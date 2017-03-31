@@ -71,6 +71,10 @@ namespace System.Security.Cryptography.X509Certificates
 			get;
 		}
 
+		internal abstract X509Certificate2Impl FallbackImpl {
+			get;
+		}
+
 		public abstract string GetNameInfo (X509NameType nameType, bool forIssuer);
 
 		public abstract void Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags);

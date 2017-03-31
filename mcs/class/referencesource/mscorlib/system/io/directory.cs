@@ -37,7 +37,8 @@ using System.Security.AccessControl;
 
 namespace System.IO {
     [ComVisible(true)]
-    public static class Directory {
+    public static partial class Directory {
+#if !MONO
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static DirectoryInfo GetParent(String path)
@@ -590,6 +591,8 @@ namespace System.IO {
         }
 #endif
 
+#endif // !MONO
+
         // Returns an array of filenames in the DirectoryInfo specified by path
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
@@ -1007,6 +1010,7 @@ namespace System.IO {
                                                                         includeFiles, includeDirs, searchOption, true);
         }
 
+#if !MONO
         // Retrieves the names of the logical drives on this machine in the 
         // form "C:\". 
         // 
@@ -1540,6 +1544,7 @@ namespace System.IO {
         private const int FILE_SHARE_DELETE = 0x00000004;
         private const int OPEN_EXISTING = 0x00000003;
         private const int FILE_FLAG_BACKUP_SEMANTICS = 0x02000000;
+#endif // !MONO
     }
 
 }

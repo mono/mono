@@ -61,13 +61,13 @@ namespace System.Net.Sockets
 			private set;
 		}
 
-		IList <ArraySegment <byte>> _bufferList;
+		internal IList<ArraySegment<byte>> m_BufferList;
 		public IList<ArraySegment<byte>> BufferList {
-			get { return _bufferList; }
+			get { return m_BufferList; }
 			set {
 				if (Buffer != null && value != null)
 					throw new ArgumentException ("Buffer and BufferList properties cannot both be non-null.");
-				_bufferList = value;
+				m_BufferList = value;
 			}
 		}
 
@@ -177,13 +177,6 @@ namespace System.Net.Sockets
 
 			if (disposing && in_progress != 0)
 				return;
-
-			AcceptSocket = null;
-			Buffer = null;
-			BufferList = null;
-			RemoteEndPoint = null;
-			UserToken = null;
-			SendPacketsElements = null;
 		}
 
 		public void Dispose ()
@@ -240,6 +233,44 @@ namespace System.Net.Sockets
 			}
 
 			Buffer = buffer;
+		}
+
+		internal void StartOperationCommon (Socket socket)
+		{
+			current_socket = socket;
+		}
+
+		internal void StartOperationWrapperConnect (MultipleConnectAsync args)
+		{
+			SetLastOperation (SocketAsyncOperation.Connect);
+
+			//m_MultipleConnect = args;
+		}
+
+		internal void FinishConnectByNameSyncFailure (Exception exception, int bytesTransferred, SocketFlags flags)
+		{
+			throw new NotImplementedException ();
+		}
+
+		internal void FinishOperationAsyncFailure (Exception exception, int bytesTransferred, SocketFlags flags)
+		{
+			throw new NotImplementedException ();
+		}
+
+		internal void FinishWrapperConnectSuccess (Socket connectSocket, int bytesTransferred, SocketFlags flags)
+		{
+			SetResults(SocketError.Success, bytesTransferred, flags);
+			current_socket = connectSocket;
+
+			Complete ();
+			OnCompleted (this);
+		}
+
+		internal void SetResults (SocketError socketError, int bytesTransferred, SocketFlags flags)
+		{
+			SocketError = socketError;
+			BytesTransferred = bytesTransferred;
+			SocketFlags = flags;
 		}
 	}
 }

@@ -4,6 +4,10 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
+#if MONO
+#undef FEATURE_PAL
+#endif
+
 namespace System.Net {
 
     using System.IO;
@@ -22,9 +26,11 @@ namespace System.Net {
     /// </devdoc>
     public class NetworkCredential : ICredentials,ICredentialsByHost {
 
+#if MONO_FEATURE_CAS
         private static volatile EnvironmentPermission m_environmentUserNamePermission;
         private static volatile EnvironmentPermission m_environmentDomainNamePermission;
         private static readonly object lockingObject = new object();
+#endif
         private string m_domain;
         private string m_userName;
 #if !FEATURE_PAL
@@ -85,6 +91,7 @@ namespace System.Net {
         }
 #endif //!FEATURE_PAL        
 
+#if MONO_FEATURE_CAS
         void InitializePart1() {
             if (m_environmentUserNamePermission == null) {
                 lock(lockingObject) {
@@ -95,7 +102,7 @@ namespace System.Net {
                 }
             }
         }
-
+#endif
 
         /// <devdoc>
         ///    <para>
@@ -104,8 +111,10 @@ namespace System.Net {
         /// </devdoc>
         public string UserName {
             get {
+#if MONO_FEATURE_CAS
                 InitializePart1();
                 m_environmentUserNamePermission.Demand();
+#endif
                 return InternalGetUserName();
             }
             set {
@@ -124,7 +133,9 @@ namespace System.Net {
         /// </devdoc>
         public string Password {
             get {
+#if MONO_FEATURE_CAS
                 ExceptionHelper.UnmanagedPermission.Demand();
+#endif
                 return InternalGetPassword();
             }
             set {
@@ -151,7 +162,9 @@ namespace System.Net {
         /// </devdoc>
         public SecureString SecurePassword {
             get {
+#if MONO_FEATURE_CAS
                 ExceptionHelper.UnmanagedPermission.Demand();
+#endif
                 return InternalGetSecurePassword().Copy();
             }
             set {
@@ -171,8 +184,10 @@ namespace System.Net {
         /// </devdoc>
         public string Domain {
             get {
+#if MONO_FEATURE_CAS
                 InitializePart1();
                 m_environmentDomainNamePermission.Demand();
+#endif
                 return InternalGetDomain();
             }
             set {

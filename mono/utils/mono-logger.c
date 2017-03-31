@@ -1,3 +1,7 @@
+/**
+ * \file
+ */
+
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -43,10 +47,20 @@ mono_trace_init (void)
 		mono_internal_current_level = G_LOG_LEVEL_ERROR;
 		level_stack = g_queue_new();
 
-		mono_trace_set_mask_string(g_getenv("MONO_LOG_MASK"));
-		mono_trace_set_level_string(g_getenv("MONO_LOG_LEVEL"));
-		mono_trace_set_logheader_string(g_getenv("MONO_LOG_HEADER"));
-		mono_trace_set_logdest_string(g_getenv("MONO_LOG_DEST"));
+		char *mask = g_getenv ("MONO_LOG_MASK");
+		char *level = g_getenv ("MONO_LOG_LEVEL");
+		char *header = g_getenv ("MONO_LOG_HEADER");
+		char *dest = g_getenv ("MONO_LOG_DEST");
+
+		mono_trace_set_mask_string(mask);
+		mono_trace_set_level_string(level);
+		mono_trace_set_logheader_string(header);
+		mono_trace_set_logdest_string(dest);
+
+		g_free (mask);
+		g_free (level);
+		g_free (header);
+		g_free (dest);
 	}
 }
 
@@ -70,11 +84,9 @@ mono_trace_cleanup (void)
 }
 
 /**
- * mono_tracev:
- *
- *	@level: Verbose level of the specified message
- *	@mask: Type of the specified message
- *
+ * mono_tracev_inner:
+ * \param level Verbose level of the specified message
+ * \param mask Type of the specified message
  * Traces a new message, depending on the current logging level
  * and trace mask.
  */
@@ -98,11 +110,9 @@ mono_tracev_inner (GLogLevelFlags level, MonoTraceMask mask, const char *format,
 
 /**
  * mono_trace_set_level:
- *
- *	@level: Verbose level to set
- *
+ * \param level Verbose level to set
  * Sets the current logging level. Every subsequent call to
- * mono_trace will check the visibility of a message against this
+ * \c mono_trace will check the visibility of a message against this
  * value.
  */
 void 
@@ -116,11 +126,9 @@ mono_trace_set_level (GLogLevelFlags level)
 
 /**
  * mono_trace_set_mask:
- *
- *	@mask: Mask of visible message types.
- *
+ * \param mask Mask of visible message types.
  * Sets the current logging level. Every subsequent call to
- * mono_trace will check the visibility of a message against this
+ * \c mono_trace will check the visibility of a message against this
  * value.
  */
 void 
@@ -134,9 +142,7 @@ mono_trace_set_mask (MonoTraceMask mask)
 
 /**
  * mono_trace_set_logdest:
- *
- *	@dest: Destination for logging
- *
+ * \param dest Destination for logging
  * Sets the current logging destination. This can be a file or, if supported,
  * syslog.
  */
@@ -148,26 +154,35 @@ mono_trace_set_logdest_string (const char *dest)
 	if(level_stack == NULL)
 		mono_trace_init();
 
+#if PLATFORM_ANDROID
+	logger.opener = mono_log_open_logcat;
+	logger.writer = mono_log_write_logcat;
+	logger.closer = mono_log_close_logcat;
+	logger.dest   = (char*) dest;
+#elif defined (HOST_IOS)
+	logger.opener = mono_log_open_asl;
+	logger.writer = mono_log_write_asl;
+	logger.closer = mono_log_close_asl;
+	logger.dest   = (char*) dest;
+#else
 	if ((dest == NULL) || (strcmp("syslog", dest) != 0)) {
 		logger.opener = mono_log_open_logfile;
 		logger.writer = mono_log_write_logfile;
 		logger.closer = mono_log_close_logfile;
 		logger.dest   = (char *) dest;
-		mono_trace_set_log_handler_internal(&logger, NULL);
 	} else {
 		logger.opener = mono_log_open_syslog;
 		logger.writer = mono_log_write_syslog;
 		logger.closer = mono_log_close_syslog;
 		logger.dest   = (char *) dest;
-		mono_trace_set_log_handler_internal(&logger, NULL);
 	}
+#endif
+	mono_trace_set_log_handler_internal(&logger, NULL);
 }
 
 /**
  * mono_trace_set_logheader:
- *
- *	@head: Whether we want pid/date/time header on log messages
- *
+ * \param head Whether we want pid/date/time header on log messages
  * Sets the current logging header option.
  */
 void 
@@ -182,11 +197,9 @@ mono_trace_set_logheader_string(const char *head)
 
 /**
  * mono_trace_push:
- *
- *	@level: Verbose level to set
- *	@mask: Mask of visible message types.
- *
- * Saves the current values of level and mask then calls mono_trace_set
+ * \param level Verbose level to set
+ * \param mask Mask of visible message types.
+ * Saves the current values of level and mask then calls \c mono_trace_set
  * with the specified new values.
  */
 void 
@@ -280,7 +293,7 @@ mono_trace_set_mask_string (const char *value)
 			continue;
 		}
 		for (i = 0; valid_flags[i]; i++) {
-			int len = strlen (valid_flags[i]);
+			size_t len = strlen (valid_flags[i]);
 			if (strncmp (tok, valid_flags[i], len) == 0 && (tok[len] == 0 || tok[len] == ',')) {
 				flags |= valid_masks[i];
 				tok += len;
@@ -421,10 +434,8 @@ structured_log_adapter (const gchar *log_domain, GLogLevelFlags log_level, const
 
 /**
  * mono_trace_set_log_handler_internal:
- *
- *  @callback The callback that will replace the default logging handler
- *  @user_data Argument passed to @callback
- *
+ * \param callback The callback that will replace the default logging handler
+ * \param user_data Argument passed to \p callback
  * The log handler replaces the default runtime logger. All logging requests with be routed to it.
  * If the fatal argument in the callback is true, the callback must abort the current process. The runtime expects that
  * execution will not resume after a fatal error.
@@ -459,11 +470,8 @@ printerr_handler (const char *string)
 
 /**
  * mono_trace_set_print_handler:
- *
- * @callback The callback that will replace the default runtime behavior for stdout output.
- *
+ * \param callback The callback that will replace the default runtime behavior for stdout output.
  * The print handler replaces the default runtime stdout output handler. This is used by free form output done by the runtime.
- *
  */
 void
 mono_trace_set_print_handler (MonoPrintCallback callback)
@@ -475,11 +483,8 @@ mono_trace_set_print_handler (MonoPrintCallback callback)
 
 /**
  * mono_trace_set_printerr_handler:
- *
- * @callback The callback that will replace the default runtime behavior for stderr output.
- *
+ * \param callback The callback that will replace the default runtime behavior for stderr output.
  * The print handler replaces the default runtime stderr output handler. This is used by free form output done by the runtime.
- *
  */
 void
 mono_trace_set_printerr_handler (MonoPrintCallback callback)

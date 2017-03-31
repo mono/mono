@@ -30,18 +30,23 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Net.Sockets;
+using System.Diagnostics.Contracts;
 
 namespace System.Net.NetworkInformation {
-#if !MOBILE
+#if WIN_PLATFORM
 	class Win32UnicastIPAddressInformation : UnicastIPAddressInformation 
 	{
-		int if_index;
 		Win32_IP_ADAPTER_UNICAST_ADDRESS info;
+		IPAddress ipv4Mask;
 
-		public Win32UnicastIPAddressInformation (int ifIndex, Win32_IP_ADAPTER_UNICAST_ADDRESS info)
+		public Win32UnicastIPAddressInformation (Win32_IP_ADAPTER_UNICAST_ADDRESS info)
 		{
-			this.if_index = ifIndex;
 			this.info = info;
+			IPAddress ipAddress = info.Address.GetIPAddress ();
+			// IPv6 returns 0.0.0.0 for consistancy with XP
+			if (ipAddress.AddressFamily == AddressFamily.InterNetwork) {
+				ipv4Mask = PrefixLengthToSubnetMask (info.OnLinkPrefixLength, ipAddress.AddressFamily);
+			}
 		}
 
 		public override IPAddress Address {
@@ -74,27 +79,15 @@ namespace System.Net.NetworkInformation {
 			get { return info.DadState; }
 		}
 
-		public override IPAddress IPv4Mask {
+		public override IPAddress IPv4Mask{
 			get {
-				Win32_IP_ADAPTER_INFO ai = Win32NetworkInterface2.GetAdapterInfoByIndex (if_index);
-				if (ai == null)
-					throw new Exception ("huh? " + if_index);
-				if (this.Address == null)
-					return null;
-				string expected = this.Address.ToString ();
-				unsafe {
-					Win32_IP_ADDR_STRING p = ai.IpAddressList;
-					while (true) {
-						if (p.IpAddress == expected)
-							return IPAddress.Parse (p.IpMask);
-						if (p.Next == IntPtr.Zero)
-							break;
-						p = (Win32_IP_ADDR_STRING) Marshal.PtrToStructure (p.Next, typeof (Win32_IP_ADDR_STRING));
-					}
-
-					// Or whatever it should be...
-					return null;
+				// The IPv6 equivilant was never available on XP, and we've kept this behavior for legacy reasons.
+				// For IPv6 use PrefixLength instead.
+				if (Address.AddressFamily != AddressFamily.InterNetwork) {
+					return IPAddress.Any;
 				}
+
+				return ipv4Mask;
 			}
 		}
 
@@ -104,6 +97,28 @@ namespace System.Net.NetworkInformation {
 
 		public override SuffixOrigin SuffixOrigin {
 			get { return info.SuffixOrigin; }
+		}
+
+		// Convert a CIDR prefix length to a subnet mask "255.255.255.0" format
+		private static IPAddress PrefixLengthToSubnetMask (byte prefixLength, AddressFamily family) {
+			Contract.Requires ((0 <= prefixLength) && (prefixLength <= 126));
+			Contract.Requires ((family == AddressFamily.InterNetwork) || (family == AddressFamily.InterNetworkV6));
+
+			byte[] addressBytes;
+			if (family == AddressFamily.InterNetwork) {
+				addressBytes = new byte [4];
+			} else { // v6
+				addressBytes = new byte [16];
+			}
+
+			Contract.Assert (prefixLength < (addressBytes.Length * 8));
+
+			// Enable bits one at a time from left/high to right/low
+			for (int bit = 0; bit < prefixLength; bit++) {
+				addressBytes [bit / 8] |= (byte) (0x80 >> (bit % 8));
+			}
+
+			return new IPAddress (addressBytes);
 		}
 	}
 #endif

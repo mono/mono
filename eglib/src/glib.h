@@ -160,7 +160,8 @@ typedef struct _GMemChunk GMemChunk;
  * Misc.
  */
 
-const gchar *    g_getenv(const gchar *variable);
+gboolean         g_hasenv(const gchar *variable);
+gchar *          g_getenv(const gchar *variable);
 gboolean         g_setenv(const gchar *variable, const gchar *value, gboolean overwrite);
 void             g_unsetenv(const gchar *variable);
 
@@ -887,11 +888,7 @@ gboolean   g_file_test (const gchar *filename, GFileTest test);
 #define g_ascii_strtod strtod
 #define g_ascii_isalnum isalnum
 
-#ifdef WIN32
 gchar *g_mkdtemp (gchar *tmpl);
-#else
-#define g_mkdtemp mkdtemp
-#endif
 
 /*
  * Pattern matching
@@ -1068,6 +1065,10 @@ glong     g_utf8_pointer_to_offset (const gchar *str, const gchar *pos);
 #define _EGLIB_MINOR  0
  
 #define GLIB_CHECK_VERSION(a,b,c) ((a < _EGLIB_MAJOR) || (a == _EGLIB_MAJOR && (b < _EGLIB_MIDDLE || (b == _EGLIB_MIDDLE && c <= _EGLIB_MINOR))))
+
+#define G_HAVE_API_SUPPORT(x) (x)
+#define G_UNSUPPORTED_API "%s:%d: '%s' not supported.", __FILE__, __LINE__
+#define g_unsupported_api(name) G_STMT_START { g_warning (G_UNSUPPORTED_API, name); } G_STMT_END
  
 G_END_DECLS
 

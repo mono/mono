@@ -35,10 +35,10 @@ namespace System.Web.UI
 	[Serializable]
 	public sealed class Pair 
 	{
-		public Pair (object first, object second)
+		public Pair (object x, object y)
 		{
-			First = first;
-			Second = second;
+			First = x;
+			Second = y;
 		}
 
 		public Pair ()

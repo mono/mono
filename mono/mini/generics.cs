@@ -233,6 +233,42 @@ class Tests
 		return 0;
 	}
 
+	interface NonGenericInterface {
+		int return_field ();
+	}
+
+	interface GenericInterface<T> : NonGenericInterface {
+		T not_used ();
+	}
+
+	struct ImplementGenericInterface<T> : GenericInterface<T> {
+		public Object padding1;
+		public Object padding2;
+		public Object padding3;
+		public T[] arr_t;
+
+		public ImplementGenericInterface (T[] arr_t) {
+			this.padding1 = null;
+			this.padding2 = null;
+			this.padding3 = null;
+			this.arr_t = arr_t;
+		}
+
+		public T not_used () {
+			return arr_t [0];
+		}
+
+		public int return_field () {
+			return arr_t.Length;
+		}
+	}
+
+	public static int test_8_struct_implements_generic_interface () {
+		int[] arr = {1, 2, 3, 4};
+		NonGenericInterface s = new ImplementGenericInterface<int> (arr);
+		return s.return_field () + s.return_field ();
+	}
+
 	public static int test_0_generic_get_value_optimization_vtype () {
 		TestStruct[] arr = new TestStruct[] { new TestStruct (100, 200), new TestStruct (300, 400) };
 		IEnumerator<TestStruct> enumerator = GenericClass<TestStruct>.Y (arr);
@@ -1273,6 +1309,67 @@ class Tests
 		return 0;
 	}
 
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static bool is_ref_or_contains_refs<T> () {
+		return RuntimeHelpers.IsReferenceOrContainsReferences<T> ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static bool is_ref_or_contains_refs_gen_ref<T> () {
+		return RuntimeHelpers.IsReferenceOrContainsReferences<GenStruct<T>> ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static bool is_ref_or_contains_refs_gen_noref<T> () {
+		return RuntimeHelpers.IsReferenceOrContainsReferences<NoRefGenStruct<T>> ();
+	}
+
+	struct GenStruct<T> {
+		T t;
+	}
+
+	struct NoRefGenStruct<T> {
+	}
+
+	struct RefStruct {
+		string s;
+	}
+
+	struct NestedRefStruct {
+		RefStruct r;
+	}
+
+	struct NoRefStruct {
+		int i;
+	}
+
+	public static int test_0_isreference_intrins () {
+		if (RuntimeHelpers.IsReferenceOrContainsReferences<int> ())
+			return 1;
+		if (!RuntimeHelpers.IsReferenceOrContainsReferences<string> ())
+			return 2;
+		if (!RuntimeHelpers.IsReferenceOrContainsReferences<RefStruct> ())
+			return 3;
+		if (!RuntimeHelpers.IsReferenceOrContainsReferences<NestedRefStruct> ())
+			return 4;
+		if (RuntimeHelpers.IsReferenceOrContainsReferences<NoRefStruct> ())
+			return 5;
+		// Generic code
+		if (is_ref_or_contains_refs<int> ())
+			return 6;
+		// Shared code
+		if (!is_ref_or_contains_refs<string> ())
+			return 7;
+		// Complex type from shared code
+		if (!is_ref_or_contains_refs_gen_ref<string> ())
+			return 8;
+		if (is_ref_or_contains_refs_gen_ref<int> ())
+			return 9;
+		if (is_ref_or_contains_refs_gen_noref<string> ())
+			return 10;
+
+		return 0;
+	}
 }
 
 #if !__MOBILE__

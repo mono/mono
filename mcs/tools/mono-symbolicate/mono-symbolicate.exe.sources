@@ -95,16 +95,8 @@ Logger.cs
 ../../../external/cecil/Mono.Cecil.PE/*.cs
 ../../../external/cecil/Mono.Collections.Generic/*.cs
 ../../../external/cecil/Mono.Security.Cryptography/*.cs
-../../../external/cecil/System.Security.Cryptography/*.cs
 ../../../external/cecil/symbols/mdb/Mono.Cecil.Mdb/MdbReader.cs
 ../../../external/cecil/symbols/mdb/Mono.Cecil.Mdb/MdbWriter.cs
 ../../../external/cecil/symbols/mdb/Mono.CompilerServices.SymbolWriter/*.cs
 ../../../external/cecil/symbols/pdb/Microsoft.Cci.Pdb/*.cs
-../../../external/cecil/symbols/pdb/Mono.Cecil.Pdb/ISymUnmanagedDocumentWriter.cs
-../../../external/cecil/symbols/pdb/Mono.Cecil.Pdb/ISymUnmanagedWriter2.cs
-../../../external/cecil/symbols/pdb/Mono.Cecil.Pdb/ModuleMetadata.cs
-../../../external/cecil/symbols/pdb/Mono.Cecil.Pdb/PdbHelper.cs
-../../../external/cecil/symbols/pdb/Mono.Cecil.Pdb/PdbReader.cs
-../../../external/cecil/symbols/pdb/Mono.Cecil.Pdb/PdbWriter.cs
-../../../external/cecil/symbols/pdb/Mono.Cecil.Pdb/SymDocumentWriter.cs
-../../../external/cecil/symbols/pdb/Mono.Cecil.Pdb/SymWriter.cs
+../../../external/cecil/symbols/pdb/Mono.Cecil.Pdb/*.cs

@@ -146,7 +146,9 @@ namespace System.Net {
             }
             public object OwningObject;
             public GeneralAsyncDelegate AsyncCallback;
+#if !MONO
             public bool Completed;
+#endif
             public ConnectionPool Pool;
             public int CreationTimeout;
         }
@@ -811,7 +813,9 @@ namespace System.Net {
     /// </devdoc>
     sealed internal class InterlockedStack {
         private readonly Stack _stack = new Stack();
+#if !MONO
         private int _count;
+#endif
 
 #if DEBUG
         private readonly Hashtable doublepush = new Hashtable();
@@ -832,7 +836,9 @@ namespace System.Net {
 #if DEBUG
                 GlobalLog.Assert(_count+1 == _stack.Count, "push count mishandle");
 #endif
+#if !MONO
                 _count = _stack.Count;
+#endif
             }
         }
 
@@ -845,7 +851,9 @@ namespace System.Net {
                     GlobalLog.Assert(_count-1 == _stack.Count, "pop count mishandle");
                     doublepush.Remove(pooledStream);
 #endif
+#if !MONO
                     _count = _stack.Count;
+#endif
                 }
                 return pooledStream;
             }

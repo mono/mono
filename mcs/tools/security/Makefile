@@ -40,6 +40,7 @@ install-local: $(SECURITY_TARGETS)
 	for p in $(SECURITY_TARGETS) ; do \
 	    $(INSTALL_BIN) $$p $(DESTDIR)$(PROGRAM_INSTALL_DIR) ; \
 	    test ! -f $$p.mdb || $(INSTALL_BIN) $$p.mdb $(DESTDIR)$(PROGRAM_INSTALL_DIR) ; \
+	    test ! -f $${p%.exe}.pdb || $(INSTALL_BIN) $${p%.exe}.pdb $(DESTDIR)$(PROGRAM_INSTALL_DIR) ; \
 	done
 
 uninstall-local:

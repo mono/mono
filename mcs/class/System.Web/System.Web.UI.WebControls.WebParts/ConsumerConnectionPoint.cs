@@ -32,10 +32,10 @@ namespace System.Web.UI.WebControls.WebParts
 {
 	public class ConsumerConnectionPoint : ConnectionPoint
 	{
-		public ConsumerConnectionPoint (MethodInfo callBack, Type interFace,
-			Type control, string name, string id, 
-			bool allowsMultiConnections) : base (callBack, interFace,
-					control, name, id, allowsMultiConnections)
+		public ConsumerConnectionPoint (MethodInfo callbackMethod, Type interfaceType,
+			Type controlType, string displayName, string id, 
+			bool allowsMultipleConnections) : base (callbackMethod, interfaceType,
+					controlType, displayName, id, allowsMultipleConnections)
 		{			
 		}
 

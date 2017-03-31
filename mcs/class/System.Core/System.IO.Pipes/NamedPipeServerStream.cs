@@ -97,11 +97,12 @@ namespace System.IO.Pipes
 		public NamedPipeServerStream (string pipeName, PipeDirection direction, int maxNumberOfServerInstances, PipeTransmissionMode transmissionMode, PipeOptions options, int inBufferSize, int outBufferSize, PipeSecurity pipeSecurity, HandleInheritability inheritability, PipeAccessRights additionalAccessRights)
 			: base (direction, transmissionMode, outBufferSize)
 		{
-			var rights = ToAccessRights (direction) | additionalAccessRights;
-			// FIXME: reject some rights declarations (for ACL).
 #if MOBILE
 			throw new NotImplementedException ();
 #else
+			var rights = ToAccessRights (direction) | additionalAccessRights;
+			// FIXME: reject some rights declarations (for ACL).
+
 			if (IsWindows)
 				impl = new Win32NamedPipeServer (this, pipeName, maxNumberOfServerInstances, transmissionMode,
 								 rights, options, inBufferSize, outBufferSize,

@@ -131,7 +131,7 @@ namespace System.Text.RegularExpressions {
             // <SECREVIEW> Regex only generates string manipulation, so this is ok.
             // </SECREVIEW>      
 
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             new ReflectionPermission(PermissionState.Unrestricted).Assert();
 #endif
             try {
@@ -172,7 +172,7 @@ namespace System.Text.RegularExpressions {
 #endif
             }
             finally {
-#if FEATURE_MONO_CAS 
+#if MONO_FEATURE_CAS 
                 CodeAccessPermission.RevertAssert();
 #endif
             }
@@ -197,14 +197,14 @@ namespace System.Text.RegularExpressions {
 
             // <SECREVIEW> Regex only generates string manipulation, so this is ok.
             // </SECREVIEW>         
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             new ReflectionPermission(PermissionState.Unrestricted).Assert();
 #endif
             try {
                 factory = c.FactoryInstanceFromCode(code, options);
             }
             finally {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 CodeAccessPermission.RevertAssert();
 #endif
             }
@@ -239,7 +239,7 @@ namespace System.Text.RegularExpressions {
         
                 Type factory;
         
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 new ReflectionPermission(PermissionState.Unrestricted).Assert();
 #endif
                 try {
@@ -247,7 +247,7 @@ namespace System.Text.RegularExpressions {
                     c.GenerateRegexType(pattern, options, fullname, regexes[i].IsPublic, code, tree, factory, mTimeout);
                 }
                 finally {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                     CodeAccessPermission.RevertAssert();
 #endif
                 }
@@ -3033,7 +3033,9 @@ namespace System.Text.RegularExpressions {
 
     internal class RegexTypeCompiler : RegexCompiler {
         private static int _typeCount = 0;
+#if !MONO
         private static LocalDataStoreSlot _moduleSlot = Thread.AllocateDataSlot();
+#endif
 
         private  AssemblyBuilder _assembly;
         private  ModuleBuilder  _module;
@@ -3049,7 +3051,7 @@ namespace System.Text.RegularExpressions {
             // SECREVIEW : Regex only generates string manipulation, so this is
             //           : ok.
             //
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             new ReflectionPermission(PermissionState.Unrestricted).Assert();
 #endif
             try {
@@ -3061,7 +3063,7 @@ namespace System.Text.RegularExpressions {
                 CustomAttributeBuilder transparencyAttribute = new CustomAttributeBuilder(transparencyCtor, new object[0]);
                 assemblyAttributes.Add(transparencyAttribute);
 
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 ConstructorInfo securityRulesCtor = typeof(SecurityRulesAttribute).GetConstructor(new Type[] { typeof(SecurityRuleSet) });
                 CustomAttributeBuilder securityRulesAttribute =
                     new CustomAttributeBuilder(securityRulesCtor, new object[] { SecurityRuleSet.Level2 });
@@ -3087,7 +3089,7 @@ namespace System.Text.RegularExpressions {
                 }
             }
             finally {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 CodeAccessPermission.RevertAssert();
 #endif
             }

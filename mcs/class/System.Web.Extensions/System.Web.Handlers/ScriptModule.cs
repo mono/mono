@@ -1,4 +1,4 @@
-﻿//
+//
 // ScriptModule.cs
 //
 // Author:
@@ -37,10 +37,10 @@ namespace System.Web.Handlers
 {
 	public class ScriptModule : IHttpModule
 	{
-		protected virtual void Init (HttpApplication context) {
-			context.PreSendRequestHeaders += new EventHandler (PreSendRequestHeaders);
-			context.PostAcquireRequestState += new EventHandler (PostAcquireRequestState);
-			context.AuthenticateRequest += new EventHandler (AuthenticateRequest);
+		protected virtual void Init (HttpApplication app) {
+			app.PreSendRequestHeaders += new EventHandler (PreSendRequestHeaders);
+			app.PostAcquireRequestState += new EventHandler (PostAcquireRequestState);
+			app.AuthenticateRequest += new EventHandler (AuthenticateRequest);
 		}
 
 		void AuthenticateRequest (object sender, EventArgs e) {

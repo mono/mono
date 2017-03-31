@@ -149,8 +149,8 @@ namespace MonoTests.System.Net.Http
 			/*
 			sc = new StreamContent (new ExceptionStream ());
 			try {
-			    sc.CopyToAsync (m).Wait ();
-			    Assert.Fail ("#2");
+				sc.CopyToAsync (m).Wait ();
+				Assert.Fail ("#2");
 			} catch (AggregateException) {
 			}
 			*/ 
@@ -188,6 +188,32 @@ namespace MonoTests.System.Net.Http
 			}
 
 			Assert.IsTrue (hit, "#10");
+		}
+
+		[Test]
+		public void CopyToAsync_Twice ()
+		{
+			var ms = new MemoryStream();
+			ms.WriteByte(4);
+			ms.WriteByte(12);
+			ms.WriteByte(7);
+			ms.Seek(1, SeekOrigin.Begin);
+
+			var sc = new StreamContent(ms);
+
+			var dest = new MemoryStream();
+			var task = sc.CopyToAsync(dest);
+			Assert.True(task.Wait(3000), "#0");
+			Assert.AreEqual(2, dest.Length, "#1");
+			dest.Seek(0, SeekOrigin.Begin);
+			Assert.AreEqual(12, dest.ReadByte(), "#2");
+
+			dest = new MemoryStream();
+			task = sc.CopyToAsync(dest);
+			Assert.True(task.Wait(3000), "#10");
+			Assert.AreEqual(2, dest.Length, "#11");
+			dest.Seek(0, SeekOrigin.Begin);
+			Assert.AreEqual(12, dest.ReadByte(), "#12");
 		}
 
 		[Test]

@@ -133,10 +133,13 @@ namespace System.IO.Pipes
 			get {
 				if (!IsConnected)
 					throw new InvalidOperationException ("Pipe is not connected");
-				if (stream == null)
+				if (stream == null) {
+#pragma warning disable 618
 					stream = new FileStream (handle.DangerousGetHandle (),
 								 CanRead ? (CanWrite ? FileAccess.ReadWrite : FileAccess.Read)
 								 	 : FileAccess.Write, true, buffer_size, IsAsync);
+#pragma warning restore 618					
+				}
 				return stream;
 			}
 			set { stream = value; }

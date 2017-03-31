@@ -1,5 +1,5 @@
-/*
- * mono-rand.c: 
+/**
+ * \file
  *
  * Authors:
  *      Mark Crichton (crichton@gimp.org)
@@ -13,7 +13,6 @@
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
-
 #include <glib.h>
 #include <config.h>
 
@@ -26,125 +25,7 @@
 #include "metadata/object.h"
 
 #ifdef HOST_WIN32
-
-#include <windows.h>
-#include <wincrypt.h>
-
-#ifndef PROV_INTEL_SEC
-#define PROV_INTEL_SEC		22
-#endif
-#ifndef CRYPT_VERIFY_CONTEXT
-#define CRYPT_VERIFY_CONTEXT	0xF0000000
-#endif
-
-/**
- * mono_rand_open:
- *
- * Returns: True if random source is global, false if mono_rand_init can be called repeatedly to get randomness instances.
- *
- * Initializes entire RNG system. Must be called once per process before calling mono_rand_init.
- */
-gboolean
-mono_rand_open (void)
-{
-	return FALSE;
-}
-
-/**
- * mono_rand_init:
- * @seed: A string containing seed data
- * @seed_size: Length of seed string
- *
- * Returns: On success, a non-NULL handle which can be used to fetch random data from mono_rand_try_get_bytes. On failure, NULL.
- *
- * Initializes an RNG client.
- */
-gpointer
-mono_rand_init (guchar *seed, gint seed_size)
-{
-	HCRYPTPROV provider = 0;
-
-	/* There is no need to create a container for just random data,
-	 * so we can use CRYPT_VERIFY_CONTEXT (one call) see: 
-	 * http://blogs.msdn.com/dangriff/archive/2003/11/19/51709.aspx */
-
-	/* We first try to use the Intel PIII RNG if drivers are present */
-	if (!CryptAcquireContext (&provider, NULL, NULL, PROV_INTEL_SEC, CRYPT_VERIFY_CONTEXT)) {
-		/* not a PIII or no drivers available, use default RSA CSP */
-		if (!CryptAcquireContext (&provider, NULL, NULL, PROV_RSA_FULL, CRYPT_VERIFY_CONTEXT)) {
-			/* exception will be thrown in managed code */
-			provider = 0;
-		}
-	}
-
-	/* seed the CSP with the supplied buffer (if present) */
-	if (provider != 0 && seed) {
-		/* the call we replace the seed with random - this isn't what is
-		 * expected from the class library user */
-		guchar *data = g_malloc (seed_size);
-		if (data) {
-			memcpy (data, seed, seed_size);
-			/* add seeding material to the RNG */
-			CryptGenRandom (provider, seed_size, data);
-			/* zeroize and free */
-			memset (data, 0, seed_size);
-			g_free (data);
-		}
-	}
-
-	return (gpointer) provider;
-}
-
-/**
- * mono_rand_try_get_bytes:
- * @handle: A pointer to an RNG handle. Handle is set to NULL on failure.
- * @buffer: A buffer into which to write random data.
- * @buffer_size: Number of bytes to write into buffer.
- * @error: Set on error.
- *
- * Returns: FALSE on failure and sets @error, TRUE on success.
- *
- * Extracts bytes from an RNG handle.
- */
-gboolean
-mono_rand_try_get_bytes (gpointer *handle, guchar *buffer, gint buffer_size, MonoError *error)
-{
-	HCRYPTPROV provider;
-
-	mono_error_init (error);
-
-	g_assert (handle);
-	provider = (HCRYPTPROV) *handle;
-
-	if (!CryptGenRandom (provider, buffer_size, buffer)) {
-		CryptReleaseContext (provider, 0);
-		/* we may have lost our context with CryptoAPI, but all hope isn't lost yet! */
-		provider = (HCRYPTPROV) mono_rand_init (NULL, 0);
-		if (!CryptGenRandom (provider, buffer_size, buffer)) {
-			/* exception will be thrown in managed code */
-			CryptReleaseContext (provider, 0);
-			*handle = 0;
-			mono_error_set_execution_engine (error, "Failed to gen random bytes (%d)", GetLastError ());
-			return FALSE;
-		}
-	}
-	return TRUE;
-}
-
-/**
- * mono_rand_close:
- * @handle: An RNG handle.
- * @buffer: A buffer into which to write random data.
- * @buffer_size: Number of bytes to write into buffer.
- *
- * Releases an RNG handle.
- */
-void
-mono_rand_close (gpointer handle)
-{
-	CryptReleaseContext ((HCRYPTPROV) handle, 0);
-}
-
+// Windows specific implementation in mono-rand-windows.c
 #elif defined (HAVE_SYS_UN_H) && !defined(__native_client__)
 
 #include <errno.h>
@@ -170,7 +51,7 @@ get_entropy_from_egd (const char *path, guchar *buffer, int buffer_size, MonoErr
 	guint offset = 0;
 	int err = 0;
 
-	mono_error_init (error);
+	error_init (error);
 	
 	socket_fd = socket (PF_UNIX, SOCK_STREAM, 0);
 	if (socket_fd < 0) {
@@ -178,7 +59,7 @@ get_entropy_from_egd (const char *path, guchar *buffer, int buffer_size, MonoErr
 		err = errno;
 	} else {
 		egd_addr.sun_family = AF_UNIX;
-		strncpy (egd_addr.sun_path, path, sizeof (egd_addr.sun_path) - 1);
+		memcpy (egd_addr.sun_path, path, sizeof (egd_addr.sun_path) - 1);
 		egd_addr.sun_path [sizeof (egd_addr.sun_path) - 1] = '\0';
 		ret = connect (socket_fd, (struct sockaddr*) &egd_addr, sizeof (egd_addr));
 		err = errno;
@@ -255,7 +136,7 @@ mono_rand_open (void)
 		file = open (NAME_DEV_RANDOM, O_RDONLY);
 #endif
 	if (file < 0)
-		use_egd = g_getenv("MONO_EGD_SOCKET") != NULL;
+		use_egd = g_hasenv ("MONO_EGD_SOCKET");
 
 	status = 2;
 
@@ -274,16 +155,17 @@ mono_rand_try_get_bytes (gpointer *handle, guchar *buffer, gint buffer_size, Mon
 {
 	g_assert (handle);
 
-	mono_error_init (error);
+	error_init (error);
 
 	if (use_egd) {
-		const char *socket_path = g_getenv ("MONO_EGD_SOCKET");
+		char *socket_path = g_getenv ("MONO_EGD_SOCKET");
 		/* exception will be thrown in managed code */
 		if (socket_path == NULL) {
 			*handle = NULL;
 			return FALSE;
 		}
 		get_entropy_from_egd (socket_path, buffer, buffer_size, error);
+		g_free (socket_path);
 	} else {
 		/* Read until the buffer is filled. This may block if using NAME_DEV_RANDOM. */
 		gint count = 0;
@@ -343,7 +225,7 @@ mono_rand_try_get_bytes (gpointer *handle, guchar *buffer, gint buffer_size, Mon
 {
 	gint count = 0;
 
-	mono_error_init (error);
+	error_init (error);
 	
 	do {
 		if (buffer_size - count >= sizeof (gint32) && RAND_MAX >= 0xFFFFFFFF) {
@@ -373,14 +255,12 @@ mono_rand_close (gpointer provider)
 
 /**
  * mono_rand_try_get_uint32:
- * @handle: A pointer to an RNG handle. Handle is set to NULL on failure.
- * @val: A pointer to a 32-bit unsigned int, to which the result will be written.
- * @min: Result will be greater than or equal to this value.
- * @max: Result will be less than or equal to this value.
- *
- * Returns: FALSE on failure, TRUE on success.
- *
+ * \param handle A pointer to an RNG handle. Handle is set to NULL on failure.
+ * \param val A pointer to a 32-bit unsigned int, to which the result will be written.
+ * \param min Result will be greater than or equal to this value.
+ * \param max Result will be less than or equal to this value.
  * Extracts one 32-bit unsigned int from an RNG handle.
+ * \returns FALSE on failure, TRUE on success.
  */
 gboolean
 mono_rand_try_get_uint32 (gpointer *handle, guint32 *val, guint32 min, guint32 max, MonoError *error)

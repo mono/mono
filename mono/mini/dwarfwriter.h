@@ -1,5 +1,6 @@
-/*
- * dwarfwriter.h: Creation of DWARF debug information
+/**
+ * \file
+ * Creation of DWARF debug information
  *
  * Author:
  *   Zoltan Varga (vargaz@gmail.com)
@@ -14,7 +15,7 @@
 #include "image-writer.h"
 #include "mini.h"
 
-#include <mono/metadata/debug-mono-symfile.h>
+#include <mono/metadata/debug-internals.h>
 
 #include <glib.h>
 

@@ -270,10 +270,14 @@ namespace Mono.CSharp {
 			var da_false = new DefiniteAssignmentBitSet (fc.DefiniteAssignmentOnFalse);
 
 			fc.DefiniteAssignment = fc.DefiniteAssignmentOnTrue;
+			var labels = fc.CopyLabelStack ();
 
 			var res = TrueStatement.FlowAnalysis (fc);
 
+			fc.SetLabelStack (labels);
+
 			if (FalseStatement == null) {
+
 				var c = expr as Constant;
 				if (c != null && !c.IsDefaultValue)
 					return true_returns;
@@ -288,13 +292,19 @@ namespace Mono.CSharp {
 
 			if (true_returns) {
 				fc.DefiniteAssignment = da_false;
-				return FalseStatement.FlowAnalysis (fc);
+
+				res = FalseStatement.FlowAnalysis (fc);
+				fc.SetLabelStack (labels);
+				return res;
 			}
 
 			var da_true = fc.DefiniteAssignment;
 
 			fc.DefiniteAssignment = da_false;
+
 			res &= FalseStatement.FlowAnalysis (fc);
+
+			fc.SetLabelStack (labels);
 
 			if (!TrueStatement.IsUnreachable) {
 				if (false_returns || FalseStatement.IsUnreachable)
@@ -1291,7 +1301,7 @@ namespace Mono.CSharp {
 						// Special case hoisted return value (happens in try/finally scenario)
 						//
 						if (ec.TryFinallyUnwind != null) {
-							exit_label = TryFinally.EmitRedirectedReturn (ec, async_body);
+							exit_label = TryFinally.EmitRedirectedReturn (ec, async_body, unwind_protect);
 						}
 
 						var async_return = (IAssignMethod)storey.HoistedReturnValue;
@@ -1301,7 +1311,7 @@ namespace Mono.CSharp {
 						expr.Emit (ec);
 
 						if (ec.TryFinallyUnwind != null)
-							exit_label = TryFinally.EmitRedirectedReturn (ec, async_body);
+							exit_label = TryFinally.EmitRedirectedReturn (ec, async_body, unwind_protect);
 					}
 
 					ec.Emit (OpCodes.Leave, exit_label);
@@ -1450,7 +1460,7 @@ namespace Mono.CSharp {
 
 			if (ec.TryFinallyUnwind != null && IsLeavingFinally (label.Block)) {
 				var async_body = (AsyncInitializer) ec.CurrentAnonymousMethod;
-				l = TryFinally.EmitRedirectedJump (ec, async_body, l, label.Block);
+				l = TryFinally.EmitRedirectedJump (ec, async_body, l, label.Block, unwind_protect);
 			}
 
 			ec.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, l);
@@ -1857,7 +1867,7 @@ namespace Mono.CSharp {
 
 			if (ec.TryFinallyUnwind != null) {
 				var async_body = (AsyncInitializer) ec.CurrentAnonymousMethod;
-				l = TryFinally.EmitRedirectedJump (ec, async_body, l, enclosing_loop.Statement as Block);
+				l = TryFinally.EmitRedirectedJump (ec, async_body, l, enclosing_loop.Statement as Block, unwind_protect);
 			}
 
 			ec.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, l);
@@ -1905,7 +1915,7 @@ namespace Mono.CSharp {
 
 			if (ec.TryFinallyUnwind != null) {
 				var async_body = (AsyncInitializer) ec.CurrentAnonymousMethod;
-				l = TryFinally.EmitRedirectedJump (ec, async_body, l, enclosing_loop.Statement as Block);
+				l = TryFinally.EmitRedirectedJump (ec, async_body, l, enclosing_loop.Statement as Block, unwind_protect);
 			}
 
 			ec.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, l);
@@ -3235,9 +3245,10 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			if (Parent != null) {
-				// TODO: It's needed only when scope has variable (normal or lifted)
-				ec.BeginScope (GetDebugSymbolScopeIndex ());
+			// TODO: It's needed only when scope has variable (normal or lifted)
+			var scopeIndex = GetDebugSymbolScopeIndex ();
+			if (scopeIndex > 0) {
+				ec.BeginScope (scopeIndex);
 			}
 
 			EmitScopeInitialization (ec);
@@ -3248,7 +3259,7 @@ namespace Mono.CSharp {
 
 			DoEmit (ec);
 
-			if (Parent != null)
+			if (scopeIndex > 0)
 				ec.EndScope ();
 
 			if (ec.EmitAccurateDebugInfo && HasReachableClosingBrace && !(this is ParametersBlock) &&
@@ -3441,7 +3452,12 @@ namespace Mono.CSharp {
 			storey.Parent.PartialContainer.AddCompilerGeneratedClass (storey);
 		}
 
-		public int GetDebugSymbolScopeIndex ()
+		public void DisableDebugScopeIndex ()
+		{
+			debug_scope_index = -1;
+		}
+
+		public virtual int GetDebugSymbolScopeIndex ()
 		{
 			if (debug_scope_index == 0)
 				debug_scope_index = ++ParametersBlock.debug_scope_index;
@@ -3847,6 +3863,11 @@ namespace Mono.CSharp {
 				CheckControlExit (fc);
 
 			return res;
+		}
+
+		public override int GetDebugSymbolScopeIndex ()
+		{
+			return 0;
 		}
 
 		public LabeledStatement GetLabel (string name, Block block)
@@ -6976,7 +6997,7 @@ namespace Mono.CSharp {
 	{
 		ExplicitBlock fini;
 		List<DefiniteAssignmentBitSet> try_exit_dat;
-		List<Label> redirected_jumps;
+		List<Tuple<Label, bool>> redirected_jumps;
 		Label? start_fin_label;
 
 		public TryFinally (Statement stmt, ExplicitBlock fini, Location loc)
@@ -7102,7 +7123,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		public static Label EmitRedirectedJump (EmitContext ec, AsyncInitializer initializer, Label label, Block labelBlock)
+		public static Label EmitRedirectedJump (EmitContext ec, AsyncInitializer initializer, Label label, Block labelBlock, bool unwindProtect)
 		{
 			int idx;
 			if (labelBlock != null) {
@@ -7122,7 +7143,7 @@ namespace Mono.CSharp {
 				if (labelBlock != null && !fin.IsParentBlock (labelBlock))
 					break;
 
-				fin.EmitRedirectedExit (ec, label, initializer, set_return_state);
+				fin.EmitRedirectedExit (ec, label, initializer, set_return_state, unwindProtect);
 				set_return_state = false;
 
 				if (fin.start_fin_label == null) {
@@ -7135,26 +7156,26 @@ namespace Mono.CSharp {
 			return label;
 		}
 
-		public static Label EmitRedirectedReturn (EmitContext ec, AsyncInitializer initializer)
+		public static Label EmitRedirectedReturn (EmitContext ec, AsyncInitializer initializer, bool unwindProtect)
 		{
-			return EmitRedirectedJump (ec, initializer, initializer.BodyEnd, null);
+			return EmitRedirectedJump (ec, initializer, initializer.BodyEnd, null, unwindProtect);
 		}
 
-		void EmitRedirectedExit (EmitContext ec, Label label, AsyncInitializer initializer, bool setReturnState)
+		void EmitRedirectedExit (EmitContext ec, Label label, AsyncInitializer initializer, bool setReturnState, bool unwindProtect)
 		{
 			if (redirected_jumps == null) {
-				redirected_jumps = new List<Label> ();
+				redirected_jumps = new List<Tuple<Label, bool>> ();
 
 				// Add fallthrough label
-				redirected_jumps.Add (ec.DefineLabel ());
+				redirected_jumps.Add (Tuple.Create (ec.DefineLabel (), false));
 
 				if (setReturnState)
 					initializer.HoistedReturnState = ec.GetTemporaryField (ec.Module.Compiler.BuiltinTypes.Int, true);
 			}
 
-			int index = redirected_jumps.IndexOf (label);
+			int index = redirected_jumps.FindIndex (l => l.Item1 == label);
 			if (index < 0) {
-				redirected_jumps.Add (label);
+				redirected_jumps.Add (Tuple.Create (label, unwindProtect));
 				index = redirected_jumps.Count - 1;
 			}
 
@@ -7178,10 +7199,34 @@ namespace Mono.CSharp {
 
 			var initializer = (AsyncInitializer)ec.CurrentAnonymousMethod;
 			initializer.HoistedReturnState.EmitLoad (ec);
-			ec.Emit (OpCodes.Switch, redirected_jumps.ToArray ());
+
+			var jumps_table = new Label [redirected_jumps.Count];
+			List<Tuple<Label, Label>> leave_redirect = null;
+			for (int i = 0; i < jumps_table.Length; ++i) {
+				var val = redirected_jumps [i];
+
+				if (val.Item2) {
+					if (leave_redirect == null)
+						leave_redirect = new List<Tuple<Label, Label>> ();
+					var label = ec.DefineLabel ();
+					leave_redirect.Add (Tuple.Create (label, val.Item1));
+					jumps_table [i] = label;
+				} else {
+					jumps_table [i] = val.Item1;
+				}
+			}
+
+			ec.Emit (OpCodes.Switch, jumps_table);
+
+			if (leave_redirect != null) {
+				foreach (var entry in leave_redirect) {
+					ec.MarkLabel (entry.Item1);
+					ec.Emit (OpCodes.Leave, entry.Item2);
+				}
+			}
 
 			// Mark fallthrough label
-			ec.MarkLabel (redirected_jumps [0]);
+			ec.MarkLabel (jumps_table [0]);
 		}
 
 		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
@@ -8328,15 +8373,14 @@ namespace Mono.CSharp {
 			ec.LoopBegin = ec.DefineLabel ();
 			ec.LoopEnd = ec.DefineLabel ();
 
-			if (!(Statement is Block))
-				ec.BeginCompilerScope (variable.Block.Explicit.GetDebugSymbolScopeIndex ());
+			ec.BeginCompilerScope (variable.Block.Explicit.GetDebugSymbolScopeIndex ());
+			body.Explicit.DisableDebugScopeIndex ();
 
 			variable.CreateBuilder (ec);
 
 			Statement.Emit (ec);
 
-			if (!(Statement is Block))
-				ec.EndScope ();
+			ec.EndScope ();
 
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;

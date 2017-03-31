@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+#if !MONOTOUCH_WATCH
 using Mono.Net;
+#endif
 
 namespace System.Net
 {

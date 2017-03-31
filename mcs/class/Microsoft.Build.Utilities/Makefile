@@ -15,6 +15,7 @@ TEST_RESX_RESOURCES = Test/Microsoft.Build.Utilities/Strings.resources
 
 TEST_LIB_REFS = $(XBUILD_ENGINE) $(XBUILD_FRAMEWORK) $(PARENT_PROFILE)System $(PARENT_PROFILE)System.Core
 TEST_MCS_FLAGS = $(TEST_RESX_RESOURCES:%=-resource:%)
+TEST_NUNITLITE_APP_CONFIG_RUNTIME=Test/test-config-file-$(PROFILE)
 
 include $(XBUILD_DIR)/xbuild_test.make
 include ../../build/library.make

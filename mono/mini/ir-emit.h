@@ -1,5 +1,6 @@
-/*
- * ir-emit.h: IR Creation/Emission Macros
+/**
+ * \file
+ * IR Creation/Emission Macros
  *
  * Author:
  *   Zoltan Varga (vargaz@gmail.com)
@@ -76,6 +77,12 @@ alloc_ireg_mp (MonoCompile *cfg)
 }
 
 static inline guint32
+alloc_xreg (MonoCompile *cfg)
+{
+	return alloc_ireg (cfg);
+}
+
+static inline guint32
 alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 {
 	switch (stack_type) {
@@ -100,10 +107,47 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 	}
 }
 
+/*
+ * Macros used to generate intermediate representation macros
+ *
+ * The macros use a `MonoConfig` object as its context, and among other
+ * things it is used to associate instructions with the memory pool with 
+ * it.
+ * 
+ * The macros come in three variations with slightly different
+ * features, the patter is: NEW_OP, EMIT_NEW_OP, MONO_EMIT_NEW_OP,
+ * the differences are as follows:
+ *
+ * `NEW_OP`: these are the basic macros to setup an instruction that is
+ * passed as an argument.
+ *
+ * `EMIT_NEW_OP`: these macros in addition to creating the instruction
+ * add the instruction to the current basic block in the `MonoConfig`
+ * object passed.   Usually these are used when further customization of
+ * the `inst` parameter is desired before the instruction is added to the
+ * MonoConfig current basic block.
+ *
+ * `MONO_EMIT_NEW_OP`: These variations of the instructions are used when
+ * you are merely interested in emitting the instruction into the `MonoConfig`
+ * parameter. 
+ */
 #undef MONO_INST_NEW
 /* 
  * FIXME: zeroing out some fields is not needed with the new IR, but the old 
  * JIT code still uses the left and right fields, so it has to stay.
+ */
+
+/*
+ * MONO_INST_NEW: create a new MonoInst instance that is allocated on the MonoConfig pool.
+ *
+ * @cfg: the MonoConfig object that will be used as the context for the 
+ * instruction.
+ * @dest: this is the place where the instance of the `MonoInst` is stored.
+ * @op: the value that should be stored in the MonoInst.opcode field
+ *
+ * This initializes an empty MonoInst that has been nulled out, it is allocated
+ * from the memory pool associated with the MonoConfig, but it is not linked anywhere.
+ * the cil_code is set to the cfg->ip address. 
  */
 #define MONO_INST_NEW(cfg,dest,op) do {	\
 		(dest) = (MonoInst *)mono_mempool_alloc ((cfg)->mempool, sizeof (MonoInst));	\
@@ -265,15 +309,6 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 #define NEW_TYPE_FROM_HANDLE_CONST(cfg,dest,image,token,generic_context) NEW_AOTCONST_TOKEN ((cfg), (dest), MONO_PATCH_INFO_TYPE_FROM_HANDLE, (image), (token), (generic_context), STACK_OBJ, mono_defaults.runtimetype_class)
 
 #define NEW_LDTOKENCONST(cfg,dest,image,token,generic_context) NEW_AOTCONST_TOKEN ((cfg), (dest), MONO_PATCH_INFO_LDTOKEN, (image), (token), (generic_context), STACK_PTR, NULL)
-
-#define NEW_TLS_OFFSETCONST(cfg,dest,key) do { \
-	if (cfg->compile_aot) { \
-		NEW_AOTCONST ((cfg), (dest), MONO_PATCH_INFO_TLS_OFFSET, GINT_TO_POINTER (key)); \
-	} else {															\
-		int _offset = mini_get_tls_offset ((key));							\
-		NEW_PCONST ((cfg), (dest), GINT_TO_POINTER (_offset)); \
-		} \
-	} while (0)
 
 #define NEW_DECLSECCONST(cfg,dest,image,entry) do { \
 		if (cfg->compile_aot) { \
@@ -778,10 +813,12 @@ static int ccount = 0;
             ins->inst_false_bb = NULL; \
             mono_link_bblock ((cfg), (cfg)->cbb, (truebb)); \
             MONO_ADD_INS ((cfg)->cbb, ins); \
-            if (g_getenv ("COUNT2") && ccount == atoi (g_getenv ("COUNT2")) - 1) { printf ("HIT: %d\n", cfg->cbb->block_num); } \
-            if (g_getenv ("COUNT2") && ccount < atoi (g_getenv ("COUNT2"))) { \
+            char *count2 = g_getenv ("COUNT2"); \
+            if (count2 && ccount == atoi (count2) - 1) { printf ("HIT: %d\n", cfg->cbb->block_num); } \
+            if (count2 && ccount < atoi (count2)) { \
                  cfg->cbb->extended = TRUE; \
             } else { NEW_BBLOCK ((cfg), falsebb); ins->inst_false_bb = (falsebb); mono_link_bblock ((cfg), (cfg)->cbb, (falsebb)); MONO_START_BB ((cfg), falsebb); } \
+            if (count2) g_free (count2); \
         } \
 	} while (0)
 #else

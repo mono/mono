@@ -1071,6 +1071,12 @@ namespace MonoTests.System.Xml.TestClasses
 		public DateTime SomeDate;
 	}
 
+	public class UtcTimeClass
+	{
+		[XmlElementAttribute (DataType = "time")]
+		public DateTime DateTimeValue;
+	}
+
 	public class Bug8468BaseClass
 	{
 		public string Base;

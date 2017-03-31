@@ -874,6 +874,23 @@ class Tests {
 		return 2;
 	}
 
+	class InstanceDelegateTest {
+		public int a;
+
+		public int return_field () {
+			return a;
+		}
+	}
+
+	public static int test_2_instance_delegate_with_field () {
+		InstanceDelegateTest t = new InstanceDelegateTest () { a = 1337 };
+		GetIntDel del = new GetIntDel (t.return_field);
+		int v = del ();
+		if (v != 1337)
+			return 0;
+		return 2;
+	}
+
 	interface IFaceVirtualDel {
 		int return_field ();
 	}
@@ -1765,6 +1782,16 @@ ncells ) {
 	public static int test_142_byte_enum_arg_zero_extend () {
 		return enum_arg_zero_extend (ByteEnum2.High);
 	}
+
+	enum Mine { One, Two }
+
+	public static int test_0_enum_gethashcode_opt () {
+		int sum = 0;
+        for (int i = 0; i < 1000000; ++i)
+			sum += Mine.Two.GetHashCode();
+
+        return 0;
+    }
 }
 
 #if __MOBILE__

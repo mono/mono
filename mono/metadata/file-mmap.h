@@ -1,5 +1,6 @@
-/*
- * file-mmap.h: Managed mmap wrappers.
+/**
+ * \file
+ * Managed mmap wrappers.
  *
  * Authors:
  *	Rodrigo Kumpera
@@ -15,7 +16,6 @@
 #include <glib.h>
 
 #include <mono/metadata/object-internals.h>
-#include <mono/io-layer/io-layer.h>
 #include <mono/utils/mono-compiler.h>
 
 extern void mono_mmap_close (void *mmap_handle);

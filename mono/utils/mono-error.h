@@ -1,3 +1,7 @@
+/**
+ * \file
+ */
+
 #ifndef __MONO_ERROR_H__
 #define __MONO_ERROR_H__
 
@@ -12,7 +16,11 @@ enum {
 	/*
 	Something happened while processing the error and the resulting message is incomplete.
 	*/
-	MONO_ERROR_INCOMPLETE = 0x0002
+	MONO_ERROR_INCOMPLETE = 0x0002,
+	/*
+	This MonoError is heap allocated in a mempool
+        */
+	MONO_ERROR_MEMPOOL_BOXED = 0x0004
 };
 
 enum {
@@ -48,8 +56,12 @@ typedef struct _MonoError {
 	void *hidden_1 [12]; /*DON'T TOUCH */
 } MonoError;
 
+/* Mempool-allocated MonoError.*/
+typedef struct _MonoErrorBoxed MonoErrorBoxed;
+
 MONO_BEGIN_DECLS
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API void
 mono_error_init (MonoError *error);
 

@@ -187,6 +187,18 @@
     <ClCompile Include="..\mono\utils\mono-log-windows.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\mono\utils\mono-rand-windows.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mono\utils\mono-proclib-windows.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mono\utils\mono-mmap-windows.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mono\utils\os-event-win32.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\mono\utils\atomic.h">
@@ -396,6 +408,24 @@
     <ClInclude Include="..\mono\utils\valgrind.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\mono\utils\mono-mmap-windows-internals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mono\utils\mono-mmap-internals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mono\utils\mono-proclib-windows-internals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mono\utils\mono-rand-windows-internals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mono\utils\mono-dl-windows-internals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mono\utils\os-event.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
@@ -412,5 +442,10 @@
     <MASM Include="..\mono\utils\win64.asm">
       <Filter>Resource Files</Filter>
     </MASM>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\mono\utils\Makefile.am">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

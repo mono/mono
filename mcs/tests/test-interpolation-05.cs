@@ -13,6 +13,13 @@ public class ParserTest
 		Console.WriteLine($"This should work but the compiler explodes if the string is too long!");		
 	}
 
+	void Test3 ()
+	{
+		string field = "";
+		var l1 = $"\"{field.Replace("\"", "gg")}\"";
+		var l2 = $@"""{field.Replace("\"", "gg")}""";
+	}
+
 	public static void Main()
 	{
 	}

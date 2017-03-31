@@ -1,5 +1,6 @@
-/*
- * console-io.c: ConsoleDriver internal calls for Unix systems.
+/**
+ * \file
+ * ConsoleDriver internal calls for Unix systems.
  *
  * Author:
  *	Gonzalo Paniagua Javier (gonzalo@ximian.com)
@@ -34,9 +35,10 @@
 #include <mono/metadata/domain-internals.h>
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/metadata.h>
-#include <mono/metadata/threadpool-ms.h>
+#include <mono/metadata/threadpool.h>
 #include <mono/utils/mono-signal-handler.h>
 #include <mono/utils/mono-proclib.h>
+#include <mono/utils/w32api.h>
 
 /* On solaris, curses.h must come before both termios.h and term.h */
 #ifdef HAVE_CURSES_H
@@ -257,7 +259,7 @@ do_console_cancel_event (void)
 	method = mono_class_get_method_from_name (klass, "BeginInvoke", -1);
 	g_assert (method != NULL);
 
-	mono_threadpool_ms_begin_invoke (domain, (MonoObject*) load_value, method, NULL, &error);
+	mono_threadpool_begin_invoke (domain, (MonoObject*) load_value, method, NULL, &error);
 	if (!is_ok (&error)) {
 		g_warning ("Couldn't invoke System.Console cancel handler due to %s", mono_error_get_message (&error));
 		mono_error_cleanup (&error);
@@ -455,12 +457,16 @@ ves_icall_System_ConsoleDriver_TtySetup (MonoString *keypad, MonoString *teardow
 	if (dims == -1){
 		int cols = 0, rows = 0;
 				      
-		const char *str = g_getenv ("COLUMNS");
-		if (str != NULL)
+		char *str = g_getenv ("COLUMNS");
+		if (str != NULL) {
 			cols = atoi (str);
+			g_free (str);
+		}
 		str = g_getenv ("LINES");
-		if (str != NULL)
+		if (str != NULL) {
 			rows = atoi (str);
+			g_free (str);
+		}
 
 		if (cols != 0 && rows != 0)
 			cols_and_lines = (cols << 16) | rows;

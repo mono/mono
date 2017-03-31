@@ -1,4 +1,5 @@
-/*
+/**
+ * \file
  * Copyright 2003 Ximian, Inc
  * Copyright 2003-2011 Novell Inc
  * Copyright 2011 Xamarin Inc
@@ -864,6 +865,7 @@ MINI_OP(OP_PSUBW_SAT_UN, "psubw_sat_un", XREG, XREG, XREG)
 
 MINI_OP(OP_PMULW, "pmulw", XREG, XREG, XREG)
 MINI_OP(OP_PMULD, "pmuld", XREG, XREG, XREG)
+/* Multiplies two 32 bit numbers into a 64 bit one */
 MINI_OP(OP_PMULQ, "pmulq", XREG, XREG, XREG)
 
 MINI_OP(OP_PMULW_HIGH_UN, "pmul_high_un", XREG, XREG, XREG)
@@ -947,10 +949,15 @@ MINI_OP(OP_CVTPS2PD, "cvtps2pd", XREG, XREG, NONE)
 MINI_OP(OP_CVTTPD2DQ, "cvttpd2dq", XREG, XREG, NONE)
 MINI_OP(OP_CVTTPS2DQ, "cvttps2dq", XREG, XREG, NONE)
 
+/* r4 dot product */
+/* multiply all 4 single precision float elements, add them together, and store the result to the lowest element */
+MINI_OP(OP_DPPS, "dpps", XREG, XREG, XREG)
+
 #endif
 
 MINI_OP(OP_XMOVE,   "xmove", XREG, XREG, NONE)
 MINI_OP(OP_XZERO,   "xzero", XREG, NONE, NONE)
+MINI_OP(OP_XONES,   "xones", XREG, NONE, NONE)
 MINI_OP(OP_XPHI,	"xphi", XREG, NONE, NONE)
 
 /*
@@ -1391,9 +1398,7 @@ MINI_OP(OP_ARM64_CBNZX, "arm64_cbnzx", NONE, IREG, NONE)
 #endif
 
 /* Same as OUTARG_VT, but has a dreg */
-#ifdef ENABLE_LLVM
 MINI_OP(OP_LLVM_OUTARG_VT,	"llvm_outarg_vt", IREG, VREG, NONE)
-#endif
 
 MINI_OP(OP_OBJC_GET_SELECTOR, "objc_get_selector", IREG, NONE, NONE)
 

@@ -149,10 +149,10 @@ namespace System
 			return true;
 		}
 
-#if !MOBILE || MOBILE_STATIC
+#if !MONODROID && !MONOTOUCH && !XAMMAC
 		static TimeZoneInfo CreateLocal ()
 		{
-#if !MOBILE_STATIC
+#if !FULL_AOT_DESKTOP || WIN_PLATFORM
 			if (IsWindows && LocalZoneKey != null) {
 				string name = (string)LocalZoneKey.GetValue ("TimeZoneKeyName");
 				if (name == null)
@@ -160,6 +160,8 @@ namespace System
 				name = TrimSpecial (name);
 				if (name != null)
 					return TimeZoneInfo.FindSystemTimeZoneById (name);
+			} else if (IsWindows) {
+				return GetLocalTimeZoneInfoWinRTFallback ();
 			}
 #endif
 
@@ -204,7 +206,7 @@ namespace System
 
 		static void GetSystemTimeZonesCore (List<TimeZoneInfo> systemTimeZones)
 		{
-#if !MOBILE_STATIC
+#if !FULL_AOT_DESKTOP || WIN_PLATFORM
 			if (TimeZoneKey != null) {
 				foreach (string id in TimeZoneKey.GetSubKeyNames ()) {
 					try {
@@ -212,6 +214,9 @@ namespace System
 					} catch {}
 				}
 
+				return;
+			} else if (IsWindows) {
+				systemTimeZones.AddRange (GetSystemTimeZonesWinRTFallback ());
 				return;
 			}
 #endif
@@ -237,7 +242,7 @@ namespace System
 			throw new NotImplementedException ("This method is not implemented for this platform");
 #endif
 		}
-#endif
+#endif // !MONODROID && !MONOTOUCH && !XAMMAC
 
 		string standardDisplayName;
 		public string StandardName {
@@ -273,7 +278,7 @@ namespace System
 #endif
 		private AdjustmentRule [] adjustmentRules;
 
-#if !MOBILE || MOBILE_STATIC
+#if !MOBILE || !FULL_AOT_DESKTOP || WIN_PLATFORM
 		/// <summary>
 		/// Determine whether windows of not (taken Stephane Delcroix's code)
 		/// </summary>
@@ -301,7 +306,7 @@ namespace System
 			return str.Substring (Istart, Iend-Istart+1);
 		}
 		
-#if !MOBILE_STATIC
+#if !FULL_AOT_DESKTOP || WIN_PLATFORM
 		static RegistryKey timeZoneKey;
 		static RegistryKey TimeZoneKey {
 			get {
@@ -310,9 +315,13 @@ namespace System
 				if (!IsWindows)
 					return null;
 				
-				return timeZoneKey = Registry.LocalMachine.OpenSubKey (
-					"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones",
-					false);
+				try {
+					return timeZoneKey = Registry.LocalMachine.OpenSubKey (
+						"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones",
+						false);
+				} catch {
+					return null;
+				}
 			}
 		}
 		
@@ -325,12 +334,16 @@ namespace System
 				if (!IsWindows)
 					return null;
 				
-				return localZoneKey = Registry.LocalMachine.OpenSubKey (
-					"SYSTEM\\CurrentControlSet\\Control\\TimeZoneInformation", false);
+				try {
+					return localZoneKey = Registry.LocalMachine.OpenSubKey (
+						"SYSTEM\\CurrentControlSet\\Control\\TimeZoneInformation", false);
+				} catch {
+					return null;
+				}
 			}
 		}
 #endif
-#endif
+#endif // !MOBILE || !FULL_AOT_DESKTOP || WIN_PLATFORM
 
 		private static bool TryAddTicks (DateTime date, long ticks, out DateTime result, DateTimeKind kind = DateTimeKind.Unspecified)
 		{
@@ -538,7 +551,7 @@ namespace System
 			//FIXME: this method should check for cached values in systemTimeZones
 			if (id == null)
 				throw new ArgumentNullException ("id");
-#if !MOBILE
+#if WIN_PLATFORM
 			if (TimeZoneKey != null)
 			{
 				if (id == "Coordinated Universal Time")
@@ -547,6 +560,8 @@ namespace System
 				if (key == null)
 					throw new TimeZoneNotFoundException ();
 				return FromRegistryKey(id, key);
+			} else if (IsWindows) {
+				return FindSystemTimeZoneByIdWinRTFallback (id);
 			}
 #endif
 			// Local requires special logic that already exists in the Local property (bug #326)
@@ -568,7 +583,7 @@ namespace System
 		}
 #endif
 
-#if !MOBILE
+#if WIN_PLATFORM
 		private static TimeZoneInfo FromRegistryKey (string id, RegistryKey key)
 		{
 			byte [] reg_tzi = (byte []) key.GetValue ("TZI");
@@ -811,7 +826,7 @@ namespace System
 					return tz.BaseUtcOffset;
 			}
 
-			if (tzRule != null && tz.IsInDST (tzRule, stdUtcDateTime)) {
+			if (tzRule != null && tz.IsInDST (tzRule, dateTime)) {
 				// Replicate what .NET does when given a time which falls into the hour which is lost when
 				// DST starts. isDST should always be true but the offset should be BaseUtcOffset without the
 				// DST delta while in that hour.
@@ -868,7 +883,7 @@ namespace System
 			AdjustmentRule rule = GetApplicableRule (dateTime);
 			if (rule != null) {
 				DateTime tpoint = TransitionPoint (rule.DaylightTransitionEnd, dateTime.Year);
-				if (dateTime > tpoint - rule.DaylightDelta  && dateTime <= tpoint)
+				if (dateTime > tpoint - rule.DaylightDelta && dateTime <= tpoint)
 					return true;
 			}
 				
@@ -898,7 +913,6 @@ namespace System
 				DST_start -= BaseUtcOffset;
 				DST_end -= (BaseUtcOffset + rule.DaylightDelta);
 			}
-
 			return (dateTime >= DST_start && dateTime < DST_end);
 		}
 		
@@ -1184,31 +1198,16 @@ namespace System
 					return false;
 			}
 
-			var inDelta = false;
-			for (var i =  transitions.Count - 1; i >= 0; i--) {
-				var pair = transitions [i];
-				DateTime ttime = pair.Key;
-				TimeType ttype = pair.Value;
-
-				var delta =  new TimeSpan (0, 0, ttype.Offset) - BaseUtcOffset;
-
-				if ((ttime + delta) > date) {
-					inDelta = ttime <= date;
-					continue;
+			AdjustmentRule current = GetApplicableRule(date);
+			if (current != null) {
+				DateTime tStart = TransitionPoint(current.DaylightTransitionStart, date.Year);
+				DateTime tEnd = TransitionPoint(current.DaylightTransitionEnd, date.Year);
+				if ((date >= tStart) && (date <= tEnd)) {
+					offset = baseUtcOffset + current.DaylightDelta; 
+					isDst = true;
+					return true;
 				}
-
-				offset =  new TimeSpan (0, 0, ttype.Offset);
-				if (inDelta) {
-					// Replicate what .NET does when given a time which falls into the hour which is lost when
-					// DST starts. isDST should be true but the offset should be the non-DST offset.
-					isDst = transitions [i - 1].Value.IsDst;
-				} else {
-					isDst = ttype.IsDst;
-				}
-
-				return true;
 			}
-
 			return false;
 		}
 
@@ -1498,7 +1497,7 @@ namespace System
 
 			if (zone.IsAmbiguousTime (time)) {
 				isAmbiguousLocalDst = true;
-				return baseOffset;
+//				return baseOffset;
 			}
 
 			return zone.GetUtcOffset (time, out isDaylightSavings);

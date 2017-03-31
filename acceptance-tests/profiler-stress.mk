@@ -4,7 +4,8 @@ SYS_REFS = \
 	System.Data.dll \
 	System.Runtime.Serialization.dll \
 	System.Xml.dll \
-	System.Xml.Linq.dll
+	System.Xml.Linq.dll \
+	Mono.Posix.dll
 
 check-profiler-stress:
 	@$(MAKE) validate-benchmarker RESET_VERSIONS=1

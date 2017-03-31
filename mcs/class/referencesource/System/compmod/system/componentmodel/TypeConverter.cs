@@ -28,8 +28,10 @@ namespace System.ComponentModel {
 
         private const string s_UseCompatibleTypeConverterBehavior = "UseCompatibleTypeConverterBehavior";
         private static volatile bool useCompatibleTypeConversion = false;
+#if !MONO
         private static volatile bool firstLoadAppSetting = true;
         private static object loadAppSettingLock = new Object();
+#endif
 
         private static bool UseCompatibleTypeConversion {
             get {

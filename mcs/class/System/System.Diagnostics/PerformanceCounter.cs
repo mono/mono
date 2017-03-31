@@ -159,7 +159,7 @@ namespace System.Diagnostics {
 		}
 
 		// may throw ArgumentNullException
-		[DefaultValue (""), ReadOnly (true), RecommendedAsConfigurable (true)]
+		[DefaultValue (""), ReadOnly (true), SettingsBindable (true)]
 		[TypeConverter ("System.Diagnostics.Design.CategoryValueConverter, " + Consts.AssemblySystem_Design)]
 		[SRDescription ("The category name for this performance counter.")]
 		public string CategoryName {
@@ -181,7 +181,7 @@ namespace System.Diagnostics {
 		}
 
 		// may throw ArgumentNullException
-		[DefaultValue (""), ReadOnly (true), RecommendedAsConfigurable (true)]
+		[DefaultValue (""), ReadOnly (true), SettingsBindable (true)]
 		[TypeConverter ("System.Diagnostics.Design.CounterNameConverter, " + Consts.AssemblySystem_Design)]
 		[SRDescription ("The name of this performance counter.")]
 		public string CounterName 
@@ -212,7 +212,7 @@ namespace System.Diagnostics {
 			set { lifetime = value; }
 		}
 
-		[DefaultValue (""), ReadOnly (true), RecommendedAsConfigurable (true)]
+		[DefaultValue (""), ReadOnly (true), SettingsBindable (true)]
 		[TypeConverter ("System.Diagnostics.Design.InstanceNameConverter, " + Consts.AssemblySystem_Design)]
 		[SRDescription ("The instance name for this performance counter.")]
 		public string InstanceName {
@@ -227,7 +227,7 @@ namespace System.Diagnostics {
 
 		// may throw ArgumentException if machine name format is wrong
 		[MonoTODO("What's the machine name format?")]
-		[DefaultValue ("."), Browsable (false), RecommendedAsConfigurable (true)]
+		[DefaultValue ("."), Browsable (false), SettingsBindable (true)]
 		[SRDescription ("The machine where this performance counter resides.")]
 		public string MachineName {
 			get {return machineName;}

@@ -34,6 +34,8 @@ using System.Collections.Specialized;
 using System.Xml;
 #endif
 
+#pragma warning disable 618
+
 namespace System.Configuration
 {
 	class ConfigHelper

@@ -1,5 +1,6 @@
-/*
- * attach.c: Support for attaching to the runtime from other processes.
+/**
+ * \file
+ * Support for attaching to the runtime from other processes.
  *
  * Author:
  *   Zoltan Varga (vargaz@gmail.com)
@@ -24,8 +25,6 @@
 #include <sys/stat.h>
 #include <sys/un.h>
 #include <netinet/in.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <fcntl.h>
 #include <inttypes.h>
 #include <pwd.h>
@@ -33,7 +32,7 @@
 #include <netdb.h>
 #include <unistd.h>
 
-#include <mono/metadata/assembly.h>
+#include <mono/metadata/assembly-internals.h>
 #include <mono/metadata/metadata.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/object-internals.h>
@@ -41,6 +40,8 @@
 #include <mono/metadata/gc-internals.h>
 #include <mono/utils/mono-threads.h>
 #include "attach.h"
+
+#include <mono/utils/w32api.h>
 
 /*
  * This module enables other processes to attach to a running mono process and
@@ -94,7 +95,7 @@ static char *ipc_filename;
 
 static char *server_uri;
 
-static HANDLE receiver_thread_handle;
+static MonoThreadHandle *receiver_thread_handle;
 
 static gboolean stop_receiver_thread;
 
@@ -260,7 +261,7 @@ mono_attach_cleanup (void)
 
 	/* Wait for the receiver thread to exit */
 	if (receiver_thread_handle)
-		WaitForSingleObjectEx (receiver_thread_handle, 0, FALSE);
+		mono_thread_info_wait_one_handle (receiver_thread_handle, 0, FALSE);
 }
 
 static int
@@ -275,7 +276,7 @@ mono_attach_load_agent (MonoDomain *domain, char *agent, char *args, MonoObject 
 	gpointer pa [1];
 	MonoImageOpenStatus open_status;
 
-	agent_assembly = mono_assembly_open (agent, &open_status);
+	agent_assembly = mono_assembly_open_predicate (agent, FALSE, FALSE, NULL, NULL, &open_status);
 	if (!agent_assembly) {
 		fprintf (stderr, "Cannot open agent assembly '%s': %s.\n", agent, mono_image_strerror (open_status));
 		g_free (agent);
@@ -475,12 +476,18 @@ transport_send (int fd, guint8 *data, int len)
 static void
 transport_start_receive (void)
 {
+	MonoError error;
+	MonoInternalThread *internal;
+
 	transport_connect ();
 
 	if (!listen_fd)
 		return;
 
-	receiver_thread_handle = mono_threads_create_thread (receiver_thread, NULL, 0, NULL);
+	internal = mono_thread_create_internal (mono_get_root_domain (), receiver_thread, NULL, MONO_THREAD_CREATE_FLAGS_NONE, &error);
+	mono_error_assert_ok (&error);
+
+	receiver_thread_handle = mono_threads_open_thread_handle (internal->handle);
 	g_assert (receiver_thread_handle);
 }
 
@@ -492,8 +499,15 @@ receiver_thread (void *arg)
 	guint8 buffer [256];
 	guint8 *p, *p_end;
 	MonoObject *exc;
+	MonoInternalThread *internal;
 
-	mono_native_thread_set_name (mono_native_thread_id_get (), "Attach receiver");
+	internal = mono_thread_internal_current ();
+	mono_thread_set_name_internal (internal, mono_string_new (mono_domain_get (), "Attach receiver"), TRUE, FALSE, &error);
+	mono_error_assert_ok (&error);
+	/* Ask the runtime to not abort this thread */
+	//internal->flags |= MONO_THREAD_FLAG_DONT_MANAGE;
+	/* Ask the runtime to not wait for this thread */
+	internal->state |= ThreadState_Background;
 
 	printf ("attach: Listening on '%s'...\n", server_uri);
 
@@ -504,14 +518,6 @@ receiver_thread (void *arg)
 			return 0;
 
 		printf ("attach: Connected.\n");
-
-		MonoThread *thread = mono_thread_attach (mono_get_root_domain ());
-		mono_thread_set_name_internal (thread->internal_thread, mono_string_new (mono_get_root_domain (), "Attach receiver"), TRUE, &error);
-		mono_error_assert_ok (&error);
-		/* Ask the runtime to not abort this thread */
-		//mono_thread_current ()->flags |= MONO_THREAD_FLAG_DONT_MANAGE;
-		/* Ask the runtime to not wait for this thread */
-		thread->internal_thread->state |= ThreadState_Background;
 
 		while (TRUE) {
 			char *cmd, *agent_name, *agent_args;

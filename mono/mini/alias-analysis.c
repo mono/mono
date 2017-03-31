@@ -1,5 +1,6 @@
-/*
- * alias-analysis.c: Implement simple alias analysis for local variables.
+/**
+ * \file
+ * Implement simple alias analysis for local variables.
  *
  * Author:
  *   Rodrigo Kumpera (kumpera@gmail.com)
@@ -13,6 +14,7 @@
 #include "mini.h"
 #include "ir-emit.h"
 #include "glib.h"
+#include <mono/utils/mono-compiler.h>
 
 #ifndef DISABLE_JIT
 
@@ -158,10 +160,17 @@ lower_memory_access (MonoCompile *cfg)
 		for (ins = bb->code; ins; ins = ins->next) {
 handle_instruction:
 			switch (ins->opcode) {
-			case OP_LDADDR:
-				g_hash_table_insert (addr_loads, GINT_TO_POINTER (ins->dreg), ins);
-				if (cfg->verbose_level > 2) { printf ("New address: "); mono_print_ins (ins); }
+			case OP_LDADDR: {
+				MonoInst *var = (MonoInst*)ins->inst_p0;
+				if (var->flags & MONO_INST_VOLATILE) {
+					if (cfg->verbose_level > 2) { printf ("Found address to volatile var, can't take it: "); mono_print_ins (ins); }
+				} else {
+					g_hash_table_insert (addr_loads, GINT_TO_POINTER (ins->dreg), ins);
+					if (cfg->verbose_level > 2) { printf ("New address: "); mono_print_ins (ins); }
+				}
 				break;
+			}
+
 			case OP_MOVE:
 				tmp = (MonoInst*)g_hash_table_lookup (addr_loads, GINT_TO_POINTER (ins->sreg1));
 				/*
@@ -361,5 +370,9 @@ done:
 	if (cfg->verbose_level > 2)
 		mono_print_code (cfg, "AFTER ALIAS_ANALYSIS");
 }
+
+#else /* !DISABLE_JIT */
+
+MONO_EMPTY_SOURCE_FILE (alias_analysis);
 
 #endif /* !DISABLE_JIT */

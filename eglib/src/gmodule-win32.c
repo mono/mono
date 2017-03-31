@@ -28,10 +28,11 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+#include <config.h>
 #include <glib.h>
-#include <gmodule.h>
 #include <windows.h>
 #include <psapi.h>
+#include <gmodule-win32-internals.h>
 
 #define LIBSUFFIX ".dll"
 #define LIBPREFIX ""
@@ -68,7 +69,8 @@ g_module_open (const gchar *file, GModuleFlags flags)
 	return module;
 }
 
-static gpointer
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+gpointer
 w32_find_symbol (const gchar *symbol_name)
 {
 	HMODULE *modules;
@@ -114,6 +116,7 @@ w32_find_symbol (const gchar *symbol_name)
 	g_free (modules);
 	return NULL;
 }
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
 gboolean
 g_module_symbol (GModule *module, const gchar *symbol_name, gpointer *symbol)
@@ -134,6 +137,7 @@ g_module_symbol (GModule *module, const gchar *symbol_name, gpointer *symbol)
 	}
 }
 
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 const gchar *
 g_module_error (void)
 {
@@ -150,6 +154,7 @@ g_module_error (void)
 
 	return ret;
 }
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
 gboolean
 g_module_close (GModule *module)

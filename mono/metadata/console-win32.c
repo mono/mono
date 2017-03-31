@@ -1,5 +1,6 @@
-/*
- * console-io.c: ConsoleDriver internal calls for Win32
+/**
+ * \file
+ * ConsoleDriver internal calls for Win32
  *
  * Author:
  *	Gonzalo Paniagua Javier (gonzalo@ximian.com)
@@ -41,11 +42,11 @@ mono_console_handle_async_ops (void)
 {
 }
 
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 MonoBoolean
 ves_icall_System_ConsoleDriver_Isatty (HANDLE handle)
 {
 	DWORD mode;
-
 	return GetConsoleMode (handle, &mode) != 0;
 }
 
@@ -72,3 +73,4 @@ ves_icall_System_ConsoleDriver_TtySetup (MonoString *keypad, MonoString *teardow
 {
 	return FALSE;
 }
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */

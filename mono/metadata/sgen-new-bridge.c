@@ -1,5 +1,6 @@
-/*
- * sgen-bridge.c: Simple generational GC.
+/**
+ * \file
+ * Simple generational GC.
  *
  * Copyright 2011 Novell, Inc (http://www.novell.com)
  * Copyright 2011 Xamarin Inc (http://www.xamarin.com)
@@ -196,7 +197,7 @@ class_kind (MonoClass *klass)
 
 		/* FIXME the bridge check can be quite expensive, cache it at the class level. */
 		/* An array of a sealed type that is not a bridge will never get to a bridge */
-		if ((elem_class->flags & TYPE_ATTRIBUTE_SEALED) && !elem_class->has_references && !bridge_callbacks.bridge_class_kind (elem_class)) {
+		if ((mono_class_get_flags (elem_class) & TYPE_ATTRIBUTE_SEALED) && !elem_class->has_references && !bridge_callbacks.bridge_class_kind (elem_class)) {
 			SGEN_LOG (6, "class %s is opaque\n", klass->name);
 			return GC_BRIDGE_OPAQUE_CLASS;
 		}
@@ -1030,7 +1031,7 @@ processing_after_callback (int generation)
 			for (j = 0; j < api_sccs [i]->num_objs; ++j) {
 				GCVTable vtable = SGEN_LOAD_VTABLE (api_sccs [i]->objs [j]);
 				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC,
-					"OBJECT %s (%p) SCC [%d] %s",
+					"OBJECT %s.%s (%p) SCC [%d] %s",
 						sgen_client_vtable_get_namespace (vtable), sgen_client_vtable_get_name (vtable), api_sccs [i]->objs [j],
 						i,
 						api_sccs [i]->is_alive  ? "ALIVE" : "DEAD");

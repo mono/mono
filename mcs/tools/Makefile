@@ -3,7 +3,6 @@ thisdir = tools
 net_4_5_dirs := \
 	al		\
 	linker		\
-	tuner		\
 	culevel		\
 	genxs		\
 	mkbundle	\
@@ -45,6 +44,7 @@ net_4_5_dirs := \
 	cccheck		\
 	security	\
 	mdbrebase	\
+	mdb2ppdb	\
 	ikdasm		\
 	mono-symbolicate	\
 	linker-analyzer

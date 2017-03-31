@@ -100,6 +100,13 @@ public class AssemblyBuilderTest
 	}
 
 	[Test]
+	[Category ("MobileNotWorking")]
+	public void DefaultCtor ()
+	{
+		Assert.IsNotNull (ab.Evidence, "#1");
+	}
+
+	[Test]
 	[Category ("NotWorking")]
 	public void ManifestModule ()
 	{
@@ -410,7 +417,7 @@ public class AssemblyBuilderTest
 	}
 
 	[Test]
-	[Category ("AndroidNotWorking")] // DefineResource doesn't allow path in its fileName parameter and the test attempts to write to / in effect
+	[Category ("MobileNotWorking")] // DefineResource doesn't allow path in its fileName parameter and the test attempts to write to / in effect
 	public void TestDefineResource ()
 	{
 		ab.DefineResource ("foo", "FOO", "foo.txt", ResourceAttributes.Public);
@@ -587,12 +594,16 @@ public class AssemblyBuilderTest
 	}
 
 	[Test]
-	[Category ("AndroidNotWorking")] // Missing Mono.Compilerservices.SymbolWriter assembly
 	public void TestDefineDynamicModule ()
 	{
 		ab.DefineDynamicModule ("foo", "foo.dll");
-		ab.DefineDynamicModule ("foo2", true);
 		ab.DefineDynamicModule ("foo3", "foo3.dll");
+	}
+
+	[Category ("MobileNotWorking")] //XA doesn't ship SymbolWriter. https://bugzilla.xamarin.com/show_bug.cgi?id=53038
+	public void TestDefineDynamicModuleWithSymbolWriter ()
+	{
+		ab.DefineDynamicModule ("foo2", true);
 		ab.DefineDynamicModule ("foo4", "foo4.dll", true);
 	}
 

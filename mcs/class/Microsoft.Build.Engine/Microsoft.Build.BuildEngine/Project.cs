@@ -131,17 +131,17 @@ namespace Microsoft.Build.BuildEngine {
 		}
 
 		[MonoTODO ("Not tested")]
-		public void AddNewImport (string importLocation,
-					  string importCondition)
+		public void AddNewImport (string projectFile,
+					  string condition)
 		{
-			if (importLocation == null)
-				throw new ArgumentNullException ("importLocation");
+			if (projectFile == null)
+				throw new ArgumentNullException ("projectFile");
 
 			XmlElement importElement = xmlDocument.CreateElement ("Import", XmlNamespace);
 			xmlDocument.DocumentElement.AppendChild (importElement);
-			importElement.SetAttribute ("Project", importLocation);
-			if (!String.IsNullOrEmpty (importCondition))
-				importElement.SetAttribute ("Condition", importCondition);
+			importElement.SetAttribute ("Project", projectFile);
+			if (!String.IsNullOrEmpty (condition))
+				importElement.SetAttribute ("Condition", condition);
 
 			AddImport (importElement, null, false);
 			MarkProjectAsDirty ();
@@ -374,10 +374,8 @@ namespace Microsoft.Build.BuildEngine {
 				return false;
 
 			ITaskItem[] outputs;
-			if (ParentEngine.BuiltTargetsOutputByName.TryGetValue (key, out outputs)) {
-				if (targetOutputs != null)
-					targetOutputs.Add (target_name, outputs);
-			}
+			if (targetOutputs != null && ParentEngine.BuiltTargetsOutputByName.TryGetValue (key, out outputs))
+				targetOutputs [target_name] = outputs;
 			return true;
 		}
 
@@ -508,9 +506,9 @@ namespace Microsoft.Build.BuildEngine {
 			Load (projectFileName, ProjectLoadSettings.None);
 		}
 
-		public void Load (string projectFileName, ProjectLoadSettings settings)
+		public void Load (string projectFileName, ProjectLoadSettings projectLoadSettings)
 		{
-			project_load_settings = settings;
+			project_load_settings = projectLoadSettings;
 			if (String.IsNullOrEmpty (projectFileName))
 				throw new ArgumentNullException ("projectFileName");
 
@@ -646,7 +644,7 @@ namespace Microsoft.Build.BuildEngine {
 		
 		[MonoTODO]
 		// NOTE: does not modify imported projects
-		public void RemoveItemGroupsWithMatchingCondition (string matchingCondition)
+		public void RemoveItemGroupsWithMatchingCondition (string matchCondition)
 		{
 			throw new NotImplementedException ();
 		}
@@ -699,9 +697,9 @@ namespace Microsoft.Build.BuildEngine {
 			isDirty = false;
 		}
 
-		public void Save (TextWriter outTextWriter)
+		public void Save (TextWriter textWriter)
 		{
-			xmlDocument.Save (outTextWriter);
+			xmlDocument.Save (textWriter);
 			isDirty = false;
 		}
 
@@ -735,12 +733,12 @@ namespace Microsoft.Build.BuildEngine {
 			throw new NotImplementedException ();
 		}
 
-		public void SetProjectExtensions (string id, string xmlText)
+		public void SetProjectExtensions (string id, string content)
 		{
 			if (id == null)
 				throw new ArgumentNullException ("id");
-			if (xmlText == null)
-				throw new ArgumentNullException ("xmlText");
+			if (content == null)
+				throw new ArgumentNullException ("content");
 
 			XmlNode projectExtensions, node;
 
@@ -751,7 +749,7 @@ namespace Microsoft.Build.BuildEngine {
 				xmlDocument.DocumentElement.AppendChild (projectExtensions);
 
 				node = xmlDocument.CreateElement (id, XmlNamespace);
-				node.InnerXml = xmlText;
+				node.InnerXml = content;
 				projectExtensions.AppendChild (node);
 			} else {
 				node = xmlDocument.SelectSingleNode (String.Format ("/tns:Project/tns:ProjectExtensions/tns:{0}", id), XmlNamespaceManager);
@@ -761,7 +759,7 @@ namespace Microsoft.Build.BuildEngine {
 					projectExtensions.AppendChild (node);
 				}
 				
-				node.InnerXml = xmlText;
+				node.InnerXml = content;
 				
 			}
 

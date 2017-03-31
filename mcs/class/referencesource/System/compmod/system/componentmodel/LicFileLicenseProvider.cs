@@ -98,11 +98,15 @@ namespace System.ComponentModel {
         }
 
         private class LicFileLicense : License {
+#if !MONO
             private LicFileLicenseProvider owner;
+#endif
             private string key;
 
             public LicFileLicense(LicFileLicenseProvider owner, string key) {
+#if !MONO
                 this.owner = owner;
+#endif
                 this.key = key;
             }
             public override string LicenseKey { 

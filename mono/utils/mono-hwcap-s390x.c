@@ -1,5 +1,6 @@
-/*
- * mono-hwcap-s390x.c: S/390x hardware feature detection
+/**
+ * \file
+ * S/390x hardware feature detection
  *
  * Authors:
  *    Alex Rønne Petersen (alexrp@xamarin.com)
@@ -114,7 +115,7 @@ typedef struct {
 	uint8_t	sccm:1;		// 142 - Store CPU counter multiple
 	uint8_t ibm13:1;	// 143 - Assigned to IBM
 	uint8_t x015[14];	// 144-256 Undefined
-} __attribute__ ((packed)) __attribute__ ((aligned(8))) facilityList_t;
+} __attribute__ ((__packed__)) __attribute__ ((__aligned__(8))) facilityList_t;
 
 void
 mono_hwcap_arch_init (void)

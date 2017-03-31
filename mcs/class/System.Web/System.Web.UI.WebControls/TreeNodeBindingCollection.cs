@@ -53,9 +53,9 @@ namespace System.Web.UI.WebControls
 			return ((IList)this).Contains (binding);
 		}
 		
-		public void CopyTo (TreeNodeBinding[] array, int index)
+		public void CopyTo (TreeNodeBinding[] bindingArray, int index)
 		{
-			((IList)this).CopyTo (array, index);
+			((IList)this).CopyTo (bindingArray, index);
 		}
 		
 		protected override object CreateKnownType (int index)

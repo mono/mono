@@ -1,5 +1,6 @@
-/*
- * mono-tls.h: Low-level TLS support
+/**
+ * \file
+ * Low-level TLS support
  *
  * Author:
  *	Rodrigo Kumpera (kumpera@gmail.com)
@@ -12,6 +13,7 @@
 #ifndef __MONO_TLS_H__
 #define __MONO_TLS_H__
 
+#include <config.h>
 #include <glib.h>
 
 /* TLS entries used by the runtime */
@@ -21,12 +23,14 @@ typedef enum {
 	TLS_KEY_JIT_TLS = 1,
 	/* mono_domain_get () */
 	TLS_KEY_DOMAIN = 2,
-	TLS_KEY_LMF = 3,
-	TLS_KEY_SGEN_THREAD_INFO = 4,
-	TLS_KEY_BOEHM_GC_THREAD = 5,
-	TLS_KEY_LMF_ADDR = 6,
-	TLS_KEY_NUM = 7
+	TLS_KEY_SGEN_THREAD_INFO = 3,
+	TLS_KEY_LMF_ADDR = 4,
+	TLS_KEY_NUM = 5
 } MonoTlsKey;
+
+#ifdef HAVE_KW_THREAD
+#define USE_KW_THREAD
+#endif
 
 #ifdef HOST_WIN32
 
@@ -65,7 +69,23 @@ mono_native_tls_set_value (MonoNativeTlsKey key, gpointer value)
 
 #endif /* HOST_WIN32 */
 
-int mono_tls_key_get_offset (MonoTlsKey key);
-void mono_tls_key_set_offset (MonoTlsKey key, int offset);
+void mono_tls_init_gc_keys (void);
+void mono_tls_init_runtime_keys (void);
+void mono_tls_free_keys (void);
+gint32 mono_tls_get_tls_offset (MonoTlsKey key);
+gpointer mono_tls_get_tls_getter (MonoTlsKey key, gboolean name);
+gpointer mono_tls_get_tls_setter (MonoTlsKey key, gboolean name);
+
+gpointer mono_tls_get_thread (void);
+gpointer mono_tls_get_jit_tls (void);
+gpointer mono_tls_get_domain (void);
+gpointer mono_tls_get_sgen_thread_info (void);
+gpointer mono_tls_get_lmf_addr (void);
+
+void mono_tls_set_thread (gpointer value);
+void mono_tls_set_jit_tls (gpointer value);
+void mono_tls_set_domain (gpointer value);
+void mono_tls_set_sgen_thread_info (gpointer value);
+void mono_tls_set_lmf_addr (gpointer value);
 
 #endif /* __MONO_TLS_H__ */

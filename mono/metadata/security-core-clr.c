@@ -1,5 +1,6 @@
-/*
- * security-core-clr.c: CoreCLR security
+/**
+ * \file
+ * CoreCLR security
  *
  * Authors:
  *	Mark Probst <mark.probst@gmail.com>
@@ -27,19 +28,19 @@ static MonoSecurityCoreCLROptions security_core_clr_options = MONO_SECURITY_CORE
 
 /**
  * mono_security_core_clr_set_options:
- * @options: the new options for the coreclr system to use
+ * \param options the new options for the coreclr system to use
  *
  * By default, the CoreCLRs security model forbids execution trough reflection of methods not visible from the calling code.
  * Even if the method being called is not in a platform assembly. For non moonlight CoreCLR users this restriction does not
  * make a lot of sense, since the author could have just changed the non platform assembly to allow the method to be called.
  * This function allows specific relaxations from the default behaviour to be set.
  *
- * Use MONO_SECURITY_CORE_CLR_OPTIONS_DEFAULT for the default coreclr coreclr behaviour as used in Moonlight.
+ * Use \c MONO_SECURITY_CORE_CLR_OPTIONS_DEFAULT for the default coreclr coreclr behaviour as used in Moonlight.
  *
- * Use MONO_SECURITY_CORE_CLR_OPTIONS_RELAX_REFLECTION to allow transparent code to execute methods and access 
+ * Use \c MONO_SECURITY_CORE_CLR_OPTIONS_RELAX_REFLECTION to allow transparent code to execute methods and access 
  * fields that are not in platformcode, even if those methods and fields are private or otherwise not visible to the calling code.
  *
- * Use MONO_SECURITY_CORE_CLR_OPTIONS_RELAX_DELEGATE to allow delegates to be created that point at methods that are not in
+ * Use \c MONO_SECURITY_CORE_CLR_OPTIONS_RELAX_DELEGATE to allow delegates to be created that point at methods that are not in
  * platformcode even if those methods and fields are private or otherwise not visible to the calling code.
  *
  */
@@ -124,8 +125,8 @@ mono_security_core_clr_is_platform_image (MonoImage *image)
 #ifndef DISABLE_SECURITY
 
 /* Class lazy loading functions */
-static GENERATE_GET_CLASS_WITH_CACHE (security_critical, System.Security, SecurityCriticalAttribute)
-static GENERATE_GET_CLASS_WITH_CACHE (security_safe_critical, System.Security, SecuritySafeCriticalAttribute)
+static GENERATE_GET_CLASS_WITH_CACHE (security_critical, "System.Security", "SecurityCriticalAttribute")
+static GENERATE_GET_CLASS_WITH_CACHE (security_safe_critical, "System.Security", "SecuritySafeCriticalAttribute")
 
 static MonoClass*
 security_critical_attribute (void)
@@ -160,13 +161,13 @@ set_type_load_exception_type (const char *format, MonoClass *klass)
 {
 	char *type_name = mono_type_get_full_name (klass);
 	char *parent_name = mono_type_get_full_name (klass->parent);
-	char *message = g_strdup_printf (format, type_name, parent_name);
+	char *message = mono_image_strdup_printf (klass->image, format, type_name, parent_name);
 
 	g_free (parent_name);
 	g_free (type_name);
 	
-	mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_SECURITY, message);
-	mono_class_set_failure (klass, MONO_EXCEPTION_TYPE_LOAD, message);
+	mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_SECURITY, "%s", message);
+	mono_class_set_type_load_failure (klass, "%s", message);
 	// note: do not free string given to mono_class_set_failure
 }
 
@@ -183,13 +184,13 @@ set_type_load_exception_methods (const char *format, MonoMethod *override, MonoM
 {
 	char *method_name = get_method_full_name (override);
 	char *base_name = get_method_full_name (base);
-	char *message = g_strdup_printf (format, method_name, base_name);
+	char *message = mono_image_strdup_printf (override->klass->image, format, method_name, base_name);
 
 	g_free (base_name);
 	g_free (method_name);
 
-	mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_SECURITY, message);
-	mono_class_set_failure (override->klass, MONO_EXCEPTION_TYPE_LOAD, message);
+	mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_SECURITY, "%s", message);
+	mono_class_set_type_load_failure (override->klass, "%s", message);
 	// note: do not free string given to mono_class_set_failure
 }
 
@@ -206,7 +207,8 @@ get_default_ctor (MonoClass *klass)
 	if (!klass->methods)
 		return NULL;
 
-	for (i = 0; i < klass->method.count; ++i) {
+	int mcount = mono_class_get_method_count (klass);
+	for (i = 0; i < mcount; ++i) {
 		MonoMethodSignature *sig;
 		MonoMethod *method = klass->methods [i];
 
@@ -561,7 +563,7 @@ get_argument_exception (const char *format, MonoMethod *caller, MonoMethod *call
 	g_free (callee_name);
 	g_free (caller_name);
 
-	mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_SECURITY, message);
+	mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_SECURITY, "%s", message);
 	ex = mono_get_exception_argument ("method", message);
 	g_free (message);
 
@@ -586,7 +588,7 @@ get_field_access_exception (const char *format, MonoMethod *caller, MonoClassFie
 	g_free (field_name);
 	g_free (caller_name);
 
-	mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_SECURITY, message);
+	mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_SECURITY, "%s", message);
 	ex = mono_get_exception_field_access_msg (message);
 	g_free (message);
 
@@ -611,7 +613,7 @@ get_method_access_exception (const char *format, MonoMethod *caller, MonoMethod 
 	g_free (callee_name);
 	g_free (caller_name);
 
-	mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_SECURITY, message);
+	mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_SECURITY, "%s", message);
 	ex = mono_get_exception_method_access_msg (message);
 	g_free (message);
 
@@ -630,7 +632,7 @@ get_method_access_exception (const char *format, MonoMethod *caller, MonoMethod 
 gboolean
 mono_security_core_clr_ensure_reflection_access_field (MonoClassField *field, MonoError *error)
 {
-	mono_error_init (error);
+	error_init (error);
 	MonoMethod *caller = get_reflection_caller ();
 	/* CoreCLR restrictions applies to Transparent code/caller */
 	if (mono_security_core_clr_method_level (caller, TRUE) != MONO_SECURITY_CORE_CLR_TRANSPARENT)
@@ -671,7 +673,7 @@ mono_security_core_clr_ensure_reflection_access_field (MonoClassField *field, Mo
 gboolean
 mono_security_core_clr_ensure_reflection_access_method (MonoMethod *method, MonoError *error)
 {
-	mono_error_init (error);
+	error_init (error);
 	MonoMethod *caller = get_reflection_caller ();
 	/* CoreCLR restrictions applies to Transparent code/caller */
 	if (mono_security_core_clr_method_level (caller, TRUE) != MONO_SECURITY_CORE_CLR_TRANSPARENT)
@@ -747,7 +749,7 @@ mono_security_core_clr_ensure_delegate_creation (MonoMethod *method, MonoError *
 {
 	MonoMethod *caller;
 
-	mono_error_init (error);
+	error_init (error);
 
 	/* note: mscorlib creates delegates to avoid reflection (optimization), we ignore those cases */
 	if (can_avoid_corlib_reflection_delegate_optimization (method))
@@ -1060,21 +1062,21 @@ mono_security_core_clr_require_elevated_permissions (void)
 gboolean
 mono_security_core_clr_ensure_reflection_access_field (MonoClassField *field, MonoError *error)
 {
-	mono_error_init (error);
+	error_init (error);
 	return TRUE;
 }
 
 gboolean
 mono_security_core_clr_ensure_reflection_access_method (MonoMethod *method, MonoError *error)
 {
-	mono_error_init (error);
+	error_init (error);
 	return TRUE;
 }
 
 gboolean
 mono_security_core_clr_ensure_delegate_creation (MonoMethod *method, MonoError *error)
 {
-	mono_error_init (error);
+	error_init (error);
 	return TRUE;
 }
 

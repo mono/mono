@@ -65,7 +65,7 @@ namespace Mono.Tools.LocaleBuilder
 		public void AppendTableRow (StringBuilder builder)
 		{
 			builder.Append ("\t{");
-			builder.Append (EncodeStringIdx (MonthDayPattern) + ", ");
+			builder.Append (EncodePatternStringIdx (MonthDayPattern) + ", ");
 
 			builder.Append (EncodeStringIdx (AMDesignator) + ", ");
 			builder.Append (EncodeStringIdx (PMDesignator) + ", ");
@@ -106,7 +106,7 @@ namespace Mono.Tools.LocaleBuilder
 				if (i > 0)
 					builder.Append (',');
 
-				string s = EncodeStringIdx (patterns[i]);
+				string s = EncodePatternStringIdx (patterns[i]);
 				builder.Append (s);
 			}
 			if (patterns.Count == 0)

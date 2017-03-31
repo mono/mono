@@ -478,7 +478,7 @@ namespace Mono.CSharp {
 			catch
 			{
 				ec.Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
-					GetValue ().ToString (), target.GetSignatureForError ());
+					GetValueAsLiteral (), target.GetSignatureForError ());
 			}
 		}
 
@@ -1697,7 +1697,7 @@ namespace Mono.CSharp {
 
 		public override string GetValueAsLiteral ()
 		{
-			return Value.ToString ();
+			return Value.ToString (CultureInfo.InvariantCulture);
 		}
 
 		public override long GetValueAsLong ()
@@ -1820,7 +1820,7 @@ namespace Mono.CSharp {
 
 		public override string GetValueAsLiteral ()
 		{
-			return Value.ToString ();
+			return Value.ToString (CultureInfo.InvariantCulture);
 		}
 
 		public override long GetValueAsLong ()
@@ -2021,7 +2021,7 @@ namespace Mono.CSharp {
 
 		public override string GetValueAsLiteral ()
 		{
-			return Value.ToString () + "M";
+			return Value.ToString (CultureInfo.InvariantCulture) + "M";
 		}
 
 		public override long GetValueAsLong ()

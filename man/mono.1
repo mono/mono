@@ -7,7 +7,7 @@
 .\" Author:
 .\"   Miguel de Icaza (miguel@gnu.org)
 .\"
-.TH Mono "Mono 4.7.0"
+.TH Mono "mono"
 .SH NAME
 mono \- Mono's ECMA-CLI native code generator (Just-in-Time and Ahead-of-Time)
 .SH SYNOPSIS
@@ -19,14 +19,6 @@ mono \- Mono's ECMA-CLI native code generator (Just-in-Time and Ahead-of-Time)
 \fImono\fP is a runtime implementation of the ECMA Common Language
 Infrastructure.  This can be used to run ECMA and .NET applications.
 .PP
-The runtime contains a native code generator that transforms the
-Common Intermediate Language into native code.
-.PP
-The code generator can operate in two modes: just in time compilation
-(JIT) or ahead of time compilation (AOT).  Since code can be
-dynamically loaded, the runtime environment and the JIT are always
-present, even if code is compiled ahead of time.
-.PP
 The runtime loads the specified
 .I file
 and optionally passes
@@ -36,12 +28,26 @@ to it.  The
 .I file
 is an ECMA assembly.  They typically have a .exe or .dll extension.
 .PP
+These executables can reference additionaly functionality in the form
+of assembly references.  By default those assembly references are
+resolved as follows: the \fBmscorlib.dll\fR is resolved from the
+system profile that is configured by Mono, and other assemblies are
+loaded from the Global Assembly Cache (GAC).   
+.PP
+The runtime contains a native code generator that transforms the
+Common Intermediate Language into native code.
+.PP
+The code generator can operate in two modes: just in time compilation
+(JIT) or ahead of time compilation (AOT).  Since code can be
+dynamically loaded, the runtime environment and the JIT are always
+present, even if code is compiled ahead of time.
+.PP
 The runtime provides a number of configuration options for running
 applications, for developing and debugging, and for testing and
 debugging the runtime itself.
 .PP
-The \fImono\fP command uses the Boehm conservative garbage collector
-while the \fImono-sgen\fP command uses a moving and generational
+The \fImono\fP command uses the moving and generational SGen garbage collector
+while the \fImono-boehm\fP command uses the conservative Boehm
 garbage collector.
 .SH PORTABILITY
 On Unix-based systems, Mono provides a mechanism to emulate the 
@@ -87,7 +93,7 @@ information which is not available on the generated file.  When
 precompiling code, you might want to compile with all optimizations
 (-O=all).  Pre-compiled code is position independent code.
 .Sp
-Pre compilation is just a mechanism to reduce startup time, increase
+Precompilation is just a mechanism to reduce startup time, increase
 code sharing across multiple mono processes and avoid just-in-time
 compilation program startup costs.  The original assembly must still
 be present, as the metadata is contained there.
@@ -104,11 +110,6 @@ than one can be specified:
 .RS
 .ne 8
 .TP
-.I autoreg
-The AOT compiler will emit a (ELF only) library initializer to automatically
-register the aot compiled module with the runtime.  This is only useful in static
-mode
-.TP
 .I asmonly
 Instructs the AOT compiler to output assembly code instead of an
 object file.
@@ -118,11 +119,6 @@ object file.
 If specified, forces the generated AOT files to be bound to the
 runtime version of the compiling Mono.   This will prevent the AOT
 files from being consumed by a different Mono runtime.
-.I full
-.Sp
-This is currently an experimental feature as it is not complete.
-This instructs Mono to precompile code that has historically not been
-precompiled with AOT.   
 .TP
 .I data-outfile=FILE.dll.aotdata
 .Sp
@@ -134,10 +130,59 @@ on demand by using the
 .I mono_install_load_aot_data_hook
 method.
 .TP
+.I direct-icalls
+.Sp
+When this option is specified, icalls (internal calls made from the
+standard library into the mono runtime code) are invoked directly
+instead of going through the operating system symbol lookup operation.
+This requires use of the
+.I static
+option.
+.TP
 .I direct-pinvoke
 .Sp
 When this option is specified, P/Invoke methods are invoked directly
 instead of going through the operating system symbol lookup operation.
+This requires use of the
+.I static
+option.
+.TP
+.I dwarfdebug
+Instructs the AOT compiler to emit DWARF debugging information. When
+used together with the nodebug option, only DWARF debugging
+information is emitted, but not the information that can be used at
+runtime.
+.TP
+.I full
+.Sp
+This creates binaries which can be used with the --full-aot option.
+.TP
+.I hybrid
+.Sp
+This creates binaries which can be used with the --hybrid-aot option.
+.TP
+.I llvm
+AOT will be performed with the LLVM backend instead of the Mono backend where possible. This will be slower to compile but most likely result in a performance improvement.
+.TP
+.I llvmonly
+AOT will be performed with the LLVM backend exclusively and the Mono backend will not be used. The only output in this mode will be the bitcode file normally specified with the
+.I llvm-outfile
+option. Use of
+.I llvmonly
+automatically enables the
+.I full
+and
+.I llvm
+options. This feature is experimental.
+.TP
+.I llvm-outfile=[filename]
+Gives the path for the temporary LLVM bitcode file created during AOT.
+.TP
+.I info
+Print the architecture the AOT in this copy of Mono targets and quit.
+.TP
+.I ld-flags
+Additional flags to pass to the C linker (if the current AOT mode calls for invoking it).
 .TP
 .I llvm-path=<PREFIX>
 Same for the llvm tools 'opt' and 'llc'.
@@ -156,7 +201,12 @@ llc compiler.
 .I nimt-trampolines=[number]
 When compiling in full aot mode, the IMT trampolines must be precreated
 in the AOT image.  You can add additional method trampolines with this argument.
-Defaults to 128.
+Defaults to 512.
+.TP
+.I ngsharedvt-trampolines=[number]
+When compiling in full aot mode, the value type generic sharing trampolines must be precreated
+in the AOT image.  You can add additional method trampolines with this argument.
+Defaults to 512.
 .TP
 .I nodebug
 Instructs the AOT compiler to not output any debugging information.
@@ -166,23 +216,22 @@ This prevents the AOT compiler from generating a direct calls to a
 method.   The AOT compiler usually generates direct calls for certain
 methods that do not require going through the PLT (for example,
 methods that are known to not require a hook like a static
-constructor) or call into simple internal calls. 
-.TP
-.I dwarfdebug
-Instructs the AOT compiler to emit DWARF debugging information. When
-used together with the nodebug option, only DWARF debugging
-information is emitted, but not the information that can be used at
-runtime.
+constructor) or call into simple internal calls.
 .TP
 .I nrgctx-trampolines=[number]
 When compiling in full aot mode, the generic sharing trampolines must be precreated
 in the AOT image.  You can add additional method trampolines with this argument.
-Defaults to 1024.
+Defaults to 4096.
+.TP
+.I nrgctx-fetch-trampolines=[number]
+When compiling in full aot mode, the generic sharing fetch trampolines must be precreated
+in the AOT image.  You can add additional method trampolines with this argument.
+Defaults to 128.
 .TP
 .I ntrampolines=[number]
 When compiling in full aot mode, the method trampolines must be precreated
 in the AOT image.  You can add additional method trampolines with this argument.
-Defaults to 1024.
+Defaults to 4096.
 .TP
 .I outfile=[filename]
 Instructs the AOT compiler to save the output to the specified file.
@@ -190,6 +239,16 @@ Instructs the AOT compiler to save the output to the specified file.
 .I print-skipped-methods
 If the AOT compiler cannot compile a method for any reason, enabling this flag
 will output the skipped methods to the console.
+.TP
+.I profile=[file]
+Specify a file to use for profile-guided optimization. See the "AOT PROFILING" section. To specify multiple files, include the
+.I profile
+option multiple times.
+.TP
+.I profile-only
+AOT *only* the methods described in the files specified with the
+.I profile
+option. See the "AOT PROFILING" section.
 .TP
 .I readonly-value=namespace.typename.fieldname=type/value
 Override the value of a static readonly field. Usually, during JIT
@@ -203,7 +262,6 @@ Note that signed/unsigned numbers do not matter here, just the storage size.
 This option can be specified multiple times and it doesn't prevent the static
 constructor for the type defining the field to execute with the usual rules
 at runtime (hence possibly computing a different value for the field).
-
 .TP
 .I save-temps,keep-temps
 Instructs the AOT compiler to keep temporary files.
@@ -232,6 +290,9 @@ mono_aot_register_module (mono_aot_module_hello_info);
 .I stats
 Print various stats collected during AOT compilation.
 .TP
+.I temp_path=[path]
+Explicitly specify path to store temporary files created during AOT compilation.
+.TP
 .I threads=[number]
 This is an experimental option for the AOT compiler to use multiple threads
 when compiling the methods.
@@ -241,8 +302,11 @@ Prepends <PREFIX> to the name of tools ran by the AOT compiler, i.e. 'as'/'ld'. 
 example, --tool=prefix=arm-linux-gnueabi- will make the AOT compiler run
 'arm-linux-gnueabi-as' instead of 'as'.
 .TP
-.I write-symbols
-Instructs the AOT compiler to emit debug symbol information.
+.I verbose
+Prints additional information about type loading failures.
+.TP
+.I write-symbols,no-write-symbols
+Instructs the AOT compiler to emit (or not emit) debug symbol information.
 .PP
 For more information about AOT, see: http://www.mono-project.com/docs/advanced/aot/
 .RE
@@ -257,12 +321,15 @@ The default files are /etc/mono/config and ~/.mono/config or the file
 specified in the MONO_CONFIG environment variable, if set.  See the
 mono-config(5) man page for details on the format of this file.
 .TP
+\fB--aot-path=PATH\fR
+List of additional directories to search for AOT images.
+.TP
 \fB--debugger-agent=[options]\fR 
 This instructs the Mono runtime to
 start a debugging agent inside the Mono runtime and connect it to a
 client user interface will control the Mono process.
-This option is typically used by IDEs, like the MonoDevelop IDE.
-.PP
+This option is typically used by IDEs, like the MonoDevelop or Visual Studio IDEs.
+.RS
 The configuration is specified using one of more of the following options:
 .RS
 .ne 8
@@ -289,10 +356,10 @@ actively waits for the debugger front end to connect to the Mono process.
 Mono will print out to stdout the IP address and port where it is listening.
 .TP
 .I setpgid=[y/n]
-If set to yes, Mono will call \fBsetpgid(0, 0)\fB on startup, if that function
+If set to yes, Mono will call \fBsetpgid(0, 0)\fR on startup, if that function
 is available on the system. This is useful for ensuring that signals delivered
 to a process that is executing the debuggee are not propagated to the debuggee,
-e.g. when Ctrl-C sends \fBSIGINT\fB to the \fBsdb\fB tool.
+e.g. when Ctrl-C sends \fBSIGINT\fR to the \fBsdb\fR tool.
 .TP
 .I suspend=[y/n]
 Defaults to yes, with the default option Mono will suspend the vm on startup 
@@ -315,10 +382,12 @@ the heap as much as possible at the expense of slowing down garbage
 collection a bit.
 .TP
 \fB--full-aot\fR
-This is an experimental flag that instructs the Mono runtime to not
+This flag instructs the Mono runtime to not
 generate any code at runtime and depend exclusively on the code
-generated from using mono --aot=full previously.   This is useful for
-platforms that do not permit dynamic code generation.
+generated from using mono --aot=full previously.  This is useful for
+platforms that do not permit dynamic code generation, or if you need
+to run assemblies that have been stripped of IL (for example using
+mono-cil-strip).
 .Sp
 Notice that this feature will abort execution at runtime if a codepath
 in your program, or Mono's class libraries attempts to generate code
@@ -332,6 +401,12 @@ Currently this merely ensures that you are running either the
 \fBMONO_ENV_OPTIONS\fR environment variable to force all of your child
 processes to use one particular kind of GC with the Mono runtime.
 .TP
+\fB--gc-debug=[options]\fR
+Command line equivalent of the \fBMONO_GC_DEBUG\fR environment variable.
+.TP
+\fB--gc-params=[options]\fR
+Command line equivalent of the \fBMONO_GC_PARAMS\fR environment variable.
+.TP
 \fB--arch=32\fR, \fB--arch=64\fR
 (Mac OS X only): Selects the bitness of the Mono binary used, if
 available. If the binary used is already for the selected bitness, nothing
@@ -341,6 +416,14 @@ will switch to '/bin/mono64' iff '/bin/mono' is a 32-bit build).
 .TP
 \fB--help\fR, \fB-h\fR
 Displays usage instructions.
+.TP
+\fB--hybrid-aot\fR
+This flag allows the Mono runtime to run assemblies
+that have been stripped of IL, for example using mono-cil-strip. For this to
+work, the assembly must have been AOT compiled with --aot=hybrid.
+
+This flag is similar to --full-aot, but it does not disable the JIT. This means
+you can use dynamic features such as System.Reflection.Emit.
 .TP
 \fB--llvm\fR
 If the Mono runtime has been compiled with LLVM support (not available
@@ -519,7 +602,7 @@ platforms, and only when using gdb 7.0 or later.
 Turns on profiling.  For more information about profiling applications
 and code coverage see the sections "PROFILING" and "CODE COVERAGE"
 below. 
-.TP
+.Sp
 This option can be used multiple times, each time will load an
 additional profiler.   This allows developers to use modules that
 extend the JIT through the Mono profiling interface.
@@ -600,7 +683,7 @@ Finally, namespaces can be specified using the N: prefix:
 Don't align stack frames on the x86 architecture.  By default, Mono
 aligns stack frames to 16 bytes on x86, so that local floating point
 and SIMD variables can be properly aligned.  This option turns off the
-alignment, which usually saves one intruction per call, but might
+alignment, which usually saves one instruction per call, but might
 result in significantly lower floating point and SIMD performance.
 .TP
 \fB--jitmap\fR
@@ -844,6 +927,26 @@ The offsets displayed are IL offsets.
 .PP
 A more powerful coverage tool is available in the module `monocov'.
 See the monocov(1) man page for details.
+.SH AOT PROFILING
+You can improve startup performance by using the AOT profiler.
+.PP
+Typically the AOT compiler (\fBmono --aot\fR) will not generate code
+for generic instantiations.   To solve this, you can run Mono with the
+AOT profiler to find out all the generic instantiations that are used,
+and then instructing the AOT compiler to produce code for these.
+.PP
+This command will run the specified app.exe and produce the
+\fBout.aotprof\fR file with the data describing the generic
+instantiations that are needed:
+.nf
+	$ mono --profile=aot:output=out.aotprof app.exe
+.fi
+.PP
+Once you have this data, you can pass this to Mono's AOT compiler to
+instruct it to generate code for it:
+.nf
+	$ mono --aot=profile=out.aotprof
+.fi
 .SH DEBUGGING AIDS
 To debug managed applications, you can use the 
 .B mdb
@@ -1663,7 +1766,7 @@ Captures the interrupt signal (Control-C) and displays a stack trace
 when pressed.  Useful to find out where the program is executing at a
 given point.  This only displays the stack trace of a single thread. 
 .TP
-\fBinit-stacks\FR 
+\fBinit-stacks\fR
 Instructs the runtime to initialize the stack with
 some known values (0x2a on x86-64) at the start of a method to assist
 in debuggin the JIT engine.
@@ -1703,10 +1806,13 @@ values.
 This option allows using single-steps and breakpoints in hardware
 where we cannot do it with signals.
 .TP
-\fBsuspend-on-sigsegv\fR
-This option will suspend the program when a native SIGSEGV is received.
+\fBsuspend-on-native-crash\fR
+This option will suspend the program when a native crash occurs (SIGSEGV, SIGILL, ...).
 This is useful for debugging crashes which do not happen under gdb,
 since a live process contains more information than a core file.
+.TP
+\fBsuspend-on-sigsegv\fR
+Same as \fBsuspend-on-native-crash\fR.
 .TP
 \fBsuspend-on-exception\fR
 This option will suspend the program when an exception occurs.
@@ -1910,8 +2016,8 @@ http://www.mono-project.com/community/help/mailing-lists/
 http://www.mono-project.com
 .SH SEE ALSO
 .PP
-certmgr(1), csharp(1), mcs(1), mdb(1), monocov(1), monodis(1),
-mono-config(5), mozroots(1), mprof-report(1), pdb2mdb(1), xsp(1), mod_mono(8).
+certmgr(1), cert-sync(1), csharp(1), gacutil(1), mcs(1), mdb(1), monocov(1), monodis(1),
+mono-config(5), mprof-report(1), pdb2mdb(1), xsp(1), mod_mono(8).
 .PP
 For more information on AOT:
 http://www.mono-project.com/docs/advanced/aot/

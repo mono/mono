@@ -73,19 +73,6 @@ namespace Mono.Net.Security.Private
 				return monoSslStreamImpl.Impl;
 			return new MonoSslStreamWrapper (sslStream);
 		}
-
-		public MSI.IMonoTlsContext CreateTlsContext (
-			string hostname, bool serverMode, MSI.TlsProtocols protocolFlags,
-			X509Certificate serverCertificate, X509CertificateCollection clientCertificates,
-			bool remoteCertRequired, bool checkCertName, bool checkCertRevocationStatus,
-			MSI.MonoEncryptionPolicy encryptionPolicy, MSI.MonoTlsSettings settings)
-		{
-			return provider.CreateTlsContext (
-				hostname, serverMode, protocolFlags,
-				serverCertificate, clientCertificates,
-				remoteCertRequired, (MSI.MonoEncryptionPolicy)encryptionPolicy,
-				settings);
-		}
 	}
 }
 

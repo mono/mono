@@ -128,4 +128,10 @@ System.IdentityModel.Tokens/X509SubjectKeyIdentifierClause.cs
 System.IdentityModel.Tokens/X509ThumbprintKeyIdentifierClause.cs
 System.IdentityModel.Tokens/X509WindowsSecurityToken.cs
 System.Security.Claims/AuthenticationTypes.cs
+System.ServiceModel.Security/BinarySecretKeyIdentifierClause.cs
+System.ServiceModel.Security/KeyNameIdentifierClause.cs
+System.ServiceModel.Security/SecurityContextKeyIdentifierClause.cs
 System.ServiceModel.Security/X509CertificateValidationMode.cs
+System.ServiceModel.Security.Tokens/BinarySecretSecurityToken.cs
+System.ServiceModel.Security.Tokens/InternalEncryptedKeyIdentifierClause.cs
+System.ServiceModel.Security.Tokens/WrappedKeySecurityToken.cs

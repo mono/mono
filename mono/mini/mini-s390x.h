@@ -1,3 +1,7 @@
+/**
+ * \file
+ */
+
 #ifndef __MONO_MINI_S390X_H__
 #define __MONO_MINI_S390X_H__
 
@@ -47,8 +51,6 @@ typedef struct
 #define MONO_ARCH_NEED_DIV_CHECK			1
 #define MONO_ARCH_SIGNAL_STACK_SIZE 			256*1024
 #define MONO_ARCH_HAVE_DECOMPOSE_OPTS 			1
-#define MONO_ARCH_HAVE_TLS_GET				1
-#define MONO_ARCH_ENABLE_MONO_LMF_VAR			1
 #define MONO_ARCH_IMT_REG				s390_r9
 #define MONO_ARCH_VTABLE_REG				S390_FIRST_ARG_REG
 #define MONO_ARCH_RGCTX_REG				MONO_ARCH_IMT_REG

@@ -318,6 +318,11 @@ public class Tests : TestsBase, ITest2
 			threadpool_io ();
 			return 0;
 		}
+		if (args.Length > 0 && args [0] == "attach") {
+			new Tests ().attach ();
+			return 0;
+		}
+		assembly_load ();
 		breakpoints ();
 		single_stepping ();
 		arguments ();
@@ -327,7 +332,6 @@ public class Tests : TestsBase, ITest2
 		locals ();
 		line_numbers ();
 		type_info ();
-		assembly_load ();
 		invoke ();
 		exceptions ();
 		exception_filter ();
@@ -430,6 +434,8 @@ public class Tests : TestsBase, ITest2
 		ss_recursive2 (1);
 		ss_recursive_chaotic ();
 		ss_fp_clobber ();
+		ss_no_frames ();
+		ss_await ();
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -484,23 +490,49 @@ public class Tests : TestsBase, ITest2
 	public static void ss6_2 () {
 	}
 
-	[MethodImplAttribute (MethodImplOptions.NoInlining)]
-	public static void ss7 () {
-		try {
-			ss7_2 ();
-			ss7_3 ();
-		} catch {
-		}
-		ss7_2 ();
+	[MethodImplAttribute(MethodImplOptions.NoInlining)]
+	public static void ss7 ()
+	{
+		ss7_2();//Used to test stepout inside ss7_2, which may not go to catch
+		ss7_2();//Used to test stepout inside ss7_2_1, which must go to catch
+		ss7_2();//Used to test stepover inside ss7_2, which must go to catch
+		ss7_2();//Used to test stepover inside ss7_2_1, which must go to catch
+		ss7_3();//Used to test stepin inside ss7_3, which must go to catch
+		ss7_2();//Used to test stepin inside ss7_2_1, which must go to catch
 	}
 
-	[MethodImplAttribute (MethodImplOptions.NoInlining)]
-	public static void ss7_2 () {
-	}
-
-	[MethodImplAttribute (MethodImplOptions.NoInlining)]
-	public static void ss7_3 () {
+	[MethodImplAttribute(MethodImplOptions.NoInlining)]
+	public static void ss7_2_1 ()
+	{
 		throw new Exception ();
+	}
+
+	[MethodImplAttribute(MethodImplOptions.NoInlining)]
+	public static void ss7_2_2 ()
+	{
+		ss7_2_1();
+	}
+
+	[MethodImplAttribute(MethodImplOptions.NoInlining)]
+	public static void ss7_2 ()
+	{
+		try {
+			ss7_2_2();
+		}
+		catch
+		{
+		}
+	}
+
+	[MethodImplAttribute(MethodImplOptions.NoInlining)]
+	public static void ss7_3 ()
+	{
+		try {
+			throw new Exception ();
+		}
+		catch
+		{
+		}
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -677,6 +709,71 @@ public class Tests : TestsBase, ITest2
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void ss_fp_clobber_2 (double d) {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_no_frames () {
+		Action a = ss_no_frames_2;
+		var ar = a.BeginInvoke (null, null);
+		ar.AsyncWaitHandle.WaitOne ();
+		// Avoid waiting every time this runs
+		if (static_i == 56)
+			Thread.Sleep (200);
+		ss_no_frames_3 ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_await ()
+	{
+		ss_await_1 ().Wait ();//in
+		ss_await_1 ().Wait ();//over
+		ss_await_1 ().Wait ();//out before
+		ss_await_1 ().Wait ();//out after
+		ss_await_1_exc (true, true).Wait ();//in
+		ss_await_1_exc (true, true).Wait ();//over
+		ss_await_1_exc (true, true).Wait ();//out
+		try {
+			ss_await_1_exc (true, false).Wait ();//in
+		} catch { }
+		try {
+			ss_await_1_exc (true, false).Wait ();//over
+		} catch { }
+		try {
+			ss_await_1_exc (true, false).Wait ();//out
+		} catch { }
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static async Task<int> ss_await_1 () {
+		var a = 1;
+		await Task.Delay (10);
+		return a + 2;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static async Task<int> ss_await_1_exc (bool exc, bool handled)
+	{
+		var a = 1;
+		await Task.Delay (10);
+		if (exc) {
+			if (handled) {
+				try {
+					throw new Exception ();
+				} catch {
+				}
+			} else {
+				throw new Exception ();
+			}
+		}
+		return a + 2;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_no_frames_2 () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_no_frames_3 () {
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -1302,6 +1399,8 @@ public class Tests : TestsBase, ITest2
 
 		o.invoke_2 ();
 
+		o.assembly_load ();
+
 		AppDomain.Unload (domain);
 
 		domains_3 ();
@@ -1331,6 +1430,11 @@ public class Tests : TestsBase, ITest2
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void invoke_in_domain_2 () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void assembly_load_in_domain () {
+		Assembly.Load ("System.Transactions");
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -1587,12 +1691,26 @@ public class Tests : TestsBase, ITest2
 		streamOut.Close ();
 		var bsIn = t.Result;
 	}
-}
 
-class TypeLoadClass {
-}
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public void attach_break () {
+	}
 
-class TypeLoadClass2 {
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public void attach () {
+		AppDomain domain = AppDomain.CreateDomain ("domain");
+
+		CrossDomain o = (CrossDomain)domain.CreateInstanceAndUnwrap (
+				   typeof (CrossDomain).Assembly.FullName, "CrossDomain");
+		o.assembly_load ();
+		o.type_load ();
+
+		// Wait for the client to attach
+		while (true) {
+			Thread.Sleep (200);
+			attach_break ();
+		}
+	}
 }
 
 public class SentinelClass : MarshalByRefObject {
@@ -1613,11 +1731,39 @@ public class CrossDomain : MarshalByRefObject
 	public int invoke_3 () {
 		return 42;
 	}
+
+	public void assembly_load () {
+		Tests.assembly_load_in_domain ();
+	}
+
+	public void type_load () {
+		//Activator.CreateInstance (typeof (int).Assembly.GetType ("Microsoft.Win32.RegistryOptions"));
+		var is_server = System.Runtime.GCSettings.IsServerGC;
+	}
 }	
 
 public class Foo
 {
 	public ProcessStartInfo info;
+}
+
+class LocalReflectClass
+{
+	public static void RunMe ()
+	{
+		var reflectMe = new someClass ();
+		var temp = reflectMe; // Breakpoint location
+		reflectMe.someMethod ();
+	}
+
+	class someClass : ContextBoundObject
+	{
+		public object someField;
+
+		public void someMethod ()
+		{
+		}
+	}
 }
 
 // Class used for line number info testing, don't change its layout
@@ -1643,22 +1789,5 @@ public class LineNumbers
 	}
 }
 
-class LocalReflectClass
-{
-	public static void RunMe ()
-	{
-		var reflectMe = new someClass ();
-		reflectMe.someMethod ();
-	}
-
-	class someClass : ContextBoundObject
-	{
-		public object someField;
-
-		public void someMethod ()
-		{
-		}
-	}
-}
 
 

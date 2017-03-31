@@ -1,5 +1,6 @@
-/*
- * w32event-win32.c: Runtime support for managed Event on Win32
+/**
+ * \file
+ * Runtime support for managed Event on Win32
  *
  * Author:
  *	Ludovic Henry (luhenry@microsoft.com)
@@ -21,6 +22,12 @@ gpointer
 mono_w32event_create (gboolean manual, gboolean initial)
 {
 	return CreateEvent (NULL, manual, initial, NULL);
+}
+
+gboolean
+mono_w32event_close (gpointer handle)
+{
+	return CloseHandle (handle);
 }
 
 void

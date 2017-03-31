@@ -80,6 +80,9 @@ namespace Microsoft.Build.Internal
 					if (!queued_builds.TryDequeue (out build))
 						continue;
 					StartOneBuild (build);
+				} catch (ThreadAbortException) {
+					// do nothing
+					break;
 				} catch (Exception ex) {
 					// FIXME: I guess INodeLogger should be used instead.
 					Console.Error.WriteLine ("Uncaught build node exception occured");

@@ -1,5 +1,6 @@
-/*
- * debug-mini.c: Mini-specific debugging stuff.
+/**
+ * \file
+ * Mini-specific debugging stuff.
  *
  * Author:
  *   Martin Baulig (martin@ximian.com)
@@ -16,7 +17,7 @@
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/threads-types.h>
 
-#include <mono/metadata/mono-debug-debugger.h>
+#include <mono/metadata/debug-internals.h>
 
 #include <mono/utils/valgrind.h>
 
@@ -152,7 +153,7 @@ mono_debug_add_vg_method (MonoMethod *method, MonoDebugMethodJitInfo *jit)
 		for (i = 0; i < header->code_size; ++i) {
 			MonoDebugSourceLocation *location;
 
-			location = mono_debug_symfile_lookup_location (minfo, i);
+			location = mono_debug_method_lookup_location (minfo, i);
 			if (!location)
 				continue;
 
@@ -652,11 +653,11 @@ print_var_info (MonoDebugVarInfo *info, int idx, const char *name, const char *t
  * mono_debug_print_locals:
  *
  * Prints to stdout the information about the local variables in
- * a method (if @only_arguments is false) or about the arguments.
+ * a method (if \p only_arguments is false) or about the arguments.
  * The information includes the storage info (where the variable 
  * lives, in a register or in memory).
  * The method is found by looking up what method has been emitted at
- * the instruction address @ip.
+ * the instruction address \p ip.
  * This is for use inside a debugger.
  */
 void

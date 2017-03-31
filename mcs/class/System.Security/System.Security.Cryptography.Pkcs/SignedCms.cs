@@ -55,18 +55,18 @@ namespace System.Security.Cryptography.Pkcs {
 			_info = new SignerInfoCollection ();
 		}
 
-		public SignedCms (ContentInfo content) 
-			: this (content, false)
+		public SignedCms (ContentInfo contentInfo) 
+			: this (contentInfo, false)
 		{
 		}
 
-		public SignedCms (ContentInfo content, bool detached) 
+		public SignedCms (ContentInfo contentInfo, bool detached) 
 			: this ()
 		{
-			if (content == null)
-				throw new ArgumentNullException ("content");
+			if (contentInfo == null)
+				throw new ArgumentNullException ("contentInfo");
 
-			_content = content;
+			_content = contentInfo;
 			_detached = detached;
 		}
 
@@ -75,14 +75,14 @@ namespace System.Security.Cryptography.Pkcs {
 			_type = signerIdentifierType;
 		}
 
-		public SignedCms (SubjectIdentifierType signerIdentifierType, ContentInfo content) 
-			: this (content, false) 
+		public SignedCms (SubjectIdentifierType signerIdentifierType, ContentInfo contentInfo) 
+			: this (contentInfo, false) 
 		{
 			_type = signerIdentifierType;
 		}
 
-		public SignedCms (SubjectIdentifierType signerIdentifierType, ContentInfo content, bool detached) 
-			: this (content, detached) 
+		public SignedCms (SubjectIdentifierType signerIdentifierType, ContentInfo contentInfo, bool detached) 
+			: this (contentInfo, detached) 
 		{
 			_type = signerIdentifierType;
 		}

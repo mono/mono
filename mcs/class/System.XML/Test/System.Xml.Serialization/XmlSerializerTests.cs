@@ -161,14 +161,12 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		// test constructors
-#if USE_VERSION_1_1	// It doesn't pass on MS.NET 1.1.
 		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void TestConstructor()
 		{
 			XmlSerializer ser = new XmlSerializer (null, "");
 		}
-#else
-#endif
 
 		// test basic types ////////////////////////////////////////////////////////
 		[Test]
@@ -2323,6 +2321,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual ("<:ErrorneousGetSchema></>", Infoset (sw.ToString ()));
 		}
 
+		[Test]
 		public void DateTimeRoundtrip ()
 		{
 			// bug #337729

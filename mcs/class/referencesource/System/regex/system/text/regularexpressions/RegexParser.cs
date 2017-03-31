@@ -567,11 +567,11 @@ namespace System.Text.RegularExpressions {
                     // This is code for Posix style properties - [:Ll:] or [:IsTibetan:].
                     // It currently doesn't do anything other than skip the whole thing!
                     if (CharsRight() > 0 && RightChar() == ':' && !inRange) {
-                        String name;
+//                        String name;
                         int savePos = Textpos();
 
                         MoveRight();
-                        name = ScanCapname();
+/*                        name = */ ScanCapname();
                         if (CharsRight() < 2 || MoveRightGetChar() != ':' || MoveRightGetChar() != ']')
                             Textto(savePos);
                         // else lookup name (nyi)

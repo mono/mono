@@ -24,6 +24,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.IO;
 using Microsoft.Build.BuildEngine;
 using NUnit.Framework;
 
@@ -60,6 +61,11 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 					</PropertyGroup>
 				</Project>
 			";
+
+			if (Path.DirectorySeparatorChar == '\\') {
+				documentString = documentString.Replace ("/home", "c:/home");
+				documentString = documentString.Replace ("/tmp", "c:/tmp");
+			}
 
 			var engine = new Engine (Consts.BinPath);
 			var project = engine.CreateNewProject ();

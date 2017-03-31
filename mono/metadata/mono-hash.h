@@ -1,5 +1,6 @@
-/*
- * mono-hash.c: GC-aware hashtable, based on Eglib's Hashtable
+/**
+ * \file
+ * GC-aware hashtable, based on Eglib's Hashtable
  *
  * Authors:
  *   Paolo Molaro (lupus@xamarin.com)
@@ -20,6 +21,8 @@ typedef enum {
 	MONO_HASH_VALUE_GC = 2,
 	MONO_HASH_KEY_VALUE_GC = MONO_HASH_KEY_GC | MONO_HASH_VALUE_GC,
 } MonoGHashGCType;
+
+extern int mono_g_hash_table_max_chain_length;
 
 typedef struct _MonoGHashTable MonoGHashTable;
 

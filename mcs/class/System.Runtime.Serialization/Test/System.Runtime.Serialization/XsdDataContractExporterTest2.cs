@@ -24,7 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if !MOBILE
+#if !MOBILE && !MONOMAC
 
 using System;
 using System.CodeDom;
@@ -44,7 +44,6 @@ using System.Xml.Serialization;
 using Microsoft.CSharp;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
-using NUnit.Framework.SyntaxHelpers;
 
 using QName = System.Xml.XmlQualifiedName;
 
@@ -67,7 +66,7 @@ namespace MonoTests.System.Runtime.Serialization
 			var type = exporter.Schemas.GlobalTypes [typeName];
 
 			Assert.That (type, Is.Not.Null, "#2");
-			Assert.That (type, Is.InstanceOfType (typeof (XmlSchemaComplexType)), "#3");
+			Assert.IsInstanceOfType (typeof (XmlSchemaComplexType), type, "#3");
 
 			var complex = (XmlSchemaComplexType)type;
 			Assert.That (complex.Annotation, Is.Null, "#4");
@@ -83,16 +82,16 @@ namespace MonoTests.System.Runtime.Serialization
 			Assert.That (list, Is.Not.Null, "#6");
 			Assert.That (list.Annotation, Is.Null, "#6a");
 			Assert.That (list.Name, Is.EqualTo ("list"), "#6b");
-			Assert.That (list.ElementSchemaType, Is.InstanceOfType (typeof (XmlSchemaComplexType)), "#6c");
+			Assert.IsInstanceOfType (typeof (XmlSchemaComplexType), list.ElementSchemaType, "#6c");
 
 			var listElement = (XmlSchemaComplexType)list.ElementSchemaType;
 			Assert.That (listElement.QualifiedName.Namespace, Is.EqualTo (MSArraysNamespace), "#6d");
 			Assert.That (listElement.QualifiedName.Name, Is.EqualTo ("ArrayOfint"), "#6e");
 
-			Assert.That (listElement.Particle, Is.InstanceOfType (typeof(XmlSchemaSequence)), "#7");
+			Assert.IsInstanceOfType (typeof(XmlSchemaSequence), listElement.Particle, "#7");
 			var listSeq = (XmlSchemaSequence)listElement.Particle;
 			Assert.That (listSeq.Items.Count, Is.EqualTo (1), "#7b");
-			Assert.That (listSeq.Items[0], Is.InstanceOfType (typeof(XmlSchemaElement)), "#7c");
+			Assert.IsInstanceOfType (typeof(XmlSchemaElement), listSeq.Items[0], "#7c");
 			Assert.That (listSeq.Annotation, Is.Null, "#7d");
 
 			var listSeqElement = (XmlSchemaElement)listSeq.Items[0];
@@ -103,16 +102,16 @@ namespace MonoTests.System.Runtime.Serialization
 			Assert.That (dict, Is.Not.Null, "#8");
 			Assert.That (dict.Annotation, Is.Null, "#8a");
 			Assert.That (dict.Name, Is.EqualTo ("dictionary"), "#8b");
-			Assert.That (dict.ElementSchemaType, Is.InstanceOfType (typeof (XmlSchemaComplexType)), "#8c");
+			Assert.IsInstanceOfType (typeof (XmlSchemaComplexType), dict.ElementSchemaType, "#8c");
 			
 			var dictElement = (XmlSchemaComplexType)dict.ElementSchemaType;
 			Assert.That (dictElement.QualifiedName.Namespace, Is.EqualTo (MSArraysNamespace), "#8d");
 			Assert.That (dictElement.QualifiedName.Name, Is.EqualTo ("ArrayOfKeyValueOfstringdouble"), "#8e");
 
-			Assert.That (dictElement.Particle, Is.InstanceOfType (typeof(XmlSchemaSequence)), "#9");
+			Assert.IsInstanceOfType (typeof(XmlSchemaSequence), dictElement.Particle, "#9");
 			var dictSeq = (XmlSchemaSequence)dictElement.Particle;
 			Assert.That (dictSeq.Items.Count, Is.EqualTo (1), "#9b");
-			Assert.That (dictSeq.Items[0], Is.InstanceOfType (typeof(XmlSchemaElement)), "#9c");
+			Assert.IsInstanceOfType (typeof(XmlSchemaElement), dictSeq.Items[0], "#9c");
 			Assert.That (dictSeq.Annotation, Is.Null, "#9d");
 			
 			var dictSeqElement = (XmlSchemaElement)dictSeq.Items[0];
@@ -124,7 +123,7 @@ namespace MonoTests.System.Runtime.Serialization
 			Assert.That (custom, Is.Not.Null, "#10");
 			Assert.That (custom.Annotation, Is.Null, "#10a");
 			Assert.That (custom.Name, Is.EqualTo ("customCollection"), "#10b");
-			Assert.That (custom.ElementSchemaType, Is.InstanceOfType (typeof (XmlSchemaComplexType)), "#10c");
+			Assert.IsInstanceOfType (typeof (XmlSchemaComplexType), custom.ElementSchemaType, "#10c");
 			
 			var customElement = (XmlSchemaComplexType)custom.ElementSchemaType;
 			var customEQN = customElement.QualifiedName;
@@ -132,10 +131,10 @@ namespace MonoTests.System.Runtime.Serialization
 			Assert.That (customEQN.Name.StartsWith ("XsdDataContractExporterTest2.MyCollectionOfstring", StringComparison.InvariantCultureIgnoreCase),
 			             Is.True, "#10e");
 
-			Assert.That (customElement.Particle, Is.InstanceOfType (typeof(XmlSchemaSequence)), "#11");
+			Assert.IsInstanceOfType (typeof(XmlSchemaSequence), customElement.Particle, "#11");
 			var customSeq = (XmlSchemaSequence)customElement.Particle;
 			Assert.That (customSeq.Items.Count, Is.EqualTo (1), "#11b");
-			Assert.That (customSeq.Items[0], Is.InstanceOfType (typeof(XmlSchemaElement)), "#11c");
+			Assert.IsInstanceOfType (typeof(XmlSchemaElement), customSeq.Items[0], "#11c");
 			Assert.That (customSeq.Annotation, Is.Null, "#11d");
 			
 			var customSeqElement = (XmlSchemaElement)customSeq.Items[0];

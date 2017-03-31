@@ -161,7 +161,7 @@ using nwind;
             var customer = new Customer();
             db.Customers.Attach(customer, originalCustomer);
 
-            Assert.Greater(db.Customers.GetModifiedMembers(customer).Count(), 0);
+            AssertHelper.Greater(db.Customers.GetModifiedMembers(customer).Count(), 0);
         }
 
 #if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !L2SQL))

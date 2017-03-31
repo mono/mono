@@ -1,5 +1,6 @@
-/*
- * networking-missing.c: Implements missing standard socket functions.
+/**
+ * \file
+ * Implements missing standard socket functions.
  *
  * Author:
  *	Rodrigo Kumpera (kumpera@gmail.com)
@@ -8,6 +9,7 @@
  */
 
 #include <mono/utils/networking.h>
+#include <mono/utils/mono-compiler.h>
 #include <glib.h>
 
 #ifdef HAVE_NETDB_H
@@ -53,4 +55,7 @@ inet_pton (int family, const char *address, void *inaddrp)
 	return -1;
 }
 
+#else /* !HAVE_INET_PTON */
+
+MONO_EMPTY_SOURCE_FILE (networking_missing);
 #endif /* !HAVE_INET_PTON */

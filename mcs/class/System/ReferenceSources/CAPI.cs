@@ -27,8 +27,6 @@ namespace System.Security.Cryptography {
 				return "md2RSA";
 			case "1.2.840.113549.1.1.3":
 				return "md4RSA";
-				return "md4RSA";
-				return "md4RSA";
 			case "1.3.14.3.2.27":
 				return "dsaSHA1";
 			case "2.16.840.1.101.2.1.1.19":

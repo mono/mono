@@ -1,5 +1,6 @@
-/*
- * blob.h: Definitions used to pull information out of the Blob
+/**
+ * \file
+ * Definitions used to pull information out of the Blob
  *
  */
 #ifndef _MONO_METADATA_BLOB_H_
@@ -105,7 +106,7 @@ typedef enum {
 	MONO_TABLE_LOCALVARIABLE,
 	MONO_TABLE_LOCALCONSTANT,
 	MONO_TABLE_IMPORTSCOPE,
-	MONO_TABLE_ASYNCMETHOD,
+	MONO_TABLE_STATEMACHINEMETHOD,
 	MONO_TABLE_CUSTOMDEBUGINFORMATION
 
 #define MONO_TABLE_LAST MONO_TABLE_CUSTOMDEBUGINFORMATION

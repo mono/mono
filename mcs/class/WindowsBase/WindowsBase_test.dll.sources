@@ -1,3 +1,4 @@
+../../test-helpers/NunitHelpers.cs
 System.Collections.ObjectModel/ObservableCollectionTest.cs
 System.Collections.ObjectModel/ReadOnlyObservableCollectionTest.cs
 System.Collections.Specialized/NotifyCollectionChangedEventArgsTest.cs

@@ -35,9 +35,10 @@ using System.Net;
 using NUnit.Framework;
 using System.Collections;
 using System.Security.Permissions;
+
 using System.Security;
 
-namespace MonoTests.System.Data
+namespace MonoTests.System.Data.Connected.SqlClient
 {
 	[TestFixture]
 	[Category ("sqlserver")]

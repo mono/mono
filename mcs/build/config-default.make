@@ -9,11 +9,12 @@
 # Use UTF-8 as the default encoding for compilers
 CODEPAGE = 65001
 
-RUNTIME_FLAGS = 
-TEST_HARNESS = $(topdir)/class/lib/$(PROFILE)/$(PARENT_PROFILE)nunit-console.exe
+RUNTIME_FLAGS =
+TEST_HARNESS = $(topdir)/class/lib/$(PROFILE)/$(PARENT_PROFILE)nunit-lite-console.exe
+PLATFORM_DEBUG_FLAGS = /debug:portable
 MCS_FLAGS = 
-MBAS_FLAGS = $(PLATFORM_DEBUG_FLAGS)
-LIBRARY_FLAGS = /noconfig
+MBAS_FLAGS = -debug
+LIBRARY_FLAGS =
 ifndef CFLAGS
 CFLAGS = -g -O2
 endif

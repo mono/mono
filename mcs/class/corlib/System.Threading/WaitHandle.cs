@@ -45,6 +45,8 @@ namespace System.Threading
 	{
 		protected static readonly IntPtr InvalidHandle = (IntPtr) (-1);
 
+		internal const int MaxWaitHandles = 64;
+
 		static int WaitMultiple(WaitHandle[] waitHandles, int millisecondsTimeout, bool exitContext, bool WaitAll)
 		{
 			int release_last = -1;

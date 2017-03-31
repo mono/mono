@@ -83,23 +83,23 @@ namespace System.Xaml
 				Save (xw, instance);
 		}
 
-		public static void Save (TextWriter textWriter, object instance)
+		public static void Save (TextWriter writer, object instance)
 		{
-			using (var xw = XmlWriter.Create (textWriter, new XmlWriterSettings () { OmitXmlDeclaration = true, Indent = true }))
+			using (var xw = XmlWriter.Create (writer, new XmlWriterSettings () { OmitXmlDeclaration = true, Indent = true }))
 				Save (xw, instance);
 		}
 
-		public static void Save (XmlWriter xmlWriter, object instance)
+		public static void Save (XmlWriter writer, object instance)
 		{
-			Save (new XamlXmlWriter (xmlWriter, new XamlSchemaContext ()), instance);
+			Save (new XamlXmlWriter (writer, new XamlSchemaContext ()), instance);
 		}
 
-		public static void Save (XamlWriter xamlWriter, object instance)
+		public static void Save (XamlWriter writer, object instance)
 		{
-			if (xamlWriter == null)
-				throw new ArgumentNullException ("xamlWriter");
-			var r = new XamlObjectReader (instance, xamlWriter.SchemaContext);
-			Transform (r, xamlWriter);
+			if (writer == null)
+				throw new ArgumentNullException ("writer");
+			var r = new XamlObjectReader (instance, writer.SchemaContext);
+			Transform (r, writer);
 		}
 
 		public static void Transform (XamlReader xamlReader, XamlWriter xamlWriter)

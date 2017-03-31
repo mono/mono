@@ -36,6 +36,8 @@ using System.Xml;
 using XmlNode = System.Object;
 #endif
 
+#pragma warning disable 618
+
 namespace System.Net.Configuration
 {
 	class ConnectionManagementData

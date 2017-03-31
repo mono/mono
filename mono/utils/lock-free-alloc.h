@@ -1,5 +1,6 @@
-/*
- * lock-free-alloc.h: Lock free allocator.
+/**
+ * \file
+ * Lock free allocator.
  *
  * (C) Copyright 2011 Novell, Inc
  *
@@ -27,8 +28,8 @@
 #define __MONO_LOCKFREEALLOC_H__
 
 #include <glib.h>
-
-#include "lock-free-queue.h"
+#include <mono/utils/lock-free-queue.h>
+#include <mono/utils/mono-mmap.h>
 
 typedef struct {
 	MonoLockFreeQueue partial;

@@ -16,7 +16,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-#if !MONOTOUCH && !MOBILE_STATIC
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
 #endif
 using System.Runtime.InteropServices;
@@ -261,7 +261,7 @@ namespace MonoTests.System
 	[TestFixture]
 	public class TypeTest
 	{
-#if !MONOTOUCH && !MOBILE_STATIC
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 		private ModuleBuilder module;
 #endif
 		const string ASSEMBLY_NAME = "MonoTests.System.TypeTest";
@@ -273,7 +273,7 @@ namespace MonoTests.System
 		{
 			AssemblyName assemblyName = new AssemblyName ();
 			assemblyName.Name = ASSEMBLY_NAME;
-#if !MONOTOUCH && !MOBILE_STATIC
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 			var assembly = AppDomain.CurrentDomain.DefineDynamicAssembly (
 					assemblyName, AssemblyBuilderAccess.RunAndSave, Path.GetTempPath ());
 			module = assembly.DefineDynamicModule ("module1");
@@ -3058,9 +3058,23 @@ namespace MonoTests.System
 		public void MakeArrayTypeTest ()
 		{
 			// This should not crash:
-			typeof (void).MakeArrayType ();
+			Type t = typeof (void).MakeArrayType ();
 		}
 		
+		[Test]
+		[ExpectedException (typeof (InvalidProgramException))]
+		public void MakeArrayTypedReferenceInstanceTest ()
+		{
+			object o = Array.CreateInstance (typeof (global::System.TypedReference), 1);
+		}
+
+		[Test]
+		public void MakeArrayTypeLargeRank ()
+		{
+			Assert.Throws<TypeLoadException> (delegate () {
+					typeof (int).MakeArrayType (33);
+				});
+		}
 
 		[ComVisible (true)]
 		public class ComFoo<T> {
@@ -3151,7 +3165,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
-#if MONOTOUCH || MOBILE_STATIC
+#if MONOTOUCH || FULL_AOT_RUNTIME
 		[ExpectedException (typeof (NotSupportedException))]
 #endif
 		public void MakeGenericType_UserDefinedType ()
@@ -3168,7 +3182,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
-#if MONOTOUCH || MOBILE_STATIC
+#if MONOTOUCH || FULL_AOT_RUNTIME
 		[ExpectedException (typeof (NotSupportedException))]
 #endif
 		public void MakeGenericType_NestedUserDefinedType ()
@@ -3185,7 +3199,7 @@ namespace MonoTests.System
 		}
 		
 		[Test]
-#if MONOTOUCH || MOBILE_STATIC
+#if MONOTOUCH || FULL_AOT_RUNTIME
 		[ExpectedException (typeof (NotSupportedException))]
 #endif
 		public void TestMakeGenericType_UserDefinedType_DotNet20SP1 () 
@@ -3198,7 +3212,7 @@ namespace MonoTests.System
 		}
 		
 		[Test]
-#if MONOTOUCH || MOBILE_STATIC
+#if MONOTOUCH || FULL_AOT_RUNTIME
 		[ExpectedException (typeof (NotSupportedException))]
 #endif
 		public void MakeGenericType_BadUserType ()
@@ -3334,7 +3348,7 @@ namespace MonoTests.System
 			Assert.AreEqual (t1, t2);
 		}
 
-#if !MONOTOUCH && !MOBILE_STATIC
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 		[Test]
 		public void SpaceAfterComma () {
 			string strType = "System.Collections.Generic.Dictionary`2[[System.Int32,mscorlib], [System.String,mscorlib]],mscorlib";
@@ -3342,7 +3356,7 @@ namespace MonoTests.System
 		}
 #endif
 
-#if !MONOTOUCH && !MOBILE_STATIC
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 		[Test]
 		public void Bug506757 ()
 		{
@@ -4191,6 +4205,17 @@ namespace MonoTests.System
 			MustTLE (string.Format ("{0}ZZZZ,{1}", typeof (MyRealEnum).FullName, aqn));
 		}
 
+		[Test]
+		public void GetTypeExceptionMsg () {
+			string typeName = "system.int32, foo";
+			try {
+				Type.GetType(typeName, true, false);
+			} catch (TypeLoadException ex) {
+				Assert.IsTrue (ex.Message.Contains ("system.int32"));
+				Assert.IsTrue (ex.Message.Contains ("foo"));
+			}
+		}
+
 	   	delegate void MyAction<in T>(T ag);
 
 		[Test] //bug #668506
@@ -4272,7 +4297,7 @@ namespace MonoTests.System
 
 		}
 
-#if !MONOTOUCH && !MOBILE_STATIC
+#if !MONOTOUCH && !FULL_AOT_RUNTIME && !MONOMAC
 		[Test]
 		[Category ("AndroidNotWorking")] // requires symbol writer
 		public void FullNameGetTypeParseEscapeRoundtrip () // bug #26384
@@ -4280,7 +4305,7 @@ namespace MonoTests.System
 			var nm = new AssemblyName ("asm");
 			var ab = AssemblyBuilder.DefineDynamicAssembly (nm,
 									AssemblyBuilderAccess.Run);
-			var mb = ab.DefineDynamicModule("m", true);
+			var mb = ab.DefineDynamicModule("m", false);
 			var tb = mb.DefineType ("NameSpace,+*&[]\\.Type,+*&[]\\",
 						TypeAttributes.Class | TypeAttributes.Public);
 
@@ -4317,6 +4342,24 @@ namespace MonoTests.System
 
 		}
 #endif
+
+
+		[Test]
+		public void GetTypeBadArity()
+		{
+			// Regression test for #46250
+			try {
+				Type.GetType ("System.Collections.Generic.Dictionary`2[System.String]", true);
+				Assert.Fail ("Did not throw an exception (#1)");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				Type.GetType ("System.Collections.Generic.Dictionary`2[System.String,System.Int32,System.Int64]", true);
+				Assert.Fail ("Did not throw an exception (#2)");
+			} catch (ArgumentException) {
+			}
+		}
 
 		public abstract class Stream : IDisposable
 		{

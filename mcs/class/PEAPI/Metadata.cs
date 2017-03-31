@@ -92,7 +92,12 @@ namespace PEAPI {
 	/// </summary>
 	public enum ImplAttr { IL, Native, Runtime = 0x03, Unmanaged = 0x04,
 		ForwardRef = 0x10, PreserveSig = 0x0080, InternalCall = 0x1000, 
-		Synchronised = 0x0020, Synchronized = 0x0020, NoInLining = 0x0008, Optil = 0x0002}
+		Synchronised = 0x0020, Synchronized = 0x0020, NoInLining = 0x0008, NoOptimization = 0x0040, Optil = 0x0002}
+
+	/// <summary>
+	/// Storage location for initial field data
+	/// </summary>
+	public enum DataSegment { Data, TLS, CIL }
 
 	/// <summary>
 	/// Modes for a parameter

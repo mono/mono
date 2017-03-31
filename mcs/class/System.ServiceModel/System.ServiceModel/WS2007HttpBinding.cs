@@ -1,4 +1,4 @@
-﻿//
+//
 // WS2007HttpBinding.cs
 //
 // Author:
@@ -40,19 +40,19 @@ namespace System.ServiceModel
 		{
 		}
 
-		public WS2007HttpBinding (SecurityMode mode)
-			: base (mode)
+		public WS2007HttpBinding (SecurityMode securityMode)
+			: base (securityMode)
 		{
 		}
 
-		public WS2007HttpBinding (SecurityMode mode, bool reliableSessionEnabled)
-			: base (mode, reliableSessionEnabled)
+		public WS2007HttpBinding (SecurityMode securityMode, bool reliableSessionEnabled)
+			: base (securityMode, reliableSessionEnabled)
 		{
 		}
 
 		[MonoTODO]
-		public WS2007HttpBinding (string configurationName)
-			: base (configurationName)
+		public WS2007HttpBinding (string configName)
+			: base (configName)
 		{
 		}
 	}

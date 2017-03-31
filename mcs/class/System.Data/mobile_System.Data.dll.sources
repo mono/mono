@@ -1,5 +1,5 @@
 Assembly/AssemblyInfo.cs
-../../build/common/Consts.cs.in
+../../build/common/Consts.cs
 ../../build/common/Locale.cs
 ../../build/common/SR.cs
 ../../build/common/MonoTODOAttribute.cs
@@ -14,8 +14,9 @@ ReferenceSources/ResDescriptionAttribute.cs
 ReferenceSources/ThisAssembly.cs
 ReferenceSources/Win32NativeMethods.cs
 ReferenceSources/SqlInternalConnectionTds.cs
-
 ReferenceSources/mobile_DbConnectionPoolCounters.cs
+
+corefx/SR.cs
 
 Microsoft.SqlServer.Server/SqlDataRecord.cs
 Microsoft.SqlServer.Server/SqlMetaData.cs
@@ -64,6 +65,6 @@ System.Data.Common/DbTypes.cs
 System.Data.Common/ExceptionHelper.cs
 System.Data.Common/DbConnectionStringBuilderHelper.cs
 
-#include mobile_referencesource.sources
+MobileStubs.cs
 
-
+#include corefx.common.sources

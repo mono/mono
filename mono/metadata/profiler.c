@@ -1,5 +1,6 @@
-/*
- * profiler.c: Profiler interface for Mono
+/**
+ * \file
+ * Profiler interface for Mono
  *
  * Author:
  *   Paolo Molaro (lupus@ximian.com)
@@ -16,13 +17,12 @@
 #include "mono/metadata/assembly.h"
 #include "mono/metadata/debug-helpers.h"
 #include "mono/metadata/mono-debug.h"
-#include "mono/metadata/debug-mono-symfile.h"
+#include "mono/metadata/debug-internals.h"
 #include "mono/metadata/metadata-internals.h"
 #include "mono/metadata/class-internals.h"
 #include "mono/metadata/domain-internals.h"
 #include "mono/metadata/gc-internals.h"
 #include "mono/metadata/mono-config-dirs.h"
-#include "mono/io-layer/io-layer.h"
 #include "mono/utils/mono-dl.h"
 #include <mono/utils/mono-logger-internals.h>
 #include <string.h>
@@ -127,14 +127,12 @@ MonoProfileFlags mono_profiler_events;
 
 /**
  * mono_profiler_install:
- * @prof: a MonoProfiler structure pointer, or a pointer to a derived structure.
- * @callback: the function to invoke at shutdown
- *
- * Use mono_profiler_install to activate profiling in the Mono runtime.
+ * \param prof a \c MonoProfiler structure pointer, or a pointer to a derived structure.
+ * \param callback the function to invoke at shutdown
+ * Use \c mono_profiler_install to activate profiling in the Mono runtime.
  * Typically developers of new profilers will create a new structure whose
- * first field is a MonoProfiler and put any extra information that they need
+ * first field is a \c MonoProfiler and put any extra information that they need
  * to access from the various profiling callbacks there.
- *
  */
 void
 mono_profiler_install (MonoProfiler *prof, MonoProfileFunc callback)
@@ -150,16 +148,15 @@ mono_profiler_install (MonoProfiler *prof, MonoProfileFunc callback)
 
 /**
  * mono_profiler_set_events:
- * @events: an ORed set of values made up of MONO_PROFILER_ flags
- *
- * The events descriped in the @events argument is a set of flags
+ * \param events an ORed set of values made up of \c MONO_PROFILER_ flags
+ * The events described in the \p events argument is a set of flags
  * that represent which profiling events must be triggered.  For
  * example if you have registered a set of methods for tracking
- * JIT compilation start and end with mono_profiler_install_jit_compile,
- * you will want to pass the MONO_PROFILE_JIT_COMPILATION flag to
+ * JIT compilation start and end with \c mono_profiler_install_jit_compile,
+ * you will want to pass the \c MONO_PROFILE_JIT_COMPILATION flag to
  * this routine.
  *
- * You can call mono_profile_set_events more than once and you can
+ * You can call \c mono_profile_set_events more than once and you can
  * do this at runtime to modify which methods are invoked.
  */
 void
@@ -187,12 +184,12 @@ mono_profiler_get_events (void)
 
 /**
  * mono_profiler_install_enter_leave:
- * @enter: the routine to be called on each method entry
- * @fleave: the routine to be called each time a method returns
+ * \param enter the routine to be called on each method entry
+ * \param fleave the routine to be called each time a method returns
  *
  * Use this routine to install routines that will be called everytime
  * a method enters and leaves.   The routines will receive as an argument
- * the MonoMethod representing the method that is entering or leaving.
+ * the \c MonoMethod representing the method that is entering or leaving.
  */
 void
 mono_profiler_install_enter_leave (MonoProfileMethodFunc enter, MonoProfileMethodFunc fleave)
@@ -205,8 +202,8 @@ mono_profiler_install_enter_leave (MonoProfileMethodFunc enter, MonoProfileMetho
 
 /**
  * mono_profiler_install_jit_compile:
- * @start: the routine to be called when the JIT process starts.
- * @end: the routine to be called when the JIT process ends.
+ * \param start the routine to be called when the JIT process starts.
+ * \param end the routine to be called when the JIT process ends.
  *
  * Use this routine to install routines that will be called when JIT 
  * compilation of a method starts and completes.
@@ -245,6 +242,9 @@ mono_profiler_install_method_invoke (MonoProfileMethodFunc start, MonoProfileMet
 	prof_list->method_end_invoke = end;
 }
 
+/**
+ * mono_profiler_install_thread:
+ */
 void 
 mono_profiler_install_thread (MonoProfileThreadFunc start, MonoProfileThreadFunc end)
 {
@@ -262,6 +262,9 @@ mono_profiler_install_thread_name (MonoProfileThreadNameFunc thread_name_cb)
 	prof_list->thread_name = thread_name_cb;
 }
 
+/**
+ * mono_profiler_install_transition:
+ */
 void 
 mono_profiler_install_transition (MonoProfileMethodResult callback)
 {
@@ -270,10 +273,12 @@ mono_profiler_install_transition (MonoProfileMethodResult callback)
 	prof_list->man_unman_transition = callback;
 }
 
+/**
+ * mono_profiler_install_allocation:
+ */
 void 
 mono_profiler_install_allocation (MonoProfileAllocFunc callback)
 {
-	mono_gc_enable_alloc_events ();
 	if (!prof_list)
 		return;
 	prof_list->allocation_cb = callback;
@@ -292,8 +297,8 @@ static int64_t sampling_frequency = 100; // Hz
 
 /**
  * mono_profiler_set_statistical_mode:
- * @mode the sampling mode used.
- * @sample_frequency_is_us the sampling frequency in microseconds.
+ * \param mode the sampling mode used.
+ * \param sample_frequency_is_us the sampling frequency in microseconds.
  *
  * Set the sampling parameters for the profiler. Sampling mode affects the effective sampling rate as in samples/s you'll witness.
  * The default sampling mode is process mode, which only reports samples when there's activity in the process.
@@ -309,6 +314,9 @@ mono_profiler_set_statistical_mode (MonoProfileSamplingMode mode, int64_t sampli
 	sampling_frequency = sampling_frequency_hz;
 }
 
+/**
+ * mono_profiler_install_statistical:
+ */
 void 
 mono_profiler_install_statistical (MonoProfileStatFunc callback)
 {
@@ -371,6 +379,9 @@ void mono_profiler_install_exception (MonoProfileExceptionFunc throw_callback, M
 	prof_list->exception_clause_cb = clause_callback;
 }
 
+/**
+ * mono_profiler_install_coverage_filter:
+ */
 void 
 mono_profiler_install_coverage_filter (MonoProfileCoverageFilterFunc callback)
 {
@@ -379,6 +390,9 @@ mono_profiler_install_coverage_filter (MonoProfileCoverageFilterFunc callback)
 	prof_list->coverage_filter_cb = callback;
 }
 
+/**
+ * mono_profiler_install_appdomain:
+ */
 void 
 mono_profiler_install_appdomain   (MonoProfileAppDomainFunc start_load, MonoProfileAppDomainResult end_load,
                                    MonoProfileAppDomainFunc start_unload, MonoProfileAppDomainFunc end_unload)
@@ -411,6 +425,9 @@ mono_profiler_install_context (MonoProfileContextFunc load, MonoProfileContextFu
 	prof_list->context_unload = unload;
 }
 
+/**
+ * mono_profiler_install_assembly:
+ */
 void 
 mono_profiler_install_assembly    (MonoProfileAssemblyFunc start_load, MonoProfileAssemblyResult end_load,
                                    MonoProfileAssemblyFunc start_unload, MonoProfileAssemblyFunc end_unload)
@@ -423,6 +440,9 @@ mono_profiler_install_assembly    (MonoProfileAssemblyFunc start_load, MonoProfi
 	prof_list->assembly_end_unload = end_unload;
 }
 
+/**
+ * mono_profiler_install_module:
+ */
 void 
 mono_profiler_install_module      (MonoProfileModuleFunc start_load, MonoProfileModuleResult end_load,
                                    MonoProfileModuleFunc start_unload, MonoProfileModuleFunc end_unload)
@@ -435,6 +455,9 @@ mono_profiler_install_module      (MonoProfileModuleFunc start_load, MonoProfile
 	prof_list->module_end_unload = end_unload;
 }
 
+/**
+ * mono_profiler_install_class:
+ */
 void
 mono_profiler_install_class       (MonoProfileClassFunc start_load, MonoProfileClassResult end_load,
                                    MonoProfileClassFunc start_unload, MonoProfileClassFunc end_unload)
@@ -447,6 +470,9 @@ mono_profiler_install_class       (MonoProfileClassFunc start_load, MonoProfileC
 	prof_list->class_end_unload = end_unload;
 }
 
+/**
+ * mono_profiler_method_enter:
+ */
 void
 mono_profiler_method_enter (MonoMethod *method)
 {
@@ -457,6 +483,9 @@ mono_profiler_method_enter (MonoMethod *method)
 	}
 }
 
+/**
+ * mono_profiler_method_leave:
+ */
 void
 mono_profiler_method_leave (MonoMethod *method)
 {
@@ -467,6 +496,9 @@ mono_profiler_method_leave (MonoMethod *method)
 	}
 }
 
+/**
+ * mono_profiler_method_jit:
+ */
 void 
 mono_profiler_method_jit (MonoMethod *method)
 {
@@ -477,6 +509,9 @@ mono_profiler_method_jit (MonoMethod *method)
 	}
 }
 
+/**
+ * mono_profiler_method_end_jit:
+ */
 void 
 mono_profiler_method_end_jit (MonoMethod *method, MonoJitInfo* jinfo, int result)
 {
@@ -521,6 +556,9 @@ mono_profiler_method_end_invoke (MonoMethod *method)
 	}
 }
 
+/**
+ * mono_profiler_code_transition:
+ */
 void 
 mono_profiler_code_transition (MonoMethod *method, int result)
 {
@@ -531,6 +569,9 @@ mono_profiler_code_transition (MonoMethod *method, int result)
 	}
 }
 
+/**
+ * mono_profiler_allocation:
+ */
 void 
 mono_profiler_allocation (MonoObject *obj)
 {
@@ -550,6 +591,9 @@ mono_profiler_monitor_event      (MonoObject *obj, MonoProfilerMonitorEvent even
 	}
 }
 
+/**
+ * mono_profiler_stat_hit:
+ */
 void
 mono_profiler_stat_hit (guchar *ip, void *context)
 {
@@ -600,6 +644,9 @@ mono_profiler_exception_clause_handler (MonoMethod *method, int clause_type, int
 	}
 }
 
+/**
+ * mono_profiler_thread_start:
+ */
 void
 mono_profiler_thread_start (gsize tid)
 {
@@ -610,6 +657,9 @@ mono_profiler_thread_start (gsize tid)
 	}
 }
 
+/**
+ * mono_profiler_thread_end:
+ */
 void 
 mono_profiler_thread_end (gsize tid)
 {
@@ -630,6 +680,9 @@ mono_profiler_thread_name (gsize tid, const char *name)
 	}
 }
 
+/**
+ * mono_profiler_assembly_event:
+ */
 void 
 mono_profiler_assembly_event  (MonoAssembly *assembly, int code)
 {
@@ -657,6 +710,9 @@ mono_profiler_assembly_event  (MonoAssembly *assembly, int code)
 	}
 }
 
+/**
+ * mono_profiler_assembly_loaded:
+ */
 void 
 mono_profiler_assembly_loaded (MonoAssembly *assembly, int result)
 {
@@ -676,6 +732,9 @@ void mono_profiler_iomap (char *report, const char *pathname, const char *new_pa
 	}
 }
 
+/**
+ * mono_profiler_module_event:
+ */
 void 
 mono_profiler_module_event  (MonoImage *module, int code)
 {
@@ -703,6 +762,9 @@ mono_profiler_module_event  (MonoImage *module, int code)
 	}
 }
 
+/**
+ * mono_profiler_module_loaded:
+ */
 void 
 mono_profiler_module_loaded (MonoImage *module, int result)
 {
@@ -713,6 +775,9 @@ mono_profiler_module_loaded (MonoImage *module, int result)
 	}
 }
 
+/**
+ * mono_profiler_class_event:
+ */
 void 
 mono_profiler_class_event  (MonoClass *klass, int code)
 {
@@ -740,6 +805,9 @@ mono_profiler_class_event  (MonoClass *klass, int code)
 	}
 }
 
+/**
+ * mono_profiler_class_loaded:
+ */
 void 
 mono_profiler_class_loaded (MonoClass *klass, int result)
 {
@@ -750,6 +818,9 @@ mono_profiler_class_loaded (MonoClass *klass, int result)
 	}
 }
 
+/**
+ * mono_profiler_appdomain_event:
+ */
 void 
 mono_profiler_appdomain_event  (MonoDomain *domain, int code)
 {
@@ -777,6 +848,9 @@ mono_profiler_appdomain_event  (MonoDomain *domain, int code)
 	}
 }
 
+/**
+ * mono_profiler_appdomain_loaded:
+ */
 void 
 mono_profiler_appdomain_loaded (MonoDomain *domain, int result)
 {
@@ -811,6 +885,9 @@ mono_profiler_context_unloaded (MonoAppContext *context)
 			prof->context_unload (prof->profiler, context);
 }
 
+/**
+ * mono_profiler_shutdown:
+ */
 void 
 mono_profiler_shutdown (void)
 {
@@ -823,6 +900,9 @@ mono_profiler_shutdown (void)
 	mono_profiler_set_events ((MonoProfileFlags)0);
 }
 
+/**
+ * mono_profiler_gc_heap_resize:
+ */
 void
 mono_profiler_gc_heap_resize (gint64 new_size)
 {
@@ -833,6 +913,9 @@ mono_profiler_gc_heap_resize (gint64 new_size)
 	}
 }
 
+/**
+ * mono_profiler_gc_event:
+ */
 void
 mono_profiler_gc_event (MonoGCEvent event, int generation)
 {
@@ -873,10 +956,12 @@ mono_profiler_gc_roots (int num, void **objects, int *root_types, uintptr_t *ext
 	}
 }
 
+/**
+ * mono_profiler_install_gc:
+ */
 void
 mono_profiler_install_gc (MonoProfileGCFunc callback, MonoProfileGCResizeFunc heap_resize_callback)
 {
-	mono_gc_enable_events ();
 	if (!prof_list)
 		return;
 	prof_list->gc_event = callback;
@@ -885,9 +970,9 @@ mono_profiler_install_gc (MonoProfileGCFunc callback, MonoProfileGCResizeFunc he
 
 /**
  * mono_profiler_install_gc_moves:
- * @callback: callback function
+ * \param callback callback function
  *
- * Install the @callback function that the GC will call when moving objects.
+ * Install the \p callback function that the GC will call when moving objects.
  * The callback receives an array of pointers and the number of elements
  * in the array. Every even element in the array is the original object location
  * and the following odd element is the new location of the object in memory.
@@ -907,15 +992,15 @@ mono_profiler_install_gc_moves (MonoProfileGCMoveFunc callback)
 
 /**
  * mono_profiler_install_gc_roots:
- * @handle_callback: callback function
- * @roots_callback: callback function
+ * \param handle_callback callback function
+ * \param roots_callback callback function
  *
- * Install the @handle_callback function that the GC will call when GC
+ * Install the \p handle_callback function that the GC will call when GC
  * handles are created or destroyed.
- * The callback receives an operation, which is either #MONO_PROFILER_GC_HANDLE_CREATED
- * or #MONO_PROFILER_GC_HANDLE_DESTROYED, the handle type, the handle value and the
+ * The callback receives an operation, which is either \c MONO_PROFILER_GC_HANDLE_CREATED
+ * or \c MONO_PROFILER_GC_HANDLE_DESTROYED, the handle type, the handle value and the
  * object pointer, if present.
- * Install the @roots_callback function that the GC will call when tracing
+ * Install the \p roots_callback function that the GC will call when tracing
  * the roots for a collection.
  * The callback receives the number of elements and three arrays: an array
  * of objects, an array of root types and flags and an array of extra info.
@@ -970,7 +1055,7 @@ mono_profiler_install_gc_finalize (MonoProfileGCFinalizeFunc begin, MonoProfileG
 
 	prof_list->gc_finalize_begin = begin;
 	prof_list->gc_finalize_object_begin = begin_obj;
-	prof_list->gc_finalize_object_begin = end_obj;
+	prof_list->gc_finalize_object_end = end_obj;
 	prof_list->gc_finalize_end = end;
 }
 
@@ -1101,15 +1186,15 @@ mono_profiler_coverage_free (MonoMethod *method)
 
 /**
  * mono_profiler_coverage_get:
- * @prof: The profiler handle, installed with mono_profiler_install
- * @method: the method to gather information from.
- * @func: A routine that will be called back with the results
+ * \param prof The profiler handle, installed with mono_profiler_install
+ * \param method the method to gather information from.
+ * \param func A routine that will be called back with the results
  *
- * If the MONO_PROFILER_INS_COVERAGE flag was active during JIT compilation
- * it is posisble to obtain coverage information about a give method.
+ * If the \c MONO_PROFILER_INS_COVERAGE flag was active during JIT compilation
+ * it is possible to obtain coverage information about a give method.
  *
- * The function @func will be invoked repeatedly with instances of the
- * MonoProfileCoverageEntry structure.
+ * The function \p func will be invoked repeatedly with instances of the
+ * \c MonoProfileCoverageEntry structure.
  */
 void 
 mono_profiler_coverage_get (MonoProfiler *prof, MonoMethod *method, MonoProfileCoverageFunc func)
@@ -1150,7 +1235,7 @@ mono_profiler_coverage_get (MonoProfiler *prof, MonoMethod *method, MonoProfileC
 			if (debug_minfo) {
 				MonoDebugSourceLocation *location;
 
-				location = mono_debug_symfile_lookup_location (debug_minfo, offset);
+				location = mono_debug_method_lookup_location (debug_minfo, offset);
 				if (location) {
 					entry.line = location->row;
 					entry.col = location->column;
@@ -1257,7 +1342,7 @@ load_profiler_from_mono_installation (const char *libname, const char *desc)
 
 /**
  * mono_profiler_load:
- * @desc: arguments to configure the profiler
+ * \param desc arguments to configure the profiler
  *
  * Invoke this method to initialize the profiler.   This will drive the
  * loading of the internal ("default") or any external profilers.

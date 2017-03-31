@@ -128,7 +128,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			Assert.IsNotNull (ex);
 			Assert.IsNotNull (ex.InnerException);
-			Assert.IsInstanceOfType (typeof(OperationCanceledException),
+			Assert.IsInstanceOfType (typeof(TaskCanceledException),
 				ex.InnerException);
 			Assert.IsTrue (task.IsCompleted);
 			Assert.AreEqual (TaskStatus.Canceled, task.Status);

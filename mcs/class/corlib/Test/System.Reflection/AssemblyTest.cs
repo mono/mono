@@ -37,7 +37,7 @@ using System.Configuration.Assemblies;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-#if !MONOTOUCH && !MOBILE_STATIC
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
 #endif
 using System.Threading;
@@ -213,9 +213,8 @@ namespace MonoTests.System.Reflection
 #endif
 		}
 
-#if !MONOTOUCH && !MOBILE_STATIC // Reflection.Emit is not supported.
+#if !MONOTOUCH && !FULL_AOT_RUNTIME // Reflection.Emit is not supported.
 		[Test]
-		[Category("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter
 		public void GetModules_MissingFile ()
 		{
 			AssemblyName newName = new AssemblyName ();
@@ -223,7 +222,7 @@ namespace MonoTests.System.Reflection
 
 			AssemblyBuilder ab = Thread.GetDomain().DefineDynamicAssembly (newName, AssemblyBuilderAccess.RunAndSave, TempFolder);
 
-			ModuleBuilder mb = ab.DefineDynamicModule ("myDynamicModule1", "myDynamicModule.dll", true);
+			ModuleBuilder mb = ab.DefineDynamicModule ("myDynamicModule1", "myDynamicModule.dll", false);
 
 			ab.Save ("test_assembly.dll");
 
@@ -265,7 +264,7 @@ namespace MonoTests.System.Reflection
 		public void Corlib_test ()
 		{
 			Assembly corlib_test = Assembly.GetExecutingAssembly ();
-#if MONODROID || MOBILE_STATIC || __WATCHOS__
+#if MONODROID || FULL_AOT_DESKTOP || __WATCHOS__
 			Assert.IsNull (corlib_test.EntryPoint, "EntryPoint");
 			Assert.IsNull (corlib_test.Evidence, "Evidence");
 #elif MOBILE
@@ -474,11 +473,7 @@ namespace MonoTests.System.Reflection
 // with the semantics of aot'ed assembly loading, as
 // aot may assert when loading. This assumes that it's
 // safe to greedly load everything.
-#if MOBILE_STATIC
-			string [] names = { "mobile_static_corlib_test" };
-#else
-			string [] names = { "corlib_test_net_1_1", "corlib_test_net_2_0", "corlib_test_net_4_0", "corlib_test_net_4_5", "net_4_x_corlib_test", "corlib_plattest", "mscorlibtests", "BclTests" };
-#endif
+			var names = new string[] { Assembly.GetCallingAssembly ().GetName ().Name };
 
 			foreach (string s in names)
 				if (Assembly.LoadWithPartialName (s) != null)
@@ -523,7 +518,7 @@ namespace MonoTests.System.Reflection
 			}
 		}
 
-#if !MONOTOUCH && !MOBILE_STATIC // Reflection.Emit is not supported.
+#if !MONOTOUCH && !FULL_AOT_RUNTIME // Reflection.Emit is not supported.
 		[Test]
 		public void Location_Empty() {
 			string assemblyFileName = Path.Combine (
@@ -730,12 +725,12 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
-		[Category ("AndroidNotWorking")] // Assemblies in Xamarin.Android cannot be directly as files
+		[Category ("AndroidNotWorking")] // Xamarin.Android assemblies are bundled so they don't exist in the file system.
 		public void ReflectionOnlyLoadFrom ()
 		{
 			string loc = typeof (AssemblyTest).Assembly.Location;
 			string filename = Path.GetFileName (loc);
-			Assembly assembly = Assembly.ReflectionOnlyLoadFrom (filename);
+			Assembly assembly = Assembly.ReflectionOnlyLoadFrom (loc);
 
 			Assert.IsNotNull (assembly);
 			Assert.IsTrue (assembly.ReflectionOnly);
@@ -1146,7 +1141,7 @@ namespace MonoTests.System.Reflection
 
 			Assert.AreEqual ("MonoModule", module.GetType ().Name, "#2");
 
-#if !MONOTOUCH && !MOBILE_STATIC
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 			Assert.AreEqual ("mscorlib.dll", module.Name, "#3");
 #endif
 			Assert.IsFalse (module.IsResource (), "#4");

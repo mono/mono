@@ -34,11 +34,9 @@ using System.Windows.Forms.Design;
 
 namespace System.Web.UI.Design.WebControls {
 
-	public class ListControlDesigner :
-	DataBoundControlDesigner
+	public class ListControlDesigner : DataBoundControlDesigner
 	{
 		string data_key_field;
-		string data_member;
 		string data_text_field;
 		string data_value_field;
 		
@@ -55,17 +53,9 @@ namespace System.Web.UI.Design.WebControls {
 			get { throw new NotImplementedException (); }
 		}
 
-		public string DataSource {
-			get; set;
-		}
 		public string DataKeyField {
 			get { return data_key_field; }
 			set { data_key_field = value; }
-		}
-
-		public string DataMember {
-			get { return data_member; }
-			set { data_member = value; }
 		}
 
 		public string DataTextField {

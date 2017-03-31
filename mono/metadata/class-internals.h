@@ -1,4 +1,5 @@
-/* 
+/**
+ * \file
  * Copyright 2012 Xamarin Inc
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
@@ -9,14 +10,14 @@
 #include <mono/metadata/object.h>
 #include <mono/metadata/mempool.h>
 #include <mono/metadata/metadata-internals.h>
-#include <mono/io-layer/io-layer.h>
+#include <mono/metadata/property-bag.h>
 #include "mono/utils/mono-compiler.h"
 #include "mono/utils/mono-error.h"
 #include "mono/sgen/gc-internal-agnostic.h"
 
 #define MONO_CLASS_IS_ARRAY(c) ((c)->rank)
 
-#define MONO_CLASS_HAS_STATIC_METADATA(klass) ((klass)->type_token && !(klass)->image->dynamic && !(klass)->generic_class)
+#define MONO_CLASS_HAS_STATIC_METADATA(klass) ((klass)->type_token && !(klass)->image->dynamic && !mono_class_is_ginst (klass))
 
 #define MONO_DEFAULT_SUPERTABLE_SIZE 6
 
@@ -164,6 +165,8 @@ typedef struct {
 } MonoMarshalField;
 
 typedef struct {
+	MonoPropertyBagItem head;
+
 	guint32 native_size, min_align;
 	guint32 num_fields;
 	MonoMethod *ptr_to_str;
@@ -194,7 +197,7 @@ struct _MonoEvent {
 };
 
 /* type of exception being "on hold" for later processing (see exception_type) */
-enum {
+typedef enum {
 	MONO_EXCEPTION_NONE = 0,
 	MONO_EXCEPTION_INVALID_PROGRAM = 3,
 	MONO_EXCEPTION_UNVERIFIABLE_IL = 4,
@@ -211,7 +214,7 @@ enum {
 	MONO_EXCEPTION_INLINE_FAILED = 15,
 	MONO_EXCEPTION_MONO_ERROR = 16,
 	/* add other exception type */
-};
+} MonoExceptionType;
 
 /* This struct collects the info needed for the runtime use of a class,
  * like the vtables for a domain, the GC descriptor, etc.
@@ -224,37 +227,30 @@ typedef struct {
 
 #define MONO_SIZEOF_CLASS_RUNTIME_INFO (sizeof (MonoClassRuntimeInfo) - MONO_ZERO_LEN_ARRAY * SIZEOF_VOID_P)
 
-#define MONO_CLASS_PROP_EXCEPTION_DATA 0
-
-/* 
- * This structure contains the rarely used fields of MonoClass
- * Since using just one field causes the whole structure to be allocated, it should
- * be used for fields which are only used in like 5% of all classes.
- */
 typedef struct {
-	struct {
-#if MONO_SMALL_CONFIG
-		guint16 first, count;
-#else
-		guint32 first, count;
-#endif
-	} property, event;
+	MonoPropertyBagItem head;
 
-	/* Initialized by a call to mono_class_setup_properties () */
 	MonoProperty *properties;
+	guint32 first, count;
+	MonoFieldDefaultValue *def_values;
+} MonoClassPropertyInfo;
+
+typedef struct {
+	MonoPropertyBagItem head;
 
 	/* Initialized by a call to mono_class_setup_events () */
 	MonoEvent *events;
+	guint32 first, count;
+} MonoClassEventInfo;
 
-	guint32    declsec_flags;	/* declarative security attributes flags */
-
-	/* Default values/RVA for fields and properties */
-	/* Accessed using mono_class_get_field_default_value () / mono_field_get_data () */
-	MonoFieldDefaultValue *field_def_values;
-	MonoFieldDefaultValue *prop_def_values;
-
-	GList      *nested_classes;
-} MonoClassExt;
+typedef enum {
+	MONO_CLASS_DEF = 1, /* non-generic type */
+	MONO_CLASS_GTD, /* generic type definition */
+	MONO_CLASS_GINST, /* generic instantiation */
+	MONO_CLASS_GPARAM, /* generic parameter */
+	MONO_CLASS_ARRAY, /* vector or array, bounded or not */
+	MONO_CLASS_POINTER, /* pointer of function pointer*/
+} MonoTypeKind;
 
 struct _MonoClass {
 	/* element class for arrays and enum basetype for enums */
@@ -272,8 +268,6 @@ struct _MonoClass {
 	int        instance_size; /* object instance size */
 
 	guint inited          : 1;
-	/* We use init_pending to detect cyclic calls to mono_class_init */
-	guint init_pending    : 1;
 
 	/* A class contains static and non static data. Static data can be
 	 * of the same type as the class itselfs, but it does not influence
@@ -283,13 +277,16 @@ struct _MonoClass {
 	 * to 1, because we know the instance size now. After that we 
 	 * initialise all static fields.
 	 */
-	/* size_inited is accessed without locks, so it needs a memory barrier */
+
+	/* ALL BITFIELDS SHOULD BE WRITTEN WHILE HOLDING THE LOADER LOCK */
 	guint size_inited     : 1;
 	guint valuetype       : 1; /* derives from System.ValueType */
 	guint enumtype        : 1; /* derives from System.Enum */
 	guint blittable       : 1; /* class is blittable */
 	guint unicode         : 1; /* class uses unicode char when marshalled */
 	guint wastypebuilder  : 1; /* class was created at runtime from a TypeBuilder */
+	guint is_array_special_interface : 1; /* gtd or ginst of once of the magic interfaces that arrays implement */
+
 	/* next byte */
 	guint8 min_align;
 
@@ -317,19 +314,12 @@ struct _MonoClass {
 	guint nested_classes_inited : 1; /* Whenever nested_class is initialized */
 
 	/* next byte*/
+	guint class_kind : 3; /* One of the values from MonoTypeKind */
 	guint interfaces_inited : 1; /* interfaces is initialized */
 	guint simd_type : 1; /* class is a simd intrinsic type */
-	guint is_generic : 1; /* class is a generic type definition */
-	guint is_inflated : 1; /* class is a generic instance */
 	guint has_finalize_inited    : 1; /* has_finalize is initialized */
-	guint fields_inited : 1; /* fields is initialized */
-	guint setup_fields_called : 1; /* to prevent infinite loops in setup_fields */
-
-	guint8     exception_type;	/* MONO_EXCEPTION_* */
-
-	/* Additional information about the exception */
-	/* Stored as property MONO_CLASS_PROP_EXCEPTION_DATA */
-	//void       *exception_data;
+	guint fields_inited : 1; /* setup_fields () has finished */
+	guint has_failure : 1; /* See mono_class_get_exception_data () for a MonoErrorBoxed with the details */
 
 	MonoClass  *parent;
 	MonoClass  *nested_in;
@@ -342,8 +332,8 @@ struct _MonoClass {
 	int        vtable_size; /* number of slots */
 
 	guint16     interface_count;
-	guint16     interface_id;        /* unique inderface id (for interfaces) */
-	guint16     max_interface_id;
+	guint32     interface_id;        /* unique inderface id (for interfaces) */
+	guint32     max_interface_id;
 	
 	guint16     interface_offsets_count;
 	MonoClass **interfaces_packed;
@@ -363,24 +353,6 @@ struct _MonoClass {
 	} sizes;
 
 	/*
-	 * From the TypeDef table
-	 */
-	guint32    flags;
-	struct {
-#if MONO_SMALL_CONFIG
-		guint16 first, count;
-#else
-		guint32 first, count;
-#endif
-	} field, method;
-
-	/* A GC handle pointing to the corresponding type builder/generic param builder */
-	guint32 ref_info_handle;
-
-	/* loaded on demand */
-	MonoMarshalType *marshal_info;
-
-	/*
 	 * Field information: Type and location from object base
 	 */
 	MonoClassField *fields;
@@ -391,22 +363,52 @@ struct _MonoClass {
 	MonoType this_arg;
 	MonoType byval_arg;
 
-	MonoGenericClass *generic_class;
-	MonoGenericContainer *generic_container;
-
 	MonoGCDescriptor gc_descr;
 
 	MonoClassRuntimeInfo *runtime_info;
 
-	/* next element in the class_cache hash list (in MonoImage) */
-	MonoClass *next_class_cache;
-
 	/* Generic vtable. Initialized by a call to mono_class_setup_vtable () */
 	MonoMethod **vtable;
 
-	/* Rarely used fields of classes */
-	MonoClassExt *ext;
+	/* Infrequently used items. See class-accessors.c: InfrequentDataKind for what goes into here. */
+	MonoPropertyBag infrequent_data;
 };
+
+typedef struct {
+	MonoClass class;
+	guint32	flags;
+	/*
+	 * From the TypeDef table
+	 */
+	guint32 first_method_idx;
+	guint32 first_field_idx;
+	guint32 method_count, field_count;
+	/* next element in the class_cache hash list (in MonoImage) */
+	MonoClass *next_class_cache;
+} MonoClassDef;
+
+typedef struct {
+	MonoClassDef class;
+	MonoGenericContainer *generic_container;
+} MonoClassGtd;
+
+typedef struct {
+	MonoClass class;
+	MonoGenericClass *generic_class;
+} MonoClassGenericInst;
+
+typedef struct {
+	MonoClass class;
+} MonoClassGenericParam;
+
+typedef struct {
+	MonoClass class;
+	guint32 method_count;
+} MonoClassArray;
+
+typedef struct {
+	MonoClass class;
+} MonoClassPointer;
 
 #ifdef COMPRESSED_INTERFACE_BITMAP
 int mono_compress_bitmap (uint8_t *dest, const uint8_t *bitmap, int size);
@@ -433,10 +435,8 @@ int mono_class_interface_match (const uint8_t *bitmap, int id);
 
 #ifdef DISABLE_COM
 #define mono_class_is_com_object(klass) (FALSE)
-#define mono_class_set_is_com_object(klass) do {} while (0)
 #else
 #define mono_class_is_com_object(klass) ((klass)->is_com_object)
-#define mono_class_set_is_com_object(klass) do { (klass)->is_com_object = 1; } while (0)
 #endif
 
 
@@ -456,10 +456,11 @@ struct MonoVTable {
 	MonoDomain *domain;  /* each object/vtable belongs to exactly one domain */
         gpointer    type; /* System.Type type for klass */
 	guint8     *interface_bitmap;
-	guint16     max_interface_id;
+	guint32     max_interface_id;
 	guint8      rank;
+	/* Keep this a guint8, the jit depends on it */
+	guint8      initialized; /* cctor has been run */
 	guint remote          : 1; /* class is remotely activated */
-	guint initialized     : 1; /* cctor has been run */
 	guint init_failed     : 1; /* cctor execution failed */
 	guint has_static_fields : 1; /* pointer to the data stored at the end of the vtable array */
 	guint gc_bits         : MONO_VTABLE_AVAILABLE_GC_BITS; /* Those bits are reserved for the usaged of the GC */
@@ -712,7 +713,7 @@ void
 mono_class_setup_supertypes (MonoClass *klass);
 
 void
-mono_class_setup_fields_locking (MonoClass *klass);
+mono_class_setup_fields (MonoClass *klass);
 
 /* WARNING
  * Only call this function if you can ensure both @klass and @parent
@@ -892,9 +893,6 @@ typedef struct {
 
 extern MonoStats mono_stats;
 
-typedef gpointer (*MonoRemotingTrampoline)       (MonoDomain *domain, MonoMethod *method, MonoRemotingTarget target, MonoError *error);
-typedef gpointer (*MonoDelegateTrampoline)       (MonoDomain *domain, MonoClass *klass);
-
 typedef gboolean (*MonoGetCachedClassInfo) (MonoClass *klass, MonoCachedClassInfo *res);
 
 typedef gboolean (*MonoGetClassFromName) (MonoImage *image, const char *name_space, const char *name, MonoClass **res);
@@ -916,7 +914,7 @@ void
 mono_classes_cleanup (void);
 
 void
-mono_class_layout_fields   (MonoClass *klass, int instance_size);
+mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_size, gboolean sre);
 
 void
 mono_class_setup_interface_offsets (MonoClass *klass);
@@ -959,7 +957,7 @@ mono_class_get_overrides_full (MonoImage *image, guint32 type_token, MonoMethod 
 			       MonoGenericContext *generic_context);
 
 MonoMethod*
-mono_class_get_cctor (MonoClass *klass);
+mono_class_get_cctor (MonoClass *klass) MONO_LLVM_INTERNAL;
 
 MonoMethod*
 mono_class_get_finalizer (MonoClass *klass);
@@ -982,9 +980,6 @@ mono_class_get_field_default_value (MonoClassField *field, MonoTypeEnum *def_typ
 const char*
 mono_class_get_property_default_value (MonoProperty *property, MonoTypeEnum *def_type);
 
-void
-mono_install_delegate_trampoline (MonoDelegateTrampoline func);
-
 gpointer
 mono_lookup_dynamic_token (MonoImage *image, guint32 token, MonoGenericContext *context, MonoError *error);
 
@@ -1003,16 +998,16 @@ mono_install_get_cached_class_info (MonoGetCachedClassInfo func);
 void
 mono_install_get_class_from_name (MonoGetClassFromName func);
 
-MonoGenericContext*
+MONO_PROFILER_API MonoGenericContext*
 mono_class_get_context (MonoClass *klass);
 
-MonoMethodSignature*
+MONO_PROFILER_API MonoMethodSignature*
 mono_method_signature_checked (MonoMethod *m, MonoError *err);
 
 MonoGenericContext*
 mono_method_get_context_general (MonoMethod *method, gboolean uninflated);
 
-MonoGenericContext*
+MONO_PROFILER_API MonoGenericContext*
 mono_method_get_context (MonoMethod *method);
 
 /* Used by monodis, thus cannot be MONO_INTERNAL */
@@ -1121,18 +1116,12 @@ typedef struct {
 #ifdef DISABLE_REMOTING
 #define mono_class_is_transparent_proxy(klass) (FALSE)
 #define mono_class_is_real_proxy(klass) (FALSE)
-#define mono_object_is_transparent_proxy(object) (FALSE)
 #else
-MonoRemoteClass*
-mono_remote_class (MonoDomain *domain, MonoString *class_name, MonoClass *proxy_class, MonoError *error);
-
-void
-mono_install_remoting_trampoline (MonoRemotingTrampoline func);
-
 #define mono_class_is_transparent_proxy(klass) ((klass) == mono_defaults.transparent_proxy_class)
 #define mono_class_is_real_proxy(klass) ((klass) == mono_defaults.real_proxy_class)
-#define mono_object_is_transparent_proxy(object) (((MonoObject*)object)->vtable->klass == mono_defaults.transparent_proxy_class)
 #endif
+
+#define mono_object_is_transparent_proxy(object) (mono_class_is_transparent_proxy (mono_object_class (object)))
 
 
 #define GENERATE_GET_CLASS_WITH_CACHE_DECL(shortname) \
@@ -1141,21 +1130,21 @@ MonoClass* mono_class_get_##shortname##_class (void);
 #define GENERATE_TRY_GET_CLASS_WITH_CACHE_DECL(shortname) \
 MonoClass* mono_class_try_get_##shortname##_class (void);
 
-#define GENERATE_GET_CLASS_WITH_CACHE(shortname,namespace,name) \
+#define GENERATE_GET_CLASS_WITH_CACHE(shortname,name_space,name) \
 MonoClass*	\
 mono_class_get_##shortname##_class (void)	\
 {	\
 	static MonoClass *tmp_class;	\
 	MonoClass *klass = tmp_class;	\
 	if (!klass) {	\
-		klass = mono_class_load_from_name (mono_defaults.corlib, #namespace, #name);	\
+		klass = mono_class_load_from_name (mono_defaults.corlib, name_space, name);	\
 		mono_memory_barrier ();	\
 		tmp_class = klass;	\
 	}	\
 	return klass;	\
 }
 
-#define GENERATE_TRY_GET_CLASS_WITH_CACHE(shortname,namespace,name) \
+#define GENERATE_TRY_GET_CLASS_WITH_CACHE(shortname,name_space,name) \
 MonoClass*	\
 mono_class_try_get_##shortname##_class (void)	\
 {	\
@@ -1164,7 +1153,7 @@ mono_class_try_get_##shortname##_class (void)	\
 	MonoClass *klass = (MonoClass *)tmp_class;	\
 	mono_memory_barrier ();	\
 	if (!inited) {	\
-		klass = mono_class_try_load_from_name (mono_defaults.corlib, #namespace, #name);	\
+		klass = mono_class_try_load_from_name (mono_defaults.corlib, name_space, name);	\
 		tmp_class = klass;	\
 		mono_memory_barrier ();	\
 		inited = TRUE;	\
@@ -1258,10 +1247,7 @@ const char*
 mono_lookup_jit_icall_symbol (const char *name);
 
 gboolean
-mono_class_set_failure (MonoClass *klass, guint32 ex_type, void *ex_data);
-
-gpointer
-mono_class_get_exception_data (MonoClass *klass);
+mono_class_set_type_load_failure (MonoClass *klass, const char * fmt, ...) MONO_ATTR_FORMAT_PRINTF(2,3);
 
 MonoException*
 mono_class_get_exception_for_failure (MonoClass *klass);
@@ -1296,7 +1282,7 @@ MONO_API void mono_class_describe_statics (MonoClass* klass);
 /* method debugging functions, for use inside gdb */
 MONO_API void mono_method_print_code (MonoMethod *method);
 
-char *mono_signature_full_name (MonoMethodSignature *sig);
+MONO_PROFILER_API char *mono_signature_full_name (MonoMethodSignature *sig);
 
 /*Enum validation related functions*/
 MONO_API gboolean
@@ -1304,6 +1290,9 @@ mono_type_is_valid_enum_basetype (MonoType * type);
 
 MONO_API gboolean
 mono_class_is_valid_enum (MonoClass *klass);
+
+MONO_PROFILER_API gboolean
+mono_type_is_primitive (MonoType *type);
 
 MonoType *
 mono_type_get_checked        (MonoImage *image, guint32 type_token, MonoGenericContext *context, MonoError *error);
@@ -1339,6 +1328,9 @@ int
 mono_method_get_vtable_index (MonoMethod *method);
 
 MonoMethod*
+mono_method_get_base_method (MonoMethod *method, gboolean definition, MonoError *error);
+
+MonoMethod*
 mono_method_search_in_array_class (MonoClass *klass, const char *name, MonoMethodSignature *sig);
 
 void
@@ -1347,11 +1339,11 @@ mono_class_setup_interface_id (MonoClass *klass);
 MonoGenericContainer*
 mono_class_get_generic_container (MonoClass *klass);
 
-MonoGenericClass*
-mono_class_get_generic_class (MonoClass *klass);
+gpointer
+mono_class_alloc (MonoClass *klass, int size);
 
-void
-mono_class_alloc_ext (MonoClass *klass);
+gpointer
+mono_class_alloc0 (MonoClass *klass, int size);
 
 void
 mono_class_setup_interfaces (MonoClass *klass, MonoError *error);
@@ -1431,20 +1423,103 @@ MonoClass*
 mono_class_try_load_from_name (MonoImage *image, const char* name_space, const char *name);
 
 void
-mono_error_set_for_class_failure (MonoError *orerror, MonoClass *klass);
+mono_error_set_for_class_failure (MonoError *orerror, const MonoClass *klass);
 
-static inline guint8
-mono_class_get_failure (MonoClass *klass)
-{
-	g_assert (klass != NULL);
-	return klass->exception_type;
-}
+gboolean
+mono_class_has_failure (const MonoClass *klass);
 
-static inline gboolean
-mono_class_has_failure (MonoClass *klass)
-{
-	g_assert (klass != NULL);
-	return mono_class_get_failure (klass) != MONO_EXCEPTION_NONE;
-}
+/* Kind specific accessors */
+MonoGenericClass*
+mono_class_get_generic_class (MonoClass *klass);
+
+MonoGenericClass*
+mono_class_try_get_generic_class (MonoClass *klass);
+
+void
+mono_class_set_flags (MonoClass *klass, guint32 flags);
+
+MonoGenericContainer*
+mono_class_try_get_generic_container (MonoClass *klass);
+
+void
+mono_class_set_generic_container (MonoClass *klass, MonoGenericContainer *container);
+
+guint32
+mono_class_get_first_method_idx (MonoClass *klass);
+
+void
+mono_class_set_first_method_idx (MonoClass *klass, guint32 idx);
+
+guint32
+mono_class_get_first_field_idx (MonoClass *klass);
+
+void
+mono_class_set_first_field_idx (MonoClass *klass, guint32 idx);
+
+guint32
+mono_class_get_method_count (MonoClass *klass);
+
+void
+mono_class_set_method_count (MonoClass *klass, guint32 count);
+
+guint32
+mono_class_get_field_count (MonoClass *klass);
+
+void
+mono_class_set_field_count (MonoClass *klass, guint32 count);
+
+MonoMarshalType*
+mono_class_get_marshal_info (MonoClass *class);
+
+void
+mono_class_set_marshal_info (MonoClass *class, MonoMarshalType *marshal_info);
+
+guint32
+mono_class_get_ref_info_handle (MonoClass *class);
+
+guint32
+mono_class_set_ref_info_handle (MonoClass *class, guint32 value);
+
+MonoErrorBoxed*
+mono_class_get_exception_data (MonoClass *klass);
+
+void
+mono_class_set_exception_data (MonoClass *klass, MonoErrorBoxed *value);
+
+GList*
+mono_class_get_nested_classes_property (MonoClass *klass);
+
+void
+mono_class_set_nested_classes_property (MonoClass *klass, GList *value);
+
+MonoClassPropertyInfo*
+mono_class_get_property_info (MonoClass *klass);
+
+void
+mono_class_set_property_info (MonoClass *klass, MonoClassPropertyInfo *info);
+
+MonoClassEventInfo*
+mono_class_get_event_info (MonoClass *klass);
+
+void
+mono_class_set_event_info (MonoClass *klass, MonoClassEventInfo *info);
+
+MonoFieldDefaultValue*
+mono_class_get_field_def_values (MonoClass *klass);
+
+void
+mono_class_set_field_def_values (MonoClass *klass, MonoFieldDefaultValue *values);
+
+guint32
+mono_class_get_declsec_flags (MonoClass *class);
+
+void
+mono_class_set_declsec_flags (MonoClass *class, guint32 value);
+
+void
+mono_class_set_is_com_object (MonoClass *klass);
+
+/*Now that everything has been defined, let's include the inline functions */
+#include <mono/metadata/class-inlines.h>
 
 #endif /* __MONO_METADATA_CLASS_INTERNALS_H__ */

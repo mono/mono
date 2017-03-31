@@ -265,7 +265,7 @@ using DbLinq.Data.Linq;
 
 
             var list = query.ToList();
-            Assert.Greater(list.Count, 0);
+            AssertHelper.Greater(list.Count, 0);
         }
 
 #if !DEBUG && SQLITE
@@ -299,7 +299,7 @@ using DbLinq.Data.Linq;
 
 
             var list = query.ToList();
-            Assert.Greater(list.Count, 0);
+            AssertHelper.Greater(list.Count, 0);
         }
 
 
@@ -334,7 +334,7 @@ using DbLinq.Data.Linq;
 
 
             var list = query.ToList();
-            Assert.Greater(list.Count, 0);
+            AssertHelper.Greater(list.Count, 0);
         }
 
 #if !DEBUG && (SQLITE || MSSQL)
@@ -354,7 +354,7 @@ using DbLinq.Data.Linq;
             
 
             var list = query.ToList();
-            Assert.Greater(list.Count, 0);
+            AssertHelper.Greater(list.Count, 0);
         }
 
 #if !DEBUG && SQLITE
@@ -388,7 +388,7 @@ using DbLinq.Data.Linq;
 
 
             var list = query.ToList();
-            Assert.Greater(list.Count, 0);
+            AssertHelper.Greater(list.Count, 0);
         }
 
 #if !DEBUG && SQLITE
@@ -410,7 +410,7 @@ using DbLinq.Data.Linq;
 
             var list = query.ToList();
 
-            Assert.Greater(list.Count, 0);
+            AssertHelper.Greater(list.Count, 0);
         }
 
 #if !DEBUG && POSTGRES
@@ -443,7 +443,7 @@ using DbLinq.Data.Linq;
 
                 var list = query.ToList();
 
-                Assert.Greater(list.Count, 0);
+                AssertHelper.Greater(list.Count, 0);
             }
             finally
             {
@@ -481,7 +481,7 @@ using DbLinq.Data.Linq;
 
                 var list = query.ToList();
 
-                Assert.Greater(list.Count, 0);
+                AssertHelper.Greater(list.Count, 0);
             }
             finally
             {

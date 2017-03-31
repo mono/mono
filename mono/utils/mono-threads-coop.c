@@ -1,5 +1,6 @@
- /*
- * mono-threads.c: Coop threading
+/**
+ * \file
+ * Coop threading
  *
  * Author:
  *	Rodrigo Kumpera (kumpera@gmail.com)
@@ -27,6 +28,7 @@
 #include <mono/utils/mono-threads-coop.h>
 #include <mono/utils/mono-threads-api.h>
 #include <mono/utils/checked-build.h>
+#include <mono/utils/mono-threads-debug.h>
 
 #ifdef TARGET_OSX
 #include <mono/utils/mach-support.h>
@@ -70,7 +72,7 @@ coop_tls_pop (gpointer received_cookie)
 
 	stack = mono_native_tls_get_value (coop_reset_count_stack_key);
 	if (!stack || 0 == stack->len)
-		mono_fatal_with_history ("Received cookie %p but found no stack at all, %x\n", received_cookie);
+		mono_fatal_with_history ("Received cookie %p but found no stack at all\n", received_cookie);
 
 	expected_cookie = g_array_index (stack, gpointer, stack->len - 1);
 	stack->len --;
@@ -134,7 +136,7 @@ mono_threads_state_poll_with_info (MonoThreadInfo *info)
 	/* commit the saved state and notify others if needed */
 	switch (mono_threads_transition_state_poll (info)) {
 	case SelfSuspendResumed:
-		return;
+		break;
 	case SelfSuspendWait:
 		mono_thread_info_wait_for_resume (info);
 		break;
@@ -142,6 +144,12 @@ mono_threads_state_poll_with_info (MonoThreadInfo *info)
 		mono_threads_notify_initiator_of_suspend (info);
 		mono_thread_info_wait_for_resume (info);
 		break;
+	}
+
+	if (info->async_target) {
+		info->async_target (info->user_data);
+		info->async_target = NULL;
+		info->user_data = NULL;
 	}
 }
 
@@ -281,6 +289,12 @@ mono_threads_exit_gc_safe_region_unbalanced (gpointer cookie, gpointer *stackdat
 	default:
 		g_error ("Unknown thread state");
 	}
+
+	if (info->async_target) {
+		info->async_target (info->user_data);
+		info->async_target = NULL;
+		info->user_data = NULL;
+	}
 }
 
 void
@@ -348,6 +362,12 @@ mono_threads_enter_gc_unsafe_region_unbalanced_with_info (MonoThreadInfo *info, 
 		g_error ("Unknown thread state");
 	}
 
+	if (info->async_target) {
+		info->async_target (info->user_data);
+		info->async_target = NULL;
+		info->user_data = NULL;
+	}
+
 	return info;
 }
 
@@ -410,7 +430,7 @@ mono_threads_is_coop_enabled (void)
 #else
 	static int is_coop_enabled = -1;
 	if (G_UNLIKELY (is_coop_enabled == -1))
-		is_coop_enabled = g_getenv ("MONO_ENABLE_COOP") != NULL ? 1 : 0;
+		is_coop_enabled = g_hasenv ("MONO_ENABLE_COOP") ? 1 : 0;
 	return is_coop_enabled == 1;
 #endif
 }

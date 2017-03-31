@@ -130,7 +130,7 @@ namespace System.IO {
         [System.Security.SecurityCritical]  // auto-generated
         private FileInfo(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
 #if !FEATURE_CORECLR
             FileIOPermission.QuickDemand(FileIOPermissionAccess.Read, FullPath, false, false);
 #endif
@@ -187,7 +187,7 @@ namespace System.IO {
                 String directoryName = Path.GetDirectoryName(FullPath);
                 if (directoryName != null)
                 {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
 #if FEATURE_CORECLR
                     FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Read, DisplayPath, FullPath);
                     state.EnsureState();
@@ -338,7 +338,7 @@ namespace System.IO {
         [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
         public override void Delete()
         {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
 #if FEATURE_CORECLR
             FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Write, DisplayPath, FullPath);
             state.EnsureState();

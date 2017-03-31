@@ -32,7 +32,6 @@
 //
 
 using System;
-using System.Runtime.Remoting;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
@@ -795,7 +794,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			Status status = GDIPlus.GdipDisposeImage (nativeObject);
 			// dispose the stream (set under Win32 only if SD owns the stream) and ...
 			if (stream != null) {
-				stream.Close ();
+				stream.Dispose ();
 				stream = null;
 			}
 			// ... set nativeObject to null before (possibly) throwing an exception

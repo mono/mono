@@ -42,16 +42,16 @@ namespace System.IdentityModel.Tokens
 	{
 		byte [] key;
 
-		public InMemorySymmetricSecurityKey (byte [] key)
-			: this (key, true)
+		public InMemorySymmetricSecurityKey (byte [] symmetricKey)
+			: this (symmetricKey, true)
 		{
 		}
 
-		public InMemorySymmetricSecurityKey (byte [] key, bool clone)
+		public InMemorySymmetricSecurityKey (byte [] symmetricKey, bool cloneBuffer)
 		{
-			if (key == null)
-				throw new ArgumentNullException ("key");
-			this.key = clone ? (byte []) key.Clone() : key;
+			if (symmetricKey == null)
+				throw new ArgumentNullException ("symmetricKey");
+			this.key = cloneBuffer ? (byte []) symmetricKey.Clone() : symmetricKey;
 		}
 
 		// SymmetricSecurityKey implementation

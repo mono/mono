@@ -1,5 +1,6 @@
-/*
- * checked-build.c: Expensive asserts used when mono is built with --with-checked-build=yes
+/**
+ * \file
+ * Expensive asserts used when mono is built with --with-checked-build=yes
  *
  * Author:
  *	Rodrigo Kumpera (kumpera@gmail.com)
@@ -58,6 +59,7 @@ mono_check_mode_enabled (MonoCheckMode query)
 #endif
 			}
 			g_strfreev (env_split);
+			g_free (env_string);
 		}
 
 		check_mode = env_check_mode;
@@ -71,10 +73,12 @@ mono_check_transition_limit (void)
 	static int transition_limit = -1;
 	if (transition_limit < 0) {
 		const gchar *env_string = g_getenv ("MONO_CHECK_THREAD_TRANSITION_HISTORY");
-		if (env_string)
+		if (env_string) {
 			transition_limit = atoi (env_string);
-		else
+			g_free (env_string);
+		} else {
 			transition_limit = 3;
+		}
 	}
 	return transition_limit;
 }
@@ -245,7 +249,7 @@ mono_fatal_with_history (const char *msg, ...)
 #ifdef ENABLE_CHECKED_BUILD_GC
 
 void
-assert_gc_safe_mode (void)
+assert_gc_safe_mode (const char *file, int lineno)
 {
 	if (!mono_check_mode_enabled (MONO_CHECK_MODE_GC))
 		return;
@@ -254,19 +258,19 @@ assert_gc_safe_mode (void)
 	int state;
 
 	if (!cur)
-		mono_fatal_with_history ("Expected GC Safe mode but thread is not attached");
+		mono_fatal_with_history ("%s:%d: Expected GC Safe mode but thread is not attached", file, lineno);
 
 	switch (state = mono_thread_info_current_state (cur)) {
 	case STATE_BLOCKING:
 	case STATE_BLOCKING_AND_SUSPENDED:
 		break;
 	default:
-		mono_fatal_with_history ("Expected GC Safe mode but was in %s state", mono_thread_state_name (state));
+		mono_fatal_with_history ("%s:%d: Expected GC Safe mode but was in %s state", file, lineno, mono_thread_state_name (state));
 	}
 }
 
 void
-assert_gc_unsafe_mode (void)
+assert_gc_unsafe_mode (const char *file, int lineno)
 {
 	if (!mono_check_mode_enabled (MONO_CHECK_MODE_GC))
 		return;
@@ -275,7 +279,7 @@ assert_gc_unsafe_mode (void)
 	int state;
 
 	if (!cur)
-		mono_fatal_with_history ("Expected GC Unsafe mode but thread is not attached");
+		mono_fatal_with_history ("%s:%d: Expected GC Unsafe mode but thread is not attached", file, lineno);
 
 	switch (state = mono_thread_info_current_state (cur)) {
 	case STATE_RUNNING:
@@ -283,12 +287,12 @@ assert_gc_unsafe_mode (void)
 	case STATE_SELF_SUSPEND_REQUESTED:
 		break;
 	default:
-		mono_fatal_with_history ("Expected GC Unsafe mode but was in %s state", mono_thread_state_name (state));
+		mono_fatal_with_history ("%s:%d: Expected GC Unsafe mode but was in %s state", file, lineno, mono_thread_state_name (state));
 	}
 }
 
 void
-assert_gc_neutral_mode (void)
+assert_gc_neutral_mode (const char *file, int lineno)
 {
 	if (!mono_check_mode_enabled (MONO_CHECK_MODE_GC))
 		return;
@@ -297,7 +301,7 @@ assert_gc_neutral_mode (void)
 	int state;
 
 	if (!cur)
-		mono_fatal_with_history ("Expected GC Neutral mode but thread is not attached");
+		mono_fatal_with_history ("%s:%d: Expected GC Neutral mode but thread is not attached", file, lineno);
 
 	switch (state = mono_thread_info_current_state (cur)) {
 	case STATE_RUNNING:
@@ -307,7 +311,7 @@ assert_gc_neutral_mode (void)
 	case STATE_BLOCKING_AND_SUSPENDED:
 		break;
 	default:
-		mono_fatal_with_history ("Expected GC Neutral mode but was in %s state", mono_thread_state_name (state));
+		mono_fatal_with_history ("%s:%d: Expected GC Neutral mode but was in %s state", file, lineno, mono_thread_state_name (state));
 	}
 }
 

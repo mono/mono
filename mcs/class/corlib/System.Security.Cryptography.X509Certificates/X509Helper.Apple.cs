@@ -1,3 +1,4 @@
+#if MONO_FEATURE_APPLETLS || MONO_FEATURE_APPLE_X509
 using System;
 using System.Runtime.InteropServices;
 using MX = Mono.Security.X509;
@@ -7,12 +8,12 @@ namespace System.Security.Cryptography.X509Certificates
 {
 	static partial class X509Helper
 	{
-		public static X509CertificateImpl InitFromHandle (IntPtr handle)
+		public static X509CertificateImpl InitFromHandleApple (IntPtr handle)
 		{
 			return new X509CertificateImplApple (handle, false);
 		}
 
-		static X509CertificateImpl Import (byte[] rawData)
+		static X509CertificateImpl ImportApple (byte[] rawData)
 		{
 			var handle = CFHelpers.CreateCertificateFromData (rawData);
 			if (handle != IntPtr.Zero)
@@ -35,3 +36,4 @@ namespace System.Security.Cryptography.X509Certificates
 		}
 	}
 }
+#endif

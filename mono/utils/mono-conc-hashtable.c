@@ -1,5 +1,6 @@
-/*
- * mono-conc-hashtable.h: A mostly concurrent hashtable
+/**
+ * \file
+ * A mostly concurrent hashtable
  *
  * Author:
  *	Rodrigo Kumpera (kumpera@gmail.com)
@@ -114,7 +115,7 @@ mono_conc_hashtable_new (GHashFunc hash_func, GEqualFunc key_equal_func)
 {
 	MonoConcurrentHashTable *res = g_new0 (MonoConcurrentHashTable, 1);
 	res->hash_func = hash_func ? hash_func : g_direct_hash;
-	res->equal_func = key_equal_func ? key_equal_func : g_direct_equal;
+	res->equal_func = key_equal_func;
 	// res->equal_func = g_direct_equal;
 	res->table = conc_table_new (INITIAL_SIZE);
 	res->element_count = 0;
@@ -214,10 +215,8 @@ retry:
 
 /**
  * mono_conc_hashtable_remove:
- *
  * Remove a value from the hashtable. Requires external locking
- *
- * @Returns the old value if key is already present or null
+ * \returns the old value if \p key is already present or NULL
  */
 gpointer
 mono_conc_hashtable_remove (MonoConcurrentHashTable *hash_table, gpointer key)
@@ -283,9 +282,8 @@ mono_conc_hashtable_remove (MonoConcurrentHashTable *hash_table, gpointer key)
 }
 /**
  * mono_conc_hashtable_insert:
- * 
  * Insert a value into the hashtable. Requires external locking.
- * @Returns the old value if key is already present or null
+ * \returns the old value if \p key is already present or NULL
  */
 gpointer
 mono_conc_hashtable_insert (MonoConcurrentHashTable *hash_table, gpointer key, gpointer value)
@@ -345,8 +343,7 @@ mono_conc_hashtable_insert (MonoConcurrentHashTable *hash_table, gpointer key, g
 
 /**
  * mono_conc_hashtable_foreach:
- *
- * Calls @func for each value in the hashtable. Requires external locking.
+ * Calls \p func for each value in the hashtable. Requires external locking.
  */
 void
 mono_conc_hashtable_foreach (MonoConcurrentHashTable *hash_table, GHFunc func, gpointer userdata)

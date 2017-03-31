@@ -23,12 +23,22 @@
     <ClCompile Include="..\mono\metadata\assembly.c" />
     <ClCompile Include="..\mono\metadata\attach.c" />
     <ClCompile Include="..\mono\metadata\boehm-gc.c" />
+    <ClCompile Include="..\mono\metadata\class-accessors.c" />
     <ClCompile Include="..\mono\metadata\class.c" />
     <ClCompile Include="..\mono\metadata\cominterop.c" />
     <ClCompile Include="..\mono\metadata\console-win32.c" />
+    <ClCompile Include="..\mono\metadata\property-bag.c" />
+    <ClCompile Include="..\mono\metadata\w32socket-win32.c" />
+    <ClCompile Include="..\mono\metadata\w32file-win32.c" />
+    <ClCompile Include="..\mono\metadata\w32error-win32.c" />
+    <ClCompile Include="..\mono\metadata\icall-windows.c" />
+    <ClCompile Include="..\mono\metadata\marshal-windows.c" />
+    <ClCompile Include="..\mono\metadata\mono-security-windows.c" />
     <ClCompile Include="..\mono\metadata\w32mutex-win32.c" />
     <ClCompile Include="..\mono\metadata\w32semaphore-win32.c" />
     <ClCompile Include="..\mono\metadata\w32event-win32.c" />
+    <ClCompile Include="..\mono\metadata\w32process.c" />
+    <ClCompile Include="..\mono\metadata\w32process-win32.c" />
     <ClCompile Include="..\mono\metadata\coree.c" />
     <ClCompile Include="..\mono\metadata\custom-attrs.c" />
     <ClCompile Include="..\mono\metadata\debug-helpers.c" />
@@ -40,7 +50,7 @@
     <ClCompile Include="..\mono\metadata\domain.c" />
     <ClCompile Include="..\mono\metadata\environment.c" />
     <ClCompile Include="..\mono\metadata\exception.c" />
-    <ClCompile Include="..\mono\metadata\file-io.c" />
+    <ClCompile Include="..\mono\metadata\w32file.c" />
     <ClCompile Include="..\mono\metadata\file-mmap-windows.c" />
     <ClCompile Include="..\mono\metadata\filewatcher.c" />
     <ClCompile Include="..\mono\metadata\gc-stats.c" />
@@ -72,7 +82,6 @@
     <ClCompile Include="..\mono\metadata\number-ms.c" />
     <ClCompile Include="..\mono\metadata\object.c" />
     <ClCompile Include="..\mono\metadata\opcodes.c" />
-    <ClCompile Include="..\mono\metadata\process.c" />
     <ClCompile Include="..\mono\metadata\profiler.c" />
     <ClCompile Include="..\mono\metadata\rand.c" />
     <ClCompile Include="..\mono\metadata\reflection.c" />
@@ -83,29 +92,16 @@
     <ClCompile Include="..\mono\metadata\mono-security.c" />
     <ClCompile Include="..\mono\metadata\seq-points-data.c" />
     <ClCompile Include="..\mono\metadata\sgen-mono.c" />
-    <ClCompile Include="..\mono\metadata\sgen-os-coop.c" />
-    <ClCompile Include="..\mono\metadata\threadpool-ms-io.c" />
-    <ClCompile Include="..\mono\metadata\threadpool-ms.c" />
+    <ClCompile Include="..\mono\metadata\threadpool-io.c" />
+    <ClCompile Include="..\mono\metadata\threadpool.c" />
+    <ClCompile Include="..\mono\metadata\threadpool-worker-default.c" />
     <ClCompile Include="..\mono\metadata\sgen-bridge.c" />
     <ClCompile Include="..\mono\metadata\sgen-new-bridge.c" />
     <ClCompile Include="..\mono\metadata\sgen-old-bridge.c" />
-    <ClCompile Include="..\mono\metadata\sgen-os-mach.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\mono\metadata\sgen-os-posix.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\mono\metadata\sgen-os-win32.c" />
     <ClCompile Include="..\mono\metadata\sgen-tarjan-bridge.c" />
     <ClCompile Include="..\mono\metadata\sgen-toggleref.c" />
     <ClCompile Include="..\mono\metadata\sgen-stw.c" />
-    <ClCompile Include="..\mono\metadata\socket-io.c" />
+    <ClCompile Include="..\mono\metadata\w32socket.c" />
     <ClCompile Include="..\mono\metadata\sre.c" />
     <ClCompile Include="..\mono\metadata\sre-encode.c" />
     <ClCompile Include="..\mono\metadata\sre-save.c" />
@@ -116,13 +112,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\mono\metadata\appdomain.h" />
+    <ClInclude Include="..\mono\metadata\appdomain-icalls.h" />
     <ClInclude Include="..\mono\metadata\assembly.h" />
     <ClInclude Include="..\mono\metadata\attach.h" />
     <ClInclude Include="..\mono\metadata\cil-coff.h" />
     <ClInclude Include="..\mono\metadata\class-internals.h" />
     <ClInclude Include="..\mono\metadata\class.h" />
+    <ClInclude Include="..\mono\metadata\cominterop-win32-internals.h" />
     <ClInclude Include="..\mono\metadata\cominterop.h" />
     <ClInclude Include="..\mono\metadata\console-io.h" />
+    <ClInclude Include="..\mono\metadata\console-win32-internals.h" />
+    <ClInclude Include="..\mono\metadata\coree-internals.h" />
     <ClInclude Include="..\mono\metadata\coree.h" />
     <ClInclude Include="..\mono\metadata\culture-info-tables.h" />
     <ClInclude Include="..\mono\metadata\culture-info.h" />
@@ -135,17 +135,32 @@
     <ClInclude Include="..\mono\metadata\dynamic-stream-internals.h" />
     <ClInclude Include="..\mono\metadata\environment.h" />
     <ClInclude Include="..\mono\metadata\exception.h" />
-    <ClInclude Include="..\mono\metadata\file-io.h" />
+    <ClInclude Include="..\mono\metadata\w32file-internals.h" />
+    <ClInclude Include="..\mono\metadata\w32file-win32-internals.h" />
+    <ClInclude Include="..\mono\metadata\w32file.h" />
+    <ClInclude Include="..\mono\metadata\w32error.h" />
+    <ClInclude Include="..\mono\utils\w32api.h" />
     <ClInclude Include="..\mono\metadata\filewatcher.h" />
     <ClInclude Include="..\mono\metadata\gc-internals.h" />
     <ClInclude Include="..\mono\metadata\handle.h" />
+    <ClInclude Include="..\mono\metadata\icall-windows-internals.h" />
+    <ClInclude Include="..\mono\metadata\icall-internals.h" />
+    <ClInclude Include="..\mono\metadata\marshal-internals.h" />
+    <ClInclude Include="..\mono\metadata\marshal-windows-internals.h" />
+    <ClInclude Include="..\mono\metadata\mono-security-windows-internals.h" />
     <ClInclude Include="..\mono\metadata\number-ms.h" />
+    <ClInclude Include="..\mono\metadata\property-bag.h" />
+    <ClInclude Include="..\mono\metadata\w32process.h" />
+    <ClInclude Include="..\mono\metadata\w32process-internals.h" />
+    <ClInclude Include="..\mono\metadata\w32process-win32-internals.h" />
     <ClInclude Include="..\mono\metadata\remoting.h" />
     <ClInclude Include="..\mono\metadata\seq-points-data.h" />
     <ClInclude Include="..\mono\metadata\sgen-bridge-internals.h" />
     <ClInclude Include="..\mono\metadata\sgen-client-mono.h" />
-    <ClInclude Include="..\mono\metadata\threadpool-ms-io.h" />
-    <ClInclude Include="..\mono\metadata\threadpool-ms.h" />
+    <ClInclude Include="..\mono\metadata\w32socket-internals.h" />
+    <ClInclude Include="..\mono\metadata\threadpool-io.h" />
+    <ClInclude Include="..\mono\metadata\threadpool.h" />
+    <ClInclude Include="..\mono\metadata\threadpool-worker.h" />
     <ClInclude Include="..\mono\sgen\gc-internal-agnostic.h" />
     <ClInclude Include="..\mono\metadata\icall-def.h" />
     <ClInclude Include="..\mono\metadata\image.h" />
@@ -175,7 +190,6 @@
     <ClInclude Include="..\mono\metadata\object-internals.h" />
     <ClInclude Include="..\mono\metadata\object.h" />
     <ClInclude Include="..\mono\metadata\opcodes.h" />
-    <ClInclude Include="..\mono\metadata\process.h" />
     <ClInclude Include="..\mono\metadata\profiler-private.h" />
     <ClInclude Include="..\mono\metadata\profiler.h" />
     <ClInclude Include="..\mono\metadata\rand.h" />
@@ -188,7 +202,7 @@
     <ClInclude Include="..\mono\metadata\security.h" />
     <ClInclude Include="..\mono\metadata\sgen-bridge.h" />
     <ClInclude Include="..\mono\metadata\sgen-toggleref.h" />
-    <ClInclude Include="..\mono\metadata\socket-io.h" />
+    <ClInclude Include="..\mono\metadata\w32socket.h" />
     <ClInclude Include="..\mono\metadata\sre-internals.h" />
     <ClInclude Include="..\mono\metadata\string-icalls.h" />
     <ClInclude Include="..\mono\metadata\sysmath.h" />
@@ -202,6 +216,9 @@
     <ProjectReference Include="eglib.vcxproj">
       <Project>{158073ed-99ae-4196-9edc-ddb2344f8466}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\mono\metadata\Makefile.am" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C36612BD-22D3-4B95-85E2-7FDC4FC5D739}</ProjectGuid>

@@ -1,5 +1,6 @@
-/*
- * ssa.c: Static single assign form support for the JIT compiler.
+/**
+ * \file
+ * Static single assign form support for the JIT compiler.
  *
  * Author:
  *    Dietmar Maurer (dietmar@ximian.com)
@@ -13,6 +14,7 @@
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/mempool.h>
 #include <mono/metadata/mempool-internals.h>
+#include <mono/utils/mono-compiler.h>
 
 #ifndef DISABLE_JIT
 
@@ -158,9 +160,8 @@ typedef struct {
 
 /**
  * mono_ssa_rename_vars:
- *
- *  Implement renaming of SSA variables. Also compute def-use information in parallel.
- * @stack_history points to an area of memory which can be used for storing changes 
+ * Implement renaming of SSA variables. Also compute def-use information in parallel.
+ * \p stack_history points to an area of memory which can be used for storing changes 
  * made to the stack, so they can be reverted later.
  */
 static void
@@ -237,8 +238,13 @@ mono_ssa_rename_vars (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gboole
 				if (var->opcode == OP_ARG)
 					originals_used [idx] = TRUE;
 
-				/* FIXME: */
-				g_assert (stack_history_len < stack_history_size);
+				if (stack_history_len + 128 > stack_history_size) {
+					stack_history_size += 1024;
+					RenameInfo *new_history = mono_mempool_alloc (cfg->mempool, sizeof (RenameInfo) * stack_history_size);
+					memcpy (new_history, stack_history, stack_history_len * sizeof (RenameInfo));
+					stack_history = new_history;
+				}
+
 				stack_history [stack_history_len].var = stack [idx];
 				stack_history [stack_history_len].idx = idx;
 				stack_history_len ++;
@@ -1515,4 +1521,8 @@ mono_ssa_loop_invariant_code_motion (MonoCompile *cfg)
 	}
 }
 
-#endif /* DISABLE_JIT */
+#else /* !DISABLE_JIT */
+
+MONO_EMPTY_SOURCE_FILE (ssa);
+
+#endif /* !DISABLE_JIT */

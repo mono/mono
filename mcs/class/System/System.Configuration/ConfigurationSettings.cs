@@ -43,6 +43,8 @@ using System.Xml;
 using System.Xml.XPath;
 #endif
 
+#pragma warning disable 618
+
 namespace System.Configuration
 {
 	public sealed class ConfigurationSettings

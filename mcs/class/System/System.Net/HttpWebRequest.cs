@@ -145,14 +145,6 @@ namespace System.Net
 #endif
 		}
 
-		[Obsolete ("This API supports the .NET Framework infrastructure and is not intended to be used directly from your code.", true)]
-#if !BOOTSTRAP_BASIC
-		[System.ComponentModel.EditorBrowsable (System.ComponentModel.EditorBrowsableState.Never)]
-#endif
-		public HttpWebRequest ()
-		{
-		}
-
 #if MOBILE
 		public
 #else
@@ -1039,9 +1031,9 @@ namespace System.Net
 			return result.Response;
 		}
 		
-		public Stream EndGetRequestStream (IAsyncResult asyncResult, out TransportContext transportContext)
+		public Stream EndGetRequestStream (IAsyncResult asyncResult, out TransportContext context)
 		{
-			transportContext = null;
+			context = null;
 			return EndGetRequestStream (asyncResult);
 		}
 
@@ -1328,8 +1320,11 @@ namespace System.Net
 					msg = "Error: " + status;
 					wex = new WebException (msg, status);
 				} else {
-					msg = String.Format ("Error: {0} ({1})", status, exc.Message);
-					wex = new WebException (msg, status, WebExceptionInternalStatus.RequestFatal, exc);
+					wex = exc as WebException;
+					if (wex == null) {
+						msg = String.Format ("Error: {0} ({1})", status, exc.Message);
+						wex = new WebException (msg, status, WebExceptionInternalStatus.RequestFatal, exc);
+					}
 				}
 				r.SetCompleted (false, wex);
 				r.DoCallback ();

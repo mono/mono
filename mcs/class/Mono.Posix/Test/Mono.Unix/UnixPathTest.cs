@@ -16,7 +16,7 @@ using Mono.Unix;
 namespace MonoTests.Mono.Unix
 {
 
-	[TestFixture, Category ("NotDotNet")]
+	[TestFixture, Category ("NotDotNet"), Category ("NotOnWindows")]
 	public class UnixPathTest {
 
 		private static readonly char DSC = UnixPath.DirectorySeparatorChar;

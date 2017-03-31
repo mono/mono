@@ -1,3 +1,4 @@
+#if MONO_FEATURE_APPLETLS || MONO_FEATURE_APPLE_X509
 using System;
 using System.Text;
 using System.Runtime.InteropServices;
@@ -197,3 +198,4 @@ namespace System.Security.Cryptography.X509Certificates
 		}
 	}
 }
+#endif

@@ -1,6 +1,27 @@
 thisdir = class
 
-basic_SUBDIRS := corlib Mono.Security System System.XML System.Core 
+pcl_facade_dirs := Facades
+
+-include ../build/config.make
+
+ifdef MCS_MODE
+MCS_MODE_dirs := Mono.Cecil.Mdb
+endif
+
+# The minimal set of csc dependencies
+basic_SUBDIRS := \
+	corlib \
+	Mono.Security \
+	System \
+	System.XML \
+	System.Core \
+	System.ComponentModel.Composition.4.5 \
+	System.Numerics \
+	System.Xml.Linq \
+	System.Runtime.InteropServices.RuntimeInformation \
+	Mono.Cecil \
+	$(MCS_MODE_dirs) \
+	../tools/cil-stringreplacer
 
 # resgen is corlib specific so we need to wait until corlib is build
 # and build it just a step before first dll needs it
@@ -13,10 +34,24 @@ build_SUBDIRS :=  \
 	System.XML \
 	Mono.Posix \
 	System.Core \
+	System.ComponentModel.Composition.4.5 \
+	System.Numerics \
+	System.Xml.Linq \
+	System.Runtime.InteropServices.RuntimeInformation \
+	System.IO.Compression \
 	Mono.Cecil \
-	Mono.Cecil.Mdb
+	$(MCS_MODE_dirs) \
+	Mono.CompilerServices.SymbolWriter	\
+	PEAPI \
+	../tools/cil-stringreplacer
 
-pcl_facade_dirs := Facades
+ifdef MCS_MODE
+basic_PARALLEL_SUBDIRS := ../mcs
+build_PARALLEL_SUBDIRS := ../mcs
+else
+basic_PARALLEL_SUBDIRS := $(pcl_facade_dirs)
+build_PARALLEL_SUBDIRS := $(pcl_facade_dirs)
+endif
 
 mobile_common_dirs := \
 	corlib	\
@@ -57,29 +92,32 @@ mobile_common_dirs := \
 	System.Reflection.Context	\
 	System.Net.Http.WinHttpHandler
 
-mobile_static_dirs := \
+testing_aot_full_dirs := \
 	$(mobile_common_dirs)	\
-	Mono.Dynamic.Interpreter	\
-	PEAPI	\
-	Mono.CompilerServices.SymbolWriter	\
 	Mono.Simd			\
 	$(pcl_facade_dirs)
 
-mobile_dynamic_dirs := \
+testing_aot_hybrid_dirs := \
+	$(mobile_common_dirs)	\
+	Mono.Simd			\
+	$(pcl_facade_dirs)
+
+xammac_dirs := \
 	$(mobile_common_dirs)	\
 	Mono.CompilerServices.SymbolWriter	\
 	$(pcl_facade_dirs)
 
-xammac_dirs := \
-	$(mobile_dynamic_dirs)
-
 monodroid_dirs := \
-	$(mobile_dynamic_dirs)
+	$(mobile_common_dirs)	\
+	Mono.CompilerServices.SymbolWriter	\
+	Mono.Btls.Interface	\
+	Mono.Posix	\
+	$(pcl_facade_dirs)
 
 monotouch_dirs := \
-	$(mobile_static_dirs)
+	$(testing_aot_full_dirs)
 
-monotouch_watch_dirs := $(monotouch_dirs)
+monotouch_watch_dirs := $(filter-out Mono.Security Mono.Data.Tds,$(monotouch_dirs))
 monotouch_tv_dirs   := $(monotouch_dirs)
 
 monotouch_runtime_dirs := \
@@ -90,8 +128,10 @@ monotouch_runtime_dirs := \
 	System.XML \
 	Mono.CSharp
 
-monotouch_watch_runtime_dirs := $(monotouch_runtime_dirs)
+monotouch_watch_runtime_dirs := $(filter-out Mono.Security Mono.Data.Tds,$(monotouch_runtime_dirs))
 monotouch_tv_runtime_dirs := $(monotouch_runtime_dirs)
+
+winaot_dirs := $(monotouch_dirs) System.Drawing
 
 xammac_4_5_dirs := \
 	corlib	\
@@ -232,6 +272,7 @@ net_4_x_dirs := \
 net_4_x_parallel_dirs := \
 	PEAPI				\
 	I18N				\
+	Mono.Btls.Interface		\
 	Mono.Http			\
 	Mono.Cairo                      \
 	Mono.Cecil			\
@@ -301,19 +342,21 @@ monotouch_tv_SUBDIRS    := $(monotouch_tv_dirs)
 monotouch_runtime_SUBDIRS := $(monotouch_runtime_dirs)
 monotouch_watch_runtime_SUBDIRS := $(monotouch_watch_runtime_dirs)
 monotouch_tv_runtime_SUBDIRS := $(monotouch_tv_runtime_dirs)
-mobile_static_SUBDIRS := $(mobile_static_dirs)
-mobile_SUBDIRS := $(mobile_dynamic_dirs)
+testing_aot_full_SUBDIRS := $(testing_aot_full_dirs)
+testing_aot_hybrid_SUBDIRS := $(testing_aot_hybrid_dirs)
 xammac_SUBDIRS := $(xammac_dirs)
 xammac_net_4_5_SUBDIRS := $(xammac_4_5_dirs)
 binary_reference_assemblies_SUBDIRS := reference-assemblies
 net_4_x_SUBDIRS := $(net_4_x_dirs) $(xbuild_4_0_dirs)
-net_4_x_PARALLEL_SUBDIRS := $(net_4_x_parallel_dirs) aot-compiler
+net_4_x_PARALLEL_SUBDIRS := $(net_4_x_parallel_dirs)
 xbuild_12_SUBDIRS := $(xbuild_4_0_dirs)
 xbuild_14_SUBDIRS := $(xbuild_4_0_dirs) Microsoft.NuGet.Build.Tasks
+winaot_SUBDIRS := $(winaot_dirs)
+orbis_SUBDIRS := $(monotouch_dirs)
 
 include ../build/rules.make
 
-SUBDIRS = $(mobile_static_dirs) $(mobile_dynamic_dirs) $(monotouch_dirs) $(monodroid_dirs) $(xammac_dirs) $(net_4_x_dirs) $(net_4_x_parallel_dirs) $(xammac_net_4_5_SUBDIRS)
+SUBDIRS = $(testing_aot_full_dirs) $(testing_aot_hybrid_dirs) $(monotouch_dirs) $(monodroid_dirs) $(xammac_dirs) $(net_4_x_dirs) $(net_4_x_parallel_dirs) $(xammac_net_4_5_SUBDIRS)
 
 DIST_ONLY_SUBDIRS = dlr aot-compiler reference-assemblies $(xbuild_4_0_dirs) Microsoft.NuGet.Build.Tasks
 
@@ -329,6 +372,7 @@ DISTFILES = \
 	silverlight.pub		\
 	reactive.pub		\
 	mono.snk		\
+	Open.snk		\
 	LICENSE 		\
 	README			\
 	doc/API-notes		\
@@ -338,6 +382,7 @@ DISTFILES = \
 	MicrosoftAjaxLibrary/License.htm	\
 	test-helpers/NetworkHelpers.cs	\
 	test-helpers/SocketResponder.cs	\
+	lib/$(monolite_dir)/mcs.exe   \
 	$(monolite_files)
 
 .PHONY: all-local $(STD_TARGETS:=-local)
@@ -346,21 +391,48 @@ all-local $(STD_TARGETS:=-local):
 
 all-local-aot:
 
-# Files needed to bootstrap C# compiler
-basic_files = basic.exe mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Core.dll System.Security.dll System.Configuration.dll
-monolite_files = $(basic_files:%=lib/monolite/%)
+monolite_dir := monolite
 
-lib/monolite:
+# Files needed to bootstrap C# compiler
+build_files = mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Core.dll System.Security.dll System.Configuration.dll \
+	System.Numerics.dll System.Xml.Linq.dll System.Runtime.InteropServices.RuntimeInformation.dll \
+	Facades/System.Collections.Concurrent.dll Facades/System.Linq.dll Facades/System.Runtime.dll Facades/System.Collections.dll	\
+	Facades/System.Reflection.Extensions.dll Facades/System.Text.Encoding.Extensions.dll Facades/System.Diagnostics.Debug.dll \
+	Facades/System.Reflection.Primitives.dll Facades/System.Text.Encoding.dll Facades/System.Diagnostics.Tools.dll Facades/System.Reflection.dll \
+	Facades/System.Threading.Tasks.Parallel.dll Facades/System.Dynamic.Runtime.dll Facades/System.Resources.ResourceManager.dll \
+	Facades/System.Threading.Tasks.dll Facades/System.Globalization.dll Facades/System.Runtime.Extensions.dll Facades/System.Threading.dll \
+	Facades/System.IO.dll Facades/System.Runtime.InteropServices.dll Facades/System.Xml.ReaderWriter.dll Facades/System.Linq.Expressions.dll \
+	Facades/System.Runtime.Numerics.dll Facades/System.Xml.XDocument.dll Facades/System.IO.FileSystem.Primitives.dll Facades/System.IO.FileSystem.dll \
+	Facades/System.Diagnostics.FileVersionInfo.dll Facades/System.Security.Cryptography.Primitives.dll Facades/System.Security.Cryptography.Algorithms.dll \
+	Facades/System.ValueTuple.dll Facades/System.Text.Encoding.CodePages.dll
+
+monolite_files = $(build_files:%=lib/$(monolite_dir)/%)
+
+lib/$(monolite_dir):
+lib/$(monolite_dir)/Facades:
 	$(MKINSTALLDIRS) $@
 
-$(monolite_files): | lib/monolite
-$(monolite_files): lib/monolite/%: lib/basic/%
+$(monolite_files): | lib/$(monolite_dir)
+$(monolite_files): | lib/$(monolite_dir)/Facades
+$(monolite_files): lib/$(monolite_dir)/%: lib/build/%
 	cp -p $< $@
 
-$(basic_files:%=lib/basic/%):
-	cd $(topdir) && $(MAKE) profile-do--basic--all NO_DIR_CHECK=1 SKIP_AOT=1
+lib/$(monolite_dir)/mcs.exe:
+	$(MAKE) -C ../mcs PROFILE=build
+	cp -p lib/build/mcs.exe lib/$(monolite_dir)
 
-dist-default: $(monolite_files)
+$(build_files:%=lib/build/%):
+	cd $(topdir) && $(MAKE) profile-do--build--all NO_DIR_CHECK=1 SKIP_AOT=1
+
+dist-monolite: $(monolite_files) lib/$(monolite_dir)/mcs.exe
+
+package-monolite-latest:
+	MONOLITE=monolite-$(MONO_CORLIB_VERSION)-latest; \
+	$(MAKE) dist-monolite monolite_dir=$$MONOLITE; \
+	tar zcvpf $$MONOLITE.tar.gz --directory=lib $$MONOLITE/
+
+dist-default: dist-monolite
+
 dist-local: dist-default
 
 csproj-local:

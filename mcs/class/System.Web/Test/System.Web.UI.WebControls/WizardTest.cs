@@ -1538,7 +1538,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Console.WriteLine ("----------------------------");
 			Console.WriteLine (renderedHtml);
 			
-			Assert.AreEqual (origHtml, renderedHtml, "#A1");
+			Assert.AreEqual (origHtml.Replace ("\r", ""), renderedHtml.Replace ("\r", ""), "#A1");
 		}
 
 		[Test]
@@ -1566,13 +1566,13 @@ namespace MonoTests.System.Web.UI.WebControls
 			string origHtml = "Header<table cellspacing=\"5\" cellpadding=\"5\">\r\n\t<tr>\r\n\t\t<td align=\"right\"><input type=\"submit\" name=\"MyWizard$StepNavigationTemplateContainerID$StepPreviousButton\" value=\"Previous\" id=\"MyWizard_StepNavigationTemplateContainerID_StepPreviousButton\" /></td><td align=\"right\"><input type=\"submit\" name=\"MyWizard$StepNavigationTemplateContainerID$StepNextButton\" value=\"Next\" id=\"MyWizard_StepNavigationTemplateContainerID_StepNextButton\" /></td>\n\t</tr>\n</table>Step";
 			string renderedHtml = HtmlDiff.GetControlFromPageHtml (result);
 
-			Assert.AreEqual (origHtml, renderedHtml, "#A1");
+			Assert.AreEqual (origHtml.Replace ("\r", ""), renderedHtml.Replace ("\r", ""), "#A1");
 
 			t.UserData = "RenderHeader_InSpan";
 			result = t.Run ();
 			origHtml = "Header<table cellspacing=\"5\" cellpadding=\"5\">\r\n\t<tr>\r\n\t\t<td align=\"right\"><input type=\"submit\" name=\"MyWizard$StepNavigationTemplateContainerID$StepPreviousButton\" value=\"Previous\" id=\"MyWizard_StepNavigationTemplateContainerID_StepPreviousButton\" /></td><td align=\"right\"><input type=\"submit\" name=\"MyWizard$StepNavigationTemplateContainerID$StepNextButton\" value=\"Next\" id=\"MyWizard_StepNavigationTemplateContainerID_StepNextButton\" /></td>\n\t</tr>\n</table>Step";
 			renderedHtml = HtmlDiff.GetControlFromPageHtml (result);
-			Assert.AreEqual (origHtml, renderedHtml, "#A2");
+			Assert.AreEqual (origHtml.Replace ("\r", ""), renderedHtml.Replace ("\r", ""), "#A2");
 		}
 
 		[Test]

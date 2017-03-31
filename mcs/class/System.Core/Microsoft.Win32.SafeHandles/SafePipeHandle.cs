@@ -46,12 +46,8 @@ namespace Microsoft.Win32.SafeHandles
 
 		protected override bool ReleaseHandle ()
 		{
-			try {
-				Marshal.FreeHGlobal (handle);
-				return true;
-			} catch (ArgumentException) {
-				return false;
-			}
+			MonoIOError error;
+			return MonoIO.Close (handle, out error);
 		}
 	}
 }

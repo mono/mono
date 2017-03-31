@@ -91,6 +91,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Ignore ("causes an infinite restart loop since we're not in a separate AppDomain with nunit-lite")]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void RestartNotSupportedExceptionTest ()
 		{

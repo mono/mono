@@ -3,7 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = Mono.Reactive.Testing.dll
-LIB_REFS = System System.Core System.Reactive.Interfaces System.Reactive.Core System.Reactive.Linq System.Reactive.PlatformServices System.Reactive.Providers System.Reactive.Runtime.Remoting System.Reactive.Experimental System.Reactive.Windows.Forms System.Reactive.Windows.Threading System.Reactive.Observable.Aliases System.Windows.Forms WindowsBase nunit.framework
+LIB_REFS = System System.Core System.Reactive.Interfaces System.Reactive.Core System.Reactive.Linq System.Reactive.PlatformServices System.Reactive.Providers System.Reactive.Runtime.Remoting System.Reactive.Experimental System.Reactive.Windows.Forms System.Reactive.Windows.Threading System.Reactive.Observable.Aliases System.Windows.Forms WindowsBase nunitlite
 LIB_MCS_FLAGS = \
 		@more_build_args \
 		-d:NUNIT -d:MONO -d:DESKTOPCLR

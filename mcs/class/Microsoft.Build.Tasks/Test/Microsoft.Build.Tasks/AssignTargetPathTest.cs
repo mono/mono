@@ -158,11 +158,11 @@ namespace MonoTests.Microsoft.Build.Tasks
 			Assert.AreEqual(files.Length, include.Count, id + "2");
 
 			for (int i = 0; i < files.Length; i++) {
-			        Assert.AreEqual (files [i], include [i].FinalItemSpec, id + "3, file #" + i);
+			        Assert.AreEqual (files [i], include [i].FinalItemSpec.Replace ("\\", "/"), id + "3, file #" + i);
 				Assert.IsTrue (include[i].HasMetadata ("TargetPath"), id + "4, file #" + i + ", TargetPath metadata missing");
 				Assert.AreEqual (assignedFiles [i], include[i].GetMetadata("TargetPath"), id + "5, file #" + i);
 				Assert.IsTrue (include [i].HasMetadata ("Child"), id + "6, file #" + i + ", Child metadata missing");
-				Assert.AreEqual ("C" + files [i], include [i].GetMetadata ("Child"), id + "7, file #" + i + ", Child metadata value incorrect");
+				Assert.AreEqual ("C" + files [i], include [i].GetMetadata ("Child").Replace ("\\", "/"), id + "7, file #" + i + ", Child metadata value incorrect");
 			}
 		}
 

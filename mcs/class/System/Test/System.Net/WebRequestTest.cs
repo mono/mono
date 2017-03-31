@@ -193,6 +193,9 @@ namespace MonoTests.System.Net {
 		}
 
 	[Test]
+#if FEATURE_NO_BSD_SOCKETS
+	[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 	public void All ()
 	{
 		WebRequest req = WebRequest.Create ("http://www.contoso.com");
@@ -264,6 +267,9 @@ namespace MonoTests.System.Net {
 	}
 
 	[Test]
+#if FEATURE_NO_BSD_SOCKETS
+	[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 	public void DefaultWebProxy ()
 	{
 		WebProxy proxy = new WebProxy ("proxy.intern.com", 83);
@@ -326,6 +332,10 @@ namespace MonoTests.System.Net {
 		try {
 			WebRequest.Create ("http://127.0.0.1:0/non-existant.txt").GetResponse ();
 			Assert.Fail ("Should have raised an exception");
+#if FEATURE_NO_BSD_SOCKETS
+		} catch (PlatformNotSupportedException) {
+			// Expected
+#endif
 		} catch (Exception e) {
 			Assert.IsTrue (e is WebException, "Got " + e.GetType ().Name + ": " + e.Message);
 			//#if NET_2_0 e.Message == "Unable to connect to the remote server"
@@ -359,6 +369,10 @@ namespace MonoTests.System.Net {
 				Assert.Ignore ("Misbehaving DNS server.");
 
 			Assert.Fail ("Should have raised an exception");
+#if FEATURE_NO_BSD_SOCKETS
+		} catch (PlatformNotSupportedException) {
+			// Expected
+#endif
 		} catch (Exception e) {
 			Assert.IsTrue (e is WebException);
 			//#if NET_2_0 e.Message == "The underlying connection was closed: The remote name could not be resolved."
@@ -414,7 +428,9 @@ namespace MonoTests.System.Net {
 	}
 
 	[Test] // Covers #41477
-	[Category ("RequiresBSDSockets")]
+#if FEATURE_NO_BSD_SOCKETS
+	[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 	public void TestReceiveCancelation ()
 	{
 		var uri = "http://localhost:" + NetworkHelpers.FindFreePort () + "/";

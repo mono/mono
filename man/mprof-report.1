@@ -92,7 +92,7 @@ provided by the Mono runtime and write them to a file named
 \f[I]output.mlpd\f[].
 When no option is specified, it is equivalent to using:
 .PP
-\f[B]--profile=log:calls,alloc,output=output.mlpd,maxframes=8,calldepth=100\f[]
+\f[B]--profile=log:calls,alloc,output=output.mlpd,maxframes=32,calldepth=100\f[]
 .PP
 The following options can be used to modify this default behaviour.
 Each option is separated from the next by a \f[B],\f[] character,
@@ -139,41 +139,16 @@ garbage collections
 to the control port
 .RE
 .IP \[bu] 2
-\f[I]sample[=TYPE[/FREQ]]\f[]: collect statistical samples of the
+\f[I]sample[=FREQ]\f[]: collect statistical samples of the
 program behaviour.
 The default is to collect a 100 times per second (100 Hz) the
 instruction pointer.
-This is equivalent to the value \[lq]cycles/100\[rq].
+This is equivalent to the value \[lq]100\[rq].
 A value of zero for \f[I]FREQ\f[] effectively disables sampling.
-On some systems, like with recent Linux kernels, it is possible to
-cause the sampling to happen for other events provided by the
-performance counters of the cpu.
-In this case, \f[I]TYPE\f[] can be one of:
-.RS 2
-.IP \[bu] 2
-\f[I]cycles\f[]: processor cycles
-.IP \[bu] 2
-\f[I]instr\f[]: executed instructions
-.IP \[bu] 2
-\f[I]cacherefs\f[]: cache references
-.IP \[bu] 2
-\f[I]cachemiss\f[]: cache misses
-.IP \[bu] 2
-\f[I]branches\f[]: executed branches
-.IP \[bu] 2
-\f[I]branchmiss\f[]: mispredicted branches
-.RE
-.IP \[bu] 2
-\f[I]time=TIMER\f[]: use the TIMER timestamp mode.
-TIMER can have the following values:
-.RS 2
-.IP \[bu] 2
-\f[I]fast\f[]: a usually faster but possibly more inaccurate timer
-.RE
 .IP \[bu] 2
 \f[I]maxframes=NUM\f[]: when a stack trace needs to be performed,
 collect \f[I]NUM\f[] frames at the most.
-The default is 8.
+The default is 32.
 .IP \[bu] 2
 \f[I]maxsamples=NUM\f[]: stop allocating reusable sample events
 once \f[I]NUM\f[] events have been allocated (a value of zero for
@@ -234,16 +209,15 @@ The following commands are available:
 \f[I]heapshot\f[]: perform a heapshot as soon as possible
 .RE
 .IP \[bu] 2
-\f[I]counters\f[]: sample counters values every 1 second. This allow
-a really lightweight way to have insight in some of the runtime key
-metrics. Counters displayed in non verbose mode are : Methods from AOT,
-Methods JITted using mono JIT, Methods JITted using LLVM, Total time
-spent JITting (sec), User Time, System Time, Total Time, Working Set,
-Private Bytes, Virtual Bytes, Page Faults and CPU Load Average (1min,
-5min and 15min).
+\f[I]nocounters\f[]: disables sampling of runtime and performance
+counters, which is normally done every 1 second.
 .IP \[bu] 2
 \f[I]coverage\f[]: collect code coverage data. This implies enabling
 the \f[I]calls\f[] option.
+.IP \[bu] 2
+\f[I]onlycoverage\f[]: can only be used with \f[I]coverage\f[]. This
+disables most other events so that the profiler mostly only collects
+coverage data.
 .RE
 .SS Analyzing the profile data
 .PP
@@ -274,10 +248,6 @@ with the \f[I]--maxframes=NUM\f[] option:
 The stack trace info will be available if method enter/leave events
 have been recorded or if stack trace collection wasn't explicitly
 disabled with the \f[I]maxframes=0\f[] profiler option.
-Note that the profiler will collect up to 8 frames by default at
-specific events when the \f[I]nocalls\f[] option is used, so in
-that case, if more stack frames are required in mprof-report, a
-bigger value for maxframes when profiling must be used, too.
 .PP
 The \f[I]--traces\f[] option also controls the reverse reference
 feature in the heapshot report: for each class it reports how many
@@ -487,15 +457,6 @@ option: especially if the managed heap is big, since every object
 needs to be inspected.
 The \f[I]MODE\f[] parameter of the \f[I]heapshot\f[] option can be
 used to reduce the frequency of the heap shots.
-.IP "\f[I]Reduce the timestamp overhead\f[]" 4
-.Sp
-On many operating systems or architectures what actually slows down
-profiling is the function provided by the system to get timestamp
-information.
-The \f[I]time=fast\f[] profiler option can be usually used to speed
-up this operation, but, depending on the system, time accounting
-may have some level of approximation (though statistically the data
-should be still fairly valuable).
 .SS Dealing with the size of the data files
 .PP
 When collecting a lot of information about a profiled program, huge

@@ -1,6 +1,7 @@
-/*
- * sgen-descriptor.h: GC descriptors describe object layout.
-
+/**
+ * \file
+ * GC descriptors describe object layout.
+ *
  * Copyright 2001-2003 Ximian, Inc
  * Copyright 2003-2010 Novell, Inc.
  * Copyright 2011 Xamarin Inc (http://www.xamarin.com)
@@ -114,6 +115,7 @@ enum {
 	ROOT_DESC_BITMAP,
 	ROOT_DESC_RUN_LEN, 
 	ROOT_DESC_COMPLEX,
+	ROOT_DESC_VECTOR,
 	ROOT_DESC_USER,
 	ROOT_DESC_TYPE_MASK = 0x7,
 	ROOT_DESC_TYPE_SHIFT = 3,

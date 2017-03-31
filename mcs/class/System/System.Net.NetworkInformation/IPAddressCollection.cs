@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Net.NetworkInformation {
 
-#if !MOBILE
+#if WIN_PLATFORM
 	class Win32IPAddressCollection : IPAddressCollection
 	{
 		public static readonly Win32IPAddressCollection Empty = new Win32IPAddressCollection (IntPtr.Zero);

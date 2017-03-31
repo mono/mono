@@ -68,7 +68,7 @@ using nwind;
         {
             Northwind db = CreateDB();
             int result = db.ExecuteCommand("SELECT count(*) FROM \"Products\"");
-            Assert.Greater(result, 0, "Expecting some rows in Products table, got:" + result);
+            AssertHelper.Greater(result, 0, "Expecting some rows in Products table, got:" + result);
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ using nwind;
             Northwind db = CreateDB();
             int result = db.ExecuteCommand("SELECT count(*) FROM [Products] WHERE [ProductID]>{0}", 3);
             //long iResult = base.ExecuteScalar(sql);
-            Assert.Greater(result, 0, "Expecting some rows in Products table, got:" + result);
+            AssertHelper.Greater(result, 0, "Expecting some rows in Products table, got:" + result);
         }
 
     }

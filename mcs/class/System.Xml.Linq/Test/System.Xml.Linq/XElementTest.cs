@@ -2099,6 +2099,27 @@ namespace MonoTests.System.Xml.Linq
 			Assert.AreEqual (xe.Content.ToString (), "<Data />", "#3");
 		}
 
+		[XmlType ("Root")]
+		public class DeserializeXElementArray_Data
+		{
+			[XmlAnyElement]
+			public XElement[] Content;
+		}
+
+		[Test]
+		public void DeserializeXElementArray ()
+		{
+			var xmlString = "<Root><Data /></Root>";
+
+			var serializer = new XmlSerializer (typeof (DeserializeXElementArray_Data));
+			var res = serializer.Deserialize (new StringReader (xmlString));
+
+			Assert.IsNotNull (res, "#1");
+			Assert.AreEqual (typeof (DeserializeXElementArray_Data), res.GetType (), "#2");
+			var xe = (DeserializeXElementArray_Data)res;
+			Assert.AreEqual (xe.Content [0].ToString (), "<Data />", "#3");
+		}
+
 		[Test] // Bug #20151
 		public void XElementFromArrayWithNullValuesAsObject ()
 		{

@@ -1,4 +1,4 @@
-thisdir = tools/SqlSharp
+thisdir = tools/sqlsharp
 SUBDIRS = 
 include ../../build/rules.make
 

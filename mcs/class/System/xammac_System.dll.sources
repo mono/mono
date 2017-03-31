@@ -1,4 +1,2 @@
 #include mobile_System.dll.sources
-Assembly/AssemblyInfoEx.cs
 Mono.Net.Security/MonoTlsProviderFactory.Apple.cs
-../Mono.Security/Mono.Security.Interface/MonoTlsProviderFactory.Apple.cs

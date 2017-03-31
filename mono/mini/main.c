@@ -1,5 +1,6 @@
-/*
- * main.c: The main entry point for the mono executable
+/**
+ * \file
+ * The main entry point for the mono executable
  *
  * The main entry point does a few things:
  * 
@@ -149,7 +150,7 @@ static void
 bundle_save_library_initialize ()
 {
 	bundle_save_library_initialized = 1;
-	char *path = g_build_filename (g_get_tmp_dir (), "mono-bundle-XXXXXX");
+	char *path = g_build_filename (g_get_tmp_dir (), "mono-bundle-XXXXXX", NULL);
 	bundled_dylibrary_directory = g_mkdtemp (path);
 	g_free (path);
 	if (bundled_dylibrary_directory == NULL)
@@ -161,19 +162,23 @@ static void
 save_library (int fd, uint64_t offset, uint64_t size, const char *destfname)
 {
 	MonoDl *lib;
-	char *file, *buffer, *err;
+	char *file, *buffer, *err, *internal_path;
 	if (!bundle_save_library_initialized)
 		bundle_save_library_initialize ();
 	
-	file = g_build_filename (bundled_dylibrary_directory, destfname);
+	file = g_build_filename (bundled_dylibrary_directory, destfname, NULL);
 	buffer = load_from_region (fd, offset, size);
 	g_file_set_contents (file, buffer, size, NULL);
+
 	lib = mono_dl_open (file, MONO_DL_LAZY, &err);
-	if (err != NULL){
-		fprintf (stderr, "Error loading shared library: %s\n", file);
+	if (lib == NULL){
+		fprintf (stderr, "Error loading shared library: %s %s\n", file, err);
 		exit (1);
 	}
-	mono_loader_register_module (destfname, lib);
+	// Register the name with "." as this is how it will be found when embedded
+	internal_path = g_build_filename (".", destfname, NULL);
+ 	mono_loader_register_module (internal_path, lib);
+	g_free (internal_path);
 	bundle_library_paths = g_slist_append (bundle_library_paths, file);
 	
 	g_free (buffer);
@@ -276,9 +281,10 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 
 	mono_register_bundled_assemblies ((const MonoBundledAssembly **) assemblies->data);
 	new_argv = g_new (char *, (*ref_argc)+1);
-	for (j = 0; j < *ref_argc; j++)
-		new_argv [j] = (*ref_argv)[j];
-	new_argv [j] = entry_point;
+	new_argv [0] = (*ref_argv)[0];
+	new_argv [1] = entry_point;
+	for (j = 1; j < *ref_argc; j++)
+		new_argv [j+1] = (*ref_argv)[j];
 	*ref_argv = new_argv;
 	(*ref_argc)++;
 	

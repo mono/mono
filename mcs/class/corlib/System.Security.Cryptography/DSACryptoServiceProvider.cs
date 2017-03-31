@@ -231,6 +231,28 @@ namespace System.Security.Cryptography {
 			return dsa.VerifySignature (rgbHash, rgbSignature);
 		}
 
+		protected override byte[] HashData (byte[] data, int offset, int count, HashAlgorithmName hashAlgorithm)
+		{
+			if (hashAlgorithm != HashAlgorithmName.SHA1)
+			{
+				throw new CryptographicException(Environment.GetResourceString("Cryptography_UnknownHashAlgorithm", hashAlgorithm.Name));
+			}
+
+			var hash = HashAlgorithm.Create (hashAlgorithm.Name);
+			return hash.ComputeHash (data, offset, count);
+		}
+
+		protected override byte[] HashData (System.IO.Stream data, HashAlgorithmName hashAlgorithm)
+		{
+			if (hashAlgorithm != HashAlgorithmName.SHA1)
+			{
+				throw new CryptographicException(Environment.GetResourceString("Cryptography_UnknownHashAlgorithm", hashAlgorithm.Name));
+			}
+
+			var hash = HashAlgorithm.Create (hashAlgorithm.Name);
+			return hash.ComputeHash (data);
+		}
+
 		protected override void Dispose (bool disposing) 
 		{
 			if (!m_disposed) {

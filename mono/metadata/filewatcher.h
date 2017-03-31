@@ -1,5 +1,6 @@
-/*
- * filewatcher.h: File System Watcher internal calls
+/**
+ * \file
+ * File System Watcher internal calls
  *
  * Authors:
  *	Gonzalo Paniagua Javier (gonzalo@ximian.com)
@@ -11,7 +12,6 @@
 #define _MONO_METADATA_FILEWATCHER_H
 
 #include <mono/metadata/object.h>
-#include <mono/io-layer/io-layer.h>
 #include "mono/utils/mono-compiler.h"
 #include <glib.h>
 

@@ -79,27 +79,27 @@ namespace Microsoft.Build.Evaluation
 	+ "{data.Items.Count} #Targets={data.Targets.Count}")]
 	public class Project
 	{
-		public Project (XmlReader xml)
-			: this (ProjectRootElement.Create (xml))
+		public Project (XmlReader xmlReader)
+			: this (ProjectRootElement.Create (xmlReader))
 		{
 		}
 
-		public Project (XmlReader xml, IDictionary<string, string> globalProperties,
+		public Project (XmlReader xmlReader, IDictionary<string, string> globalProperties,
 		                              string toolsVersion)
-			: this (ProjectRootElement.Create (xml), globalProperties, toolsVersion)
+			: this (ProjectRootElement.Create (xmlReader), globalProperties, toolsVersion)
 		{
 		}
 
-		public Project (XmlReader xml, IDictionary<string, string> globalProperties,
+		public Project (XmlReader xmlReader, IDictionary<string, string> globalProperties,
 		                              string toolsVersion, ProjectCollection projectCollection)
-			: this (ProjectRootElement.Create (xml), globalProperties, toolsVersion, projectCollection)
+			: this (ProjectRootElement.Create (xmlReader), globalProperties, toolsVersion, projectCollection)
 		{
 		}
 
-		public Project (XmlReader xml, IDictionary<string, string> globalProperties,
+		public Project (XmlReader xmlReader, IDictionary<string, string> globalProperties,
 		                              string toolsVersion, ProjectCollection projectCollection,
 		                              ProjectLoadSettings loadSettings)
-			: this (ProjectRootElement.Create (xml), globalProperties, toolsVersion, projectCollection, loadSettings)
+			: this (ProjectRootElement.Create (xmlReader), globalProperties, toolsVersion, projectCollection, loadSettings)
 		{
 		}
 

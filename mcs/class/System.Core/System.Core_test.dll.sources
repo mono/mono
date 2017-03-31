@@ -34,6 +34,7 @@ System.Linq.Expressions/ExpressionTest_LeftShift.cs
 System.Linq.Expressions/ExpressionTest_Lift.cs
 System.Linq.Expressions/ExpressionTest_ListBind.cs
 System.Linq.Expressions/ExpressionTest_ListInit.cs
+System.Linq.Expressions/ExpressionTest_Loop.cs
 System.Linq.Expressions/ExpressionTest_MakeBinary.cs
 System.Linq.Expressions/ExpressionTest_MemberBind.cs
 System.Linq.Expressions/ExpressionTest_MemberInit.cs

@@ -63,28 +63,28 @@ namespace MonoTests.System.Web.UI.WebControls.Adapters
 		public void RenderBeginTag ()
 		{
 			a.RenderBeginTag (w);
-			Assert.AreEqual ("RenderBeginTag\n", sw.ToString (), "RenderBeginTag #1");
+			Assert.AreEqual ("RenderBeginTag\n", sw.ToString ().Replace ("\r", ""), "RenderBeginTag #1");
 		}
 
 		[Test]
 		public void RenderContentsTag ()
 		{
 			a.RenderContents (w);
-			Assert.AreEqual ("RenderContents\n", sw.ToString (), "RenderContents #1");
+			Assert.AreEqual ("RenderContents\n", sw.ToString ().Replace ("\r", ""), "RenderContents #1");
 		}
 
 		[Test]
 		public void RenderEndTag ()
 		{
 			a.RenderEndTag (w);
-			Assert.AreEqual ("RenderEndTag\n", sw.ToString (), "RenderEndTag #1");
+			Assert.AreEqual ("RenderEndTag\n", sw.ToString ().Replace ("\r", ""), "RenderEndTag #1");
 		}
 
 		[Test]
 		public void Render ()
 		{
 			a.Render (w);
-			Assert.AreEqual ("RenderBeginTag\nRenderContents\nRenderEndTag\n", sw.ToString (), "Render #1");
+			Assert.AreEqual ("RenderBeginTag\nRenderContents\nRenderEndTag\n", sw.ToString ().Replace ("\r", ""), "Render #1");
 		}
 		
 		[Test]

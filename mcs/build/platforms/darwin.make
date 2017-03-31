@@ -1,13 +1,12 @@
 # -*- makefile -*-
 #
-# Platform-specific makefile rules. This one's for linux.
+# Platform-specific makefile rules. This one's for macOS.
 #
 
-PLATFORM_DEBUG_FLAGS = -debug
 PLATFORM_MCS_FLAGS =
 PLATFORM_RUNTIME = $(RUNTIME)
 PLATFORM_CORLIB = mscorlib.dll
-PLATFORM_TEST_HARNESS_EXCLUDES = NotOnMac,
+PLATFORM_TEST_HARNESS_EXCLUDES = NotOnMac,MacNotWorking,
 
 EXTERNAL_MCS = mcs
 EXTERNAL_MBAS = mbas

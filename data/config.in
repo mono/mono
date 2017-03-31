@@ -11,14 +11,21 @@
 	<dllmap dll="oci" target="libclntsh@libsuffix@" os="!windows"/>
 	<dllmap dll="db2cli" target="libdb2_36@libsuffix@" os="!windows"/>
 	<dllmap dll="MonoPosixHelper" target="$mono_libdir/libMonoPosixHelper@libsuffix@" os="!windows" />
+	<dllmap dll="libmono-btls-shared" target="$mono_libdir/libmono-btls-shared@libsuffix@" os="!windows" />
 	<dllmap dll="i:msvcrt" target="@LIBC@" os="!windows"/>
 	<dllmap dll="i:msvcrt.dll" target="@LIBC@" os="!windows"/>
 	<dllmap dll="sqlite" target="@SQLITE@" os="!windows"/>
 	<dllmap dll="sqlite3" target="@SQLITE3@" os="!windows"/>
 	<dllmap dll="libX11" target="@X11@" os="!windows" />
 	<dllmap dll="libgdk-x11-2.0" target="@GDKX11@" os="!windows"/>
+	<dllmap dll="libgdk_pixbuf-2.0" target="libgdk_pixbuf-2.0.so.0" os="!windows"/>
 	<dllmap dll="libgtk-x11-2.0" target="@GTKX11@" os="!windows"/>
+	<dllmap dll="libglib-2.0" target="libglib-2.0.so.0" os="!windows"/>
+	<dllmap dll="libgobject-2.0" target="libgobject-2.0.so.0" os="!windows"/>
+	<dllmap dll="libgnomeui-2" target="libgnomeui-2.so.0" os="!windows"/>
+	<dllmap dll="librsvg-2" target="librsvg-2.so.2" os="!windows"/>
 	<dllmap dll="libXinerama" target="@XINERAMA@" os="!windows" />
+	<dllmap dll="libasound" target="libasound.so.2" os="!windows" />
 	<dllmap dll="libcairo-2.dll" target="libcairo.so.2" os="!windows"/>
 	<dllmap dll="libcairo-2.dll" target="libcairo.2.dylib" os="osx"/>
 	<dllmap dll="libcups" target="libcups.so.2" os="!windows"/>

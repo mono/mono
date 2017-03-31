@@ -1,5 +1,6 @@
-/*
- * file-mmap-posix.c: File mmap internal calls
+/**
+ * \file
+ * File mmap internal calls
  *
  * Author:
  *	Rodrigo Kumpera
@@ -32,7 +33,7 @@
 
 
 #include <mono/metadata/object.h>
-#include <mono/metadata/file-io.h>
+#include <mono/metadata/w32file.h>
 #include <mono/metadata/file-mmap.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-memory-model.h>
@@ -63,7 +64,9 @@ enum {
 	COULD_NOT_OPEN,
 	CAPACITY_MUST_BE_POSITIVE,
 	INVALID_FILE_MODE,
-	COULD_NOT_MAP_MEMORY
+	COULD_NOT_MAP_MEMORY,
+	ACCESS_DENIED,
+	CAPACITY_LARGER_THAN_LOGICAL_ADDRESS_SPACE
 };
 
 enum {
@@ -300,10 +303,16 @@ static void*
 open_memory_map (const char *c_mapName, int mode, gint64 *capacity, int access, int options, int *ioerror)
 {
 	MmapHandle *handle;
-	if (*capacity <= 1) {
+	if (*capacity <= 0) {
 		*ioerror = CAPACITY_MUST_BE_POSITIVE;
 		return NULL;
 	}
+#if SIZEOF_VOID_P == 4
+	if (*capacity > UINT32_MAX) {
+		*ioerror = CAPACITY_LARGER_THAN_LOGICAL_ADDRESS_SPACE;
+		return NULL;
+	}
+#endif
 
 	if (!(mode == FILE_MODE_CREATE_NEW || mode == FILE_MODE_OPEN_OR_CREATE || mode == FILE_MODE_OPEN)) {
 		*ioerror = INVALID_FILE_MODE;
@@ -499,8 +508,11 @@ mono_mmap_map (void *handle, gint64 offset, gint64 *size, int access, void **mma
 	struct stat buf = { 0 };
 	fstat (fh->fd, &buf); //FIXME error handling
 
+	*mmap_handle = NULL;
+	*base_address = NULL;
+
 	if (offset > buf.st_size || ((eff_size + offset) > buf.st_size && !is_special_zero_size_file (&buf)))
-		goto error;
+		return ACCESS_DENIED;
 	/**
 	  * We use the file size if one of the following conditions is true:
 	  *  -input size is zero
@@ -522,9 +534,6 @@ mono_mmap_map (void *handle, gint64 offset, gint64 *size, int access, void **mma
 		return 0;
 	}
 
-error:
-	*mmap_handle = NULL;
-	*base_address = NULL;
 	return COULD_NOT_MAP_MEMORY;
 }
 

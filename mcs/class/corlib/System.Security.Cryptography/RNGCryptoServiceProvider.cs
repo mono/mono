@@ -58,7 +58,7 @@ namespace System.Security.Cryptography {
 			_handle = RngInitialize (null);
 			Check ();
 		}
-#if !MOBILE
+
 		public RNGCryptoServiceProvider (byte[] rgb)
 		{
 			_handle = RngInitialize (rgb);
@@ -81,7 +81,7 @@ namespace System.Security.Cryptography {
 				_handle = RngInitialize (Encoding.UTF8.GetBytes (str));
 			Check ();
 		}
-#endif
+
 		private void Check () 
 		{
 			if (_handle == IntPtr.Zero) {

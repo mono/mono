@@ -26,7 +26,7 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace MonoTests.System.Data
+namespace MonoTests.System.Data.Connected
 {
 	public enum EngineType
 	{

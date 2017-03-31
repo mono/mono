@@ -72,7 +72,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		private void GetClientCertificate ()
 		{
-#warning "Client certificate selection is unfinished"
+// TODO: Client certificate selection is unfinished
 			ClientContext context = (ClientContext)this.Context;
 
 			// note: the server may ask for mutual authentication 

@@ -86,10 +86,10 @@ using nwind;
             foreach (var c in q)
             {
                 Assert.IsNotNull(c.CustomerID);
-                Assert.Greater(c.OrderCount, -1);
+                AssertHelper.Greater(c.OrderCount, -1);
                 count++;
             }
-            Assert.Greater(count, 0);
+            AssertHelper.Greater(count, 0);
         }
 
         [Test]
@@ -103,10 +103,10 @@ using nwind;
             foreach (var v in q)
             {
                 Assert.IsNotNull(v.c.CustomerID);
-                Assert.Greater(v.OrderCount, -1);
+                AssertHelper.Greater(v.OrderCount, -1);
                 count++;
             }
-            Assert.Greater(count, 0);
+            AssertHelper.Greater(count, 0);
         }
 
         [Test]
@@ -121,7 +121,7 @@ using nwind;
                 Assert.IsTrue(c.CustomerID!=null, "Non-null customerID required");
                 count++;
             }
-            Assert.Greater(count, 0);
+            AssertHelper.Greater(count, 0);
         }
 #endif
     }

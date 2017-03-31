@@ -41,8 +41,10 @@ namespace System.Diagnostics {
         // a user's char[] directly, instead of our internal char[].
         private int _maxCharsPerBuffer;
 
+#pragma warning disable 414
         // Store a backpointer to the process class, to check for user callbacks
         private Process process;
+#pragma warning restore
 
         // Delegate to call user function.
         private UserCallBack userCallBack;
@@ -57,6 +59,11 @@ namespace System.Diagnostics {
         // Cache the last position scanned in sb when searching for lines.
         private int currentLinePos;
 		
+#if MONO
+		//users to coordinate between Dispose and BeginReadLine
+		private object syncObject = new Object ();
+#endif
+
         internal AsyncStreamReader(Process process, Stream stream, UserCallBack callback, Encoding encoding) 
             : this(process, stream, callback, encoding, DefaultBufferSize) {
         }
@@ -104,6 +111,9 @@ namespace System.Diagnostics {
 
         protected virtual void Dispose(bool disposing)
         {
+#if MONO
+            lock (syncObject) {
+#endif
             if (disposing) {
                 if (stream != null)
                     stream.Close();
@@ -120,6 +130,9 @@ namespace System.Diagnostics {
                 eofEvent.Close();
                 eofEvent = null;
             }
+#if MONO
+            }
+#endif
         }
         
         public virtual Encoding CurrentEncoding {
@@ -155,6 +168,12 @@ namespace System.Diagnostics {
             int byteLen;
             
             try {
+#if MONO
+                var stream = this.stream;
+                if (stream == null)
+                byteLen = 0;
+                else
+#endif
                 byteLen = stream.EndRead(ar);
             }
             catch (IOException ) {
@@ -171,6 +190,9 @@ namespace System.Diagnostics {
                 byteLen = 0; // Treat this as EOF
             }
                 
+#if MONO
+retry_dispose:
+#endif
             if (byteLen == 0) { 
                 // We're at EOF, we won't call this function again from here on.
                 lock(messageQueue) {
@@ -186,13 +208,45 @@ namespace System.Diagnostics {
                     FlushMessageQueue();
                 }
                 finally {
+#if MONO
+                    lock (syncObject) {
+                        if (eofEvent != null) {
+                            try {
+                                eofEvent.Set ();
+                            } catch (System.ObjectDisposedException) {
+                                // This races with Dispose, it's safe to ignore the error as it comes from a SafeHandle doing its job
+                            }
+                        }
+                    }
+#else
                     eofEvent.Set();
+#endif
                 }
             } else {
+#if MONO
+                lock (syncObject) {
+                    if (decoder == null) { //we got disposed after the EndRead, retry as Diposed
+                        byteLen = 0;
+                        goto retry_dispose;
+                    }
+#endif
                 int charLen = decoder.GetChars(byteBuffer, 0, byteLen, charBuffer, 0);
                 sb.Append(charBuffer, 0, charLen);
+#if MONO
+                }
+#endif
                 GetLinesFromStringBuilder();
+#if MONO
+                lock (syncObject) {
+                    if (stream == null) { //we got disposed after the EndRead, retry as Diposed
+                        byteLen = 0;
+                        goto retry_dispose;
+                    }
+#endif
                 stream.BeginRead(byteBuffer, 0 , byteBuffer.Length,  new AsyncCallback(ReadBuffer), null);
+#if MONO
+                }
+#endif
             }
         }
         

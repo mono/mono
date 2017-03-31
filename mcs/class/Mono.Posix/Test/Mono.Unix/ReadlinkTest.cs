@@ -18,7 +18,7 @@ using NUnit.Framework;
 
 namespace MonoTests.Mono.Unix
 {
-	[TestFixture, Category ("NotDotNet")]
+	[TestFixture, Category ("NotDotNet"), Category ("NotOnWindows")]
 	public class ReadlinkTest {
 
 		static string[] Targets = {
@@ -173,7 +173,7 @@ namespace MonoTests.Mono.Unix
 					long r = Syscall.readlink (link, buf);
 					if (r < 0)
 						UnixMarshal.ThrowExceptionForLastError ();
-					Assert.GreaterOrEqual (buf.Length, r);
+					Assert.That(buf.Length, Is.GreaterThanOrEqualTo(r));
 					if (r == buf.Length)
 						buf = new byte[checked (buf.Length * 2)];
 					else
@@ -199,7 +199,7 @@ namespace MonoTests.Mono.Unix
 					long r = Syscall.readlinkat (TempFD, "link", buf);
 					if (r < 0)
 						UnixMarshal.ThrowExceptionForLastError ();
-					Assert.GreaterOrEqual (buf.Length, r);
+					Assert.That(buf.Length, Is.GreaterThanOrEqualTo(r));
 					if (r == buf.Length)
 						buf = new byte[checked (buf.Length * 2)];
 					else
@@ -226,7 +226,7 @@ namespace MonoTests.Mono.Unix
 					if (r < 0)
 						UnixMarshal.ThrowExceptionForLastError ();
 					Assert.AreEqual (r, sb.Length);
-					Assert.GreaterOrEqual (sb.Capacity, r);
+					Assert.That(sb.Capacity, Is.GreaterThanOrEqualTo(r));
 					if (r == sb.Capacity)
 						checked { sb.Capacity *= 2; }
 					else
@@ -255,7 +255,7 @@ namespace MonoTests.Mono.Unix
 					if (r < 0)
 						UnixMarshal.ThrowExceptionForLastError ();
 					Assert.AreEqual (r, sb.Length);
-					Assert.GreaterOrEqual (sb.Capacity, r);
+					Assert.That(sb.Capacity, Is.GreaterThanOrEqualTo(r));
 					if (r == sb.Capacity)
 						checked { sb.Capacity *= 2; }
 					else

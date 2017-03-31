@@ -68,9 +68,9 @@ namespace System.Web.UI.WebControls
 			return types;
 		}
 		
-		public int IndexOf (MenuItemBinding binding)
+		public int IndexOf (MenuItemBinding value)
 		{
-			return ((IList)this).IndexOf (binding);
+			return ((IList)this).IndexOf (value);
 		}
 		
 		public void Insert (int index, MenuItemBinding binding)

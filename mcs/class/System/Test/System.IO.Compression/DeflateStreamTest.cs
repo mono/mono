@@ -410,6 +410,46 @@ namespace MonoTests.System.IO.Compression
 			using (var unZippedStream = new StreamReader (gZipStream, Encoding.UTF8)) {
 				unZipped = unZippedStream.ReadToEnd ();
 			}
+
+			Assert.AreEqual(1877, unZipped.Length);
+		}
+
+		[Test]
+		public void Bug44994_Inflate()
+		{
+			var base64String = @"7cWxCQAgDACwpeBjgqsgXiHU0fd9QzBLErX1EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADepcxcuU/atm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm37zy8=";
+
+			byte[] byteArray = Convert.FromBase64String(base64String);
+			string unZipped = null;
+
+			using (var zippedMemoryStream = new MemoryStream(byteArray))
+			using (var gZipStream = new DeflateStream(zippedMemoryStream, CompressionMode.Decompress))
+			using (var unzippedMemStream = new MemoryStream())
+			using (var unZippedStream = new StreamReader(gZipStream, Encoding.UTF8))
+			{
+				unZipped = unZippedStream.ReadToEnd();
+			}
+
+			Assert.AreEqual(81942, unZipped.Length);
+		}
+
+		[Test]
+		[Category ("MobileNotWorking")]
+		public void Bug44994_InflateByteByByte()
+		{
+			int byteCount = 0;
+			using (var fileStream = File.OpenRead(Path.Combine("Test", "compressed.bin")))
+			{
+				using (var deflateStream = new DeflateStream(fileStream, CompressionMode.Decompress, false))
+				{
+					while (deflateStream.ReadByte() != -1)
+					{
+						byteCount++;
+					}
+				}
+			}
+
+			Assert.AreEqual(125387, byteCount);
 		}
 	}
 }

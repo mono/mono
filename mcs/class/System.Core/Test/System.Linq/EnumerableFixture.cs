@@ -34,11 +34,8 @@ using System.Text;
 using System.Threading;
 using NUnit.Framework;
 using System.Linq;
-using NUnit.Framework.SyntaxHelpers;
 using NUnit.Framework.Constraints;
 using System.Diagnostics;
-
-namespace NUnit.Framework.SyntaxHelpers { class Dummy {} }
 
 namespace MonoTests.System.Linq
 {
@@ -2169,14 +2166,14 @@ namespace MonoTests.System.Linq
 			// then check that the source enumerator will be disposed
 			// by the time the test is torn.
 			//
-
+/*
 			var disposed = false;
 			var enumerated = false;
 			reader.Disposed += delegate { disposed = true; };
 			reader.Enumerated += delegate { enumerated = true; };
 			AssertionHandler assertion = () => Assert.That (!enumerated || disposed, Is.True, "Enumerator not disposed.");
 			tearDownAssertions = (AssertionHandler) Delegate.Combine (tearDownAssertions, assertion);
-
+*/
 			return reader;
 		}
 	}

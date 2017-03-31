@@ -8,11 +8,12 @@ CLEANFILES = *.dll *.exe *.mdb
 EXTRA_DIST=README.md SUBMODULES.json versions.mk roslyn.mk coreclr.mk ms-test-suite.mk
 
 CLASS=$(mcs_topdir)/class/lib/$(DEFAULT_PROFILE)
+TOOLS_CLASS=$(mcs_topdir)/class/lib/build
 
-with_mono_path = MONO_PATH=$(CLASS)
-RUNTIME = $(with_mono_path) $(abs_top_builddir)/runtime/mono-wrapper --debug
-MCS = $(RUNTIME) $(mcs_topdir)/class/lib/build/mcs.exe
-ILASM = $(RUNTIME) $(CLASS)/ilasm.exe
+RUNTIME = MONO_PATH=$(CLASS) $(abs_top_builddir)/runtime/mono-wrapper --debug
+TOOLS_RUNTIME = MONO_PATH=$(TOOLS_CLASS) $(abs_top_builddir)/runtime/mono-wrapper --debug
+MCS = $(TOOLS_RUNTIME) $(CSC) -nologo -noconfig -lib:$(CLASS) -r:System.dll -r:System.Core.dll -r:System.Xml.dll -r:Microsoft.CSharp.dll
+ILASM = $(TOOLS_RUNTIME) $(TOOLS_CLASS)/ilasm.exe
 
 include versions.mk
 include profiler-stress.mk

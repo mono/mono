@@ -56,9 +56,9 @@ namespace System.Xaml.Schema
 		public XamlType TargetType { get; private set; }
 
 		
-		public static bool operator == (XamlValueConverter<TConverterBase> left, XamlValueConverter<TConverterBase> right)
+		public static bool operator == (XamlValueConverter<TConverterBase> converter1, XamlValueConverter<TConverterBase> converter2)
 		{
-			return IsNull (left) ? IsNull (right) : left.Equals (right);
+			return IsNull (converter1) ? IsNull (converter2) : converter1.Equals (converter2);
 		}
 
 		static bool IsNull (XamlValueConverter<TConverterBase> a)
@@ -66,9 +66,9 @@ namespace System.Xaml.Schema
 			return Object.ReferenceEquals (a, null);
 		}
 
-		public static bool operator != (XamlValueConverter<TConverterBase> left, XamlValueConverter<TConverterBase> right)
+		public static bool operator != (XamlValueConverter<TConverterBase> converter1, XamlValueConverter<TConverterBase> converter2)
 		{
-			return IsNull (left) ? !IsNull (right) : IsNull (right) || left.ConverterType != right.ConverterType || left.TargetType != right.TargetType || left.Name != right.Name;
+			return IsNull (converter1) ? !IsNull (converter2) : IsNull (converter2) || converter1.ConverterType != converter2.ConverterType || converter1.TargetType != converter2.TargetType || converter1.Name != converter2.Name;
 		}
 		
 		public bool Equals (XamlValueConverter<TConverterBase> other)

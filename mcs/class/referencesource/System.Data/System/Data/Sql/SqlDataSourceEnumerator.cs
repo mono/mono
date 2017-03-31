@@ -40,6 +40,7 @@ namespace System.Data.Sql {
 
         override public DataTable GetDataSources() {
 #if MONO
+            timeoutTime = 0;
             throw new NotImplementedException ();
 #else
             (new NamedPermissionSet("FullTrust")).Demand(); // SQLBUDT 244304

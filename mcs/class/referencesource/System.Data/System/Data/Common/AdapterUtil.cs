@@ -55,6 +55,8 @@ namespace System.Data.Common {
         // The resource Framework.txt will ensure proper string text based on the appropriate
         // locale.
 
+        public const CompareOptions DefaultCompareOptions = CompareOptions.IgnoreKanaType | CompareOptions.IgnoreWidth | CompareOptions.IgnoreCase;
+
         static internal Task<T> CreatedTaskWithException<T>(Exception ex) {
             TaskCompletionSource<T> completion = new TaskCompletionSource<T>();
             completion.SetException(ex);
@@ -77,27 +79,9 @@ namespace System.Data.Common {
             }
         }
 
-        // NOTE: Initializing a Task in SQL CLR requires the "UNSAFE" permission set (http://msdn.microsoft.com/en-us/library/ms172338.aspx)
-        // Therefore we are lazily initializing these Tasks to avoid forcing customers to use the "UNSAFE" set when they are actually using no Async features (See Dev11 Bug #193253)
-        static private Task<bool> _trueTask = null;
-        static internal Task<bool> TrueTask {
-            get {
-                if (_trueTask == null) {
-                    _trueTask = Task.FromResult<bool>(true);
-                }
-                return _trueTask;
-            }
-        }
+        static internal Task<bool> s_trueTask = Task.FromResult<bool>(true);
 
-        static private Task<bool> _falseTask = null;
-        static internal Task<bool> FalseTask {
-            get {
-                if (_falseTask == null) {
-                    _falseTask = Task.FromResult<bool>(false);
-                }
-                return _falseTask;
-            }
-        }
+        static internal Task<bool> s_falseTask = Task.FromResult<bool>(false);
         
         [BidMethod] // this method accepts BID format as an argument, this attribute allows FXCopBid rule to validate calls to it
         static private void TraceException(
@@ -2125,7 +2109,7 @@ namespace System.Data.Common {
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         static internal Stream GetFileStream(string filename) {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             (new FileIOPermission(FileIOPermissionAccess.Read, filename)).Assert();
             try {
                 return new FileStream(filename,FileMode.Open,FileAccess.Read,FileShare.Read);
@@ -2141,7 +2125,7 @@ namespace System.Data.Common {
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         static internal FileVersionInfo GetVersionInfo(string filename) {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             (new FileIOPermission(FileIOPermissionAccess.Read, filename)).Assert(); // MDAC 62038
             try {
                 return FileVersionInfo.GetVersionInfo(filename); // MDAC 60411

@@ -126,10 +126,10 @@ namespace System.Data.SqlClient
 			ConnectionString = connectionString;
 		}
 
-		public SqlConnection (string connectionString, SqlCredential cred)
+		public SqlConnection (string connectionString, SqlCredential credential)
 		{
 			ConnectionString = connectionString;
-			Credentials = cred;
+			Credentials = credential;
 		}
 
 		#endregion // Constructors
@@ -138,7 +138,9 @@ namespace System.Data.SqlClient
 
 		[DefaultValue ("")]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.SQL.Design.SqlConnectionStringEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-		[RecommendedAsConfigurable (true)]
+#pragma warning disable 618 // ignore obsolete warning about RecommendedAsConfigurable to use SettingsBindableAttribute
+		[RecommendedAsConfigurable(true)]
+#pragma warning restore 618
 		[RefreshProperties (RefreshProperties.All)]
 		public override string ConnectionString {
 			get {
@@ -928,10 +930,22 @@ namespace System.Data.SqlClient
 
 				if (Client.Available <= 0)
 					return -1; // Error
-				IPEndPoint endpoint = new IPEndPoint (Dns.GetHostEntry ("localhost").AddressList [0], 0);
+
+				IPEndPoint remoteEndpoint;
+				switch (Client.AddressFamily) {
+					case AddressFamily.InterNetwork:
+						remoteEndpoint = new IPEndPoint(IPAddress.Any, 0);
+						break;
+					case AddressFamily.InterNetworkV6:
+						remoteEndpoint = new IPEndPoint(IPAddress.IPv6Any, 0);
+						break;
+					default:
+						return -1; // Error
+				}
+
 				Byte [] rawrs;
 
-				rawrs = Receive (ref endpoint);
+				rawrs = Receive (ref remoteEndpoint);
 
 				string rs = Encoding.ASCII.GetString (rawrs);
 

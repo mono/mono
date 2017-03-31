@@ -35,9 +35,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using NUnit.Framework;
-#if !MOBILE
-using NUnit.Framework.SyntaxHelpers;
-#endif
 
 namespace MonoTests.System.Threading.Tasks
 {
@@ -448,6 +445,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MacNotWorking")] // Randomly fails - https://bugzilla.xamarin.com/show_bug.cgi?id=51255
 		public void FromAsync_Completed ()
 		{
 			var completed = new CompletedAsyncResult ();
@@ -571,6 +569,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MacNotWorking")] // Randomly fails - https://bugzilla.xamarin.com/show_bug.cgi?id=51255
 		public void FromAsync_BeginCallback ()
 		{
 			bool called = false;

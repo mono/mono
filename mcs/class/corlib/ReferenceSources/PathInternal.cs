@@ -6,5 +6,10 @@ namespace System.IO
 		{
 			return false;
 		}
+
+		public static bool HasIllegalCharacters (string path, bool checkAdditional)
+		{
+			return path.IndexOfAny (Path.InvalidPathChars) != -1;
+		}
 	}
 }

@@ -742,9 +742,9 @@ namespace System.Net.Mail {
 			}
 		}
 
-		public void Send (string from, string to, string subject, string body)
+		public void Send (string from, string recipients, string subject, string body)
 		{
-			Send (new MailMessage (from, to, subject, body));
+			Send (new MailMessage (from, recipients, subject, body));
 		}
 
 		public Task SendMailAsync (MailMessage message)
@@ -836,9 +836,9 @@ namespace System.Net.Mail {
 			worker.RunWorkerAsync (userToken);
 		}
 
-		public void SendAsync (string from, string to, string subject, string body, object userToken)
+		public void SendAsync (string from, string recipients, string subject, string body, object userToken)
 		{
-			SendAsync (new MailMessage (from, to, subject, body), userToken);
+			SendAsync (new MailMessage (from, recipients, subject, body), userToken);
 		}
 
 		public void SendAsyncCancel ()

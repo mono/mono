@@ -44,6 +44,16 @@ namespace System.Security.Cryptography {
 	[ComVisible (true)]
 	public partial class CryptoConfig {
 
+		public static void AddAlgorithm (Type algorithm, params string[] names)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public static void AddOID (string oid, params string[] names)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
 		// try to avoid hitting the CreateFromName overloads to help the linker
 
 		public static object CreateFromName (string name)
@@ -186,7 +196,7 @@ namespace System.Security.Cryptography {
 				name = "System.Security.Cryptography.X509Certificates.X509Chain, System";
 				break;
 			case "aes":
-#if MOBILE_STATIC
+#if FULL_AOT_DESKTOP  // TODO: why is this special cased? we could use AesManaged like other full AOT profiles
 				name = "System.Security.Cryptography.AesCryptoServiceProvider, System.Core";
 #else
 				name = "System.Security.Cryptography.AesManaged, System.Core";

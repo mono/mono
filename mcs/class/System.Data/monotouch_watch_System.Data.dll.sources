@@ -1,1 +1,10 @@
 #include mobile_System.Data.dll.sources
+System.Data.SqlClient/SqlBulkCopy.platformnotsupported.cs
+System.Data.SqlClient/SqlCommand.platformnotsupported.cs
+System.Data.SqlClient/SqlCommandBuilder.platformnotsupported.cs
+System.Data.SqlClient/SqlConnection.platformnotsupported.cs
+System.Data.SqlClient/SqlDataReader.platformnotsupported.cs
+System.Data.SqlClient/SqlException.platformnotsupported.cs
+System.Data.SqlClient/SqlParameter.platformnotsupported.cs
+System.Data.SqlClient/SqlParameterCollection.platformnotsupported.cs
+System.Data.SqlClient/SqlTransaction.platformnotsupported.cs

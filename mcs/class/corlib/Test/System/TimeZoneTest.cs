@@ -14,6 +14,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Globalization;
+using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace MonoTests.System {
@@ -271,6 +272,47 @@ public class TimeZoneTest {
 	}
 
 		[Test]
+		public void GetUTCNowAtDSTBoundaries ()
+		{
+			TimeZoneInfo.TransitionTime startTransition = TimeZoneInfo.TransitionTime.CreateFloatingDateRule(new DateTime(1, 1, 1, 2, 0, 0), 3, 5, DayOfWeek.Sunday);
+
+			TimeZoneInfo.TransitionTime endTransition = TimeZoneInfo.TransitionTime.CreateFloatingDateRule(new DateTime(1, 1, 1, 3, 0, 0), 10, 5, DayOfWeek.Sunday);
+
+			TimeSpan delta = TimeSpan.FromMinutes(60.0);
+			TimeZoneInfo.AdjustmentRule adjustment = TimeZoneInfo.AdjustmentRule.CreateAdjustmentRule(new DateTime(1970, 1, 1), DateTime.MaxValue.Date, delta, startTransition, endTransition);
+			TimeZoneInfo.TransitionTime startTrans = adjustment.DaylightTransitionStart;
+			TimeZoneInfo.TransitionTime endTrans = adjustment.DaylightTransitionEnd;
+			TimeZoneInfo.AdjustmentRule[] adjustments = { adjustment };
+
+			TimeZoneInfo tzInfo = TimeZoneInfo.CreateCustomTimeZone("MY Standard Time", TimeSpan.Zero, "MST", "MST", "MDT", adjustments);
+
+			// There is no .NET API to set timezone. Use reflection to assign time zone to the TimeZoneInfo.local field.
+			FieldInfo localTimeZone = typeof(TimeZoneInfo).GetField("local", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
+			localTimeZone.SetValue(null, tzInfo);
+
+			DateTime st = new DateTime(2016, 3, 27, 1, 0, 0, DateTimeKind.Local);
+			Assert.IsTrue (!tzInfo.IsDaylightSavingTime(st));	
+			Assert.IsTrue (!tzInfo.IsAmbiguousTime(st));
+			Assert.IsTrue ((TimeZoneInfo.ConvertTimeToUtc(st).Hour == 1));
+			st = new DateTime(2016, 3, 27, 3, 0, 0, DateTimeKind.Local);
+			Assert.IsTrue (tzInfo.IsDaylightSavingTime(st));	
+			Assert.IsTrue (!tzInfo.IsAmbiguousTime(st));
+			Assert.IsTrue ((TimeZoneInfo.ConvertTimeToUtc(st).Hour == 2));
+			st = new DateTime(2016, 10, 30, 2, 0, 0, DateTimeKind.Local);
+			Assert.IsTrue (tzInfo.IsDaylightSavingTime(st));	
+			Assert.IsTrue (!tzInfo.IsAmbiguousTime(st));
+			Assert.IsTrue ((TimeZoneInfo.ConvertTimeToUtc(st).Hour == 1));
+			st = new DateTime(2016, 10, 30, 3, 0, 0, DateTimeKind.Local);
+			Assert.IsTrue (!tzInfo.IsDaylightSavingTime(st));	
+			Assert.IsTrue (tzInfo.IsAmbiguousTime(st));
+			Assert.IsTrue ((TimeZoneInfo.ConvertTimeToUtc(st).Hour == 3));
+			st = new DateTime(2016, 10, 30, 4, 0, 0, DateTimeKind.Local);
+			Assert.IsTrue (!tzInfo.IsDaylightSavingTime(st));	
+			Assert.IsTrue (!tzInfo.IsAmbiguousTime(st));
+			Assert.IsTrue ((TimeZoneInfo.ConvertTimeToUtc(st).Hour == 4));
+		}
+
+		[Test]
 		public void GetUtcOffsetAtDSTBoundary ()
 		{
 			/*
@@ -302,11 +344,12 @@ public class TimeZoneTest {
 				Assert.Ignore (tz.StandardName + " did not observe daylight saving time during " + year + ".");
 
 			var standardOffset = tz.GetUtcOffset(daylightChanges.Start.AddMinutes(-1));
+			var dstOffset = tz.GetUtcOffset(daylightChanges.Start.AddMinutes(61));
 
 			Assert.AreEqual(standardOffset, tz.GetUtcOffset (dst_end));
-			Assert.AreEqual(standardOffset, tz.GetUtcOffset (dst_end.Add (daylightChanges.Delta.Negate ().Add (TimeSpan.FromSeconds(1)))));
-			Assert.AreEqual(standardOffset, tz.GetUtcOffset (dst_end.Add(daylightChanges.Delta.Negate ())));
-			Assert.AreNotEqual(standardOffset, tz.GetUtcOffset (dst_end.Add(daylightChanges.Delta.Negate ().Add (TimeSpan.FromSeconds(-1)))));
+			Assert.AreEqual(dstOffset, tz.GetUtcOffset (dst_end.Add (daylightChanges.Delta.Negate ().Add (TimeSpan.FromSeconds(1)))));
+			Assert.AreEqual(dstOffset, tz.GetUtcOffset (dst_end.Add(daylightChanges.Delta.Negate ())));
+			Assert.AreEqual(dstOffset, tz.GetUtcOffset (dst_end.Add(daylightChanges.Delta.Negate ().Add (TimeSpan.FromSeconds(-1)))));
 		}
 
 
@@ -336,7 +379,7 @@ public class TimeZoneTest {
 			dto.ToLocalTime ();
 		}
 
-#if MOBILE
+#if !WIN_PLATFORM
 		// On device we cannot read the OS file system to look for /etc/localtime
 		// and /usr/share/zoneinfo - so we must initialize the BCL TimeZoneInfo
 		// from NSTimeZoneInfo. The tests here check the code paths between the
@@ -359,7 +402,7 @@ public class TimeZoneTest {
 				// now it fails on Snow Leopard the same way (incomplete data) with iOS5 simulator (OS update ?)
 				// but it *never*ever* failed on devices
 				incomplete_data_on_simulator_only_bug = true;
-#if XAMCORE_2_0 || MONOTOUCH
+#if MONOTOUCH
 
 #if XAMCORE_2_0
 				if (ObjCRuntime.Runtime.Arch == ObjCRuntime.Arch.SIMULATOR)
@@ -367,7 +410,7 @@ public class TimeZoneTest {
 				if (MonoTouch.ObjCRuntime.Runtime.Arch == MonoTouch.ObjCRuntime.Arch.SIMULATOR)
 #endif
 					Assert.Ignore ("known to fail on some iOS simulator versions - see source comments");
-#endif // XAMCORE_2_0 || MONOTOUCH
+#endif // MONOTOUCH
 			}
 		}
 #endif

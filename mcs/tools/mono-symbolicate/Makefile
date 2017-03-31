@@ -4,8 +4,7 @@ include ../../build/rules.make
 
 PROGRAM = mono-symbolicate.exe
 
-LOCAL_MCS_FLAGS = \
-	/D:NO_AUTHENTICODE /D:CECIL
+LOCAL_MCS_FLAGS = /D:NO_AUTHENTICODE /D:CECIL -nowarn:649
 
 LIB_REFS = System.Xml System.Core System
 
@@ -26,7 +25,7 @@ SYMBOLICATE_EXPECTED_FILE = Test/symbolicate.expected
 CHECK_DIFF = @\
 	$(MONO) $(TEST_EXE) > $(STACKTRACE_FILE); \
 	$(MONO) $(LIB_PATH)/$(PROGRAM) $(MSYM_DIR) $(STACKTRACE_FILE) > $(SYMBOLICATE_RAW_FILE); \
-	sed "s/) .* in .*\/mcs\//) in mcs\//" $(SYMBOLICATE_RAW_FILE) | sed '/\[MVID\]/d' | sed '/\[AOTID\]/d' > $(SYMBOLICATE_RESULT_FILE); \
+	cat $(SYMBOLICATE_RAW_FILE) | tr '\\' '/' | sed "s/) .* in .*\/mcs\//) in mcs\//" | sed "s/) .* in .*\/external\//) in external\//" | sed '/\[MVID\]/d' | sed '/\[AOTID\]/d' > $(SYMBOLICATE_RESULT_FILE); \
 	DIFF=$$(diff -up $(SYMBOLICATE_EXPECTED_FILE) $(SYMBOLICATE_RESULT_FILE)); \
 	if [ ! -z "$$DIFF" ]; then \
 		echo "Symbolicate tests failed."; \

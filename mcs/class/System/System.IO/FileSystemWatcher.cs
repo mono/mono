@@ -224,7 +224,7 @@ namespace System.IO {
 
 		[DefaultValue("*.*")]
 		[IODescription("File name filter pattern")]
-		[RecommendedAsConfigurable(true)]
+		[SettingsBindable(true)]
 		[TypeConverter ("System.Diagnostics.Design.StringValueConverter, " + Consts.AssemblySystem_Design)]
 		public string Filter {
 			get { return filter; }
@@ -293,7 +293,7 @@ namespace System.IO {
 
 		[DefaultValue("")]
 		[IODescription("The directory to monitor")]
-		[RecommendedAsConfigurable(true)]
+		[SettingsBindable(true)]
 		[TypeConverter ("System.Diagnostics.Design.StringValueConverter, " + Consts.AssemblySystem_Design)]
 		[Editor ("System.Diagnostics.Design.FSWPathEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public string Path {

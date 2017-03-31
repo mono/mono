@@ -721,7 +721,7 @@ namespace System.Diagnostics
 
 				_notifyResetEvent = new ManualResetEvent (false);
 				_lastEntryWritten = OldestEventLogEntry + EntryCount;
-				if (PInvoke.NotifyChangeEventLog (ReadHandle, _notifyResetEvent.Handle) == 0)
+				if (PInvoke.NotifyChangeEventLog (ReadHandle, _notifyResetEvent.SafeWaitHandle.DangerousGetHandle ()) == 0)
 					throw new InvalidOperationException (string.Format (
 						CultureInfo.InvariantCulture, "Unable to receive notifications"
 						+ " for log '{0}' on computer '{1}'.", CoreEventLog.GetLogName (),
@@ -737,7 +737,7 @@ namespace System.Diagnostics
 			while (true) {
 				try {
 					resetEvent.WaitOne ();
-				} catch (ObjectDisposedException e) {
+				} catch (ObjectDisposedException) {
 					// Notifications have been disabled and event 
 					// has been closed but not yet nulled. End thread.
 					break;

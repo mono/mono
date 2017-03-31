@@ -1392,6 +1392,16 @@ namespace System {
 
             return s;
         }
+
+        unsafe internal int GetBytesFromEncoding(byte* pbNativeBuffer, int cbNativeBuffer,Encoding encoding)
+        {
+            // encoding == Encoding.UTF8
+            fixed (char* pwzChar = &this.m_firstChar)
+            {
+                return encoding.GetBytes(pwzChar, m_stringLength, pbNativeBuffer, cbNativeBuffer);
+            }
+        }
+
 #if !MONO
         [System.Security.SecuritySafeCritical]  // auto-generated
         unsafe internal int ConvertToAnsi(byte *pbNativeBuffer, int cbNativeBuffer, bool fBestFit, bool fThrowOnUnmappableChar)

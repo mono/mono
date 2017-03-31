@@ -1,3 +1,6 @@
+/**
+ * \file
+ */
 
 #ifndef _MONO_METADATA_W32EVENT_H_
 #define _MONO_METADATA_W32EVENT_H_
@@ -13,6 +16,9 @@ mono_w32event_init (void);
 
 gpointer
 mono_w32event_create (gboolean manual, gboolean initial);
+
+gboolean
+mono_w32event_close (gpointer handle);
 
 void
 mono_w32event_set (gpointer handle);

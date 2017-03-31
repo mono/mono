@@ -33,11 +33,13 @@ using System.Net.Sockets;
 
 namespace Mono.Unix
 {
+#pragma warning disable 649
 	internal struct PeerCredData {
 		public int pid;
 		public int uid;
 		public int gid;
 	}
+#pragma warning restore 649
 
 	public class PeerCred
 	{

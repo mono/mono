@@ -63,6 +63,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test] // SqlDataAdapter (SqlCommand)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Constructor2 ()
 		{
 			SqlCommand cmd = new SqlCommand ();
@@ -109,6 +112,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test] // SqlDataAdapter (string, SqlConnection)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Constructor3 ()
 		{
 			string selectCommandText = "SELECT * FROM Authors";
@@ -137,6 +143,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test] // SqlDataAdapter (string, SqlConnection)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Constructor3_SelectCommandText_Null ()
 		{
 			SqlConnection selectConnection = new SqlConnection ();
@@ -165,6 +174,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test] // SqlDataAdapter (string, SqlConnection)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Constructor3_SelectConnection_Null ()
 		{
 			string selectCommandText = "SELECT * FROM Authors";
@@ -192,6 +204,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test] // SqlDataAdapter (string, string)]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Constructor4 ()
 		{
 			string selectCommandText = "SELECT * FROM Authors";
@@ -221,6 +236,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test] // SqlDataAdapter (string, string)]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Constructor4_SelectCommandText_Null ()
 		{
 			string selectConnectionString = "server=SQLSRV;database=Mono";
@@ -250,6 +268,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test] // SqlDataAdapter (string, string)]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Constructor4_SelectConnectionString_Null ()
 		{
 			string selectCommandText = "SELECT * FROM Authors";
@@ -278,6 +299,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void DeleteCommand ()
 		{
 			SqlDataAdapter da = new SqlDataAdapter ();
@@ -293,6 +317,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Dispose ()
 		{
 			SqlDataAdapter da = new SqlDataAdapter ();
@@ -311,6 +338,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void InsertCommand ()
 		{
 			SqlDataAdapter da = new SqlDataAdapter ();
@@ -326,6 +356,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SelectCommand ()
 		{
 			SqlDataAdapter da = new SqlDataAdapter ();
@@ -369,6 +402,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void UpdateCommand ()
 		{
 			SqlDataAdapter da = new SqlDataAdapter ();

@@ -97,7 +97,7 @@ namespace System.Net {
 							InternalWrite (bytes, 0, bytes.Length);
 							trailer_sent = true;
 						}
-					} catch (IOException ex) {
+					} catch (IOException) {
 						// Ignore error due to connection reset by peer
 					}
 				}
@@ -143,6 +143,8 @@ namespace System.Net {
 		{
 			if (disposed)
 				throw new ObjectDisposedException (GetType ().ToString ());
+			if (count == 0)
+				return;
 
 			byte [] bytes = null;
 			MemoryStream ms = GetHeaders (false);

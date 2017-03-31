@@ -908,12 +908,12 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (1.0f, Color.White.GetBrightness (), "BrightnessWhite");
 		
 			Color c1 = Color.FromArgb (0, 13, 45, 7); //just some random color
-			Assert.IsTrue (       FloatsAlmostEqual (110.5263f, c1.GetHue ()), "Hue1");
+			Assert.IsTrue (FloatsAlmostEqual (110.5263f, c1.GetHue ()), "Hue1");
 			Assert.IsTrue (FloatsAlmostEqual (0.1019608f, c1.GetBrightness ()), "Brightness1");
 			Assert.IsTrue (FloatsAlmostEqual (0.7307692f, c1.GetSaturation ()), "Saturation1");
 	
 			Color c2 = Color.FromArgb (0, 112, 75, 29); //another random color
-			Assert.IsTrue (       FloatsAlmostEqual (33.25302f, c2.GetHue ()), "Hue2");
+			Assert.IsTrue (FloatsAlmostEqual (33.25302f, c2.GetHue ()), "Hue2");
 			Assert.IsTrue (FloatsAlmostEqual (0.2764706f, c2.GetBrightness ()), "Brightness2");
 			Assert.IsTrue (FloatsAlmostEqual (0.5886525f, c2.GetSaturation ()), "Saturation2");
 		}
@@ -1019,115 +1019,99 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void FromArgb_InvalidAlpha1 ()
 		{
-			Color.FromArgb (-1, Color.Red);
+			Assert.Throws<ArgumentException> (() => Color.FromArgb (-1, Color.Red));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void FromArgb_InvalidAlpha2 ()
 		{
-			Color.FromArgb (256, Color.Red);
+			Assert.Throws<ArgumentException> (() => Color.FromArgb (256, Color.Red));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void FromArgb_InvalidAlpha3 ()
 		{
-			Color.FromArgb (-1, 0, 0, 0);
+			Assert.Throws<ArgumentException> (() => Color.FromArgb (-1, 0, 0, 0));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void FromArgb_InvalidAlpha4 ()
 		{
-			Color.FromArgb (256, 0, 0, 0);
+			Assert.Throws<ArgumentException> (() => Color.FromArgb (256, 0, 0, 0));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void FromArgb_InvalidRed1 ()
 		{
-			Color.FromArgb (-1, 0, 0);
+			Assert.Throws<ArgumentException> (() => Color.FromArgb (-1, 0, 0));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void FromArgb_InvalidRed2 ()
 		{
-			Color.FromArgb (256, 0, 0);
+			Assert.Throws<ArgumentException> (() => Color.FromArgb (256, 0, 0));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void FromArgb_InvalidRed3 ()
 		{
-			Color.FromArgb (0, -1, 0, 0);
+			Assert.Throws<ArgumentException> (() => Color.FromArgb (0, -1, 0, 0));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void FromArgb_InvalidRed4 ()
 		{
-			Color.FromArgb (0, 256, 0, 0);
+			Assert.Throws<ArgumentException> (() => Color.FromArgb (0, 256, 0, 0));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void FromArgb_InvalidGreen1 ()
 		{
-			Color.FromArgb (0, -1, 0);
+			Assert.Throws<ArgumentException> (() => Color.FromArgb (0, -1, 0));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void FromArgb_InvalidGreen2 ()
 		{
-			Color.FromArgb (0, 256, 0);
+			Assert.Throws<ArgumentException> (() => Color.FromArgb (0, 256, 0));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void FromArgb_InvalidGreen3 ()
 		{
-			Color.FromArgb (0, 0, -1, 0);
+			Assert.Throws<ArgumentException> (() => Color.FromArgb (0, 0, -1, 0));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void FromArgb_InvalidGreen4 ()
 		{
-			Color.FromArgb (0, 0, 256, 0);
+			Assert.Throws<ArgumentException> (() => Color.FromArgb (0, 0, 256, 0));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void FromArgb_InvalidBlue1 ()
 		{
-			Color.FromArgb (0, 0, -1);
+			Assert.Throws<ArgumentException> (() => Color.FromArgb (0, 0, -1));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void FromArgb_InvalidBlue2 ()
 		{
-			Color.FromArgb (0, 0, 256);
+			Assert.Throws<ArgumentException> (() => Color.FromArgb (0, 0, 256));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void FromArgb_InvalidBlue3 ()
 		{
-			Color.FromArgb (0, 0, 0, -1);
+			Assert.Throws<ArgumentException> (() => Color.FromArgb (0, 0, 0, -1));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void FromArgb_InvalidBlue4 ()
 		{
-			Color.FromArgb (0, 0, 0, 256);
+			Assert.Throws<ArgumentException> (() => Color.FromArgb (0, 0, 0, 256));
 		}
 
 		[Test]

@@ -1,3 +1,4 @@
+../../test-helpers/NunitHelpers.cs
 ../examples/DbLinq.SQLite.Example/nwind/Northwind.cs
 ../src/DbLinq.Sqlite/Test/DirectDataContext.cs
 ../src/DbLinq.Sqlite/Test/TestBase_mono.cs

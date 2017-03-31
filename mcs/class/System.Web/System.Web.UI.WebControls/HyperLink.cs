@@ -49,19 +49,19 @@ namespace System.Web.UI.WebControls
 		{
 		}
 				
-		protected override void AddAttributesToRender (HtmlTextWriter w)
+		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
-			base.AddAttributesToRender (w);
-			AddDisplayStyleAttribute (w);
+			base.AddAttributesToRender (writer);
+			AddDisplayStyleAttribute (writer);
 			if (!IsEnabled)
 				return;
 			// add attributes - only if they're not empty
 			string t = Target;
 			string s = NavigateUrl;
 			if (s.Length > 0)
-				w.AddAttribute (HtmlTextWriterAttribute.Href, ResolveClientUrl (s));
+				writer.AddAttribute (HtmlTextWriterAttribute.Href, ResolveClientUrl (s));
 			if (t.Length > 0)
-				w.AddAttribute (HtmlTextWriterAttribute.Target, t);
+				writer.AddAttribute (HtmlTextWriterAttribute.Target, t);
 		}
 		
 		protected override void AddParsedSubObject (object obj)
@@ -90,25 +90,25 @@ namespace System.Web.UI.WebControls
 			base.LoadViewState (savedState);
 		}
 		
-		protected internal override void RenderContents (HtmlTextWriter w)	
+		protected internal override void RenderContents (HtmlTextWriter writer)	
 		{
 			if (HasControls () || HasRenderMethodDelegate ()) {
-				base.RenderContents (w);
+				base.RenderContents (writer);
 				return;
 			}
 			string image_url = ImageUrl;
 			if (!String.IsNullOrEmpty (image_url)) {
 				string str = ToolTip;
 				if (!String.IsNullOrEmpty (str))
-					w.AddAttribute (HtmlTextWriterAttribute.Title, str);
+					writer.AddAttribute (HtmlTextWriterAttribute.Title, str);
 
-				w.AddAttribute (HtmlTextWriterAttribute.Src, ResolveClientUrl (image_url));
+				writer.AddAttribute (HtmlTextWriterAttribute.Src, ResolveClientUrl (image_url));
 				str = Text;
-					w.AddAttribute (HtmlTextWriterAttribute.Alt, str);
-				w.RenderBeginTag (HtmlTextWriterTag.Img);
-				w.RenderEndTag ();
+					writer.AddAttribute (HtmlTextWriterAttribute.Alt, str);
+				writer.RenderBeginTag (HtmlTextWriterTag.Img);
+				writer.RenderEndTag ();
 			} else
-				w.Write (Text);
+				writer.Write (Text);
 		}
 
 		[Bindable(true)]

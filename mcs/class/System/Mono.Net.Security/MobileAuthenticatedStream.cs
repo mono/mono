@@ -23,6 +23,7 @@ using System.IO;
 using System.Net;
 using System.Net.Security;
 using System.Globalization;
+using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Security.Cryptography.X509Certificates;
@@ -214,7 +215,7 @@ namespace Mono.Net.Security
 				try {
 					asyncRequest.StartOperation (ProcessHandshake);
 				} catch (Exception ex) {
-					throw SetException (ex);
+					ExceptionDispatchInfo.Capture (SetException (ex)).Throw ();
 				}
 			} finally {
 				if (lazyResult == null || lastException != null) {
@@ -241,7 +242,7 @@ namespace Mono.Net.Security
 
 			var e = lazyResult.Result as Exception;
 			if (e != null)
-				throw SetException (e);
+				ExceptionDispatchInfo.Capture (SetException (e)).Throw ();
 		}
 
 		internal void ValidateCreateContext (bool serverMode, string targetHost, SslProtocols enabledProtocols, X509Certificate serverCertificate, X509CertificateCollection clientCertificates, bool clientCertRequired)

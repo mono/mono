@@ -33,11 +33,9 @@
 //
 
 using System.Collections;
-using System.Security.Permissions;
 
 namespace System.Drawing.Design
 {
-	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	public sealed class CategoryNameCollection : ReadOnlyCollectionBase
 	{
 		

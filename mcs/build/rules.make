@@ -22,16 +22,18 @@ VERSION = 0.93
 
 Q=$(if $(V),,@)
 # echo -e "\\t" does not work on some systems, so use 5 spaces
-Q_MCS=$(if $(V),,@echo "MCS     [$(intermediate)$(PROFILE)] $(notdir $(@))";)
+Q_MCS=$(if $(V),,@echo "$(if $(MCS_MODE),MCS,CSC)     [$(intermediate)$(PROFILE)] $(notdir $(@))";)
+Q_AOT=$(if $(V),,@echo "AOT     [$(intermediate)$(PROFILE)] $(notdir $(@))";)
 
 ifndef BUILD_TOOLS_PROFILE
 BUILD_TOOLS_PROFILE = build
 endif
 
-USE_MCS_FLAGS = /codepage:$(CODEPAGE) $(LOCAL_MCS_FLAGS) $(PLATFORM_MCS_FLAGS) $(PROFILE_MCS_FLAGS) $(MCS_FLAGS)
+USE_MCS_FLAGS = /codepage:$(CODEPAGE) /nologo /noconfig /deterministic $(LOCAL_MCS_FLAGS) $(PLATFORM_MCS_FLAGS) $(PROFILE_MCS_FLAGS) $(MCS_FLAGS)
 USE_MBAS_FLAGS = /codepage:$(CODEPAGE) $(LOCAL_MBAS_FLAGS) $(PLATFORM_MBAS_FLAGS) $(PROFILE_MBAS_FLAGS) $(MBAS_FLAGS)
 USE_CFLAGS = $(LOCAL_CFLAGS) $(CFLAGS) $(CPPFLAGS)
 CSCOMPILE = $(Q_MCS) $(MCS) $(USE_MCS_FLAGS)
+CSC_RUNTIME_FLAGS = --aot-path=$(abspath $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)) --gc-params=nursery-size=64m
 BASCOMPILE = $(MBAS) $(USE_MBAS_FLAGS)
 CCOMPILE = $(CC) $(USE_CFLAGS)
 BOOT_COMPILE = $(Q_MCS) $(BOOTSTRAP_MCS) $(USE_MCS_FLAGS)
@@ -41,9 +43,11 @@ INSTALL_BIN = $(INSTALL) -c -m 755
 INSTALL_LIB = $(INSTALL_BIN)
 MKINSTALLDIRS = $(SHELL) $(topdir)/mkinstalldirs
 INTERNAL_MBAS = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/mbas/mbas.exe
-INTERNAL_GMCS = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/mcs.exe
 INTERNAL_ILASM = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/ilasm.exe
-INTERNAL_CSC = $(RUNTIME) $(RUNTIME_FLAGS) $(CSC_LOCATION)
+INTERNAL_CSC_LOCATION = $(CSC_LOCATION)
+
+# Using CSC_SDK_PATH_DISABLED for sanity check that all references have path specified
+INTERNAL_CSC = CSC_SDK_PATH_DISABLED= $(RUNTIME) $(RUNTIME_FLAGS) $(CSC_RUNTIME_FLAGS) $(INTERNAL_CSC_LOCATION)
 
 RESGEN_EXE = $(topdir)/class/lib/$(PROFILE)/$(PARENT_PROFILE)resgen.exe
 INTERNAL_RESGEN = $(RUNTIME) $(RUNTIME_FLAGS) $(RESGEN_EXE)
@@ -116,24 +120,17 @@ endif
 
 include $(topdir)/build/profiles/$(PROFILE).make
 
-# If the profile is using nunit-lite, use it
-ifdef NUNIT_LITE
-TEST_HARNESS=$(topdir)/class/lib/$(PROFILE)/nunit-lite-console.exe
-endif
-
-# Make sure propagates
-export TEST_HARNESS
-
-# If the profile is using nunit-lite, use it
-ifdef NUNIT_LITE
-TEST_HARNESS=$(topdir)/class/lib/$(PROFILE)/nunit-lite-console.exe
-endif
-
-# Make sure propagates
-export TEST_HARNESS
-
 ifdef BCL_OPTIMIZE
 PROFILE_MCS_FLAGS += -optimize
+endif
+
+ifdef MCS_MODE
+INTERNAL_CSC_LOCATION = $(topdir)/class/lib/$(BOOTSTRAP_PROFILE)/mcs.exe
+
+ifdef PLATFORM_DEBUG_FLAGS
+PLATFORM_DEBUG_FLAGS = /debug:full
+endif
+
 endif
 
 # Design:
@@ -143,7 +140,7 @@ endif
 # For this to be done safely, we really need two passes. This
 # ensures that all of the .dlls are compiled before trying to
 # aot them. Because we want this to be the
-# default target for some profiles(mobile_static) we have a
+# default target for some profiles(testing_aot_full) we have a
 # two-level build system. The do-all-aot target is what
 # gets invoked at the top-level when someone tries to build with aot.
 # It will invoke the do-all target, and will set TOP_LEVEL_DO for this
@@ -179,7 +176,6 @@ STD_TARGETS = test run-test run-test-ondotnet clean install uninstall doc-update
 $(STD_TARGETS): %: do-%
 
 ifdef PLATFORM_AOT_SUFFIX
-AOT_PROFILE_ASSEMBLIES = $(shell cd $(topdir)/class/lib/$(PROFILE)/ && find . | grep -E '(dll|exe)$$' | grep -v -E 'bare|plaincore|secxml|Facades' | sed 's:\./::g' | tr '\n' ' ')
 
 do-all-aot:
 	$(MAKE) do-all TOP_LEVEL_DO=do-all
@@ -190,18 +186,26 @@ do-all-aot:
 # be able to evaluate the .dylibs to make
 ifneq ("$(wildcard $(topdir)/class/lib/$(PROFILE))","")
 
-AOT_PROFILE_ASSEMBLIES_CMD = cd $(topdir)/class/lib/$(PROFILE)/ && find . | grep -E '(dll|exe)$$' | grep -v -E 'bare|plaincore|secxml|Facades|ilasm' | sed 's:\./::g' | tr '\n' ' '
-AOT_PROFILE_ASSEMBLIES_CMD_SAFE = $(AOT_PROFILE_ASSEMBLIES_CMD) || true
-AOT_PROFILE_ASSEMBLIES = $(shell $(AOT_PROFILE_ASSEMBLIES_CMD_SAFE))
+AOT_PROFILE_ASSEMBLIES := $(sort $(patsubst .//%,%,$(filter-out %.dll.dll %.exe.dll %bare% %plaincore% %secxml% %Facades% %ilasm%,$(filter %.dll %.exe,$(wildcard $(topdir)/class/lib/$(PROFILE)/*)))))
 
 # This can run in parallel
 .PHONY: aot-all-profile
-aot-all-profile: $(patsubst %,$(topdir)/class/lib/$(PROFILE)/%$(PLATFORM_AOT_SUFFIX),$(AOT_PROFILE_ASSEMBLIES))
+ifdef AOT_BUILD_FLAGS
+aot-all-profile: $(patsubst %,%$(PLATFORM_AOT_SUFFIX),$(AOT_PROFILE_ASSEMBLIES))
+else
+aot-all-profile:
+	echo AOT_BUILD_FLAGS not set, skipping AOT.
+endif
 
-$(topdir)/class/lib/$(PROFILE)/%$(PLATFORM_AOT_SUFFIX): $(topdir)/class/lib/$(PROFILE)/%
-	@ mkdir -p $(topdir)/class/lib/$(PROFILE)/$*_bitcode_tmp
-	@echo "AOT     [$(PROFILE)] AOT $* " && cd $(topdir)/class/lib/$(PROFILE)/ && MONO_PATH="." $(RUNTIME) $(RUNTIME_FLAGS) $(AOT_BUILD_FLAGS),temp-path=$*_bitcode_tmp $* >> $(PROFILE)-aot.log
-	@ rm -rf $(topdir)/class/lib/$(PROFILE)/$*_bitcode_tmp
+%.dll$(PLATFORM_AOT_SUFFIX): %.dll
+	@ mkdir -p $<_bitcode_tmp
+	$(Q_AOT) MONO_PATH="$(dir $<)" $(RUNTIME) $(RUNTIME_FLAGS) $(AOT_BUILD_FLAGS),temp-path=$<_bitcode_tmp --verbose $< > $@.aot-log
+	@ rm -rf $<_bitcode_tmp
+
+%.exe$(PLATFORM_AOT_SUFFIX): %.exe
+	@ mkdir -p $<_bitcode_tmp
+	$(Q_AOT) MONO_PATH="$(dir $<)" $(RUNTIME) $(RUNTIME_FLAGS) $(AOT_BUILD_FLAGS),temp-path=$<_bitcode_tmp --verbose $< > $@.aot-log
+	@ rm -rf $<_bitcode_tmp
 
 endif #ifneq ("$(wildcard $(topdir)/class/lib/$(PROFILE))","")
 

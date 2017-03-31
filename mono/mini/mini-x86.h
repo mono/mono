@@ -1,3 +1,7 @@
+/**
+ * \file
+ */
+
 #ifndef __MONO_MINI_X86_H__
 #define __MONO_MINI_X86_H__
 
@@ -33,12 +37,6 @@ void win32_seh_set_handler(int type, MonoW32ExceptionHandler handler);
 LONG CALLBACK seh_handler(EXCEPTION_POINTERS* ep);
 
 #endif /* HOST_WIN32 */
-
-#ifdef __HAIKU__
-struct sigcontext {
-	vregs regs;
-};
-#endif /* __HAIKU__ */
 
 #if defined( __linux__) || defined(__sun) || defined(__APPLE__) || defined(__NetBSD__) || \
        defined(__FreeBSD__) || defined(__FreeBSD_kernel__) || defined(__OpenBSD__)
@@ -198,11 +196,6 @@ typedef struct {
 #define MONO_ARCH_HAVE_IS_INT_OVERFLOW 1
 #define MONO_ARCH_HAVE_INVALIDATE_METHOD 1
 #define MONO_ARCH_NEED_GOT_VAR 1
-#ifndef HOST_WIN32
-/* X86 uses jit_tls->lmf (See emit_push_lmf ()) */
-#define MONO_ARCH_ENABLE_MONO_LMF_VAR 1
-#endif
-#define MONO_ARCH_HAVE_TLS_GET (mono_x86_have_tls_get ())
 #define MONO_ARCH_IMT_REG X86_EDX
 #define MONO_ARCH_VTABLE_REG X86_EDX
 #define MONO_ARCH_RGCTX_REG MONO_ARCH_IMT_REG
@@ -241,7 +234,6 @@ typedef struct {
 #define MONO_ARCH_GSHAREDVT_SUPPORTED 1
 #define MONO_ARCH_HAVE_OP_TAIL_CALL 1
 #define MONO_ARCH_HAVE_TRANSLATE_TLS_OFFSET 1
-#define MONO_ARCH_HAVE_TLS_GET_REG 1
 #define MONO_ARCH_HAVE_DUMMY_INIT 1
 #define MONO_ARCH_HAVE_SDB_TRAMPOLINES 1
 #define MONO_ARCH_HAVE_PATCH_CODE_NEW 1
@@ -336,17 +328,8 @@ typedef struct {
 	ArgInfo args [1];
 } CallInfo;
 
-guint8*
-mono_x86_emit_tls_get (guint8* code, int dreg, int tls_offset);
-
-guint8*
-mono_x86_emit_tls_get_reg (guint8* code, int dreg, int offset_reg);
-
 guint32
 mono_x86_get_this_arg_offset (MonoMethodSignature *sig);
-
-gboolean
-mono_x86_have_tls_get (void);
 
 void
 mono_x86_throw_exception (mgreg_t *regs, MonoObject *exc, 

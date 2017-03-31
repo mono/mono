@@ -2,8 +2,12 @@ thisdir = class/System.IdentityModel
 SUBDIRS = 
 include ../../build/rules.make
 
+ifndef NO_MONO_SECURITY
+MONO_SECURITY=Mono.Security
+endif
+
 LIBRARY = System.IdentityModel.dll
-LIB_REFS = System System.Xml System.Security Mono.Security System.Runtime.Serialization
+LIB_REFS = System System.Xml System.Security $(MONO_SECURITY) System.Runtime.Serialization
 LIB_MCS_FLAGS = \
 		/d:NET_3_0	\
 	        $(OTHER_LIB_MCS_FLAGS)

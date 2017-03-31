@@ -301,7 +301,11 @@ namespace MonoTests.Microsoft.Build.Tasks {
 				Assert.Fail ("Build failed");
 			}
 			Assert.IsTrue (File.Exists (target_file), "A2");
-			Assert.AreEqual (FileAttributes.Normal, File.GetAttributes (target_file), "A3");					
+			if (Environment.OSVersion.Platform == PlatformID.Unix)
+				Assert.AreEqual (FileAttributes.Normal, File.GetAttributes (target_file), "A3");
+			else
+				// On Windows the Archive attribute will be set, not the Normal attribute.
+				Assert.AreEqual (FileAttributes.Archive, File.GetAttributes (target_file), "A3");
 		}
 
 		[Test]
@@ -349,7 +353,12 @@ namespace MonoTests.Microsoft.Build.Tasks {
 				Assert.Fail ("Build failed " + sb.ToString ());
 			}
 			Assert.IsTrue (File.Exists (target_file), "A2");
-			Assert.AreEqual (FileAttributes.Normal, File.GetAttributes (target_file), "A3");					
+			var target_file_attrs = File.GetAttributes (target_file);
+			if (Environment.OSVersion.Platform == PlatformID.Unix)
+				Assert.AreEqual (FileAttributes.Normal, File.GetAttributes (target_file), "A3");
+			else
+				// On Windows the Archive attribute will be set, not the Normal attribute.
+				Assert.AreEqual (FileAttributes.Archive, File.GetAttributes (target_file), "A3");
 		}
 
 		[Test]

@@ -22,10 +22,9 @@
 //
 #if SECURITY_DEP
 
-using XX509CertificateCollection = System.Security.Cryptography.X509Certificates.X509CertificateCollection;
-
 using System;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
 
 namespace System.Security.Cryptography.X509Certificates {
 
@@ -107,7 +106,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			return handle;
 		}
 		
-		public static SecTrustResult TrustEvaluateSsl (XX509CertificateCollection certificates, XX509CertificateCollection anchors, string host)
+		public static SecTrustResult TrustEvaluateSsl (X509CertificateCollection certificates, X509CertificateCollection anchors, string host)
 		{
 			if (certificates == null)
 				return SecTrustResult.Deny;
@@ -119,7 +118,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			}
 		}
 
-		static SecTrustResult _TrustEvaluateSsl (XX509CertificateCollection certificates, XX509CertificateCollection anchors, string hostName)
+		static SecTrustResult _TrustEvaluateSsl (X509CertificateCollection certificates, X509CertificateCollection anchors, string hostName)
 		{
 			int certCount = certificates.Count;
 			int anchorCount = anchors != null ? anchors.Count : 0;
@@ -147,7 +146,7 @@ namespace System.Security.Cryptography.X509Certificates {
 
 				certArray = FromIntPtrs (secCerts);
 
-				if (!string.IsNullOrEmpty (hostName))
+				if (hostName != null)
 					host = CFStringCreateWithCharacters (IntPtr.Zero, hostName, (IntPtr) hostName.Length);
 				sslsecpolicy = SecPolicyCreateSSL (true, host);
 

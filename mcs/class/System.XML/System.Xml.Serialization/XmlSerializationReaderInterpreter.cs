@@ -737,7 +737,8 @@ namespace System.Xml.Serialization
 			Type type = listType.Type;
 			if (type.IsArray)
 			{
-				list = EnsureArrayIndex ((Array)list, index, type.GetElementType());
+				list = EnsureArrayIndex ((Array)list, index, type.GetElementType ());
+				listType.ConvertForAssignment (ref value);
 				((Array)list).SetValue (value, index);
 			}
 			else	// Must be IEnumerable

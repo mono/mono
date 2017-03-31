@@ -27,13 +27,13 @@ class C
 	int TestInstance ()
 	{
 		Expression<Func<EmptyDelegate>> e = () => M;
-		if (e.Body.ToString () != "Convert(Void M().CreateDelegate(EmptyDelegate, value(C)))")
+		if (e.Body.ToString () != "Convert(Void M().CreateDelegate(EmptyDelegate, value(C)), EmptyDelegate)")
 			return 1;
 		
 		e.Compile () ();
 		
 		Expression<Func<C, EmptyDelegate>> e2 = (l) => l.M;
-		if (e2.Body.ToString () != "Convert(Void M().CreateDelegate(EmptyDelegate, l))")
+		if (e2.Body.ToString () != "Convert(Void M().CreateDelegate(EmptyDelegate, l), EmptyDelegate)")
 			return 2;
 		
 		e2.Compile () (this);
@@ -43,7 +43,7 @@ class C
 	public static int Main ()
 	{
 		Expression<Func<EmptyDelegate>> e = () => new EmptyDelegate (Test);
-		if (e.Body.ToString () != "Convert(Void Test().CreateDelegate(EmptyDelegate, null))")
+		if (e.Body.ToString () != "Convert(Void Test().CreateDelegate(EmptyDelegate, null), EmptyDelegate)")
 			return 1;
 
 		var v = e.Compile ();
@@ -53,7 +53,7 @@ class C
 			return 2;
 		
 		Expression<Func<EmptyDelegate>> e2 = () => Test;
-		if (e2.Body.ToString () != "Convert(Void Test().CreateDelegate(EmptyDelegate, null))")
+		if (e2.Body.ToString () != "Convert(Void Test().CreateDelegate(EmptyDelegate, null), EmptyDelegate)")
 			return 3;
 
 		var v2 = e2.Compile ();
@@ -64,7 +64,7 @@ class C
 			
 		unsafe {
 			Expression<Func<UnsafeDelegate>> e3 = () => new UnsafeDelegate (Foo);
-			if (e3.Body.ToString () != "Convert(Int32* Foo().CreateDelegate(UnsafeDelegate, null))")
+			if (e3.Body.ToString () != "Convert(Int32* Foo().CreateDelegate(UnsafeDelegate, null), UnsafeDelegate)")
 				return 5;
 			
 			var v3 = e3.Compile ();

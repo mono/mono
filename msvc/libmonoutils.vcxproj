@@ -65,8 +65,11 @@
     <ClCompile Include="..\mono\utils\mono-log-common.c" />
     <ClCompile Include="..\mono\utils\mono-math.c" />
     <ClCompile Include="..\mono\utils\mono-md5.c" />
+    <ClCompile Include="..\mono\utils\mono-mmap-windows.c" />
     <ClCompile Include="..\mono\utils\mono-mmap.c" />
     <ClCompile Include="..\mono\utils\mono-networkinterfaces.c" />
+    <ClCompile Include="..\mono\utils\mono-proclib-windows.c" />
+    <ClCompile Include="..\mono\utils\mono-rand-windows.c" />
     <ClCompile Include="..\mono\utils\mono-rand.c" />
     <ClCompile Include="..\mono\utils\mono-threads-state-machine.c" />
     <ClCompile Include="..\mono\utils\networking.c" />
@@ -101,24 +104,12 @@
     <ClCompile Include="..\mono\utils\mono-threads-windows.c" />
     <ClCompile Include="..\mono\utils\mono-threads.c" />
     <ClCompile Include="..\mono\utils\mono-threads-coop.c" />
-    <ClCompile Include="..\mono\utils\mono-threads-posix-abort-syscall.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\mono\utils\mono-threads-mach-abort-syscall.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\mono\utils\mono-threads-windows-abort-syscall.c" />
     <ClCompile Include="..\mono\utils\mono-time.c" />
     <ClCompile Include="..\mono\utils\mono-tls.c" />
     <ClCompile Include="..\mono\utils\mono-uri.c" />
     <ClCompile Include="..\mono\utils\mono-value-hash.c" />
     <ClCompile Include="..\mono\utils\monobitset.c" />
+    <ClCompile Include="..\mono\utils\os-event-win32.c" />
     <ClCompile Include="..\mono\utils\strenc.c" />
     <ClCompile Include="..\mono\utils\atomic.c" />
     <ClCompile Include="..\mono\utils\mono-hwcap.c" />
@@ -153,6 +144,7 @@
     <ClInclude Include="..\mono\utils\mono-counters.h" />
     <ClInclude Include="..\mono\utils\mono-digest.h" />
     <ClInclude Include="..\mono\utils\mono-dl-fallback.h" />
+    <ClInclude Include="..\mono\utils\mono-dl-windows-internals.h" />
     <ClInclude Include="..\mono\utils\mono-dl.h" />
     <ClInclude Include="..\mono\utils\mono-error-internals.h" />
     <ClInclude Include="..\mono\utils\mono-error.h" />
@@ -165,6 +157,8 @@
     <ClInclude Include="..\mono\utils\mono-math.h" />
     <ClInclude Include="..\mono\utils\mono-membar.h" />
     <ClInclude Include="..\mono\utils\mono-memory-model.h" />
+    <ClInclude Include="..\mono\utils\mono-mmap-internals.h" />
+    <ClInclude Include="..\mono\utils\mono-mmap-windows-internals.h" />
     <ClInclude Include="..\mono\utils\mono-mmap.h" />
     <ClInclude Include="..\mono\utils\mono-networkinterfaces.h" />
     <ClInclude Include="..\mono\utils\mono-once.h" />
@@ -172,9 +166,11 @@
     <ClInclude Include="..\mono\utils\mono-os-semaphore.h" />
     <ClInclude Include="..\mono\utils\mono-path.h" />
     <ClInclude Include="..\mono\utils\mono-poll.h" />
+    <ClInclude Include="..\mono\utils\mono-proclib-windows-internals.h" />
     <ClInclude Include="..\mono\utils\mono-proclib.h" />
     <ClInclude Include="..\mono\utils\mono-property-hash.h" />
     <ClInclude Include="..\mono\utils\mono-publib.h" />
+    <ClInclude Include="..\mono\utils\mono-rand-windows-internals.h" />
     <ClInclude Include="..\mono\utils\mono-rand.h" />
     <ClInclude Include="..\mono\utils\mono-sigcontext.h" />
     <ClInclude Include="..\mono\utils\mono-stack-unwinding.h" />
@@ -183,12 +179,12 @@
     <ClInclude Include="..\mono\utils\mono-threads.h" />
     <ClInclude Include="..\mono\utils\mono-threads-api.h" />
     <ClInclude Include="..\mono\utils\mono-threads-coop.h" />
-    <ClInclude Include="..\mono\utils\mono-threads-posix-signals.h" />
     <ClInclude Include="..\mono\utils\mono-time.h" />
     <ClInclude Include="..\mono\utils\mono-tls.h" />
     <ClInclude Include="..\mono\utils\mono-uri.h" />
     <ClInclude Include="..\mono\utils\mono-value-hash.h" />
     <ClInclude Include="..\mono\utils\monobitset.h" />
+    <ClInclude Include="..\mono\utils\os-event.h" />
     <ClInclude Include="..\mono\utils\strenc.h" />
     <ClInclude Include="..\mono\utils\valgrind.h" />
     <ClInclude Include="..\mono\utils\atomic.h" />
@@ -209,6 +205,9 @@
     <ProjectReference Include="eglib.vcxproj">
       <Project>{158073ed-99ae-4196-9edc-ddb2344f8466}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\mono\utils\Makefile.am" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8FC2B0C8-51AD-49DF-851F-5D01A77A75E4}</ProjectGuid>

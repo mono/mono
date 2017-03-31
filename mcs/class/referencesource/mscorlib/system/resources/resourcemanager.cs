@@ -501,7 +501,9 @@ namespace System.Resources {
         [System.Security.SecuritySafeCritical]
         private void CommonAssemblyInit()
         {
+#if FEATURE_APPX            
             if (_bUsingModernResourceManagement == false)
+#endif
             {
                 UseManifest = true;
         
@@ -516,10 +518,9 @@ namespace System.Resources {
 
             _neutralResourcesCulture = ManifestBasedResourceGroveler.GetNeutralResourcesLanguage(MainAssembly, ref _fallbackLoc);
 
-#if !FEATURE_CORECLR   // PAL doesn't support eventing, and we don't compile event providers for coreclr
+#if !FEATURE_CORECLR && FEATURE_APPX  // PAL doesn't support eventing, and we don't compile event providers for coreclr
             if (_bUsingModernResourceManagement == false)
             {
-#if !MONO
                 if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled()) {
                     CultureInfo culture = CultureInfo.InvariantCulture;
                     String defaultResName = GetResourceFileName(culture);
@@ -534,11 +535,13 @@ namespace System.Resources {
                         FrameworkEventSource.Log.ResourceManagerNeutralResourcesNotFound(BaseNameField, MainAssembly, outputResName);
                     }
                 }
-#endif
 #pragma warning disable 618
                 ResourceSets = new Hashtable(); // for backward compatibility
 #pragma warning restore 618
             }
+#endif
+#if MONO
+            ResourceSets = new Hashtable(); // for backward compatibility
 #endif
         }
 
@@ -1020,12 +1023,10 @@ namespace System.Resources {
             Type WinRTResourceManagerType = Type.GetType("System.Resources.WindowsRuntimeResourceManager, " + AssemblyRef.SystemRuntimeWindowsRuntime, true);
             return (WindowsRuntimeResourceManagerBase)Activator.CreateInstance(WinRTResourceManagerType, true);
         }
-#endif
 
         [NonSerialized]
         private bool _bUsingModernResourceManagement; // Written only by SetAppXConfiguration
 
-#if FEATURE_APPX
         [NonSerialized]
         [SecurityCritical]
         private WindowsRuntimeResourceManagerBase _WinRTResourceManager; // Written only by SetAppXConfiguration
@@ -1094,8 +1095,8 @@ namespace System.Resources {
 
         private void SetAppXConfiguration()
         {
+#if FEATURE_APPX            
             Contract.Assert(_bUsingModernResourceManagement == false); // Only this function writes to this member
-#if FEATURE_APPX
             Contract.Assert(_WinRTResourceManager == null); // Only this function writes to this member
             Contract.Assert(_PRIonAppXInitialized == false); // Only this function writes to this member
             Contract.Assert(_PRIExceptionInfo == null); // Only this function writes to this member

@@ -1,5 +1,6 @@
-/*
- * sgen-client-mono.h: Mono's client definitions for SGen.
+/**
+ * \file
+ * Mono's client definitions for SGen.
  *
  * Copyright (C) 2014 Xamarin Inc
  *
@@ -38,9 +39,6 @@ struct _SgenClientThreadInfo {
 	*/
 	gboolean skip, suspend_done;
 	volatile int in_critical_region;
-
-	gpointer stopped_ip;	/* only valid if the thread is stopped */
-	MonoDomain *stopped_domain; /* dsto */
 
 	/*
 	This is set the argument of mono_gc_set_skip_thread.
@@ -84,6 +82,7 @@ extern void mono_sgen_init_stw (void);
 
 enum {
 	INTERNAL_MEM_EPHEMERON_LINK = INTERNAL_MEM_FIRST_CLIENT,
+	INTERNAL_MEM_MOVED_OBJECT,
 	INTERNAL_MEM_MAX
 };
 
@@ -114,7 +113,7 @@ sgen_mono_array_size (GCVTable vtable, MonoArray *array, mword *bounds_size, mwo
 #define SGEN_CLIENT_OBJECT_HEADER_SIZE		(sizeof (GCObject))
 #define SGEN_CLIENT_MINIMUM_OBJECT_SIZE		SGEN_CLIENT_OBJECT_HEADER_SIZE
 
-static mword /*__attribute__((noinline)) not sure if this hint is a good idea*/
+static mword /*__attribute__ ((__noinline__)) not sure if this hint is a good idea*/
 sgen_client_slow_object_get_size (GCVTable vtable, GCObject* o)
 {
 	MonoClass *klass = ((MonoVTable*)vtable)->klass;
@@ -699,26 +698,8 @@ sgen_client_binary_protocol_pin_stats (int objects_pinned_in_nursery, size_t byt
 {
 }
 
-int sgen_thread_handshake (BOOL suspend);
-gboolean sgen_suspend_thread (SgenThreadInfo *info);
-gboolean sgen_resume_thread (SgenThreadInfo *info);
-void sgen_wait_for_suspend_ack (int count);
-
-#ifdef HAVE_KW_THREAD
-extern __thread SgenThreadInfo *sgen_thread_info;
-#define TLAB_ACCESS_INIT
-#define IN_CRITICAL_REGION sgen_thread_info->client_info.in_critical_region
-#else
-extern MonoNativeTlsKey thread_info_key;
-#define TLAB_ACCESS_INIT	SgenThreadInfo *__thread_info__ = mono_native_tls_get_value (thread_info_key)
+#define TLAB_ACCESS_INIT	SgenThreadInfo *__thread_info__ = (SgenThreadInfo*)mono_tls_get_sgen_thread_info ()
 #define IN_CRITICAL_REGION (__thread_info__->client_info.in_critical_region)
-#endif
-
-#ifdef HAVE_KW_THREAD
-#define IN_CRITICAL_REGION sgen_thread_info->client_info.in_critical_region
-#else
-#define IN_CRITICAL_REGION (__thread_info__->client_info.in_critical_region)
-#endif
 
 /* Enter must be visible before anything is done in the critical region. */
 #define ENTER_CRITICAL_REGION do { mono_atomic_store_acquire (&IN_CRITICAL_REGION, 1); } while (0)

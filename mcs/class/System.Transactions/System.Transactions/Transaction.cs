@@ -137,44 +137,44 @@ namespace System.Transactions
 
 		[MonoTODO]
 		public DependentTransaction DependentClone (
-			DependentCloneOption option)
+			DependentCloneOption cloneOption)
 		{
 			DependentTransaction d = 
-				new DependentTransaction (this, option);
+				new DependentTransaction (this, cloneOption);
 			dependents.Add (d);
 			return d;
 		}
 
 		[MonoTODO ("Only SinglePhase commit supported for durable resource managers.")]
 		[PermissionSetAttribute (SecurityAction.LinkDemand)]
-		public Enlistment EnlistDurable (Guid manager,
-			IEnlistmentNotification notification,
-			EnlistmentOptions options)
+		public Enlistment EnlistDurable (Guid resourceManagerIdentifier,
+			IEnlistmentNotification enlistmentNotification,
+			EnlistmentOptions enlistmentOptions)
 		{
 			throw new NotImplementedException ("DTC unsupported, only SinglePhase commit supported for durable resource managers.");
 		}
 
 		[MonoTODO ("Only Local Transaction Manager supported. Cannot have more than 1 durable resource per transaction. Only EnlistmentOptions.None supported yet.")]
 		[PermissionSetAttribute (SecurityAction.LinkDemand)]
-		public Enlistment EnlistDurable (Guid manager,
-			ISinglePhaseNotification notification,
-			EnlistmentOptions options)
+		public Enlistment EnlistDurable (Guid resourceManagerIdentifier,
+			ISinglePhaseNotification singlePhaseNotification,
+			EnlistmentOptions enlistmentOptions)
 		{
 			EnsureIncompleteCurrentScope ();
 			if (pspe != null || Durables.Count > 0)
 				throw new NotImplementedException ("DTC unsupported, multiple durable resource managers aren't supported.");
 
-			if (options != EnlistmentOptions.None)
+			if (enlistmentOptions != EnlistmentOptions.None)
 				throw new NotImplementedException ("EnlistmentOptions other than None aren't supported");
 
-			Durables.Add (notification);
+			Durables.Add (singlePhaseNotification);
 
 			/* FIXME: Enlistment ?? */
 			return new Enlistment ();
 		}
 
 		public bool EnlistPromotableSinglePhase (
-			IPromotableSinglePhaseNotification notification)
+			IPromotableSinglePhaseNotification promotableSinglePhaseNotification)
 		{
 			EnsureIncompleteCurrentScope ();
 
@@ -183,27 +183,47 @@ namespace System.Transactions
 			if (pspe != null || Durables.Count > 0)
 				return false;
 
-			pspe = notification;
+			pspe = promotableSinglePhaseNotification;
 			pspe.Initialize();
 
 			return true;
 		}
 
-		[MonoTODO ("EnlistmentOptions being ignored")]
-		public Enlistment EnlistVolatile (
-			IEnlistmentNotification notification,
-			EnlistmentOptions options)
+		public void SetDistributedTransactionIdentifier (IPromotableSinglePhaseNotification promotableNotification, Guid distributedTransactionIdentifier)
 		{
-			return EnlistVolatileInternal (notification, options);
+			throw new NotImplementedException ();
+		}
+
+ 		public bool EnlistPromotableSinglePhase (IPromotableSinglePhaseNotification promotableSinglePhaseNotification, Guid promoterType)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public byte[] GetPromotedToken ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public Guid PromoterType
+		{
+			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO ("EnlistmentOptions being ignored")]
 		public Enlistment EnlistVolatile (
-			ISinglePhaseNotification notification,
-			EnlistmentOptions options)
+			IEnlistmentNotification enlistmentNotification,
+			EnlistmentOptions enlistmentOptions)
+		{
+			return EnlistVolatileInternal (enlistmentNotification, enlistmentOptions);
+		}
+
+		[MonoTODO ("EnlistmentOptions being ignored")]
+		public Enlistment EnlistVolatile (
+			ISinglePhaseNotification singlePhaseNotification,
+			EnlistmentOptions enlistmentOptions)
 		{
 			/* FIXME: Anything extra reqd for this? */
-			return EnlistVolatileInternal (notification, options);
+			return EnlistVolatileInternal (singlePhaseNotification, enlistmentOptions);
 		}
 
 		private Enlistment EnlistVolatileInternal (
@@ -216,6 +236,17 @@ namespace System.Transactions
 
 			/* FIXME: Enlistment.. ? */
 			return new Enlistment ();
+		}
+
+		[MonoTODO ("Only Local Transaction Manager supported. Cannot have more than 1 durable resource per transaction.")]
+		[PermissionSetAttribute (SecurityAction.LinkDemand)]
+		public Enlistment PromoteAndEnlistDurable (
+			Guid manager,
+			IPromotableSinglePhaseNotification promotableNotification,
+			ISinglePhaseNotification notification,
+			EnlistmentOptions options)
+		{
+			throw new NotImplementedException ("DTC unsupported, multiple durable resource managers aren't supported.");
 		}
 
 		public override bool Equals (object obj)
@@ -256,10 +287,10 @@ namespace System.Transactions
 			Rollback (null);
 		}
 
-		public void Rollback (Exception ex)
+		public void Rollback (Exception e)
 		{
 			EnsureIncompleteCurrentScope ();
-			Rollback (ex, null);
+			Rollback (e, null);
 		}
 
 		internal void Rollback (Exception ex, object abortingEnlisted)

@@ -1,5 +1,6 @@
-/*
- * abcremoval.c: Array bounds check removal
+/**
+ * \file
+ * Array bounds check removal
  *
  * Author:
  *   Massimiliano Mantione (massi@ximian.com)
@@ -13,6 +14,7 @@
 #include <mono/metadata/mempool.h>
 #include <mono/metadata/opcodes.h>
 #include <mono/metadata/mempool-internals.h>
+#include <mono/utils/mono-compiler.h>
 
 #include <config.h>
 
@@ -1241,7 +1243,7 @@ type_to_value_kind (MonoType *type)
 
 /**
  * mono_perform_abc_removal:
- * @cfg: Control Flow Graph
+ * \param cfg Control Flow Graph
  *
  * Performs the ABC removal from a cfg in SSA form.
  * It does the following:
@@ -1380,4 +1382,8 @@ mono_perform_abc_removal (MonoCompile *cfg)
 	process_block (cfg, cfg->bblocks [0], &area);
 }
 
-#endif /* DISABLE_JIT */
+#else /* !DISABLE_JIT */
+
+MONO_EMPTY_SOURCE_FILE (abcremoval);
+
+#endif /* !DISABLE_JIT */

@@ -38,7 +38,7 @@ namespace zipsharp
 		string[] Files {
 			get {
 				if (files == null)
-					files = NativeUnzip.GetFiles (Handle);
+					files = NativeVersion.Use32Bit ? NativeUnzip.GetFiles32 (Handle) : NativeUnzip.GetFiles64 (Handle);
 				return files;
 			}
 		}
@@ -66,7 +66,7 @@ namespace zipsharp
 		public UnzipArchive (Stream stream, bool ownsStream)
 		{
 			Stream = new ZipStream (stream, ownsStream);
-			Handle = NativeUnzip.OpenArchive (Stream.IOFunctions);
+			Handle = NativeVersion.Use32Bit ? NativeUnzip.OpenArchive32 (Stream.IOFunctions32) : NativeUnzip.OpenArchive64 (Stream.IOFunctions64);
 		}
 
 		public void Dispose ()

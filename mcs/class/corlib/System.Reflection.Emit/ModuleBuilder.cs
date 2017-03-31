@@ -348,9 +348,6 @@ namespace System.Reflection.Emit {
 			return null;
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern Type create_modified_type (TypeBuilder tb, string modifiers);
-
 		private TypeBuilder GetMaybeNested (TypeBuilder t, IEnumerable<TypeName> nested) {
 			TypeBuilder result = t;
 
@@ -392,8 +389,27 @@ namespace System.Reflection.Emit {
 			if ((result == null) && throwOnError)
 				throw new TypeLoadException (className);
 			if (result != null && (ts.HasModifiers || ts.IsByRef)) {
-				string modifiers = ts.ModifierString ();
-				Type mt = create_modified_type (result, modifiers);
+				Type mt = result;
+				if (result is TypeBuilder) {
+					var tb = result as TypeBuilder;
+					if (tb.is_created)
+						mt = tb.CreateType ();
+				}
+				foreach (var mod in ts.Modifiers) {
+					if (mod is PointerSpec)
+						mt = mt.MakePointerType ();
+					else if (mod is ArraySpec) {
+						var spec = mod as ArraySpec;
+						if (spec.IsBound)
+							return null;
+						if (spec.Rank == 1)
+							mt = mt.MakeArrayType ();
+						else
+							mt = mt.MakeArrayType (spec.Rank);
+					}
+				}
+				if (ts.IsByRef)
+					mt = mt.MakeByRefType ();
 				result = mt as TypeBuilder;
 				if (result == null)
 					return mt;
@@ -665,15 +681,90 @@ namespace System.Reflection.Emit {
 			return result;
 		}
 
+		static int typeref_tokengen =  0x01ffffff;
+		static int typedef_tokengen =  0x02ffffff;
+		static int typespec_tokengen =  0x1bffffff;
+		static int memberref_tokengen =  0x0affffff;
+		static int methoddef_tokengen =  0x06ffffff;
+		Dictionary<MemberInfo, int> inst_tokens = new Dictionary<MemberInfo, int> ();
+		Dictionary<MemberInfo, int> inst_tokens_open = new Dictionary<MemberInfo, int> ();
+
+		//
+		// Assign a pseudo token to the various TypeBuilderInst objects, so the runtime
+		// doesn't have to deal with them.
+		// For Save assemblies, the tokens will be fixed up later during Save ().
+		// For Run assemblies, the tokens will not be fixed up, so the runtime will
+		// still encounter these objects, it will resolve them by calling their
+		// RuntimeResolve () methods.
+		//
+		int GetPseudoToken (MemberInfo member, bool create_open_instance) {
+			int token;
+
+			if (create_open_instance) {
+				if (inst_tokens_open.TryGetValue (member, out token))
+					return token;
+			} else {
+				if (inst_tokens.TryGetValue (member, out token))
+					return token;
+			}
+			// Count backwards to avoid collisions with the tokens
+			// allocated by the runtime
+			if (member is TypeBuilderInstantiation || member is SymbolType)
+				token = typespec_tokengen --;
+			else if (member is FieldOnTypeBuilderInst)
+				token = memberref_tokengen --;
+			else if (member is ConstructorOnTypeBuilderInst)
+				token = memberref_tokengen --;
+			else if (member is MethodOnTypeBuilderInst)
+				token = memberref_tokengen --;
+			else if (member is FieldBuilder)
+				token = memberref_tokengen --;
+			else if (member is TypeBuilder) {
+				if (create_open_instance && (member as TypeBuilder).ContainsGenericParameters)
+					token = typespec_tokengen --;
+				else if (member.Module == this)
+					token = typedef_tokengen --;
+				else
+					token = typeref_tokengen --;
+			} else if (member is ConstructorBuilder) {
+				if (member.Module == this && !(member as ConstructorBuilder).TypeBuilder.ContainsGenericParameters)
+					token = methoddef_tokengen --;
+				else
+					token = memberref_tokengen --;
+			} else if (member is MethodBuilder) {
+				var mb = member as MethodBuilder;
+				if (member.Module == this && !mb.TypeBuilder.ContainsGenericParameters && !mb.IsGenericMethodDefinition)
+					token = methoddef_tokengen --;
+				else
+					token = memberref_tokengen --;
+			} else if (member is GenericTypeParameterBuilder) {
+				token = typespec_tokengen --;
+			} else
+				throw new NotImplementedException ();
+			if (create_open_instance)
+				inst_tokens_open [member] = token;
+			else
+				inst_tokens [member] = token;
+			RegisterToken (member, token);
+			return token;
+		}
+
 		internal int GetToken (MemberInfo member) {
+			if (member is ConstructorBuilder || member is MethodBuilder)
+				return GetPseudoToken (member, false);
 			return getToken (this, member, true);
 		}
 
 		internal int GetToken (MemberInfo member, bool create_open_instance) {
+			if (member is TypeBuilderInstantiation || member is FieldOnTypeBuilderInst || member is ConstructorOnTypeBuilderInst || member is MethodOnTypeBuilderInst || member is SymbolType || member is FieldBuilder || member is TypeBuilder || member is ConstructorBuilder || member is MethodBuilder || member is GenericTypeParameterBuilder)
+				return GetPseudoToken (member, create_open_instance);
 			return getToken (this, member, create_open_instance);
 		}
 
 		internal int GetToken (MethodBase method, IEnumerable<Type> opt_param_types) {
+			if (method is ConstructorBuilder || method is MethodBuilder)
+				return GetPseudoToken (method, false);
+
 			if (opt_param_types == null)
 				return getToken (this, method, true);
 
@@ -682,6 +773,8 @@ namespace System.Reflection.Emit {
 		}
 		
 		internal int GetToken (MethodBase method, Type[] opt_param_types) {
+			if (method is ConstructorBuilder || method is MethodBuilder)
+				return GetPseudoToken (method, false);
 			return getMethodToken (this, method, opt_param_types);
 		}
 
@@ -708,11 +801,87 @@ namespace System.Reflection.Emit {
 			return token_gen;
 		}
 
+		// Called from the runtime to return the corresponding finished reflection object
+		internal static object RuntimeResolve (object obj) {
+			if (obj is MethodBuilder)
+				return (obj as MethodBuilder).RuntimeResolve ();
+			if (obj is ConstructorBuilder)
+				return (obj as ConstructorBuilder).RuntimeResolve ();
+			if (obj is FieldBuilder)
+				return (obj as FieldBuilder).RuntimeResolve ();
+			if (obj is GenericTypeParameterBuilder)
+				return (obj as GenericTypeParameterBuilder).RuntimeResolve ();
+			if (obj is FieldOnTypeBuilderInst)
+				return (obj as FieldOnTypeBuilderInst).RuntimeResolve ();
+			if (obj is MethodOnTypeBuilderInst)
+				return (obj as MethodOnTypeBuilderInst).RuntimeResolve ();
+			if (obj is ConstructorOnTypeBuilderInst)
+				return (obj as ConstructorOnTypeBuilderInst).RuntimeResolve ();
+			if (obj is Type)
+				return (obj as Type).RuntimeResolve ();
+			throw new NotImplementedException (obj.GetType ().FullName);
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void build_metadata (ModuleBuilder mb);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void WriteToFile (IntPtr handle);
+
+		void FixupTokens (Dictionary<int, int> token_map, Dictionary<int, MemberInfo> member_map, Dictionary<MemberInfo, int> inst_tokens,
+						  bool open) {
+			foreach (var v in inst_tokens) {
+				var member = v.Key;
+				var old_token = v.Value;
+				MemberInfo finished = null;
+
+				// Construct the concrete reflection object corresponding to the
+				// TypeBuilderInst object, and request a token for it instead.
+				if (member is TypeBuilderInstantiation || member is SymbolType) {
+					finished = (member as Type).RuntimeResolve ();
+				} else if (member is FieldOnTypeBuilderInst) {
+					finished = (member as FieldOnTypeBuilderInst).RuntimeResolve ();
+				} else if (member is ConstructorOnTypeBuilderInst) {
+					finished = (member as ConstructorOnTypeBuilderInst).RuntimeResolve ();
+				} else if (member is MethodOnTypeBuilderInst) {
+					finished = (member as MethodOnTypeBuilderInst).RuntimeResolve ();
+				} else if (member is FieldBuilder) {
+					finished = (member as FieldBuilder).RuntimeResolve ();
+				} else if (member is TypeBuilder) {
+					finished = (member as TypeBuilder).RuntimeResolve ();
+				} else if (member is ConstructorBuilder) {
+					finished = (member as ConstructorBuilder).RuntimeResolve ();
+				} else if (member is MethodBuilder) {
+					finished = (member as MethodBuilder).RuntimeResolve ();
+				} else if (member is GenericTypeParameterBuilder) {
+					finished = (member as GenericTypeParameterBuilder).RuntimeResolve ();
+				} else {
+					throw new NotImplementedException ();
+				}
+
+				int new_token = GetToken (finished, open);
+				token_map [old_token] = new_token;
+				member_map [old_token] = finished;
+				// Replace the token mapping in the runtime so it points to the new object
+				RegisterToken (finished, old_token);
+			}
+		}
+
+		//
+		// Fixup the pseudo tokens assigned to the various SRE objects
+		//
+		void FixupTokens () {
+			var token_map = new Dictionary<int, int> ();
+			var member_map = new Dictionary<int, MemberInfo> ();
+			FixupTokens (token_map, member_map, inst_tokens, false);
+			FixupTokens (token_map, member_map, inst_tokens_open, true);
+
+			// Replace the tokens in the IL stream
+			if (types != null) {
+				for (int i = 0; i < num_types; ++i)
+					types [i].FixupTokens (token_map, member_map);
+			}
+		}
 
 		internal void Save ()
 		{
@@ -724,6 +893,8 @@ namespace System.Reflection.Emit {
 					if (!types [i].is_created)
 						throw new NotSupportedException ("Type '" + types [i].FullName + "' was not completed.");
 			}
+
+			FixupTokens ();
 
 			if ((global_type != null) && (global_type_created == null))
 				global_type_created = global_type.CreateType ();

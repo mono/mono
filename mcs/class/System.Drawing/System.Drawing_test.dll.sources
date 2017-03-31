@@ -1,3 +1,4 @@
+../../test-helpers/NunitHelpers.cs
 ../../../build/common/Locale.cs
 ../System.Drawing/gdipEnums.cs    
 ../System.Drawing/gdipFunctions.cs

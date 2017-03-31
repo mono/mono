@@ -5,7 +5,7 @@
 // (C) 2004 Ximian, Inc. http://www.ximian.com
 //
 
-#if !MONOTOUCH && !MOBILE_STATIC
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 
 using System;
 using System.Threading;

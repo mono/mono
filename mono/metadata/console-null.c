@@ -1,5 +1,6 @@
-/*
- * console-null.c: Null driver, does nothing.
+/**
+ * \file
+ * Null driver, does nothing.
  *
  * Author:
  *	Gonzalo Paniagua Javier (gonzalo@ximian.com)
@@ -30,7 +31,7 @@ mono_console_handle_async_ops (void)
 MonoBoolean
 ves_icall_System_ConsoleDriver_Isatty (HANDLE handle)
 {
-	return (GetFileType (handle) == FILE_TYPE_CHAR);
+	return mono_w32file_get_type (handle) == FILE_TYPE_CHAR;
 }
 
 MonoBoolean

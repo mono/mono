@@ -1,5 +1,5 @@
-/*
- * mini-arm64.h
+/**
+ * \file
  *
  * Copyright 2013 Xamarin Inc
  *
@@ -143,15 +143,10 @@ typedef struct {
 #define MONO_ARCH_DYN_CALL_SUPPORTED 1
 #define MONO_ARCH_DYN_CALL_PARAM_AREA (DYN_CALL_STACK_ARGS * 8)
 #define MONO_ARCH_SOFT_DEBUG_SUPPORTED 1
-#ifndef TARGET_ANDROID
 #define MONO_ARCH_GSHAREDVT_SUPPORTED 1
-#endif
 #define MONO_ARCH_HAVE_SETUP_RESUME_FROM_SIGNAL_HANDLER_CTX 1
 #define MONO_ARCH_HAVE_SETUP_ASYNC_CALLBACK 1
 #define MONO_ARCH_HAVE_GENERAL_RGCTX_LAZY_FETCH_TRAMPOLINE 1
-#ifndef MONO_CROSS_COMPILE
-#define MONO_ARCH_ENABLE_MONO_LMF_VAR 1
-#endif
 #define MONO_ARCH_HAVE_OP_GET_EX_OBJ 1
 #define MONO_ARCH_HAVE_OBJC_GET_SELECTOR 1
 #define MONO_ARCH_HAVE_SDB_TRAMPOLINES 1
@@ -160,6 +155,7 @@ typedef struct {
 #define MONO_ARCH_HAVE_OPCODE_NEEDS_EMULATION 1
 #define MONO_ARCH_HAVE_DECOMPOSE_LONG_OPTS 1
 #define MONO_ARCH_HAVE_HANDLER_BLOCK_GUARD 1
+#define MONO_ARCH_HAVE_HANDLER_BLOCK_GUARD_AOT 1
 
 #ifdef TARGET_IOS
 
@@ -168,10 +164,6 @@ typedef struct {
 #else
 
 #define MONO_ARCH_REDZONE_SIZE 0
-#if !defined(__PIC__)
-#define MONO_ARCH_HAVE_TLS_GET 1
-#endif
-#define MONO_ARCH_HAVE_TLS_GET_REG 1
 
 #endif
 
@@ -264,6 +256,8 @@ void mono_arm_gsharedvt_init (void);
 GSList* mono_arm_get_exception_trampolines (gboolean aot);
 
 void mono_arm_resume_unwind (gpointer arg, mgreg_t pc, mgreg_t *int_regs, gdouble *fp_regs, gboolean corlib, gboolean rethrow);
+
+gpointer mono_arm_handler_block_trampoline_helper (gpointer *ptr);
 
 CallInfo* mono_arch_get_call_info (MonoMemPool *mp, MonoMethodSignature *sig);
 

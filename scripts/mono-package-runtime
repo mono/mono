@@ -1,0 +1,36 @@
+#!/bin/sh
+
+if test x$2 = x; then
+   echo usage is: mono-package-runtime MONO_INSTALL_PREFIX LABEL
+   echo The file will be created in the current directory
+   exit 1
+fi
+
+prefix=$1
+output=$2
+if test ! -d $prefix; then
+   echo the specified path is not a directory: $prefix
+   exit 1
+fi
+
+if test -e $output.zip; then
+   echo The output file already exists, refusing to overwrite: $output.zip
+   exit 1
+fi
+
+if test ! -e $prefix/bin/mono; then
+   echo The $prefix does not contains a bin/mono
+   exit 1
+fi
+
+if test ! -d $prefix/lib/mono/4.5; then
+   echo The $prefix does not contains a lib/mono/4.5
+   exit 1
+fi
+
+o=`pwd`/$output
+
+cd $prefix
+(zip -u $o.zip bin/mono lib/mono/4.5/mscorlib.dll lib/mono/4.5/System*dll lib/mono/4.5/Mono.CSharp.dll lib/mono/4.5/Microsoft*dll lib/mono/4.5/FSharp*.dll lib/mono/4.5/I18N*dll lib/mono/4.5/Accessibility.dll lib/mono/4.5/RabbitMQ.Client.dll lib/mono/4.5/ICSharpCode.SharpZipLib.dll lib/mono/4.5/CustomMarshalers.dll etc/mono/config etc/mono/4.5/machine.config etc/mono/4.5/web.config lib/mono/4.5/Mono.Cairo.dll lib/mono/4.5/Mono.Data.Sqlite.dll lib/mono/4.5/Mono.Posix.dll lib/mono/4.5/Mono.Security.*dll lib/mono/4.5/Mono.Simd.dll)
+echo Created file $o.zip
+

@@ -1289,7 +1289,9 @@ namespace Mono.CSharp
 							i = loaded.FindIndex (l => l.Item2 == ca);
 						}
 
-						loaded.RemoveAt (i);
+						if (i >= 0)
+							loaded.RemoveAt (i);
+
 						break;
 					}
 				}

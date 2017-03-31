@@ -10,9 +10,10 @@ LIBRARY = Microsoft.Build.dll
 LIB_REFS = $(PARENT_PROFILE)System $(PARENT_PROFILE)System.Core $(PARENT_PROFILE)System.Xml Microsoft.Build.Engine Microsoft.Build.Framework
 LIB_MCS_FLAGS = \
 	/d:MICROSOFT_BUILD_DLL
-	
+
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 TEST_LIB_REFS = $(XBUILD_UTILITIES)
+TEST_NUNITLITE_APP_CONFIG_RUNTIME=Test/test-config-file-$(PROFILE)
 
 EXTRA_DISTFILES = \
 	Microsoft.Build.Internal/ExpressionParser.jay	\

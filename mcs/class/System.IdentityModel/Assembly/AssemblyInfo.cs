@@ -63,4 +63,5 @@ using System.Runtime.InteropServices;
 
 #if !MOBILE
 [assembly: SecurityCritical (SecurityCriticalScope.Explicit)]
+[assembly: InternalsVisibleTo ("System.ServiceModel, PublicKey=00000000000000000400000000000000")]
 #endif

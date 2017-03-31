@@ -1,3 +1,7 @@
+/**
+ * \file
+ */
+
 #include "config.h"
 
 #include <string.h>
@@ -7,6 +11,7 @@
 #include <errno.h>
 #include <mono/utils/mono-io-portability.h>
 #include <mono/metadata/profiler-private.h>
+#include <mono/utils/mono-compiler.h>
 
 #ifndef DISABLE_PORTABILITY
 
@@ -18,7 +23,7 @@ static inline gchar *mono_portability_find_file_internal (GString **report, cons
 
 void mono_portability_helpers_init (void)
 {
-        const gchar *env;
+        gchar *env;
 
 	if (mono_io_portability_helpers != PORTABILITY_UNKNOWN)
 		return;
@@ -51,6 +56,7 @@ void mono_portability_helpers_init (void)
                                 mono_io_portability_helpers |= (PORTABILITY_DRIVE | PORTABILITY_CASE);
 			}
                 }
+		g_free (env);
 	}
 }
 
@@ -387,4 +393,9 @@ static inline gchar *mono_portability_find_file_internal (GString **report, cons
 	g_free (new_pathname);
 	return(NULL);
 }
-#endif
+
+#else /* DISABLE_PORTABILITY */
+
+MONO_EMPTY_SOURCE_FILE (mono_io_portability);
+
+#endif /* DISABLE_PORTABILITY */

@@ -48,16 +48,11 @@ namespace System {
 	public static partial class Environment {
 
 		/*
-		 * This is the version number of the corlib-runtime interface. When
-		 * making changes to this interface (by changing the layout
-		 * of classes the runtime knows about, changing icall signature or
-		 * semantics etc), increment this variable. Also increment the
-		 * pair of this variable in the runtime in metadata/appdomain.c.
-		 * Changes which are already detected at runtime, like the addition
-		 * of icalls, do not require an increment.
+		 * This is the version number of the corlib-runtime interface.
+		 * It is defined in configure.ac.
 		 */
 #pragma warning disable 169
-		private const int mono_corlib_version = 156;
+		private const int mono_corlib_version = Consts.MonoCorlibVersion;
 #pragma warning restore 169
 
 		[ComVisible (true)]
@@ -488,7 +483,7 @@ namespace System {
 		/// </summary>
 		public static string GetEnvironmentVariable (string variable)
 		{
-#if !MOBILE
+#if MONO_FEATURE_CAS
 			if (SecurityManager.SecurityEnabled) {
 				new EnvironmentPermission (EnvironmentPermissionAccess.Read, variable).Demand ();
 			}
@@ -573,7 +568,7 @@ namespace System {
 			else
 				dir = UnixGetFolderPath (folder, option);
 
-#if !MOBILE
+#if MONO_FEATURE_CAS
 			if ((dir != null) && (dir.Length > 0) && SecurityManager.SecurityEnabled) {
 				new FileIOPermission (FileIOPermissionAccess.PathDiscovery, dir).Demand ();
 			}
@@ -996,6 +991,14 @@ namespace System {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static int GetPageSize ();
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern private static string get_bundled_machine_config ();
+
+		internal static string GetBundledMachineConfig ()
+		{
+			return get_bundled_machine_config ();
+		}
+
 		static internal bool IsUnix {
 			get {
 				int platform = (int) Environment.Platform;
@@ -1031,6 +1034,15 @@ namespace System {
 
 			// Do not include a trailing newline for backwards compatibility
 			return st.ToString( System.Diagnostics.StackTrace.TraceFormat.Normal );
+		}
+
+		// Copied from referencesource Environment
+		internal static bool IsWinRTSupported
+		{
+			get
+			{
+				return true;
+			}
 		}
 	}
 }

@@ -145,14 +145,6 @@ namespace Mono.Security.Interface
 #endregion
 
 #region Certificate Validation
-
-		/*
-		 * Allows a TLS provider to provide a custom system certificiate validator.
-		 */
-		internal virtual bool HasCustomSystemCertificateValidator {
-			get { return false; }
-		}
-
 		/*
 		 * If @serverMode is true, then we're a server and want to validate a certificate
 		 * that we received from a client.
@@ -162,32 +154,10 @@ namespace Mono.Security.Interface
 		 * Returns `true` if certificate validation has been performed and `false` to invoke the
 		 * default system validator.
 		 */
-		internal virtual bool InvokeSystemCertificateValidator (
+		internal abstract bool ValidateCertificate (
 			ICertificateValidator2 validator, string targetHost, bool serverMode,
 			X509CertificateCollection certificates, bool wantsChain, ref X509Chain chain,
-			out bool success, ref MonoSslPolicyErrors errors, ref int status11)
-		{
-			throw new InvalidOperationException ();
-		}
-
-#endregion
-
-#region Manged SSPI
-
-		/*
-		 * The managed SSPI implementation from the new TLS code.
-		 */
-
-		internal abstract bool SupportsTlsContext {
-			get;
-		}
-
-		internal abstract IMonoTlsContext CreateTlsContext (
-			string hostname, bool serverMode, TlsProtocols protocolFlags,
-			X509Certificate serverCertificate, X509CertificateCollection clientCertificates,
-			bool remoteCertRequired, MonoEncryptionPolicy encryptionPolicy,
-			MonoTlsSettings settings);
-
+			ref MonoSslPolicyErrors errors, ref int status11);
 #endregion
 	}
 }

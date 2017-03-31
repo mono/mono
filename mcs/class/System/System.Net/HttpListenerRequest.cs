@@ -370,7 +370,7 @@ namespace System.Net {
 						return false;
 					if (InputStream.EndRead (ares) <= 0)
 						return true;
-				} catch (ObjectDisposedException e) {
+				} catch (ObjectDisposedException) {
 					input_stream = null;
 					return true;
 				} catch {
@@ -404,7 +404,7 @@ namespace System.Net {
 		}
 
 		public long ContentLength64 {
-			get { return content_length; }
+			get { return is_chunked ? -1 : content_length; }
 		}
 
 		public string ContentType {

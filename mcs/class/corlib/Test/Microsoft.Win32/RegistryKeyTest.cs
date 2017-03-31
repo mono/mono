@@ -3436,15 +3436,20 @@ namespace MonoTests.Microsoft.Win32
 		[Test]
 		public void bugnew2 () // values cannot be written on registry root (hive)
 		{
-			string [] names = Registry.CurrentUser.GetValueNames ();
-			Assert.IsNotNull (names, "#1");
-			Registry.CurrentUser.SetValue ("name1", "value1");
-			Assert.IsNotNull (Registry.CurrentUser.GetValue ("name1"), "#2");
-			Assert.AreEqual ("value1", Registry.CurrentUser.GetValue ("name1"), "#3");
-			string [] newNames = Registry.CurrentUser.GetValueNames ();
-			Assert.IsNotNull (newNames, "#4");
-			Assert.AreEqual (names.Length + 1, newNames.Length, "#5");
-			Registry.CurrentUser.DeleteValue ("name1");
+			try {
+				string [] names = Registry.CurrentUser.GetValueNames ();
+				Assert.IsNotNull (names, "#1");
+				Registry.CurrentUser.SetValue ("name1", "value1");
+				Assert.IsNotNull (Registry.CurrentUser.GetValue ("name1"), "#2");
+				Assert.AreEqual ("value1", Registry.CurrentUser.GetValue ("name1"), "#3");
+				string [] newNames = Registry.CurrentUser.GetValueNames ();
+				Assert.IsNotNull (newNames, "#4");
+				Assert.AreEqual (names.Length + 1, newNames.Length, "#5");
+				Registry.CurrentUser.DeleteValue ("name1");
+			} finally {
+				Registry.CurrentUser.DeleteValue ("name1", false);
+				Registry.CurrentUser.Flush ();
+			}				
 		}
 
 		[Test]

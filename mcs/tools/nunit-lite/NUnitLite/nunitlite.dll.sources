@@ -264,3 +264,4 @@
 ../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/TestCaseData.cs
 ../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/TestContext.cs
 ../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/Throws.cs
+BabysitterSupport.cs

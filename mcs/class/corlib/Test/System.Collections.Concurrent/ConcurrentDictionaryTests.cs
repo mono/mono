@@ -32,9 +32,6 @@ using System.Collections.Concurrent;
 
 using NUnit;
 using NUnit.Framework;
-#if !MOBILE
-using NUnit.Framework.SyntaxHelpers;
-#endif
 
 namespace MonoTests.System.Collections.Concurrent
 {

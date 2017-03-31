@@ -1,4 +1,5 @@
-/*
+/**
+ * \file
  * Copyright 2008-2011 Novell Inc
  * Copyright 2011 Xamarin Inc
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
@@ -19,13 +20,10 @@
 #include <sched.h>
 #endif
 
-#ifdef HOST_WIN32
-#include <windows.h>
-#include <process.h>
-#endif
-
 #if defined(_POSIX_VERSION)
+#ifdef HAVE_SYS_ERRNO_H
 #include <sys/errno.h>
+#endif
 #include <sys/param.h>
 #include <errno.h>
 #ifdef HAVE_SYS_TYPES_H
@@ -35,6 +33,9 @@
 #include <sys/sysctl.h>
 #endif
 #include <sys/resource.h>
+#endif
+#if defined(__HAIKU__)
+#include <os/kernel/OS.h>
 #endif
 #if defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
 #include <sys/proc.h>
@@ -65,12 +66,26 @@
 #define USE_SYSCTL 1
 #endif
 
+#ifdef HAVE_SCHED_GETAFFINITY
+#  ifndef GLIBC_HAS_CPU_COUNT
+static int
+CPU_COUNT(cpu_set_t *set)
+{
+	int i, count = 0;
+
+	for (int i = 0; i < CPU_SETSIZE; i++)
+		if (CPU_ISSET(i, set))
+			count++;
+	return count;
+}
+#  endif
+#endif
+
 /**
  * mono_process_list:
- * @size: a pointer to a location where the size of the returned array is stored
- *
- * Return an array of pid values for the processes currently running on the system.
- * The size of the array is stored in @size.
+ * \param size a pointer to a location where the size of the returned array is stored
+ * \returns an array of pid values for the processes currently running on the system.
+ * The size of the array is stored in \p size.
  */
 gpointer*
 mono_process_list (int *size)
@@ -145,9 +160,20 @@ mono_process_list (int *size)
 		*size = res;
 	return buf;
 #elif defined(__HAIKU__)
-	/* FIXME: Add back the code from 9185fcc305e43428d0f40f3ee37c8a405d41c9ae */
-	g_assert_not_reached ();
-	return NULL;
+	int32 cookie = 0;
+	int32 i = 0;
+	team_info ti;
+	system_info si;
+
+	get_system_info(&si);
+	void **buf = g_calloc(si.used_teams, sizeof(void*));
+
+	while (get_next_team_info(&cookie, &ti) == B_OK && i < si.used_teams) {
+		buf[i++] = GINT_TO_POINTER (ti.team);
+	}
+	*size = i;
+
+	return buf;
 #else
 	const char *name;
 	void **buf = NULL;
@@ -187,7 +213,7 @@ get_pid_status_item_buf (int pid, const char *item, char *rbuf, int blen, MonoPr
 	char buf [256];
 	char *s;
 	FILE *f;
-	int len = strlen (item);
+	size_t len = strlen (item);
 
 	g_snprintf (buf, sizeof (buf), "/proc/%d/status", pid);
 	f = fopen (buf, "r");
@@ -208,7 +234,7 @@ get_pid_status_item_buf (int pid, const char *item, char *rbuf, int blen, MonoPr
 		while (g_ascii_isspace (*s)) s++;
 		fclose (f);
 		len = strlen (s);
-		strncpy (rbuf, s, MIN (len, blen));
+		memcpy (rbuf, s, MIN (len, blen));
 		rbuf [MIN (len, blen) - 1] = 0;
 		if (error)
 			*error = MONO_PROCESS_ERROR_NONE;
@@ -263,12 +289,11 @@ sysctl_kinfo_proc (gpointer pid, KINFO_PROC* processi)
 
 /**
  * mono_process_get_name:
- * @pid: pid of the process
- * @buf: byte buffer where to store the name of the prcoess
- * @len: size of the buffer @buf
- *
- * Return the name of the process identified by @pid, storing it
- * inside @buf for a maximum of len bytes (including the terminating 0).
+ * \param pid pid of the process
+ * \param buf byte buffer where to store the name of the prcoess
+ * \param len size of the buffer \p buf
+ * \returns the name of the process identified by \p pid, storing it
+ * inside \p buf for a maximum of len bytes (including the terminating 0).
  */
 char*
 mono_process_get_name (gpointer pid, char *buf, int len)
@@ -279,14 +304,14 @@ mono_process_get_name (gpointer pid, char *buf, int len)
 	memset (buf, 0, len);
 
 	if (sysctl_kinfo_proc (pid, &processi))
-		strncpy (buf, processi.kinfo_name_member, len - 1);
+		memcpy (buf, processi.kinfo_name_member, len - 1);
 
 	return buf;
 #else
 	char fname [128];
 	FILE *file;
 	char *p;
-	int r;
+	size_t r;
 	sprintf (fname, "/proc/%d/cmdline", GPOINTER_TO_INT (pid));
 	buf [0] = 0;
 	file = fopen (fname, "r");
@@ -443,7 +468,8 @@ get_process_stat_item (int pid, int pos, int sum, MonoProcessError *error)
 	char buf [512];
 	char *s, *end;
 	FILE *f;
-	int len, i;
+	size_t len;
+	int i;
 	gint64 value;
 
 	g_snprintf (buf, sizeof (buf), "/proc/%d/stat", pid);
@@ -574,11 +600,10 @@ get_pid_status_item (int pid, const char *item, MonoProcessError *error, int mul
 
 /**
  * mono_process_get_data:
- * @pid: pid of the process
- * @data: description of data to return
- *
- * Return a data item of a process like user time, memory use etc,
- * according to the @data argumet.
+ * \param pid pid of the process
+ * \param data description of data to return
+ * \returns a data item of a process like user time, memory use etc,
+ * according to the \p data argumet.
  */
 gint64
 mono_process_get_data_with_error (gpointer pid, MonoProcessData data, MonoProcessError *error)
@@ -637,31 +662,26 @@ mono_process_get_data (gpointer pid, MonoProcessData data)
 	return mono_process_get_data_with_error (pid, data, &error);
 }
 
+#ifndef HOST_WIN32
 int
 mono_process_current_pid ()
 {
 #if defined(HAVE_UNISTD_H)
 	return (int) getpid ();
-#elif defined(HOST_WIN32)
-	return (int) GetCurrentProcessId ();
 #else
 #error getpid
 #endif
 }
+#endif /* !HOST_WIN32 */
 
 /**
  * mono_cpu_count:
- *
- * Return the number of processors on the system.
+ * \returns the number of processors on the system.
  */
+#ifndef HOST_WIN32
 int
 mono_cpu_count (void)
 {
-#ifdef HOST_WIN32
-	SYSTEM_INFO info;
-	GetSystemInfo (&info);
-	return info.dwNumberOfProcessors;
-#else
 #ifdef PLATFORM_ANDROID
 	/* Android tries really hard to save power by powering off CPUs on SMP phones which
 	 * means the normal way to query cpu count returns a wrong value with userspace API.
@@ -779,10 +799,10 @@ mono_cpu_count (void)
 			return count;
 	}
 #endif
-#endif /* HOST_WIN32 */
 	/* FIXME: warn */
 	return 1;
 }
+#endif /* !HOST_WIN32 */
 
 static void
 get_cpu_times (int cpu_id, gint64 *user, gint64 *systemt, gint64 *irq, gint64 *sirq, gint64 *idle)
@@ -833,9 +853,8 @@ get_cpu_times (int cpu_id, gint64 *user, gint64 *systemt, gint64 *irq, gint64 *s
 
 /**
  * mono_cpu_get_data:
- * @cpu_id: processor number or -1 to get a summary of all the processors
- * @data: type of data to retrieve
- *
+ * \param cpu_id processor number or -1 to get a summary of all the processors
+ * \param data type of data to retrieve
  * Get data about a processor on the system, like time spent in user space or idle time.
  */
 gint64
@@ -889,14 +908,13 @@ mono_atexit (void (*func)(void))
  * battery and performance reasons, shut down cores and
  * lie about the number of active cores.
  */
+#ifndef HOST_WIN32
 gint32
 mono_cpu_usage (MonoCpuUsageState *prev)
 {
 	gint32 cpu_usage = 0;
 	gint64 cpu_total_time;
 	gint64 cpu_busy_time;
-
-#ifndef HOST_WIN32
 	struct rusage resource_usage;
 	gint64 current_time;
 	gint64 kernel_time;
@@ -919,28 +937,10 @@ mono_cpu_usage (MonoCpuUsageState *prev)
 		prev->user_time = user_time;
 		prev->current_time = current_time;
 	}
-#else
-	guint64 idle_time;
-	guint64 kernel_time;
-	guint64 user_time;
-
-	if (!GetSystemTimes ((FILETIME*) &idle_time, (FILETIME*) &kernel_time, (FILETIME*) &user_time)) {
-		g_error ("GetSystemTimes() failed, error code is %d\n", GetLastError ());
-		return -1;
-	}
-
-	cpu_total_time = (gint64)((user_time - (prev ? prev->user_time : 0)) + (kernel_time - (prev ? prev->kernel_time : 0)));
-	cpu_busy_time = (gint64)(cpu_total_time - (idle_time - (prev ? prev->idle_time : 0)));
-
-	if (prev) {
-		prev->idle_time = idle_time;
-		prev->kernel_time = kernel_time;
-		prev->user_time = user_time;
-	}
-#endif
 
 	if (cpu_total_time > 0 && cpu_busy_time > 0)
 		cpu_usage = (gint32)(cpu_busy_time * 100 / cpu_total_time);
 
 	return cpu_usage;
 }
+#endif /* !HOST_WIN32 */

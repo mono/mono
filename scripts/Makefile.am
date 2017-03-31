@@ -34,8 +34,10 @@ bin_SCRIPTS = \
 	$(MDOC_SUBCOMMANDS)	\
 	$(MDOC_COMPAT)		\
 	mono-test-install	\
-	peverify			\
-	mcs					\
+	peverify		\
+	mcs			\
+	csc					\
+	mono-package-runtime	\
 	mono-heapviz		\
 	$(scripts_mono_configuration_crypto)
 
@@ -153,13 +155,14 @@ EXTRA_DIST =			\
 	mono-find-requires.in	\
 	peverify.in			\
 	xbuild.in			\
-	update_submodules		\
+	update_submodules.sh	\
 	mcs.in				\
+	csc.in				\
 	dmcs.in				\
+	mono-package-runtime	\
 	mono-test-install	\
 	mono-heapviz		\
 	$(MDOC_COMPAT)		\
-	get-cygwin-deps.sh	\
 	mono-configuration-crypto.in	\
 	submodules/versions.mk	\
 	submodules/versions.py
@@ -198,6 +201,10 @@ peverify: peverify.in Makefile
 
 mcs: mcs.in Makefile
 	$(REWRITE_COMMON) $(srcdir)/mcs.in > $@.tmp
+	mv -f $@.tmp $@
+
+csc: csc.in Makefile
+	$(REWRITE_COMMON) $(srcdir)/csc.in > $@.tmp
 	mv -f $@.tmp $@
 
 dmcs: dmcs.in Makefile

@@ -221,7 +221,7 @@ namespace Mono.Data.Sqlite
         case SQLiteDateFormats.UnixEpoch:
           return ((long)(dateValue.Subtract(UnixEpoch).Ticks / TimeSpan.TicksPerSecond)).ToString();
         default:
-          return dateValue.ToString(_datetimeFormats[7], CultureInfo.InvariantCulture);
+          return dateValue.ToString(_datetimeFormats[19], CultureInfo.InvariantCulture);
       }
     }
 

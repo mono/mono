@@ -1,5 +1,5 @@
-/*
- * mono-config.c
+/**
+ * \file
  *
  * Runtime and assembly configuration file support routines.
  *
@@ -163,8 +163,7 @@ mono_parser = {
 
 static GHashTable *config_handlers;
 
-static const char *mono_cfg_dir = NULL;
-static char *mono_cfg_dir_allocated = NULL;
+static char *mono_cfg_dir = NULL;
 
 /* when this interface is stable, export it. */
 typedef struct MonoParseHandler MonoParseHandler;
@@ -314,13 +313,14 @@ dllmap_start (gpointer user_data,
 			else if (strcmp (attribute_names [i], "target") == 0){
 				char *p = strstr (attribute_values [i], "$mono_libdir");
 				if (p != NULL){
-					const char *libdir = mono_assembly_getrootdir ();
+					char *libdir = mono_native_getrootdir ();
 					size_t libdir_len = strlen (libdir);
 					char *result;
 					
 					result = (char *)g_malloc (libdir_len-strlen("$mono_libdir")+strlen(attribute_values[i])+1);
 					strncpy (result, attribute_values[i], p-attribute_values[i]);
 					strcpy (result+(p-attribute_values[i]), libdir);
+					g_free (libdir);
 					strcat (result, p+strlen("$mono_libdir"));
 					info->target = result;
 				} else 
@@ -464,12 +464,15 @@ mono_config_init (void)
 	g_hash_table_insert (config_handlers, (gpointer) aot_cache_handler.element_name, (gpointer) &aot_cache_handler);
 }
 
+/**
+ * mono_config_cleanup:
+ */
 void
 mono_config_cleanup (void)
 {
 	if (config_handlers)
 		g_hash_table_destroy (config_handlers);
-	g_free (mono_cfg_dir_allocated);
+	g_free (mono_cfg_dir);
 }
 
 /* FIXME: error handling */
@@ -515,8 +518,7 @@ mono_config_parse_file_with_context (ParseState *state, const char *filename)
 
 /**
  * mono_config_parse_memory:
- * @buffer: a pointer to an string XML representation of the configuration
- *
+ * \param buffer a pointer to an string XML representation of the configuration
  * Parses the configuration from a buffer
  */
 void
@@ -566,6 +568,9 @@ static BundledConfig *bundled_configs = NULL;
 
 static const char *bundled_machine_config = NULL;
 
+/**
+ * mono_register_config_for_assembly:
+ */
 void
 mono_register_config_for_assembly (const char* assembly_name, const char* config_xml)
 {
@@ -578,6 +583,9 @@ mono_register_config_for_assembly (const char* assembly_name, const char* config
 	bundled_configs = bconfig;
 }
 
+/**
+ * mono_config_string_for_assembly_file:
+ */
 const char *
 mono_config_string_for_assembly_file (const char *filename)
 {
@@ -590,6 +598,9 @@ mono_config_string_for_assembly_file (const char *filename)
 	return NULL;
 }
 
+/**
+ * mono_config_for_assembly:
+ */
 void 
 mono_config_for_assembly (MonoImage *assembly)
 {
@@ -632,10 +643,9 @@ mono_config_for_assembly (MonoImage *assembly)
 
 /**
  * mono_config_parse:
- * @filename: the filename to load the configuration variables from.
- *
+ * \param filename the filename to load the configuration variables from.
  * Pass a NULL filename to parse the default config files
- * (or the file in the MONO_CONFIG env var).
+ * (or the file in the \c MONO_CONFIG env var).
  */
 void
 mono_config_parse (const char *filename) {
@@ -650,9 +660,10 @@ mono_config_parse (const char *filename) {
 		return;
 	}
 
-	home = g_getenv ("MONO_CONFIG");
-	if (home) {
-		mono_config_parse_file (home);
+	// FIXME: leak, do we store any references to home
+	char *env_home = g_getenv ("MONO_CONFIG");
+	if (env_home) {
+		mono_config_parse_file (env_home);
 		return;
 	}
 
@@ -668,16 +679,24 @@ mono_config_parse (const char *filename) {
 #endif
 }
 
-/* Invoked during startup */
+/**
+ * mono_set_config_dir:
+ * Invoked during startup
+ */
 void
 mono_set_config_dir (const char *dir)
 {
-	/* If this variable is set, overrides the directory computed */
-	mono_cfg_dir = g_getenv ("MONO_CFG_DIR");
-	if (mono_cfg_dir == NULL)
-		mono_cfg_dir = mono_cfg_dir_allocated = g_strdup (dir);
+	/* If this environment variable is set, overrides the directory computed */
+	char *env_mono_cfg_dir = g_getenv ("MONO_CFG_DIR");
+	if (env_mono_cfg_dir == NULL && dir != NULL)
+		env_mono_cfg_dir = strdup (dir);
+
+	mono_cfg_dir = env_mono_cfg_dir;
 }
 
+/**
+ * mono_get_config_dir:
+ */
 const char* 
 mono_get_config_dir (void)
 {
@@ -687,12 +706,18 @@ mono_get_config_dir (void)
 	return mono_cfg_dir;
 }
 
+/**
+ * mono_register_machine_config:
+ */
 void
 mono_register_machine_config (const char *config_xml)
 {
 	bundled_machine_config = config_xml;
 }
 
+/**
+ * mono_get_machine_config:
+ */
 const char *
 mono_get_machine_config (void)
 {
@@ -888,12 +913,18 @@ mono_config_parse_assembly_bindings (const char *filename, int amajor, int amino
 
 static mono_bool mono_server_mode = FALSE;
 
+/**
+ * mono_config_set_server_mode:
+ */
 void
 mono_config_set_server_mode (mono_bool server_mode)
 {
 	mono_server_mode = server_mode;
 }
 
+/**
+ * mono_config_is_server_mode:
+ */
 mono_bool
 mono_config_is_server_mode (void)
 {

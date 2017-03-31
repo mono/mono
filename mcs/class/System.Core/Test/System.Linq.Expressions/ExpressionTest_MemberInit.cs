@@ -93,7 +93,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorkingInterpreter")]
 		public void CompiledInit ()
 		{
 			var i = Expression.Lambda<Func<Thing>> (

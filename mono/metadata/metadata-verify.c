@@ -1,5 +1,6 @@
-/*
- * metadata-verify.c: Metadata verfication support
+/**
+ * \file
+ * Metadata verfication support
  *
  * Author:
  *	Mono Project (http://www.mono-project.com)
@@ -2397,7 +2398,7 @@ verify_typeref_table (VerifyContext *ctx)
 }
 
 /*bits 9,11,14,15,19,21,24-31 */
-#define INVALID_TYPEDEF_FLAG_BITS ((1 << 6) | (1 << 9) | (1 << 14) | (1 << 15) | (1 << 19) | (1 << 21) | 0xFF000000)
+#define INVALID_TYPEDEF_FLAG_BITS ((1 << 6) | (1 << 9) | (1 << 15) | (1 << 19) | (1 << 21) | 0xFF000000)
 static void
 verify_typedef_table (VerifyContext *ctx)
 {
@@ -4055,7 +4056,7 @@ mono_verifier_verify_method_signature (MonoImage *image, guint32 offset, MonoErr
 {
 	VerifyContext ctx;
 
-	mono_error_init (error);
+	error_init (error);
 
 	if (!mono_verifier_is_enabled_for_image (image))
 		return TRUE;
@@ -4245,7 +4246,7 @@ mono_verifier_verify_typeref_row (MonoImage *image, guint32 row, MonoError *erro
 	MonoTableInfo *table = &image->tables [MONO_TABLE_TYPEREF];
 	guint32 data [MONO_TYPEREF_SIZE];
 
-	mono_error_init (error);
+	error_init (error);
 
 	if (!mono_verifier_is_enabled_for_image (image))
 		return TRUE;
@@ -4288,7 +4289,7 @@ mono_verifier_verify_methodimpl_row (MonoImage *image, guint32 row, MonoError *e
 	MonoTableInfo *table = &image->tables [MONO_TABLE_METHODIMPL];
 	guint32 data [MONO_METHODIMPL_SIZE];
 
-	mono_error_init (error);
+	error_init (error);
 
 	if (!mono_verifier_is_enabled_for_image (image))
 		return TRUE;
@@ -4371,7 +4372,7 @@ mono_verifier_verify_method_header (MonoImage *image, guint32 offset, GSList **e
 gboolean
 mono_verifier_verify_method_signature (MonoImage *image, guint32 offset, MonoError *error)
 {
-	mono_error_init (error);
+	error_init (error);
 	return TRUE;
 }
 
@@ -4421,14 +4422,14 @@ mono_verifier_is_sig_compatible (MonoImage *image, MonoMethod *method, MonoMetho
 gboolean
 mono_verifier_verify_typeref_row (MonoImage *image, guint32 row, MonoError *error)
 {
-	mono_error_init (error);
+	error_init (error);
 	return TRUE;
 }
 
 gboolean
 mono_verifier_verify_methodimpl_row (MonoImage *image, guint32 row, MonoError *error)
 {
-	mono_error_init (error);
+	error_init (error);
 	return TRUE;
 }
 

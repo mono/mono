@@ -71,6 +71,7 @@ namespace System.Net.NetworkInformation {
 #endif
 		};
 		static readonly string PingBinPath;
+		static bool canSendPrivileged;
 #endif
 		const int default_timeout = 4000; // 4 sec.
 		ushort identifier;
@@ -80,7 +81,6 @@ namespace System.Net.NetworkInformation {
 		const UInt32 linux_cap_version = 0x20071026;
 		
 		static readonly byte [] default_buffer = new byte [0];
-		static bool canSendPrivileged;
 		
 
 		BackgroundWorker worker;
@@ -207,11 +207,14 @@ namespace System.Net.NetworkInformation {
 			return Send (addresses [0], timeout, buffer, options);
 		}
 
-		static IPAddress GetNonLoopbackIP ()
+		static IPAddress GetNonLoopbackIPV4 ()
 		{
+#pragma warning disable 618
 			foreach (IPAddress addr in Dns.GetHostByName (Dns.GetHostName ()).AddressList)
-				if (!IPAddress.IsLoopback (addr))
+				if (!IPAddress.IsLoopback (addr) && addr.AddressFamily == AddressFamily.InterNetwork)
 					return addr;
+#pragma warning restore 618
+
 			throw new InvalidOperationException ("Could not resolve non-loopback IP address for localhost");
 		}
 
@@ -240,7 +243,7 @@ namespace System.Net.NetworkInformation {
 		private PingReply SendPrivileged (IPAddress address, int timeout, byte [] buffer, PingOptions options)
 		{
 			IPEndPoint target = new IPEndPoint (address, 0);
-			IPEndPoint client = new IPEndPoint (GetNonLoopbackIP (), 0);
+			IPEndPoint client = new IPEndPoint (GetNonLoopbackIPV4 (), 0);
 
 			// FIXME: support IPv6
 			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.Icmp)) {
@@ -262,12 +265,12 @@ namespace System.Net.NetworkInformation {
 				bytes = new byte [100];
 				do {
 					EndPoint endpoint = client;
-					int error = 0;
-					int rc = s.ReceiveFrom_nochecks_exc (bytes, 0, 100, SocketFlags.None,
-							ref endpoint, false, out error);
+					SocketError error = 0;
+					int rc = s.ReceiveFrom (bytes, 0, 100, SocketFlags.None,
+							ref endpoint, out error);
 
-					if (error != 0) {
-						if (error == (int) SocketError.TimedOut) {
+					if (error != SocketError.Success) {
+						if (error == SocketError.TimedOut) {
 							return new PingReply (null, new byte [0], options, 0, IPStatus.TimedOut);
 						}
 						throw new NotSupportedException (String.Format ("Unexpected socket error during ping request: {0}", error));

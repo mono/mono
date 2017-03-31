@@ -682,6 +682,7 @@ namespace Mono.CompilerServices.SymbolWriter
 		byte[] hash;
 		bool creating;
 		bool auto_generated;
+		readonly string sourceFile;
 
 		public static int Size {
 			get { return 8; }
@@ -696,11 +697,17 @@ namespace Mono.CompilerServices.SymbolWriter
 			creating = true;
 		}
 
-		public SourceFileEntry (MonoSymbolFile file, string file_name, byte[] guid, byte[] checksum)
-			: this (file, file_name)
+		public SourceFileEntry (MonoSymbolFile file, string sourceFile, byte [] guid, byte [] checksum)
+			: this (file, sourceFile, sourceFile, guid, checksum)
+		{
+		}
+
+		public SourceFileEntry (MonoSymbolFile file, string fileName, string sourceFile, byte[] guid, byte[] checksum)
+			: this (file, fileName)
 		{
 			this.guid = guid;
 			this.hash = checksum;
+			this.sourceFile = sourceFile;
 		}
 
 		public byte[] Checksum {
@@ -719,7 +726,7 @@ namespace Mono.CompilerServices.SymbolWriter
 
 			if (hash == null) {
 				try {
-				    using (FileStream fs = new FileStream (file_name, FileMode.Open, FileAccess.Read)) {
+				    using (FileStream fs = new FileStream (sourceFile, FileMode.Open, FileAccess.Read)) {
 				        MD5 md5 = MD5.Create ();
 				        hash = md5.ComputeHash (fs);
 				    }
@@ -749,7 +756,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			int old_pos = (int) reader.BaseStream.Position;
 			reader.BaseStream.Position = DataOffset;
 
-			file_name = reader.ReadString ();
+			sourceFile = file_name = reader.ReadString ();
 			guid = reader.ReadBytes (16);
 			hash = reader.ReadBytes (16);
 			auto_generated = reader.ReadByte () == 1;
@@ -778,7 +785,7 @@ namespace Mono.CompilerServices.SymbolWriter
 		public bool CheckChecksum ()
 		{
 			try {
-				using (FileStream fs = new FileStream (file_name, FileMode.Open)) {
+				using (FileStream fs = new FileStream (sourceFile, FileMode.Open)) {
 					MD5 md5 = MD5.Create ();
 					byte[] data = md5.ComputeHash (fs);
 					for (int i = 0; i < 16; i++)

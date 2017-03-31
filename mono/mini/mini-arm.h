@@ -1,4 +1,5 @@
-/*
+/**
+ * \file
  * Copyright 2011 Xamarin Inc
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
@@ -208,7 +209,7 @@ typedef struct {
 	guint8  reg;
 	ArgStorage  storage;
 	/* RegTypeStructByVal */
-	gint32  struct_size;
+	gint32  struct_size, align;
 	guint8  size    : 4; /* 1, 2, 4, 8, or regs used by RegTypeStructByVal */
 } ArgInfo;
 
@@ -340,6 +341,7 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_HAVE_SETUP_ASYNC_CALLBACK 1
 #define MONO_ARCH_HAVE_CONTEXT_SET_INT_REG 1
 #define MONO_ARCH_HAVE_HANDLER_BLOCK_GUARD 1
+#define MONO_ARCH_HAVE_HANDLER_BLOCK_GUARD_AOT 1
 #define MONO_ARCH_HAVE_SETUP_RESUME_FROM_SIGNAL_HANDLER_CTX 1
 #define MONO_ARCH_GSHAREDVT_SUPPORTED 1
 #define MONO_ARCH_HAVE_GENERAL_RGCTX_LAZY_FETCH_TRAMPOLINE 1
@@ -351,10 +353,7 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_HAVE_PATCH_CODE_NEW 1
 #define MONO_ARCH_HAVE_OP_GENERIC_CLASS_INIT 1
 
-#define MONO_ARCH_HAVE_TLS_GET (mono_arm_have_tls_get ())
-#define MONO_ARCH_HAVE_TLS_GET_REG 1
-
-#ifdef TARGET_WATCHOS
+#if defined(TARGET_WATCHOS) || (defined(__linux__) && !defined(TARGET_ANDROID))
 #define MONO_ARCH_DISABLE_HW_TRAPS 1
 #define MONO_ARCH_HAVE_UNWIND_BACKTRACE 1
 #endif
@@ -403,11 +402,15 @@ mono_arm_patchable_bl (guint8 *code, int cond);
 gboolean
 mono_arm_is_hard_float (void);
 
-gboolean
-mono_arm_have_tls_get (void);
-
 void
 mono_arm_unaligned_stack (MonoMethod *method);
+
+gpointer
+mono_arm_handler_block_trampoline_helper (gpointer *ptr);
+
+/* MonoJumpInfo **ji */
+guint8*
+mono_arm_emit_aotconst (gpointer ji, guint8 *code, guint8 *buf, int dreg, int patch_type, gconstpointer data);
 
 CallInfo*
 mono_arch_get_call_info (MonoMemPool *mp, MonoMethodSignature *sig);

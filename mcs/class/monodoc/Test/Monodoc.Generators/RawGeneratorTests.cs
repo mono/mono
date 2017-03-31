@@ -47,7 +47,7 @@ namespace MonoTests.Monodoc.Generators
 		{
 			var xml = rootTree.RenderUrl ("T:System.String", generator);
 			Assert.IsNotNull (xml);
-			Assert.IsNotEmpty (xml);
+			AssertHelper.IsNotEmpty (xml);
 			AssertValidXml (xml);
 			AssertEcmaFullTypeName (xml, "System.String");
 		}
@@ -57,7 +57,7 @@ namespace MonoTests.Monodoc.Generators
 		{
 			var xml = rootTree.RenderUrl ("T:System.Int32", generator);
 			Assert.IsNotNull (xml);
-			Assert.IsNotEmpty (xml);
+			AssertHelper.IsNotEmpty (xml);
 			AssertValidXml (xml);
 			AssertEcmaFullTypeName (xml, "System.Int32");
 		}

@@ -2465,6 +2465,12 @@ namespace Mono.CSharp
 				case '\"':
 					++str_quote;
 					break;
+				case '\\':
+					// Skip escaped " character
+					c = reader.Read ();
+					if (c == -1)
+						res = false;
+					break;
 				case -1:
 					res = false;
 					break;

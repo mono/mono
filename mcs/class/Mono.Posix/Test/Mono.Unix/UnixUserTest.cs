@@ -21,7 +21,7 @@ using Syscall = Mono.Unix.Native.Syscall;
 
 namespace MonoTests.Mono.Unix {
 
-	[TestFixture, Category ("NotDotNet")]
+	[TestFixture, Category ("NotDotNet"), Category ("NotOnWindows")]
 	public class UnixUserTest
 	{
 		[Test]

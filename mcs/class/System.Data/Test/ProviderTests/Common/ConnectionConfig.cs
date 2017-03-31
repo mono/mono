@@ -27,13 +27,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !NO_CONFIGURATION
+
 using System;
 using System.Collections;
 using System.Configuration;
 using System.Globalization;
 using System.Xml;
 
-namespace MonoTests.System.Data
+namespace MonoTests.System.Data.Connected
 {
 	internal sealed class ConnectionConfig
 	{
@@ -110,3 +112,5 @@ namespace MonoTests.System.Data
 		}
 	}
 }
+
+#endif

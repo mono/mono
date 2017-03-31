@@ -272,12 +272,7 @@ namespace System.Windows.Forms
 		{
 			public int Compare (DataGridViewColumn o1, DataGridViewColumn o2)
 			{
-				if (o1.DisplayIndex == o2.DisplayIndex)
-					// Here we avoid the equal value swapping that both Array.Sort and ArrayList.Sort 
-					// do occasionally and preserve the user column insertation order.
-					return 1;
-				else
-					return o1.DisplayIndex - o2.DisplayIndex;
+				return o1.DisplayIndex.CompareTo (o2.DisplayIndex);
 			}
 		}
 	}

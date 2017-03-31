@@ -228,6 +228,10 @@ namespace System.Reflection.Emit {
 				marshal_info.marshaltyperef = TypeBuilder.ResolveUserType (marshal_info.marshaltyperef);
 		}
 
+		internal FieldInfo RuntimeResolve () {
+			return typeb.CreateType ().GetField (this);
+		}
+
 		public override Module Module {
 			get {
 				return base.Module;

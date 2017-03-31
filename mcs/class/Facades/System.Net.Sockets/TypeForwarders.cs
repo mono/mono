@@ -38,12 +38,13 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Sockets.SocketInformationOptions))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Sockets.SocketOptionLevel))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Sockets.SocketOptionName))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Sockets.SocketReceiveFromResult))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Sockets.SocketReceiveMessageFromResult))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Sockets.SocketShutdown))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Sockets.SocketTaskExtensions))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Sockets.SocketType))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Sockets.TcpClient))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Sockets.TcpListener))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Sockets.TransmitFileOptions))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Sockets.UdpClient))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Sockets.UdpReceiveResult))]
-
-

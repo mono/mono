@@ -34,8 +34,8 @@ namespace System.ServiceModel {
 	public class AddressAccessDeniedException : CommunicationException
 	{
 		public AddressAccessDeniedException () : base () {}
-		public AddressAccessDeniedException (string msg) : base (msg) {}
-		public AddressAccessDeniedException (string msg, Exception inner) : base (msg, inner) {}
+		public AddressAccessDeniedException (string message) : base (message) {}
+		public AddressAccessDeniedException (string message, Exception innerException) : base (message, innerException) {}
 		protected AddressAccessDeniedException (SerializationInfo info, StreamingContext context) :
 			base (info, context) {}
 

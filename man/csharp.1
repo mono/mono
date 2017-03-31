@@ -2,30 +2,21 @@
 .if t .sp .5v
 .if n .sp
 ..
-.TH csharp 1 "4 September 2008"
+.TH csharp 1 "22 March 2017"
 .SH NAME 
-csharp, gsharp \- Interactive C# Shell 
+csharp \- Interactive C# Shell and Scripting
 .SH SYNOPSIS
 .B csharp [--attach PID] [-e EXPRESSION] [file1 [file2]]
-[options] 
-.P
-.B gsharp [file1 [file2]]
+[compiler-options] [--|-s script-options]
 .SH DESCRIPTION
 The 
 .I csharp
-is an interactive C# shell that allows the user to enter and evaluate
-C# statements and expressions from the command line.   The regular 
+command is an interactive C# shell and scripting host that allows
+the user to enter and evaluate C# statements and expressions from
+the command line or execute C# scripts.
+The regular
 .I mcs
 command line options can be used in this version of the compiler. 
-.PP
-The 
-.I gsharp
-command is a GUI version of the C# interpreter that uses Gtk# and
-provides an area to attach widgets as well.      This version can be
-attached to other Gtk# applications in a safe way as it injects itself
-into the main loop of a Gtk# application, avoiding any problems
-arising from the multi-threaded nature of injecting itself into a
-target process.
 .PP
 Files specified in the command line will be loaded and executed as
 scripts.
@@ -35,9 +26,31 @@ Starting with Mono 2.10, the
 command can be used as an interpreter executed by executables flagged
 with the Unix execute attribute.   To do this, make the first line of
 your C# source code look like this:
+.PP
 .nf
-"#!/usr/bin/csharp" 
-Console.WriteLine ("Hello, World");
+  #!/usr/bin/csharp
+  Console.WriteLine ("Hello, World");
+.fi
+.PP
+Starting with Mono 5.0, command line arguments may now be passed
+to the
+.I csharp
+command by specifying either the
+.I -s
+or
+.I --
+(script) options.
+.PP
+The
+.I -s
+option is ideal for interpreting executable scripts that utilize
+shebang syntax (introduced in Mono 2.10). This allows command line
+arguments to be passed to and consumed cleanly by the script:
+.PP
+.nf
+  #!/usr/bin/csharp -s
+  foreach (var arg in Args)
+    Console.WriteLine ($"script argument: {arg}");
 .fi
 .SH OPTIONS
 The commands accept all of the commands that are available to the 
@@ -45,6 +58,23 @@ The commands accept all of the commands that are available to the
 command, so you can reference assemblies, specify paths, language
 level and so on from the command line.   In addition, the following
 command line options are supported:
+.TP
+.I "\-s" SCRIPT_FILE
+This option is ideal for authoring executable scripts that utilize
+the Unix shebang feature. Unix will implicitly append as an argument
+the path of the script to execute. When the executable is invoked,
+any arguments then passed to it will be available in the
+.I Args
+global. Example:
+.I "#!/usr/bin/env csharp -s"
+.TP
+.I "\-\-"
+Any arguments that follow will not be passed to the compiler driver,
+and instead will be made available in the
+.I Args
+global. Example:
+.I csharp -- a b c
+will result in Args = { "a", "b", "c" } in the interactive shell.
 .TP 
 .I "\-\-attach"
 This is an advanced option and should only be used if you have a deep
@@ -224,7 +254,7 @@ versions uses the standard Gtk# key bindings.
 .PP
 The command set is similar to many other applications (cursor keys)
 and incorporates some of the Emacs commands for editing as well as a
-history mechanism to 
+history mechanism too.
 .PP
 .PP
 The following keyboard input is supported:
@@ -247,7 +277,7 @@ line in the history.
 .TP
 .I Down Arrow Key, Control-n
 Moves forward in the history, replaces the current line with the next
-lien in the history.
+line in the history.
 .TP
 .I Return
 Executes the current line if the statement or expression is complete,
@@ -289,6 +319,15 @@ Since the methods and properties of the base class from where the
 statements and expressions are executed are static, they can be
 invoked directly from the shell.   These are the available properties
 and methods:
+.TP
+.I Args
+An easy to consume array of any arguments specified after either
+.I -s
+or
+.I --
+on the command line. Ideal for self-executing scripts utilizing the
+.I -s
+option.
 .TP
 .I void LoadAssembly(string assembly)
 Loads the given assembly.   This is equivalent to passing the compiler

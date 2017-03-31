@@ -261,5 +261,9 @@ namespace System.Reflection {
         {
             return typeImpl.GetInterfaceMap(interfaceType);
         }
+
+#if MONO
+        public override bool IsSZArray { get { return typeImpl.IsSZArray; } }
+#endif
     }
 }

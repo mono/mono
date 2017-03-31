@@ -361,7 +361,7 @@ namespace System.Net
 						return host;
 					}
 
-					if (!HasTimedOut)
+					if (!HasTimedOut && host != null)
 						return host;
 
 					lastDnsResolve = DateTime.UtcNow;

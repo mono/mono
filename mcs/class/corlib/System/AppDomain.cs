@@ -1217,14 +1217,16 @@ namespace System {
 			SetData (name, data);
 		}
 
-#if !MOBILE
 		[Obsolete ("Use AppDomainSetup.DynamicBase")]
 		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public void SetDynamicBase (string path)
 		{
+#if MOBILE
+			throw new PlatformNotSupportedException ();
+#else
 			SetupInformationNoCopy.DynamicBase = path;
+#endif // MOBILE
 		}
-#endif // !MOBILE
 
 		[Obsolete ("AppDomain.GetCurrentThreadId has been deprecated"
 			+ " because it does not provide a stable Id when managed"
@@ -1286,14 +1288,11 @@ namespace System {
 		private Assembly DoAssemblyResolve (string name, Assembly requestingAssembly, bool refonly)
 		{
 			ResolveEventHandler del;
-#if !MOBILE
 			if (refonly)
 				del = ReflectionOnlyAssemblyResolve;
 			else
 				del = AssemblyResolve;
-#else
-			del = AssemblyResolve;
-#endif
+
 			if (del == null)
 				return null;
 			
@@ -1490,9 +1489,7 @@ namespace System {
 		}
 #endif // MONO_FEATURE_MULTIPLE_APPDOMAINS
 
-#if !MOBILE
 		public event ResolveEventHandler ReflectionOnlyAssemblyResolve;
-#endif
 
         #pragma warning disable 649
 #if MOBILE

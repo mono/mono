@@ -42,7 +42,12 @@ executable_CLEAN_FILES += $(build_lib) $(build_lib).so $(build_lib).mdb $(build_
 
 makefrag = $(depsdir)/$(PROFILE)_$(base_prog).makefrag
 
+MCS_REFERENCES = $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE)/%.dll,$(LIB_REFS))
+MCS_REFERENCES += $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE)/%.exe,$(EXE_REFS))
+
+ifndef NO_BUILD
 all-local: $(the_lib) $(PROGRAM_config)
+endif
 
 install-local: all-local
 test-local: all-local
@@ -61,6 +66,7 @@ install-local:
 	$(MKINSTALLDIRS) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
 	$(INSTALL_BIN) $(the_lib) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
 	test ! -f $(the_lib).mdb || $(INSTALL_BIN) $(the_lib).mdb $(DESTDIR)$(PROGRAM_INSTALL_DIR)
+	test ! -f $(the_lib:.exe=.pdb) || $(INSTALL_BIN) $(the_lib:.exe=.pdb) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
 ifdef PROGRAM_config
 	$(INSTALL_DATA) $(PROGRAM_config) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
 endif
@@ -69,7 +75,8 @@ ifdef PLATFORM_AOT_SUFFIX
 endif
 
 uninstall-local:
-	-rm -f $(DESTDIR)$(PROGRAM_INSTALL_DIR)/$(base_prog) $(DESTDIR)$(PROGRAM_INSTALL_DIR)/$(base_prog).mdb $(DESTDIR)$(PROGRAM_INSTALL_DIR)/$(base_prog).config
+	-rm -f $(DESTDIR)$(PROGRAM_INSTALL_DIR)/$(base_prog) $(DESTDIR)$(PROGRAM_INSTALL_DIR)/$(base_prog).mdb \
+	$(DESTDIR)$(PROGRAM_INSTALL_DIR)/$(base_prog:.exe=.pdb) $(DESTDIR)$(PROGRAM_INSTALL_DIR)/$(base_prog).config
 endif
 
 clean-local:
@@ -148,9 +155,6 @@ $(response): $(sourcefile)
 endif
 
 -include $(makefrag)
-
-MCS_REFERENCES = $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE)/%.dll,$(LIB_REFS))
-MCS_REFERENCES += $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE)/%.exe,$(EXE_REFS))
 
 all-local: $(makefrag) $(extra_targets)
 

@@ -163,7 +163,7 @@ namespace System.IO {
             if (_isOpen) {
                 throw new InvalidOperationException(Environment.GetResourceString("InvalidOperation_CalledTwice"));
             }
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             if (!skipSecurityCheck) {
 #pragma warning disable 618
                 new SecurityPermission(SecurityPermissionFlag.UnmanagedCode).Demand();
@@ -244,7 +244,7 @@ namespace System.IO {
             if (_isOpen)
                 throw new InvalidOperationException(Environment.GetResourceString("InvalidOperation_CalledTwice"));
 
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             if (!skipSecurityCheck)
 #pragma warning disable 618
                 new SecurityPermission(SecurityPermissionFlag.UnmanagedCode).Demand();

@@ -21,7 +21,6 @@ using MonoTests.Helpers;
 namespace MonoTests.System.Net
 {
 	[TestFixture]
-	[Category ("RequiresBSDSockets")]
 	public class WebClientTest
 	{
 		private string _tempFolder;
@@ -437,6 +436,17 @@ namespace MonoTests.System.Net
 				Assert.IsNull (inner.InnerException, "#8");
 				Assert.IsNotNull (inner.Message, "#9");
 			}
+		}
+
+		[Test]
+		public void OpenReadTaskAsyncOnFile ()
+		{
+			var tmp = Path.GetTempFileName ();
+			string url = "file://" + tmp;
+
+			var client = new WebClient ();
+			var task = client.OpenReadTaskAsync (url);
+			Assert.IsTrue (task.Wait (2000));
 		}
 
 		[Test] // OpenWrite (string)
@@ -1419,6 +1429,9 @@ namespace MonoTests.System.Net
 
 		[Test]
 		[Category ("AndroidNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void UploadValues1 ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
@@ -1669,6 +1682,10 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		// We throw a PlatformNotSupportedException deeper, which is caught and re-thrown as WebException
+		[ExpectedException (typeof (WebException))]
+#endif
 		public void GetWebRequestOverriding ()
 		{
 			GetWebRequestOverridingTestClass testObject = new GetWebRequestOverridingTestClass ();
@@ -1772,6 +1789,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void DefaultProxy ()
 		{
 			WebClient wc = new WebClient ();
@@ -1783,6 +1803,9 @@ namespace MonoTests.System.Net
 		 
 		[Test]
 		[Category ("AndroidNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void UploadStringAsyncCancelEvent ()
 		{
 			UploadAsyncCancelEventTest (9301, (webClient, uri, cancelEvent) =>
@@ -1800,6 +1823,9 @@ namespace MonoTests.System.Net
 
 		[Test]
 		[Category ("AndroidNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void UploadDataAsyncCancelEvent ()
 		{
 			UploadAsyncCancelEventTest (9302, (webClient, uri, cancelEvent) =>
@@ -1816,6 +1842,9 @@ namespace MonoTests.System.Net
 		
 		[Test]
 		[Category ("AndroidNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void UploadValuesAsyncCancelEvent ()
 		{
 			UploadAsyncCancelEventTest (9303, (webClient, uri, cancelEvent) =>
@@ -1832,6 +1861,9 @@ namespace MonoTests.System.Net
 
 		[Test]
 		[Category ("AndroidNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void UploadFileAsyncCancelEvent ()
 		{
 			UploadAsyncCancelEventTest (9304,(webClient, uri, cancelEvent) =>
@@ -1851,6 +1883,9 @@ namespace MonoTests.System.Net
 
 		[Test]
 		[Category ("AndroidNotWorking")] // Test suite hangs if the tests runs as part of the entire BCL suite. Works when only this fixture is ran
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void UploadFileAsyncContentType ()
 		{
 			var port = NetworkHelpers.FindFreePort ();

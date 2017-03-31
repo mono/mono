@@ -1,5 +1,6 @@
-/*
- * mono-mmap.c: Support for mapping code into the process address space
+/**
+ * \file
+ * Support for mapping code into the process address space
  *
  * Author:
  *   Mono Team (mono-list@lists.ximian.com)
@@ -8,12 +9,9 @@
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
-#include "config.h"
+#include <config.h>
 
-#ifdef HOST_WIN32
-#include <windows.h>
-#include <io.h>
-#else
+#ifndef HOST_WIN32
 #include <sys/types.h>
 #if HAVE_SYS_STAT_H
 #include <sys/stat.h>
@@ -29,7 +27,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <errno.h>
-#endif
+#endif /* !HOST_WIN32 */
 
 #include "mono-mmap.h"
 #include "mono-mmap-internals.h"
@@ -37,7 +35,6 @@
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-counters.h>
-
 
 #define BEGIN_CRITICAL_SECTION do { \
 	MonoThreadInfo *__info = mono_thread_info_current_unchecked (); \
@@ -63,9 +60,7 @@ typedef struct {
 	short stats_end;
 } SAreaHeader;
 
-static void* malloced_shared_area = NULL;
-
-static void*
+void*
 malloc_shared_area (int pid)
 {
 	int size = mono_pagesize ();
@@ -78,7 +73,7 @@ malloc_shared_area (int pid)
 	return sarea;
 }
 
-static char*
+char*
 aligned_address (char *mem, size_t size, size_t alignment)
 {
 	char *aligned = (char*)((size_t)(mem + (alignment - 1)) & ~(alignment - 1));
@@ -88,7 +83,7 @@ aligned_address (char *mem, size_t size, size_t alignment)
 
 static volatile size_t allocation_count [MONO_MEM_ACCOUNT_MAX];
 
-static void
+void
 account_mem (MonoMemAccountType type, ssize_t size)
 {
 #if SIZEOF_VOID_P == 4
@@ -135,186 +130,12 @@ mono_mem_account_register_counters (void)
 }
 
 #ifdef HOST_WIN32
-
-int
-mono_pagesize (void)
-{
-	SYSTEM_INFO info;
-	static int saved_pagesize = 0;
-	if (saved_pagesize)
-		return saved_pagesize;
-	GetSystemInfo (&info);
-	saved_pagesize = info.dwAllocationGranularity;
-	return saved_pagesize;
-}
-
-static int
-prot_from_flags (int flags)
-{
-	int prot = flags & (MONO_MMAP_READ|MONO_MMAP_WRITE|MONO_MMAP_EXEC);
-	switch (prot) {
-	case 0: prot = PAGE_NOACCESS; break;
-	case MONO_MMAP_READ: prot = PAGE_READONLY; break;
-	case MONO_MMAP_READ|MONO_MMAP_EXEC: prot = PAGE_EXECUTE_READ; break;
-	case MONO_MMAP_READ|MONO_MMAP_WRITE: prot = PAGE_READWRITE; break;
-	case MONO_MMAP_READ|MONO_MMAP_WRITE|MONO_MMAP_EXEC: prot = PAGE_EXECUTE_READWRITE; break;
-	case MONO_MMAP_WRITE: prot = PAGE_READWRITE; break;
-	case MONO_MMAP_WRITE|MONO_MMAP_EXEC: prot = PAGE_EXECUTE_READWRITE; break;
-	case MONO_MMAP_EXEC: prot = PAGE_EXECUTE; break;
-	default:
-		g_assert_not_reached ();
-	}
-	return prot;
-}
-
-void*
-mono_valloc (void *addr, size_t length, int flags, MonoMemAccountType type)
-{
-	void *ptr;
-	int mflags = MEM_RESERVE|MEM_COMMIT;
-	int prot = prot_from_flags (flags);
-	/* translate the flags */
-
-	ptr = VirtualAlloc (addr, length, mflags, prot);
-
-	account_mem (type, (ssize_t)length);
-
-	return ptr;
-}
-
-void*
-mono_valloc_aligned (size_t length, size_t alignment, int flags, MonoMemAccountType type)
-{
-	int prot = prot_from_flags (flags);
-	char *mem = VirtualAlloc (NULL, length + alignment, MEM_RESERVE, prot);
-	char *aligned;
-
-	if (!mem)
-		return NULL;
-
-	aligned = aligned_address (mem, length, alignment);
-
-	aligned = VirtualAlloc (aligned, length, MEM_COMMIT, prot);
-	g_assert (aligned);
-
-	account_mem (type, (ssize_t)length);
-
-	return aligned;
-}
-
+// Windows specific implementation in mono-mmap-windows.c
 #define HAVE_VALLOC_ALIGNED
 
-int
-mono_vfree (void *addr, size_t length, MonoMemAccountType type)
-{
-	MEMORY_BASIC_INFORMATION mbi;
-	SIZE_T query_result = VirtualQuery (addr, &mbi, sizeof (mbi));
-	BOOL res;
-
-	g_assert (query_result);
-
-	res = VirtualFree (mbi.AllocationBase, 0, MEM_RELEASE);
-
-	g_assert (res);
-
-	account_mem (type, -(ssize_t)length);
-
-	return 0;
-}
-
-void*
-mono_file_map (size_t length, int flags, int fd, guint64 offset, void **ret_handle)
-{
-	void *ptr;
-	int mflags = 0;
-	HANDLE file, mapping;
-	int prot = prot_from_flags (flags);
-	/* translate the flags */
-	/*if (flags & MONO_MMAP_PRIVATE)
-		mflags |= MAP_PRIVATE;
-	if (flags & MONO_MMAP_SHARED)
-		mflags |= MAP_SHARED;
-	if (flags & MONO_MMAP_ANON)
-		mflags |= MAP_ANONYMOUS;
-	if (flags & MONO_MMAP_FIXED)
-		mflags |= MAP_FIXED;
-	if (flags & MONO_MMAP_32BIT)
-		mflags |= MAP_32BIT;*/
-
-	mflags = FILE_MAP_READ;
-	if (flags & MONO_MMAP_WRITE)
-		mflags = FILE_MAP_COPY;
-
-	file = (HANDLE) _get_osfhandle (fd);
-	mapping = CreateFileMapping (file, NULL, prot, 0, 0, NULL);
-	if (mapping == NULL)
-		return NULL;
-	ptr = MapViewOfFile (mapping, mflags, 0, offset, length);
-	if (ptr == NULL) {
-		CloseHandle (mapping);
-		return NULL;
-	}
-	*ret_handle = (void*)mapping;
-	return ptr;
-}
-
-int
-mono_file_unmap (void *addr, void *handle)
-{
-	UnmapViewOfFile (addr);
-	CloseHandle ((HANDLE)handle);
-	return 0;
-}
-
-int
-mono_mprotect (void *addr, size_t length, int flags)
-{
-	DWORD oldprot;
-	int prot = prot_from_flags (flags);
-
-	if (flags & MONO_MMAP_DISCARD) {
-		VirtualFree (addr, length, MEM_DECOMMIT);
-		VirtualAlloc (addr, length, MEM_COMMIT, prot);
-		return 0;
-	}
-	return VirtualProtect (addr, length, prot, &oldprot) == 0;
-}
-
-void*
-mono_shared_area (void)
-{
-	if (!malloced_shared_area)
-		malloced_shared_area = malloc_shared_area (0);
-	/* get the pid here */
-	return malloced_shared_area;
-}
-
-void
-mono_shared_area_remove (void)
-{
-	if (malloced_shared_area)
-		g_free (malloced_shared_area);
-	malloced_shared_area = NULL;
-}
-
-void*
-mono_shared_area_for_pid (void *pid)
-{
-	return NULL;
-}
-
-void
-mono_shared_area_unload (void *area)
-{
-}
-
-int
-mono_shared_area_instances (void **array, int count)
-{
-	return 0;
-}
-
 #else
+
+static void* malloced_shared_area = NULL;
 #if defined(HAVE_MMAP)
 
 /**
@@ -335,6 +156,12 @@ mono_pagesize (void)
 	return saved_pagesize;
 }
 
+int
+mono_valloc_granule (void)
+{
+	return mono_pagesize ();
+}
+
 static int
 prot_from_flags (int flags)
 {
@@ -351,17 +178,15 @@ prot_from_flags (int flags)
 
 /**
  * mono_valloc:
- * @addr: memory address
- * @length: memory area size
- * @flags: protection flags
- *
- * Allocates @length bytes of virtual memory with the @flags
- * protection. @addr can be a preferred memory address or a
- * mandatory one if MONO_MMAP_FIXED is set in @flags.
- * @addr must be pagesize aligned and can be NULL.
- * @length must be a multiple of pagesize.
- *
- * Returns: NULL on failure, the address of the memory area otherwise
+ * \param addr memory address
+ * \param length memory area size
+ * \param flags protection flags
+ * Allocates \p length bytes of virtual memory with the \p flags
+ * protection. \p addr can be a preferred memory address or a
+ * mandatory one if MONO_MMAP_FIXED is set in \p flags.
+ * \p addr must be pagesize aligned and can be NULL.
+ * \p length must be a multiple of pagesize.
+ * \returns NULL on failure, the address of the memory area otherwise
  */
 void*
 mono_valloc (void *addr, size_t length, int flags, MonoMemAccountType type)
@@ -399,12 +224,10 @@ mono_valloc (void *addr, size_t length, int flags, MonoMemAccountType type)
 
 /**
  * mono_vfree:
- * @addr: memory address returned by mono_valloc ()
- * @length: size of memory area
- *
- * Remove the memory mapping at the address @addr.
- *
- * Returns: 0 on success.
+ * \param addr memory address returned by mono_valloc ()
+ * \param length size of memory area
+ * Remove the memory mapping at the address \p addr.
+ * \returns \c 0 on success.
  */
 int
 mono_vfree (void *addr, size_t length, MonoMemAccountType type)
@@ -421,19 +244,17 @@ mono_vfree (void *addr, size_t length, MonoMemAccountType type)
 
 /**
  * mono_file_map:
- * @length: size of data to map
- * @flags: protection flags
- * @fd: file descriptor
- * @offset: offset in the file
- * @ret_handle: pointer to storage for returning a handle for the map
- *
- * Map the area of the file pointed to by the file descriptor @fd, at offset
- * @offset and of size @length in memory according to the protection flags
- * @flags.
- * @offset and @length must be multiples of the page size.
- * @ret_handle must point to a void*: this value must be used when unmapping
- * the memory area using mono_file_unmap ().
- *
+ * \param length size of data to map
+ * \param flags protection flags
+ * \param fd file descriptor
+ * \param offset offset in the file
+ * \param ret_handle pointer to storage for returning a handle for the map
+ * Map the area of the file pointed to by the file descriptor \p fd, at offset
+ * \p offset and of size \p length in memory according to the protection flags
+ * \p flags.
+ * \p offset and \p length must be multiples of the page size.
+ * \p ret_handle must point to a void*: this value must be used when unmapping
+ * the memory area using \c mono_file_unmap().
  */
 void*
 mono_file_map (size_t length, int flags, int fd, guint64 offset, void **ret_handle)
@@ -462,13 +283,11 @@ mono_file_map (size_t length, int flags, int fd, guint64 offset, void **ret_hand
 
 /**
  * mono_file_unmap:
- * @addr: memory address returned by mono_file_map ()
- * @handle: handle of memory map
- *
- * Remove the memory mapping at the address @addr.
- * @handle must be the value returned in ret_handle by mono_file_map ().
- *
- * Returns: 0 on success.
+ * \param addr memory address returned by mono_file_map ()
+ * \param handle handle of memory map
+ * Remove the memory mapping at the address \p addr.
+ * \p handle must be the value returned in ret_handle by \c mono_file_map().
+ * \returns \c 0 on success.
  */
 int
 mono_file_unmap (void *addr, void *handle)
@@ -484,18 +303,16 @@ mono_file_unmap (void *addr, void *handle)
 
 /**
  * mono_mprotect:
- * @addr: memory address
- * @length: size of memory area
- * @flags: new protection flags
- *
- * Change the protection for the memory area at @addr for @length bytes
- * to matche the supplied @flags.
- * If @flags includes MON_MMAP_DISCARD the pages are discarded from memory
+ * \param addr memory address
+ * \param length size of memory area
+ * \param flags new protection flags
+ * Change the protection for the memory area at \p addr for \p length bytes
+ * to matche the supplied \p flags.
+ * If \p flags includes MON_MMAP_DISCARD the pages are discarded from memory
  * and the area is cleared to zero.
- * @addr must be aligned to the page size.
- * @length must be a multiple of the page size.
- *
- * Returns: 0 on success.
+ * \p addr must be aligned to the page size.
+ * \p length must be a multiple of the page size.
+ * \returns \c 0 on success.
  */
 #if defined(__native_client__)
 int
@@ -544,6 +361,12 @@ mono_pagesize (void)
 	return 4096;
 }
 
+int
+mono_valloc_granule (void)
+{
+	return mono_pagesize ();
+}
+
 void*
 mono_valloc (void *addr, size_t length, int flags, MonoMemAccountType type)
 {
@@ -584,7 +407,7 @@ static gboolean
 shared_area_disabled (void)
 {
 	if (!use_shared_area) {
-		if (g_getenv ("MONO_DISABLE_SHARED_AREA"))
+		if (g_hasenv ("MONO_DISABLE_SHARED_AREA"))
 			use_shared_area = -1;
 		else
 			use_shared_area = 1;

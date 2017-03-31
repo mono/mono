@@ -1,5 +1,6 @@
-/*
- * sgen-tarjan-bridge.c: Tarjan-based bridge implementation.
+/**
+ * \file
+ * Tarjan-based bridge implementation.
  *
  * Copyright 2011 Novell, Inc (http://www.novell.com)
  * Copyright 2014 Xamarin Inc (http://www.xamarin.com)
@@ -62,7 +63,7 @@ class_kind (MonoClass *klass)
 
 		/* FIXME the bridge check can be quite expensive, cache it at the class level. */
 		/* An array of a sealed type that is not a bridge will never get to a bridge */
-		if ((elem_class->flags & TYPE_ATTRIBUTE_SEALED) && !elem_class->has_references && !bridge_callbacks.bridge_class_kind (elem_class)) {
+		if ((mono_class_get_flags (elem_class) & TYPE_ATTRIBUTE_SEALED) && !elem_class->has_references && !bridge_callbacks.bridge_class_kind (elem_class)) {
 			SGEN_LOG (6, "class %s is opaque\n", klass->name);
 			return GC_BRIDGE_OPAQUE_CLASS;
 		}

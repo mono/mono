@@ -1,5 +1,6 @@
-/*
- * filewatcher.c: File System Watcher internal calls
+/**
+ * \file
+ * File System Watcher internal calls
  *
  * Authors:
  *	Gonzalo Paniagua Javier (gonzalo@ximian.com)
@@ -28,6 +29,8 @@
 #include <mono/metadata/marshal.h>
 #include <mono/utils/mono-dl.h>
 #include <mono/utils/mono-io-portability.h>
+#include <mono/metadata/w32error.h>
+
 #ifdef HOST_WIN32
 
 /*

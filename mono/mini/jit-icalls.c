@@ -1,5 +1,6 @@
-/*
- * jit-icalls.c: internal calls used by the JIT
+/**
+ * \file
+ * internal calls used by the JIT
  *
  * Author:
  *   Dietmar Maurer (dietmar@ximian.com)
@@ -72,10 +73,10 @@ ldvirtfn_internal (MonoObject *obj, MonoMethod *method, gboolean gshared)
 	if (gshared && method->is_inflated && mono_method_get_context (method)->method_inst) {
 		MonoGenericContext context = { NULL, NULL };
 
-		if (res->klass->generic_class)
-			context.class_inst = res->klass->generic_class->context.class_inst;
-		else if (res->klass->generic_container)
-			context.class_inst = res->klass->generic_container->context.class_inst;
+		if (mono_class_is_ginst (res->klass))
+			context.class_inst = mono_class_get_generic_class (res->klass)->context.class_inst;
+		else if (mono_class_is_gtd (res->klass))
+			context.class_inst = mono_class_get_generic_container (res->klass)->context.class_inst;
 		context.method_inst = mono_method_get_context (method)->method_inst;
 
 		res = mono_class_inflate_generic_method_checked (res, &context, &error);
@@ -1108,8 +1109,8 @@ mono_helper_compile_generic_method (MonoObject *obj, MonoMethod *method, gpointe
 		return NULL;
 	}
 	vmethod = mono_object_get_virtual_method (obj, method);
-	g_assert (!vmethod->klass->generic_container);
-	g_assert (!vmethod->klass->generic_class || !vmethod->klass->generic_class->context.class_inst->is_open);
+	g_assert (!mono_class_is_gtd (vmethod->klass));
+	g_assert (!mono_class_is_ginst (vmethod->klass) || !mono_class_get_generic_class (vmethod->klass)->context.class_inst->is_open);
 	g_assert (!context->method_inst || !context->method_inst->is_open);
 
 	addr = mono_compile_method_checked (vmethod, &error);
@@ -1215,7 +1216,7 @@ mono_object_castclass_unbox (MonoObject *obj, MonoClass *klass)
 	MonoClass *oklass;
 
 	if (mini_get_debug_options ()->better_cast_details) {
-		jit_tls = (MonoJitTlsData *)mono_native_tls_get_value (mono_jit_tls_id);
+		jit_tls = (MonoJitTlsData *)mono_tls_get_jit_tls ();
 		jit_tls->class_cast_from = NULL;
 	}
 
@@ -1249,7 +1250,7 @@ mono_object_castclass_with_cache (MonoObject *obj, MonoClass *klass, gpointer *c
 	gpointer cached_vtable, obj_vtable;
 
 	if (mini_get_debug_options ()->better_cast_details) {
-		jit_tls = (MonoJitTlsData *)mono_native_tls_get_value (mono_jit_tls_id);
+		jit_tls = (MonoJitTlsData *)mono_tls_get_jit_tls ();
 		jit_tls->class_cast_from = NULL;
 	}
 
@@ -1332,9 +1333,9 @@ constrained_gsharedvt_call_setup (gpointer mp, MonoMethod *cmethod, MonoClass *k
 	MonoMethod *m;
 	int vt_slot, iface_offset;
 
-	mono_error_init (error);
+	error_init (error);
 
-	if (klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
+	if (mono_class_is_interface (klass)) {
 		MonoObject *this_obj;
 
 		/* Have to use the receiver's type instead of klass, the receiver is a ref type */
@@ -1352,7 +1353,7 @@ constrained_gsharedvt_call_setup (gpointer mp, MonoMethod *cmethod, MonoClass *k
 		mono_class_setup_vtable (klass);
 		g_assert (klass->vtable);
 		vt_slot = mono_method_get_vtable_slot (cmethod);
-		if (cmethod->klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
+		if (mono_class_is_interface (cmethod->klass)) {
 			iface_offset = mono_class_interface_offset (klass, cmethod->klass);
 			g_assert (iface_offset != -1);
 			vt_slot += iface_offset;
@@ -1504,7 +1505,7 @@ resolve_iface_call (MonoObject *this_obj, int imt_slot, MonoMethod *imt_method, 
 	gpointer addr, compiled_method, aot_addr;
 	gboolean need_rgctx_tramp = FALSE, need_unbox_tramp = FALSE;
 
-	mono_error_init (error);
+	error_init (error);
 	if (!this_obj)
 		/* The caller will handle it */
 		return NULL;
@@ -1588,7 +1589,7 @@ resolve_vcall (MonoVTable *vt, int slot, MonoMethod *imt_method, gpointer *out_a
 	gpointer addr, compiled_method;
 	gboolean need_unbox_tramp = FALSE;
 
-	mono_error_init (error);
+	error_init (error);
 	/* Same as in common_call_trampoline () */
 
 	/* Avoid loading metadata or creating a generic vtable if possible */
@@ -1608,10 +1609,10 @@ resolve_vcall (MonoVTable *vt, int slot, MonoMethod *imt_method, gpointer *out_a
 		else
 			declaring = m;
 
-		if (m->klass->generic_class)
-			context.class_inst = m->klass->generic_class->context.class_inst;
+		if (mono_class_is_ginst (m->klass))
+			context.class_inst = mono_class_get_generic_class (m->klass)->context.class_inst;
 		else
-			g_assert (!m->klass->generic_container);
+			g_assert (!mono_class_is_gtd (m->klass));
 
 		generic_virtual = imt_method;
 		g_assert (generic_virtual);
@@ -1692,10 +1693,10 @@ mono_resolve_generic_virtual_call (MonoVTable *vt, int slot, MonoMethod *generic
 	else
 		declaring = m;
 
-	if (m->klass->generic_class)
-		context.class_inst = m->klass->generic_class->context.class_inst;
+	if (mono_class_is_ginst (m->klass))
+		context.class_inst = mono_class_get_generic_class (m->klass)->context.class_inst;
 	else
-		g_assert (!m->klass->generic_container);
+		g_assert (!mono_class_is_gtd (m->klass));
 
 	g_assert (generic_virtual->is_inflated);
 	context.method_inst = ((MonoMethodInflated*)generic_virtual)->context.method_inst;
@@ -1866,12 +1867,9 @@ mono_llvmonly_init_delegate_virtual (MonoDelegate *del, MonoObject *target, Mono
 MonoObject*
 mono_get_assembly_object (MonoImage *image)
 {
-	MonoError error;
-	MonoObject *result;
-	result = (MonoObject*)mono_assembly_get_object_checked (mono_domain_get (), image->assembly, &error);
-	if (!result)
-		mono_error_set_pending_exception (&error);
-	return result;
+	ICALL_ENTRY();
+	MonoObjectHandle result = MONO_HANDLE_CAST (MonoObject, mono_assembly_get_object_handle (mono_domain_get (), image->assembly, &error));
+	ICALL_RETURN_OBJ (result);
 }
 
 MonoObject*
@@ -1912,14 +1910,14 @@ mono_interruption_checkpoint_from_trampoline (void)
 }
 
 void
-mono_throw_method_access (MonoMethod *callee, MonoMethod *caller)
+mono_throw_method_access (MonoMethod *caller, MonoMethod *callee)
 {
-	char *callee_name = mono_method_full_name (callee, 1);
 	char *caller_name = mono_method_full_name (caller, 1);
+	char *callee_name = mono_method_full_name (callee, 1);
 	MonoError error;
 
-	mono_error_init (&error);
-	mono_error_set_generic_error (&error, "System", "MethodAccessException", "Method `%s' is inaccessible from method `%s'\n", callee_name, caller_name);
+	error_init (&error);
+	mono_error_set_generic_error (&error, "System", "MethodAccessException", "Method `%s' is inaccessible from method `%s'", callee_name, caller_name);
 	mono_error_set_pending_exception (&error);
 	g_free (callee_name);
 	g_free (caller_name);

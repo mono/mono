@@ -19,6 +19,9 @@ namespace NUnit.ConsoleRunner
 		[STAThread]
 		public static int Main(string[] args)
 		{
+			Console.ForegroundColor = ConsoleColor.Red;
+			Console.WriteLine ("Note: nunit-console shipped with Mono is deprecated, please use the NUnit NuGet package or some other form of acquiring NUnit.");
+			Console.ResetColor ();
 			return Runner.Main( args );
 		}
 	}

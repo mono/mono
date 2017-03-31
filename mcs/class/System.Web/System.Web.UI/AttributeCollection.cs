@@ -48,9 +48,9 @@ namespace System.Web.UI {
 			this.bag = bag;
 		}
 
-		public override bool Equals (object obj) 
+		public override bool Equals (object o) 
 		{
-			AttributeCollection other = obj as AttributeCollection;
+			AttributeCollection other = o as AttributeCollection;
 			if (other == null) {
 				return false;
 			}

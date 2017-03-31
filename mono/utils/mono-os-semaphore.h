@@ -1,5 +1,6 @@
-/*
- * mono-os-semaphore.h:  Definitions for generic semaphore usage
+/**
+ * \file
+ * Definitions for generic semaphore usage
  *
  * Author:
  *	Geoff Norton  <gnorton@novell.com>
@@ -291,7 +292,12 @@ typedef HANDLE MonoSemType;
 static inline void
 mono_os_sem_init (MonoSemType *sem, int value)
 {
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 	*sem = CreateSemaphore (NULL, value, 0x7FFFFFFF, NULL);
+#else
+	*sem = CreateSemaphoreEx (NULL, value, 0x7FFFFFFF, NULL, 0, SEMAPHORE_ALL_ACCESS);
+#endif
+
 	if (G_UNLIKELY (*sem == NULL))
 		g_error ("%s: CreateSemaphore failed with error %d", __func__, GetLastError ());
 }
@@ -334,7 +340,7 @@ retry:
 static inline int
 mono_os_sem_wait (MonoSemType *sem, MonoSemFlags flags)
 {
-	return mono_os_sem_timedwait (sem, INFINITE, flags) != 0 ? -1 : 0;
+	return mono_os_sem_timedwait (sem, MONO_INFINITE_WAIT, flags) != 0 ? -1 : 0;
 }
 
 static inline void

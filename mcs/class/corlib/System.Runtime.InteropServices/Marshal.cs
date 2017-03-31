@@ -38,6 +38,7 @@ using System.Security;
 using System.Reflection;
 using System.Threading;
 using System.Runtime.InteropServices.ComTypes;
+using System.Text;
 
 using System.Runtime.ConstrainedExecution;
 #if !FULL_AOT_RUNTIME
@@ -74,8 +75,18 @@ namespace System.Runtime.InteropServices
 			return false;
 		}
 
+		[MonoTODO]
+		public static void CleanupUnusedObjectsInCurrentContext ()
+		{
+			if (Environment.IsRunningOnWindows)
+				throw new PlatformNotSupportedException ();
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr AllocCoTaskMem (int cb);
+		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static IntPtr AllocCoTaskMemSize (UIntPtr sizet);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
@@ -278,6 +289,12 @@ namespace System.Runtime.InteropServices
 			FreeCoTaskMem (s);
 		}
 
+		public static void ZeroFreeCoTaskMemUTF8 (IntPtr s)
+		{
+			ClearAnsi (s);
+			FreeCoTaskMem (s);
+		}
+		
 		public static void ZeroFreeGlobalAllocAnsi (IntPtr s)
 		{
 			ClearAnsi (s);
@@ -751,6 +768,16 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static string PtrToStringAnsi (IntPtr ptr, int len);
 
+		public static string PtrToStringUTF8 (IntPtr ptr)
+		{
+			return PtrToStringAnsi (ptr);
+		}
+		
+		public static string PtrToStringUTF8 (IntPtr ptr, int byteLen)
+		{
+			return PtrToStringAnsi (ptr, byteLen);
+		}
+		
 		public static string PtrToStringAuto (IntPtr ptr)
 		{
 			return SystemDefaultCharSize == 2
@@ -769,15 +796,8 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static string PtrToStringUni (IntPtr ptr, int len);
 
-#if !MOBILE
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static string PtrToStringBSTR (IntPtr ptr);
-#else
-		public static string PtrToStringBSTR (IntPtr ptr)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		[ComVisible (true)]
@@ -1053,23 +1073,9 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr StringToBSTR (string s);
 
-		//
-		// I believe this is wrong, because in Mono and in P/Invoke
-		// we treat "Ansi" conversions as UTF-8 conversions, while
-		// this one does not do this
-		//
 		public static IntPtr StringToCoTaskMemAnsi (string s)
 		{
-			int length = s.Length + 1;
-			IntPtr ctm = AllocCoTaskMem (length);
-
-			byte[] asBytes = new byte[length];
-			for (int i = 0; i < s.Length; i++)
-				asBytes[i] = (byte)s[i];
-			asBytes[s.Length] = 0;
-
-			copy_to_unmanaged (asBytes, 0, ctm, length);
-			return ctm;
+			return StringToAllocatedMemoryUTF8 (s);
 		}
 
 		public static IntPtr StringToCoTaskMemAuto (string s)
@@ -1094,6 +1100,29 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr StringToHGlobalAnsi (string s);
 
+		unsafe public static IntPtr StringToAllocatedMemoryUTF8(String s)
+		{
+			const int MAX_UTF8_CHAR_SIZE = 3;
+			if (s == null)
+				return IntPtr.Zero;
+
+			int nb = (s.Length + 1) * MAX_UTF8_CHAR_SIZE;
+
+			// Overflow checking
+			if (nb < s.Length)
+				throw new ArgumentOutOfRangeException("s");
+			
+			IntPtr pMem = AllocCoTaskMemSize(new UIntPtr((uint)nb +1));
+			
+			if (pMem == IntPtr.Zero)
+				throw new OutOfMemoryException();
+
+			byte* pbMem = (byte*)pMem;
+			int nbWritten = s.GetBytesFromEncoding(pbMem, nb, Encoding.UTF8);
+			pbMem[nbWritten] = 0;
+			return pMem;
+		}
+		
 		public static IntPtr StringToHGlobalAuto (string s)
 		{
 			return SystemDefaultCharSize == 2
@@ -1722,5 +1751,45 @@ namespace System.Runtime.InteropServices
 		internal static void SetLastWin32Error (int error)
 		{
 		}
+
+#if FEATURE_COMINTEROP || MONO_COM
+		// Copied from referencesource/mscorlib/system/runtime/interopservices/marshal.cs
+		//====================================================================
+		// return the raw IUnknown* for a COM Object not related to current 
+		// context
+		// Does not call AddRef
+		//====================================================================
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern IntPtr /* IUnknown* */ GetRawIUnknownForComObjectNoAddRef(Object o);
+		
+		// Copied from referencesource/mscorlib/system/runtime/interopservices/marshal.cs
+		//====================================================================
+		// Converts the CLR exception to an HRESULT. This function also sets
+		// up an IErrorInfo for the exception.
+		// This function is only used in WinRT and converts ObjectDisposedException
+		// to RO_E_CLOSED
+		//====================================================================
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern int GetHRForException_WinRT(Exception e);
+
+		// Copied from referencesource/mscorlib/system/runtime/interopservices/marshal.cs
+		//========================================================================
+		// Create activation factory and wraps it with a unique RCW
+		//========================================================================
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern object GetNativeActivationFactory(Type type);
+#else
+		internal static IntPtr /* IUnknown* */ GetRawIUnknownForComObjectNoAddRef(Object o) {
+			throw new NotSupportedException();
+		}
+
+		internal static int GetHRForException_WinRT(Exception e) {
+			throw new NotSupportedException();
+		}
+
+		internal static object GetNativeActivationFactory(Type type) {
+			throw new NotSupportedException();
+		}
+#endif
 	}
 }

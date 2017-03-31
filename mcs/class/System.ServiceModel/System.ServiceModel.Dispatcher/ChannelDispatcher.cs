@@ -364,8 +364,11 @@ namespace System.ServiceModel.Dispatcher
 
 			public void Start ()
 			{
-				if (loop_thread == null)
+				if (loop_thread == null) {
 					loop_thread = new Thread (new ThreadStart (Loop));
+					loop_thread.IsBackground = true;
+				}
+
 				loop_thread.Start ();
 			}
 
@@ -425,8 +428,10 @@ namespace System.ServiceModel.Dispatcher
 					Logger.Warning (String.Format ("Channel listener '{0}' is not closed. Aborting.", owner.Listener.GetType ()));
 					owner.Listener.Abort ();
 				}
-				if (loop_thread != null && loop_thread.IsAlive)
-					loop_thread.Abort ();
+				if (loop_thread != null && loop_thread.IsAlive) {
+					if (!loop_thread.Join (500))
+						loop_thread.Abort ();
+				}
 				loop_thread = null;
 			}
 

@@ -48,6 +48,8 @@ namespace Mono.CSharp
 		public ReflectionImporter (ModuleContainer module, BuiltinTypes builtin)
 			: base (module)
 		{
+			IgnoreCompilerGeneratedField = false;
+
 			Initialize (builtin);
 		}
 

@@ -52,8 +52,8 @@ namespace System.ServiceModel
 		}
 
 		protected DuplexClientBase (object callbackInstance,
-			string bindingConfigurationName, EndpointAddress remoteAddress)
-			: this (new InstanceContext (callbackInstance), bindingConfigurationName, remoteAddress)
+			string endpointConfigurationName, EndpointAddress remoteAddress)
+			: this (new InstanceContext (callbackInstance), endpointConfigurationName, remoteAddress)
 		{
 		}
 
@@ -87,8 +87,8 @@ namespace System.ServiceModel
 		}
 
 		protected DuplexClientBase (InstanceContext callbackInstance,
-			string endpointConfigurationName, EndpointAddress address)
-			: base (callbackInstance, endpointConfigurationName, address)
+			string endpointConfigurationName, EndpointAddress remoteAddress)
+			: base (callbackInstance, endpointConfigurationName, remoteAddress)
 		{
 		}
 

@@ -21,7 +21,7 @@
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/tokentype.h>
 #include <mono/metadata/appdomain.h>
-#include <mono/metadata/assembly.h>
+#include <mono/metadata/assembly-internals.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/verify-internals.h>
@@ -523,7 +523,7 @@ try_load_from (MonoAssembly **assembly, const gchar *path1, const gchar *path2,
 	*assembly = NULL;
 	fullpath = g_build_filename (path1, path2, path3, path4, NULL);
 	if (g_file_test (fullpath, G_FILE_TEST_IS_REGULAR))
-		*assembly = mono_assembly_open_full (fullpath, NULL, refonly);
+		*assembly = mono_assembly_open_predicate (fullpath, refonly, FALSE, NULL, NULL, NULL);
 
 	g_free (fullpath);
 	return (*assembly != NULL);
@@ -658,6 +658,7 @@ main (int argc, char *argv [])
 	mono_perfcounters_init ();
 #endif
 	mono_counters_init ();
+	mono_tls_init_runtime_keys ();
 	mono_metadata_init ();
 	mono_images_init ();
 	mono_assemblies_init ();
@@ -701,7 +702,7 @@ main (int argc, char *argv [])
 	if (verify_pe || run_new_metadata_verifier) {
 		run_new_metadata_verifier = 1;
 	}
-	
+
 	if (run_new_metadata_verifier) {
 		mono_verifier_set_mode (verifier_mode);
 
@@ -726,7 +727,7 @@ main (int argc, char *argv [])
 
 		mono_verifier_set_mode (verifier_mode);
 
-		assembly = mono_assembly_open (file, NULL);
+		assembly = mono_assembly_open_predicate (file, FALSE, FALSE, NULL, NULL, NULL);
 		/*fake an assembly for netmodules so the verifier works*/
 		if (!assembly && (image = mono_image_open (file, &status)) && image->tables [MONO_TABLE_ASSEMBLY].rows == 0) {
 			assembly = g_new0 (MonoAssembly, 1);

@@ -28,9 +28,11 @@
 
 using System.ComponentModel;
 
+#pragma warning disable 67
+
 namespace System.IO
 {
-    public class FileSystemWatcher : Component, IDisposable
+    public class FileSystemWatcher : Component, IDisposable, ISupportInitialize
     {
         public FileSystemWatcher () { throw new NotImplementedException (); }
         public FileSystemWatcher (string path) { throw new NotImplementedException (); }
@@ -57,7 +59,6 @@ namespace System.IO
         protected void OnRenamed (RenamedEventArgs e) { throw new NotImplementedException (); }
         public WaitForChangedResult WaitForChanged (WatcherChangeTypes changeType) { throw new NotImplementedException (); }
         public WaitForChangedResult WaitForChanged (WatcherChangeTypes changeType, int timeout) { throw new NotImplementedException (); }
-        public virtual void Dispose () { throw new NotImplementedException (); }
         protected override void Dispose (bool disposing) { throw new NotImplementedException (); }
     }
 }

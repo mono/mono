@@ -365,7 +365,7 @@ namespace System.Net {
                 throw new ArgumentNullException("creator");
             }
 
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             ExceptionHelper.WebPermissionUnrestricted.Demand();
 #endif
 
@@ -622,7 +622,7 @@ namespace System.Net {
                 return RequestCacheManager.GetBinding(string.Empty).Policy;
             }
             set {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 // This is a replacement of RequestCachePermission demand since we are not including the latest in the product.
                 ExceptionHelper.WebPermissionUnrestricted.Demand();
 #endif
@@ -1108,7 +1108,7 @@ namespace System.Net {
         {
             get
             {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 ExceptionHelper.WebPermissionUnrestricted.Demand();
 #endif
                 return InternalDefaultWebProxy;
@@ -1116,7 +1116,7 @@ namespace System.Net {
 
             set
             {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 ExceptionHelper.WebPermissionUnrestricted.Demand();
 #endif
                 InternalDefaultWebProxy = value;
@@ -1128,7 +1128,7 @@ namespace System.Net {
         //
         public static IWebProxy GetSystemWebProxy()
         {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             ExceptionHelper.WebPermissionUnrestricted.Demand();
 #endif
             return InternalGetSystemWebProxy();
@@ -1209,7 +1209,6 @@ namespace System.Net {
             }
         }
 
-#if !MONO
         //
         internal void SetupCacheProtocol(Uri uri)
         {
@@ -1224,6 +1223,7 @@ namespace System.Net {
             }
         }
 
+#if !MONO
         delegate void DelEtwFireBeginWRGet(object id, string uri, bool success, bool synchronous);
         delegate void DelEtwFireEndWRGet(object id, bool success, bool synchronous);
         delegate void DelEtwFireEndWRespGet(object id, bool success, bool synchronous, int statusCode);

@@ -26,17 +26,26 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include <config.h>
+
 #include <stdlib.h>
 #include <glib.h>
 
 #include <windows.h>
-#ifdef _MSC_VER
+#if _MSC_VER && G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 #include <shlobj.h>
 #endif
 #include <direct.h>
 #include <io.h>
+#include <assert.h>
 
-const gchar *
+gboolean
+g_hasenv (const gchar *variable)
+{
+	return g_getenv (variable) != NULL;
+}
+
+gchar *
 g_getenv(const gchar *variable)
 {
 	gunichar2 *var, *buffer;
@@ -87,6 +96,7 @@ g_unsetenv(const gchar *variable)
 	g_free(var);
 }
 
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 gchar*
 g_win32_getlocale(void)
 {
@@ -97,6 +107,7 @@ g_win32_getlocale(void)
 	ccBuf += GetLocaleInfoA(lcid, LOCALE_SISO3166CTRYNAME, buf + ccBuf, 9);
 	return g_strdup (buf);
 }
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
 gboolean
 g_path_is_absolute (const char *filename)
@@ -116,19 +127,34 @@ g_path_is_absolute (const char *filename)
 	return FALSE;
 }
 
-const gchar *
-g_get_home_dir (void)
+#if _MSC_VER && G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+static gchar*
+g_get_known_folder_path (void)
 {
-	gchar *home_dir = NULL;
-
-#ifdef _MSC_VER
+	gchar *folder_path = NULL;
 	PWSTR profile_path = NULL;
 	HRESULT hr = SHGetKnownFolderPath (&FOLDERID_Profile, KF_FLAG_DEFAULT, NULL, &profile_path);
 	if (SUCCEEDED(hr)) {
-		home_dir = u16to8 (profile_path);
+		folder_path = u16to8 (profile_path);
 		CoTaskMemFree (profile_path);
 	}
+
+	return folder_path;
+}
+
+#else
+
+static inline gchar *
+g_get_known_folder_path (void)
+{
+	return NULL;
+}
 #endif
+
+const gchar *
+g_get_home_dir (void)
+{
+	gchar *home_dir = g_get_known_folder_path ();
 
 	if (!home_dir) {
 		home_dir = (gchar *) g_getenv ("USERPROFILE");
@@ -180,4 +206,3 @@ g_get_tmp_dir (void)
 	}
 	return tmp_dir;
 }
-

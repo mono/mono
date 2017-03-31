@@ -1,3 +1,7 @@
+/**
+ * \file
+ */
+
 #ifndef __MONO_MINI_MIPS_H__
 #define __MONO_MINI_MIPS_H__
 
@@ -231,6 +235,15 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_EMULATE_LCONV_TO_R4 1
 #define MONO_ARCH_EMULATE_LCONV_TO_R8_UN 1
 #define MONO_ARCH_EMULATE_FREM 1
+#endif
+
+/*
+ * mips backend misses some instructions that enable emitting of optimal
+ * code on other targets and, additionally, the register allocator gets
+ * confused by this optimization, failing to allocate all hw regs.
+ */
+#if SIZEOF_REGISTER == 4
+#define MONO_ARCH_NO_DIV_WITH_MUL
 #endif
 
 #if SIZEOF_REGISTER == 8

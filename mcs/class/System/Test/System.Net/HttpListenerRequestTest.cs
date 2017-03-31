@@ -34,6 +34,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using NUnit.Framework;
 
@@ -42,7 +43,6 @@ using MonoTests.Helpers;
 namespace MonoTests.System.Net
 {
 	[TestFixture]
-	[Category ("RequiresBSDSockets")]
 	public class HttpListenerRequestTest
 	{
 		[Test]
@@ -151,6 +151,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void HttpMethod ()
 		{
 			var port = NetworkHelpers.FindFreePort ();
@@ -165,6 +168,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void HttpBasicAuthScheme ()
 		{
 			var port = NetworkHelpers.FindFreePort ();			
@@ -180,6 +186,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void HttpRequestUriIsNotDecoded ()
 		{
 			var port = NetworkHelpers.FindFreePort ();
@@ -194,12 +203,17 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void HttpRequestIsLocal ()
 		{
 			var port = NetworkHelpers.FindFreePort ();
 			var ips = new List<IPAddress> ();
 			ips.Add (IPAddress.Loopback);
 			foreach (var adapter in NetworkInterface.GetAllNetworkInterfaces ()) {
+				if (adapter.OperationalStatus != OperationalStatus.Up)
+					continue;
 				foreach (var ip in adapter.GetIPProperties ().UnicastAddresses) {
 					ips.Add (ip.Address);
 				}
@@ -221,6 +235,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // #29927
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void HttpRequestUriUnescape ()
 		{
 			var prefix = "http://localhost:" + NetworkHelpers.FindFreePort () + "/";
@@ -238,10 +255,36 @@ namespace MonoTests.System.Net
 			var request = (HttpWebRequest) WebRequest.Create (rawUrl);
 			request.GetResponseAsync ();
 
-			if(!contextTask.Wait (1000))
-				Assert.Fail ("Timeout");
+			Assert.IsTrue (contextTask.Wait (1000));
 
 			Assert.AreEqual (expectedUrl, contextTask.Result.Request.Url.AbsoluteUri);
+
+			listener.Close ();
+		}
+
+		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
+		public void EmptyWrite ()
+		{
+			var prefix = "http://localhost:" + NetworkHelpers.FindFreePort () + "/";
+
+			HttpListener listener = new HttpListener ();
+			listener.Prefixes.Add (prefix);
+			listener.Start ();
+
+			Task.Run (() => {
+				var context = listener.GetContext ();
+
+				var s = context.Response.OutputStream;
+				s.Write (new byte[10], 0, 0);
+				return;
+			});
+
+			var request = (HttpWebRequest)WebRequest.Create (prefix);
+			var rsp = request.GetResponseAsync ();
+			Assert.IsFalse (rsp.Wait (1000), "Don't send on empty write");
 
 			listener.Close ();
 		}

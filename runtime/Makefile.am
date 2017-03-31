@@ -29,7 +29,7 @@ build_profiles =
 
 if INSTALL_4_x
 build_profiles += binary_reference_assemblies net_4_x xbuild_12 xbuild_14
-al_profile = net_4_x
+net_profile = net_4_x
 endif
 
 if INSTALL_MONODROID
@@ -48,12 +48,24 @@ if INSTALL_MONOTOUCH_TV
 build_profiles += monotouch_tv monotouch_tv_runtime
 endif
 
-if INSTALL_MOBILE_STATIC
-build_profiles += mobile_static
+if INSTALL_TESTING_AOT_HYBRID
+build_profiles += testing_aot_hybrid
+endif
+
+if INSTALL_TESTING_AOT_FULL
+build_profiles += testing_aot_full
+endif
+
+if INSTALL_WINAOT
+build_profiles += winaot
 endif
 
 if INSTALL_XAMMAC
 build_profiles += xammac xammac_net_4_5
+endif
+
+if INSTALL_ORBIS
+build_profiles += orbis
 endif
 
 test_profiles = $(build_profiles)
@@ -88,7 +100,7 @@ clean-local:
 
 endif BUILD_MCS
 
-TEST_SUPPORT_FILES = $(tmpinst)/bin/mono $(tmpinst)/bin/ilasm $(tmpinst)/bin/mcs $(tmpinst)/bin/al
+TEST_SUPPORT_FILES = $(tmpinst)/bin/mono $(tmpinst)/bin/ilasm $(tmpinst)/bin/csc $(tmpinst)/bin/mcs $(tmpinst)/bin/al
 
 mcs-do-test-profiles:
 	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(test_profiles)' test-profiles
@@ -109,20 +121,20 @@ cur_dir_cmd = pwd
 PLATFORM_PATH_SEPARATOR = :
 endif
 
-if INSTALL_MOBILE_STATIC
-#  ILASM.exe has features which a mobile_static runtime will not support.
+if FULL_AOT_TESTS
+#  ILASM.exe has features which a testing_aot_full runtime will not support.
 #  It is invoked with an external mono when used in the runtime.
 #  We skip it here because otherwise it will fail to verify.
-MOBILE_STATIC_FILTER=grep -v ilasm
+FULL_AOT_TESTS_FILTER=grep -v ilasm
 else
-MOBILE_STATIC_FILTER=echo
+FULL_AOT_TESTS_FILTER=echo
 endif
 
 # Compile all assemblies with the verifier turned on. Code must be valid but not verifiable.
 # TODO it would be nice to split assemblies without unsafe code to use the verifier with verifiable mode.
 # Skip binary_reference_assemblies because they contain metadata only
 mcs-compileall: mono-wrapper etc/mono/config
-	export verifiable_files=`ls "$(mcs_topdir)/class/lib/$$profile/" | grep -E '\.(dll|exe)$$' | $(MOBILE_STATIC_FILTER)` ; \
+	export verifiable_files=`ls "$(mcs_topdir)/class/lib/$$profile/" | grep -E '\.(dll|exe)$$' | $(FULL_AOT_TESTS_FILTER)` ; \
 	save_MONO_PATH=$$MONO_PATH; mcs_topdir=`cd $(mcs_topdir) && $(cur_dir_cmd)`; ok=:; \
 	for profile in $(test_profiles); do \
 	  if [ "binary_reference_assemblies" = "$$profile" ]; then \
@@ -165,19 +177,28 @@ CLEANFILES = etc/mono/config
 etc/mono/config: ../data/config Makefile $(symlinks)
 	d=`cd ../support && pwd`; \
 	sed 's,target="$$mono_libdir/libMonoPosixHelper$(libsuffix)",target="'$$d'/libMonoPosixHelper.la",' ../data/config > $@t
+	d=`cd ../mono/btls/build-shared && pwd`; \
+	sed 's,target="$$mono_libdir/libmono-btls-shared$(libsuffix)",target="'$$d'/libmono-btls-shared$(libsuffix)",' $@t > $@tt
 	if test -z "$(libgdiplus_loc)"; then :; else \
-	  sed 's,target="$(libgdiplus_install_loc)",target="$(libgdiplus_loc)",' $@t > $@tt; \
-	  mv -f $@tt $@t; fi
-	mv -f $@t $@
+	  sed 's,target="$(libgdiplus_install_loc)",target="$(libgdiplus_loc)",' $@tt > $@ttt; \
+	  mv -f $@ttt $@tt; fi
+	mv -f $@tt $@
+	rm -f $@t
 
 $(tmpinst)/bin/mono: mono-wrapper etc/mono/config
 	$(mkinstalldirs) $(tmpinst)/bin
 	cp mono-wrapper $@
 
+$(tmpinst)/bin/csc: $(tmpinst)/bin/mono Makefile
+	echo '#! /bin/sh' > $@ ; \
+	r=`pwd`; m=`cd $(mcs_topdir) && pwd`; \
+	echo 'exec "'"$$r/$(tmpinst)/bin/mono"'" "'"$(CSC)"'" "$$@"' >> $@ ; \
+	chmod +x $@
+
 $(tmpinst)/bin/mcs: $(tmpinst)/bin/mono Makefile
 	echo '#! /bin/sh' > $@ ; \
 	r=`pwd`; m=`cd $(mcs_topdir) && pwd`; \
-	echo 'exec "'"$$r/$(tmpinst)/bin/mono"'" "'"$$m/class/lib/build/mcs.exe"'" "$$@"' >> $@ ; \
+	echo 'exec "'"$$r/$(tmpinst)/bin/mono"'" "'"$$m/class/lib/$(net_profile)/mcs.exe"'" "$$@"' >> $@ ; \
 	chmod +x $@
 
 $(tmpinst)/bin/ilasm: $(tmpinst)/bin/mono Makefile
@@ -189,7 +210,7 @@ $(tmpinst)/bin/ilasm: $(tmpinst)/bin/mono Makefile
 $(tmpinst)/bin/al: $(tmpinst)/bin/mono Makefile
 	echo '#! /bin/sh' > $@ ; \
 	r=`pwd`; m=`cd $(mcs_topdir) && pwd`; \
-	echo 'exec "'"$$r/$(tmpinst)/bin/mono"'" "'"$$m/class/lib/$(al_profile)/al.exe"'" "$$@"' >> $@ ; \
+	echo 'exec "'"$$r/$(tmpinst)/bin/mono"'" "'"$$m/class/lib/$(net_profile)/al.exe"'" "$$@"' >> $@ ; \
 	chmod +x $@
 
 test-support-files: $(TEST_SUPPORT_FILES)

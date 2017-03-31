@@ -331,7 +331,7 @@ using nwind;
             decimal[] d = new decimal[] { 1, 4, 5, 6, 10248, 10255 };
             var q = db.OrderDetails.Where(o => d.Contains(o.OrderID));
 
-            Assert.Greater(q.Count(), 0);
+            AssertHelper.Greater(q.Count(), 0);
         }
 
 

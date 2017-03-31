@@ -38,6 +38,12 @@ prof_ldflags = -Wl,-undefined -Wl,suppress -Wl,-flat_namespace
 endif
 endif
 
+if TARGET_OSX
+libmono_dep =
+else
+libmono_dep = $(monodir)/mono/mini/$(LIBMONO_LA)
+endif
+
 if PLATFORM_ANDROID
 prof_ldflags = -avoid-version
 endif
@@ -62,21 +68,21 @@ monodir=$(top_builddir)
 # functionality, so create a separate static version of the library.
 
 libmono_profiler_aot_la_SOURCES = mono-profiler-aot.c
-libmono_profiler_aot_la_LIBADD =  $(monodir)/mono/mini/$(LIBMONO_LA) $(GLIB_LIBS) $(LIBICONV)
+libmono_profiler_aot_la_LIBADD =  $(libmono_dep) $(GLIB_LIBS) $(LIBICONV)
 libmono_profiler_aot_la_LDFLAGS = $(prof_ldflags)
 libmono_profiler_aot_static_la_SOURCES = mono-profiler-aot.c
 libmono_profiler_aot_static_la_LDFLAGS = -static
 
 libmono_profiler_iomap_la_SOURCES = mono-profiler-iomap.c
-libmono_profiler_iomap_la_LIBADD = $(monodir)/mono/mini/$(LIBMONO_LA) $(GLIB_LIBS) $(LIBICONV)
+libmono_profiler_iomap_la_LIBADD = $(libmono_dep) $(GLIB_LIBS) $(LIBICONV)
 libmono_profiler_iomap_la_LDFLAGS = $(prof_ldflags)
 libmono_profiler_iomap_static_la_SOURCES = mono-profiler-iomap.c
 libmono_profiler_iomap_static_la_LDFLAGS = -static
 
-libmono_profiler_log_la_SOURCES = proflog.c
-libmono_profiler_log_la_LIBADD = $(monodir)/mono/mini/$(LIBMONO_LA) $(GLIB_LIBS) $(Z_LIBS)
+libmono_profiler_log_la_SOURCES = mono-profiler-log.c
+libmono_profiler_log_la_LIBADD = $(libmono_dep) $(GLIB_LIBS) $(Z_LIBS)
 libmono_profiler_log_la_LDFLAGS = $(prof_ldflags)
-libmono_profiler_log_static_la_SOURCES = proflog.c
+libmono_profiler_log_static_la_SOURCES = mono-profiler-log.c
 libmono_profiler_log_static_la_LDFLAGS = -static
 
 if HAVE_VTUNE
@@ -86,9 +92,11 @@ libmono_profiler_vtune_la_LIBADD = $(VTUNE_LIBS) $(LIBMONO) $(GLIB_LIBS) $(LIBIC
 libmono_profiler_vtune_la_LDFLAGS = $(prof_ldflags)
 libmono_profiler_vtune_static_la_SOURCES = mono-profiler-vtune.c
 libmono_profiler_vtune_static_la_LDFLAGS = -static
+libmono_profiler_vtune_static_la_CFLAGS = $(VTUNE_CFLAGS)
+libmono_profiler_vtune_static_la_LIBADD = $(VTUNE_LIBS)
 endif
 
-mprof_report_SOURCES = decode.c
+mprof_report_SOURCES = mprof-report.c
 mprof_report_LDADD = $(Z_LIBS) $(GLIB_LIBS) $(LIBICONV)
 
 PLOG_TESTS_SRC=test-alloc.cs test-busy.cs test-monitor.cs test-excleave.cs \
@@ -97,19 +105,19 @@ PLOG_TESTS=$(PLOG_TESTS_SRC:.cs=.exe)
 
 CLASS=$(mcs_topdir)/class/lib/$(DEFAULT_PROFILE)
 
-with_mono_path = MONO_PATH=$(CLASS)
-
-RUNTIME = $(with_mono_path) $(top_builddir)/runtime/mono-wrapper
-MCS = $(RUNTIME) $(mcs_topdir)/class/lib/build/mcs.exe -unsafe -nowarn:0162 -nowarn:0168 -nowarn:0219 -debug
+TOOLS_RUNTIME = MONO_PATH=$(mcs_topdir)/class/lib/build $(top_builddir)/runtime/mono-wrapper
+MCS = $(TOOLS_RUNTIME) $(CSC) -lib:$(CLASS) -unsafe -nologo -noconfig -nowarn:0162 -nowarn:0168 -nowarn:0219 -debug:portable
 
 %.exe: %.cs
 	$(MCS) -out:$@ $<
 
 testlog: $(PLOG_TESTS)
-	$(with_mono_path) perl $(srcdir)/ptestrunner.pl $(top_builddir)
+	MONO_PATH=$(CLASS) perl $(srcdir)/ptestrunner.pl $(top_builddir)
 
 check-local: $(check_targets)
 
-EXTRA_DIST=utils.c utils.h proflog.h \
-	$(PLOG_TESTS_SRC) ptestrunner.pl \
+EXTRA_DIST=mono-profiler-log.h \
+	mono-profiler-aot.h \
+	$(PLOG_TESTS_SRC) \
+	ptestrunner.pl \
 	$(suppression_DATA)

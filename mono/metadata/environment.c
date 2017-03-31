@@ -1,5 +1,6 @@
-/*
- * environment.c: System.Environment support internal calls
+/**
+ * \file
+ * System.Environment support internal calls
  *
  * Authors:
  *	Dick Porter (dick@ximian.com)
@@ -17,7 +18,7 @@
 #include <mono/metadata/environment.h>
 #include <mono/metadata/exception.h>
 #include <mono/utils/mono-compiler.h>
-#include <mono/io-layer/io-layer.h>
+#include <mono/utils/w32api.h>
 
 extern MonoString* ves_icall_System_Environment_GetOSVersionString (void);
 
@@ -27,12 +28,20 @@ extern MonoString* ves_icall_System_Environment_GetOSVersionString (void);
 
 static gint32 exitcode=0;
 
-gint32 mono_environment_exitcode_get (void)
+/**
+ * mono_environment_exitcode_get:
+ */
+gint32
+mono_environment_exitcode_get (void)
 {
 	return(exitcode);
 }
 
-void mono_environment_exitcode_set (gint32 value)
+/**
+ * mono_environment_exitcode_set:
+ */
+void
+mono_environment_exitcode_set (gint32 value)
 {
 	exitcode=value;
 }

@@ -91,6 +91,9 @@ namespace System.Security.Cryptography.X509Certificates {
 				}
 				return store2;
 			}
+			internal set {
+				store2 = value;
+			}
 		}
 
 		public X509RevocationFlag RevocationFlag {

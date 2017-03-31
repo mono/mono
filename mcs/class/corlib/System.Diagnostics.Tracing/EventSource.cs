@@ -151,6 +151,7 @@ namespace System.Diagnostics.Tracing
 		{
 		}
 
+		[CLSCompliant (false)]
 		public void Write<T> (string eventName, ref EventSourceOptions options, ref T data)
 		{
 		}
@@ -270,14 +271,12 @@ namespace System.Diagnostics.Tracing
 		{
 		}
 
-#if NETSTANDARD
 		[MonoTODO]
 		public event EventHandler<EventCommandEventArgs> EventCommandExecuted
 		{
 			add { throw new NotImplementedException (); }
 			remove { throw new NotImplementedException (); }
 		}
-#endif
 
 		[MonoTODO]
 		public static string GenerateManifest (Type eventSourceType, string assemblyPathToIncludeInManifest)

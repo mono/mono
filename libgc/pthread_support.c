@@ -205,7 +205,7 @@ static
 GC_key_t GC_thread_key;
 
 #ifdef USE_COMPILER_TLS
-__thread MONO_TLS_FAST void* GC_thread_tls;
+__thread void* GC_thread_tls;
 
 /*
  * gcc errors out with /tmp/ccdPMFuq.s:2994: Error: symbol `.LTLS4' is already defined

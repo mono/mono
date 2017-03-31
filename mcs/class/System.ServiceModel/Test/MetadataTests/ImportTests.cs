@@ -34,7 +34,6 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
-using NUnit.Framework.SyntaxHelpers;
 
 using WS = System.Web.Services.Description;
 

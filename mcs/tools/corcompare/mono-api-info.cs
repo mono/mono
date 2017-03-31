@@ -200,7 +200,7 @@ namespace CorCompare
 				if (File.Exists (assembly))
 					return TypeHelper.Resolver.ResolveFile (assembly);
 
-				return TypeHelper.Resolver.Resolve (assembly);
+				return TypeHelper.Resolver.Resolve (AssemblyNameReference.Parse (assembly), new ReaderParameters ());
 			} catch (Exception e) {
 				Console.WriteLine (e);
 				return null;
@@ -1377,10 +1377,18 @@ namespace CorCompare
 				if (ca.Count != 1)
 					break;
 
+				if (mapping == null)
+					mapping = new Dictionary<string, object> (StringComparer.Ordinal);
+
 				if (constructor.Parameters[0].ParameterType == constructor.Module.TypeSystem.Boolean) {
-					if (mapping == null)
-						mapping = new Dictionary<string, object> (StringComparer.Ordinal);
 					mapping.Add ("Bindable", ca[0].Value);
+				} else if (constructor.Parameters[0].ParameterType.FullName == "System.ComponentModel.BindableSupport") {
+					if ((int)ca[0].Value == 0)
+						mapping.Add ("Bindable", false);
+					else if ((int)ca[0].Value == 1)
+						mapping.Add ("Bindable", true);
+					else
+						throw new NotImplementedException ();
 				} else {
 					throw new NotImplementedException ();
 				}

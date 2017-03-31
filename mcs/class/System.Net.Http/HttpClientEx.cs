@@ -29,7 +29,12 @@ namespace System.Net.Http {
 		// but we want this to work "as expected" even if the application is not being linked
 		static HttpMessageHandler GetDefaultHandler ()
 		{
+#if MONOTOUCH_WATCH
+			// There's only one valid handler type for watchOS
+			return new NSUrlSessionHandler ();
+#else
 			return RuntimeOptions.GetHttpMessageHandler ();
+#endif
 		}
 	}
 #else

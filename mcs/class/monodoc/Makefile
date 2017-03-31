@@ -6,7 +6,7 @@ LIBRARY = monodoc.dll
 LIBRARY_PACKAGE = monodoc
 # Remove a bunch of "obsolete"-type warning for Lucene.NET
 # also activate legacy mode to compile old monodoc.dll api
-LOCAL_MCS_FLAGS = /nowarn:618,612,672,809 /define:LEGACY_MODE
+LOCAL_MCS_FLAGS = /nowarn:618,612,672,809,414,649 /define:LEGACY_MODE
 
 JAY_FLAGS = -ct
 
@@ -110,8 +110,7 @@ LIB_MCS_FLAGS = \
 	/resource:Resources/mono-ecma.css,mono-ecma.css                   \
 	/resource:Resources/mono-ecma.xsl,mono-ecma.xsl                   \
 	/resource:Resources/toc-html.xsl,toc-html.xsl                     \
-	$(IMAGE_RESOURCE_COMMAND)					                      \
-	/publicsign
+	$(IMAGE_RESOURCE_COMMAND)
 
 CLEAN_FILES += $(the_lib).config
 

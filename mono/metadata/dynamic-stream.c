@@ -1,5 +1,6 @@
-/*
- * dynamic-stream.c: MonoDynamicStream
+/**
+ * \file
+ * MonoDynamicStream
  * Copyright 2016 Microsoft
  *
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
@@ -76,7 +77,7 @@ mono_dynstream_insert_mstring (MonoDynamicStream *sh, MonoString *str, MonoError
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	mono_error_init (error);
+	error_init (error);
 	char *name = mono_string_to_utf8_checked (str, error);
 	return_val_if_nok (error, -1);
 	guint32 idx;

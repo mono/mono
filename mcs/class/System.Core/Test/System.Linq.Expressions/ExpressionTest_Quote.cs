@@ -58,7 +58,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorkingInterpreter")]
 		public void ParameterInQuotedExpression () // #550722
 		{
 			// Expression<Func<string, Expression<Func<string>>>> e = (string s) => () => s;

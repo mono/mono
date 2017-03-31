@@ -32,10 +32,6 @@ using System.Text;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
 
-#if !MOBILE
-using NUnit.Framework.SyntaxHelpers;
-#endif
-
 namespace MonoTests.System.Text
 {
 	[TestFixture]

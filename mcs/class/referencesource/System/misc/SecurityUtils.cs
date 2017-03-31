@@ -60,7 +60,7 @@ namespace System.Windows.Forms
         }
 
         private static void DemandReflectionAccess(Type type) {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             try {
                 MemberAccessPermission.Demand();
             }
@@ -72,7 +72,7 @@ namespace System.Windows.Forms
 
         [SecuritySafeCritical]
         private static void DemandGrantSet(Assembly assembly) {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             PermissionSet targetGrantSet = assembly.PermissionSet;
             targetGrantSet.AddPermission(RestrictedMemberAccessPermission);
             targetGrantSet.Demand();

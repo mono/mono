@@ -1,5 +1,6 @@
-/*
- * mini-sparc.c: Sparc backend for the Mono code generator
+/**
+ * \file
+ * Sparc backend for the Mono code generator
  *
  * Authors:
  *   Paolo Molaro (lupus@ximian.com)
@@ -215,6 +216,12 @@ mono_arch_init (void)
 void
 mono_arch_cleanup (void)
 {
+}
+
+gboolean
+mono_arch_have_fast_tls (void)
+{
+	return FALSE;
 }
 
 /*
@@ -3676,7 +3683,7 @@ mono_arch_patch_code (MonoCompile *cfg, MonoMethod *method, MonoDomain *domain, 
 {
 	MonoJumpInfo *patch_info;
 
-	mono_error_init (error);
+	error_init (error);
 
 	/* FIXME: Move part of this to arch independent code */
 	for (patch_info = ji; patch_info; patch_info = patch_info->next) {

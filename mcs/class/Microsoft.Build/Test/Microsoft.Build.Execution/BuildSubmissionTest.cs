@@ -108,7 +108,8 @@ namespace MonoTests.Microsoft.Build.Execution
 			Assert.IsTrue (sub.BuildResult.OverallResult == BuildResultCode.Success, "#1");
 			DateTime endBuildDone = DateTime.Now;
 			Assert.IsTrue (endBuildDone - beforeExec >= TimeSpan.FromSeconds (1), "#2");
-			Assert.IsTrue (endBuildDone > waitDone, "#3");
+			Assert.IsTrue (waitDone >= beforeExec, "#3");
+			Assert.IsTrue (endBuildDone >= waitDone, "#4");
 		}
 		
 		[Test]

@@ -71,7 +71,7 @@ namespace MonoTests.System.Linq.Expressions {
 			var c = Expression.Convert (
 				Expression.Constant (null, typeof (Bar)), typeof (Foo));
 
-			Assert.AreEqual ("Convert(null)", c.ToString ());
+			Assert.AreEqual ("Convert(null, Foo)", c.ToString ());
 		}
 
 		[Test]
@@ -94,7 +94,7 @@ namespace MonoTests.System.Linq.Expressions {
 				Expression.Constant (2, typeof (int)), typeof (long));
 
 			Assert.AreEqual (ExpressionType.ConvertChecked, c.NodeType);
-			Assert.AreEqual ("ConvertChecked(2)", c.ToString ());
+			Assert.AreEqual ("ConvertChecked(2, Int64)", c.ToString ());
 		}
 
 		[Test]
@@ -359,7 +359,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorkingInterpreter")]
 		public void CompileNullableToNotNullable ()
 		{
 			var p = Expression.Parameter (typeof (int?), "i");
@@ -452,7 +451,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorkingInterpreter")]
 		public void ConvertImplicitToShortToNullableInt ()
 		{
 			var a = Expression.Parameter (typeof (ImplicitToShort?), "a");
@@ -478,7 +476,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorkingInterpreter")]
 		public void NullableImplicitToShort ()
 		{
 			var i = Expression.Parameter (typeof (ImplicitToShort?), "i");
@@ -514,7 +511,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorkingInterpreter")]
 		public void ConvertNullableULongToNullableDecimal ()
 		{
 			var p = Expression.Parameter (typeof (ulong?), "l");
@@ -559,7 +555,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorkingInterpreter")]
 		public void ConvertNullableImplictToIntToNullableLong ()
 		{
 			var i = Expression.Parameter (typeof (ImplicitToInt?), "i");
@@ -577,7 +572,6 @@ namespace MonoTests.System.Linq.Expressions {
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
-		[Category ("NotWorking")]
 		public void ConvertNullableIntToStringWithConvertMethod ()
 		{
 			Expression.Convert (

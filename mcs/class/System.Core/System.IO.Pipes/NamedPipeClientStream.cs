@@ -120,8 +120,10 @@ namespace System.IO.Pipes
 		~NamedPipeClientStream () {
 			Dispose (false);
 		}
-		
+
+#if !MOBILE
 		INamedPipeClient impl;
+#endif
 
 		public void Connect ()
 		{
@@ -172,7 +174,11 @@ namespace System.IO.Pipes
 		public int NumberOfServerInstances {
 			get {
 				CheckPipePropertyOperations ();
+#if MOBILE
+				throw new NotImplementedException ();
+#else
 				return impl.NumberOfServerInstances;
+#endif
 			}
 		}
 	}

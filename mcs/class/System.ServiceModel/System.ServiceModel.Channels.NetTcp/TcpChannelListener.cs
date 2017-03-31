@@ -201,13 +201,13 @@ namespace System.ServiceModel.Channels.NetTcp
 					if (accept_handles.Count > 0)
 						accept_handles [0].Set ();
 				}
-			} catch {
+			} catch (ObjectDisposedException) {
 				/* If an accept fails, just ignore it. Maybe the remote peer disconnected already */
 			} finally {
 				if (State == CommunicationState.Opened) {
 					try {
 						listener.BeginAcceptTcpClient (TcpListenerAcceptedClient, listener);
-					} catch {
+					} catch (ObjectDisposedException) {
 						/* If this fails, we must have disposed the listener */
 					}
 				}

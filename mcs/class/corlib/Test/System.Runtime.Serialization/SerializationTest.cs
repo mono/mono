@@ -43,7 +43,7 @@ namespace MonoTests.System.Runtime.Serialization
 		}
 #endif
 
-#if !MONOTOUCH && !MOBILE_STATIC
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 		[Test]
 		public void DelegateSerializationTest ()
 		{

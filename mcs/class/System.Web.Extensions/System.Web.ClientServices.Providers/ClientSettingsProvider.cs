@@ -43,7 +43,9 @@ namespace System.Web.ClientServices.Providers
 {
 	public class ClientSettingsProvider : SettingsProvider, IApplicationSettingsProvider
 	{
+#pragma warning disable 67
 		public event EventHandler <SettingsSavedEventArgs> SettingsSaved;
+#pragma warning restore 67
 		
 		public static string ServiceUri {
 			get { throw new NotImplementedException (); }

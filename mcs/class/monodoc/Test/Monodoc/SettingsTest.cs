@@ -17,7 +17,7 @@ namespace MonoTests.Monodoc
 		{
 			// the docPath variable is the only one we know for sure should exist
 			Assert.IsNotNull (Config.Get ("docPath"));
-			Assert.IsNotEmpty (Config.Get ("docPath"));
+			AssertHelper.IsNotEmpty (Config.Get ("docPath"));
 		}
 	}
 }

@@ -82,7 +82,7 @@ Content-Type: application/xop+xml;charset=utf-8;type=""sTaRt""
 &#xD;XXX
 666</foo></root>
 --myboundary--
-<root/><root/><root/>".Replace ("\n", "\r\n").Replace ("XXX\r\n", "\n");
+<root/><root/><root/>".Replace ("\r\n", "\n").Replace ("\n", "\r\n").Replace ("XXX\r\n", "\n");
 	}
 
 	class MyStreamProvider : IStreamProvider

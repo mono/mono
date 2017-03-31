@@ -1,5 +1,6 @@
-/*
- * tramp-arm64.c: JIT trampoline code for ARM64
+/**
+ * \file
+ * JIT trampoline code for ARM64
  *
  * Copyright 2013 Xamarin Inc
  *
@@ -90,6 +91,13 @@ mono_arch_get_plt_info_offset (guint8 *plt_entry, mgreg_t *regs, guint8 *code)
 {
 	/* The offset is stored as the 5th word of the plt entry */
 	return ((guint32*)plt_entry) [4];
+}
+
+gpointer
+mono_arm_handler_block_trampoline_helper (gpointer *ptr)
+{
+	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
+	return jit_tls->handler_block_return_address;
 }
 
 #ifndef DISABLE_JIT
@@ -356,14 +364,14 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 }
 
 gpointer
-mono_arch_get_static_rgctx_trampoline (MonoMethod *m, MonoMethodRuntimeGenericContext *mrgctx, gpointer addr)
+mono_arch_get_static_rgctx_trampoline (gpointer arg, gpointer addr)
 {
 	guint8 *code, *start;
 	guint32 buf_len = 32;
 	MonoDomain *domain = mono_domain_get ();
 
 	start = code = mono_domain_code_reserve (domain, buf_len);
-	code = mono_arm_emit_imm64 (code, MONO_ARCH_RGCTX_REG, (guint64)mrgctx);
+	code = mono_arm_emit_imm64 (code, MONO_ARCH_RGCTX_REG, (guint64)arg);
 	code = mono_arm_emit_imm64 (code, ARMREG_IP0, (guint64)addr);
 	arm_brx (code, ARMREG_IP0);
 
@@ -507,13 +515,6 @@ mono_arch_create_general_rgctx_lazy_fetch_trampoline (MonoTrampInfo **info, gboo
 	return buf;
 }
 
-static gpointer
-handler_block_trampoline_helper (gpointer *ptr)
-{
-	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
-	return jit_tls->handler_block_return_address;
-}
-
 gpointer
 mono_arch_create_handler_block_trampoline (MonoTrampInfo **info, gboolean aot)
 {
@@ -523,13 +524,9 @@ mono_arch_create_handler_block_trampoline (MonoTrampInfo **info, gboolean aot)
 	MonoJumpInfo *ji = NULL;
 	GSList *unwind_ops = NULL;
 
-	g_assert (!aot);
-
 	code = buf = mono_global_codeman_reserve (tramp_size);
 
 	unwind_ops = NULL;
-
-	tramp = mono_arch_create_specific_trampoline (NULL, MONO_TRAMPOLINE_HANDLER_BLOCK_GUARD, NULL, NULL);
 
 	/*
 	This trampoline restore the call chain of the handler block then jumps into the code that deals with it.
@@ -538,12 +535,21 @@ mono_arch_create_handler_block_trampoline (MonoTrampInfo **info, gboolean aot)
 	/*
 	 * We are in a method frame after the call emitted by OP_CALL_HANDLER.
 	 */
-	code = mono_arm_emit_imm64 (code, ARMREG_IP0, (guint64)handler_block_trampoline_helper);
+	if (aot)
+		code = mono_arm_emit_aotconst (&ji, code, buf, ARMREG_IP0, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mono_arm_handler_block_trampoline_helper");
+	else
+		code = mono_arm_emit_imm64 (code, ARMREG_IP0, (guint64)mono_arm_handler_block_trampoline_helper);
 	/* Set it as the return address so the trampoline will return to it */
 	arm_movx (code, ARMREG_LR, ARMREG_IP0);
 
 	/* Call the trampoline */
-	code = mono_arm_emit_imm64 (code, ARMREG_IP0, (guint64)tramp);
+	if (aot) {
+		char *name = g_strdup_printf ("trampoline_func_%d", MONO_TRAMPOLINE_HANDLER_BLOCK_GUARD);
+		code = mono_arm_emit_aotconst (&ji, code, buf, ARMREG_IP0, MONO_PATCH_INFO_JIT_ICALL_ADDR, name);
+	} else {
+		tramp = mono_arch_create_specific_trampoline (NULL, MONO_TRAMPOLINE_HANDLER_BLOCK_GUARD, NULL, NULL);
+		code = mono_arm_emit_imm64 (code, ARMREG_IP0, (guint64)tramp);
+	}
 	arm_brx (code, ARMREG_IP0);
 
 	mono_arch_flush_icache (buf, code - buf);
@@ -684,7 +690,7 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 }
 
 gpointer
-mono_arch_get_static_rgctx_trampoline (MonoMethod *m, MonoMethodRuntimeGenericContext *mrgctx, gpointer addr)
+mono_arch_get_static_rgctx_trampoline (gpointer arg, gpointer addr)
 {
 	g_assert_not_reached ();
 	return NULL;

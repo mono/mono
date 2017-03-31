@@ -39,18 +39,13 @@
 #include <unicode-data.h>
 #include <errno.h>
 
-#if defined(_MSC_VER) || defined(G_OS_WIN32)
-/* FIXME */
-#  define CODESET 1
-#  include <windows.h>
-#else
+#ifndef G_OS_WIN32
 #    ifdef HAVE_LOCALCHARSET_H
 #       include <localcharset.h>
 #    endif
 #endif
 
-static const char *my_charset;
-static gboolean is_utf8;
+const char *my_charset;
 
 /*
  * Character set conversion
@@ -205,16 +200,13 @@ g_filename_from_utf8 (const gchar *utf8string, gssize len, gsize *bytes_read, gs
 	return res;
 }
 
+#ifndef G_OS_WIN32
+static gboolean is_utf8;
+
 gboolean
 g_get_charset (G_CONST_RETURN char **charset)
 {
 	if (my_charset == NULL) {
-#ifdef G_OS_WIN32
-		static char buf [14];
-		sprintf (buf, "CP%u", GetACP ());
-		my_charset = buf;
-		is_utf8 = FALSE;
-#else
 		/* These shouldn't be heap allocated */
 #if defined(HAVE_LOCALCHARSET_H)
 		my_charset = locale_charset ();
@@ -222,7 +214,6 @@ g_get_charset (G_CONST_RETURN char **charset)
 		my_charset = "UTF-8";
 #endif
 		is_utf8 = strcmp (my_charset, "UTF-8") == 0;
-#endif
 	}
 	
 	if (charset != NULL)
@@ -230,6 +221,7 @@ g_get_charset (G_CONST_RETURN char **charset)
 
 	return is_utf8;
 }
+#endif /* G_OS_WIN32 */
 
 gchar *
 g_locale_to_utf8 (const gchar *opsysstring, gssize len, gsize *bytes_read, gsize *bytes_written, GError **error)

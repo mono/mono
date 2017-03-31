@@ -234,7 +234,7 @@ namespace nwind
             var q = from p in db.Products select p;
             List<Product> products = q.ToList();
             int productCount = products.Count;
-            Assert.Greater(productCount, 0, "Expected some products, got none");
+            AssertHelper.Greater(productCount, 0, "Expected some products, got none");
         }
 
 #if !DEBUG && SQLITE
@@ -443,7 +443,7 @@ namespace nwind
                     select p;
 
             int count = q.Count();
-            Assert.Less(count, db.Customers.Count());
+            AssertHelper.Less(count, db.Customers.Count());
         }
 
         [Test]
@@ -455,7 +455,7 @@ namespace nwind
                     select p;
 
             int count = q.Count();
-            Assert.Less(count, db.Customers.Count());
+            AssertHelper.Less(count, db.Customers.Count());
         }
 
         [Test]
@@ -496,7 +496,7 @@ namespace nwind
         }
 
         [Test]
-        [ExpectedException(ExceptionType=typeof(InvalidOperationException), ExpectedMessage="Data context options cannot be modified after results have been returned from a query.")]
+        [ExpectedException(typeof(InvalidOperationException), ExpectedMessage="Data context options cannot be modified after results have been returned from a query.")]
         public void C13_Changing_ObjectTrackingEnabled2False()
         {
             Northwind db = CreateDB();
@@ -507,7 +507,7 @@ namespace nwind
         }
 
         [Test]
-        [ExpectedException(ExceptionType = typeof(InvalidOperationException), ExpectedMessage = "Data context options cannot be modified after results have been returned from a query.")]
+        [ExpectedException(typeof(InvalidOperationException), ExpectedMessage = "Data context options cannot be modified after results have been returned from a query.")]
         public void C14_Changing_DeferredLoadingEnabled2False()
         {
             Northwind db = CreateDB();
@@ -518,7 +518,7 @@ namespace nwind
         }
 
         [Test]
-        [ExpectedException(ExceptionType = typeof(InvalidOperationException), ExpectedMessage = "Object tracking is not enabled for the current data context instance.")]
+        [ExpectedException(typeof(InvalidOperationException), ExpectedMessage = "Object tracking is not enabled for the current data context instance.")]
         public void C15_SubmitChanges_DeferredLoadingEnabled_False()
         {
             Northwind db = CreateDB();
@@ -572,7 +572,7 @@ namespace nwind
                         .Join(db.GetTable<EmployeeTerritory>(), t => t.TerritoryID, l => l.TerritoryID, (t, l) => l)
                         .Join(db.GetTable<Employee>().Where(e => e.EmployeeID > 0), l => l.EmployeeID, e => e.EmployeeID, (l, e) => e);
             var employeeCount = q.Count();
-            Assert.Greater(employeeCount, 0, "Expected any employees, got count=" + employeeCount);
+            AssertHelper.Greater(employeeCount, 0, "Expected any employees, got count=" + employeeCount);
         }
 
         /// <summary>
@@ -839,7 +839,7 @@ namespace nwind
 
             var q = from p in db.Products where p.ProductName == "Chai" select p.ProductID;
             var productID = q.First();
-            Assert.Greater(productID, 0, "Expected penID>0, got " + productID);
+            AssertHelper.Greater(productID, 0, "Expected penID>0, got " + productID);
         }
 
 
@@ -880,7 +880,7 @@ namespace nwind
 
             var q = from p in db.Products where p.ProductName == "Chai" select p.ProductID;
             var productID = q.Last();
-            Assert.Greater(productID, 0, "Expected penID>0, got " + productID);
+            AssertHelper.Greater(productID, 0, "Expected penID>0, got " + productID);
         }
 
 #if !DEBUG && (POSTGRES || (MSSQL && !L2SQL))
@@ -902,11 +902,11 @@ namespace nwind
                 {
                     //int compareNames = prevProductName.CompareTo(p.ProductName);
                     int compareNames = string.Compare(prevProductName, p.ProductName, stringComparisonType);
-                    Assert.Less(compareNames, 0, "When ordering by names, expected " + prevProductName + " to come after " + p.ProductName);
+                    AssertHelper.Less(compareNames, 0, "When ordering by names, expected " + prevProductName + " to come after " + p.ProductName);
                 }
                 prevProductName = p.ProductName;
             }
-            //Assert.Greater(productID,0,"Expected penID>0, got "+productID);
+            //AssertHelper.Greater(productID,0,"Expected penID>0, got "+productID);
         }
 
         [Test]
@@ -915,7 +915,7 @@ namespace nwind
             Northwind db = CreateDB();
             //var q = from p in db.Products where "Chai"==p.ProductName select p.Order;
             //List<Order> penOrders = q.ToList();
-            //Assert.Greater(penOrders.Count,0,"Expected some orders for product 'Chai'");
+            //AssertHelper.Greater(penOrders.Count,0,"Expected some orders for product 'Chai'");
 
             var q =
                 from o in db.Orders
@@ -929,7 +929,7 @@ namespace nwind
                 Assert.IsNotNull(co.c.City, "Expected non-null customer city");
                 Assert.IsNotNull(co.o, "Expected non-null order");
             }
-            Assert.Greater(list1.Count, 0, "Expected some orders for London customers");
+            AssertHelper.Greater(list1.Count, 0, "Expected some orders for London customers");
         }
 
         [Test]
@@ -947,7 +947,7 @@ namespace nwind
                 Assert.IsNotNull(co.c, "Expected non-null customer");
                 Assert.IsNotNull(co.o, "Expected non-null order");
             }
-            Assert.Greater(list1.Count, 0, "Expected some orders for London customers");
+            AssertHelper.Greater(list1.Count, 0, "Expected some orders for London customers");
         }
 
         [Test]
@@ -962,7 +962,7 @@ namespace nwind
                 where c.City == "London"
                 select new { c, o };
 
-            Assert.Greater(q.ToList().Count, 0, "Expected some orders for London customers");
+            AssertHelper.Greater(q.ToList().Count, 0, "Expected some orders for London customers");
         }
 
         [Test]
@@ -987,7 +987,7 @@ namespace nwind
 #else
             int expectedCount = 2; //Oracle, Mysql: 'Toilet Paper' and 'iPod'
 #endif
-            Assert.Greater(prods.Count, expectedCount, "Expected couple of products with letter 'p'");
+            AssertHelper.Greater(prods.Count, expectedCount, "Expected couple of products with letter 'p'");
         }
 
         [Test]
@@ -1002,11 +1002,11 @@ namespace nwind
             ).Take(5);
             //var q = db.Products.Where( p=>p.ProductName.Contains("p")).Take(5);
             List<Product> prods = q.ToList();
-            Assert.Greater(prods.Count, 2, "Expected couple of products with letter 'p'");
+            AssertHelper.Greater(prods.Count, 2, "Expected couple of products with letter 'p'");
 
             var prodID0 = prods[0].ProductID;
             var prodID1 = prods[1].ProductID;
-            Assert.Greater(prodID0, prodID1, "Sorting is broken");
+            AssertHelper.Greater(prodID0, prodID1, "Sorting is broken");
         }
 
         [Test]

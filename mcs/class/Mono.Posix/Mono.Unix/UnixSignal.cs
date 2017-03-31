@@ -152,11 +152,13 @@ namespace Mono.Unix {
 
 		// signum, count, write_fd, pipecnt, and pipelock are read from a signal handler thread
 		// count and pipelock are both read and written from the signal handler thread
+#pragma warning disable 649
 		[Map]
 		struct SignalInfo {
 			public int signum, count, read_fd, write_fd, pipecnt, pipelock, have_handler;
 			public IntPtr handler; // Backed-up handler to restore when signal unregistered
 		}
+#pragma warning restore 649
 
 		#region WaitHandle overrides
 		protected unsafe override void Dispose (bool disposing)
@@ -186,6 +188,8 @@ namespace Mono.Unix {
 			AssertValid ();
 			if (exitContext)
 				throw new InvalidOperationException ("exitContext is not supported");
+			if (millisecondsTimeout == 0)
+				return IsSet;		
 			return WaitAny (new UnixSignal[]{this}, millisecondsTimeout) == 0;
 		}
 		#endregion

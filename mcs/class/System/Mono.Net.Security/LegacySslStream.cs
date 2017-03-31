@@ -91,7 +91,7 @@ namespace Mono.Net.Security.Private
 			: base (innerStream, leaveInnerStreamOpen)
 		{
 			this.provider = provider;
-			certificateValidator = ChainValidationHelper.GetDefaultValidator (provider, settings);
+			certificateValidator = ChainValidationHelper.GetInternalValidator (provider, settings);
 		}
 		#endregion // Constructors
 
@@ -316,12 +316,14 @@ namespace Mono.Net.Security.Private
 */
 		X509Certificate OnCertificateSelection (X509CertificateCollection clientCerts, X509Certificate serverCert, string targetHost, X509CertificateCollection serverRequestedCerts)
 		{
+#pragma warning disable 618
 			string [] acceptableIssuers = new string [serverRequestedCerts != null ? serverRequestedCerts.Count : 0];
 			for (int i = 0; i < acceptableIssuers.Length; i++)
 				acceptableIssuers [i] = serverRequestedCerts [i].GetIssuerName ();
 			X509Certificate clientCertificate;
 			certificateValidator.SelectClientCertificate (targetHost, clientCerts, serverCert, acceptableIssuers, out clientCertificate);
 			return clientCertificate;
+#pragma warning restore 618
 		}
 
 		public virtual IAsyncResult BeginAuthenticateAsClient (string targetHost, AsyncCallback asyncCallback, object asyncState)

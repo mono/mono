@@ -1,5 +1,6 @@
-/*
- * security-manager.c:  Security Manager (Unmanaged side)
+/**
+ * \file
+ * Security Manager (Unmanaged side)
  *
  * Author:
  *	Sebastien Pouliot  <sebastien@ximian.com>
@@ -11,8 +12,8 @@
 #include "security-manager.h"
 
 /* Class lazy loading functions */
-static GENERATE_GET_CLASS_WITH_CACHE (security_manager, System.Security, SecurityManager)
-static GENERATE_TRY_GET_CLASS_WITH_CACHE (execution_context, System.Threading, ExecutionContext)
+static GENERATE_GET_CLASS_WITH_CACHE (security_manager, "System.Security", "SecurityManager")
+static GENERATE_TRY_GET_CLASS_WITH_CACHE (execution_context, "System.Threading", "ExecutionContext")
 
 static MonoSecurityMode mono_security_mode = MONO_SECURITY_MODE_NONE;
 

@@ -35,10 +35,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Messaging;
 
-#if MONOTOUCH || MOBILE_STATIC
-using MonoTouch;
-#endif
-
 namespace System.IO.Compression
 {
 	public class DeflateStream : Stream
@@ -59,6 +55,11 @@ namespace System.IO.Compression
 
 		public DeflateStream (Stream stream, CompressionMode mode, bool leaveOpen) :
 			this (stream, mode, leaveOpen, false)
+		{
+		}
+
+		internal DeflateStream (Stream stream, CompressionMode mode, bool leaveOpen, int windowsBits) :
+			this (stream, mode, leaveOpen, true)
 		{
 		}
 
@@ -87,6 +88,11 @@ namespace System.IO.Compression
 		
 		public DeflateStream (Stream stream, CompressionLevel compressionLevel, bool leaveOpen)
 			: this (stream, compressionLevel, leaveOpen, false)
+		{
+		}
+
+		internal DeflateStream (Stream stream, CompressionLevel compressionLevel, bool leaveOpen, int windowsBits)
+			: this (stream, compressionLevel, leaveOpen, true)
 		{
 		}
 
@@ -187,8 +193,8 @@ namespace System.IO.Compression
 			}
 		}
 
-		public override IAsyncResult BeginRead (byte [] buffer, int offset, int count,
-							AsyncCallback cback, object state)
+		public override IAsyncResult BeginRead (byte [] array, int offset, int count,
+							AsyncCallback asyncCallback, object asyncState)
 		{
 			if (disposed)
 				throw new ObjectDisposedException (GetType ().FullName);
@@ -196,8 +202,8 @@ namespace System.IO.Compression
 			if (!CanRead)
 				throw new NotSupportedException ("This stream does not support reading");
 
-			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
+			if (array == null)
+				throw new ArgumentNullException ("array");
 
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count", "Must be >= 0");
@@ -205,15 +211,15 @@ namespace System.IO.Compression
 			if (offset < 0)
 				throw new ArgumentOutOfRangeException ("offset", "Must be >= 0");
 
-			if (count + offset > buffer.Length)
+			if (count + offset > array.Length)
 				throw new ArgumentException ("Buffer too small. count/offset wrong.");
 
 			ReadMethod r = new ReadMethod (ReadInternal);
-			return r.BeginInvoke (buffer, offset, count, cback, state);
+			return r.BeginInvoke (array, offset, count, asyncCallback, asyncState);
 		}
 
-		public override IAsyncResult BeginWrite (byte [] buffer, int offset, int count,
-							AsyncCallback cback, object state)
+		public override IAsyncResult BeginWrite (byte [] array, int offset, int count,
+							AsyncCallback asyncCallback, object asyncState)
 		{
 			if (disposed)
 				throw new ObjectDisposedException (GetType ().FullName);
@@ -221,8 +227,8 @@ namespace System.IO.Compression
 			if (!CanWrite)
 				throw new InvalidOperationException ("This stream does not support writing");
 
-			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
+			if (array == null)
+				throw new ArgumentNullException ("array");
 
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count", "Must be >= 0");
@@ -230,43 +236,43 @@ namespace System.IO.Compression
 			if (offset < 0)
 				throw new ArgumentOutOfRangeException ("offset", "Must be >= 0");
 
-			if (count + offset > buffer.Length)
+			if (count + offset > array.Length)
 				throw new ArgumentException ("Buffer too small. count/offset wrong.");
 
 			WriteMethod w = new WriteMethod (WriteInternal);
-			return w.BeginInvoke (buffer, offset, count, cback, state);			
+			return w.BeginInvoke (array, offset, count, asyncCallback, asyncState);			
 		}
 
-		public override int EndRead(IAsyncResult async_result)
+		public override int EndRead(IAsyncResult asyncResult)
 		{
-			if (async_result == null)
-				throw new ArgumentNullException ("async_result");
+			if (asyncResult == null)
+				throw new ArgumentNullException ("asyncResult");
 
-			AsyncResult ares = async_result as AsyncResult;
+			AsyncResult ares = asyncResult as AsyncResult;
 			if (ares == null)
-				throw new ArgumentException ("Invalid IAsyncResult", "async_result");
+				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
 
 			ReadMethod r = ares.AsyncDelegate as ReadMethod;
 			if (r == null)
-				throw new ArgumentException ("Invalid IAsyncResult", "async_result");
+				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
 
-			return r.EndInvoke (async_result);
+			return r.EndInvoke (asyncResult);
 		}
 
-		public override void EndWrite (IAsyncResult async_result)
+		public override void EndWrite (IAsyncResult asyncResult)
 		{
-			if (async_result == null)
-				throw new ArgumentNullException ("async_result");
+			if (asyncResult == null)
+				throw new ArgumentNullException ("asyncResult");
 
-			AsyncResult ares = async_result as AsyncResult;
+			AsyncResult ares = asyncResult as AsyncResult;
 			if (ares == null)
-				throw new ArgumentException ("Invalid IAsyncResult", "async_result");
+				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
 
 			WriteMethod w = ares.AsyncDelegate as WriteMethod;
 			if (w == null)
-				throw new ArgumentException ("Invalid IAsyncResult", "async_result");
+				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
 
-			w.EndInvoke (async_result);
+			w.EndInvoke (asyncResult);
 			return;
 		}
 
@@ -383,9 +389,7 @@ namespace System.IO.Compression
 			CheckResult (res, "WriteInternal");
 		}
 
-#if MONOTOUCH || MOBILE_STATIC
-		[MonoPInvokeCallback (typeof (UnmanagedReadOrWrite))]
-#endif
+		[Mono.Util.MonoPInvokeCallback (typeof (UnmanagedReadOrWrite))]
 		static int UnmanagedRead (IntPtr buffer, int length, IntPtr data)
 		{
 			GCHandle s = GCHandle.FromIntPtr (data);
@@ -408,9 +412,7 @@ namespace System.IO.Compression
 			return n;
 		}
 
-#if MONOTOUCH || MOBILE_STATIC
-		[MonoPInvokeCallback (typeof (UnmanagedReadOrWrite))]
-#endif
+		[Mono.Util.MonoPInvokeCallback (typeof (UnmanagedReadOrWrite))]
 		static int UnmanagedWrite (IntPtr buffer, int length, IntPtr data)
 		{
 			GCHandle s = GCHandle.FromIntPtr (data);

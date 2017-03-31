@@ -428,7 +428,7 @@ namespace System.Reflection {
 		internal extern Type InternalGetType (Module module, String name, Boolean throwOnError, Boolean ignoreCase);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern static void InternalGetAssemblyName (string assemblyFile, AssemblyName aname);
+		internal extern unsafe static void InternalGetAssemblyName (string assemblyFile, out Mono.MonoAssemblyName aname, out string codebase);
 
 		public virtual AssemblyName GetName (Boolean copiedName)
 		{
@@ -647,7 +647,7 @@ namespace System.Reflection {
 			return LoadFrom (assemblyFile, true);
 		}
 
-		[Obsolete]
+        [Obsolete("This method has been deprecated. Please use Assembly.Load() instead. http://go.microsoft.com/fwlink/?linkid=14202")]
 		public static Assembly LoadWithPartialName (string partialName)
 		{
 			return LoadWithPartialName (partialName, null);
@@ -670,7 +670,7 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern Assembly load_with_partial_name (string name, Evidence e);
 
-		[Obsolete]
+        [Obsolete("This method has been deprecated. Please use Assembly.Load() instead. http://go.microsoft.com/fwlink/?linkid=14202")]
 		public static Assembly LoadWithPartialName (string partialName, Evidence securityEvidence)
 		{
 			return LoadWithPartialName (partialName, securityEvidence, true);
@@ -754,7 +754,37 @@ namespace System.Reflection {
 		public extern static Assembly GetCallingAssembly ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern AssemblyName[] GetReferencedAssemblies (Assembly module);
+		internal static extern IntPtr InternalGetReferencedAssemblies (Assembly module);
+
+		internal static AssemblyName[] GetReferencedAssemblies (Assembly module)
+		{
+			using (var nativeNames = new Mono.SafeGPtrArrayHandle (InternalGetReferencedAssemblies (module))) {
+				var numAssemblies = nativeNames.Length;
+				try {
+					AssemblyName [] result = new AssemblyName[numAssemblies];
+					const bool addVersion = true;
+					const bool addPublicKey = false;
+					const bool defaultToken = true;
+					const bool assemblyRef = true;
+					for (int i = 0; i < numAssemblies; i++) {
+						AssemblyName name = new AssemblyName ();
+						unsafe {
+							Mono.MonoAssemblyName *nativeName = (Mono.MonoAssemblyName*) nativeNames[i];
+							name.FillName (nativeName, null, addVersion, addPublicKey, defaultToken, assemblyRef);
+							result[i] = name;
+						}
+					}
+					return result;
+				} finally {
+					for (int i = 0; i < numAssemblies; i++) {
+						unsafe {
+							Mono.MonoAssemblyName* nativeName = (Mono.MonoAssemblyName*) nativeNames[i];
+							Mono.RuntimeMarshal.FreeAssemblyName (ref *nativeName, true);
+						}
+					}
+				}
+			}
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern bool GetManifestResourceInfoInternal (String name, ManifestResourceInfo info);

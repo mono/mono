@@ -30,7 +30,7 @@ namespace System.Net.Mime
 
         //used when the length of the header name itself is known (i.e. Subject : )
         internal static string EncodeHeaderValue(string value, Encoding encoding, bool base64Encoding, int headerLength) {
-            StringBuilder newString = new StringBuilder();
+//            StringBuilder newString = new StringBuilder();
             
             //no need to encode if it's pure ascii
             if (IsAscii(value, false)) {

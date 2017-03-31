@@ -48,7 +48,7 @@ namespace MonoTests.System.Data.OracleClient {
                 [TestFixtureSetUp]
                 public void FixtureSetUp ()
                 {
-                        connection_string = ConfigurationSettings.AppSettings.Get ("ConnectionString");
+                        connection_string = Environment.GetEnvironmentVariable ("MONO_TESTS_ORACLE_CONNECTION_STRING");
                         if(connection_string == null)
                                 Assert.Ignore ("Please consult README.tests.");
                 }

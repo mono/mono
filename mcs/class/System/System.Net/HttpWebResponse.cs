@@ -86,10 +86,14 @@ namespace System.Net
 			}
 
 			string content_encoding = webHeaders ["Content-Encoding"];
-			if (content_encoding == "gzip" && (data.request.AutomaticDecompression & DecompressionMethods.GZip) != 0)
+			if (content_encoding == "gzip" && (data.request.AutomaticDecompression & DecompressionMethods.GZip) != 0) {
 				stream = new GZipStream (stream, CompressionMode.Decompress);
-			else if (content_encoding == "deflate" && (data.request.AutomaticDecompression & DecompressionMethods.Deflate) != 0)
+				webHeaders.Remove (HttpRequestHeader.ContentEncoding);
+			}
+			else if (content_encoding == "deflate" && (data.request.AutomaticDecompression & DecompressionMethods.Deflate) != 0) {
 				stream = new DeflateStream (stream, CompressionMode.Decompress);
+				webHeaders.Remove (HttpRequestHeader.ContentEncoding);
+			}
 		}
 
 		[Obsolete ("Serialization is obsoleted for this type", false)]
@@ -105,14 +109,6 @@ namespace System.Net
 			cookieCollection = (CookieCollection) info.GetValue ("cookieCollection", typeof (CookieCollection));
 			version = (Version) info.GetValue ("version", typeof (Version));
 			statusCode = (HttpStatusCode) info.GetValue ("statusCode", typeof (HttpStatusCode));
-		}
-
-		[Obsolete ("This API supports the .NET Framework infrastructure and is not intended to be used directly from your code.", true)]
-#if !BOOTSTRAP_BASIC
-		[System.ComponentModel.EditorBrowsable (System.ComponentModel.EditorBrowsableState.Never)]
-#endif
-		public HttpWebResponse ()
-		{
 		}
 
 		// Properties
@@ -233,7 +229,7 @@ namespace System.Net
 		public string Server {
 			get {
 				CheckDisposed ();
-				return webHeaders ["Server"]; 
+				return webHeaders ["Server"] ?? "";
 			}
 		}
 		

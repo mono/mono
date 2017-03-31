@@ -1,6 +1,6 @@
-
-/*
- * marshal.h: Routines for marshaling complex types in P/Invoke methods.
+/**
+ * \file
+ * Routines for marshaling complex types in P/Invoke methods.
  * 
  * Author:
  *   Paolo Molaro (lupus@ximian.com)
@@ -121,6 +121,7 @@ typedef enum {
 	/* Subtypes of MONO_WRAPPER_UNKNOWN */
 	WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG,
 	WRAPPER_SUBTYPE_GSHAREDVT_OUT_SIG,
+	WRAPPER_SUBTYPE_INTERP_IN
 } WrapperSubtype;
 
 typedef struct {
@@ -195,6 +196,10 @@ typedef struct {
 	MonoMethod *method;
 } DelegateInvokeWrapperInfo;
 
+typedef struct {
+	MonoMethodSignature *sig;
+} InterpInWrapperInfo;
+
 /*
  * This structure contains additional information to uniquely identify a given wrapper
  * method. It can be retrieved by mono_marshal_get_wrapper_info () for certain types
@@ -237,6 +242,8 @@ typedef struct {
 		GsharedvtWrapperInfo gsharedvt;
 		/* DELEGATE_INVOKE */
 		DelegateInvokeWrapperInfo delegate_invoke;
+		/* INTERP_IN */
+		InterpInWrapperInfo interp_in;
 	} d;
 } WrapperInfo;
 
@@ -330,7 +337,7 @@ MonoMethodSignature*
 mono_marshal_get_string_ctor_signature (MonoMethod *method);
 
 MonoMethod *
-mono_marshal_get_managed_wrapper (MonoMethod *method, MonoClass *delegate_klass, uint32_t this_loc);
+mono_marshal_get_managed_wrapper (MonoMethod *method, MonoClass *delegate_klass, uint32_t this_loc, MonoError *exernal_error);
 
 gpointer
 mono_marshal_get_vtfixup_ftnptr (MonoImage *image, guint32 token, guint16 type);
@@ -369,12 +376,6 @@ MonoMethod *
 mono_marshal_get_isinst_with_cache (void);
 
 MonoMethod *
-mono_marshal_get_isinst (MonoClass *klass);
-
-MonoMethod *
-mono_marshal_get_castclass (MonoClass *klass);
-
-MonoMethod *
 mono_marshal_get_stelemref (void);
 
 MonoMethod*
@@ -390,8 +391,7 @@ MonoMethod *
 mono_marshal_get_array_accessor_wrapper (MonoMethod *method);
 
 MonoMethod *
-mono_marshal_get_generic_array_helper (MonoClass *klass, MonoClass *iface,
-				       gchar *name, MonoMethod *method);
+mono_marshal_get_generic_array_helper (MonoClass *klass, gchar *name, MonoMethod *method);
 
 MonoMethod *
 mono_marshal_get_thunk_invoke_wrapper (MonoMethod *method);
@@ -489,6 +489,9 @@ ves_icall_System_Runtime_InteropServices_Marshal_DestroyStructure (gpointer src,
 
 void*
 ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMem (int size);
+
+void*
+ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMemSize (gulong size);
 
 void
 ves_icall_System_Runtime_InteropServices_Marshal_FreeCoTaskMem (void *ptr);

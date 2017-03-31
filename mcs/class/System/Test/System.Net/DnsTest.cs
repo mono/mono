@@ -19,7 +19,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Net
 {
 	[TestFixture]
-	[Category ("RequiresBSDSockets")]
 	public class DnsTest
 	{
 		private String site1Name = "google-public-dns-a.google.com",
@@ -30,6 +29,9 @@ namespace MonoTests.System.Net
 		private uint site1IP = 134744072, site2IP = 134743044; // Big-Endian
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void AsyncGetHostByName ()
 		{
 			IAsyncResult async = Dns.BeginGetHostByName (site1Name, null, null);
@@ -39,6 +41,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void AsyncGetHostByNameCallback ()
 		{
 			var evt = new ManualResetEvent (false);
@@ -61,6 +66,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void AsyncResolve ()
 		{
 			IAsyncResult async = Dns.BeginResolve (site1Dot, null, null);
@@ -71,6 +79,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void AsyncResolveCallback ()
 		{
 			var evt = new ManualResetEvent (false);
@@ -205,6 +216,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void GetHostByName ()
 		{
 			SubTestGetHostByName (site1Name, site1Dot);
@@ -336,6 +350,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginResolve_HostName_Null ()
 		{
 			try {
@@ -352,6 +369,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Resolve ()
 		{
 			SubTestResolve (site1Name);
@@ -367,6 +387,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Resolve_HostName_Null ()
 		{
 			try {
@@ -381,6 +404,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // BeginGetHostEntry (IPAddress, AsyncCallback, Object)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginGetHostEntry1_Address_Null ()
 		{
 			try {
@@ -398,6 +424,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // BeginGetHostEntry (String, AsyncCallback, Object)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginGetHostEntry2_HostNameOrAddress_Null ()
 		{
 			try {
@@ -415,6 +444,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // BeginGetHostEntry (String, AsyncCallback, Object)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginGetHostEntry2_HostNameOrAddress_UnspecifiedAddress ()
 		{
 			// IPv4
@@ -473,6 +505,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // GetHostEntry (String)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void GetHostEntry2 ()
 		{
 			Dns.GetHostEntry (site1Name); // hostname

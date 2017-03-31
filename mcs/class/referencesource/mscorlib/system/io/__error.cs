@@ -92,7 +92,7 @@ namespace System.IO {
             bool safeToReturn = false;
             try {
                 if (!isInvalidPath) {
-#if !FEATURE_CORECLR && FEATURE_MONO_CAS
+#if !FEATURE_CORECLR && MONO_FEATURE_CAS
                     FileIOPermission.QuickDemand(FileIOPermissionAccess.PathDiscovery, path, false, false);
 #endif
                     safeToReturn = true;

@@ -45,7 +45,7 @@
 #
 # See the code in mini-x86.c for more details on how the specifiers are used.
 #
-tailcall: len:120 clob:c
+tailcall: len:124 clob:c
 memory_barrier: len:4
 nop: len:4
 relaxed_nop: len:4
@@ -217,7 +217,6 @@ ppc_subfic: dest:i src1:i len:4
 ppc_subfze: dest:i src1:i len:4
 bigmul: len:12 dest:i src1:i src2:i
 bigmul_un: len:12 dest:i src1:i src2:i
-tls_get: len:8 dest:i
 
 # Linear IR opcodes
 dummy_use: src1:i len:0

@@ -1,3 +1,7 @@
+/**
+ * \file
+ */
+
 #ifndef __MONO_MINI_PPC_H__
 #define __MONO_MINI_PPC_H__
 
@@ -18,6 +22,9 @@
 
 #define MONO_SAVED_GREGS 19
 #define MONO_SAVED_FREGS 18
+
+#define MONO_PPC_FIRST_SAVED_GREG ppc_r13
+#define MONO_PPC_FIRST_SAVED_FREG ppc_f14
 
 #define MONO_ARCH_FRAME_ALIGNMENT 16
 
@@ -77,13 +84,8 @@ typedef struct MonoCompileArch {
 #define PPC_USES_FUNCTION_DESCRIPTOR
 #endif
 
-#ifndef __mono_ilp32__
-#define MONO_ARCH_HAVE_TLS_GET 1
-#endif
-
 #else /* must be __mono_ppc__ */
 
-#define MONO_ARCH_HAVE_TLS_GET 1
 #define MONO_ARCH_EMULATE_FCONV_TO_I8 1
 #define MONO_ARCH_EMULATE_LCONV_TO_R8 1
 #define MONO_ARCH_EMULATE_LCONV_TO_R4 1
@@ -183,7 +185,6 @@ typedef struct MonoCompileArch {
 #define PPC_LAST_FPARG_REG ppc_f13
 #define PPC_PASS_STRUCTS_BY_VALUE 1
 #define PPC_THREAD_PTR_REG ppc_r13
-#define MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX 1
 #else
 #define PPC_RET_ADDR_OFFSET 4
 #define PPC_STACK_PARAM_OFFSET 8
@@ -200,6 +201,7 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_RETURN_CAN_USE_MULTIPLE_REGISTERS 0
 #define PPC_THREAD_PTR_REG ppc_r2
 #endif
+#define MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX 1
 #define PPC_FIRST_ARG_REG ppc_r3
 #define PPC_LAST_ARG_REG ppc_r10
 #define PPC_FIRST_FPARG_REG ppc_f1
@@ -367,18 +369,18 @@ void mono_ppc_set_func_into_sigctx (void *sigctx, void *func);
 #ifdef DEBUG_ELFABIV2
 
 #define DEBUG_ELFABIV2_printf(a, ...) \
-{if (getenv("DEBUG_ELFABIV2")) { printf(a, ##__VA_ARGS__); fflush(stdout); } }
+{char *debug_env; if (debug_env = getenv("DEBUG_ELFABIV2")) { printf(a, ##__VA_ARGS__); fflush(stdout); g_free (debug_env); } }
 
 #define DEBUG_ELFABIV2_mono_print_ins(a) \
-{if (getenv("DEBUG_ELFABIV2")) { if (!a) {printf("null\n");} else {mono_print_ins(a);} fflush(stdout); } }
+{char *debug_env; if (debug_env = getenv("DEBUG_ELFABIV2")) { if (!a) {printf("null\n");} else {mono_print_ins(a);} fflush(stdout); g_free (debug_env); } }
 
 extern char* mono_type_full_name (MonoType *type);
 
 #define DEBUG_ELFABIV2_mono_print_type(a) \
-{if (getenv("DEBUG_ELFABIV2")) { printf("%s, size: %d\n", mono_type_get_name(a), mini_type_stack_size (a, 0)); fflush(stdout); } }
+{char *debug_env; if (debug_env = getenv("DEBUG_ELFABIV2")) { printf("%s, size: %d\n", mono_type_get_name(a), mini_type_stack_size (a, 0)); fflush(stdout); g_free (debug_env); } }
 
 #define DEBUG_ELFABIV2_mono_print_class(a) \
-{if (getenv("DEBUG_ELFABIV2")) { printf("%s\n", mono_type_get_name(&a->byval_arg)); fflush(stdout); } }
+{char *debug_env; if (debug_env = getenv("DEBUG_ELFABIV2")) { printf("%s\n", mono_type_get_name(&a->byval_arg)); fflush(stdout); g_free (debug_env); } }
 
 #else
 

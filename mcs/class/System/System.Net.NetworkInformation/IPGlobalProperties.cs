@@ -351,7 +351,7 @@ namespace System.Net.NetworkInformation {
 		}
 	}
 
-#if !MOBILE
+#if WIN_PLATFORM
 	class Win32IPGlobalProperties : IPGlobalProperties
 	{
 		public const int AF_INET = 2;
@@ -487,7 +487,7 @@ namespace System.Net.NetworkInformation {
 
 		public override IcmpV4Statistics GetIcmpV4Statistics ()
 		{
-			if (!Socket.SupportsIPv4)
+			if (!Socket.OSSupportsIPv4)
 				throw new NetworkInformationException ();
 			Win32_MIBICMPINFO stats;
 			GetIcmpStatistics (out stats, AF_INET);
@@ -505,7 +505,7 @@ namespace System.Net.NetworkInformation {
 
 		public override IPGlobalStatistics GetIPv4GlobalStatistics ()
 		{
-			if (!Socket.SupportsIPv4)
+			if (!Socket.OSSupportsIPv4)
 				throw new NetworkInformationException ();
 			Win32_MIB_IPSTATS stats;
 			GetIpStatisticsEx (out stats, AF_INET);
@@ -523,7 +523,7 @@ namespace System.Net.NetworkInformation {
 
 		public override TcpStatistics GetTcpIPv4Statistics ()
 		{
-			if (!Socket.SupportsIPv4)
+			if (!Socket.OSSupportsIPv4)
 				throw new NetworkInformationException ();
 			Win32_MIB_TCPSTATS stats;
 			GetTcpStatisticsEx (out stats, AF_INET);
@@ -541,7 +541,7 @@ namespace System.Net.NetworkInformation {
 
 		public override UdpStatistics GetUdpIPv4Statistics ()
 		{
-			if (!Socket.SupportsIPv4)
+			if (!Socket.OSSupportsIPv4)
 				throw new NetworkInformationException ();
 			Win32_MIB_UDPSTATS stats;
 			GetUdpStatisticsEx (out stats, AF_INET);
@@ -558,23 +558,23 @@ namespace System.Net.NetworkInformation {
 		}
 
 		public override string DhcpScopeName {
-			get { return Win32_FIXED_INFO.Instance.ScopeId; }
+			get { return Win32NetworkInterface.FixedInfo.ScopeId; }
 		}
 
 		public override string DomainName {
-			get { return Win32_FIXED_INFO.Instance.DomainName; }
+			get { return Win32NetworkInterface.FixedInfo.DomainName; }
 		}
 
 		public override string HostName {
-			get { return Win32_FIXED_INFO.Instance.HostName; }
+			get { return Win32NetworkInterface.FixedInfo.HostName; }
 		}
 
 		public override bool IsWinsProxy {
-			get { return Win32_FIXED_INFO.Instance.EnableProxy != 0; }
+			get { return Win32NetworkInterface.FixedInfo.EnableProxy != 0; }
 		}
 
 		public override NetBiosNodeType NodeType {
-			get { return Win32_FIXED_INFO.Instance.NodeType; }
+			get { return Win32NetworkInterface.FixedInfo.NodeType; }
 		}
 
 		// PInvokes

@@ -1,5 +1,6 @@
-/*
- * mono-lazy-init.h: Lazy initialization and cleanup utilities
+/**
+ * \file
+ * Lazy initialization and cleanup utilities
  *
  * Authors: Ludovic Henry <ludovic@xamarin.com>
  *
@@ -20,7 +21,7 @@
 
 /*
  * These functions should be used if you want some form of lazy initialization. You can have a look at the
- * threadpool-ms for a more detailed example.
+ * threadpool for a more detailed example.
  *
  * The idea is that a module can be in 5 different states:
  *  - not initialized: it is the first state it starts in
@@ -52,7 +53,7 @@ enum {
 	MONO_LAZY_INIT_STATUS_CLEANED,
 };
 
-static inline void
+static inline gboolean
 mono_lazy_initialize (mono_lazy_init_t *lazy_init, void (*initialize) (void))
 {
 	gint32 status;
@@ -62,7 +63,7 @@ mono_lazy_initialize (mono_lazy_init_t *lazy_init, void (*initialize) (void))
 	status = *lazy_init;
 
 	if (status >= MONO_LAZY_INIT_STATUS_INITIALIZED)
-		return;
+		return status == MONO_LAZY_INIT_STATUS_INITIALIZED;
 	if (status == MONO_LAZY_INIT_STATUS_INITIALIZING
 	     || InterlockedCompareExchange (lazy_init, MONO_LAZY_INIT_STATUS_INITIALIZING, MONO_LAZY_INIT_STATUS_NOT_INITIALIZED)
 	         != MONO_LAZY_INIT_STATUS_NOT_INITIALIZED
@@ -70,12 +71,13 @@ mono_lazy_initialize (mono_lazy_init_t *lazy_init, void (*initialize) (void))
 		while (*lazy_init == MONO_LAZY_INIT_STATUS_INITIALIZING)
 			mono_thread_info_yield ();
 		g_assert (InterlockedRead (lazy_init) >= MONO_LAZY_INIT_STATUS_INITIALIZED);
-		return;
+		return status == MONO_LAZY_INIT_STATUS_INITIALIZED;
 	}
 
 	initialize ();
 
 	mono_atomic_store_release (lazy_init, MONO_LAZY_INIT_STATUS_INITIALIZED);
+	return TRUE;
 }
 
 static inline void

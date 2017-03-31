@@ -42,6 +42,9 @@ namespace MonoTests.System.Data.SqlClient
 		const string COMMAND_TEXT = "SELECT * FROM Authors";
 
 		[Test] // SqlCommand ()
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Constructor1 ()
 		{
 			SqlCommand cmd = new SqlCommand ();
@@ -61,6 +64,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test] // SqlCommand (string)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Constructor2 ()
 		{
 			SqlCommand cmd = new SqlCommand (COMMAND_TEXT);
@@ -95,6 +101,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test] // SqlCommand (string, SqlConnection)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Constructor3 ()
 		{
 			SqlConnection conn = new SqlConnection ();
@@ -147,6 +156,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test] // SqlCommand (string, SqlConnection, SqlTransaction)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Constructor4 ()
 		{
 			SqlConnection conn = new SqlConnection ();
@@ -199,6 +211,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Clone ()
 		{
 			SqlNotificationRequest notificationReq = new SqlNotificationRequest ();
@@ -237,6 +252,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void CommandText ()
 		{
 			SqlCommand cmd = new SqlCommand ();
@@ -251,6 +269,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void CommandTimeout ()
 		{
 			SqlCommand cmd = new SqlCommand ();
@@ -263,6 +284,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void CommandTimeout_Value_Negative ()
 		{
 			SqlCommand cmd = new SqlCommand ();
@@ -279,6 +303,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void CommandType_Value_Invalid ()
 		{
 			SqlCommand cmd = new SqlCommand ();
@@ -296,6 +323,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test] // bug #324386
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Dispose ()
 		{
 			string connectionString = "Initial Catalog=a;Server=b;User ID=c;"
@@ -307,6 +337,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ExecuteNonQuery_Connection_Closed ()
 		{
 			string connectionString = "Initial Catalog=a;Server=b;User ID=c;"
@@ -329,6 +362,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ExecuteNonQuery_Connection_Null ()
 		{
 			SqlCommand cmd = new SqlCommand ("delete from whatever");
@@ -346,6 +382,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ExecuteReader_Connection_Closed ()
 		{
 			string connectionString = "Initial Catalog=a;Server=b;User ID=c;"
@@ -368,6 +407,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ExecuteReader_Connection_Null ()
 		{
 			SqlCommand cmd = new SqlCommand ("select * from whatever");
@@ -385,6 +427,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ExecuteScalar_Connection_Closed ()
 		{
 			string connectionString = "Initial Catalog=a;Server=b;User ID=c;"
@@ -407,6 +452,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test] // bug #412584
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ExecuteScalar_Connection_Null ()
 		{
 			SqlCommand cmd = new SqlCommand ("select count(*) from whatever");
@@ -425,6 +473,9 @@ namespace MonoTests.System.Data.SqlClient
 
 		// FIXME: this actually doesn't match .NET behavior. It shouldn't throw NRE.
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Prepare_Connection_Null ()
 		{
 			SqlCommand cmd;
@@ -477,6 +528,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 		
 		[Test] // bug #412586
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Prepare_Connection_Closed ()
 		{
 			string connectionString = "Initial Catalog=a;Server=b;User ID=c;"
@@ -527,6 +581,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ResetCommandTimeout ()
 		{
 			SqlCommand cmd = new SqlCommand ();
@@ -537,6 +594,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void UpdatedRowSource ()
 		{
 			SqlCommand cmd = new SqlCommand ();
@@ -547,6 +607,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void UpdatedRowSource_Value_Invalid ()
 		{
 			SqlCommand cmd = new SqlCommand ();
@@ -565,6 +628,9 @@ namespace MonoTests.System.Data.SqlClient
 
 
 		[Test] // bug #381100
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ParameterCollectionTest ()
 		{
 			SqlCommand cmd = new SqlCommand();

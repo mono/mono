@@ -1,5 +1,5 @@
-/*
- * debug-helpers.c:
+/**
+ * \file
  *
  * Author:
  *	Mono Project (http://www.mono-project.com)
@@ -163,7 +163,10 @@ mono_type_get_desc (GString *res, MonoType *type, gboolean include_namespace)
 		break;
 	case MONO_TYPE_ARRAY:
 		mono_type_get_desc (res, &type->data.array->eklass->byval_arg, include_namespace);
-		g_string_append_printf (res, "[%d]", type->data.array->rank);
+		g_string_append_c (res, '[');
+		for (i = 1; i < type->data.array->rank; ++i)
+			g_string_append_c (res, ',');
+		g_string_append_c (res, ']');
 		break;
 	case MONO_TYPE_SZARRAY:
 		mono_type_get_desc (res, &type->data.klass->byval_arg, include_namespace);
@@ -220,6 +223,9 @@ mono_type_get_desc (GString *res, MonoType *type, gboolean include_namespace)
 		g_string_append_c (res, '&');
 }
 
+/**
+ * mono_type_full_name:
+ */
 char*
 mono_type_full_name (MonoType *type)
 {
@@ -230,6 +236,9 @@ mono_type_full_name (MonoType *type)
 	return g_string_free (str, FALSE);
 }
 
+/**
+ * mono_signature_get_desc:
+ */
 char*
 mono_signature_get_desc (MonoMethodSignature *sig, gboolean include_namespace)
 {
@@ -277,8 +286,8 @@ mono_signature_full_name (MonoMethodSignature *sig)
 	return result;
 }
 
-static void
-ginst_get_desc (GString *str, MonoGenericInst *ginst)
+void
+mono_ginst_get_desc (GString *str, MonoGenericInst *ginst)
 {
 	int i;
 
@@ -299,11 +308,11 @@ mono_context_get_desc (MonoGenericContext *context)
 	g_string_append (str, "<");
 
 	if (context->class_inst)
-		ginst_get_desc (str, context->class_inst);
+		mono_ginst_get_desc (str, context->class_inst);
 	if (context->method_inst) {
 		if (context->class_inst)
 			g_string_append (str, "; ");
-		ginst_get_desc (str, context->method_inst);
+		mono_ginst_get_desc (str, context->method_inst);
 	}
 
 	g_string_append (str, ">");
@@ -314,19 +323,19 @@ mono_context_get_desc (MonoGenericContext *context)
 
 /**
  * mono_method_desc_new:
- * @name: the method name.
- * @include_namespace: whether the name includes a namespace or not.
+ * \param name the method name.
+ * \param include_namespace whether the name includes a namespace or not.
  *
- * Creates a method description for @name, which conforms to the following
+ * Creates a method description for \p name, which conforms to the following
  * specification:
  *
- * [namespace.]classname:methodname[(args...)]
+ * <code>[namespace.]classname:methodname[(args...)]</code>
  *
  * in all the loaded assemblies.
  *
- * Both classname and methodname can contain '*' which matches anything.
+ * Both classname and methodname can contain <code>*</code> which matches anything.
  *
- * Returns: a parsed representation of the method description.
+ * \returns a parsed representation of the method description.
  */
 MonoMethodDesc*
 mono_method_desc_new (const char *name, gboolean include_namespace)
@@ -397,6 +406,9 @@ mono_method_desc_new (const char *name, gboolean include_namespace)
 	return result;
 }
 
+/**
+ * mono_method_desc_from_method:
+ */
 MonoMethodDesc*
 mono_method_desc_from_method (MonoMethod *method)
 {
@@ -413,9 +425,8 @@ mono_method_desc_from_method (MonoMethod *method)
 
 /**
  * mono_method_desc_free:
- * @desc: method description to be released
- *
- * Releases the MonoMethodDesc object @desc.
+ * \param desc method description to be released
+ * Releases the \c MonoMethodDesc object \p desc.
  */
 void
 mono_method_desc_free (MonoMethodDesc *desc)
@@ -428,14 +439,14 @@ mono_method_desc_free (MonoMethodDesc *desc)
 }
 
 /**
- * mono_method_descr_match:
- * @desc: MonoMethoDescription
- * @method: MonoMethod to test
+ * mono_method_desc_match:
+ * \param desc \c MonoMethoDescription
+ * \param method \c MonoMethod to test
  *
- * Determines whether the specified @method matches the provided @desc description.
+ * Determines whether the specified \p method matches the provided \p desc description.
  *
  * namespace and class are supposed to match already if this function is used.
- * Returns: True if the method matches the description, false otherwise.
+ * \returns TRUE if the method matches the description, FALSE otherwise.
  */
 gboolean
 mono_method_desc_match (MonoMethodDesc *desc, MonoMethod *method)
@@ -503,6 +514,9 @@ match_class (MonoMethodDesc *desc, int pos, MonoClass *klass)
 	return match_class (desc, pos, klass->nested_in);
 }
 
+/**
+ * mono_method_desc_full_match:
+ */
 gboolean
 mono_method_desc_full_match (MonoMethodDesc *desc, MonoMethod *method)
 {
@@ -514,6 +528,9 @@ mono_method_desc_full_match (MonoMethodDesc *desc, MonoMethod *method)
 	return mono_method_desc_match (desc, method);
 }
 
+/**
+ * mono_method_desc_search_in_class:
+ */
 MonoMethod*
 mono_method_desc_search_in_class (MonoMethodDesc *desc, MonoClass *klass)
 {
@@ -526,6 +543,9 @@ mono_method_desc_search_in_class (MonoMethodDesc *desc, MonoClass *klass)
 	return NULL;
 }
 
+/**
+ * mono_method_desc_search_in_image:
+ */
 MonoMethod*
 mono_method_desc_search_in_image (MonoMethodDesc *desc, MonoImage *image)
 {
@@ -751,6 +771,9 @@ default_dh = {
 	NULL  /* user data */
 };
 
+/**
+ * mono_disasm_code_one:
+ */
 char*
 mono_disasm_code_one (MonoDisHelper *dh, MonoMethod *method, const guchar *ip, const guchar **endp)
 {
@@ -769,6 +792,9 @@ mono_disasm_code_one (MonoDisHelper *dh, MonoMethod *method, const guchar *ip, c
 	return result;
 }
 
+/**
+ * mono_disasm_code:
+ */
 char*
 mono_disasm_code (MonoDisHelper *dh, MonoMethod *method, const guchar *ip, const guchar* end)
 {
@@ -788,9 +814,8 @@ mono_disasm_code (MonoDisHelper *dh, MonoMethod *method, const guchar *ip, const
 
 /**
  * mono_field_full_name:
- * @field: field to retrieve information for
- *
- * Returns: the full name for the field, made up of the namespace, type name and the field name.
+ * \param field field to retrieve information for
+ * \returns the full name for the field, made up of the namespace, type name and the field name.
  */
 char *
 mono_field_full_name (MonoClassField *field)
@@ -811,6 +836,7 @@ mono_method_get_name_full (MonoMethod *method, gboolean signature, gboolean ret,
 	char wrapper [64];
 	char *klass_desc;
 	char *inst_desc = NULL;
+	MonoError error;
 
 	if (format == MONO_TYPE_NAME_FORMAT_IL)
 		klass_desc = mono_type_full_name (&method->klass->byval_arg);
@@ -823,7 +849,7 @@ mono_method_get_name_full (MonoMethod *method, gboolean signature, gboolean ret,
 			g_string_append (str, "<");
 		else
 			g_string_append (str, "[");
-		ginst_get_desc (str, ((MonoMethodInflated*)method)->context.method_inst);
+		mono_ginst_get_desc (str, ((MonoMethodInflated*)method)->context.method_inst);
 		if (format == MONO_TYPE_NAME_FORMAT_IL)
 			g_string_append_c (str, '>');
 		else
@@ -839,7 +865,7 @@ mono_method_get_name_full (MonoMethod *method, gboolean signature, gboolean ret,
 			g_string_append (str, "<");
 		else
 			g_string_append (str, "[");
-		ginst_get_desc (str, container->context.method_inst);
+		mono_ginst_get_desc (str, container->context.method_inst);
 		if (format == MONO_TYPE_NAME_FORMAT_IL)
 			g_string_append_c (str, '>');
 		else
@@ -855,14 +881,22 @@ mono_method_get_name_full (MonoMethod *method, gboolean signature, gboolean ret,
 		strcpy (wrapper, "");
 
 	if (signature) {
-		char *tmpsig = mono_signature_get_desc (mono_method_signature (method), TRUE);
+		MonoMethodSignature *sig = mono_method_signature_checked (method, &error);
+		char *tmpsig;
+
+		if (!is_ok (&error)) {
+			tmpsig = g_strdup_printf ("<unable to load signature>");
+			mono_error_cleanup (&error);
+		} else {
+			tmpsig = mono_signature_get_desc (sig, TRUE);
+		}
 
 		if (method->wrapper_type != MONO_WRAPPER_NONE)
 			sprintf (wrapper, "(wrapper %s) ", wrapper_type_to_str (method->wrapper_type));
 		else
 			strcpy (wrapper, "");
-		if (ret) {
-			char *ret_str = mono_type_full_name (mono_method_signature (method)->ret);
+		if (ret && sig) {
+			char *ret_str = mono_type_full_name (sig->ret);
 			res = g_strdup_printf ("%s%s %s:%s%s (%s)", wrapper, ret_str, klass_desc,
 								   method->name, inst_desc ? inst_desc : "", tmpsig);
 			g_free (ret_str);
@@ -882,6 +916,9 @@ mono_method_get_name_full (MonoMethod *method, gboolean signature, gboolean ret,
 	return res;
 }
 
+/**
+ * mono_method_full_name:
+ */
 char *
 mono_method_full_name (MonoMethod *method, gboolean signature)
 {
@@ -912,7 +949,7 @@ print_name_space (MonoClass *klass)
 /**
  * mono_object_describe:
  *
- * Prints to stdout a small description of the object @obj.
+ * Prints to stdout a small description of the object \p obj.
  * For use in a debugger.
  */
 void
@@ -1064,7 +1101,7 @@ objval_describe (MonoClass *klass, const char *addr)
 /**
  * mono_object_describe_fields:
  *
- * Prints to stdout a small description of each field of the object @obj.
+ * Prints to stdout a small description of each field of the object \p obj.
  * For use in a debugger.
  */
 void
@@ -1078,7 +1115,7 @@ mono_object_describe_fields (MonoObject *obj)
  * mono_value_describe_fields:
  *
  * Prints to stdout a small description of each field of the value type
- * stored at @addr of type @klass.
+ * stored at \p addr of type \p klass.
  * For use in a debugger.
  */
 void
@@ -1090,7 +1127,7 @@ mono_value_describe_fields (MonoClass* klass, const char* addr)
 /**
  * mono_class_describe_statics:
  *
- * Prints to stdout a small description of each static field of the type @klass
+ * Prints to stdout a small description of each static field of the type \p klass
  * in the current application domain.
  * For use in a debugger.
  */
@@ -1129,7 +1166,7 @@ mono_class_describe_statics (MonoClass* klass)
 
 /**
  * mono_print_method_code
- * @MonoMethod: a pointer to the method
+ * \param method: a pointer to the method
  *
  * This method is used from a debugger to print the code of the method.
  *

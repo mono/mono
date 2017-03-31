@@ -10,12 +10,16 @@ namespace System.ComponentModel {
     using System.Diagnostics;
     using System.Globalization;
     using System.Runtime.Serialization;
+#if MONO_FEATURE_CAS
     using System.Security.Permissions;
+#endif
     
     /// <devdoc>
     ///    <para>The exception that is thrown when using invalid arguments that are enumerators.</para>
     /// </devdoc>
+#if MONO_FEATURE_CAS
     [HostProtection(SharedState = true)]
+#endif
     [Serializable]
     public class InvalidEnumArgumentException : ArgumentException {
 

@@ -441,12 +441,12 @@ namespace System.ServiceModel.Description
 
 		public void ExportEndpoints (
 			IEnumerable<ServiceEndpoint> endpoints,
-			XmlQualifiedName name)
+			XmlQualifiedName wsdlServiceQName)
 		{
 			if (endpoints == null)
 				throw new ArgumentNullException ("endpoints");
-			if (name == null)
-				throw new ArgumentNullException ("name");
+			if (wsdlServiceQName == null)
+				throw new ArgumentNullException ("wsdlServiceQName");
 
 			foreach (ServiceEndpoint ep in endpoints) {
 				if (ep.Contract.Name == ServiceMetadataBehavior.MexContractName)

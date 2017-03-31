@@ -1,5 +1,6 @@
-/*
- * w32semaphore-win32.c: Runtime support for managed Semaphore on Win32
+/**
+ * \file
+ * Runtime support for managed Semaphore on Win32
  *
  * Author:
  *	Ludovic Henry (luhenry@microsoft.com)
@@ -17,6 +18,7 @@ mono_w32semaphore_init (void)
 {
 }
 
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT)
 gpointer
 ves_icall_System_Threading_Semaphore_CreateSemaphore_internal (gint32 initialCount, gint32 maximumCount, MonoString *name, gint32 *error)
 { 
@@ -28,6 +30,7 @@ ves_icall_System_Threading_Semaphore_CreateSemaphore_internal (gint32 initialCou
 
 	return sem;
 }
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT) */
 
 MonoBoolean
 ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (gpointer handle, gint32 releaseCount, gint32 *prevcount)

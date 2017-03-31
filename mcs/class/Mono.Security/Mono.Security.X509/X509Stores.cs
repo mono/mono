@@ -44,15 +44,17 @@ namespace Mono.Security.X509 {
 	class X509Stores {
 
 		private string _storePath;
+		private bool _newFormat;
 		private X509Store _personal;
 		private X509Store _other;
 		private X509Store _intermediate;
 		private X509Store _trusted;
 		private X509Store _untrusted;
 
-		internal X509Stores (string path) 
+		internal X509Stores (string path, bool newFormat)
 		{
 			_storePath = path;
+			_newFormat = newFormat;
 		}
 
 		// properties
@@ -61,7 +63,7 @@ namespace Mono.Security.X509 {
 			get { 
 				if (_personal == null) {
 					string path = Path.Combine (_storePath, Names.Personal);
-					_personal = new X509Store (path, false);
+					_personal = new X509Store (path, false, false);
 				}
 				return _personal; 
 			}
@@ -71,7 +73,7 @@ namespace Mono.Security.X509 {
 			get { 
 				if (_other == null) {
 					string path = Path.Combine (_storePath, Names.OtherPeople);
-					_other = new X509Store (path, false);
+					_other = new X509Store (path, false, false);
 				}
 				return _other; 
 			}
@@ -81,7 +83,7 @@ namespace Mono.Security.X509 {
 			get { 
 				if (_intermediate == null) {
 					string path = Path.Combine (_storePath, Names.IntermediateCA);
-					_intermediate = new X509Store (path, true);
+					_intermediate = new X509Store (path, true, _newFormat);
 				}
 				return _intermediate; 
 			}
@@ -91,7 +93,7 @@ namespace Mono.Security.X509 {
 			get { 
 				if (_trusted == null) {
 					string path = Path.Combine (_storePath, Names.TrustedRoot);
-					_trusted = new X509Store (path, true);
+					_trusted = new X509Store (path, true, _newFormat);
 				}
 				return _trusted; 
 			}
@@ -101,7 +103,7 @@ namespace Mono.Security.X509 {
 			get { 
 				if (_untrusted == null) {
 					string path = Path.Combine (_storePath, Names.Untrusted);
-					_untrusted = new X509Store (path, false);
+					_untrusted = new X509Store (path, false, _newFormat);
 				}
 				return _untrusted; 
 			}
@@ -138,7 +140,7 @@ namespace Mono.Security.X509 {
 			if (!create && !Directory.Exists (path))
 				return null;
 
-			return new X509Store (path, true);
+			return new X509Store (path, true, false);
 		}
 
 		// names
@@ -151,7 +153,7 @@ namespace Mono.Security.X509 {
 			public const string IntermediateCA = "CA";
 			public const string TrustedRoot = "Trust";
 			public const string Untrusted = "Disallowed";
-			
+
 			public Names () {}
 		}
 	}

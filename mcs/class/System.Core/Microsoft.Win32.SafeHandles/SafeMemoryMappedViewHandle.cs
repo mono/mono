@@ -44,6 +44,10 @@ namespace Microsoft.Win32.SafeHandles
 			Initialize ((ulong)size);
 		}
 
+		internal void Flush () {
+			MemoryMapImpl.Flush (this.mmap_handle);
+		}
+
 		protected override bool ReleaseHandle () {
 			if (this.handle != (IntPtr) (-1))
 				return MemoryMapImpl.Unmap (this.mmap_handle);

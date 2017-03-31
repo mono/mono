@@ -1,3 +1,4 @@
+../../test-helpers/NunitHelpers.cs
 NUnitMoonHelper.cs
 FeatureBased/Features.Client/AsyncCallTesterProxy.cs
 FeatureBased/Features.Client/AsyncPatternServer.cs

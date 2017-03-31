@@ -1,5 +1,6 @@
-/*
- * liveness.c: liveness analysis
+/**
+ * \file
+ * liveness analysis
  *
  * Author:
  *   Dietmar Maurer (dietmar@ximian.com)
@@ -9,6 +10,7 @@
 
 #include "mini.h"
 #include <mono/metadata/debug-helpers.h>
+#include <mono/utils/mono-compiler.h>
 
 #ifndef DISABLE_JIT
 
@@ -512,4 +514,8 @@ mono_linear_scan2 (MonoCompile *cfg, GList *vars, GList *regs, regmask_t *used_m
 	g_list_free (inactive);
 }
 
-#endif /* #ifndef DISABLE_JIT */
+#else /* !DISABLE_JIT */
+
+MONO_EMPTY_SOURCE_FILE (linear_scan);
+
+#endif /* !DISABLE_JIT */

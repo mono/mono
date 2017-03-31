@@ -1,5 +1,6 @@
-/*
- * mono-hwcap.c: Hardware feature detection
+/**
+ * \file
+ * Hardware feature detection
  *
  * Authors:
  *    Alex Rønne Petersen (alexrp@xamarin.com)
@@ -33,8 +34,8 @@ static gboolean hwcap_inited = FALSE;
 void
 mono_hwcap_init (void)
 {
-	const char *verbose = g_getenv ("MONO_VERBOSE_HWCAP");
-	const char *conservative = g_getenv ("MONO_CONSERVATIVE_HWCAP");
+	char *verbose = g_getenv ("MONO_VERBOSE_HWCAP");
+	char *conservative = g_getenv ("MONO_CONSERVATIVE_HWCAP");
 
 	if (hwcap_inited)
 		return;
@@ -44,6 +45,9 @@ mono_hwcap_init (void)
 
 	if (verbose && !strncmp (verbose, "1", 1))
 		mono_hwcap_print ();
+
+	g_free (verbose);
+	g_free (conservative);
 }
 
 void

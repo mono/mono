@@ -7,9 +7,6 @@
 [submodule "external/cecil"]
 	path = external/cecil
 	url = git://github.com/mono/cecil.git
-[submodule "external/debian-snapshot"]
-	path = external/debian-snapshot
-	url = git://github.com/directhex/mono-snapshot.git
 [submodule "external/rx"]
 	path = external/rx
 	url = git://github.com/mono/rx.git
@@ -39,3 +36,25 @@
 	path = external/cecil-legacy
 	url = git://github.com/mono/cecil.git
 	branch = mono-legacy-0.9.5
+[submodule "external/boringssl"]
+	path = external/boringssl
+	url = git://github.com/mono/boringssl.git
+	branch = mono
+[submodule "external/corefx"]
+	path = external/corefx
+	url = git://github.com/mono/corefx.git
+[submodule "external/bockbuild"]
+	path = external/bockbuild
+	url = git://github.com/mono/bockbuild.git
+[submodule "external/linker"]
+	path = external/linker
+	url = git://github.com/mono/linker.git
+[submodule "external/roslyn-binaries"]
+	path = external/roslyn-binaries
+	url = git://github.com/mono/roslyn-binaries.git
+[submodule "external/corert"]
+	path = external/corert
+	url = git://github.com/mono/corert.git
+[submodule "external/xunit-binaries"]
+	path = external/xunit-binaries
+	url = git://github.com/mono/xunit-binaries.git
