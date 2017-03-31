@@ -1606,7 +1606,7 @@ mono_main (int argc, char* argv[])
 	darwin_change_default_file_handles ();
 #endif
 
-	if (g_getenv ("MONO_NO_SMP"))
+	if (g_hasenv ("MONO_NO_SMP"))
 		mono_set_use_smp (FALSE);
 	
 	g_log_set_always_fatal (G_LOG_LEVEL_ERROR);
@@ -1968,7 +1968,7 @@ mono_main (int argc, char* argv[])
 	}
 #endif
 
-	if (g_getenv ("MONO_XDEBUG"))
+	if (g_hasenv ("MONO_XDEBUG"))
 		enable_debugging = TRUE;
 
 #ifdef MONO_CROSS_COMPILE
@@ -2550,10 +2550,11 @@ mono_parse_env_options (int *ref_argc, char **ref_argv [])
 {
 	char *ret;
 	
-	const char *env_options = g_getenv ("MONO_ENV_OPTIONS");
+	char *env_options = g_getenv ("MONO_ENV_OPTIONS");
 	if (env_options == NULL)
 		return;
 	ret = mono_parse_options_from (env_options, ref_argc, ref_argv);
+	g_free (env_options);
 	if (ret == NULL)
 		return;
 	fprintf (stderr, "%s", ret);

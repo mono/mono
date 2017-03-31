@@ -2196,8 +2196,9 @@ ves_icall_System_AppDomain_InternalUnload (gint32 domain_id, MonoError *error)
 	 * Unloading seems to cause problems when running NUnit/NAnt, hence
 	 * this workaround.
 	 */
-	if (g_getenv ("MONO_NO_UNLOAD"))
+	if (g_hasenv ("MONO_NO_UNLOAD"))
 		return;
+
 #ifdef __native_client__
 	return;
 #endif
