@@ -38,6 +38,14 @@ namespace System {
 			isMacOS = true;
 			checkedOS = true;
 		}
+
+#elif ORBIS
+		const bool isFreeBSD = true;
+
+ 		private static void CheckOS() {
+ 			checkedOS = true;
+ 		}
+
 #else
 		static bool isFreeBSD;
 
