@@ -168,12 +168,12 @@ namespace System.IO.Packaging {
 
 				// Workaround for Mono relative paths
 				// http://www.mono-project.com/docs/faq/known-issues/urikind-relativeorabsolute/
-                                var kind = (UriKind) 300;
+				var kind = (UriKind) 300;
 				CreateRelationship (new Uri (node.Attributes["Target"].Value.ToString(), kind),
-						    mode,
-						    node.Attributes["Type"].Value.ToString (),
-				                    node.Attributes["Id"].Value.ToString (),
-				                    true);
+									mode,
+									node.Attributes["Type"].Value.ToString (),
+									node.Attributes["Id"].Value.ToString (),
+									true);
 			}
 		}
 
