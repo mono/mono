@@ -168,7 +168,7 @@ namespace System.IO.Packaging {
 
 				// Workaround for Mono relative paths
 				// http://www.mono-project.com/docs/faq/known-issues/urikind-relativeorabsolute/
-				var kind = node.Attributes["Target"].Value.ToString()?.StartsWith ("/") == true ? UriKind.Relative : UriKind.RelativeOrAbsolute;
+                                var kind = (UriKind) 300;
 				CreateRelationship (new Uri (node.Attributes["Target"].Value.ToString(), kind),
 						    mode,
 						    node.Attributes["Type"].Value.ToString (),
