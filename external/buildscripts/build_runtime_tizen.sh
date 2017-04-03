@@ -109,7 +109,7 @@ autoreconf -i
 make && echo "Build SUCCESS!" || exit 1
 
 mkdir -p $OUTDIR
-cp -f mono/mini/.libs/libmono.a $OUTDIR
+cp -f mono/mini/.libs/libmono.so $OUTDIR
 
 # Clean up for next build
 make clean && make distclean
