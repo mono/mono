@@ -311,6 +311,7 @@ static MonoLinkedListSet profiler_thread_list;
  * 	[clause index: uleb128] index of the current clause
  * 	[method: sleb128] MonoMethod* as a pointer difference from the last such
  * 	pointer or the buffer method_base
+ * 	[object: sleb128] the exception object as a difference from obj_base
  * else
  * 	[object: sleb128] the exception object as a difference from obj_base
  * 	if exinfo has TYPE_THROW_BT set, a backtrace follows.
@@ -2088,7 +2089,7 @@ throw_exc (MonoProfiler *prof, MonoObject *object)
 }
 
 static void
-clause_exc (MonoProfiler *prof, MonoMethod *method, int clause_type, int clause_num)
+clause_exc (MonoProfiler *prof, MonoMethod *method, int clause_type, int clause_num, MonoObject *obj)
 {
 	ENTER_LOG (&exception_clauses_ctr, logbuffer,
 		EVENT_SIZE /* event */ +
@@ -2101,6 +2102,7 @@ clause_exc (MonoProfiler *prof, MonoMethod *method, int clause_type, int clause_
 	emit_byte (logbuffer, clause_type);
 	emit_value (logbuffer, clause_num);
 	emit_method (logbuffer, method);
+	emit_obj (logbuffer, obj);
 
 	EXIT_LOG;
 }
@@ -5028,7 +5030,8 @@ mono_profiler_startup (const char *desc)
 	mono_profiler_install_enter_leave (method_enter, method_leave);
 	mono_profiler_install_jit_end (method_jitted);
 	mono_profiler_install_code_buffer_new (code_buffer_new);
-	mono_profiler_install_exception (throw_exc, method_exc_leave, clause_exc);
+	mono_profiler_install_exception (throw_exc, method_exc_leave, NULL);
+	mono_profiler_install_exception_clause (clause_exc);
 	mono_profiler_install_monitor (monitor_event);
 	mono_profiler_install_runtime_initialized (runtime_initialized);
 	if (do_coverage)
