@@ -2505,6 +2505,10 @@ decode_buffer (ProfContext *ctx)
 					add_assembly (ptr_base + ptrdiff, (char*)p);
 				while (*p) p++;
 				p++;
+				if (ctx->data_version > 13) {
+					while (*p) p++; // image name
+					p++;
+				}
 			} else if (mtype == TYPE_DOMAIN) {
 				if (ctx->data_version < 13)
 					decode_uleb128 (p, &p); /* flags */

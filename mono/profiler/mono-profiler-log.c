@@ -286,6 +286,7 @@ static MonoLinkedListSet profiler_thread_list;
  * 	[name: string] image file name
  * if mtype == TYPE_ASSEMBLY
  * 	[name: string] assembly name
+ * 	[img name: string] image file name
  * if mtype == TYPE_DOMAIN && exinfo == 0
  * 	[name: string] domain friendly name
  * if mtype == TYPE_CONTEXT
@@ -1841,6 +1842,8 @@ assembly_loaded (MonoProfiler *prof, MonoAssembly *assembly, int result)
 
 	char *name = mono_stringify_assembly_name (mono_assembly_get_name (assembly));
 	int nlen = strlen (name) + 1;
+	const char *img_name = mono_image_get_filename (mono_assembly_get_image (assembly));
+	int img_nlen = strlen (img_name) + 1;
 
 	ENTER_LOG (&assembly_loads_ctr, logbuffer,
 		EVENT_SIZE /* event */ +
@@ -1854,6 +1857,8 @@ assembly_loaded (MonoProfiler *prof, MonoAssembly *assembly, int result)
 	emit_ptr (logbuffer, assembly);
 	memcpy (logbuffer->cursor, name, nlen);
 	logbuffer->cursor += nlen;
+	memcpy (logbuffer->cursor, img_name, img_nlen);
+	logbuffer->cursor += img_nlen;
 
 	EXIT_LOG;
 
@@ -1865,6 +1870,8 @@ assembly_unloaded (MonoProfiler *prof, MonoAssembly *assembly)
 {
 	char *name = mono_stringify_assembly_name (mono_assembly_get_name (assembly));
 	int nlen = strlen (name) + 1;
+	const char *img_name = mono_image_get_filename (mono_assembly_get_image (assembly));
+	int img_nlen = strlen (img_name) + 1;
 
 	ENTER_LOG (&assembly_unloads_ctr, logbuffer,
 		EVENT_SIZE /* event */ +
@@ -1878,6 +1885,8 @@ assembly_unloaded (MonoProfiler *prof, MonoAssembly *assembly)
 	emit_ptr (logbuffer, assembly);
 	memcpy (logbuffer->cursor, name, nlen);
 	logbuffer->cursor += nlen;
+	memcpy (logbuffer->cursor, img_name, img_nlen);
+	logbuffer->cursor += img_nlen;
 
 	EXIT_LOG;
 
