@@ -38,12 +38,39 @@ namespace Mono.AppleTls
 			if (certificate2 != null)
 				return SecIdentity.Import (certificate2);
 
+#if MOBILE
 			/*
 			 * Otherwise, we require the private key to be in the keychain.
+			 *
+			 * When using Xamarin.Mac or Xamarin.iOS, we try to search the keychain
+			 * for the certificate and private key.
+			 *
+			 * On Xamarin.iOS, this is easy because each app has its own keychain.
+			 *
+			 * On Xamarin.Mac, the `.app` package needs to be trusted via code-sign
+			 * to get permission to access the user's keychain.  [FIXME: I still have to
+			 * research how to actually do that.]  Without this, you will get a popup
+			 * message each time, asking you whether you want to allow the app to access
+			 * the keychain, but you can make these go away by selecting "Trust always".
+			 *
+			 * On Desktop Mono, this is problematic because selecting "Trust always"
+			 * give the 'mono' binary (and thus everything you'll ever run with Mono)
+			 * permission to retrieve the private key from the keychain.
+			 *
+			 * The following code would also trigger constant keychain popup messages,
+			 * which could only be suppressed by granting full trust.
+			 *
+			 * Since you do not need to use the keychain for AppleTls, we currently
+			 * disabled it on Desktop Mono until we have a better understanding of how
+			 * these mechanisms work to provide a smooth solution.
+			 *
 			 */
 			using (var secCert = new SecCertificate (certificate)) {
 				return SecKeyChain.FindIdentity (secCert, true);
 			}
+#else
+			return null;
+#endif
 		}
 
 		public static SecIdentity GetIdentity (X509Certificate certificate, out SecCertificate[] intermediateCerts)
