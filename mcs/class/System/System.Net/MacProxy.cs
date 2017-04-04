@@ -47,7 +47,7 @@ namespace Mono.Net
 		public static extern IntPtr dlopen (string path, int mode);
 
 		[DllImport (SystemLibrary)]
-		public static extern IntPtr dlsym (IntPtr handle, string symbol);
+		static extern IntPtr dlsym (IntPtr handle, string symbol);
 
 		[DllImport (SystemLibrary)]
 		public static extern void dlclose (IntPtr handle);
@@ -1249,8 +1249,8 @@ namespace Mono.Net
 			if (handle == IntPtr.Zero)
 				return;
 			try {
-				True  = new CFBoolean (CFObject.dlsym (handle, "kCFBooleanTrue"), false);
-				False = new CFBoolean (CFObject.dlsym (handle, "kCFBooleanFalse"), false);
+				True  = new CFBoolean (CFObject.GetCFObjectHandle (handle, "kCFBooleanTrue"), false);
+				False = new CFBoolean (CFObject.GetCFObjectHandle (handle, "kCFBooleanFalse"), false);
 			}
 			finally {
 				CFObject.dlclose (handle);
