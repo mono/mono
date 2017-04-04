@@ -577,15 +577,20 @@ init_time (void)
 /*
  * These macros should be used when writing an event to a log buffer. They take
  * care of a bunch of stuff that can be repetitive and error-prone, such as
- * acquiring/releasing the buffer lock, incrementing the event counter,
- * expanding the log buffer, processing requests, etc. They also create a scope
- * so that it's harder to leak the LogBuffer pointer, which can be problematic
- * as the pointer is unstable when the buffer lock isn't acquired.
+ * attaching the current thread, acquiring/releasing the buffer lock,
+ * incrementing the event counter, expanding the log buffer, processing
+ * requests, etc. They also create a scope so that it's harder to leak the
+ * LogBuffer pointer, which can be problematic as the pointer is unstable when
+ * the buffer lock isn't acquired.
+ *
+ * If the calling thread is already attached, these macros will not alter its
+ * attach mode (i.e. whether it's added to the LLS). If the thread is not
+ * attached, init_thread () will be called with add_to_lls = TRUE.
  */
 
 #define ENTER_LOG(COUNTER, BUFFER, SIZE) \
 	do { \
-		MonoProfilerThread *thread__ = PROF_TLS_GET (); \
+		MonoProfilerThread *thread__ = get_thread (); \
 		if (thread__->attached) \
 			buffer_lock (); \
 		g_assert (!thread__->busy && "Why are we trying to write a new event while already writing one?"); \
@@ -696,6 +701,8 @@ struct _BinaryObject {
 	char *name;
 };
 
+static MonoProfiler *log_profiler;
+
 struct _MonoProfiler {
 	FILE* file;
 #if defined (HAVE_SYS_ZLIB)
@@ -740,6 +747,8 @@ typedef struct {
 	MonoJitInfo *ji;
 	uint64_t time;
 } MethodInfo;
+
+// Do not use these TLS macros directly unless you know what you're doing.
 
 #ifdef HOST_WIN32
 
@@ -881,6 +890,12 @@ deinit_thread (MonoProfilerThread *thread)
 
 	g_free (thread);
 	PROF_TLS_SET (NULL);
+}
+
+static MonoProfilerThread *
+get_thread (void)
+{
+	return init_thread (log_profiler, TRUE);
 }
 
 // Only valid if init_thread () was called with add_to_lls = FALSE.
@@ -1035,7 +1050,7 @@ emit_method_inner (LogBuffer *logbuffer, void *method)
 static void
 register_method_local (MonoMethod *method, MonoJitInfo *ji)
 {
-	MonoProfilerThread *thread = PROF_TLS_GET ();
+	MonoProfilerThread *thread = get_thread ();
 
 	if (!mono_conc_hashtable_lookup (thread->profiler->method_table, method)) {
 		MethodInfo *info = (MethodInfo *) g_malloc (sizeof (MethodInfo));
@@ -1598,8 +1613,6 @@ emit_bt (MonoProfiler *prof, LogBuffer *logbuffer, FrameData *data)
 static void
 gc_alloc (MonoProfiler *prof, MonoObject *obj, MonoClass *klass)
 {
-	init_thread (prof, TRUE);
-
 	int do_bt = (nocalls && InterlockedRead (&runtime_inited) && !notraces) ? TYPE_ALLOC_BT : 0;
 	FrameData data;
 	uintptr_t len = mono_object_get_size (obj);
@@ -1975,7 +1988,7 @@ method_enter (MonoProfiler *prof, MonoMethod *method)
 {
 	process_method_enter_coverage (prof, method);
 
-	if (!only_coverage && PROF_TLS_GET ()->call_depth++ <= max_call_depth) {
+	if (!only_coverage && get_thread ()->call_depth++ <= max_call_depth) {
 		ENTER_LOG (&method_entries_ctr, logbuffer,
 			EVENT_SIZE /* event */ +
 			LEB128_SIZE /* method */
@@ -1991,7 +2004,7 @@ method_enter (MonoProfiler *prof, MonoMethod *method)
 static void
 method_leave (MonoProfiler *prof, MonoMethod *method)
 {
-	if (!only_coverage && --PROF_TLS_GET ()->call_depth <= max_call_depth) {
+	if (!only_coverage && --get_thread ()->call_depth <= max_call_depth) {
 		ENTER_LOG (&method_exits_ctr, logbuffer,
 			EVENT_SIZE /* event */ +
 			LEB128_SIZE /* method */
@@ -2007,7 +2020,7 @@ method_leave (MonoProfiler *prof, MonoMethod *method)
 static void
 method_exc_leave (MonoProfiler *prof, MonoMethod *method)
 {
-	if (!only_coverage && !nocalls && --PROF_TLS_GET ()->call_depth <= max_call_depth) {
+	if (!only_coverage && !nocalls && --get_thread ()->call_depth <= max_call_depth) {
 		ENTER_LOG (&method_exception_exits_ctr, logbuffer,
 			EVENT_SIZE /* event */ +
 			LEB128_SIZE /* method */
@@ -2165,8 +2178,6 @@ monitor_event (MonoProfiler *profiler, MonoObject *object, MonoProfilerMonitorEv
 static void
 thread_start (MonoProfiler *prof, uintptr_t tid)
 {
-	init_thread (prof, TRUE);
-
 	ENTER_LOG (&thread_starts_ctr, logbuffer,
 		EVENT_SIZE /* event */ +
 		BYTE_SIZE /* type */ +
@@ -2195,7 +2206,7 @@ thread_end (MonoProfiler *prof, uintptr_t tid)
 
 	EXIT_LOG_EXPLICIT (NO_SEND, NO_REQUESTS);
 
-	MonoProfilerThread *thread = PROF_TLS_GET ();
+	MonoProfilerThread *thread = get_thread ();
 
 	thread->ended = TRUE;
 	remove_thread (thread);
@@ -4323,8 +4334,10 @@ handle_writer_queue_entry (MonoProfiler *prof)
 		g_ptr_array_free (entry->methods, TRUE);
 
 		if (wrote_methods) {
-			dump_buffer_threadless (prof, PROF_TLS_GET ()->buffer);
-			init_buffer_state (PROF_TLS_GET ());
+			MonoProfilerThread *thread = get_thread ();
+
+			dump_buffer_threadless (prof, thread->buffer);
+			init_buffer_state (thread);
 		}
 
 	no_methods:
@@ -5018,15 +5031,14 @@ mono_profiler_startup (const char *desc)
 
 	PROF_TLS_INIT ();
 
-	prof = create_profiler (desc, filename, filters);
+	log_profiler = prof = create_profiler (desc, filename, filters);
+
 	if (!prof) {
 		PROF_TLS_FREE ();
 		return;
 	}
 
 	mono_lls_init (&profiler_thread_list, NULL);
-
-	init_thread (prof, TRUE);
 
 	mono_profiler_install (prof, log_shutdown);
 	mono_profiler_install_gc (gc_event, gc_resize);
