@@ -37,7 +37,7 @@ namespace MonoTests.System.Net
 			IAsyncResult async = Dns.BeginGetHostByName (site1Name, null, null);
 			IPHostEntry entry = Dns.EndGetHostByName (async);
 			SubTestValidIPHostEntry (entry);
-			Assert.IsTrue (entry.HostName == "google-public-dns-a.google.com");
+			Assert.AreEqual ("google-public-dns-a.google.com", entry.HostName, "#1");
 		}
 
 		[Test]
@@ -219,26 +219,13 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[NUnit.Framework.Category ("AndroidNotWorking")] //Some Android devices like to return catch-all IPs for invalid host names.
 		public void GetHostByName ()
 		{
 			SubTestGetHostByName (site1Name, site1Dot);
 			SubTestGetHostByName (site2Name, site2Dot);
 			try {
 				var entry = Dns.GetHostByName (noneExistingSite);
-				/*
-				 * Work around broken t-online.de DNS Server.
-				 * 
-				 * T-Online's DNS Server for DSL Customers resolves
-				 * non-exisitng domain names to
-				 * http://navigationshilfe1.t-online.de/dnserror?url=....
-				 * instead of reporting an error.
-				 */
-				var navigationshilfe1 = IPAddress.Parse ("80.156.86.78");
-				var navigationshilfe2 = IPAddress.Parse ("62.157.140.133");
-				foreach (var addr in entry.AddressList) {
-					if (addr.Equals (navigationshilfe1) || addr.Equals (navigationshilfe2))
-						return;
-				}
 				Assert.Fail ("Should raise a SocketException (assuming that '" + noneExistingSite + "' does not exist)");
 			} catch (SocketException) {
 			}
