@@ -267,12 +267,14 @@ namespace Mono.Btls
 		public DateTime GetNotBefore ()
 		{
 			var ticks = mono_btls_x509_get_not_before (Handle.DangerousGetHandle ());
+			Console.Error.WriteLine ("GET NOT BEFORE: {0}", ticks);
 			return new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds (ticks);
 		}
 
 		public DateTime GetNotAfter ()
 		{
 			var ticks = mono_btls_x509_get_not_after (Handle.DangerousGetHandle ());
+			Console.Error.WriteLine ("GET NOT AFTER: {0}", ticks);
 			return new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds (ticks);
 		}
 
