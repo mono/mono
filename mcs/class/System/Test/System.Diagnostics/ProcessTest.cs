@@ -1123,8 +1123,7 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test]
-		[ExpectedException(typeof(InvalidOperationException))]
-		[NUnit.Framework.Category ("AndroidNotWorking")] //Getting the name of init works fine on Android, go figure.
+		[NUnit.Framework.Category ("NotWorking")] //Getting the name of init works fine on Android and Linux, but fails on OSX, SELinux and iOS
 		public void HigherPrivilegeProcessName ()
 		{
 			if (!RunningOnUnix)
