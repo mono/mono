@@ -469,7 +469,14 @@ namespace Mono.Net
 		{
 			return new CFDictionary (CFDictionaryCreate (IntPtr.Zero, new IntPtr[] { key }, new IntPtr [] { obj }, (IntPtr)1, KeyCallbacks, ValueCallbacks), true);
 		}
-		
+
+		public static CFDictionary FromKeysAndObjects (IntPtr[] keys, IntPtr[] objs)
+		{
+			if (keys.Length != objs.Length)
+				throw new ArgumentException ();
+			return new CFDictionary (CFDictionaryCreate (IntPtr.Zero, keys, objs, (IntPtr)keys.Length, KeyCallbacks, ValueCallbacks), true);
+		}
+
 		[DllImport (CoreFoundationLibrary)]
 		extern static IntPtr CFDictionaryCreate (IntPtr allocator, IntPtr[] keys, IntPtr[] vals, IntPtr len, IntPtr keyCallbacks, IntPtr valCallbacks);
 

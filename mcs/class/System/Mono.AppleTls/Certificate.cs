@@ -242,14 +242,24 @@ namespace Mono.AppleTls {
 			}
 		}
 
-		public static SecIdentity Import (byte[] data, string password)
+		static CFDictionary CreateImportOptions (CFString password, SecAccess access)
+		{
+			if (access == null)
+				return CFDictionary.FromObjectAndKey (password.Handle, ImportExportPassphase.Handle);
+
+			var keys = new IntPtr [] { ImportExportPassphase.Handle, ImportExportAccess.Handle };
+			var objs = new IntPtr [] { password.Handle, access.Handle };
+			return CFDictionary.FromKeysAndObjects (keys, objs);
+		}
+
+		public static SecIdentity Import (byte[] data, string password, SecAccess access = null)
 		{
 			if (data == null)
 				throw new ArgumentNullException ("data");
 			if (string.IsNullOrEmpty (password)) // SecPKCS12Import() doesn't allow empty passwords.
 				throw new ArgumentException ("password");
 			using (var pwstring = CFString.Create (password))
-			using (var options = CFDictionary.FromObjectAndKey (pwstring.Handle, ImportExportPassphase.Handle)) {
+			using (var options = CreateImportOptions (pwstring, access)) {
 				CFDictionary [] array;
 				SecStatusCode result = SecImportExport.ImportPkcs12 (data, options, out array);
 				if (result != SecStatusCode.Success)
@@ -259,7 +269,7 @@ namespace Mono.AppleTls {
 			}
 		}
 
-		public static SecIdentity Import (X509Certificate2 certificate)
+		public static SecIdentity Import (X509Certificate2 certificate, SecAccess access = null)
 		{
 			if (certificate == null)
 				throw new ArgumentNullException ("certificate");
@@ -272,7 +282,7 @@ namespace Mono.AppleTls {
 			 */
 			var password = Guid.NewGuid ().ToString ();
 			var pkcs12 = certificate.Export (X509ContentType.Pfx, password);
-			return Import (pkcs12, password);
+			return Import (pkcs12, password, access);
 		}
 
 		~SecIdentity ()
