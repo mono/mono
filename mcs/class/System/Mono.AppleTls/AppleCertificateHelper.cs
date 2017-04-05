@@ -37,7 +37,7 @@ namespace Mono.AppleTls
 			var certificate2 = certificate as X509Certificate2;
 			if (certificate2 != null) {
 				var access = SecAccess.Create ("MartinTest");
-				return SecIdentity.Import (certificate2, access);
+				return SecIdentity.Import (certificate2, null, access);
 			}
 
 #if MOBILE
