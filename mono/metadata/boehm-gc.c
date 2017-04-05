@@ -1457,6 +1457,8 @@ BOOL APIENTRY mono_gc_dllmain (HMODULE module_handle, DWORD reason, LPVOID reser
 {
 #if !HAVE_BDWGC_GC
 	return GC_DllMain (module_handle, reason, reserved);
+#else
+	return TRUE;
 #endif
 }
 #endif
