@@ -54,7 +54,8 @@ namespace Mono.AppleTls {
 			IntPtr handle;
 			SecStatusCode code = SecPKCS12Import (data.Handle, options.Handle, out handle);
 			array = CFArray.ArrayFromHandle <CFDictionary> (handle, h => new CFDictionary (h, false));
-			CFObject.CFRelease (handle);
+			if (handle != IntPtr.Zero)
+				CFObject.CFRelease (handle);
 			return code;
 		}
 	}
