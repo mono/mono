@@ -176,6 +176,15 @@ namespace Mono.Btls
 			}
 		}
 
+		internal static MonoBtlsX509 LoadFromData (IntPtr data, int length, MonoBtlsX509Format format)
+		{
+			var x509 = mono_btls_x509_from_data (data, length, format);
+			if (x509 == IntPtr.Zero)
+				throw new MonoBtlsException ("Failed to read certificate from data.");
+
+			return new MonoBtlsX509 (new BoringX509Handle (x509));
+		}
+
 		public MonoBtlsX509Name GetSubjectName ()
 		{
 			var handle = mono_btls_x509_get_subject_name (Handle.DangerousGetHandle ());

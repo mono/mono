@@ -45,9 +45,9 @@ namespace Mono.AppleTls {
 	}
 
 	class SecKeyChain : INativeObject, IDisposable {
-		static readonly IntPtr MatchLimitAll;
-		static readonly IntPtr MatchLimitOne;
-		static readonly IntPtr MatchLimit;
+		internal static readonly IntPtr MatchLimitAll;
+		internal static readonly IntPtr MatchLimitOne;
+		internal static readonly IntPtr MatchLimit;
 
 		IntPtr handle;
 
@@ -119,7 +119,7 @@ namespace Mono.AppleTls {
 				return null;
 			}
 
-			using (var copy = query.queryDict.MutableCopy ()) {
+			using (var copy = query.QueryDict.MutableCopy ()) {
 				copy.SetValue (CFBoolean.True.Handle, SecItem.ReturnRef);
 				SetLimit (copy, max);
 				return QueryAsReference (copy, out result);
@@ -152,7 +152,7 @@ namespace Mono.AppleTls {
 			return null;
 		}
 
-		static CFNumber SetLimit (CFMutableDictionary dict, int max)
+		internal static CFNumber SetLimit (CFMutableDictionary dict, int max)
 		{
 			CFNumber n = null;
 			IntPtr val;
@@ -164,15 +164,15 @@ namespace Mono.AppleTls {
 				n = CFNumber.FromInt32 (max);
 				val = n.Handle;
 			}
-			
+
 			dict.SetValue (val, SecKeyChain.MatchLimit);
 			return n;
 		}
 
 		[DllImport (AppleTlsContext.SecurityLibrary)]
 		extern static /* OSStatus */ SecStatusCode SecKeychainCreate (/* const char * */ IntPtr pathName, uint passwordLength, /* const void * */ IntPtr password,
-		                                                              bool promptUser, /* SecAccessRef */ IntPtr initialAccess,
-		                                                              /* SecKeychainRef  _Nullable * */ out IntPtr keychain);
+									      bool promptUser, /* SecAccessRef */ IntPtr initialAccess,
+									      /* SecKeychainRef  _Nullable * */ out IntPtr keychain);
 
 		internal static SecKeyChain Create (string pathName, string password)
 		{
@@ -204,7 +204,10 @@ namespace Mono.AppleTls {
 			}
 		}
 
-		internal const string KeyChainPath_SystemRootCertificates = "/System/Library/Keychains/SystemRootCertificates.keychain";
+		internal static SecKeyChain OpenSystemRootCertificates ()
+		{
+			return Open ("/System/Library/Keychains/SystemRootCertificates.keychain");
+		}
 
 		~SecKeyChain ()
 		{
@@ -231,42 +234,45 @@ namespace Mono.AppleTls {
 			}
 		}
 	}
-	
+
 	class SecRecord : IDisposable {
 
-		static readonly IntPtr SecClassKey;
+		internal static readonly IntPtr SecClassKey;
 		static SecRecord ()
 		{
 			var handle = CFObject.dlopen (AppleTlsContext.SecurityLibrary, 0);
 			if (handle == IntPtr.Zero)
 				return;
 
-			try {		
-				SecClassKey = CFObject.GetIntPtr (handle, "kSecClassKey");
+			try {
+				SecClassKey = CFObject.GetIntPtr (handle, "kSecClass");
 			} finally {
 				CFObject.dlclose (handle);
 			}
 		}
 
-		// Fix <= iOS 6 Behaviour - Desk #83099
-		// NSCFDictionary: mutating method sent to immutable object
-		// iOS 6 returns an inmutable NSDictionary handle and when we try to set its values it goes kaboom
-		// By explicitly calling `MutableCopy` we ensure we always have a mutable reference we expect that.
-		CFDictionary _queryDict;
-		internal CFDictionary queryDict 
-		{ 
+		CFMutableDictionary _queryDict;
+		internal CFMutableDictionary QueryDict {
 			get {
 				return _queryDict;
 			}
+#if FIXME
 			set {
 				_queryDict = value != null ? value.Copy () : null;
 			}
+#endif
+		}
+
+		internal void SetValue (IntPtr key, IntPtr value)
+		{
+			_queryDict.SetValue (key, value);
 		}
 
 		public SecRecord (SecKind secKind)
 		{
 			var kind = SecClass.FromSecKind (secKind);
-			queryDict = CFDictionary.FromObjectAndKey (kind, SecClassKey);
+			_queryDict = CFMutableDictionary.Create ();
+			_queryDict.SetValue (SecClassKey, kind);
 		}
 
 		public void Dispose ()
@@ -277,10 +283,10 @@ namespace Mono.AppleTls {
 
 		protected virtual void Dispose (bool disposing)
 		{
-			if (queryDict != null){
+			if (_queryDict != null){
 				if (disposing){
-					queryDict.Dispose ();
-					queryDict = null;
+					_queryDict.Dispose ();
+					_queryDict = null;
 				}
 			}
 		}

@@ -524,8 +524,20 @@ namespace Mono.Net
 			CFDictionarySetValue (Handle, key, val);
 		}
 
+		public static CFMutableDictionary Create ()
+		{
+			var handle = CFDictionaryCreateMutable (IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+			if (handle == IntPtr.Zero)
+				throw new InvalidOperationException ();
+			return new CFMutableDictionary (handle, true);
+		}
+
 		[DllImport (CoreFoundationLibrary)]
 		extern static void CFDictionarySetValue (IntPtr handle, IntPtr key, IntPtr val);
+
+		[DllImport (CoreFoundationLibrary)]
+		extern static IntPtr CFDictionaryCreateMutable (IntPtr allocator, IntPtr capacity, IntPtr keyCallback, IntPtr valueCallbacks);
+
 	}
 
 	internal class CFUrl : CFObject

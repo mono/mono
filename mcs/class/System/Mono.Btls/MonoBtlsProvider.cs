@@ -32,8 +32,12 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Authentication;
+using Mono.Net;
+using Mono.AppleTls;
+using ObjCRuntime;
 
 #if MONO_SECURITY_ALIAS
 using MonoSecurity::Mono.Security.Interface;
@@ -45,10 +49,8 @@ using MX = Mono.Security.X509;
 
 using MNS = Mono.Net.Security;
 
-namespace Mono.Btls
-{
-	class MonoBtlsProvider : MonoTlsProvider
-	{
+namespace Mono.Btls {
+	class MonoBtlsProvider : MonoTlsProvider {
 		static readonly Guid id = new Guid ("432d18c9-9348-4b90-bfbf-9f2a10e1f15b");
 
 		public override Guid ID {
@@ -248,9 +250,13 @@ namespace Mono.Btls
 			store.SetDefaultPaths ();
 			store.AddAndroidLookup ();
 #else
-			AddUserStore (store);
-			AddMachineStore (store);
+			// AddUserStore (store);
+			// AddMachineStore (store);
 #endif
+
+			MartinTest ();
+			if (systemRootCertificates != null)
+				store.AddCollection (systemRootCertificates, MonoBtlsX509TrustKind.TRUST_SERVER);
 		}
 
 #if !MONODROID
@@ -349,6 +355,55 @@ namespace Mono.Btls
 				throw;
 			}
 		}
+
+		static MonoBtlsProvider ()
+		{
+			MartinTest ();
+		}
+
+		static bool initialized;
+		static X509CertificateCollection systemRootCertificates;
+
+		static void MartinTest ()
+		{
+			if (initialized)
+				return;
+			initialized = true;
+
+			var filename = "/Users/mabaul/Desktop/test-keychain.keychain";
+			if (File.Exists (filename))
+				File.Delete (filename);
+
+			var certificates = new List<X509Certificate> ();
+			systemRootCertificates = new X509CertificateCollection ();
+
+			using (var keychain = SecKeyChain.OpenSystemRootCertificates ())
+			using (var array = CFArray.CreateArray (new IntPtr [] { keychain.Handle }))
+			using (var record = new SecRecord (SecKind.Certificate)) {
+				record.SetValue (SecItem.MatchSearchList, array.Handle);
+				record.SetValue (SecItem.ReturnRef, CFBoolean.True.Handle);
+				record.SetValue (SecKeyChain.MatchLimit, SecKeyChain.MatchLimitAll);
+
+				SecStatusCode status;
+				var result = SecKeyChain.QueryAsReference (record, -1, out status);
+				Console.WriteLine ("MARTIN TEST DONE: {0} {1}", status, result?.Length);
+				if (status != SecStatusCode.Success)
+					throw new InvalidOperationException (status.ToString ());
+
+				foreach (SecCertificate certificate in result) {
+					Console.WriteLine ("  MARTIN TEST: {0}", certificate);
+					using (var data = certificate.DerData)
+					using (var x509 = MonoBtlsX509.LoadFromData (data.Bytes, (int)data.Length, MonoBtlsX509Format.DER))
+					using (var impl = new X509CertificateImplBtls (x509)) {
+						var btlsCert = new X509Certificate (impl);
+						Console.WriteLine ("  MARTIN TEST #1: {0}", btlsCert.Subject);
+						systemRootCertificates.Add (btlsCert);
+					}
+				}
+			}
+
+			Console.WriteLine ("MARTIN TEST FINALLY DONE!");
+		}
 	}
 }
-#endif
+// #endif
