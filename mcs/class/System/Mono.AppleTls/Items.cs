@@ -43,10 +43,22 @@ namespace Mono.AppleTls {
 		Identity
 	}
 
-	static class SecKeyChain {
+	class SecKeyChain : INativeObject, IDisposable {
 		static readonly IntPtr MatchLimitAll;
 		static readonly IntPtr MatchLimitOne;
 		static readonly IntPtr MatchLimit;
+
+		IntPtr handle;
+
+		internal SecKeyChain (IntPtr handle, bool owns = false)
+		{
+			if (handle == IntPtr.Zero)
+				throw new Exception ("Invalid handle");
+
+			this.handle = handle;
+			if (!owns)
+				CFObject.CFRetain (handle);
+		}
 
 		static SecKeyChain ()
 		{
@@ -145,6 +157,48 @@ namespace Mono.AppleTls {
 			
 			dict.SetValue (val, SecKeyChain.MatchLimit);
 			return n;
+		}
+
+		[DllImport (AppleTlsContext.SecurityLibrary)]
+		extern static /* OSStatus */ SecStatusCode SecKeychainCreate (/* const char * */ IntPtr pathName, uint passwordLength, /* const void * */ IntPtr password,
+		                                                              bool promptUser, /* SecAccessRef */ IntPtr initialAccess,
+		                                                              /* SecKeychainRef  _Nullable * */ out IntPtr keychain);
+
+		internal static SecKeyChain Create (string pathName, string password)
+		{
+			IntPtr handle;
+			var pathNamePtr = Marshal.StringToHGlobalAnsi (pathName);
+			var passwordPtr = Marshal.StringToHGlobalAnsi (password);
+			var result = SecKeychainCreate (pathNamePtr, (uint)password.Length, passwordPtr, false, IntPtr.Zero, out handle);
+			if (result != SecStatusCode.Success)
+				throw new InvalidOperationException (result.ToString ());
+			return new SecKeyChain (handle, true);
+		}
+
+
+		~SecKeyChain ()
+		{
+			Dispose (false);
+		}
+
+		public IntPtr Handle {
+			get {
+				return handle;
+			}
+		}
+
+		public void Dispose ()
+		{
+			Dispose (true);
+			GC.SuppressFinalize (this);
+		}
+
+		protected virtual void Dispose (bool disposing)
+		{
+			if (handle != IntPtr.Zero) {
+				CFObject.CFRelease (handle);
+				handle = IntPtr.Zero;
+			}
 		}
 	}
 	
