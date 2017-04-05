@@ -198,6 +198,7 @@ namespace Mono.AppleTls {
 		 
 		static readonly CFString ImportExportPassphase;
 		static readonly CFString ImportItemIdentity;
+		static readonly CFString ImportExportAccess;
 		
 		static SecIdentity ()
 		{
@@ -208,6 +209,7 @@ namespace Mono.AppleTls {
 			try {		
 				ImportExportPassphase = CFObject.GetStringConstant (handle, "kSecImportExportPassphrase");
 				ImportItemIdentity = CFObject.GetStringConstant (handle, "kSecImportItemIdentity");
+				ImportExportAccess = CFObject.GetStringConstant (handle, "kSecImportExportAccess");
 			} finally {
 				CFObject.dlclose (handle);
 			}
@@ -332,6 +334,63 @@ namespace Mono.AppleTls {
 		protected virtual void Dispose (bool disposing)
 		{
 			if (handle != IntPtr.Zero){
+				CFObject.CFRelease (handle);
+				handle = IntPtr.Zero;
+			}
+		}
+	}
+
+	class SecAccess : INativeObject, IDisposable {
+		internal IntPtr handle;
+
+		public SecAccess (IntPtr handle, bool owns = false)
+		{
+			this.handle = handle;
+			if (!owns)
+				CFObject.CFRetain (handle);
+		}
+
+		~SecAccess ()
+		{
+			Dispose (false);
+		}
+
+		public IntPtr Handle {
+			get {
+				return handle;
+			}
+		}
+
+		[DllImport (AppleTlsContext.SecurityLibrary)]
+		extern static /* OSStatus */ SecStatusCode SecAccessCreate (/* CFStringRef */ IntPtr descriptor,  /* CFArrayRef */ IntPtr trustedList, /* SecAccessRef _Nullable * */ out IntPtr accessRef);
+
+		public static SecAccess Create (string descriptor)
+		{
+			var descriptorHandle = CFString.Create (descriptor);
+			if (descriptorHandle == null)
+				throw new InvalidOperationException ();
+
+			try {
+				IntPtr accessRef;
+				var result = SecAccessCreate (descriptorHandle.Handle, IntPtr.Zero, out accessRef);
+				if (result != SecStatusCode.Success)
+					throw new InvalidOperationException (result.ToString ());
+
+				return new SecAccess (accessRef, true);
+			} finally {
+				descriptorHandle.Dispose ();
+			}
+		}
+
+		public void Dispose ()
+		{
+			Dispose (true);
+			GC.SuppressFinalize (this);
+		}
+
+		protected virtual void Dispose (bool disposing)
+		{
+			if (handle != IntPtr.Zero) {
 				CFObject.CFRelease (handle);
 				handle = IntPtr.Zero;
 			}
