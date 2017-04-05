@@ -48,13 +48,13 @@ namespace MonoTests.System.Data.Connected
 		private static ConnectionManager instance;
 		private ConnectionHolder<SqlConnection> sql;
 
-		private const string OdbcEnvVar = "SYSTEM_DATA_ODBC";
-		private const string SqlEnvVar = "SYSTEM_DATA_MSSQL";
+		private const string OdbcEnvVar = "SYSTEM_DATA_ODBC_V2";
+		private const string SqlEnvVar = "SYSTEM_DATA_MSSQL_V2";
 
 		private ConnectionManager ()
 		{
-			//Environment.SetEnvironmentVariable(OdbcEnvVar, @"Driver={MySQL ODBC 5.3 Unicode Driver};server=127.0.0.1;uid=sa;pwd=qwerty123;";
-			//Environment.SetEnvironmentVariable(SqlEnvVar, @"server=127.0.0.1;database=master;user id=sa;password=qwerty123";
+			//Environment.SetEnvironmentVariable(OdbcEnvVar, @"Driver={MySQL ODBC 5.3 Unicode Driver};server=127.0.0.1;uid=sa;pwd=qwerty123;");
+			//Environment.SetEnvironmentVariable(SqlEnvVar, @"server=127.0.0.1;database=master;user id=sa;password=qwerty123");
 
 			// Generate a random db name
 			DatabaseName = "monotest" + Guid.NewGuid().ToString().Substring(0, 7);
@@ -122,7 +122,8 @@ namespace MonoTests.System.Data.Connected
 		private void CreateMssqlDatabase()
 		{
 			DBHelper.ExecuteNonQuery(sql.Connection, $"CREATE DATABASE [{DatabaseName}]");
-			sql.Connection.ChangeDatabase(DatabaseName);
+			sql.ConnectionString = sql.ConnectionString.Replace(sql.Connection.Database, DatabaseName);
+			sql.CloseConnection();
 
 			string query = File.ReadAllText(@"Test/ProviderTests/sql/sqlserver.sql");
 
@@ -247,5 +248,7 @@ namespace MonoTests.System.Data.Connected
 			this.connection = connection;
 			ConnectionString = connectionString;
 		}
+
+		public bool IsAzure => ConnectionString.ToLower().Contains("database.windows.net");
 	}
 }

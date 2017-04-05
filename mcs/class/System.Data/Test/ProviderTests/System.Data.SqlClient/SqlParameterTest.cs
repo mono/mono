@@ -64,6 +64,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test] // bug #324840
+		[Category("NotWorking")]
 		public void ParameterSizeTest ()
 		{
 			if (ClientVersion == 7)
