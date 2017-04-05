@@ -589,31 +589,6 @@ namespace System
 			return source.IsAssignableFrom (target) || target.IsAssignableFrom (source);
 		}
 
-		public static T[] FindAll<T> (T[] array, Predicate<T> match)
-		{
-			if (array == null)
-				throw new ArgumentNullException ("array");
-
-			if (match == null)
-				throw new ArgumentNullException ("match");
-
-			int pos = 0;
-			T[] d = Empty<T>();
-			for (int i = 0; i < array.Length; i++) {
-				if (match (array [i])) {
-					if (pos == d.Length)
-						Resize (ref d, pos == 0 ? 4 : pos * 2);
-
-					d [pos++] = array [i];
-				}
-			}
-
-			if (pos != d.Length)
-				Resize (ref d, pos);
-
-			return d;
-		}
-
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 		//
 		// The constrained copy should guarantee that if there is an exception thrown
@@ -624,9 +599,40 @@ namespace System
 			Copy (sourceArray, sourceIndex, destinationArray, destinationIndex, length);
 		}
 
-		object GetValueWithFlattenedIndex_NoErrorCheck (int flattenedIndex)
+		public static T[] Empty<T>()
 		{
-			return GetValueImpl (flattenedIndex);
+			return EmptyArray<T>.Value;
+		}
+
+		public void Initialize()
+		{
+			return;
+		}
+
+		static int IndexOfImpl<T>(T[] array, T value, int startIndex, int count)
+		{
+			return EqualityComparer<T>.Default.IndexOf (array, value, startIndex, count);
+		}
+
+		static int LastIndexOfImpl<T>(T[] array, T value, int startIndex, int count)
+		{
+			return EqualityComparer<T>.Default.LastIndexOf (array, value, startIndex, count);
+		}
+
+		static void SortImpl (Array keys, Array items, int index, int length, IComparer comparer)
+		{
+			Object[] objKeys = keys as Object[];
+			Object[] objItems = null;
+			if (objKeys != null)
+				objItems = items as Object[];
+
+			if (objKeys != null && (items == null || objItems != null)) {
+				SorterObjectArray sorter = new SorterObjectArray(objKeys, objItems, comparer);
+				sorter.Sort(index, length);
+			} else {
+				SorterGenericArray sorter = new SorterGenericArray(keys, items, comparer);
+				sorter.Sort(index, length);
+			}
 		}
 
 		#region Unsafe array operations
@@ -676,6 +682,17 @@ namespace System
 
 			public int Compare(T x, T y) {
 				return comparison(x, y);
+			}
+		}
+
+		partial class ArrayEnumerator
+		{
+			public Object Current {
+				get {
+					if (_index < 0) throw new InvalidOperationException(SR.InvalidOperation_EnumNotStarted);
+					if (_index >= _endIndex) throw new InvalidOperationException(SR.InvalidOperation_EnumEnded);
+					return _array.GetValueImpl(_index);
+				}
 			}
 		}
 	}

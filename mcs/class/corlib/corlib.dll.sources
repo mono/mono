@@ -1639,7 +1639,6 @@ ReferenceSources/Type.cs
 coreclr/SorterArray.cs
 
 corert/AddrofIntrinsics.cs
-corert/Array.Portable.cs
 corert/Debug.cs
 corert/Interop.cs
 corert/Interop.MemAllocFree.cs
@@ -1677,6 +1676,7 @@ corert/RuntimeThread.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/Microsoft/Win32/SafeHandles/SafeThreadPoolIOHandle.cs
 
+../../../external/corert/src/System.Private.CoreLib/src/System/Array.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Tuple.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/ValueTuple.cs
 
