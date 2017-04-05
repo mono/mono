@@ -28,6 +28,7 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Data.Common.DbConnection))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Data.Common.DbConnectionStringBuilder))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Data.Common.DbDataReader))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Data.Common.DbDataReaderExtensions))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Data.Common.DbDataRecord))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Data.Common.DbEnumerator))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Data.Common.DbException))]
