@@ -20,7 +20,7 @@ else
 	endif
 	ifeq ($(UNAME_S),Darwin)
 		CPPSHARP_OS=osx
-		CPPSHARP_ARCH=32
+		CPPSHARP_ARCH=64
 	endif
 endif
 
@@ -36,7 +36,7 @@ SRC_ROOT = ../..
 
 MONO_OPTIONS_SRC = $(SRC_ROOT)/mcs/class/Mono.Options/Mono.Options/Options.cs
 
-HASH=60f763a9
+HASH=9dc880dd
 .stamp-clone-$(HASH):
 	rm -Rf $(CPPSHARP_BASE_DIR)
 	git clone -b $(HASH) --depth 1 git://github.com/xamarin/CppSharpBinaries.git $(CPPSHARP_BASE_DIR) && touch $@
