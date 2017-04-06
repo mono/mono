@@ -220,27 +220,41 @@ namespace Mono.Btls {
 			}
 
 			foreach (var path in settings.CertificateSearchPaths) {
-				if (string.Equals (path, "@default", StringComparison.Ordinal)) {
+				switch (path) {
+				case "@default":
 					AddTrustedRoots (store, settings, server);
 					AddUserStore (store);
 					AddMachineStore (store);
-				} else if (string.Equals (path, "@user", StringComparison.Ordinal))
-					AddUserStore (store);
-				else if (string.Equals (path, "@machine", StringComparison.Ordinal))
-					AddMachineStore (store);
-				else if (string.Equals (path, "@trusted", StringComparison.Ordinal))
+					break;
+				case "@trusted":
 					AddTrustedRoots (store, settings, server);
-				else if (path.StartsWith ("@pem:", StringComparison.Ordinal)) {
-					var realPath = path.Substring (5);
-					if (Directory.Exists (realPath))
-						store.AddDirectoryLookup (realPath, MonoBtlsX509FileType.PEM);
-				} else if (path.StartsWith ("@der:", StringComparison.Ordinal)) {
-					var realPath = path.Substring (5);
-					if (Directory.Exists (realPath))
-						store.AddDirectoryLookup (realPath, MonoBtlsX509FileType.ASN1);
-				} else {
-					if (Directory.Exists (path))
-						store.AddDirectoryLookup (path, MonoBtlsX509FileType.PEM);
+					break;
+				case "@user":
+					AddUserStore (store);
+					break;
+				case "@machine":
+					AddMachineStore (store);
+					break;
+#if MONO_FEATURE_APPLETLS
+				case "@apple":
+					InitializeSystemRootCertificates ();
+					if (systemRootCertificates != null)
+						store.AddCollection (systemRootCertificates, MonoBtlsX509TrustKind.TRUST_SERVER);
+					break;
+#endif
+				default:
+					if (path.StartsWith ("@pem:")) {
+						var realPath = path.Substring (5);
+						if (Directory.Exists (realPath))
+							store.AddDirectoryLookup (realPath, MonoBtlsX509FileType.PEM);
+						break;
+					} else if (path.StartsWith ("@der:")) {
+						var realPath = path.Substring (5);
+						if (Directory.Exists (realPath))
+							store.AddDirectoryLookup (realPath, MonoBtlsX509FileType.ASN1);
+						break;
+					}
+					throw new NotSupportedException (string.Format ("Invalid item `{0}' in MonoTlsSettings.CertificateSearchPaths.", path));
 				}
 			}
 #endif
@@ -252,13 +266,9 @@ namespace Mono.Btls {
 			store.SetDefaultPaths ();
 			store.AddAndroidLookup ();
 #else
-			// AddUserStore (store);
-			// AddMachineStore (store);
+			AddUserStore (store);
+			AddMachineStore (store);
 #endif
-
-			MartinTest ();
-			if (systemRootCertificates != null)
-				store.AddCollection (systemRootCertificates, MonoBtlsX509TrustKind.TRUST_SERVER);
 		}
 
 #if !MONODROID
@@ -358,19 +368,13 @@ namespace Mono.Btls {
 			}
 		}
 
-		static MonoBtlsProvider ()
-		{
-			MartinTest ();
-		}
-
-		static bool initialized;
+		static int initialized;
 		static X509CertificateCollection systemRootCertificates;
 
-		static void MartinTest ()
+		static void InitializeSystemRootCertificates ()
 		{
-			if (initialized)
+			if (Interlocked.CompareExchange (ref initialized, 1, 0) == 1)
 				return;
-			initialized = true;
 
 #if MONO_FEATURE_APPLETLS
 			var certificates = new List<X509Certificate> ();
