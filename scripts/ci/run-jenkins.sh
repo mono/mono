@@ -84,7 +84,10 @@ if [[ ${CI_TAGS} == *'acceptance-tests'* ]];
 	$(dirname "${BASH_SOURCE[0]}")/run-test-acceptance-tests.sh
 elif [[ ${CI_TAGS} == *'profiler-stress-tests'* ]];
     then
-	$(dirname "${BASH_SOURCE[0]}")/run-test-profiler-stress-tests.sh
+    $(dirname "${BASH_SOURCE[0]}")/run-test-profiler-stress-tests.sh
+elif [[ ${CI_TAGS} == *'stress-tests'* ]];
+    then
+    $(dirname "${BASH_SOURCE[0]}")/run-test-stress-tests.sh
 elif [[ ${CI_TAGS} == *'interpreter'* ]];
     then
     $(dirname "${BASH_SOURCE[0]}")/run-test-interpreter.sh
