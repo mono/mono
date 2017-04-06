@@ -145,10 +145,15 @@ mono_threads_pthread_kill (MonoThreadInfo *info, int signum)
 #ifdef USE_TKILL_ON_ANDROID
 	int result, old_errno = errno;
 	result = tkill (info->native_handle, signum);
+
 	if (result < 0) {
 		result = errno;
 		errno = old_errno;
 	}
+
+	if (result == EAGAIN)
+		g_error ("%s: tkill failed with EAGAIN (%d) - kernel OOM or signal queue overflow", __func__, result);
+
 	return result;
 #elif defined(__native_client__)
 	/* Workaround pthread_kill abort() in NaCl glibc. */
@@ -156,7 +161,12 @@ mono_threads_pthread_kill (MonoThreadInfo *info, int signum)
 #elif !defined(HAVE_PTHREAD_KILL)
 	g_error ("pthread_kill() is not supported by this platform");
 #else
-	return pthread_kill (mono_thread_info_get_tid (info), signum);
+	int result = pthread_kill (mono_thread_info_get_tid (info), signum);
+
+	if (result == EAGAIN)
+		g_error ("%s: pthread_kill failed with EAGAIN (%d) - kernel OOM or signal queue overflow", __func__, result);
+
+	return result;
 #endif
 }
 
