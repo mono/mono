@@ -219,6 +219,12 @@ typedef struct {
 
 	/* Stack mark for targets that explicitly require one */
 	gpointer stack_mark;
+
+	/*
+	 * Used by the sampling code in mini-posix.c to ensure that a thread has
+	 * handled a sampling signal before sending another one.
+	 */
+	gint32 profiler_signal_ack;
 } MonoThreadInfo;
 
 typedef struct {
