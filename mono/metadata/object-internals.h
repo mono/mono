@@ -622,8 +622,6 @@ typedef struct {
 	void (*mono_clear_abort_threshold) (void);
 } MonoRuntimeExceptionHandlingCallbacks;
 
-MONO_COLD void mono_set_pending_exception (MonoException *exc);
-
 /* remoting and async support */
 
 MonoAsyncResult *
