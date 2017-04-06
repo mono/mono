@@ -59,7 +59,7 @@ namespace Mono.Debugger.Soft
 				sb.Append (ReturnType.Name);
 				sb.Append (' ');
 				if (type_namespace != String.Empty)
-					sb.Append (type_namespace + ".");
+					sb.Append (type_namespace).Append (".");
 				sb.Append(type_name);
 				sb.Append(":");
 				sb.Append(Name);
@@ -241,7 +241,8 @@ namespace Mono.Debugger.Soft
 		}
 
 		public LocalScope [] GetScopes () {
-			vm.CheckProtocolVersion (2, 43);
+			if (!vm.Version.AtLeast (2, 43))
+				throw new InvalidOperationException ("Scopes support was implemented in 2.43 version of protocol.");
 			GetLocals ();
 			return scopes;
 		}

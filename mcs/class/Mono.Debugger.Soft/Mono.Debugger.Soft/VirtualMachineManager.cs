@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Remoting.Messaging;
+using System.Text;
 
 namespace Mono.Debugger.Soft
 {
@@ -31,19 +32,19 @@ namespace Mono.Debugger.Soft
 
 	public class VirtualMachineManager
 	{
-		private delegate VirtualMachine LaunchCallback (ITargetProcess p, ProcessStartInfo info, Socket socket);
-		private delegate VirtualMachine ListenCallback (Socket dbg_sock, Socket con_sock); 
-		private delegate VirtualMachine ConnectCallback (Socket dbg_sock, Socket con_sock, IPEndPoint dbg_ep, IPEndPoint con_ep); 
+		private delegate VirtualMachine LaunchCallback (ITargetProcess p, ProcessStartInfo info, Socket socket, TextWriter logWriter);
+		private delegate VirtualMachine ListenCallback (Socket dbg_sock, Socket con_sock, TextWriter logWriter); 
+		private delegate VirtualMachine ConnectCallback (Socket dbg_sock, Socket con_sock, IPEndPoint dbg_ep, IPEndPoint con_ep, TextWriter logWriter); 
 
 		internal VirtualMachineManager () {
 		}
 
-		public static VirtualMachine LaunchInternal (Process p, ProcessStartInfo info, Socket socket)
+		public static VirtualMachine LaunchInternal (Process p, ProcessStartInfo info, Socket socket, TextWriter logWriter = null)
 		{
-			return LaunchInternal (new ProcessWrapper (p), info, socket);
+			return LaunchInternal (new ProcessWrapper (p), info, socket, logWriter);
 		}
 			
-		public static VirtualMachine LaunchInternal (ITargetProcess p, ProcessStartInfo info, Socket socket) {
+		public static VirtualMachine LaunchInternal (ITargetProcess p, ProcessStartInfo info, Socket socket, TextWriter logWriter = null) {
 			Socket accepted = null;
 			try {
 				accepted = socket.Accept ();
@@ -51,7 +52,7 @@ namespace Mono.Debugger.Soft
 				throw;
 			}
 
-			Connection conn = new TcpConnection (accepted);
+			Connection conn = new TcpConnection (accepted, logWriter);
 
 			VirtualMachine vm = new VirtualMachine (p, conn);
 
@@ -68,12 +69,12 @@ namespace Mono.Debugger.Soft
 			return vm;
 		}
 
-		public static IAsyncResult BeginLaunch (ProcessStartInfo info, AsyncCallback callback)
+		public static IAsyncResult BeginLaunch (ProcessStartInfo info, AsyncCallback callback, TextWriter logWriter = null)
 		{
-			return BeginLaunch (info, callback, null);
+			return BeginLaunch (info, callback, null, logWriter);
 		}
 
-		public static IAsyncResult BeginLaunch (ProcessStartInfo info, AsyncCallback callback, LaunchOptions options)
+		public static IAsyncResult BeginLaunch (ProcessStartInfo info, AsyncCallback callback, LaunchOptions options, TextWriter logWriter = null)
 		{
 			if (info == null)
 				throw new ArgumentNullException ("info");
@@ -95,6 +96,9 @@ namespace Mono.Debugger.Soft
 				info.FileName = "valgrind";
 			info.UseShellExecute = false;
 
+			info.StandardErrorEncoding = Encoding.UTF8;
+			info.StandardOutputEncoding = Encoding.UTF8;
+
 			ITargetProcess p;
 			if (options != null && options.CustomProcessLauncher != null)
 				p = new ProcessWrapper (options.CustomProcessLauncher (info));
@@ -108,7 +112,7 @@ namespace Mono.Debugger.Soft
 			};
 
 			LaunchCallback c = new LaunchCallback (LaunchInternal);
-			return c.BeginInvoke (p, info, socket, callback, socket);
+			return c.BeginInvoke (p, info, socket, logWriter, callback, socket);
 		}
 
 		public static VirtualMachine EndLaunch (IAsyncResult asyncResult) {
@@ -123,30 +127,30 @@ namespace Mono.Debugger.Soft
 			return cb.EndInvoke (asyncResult);
 		}
 
-		public static VirtualMachine Launch (ProcessStartInfo info)
+		public static VirtualMachine Launch (ProcessStartInfo info, TextWriter logWriter = null)
 		{
-			return Launch (info, null);
+			return Launch (info, null, logWriter);
 		}
 
-		public static VirtualMachine Launch (ProcessStartInfo info, LaunchOptions options)
+		public static VirtualMachine Launch (ProcessStartInfo info, LaunchOptions options, TextWriter logWriter = null)
 		{
-			return EndLaunch (BeginLaunch (info, null, options));
+			return EndLaunch (BeginLaunch (info, null, options, logWriter));
 		}
 
-		public static VirtualMachine Launch (string[] args)
+		public static VirtualMachine Launch (string[] args, TextWriter logWriter = null)
 		{
-			return Launch (args, null);
+			return Launch (args, null, logWriter);
 		}
 
-		public static VirtualMachine Launch (string[] args, LaunchOptions options)
+		public static VirtualMachine Launch (string[] args, LaunchOptions options, TextWriter logWriter = null)
 		{
 			ProcessStartInfo pi = new ProcessStartInfo ("mono");
 			pi.Arguments = String.Join (" ", args);
 
-			return Launch (pi, options);
+			return Launch (pi, options, logWriter);
 		}
 			
-		public static VirtualMachine ListenInternal (Socket dbg_sock, Socket con_sock) {
+		public static VirtualMachine ListenInternal (Socket dbg_sock, Socket con_sock, TextWriter logWriter = null) {
 			Socket con_acc = null;
 			Socket dbg_acc = null;
 
@@ -183,24 +187,24 @@ namespace Mono.Debugger.Soft
 				dbg_sock.Disconnect (false);
 			dbg_sock.Close ();
 
-			Connection transport = new TcpConnection (dbg_acc);
+			Connection transport = new TcpConnection (dbg_acc, logWriter);
 			StreamReader console = con_acc != null? new StreamReader (new NetworkStream (con_acc)) : null;
 			
 			return Connect (transport, console, null);
 		}
 
-		public static IAsyncResult BeginListen (IPEndPoint dbg_ep, AsyncCallback callback) {
-			return BeginListen (dbg_ep, null, callback);
+		public static IAsyncResult BeginListen (IPEndPoint dbg_ep, AsyncCallback callback, TextWriter logWriter = null) {
+			return BeginListen (dbg_ep, null, callback, logWriter);
 		}
 		
-		public static IAsyncResult BeginListen (IPEndPoint dbg_ep, IPEndPoint con_ep, AsyncCallback callback)
+		public static IAsyncResult BeginListen (IPEndPoint dbg_ep, IPEndPoint con_ep, AsyncCallback callback, TextWriter logWriter = null)
 		{
 			int dbg_port, con_port;
-			return BeginListen (dbg_ep, con_ep, callback, out dbg_port, out con_port);
+			return BeginListen (dbg_ep, con_ep, callback, out dbg_port, out con_port, logWriter);
 		}
 
 		public static IAsyncResult BeginListen (IPEndPoint dbg_ep, IPEndPoint con_ep, AsyncCallback callback,
-			out int dbg_port, out int con_port)
+			out int dbg_port, out int con_port, TextWriter logWriter = null)
 		{
 			dbg_port = con_port = 0;
 			
@@ -220,7 +224,7 @@ namespace Mono.Debugger.Soft
 			}
 			
 			ListenCallback c = new ListenCallback (ListenInternal);
-			return c.BeginInvoke (dbg_sock, con_sock, callback, con_sock ?? dbg_sock);
+			return c.BeginInvoke (dbg_sock, con_sock, logWriter, callback, con_sock ?? dbg_sock);
 		}
 
 		public static VirtualMachine EndListen (IAsyncResult asyncResult) {
@@ -235,64 +239,64 @@ namespace Mono.Debugger.Soft
 			return cb.EndInvoke (asyncResult);
 		}
 
-		public static VirtualMachine Listen (IPEndPoint dbg_ep)
+		public static VirtualMachine Listen (IPEndPoint dbg_ep, TextWriter logWriter = null)
 		{
-			return Listen (dbg_ep, null);
+			return Listen (dbg_ep, null, logWriter);
 		}
 
-		public static VirtualMachine Listen (IPEndPoint dbg_ep, IPEndPoint con_ep)
+		public static VirtualMachine Listen (IPEndPoint dbg_ep, IPEndPoint con_ep, TextWriter logWriter = null)
 		{
-			return EndListen (BeginListen (dbg_ep, con_ep, null));
+			return EndListen (BeginListen (dbg_ep, con_ep, null, logWriter));
 		}
 
 		/*
 		 * Connect to a virtual machine listening at the specified address.
 		 */
-		public static VirtualMachine Connect (IPEndPoint endpoint) {
-			return Connect (endpoint, null);
+		public static VirtualMachine Connect (IPEndPoint endpoint, TextWriter logWriter = null) {
+			return Connect (endpoint, null, logWriter);
 		}
 
-		public static VirtualMachine Connect (IPEndPoint endpoint, IPEndPoint consoleEndpoint) { 
+		public static VirtualMachine Connect (IPEndPoint endpoint, IPEndPoint consoleEndpoint, TextWriter logWriter = null) { 
 			if (endpoint == null)
 				throw new ArgumentNullException ("endpoint");
 
-			return EndConnect (BeginConnect (endpoint, consoleEndpoint, null));
+			return EndConnect (BeginConnect (endpoint, consoleEndpoint, null, logWriter));
 		}
 
-		public static VirtualMachine ConnectInternal (Socket dbg_sock, Socket con_sock, IPEndPoint dbg_ep, IPEndPoint con_ep) {
+		public static VirtualMachine ConnectInternal (Socket dbg_sock, Socket con_sock, IPEndPoint dbg_ep, IPEndPoint con_ep, TextWriter logWriter = null) {
 			if (con_sock != null) {
 				try {
 					con_sock.Connect (con_ep);
 				} catch (Exception) {
 					try {
 						dbg_sock.Close ();
-					} catch {}
+					} catch { }
 					throw;
 				}
 			}
-						
+
 			try {
 				dbg_sock.Connect (dbg_ep);
 			} catch (Exception) {
 				if (con_sock != null) {
 					try {
 						con_sock.Close ();
-					} catch {}
+					} catch { }
 				}
 				throw;
 			}
-			
-			Connection transport = new TcpConnection (dbg_sock);
-			StreamReader console = con_sock != null? new StreamReader (new NetworkStream (con_sock)) : null;
-			
+
+			Connection transport = new TcpConnection (dbg_sock, logWriter);
+			StreamReader console = con_sock != null ? new StreamReader (new NetworkStream (con_sock)) : null;
+
 			return Connect (transport, console, null);
 		}
 
-		public static IAsyncResult BeginConnect (IPEndPoint dbg_ep, AsyncCallback callback) {
-			return BeginConnect (dbg_ep, null, callback);
+		public static IAsyncResult BeginConnect (IPEndPoint dbg_ep, AsyncCallback callback, TextWriter logWriter = null) {
+			return BeginConnect (dbg_ep, null, callback, logWriter);
 		}
 
-		public static IAsyncResult BeginConnect (IPEndPoint dbg_ep, IPEndPoint con_ep, AsyncCallback callback) {
+		public static IAsyncResult BeginConnect (IPEndPoint dbg_ep, IPEndPoint con_ep, AsyncCallback callback, TextWriter logWriter = null) {
 			Socket dbg_sock = null;
 			Socket con_sock = null;
 
@@ -303,7 +307,7 @@ namespace Mono.Debugger.Soft
 			}
 			
 			ConnectCallback c = new ConnectCallback (ConnectInternal);
-			return c.BeginInvoke (dbg_sock, con_sock, dbg_ep, con_ep, callback, con_sock ?? dbg_sock);
+			return c.BeginInvoke (dbg_sock, con_sock, dbg_ep, con_ep, logWriter, callback, con_sock ?? dbg_sock);
 		}
 
 		public static VirtualMachine EndConnect (IAsyncResult asyncResult) {
