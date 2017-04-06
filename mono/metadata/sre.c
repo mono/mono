@@ -2350,14 +2350,36 @@ leave:
 static gboolean
 reflection_setup_internal_class (MonoReflectionTypeBuilderHandle ref_tb, MonoError *error)
 {
+	static GHashTable *seen = NULL;
 	HANDLE_FUNCTION_ENTER ();
 	error_init (error);
 
+	// Here we're using the loader lock to lock
+	// our static hash table
+	//
+	// This prevents other threads from racing with us here,
+	// as we can end up inside this lock only recursively.
+	// This allows us to use the static hash table to detect circular
+	// references
 	mono_loader_lock ();
+
+	if (!seen)
+		seen = g_hash_table_new (NULL, NULL);
 
 	MonoReflectionTypeHandle ref_parent = MONO_HANDLE_NEW_GET (MonoReflectionType, ref_tb, parent);
 	MonoClass *parent = NULL;
+
+	gpointer raw;
+
 	if (!MONO_HANDLE_IS_NULL (ref_parent)) {
+		raw = MONO_HANDLE_RAW (ref_parent);
+
+		gpointer in = g_hash_table_lookup (seen, raw);
+		if (in)
+			goto leave_circular;
+		else
+			g_hash_table_insert (seen, raw, GINT_TO_POINTER (TRUE));
+
 		MonoType *parent_type = mono_reflection_type_handle_mono_type (ref_parent, error);
 		if (!is_ok (error))
 			goto leave;
@@ -2475,7 +2497,21 @@ reflection_setup_internal_class (MonoReflectionTypeBuilderHandle ref_tb, MonoErr
 
 	mono_profiler_class_loaded (klass, MONO_PROFILE_OK);
 	
+leave_circular:
+	mono_error_set_invalid_operation (error, "Circular references reachable from submitted TypeBuilder. Please verify submitted method.");
+
 leave:
+	// if the hash table is now empty, free it
+	// AKA: if we aren't inside of a frame below
+	// an existing init, don't leave around leaked memory
+	if (raw)
+		g_hash_table_remove (seen, raw);
+
+	if (seen && (g_hash_table_size (seen) == 0 || !is_ok (error))) {
+		g_free (seen);
+		seen = NULL;
+	}
+
 	mono_loader_unlock ();
 	HANDLE_FUNCTION_RETURN_VAL (is_ok (error));
 }
