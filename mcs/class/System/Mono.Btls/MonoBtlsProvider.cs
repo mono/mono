@@ -35,9 +35,11 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Authentication;
+#if MONO_FEATURE_APPLETLS
 using Mono.Net;
 using Mono.AppleTls;
 using ObjCRuntime;
+#endif
 
 #if MONO_SECURITY_ALIAS
 using MonoSecurity::Mono.Security.Interface;
@@ -370,10 +372,7 @@ namespace Mono.Btls {
 				return;
 			initialized = true;
 
-			var filename = "/Users/mabaul/Desktop/test-keychain.keychain";
-			if (File.Exists (filename))
-				File.Delete (filename);
-
+#if MONO_FEATURE_APPLETLS
 			var certificates = new List<X509Certificate> ();
 			systemRootCertificates = new X509CertificateCollection ();
 
@@ -403,6 +402,7 @@ namespace Mono.Btls {
 			}
 
 			Console.WriteLine ("MARTIN TEST FINALLY DONE!");
+#endif
 		}
 	}
 }
