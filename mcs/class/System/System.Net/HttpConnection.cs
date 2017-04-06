@@ -110,10 +110,13 @@ namespace System.Net {
 
 		void Init ()
 		{
-			if (ssl_stream != null) {
+			if (ssl_stream != null)
 				ssl_stream.AuthenticateAsServer (cert, true, (SslProtocols)ServicePointManager.SecurityProtocol, false);
-			}
+			Reset ();
+		}
 
+		void Reset ()
+		{
 			context_bound = false;
 			i_stream = null;
 			o_stream = null;
@@ -464,14 +467,14 @@ namespace System.Net {
 						// Don't close. Keep working.
 						reuses++;
 						Unbind ();
-						Init ();
+						Reset ();
 						BeginReadRequest ();
 						return;
 					}
 
 					reuses++;
 					Unbind ();
-					Init ();
+					Reset ();
 					BeginReadRequest ();
 					return;
 				}
