@@ -35,7 +35,7 @@ check-coreclr:
 	$(MAKE) -C $(mono_build_root)/acceptance-tests check-coreclr
 
 check-stress:
-	MONO_TESTS_STRESS=1 $(MAKE) test-sgen
+	$(MAKE) test-stress-sgen
 
 # for backwards compatibility on Wrench
 test-wrench: check-parallel
@@ -1395,10 +1395,22 @@ debug-casts: debug-casts.exe
 EXTRA_DIST += sgen-bridge.cs sgen-descriptors.cs sgen-gshared-vtype.cs sgen-bridge-major-fragmentation.cs sgen-domain-unload.cs sgen-weakref-stress.cs sgen-cementing-stress.cs sgen-case-23400.cs 	finalizer-wait.cs critical-finalizers.cs sgen-domain-unload-2.cs sgen-suspend.cs sgen-new-threads-dont-join-stw.cs sgen-new-threads-dont-join-stw-2.cs sgen-new-threads-collect.cs sgen-bridge-xref.cs bug-17590.cs sgen-toggleref.cs sgen-bridge-gchandle.cs
 
 test-sgen:
-	$(MAKE) test-sgen-regular
-	$(MAKE) test-sgen-toggleref
-	$(MAKE) test-sgen-bridge
-	$(MAKE) test-sgen-bridge2
+	ok=; \
+	$(MAKE) test-sgen-regular || ok=false; \
+	$(MAKE) test-sgen-toggleref || ok=false; \
+	$(MAKE) test-sgen-bridge || ok=false; \
+	$(MAKE) test-sgen-bridge2 || ok=false; \
+	$(MAKE) test-sgen-bridge3 || ok=false; \
+	$$ok
+
+test-stress-sgen:
+	ok=; \
+	$(MAKE) test-stress-sgen-regular || ok=false; \
+	$(MAKE) test-stress-sgen-toggleref || ok=false; \
+	$(MAKE) test-stress-sgen-bridge || ok=false; \
+	$(MAKE) test-stress-sgen-bridge2 || ok=false; \
+	$(MAKE) test-stress-sgen-bridge3 || ok=false; \
+	$$ok
 
 TESTS_SGEN_REGULAR_SRC =	\
 	finalizer-wait.cs	\
@@ -1427,15 +1439,23 @@ TESTSAOT_SGEN_REGULAR=$(TESTS_SGEN_REGULAR:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 endif
 
 test-sgen-regular: $(TESTS_SGEN_REGULAR) $(TESTSAOT_SGEN_REGULAR)
-	$(MAKE) test-sgen-regular-ms
-	$(MAKE) test-sgen-regular-ms-conc
-	$(MAKE) test-sgen-regular-ms-conc-par
-	$(MAKE) test-sgen-regular-ms-conc-split
-	$(MAKE) test-sgen-regular-ms-split
-	$(MAKE) test-sgen-regular-ms-conc-split-95
-	$(MAKE) test-sgen-regular-ms-clear-at-gc
-	$(MAKE) test-sgen-regular-ms-conc-clear-at-gc
-	$(MAKE) test-sgen-regular-ms-conc-split-clear-at-gc
+	ok=; \
+	$(MAKE) test-sgen-regular-ms || ok=false; \
+	$(MAKE) test-sgen-regular-ms-conc || ok=false; \
+	$$ok
+
+test-stress-sgen-regular: $(TESTS_SGEN_REGULAR) $(TESTSAOT_SGEN_REGULAR)
+	ok=; \
+	$(MAKE) test-sgen-regular-ms MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-regular-ms-conc MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-regular-ms-conc-par MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-regular-ms-conc-split MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-regular-ms-split MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-regular-ms-conc-split-95 MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-regular-ms-clear-at-gc MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-regular-ms-conc-clear-at-gc MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-regular-ms-conc-split-clear-at-gc MONO_TESTS_STRESS=1 || ok=false; \
+	$$ok
 
 test-sgen-regular-ms: $(TESTS_SGEN_REGULAR) $(TESTSAOT_SGEN_REGULAR) test-runner.exe
 	$(TOOLS_RUNTIME) $(TEST_RUNNER) --testsuite-name $@ --runtime-args "--gc=sgen --gc-debug= --gc-params=major=marksweep" --disabled "$(DISABLED_TESTS)" --timeout 900 $(TESTS_SGEN_REGULAR)
@@ -1470,14 +1490,22 @@ TESTSAOT_SGEN_TOGGLEREF=$(TESTS_SGEN_TOGGLEREF:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 endif
 
 test-sgen-toggleref: $(TESTS_SGEN_TOGGLEREF) $(TESTSAOT_SGEN_TOGGLEREF)
-	$(MAKE) test-sgen-toggleref-ms
-	$(MAKE) test-sgen-toggleref-ms-conc
-	$(MAKE) test-sgen-toggleref-ms-conc-split
-	$(MAKE) test-sgen-toggleref-ms-split
-	$(MAKE) test-sgen-toggleref-ms-split-95
-	$(MAKE) test-sgen-toggleref-ms-clear-at-gc
-	$(MAKE) test-sgen-toggleref-ms-conc-clear-at-gc
-	$(MAKE) test-sgen-toggleref-ms-split-clear-at-gc
+	ok=; \
+	$(MAKE) test-sgen-toggleref-ms || ok=false; \
+	$(MAKE) test-sgen-toggleref-ms-conc || ok=false; \
+	$$ok
+
+test-stress-sgen-toggleref: $(TESTS_SGEN_TOGGLEREF) $(TESTSAOT_SGEN_TOGGLEREF)
+	ok=; \
+	$(MAKE) test-sgen-toggleref-ms MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-toggleref-ms-conc MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-toggleref-ms-conc-split MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-toggleref-ms-split MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-toggleref-ms-split-95 MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-toggleref-ms-clear-at-gc MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-toggleref-ms-conc-clear-at-gc MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-toggleref-ms-split-clear-at-gc MONO_TESTS_STRESS=1 || ok=false; \
+	$$ok
 
 test-sgen-toggleref-ms: $(TESTS_SGEN_TOGGLEREF) $(TESTSAOT_SGEN_TOGGLEREF) test-runner.exe
 	$(TOOLS_RUNTIME) $(TEST_RUNNER) --testsuite-name $@ --runtime-args "--gc=sgen --gc-debug= --gc-params=toggleref-test" --disabled "$(DISABLED_TESTS)" --timeout 900 $(TESTS_SGEN_TOGGLEREF)
@@ -1511,14 +1539,22 @@ TESTSAOT_SGEN_BRIDGE=$(TESTS_SGEN_BRIDGE:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 endif
 
 test-sgen-bridge: $(TESTS_SGEN_BRIDGE) $(TESTSAOT_SGEN_BRIDGE)
-	$(MAKE) test-sgen-bridge-ms
-	$(MAKE) test-sgen-bridge-ms-conc
-	$(MAKE) test-sgen-bridge-ms-split
-	$(MAKE) test-sgen-bridge-ms-new-bridge
-	$(MAKE) test-sgen-bridge-ms-conc-new-bridge
-	$(MAKE) test-sgen-bridge-ms-split-new-bridge
-	$(MAKE) test-sgen-bridge-ms-tarjan-bridge
-	$(MAKE) test-sgen-bridge-ms-split-tarjan-bridge
+	ok=; \
+	$(MAKE) test-sgen-bridge-ms || ok=false; \
+	$(MAKE) test-sgen-bridge-ms-conc || ok=false; \
+	$$ok
+
+test-stress-sgen-bridge: $(TESTS_SGEN_BRIDGE) $(TESTSAOT_SGEN_BRIDGE)
+	ok=; \
+	$(MAKE) test-sgen-bridge-ms MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-bridge-ms-conc MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-bridge-ms-split MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-bridge-ms-new-bridge MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-bridge-ms-conc-new-bridge MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-bridge-ms-split-new-bridge MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-bridge-ms-tarjan-bridge MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-bridge-ms-split-tarjan-bridge MONO_TESTS_STRESS=1 || ok=false; \
+	$$ok
 
 test-sgen-bridge-ms: $(TESTS_SGEN_BRIDGE) $(TESTSAOT_SGEN_BRIDGE) test-runner.exe
 	$(TOOLS_RUNTIME) $(TEST_RUNNER) --testsuite-name $@ --runtime-args "--gc=sgen --gc-debug=Bridge --gc-params=" --disabled "$(DISABLED_TESTS)" --timeout 900 $(TESTS_SGEN_BRIDGE)
@@ -1551,14 +1587,22 @@ TESTSAOT_SGEN_BRIDGE2=$(TESTS_SGEN_BRIDGE2:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 endif
 
 test-sgen-bridge2: $(TESTS_SGEN_BRIDGE2) $(TESTSAOT_SGEN_BRIDGE2)
-	$(MAKE) test-sgen-bridge2-ms
-	$(MAKE) test-sgen-bridge2-ms-conc
-	$(MAKE) test-sgen-bridge2-ms-split
-	$(MAKE) test-sgen-bridge2-ms-new-bridge
-	$(MAKE) test-sgen-bridge2-ms-conc-new-bridge
-	$(MAKE) test-sgen-bridge2-ms-split-new-bridge
-	$(MAKE) test-sgen-bridge2-ms-tarjan-bridge
-	$(MAKE) test-sgen-bridge2-ms-split-tarjan-bridge
+	ok=; \
+	$(MAKE) test-sgen-bridge2-ms || ok=false; \
+	$(MAKE) test-sgen-bridge2-ms-conc || ok=false; \
+	$$ok
+
+test-stress-sgen-bridge2: $(TESTS_SGEN_BRIDGE2) $(TESTSAOT_SGEN_BRIDGE2)
+	ok=; \
+	$(MAKE) test-sgen-bridge2-ms MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-bridge2-ms-conc MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-bridge2-ms-split MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-bridge2-ms-new-bridge MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-bridge2-ms-conc-new-bridge MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-bridge2-ms-split-new-bridge MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-bridge2-ms-tarjan-bridge MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-bridge2-ms-split-tarjan-bridge MONO_TESTS_STRESS=1 || ok=false; \
+	$$ok
 
 test-sgen-bridge2-ms: $(TESTS_SGEN_BRIDGE2) $(TESTSAOT_SGEN_BRIDGE2) test-runner.exe
 	$(TOOLS_RUNTIME) $(TEST_RUNNER) --testsuite-name $@ --runtime-args "--gc=sgen --gc-debug=bridge=2Bridge --gc-params=" --disabled "$(DISABLED_TESTS)" --timeout 900 $(TESTS_SGEN_BRIDGE2)
@@ -1591,14 +1635,22 @@ TESTSAOT_SGEN_BRIDGE3=$(TESTS_SGEN_BRIDGE3:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 endif
 
 test-sgen-bridge3: $(TESTS_SGEN_BRIDGE3) $(TESTSAOT_SGEN_BRIDGE3)
-	$(MAKE) test-sgen-bridge3-ms
-	$(MAKE) test-sgen-bridge3-ms-conc
-	$(MAKE) test-sgen-bridge3-ms-split
-	$(MAKE) test-sgen-bridge3-ms-new-bridge
-	$(MAKE) test-sgen-bridge3-ms-conc-new-bridge
-	$(MAKE) test-sgen-bridge3-ms-split-new-bridge
-	$(MAKE) test-sgen-bridge3-ms-tarjan-bridge
-	$(MAKE) test-sgen-bridge3-ms-split-tarjan-bridge
+	ok=; \
+	$(MAKE) test-sgen-bridge3-ms || ok=false; \
+	$(MAKE) test-sgen-bridge3-ms-conc || ok=false; \
+	$$ok
+
+test-stress-sgen-bridge3: $(TESTS_SGEN_BRIDGE3) $(TESTSAOT_SGEN_BRIDGE3)
+	ok=; \
+	$(MAKE) test-sgen-bridge3-ms MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-bridge3-ms-conc MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-bridge3-ms-split MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-bridge3-ms-new-bridge MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-bridge3-ms-conc-new-bridge MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-bridge3-ms-split-new-bridge MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-bridge3-ms-tarjan-bridge MONO_TESTS_STRESS=1 || ok=false; \
+	$(MAKE) test-sgen-bridge3-ms-split-tarjan-bridge MONO_TESTS_STRESS=1 || ok=false; \
+	$$ok
 
 test-sgen-bridge3-ms: $(TESTS_SGEN_BRIDGE3) $(TESTSAOT_SGEN_BRIDGE3) test-runner.exe
 	$(TOOLS_RUNTIME) $(TEST_RUNNER) --testsuite-name $@ --runtime-args "--gc=sgen --gc-debug=bridge=3Bridge --gc-params=major=marksweep" --disabled "$(DISABLED_TESTS)" --timeout 900 $(TESTS_SGEN_BRIDGE3)
