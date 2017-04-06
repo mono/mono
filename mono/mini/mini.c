@@ -3114,7 +3114,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	gboolean llvm = (flags & JIT_FLAG_LLVM) ? 1 : 0;
 #endif
 	static gboolean verbose_method_inited;
-	static const char *verbose_method_name;
+	static char *verbose_method_name;
 
 	InterlockedIncrement (&mono_jit_stats.methods_compiled);
 	if (mono_profiler_get_events () & MONO_PROFILE_JIT_COMPILATION)
@@ -4368,7 +4368,7 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
  * mini_get_underlying_type:
  *
  *   Return the type the JIT will use during compilation.
- * Handles: byref, enums, native types, generic sharing.
+ * Handles: byref, enums, native types, bool/char, ref types, generic sharing.
  * For gsharedvt types, it will return the original VAR/MVAR.
  */
 MonoType*

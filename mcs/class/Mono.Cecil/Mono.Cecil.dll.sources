@@ -6,7 +6,6 @@ Consts.cs
 ../../../external/cecil/Mono.Cecil.PE/*.cs
 ../../../external/cecil/Mono.Collections.Generic/*.cs
 ../../../external/cecil/Mono.Security.Cryptography/*.cs
-../../../external/cecil/System.Security.Cryptography/*.cs
 
 ../../../external/cecil/Mono.Cecil/ArrayType.cs
 ../../../external/cecil/Mono.Cecil/AssemblyDefinition.cs

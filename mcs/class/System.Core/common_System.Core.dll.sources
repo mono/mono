@@ -124,7 +124,6 @@ System.Security.Cryptography/SHA512CryptoServiceProvider.cs
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Runtime/CompilerServices/IRuntimeVariables.cs
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Runtime/CompilerServices/ReadOnlyCollectionBuilder.cs
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Runtime/CompilerServices/RuleCache.cs
-../../../external/corefx/src/System.Linq.Expressions/src/System/Runtime/CompilerServices/RuntimeOps.ExpressionQuoter.cs
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Runtime/CompilerServices/RuntimeOps.RuntimeVariableList.cs
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Runtime/CompilerServices/RuntimeOps.MergedRuntimeVariables.cs
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Runtime/CompilerServices/RuntimeOps.RuntimeVariables.cs

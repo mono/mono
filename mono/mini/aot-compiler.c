@@ -298,6 +298,7 @@ typedef struct MonoAotCompile {
 	guint32 label_generator;
 	gboolean llvm;
 	gboolean has_jitted_code;
+	gboolean is_full_aot;
 	MonoAotFileFlags flags;
 	MonoDynamicStream blob;
 	gboolean blob_closed;
@@ -438,7 +439,10 @@ report_loader_error (MonoAotCompile *acfg, MonoError *error, const char *format,
 	va_end (args);
 	mono_error_cleanup (error);
 
-	g_error ("FullAOT cannot continue if there are loader errors");
+	if (acfg->is_full_aot) {
+		fprintf (output, "FullAOT cannot continue if there are loader errors.\n");
+		exit (1);
+	}
 }
 
 /* Wrappers around the image writer functions */
@@ -7138,6 +7142,7 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->write_symbols = TRUE;
 		} else if (str_begins_with (arg, "no-write-symbols")) {
 			opts->write_symbols = FALSE;
+		// Intentionally undocumented -- one-off experiment
 		} else if (str_begins_with (arg, "metadata-only")) {
 			opts->metadata_only = TRUE;
 		} else if (str_begins_with (arg, "bind-to-runtime-version")) {
@@ -7159,6 +7164,7 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->nodebug = TRUE;
 		} else if (str_begins_with (arg, "dwarfdebug")) {
 			opts->dwarf_debug = TRUE;
+		// Intentionally undocumented -- No one remembers what this does. It appears to be ARM-only
 		} else if (str_begins_with (arg, "nopagetrampolines")) {
 			opts->use_trampolines_page = FALSE;
 		} else if (str_begins_with (arg, "ntrampolines=")) {
@@ -7177,6 +7183,7 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->ld_flags = g_strdup (arg + strlen ("ld-flags="));			
 		} else if (str_begins_with (arg, "soft-debug")) {
 			opts->soft_debug = TRUE;
+		// Intentionally undocumented x2-- deprecated
 		} else if (str_begins_with (arg, "gen-seq-points-file=")) {
 			fprintf (stderr, "Mono Warning: aot option gen-seq-points-file= is deprecated.\n");
 		} else if (str_begins_with (arg, "gen-seq-points-file")) {
@@ -7195,8 +7202,10 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->print_skipped_methods = TRUE;
 		} else if (str_begins_with (arg, "stats")) {
 			opts->stats = TRUE;
+		// Intentionally undocumented-- has no known function other than to debug the compiler
 		} else if (str_begins_with (arg, "no-instances")) {
 			opts->no_instances = TRUE;
+		// Intentionally undocumented x4-- Used for internal debugging of compiler
 		} else if (str_begins_with (arg, "log-generics")) {
 			opts->log_generics = TRUE;
 		} else if (str_begins_with (arg, "log-instances=")) {
@@ -7217,8 +7226,10 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 		} else if (str_begins_with (arg, "info")) {
 			printf ("AOT target setup: %s.\n", AOT_TARGET_STR);
 			exit (0);
+		// Intentionally undocumented: Used for precise stack maps, which are not available yet
 		} else if (str_begins_with (arg, "gc-maps")) {
 			mini_gc_enable_gc_maps_for_aot ();
+		// Intentionally undocumented: Used for internal debugging
 		} else if (str_begins_with (arg, "dump")) {
 			opts->dump_json = TRUE;
 		} else if (str_begins_with (arg, "llvmonly")) {
@@ -7235,36 +7246,44 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->verbose = TRUE;
 		} else if (str_begins_with (arg, "help") || str_begins_with (arg, "?")) {
 			printf ("Supported options for --aot:\n");
-			printf ("    outfile=\n");
+			printf ("    asmonly\n");
+			printf ("    bind-to-runtime-version\n");
+			printf ("    bitcode\n");
+			printf ("    data-outfile=\n");
+			printf ("    direct-icalls\n");
+			printf ("    direct-pinvoke\n");
+			printf ("    dwarfdebug\n");
+			printf ("    full\n");
+			printf ("    hybrid\n");
+			printf ("    info\n");
+			printf ("    keep-temps\n");
+			printf ("    llvm\n");
+			printf ("    llvmonly\n");
 			printf ("    llvm-outfile=\n");
 			printf ("    llvm-path=\n");
-			printf ("    temp-path=\n");
-			printf ("    save-temps\n");
-			printf ("    keep-temps\n");
-			printf ("    write-symbols\n");
-			printf ("    metadata-only\n");
-			printf ("    bind-to-runtime-version\n");
-			printf ("    full\n");
-			printf ("    threads=\n");
-			printf ("    static\n");
-			printf ("    asmonly\n");
-			printf ("    asmwriter\n");
-			printf ("    nodebug\n");
-			printf ("    dwarfdebug\n");
-			printf ("    ntrampolines=\n");
-			printf ("    nrgctx-trampolines=\n");
-			printf ("    nimt-trampolines=\n");
-			printf ("    ngsharedvt-trampolines=\n");
-			printf ("    tool-prefix=\n");
-			printf ("    readonly-value=\n");
-			printf ("    soft-debug\n");
 			printf ("    msym-dir=\n");
-			printf ("    gc-maps\n");
-			printf ("    print-skipped\n");
-			printf ("    no-instances\n");
+			printf ("    mtriple\n");
+			printf ("    nimt-trampolines=\n");
+			printf ("    nodebug\n");
+			printf ("    no-direct-calls\n");
+			printf ("    no-write-symbols\n");
+			printf ("    nrgctx-trampolines=\n");
+			printf ("    nrgctx-fetch-trampolines=\n");
+			printf ("    ngsharedvt-trampolines=\n");
+			printf ("    ntrampolines=\n");
+			printf ("    outfile=\n");
+			printf ("    profile=\n");
+			printf ("    profile-only\n");
+			printf ("    print-skipped-methods\n");
+			printf ("    readonly-value=\n");
+			printf ("    save-temps\n");
+			printf ("    soft-debug\n");
+			printf ("    static\n");
 			printf ("    stats\n");
-			printf ("    dump\n");
-			printf ("    info\n");
+			printf ("    temp-path=\n");
+			printf ("    tool-prefix=\n");
+			printf ("    threads=\n");
+			printf ("    write-symbols\n");
 			printf ("    verbose\n");
 			printf ("    help/?\n");
 			exit (0);
@@ -7598,11 +7617,9 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 		return;
 	}
 	if (cfg->exception_type != MONO_EXCEPTION_NONE) {
-		if (acfg->aot_opts.print_skipped_methods) {
-			printf ("Skip (JIT failure): %s\n", mono_method_get_full_name (method));
-			if (cfg->exception_message)
-				printf ("Caused by: %s\n", cfg->exception_message);
-		}
+		/* Some instances cannot be JITted due to constraints etc. */
+		if (!method->is_inflated)
+			report_loader_error (acfg, &cfg->error, "Unable to compile method '%s' due to: '%s'.\n", mono_method_get_full_name (method), mono_error_get_message (&cfg->error));
 		/* Let the exception happen at runtime */
 		return;
 	}
@@ -11470,8 +11487,10 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 		}
 	}
 
-	if (mono_aot_mode_is_full (&acfg->aot_opts))
+	if (mono_aot_mode_is_full (&acfg->aot_opts)) {
 		acfg->flags = (MonoAotFileFlags)(acfg->flags | MONO_AOT_FILE_FLAG_FULL_AOT);
+		acfg->is_full_aot = TRUE;
+	}
 
 	if (mono_threads_is_coop_enabled ())
 		acfg->flags = (MonoAotFileFlags)(acfg->flags | MONO_AOT_FILE_FLAG_SAFEPOINTS);

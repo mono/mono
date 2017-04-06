@@ -345,7 +345,7 @@ namespace Mono.CSharp {
 		void About ()
 		{
 			output.WriteLine (
-				"The Mono C# compiler is Copyright 2001-2011, Novell, Inc.\n\n" +
+				"The Mono C# compiler is Copyright 2001-2011, Novell, Inc. 2011-2016 Xamarin Inc, 2016-2017 Microsoft Corp\n\n" +
 				"The compiler source code is released under the terms of the \n" +
 				"MIT X11 or GNU GPL licenses\n\n" +
 
@@ -1602,7 +1602,7 @@ namespace Mono.CSharp {
 		void Usage ()
 		{
 			output.WriteLine (
-				"Mono C# compiler, Copyright 2001-2011 Novell, Inc., Copyright 2011-2012 Xamarin, Inc\n" +
+				"Mono C# compiler, Copyright 2001-2011 Novell, Inc., 2011-2016 Xamarin, Inc, 2016-2017 Microsoft Corp\n" +
 				"mcs [options] source-files\n" +
 				"   --about              About the Mono C# compiler\n" +
 				"   -addmodule:M1[,Mn]   Adds the module to the generated assembly\n" +

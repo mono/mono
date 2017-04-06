@@ -1438,6 +1438,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test] // bug #319598
+		[Category("NotWorking")]
 		public void LongQueryTest ()
 		{
 			if (ClientVersion == 7)

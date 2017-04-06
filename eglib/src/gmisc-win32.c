@@ -39,7 +39,13 @@
 #include <io.h>
 #include <assert.h>
 
-const gchar *
+gboolean
+g_hasenv (const gchar *variable)
+{
+	return g_getenv (variable) != NULL;
+}
+
+gchar *
 g_getenv(const gchar *variable)
 {
 	gunichar2 *var, *buffer;

@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 #AC_PREREQ([2.62])
 
-AC_INIT(mono, [5.1.0],
+AC_INIT(mono, [5.3.0],
         [http://bugzilla.xamarin.com/enter_bug.cgi?classification=Mono])
 
 AC_CONFIG_SRCDIR([README.md])
@@ -40,7 +40,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # This can be reset to 0 when Mono's version number is bumped
 # since it's part of the corlib version (the prefix '1' in the full
 # version number is to ensure the number isn't treated as octal in C)
-MONO_CORLIB_COUNTER=0
+MONO_CORLIB_COUNTER=1
 MONO_CORLIB_VERSION=`printf "1%02d%02d%02d%03d" $MONO_VERSION_MAJOR $MONO_VERSION_MINOR $MONO_VERSION_BUILD $MONO_CORLIB_COUNTER`
 
 AC_DEFINE_UNQUOTED(MONO_CORLIB_VERSION,$MONO_CORLIB_VERSION,[Version of the corlib-runtime interface])
@@ -234,9 +234,6 @@ case "$host" in
 		# Bionic doesn't provide S_IWRITE; breaks io-layer/io.c
 		CFLAGS="$CFLAGS -DPAGE_SIZE=4096 -DS_IWRITE=S_IWUSR"
 		CXXFLAGS="$CXXFLAGS -DPAGE_SIZE=4096 -DS_IWRITE=S_IWUSR"
-
-		# The configure check can't detect this
-		AC_DEFINE(HAVE_LARGE_FILE_SUPPORT, 1, [Have large file support])
 
 		# to bypass the underscore linker check, can't work when cross-compiling
 		mono_cv_uscore=yes
@@ -2412,6 +2409,8 @@ if test x$host_win32 = xno; then
 	AC_CHECK_FUNCS(system)
 	AC_CHECK_FUNCS(fork execv execve)
 	AC_CHECK_FUNCS(accept4)
+	AC_CHECK_FUNCS(localtime_r)
+	AC_CHECK_FUNCS(mkdtemp)
 	AC_CHECK_SIZEOF(size_t)
 	AC_CHECK_TYPES([blksize_t], [AC_DEFINE(HAVE_BLKSIZE_T)], , 
 		[#include <sys/types.h>
@@ -4442,7 +4441,6 @@ mono/arch/mips/Makefile
 mono/sgen/Makefile
 mono/tests/Makefile
 mono/tests/tests-config
-mono/tests/assemblyresolve/Makefile
 mono/tests/gc-descriptors/Makefile
 mono/tests/testing_gac/Makefile
 mono/unit-tests/Makefile

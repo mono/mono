@@ -1123,7 +1123,7 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test]
-		[ExpectedException(typeof(InvalidOperationException))]
+		[NUnit.Framework.Category ("NotWorking")] //Getting the name of init works fine on Android and Linux, but fails on OSX, SELinux and iOS
 		public void HigherPrivilegeProcessName ()
 		{
 			if (!RunningOnUnix)
@@ -1133,6 +1133,7 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test]
+		[NUnit.Framework.Category ("AndroidNotWorking")] //SELinux makes probing the parent process impossible
 		public void NonChildProcessWaitForExit ()
 		{
 			if (!RunningOnUnix)
@@ -1156,6 +1157,7 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test]
+		[NUnit.Framework.Category ("AndroidNotWorking")] //SELinux makes probing the parent process impossible
 		public void NonChildProcessName ()
 		{
 			if (!RunningOnUnix)
@@ -1170,6 +1172,7 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test]
+		[NUnit.Framework.Category ("AndroidNotWorking")] //SELinux makes probing the parent process impossible
 		public void NonChildProcessId ()
 		{
 			if (!RunningOnUnix)

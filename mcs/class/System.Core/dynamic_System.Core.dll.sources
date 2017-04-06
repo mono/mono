@@ -32,3 +32,5 @@
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/StackSpiller.Temps.cs
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/StackSpiller.cs
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/VariableBinder.cs
+
+../../../external/corefx/src/System.Linq.Expressions/src/System/Runtime/CompilerServices/RuntimeOps.ExpressionQuoter.cs

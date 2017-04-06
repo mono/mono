@@ -111,6 +111,7 @@ monodroid_dirs := \
 	$(mobile_common_dirs)	\
 	Mono.CompilerServices.SymbolWriter	\
 	Mono.Btls.Interface	\
+	Mono.Posix	\
 	$(pcl_facade_dirs)
 
 monotouch_dirs := \
@@ -334,6 +335,11 @@ xbuild_4_0_dirs := \
 	$(xbuild_2_0_dirs)	\
 	Microsoft.Build
 
+orbis_exclude_dirs := \
+ 	Microsoft.CSharp \
+ 	Mono.CSharp \
+ 	Mono.Data.Sqlite
+
 monodroid_SUBDIRS := $(monodroid_dirs)
 monotouch_SUBDIRS := $(monotouch_dirs)
 monotouch_watch_SUBDIRS := $(monotouch_watch_dirs)
@@ -351,7 +357,7 @@ net_4_x_PARALLEL_SUBDIRS := $(net_4_x_parallel_dirs)
 xbuild_12_SUBDIRS := $(xbuild_4_0_dirs)
 xbuild_14_SUBDIRS := $(xbuild_4_0_dirs) Microsoft.NuGet.Build.Tasks
 winaot_SUBDIRS := $(winaot_dirs)
-orbis_SUBDIRS := $(monotouch_dirs)
+orbis_SUBDIRS := $(filter-out $(orbis_exclude_dirs),$(monotouch_dirs))
 
 include ../build/rules.make
 
@@ -390,7 +396,7 @@ all-local $(STD_TARGETS:=-local):
 
 all-local-aot:
 
-monolite_dir := monolite
+monolite_dir := monolite/$(MONO_CORLIB_VERSION)
 
 # Files needed to bootstrap C# compiler
 build_files = mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Core.dll System.Security.dll System.Configuration.dll \

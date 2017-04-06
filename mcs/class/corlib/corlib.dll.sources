@@ -1091,7 +1091,6 @@ ReferenceSources/Type.cs
 
 ../referencesource/mscorlib/system/collections/generic/comparer.cs
 ../referencesource/mscorlib/system/collections/generic/debugview.cs
-../referencesource/mscorlib/system/collections/generic/dictionary.cs
 ../referencesource/mscorlib/system/collections/generic/equalitycomparer.cs
 ../referencesource/mscorlib/system/collections/generic/icollection.cs
 ../referencesource/mscorlib/system/collections/generic/icomparer.cs
@@ -1637,10 +1636,15 @@ ReferenceSources/Type.cs
 ../referencesource/mscorlib/microsoft/win32/safehandles/safewaithandle.cs
 ../referencesource/mscorlib/microsoft/win32/safehandles/win32safehandles.cs
 
+coreclr/SorterArray.cs
+
 corert/AddrofIntrinsics.cs
+corert/Array.Portable.cs
 corert/Debug.cs
 corert/Interop.cs
 corert/Interop.MemAllocFree.cs
+corert/RelocatedTypeAttribute.cs
+corert/RuntimeThread.cs
 
 ../../../external/corert/src/Common/src/Interop/Unix/Interop.Libraries.cs
 
@@ -1648,32 +1652,43 @@ corert/Interop.MemAllocFree.cs
 
 ../../../external/corert/src/Common/src/Interop/Windows/Interop.Libraries.cs
 
-../../../external/corert/src/Common/src/Interop/Windows/mincore/Interop.Errors.cs
-../../../external/corert/src/Common/src/Interop/Windows/mincore/Interop.FormatMessage.cs
 ../../../external/corert/src/Common/src/Interop/Windows/mincore/Interop.MemAllocFree.cs
 ../../../external/corert/src/Common/src/Interop/Windows/mincore/Interop.ThreadPoolIO.cs
-
-../../../external/corert/src/Common/src/System/Diagnostics/Debug.cs
 
 ../../../external/corert/src/Common/src/System/Numerics/Hashing/HashHelpers.cs
 
 ../../../external/corert/src/Runtime.Base/src/System/Runtime/InteropServices/NativeCallableAttribute.cs
 
+
+../../../external/corert/src/System.Private.CoreLib/shared/Interop/Windows/Interop.Errors.cs
+../../../external/corert/src/System.Private.CoreLib/shared/Interop/Windows/Interop.Libraries.cs
+
+../../../external/corert/src/System.Private.CoreLib/shared/Interop/Windows/Kernel32/Interop.FormatMessage.cs
+
+../../../external/corert/src/System.Private.CoreLib/shared/System/TupleExtensions.cs
+
+../../../external/corert/src/System.Private.CoreLib/shared/System/IO/Win32Marshal.cs
+
+../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/CompilerServices/ITuple.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/CompilerServices/TupleElementNamesAttribute.cs
+
+../../../external/corert/src/System.Private.CoreLib/shared/System/Threading/DeferredDisposableLifetime.cs
+
+
 ../../../external/corert/src/System.Private.CoreLib/src/Microsoft/Win32/SafeHandles/SafeThreadPoolIOHandle.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Tuple.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/TupleExtensions.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/ValueTuple.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/LowLevelComparer.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/ObjectEqualityComparer.cs
 
-../../../external/corert/src/System.Private.CoreLib/src/System/IO/Win32Marshal.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/ArraySortHelper.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/IDictionaryDebugView.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/Dictionary.cs
 
-../../../external/corert/src/System.Private.CoreLib/src/System/Runtime/CompilerServices/ITuple.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Runtime/CompilerServices/TupleElementNamesAttribute.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Diagnostics/Debug.cs
 
-../../../external/corert/src/System.Private.CoreLib/src/System/Threading/DeferredDisposableLifetime.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolBoundHandle.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolNativeOverlapped.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolNativeOverlapped.ExecutionContextCallbackArgs.cs

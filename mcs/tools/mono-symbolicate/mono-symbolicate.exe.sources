@@ -95,7 +95,6 @@ Logger.cs
 ../../../external/cecil/Mono.Cecil.PE/*.cs
 ../../../external/cecil/Mono.Collections.Generic/*.cs
 ../../../external/cecil/Mono.Security.Cryptography/*.cs
-../../../external/cecil/System.Security.Cryptography/*.cs
 ../../../external/cecil/symbols/mdb/Mono.Cecil.Mdb/MdbReader.cs
 ../../../external/cecil/symbols/mdb/Mono.Cecil.Mdb/MdbWriter.cs
 ../../../external/cecil/symbols/mdb/Mono.CompilerServices.SymbolWriter/*.cs

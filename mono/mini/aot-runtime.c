@@ -1992,6 +1992,7 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_AOT, "AOT: image '%s' not found: %s", aot_name, err);
 				g_free (err);
 			}
+			g_free (aot_name);
 		}
 		if (!sofile) {
 			GList *l;
@@ -2356,8 +2357,11 @@ mono_aot_init (void)
 #endif
 	mono_counters_register ("Async JIT info size", MONO_COUNTER_INT|MONO_COUNTER_JIT, &async_jit_info_size);
 
-	if (g_getenv ("MONO_LASTAOT"))
-		mono_last_aot_method = atoi (g_getenv ("MONO_LASTAOT"));
+	char *lastaot = g_getenv ("MONO_LASTAOT");
+	if (lastaot) {
+		mono_last_aot_method = atoi (lastaot);
+		g_free (lastaot);
+	}
 	aot_cache_init ();
 }
 

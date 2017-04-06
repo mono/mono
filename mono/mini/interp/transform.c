@@ -636,6 +636,35 @@ get_data_item_index (TransformData *td, void *ptr)
 	return index;
 }
 
+static gboolean
+jit_call_supported (MonoMethod *method, MonoMethodSignature *sig)
+{
+	GSList *l;
+
+	if (sig->param_count > 6)
+		return FALSE;
+	if (sig->pinvoke)
+		return FALSE;
+	if (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)
+		return FALSE;
+	if (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL)
+		return FALSE;
+	if (method->is_inflated)
+		return FALSE;
+	if (method->string_ctor)
+		return FALSE;
+
+	for (l = jit_classes; l; l = l->next) {
+		char *class_name = l->data;
+		// FIXME: Namespaces
+		if (!strcmp (method->klass->name, class_name))
+			return TRUE;
+	}
+
+	//return TRUE;
+	return FALSE;
+}
+
 static void
 interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target_method, MonoDomain *domain, MonoGenericContext *generic_context, unsigned char *is_bb_start, int body_start_offset, MonoClass *constrained_class, gboolean readonly)
 {
@@ -782,8 +811,9 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 			int offset;
 			if (mono_interp_traceopt)
 				g_print ("Optimize tail call of %s.%s\n", target_method->klass->name, target_method->name);
-			for (i = csignature->param_count - 1; i >= 0; --i)
-				store_arg (td, i + csignature->hasthis);
+
+			for (i = csignature->param_count - 1 + !!csignature->hasthis; i >= 0; --i)
+				store_arg (td, i);
 
 			ADD_CODE(td, MINT_BR_S);
 			offset = body_start_offset - ((td->new_ip - 1) - td->new_code);
@@ -858,6 +888,10 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 			ADD_CODE (td, get_data_item_index (td, target_method->klass));
 			ADD_CODE (td, 1 + target_method->klass->rank);
 		}
+	} else if (!calli && !virtual && jit_call_supported (target_method, csignature)) {
+		ADD_CODE(td, MINT_JIT_CALL);
+		ADD_CODE(td, get_data_item_index (td, (void *)mono_interp_get_runtime_method (domain, target_method, &error)));
+		mono_error_assert_ok (&error);
 	} else {
 		if (calli)
 			ADD_CODE(td, native ? MINT_CALLI_NAT : MINT_CALLI);
@@ -865,7 +899,7 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 			ADD_CODE(td, is_void ? MINT_VCALLVIRT : MINT_CALLVIRT);
 		else
 			ADD_CODE(td, is_void ? MINT_VCALL : MINT_CALL);
-		
+
 		if (calli) {
 			ADD_CODE(td, get_data_item_index (td, (void *)csignature));
 		} else {
@@ -944,6 +978,17 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 		td.stack_state [c->handler_offset] = g_malloc0(sizeof(StackInfo));
 		td.stack_state [c->handler_offset][0].type = STACK_TYPE_O;
 		td.stack_state [c->handler_offset][0].klass = NULL; /*FIX*/
+
+		if (c->flags & MONO_EXCEPTION_CLAUSE_FILTER) {
+			td.stack_height [c->data.filter_offset] = 0;
+			td.vt_stack_size [c->data.filter_offset] = 0;
+			td.is_bb_start [c->data.filter_offset] = 1;
+
+			td.stack_height [c->data.filter_offset] = 1;
+			td.stack_state [c->data.filter_offset] = g_malloc0(sizeof(StackInfo));
+			td.stack_state [c->data.filter_offset][0].type = STACK_TYPE_O;
+			td.stack_state [c->data.filter_offset][0].klass = NULL; /*FIX*/
+		}
 	}
 
 	td.ip = header->code;
@@ -2759,6 +2804,7 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 			++td.ip;
 			break;
 		case CEE_ENDFINALLY:
+			td.sp = td.stack;
 			SIMPLE_OP (td, MINT_ENDFINALLY);
 			generating_code = 0;
 			break;
@@ -3072,8 +3118,11 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 				break;
 #if 0
 			case CEE_UNUSED57: ves_abort(); break;
-			case CEE_ENDFILTER: ves_abort(); break;
 #endif
+			case CEE_ENDFILTER:
+				ADD_CODE (&td, MINT_ENDFILTER);
+				++td.ip;
+				break;
 			case CEE_UNALIGNED_:
 				++td.ip;
 				/* FIX: should do something? */;
@@ -3122,6 +3171,7 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 				CHECK_STACK(&td, 3);
 				ADD_CODE(&td, MINT_INITBLK);
 				td.sp -= 3;
+				td.ip += 1;
 				break;
 #if 0
 			case CEE_NO_:
@@ -3201,6 +3251,8 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 		end_off = c->handler_offset + c->handler_len;
 		c->handler_offset = td.in_offsets [c->handler_offset];
 		c->handler_len = td.in_offsets [end_off] - c->handler_offset;
+		if (c->flags & MONO_EXCEPTION_CLAUSE_FILTER)
+			c->data.filter_offset = td.in_offsets [c->data.filter_offset];
 	}
 	rtm->vt_stack_size = td.max_vt_sp;
 	rtm->alloca_size = rtm->locals_size + rtm->args_size + rtm->vt_stack_size + rtm->stack_size;
@@ -3468,7 +3520,7 @@ mono_interp_transform_method (RuntimeMethod *runtime_method, ThreadContext *cont
 	}
 
 	runtime_method->local_offsets = g_malloc (header->num_locals * sizeof(guint32));
-	runtime_method->stack_size = (sizeof (stackval) + 2) * header->max_stack; /* + 1 for returns of called functions  + 1 for 0-ing in trace*/
+	runtime_method->stack_size = (sizeof (stackval)) * (header->max_stack + 2); /* + 1 for returns of called functions  + 1 for 0-ing in trace*/
 	runtime_method->stack_size = (runtime_method->stack_size + 7) & ~7;
 	offset = 0;
 	for (i = 0; i < header->num_locals; ++i) {

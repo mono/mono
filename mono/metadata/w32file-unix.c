@@ -3111,9 +3111,6 @@ mono_w32file_get_std_handle (gint stdhandle)
 			mono_w32error_set_last (ERROR_NO_MORE_FILES);
 			goto done;
 		}
-	} else {
-		/* Add a reference to this handle */
-		mono_w32handle_ref (handle);
 	}
 	
   done:
@@ -5078,7 +5075,7 @@ mono_w32file_init (void)
 /* 	mono_w32handle_register_capabilities (MONO_W32HANDLE_CONSOLE, */
 /* 					    MONO_W32HANDLE_CAP_WAIT); */
 
-	if (g_getenv ("MONO_STRICT_IO_EMULATION"))
+	if (g_hasenv ("MONO_STRICT_IO_EMULATION"))
 		lock_while_writing = TRUE;
 }
 

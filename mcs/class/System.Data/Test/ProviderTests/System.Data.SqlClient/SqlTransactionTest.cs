@@ -63,6 +63,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test]
+		[Category("NotWorking")]
 		public void Commit ()
 		{
 			if (RunningOnMono)

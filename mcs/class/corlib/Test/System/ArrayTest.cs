@@ -1003,7 +1003,6 @@ public class ArrayTest
 		int[] myBoundArray = new int[1] { Int32.MinValue };
 		Array myExtremeArray=Array.CreateInstance ( typeof(String), myLengthArray, myBoundArray );
 		Assert.AreEqual (Int32.MaxValue, ((IList)myExtremeArray).IndexOf (42), "AD04");
-
 	}
 
 	[Test]
@@ -2580,6 +2579,26 @@ public class ArrayTest
 		int IComparable.CompareTo (object obj)
 		{
 			return val.CompareTo ((obj as Comp).val);
+		}
+	}
+
+	[Test]
+	public void TestSortComparableMixed()
+	{
+		var m = new TestSortComparableMixed_Comparer ();
+		var arr = new object [] { 1, 2, m, 4, 5, 6, 7, 8, 9, 10 };
+
+		Array.Sort (arr);
+
+		var expected = new object [] { m, 1, 2, 4, 5, 6, 7, 8, 9, 10 };
+		Assert.AreEqual (expected, arr);
+	}
+
+	class TestSortComparableMixed_Comparer : IComparable
+	{
+		public int CompareTo (object other)
+		{
+			return -1;
 		}
 	}
 

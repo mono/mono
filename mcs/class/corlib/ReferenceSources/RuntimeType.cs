@@ -794,6 +794,13 @@ namespace System
 			}
 		}
 
+		public override bool IsSZArray {
+			get {
+				// TODO: intrinsic
+				return IsArray && ReferenceEquals (this, GetElementType ().MakeArrayType ());
+			}
+		}
+
 		internal override bool IsUserType {
 			get {
 				return false;

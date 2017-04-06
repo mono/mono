@@ -1,4 +1,3 @@
-
 namespace System.Diagnostics.Private
 {
 	static partial class Debug

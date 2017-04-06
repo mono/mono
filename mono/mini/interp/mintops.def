@@ -266,6 +266,8 @@ OPDEF(MINT_JMP, "jmp", 2, MintOpMethodToken)
 
 OPDEF(MINT_CALLRUN, "callrun", 1, MintOpNoArgs)
 
+OPDEF(MINT_ENDFILTER, "endfilter", 1, MintOpNoArgs)
+
 OPDEF(MINT_NEWOBJ, "newobj", 2, MintOpMethodToken) 
 OPDEF(MINT_INITOBJ, "initobj", 3, MintOpInt) 
 OPDEF(MINT_CASTCLASS, "castclass", 2, MintOpClassToken) 
@@ -509,4 +511,5 @@ OPDEF(MINT_MONO_NEWOBJ, "mono_newobj", 2, MintOpClassToken)
 OPDEF(MINT_MONO_RETOBJ, "mono_retobj", 1, MintOpNoArgs)
 OPDEF(MINT_MONO_FREE, "mono_free", 1, MintOpNoArgs)
 
-
+// FIXME: MintOp
+OPDEF(MINT_JIT_CALL, "mono_jit_call", 2, MintOpNoArgs)
