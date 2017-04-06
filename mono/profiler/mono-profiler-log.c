@@ -496,7 +496,41 @@ typedef struct {
 
 	// Has this thread written a thread end event to `buffer`?
 	gboolean ended;
+
+	// Stored in `buffer_lock_state` to take the exclusive lock.
+	int small_id;
 } MonoProfilerThread;
+
+// Do not use these TLS macros directly unless you know what you're doing.
+
+#ifdef HOST_WIN32
+
+#define PROF_TLS_SET(VAL) (TlsSetValue (profiler_tls, (VAL)))
+#define PROF_TLS_GET() ((MonoProfilerThread *) TlsGetValue (profiler_tls))
+#define PROF_TLS_INIT() (profiler_tls = TlsAlloc ())
+#define PROF_TLS_FREE() (TlsFree (profiler_tls))
+
+static DWORD profiler_tls;
+
+#elif HAVE_KW_THREAD
+
+#define PROF_TLS_SET(VAL) (profiler_tls = (VAL))
+#define PROF_TLS_GET() (profiler_tls)
+#define PROF_TLS_INIT()
+#define PROF_TLS_FREE()
+
+static __thread MonoProfilerThread *profiler_tls;
+
+#else
+
+#define PROF_TLS_SET(VAL) (pthread_setspecific (profiler_tls, (VAL)))
+#define PROF_TLS_GET() ((MonoProfilerThread *) pthread_getspecific (profiler_tls))
+#define PROF_TLS_INIT() (pthread_key_create (&profiler_tls, NULL))
+#define PROF_TLS_FREE() (pthread_key_delete (profiler_tls))
+
+static pthread_key_t profiler_tls;
+
+#endif
 
 static uintptr_t
 thread_id (void)
@@ -616,8 +650,37 @@ init_time (void)
 
 #define EXIT_LOG EXIT_LOG_EXPLICIT (DO_SEND, DO_REQUESTS)
 
-static volatile gint32 buffer_rwlock_count;
-static volatile gpointer buffer_rwlock_exclusive;
+/*
+ * This is a reader/writer spin lock of sorts used to protect log buffers.
+ * When a thread modifies its own log buffer, it increments the reader
+ * count. When a thread wants to access log buffers of other threads, it
+ * takes the exclusive lock.
+ *
+ * `buffer_lock_state` holds the reader count in its lower 16 bits, and
+ * the small ID of the thread currently holding the exclusive (writer)
+ * lock in its upper 16 bits. Both can be zero. It's important that the
+ * whole lock state is a single word that can be read/written atomically
+ * to avoid race conditions where there could end up being readers while
+ * the writer lock is held.
+ *
+ * The lock is writer-biased. When a thread wants to take the exclusive
+ * lock, it sets `buffer_lock_exclusive_intent` which will make new
+ * readers spin until it's back to zero, then takes the exclusive lock
+ * once the reader count has reached zero. After releasing the exclusive
+ * lock, it sets `buffer_lock_exclusive_intent` back to zero, which
+ * allow readers to increment the reader count again.
+ *
+ * The writer bias is necessary because we take the exclusive lock in
+ * `gc_event ()` during STW. If the writer bias was not there, and a
+ * program had a large number of threads, STW-induced pauses could be
+ * significantly longer than they have to be. Also, we emit periodic
+ * sync points from the helper thread, which requires taking the
+ * exclusive lock, and we need those to arrive at a reasonably
+ * consistent frequency so that readers don't have to queue up too many
+ * events between sync points.
+ */
+static volatile gint32 buffer_lock_state;
+static volatile gint32 buffer_lock_exclusive_intent;
 
 // Can be used recursively.
 static void
@@ -633,13 +696,27 @@ buffer_lock (void)
 	 * the exclusive lock in the gc_event () callback when the world
 	 * is about to stop.
 	 */
-	if (InterlockedReadPointer (&buffer_rwlock_exclusive) != (gpointer) thread_id ()) {
+	if (InterlockedRead (&buffer_lock_state) != PROF_TLS_GET ()->small_id << 16) {
 		MONO_ENTER_GC_SAFE;
 
-		while (InterlockedReadPointer (&buffer_rwlock_exclusive))
-			mono_thread_info_yield ();
+		gint32 old, new_;
 
-		InterlockedIncrement (&buffer_rwlock_count);
+		do {
+		restart:
+			// Hold off if a thread wants to take the exclusive lock.
+			while (InterlockedRead (&buffer_lock_exclusive_intent))
+				mono_thread_info_yield ();
+
+			old = InterlockedRead (&buffer_lock_state);
+
+			// Is a thread holding the exclusive lock?
+			if (old >> 16) {
+				mono_thread_info_yield ();
+				goto restart;
+			}
+
+			new_ = old + 1;
+		} while (InterlockedCompareExchange (&buffer_lock_state, new_, old) != old);
 
 		MONO_EXIT_GC_SAFE;
 	}
@@ -652,29 +729,31 @@ buffer_unlock (void)
 {
 	mono_memory_barrier ();
 
+	gint32 state = InterlockedRead (&buffer_lock_state);
+
 	// See the comment in buffer_lock ().
-	if (InterlockedReadPointer (&buffer_rwlock_exclusive) == (gpointer) thread_id ())
+	if (state == PROF_TLS_GET ()->small_id << 16)
 		return;
 
-	g_assert (InterlockedRead (&buffer_rwlock_count) && "Why are we trying to decrement a zero reader count?");
+	g_assert (state && "Why are we decrementing a zero reader count?");
+	g_assert (!(state >> 16) && "Why is the exclusive lock held?");
 
-	InterlockedDecrement (&buffer_rwlock_count);
+	InterlockedDecrement (&buffer_lock_state);
 }
 
 // Cannot be used recursively.
 static void
 buffer_lock_excl (void)
 {
-	gpointer tid = (gpointer) thread_id ();
+	gint32 new_ = PROF_TLS_GET ()->small_id << 16;
 
-	g_assert (InterlockedReadPointer (&buffer_rwlock_exclusive) != tid && "Why are we taking the exclusive lock twice?");
+	g_assert (InterlockedRead (&buffer_lock_state) != new_ && "Why are we taking the exclusive lock twice?");
+
+	InterlockedWrite (&buffer_lock_exclusive_intent, 1);
 
 	MONO_ENTER_GC_SAFE;
 
-	while (InterlockedCompareExchangePointer (&buffer_rwlock_exclusive, tid, 0))
-		mono_thread_info_yield ();
-
-	while (InterlockedRead (&buffer_rwlock_count))
+	while (InterlockedCompareExchange (&buffer_lock_state, new_, 0))
 		mono_thread_info_yield ();
 
 	MONO_EXIT_GC_SAFE;
@@ -687,11 +766,15 @@ buffer_unlock_excl (void)
 {
 	mono_memory_barrier ();
 
-	g_assert (InterlockedReadPointer (&buffer_rwlock_exclusive) && "Why is the exclusive lock not held?");
-	g_assert (InterlockedReadPointer (&buffer_rwlock_exclusive) == (gpointer) thread_id () && "Why does another thread hold the exclusive lock?");
-	g_assert (!InterlockedRead (&buffer_rwlock_count) && "Why are there readers when the exclusive lock is held?");
+	gint32 state = InterlockedRead (&buffer_lock_state);
+	gint32 excl = state >> 16;
 
-	InterlockedWritePointer (&buffer_rwlock_exclusive, NULL);
+	g_assert (excl && "Why is the exclusive lock not held?");
+	g_assert (excl == PROF_TLS_GET ()->small_id && "Why does another thread hold the exclusive lock?");
+	g_assert (!(state & 0xFFFF) && "Why are there readers when the exclusive lock is held?");
+
+	InterlockedWrite (&buffer_lock_state, 0);
+	InterlockedWrite (&buffer_lock_exclusive_intent, 0);
 }
 
 typedef struct _BinaryObject BinaryObject;
@@ -747,37 +830,6 @@ typedef struct {
 	MonoJitInfo *ji;
 	uint64_t time;
 } MethodInfo;
-
-// Do not use these TLS macros directly unless you know what you're doing.
-
-#ifdef HOST_WIN32
-
-#define PROF_TLS_SET(VAL) (TlsSetValue (profiler_tls, (VAL)))
-#define PROF_TLS_GET() ((MonoProfilerThread *) TlsGetValue (profiler_tls))
-#define PROF_TLS_INIT() (profiler_tls = TlsAlloc ())
-#define PROF_TLS_FREE() (TlsFree (profiler_tls))
-
-static DWORD profiler_tls;
-
-#elif HAVE_KW_THREAD
-
-#define PROF_TLS_SET(VAL) (profiler_tls = (VAL))
-#define PROF_TLS_GET() (profiler_tls)
-#define PROF_TLS_INIT()
-#define PROF_TLS_FREE()
-
-static __thread MonoProfilerThread *profiler_tls;
-
-#else
-
-#define PROF_TLS_SET(VAL) (pthread_setspecific (profiler_tls, (VAL)))
-#define PROF_TLS_GET() ((MonoProfilerThread *) pthread_getspecific (profiler_tls))
-#define PROF_TLS_INIT() (pthread_key_create (&profiler_tls, NULL))
-#define PROF_TLS_FREE() (pthread_key_delete (profiler_tls))
-
-static pthread_key_t profiler_tls;
-
-#endif
 
 static char*
 pstrdup (const char *s)
@@ -866,6 +918,11 @@ init_thread (MonoProfiler *prof, gboolean add_to_lls)
 	thread->ended = FALSE;
 
 	init_buffer_state (thread);
+
+	thread->small_id = mono_thread_info_get_small_id ();
+
+	if (thread->small_id == -1)
+		thread->small_id = mono_thread_small_id_alloc ();
 
 	/*
 	 * Some internal profiler threads don't need to be cleaned up
@@ -1335,7 +1392,7 @@ send_log_unsafe (gboolean if_needed)
 static void
 sync_point_flush (void)
 {
-	g_assert (InterlockedReadPointer (&buffer_rwlock_exclusive) == (gpointer) thread_id () && "Why don't we hold the exclusive lock?");
+	g_assert (InterlockedRead (&buffer_lock_state) == PROF_TLS_GET ()->small_id << 16 && "Why don't we hold the exclusive lock?");
 
 	MONO_LLS_FOREACH_SAFE (&profiler_thread_list, MonoProfilerThread, thread) {
 		g_assert (thread->attached && "Why is a thread in the LLS not attached?");
@@ -1349,7 +1406,7 @@ sync_point_flush (void)
 static void
 sync_point_mark (MonoProfilerSyncPointType type)
 {
-	g_assert (InterlockedReadPointer (&buffer_rwlock_exclusive) == (gpointer) thread_id () && "Why don't we hold the exclusive lock?");
+	g_assert (InterlockedRead (&buffer_lock_state) == PROF_TLS_GET ()->small_id << 16 && "Why don't we hold the exclusive lock?");
 
 	ENTER_LOG (&sync_points_ctr, logbuffer,
 		EVENT_SIZE /* event */ +
@@ -2206,7 +2263,7 @@ thread_end (MonoProfiler *prof, uintptr_t tid)
 
 	EXIT_LOG_EXPLICIT (NO_SEND, NO_REQUESTS);
 
-	MonoProfilerThread *thread = get_thread ();
+	MonoProfilerThread *thread = PROF_TLS_GET ();
 
 	thread->ended = TRUE;
 	remove_thread (thread);
@@ -3980,8 +4037,10 @@ log_shutdown (MonoProfiler *prof)
 	 */
 	mono_thread_hazardous_try_free_all ();
 
-	g_assert (!InterlockedRead (&buffer_rwlock_count) && "Why is the reader count still non-zero?");
-	g_assert (!InterlockedReadPointer (&buffer_rwlock_exclusive) && "Why does someone still hold the exclusive lock?");
+	gint32 state = InterlockedRead (&buffer_lock_state);
+
+	g_assert (!(state & 0xFFFF) && "Why is the reader count still non-zero?");
+	g_assert (!(state >> 16) && "Why is the exclusive lock still held?");
 
 #if defined (HAVE_SYS_ZLIB)
 	if (prof->gzfile)
@@ -4334,7 +4393,7 @@ handle_writer_queue_entry (MonoProfiler *prof)
 		g_ptr_array_free (entry->methods, TRUE);
 
 		if (wrote_methods) {
-			MonoProfilerThread *thread = get_thread ();
+			MonoProfilerThread *thread = PROF_TLS_GET ();
 
 			dump_buffer_threadless (prof, thread->buffer);
 			init_buffer_state (thread);
