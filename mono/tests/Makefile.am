@@ -1,31 +1,35 @@
 SUBDIRS = gc-descriptors . testing_gac
 
 check-local:
-	$(MAKE) test-jit
-	$(MAKE) test-generic-sharing
-	$(MAKE) test-type-load
-	$(MAKE) test-multi-netmodule
-	$(MAKE) test-cattr-type-load
-	$(MAKE) test-reflection-load-with-context
-	$(MAKE) test-platform
-	$(MAKE) test-console-output
-	$(MAKE) test-env-options
-	$(MAKE) test-unhandled-exception-2
-if !FULL_AOT_TESTS
-	$(MAKE) test-appdomain-unload
-endif
-	$(MAKE) test-process-stress
-	$(MAKE) test-pedump
-	$(MAKE) rm-empty-logs
-	$(MAKE) runtest-gac-loading
+	ok=:; \
+	$(MAKE) test-jit || ok=false; \
+	$(MAKE) test-generic-sharing || ok=false; \
+	$(MAKE) test-type-load || ok=false; \
+	$(MAKE) test-multi-netmodule || ok=false; \
+	$(MAKE) test-cattr-type-load || ok=false; \
+	$(MAKE) test-reflection-load-with-context || ok=false; \
+	$(MAKE) test-platform || ok=false; \
+	$(MAKE) test-console-output || ok=false; \
+	$(MAKE) test-env-options || ok=false; \
+	$(MAKE) test-unhandled-exception-2 || ok=false; \
+	$(MAKE) test-appdomain-unload || ok=false; \
+	$(MAKE) test-process-stress || ok=false; \
+	$(MAKE) test-pedump || ok=false; \
+	$(MAKE) rm-empty-logs || ok=false; \
+	$(MAKE) runtest-gac-loading || ok=false; \
+	$$ok
 
 check-full:
-	$(MAKE) test-sgen
-	$(MAKE) check-local
+	ok=; \
+	$(MAKE) test-sgen || ok=false; \
+	$(MAKE) check-local || ok=false; \
+	$$ok
 
 check-parallel:
-	$(MAKE) compile-tests
-	$(MAKE) check-full
+	ok=; \
+	$(MAKE) compile-tests; \
+	$(MAKE) check-full || ok=false; \
+	$$ok
 
 check-coreclr:
 	$(MAKE) -C $(mono_build_root)/acceptance-tests check-coreclr
@@ -1934,10 +1938,12 @@ TESTSAOT_UNHANDLED_EXCEPTION_255=$(TESTS_UNHANDLED_EXCEPTION_255:.exe=.exe$(PLAT
 endif
 
 test-unhandled-exception-2: $(TESTS_UNHANDLED_EXCEPTION_1) $(TESTS_UNHANDLED_EXCEPTION_255) $(TESTSAOT_UNHANDLED_EXCEPTION_1) $(TESTSAOT_UNHANDLED_EXCEPTION_255)
-	$(MAKE) test-unhandled-exception-2-1-with-managed-handler
-	$(MAKE) test-unhandled-exception-2-1-without-managed-handler
-	$(MAKE) test-unhandled-exception-2-255-with-managed-handler
-	$(MAKE) test-unhandled-exception-2-255-without-managed-handler
+	ok=; \
+	$(MAKE) test-unhandled-exception-2-1-with-managed-handler || ok=false; \
+	$(MAKE) test-unhandled-exception-2-1-without-managed-handler || ok=false; \
+	$(MAKE) test-unhandled-exception-2-255-with-managed-handler || ok=false; \
+	$(MAKE) test-unhandled-exception-2-255-without-managed-handler || ok=false; \
+	$$ok
 
 test-unhandled-exception-2-1-with-managed-handler: $(TESTS_UNHANDLED_EXCEPTION_1) $(TESTSAOT_UNHANDLED_EXCEPTION_1) test-runner.exe
 	$(TOOLS_RUNTIME) $(TEST_RUNNER) -j a --testsuite-name $@ --disabled "$(DISABLED_TESTS)" --expected-exit-code 1 $(TESTS_UNHANDLED_EXCEPTION_1)
@@ -1950,6 +1956,9 @@ test-unhandled-exception-2-255-without-managed-handler: $(TESTS_UNHANDLED_EXCEPT
 
 EXTRA_DIST += appdomain-loader.cs appdomain-tester.cs
 
+if FULL_AOT_TESTS
+test-appdomain-unload:
+else
 appdomain-loader.exe: appdomain-tester.exe
 
 test-appdomain-unload: appdomain-loader.exe appdomain-tester.exe
@@ -1957,6 +1966,7 @@ test-appdomain-unload: appdomain-loader.exe appdomain-tester.exe
 	$(RUNTIME) appdomain-loader.exe > appdomain-loader.exe.2.stdout || exit 1;
 	MONO_DEBUG_ASSEMBLY_UNLOAD=1 $(RUNTIME) -O=gshared appdomain-loader.exe > appdomain-loader.exe.3.stdout || exit 1;
 	MONO_DEBUG_ASSEMBLY_UNLOAD=1 $(RUNTIME) appdomain-loader.exe > appdomain-loader.exe.4.stdout || exit 1;
+endif
 
 EXTRA_DIST += console-output.cs console-output.exe.stderr.expected console-output.exe.stdout.expected
 test-console-output: console-output.exe
