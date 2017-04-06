@@ -4709,6 +4709,37 @@ mono_set_pending_exception (MonoException *exc)
     mono_thread_request_interruption (FALSE);
 }
 
+/*
+ * mono_runtime_set_pending_exception:
+ *
+ *   Set the pending exception of the current thread to \p exc.
+ *   The exception will be thrown when execution returns to managed code.
+ *   Can optionally \p overwrite any existing pending exceptions.
+ *   Return whether the pending exception was set or not.
+ *   It will not be set if:
+ *   * The thread or runtime is stopping or shutting down
+ *   * There already is a pending exception (and \p overwrite is false)
+ */
+mono_bool
+mono_runtime_set_pending_exception (MonoException *exc, mono_bool overwrite)
+{
+	MonoThread *thread = mono_thread_current ();
+
+	/* The thread may already be stopping */
+	if (thread == NULL)
+		return FALSE;
+
+	/* Don't overwrite any existing pending exceptions unless asked to */
+	if (!overwrite && thread->pending_exception)
+		return FALSE;
+
+	MONO_OBJECT_SETREF (thread, pending_exception, exc);
+
+	mono_thread_request_interruption (FALSE);
+
+	return TRUE;
+}
+
 /**
  * mono_thread_interruption_request_flag:
  *
