@@ -3,8 +3,10 @@
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
 
+Mono.Btls.Interface/BtlsKey.cs
 Mono.Btls.Interface/BtlsObject.cs
 Mono.Btls.Interface/BtlsProvider.cs
+Mono.Btls.Interface/BtlsPkcs12.cs
 Mono.Btls.Interface/BtlsX509.cs
 Mono.Btls.Interface/BtlsX509Chain.cs
 Mono.Btls.Interface/BtlsX509Error.cs
