@@ -219,8 +219,7 @@ namespace CppSharp
 
                 var options = new DriverOptions();
 
-                var log = new TextDiagnosticPrinter();
-                var driver = new Driver(options, log);
+                var driver = new Driver(options);
 
                 Setup(driver, target);
                 driver.Setup();
