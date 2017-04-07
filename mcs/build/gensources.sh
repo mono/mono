@@ -29,6 +29,17 @@ process_includes() {
     rm -f $t
 }
 
+check_newline_eof() {
+	file=$1
+	if ! test -n "$file"; then return; fi
+	if ! test -z "$(tail -c 1 "$file")"; then echo "$file: missing newline at end of file."; exit 1; fi
+}
+
+check_newline_eof $incfile
+check_newline_eof $excfile
+check_newline_eof $extfile
+check_newline_eof $extexcfile
+
 rm -f $outfile.makefrag
 
 process_includes $incfile $outfile.inc
