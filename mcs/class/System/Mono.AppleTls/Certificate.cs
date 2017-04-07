@@ -319,12 +319,24 @@ namespace Mono.AppleTls {
 
 	partial class SecKey : INativeObject, IDisposable {
 		internal IntPtr handle;
+		internal IntPtr owner;
 		
 		public SecKey (IntPtr handle, bool owns = false)
 		{
 			this.handle = handle;
 			if (!owns)
 				CFObject.CFRetain (handle);
+		}
+
+		/*
+		 * SecItemImport() returns a SecArrayRef.  We need to free the array, not the items inside it.
+		 * 
+		 */
+		internal SecKey (IntPtr handle, IntPtr owner)
+		{
+			this.handle = handle;
+			this.owner = owner;
+			CFObject.CFRetain (owner);
 		}
 
 		[DllImport (AppleTlsContext.SecurityLibrary, EntryPoint="SecKeyGetTypeID")]
@@ -349,7 +361,10 @@ namespace Mono.AppleTls {
 
 		protected virtual void Dispose (bool disposing)
 		{
-			if (handle != IntPtr.Zero){
+			if (owner != IntPtr.Zero) {
+				CFObject.CFRelease (owner);
+				owner = handle = IntPtr.Zero;
+			} else if (handle != IntPtr.Zero) {
 				CFObject.CFRelease (handle);
 				handle = IntPtr.Zero;
 			}
