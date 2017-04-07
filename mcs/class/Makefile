@@ -114,7 +114,9 @@ monodroid_dirs := \
 	$(pcl_facade_dirs)
 
 monotouch_dirs := \
-	$(testing_aot_full_dirs)
+	$(mobile_common_dirs)	\
+	Mono.Simd			\
+	$(pcl_facade_dirs)
 
 monotouch_watch_dirs := $(filter-out Mono.Security Mono.Data.Tds,$(monotouch_dirs))
 monotouch_tv_dirs   := $(monotouch_dirs)
@@ -130,7 +132,10 @@ monotouch_runtime_dirs := \
 monotouch_watch_runtime_dirs := $(filter-out Mono.Security Mono.Data.Tds,$(monotouch_runtime_dirs))
 monotouch_tv_runtime_dirs := $(monotouch_runtime_dirs)
 
-winaot_dirs := $(monotouch_dirs) System.Drawing
+winaot_dirs := \
+	$(mobile_common_dirs)	\
+	System.Drawing			\
+	$(pcl_facade_dirs)
 
 xammac_4_5_dirs := \
 	corlib	\
@@ -334,10 +339,10 @@ xbuild_4_0_dirs := \
 	$(xbuild_2_0_dirs)	\
 	Microsoft.Build
 
-orbis_exclude_dirs := \
- 	Microsoft.CSharp \
- 	Mono.CSharp \
- 	Mono.Data.Sqlite
+orbis_dirs := \
+	$(filter-out Microsoft.CSharp Mono.CSharp Mono.Data.Sqlite,$(mobile_common_dirs))	\
+	System.Drawing		\
+	$(pcl_facade_dirs)
 
 monodroid_SUBDIRS := $(monodroid_dirs)
 monotouch_SUBDIRS := $(monotouch_dirs)
@@ -356,7 +361,7 @@ net_4_x_PARALLEL_SUBDIRS := $(net_4_x_parallel_dirs)
 xbuild_12_SUBDIRS := $(xbuild_4_0_dirs)
 xbuild_14_SUBDIRS := $(xbuild_4_0_dirs) Microsoft.NuGet.Build.Tasks
 winaot_SUBDIRS := $(winaot_dirs)
-orbis_SUBDIRS := $(filter-out $(orbis_exclude_dirs),$(monotouch_dirs))
+orbis_SUBDIRS := $(orbis_dirs)
 
 include ../build/rules.make
 
