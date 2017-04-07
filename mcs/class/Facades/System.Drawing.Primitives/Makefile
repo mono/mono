@@ -20,6 +20,14 @@ LIB_REFS += System.Drawing
 endif
 endif
 
+ifeq ($(PROFILE),winaot)
+LIB_REFS += System.Drawing
+endif
+
+ifeq ($(PROFILE),orbis)
+LIB_REFS += System.Drawing
+endif
+
 PLATFORM_DEBUG_FLAGS =
 
 NO_TEST = yes
