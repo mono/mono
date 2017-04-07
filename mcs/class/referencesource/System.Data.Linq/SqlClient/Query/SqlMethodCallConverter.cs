@@ -939,7 +939,7 @@ namespace System.Data.Linq.SqlClient {
 
                     //Recognized pattern has set return value so return
                     if (returnValue != null) {
-                        // Assert here to verify that actual translation stays in [....] with
+                        // Assert here to verify that actual translation stays in sync with
                         // method support logic
                         Debug.Assert(GetMethodSupport(mc) == MethodSupport.Method);
                         return returnValue;
@@ -973,7 +973,7 @@ namespace System.Data.Linq.SqlClient {
                         returnValue = TranslateDateTimeOffsetInstanceMethod(mc);
                     }
                     if (returnValue != null) {
-                        // Assert here to verify that actual translation stays in [....] with
+                        // Assert here to verify that actual translation stays in sync with
                         // method support logic
                         Debug.Assert(GetMethodSupport(mc) == MethodSupport.Method);
                         return returnValue;
@@ -2159,7 +2159,7 @@ namespace System.Data.Linq.SqlClient {
                 throw GetMethodSupportException(mc);
             }
 
-            [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity", Justification = "[....]: These issues are related to our use of if-then and case statements for node types, which adds to the complexity count however when reviewed they are easy to navigate and understand.")]
+            [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity", Justification = "Microsoft: These issues are related to our use of if-then and case statements for node types, which adds to the complexity count however when reviewed they are easy to navigate and understand.")]
             internal override SqlNode VisitMember(SqlMember m) {
                 SqlExpression exp = this.VisitExpression(m.Expression);
                 MemberInfo member = m.Member;

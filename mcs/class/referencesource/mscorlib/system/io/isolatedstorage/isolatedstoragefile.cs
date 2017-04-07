@@ -8,8 +8,8 @@
  * 
  * Class:  IsolatedStorageFile
 // 
-// <OWNER>[....]</OWNER>
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
+// <OWNER>Microsoft</OWNER>
  *
  *
  * Purpose: Provides access to Application files and folders
@@ -2304,7 +2304,7 @@ namespace System.IO.IsolatedStorage {
         {
             if (IsRoaming(scope))
             {
-                // no [....] needed, ok to create multiple instances.
+                // no sync needed, ok to create multiple instances.
                 if (s_PermRoaming == null)
                 {
                     s_PermRoaming =  new FileIOPermission(
@@ -2316,7 +2316,7 @@ namespace System.IO.IsolatedStorage {
 
             if (IsMachine(scope))
             {
-                // no [....] needed, ok to create multiple instances.
+                // no sync needed, ok to create multiple instances.
                 if (s_PermMachine == null)
                 {
                     s_PermMachine =  new FileIOPermission(
@@ -2325,7 +2325,7 @@ namespace System.IO.IsolatedStorage {
 
                 return s_PermMachine;
             }
-            // no [....] needed, ok to create multiple instances.
+            // no sync needed, ok to create multiple instances.
             if (s_PermUser == null)
             {
                 s_PermUser =  new FileIOPermission(
@@ -2338,7 +2338,7 @@ namespace System.IO.IsolatedStorage {
         [System.Security.SecurityCritical]  // auto-generated
         private static void DemandAdminPermission()
         {
-            // Ok if more than one instance is created, no need to [....].
+            // Ok if more than one instance is created, no need to sync.
             if (s_PermAdminUser == null)
             {
                 s_PermAdminUser = new IsolatedStorageFilePermission(

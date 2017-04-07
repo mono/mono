@@ -4,7 +4,7 @@
 // </copyright>
 //
 // @owner       daobando
-// @backupOwner [....]
+// @backupOwner Microsoft
 //---------------------------------------------------------------------
 
 using System.Collections.Specialized;

@@ -19,7 +19,7 @@ namespace System.ServiceModel.Activation.Configuration
             {
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("config");
             }
-#pragma warning suppress 56506 // [....], Configuration.SectionGroups cannot be null
+#pragma warning suppress 56506 // Microsoft, Configuration.SectionGroups cannot be null
             return (ServiceModelActivationSectionGroup)config.SectionGroups[ConfigurationStrings.SectionGroupName];
         }
 

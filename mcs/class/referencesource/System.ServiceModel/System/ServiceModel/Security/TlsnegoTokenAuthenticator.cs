@@ -170,8 +170,17 @@ namespace System.ServiceModel.Security
 
         protected override SspiNegotiationTokenAuthenticatorState CreateSspiState(byte[] incomingBlob, string incomingValueTypeUri)
         {
-            TlsSspiNegotiation tlsNegotiation = new TlsSspiNegotiation(SchProtocols.TlsServer | SchProtocols.Ssl3Server,
+            TlsSspiNegotiation tlsNegotiation = null;
+            if (LocalAppContextSwitches.DisableUsingServicePointManagerSecurityProtocols)
+            {
+                tlsNegotiation = new TlsSspiNegotiation(SchProtocols.TlsServer | SchProtocols.Ssl3Server,
                 this.serverToken.Certificate, this.ClientTokenAuthenticator != null);
+            }
+            else
+            {
+                var protocol = (SchProtocols)System.Net.ServicePointManager.SecurityProtocol & SchProtocols.ServerMask;
+                tlsNegotiation = new TlsSspiNegotiation(protocol, this.serverToken.Certificate, this.ClientTokenAuthenticator != null);
+            }
             // Echo only for TrustFeb2005 and ValueType mismatch
             if (this.StandardsManager.MessageSecurityVersion.TrustVersion == TrustVersion.WSTrustFeb2005 && 
                 this.NegotiationValueType.Value != incomingValueTypeUri)

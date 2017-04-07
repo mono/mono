@@ -7,9 +7,9 @@
 //
 // File:        ClientSponsor.cs
 //
-// Contents:    Agent for keeping Server Object's lifetime in [....] with a client's lifetime
+// Contents:    Agent for keeping Server Object's lifetime in sync with a client's lifetime
 //
-// History:     8/9/00   <EMAIL>[....]</EMAIL>        Created
+// History:     8/9/00   <EMAIL>Microsoft</EMAIL>        Created
 //
 //+----------------------------------------------------------------------------
 

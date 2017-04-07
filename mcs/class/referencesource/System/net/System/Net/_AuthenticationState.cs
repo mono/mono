@@ -325,7 +325,7 @@ namespace System.Net {
         internal void Update(HttpWebRequest httpWebRequest) {
             //
             // RAID#86753
-            // [....]: this is just a fix for redirection & kerberos.
+            // Microsoft: this is just a fix for redirection & kerberos.
             // we need to close the Context and call ISC() again with the final
             // blob returned from the server. to do this in general
             // we would probably need to change the IAuthenticationMdule interface and

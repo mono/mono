@@ -55,7 +55,7 @@ namespace System.Xml {
             }
         }
 
-        #region [....] Methods, Properties Check
+        #region Sync Methods, Properties Check
         
         public override XmlReaderSettings Settings {
             get {

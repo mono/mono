@@ -8,7 +8,7 @@ Module Name:
 Abstract:
     The class is a simple wrapper on top of a read stream.
     It will read the exact number of bytes requested.
-    It operates either [....] or async.
+    It operates either sync or async.
 
 Author:
 
@@ -76,7 +76,7 @@ namespace System.Net {
             StartReading();
         }
         //
-        // Loops while subsequest completions are [....]
+        // Loops while subsequest completions are sync
         //
         private void StartReading()
         {

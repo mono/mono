@@ -7,8 +7,8 @@
 **
 ** Class:  FileNotFoundException
 ** 
-** <OWNER>[....]</OWNER>
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Exception for accessing a file that doesn't exist.

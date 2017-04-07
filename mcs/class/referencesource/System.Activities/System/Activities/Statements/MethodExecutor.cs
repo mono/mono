@@ -114,12 +114,12 @@ namespace System.Activities.Statements
                 }
             }
 
-            return BeginMakeMethodCall(context, targetInstance, callback, state); // defer to concrete instance for [....]/async variations
+            return BeginMakeMethodCall(context, targetInstance, callback, state); // defer to concrete instance for sync/async variations
         }
 
         public void EndExecuteMethod(AsyncCodeActivityContext context, IAsyncResult result)
         {
-            EndMakeMethodCall(context, result); // defer to concrete instance for [....]/async variations
+            EndMakeMethodCall(context, result); // defer to concrete instance for sync/async variations
         }
 
         [SuppressMessage("Reliability", "Reliability108:IsFatalRule",

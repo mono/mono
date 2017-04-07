@@ -61,7 +61,7 @@ namespace System {
 
         //private static readonly char FmtMsgMarkerChar='%';
         //private static readonly char FmtMsgFmtCodeChar='!';
-        //These are defined in Com99/src/vm/COMStringCommon.h and must be kept in [....].
+        //These are defined in Com99/src/vm/COMStringCommon.h and must be kept in sync.
         private const int TrimHead = 0;
         private const int TrimTail = 1;
         private const int TrimBoth = 2;
@@ -1403,6 +1403,16 @@ namespace System {
         }
 
 #if !MONO
+        [System.Security.SecuritySafeCritical]  // auto-generated
+         unsafe internal int GetBytesFromEncoding(byte* pbNativeBuffer, int cbNativeBuffer,Encoding encoding)
+         {
+             // encoding == Encoding.UTF8
+             fixed (char* pwzChar = &this.m_firstChar)
+             {
+                 return encoding.GetBytes(pwzChar, m_stringLength, pbNativeBuffer, cbNativeBuffer);
+             }
+         }
+
         [System.Security.SecuritySafeCritical]  // auto-generated
         unsafe internal int ConvertToAnsi(byte *pbNativeBuffer, int cbNativeBuffer, bool fBestFit, bool fThrowOnUnmappableChar)
         {

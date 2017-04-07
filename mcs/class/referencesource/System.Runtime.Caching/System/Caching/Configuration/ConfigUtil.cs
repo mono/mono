@@ -12,6 +12,7 @@ namespace System.Runtime.Caching.Configuration {
         internal const string CacheMemoryLimitMegabytes = "cacheMemoryLimitMegabytes";
         internal const string PhysicalMemoryLimitPercentage = "physicalMemoryLimitPercentage";
         internal const string PollingInterval = "pollingInterval";
+        internal const string UseMemoryCacheManager = "useMemoryCacheManager";
         internal const int DefaultPollingTimeMilliseconds = 120000;
 
         internal static int GetIntValue(NameValueCollection config, string valueName, int defaultValue, bool zeroAllowed, int maxValueAllowed) {
@@ -63,5 +64,19 @@ namespace System.Runtime.Caching.Configuration {
             return iValue;
         }
 
+        internal static bool GetBooleanValue(NameValueCollection config, string valueName, bool defaultValue) {
+            string sValue = config[valueName];
+
+            if (sValue == null) {
+                return defaultValue;
+            }
+
+            bool bValue;
+            if (!Boolean.TryParse(sValue, out bValue)) {
+                throw new ArgumentException(RH.Format(R.Value_must_be_boolean, valueName, sValue), "config");
+            }
+
+            return bValue;
+        }
     }
 }

@@ -780,7 +780,7 @@ namespace System.ServiceModel.Channels
                 {
                     completeSelf = thisPtr.ContinueReading(thisPtr.inputStream.EndRead(result));
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -2193,7 +2193,7 @@ namespace System.ServiceModel.Channels
 
             bool WriteStreamedMessage()
             {
-                // return a bool to determine if we are [....]. 
+                // return a bool to determine if we are sync. 
 
                 if (onWriteStreamedMessage == null)
                 {
@@ -2289,7 +2289,7 @@ namespace System.ServiceModel.Channels
                         completeSelf = true;
                     }
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -2315,7 +2315,7 @@ namespace System.ServiceModel.Channels
                 {
                     completeSelf = thisPtr.WriteStreamedMessage();
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -2349,7 +2349,7 @@ namespace System.ServiceModel.Channels
                     thisPtr.CompleteWriteBody(result);
                     thisPtr.httpOutput.TraceSend();
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -2781,7 +2781,7 @@ namespace System.ServiceModel.Channels
                     {
                         thisPtr.CompleteGetRequestStream(result);
                     }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                     catch (Exception e)
                     {
                         if (Fx.IsFatal(e))

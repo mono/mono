@@ -115,9 +115,9 @@ namespace System.Data.Linq {
 
             // if we have accumulated any failed updates, throw the exception now
             if (conflicts.Count > 0) {
-                // First we need to rollback any value that have already been auto-[....]'d, since the values are no longer valid on the server
+                // First we need to rollback any value that have already been auto-sync'd, since the values are no longer valid on the server
                 changeDirector.RollbackAutoSync();
-                // Also rollback any dependent items that were [....]'d, since their parent values may have been rolled back
+                // Also rollback any dependent items that were sync'd, since their parent values may have been rolled back
                 foreach (TrackedObject syncDependentItem in syncDependentItems) {
                     Debug.Assert(syncDependentItem.IsNew || syncDependentItem.IsPossiblyModified, "SynchDependent data should only be rolled back for new and modified objects.");
                     syncDependentItem.SynchDependentData();

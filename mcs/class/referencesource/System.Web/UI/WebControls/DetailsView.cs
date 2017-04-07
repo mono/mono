@@ -2867,7 +2867,7 @@ namespace System.Web.UI.WebControls {
                 propertyChanged = true;
 
                 // since we can't go into insert mode in a callback, oldPageIndex should never be -1 and different from PageIndex
-                Debug.Assert(oldPageIndex >= 0, "Page indeces are out of [....] from callback hidden field state");
+                Debug.Assert(oldPageIndex >= 0, "Page indeces are out of sync from callback hidden field state");
                 _pageIndex = oldPageIndex;
                 
                 string oldDataKeyString = dataKey;

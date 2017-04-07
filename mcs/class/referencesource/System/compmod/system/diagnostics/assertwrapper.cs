@@ -61,9 +61,9 @@ namespace System.Diagnostics {
 
         [DllImport(ExternDll.Fxassert, CharSet=System.Runtime.InteropServices.CharSet.Ansi, BestFitMapping=true)]
         [ResourceExposure(ResourceScope.None)]
-        [SuppressMessage("Microsoft.Globalization","CA2101:SpecifyMarshalingForPInvokeStringArguments", MessageId="0", Justification="[....]: VsAssert isn't making a security decision here and they don't provide Unicode versions, also it is internal to MS")]
-        [SuppressMessage("Microsoft.Globalization","CA2101:SpecifyMarshalingForPInvokeStringArguments", MessageId="1", Justification="[....]: VsAssert isn't making a security decision here and they don't provide Unicode versions, also it is internal to MS")]
-        [SuppressMessage("Microsoft.Globalization","CA2101:SpecifyMarshalingForPInvokeStringArguments", MessageId="2", Justification="[....]: VsAssert isn't making a security decision here and they don't provide Unicode versions, also it is internal to MS")]
+        [SuppressMessage("Microsoft.Globalization","CA2101:SpecifyMarshalingForPInvokeStringArguments", MessageId="0", Justification="Microsoft: VsAssert isn't making a security decision here and they don't provide Unicode versions, also it is internal to MS")]
+        [SuppressMessage("Microsoft.Globalization","CA2101:SpecifyMarshalingForPInvokeStringArguments", MessageId="1", Justification="Microsoft: VsAssert isn't making a security decision here and they don't provide Unicode versions, also it is internal to MS")]
+        [SuppressMessage("Microsoft.Globalization","CA2101:SpecifyMarshalingForPInvokeStringArguments", MessageId="2", Justification="Microsoft: VsAssert isn't making a security decision here and they don't provide Unicode versions, also it is internal to MS")]
         public static extern int VsAssert(string message, string assert, string file, int line, [In, Out]int[] pfDisable);
 
         [ResourceExposure(ResourceScope.None)]
@@ -203,7 +203,7 @@ namespace System.Diagnostics {
         [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
 #endif
         [SecuritySafeCritical]
-        [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "Microsoft.Win32.UnsafeNativeMethods.ReleaseDC(System.IntPtr,System.IntPtr)", Justification = "[....]: If the DC is not released there's not much we can do.")]
+        [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "Microsoft.Win32.UnsafeNativeMethods.ReleaseDC(System.IntPtr,System.IntPtr)", Justification = "Microsoft: If the DC is not released there's not much we can do.")]
         private static string TruncateMessageToFitScreen(string message) {            
             const int MaxCharsPerLine = 80;
 

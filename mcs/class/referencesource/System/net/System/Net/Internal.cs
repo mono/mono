@@ -446,7 +446,7 @@ namespace System.Net {
     }
     
     //
-    // A simple [....] point, useful for deferring work.  Just an int value with helper methods.
+    // A simple sync point, useful for deferring work.  Just an int value with helper methods.
     // This is used by HttpWebRequest to syncronize Reads/Writes while waiting for a 100-Continue response.
     //
     internal struct InterlockedGate

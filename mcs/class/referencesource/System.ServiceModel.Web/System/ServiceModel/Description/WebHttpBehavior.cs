@@ -116,12 +116,12 @@ namespace System.ServiceModel.Description
             {
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException(SR2.CrossDomainJavascriptNotsupported));
             }
-#pragma warning disable 56506 // [....], endpoint.Contract is never null
+#pragma warning disable 56506 // Microsoft, endpoint.Contract is never null
             this.reflector = new XmlSerializerOperationBehavior.Reflector(endpoint.Contract.Namespace, null);
             foreach (OperationDescription od in endpoint.Contract.Operations)
 #pragma warning restore 56506
             {
-#pragma warning disable 56506 // [....], clientRuntime.Operations is never null
+#pragma warning disable 56506 // Microsoft, clientRuntime.Operations is never null
                 if (clientRuntime.Operations.Contains(od.Name))
 #pragma warning restore 56506
                 {
@@ -169,7 +169,7 @@ namespace System.ServiceModel.Description
             {
                 this.HelpUri = new UriTemplate(HelpPage.OperationListHelpPageUriTemplate).BindByPosition(endpoint.ListenUri);
             }
-#pragma warning disable 56506 // [....], endpoint.Contract is never null
+#pragma warning disable 56506 // Microsoft, endpoint.Contract is never null
             this.reflector = new XmlSerializerOperationBehavior.Reflector(endpoint.Contract.Namespace, null);
 #pragma warning restore 56506
 
@@ -177,12 +177,12 @@ namespace System.ServiceModel.Description
             endpointDispatcher.AddressFilter = new PrefixEndpointAddressMessageFilter(endpoint.Address);
             endpointDispatcher.ContractFilter = new MatchAllMessageFilter();
             // operation selector
-#pragma warning disable 56506 // [....], endpointDispatcher.DispatchRuntime is never null
+#pragma warning disable 56506 // Microsoft, endpointDispatcher.DispatchRuntime is never null
             endpointDispatcher.DispatchRuntime.OperationSelector = this.GetOperationSelector(endpoint);
 #pragma warning restore 56506
             // unhandled operation
             string actionStarOperationName = null;
-#pragma warning disable 56506 // [....], endpoint.Contract is never null
+#pragma warning disable 56506 // Microsoft, endpoint.Contract is never null
             foreach (OperationDescription od in endpoint.Contract.Operations)
 #pragma warning restore 56506
             {
@@ -197,7 +197,7 @@ namespace System.ServiceModel.Description
             {
                 // WCF v1 installs any Action="*" op into UnhandledDispatchOperation, but WebHttpBehavior
                 // doesn't want this, so we 'move' that operation back into normal set of operations
-#pragma warning disable 56506 // [....], endpointDispatcher.DispatchRuntime.{Operations,UnhandledDispatchOperation} is never null
+#pragma warning disable 56506 // Microsoft, endpointDispatcher.DispatchRuntime.{Operations,UnhandledDispatchOperation} is never null
                 endpointDispatcher.DispatchRuntime.Operations.Add(
                     endpointDispatcher.DispatchRuntime.UnhandledDispatchOperation);
 #pragma warning restore 56506
@@ -228,7 +228,7 @@ namespace System.ServiceModel.Description
                 jsonContentType = JsonMessageEncoderFactory.GetContentType(null);
             }
 
-#pragma warning disable 56506 // [....], endpointDispatcher.DispatchRuntime.UnhandledDispatchOperation is never null
+#pragma warning disable 56506 // Microsoft, endpointDispatcher.DispatchRuntime.UnhandledDispatchOperation is never null
             // always install UnhandledDispatchOperation (WebHttpDispatchOperationSelector may choose not to use it)
             endpointDispatcher.DispatchRuntime.UnhandledDispatchOperation = new DispatchOperation(endpointDispatcher.DispatchRuntime, "*", WildcardAction, WildcardAction);
             endpointDispatcher.DispatchRuntime.UnhandledDispatchOperation.DeserializeRequest = false;
@@ -239,13 +239,13 @@ namespace System.ServiceModel.Description
             foreach (OperationDescription od in endpoint.Contract.Operations)
             {
                 DispatchOperation dop = null;
-#pragma warning disable 56506 // [....], endpointDispatcher.DispatchRuntime, DispatchRuntime.Operations are never null
+#pragma warning disable 56506 // Microsoft, endpointDispatcher.DispatchRuntime, DispatchRuntime.Operations are never null
                 if (endpointDispatcher.DispatchRuntime.Operations.Contains(od.Name))
 #pragma warning restore 56506
                 {
                     dop = endpointDispatcher.DispatchRuntime.Operations[od.Name];
                 }
-#pragma warning disable 56506 // [....], endpointDispatcher.DispatchRuntime.UnhandledDispatchOperation is never null
+#pragma warning disable 56506 // Microsoft, endpointDispatcher.DispatchRuntime.UnhandledDispatchOperation is never null
                 else if (endpointDispatcher.DispatchRuntime.UnhandledDispatchOperation.Name == od.Name)
                 {
                     dop = endpointDispatcher.DispatchRuntime.UnhandledDispatchOperation;
@@ -600,7 +600,7 @@ namespace System.ServiceModel.Description
             WebMessageFormat responseFormat = GetResponseFormat(operationDescription);
 
             //  Determine if we should add a json formatter; If the ResponseFormat is json, we always add the json formatter even if the
-            //  operation is XmlSerializerFormat because the formatter constructor throws the exception: "json not valid with XmlSerializerFormat" [[....]]
+            //  operation is XmlSerializerFormat because the formatter constructor throws the exception: "json not valid with XmlSerializerFormat" [Microsoft]
             bool useJson = (responseFormat == WebMessageFormat.Json || SupportsJsonFormat(operationDescription));
 
             IDispatchMessageFormatter innerFormatter;

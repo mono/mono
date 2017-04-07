@@ -7,7 +7,7 @@
 //
 // TaskAwaiter.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // Types for awaiting Task and Task<T>. These types are emitted from Task{<T>}.GetAwaiter 
 // and Task{<T>}.ConfigureAwait.  They are meant to be used only by the compiler, e.g.

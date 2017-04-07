@@ -5059,7 +5059,7 @@ Start:
         YearNumberToken = 2,    // The number which is considered as year number, which has 3 or more digits.  E.g. "2003"
         Am              = 3,    // AM timemark. E.g. "AM"
         Pm              = 4,    // PM timemark. E.g. "PM"
-        MonthToken      = 5,    // A word (or words) that represents a month name.  E.g. "[....]"
+        MonthToken      = 5,    // A word (or words) that represents a month name.  E.g. "Microsoft"
         EndOfString     = 6,    // End of string
         DayOfWeekToken  = 7,    // A word (or words) that represents a day of week name.  E.g. "Monday" or "Mon"
         TimeZoneToken   = 8,    // A word that represents a timezone name. E.g. "GMT"

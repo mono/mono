@@ -4,7 +4,7 @@
 // 
 // ==--==
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 
 using Microsoft.Win32;
 using Microsoft.Win32.SafeHandles;
@@ -72,7 +72,7 @@ namespace System.Threading
         // We need to keep our notion of time synchronized with the calls to SleepEx that drive
         // the underlying native timer.  In Win8, SleepEx does not count the time the machine spends
         // sleeping/hibernating.  Environment.TickCount (GetTickCount) *does* count that time,
-        // so we will get out of [....] with SleepEx if we use that method.
+        // so we will get out of sync with SleepEx if we use that method.
         //
         // So, on Win8, we use QueryUnbiasedInterruptTime instead; this does not count time spent
         // in sleep/hibernate mode.

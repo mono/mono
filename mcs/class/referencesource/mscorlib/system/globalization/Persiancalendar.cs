@@ -13,7 +13,7 @@ namespace System.Globalization {
     //
     ////////////////////////////////////////////////////////////////////////////
     // Modern Persian calendar is a solar observation based calendar. Each new year begins on the day when the vernal equinox occurs before noon.
-    // The epoch is the date of the vernal equinox prior to the epoch of the Islamic calendar ([....] 19, 622 Julian or [....] 22, 622 Gregorian)
+    // The epoch is the date of the vernal equinox prior to the epoch of the Islamic calendar (Microsoft 19, 622 Julian or Microsoft 22, 622 Gregorian)
 
     // There is no Persian year 0. Ordinary years have 365 days. Leap years have 366 days with the last month (Esfand) gaining the extra day.
     /*

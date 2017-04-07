@@ -2,8 +2,8 @@
 // <copyright file="DbConnectionPool.cs" company="Microsoft">
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.ProviderBase {
@@ -758,40 +758,6 @@ namespace System.Data.ProviderBase {
             return (new Timer(new TimerCallback(this.CleanupCallback), null, _cleanupWait, _cleanupWait));
         }
 
-        private static readonly string[] AzureSqlServerEndpoints = {Res.GetString(Res.AZURESQL_GenericEndpoint),
-                                                                    Res.GetString(Res.AZURESQL_GermanEndpoint),
-                                                                    Res.GetString(Res.AZURESQL_UsGovEndpoint),
-                                                                    Res.GetString(Res.AZURESQL_ChinaEndpoint) };
-        private static bool IsAzureSqlServerEndpoint(string dataSource)
-        {
-            // remove server port
-            var i = dataSource.LastIndexOf(',');
-            if (i >= 0)
-            {
-                dataSource = dataSource.Substring(0, i);
-            }
-
-            // check for the instance name
-            i = dataSource.LastIndexOf('\\');
-            if (i >= 0)
-            {
-                dataSource = dataSource.Substring(0, i);
-            }
-
-            // trim redundant whitespaces
-            dataSource = dataSource.Trim();
-
-            // check if servername end with any azure endpoints
-            for (i = 0; i < AzureSqlServerEndpoints.Length; i++)
-            {
-                if (dataSource.EndsWith(AzureSqlServerEndpoints[i], StringComparison.OrdinalIgnoreCase))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
         private bool IsBlockingPeriodEnabled()
         {
             var poolGroupConnectionOptions = _connectionPoolGroup.ConnectionOptions as SqlConnectionString;
@@ -806,7 +772,7 @@ namespace System.Data.ProviderBase {
             {
                 case PoolBlockingPeriod.Auto:
                 {
-                    if (IsAzureSqlServerEndpoint(poolGroupConnectionOptions.DataSource))
+                    if (ADP.IsAzureSqlServerEndpoint(poolGroupConnectionOptions.DataSource))
                     {
                         return false; // in Azure it will be Disabled
                     }
@@ -1243,7 +1209,7 @@ namespace System.Data.ProviderBase {
                 return true;
             }
             else if (retry == null) {
-                // timed out on a [....] call
+                // timed out on a sync call
                 return true;
             }
 

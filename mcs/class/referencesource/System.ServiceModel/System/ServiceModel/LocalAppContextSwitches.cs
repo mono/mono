@@ -15,10 +15,12 @@ namespace System.ServiceModel
         private const string DisableExplicitConnectionCloseHeaderString = "Switch.System.ServiceModel.DisableExplicitConnectionCloseHeader";
         private const string AllowUnsignedToHeaderString = "Switch.System.ServiceModel.AllowUnsignedToHeader";
         private const string DisableCngCertificatesString = "Switch.System.ServiceModel.DisableCngCertificates";
+        internal const string DisableUsingServicePointManagerSecurityProtocolsString = "Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols";
 
         private static int disableExplicitConnectionCloseHeader;
         private static int allowUnsignedToHeader;
         private static int disableCngCertificates;
+        private static int disableUsingServicePointManagerSecurityProtocols;
 
         public static bool DisableExplicitConnectionCloseHeader
         {
@@ -44,6 +46,15 @@ namespace System.ServiceModel
             get
             {
                 return LocalAppContext.GetCachedSwitchValue(DisableCngCertificatesString, ref disableCngCertificates);
+            }
+        }
+
+        public static bool DisableUsingServicePointManagerSecurityProtocols
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return LocalAppContext.GetCachedSwitchValue(DisableUsingServicePointManagerSecurityProtocolsString, ref disableUsingServicePointManagerSecurityProtocols);
             }
         }
 

@@ -6,7 +6,7 @@
 //
 // File: Type.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // Implements System.Type
 //

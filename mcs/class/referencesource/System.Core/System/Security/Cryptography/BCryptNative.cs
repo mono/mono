@@ -75,9 +75,11 @@ namespace System.Security.Cryptography {
         ///     Well known algorithm names
         /// </summary>
         internal static class AlgorithmName {
+            public const string ECDH = "ECDH";                  // BCRYPT_ECDH_ALGORITHM
             public const string ECDHP256 = "ECDH_P256";         // BCRYPT_ECDH_P256_ALGORITHM
             public const string ECDHP384 = "ECDH_P384";         // BCRYPT_ECDH_P384_ALGORITHM
             public const string ECDHP521 = "ECDH_P521";         // BCRYPT_ECDH_P521_ALGORITHM
+            public const string ECDsa = "ECDSA";                // BCRYPT_ECDSA_ALGORITHM
             public const string ECDsaP256 = "ECDSA_P256";       // BCRYPT_ECDSA_P256_ALGORITHM
             public const string ECDsaP384 = "ECDSA_P384";       // BCRYPT_ECDSA_P384_ALGORITHM
             public const string ECDsaP521 = "ECDSA_P521";       // BCRYPT_ECDSA_P521_ALGORITHM
@@ -182,6 +184,10 @@ namespace System.Security.Cryptography {
 
         internal const string BCRYPT_ECCPUBLIC_BLOB = "ECCPUBLICBLOB";
         internal const string BCRYPT_ECCPRIVATE_BLOB = "ECCPRIVATEBLOB";
+
+        internal const string BCRYPT_ECC_CURVE_NISTP256 = "nistP256";
+        internal const string BCRYPT_ECC_CURVE_NISTP384 = "nistP384";
+        internal const string BCRYPT_ECC_CURVE_NISTP521 = "nistP521";
 
         /// <summary>
         ///     Well known BCrypt provider names

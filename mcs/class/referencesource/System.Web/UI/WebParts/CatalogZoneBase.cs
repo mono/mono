@@ -549,7 +549,7 @@ namespace System.Web.UI.WebControls.WebParts {
                 // Mozilla renders padding on an empty TD without this attribute
                 writer.AddStyleAttribute(HtmlTextWriterStyle.Padding, "0");
 
-                // Add an extra row with height of 100%, to [....] up any extra space
+                // Add an extra row with height of 100%, to Microsoft up any extra space
                 // if the height of the zone is larger than its contents
                 // Mac IE needs height=100% set on <td> instead of <tr>
                 writer.AddStyleAttribute(HtmlTextWriterStyle.Height, "100%");

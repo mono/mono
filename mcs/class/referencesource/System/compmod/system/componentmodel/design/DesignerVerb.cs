@@ -30,7 +30,7 @@ namespace System.ComponentModel.Design {
         /// </devdoc>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public DesignerVerb(string text, EventHandler handler)  : base(handler, StandardCommands.VerbFirst) {
-            // NOTICE!!! When you changed the regex here, please change it in Designer\[....]\System\[....]\Design\TableLayoutPanelDesigner.cs
+            // NOTICE!!! When you changed the regex here, please change it in Designer\Microsoft\System\Microsoft\Design\TableLayoutPanelDesigner.cs
             //           method "TrimText", too.
             Properties["Text"] = text == null ? null : Regex.Replace(text, @"\(\&.\)", ""); // VSWHIDBEY 485835
         }

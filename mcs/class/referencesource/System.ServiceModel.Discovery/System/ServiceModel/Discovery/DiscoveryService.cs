@@ -69,7 +69,7 @@ namespace System.ServiceModel.Discovery
 
         void IDiscoveryContractApril2005.ProbeOperation(ProbeMessageApril2005 request)
         {
-            Fx.Assert("The [....] method IDiscoveryContractApril2005.ProbeOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
+            Fx.Assert("The sync method IDiscoveryContractApril2005.ProbeOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
         }
 
         IAsyncResult IDiscoveryContractApril2005.BeginProbeOperation(ProbeMessageApril2005 request, AsyncCallback callback, object state)
@@ -84,7 +84,7 @@ namespace System.ServiceModel.Discovery
 
         void IDiscoveryContractApril2005.ResolveOperation(ResolveMessageApril2005 request)
         {
-            Fx.Assert("The [....] method IDiscoveryContractApril2005.ResolveOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
+            Fx.Assert("The sync method IDiscoveryContractApril2005.ResolveOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
         }
 
         IAsyncResult IDiscoveryContractApril2005.BeginResolveOperation(ResolveMessageApril2005 request, AsyncCallback callback, object state)
@@ -99,7 +99,7 @@ namespace System.ServiceModel.Discovery
 
         void IDiscoveryContractAdhoc11.ProbeOperation(ProbeMessage11 request)
         {
-            Fx.Assert("The [....] method IDiscoveryContractAdhoc11.ProbeOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
+            Fx.Assert("The sync method IDiscoveryContractAdhoc11.ProbeOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
         }
 
         IAsyncResult IDiscoveryContractAdhoc11.BeginProbeOperation(ProbeMessage11 request, AsyncCallback callback, object state)
@@ -114,7 +114,7 @@ namespace System.ServiceModel.Discovery
 
         void IDiscoveryContractAdhoc11.ResolveOperation(ResolveMessage11 request)
         {
-            Fx.Assert("The [....] method IDiscoveryContractAdhoc11.ResolveOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
+            Fx.Assert("The sync method IDiscoveryContractAdhoc11.ResolveOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
         }
 
         IAsyncResult IDiscoveryContractAdhoc11.BeginResolveOperation(ResolveMessage11 request, AsyncCallback callback, object state)
@@ -129,7 +129,7 @@ namespace System.ServiceModel.Discovery
 
         ProbeMatchesMessage11 IDiscoveryContractManaged11.ProbeOperation(ProbeMessage11 request)
         {
-            Fx.Assert("The [....] method IDiscoveryContractManaged11.ProbeOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
+            Fx.Assert("The sync method IDiscoveryContractManaged11.ProbeOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
             return null;
         }
 
@@ -145,7 +145,7 @@ namespace System.ServiceModel.Discovery
 
         ResolveMatchesMessage11 IDiscoveryContractManaged11.ResolveOperation(ResolveMessage11 request)
         {
-            Fx.Assert("The [....] method IDiscoveryContractManaged11.ResolveOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
+            Fx.Assert("The sync method IDiscoveryContractManaged11.ResolveOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
 
             return null;
         }
@@ -162,7 +162,7 @@ namespace System.ServiceModel.Discovery
 
         void IDiscoveryContractAdhocCD1.ProbeOperation(ProbeMessageCD1 request)
         {
-            Fx.Assert("The [....] method IDiscoveryContractAdhocCD1.ProbeOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
+            Fx.Assert("The sync method IDiscoveryContractAdhocCD1.ProbeOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
         }
 
         IAsyncResult IDiscoveryContractAdhocCD1.BeginProbeOperation(ProbeMessageCD1 request, AsyncCallback callback, object state)
@@ -177,7 +177,7 @@ namespace System.ServiceModel.Discovery
 
         void IDiscoveryContractAdhocCD1.ResolveOperation(ResolveMessageCD1 request)
         {
-            Fx.Assert("The [....] method IDiscoveryContractAdhocCD1.ResolveOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
+            Fx.Assert("The sync method IDiscoveryContractAdhocCD1.ResolveOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
         }
 
         IAsyncResult IDiscoveryContractAdhocCD1.BeginResolveOperation(ResolveMessageCD1 request, AsyncCallback callback, object state)
@@ -192,7 +192,7 @@ namespace System.ServiceModel.Discovery
 
         ProbeMatchesMessageCD1 IDiscoveryContractManagedCD1.ProbeOperation(ProbeMessageCD1 request)
         {
-            Fx.Assert("The [....] method IDiscoveryContractManagedCD1.ProbeOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
+            Fx.Assert("The sync method IDiscoveryContractManagedCD1.ProbeOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
             return null;
         }
 
@@ -208,7 +208,7 @@ namespace System.ServiceModel.Discovery
 
         ResolveMatchesMessageCD1 IDiscoveryContractManagedCD1.ResolveOperation(ResolveMessageCD1 request)
         {
-            Fx.Assert("The [....] method IDiscoveryContractManagedCD1.ResolveOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
+            Fx.Assert("The sync method IDiscoveryContractManagedCD1.ResolveOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
             return null;
         }
 

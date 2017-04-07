@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 //
@@ -20,7 +20,7 @@ namespace System.Security.Cryptography {
     // and ciphertext-stealing (CTS).  Not all implementations will support all modes.
     [Serializable]
     [System.Runtime.InteropServices.ComVisible(true)]
-    public enum CipherMode {            // Please keep in [....] with wincrypt.h
+    public enum CipherMode {            // Please keep in sync with wincrypt.h
         CBC = 1,
         ECB = 2,
         OFB = 3,

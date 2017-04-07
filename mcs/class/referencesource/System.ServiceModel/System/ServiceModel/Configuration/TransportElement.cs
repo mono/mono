@@ -27,7 +27,7 @@ using System.ServiceModel.Channels;
             base.CopyFrom(from);
 
             TransportElement source = (TransportElement)from;
-#pragma warning suppress 56506 // [....], base.CopyFrom() validates the argument
+#pragma warning suppress 56506 // Microsoft, base.CopyFrom() validates the argument
             this.ManualAddressing = source.ManualAddressing;
             this.MaxBufferPoolSize = source.MaxBufferPoolSize;
             this.MaxReceivedMessageSize = source.MaxReceivedMessageSize;

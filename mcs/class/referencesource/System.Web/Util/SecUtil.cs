@@ -158,7 +158,7 @@ namespace System.Web.Util {
 
             Hashtable values = new Hashtable(param.Length);
             for (int i = param.Length - 1; i >= 0; i--) {
-                SecUtility.CheckParameter(ref param[i], checkForNull, checkIfEmpty, checkForCommas, maxSize, 
+                SecUtility.CheckParameter(ref param[i], checkForNull, checkIfEmpty, checkForCommas, maxSize,
                     paramName + "[ " + i.ToString(CultureInfo.InvariantCulture) + " ]");
                 if (values.Contains(param[i])) {
                     throw new ArgumentException(SR.GetString(SR.Parameter_duplicate_array_element, paramName), paramName);
@@ -213,6 +213,17 @@ namespace System.Web.Util {
             }
 
             return iValue;
+        }
+
+        internal static TimeUnit GetTimeoutUnit(NameValueCollection config, string valueName, TimeUnit defaultValue) {
+            TimeUnit unit;
+            string sValue = config[valueName];
+
+            if (sValue == null || !Enum.TryParse(sValue, out unit)) {
+                return defaultValue;
+            }
+
+            return unit;
         }
 
         internal static int? GetNullableIntValue(NameValueCollection config, string valueName) {

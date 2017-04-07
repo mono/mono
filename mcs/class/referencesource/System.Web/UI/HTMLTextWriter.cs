@@ -98,7 +98,7 @@ namespace System.Web.UI {
         public const char StyleEqualsChar = ':';
         public const string DefaultTabString = "\t";
 
-        // The DesignerRegion attribute name must be kept in [....] with
+        // The DesignerRegion attribute name must be kept in sync with
         // System.Web.UI.Design.DesignerRegion.DesignerRegionNameAttribute
         internal const string DesignerRegionAttributeName = "_designerRegion";
 

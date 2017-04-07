@@ -412,7 +412,27 @@ namespace System.Web.Security {
                 if (defaultProviderInitialized) {
                     s_InitializedDefaultProvider = true;
                 }
+                // VSO #265267 log warning in event log when using clear password and encrypted password in Membership provider
+                // VSO #366114 Move this to only after the initialization has fully completed.
+                if (s_Initialized && s_InitializedDefaultProvider) {
+                     CheckedPasswordFormat(s_Providers);
+                 }
             }
+        }
+
+        // VSO #265267 we want to log a warning in the event log, whenever detect using clear password or encrypted password formats settings in Membership provider
+        private static void CheckedPasswordFormat(MembershipProviderCollection providers) {
+            //VSO #294931 Since this is an optional feature, we want to prevent any corner cases that were not able to return the password format. In those cases, we will just do nothing and not log any warnings.
+            try {
+
+                foreach (MembershipProvider p in providers) {
+                    if (p != null && (p.PasswordFormat == MembershipPasswordFormat.Clear || p.PasswordFormat == MembershipPasswordFormat.Encrypted)) {
+                        string providerName = p.Name ?? string.Empty;
+                        WebBaseEvent.RaiseRuntimeError(new ConfigurationErrorsException(SR.GetString(SR.MembershipPasswordFormat_Obsoleted, providerName, p.PasswordFormat)), typeof(MembershipProvider));
+                    }
+                }
+            }
+            catch { }
         }
 
         private static bool InitializeSettings(bool initializeGeneralSettings, RuntimeConfig appConfig, MembershipSection settings) {

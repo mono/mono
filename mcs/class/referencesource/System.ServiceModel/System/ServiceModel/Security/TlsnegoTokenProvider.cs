@@ -74,7 +74,16 @@ namespace System.ServiceModel.Security
             {
                 clientCertificate = token.Certificate;
             }
-            TlsSspiNegotiation tlsNegotiation = new TlsSspiNegotiation(String.Empty, SchProtocols.Ssl3Client | SchProtocols.TlsClient, clientCertificate);
+            TlsSspiNegotiation tlsNegotiation = null;
+            if(LocalAppContextSwitches.DisableUsingServicePointManagerSecurityProtocols)
+            {
+                tlsNegotiation = new TlsSspiNegotiation(String.Empty, SchProtocols.Ssl3Client | SchProtocols.TlsClient, clientCertificate);
+            }
+            else
+            {
+                var protocol = (SchProtocols)System.Net.ServicePointManager.SecurityProtocol & SchProtocols.ClientMask;
+                tlsNegotiation = new TlsSspiNegotiation(String.Empty, protocol, clientCertificate);
+            }
             return new SspiNegotiationTokenProviderState(tlsNegotiation);
         }
 

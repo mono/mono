@@ -3,8 +3,8 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 //  </copyright>
 // <owner current="true" primary="true">junfang</owner>
-// <owner current="true" primary="false">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 //**************************************************************************
@@ -47,8 +47,8 @@ namespace System.Data.SqlTypes {
 	private bool m_fNotNull; // false if null, the default ctor (plain 0) will make it Null
         private int m_value;
 
-        private static readonly long x_iIntMin          = Int32.MinValue;   // minimum (signed) int value
-        private static readonly long x_lBitNotIntMax    = ~(long)(Int32.MaxValue);
+        private const long x_iIntMin          = Int32.MinValue;   // minimum (signed) int value
+        private const long x_lBitNotIntMax    = ~(long)(Int32.MaxValue);
 
         // constructor
         // construct a Null

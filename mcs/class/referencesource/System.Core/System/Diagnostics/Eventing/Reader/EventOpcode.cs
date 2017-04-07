@@ -20,7 +20,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace System.Diagnostics.Eventing.Reader {
 
     [System.Security.Permissions.HostProtection(MayLeakOnAbort = true)]
-    [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "Opcode", Justification = "[....]: Shipped public in 3.5, breaking change to fix now.")]
+    [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "Opcode", Justification = "Microsoft: Shipped public in 3.5, breaking change to fix now.")]
     public sealed class EventOpcode {
         private int value;
         private string name;

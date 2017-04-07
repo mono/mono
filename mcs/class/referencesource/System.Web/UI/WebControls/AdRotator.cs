@@ -454,8 +454,8 @@ namespace System.Web.UI.WebControls {
             // try to get it from the ASP.NET cache
             string fileKey = CacheInternal.PrefixAdRotator + ((!String.IsNullOrEmpty(physicalPath)) ?
                 physicalPath : virtualPath.VirtualPathString);
-            CacheInternal cacheInternal = System.Web.HttpRuntime.CacheInternal;
-            AdRec [] adRecs = cacheInternal[fileKey] as AdRec[];
+            CacheStoreProvider cacheInternal = System.Web.HttpRuntime.Cache.InternalCache;
+            AdRec[] adRecs = cacheInternal.Get(fileKey) as AdRec[];
 
             if (adRecs == null) {
                 // Otherwise load it
@@ -481,7 +481,7 @@ namespace System.Web.UI.WebControls {
                 if (dependency != null) {
                     using (dependency) {
                         // and store it in the cache, dependent on the file name
-                        cacheInternal.UtcInsert(fileKey, adRecs, dependency);
+                        cacheInternal.Insert(fileKey, adRecs, new CacheInsertOptions() { Dependencies = dependency });
                     }
                 }
             }

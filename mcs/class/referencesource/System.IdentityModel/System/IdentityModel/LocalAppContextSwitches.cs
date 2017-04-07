@@ -2,6 +2,7 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 //------------------------------------------------------------
 
+#pragma warning disable 0436 //Disable the type conflict warning for the types used by LocalAppContext framework (Quirking)
 namespace System.IdentityModel
 {
     using System;
@@ -16,10 +17,12 @@ namespace System.IdentityModel
         private const string EnableCachedEmptyDefaultAuthorizationContextString = "Switch.System.IdentityModel.EnableCachedEmptyDefaultAuthorizationContext";
         private const string DisableMultipleDNSEntriesInSANCertificateString = "Switch.System.IdentityModel.DisableMultipleDNSEntriesInSANCertificate";
         private const string DisableUpdatingRsaProviderTypeString = "Switch.System.IdentityModel.DisableUpdatingRsaProviderType";
+        private const string DisableCngCertificatesString = "Switch.System.IdentityModel.DisableCngCertificates";
 
         private static int enableCachedEmptyDefaultAuthorizationContext;
         private static int disableMultipleDNSEntriesInSANCertificate;
         private static int disableUpdatingRsaProviderType;
+        private static int disableCngCertificatesString;
 
         public static bool EnableCachedEmptyDefaultAuthorizationContext
         {
@@ -48,6 +51,15 @@ namespace System.IdentityModel
             }
         }
 
+        public static bool DisableCngCertificates
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return LocalAppContext.GetCachedSwitchValue(DisableCngCertificatesString, ref disableCngCertificatesString);
+            }
+        }
+
         public static void SetDefaultsLessOrEqual_452()
         {
 #pragma warning disable BCL0012
@@ -61,6 +73,14 @@ namespace System.IdentityModel
 #pragma warning disable BCL0012
             // Define the switches that should be true for 4.6 or less, false for 4.6.1+.
             LocalAppContext.DefineSwitchDefault(DisableMultipleDNSEntriesInSANCertificateString, true);
+#pragma warning restore BCL0012
+        }
+
+        public static void SetDefaultsLessOrEqual_462()
+        {
+#pragma warning disable BCL0012
+            // Define the switches that should be true for 4.6.2 or less, false for above 4.6.2.
+            LocalAppContext.DefineSwitchDefault(DisableCngCertificatesString, true);
 #pragma warning restore BCL0012
         }
     }

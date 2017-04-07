@@ -227,7 +227,7 @@ namespace System.Media {
         /// <include file='doc\SoundPlayer.uex' path='docs/doc[@for="SoundPlayer.Load"]/*' />
         public void Load() {
             // if we have a file there is nothing to load - we just pass the file to the PlaySound function
-            // if we have a stream, then we start loading the stream [....]
+            // if we have a stream, then we start loading the stream sync
             //
             if (uri != null && uri.IsFile){
                 Debug.Assert(stream == null, "we can't have a stream and a path at the same time");

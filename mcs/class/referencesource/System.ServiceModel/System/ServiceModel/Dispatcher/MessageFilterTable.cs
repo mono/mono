@@ -153,7 +153,7 @@ namespace System.ServiceModel.Dispatcher
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument("filter", SR.GetString(SR.FilterExists));
             }
 
-#pragma warning suppress 56506 // [....], PreSharp generates a false warning here
+#pragma warning suppress 56506 // Microsoft, PreSharp generates a false warning here
             Type filterType = filter.GetType();
             Type tableType = null;
             IMessageFilterTable<TFilterData> table = null;

@@ -10,7 +10,7 @@
 //             an attached property by setting it on the static accessor
 //             for the attachable property).
 //
-//  Created:   04/28/2005 [....]
+//  Created:   04/28/2005 Microsoft
 //
 //------------------------------------------------------------------------
 

@@ -7,7 +7,7 @@
 **
 ** Class: ReflectionContext
 **
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: For Assembly-related stuff.

@@ -305,7 +305,7 @@
                                    // BeginHandler hasn't yet returned, so this call may be synchronous or asynchronous.
                                    // We can tell by comparing the current thread with the thread which called BeginHandler.
                                    // From a correctness perspective, it is valid to invoke the AsyncCallback delegate either
-                                   // synchronously or asynchronously. From [....]: if 'CompletedSynchronously = true', then
+                                   // synchronously or asynchronously. From Microsoft: if 'CompletedSynchronously = true', then
                                    // AsyncCallback invocation can happen either on the same thread or on a different thread,
                                    // just as long as BeginHandler hasn't yet returned (which in true in this case).
                                    if (!asyncResult.CompletedSynchronously) {

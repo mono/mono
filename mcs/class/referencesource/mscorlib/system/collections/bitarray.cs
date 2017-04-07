@@ -7,7 +7,7 @@
 **
 ** Class: BitArray
 **
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: The BitArray class manages a compact array of bit values.

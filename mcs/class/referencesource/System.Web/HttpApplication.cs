@@ -789,7 +789,7 @@ namespace System.Web {
         }
 
         //
-        // [....] event hookup
+        // Sync event hookup
         //
 
 
@@ -1727,7 +1727,7 @@ namespace System.Web {
                 asyncHandler.CreateExecutionSteps(this, steps);
             }
 
-            // [....]
+            // sync
             EventHandler handler = (EventHandler)Events[eventIndex];
 
             if (handler != null) {
@@ -2418,7 +2418,7 @@ namespace System.Web {
                 Debug.Trace("PipelineRuntime", "RegisterEventSubscriptionsWithIIS: name=" + CurrentModuleCollectionKey
                             + ", type=" + httpModule.GetType().FullName + "\n");
 
-                // make sure collections are in [....]
+                // make sure collections are in sync
                 Debug.Assert(moduleInfo.Name == _currentModuleCollectionKey, "moduleInfo.Name == _currentModuleCollectionKey");
 #endif
 
@@ -2566,7 +2566,7 @@ namespace System.Web {
                 hasEvents = true;
             }
 
-            // [....]
+            // sync
             EventHandler handler = (EventHandler)Events[eventIndex];
 
             if (handler != null) {
@@ -4107,7 +4107,7 @@ namespace System.Web {
                                         break;
                                     }
 
-                                    // [....] case (we might be able to stay in managed code and execute another notification)
+                                    // sync case (we might be able to stay in managed code and execute another notification)
                                     if (needToFinishRequest || UnsafeIISMethods.MgdGetNextNotification(wr.RequestContext, RequestNotificationStatus.Continue) != 1) {
                                         isSynchronousCompletion = true;
                                         needToComplete = true;
@@ -4171,14 +4171,14 @@ namespace System.Web {
                             if (threadContext != null) {
                                 if (context.InIndicateCompletion) {
                                     if (isSynchronousCompletion) {
-                                        // this is a [....] completion on an IIS thread
+                                        // this is a sync completion on an IIS thread
                                         threadContext.Synchronize();
                                         // Note for DevDiv 482614 fix:
                                         // If this threadContext is from IndicateCompletionContext (e.g. this thread called IndicateCompletion)
                                         // then we continue reusing this thread and only undo impersonation before unwinding back to IIS.
                                         //
                                         // If this threadContext was created while another thread was and still is in IndicateCompletion call
-                                        // (e.g. [....] or async flush on a background thread from native code, not managed since isReEnty==false)
+                                        // (e.g. sync or async flush on a background thread from native code, not managed since isReEnty==false)
                                         // then we can not reuse this thread and this threadContext will be cleaned before we leave ResumeSteps
                                         // (because needToDisassociateThreadContext was set to true when we created this threadContext)
 
@@ -4210,7 +4210,7 @@ namespace System.Web {
                                 }
                                 else if (isSynchronousCompletion) {
                                     Debug.Assert(needToDisassociateThreadContext == true, "needToDisassociateThreadContext MUST BE true");
-                                    // this is a [....] completion on an IIS thread
+                                    // this is a sync completion on an IIS thread
                                     threadContext.Synchronize();
                                     // get ready to call IndicateCompletion
                                     context.IndicateCompletionContext = threadContext;

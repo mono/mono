@@ -46,14 +46,14 @@ namespace System.IdentityModel
         /// </summary>
         /// <param name="key">The provided key will be used as the encryption and decryption key by default.</param>
         /// <exception cref="ArgumentNullException">When the key is null.</exception>
-        public RsaEncryptionCookieTransform( RSA key )
+        public RsaEncryptionCookieTransform(RSA key)
         {
-            if ( null == key )
+            if (null == key)
             {
-                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull( "key" );
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("key");
             }
             _encryptionKey = key;
-            _decryptionKeys.Add( _encryptionKey );
+            _decryptionKeys.Add(_encryptionKey);
         }
 
         /// <summary>
@@ -63,14 +63,14 @@ namespace System.IdentityModel
         /// <exception cref="ArgumentNullException">When certificate is null.</exception>
         /// <exception cref="ArgumentException">When the certificate has no private key.</exception>
         /// <exception cref="ArgumentException">When the certificate's key is not RSA.</exception>
-        public RsaEncryptionCookieTransform( X509Certificate2 certificate )
+        public RsaEncryptionCookieTransform(X509Certificate2 certificate)
         {
-            if ( null == certificate )
+            if (null == certificate)
             {
-                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull( "certificate" );
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("certificate");
             }
-            _encryptionKey = X509Util.EnsureAndGetPrivateRSAKey( certificate );
-            _decryptionKeys.Add( _encryptionKey );
+            _encryptionKey = X509Util.EnsureAndGetPrivateRSAKey(certificate);
+            _decryptionKeys.Add(_encryptionKey);
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace System.IdentityModel
             set
             {
                 _encryptionKey = value;
-                _decryptionKeys = new List<RSA>( new RSA[] { _encryptionKey });
+                _decryptionKeys = new List<RSA>(new RSA[] { _encryptionKey });
             }
         }
 
@@ -118,11 +118,11 @@ namespace System.IdentityModel
             get { return _hashName; }
             set
             {
-                using ( HashAlgorithm algorithm = CryptoHelper.CreateHashAlgorithm( value ) )
+                using (HashAlgorithm algorithm = CryptoHelper.CreateHashAlgorithm(value))
                 {
-                    if ( algorithm == null )
+                    if (algorithm == null)
                     {
-                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument( "value", SR.GetString( SR.ID6034, value ) );
+                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument("value", SR.GetString(SR.ID6034, value));
                     }
                     _hashName = value;
                 }
@@ -138,23 +138,23 @@ namespace System.IdentityModel
         /// <exception cref="ArgumentException">The argument 'encoded' contains zero bytes.</exception>
         /// <exception cref="NotSupportedException">The platform does not support the requested algorithm.</exception>
         /// <exception cref="InvalidOperationException">There are no decryption keys or none of the keys match.</exception>
-        public override byte[] Decode( byte[] encoded )
+        public override byte[] Decode(byte[] encoded)
         {
-            if ( null == encoded )
+            if (null == encoded)
             {
-                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull( "encoded" );
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("encoded");
             }
 
-            if ( 0 == encoded.Length )
+            if (0 == encoded.Length)
             {
-                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument( "encoded", SR.GetString( SR.ID6045 ) );
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument("encoded", SR.GetString(SR.ID6045));
             }
 
             ReadOnlyCollection<RSA> decryptionKeys = DecryptionKeys;
 
-            if ( 0 == decryptionKeys.Count )
+            if (0 == decryptionKeys.Count)
             {
-                throw DiagnosticUtility.ThrowHelperInvalidOperation( SR.GetString( SR.ID6039 ) );
+                throw DiagnosticUtility.ThrowHelperInvalidOperation(SR.GetString(SR.ID6039));
             }
 
             byte[] encryptedKeyAndIV;
@@ -162,50 +162,50 @@ namespace System.IdentityModel
             byte[] rsaHash;
             RSA rsaDecryptionKey = null;
 
-            using ( HashAlgorithm hash = CryptoHelper.CreateHashAlgorithm( _hashName ) )
+            using (HashAlgorithm hash = CryptoHelper.CreateHashAlgorithm(_hashName))
             {
                 int hashSizeInBytes = hash.HashSize / 8;
-                using ( BinaryReader br = new BinaryReader( new MemoryStream( encoded ) ) )
+                using (BinaryReader br = new BinaryReader(new MemoryStream(encoded)))
                 {
-                    rsaHash = br.ReadBytes( hashSizeInBytes );
+                    rsaHash = br.ReadBytes(hashSizeInBytes);
                     int encryptedKeyAndIVSize = br.ReadInt32();
-                    if ( encryptedKeyAndIVSize < 0 )
+                    if (encryptedKeyAndIVSize < 0)
                     {
-                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError( new FormatException( SR.GetString( SR.ID1006, encryptedKeyAndIVSize ) ) );
+                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SR.GetString(SR.ID1006, encryptedKeyAndIVSize)));
                     }
                     //
                     // Enforce upper limit on key size to prevent large buffer allocation in br.ReadBytes()
                     //
 
-                    if ( encryptedKeyAndIVSize > encoded.Length )
+                    if (encryptedKeyAndIVSize > encoded.Length)
                     {
-                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError( new FormatException( SR.GetString( SR.ID1007 ) ) );
+                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SR.GetString(SR.ID1007)));
                     }
-                    encryptedKeyAndIV = br.ReadBytes( encryptedKeyAndIVSize );
+                    encryptedKeyAndIV = br.ReadBytes(encryptedKeyAndIVSize);
 
                     int encryptedDataSize = br.ReadInt32();
-                    if ( encryptedDataSize < 0 )
+                    if (encryptedDataSize < 0)
                     {
-                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError( new FormatException( SR.GetString( SR.ID1008, encryptedDataSize ) ) );
+                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SR.GetString(SR.ID1008, encryptedDataSize)));
                     }
                     //
                     // Enforce upper limit on data size to prevent large buffer allocation in br.ReadBytes()
                     //
-                    if ( encryptedDataSize > encoded.Length )
+                    if (encryptedDataSize > encoded.Length)
                     {
-                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError( new FormatException( SR.GetString( SR.ID1009 ) ) );
+                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new FormatException(SR.GetString(SR.ID1009)));
                     }
 
-                    encryptedData = br.ReadBytes( encryptedDataSize );
+                    encryptedData = br.ReadBytes(encryptedDataSize);
                 }
 
                 //
                 // Find the decryption key matching the one in XML
                 //
-                foreach ( RSA key in decryptionKeys )
+                foreach (RSA key in decryptionKeys)
                 {
-                    byte[] hashedKey = hash.ComputeHash( Encoding.UTF8.GetBytes( key.ToXmlString( false ) ) );
-                    if ( CryptoHelper.IsEqual( hashedKey, rsaHash ) )
+                    byte[] hashedKey = hash.ComputeHash(Encoding.UTF8.GetBytes(key.ToXmlString(false)));
+                    if (CryptoHelper.IsEqual(hashedKey, rsaHash))
                     {
                         rsaDecryptionKey = key;
                         break;
@@ -213,19 +213,12 @@ namespace System.IdentityModel
                 }
             }
 
-            if ( rsaDecryptionKey == null )
+            if (rsaDecryptionKey == null)
             {
-                throw DiagnosticUtility.ThrowHelperInvalidOperation( SR.GetString( SR.ID6040 ) );
+                throw DiagnosticUtility.ThrowHelperInvalidOperation(SR.GetString(SR.ID6040));
             }
 
-            RSACryptoServiceProvider rsaProvider = rsaDecryptionKey as RSACryptoServiceProvider;
-
-            if ( rsaProvider == null )
-            {
-                throw DiagnosticUtility.ThrowHelperInvalidOperation( SR.GetString( SR.ID6041 ) );
-            }
-
-            byte[] decryptedKeyAndIV = rsaProvider.Decrypt( encryptedKeyAndIV, true );
+            byte[] decryptedKeyAndIV = CngLightup.OaepSha1Decrypt(rsaDecryptionKey, encryptedKeyAndIV);
 
             using (SymmetricAlgorithm symmetricAlgorithm = CryptoHelper.NewDefaultEncryption())
             {
@@ -265,35 +258,35 @@ namespace System.IdentityModel
         /// <exception cref="ArgumentException">The argument 'value' contains zero bytes.</exception>
         /// <exception cref="InvalidOperationException">The EncryptionKey is null.</exception>
         /// <returns>Encoded data</returns>
-        public override byte[] Encode( byte[] value )
+        public override byte[] Encode(byte[] value)
         {
-            if ( null == value )
+            if (null == value)
             {
-                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull( "value" );
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("value");
             }
 
-            if ( 0 == value.Length )
+            if (0 == value.Length)
             {
-                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument( "value", SR.GetString( SR.ID6044 ) );
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument("value", SR.GetString(SR.ID6044));
             }
 
             RSA encryptionKey = EncryptionKey;
 
-            if ( null == encryptionKey )
+            if (null == encryptionKey)
             {
-                throw DiagnosticUtility.ThrowHelperInvalidOperation( SR.GetString( SR.ID6043 ) );
+                throw DiagnosticUtility.ThrowHelperInvalidOperation(SR.GetString(SR.ID6043));
             }
 
             byte[] rsaHash;
             byte[] encryptedKeyAndIV;
             byte[] encryptedData;
 
-            using ( HashAlgorithm hash = CryptoHelper.CreateHashAlgorithm( _hashName ) )
+            using (HashAlgorithm hash = CryptoHelper.CreateHashAlgorithm(_hashName))
             {
-                rsaHash = hash.ComputeHash( Encoding.UTF8.GetBytes( encryptionKey.ToXmlString( false ) ) );
+                rsaHash = hash.ComputeHash(Encoding.UTF8.GetBytes(encryptionKey.ToXmlString(false)));
             }
 
-            using ( SymmetricAlgorithm encryptionAlgorithm = CryptoHelper.NewDefaultEncryption() )
+            using (SymmetricAlgorithm encryptionAlgorithm = CryptoHelper.NewDefaultEncryption())
             {
                 encryptionAlgorithm.GenerateIV();
                 encryptionAlgorithm.GenerateKey();
@@ -314,21 +307,21 @@ namespace System.IdentityModel
                 // Concatenate the Key and IV in an attempt to avoid two minimum block lengths in the cookie
                 //
                 byte[] keyAndIV = new byte[encryptionAlgorithm.Key.Length + encryptionAlgorithm.IV.Length];
-                Array.Copy( encryptionAlgorithm.Key, keyAndIV, encryptionAlgorithm.Key.Length );
-                Array.Copy( encryptionAlgorithm.IV, 0, keyAndIV, encryptionAlgorithm.Key.Length, encryptionAlgorithm.IV.Length );
+                Array.Copy(encryptionAlgorithm.Key, keyAndIV, encryptionAlgorithm.Key.Length);
+                Array.Copy(encryptionAlgorithm.IV, 0, keyAndIV, encryptionAlgorithm.Key.Length, encryptionAlgorithm.IV.Length);
 
-                encryptedKeyAndIV = provider.Encrypt( keyAndIV, true );
+                encryptedKeyAndIV = CngLightup.OaepSha1Encrypt(encryptionKey, keyAndIV);
             }
 
-            using ( MemoryStream ms = new MemoryStream() )
+            using (MemoryStream ms = new MemoryStream())
             {
-                using ( BinaryWriter bw = new BinaryWriter( ms ) )
+                using (BinaryWriter bw = new BinaryWriter(ms))
                 {
-                    bw.Write( rsaHash );
-                    bw.Write( encryptedKeyAndIV.Length );
-                    bw.Write( encryptedKeyAndIV );
-                    bw.Write( encryptedData.Length );
-                    bw.Write( encryptedData );
+                    bw.Write(rsaHash);
+                    bw.Write(encryptedKeyAndIV.Length);
+                    bw.Write(encryptedKeyAndIV);
+                    bw.Write(encryptedData.Length);
+                    bw.Write(encryptedData);
                     bw.Flush();
                 }
 

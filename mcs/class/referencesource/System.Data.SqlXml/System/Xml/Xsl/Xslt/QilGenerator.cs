@@ -2,7 +2,7 @@
 // <copyright file="QilGenerator.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 // <spec>http://www.w3.org/TR/xslt.html</spec>
 // <spec>http://www.w3.org/TR/xslt20/</spec>
 //------------------------------------------------------------------------------

@@ -7,7 +7,7 @@
 //
 // Barrier.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // A barrier allows multiple tasks to cooperatively work on some algorithm in parallel.
 // A group of tasks cooperate by moving through a series of phases, where each in the group signals it has arrived at

@@ -85,6 +85,10 @@ namespace System.Runtime.Caching {
             CacheManagerThread(0);
         }
 
+        internal long GetLastSize() {
+            return this._cacheMemoryMonitor.PressureLast;
+        }
+
         private int GetPercentToTrim() {
             int gen2Count = GC.CollectionCount(2);
             // has there been a Gen 2 Collection since the last trim?

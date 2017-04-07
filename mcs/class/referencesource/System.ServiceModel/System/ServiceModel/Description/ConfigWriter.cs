@@ -40,7 +40,7 @@ namespace System.ServiceModel.Description
 
             channelElement = new ChannelEndpointElement(endpoint.Address, typeName);
 
-            // [....]: review: Use decoded form to preserve the user-given friendly name, however, beacuse our Encoding algorithm
+            // Microsoft: review: Use decoded form to preserve the user-given friendly name, however, beacuse our Encoding algorithm
             // does not touch ASCII names, a name that looks like encoded name will not roundtrip(Example: "_x002C_" will turned into ",")
             channelElement.Name = NamingHelper.GetUniqueName(NamingHelper.CodeName(endpoint.Name), this.CheckIfChannelNameInUse, null);
 
@@ -64,7 +64,7 @@ namespace System.ServiceModel.Description
             BindingDictionaryValue bindingDV;
             if (!bindingTable.TryGetValue(binding, out bindingDV))
             {
-                // [....]: review: Use decoded form to preserve the user-given friendly name, however, beacuse our Encoding algorithm
+                // Microsoft: review: Use decoded form to preserve the user-given friendly name, however, beacuse our Encoding algorithm
                 // does not touch ASCII names, a name that looks like encoded name will not roundtrip(Example: "_x002C_" will turned into ",")
                 string bindingName = NamingHelper.GetUniqueName(NamingHelper.CodeName(binding.Name), this.CheckIfBindingNameInUse, null);
                 string bindingSectionName;

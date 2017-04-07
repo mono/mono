@@ -44,7 +44,7 @@ namespace System.ServiceModel.Dispatcher
         {
             get
             {
-                // PERF, [....], weaken guard?
+                // PERF, Microsoft, weaken guard?
                 return QueryAxisType.Self == this.axis.Type || QueryAxisType.Child == this.axis.Type;
                 //return ((QueryAxisType.Self == this.axis.Type) || ((this.axis.Type != QueryAxisType.DescendantOrSelf || this.axis.Type != QueryAxisType.Descendant)&& 0 != ((QueryNodeType.Element | QueryNodeType.Root) & this.type)));
             }

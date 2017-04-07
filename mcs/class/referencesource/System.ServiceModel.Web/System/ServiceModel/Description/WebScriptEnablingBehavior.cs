@@ -126,7 +126,7 @@ namespace System.ServiceModel.Description
         public override void ApplyClientBehavior(ServiceEndpoint endpoint, ClientRuntime clientRuntime)
         {
             base.ApplyClientBehavior(endpoint, clientRuntime);
-#pragma warning disable 56506 // [....], clientRuntime.MessageInspectors is never null
+#pragma warning disable 56506 // Microsoft, clientRuntime.MessageInspectors is never null
             clientRuntime.MessageInspectors.Add(new JsonClientMessageInspector());
 #pragma warning restore 56506
         }
@@ -142,7 +142,7 @@ namespace System.ServiceModel.Description
             }
             catch (XmlException exception)
             {
-                // [....], need to reference this resource string although fix for 13332 was removed
+                // Microsoft, need to reference this resource string although fix for 13332 was removed
                 throw System.ServiceModel.DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException(SR2.GetString(SR2.InvalidXmlCharactersInNameUsedWithPOSTMethod, string.Empty, string.Empty, string.Empty), exception));
             }
         }
@@ -151,7 +151,7 @@ namespace System.ServiceModel.Description
         {
             base.Validate(endpoint);
 
-#pragma warning disable 56506 // [....], endpoint.Contract is never null
+#pragma warning disable 56506 // Microsoft, endpoint.Contract is never null
             foreach (OperationDescription operation in endpoint.Contract.Operations)
 #pragma warning restore 56506
             {
@@ -232,7 +232,7 @@ namespace System.ServiceModel.Description
                 throw System.ServiceModel.DiagnosticUtility.ExceptionUtility.ThrowHelperArgument(
                     "endpointDispatcher", SR2.GetString(SR2.ChannelDispatcherMustBePresent));
             }
-#pragma warning disable 56506 // [....], endpointDispatcher.ChannelDispatcher.ErrorHandlers never null
+#pragma warning disable 56506 // Microsoft, endpointDispatcher.ChannelDispatcher.ErrorHandlers never null
             endpointDispatcher.ChannelDispatcher.ErrorHandlers.Add(new JsonErrorHandler(endpoint, endpointDispatcher.ChannelDispatcher.IncludeExceptionDetailInFaults));
 #pragma warning restore 56506
         }

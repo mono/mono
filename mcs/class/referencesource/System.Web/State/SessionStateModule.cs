@@ -31,6 +31,8 @@ namespace System.Web.SessionState {
     using System.Web.Hosting;
     using System.Web.Management;
     using Microsoft.Win32;
+    using System.Collections.Concurrent;
+    using System.Collections.Generic;
 
     public delegate void SessionStateItemExpireCallback(
             string id, SessionStateStoreData item);
@@ -153,7 +155,8 @@ namespace System.Web.SessionState {
 
         private static bool s_PollIntervalRegLookedUp = false;
         private static object s_PollIntervalRegLock = new object();
-
+        
+        private static ConcurrentDictionary<string, int> s_queuedRequestsNumPerSession = new ConcurrentDictionary<string, int>();
         //
         // Check if we can optmize for InProc case.
         // Optimization details:
@@ -962,7 +965,7 @@ namespace System.Web.SessionState {
                 Debug.Assert(storedItem != null, "Must succeed in locking session state item.");
             }
         }
-
+        
         bool GetSessionStateItem() {
             bool            isCompleted = true;
             bool            locked;
@@ -1012,6 +1015,8 @@ namespace System.Web.SessionState {
         }
 
         void PollLockedSession() {
+            EnsureRequestTimeout();                        
+
             if (_timerCallback == null) {
                 _timerCallback = new TimerCallback(this.PollLockedSessionCallback);
             }
@@ -1019,6 +1024,9 @@ namespace System.Web.SessionState {
             if (_timer == null) {
                 _timerId++;
 
+                // Only call this method once when setting up timer to poll the session item.
+                // It should not be called in timer's callback
+                QueueRef();
 #if DBG
                 if (!Debug.IsTagPresent("Timer") || Debug.IsTagEnabled("Timer"))
 #endif
@@ -1027,6 +1035,53 @@ namespace System.Web.SessionState {
                         LookUpRegForPollInterval();
                     _timer = new Timer(_timerCallback, _timerId, LOCKED_ITEM_POLLING_INTERVAL, LOCKED_ITEM_POLLING_INTERVAL);
                 }
+            }
+        }
+
+        private void EnsureRequestTimeout() {
+            // Request may be blocked in acquiring state longer than execution timeout.
+            // In that case, it will be timeout anyway after it gets the session item.
+            // So it makes sense to timeout it when waiting longer than executionTimeout.
+            if (_rqContext.HasTimeoutExpired) {
+                throw new HttpException(SR.GetString(SR.Request_timed_out));
+            }
+        }
+
+        private static bool IsRequestQueueEnabled {
+            get {
+                return (AppSettings.RequestQueueLimitPerSession != AppSettings.UnlimitedRequestsPerSession);
+            }
+        } 
+
+        private void QueueRef() {
+            if (!IsRequestQueueEnabled || _rqId == null) { 
+                return;
+            }
+
+            //
+            // Check the limit
+            int count = 0;
+            s_queuedRequestsNumPerSession.TryGetValue(_rqId, out count);
+
+            if (count >= AppSettings.RequestQueueLimitPerSession) {
+                throw new HttpException(SR.GetString(SR.Request_Queue_Limit_Per_Session_Exceeded));
+            }
+
+            //
+            // Add ref
+            s_queuedRequestsNumPerSession.AddOrUpdate(_rqId, 1, (key, value) => value + 1);
+        }
+
+        private void DequeRef() {
+            if (!IsRequestQueueEnabled || _rqId == null) { 
+                return;
+            }
+
+            // Decrement the counter
+            if (s_queuedRequestsNumPerSession.AddOrUpdate(_rqId, 0, (key, value) => value - 1) == 0) {
+                //
+                // Remove the element when no more references
+                ((ICollection<KeyValuePair<string, int>>)s_queuedRequestsNumPerSession).Remove(new KeyValuePair<string,int>(_rqId, 0));
             }
         }
 
@@ -1167,6 +1222,8 @@ namespace System.Web.SessionState {
             }
 
             if (isCompleted || error != null) {
+                DequeRef();
+
                 _rqAr.Complete(false, null, error);
             }
         }

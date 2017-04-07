@@ -271,9 +271,9 @@ namespace System.Web.Compilation {
                 "." + classKey;
 
             // If we have it cached, return it
-            CacheInternal cacheInternal = System.Web.HttpRuntime.CacheInternal;
+            CacheStoreProvider cacheInternal = System.Web.HttpRuntime.Cache.InternalCache;
             string cacheKey = CacheInternal.PrefixResourceProvider + fullClassName;
-            IResourceProvider resourceProvider = cacheInternal[cacheKey] as IResourceProvider;
+            IResourceProvider resourceProvider = cacheInternal.Get(cacheKey) as IResourceProvider;
             if (resourceProvider != null) {
                 return resourceProvider;
             }
@@ -282,7 +282,7 @@ namespace System.Web.Compilation {
             resourceProvider = s_resourceProviderFactory.CreateGlobalResourceProvider(classKey);
 
             // Cache it
-            cacheInternal.UtcInsert(cacheKey, resourceProvider);
+            cacheInternal.Insert(cacheKey, resourceProvider, null);
 
             return resourceProvider;
         }
@@ -296,9 +296,9 @@ namespace System.Web.Compilation {
         internal static IResourceProvider GetLocalResourceProvider(VirtualPath virtualPath) {
 
             // If we have it cached, return it (it may be null if there are no local resources)
-            CacheInternal cacheInternal = System.Web.HttpRuntime.CacheInternal;
+            CacheStoreProvider cacheInternal = System.Web.HttpRuntime.Cache.InternalCache;
             string cacheKey = CacheInternal.PrefixResourceProvider + virtualPath.VirtualPathString;
-            IResourceProvider resourceProvider = cacheInternal[cacheKey] as IResourceProvider;
+            IResourceProvider resourceProvider = cacheInternal.Get(cacheKey) as IResourceProvider;
             if (resourceProvider != null) {
                 return resourceProvider;
             }
@@ -307,7 +307,7 @@ namespace System.Web.Compilation {
             resourceProvider = s_resourceProviderFactory.CreateLocalResourceProvider(virtualPath.VirtualPathString);
 
             // Cache it
-            cacheInternal.UtcInsert(cacheKey, resourceProvider);
+            cacheInternal.Insert(cacheKey, resourceProvider, null);
 
             return resourceProvider;
         }

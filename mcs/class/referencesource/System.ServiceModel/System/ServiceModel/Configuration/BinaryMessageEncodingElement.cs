@@ -63,7 +63,7 @@ namespace System.ServiceModel.Configuration
             binding.MaxSessionSize = this.MaxSessionSize;
             binding.MaxReadPoolSize = this.MaxReadPoolSize;
             binding.MaxWritePoolSize = this.MaxWritePoolSize;
-#pragma warning suppress 56506 //[....]; base.ApplyConfiguration() checks for 'binding' being null
+#pragma warning suppress 56506 //Microsoft; base.ApplyConfiguration() checks for 'binding' being null
             this.ReaderQuotas.ApplyConfiguration(binding.ReaderQuotas);
             binding.CompressionFormat = this.CompressionFormat;
         }
@@ -73,7 +73,7 @@ namespace System.ServiceModel.Configuration
             base.CopyFrom(from);
 
             BinaryMessageEncodingElement source = (BinaryMessageEncodingElement)from;
-#pragma warning suppress 56506 //[....]; base.CopyFrom() checks for 'from' being null
+#pragma warning suppress 56506 //Microsoft; base.CopyFrom() checks for 'from' being null
             this.MaxSessionSize = source.MaxSessionSize;
             this.MaxReadPoolSize = source.MaxReadPoolSize;
             this.MaxWritePoolSize = source.MaxWritePoolSize;

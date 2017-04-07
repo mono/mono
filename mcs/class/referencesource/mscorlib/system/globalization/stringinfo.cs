@@ -11,7 +11,7 @@
 //            A writing system is the collection of scripts and
 //            orthographic rules required to represent a language as text.
 //
-//  Date:     [....] 31, 1999
+//  Date:     Microsoft 31, 1999
 //
 ////////////////////////////////////////////////////////////////////////////
 

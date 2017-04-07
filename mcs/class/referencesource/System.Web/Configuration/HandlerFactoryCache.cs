@@ -15,6 +15,7 @@ namespace System.Web.Configuration {
     using System.Web.Compilation;
     using System.Security;
     using System.Security.Permissions;
+    using System.Web;
 
     /*
      * An object to cache a factory
@@ -37,6 +38,7 @@ namespace System.Web.Configuration {
             else {
                 throw new HttpException(SR.GetString(SR.Type_not_factory_or_handler, instance.GetType().FullName));
             }
+            TelemetryLogger.LogHttpHandler(instance.GetType());
         }
 
         internal HandlerFactoryCache(HttpHandlerAction mapping) {
@@ -54,6 +56,7 @@ namespace System.Web.Configuration {
             else {
                 throw new HttpException(SR.GetString(SR.Type_not_factory_or_handler, instance.GetType().FullName));
             }
+            TelemetryLogger.LogHttpHandler(instance.GetType());
         }
 
         internal IHttpHandlerFactory Factory {

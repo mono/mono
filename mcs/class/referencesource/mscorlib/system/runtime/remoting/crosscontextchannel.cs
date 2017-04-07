@@ -133,7 +133,7 @@ namespace System.Runtime.Remoting.Channels {
             
             try
             {
-                Message.DebugOut("\n::::::::::::::::::::::::: CrossContext Channel: [....] call starting");
+                Message.DebugOut("\n::::::::::::::::::::::::: CrossContext Channel: Sync call starting");
                 IMessage errMsg = ValidateMessage(reqMsg);
                 if (errMsg != null)
                 {
@@ -163,7 +163,7 @@ namespace System.Runtime.Remoting.Channels {
                 }
             }
                 
-            Message.DebugOut("::::::::::::::::::::::::::: CrossContext Channel: [....] call returning!!\n");                         
+            Message.DebugOut("::::::::::::::::::::::::::: CrossContext Channel: Sync call returning!!\n");                         
             return replyMsg;
         }
 

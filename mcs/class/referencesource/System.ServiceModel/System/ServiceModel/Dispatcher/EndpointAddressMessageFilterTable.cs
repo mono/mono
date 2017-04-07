@@ -153,7 +153,7 @@ namespace System.ServiceModel.Dispatcher
             this.candidates.Add(filter, can);
 
             CandidateSet cset;
-#pragma warning suppress 56506 // [....], EndpointAddressMessageFilter.Address can never be null
+#pragma warning suppress 56506 // Microsoft, EndpointAddressMessageFilter.Address can never be null
             Uri soapToAddress = filter.Address.Uri;
             if (filter.IncludeHostNameInComparison)
             {
@@ -181,7 +181,7 @@ namespace System.ServiceModel.Dispatcher
             // Update the QName ref count
             QName qname;
             int cnt;
-#pragma warning suppress 56506 // [....], EndpointAddressMessageFilter.Address can never be null
+#pragma warning suppress 56506 // Microsoft, EndpointAddressMessageFilter.Address can never be null
             for (int i = 0; i < address.Headers.Count; ++i)
             {
                 AddressHeader parameter = address.Headers[i];
@@ -719,7 +719,7 @@ namespace System.ServiceModel.Dispatcher
             }
 
             Candidate can = this.candidates[filter];
-#pragma warning suppress 56506 // [....], EndpointAddressMessageFilter.Address can never be null
+#pragma warning suppress 56506 // Microsoft, EndpointAddressMessageFilter.Address can never be null
             Uri soapToAddress = filter.Address.Uri;
 
             CandidateSet cset = null;
@@ -761,7 +761,7 @@ namespace System.ServiceModel.Dispatcher
         {
             // Adjust QName counts
             QName qname;
-#pragma warning suppress 56506 // [....], EndpointAddress.Headers can never be null
+#pragma warning suppress 56506 // Microsoft, EndpointAddress.Headers can never be null
             for (int i = 0; i < address.Headers.Count; ++i)
             {
                 AddressHeader parameter = address.Headers[i];

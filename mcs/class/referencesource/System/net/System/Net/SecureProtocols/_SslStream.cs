@@ -315,10 +315,12 @@ namespace System.Net.Security {
                 throw new ArgumentOutOfRangeException("count", SR.GetString(SR.net_offset_plus_count));
         }
         //
-        // Combined [....]/async write method. For [....] case asyncRequest==null
+        // Combined sync/async write method. For sync case asyncRequest==null
         //
         private void ProcessWrite(BufferOffsetSize[] buffers, SplitWriteAsyncProtocolRequest asyncRequest)
         {
+            _SslState.CheckThrow(authSuccessCheck: true, shutdownCheck: true);
+
             foreach (BufferOffsetSize buffer in buffers)
             {
                 ValidateParameters(buffer.Buffer, buffer.Offset, buffer.Size);
@@ -357,7 +359,7 @@ namespace System.Net.Security {
             }
         }
         //
-        // Combined [....]/async write method. For [....] case asyncRequest==null
+        // Combined sync/async write method. For sync case asyncRequest==null
         //
         private void ProcessWrite(byte[] buffer, int offset, int count, AsyncProtocolRequest asyncRequest)
         {
@@ -376,6 +378,7 @@ namespace System.Net.Security {
             }
 
             ValidateParameters(buffer, offset, count);
+            _SslState.CheckThrow(authSuccessCheck: true, shutdownCheck: true);
 
             if (Interlocked.Exchange(ref _NestedWrite, 1) == 1)
             {
@@ -634,9 +637,9 @@ namespace System.Net.Security {
         }
 
         //
-        // Combined [....]/async read method. For [....] requet asyncRequest==null
-        // There is a little overheader because we need to pass buffer/offset/count used only in [....].
-        // Still the benefit is that we have a common [....]/async code path.
+        // Combined sync/async read method. For sync requet asyncRequest==null
+        // There is a little overheader because we need to pass buffer/offset/count used only in sync.
+        // Still the benefit is that we have a common sync/async code path.
         //
         private int ProcessRead(byte[] buffer, int offset, int count, AsyncProtocolRequest asyncRequest)
         {
@@ -678,7 +681,7 @@ namespace System.Net.Security {
             }
             finally
             {
-                // if [....] request or exception
+                // if sync request or exception
                 if (asyncRequest == null || failed)
                 {
                     _NestedRead = 0;
@@ -793,7 +796,7 @@ namespace System.Net.Security {
                 }
                 readBytes = asyncRequest.Result;
             }
-            else //[....]
+            else //Sync
             {
                 readBytes = _Reader.ReadPacket(InternalBuffer, SecureChannel.ReadHeaderSize, readBytes);
             }

@@ -7,7 +7,7 @@
 **
 ** Class:  SafeLibraryHandle 
 **
-** <EMAIL>Author: David Gutierrez ([....]) </EMAIL>
+** <EMAIL>Author: David Gutierrez (Microsoft) </EMAIL>
 **
 ** A wrapper for a library handles
 **

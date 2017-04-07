@@ -7,7 +7,7 @@
 **
 ** Class:  File
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: A collection of methods for manipulating Files.

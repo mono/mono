@@ -17,7 +17,7 @@ namespace System.Security.Cryptography {
     ///     Wrapper for NCrypt's implementation of elliptic curve DSA
     /// </summary>
     [System.Security.Permissions.HostProtection(MayLeakOnAbort = true)]
-    public sealed class ECDsaCng : ECDsa {
+    public sealed partial class ECDsaCng : ECDsa {
 #if MONO
         public ECDsaCng() : this(521) {
         }
@@ -75,6 +75,11 @@ namespace System.Security.Cryptography {
 
             LegalKeySizesValue = s_legalKeySizes;
             KeySize = keySize;
+        }
+
+        public ECDsaCng(ECCurve curve) {
+            // GenerateKey will already do all of the validation we need.
+            GenerateKey(curve);
         }
 
         [SecuritySafeCritical]
@@ -266,7 +271,13 @@ namespace System.Security.Cryptography {
                 throw new ArgumentOutOfRangeException("format");
             }
 
-            Key = Rfc4050KeyFormatter.FromXml(xml);
+            bool isEcdh;
+            ECParameters parameters = Rfc4050KeyFormatter.FromXml(xml, out isEcdh);
+
+            // .NET 4.6.2 allowed ECDsaCng to wrap ECDH keys because of interop with non-Windows PFX files.
+            // As a result XML marked as ECDiffieHellman loaded just fine, so no check should be done on the
+            // key type.
+            ImportParameters(parameters);
         }
 
         //
@@ -364,7 +375,8 @@ namespace System.Security.Cryptography {
                 throw new ArgumentOutOfRangeException("format");
             }
 
-            return Rfc4050KeyFormatter.ToXml(Key);
+            ECParameters ecParams = ExportParameters(false);
+            return Rfc4050KeyFormatter.ToXml(ecParams, isEcdh: false);
         }
 
         //
@@ -438,6 +450,19 @@ namespace System.Security.Cryptography {
 
                 return NCryptNative.VerifySignature(keyHandle, hash, signature);
             }
+        }
+
+        public override void GenerateKey(ECCurve curve) {
+            curve.Validate();
+
+            if (m_key != null) {
+                m_key.Dispose();
+                m_key = null;
+            }
+
+            CngKey newKey = CngKey.Create(curve, name => CngKey.EcdsaCurveNameToAlgorithm(name));
+            m_key = newKey;
+            KeySizeValue = newKey.KeySize;
         }
 
         /// <summary>

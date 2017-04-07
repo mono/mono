@@ -122,6 +122,9 @@ Overflow_Int64=Value was either too large or too small for an Int64.
 Overflow_UInt32=Value was either too large or too small for a UInt32.
 Overflow_UInt64=Value was either too large or too small for a UInt64.
 Overflow_Decimal=Value was either too large or too small for a Decimal.
+#
+#endif   // !SILVERLIGHT
+#
 
 #=------------------------------------------------------------------=
 # Strings used by System.Runtime.Versioning
@@ -132,9 +135,6 @@ Argument_FrameworkNameInvalidVersion=FrameworkName version component is invalid.
 Argument_FrameworkNameMissingVersion=FrameworkName version component is missing.
 
 # Strings used by System.Collections
-#
-#endif   // !SILVERLIGHT
-#
 ArgumentNull_Key=Key cannot be null.
 Argument_AddingDuplicate=An entry with the same key already exists.
 Argument_InvalidValue=Argument {0} should be larger than {1}.
@@ -522,6 +522,7 @@ DirectoryObjectPathDescr=The fully qualified, or relative path to the directory 
 FileObjectDetectEncodingDescr=Determines whether the file will be parsed to see if it has a byte order mark indicating its encoding.  If it does, this will be used rather than the current specified encoding.
 FileObjectEncodingDescr=The encoding to use when reading the file. UTF-8 is the default.
 FileObjectPathDescr=The fully qualified, or relative path to the file you wish to read from. E.g., "myfile.txt".
+#endif // !SILVERLIGHT
 
 #=------------------------------------------------------------------=
 # Security resources
@@ -536,9 +537,7 @@ Arg_EmptyOrNullString=String cannot be empty or null.
 Arg_EmptyOrNullArray=Array cannot be empty or null.
 Argument_InvalidClassAttribute=The value of "class" attribute is invalid.
 Argument_InvalidNameType=The value of "nameType" is invalid.
-#endif // !SILVERLIGHT
 InvalidOperation_EnumNotStarted=Enumeration has not started.  Call MoveNext.
-#if !SILVERLIGHT
 InvalidOperation_DuplicateItemNotAllowed=Duplicate items are not allowed in the collection.
 
 Cryptography_Asn_MismatchedOidInCollection=The AsnEncodedData object does not have the same OID for the collection.
@@ -587,6 +586,7 @@ Security_InvalidValue=The {0} value was invalid.
 
 Unknown_Error=Unknown error.
 
+#if !SILVERLIGHT
 security_ServiceNameCollection_EmptyServiceName=A service name must not be null or empty.
 security_ExtendedProtectionPolicy_UseDifferentConstructorForNever=To construct a policy with PolicyEnforcement.Never, the single-parameter constructor must be used.
 security_ExtendedProtectionPolicy_NoEmptyServiceNameCollection=The ServiceNameCollection must contain at least one service name.
@@ -854,10 +854,10 @@ net_uri_BadUnicodeHostForIdn=An invalid Unicode character by IDN standards was s
 net_uri_GenericAuthorityNotDnsSafe=The generic authority '{0}' is not a valid dns name.
 net_uri_NotJustSerialization=UriComponents.SerializationInfoString must not be combined with other UriComponents.
 
+net_emptystringcall=The parameter '{0}' cannot be an empty string.
 
 #if !SILVERLIGHT
 net_emptystringset=This property cannot be set to an empty string.
-net_emptystringcall=The parameter '{0}' cannot be an empty string.
 
 net_headers_req=This collection holds response headers and cannot contain the specified request header.
 net_headers_rsp=This collection holds request headers and cannot contain the specified response header.
@@ -1333,6 +1333,9 @@ net_log_socket_connected=Created connection from {0} to {1}.
 net_log_socket_accepted=Accepted connection from {0} to {1}.
 net_log_socket_not_logged_file=Not logging data from file: {0}.
 net_log_socket_connect_dnsendpoint=Connecting to a DnsEndPoint.
+net_log_set_socketoption_reuseport={0}#{1} - Setting SocketOptionName.ReuseUnicastPort option for socket.
+net_log_set_socketoption_reuseport_not_supported={0}#{1} - SocketOptionName.ReuseUnicastPort option not supported.
+net_log_set_socketoption_reuseport_default_on=Registry key activated to enable SocketOptionName.ReuseUnicastPort socket option by default for all ServicePoint TCP connections.
 
 #=--------------------------
 #= Email Strings
@@ -1699,6 +1702,7 @@ CantGetStandardError=StandardError has not been redirected.
 CantMixSyncAsyncOperation= Cannot mix synchronous and asynchronous operation on process stream.
 NoFileMappingSize=Cannot retrieve file mapping size while initializing configuration settings.
 EnvironmentBlockTooLong=The environment block used to start a process cannot be longer than 65535 bytes.  Your environment block is {0} bytes long.  Remove some environment variables and try again.
+CantSetDuplicatePassword=ProcessStartInfo.Password and ProcessStartInfo.PasswordInClearText cannot both be set. Use only one of them.
 
 #=------------------------------------------------------------------=
 # Strings used by the Serial ports and other areas using IO error reporting
@@ -2130,6 +2134,13 @@ ResetActionRequiresNullItem=Reset action must be initialized with no changed ite
 ResetActionRequiresIndexMinus1=Reset action must be initialized with index -1.
 IndexCannotBeNegative=Index cannot be negative.
 ObservableCollectionReentrancyNotAllowed=Cannot change ObservableCollection during a CollectionChanged event.
+
+InvalidOperation_HCCountOverflow=Handle collector count overflows or underflows.
+Argument_InvalidThreshold=maximumThreshold cannot be less than initialThreshold.
 #endif // !FEATURE_NETCORE
 
 #endif // INCLUDE_DEBUG
+
+#if !SILVERLIGHT
+net_ssl_io_already_shutdown=Write operations are not allowed after the channel was shutdown.
+#endif // !SILVERLIGHT

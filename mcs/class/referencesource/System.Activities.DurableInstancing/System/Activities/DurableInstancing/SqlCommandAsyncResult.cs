@@ -118,7 +118,7 @@ namespace System.Activities.DurableInstancing
             SqlCommandAsyncResult thisPtr = (SqlCommandAsyncResult) state;
             try
             {
-                // this can throw on the [....] path - we need to signal the callback
+                // this can throw on the sync path - we need to signal the callback
                 thisPtr.StartCommandInternal(false);
             }
             catch (Exception e)
@@ -171,7 +171,7 @@ namespace System.Activities.DurableInstancing
                     this.sqlCommand.Connection.Close();
                 }
 
-                // If we completed [....] then any retry is done by the original caller.
+                // If we completed sync then any retry is done by the original caller.
                 if (!result.CompletedSynchronously)
                 {
                     if (this.CheckRetryCountAndTimer() && ShouldRetryForSqlError(exception.Number, RetryErrorOptions.RetryOnEnd))
