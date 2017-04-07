@@ -196,6 +196,7 @@ namespace Mono.ILASM {
                                 keywords ["synchronized"] = new ILToken (Token.K_SYNCHRONIZED, "synchronized");
                                 keywords ["noinlining"] = new ILToken (Token.K_NOINLINING, "noinlining");
                                 keywords ["nooptimization"] = new ILToken (Token.K_NOOPTIMIZATION, "nooptimization");
+                                keywords ["aggressiveinlining"] = new ILToken (Token.K_AGGRESSIVEINLINING, "aggressiveinlining");
                                 keywords ["custom"] = new ILToken (Token.K_CUSTOM, "custom");
                                 keywords ["fixed"] = new ILToken (Token.K_FIXED, "fixed");
                                 keywords ["sysstring"] = new ILToken (Token.K_SYSSTRING, "sysstring");

@@ -1,0 +1,15 @@
+../../build/common/Consts.cs
+../../build/common/SR.cs
+Assembly/AssemblyInfo.cs
+corefx/SR.cs
+
+../../../external/corefx/src/System.Memory/src/System/Pinnable.cs
+../../../external/corefx/src/System.Memory/src/System/Span.cs
+../../../external/corefx/src/System.Memory/src/System/SpanHelpers.Clear.cs
+../../../external/corefx/src/System.Memory/src/System/SpanHelpers.byte.cs
+../../../external/corefx/src/System.Memory/src/System/SpanHelpers.cs
+../../../external/corefx/src/System.Memory/src/System/ReadOnlySpan.cs
+../../../external/corefx/src/System.Memory/src/System/SpanExtensions.cs
+../../../external/corefx/src/System.Memory/src/System/SpanHelpers.T.cs
+../../../external/corefx/src/System.Memory/src/System/SpanHelpers.char.cs
+../../../external/corefx/src/System.Memory/src/System/ThrowHelper.cs
