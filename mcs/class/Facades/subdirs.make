@@ -69,9 +69,11 @@ monotouch_watch_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
 monotouch_tv_SUBDIRS = $(monotouch_SUBDIRS)
 monotouch_tv_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
 
-winaot_PARALLEL_SUBDIRS :=
+winaot_SUBDIRS = $(common_DEPS_SUBDIRS) $(mobile_only_DEPS_SUBDIRS) $(drawing_DEPS_SUBDIRS)
+winaot_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 
-orbis_PARALLEL_SUBDIRS :=
+orbis_SUBDIRS = $(common_DEPS_SUBDIRS) $(mobile_only_DEPS_SUBDIRS) $(drawing_DEPS_SUBDIRS)
+orbis_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 
 mobile_only_SUBDIRS = System.Net.Ping System.Runtime.Serialization.Formatters System.Security.Cryptography.Csp System.Security.Cryptography.Pkcs \
 System.Security.Cryptography.Cng
