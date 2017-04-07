@@ -3,8 +3,8 @@
 //     Copyright (c) Microsoft Corporation. All Rights Reserved.
 //     Information Contained Herein is Proprietary and Confidential.
 //  </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.SqlClient {

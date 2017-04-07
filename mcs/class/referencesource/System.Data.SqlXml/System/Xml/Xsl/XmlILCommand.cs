@@ -2,8 +2,8 @@
 // <copyright file="XmlILCommand.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="false">Microsoft</owner>
 // <spec>http://webdata/xml/specs/querylowlevel.xml</spec>
 //------------------------------------------------------------------------------
 

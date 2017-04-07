@@ -1146,7 +1146,7 @@ namespace System.Reflection
 
     }
 
-    // Keep this in [....] with LOADCTX_TYPE defined in fusionpriv.idl
+    // Keep this in sync with LOADCTX_TYPE defined in fusionpriv.idl
     internal enum LoadContext
     {
        DEFAULT,

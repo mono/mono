@@ -18,6 +18,8 @@ Assembly/AssemblyInfo.cs
 ../System.Windows.Forms/System.Resources/TypeConverterFromResXHandler.cs
 ../System.Windows.Forms/System.Resources/ResXFileRef.cs
 
+ReferenceSources/TelemetryLogger.cs
+
 Mono.Web.Util/ISectionSettingsMapper.cs
 Mono.Web.Util/MembershipSectionMapper.cs
 Mono.Web.Util/RoleManagerSectionMapper.cs

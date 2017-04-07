@@ -47,7 +47,7 @@ namespace System.ServiceModel.Configuration
             PropertyInformationCollection propertyInfo = this.ElementInformation.Properties;
             if (propertyInfo[ConfigurationStrings.ChannelPoolSettings].ValueOrigin != PropertyValueOrigin.Default)
             {
-#pragma warning suppress 56506 // [....], base.ApplyConfiguration() validates the argument
+#pragma warning suppress 56506 // Microsoft, base.ApplyConfiguration() validates the argument
                 this.ChannelPoolSettings.ApplyConfiguration(oneWayBindingElement.ChannelPoolSettings);
             }
             oneWayBindingElement.MaxAcceptedChannels = this.MaxAcceptedChannels;
@@ -59,7 +59,7 @@ namespace System.ServiceModel.Configuration
             base.CopyFrom(from);
 
             OneWayElement source = (OneWayElement)from;
-#pragma warning suppress 56506 // [....], base.CopyFrom() validates the argument
+#pragma warning suppress 56506 // Microsoft, base.CopyFrom() validates the argument
             PropertyInformationCollection propertyInfo = source.ElementInformation.Properties;
             if (propertyInfo[ConfigurationStrings.ChannelPoolSettings].ValueOrigin != PropertyValueOrigin.Default)
             {

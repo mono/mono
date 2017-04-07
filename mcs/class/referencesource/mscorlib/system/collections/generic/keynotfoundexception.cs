@@ -7,7 +7,7 @@
 **
 ** Class: KeyNotFoundException
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Exception class for Hashtable and Dictionary.

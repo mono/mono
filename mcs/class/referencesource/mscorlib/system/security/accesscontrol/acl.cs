@@ -1787,7 +1787,7 @@ namespace System.Security.AccessControl
                     if ( ace == null )
                     {
                         //
-                        // <[....]-9/19/2004> Afraid to yank this statement now
+                        // <Microsoft-9/19/2004> Afraid to yank this statement now
                         // for fear of destabilization, so adding an assert instead
                         //
 

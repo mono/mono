@@ -279,7 +279,7 @@ namespace System.ServiceModel.Activation
 
         override protected bool ReleaseHandle()
         {
-#pragma warning suppress 56523 // [....], should only fail if there is a bug (invalid handle); MDA will be raised
+#pragma warning suppress 56523 // Microsoft, should only fail if there is a bug (invalid handle); MDA will be raised
             return ListenerUnsafeNativeMethods.CloseServiceHandle(handle);
         }
     }

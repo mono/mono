@@ -180,7 +180,7 @@ namespace System.Data.SqlClient
                                     byteBufferUsed += bytesRead;
                                 }
                                 else {
-                                    // We need more data - setup the callback, and mark this as not completed [....]
+                                    // We need more data - setup the callback, and mark this as not completed sync
                                     completedSynchronously = false;
                                     getBytesTask.ContinueWith((t) =>
                                     {

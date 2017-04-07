@@ -738,7 +738,7 @@ namespace System.Data.Linq.SqlClient {
             }
         }
 
-        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification="[....]: Code needs to return false regarless of exception.")]
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification="Microsoft: Code needs to return false regarless of exception.")]
         [ResourceExposure(ResourceScope.None)] // Exposure is via other methods that set dbName.
         [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)] // File.Exists method call.
         bool IProvider.DatabaseExists() {
@@ -1779,7 +1779,7 @@ namespace System.Data.Linq.SqlClient {
             IObjectReaderSession session;
             int iReturnParameter = -1;
             object value;
-            [SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields", Justification = "[....]: used in an assert in ReturnValue.set")]
+            [SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields", Justification = "Microsoft: used in an assert in ReturnValue.set")]
             bool useReturnValue;
             bool isDisposed;
 

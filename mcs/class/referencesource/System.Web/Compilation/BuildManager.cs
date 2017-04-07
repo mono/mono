@@ -461,7 +461,7 @@ namespace System.Web.Compilation {
             //
 
             // Always try the memory cache first
-            _memoryCache = new MemoryBuildResultCache(HttpRuntime.CacheInternal);
+            _memoryCache = new MemoryBuildResultCache();
 
             // Use the standard disk cache for regular apps
             _codeGenCache = new StandardDiskBuildResultCache(HttpRuntime.CodegenDirInternal);
@@ -479,7 +479,7 @@ namespace System.Web.Compilation {
             //
 
             // Always try the memory cache first
-            _memoryCache = new MemoryBuildResultCache(HttpRuntime.CacheInternal);
+            _memoryCache = new MemoryBuildResultCache();
 
             // Used the precomp cache for precompiled apps
             BuildResultCache preCompCache = new PrecompiledSiteDiskBuildResultCache(
@@ -501,7 +501,7 @@ namespace System.Web.Compilation {
             // We are precompiling an app
 
             // Always try the memory cache first
-            _memoryCache = new MemoryBuildResultCache(HttpRuntime.CacheInternal);
+            _memoryCache = new MemoryBuildResultCache();
 
             // Create a regular disk cache, to take advantage of the fact that the app
             // may already have been compiled (and to cause it to be if it wasn't)

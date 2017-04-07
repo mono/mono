@@ -3,8 +3,8 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 //  </copyright>
 // <owner current="true" primary="true">junfang</owner>
-// <owner current="true" primary="false">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 //**************************************************************************
@@ -52,12 +52,12 @@ namespace System.Data.SqlTypes {
         private long m_value;
 
         // SQL Server stores money8 as ticks of 1/10000.
-        internal static readonly int x_iMoneyScale = 4;
-        private static readonly long x_lTickBase = 10000;
-        private static readonly double x_dTickBase = (double)x_lTickBase;
+        internal const int x_iMoneyScale = 4;
+        private const long x_lTickBase = 10000;
+        private const double x_dTickBase = (double)x_lTickBase;
 
-        private static readonly long MinLong = unchecked((long)0x8000000000000000L) / x_lTickBase;
-        private static readonly long MaxLong = 0x7FFFFFFFFFFFFFFFL / x_lTickBase;
+        private const long MinLong = unchecked((long)0x8000000000000000L) / x_lTickBase;
+        private const long MaxLong = 0x7FFFFFFFFFFFFFFFL / x_lTickBase;
 
         // constructor
         // construct a Null

@@ -3,9 +3,9 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 //  </copyright>
 // <owner current="true" primary="true">junfang</owner>
-// <owner current="true" primary="false">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 //**************************************************************************
@@ -69,44 +69,44 @@ namespace System.Data.SqlTypes {
         internal UInt32  m_data3;
         internal UInt32  m_data4;
 
-        private static readonly byte NUMERIC_MAX_PRECISION = 38;            // Maximum precision of numeric
+        private const byte NUMERIC_MAX_PRECISION = 38;            // Maximum precision of numeric
         /// <devdoc>
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
-        public  static readonly byte MaxPrecision = NUMERIC_MAX_PRECISION;  // max SS precision
+        public static readonly byte MaxPrecision = NUMERIC_MAX_PRECISION;  // max SS precision
         /// <devdoc>
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
-        public  static readonly byte MaxScale = NUMERIC_MAX_PRECISION;      // max SS scale
+        public static readonly byte MaxScale = NUMERIC_MAX_PRECISION;      // max SS scale
 
-        private static readonly byte    x_bNullMask     = 1;    // bit mask for null bit in m_bStatus
-        private static readonly byte    x_bIsNull       = 0;    // is null
-        private static readonly byte    x_bNotNull      = 1;    // is not null
-        private static readonly byte    x_bReverseNullMask  = unchecked((byte)~x_bNullMask);
+        private const byte   x_bNullMask         = 1;    // bit mask for null bit in m_bStatus
+        private const byte   x_bIsNull           = 0;    // is null
+        private const byte   x_bNotNull          = 1;    // is not null
+        private const byte   x_bReverseNullMask  = unchecked((byte)~x_bNullMask);
 
-        private static readonly byte    x_bSignMask     = 2;    // bit mask for sign bit in m_bStatus
-        private static readonly byte    x_bPositive     = 0;    // is positive
-        private static readonly byte    x_bNegative     = 2;    // is negative
-        private static readonly byte    x_bReverseSignMask  = unchecked((byte)~x_bSignMask);
+        private const byte   x_bSignMask         = 2;    // bit mask for sign bit in m_bStatus
+        private const byte   x_bPositive         = 0;    // is positive
+        private const byte   x_bNegative         = 2;    // is negative
+        private const byte   x_bReverseSignMask  = unchecked((byte)~x_bSignMask);
 
-        private static readonly uint    x_uiZero            = (uint) 0;
+        private const uint   x_uiZero            = (uint) 0;
 
-        private static readonly int     x_cNumeMax          = 4;
-        private static readonly long    x_lInt32Base        = ((long)1) << 32;      // 2**32
-        private static readonly ulong   x_ulInt32Base       = ((ulong)1) << 32;     // 2**32
-        private static readonly ulong   x_ulInt32BaseForMod = x_ulInt32Base - 1;    // 2**32 - 1 (0xFFF...FF)
+        private const int    x_cNumeMax          = 4;
+        private const long   x_lInt32Base        = ((long)1) << 32;      // 2**32
+        private const ulong  x_ulInt32Base       = ((ulong)1) << 32;     // 2**32
+        private const ulong  x_ulInt32BaseForMod = x_ulInt32Base - 1;    // 2**32 - 1 (0xFFF...FF)
 
-        internal static readonly ulong   x_llMax            = Int64.MaxValue;   // Max of Int64
+        internal const ulong x_llMax             = Int64.MaxValue;   // Max of Int64
 
-        private static readonly uint    x_ulBase10          = 10;
+        private const uint   x_ulBase10          = 10;
 
-        private static readonly double  DUINT_BASE  = (double)x_lInt32Base;     // 2**32
-        private static readonly double  DUINT_BASE2 = DUINT_BASE * DUINT_BASE;  // 2**64
-        private static readonly double  DUINT_BASE3 = DUINT_BASE2 * DUINT_BASE; // 2**96
-        private static readonly double  DMAX_NUME   = 1.0e+38;                  // Max value of numeric
-        private static readonly uint    DBL_DIG     = 17;                       // Max decimal digits of double
+        private const double DUINT_BASE          = (double)x_lInt32Base;     // 2**32
+        private const double DUINT_BASE2         = DUINT_BASE * DUINT_BASE;  // 2**64
+        private const double DUINT_BASE3         = DUINT_BASE2 * DUINT_BASE; // 2**96
+        private const double DMAX_NUME           = 1.0e+38;                  // Max value of numeric
+        private const uint   DBL_DIG             = 17;                       // Max decimal digits of double
 
-        private static readonly byte    x_cNumeDivScaleMin = 6;     // Minimum result scale of numeric division
+        private const byte   x_cNumeDivScaleMin  = 6;     // Minimum result scale of numeric division
 
         // Array of multipliers for lAdjust and Ceiling/Floor.
         private static readonly uint[] x_rgulShiftBase = new uint[9] {
@@ -1907,25 +1907,25 @@ namespace System.Data.SqlTypes {
 
 
         // Powers of ten (used by BGetPrecI4,BGetPrecI8)
-        private static readonly uint x_ulT1 =       10;
-        private static readonly uint x_ulT2 =       100;
-        private static readonly uint x_ulT3 =       1000;
-        private static readonly uint x_ulT4 =       10000;
-        private static readonly uint x_ulT5 =       100000;
-        private static readonly uint x_ulT6 =       1000000;
-        private static readonly uint x_ulT7 =       10000000;
-        private static readonly uint x_ulT8 =       100000000;
-        private static readonly uint x_ulT9 =       1000000000;
-        private static readonly ulong x_dwlT10 =    10000000000;
-        private static readonly ulong x_dwlT11 =    100000000000;
-        private static readonly ulong x_dwlT12 =    1000000000000;
-        private static readonly ulong x_dwlT13 =    10000000000000;
-        private static readonly ulong x_dwlT14 =    100000000000000;
-        private static readonly ulong x_dwlT15 =    1000000000000000;
-        private static readonly ulong x_dwlT16 =    10000000000000000;
-        private static readonly ulong x_dwlT17 =    100000000000000000;
-        private static readonly ulong x_dwlT18 =    1000000000000000000;
-        private static readonly ulong x_dwlT19 =    10000000000000000000;
+        private const uint x_ulT1 =       10;
+        private const uint x_ulT2 =       100;
+        private const uint x_ulT3 =       1000;
+        private const uint x_ulT4 =       10000;
+        private const uint x_ulT5 =       100000;
+        private const uint x_ulT6 =       1000000;
+        private const uint x_ulT7 =       10000000;
+        private const uint x_ulT8 =       100000000;
+        private const uint x_ulT9 =       1000000000;
+        private const ulong x_dwlT10 =    10000000000;
+        private const ulong x_dwlT11 =    100000000000;
+        private const ulong x_dwlT12 =    1000000000000;
+        private const ulong x_dwlT13 =    10000000000000;
+        private const ulong x_dwlT14 =    100000000000000;
+        private const ulong x_dwlT15 =    1000000000000000;
+        private const ulong x_dwlT16 =    10000000000000000;
+        private const ulong x_dwlT17 =    100000000000000000;
+        private const ulong x_dwlT18 =    1000000000000000000;
+        private const ulong x_dwlT19 =    10000000000000000000;
 
         //------------------------------------------------------------------
         //BGetPrecI4

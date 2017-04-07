@@ -7,7 +7,7 @@
 **
 ** Class:  FileSystemInfo    
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: 
@@ -35,9 +35,11 @@ namespace System.IO {
 #endif
     [ComVisible(true)]
 #if FEATURE_REMOTING || MONO
-    public abstract class FileSystemInfo : MarshalByRefObject, ISerializable {
+    public abstract class FileSystemInfo : MarshalByRefObject, ISerializable
+    {
 #else // FEATURE_REMOTING
-    public abstract class FileSystemInfo : ISerializable {   
+    public abstract class FileSystemInfo : ISerializable
+    {
 #endif  //FEATURE_REMOTING      
 #if MONO
         internal MonoIOStat _data;
@@ -97,44 +99,31 @@ namespace System.IO {
         }
 
         // Full path of the direcory/file
-        public virtual String FullName {
-            [System.Security.SecuritySafeCritical]
-            get 
+        public virtual string FullName
+        {
+            [SecuritySafeCritical]
+            get
             {
-#pragma warning disable 219
-                String demandDir;
-#pragma warning restore
-                if (this is DirectoryInfo)
-                    demandDir = Directory.GetDemandDir(FullPath, true);
-                else
-                    demandDir = FullPath;
 #if MONO_FEATURE_CAS
 #if FEATURE_CORECLR
-                FileSecurityState sourceState = new FileSecurityState(FileSecurityStateAccess.PathDiscovery, String.Empty, demandDir);
+                FileSecurityState sourceState = new FileSecurityState(FileSecurityStateAccess.PathDiscovery, String.Empty, FullPath);
                 sourceState.EnsureState();
 #else
-                FileIOPermission.QuickDemand(FileIOPermissionAccess.PathDiscovery, demandDir);
+                FileIOPermission.QuickDemand(FileIOPermissionAccess.PathDiscovery, FullPath);
 #endif
 #endif
                 return FullPath;
             }
         }
 
-        internal virtual String UnsafeGetFullName
+        internal virtual string UnsafeGetFullName
         {
-            [System.Security.SecurityCritical]
+            [SecurityCritical]
             get
             {
-#pragma warning disable 219
-                String demandDir;
-#pragma warning restore
-                if (this is DirectoryInfo)
-                    demandDir = Directory.GetDemandDir(FullPath, true);
-                else
-                    demandDir = FullPath;
 #if MONO_FEATURE_CAS
 #if !FEATURE_CORECLR
-                FileIOPermission.QuickDemand(FileIOPermissionAccess.PathDiscovery, demandDir);
+                FileIOPermission.QuickDemand(FileIOPermissionAccess.PathDiscovery, FullPath);
 #endif
 #endif
                 return FullPath;

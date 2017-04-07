@@ -16,14 +16,17 @@ namespace System.ServiceModel
         internal const string EnsureUniquePerformanceCounterInstanceNamesString = "wcf:ensureUniquePerformanceCounterInstanceNames";
         internal const string UseConfiguredTransportSecurityHeaderLayoutString = "wcf:useConfiguredTransportSecurityHeaderLayout";
         internal const string UseBestMatchNamedPipeUriString = "wcf:useBestMatchNamedPipeUri";
+        internal const string DisableOperationContextAsyncFlowString = "wcf:disableOperationContextAsyncFlow";
         const bool DefaultHttpTransportPerFactoryConnectionPool = false;
         const bool DefaultEnsureUniquePerformanceCounterInstanceNames = false;
         const bool DefaultUseConfiguredTransportSecurityHeaderLayout = false;
         const bool DefaultUseBestMatchNamedPipeUri = false;
+        const bool DefaultDisableOperationContextAsyncFlow = true;
         static bool httpTransportPerFactoryConnectionPool;
         static bool ensureUniquePerformanceCounterInstanceNames;
         static bool useConfiguredTransportSecurityHeaderLayout;
         static bool useBestMatchNamedPipeUri;
+        static bool disableOperationContextAsyncFlow;
         static volatile bool settingsInitalized = false;
         static object appSettingsLock = new object();
 
@@ -44,6 +47,15 @@ namespace System.ServiceModel
                 EnsureSettingsLoaded();
 
                 return ensureUniquePerformanceCounterInstanceNames;
+            }
+        }
+
+        internal static bool DisableOperationContextAsyncFlow
+        {
+            get
+            {
+                EnsureSettingsLoaded();
+                return disableOperationContextAsyncFlow;
             }
         }
 
@@ -97,6 +109,11 @@ namespace System.ServiceModel
                                 ensureUniquePerformanceCounterInstanceNames = DefaultEnsureUniquePerformanceCounterInstanceNames;
                             }
 
+                            if ((appSettingsSection == null) || !bool.TryParse(appSettingsSection[DisableOperationContextAsyncFlowString], out disableOperationContextAsyncFlow))
+                            {
+                                disableOperationContextAsyncFlow = DefaultDisableOperationContextAsyncFlow;
+                            }
+                            
                             if ((appSettingsSection == null) || !bool.TryParse(appSettingsSection[UseConfiguredTransportSecurityHeaderLayoutString], out useConfiguredTransportSecurityHeaderLayout))
                             {
                                 useConfiguredTransportSecurityHeaderLayout = DefaultUseConfiguredTransportSecurityHeaderLayout;

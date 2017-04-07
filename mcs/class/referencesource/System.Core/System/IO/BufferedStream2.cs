@@ -265,7 +265,7 @@ internal abstract class BufferedStream2 : Stream
             // (either synchronously or asynchronously) before the first one 
             // returns.  This would involve some sort of complex buffer locking
             // that we probably don't want to get into, at least not in V1.
-            // If we did a [....] read to fill the buffer, we could avoid the
+            // If we did a sync read to fill the buffer, we could avoid the
             // problem, and any async read less than 64K gets turned into a
             // synchronous read by NT anyways...       -- 
 
@@ -508,7 +508,7 @@ internal abstract class BufferedStream2 : Stream
 
     // Reading is done by blocks from the file, but someone could read
     // 1 byte from the buffer then write.  At that point, the OS's file
-    // pointer is out of [....] with the stream's position.  All write 
+    // pointer is out of sync with the stream's position.  All write 
     // functions should call this function to preserve the position in the file.
     [MethodImplAttribute(MethodImplOptions.Synchronized)]
     protected void FlushRead() {

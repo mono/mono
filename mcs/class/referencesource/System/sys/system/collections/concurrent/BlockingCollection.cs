@@ -7,7 +7,7 @@
 //
 // BlockingCollection.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // A class that implements the bounding and blocking functionality while abstracting away
 // the underlying storage mechanism. This file also contains BlockingCollection's 

@@ -23,7 +23,7 @@ namespace System.Web.SessionState {
 
     class StateHttpWorkerRequest : HttpWorkerRequest {
 
-        /* long enough to hold the string representation of an IPv4 or IPv6 address; keep in [....] with tracker.cxx */
+        /* long enough to hold the string representation of an IPv4 or IPv6 address; keep in sync with tracker.cxx */
         private const int ADDRESS_LENGTH_MAX = 64;
 
         IntPtr                                  _tracker;

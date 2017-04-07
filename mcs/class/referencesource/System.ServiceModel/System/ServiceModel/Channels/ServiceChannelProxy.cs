@@ -765,7 +765,7 @@ namespace System.ServiceModel.Channels
                     {
                         get
                         {
-#pragma warning suppress 56503 // [....], IEnumerator guidelines, Current throws exception before calling MoveNext
+#pragma warning suppress 56503 // Microsoft, IEnumerator guidelines, Current throws exception before calling MoveNext
                             throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.SFxDictionaryIsEmpty)));
                         }
                     }
@@ -778,7 +778,7 @@ namespace System.ServiceModel.Channels
                     {
                         get
                         {
-#pragma warning suppress 56503 // [....], IEnumerator guidelines, Current throws exception before calling MoveNext
+#pragma warning suppress 56503 // Microsoft, IEnumerator guidelines, Current throws exception before calling MoveNext
                             throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.SFxDictionaryIsEmpty)));
                         }
                     }
@@ -787,7 +787,7 @@ namespace System.ServiceModel.Channels
                     {
                         get
                         {
-#pragma warning suppress 56503 // [....], IEnumerator guidelines, Current throws exception before calling MoveNext
+#pragma warning suppress 56503 // Microsoft, IEnumerator guidelines, Current throws exception before calling MoveNext
                             throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.SFxDictionaryIsEmpty)));
                         }
                     }
@@ -796,7 +796,7 @@ namespace System.ServiceModel.Channels
                     {
                         get
                         {
-#pragma warning suppress 56503 // [....], IEnumerator guidelines, Current throws exception before calling MoveNext
+#pragma warning suppress 56503 // Microsoft, IEnumerator guidelines, Current throws exception before calling MoveNext
                             throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.SFxDictionaryIsEmpty)));
                         }
                     }

@@ -59,7 +59,7 @@ namespace System.Web.Services.Protocols {
         /// <devdoc>
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
-        // NOTE, [....]: The SOAP 1.1 is unclear on whether the detail element can or should be qualified.
+        // NOTE, Microsoft: The SOAP 1.1 is unclear on whether the detail element can or should be qualified.
         // Based on consensus about the intent, we will not qualify it.
         public static readonly XmlQualifiedName DetailElementName = new XmlQualifiedName(Soap.Element.FaultDetail, "");
 

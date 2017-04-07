@@ -8,6 +8,19 @@ using System.Collections.Generic;
 
 namespace System
 {
+
+    // 
+    // The AppContext class consists of a collection of APIs that applications can use to reason about the context
+    // in which they are running.
+    // 
+    // One of the APIs that are available to the application (and the framework) are the ones related to the 
+    // configuration switches (SetSwitch, TryGetSwitch). Those APIs are used to set and retrieve the value of a switch. 
+    // 
+    // Inside the framework we use those APIs to provide backward compatibility for our in-place updates. In order for
+    // that to work in as many cases as possible we have intentionally coded the APIs to use very low level concepts.
+    // For instance, we are directly P/Invoking into the Registry calls and so that we don't initialize the infrastructure
+    // for accessing registry. Doing that would allow us to use AppContext switches inside the Registry code.
+    // 
     public static class AppContext
     {
         [Flags]
@@ -18,7 +31,13 @@ namespace System
             HasLookedForOverride = 0x4,
             UnknownValue = 0x8 // Has no default and could not find an override
         }
+        
+        // The Dictionary is intentionally left without specifying the comparer. StringComparer.Ordinal for instance will
+        // end up pulling in Globalization since all StringComparers are initialized in the static constructor (including the
+        // ones that use CultureInfo).
+        // Not specifying a comparer means that the dictionary will end up with a GenericEqualityComparer<string> comparer 
         private static readonly Dictionary<string, SwitchValueState> s_switchMap = new Dictionary<string, SwitchValueState>();
+        private static volatile bool s_defaultsInitialized = false;
 
         public static string BaseDirectory
         {
@@ -37,23 +56,38 @@ namespace System
         {
             get
             {
-                throw new NotImplementedException();
+                // Forward the value that is set on the current domain.
+                return AppDomain.CurrentDomain.SetupInformation.TargetFrameworkName;
             }
         }
 
-        public static object GetData (string name)
+#if FEATURE_CORECLR
+        [System.Security.SecuritySafeCritical]
+#endif
+        public static object GetData(string name)
         {
-            throw new NotImplementedException();
+            return AppDomain.CurrentDomain.GetData(name);
         }
 
         #region Switch APIs
-#if !MONO
-        static AppContext()
+
+        private static void InitializeDefaultSwitchValues()
         {
-            // populate the AppContext with the default set of values
-            AppContextDefaultValues.PopulateDefaultValues();
-        }
+            // To save a method call into this method, we are first checking
+            // the value of s_defaultsInitialized in the caller.
+            lock (s_switchMap)
+            {
+                if (s_defaultsInitialized == false)
+                {
+#if !MONO
+                    // populate the AppContext with the default set of values
+                    AppContextDefaultValues.PopulateDefaultValues();
 #endif
+                    s_defaultsInitialized = true;
+                }
+            }
+        }        
+
         /// <summary>
         /// Try to get the value of the switch.
         /// </summary>
@@ -66,6 +100,14 @@ namespace System
                 throw new ArgumentNullException("switchName");
             if (switchName.Length == 0)
                 throw new ArgumentException(Environment.GetResourceString("Argument_EmptyName"), "switchName");
+
+            if (s_defaultsInitialized == false)
+            {
+                InitializeDefaultSwitchValues();
+            }
+#if DEBUG
+            BCLDebug.Assert(s_defaultsInitialized == true, "AppContext defaults should have been initialized.");
+#endif
 
             // By default, the switch is not enabled.
             isEnabled = false;
@@ -163,6 +205,14 @@ namespace System
             if (switchName.Length == 0)
                 throw new ArgumentException(Environment.GetResourceString("Argument_EmptyName"), "switchName");
 
+            if (s_defaultsInitialized == false)
+            {
+                InitializeDefaultSwitchValues();
+            }
+#if DEBUG
+            BCLDebug.Assert(s_defaultsInitialized == true, "AppContext defaults should have been initialized.");
+#endif
+
             SwitchValueState switchValue = (isEnabled ? SwitchValueState.HasTrueValue : SwitchValueState.HasFalseValue)
                                              | SwitchValueState.HasLookedForOverride;
             lock (s_switchMap)
@@ -174,12 +224,29 @@ namespace System
 
         /// <summary>
         /// This method is going to be called from the AppContextDefaultValues class when setting up the 
-        /// default values for the switches. !!!! This method is called during the static constructor so it does not
-        /// take a lock !!!! If you are planning to use this outside of that, please ensure proper locking.
+        /// default values for the switches.
         /// </summary>
         internal static void DefineSwitchDefault(string switchName, bool isEnabled)
         {
+#if DEBUG
+            BCLDebug.Assert(System.Threading.Monitor.IsEntered(s_switchMap), "Expected the method to be called within a lock");
+#endif
+
             s_switchMap[switchName] = isEnabled ? SwitchValueState.HasTrueValue : SwitchValueState.HasFalseValue;
+        }
+
+        /// <summary>
+        /// This method is going to be called from the AppContextDefaultValues class when setting up the 
+        /// override default values for the switches.
+        /// </summary>
+        internal static void DefineSwitchOverride(string switchName, bool isEnabled)
+        {
+#if DEBUG
+            BCLDebug.Assert(System.Threading.Monitor.IsEntered(s_switchMap), "Expected the method to be called within a lock");
+#endif
+
+            s_switchMap[switchName] = (isEnabled ? SwitchValueState.HasTrueValue : SwitchValueState.HasFalseValue) 
+                                        | SwitchValueState.HasLookedForOverride;
         }
         #endregion
     }

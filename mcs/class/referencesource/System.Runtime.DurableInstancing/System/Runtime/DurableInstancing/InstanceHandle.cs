@@ -89,7 +89,7 @@ namespace System.Runtime.DurableInstancing
             {
                 Fx.Assert(value != Guid.Empty, "Cannot set an empty Id.");
                 Fx.Assert(this.id == Guid.Empty, "Cannot set Id more than once.");
-                Fx.Assert(!this.idIsSet, "idIsSet out of [....] with id.");
+                Fx.Assert(!this.idIsSet, "idIsSet out of sync with id.");
 
                 this.id = value;
 

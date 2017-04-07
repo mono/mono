@@ -69,7 +69,7 @@ namespace System.ServiceModel.Channels
             {
                 try
                 {
-#pragma warning suppress 56506 // [....], Message.Version can never be null
+#pragma warning suppress 56506 // Microsoft, Message.Version can never be null
                     EnvelopeVersion envelopeVersion = message.Version.Envelope;
                     MessageFault fault;
                     if (envelopeVersion == EnvelopeVersion.Soap12)

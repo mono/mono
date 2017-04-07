@@ -5,7 +5,7 @@
 // ==--==
 // HostProtectionPermission.cs
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 
 namespace System.Security.Permissions
@@ -22,7 +22,7 @@ namespace System.Security.Permissions
     using System.Globalization;
     using System.Diagnostics.Contracts;
 
-    // Keep this enum in [....] with tools\ngen\ngen.cpp and inc\mscoree.idl
+    // Keep this enum in sync with tools\ngen\ngen.cpp and inc\mscoree.idl
 
 [Serializable]
     [Flags]

@@ -7,7 +7,7 @@
 **
 ** Class:  DirectoryInfo
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Exposes routines for enumerating through a 
@@ -33,14 +33,19 @@ using System.Runtime.Serialization;
 using System.Runtime.Versioning;
 using System.Diagnostics.Contracts;
 
-namespace System.IO {
+namespace System.IO
+{
     [Serializable]
     [ComVisible(true)]
-    public sealed class DirectoryInfo : FileSystemInfo {
-        private String[] demandDir;
+    public sealed class DirectoryInfo : FileSystemInfo
+    {
+#pragma warning disable CS0169
+        // This member isn't used anymore but must be maintained for binary serialization compatibility
+        private string[] demandDir;
+#pragma warning restore CS0169
 
 #if FEATURE_CORECLR
-         // Migrating InheritanceDemands requires this default ctor, so we can annotate it.
+        // Migrating InheritanceDemands requires this default ctor, so we can annotate it.
 #if FEATURE_CORESYSTEM
         [System.Security.SecurityCritical]
 #else
@@ -79,7 +84,7 @@ namespace System.IO {
         [System.Security.SecurityCritical]
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
-        private void Init(String path, bool checkHost)
+        private void Init(string path, bool checkHost)
         {
             // Special case "<DriveLetter>:" to point to "<CurrentDirectory>" instead
             if ((path.Length == 2) && (path[1] == ':'))
@@ -92,18 +97,7 @@ namespace System.IO {
             }
 
             // Must fully qualify the path for the security check
-            String fullPath = Path.GetFullPathInternal(path);
-
-            demandDir = new String[] {Directory.GetDemandDir(fullPath, true)};
-#if FEATURE_CORECLR
-            if (checkHost)
-            {
-                FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Read, OriginalPath, fullPath);
-                state.EnsureState();
-            }
-#else
-            FileIOPermission.QuickDemand(FileIOPermissionAccess.Read, demandDir, false, false);
-#endif
+            string fullPath = Directory.GetFullPathAndCheckPermissions(path, checkHost: checkHost);
 
             FullPath = fullPath;
             DisplayPath = GetDisplayName(OriginalPath, FullPath);
@@ -122,20 +116,17 @@ namespace System.IO {
 
             FullPath = fullPath;
             DisplayPath = GetDisplayName(OriginalPath, FullPath);
-            demandDir = new String[] {Directory.GetDemandDir(fullPath, true)};
         }
 
         [System.Security.SecurityCritical]  // auto-generated
         private DirectoryInfo(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-#if !FEATURE_CORECLR
-            demandDir = new String[] {Directory.GetDemandDir(FullPath, true)};
-            FileIOPermission.QuickDemand(FileIOPermissionAccess.Read, demandDir, false, false );
-#endif
+            Directory.CheckPermissions(string.Empty, FullPath, checkHost: false);
             DisplayPath = GetDisplayName(OriginalPath, FullPath);
         }
 
-        public override String Name {
+        public override string Name
+        {
             [ResourceExposure(ResourceScope.Machine)]
             [ResourceConsumption(ResourceScope.Machine)]
             get 
@@ -150,32 +141,49 @@ namespace System.IO {
             }
         }
 
-        public DirectoryInfo Parent {
+        public override string FullName
+        {
+            [SecuritySafeCritical]
+            get
+            {
+                Directory.CheckPermissions(string.Empty, FullPath, checkHost: true, access: FileSecurityStateAccess.PathDiscovery);
+                return FullPath;
+            }
+        }
+
+        internal override string UnsafeGetFullName
+        {
+            [SecurityCritical]
+            get
+            {
+                Directory.CheckPermissions(string.Empty, FullPath, checkHost: false, access: FileSecurityStateAccess.PathDiscovery);
+                return FullPath;
+            }
+        }
+
+        public DirectoryInfo Parent
+        {
             [System.Security.SecuritySafeCritical]
             [ResourceExposure(ResourceScope.Machine)]
             [ResourceConsumption(ResourceScope.Machine)]
-            get {
-                String parentName;
+            get
+            {
+                string parentName;
                 // FullPath might be either "c:\bar" or "c:\bar\".  Handle 
                 // those cases, as well as avoiding mangling "c:\".
-                String s = FullPath;
+                string s = FullPath;
                 if (s.Length > 3 && s.EndsWith(Path.DirectorySeparatorChar))
-                    s = FullPath.Substring(0, FullPath.Length - 1);                
+                    s = FullPath.Substring(0, FullPath.Length - 1);
                 parentName = Path.GetDirectoryName(s);
                 if (parentName==null)
                     return null;
-                DirectoryInfo dir = new DirectoryInfo(parentName,false);
-#if FEATURE_CORECLR
-                FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.PathDiscovery | FileSecurityStateAccess.Read, String.Empty, dir.demandDir[0]);
-                state.EnsureState();
-#else
-                FileIOPermission.QuickDemand(FileIOPermissionAccess.PathDiscovery | FileIOPermissionAccess.Read, dir.demandDir, false, false);
-#endif
+
+                DirectoryInfo dir = new DirectoryInfo(parentName, false);
+                Directory.CheckPermissions(string.Empty, dir.FullPath, checkHost: true, access: FileSecurityStateAccess.PathDiscovery | FileSecurityStateAccess.Read);
                 return dir;
             }
         }
 
-      
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
 #if FEATURE_CORECLR
@@ -618,25 +626,19 @@ namespace System.IO {
         [System.Security.SecuritySafeCritical]
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
-        public void MoveTo(String destDirName) {
+        public void MoveTo(string destDirName)
+        {
             if (destDirName==null)
                 throw new ArgumentNullException("destDirName");
             if (destDirName.Length==0)
                 throw new ArgumentException(Environment.GetResourceString("Argument_EmptyFileName"), "destDirName");
             Contract.EndContractBlock();
-            
-#if FEATURE_CORECLR
-            FileSecurityState sourceState = new FileSecurityState(FileSecurityStateAccess.Write | FileSecurityStateAccess.Read, DisplayPath, Directory.GetDemandDir(FullPath, true));
-            sourceState.EnsureState();
-#else
-            FileIOPermission.QuickDemand(FileIOPermissionAccess.Write | FileIOPermissionAccess.Read, demandDir, false, false);
-#endif
-            String fullDestDirName = Path.GetFullPathInternal(destDirName);
-            String demandPath;
+
+            Directory.CheckPermissions(DisplayPath, FullPath, checkHost: true, access: FileSecurityStateAccess.Write | FileSecurityStateAccess.Read);
+
+            string fullDestDirName = Path.GetFullPathInternal(destDirName);
             if (!fullDestDirName.EndsWith(Path.DirectorySeparatorChar))
                 fullDestDirName = fullDestDirName + Path.DirectorySeparatorChar;
-
-            demandPath = fullDestDirName + '.';
 
             // Demand read & write permission to destination.  The reason is
             // we hand back a DirectoryInfo to the destination that would allow
@@ -644,12 +646,8 @@ namespace System.IO {
             // had the ability to read the file contents in the old location,
             // but you technically also need read permissions to the new 
             // location as well, and write is not a true superset of read.
-#if FEATURE_CORECLR
-            FileSecurityState destState = new FileSecurityState(FileSecurityStateAccess.Write, destDirName, demandPath);
-            destState.EnsureState();
-#else
-            FileIOPermission.QuickDemand(FileIOPermissionAccess.Write | FileIOPermissionAccess.Read, demandPath);
-#endif
+
+            Directory.CheckPermissions(destDirName, fullDestDirName, checkHost: true, access: FileSecurityStateAccess.Write | FileSecurityStateAccess.Read);
 
             String fullSourcePath;
             if (FullPath.EndsWith(Path.DirectorySeparatorChar))
@@ -674,16 +672,15 @@ namespace System.IO {
                     hr = Win32Native.ERROR_PATH_NOT_FOUND;
                     __Error.WinIOError(hr, DisplayPath);
                 }
-                
+
                 if (hr == Win32Native.ERROR_ACCESS_DENIED) // We did this for Win9x. We can't change it for backcomp. 
                     throw new IOException(Environment.GetResourceString("UnauthorizedAccess_IODenied_Path", DisplayPath));
-            
-                __Error.WinIOError(hr,String.Empty);
+
+                __Error.WinIOError(hr, string.Empty);
             }
             FullPath = fullDestDirName;
             OriginalPath = destDirName;
             DisplayPath = GetDisplayName(OriginalPath, FullPath);
-            demandDir = new String[] { Directory.GetDemandDir(FullPath, true) };
 
             // Flush any cached information about the directory.
             _dataInitialised = -1;

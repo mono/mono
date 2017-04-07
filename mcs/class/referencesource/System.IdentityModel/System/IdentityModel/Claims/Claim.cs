@@ -17,7 +17,7 @@ namespace System.IdentityModel.Claims
     //    ---------------  ----------------  ------------------
     //    "File"           "boot.ini"        "Read"
     //    "HairColor"      "Brown"           "PossessProperty"
-    //    "UserName"       "[....]"          "PossessProperty"
+    //    "UserName"       "Microsoft"          "PossessProperty"
     //    "Service"        "MailService"     "Access"
     //    "Operation"      "ReadMail"        "Invoke"
     // ClaimType:

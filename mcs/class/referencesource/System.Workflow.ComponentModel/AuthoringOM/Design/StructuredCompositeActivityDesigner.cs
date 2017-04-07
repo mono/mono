@@ -150,7 +150,7 @@ namespace System.Workflow.ComponentModel.Design
                 //activities with errors we want to reveal these activities
                 DesignerHelpers.RefreshDesignerActions(Activity.Site);
 
-                //Keep the dynamic action and designer verbs in [....]
+                //Keep the dynamic action and designer verbs in sync
                 RefreshDesignerVerbs();
             }
         }

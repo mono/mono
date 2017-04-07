@@ -254,7 +254,7 @@ namespace System.Web.Security {
 
             freeDescriptor = false;
             string                          oCacheKey   = CacheInternal.PrefixFileSecurity + fileName;
-            FileSecurityDescriptorWrapper   oSecDesc    = HttpRuntime.CacheInternal.Get(oCacheKey) as FileSecurityDescriptorWrapper;
+            FileSecurityDescriptorWrapper   oSecDesc    = HttpRuntime.Cache.InternalCache.Get(oCacheKey) as FileSecurityDescriptorWrapper;
 
             // If it's not present in the cache, then create it and add to the cache
             if (oSecDesc == null) {
@@ -267,8 +267,11 @@ namespace System.Web.Security {
                         Debug.Trace("FAM", "GetFileSecurityDescriptorWrapper: inserting into cache with dependency on " + cacheDependencyPath);
                         CacheDependency dependency = new CacheDependency(0, cacheDependencyPath);
                         TimeSpan slidingExp = CachedPathData.UrlMetadataSlidingExpiration;
-                        HttpRuntime.CacheInternal.UtcInsert(oCacheKey, oSecDesc, dependency, Cache.NoAbsoluteExpiration, slidingExp,
-                                                            CacheItemPriority.Default, new CacheItemRemovedCallback(oSecDesc.OnCacheItemRemoved));
+                        HttpRuntime.Cache.InternalCache.Insert(oCacheKey, oSecDesc, new CacheInsertOptions() {
+                                                                                    Dependencies = dependency,
+                                                                                    SlidingExpiration = slidingExp,
+                                                                                    OnRemovedCallback = new CacheItemRemovedCallback(oSecDesc.OnCacheItemRemoved)
+                                                                                });
                     } catch (Exception e){
                         Debug.Trace("internal", e.ToString());
                         freeDescriptor = true;
@@ -303,7 +306,7 @@ namespace System.Web.Security {
 
             oCacheKey = CacheInternal.PrefixFileSecurity + context.Request.PhysicalPathInternal;
 
-            sec = HttpRuntime.CacheInternal.Get(oCacheKey);
+            sec = HttpRuntime.Cache.InternalCache.Get(oCacheKey);
 
             // If it's not present in the cache, then return true
             if (sec == null || !(sec is FileSecurityDescriptorWrapper))

@@ -1496,7 +1496,7 @@ namespace System.ServiceModel.Channels
                     {
                         completeSelf = thisPtr.OnGetWebRequestCompleted(result);
                     }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                     catch (Exception e)
                     {
                         if (Fx.IsFatal(e))
@@ -1810,7 +1810,7 @@ namespace System.ServiceModel.Channels
                     {
                         thisPtr.CompleteParseIncomingMessage(result);
                     }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                     catch (Exception e)
                     {
                         if (Fx.IsFatal(e))
@@ -1837,7 +1837,7 @@ namespace System.ServiceModel.Channels
                     {
                         completeSelf = thisPtr.CompleteSend(result);
                     }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                     catch (Exception e)
                     {
                         if (Fx.IsFatal(e))
@@ -1882,7 +1882,7 @@ namespace System.ServiceModel.Channels
                         completeSelf = true;
                         completionException = new CommunicationException(webException.Message, webException);
                     }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                     catch (Exception e)
                     {
                         if (Fx.IsFatal(e))
@@ -2068,7 +2068,7 @@ namespace System.ServiceModel.Channels
                         thisPtr.CompleteGetSspiCredential(result);
                         thisPtr.CloseTokenProvidersIfRequired();
                     }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                     catch (Exception e)
                     {
                         if (Fx.IsFatal(e))
@@ -2096,7 +2096,7 @@ namespace System.ServiceModel.Channels
                         thisPtr.CompleteGetUserNameCredential(result);
                         thisPtr.CloseTokenProvidersIfRequired();
                     }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                     catch (Exception e)
                     {
                         if (Fx.IsFatal(e))

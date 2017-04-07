@@ -355,7 +355,7 @@ namespace System.Activities.Statements
                 {
                     return null;
                 }
-                else // For a regular [....] method, ambiguity is distinct from no match and gets an explicit error message
+                else // For a regular sync method, ambiguity is distinct from no match and gets an explicit error message
                 {
                     throw;
                 }

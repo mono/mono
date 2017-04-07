@@ -181,7 +181,7 @@ namespace System.Workflow.ComponentModel.Design
             //Initialize the tooltip shown
             this.workflowToolTip = new WorkflowToolTip(this);
 
-            //[....] the global theme change event, which is fired by the theme infrastructure for theme change
+            //Sync the global theme change event, which is fired by the theme infrastructure for theme change
             WorkflowTheme.ThemeChanged += new EventHandler(OnThemeChange);
 
             //Create the core message filters

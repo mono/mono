@@ -134,7 +134,7 @@ namespace System.ServiceModel.Channels
                     completeSelf = reader.ContinueReading();
                 }
             }
-#pragma warning suppress 56500 // [....], transferring exception to caller
+#pragma warning suppress 56500 // Microsoft, transferring exception to caller
             catch (Exception e)
             {
                 if (Fx.IsFatal(e))
@@ -201,7 +201,7 @@ namespace System.ServiceModel.Channels
             {
                 completeSelf = ContinueReading();
             }
-#pragma warning suppress 56500 // [....], transferring exception to caller
+#pragma warning suppress 56500 // Microsoft, transferring exception to caller
             catch (Exception e)
             {
                 if (Fx.IsFatal(e))

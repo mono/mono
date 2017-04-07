@@ -374,7 +374,7 @@ namespace System.Web.Services.Description {
             foreach (XmlMembersMapping member in soapMembers)
                 soapExporter.ExportMembersMapping(member);
 
-            // NOTE, [....], we are sharing the SoapInclude and XmlInclude attributes of the 
+            // NOTE, Microsoft, we are sharing the SoapInclude and XmlInclude attributes of the 
             // class among ALL classes generated, This is probably OK, since doing to per 
             // class would probably result in the same set of includes if the user
             // has object as a return value (meaning 'all' types are OK).
@@ -1076,7 +1076,7 @@ namespace System.Web.Services.Description {
                 return true;
             }
             else if (soapBindingStyle == SoapBindingStyle.Document) {
-                // NOTE, [....].  WSDL doesn't really let us figure out whether a document is
+                // NOTE, Microsoft.  WSDL doesn't really let us figure out whether a document is
                 // in fact a struct containing parameters, so we apply a little heuristic here
                 // in order to produce the appropriate programming model.
                 hasWrapper = (parts.Length == 1 && string.Compare(parts[0].Name, "parameters", StringComparison.Ordinal) == 0);

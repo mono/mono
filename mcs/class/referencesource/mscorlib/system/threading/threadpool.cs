@@ -4,7 +4,7 @@
 // 
 // ==--==
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 /*=============================================================================
 **
 ** Class: ThreadPool
@@ -131,7 +131,7 @@ namespace System.Threading
                             }
                             else if (i == array.Length - 1)
                             {
-                                // Must resize. If we ----d and lost, we start over again.
+                                // Must resize. If we raced and lost, we start over again.
                                 if (array != m_array)
                                     continue;
 

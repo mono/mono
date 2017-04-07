@@ -1207,7 +1207,7 @@ namespace System.Diagnostics.Tracing
                         }
 
 #if FEATURE_ACTIVITYSAMPLING
-                        // this code should be kept in [....] with WriteEventVarargs().
+                        // this code should be kept in sync with WriteEventVarargs().
                         SessionMask etwSessions = SessionMask.All;
                         // only compute etwSessions if there are *any* ETW filters enabled...
                         if ((ulong)m_curLiveSessions != 0)
@@ -1938,7 +1938,7 @@ namespace System.Diagnostics.Tracing
                         }
 
 #if FEATURE_ACTIVITYSAMPLING
-                        // this code should be kept in [....] with WriteEventWithRelatedActivityIdCore().
+                        // this code should be kept in sync with WriteEventWithRelatedActivityIdCore().
                         SessionMask etwSessions = SessionMask.All;
                         // only compute etwSessions if there are *any* ETW filters enabled...
                         if ((ulong)m_curLiveSessions != 0)
@@ -1968,7 +1968,7 @@ namespace System.Diagnostics.Tracing
                                         m_eventData[eventId].Descriptor.Level,
                                         m_eventData[eventId].Descriptor.Opcode,
                                         m_eventData[eventId].Descriptor.Task,
-                                        unchecked((long)(ulong)etwSessions | origKwd));
+                                        unchecked((long)etwSessions.ToEventKeywords() | origKwd));
 
                                     if (!m_provider.WriteEvent(ref desc, pActivityId, childActivityID, args))
                                         ThrowEventSourceException(m_eventData[eventId].Name);
@@ -1989,7 +1989,7 @@ namespace System.Diagnostics.Tracing
                                 // 
                                 EventSourceOptions opt = new EventSourceOptions
                                 {
-                                    Keywords = (EventKeywords)unchecked((long)(ulong)etwSessions | origKwd),
+                                    Keywords = (EventKeywords)unchecked((long)etwSessions.ToEventKeywords() | origKwd), 
                                     Level = (EventLevel)m_eventData[eventId].Descriptor.Level,
                                     Opcode = (EventOpcode)m_eventData[eventId].Descriptor.Opcode
                                 };
@@ -3109,6 +3109,11 @@ namespace System.Diagnostics.Tracing
                     dataLeft -= chunkSize;
                     dataDescrs[1].Ptr += (uint)chunkSize;
                     envelope.ChunkNumber++;
+                    
+                    // For large manifests we want to not overflow any receiver's buffer. Most manifests will fit within
+                    // 5 chunks, so only the largest manifests will hit the pause.
+                    if((envelope.ChunkNumber % 5) == 0)
+                        Thread.Sleep(15);
                 }
             }
 #endif
@@ -4330,6 +4335,15 @@ namespace System.Diagnostics.Tracing
         }
 
         /// <summary>
+        /// EventSourceIndex is small non-negative integer (suitable for indexing in an array)
+        /// identifying EventSource. It is unique per-appdomain. Some EventListeners might find
+        /// it useful to store additional information about each eventSource connected to it,
+        /// and EventSourceIndex allows this extra information to be efficiently stored in a
+        /// (growable) array (eg List(T)).
+        /// </summary>
+        public static int EventSourceIndex(EventSource eventSource) { return eventSource.m_id; }
+
+        /// <summary>
         /// This method is called whenever a new eventSource is 'attached' to the dispatcher.
         /// This can happen for all existing EventSources when the EventListener is created
         /// as well as for any EventSources that come into existence after the EventListener
@@ -4366,15 +4380,6 @@ namespace System.Diagnostics.Tracing
                 callBack(this, eventData);
             }
         }
-
-        /// <summary>
-        /// EventSourceIndex is small non-negative integer (suitable for indexing in an array)
-        /// identifying EventSource. It is unique per-appdomain. Some EventListeners might find
-        /// it useful to store additional information about each eventSource connected to it,
-        /// and EventSourceIndex allows this extra information to be efficiently stored in a
-        /// (growable) array (eg List(T)).
-        /// </summary>
-        static protected int EventSourceIndex(EventSource eventSource) { return eventSource.m_id; }
 
         #region private
         /// <summary>

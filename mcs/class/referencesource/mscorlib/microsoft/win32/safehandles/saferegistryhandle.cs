@@ -6,7 +6,7 @@
 //
 // File: SafeRegistryHandle.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // Implements Microsoft.Win32.SafeHandles.SafeRegistryHandle
 //

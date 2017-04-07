@@ -560,7 +560,7 @@ namespace System.Activities.Presentation
                         }
                         else
                         {
-                            //[....] 
+                            //Microsoft 
 
                             entry.Expression = null;
                         }

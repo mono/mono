@@ -7,7 +7,7 @@
 //
 // CountdownEvent.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // A simple coordination data structure that we use for fork/join style parallelism.
 //
@@ -115,7 +115,7 @@ namespace System.Threading
                 // The latch is "completed" if its current count has reached 0. Note that this is NOT
                 // the same thing is checking the event's IsCompleted property. There is a tiny window
                 // of time, after the final decrement of the current count to 0 and before setting the
-                // event, where the two values are out of [....].
+                // event, where the two values are out of sync.
                 return (m_currentCount <= 0);
             }
         }

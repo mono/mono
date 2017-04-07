@@ -2,8 +2,8 @@
 // <copyright file="XMLSchema.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>                                                                
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data {
@@ -1346,7 +1346,7 @@ namespace System.Data {
             table = _ds.Tables.GetTable(XmlConvert.DecodeName(typeName), _TableUri);
 // TOD: Do not do this fix
 //            if (table == null && node.RefName.IsEmpty && !IsTopLevelElement(node) && _TableUri != null && _TableUri.Length > 0) { 
-//                _TableUri = null;    // it means form="qualified", so child element inherits namespace. [....]
+//                _TableUri = null;    // it means form="qualified", so child element inherits namespace. Microsoft
 //            }
             
             if (!FromInference || (FromInference && table == null)) 
@@ -1574,7 +1574,7 @@ namespace System.Data {
             new NameType("byte"                , typeof(SByte)   ), /* XSD Apr */
             new NameType("date"                , typeof(DateTime)), /* XSD Apr */
             new NameType("dateTime"            , typeof(DateTime)), /* XSD Apr */
-            new NameType("decimal"              , typeof(decimal) ), /* XSD 2001 [....] */
+            new NameType("decimal"              , typeof(decimal) ), /* XSD 2001 Microsoft */
             new NameType("double"              , typeof(double)  ), /* XSD Apr */
             new NameType("duration"            , typeof(TimeSpan)), /* XSD Apr */
             new NameType("float"               , typeof(Single)  ), /* XSD Apr */
@@ -2026,7 +2026,7 @@ namespace System.Data {
             }
 
 
-            // XDR [....] change
+            // XDR Microsoft change
             string strDefault = (attrib.Use == XmlSchemaUse.Required) ? GetMsdataAttribute(attr, Keywords.MSD_DEFAULTVALUE) : attr.DefaultValue;
             if ((attr.Use == XmlSchemaUse.Optional) && (strDefault == null ))
                 strDefault = attr.FixedValue;

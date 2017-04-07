@@ -211,7 +211,7 @@ namespace System.Web.Configuration {
         private void CacheBrowserCapResult(ref HttpCapabilitiesBase result) {
             // Use the previously cached browserCap object if an identical
             // browserCap is found.
-            CacheInternal cacheInternal = System.Web.HttpRuntime.CacheInternal;
+            CacheStoreProvider cacheInternal = System.Web.HttpRuntime.Cache.InternalCache;
 
             if (result.Capabilities == null) {
                 return;
@@ -241,7 +241,7 @@ namespace System.Web.Configuration {
             }
             else {
                 // cache it and respect cachetime
-                cacheInternal.UtcInsert(hashKey, result, null, Cache.NoAbsoluteExpiration, _cachetime);
+                cacheInternal.Insert(hashKey, result, new CacheInsertOptions() { SlidingExpiration = _cachetime });
             }
         }
 
@@ -255,7 +255,7 @@ namespace System.Web.Configuration {
         internal HttpCapabilitiesBase Evaluate(HttpRequest request) {
 
             HttpCapabilitiesBase result;
-            CacheInternal cacheInternal = System.Web.HttpRuntime.CacheInternal;
+            CacheStoreProvider cacheInternal = System.Web.HttpRuntime.Cache.InternalCache;
 
             //
             // 1) grab UA and do optimistic cache lookup (if UA is in dependency list) 
@@ -298,7 +298,7 @@ namespace System.Web.Configuration {
                     CacheBrowserCapResult(ref result);
 
                     // Cache the result using the optimisicCacheKey
-                    cacheInternal.UtcInsert(optimisticCacheKey, result, null, Cache.NoAbsoluteExpiration, _cachetime);
+                    cacheInternal.Insert(optimisticCacheKey, result, new CacheInsertOptions() { SlidingExpiration = _cachetime });
 
                     return result;
                 }
@@ -363,9 +363,9 @@ namespace System.Web.Configuration {
             CacheBrowserCapResult(ref result);
 
              // cache it and respect _cachetime
-            cacheInternal.UtcInsert(fullCacheKey, result, null, Cache.NoAbsoluteExpiration, _cachetime);
+            cacheInternal.Insert(fullCacheKey, result, new CacheInsertOptions() { SlidingExpiration = _cachetime });
             if(optimisticCacheKey != null) {
-                cacheInternal.UtcInsert(optimisticCacheKey, _disableOptimisticCachingSingleton, null, Cache.NoAbsoluteExpiration, _cachetime);
+                cacheInternal.Insert(optimisticCacheKey, _disableOptimisticCachingSingleton, new CacheInsertOptions() { SlidingExpiration = _cachetime });
             }
 
             return result;

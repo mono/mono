@@ -33,7 +33,7 @@ namespace System.ServiceModel.Activation
         static SafeCloseHandle OpenCurrentProcessForWrite()
         {
             int processId = Process.GetCurrentProcess().Id;
-#pragma warning suppress 56523 // [....], Win32Exception ctor calls Marshal.GetLastWin32Error()
+#pragma warning suppress 56523 // Microsoft, Win32Exception ctor calls Marshal.GetLastWin32Error()
             SafeCloseHandle process = ListenerUnsafeNativeMethods.OpenProcess(ListenerUnsafeNativeMethods.PROCESS_QUERY_INFORMATION | ListenerUnsafeNativeMethods.WRITE_DAC | ListenerUnsafeNativeMethods.READ_CONTROL, false, processId);
             if (process.IsInvalid)
             {
@@ -46,7 +46,7 @@ namespace System.ServiceModel.Activation
 
         static SafeCloseHandle OpenProcessForQuery(int pid)
         {
-#pragma warning suppress 56523 // [....], Win32Exception ctor calls Marshal.GetLastWin32Error()
+#pragma warning suppress 56523 // Microsoft, Win32Exception ctor calls Marshal.GetLastWin32Error()
             SafeCloseHandle process = ListenerUnsafeNativeMethods.OpenProcess(ListenerUnsafeNativeMethods.PROCESS_QUERY_INFORMATION, false, pid);
             if (process.IsInvalid)
             {
@@ -99,7 +99,7 @@ namespace System.ServiceModel.Activation
 
         static SafeServiceHandle OpenSCManager()
         {
-#pragma warning suppress 56523 // [....], Win32Exception ctor calls Marshal.GetLastWin32Error()
+#pragma warning suppress 56523 // Microsoft, Win32Exception ctor calls Marshal.GetLastWin32Error()
             SafeServiceHandle scManager = ListenerUnsafeNativeMethods.OpenSCManager(null, null, ListenerUnsafeNativeMethods.SC_MANAGER_CONNECT);
             if (scManager.IsInvalid)
             {
@@ -112,7 +112,7 @@ namespace System.ServiceModel.Activation
 
         static SafeServiceHandle OpenService(SafeServiceHandle scManager, string serviceName, int purpose)
         {
-#pragma warning suppress 56523 // [....], Win32Exception ctor calls Marshal.GetLastWin32Error()
+#pragma warning suppress 56523 // Microsoft, Win32Exception ctor calls Marshal.GetLastWin32Error()
             SafeServiceHandle service = ListenerUnsafeNativeMethods.OpenService(scManager, serviceName, purpose);
             if (service.IsInvalid)
             {
@@ -249,7 +249,7 @@ namespace System.ServiceModel.Activation
                 }
             }
             byte[] pSecurityDescriptor = new byte[lpnLengthNeeded];
-#pragma warning suppress 56523 // [....], Win32Exception ctor calls Marshal.GetLastWin32Error()
+#pragma warning suppress 56523 // Microsoft, Win32Exception ctor calls Marshal.GetLastWin32Error()
             success = ListenerUnsafeNativeMethods.GetKernelObjectSecurity(kernelObject, ListenerUnsafeNativeMethods.DACL_SECURITY_INFORMATION, pSecurityDescriptor, pSecurityDescriptor.Length, out lpnLengthNeeded);
             if (!success)
             {
@@ -273,7 +273,7 @@ namespace System.ServiceModel.Activation
             pSecurityDescriptor = new byte[lpnLengthNeeded];
             securityDescriptor.GetBinaryForm(pSecurityDescriptor, 0);
             // set the SECURITY_DESCRIPTOR on the kernelObject
-#pragma warning suppress 56523 // [....], Win32Exception ctor calls Marshal.GetLastWin32Error()
+#pragma warning suppress 56523 // Microsoft, Win32Exception ctor calls Marshal.GetLastWin32Error()
             success = ListenerUnsafeNativeMethods.SetKernelObjectSecurity(kernelObject, ListenerUnsafeNativeMethods.DACL_SECURITY_INFORMATION, pSecurityDescriptor);
             if (!success)
             {
@@ -419,7 +419,7 @@ namespace System.ServiceModel.Activation
                         }
                     }
                     byte[] serviceStatusProcess = new byte[lpnLengthNeeded];
-#pragma warning suppress 56523 // [....], Win32Exception ctor calls Marshal.GetLastWin32Error()
+#pragma warning suppress 56523 // Microsoft, Win32Exception ctor calls Marshal.GetLastWin32Error()
                     success = ListenerUnsafeNativeMethods.QueryServiceStatusEx(service, ListenerUnsafeNativeMethods.SC_STATUS_PROCESS_INFO, serviceStatusProcess, serviceStatusProcess.Length, out lpnLengthNeeded);
                     if (!success)
                     {

@@ -1,0 +1,1537 @@
+//------------------------------------------------------------------------------
+// <copyright file="CacheUsage.cs" company="Microsoft">
+//     Copyright (c) Microsoft Corporation.  All rights reserved.
+// </copyright>                                                                
+//------------------------------------------------------------------------------
+
+// 
+// This is the implementation of an LRU2 list for the cache, which is used
+// to flush the least frequently used items when memory pressure is low.
+// 
+// LRU2 is similar to LRU (Least Recently Used), but it keeps track of the 
+// second to last use of an item, thereby measuring the average interval
+// between references to an item. This has the advantage over LRU of keeping
+// items that are frequently used, but haven't been used just at the time that
+// we need to flush.
+//
+// Please note that when we insert a new item in the list, we treat the addition
+// as a reference by itself.  So the 1st reference goes to the head, 
+// and the 2nd reference goes to the head of the 2nd reference list.
+//
+// ...................................................
+// For example:
+// Action       List (Head...Tail)
+// ------       ------------------
+// Insert A     A1 A2
+// Insert B     B1 A1 B2 A2
+// Insert C     C1 B1 A1 C2 B2 A2
+// Ref B        B1 C1 B2 A1 C2 A2
+// Ref A        A1 B1 C1 B2 A2 C2
+// Ref B        B1 A1 B2 C1 A2 C2
+// Ref C        C1 B1 A1 B2 C2 A2
+// Ref A        A1 C1 B1 A2 B2 C2
+//
+// When flushing, we will start scanning from the tail, and flush all 2nd references we find.
+// For example, if we want to flush 2 items, we will find C2 and B2,
+// and thus we will flush item B and C.
+// ...................................................
+// 
+// An item in the LRU2 list is represented by a UsageEntry struct. This struct
+// contains the reference to the cache entry, and the linked list entries for
+// both the most recent first and second references to the entry. To distinguish
+// between a link to an item's first reference and its second reference, we use
+// a positive index for the first reference, and a negative index for the second
+// reference.
+//
+// ...................................................
+// For example:
+// Logically I have this list
+// Head                 Tail
+// A1 B1 C2 C1 B2 A2
+//
+// Physically, A, B and C are stored in an array, and their indexes are 1, 2 and 3.
+//
+// So their ref1 and ref2 values will be:
+//
+// Entry(index) Ref1.Prev   Ref1.Next   Ref2.Prev   Ref2.Next
+// -----        ---------   ---------   ---------   ---------
+// (Head == 1 (point to A1))
+// A(1)         0           2 (B1)      -2 (B2)     0
+// B(2)         1 (A1)      -3 (C2)     3 (C1)      -1 (A2)
+// C(3)         -3 (C2)     -2 (B2)     2 (B1)      3 (C1)
+// ...................................................
+// 
+// To efficiently store potentially millions of cache items in the LRU2, 
+// we adopt a paging model. Each UsagePage contains an array of 127 UsageEntry
+// structs (whose size is slightly less than one x86 memory page). A reference
+// to a UsageEntry is thus defined by 2 index, the index of the page, and the 
+// index in the page's array of UsageEntry's.
+//     
+// When the number of free entries rises above a threshold, we reduce the number
+// of pages in use.
+// 
+// In order to efficiently items in an array of arrays, we must use the C++ macro
+// preprocessor. The jitter will not inline small functions, and we cannot represent
+// access to a UsageEntry as a property, since the propery requires an index parameter.
+// 
+
+namespace System.Web.Caching {
+    using System.Runtime.InteropServices;
+    using System.Text;
+    using System.Threading;
+    using System.Web;
+    using System.Web.Util;
+    using System.Collections;
+    using System;
+
+    // UsageEntryRef defines a reference to a UsageEntry in the UsageBucket data structure.
+    // An entry is identified by its index into the UsageBucket._pages array, and its
+    // index into the UsagePage._entries array. 
+    //
+    // Bits 0-7 of the reference are for the index into the UsagePage._entries array.
+    // Bits 8-31 of the reference are for the index into the UsageBucket._pages array.
+    //
+    // A reference to a UsageEntry may be to either its first or second reference in 
+    // the UsageBucket._lastRef list. The second reference will have a negative index.
+    //
+    struct UsageEntryRef {
+        // The invalid reference is 0.
+        static internal readonly UsageEntryRef INVALID = new UsageEntryRef(0, 0);
+
+        const uint   ENTRY_MASK  = 0x000000ffu;
+        const uint   PAGE_MASK   = 0xffffff00u;
+        const int    PAGE_SHIFT  = 8;
+
+        uint _ref;
+
+        internal UsageEntryRef(int pageIndex, int entryIndex) {
+            Debug.Assert((pageIndex & 0x00ffffff) == pageIndex, "(pageIndex & 0x00ffffff) == pageIndex");
+            Debug.Assert((Math.Abs(entryIndex) & ENTRY_MASK) == (Math.Abs(entryIndex)), "(Math.Abs(entryIndex) & ENTRY_MASK) == Math.Abs(entryIndex)");
+            Debug.Assert(entryIndex != 0 || pageIndex == 0, "entryIndex != 0 || pageIndex == 0");
+
+            // Please note that because the range of valid entryIndex is -127 to 127, so 
+            // 1 byte is big enough to hold the value.
+
+            _ref = ( (((uint)pageIndex) << PAGE_SHIFT) | (((uint)(entryIndex)) & ENTRY_MASK) );
+        }
+
+        public override bool Equals(object value) {
+            if (value is UsageEntryRef) {
+                return _ref == ((UsageEntryRef)value)._ref;
+            }
+
+            return false;
+        }
+
+#if NOT_USED
+        public static bool Equals(UsageEntryRef r1, UsageEntryRef r2) {
+            return r1._ref == r2._ref;
+        }
+#endif
+        public static bool operator ==(UsageEntryRef r1, UsageEntryRef r2) {
+            return r1._ref == r2._ref;
+        }
+
+        public static bool operator !=(UsageEntryRef r1, UsageEntryRef r2) {
+            return r1._ref != r2._ref;
+        }
+        
+        public override int GetHashCode() {
+            return (int) _ref;
+        }
+    
+#if DBG
+        public override string ToString() {
+            if (IsRef1) {
+                return PageIndex + ":" + Ref1Index;
+            }
+            else if (IsRef2) {
+                return PageIndex + ":" + -Ref2Index;
+            }
+            else {
+                return "0";
+            }
+        }
+#endif
+
+        // The index into the UsageBucket._pages array.
+        internal int PageIndex {
+            get {
+                int result = (int) (_ref >> PAGE_SHIFT);
+                return result;
+            }
+        }
+
+        
+        // The index for UsageEntry._ref1 in the UsagePage._entries array.
+        internal int Ref1Index {
+            get {
+                int result = (int) (sbyte) (_ref & ENTRY_MASK);
+                Debug.Assert(result > 0, "result > 0");
+                return result;
+            }
+        }
+
+        // The index for UsageEntry._ref2 in the UsagePage._entries array.
+        internal int Ref2Index {
+            get {
+                int result = (int) (sbyte) (_ref & ENTRY_MASK);
+                Debug.Assert(result < 0, "result < 0");
+                return -result;
+            }
+        }
+
+        // Is the reference for the first reference?
+        internal bool IsRef1 {
+            get {
+                return ((int) (sbyte) (_ref & ENTRY_MASK)) > 0;
+            }
+        }
+
+        // Is the reference for the second reference?
+        internal bool IsRef2 {
+            get {
+                return ((int) (sbyte) (_ref & ENTRY_MASK)) < 0;
+            }
+        }
+
+        // Is the reference invalid?
+        internal bool IsInvalid {
+            get {
+                return _ref == 0;
+            }
+        }
+    }
+
+    // A link to an item in the last references list.
+    struct UsageEntryLink {
+        internal UsageEntryRef _next;
+        internal UsageEntryRef _prev;
+    }
+
+    // A cache entry in the LRU2 list. It contains the pointer to the 
+    // cache entry, the date it was added to the list, and the links
+    // to the first and second references to the item in the list.
+    [StructLayout(LayoutKind.Explicit)]
+    struct UsageEntry {
+        // The entry's first reference in the last reference list.
+        // _ref1._next is also used for the following purposes when
+        // the entry is not on the last reference list:
+        //  * As a link in the free entry list for a page.
+        //  * As a link in the list of items to flush in FlushUnderUsedItems.
+        //
+        [FieldOffset(0)]
+        internal UsageEntryLink _ref1;
+
+        // _entries[0]._ref1._next is used to hold the head of the free entries
+        // list. We use the space in _ref1._prev to hold the number
+        // of free entries in the list.
+        [FieldOffset(4)]
+        internal int            _cFree;
+
+        // The entry's second reference in the last reference list.
+        [FieldOffset(8)]
+        internal UsageEntryLink _ref2;
+
+        // The date the entry was added to the list.
+        // If the date is 0 (DateTime.MinValue), the entry is free.
+        [FieldOffset(16)]
+        internal DateTime       _utcDate; 
+                                          
+        // The cache entry.
+        [FieldOffset(24)]
+        internal CacheEntry     _cacheEntry;
+    }
+
+    // A page to hold the array of UsageEntry. 
+    struct UsagePage {
+        internal UsageEntry[]   _entries;       // array of UsagEntry.
+        internal int            _pageNext;      // next page on the free page or free entry list
+        internal int            _pagePrev;      // prev page on the free page or free entry list
+    }
+
+    // A list of UsagePages.
+    struct UsagePageList {
+        internal int            _head;          // head of list
+        internal int            _tail;          // tail of list
+    }
+
+    sealed class UsageBucket {
+        // We cannot use array index 0 for entries, because we need an array index to 
+        // be different than its negation, and -0 = 0.
+        // We use _entries[0] to hold the head of the free list, and the size of the free list.
+        internal const int NUM_ENTRIES = 127;
+        const int LENGTH_ENTRIES = 128;
+
+        const int           MIN_PAGES_INCREMENT = 10;   
+        const int           MAX_PAGES_INCREMENT = 340;   // (size of a page on x86) / (12 bytes per UsagePage)
+        const double        MIN_LOAD_FACTOR = 0.5;  // minimum ratio of used to total entries before we will reduce
+
+        CacheUsage          _cacheUsage;            // parent usage object
+        byte                _bucket;                // priority of this bucket
+
+        UsagePage[]         _pages;                 // list of pages
+        int                 _cEntriesInUse;         // count of UsageEntry's in use
+        int                 _cPagesInUse;           // count of UsagePage's in use
+        int                 _cEntriesInFlush;       // count of UsageEntry's in process of being flushed
+        int                 _minEntriesInUse;       // minimum number of entries in use before we reduce
+
+        UsagePageList       _freePageList;          // list of free pages (_entries == null)
+        UsagePageList       _freeEntryList;         // list of pages with free entries (entry.FreeCountCount > 0)
+
+        UsageEntryRef       _lastRefHead;           // head of list of last refs
+        UsageEntryRef       _lastRefTail;           // tail of list of last refs
+        UsageEntryRef       _addRef2Head;           // head of ref2 list
+
+        bool                _blockReduce;           // block calls to Reduce() while in FlushUnderUsedItems
+
+
+        internal UsageBucket(CacheUsage cacheUsage, byte bucket) {
+            _cacheUsage = cacheUsage;
+            _bucket = bucket;
+            InitZeroPages();
+        }
+
+        void InitZeroPages() {
+            Debug.Assert(_cPagesInUse == 0, "_cPagesInUse == 0");
+            Debug.Assert(_cEntriesInUse == 0, "_cEntriesInUse == 0");
+            Debug.Assert(_cEntriesInFlush == 0, "_cEntriesInFlush == 0");
+            Debug.Assert(_lastRefHead.IsInvalid, "_lastRefHead.IsInvalid");
+            Debug.Assert(_lastRefTail.IsInvalid, "_lastRefTail.IsInvalid");
+            Debug.Assert(_addRef2Head.IsInvalid, "_addRef2Head.IsInvalid");
+
+            _pages = null;
+            _minEntriesInUse = -1;
+            _freePageList._head = -1;
+            _freePageList._tail = -1;
+            _freeEntryList._head = -1;
+            _freeEntryList._tail = -1;
+        }
+
+
+// Use macros so that the code is inlined in the function
+#define EntriesI(i)             (_pages[(i)]._entries)
+
+#define EntriesR(entryRef)      (_pages[(entryRef.PageIndex)]._entries)
+
+#define PagePrev(i)             (_pages[(i)]._pagePrev)
+
+#define PageNext(i)             (_pages[(i)]._pageNext)
+
+#define FreeEntryHead(entries)  ((entries)[0]._ref1._next)
+
+#define FreeEntryCount(entries) ((entries)[0]._cFree)
+
+#define CreateRef1(entryRef)    (new UsageEntryRef((entryRef).PageIndex, (entryRef).Ref2Index))
+
+#define CreateRef2(entryRef)    (new UsageEntryRef((entryRef).PageIndex, -(entryRef).Ref1Index))
+
+
+#if DBG
+        bool EntryIsFree(UsageEntryRef entryRef) {
+            return EntriesR(entryRef)[entryRef.Ref1Index]._cacheEntry == null &&
+                   EntriesR(entryRef)[entryRef.Ref1Index]._utcDate == DateTime.MinValue;
+        }
+
+        bool EntryIsUsed(UsageEntryRef entryRef) {
+            if (entryRef.IsRef1) {
+                return EntriesR(entryRef)[entryRef.Ref1Index]._cacheEntry != null &&
+                       EntriesR(entryRef)[entryRef.Ref1Index]._utcDate != DateTime.MinValue;
+            }
+            else {
+                return EntriesR(entryRef)[entryRef.Ref2Index]._cacheEntry != null &&
+                       EntriesR(entryRef)[entryRef.Ref2Index]._utcDate != DateTime.MinValue;
+            }
+        }
+#endif
+
+        // Add a page to the head of a list.
+        void AddToListHead(int pageIndex, ref UsagePageList list) {
+            Debug.Assert((list._head == -1) == (list._tail == -1), "(list._head == -1) == (list._tail == -1)");
+
+            PagePrev(pageIndex) = -1;
+            PageNext(pageIndex) = list._head;
+            if (list._head != -1) {
+                Debug.Assert(PagePrev(list._head) == -1, "PagePrev(list._head) == -1");
+                PagePrev(list._head) = pageIndex;
+            }
+            else {
+                list._tail = pageIndex;
+            }
+
+            list._head = pageIndex;
+        }
+
+        // Add a page to the tail of a list.
+        void AddToListTail(int pageIndex, ref UsagePageList list) {
+            Debug.Assert((list._head == -1) == (list._tail == -1), "(list._head == -1) == (list._tail == -1)");
+
+            PageNext(pageIndex) = -1;
+            PagePrev(pageIndex) = list._tail;
+            if (list._tail != -1) {
+                Debug.Assert(PageNext(list._tail) == -1, "PageNext(list._tail) == -1");
+                PageNext(list._tail) = pageIndex;
+            }
+            else {
+                list._head = pageIndex;
+            }
+
+            list._tail = pageIndex;
+        }
+
+        // Remove a page from the head of a list.
+        int RemoveFromListHead(ref UsagePageList list) {
+            Debug.Assert(list._head != -1, "list._head != -1");
+
+            int oldHead = list._head;
+            RemoveFromList(oldHead, ref list);
+            return oldHead;
+        }
+
+        // Remove a page from the list.
+        void RemoveFromList(int pageIndex, ref UsagePageList list) {
+            Debug.Assert((list._head == -1) == (list._tail == -1), "(list._head == -1) == (list._tail == -1)");
+
+            if (PagePrev(pageIndex) != -1) {
+                Debug.Assert(PageNext(PagePrev(pageIndex)) == pageIndex, "PageNext(PagePrev(pageIndex)) == pageIndex");
+                PageNext(PagePrev(pageIndex)) = PageNext(pageIndex);
+            }
+            else {
+                Debug.Assert(list._head == pageIndex, "list._head == pageIndex");
+                list._head = PageNext(pageIndex);
+            }
+
+            if (PageNext(pageIndex) != -1) {
+                Debug.Assert(PagePrev(PageNext(pageIndex)) == pageIndex, "PagePrev(PageNext(pageIndex)) == pageIndex");
+                PagePrev(PageNext(pageIndex)) = PagePrev(pageIndex);
+            }
+            else {
+                Debug.Assert(list._tail == pageIndex, "list._tail == pageIndex");
+                list._tail = PagePrev(pageIndex);
+            }
+
+            PagePrev(pageIndex) = -1;
+            PageNext(pageIndex) = -1;
+        }
+
+        // Move a page to the head of the list
+        void MoveToListHead(int pageIndex, ref UsagePageList list) {
+            Debug.Assert(list._head != -1, "list._head != -1");
+            Debug.Assert(list._tail != -1, "list._tail != -1");
+
+            // already at head?
+            if (list._head == pageIndex)
+                return;
+
+            // remove from list
+            RemoveFromList(pageIndex, ref list);
+
+            // add to head
+            AddToListHead(pageIndex, ref list);
+        }
+
+        // Move to the tail of the list
+        void MoveToListTail(int pageIndex, ref UsagePageList list) {
+            Debug.Assert(list._head != -1, "list._head != -1");
+            Debug.Assert(list._tail != -1, "list._tail != -1");
+
+            // already at tail?
+            if (list._tail == pageIndex)
+                return;
+
+            // remove from list
+            RemoveFromList(pageIndex, ref list);
+
+            // add to head
+            AddToListTail(pageIndex, ref list);
+        }
+
+        // Update _minEntriesInUse when _cPagesInUse changes.
+        // When _cEntriesInUse falls below _minEntriesInUse,
+        // a call to Reduce() will consolidate entries onto fewer pages.
+        // If _minEntries == -1, then a call to Reduce() will never reduce the number of pages.
+        void UpdateMinEntries() {
+            if (_cPagesInUse <= 1) {
+                _minEntriesInUse = -1;
+            }
+            else {
+                int capacity = _cPagesInUse * NUM_ENTRIES;
+                Debug.Assert(capacity > 0, "capacity > 0");
+                Debug.Assert(MIN_LOAD_FACTOR < 1.0, "MIN_LOAD_FACTOR < 1.0");
+
+                _minEntriesInUse = (int) (capacity * MIN_LOAD_FACTOR);
+
+                // Don't allow a reduce if there are not enough free entries to
+                // remove a page.
+                // Note: _minEntriesInUse - 1 == max # of entries still in use when Reduce() happens
+                //       (_cPagesInUse - 1) * NUM_ENTRIES == capacity after one page is freed
+                if ((_minEntriesInUse - 1) > ((_cPagesInUse - 1) * NUM_ENTRIES)) {
+                    _minEntriesInUse = -1;
+                }
+            }
+
+#if DBG
+            if (Debug.IsTagPresent("CacheUsageNoReduce") && Debug.IsTagEnabled("CacheUsageNoReduce")) {
+                _minEntriesInUse = -1;
+            }
+#endif
+
+        }
+
+        // Remove a UsagePage that is in use, and put in on the list of free pages.
+        void RemovePage(int pageIndex) {
+            Debug.Assert(FreeEntryCount(EntriesI(pageIndex)) == NUM_ENTRIES, "FreeEntryCount(EntriesI(pageIndex)) == NUM_ENTRIES");
+
+            // release the page from the free entries list
+            RemoveFromList(pageIndex, ref _freeEntryList);
+
+            // Add the page to the free pages list
+            AddToListHead(pageIndex, ref _freePageList);
+
+            // remove reference to page
+            Debug.Assert(EntriesI(pageIndex) != null, "EntriesI(pageIndex) != null");
+            EntriesI(pageIndex) = null;
+
+            // decrement count of pages and update _cMinEntriesInUse
+            _cPagesInUse--;
+            if (_cPagesInUse == 0) {
+                InitZeroPages();
+            }
+            else {
+                UpdateMinEntries();
+            }
+        }
+
+#if DBG
+        UsageEntryRef GetLastRefNext(UsageEntryRef entryRef) {
+            if (entryRef.IsRef1) {
+                return EntriesR(entryRef)[entryRef.Ref1Index]._ref1._next;
+            }
+            else if (entryRef.IsRef2) {
+                return EntriesR(entryRef)[entryRef.Ref2Index]._ref2._next;
+            }
+            else {
+                return _lastRefHead;
+            }
+        }
+
+        UsageEntryRef GetLastRefPrev(UsageEntryRef entryRef) {
+            if (entryRef.IsRef1) {
+                return EntriesR(entryRef)[entryRef.Ref1Index]._ref1._prev;
+            }
+            else if (entryRef.IsRef2) {
+                return EntriesR(entryRef)[entryRef.Ref2Index]._ref2._prev;
+            }
+            else {
+                return _lastRefTail;
+            }
+        }
+#endif
+
+        // Set the _next reference in the last reference list.
+        // We must do this with a macro to force inlining.
+#define SetLastRefNext(entryRef, next) {                                                \
+            if ((entryRef).IsRef1) {                                                    \
+                EntriesR((entryRef))[(entryRef).Ref1Index]._ref1._next = (next);        \
+            }                                                                           \
+            else if ((entryRef).IsRef2) {                                               \
+                EntriesR((entryRef))[(entryRef).Ref2Index]._ref2._next = (next);        \
+            }                                                                           \
+            else {                                                                      \
+                _lastRefHead = (next);                                                  \
+            }                                                                           \
+        }                                                                               \
+
+        // Set the _prev reference in the last reference list.
+        // We must do this with a macro to force inlining.
+#define SetLastRefPrev(entryRef, prev) {                                                \
+            if ((entryRef).IsRef1) {                                                    \
+                EntriesR((entryRef))[(entryRef).Ref1Index]._ref1._prev = (prev);        \
+            }                                                                           \
+            else if ((entryRef).IsRef2) {                                               \
+                EntriesR((entryRef))[(entryRef).Ref2Index]._ref2._prev = (prev);        \
+            }                                                                           \
+            else {                                                                      \
+                _lastRefTail = (prev);                                                  \
+            }                                                                           \
+        }                                                                               \
+
+        // Get a free UsageEntry.
+        UsageEntryRef GetFreeUsageEntry() {
+            // get the page of the free entry
+            Debug.Assert(_freeEntryList._head >= 0, "_freeEntryList._head >= 0");
+            int pageIndex = _freeEntryList._head;
+
+            // get a free entry from _entries
+            UsageEntry[] entries = EntriesI(pageIndex);
+            int entryIndex = FreeEntryHead(entries).Ref1Index;
+
+            // fixup free list and count
+            FreeEntryHead(entries) = entries[entryIndex]._ref1._next;
+            FreeEntryCount(entries)--;
+            if (FreeEntryCount(entries) == 0) {
+                // remove page from list of free pages
+                Debug.Assert(FreeEntryHead(entries).IsInvalid, "FreeEntryHead(entries).IsInvalid");
+                RemoveFromList(pageIndex, ref _freeEntryList);
+            }
+
+#if DBG
+            Debug.Assert(EntryIsFree(new UsageEntryRef(pageIndex, entryIndex)), "EntryIsFree(new UsageEntryRef(pageIndex, entryIndex))");
+            if (!FreeEntryHead(entries).IsInvalid) {
+                Debug.Assert(FreeEntryHead(entries).Ref1Index != entryIndex, "FreeEntryHead(entries).Ref1Index != entryIndex");
+                Debug.Assert(EntryIsFree(new UsageEntryRef(pageIndex, FreeEntryHead(entries).Ref1Index)), "EntryIsFree(new UsageEntryRef(pageIndex, FreeEntryHead(entries).Ref1Index))");
+            }
+#endif
+
+            return new UsageEntryRef(pageIndex, entryIndex);
+        }
+
+        // Add a UsageEntry to the free entry list.
+        void AddUsageEntryToFreeList(UsageEntryRef entryRef) {
+            Debug.Assert(entryRef.IsRef1, "entryRef.IsRef1");
+
+            UsageEntry[] entries = EntriesR(entryRef);
+            int entryIndex = entryRef.Ref1Index;
+
+            Debug.Assert(entries[entryIndex]._cacheEntry == null, "entries[entryIndex]._cacheEntry == null");
+            entries[entryIndex]._utcDate = DateTime.MinValue;
+            entries[entryIndex]._ref1._prev = UsageEntryRef.INVALID;
+            entries[entryIndex]._ref2._next = UsageEntryRef.INVALID;
+            entries[entryIndex]._ref2._prev = UsageEntryRef.INVALID;
+
+            entries[entryIndex]._ref1._next = FreeEntryHead(entries);
+            FreeEntryHead(entries) = entryRef;
+
+            _cEntriesInUse--;
+            int pageIndex = entryRef.PageIndex;
+            FreeEntryCount(entries)++;
+            if (FreeEntryCount(entries) == 1) {
+                // add page to head of list of free pages
+                AddToListHead(pageIndex, ref _freeEntryList);
+            }
+            else if (FreeEntryCount(entries) == NUM_ENTRIES) {
+                RemovePage(pageIndex);
+            }
+        }
+
+        // Expand the capacity of the UsageBucket to hold more CacheEntry's.
+        // We will need to allocate a new page, and perhaps expand the _pages array.
+        // Note that we never collapse the _pages array.
+        void Expand() {
+            Debug.Assert(_cPagesInUse * NUM_ENTRIES == _cEntriesInUse, "_cPagesInUse * NUM_ENTRIES == _cEntriesInUse");
+            Debug.Assert(_freeEntryList._head == -1, "_freeEntryList._head == -1");
+            Debug.Assert(_freeEntryList._tail == -1, "_freeEntryList._tail == -1");
+
+            // exapnd _pages if there are no more
+            if (_freePageList._head == -1) {
+                // alloc new pages array
+                int oldLength;
+                if (_pages == null) {
+                    oldLength = 0;
+                }
+                else {
+                    oldLength = _pages.Length;
+                }
+
+                Debug.Assert(_cPagesInUse == oldLength, "_cPagesInUse == oldLength");
+                Debug.Assert(_cEntriesInUse == oldLength * NUM_ENTRIES, "_cEntriesInUse == oldLength * ExpiresEntryRef.NUM_ENTRIES");
+
+                int newLength = oldLength * 2;
+                newLength = Math.Max(oldLength + MIN_PAGES_INCREMENT, newLength);
+                newLength = Math.Min(newLength, oldLength + MAX_PAGES_INCREMENT);
+                Debug.Assert(newLength > oldLength, "newLength > oldLength");
+
+                UsagePage[] newPages = new UsagePage[newLength];
+
+                // copy original pages
+                for (int i = 0; i < oldLength; i++) {
+                    newPages[i] = _pages[i];
+                }
+
+                // setup free list of new pages
+                for (int i = oldLength; i < newPages.Length; i++) {
+                    newPages[i]._pagePrev = i - 1;
+                    newPages[i]._pageNext = i + 1;
+                }
+
+                newPages[oldLength]._pagePrev = -1;
+                newPages[newPages.Length - 1]._pageNext = -1;
+
+                // use new pages array
+                _freePageList._head = oldLength;
+                _freePageList._tail = newPages.Length - 1;
+
+                _pages = newPages;
+            }
+
+            // move from free page list to free entries list
+            int pageIndex = RemoveFromListHead(ref _freePageList);
+            AddToListHead(pageIndex, ref _freeEntryList);
+
+            // create the entries
+            UsageEntry[] entries = new UsageEntry[LENGTH_ENTRIES];
+            FreeEntryCount(entries) = NUM_ENTRIES;
+            
+            // init free list
+            for (int i = 0; i < entries.Length - 1; i++) {
+                entries[i]._ref1._next = new UsageEntryRef(pageIndex, i + 1);
+            }
+            entries[entries.Length - 1]._ref1._next = UsageEntryRef.INVALID;
+
+            EntriesI(pageIndex) = entries;
+
+            // increment count of pages and update _minEntriesInUse
+            _cPagesInUse++;
+            UpdateMinEntries();
+        }
+
+        // Consolidate UsageEntry's onto fewer pages when there are too many
+        // free entries.
+        void Reduce() {
+            // Test if we need to consolidate.
+            if (_cEntriesInUse >= _minEntriesInUse || _blockReduce)
+                return;
+
+            Debug.Assert(_freeEntryList._head != -1, "_freeEntryList._head != -1");
+            Debug.Assert(_freeEntryList._tail != -1, "_freeEntryList._tail != -1");
+            Debug.Assert(_freeEntryList._head != _freeEntryList._tail, "_freeEntryList._head != _freeEntryList._tail");
+
+            // Rearrange free page list to put pages with more free entries at the tail
+            int meanFree = (int) (NUM_ENTRIES - (NUM_ENTRIES * MIN_LOAD_FACTOR));
+            int pageIndexLast = _freeEntryList._tail;
+            int pageIndexCurrent = _freeEntryList._head;
+            int pageIndexNext;
+            UsageEntry[] entries;
+
+            for (;;) {
+                pageIndexNext = PageNext(pageIndexCurrent);
+
+                // move pages with greater than mean number
+                // of free items to tail, move the others to head
+                if (FreeEntryCount(EntriesI(pageIndexCurrent)) > meanFree) {
+                    MoveToListTail(pageIndexCurrent, ref _freeEntryList);
+                }
+                else {
+                    MoveToListHead(pageIndexCurrent, ref _freeEntryList);
+                }
+
+                // check if entire list has been examined
+                if (pageIndexCurrent == pageIndexLast)
+                    break;
+
+                // iterate
+                pageIndexCurrent = pageIndexNext;
+            }
+
+            // Move entries from the free pages at the tail to the 
+            // free pages at the front, and release the free pages at the tail.
+            for (;;) {
+                // See if there is room left to move entries used by the page.
+                if (_freeEntryList._tail == -1)
+                    break;
+
+                entries = EntriesI(_freeEntryList._tail);
+                Debug.Assert(FreeEntryCount(entries) > 0, "FreeEntryCount(entries) > 0");
+                int availableFreeEntries = (_cPagesInUse * NUM_ENTRIES) - FreeEntryCount(entries) - _cEntriesInUse;
+                if (availableFreeEntries < (NUM_ENTRIES - FreeEntryCount(entries)))
+                    break;
+
+                // Move each entry from the page at the tail to a page at the head.
+                for (int i = 1; i < entries.Length; i++) {
+                    // skip the free entries
+                    if (entries[i]._cacheEntry == null)
+                        continue;
+
+                    // get a free UsageEntry from the head of the list.
+                    Debug.Assert(_freeEntryList._head != _freeEntryList._tail, "_freeEntryList._head != _freeEntryList._tail");
+                    UsageEntryRef newRef1 = GetFreeUsageEntry();
+                    UsageEntryRef newRef2 = CreateRef2(newRef1);
+                    Debug.Assert(newRef1.PageIndex != _freeEntryList._tail, "newRef1.PageIndex != _freeEntryList._tail");
+
+                    UsageEntryRef oldRef1 = new UsageEntryRef(_freeEntryList._tail, i);
+                    UsageEntryRef oldRef2 = CreateRef2(oldRef1);
+
+                    // update the CacheEntry
+                    CacheEntry cacheEntry = entries[i]._cacheEntry;
+                    Debug.Assert(cacheEntry.UsageEntryRef == oldRef1, "cacheEntry.UsageEntryRef == oldRef1");
+                    cacheEntry.UsageEntryRef = newRef1;
+
+                    // copy old entry to new entry
+                    UsageEntry[] newEntries = EntriesR(newRef1);
+                    newEntries[newRef1.Ref1Index] = entries[i];
+
+                    // Update free entry count for debugging. We don't bother
+                    // to fix up the free entry list for this page as we are
+                    // going to release the page.
+                    FreeEntryCount(entries)++;
+
+                    // Update the last ref list. We need to be careful when
+                    // references to the entry refer to the same entry.
+
+                    // ref1
+                    UsageEntryRef prev = newEntries[newRef1.Ref1Index]._ref1._prev;
+                    Debug.Assert(prev != oldRef2, "prev != oldRef2");
+
+                    UsageEntryRef next = newEntries[newRef1.Ref1Index]._ref1._next;
+                    if (next == oldRef2) {
+                        next = newRef2;
+                    }
+
+#if DBG
+                    Debug.Assert(GetLastRefNext(prev) == oldRef1, "GetLastRefNext(prev) == oldRef1");
+                    Debug.Assert(GetLastRefPrev(next) == oldRef1, "GetLastRefPrev(next) == oldRef1");
+#endif
+
+                    SetLastRefNext(prev, newRef1);
+                    SetLastRefPrev(next, newRef1);
+
+                    // ref2
+                    prev = newEntries[newRef1.Ref1Index]._ref2._prev; 
+                    if (prev == oldRef1) {
+                        prev = newRef1;
+                    }
+
+                    next = newEntries[newRef1.Ref1Index]._ref2._next; 
+                    Debug.Assert(next != oldRef1, "next != oldRef1");
+
+#if DBG
+                    Debug.Assert(GetLastRefNext(prev) == oldRef2, "GetLastRefNext(prev) == oldRef2");
+                    Debug.Assert(GetLastRefPrev(next) == oldRef2, "GetLastRefPrev(next) == oldRef2");
+#endif
+
+                    SetLastRefNext(prev, newRef2);
+                    SetLastRefPrev(next, newRef2);
+                    
+                    // _addRef2Head
+                    if (_addRef2Head == oldRef2) {
+                        _addRef2Head = newRef2;
+                    }
+                }
+
+                // now the page is free - release its memory
+                RemovePage(_freeEntryList._tail);
+
+                Debug.Validate("CacheValidateUsage", this);
+            }
+        }
+
+        // Add a new UsageEntry for a CacheEntry.
+        internal void AddCacheEntry(CacheEntry cacheEntry) {
+            lock (this) {
+                // Expand if there are no free UsageEntry's available.
+                if (_freeEntryList._head == -1) {
+                    Expand();
+                }
+
+                // get the free entry
+                UsageEntryRef freeRef1 = GetFreeUsageEntry();
+                UsageEntryRef freeRef2 = CreateRef2(freeRef1);
+                Debug.Assert(cacheEntry.UsageEntryRef.IsInvalid, "cacheEntry.UsageEntryRef.IsInvalid");
+                cacheEntry.UsageEntryRef = freeRef1;
+
+                // initialize index
+                UsageEntry[] entries = EntriesR(freeRef1);
+                int entryIndex = freeRef1.Ref1Index;
+                entries[entryIndex]._cacheEntry = cacheEntry;
+                entries[entryIndex]._utcDate = DateTime.UtcNow;
+
+                // add ref1 to head of entire list, ref2 to head of new ref2 list
+#if DBG
+                Debug.Assert(!_addRef2Head.IsRef1, "!_addRef2Head.IsRef1");
+                Debug.Assert(!_lastRefTail.IsRef1, "!_lastRefTail.IsRef1");
+                Debug.Assert(!_lastRefHead.IsRef2, "!_lastRefHead.IsRef2");
+                Debug.Assert(_lastRefTail.IsInvalid == _lastRefHead.IsInvalid, "_lastRefTail.IsInvalid == _lastRefHead.IsInvalid");
+                Debug.Assert(!_lastRefTail.IsInvalid || _addRef2Head.IsInvalid, "!_lastRefTail.IsInvalid || _addRef2Head.IsInvalid");
+                Debug.Assert(GetLastRefNext(_lastRefTail).IsInvalid, "GetLastRefNext(_lastRefTail).IsInvalid");
+                Debug.Assert(GetLastRefPrev(_lastRefHead).IsInvalid, "GetLastRefPrev(_lastRefHead).IsInvalid");
+#endif
+
+                entries[entryIndex]._ref1._prev = UsageEntryRef.INVALID;
+                entries[entryIndex]._ref2._next = _addRef2Head;
+                if (_lastRefHead.IsInvalid) {
+                    entries[entryIndex]._ref1._next = freeRef2;
+                    entries[entryIndex]._ref2._prev = freeRef1;
+                    _lastRefTail = freeRef2;
+                }
+                else {
+                    entries[entryIndex]._ref1._next = _lastRefHead;
+                    SetLastRefPrev(_lastRefHead, freeRef1);
+
+                    UsageEntryRef next, prev;
+                    if (_addRef2Head.IsInvalid) {
+                        prev = _lastRefTail;
+                        next = UsageEntryRef.INVALID;
+                    }
+                    else {
+                        prev = EntriesR(_addRef2Head)[_addRef2Head.Ref2Index]._ref2._prev;
+                        next = _addRef2Head;
+                    }
+
+                    entries[entryIndex]._ref2._prev = prev;
+                    SetLastRefNext(prev, freeRef2);
+                    SetLastRefPrev(next, freeRef2);
+                }
+
+                _lastRefHead = freeRef1;
+                _addRef2Head = freeRef2;
+
+                _cEntriesInUse++;
+
+                Debug.Trace("CacheUsageAdd", 
+                            "Added item=" + cacheEntry.Key + 
+                            ",_bucket=" + _bucket + 
+                            ",ref=" + freeRef1);
+
+                Debug.Validate("CacheValidateUsage", this);
+                Debug.Dump("CacheUsageAdd", this);
+            }
+        }
+
+        // Remove an entry from the last references list.
+        void RemoveEntryFromLastRefList(UsageEntryRef entryRef) {
+            Debug.Assert(entryRef.IsRef1, "entryRef.IsRef1");
+            UsageEntry[] entries = EntriesR(entryRef);
+            int entryIndex = entryRef.Ref1Index;
+
+            // remove ref1 from list
+            UsageEntryRef prev = entries[entryIndex]._ref1._prev;
+            UsageEntryRef next = entries[entryIndex]._ref1._next;
+
+#if DBG
+            Debug.Assert(GetLastRefNext(prev) == entryRef, "GetLastRefNext(prev) == entryRef");
+            Debug.Assert(GetLastRefPrev(next) == entryRef, "GetLastRefPrev(next) == entryRef");
+#endif
+
+            SetLastRefNext(prev, next);
+            SetLastRefPrev(next, prev);
+
+            // remove ref2 from list
+            prev = entries[entryIndex]._ref2._prev;
+            next = entries[entryIndex]._ref2._next;
+
+            UsageEntryRef entryRef2 = CreateRef2(entryRef);
+
+#if DBG
+            Debug.Assert(GetLastRefNext(prev) == entryRef2, "GetLastRefNext(prev) == entryRef2");
+            Debug.Assert(GetLastRefPrev(next) == entryRef2, "GetLastRefPrev(next) == entryRef2");
+#endif
+
+            SetLastRefNext(prev, next);
+            SetLastRefPrev(next, prev);
+
+            // fixup _addRef2Head
+            if (_addRef2Head == entryRef2) {
+                _addRef2Head = next;
+            }
+        }
+
+        // Remove a CacheEntry from the UsageBucket.
+        internal void RemoveCacheEntry(CacheEntry cacheEntry) {
+            lock (this) {
+                // The cache entry could have been removed from the cache while 
+                // we are in the middle of FlushUnderUsedItems, after we have
+                // released the lock and before we ourselves call Cache.Remove().
+                // Guard against that here.
+                UsageEntryRef entryRef = cacheEntry.UsageEntryRef;
+                if (entryRef.IsInvalid)
+                    return;
+
+                UsageEntry[]    entries = EntriesR(entryRef);
+                int             entryIndex = entryRef.Ref1Index;
+
+#if DBG
+                Debug.Assert(entryRef.IsRef1, "entryRef.IsRef1");
+                Debug.Assert(EntryIsUsed(entryRef), "EntryIsUsed(entryRef)");
+                Debug.Assert(cacheEntry == entries[entryIndex]._cacheEntry, "cacheEntry == entries[entryIndex]._cacheEntry");
+#endif
+    
+                // update the cache entry
+                cacheEntry.UsageEntryRef = UsageEntryRef.INVALID;
+                entries[entryIndex]._cacheEntry = null;
+    
+                // remove from last ref list
+                RemoveEntryFromLastRefList(entryRef);
+
+                // add to free list
+                AddUsageEntryToFreeList(entryRef);
+
+                // remove pages if necessary
+                Reduce();
+
+                Debug.Trace("CacheUsageRemove", 
+                            "Removed item=" + cacheEntry.Key + 
+                            ",_bucket=" + _bucket + 
+                            ",ref=" + entryRef);
+
+                Debug.Validate("CacheValidateUsage", this);
+                Debug.Dump("CacheUsageRemove", this);
+            }
+        }
+
+        // Update the CacheEntry in the last references list.
+        internal void UpdateCacheEntry(CacheEntry cacheEntry) {
+            lock (this) {
+                // The cache entry could have been retreived from the cache while 
+                // we are in the middle of FlushUnderUsedItems, after we have
+                // released the lock and before we ourselves call Cache.Remove().
+                // Guard against that here.
+                UsageEntryRef entryRef = cacheEntry.UsageEntryRef;
+                if (entryRef.IsInvalid)
+                    return;
+
+#if DBG
+                Debug.Assert(entryRef.IsRef1, "entryRef.IsRef1");
+                Debug.Assert(EntryIsUsed(entryRef), "EntryIsUsed(entryRef)");
+                Debug.Assert(!_lastRefHead.IsInvalid, "!_lastRefHead.IsInvalid");
+                Debug.Assert(!_lastRefTail.IsInvalid, "!_lastRefTail.IsInvalid");
+#endif
+
+                UsageEntry[] entries = EntriesR(entryRef);
+                int entryIndex = entryRef.Ref1Index;
+                UsageEntryRef entryRef2 = CreateRef2(entryRef);
+
+                // remove ref2 from list
+                UsageEntryRef prev = entries[entryIndex]._ref2._prev;
+                UsageEntryRef next = entries[entryIndex]._ref2._next;
+
+#if DBG
+                Debug.Assert(GetLastRefNext(prev) == entryRef2, "GetLastRefNext(prev) == entryRef2");
+                Debug.Assert(GetLastRefPrev(next) == entryRef2, "GetLastRefPrev(next) == entryRef2");
+#endif
+
+                SetLastRefNext(prev, next);
+                SetLastRefPrev(next, prev);
+
+                // fixup _addRef2Head
+                if (_addRef2Head == entryRef2) {
+                    _addRef2Head = next;
+                }
+
+                // move ref1 to ref2
+                entries[entryIndex]._ref2 = entries[entryIndex]._ref1;
+                prev = entries[entryIndex]._ref2._prev;
+                next = entries[entryIndex]._ref2._next;
+
+#if DBG
+                Debug.Assert(GetLastRefNext(prev) == entryRef, "GetLastRefNext(prev) == entryRef");
+                Debug.Assert(GetLastRefPrev(next) == entryRef, "GetLastRefPrev(next) == entryRef");
+#endif
+
+                SetLastRefNext(prev, entryRef2);
+                SetLastRefPrev(next, entryRef2);
+
+                // put ref1 at head of list
+                entries[entryIndex]._ref1._prev = UsageEntryRef.INVALID;
+                entries[entryIndex]._ref1._next = _lastRefHead;
+
+#if DBG
+                Debug.Assert(GetLastRefPrev(_lastRefHead).IsInvalid, "GetLastRefPrev(_lastRefHead).IsInvalid");
+#endif
+
+                SetLastRefPrev(_lastRefHead, entryRef);
+                _lastRefHead = entryRef;
+
+                Debug.Trace("CacheUsageUpdate", 
+                            "Updated item=" + cacheEntry.Key + 
+                            ",_bucket=" + _bucket + 
+                            ",ref=" + entryRef);
+
+                Debug.Validate("CacheValidateUsage", this);
+                Debug.Dump("CacheUsageUpdate", this);
+            }
+        }
+
+        // Flush under used items from the cache.
+        // If force is false, then we will skip items that have not aged enough
+        // to accumulate history.
+        // publicEntriesFlushed keeps track of the number of public entries that are flushed
+        internal int FlushUnderUsedItems(int maxFlush, bool force, ref int publicEntriesFlushed, ref int ocEntriesFlushed) {            
+#if DBG
+            if (Debug.IsTagPresent("CacheUsageNoFlush") && Debug.IsTagEnabled("CacheUsageNoFlush"))
+                return 0;
+#endif
+
+            // Check if there is something to flush
+            if (_cEntriesInUse == 0)
+                return 0;
+
+            Debug.Assert(maxFlush > 0, "maxFlush is not greater than 0, instead is " + maxFlush);
+            Debug.Assert(_cEntriesInFlush == 0, "_cEntriesInFlush == 0");
+
+            // We create a list of UsageEntry's that we wish to flush. These entries
+            // are not considered free, so the page that holds them will not be removed.
+            // inFlushHead will point to the head of that list, while we use the same
+            // UsageEntry._ref1 to chain them together (after we remove them from
+            // the LastRef list.)
+            UsageEntryRef inFlushHead = UsageEntryRef.INVALID;
+
+            UsageEntryRef prev, prevNext;
+            DateTime utcDate;
+            UsageEntry[] entries;
+            int entryIndex;
+            CacheEntry cacheEntry;
+            int flushed = 0;
+
+            try {
+                // Block insertion into the Cache if we're under high memory pressure
+                _cacheUsage.CacheSingle.BlockInsertIfNeeded();
+                
+                lock (this) {
+                    Debug.Assert(_blockReduce == false, "_blockReduce == false");
+
+                    // Recheck if there is something to flush.
+                    if (_cEntriesInUse == 0)
+                        return 0;
+
+                    DateTime utcNow = DateTime.UtcNow;
+
+                    // Walk the ref2 list backwards, as these are the items that have
+                    // been used least.
+                    for (prev = _lastRefTail; _cEntriesInFlush < maxFlush && !prev.IsInvalid; prev = prevNext) {
+                        Debug.Assert(_cEntriesInUse > 0, "_cEntriesInUse > 0");
+
+                        // Set prevNext before possibly freeing an item.
+                        // Examine only at ref2 items so we don't enumerate an
+                        // item twice.
+                        prevNext = EntriesR(prev)[prev.Ref2Index]._ref2._prev;
+                        while (prevNext.IsRef1) {
+                            prevNext = EntriesR(prevNext)[prevNext.Ref1Index]._ref1._prev;
+                        }
+
+#if DBG
+                        Debug.Assert(prev.IsRef2, "prev.IsRef2");
+                        Debug.Assert(EntryIsUsed(prev), "EntryIsUsed(prev)");
+                        Debug.Assert(EntryIsUsed(prev), "EntryIsUsed(prev)");
+#endif
+
+                        entries = EntriesR(prev);
+                        entryIndex = prev.Ref2Index;
+
+                        // Do not remove an item if it was recently added to the last references list,
+                        // as it has not had enough time to accumulate usage history.
+                        if (!force) {
+                            utcDate = entries[entryIndex]._utcDate;
+                            Debug.Assert(utcDate != DateTime.MinValue, "utcDate != DateTime.MinValue");
+
+                            if (utcNow - utcDate <= CacheUsage.NEWADD_INTERVAL && utcNow >= utcDate)
+                                continue;
+                        }
+
+                        UsageEntryRef prev1 = CreateRef1(prev);
+                        cacheEntry = entries[entryIndex]._cacheEntry;
+                        Debug.Assert(cacheEntry.UsageEntryRef == prev1, "cacheEntry.UsageEntryRef == prev1");
+                        Debug.Trace("CacheUsageFlushUnderUsedItem", "Flushing underused items, item=" + cacheEntry.Key + ", bucket=" + _bucket);
+
+                        // Remove reference from CacheEntry. We must do this before we
+                        // release the lock, otherwise the item would be corrupted if
+                        // UpdateCacheEntry or RemoveCacheEntry were called.
+                        cacheEntry.UsageEntryRef = UsageEntryRef.INVALID;
+                        
+                        // Keep track of how many public entries were flushed
+                        if (cacheEntry.IsPublic) {
+                            publicEntriesFlushed ++;
+                        }
+                        else if (cacheEntry.IsOutputCache) {
+                            ocEntriesFlushed++;
+                        }
+                        
+                        // remove from lastref list
+                        RemoveEntryFromLastRefList(prev1);
+
+                        // add it to the inFlush list
+                        entries[entryIndex]._ref1._next = inFlushHead;
+                        inFlushHead = prev1;
+
+                        flushed++;
+                        _cEntriesInFlush++;
+                    }
+
+                    if (flushed == 0) {
+                        Debug.Trace("CacheUsageFlushTotal", "Flush(" + maxFlush + "," + force + ") removed " + flushed + 
+                                    " underused items; Time=" + Debug.FormatLocalDate(DateTime.Now));
+
+                        return 0;
+                    }
+                    
+
+                    // We are about to leave the lock.  However, we still have to use the 
+                    // locally created "inFlush list" after that.  That's why we have to
+                    // set _blockReduce to true to prevent Reduce() from moving the
+                    // entries around.
+                    _blockReduce = true;
+                }
+            }
+            finally {
+                // Don't hold any insertblock before we remove Cache items.  If not, the following
+                // deadlock scenario may happen:
+                // - 3rd party code hold lock A, call Cache.Insert, which wait for the Cache insertblock
+                // - FlushUnderUsedItems holds the Cache insertBlock, call Cache.Remove, which call
+                //   3rd party CacheItemRemovedCallback, which then try to get lock A
+                
+                _cacheUsage.CacheSingle.UnblockInsert();
+            }
+
+            // We need to release the lock because when we do remove below,
+            // some CacheRemoveCallback user code might run that might
+            // do a cache insert in another thread, and will cause
+            // a CacheUsage insert/remove/update, we will block
+            // that thread, which cause a deadlock if the user code is
+            // waiting for that thread to finish its job.
+
+            Debug.Assert(!inFlushHead.IsInvalid, "!inFlushHead.IsInvalid");
+
+            // Remove items on the inFlush list from the rest of the cache.
+            CacheSingle cacheSingle = _cacheUsage.CacheSingle;
+            UsageEntryRef current = inFlushHead;
+            UsageEntryRef next;
+            while (!current.IsInvalid) {
+                entries = EntriesR(current);
+                entryIndex = current.Ref1Index;
+
+                next = entries[entryIndex]._ref1._next;
+                
+                // remove the entry
+                cacheEntry = entries[entryIndex]._cacheEntry;
+                entries[entryIndex]._cacheEntry = null;
+                Debug.Assert(cacheEntry.UsageEntryRef.IsInvalid, "cacheEntry.UsageEntryRef.IsInvalid");
+                cacheSingle.Remove(cacheEntry, CacheItemRemovedReason.Underused);
+
+                //iterate
+                current = next;
+            }
+
+            try {
+                // Block insertion into the Cache if we're under high memory pressure
+                _cacheUsage.CacheSingle.BlockInsertIfNeeded();
+                
+                lock (this) {
+                    // add each UsageEntry to the free list
+                    current = inFlushHead;
+                    while (!current.IsInvalid) {
+                        entries = EntriesR(current);
+                        entryIndex = current.Ref1Index;
+
+                        next = entries[entryIndex]._ref1._next;
+
+                        _cEntriesInFlush--;
+                        AddUsageEntryToFreeList(current);
+
+                        //iterate
+                        current = next;
+                    }
+
+                    // try to reduce
+                    Debug.Assert(_cEntriesInFlush == 0, "_cEntriesInFlush == 0");
+                    _blockReduce = false;
+                    Reduce();
+
+                    Debug.Trace("CacheUsageFlushTotal", "Flush(" + maxFlush + "," + force + ") removed " + flushed + 
+                                " underused items; Time=" + Debug.FormatLocalDate(DateTime.Now));
+
+                    Debug.Validate("CacheValidateUsage", this);
+                    Debug.Dump("CacheUsageFlush", this);
+                }
+            }
+            finally {
+                _cacheUsage.CacheSingle.UnblockInsert();
+            }
+
+            return flushed;
+        }
+
+#if DBG
+        internal void DebugValidate() {
+            int cFree = 0;               
+            int cEntriesInUse = 0;              
+            int cPagesInUse = 0;
+            int pagesLength;
+
+            if (_pages == null) {
+                pagesLength = 0;
+            }
+            else {
+                pagesLength = _pages.Length;
+            }
+
+            Debug.CheckValid(-1 <= _freePageList._head && _freePageList._head <= pagesLength, "-1 <= _freePageList._head && _freePageList._head <= pagesLength");
+            Debug.CheckValid(-1 <= _freeEntryList._head && _freeEntryList._head <= pagesLength, "-1 <= _freeEntryList._head && _freeEntryList._head <= pagesLength");
+            Debug.CheckValid(-1 <= _freeEntryList._tail && _freeEntryList._tail <= pagesLength, "-1 <= _freeEntryList._tail && _freeEntryList._tail <= pagesLength");
+            Debug.CheckValid((_freeEntryList._head == -1) == (_freeEntryList._tail == -1), "(_freeEntryList._head == -1) == (_freeEntryList._tail == -1)");
+            Debug.CheckValid(_minEntriesInUse >= -1, "_minEntriesInUse >= -1");
+            Debug.CheckValid(_lastRefHead.IsInvalid == _lastRefTail.IsInvalid, "_lastRefHead.IsInvalid == _lastRefTail.IsInvalid");
+            Debug.CheckValid(!_lastRefTail.IsInvalid || _addRef2Head.IsInvalid, "!_lastRefTail.IsInvalid || _addRef2Head.IsInvalid");
+            Debug.CheckValid(!_lastRefHead.IsRef2, "!_lastRefHead.IsRef2");
+            Debug.CheckValid(!_lastRefTail.IsRef1, "!_lastRefTail.IsRef1");
+            Debug.CheckValid(!_addRef2Head.IsRef1, "!_addRef2Head.IsRef1");
+            Debug.CheckValid(_cEntriesInFlush >= 0, "_cEntriesInFlush >= 0");
+
+            // check counts
+            for (int i = 0; i < pagesLength; i++) {
+                UsageEntry[] entries = _pages[i]._entries;
+                if (entries != null) {
+                    cPagesInUse++;
+                    cFree = 0;
+
+                    Debug.CheckValid(entries[0]._cacheEntry == null, "entries[0]._cacheEntry == null");
+                    Debug.CheckValid(entries[0]._utcDate == DateTime.MinValue, "entries[0]._utcDate == DateTime.MinValue");
+
+                    for (int j = 1; j < entries.Length; j++) {
+                        if (EntryIsFree(new UsageEntryRef(i, j))) {
+                            cFree++;
+                        }
+                        else {
+                            cEntriesInUse++;
+                        }
+                    }
+
+                    Debug.CheckValid(cFree == FreeEntryCount(entries), "cFree == FreeEntryCount(entries)");
+
+                    // walk the free list
+                    cFree = 0;
+                    if (!FreeEntryHead(entries).IsInvalid) {
+                        int j = FreeEntryHead(entries).Ref1Index;
+                        for (;;) {
+                            cFree++;
+                            Debug.CheckValid(cFree <= FreeEntryCount(entries), "cFree <= FreeEntryCount(entries)");
+
+                            if (entries[j]._ref1._next.IsInvalid)
+                                break;
+
+                            j = entries[j]._ref1._next.Ref1Index;
+                        }
+                    }
+                    Debug.CheckValid(cFree == FreeEntryCount(entries), "cFree == FreeEntryCount(entries)");
+                }
+            }
+
+            Debug.CheckValid(cPagesInUse == _cPagesInUse, "cPagesInUse == _cPagesInUse");
+            Debug.CheckValid(cEntriesInUse == _cEntriesInUse, "cEntriesInUse == _cEntriesInUse");
+
+            // walk the free slot list
+            int cFreeSlots = 0;
+            if (_freePageList._head != -1) {
+                for (int i = _freePageList._head; i != -1; i = _pages[i]._pageNext) {
+                    cFreeSlots++;
+                    Debug.CheckValid(cFreeSlots <= pagesLength, "cFreeSlots <= pagesLength");
+                    Debug.CheckValid(_pages[i]._entries == null, "_pages[i]._entries == null");
+                    if (_freePageList._head != i) {
+                        Debug.CheckValid(PageNext(PagePrev(i)) == i, "PageNext(PagePrev(i)) == i");
+                    }
+
+                    if (_freePageList._tail != i) {
+                        Debug.CheckValid(PagePrev(PageNext(i)) == i, "PagePrev(PageNext(i)) == i");
+                    }
+                }
+            }
+            Debug.CheckValid(cFreeSlots == pagesLength - _cPagesInUse, "cFreeSlots == pagesLength - _cPagesInUse");
+
+            // walk the free page list
+            int cFreeEntries = 0;
+            int cFreePages = 0;
+            if (_freeEntryList._head != -1) {
+                for (int i = _freeEntryList._head; i != -1; i = _pages[i]._pageNext) {
+                    cFreePages++;
+                    Debug.CheckValid(cFreePages <= pagesLength, "cFreePages < pagesLength");
+                    UsageEntry[] entries = _pages[i]._entries;
+                    Debug.CheckValid(entries != null, "entries != null");
+                    cFreeEntries += FreeEntryCount(entries);
+                    if (_freeEntryList._head != i) {
+                        Debug.CheckValid(PageNext(PagePrev(i)) == i, "PageNext(PagePrev(i)) == i");
+                    }
+
+                    if (_freeEntryList._tail != i) {
+                        Debug.CheckValid(PagePrev(PageNext(i)) == i, "PagePrev(PageNext(i)) == i");
+                    }
+                }
+            }
+
+            Debug.CheckValid(cFreeEntries == (_cPagesInUse * NUM_ENTRIES) - _cEntriesInUse, "cFreeEntries == (_cPagesInUse * NUM_ENTRIES) - _cEntriesInUse");
+
+            // walk last ref list forwards
+            int cTotalRefs = 2 * (_cEntriesInUse - _cEntriesInFlush);
+            int cRefs = 0;
+            UsageEntryRef last = UsageEntryRef.INVALID;
+            UsageEntryRef next = _lastRefHead;
+            while (!next.IsInvalid) {
+                cRefs++;
+                Debug.CheckValid(cRefs <= cTotalRefs, "cRefs <= cTotalRefs");
+                Debug.CheckValid(EntryIsUsed(next), "EntryIsUsed(next)");
+                Debug.CheckValid(GetLastRefPrev(next) == last, "GetLastRefPrev(next) == last");
+                last = next;
+                next = GetLastRefNext(next);
+            }
+
+            Debug.CheckValid(cRefs == cTotalRefs, "cRefs == cTotalRefs");
+
+            // walk list backwards
+            cRefs = 0;
+            last = UsageEntryRef.INVALID;
+            UsageEntryRef prev = _lastRefTail;
+            while (!prev.IsInvalid) {
+                cRefs++;
+                Debug.CheckValid(cRefs <= cTotalRefs, "cRefs <= cTotalRefs");
+                Debug.CheckValid(EntryIsUsed(prev), "EntryIsUsed(next)");
+                Debug.CheckValid(GetLastRefNext(prev) == last, "GetLastRefPrev(next) == last");
+                last = prev;
+                prev = GetLastRefPrev(prev);
+            }
+
+            Debug.CheckValid(cRefs == cTotalRefs, "cRefs == cTotalRefs");
+            
+            // walk the add2ref list
+            cRefs = 0;
+            last = GetLastRefPrev(_addRef2Head);
+            next = _addRef2Head;
+            while (!next.IsInvalid) {
+                cRefs++;
+                Debug.CheckValid(cRefs <= (cTotalRefs / 2), "cRefs <= (cTotalRefs / 2)");
+                Debug.CheckValid(EntryIsUsed(next), "EntryIsUsed(next)");
+                Debug.CheckValid(GetLastRefPrev(next) == last, "GetLastRefPrev(next) == last");
+                Debug.CheckValid(!next.IsRef1, "!next.IsRef1");
+                last = next;
+                next = GetLastRefNext(next);
+            }
+
+            Debug.CheckValid(cRefs <= (cTotalRefs / 2), "cRefs <= (cTotalRefs / 2)");
+        }
+
+        internal string DebugDescription(string indent) {
+            StringBuilder   sb = new StringBuilder();
+            string          i2 = indent + "    ";
+
+            sb.Append(indent + 
+                      "_bucket=" + _bucket + 
+                      ",_cEntriesInUse=" + _cEntriesInUse + 
+                      ",_cPagesInUse=" + _cPagesInUse + 
+                      ",_pages is " + (_pages == null ? "null" : "non-null") + 
+                      ",_minEntriesInUse=" + _minEntriesInUse + 
+                      ",_freePageList._head=" + _freePageList._head + 
+                      ",_freeEntryList._head=" + _freeEntryList._head + 
+                      ",_freeEntryList._tail=" + _freeEntryList._tail +
+                      "\n");
+
+            sb.Append(indent + "Refs list, in order:\n");
+
+            UsageEntryRef next = _lastRefHead;
+            while (!next.IsInvalid) {
+                if (next.IsRef1) {
+                    sb.Append(i2 + next.PageIndex + ":" + next.Ref1Index + " (1): " + EntriesR(next)[next.Ref1Index]._cacheEntry.Key + "\n");
+                }
+                else {
+                    sb.Append(i2 + next.PageIndex + ":" + next.Ref2Index + " (2): " + EntriesR(next)[next.Ref2Index]._cacheEntry.Key + "\n");
+                }
+
+                next = GetLastRefNext(next);
+            }
+
+            return sb.ToString();
+        }
+#endif
+    }
+
+    class CacheUsage {
+        internal static readonly TimeSpan   NEWADD_INTERVAL = new TimeSpan(0, 0, 10);
+        internal static readonly TimeSpan   CORRELATED_REQUEST_TIMEOUT = new TimeSpan(0, 0, 1);
+        internal static readonly TimeSpan   MIN_LIFETIME_FOR_USAGE = NEWADD_INTERVAL;
+        const byte                          NUMBUCKETS = (byte) (CacheItemPriority.High);
+        const int                           MAX_REMOVE = 1024;  // one page of poiners to CacheEntry's
+
+        readonly CacheSingle              _cacheSingle;
+        internal readonly UsageBucket[]     _buckets;
+        int                                 _inFlush;
+
+        internal CacheUsage(CacheSingle cacheSingle) {
+            Debug.Assert((int) CacheItemPriority.Low == 1, "(int) CacheItemPriority.Low == 1");
+
+            _cacheSingle = cacheSingle;
+            _buckets = new UsageBucket[NUMBUCKETS];
+            for (byte b = 0; b < _buckets.Length; b++) {
+                _buckets[b] = new UsageBucket(this, b);
+            }
+        }
+
+        internal CacheSingle CacheSingle {
+            get {
+                return _cacheSingle;
+            }
+        }
+
+        internal void Add(CacheEntry cacheEntry) {
+            byte bucket = cacheEntry.UsageBucket;
+            Debug.Assert(bucket != 0xff, "bucket != 0xff");
+            _buckets[bucket].AddCacheEntry(cacheEntry);
+        }
+
+        internal void Remove(CacheEntry cacheEntry) {
+            byte bucket = cacheEntry.UsageBucket;
+            if (bucket != 0xff) {
+                _buckets[bucket].RemoveCacheEntry(cacheEntry);
+            }
+        }
+
+        internal void Update(CacheEntry cacheEntry) {
+            byte bucket = cacheEntry.UsageBucket;
+            if (bucket != 0xff) {
+                _buckets[bucket].UpdateCacheEntry(cacheEntry);
+            }
+        }
+
+        // publicEntriesFlushed keeps track of the number of public entries that are flushed
+        internal int FlushUnderUsedItems(int toFlush, ref int publicEntriesFlushed, ref int ocEntriesFlushed) {
+            int flushed = 0;
+
+            if (Interlocked.Exchange(ref _inFlush, 1) == 0) {
+                try { 
+                    foreach (UsageBucket usageBucket in _buckets) {
+                        int flushedOne = usageBucket.FlushUnderUsedItems(toFlush - flushed, 
+                                                                         false,
+                                                                         ref publicEntriesFlushed, 
+                                                                         ref ocEntriesFlushed);
+                        flushed += flushedOne;
+                        if (flushed >= toFlush)
+                            break;
+                    }
+        
+                    if (flushed < toFlush) {
+                        foreach (UsageBucket usageBucket in _buckets) {
+                            int flushedOne = usageBucket.FlushUnderUsedItems(toFlush - flushed, 
+                                                                             true, 
+                                                                             ref publicEntriesFlushed, 
+                                                                             ref ocEntriesFlushed);
+                            flushed += flushedOne;
+                            if (flushed >= toFlush)
+                                break;
+                        }
+                    }
+                }
+                finally {
+                    Interlocked.Exchange(ref _inFlush, 0);
+                }
+            }
+
+            return flushed;
+        }
+
+#if DBG
+        internal void DebugValidate() {
+            foreach (UsageBucket usageBucket in _buckets) {
+                usageBucket.DebugValidate();
+            }
+        }
+
+        internal string DebugDescription(string indent) {
+            StringBuilder   sb = new StringBuilder();
+            string          i2 = indent + "    ";
+
+            sb.Append(indent);
+            sb.Append("Cache Usage\n");
+
+            foreach (UsageBucket usageBucket in _buckets) {
+                sb.Append(usageBucket.DebugDescription(i2));
+            }
+
+            return sb.ToString();
+        }
+#endif
+    }
+}

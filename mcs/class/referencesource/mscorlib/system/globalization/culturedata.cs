@@ -55,7 +55,7 @@ namespace System.Globalization
     //
 
     // StructLayout is needed here otherwise compiler can re-arrange the fields.
-    // We have to keep this in-[....] with the definition in comnlsinfo.h
+    // We have to keep this in-sync with the definition in comnlsinfo.h
     //
     // WARNING WARNING WARNING
     //

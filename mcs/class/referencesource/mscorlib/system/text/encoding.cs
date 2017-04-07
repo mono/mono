@@ -109,7 +109,7 @@ namespace System.Text
 
         //
         // The following values are from mlang.idl.  These values
-        // should be in [....] with those in mlang.idl.
+        // should be in sync with those in mlang.idl.
         //
         private const int MIMECONTF_MAILNEWS          = 0x00000001;
         private const int MIMECONTF_BROWSER           = 0x00000002;

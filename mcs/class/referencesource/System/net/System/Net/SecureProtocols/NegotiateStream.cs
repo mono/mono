@@ -93,7 +93,7 @@ using System.Security.Principal;
                                                  TokenImpersonationLevel    allowedImpersonationLevel)
         {
 #if DEBUG
-            using (GlobalLog.SetThreadKind(ThreadKinds.User | ThreadKinds.[....])) {
+            using (GlobalLog.SetThreadKind(ThreadKinds.User | ThreadKinds.Sync)) {
 #endif
             _NegoState.ValidateCreateContext(_Package, false, credential, targetName, binding, requiredProtectionLevel, allowedImpersonationLevel);
             _NegoState.ProcessAuthentication(null);
@@ -199,7 +199,7 @@ using System.Security.Principal;
                                                  TokenImpersonationLevel    requiredImpersonationLevel)
         {
 #if DEBUG
-            using (GlobalLog.SetThreadKind(ThreadKinds.User | ThreadKinds.[....])) {
+            using (GlobalLog.SetThreadKind(ThreadKinds.User | ThreadKinds.Sync)) {
 #endif
             _NegoState.ValidateCreateContext(_Package, credential, string.Empty, policy, requiredProtectionLevel, requiredImpersonationLevel);
 
@@ -503,7 +503,7 @@ using System.Security.Principal;
         // Should this not block?
         public override void Flush() {
 #if DEBUG
-            using (GlobalLog.SetThreadKind(ThreadKinds.User | ThreadKinds.[....])) {
+            using (GlobalLog.SetThreadKind(ThreadKinds.User | ThreadKinds.Sync)) {
 #endif
             InnerStream.Flush();
 #if DEBUG
@@ -531,7 +531,7 @@ using System.Security.Principal;
         public override int Read(byte[] buffer, int offset, int count)
         {
 #if DEBUG
-            using (GlobalLog.SetThreadKind(ThreadKinds.User | ThreadKinds.[....])) {
+            using (GlobalLog.SetThreadKind(ThreadKinds.User | ThreadKinds.Sync)) {
 #endif
             _NegoState.CheckThrow(true);
 
@@ -548,7 +548,7 @@ using System.Security.Principal;
         public override void Write(byte[] buffer, int offset, int count)
         {
 #if DEBUG
-            using (GlobalLog.SetThreadKind(ThreadKinds.User | ThreadKinds.[....])) {
+            using (GlobalLog.SetThreadKind(ThreadKinds.User | ThreadKinds.Sync)) {
 #endif
             _NegoState.CheckThrow(true);
 

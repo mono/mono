@@ -796,7 +796,7 @@ namespace System {
     }
 
     // These flags effect the way BindToMethodInfo and BindToMethodName are allowed to bind a delegate to a target method. Their
-    // values must be kept in [....] with the definition in vm\comdelegate.h.
+    // values must be kept in sync with the definition in vm\comdelegate.h.
     internal enum DelegateBindingFlags
     {
         StaticMethodOnly    =   0x00000001, // Can only bind to static target methods

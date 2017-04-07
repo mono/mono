@@ -50,7 +50,7 @@ namespace System.ServiceModel.Configuration
             base.CopyFrom(from);
 
             PrivacyNoticeElement source = (PrivacyNoticeElement) from;
-    #pragma warning suppress 56506 // [....], base.CopyFrom() validates the argument
+    #pragma warning suppress 56506 // Microsoft, base.CopyFrom() validates the argument
             this.Url = source.Url;
             this.Version = source.Version;
         }

@@ -799,7 +799,7 @@ namespace System.ServiceModel.Channels
         ulong GetServerPid()
         {
             ulong id;
-#pragma warning suppress 56523 // [....], Win32Exception ctor calls Marshal.GetLastWin32Error()
+#pragma warning suppress 56523 // Microsoft, Win32Exception ctor calls Marshal.GetLastWin32Error()
             if (!UnsafeNativeMethods.GetNamedPipeServerProcessId(pipe, out id))
             {
                 Win32Exception e = new Win32Exception();
@@ -811,7 +811,7 @@ namespace System.ServiceModel.Channels
         ulong GetClientPid()
         {
             ulong id;
-#pragma warning suppress 56523 // [....], Win32Exception ctor calls Marshal.GetLastWin32Error()
+#pragma warning suppress 56523 // Microsoft, Win32Exception ctor calls Marshal.GetLastWin32Error()
             if (!UnsafeNativeMethods.GetNamedPipeServerProcessId(pipe, out id))
             {
                 Win32Exception e = new Win32Exception();
@@ -886,7 +886,7 @@ namespace System.ServiceModel.Channels
                         throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(ConvertPipeException(e, TransferOperation.Read));
                     }
                 }
-#pragma warning suppress 56500 // [....], transferring exception to caller
+#pragma warning suppress 56500 // Microsoft, transferring exception to caller
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -956,7 +956,7 @@ namespace System.ServiceModel.Channels
                         throw DiagnosticUtility.ExceptionUtility.ThrowHelper(ConvertPipeException(e, TransferOperation.Write), ExceptionEventType);
                     }
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -2315,7 +2315,7 @@ namespace System.ServiceModel.Channels
                         }
                     }
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))

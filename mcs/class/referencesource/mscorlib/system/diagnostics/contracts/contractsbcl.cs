@@ -7,7 +7,7 @@
 **
 ** Class:  Contract
 ** 
-** <OWNER>maf,mbarnett,[....]</OWNER>
+** <OWNER>maf,mbarnett,Microsoft</OWNER>
 **
 ** Implementation details of CLR Contracts.
 **

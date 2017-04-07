@@ -37,7 +37,7 @@ namespace System.ServiceModel.Configuration
 
             SecurityElement source = (SecurityElement)from;
 
-#pragma warning suppress 56506 //[....]; base.CopyFrom() checks for 'from' being null
+#pragma warning suppress 56506 //Microsoft; base.CopyFrom() checks for 'from' being null
             if (PropertyValueOrigin.Default != source.ElementInformation.Properties[ConfigurationStrings.SecureConversationBootstrap].ValueOrigin)
                 this.SecureConversationBootstrap.CopyFrom(source.SecureConversationBootstrap);
         }

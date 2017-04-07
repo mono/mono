@@ -359,7 +359,7 @@ namespace System.Net {
         // to avoid flowing context.  Even if the operation completes before this call, the callback won't have been
         // called.
         //
-        // Returns whether the operation completed [....] or not.
+        // Returns whether the operation completed sync or not.
         //
         private bool CaptureOrComplete(ref ExecutionContext cachedContext, bool returnContext)
         {

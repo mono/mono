@@ -1316,7 +1316,7 @@ namespace System.Data.Linq.SqlClient {
                 }
             }
 
-            [SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily", Justification = "[....]: Cast is dependent on node type and casts do not happen unecessarily in a single code path.")]
+            [SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily", Justification = "Microsoft: Cast is dependent on node type and casts do not happen unecessarily in a single code path.")]
             internal override ProviderType GetBestType(ProviderType typeA, ProviderType typeB) {
                 // first determine the type precedence
                 SqlType bestType = (SqlType)(typeA.ComparePrecedenceTo(typeB) > 0 ? typeA : typeB);

@@ -118,7 +118,7 @@ namespace System.Web.SessionState {
             // with SQL provider
             SessionIDManager.CheckIdLength(id, true /* throwOnFail */);
 
-            InProcSessionState state = (InProcSessionState) HttpRuntime.CacheInternal.Get(key);
+            InProcSessionState state = (InProcSessionState)HttpRuntime.Cache.InternalCache.Get(key);
             if (state != null) {
                 bool    lockedByOther;       // True if the state is locked by another session
                 int initialFlags;
@@ -224,7 +224,7 @@ namespace System.Web.SessionState {
             
             SessionIDManager.CheckIdLength(id, true /* throwOnFail */);
 
-            InProcSessionState state = (InProcSessionState) HttpRuntime.CacheInternal.Get(key);
+            InProcSessionState state = (InProcSessionState)HttpRuntime.Cache.InternalCache.Get(key);
 
             /* If the state isn't there, we probably took too long to run. */
             if (state == null)
@@ -250,7 +250,7 @@ namespace System.Web.SessionState {
                                     bool newItem) {
             string          key = CreateSessionStateCacheKey(id);
             bool            doInsert = true;
-            CacheInternal   cacheInternal = HttpRuntime.CacheInternal;
+            CacheStoreProvider     cacheInternal = HttpRuntime.Cache.InternalCache;
             int             lockCookieForInsert = NewLockCookie;
             ISessionStateItemCollection items = null;
             HttpStaticObjectsCollection staticObjects = null;
@@ -312,7 +312,7 @@ namespace System.Web.SessionState {
                            Pleas note that an insert will cause the Session_End to be incorrectly raised. 
                            
                            Please note that the item itself should not expire between now and
-                           where we do UtcInsert below because CacheInternal.Get above have just
+                           where we do UtcInsert below because cacheInternal.Get above have just
                            updated its expiry time.
                         */ 
                         stateCurrent._flags |= (int)SessionStateItemFlags.IgnoreCacheItemRemoved;
@@ -346,9 +346,11 @@ namespace System.Web.SessionState {
                 }
                 finally {
                     // protected from ThreadAbortEx
-                    cacheInternal.UtcInsert(
-                            key, state, null, Cache.NoAbsoluteExpiration, new TimeSpan(0, state._timeout, 0),
-                            CacheItemPriority.NotRemovable, _callback);
+                    cacheInternal.Insert(key, state, new CacheInsertOptions() {
+                                                            SlidingExpiration = new TimeSpan(0, state._timeout, 0),
+                                                            Priority = CacheItemPriority.NotRemovable,
+                                                            OnRemovedCallback = _callback
+                                                        });
                     PerfCounters.IncrementCounter(AppPerfCounter.SESSIONS_TOTAL);
                     PerfCounters.IncrementCounter(AppPerfCounter.SESSIONS_ACTIVE);
 
@@ -383,9 +385,11 @@ namespace System.Web.SessionState {
             }
             finally {
                 // protected from ThreadAbortEx
-                object existingEntry = HttpRuntime.CacheInternal.UtcAdd(
-                        key, state, null, Cache.NoAbsoluteExpiration, new TimeSpan(0, timeout, 0),
-                        CacheItemPriority.NotRemovable, _callback);
+                object existingEntry = HttpRuntime.Cache.InternalCache.Add(key, state, new CacheInsertOptions() {
+                                                                                        SlidingExpiration = new TimeSpan(0, timeout, 0),
+                                                                                        Priority = CacheItemPriority.NotRemovable,
+                                                                                        OnRemovedCallback = _callback
+                                                                                    });
                 if (existingEntry == null) {
                     PerfCounters.IncrementCounter(AppPerfCounter.SESSIONS_TOTAL);
                     PerfCounters.IncrementCounter(AppPerfCounter.SESSIONS_ACTIVE);
@@ -402,7 +406,7 @@ namespace System.Web.SessionState {
             Debug.Assert(lockId != null, "lockId != null");
                 
             string          key = CreateSessionStateCacheKey(id);
-            CacheInternal   cacheInternal = HttpRuntime.CacheInternal;
+            CacheStoreProvider     cacheInternal = HttpRuntime.Cache.InternalCache;
             int             lockCookie = (int)lockId;
 
             SessionIDManager.CheckIdLength(id, true /* throwOnFail */);
@@ -438,7 +442,7 @@ namespace System.Web.SessionState {
             string  key = CreateSessionStateCacheKey(id);
             
             SessionIDManager.CheckIdLength(id, true /* throwOnFail */);
-            HttpRuntime.CacheInternal.Get(key);
+            HttpRuntime.Cache.InternalCache.Get(key);
         }
 
         // Create a new SessionStateStoreData.

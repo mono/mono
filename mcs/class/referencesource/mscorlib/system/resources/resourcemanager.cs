@@ -66,7 +66,7 @@ namespace System.Resources {
     }
 
     [FriendAccessAllowed]
-    // [[....] 3/9/2012] This class should be named PRIErrorInfo.
+    // [Microsoft 3/9/2012] This class should be named PRIErrorInfo.
     //
     // During Dev11 CLR RC Ask mode, the Windows Modern Resource Manager
     // made a breaking change such that ResourceMap.GetSubtree returns null when a subtree is
@@ -651,7 +651,7 @@ namespace System.Resources {
             return sb.ToString();
         }
 
-        // WARNING: This function must be kept in [....] with ResourceFallbackManager.GetEnumerator()
+        // WARNING: This function must be kept in sync with ResourceFallbackManager.GetEnumerator()
         // Return the first ResourceSet, based on the first culture ResourceFallbackManager would return
         internal ResourceSet GetFirstResourceSet(CultureInfo culture)
         {

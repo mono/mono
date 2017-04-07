@@ -60,7 +60,7 @@ namespace System.ServiceModel.Configuration
             base.CopyFrom(from);
 
             SslStreamSecurityElement source = (SslStreamSecurityElement)from;
-#pragma warning suppress 56506 // [....], base.CopyFrom() validates the argument
+#pragma warning suppress 56506 // Microsoft, base.CopyFrom() validates the argument
             this.RequireClientCertificate = source.RequireClientCertificate;
             this.SslProtocols = source.SslProtocols;
         }

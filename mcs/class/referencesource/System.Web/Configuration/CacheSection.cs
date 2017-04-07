@@ -19,14 +19,20 @@ namespace System.Web.Configuration {
     /* 
             <!--
             cache Attributes:
+              defaultProvider="name" - a name matching a provider in the provider list to use for Object and Internal cache.
               cacheAPIEnabled="[true|false]" - Enable or disable the user Cache API
               disableMemoryCollection="[true|false]" - Enable or disable the cache memory collection
               disableExpiration="[true|false]" - Enable or disable the expiration of items from the cache
               privateBytesLimit="number" - Represents maximum private bytes (in bytes) allowed. If it's zero, Cache will use an auto-generated limit. Cache will collect memory when the private bytes is near the limit. This works on top of other memory indexes monitored by Cache.
               percentagePhysicalMemoryUsedLimit="number" - Represents percentage of physical memory process allowed. Cache will collect memory when the private bytes is near the limit. This works on top of other memory indexes monitored by Cache.
               privateBytesPollTime="timespan" - How often we poll the process memory by calling NtQuerySystemInformation. Default is 2 min.
+               
             -->
-            <cache cacheAPIEnabled="true" />
+            <cache cacheAPIEnabled="true" defaultProvider="name" >
+                <providers>
+                    <add name="string" type="string" ... />
+                </providers>
+            </cache>
       */
 
     public sealed class CacheSection : ConfigurationSection {
@@ -44,6 +50,9 @@ namespace System.Web.Configuration {
         private static readonly ConfigurationProperty _propPercentagePhysicalMemoryUsedLimit;
         private static readonly ConfigurationProperty _propPrivateBytesPollTime;
 
+        private static readonly ConfigurationProperty _propProviders;
+        private static readonly ConfigurationProperty _propDefaultProvider;
+
 
         static CacheSection() {
             // Property initialization
@@ -51,6 +60,14 @@ namespace System.Web.Configuration {
             _propCacheAPIEnabled = new ConfigurationProperty("cacheAPIEnabled", typeof(bool), true, ConfigurationPropertyOptions.None);
             _propDisableDependencies = new ConfigurationProperty("disableDependencies", typeof(bool), false, ConfigurationPropertyOptions.None);
 #endif
+            _propProviders = new ConfigurationProperty("providers", typeof(ProviderSettingsCollection), null, ConfigurationPropertyOptions.None);
+            _propDefaultProvider =
+                new ConfigurationProperty("defaultProvider",
+                                            typeof(string),
+                                            null,
+                                            null,
+                                            StdValidatorsAndConverters.NonEmptyStringValidator,
+                                            ConfigurationPropertyOptions.None);
 
             _propDisableMemoryCollection = 
                 new ConfigurationProperty("disableMemoryCollection", 
@@ -91,6 +108,8 @@ namespace System.Web.Configuration {
             _properties.Add(_propDisableDependencies);
 #endif
 
+            _properties.Add(_propProviders);
+            _properties.Add(_propDefaultProvider);
             _properties.Add(_propDisableMemoryCollection);
             _properties.Add(_propDisableExpiration);
             _properties.Add(_propPrivateBytesLimit);
@@ -99,6 +118,24 @@ namespace System.Web.Configuration {
         }
 
         public CacheSection() {
+        }
+
+        [ConfigurationProperty("providers")]
+        public ProviderSettingsCollection Providers {
+            get {
+                return (ProviderSettingsCollection)base[_propProviders];
+            }
+        }
+
+        [ConfigurationProperty("defaultProvider", DefaultValue = null)]
+        [StringValidator(MinLength = 1)]
+        public string DefaultProvider {
+            get {
+                return (string)base[_propDefaultProvider];
+            }
+            set {
+                base[_propDefaultProvider] = value;
+            }
         }
 
 #if NOT_UNTIL_LATER

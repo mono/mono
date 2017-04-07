@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner       [....]
-// @backupOwner [....]
+// @owner       Microsoft
+// @backupOwner Microsoft
 //---------------------------------------------------------------------
 
 namespace System.Data.Objects
@@ -2131,7 +2131,7 @@ namespace System.Data.Objects
                 _inRelationshipFixup = false;
             }
 
-            // Keeping the entity and entry keys in [....].
+            // Keeping the entity and entry keys in sync.
             entry.EntityKey = value;
 
             //Internally, entry.EntityKey asserts that entry._entityKey and entityWithKey.EntityKey are equal.
@@ -3553,7 +3553,7 @@ namespace System.Data.Objects
                                     reference.IsForeignKey &&
                                     reference.IsDependentEndOfReferentialConstraint(checkIdentifying: false))
                                 {
-                                    // Ensure that the cached FK value on the reference is in [....] because it is possible that we
+                                    // Ensure that the cached FK value on the reference is in sync because it is possible that we
                                     // didn't take any actions above that would cause this to be set.
                                     reference.SetCachedForeignKey(ForeignKeyFactory.CreateKeyFromForeignKeyValues(entry, reference), entry);
                                 }

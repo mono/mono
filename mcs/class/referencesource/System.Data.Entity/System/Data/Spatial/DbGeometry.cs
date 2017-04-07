@@ -4,7 +4,7 @@
 // </copyright>
 //
 // @owner  willa
-// @backupOwner [....]
+// @backupOwner Microsoft
 //------------------------------------------------------------------------------
 
 using System.Data.Common.Internal;

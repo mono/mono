@@ -345,7 +345,7 @@ namespace System.ServiceModel.Channels
                     {
                         thisPtr.CompleteSend(result);
                     }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                     catch (Exception e)
                     {
                         if (Fx.IsFatal(e))

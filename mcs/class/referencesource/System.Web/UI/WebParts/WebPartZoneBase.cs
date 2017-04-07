@@ -1261,7 +1261,7 @@ namespace System.Web.UI.WebControls.WebParts {
                 }
 
                 if (orientation == Orientation.Vertical) {
-                    // Add an extra row with height of 100%, to [....] up any extra space
+                    // Add an extra row with height of 100%, to Microsoft up any extra space
                     // if the height of the zone is larger than its contents
                     writer.RenderBeginTag(HtmlTextWriterTag.Tr);
 
@@ -1276,7 +1276,7 @@ namespace System.Web.UI.WebControls.WebParts {
                     writer.RenderEndTag(); // Tr
                 }
                 else {
-                    // Add an extra cell with width of 100%, to [....] up any extra space
+                    // Add an extra cell with width of 100%, to Microsoft up any extra space
                     // if the width of the zone is larger than its contents.
                     writer.AddStyleAttribute(HtmlTextWriterStyle.Width, "100%");
 

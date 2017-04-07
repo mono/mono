@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner  [....]
-// @backupOwner [....]
+// @owner  Microsoft
+// @backupOwner Microsoft
 //---------------------------------------------------------------------
 
 //using System.Diagnostics; // Please use PlanCompiler.Assert instead of Debug.Assert in this class...
@@ -1047,7 +1047,7 @@ namespace System.Data.Query.PlanCompiler
         /// <returns></returns>
         public override DbExpression Visit(SoftCastOp op, Node n)
         {
-            // [....] 9/21/06 - temporarily removing check here 
+            // Microsoft 9/21/06 - temporarily removing check here 
             //  because the assert wrongly fails in some cases where the types are promotable,
             //  but the facets are not.  Put this back when that issue is solved.
             //
