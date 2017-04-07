@@ -211,11 +211,13 @@ namespace Mono.Btls {
 				AddTrustedRoots (store, settings, server);
 
 #if MONODROID
-			SetupCertificateStore (store);
+			if (!server)
+				SetupCertificateStore (store);
 			return;
 #else
 			if (settings?.CertificateSearchPaths == null) {
-				SetupCertificateStore (store);
+				if (!server)
+					SetupCertificateStore (store);
 				return;
 			}
 
