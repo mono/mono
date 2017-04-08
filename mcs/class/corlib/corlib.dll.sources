@@ -1640,6 +1640,7 @@ coreclr/SorterArray.cs
 
 corert/AddrofIntrinsics.cs
 corert/Debug.cs
+corert/EnvironmentAugments.cs
 corert/Interop.cs
 corert/Interop.MemAllocFree.cs
 corert/RelocatedTypeAttribute.cs
@@ -1666,6 +1667,8 @@ corert/RuntimeThread.cs
 
 ../../../external/corert/src/System.Private.CoreLib/shared/System/TupleExtensions.cs
 
+../../../external/corert/src/System.Private.CoreLib/shared/System/Diagnostics/Debug.cs
+
 ../../../external/corert/src/System.Private.CoreLib/shared/System/IO/Win32Marshal.cs
 
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/CompilerServices/ITuple.cs
@@ -1686,8 +1689,6 @@ corert/RuntimeThread.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/ArraySortHelper.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/IDictionaryDebugView.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/Dictionary.cs
-
-../../../external/corert/src/System.Private.CoreLib/src/System/Diagnostics/Debug.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolBoundHandle.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolNativeOverlapped.cs
