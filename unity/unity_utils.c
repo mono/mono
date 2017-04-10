@@ -241,11 +241,12 @@ mono_unity_g_free (void* ptr)
 	g_free (ptr);
 }
 
-// only needed on OSX
+extern int mono_backtrace_from_context(void* context, void* array[], int count);
+
 int
 mono_unity_backtrace_from_context (void* context, void* array[], int count)
 {
-	return 0;
+	return mono_backtrace_from_context (context, array, count);
 }
 
 MonoException*
