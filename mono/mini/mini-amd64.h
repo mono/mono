@@ -190,10 +190,7 @@ typedef struct MonoCompileArch {
 
 typedef struct {
 	double lo;
-	/* technically we should save/resume all 128 bits but nothing is 
-	 * setup to handle this currently
-	 * double hi;
-	 */
+	double hi;
 } MonoContextSimdReg;
 
 typedef struct {
