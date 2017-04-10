@@ -155,5 +155,7 @@ void* mono_unity_get_field_address(MonoObject *obj, MonoVTable *vt, MonoClassFie
 gboolean mono_unity_thread_state_init_from_handle(MonoThreadUnwindState *tctx, MonoThreadInfo *info);
 void mono_unity_stackframe_set_method(MonoStackFrame *sf, MonoMethod *method);
 MonoType* mono_unity_reflection_type_get_type(MonoReflectionType *type);
+void mono_unity_set_data_dir(const char* dir);
+char* mono_unity_get_data_dir();
 
 #endif

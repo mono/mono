@@ -125,7 +125,6 @@ mono_class_is_enum
 mono_class_is_subclass_of
 mono_class_is_valid_enum
 mono_class_is_valuetype
-mono_class_is_blittable
 mono_class_min_align
 mono_class_name_from_token
 mono_class_num_events
@@ -941,6 +940,7 @@ mono_unity_socket_security_enabled_set
 mono_unity_seh_handler
 mono_unity_set_unhandled_exception_handler
 mono_class_is_generic
+mono_class_is_blittable
 mono_class_is_inflated
 unity_mono_method_is_generic
 unity_mono_method_is_inflated
@@ -975,3 +975,5 @@ mono_unity_loader_get_last_error_and_error_prepare_exception
 mono_unity_jit_cleanup
 mono_unity_install_memory_callbacks
 mono_unity_register_path_remapper
+mono_unity_set_data_dir
+mono_unity_get_data_dir
