@@ -1775,6 +1775,12 @@ int mono_backtrace_from_context(void* context, void* array[], int count)
 #endif
 }
 
+int
+mono_unity_backtrace_from_context (void* context, void* array[], int count)
+{
+	return mono_backtrace_from_context (context, array, count);
+}
+
 /*
  * mono_handle_native_sigsegv:
  *

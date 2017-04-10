@@ -241,14 +241,6 @@ mono_unity_g_free (void* ptr)
 	g_free (ptr);
 }
 
-extern int mono_backtrace_from_context(void* context, void* array[], int count);
-
-int
-mono_unity_backtrace_from_context (void* context, void* array[], int count)
-{
-	return mono_backtrace_from_context (context, array, count);
-}
-
 MonoException*
 mono_unity_loader_get_last_error_and_error_prepare_exception ()
 {
