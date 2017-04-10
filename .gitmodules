@@ -56,3 +56,12 @@
 [submodule "external/corert"]
 	path = external/corert
 	url = git://github.com/mono/corert.git
+[submodule "external/buildscripts"]
+	path = external/buildscripts
+	url = git@github.com:Unity-Technologies/monobuildtools.git
+[submodule "external/bdwgc"]
+	path = external/bdwgc
+	url = git://github.com/Unity-Technologies/bdwgc.git
+[submodule "external/libatomic_ops"]
+	path = external/libatomic_ops
+	url = https://github.com/Unity-Technologies/libatomic_ops.git
