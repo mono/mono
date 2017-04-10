@@ -253,3 +253,28 @@ mono_unity_loader_get_last_error_and_error_prepare_exception ()
 
 	return mono_loader_error_prepare_exception (last_error);
 }
+
+MonoClass*
+mono_unity_class_get_generic_type_definition (MonoClass* klass)
+{
+	return klass->generic_class ? mono_class_get_generic_type_definition (klass) : NULL;
+}
+
+MonoClass*
+mono_unity_class_get_generic_parameter_at (MonoClass* klass, guint32 index)
+{
+	if (!klass->generic_container || index >= klass->generic_container->type_argc)
+		return NULL;
+
+	return mono_class_from_generic_parameter (mono_generic_container_get_param (klass->generic_container, index), klass->image, FALSE);
+}
+
+guint32
+mono_unity_class_get_generic_parameter_count (MonoClass* klass)
+{
+	if (!klass->generic_container)
+		return 0;
+
+	return klass->generic_container->type_argc;
+}
+
