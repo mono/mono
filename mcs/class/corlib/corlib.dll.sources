@@ -1063,7 +1063,6 @@ ReferenceSources/Type.cs
 ../referencesource/mscorlib/system/collections/comparer.cs
 ../referencesource/mscorlib/system/collections/compatiblecomparer.cs
 ../referencesource/mscorlib/system/collections/dictionarybase.cs
-../referencesource/mscorlib/system/collections/dictionaryentry.cs
 ../referencesource/mscorlib/system/collections/emptyreadonlydictionaryinternal.cs
 ../referencesource/mscorlib/system/collections/hashtable.cs
 ../referencesource/mscorlib/system/collections/icollection.cs
@@ -1103,7 +1102,6 @@ ReferenceSources/Type.cs
 ../referencesource/mscorlib/system/collections/generic/ireadonlydictionary.cs
 ../referencesource/mscorlib/system/collections/generic/ireadonlylist.cs
 ../referencesource/mscorlib/system/collections/generic/keynotfoundexception.cs
-../referencesource/mscorlib/system/collections/generic/keyvaluepair.cs
 ../referencesource/mscorlib/system/collections/generic/list.cs
 
 ../referencesource/mscorlib/system/diagnostics/assert.cs
@@ -1666,6 +1664,10 @@ corert/RuntimeThread.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/Interop/Windows/Kernel32/Interop.FormatMessage.cs
 
 ../../../external/corert/src/System.Private.CoreLib/shared/System/TupleExtensions.cs
+
+../../../external/corert/src/System.Private.CoreLib/shared/System/Collections/DictionaryEntry.cs
+
+../../../external/corert/src/System.Private.CoreLib/shared/System/Collections/Generic/KeyValuePair.cs
 
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Diagnostics/Debug.cs
 
