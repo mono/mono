@@ -169,22 +169,22 @@ LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 	sctx->r14 = ctx->R14;
 	sctx->r15 = ctx->R15;
 
-	sctx->fregs[AMD64_XMM0].lo = *(double*)&ctx->Xmm0.Low;
-	sctx->fregs[AMD64_XMM1].lo = *(double*)&ctx->Xmm1.Low;
-	sctx->fregs[AMD64_XMM2].lo = *(double*)&ctx->Xmm2.Low;
-	sctx->fregs[AMD64_XMM3].lo = *(double*)&ctx->Xmm3.Low;
-	sctx->fregs[AMD64_XMM4].lo = *(double*)&ctx->Xmm4.Low;
-	sctx->fregs[AMD64_XMM5].lo = *(double*)&ctx->Xmm5.Low;
-	sctx->fregs[AMD64_XMM6].lo = *(double*)&ctx->Xmm6.Low;
-	sctx->fregs[AMD64_XMM7].lo = *(double*)&ctx->Xmm7.Low;
-	sctx->fregs[AMD64_XMM8].lo = *(double*)&ctx->Xmm8.Low;
-	sctx->fregs[AMD64_XMM9].lo = *(double*)&ctx->Xmm9.Low;
-	sctx->fregs[AMD64_XMM10].lo = *(double*)&ctx->Xmm10.Low;
-	sctx->fregs[AMD64_XMM11].lo = *(double*)&ctx->Xmm11.Low;
-	sctx->fregs[AMD64_XMM12].lo = *(double*)&ctx->Xmm12.Low;
-	sctx->fregs[AMD64_XMM13].lo = *(double*)&ctx->Xmm13.Low;
-	sctx->fregs[AMD64_XMM14].lo = *(double*)&ctx->Xmm14.Low;
-	sctx->fregs[AMD64_XMM15].lo = *(double*)&ctx->Xmm15.Low;
+	memcpy(&sctx->fregs[AMD64_XMM0], &ctx->Xmm0, sizeof(MonoContextSimdReg));
+	memcpy(&sctx->fregs[AMD64_XMM1], &ctx->Xmm1, sizeof(MonoContextSimdReg));
+	memcpy(&sctx->fregs[AMD64_XMM2], &ctx->Xmm2, sizeof(MonoContextSimdReg));
+	memcpy(&sctx->fregs[AMD64_XMM3], &ctx->Xmm3, sizeof(MonoContextSimdReg));
+	memcpy(&sctx->fregs[AMD64_XMM4], &ctx->Xmm4, sizeof(MonoContextSimdReg));
+	memcpy(&sctx->fregs[AMD64_XMM5], &ctx->Xmm5, sizeof(MonoContextSimdReg));
+	memcpy(&sctx->fregs[AMD64_XMM6], &ctx->Xmm6, sizeof(MonoContextSimdReg));
+	memcpy(&sctx->fregs[AMD64_XMM7], &ctx->Xmm7, sizeof(MonoContextSimdReg));
+	memcpy(&sctx->fregs[AMD64_XMM8], &ctx->Xmm8, sizeof(MonoContextSimdReg));
+	memcpy(&sctx->fregs[AMD64_XMM9], &ctx->Xmm9, sizeof(MonoContextSimdReg));
+	memcpy(&sctx->fregs[AMD64_XMM10], &ctx->Xmm10, sizeof(MonoContextSimdReg));
+	memcpy(&sctx->fregs[AMD64_XMM11], &ctx->Xmm11, sizeof(MonoContextSimdReg));
+	memcpy(&sctx->fregs[AMD64_XMM12], &ctx->Xmm12, sizeof(MonoContextSimdReg));
+	memcpy(&sctx->fregs[AMD64_XMM13], &ctx->Xmm13, sizeof(MonoContextSimdReg));
+	memcpy(&sctx->fregs[AMD64_XMM14], &ctx->Xmm14, sizeof(MonoContextSimdReg));
+	memcpy(&sctx->fregs[AMD64_XMM15], &ctx->Xmm15, sizeof(MonoContextSimdReg));
 
 	sctx->has_fregs = TRUE;
 
@@ -237,22 +237,22 @@ LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 		ctx->R15 = sctx->r15;
 		ctx->Rip = sctx->rip;
 
-		ctx->Xmm0.Low = *(ULONGLONG*)&sctx->fregs[AMD64_XMM0].lo;
-		ctx->Xmm1.Low = *(ULONGLONG*)&sctx->fregs[AMD64_XMM1].lo;
-		ctx->Xmm2.Low = *(ULONGLONG*)&sctx->fregs[AMD64_XMM2].lo;
-		ctx->Xmm3.Low = *(ULONGLONG*)&sctx->fregs[AMD64_XMM3].lo;
-		ctx->Xmm4.Low = *(ULONGLONG*)&sctx->fregs[AMD64_XMM4].lo;
-		ctx->Xmm5.Low = *(ULONGLONG*)&sctx->fregs[AMD64_XMM5].lo;
-		ctx->Xmm6.Low = *(ULONGLONG*)&sctx->fregs[AMD64_XMM6].lo;
-		ctx->Xmm7.Low = *(ULONGLONG*)&sctx->fregs[AMD64_XMM7].lo;
-		ctx->Xmm8.Low = *(ULONGLONG*)&sctx->fregs[AMD64_XMM8].lo;
-		ctx->Xmm9.Low = *(ULONGLONG*)&sctx->fregs[AMD64_XMM9].lo;
-		ctx->Xmm10.Low = *(ULONGLONG*)&sctx->fregs[AMD64_XMM10].lo;
-		ctx->Xmm11.Low = *(ULONGLONG*)&sctx->fregs[AMD64_XMM11].lo;
-		ctx->Xmm12.Low = *(ULONGLONG*)&sctx->fregs[AMD64_XMM12].lo;
-		ctx->Xmm13.Low = *(ULONGLONG*)&sctx->fregs[AMD64_XMM13].lo;
-		ctx->Xmm14.Low = *(ULONGLONG*)&sctx->fregs[AMD64_XMM14].lo;
-		ctx->Xmm15.Low = *(ULONGLONG*)&sctx->fregs[AMD64_XMM15].lo;
+		memcpy(&ctx->Xmm0, &sctx->fregs[AMD64_XMM0], sizeof(MonoContextSimdReg));
+		memcpy(&ctx->Xmm1, &sctx->fregs[AMD64_XMM1], sizeof(MonoContextSimdReg));
+		memcpy(&ctx->Xmm2, &sctx->fregs[AMD64_XMM2], sizeof(MonoContextSimdReg));
+		memcpy(&ctx->Xmm3, &sctx->fregs[AMD64_XMM3], sizeof(MonoContextSimdReg));
+		memcpy(&ctx->Xmm4, &sctx->fregs[AMD64_XMM4], sizeof(MonoContextSimdReg));
+		memcpy(&ctx->Xmm5, &sctx->fregs[AMD64_XMM5], sizeof(MonoContextSimdReg));
+		memcpy(&ctx->Xmm6, &sctx->fregs[AMD64_XMM6], sizeof(MonoContextSimdReg));
+		memcpy(&ctx->Xmm7, &sctx->fregs[AMD64_XMM7], sizeof(MonoContextSimdReg));
+		memcpy(&ctx->Xmm8, &sctx->fregs[AMD64_XMM8], sizeof(MonoContextSimdReg));
+		memcpy(&ctx->Xmm9, &sctx->fregs[AMD64_XMM9], sizeof(MonoContextSimdReg));
+		memcpy(&ctx->Xmm10, &sctx->fregs[AMD64_XMM10], sizeof(MonoContextSimdReg));
+		memcpy(&ctx->Xmm11, &sctx->fregs[AMD64_XMM11], sizeof(MonoContextSimdReg));
+		memcpy(&ctx->Xmm12, &sctx->fregs[AMD64_XMM12], sizeof(MonoContextSimdReg));
+		memcpy(&ctx->Xmm13, &sctx->fregs[AMD64_XMM13], sizeof(MonoContextSimdReg));
+		memcpy(&ctx->Xmm14, &sctx->fregs[AMD64_XMM14], sizeof(MonoContextSimdReg));
+		memcpy(&ctx->Xmm15, &sctx->fregs[AMD64_XMM15], sizeof(MonoContextSimdReg));
 
 		/* Volatile But should not matter?*/
 		ctx->Rax = sctx->rax;
@@ -337,7 +337,7 @@ mono_arch_get_restore_context_full (guint32 *code_size, MonoJumpInfo **ji, gbool
 	amd64_mov_reg_reg (code, AMD64_R11, AMD64_ARG_REG1, 8);
 	fregs_offset = G_STRUCT_OFFSET (MonoContext, fregs);
 	for (i = 0; i < AMD64_XMM_NREG; ++i) {
-		amd64_movsd_reg_membase (code, i, AMD64_R11, fregs_offset + (i * sizeof (MonoContextSimdReg)));
+		amd64_sse_movups_reg_membase (code, i, AMD64_R11, fregs_offset + (i * sizeof (MonoContextSimdReg)));
 	}
 
 	mono_amd64_patch (br, code);
@@ -975,6 +975,7 @@ mono_arch_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 	mctx->r15 = gregs [REG_R15];
 #elif defined(MONO_ARCH_USE_SIGACTION)
 	ucontext_t *ctx = (ucontext_t*)sigctx;
+	mctx->has_fregs = TRUE;
 
 	mctx->rax = UCONTEXT_REG_RAX (ctx);
 	mctx->rbx = UCONTEXT_REG_RBX (ctx);
@@ -993,22 +994,23 @@ mono_arch_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 	mctx->r13 = UCONTEXT_REG_R13 (ctx);
 	mctx->r14 = UCONTEXT_REG_R14 (ctx);
 	mctx->r15 = UCONTEXT_REG_R15 (ctx);
-	mctx->fregs[AMD64_XMM0].lo = UCONTEXT_REG_FPR0_LOW(ctx);
-	mctx->fregs[AMD64_XMM1].lo = UCONTEXT_REG_FPR1_LOW(ctx);
-	mctx->fregs[AMD64_XMM2].lo = UCONTEXT_REG_FPR2_LOW(ctx);
-	mctx->fregs[AMD64_XMM3].lo = UCONTEXT_REG_FPR3_LOW(ctx);
-	mctx->fregs[AMD64_XMM4].lo = UCONTEXT_REG_FPR4_LOW(ctx);
-	mctx->fregs[AMD64_XMM5].lo = UCONTEXT_REG_FPR5_LOW(ctx);
-	mctx->fregs[AMD64_XMM6].lo = UCONTEXT_REG_FPR6_LOW(ctx);
-	mctx->fregs[AMD64_XMM7].lo = UCONTEXT_REG_FPR7_LOW(ctx);
-	mctx->fregs[AMD64_XMM8].lo = UCONTEXT_REG_FPR8_LOW(ctx);
-	mctx->fregs[AMD64_XMM9].lo = UCONTEXT_REG_FPR9_LOW(ctx);
-	mctx->fregs[AMD64_XMM10].lo = UCONTEXT_REG_FPR10_LOW(ctx);
-	mctx->fregs[AMD64_XMM11].lo = UCONTEXT_REG_FPR11_LOW(ctx);
-	mctx->fregs[AMD64_XMM12].lo = UCONTEXT_REG_FPR12_LOW(ctx);
-	mctx->fregs[AMD64_XMM13].lo = UCONTEXT_REG_FPR13_LOW(ctx);
-	mctx->fregs[AMD64_XMM14].lo = UCONTEXT_REG_FPR14_LOW(ctx);
-	mctx->fregs[AMD64_XMM15].lo = UCONTEXT_REG_FPR15_LOW(ctx);
+
+	memcpy(&mctx->fregs[AMD64_XMM0], &UCONTEXT_REG_FPR0(ctx), sizeof(MonoContextSimdReg));
+	memcpy(&mctx->fregs[AMD64_XMM1], &UCONTEXT_REG_FPR1(ctx), sizeof(MonoContextSimdReg));
+	memcpy(&mctx->fregs[AMD64_XMM2], &UCONTEXT_REG_FPR2(ctx), sizeof(MonoContextSimdReg));
+	memcpy(&mctx->fregs[AMD64_XMM3], &UCONTEXT_REG_FPR3(ctx), sizeof(MonoContextSimdReg));
+	memcpy(&mctx->fregs[AMD64_XMM4], &UCONTEXT_REG_FPR4(ctx), sizeof(MonoContextSimdReg));
+	memcpy(&mctx->fregs[AMD64_XMM5], &UCONTEXT_REG_FPR5(ctx), sizeof(MonoContextSimdReg));
+	memcpy(&mctx->fregs[AMD64_XMM6], &UCONTEXT_REG_FPR6(ctx), sizeof(MonoContextSimdReg));
+	memcpy(&mctx->fregs[AMD64_XMM7], &UCONTEXT_REG_FPR7(ctx), sizeof(MonoContextSimdReg));
+	memcpy(&mctx->fregs[AMD64_XMM8], &UCONTEXT_REG_FPR8(ctx), sizeof(MonoContextSimdReg));
+	memcpy(&mctx->fregs[AMD64_XMM9], &UCONTEXT_REG_FPR9(ctx), sizeof(MonoContextSimdReg));
+	memcpy(&mctx->fregs[AMD64_XMM10], &UCONTEXT_REG_FPR10(ctx), sizeof(MonoContextSimdReg));
+	memcpy(&mctx->fregs[AMD64_XMM11], &UCONTEXT_REG_FPR11(ctx), sizeof(MonoContextSimdReg));
+	memcpy(&mctx->fregs[AMD64_XMM12], &UCONTEXT_REG_FPR12(ctx), sizeof(MonoContextSimdReg));
+	memcpy(&mctx->fregs[AMD64_XMM13], &UCONTEXT_REG_FPR13(ctx), sizeof(MonoContextSimdReg));
+	memcpy(&mctx->fregs[AMD64_XMM14], &UCONTEXT_REG_FPR14(ctx), sizeof(MonoContextSimdReg));
+	memcpy(&mctx->fregs[AMD64_XMM15], &UCONTEXT_REG_FPR15(ctx), sizeof(MonoContextSimdReg));
 #else
 	MonoContext *ctx = (MonoContext *)sigctx;
 
@@ -1075,22 +1077,22 @@ mono_arch_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
 	UCONTEXT_REG_R14 (ctx) = mctx->r14;
 	UCONTEXT_REG_R15 (ctx) = mctx->r15;
 
-	UCONTEXT_REG_FPR0_LOW(ctx) = mctx->fregs[AMD64_XMM0].lo;
-	UCONTEXT_REG_FPR1_LOW(ctx) = mctx->fregs[AMD64_XMM1].lo;
-	UCONTEXT_REG_FPR2_LOW(ctx) = mctx->fregs[AMD64_XMM2].lo;
-	UCONTEXT_REG_FPR3_LOW(ctx) = mctx->fregs[AMD64_XMM3].lo;
-	UCONTEXT_REG_FPR4_LOW(ctx) = mctx->fregs[AMD64_XMM4].lo;
-	UCONTEXT_REG_FPR5_LOW(ctx) = mctx->fregs[AMD64_XMM5].lo;
-	UCONTEXT_REG_FPR6_LOW(ctx) = mctx->fregs[AMD64_XMM6].lo;
-	UCONTEXT_REG_FPR7_LOW(ctx) = mctx->fregs[AMD64_XMM7].lo;
-	UCONTEXT_REG_FPR8_LOW(ctx) = mctx->fregs[AMD64_XMM8].lo;
-	UCONTEXT_REG_FPR9_LOW(ctx) = mctx->fregs[AMD64_XMM9].lo;
-	UCONTEXT_REG_FPR10_LOW(ctx) = mctx->fregs[AMD64_XMM10].lo;
-	UCONTEXT_REG_FPR11_LOW(ctx) = mctx->fregs[AMD64_XMM11].lo;
-	UCONTEXT_REG_FPR12_LOW(ctx) = mctx->fregs[AMD64_XMM12].lo;
-	UCONTEXT_REG_FPR13_LOW(ctx) = mctx->fregs[AMD64_XMM13].lo;
-	UCONTEXT_REG_FPR14_LOW(ctx) = mctx->fregs[AMD64_XMM14].lo;
-	UCONTEXT_REG_FPR15_LOW(ctx) = mctx->fregs[AMD64_XMM15].lo;
+	memcpy(&UCONTEXT_REG_FPR0(ctx), &mctx->fregs[AMD64_XMM0], sizeof(MonoContextSimdReg));
+	memcpy(&UCONTEXT_REG_FPR1(ctx), &mctx->fregs[AMD64_XMM1], sizeof(MonoContextSimdReg));
+	memcpy(&UCONTEXT_REG_FPR2(ctx), &mctx->fregs[AMD64_XMM2], sizeof(MonoContextSimdReg));
+	memcpy(&UCONTEXT_REG_FPR3(ctx), &mctx->fregs[AMD64_XMM3], sizeof(MonoContextSimdReg));
+	memcpy(&UCONTEXT_REG_FPR4(ctx), &mctx->fregs[AMD64_XMM4], sizeof(MonoContextSimdReg));
+	memcpy(&UCONTEXT_REG_FPR5(ctx), &mctx->fregs[AMD64_XMM5], sizeof(MonoContextSimdReg));
+	memcpy(&UCONTEXT_REG_FPR6(ctx), &mctx->fregs[AMD64_XMM6], sizeof(MonoContextSimdReg));
+	memcpy(&UCONTEXT_REG_FPR7(ctx), &mctx->fregs[AMD64_XMM7], sizeof(MonoContextSimdReg));
+	memcpy(&UCONTEXT_REG_FPR8(ctx), &mctx->fregs[AMD64_XMM8], sizeof(MonoContextSimdReg));
+	memcpy(&UCONTEXT_REG_FPR9(ctx), &mctx->fregs[AMD64_XMM9], sizeof(MonoContextSimdReg));
+	memcpy(&UCONTEXT_REG_FPR10(ctx), &mctx->fregs[AMD64_XMM10], sizeof(MonoContextSimdReg));
+	memcpy(&UCONTEXT_REG_FPR11(ctx), &mctx->fregs[AMD64_XMM11], sizeof(MonoContextSimdReg));
+	memcpy(&UCONTEXT_REG_FPR12(ctx), &mctx->fregs[AMD64_XMM12], sizeof(MonoContextSimdReg));
+	memcpy(&UCONTEXT_REG_FPR13(ctx), &mctx->fregs[AMD64_XMM13], sizeof(MonoContextSimdReg));
+	memcpy(&UCONTEXT_REG_FPR14(ctx), &mctx->fregs[AMD64_XMM14], sizeof(MonoContextSimdReg));
+	memcpy(&UCONTEXT_REG_FPR15(ctx), &mctx->fregs[AMD64_XMM15], sizeof(MonoContextSimdReg));
 #else
 	MonoContext *ctx = (MonoContext *)sigctx;
 
