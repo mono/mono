@@ -179,7 +179,7 @@ namespace Mono.AppleTls {
 		// Native enum; don't change.
 		enum SecExternalFormat : int {
 			Unknown = 0,
-			OpenSSL,
+			OpenSSL = 1,
 			X509Cert = 9,
 			PEMSequence = 10,
 			PKCS7 = 11,
@@ -188,12 +188,12 @@ namespace Mono.AppleTls {
 
 		// Native enum; don't change.
 		enum SecExternalItemType : int {
-			Unknown,
-			PrivateKey,
-			PublicKey,
-			SessionKey,
-			Certificate,
-			Aggregate
+			Unknown = 0,
+			PrivateKey = 1,
+			PublicKey = 2,
+			SessionKey = 3,
+			Certificate = 4,
+			Aggregate = 5
 		}
 
 		// Native enum; don't change
