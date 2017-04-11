@@ -879,7 +879,6 @@ ReferenceSources/CompatibilitySwitches.cs
 ReferenceSources/CultureData.cs
 ReferenceSources/DefaultBinder.cs
 ReferenceSources/Environment.cs
-ReferenceSources/HashHelpers.cs
 ReferenceSources/ParseNumbers.cs
 ReferenceSources/AppDomain.cs
 ReferenceSources/CLRConfig.cs
@@ -1664,6 +1663,7 @@ corert/RuntimeThread.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/Interop/Windows/Kernel32/Interop.FormatMessage.cs
 
 ../../../external/corert/src/System.Private.CoreLib/shared/System/TupleExtensions.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/ValueTuple.cs
 
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Collections/DictionaryEntry.cs
 
@@ -1683,7 +1683,6 @@ corert/RuntimeThread.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Array.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Tuple.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/ValueTuple.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/LowLevelComparer.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/ObjectEqualityComparer.cs
@@ -1691,6 +1690,7 @@ corert/RuntimeThread.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/ArraySortHelper.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/IDictionaryDebugView.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/Dictionary.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/NonRandomizedStringEqualityComparer.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolBoundHandle.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolNativeOverlapped.cs
