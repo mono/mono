@@ -54,7 +54,7 @@ namespace Mono.AppleTls {
 		internal SecKeyChain (IntPtr handle, bool owns = false)
 		{
 			if (handle == IntPtr.Zero)
-				throw new Exception ("Invalid handle");
+				throw new ArgumentException ("Invalid handle");
 
 			this.handle = handle;
 			if (!owns)
