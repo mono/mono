@@ -40,7 +40,6 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.AppDomainUnloadedException))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.ApplicationException))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.ApplicationId))]
-[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.ArgIterator))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.ArgumentException))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.ArgumentNullException))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.ArgumentOutOfRangeException))]
