@@ -49,6 +49,8 @@
 #define MONITOR_INTERVAL 100 // ms
 #define MONITOR_MINIMAL_LIFETIME 60 * 1000 // ms
 
+#define WORKER_CREATION_MAX_PER_SEC 10
+
 /* The exponent to apply to the gain. 1.0 means to use linear gain,
  * higher values will enhance large moves and damp small ones.
  * default: 2.0 */
@@ -131,6 +133,10 @@ typedef struct {
 	GPtrArray *working_threads; // ThreadPoolWorkingThread* []
 	GPtrArray *parked_threads; // ThreadPoolParkedThread* []
 	mono_mutex_t active_threads_lock; /* protect access to working_threads and parked_threads */
+
+	guint32 worker_creation_current_second;
+	guint32 worker_creation_current_count;
+	mono_mutex_t worker_creation_lock;
 
 	gint32 heuristic_completions;
 	guint32 heuristic_sample_start;
@@ -253,6 +259,9 @@ initialize (void)
 	threadpool->parked_threads = g_ptr_array_new ();
 	threadpool->working_threads = g_ptr_array_new ();
 	mono_mutex_init (&threadpool->active_threads_lock);
+
+	threadpool->worker_creation_current_second = -1;
+	mono_mutex_init (&threadpool->worker_creation_lock);
 
 	threadpool->heuristic_adjustment_interval = 10;
 	mono_mutex_init (&threadpool->heuristic_lock);
@@ -686,29 +695,54 @@ worker_try_create (void)
 {
 	ThreadPoolCounter counter;
 	MonoInternalThread *thread;
+	gint32 now;
+
+	mono_mutex_lock (&threadpool->worker_creation_lock);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] try create worker", GetCurrentThreadId ());
 
+	if ((now = mono_100ns_ticks () / 10 / 1000 / 1000) == 0) {
+		g_warning ("failed to get 100ns ticks");
+	} else {
+		if (threadpool->worker_creation_current_second != now) {
+			threadpool->worker_creation_current_second = now;
+			threadpool->worker_creation_current_count = 0;
+		} else {
+			g_assert (threadpool->worker_creation_current_count <= WORKER_CREATION_MAX_PER_SEC);
+			if (threadpool->worker_creation_current_count == WORKER_CREATION_MAX_PER_SEC) {
+				mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] try create worker, failed: maximum number of worker created per second reached, now = %d", GetCurrentThreadId (), now);
+				mono_mutex_unlock (&threadpool->worker_creation_lock);
+				return FALSE;
+			}
+		}
+	}
+
 	COUNTER_ATOMIC (counter, {
-		if (counter._.working >= counter._.max_working)
+		if (counter._.working >= counter._.max_working) {
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] try create worker, failed: maximum number of working threads reached", GetCurrentThreadId ());
+			mono_mutex_unlock (&threadpool->worker_creation_lock);
 			return FALSE;
+		}
 		counter._.working ++;
 		counter._.active ++;
 	});
 
 	if ((thread = mono_thread_create_internal (mono_get_root_domain (), worker_thread, NULL, TRUE, 0)) != NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] try create worker, created %p",
-			GetCurrentThreadId (), thread->tid);
+		threadpool->worker_creation_current_count += 1;
+
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] try create worker, created %p, now = %d count = %d", GetCurrentThreadId (), thread->tid, now, threadpool->worker_creation_current_count);
+		mono_mutex_unlock (&threadpool->worker_creation_lock);
 		return TRUE;
 	}
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] try create worker, failed", GetCurrentThreadId ());
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] try create worker, failed: could not create thread", GetCurrentThreadId ());
 
 	COUNTER_ATOMIC (counter, {
 		counter._.working --;
 		counter._.active --;
 	});
 
+	mono_mutex_unlock (&threadpool->worker_creation_lock);
 	return FALSE;
 }
 
