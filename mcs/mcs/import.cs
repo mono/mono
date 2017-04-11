@@ -1706,7 +1706,7 @@ namespace Mono.CSharp
 				token = null;
 
 			foreach (var internals in internals_visible_to) {
-				if (internals.Name != assembly.Name)
+				if (!String.Equals(internals.Name, assembly.Name, StringComparison.OrdinalIgnoreCase))
 					continue;
 
 				if (token == null && assembly is AssemblyDefinition) {
