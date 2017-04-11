@@ -1038,3 +1038,27 @@ mono_unity_get_data_dir()
 {
     return data_dir;
 }
+
+MONO_API MonoClass*
+mono_unity_class_get_generic_type_definition (MonoClass* klass)
+{
+	return klass->generic_class ? mono_class_get_generic_type_definition (klass) : NULL;
+}
+
+MONO_API MonoClass*
+mono_unity_class_get_generic_parameter_at (MonoClass* klass, guint32 index)
+{
+	if (!klass->generic_container || index >= klass->generic_container->type_argc)
+		return NULL;
+
+	return mono_class_from_generic_parameter (mono_generic_container_get_param (klass->generic_container, index), klass->image, FALSE);
+}
+
+MONO_API guint32
+mono_unity_class_get_generic_parameter_count (MonoClass* klass)
+{
+	if (!klass->generic_container)
+		return 0;
+
+	return klass->generic_container->type_argc;
+}
