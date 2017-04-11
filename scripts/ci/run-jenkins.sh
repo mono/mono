@@ -42,6 +42,10 @@ elif [[ ${label} != w* ]] && [[ ${label} != 'debian-8-ppc64el' ]] && [[ ${label}
     if [[ ${label} == 'ubuntu-1404-amd64' ]]; then
         # only enable build of the additional profiles on one architecture to save time
         EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=all"
+        # when building profiles like monotouch/monodroid which don't build System.Drawing.dll in the Mono repo we need
+        # to build the facades against _something_ to satisfy the typeforwards. In CI we can cheat a little and pass
+        # them System.Drawing.dll from the 'build' profile since we don't test those profiles here (we just ensure they compile).
+        export EXTERNAL_FACADE_DRAWING_REFERENCE=${MONO_REPO_ROOT}/mcs/class/lib/build/System.Drawing.dll
     fi
 fi
 
