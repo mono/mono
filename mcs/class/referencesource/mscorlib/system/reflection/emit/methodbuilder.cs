@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 namespace System.Reflection.Emit 
@@ -1405,7 +1405,7 @@ namespace System.Reflection.Emit
     [ComVisible(false)]
     public struct ExceptionHandler : IEquatable<ExceptionHandler>
     {
-        // Keep in [....] with unmanged structure. 
+        // Keep in sync with unmanged structure. 
         internal readonly int m_exceptionClass;
         internal readonly int m_tryStartOffset;
         internal readonly int m_tryEndOffset;

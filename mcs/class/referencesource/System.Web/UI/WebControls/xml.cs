@@ -403,7 +403,7 @@ namespace System.Web.UI.WebControls {
             string physicalPath;
             ResolvePhysicalOrVirtualPath(_transformSource, out virtualPath, out physicalPath);
 
-            CacheInternal cacheInternal = HttpRuntime.CacheInternal;
+            CacheStoreProvider cacheInternal = HttpRuntime.Cache.InternalCache;
             string key = CacheInternal.PrefixLoadXPath + ((physicalPath != null) ?
                 physicalPath : virtualPath.VirtualPathString);
 
@@ -436,7 +436,8 @@ namespace System.Web.UI.WebControls {
                 // Cache it, but only if we got a dependency
                 if (dependency != null) {
                     using (dependency) {
-                        cacheInternal.UtcInsert(key, ((_compiledTransform == null) ? (object)_transform : (object)_compiledTransform), dependency);
+                        cacheInternal.Insert(key, ((_compiledTransform == null) ? (object)_transform : (object)_compiledTransform),
+                            new CacheInsertOptions() { Dependencies = dependency });
                     }
                 }
             }
@@ -467,7 +468,7 @@ namespace System.Web.UI.WebControls {
             // Make it absolute and check security
             string physicalPath = MapPathSecure(_documentSource);
 
-            CacheInternal cacheInternal = System.Web.HttpRuntime.CacheInternal;
+            CacheStoreProvider cacheInternal = System.Web.HttpRuntime.Cache.InternalCache;
             string key = CacheInternal.PrefixLoadXml + physicalPath;
 
             _document = (XmlDocument) cacheInternal.Get(key);
@@ -480,7 +481,7 @@ namespace System.Web.UI.WebControls {
 
                     _document = new XmlDocument();
                     _document.Load(XmlUtils.CreateXmlReader(stream, physicalPath));
-                    cacheInternal.UtcInsert(key, _document, dependency);
+                    cacheInternal.Insert(key, _document, new CacheInsertOptions() { Dependencies = dependency });
                 }
             }
             else {
@@ -511,7 +512,7 @@ namespace System.Web.UI.WebControls {
             string physicalPath;
             ResolvePhysicalOrVirtualPath(_documentSource, out virtualPath, out physicalPath);
 
-            CacheInternal cacheInternal = HttpRuntime.CacheInternal;
+            CacheStoreProvider cacheInternal = HttpRuntime.Cache.InternalCache;
             string key = CacheInternal.PrefixLoadXPath + ((physicalPath != null) ?
                 physicalPath : virtualPath.VirtualPathString);
 
@@ -533,7 +534,7 @@ namespace System.Web.UI.WebControls {
                 // Cache it, but only if we got a dependency
                 if (dependency != null) {
                     using (dependency) {
-                        cacheInternal.UtcInsert(key, _xpathDocument, dependency);
+                        cacheInternal.Insert(key, _xpathDocument, new CacheInsertOptions() { Dependencies = dependency });
                     }
                 }
             }

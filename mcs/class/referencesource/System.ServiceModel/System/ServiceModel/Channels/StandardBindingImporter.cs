@@ -21,7 +21,7 @@ namespace System.ServiceModel.Channels
             if (endpointContext == null)
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("endpointContext");
 
-#pragma warning suppress 56506 // [....], endpointContext.Endpoint is never null
+#pragma warning suppress 56506 // Microsoft, endpointContext.Endpoint is never null
             if (endpointContext.Endpoint.Binding == null)
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("endpointContext.Binding");
 

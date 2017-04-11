@@ -14,7 +14,7 @@
 //            as well as methods for common operations such as printing
 //            dates and sorting strings.
 //
-//  Date:     [....] 31, 1999
+//  Date:     Microsoft 31, 1999
 //
 //
 //  !!!! NOTE WHEN CHANGING THIS CLASS !!!!

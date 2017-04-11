@@ -128,7 +128,8 @@
     <Compile Include="..\referencesource\System.ServiceModel.Internals\TraceCore.Designer.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="EventLogEntryType.cs" />
-    <Compile Include="InternalSR.cs" />  </ItemGroup>
+    <Compile Include="InternalSR.cs" />
+    <Compile Include="ReferenceSources\LocalAppContextSwitches.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

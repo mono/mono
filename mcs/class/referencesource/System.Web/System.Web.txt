@@ -1,4 +1,4 @@
-;
+	;
 ; ASP.NET managed resource file
 ;
 ; Copyright (c) 2000 Microsoft Corporation
@@ -324,6 +324,7 @@ Invalid_value_for_CacheControl=Property value for CacheControl is not valid. Val
 OutputStream_NotAvail=OutputStream is not available when a custom TextWriter is used.
 Information_Disclosure_Warning=This error page might contain sensitive information because ASP.NET is configured to show verbose error messages using &lt;customErrors mode="Off"/&gt;. Consider using &lt;customErrors mode="On"/&gt; or &lt;customErrors mode="RemoteOnly"/&gt; in production environments.
 InvalidOffsetOrCount=The sum of {0} and {1} is greater than the length of the buffer.
+Invalid_path_for_push_promise=Invalid path '{0}' for push promise. A virtual path is expected.
 
 ; Runtime
 
@@ -392,7 +393,7 @@ Hosting_Env_IdleTimeout=Idle timeout
 Unhandled_Exception=An unhandled exception occurred and the process was terminated.
 Provider_must_implement_the_interface=The provider class '{0}' must implement the class '{1}'.
 Permission_set_not_found=Could not find permission set named '{0}'.
-Require_stable_string_hash_codes=ASP.NET cannot operate when String hash code randomization is enabled for the current machine. Please verify that the registry key HKEY_LOCAL_MACHINE\\Software\\Microsoft\\.NETFramework\\UseRandomizedStringHashAlgorithm does not exist or is set to [DWORD] 0.
+Require_stable_string_hash_codes=ASP.NET can operate with String hash code randomization only when enabled per application via AppSettings configuration. Registry key HKEY_LOCAL_MACHINE\\Software\\Microsoft\\.NETFramework\\UseRandomizedStringHashAlgorithm and <runtime/UseRandomizedStringHashAlgorithm> configuration are not supported.
 
 ; Server vars collection
 Server_variable_cannot_be_modified=This server variable cannot be modified during request execution.
@@ -1304,7 +1305,11 @@ ModelDataSourceView_CannotCallMethodsWithOutOrRefParameters=Cannot call the meth
 ModelDataSourceView_DataMethodNotFound=A public method with the name '{0}' was either not found or there were multiple methods with the same name on the type '{1}'.
 ModelDataSourceView_DeleteNotSupported=Deleting is not supported unless the DeleteMethod is specified.
 ModelDataSourceView_InvalidSelectReturnType=The Select Method must return one of "IQueryable<{0}>" or "IEnumerable<{0}>" or "{0}" when ItemType is set to "{0}".
+ModelDataSourceView_InvalidAsyncSelectReturnType=The Task-based Select Method must return one of "Task<IEnumerable<{0}>>" or "Task<System.Web.UI.WebControls.SelectResult>" or "Task<{0}>" when ItemType is set to "{0}".
+ModelDataSourceView_UseAsyncMethodMustBeUsingAsyncPage=When using a Task-based async method, the page must be marked as asynchronous using the <%@ Page Async="true" %> directive, and the web application must be targeting .NET 4.5 or higher via <httpRuntime targetFramework="4.5" />.
 ModelDataSourceView_InvalidPagingParameters=When the DataBoundControl has paging enabled, either the SelectMethod should return an IQueryable<ItemType> or should have all these mandatory parameters : int startRowIndex, int maximumRows, out int totalRowCount
+ModelDataSourceView_InvalidAsyncPagingParameters=When the DataBoundControl has paging enabled, the SelectMethod should return "Task<System.Web.UI.WebControls.SelectResult>" and have all these mandatory parameters : int startRowIndex, int maximumRows
+ModelDataSourceView_MustUseSelectResultAsReturnType=When using custom paging with an async Select method, the Select method return type must be "Task<System.Web.UI.WebControls.SelectResult>".
 ModelDataSourceView_InvalidSortingParameters=When the DataBoundControl has sorting enabled, either the SelectMethod should return an IQueryable<ItemType> or should have all these mandatory parameters : string sortByExpression
 ModelDataSourceView_InsertNotSupported=Inserting is not supported unless the InsertMethod is specified.
 ModelDataSourceView_MultipleModelMethodSources=The DataMethodsType and DataMethodsObject properties cannot both be specified at the same time.
@@ -1314,6 +1319,7 @@ ModelDataSourceView_SelectNotSupported=The Select operation is not supported unl
 ModelDataSourceView_SortNotSupportedOnIEnumerable=The SelectMethod does not support sorting with IEnumerable data. Automatic sorting is only supported when the SelectMethod returns an IQueryable type.
 ModelDataSourceView_ParameterCannotBeNull=A null value for parameter '{0}' of non-nullable type '{1}' for method '{2}' in '{3}'. An optional parameter must be a reference type or a nullable type.
 ModelDataSourceView_ParameterValueHasWrongType=An invalid value for parameter '{0}' for method '{1}' in '{2}'. The value from model binding is of type '{3}', but the parameter requires a value of type '{4}'.
+ModelDataSourceView_CancellationTokenIsNotSupported=Parameters typed as CancellationToken are supported only in Task-returning methods.
 ObjectDataSource_Description=Connect to a middle-tier business object or DataSet in the Bin or App_Code directory for the application.
 ObjectDataSource_DisplayName=Object
 ObjectDataSourceView_DeleteNotSupported=Deleting is not supported by ObjectDataSource '{0}' unless the DeleteMethod is specified.
@@ -3758,6 +3764,7 @@ AppVerifier_Subtitle=ASP.NET detected an error while invoking an asynchronous me
 AppVerifier_BasicInfo_URL=Current URL: {0}
 AppVerifier_BasicInfo_ErrorCode=Error code: {0}
 AppVerifier_BasicInfo_Description=Description: {0}
+AppVerifier_BasicInfo_NotificationInfo=The assertion was triggered after processing notification {0}, isPostNotification = {1}, isReentry = {2}
 AppVerifier_BasicInfo_ThreadInfo=The assertion was triggered on thread {0} at {1} with the following stack trace:
 AppVerifier_BeginMethodInfo_EntryMethod=Entry point which triggered failure: {0}
 AppVerifier_BeginMethodInfo_RequestNotification_Integrated=Request notification at time of entry: {0} [IsPostNotification = {1}]
@@ -3782,3 +3789,14 @@ AppVerifier_Errors_BeginHandlerReturnedAsyncResultMarkedCompletedSynchronouslyBu
 AppVerifier_Errors_BeginHandlerReturnedAsyncResultMarkedCompletedSynchronouslyButAsyncCallbackNeverCalled=The entry point returned an IAsyncResult instance that was marked 'CompletedSynchronously = true', but AsyncCallback was never invoked synchronously. If an operation completes synchronously and AsyncCallback is non-null, the callback must be invoked synchronously before the entry point returns to its caller.
 AppVerifier_Errors_BeginHandlerReturnedUnexpectedAsyncResultAsyncState=The entry point returned an IAsyncResult instance with an invalid AsyncState property. The IAsyncResult's AsyncState property must match the state object parameter provided to the entry point.
 AppVerifier_Errors_SyncContextSendOrPostCalledAfterRequestCompleted=A thread attempted to call SynchronizationContext.Send or SynchronizationContext.Post after the request associated with the SynchronizationContext had already completed.
+AppVerifier_Errors_SyncContextSendOrPostCalledBetweenNotifications=A thread attempted to call SynchronizationContext.Send or SynchronizationContext.Post while ASP.NET is not processing any request pipeline notification.
+AppVerifier_Errors_SyncContextPostCalledInNestedNotification=A thread attempted to call SynchronizationContext.Post while processing a nested request notification. This may result in undefined behavior.
+AppVerifier_Errors_RequestNotificationCompletedSynchronouslyWithNotificationContextPending=An inconsistency was found after processing an integrated IIS request pipeline notification. Even though the notification completed synchronously it had left pending async completions.
+AppVerifier_Errors_NotificationContextHasChangedAfterSynchronouslyProcessingNotification=An inconsistency was found after processing an integrated IIS request pipeline notification. The NotificationContext has unexpectedly changed while synchronously processing a notification.
+AppVerifier_Errors_PendingProcessRequestNotificationStatusAfterCompletingNestedNotification=An inconsistency was found after processing an integrated IIS request pipeline notification. Nested notifications such as RQ_SEND_RESPONSE have to be processed synchronously and can not leave pending async work.
+
+Request_Queue_Limit_Per_Session_Exceeded=The request queue limit of the session is exceeded.
+
+MembershipPasswordFormat_Obsoleted=Unsecured Passwords Format Detected. The Membership Provider that contains the unsecure passwords format is: {0}. The obsoleted password format is: {1}. For more information, see https://go.microsoft.com/fwlink/?linkid=834784.
+
+Unhandled_Monitor_Exception=An unhandled exception occurred while executing '{0}' in '{1}'.

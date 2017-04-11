@@ -562,8 +562,8 @@ namespace System.Data.Linq.SqlClient {
         /// <param name="match_expression">The string that is to be matched.</param>
         /// <param name="pattern">The pattern which may involve wildcards %,_,[,],^.</param>
         /// <returns>true if there is a match.</returns>
-        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "pattern", Justification = "[....]: Method is a placeholder for a server-side method.")]
-        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "matchExpression", Justification = "[....]: Method is a placeholder for a server-side method.")]
+        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "pattern", Justification = "Microsoft: Method is a placeholder for a server-side method.")]
+        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "matchExpression", Justification = "Microsoft: Method is a placeholder for a server-side method.")]
         public static bool Like(string matchExpression, string pattern) {
             throw Error.SqlMethodOnlyForSql(MethodInfo.GetCurrentMethod());
         }
@@ -576,9 +576,9 @@ namespace System.Data.Linq.SqlClient {
         /// <param name="pattern">The pattern which may involve wildcards %,_,[,],^.</param>
         /// <param name="escape_character">The escape character to use in front of %,_,[,],^ if they are not used as wildcards.</param>
         /// <returns>true if there is a match.</returns>
-        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "pattern", Justification = "[....]: Method is a placeholder for a server-side method.")]
-        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "matchExpression", Justification = "[....]: Method is a placeholder for a server-side method.")]
-        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "escapeCharacter", Justification = "[....]: Method is a placeholder for a server-side method.")]
+        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "pattern", Justification = "Microsoft: Method is a placeholder for a server-side method.")]
+        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "matchExpression", Justification = "Microsoft: Method is a placeholder for a server-side method.")]
+        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "escapeCharacter", Justification = "Microsoft: Method is a placeholder for a server-side method.")]
         public static bool Like(string matchExpression, string pattern, char escapeCharacter) {
             throw Error.SqlMethodOnlyForSql(MethodInfo.GetCurrentMethod());
         }
@@ -591,7 +591,7 @@ namespace System.Data.Linq.SqlClient {
         /// </summary>
         /// <param name="value">The string to take the length of.</param>
         /// <returns>length of the string</returns>
-        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "value", Justification = "[....]: Method is a placeholder for a server-side method.")]
+        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "value", Justification = "Microsoft: Method is a placeholder for a server-side method.")]
         internal static int RawLength(string value) {
             throw Error.SqlMethodOnlyForSql(MethodInfo.GetCurrentMethod());
         }
@@ -602,7 +602,7 @@ namespace System.Data.Linq.SqlClient {
         /// </summary>
         /// <param name="value">The byte array to take the length of.</param>
         /// <returns>length of the array</returns>
-        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "value", Justification = "[....]: Method is a placeholder for a server-side method.")]
+        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "value", Justification = "Microsoft: Method is a placeholder for a server-side method.")]
         internal static int RawLength(byte[] value) {
             throw Error.SqlMethodOnlyForSql(MethodInfo.GetCurrentMethod());
         }
@@ -613,7 +613,7 @@ namespace System.Data.Linq.SqlClient {
         /// </summary>
         /// <param name="value">The Binary value to take the length of.</param>
         /// <returns>length of the Binary</returns>
-        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "value", Justification = "[....]: Method is a placeholder for a server-side method.")]
+        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "value", Justification = "Microsoft: Method is a placeholder for a server-side method.")]
         internal static int RawLength(Binary value) {
             throw Error.SqlMethodOnlyForSql(MethodInfo.GetCurrentMethod());
         }

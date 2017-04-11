@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner [....]
-// @backupowner [....]
+// @owner Microsoft
+// @backupowner Microsoft
 //---------------------------------------------------------------------
 
 using System;

@@ -7,7 +7,7 @@
 //
 // Task.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // A schedulable unit of work.
 //

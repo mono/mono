@@ -32,6 +32,12 @@ namespace System
                         LocalAppContextSwitches.SetDefaultsLessOrEqual_461();
                     }
 
+                    if (version <= 40602)
+                    {
+                        // Define the switches that should be true for 4.6.2 or less, false for 4.6.3+.
+                        LocalAppContext.DefineSwitchDefault(LocalAppContextSwitches.DisableUsingServicePointManagerSecurityProtocolsString, true);
+                    }
+
                     break;
                 }
             }

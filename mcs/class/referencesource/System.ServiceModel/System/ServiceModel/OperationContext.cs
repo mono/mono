@@ -100,7 +100,7 @@ namespace System.ServiceModel
 
             set
             {
-                if (ShouldUseAsyncLocalContext)
+                if (ShouldUseAsyncLocalContext && value != null && value.isAsyncFlowEnabled)
                 {
                     OperationContext.currentAsyncLocalContext.Value = value;
                 }
@@ -125,11 +125,11 @@ namespace System.ServiceModel
             }
         }
 
-        private static bool ShouldUseAsyncLocalContext
+        internal static bool ShouldUseAsyncLocalContext
         {
             get
             {
-                return CurrentHolder.Context == null && OperationContext.currentAsyncLocalContext.Value != null && OperationContext.currentAsyncLocalContext.Value.isAsyncFlowEnabled;
+                return !ServiceModelAppSettings.DisableOperationContextAsyncFlow && CurrentHolder.Context == null && OperationContext.currentAsyncLocalContext.Value != null && OperationContext.currentAsyncLocalContext.Value.isAsyncFlowEnabled;
             }
         }
 
@@ -359,8 +359,16 @@ namespace System.ServiceModel
 
         internal static void EnableAsyncFlow()
         {
-            CurrentHolder.Context.isAsyncFlowEnabled = true;
-            currentAsyncLocalContext.Value = CurrentHolder.Context;
+            EnableAsyncFlow(CurrentHolder.Context);
+        }
+
+        internal static void EnableAsyncFlow(OperationContext oc)
+        {
+            if (oc != null)
+            {
+                oc.isAsyncFlowEnabled = true;
+                currentAsyncLocalContext.Value = oc;
+            }
         }
 
         internal static void DisableAsyncFlow()

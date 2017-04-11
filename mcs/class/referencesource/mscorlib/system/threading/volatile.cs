@@ -4,7 +4,7 @@
 // 
 // ==--==
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 using System;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;

@@ -258,7 +258,7 @@ namespace System.Runtime.Remoting.Metadata
         // parameter maps
         // NOTE: these fields are all initialized at the same time however access to 
         // the internal property of each field is locked only on that specific field 
-        // having been initialized. - [....]
+        // having been initialized. - Microsoft
         private int[] _inRefArgMap = null;     // parameter map of input and ref parameters
         private int[] _outRefArgMap = null;     // parameter map of out and ref parameters (exactly all byref parameters)
         private int[] _outOnlyArgMap = null;   // parameter map of only output parameters

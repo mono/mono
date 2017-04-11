@@ -10,7 +10,7 @@
 // REVISIONS
 // Date          Ver     By           Remarks
 // ~~~~~~~~~~    ~~~     ~~~~~~~~     ~~~~~~~~~~~~~~
-// 03/08/01      1.0     [....]       Created.
+// 03/08/01      1.0     Microsoft       Created.
 // ****************************************************************************
 using System;
 using System.Runtime.Serialization;

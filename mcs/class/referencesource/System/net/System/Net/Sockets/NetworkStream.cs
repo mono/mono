@@ -483,7 +483,7 @@ namespace System.Net.Sockets {
 #if DEBUG
             using (GlobalLog.SetThreadKind(ThreadKinds.User | ThreadKinds.Sync)) {
 #endif
-            bool canRead = CanRead;  // Prevent race with Dispose.
+            bool canRead = CanRead;  // Prevent ---- with Dispose.
             if (m_CleanedUp){
                 throw new ObjectDisposedException(this.GetType().FullName);
             }
@@ -557,7 +557,7 @@ namespace System.Net.Sockets {
 #if DEBUG
             using (GlobalLog.SetThreadKind(ThreadKinds.User | ThreadKinds.Sync)) {
 #endif
-            bool canWrite = CanWrite; // Prevent race with Dispose.
+            bool canWrite = CanWrite; // Prevent ---- with Dispose.
             if (m_CleanedUp){
                 throw new ObjectDisposedException(this.GetType().FullName);
             }
@@ -717,7 +717,7 @@ namespace System.Net.Sockets {
 #if DEBUG
             using (GlobalLog.SetThreadKind(ThreadKinds.User | ThreadKinds.Async)) {
 #endif
-            bool canRead = CanRead; // Prevent race with Dispose.
+            bool canRead = CanRead; // Prevent ---- with Dispose.
             if (m_CleanedUp){
                 throw new ObjectDisposedException(this.GetType().FullName);
             }
@@ -772,7 +772,7 @@ namespace System.Net.Sockets {
 
         internal virtual IAsyncResult UnsafeBeginRead(byte[] buffer, int offset, int size, AsyncCallback callback, Object state)
         {
-            bool canRead = CanRead; // Prevent race with Dispose.
+            bool canRead = CanRead; // Prevent ---- with Dispose.
             if (m_CleanedUp)
             {
                 throw new ObjectDisposedException(GetType().FullName);
@@ -902,7 +902,7 @@ namespace System.Net.Sockets {
 #if DEBUG
             using (GlobalLog.SetThreadKind(ThreadKinds.User | ThreadKinds.Async)) {
 #endif
-            bool canWrite = CanWrite; // Prevent race with Dispose.
+            bool canWrite = CanWrite; // Prevent ---- with Dispose.
             if (m_CleanedUp){
                 throw new ObjectDisposedException(this.GetType().FullName);
             }
@@ -964,7 +964,7 @@ namespace System.Net.Sockets {
 #if DEBUG
             using (GlobalLog.SetThreadKind(ThreadKinds.User | ThreadKinds.Async)) {
 #endif
-                bool canWrite = CanWrite; // Prevent race with Dispose.
+                bool canWrite = CanWrite; // Prevent ---- with Dispose.
                 if (m_CleanedUp){
                     throw new ObjectDisposedException(this.GetType().FullName);
                 }
@@ -1061,7 +1061,7 @@ namespace System.Net.Sockets {
 
         /// <devdoc>
         ///    <para>
-        ///       Performs a [....] Write of an array of buffers.
+        ///       Performs a sync Write of an array of buffers.
         ///    </para>
         /// </devdoc>
         internal virtual void MultipleWrite(BufferOffsetSize[] buffers)

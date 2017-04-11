@@ -15,7 +15,7 @@
     <NoStdLib>True</NoStdLib>
     
     <NoConfig>True</NoConfig>
-    
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>
     </RootNamespace>
@@ -51,6 +51,25 @@
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
+    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="..\..\class\System.Runtime.Serialization.Formatters.Soap\System.Runtime.Serialization.Formatters.Soap\SoapFormatter.cs" />
+    <Compile Include="..\..\class\System.Runtime.Serialization.Formatters.Soap\System.Runtime.Serialization.Formatters.Soap\SoapReader.cs" />
+    <Compile Include="..\..\class\System.Runtime.Serialization.Formatters.Soap\System.Runtime.Serialization.Formatters.Soap\SoapTypeMapper.cs" />
+    <Compile Include="..\..\class\System.Runtime.Serialization.Formatters.Soap\System.Runtime.Serialization.Formatters.Soap\SoapWriter.cs" />
+    <Compile Include="..\..\class\System.Windows.Forms\System.Resources\AssemblyNamesTypeResolutionService.cs" />
+    <Compile Include="..\..\class\System.Windows.Forms\System.Resources\ByteArrayFromResXHandler.cs" />
+    <Compile Include="..\..\class\System.Windows.Forms\System.Resources\FileRefHandler.cs" />
+    <Compile Include="..\..\class\System.Windows.Forms\System.Resources\InMemoryHandler.cs" />
+    <Compile Include="..\..\class\System.Windows.Forms\System.Resources\NullRefHandler.cs" />
+    <Compile Include="..\..\class\System.Windows.Forms\System.Resources\ResXDataNode.cs" />
+    <Compile Include="..\..\class\System.Windows.Forms\System.Resources\ResXDataNodeHandler.cs" />
+    <Compile Include="..\..\class\System.Windows.Forms\System.Resources\ResXFileRef.cs" />
+    <Compile Include="..\..\class\System.Windows.Forms\System.Resources\ResXNullRef.cs" />
+    <Compile Include="..\..\class\System.Windows.Forms\System.Resources\ResXResourceReader.cs" />
+    <Compile Include="..\..\class\System.Windows.Forms\System.Resources\ResXResourceSet.cs" />
+    <Compile Include="..\..\class\System.Windows.Forms\System.Resources\ResXResourceWriter.cs" />
+    <Compile Include="..\..\class\System.Windows.Forms\System.Resources\SerializedFromResXHandler.cs" />
+    <Compile Include="..\..\class\System.Windows.Forms\System.Resources\TypeConverterFromResXHandler.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="monoresgen.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -90,6 +109,10 @@
     <ProjectReference Include="../../class/System.Core/System.Core-net_4_x.csproj">
       <Project>{359142A1-D80F-401E-AA64-7167C9317649}</Project>
       <Name>System.Core-net_4_x</Name>
+    </ProjectReference>
+    <ProjectReference Include="../../class/System.Drawing/System.Drawing-net_4_x.csproj">
+      <Project>{584A5E46-2958-4CB2-8DF9-188B420D0BB0}</Project>
+      <Name>System.Drawing-net_4_x</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

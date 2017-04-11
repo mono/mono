@@ -2,8 +2,8 @@
 // <copyright file="DBConnectionString.cs" company="Microsoft">
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.Common {
@@ -251,7 +251,7 @@ namespace System.Data.Common {
                 //Debug.WriteLine("14/15/16 this AllowOnly and entry AllowOnly but no restrictions");
             }
 
-            // verify _hasPassword & _parsetable are in [....] between Everett/Whidbey
+            // verify _hasPassword & _parsetable are in sync between Everett/Whidbey
             Debug.Assert(!_hasPassword || ContainsKey(KEY.Password) || ContainsKey(KEY.Pwd), "OnDeserialized password mismatch this");
             Debug.Assert(null == entry || !entry._hasPassword || entry.ContainsKey(KEY.Password) || entry.ContainsKey(KEY.Pwd), "OnDeserialized password mismatch entry");
 

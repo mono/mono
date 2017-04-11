@@ -7,7 +7,8 @@ Assembly/AssemblyInfo.cs
 ReferenceSources/CacheEntryCollection.cs
 ReferenceSources/CacheExpires.cs
 ReferenceSources/CacheUsage.cs
-ReferenceSources/R.Designer.cs
+ReferenceSources/R.cs
+
 ../referencesource/System.Runtime.Caching/Resources/RH.cs
 ../referencesource/System.Runtime.Caching/System/Caching/CacheEntryChangeMonitor.cs
 ../referencesource/System.Runtime.Caching/System/Caching/CacheEntryRemovedArguments.cs

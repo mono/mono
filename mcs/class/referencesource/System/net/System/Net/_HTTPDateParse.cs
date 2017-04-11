@@ -42,7 +42,7 @@ namespace System.Net {
 
         private const int DATE_TOKEN_JANUARY      = 1;
         private const int DATE_TOKEN_FEBRUARY     = 2;
-        private const int DATE_TOKEN_MARCH        = 3;
+        private const int DATE_TOKEN_Microsoft        = 3;
         private const int DATE_TOKEN_APRIL        = 4;
         private const int DATE_TOKEN_MAY          = 5;
         private const int DATE_TOKEN_JUNE         = 6;
@@ -148,7 +148,7 @@ namespace System.Net {
                         case 'A':
                             switch (MAKE_UPPER(lpszDay[index+2])) {
                                 case 'R':
-                                    return DATE_TOKEN_MARCH;
+                                    return DATE_TOKEN_Microsoft;
                                 case 'Y':
                                     return DATE_TOKEN_MAY;
                             }

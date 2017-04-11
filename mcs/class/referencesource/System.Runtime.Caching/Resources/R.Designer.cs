@@ -223,6 +223,15 @@ namespace System.Runtime.Caching.Resources {
         }
 
         /// <summary>
+        ///   Looks up a localized string similar to Invalid configuration: {0}=&quot;{1}&quot;.  The {0} value must be a boolean..
+        /// </summary>
+        internal static string Value_must_be_boolean {
+            get {
+                return ResourceManager.GetString("Value_must_be_boolean", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to An empty string is invalid..
         /// </summary>
         internal static string Empty_string_invalid {

@@ -23,7 +23,7 @@ namespace System.ServiceModel.Configuration
             {
                 if (!typeof(System.ServiceModel.Description.IEndpointBehavior).IsAssignableFrom(element.BehaviorType))
                 {
-#pragma warning disable 56506 //[....]; element.ElementInformation is guaranteed to be non-null(System.Configuration)
+#pragma warning disable 56506 //Microsoft; element.ElementInformation is guaranteed to be non-null(System.Configuration)
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ConfigurationErrorsException(SR.GetString(SR.ConfigInvalidCommonEndpointBehaviorType,
                         element.ConfigurationElementName,
                         typeof(System.ServiceModel.Description.IEndpointBehavior).FullName),
@@ -44,7 +44,7 @@ namespace System.ServiceModel.Configuration
             {
                 if (!typeof(System.ServiceModel.Description.IEndpointBehavior).IsAssignableFrom(element.BehaviorType))
                 {
-#pragma warning disable 56506 //[....]; element.ElementInformation is guaranteed to be non-null(System.Configuration)
+#pragma warning disable 56506 //Microsoft; element.ElementInformation is guaranteed to be non-null(System.Configuration)
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ConfigurationErrorsException(SR.GetString(SR.ConfigInvalidCommonEndpointBehaviorType,
                         element.ConfigurationElementName,
                         typeof(System.ServiceModel.Description.IEndpointBehavior).FullName),

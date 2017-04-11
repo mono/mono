@@ -5,7 +5,7 @@
 // ==--==
 //  FileIOPermission.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 
 namespace System.Security.Permissions {
@@ -210,6 +210,7 @@ namespace System.Security.Permissions {
             {
                 throw new ArgumentException(Environment.GetResourceString("Argument_EmptyPath"));
             }
+
             Contract.EndContractBlock();
             // @
 
@@ -551,13 +552,10 @@ namespace System.Security.Permissions {
         {
             for (int i = 0; i < str.Length; ++i)
             {
-                // FileIOPermission doesn't allow for normalizing across various volume names. This means "C:\" and
-                // "\\?\C:\" won't be considered correctly. In addition there are many other aliases for the volume
-                // besides "C:" such as (in one concrete example) "\\?\Harddisk0Partition2\", "\\?\HarddiskVolume6\",
-                // "\\?\Volume{d1655348-0000-0000-0000-f01500000000}\", etc.
-                //
-                // We'll continue to explicitly block extended syntax here by disallowing wildcards no matter where
-                // they occur in the string (e.g. \\?\ isn't ok)
+                // Fail out nulls as CheckInvalidPathChars would (to match historical behavior)
+                if (str[i] == null) throw new ArgumentNullException("path");
+
+                // Looking for wildcard characters, etc.
                 if (CheckExtraPathCharacters(str[i]))
                     throw new ArgumentException(Environment.GetResourceString("Argument_InvalidPathChars"));
 
@@ -570,10 +568,27 @@ namespace System.Security.Permissions {
         /// Check for ?,* and null, ignoring extended syntax.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [SecuritySafeCritical]
         private unsafe static bool CheckExtraPathCharacters(string path)
         {
+            // FileIOPermission doesn't allow for normalizing across various volume names. This means "C:\" and
+            // "\\?\C:\" won't be considered correctly. In addition there are many other aliases for the volume
+            // besides "C:" such as (in one concrete example) "\\?\Harddisk0Partition2\", "\\?\HarddiskVolume6\",
+            // "\\?\Volume{d1655348-0000-0000-0000-f01500000000}\", etc.
+            //
+            // This was never completely correct due to \\.\ paths. We'll allow \\?\ now if two conditions are met:
+            // (1) We are in full trust and (2) we _aren't_ under the LegacyPathHandling switch.
+
+            bool skipPrefix =
+#if FEATURE_CAS_POLICY
+                CodeAccessSecurityEngine.QuickCheckForAllDemands() &&
+#endif
+                !AppContextSwitches.UseLegacyPathHandling;
+
+            int startIndex = !skipPrefix ? 0 : PathInternal.IsDevice(path) ? PathInternal.DevicePrefixLength : 0;
+
             char currentChar;
-            for (int i = 0; i < path.Length; i++)
+            for (int i = startIndex; i < path.Length; i++)
             {
                 currentChar = path[i];
 

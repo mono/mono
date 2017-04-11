@@ -71,7 +71,7 @@ namespace System.Workflow.Runtime
                         if (this._workflowDefinition == null)
                         {
                             // Clone the original definition after locking the
-                            // definition's [....] object which was passed in
+                            // definition's sync object which was passed in
                             // the constructor.  This is so that the host cannot
                             // corrupt the shared definition
                             Activity tempDefinition = this._originalWorkflowDefinition.Clone();

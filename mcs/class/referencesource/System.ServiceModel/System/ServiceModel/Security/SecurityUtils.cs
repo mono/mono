@@ -284,7 +284,7 @@ namespace System.ServiceModel.Security
         volatile static bool isSslValidationRequirementDetermined = false;
         static readonly int MinimumSslCipherStrength = 128;
 
-        // these are kept in [....] with IIS70
+        // these are kept in sync with IIS70
         public const string AuthTypeNTLM = "NTLM";
         public const string AuthTypeNegotiate = "Negotiate";
         public const string AuthTypeKerberos = "Kerberos";
@@ -1472,7 +1472,7 @@ namespace System.ServiceModel.Security
             }
         }
 
-        // WORKAROUND, [....], VSWhidbey 561276: The first NetworkCredential must be created in a lock.
+        // WORKAROUND, Microsoft, VSWhidbey 561276: The first NetworkCredential must be created in a lock.
         internal static void PrepareNetworkCredential()
         {
             if (dummyNetworkCredential == null)
@@ -1692,7 +1692,7 @@ namespace System.ServiceModel.Security
                 {
                     thisPtr.communicationObject.EndOpen(result);
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -1767,7 +1767,7 @@ namespace System.ServiceModel.Security
                 {
                     thisPtr.communicationObject.EndClose(result);
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))

@@ -6,7 +6,7 @@
 // <copyright file="XmlCharType.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 //#define XMLCHARTYPE_USE_RESOURCE    // load the character properties from resources (XmlCharType.bin must be linked to System.Xml.dll)

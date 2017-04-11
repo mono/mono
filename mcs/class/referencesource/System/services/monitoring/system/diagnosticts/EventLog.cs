@@ -150,8 +150,8 @@ namespace System.Diagnostics {
         [MonitoringDescription(SR.LogLog)]
         [DefaultValue("")]
         [SettingsBindable(true)]
-        [SuppressMessage("Microsoft.Security", "CA2103:ReviewImperativeSecurity", Justification = "[....]: Safe, oldLog.machineName doesn't change")]
-        [SuppressMessage("Microsoft.Security", "CA2106:SecureAsserts", Justification = "[....]: By design, see justification above assert")]
+        [SuppressMessage("Microsoft.Security", "CA2103:ReviewImperativeSecurity", Justification = "Microsoft: Safe, oldLog.machineName doesn't change")]
+        [SuppressMessage("Microsoft.Security", "CA2106:SecureAsserts", Justification = "Microsoft: By design, see justification above assert")]
         public string Log {
             get {
                 return m_underlyingEventLog.Log;
@@ -181,7 +181,7 @@ namespace System.Diagnostics {
         [MonitoringDescription(SR.LogMachineName)]
         [DefaultValue(".")]
         [SettingsBindable(true)]
-        [SuppressMessage("Microsoft.Security", "CA2106:SecureAsserts", Justification = "[....]: By design, see justification above assert")]
+        [SuppressMessage("Microsoft.Security", "CA2106:SecureAsserts", Justification = "Microsoft: By design, see justification above assert")]
         public string MachineName {
             get {
                 return m_underlyingEventLog.MachineName;
@@ -292,8 +292,8 @@ namespace System.Diagnostics {
         [MonitoringDescription(SR.LogSource)]
         [DefaultValue("")]
         [SettingsBindable(true)]
-        [SuppressMessage("Microsoft.Security", "CA2103:ReviewImperativeSecurity", Justification = "[....]: Safe, oldLog.machineName doesn't change")]
-        [SuppressMessage("Microsoft.Security", "CA2106:SecureAsserts", Justification = "[....]: By design, see justification above assert")]
+        [SuppressMessage("Microsoft.Security", "CA2103:ReviewImperativeSecurity", Justification = "Microsoft: Safe, oldLog.machineName doesn't change")]
+        [SuppressMessage("Microsoft.Security", "CA2106:SecureAsserts", Justification = "Microsoft: By design, see justification above assert")]
         public string Source {
             get {
                 return m_underlyingEventLog.Source;
@@ -1069,7 +1069,7 @@ namespace System.Diagnostics {
         /// </devdoc>
         [ResourceExposure(ResourceScope.None)]
         [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
-        [SuppressMessage("Microsoft.Security", "CA2103:ReviewImperativeSecurity", Justification = "[....]: Safe, machineName doesn't change")]
+        [SuppressMessage("Microsoft.Security", "CA2103:ReviewImperativeSecurity", Justification = "Microsoft: Safe, machineName doesn't change")]
         internal static bool SourceExists(string source, string machineName, bool wantToCreate) {
             if (!SyntaxCheck.CheckMachineName(machineName)) {
                 throw new ArgumentException(SR.GetString(SR.InvalidParameter, "machineName", machineName));

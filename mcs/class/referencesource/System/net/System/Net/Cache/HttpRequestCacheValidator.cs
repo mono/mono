@@ -902,7 +902,7 @@ namespace System.Net.Cache {
 
                         // These if-else are two logically identical blocks that differ only in the way of how text search is done.
                         // The text search is done differently for 32 and X-bits platforms.
-                        // ATTN: You are responsible for keeping the rest of the logic in [....].
+                        // ATTN: You are responsible for keeping the rest of the logic in sync.
                         if (IntPtr.Size == 4) {
                             // We are on 32-bits platform
 

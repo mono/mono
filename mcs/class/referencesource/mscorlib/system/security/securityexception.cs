@@ -7,7 +7,7 @@
 **
 ** Class: SecurityException
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Exception class for security

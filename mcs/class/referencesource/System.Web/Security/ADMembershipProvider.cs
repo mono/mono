@@ -378,6 +378,7 @@ namespace System.Web.Security
 
             int clientSearchTimeout = SecUtility.GetIntValue(config, "clientSearchTimeout", -1, false, 0);
             int serverSearchTimeout = SecUtility.GetIntValue(config, "serverSearchTimeout", -1, false, 0);
+            TimeUnit timeoutUnit = SecUtility.GetTimeoutUnit(config, "timeoutUnit", TimeUnit.Minutes);
             passwordStrengthRegexTimeout = SecUtility.GetNullableIntValue(config, "passwordStrengthRegexTimeout");
 
             enableSearchMethods = SecUtility.GetBooleanValue(config, "enableSearchMethods", false);
@@ -418,7 +419,7 @@ namespace System.Web.Security
                 //  connectionprotection if necessary, make sure credentials are valid, container exists and the directory is
                 //  either AD or ADAM)
                 //
-                directoryInfo = new DirectoryInformation(adConnectionString, credential, connProtection, clientSearchTimeout, serverSearchTimeout, enablePasswordReset);
+                directoryInfo = new DirectoryInformation(adConnectionString, credential, connProtection, clientSearchTimeout, serverSearchTimeout, enablePasswordReset, timeoutUnit);
 
                 //
                 // initialize the syntaxes table
@@ -609,6 +610,7 @@ namespace System.Web.Security
             config.Remove("connectionPassword");
             config.Remove("clientSearchTimeout");
             config.Remove("serverSearchTimeout");
+            config.Remove("timeoutUnit");
             config.Remove("enableSearchMethods");
             config.Remove("maxInvalidPasswordAttempts");
             config.Remove("passwordAttemptWindow");
@@ -2021,9 +2023,9 @@ namespace System.Web.Security
                     searcher.PropertiesToLoad.Add(attributeMapUsername);
 
                     if (directoryInfo.ClientSearchTimeout != -1)
-                        searcher.ClientTimeout = new TimeSpan(0, directoryInfo.ClientSearchTimeout, 0);
+                        searcher.ClientTimeout = DateTimeUtil.GetTimeoutFromTimeUnit(directoryInfo.ClientSearchTimeout, directoryInfo.TimeoutUnit);
                     if (directoryInfo.ServerSearchTimeout != -1)
-                        searcher.ServerPageTimeLimit = new TimeSpan(0, directoryInfo.ServerSearchTimeout, 0);
+                        searcher.ServerPageTimeLimit = DateTimeUtil.GetTimeoutFromTimeUnit(directoryInfo.ServerSearchTimeout, directoryInfo.TimeoutUnit);
 
                     resCol = searcher.FindAll();
                     bool userFound = false;
@@ -2371,9 +2373,9 @@ namespace System.Web.Security
             searcher.Filter = "(&(objectCategory=person)(objectClass=user)" + filter + ")";
 
             if (directoryInfo.ClientSearchTimeout != -1)
-                searcher.ClientTimeout = new TimeSpan(0, directoryInfo.ClientSearchTimeout, 0);
+                searcher.ClientTimeout = DateTimeUtil.GetTimeoutFromTimeUnit(directoryInfo.ClientSearchTimeout, directoryInfo.TimeoutUnit);
             if (directoryInfo.ServerSearchTimeout != -1)
-                searcher.ServerPageTimeLimit = new TimeSpan(0, directoryInfo.ServerSearchTimeout, 0);
+                searcher.ServerPageTimeLimit = DateTimeUtil.GetTimeoutFromTimeUnit(directoryInfo.ServerSearchTimeout, directoryInfo.TimeoutUnit);
 
             if (retrieveSAMAccountName)
                 searcher.PropertiesToLoad.Add("sAMAccountName");
@@ -2413,9 +2415,9 @@ namespace System.Web.Security
             searcher.Filter = "(&(objectCategory=person)(objectClass=user)" + filter + ")";
 
             if (directoryInfo.ClientSearchTimeout != -1)
-                searcher.ClientTimeout = new TimeSpan(0, directoryInfo.ClientSearchTimeout, 0);
+                searcher.ClientTimeout = DateTimeUtil.GetTimeoutFromTimeUnit(directoryInfo.ClientSearchTimeout, directoryInfo.TimeoutUnit);
             if (directoryInfo.ServerSearchTimeout != -1)
-                searcher.ServerPageTimeLimit = new TimeSpan(0, directoryInfo.ServerSearchTimeout, 0);
+                searcher.ServerPageTimeLimit = DateTimeUtil.GetTimeoutFromTimeUnit(directoryInfo.ServerSearchTimeout, directoryInfo.TimeoutUnit);
 
             //
             // load all the attributes needed to create a MembershipUser object
@@ -2483,9 +2485,9 @@ namespace System.Web.Security
             searcher.Filter = "(&(objectCategory=person)(objectClass=user)" + filter + ")";
 
             if (directoryInfo.ClientSearchTimeout != -1)
-                searcher.ClientTimeout = new TimeSpan(0, directoryInfo.ClientSearchTimeout, 0);
+                searcher.ClientTimeout = DateTimeUtil.GetTimeoutFromTimeUnit(directoryInfo.ClientSearchTimeout, directoryInfo.TimeoutUnit);
             if (directoryInfo.ServerSearchTimeout != -1)
-                searcher.ServerPageTimeLimit = new TimeSpan(0, directoryInfo.ServerSearchTimeout, 0);
+                searcher.ServerPageTimeLimit = DateTimeUtil.GetTimeoutFromTimeUnit(directoryInfo.ServerSearchTimeout, directoryInfo.TimeoutUnit);
 
             //
             // load all the attributes needed to create a MembershipUser object
@@ -3059,9 +3061,9 @@ namespace System.Web.Security
             searcher.SearchScope = System.DirectoryServices.SearchScope.Subtree;
 
             if (directoryInfo.ClientSearchTimeout != -1)
-                searcher.ClientTimeout = new TimeSpan(0, directoryInfo.ClientSearchTimeout, 0);
+                searcher.ClientTimeout = DateTimeUtil.GetTimeoutFromTimeUnit(directoryInfo.ClientSearchTimeout, directoryInfo.TimeoutUnit);
             if (directoryInfo.ServerSearchTimeout != -1)
-                searcher.ServerPageTimeLimit = new TimeSpan(0, directoryInfo.ServerSearchTimeout, 0);
+                searcher.ServerPageTimeLimit = DateTimeUtil.GetTimeoutFromTimeUnit(directoryInfo.ServerSearchTimeout, directoryInfo.TimeoutUnit);
 
             bool result;
             try
@@ -3099,9 +3101,9 @@ namespace System.Web.Security
             searcher.SearchScope = System.DirectoryServices.SearchScope.Subtree;
 
             if (directoryInfo.ClientSearchTimeout != -1)
-                searcher.ClientTimeout = new TimeSpan(0, directoryInfo.ClientSearchTimeout, 0);
+                searcher.ClientTimeout = DateTimeUtil.GetTimeoutFromTimeUnit(directoryInfo.ClientSearchTimeout, directoryInfo.TimeoutUnit);
             if (directoryInfo.ServerSearchTimeout != -1)
-                searcher.ServerPageTimeLimit = new TimeSpan(0, directoryInfo.ServerSearchTimeout, 0);
+                searcher.ServerPageTimeLimit = DateTimeUtil.GetTimeoutFromTimeUnit(directoryInfo.ServerSearchTimeout, directoryInfo.TimeoutUnit);
 
             bool result;
             try
@@ -3434,6 +3436,7 @@ namespace System.Web.Security
         private bool concurrentBindSupported = false;
         private int clientSearchTimeout = -1;
         private int serverSearchTimeout = -1;
+        private TimeUnit timeUnit = TimeUnit.Unknown;
         private DirectoryEntry rootdse = null;
         private NetworkCredential credentials = null;
         private AuthenticationTypes authenticationType = AuthenticationTypes.None;
@@ -3471,7 +3474,8 @@ namespace System.Web.Security
                                                             string connProtection,
                                                             int clientSearchTimeout,
                                                             int serverSearchTimeout,
-                                                            bool enablePasswordReset)
+                                                            bool enablePasswordReset,
+                                                            TimeUnit timeUnit)
         {
 
            //
@@ -3482,6 +3486,7 @@ namespace System.Web.Security
             this.credentials = credentials;
             this.clientSearchTimeout = clientSearchTimeout;
             this.serverSearchTimeout = serverSearchTimeout;
+            this.timeUnit = timeUnit;
 
             Debug.Assert(adspath != null);
             Debug.Assert(adspath.Length > 0);
@@ -3878,6 +3883,11 @@ namespace System.Web.Security
         internal int ServerSearchTimeout
         {
             get { return serverSearchTimeout; }
+        }
+
+        internal TimeUnit TimeoutUnit
+        {
+            get { return timeUnit; }
         }
 
         internal string ADAMPartitionDN

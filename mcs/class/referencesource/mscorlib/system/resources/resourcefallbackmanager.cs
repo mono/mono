@@ -7,7 +7,7 @@
 **
 ** Class:  ResourceFallbackManager
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Encapsulates CultureInfo fallback for resource 
@@ -67,7 +67,7 @@ namespace System.Resources
             return GetEnumerator();
         }
 
-        // WARING: This function must be kept in [....] with ResourceManager.GetFirstResourceSet()
+        // WARING: This function must be kept in sync with ResourceManager.GetFirstResourceSet()
         public IEnumerator<CultureInfo> GetEnumerator()
         {
             bool reachedNeutralResourcesCulture = false;

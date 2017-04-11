@@ -51,7 +51,7 @@ namespace Microsoft.Win32 {
             ***********/
 
             // Per VsWhidbey#88276 it was decided to not enforce any cache metadata limits for WinInet cache provider.
-            //  ([....] 7/17 made this a const to avoid threading issues)
+            //  (Microsoft 7/17 made this a const to avoid threading issues)
             //_MaximumResponseHeadersLength = Int32.MaxValue;
             this.async = async;
 

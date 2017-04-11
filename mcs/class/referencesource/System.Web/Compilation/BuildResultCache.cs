@@ -67,15 +67,13 @@ internal abstract class BuildResultCache {
 
 internal class MemoryBuildResultCache: BuildResultCache {
 
-    private CacheInternal _cache;
     private CacheItemRemovedCallback _onRemoveCallback;
 
     // The keys are simple assembly names
     // The values are ArrayLists containing the simple names of assemblies that depend on it
     private Hashtable _dependentAssemblies = new Hashtable();
 
-    internal MemoryBuildResultCache(CacheInternal cache) {
-        _cache = cache;
+    internal MemoryBuildResultCache() {
 
         // Register an AssemblyLoad event
         AppDomain.CurrentDomain.AssemblyLoad += new AssemblyLoadEventHandler(OnAssemblyLoad);
@@ -121,7 +119,7 @@ internal class MemoryBuildResultCache: BuildResultCache {
         Debug.Trace("BuildResultCache", "Looking for '" + cacheKey + "' in the memory cache");
 
         string key = GetMemoryCacheKey(cacheKey);
-        BuildResult result = (BuildResult) _cache.Get(key);
+        BuildResult result = (BuildResult) HttpRuntime.Cache.InternalCache.Get(key);
 
         // Not found in the cache
         if (result == null) {
@@ -137,9 +135,9 @@ internal class MemoryBuildResultCache: BuildResultCache {
             Debug.Trace("BuildResultCache", "'" + cacheKey + "' was found but is out of date");
 
             // Remove it from the cache
-            _cache.Remove(key);
+            HttpRuntime.Cache.InternalCache.Remove(key);
 
-            Debug.Assert(_cache.Get(key) == null);
+            Debug.Assert(HttpRuntime.Cache.InternalCache.Get(key) == null);
 
             return null;
         }
@@ -183,16 +181,11 @@ internal class MemoryBuildResultCache: BuildResultCache {
 
             // Insert a new cache entry using the assembly path as the key
             string assemblyKey = GetAssemblyCacheKey(compiledResult.ResultAssembly);
-            Assembly a = (Assembly)_cache.Get(assemblyKey);
+            Assembly a = (Assembly) HttpRuntime.Cache.InternalCache.Get(assemblyKey);
             if (a == null) {
                 Debug.Trace("BuildResultCache", "Adding marker cache entry " + compiledResult.ResultAssembly);
                 // VSWhidbey 500049 - add as NotRemovable to prevent the assembly from being prematurely deleted
-                _cache.UtcInsert(assemblyKey, compiledResult.ResultAssembly,
-                                 null,
-                                 Cache.NoAbsoluteExpiration,
-                                 Cache.NoSlidingExpiration,
-                                 CacheItemPriority.NotRemovable,
-                                 null);
+                HttpRuntime.Cache.InternalCache.Insert(assemblyKey, compiledResult.ResultAssembly, null);
             }
             else {
                 Debug.Assert(a == compiledResult.ResultAssembly);
@@ -237,11 +230,13 @@ internal class MemoryBuildResultCache: BuildResultCache {
             onRemoveCallback = _onRemoveCallback;
         }
 
-        _cache.UtcInsert(key, result, cacheDependency,
-            result.MemoryCacheExpiration,
-            result.MemoryCacheSlidingExpiration,
-            cachePriority,
-            onRemoveCallback);
+        HttpRuntime.Cache.InternalCache.Insert(key, result, new CacheInsertOptions() {
+                                                            Dependencies = cacheDependency,
+                                                            AbsoluteExpiration = result.MemoryCacheExpiration,
+                                                            SlidingExpiration = result.MemoryCacheSlidingExpiration,
+                                                            Priority = cachePriority,
+                                                            OnRemovedCallback = onRemoveCallback
+                                                        });
     }
 
     // OnCacheItemRemoved can be invoked with user code on the stack, for example if someone
@@ -338,7 +333,7 @@ internal class MemoryBuildResultCache: BuildResultCache {
 
         // If we have no cache entry for this assembly, there is nothing to do
         string cacheKey = GetAssemblyCacheKeyFromName(assemblyName);
-        Assembly assembly = (Assembly)_cache[cacheKey];
+        Assembly assembly = (Assembly)HttpRuntime.Cache.InternalCache.Get(cacheKey);
         if (assembly == null)
             return;
 
@@ -348,7 +343,7 @@ internal class MemoryBuildResultCache: BuildResultCache {
         Debug.Trace("BuildResultCache", "removing cacheKey for assembly " + assemblyPath + " because of dependency change");
 
         // Remove the cache entry in order to kick out all the pages that are in that batch
-        _cache.Remove(cacheKey);
+        HttpRuntime.Cache.InternalCache.Remove(cacheKey);
 
         // Now call recursively on all the dependent assemblies (VSWhidbey 577593)
         ICollection dependentAssemblies = _dependentAssemblies[assemblyName] as ICollection;
@@ -532,7 +527,7 @@ internal abstract class DiskBuildResultCache: BuildResultCache {
                     // This is required otherwise new components can be compiled
                     // with obsolete build results whose assembly has been removed.
                     string assemblyKey = GetAssemblyCacheKey(f.FullName);
-                    HttpRuntime.CacheInternal.Remove(assemblyKey);
+                    HttpRuntime.Cache.InternalCache.Remove(assemblyKey);
 
                     // Remove the assembly
                     RemoveAssembly(f);

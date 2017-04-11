@@ -528,7 +528,7 @@ namespace System.ServiceModel.Channels
             }
             else
             {
-#pragma warning suppress 56506 // [....], BindingContext.BindingParameters cannot be null
+#pragma warning suppress 56506 // Microsoft, BindingContext.BindingParameters cannot be null
                 if (context.BindingParameters.Find<MessageEncodingBindingElement>() == null)
                 {
                     context.BindingParameters.Add(new TextMessageEncodingBindingElement());
@@ -578,7 +578,7 @@ namespace System.ServiceModel.Channels
 
             if (!this.CanBuildChannelFactory<TChannel>(context))
             {
-#pragma warning suppress 56506 // [....], context.Binding will never be null.
+#pragma warning suppress 56506 // Microsoft, context.Binding will never be null.
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument("TChannel", SR.GetString(SR.CouldnTCreateChannelForChannelType2, context.Binding.Name, typeof(TChannel)));
             }
 
@@ -649,7 +649,7 @@ namespace System.ServiceModel.Channels
             if (!this.CanBuildChannelListener<TChannel>(context))
             {
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument(
-#pragma warning suppress 56506 // [....], context.Binding will never be null.
+#pragma warning suppress 56506 // Microsoft, context.Binding will never be null.
 "TChannel", SR.GetString(SR.CouldnTCreateChannelForChannelType2, context.Binding.Name, typeof(TChannel)));
             }
 
@@ -672,7 +672,7 @@ namespace System.ServiceModel.Channels
 
             if (effectiveAutheSchemes == AuthenticationSchemes.None)
             {
-#pragma warning suppress 56506 // [....], context.Binding will never be null.
+#pragma warning suppress 56506 // Microsoft, context.Binding will never be null.
                 string bindingName = context.Binding.Name;
 
                 if (this.AuthenticationScheme == AuthenticationSchemes.None)

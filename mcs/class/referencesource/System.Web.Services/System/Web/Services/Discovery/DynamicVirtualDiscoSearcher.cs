@@ -140,7 +140,7 @@ namespace System.Web.Services.Discovery {
 
 
         // -------------------------------------------------------------------------------
-        // Calculate root ADSI virtual directory name (func by '[....]').
+        // Calculate root ADSI virtual directory name (func by 'Microsoft').
         private string GetWebServerForUrl(string url) {
             Uri uri = new Uri(url);
             DirectoryEntry w3Service = new DirectoryEntry("IIS://" + uri.Host + "/W3SVC");

@@ -948,7 +948,7 @@ namespace System.Web.UI.MobileControls
             if (IsTrackingViewState)
             {
                 _items = null;
-                // avoid view state being out of [....] with fields.
+                // avoid view state being out of sync with fields.
                 _ignoreFieldsItemsViewModeViewState = true;
                 if (fieldAddedOrRemoved)
                 {

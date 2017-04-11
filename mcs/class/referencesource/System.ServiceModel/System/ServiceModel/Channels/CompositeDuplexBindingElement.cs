@@ -86,7 +86,7 @@ namespace System.ServiceModel.Channels
                 else
                 {
                     // 
-#pragma warning suppress 56506 // [....], context.Binding will never be null.
+#pragma warning suppress 56506 // Microsoft, context.Binding will never be null.
                     context.ListenUriRelativeAddress = String.Empty;
                     context.ListenUriMode = ListenUriMode.Unique;
                 }

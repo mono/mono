@@ -282,29 +282,17 @@ namespace System.Web.Caching {
 
 
         //
-        // helpers for accessing CacheInternal
+        // helpers for accessing InternalCache
         //
 
         // add CachedVary
         private static CachedVary UtcAdd(String key, CachedVary cachedVary) {
-            return (CachedVary) HttpRuntime.CacheInternal.UtcAdd(key, 
-                                                                 cachedVary, 
-                                                                 null /*dependencies*/, 
-                                                                 Cache.NoAbsoluteExpiration, 
-                                                                 Cache.NoSlidingExpiration, 
-                                                                 CacheItemPriority.Normal, 
-                                                                 null /*callback*/);
+            return (CachedVary) HttpRuntime.Cache.InternalCache.Add(key, cachedVary, null);
         }        
 
         // add ControlCachedVary
         private static ControlCachedVary UtcAdd(String key, ControlCachedVary cachedVary) {
-            return (ControlCachedVary) HttpRuntime.CacheInternal.UtcAdd(key, 
-                                                                 cachedVary, 
-                                                                 null /*dependencies*/, 
-                                                                 Cache.NoAbsoluteExpiration, 
-                                                                 Cache.NoSlidingExpiration, 
-                                                                 CacheItemPriority.Normal, 
-                                                                 null /*callback*/);
+            return (ControlCachedVary) HttpRuntime.Cache.InternalCache.Add(key, cachedVary, null);
         }        
 
         private static bool IsSubstBlockSerializable(HttpRawResponse rawResponse) {
@@ -391,7 +379,7 @@ namespace System.Web.Caching {
                 String kernelCacheUrl = cachedRawResponse._kernelCacheUrl;
                 // if it is kernel cached, the url will be non-null.
                 // if the entry was re-inserted, don't remove kernel entry since it will be updated
-                if (kernelCacheUrl != null && HttpRuntime.CacheInternal.Get(key) == null) {
+                if (kernelCacheUrl != null && HttpRuntime.Cache.InternalCache.Get(key) == null) {
                     // invalidate kernel cache entry
                     if (HttpRuntime.UseIntegratedPipeline) {
                         UnsafeIISMethods.MgdFlushKernelCache(kernelCacheUrl);
@@ -462,7 +450,7 @@ namespace System.Web.Caching {
             }
 
             // is the file dependency already in the in-memory cache?
-            if (HttpRuntime.CacheInternal.Get(depKey) != null) {
+            if (HttpRuntime.Cache.InternalCache.Get(depKey) != null) {
 #if DBG
                 Debug.Trace("OutputCache", "HasDependencyChanged(" + depKey + ", ..., " + oceKey + ", ...) --> false");
 #endif
@@ -480,9 +468,10 @@ namespace System.Web.Caching {
             // have the file dependencies changed?
             if (String.Compare(dep.GetUniqueID(), 0, depKey, idStartIndex, idLength, StringComparison.Ordinal) == 0) {
                 // file dependencies have not changed--cache them with callback to remove OutputCacheEntry if they change
-                HttpRuntime.CacheInternal.UtcInsert(depKey, new DependencyCacheEntry(oceKey, kernelKey, providerName), dep, 
-                                                    Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration, 
-                                                    CacheItemPriority.Normal, callback);
+                HttpRuntime.Cache.InternalCache.Insert(depKey, new DependencyCacheEntry(oceKey, kernelKey, providerName), new CacheInsertOptions() {
+                                                                                                                            Dependencies = dep, 
+                                                                                                                            OnRemovedCallback = callback
+                                                                                                                        });
 #if DBG
                 Debug.Trace("OutputCache", "HasDependencyChanged(" + depKey + ", ..., " + oceKey + ", ...) --> false, DEPENDENCY RE-INSERTED");
 #endif
@@ -545,7 +534,7 @@ namespace System.Web.Caching {
                 }
             }
             if (result == null) {
-                result = HttpRuntime.CacheInternal.Get(key);
+                result = HttpRuntime.Cache.InternalCache.Get(key);
 #if DBG
                 string typeName = (result != null) ? result.GetType().Name : "null";            
                 Debug.Trace("OutputCache", "Get(" + key + ") --> " + typeName + ", CacheInternal");
@@ -580,7 +569,7 @@ namespace System.Web.Caching {
             }
 
             if (result == null) {
-                result = HttpRuntime.CacheInternal.Get(key);
+                result = HttpRuntime.Cache.InternalCache.Get(key);
 #if DBG
                 string typeName = (result != null) ? result.GetType().Name : "null";                
                 Debug.Trace("OutputCache", "GetFragment(" + key + "," + providerName + ") --> " + typeName + ", CacheInternal");
@@ -601,7 +590,7 @@ namespace System.Web.Caching {
             // If the context is null, then we don't know which
             // provider and we have to check all.
 
-            HttpRuntime.CacheInternal.Remove(key);
+            HttpRuntime.Cache.InternalCache.Remove(key);
 
             if (context == null) {
                 // remove from all providers since we don't know which one it's in.
@@ -654,7 +643,7 @@ namespace System.Web.Caching {
             if (provider != null) {
                 provider.Remove(key);
             }
-            HttpRuntime.CacheInternal.Remove(key);
+            HttpRuntime.Cache.InternalCache.Remove(key);
 #if DBG
             Debug.Trace("OutputCache", "RemoveFragment(" + key + "," + providerName + ")");
 #endif
@@ -708,7 +697,7 @@ namespace System.Web.Caching {
                     if (!cachedVary.Equals(cachedVaryInCache)) {
                         // overwrite existing cached vary
                         if (!useProvider) {
-                            HttpRuntime.CacheInternal.UtcInsert(cachedVaryKey, cachedVary);
+                            HttpRuntime.Cache.InternalCache.Insert(cachedVaryKey, cachedVary, null);
                         }
                         else {
                             provider.Set(cachedVaryKey, cachedVary, Cache.NoAbsoluteExpiration);
@@ -733,11 +722,11 @@ namespace System.Web.Caching {
 
             // Now insert into the cache (use cache provider if possible, otherwise use internal cache)
             if (!useProvider) {
-                HttpRuntime.CacheInternal.UtcInsert(fragmentKey, fragment,
-                                                    dependencies,
-                                                    absExp, slidingExp,
-                                                    CacheItemPriority.Normal,
-                                                    null);
+                HttpRuntime.Cache.InternalCache.Insert(fragmentKey, fragment, new CacheInsertOptions() {
+                                                                                Dependencies = dependencies,
+                                                                                AbsoluteExpiration = absExp,
+                                                                                SlidingExpiration = slidingExp
+                                                                            });
             }
             else {
                 string depKey = null;
@@ -749,10 +738,12 @@ namespace System.Web.Caching {
                 provider.Set(fragmentKey, fragment, absExp);
                 if (dependencies != null) {
                     // use Add and dispose dependencies if there's already one in the cache
-                    Object d = HttpRuntime.CacheInternal.UtcAdd(depKey, new DependencyCacheEntry(fragmentKey, null, provider.Name),
-                                                                dependencies,
-                                                                absExp, Cache.NoSlidingExpiration,
-                                                                CacheItemPriority.Normal, s_dependencyRemovedCallbackForFragment);
+                    Object d = HttpRuntime.Cache.InternalCache.Add(depKey, new DependencyCacheEntry(fragmentKey, null, provider.Name),
+                                                                new CacheInsertOptions() {
+                                                                    Dependencies = dependencies,
+                                                                    AbsoluteExpiration = absExp,
+                                                                    OnRemovedCallback = s_dependencyRemovedCallbackForFragment
+                                                                });
                     if (d != null) {
                         dependencies.Dispose();
                     }
@@ -768,7 +759,7 @@ namespace System.Web.Caching {
                         + fragmentKey + ", PartialCachingCacheEntry, ...) -->"
                         + providerUsed);
 #endif
-        }
+                                            }
 
         // insert cached vary or output cache entry
         internal static void InsertResponse(String cachedVaryKey, CachedVary cachedVary,
@@ -820,7 +811,7 @@ namespace System.Web.Caching {
                 if (cachedVaryInCache != null) {
                     if (!cachedVary.Equals(cachedVaryInCache)) {
                         if (!useProvider) {
-                            HttpRuntime.CacheInternal.UtcInsert(cachedVaryKey, cachedVary);
+                            HttpRuntime.Cache.InternalCache.Insert(cachedVaryKey, cachedVary, null);
                         }
                         else {
                             provider.Set(cachedVaryKey, cachedVary, Cache.NoAbsoluteExpiration);
@@ -845,11 +836,12 @@ namespace System.Web.Caching {
 
             // Now insert into the cache (use cache provider if possible, otherwise use internal cache)
             if (!useProvider) {
-                HttpRuntime.CacheInternal.UtcInsert(rawResponseKey, rawResponse,
-                                                    dependencies,
-                                                    absExp, slidingExp,
-                                                    CacheItemPriority.Normal,
-                                                    s_entryRemovedCallback);
+                HttpRuntime.Cache.InternalCache.Insert(rawResponseKey, rawResponse, new CacheInsertOptions() {
+                                                                                    Dependencies = dependencies,
+                                                                                    AbsoluteExpiration = absExp,
+                                                                                    SlidingExpiration = slidingExp,
+                                                                                    OnRemovedCallback = s_entryRemovedCallback
+                                                                                });
 
                 IncrementCount();
 
@@ -867,10 +859,12 @@ namespace System.Web.Caching {
                 provider.Set(rawResponseKey, oce, absExp);
                 if (dependencies != null) {
                     // use Add and dispose dependencies if there's already one in the cache
-                    Object d = HttpRuntime.CacheInternal.UtcAdd(depKey, new DependencyCacheEntry(rawResponseKey, oce.KernelCacheUrl, provider.Name),
-                                                                dependencies,
-                                                                absExp, Cache.NoSlidingExpiration,
-                                                                CacheItemPriority.Normal, s_dependencyRemovedCallback);
+                    Object d = HttpRuntime.Cache.InternalCache.Add(depKey, new DependencyCacheEntry(rawResponseKey, oce.KernelCacheUrl, provider.Name),
+                                                                new CacheInsertOptions() {
+                                                                    Dependencies = dependencies,
+                                                                    AbsoluteExpiration = absExp,
+                                                                    OnRemovedCallback = s_dependencyRemovedCallbackForFragment
+                                                                });
                     if (d != null) {
                         dependencies.Dispose();
                     }

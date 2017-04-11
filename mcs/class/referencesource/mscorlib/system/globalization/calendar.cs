@@ -19,7 +19,7 @@ namespace System.Globalization {
     // , 46, 8, 20, 3, 1999) in the Gregorian calendar. An  implementation of
     // Calendar can map any DateTime value to such an n-tuple and vice versa. The
     // DateTimeFormat class can map between such n-tuples and a textual
-    // representation such as "8:46 AM [....] 20th 1999 AD".
+    // representation such as "8:46 AM Microsoft 20th 1999 AD".
     //
     // Most calendars identify a year which begins the current era. There may be any
     // number of previous eras. The Calendar class identifies the eras as enumerated

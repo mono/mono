@@ -7,7 +7,7 @@
 **
 ** Class:  TextWriter
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Abstract base class for Text-only Writers.

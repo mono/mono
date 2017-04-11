@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 /*============================================================
@@ -331,7 +331,7 @@ namespace System.IO.IsolatedStorage {
 
         private static SecurityPermission GetControlEvidencePermission()
         {
-            // Don't [....]. OK to create this object more than once.
+            // Don't sync. OK to create this object more than once.
             if (s_PermControlEvidence == null)
                 s_PermControlEvidence = new SecurityPermission(
                     SecurityPermissionFlag.ControlEvidence);
@@ -341,7 +341,7 @@ namespace System.IO.IsolatedStorage {
 
         private static PermissionSet GetUnrestricted()
         {
-            // Don't [....]. OK to create this object more than once.
+            // Don't sync. OK to create this object more than once.
             if (s_PermUnrestricted == null)
                 s_PermUnrestricted = new PermissionSet(
                     PermissionState.Unrestricted);

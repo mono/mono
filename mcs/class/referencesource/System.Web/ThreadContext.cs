@@ -61,7 +61,7 @@
 
             /*
              * !! IMPORTANT !!
-             * Keep this logic in [....] with DisassociateFromCurrentThread and EnterExecutionContext.
+             * Keep this logic in sync with DisassociateFromCurrentThread and EnterExecutionContext.
              */
 
             // attach http context to the call context
@@ -128,7 +128,7 @@
 
             /*
              * !! IMPORTANT !!
-             * Keep this logic in [....] with AssociateWithCurrentThread and EnterExecutionContext.
+             * Keep this logic in sync with AssociateWithCurrentThread and EnterExecutionContext.
              */
 
             Current = _originalThreadContextCurrent;
@@ -176,7 +176,7 @@
 
             /*
              * !! IMPORTANT !!
-             * Keep this logic in [....] with AssociateWithCurrentThread and DisassociateFromCurrentThread.
+             * Keep this logic in sync with AssociateWithCurrentThread and DisassociateFromCurrentThread.
              */
 
             // ExecutionContext.Run replaces the current impersonation token, so we need to impersonate

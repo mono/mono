@@ -2,9 +2,9 @@
 // <copyright file="SqlDependency.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="false" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="false" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 using System;
@@ -151,7 +151,7 @@ internal class SqlDependencyProcessDispatcher : MarshalByRefObject { // MBR sinc
 
                 _conversationGuidParam = new SqlParameter("@p1", SqlDbType.UniqueIdentifier);
                 _timeoutParam          = new SqlParameter("@p2", SqlDbType.Int);
-                _timeoutParam.Value    = 0; // Timeout set to 0 for initial [....] query.
+                _timeoutParam.Value    = 0; // Timeout set to 0 for initial sync query.
                 _com.Parameters.Add(_timeoutParam);
 
                 setupCompleted = true;
@@ -160,7 +160,7 @@ internal class SqlDependencyProcessDispatcher : MarshalByRefObject { // MBR sinc
                 // Create standard query.
                 _receiveQuery = "WAITFOR(RECEIVE TOP (1) message_type_name, conversation_handle, cast(message_body AS XML) as message_body from " + _escapedQueueName + "), TIMEOUT @p2;";
 
-                // Create queue, service, [....] query, and async query on user thread to ensure proper
+                // Create queue, service, sync query, and async query on user thread to ensure proper
                 // init prior to return.  
 
                 if (useDefaults) { // Only create if user did not specify service & database.
@@ -179,7 +179,7 @@ internal class SqlDependencyProcessDispatcher : MarshalByRefObject { // MBR sinc
                 // Query synchronously once to ensure everything is working correctly.
                 // We want the exception to occur on start to immediately inform caller.
                 SynchronouslyQueryServiceBrokerQueue();
-                _timeoutParam.Value = _defaultWaitforTimeout; // [....] successful, extend timeout to 60 seconds.
+                _timeoutParam.Value = _defaultWaitforTimeout; // Sync successful, extend timeout to 60 seconds.
                 AsynchronouslyQueryServiceBrokerQueue();
             }
             catch (Exception e) {

@@ -197,7 +197,7 @@ namespace System.ServiceModel.Channels
                 lock (ThisLock)
                 {
                     if (closed)
-#pragma warning suppress 56503 // [....], Invalid State after dispose
+#pragma warning suppress 56503 // Microsoft, Invalid State after dispose
                         throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(CreateBufferDisposedException());
                     return messageData.Buffer.Count;
                 }
@@ -224,7 +224,7 @@ namespace System.ServiceModel.Channels
                 lock (ThisLock)
                 {
                     if (closed)
-#pragma warning suppress 56503 // [....], Invalid State after dispose
+#pragma warning suppress 56503 // Microsoft, Invalid State after dispose
                         throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(CreateBufferDisposedException());
                     return messageData.MessageEncoder.ContentType;
                 }

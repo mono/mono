@@ -160,7 +160,7 @@ namespace System.Diagnostics {
         /// <devdoc>
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
-        [SuppressMessage("Microsoft.Security", "CA2103:ReviewImperativeSecurity", Justification = "[....]: Safe, oldLog.machineName doesn't change")]
+        [SuppressMessage("Microsoft.Security", "CA2103:ReviewImperativeSecurity", Justification = "Microsoft: Safe, oldLog.machineName doesn't change")]
         public EventLogInternal(string logName, string machineName, string source, EventLog parent) {
             //look out for invalid log names
             if (logName == null)
@@ -316,7 +316,7 @@ namespace System.Diagnostics {
             }
         }
 
-        [SuppressMessage("Microsoft.Security", "CA2103:ReviewImperativeSecurity", Justification = "[....]: Safe, machineName doesn't change")]
+        [SuppressMessage("Microsoft.Security", "CA2103:ReviewImperativeSecurity", Justification = "Microsoft: Safe, machineName doesn't change")]
         private string GetLogName(string currentMachineName)
         {
             if ((logName == null || logName.Length == 0) && sourceName != null && sourceName.Length!=0) {
@@ -347,7 +347,7 @@ namespace System.Diagnostics {
         }
 
         [ComVisible(false)]
-        [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly", Justification = "[....]: MaximumKilobytes is the name of this property.")]
+        [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly", Justification = "Microsoft: MaximumKilobytes is the name of this property.")]
         public long MaximumKilobytes {
             get {
                 string currentMachineName = this.machineName;
@@ -653,7 +653,7 @@ namespace System.Diagnostics {
             Close(this.machineName);
         }
 
-        [SuppressMessage("Microsoft.Security", "CA2103:ReviewImperativeSecurity", Justification = "[....]: Safe, currentMachineName doesn't change")]
+        [SuppressMessage("Microsoft.Security", "CA2103:ReviewImperativeSecurity", Justification = "Microsoft: Safe, currentMachineName doesn't change")]
         private void Close(string currentMachineName) {
             EventLogPermission permission = new EventLogPermission(EventLogPermissionAccess.Write, currentMachineName);
             permission.Demand();
@@ -730,7 +730,7 @@ namespace System.Diagnostics {
                     i = lastSeenCount;
                 }
 
-                // NOTE, [....]: We have a double loop here so that we access the
+                // NOTE, Microsoft: We have a double loop here so that we access the
                 // EntryCount property as infrequently as possible. (It may be expensive
                 // to get the property.) Even though there are two loops, they will together
                 // only execute as many times as (final value of EntryCount) - lastSeenCount.
@@ -897,7 +897,7 @@ namespace System.Diagnostics {
                                                       oldestEntry+idx, buf, buf.Length, out bytesRead, out minBytesNeeded);
                 if (!success) {
                     error = Marshal.GetLastWin32Error();
-                    // NOTE, [....]: ERROR_PROC_NOT_FOUND used to get returned, but I think that
+                    // NOTE, Microsoft: ERROR_PROC_NOT_FOUND used to get returned, but I think that
                     // was because I was calling GetLastError directly instead of GetLastWin32Error.
                     // Making the buffer bigger and trying again seemed to work. I've removed the check
                     // for ERROR_PROC_NOT_FOUND because I don't think it's necessary any more, but
@@ -1090,7 +1090,7 @@ namespace System.Diagnostics {
                                                   cache, cache.Length, out bytesRead, out minBytesNeeded);
             if (!success) {
                 int error = Marshal.GetLastWin32Error();
-                // NOTE, [....]: ERROR_PROC_NOT_FOUND used to get returned, but I think that
+                // NOTE, Microsoft: ERROR_PROC_NOT_FOUND used to get returned, but I think that
                 // was because I was calling GetLastError directly instead of GetLastWin32Error.
                 // Making the buffer bigger and trying again seemed to work. I've removed the check
                 // for ERROR_PROC_NOT_FOUND because I don't think it's necessary any more, but
@@ -1270,7 +1270,7 @@ namespace System.Diagnostics {
         /// </devdoc>
         [ResourceExposure(ResourceScope.None)]
         [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
-        [SuppressMessage("Microsoft.Security", "CA2103:ReviewImperativeSecurity", Justification = "[....]: Safe, machineName doesn't change")]
+        [SuppressMessage("Microsoft.Security", "CA2103:ReviewImperativeSecurity", Justification = "Microsoft: Safe, machineName doesn't change")]
         private void OpenForRead(string currentMachineName) {
             Debug.WriteLineIf(CompModSwitches.EventLog.TraceVerbose, "EventLog::OpenForRead");
 
@@ -1286,13 +1286,13 @@ namespace System.Diagnostics {
             if (logname == null || logname.Length==0)
                 throw new ArgumentException(SR.GetString(SR.MissingLogProperty));
 
-            if (!EventLog.Exists(logname, currentMachineName) )        // do not open non-existing Log [[....]]
+            if (!EventLog.Exists(logname, currentMachineName) )        // do not open non-existing Log [Microsoft]
                 throw new InvalidOperationException( SR.GetString(SR.LogDoesNotExists, logname, currentMachineName) );
             //Check environment before calling api
             SharedUtils.CheckEnvironment();
 
             // Clean up cache variables.
-            // [[....]] The initilizing code is put here to guarantee, that first read of events
+            // [Microsoft] The initilizing code is put here to guarantee, that first read of events
             //           from log file will start by filling up the cache buffer.
             lastSeenEntry = 0;
             lastSeenPos = 0;
@@ -1506,7 +1506,7 @@ namespace System.Diagnostics {
 
         [ResourceExposure(ResourceScope.None)]
         [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
-        [SuppressMessage("Microsoft.Security", "CA2103:ReviewImperativeSecurity", Justification = "[....]: Safe, machineName doesn't change")]
+        [SuppressMessage("Microsoft.Security", "CA2103:ReviewImperativeSecurity", Justification = "Microsoft: Safe, machineName doesn't change")]
         private void VerifyAndCreateSource(string sourceName, string currentMachineName) {
             if (boolFlags[Flag_sourceVerified]) 
                 return;

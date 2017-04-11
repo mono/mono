@@ -117,7 +117,7 @@ namespace System.ServiceModel.Channels
 
             // to cover all our bases, let's iterate through the BindingParameters to make sure
             // we haven't missed a query (since we're the Transport and we're at the bottom)
-#pragma warning suppress 56506 // [....], BindingContext.BindingParameters cannot be null
+#pragma warning suppress 56506 // Microsoft, BindingContext.BindingParameters cannot be null
             Collection<BindingElement> bindingElements = context.BindingParameters.FindAll<BindingElement>();
 
             T result = default(T);
@@ -154,7 +154,7 @@ namespace System.ServiceModel.Channels
         internal ChannelProtectionRequirements GetProtectionRequirements(BindingContext context)
         {
             AddressingVersion addressingVersion = AddressingVersion.WSAddressing10;
-#pragma warning suppress 56506 // [....], CustomBinding.Elements can never be null
+#pragma warning suppress 56506 // Microsoft, CustomBinding.Elements can never be null
             MessageEncodingBindingElement messageEncoderBindingElement = context.Binding.Elements.Find<MessageEncodingBindingElement>();
             if (messageEncoderBindingElement != null)
             {
@@ -183,7 +183,7 @@ namespace System.ServiceModel.Channels
             }
 
             // Set SoapBinding Transport URI
-#pragma warning suppress 56506 // [....], these properties cannot be null in this context
+#pragma warning suppress 56506 // Microsoft, these properties cannot be null in this context
             BindingElementCollection bindingElements = endpointContext.Endpoint.Binding.CreateBindingElements();
             if (wsdlTransportUri != null)
             {

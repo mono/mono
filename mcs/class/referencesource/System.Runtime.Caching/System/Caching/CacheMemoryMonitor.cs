@@ -44,7 +44,8 @@ namespace System.Runtime.Caching {
             _gen2Count = GC.CollectionCount(2);
             _cacheSizeSamples = new long[SAMPLE_COUNT];
             _cacheSizeSampleTimes = new DateTime[SAMPLE_COUNT];
-            InitMemoryCacheManager();
+            if (memoryCache.UseMemoryCacheManager)
+                InitMemoryCacheManager();   // This magic thing connects us to ObjectCacheHost magically. :/
             InitDisposableMembers(cacheMemoryLimitMegabytes);
         }
         

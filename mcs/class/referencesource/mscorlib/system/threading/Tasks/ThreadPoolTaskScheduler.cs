@@ -1,4 +1,4 @@
-﻿// ==++==
+// ==++==
 //
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
@@ -7,7 +7,7 @@
 //
 // TaskScheduler.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // This file contains the primary interface and management of tasks and queues.  
 //
@@ -34,6 +34,7 @@ namespace System.Threading.Tasks
         /// </summary>
         internal ThreadPoolTaskScheduler()
         {
+            int id = base.Id; // force ID creation of the default scheduler
         }
 
         // static delegate for threads allocated to handle LongRunning tasks.

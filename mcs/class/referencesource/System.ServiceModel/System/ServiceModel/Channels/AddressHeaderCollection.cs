@@ -70,7 +70,7 @@ namespace System.ServiceModel.Channels
 
             for (int i = 0; i < InternalCount; i++)
             {
-#pragma warning suppress 56506 // [....], Message.Headers can never be null
+#pragma warning suppress 56506 // Microsoft, Message.Headers can never be null
                 message.Headers.Add(this[i].ToMessageHeader());
             }
         }

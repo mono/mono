@@ -2,8 +2,8 @@
 // <copyright file="AdapterUtil.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.Common {
@@ -1836,7 +1836,8 @@ namespace System.Data.Common {
         internal const int DefaultCommandTimeout = 30;
         internal const int DefaultConnectionTimeout = DbConnectionStringDefaults.ConnectTimeout;
         internal const float FailoverTimeoutStep = 0.08F;    // fraction of timeout to use for fast failover connections
-        internal const int FirstTransparentAttemptTimeout = 500; // The first login attempt in  Transparent network IP Resolution 
+        internal const float FailoverTimeoutStepForTnir = 0.125F; // Fraction of timeout to use in case of Transparent Network IP resolution.
+        internal const int MinimumTimeoutForTnirMs = 500; // The first login attempt in  Transparent network IP Resolution 
 
         // security issue, don't rely upon static public readonly values - AS/URT 109635
         static internal readonly String StrEmpty = ""; // String.Empty
@@ -1993,7 +1994,7 @@ namespace System.Data.Common {
             return resultString.ToString();
         }
 
-        private static readonly string hexDigits = "0123456789abcdef";
+        private const string hexDigits = "0123456789abcdef";
 
         static internal byte[] ByteArrayFromString(string hexString, string dataTypeName) {
             if ((hexString.Length & 0x1) != 0) {
@@ -2549,6 +2550,43 @@ namespace System.Data.Common {
             }
 
             return _systemDataVersion;
+        }
+
+        static internal readonly string[] AzureSqlServerEndpoints = {Res.GetString(Res.AZURESQL_GenericEndpoint),
+                                                                     Res.GetString(Res.AZURESQL_GermanEndpoint),
+                                                                     Res.GetString(Res.AZURESQL_UsGovEndpoint),
+                                                                     Res.GetString(Res.AZURESQL_ChinaEndpoint)};
+
+        // This method assumes dataSource parameter is in TCP connection string format.
+        static internal bool IsAzureSqlServerEndpoint(string dataSource)
+        {
+            // remove server port
+            int i = dataSource.LastIndexOf(',');
+            if (i >= 0)
+            {
+                dataSource = dataSource.Substring(0, i);
+            }
+
+            // check for the instance name
+            i = dataSource.LastIndexOf('\\');
+            if (i >= 0)
+            {
+                dataSource = dataSource.Substring(0, i);
+            }
+
+            // trim redundant whitespaces
+            dataSource = dataSource.Trim();
+
+            // check if servername end with any azure endpoints
+            for (i = 0; i < AzureSqlServerEndpoints.Length; i++)
+            {
+                if (dataSource.EndsWith(AzureSqlServerEndpoints[i], StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

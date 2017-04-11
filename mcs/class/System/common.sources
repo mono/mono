@@ -325,6 +325,7 @@ ReferenceSources/HttpSysSettings.cs
 ReferenceSources/Logging.cs
 ReferenceSources/NativeMethods.cs
 ReferenceSources/RequestCacheProtocol.cs
+ReferenceSources/ServerCertValidationCallback.cs
 ReferenceSources/SettingsSectionInternal.cs
 ReferenceSources/SecureStringHelper.cs
 ReferenceSources/Socket.cs
@@ -958,6 +959,8 @@ corefx/SR.cs
 ../../../external/corefx/src/System.IO.Compression/src/System/IO/Compression/CompressionLevel.cs
 ../../../external/corefx/src/System.IO.Compression/src/System/IO/Compression/CompressionMode.cs
 ../../../external/corefx/src/System.IO.Compression/src/System/IO/Compression/GZipStream.cs
+
+../../../external/corefx/src/System.Net.ServicePoint/src/System/Net/SecurityProtocolType.cs
 
 ../../../external/corefx/src/System.Net.WebSockets/src/System/Net/WebSockets/WebSocket.cs
 ../../../external/corefx/src/System.Net.WebSockets/src/System/Net/WebSockets/WebSocketCloseStatus.cs

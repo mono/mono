@@ -74,7 +74,7 @@ namespace System.ServiceModel.Configuration
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("config");
             }
 
-#pragma warning suppress 56506 //[....]; config.SectionGroups can never be null (underlying configuration system guarantees)
+#pragma warning suppress 56506 //Microsoft; config.SectionGroups can never be null (underlying configuration system guarantees)
             return (ServiceModelSectionGroup)config.SectionGroups[ConfigurationStrings.SectionGroupName];
         }
 

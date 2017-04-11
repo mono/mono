@@ -7,7 +7,7 @@
 //
 // TaskContinuation.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // Implementation of task continuations, TaskContinuation, and its descendants.
 //
@@ -223,7 +223,7 @@ namespace System.Threading.Tasks
     //     - StandardTaskContinuation: wraps a task,options,and scheduler, and overrides Run to process the task with that configuration
     //     - AwaitTaskContinuation: base for continuations created through TaskAwaiter; targets default scheduler by default
     //         - TaskSchedulerAwaitTaskContinuation: awaiting with a non-default TaskScheduler
-    //         - SynchronizationContextAwaitTaskContinuation: awaiting with a "current" [....] ctx
+    //         - SynchronizationContextAwaitTaskContinuation: awaiting with a "current" sync ctx
 
     /// <summary>Represents a continuation.</summary>
     internal abstract class TaskContinuation

@@ -2,8 +2,8 @@
 // <copyright file="SqlBulkCopy.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 // todo list:
@@ -531,7 +531,7 @@ namespace System.Data.SqlClient {
         }
 
         // Creates and then executes initial query to get information about the targettable
-        // When __isAsyncBulkCopy == false (i.e. it is [....] copy): out result contains the resulset. Returns null. 
+        // When __isAsyncBulkCopy == false (i.e. it is Sync copy): out result contains the resulset. Returns null. 
         // When __isAsyncBulkCopy == true (i.e. it is Async copy): This still uses the _parser.Run method synchronously and return Task<BulkCopySimpleResultSet>. 
         // We need to have a _parser.RunAsync to make it real async. 
         private Task<BulkCopySimpleResultSet> CreateAndExecuteInitialQueryAsync(out BulkCopySimpleResultSet result) {
@@ -1067,7 +1067,7 @@ namespace System.Data.SqlClient {
         
         // unified method to read a row from the current rowsource
         // When _isAsyncBulkCopy == true (i.e. async copy): returns Task<bool> when IDataReader is a DbDataReader, Null for others.
-        // When _isAsyncBulkCopy == false (i.e. [....] copy): returns null. Uses ReadFromRowSource to get the boolean value.
+        // When _isAsyncBulkCopy == false (i.e. sync copy): returns null. Uses ReadFromRowSource to get the boolean value.
         // "more" -- should be used by the caller only when the return value is null.
         private Task ReadFromRowSourceAsync(CancellationToken cts) {
 #if !PROJECTK
@@ -2081,7 +2081,7 @@ namespace System.Data.SqlClient {
         // Reads a cell and then writes it. 
         // Read may block at this moment since there is no getValueAsync or DownStream async at this moment.
         // When _isAsyncBulkCopy == true: Write will return Task (when async method runs asynchronously) or Null (when async call actually ran synchronously) for performance. 
-        // When _isAsyncBulkCopy == false: Writes are purely [....]. This method reutrn null at the end.
+        // When _isAsyncBulkCopy == false: Writes are purely sync. This method reutrn null at the end.
         //
         private Task ReadWriteColumnValueAsync(int col) {
             bool isSqlType;
@@ -2392,7 +2392,7 @@ namespace System.Data.SqlClient {
                         AsyncHelper.ContinueTask(commandTask, source, () => {
                             Task continuedTask = CopyBatchesAsyncContinued(internalResults, updateBulkCommandText, cts, source);
                             if (continuedTask == null) {
-                                // Continuation finished [....], recall into CopyBatchesAsync to continue
+                                // Continuation finished sync, recall into CopyBatchesAsync to continue
                                 CopyBatchesAsync(internalResults, updateBulkCommandText, cts, source);
                             }
                         }, _connection.GetOpenTdsConnection());
@@ -2443,7 +2443,7 @@ namespace System.Data.SqlClient {
                     AsyncHelper.ContinueTask(task, source, () => {
                         Task continuedTask = CopyBatchesAsyncContinuedOnSuccess(internalResults, updateBulkCommandText, cts, source);
                         if (continuedTask == null) {
-                            // Continuation finished [....], recall into CopyBatchesAsync to continue
+                            // Continuation finished sync, recall into CopyBatchesAsync to continue
                             CopyBatchesAsync(internalResults, updateBulkCommandText, cts, source);
                         }
                     }, _connection.GetOpenTdsConnection(), _ => CopyBatchesAsyncContinuedOnError(cleanupParser: false), () => CopyBatchesAsyncContinuedOnError(cleanupParser: true));
@@ -2586,7 +2586,7 @@ namespace System.Data.SqlClient {
 
         // The continuation part of WriteToServerInternalRest. Executes when the initial query task is completed. (see, WriteToServerInternalRest).
         // It carries on the source which is passed from the WriteToServerInternalRest and performs SetResult when the entire copy is done.
-        // The carried on source may be null in case of [....] copy. So no need to SetResult at that time.
+        // The carried on source may be null in case of Sync copy. So no need to SetResult at that time.
         // It launches the copy operation. 
         //
         private void WriteToServerInternalRestContinuedAsync(BulkCopySimpleResultSet internalResults, CancellationToken cts, TaskCompletionSource<object> source) {
@@ -2683,7 +2683,7 @@ namespace System.Data.SqlClient {
 
         // Rest of the WriteToServerInternalAsync method. 
         // It carries on the source from its caller WriteToServerInternal.
-        // source is null in case of [....] bcp. But valid in case of Async bcp.
+        // source is null in case of Sync bcp. But valid in case of Async bcp.
         // It calls the WriteToServerInternalRestContinuedAsync as a continuation of the initial query task.
         //
         private void WriteToServerInternalRestAsync(CancellationToken cts, TaskCompletionSource<object> source) {
@@ -2793,7 +2793,7 @@ namespace System.Data.SqlClient {
             }            
         }
     
-        // This returns Task for Async, Null for [....]
+        // This returns Task for Async, Null for Sync
         //
         private Task WriteToServerInternalAsync(CancellationToken ctoken) {
             TaskCompletionSource<object> source = null;

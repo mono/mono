@@ -106,7 +106,7 @@ namespace System.Web {
         // DevID 251951	Cookie is getting duplicated by ASP.NET when they are added via a native module
         // This flag is used to remember that this cookie came from an IIS Set-Header flag, 
         // so we don't duplicate it and send it back to IIS
-        internal bool FromHeader {
+        internal bool IsInResponseHeader {
             get;
             set;
         }

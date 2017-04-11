@@ -7,7 +7,7 @@
 **
 ** Class:  TextReader
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Abstract base class for all Text-only Readers.

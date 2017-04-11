@@ -10,7 +10,7 @@
 //
 // Contents:    Administers the leases in an appdomain
 //
-// History:     1/5/00   <EMAIL>[....]</EMAIL>        Created
+// History:     1/5/00   <EMAIL>Microsoft</EMAIL>        Created
 //
 //+----------------------------------------------------------------------------
 

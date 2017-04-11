@@ -36,7 +36,7 @@ namespace System.Web.Services.Discovery {
         public DiscoveryDocument() {
         }
 
-        // NOTE, [....]: This property is not really ignored by the xml serializer. Instead,
+        // NOTE, Microsoft: This property is not really ignored by the xml serializer. Instead,
         // the attributes that would go here are configured in WebServicesConfiguration's
         // DiscoveryDocumentSerializer property.
         /// <include file='doc\DiscoveryDocument.uex' path='docs/doc[@for="DiscoveryDocument.References"]/*' />

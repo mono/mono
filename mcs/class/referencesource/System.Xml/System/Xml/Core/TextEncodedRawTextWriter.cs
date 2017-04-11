@@ -3,7 +3,7 @@
 // <copyright file="TextWriterGenerator.cxx" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 // WARNING: This file is generated and should not be modified directly.  Instead,

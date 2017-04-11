@@ -27,6 +27,9 @@ namespace System.Runtime.Serialization.Json
         const char WHITESPACE = ' ';
         const char CARRIAGE_RETURN = '\r';
         const char NEWLINE = '\n';
+        const char BACKSPACE = '\b';  
+        const char FORM_FEED = '\f';  
+        const char HORIZONTAL_TABULATION = '\t';  
         const string xmlNamespace = "http://www.w3.org/XML/1998/namespace";
         const string xmlnsNamespace = "http://www.w3.org/2000/xmlns/";
 
@@ -34,6 +37,9 @@ namespace System.Runtime.Serialization.Json
             + " data from being modified or leaked to other components in appdomain.")]
         [SecurityCritical]
         static BinHexEncoding binHexEncoding;
+        
+        // This array was part of a perf improvement for escaping characters < WHITESPACE.
+        static char[] CharacterAbbrevs;
 
         string attributeText;
         JsonDataType dataType;
@@ -71,6 +77,57 @@ namespace System.Runtime.Serialization.Json
                 this.indentChars = indentChars;
             }
             InitializeWriter();
+            
+            if (CharacterAbbrevs == null)
+            {
+                CharacterAbbrevs = GetCharacterAbbrevs();
+            }
+        }
+
+        private static char[] GetCharacterAbbrevs()
+        {
+            var abbrevs = new char[WHITESPACE];
+            for(int i = 0; i < WHITESPACE; i++)
+            {
+                char abbrev;
+                if (!LocalAppContextSwitches.DoNotUseEcmaScriptV6EscapeControlCharacter && TryEscapeControlCharacter((char)i, out abbrev)) 
+                {
+                    abbrevs[i] = abbrev;
+                }
+                else
+                {
+                    abbrevs[i] = (char) 0;
+                }
+            }
+
+            return abbrevs;
+        }
+
+        private static bool TryEscapeControlCharacter(char ch, out char abbrev)
+        {            
+            switch (ch)
+            {
+                case BACKSPACE:
+                    abbrev = 'b';
+                    break;
+                case HORIZONTAL_TABULATION:
+                    abbrev = 't';
+                    break;
+                case NEWLINE:
+                    abbrev = 'n';
+                    break;
+                case FORM_FEED:
+                    abbrev = 'f';
+                    break;
+                case CARRIAGE_RETURN:
+                    abbrev = 'r';
+                    break;
+                default:
+                    abbrev = ' ';
+                    return false;
+            }
+
+            return true;
         }
 
         enum JsonDataType
@@ -794,7 +851,7 @@ namespace System.Runtime.Serialization.Json
             WriteString(new string(buffer, index, count));
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase")] // [....], ToLowerInvariant is just used in Json error message
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase")] // Microsoft, ToLowerInvariant is just used in Json error message
         public override void WriteStartAttribute(string prefix, string localName, string ns)
         {
             if (IsClosed)
@@ -1376,7 +1433,7 @@ namespace System.Runtime.Serialization.Json
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase")] // [....], ToLowerInvariant is just used in Json error message
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase")] // Microsoft, ToLowerInvariant is just used in Json error message
         void ThrowInvalidAttributeContent()
         {
             if (HasOpenAttribute)
@@ -1450,7 +1507,7 @@ namespace System.Runtime.Serialization.Json
                 {
                     char ch = chars[j];
                     if (ch <= FORWARD_SLASH)
-                    {
+                    {                        
                         if (ch == FORWARD_SLASH || ch == JsonGlobals.QuoteChar)
                         {
                             nodeWriter.WriteChars(chars + i, j - i);
@@ -1462,9 +1519,17 @@ namespace System.Runtime.Serialization.Json
                         {
                             nodeWriter.WriteChars(chars + i, j - i);
                             nodeWriter.WriteText(BACK_SLASH);
-                            nodeWriter.WriteText('u');
-                            nodeWriter.WriteText(string.Format(CultureInfo.InvariantCulture, "{0:x4}", (int)ch));
-                            i = j + 1;
+                            if (CharacterAbbrevs[ch] == 0)
+                            {
+                                nodeWriter.WriteText('u');
+                                nodeWriter.WriteText(string.Format(CultureInfo.InvariantCulture, "{0:x4}", (int)ch));
+                                i = j + 1;
+                            }
+                            else
+                            {
+                                nodeWriter.WriteText(CharacterAbbrevs[ch]);
+                                i = j + 1;
+                            }                      
                         }
                     }
                     else if (ch == BACK_SLASH)

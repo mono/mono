@@ -195,7 +195,7 @@ public class Page: TemplateControl, IHttpHandler {
     private const string PageSubmitScriptKey = "PageSubmitScript";
     private const string PageReEnableControlsScriptKey = "PageReEnableControlsScript";
 
-    // NOTE: Make sure this stays in [....] with MobilePage.PageRegisteredControlsThatRequirePostBackKey
+    // NOTE: Make sure this stays in sync with MobilePage.PageRegisteredControlsThatRequirePostBackKey
     // 
     private const string PageRegisteredControlsThatRequirePostBackKey = "__ControlsRequirePostBackKey__";
 
@@ -3234,7 +3234,7 @@ window.onload = WebForm_RestoreScrollPosition;
         bool changed;
 
         // ListControl family controls call EnsureDataBound in consumer.LoadPostData, which could be an async call in 4.6. 
-        // LoadPostData, however, is a [....] method, which means we cannot await EnsureDataBound in the method.
+        // LoadPostData, however, is a sync method, which means we cannot await EnsureDataBound in the method.
         // To workaround this, for ListControl family controls, we call EnsureDataBound before we call into LoadPostData.
         if (AppSettings.EnableAsyncModelBinding && consumer is ListControl) {
             var listControl = consumer as ListControl;

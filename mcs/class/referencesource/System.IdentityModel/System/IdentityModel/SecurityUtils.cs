@@ -28,7 +28,7 @@ namespace System.IdentityModel
         public const int WindowsVistaMajorNumber = 6;
         static IIdentity anonymousIdentity;
 
-        // these should be kept in [....] with IIS70
+        // these should be kept in sync with IIS70
         public const string AuthTypeNTLM = "NTLM";
         public const string AuthTypeNegotiate = "Negotiate";
         public const string AuthTypeKerberos = "Kerberos";
@@ -727,7 +727,7 @@ namespace System.IdentityModel
     }
 
     /// <summary>
-    /// Internal helper class to help keep Kerberos and Spnego in [....].
+    /// Internal helper class to help keep Kerberos and Spnego in sync.
     /// This code is shared by: 
     ///     System\IdentityModel\Tokens\KerberosReceiverSecurityToken.cs
     ///     System\ServiceModel\Security\WindowsSspiNegotiation.cs
@@ -736,7 +736,7 @@ namespace System.IdentityModel
     internal class ExtendedProtectionPolicyHelper
     {
         //
-        // keep the defaults: _protectionScenario and _policyEnforcement, in [....] with: static class System.ServiceModel.Channel.ChannelBindingUtility
+        // keep the defaults: _protectionScenario and _policyEnforcement, in sync with: static class System.ServiceModel.Channel.ChannelBindingUtility
         // We can't access those defaults as IdentityModel cannot take a dependency on ServiceModel
         //
         static ExtendedProtectionPolicy disabledPolicy = new ExtendedProtectionPolicy(PolicyEnforcement.Never);
@@ -893,11 +893,11 @@ namespace System.IdentityModel
         }
 
         /// <summary>
-        /// Keep this in [....] with \System\ServiceModel\Channels\ChannelBindingUtility.cs
+        /// Keep this in sync with \System\ServiceModel\Channels\ChannelBindingUtility.cs
         /// </summary>
         public static ExtendedProtectionPolicy DefaultPolicy
         {   //
-            //keep the default in [....] with : static class System.ServiceModel.Channels.ChannelBindingUtility
+            //keep the default in sync with : static class System.ServiceModel.Channels.ChannelBindingUtility
             //we can't use these defaults as IdentityModel cannot take a dependency on ServiceModel
             //
 

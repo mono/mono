@@ -1115,7 +1115,7 @@ namespace System.Web.UI.Design.MobileControls
                 Debug.Assert(
                     (_choicePropertyFilter == null)
                     || (_runtimeChoice == _choicePropertyFilter.RuntimeChoice),
-                    "Local runtime choice object out of [....]."
+                    "Local runtime choice object out of sync."
                 );
                 return _runtimeChoice;
             }

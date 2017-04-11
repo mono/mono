@@ -91,22 +91,12 @@ namespace System.Web.Hosting {
             if (memoryCache == null) {
                 throw new ArgumentNullException("memoryCache");
             }
-            long delta = 0;
             lock (_lock) {
                 if (_cacheInfos != null) {
                     MemoryCacheInfo info = null;
                     if (_cacheInfos.TryGetValue(memoryCache, out info)) {
-                        delta = 0 - info.Size;
                         _cacheInfos.Remove(memoryCache);
                     }
-                }
-            }
-            if (delta != 0) {
-                ApplicationManager appManager = HostingEnvironment.GetApplicationManager();
-                if (appManager != null) {
-                    ExecutionContextUtil.RunInNullExecutionContext(delegate {
-                        appManager.GetUpdatedTotalCacheSize(delta);
-                    });
                 }
             }
         }
@@ -115,7 +105,6 @@ namespace System.Web.Hosting {
             if (memoryCache == null) {
                 throw new ArgumentNullException("memoryCache");
             }
-            long delta = 0;
             lock (_lock) {
                 if (_cacheInfos == null) {
                     _cacheInfos = new Dictionary<MemoryCache, MemoryCacheInfo>();
@@ -126,15 +115,8 @@ namespace System.Web.Hosting {
                     info.Cache = memoryCache;
                     _cacheInfos[memoryCache] = info;
                 }
-                delta = size - info.Size;
                 info.Size = size;
             }
-            ApplicationManager appManager = HostingEnvironment.GetApplicationManager();
-            if (appManager != null) {
-                ExecutionContextUtil.RunInNullExecutionContext(delegate {
-                    appManager.GetUpdatedTotalCacheSize(delta);
-                });
-            }            
         }
 
         internal long TrimCache(int percent) {

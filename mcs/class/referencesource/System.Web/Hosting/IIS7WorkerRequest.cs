@@ -1380,7 +1380,7 @@ namespace System.Web.Hosting {
                 }
 
                 // send to unmanaged code
-                // sends are always [....] now since they're buffered by IIS
+                // sends are always sync now since they're buffered by IIS
                 FlushCore(true,
                           numFragments,
                           fragments,

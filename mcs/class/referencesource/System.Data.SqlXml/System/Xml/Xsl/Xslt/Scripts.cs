@@ -2,7 +2,7 @@
 // <copyright file="Scripts.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 // <spec>http://devdiv/Documents/Whidbey/CLR/CurrentSpecs/BCL/CodeDom%20Activation.doc</spec>
 //------------------------------------------------------------------------------
 
@@ -305,7 +305,7 @@ namespace System.Xml.Xsl.Xslt {
 
             // If GenerateInMemory == true, then CodeDom loads the compiled assembly using Assembly.Load(byte[])
             // instead of Assembly.Load(AssemblyName).  That means the assembly will be loaded in the anonymous
-            // context (http://blogs.msdn.com/[....]/archive/2003/05/29/57143.aspx), and its dependencies can only
+            // context (http://blogs.msdn.com/Microsoft/archive/2003/05/29/57143.aspx), and its dependencies can only
             // be loaded from the Load context or using AssemblyResolve event.  However we want to use the LoadFrom
             // context to preload all dependencies specified by <ms:assembly href="uri-reference"/>, so we turn off
             // GenerateInMemory here.

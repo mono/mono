@@ -1,4 +1,4 @@
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 namespace System.Security {
     using System.Security.Cryptography;
     using System.Runtime.InteropServices;

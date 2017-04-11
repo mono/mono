@@ -2,9 +2,9 @@
 // <copyright file="SqlDependencyUtils.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="false" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="false" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.SqlClient {
@@ -179,7 +179,7 @@ namespace System.Data.SqlClient {
                             {
                                 // this should not happen since _commandHashToNotificationId and _notificationIdToDependenciesHash are always
                                 // updated together
-                                Debug.Assert(false, "_commandHashToNotificationId has entries that were removed from _notificationIdToDependenciesHash. Remember to keep them in [....]");
+                                Debug.Assert(false, "_commandHashToNotificationId has entries that were removed from _notificationIdToDependenciesHash. Remember to keep them in sync");
                                 throw ADP.InternalError(ADP.InternalErrorCode.SqlDependencyCommandHashIsNotAssociatedWithNotification);
                             }
 
@@ -217,7 +217,7 @@ namespace System.Data.SqlClient {
                         }
 
 
-                        Debug.Assert(_notificationIdToDependenciesHash.Count == _commandHashToNotificationId.Count, "always keep these maps in [....]!");
+                        Debug.Assert(_notificationIdToDependenciesHash.Count == _commandHashToNotificationId.Count, "always keep these maps in sync!");
                     }
                 }
             }
@@ -402,7 +402,7 @@ namespace System.Data.SqlClient {
                         Bid.NotificationsTrace("<sc.SqlDependencyPerAppDomainDispatcher.LookupDependencyEntriesWithRemove|DEP> Entries NOT found in hashtable.\n");
                     }
 
-                    Debug.Assert(_notificationIdToDependenciesHash.Count == _commandHashToNotificationId.Count, "always keep these maps in [....]!");
+                    Debug.Assert(_notificationIdToDependenciesHash.Count == _commandHashToNotificationId.Count, "always keep these maps in sync!");
                 }
 
                 return entry; // DependencyList inherits from List<SqlDependency>
@@ -436,7 +436,7 @@ namespace System.Data.SqlClient {
                         // same SqlDependency can be associated with more than one command, so we have to continue till the end...
                     }
 
-                    Debug.Assert(commandHashesToRemove.Count == notificationIdsToRemove.Count, "maps should be kept in [....]");
+                    Debug.Assert(commandHashesToRemove.Count == notificationIdsToRemove.Count, "maps should be kept in sync");
                     for (int i = 0; i < notificationIdsToRemove.Count; i++ ) {
                         // cleanup the entry outside of foreach
                         // do it inside finally block to avoid ThreadAbort exception interrupt this operation
@@ -448,7 +448,7 @@ namespace System.Data.SqlClient {
                         }
                     }
 
-                    Debug.Assert(_notificationIdToDependenciesHash.Count == _commandHashToNotificationId.Count, "always keep these maps in [....]!");
+                    Debug.Assert(_notificationIdToDependenciesHash.Count == _commandHashToNotificationId.Count, "always keep these maps in sync!");
                 }
             }
             finally {

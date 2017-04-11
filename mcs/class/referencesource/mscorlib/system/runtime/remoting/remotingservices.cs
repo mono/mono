@@ -6,7 +6,7 @@
 // 
 // File: RemotingServices.cs
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 // Author(s):   <EMAIL>Gopal Kakivaya (GopalK)</EMAIL>
 // 
@@ -616,7 +616,7 @@ namespace System.Runtime.Remoting {
                     {
                         int channelDataLength = channelData.Length;
                         Object[] newChannelData = new Object[channelDataLength];
-                        // Clone the data so that we dont [....] the current appdomain data which is stored
+                        // Clone the data so that we dont Microsoft the current appdomain data which is stored
                         // as a static
                         Array.Copy(channelData, newChannelData, channelDataLength);
                         for (int i = 0; i < channelDataLength; i++)

@@ -7,12 +7,12 @@
 //
 // CdsSyncEtwBCLProvider.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // A helper class for firing ETW events related to the Coordination Data Structure 
-// [....] primitives. This provider is used by CDS [....] primitives in both mscorlib.dll 
+// sync primitives. This provider is used by CDS sync primitives in both mscorlib.dll 
 // and system.dll. The purpose of sharing the provider class is to be able to enable 
-// ETW tracing on all CDS [....] types with a single ETW provider GUID, and to minimize
+// ETW tracing on all CDS sync types with a single ETW provider GUID, and to minimize
 // the number of providers in use.
 //
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -36,8 +36,8 @@ namespace System.Threading
     internal sealed class CdsSyncEtwBCLProvider : EventSource
     {
         /// <summary>
-        /// Defines the singleton instance for the CDS [....] ETW provider.
-        /// The CDS [....] Event provider GUID is {EC631D38-466B-4290-9306-834971BA0217}.
+        /// Defines the singleton instance for the CDS Sync ETW provider.
+        /// The CDS Sync Event provider GUID is {EC631D38-466B-4290-9306-834971BA0217}.
         /// </summary>
         public static CdsSyncEtwBCLProvider Log = new CdsSyncEtwBCLProvider();
         /// <summary>Prevent external instantiation.  All logging should go through the Log instance.</summary>

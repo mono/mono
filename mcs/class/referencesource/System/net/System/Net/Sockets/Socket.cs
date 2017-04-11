@@ -68,7 +68,7 @@ namespace System.Net.Sockets {
         private SocketType      socketType;
         private ProtocolType    protocolType;
 
-        // These caches are one degree off of Socket since they're not used in the [....] case/when disabled in config.
+        // These caches are one degree off of Socket since they're not used in the sync case/when disabled in config.
         private CacheSet m_Caches;
 
         private class CacheSet
@@ -6470,7 +6470,7 @@ namespace System.Net.Sockets {
                 throw;
             }
 
-            // Keep the internal state in [....] if the user manually resets this
+            // Keep the internal state in sync if the user manually resets this
             if (optionName == SocketOptionName.PacketInformation && optionValue == 0 && 
                 errorCode == SocketError.Success)
             {
@@ -7696,7 +7696,7 @@ namespace System.Net.Sockets {
             e.StartOperationAccept();
             BindToCompletionPort();
 
-            // Local variables for [....] completion.
+            // Local variables for sync completion.
             int bytesTransferred;
             SocketError socketError = SocketError.Success;
 
@@ -7963,7 +7963,7 @@ namespace System.Net.Sockets {
             e.StartOperationReceive();
             BindToCompletionPort();
 
-            // Local vars for [....] completion of native call.
+            // Local vars for sync completion of native call.
             SocketFlags flags = e.m_SocketFlags;
             int bytesTransferred;
             SocketError socketError;
@@ -8206,7 +8206,7 @@ namespace System.Net.Sockets {
             BindToCompletionPort();
 
             
-            // Local vars for [....] completion of native call.
+            // Local vars for sync completion of native call.
             int bytesTransferred;
             SocketError socketError;
 
@@ -8915,7 +8915,7 @@ namespace System.Net.Sockets {
             
 
 
-        // Method to update internal state after [....] or async completion.
+        // Method to update internal state after sync or async completion.
         internal void SetResults(SocketError socketError, int bytesTransferred, SocketFlags flags) {
             m_SocketError = socketError;
             m_ConnectByNameError = null;

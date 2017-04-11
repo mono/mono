@@ -28,7 +28,7 @@ namespace System.Net {
         private static PrefixLookup challengeCache = new PrefixLookup();
         private static readonly char[] singleSpaceArray = new char[]{' '};
 
-        // [....]: make sure WDigest fixes these bugs before we
+        // Microsoft: make sure WDigest fixes these bugs before we
         // enable this code ("Windows OS" Product Studio database):
         //
         // 921024   1   Wdigest should support MD5, at least for explicit (non-default) credentials.

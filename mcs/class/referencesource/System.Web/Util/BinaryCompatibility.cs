@@ -17,7 +17,13 @@ namespace System.Web.Util {
         internal const string TargetFrameworkKey = "ASPNET_TARGETFRAMEWORK";
 
         // quick accessor for the current AppDomain's instance
-        public static readonly BinaryCompatibility Current = new BinaryCompatibility(AppDomain.CurrentDomain.GetData(TargetFrameworkKey) as FrameworkName);
+        public static readonly BinaryCompatibility Current;
+
+        static BinaryCompatibility() {
+            Current = new BinaryCompatibility(AppDomain.CurrentDomain.GetData(TargetFrameworkKey) as FrameworkName);
+
+            TelemetryLogger.LogTargetFramework(Current.TargetFramework);
+        }
 
         public BinaryCompatibility(FrameworkName frameworkName) {
             // parse version from FrameworkName, otherwise use a default value
@@ -32,6 +38,7 @@ namespace System.Web.Util {
             TargetsAtLeastFramework452 = (version >= VersionUtil.Framework452);
             TargetsAtLeastFramework46 = (version >= VersionUtil.Framework46);
             TargetsAtLeastFramework461 = (version >= VersionUtil.Framework461);
+            TargetsAtLeastFramework463 = (version >= VersionUtil.Framework463);
         }
 
         public bool TargetsAtLeastFramework45 { get; private set; }
@@ -39,6 +46,7 @@ namespace System.Web.Util {
         public bool TargetsAtLeastFramework452 { get; private set; }
         public bool TargetsAtLeastFramework46 { get; private set; }
         public bool TargetsAtLeastFramework461 { get; private set; }
+        public bool TargetsAtLeastFramework463 { get; private set; }
 
         public Version TargetFramework { get; private set; }
 

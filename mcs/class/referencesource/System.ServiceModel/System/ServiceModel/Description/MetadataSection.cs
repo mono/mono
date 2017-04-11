@@ -92,7 +92,7 @@ namespace System.ServiceModel.Description
             if (!IsPolicyElement(policy))
             {
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument("policy",
-#pragma warning suppress 56506 // [....], policy cannot be null at this point since it has been validated above.
+#pragma warning suppress 56506 // Microsoft, policy cannot be null at this point since it has been validated above.
  SR.GetString(SR.SFxBadMetadataMustBePolicy, MetadataStrings.WSPolicy.NamespaceUri, MetadataStrings.WSPolicy.Elements.Policy, policy.NamespaceURI, policy.LocalName));
             }
 
