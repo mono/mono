@@ -112,7 +112,7 @@ namespace Mono.AppleTls {
 			return null;
 		}
 
-		public static INativeObject [] QueryAsReference (SecRecord query, int max, out SecStatusCode result)
+		static INativeObject [] QueryAsReference (SecRecord query, int max, out SecStatusCode result)
 		{
 			if (query == null) {
 				result = SecStatusCode.Param;
@@ -126,7 +126,7 @@ namespace Mono.AppleTls {
 			}
 		}
 
-		public static INativeObject [] QueryAsReference (CFDictionary query, out SecStatusCode result)
+		static INativeObject [] QueryAsReference (CFDictionary query, out SecStatusCode result)
 		{
 			if (query == null) {
 				result = SecStatusCode.Param;
