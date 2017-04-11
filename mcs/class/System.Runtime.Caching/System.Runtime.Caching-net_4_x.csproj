@@ -100,7 +100,7 @@
     <Compile Include="ReferenceSources\CacheEntryCollection.cs" />
     <Compile Include="ReferenceSources\CacheExpires.cs" />
     <Compile Include="ReferenceSources\CacheUsage.cs" />
-    <Compile Include="ReferenceSources\R.Designer.cs" />  </ItemGroup>
+    <Compile Include="ReferenceSources\R.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
