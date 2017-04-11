@@ -20,3 +20,11 @@ Extern aliases:
 
 * MONO_SECURITY_ALIAS: we're using Mono.Security from the "MonoSecurity" extern alias.
 
+## How to import new version update
+
+```
+wget https://patch-diff.githubusercontent.com/raw/Microsoft/referencesource/pull/{pull-request-number}.patch
+patch -p1 <{pull-request-number}.patch
+```
+
+After that manually review .rej files generated during patching (they are hidden by .gitignore)
