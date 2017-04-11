@@ -1,4 +1,4 @@
-#if SECURITY_DEP && MONO_FEATURE_APPLETLS
+﻿#if SECURITY_DEP && MONO_FEATURE_APPLETLS
 // 
 // ImportExport.cs
 //
@@ -110,13 +110,8 @@ namespace Mono.AppleTls {
 
 			IntPtr result = IntPtr.Zero;
 			SecStatusCode status = SecStatusCode.Success;
-			for (var test = 0; test < 13; test++) {
-				format = (SecExternalFormat)test;
-				keyParams = new SecItemImportExportKeyParameters ();
-				status = SecItemImport (data.Handle, IntPtr.Zero, ref format, ref itemType, flags, keyParamsPtr, IntPtr.Zero, out result);
-				if (status == SecStatusCode.Success)
-					break;
-			}
+			keyParams = new SecItemImportExportKeyParameters ();
+			status = SecItemImport (data.Handle, IntPtr.Zero, ref format, ref itemType, flags, keyParamsPtr, IntPtr.Zero, out result);
 
 			if (keyParamsPtr != IntPtr.Zero)
 				Marshal.FreeHGlobal (keyParamsPtr);
