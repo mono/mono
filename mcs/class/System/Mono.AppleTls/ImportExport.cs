@@ -108,10 +108,8 @@ namespace Mono.AppleTls {
 				Marshal.StructureToPtr (keyParams.Value, keyParamsPtr, false);
 			}
 
-			IntPtr result = IntPtr.Zero;
-			SecStatusCode status = SecStatusCode.Success;
-			keyParams = new SecItemImportExportKeyParameters ();
-			status = SecItemImport (data.Handle, IntPtr.Zero, ref format, ref itemType, flags, keyParamsPtr, IntPtr.Zero, out result);
+			IntPtr result;
+			var status = SecItemImport (data.Handle, IntPtr.Zero, ref format, ref itemType, flags, keyParamsPtr, IntPtr.Zero, out result);
 
 			if (keyParamsPtr != IntPtr.Zero)
 				Marshal.FreeHGlobal (keyParamsPtr);
