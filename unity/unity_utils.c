@@ -223,7 +223,7 @@ mono_unity_array_new_2d (MonoDomain *domain, MonoClass *eklass, size_t size0, si
 MonoArray*
 mono_unity_array_new_3d (MonoDomain *domain, MonoClass *eklass, size_t size0, size_t size1, size_t size2)
 {
-	mono_array_size_t sizes[] = { (mono_array_size_t)size0, (mono_array_size_t)size1, (mono_array_size_t)size1 };
+	mono_array_size_t sizes[] = { (mono_array_size_t)size0, (mono_array_size_t)size1, (mono_array_size_t)size2 };
 	MonoClass* ac = mono_array_class_get (eklass, 3);
 
 	return mono_array_new_full (domain, ac, sizes, NULL);
@@ -241,13 +241,6 @@ mono_unity_g_free (void* ptr)
 	g_free (ptr);
 }
 
-// only needed on OSX
-int
-mono_unity_backtrace_from_context (void* context, void* array[], int count)
-{
-	return 0;
-}
-
 MonoException*
 mono_unity_loader_get_last_error_and_error_prepare_exception ()
 {
@@ -260,3 +253,28 @@ mono_unity_loader_get_last_error_and_error_prepare_exception ()
 
 	return mono_loader_error_prepare_exception (last_error);
 }
+
+MonoClass*
+mono_unity_class_get_generic_type_definition (MonoClass* klass)
+{
+	return klass->generic_class ? mono_class_get_generic_type_definition (klass) : NULL;
+}
+
+MonoClass*
+mono_unity_class_get_generic_parameter_at (MonoClass* klass, guint32 index)
+{
+	if (!klass->generic_container || index >= klass->generic_container->type_argc)
+		return NULL;
+
+	return mono_class_from_generic_parameter (mono_generic_container_get_param (klass->generic_container, index), klass->image, FALSE);
+}
+
+guint32
+mono_unity_class_get_generic_parameter_count (MonoClass* klass)
+{
+	if (!klass->generic_container)
+		return 0;
+
+	return klass->generic_container->type_argc;
+}
+
