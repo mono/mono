@@ -144,9 +144,7 @@ find_cached_memberref_sig (MonoImage *image, guint32 sig_idx)
 {
 	gpointer res;
 
-	mono_image_lock (image);
-	res = g_hash_table_lookup (image->memberref_signatures, GUINT_TO_POINTER (sig_idx));
-	mono_image_unlock (image);
+	res = mono_conc_hashtable_lookup (image->memberref_signatures, GUINT_TO_POINTER (sig_idx));
 
 	return res;
 }
@@ -157,19 +155,18 @@ cache_memberref_sig (MonoImage *image, guint32 sig_idx, gpointer sig)
 	gpointer prev_sig;
 
 	mono_image_lock (image);
-	prev_sig = g_hash_table_lookup (image->memberref_signatures, GUINT_TO_POINTER (sig_idx));
-	if (prev_sig) {
-		/* Somebody got in before us */
-		sig = prev_sig;
-	}
-	else {
-		g_hash_table_insert (image->memberref_signatures, GUINT_TO_POINTER (sig_idx), sig);
+
+	prev_sig = mono_conc_hashtable_insert (image->memberref_signatures, GUINT_TO_POINTER (sig_idx), sig);
+
+	mono_image_unlock (image);
+
+	if (!prev_sig) {
+		prev_sig = sig;
 		/* An approximation based on glib 2.18 */
 		memberref_sig_cache_size += sizeof (gpointer) * 4;
 	}
-	mono_image_unlock (image);
 
-	return sig;
+	return prev_sig;
 }
 
 static MonoClassField*
@@ -1742,6 +1739,16 @@ mono_get_method_full (MonoImage *image, guint32 token, MonoClass *klass,
 	return result;
 }
 
+static void
+create_conc_hash_table_if_needed (MonoConcurrentHashTable **ptr)
+{
+	MonoConcurrentHashTable *val = mono_conc_hashtable_new (NULL, NULL);
+	mono_memory_barrier ();
+
+	if (InterlockedCompareExchangePointer ((volatile void*)ptr, val, NULL))
+		mono_conc_hashtable_destroy (val); //someone else won setting up
+}
+
 MonoMethod *
 mono_get_method_checked (MonoImage *image, guint32 token, MonoClass *klass, MonoGenericContext *context, MonoError *error)
 {
@@ -1752,48 +1759,45 @@ mono_get_method_checked (MonoImage *image, guint32 token, MonoClass *klass, Mono
 
 	error_init (error);
 
-	mono_image_lock (image);
-
 	if (mono_metadata_token_table (token) == MONO_TABLE_METHOD) {
-		if (!image->method_cache)
-			image->method_cache = g_hash_table_new (NULL, NULL);
-		result = (MonoMethod *)g_hash_table_lookup (image->method_cache, GINT_TO_POINTER (mono_metadata_token_index (token)));
+		if (image->method_cache)
+			result = (MonoMethod *)mono_conc_hashtable_lookup (image->method_cache, GINT_TO_POINTER (mono_metadata_token_index (token)));
 	} else if (!image_is_dynamic (image)) {
-		if (!image->methodref_cache)
-			image->methodref_cache = g_hash_table_new (NULL, NULL);
-		result = (MonoMethod *)g_hash_table_lookup (image->methodref_cache, GINT_TO_POINTER (token));
+		if (image->methodref_cache)
+			result = (MonoMethod *)mono_conc_hashtable_lookup (image->methodref_cache, GINT_TO_POINTER (token));
 	}
-	mono_image_unlock (image);
 
 	if (result)
 		return result;
-
 
 	result = mono_get_method_from_token (image, token, klass, context, &used_context, error);
 	if (!result)
 		return NULL;
 
-	mono_image_lock (image);
 	if (!used_context && !result->is_inflated) {
 		MonoMethod *result2 = NULL;
 
 		if (mono_metadata_token_table (token) == MONO_TABLE_METHOD)
-			result2 = (MonoMethod *)g_hash_table_lookup (image->method_cache, GINT_TO_POINTER (mono_metadata_token_index (token)));
+			create_conc_hash_table_if_needed (&image->method_cache);
 		else if (!image_is_dynamic (image))
-			result2 = (MonoMethod *)g_hash_table_lookup (image->methodref_cache, GINT_TO_POINTER (token));
+			create_conc_hash_table_if_needed (&image->methodref_cache);
 
-		if (result2) {
-			mono_image_unlock (image);
-			return result2;
-		}
+		mono_image_lock (image);
 
 		if (mono_metadata_token_table (token) == MONO_TABLE_METHOD)
-			g_hash_table_insert (image->method_cache, GINT_TO_POINTER (mono_metadata_token_index (token)), result);
+			result2 = (MonoMethod *)mono_conc_hashtable_insert (image->method_cache, GINT_TO_POINTER (mono_metadata_token_index (token)), result);
 		else if (!image_is_dynamic (image))
-			g_hash_table_insert (image->methodref_cache, GINT_TO_POINTER (token), result);
+			result2 = (MonoMethod *)mono_conc_hashtable_insert (image->methodref_cache, GINT_TO_POINTER (token), result);
+
+		mono_image_unlock (image);
+
+		if (!result2)
+			result2 = result;
+
+		return result2;
+
 	}
 
-	mono_image_unlock (image);
 
 	return result;
 }

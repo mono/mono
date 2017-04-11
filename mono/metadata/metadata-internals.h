@@ -293,11 +293,11 @@ struct _MonoImage {
 	/*
 	 * Indexed by method tokens and typedef tokens.
 	 */
-	GHashTable *method_cache; /*protected by the image lock*/
+	MonoConcurrentHashTable *method_cache; /*protected by the image lock*/
 	MonoInternalHashTable class_cache;
 
 	/* Indexed by memberref + methodspec tokens */
-	GHashTable *methodref_cache; /*protected by the image lock*/
+	MonoConcurrentHashTable *methodref_cache; /*protected by the image lock*/
 
 	/*
 	 * Indexed by fielddef and memberref tokens
@@ -305,9 +305,9 @@ struct _MonoImage {
 	MonoConcurrentHashTable *field_cache; /*protected by the image lock*/
 
 	/* indexed by typespec tokens. */
-	GHashTable *typespec_cache; /* protected by the image lock */
+	MonoConcurrentHashTable *typespec_cache; /* protected by the image lock */
 	/* indexed by token */
-	GHashTable *memberref_signatures;
+	MonoConcurrentHashTable *memberref_signatures;
 	GHashTable *helper_signatures;
 
 	/* Indexed by blob heap indexes */
@@ -430,7 +430,9 @@ typedef struct {
 	MonoImage **images;
 
 	// Generic-specific caches
-	GHashTable *gclass_cache, *ginst_cache, *gmethod_cache, *gsignature_cache;
+	GHashTable *gmethod_cache, *gsignature_cache;
+	MonoConcurrentHashTable *ginst_cache;
+	MonoConcurrentHashTable *gclass_cache;
 
 	MonoWrapperCaches wrapper_caches;
 

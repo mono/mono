@@ -1552,21 +1552,21 @@ mono_create_jit_trampoline (MonoDomain *domain, MonoMethod *method, MonoError *e
 		}
 	}
 
-	mono_domain_lock (domain);
-	tramp = g_hash_table_lookup (domain_jit_info (domain)->jit_trampoline_hash, method);
-	mono_domain_unlock (domain);
+	tramp = mono_conc_hashtable_lookup (domain_jit_info (domain)->jit_trampoline_hash, method);
 	if (tramp)
 		return tramp;
 
 	tramp = mono_create_specific_trampoline (method, MONO_TRAMPOLINE_JIT, domain, NULL);
 	
 	mono_domain_lock (domain);
-	g_hash_table_insert (domain_jit_info (domain)->jit_trampoline_hash, method, tramp);
+	gpointer tramp2 = mono_conc_hashtable_insert (domain_jit_info (domain)->jit_trampoline_hash, method, tramp);
 	mono_domain_unlock (domain);
+	if (!tramp2)
+		tramp2 = tramp;
 
 	jit_trampolines++;
 
-	return tramp;
+	return tramp2;
 }	
 
 gpointer

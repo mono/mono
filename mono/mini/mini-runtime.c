@@ -188,7 +188,7 @@ get_method_from_ip (void *ip)
 		user_data.ip = ip;
 		user_data.method = NULL;
 		mono_domain_lock (domain);
-		g_hash_table_foreach (domain_jit_info (domain)->jit_trampoline_hash, find_tramp, &user_data);
+		mono_conc_hashtable_foreach (domain_jit_info (domain)->jit_trampoline_hash, find_tramp, &user_data);
 		mono_domain_unlock (domain);
 		if (user_data.method) {
 			char *mname = mono_method_full_name (user_data.method, TRUE);
@@ -271,7 +271,7 @@ mono_print_method_from_ip (void *ip)
 		user_data.ip = ip;
 		user_data.method = NULL;
 		mono_domain_lock (domain);
-		g_hash_table_foreach (domain_jit_info (domain)->jit_trampoline_hash, find_tramp, &user_data);
+		mono_conc_hashtable_foreach (domain_jit_info (domain)->jit_trampoline_hash, find_tramp, &user_data);
 		mono_domain_unlock (domain);
 
 		if (user_data.method) {
@@ -1756,6 +1756,128 @@ no_gsharedvt_in_wrapper (void)
 	g_assert_not_reached ();
 }
 
+typedef struct {
+	MonoMethod *method;
+	pthread_t thread;
+	int count;
+} MethodAndThread;
+
+typedef struct {
+	GPtrArray *in_flight_methods;
+	int threads_waiting;
+	MonoCoopMutex lock;
+	MonoCoopCond cond;
+} JitJobs;
+
+static MethodAndThread*
+find_method (JitJobs *sb, MonoMethod *method)
+{
+	int i;
+	for (i = 0; i < sb->in_flight_methods->len; ++i){
+		MethodAndThread *m = sb->in_flight_methods->pdata [i];
+		if (m->method == method)
+			return m;
+	}
+
+	return NULL;
+}
+
+static void
+jit_jobs_free (JitJobs *sb)
+{
+	mono_coop_cond_destroy (&sb->cond);
+	mono_coop_mutex_destroy (&sb->lock);
+	g_ptr_array_free (sb->in_flight_methods, TRUE);
+	g_free (sb);
+}
+
+static JitJobs *
+jit_jobs_alloc (void)
+{
+	JitJobs *sb = g_new0 (JitJobs, 1);
+	mono_coop_mutex_init (&sb->lock);
+	mono_coop_cond_init (&sb->cond);
+	sb->in_flight_methods = g_ptr_array_new ();
+	return sb;
+}
+
+
+/*
+ * Returns true if this method waited successfully for another thread to JIT it
+ */
+static gboolean
+wait_or_register_method_to_compile (MonoMethod *method, MonoDomain *target_domain)
+{
+	JitJobs *sb;
+	MethodAndThread *mt;
+
+	static int jit_methods_waited, jit_methods_dupe;
+	static gboolean inited;
+	if (!inited) {
+		mono_counters_register ("JIT compile waits", MONO_COUNTER_INT|MONO_COUNTER_JIT, &jit_methods_waited);
+		mono_counters_register ("JIT compile dupes", MONO_COUNTER_INT|MONO_COUNTER_JIT, &jit_methods_dupe);
+		inited = TRUE;
+	}
+
+	while (!(sb = target_domain->jit_compilation_data)) {
+		sb = jit_jobs_alloc ();
+		if (InterlockedCompareExchangePointer (&target_domain->jit_compilation_data, sb, NULL))
+			jit_jobs_free (sb);
+	}
+
+	//Add this method to the set of methods to be JIT'd
+	mono_coop_mutex_lock (&sb->lock);
+
+	if (!(mt = find_method (sb, method))) {
+		mt = g_new (MethodAndThread, 1);
+		mt->method = method;
+		mt->thread = pthread_self ();
+		mt->count = 1;
+		g_ptr_array_add (sb->in_flight_methods, mt);
+		mono_coop_mutex_unlock (&sb->lock);
+		return FALSE;
+	} else {
+		if (mt->thread == pthread_self ()) {
+			++mt->count;
+			++jit_methods_dupe;
+			mono_coop_mutex_unlock (&sb->lock);
+			return FALSE;
+		}
+		// printf ("waiting %p / %p [%p]\n", method, target_domain, pthread_self ());
+		++jit_methods_waited;
+		while (TRUE) {
+			++sb->threads_waiting;
+			mono_coop_cond_wait (&sb->cond, &sb->lock);
+			--sb->threads_waiting;
+
+			if (!find_method (sb, method)) {
+				mono_coop_mutex_unlock (&sb->lock);
+				return TRUE;
+			}
+		}
+	}
+}
+
+static void
+unregister_method_for_compile (MonoMethod *method, MonoDomain *target_domain)
+{
+	JitJobs *sb = target_domain->jit_compilation_data;
+	if (sb) {
+		mono_coop_mutex_lock (&sb->lock);
+
+		MethodAndThread *mt = find_method (sb, method);
+		g_assert (mt); // It would be weird to fail
+		if (--mt->count == 0) {
+			g_ptr_array_remove (sb->in_flight_methods, mt);
+			g_free (mt);
+		}
+
+		if (sb->threads_waiting)
+			mono_coop_cond_broadcast (&sb->cond);
+		mono_coop_mutex_unlock (&sb->lock);
+	}
+}
+
 static gpointer
 mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt, gboolean jit_only, MonoError *error)
 {
@@ -1818,6 +1940,7 @@ mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt, gboolean jit_
 		}
 	}
 
+lookup_start:
 	info = lookup_method (target_domain, method);
 	if (info) {
 		/* We can't use a domain specific method in another domain */
@@ -1885,8 +2008,12 @@ mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt, gboolean jit_
 		}
 	}
 
-	if (!code)
+	if (!code) {
+		if (wait_or_register_method_to_compile (method, target_domain))
+			goto lookup_start;
 		code = mono_jit_compile_method_inner (method, target_domain, opt, error);
+		unregister_method_for_compile (method, target_domain);
+	}
 	if (!mono_error_ok (error))
 		return NULL;
 
@@ -3371,7 +3498,7 @@ mini_create_jit_domain_info (MonoDomain *domain)
 	MonoJitDomainInfo *info = g_new0 (MonoJitDomainInfo, 1);
 
 	info->jump_trampoline_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
-	info->jit_trampoline_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
+	info->jit_trampoline_hash = mono_conc_hashtable_new (mono_aligned_addr_hash, NULL);
 	info->delegate_trampoline_hash = g_hash_table_new (class_method_pair_hash, class_method_pair_equal);
 	info->llvm_vcall_trampoline_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
 	info->runtime_invoke_hash = mono_conc_hashtable_new_full (mono_aligned_addr_hash, NULL, NULL, runtime_invoke_info_free);
@@ -3441,7 +3568,7 @@ mini_free_jit_domain_info (MonoDomain *domain)
 	if (info->method_code_hash)
 		g_hash_table_destroy (info->method_code_hash);
 	g_hash_table_destroy (info->jump_trampoline_hash);
-	g_hash_table_destroy (info->jit_trampoline_hash);
+	mono_conc_hashtable_destroy (info->jit_trampoline_hash);
 	g_hash_table_destroy (info->delegate_trampoline_hash);
 	if (info->static_rgctx_trampoline_hash)
 		g_hash_table_destroy (info->static_rgctx_trampoline_hash);
