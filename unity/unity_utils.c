@@ -278,3 +278,19 @@ mono_unity_class_get_generic_parameter_count (MonoClass* klass)
 	return klass->generic_container->type_argc;
 }
 
+static char* data_dir = NULL;
+void
+mono_unity_set_data_dir(const char* dir)
+{
+	if (data_dir)
+		g_free(data_dir);
+
+	data_dir = g_new(char*, strlen(dir) + 1);
+	strcpy(data_dir, dir);
+}
+ 
+char*
+mono_unity_get_data_dir()
+{
+	return data_dir;
+}
