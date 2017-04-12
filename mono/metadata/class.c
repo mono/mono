@@ -1030,6 +1030,7 @@ mono_class_inflate_generic_method_full_checked (MonoMethod *method, MonoClass *k
 	MonoMethodInflated *iresult, *cached;
 	MonoMethodSignature *sig;
 	MonoGenericContext tmp_context;
+	MonoMethodInflated tmp_result;
 
 	error_init (error);
 
@@ -1061,7 +1062,8 @@ mono_class_inflate_generic_method_full_checked (MonoMethod *method, MonoClass *k
 		(mono_class_is_gtd (method->klass) && context->class_inst)))
 		return method;
 
-	iresult = g_new0 (MonoMethodInflated, 1);
+	iresult = &tmp_result;
+	memset (iresult, 0, sizeof (MonoMethodInflated));
 	iresult->context = *context;
 	iresult->declaring = method;
 
@@ -1084,10 +1086,10 @@ mono_class_inflate_generic_method_full_checked (MonoMethod *method, MonoClass *k
 	cached = (MonoMethodInflated *)g_hash_table_lookup (set->gmethod_cache, iresult);
 	mono_image_set_unlock (set);
 
-	if (cached) {
-		g_free (iresult);
+	if (cached)
 		return (MonoMethod*)cached;
-	}
+
+	iresult = g_memdup (iresult, sizeof (MonoMethodInflated));
 
 	mono_stats.inflated_method_count++;
 
