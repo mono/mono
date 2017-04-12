@@ -24,7 +24,6 @@ boehm_libs=	\
 
 bdwgc_libs=	\
 	$(monodir)/mono/metadata/libmonoruntimebdwgc.la	\
-	$(monodir)/mono/io-layer/libwapi.la	\
 	$(monodir)/mono/utils/libmonoutils.la \
 	$(GLIB_LIBS) $(LIBICONV) \
 	$(libbdwgc_libs)
@@ -43,7 +42,6 @@ boehm_static_libs=	\
 
 bdwgc_static_libs=	\
 	$(monodir)/mono/metadata/libmonoruntimebdwgc-static.la	\
-	$(monodir)/mono/io-layer/libwapi.la	\
 	$(monodir)/mono/utils/libmonoutils.la \
 	$(GLIB_LIBS) $(LIBICONV) \
 	$(libbdwgc_static_libs)
