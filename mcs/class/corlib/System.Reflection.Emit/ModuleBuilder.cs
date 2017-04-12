@@ -62,6 +62,7 @@ namespace System.Reflection.Emit {
 		private FieldBuilder[] global_fields;
 		bool is_main;
 		private MonoResource[] resources;
+		private IntPtr unparented_classes;
 		#endregion
 #pragma warning restore 169, 414
 		
