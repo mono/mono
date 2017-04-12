@@ -176,7 +176,12 @@ namespace Mono.Btls
 		{
 			using (var store = new MonoBtlsX509Store ())
 			using (var storeCtx = new MonoBtlsX509StoreCtx ()) {
-				SetupCertificateStore (store);
+				/*
+				 * We're called from X509Certificate2.Verify() via X509CertificateImplBtls.Verify().
+				 *
+				 * Use the default settings and assume client-mode.
+				 */
+				SetupCertificateStore (store, MonoTlsSettings.DefaultSettings, false);
 
 				storeCtx.Initialize (store, chain);
 
@@ -203,46 +208,62 @@ namespace Mono.Btls
 
 		internal static void SetupCertificateStore (MonoBtlsX509Store store, MonoTlsSettings settings, bool server)
 		{
-			if (settings?.CertificateSearchPaths == null)
-				AddTrustedRoots (store, settings, server);
+			/*
+			 * In server-mode, we only add certificates which are explicitly trusted via
+			 * MonoTlsSettings.TrustAnchors.
+			 * 
+			 * MonoTlsSettings.CertificateSearchPaths is ignored on Android.
+			 * 
+			 */
 
 #if MONODROID
-			SetupCertificateStore (store);
+			AddTrustedRoots (store, settings, server);
+			if (!server)
+				SetupDefaultCertificateStore (store);
 			return;
 #else
-			if (settings?.CertificateSearchPaths == null) {
-				SetupCertificateStore (store);
+			if (server || settings?.CertificateSearchPaths == null) {
+				AddTrustedRoots (store, settings, server);
+				if (!server)
+					SetupDefaultCertificateStore (store);
 				return;
 			}
 
 			foreach (var path in settings.CertificateSearchPaths) {
-				if (string.Equals (path, "@default", StringComparison.Ordinal)) {
+				switch (path) {
+				case "@default":
 					AddTrustedRoots (store, settings, server);
 					AddUserStore (store);
 					AddMachineStore (store);
-				} else if (string.Equals (path, "@user", StringComparison.Ordinal))
-					AddUserStore (store);
-				else if (string.Equals (path, "@machine", StringComparison.Ordinal))
-					AddMachineStore (store);
-				else if (string.Equals (path, "@trusted", StringComparison.Ordinal))
+					break;
+				case "@trusted":
 					AddTrustedRoots (store, settings, server);
-				else if (path.StartsWith ("@pem:", StringComparison.Ordinal)) {
-					var realPath = path.Substring (5);
-					if (Directory.Exists (realPath))
-						store.AddDirectoryLookup (realPath, MonoBtlsX509FileType.PEM);
-				} else if (path.StartsWith ("@der:", StringComparison.Ordinal)) {
-					var realPath = path.Substring (5);
-					if (Directory.Exists (realPath))
-						store.AddDirectoryLookup (realPath, MonoBtlsX509FileType.ASN1);
-				} else {
-					if (Directory.Exists (path))
-						store.AddDirectoryLookup (path, MonoBtlsX509FileType.PEM);
+					break;
+				case "@user":
+					AddUserStore (store);
+					break;
+				case "@machine":
+					AddMachineStore (store);
+					break;
+				default:
+					if (path.StartsWith ("@pem:")) {
+						var realPath = path.Substring (5);
+						if (Directory.Exists (realPath))
+							store.AddDirectoryLookup (realPath, MonoBtlsX509FileType.PEM);
+						break;
+					} else if (path.StartsWith ("@der:")) {
+						var realPath = path.Substring (5);
+						if (Directory.Exists (realPath))
+							store.AddDirectoryLookup (realPath, MonoBtlsX509FileType.ASN1);
+						break;
+					}
+					throw new NotSupportedException (string.Format ("Invalid item `{0}' in MonoTlsSettings.CertificateSearchPaths.", path));
 				}
 			}
 #endif
 		}
 
-		internal static void SetupCertificateStore (MonoBtlsX509Store store)
+		static void SetupDefaultCertificateStore (MonoBtlsX509Store store)
 		{
 #if MONODROID
 			store.SetDefaultPaths ();
