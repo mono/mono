@@ -111,7 +111,7 @@ namespace Mono.Btls
 			return new X509CertificateImplBtls (data, MonoBtlsX509Format.DER, false);
 		}
 
-		internal static MonoBtlsX509VerifyParam GetVerifyParam (string targetHost, bool serverMode)
+		internal static MonoBtlsX509VerifyParam GetVerifyParam (MonoTlsSettings settings, string targetHost, bool serverMode)
 		{
 			MonoBtlsX509VerifyParam param;
 			if (serverMode)
@@ -119,12 +119,15 @@ namespace Mono.Btls
 			else
 				param = MonoBtlsX509VerifyParam.GetSslServer ();
 
-			if (targetHost == null)
+			if (targetHost == null && settings?.CertificateValidationTime == null)
 				return param;
 
 			try {
 				var copy = param.Copy ();
-				copy.SetHost (targetHost);
+				if (targetHost != null)
+					copy.SetHost (targetHost);
+				if (settings?.CertificateValidationTime != null)
+					copy.SetTime (settings.CertificateValidationTime.Value);
 				return copy;
 			} finally {
 				param.Dispose ();
@@ -148,7 +151,7 @@ namespace Mono.Btls
 
 			using (var store = new MonoBtlsX509Store ())
 			using (var nativeChain = MonoBtlsProvider.GetNativeChain (certificates))
-			using (var param = GetVerifyParam (targetHost, serverMode))
+			using (var param = GetVerifyParam (validator.Settings, targetHost, serverMode))
 			using (var storeCtx = new MonoBtlsX509StoreCtx ()) {
 				SetupCertificateStore (store, validator.Settings, serverMode);
 

@@ -234,7 +234,7 @@ namespace Mono.Btls
 			if (!IsServer)
 				ctx.SetSelectCallback (SelectCallback);
 
-			ctx.SetVerifyParam (MonoBtlsProvider.GetVerifyParam (ServerName, IsServer));
+			ctx.SetVerifyParam (MonoBtlsProvider.GetVerifyParam (Settings, ServerName, IsServer));
 
 			TlsProtocolCode minProtocol, maxProtocol;
 			GetProtocolVersions (out minProtocol, out maxProtocol);
