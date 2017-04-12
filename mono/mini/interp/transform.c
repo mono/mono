@@ -811,8 +811,9 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 			int offset;
 			if (mono_interp_traceopt)
 				g_print ("Optimize tail call of %s.%s\n", target_method->klass->name, target_method->name);
-			for (i = csignature->param_count - 1; i >= 0; --i)
-				store_arg (td, i + csignature->hasthis);
+
+			for (i = csignature->param_count - 1 + !!csignature->hasthis; i >= 0; --i)
+				store_arg (td, i);
 
 			ADD_CODE(td, MINT_BR_S);
 			offset = body_start_offset - ((td->new_ip - 1) - td->new_code);
@@ -3519,7 +3520,7 @@ mono_interp_transform_method (RuntimeMethod *runtime_method, ThreadContext *cont
 	}
 
 	runtime_method->local_offsets = g_malloc (header->num_locals * sizeof(guint32));
-	runtime_method->stack_size = (sizeof (stackval) + 2) * header->max_stack; /* + 1 for returns of called functions  + 1 for 0-ing in trace*/
+	runtime_method->stack_size = (sizeof (stackval)) * (header->max_stack + 2); /* + 1 for returns of called functions  + 1 for 0-ing in trace*/
 	runtime_method->stack_size = (runtime_method->stack_size + 7) & ~7;
 	offset = 0;
 	for (i = 0; i < header->num_locals; ++i) {

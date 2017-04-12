@@ -42,6 +42,7 @@ namespace MonoTests.System.Data.Connected
 			IDbCommand command = connection.CreateCommand ();
 			command.CommandType = CommandType.Text;
 			command.CommandText = query;
+			command.CommandTimeout = 120;
 			int result = -1;
 			try {
 				result = command.ExecuteNonQuery ();
