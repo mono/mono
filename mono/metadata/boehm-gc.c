@@ -1322,7 +1322,11 @@ mono_gc_invoke_with_gc_lock (MonoGCLockedCallbackFunc func, void *data)
 char*
 mono_gc_get_description (void)
 {
+#if HAVE_BDWGC_GC
+	return g_strdup ("bdwgc");
+#else
 	return g_strdup (DEFAULT_GC_NAME);
+#endif
 }
 
 void
