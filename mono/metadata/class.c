@@ -82,6 +82,82 @@ static void mono_generic_class_setup_parent (MonoClass *klass, MonoClass *gklass
 static gboolean mono_class_set_failure (MonoClass *klass, MonoErrorBoxed *boxed_error);
 
 
+//256 bytes on 64bits
+#define MAX_ADAPT_PAIRS 15
+
+typedef struct {
+	GHashTable *overflow;
+	int count;
+	gpointer keys [MAX_ADAPT_PAIRS];
+	gpointer values [MAX_ADAPT_PAIRS];
+} MonoAdaptatativeHashTable;
+
+static void
+overflow (MonoAdaptatativeHashTable *hash)
+{
+	int i;
+	hash->overflow = g_hash_table_new (NULL, NULL);
+	for (i = 0; i < hash->count; ++i)
+		g_hash_table_insert (hash->overflow, hash->keys [i], hash->values [i]);
+}
+
+static gpointer
+mono_adapt_hash_lookup (MonoAdaptatativeHashTable *hash, gpointer key)
+{
+	int i;
+	if (hash->overflow)
+		return g_hash_table_lookup (hash->overflow, key);
+	for (i = 0; i < hash->count; ++i) {
+		if (hash->keys [i] == key)
+			return hash->values [i];
+	}
+	return NULL;
+}
+
+static void
+mono_adapt_hash_insert (MonoAdaptatativeHashTable *hash, gpointer key, gpointer value)
+{
+	if (hash->count >= MAX_ADAPT_PAIRS)
+		overflow (hash);
+	if (hash->overflow) {
+		g_hash_table_insert (hash->overflow, key, value);
+	} else {
+		int i;
+		for (i = 0; i < hash->count; ++i) {
+			if (hash->keys [i] == key) {
+				hash->values [i] = value;
+				return;
+			}
+		}
+		hash->keys [hash->count] = key;
+		hash->values [hash->count] = value;
+		++hash->count;
+	}
+}
+
+static int adapt_overflow, adapt_count, adapt_max;
+
+static void
+mono_adapt_hash_init (MonoAdaptatativeHashTable *hash)
+{
+	++adapt_count;
+	hash->count = 0;
+	hash->overflow = NULL;
+}
+
+static void
+mono_adapt_hash_destroy (MonoAdaptatativeHashTable *hash)
+{
+	if (hash->overflow) {
+		++adapt_overflow;
+		adapt_max = MAX (adapt_max, (int)g_hash_table_size (hash->overflow));
+		adapt_max = MAX (adapt_max, (int)g_hash_table_size (hash->overflow));
+		g_hash_table_destroy (hash->overflow);
+	} else {
+		adapt_max = MAX (adapt_max, hash->count);
+	}
+}
+
 /*
 We use gclass recording to allow recursive system f types to be referenced by a parent.
 
@@ -2898,7 +2974,7 @@ mono_get_unique_iid (MonoClass *klass)
 }
 
 static void
-collect_implemented_interfaces_aux (MonoClass *klass, GPtrArray **res, GHashTable **ifaces, MonoError *error)
+collect_implemented_interfaces_aux (MonoClass *klass, GPtrArray **res, MonoAdaptatativeHashTable *ifaces, MonoError *error)
 {
 	int i;
 	MonoClass *ic;
@@ -2911,12 +2987,10 @@ collect_implemented_interfaces_aux (MonoClass *klass, GPtrArray **res, GHashTabl
 
 		if (*res == NULL)
 			*res = g_ptr_array_new ();
-		if (*ifaces == NULL)
-			*ifaces = g_hash_table_new (NULL, NULL);
-		if (g_hash_table_lookup (*ifaces, ic))
+		if (mono_adapt_hash_lookup (ifaces, ic))
 			continue;
 		g_ptr_array_add (*res, ic);
-		g_hash_table_insert (*ifaces, ic, ic);
+		mono_adapt_hash_insert (ifaces, ic, ic);
 		mono_class_init (ic);
 		if (mono_class_has_failure (ic)) {
 			mono_error_set_type_load_class (error, ic, "Error Loading class");
@@ -2932,11 +3006,11 @@ GPtrArray*
 mono_class_get_implemented_interfaces (MonoClass *klass, MonoError *error)
 {
 	GPtrArray *res = NULL;
-	GHashTable *ifaces = NULL;
+	MonoAdaptatativeHashTable ifaces;
 
+	mono_adapt_hash_init (&ifaces);
 	collect_implemented_interfaces_aux (klass, &res, &ifaces, error);
-	if (ifaces)
-		g_hash_table_destroy (ifaces);
+	mono_adapt_hash_destroy (&ifaces);
 	if (!mono_error_ok (error)) {
 		if (res)
 			g_ptr_array_free (res, TRUE);
@@ -7707,7 +7781,7 @@ search_modules (MonoImage *image, const char *name_space, const char *name, Mono
 }
 
 static MonoClass *
-mono_class_from_name_checked_aux (MonoImage *image, const char* name_space, const char *name, GHashTable* visited_images, MonoError *error)
+mono_class_from_name_checked_aux (MonoImage *image, const char* name_space, const char *name, MonoAdaptatativeHashTable* visited_images, MonoError *error)
 {
 	GHashTable *nspace_table;
 	MonoImage *loaded_image;
@@ -7720,10 +7794,10 @@ mono_class_from_name_checked_aux (MonoImage *image, const char* name_space, cons
 	error_init (error);
 
 	// Checking visited images avoids stack overflows when cyclic references exist.
-	if (g_hash_table_lookup (visited_images, image))
+	if (mono_adapt_hash_lookup (visited_images, image))
 		return NULL;
 
-	g_hash_table_insert (visited_images, image, GUINT_TO_POINTER(1));
+	mono_adapt_hash_insert (visited_images, image, GUINT_TO_POINTER(1));
 
 	if ((nested = strchr (name, '/'))) {
 		int pos = nested - name;
@@ -7840,13 +7914,13 @@ MonoClass *
 mono_class_from_name_checked (MonoImage *image, const char* name_space, const char *name, MonoError *error)
 {
 	MonoClass *klass;
-	GHashTable *visited_images;
+	MonoAdaptatativeHashTable visited_images;
+	
+	mono_adapt_hash_init (&visited_images);
 
-	visited_images = g_hash_table_new (g_direct_hash, g_direct_equal);
+	klass = mono_class_from_name_checked_aux (image, name_space, name, &visited_images, error);
 
-	klass = mono_class_from_name_checked_aux (image, name_space, name, visited_images, error);
-
-	g_hash_table_destroy (visited_images);
+	mono_adapt_hash_destroy (&visited_images);
 
 	return klass;
 }
@@ -9897,7 +9971,13 @@ mono_classes_init (void)
 							MONO_COUNTER_GENERICS | MONO_COUNTER_INT, &inflated_classes_size);
 	mono_counters_register ("MonoClass size",
 							MONO_COUNTER_METADATA | MONO_COUNTER_INT, &classes_size);
+
+
+	mono_counters_register ("adapt_overflow", MONO_COUNTER_METADATA | MONO_COUNTER_INT, &adapt_overflow);
+	mono_counters_register ("adapt_count", MONO_COUNTER_METADATA | MONO_COUNTER_INT, &adapt_count);
+	mono_counters_register ("adapt_max", MONO_COUNTER_METADATA | MONO_COUNTER_INT, &adapt_max);
 }
+
 
 /**
  * mono_classes_cleanup:
