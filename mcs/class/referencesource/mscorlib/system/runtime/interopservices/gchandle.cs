@@ -44,7 +44,7 @@ namespace System.Runtime.InteropServices
     [System.Runtime.InteropServices.ComVisible(true)]
     public struct GCHandle
     {
-        // IMPORTANT: This must be kept in [....] with the GCHandleType enum.
+        // IMPORTANT: This must be kept in sync with the GCHandleType enum.
         private const GCHandleType MaxHandleType = GCHandleType.Pinned;
 
 #if MDA_SUPPORTED

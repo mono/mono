@@ -59,7 +59,7 @@ namespace System.ServiceModel.Dispatcher
             Candidate can = new Candidate(filter, data, mask, filter.HeaderLookup);
             this.candidates.Add(filter, can);
 
-#pragma warning suppress 56506 // [....], PrefixEndpointAddressMessageFilter.Address can never be null
+#pragma warning suppress 56506 // Microsoft, PrefixEndpointAddressMessageFilter.Address can never be null
             Uri soapToAddress = filter.Address.Uri;
 
             CandidateSet cset;
@@ -134,7 +134,7 @@ namespace System.ServiceModel.Dispatcher
             }
 
             Candidate can = this.candidates[filter];
-#pragma warning suppress 56506 // [....], PrefixEndpointAddressMessageFilter.Address can never be null
+#pragma warning suppress 56506 // Microsoft, PrefixEndpointAddressMessageFilter.Address can never be null
             Uri soapToAddress = filter.Address.Uri;
 
             CandidateSet cset = null;

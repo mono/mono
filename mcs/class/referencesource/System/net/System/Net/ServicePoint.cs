@@ -253,7 +253,7 @@ namespace System.Net {
             abortSocket6 = socket6;
 
             //
-            // Setup socket timeouts for [....] requests
+            // Setup socket timeouts for sync requests
             //
             // 
 

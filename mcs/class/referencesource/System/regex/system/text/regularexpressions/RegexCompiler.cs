@@ -216,7 +216,7 @@ namespace System.Text.RegularExpressions {
          */
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
-        [SuppressMessage("Microsoft.Security","CA2106:SecureAsserts", Justification="[....]: SECREVIEW : Regex only generates string manipulation, so this is OK")]
+        [SuppressMessage("Microsoft.Security","CA2106:SecureAsserts", Justification="Microsoft: SECREVIEW : Regex only generates string manipulation, so this is OK")]
         internal static void CompileToAssembly(RegexCompilationInfo[] regexes, AssemblyName an, CustomAttributeBuilder[] attribs, String resourceFile) {
             RegexTypeCompiler c = new RegexTypeCompiler(an, attribs, resourceFile);
         
@@ -3046,7 +3046,7 @@ namespace System.Text.RegularExpressions {
 
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
-        [SuppressMessage("Microsoft.Security","CA2106:SecureAsserts", Justification="[....]: SECREVIEW : Regex only generates string manipulation, so this is OK")]
+        [SuppressMessage("Microsoft.Security","CA2106:SecureAsserts", Justification="Microsoft: SECREVIEW : Regex only generates string manipulation, so this is OK")]
         internal RegexTypeCompiler(AssemblyName an, CustomAttributeBuilder[] attribs, String resourceFile) {
             // SECREVIEW : Regex only generates string manipulation, so this is
             //           : ok.

@@ -2,19 +2,16 @@ namespace System.Diagnostics.Private
 {
 	static partial class Debug
 	{
-		internal static IDebugLogger s_logger = new MonoDebugLogger();
+		static readonly string NewLine = Environment.NewLine;
 
-		internal sealed class MonoDebugLogger : IDebugLogger
+		static void ShowAssertDialog (string stackTrace, string message, string detailMessage)
 		{
-			public void ShowAssertDialog(string stackTrace, string message, string detailMessage)
-			{
-				// FIXME should we g_error in this case?
-			}
+			// FIXME should we g_error in this case?
+		}
 
-			public void WriteCore(string message)
-			{
-				// FIXME should we g_debug in this case?
-			}
+		static void WriteCore (string message)
+		{
+			// FIXME should we g_debug in this case?
 		}
 	}
 }

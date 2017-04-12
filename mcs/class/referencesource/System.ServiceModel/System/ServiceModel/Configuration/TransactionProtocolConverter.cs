@@ -32,7 +32,7 @@ namespace System.ServiceModel.Configuration
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
             string protocol = value as string;
-#pragma warning suppress 56507 // [....], Really checking for null (meaning value was not a string) versus String.Empty
+#pragma warning suppress 56507 // Microsoft, Really checking for null (meaning value was not a string) versus String.Empty
             if (protocol != null)
             {
                 switch (protocol)

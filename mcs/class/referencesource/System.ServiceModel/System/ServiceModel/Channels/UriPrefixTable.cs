@@ -56,7 +56,7 @@ namespace System.ServiceModel.Channels
             {
                 // The UriPrefixTable instance itself is used as a 
                 // synchronization primitive in the TransportManagers and the 
-                // TransportManagerContainers so we return 'this' to keep them in [....].                 
+                // TransportManagerContainers so we return 'this' to keep them in sync.                 
                 return this;
             }
         }

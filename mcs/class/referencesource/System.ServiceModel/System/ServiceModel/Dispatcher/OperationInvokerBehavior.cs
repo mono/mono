@@ -41,7 +41,7 @@ namespace System.ServiceModel.Dispatcher
             {
                 if (description.BeginMethod != null)
                 {
-                    // both [....] and async methods are present on the contract, check the preference
+                    // both sync and async methods are present on the contract, check the preference
                     OperationBehaviorAttribute operationBehaviorAttribue = description.Behaviors.Find<OperationBehaviorAttribute>();
                     if ((operationBehaviorAttribue != null) && operationBehaviorAttribue.PreferAsyncInvocation)
                     {
@@ -54,7 +54,7 @@ namespace System.ServiceModel.Dispatcher
                 }
                 else
                 {
-                    // only [....] method is present on the contract
+                    // only sync method is present on the contract
                     dispatch.Invoker = new SyncMethodInvoker(description.SyncMethod);
                 }
             }

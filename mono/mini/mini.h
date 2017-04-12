@@ -1202,6 +1202,12 @@ typedef struct {
 	 * the catch block that caught the ThreadAbortException).
 	 */
 	gpointer abort_exc_stack_threshold;
+
+
+	/*
+	 * List of methods being JIT'd in the current thread.
+	 */
+	int active_jit_methods;
 } MonoJitTlsData;
 
 /*
@@ -2257,6 +2263,8 @@ enum {
 	  */
 	 guint8 *uw_info;
 	 guint32 uw_info_len;
+	 /* Whenever uw_info is owned by this structure */
+	 gboolean owns_uw_info;
 } MonoTrampInfo;
 
 typedef void (*MonoInstFunc) (MonoInst *tree, gpointer data);

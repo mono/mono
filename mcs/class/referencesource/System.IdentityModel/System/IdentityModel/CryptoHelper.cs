@@ -865,7 +865,7 @@ namespace System.IdentityModel
             catch (InvalidOperationException)
             {
                 algorithmObject = null;
-                // We ---- the exception and continue.
+                // We swallow the exception and continue.
             }
 
             if (algorithmObject != null)
@@ -901,7 +901,7 @@ namespace System.IdentityModel
             catch (InvalidOperationException)
             {
                 algorithmObject = null;
-                // We ---- the exception and continue.
+                // We swallow the exception and continue.
             }
             if (algorithmObject != null)
             {
@@ -952,7 +952,7 @@ namespace System.IdentityModel
             }
             catch (InvalidOperationException)
             {
-                // We ---- the exception and continue.
+                // We swallow the exception and continue.
             }
             if (algorithmObject != null)
             {

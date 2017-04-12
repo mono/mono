@@ -332,7 +332,7 @@ namespace System.ServiceModel.Dispatcher
             {
                 get
                 {
-#pragma warning suppress 56503 // [....], not a seekable stream, it is ok to throw NotSupported in this case
+#pragma warning suppress 56503 // Microsoft, not a seekable stream, it is ok to throw NotSupported in this case
                     throw TraceUtility.ThrowHelperError(new NotSupportedException(), this.message);
                 }
             }

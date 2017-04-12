@@ -26,10 +26,6 @@ namespace System.Web.Caching {
     using System.Runtime.Caching;
 #endif
 
-    internal interface ICacheDependencyChanged {
-        void DependencyChanged(Object sender, EventArgs e);
-    }
-
 
     /// <devdoc>
     /// <para>The <see langword='CacheDependency'/> class tracks cache dependencies, which can be files, 
@@ -50,7 +46,7 @@ namespace System.Web.Caching {
         string                     _uniqueID;              // used by HttpCachePolicy for the ETag
         object                     _depFileInfos;          // files to monitor for changes, either a DepFileInfo or array of DepFileInfos 
         object                     _entries;               // cache entries we are dependent on, either a string or array of strings 
-        ICacheDependencyChanged    _objNotify;             // Associated object to notify when a change occurs 
+        Action<Object, EventArgs>  _objNotify;             // Associated object to notify when a change occurs 
         SafeBitVector32            _bits;                  // status bits for ready, used, changed, disposed  
         DateTime                   _utcLastModified;       // Time of last modified item
 #if USE_MEMORY_CACHE
@@ -59,7 +55,7 @@ namespace System.Web.Caching {
 #endif
 
         static readonly string[]        s_stringsEmpty;
-        static readonly CacheEntry[]    s_entriesEmpty;
+        static readonly DepCacheInfo[]  s_entriesEmpty;
         static readonly CacheDependency s_dependencyEmpty;
         static readonly DepFileInfo[]   s_depFileInfosEmpty;
 
@@ -78,9 +74,14 @@ namespace System.Web.Caching {
             internal FileAttributesData _fad;
         }
 
+        internal class DepCacheInfo {
+            internal CacheStoreProvider _cacheStore;
+            internal string             _key;
+        }
+
         static CacheDependency() {
             s_stringsEmpty = new string[0];
-            s_entriesEmpty = new CacheEntry[0];
+            s_entriesEmpty = new DepCacheInfo[0];
             s_dependencyEmpty = new CacheDependency(0);
             s_depFileInfosEmpty = new DepFileInfo[0];
         }
@@ -205,7 +206,7 @@ namespace System.Web.Caching {
         void InitForMemoryCache(bool isPublic, string[] filenamesArg, string[] cachekeysArg, CacheDependency dependency, DateTime utcStart) {
             bool dispose = true;
             try {
-                MemCache memCache = HttpRuntime.CacheInternal as MemCache;
+                MemCache memCache = HttpRuntime.InternalCache as MemCache;
                 _bits = new SafeBitVector32(0);
                 _utcLastModified = DateTime.MinValue;
                 IList<String> files = filenamesArg;
@@ -308,9 +309,9 @@ namespace System.Web.Caching {
             }
 #endif
             DepFileInfo[]   depFileInfos = s_depFileInfosEmpty;
-            CacheEntry[]    depEntries = s_entriesEmpty;
+            DepCacheInfo[] depEntries = s_entriesEmpty;
             string []       filenames, cachekeys;
-            CacheInternal   cacheInternal;
+            CacheStoreProvider     cache;
 
             _bits = new SafeBitVector32(0);
 
@@ -420,13 +421,13 @@ namespace System.Web.Caching {
 
                     // copy cache entries
                     if (d_entries != null) {
-                        if (d_entries is CacheEntry) {
-                            depEntries = new CacheEntry[1] {(CacheEntry) (d_entries)};
+                        if (d_entries is DepCacheInfo) {
+                            depEntries = new DepCacheInfo[1] { (DepCacheInfo)(d_entries) };
                         }
                         else {
-                            depEntries = (CacheEntry[]) (d_entries);
+                            depEntries = (DepCacheInfo[])(d_entries);
                             // verify that the object was fully constructed
-                            foreach (CacheEntry entry in depEntries) {
+                            foreach (DepCacheInfo entry in depEntries) {
                                 if (entry == null) {
                                     _bits[CHANGED] = true;
                                     // There is nothing to dispose because we haven't started
@@ -501,41 +502,32 @@ namespace System.Web.Caching {
 
                 // Monitor other cache entries for changes
                 int lenMyEntries = depEntries.Length + cachekeys.Length;
+                DateTime lastUpdated;
                 if (lenMyEntries > 0 && !_bits[CHANGED]) {
-                    CacheEntry[] myEntries = new CacheEntry[lenMyEntries];
+                    DepCacheInfo[] myEntries = new DepCacheInfo[lenMyEntries];
 
                     // Monitor entries from the existing cache dependency
                     int i = 0;
-                    foreach (CacheEntry entry in depEntries) {
-                        entry.AddCacheDependencyNotify(this);
+                    foreach (DepCacheInfo entry in depEntries) {
+                        entry._cacheStore.AddDependent(entry._key, this, out lastUpdated);
                         myEntries[i++] = entry;
                     }
 
                     // Monitor new entries specified for this depenedency
                     // Entries must be added to cache, and created before the startTime
-                    cacheInternal = HttpRuntime.CacheInternal;
+                    cache = isPublic ? HttpRuntime.Cache.ObjectCache : HttpRuntime.Cache.InternalCache;
                     foreach (string k in cachekeys) {
-                        CacheEntry entry = (CacheEntry) cacheInternal.DoGet(isPublic, k, CacheGetOptions.ReturnCacheEntry);
-                        if (entry != null) {
-                            entry.AddCacheDependencyNotify(this);
-                            myEntries[i++] = entry;
+                        if (cache.AddDependent(k, this, out lastUpdated)) {
+                            myEntries[i++] = new DepCacheInfo() { _cacheStore = cache, _key = k };
 
-                            if (entry.UtcCreated > _utcLastModified) {
-                                _utcLastModified = entry.UtcCreated;
+                            if (lastUpdated > _utcLastModified) {
+                                _utcLastModified = lastUpdated;
                             }
 
-                            if (    entry.State != CacheEntry.EntryState.AddedToCache || 
-                                    entry.UtcCreated > utcStart) {
-
+                            if (lastUpdated > utcStart) {  // Cache item has been updated since start, consider changed
 #if DBG
-                                if (entry.State != CacheEntry.EntryState.AddedToCache) {
-                                    Debug.Trace("CacheDependencyInit", "Entry is not in cache, considered changed:" + k);
-                                }
-                                else {
-                                    Debug.Trace("CacheDependencyInit", "Changes occurred to entry since start time:" + k);
-                                }
+                                Debug.Trace("CacheDependencyInit", "Changes occurred to entry since start time:" + k);
 #endif
-
                                 _bits[CHANGED] = true;
                                 break;
                             }
@@ -583,7 +575,7 @@ namespace System.Web.Caching {
             // Set this bit just in case our derived ctor forgot to call FinishInit()
             _bits[DERIVED_INIT] = true;
                 
-            if (Use()) {
+            if (TakeOwnership()) {
                 // Do the dispose only if the cache has not already used us
                 DisposeInternal();
             }
@@ -660,17 +652,17 @@ namespace System.Web.Caching {
 
             // stop monitoring cache items
             if (l_entries != null) {
-                CacheEntry oneEntry = l_entries as CacheEntry;
+                DepCacheInfo oneEntry = l_entries as DepCacheInfo;
                 if (oneEntry != null) {
-                    oneEntry.RemoveCacheDependencyNotify(this);
+                    oneEntry._cacheStore.RemoveDependent(oneEntry._key, this);
                 }
                 else {
-                    CacheEntry[] entries = (CacheEntry[]) l_entries;
-                    foreach (CacheEntry entry in entries) {
+                    DepCacheInfo[] entries = (DepCacheInfo[])l_entries;
+                    foreach (DepCacheInfo entry in entries) {
                         // ensure that we handle partially contructed
                         // objects by checking entry for null
                         if (entry != null) {
-                            entry.RemoveCacheDependencyNotify(this);
+                            entry._cacheStore.RemoveDependent(entry._key, this);
                         }
                     }
                 }
@@ -686,8 +678,10 @@ namespace System.Web.Caching {
 #endif
         }
 
-        // allow the first user to declare ownership
-        internal bool Use() {
+        /// <devdoc>
+        ///    <para>Allow the first user to declare exclusive ownership of this dependency.</para>
+        /// </devdoc>
+        public bool TakeOwnership() {
             return _bits.ChangeValue(USED, true);
         }
 
@@ -706,22 +700,38 @@ namespace System.Web.Caching {
             }
         }
 
-
         protected void SetUtcLastModified(DateTime utcLastModified) {
             _utcLastModified = utcLastModified;
         }
 
-        //
-        // Add/remove an NotifyDependencyChanged notification.
-        //
-        internal void SetCacheDependencyChanged(ICacheDependencyChanged objNotify) {
+        public void KeepDependenciesAlive() {
+            if (_entries != null) {
+                // update the last access time of every cache item that depends on this dependency
+                DepCacheInfo oneEntry = _entries as DepCacheInfo;
+                if (oneEntry != null) {
+                    oneEntry._cacheStore.Get(oneEntry._key);
+                    return;
+                }
+
+                foreach (DepCacheInfo entry in (DepCacheInfo[])_entries) {
+                    if (entry != null) {
+                        object item = entry._cacheStore.Get(entry._key);
+                    }
+                }
+            }
+        }
+
+        /// <devdoc>
+        ///    <para>Add an Action to handle notifying interested party in changes to this dependency.</para>
+        /// </devdoc>
+        public void SetCacheDependencyChanged(Action<Object, EventArgs> dependencyChangedAction) {
             Debug.Assert(_objNotify == null, "_objNotify == null");
 
             // Set this bit just in case our derived ctor forgot to call FinishInit()
             _bits[DERIVED_INIT] = true;
-                
+
             if (!_bits[BASE_DISPOSED]) {
-                _objNotify = objNotify;
+                _objNotify = dependencyChangedAction;
             }
         }
 
@@ -768,23 +778,23 @@ namespace System.Web.Caching {
             // get unique id from cache entries
             l_entries = _entries;
             if (l_entries != null) {
-                CacheEntry oneEntry = l_entries as CacheEntry;
+                DepCacheInfo oneEntry = l_entries as DepCacheInfo;
                 if (oneEntry != null) {
                     if (sb == null)
                         sb = new StringBuilder();
-                    sb.Append(oneEntry.Key);
-                    sb.Append(oneEntry.UtcCreated.Ticks.ToString(CultureInfo.InvariantCulture));
+                    sb.Append(oneEntry._key);
+                    sb.Append(oneEntry.GetHashCode().ToString(CultureInfo.InvariantCulture));
                 }
                 else {
-                    CacheEntry[] entries = (CacheEntry[]) l_entries;
-                    foreach (CacheEntry entry in entries) {
+                    DepCacheInfo[] entries = (DepCacheInfo[])l_entries;
+                    foreach (DepCacheInfo entry in entries) {
                         // ensure that we handle partially contructed
                         // objects by checking entry for null
                         if (entry != null) {
                             if (sb == null)
                                 sb = new StringBuilder();
-                            sb.Append(entry.Key);
-                            sb.Append(entry.UtcCreated.Ticks.ToString(CultureInfo.InvariantCulture));
+                            sb.Append(entry._key);
+                            sb.Append(entry.GetHashCode().ToString(CultureInfo.InvariantCulture));
                         }
                     }
                 }
@@ -806,24 +816,6 @@ namespace System.Web.Caching {
         }
 
         //
-        // Return the cacheEntries monitored by this dependency
-        // 
-        internal CacheEntry[] CacheEntries {
-            get {
-                if (_entries == null) {
-                    return null;
-                }
-
-                CacheEntry oneEntry = _entries as CacheEntry;
-                if (oneEntry != null) {
-                    return new CacheEntry[1] {oneEntry};
-                }
-
-                return (CacheEntry[]) _entries;
-            }
-        }
-
-        //
         // This object has changed, so fire the NotifyDependencyChanged event.
         // We only allow this event to be fired once.
         //
@@ -832,20 +824,20 @@ namespace System.Web.Caching {
             if (_bits.ChangeValue(CHANGED, true)) {
                 _utcLastModified = DateTime.UtcNow;
 
-                ICacheDependencyChanged objNotify = _objNotify;
-                if (objNotify != null && !_bits[BASE_DISPOSED]) {
+                Action<Object, EventArgs> action = _objNotify as Action<Object, EventArgs>;
+                if (action != null && !_bits[BASE_DISPOSED]) {
                     Debug.Trace("CacheDependencyNotifyDependencyChanged", "change occurred");
-                    objNotify.DependencyChanged(sender, e);
+                    action(sender, e);
                 }
 
                 DisposeInternal();
             }
         }
 
-        //
-        // ItemRemoved is called when a cache entry we are monitoring has been removed.
-        //
-        internal void ItemRemoved() {
+        /// <devdoc>
+        ///    <para>ItemRemoved should be called when an ICacheEntry we are monitoring has been removed.</para>
+        /// </devdoc>
+        public void ItemRemoved() {
             NotifyDependencyChanged(this, EventArgs.Empty);
         }
 
@@ -880,12 +872,12 @@ namespace System.Web.Caching {
             // Check and see if we are dependent on any cache entries
             l_entries = _entries;
             if (l_entries != null) {
-                CacheEntry oneEntry = l_entries as CacheEntry;
+                DepCacheInfo oneEntry = l_entries as DepCacheInfo;
                 if (oneEntry != null) {
                     return false;
                 }
                 else {
-                    CacheEntry[] entries = (CacheEntry[]) l_entries;
+                    DepCacheInfo[] entries = (DepCacheInfo[]) l_entries;
                     if (entries != null && entries.Length > 0) {
                         return false;
                     }
@@ -952,7 +944,7 @@ namespace System.Web.Caching {
         }
     }
 
-    public sealed class AggregateCacheDependency : CacheDependency, ICacheDependencyChanged {
+    public sealed class AggregateCacheDependency : CacheDependency {
         ArrayList   _dependencies;
         bool        _disposed;
 
@@ -979,10 +971,9 @@ namespace System.Web.Caching {
                     throw new ArgumentNullException("dependencies");
                 }
 
-                if (!d.Use()) {
+                if (!d.TakeOwnership()) {
                     throw new InvalidOperationException(SR.GetString(SR.Cache_dependency_used_more_that_once));
-                }
-            }
+                }            }
 
             // add dependencies, and check if any have changed
             bool hasChanged = false;
@@ -995,7 +986,9 @@ namespace System.Web.Caching {
                     _dependencies.AddRange(dependencies);
 
                     foreach (CacheDependency d in dependencies) {
-                        d.SetCacheDependencyChanged(this);
+                        d.SetCacheDependencyChanged((Object sender, EventArgs args) => {
+                            DependencyChanged(sender, args);
+                        });
 
                         if (d.UtcLastModified > utcLastModified) {
                             utcLastModified = d.UtcLastModified;
@@ -1041,7 +1034,7 @@ namespace System.Web.Caching {
         // Forward call from the aggregate to the CacheEntry
 
         /// <internalonly/>
-        void ICacheDependencyChanged.DependencyChanged(Object sender, EventArgs e) {
+        void DependencyChanged(Object sender, EventArgs e) {
             NotifyDependencyChanged(sender, e);
         }
 
@@ -1122,7 +1115,7 @@ namespace System.Web.Caching {
 
             return true;
         }
- 
+
         /// <summary>
         /// This method will return only the file dependencies from this dependency
         /// </summary>

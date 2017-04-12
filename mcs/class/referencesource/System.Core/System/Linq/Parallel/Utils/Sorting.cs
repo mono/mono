@@ -7,7 +7,7 @@
 //
 // Sorting.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // Support for sorting.
 //

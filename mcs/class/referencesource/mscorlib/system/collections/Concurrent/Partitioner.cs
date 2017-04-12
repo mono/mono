@@ -7,7 +7,7 @@
 //
 // Partitioner.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // Represents a particular way of splitting a collection into multiple partitions.
 //

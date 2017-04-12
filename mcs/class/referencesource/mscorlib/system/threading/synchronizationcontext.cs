@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 /*============================================================
 **
 ** Class:  SynchronizationContext
@@ -81,7 +81,7 @@ namespace System.Threading
         static Type s_cachedPreparedType4;
         static Type s_cachedPreparedType5;
 
-        // protected so that only the derived [....] context class can enable these flags
+        // protected so that only the derived sync context class can enable these flags
         [System.Security.SecuritySafeCritical]  // auto-generated
         [SuppressMessage("Microsoft.Concurrency", "CA8001", Justification = "We never dereference s_cachedPreparedType*, so ordering is unimportant")]
         protected void SetWaitNotificationRequired()
@@ -95,7 +95,7 @@ namespace System.Threading
             // So we keep track of a few types we've already prepared in this AD.  It is uncommon to have more than
             // a few SynchronizationContext implementations, so we only cache the first five we encounter; this lets
             // our cache be much faster than a more general cache might be.  This is important, because this
-            // is a *very* hot code path for many WPF and [....] apps.
+            // is a *very* hot code path for many WPF and Microsoft apps.
             //
             Type type = this.GetType();
             if (s_cachedPreparedType1 != type &&

@@ -279,9 +279,12 @@ namespace System.Web {
                 {
                     cookie = _cookies[c];
                     if (cookie.Added) {
-                        // if a cookie was added, we generate a Set-Cookie header for it
-                        cookieHeader = cookie.GetSetCookieHeader(_context);
-                        headers.SetHeader(cookieHeader.Name, cookieHeader.Value, false);
+                        if (!cookie.IsInResponseHeader) {
+                            // if a cookie was added, we generate a Set-Cookie header for it
+                            cookieHeader = cookie.GetSetCookieHeader(_context);
+                            headers.SetHeader(cookieHeader.Name, cookieHeader.Value, false);
+                            cookie.IsInResponseHeader = true;
+                        }
                         cookie.Added = false;
                         cookie.Changed = false;
                     }
@@ -308,6 +311,7 @@ namespace System.Web {
                     cookie = _cookies[c];
                     cookieHeader = cookie.GetSetCookieHeader(_context);
                     headers.SetHeader(cookieHeader.Name, cookieHeader.Value, false);
+                    cookie.IsInResponseHeader = true;
                     cookie.Added = false;
                     cookie.Changed = false;
                 }
@@ -726,7 +730,7 @@ namespace System.Web {
                 return _wr.BeginFlush(callback, state);
             }
 
-            // perform a [....] flush since async is not supported
+            // perform a sync flush since async is not supported
             FlushAsyncResult ar = new FlushAsyncResult(callback, state);
             try {
                 Flush(false);
@@ -752,7 +756,7 @@ namespace System.Web {
                 return;
             }
             
-            // finish [....] flush since async is not supported
+            // finish sync flush since async is not supported
             if (asyncResult == null)
                 throw new ArgumentNullException("asyncResult");
             FlushAsyncResult ar = asyncResult as FlushAsyncResult;
@@ -1446,7 +1450,7 @@ namespace System.Web {
                     if (value != null) {
                         HttpCookie cookie = HttpRequest.CreateCookieFromString(value);
                         // do not write this cookie back to IIS
-                        cookie.FromHeader = true;
+                        cookie.IsInResponseHeader = true;
                         Cookies.Set(cookie);
                         cookie.Changed = false;
                         cookie.Added = false;

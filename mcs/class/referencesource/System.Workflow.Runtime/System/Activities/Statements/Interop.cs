@@ -1453,7 +1453,7 @@ namespace System.Activities.Statements
             }
         }
 
-        //This needs to be in [....] with the table in the spec
+        //This needs to be in sync with the table in the spec
         //We use this internally to keep a hashset of validation data
         enum InteropValidationEnum
         {

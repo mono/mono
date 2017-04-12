@@ -7,7 +7,7 @@
 //
 // TaskExtensions.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // Extensions to Task/Task<TResult> classes
 //

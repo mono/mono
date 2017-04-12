@@ -7,7 +7,7 @@
  *
  * Class:  IsolatedStorageFileStream
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
  *
  *
  * Purpose: Provides access to files using the same interface as FileStream

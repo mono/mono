@@ -7,7 +7,7 @@
 **
 ** Class:  SatelliteContractVersionAttribute
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Specifies which version of a satellite assembly 

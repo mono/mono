@@ -739,7 +739,7 @@ namespace System.ServiceModel.Channels
                 {
                     completeSelf = thisPtr.HandleCloseOutputSession(result, false);
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -771,7 +771,7 @@ namespace System.ServiceModel.Channels
                 {
                     completeSelf = thisPtr.HandleCloseInputSession(result, false);
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -937,7 +937,7 @@ namespace System.ServiceModel.Channels
                     {
                         completeSelf = thisPtr.WriteEndBytes();
                     }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                     catch (Exception e)
                     {
                         if (Fx.IsFatal(e))
@@ -965,7 +965,7 @@ namespace System.ServiceModel.Channels
                 {
                     thisPtr.HandleWriteEndBytesComplete();
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -1105,7 +1105,7 @@ namespace System.ServiceModel.Channels
                     {
                         completeSelf = thisPtr.WriteCore();
                     }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                     catch (Exception e)
                     {
                         if (Fx.IsFatal(e))
@@ -1133,7 +1133,7 @@ namespace System.ServiceModel.Channels
                 {
                     thisPtr.channel.FinishWritingMessage();
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -1290,7 +1290,7 @@ namespace System.ServiceModel.Channels
 
                     DiagnosticUtility.TraceHandledException(e, TraceEventType.Information);
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))

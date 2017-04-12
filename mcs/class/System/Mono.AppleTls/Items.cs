@@ -1,4 +1,4 @@
-#if SECURITY_DEP && MONO_FEATURE_APPLETLS
+﻿#if SECURITY_DEP && MONO_FEATURE_APPLETLS
 // 
 // Items.cs: Implements the KeyChain query access APIs
 //
@@ -54,7 +54,7 @@ namespace Mono.AppleTls {
 		internal SecKeyChain (IntPtr handle, bool owns = false)
 		{
 			if (handle == IntPtr.Zero)
-				throw new Exception ("Invalid handle");
+				throw new ArgumentException ("Invalid handle");
 
 			this.handle = handle;
 			if (!owns)
@@ -112,7 +112,7 @@ namespace Mono.AppleTls {
 			return null;
 		}
 
-		public static INativeObject [] QueryAsReference (SecRecord query, int max, out SecStatusCode result)
+		internal static INativeObject [] QueryAsReference (SecRecord query, int max, out SecStatusCode result)
 		{
 			if (query == null) {
 				result = SecStatusCode.Param;
@@ -126,7 +126,7 @@ namespace Mono.AppleTls {
 			}
 		}
 
-		public static INativeObject [] QueryAsReference (CFDictionary query, out SecStatusCode result)
+		static INativeObject [] QueryAsReference (CFDictionary query, out SecStatusCode result)
 		{
 			if (query == null) {
 				result = SecStatusCode.Param;
@@ -135,17 +135,16 @@ namespace Mono.AppleTls {
 
 			IntPtr ptr;
 			result = SecItem.SecItemCopyMatching (query.Handle, out ptr);
-			if ((result == SecStatusCode.Success) && (ptr != IntPtr.Zero)) {
+			if (result == SecStatusCode.Success && ptr != IntPtr.Zero) {
 				var array = CFArray.ArrayFromHandle<INativeObject> (ptr, p => {
 					IntPtr cfType = CFType.GetTypeID (p);
 					if (cfType == SecCertificate.GetTypeID ())
 						return new SecCertificate (p, true);
-					else if (cfType == SecKey.GetTypeID ())
+					if (cfType == SecKey.GetTypeID ())
 						return new SecKey (p, true);
-					else if (cfType == SecIdentity.GetTypeID ())
+					if (cfType == SecIdentity.GetTypeID ())
 						return new SecIdentity (p, true);
-					else
-						throw new Exception (String.Format ("Unexpected type: 0x{0:x}", cfType));
+					throw new Exception (String.Format ("Unexpected type: 0x{0:x}", cfType));
 				});
 				return array;
 			}
@@ -256,11 +255,6 @@ namespace Mono.AppleTls {
 			get {
 				return _queryDict;
 			}
-#if FIXME
-			set {
-				_queryDict = value != null ? value.Copy () : null;
-			}
-#endif
 		}
 
 		internal void SetValue (IntPtr key, IntPtr value)

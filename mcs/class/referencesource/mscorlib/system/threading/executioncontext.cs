@@ -6,7 +6,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 /*============================================================
 **
 ** Class:  ExecutionContext
@@ -450,7 +450,7 @@ namespace System.Threading
         
         public override int GetHashCode()
         {
-            // review - [....]
+            // review - Microsoft
             return _thread == null ? ToString().GetHashCode() : _thread.GetHashCode();
         }
         
@@ -1237,7 +1237,7 @@ namespace System.Threading
 
             if (!ecCurrent.IsNull)
             {
-                // capture the [....] context
+                // capture the sync context
                 if (0 == (options & CaptureOptions.IgnoreSyncCtx))
                     syncCtxNew = (ecCurrent.SynchronizationContext == null) ? null : ecCurrent.SynchronizationContext.CreateCopy();
 

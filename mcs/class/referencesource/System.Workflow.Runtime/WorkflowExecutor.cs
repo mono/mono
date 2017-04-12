@@ -961,7 +961,7 @@ namespace System.Workflow.Runtime
                 if (WorkflowExecutor.IsIrrecoverableException(e))
                 {
                     throw;
-                } //@@undone: for [....]:- we should not be running exception handler, when we are unlocking.
+                } //@@undone: for Microsoft:- we should not be running exception handler, when we are unlocking.
                 else if (this.WorkflowStatus != WorkflowStatus.Suspended && this.IsInstanceValid)
                 {
                     // the persistence attempt threw an exception
@@ -1548,7 +1548,7 @@ namespace System.Workflow.Runtime
             }
         }
 
-        // shutsdown the schedule instance [....]
+        // shutsdown the schedule instance sync
         internal void Unload()
         {
             WorkflowTrace.Runtime.TraceEvent(TraceEventType.Information, 0, "Workflow Runtime: WorkflowExecutor: Got an unload request for instance {0}", this.InstanceIdString);
@@ -1612,7 +1612,7 @@ namespace System.Workflow.Runtime
 
         #region Terminate
 
-        // terminates the schedule instance [....]
+        // terminates the schedule instance sync
         // must be called only from outside the instance... the thread running the instance must
         // never call this method... it should call TerminateOnIdle instead.
         internal void Terminate(string error)
@@ -1748,7 +1748,7 @@ namespace System.Workflow.Runtime
 
         #region Abort
 
-        // aborts the schedule instance [....]
+        // aborts the schedule instance sync
         // must be called only from outside the instance... the thread running the instance must
         // never call this method... it should call AbortOnIdle instead.
         internal void Abort()
@@ -1860,7 +1860,7 @@ namespace System.Workflow.Runtime
 
         #region Suspend
 
-        // suspends the schedule instance [....]
+        // suspends the schedule instance sync
         // must be called only from outside the instance... the thread running the instance must
         // never call this method... it should call SuspendOnIdle instead.
         internal bool Suspend(string error)
@@ -1966,7 +1966,7 @@ namespace System.Workflow.Runtime
 
         #region Resume
 
-        // resumes the schedule instance [....]
+        // resumes the schedule instance sync
         // must be called only from outside the instance... the thread running the instance must
         // never call this method... it should call ResumeOnIdle instead.
         internal void Resume()
@@ -1996,7 +1996,7 @@ namespace System.Workflow.Runtime
                             //@@Undone-- bmalhi there is one test in bat
                             //which fails here. This check is right thing but im 
                             //commenting it out for bat.
-                            // [....]:  this fails because when we load an instance into memory it grabs
+                            // Microsoft:  this fails because when we load an instance into memory it grabs
                             // the scheduler lock and starts running.  By the time the user Resume request
                             // gets the scheduler lock the instance is often done (the AbortBat test case scenario)
                             // Balinder is attempting a fix to separate rehydration from resuming execution.

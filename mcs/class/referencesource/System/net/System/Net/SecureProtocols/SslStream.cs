@@ -120,24 +120,19 @@ using System.Net.Configuration;
             return _userCertificateSelectionCallback(this, targetHost, localCertificates, remoteCertificate, acceptableIssuers);
         }
 
-        private SslProtocols DefaultProtocols()
-        {
-            SslProtocols protocols = SslProtocols.Tls12 | SslProtocols.Tls11 | SslProtocols.Tls;
-            if (ServicePointManager.DisableStrongCrypto)
-            {
-                protocols = SslProtocols.Tls | SslProtocols.Ssl3;
-            }
-
-            return protocols;
-        }
-
         //
         // Client side auth
         //
         public virtual void AuthenticateAsClient(string targetHost)
         {
-            AuthenticateAsClient(targetHost, new X509CertificateCollection(), DefaultProtocols(), false);
+            AuthenticateAsClient(targetHost, new X509CertificateCollection(), ServicePointManager.DefaultSslProtocols, false);
         }
+
+        public virtual void AuthenticateAsClient(string targetHost, X509CertificateCollection clientCertificates, bool checkCertificateRevocation)
+        {
+            AuthenticateAsClient(targetHost, clientCertificates, ServicePointManager.DefaultSslProtocols, false);
+        }
+
         //
         public virtual void AuthenticateAsClient(string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
         {
@@ -150,9 +145,18 @@ using System.Net.Configuration;
         [HostProtection(ExternalThreading=true)]
         public virtual IAsyncResult BeginAuthenticateAsClient(string targetHost, AsyncCallback asyncCallback, object asyncState)
         {
-            return BeginAuthenticateAsClient(targetHost, new X509CertificateCollection(), DefaultProtocols(), false,
+            return BeginAuthenticateAsClient(targetHost, new X509CertificateCollection(), ServicePointManager.DefaultSslProtocols, false,
                                            asyncCallback, asyncState);
         }
+
+        [HostProtection(ExternalThreading = true)]
+        public virtual IAsyncResult BeginAuthenticateAsClient(string targetHost, X509CertificateCollection clientCertificates,
+                                                              bool checkCertificateRevocation, AsyncCallback asyncCallback, 
+                                                              object asyncState)
+        {
+            return BeginAuthenticateAsClient(targetHost, clientCertificates, ServicePointManager.DefaultSslProtocols, checkCertificateRevocation, asyncCallback, asyncState);
+        }
+        
         //
 
         [HostProtection(ExternalThreading=true)]
@@ -168,7 +172,6 @@ using System.Net.Configuration;
         }
         //
 
-
         public virtual void EndAuthenticateAsClient(IAsyncResult asyncResult)
         {
             _SslState.EndProcessAuthentication(asyncResult);
@@ -181,8 +184,15 @@ using System.Net.Configuration;
         //
         public virtual void AuthenticateAsServer(X509Certificate serverCertificate)
         {
-            AuthenticateAsServer(serverCertificate, false, DefaultProtocols(), false);
+            AuthenticateAsServer(serverCertificate, false, ServicePointManager.DefaultSslProtocols, false);
         }
+
+        public virtual void AuthenticateAsServer(X509Certificate serverCertificate, bool clientCertificateRequired,
+                                                bool checkCertificateRevocation)
+        {
+            AuthenticateAsServer(serverCertificate, clientCertificateRequired, ServicePointManager.DefaultSslProtocols, checkCertificateRevocation);
+        }
+
         //
         public virtual void AuthenticateAsServer(X509Certificate serverCertificate, bool clientCertificateRequired,
                                                SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
@@ -196,10 +206,19 @@ using System.Net.Configuration;
 
         {
 
-            return BeginAuthenticateAsServer(serverCertificate, false, DefaultProtocols(), false,
+            return BeginAuthenticateAsServer(serverCertificate, false, ServicePointManager.DefaultSslProtocols, false,
                                                           asyncCallback,
                                                             asyncState);
         }
+        
+        [HostProtection(ExternalThreading = true)]
+        public virtual IAsyncResult BeginAuthenticateAsServer(X509Certificate serverCertificate, bool clientCertificateRequired,
+                                                            bool checkCertificateRevocation, AsyncCallback asyncCallback,
+                                                            object asyncState)
+        {
+            return BeginAuthenticateAsServer(serverCertificate, clientCertificateRequired, ServicePointManager.DefaultSslProtocols, checkCertificateRevocation, asyncCallback, asyncState);
+        }
+
         //
         [HostProtection(ExternalThreading=true)]
         public virtual IAsyncResult BeginAuthenticateAsServer(X509Certificate serverCertificate, bool clientCertificateRequired,
@@ -217,6 +236,16 @@ using System.Net.Configuration;
         public virtual void EndAuthenticateAsServer(IAsyncResult asyncResult)
         {
             _SslState.EndProcessAuthentication(asyncResult);
+        }
+
+        internal virtual IAsyncResult BeginShutdown(AsyncCallback asyncCallback, object asyncState)
+        {
+            return _SslState.BeginShutdown(asyncCallback, asyncState);
+        }
+
+        internal virtual void EndShutdown(IAsyncResult asyncResult)
+        {
+            _SslState.EndShutdown(asyncResult);
         }
 
         public TransportContext TransportContext
@@ -244,6 +273,12 @@ using System.Net.Configuration;
         }
 
         [HostProtection(ExternalThreading = true)]
+        public virtual Task AuthenticateAsClientAsync(string targetHost, X509CertificateCollection clientCertificates, bool checkCertificateRevocation)
+        {
+            return AuthenticateAsClientAsync(targetHost, clientCertificates, ServicePointManager.DefaultSslProtocols, checkCertificateRevocation);
+        }
+
+        [HostProtection(ExternalThreading = true)]
         public virtual Task AuthenticateAsClientAsync(string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
         {
             return Task.Factory.FromAsync((callback, state) => BeginAuthenticateAsClient(targetHost, clientCertificates, enabledSslProtocols, checkCertificateRevocation, callback, state), EndAuthenticateAsClient, null);
@@ -256,11 +291,25 @@ using System.Net.Configuration;
         }
 
         [HostProtection(ExternalThreading = true)]
+        public virtual Task AuthenticateAsServerAsync(X509Certificate serverCertificate, bool clientCertificateRequired, bool checkCertificateRevocation)
+        {
+            return AuthenticateAsServerAsync(serverCertificate, clientCertificateRequired, ServicePointManager.DefaultSslProtocols, checkCertificateRevocation);
+        }
+
+        [HostProtection(ExternalThreading = true)]
         public virtual Task AuthenticateAsServerAsync(X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
         {
             return Task.Factory.FromAsync((callback, state) => BeginAuthenticateAsServer(serverCertificate, clientCertificateRequired, enabledSslProtocols, checkCertificateRevocation, callback, state), EndAuthenticateAsServer, null);
         }
 
+        [HostProtection(ExternalThreading = true)]
+        public virtual Task ShutdownAsync()
+        {
+            return Task.Factory.FromAsync(
+                (callback, state) => BeginShutdown(callback, state),
+                EndShutdown,
+                null);
+        }
 
         //
         //
@@ -393,7 +442,7 @@ using System.Net.Configuration;
         //
         public override bool CanWrite {
             get {
-                return _SslState.IsAuthenticated && InnerStream.CanWrite;
+                return _SslState.IsAuthenticated && InnerStream.CanWrite && !_SslState.IsShutdown;
             }
         }
         //

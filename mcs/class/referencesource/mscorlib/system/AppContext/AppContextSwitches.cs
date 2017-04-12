@@ -83,6 +83,16 @@ namespace System
             }
         }
 
+        private static int _doNotAddrOfCspParentWindowHandle;
+        public static bool DoNotAddrOfCspParentWindowHandle
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return GetCachedSwitchValue(AppContextDefaultValues.SwitchDoNotAddrOfCspParentWindowHandle, ref _doNotAddrOfCspParentWindowHandle);
+            }
+        }
+
         //
         // Implementation details
         //

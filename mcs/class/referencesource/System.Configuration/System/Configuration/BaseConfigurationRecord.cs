@@ -4124,9 +4124,12 @@ namespace System.Configuration {
         //
         const string ProtectedConfigurationSectionTypeName = "System.Configuration.ProtectedConfigurationSection, " + AssemblyRef.SystemConfiguration;
         internal const string RESERVED_SECTION_PROTECTED_CONFIGURATION       = "configProtectedData";
+        internal const string Microsoft_CONFIGURATION_SECTION = ConfigurationStringConstants.WinformsApplicationConfigurationSectionName;
+        const string SystemConfigurationSectionTypeName = "System.Configuration.AppSettingsSection, " + AssemblyRef.SystemConfiguration;
 
         internal static bool IsImplicitSection(string configKey) {
-            if (configKey == RESERVED_SECTION_PROTECTED_CONFIGURATION) {
+            if (string.Equals(configKey, RESERVED_SECTION_PROTECTED_CONFIGURATION, StringComparison.Ordinal) || 
+                string.Equals(configKey, Microsoft_CONFIGURATION_SECTION, StringComparison.Ordinal)) {
                 return true;
             }
             else {
@@ -4161,6 +4164,34 @@ namespace System.Configuration {
                                 string.Empty,                               // group
                                 RESERVED_SECTION_PROTECTED_CONFIGURATION,   // name
                                 ProtectedConfigurationSectionTypeName,      // factoryTypeName
+                                true,                                       // allowLocation
+                                ConfigurationAllowDefinition.Everywhere,    // allowDefinition
+                                ConfigurationAllowExeDefinition.MachineToApplication,   // allowExeDefinition
+                                OverrideModeSetting.SectionDefault,         // overrideModeDefault
+                                true,                                       // restartOnExternalChanges
+                                true,                                       // requirePermission
+                                true,                                       // isFromTrustedConfig
+                                true,                                       // isUndeclared
+                                null,                                       // filename
+                                -1);                                        // lineNumber
+                }
+
+                factoryRecord = (FactoryRecord)factoryList[Microsoft_CONFIGURATION_SECTION];
+
+                // If the user has mistakenly declared an implicit section, we should leave the factoryRecord
+                // alone because it contains the error and the error will be thrown later.
+                if (factoryRecord != null)
+                {
+                    Debug.Assert(factoryRecord.HasErrors, "If the user has mistakenly declared an implicit section, we should have recorded an error.");
+                }
+                else
+                {
+                    factoryList[Microsoft_CONFIGURATION_SECTION] =
+                        new FactoryRecord(
+                                Microsoft_CONFIGURATION_SECTION,             // configKey
+                                string.Empty,                               // group
+                                Microsoft_CONFIGURATION_SECTION,             // name
+                                SystemConfigurationSectionTypeName,         // factoryTypeName
                                 true,                                       // allowLocation
                                 ConfigurationAllowDefinition.Everywhere,    // allowDefinition
                                 ConfigurationAllowExeDefinition.MachineToApplication,   // allowExeDefinition

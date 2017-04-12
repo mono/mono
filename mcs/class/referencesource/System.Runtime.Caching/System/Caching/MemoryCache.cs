@@ -34,6 +34,7 @@ namespace System.Runtime.Caching {
         private string _name;
         private PerfCounters _perfCounters;
         private bool _configLess;
+        private bool _useMemoryCacheManager = true;
         EventHandler _onAppDomainUnload;
         UnhandledExceptionEventHandler _onUnhandledException;
 
@@ -258,6 +259,10 @@ namespace System.Runtime.Caching {
             get { return _name; }
         }
 
+        internal bool UseMemoryCacheManager {
+            get { return _useMemoryCacheManager; }
+        }
+
         // Percentage of physical memory that can be used before
         // the cache begins to forcibly remove items.
         public long PhysicalMemoryLimit {
@@ -280,7 +285,7 @@ namespace System.Runtime.Caching {
             Init(null);
         }
 
-        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification="This is assembly is a special case approved by the NetFx API review board")]
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification = "This is assembly is a special case approved by the NetFx API review board")]
         public MemoryCache(string name, NameValueCollection config = null) {
             if (name == null) {
                 throw new ArgumentNullException("name");
@@ -294,12 +299,12 @@ namespace System.Runtime.Caching {
             _name = name;
             Init(config);
         }
-
-        // Configless is used when redirecting ASP.NET cache into the MemoryCache.  This avoids infinite recursion
+            
+        // ignoreConfigSection is used when redirecting ASP.NET cache into the MemoryCache.  This avoids infinite recursion
         // due to the fact that the (ASP.NET) config system uses the cache, and the cache uses the
         // config system.  This method could be made public, perhaps with CAS to prevent partial trust callers.
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Grandfathered suppression from original caching code checkin")]
-        internal MemoryCache(string name, NameValueCollection config, bool configLess) {
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification = "This is assembly is a special case approved by the NetFx API review board")]
+        public MemoryCache(string name, NameValueCollection config, bool ignoreConfigSection) {
             if (name == null) {
                 throw new ArgumentNullException("name");
             }
@@ -310,14 +315,15 @@ namespace System.Runtime.Caching {
                 throw new ArgumentException(R.Default_is_reserved, "name");
             }
             _name = name;
-            _configLess = configLess;
+            _configLess = ignoreConfigSection;
             Init(config);
         }
 
+
         private void Init(NameValueCollection config) {
             _storeCount = Environment.ProcessorCount;
-#if MONO
             if (config != null) {
+#if MONO
                 if (config ["__MonoEmulateOneCPU"] == "true")
                     _storeCount = 1;
                 if (config ["__MonoTimerPeriod"] != null) {
@@ -328,9 +334,11 @@ namespace System.Runtime.Caching {
                         //
                     }
                 }
+#endif                
+                _useMemoryCacheManager = ConfigUtil.GetBooleanValue(config, ConfigUtil.UseMemoryCacheManager, true);
             }
-#endif
             _storeRefs = new GCHandleRef<MemoryCacheStore>[_storeCount];
+
             InitDisposableMembers(config);
         }
 
@@ -668,6 +676,11 @@ namespace System.Runtime.Caching {
 
         [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification="This is assembly is a special case approved by the NetFx API review board")]
         public override object Remove(string key, string regionName = null) {
+            return Remove(key, CacheEntryRemovedReason.Removed, regionName);
+        }
+
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification = "This is assembly is a special case approved by the NetFx API review board")]
+        public object Remove(string key, CacheEntryRemovedReason reason, string regionName = null) {
             if (regionName != null) {
                 throw new NotSupportedException(R.RegionName_not_supported);
             }
@@ -677,7 +690,7 @@ namespace System.Runtime.Caching {
             if (IsDisposed) {
                 return null;
             }
-            MemoryCacheEntry entry = RemoveEntry(key, null, CacheEntryRemovedReason.Removed);
+            MemoryCacheEntry entry = RemoveEntry(key, null, reason);
             return (entry != null) ? entry.Value : null;
         }
 
@@ -693,6 +706,14 @@ namespace System.Runtime.Caching {
                 }
             }
             return count;
+        }
+
+        public long GetLastSize(string regionName = null) {
+            if (regionName != null) {
+                throw new NotSupportedException(R.RegionName_not_supported);
+            }
+
+            return _stats.GetLastSize();
         }
 
         [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification="This is assembly is a special case approved by the NetFx API review board")]

@@ -370,7 +370,7 @@ namespace System.IdentityModel.Tokens
 
                 if (this.samlSecurityTokenRequirement.MapToWindows)
                 {
-                    // TFS: 153865, [....] WindowsIdentity does not set Authtype. I don't think that authtype should be set here anyway.
+                    // TFS: 153865, Microsoft WindowsIdentity does not set Authtype. I don't think that authtype should be set here anyway.
                     // The authtype will be S4U (kerberos) it doesn't really matter that the upn arrived in a SAML token.
                     claimsIdentity = this.CreateWindowsIdentity(this.FindUpn(claimsIdentity));
 

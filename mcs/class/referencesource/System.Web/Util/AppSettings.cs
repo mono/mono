@@ -130,6 +130,9 @@ namespace System.Web.Util {
                             if (settings == null || !Boolean.TryParse(settings["aspnet:EnableAsyncModelBinding"], out _enableAsyncModelBinding))
                                 _enableAsyncModelBinding = BinaryCompatibility.Current.TargetsAtLeastFramework46;
 
+                            if (settings == null || !int.TryParse(settings["aspnet:RequestQueueLimitPerSession"], out _requestQueueLimitPerSession) || _requestQueueLimitPerSession < 0)
+                                _requestQueueLimitPerSession = BinaryCompatibility.Current.TargetsAtLeastFramework463 ? DefaultRequestQueueLimitPerSession : UnlimitedRequestsPerSession;
+
                             _settingsInitialized = true;
                         }
                     }
@@ -492,5 +495,16 @@ namespace System.Web.Util {
                return _enableAsyncModelBinding;
            }
        }
+
+        internal const int UnlimitedRequestsPerSession = Int32.MaxValue;
+        internal const int DefaultRequestQueueLimitPerSession = 50;
+        // Limit of queued requests per session
+        private static int _requestQueueLimitPerSession;
+        internal static int RequestQueueLimitPerSession {
+            get {
+                EnsureSettingsLoaded();
+                return _requestQueueLimitPerSession;
+            }
+        }
     }
 }

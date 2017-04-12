@@ -4,7 +4,7 @@
 // 
 // ==--==
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 /*=============================================================================
 **
 ** Class: WaitHandle    (this name is NOT definitive)
@@ -113,7 +113,7 @@ namespace System.Threading
                     // ideally do these things:
                     // *) Expose a settable SafeHandle property on WaitHandle.
                     // *) Expose a settable OwnsHandle property on SafeHandle.
-                    // We're looking into this.   -- [....]
+                    // We're looking into this.   -- Microsoft
                     if (safeWaitHandle != null)
                     {
                         safeWaitHandle.SetHandleAsInvalid();

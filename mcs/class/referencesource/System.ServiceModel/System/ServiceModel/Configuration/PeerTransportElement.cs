@@ -68,7 +68,7 @@ namespace System.ServiceModel.Configuration
             binding.Port = this.Port;
             binding.MaxBufferPoolSize = this.MaxBufferPoolSize;
             binding.MaxReceivedMessageSize = this.MaxReceivedMessageSize;
-#pragma warning suppress 56506 //[....]; base.ApplyConfiguration() checks for 'binding' being null
+#pragma warning suppress 56506 //Microsoft; base.ApplyConfiguration() checks for 'binding' being null
             this.Security.ApplyConfiguration(binding.Security);
         }
 
@@ -77,7 +77,7 @@ namespace System.ServiceModel.Configuration
             base.CopyFrom(from);
 
             PeerTransportElement source = (PeerTransportElement)from;
-#pragma warning suppress 56506 // [....], base.CopyFrom() validates the argument
+#pragma warning suppress 56506 // Microsoft, base.CopyFrom() validates the argument
             this.ListenIPAddress = source.ListenIPAddress;
             this.Port = source.Port;
             this.MaxBufferPoolSize = source.MaxBufferPoolSize;

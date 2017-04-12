@@ -8,7 +8,7 @@
 //
 // SlimManualResetEvent.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // An manual-reset event that mixes a little spinning with a true Win32 event.
 //
@@ -281,7 +281,7 @@ namespace System.Threading
             // guarantee only one event is actually stored in this field.
             if (Interlocked.CompareExchange(ref m_eventObj, newEventObj, null) != null)
             {
-                // We ----d with someone else and lost. Destroy the garbage event.
+                // We raced with someone else and lost. Destroy the garbage event.
                 newEventObj.Close();
 
                 return false;

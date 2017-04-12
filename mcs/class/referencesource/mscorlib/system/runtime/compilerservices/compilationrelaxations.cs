@@ -11,7 +11,7 @@ namespace System.Runtime.CompilerServices
 
     using System;
 
-    /// IMPORTANT: Keep this in [....] with corhdr.h
+    /// IMPORTANT: Keep this in sync with corhdr.h
 [Serializable]
 [Flags]
 [System.Runtime.InteropServices.ComVisible(true)]

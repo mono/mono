@@ -271,7 +271,7 @@ namespace System.Runtime.Remoting.Contexts {
         /* 
         * Call back function -- executed for each work item that 
         * was enqueued. This is invoked by a thread-pool thread for
-        * async work items and the caller thread for [....] items.
+        * async work items and the caller thread for sync items.
         */
         private void DispatcherCallBack(Object stateIgnored, bool ignored)
         {
@@ -356,7 +356,7 @@ namespace System.Runtime.Remoting.Contexts {
             // See if we found a non-signaled work item at the head. 
             if (bNotify)
             {
-                // In both [....] and async cases we just hand off the _locked state to
+                // In both sync and async cases we just hand off the _locked state to
                 // the next thread which will execute.
                 if (nextWork.IsAsync())
                 {
@@ -366,7 +366,7 @@ namespace System.Runtime.Remoting.Contexts {
                 }
                 else
                 {
-                    // [....]-WorkItem: notify the waiting [....]-thread.
+                    // Sync-WorkItem: notify the waiting sync-thread.
                     lock(nextWork)
                     {
                         Monitor.Pulse(nextWork);
@@ -419,7 +419,7 @@ namespace System.Runtime.Remoting.Contexts {
                 }
                 else
                 {        
-                    // [....] work is queued only if there are other items
+                    // Sync work is queued only if there are other items
                     // already in the queue.
                     lock(work)
                     {
@@ -434,7 +434,7 @@ namespace System.Runtime.Remoting.Contexts {
                             }
                             else
                             {
-                                //DBGConsole.WriteLine(Thread.CurrentThread.GetHashCode()+"] ~~~ ENQUEUE [....]!" + (work.IsDummy()?" DUMMY ":" REAL ") + work._thread);
+                                //DBGConsole.WriteLine(Thread.CurrentThread.GetHashCode()+"] ~~~ ENQUEUE Sync!" + (work.IsDummy()?" DUMMY ":" REAL ") + work._thread);
                                 bQueued = true;
                                 work.SetWaiting();
                                 _workItemQueue.Enqueue(work);
@@ -514,7 +514,7 @@ namespace System.Runtime.Remoting.Contexts {
             // This returns TRUE only if it is a non-reEntrant context
             // AND 
             // (the LCID of the reqMsg matches that of 
-            // the top level [....] call lcid associated with the context.
+            // the top level sync call lcid associated with the context.
             //  OR
             // it matches one of the async call out lcids)
             
@@ -668,7 +668,7 @@ namespace System.Runtime.Remoting.Contexts {
     
     //*************************************** WORK ITEM ********************************//
     /*
-    *   A work item holds the info about a call to [....] or
+    *   A work item holds the info about a call to Sync or
     *   Async-ProcessMessage.
     */
     internal class WorkItem
@@ -681,9 +681,9 @@ namespace System.Runtime.Remoting.Contexts {
         internal int _flags;
         internal IMessage _reqMsg;
         internal IMessageSink _nextSink;
-        // ReplySink will be null for an [....] work item.
+        // ReplySink will be null for an sync work item.
         internal IMessageSink _replySink;
-        // ReplyMsg is set once the [....] call is completed
+        // ReplyMsg is set once the sync call is completed
         internal IMessage _replyMsg;
     
         // Context in which the work should execute.
@@ -778,14 +778,14 @@ namespace System.Runtime.Remoting.Contexts {
         }
     
         /*
-        *   Execute is called to complete a work item ([....] or async).
+        *   Execute is called to complete a work item (sync or async).
         *   Execute assumes that the context is set correctly and the lock
         *   is taken (i.e. it makes no policy decisions)
         * 
         *   It is called from the following 3 points:
         *       1. thread pool thread executing the callback for an async item
-        *       2. calling thread executing the callback for a queued [....] item
-        *       3. calling thread directly calling Execute for a non-queued [....] item
+        *       2. calling thread executing the callback for a queued sync item
+        *       3. calling thread directly calling Execute for a non-queued sync item
         */
         [System.Security.SecurityCritical]  // auto-generated
         internal virtual void Execute()
@@ -842,20 +842,20 @@ namespace System.Runtime.Remoting.Contexts {
                 // Notify the property that we are leaving 
                 _property.HandleThreadExit();
 
-                //DBGConsole.WriteLine(Thread.CurrentThread.GetHashCode()+"] R: [....] call-out");
+                //DBGConsole.WriteLine(Thread.CurrentThread.GetHashCode()+"] R: Sync call-out");
                 replyMsg = _nextSink.SyncProcessMessage(reqMsg);
     
                 // We will just block till we are given permission to re-enter
                 // Notify the property that we wish to re-enter the domain.
                 // This will block the thread here if someone is in the domain.
-                //DBGConsole.WriteLine(Thread.CurrentThread.GetHashCode()+"] R: [....] call-out returned, waiting for lock");                
+                //DBGConsole.WriteLine(Thread.CurrentThread.GetHashCode()+"] R: Sync call-out returned, waiting for lock");                
                 _property.HandleThreadReEntry(); 
                 Contract.Assert(_property.Locked == true,"_property.Locked == true");
             }
             else
             {
                 // In the non-reentrant case we are just a pass-through sink
-                //DBGConsole.WriteLine(Thread.CurrentThread.GetHashCode()+"] NR: [....] call-out (pass through)");                
+                //DBGConsole.WriteLine(Thread.CurrentThread.GetHashCode()+"] NR: Sync call-out (pass through)");                
                 // We should mark the domain with our LCID so that call-backs are allowed to enter..
                 LogicalCallContext cctx = 
                     (LogicalCallContext) reqMsg.Properties[Message.CallContextKey];
@@ -868,7 +868,7 @@ namespace System.Runtime.Remoting.Contexts {
                     // start of each Invoke. As an optimization we now do it 
                     // here in a delayed fashion... since currently only 
                     // Synchronization needs it
-                    // Note that for [....]-calls we would just inherit an LCID
+                    // Note that for Sync-calls we would just inherit an LCID
                     // if the call has one, if not we create one. However for
                     // async calls we always generate a new LCID.
                     lcid = Identity.GetNewLogicalCallID();
@@ -896,7 +896,7 @@ namespace System.Runtime.Remoting.Contexts {
                 {
                     _property.SyncCallOutLCID = null;
 
-                    // The [....] callOut is done, we do not need the lcid
+                    // The sync callOut is done, we do not need the lcid
                     // that was associated with the call any more.
                     // (clear it only if we added one to the reqMsg)
                     if (bClear)
@@ -914,7 +914,7 @@ namespace System.Runtime.Remoting.Contexts {
                     }
                 }
                 
-                //DBGConsole.WriteLine(Thread.CurrentThread.GetHashCode()+"] NR: [....] call-out returned");
+                //DBGConsole.WriteLine(Thread.CurrentThread.GetHashCode()+"] NR: Sync call-out returned");
             }
             return replyMsg;
         }
@@ -952,7 +952,7 @@ namespace System.Runtime.Remoting.Contexts {
 
                 Contract.Assert(
                     _property.SyncCallOutLCID == null,
-                    "Cannot handle async call outs when already in a top-level [....] call out");
+                    "Cannot handle async call outs when already in a top-level sync call out");
                 //DBGConsole.WriteLine(Thread.CurrentThread.GetHashCode()+"] NR: Async CallOut: adding to lcidList: " + lcid);                                            
                 _property.AsyncCallOutLCIDList.Add(lcid);
             }
@@ -1012,7 +1012,7 @@ namespace System.Runtime.Remoting.Contexts {
             public virtual IMessage SyncProcessMessage(IMessage reqMsg)
             {
                 
-                // We handle this as a regular new [....] workItem
+                // We handle this as a regular new Sync workItem
                 // 1. Create a work item 
                 WorkItem work = new WorkItem(reqMsg,
                                             _nextSink,

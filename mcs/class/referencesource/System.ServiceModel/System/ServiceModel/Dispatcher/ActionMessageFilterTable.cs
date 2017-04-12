@@ -111,7 +111,7 @@ namespace System.ServiceModel.Dispatcher
 
             this.filters.Add(filter, data);
             List<MessageFilter> filters;
-#pragma warning suppress 56506 // [....], Actions will never be null
+#pragma warning suppress 56506 // Microsoft, Actions will never be null
             if (filter.Actions.Count == 0)
             {
                 this.always.Add(filter);
@@ -426,7 +426,7 @@ namespace System.ServiceModel.Dispatcher
 
             if (this.filters.Remove(filter))
             {
-#pragma warning suppress 56506 // [....], ActionMessageFilter.Actions can never be null
+#pragma warning suppress 56506 // Microsoft, ActionMessageFilter.Actions can never be null
                 if (filter.Actions.Count == 0)
                 {
                     this.always.Remove(filter);
@@ -436,9 +436,9 @@ namespace System.ServiceModel.Dispatcher
                     List<MessageFilter> filters;
                     for (int i = 0; i < filter.Actions.Count; ++i)
                     {
-#pragma warning suppress 56506 // [....], PreSharp generates a false error here
+#pragma warning suppress 56506 // Microsoft, PreSharp generates a false error here
                         filters = this.actions[filter.Actions[i]];
-#pragma warning suppress 56506 // [....], filters can never be null
+#pragma warning suppress 56506 // Microsoft, filters can never be null
                         if (filters.Count == 1)
                         {
                             this.actions.Remove(filter.Actions[i]);

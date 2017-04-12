@@ -2,8 +2,8 @@
 // <copyright file="xmlsaver.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data {
@@ -153,7 +153,7 @@ namespace System.Data {
             if (propInst is PropertyCollection) {
                 return;
             }
-            // [....]: perf: Why not have this as a table?
+            // Microsoft: perf: Why not have this as a table?
             // there are several xdo properties that equal to some xml attributes, we should not explicitly ouput them.
             if (
                 0 == String.Compare(pd.Name, "Namespace"    , StringComparison.Ordinal) ||
@@ -1093,7 +1093,7 @@ namespace System.Data {
                             schNode.AppendChild(type);
                         }else {
     #if DEBUG
-    // [....]: TO DO: replace the constructor with IsEqual(XmlElement)
+    // Microsoft: TO DO: replace the constructor with IsEqual(XmlElement)
     //                        Debug.Assert(col.SimpleType.IsEqual(new SimpleType(elmSimpeType)), "simpleTypes with the same name have to be the same: "+name);
     #endif
                         }
@@ -1288,7 +1288,7 @@ namespace System.Data {
             minOccurs = (col.AllowDBNull) ? 0 : 1;
 
 
-            // [....] 2001 change
+            // Microsoft 2001 change
             if (col.ColumnMapping == MappingType.Attribute && minOccurs != 0)
                 root.SetAttribute(Keywords.USE, Keywords.REQUIRED);
 

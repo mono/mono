@@ -242,15 +242,18 @@ namespace System.IdentityModel
             }
 
             RSA signingKey = SigningKey;
-
-            RSACryptoServiceProvider rsaCryptoServiceProvider = signingKey as RSACryptoServiceProvider;
-
-            if (null == signingKey || null == rsaCryptoServiceProvider)
+            if (null == signingKey)
             {
                 throw DiagnosticUtility.ThrowHelperInvalidOperation(SR.GetString(SR.ID6042));
             }
 
-            if (rsaCryptoServiceProvider.PublicOnly)
+            RSACryptoServiceProvider rsaCryptoServiceProvider = signingKey as RSACryptoServiceProvider;
+            if (rsaCryptoServiceProvider == null && LocalAppContextSwitches.DisableCngCertificates)
+            {
+                throw DiagnosticUtility.ThrowHelperInvalidOperation(SR.GetString(SR.ID6042));
+            }
+
+            if (rsaCryptoServiceProvider != null && rsaCryptoServiceProvider.PublicOnly)
             {
                 throw DiagnosticUtility.ThrowHelperInvalidOperation(SR.GetString(SR.ID6046));
             }

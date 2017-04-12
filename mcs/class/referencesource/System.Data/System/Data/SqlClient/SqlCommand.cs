@@ -2,8 +2,8 @@
 // <copyright file="SqlCommand.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.SqlClient {
@@ -500,7 +500,7 @@ namespace System.Data.SqlClient {
                     }
                 }
 
-                _activeConnection = value; // UNDONE: Designers need this setter.  Should we block other scenarios?
+                _activeConnection = value; // 
 
                 Bid.Trace("<sc.SqlCommand.set_Connection|API> %d#, %d#\n", ObjectID, ((null != value) ? value.ObjectID : -1));
             }
@@ -1991,7 +1991,7 @@ namespace System.Data.SqlClient {
         }
 
         internal SqlDataReader ExecuteReader(CommandBehavior behavior, string method) {
-            SqlConnection.ExecutePermission.Demand(); // TODO: Need to move this to public methods...
+            SqlConnection.ExecutePermission.Demand(); // 
 
             // Reset _pendingCancel upon entry into any Execute - used to synchronize state
             // between entry into Execute* API and the thread obtaining the stateObject.
@@ -4032,7 +4032,7 @@ namespace System.Data.SqlClient {
                         catch (SqlException ex) {
                             // We only want to retry once, so don't retry if we are already in retry.
                             // If we didn't use the cache, we don't want to retry.
-                            // The async retried are handled separately, handle only [....] calls here.
+                            // The async retried are handled separately, handle only sync calls here.
                             if (inRetry || async || !usedCache) {
                                 throw;
                             }
@@ -4441,7 +4441,7 @@ namespace System.Data.SqlClient {
                 }
 
                 if (null != eventStream) {
-                    eventStream.Close( EventSink );     // UNDONE: should cancel instead!
+                    eventStream.Close( EventSink );     // 
                 }
 
                 if (requestExecutor != null) {

@@ -69,7 +69,7 @@ namespace System.Web.Caching {
         {
             Debug.Trace("SqlCacheDependency", 
                             "Depend on key=" + GetDependKey(databaseEntryName, tableName) + "; value=" +
-                            HttpRuntime.CacheInternal[GetDependKey(databaseEntryName, tableName)]);
+                            HttpRuntime.Cache.InternalCache.Get(GetDependKey(databaseEntryName, tableName)));
 
             // Permission checking is done in GetDependKey()
 
@@ -77,7 +77,7 @@ namespace System.Web.Caching {
             _sql7DepInfo._database = databaseEntryName;
             _sql7DepInfo._table = tableName;
 
-            object o = HttpRuntime.CacheInternal[GetDependKey(databaseEntryName, tableName)];
+            object o = HttpRuntime.Cache.InternalCache.Get(GetDependKey(databaseEntryName, tableName));
             if (o == null) {
                 // If the cache entry can't be found, this cache dependency will be set to CHANGED already.
                 _sql7ChangeId = -1;
@@ -756,7 +756,7 @@ namespace System.Web.Caching {
             SqlCommand          sqlCmd = null;
             int                 changeId;
             string              tableName;
-            CacheInternal       cacheInternal = HttpRuntime.CacheInternal;
+            CacheStoreProvider         cacheInternal = HttpRuntime.Cache.InternalCache;
             string              monitorKey;
             object              obj;
             bool                notifEnabled = false;
@@ -864,33 +864,28 @@ namespace System.Web.Caching {
                                 "Database=" + dbState._database+ "; tableName=" + tableName + "; changeId=" + changeId);
 
                         monitorKey = GetMoniterKey(dbState._database, tableName);
-                        obj = cacheInternal[monitorKey];
+                        obj = cacheInternal.Get(monitorKey);
 
                         if (obj == null) {
                             Debug.Assert(!dbState._tables.ContainsKey(tableName), 
-                                        "DatabaseNotifStae._tables and internal cache keys should be in-[....]");
+                                        "DatabaseNotifStae._tables and internal cache keys should be in-sync");
                             
                             Debug.Trace("SqlCacheDependencyManagerPolling", 
                                 "Add Database=" + dbState._database+ "; tableName=" + tableName + "; changeId=" + changeId);
                             
-                            cacheInternal.UtcAdd(monitorKey, changeId, null, 
-                                        Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration,
-                                        CacheItemPriority.NotRemovable, null);
-
+                            cacheInternal.Add(monitorKey, changeId, new CacheInsertOptions() { Priority = CacheItemPriority.NotRemovable });
                             dbState._tables.Add(tableName, null);
                         }
                         else if (changeId != (int)obj) {
                             Debug.Assert(dbState._tables.ContainsKey(tableName), 
-                                        "DatabaseNotifStae._tables and internal cache keys should be in-[....]");
+                                        "DatabaseNotifStae._tables and internal cache keys should be in-sync");
                             
                             Debug.Trace("SqlCacheDependencyManagerPolling", 
                                     "Change Database=" + dbState._database+ "; tableName=" + tableName + "; old=" + (int)obj + "; new=" + changeId);
                             
                             // ChangeId is different. It means some table changes have happened.
                             // Update local cache value
-                            cacheInternal.UtcInsert(monitorKey, changeId, null, 
-                                        Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration,
-                                        CacheItemPriority.NotRemovable, null);
+                            cacheInternal.Insert(monitorKey, changeId, new CacheInsertOptions() { Priority = CacheItemPriority.NotRemovable });
                         }
 
                         originalTables.Remove(tableName);
@@ -1001,8 +996,8 @@ namespace System.Web.Caching {
             // for this table has successfully completed
             Debug.Trace("SqlCacheDependencyManagerCheck", 
                                 "Check is called.  Database=" + database+ "; table=" + table);
-            
-            if (HttpRuntime.CacheInternal[GetMoniterKey(database, table)] != null) {
+
+            if (HttpRuntime.Cache.InternalCache.Get(GetMoniterKey(database, table)) != null) {
                 return;
             }
 

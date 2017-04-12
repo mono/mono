@@ -5,7 +5,7 @@
 // ==--==
 // SiteIdentityPermission.cs
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 namespace System.Security.Permissions

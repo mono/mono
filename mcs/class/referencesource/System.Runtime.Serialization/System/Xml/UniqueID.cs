@@ -352,7 +352,7 @@ namespace System.Xml
             if (object.ReferenceEquals(id1, null) || object.ReferenceEquals(id2, null))
                 return false;
 
-#pragma warning suppress 56506 // [....], checks for whether id1 and id2 are null done above.
+#pragma warning suppress 56506 // Microsoft, checks for whether id1 and id2 are null done above.
             if (id1.IsGuid && id2.IsGuid)
             {
                 return id1.idLow == id2.idLow && id1.idHigh == id2.idHigh;

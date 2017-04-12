@@ -290,8 +290,8 @@ namespace System.Web.SessionState
 					handler.ResetItemTimeout (context, container.SessionID);
 				}
 				else {
-					handler.ReleaseItemExclusive (context, container.SessionID, storeLockId);
 					handler.RemoveItem (context, container.SessionID, storeLockId, storeData);
+					handler.ReleaseItemExclusive (context, container.SessionID, storeLockId);
 					if (supportsExpiration)
 						// Make sure the expiration handler is not called after we will have raised
 						// the session end event.

@@ -1,4 +1,4 @@
-#if SECURITY_DEP && MONO_FEATURE_APPLETLS
+﻿#if SECURITY_DEP && MONO_FEATURE_APPLETLS
 // 
 // ImportExport.cs
 //
@@ -85,9 +85,7 @@ namespace Mono.AppleTls {
 				SecItemImportExportKeyParameters keyParams = new SecItemImportExportKeyParameters ();
 				keyParams.passphrase = pwstring.Handle;
 
-				var items = ItemImport (data, SecExternalFormat.PKCS12, SecExternalItemType.Aggregate, SecItemImportExportFlags.None, keyParams);
-				Console.Error.WriteLine ("ITEM IMPORT: {0}", items.Count);
-				return items;
+				return ItemImport (data, SecExternalFormat.PKCS12, SecExternalItemType.Aggregate, SecItemImportExportFlags.None, keyParams);
 			}
 		}
 
@@ -110,15 +108,8 @@ namespace Mono.AppleTls {
 				Marshal.StructureToPtr (keyParams.Value, keyParamsPtr, false);
 			}
 
-			IntPtr result = IntPtr.Zero;
-			SecStatusCode status = SecStatusCode.Success;
-			for (var test = 0; test < 13; test++) {
-				format = (SecExternalFormat)test;
-				keyParams = new SecItemImportExportKeyParameters ();
-				status = SecItemImport (data.Handle, IntPtr.Zero, ref format, ref itemType, flags, keyParamsPtr, IntPtr.Zero, out result);
-				if (status == SecStatusCode.Success)
-					break;
-			}
+			IntPtr result;
+			var status = SecItemImport (data.Handle, IntPtr.Zero, ref format, ref itemType, flags, keyParamsPtr, IntPtr.Zero, out result);
 
 			if (keyParamsPtr != IntPtr.Zero)
 				Marshal.FreeHGlobal (keyParamsPtr);
@@ -188,7 +179,7 @@ namespace Mono.AppleTls {
 		// Native enum; don't change.
 		enum SecExternalFormat : int {
 			Unknown = 0,
-			OpenSSL,
+			OpenSSL = 1,
 			X509Cert = 9,
 			PEMSequence = 10,
 			PKCS7 = 11,
@@ -197,12 +188,12 @@ namespace Mono.AppleTls {
 
 		// Native enum; don't change.
 		enum SecExternalItemType : int {
-			Unknown,
-			PrivateKey,
-			PublicKey,
-			SessionKey,
-			Certificate,
-			Aggregate
+			Unknown = 0,
+			PrivateKey = 1,
+			PublicKey = 2,
+			SessionKey = 3,
+			Certificate = 4,
+			Aggregate = 5
 		}
 
 		// Native enum; don't change

@@ -3687,5 +3687,17 @@ public class ArrayTest
 			Assert.AreEqual (10, ((object[])arr [i]).Length);
 		}
 	}
+
+	[Test]
+	public unsafe void PointerArraysBoxing ()
+	{
+		var x = new int*[10];
+		var e = x.GetEnumerator ();
+		e.MoveNext ();
+
+		Assert.Throws<NotSupportedException> (() => { var _ = e.Current; }, "#1");
+		Assert.Throws<NotSupportedException> (() => { var _ = x.GetValue (0); }, "#2");
+		Assert.Throws<NotSupportedException> (() => { x.SetValue (0, 0); }, "#3");
+	}
 }
 }

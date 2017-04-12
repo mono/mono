@@ -3,8 +3,8 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 //  </copyright>
 // <owner current="true" primary="true">junfang</owner>
-// <owner current="true" primary="false">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 //**************************************************************************
@@ -49,7 +49,7 @@ namespace System.Data.SqlTypes {
         private bool    m_fNotNull; // false if null
         private byte    m_value;
 
-        private static readonly int x_iBitNotByteMax    = ~0xff;
+        private const int x_iBitNotByteMax    = ~0xff;
 
         // constructor
         // construct a Null

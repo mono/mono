@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner       [....]
-// @backupOwner [....]
+// @owner       Microsoft
+// @backupOwner Microsoft
 //---------------------------------------------------------------------
 namespace System.Data.Metadata.Edm
 {
@@ -80,7 +80,7 @@ namespace System.Data.Metadata.Edm
                     }
                     _keyMemberNames = keyNames;
                 }
-                Debug.Assert(_keyMemberNames.Length == this.KeyMembers.Count, "This list is out of [....] with the key members count. This property was called before all the keymembers were added");
+                Debug.Assert(_keyMemberNames.Length == this.KeyMembers.Count, "This list is out of sync with the key members count. This property was called before all the keymembers were added");
                 return _keyMemberNames;
             }
         }

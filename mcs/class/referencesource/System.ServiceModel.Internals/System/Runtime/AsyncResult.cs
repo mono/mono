@@ -402,7 +402,7 @@ namespace System.Runtime
             return asyncResult;
         }
 
-        // can be utilized by subclasses to write core completion code for both the [....] and async paths
+        // can be utilized by subclasses to write core completion code for both the sync and async paths
         // in one location, signalling chainable synchronous completion with the boolean result,
         // and leveraging PrepareAsyncCompletion for conversion to an AsyncCallback.
         // NOTE: requires that "this" is passed in as the state object to the asynchronous sub-call being used with a completion routine.

@@ -490,7 +490,7 @@ namespace System.Net.PeerToPeer
     
 
     /// <summary>
-    /// PeerNameResolver does [....] and async resolves. 
+    /// PeerNameResolver does sync and async resolves. 
     /// PeerNameResolver supports multiple outstanding async calls
     /// </summary>
     public class PeerNameResolver
@@ -581,7 +581,7 @@ namespace System.Net.PeerToPeer
         }
 
         /// <summary>
-        /// Implements [....] resolve of the PeerName in the cloud given
+        /// Implements sync resolve of the PeerName in the cloud given
         /// </summary>
         /// <param name="peerName"></param>
         /// <param name="cloud"></param>
@@ -641,7 +641,7 @@ namespace System.Net.PeerToPeer
             //---------------------------------------------------------------
             //Trace log
             //---------------------------------------------------------------
-            Logging.P2PTraceSource.TraceEvent(TraceEventType.Information, 0, "[....] Resolve called with PeerName: {0}, Cloud: {1}, MaxRecords {2}", peerName, cloud, maxRecords);
+            Logging.P2PTraceSource.TraceEvent(TraceEventType.Information, 0, "Sync Resolve called with PeerName: {0}, Cloud: {1}, MaxRecords {2}", peerName, cloud, maxRecords);
 
             SafePeerData shEndPointInfoArray;
             string NativeCloudName = cloud.InternalName;
@@ -721,7 +721,7 @@ namespace System.Net.PeerToPeer
                     shEndPointInfoArray.Dispose();
                 }
             }
-            Logging.P2PTraceSource.TraceEvent(TraceEventType.Information, 0, "[....] Resolve returnig with PeerNameRecord count :{0}", PeerNameRecords.Count);
+            Logging.P2PTraceSource.TraceEvent(TraceEventType.Information, 0, "Sync Resolve returnig with PeerNameRecord count :{0}", PeerNameRecords.Count);
             return PeerNameRecords;
         }
         

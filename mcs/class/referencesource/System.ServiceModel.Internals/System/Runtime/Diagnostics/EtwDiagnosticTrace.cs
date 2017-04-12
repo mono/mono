@@ -15,6 +15,7 @@ namespace System.Runtime.Diagnostics
     using System.Xml.XPath;
     using System.Diagnostics.CodeAnalysis;
     using System.Security.Permissions;
+    using System.ServiceModel.Internals;
     using System.Collections.Generic;
     using System.Collections.Concurrent;
 
@@ -29,6 +30,7 @@ namespace System.Runtime.Diagnostics
         const string DiagnosticTraceSource = "System.ServiceModel.Diagnostics";
 
         const int XmlBracketsLength = 5; // "<></>".Length;
+        const int XmlBracketsLengthForNullValue = 4; // "< />".Length; (Empty XML Element)
 
         static readonly public Guid ImmutableDefaultEtwProviderId = new Guid("{c651f5f6-1c0d-492e-8ae1-b4efd7c9d503}");
         [Fx.Tag.SecurityNote(Critical = "provider Id to create EtwProvider, which is SecurityCritical")]
@@ -891,7 +893,19 @@ namespace System.Runtime.Diagnostics
 
         static bool WriteXmlElementString(XmlTextWriter xml, string localName, string value, ref int remainingLength)
         {
-            int xmlElementLength = (localName.Length * 2) + EtwDiagnosticTrace.XmlBracketsLength + value.Length;
+            int xmlElementLength;
+
+            // Quirk to fix DevDiv 155469: All previous versions of that platform (up-to 4.6.2) will get the old behavior (throw null ref when Exception Message property is null) 
+            if (string.IsNullOrEmpty(value) && !LocalAppContextSwitches.IncludeNullExceptionMessageInETWTrace)
+            {
+                xmlElementLength = localName.Length + EtwDiagnosticTrace.XmlBracketsLengthForNullValue;
+            }
+
+            else
+            {
+                xmlElementLength = (localName.Length * 2) + EtwDiagnosticTrace.XmlBracketsLength + value.Length;
+            }
+                
             if (xmlElementLength <= remainingLength)
             {
                 xml.WriteElementString(localName, value);

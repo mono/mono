@@ -2,8 +2,8 @@
 // <copyright file="TdsParser.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.SqlClient {
@@ -386,7 +386,8 @@ namespace System.Data.SqlClient {
                               bool integratedSecurity,
                               bool withFailover,
                               bool isFirstTransparentAttempt,
-                              SqlAuthenticationMethod authType) {
+                              SqlAuthenticationMethod authType,
+                              bool disableTnir) {
             if (_state != TdsParserState.Closed) {
                 Debug.Assert(false, "TdsParser.Connect called on non-closed connection!");
                 return;
@@ -435,7 +436,7 @@ namespace System.Data.SqlClient {
             bool fParallel = _connHandler.ConnectionOptions.MultiSubnetFailover;
 
             TransparentNetworkResolutionState transparentNetworkResolutionState;
-            if(_connHandler.ConnectionOptions.TransparentNetworkIPResolution)
+            if (_connHandler.ConnectionOptions.TransparentNetworkIPResolution && !disableTnir)
             {
                 if(isFirstTransparentAttempt)
                     transparentNetworkResolutionState = TransparentNetworkResolutionState.SequentialMode;
@@ -7948,7 +7949,7 @@ namespace System.Data.SqlClient {
                     }, TaskScheduler.Default);
                 }
 
-                // Finished [....]
+                // Finished sync
                 return null;
             }
             catch (Exception e) {
@@ -8773,7 +8774,7 @@ namespace System.Data.SqlClient {
                 case SqlDbType.Char:
                     stateObj.WriteByte(TdsEnums.SQLBIGCHAR);
                     WriteUnsignedShort(checked((ushort)(metaData.MaxLength)), stateObj);
-                    WriteUnsignedInt(_defaultCollation.info, stateObj); // TODO: Use metadata's collation??
+                    WriteUnsignedInt(_defaultCollation.info, stateObj); // 
                     stateObj.WriteByte(_defaultCollation.sortId);
                     break;
                 case SqlDbType.DateTime:
@@ -8805,13 +8806,13 @@ namespace System.Data.SqlClient {
                 case SqlDbType.NChar:
                     stateObj.WriteByte(TdsEnums.SQLNCHAR);
                     WriteUnsignedShort(checked((ushort)(metaData.MaxLength*2)), stateObj);
-                    WriteUnsignedInt(_defaultCollation.info, stateObj); // TODO: Use metadata's collation??
+                    WriteUnsignedInt(_defaultCollation.info, stateObj); // 
                     stateObj.WriteByte(_defaultCollation.sortId);
                     break;
                 case SqlDbType.NText:
                     stateObj.WriteByte(TdsEnums.SQLNVARCHAR);
                     WriteUnsignedShort(unchecked((ushort)MSS.SmiMetaData.UnlimitedMaxLengthIndicator), stateObj);
-                    WriteUnsignedInt(_defaultCollation.info, stateObj); // TODO: Use metadata's collation??
+                    WriteUnsignedInt(_defaultCollation.info, stateObj); // 
                     stateObj.WriteByte(_defaultCollation.sortId);
                     break;
                 case SqlDbType.NVarChar:
@@ -8822,7 +8823,7 @@ namespace System.Data.SqlClient {
                     else {
                         WriteUnsignedShort(checked((ushort)(metaData.MaxLength*2)), stateObj);
                     }
-                    WriteUnsignedInt(_defaultCollation.info, stateObj); // TODO: Use metadata's collation??
+                    WriteUnsignedInt(_defaultCollation.info, stateObj); // 
                     stateObj.WriteByte(_defaultCollation.sortId);
                     break;
                 case SqlDbType.Real:
@@ -8848,7 +8849,7 @@ namespace System.Data.SqlClient {
                 case SqlDbType.Text:
                     stateObj.WriteByte(TdsEnums.SQLBIGVARCHAR);
                     WriteUnsignedShort(unchecked((ushort)MSS.SmiMetaData.UnlimitedMaxLengthIndicator), stateObj);
-                    WriteUnsignedInt(_defaultCollation.info, stateObj); // TODO: Use metadata's collation??
+                    WriteUnsignedInt(_defaultCollation.info, stateObj); // 
                     stateObj.WriteByte(_defaultCollation.sortId);
                     break;
                 case SqlDbType.Timestamp:
@@ -8866,7 +8867,7 @@ namespace System.Data.SqlClient {
                 case SqlDbType.VarChar:
                     stateObj.WriteByte(TdsEnums.SQLBIGVARCHAR);
                     WriteUnsignedShort(unchecked((ushort)metaData.MaxLength), stateObj);
-                    WriteUnsignedInt(_defaultCollation.info, stateObj); // TODO: Use metadata's collation??
+                    WriteUnsignedInt(_defaultCollation.info, stateObj); // 
                     stateObj.WriteByte(_defaultCollation.sortId);
                     break;
                 case SqlDbType.Variant:
@@ -9127,7 +9128,7 @@ namespace System.Data.SqlClient {
         /// <returns></returns>
         internal void WriteTceUserTypeAndTypeInfo(SqlMetaDataPriv mdPriv, TdsParserStateObject stateObj) {
             // Write the UserType (4 byte value)
-            WriteInt(0x0, stateObj); // TODO: fix this- timestamp columns have 0x50 value here
+            WriteInt(0x0, stateObj); // 
 
             Debug.Assert(SqlDbType.Xml != mdPriv.type);
             Debug.Assert(SqlDbType.Udt != mdPriv.type);
@@ -9233,7 +9234,7 @@ namespace System.Data.SqlClient {
                     // todo:
                     // for xml WriteTokenLength results in a no-op
                     // discuss this with blaine ...
-                    // ([....]) xml datatype does not have token length in its metadata. So it should be a noop.
+                    // (Microsoft) xml datatype does not have token length in its metadata. So it should be a noop.
 
                     switch (md.type) {
                         case SqlDbType.Decimal:

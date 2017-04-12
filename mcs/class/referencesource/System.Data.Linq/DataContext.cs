@@ -352,7 +352,7 @@ namespace System.Data.Linq {
         /// <typeparam name="TEntity">The type of the entity objects. In case of a persistent hierarchy
         /// the entity specified must be the base type of the hierarchy.</typeparam>
         /// <returns></returns>
-        [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "[....]: Generic parameters are required for strong-typing of the return type.")]
+        [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "Microsoft: Generic parameters are required for strong-typing of the return type.")]
         public Table<TEntity> GetTable<TEntity>() where TEntity : class {
             CheckDispose();
             MetaTable metaTable = this.services.Model.GetTable(typeof(TEntity));
@@ -483,7 +483,7 @@ namespace System.Data.Linq {
         /// You can override this method to implement common conflict resolution behaviors.
         /// </summary>
         /// <param name="failureMode">Determines how SubmitChanges handles conflicts.</param>
-        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "[....]: In the middle of attempting to rollback a transaction, outer transaction is thrown.")]
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Microsoft: In the middle of attempting to rollback a transaction, outer transaction is thrown.")]
         public virtual void SubmitChanges(ConflictMode failureMode) {
             CheckDispose();
             CheckNotInSubmitChanges();
@@ -718,7 +718,7 @@ namespace System.Data.Linq {
         /// <param name="query">The query specified in the server's native query language.</param>
         /// <param name="parameters">The parameter values to use for the query.</param>
         /// <returns>An IEnumerable sequence of objects.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "[....]: Generic parameters are required for strong-typing of the return type.")]
+        [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "Microsoft: Generic parameters are required for strong-typing of the return type.")]
         public IEnumerable<TResult> ExecuteQuery<TResult>(string query, params object[] parameters) {
             CheckDispose();
             if (query == null) {
@@ -786,7 +786,7 @@ namespace System.Data.Linq {
         /// <param name="methodInfo">The reflection MethodInfo for the method to invoke.</param>
         /// <param name="parameters">The parameters for the method call.</param>
         /// <returns>The returned query object</returns>
-        [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "[....]: Generic parameters are required for strong-typing of the return type.")]
+        [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "Microsoft: Generic parameters are required for strong-typing of the return type.")]
         internal protected IQueryable<TResult> CreateMethodCallQuery<TResult>(object instance, MethodInfo methodInfo, params object[] parameters) {
             CheckDispose();
             if (instance == null) {
@@ -884,7 +884,7 @@ namespace System.Data.Linq {
         /// <typeparam name="TResult">The element type of the resulting sequence</typeparam>
         /// <param name="reader">The DbDataReader to translate</param>
         /// <returns>The translated sequence of objects</returns>
-        [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "[....]: Generic parameters are required for strong-typing of the return type.")]
+        [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "Microsoft: Generic parameters are required for strong-typing of the return type.")]
         public IEnumerable<TResult> Translate<TResult>(DbDataReader reader) {
             CheckDispose();
             return (IEnumerable<TResult>)this.Translate(typeof(TResult), reader);
@@ -999,7 +999,7 @@ namespace System.Data.Linq {
     /// ITable is the common interface for DataContext tables. It can be used as the source
     /// of a dynamic/runtime-generated query.
     /// </summary>
-    [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Justification="[....]: Meant to represent a database table which is delayed loaded and doesn't provide collection semantics.")]
+    [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Justification="Microsoft: Meant to represent a database table which is delayed loaded and doesn't provide collection semantics.")]
     public interface ITable : IQueryable {
         /// <summary>
         /// The DataContext containing this Table.
@@ -1102,7 +1102,7 @@ namespace System.Data.Linq {
     /// persisted in the database. Use it as a source of queries and to add/insert and remove/delete entities.
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
-    [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Justification="[....]: Meant to represent a database table which is delayed loaded and doesn't provide collection semantics.")]
+    [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Justification="Microsoft: Meant to represent a database table which is delayed loaded and doesn't provide collection semantics.")]
     public sealed class Table<TEntity> : IQueryable<TEntity>, IQueryProvider, IEnumerable<TEntity>, IQueryable, IEnumerable, ITable, IListSource, ITable<TEntity> 
         where TEntity : class {
         DataContext context;
@@ -1156,7 +1156,7 @@ namespace System.Data.Linq {
             return (IQueryable)Activator.CreateInstance(dqType, new object[] { this.context, expression });
         }
 
-        [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "[....]: Generic parameters are required for strong-typing of the return type.")]
+        [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "Microsoft: Generic parameters are required for strong-typing of the return type.")]
         IQueryable<TResult> IQueryProvider.CreateQuery<TResult>(Expression expression) {
             if (expression == null) {
                 throw Error.ArgumentNull("expression");
@@ -1171,7 +1171,7 @@ namespace System.Data.Linq {
             return this.context.Provider.Execute(expression).ReturnValue;
         }
 
-        [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "[....]: Generic parameters are required for strong-typing of the return type.")]
+        [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "Microsoft: Generic parameters are required for strong-typing of the return type.")]
         TResult IQueryProvider.Execute<TResult>(Expression expression) {
             return (TResult)this.context.Provider.Execute(expression).ReturnValue;
         }
@@ -1680,7 +1680,7 @@ namespace System.Data.Linq {
         }
     }
 
-    [SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes", Justification = "[....]: Types are never compared to each other.  When comparisons happen it is against the entities that are represented by these constructs.")]
+    [SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes", Justification = "Microsoft: Types are never compared to each other.  When comparisons happen it is against the entities that are represented by these constructs.")]
     public struct ModifiedMemberInfo {
         MemberInfo member;
         object current;

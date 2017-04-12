@@ -10,6 +10,7 @@
 
 namespace System.Text.RegularExpressions {
     using System.Security.Permissions;
+    using System.Runtime.Serialization;
 
     /// <devdoc>
     ///    Group 
@@ -22,19 +23,24 @@ namespace System.Text.RegularExpressions {
 #endif
     public class Group : Capture {
         // the empty group object
-        internal static Group   _emptygroup = new Group(String.Empty, new int[0], 0);
+        internal static Group _emptygroup = new Group(String.Empty, new int[0], 0, string.Empty);
         
         internal int[] _caps;
         internal int _capcount;
         internal CaptureCollection _capcoll;
+#if !SILVERLIGHT
+        [OptionalField]
+#endif
+        internal string _name;
 
-        internal Group(String text, int[] caps, int capcount)
+        internal Group(String text, int[] caps, int capcount, string name)
 
         : base(text, capcount == 0 ? 0 : caps[(capcount - 1) * 2],
                capcount == 0 ? 0 : caps[(capcount * 2) - 1]) {
 
             _caps = caps;
             _capcount = capcount;
+            _name = name;
         }
 
         /*
@@ -46,6 +52,17 @@ namespace System.Text.RegularExpressions {
         public bool Success {
             get {
                 return _capcount != 0;
+            }
+        }
+
+        /// <summary>
+        /// Provides the name of the group.
+        /// </summary>
+        public string Name
+        {
+            get
+            {
+                return _name;
             }
         }
 

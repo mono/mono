@@ -9,7 +9,7 @@
 //
 // ConcurrentStack.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // A lock-free, concurrent stack primitive, and its associated debugger view type.
 //

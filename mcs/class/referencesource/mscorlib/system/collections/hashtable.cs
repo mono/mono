@@ -7,7 +7,7 @@
 **
 ** Class:  Hashtable
 **
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Hash table implementation

@@ -395,7 +395,7 @@ public sealed class BufferedStream : Stream {
 
 
     // Reading is done in blocks, but someone could read 1 byte from the buffer then write. 
-    // At that point, the underlying stream's pointer is out of [....] with this stream's position. 
+    // At that point, the underlying stream's pointer is out of sync with this stream's position. 
     // All write  functions should call this function to ensure that the buffered data is not lost.
     private void FlushRead() {
 
@@ -1158,7 +1158,7 @@ public sealed class BufferedStream : Stream {
         try {
 
             // The buffer might have been changed by another async task while we were waiting on the semaphore.
-            // However, note that if we recalculate the [....] completion condition to TRUE, then useBuffer will also be TRUE.
+            // However, note that if we recalculate the sync completion condition to TRUE, then useBuffer will also be TRUE.
 
             if (_writePos == 0)
                 ClearReadBufferBeforeWrite();            

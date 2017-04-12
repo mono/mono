@@ -2097,7 +2097,7 @@ namespace System {
                     ++length;
                 }
 
-                // [....] codereview:
+                // Microsoft codereview:
                 // Old Uri parser tries to figure out on a DosPath in all cases.
                 // Hence http://c:/ is treated as as DosPath without the host while it should be a host "c", port 80
                 //
@@ -2427,7 +2427,7 @@ namespace System {
             // Note we already checked on general port syntax in ParseMinimal()
 
             // If iri parsing is on with unicode chars then the end of parsed host
-            // points to m_[....] string and not m_String
+            // points to m_orig string and not m_String
 
             bool UseOrigUnicodeStrOffset = ((cF& Flags.UseOrigUncdStrOffset) != 0);
             // This should happen only once. Reset it
@@ -2606,7 +2606,7 @@ namespace System {
                     break;
 
                 case Flags.IPv6HostType:
-                    //[....] codereview
+                    //Microsoft codereview
                     // The helper will return [...] string that is not suited for Dns.Resolve()
                     host = IPv6AddressHelper.ParseCanonicalName(str, idx, ref loopback, ref scopeId);
                     break;
@@ -2749,7 +2749,7 @@ namespace System {
         //
         private string GetEscapedParts(UriComponents uriParts) {
             // Which Uri parts are not escaped canonically ?
-            // Notice that public UriPart and private Flags must me in [....] so below code can work
+            // Notice that public UriPart and private Flags must me in Sync so below code can work
             //
             ushort  nonCanonical = (ushort)(((ushort)m_Flags & ((ushort)Flags.CannotDisplayCanonical<<7)) >> 6);
             if (InFact(Flags.SchemeNotCanonical)) {
@@ -2779,7 +2779,7 @@ namespace System {
 
         private string GetUnescapedParts(UriComponents uriParts, UriFormat formatAs) {
             // Which Uri parts are not escaped canonically ?
-            // Notice that public UriComponents and private Uri.Flags must me in [....] so below code can work
+            // Notice that public UriComponents and private Uri.Flags must me in Sync so below code can work
             //
             ushort  nonCanonical = (ushort)((ushort)m_Flags & (ushort)Flags.CannotDisplayCanonical);
 
@@ -3360,7 +3360,7 @@ namespace System {
             // Parsing the Path if any
             //
 
-            // For iri parsing if we found unicode the idx has offset into m_[....] string..
+            // For iri parsing if we found unicode the idx has offset into m_orig string..
             // so restart parsing from there and make m_Info.Offset.Path as m_string.length
 
             idx = m_Info.Offset.Path;
@@ -5353,7 +5353,7 @@ namespace System {
         [Obsolete("The method has been deprecated. It is not used by the system. http://go.microsoft.com/fwlink/?linkid=14202")]
         protected virtual void Parse()
         {
-            // [....] cr: In V1-Everett this method if suppressed by the derived class
+            // Microsoft cr: In V1-Everett this method if suppressed by the derived class
             // would lead to an unconstructed Uri instance.
             // It does not make any sense and violates Fxcop on calling a virtual method in the ctor.
             // Should be deprecated and removed asap.
@@ -5362,7 +5362,7 @@ namespace System {
         [Obsolete("The method has been deprecated. It is not used by the system. http://go.microsoft.com/fwlink/?linkid=14202")]
         protected virtual void Canonicalize()
         {
-            // [....] cr: In V1-Everett this method if suppressed by the derived class
+            // Microsoft cr: In V1-Everett this method if suppressed by the derived class
             // would lead to supressing of a path compression
             // It does not make much sense and violates Fxcop on calling a virtual method in the ctor.
             // Should be deprecated and removed asap.
@@ -5371,7 +5371,7 @@ namespace System {
         [Obsolete("The method has been deprecated. It is not used by the system. http://go.microsoft.com/fwlink/?linkid=14202")]
         protected virtual void Escape()
         {
-            // [....] cr: In V1-Everett this method if suppressed by the derived class
+            // Microsoft cr: In V1-Everett this method if suppressed by the derived class
             // would lead to the same effect as dontEscape=true.
             // It does not make much sense and violates Fxcop on calling a virtual method in the ctor.
             // Should be deprecated and removed asap.
@@ -5387,7 +5387,7 @@ namespace System {
         [Obsolete("The method has been deprecated. Please use GetComponents() or static UnescapeDataString() to unescape a Uri component or a string. http://go.microsoft.com/fwlink/?linkid=14202")]
         protected virtual string Unescape(string path) {
 
-            // [....] cr: This method is dangerous since it gives path unescaping control
+            // Microsoft cr: This method is dangerous since it gives path unescaping control
             // to the derived class without any permission demand.
             // Should be deprecated and removed asap.
 
@@ -5401,7 +5401,7 @@ namespace System {
         [Obsolete("The method has been deprecated. Please use GetComponents() or static EscapeUriString() to escape a Uri component or a string. http://go.microsoft.com/fwlink/?linkid=14202")]
         protected static string EscapeString(string str) {
 
-            // [....] cr: This method just does not make sense sa protected
+            // Microsoft cr: This method just does not make sense sa protected
             // It should go public static asap
 
             if ((object)str == null) {
@@ -5424,7 +5424,7 @@ namespace System {
         [Obsolete("The method has been deprecated. It is not used by the system. http://go.microsoft.com/fwlink/?linkid=14202")]
         protected virtual void CheckSecurity()  {
 
-            // [....] cr: This method just does not make sense
+            // Microsoft cr: This method just does not make sense
             // Should be deprecated and removed asap.
 
             if (Scheme == "telnet") {
@@ -5448,7 +5448,7 @@ namespace System {
         [Obsolete("The method has been deprecated. It is not used by the system. http://go.microsoft.com/fwlink/?linkid=14202")]
         protected virtual bool IsReservedCharacter(char character) {
 
-            // [....] cr: This method just does not make sense as virtual protected
+            // Microsoft cr: This method just does not make sense as virtual protected
             // It should go public static asap
 
             return (character == ';')
@@ -5476,7 +5476,7 @@ namespace System {
         [Obsolete("The method has been deprecated. It is not used by the system. http://go.microsoft.com/fwlink/?linkid=14202")]
         protected static bool IsExcludedCharacter(char character) {
 
-            // [....] cr: This method just does not make sense sa protected
+            // Microsoft cr: This method just does not make sense sa protected
             // It should go public static asap
 
             //
@@ -5519,7 +5519,7 @@ namespace System {
         [Obsolete("The method has been deprecated. It is not used by the system. http://go.microsoft.com/fwlink/?linkid=14202")]
         protected virtual bool IsBadFileSystemCharacter(char character) {
 
-            // [....] cr: This method just does not make sense sa protected virtual
+            // Microsoft cr: This method just does not make sense sa protected virtual
             // It should go public static asap
 
             return (character < 0x20)

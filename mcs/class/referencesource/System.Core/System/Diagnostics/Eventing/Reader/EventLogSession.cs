@@ -52,7 +52,7 @@ namespace System.Diagnostics.Eventing.Reader {
         internal EventLogHandle renderContextHandleSystem = EventLogHandle.Zero;
         internal EventLogHandle renderContextHandleUser = EventLogHandle.Zero;
 
-        //the dummy [....] object for the two contextes.
+        //the dummy sync object for the two contextes.
         private object syncObject = null;
 
         private string server;

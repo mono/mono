@@ -138,7 +138,7 @@ namespace System.ServiceModel.Dispatcher
 
         // The base uri of the element
         // This is usually associated with the URI of the original data's location
-        // WS, [....], look into what readers from messages surface.  If it's always null, we can save
+        // WS, Microsoft, look into what readers from messages surface.  If it's always null, we can save
         // some memory
         public override string BaseURI
         {
@@ -183,7 +183,7 @@ namespace System.ServiceModel.Dispatcher
 
                     while (n != p.elem)
                     {
-                        // PERF, [....], we might be able to get rid of this check by tweaking the position
+                        // PERF, Microsoft, we might be able to get rid of this check by tweaking the position
                         // validator
                         if (n == NullIndex)
                         {
@@ -779,7 +779,7 @@ namespace System.ServiceModel.Dispatcher
         // Move the navigator to the first child of the current node.
         public override bool MoveToFirstChild()
         {
-            // PERF, [....], do we need this check?  The null check may be enough
+            // PERF, Microsoft, do we need this check?  The null check may be enough
             // Only valid for the root or an element node
             if (this.location == RootIndex || this.dom.nodes[this.location].type == XPathNodeType.Element)
             {
@@ -894,7 +894,7 @@ namespace System.ServiceModel.Dispatcher
                 n = this.dom.nodes[n].nextSibling;
             }
 
-            // PERF, [....], can we just clear?
+            // PERF, Microsoft, can we just clear?
             // We didn't find it, so restore the namespace stack
             for (int i = 0; i < nsCount; ++i)
             {
@@ -1483,7 +1483,7 @@ namespace System.ServiceModel.Dispatcher
 
         // Get the index of the next namespace that matches the scope
         // This function populates the namespace stack too
-        // PERF, [....], see if we can have this function set the current location too
+        // PERF, Microsoft, see if we can have this function set the current location too
         int FindNamespace(int parent, int ns, XPathNamespaceScope scope)
         {
             bool done = false;
@@ -1932,7 +1932,7 @@ namespace System.ServiceModel.Dispatcher
             int n = NullIndex;
             do
             {
-                // PERF, [....], reorder cases so more common ones are earlier
+                // PERF, Microsoft, reorder cases so more common ones are earlier
                 switch (reader.NodeType)
                 {
                     case XmlNodeType.Element:
@@ -2118,7 +2118,7 @@ namespace System.ServiceModel.Dispatcher
             }
         }
 
-        // PERF, [....], find a better way to implement and have internal
+        // PERF, Microsoft, find a better way to implement and have internal
         void INodeCounter.Increase()
         {
             Increase();

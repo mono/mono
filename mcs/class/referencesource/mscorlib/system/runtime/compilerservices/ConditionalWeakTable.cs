@@ -6,7 +6,7 @@
 /*============================================================
 ** Class:  ConditionalWeakTable
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 ** Description: Compiler support for runtime-generated "object fields."
 **
