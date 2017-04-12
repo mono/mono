@@ -1085,6 +1085,12 @@ HANDLE ves_icall_System_Threading_Thread_Thread_internal(MonoThread *this,
 
 	THREAD_DEBUG (g_message("%s: Trying to start a new thread: this (%p) start (%p)", __func__, this, start));
 
+	if (mono_domain_is_unloading (this->obj.vtable->domain))
+	{
+		mono_raise_exception (mono_get_exception_invalid_operation ("Cannot start thread while application domain is being unloaded."));
+		return NULL;
+	}
+
 	ensure_synch_cs_set (this);
 
 	EnterCriticalSection (this->synch_cs);
