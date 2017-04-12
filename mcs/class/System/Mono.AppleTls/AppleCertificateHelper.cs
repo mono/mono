@@ -36,7 +36,7 @@ namespace Mono.AppleTls
 			 */
 			var certificate2 = certificate as X509Certificate2;
 			if (certificate2 != null)
-				return SecIdentity.Import (certificate2);
+				return SecImportExport.ItemImport (certificate2);
 
 			/*
 			 * Reading Certificates from the Mac Keychain
