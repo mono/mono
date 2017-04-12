@@ -151,11 +151,6 @@ namespace CppSharp
                     "TARGET_IOS", "TARGET_MACH", "MONO_CROSS_COMPILE", "USE_MONO_CTX",
                     "_XOPEN_SOURCE"
                 });
-
-                // Hack, not sure how this define should normally be set, but setting it here works.
-                // Needed in order to parse object-offsets.h.  See comment in object-offsets.h where this define is used
-                // for more details
-                target.Defines.Add("MONO_GENERATING_OFFSETS");
             }
 
             Targets.Add(new Target {
@@ -352,15 +347,6 @@ namespace CppSharp
             default:
                 throw new ArgumentOutOfRangeException ();
             }
-
-            if (!Directory.Exists (MonoDir)) {
-                MonoDir = Path.GetFullPath (Path.Combine (targetPath, "../../mono"));
-            }
-
-            var targetBuild = Path.Combine(targetPath, target.Build);
-
-            // HACK : We don't use the same directory structure as the xamarin-macios build
-            targetBuild = MaccoreDir;
 
             if (!Directory.Exists(targetBuild))
                 throw new Exception(string.Format("Could not find the target build directory: {0}", targetBuild));
