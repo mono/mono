@@ -1341,4 +1341,54 @@ namespace Mono.Net
 		}
 	}
 
+	internal class CFDate : INativeObject, IDisposable {
+		IntPtr handle;
+
+		internal CFDate (IntPtr handle, bool owns)
+		{
+			this.handle = handle;
+			if (!owns)
+				CFObject.CFRetain (handle);
+		}
+
+		~CFDate ()
+		{
+			Dispose (false);
+		}
+
+		[DllImport (CFObject.CoreFoundationLibrary)]
+		extern static IntPtr CFDateCreate (IntPtr allocator, /* CFAbsoluteTime */ double at);
+
+		public static CFDate Create (DateTime date)
+		{
+			var referenceTime = new DateTime (2001, 1, 1);
+			var difference = (date - referenceTime).TotalSeconds;
+			var handle = CFDateCreate (IntPtr.Zero, difference);
+			if (handle == IntPtr.Zero)
+				throw new NotSupportedException ();
+			return new CFDate (handle, true);
+		}
+
+		public IntPtr Handle {
+			get {
+				return handle;
+			}
+		}
+
+		public void Dispose ()
+		{
+			Dispose (true);
+			GC.SuppressFinalize (this);
+		}
+
+		protected virtual void Dispose (bool disposing)
+		{
+			if (handle != IntPtr.Zero) {
+				CFObject.CFRelease (handle);
+				handle = IntPtr.Zero;
+			}
+		}
+
+	}
+
 }

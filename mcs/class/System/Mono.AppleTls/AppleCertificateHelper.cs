@@ -139,6 +139,12 @@ namespace Mono.AppleTls
 				trust.SetAnchorCertificatesOnly (false);
 			}
 
+			if (validator.Settings.CertificateValidationTime != null) {
+				var status = trust.SetVerifyDate (validator.Settings.CertificateValidationTime.Value);
+				if (status != SecStatusCode.Success)
+					throw new InvalidOperationException (status.ToString ());
+			}
+
 			var result = trust.Evaluate ();
 			if (result == SecTrustResult.Unspecified)
 				return true;
