@@ -40,7 +40,7 @@
 #include <mono/metadata/verify-internals.h>
 #include <mono/metadata/verify.h>
 #include <mono/metadata/image-internals.h>
-#include <mono/metadata/file-io.h>
+#include <mono/metadata/w32file.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #ifdef HAVE_UNISTD_H

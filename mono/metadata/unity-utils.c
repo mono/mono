@@ -16,7 +16,6 @@
 #include <mono/metadata/reflection-internals.h>
 #include <mono/metadata/threads.h>
 #include <mono/metadata/tokentype.h>
-#include <mono/metadata/threadpool-ms.h>
 #include <mono/utils/mono-string.h>
 
 #include <glib.h>
@@ -79,7 +78,7 @@ mono_unity_class_is_interface (MonoClass* klass)
 MONO_API gboolean
 mono_unity_class_is_abstract (MonoClass* klass)
 {
-	return (klass->flags & TYPE_ATTRIBUTE_ABSTRACT);
+	return (mono_class_get_flags (klass) & TYPE_ATTRIBUTE_ABSTRACT);
 }
 
 // classes_ref is a preallocated array of *length_ref MonoClass*
@@ -135,13 +134,14 @@ MONO_API gboolean
 mono_class_is_inflated (MonoClass *klass)
 {
 	g_assert(klass);
-	return (klass->is_inflated);
+	return (klass->class_kind == MONO_CLASS_GINST);
 }
 
 MONO_API void
 mono_thread_pool_cleanup (void)
 {
-	mono_threadpool_ms_cleanup ();
+	// TODO_UNITY : I am not sure we need to call this anymore
+	mono_threadpool_cleanup ();
 }
 
 MONO_API void*
@@ -240,8 +240,9 @@ const char* mono_unity_class_get_image_name(MonoClass* klass)
 
 MonoClass* mono_unity_class_get_generic_definition(MonoClass* klass)
 {
-	if (klass->generic_class && klass->generic_class->container_class)
-		return klass->generic_class->container_class;
+	MonoGenericClass* generic_class = mono_class_try_get_generic_class (klass);
+	if (generic_class)
+		return generic_class->container_class;
 
 	return NULL;
 }
@@ -311,7 +312,7 @@ MONO_API gboolean
 mono_class_is_generic(MonoClass *klass)
 {
 	g_assert(klass);
-	return klass->is_generic;
+	return (klass->class_kind == MONO_CLASS_GTD);
 }
 
 MONO_API gboolean
@@ -544,10 +545,10 @@ static GList* get_type_hashes_method(MonoMethod *method, gboolean inflate)
 	hashes->data = method->token;
 	g_list_append(hashes, hash_string_djb2(method->klass->image->module_name));
 
-	if (inflate && method->klass->is_inflated)
+	if (inflate && method->klass->class_kind == MONO_CLASS_GINST)
 	{
 		g_list_append(hashes, method->klass->type_token);
-		get_type_hashes_generic_inst(method->klass->generic_class->context.class_inst, hashes, inflate);
+		get_type_hashes_generic_inst(mono_class_get_generic_class (method->klass)->context.class_inst, hashes, inflate);
 	}
 
 	if (inflate && method->is_inflated)
@@ -1042,23 +1043,27 @@ mono_unity_get_data_dir()
 MONO_API MonoClass*
 mono_unity_class_get_generic_type_definition (MonoClass* klass)
 {
-	return klass->generic_class ? mono_class_get_generic_type_definition (klass) : NULL;
+	MonoGenericClass* generic_class = mono_class_try_get_generic_class (klass);
+	return generic_class ? generic_class->container_class : NULL;
 }
 
 MONO_API MonoClass*
 mono_unity_class_get_generic_parameter_at (MonoClass* klass, guint32 index)
 {
-	if (!klass->generic_container || index >= klass->generic_container->type_argc)
+	MonoGenericContainer* generic_container = mono_class_try_get_generic_container (klass);
+	if (!generic_container || index >= generic_container->type_argc)
 		return NULL;
 
-	return mono_class_from_generic_parameter (mono_generic_container_get_param (klass->generic_container, index), klass->image, FALSE);
+	return mono_class_from_generic_parameter (mono_generic_container_get_param (generic_container, index), klass->image, FALSE);
 }
 
 MONO_API guint32
 mono_unity_class_get_generic_parameter_count (MonoClass* klass)
 {
-	if (!klass->generic_container)
+	MonoGenericContainer* generic_container = mono_class_try_get_generic_container (klass);
+
+	if (!generic_container)
 		return 0;
 
-	return klass->generic_container->type_argc;
+	return generic_container->type_argc;
 }

@@ -258,6 +258,11 @@ extern void ves_icall_System_IO_MonoIO_Unlock (gpointer handle, gint64 position,
 					       gint64 length, gint32 *error);
 
 extern MonoBoolean
+ves_icall_System_IO_MonoIO_RemapPath (MonoString *path, MonoString **new_path);
+
+gboolean mono_file_remap_path (const char** path);
+
+extern MonoBoolean
 ves_icall_System_IO_MonoIO_ReplaceFile (MonoString *sourceFileName, MonoString *destinationFileName,
 					MonoString *destinationBackupFileName, MonoBoolean ignoreMetadataErrors,
 					gint32 *error);

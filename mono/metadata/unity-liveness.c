@@ -223,7 +223,7 @@ static void mono_traverse_object_internal (MonoObject* object, gboolean isStruct
 	{
 		if (p->size_inited == 0)
 			continue;
-		for (i = 0; i < p->field.count; i++)
+		for (i = 0; i < mono_class_get_field_count (p); i++)
 		{
 			field = &p->fields[i];
 			if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
@@ -311,7 +311,7 @@ static void mono_traverse_array (MonoArray* array, LivenessState* state)
 	has_references = !mono_class_is_valuetype(element_class);
 	g_assert(element_class->size_inited != 0);
 	
-	for (i = 0; i < element_class->field.count; i++)
+	for (i = 0; i < mono_class_get_field_count (element_class); i++)
 	{
 		has_references |= mono_field_can_contain_references(&element_class->fields[i]);
 	}
@@ -394,7 +394,7 @@ void mono_unity_liveness_calculation_from_statics(LivenessState* liveness_state)
 			continue;
 		if (klass->size_inited == 0)
 			continue;
-		for (j = 0; j < klass->field.count; j++)
+		for (j = 0; j < mono_class_get_field_count (klass); j++)
 		{
 			field = &klass->fields[j];
 			if (!(field->type->attrs & FIELD_ATTRIBUTE_STATIC))

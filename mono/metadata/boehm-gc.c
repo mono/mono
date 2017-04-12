@@ -59,9 +59,9 @@ static void*
 boehm_thread_register (MonoThreadInfo* info, void *baseptr);
 static void
 boehm_thread_unregister (MonoThreadInfo *p);
-#if !HAVE_BDWGC_GC
 static void
 boehm_thread_detach (MonoThreadInfo *p);
+#if !HAVE_BDWGC_GC
 static void
 register_test_toggleref_callback (void);
 #endif

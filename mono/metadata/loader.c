@@ -41,7 +41,7 @@
 #include <mono/metadata/lock-tracer.h>
 #include <mono/metadata/verify-internals.h>
 #include <mono/metadata/unity-utils.h>
-#include <mono/metadata/file-io.h>
+#include <mono/metadata/w32file.h>
 #include <mono/utils/mono-logger-internals.h>
 #include <mono/utils/mono-dl.h>
 #include <mono/utils/mono-membar.h>
