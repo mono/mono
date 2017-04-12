@@ -6,6 +6,7 @@
 #ifdef WIN32
 #include <fcntl.h>
 #endif
+#include <mono/metadata/exception.h>
 #include <mono/metadata/object.h>
 #include <mono/metadata/metadata.h>
 #include <mono/metadata/tabledefs.h>
@@ -15,6 +16,7 @@
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/reflection-internals.h>
 #include <mono/metadata/threads.h>
+#include <mono/metadata/threadpool.h>
 #include <mono/metadata/tokentype.h>
 #include <mono/utils/mono-string.h>
 
