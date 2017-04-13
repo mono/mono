@@ -159,6 +159,15 @@ namespace Mono.AppleTls {
 			return SecTrustSetAnchorCertificatesOnly (handle, anchorCertificatesOnly);
 		}
 
+		[DllImport (AppleTlsContext.SecurityLibrary)]
+		extern static SecStatusCode /* OSStatus */ SecTrustSetVerifyDate (IntPtr /* SecTrustRef */ trust, IntPtr /* CFDateRef */ date);
+
+		public SecStatusCode SetVerifyDate (DateTime date)
+		{
+			using (var nativeDate = CFDate.Create (date))
+				return SecTrustSetVerifyDate (handle, nativeDate.Handle);
+		}
+
 		~SecTrust ()
 		{
 			Dispose (false);

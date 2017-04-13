@@ -1,4 +1,4 @@
-//
+﻿//
 // MonoTlsSettings.cs
 //
 // Author:
@@ -62,6 +62,13 @@ namespace Mono.Security.Interface
 		public bool CallbackNeedsCertificateChain {
 			get { return callbackNeedsChain; }
 			set { callbackNeedsChain = value; }
+		}
+
+		/*
+		 * Use custom time for certificate expiration checks
+		 */
+		public DateTime? CertificateValidationTime {
+			get; set;
 		}
 
 		/*
@@ -165,6 +172,7 @@ namespace Mono.Security.Interface
 			UserSettings = other.UserSettings;
 			EnabledProtocols = other.EnabledProtocols;
 			EnabledCiphers = other.EnabledCiphers;
+			CertificateValidationTime = other.CertificateValidationTime;
 			if (other.TrustAnchors != null)
 				TrustAnchors = new X509CertificateCollection (other.TrustAnchors);
 			if (other.CertificateSearchPaths != null) {
