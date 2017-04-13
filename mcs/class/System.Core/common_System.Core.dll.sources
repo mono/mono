@@ -33,7 +33,6 @@ System.IO.Pipes/PipeStreamImpersonationWorker.cs
 System.IO.Pipes/PipeTransmissionMode.cs
 
 ReferenceSources/SR.cs
-ReferenceSources/SR.missing.cs
 
 corefx/LambdaExpression.cs
 corefx/SR.cs
