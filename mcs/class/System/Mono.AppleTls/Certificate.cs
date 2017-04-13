@@ -31,6 +31,7 @@
 #if SECURITY_DEP && MONO_FEATURE_APPLETLS
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using Mono.Net;
@@ -198,6 +199,8 @@ namespace Mono.AppleTls {
 		 
 		static readonly CFString ImportExportPassphase;
 		static readonly CFString ImportItemIdentity;
+		static readonly CFString ImportExportAccess;
+		static readonly CFString ImportExportKeychain;
 		
 		static SecIdentity ()
 		{
@@ -208,6 +211,8 @@ namespace Mono.AppleTls {
 			try {		
 				ImportExportPassphase = CFObject.GetStringConstant (handle, "kSecImportExportPassphrase");
 				ImportItemIdentity = CFObject.GetStringConstant (handle, "kSecImportItemIdentity");
+				ImportExportAccess = CFObject.GetStringConstant (handle, "kSecImportExportAccess");
+				ImportExportKeychain = CFObject.GetStringConstant (handle, "kSecImportExportKeychain");
 			} finally {
 				CFObject.dlclose (handle);
 			}
@@ -240,14 +245,27 @@ namespace Mono.AppleTls {
 			}
 		}
 
-		public static SecIdentity Import (byte[] data, string password)
+		static CFDictionary CreateImportOptions (CFString password, SecKeyChain keychain, SecAccess access)
+		{
+			var items = new List<Tuple<IntPtr, IntPtr>> ();
+			items.Add (new Tuple<IntPtr, IntPtr> (ImportExportPassphase.Handle, password.Handle));
+
+			if (keychain != null)
+				items.Add (new Tuple<IntPtr, IntPtr> (ImportExportKeychain.Handle, keychain.Handle));
+			if (access != null)
+				items.Add (new Tuple<IntPtr, IntPtr> (ImportExportAccess.Handle, access.Handle));
+
+			return CFDictionary.FromKeysAndObjects (items);
+		}
+
+		public static SecIdentity Import (byte[] data, string password, SecKeyChain keychain = null, SecAccess access = null)
 		{
 			if (data == null)
 				throw new ArgumentNullException ("data");
 			if (string.IsNullOrEmpty (password)) // SecPKCS12Import() doesn't allow empty passwords.
 				throw new ArgumentException ("password");
 			using (var pwstring = CFString.Create (password))
-			using (var options = CFDictionary.FromObjectAndKey (pwstring.Handle, ImportExportPassphase.Handle)) {
+			using (var options = CreateImportOptions (pwstring, keychain, access)) {
 				CFDictionary [] array;
 				SecStatusCode result = SecImportExport.ImportPkcs12 (data, options, out array);
 				if (result != SecStatusCode.Success)
@@ -257,7 +275,7 @@ namespace Mono.AppleTls {
 			}
 		}
 
-		public static SecIdentity Import (X509Certificate2 certificate)
+		public static SecIdentity Import (X509Certificate2 certificate, SecKeyChain keychain = null, SecAccess access = null)
 		{
 			if (certificate == null)
 				throw new ArgumentNullException ("certificate");
@@ -270,7 +288,7 @@ namespace Mono.AppleTls {
 			 */
 			var password = Guid.NewGuid ().ToString ();
 			var pkcs12 = certificate.Export (X509ContentType.Pfx, password);
-			return Import (pkcs12, password);
+			return Import (pkcs12, password, keychain, access);
 		}
 
 		~SecIdentity ()
@@ -301,12 +319,24 @@ namespace Mono.AppleTls {
 
 	partial class SecKey : INativeObject, IDisposable {
 		internal IntPtr handle;
+		internal IntPtr owner;
 		
 		public SecKey (IntPtr handle, bool owns = false)
 		{
 			this.handle = handle;
 			if (!owns)
 				CFObject.CFRetain (handle);
+		}
+
+		/*
+		 * SecItemImport() returns a SecArrayRef.  We need to free the array, not the items inside it.
+		 * 
+		 */
+		internal SecKey (IntPtr handle, IntPtr owner)
+		{
+			this.handle = handle;
+			this.owner = owner;
+			CFObject.CFRetain (owner);
 		}
 
 		[DllImport (AppleTlsContext.SecurityLibrary, EntryPoint="SecKeyGetTypeID")]
@@ -331,7 +361,67 @@ namespace Mono.AppleTls {
 
 		protected virtual void Dispose (bool disposing)
 		{
-			if (handle != IntPtr.Zero){
+			if (owner != IntPtr.Zero) {
+				CFObject.CFRelease (owner);
+				owner = handle = IntPtr.Zero;
+			} else if (handle != IntPtr.Zero) {
+				CFObject.CFRelease (handle);
+				handle = IntPtr.Zero;
+			}
+		}
+	}
+
+	class SecAccess : INativeObject, IDisposable {
+		internal IntPtr handle;
+
+		public SecAccess (IntPtr handle, bool owns = false)
+		{
+			this.handle = handle;
+			if (!owns)
+				CFObject.CFRetain (handle);
+		}
+
+		~SecAccess ()
+		{
+			Dispose (false);
+		}
+
+		public IntPtr Handle {
+			get {
+				return handle;
+			}
+		}
+
+		[DllImport (AppleTlsContext.SecurityLibrary)]
+		extern static /* OSStatus */ SecStatusCode SecAccessCreate (/* CFStringRef */ IntPtr descriptor,  /* CFArrayRef */ IntPtr trustedList, /* SecAccessRef _Nullable * */ out IntPtr accessRef);
+
+		public static SecAccess Create (string descriptor)
+		{
+			var descriptorHandle = CFString.Create (descriptor);
+			if (descriptorHandle == null)
+				throw new InvalidOperationException ();
+
+			try {
+				IntPtr accessRef;
+				var result = SecAccessCreate (descriptorHandle.Handle, IntPtr.Zero, out accessRef);
+				if (result != SecStatusCode.Success)
+					throw new InvalidOperationException (result.ToString ());
+
+				return new SecAccess (accessRef, true);
+			} finally {
+				descriptorHandle.Dispose ();
+			}
+		}
+
+		public void Dispose ()
+		{
+			Dispose (true);
+			GC.SuppressFinalize (this);
+		}
+
+		protected virtual void Dispose (bool disposing)
+		{
+			if (handle != IntPtr.Zero) {
 				CFObject.CFRelease (handle);
 				handle = IntPtr.Zero;
 			}
