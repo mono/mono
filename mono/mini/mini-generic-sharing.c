@@ -3584,7 +3584,7 @@ get_shared_inst (MonoGenericInst *inst, MonoGenericInst *shared_inst, MonoGeneri
 	MonoType **type_argv;
 	int i;
 
-	type_argv = g_new0 (MonoType*, inst->type_argc);
+	type_argv = g_alloca (sizeof (MonoType*) * inst->type_argc);
 	for (i = 0; i < inst->type_argc; ++i) {
 		if (all_vt || gsharedvt) {
 			type_argv [i] = get_gsharedvt_type (shared_inst->type_argv [i]);
@@ -3595,7 +3595,6 @@ get_shared_inst (MonoGenericInst *inst, MonoGenericInst *shared_inst, MonoGeneri
 	}
 
 	res = mono_metadata_get_generic_inst (inst->type_argc, type_argv);
-	g_free (type_argv);
 	return res;
 }
 

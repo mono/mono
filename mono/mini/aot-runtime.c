@@ -377,7 +377,13 @@ decode_generic_inst (MonoAotModule *module, guint8 *buf, guint8 **endbuf, MonoEr
 
 	error_init (error);
 	type_argc = decode_value (p, &p);
-	type_argv = g_new0 (MonoType*, type_argc);
+
+	if (type_argc > MONO_GENERIC_ARG_COUNT_MAX) {
+		mono_error_set_bad_image_name (error, "<Unknown>", "Generic instantiation with too many arguments (%d)", type_argc);
+		return NULL;
+	}
+
+	type_argv = g_alloca (sizeof (MonoType*) * type_argc);
 
 	for (i = 0; i < type_argc; ++i) {
 		MonoClass *pclass = decode_klass_ref (module, p, &p, error);
@@ -389,7 +395,6 @@ decode_generic_inst (MonoAotModule *module, guint8 *buf, guint8 **endbuf, MonoEr
 	}
 
 	inst = mono_metadata_get_generic_inst (type_argc, type_argv);
-	g_free (type_argv);
 
 	*endbuf = p;
 
