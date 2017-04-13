@@ -67,6 +67,7 @@ namespace Mono.AppleTls {
 			return code;
 		}
 
+#if !MONOTOUCH
 		[DllImport (AppleTlsContext.SecurityLibrary)]
 		extern static SecStatusCode SecItemImport (
 			/* CFDataRef */ IntPtr importedData,
@@ -217,6 +218,7 @@ namespace Mono.AppleTls {
 			IntPtr keyUsage;
 			IntPtr keyAttributes;
 		}
+#endif
 	}
 }
 #endif
