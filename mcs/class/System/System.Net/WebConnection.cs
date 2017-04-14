@@ -1007,6 +1007,18 @@ namespace System.Net
 			IAsyncResult result = null;
 			try {
 				result = s.BeginWrite (buffer, offset, size, cb, state);
+			} catch (ObjectDisposedException) {
+				lock (this) {
+					if (Data.request != request)
+						return null;
+				}
+				throw;
+			} catch (IOException e) {
+				SocketException se = e.InnerException as SocketException;
+				if (se != null && se.SocketErrorCode == SocketError.NotConnected) {
+					return null;
+				}
+				throw;
 			} catch (Exception) {
 				status = WebExceptionStatus.SendFailure;
 				throw;
