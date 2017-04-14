@@ -13,8 +13,6 @@ namespace System
 		internal const string SwitchSetActorAsReferenceWhenCopyingClaimsIdentity = "Switch.System.Security.ClaimsIdentity.SetActorAsReferenceWhenCopyingClaimsIdentity";
 
 		public static void PopulateDefaultValues () {
-			//Defaults from mono 5.0
-			AppContext.DefineSwitchDefault (SwitchThrowExceptionIfDisposedCancellationTokenSource, true);
 		}
 
 		//TODO Use the values in app.config
