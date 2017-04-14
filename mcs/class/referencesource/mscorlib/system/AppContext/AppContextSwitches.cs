@@ -12,7 +12,7 @@ namespace System
     internal static class AppContextSwitches
     {
 #if MOBILE
-		public static readonly bool ThrowExceptionIfDisposedCancellationTokenSource = true;
+		public static readonly bool ThrowExceptionIfDisposedCancellationTokenSource = false;
 		public static readonly bool SetActorAsReferenceWhenCopyingClaimsIdentity = false;
 		public static readonly bool NoAsyncCurrentCulture = false;
 #else
