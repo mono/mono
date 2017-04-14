@@ -47,13 +47,12 @@ namespace System
         }
 
         #region Switch APIs
-#if !MONO
         static AppContext()
         {
             // populate the AppContext with the default set of values
             AppContextDefaultValues.PopulateDefaultValues();
         }
-#endif
+
         /// <summary>
         /// Try to get the value of the switch.
         /// </summary>
@@ -100,7 +99,6 @@ namespace System
                     {
                         return true;
                     }
-#if !MONO
                     // 3. The switch has a valid value, but we need to check for overrides.
                     // Regardless of whether or not the switch has an override, we need to update the value to reflect
                     // the fact that we checked for overrides. 
@@ -110,7 +108,6 @@ namespace System
                         // we found an override!
                         isEnabled = overrideValue;
                     }
-#endif
                     // Update the switch in the dictionary to mark it as 'checked for override'
                     s_switchMap[switchName] = (isEnabled ? SwitchValueState.HasTrueValue : SwitchValueState.HasFalseValue)
                                                 | SwitchValueState.HasLookedForOverride;
@@ -130,7 +127,6 @@ namespace System
                     //    In this case, we want to capture the fact that we looked for a value and found nothing by adding 
                     //    an entry in the dictionary with the 'sentinel' value of 'SwitchValueState.UnknownValue'.
                     //    Example: This will prevent us from trying to find overrides for values that we don't have in the dictionary
-#if !MONO
                     // 1. The value has an override specified.
                     bool overrideValue;
                     if (AppContextDefaultValues.TryGetSwitchOverride(switchName, out overrideValue))
@@ -143,7 +139,6 @@ namespace System
 
                         return true;
                     }
-#endif
                     // 2. The value does not have an override.
                     s_switchMap[switchName] = SwitchValueState.UnknownValue;
                 }
