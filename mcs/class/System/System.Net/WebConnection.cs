@@ -99,11 +99,6 @@ namespace System.Net
 			this.sPoint = sPoint;
 			buffer = new byte [4096];
 			Data = new WebConnectionData ();
-			initConn = new WaitCallback (state => {
-				try {
-					InitConnection (state);
-				} catch {}
-				});
 			queue = wcs.Group.Queue;
 			abortHelper = new AbortHelper ();
 			abortHelper.Connection = this;
@@ -706,9 +701,8 @@ namespace System.Net
 			return -1;
 		}
 		
-		void InitConnection (object state)
+		void InitConnection (HttpWebRequest request)
 		{
-			HttpWebRequest request = (HttpWebRequest) state;
 			request.WebConnection = this;
 			if (request.ReuseConnection)
 				request.StoredConnection = this;
@@ -770,7 +764,7 @@ namespace System.Net
 			lock (this) {
 				if (state.TrySetBusy ()) {
 					status = WebExceptionStatus.Success;
-					ThreadPool.QueueUserWorkItem (initConn, request);
+					ThreadPool.QueueUserWorkItem (o => { try { InitConnection ((HttpWebRequest) o); } catch {} }, request);
 				} else {
 					lock (queue) {
 #if MONOTOUCH
