@@ -15,6 +15,8 @@ corert/Interop.MemAllocFree.cs
 
 ../../../external/corert/src/Common/src/Interop/Windows/Interop.Libraries.cs
 
+../../../external/corert/src/Common/src/Interop/Unix/System.Private.CoreLib.Native/Interop.MemAllocFree.cs
+
 ../../../external/corert/src/System.Private.CoreLib/src/Microsoft/Win32/SafeHandles/SafeThreadPoolIOHandle.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolBoundHandle.cs

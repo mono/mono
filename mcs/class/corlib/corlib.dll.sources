@@ -1644,8 +1644,6 @@ corert/ThreadPoolBoundHandle.cs
 
 ../../../external/corert/src/Common/src/Interop/Unix/Interop.Libraries.cs
 
-../../../external/corert/src/Common/src/Interop/Unix/System.Private.CoreLib.Native/Interop.MemAllocFree.cs
-
 ../../../external/corert/src/Common/src/System/Numerics/Hashing/HashHelpers.cs
 
 ../../../external/corert/src/Runtime.Base/src/System/Runtime/InteropServices/NativeCallableAttribute.cs
