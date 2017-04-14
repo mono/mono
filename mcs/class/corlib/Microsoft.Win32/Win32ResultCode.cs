@@ -30,7 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if WIN_PLATFORM
+#if WIN_PLATFORM || XAMMAC_4_5
 
 using System;
 using System.Runtime.InteropServices;
