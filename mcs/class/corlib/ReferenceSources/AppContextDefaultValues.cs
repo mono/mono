@@ -1,23 +1,30 @@
 using System;
 
-
 namespace System
 {
-    internal static class AppContextDefaultValues
-    {
-        internal static readonly string SwitchNoAsyncCurrentCulture = "Switch.System.Globalization.NoAsyncCurrentCulture";
-        internal static readonly string SwitchThrowExceptionIfDisposedCancellationTokenSource = "Switch.System.Threading.ThrowExceptionIfDisposedCancellationTokenSource";
-        internal static readonly string SwitchPreserveEventListnerObjectIdentity = "Switch.System.Diagnostics.EventSource.PreserveEventListnerObjectIdentity";
-        internal static readonly string SwitchUseLegacyPathHandling = "Switch.System.IO.UseLegacyPathHandling";
-        internal static readonly string SwitchBlockLongPaths = "Switch.System.IO.BlockLongPaths";
-        internal static readonly string SwitchDoNotAddrOfCspParentWindowHandle = "Switch.System.Security.Cryptography.DoNotAddrOfCspParentWindowHandle";
-        internal static readonly string SwitchSetActorAsReferenceWhenCopyingClaimsIdentity = "Switch.System.Security.ClaimsIdentity.SetActorAsReferenceWhenCopyingClaimsIdentity";
+	internal static class AppContextDefaultValues
+	{
+		internal const string SwitchNoAsyncCurrentCulture = "Switch.System.Globalization.NoAsyncCurrentCulture";
+		internal const string SwitchThrowExceptionIfDisposedCancellationTokenSource = "Switch.System.Threading.ThrowExceptionIfDisposedCancellationTokenSource";
+		internal const string SwitchPreserveEventListnerObjectIdentity = "Switch.System.Diagnostics.EventSource.PreserveEventListnerObjectIdentity";
+		internal const string SwitchUseLegacyPathHandling = "Switch.System.IO.UseLegacyPathHandling";
+		internal const string SwitchBlockLongPaths = "Switch.System.IO.BlockLongPaths";
+		internal const string SwitchDoNotAddrOfCspParentWindowHandle = "Switch.System.Security.Cryptography.DoNotAddrOfCspParentWindowHandle";
+		internal const string SwitchSetActorAsReferenceWhenCopyingClaimsIdentity = "Switch.System.Security.ClaimsIdentity.SetActorAsReferenceWhenCopyingClaimsIdentity";
 
-		static AppContextDefaultValues () {
+		public static void PopulateDefaultValues () {
 			//Defaults from mono 5.0
 			AppContext.DefineSwitchDefault (SwitchThrowExceptionIfDisposedCancellationTokenSource, true);
-			AppContext.DefineSwitchDefault (SwitchSetActorAsReferenceWhenCopyingClaimsIdentity, false);
-			AppContext.DefineSwitchDefault (SwitchNoAsyncCurrentCulture, false);
 		}
-    }
+
+		//TODO Use the values in app.config
+		public static bool TryGetSwitchOverride (string switchName, out bool overrideValue)
+		{
+			// The default value for a switch is 'false'
+			overrideValue = false;
+
+			return false;
+		}
+	}
 }
+
