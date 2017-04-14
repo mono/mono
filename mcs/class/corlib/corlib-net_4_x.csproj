@@ -77,11 +77,13 @@
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\CompilerServices\TupleElementNamesAttribute.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Threading\DeferredDisposableLifetime.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\TupleExtensions.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\ValueTuple.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\Microsoft\Win32\SafeHandles\SafeThreadPoolIOHandle.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Array.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\Generic\ArraySortHelper.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\Generic\Dictionary.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\Generic\IDictionaryDebugView.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\LowLevelComparer.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\ObjectEqualityComparer.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Win32ThreadPoolBoundHandle.cs" />
@@ -90,7 +92,6 @@
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Win32ThreadPoolNativeOverlapped.OverlappedData.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Win32ThreadPoolPreAllocatedOverlapped.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Tuple.cs" />
-    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\ValueTuple.cs" />
     <Compile Include="..\..\build\common\AssemblyRef.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
@@ -898,7 +899,6 @@
     <Compile Include="ReferenceSources\EncodingDataItem.cs" />
     <Compile Include="ReferenceSources\EncodingTable.cs" />
     <Compile Include="ReferenceSources\Environment.cs" />
-    <Compile Include="ReferenceSources\HashHelpers.cs" />
     <Compile Include="ReferenceSources\JitHelpers.cs" />
     <Compile Include="ReferenceSources\MethodBase.cs" />
     <Compile Include="ReferenceSources\NativeMethods.cs" />
