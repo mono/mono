@@ -326,7 +326,6 @@
     <Compile Include="Microsoft.Win32.SafeHandles\SafeNCryptSecretHandle.cs" />
     <Compile Include="Microsoft.Win32.SafeHandles\SafePipeHandle.cs" />
     <Compile Include="ReferenceSources\SR.cs" />
-    <Compile Include="ReferenceSources\SR.missing.cs" />
     <Compile Include="System.IO.MemoryMappedFiles\MemoryMappedFile.cs" />
     <Compile Include="System.IO.MemoryMappedFiles\MemoryMappedView.cs" />
     <Compile Include="System.IO.Pipes\AnonymousPipeClientStream.cs" />
