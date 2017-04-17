@@ -142,7 +142,7 @@ namespace MonoTests.Mono.Unix {
 			if (!TestHelper.CanUseRealTimeSignals ())
 				return;
 
-			Assert.Throws<ArgumentException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				UnixSignal signal1 = new UnixSignal (new RealTimeSignum (0));
 				Signum s = signal1.Signum;
 			});
