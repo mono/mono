@@ -10,7 +10,7 @@ BUILDSCRIPTSDIR=external/buildscripts
 perl ${BUILDSCRIPTSDIR}/SDKDownloader.pm --repo_name=tizen-sdk --artifacts_folder=artifacts && source artifacts/SDKDownloader/tizen-sdk/env.sh
 
 CXXFLAGS="-Os -DHAVE_ARMV6=1 -DARM_FPU_VFP=1 -D__ARM_EABI__ -march=armv7-a -mfloat-abi=softfp -mfpu=neon -mtune=cortex-a9 \
--ffunction-sections -fdata-sections -fno-strict-aliasing -fPIC -fvisibility=hidden"
+-ffunction-sections -fdata-sections -fno-strict-aliasing -fPIC"
 CFLAGS="$CXXFLAGS"
 
 TIZEN_PREFIX=${TIZEN_SDK}/tools/arm-linux-gnueabi-gcc-4.9/bin/arm-linux-gnueabi-
@@ -55,7 +55,7 @@ make && echo "Build SUCCESS!" || exit 1
 rm -rf $PWD/builds
 
 mkdir -p $OUTDIR
-cp -f mono/mini/.libs/libmono.a $OUTDIR
+cp -f mono/mini/.libs/libmono.so $OUTDIR
 
 # Clean up for next build
 make clean && make distclean
@@ -109,7 +109,7 @@ autoreconf -i
 make && echo "Build SUCCESS!" || exit 1
 
 mkdir -p $OUTDIR
-cp -f mono/mini/.libs/libmono.a $OUTDIR
+cp -f mono/mini/.libs/libmono.so $OUTDIR
 
 # Clean up for next build
 make clean && make distclean

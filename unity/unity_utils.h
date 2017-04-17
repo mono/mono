@@ -39,4 +39,7 @@ unity_mono_method_is_inflated (MonoMethod* method);
 gboolean
 unity_mono_method_is_generic (MonoMethod* method);
 
+void mono_unity_set_data_dir(const char* dir);
+char* mono_unity_get_data_dir();
+
 #endif
