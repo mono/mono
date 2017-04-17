@@ -1,4 +1,4 @@
-/*
+﻿/*
  * mini-amd64.c: AMD64 backend for the Mono code generator
  *
  * Based on mini-x86.c.
@@ -5661,7 +5661,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	gboolean args_clobbered = FALSE;
 	gboolean trace = FALSE;
 
-	cfg->code_size =  MAX (((MonoMethodNormal *)method)->header->code_size * 4, 10640);
+	cfg->code_size =  MAX (((MonoMethodNormal *)method)->header->code_size * 4, 12000);
 
 	code = cfg->native_code = g_malloc (cfg->code_size);
 
