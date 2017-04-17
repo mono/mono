@@ -139,9 +139,10 @@ namespace MonoTests.Mono.Unix {
 		[Category ("NotOnMac")]
 		public void TestSignumPropertyThrows ()
 		{
+			if (!TestHelper.CanUseRealTimeSignals ())
+				return;
+
 			Assert.Throws<ArgumentException> (() => {
-				if (!TestHelper.CanUseRealTimeSignals ())
-					return;
 				UnixSignal signal1 = new UnixSignal (new RealTimeSignum (0));
 				Signum s = signal1.Signum;
 			});
@@ -162,9 +163,10 @@ namespace MonoTests.Mono.Unix {
 		[Category ("NotOnMac")]
 		public void TestRealTimePropertyThrows ()
 		{
-			Assert.Throws<InvalidOperationException> (() => {
-				if (!TestHelper.CanUseRealTimeSignals ())
+			if (!TestHelper.CanUseRealTimeSignals ())
 					return;
+
+			Assert.Throws<InvalidOperationException> (() => {
 				UnixSignal signal1 = new UnixSignal (Signum.SIGSEGV);
 				RealTimeSignum s = signal1.RealTimeSignum;
 			});

@@ -25,10 +25,10 @@ namespace MonoTests.Mono.Unix.Native {
 		[Test]
 		public void TestRealTimeOutOfRange ()
 		{
-			Assert.Throws<ArgumentOutOfRangeException> (() => {
-				if (!TestHelper.CanUseRealTimeSignals ())
-					return;
+			if (!TestHelper.CanUseRealTimeSignals ())
+				return;
 
+			Assert.Throws<ArgumentOutOfRangeException> (() => {
 				RealTimeSignum rts = new RealTimeSignum (int.MaxValue);
 			});
 		}
@@ -36,10 +36,10 @@ namespace MonoTests.Mono.Unix.Native {
 		[Test]
 		public void TestRealTimeSignumNegativeOffset ()
 		{
-			Assert.Throws<ArgumentOutOfRangeException> (() => {
-				if (!TestHelper.CanUseRealTimeSignals ())
-					return;
+			if (!TestHelper.CanUseRealTimeSignals ())
+				return;
 
+			Assert.Throws<ArgumentOutOfRangeException> (() => {
 				RealTimeSignum rts1 = new RealTimeSignum (-1);
 			});
 		}
