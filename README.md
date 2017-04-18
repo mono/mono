@@ -196,7 +196,7 @@ collector.
 both a `mono` binary and a `mono-sgen` binary. `mono` uses Boehm,
 while `mono-sgen` uses the Simple Generational GC.
 
-* `--with-gc=[included, boehm, none]` - Selects the default Boehm
+* `--with-libgc=[included, boehm, none]` - Selects the default Boehm
 garbage collector engine to use.
 
   * *included*: (*slightly modified Boehm GC*) This is the default
