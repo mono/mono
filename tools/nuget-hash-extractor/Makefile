@@ -10,13 +10,16 @@ nuget-hash-extractor.exe: $(SOURCES)
 
 download: .download_stamp_file
 
-run: nuget-hash-extractor.exe .download_stamp_file
-	mono nuget-hash-extractor.exe nugets
+run: download nuget-hash-extractor.exe exec-ver exec-asm
 
-run-asm: nuget-hash-extractor.exe .download_stamp_file
+run-asm: download nuget-hash-extractor.exe exec-asm
+
+exec-asm:
 	mono nuget-hash-extractor.exe nugets asm
 
-run-ver: nuget-hash-extractor.exe .download_stamp_file
+run-ver: download nuget-hash-extractor.exe exec-ver
+
+exec-ver:
 	mono nuget-hash-extractor.exe nugets ver
 
 .PHONY: download run
