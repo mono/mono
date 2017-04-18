@@ -2939,9 +2939,17 @@ decode_exception_debug_info (MonoAotModule *amodule, MonoDomain *domain,
 
 			ei->flags = decode_value (p, &p);
 
-			if (decode_value (p, &p)) {
-				ei->data.catch_class = decode_klass_ref (amodule, p, &p, &error);
-				mono_error_cleanup (&error); /* FIXME don't swallow the error */
+			if (!(ei->flags == MONO_EXCEPTION_CLAUSE_FILTER || ei->flags == MONO_EXCEPTION_CLAUSE_FINALLY)) {
+				int len = decode_value (p, &p);
+
+				if (len > 0) {
+					if (async) {
+						p += len;
+					} else {
+						ei->data.catch_class = decode_klass_ref (amodule, p, &p, &error);
+						mono_error_cleanup (&error); /* FIXME don't swallow the error */
+					}
+				}
 			}
 
 			ei->clause_index = i;
