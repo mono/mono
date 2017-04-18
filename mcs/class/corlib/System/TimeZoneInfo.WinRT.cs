@@ -4,7 +4,7 @@
 //
 // Inspired by various parts of CoreRT, most notably TimeZoneInfo.WinRT.cs.
 
-#if !FULL_AOT_DESKTOP || WIN_PLATFORM
+#if WIN_PLATFORM
 
 using Microsoft.Win32;
 using System;
