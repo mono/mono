@@ -48,6 +48,9 @@ namespace Mono.Audio {
 		protected uint chunk_size;
 		
 		static AudioDevice TryAlsa (string name) {
+#if XAMMAC_4_5
+			return null;
+#else
 			AudioDevice dev;
 			try {
 				dev = new AlsaDevice (name);
@@ -55,6 +58,7 @@ namespace Mono.Audio {
 			} catch {
 				return null;
 			}
+#endif
 		}
 
 		public static AudioDevice CreateDevice (string name) {
@@ -87,6 +91,7 @@ namespace Mono.Audio {
 		}
 	}
 
+#if !XAMMAC_4_5
 	class AlsaDevice: AudioDevice, IDisposable {
 		IntPtr handle;
 		IntPtr hw_param;
@@ -319,6 +324,7 @@ namespace Mono.Audio {
 			snd_pcm_drain (handle);
 		}
 	}
+#endif
 
 }
 
