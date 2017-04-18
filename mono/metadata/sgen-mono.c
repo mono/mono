@@ -2308,15 +2308,6 @@ sgen_thread_detach (SgenThreadInfo *p)
 }
 
 /**
- * mono_gc_register_thread:
- */
-gboolean
-mono_gc_register_thread (void *baseptr)
-{
-	return mono_thread_info_attach (baseptr) != NULL;
-}
-
-/**
  * mono_gc_is_gc_thread:
  */
 gboolean
@@ -2899,7 +2890,7 @@ sgen_client_init (void)
 
 	mono_tls_init_gc_keys ();
 
-	mono_gc_register_thread (&dummy);
+	mono_thread_info_attach (&dummy);
 }
 
 gboolean
