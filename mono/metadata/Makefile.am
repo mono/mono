@@ -184,6 +184,8 @@ common_sources = \
 	metadata-internals.h	\
 	method-builder.h 	\
 	method-builder.c 	\
+	mono-adapt-set.c	\
+	mono-adapt-set.h	\
 	mono-basic-block.c	\
 	mono-basic-block.h	\
 	mono-config.c		\
