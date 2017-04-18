@@ -56,4 +56,3 @@ aot.cs
 ../../class/Mono.Security/Mono.Security.Cryptography/CryptoConvert.cs
 ../../build/common/Consts.cs
 ../../tools/monop/outline.cs
-../../mcs/cs-parser.cs
