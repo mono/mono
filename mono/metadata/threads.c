@@ -691,6 +691,8 @@ mono_thread_attach_internal (MonoThread *thread, gboolean force_attach, gboolean
 		return FALSE;
 	}
 
+	mono_thread_info_set_detach_user_data (info, (gpointer) internal);
+
 	if (!threads) {
 		threads = mono_g_hash_table_new_type (NULL, NULL, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_THREADING, "threads table");
 	}
@@ -1097,7 +1099,7 @@ mono_thread_attach_full (MonoDomain *domain, gboolean force_attach)
 	MonoNativeThreadId tid;
 	gsize stack_ptr;
 
-	if (mono_thread_internal_current_is_attached ()) {
+	if (mono_thread_internal_current ()) {
 		if (domain != mono_domain_get ())
 			mono_domain_set (domain, TRUE);
 		/* Already attached */
@@ -1147,6 +1149,8 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 	gboolean removed;
 
 	g_assert (thread != NULL);
+
+	SET_CURRENT_OBJECT (thread);
 
 	THREAD_DEBUG (g_message ("%s: mono_thread_detach for %p (%"G_GSIZE_FORMAT")", __func__, thread, (gsize)thread->tid));
 
@@ -1248,8 +1252,7 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 	mono_domain_unset ();
 	mono_memory_barrier ();
 
-	if (thread == mono_thread_internal_current ())
-		mono_thread_pop_appdomain_ref ();
+	mono_thread_pop_appdomain_ref ();
 
 	mono_free_static_data (thread->static_data);
 	thread->static_data = NULL;
@@ -1312,18 +1315,6 @@ mono_thread_detach_if_exiting (void)
 		}
 	}
 	return FALSE;
-}
-
-gboolean
-mono_thread_internal_current_is_attached (void)
-{
-	MonoInternalThread *internal;
-
-	internal = GET_CURRENT_OBJECT ();
-	if (!internal)
-		return FALSE;
-
-	return TRUE;
 }
 
 /**

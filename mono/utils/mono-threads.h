@@ -219,6 +219,8 @@ typedef struct {
 
 	/* Stack mark for targets that explicitly require one */
 	gpointer stack_mark;
+
+	gpointer detach_user_data;
 } MonoThreadInfo;
 
 typedef struct {
@@ -236,7 +238,7 @@ typedef struct {
 	The thread must remain operational between this call and thread_unregister.
 	It must be possible to successfully suspend it after thread_unregister completes.
 	*/
-	void (*thread_detach)(THREAD_INFO_TYPE *info);
+	void (*thread_detach)(THREAD_INFO_TYPE *info, gpointer user_data);
 	void (*thread_attach)(THREAD_INFO_TYPE *info);
 	gboolean (*mono_method_is_critical) (void *method);
 	gboolean (*ip_in_critical_region) (MonoDomain *domain, gpointer ip);
@@ -318,6 +320,9 @@ mono_thread_info_attach (void *baseptr);
 
 MONO_API void
 mono_thread_info_detach (void);
+
+void
+mono_thread_info_set_detach_user_data (MonoThreadInfo *info, gpointer user_data);
 
 gboolean
 mono_thread_info_is_exiting (void);

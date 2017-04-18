@@ -601,7 +601,7 @@ mono_thread_info_detach (void)
 	After it completes, the thread remains functional.
 	*/
 	if (threads_callbacks.thread_detach)
-		threads_callbacks.thread_detach (info);
+		threads_callbacks.thread_detach (info, info->detach_user_data);
 
 	mono_thread_info_suspend_lock_with_info (info);
 
@@ -636,6 +636,12 @@ mono_thread_info_detach (void)
 	mono_threads_close_thread_handle (handle);
 
 	mono_native_tls_set_value (thread_info_key, NULL);
+}
+
+void
+mono_thread_info_set_detach_user_data (MonoThreadInfo *info, gpointer user_data)
+{
+	info->detach_user_data = user_data;
 }
 
 /*

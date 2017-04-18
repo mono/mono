@@ -61,7 +61,7 @@ boehm_thread_register (MonoThreadInfo* info, void *baseptr);
 static void
 boehm_thread_unregister (MonoThreadInfo *p);
 static void
-boehm_thread_detach (MonoThreadInfo *p);
+boehm_thread_detach (MonoThreadInfo *p, gpointer user_data);
 static void
 register_test_toggleref_callback (void);
 
@@ -414,10 +414,13 @@ boehm_thread_unregister (MonoThreadInfo *p)
 }
 
 static void
-boehm_thread_detach (MonoThreadInfo *p)
+boehm_thread_detach (MonoThreadInfo *p, gpointer user_data)
 {
-	if (mono_thread_internal_current_is_attached ())
-		mono_thread_detach_internal (mono_thread_internal_current ());
+	MonoInternalThread *internal;
+
+	internal = (MonoInternalThread*) user_data;
+	if (internal)
+		mono_thread_detach_internal (internal);
 }
 
 gboolean

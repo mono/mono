@@ -260,9 +260,6 @@ mono_threads_detach_coop (gpointer cookie, gpointer *dummy);
 void mono_threads_begin_abort_protected_block (void);
 gboolean mono_threads_end_abort_protected_block (void);
 
-gboolean
-mono_thread_internal_current_is_attached (void);
-
 void
 mono_thread_internal_describe (MonoInternalThread *internal, GString *str);
 
