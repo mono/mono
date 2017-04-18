@@ -7751,7 +7751,14 @@ decode_llvm_eh_info (EmitContext *ctx, gpointer eh_frame)
 	fde = (guint8*)eh_frame + fde_offset;
 	cie = (guint8*)table;
 
-	mono_unwind_decode_llvm_mono_fde (fde, fde_len, cie, cfg->native_code, &info);
+	/* Compute lengths */
+	mono_unwind_decode_llvm_mono_fde (fde, fde_len, cie, cfg->native_code, &info, NULL, NULL, NULL);
+
+	info.ex_info = (MonoJitExceptionInfo *)g_malloc0 (info.ex_info_len * sizeof (MonoJitExceptionInfo));
+	info.type_info = (gpointer *)g_malloc0 (info.ex_info_len * sizeof (gpointer));
+	info.unw_info = (guint8*)g_malloc0 (info.unw_info_len);
+
+	mono_unwind_decode_llvm_mono_fde (fde, fde_len, cie, cfg->native_code, &info, info.ex_info, info.type_info, info.unw_info);
 
 	cfg->encoded_unwind_ops = info.unw_info;
 	cfg->encoded_unwind_ops_len = info.unw_info_len;

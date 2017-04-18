@@ -202,12 +202,13 @@ typedef struct {
 	MonoJitExceptionInfo *ex_info;
 	guint32 ex_info_len;
 	gpointer *type_info;
+	int type_info_len;
 	int this_reg;
 	int this_offset;
 } MonoLLVMFDEInfo;
 
 void
-mono_unwind_decode_llvm_mono_fde (guint8 *fde, int fde_len, guint8 *cie, guint8 *code, MonoLLVMFDEInfo *res) MONO_LLVM_INTERNAL;
+mono_unwind_decode_llvm_mono_fde (guint8 *fde, int fde_len, guint8 *cie, guint8 *code, MonoLLVMFDEInfo *res, MonoJitExceptionInfo *ei, gpointer *type_info, guint8 *unw_info) MONO_LLVM_INTERNAL;
 
 GSList* mono_unwind_get_cie_program (void);
 
