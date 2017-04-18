@@ -162,10 +162,10 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
-using System.Runtime.Serialization;
 #if PCL
 using System.Reflection;
 #else
+using System.Runtime.Serialization;
 using System.Security.Permissions;
 #endif
 using System.Text;
@@ -1592,8 +1592,13 @@ namespace Mono.Options
 				throw new ArgumentNullException (nameof (suite));
 			this.suite  = suite;
 			options     = new CommandOptionSet (this, localizer);
+#if PCL
+			outWriter   = output    ?? TextWriter.Null;
+			errorWriter = error     ?? TextWriter.Null;
+#else
 			outWriter   = output    ?? Console.Out;
 			errorWriter = error     ?? Console.Error;
+#endif
 		}
 
 		public  string                          Suite               => suite;
