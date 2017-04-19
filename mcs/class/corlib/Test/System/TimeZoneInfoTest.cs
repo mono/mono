@@ -867,9 +867,12 @@ namespace MonoTests.System
 			[Test]
 			public void WindowsRegistryTimezoneWithParentheses ()
 			{
-				var method = (MethodInfo) typeof (TimeZoneInfo).GetMember ("TrimSpecial", MemberTypes.Method, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)[0];
+				var memberInfos = typeof (TimeZoneInfo).GetMember ("TrimSpecial", MemberTypes.Method, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
 
-				var name = method.Invoke (null, new object [] { " <--->  Central Standard Time (Mexico)   ||<<>>" });
+				if (memberInfos.Length == 0)
+					Assert.Ignore ("TrimSpecial method not found");
+
+				var name = ((MethodInfo)memberInfos[0]).Invoke (null, new object [] { " <--->  Central Standard Time (Mexico)   ||<<>>" });
 				Assert.AreEqual (name, "Central Standard Time (Mexico)", "#1");
 			}
 #endif
