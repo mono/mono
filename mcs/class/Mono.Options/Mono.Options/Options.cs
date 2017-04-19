@@ -1592,7 +1592,7 @@ namespace Mono.Options
 				throw new ArgumentNullException (nameof (suite));
 			this.suite  = suite;
 			options     = new CommandOptionSet (this, localizer);
-#if PCL
+#if PCL && !NETSTANDARD1_3
 			outWriter   = output    ?? TextWriter.Null;
 			errorWriter = error     ?? TextWriter.Null;
 #else
