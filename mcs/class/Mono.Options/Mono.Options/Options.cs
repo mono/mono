@@ -634,7 +634,7 @@ namespace Mono.Options
 		public abstract string Description { get; }
 		public abstract bool GetArguments (string value, out IEnumerable<string> replacement);
 
-#if !PCL
+#if !PCL || NETSTANDARD1_3
 		public static IEnumerable<string> GetArgumentsFromFile (string file)
 		{
 			return GetArguments (File.OpenText (file), true);
@@ -690,7 +690,7 @@ namespace Mono.Options
 		}
 	}
 
-#if !PCL
+#if !PCL || NETSTANDARD1_3
 	public class ResponseFileSource : ArgumentSource {
 
 		public override string[] GetNames ()
