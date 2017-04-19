@@ -196,12 +196,8 @@ guint8* mono_unwind_decode_fde (guint8 *fde, guint32 *out_len, guint32 *code_len
 
 /* Data retrieved from an LLVM Mono FDE entry */
 typedef struct {
-	/* Malloc'ed */
-	guint8 *unw_info;
 	guint32 unw_info_len;
-	MonoJitExceptionInfo *ex_info;
 	guint32 ex_info_len;
-	gpointer *type_info;
 	int type_info_len;
 	int this_reg;
 	int this_offset;

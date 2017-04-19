@@ -1124,9 +1124,9 @@ mono_unwind_decode_fde (guint8 *fde, guint32 *out_len, guint32 *code_len, MonoJi
  *   Decode an FDE entry in the LLVM emitted mono EH frame.
  * If EI/TYPE_INFO/UNW_INFO are NULL, compute only the value of the scalar fields in INFO.
  * Otherwise:
- * - Set info->ex_info to EX_INFO, fill only try_start, try_end and handler_start.
- * - Set info->type_info to TYPE_INFO, fill it with the ttype table from the LSDA.
- * - Set info->unw_info is to UNW_INFO, fill it with the unwind info.
+ * - Fill out EX_INFO with try_start, try_end and handler_start.
+ * - Fill out TYPE_INFO with the ttype table from the LSDA.
+ * - Fill out UNW_INFO with the unwind info.
  * This function is async safe.
  */
 void
@@ -1163,10 +1163,7 @@ mono_unwind_decode_llvm_mono_fde (guint8 *fde, int fde_len, guint8 *cie, guint8 
 		/* Get the lengths first */
 		decode_lsda (lsda, code, NULL, NULL, &res->ex_info_len, &res->this_reg, &res->this_offset);
 
-		res->ex_info = ex_info;
-		res->type_info = type_info;
-
-		decode_lsda (lsda, code, res->ex_info, res->type_info, NULL, &res->this_reg, &res->this_offset);
+		decode_lsda (lsda, code, ex_info, type_info, NULL, &res->this_reg, &res->this_offset);
 	}
 
 	/* Decode CIE */
@@ -1204,7 +1201,6 @@ mono_unwind_decode_llvm_mono_fde (guint8 *fde, int fde_len, guint8 *cie, guint8 
 	}
 
 	res->unw_info_len = cie_cfi_len + fde_cfi_len;
-	res->unw_info = buf;
 }
 
 /*

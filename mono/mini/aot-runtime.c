@@ -2668,7 +2668,7 @@ is_thumb_code (MonoAotModule *amodule, guint8 *code)
  * If JINFO is NULL, set OUT_LLVM_CLAUSES to the number of llvm level clauses.
  */
 static void
-decode_llvm_mono_eh_frame (MonoAotModule *amodule, MonoJitInfo *jinfo,
+decode_llvm_mono_eh_frame (MonoAotModule *amodule, MonoDomain *domain, MonoJitInfo *jinfo,
 						   guint8 *code, guint32 code_len,
 						   MonoJitExceptionInfo *clauses, int num_clauses,
 						   GSList **nesting,
@@ -2683,6 +2683,10 @@ decode_llvm_mono_eh_frame (MonoAotModule *amodule, MonoJitInfo *jinfo,
 	guint32 fde_len, ei_len, nested_len, nindex;
 	gpointer *type_info;
 	MonoLLVMFDEInfo info;
+	guint8 *unw_info;
+	gboolean async;
+
+	async = mono_thread_info_is_async_context ();
 
 	if (!amodule->mono_eh_frame) {
 		if (!jinfo) {
@@ -2759,19 +2763,22 @@ decode_llvm_mono_eh_frame (MonoAotModule *amodule, MonoJitInfo *jinfo,
 	/* This won't overflow because there is +1 entry in the table */
 	fde_len = table [(pos * 2) + 2 + 1] - table [(pos * 2) + 1];
 
-	// FIXME: This is not async safe
 	/* Compute lengths */
 	mono_unwind_decode_llvm_mono_fde (fde, fde_len, cie, code_start, &info, NULL, NULL, NULL);
 
-	info.ex_info = (MonoJitExceptionInfo *)g_malloc0 (info.ex_info_len * sizeof (MonoJitExceptionInfo));
-	info.type_info = (gpointer *)g_malloc0 (info.ex_info_len * sizeof (gpointer));
-	info.unw_info = (guint8*)g_malloc0 (info.unw_info_len);
+	if (async) {
+		/* These are leaked, but the leak is bounded */
+		ei = mono_domain_alloc0_lock_free (domain, info.ex_info_len * sizeof (MonoJitExceptionInfo));
+		type_info = mono_domain_alloc0_lock_free (domain, info.ex_info_len * sizeof (gpointer));
+		unw_info = mono_domain_alloc0_lock_free (domain, info.unw_info_len);
+	} else {
+		ei = (MonoJitExceptionInfo *)g_malloc0 (info.ex_info_len * sizeof (MonoJitExceptionInfo));
+		type_info = (gpointer *)g_malloc0 (info.ex_info_len * sizeof (gpointer));
+		unw_info = (guint8*)g_malloc0 (info.unw_info_len);
+	}
+	mono_unwind_decode_llvm_mono_fde (fde, fde_len, cie, code_start, &info, ei, type_info, unw_info);
 
-	mono_unwind_decode_llvm_mono_fde (fde, fde_len, cie, code_start, &info, info.ex_info, info.type_info, info.unw_info);
-
-	ei = info.ex_info;
 	ei_len = info.ex_info_len;
-	type_info = info.type_info;
 	*this_reg = info.this_reg;
 	*this_offset = info.this_offset;
 
@@ -2796,7 +2803,7 @@ decode_llvm_mono_eh_frame (MonoAotModule *amodule, MonoJitInfo *jinfo,
 	}
 
 	// FIXME: This is not async safe
-	jinfo->unwind_info = mono_cache_unwind_info (info.unw_info, info.unw_info_len);
+	jinfo->unwind_info = mono_cache_unwind_info (unw_info, info.unw_info_len);
 	/* This signals that unwind_info points to a normal cached unwind info */
 	jinfo->from_aot = 0;
 	jinfo->from_llvm = 1;
@@ -2988,12 +2995,12 @@ decode_exception_debug_info (MonoAotModule *amodule, MonoDomain *domain,
 
 		int num_llvm_clauses;
 		/* Get the length first */
-		decode_llvm_mono_eh_frame (amodule, NULL, code, code_len, clauses, num_clauses, nesting, &this_reg, &this_offset, &num_llvm_clauses);
+		decode_llvm_mono_eh_frame (amodule, domain, NULL, code, code_len, clauses, num_clauses, nesting, &this_reg, &this_offset, &num_llvm_clauses);
 		len = mono_jit_info_size (flags, num_llvm_clauses, num_holes);
 		jinfo = (MonoJitInfo *)alloc0_jit_info_data (domain, len, async);
 		mono_jit_info_init (jinfo, method, code, code_len, flags, num_llvm_clauses, num_holes);
 
-		decode_llvm_mono_eh_frame (amodule, jinfo, code, code_len, clauses, num_clauses, nesting, &this_reg, &this_offset, NULL);
+		decode_llvm_mono_eh_frame (amodule, domain, jinfo, code, code_len, clauses, num_clauses, nesting, &this_reg, &this_offset, NULL);
 
 		if (!async) {
 			g_free (clauses);
