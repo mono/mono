@@ -60,7 +60,8 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		{
 			if (conn != null)
 				conn.Dispose ();
-			SqlConnection.ClearAllPools ();
+			if (connectionString != null)
+				SqlConnection.ClearAllPools ();
 		}
 
 		[Test]
