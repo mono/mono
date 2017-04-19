@@ -262,6 +262,7 @@ typedef struct MonoAotCompile {
 	GPtrArray *globals;
 	GPtrArray *method_order;
 	GHashTable *dedup_cache;
+	gboolean dedup_cache_changed;
 	GHashTable *export_names;
 	/* Maps MonoClass* -> blob offset */
 	GHashTable *klass_blob_hash;
@@ -7337,6 +7338,8 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->logfile = g_strdup (arg + strlen ("internal-logfile="));
 		} else if (str_begins_with (arg, "dedup-skip")) {
 			opts->dedup = TRUE;
+		} else if (str_begins_with (arg, "dedup-include=")) {
+			opts->dedup_include = g_strdup (arg + strlen ("dedup-include="));
 		} else if (str_begins_with (arg, "mtriple=")) {
 			opts->mtriple = g_strdup (arg + strlen ("mtriple="));
 		} else if (str_begins_with (arg, "llvm-path=")) {
@@ -8929,8 +8932,6 @@ emit_code (MonoAotCompile *acfg)
 	 */
 	emit_padding (acfg, 16);
 
-	gboolean dry_run = TRUE;
-
 	for (oindex = 0; oindex < acfg->method_order->len; ++oindex) {
 		MonoCompile *cfg;
 		MonoMethod *method;
@@ -8948,15 +8949,11 @@ emit_code (MonoAotCompile *acfg)
 			g_assert (name);
 			if (strcmp (cfg->orig_method->name, "wbarrier_conc") && acfg->aot_opts.dedup) {
 				g_assert (acfg->dedup_cache);
-				if (g_hash_table_lookup (acfg->dedup_cache, name)) {
-					cfg->skip = TRUE;
-					continue;
-				} else {
+				if (!g_hash_table_lookup (acfg->dedup_cache, name)) {
 					// This AOTCompile owns this method
+					acfg->dedup_cache_changed = TRUE;
 					g_hash_table_insert (acfg->dedup_cache, name, acfg);
 				}
-					// FIXME: free name?
-					/*g_free (name);*/
 			}
 		}
 
@@ -9004,13 +9001,9 @@ emit_code (MonoAotCompile *acfg)
 		if (cfg->compile_llvm) {
 			acfg->stats.llvm_count ++;
 		} else {
-			if (!dry_run)
-				emit_method_code (acfg, cfg);
+			emit_method_code (acfg, cfg);
 		}
 	}
-
-	if (dry_run)
-		return;
 
 	emit_section_change (acfg, ".text", 0);
 	emit_alignment_code (acfg, 8);
@@ -11930,8 +11923,10 @@ mono_flush_method_cache (MonoAotCompile *acfg)
 {
 	GHashTable *method_cache = acfg->dedup_cache;
 	char *filename = g_strdup_printf ("%s.dedup", acfg->image->name);
-	if (!filename || !method_cache)
+	if (!acfg->dedup_cache_changed || !acfg->aot_opts.dedup) {
+		g_free (filename);
 		return;
+	}
 
 	acfg->dedup_cache = NULL;
 
@@ -12014,7 +12009,6 @@ mono_read_method_cache (MonoAotCompile *acfg)
 	}
 
 cleanup:
-	g_free (filename);
 	fclose (cache);
 
 early_exit:
@@ -12387,11 +12381,8 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 	if (acfg->dwarf)
 		mono_dwarf_writer_emit_base_info (acfg->dwarf, g_path_get_basename (acfg->image->name), mono_unwind_get_cie_program ());
 
-	gboolean dry_run = TRUE;
 	emit_code (acfg);
 	mono_flush_method_cache (acfg);
-	if (dry_run)
-		return 0;
 
 	emit_info (acfg);
 
