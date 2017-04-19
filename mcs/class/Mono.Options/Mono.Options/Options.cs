@@ -1586,19 +1586,26 @@ namespace Mono.Options
 
 		internal    OptionSet       Options     => options;
 
-		public CommandSet (string suite, MessageLocalizerConverter localizer = null, TextWriter output = null, TextWriter error = null)
+#if !PCL || NETSTANDARD1_3
+		public CommandSet(string suite, MessageLocalizerConverter localizer = null)
+			: this(suite, Console.Out, Console.Error, localizer)
+		{
+		}
+#endif
+		
+		public CommandSet (string suite, TextWriter output, TextWriter error, MessageLocalizerConverter localizer = null)
 		{
 			if (suite == null)
 				throw new ArgumentNullException (nameof (suite));
+			if (output == null)
+				throw new ArgumentNullException (nameof (output));
+			if (error == null)
+				throw new ArgumentNullException (nameof (error));
+
 			this.suite  = suite;
 			options     = new CommandOptionSet (this, localizer);
-#if PCL && !NETSTANDARD1_3
-			outWriter   = output    ?? TextWriter.Null;
-			errorWriter = error     ?? TextWriter.Null;
-#else
-			outWriter   = output    ?? Console.Out;
-			errorWriter = error     ?? Console.Error;
-#endif
+			outWriter   = output;
+			errorWriter = error;
 		}
 
 		public  string                          Suite               => suite;
