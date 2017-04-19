@@ -49,9 +49,6 @@ xmlfiles_files = \
 EXTRA_DISTFILES = \
 	$(wildcard System.Xml.Serialization/standalone_tests/*.cs) \
 	$(wildcard System.Xml.Serialization/standalone_tests/*.output) \
-	Test/Microsoft.Test.csproj	\
-	Test/Mono.Test.csproj		\
-	Test/MonoMicro.Test.csproj	\
 	Test/XmlFiles/76102.xml		\
 	Test/XmlFiles/79683.dtd		\
 	Test/XmlFiles/496192.xml	\
