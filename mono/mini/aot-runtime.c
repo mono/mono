@@ -1582,7 +1582,7 @@ aot_cache_load_module (MonoAssembly *assembly, char **aot_name)
 	if (in_process) {
 		aot_options = g_strdup_printf ("outfile=%s,internal-logfile=%s.log%s%s", fname, fname, config->aot_options ? "," : "", config->aot_options ? config->aot_options : "");
 		/* Maybe due this in another thread ? */
-		res = mono_compile_assembly (assembly, mono_parse_default_optimizations (NULL), aot_options);
+		res = mono_compile_assembly (assembly, mono_parse_default_optimizations (NULL), aot_options, NULL);
 		if (res) {
 			mono_trace (G_LOG_LEVEL_MESSAGE, MONO_TRACE_AOT, "AOT: compilation failed.");
 			failure_fname = g_strdup_printf ("%s.failure", fname);
@@ -1612,7 +1612,7 @@ aot_cache_load_module (MonoAssembly *assembly, char **aot_name)
 			dup2 (fileno (logfile), 2);
 
 			aot_options = g_strdup_printf ("outfile=%s", fname);
-			res = mono_compile_assembly (assembly, mono_parse_default_optimizations (NULL), aot_options);
+			res = mono_compile_assembly (assembly, mono_parse_default_optimizations (NULL), aot_options, NULL);
 			if (!res) {
 				exit (1);
 			} else {

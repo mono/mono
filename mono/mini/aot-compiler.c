@@ -401,6 +401,12 @@ get_patch_name (int info)
 
 #endif
 
+static void 
+mono_flush_method_cache (MonoAotCompile *acfg);
+
+static void 
+mono_read_method_cache (MonoAotCompile *acfg);
+
 static guint32
 get_unwind_info_offset (MonoAotCompile *acfg, guint8 *encoded, guint32 encoded_len);
 
@@ -8954,6 +8960,9 @@ emit_code (MonoAotCompile *acfg)
 					acfg->dedup_cache_changed = TRUE;
 					g_hash_table_insert (acfg->dedup_cache, name, acfg);
 				}
+				// Don't compile inflated methods if we're in first phase of
+				// dedup
+				cfg->skip = TRUE;
 			}
 		}
 
@@ -11918,7 +11927,7 @@ add_preinit_got_slots (MonoAotCompile *acfg)
 }
 
 // Flush the cache to tell future calls what to skip
-void
+static void
 mono_flush_method_cache (MonoAotCompile *acfg)
 {
 	GHashTable *method_cache = acfg->dedup_cache;
@@ -11956,7 +11965,7 @@ mono_flush_method_cache (MonoAotCompile *acfg)
 
 // Read in what has been emitted by previous invocations,
 // what can be skipped
-void
+static void
 mono_read_method_cache (MonoAotCompile *acfg)
 {
 	char *filename = g_strdup_printf ("%s.dedup", acfg->image->name);
@@ -12016,8 +12025,18 @@ early_exit:
 	return;
 }
 
+int 
+mono_compile_deferred_assemblies (guint32 opts, const char *aot_options, gpointer **aot_state)
+{
+	// create assembly, loop and add extra_methods
+	// in add_generic_instances , rip out what's in that for loop
+	// and apply that to this aot_state inside of mono_compile_assembly
+	GHashTableIter iter;
+	g_assert_not_reached ();
+}
+
 int
-mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
+mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options, gpointer **aot_state)
 {
 	MonoImage *image = ass->image;
 	int i, res;
@@ -12045,8 +12064,22 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 
 	mono_aot_parse_options (aot_options, &acfg->aot_opts);
 
+	// start dedup
 	if (acfg->aot_opts.dedup)
 		mono_read_method_cache (acfg);
+
+	// Fixme: free memory
+	if (*aot_state && acfg->aot_opts.dedup_include)
+		*aot_state = g_hash_table_new (g_str_hash, g_str_equal);
+	
+	// Can make a struct with multiple fields in future, if we need to thread more
+	// Currently reusing the variable used in the other pass for making the Makefile caches
+	if (*aot_state)
+		acfg->dedup_cache = (GHashTable *) *aot_state;
+	
+	gboolean is_dedup_dummy = FALSE;
+
+	// end dedup
 
 	if (acfg->aot_opts.logfile) {
 		acfg->logfile = fopen (acfg->aot_opts.logfile, "a+");
@@ -12233,6 +12266,13 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 
 		if (!res)
 			return 1;
+	}
+
+	// If we're emitting all of the inflated methods into a dummy
+	// Assembly, then after extra_methods is set up, we're done
+	// in this function.
+	if (acfg->aot_opts.dedup_include && !is_dedup_dummy) {
+		return 0;
 	}
 
 	{
@@ -12542,7 +12582,7 @@ mono_aot_readonly_field_override (MonoClassField *field)
 }
 
 int
-mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
+mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options, gpointer **aot_state)
 {
 	return 0;
 }
