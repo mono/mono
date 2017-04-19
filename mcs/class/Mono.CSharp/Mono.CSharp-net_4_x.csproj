@@ -68,7 +68,6 @@
     <Compile Include="..\..\mcs\constant.cs" />
     <Compile Include="..\..\mcs\context.cs" />
     <Compile Include="..\..\mcs\convert.cs" />
-    <Compile Include="..\..\mcs\cs-parser.cs" />
     <Compile Include="..\..\mcs\cs-tokenizer.cs" />
     <Compile Include="..\..\mcs\decl.cs" />
     <Compile Include="..\..\mcs\delegate.cs" />
@@ -107,7 +106,8 @@
     <Compile Include="..\..\mcs\visit.cs" />
     <Compile Include="..\..\tools\monop\outline.cs" />
     <Compile Include="aot.cs" />
-    <Compile Include="Assembly\AssemblyInfo.cs" />  </ItemGroup>
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="net_4_x-parser.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
