@@ -901,12 +901,11 @@ namespace System.Net.Sockets
 				SocketAsyncResult ares;
 
 				if (!GetCheckedIPs (e, out addresses)) {
-					e.socket_async_result.EndPoint = e.RemoteEndPoint;
+					//NOTE: DualMode may cause Socket's RemoteEndpoint to differ in AddressFamily from the
+					// SocketAsyncEventArgs, but the SocketAsyncEventArgs itself is not changed
 					ares = (SocketAsyncResult) BeginConnect (e.RemoteEndPoint, ConnectAsyncCallback, e);
 				} else {
-					DnsEndPoint dep = (e.RemoteEndPoint as DnsEndPoint);
-					e.socket_async_result.Addresses = addresses;
-					e.socket_async_result.Port = dep.Port;
+					DnsEndPoint dep = (DnsEndPoint)e.RemoteEndPoint;
 					ares = (SocketAsyncResult) BeginConnect (addresses, dep.Port, ConnectAsyncCallback, e);
 				}
 
@@ -984,8 +983,8 @@ namespace System.Net.Sockets
 					sockares.Complete (new SocketException ((int) SocketError.AddressNotAvailable), true);
 					return sockares;
 				}
-				
-				remoteEP = RemapIPEndPoint (ep);
+
+				sockares.EndPoint = remoteEP = RemapIPEndPoint (ep);
 			}
 
 			int error = 0;
