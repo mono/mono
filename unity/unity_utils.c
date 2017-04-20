@@ -294,3 +294,8 @@ mono_unity_get_data_dir()
 {
 	return data_dir;
 }
+
+MonoClass* mono_unity_class_get(MonoImage* image, guint32 type_token)
+{
+	return mono_class_get(image, type_token);
+}
