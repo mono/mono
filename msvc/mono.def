@@ -980,3 +980,4 @@ mono_unity_get_data_dir
 mono_unity_class_get_generic_type_definition
 mono_unity_class_get_generic_parameter_at
 mono_unity_class_get_generic_parameter_count
+mono_unity_class_get

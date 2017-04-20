@@ -1069,3 +1069,15 @@ mono_unity_class_get_generic_parameter_count (MonoClass* klass)
 
 	return generic_container->type_argc;
 }
+
+MONO_API MonoClass*
+mono_unity_class_get(MonoImage* image, guint32 type_token)
+{
+	// Unity expects to try to get classes that don't exist, and
+	// have a value of NULL returned. So eat the error message.
+	MonoError unused;
+	MonoClass* klass= mono_class_get_checked(image, type_token, &unused);
+	mono_error_cleanup(&unused);
+	return klass;
+}
+
