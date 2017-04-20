@@ -11532,14 +11532,77 @@ cleanup:
 	fclose (cache);
 }
 
+typedef struct {
+	GHashTable *cache;
+	gboolean emit_inflated_methods;
+	MonoAssembly *inflated_assembly;
+} MonoAotState;
+
+static MonoAotState *
+alloc_aot_state (void) 
+{
+	MonoAotState *state = g_malloc (sizeof (MonoAotState));
+	// FIXME: Should this own the memory?
+	state->cache = g_hash_table_new (g_str_hash, g_str_equal);
+	// Start in "collect mode"
+	state->emit_inflated_methods = FALSE;
+	state->inflated_assembly = NULL;
+	return state;
+}
+
+static void
+free_aot_state (MonoAotState *astate) 
+{
+	g_hash_table_destroy (astate->cache);
+	astate->cache = 0xFFF;
+	g_free (astate);
+
+	astate->cache = NULL;
+}
+
+static void
+mono_add_deferred_extra_methods (MonoAotCompile *acfg, MonoAotState *astate)
+{
+	GHashTableIter iter;
+	gchar *name = NULL;
+	MonoMethod *method = NULL;
+
+	g_hash_table_iter_init (&iter, astate->cache);
+	while (g_hash_table_iter_next (&iter, (gpointer *) &name, (gpointer *) &method)) {
+		add_method_full (acfg, method, TRUE, 0);
+		/*fprintf (stderr, "Added deferred %s\n", name);*/
+	}
+	return;
+}
+
 int 
 mono_compile_deferred_assemblies (guint32 opts, const char *aot_options, gpointer *aot_state)
 {
 	// create assembly, loop and add extra_methods
 	// in add_generic_instances , rip out what's in that for loop
 	// and apply that to this aot_state inside of mono_compile_assembly
-	GHashTableIter iter;
-	g_assert_not_reached ();
+	MonoAotState *astate;
+	astate = *(MonoAotState **)aot_state;
+	g_assert (astate);
+
+	// FIXME: allow suffixes?
+	if (!astate->inflated_assembly) {
+		char *inflate = strstr (aot_options, "dedup-inflate");
+		if (!inflate)
+			return 0;
+		else 
+			g_error ("Error: mono was not given an assembly with the provided inflate name\n");
+	}
+
+	// Switch modes
+	astate->emit_inflated_methods = TRUE;
+
+	int res = mono_compile_assembly (astate->inflated_assembly, opts, aot_options, aot_state);
+
+	*aot_state = NULL;
+	free_aot_state (astate);
+
+	return res;
 }
 
 int
@@ -11572,19 +11635,46 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 	mono_aot_parse_options (aot_options, &acfg->aot_opts);
 
 	// start dedup
+	MonoAotState *astate = NULL;
+
+	// Thread the state through when making the inflate pass
+	if (aot_state && acfg->aot_opts.dedup_include) {
+		astate = *(MonoAotState **)aot_state;
+		if (!astate)
+			*aot_state = astate = alloc_aot_state ();
+		acfg->dedup_cache = astate->cache;
+	}
+
+	gboolean is_dedup_dummy = FALSE;
+
+	// fixme: check for leaks here
+	// fills out acfg->dedup_cache
 	if (acfg->aot_opts.dedup)
 		mono_read_method_cache (acfg);
 
-	// Fixme: free memory
-	if (*aot_state && acfg->aot_opts.dedup_include)
-		*aot_state = g_hash_table_new (g_str_hash, g_str_equal);
-	
-	// Can make a struct with multiple fields in future, if we need to thread more
-	// Currently reusing the variable used in the other pass for making the Makefile caches
-	if (*aot_state)
-		acfg->dedup_cache = (GHashTable *) *aot_state;
-	
-	gboolean is_dedup_dummy = FALSE;
+	if (astate) {
+		if (!astate->inflated_assembly && acfg->aot_opts.dedup_include) {
+			gchar **asm_path = g_strsplit (ass->image->name, G_DIR_SEPARATOR_S, 0);
+			gchar *asm_file = NULL;
+			for (int i=0; asm_path [i] != NULL; i++)
+				asm_file = asm_path [i];
+
+			if (!strcmp (acfg->aot_opts.dedup_include, asm_file)) {
+				// Save
+				is_dedup_dummy = TRUE;
+				astate->inflated_assembly = ass;
+			}
+			g_strfreev (asm_path);
+		} else if (astate->inflated_assembly) {
+			is_dedup_dummy = (ass == astate->inflated_assembly);
+		}
+
+		
+		// Process later
+		if (is_dedup_dummy && !astate->emit_inflated_methods) {
+			return 0; 
+		}
+	}
 
 	// end dedup
 
@@ -11778,10 +11868,10 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 	// If we're emitting all of the inflated methods into a dummy
 	// Assembly, then after extra_methods is set up, we're done
 	// in this function.
-	if (acfg->aot_opts.dedup_include && !is_dedup_dummy) {
-		return 0;
+	if (acfg->aot_opts.dedup_include && is_dedup_dummy) {
+		mono_add_deferred_extra_methods (acfg, astate);
 	}
-
+	
 	{
 		GList *l;
 
@@ -11929,11 +12019,15 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 		mono_dwarf_writer_emit_base_info (acfg->dwarf, g_path_get_basename (acfg->image->name), mono_unwind_get_cie_program ());
 
 	emit_code (acfg);
-	mono_flush_method_cache (acfg);
+	if (acfg->aot_opts.dedup)
+		mono_flush_method_cache (acfg);
 
 	emit_info (acfg);
 
 	emit_extra_methods (acfg);
+
+	if (acfg->aot_opts.dedup_include && !is_dedup_dummy)
+		return 0;
 
 	emit_trampolines (acfg);
 
@@ -12086,7 +12180,7 @@ mono_aot_readonly_field_override (MonoClassField *field)
 }
 
 int
-mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
+mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options, gpointer *aot_state)
 {
 	return 0;
 }
