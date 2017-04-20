@@ -1081,3 +1081,9 @@ mono_unity_class_get(MonoImage* image, guint32 type_token)
 	return klass;
 }
 
+MONO_API gpointer
+mono_unity_alloc(gsize size)
+{
+	return g_malloc(size);
+}
+

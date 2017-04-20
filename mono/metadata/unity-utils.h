@@ -158,5 +158,6 @@ MonoType* mono_unity_reflection_type_get_type(MonoReflectionType *type);
 void mono_unity_set_data_dir(const char* dir);
 char* mono_unity_get_data_dir();
 MonoClass* mono_unity_class_get(MonoImage* image, guint32 type_token);
+gpointer mono_unity_alloc(gsize size);
 
 #endif
