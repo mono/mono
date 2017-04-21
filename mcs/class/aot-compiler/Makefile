@@ -65,7 +65,7 @@ $(csc_MCS_image): $(csc_MCS_dll) $(runtime_dep)
 	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(PROFILE)_aot.log 2>&1 $(RUNTIME) --aot=bind-to-runtime-version$(profile_arg),outfile=$(csc_MCS_image) --debug $(csc_MCS_dll) || (cat $(PROFILE)_aot.log; exit 1)
 
 $(csc_SRM_image): $(csc_SRM_dll) $(runtime_dep)
-	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(PROFILE)_aot.log 2>&1 $(RUNTIME) --aot=bind-to-runtime-version$(profile_arg),outfile=$(csc_SRM_image) --debug $(csc_SRM_dll) || (cat $(PROFILE)_aot.log; exit 1)
+	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(PROFILE)_aot.log 2>&1 $(RUNTIME) --aot=bind-to-runtime-version$(profile_arg),outfile=$(csc_SRM_image) --debug --apply-bindings=$(csc_exe).config $(csc_SRM_dll) || (cat $(PROFILE)_aot.log; exit 1)
 
 $(csc_SCI_image): $(csc_SCI_dll) $(runtime_dep)
 	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(PROFILE)_aot.log 2>&1 $(RUNTIME) --aot=bind-to-runtime-version$(profile_arg),outfile=$(csc_SCI_image) --debug $(csc_SCI_dll) || (cat $(PROFILE)_aot.log; exit 1)
