@@ -1310,7 +1310,7 @@ class MDocUpdater : MDocCommand
 		}
 
 		if (insertSince && since != null) {
-			XmlNode docs = basefile.DocumentElement.SelectSingleNode("Docs");
+			XmlNode docs = basefile.DocumentElement.SelectSingleChildElement("Docs");
 			docs.AppendChild (CreateSinceNode (basefile));
 		}
 
@@ -1461,8 +1461,8 @@ class MDocUpdater : MDocCommand
 			// members sharing the same name, e.g. field & property, or it's an
 			// overloaded method.
 			// for different type, sort based on MemberType value.
-			r = x.SelectSingleNode ("MemberType").InnerText.CompareTo (
-					y.SelectSingleNode ("MemberType").InnerText);
+			r = x.SelectSingleChildElement ("MemberType").InnerText.CompareTo (
+					y.SelectSingleChildElement ("MemberType").InnerText);
 			if (r != 0)
 				return r;
 
@@ -1515,7 +1515,7 @@ class MDocUpdater : MDocCommand
 	
 	private static bool MemberDocsHaveUserContent (XmlNode e)
 	{
-		e = (XmlElement)e.SelectSingleNode("Docs");
+		e = (XmlElement)e.SelectSingleChildElement("Docs");
 		if (e == null) return false;
 		foreach (XmlElement d in e.SelectNodes("*"))
 			if (d.InnerText != "" && !d.InnerText.StartsWith("To be added", StringComparison.Ordinal))
@@ -1574,7 +1574,7 @@ class MDocUpdater : MDocCommand
 		AddAssemblyNameToNode (root, type);
 
 		string assemblyInfoNodeFilter = MDocUpdater.HasDroppedNamespace (type) ? "[@apistyle='unified']" : "[not(@apistyle) or @apistyle='classic']";
-		Func<XmlElement, bool> assemblyFilter = x => x.SelectSingleNode ("AssemblyName").InnerText == type.Module.Assembly.Name.Name;
+		Func<XmlElement, bool> assemblyFilter = x => x.SelectSingleChildElement ("AssemblyName").InnerText == type.Module.Assembly.Name.Name;
 		foreach(var ass in root.SelectNodes ("AssemblyInfo" + assemblyInfoNodeFilter).Cast<XmlElement> ().Where (assemblyFilter))
 		{
 			WriteElementText(ass, "AssemblyName", type.Module.Assembly.Name.Name);
@@ -1596,7 +1596,7 @@ class MDocUpdater : MDocCommand
 			// Neither monodoc nor monodocs2html use them, so I'm deleting them
 			// since they're outdated in current docs, and a waste of space.
 			//MakeAttributes(ass, type.Assembly, true);
-			XmlNode assattrs = ass.SelectSingleNode("Attributes");
+			XmlNode assattrs = ass.SelectSingleChildElement ("Attributes");
 			if (assattrs != null)
 				ass.RemoveChild(assattrs);
 
@@ -1689,7 +1689,7 @@ class MDocUpdater : MDocCommand
 	XmlElement AddAssemblyNameToNode (XmlElement root, ModuleDefinition module)
 	{
 		Func<XmlElement, bool> assemblyFilter = x => {
-			var existingName = x.SelectSingleNode ("AssemblyName");
+			var existingName = x.SelectSingleChildElement ("AssemblyName");
 
 			bool apiStyleMatches = true;
 			string currentApiStyle = x.GetAttribute ("apistyle");
@@ -2009,7 +2009,7 @@ class MDocUpdater : MDocCommand
 		XmlNode member = e.CloneNode (true);
 		em.AppendChild (member);
 		RemoveExcept (member, ValidExtensionMembers);
-		RemoveExcept (member.SelectSingleNode ("Docs"), ValidExtensionDocMembers);
+		RemoveExcept (member.SelectSingleChildElement ("Docs"), ValidExtensionDocMembers);
 		WriteElementText (member, "MemberType", "ExtensionMethod");
 		XmlElement link = member.OwnerDocument.CreateElement ("Link");
 		link.SetAttribute ("Type", slashdocFormatter.GetName (me.DeclaringType));
@@ -2414,7 +2414,7 @@ class MDocUpdater : MDocCommand
 		if (IsMultiAssembly)
 			return false;
 			
-		XmlElement av = (XmlElement) root.SelectSingleNode ("AssemblyVersions");
+		XmlElement av = (XmlElement) root.SelectSingleChildElement ("AssemblyVersions");
 		if (av != null) {
 				// AssemblyVersions is not part of the spec
 				root.RemoveChild (av);
@@ -2503,7 +2503,7 @@ class MDocUpdater : MDocCommand
 			return;
 		}
 
-		XmlElement e = (XmlElement)root.SelectSingleNode("Attributes");
+		XmlElement e = (XmlElement)root.SelectSingleChildElement("Attributes");
 		if (e != null)
 			e.RemoveAll();
 		else if (e == null)
@@ -2580,13 +2580,13 @@ class MDocUpdater : MDocCommand
 			}
 
 			// now find the existing node, if it's there so we can reuse it.
-			var nodes = root.SelectSingleNode ("Parameters").SelectNodes ("Parameter")
+			var nodes = root.SelectSingleChildElement ("Parameters").SelectNodes ("Parameter")
 				.Cast<XmlElement> ().Where (x => x.GetAttribute ("Name") == p.Name)
 				.ToArray();
 
 			if (nodes.Count () == 0) {
 				// wasn't found, let's make sure it wasn't just cause the param name was changed
-				nodes = root.SelectSingleNode ("Parameters").SelectNodes ("Parameter")
+				nodes = root.SelectSingleChildElement ("Parameters").SelectNodes ("Parameter")
 					.Cast<XmlElement> ()
 					.Skip (i) // this makes sure we don't inadvertently "reuse" nodes when adding new ones
 					.Where (x => x.GetAttribute ("Name") != p.Name && (x.GetAttribute ("Type") == ptype || x.GetAttribute ("Type") == newPType))
@@ -2622,7 +2622,7 @@ class MDocUpdater : MDocCommand
 	private void MakeTypeParameters (XmlElement root, IList<GenericParameter> typeParams, MemberReference member, bool shouldDuplicateWithNew)
 	{
 		if (typeParams == null || typeParams.Count == 0) {
-			XmlElement f = (XmlElement) root.SelectSingleNode ("TypeParameters");
+			XmlElement f = (XmlElement) root.SelectSingleChildElement ("TypeParameters");
 			if (f != null)
 				root.RemoveChild (f);
 			return;
@@ -2640,7 +2640,7 @@ class MDocUpdater : MDocCommand
 				AddXmlNode (
 					nodes,
 					x => { 
-						var baseType = e.SelectSingleNode("BaseTypeName");
+						var baseType = e.SelectSingleChildElement ("BaseTypeName");
 						// TODO: should this comparison take into account BaseTypeName?
 						return x.GetAttribute("Name") == t.Name;
 					},
@@ -2651,7 +2651,7 @@ class MDocUpdater : MDocCommand
 						e.AppendChild(pe);
 						pe.SetAttribute("Name", t.Name);
 							MakeAttributes (pe, GetCustomAttributes (t.CustomAttributes, ""), t.DeclaringType);
-						XmlElement ce = (XmlElement) e.SelectSingleNode ("Constraints");
+						XmlElement ce = (XmlElement) e.SelectSingleChildElement ("Constraints");
 						if (attrs == GenericParameterAttributes.NonVariant && constraints.Count == 0) {
 							if (ce != null)
 								e.RemoveChild (ce);
@@ -2775,7 +2775,7 @@ class MDocUpdater : MDocCommand
 			UpdateExceptions (info.Node, info.Member);
 
 		if (since != null) {
-			XmlNode docs = me.SelectSingleNode("Docs");
+			XmlNode docs = me.SelectSingleChildElement ("Docs");
 			docs.AppendChild (CreateSinceNode (doc));
 		}
 		
@@ -3798,6 +3798,36 @@ abstract class DocumentationImporter {
 	public abstract void ImportDocumentation (DocsNodeInfo info);
 }
 
+static class XmlNodeExtensions
+{
+	public static XmlElement SelectSingleChildElement (this XmlNode node, string element)
+	{
+		foreach (XmlNode child in node.ChildNodes) {
+			if (child.NodeType != XmlNodeType.Element)
+				continue;
+			if (child.Name == element)
+				return (XmlElement) child;
+		}
+		return null;
+	}
+
+	public static XmlElement SelectSingleChildElementWithAttribute (this XmlNode node, string element, string attribute, string attributeValue)
+	{
+		foreach (XmlNode child in node.ChildNodes) {
+			if (child.NodeType != XmlNodeType.Element)
+				continue;
+			if (child.Name != element)
+				continue;
+			var attrib = child.Attributes [attribute];
+			if (attrib == null)
+				continue;
+			if (attrib.Value == attributeValue)
+				return (XmlElement) child;
+		}
+		return null;
+	}
+}
+
 class MsxdocDocumentationImporter : DocumentationImporter {
 
 	XmlDocument slashdocs;
@@ -3823,11 +3853,11 @@ class MsxdocDocumentationImporter : DocumentationImporter {
 
 		XmlElement e = info.Node;
 
-		if (elem.SelectSingleNode("summary") != null)
+		if (elem.SelectSingleChildElement ("summary") != null)
 			MDocUpdater.ClearElement(e, "summary");
-		if (elem.SelectSingleNode("remarks") != null)
+		if (elem.SelectSingleChildElement ("remarks") != null)
 			MDocUpdater.ClearElement(e, "remarks");
-		if (elem.SelectSingleNode ("value") != null || elem.SelectSingleNode ("returns") != null) {
+		if (elem.SelectSingleChildElement ("value") != null || elem.SelectSingleChildElement ("returns") != null) {
 			MDocUpdater.ClearElement(e, "value");
 			MDocUpdater.ClearElement(e, "returns");
 		}
@@ -3839,7 +3869,7 @@ class MsxdocDocumentationImporter : DocumentationImporter {
 					XmlAttribute name = child.Attributes ["name"];
 					if (name == null)
 						break;
-					XmlElement p2 = (XmlElement) e.SelectSingleNode (child.Name + "[@name='" + name.Value + "']");
+					XmlElement p2 = (XmlElement) e.SelectSingleChildElementWithAttribute (child.Name, "name", name.Value);
 					if (p2 != null)
 						p2.InnerXml = child.InnerXml;
 					break;
@@ -3859,7 +3889,7 @@ class MsxdocDocumentationImporter : DocumentationImporter {
 					XmlAttribute cref = child.Attributes ["cref"] ?? child.Attributes ["name"];
 					if (cref == null)
 						break;
-					XmlElement a = (XmlElement) e.SelectSingleNode (child.Name + "[@cref='" + cref.Value + "']");
+					XmlElement a = (XmlElement) e.SelectSingleChildElementWithAttribute (child.Name, "cref", cref.Value);
 					if (a == null) {
 						a = e.OwnerDocument.CreateElement (child.Name);
 						a.SetAttribute ("cref", cref.Value);
@@ -3872,7 +3902,7 @@ class MsxdocDocumentationImporter : DocumentationImporter {
 					XmlAttribute cref = child.Attributes ["cref"];
 					if (cref == null)
 						break;
-					XmlElement a = (XmlElement) e.SelectSingleNode ("altmember[@cref='" + cref.Value + "']");
+					XmlElement a = (XmlElement) e.SelectSingleChildElementWithAttribute ("altmember", "cref", cref.Value);
 					if (a == null) {
 						a = e.OwnerDocument.CreateElement ("altmember");
 						a.SetAttribute ("cref", cref.Value);
@@ -4090,7 +4120,7 @@ class DocumentationMember {
 			if (l != null && v != null && shouldUse)
 				MemberSignatures [l.Value] = v.Value;
 		}
-		MemberType = node.SelectSingleNode ("MemberType").InnerText;
+		MemberType = node.SelectSingleChildElement ("MemberType").InnerText;
 		XmlNode rt = node.SelectSingleNode ("ReturnValue/ReturnType[not(@apistyle) or @apistyle='classic']");
 		if (rt != null)
 			ReturnType = rt.InnerText;
