@@ -102,11 +102,11 @@ namespace Mono.Documentation {
 		static string StripToComparableType (string typename, ref bool isOut, ref bool isArray)
 		{
 			string valueToCompare = typename;
-			if (typename.EndsWith ("[]")) {
+			if (typename.EndsWith ("[]", StringComparison.Ordinal)) {
 				valueToCompare = typename.Substring (0, typename.Length - 2);
 				isArray = true;
 			}
-			if (typename.EndsWith ("&")) {
+			if (typename.EndsWith ("&", StringComparison.Ordinal)) {
 				valueToCompare = typename.Substring (0, typename.Length - 1);
 				isOut = true;
 			}
@@ -120,7 +120,7 @@ namespace Mono.Documentation {
 			string typename = t.FullName;
 
 			bool isInAssembly = MDocUpdater.IsInAssemblies (t.Module.Name);
-			if (isInAssembly && !typename.StartsWith ("System") && MDocUpdater.HasDroppedNamespace (t)) {
+			if (isInAssembly && !typename.StartsWith ("System", StringComparison.Ordinal) && MDocUpdater.HasDroppedNamespace (t)) {
 				string nameWithDropped = string.Format ("{0}.{1}", MDocUpdater.droppedNamespace, typename);
 				return nameWithDropped;
 			}
@@ -1353,7 +1353,7 @@ class MDocUpdater : MDocCommand
 							indent = line.IndexOf (region);
 							continue;
 						}
-						if (indent >= 0 && line.Trim().StartsWith ("#endregion")) {
+						if (indent >= 0 && line.Trim().StartsWith ("#endregion", StringComparison.Ordinal)) {
 							break;
 						}
 						if (indent >= 0)
@@ -1445,7 +1445,7 @@ class MDocUpdater : MDocCommand
 			// generic methods *end* with '>'
 			// it's possible for explicitly implemented generic interfaces to
 			// contain <...> without being a generic method
-			if ((!xMemberName.EndsWith (">") || !yMemberName.EndsWith (">")) &&
+			if ((!xMemberName.EndsWith (">", StringComparison.Ordinal) || !yMemberName.EndsWith (">", StringComparison.Ordinal)) &&
 					(r = xMemberName.CompareTo (yMemberName)) != 0)
 				return r;
 
@@ -1518,7 +1518,7 @@ class MDocUpdater : MDocCommand
 		e = (XmlElement)e.SelectSingleNode("Docs");
 		if (e == null) return false;
 		foreach (XmlElement d in e.SelectNodes("*"))
-			if (d.InnerText != "" && !d.InnerText.StartsWith("To be added"))
+			if (d.InnerText != "" && !d.InnerText.StartsWith("To be added", StringComparison.Ordinal))
 				return true;
 		return false;
 	}
@@ -1975,7 +1975,7 @@ class MDocUpdater : MDocCommand
 			if (a2 != "") a2 = "(" + a2 + ")";
 
 			string name = attribute.GetDeclaringType();
-			if (name.EndsWith("Attribute")) name = name.Substring(0, name.Length-"Attribute".Length);
+			if (name.EndsWith("Attribute", StringComparison.Ordinal)) name = name.Substring(0, name.Length-"Attribute".Length);
 			yield return prefix + name + a2;
 		}
 	}
@@ -2271,7 +2271,7 @@ class MDocUpdater : MDocCommand
 			foreach (XmlElement paramnode in e.SelectNodes(element)) {
 				string name = paramnode.GetAttribute("name");
 				if (!seenParams.ContainsKey(name)) {
-					if (!delete && !paramnode.InnerText.StartsWith("To be added")) {
+					if (!delete && !paramnode.InnerText.StartsWith("To be added", StringComparison.Ordinal)) {
 						Warning ("The following param node can only be deleted if the --delete option is given: ");
 						if (e.ParentNode == e.OwnerDocument.DocumentElement) {
 							// delegate type
@@ -2309,7 +2309,7 @@ class MDocUpdater : MDocCommand
 		} else {
 			// Clear all existing param nodes
 			foreach (XmlNode paramnode in e.SelectNodes(element)) {
-				if (!delete && !paramnode.InnerText.StartsWith("To be added")) {
+				if (!delete && !paramnode.InnerText.StartsWith("To be added", StringComparison.Ordinal)) {
 					Console.WriteLine("The following param node can only be deleted if the --delete option is given:");
 					Console.WriteLine(paramnode.OuterXml);
 				} else {
@@ -2759,11 +2759,11 @@ class MDocUpdater : MDocCommand
 		if (sigs == null) return null; // not publicly visible
 		
 		// no documentation for property/event accessors.  Is there a better way of doing this?
-		if (mi.Name.StartsWith("get_")) return null;
-		if (mi.Name.StartsWith("set_")) return null;
-		if (mi.Name.StartsWith("add_")) return null;
-		if (mi.Name.StartsWith("remove_")) return null;
-		if (mi.Name.StartsWith("raise_")) return null;
+		if (mi.Name.StartsWith("get_", StringComparison.Ordinal)) return null;
+		if (mi.Name.StartsWith("set_", StringComparison.Ordinal)) return null;
+		if (mi.Name.StartsWith("add_", StringComparison.Ordinal)) return null;
+		if (mi.Name.StartsWith("remove_", StringComparison.Ordinal)) return null;
+		if (mi.Name.StartsWith("raise_", StringComparison.Ordinal)) return null;
 		
 		XmlElement me = doc.CreateElement("Member");
 		me.SetAttribute("MemberName", GetMemberName (mi));
@@ -3179,7 +3179,7 @@ static class DocUtils {
 			// first, make sure this isn't a type reference to another assembly/module
 
 			bool isInAssembly = MDocUpdater.IsInAssemblies(type.Module.Name);
-			if (isInAssembly && !typeNS.StartsWith ("System") && MDocUpdater.HasDroppedNamespace (type)) {
+			if (isInAssembly && !typeNS.StartsWith ("System", StringComparison.Ordinal) && MDocUpdater.HasDroppedNamespace (type)) {
 				typeNS = string.Format ("{0}.{1}", MDocUpdater.droppedNamespace, typeNS);
 			}
 			return typeNS;
@@ -3489,7 +3489,7 @@ class DocumentationEnumerator {
 					// did not match ... if we're dropping the namespace, and the paramType has the dropped
 					// namespace, we should see if it matches when added
 					bool stillDoesntMatch = true;
-					if (MDocUpdater.HasDroppedNamespace(type) && paramType.StartsWith (MDocUpdater.droppedNamespace)) {
+					if (MDocUpdater.HasDroppedNamespace(type) && paramType.StartsWith (MDocUpdater.droppedNamespace, StringComparison.Ordinal)) {
 						string withDroppedNs = string.Format ("{0}.{1}", MDocUpdater.droppedNamespace, xmlMemberType);
 
 						stillDoesntMatch = withDroppedNs != paramType;
@@ -4114,9 +4114,9 @@ class DocumentationMember {
 	void DiscernTypeParameters ()
 	{
 		// see if we can discern the param list from the name
-		if (MemberName.Contains ("<") && MemberName.EndsWith (">")) {
-			var starti = MemberName.IndexOf ("<") + 1;
-			var endi = MemberName.LastIndexOf (">");
+		if (MemberName.Contains ("<") && MemberName.EndsWith (">", StringComparison.Ordinal)) {
+			var starti = MemberName.IndexOf ("<", StringComparison.Ordinal) + 1;
+			var endi = MemberName.LastIndexOf (">", StringComparison.Ordinal);
 			var paramlist = MemberName.Substring (starti, endi - starti);
 			var tparams = paramlist.Split (new char[] {','}, StringSplitOptions.RemoveEmptyEntries);
 			TypeParameters = new StringList (tparams);
@@ -5098,7 +5098,7 @@ class CSharpFullMemberFormatter : MemberFormatter {
 		if (type is GenericParameter)
 			return AppendGenericParameterConstraints (buf, (GenericParameter) type, context).Append (type.Name);
 		string t = type.FullName;
-		if (!t.StartsWith ("System.")) {
+		if (!t.StartsWith ("System.", StringComparison.Ordinal)) {
 			return base.AppendTypeName (buf, type, context);
 		}
 
