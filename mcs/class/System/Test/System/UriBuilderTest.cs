@@ -177,7 +177,7 @@ namespace MonoTests.System
 			Assert.AreEqual ("?\xA9 2002", b.Query, "#1");
 			Assert.AreEqual (string.Empty, b.Fragment, "#2");
 			b.Query = "?test";
-			Assert.AreEqual ("??test", b.Query, "#3");
+			Assert.AreEqual ("?test", b.Query, "#3");
 			b.Query = null;
 			Assert.AreEqual (string.Empty, b.Query, "#4");
 			b.Fragment = "test";
@@ -199,7 +199,7 @@ namespace MonoTests.System
 			Assert.AreEqual ("#\xA9 2002", b.Fragment, "#1");
 			Assert.AreEqual (string.Empty, b.Query, "#2");
 			b.Fragment = "#test";
-			Assert.AreEqual ("##test", b.Fragment, "#3");
+			Assert.AreEqual ("#test", b.Fragment, "#3");
 			b.Fragment = null;
 			Assert.AreEqual (String.Empty, b.Fragment, "#4");
 			b.Query = "name";
@@ -264,7 +264,7 @@ namespace MonoTests.System
 			b = new UriBuilder ("http", "www.ximian.com", 80, "/lalala/lelele.aspx", "?");
 			Assert.AreEqual (noquery, b.Uri.ToString (), "#2");
 			b = new UriBuilder ("http", "www.ximian.com", 80, "/lalala/lelele.aspx", "??");
-			Assert.AreEqual (noquery + "??", b.Uri.ToString (), "#3");
+			Assert.AreEqual (noquery + "?", b.Uri.ToString (), "#3");
 			b = new UriBuilder ("http", "www.ximian.com", 80, "/lalala/lelele.aspx", "?something");
 			Assert.AreEqual (noquery + "?something", b.Uri.ToString (), "#4");
 		}
