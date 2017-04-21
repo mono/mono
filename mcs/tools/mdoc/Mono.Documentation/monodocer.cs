@@ -3801,6 +3801,7 @@ abstract class DocumentationImporter {
 class MsxdocDocumentationImporter : DocumentationImporter {
 
 	XmlDocument slashdocs;
+	Dictionary<string, XmlNode> slashdocs_dict;
 
 	public MsxdocDocumentationImporter (string file)
 	{
@@ -3895,8 +3896,27 @@ class MsxdocDocumentationImporter : DocumentationImporter {
 	private XmlNode GetDocs (MemberReference member)
 	{
 		string slashdocsig = MDocUpdater.slashdocFormatter.GetDeclaration (member);
-		if (slashdocsig != null)
-			return slashdocs.SelectSingleNode ("doc/members/member[@name='" + slashdocsig + "']");
+		if (slashdocsig != null) {
+			if (slashdocs_dict == null) {
+				slashdocs_dict = new Dictionary<string, XmlNode> ();
+				var members = slashdocs.SelectSingleNode ("doc/members");
+				foreach (XmlNode node in members) {
+					if (node.NodeType != XmlNodeType.Element)
+						continue;
+					if (node.Name != "member")
+						continue;
+					var nameAttribute = node.Attributes ["name"];
+					if (nameAttribute == null)
+						continue;
+					slashdocs_dict [nameAttribute.Value] = node;
+				}
+			}
+
+			XmlNode doc;
+			if (!slashdocs_dict.TryGetValue (slashdocsig, out doc))
+				return null;
+			return doc;
+		}
 		return null;
 	}
 }
