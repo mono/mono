@@ -389,6 +389,11 @@ gpointer CreateThread(WapiSecurityAttributes *security G_GNUC_UNUSED, guint32 st
 #else
 		stacksize = (SIZEOF_VOID_P / 4) * 1024 * 1024;
 #endif
+	} else {
+		/* ensure stack is a multiple of page size */
+		int page_size = getpagesize();
+		if (page_size > 0 && (stacksize % page_size) != 0)
+				stacksize += page_size - (stacksize % page_size);
 	}
 
 #ifdef HAVE_PTHREAD_ATTR_SETSTACKSIZE
