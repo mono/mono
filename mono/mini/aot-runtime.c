@@ -2666,6 +2666,7 @@ is_thumb_code (MonoAotModule *amodule, guint8 *code)
  *   Decode the EH information emitted by our modified LLVM compiler and construct a
  * MonoJitInfo structure from it.
  * If JINFO is NULL, set OUT_LLVM_CLAUSES to the number of llvm level clauses.
+ * This function is async safe when called in async context.
  */
 static void
 decode_llvm_mono_eh_frame (MonoAotModule *amodule, MonoDomain *domain, MonoJitInfo *jinfo,
@@ -2802,11 +2803,11 @@ decode_llvm_mono_eh_frame (MonoAotModule *amodule, MonoDomain *domain, MonoJitIn
 		return;
 	}
 
-	// FIXME: This is not async safe
-	jinfo->unwind_info = mono_cache_unwind_info (unw_info, info.unw_info_len);
-	/* This signals that unwind_info points to a normal cached unwind info */
-	jinfo->from_aot = 0;
-	jinfo->from_llvm = 1;
+	/* Store the unwind info addr/length in the MonoJitInfo structure itself so its async safe */
+	MonoUnwindJitInfo *jinfo_unwind = mono_jit_info_get_unwind_info (jinfo);
+	g_assert (jinfo_unwind);
+	jinfo_unwind->unw_info = unw_info;
+	jinfo_unwind->unw_info_len = info.unw_info_len;
 
 	for (i = 0; i < ei_len; ++i) {
 		/*
@@ -2940,16 +2941,18 @@ decode_exception_debug_info (MonoAotModule *amodule, MonoDomain *domain,
 		MonoJitExceptionInfo *clauses;
 		GSList **nesting;
 
-		// FIXME: async
-		g_assert (!async);
-
 		/*
 		 * Part of the info is encoded by the AOT compiler, the rest is in the .eh_frame
 		 * section.
 		 */
 		if (async) {
-			clauses = g_newa (MonoJitExceptionInfo, num_clauses);
-			nesting = g_newa (GSList*, num_clauses);
+			if (num_clauses < 16) {
+				clauses = g_newa (MonoJitExceptionInfo, num_clauses);
+				nesting = g_newa (GSList*, num_clauses);
+			} else {
+				clauses = alloc0_jit_info_data (domain, sizeof (MonoJitExceptionInfo) * num_clauses, TRUE);
+				nesting = alloc0_jit_info_data (domain, sizeof (GSList*) * num_clauses, TRUE);
+			}
 			memset (clauses, 0, sizeof (MonoJitExceptionInfo) * num_clauses);
 			memset (nesting, 0, sizeof (GSList*) * num_clauses);
 		} else {
@@ -2992,6 +2995,8 @@ decode_exception_debug_info (MonoAotModule *amodule, MonoDomain *domain,
 				nesting [i] = g_slist_prepend (nesting [i], GINT_TO_POINTER (nesting_index));
 			}
 		}
+
+		flags |= JIT_INFO_HAS_UNWIND_INFO;
 
 		int num_llvm_clauses;
 		/* Get the length first */
