@@ -77,6 +77,7 @@
     <ClCompile Include="..\mono\metadata\mono-hash.c" />
     <ClCompile Include="..\mono\metadata\mono-mlist.c" />
     <ClCompile Include="..\mono\metadata\mono-perfcounters.c" />
+    <ClCompile Include="..\mono\metadata\mono-adapt-set.c" />
     <ClCompile Include="..\mono\metadata\nacl-stub.c" />
     <ClCompile Include="..\mono\metadata\null-gc.c" />
     <ClCompile Include="..\mono\metadata\number-ms.c" />

@@ -55,6 +55,9 @@
     <ClCompile Include="..\mono\metadata\mono-config.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\mono\metadata\mono-adapt-set.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\mono\utils\mono-dl.c">
       <Filter>Source Files</Filter>
     </ClCompile>

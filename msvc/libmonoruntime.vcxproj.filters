@@ -112,6 +112,9 @@
     <ClCompile Include="..\mono\metadata\mono-perfcounters.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\mono\metadata\mono-adapt-set.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\mono\metadata\mono-security.c">
       <Filter>Source Files</Filter>
     </ClCompile>

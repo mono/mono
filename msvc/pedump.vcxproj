@@ -227,6 +227,7 @@
     <ClCompile Include="..\mono\metadata\metadata.c" />
     <ClCompile Include="..\mono\metadata\monitor.c" />
     <ClCompile Include="..\mono\metadata\mono-config.c" />
+    <ClCompile Include="..\mono\metadata\mono-adapt-set.c" />
     <ClCompile Include="..\mono\utils\mono-dl.c" />
     <ClCompile Include="..\mono\metadata\object.c" />
     <ClCompile Include="..\mono\metadata\w32process.c" />
