@@ -1182,10 +1182,17 @@ typedef struct {
 	MonoArray *global_fields;
 	gboolean is_main;
 	MonoArray *resources;
+	GHashTable *unparented_classes;
 } MonoReflectionModuleBuilder;
 
 /* Safely acess System.Reflection.Emit.ModuleBuidler from native code */
 TYPED_HANDLE_DECL (MonoReflectionModuleBuilder);
+
+typedef enum {
+	MonoTypeBuilderNew = 0,
+	MonoTypeBuilderEntered = 1,
+	MonoTypeBuilderFinished = 2
+} MonoTypeBuilderState;
 
 typedef struct {
 	MonoReflectionType type;
@@ -1212,6 +1219,7 @@ typedef struct {
 	MonoArray *generic_params;
 	MonoArray *permissions;
 	MonoReflectionType *created;
+	gint32 state;
 } MonoReflectionTypeBuilder;
 
 /* Safely access System.Reflection.Emit.TypeBuilder from native code */
