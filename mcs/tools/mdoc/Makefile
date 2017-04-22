@@ -2,20 +2,26 @@ thisdir = tools/mdoc
 SUBDIRS = 
 include ../../build/rules.make
 
-MDOC_COMMON_FLAGS = \
-	/resource:../../class/monodoc/Resources/mdoc-html-format.xsl,mdoc-html-format.xsl    \
-	/resource:../../class/monodoc/Resources/mdoc-html-utils.xsl,mdoc-html-utils.xsl      \
-	/resource:../../class/monodoc/Resources/mdoc-sections-css.xsl,mdoc-sections-css.xsl  \
-	/resource:../../class/monodoc/Resources/mono-ecma-css.xsl,mono-ecma-css.xsl          \
-	/resource:Resources/defaulttemplate.xsl,defaulttemplate.xsl                 \
-	/resource:Resources/monodoc-ecma.xsd,monodoc-ecma.xsd                       \
-	/resource:Resources/msitomsx.xsl,msitomsx.xsl                               \
-	/resource:Resources/overview.xsl,overview.xsl                               \
-	/resource:Resources/stylesheet.xsl,stylesheet.xsl                           \
+MONODOC_RESOURCES = \
+	Resources/mdoc-html-format.xsl    \
+	Resources/mdoc-html-utils.xsl    \
+	Resources/mdoc-sections-css.xsl  \
+	Resources/mono-ecma-css.xsl
+
+MDOC_RESOURCES = \
+	Resources/defaulttemplate.xsl \
+	Resources/monodoc-ecma.xsd \
+	Resources/msitomsx.xsl \
+	Resources/overview.xsl \
+	Resources/stylesheet.xsl
+
+MDOC_RESOURCES_COMMAND = $(foreach file,$(MDOC_RESOURCES),/resource:../../../external/api-doc-tools/mdoc/$(file),$(notdir $(file)))
+
+MONODOC_RESOURCES_COMMAND = $(foreach file,$(MONODOC_RESOURCES),/resource:../../../external/api-doc-tools/monodoc/$(file),$(notdir $(file)))
 
 LIB_REFS = monodoc System System.Xml System.Core Mono.Cecil ICSharpCode.SharpZipLib System.Xml.Linq System.Web
 	
-LOCAL_MCS_FLAGS = $(MDOC_COMMON_FLAGS)
+LOCAL_MCS_FLAGS = $(MDOC_RESOURCES_COMMAND) $(MONODOC_RESOURCES_COMMAND)
 PROGRAM = $(topdir)/class/lib/$(PROFILE)/mdoc.exe
 PROGRAM_DEPS = $(topdir)/class/lib/$(PROFILE)/monodoc.dll
 
@@ -31,18 +37,6 @@ copy-with-deps:
 	cp $(topdir)/class/lib/$(PROFILE)/monodoc.dll mdoc-net
 endif
 
-MONODOC_RESOURCES = \
-	../../class/monodoc/Resources/mdoc-html-utils.xsl    \
-	../../class/monodoc/Resources/mdoc-sections-css.xsl  \
-	../../class/monodoc/Resources/mono-ecma-css.xsl
-
-MDOC_RESOURCES = \
-	Resources/defaulttemplate.xsl     \
-	Resources/monodoc-ecma.xsd        \
-	Resources/msitomsx.xsl            \
-	Resources/overview.xsl            \
-	Resources/stylesheet.xsl
-
 MDOC_TEST_FILES = \
 	Test/CLILibraryTypes.dtd				  \
 	Test/DocTest-v1.cs                                        \
@@ -53,16 +47,12 @@ MDOC_TEST_FILES = \
 	Test/validate.check.monodocer.importslashdoc              \
 	Test/validate.check.monodocer.since
 
-EXTRA_DISTFILES = \
-	$(MDOC_RESOURCES) \
-	$(MDOC_TEST_FILES)
-
 MULTI-CLASSIC = Test/DocTest-DropNS-classic.dll Test/DocTest-DropNS-classic-multitest.dll
 MULTI-UNIFIED = Test/DocTest-DropNS-unified.dll Test/DocTest-DropNS-unified-multitest.dll
 
-$(PROGRAM) : $(MDOC_RESOURCES) $(MONODOC_RESOURCES) $(PROGRAM_DEPS)
+$(PROGRAM): $(PROGRAM_DEPS)
 
-PROGRAM_COMPILE = $(CSCOMPILE) -platform:x86
+PROGRAM_COMPILE = $(CSCOMPILE)
 
 include ../../build/executable.make
 

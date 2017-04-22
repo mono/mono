@@ -1,2 +1,2 @@
-mdoc: The element 'Docs' has invalid child element 'extra'. List of possible elements expected: 'summary, param, exception, returns, remarks, example, value, permission, PermissionSet, altmember, altcompliant, since, threadsafe, typeparam, filterpriority, related'.
+mdoc: The element 'Docs' has invalid child element 'extra'. List of possible elements expected: 'summary, param, exception, returns, remarks, example, value, permission, PermissionSet, altmember, altcompliant, since, threadsafe, typeparam, filterpriority, related, forInternalUseOnly'.
 Total validation errors: 1
