@@ -94,6 +94,7 @@ ${TESTCMD} --label=Microsoft.Build.Tasks-14 --timeout=60m make -w -C mcs/class/M
 ${TESTCMD} --label=Microsoft.Build.Utilities-14 --timeout=60m make -w -C mcs/class/Microsoft.Build.Utilities run-test PROFILE=xbuild_14
 ${TESTCMD} --label=System.IO.Compression --timeout=5m make -w -C mcs/class/System.IO.Compression run-test
 ${TESTCMD} --label=System.Runtime.CompilerServices.Unsafe --timeout=5m make -w -C mcs/class/System.Runtime.CompilerServices.Unsafe run-xunit-test
+${TESTCMD} --label=System.Memory --timeout=5m make -w -C mcs/class/System.Memory run-xunit-test
 
 if [[ ${label} == osx-* ]]
 then ${TESTCMD} --label=ms-test-suite --timeout=30m make -w -C acceptance-tests check-ms-test-suite
