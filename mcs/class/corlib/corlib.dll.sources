@@ -871,7 +871,6 @@ System.Threading.Tasks/DecoupledTask.cs
 ../Mono.Parallel/Mono.Threading/AtomicBoolean.cs
 
 ReferenceSources/__ConsoleStream.cs
-ReferenceSources/AppContextSwitches.cs
 ReferenceSources/Array.cs
 ReferenceSources/BCLDebug.cs
 ReferenceSources/CalendarData.cs
@@ -1053,6 +1052,8 @@ ReferenceSources/Type.cs
 ../referencesource/mscorlib/system/version.cs
 
 ../referencesource/mscorlib/system/AppContext/AppContext.cs
+../referencesource/mscorlib/system/AppContext/AppContextSwitches.cs
+ReferenceSources/AppContextDefaultValues.cs
 
 ../referencesource/mscorlib/system/collections/arraylist.cs
 ../referencesource/mscorlib/system/collections/bitarray.cs
