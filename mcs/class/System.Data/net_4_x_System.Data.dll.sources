@@ -63,6 +63,8 @@ System.Data.Common/DbTypes.cs
 System.Data.Common/ExceptionHelper.cs
 System.Data.Common/DbConnectionStringBuilderHelper.cs
 
+../../../external/corefx/src/System.Data.Odbc/src/Common/System/HResults.cs
+
 ../referencesource/System.Data/bid/inc/cs/bidPrivateBase.cs
 ../referencesource/System.Data/Misc/PrivilegedConfigurationManager.cs
 ../referencesource/System.Data/System/Data/CodeGen/datacache.cs

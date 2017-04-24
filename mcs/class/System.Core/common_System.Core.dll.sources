@@ -111,7 +111,6 @@ System.Security.Cryptography/SHA512CryptoServiceProvider.cs
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Common/ArrayBuilderExtensions.cs
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Common/ConstantCheck.cs
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/DelegateHelpers.Generated.cs
-../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/DelegateHelpers.netstandard.cs
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/HoistedLocals.cs
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/TypeInfoExtensions.cs
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Runtime/CompilerServices/CallSite.cs
@@ -281,14 +280,11 @@ System.Security.Cryptography/SHA512CryptoServiceProvider.cs
 ../../../external/corefx/src/Common/src/System/Collections/Generic/LargeArrayBuilder.cs
 ../../../external/corefx/src/Common/src/System/Collections/Generic/SparseArrayBuilder.cs
 
-../../../external/corefx/src/Common/src/System/Dynamic/Utils/CacheDict.cs
-../../../external/corefx/src/Common/src/System/Dynamic/Utils/ContractUtils.cs
-../../../external/corefx/src/Common/src/System/Dynamic/Utils/ContractUtils.RequiresArrayRange.cs
-../../../external/corefx/src/Common/src/System/Dynamic/Utils/Error.cs
-../../../external/corefx/src/Common/src/System/Dynamic/Utils/ExpressionUtils.cs
-../../../external/corefx/src/Common/src/System/Dynamic/Utils/Strings.cs
-../../../external/corefx/src/Common/src/System/Dynamic/Utils/TypeExtensions.cs
-../../../external/corefx/src/Common/src/System/Dynamic/Utils/TypeUtils.cs
+../../../external/corefx/src/System.Linq.Expressions/src/System/Dynamic/Utils/CacheDict.cs
+../../../external/corefx/src/System.Linq.Expressions/src/System/Dynamic/Utils/ContractUtils.cs
+../../../external/corefx/src/System.Linq.Expressions/src/System/Dynamic/Utils/ExpressionUtils.cs
+../../../external/corefx/src/System.Linq.Expressions/src/System/Dynamic/Utils/TypeExtensions.cs
+../../../external/corefx/src/System.Linq.Expressions/src/System/Dynamic/Utils/TypeUtils.cs
 
-../../../external/corefx/src/Common/src/System/Linq/Expressions/Compiler/DelegateHelpers.cs
-../../../external/corefx/src/Common/src/System/Linq/Expressions/Compiler/DelegateHelpers.Generated.cs
+../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/DelegateHelpers.cs
+../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/DelegateHelpers.Generated.cs

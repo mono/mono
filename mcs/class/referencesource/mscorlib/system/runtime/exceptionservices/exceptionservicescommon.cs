@@ -150,6 +150,10 @@ namespace System.Runtime.ExceptionServices {
             m_Exception.RestoreExceptionDispatchInfo(this);
             throw m_Exception; 
         }
+
+#if MONO
+        public static void Throw (Exception source) => Capture (source).Throw ();
+#endif
     }
 }
 #endif // FEATURE_EXCEPTIONDISPATCHINFO
