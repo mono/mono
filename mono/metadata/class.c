@@ -1566,25 +1566,8 @@ mono_class_setup_fields (MonoClass *klass)
 		if (mono_class_set_type_load_failure_causedby_class (klass, klass->parent, "Could not set up parent class"))
 			return;
 		instance_size = klass->parent->instance_size;
-
-		// UNITY_TODO
-#ifdef IL2CPP_ON_MONO
-		if (klass->valuetype)
-			klass->min_align = 1;
-		else
-			klass->min_align = klass->parent->min_align;
-#else
-			klass->min_align = klass->parent->min_align;
-#endif
-
 	} else {
 		instance_size = sizeof (MonoObject);
-		// UNITY_TODO
-#ifdef IL2CPP_ON_MONO
-		klass->min_align = sizeof(void*);
-#else
-		klass->min_align = 1;
-#endif
 	}
 
 	/* Get the real size */
@@ -1804,11 +1787,23 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 	}
 
 	if (klass->parent) {
-		min_align = klass->parent->min_align;
+#ifdef IL2CPP_ON_MONO
+		if (klass->valuetype)
+			min_align = 1;
+		else
+			min_align = klass->parent->min_align;
+#else
+			min_align = klass->parent->min_align;
+#endif
+
 		/* we use | since it may have been set already */
 		has_references = klass->has_references | klass->parent->has_references;
 	} else {
+#ifdef IL2CPP_ON_MONO
+		min_align = sizeof(void*);
+#else
 		min_align = 1;
+#endif
 	}
 	/* We can't really enable 16 bytes alignment until the GC supports it.
 	The whole layout/instance size code must be reviewed because we do alignment calculation in terms of the
