@@ -212,6 +212,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Net.WebSockets\src\System\Net\WebSockets\WebSocketMessageType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.WebSockets\src\System\Net\WebSockets\WebSocketReceiveResult.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.WebSockets\src\System\Net\WebSockets\WebSocketState.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Private.Uri\src\System\UriBuilder.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\CodeDom\Compiler\IndentedTextWriter.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime\src\System\Collections\Generic\ISet.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\OpenFlags.cs" />
@@ -735,7 +736,6 @@
     <Compile Include="..\referencesource\System\net\System\Net\WebUtility.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\WriteStreamClosedEventArgs.cs" />
     <Compile Include="..\referencesource\System\net\System\URI.cs" />
-    <Compile Include="..\referencesource\System\net\System\uribuilder.cs" />
     <Compile Include="..\referencesource\System\net\System\UriEnumTypes.cs" />
     <Compile Include="..\referencesource\System\net\System\UriExt.cs" />
     <Compile Include="..\referencesource\System\net\System\URIFormatException.cs" />
