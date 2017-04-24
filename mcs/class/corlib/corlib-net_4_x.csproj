@@ -157,6 +157,7 @@
     <Compile Include="..\referencesource\mscorlib\system\activator.cs" />
     <Compile Include="..\referencesource\mscorlib\system\AggregateException.cs" />
     <Compile Include="..\referencesource\mscorlib\system\AppContext\AppContext.cs" />
+    <Compile Include="..\referencesource\mscorlib\system\AppContext\AppContextSwitches.cs" />
     <Compile Include="..\referencesource\mscorlib\system\appdomainattributes.cs" />
     <Compile Include="..\referencesource\mscorlib\system\appdomainunloadedexception.cs" />
     <Compile Include="..\referencesource\mscorlib\system\applicationexception.cs" />
@@ -885,7 +886,7 @@
     <Compile Include="Mono\SafeGPtrArrayHandle.cs" />
     <Compile Include="Mono\SafeStringMarshal.cs" />
     <Compile Include="ReferenceSources\__ConsoleStream.cs" />
-    <Compile Include="ReferenceSources\AppContextSwitches.cs" />
+    <Compile Include="ReferenceSources\AppContextDefaultValues.cs" />
     <Compile Include="ReferenceSources\AppDomain.cs" />
     <Compile Include="ReferenceSources\Array.cs" />
     <Compile Include="ReferenceSources\BCLDebug.cs" />
