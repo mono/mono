@@ -30,6 +30,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.IO;
 using System.Net;
+using System.Runtime.ExceptionServices;
 
 #if XAMCORE_4_0
 using CFNetwork;
@@ -57,7 +58,7 @@ namespace System.Net.Http
 		Mutex data_mutex;
 		AutoResetEvent data_event;
 		AutoResetEvent data_read_event;
-		Exception http_exception = null;
+		ExceptionDispatchInfo http_exception;
 
 		// The requirements are:
 		// * We must read at least one byte from the stream every time
@@ -96,7 +97,7 @@ namespace System.Net.Http
 			if (gotMutex) {
 				var stream = (CFHTTPStream)sender;
 				if (e.EventType == CFStreamEventType.ErrorOccurred)
-					http_exception = stream.GetError ();
+					Volatile.Write (http_exception, ExceptionDispatchInfo.Capture (stream.GetError ()));
 				data_mutex.ReleaseMutex ();
 			}
 		}
@@ -118,6 +119,7 @@ namespace System.Net.Http
 
 			data_mutex.WaitOne ();
 			data = null;
+			this.http_stream.ErrorEvent -= HandleErrorEvent;
 			data_mutex.ReleaseMutex ();
 
 			data_event.Set ();
@@ -128,8 +130,9 @@ namespace System.Net.Http
 			while (data_event.WaitOne ()) {
 				data_mutex.WaitOne ();
 				if (http_exception != null) {
+					http_exception.Throw ();
 					data_mutex.ReleaseMutex ();
-					throw http_exception;
+					break;
 				}
 				if (data == null || data.Length <= 0) {
 					data_mutex.ReleaseMutex ();
