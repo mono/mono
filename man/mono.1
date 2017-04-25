@@ -311,6 +311,16 @@ Instructs the AOT compiler to emit (or not emit) debug symbol information.
 For more information about AOT, see: http://www.mono-project.com/docs/advanced/aot/
 .RE
 .TP
+\fB--apply-bindings=FILE\fR
+Apply the assembly bindings from the specified configuration file when running
+the AOT compiler.  This is useful when compiling an auxiliary assembly that is
+referenced by a main assembly that provides a configuration file.  For example,
+if app.exe uses lib.dll then in order to make the assembly bindings from
+app.exe.config available when compiling lib.dll ahead of time, use:
+.nf
+	mono --apply-bindings=app.exe.config --aot lib.dll
+.fi
+.TP
 \fB--attach=[options]\fR
 Currently the only option supported by this command line argument is
 \fBdisable\fR which disables the attach functionality.
