@@ -42,8 +42,6 @@ using MX = Mono.Security.X509;
 using System.Security.Cryptography.X509Certificates;
 using Mono.AppleTls;
 
-#endif
-
 using System;
 using System.Net;
 using System.Collections.Generic;
@@ -66,19 +64,13 @@ namespace Mono.Net.Security
 		 * @IMonoTlsProvider is defined as empty interface outside 'SECURITY_DEP', so we don't need
 		 * this conditional here.
 		 */
-
 		internal static IMonoTlsProvider GetProviderInternal ()
 		{
-#if SECURITY_DEP
 			return GetTlsProvider ();
-#else
-			throw new NotSupportedException ("TLS Support not available.");
-#endif
 		}
 		
 		#endregion
 
-#if SECURITY_DEP
 		static object locker = new object ();
 		static IMonoTlsProvider provider;
 		static IMonoTlsProvider GetTlsProvider ()
@@ -140,7 +132,7 @@ namespace Mono.Net.Security
 			}
 		}
 		#endregion
-#endif
 	}
 }
+#endif
 

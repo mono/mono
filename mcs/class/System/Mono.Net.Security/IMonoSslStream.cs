@@ -34,7 +34,6 @@ using MSI = MonoSecurity::Mono.Security.Interface;
 #else
 using MSI = Mono.Security.Interface;
 #endif
-#endif
 
 using System;
 using System.IO;
@@ -222,12 +221,11 @@ namespace Mono.Net.Security
 
 		void EndWrite (IAsyncResult asyncResult);
 
-#if SECURITY_DEP
 		MSI.MonoTlsProvider Provider {
 			get;
 		}
 
 		MSI.MonoTlsConnectionInfo GetConnectionInfo ();
-#endif
 	}
 }
+#endif

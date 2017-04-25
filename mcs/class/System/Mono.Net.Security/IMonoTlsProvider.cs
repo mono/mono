@@ -59,9 +59,9 @@ namespace Mono.Net.Security
 	 * directory.
 	 * 
 	 */
+#if SECURITY_DEP
 	interface IMonoTlsProvider
 	{
-#if SECURITY_DEP
 		MonoTlsProvider Provider {
 			get;
 		}
@@ -69,6 +69,6 @@ namespace Mono.Net.Security
 		IMonoSslStream CreateSslStream (
 			Stream innerStream, bool leaveInnerStreamOpen,
 			MonoTlsSettings settings);
-#endif
 	}
+#endif
 }
