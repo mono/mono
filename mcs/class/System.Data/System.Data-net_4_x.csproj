@@ -49,6 +49,10 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Data\Common\DbConnectionPoolKey.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Data\Common\MultipartIdentifier.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Data\Common\NameValuePair.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Data\Common\SQLResource.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\AcceptRejectRule.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\AggregateType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\BaseCollection.cs" />
@@ -75,7 +79,6 @@
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\DbCommand.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\DBCommandBuilder.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\DbConnection.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\DbConnectionPoolKey.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\DbConnectionStringBuilder.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\DbDataAdapter.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\DbDataReader.cs" />
@@ -103,8 +106,6 @@
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\Int16Storage.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\Int32Storage.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\Int64Storage.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\MultipartIdentifier.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\NameValuePair.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\ObjectStorage.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\RowUpdatedEventArgs.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\RowUpdatingEventArgs.cs" />
@@ -257,7 +258,6 @@
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\SQLTypes\SQLInt32.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\SQLTypes\SQLInt64.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\SQLTypes\SQLMoney.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\SQLTypes\SQLResource.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\SQLTypes\SQLSingle.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\SQLTypes\SQLString.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\SQLTypes\SQLUtility.cs" />
@@ -281,6 +281,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\XMLSchema.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\XmlToDatasetMap.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\XmlWriteMode.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\HResults.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Xml\BaseTreeIterator.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Xml\DataDocumentXPathNavigator.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Xml\DataPointer.cs" />
@@ -292,6 +293,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Xml\XmlDataDocument.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Xml\XmlDataImplementation.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Xml\XPathNodePointer.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\Common\System\HResults.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\Common\ActivityCorrelator.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\OperationAbortedException.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\ProviderBase\DbConnectionPoolGroupProviderInfo.cs" />
@@ -302,7 +304,6 @@
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlError.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlErrorCollection.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlInfoMessageEvent.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Private.Xml\src\Misc\HResults.cs" />
     <Compile Include="..\..\build\common\AssemblyRef.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
@@ -426,7 +427,6 @@
     <Compile Include="..\referencesource\System.Data\System\Data\ProviderBase\DbMetaDataFactory.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\ProviderBase\WrappedIUnknown.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\Sql\IBinarySerialize.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Sql\invalidudtexception.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\Sql\SqlDataSourceEnumerator.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\Sql\SqlFacetAttribute.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\Sql\SqlFunctionAttribute.cs" />
