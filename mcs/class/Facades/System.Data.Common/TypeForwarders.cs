@@ -36,6 +36,7 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Data.Common.DbParameterCollection))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Data.Common.DbProviderFactory))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Data.Common.DbTransaction))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Data.Common.IDbColumnSchemaGenerator))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Data.ConnectionState))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Data.DataRowVersion))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Data.DataTable))]
