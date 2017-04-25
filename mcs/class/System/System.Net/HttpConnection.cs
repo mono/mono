@@ -73,7 +73,7 @@ namespace System.Net {
 		HttpListener last_listener;
 		int [] client_cert_errors;
 		X509Certificate2 client_cert;
-		IMonoSslStream ssl_stream;
+		MSI.IMonoSslStream ssl_stream;
 
 		public HttpConnection (Socket sock, EndPointListener epl, bool secure, X509Certificate cert)
 		{

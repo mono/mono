@@ -63,15 +63,11 @@ namespace Mono.Net.Security.Private
 			get { return provider; }
 		}
 
-		public IMonoSslStream CreateSslStream (
+		public MSI.IMonoSslStream CreateSslStream (
 			Stream innerStream, bool leaveInnerStreamOpen,
 			MSI.MonoTlsSettings settings)
 		{
-			var sslStream = provider.CreateSslStream (innerStream, leaveInnerStreamOpen, settings);
-			var monoSslStreamImpl = sslStream as MonoSslStreamImpl;
-			if (monoSslStreamImpl != null)
-				return monoSslStreamImpl.Impl;
-			return new MonoSslStreamWrapper (sslStream);
+			return provider.CreateSslStream (innerStream, leaveInnerStreamOpen, settings);
 		}
 	}
 }

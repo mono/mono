@@ -125,7 +125,7 @@ namespace System.Net {
 			}
 		}
 
-		internal IMonoSslStream CreateSslStream (Stream innerStream, bool ownsStream, MSI.MonoRemoteCertificateValidationCallback callback)
+		internal MSI.IMonoSslStream CreateSslStream (Stream innerStream, bool ownsStream, MSI.MonoRemoteCertificateValidationCallback callback)
 		{
 			lock (registry) {
 				if (tlsProvider == null)
