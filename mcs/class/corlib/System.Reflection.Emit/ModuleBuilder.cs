@@ -77,7 +77,7 @@ namespace System.Reflection.Emit {
 		Hashtable resource_writers;
 		ISymbolWriter symbolWriter;
 
-		private static bool has_warned_about_symbolWriter;
+		static bool has_warned_about_symbolWriter;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void basic_init (ModuleBuilder ab);
@@ -110,7 +110,7 @@ namespace System.Reflection.Emit {
 			if (emitSymbolInfo) {
 				Assembly asm = Assembly.LoadWithPartialName ("Mono.CompilerServices.SymbolWriter");
 				if (asm == null) {
-					WarnAboutSymbolWriter("Failed to load the default Mono.CompilerServices.SymbolWriter assembly");
+					WarnAboutSymbolWriter ("Failed to load the default Mono.CompilerServices.SymbolWriter assembly");
 					return;
 				}
 
@@ -118,7 +118,7 @@ namespace System.Reflection.Emit {
 				try {
 					symbolWriter = (ISymbolWriter) Activator.CreateInstance (t, new object[] { this });
 				} catch (System.MissingMethodException) {
-					WarnAboutSymbolWriter("The default Mono.CompilerServices.SymbolWriter is not available on this platform");					
+					WarnAboutSymbolWriter ("The default Mono.CompilerServices.SymbolWriter is not available on this platform");					
 					return;
 				}
 				
@@ -135,7 +135,7 @@ namespace System.Reflection.Emit {
 				return;
 
 			has_warned_about_symbolWriter = true;
-			Console.Error.WriteLine("WARNING: {0}", message);
+			Console.Error.WriteLine ("WARNING: {0}", message);
 		}
 
 		public override string FullyQualifiedName {get { return fqname;}}
