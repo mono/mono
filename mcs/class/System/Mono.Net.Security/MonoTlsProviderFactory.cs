@@ -229,20 +229,6 @@ namespace Mono.Net.Security
 		{
 			InitializeInternal (provider);
 		}
-
-		internal static HttpWebRequest CreateHttpsRequest (Uri requestUri, MSI.MonoTlsProvider provider, MSI.MonoTlsSettings settings)
-		{
-			lock (locker) {
-				return new HttpWebRequest (requestUri, provider, settings);
-			}
-		}
-
-		internal static HttpListener CreateHttpListener (X509Certificate certificate, MSI.MonoTlsProvider provider, MSI.MonoTlsSettings settings)
-		{
-			lock (locker) {
-				return new HttpListener (certificate, provider, settings);
-			}
-		}
 		#endregion
 	}
 }
