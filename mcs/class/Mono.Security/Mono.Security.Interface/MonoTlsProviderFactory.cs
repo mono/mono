@@ -161,6 +161,11 @@ namespace Mono.Security.Interface
 			return (IMonoSslStream)NoReflectionHelper.GetMonoSslStream (stream);
 		}
 
+		public static IMonoSslStream GetMonoSslStream (HttpListenerContext context)
+		{
+			return (IMonoSslStream)NoReflectionHelper.GetMonoSslStream (context);
+		}
+
 		#endregion
 
 		#region Obsolete APIs

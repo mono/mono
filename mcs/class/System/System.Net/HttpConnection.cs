@@ -100,6 +100,10 @@ namespace System.Net {
 			Init ();
 		}
 
+		internal MSI.IMonoSslStream SslStream {
+			get { return ssl_stream; }
+		}
+
 		internal int [] ClientCertificateErrors {
 			get { return client_cert_errors; }
 		}
