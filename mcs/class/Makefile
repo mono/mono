@@ -18,7 +18,6 @@ basic_SUBDIRS := \
 	System.ComponentModel.Composition.4.5 \
 	System.Numerics \
 	System.Xml.Linq \
-	System.Runtime.InteropServices.RuntimeInformation \
 	Mono.Cecil \
 	$(MCS_MODE_dirs) \
 	../tools/cil-stringreplacer
@@ -33,7 +32,6 @@ build_SUBDIRS :=  \
 	System.ComponentModel.Composition.4.5 \
 	System.Numerics \
 	System.Xml.Linq \
-	System.Runtime.InteropServices.RuntimeInformation \
 	System.IO.Compression \
 	System.Drawing			\
 	Mono.Cecil \
@@ -83,9 +81,7 @@ mobile_common_dirs := \
 	System.Xml.Serialization \
 	Mono.CSharp	\
 	Microsoft.CSharp \
-	System.Runtime.InteropServices.RuntimeInformation	\
 	System.Reflection.DispatchProxy	\
-	System.Xml.XPath.XmlDocument \
 	System.Reflection.Context	\
 	System.Net.Http.WinHttpHandler
 
@@ -179,7 +175,6 @@ xammac_4_5_dirs := \
 	System.Data.Linq		\
 	System.Net.Http \
 	System.Net.Http.WebRequest \
-	System.Runtime.InteropServices.RuntimeInformation \
 	System.Reflection.Context	\
 	System.Net.Http.WinHttpHandler	\
 	$(pcl_facade_dirs)
@@ -265,8 +260,7 @@ net_4_x_dirs := \
 	System.Net.Http.Formatting \
 	System.Web.Http \
 	System.Web.Http.SelfHost \
-	System.Web.Http.WebHost \
-	System.Runtime.InteropServices.RuntimeInformation
+	System.Web.Http.WebHost
 
 # These are the subdirs which depends on libs in net_4_x_dirs
 # or have proper dependencies between each other
@@ -401,7 +395,7 @@ monolite_dir := monolite/$(MONO_CORLIB_VERSION)
 
 # Files needed to bootstrap C# compiler
 build_files = mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Core.dll System.Security.dll System.Configuration.dll \
-	System.Numerics.dll System.Xml.Linq.dll System.Runtime.InteropServices.RuntimeInformation.dll \
+	System.Numerics.dll System.Xml.Linq.dll \
 	Facades/System.Collections.Concurrent.dll Facades/System.Linq.dll Facades/System.Runtime.dll Facades/System.Collections.dll	\
 	Facades/System.Reflection.Extensions.dll Facades/System.Text.Encoding.Extensions.dll Facades/System.Diagnostics.Debug.dll \
 	Facades/System.Reflection.Primitives.dll Facades/System.Text.Encoding.dll Facades/System.Diagnostics.Tools.dll Facades/System.Reflection.dll \

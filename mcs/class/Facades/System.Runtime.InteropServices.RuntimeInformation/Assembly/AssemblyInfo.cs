@@ -30,33 +30,17 @@
 
 using System;
 using System.Reflection;
-using System.Resources;
-using System.Security;
-using System.Security.Permissions;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
-// General Information about the assembly
+[assembly: AssemblyTitle ("System.Runtime.InteropServices.RuntimeInformation.dll")]
+[assembly: AssemblyDescription ("System.Runtime.InteropServices.RuntimeInformation.dll")]
+[assembly: AssemblyDefaultAlias ("System.Runtime.InteropServices.RuntimeInformation.dll")]
 
-[assembly: AssemblyTitle ("System.Xml.XPath.XmlDocument.dll")]
-[assembly: AssemblyDescription ("System.Xml.XPath.XmlDocument.dll")]
-[assembly: AssemblyDefaultAlias ("System.Xml.XPath.XmlDocument.dll")]
+[assembly: AssemblyCompany ("Xamarin, Inc.")]
+[assembly: AssemblyProduct ("Mono Common Language Infrastructure")]
+[assembly: AssemblyCopyright ("Copyright (c) 2016 Xamarin Inc. (http://www.xamarin.com)")]
+[assembly: AssemblyVersion ("4.0.0.0")]
+[assembly: AssemblyInformationalVersion ("4.0.0.0")]
+[assembly: AssemblyFileVersion ("4.0.0.0")]
 
-[assembly: AssemblyCompany (Consts.MonoCompany)]
-[assembly: AssemblyProduct (Consts.MonoProduct)]
-[assembly: AssemblyCopyright (Consts.MonoCopyright)]
-[assembly: AssemblyVersion (Consts.FxVersion)]
-[assembly: SatelliteContractVersion (Consts.FxVersion)]
-[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
-[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
-
-[assembly: NeutralResourcesLanguage ("en-US")]
 [assembly: CLSCompliant (true)]
-[assembly: AssemblyDelaySign (true)]
-
-[assembly: AssemblyKeyFile("../msfinal.pub")]
-
-[assembly: SecurityCritical]
-
-[assembly: ComVisible (false)]
