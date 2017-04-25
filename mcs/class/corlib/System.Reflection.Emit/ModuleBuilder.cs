@@ -77,6 +77,8 @@ namespace System.Reflection.Emit {
 		Hashtable resource_writers;
 		ISymbolWriter symbolWriter;
 
+		private static bool has_warned_about_symbolWriter;
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void basic_init (ModuleBuilder ab);
 
@@ -107,16 +109,33 @@ namespace System.Reflection.Emit {
 
 			if (emitSymbolInfo) {
 				Assembly asm = Assembly.LoadWithPartialName ("Mono.CompilerServices.SymbolWriter");
-				if (asm == null)
-					throw new TypeLoadException ("The assembly for default symbol writer cannot be loaded");
+				if (asm == null) {
+					WarnAboutSymbolWriter("Failed to load the default Mono.CompilerServices.SymbolWriter assembly");
+					return;
+				}
 
 				Type t = asm.GetType ("Mono.CompilerServices.SymbolWriter.SymbolWriterImpl", true);
-				symbolWriter = (ISymbolWriter) Activator.CreateInstance (t, new object[] { this });
+				try {
+					symbolWriter = (ISymbolWriter) Activator.CreateInstance (t, new object[] { this });
+				} catch (System.MissingMethodException) {
+					WarnAboutSymbolWriter("The default Mono.CompilerServices.SymbolWriter is not available on this platform");					
+					return;
+				}
+				
 				string fileName = fqname;
 				if (assemblyb.AssemblyDir != null)
 					fileName = Path.Combine (assemblyb.AssemblyDir, fileName);
 				symbolWriter.Initialize (IntPtr.Zero, fileName, true);
 			}
+		}
+
+		private static void WarnAboutSymbolWriter (string message) 
+		{
+			if (has_warned_about_symbolWriter)
+				return;
+
+			has_warned_about_symbolWriter = true;
+			Console.Error.WriteLine("WARNING: {0}", message);
 		}
 
 		public override string FullyQualifiedName {get { return fqname;}}
