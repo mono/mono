@@ -59,11 +59,9 @@ namespace Mono.Net.Security
 		 * APIs in this section are for consumption within System.dll only - do not access via
 		 * reflection or from friend assemblies.
 		 * 
-		 * @IMonoTlsProvider is defined as empty interface outside 'SECURITY_DEP', so we don't need
-		 * this conditional here.
 		 */
 
-		internal static IMonoTlsProvider GetProviderInternal ()
+		internal static MSI.MonoTlsProvider GetProviderInternal ()
 		{
 			lock (locker) {
 				InitializeInternal ();
@@ -87,7 +85,7 @@ namespace Mono.Net.Security
 				if (provider == null)
 					throw new NotSupportedException ("TLS Support not available.");
 
-				defaultProvider = new Private.MonoTlsProviderWrapper (provider);
+				defaultProvider = provider;
 				initialized = true;
 			}
 		}
@@ -98,8 +96,7 @@ namespace Mono.Net.Security
 				if (initialized)
 					throw new NotSupportedException ("TLS Subsystem already initialized.");
 
-				var msiProvider = LookupProvider (provider, true);
-				defaultProvider = new Private.MonoTlsProviderWrapper (msiProvider);
+				defaultProvider = LookupProvider (provider, true);
 				initialized = true;
 			}
 		}
@@ -110,7 +107,7 @@ namespace Mono.Net.Security
 		static object locker = new object ();
 		static bool initialized;
 
-		static IMonoTlsProvider defaultProvider;
+		static MSI.MonoTlsProvider defaultProvider;
 
 		#endregion
 
@@ -202,7 +199,7 @@ namespace Mono.Net.Security
 			if (provider == null)
 				throw new NotSupportedException ("No TLS Provider available.");
 
-			return provider.Provider;
+			return provider;
 		}
 
 		internal static bool IsProviderSupported (string name)
@@ -236,16 +233,14 @@ namespace Mono.Net.Security
 		internal static HttpWebRequest CreateHttpsRequest (Uri requestUri, MSI.MonoTlsProvider provider, MSI.MonoTlsSettings settings)
 		{
 			lock (locker) {
-				var internalProvider = provider != null ? new Private.MonoTlsProviderWrapper (provider) : null;
-				return new HttpWebRequest (requestUri, internalProvider, settings);
+				return new HttpWebRequest (requestUri, provider, settings);
 			}
 		}
 
 		internal static HttpListener CreateHttpListener (X509Certificate certificate, MSI.MonoTlsProvider provider, MSI.MonoTlsSettings settings)
 		{
 			lock (locker) {
-				var internalProvider = provider != null ? new Private.MonoTlsProviderWrapper (provider) : null;
-				return new HttpListener (certificate, internalProvider, settings);
+				return new HttpListener (certificate, provider, settings);
 			}
 		}
 		#endregion

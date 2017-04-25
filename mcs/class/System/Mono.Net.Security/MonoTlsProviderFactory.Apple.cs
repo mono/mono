@@ -61,10 +61,8 @@ namespace Mono.Net.Security
 		 * APIs in this section are for consumption within System.dll only - do not access via
 		 * reflection or from friend assemblies.
 		 * 
-		 * @IMonoTlsProvider is defined as empty interface outside 'SECURITY_DEP', so we don't need
-		 * this conditional here.
 		 */
-		internal static IMonoTlsProvider GetProviderInternal ()
+		internal static MSI.MonoTlsProvider GetProviderInternal ()
 		{
 			return GetTlsProvider ();
 		}
@@ -72,12 +70,12 @@ namespace Mono.Net.Security
 		#endregion
 
 		static object locker = new object ();
-		static IMonoTlsProvider provider;
-		static IMonoTlsProvider GetTlsProvider ()
+		static MSI.MonoTlsProvider provider;
+		static MSI.MonoTlsProvider GetTlsProvider ()
 		{
 			lock (locker) {
 				if (provider == null)
-					provider = new Private.MonoTlsProviderWrapper (new AppleTlsProvider ());
+					provider = new AppleTlsProvider ();
 				return provider;
 			}
 		}
@@ -93,7 +91,7 @@ namespace Mono.Net.Security
 
 		internal static MSI.MonoTlsProvider GetProvider ()
 		{
-			return GetTlsProvider ().Provider;
+			return GetTlsProvider ();
 		}
 
 		internal static bool IsProviderSupported (string name)
@@ -103,7 +101,7 @@ namespace Mono.Net.Security
 
 		internal static MSI.MonoTlsProvider GetProvider (string name)
 		{
-			return GetTlsProvider ().Provider;
+			return GetTlsProvider ();
 		}
 
 		internal static bool IsInitialized => true;

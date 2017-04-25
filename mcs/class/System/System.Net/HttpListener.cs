@@ -61,7 +61,7 @@ namespace System.Net {
 		bool listening;
 		bool disposed;
 
-		IMonoTlsProvider tlsProvider;
+		MSI.MonoTlsProvider tlsProvider;
 		MSI.MonoTlsSettings tlsSettings;
 		X509Certificate certificate;
 
@@ -88,7 +88,7 @@ namespace System.Net {
 			extendedProtectionPolicy = new ExtendedProtectionPolicy (PolicyEnforcement.Never);
 		}
 
-		internal HttpListener (X509Certificate certificate, IMonoTlsProvider tlsProvider, MSI.MonoTlsSettings tlsSettings)
+		internal HttpListener (X509Certificate certificate, MSI.MonoTlsProvider tlsProvider, MSI.MonoTlsSettings tlsSettings)
 			: this ()
 		{
 			this.certificate = certificate;
