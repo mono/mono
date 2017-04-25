@@ -71,7 +71,7 @@ namespace System.Net.Security
 		X509Certificate remoteCertificate,
 		string[] acceptableIssuers);
 
-	public class SslStream : AuthenticatedStream, IMonoSslStream
+	public class SslStream : AuthenticatedStream
 	{
 		MonoTlsProvider provider;
 		IMonoSslStream impl;
@@ -126,12 +126,6 @@ namespace System.Net.Security
 		public SslStream (Stream innerStream, bool leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback, LocalCertificateSelectionCallback userCertificateSelectionCallback, EncryptionPolicy encryptionPolicy)
 		: this (innerStream, leaveInnerStreamOpen, userCertificateValidationCallback, userCertificateSelectionCallback)
 		{
-		}
-
-		internal SslStream (Stream innerStream, bool leaveInnerStreamOpen, IMonoSslStream impl)
-			: base (innerStream, leaveInnerStreamOpen)
-		{
-			this.impl = impl;
 		}
 
 		public virtual void AuthenticateAsClient (string targetHost)
@@ -240,10 +234,6 @@ namespace System.Net.Security
 
 		public virtual bool CheckCertRevocationStatus {
 			get { return Impl.CheckCertRevocationStatus; }
-		}
-
-		X509Certificate IMonoSslStream.InternalLocalCertificate {
-			get { return Impl.InternalLocalCertificate; }
 		}
 
 		public virtual X509Certificate LocalCertificate {
@@ -383,19 +373,6 @@ namespace System.Net.Security
 		public override void EndWrite (IAsyncResult asyncResult)
 		{
 			Impl.EndWrite (asyncResult);
-		}
-
-		AuthenticatedStream IMonoSslStream.AuthenticatedStream {
-			get { return this; }
-		}
-
-		MonoTlsProvider IMonoSslStream.Provider {
-			get { return provider; }
-		}
-
-		MonoTlsConnectionInfo IMonoSslStream.GetConnectionInfo ()
-		{
-			return Impl.GetConnectionInfo ();
 		}
 	}
 }
