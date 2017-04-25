@@ -250,8 +250,8 @@ commands: Use `commands help` for usage.
   </Docs>
   <Members>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public CommandSet (string suite, Converter&lt;string,string&gt; localizer = null, System.IO.TextWriter output = null, System.IO.TextWriter error = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string suite, class System.Converter`2&lt;string, string&gt; localizer, class System.IO.TextWriter output, class System.IO.TextWriter error) cil managed" />
+      <MemberSignature Language="C#" Value="public CommandSet (string suite, Converter&lt;string,string&gt; localizer = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string suite, class System.Converter`2&lt;string, string&gt; localizer) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.3.0</AssemblyVersion>
@@ -259,8 +259,6 @@ commands: Use `commands help` for usage.
       <Parameters>
         <Parameter Name="suite" Type="System.String" />
         <Parameter Name="localizer" Type="System.Converter&lt;System.String,System.String&gt;" />
-        <Parameter Name="output" Type="System.IO.TextWriter" />
-        <Parameter Name="error" Type="System.IO.TextWriter" />
       </Parameters>
       <Docs>
         <param name="suite">
@@ -272,15 +270,57 @@ commands: Use `commands help` for usage.
           instance that will be used to translate strings.
           If <see langword="null" />, then no localization is performed.
         </param>
+        <summary>
+          Creates and initializes a new <c>CommandSet</c> instance.
+        </summary>
+        <remarks>
+          <para>
+            This constructor initializes
+            the <see cref="P:Mono.Options.CommandSet.Suite" /> property
+            of the new instance using <paramref name="suite" />,
+            the <see cref="P:Mono.Options.CommandSet.MessageLocalizer" /> property
+            of the new instance using <paramref name="localizer" />,
+            the <see cref="P:Mono.Options.CommandSet.Out" /> property
+            to <see cref="P:System.Console.Out" />, and
+            the <see cref="P:Mono.Options.CommandSet.Error" /> property
+            to <see cref="P:System.Console.Error" />.
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="suite" /> is <see langword="null" />.
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CommandSet (string suite, System.IO.TextWriter output, System.IO.TextWriter error, Converter&lt;string,string&gt; localizer = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string suite, class System.IO.TextWriter output, class System.IO.TextWriter error, class System.Converter`2&lt;string, string&gt; localizer) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="suite" Type="System.String" />
+        <Parameter Name="output" Type="System.IO.TextWriter" />
+        <Parameter Name="error" Type="System.IO.TextWriter" />
+        <Parameter Name="localizer" Type="System.Converter&lt;System.String,System.String&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="suite">
+          A <see cref="T:System.String" /> containing the name of the suite.
+          This value is used in default <c>help</c> text output.
+        </param>
         <param name="output">
           A <see cref="T:System.IO.TextWriter" /> where output messages will be
-          written to. If <see langword="null" />, then the
-          <see cref="P:System.Console.Out" /> property will be used.
+          written to.
         </param>
         <param name="error">
           A <see cref="T:System.IO.TextWriter" /> where error messages will be
-          written to. If <see langword="null" />, then the
-          <see cref="P:System.Console.Error" /> property will be used.
+          written to.
+        </param>
+        <param name="localizer">
+          A <see cref="T:System.Converter{System.String,System.String}" />
+          instance that will be used to translate strings.
+          If <see langword="null" />, then no localization is performed.
         </param>
         <summary>
           Creates and initializes a new <c>CommandSet</c> instance.
@@ -300,6 +340,12 @@ commands: Use `commands help` for usage.
         </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="suite" /> is <see langword="null" />.
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="output" /> is <see langword="null" />.
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="error" /> is <see langword="null" />.
         </exception>
       </Docs>
     </Member>

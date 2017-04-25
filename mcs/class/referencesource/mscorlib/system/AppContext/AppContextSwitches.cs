@@ -11,6 +11,11 @@ namespace System
 
     internal static class AppContextSwitches
     {
+#if MOBILE
+		public static readonly bool ThrowExceptionIfDisposedCancellationTokenSource = false;
+		public static readonly bool SetActorAsReferenceWhenCopyingClaimsIdentity = false;
+		public static readonly bool NoAsyncCurrentCulture = false;
+#else
         private static int _noAsyncCurrentCulture;
         public static bool NoAsyncCurrentCulture
         {
@@ -130,5 +135,6 @@ namespace System
             switchValue = isSwitchEnabled ? 1 /*true*/ : -1 /*false*/;
             return isSwitchEnabled;
         }
+#endif
     }
 }

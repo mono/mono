@@ -82,6 +82,7 @@ class DoParse : MarshalByRefObject {
 		case "System.Net.Http.dll": return "SYS_NET_HTTP";
 		case "System.Text.Encoding.CodePages.dll": return "SYS_TEXT_ENC_CODEPAGES";
 		case "System.Reflection.DispatchProxy.dll": return "SYS_REF_DISP_PROXY";
+		case "System.Threading.Overlapped.dll": return "SYS_THREADING_OVERLAPPED";
 		case "System.ValueTuple.dll": return "SYS_VALUE_TUPLE";
 		default: throw new Exception ($"No idea what to do with {name}");
 		}

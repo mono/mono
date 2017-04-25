@@ -11189,6 +11189,41 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsNotNull (ins4);
 		}
 
+		[Test]
+		public void CircularReferences () {
+			// A: C<D<A>>
+			var a_type = module.DefineType(
+				"A",
+				TypeAttributes.Class,
+				typeof(object));
+
+			var cba = a_type.DefineConstructor (MethodAttributes.Public, CallingConventions.Standard, Type.EmptyTypes);
+			cba.GetILGenerator ().Emit (OpCodes.Ret);
+
+			var c_type = module.DefineType(
+				"B",
+				TypeAttributes.Class,
+				typeof(object));
+			var cbb = c_type.DefineConstructor (MethodAttributes.Public, CallingConventions.Standard, Type.EmptyTypes);
+			cbb.GetILGenerator ().Emit (OpCodes.Ret);
+			c_type.DefineGenericParameters ("d_a_param");
+
+			var d_type = module.DefineType(
+				"D",
+				TypeAttributes.Class,
+				typeof(object));
+			var cbd = d_type.DefineConstructor (MethodAttributes.Public, CallingConventions.Standard, Type.EmptyTypes);
+			cbd.GetILGenerator ().Emit (OpCodes.Ret);
+			d_type.DefineGenericParameters ("a_param");
+
+
+			var d_instantiated = c_type.MakeGenericType (d_type.MakeGenericType (a_type));
+			a_type.SetParent (d_instantiated);
+			a_type.CreateType ();
+
+			Assert.IsNotNull (a_type);
+		}
+
 		// #22059
 		[Test]
 		[ExpectedException (typeof (TypeLoadException))]

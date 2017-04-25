@@ -298,6 +298,8 @@ endif
 
 $(the_lib): $(the_libdir)/.stamp
 
+ifndef NO_BUILD
+
 $(build_lib): $(response) $(sn) $(BUILT_SOURCES) $(build_libdir:=/.stamp) $(GEN_RESOURCE_DEPS)
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) $(GEN_RESOURCE_FLAGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
 ifdef RESOURCE_STRINGS_FILES
@@ -311,6 +313,8 @@ $(the_lib): $(build_lib)
 	$(Q) $(SN) -v $@
 	$(Q) test ! -f $(build_lib).mdb || mv $(build_lib).mdb $@.mdb
 	$(Q) test ! -f $(build_lib:.dll=.pdb) || mv $(build_lib:.dll=.pdb) $(the_lib:.dll=.pdb)
+endif
+
 endif
 
 library_CLEAN_FILES += $(PROFILE)_aot.log
@@ -355,7 +359,10 @@ endif
 ## Include corcompare stuff
 include $(topdir)/build/corcompare.make
 
+ifndef NO_BUILD
 all-local: $(makefrag) $(test_makefrag) $(btest_makefrag)
+endif
+
 ifneq ($(response),$(sourcefile))
 $(response): $(topdir)/build/library.make $(depsdir)/.stamp
 endif

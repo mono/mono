@@ -79,6 +79,7 @@ namespace System.Reflection.Emit
 		private GenericTypeParameterBuilder[] generic_params;
 		private RefEmitPermissionSet[] permissions;
 		private TypeInfo created;
+		private int state;
 		#endregion
 #pragma warning restore 169		
 		

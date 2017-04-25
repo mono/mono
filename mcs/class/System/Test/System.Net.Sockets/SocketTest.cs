@@ -4620,6 +4620,8 @@ namespace MonoTests.System.Net.Sockets
 				client.DualMode = true;
 				var ar1 = client.BeginConnect (ep, BCCallback, client);
 				Assert.IsTrue (BCCalledBack.WaitOne (10000), "#1");
+				Assert.AreEqual(server.AddressFamily, client.RemoteEndPoint.AddressFamily, "#2");
+				Assert.AreEqual(server.AddressFamily, client.LocalEndPoint.AddressFamily, "#3");
 				client.Disconnect (false);
 				client.Close ();
 
@@ -4627,7 +4629,9 @@ namespace MonoTests.System.Net.Sockets
 				client = new Socket (AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
 				client.DualMode = true;
 				var ar2 = client.BeginConnect (IPAddress.Loopback, ep.Port, BCCallback, client);
-				Assert.IsTrue (BCCalledBack.WaitOne (10000), "#2");
+				Assert.IsTrue (BCCalledBack.WaitOne (10000), "#4");
+				Assert.AreEqual(server.AddressFamily, client.RemoteEndPoint.AddressFamily, "#5");
+				Assert.AreEqual(server.AddressFamily, client.LocalEndPoint.AddressFamily, "#6");
 				client.Disconnect (false);
 				client.Close ();
 
@@ -4635,7 +4639,9 @@ namespace MonoTests.System.Net.Sockets
 				client = new Socket (AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
 				client.DualMode = true;
 				var ar3 = client.BeginConnect (new [] {IPAddress.Loopback}, ep.Port, BCCallback, client);
-				Assert.IsTrue (BCCalledBack.WaitOne (10000), "#2");
+				Assert.IsTrue (BCCalledBack.WaitOne (10000), "#7");
+				Assert.AreEqual(server.AddressFamily, client.RemoteEndPoint.AddressFamily, "#8");
+				Assert.AreEqual(server.AddressFamily, client.LocalEndPoint.AddressFamily, "#9");
 				client.Disconnect (false);
 				client.Close();
 			}

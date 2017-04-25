@@ -55,15 +55,17 @@ tests_CLEAN_FILES += $(ASSEMBLY:$(ASSEMBLY_EXT)=_test*.dll) $(ASSEMBLY:$(ASSEMBL
 
 xtest_sourcefile = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.sources)
 
-ifeq ($(wildcard $(xtest_sourcefile)),)
-xtest_sourcefile = $(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.sources)
-endif
 
 xunit_test_lib = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xunit-test.dll)
 
-xtest_response = $(depsdir)/$(xtest_lib).response
-xtest_makefrag = $(depsdir)/$(xtest_lib).makefrag
+xtest_response = $(depsdir)/$(xunit_test_lib).response
+xtest_makefrag = $(depsdir)/$(xunit_test_lib).makefrag
 xtest_flags = -r:$(the_assembly) $(xunit_libs_ref) $(XTEST_MCS_FLAGS) $(XTEST_LIB_MCS_FLAGS)
+
+ifeq ($(wildcard $(xtest_sourcefile)),)
+xtest_sourcefile = $(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.sources)
+tests_CLEAN_FILES += $(xunit_test_lib) $(xtest_response) $(xtest_makefrag)
+endif
 
 ifndef HAVE_CS_TESTS
 HAVE_CS_TESTS := $(wildcard $(test_sourcefile))

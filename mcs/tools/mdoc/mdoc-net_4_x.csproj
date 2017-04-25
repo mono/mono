@@ -29,7 +29,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM</DefineConstants>
+    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -37,7 +37,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -49,26 +49,32 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\assembler.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\dump.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\ecmadoc.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\exceptions.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Frameworks\AssemblySet.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Frameworks\FrameworkEntry.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Frameworks\FrameworkIndex.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Frameworks\FrameworkTypeEntry.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\frameworksbootstrapper.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\index.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\mdoc.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\MdocFile.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\monodocer.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\monodocs2html.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\monodocs2slashdoc.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\msitomsx.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\normalize.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\validate.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\webdoc.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\XhtmlWriter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Rocks\ObjectRocks.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Rocks\StreamRocks.cs" />
+    <Compile Include="..\..\..\external\cecil\rocks\Mono.Cecil.Rocks\DocCommentId.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\class\Mono.Options\Mono.Options\Options.cs" />
-    <Compile Include="Mono.Documentation\assembler.cs" />
-    <Compile Include="Mono.Documentation\dump.cs" />
-    <Compile Include="Mono.Documentation\ecmadoc.cs" />
-    <Compile Include="Mono.Documentation\exceptions.cs" />
-    <Compile Include="Mono.Documentation\index.cs" />
-    <Compile Include="Mono.Documentation\mdoc.cs" />
-    <Compile Include="Mono.Documentation\MdocFile.cs" />
-    <Compile Include="Mono.Documentation\monodocer.cs" />
-    <Compile Include="Mono.Documentation\monodocs2html.cs" />
-    <Compile Include="Mono.Documentation\monodocs2slashdoc.cs" />
-    <Compile Include="Mono.Documentation\msitomsx.cs" />
-    <Compile Include="Mono.Documentation\normalize.cs" />
-    <Compile Include="Mono.Documentation\preserver.cs" />
-    <Compile Include="Mono.Documentation\validate.cs" />
-    <Compile Include="Mono.Documentation\webdoc.cs" />
-    <Compile Include="Mono.Documentation\XhtmlWriter.cs" />
-    <Compile Include="Mono.Rocks\ObjectRocks.cs" />
-    <Compile Include="Mono.Rocks\StreamRocks.cs" />  </ItemGroup>
+    <Compile Include="cecil.mixin.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -132,32 +138,32 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="../../class/monodoc/Resources/mdoc-html-format.xsl">
-      <LogicalName>mdoc-html-format.xsl</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="../../class/monodoc/Resources/mdoc-html-utils.xsl">
-      <LogicalName>mdoc-html-utils.xsl</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="../../class/monodoc/Resources/mdoc-sections-css.xsl">
-      <LogicalName>mdoc-sections-css.xsl</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="../../class/monodoc/Resources/mono-ecma-css.xsl">
-      <LogicalName>mono-ecma-css.xsl</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources/defaulttemplate.xsl">
+    <EmbeddedResource Include="../../../external/api-doc-tools/mdoc/Resources/defaulttemplate.xsl">
       <LogicalName>defaulttemplate.xsl</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources/monodoc-ecma.xsd">
+    <EmbeddedResource Include="../../../external/api-doc-tools/mdoc/Resources/monodoc-ecma.xsd">
       <LogicalName>monodoc-ecma.xsd</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources/msitomsx.xsl">
+    <EmbeddedResource Include="../../../external/api-doc-tools/mdoc/Resources/msitomsx.xsl">
       <LogicalName>msitomsx.xsl</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources/overview.xsl">
+    <EmbeddedResource Include="../../../external/api-doc-tools/mdoc/Resources/overview.xsl">
       <LogicalName>overview.xsl</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources/stylesheet.xsl">
+    <EmbeddedResource Include="../../../external/api-doc-tools/mdoc/Resources/stylesheet.xsl">
       <LogicalName>stylesheet.xsl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mdoc-html-format.xsl">
+      <LogicalName>mdoc-html-format.xsl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mdoc-html-utils.xsl">
+      <LogicalName>mdoc-html-utils.xsl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mdoc-sections-css.xsl">
+      <LogicalName>mdoc-sections-css.xsl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mono-ecma-css.xsl">
+      <LogicalName>mono-ecma-css.xsl</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
 </Project>
