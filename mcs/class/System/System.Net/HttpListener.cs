@@ -42,12 +42,10 @@ using System.IO;
 using System.Collections;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Net.Security;
 using System.Security.Authentication.ExtendedProtection;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-
-using Mono.Net.Security;
-
 
 //TODO: logging
 namespace System.Net {
@@ -125,16 +123,17 @@ namespace System.Net {
 			}
 		}
 
-		internal MSI.IMonoSslStream CreateSslStream (Stream innerStream, bool ownsStream, MSI.MonoRemoteCertificateValidationCallback callback)
+		internal SslStream CreateSslStream (Stream innerStream, bool ownsStream, MSI.MonoRemoteCertificateValidationCallback callback)
 		{
 			lock (registry) {
 				if (tlsProvider == null)
-					tlsProvider = MonoTlsProviderFactory.GetProviderInternal ();
+					tlsProvider = MSI.MonoTlsProviderFactory.GetProvider ();
 				if (tlsSettings == null)
 					tlsSettings = MSI.MonoTlsSettings.CopyDefaultSettings ();
 				if (tlsSettings.RemoteCertificateValidationCallback == null)
 					tlsSettings.RemoteCertificateValidationCallback = callback;
-				return tlsProvider.CreateSslStream (innerStream, ownsStream, tlsSettings);
+				var sslStream = tlsProvider.CreateSslStream (innerStream, ownsStream, tlsSettings);
+				return sslStream.SslStream;
 			}
 		}
 

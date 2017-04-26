@@ -32,6 +32,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Authentication;
 
@@ -49,10 +50,8 @@ namespace Mono.Btls
 {
 	class MonoBtlsProvider : MonoTlsProvider
 	{
-		static readonly Guid id = new Guid ("432d18c9-9348-4b90-bfbf-9f2a10e1f15b");
-
 		public override Guid ID {
-			get { return id; }
+			get { return MNS.MonoTlsProviderFactory.BtlsId; }
 		}
 		public override string Name {
 			get { return "btls"; }
@@ -84,8 +83,15 @@ namespace Mono.Btls
 			Stream innerStream, bool leaveInnerStreamOpen,
 			MonoTlsSettings settings = null)
 		{
+			return SslStream.CreateMonoSslStream (innerStream, leaveInnerStreamOpen, this, settings);
+		}
+
+		internal override IMonoSslStream CreateSslStreamInternal (
+			SslStream sslStream, Stream innerStream, bool leaveInnerStreamOpen,
+			MonoTlsSettings settings)
+		{
 			return new MonoBtlsStream (
-				innerStream, leaveInnerStreamOpen, settings, this);
+				innerStream, leaveInnerStreamOpen, sslStream, settings, this);
 		}
 
 		internal override bool HasNativeCertificates {
