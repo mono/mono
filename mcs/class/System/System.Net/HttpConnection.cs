@@ -97,6 +97,8 @@ namespace System.Net {
 				stream = ssl_stream.AuthenticatedStream;
 			}
 			timer = new Timer (OnTimeout, null, Timeout.Infinite, Timeout.Infinite);
+			if (ssl_stream != null)
+				ssl_stream.AuthenticateAsServer (cert, true, (SslProtocols)ServicePointManager.SecurityProtocol, false);
 			Init ();
 		}
 
@@ -110,10 +112,6 @@ namespace System.Net {
 
 		void Init ()
 		{
-			if (ssl_stream != null) {
-				ssl_stream.AuthenticateAsServer (cert, true, (SslProtocols)ServicePointManager.SecurityProtocol, false);
-			}
-
 			context_bound = false;
 			i_stream = null;
 			o_stream = null;
