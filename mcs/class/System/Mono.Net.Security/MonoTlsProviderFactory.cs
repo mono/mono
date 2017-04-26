@@ -45,6 +45,10 @@ using System.Runtime.CompilerServices;
 using Mono.Btls;
 #endif
 
+#if MONO_FEATURE_APPLETLS
+using Mono.AppleTls;
+#endif
+
 #if !MOBILE
 using System.Reflection;
 #endif
