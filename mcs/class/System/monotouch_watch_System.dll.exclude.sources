@@ -8,7 +8,6 @@ Mono.Net.Security/LegacyTlsProvider.cs
 Mono.Net.Security/LegacyTlsProvider.cs
 Mono.Net.Security/MobileAuthenticatedStream.cs
 Mono.Net.Security/MobileTlsContext.cs
-Mono.Net.Security/MonoTlsProviderFactory.Apple.cs
 Mono.Net.Security/MonoTlsProviderFactory.cs
 Mono.Net.Security/MonoTlsProviderImpl.cs
 Mono.Net.Security/MonoTlsStream.cs
