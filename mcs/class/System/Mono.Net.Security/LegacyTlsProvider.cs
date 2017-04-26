@@ -48,8 +48,10 @@ namespace Mono.Net.Security
 	 */
 	class LegacyTlsProvider : MSI.MonoTlsProvider
 	{
+		static readonly Guid id = new Guid ("809e77d5-56cc-4da8-b9f0-45e65ba9cceb");
+
 		public override Guid ID {
-			get { return MonoTlsProviderFactory.LegacyId; }
+			get { return id; }
 		}
 
 		public override string Name {
