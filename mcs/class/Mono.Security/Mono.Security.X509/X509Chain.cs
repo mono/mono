@@ -158,10 +158,10 @@ namespace Mono.Security.X509 {
 
 			// validate the chain
 			if ((_chain != null) && (_status == X509ChainStatusFlags.NoError)) {
-				foreach (X509Certificate x in _chain) {
+				foreach (X509Certificate y in _chain) {
 					// validate dates for each certificate in the chain
 					// note: we DO NOT check for nested date/time
-					if (!IsValid (x)) {
+					if (!IsValid (y)) {
 						return false;
 					}
 				}
