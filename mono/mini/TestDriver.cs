@@ -35,7 +35,6 @@ public class TestDriver {
 		string name;
 		MethodInfo[] methods;
 		bool do_timings = false;
-		bool verbose = false;
 		bool quiet = false;
 		int tms = 0;
 		DateTime start, end = DateTime.Now;
@@ -53,12 +52,8 @@ public class TestDriver {
 				} else if (args [j] == "--iter") {
 					iterations = Int32.Parse (args [j + 1]);
 					j += 2;
-				} else if ((args [j] == "-v") || (args [j] == "--verbose")) {
-					verbose = !quiet;
-					j += 1;
 				} else if ((args [j] == "-q") || (args [j] == "--quiet")) {
 					quiet = true;
-					verbose = false;
 					do_timings = false;
 					j += 1;
 				} else if (args [j] == "--exclude") {
@@ -108,7 +103,7 @@ public class TestDriver {
 							skip = true;
 					}
 					if (skip) {
-						if (verbose)
+						if (!quiet)
 							Console.WriteLine ("Skipping '{0}'.", name);
 						nskipped ++;
 						continue;
@@ -117,7 +112,7 @@ public class TestDriver {
 				for (j = 5; j < name.Length; ++j)
 					if (!Char.IsDigit (name [j]))
 						break;
-				if (verbose)
+				if (!quiet)
 					Console.WriteLine ("Running '{0}' ...", name);
 				expected = Int32.Parse (name.Substring (5, j - 5));
 				start = DateTime.Now;
