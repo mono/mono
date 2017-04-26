@@ -78,7 +78,14 @@ namespace Mono.Net.Security
 			Stream innerStream, bool leaveInnerStreamOpen,
 			MSI.MonoTlsSettings settings = null)
 		{
-			return new Private.LegacySslStream (innerStream, leaveInnerStreamOpen, this, settings);
+			return SslStream.CreateMonoSslStream (innerStream, leaveInnerStreamOpen, this, settings);
+		}
+
+		internal override MSI.IMonoSslStream CreateSslStreamInternal (
+			SslStream sslStream, Stream innerStream, bool leaveInnerStreamOpen,
+			MSI.MonoTlsSettings settings)
+		{
+			return new Private.LegacySslStream (innerStream, leaveInnerStreamOpen, sslStream, this, settings);
 		}
 
 		internal override bool ValidateCertificate (

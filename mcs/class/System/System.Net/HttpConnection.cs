@@ -42,10 +42,10 @@ using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using Mono.Net.Security;
 
 namespace System.Net {
 	sealed class HttpConnection
@@ -73,7 +73,7 @@ namespace System.Net {
 		HttpListener last_listener;
 		int [] client_cert_errors;
 		X509Certificate2 client_cert;
-		MSI.IMonoSslStream ssl_stream;
+		SslStream ssl_stream;
 
 		public HttpConnection (Socket sock, EndPointListener epl, bool secure, X509Certificate cert)
 		{
@@ -94,13 +94,13 @@ namespace System.Net {
 					client_cert_errors = new int[] { (int)e };
 					return true;
 				});
-				stream = ssl_stream.AuthenticatedStream;
+				stream = ssl_stream;
 			}
 			timer = new Timer (OnTimeout, null, Timeout.Infinite, Timeout.Infinite);
 			Init ();
 		}
 
-		internal MSI.IMonoSslStream SslStream {
+		internal SslStream SslStream {
 			get { return ssl_stream; }
 		}
 
