@@ -1,2 +1,5 @@
 #include mobile_System.dll.sources
 
+System.Net/MacProxy.cs
+
+Mono.Net.Security/MonoTlsProviderFactory.Apple.cs

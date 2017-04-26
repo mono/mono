@@ -104,7 +104,7 @@ namespace System.Net.Security
 			: base (innerStream, leaveInnerStreamOpen)
 		{
 			provider = GetProvider ();
-			impl = provider.CreateSslStreamInternal (this, innerStream, leaveInnerStreamOpen, null);
+			impl = provider.CreateSslStream (innerStream, leaveInnerStreamOpen);
 		}
 
 		public SslStream (Stream innerStream, bool leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback)
@@ -126,19 +126,6 @@ namespace System.Net.Security
 		public SslStream (Stream innerStream, bool leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback, LocalCertificateSelectionCallback userCertificateSelectionCallback, EncryptionPolicy encryptionPolicy)
 		: this (innerStream, leaveInnerStreamOpen, userCertificateValidationCallback, userCertificateSelectionCallback)
 		{
-		}
-
-		SslStream (Stream innerStream, bool leaveInnerStreamOpen, MonoTlsProvider provider, MonoTlsSettings settings)
-			: base (innerStream, leaveInnerStreamOpen)
-		{
-			this.provider = provider;
-			impl = provider.CreateSslStreamInternal (this, innerStream, leaveInnerStreamOpen, settings);
-		}
-
-		internal static IMonoSslStream CreateMonoSslStream (Stream innerStream, bool leaveInnerStreamOpen, MonoTlsProvider provider, MonoTlsSettings settings)
-		{
-			var sslStream = new SslStream (innerStream, leaveInnerStreamOpen, provider, settings);
-			return sslStream.Impl;
 		}
 
 		public virtual void AuthenticateAsClient (string targetHost)

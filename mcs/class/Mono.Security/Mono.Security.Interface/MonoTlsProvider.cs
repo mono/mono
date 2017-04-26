@@ -122,10 +122,6 @@ namespace Mono.Security.Interface
 			Stream innerStream, bool leaveInnerStreamOpen,
 			MonoTlsSettings settings = null);
 
-		internal abstract IMonoSslStream CreateSslStreamInternal (
-			SslStream sslStream, Stream innerStream, bool leaveInnerStreamOpen,
-			MonoTlsSettings settings);
-
 #endregion
 
 #region Native Certificate Implementation

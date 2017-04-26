@@ -50,11 +50,10 @@ namespace Mono.Net.Security
 
 		static int uniqueNameInteger = 123;
 
-		public MobileAuthenticatedStream (Stream innerStream, bool leaveInnerStreamOpen, SslStream owner,
+		public MobileAuthenticatedStream (Stream innerStream, bool leaveInnerStreamOpen,
 		                                  MSI.MonoTlsSettings settings, MSI.MonoTlsProvider provider)
 			: base (innerStream, leaveInnerStreamOpen)
 		{
-			SslStream = owner;
 			Settings = settings;
 			Provider = provider;
 
@@ -62,16 +61,18 @@ namespace Mono.Net.Security
 			writeBuffer = new BufferOffsetSize2 (16384);
 		}
 
-		public SslStream SslStream {
-			get;
-		}
-
 		public MSI.MonoTlsSettings Settings {
 			get;
+			private set;
 		}
 
 		public MSI.MonoTlsProvider Provider {
 			get;
+			private set;
+		}
+
+		MSI.MonoTlsProvider MSI.IMonoSslStream.Provider {
+			get { return Provider; }
 		}
 
 		internal bool HasContext {

@@ -16,7 +16,6 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 
@@ -31,26 +30,21 @@ namespace Mono.AppleTls
 {
 	class AppleTlsProvider : MonoTlsProvider
 	{
+		static readonly Guid id = new Guid ("981af8af-a3a3-419a-9f01-a518e3a17c1c");
+
 		public override string Name {
 			get { return "apple-tls"; }
 		}
 
 		public override Guid ID {
-			get { return MNS.MonoTlsProviderFactory.AppleTlsId; }
+			get { return id; }
 		}
 
 		public override IMonoSslStream CreateSslStream (
 			Stream innerStream, bool leaveInnerStreamOpen,
 			MonoTlsSettings settings = null)
 		{
-			return SslStream.CreateMonoSslStream (innerStream, leaveInnerStreamOpen, this, settings);
-		}
-
-		internal override IMonoSslStream CreateSslStreamInternal (
-			SslStream sslStream, Stream innerStream, bool leaveInnerStreamOpen,
-			MonoTlsSettings settings)
-		{
-			return new AppleTlsStream (innerStream, leaveInnerStreamOpen, sslStream, settings, this);
+			return new AppleTlsStream (innerStream, leaveInnerStreamOpen, settings, this);
 		}
 
 		public override bool SupportsSslStream {
