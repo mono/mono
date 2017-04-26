@@ -132,7 +132,7 @@ namespace Mono.Net.Security
 		internal static object GetMonoSslStream (HttpListenerContext context)
 		{
 #if SECURITY_DEP
-			return context.Connection.SslStream;
+			return context.Connection.SslStream?.Impl;
 #else
 			throw new NotSupportedException ();
 #endif

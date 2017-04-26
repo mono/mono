@@ -16,6 +16,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 
@@ -30,8 +31,9 @@ namespace Mono.AppleTls
 {
 	class AppleTlsStream : MNS.MobileAuthenticatedStream
 	{
-		public AppleTlsStream (Stream innerStream, bool leaveInnerStreamOpen, MonoTlsSettings settings, MonoTlsProvider provider)
-			: base (innerStream, leaveInnerStreamOpen, settings, provider)
+		public AppleTlsStream (Stream innerStream, bool leaveInnerStreamOpen, SslStream owner,
+		                       MonoTlsSettings settings, MonoTlsProvider provider)
+			: base (innerStream, leaveInnerStreamOpen, owner, settings, provider)
 		{
 		}
 
