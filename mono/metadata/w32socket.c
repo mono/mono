@@ -210,7 +210,7 @@ convert_family (MonoAddressFamily mono_family)
 		return -1;
 #endif
 	case AddressFamily_InterNetworkV6:
-#ifdef HAVE_STRUCT_SOCKADDR_IN6
+#if defined(HAVE_STRUCT_SOCKADDR_IN6) || defined(HOST_WIN32)
 		return AF_INET6;
 #else
 		return -1;
@@ -271,7 +271,7 @@ convert_to_mono_family (guint16 af_family)
 	case AF_APPLETALK:
 		return AddressFamily_AppleTalk;
 #endif
-#ifdef HAVE_STRUCT_SOCKADDR_IN6
+#if defined(HAVE_STRUCT_SOCKADDR_IN6) || defined(HOST_WIN32)
 	case AF_INET6:
 		return AddressFamily_InterNetworkV6;
 #endif
@@ -825,7 +825,7 @@ ves_icall_System_Net_Sockets_Socket_Listen_internal(gsize sock, guint32 backlog,
 		*werror = mono_w32socket_get_last_error ();
 }
 
-#ifdef HAVE_STRUCT_SOCKADDR_IN6
+#if defined(HAVE_STRUCT_SOCKADDR_IN6) || defined(HOST_WIN32)
 // Check whether it's ::ffff::0:0.
 static gboolean
 is_ipv4_mapped_any (const struct in6_addr *addr)
@@ -919,7 +919,7 @@ create_object_from_sockaddr (struct sockaddr *saddr, int sa_size, gint32 *werror
 
 		return sockaddr_obj;
 	}
-#ifdef HAVE_STRUCT_SOCKADDR_IN6
+#if defined(HAVE_STRUCT_SOCKADDR_IN6) || defined(HOST_WIN32)
 	else if (saddr->sa_family == AF_INET6) {
 		struct sockaddr_in6 *sa_in = (struct sockaddr_in6 *)saddr;
 		int i;
@@ -989,7 +989,7 @@ get_sockaddr_size (int family)
 	if (family == AF_INET) {
 		size = sizeof (struct sockaddr_in);
 	}
-#ifdef HAVE_STRUCT_SOCKADDR_IN6
+#if defined(HAVE_STRUCT_SOCKADDR_IN6) || defined(HOST_WIN32)
 	else if (family == AF_INET6) {
 		size = sizeof (struct sockaddr_in6);
 	}
@@ -1150,7 +1150,7 @@ create_sockaddr_from_object (MonoObject *saddr_obj, socklen_t *sa_size, gint32 *
 		*sa_size = sizeof (struct sockaddr_in);
 		return (struct sockaddr *)sa;
 	}
-#ifdef HAVE_STRUCT_SOCKADDR_IN6
+#if defined(HAVE_STRUCT_SOCKADDR_IN6) || defined(HOST_WIN32)
 	else if (family == AF_INET6) {
 		struct sockaddr_in6 *sa;
 		int i;
@@ -2100,7 +2100,7 @@ ipaddress_to_struct_in_addr (MonoObject *ipaddr)
 	return inaddr;
 }
 
-#ifdef HAVE_STRUCT_SOCKADDR_IN6
+#if defined(HAVE_STRUCT_SOCKADDR_IN6) || defined(HOST_WIN32)
 static struct in6_addr
 ipaddress_to_struct_in6_addr (MonoObject *ipaddr)
 {
@@ -2220,7 +2220,7 @@ ves_icall_System_Net_Sockets_Socket_SetSocketOption_internal (gsize sock, gint32
 #if defined(HAVE_STRUCT_IP_MREQN) || defined(HAVE_STRUCT_IP_MREQ)
 		{
 			MonoObject *address = NULL;
-#ifdef HAVE_STRUCT_SOCKADDR_IN6
+#if defined(HAVE_STRUCT_SOCKADDR_IN6) || defined(HOST_WIN32)
 			if (system_level == sol_ipv6) {
 				struct ipv6_mreq mreq6;
 
@@ -2477,7 +2477,7 @@ addrinfo_to_IPHostEntry (MonoAddressInfo *info, MonoString **h_name, MonoArray *
 					}
 				}
 			}
-#ifdef HAVE_STRUCT_SOCKADDR_IN6
+#if defined(HAVE_STRUCT_SOCKADDR_IN6) || defined(HOST_WIN32)
 			if (nlocal_in6) {
 				MonoString *addr_string;
 				int i;
@@ -2600,7 +2600,7 @@ ves_icall_System_Net_Dns_GetHostByAddr_internal (MonoString *addr, MonoString **
 {
 	char *address;
 	struct sockaddr_in saddr;
-#ifdef HAVE_STRUCT_SOCKADDR_IN6
+#if defined(HAVE_STRUCT_SOCKADDR_IN6) || defined(HOST_WIN32)
 	struct sockaddr_in6 saddr6;
 #endif
 	MonoAddressInfo *info = NULL;
@@ -2617,7 +2617,7 @@ ves_icall_System_Net_Dns_GetHostByAddr_internal (MonoString *addr, MonoString **
 		family = AF_INET;
 		saddr.sin_family = AF_INET;
 	}
-#ifdef HAVE_STRUCT_SOCKADDR_IN6
+#if defined(HAVE_STRUCT_SOCKADDR_IN6) || defined(HOST_WIN32)
 	else if (inet_pton (AF_INET6, address, &saddr6.sin6_addr) == 1) {
 		family = AF_INET6;
 		saddr6.sin6_family = AF_INET6;
@@ -2640,7 +2640,7 @@ ves_icall_System_Net_Dns_GetHostByAddr_internal (MonoString *addr, MonoString **
 		ret = getnameinfo ((struct sockaddr*)&saddr, sizeof (saddr), hostname, sizeof (hostname), NULL, 0, 0) == 0;
 		break;
 	}
-#ifdef HAVE_STRUCT_SOCKADDR_IN6
+#if defined(HAVE_STRUCT_SOCKADDR_IN6) || defined(HOST_WIN32)
 	case AF_INET6: {
 #if HAVE_SOCKADDR_IN6_SIN_LEN
 		saddr6.sin6_len = sizeof (saddr6);
