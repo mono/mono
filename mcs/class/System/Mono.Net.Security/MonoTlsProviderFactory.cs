@@ -41,6 +41,10 @@ using System.Net;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
+#if MONO_FEATURE_BTLS
+using Mono.Btls;
+#endif
+
 #if !MOBILE
 using System.Reflection;
 #endif
@@ -202,8 +206,10 @@ namespace Mono.Net.Security
 				providerRegistration.Add ("default", appleTlsEntry);
 				providerRegistration.Add ("apple", appleTlsEntry);
 #else
-				var btlsEntry = new Tuple<Guid,String> (BtlsId, "Mono.Net.Security.LegacyTlsProvider");
-				var legacyEntry = new Tuple<Guid,String> (LegacyId, "Mono.Btls.MonoBtlsProvider");
+				var legacyEntry = new Tuple<Guid,String> (BtlsId, "Mono.Net.Security.LegacyTlsProvider");
+#if MONO_FEATURE_BTLS
+				var btlsEntry = new Tuple<Guid,String> (LegacyId, "Mono.Btls.MonoBtlsProvider");
+#endif
 
 				providerRegistration.Add ("legacy", legacyEntry);
 
@@ -212,8 +218,10 @@ namespace Mono.Net.Security
 				else
 					providerRegistration.Add ("default", legacyEntry);
 
+#if MONO_FEATURE_BTLS
 				if (IsBtlsSupported ())
 					providerRegistration.Add ("btls", btlsEntry);
+#endif
 
 				providerRegistration.Add ("apple", appleTlsEntry);
 #endif
@@ -222,7 +230,7 @@ namespace Mono.Net.Security
 
 #region Platform-Specific code
 
-#if !ONLY_APPLETLS && !MONOTOUCH && !XAMMAC
+#if MONO_FEATURE_BTLS
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		internal extern static bool IsBtlsSupported ();
 #endif
