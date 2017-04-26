@@ -893,16 +893,11 @@
     <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
     <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
     <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
-    <Compile Include="Mono.Net.Security\IMonoSslStream.cs" />
-    <Compile Include="Mono.Net.Security\IMonoTlsProvider.cs" />
     <Compile Include="Mono.Net.Security\LegacySslStream.cs" />
     <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
     <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
     <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
-    <Compile Include="Mono.Net.Security\MonoSslStreamImpl.cs" />
-    <Compile Include="Mono.Net.Security\MonoSslStreamWrapper.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsProviderFactory.cs" />
-    <Compile Include="Mono.Net.Security\MonoTlsProviderWrapper.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
     <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
     <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
