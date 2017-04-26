@@ -24,9 +24,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if !ONLY_APPLETLS // ONLY_APPLETLS uses MonoTlsProviderFactory.Apple.cs instead 
+#if SECURITY_DEP && !ONLY_APPLETLS // ONLY_APPLETLS uses MonoTlsProviderFactory.Apple.cs instead
 
-#if SECURITY_DEP
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 using MSI = MonoSecurity::Mono.Security.Interface;
@@ -36,7 +35,6 @@ using MSI = Mono.Security.Interface;
 using MX = Mono.Security.X509;
 #endif
 using System.Security.Cryptography.X509Certificates;
-#endif
 
 using System;
 using System.Net;
@@ -61,23 +59,16 @@ namespace Mono.Net.Security
 		 * APIs in this section are for consumption within System.dll only - do not access via
 		 * reflection or from friend assemblies.
 		 * 
-		 * @IMonoTlsProvider is defined as empty interface outside 'SECURITY_DEP', so we don't need
-		 * this conditional here.
 		 */
 
-		internal static IMonoTlsProvider GetProviderInternal ()
+		internal static MSI.MonoTlsProvider GetProviderInternal ()
 		{
-			#if SECURITY_DEP
 			lock (locker) {
 				InitializeInternal ();
 				return defaultProvider;
 			}
-			#else
-			throw new NotSupportedException ("TLS Support not available.");
-			#endif
 		}
 
-#if SECURITY_DEP
 		internal static void InitializeInternal ()
 		{
 			lock (locker) {
@@ -94,7 +85,7 @@ namespace Mono.Net.Security
 				if (provider == null)
 					throw new NotSupportedException ("TLS Support not available.");
 
-				defaultProvider = new Private.MonoTlsProviderWrapper (provider);
+				defaultProvider = provider;
 				initialized = true;
 			}
 		}
@@ -105,8 +96,7 @@ namespace Mono.Net.Security
 				if (initialized)
 					throw new NotSupportedException ("TLS Subsystem already initialized.");
 
-				var msiProvider = LookupProvider (provider, true);
-				defaultProvider = new Private.MonoTlsProviderWrapper (msiProvider);
+				defaultProvider = LookupProvider (provider, true);
 				initialized = true;
 			}
 		}
@@ -117,11 +107,9 @@ namespace Mono.Net.Security
 		static object locker = new object ();
 		static bool initialized;
 
-		static IMonoTlsProvider defaultProvider;
-#endif
-		#endregion
+		static MSI.MonoTlsProvider defaultProvider;
 
-#if SECURITY_DEP
+		#endregion
 
 		static Dictionary<string,string> providerRegistration;
 
@@ -211,7 +199,7 @@ namespace Mono.Net.Security
 			if (provider == null)
 				throw new NotSupportedException ("No TLS Provider available.");
 
-			return provider.Provider;
+			return provider;
 		}
 
 		internal static bool IsProviderSupported (string name)
@@ -234,41 +222,14 @@ namespace Mono.Net.Security
 
 		internal static void Initialize ()
 		{
-			#if SECURITY_DEP
 			InitializeInternal ();
-			#else
-			throw new NotSupportedException ("TLS Support not available.");
-			#endif
 		}
 
 		internal static void Initialize (string provider)
 		{
-			#if SECURITY_DEP
 			InitializeInternal (provider);
-			#else
-			throw new NotSupportedException ("TLS Support not available.");
-			#endif
-		}
-
-		internal static HttpWebRequest CreateHttpsRequest (Uri requestUri, MSI.MonoTlsProvider provider, MSI.MonoTlsSettings settings)
-		{
-			lock (locker) {
-				var internalProvider = provider != null ? new Private.MonoTlsProviderWrapper (provider) : null;
-				return new HttpWebRequest (requestUri, internalProvider, settings);
-			}
-		}
-
-		internal static HttpListener CreateHttpListener (X509Certificate certificate, MSI.MonoTlsProvider provider, MSI.MonoTlsSettings settings)
-		{
-			lock (locker) {
-				var internalProvider = provider != null ? new Private.MonoTlsProviderWrapper (provider) : null;
-				return new HttpListener (certificate, internalProvider, settings);
-			}
 		}
 		#endregion
-
-#endif
-
 	}
 }
 #endif
