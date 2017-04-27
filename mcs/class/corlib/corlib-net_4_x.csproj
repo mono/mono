@@ -1184,7 +1184,6 @@
     <Compile Include="System.Runtime.InteropServices\UCOMITypeLib.cs" />
     <Compile Include="System.Runtime.InteropServices\VARDESC.cs" />
     <Compile Include="System.Runtime.InteropServices\VARFLAGS.cs" />
-    <Compile Include="System.Runtime.Loader\AssemblyLoadContext.cs" />
     <Compile Include="System.Runtime.Remoting.Activation\ActivationServices.cs" />
     <Compile Include="System.Runtime.Remoting.Activation\ActivatorLevel.cs" />
     <Compile Include="System.Runtime.Remoting.Activation\AppDomainLevelActivator.cs" />
