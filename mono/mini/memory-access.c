@@ -24,6 +24,7 @@ MonoInst* emit_memory_barrier (MonoCompile *cfg, int kind);
 MonoInst* emit_runtime_constant (MonoCompile *cfg, MonoJumpInfoType patch_type, gpointer data);
 int mini_class_check_context_used (MonoCompile *cfg, MonoClass *klass);
 gboolean mono_emit_wb_aware_memcpy (MonoCompile *cfg, MonoClass *klass, MonoInst *iargs[4], int size, int align);
+void emit_write_barrier (MonoCompile *cfg, MonoInst *ptr, MonoInst *value);
 
 
 
@@ -126,7 +127,6 @@ mini_emit_memory_copy_internal (MonoCompile *cfg, MonoInst *dest, MonoInst *src,
 	MonoInst *iargs [4];
 	int size;
 	guint32 align = 0;
-	MonoMethod *memcpy_method;
 	MonoInst *size_ins = NULL;
 	MonoInst *memcpy_ins = NULL;
 
@@ -200,7 +200,7 @@ mini_emit_memory_copy_internal (MonoCompile *cfg, MonoInst *dest, MonoInst *src,
 		iargs [0] = dest;
 		iargs [1] = src;
 		iargs [2] = size_ins;
-		mono_emit_calli (cfg, mono_method_signature (memcpy_method), iargs, memcpy_ins, NULL, NULL);		
+		mono_emit_calli (cfg, mono_method_signature (get_memcpy_method ()), iargs, memcpy_ins, NULL, NULL);
 	} else {
 		mini_emit_memcpy_internal (cfg, dest, src, size, align);
 	}
@@ -256,6 +256,37 @@ mini_emit_memory_load (MonoCompile *cfg, MonoClass *klass, MonoInst *src_address
 		emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_ACQ);
 	}
 	return ins;
+}
+
+void
+mini_emit_memory_store (MonoCompile *cfg, MonoClass *klass, MonoInst *dest_address, MonoInst *src, int ins_flag)
+{
+	MonoInst *ins;
+
+	if (ins_flag & MONO_INST_VOLATILE) {
+		/* Volatile stores have release semantics, see 12.6.7 in Ecma 335 */
+		emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_REL);
+	}
+	if (ins_flag & MONO_INST_UNALIGNED) {
+		int align;
+		int size = mono_type_size (&klass->byval_arg, &align);
+		if (!mono_arch_can_do_unaligned_access (size)) {
+			MonoInst *addr, *mov, *tmp_var;
+			tmp_var = mono_compile_create_var (cfg, &klass->byval_arg, OP_LOCAL);
+			EMIT_NEW_TEMPSTORE (cfg, mov, tmp_var->inst_c0, src);
+			EMIT_NEW_VARLOADA (cfg, addr, tmp_var, tmp_var->inst_vtype);
+			mini_emit_memory_copy_internal (cfg, dest_address, addr, klass, FALSE, 1);
+			return;
+		}
+	}
+
+	EMIT_NEW_STORE_MEMBASE_TYPE (cfg, ins, &klass->byval_arg, dest_address->dreg, 0, src->dreg);
+	ins->flags |= ins_flag;
+	if (cfg->gen_write_barriers && cfg->method->wrapper_type != MONO_WRAPPER_WRITE_BARRIER &&
+		mini_type_is_reference (&klass->byval_arg) && !MONO_INS_IS_PCONST_NULL (src)) {
+		/* insert call to write barrier */
+		emit_write_barrier (cfg, dest_address, src);
+	}
 }
 
 #endif
