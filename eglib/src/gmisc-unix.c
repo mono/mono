@@ -200,4 +200,3 @@ g_get_tmp_dir (void)
 	}
 	return tmp_dir;
 }
-

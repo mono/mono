@@ -1,6 +1,6 @@
-noinst_LTLIBRARIES = libmonoutils.la
+noinst_LTLIBRARIES = libmonoutils.la libmonoutils-unity-il2cpp.la
 
-AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/mono $(LIBGC_CPPFLAGS) $(GLIB_CFLAGS) $(SHARED_CFLAGS) $(IL2CPP_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/mono $(LIBGC_CPPFLAGS) $(GLIB_CFLAGS) $(SHARED_CFLAGS)
 
 if ENABLE_DTRACE
 
@@ -22,6 +22,12 @@ unix_sources = \
 
 platform_sources = $(unix_sources)
 endif
+
+unity_files = 		\
+	unity-rand.c 	
+
+mono_only_files =	\
+	mono-rand.c
 
 monoutils_sources = \
 	$(platform_sources)	\
@@ -70,7 +76,6 @@ monoutils_sources = \
 	mono-proclib-windows-internals.h		\
 	mono-publib.c		\
 	mono-string.h		\
-	mono-time.c  		\
 	mono-time.h  		\
 	strenc.h		\
 	strenc.c		\
@@ -161,8 +166,6 @@ monoutils_sources = \
 	networking-missing.c	\
 	networking-windows.c	\
 	networking.h	\
-	mono-rand.c	\
-	mono-rand-windows.c	\
 	mono-rand.h \
 	mono-rand-windows-internals.h \
 	memfuncs.c \
@@ -253,7 +256,12 @@ arch_sources += mono-hwcap-cross.c
 
 endif
 
-libmonoutils_la_SOURCES = $(monoutils_sources) $(arch_sources)
+libmonoutils_la_SOURCES = $(monoutils_sources) $(arch_sources) $(mono_only_files)
+
+libmonoutils_unity_il2cpp_la_SOURCES = $(monoutils_sources) $(arch_sources) $(unity_files) 
+libmonoutils_unity_il2cpp_la_CFLAGS = -DIL2CPP_ON_MONO -DDISABLE_JIT -DDISABLE_REMOTING -fexceptions -DPLATFORM_UNITY -I../../../../il2cpp/build/libil2cpp/os/c-api
+
+
 libmonoutilsincludedir = $(includedir)/mono-$(API_VER)/mono/utils
 
 libmonoutilsinclude_HEADERS = 	\

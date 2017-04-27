@@ -230,6 +230,85 @@ mono_pmip (void *ip)
 }
 
 /**
+* mono_pmip_pretty:
+* @ip: an instruction pointer address
+*
+* This method is used from a debugger to get the name of the
+* method at address @ip.   This routine is typically invoked from
+* a debugger like this:
+*
+* (gdb) print mono_pmip_pretty ($pc)
+*
+* Returns: the assembly name, method name, and file info at address @ip.
+*/
+MONO_API char *
+mono_pmip_pretty(void *ip)
+{
+    char* formattedPMIP;
+
+    MonoDomain *domain = mono_domain_get();
+    if (!domain)
+        domain = mono_get_root_domain();
+
+    MonoJitInfo* ji = mono_jit_info_table_find_internal(domain, (char *)ip, TRUE, TRUE);
+
+    if (!ji)
+    {
+        FindTrampUserData user_data;
+        user_data.ip = ip;
+        user_data.method = NULL;
+        mono_domain_lock(domain);
+        g_hash_table_foreach(domain_jit_info(domain)->jit_trampoline_hash, find_tramp, &user_data);
+        mono_domain_unlock(domain);
+        if (user_data.method) {
+            char *mname = mono_method_full_name(user_data.method, TRUE);
+            formattedPMIP = g_strdup_printf("[MANAGED TRAMPOLINE] %s", mname);
+            g_free(mname);
+            return formattedPMIP;
+        }
+        else
+        {
+            formattedPMIP = g_strdup_printf("[MANAGED TRAMPOLINE] <UNKNOWN>");
+            return formattedPMIP;
+        }
+    }
+    else if (ji->is_trampoline) {
+        formattedPMIP = g_strdup_printf("[MANAGED TRAMPOLINE] %s", ((MonoTrampInfo*)ji->d.tramp_info)->name);
+        return formattedPMIP;
+    }
+
+    MonoMethod* method = jinfo_get_method(ji);
+    MonoClass* klass = method->klass;
+    char* method_name = mono_method_full_name(method, TRUE);
+
+    MonoDebugSourceLocation* location = mono_debug_lookup_source_location(method, (guint32)((guint8*)ip - (guint8*)ji->code_start), domain);
+    MonoDebugMethodInfo* minfo = mono_debug_lookup_method(method);
+
+    char *lineNumber, *filePath;
+    if (location)
+    {
+        lineNumber = g_strdup_printf("%d", location->row);
+        filePath = g_strdup(location->source_file);
+    }
+    else
+    {
+        lineNumber = g_strdup("<UNKNOWN>");
+        filePath = g_strdup("<UNKNOWN>");
+    }
+
+    char* assembly_name = klass->image->module_name;
+
+    formattedPMIP = g_strdup_printf("[%s] %s Line %s File %s", assembly_name, method_name, lineNumber, filePath);
+
+    mono_debug_free_source_location(location);
+    g_free(method_name);
+    g_free(lineNumber);
+    g_free(filePath);
+
+    return formattedPMIP;
+}
+
+/**
  * mono_print_method_from_ip
  * @ip: an instruction pointer address
  *

@@ -1,4 +1,4 @@
-noinst_LTLIBRARIES = libeglib.la
+noinst_LTLIBRARIES = libeglib.la libeglib-unity.la
 
 AM_CFLAGS = $(WERROR_CFLAGS)
 
@@ -9,15 +9,13 @@ win_files  = \
 
 unix_files = \
 	gdate-unix.c  gdir-unix.c  gfile-unix.c  gmisc-unix.c	\
-	gmodule-unix.c gtimer-unix.c
+	gmodule-unix.c gtimer-unix.c gfile-posix.c
 
-if HOST_WIN32
-os_files = $(win_files)
-else
-os_files = $(unix_files)
-endif
+unity_files = \
+	gdate-unity.c gdir-unity.c gfile-unity.c gmisc-unity.c \
+	gpath-unity.c
 
-libeglib_la_SOURCES = \
+common_files = \
 	eglib-remap.h	\
 	sort.frag.h	\
 	glib.h	     	\
@@ -40,15 +38,28 @@ libeglib_la_SOURCES = \
 	gshell.c	\
 	gspawn.c	\
 	gfile.c		\
-	gfile-posix.c	\
 	gpattern.c	\
 	gmarkup.c	\
 	gutf8.c		\
 	gunicode.c	\
-	unicode-data.h	\
+	unicode-data.h
+
+if HOST_WIN32
+os_files = $(win_files)
+else
+os_files = $(unix_files)
+endif
+
+libeglib_la_SOURCES = \
+	$(common_files) \
 	$(os_files)
 
+libeglib_unity_la_SOURCES = \
+	$(common_files) \
+	$(unity_files)
+
 libeglib_la_CFLAGS = -g -Wall -D_FORTIFY_SOURCE=2
+libeglib_unity_la_CFLAGS = $(libeglib_la_CFLAGS) -DPLATFORM_UNITY -I../../../../il2cpp/build/libil2cpp/os/c-api
 
 AM_CPPFLAGS = -I$(srcdir)
 

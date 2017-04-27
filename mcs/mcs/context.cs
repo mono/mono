@@ -22,7 +22,8 @@ namespace Mono.CSharp
 	{
 		Normal = 0,
 		Probing = 1,
-		IgnoreAccessibility = 2
+		IgnoreAccessibility = 2,
+		IgnoreStaticUsing = 1 << 10
 	}
 
 	//

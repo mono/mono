@@ -89,6 +89,8 @@ g_build_path (const gchar *separator, const gchar *first_element, ...)
 	return g_string_free (path, FALSE);
 }
 
+#ifndef PLATFORM_UNITY
+
 static gchar*
 strrchr_seperator (const gchar* filename)
 {
@@ -159,6 +161,8 @@ g_path_get_basename (const char *filename)
 
 	return g_strdup (&r[1]);
 }
+
+#endif
 
 #ifndef HAVE_STRTOK_R
 // This is from BSD's strtok_r

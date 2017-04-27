@@ -177,6 +177,130 @@ static inline void InterlockedWrite16(volatile gint16 *dst, gint16 val)
 	mono_memory_barrier ();
 }
 
+#elif defined(PLATFORM_UNITY)
+
+#include "Atomic-c-api.h"
+
+static inline gint32 InterlockedCompareExchange(volatile gint32 *dest, gint32 exch, gint32 comp)
+{
+    return UnityPalCompareExchange(dest, exch, comp);
+}
+
+static inline gint64 InterlockedCompareExchange64(volatile gint64 *dest, gint64 exch, gint64 comp)
+{
+    return UnityPalCompareExchange64(dest, exch, comp);
+}
+
+static inline gpointer InterlockedCompareExchangePointer(volatile gpointer *dest, gpointer exch, gpointer comp)
+{
+    return UnityPalCompareExchangePointer(dest, exch, comp);
+}
+
+static inline gint32 InterlockedAdd(volatile gint32 *dest, gint32 add)
+{
+    return UnityPalAdd(dest, add);
+}
+
+static inline gint64 InterlockedAdd64(volatile gint64 *dest, gint64 add)
+{
+    return UnityPalAdd64(dest, add);
+}
+
+static inline gint32 InterlockedIncrement(volatile gint32 *dest)
+{
+    return UnityPalIncrement(dest);
+}
+
+static inline gint64 InterlockedIncrement64(volatile gint64 *dest)
+{
+    return UnityPalIncrement64(dest);
+}
+
+static inline gint32 InterlockedDecrement(volatile gint32 *dest)
+{
+    return UnityPalDecrement(dest);
+}
+
+static inline gint64 InterlockedDecrement64(volatile gint64 *dest)
+{
+    return UnityPalDecrement64(dest);
+}
+
+static inline gint32 InterlockedExchange(volatile gint32 *dest, gint32 exch)
+{
+    return UnityPalExchange(dest, exch);
+}
+
+static inline gint64 InterlockedExchange64(volatile gint64 *dest, gint64 exch)
+{
+    return UnityPalExchange64(dest, exch);
+}
+
+static inline gpointer InterlockedExchangePointer(volatile gpointer *dest, gpointer exch)
+{
+    return UnityPalExchangePointer(dest, exch);
+}
+
+static inline gint64 InterlockedRead64(volatile gint64 *src)
+{
+    return UnityPalRead64(src);
+}
+
+static inline gint32 InterlockedExchangeAdd(volatile gint32 *dest, gint32 add)
+{
+    return UnityPalAdd(dest, add);
+}
+
+static inline gint64 InterlockedExchangeAdd64(volatile gint64 *dest, gint64 add)
+{
+    return UnityPalAdd64(dest, add);
+}
+
+static inline gint32 InterlockedRead(volatile gint32 *src)
+{
+    return UnityPalCompareExchange(src, 0, 0);
+}
+
+static inline gpointer InterlockedReadPointer(volatile gpointer *src)
+{
+    return UnityPalCompareExchangePointer(src, NULL, NULL);
+}
+
+static inline void InterlockedWrite(volatile gint32 *dst, gint32 val)
+{
+    UnityPalExchange(dst, val);
+}
+
+static inline void InterlockedWrite64(volatile gint64 *dst, gint64 val)
+{
+    UnityPalExchange64(dst, val);
+}
+
+static inline void InterlockedWritePointer(volatile gpointer *dst, gpointer val)
+{
+    UnityPalExchangePointer(dst, val);
+}
+
+static inline gint8 InterlockedRead8(volatile gint8 *src)
+{
+    g_assertion_message("InterlockedRead8 is not implemented");
+    return 0;
+}
+static inline gint16 InterlockedRead16(volatile gint16 *src)
+{
+    g_assertion_message("InterlockedRead16 is not implemented");
+    return 0;
+}
+
+static inline void InterlockedWrite8(volatile gint8 *dst, gint8 val)
+{
+    g_assertion_message("InterlockedWrite8 is not implemented");
+}
+static inline void InterlockedWrite16(volatile gint16 *dst, gint16 val)
+{
+    g_assertion_message("InterlockedWrite16 is not implemented");
+}
+
 /* Prefer GCC atomic ops if the target supports it (see configure.ac). */
 #elif defined(USE_GCC_ATOMIC_OPS)
 
