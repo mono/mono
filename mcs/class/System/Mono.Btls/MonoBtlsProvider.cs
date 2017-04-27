@@ -50,10 +50,8 @@ namespace Mono.Btls
 {
 	class MonoBtlsProvider : MonoTlsProvider
 	{
-		static readonly Guid id = new Guid ("432d18c9-9348-4b90-bfbf-9f2a10e1f15b");
-
 		public override Guid ID {
-			get { return id; }
+			get { return MNS.MonoTlsProviderFactory.BtlsId; }
 		}
 		public override string Name {
 			get { return "btls"; }
