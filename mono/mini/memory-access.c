@@ -16,10 +16,6 @@
 
 #define MAX_INLINE_COPIES 10
 
-static void 
-mini_emit_memcpy_internal (MonoCompile *cfg, int destreg, int doffset, int srcreg, int soffset, int size, int align);
-
-
 //STUFF TO FIX NAMING
 MonoInst* emit_get_gsharedvt_info_klass (MonoCompile *cfg, MonoClass *klass, MonoRgctxInfoType rgctx_type);
 MonoInst* mono_emit_calli (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **args, MonoInst *addr, MonoInst *imt_arg, MonoInst *rgctx_arg);
@@ -33,32 +29,9 @@ gboolean mono_emit_wb_aware_memcpy (MonoCompile *cfg, MonoClass *klass, MonoInst
 
 //new stuff
 
-
-static void 
-mini_emit_memcpy2 (MonoCompile *cfg, MonoInst *dest, MonoInst *src, int size, int align)
-{
-	/* FIXME: Optimize the case when src/dest is OP_LDADDR */
-	
-	/*
-	We can't do copies at a smaller granule than the provided alignment
-	*/
-	if ((size / align > MAX_INLINE_COPIES) && !(cfg->opt & MONO_OPT_INTRINS)) {
-		MonoInst *iargs [3];
-		iargs [0] = dest;
-		iargs [1] = src;
-
-		EMIT_NEW_ICONST (cfg, iargs [2], size);
-		mono_emit_method_call (cfg, get_memcpy_method (), iargs, NULL);
-	} else {
-		mini_emit_memcpy_internal (cfg, dest->dreg, 0, src->dreg, 0, size, align);
-	}
-	
-}
-
-
 /* Can only copy ref-free memory */
 static void 
-mini_emit_memcpy_internal (MonoCompile *cfg, int destreg, int doffset, int srcreg, int soffset, int size, int align)
+mini_emit_unrolled_memcpy (MonoCompile *cfg, int destreg, int doffset, int srcreg, int soffset, int size, int align)
 {
 	int cur_reg;
 
@@ -117,6 +90,28 @@ copy_1:
 }
 
 
+
+static void 
+mini_emit_memcpy_internal (MonoCompile *cfg, MonoInst *dest, MonoInst *src, int size, int align)
+{
+	/* FIXME: Optimize the case when src/dest is OP_LDADDR */
+	
+	/*
+	We can't do copies at a smaller granule than the provided alignment
+	*/
+	if ((size / align > MAX_INLINE_COPIES) && !(cfg->opt & MONO_OPT_INTRINS)) {
+		MonoInst *iargs [3];
+		iargs [0] = dest;
+		iargs [1] = src;
+
+		EMIT_NEW_ICONST (cfg, iargs [2], size);
+		mono_emit_method_call (cfg, get_memcpy_method (), iargs, NULL);
+	} else {
+		mini_emit_unrolled_memcpy (cfg, dest->dreg, 0, src->dreg, 0, size, align);
+	}
+}
+
+
 //XXXX HACK HACK
 static gboolean
 mono_arch_can_do_unaligned_access (int size)
@@ -129,7 +124,7 @@ static void
 mini_emit_memory_copy_internal (MonoCompile *cfg, MonoInst *dest, MonoInst *src, MonoClass *klass, gboolean native, int explicit_align)
 {
 	MonoInst *iargs [4];
-	int n;
+	int size;
 	guint32 align = 0;
 	MonoMethod *memcpy_method;
 	MonoInst *size_ins = NULL;
@@ -153,9 +148,9 @@ mini_emit_memory_copy_internal (MonoCompile *cfg, MonoInst *dest, MonoInst *src,
 	}
 
 	if (native)
-		n = mono_class_native_size (klass, &align);
+		size = mono_class_native_size (klass, &align);
 	else
-		n = mono_class_value_size (klass, &align);
+		size = mono_class_value_size (klass, &align);
 
 	if (!align)
 		align = SIZEOF_VOID_P;
@@ -175,7 +170,7 @@ mini_emit_memory_copy_internal (MonoCompile *cfg, MonoInst *dest, MonoInst *src,
 			context_used = mini_class_check_context_used (cfg, klass);
 
 			/* It's ok to intrinsify under gsharing since shared code types are layout stable. */
-			if (!size_ins && (cfg->opt & MONO_OPT_INTRINS) && mono_emit_wb_aware_memcpy (cfg, klass, iargs, n, align)) {
+			if (!size_ins && (cfg->opt & MONO_OPT_INTRINS) && mono_emit_wb_aware_memcpy (cfg, klass, iargs, size, align)) {
 				return;
 			} else if (size_ins || align < SIZEOF_VOID_P) {
 				if (context_used) {
@@ -192,10 +187,10 @@ mini_emit_memory_copy_internal (MonoCompile *cfg, MonoInst *dest, MonoInst *src,
 			} else {
 				/* We don't unroll more than 5 stores to avoid code bloat. */
 				/*This is harmless and simplify mono_gc_get_range_copy_func */
-				n += (SIZEOF_VOID_P - 1);
-				n &= ~(SIZEOF_VOID_P - 1);
+				size += (SIZEOF_VOID_P - 1);
+				size &= ~(SIZEOF_VOID_P - 1);
 
-				EMIT_NEW_ICONST (cfg, iargs [2], n);
+				EMIT_NEW_ICONST (cfg, iargs [2], size);
 				mono_emit_jit_icall (cfg, mono_gc_get_range_copy_func (), iargs);
 			}
 		}
@@ -207,7 +202,7 @@ mini_emit_memory_copy_internal (MonoCompile *cfg, MonoInst *dest, MonoInst *src,
 		iargs [2] = size_ins;
 		mono_emit_calli (cfg, mono_method_signature (memcpy_method), iargs, memcpy_ins, NULL, NULL);		
 	} else {
-		mini_emit_memcpy2 (cfg, dest, src, n, align);
+		mini_emit_memcpy_internal (cfg, dest, src, size, align);
 	}
 }
 
@@ -249,7 +244,7 @@ mini_emit_memory_load (MonoCompile *cfg, MonoClass *klass, MonoInst *src_address
 			MonoInst *addr;
 			ins = mono_compile_create_var (cfg, &klass->byval_arg, OP_LOCAL);
 			EMIT_NEW_VARLOADA (cfg, addr, ins, ins->inst_vtype);
-			mini_emit_memcpy2 (cfg, addr, src_address, size, 1);
+			mini_emit_memcpy_internal (cfg, addr, src_address, size, 1);
 		}
 	} else {
 		EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, &klass->byval_arg, src_address->dreg, 0);
