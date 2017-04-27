@@ -81,7 +81,6 @@ mobile_common_dirs := \
 	System.Xml.Serialization \
 	Mono.CSharp	\
 	Microsoft.CSharp \
-	System.Reflection.DispatchProxy	\
 	System.Reflection.Context	\
 	System.Net.Http.WinHttpHandler
 

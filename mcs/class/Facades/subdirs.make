@@ -84,7 +84,7 @@ orbis_SUBDIRS = $(common_DEPS_SUBDIRS) $(netstandard_drawing_SUBDIRS) $(mobile_o
 orbis_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 
 mobile_only_SUBDIRS = System.Net.Ping System.Runtime.Serialization.Formatters System.Security.Cryptography.Csp System.Security.Cryptography.Pkcs \
-System.Security.Cryptography.Cng System.Runtime.Loader System.Xml.XPath.XmlDocument
+System.Security.Cryptography.Cng System.Runtime.Loader System.Xml.XPath.XmlDocument System.Reflection.DispatchProxy
 
 mobile_only_DEPS_SUBDIRS = System.Security.Cryptography.OpenSsl
 
