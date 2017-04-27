@@ -31,14 +31,12 @@ namespace Mono.AppleTls
 {
 	class AppleTlsProvider : MonoTlsProvider
 	{
-		static readonly Guid id = new Guid ("981af8af-a3a3-419a-9f01-a518e3a17c1c");
-
 		public override string Name {
 			get { return "apple-tls"; }
 		}
 
 		public override Guid ID {
-			get { return id; }
+			get { return MNS.MonoTlsProviderFactory.AppleTlsId; }
 		}
 
 		public override IMonoSslStream CreateSslStream (
