@@ -81,16 +81,16 @@ namespace Mono.Net.Security.Private
 
 		SslStreamBase ssl_stream;
 		ICertificateValidator certificateValidator;
+		MonoTlsProvider provider;
 
 		#endregion // Fields
 
 		#region Constructors
 
-		public LegacySslStream (Stream innerStream, bool leaveInnerStreamOpen, SslStream owner, MonoTlsProvider provider, MonoTlsSettings settings)
+		public LegacySslStream (Stream innerStream, bool leaveInnerStreamOpen, MonoTlsProvider provider, MonoTlsSettings settings)
 			: base (innerStream, leaveInnerStreamOpen)
 		{
-			SslStream = owner;
-			Provider = provider;
+			this.provider = provider;
 			certificateValidator = ChainValidationHelper.GetInternalValidator (provider, settings);
 		}
 		#endregion // Constructors
@@ -583,15 +583,11 @@ namespace Mono.Net.Security.Private
 			get { throw new NotSupportedException (); }
 		}
 
-		public SslStream SslStream {
-			get;
+		MonoTlsProvider IMonoSslStream.Provider {
+			get { return provider; }
 		}
 
-		public MonoTlsProvider Provider {
-			get;
-		}
-
-		public MonoTlsConnectionInfo GetConnectionInfo ()
+		MonoTlsConnectionInfo IMonoSslStream.GetConnectionInfo ()
 		{
 			return null;
 		}
