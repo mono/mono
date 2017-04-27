@@ -26,7 +26,9 @@ namespace System.Data.Sql {
         internal const string InstanceName   = "InstanceName";
         internal const string IsClustered    = "IsClustered";
         internal const string Version        = "Version";
+#if !MONO
         private  const int    timeoutSeconds = ADP.DefaultCommandTimeout;
+#endif
         private long timeoutTime;                                // variable used for timeout computations, holds the value of the hi-res performance counter at which this request should expire
 
         private SqlDataSourceEnumerator() : base() {
