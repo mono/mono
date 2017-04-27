@@ -484,6 +484,7 @@ common_sources = \
 	arch-stubs.c		\
 	llvm-runtime.h	\
 	type-checking.c \
+	memory-access.c	\
 	lldb.h			\
 	lldb.c
 

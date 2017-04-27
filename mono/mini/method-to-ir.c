@@ -76,6 +76,12 @@
 #include "aot-compiler.h"
 #include "mini-llvm.h"
 
+
+MonoInst* mini_emit_memory_load (MonoCompile *cfg, MonoClass *klass, MonoInst *src_address, int ins_flags);
+void mini_emit_memory_copy (MonoCompile *cfg, MonoInst *dest, MonoInst *src, MonoClass *klass, int ins_flag);
+
+
+
 #define BRANCH_COST 10
 #define INLINE_LENGTH_LIMIT 20
 
@@ -148,8 +154,7 @@ static int inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSigna
 static MonoInst*
 emit_llvmonly_virtual_call (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, int context_used, MonoInst **sp);
 
-inline static MonoInst*
-mono_emit_calli (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **args, MonoInst *addr, MonoInst *imt_arg, MonoInst *rgctx_arg);
+MonoInst* mono_emit_calli (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **args, MonoInst *addr, MonoInst *imt_arg, MonoInst *rgctx_arg);
 
 /* helper methods signatures */
 static MonoMethodSignature *helper_sig_domain_get;
@@ -1560,7 +1565,7 @@ handle_stack_args (MonoCompile *cfg, MonoInst **sp, int count)
 	}
 }
 
-static MonoInst*
+MonoInst*
 emit_runtime_constant (MonoCompile *cfg, MonoJumpInfoType patch_type, gpointer data)
 {
 	MonoInst *ins;
@@ -2299,7 +2304,7 @@ mono_patch_info_new (MonoMemPool *mp, int ip, MonoJumpInfoType type, gconstpoint
 	return ji;
 }
 
-static int
+int
 mini_class_check_context_used (MonoCompile *cfg, MonoClass *klass)
 {
 	if (cfg->gshared)
@@ -2482,7 +2487,7 @@ set_rgctx_arg (MonoCompile *cfg, MonoCallInst *call, int rgctx_reg, MonoInst *rg
 #endif
 }	
 
-inline static MonoInst*
+MonoInst*
 mono_emit_calli (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **args, MonoInst *addr, MonoInst *imt_arg, MonoInst *rgctx_arg)
 {
 	MonoCallInst *call;
@@ -2544,7 +2549,7 @@ mono_emit_calli (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **args, Mo
 	return (MonoInst*)call;
 }
 
-static MonoInst*
+MonoInst*
 emit_get_gsharedvt_info_klass (MonoCompile *cfg, MonoClass *klass, MonoRgctxInfoType rgctx_type);
 
 static MonoInst*
@@ -2949,7 +2954,7 @@ emit_method_access_failure (MonoCompile *cfg, MonoMethod *caller, MonoMethod *ca
 	mono_emit_jit_icall (cfg, mono_throw_method_access, args);
 }
 
-static MonoMethod*
+MonoMethod*
 get_memcpy_method (void)
 {
 	static MonoMethod *memcpy_method = NULL;
@@ -3040,7 +3045,7 @@ emit_write_barrier (MonoCompile *cfg, MonoInst *ptr, MonoInst *value)
 	EMIT_NEW_DUMMY_USE (cfg, dummy_use, value);
 }
 
-static gboolean
+gboolean
 mono_emit_wb_aware_memcpy (MonoCompile *cfg, MonoClass *klass, MonoInst *iargs[4], int size, int align)
 {
 	int dest_ptr_reg, tmp_reg, destreg, srcreg, offset;
@@ -3638,7 +3643,7 @@ emit_get_gsharedvt_info (MonoCompile *cfg, gpointer data, MonoRgctxInfoType rgct
 	return ins;
 }
 
-static MonoInst*
+MonoInst*
 emit_get_gsharedvt_info_klass (MonoCompile *cfg, MonoClass *klass, MonoRgctxInfoType rgctx_type)
 {
 	return emit_get_gsharedvt_info (cfg, &klass->byval_arg, rgctx_type);
@@ -5160,7 +5165,7 @@ mini_emit_inst_for_ctor (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignat
 	return mono_emit_native_types_intrinsics (cfg, cmethod, fsig, args);
 }
 
-static MonoInst*
+MonoInst*
 emit_memory_barrier (MonoCompile *cfg, int kind)
 {
 	MonoInst *ins = NULL;
@@ -10056,7 +10061,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				break;
 			}
 
-			if ((loc_index != -1) && ip_in_bb (cfg, cfg->cbb, ip + 5)) {
+			if ((loc_index != -1) && ip_in_bb (cfg, cfg->cbb, ip + 5) && !(ins_flag & MONO_INST_UNALIGNED)) {
 				CHECK_LOCAL (loc_index);
 
 				EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, &klass->byval_arg, sp [0]->dreg, 0);
@@ -10080,21 +10085,15 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 				sp --;
 
-				mini_emit_stobj (cfg, sp [0], sp [1], klass, FALSE);
+				mini_emit_memory_copy (cfg, sp [0], sp [1], klass, ins_flag);
 
 				ip += 5 + 5;
 				ins_flag = 0;
 				break;
 			}
 
-			EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, &klass->byval_arg, sp [0]->dreg, 0);
-			ins->flags |= ins_flag;
+			ins = mini_emit_memory_load (cfg, klass, sp [0], ins_flag);
 			*sp++ = ins;
-
-			if (ins_flag & MONO_INST_VOLATILE) {
-				/* Volatile loads have acquire semantics, see 12.6.7 in Ecma 335 */
-				emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_ACQ);
-			}
 
 			ip += 5;
 			ins_flag = 0;
