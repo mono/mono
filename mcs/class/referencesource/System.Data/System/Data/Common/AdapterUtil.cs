@@ -83,6 +83,11 @@ namespace System.Data.Common {
 
         static internal Task<bool> s_falseTask = Task.FromResult<bool>(false);
         
+#if MONO
+        static internal Task<bool> TrueTask => s_trueTask;
+        static internal Task<bool> FalseTask => s_falseTask;
+#endif
+
         [BidMethod] // this method accepts BID format as an argument, this attribute allows FXCopBid rule to validate calls to it
         static private void TraceException(
                 string trace,
