@@ -135,9 +135,9 @@
       <Project>{9E61FF2E-493E-4CA0-BBDA-2EF96A4CB058}</Project>
       <Name>System.IO.Compression.FileSystem-net_4_x</Name>
     </ProjectReference>
-    <ProjectReference Include="../../System.Runtime.InteropServices.RuntimeInformation/System.Runtime.InteropServices.RuntimeInformation-net_4_x.csproj">
-      <Project>{1E1BC1A8-EAD2-496C-A6D6-8AFABD741F56}</Project>
-      <Name>System.Runtime.InteropServices.RuntimeInformation-net_4_x</Name>
+    <ProjectReference Include="../System.Runtime.InteropServices.RuntimeInformation/Facades_System.Runtime.InteropServices.RuntimeInformation-net_4_x.csproj">
+      <Project>{71D02788-3AD8-4C43-BDEB-1A3D277496BA}</Project>
+      <Name>Facades_System.Runtime.InteropServices.RuntimeInformation-net_4_x</Name>
     </ProjectReference>
     <ProjectReference Include="../System.Security.Cryptography.Algorithms/Facades_System.Security.Cryptography.Algorithms-net_4_x.csproj">
       <Project>{B044DB11-DC90-4C35-B766-F2D24D7C3009}</Project>
