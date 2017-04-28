@@ -79,6 +79,7 @@
 
 MonoInst* mini_emit_memory_load (MonoCompile *cfg, MonoClass *klass, MonoInst *src_address, int ins_flags);
 void mini_emit_memory_copy (MonoCompile *cfg, MonoInst *dest, MonoInst *src, MonoClass *klass, int ins_flag);
+void mini_emit_memory_copy_bytes (MonoCompile *cfg, MonoInst *dest, MonoInst *src, MonoInst *size, int ins_flag);
 void mini_emit_memory_store (MonoCompile *cfg, MonoClass *klass, MonoInst *dest_address, MonoInst *src, int ins_flag);
 
 
@@ -10083,11 +10084,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			/* Skip this if the operation is volatile. */
 			if (((ip [5] == CEE_STOBJ) && ip_in_bb (cfg, cfg->cbb, ip + 5) && read32 (ip + 6) == token) && !generic_class_is_reference_type (cfg, klass) && !(ins_flag & MONO_INST_VOLATILE)) {
 				CHECK_STACK (1);
-
 				sp --;
-
 				mini_emit_memory_copy (cfg, sp [0], sp [1], klass, ins_flag);
-
 				ip += 5 + 5;
 				ins_flag = 0;
 				break;
@@ -12787,7 +12785,15 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				CHECK_TYPELOAD (constrained_class);
 				ip += 6;
 				break;
-			case CEE_CPBLK:
+			case CEE_CPBLK: {
+				CHECK_STACK (3);
+				sp -= 3;
+				mini_emit_memory_copy_bytes (cfg, sp [0], sp [1], sp [2], ins_flag);
+				ip += 2;
+				ins_flag = 0;
+				inline_costs += 1;
+				break;
+			}
 			case CEE_INITBLK: {
 				MonoInst *iargs [3];
 				CHECK_STACK (3);

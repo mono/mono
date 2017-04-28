@@ -90,28 +90,34 @@ copy_1:
 	}
 }
 
-
-
 static void 
-mini_emit_memcpy_internal (MonoCompile *cfg, MonoInst *dest, MonoInst *src, int size, int align)
+mini_emit_memcpy_internal (MonoCompile *cfg, MonoInst *dest, MonoInst *src, MonoInst *size_ins, int size, int align)
 {
 	/* FIXME: Optimize the case when src/dest is OP_LDADDR */
-	
+	if (cfg->verbose_level)
+		printf ("\tEMITING memcpy [%d] <= [%d] size_ins %d size %lld align %d\n", dest->dreg, src->dreg, size_ins ? size_ins->dreg : -1, size, align);
 	/*
 	We can't do copies at a smaller granule than the provided alignment
 	*/
-	if ((size / align > MAX_INLINE_COPIES) && !(cfg->opt & MONO_OPT_INTRINS)) {
+	if (size_ins || ((size / align > MAX_INLINE_COPIES) && !(cfg->opt & MONO_OPT_INTRINS))) {
 		MonoInst *iargs [3];
 		iargs [0] = dest;
 		iargs [1] = src;
 
-		EMIT_NEW_ICONST (cfg, iargs [2], size);
+		if (!size_ins)
+			EMIT_NEW_ICONST (cfg, size_ins, size);
+		iargs [2] = size_ins;
 		mono_emit_method_call (cfg, get_memcpy_method (), iargs, NULL);
 	} else {
 		mini_emit_unrolled_memcpy (cfg, dest->dreg, 0, src->dreg, 0, size, align);
 	}
 }
 
+static void
+mini_emit_memcpy_const_size (MonoCompile *cfg, MonoInst *dest, MonoInst *src, int size, int align)
+{
+	mini_emit_memcpy_internal (cfg, dest, src, NULL, size, align);
+}
 
 //XXXX HACK HACK
 static gboolean
@@ -202,10 +208,30 @@ mini_emit_memory_copy_internal (MonoCompile *cfg, MonoInst *dest, MonoInst *src,
 		iargs [2] = size_ins;
 		mono_emit_calli (cfg, mono_method_signature (get_memcpy_method ()), iargs, memcpy_ins, NULL, NULL);
 	} else {
-		mini_emit_memcpy_internal (cfg, dest, src, size, align);
+		mini_emit_memcpy_const_size (cfg, dest, src, size, align);
 	}
 }
 
+
+void
+mini_emit_memory_copy_bytes (MonoCompile *cfg, MonoInst *dest, MonoInst *src, MonoInst *size, int ins_flag)
+{
+	if (cfg->verbose_level > 3)
+		printf ("EMITING MEMORY COPY BYTES FROM %d to %d size-var %d flags %x\n", src->dreg, dest->dreg, size->dreg, ins_flag);
+
+	int align = (ins_flag & MONO_INST_UNALIGNED) ? 1 : SIZEOF_VOID_P;
+
+	if ((cfg->opt & MONO_OPT_INTRINS) && (size->opcode == OP_ICONST)) {
+		if (cfg->verbose_level > 3)
+			printf ("EMITING CONST COPY for %d bytes\n", size->inst_c0);
+		mini_emit_memcpy_const_size (cfg, dest, src, size->inst_c0, align);
+	} else {
+		if (cfg->verbose_level > 3)
+			printf ("EMITING REGULAR COPY\n");
+		mini_emit_memcpy_internal (cfg, dest, src, size, 0, align);
+	}
+
+}
 
 void
 mini_emit_memory_copy (MonoCompile *cfg, MonoInst *dest, MonoInst *src, MonoClass *klass, int ins_flag)
@@ -217,15 +243,26 @@ mini_emit_memory_copy (MonoCompile *cfg, MonoInst *dest, MonoInst *src, MonoClas
 	if (ins_flag & MONO_INST_UNALIGNED)
 		explicit_align = 1;
 
+	/*
+	 * FIXME: It's unclear whether we should be emitting both the acquire
+	 * and release barriers for cpblk. It is technically both a load and
+	 * store operation, so it seems like that's the sensible thing to do.
+	 *
+	 * FIXME: We emit full barriers on both sides of the operation for
+	 * simplicity. We should have a separate atomic memcpy method instead.
+	 */
+	if (ins_flag & MONO_INST_VOLATILE) {
+		/* Volatile loads have acquire semantics, see 12.6.7 in Ecma 335 */
+		emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_SEQ);
+	}
+
 	mini_emit_memory_copy_internal (cfg, dest, src, klass, FALSE, explicit_align);
 	
 	if (ins_flag & MONO_INST_VOLATILE) {
 		/* Volatile loads have acquire semantics, see 12.6.7 in Ecma 335 */
-		emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_ACQ);
+		emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_SEQ);
 	}
 }
-
-
 
 
 MonoInst*
@@ -244,7 +281,7 @@ mini_emit_memory_load (MonoCompile *cfg, MonoClass *klass, MonoInst *src_address
 			MonoInst *addr;
 			ins = mono_compile_create_var (cfg, &klass->byval_arg, OP_LOCAL);
 			EMIT_NEW_VARLOADA (cfg, addr, ins, ins->inst_vtype);
-			mini_emit_memcpy_internal (cfg, addr, src_address, size, 1);
+			mini_emit_memcpy_const_size (cfg, addr, src_address, size, 1);
 		}
 	} else {
 		EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, &klass->byval_arg, src_address->dreg, 0);
@@ -288,6 +325,7 @@ mini_emit_memory_store (MonoCompile *cfg, MonoClass *klass, MonoInst *dest_addre
 		emit_write_barrier (cfg, dest_address, src);
 	}
 }
+
 
 #endif
 
