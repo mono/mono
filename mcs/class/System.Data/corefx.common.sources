@@ -273,6 +273,7 @@
 ../referencesource/System.Data/System/Data/ProviderBase/DbMetaDataFactory.cs
 ../referencesource/System.Data/System/Data/ProviderBase/WrappedIUnknown.cs
 ../referencesource/System.Data/System/Data/Sql/IBinarySerialize.cs
+../referencesource/System.Data/System/Data/Sql/invalidudtexception.cs
 ../referencesource/System.Data/System/Data/Sql/SqlDataSourceEnumerator.cs
 ../referencesource/System.Data/System/Data/Sql/SqlFacetAttribute.cs
 ../referencesource/System.Data/System/Data/Sql/SqlFunctionAttribute.cs

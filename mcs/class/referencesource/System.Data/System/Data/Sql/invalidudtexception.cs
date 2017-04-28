@@ -15,7 +15,11 @@ namespace Microsoft.SqlServer.Server {
     
     [Serializable]
     public sealed class InvalidUdtException : SystemException {
-     
+#if MONO
+        class HResults {
+            internal const int InvalidUdt = unchecked((int)0x80131937);
+        }
+#endif
         internal InvalidUdtException() : base() {
             HResult = HResults.InvalidUdt;
         }
