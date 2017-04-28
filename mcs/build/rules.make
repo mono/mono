@@ -224,36 +224,33 @@ csproj: do-csproj
 # be listed _before_ including rules.make.  However, the default
 # SUBDIRS list can come after, so don't use the eager := syntax when
 # using the defaults.
-PROFILE_SUBDIRS := $($(PROFILE)_SUBDIRS)
-ifndef PROFILE_SUBDIRS
-PROFILE_SUBDIRS = $(SUBDIRS)
-endif
+PROFILE_SUBDIRS = $(or $($(PROFILE)_SUBDIRS),$(SUBDIRS))
 
 # These subdirs can be built in parallel
-PROFILE_PARALLEL_SUBDIRS := $($(PROFILE)_PARALLEL_SUBDIRS)
-ifndef PROFILE_PARALLEL_SUBDIRS
-PROFILE_PARALLEL_SUBDIRS = $(PARALLEL_SUBDIRS)
-endif
+PROFILE_PARALLEL_SUBDIRS = $(or $($(PROFILE)_PARALLEL_SUBDIRS),$(PARALLEL_SUBDIRS))
 
 ifndef FRAMEWORK_VERSION_MAJOR
 FRAMEWORK_VERSION_MAJOR = $(basename $(FRAMEWORK_VERSION))
 endif
 
 %-recursive:
-	@set . $$MAKEFLAGS; final_exit=:; \
+	@set . $$MAKEFLAGS; \
 	case $$2 in --unix) shift ;; esac; \
 	case $$2 in *=*) dk="exit 1" ;; *k*) dk=: ;; *) dk="exit 1" ;; esac; \
-	list='$(PROFILE_SUBDIRS)'; for d in $$list ; do \
-	    (cd $$d && $(MAKE) $*) || { final_exit="exit 1"; $$dk; } ; \
-	done; \
-	if [ $* = "all" -a -n "$(PROFILE_PARALLEL_SUBDIRS)" ]; then \
-		$(MAKE) do-all-parallel ENABLE_PARALLEL_SUBDIR_BUILD=1 || { final_exit="exit 1"; $$dk; } ; \
-	else \
-		list='$(PROFILE_PARALLEL_SUBDIRS)'; for d in $$list ; do \
-		    (cd $$d && $(MAKE) $*) || { final_exit="exit 1"; $$dk; } ; \
-		done; \
-	fi; \
+	final_exit=:; \
+	$(foreach subdir,$(PROFILE_SUBDIRS),$(MAKE) -C $(subdir) $* || { final_exit="exit 1"; $$dk; };) \
+	$(if $(PROFILE_PARALLEL_SUBDIRS), \
+		$(if $(filter $*,all), \
+			$(MAKE) $(PROFILE_PARALLEL_SUBDIRS) ENABLE_PARALLEL_SUBDIR_BUILD=1 || { final_exit="exit 1"; $$dk; };, \
+			$(foreach subdir,$(PROFILE_PARALLEL_SUBDIRS),$(MAKE) -C $(subdir) $* || { final_exit="exit 1"; $$dk; };))) \
 	$$final_exit
+
+ifdef ENABLE_PARALLEL_SUBDIR_BUILD
+.PHONY: $(PROFILE_PARALLEL_SUBDIRS)
+$(PROFILE_PARALLEL_SUBDIRS):
+	@set . $$MAKEFLAGS; \
+	$(MAKE) -C $@ all
+endif
 
 #
 # Parallel build support
@@ -286,16 +283,6 @@ clean-dep-dir:
 	$(RM) $(dep_dirs)
 
 clean-local: clean-dep-dir
-
-ifdef ENABLE_PARALLEL_SUBDIR_BUILD
-.PHONY: do-all-parallel $(PROFILE_PARALLEL_SUBDIRS)
-
-do-all-parallel: $(PROFILE_PARALLEL_SUBDIRS)
-
-$(PROFILE_PARALLEL_SUBDIRS):
-	@set . $$MAKEFLAGS; \
-	cd $@ && $(MAKE)
-endif
 
 ifndef DIST_SUBDIRS
 DIST_SUBDIRS = $(SUBDIRS) $(DIST_ONLY_SUBDIRS)
