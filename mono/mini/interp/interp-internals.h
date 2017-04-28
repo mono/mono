@@ -7,6 +7,7 @@
 #include <mono/metadata/object.h>
 #include <mono/metadata/domain-internals.h>
 #include <mono/metadata/class-internals.h>
+#include <mono/metadata/debug-internals.h>
 #include "config.h"
 
 enum {

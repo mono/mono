@@ -1207,7 +1207,7 @@ ves_icall_get_frame_info (gint32 skip, MonoBoolean need_file_info,
 		if (frame.type == FRAME_TYPE_INTERP) {
 			jmethod = frame.method;
 			actual_method = frame.actual_method;
-			il_offset = frame.il_offset;
+			*native_offset = frame.native_offset;
 		} else {
 			actual_method = get_method_from_stack_frame (ji, get_generic_info_from_stack_frame (ji, &ctx));
 		}
