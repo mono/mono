@@ -60,7 +60,7 @@ System.Runtime.Numerics System.Xml.XDocument System.Reflection.Extensions System
 System.Diagnostics.FileVersionInfo System.Security.Cryptography.Primitives System.Security.Cryptography.Algorithms System.ValueTuple \
 System.Text.Encoding.CodePages
 
-build_PARALLEL_SUBDIRS = $(basic_PARALLEL_SUBDIRS)
+build_PARALLEL_SUBDIRS = $(basic_PARALLEL_SUBDIRS) System.Text.RegularExpressions System.Diagnostics.Contracts
 
 monodroid_SUBDIRS = $(monotouch_SUBDIRS)
 monodroid_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <title>@title@</title>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/github.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/diff2html/2.3.0/diff2html.min.css">
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans' />
+  </head>
+  <body style="font-family: 'Open Sans'">
+    <h1>@title@</h1>
+    <p>@description@</p>
+    <div id="diff"><!--<![CDATA[
+@diffdata@
+]]>-->
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/cs.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/diff2html/2.3.0/diff2html.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/diff2html/2.3.0/diff2html-ui.min.js"></script>
+
+    <script>
+    $(document).ready(function() {
+        var diff2htmlUi = new Diff2HtmlUI({diff: $("#diff")[0].childNodes[0].nodeValue});
+        diff2htmlUi.draw('#diff', {showFiles: true, matching: 'lines'});
+        diff2htmlUi.highlightCode('#diff');
+    });
+    </script>
+  </body>
+</html>
