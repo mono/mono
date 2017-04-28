@@ -427,6 +427,7 @@
     <Compile Include="..\referencesource\System.Data\System\Data\ProviderBase\DbMetaDataFactory.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\ProviderBase\WrappedIUnknown.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\Sql\IBinarySerialize.cs" />
+    <Compile Include="..\referencesource\System.Data\System\Data\Sql\invalidudtexception.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\Sql\SqlDataSourceEnumerator.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\Sql\SqlFacetAttribute.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\Sql\SqlFunctionAttribute.cs" />

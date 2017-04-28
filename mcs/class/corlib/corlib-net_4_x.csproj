@@ -73,7 +73,9 @@
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Collections\Generic\KeyValuePair.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Diagnostics\Debug.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\IO\Win32Marshal.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\CompilerServices\IsReadOnlyAttribute.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\CompilerServices\ITuple.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\CompilerServices\RuntimeFeature.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\CompilerServices\TupleElementNamesAttribute.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Threading\DeferredDisposableLifetime.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\TupleExtensions.cs" />
