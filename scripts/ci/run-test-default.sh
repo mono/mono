@@ -100,8 +100,8 @@ fi
 if [[ ${label} == 'ubuntu-1404-amd64' ]]; then
     source ${MONO_REPO_ROOT}/scripts/ci/util.sh
     if ${TESTCMD} --label=apidiff --timeout=15m --fatal make -w -C mcs -j4 mono-api-diff
-    then report_github_status "success" "API Diff" "No public API changes found."
-    else report_github_status "error" "API Diff" "The public API changed." "$BUILD_URL/Public_API_Diff/"
+    then report_github_status "success" "API Diff" "No public API changes found." || true
+    else report_github_status "error" "API Diff" "The public API changed." "$BUILD_URL/Public_API_Diff/" || true
     fi
 else ${TESTCMD} --label=apidiff --skip
 fi
