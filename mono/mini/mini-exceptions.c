@@ -3366,3 +3366,31 @@ mono_debug_personality (void)
 	g_assert_not_reached ();
 }
 #endif
+
+#ifndef ENABLE_INTERPRETER
+/* Stubs of interpreter functions */
+void
+mono_interp_set_resume_state (MonoException *ex, StackFrameInfo *frame, gpointer handler_ip)
+{
+	g_assert_not_reached ();
+}
+
+void
+mono_interp_run_finally (StackFrameInfo *frame, int clause_index, gpointer handler_ip)
+{
+	g_assert_not_reached ();
+}
+
+void
+mono_interp_frame_iter_init (MonoInterpStackIter *iter, gpointer interp_exit_data)
+{
+	g_assert_not_reached ();
+}
+
+gboolean
+mono_interp_frame_iter_next (MonoInterpStackIter *iter, StackFrameInfo *frame)
+{
+	g_assert_not_reached ();
+	return FALSE;
+}
+#endif
