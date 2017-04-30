@@ -199,6 +199,17 @@ static void debug_enter (MonoInvocation *frame, int *tracing)
 
 #endif
 
+/* Set the current execution state to the resume state in context */
+#define SET_RESUME_STATE(context) do { \
+		ip = (context)->handler_ip;						\
+		sp->data.p = frame->ex;											\
+		++sp;															\
+		frame->ex = NULL;												\
+		(context)->has_resume_state = 0;								\
+		(context)->handler_frame = NULL;								\
+		goto main_loop;													\
+	} while (0)
+
 static void
 interp_ex_handler (MonoException *ex) {
 	MonoError error;
@@ -2280,6 +2291,13 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, uns
 
 			ves_exec_method_with_context (&child_frame, context, NULL, NULL);
 
+			if (context->has_resume_state) {
+				if (frame == context->handler_frame)
+					SET_RESUME_STATE (context);
+				else
+					goto exit_frame;
+			}
+
 			context->current_frame = frame;
 
 			if (child_frame.ex) {
@@ -2321,6 +2339,13 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, uns
 			ves_pinvoke_method (&child_frame, csignature, (MonoFuncV) code, FALSE, context);
 
 			context->current_frame = frame;
+
+			if (context->has_resume_state) {
+				if (frame == context->handler_frame)
+					SET_RESUME_STATE (context);
+				else
+					goto exit_frame;
+			}
 
 			if (child_frame.ex) {
 				/*
@@ -2366,6 +2391,13 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, uns
 
 			context->current_frame = frame;
 
+			if (context->has_resume_state) {
+				if (frame == context->handler_frame)
+					SET_RESUME_STATE (context);
+				else
+					goto exit_frame;
+			}
+
 			if (child_frame.ex) {
 				/*
 				 * An exception occurred, need to run finally, fault and catch handlers..
@@ -2405,6 +2437,13 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, uns
 			ves_exec_method_with_context (&child_frame, context, NULL, NULL);
 
 			context->current_frame = frame;
+
+			if (context->has_resume_state) {
+				if (frame == context->handler_frame)
+					SET_RESUME_STATE (context);
+				else
+					goto exit_frame;
+			}
 
 			if (child_frame.ex) {
 				/*
@@ -2669,6 +2708,13 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, uns
 
 			context->current_frame = frame;
 
+			if (context->has_resume_state) {
+				if (frame == context->handler_frame)
+					SET_RESUME_STATE (context);
+				else
+					goto exit_frame;
+			}
+
 			if (child_frame.ex) {
 				/*
 				 * An exception occurred, need to run finally, fault and catch handlers..
@@ -2715,6 +2761,13 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, uns
 			ves_exec_method_with_context (&child_frame, context, NULL, NULL);
 
 			context->current_frame = frame;
+
+			if (context->has_resume_state) {
+				if (frame == context->handler_frame)
+					SET_RESUME_STATE (context);
+				else
+					goto exit_frame;
+			}
 
 			if (child_frame.ex) {
 				/*
@@ -3505,6 +3558,13 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, uns
 			ves_exec_method_with_context (&child_frame, context, NULL, NULL);
 
 			context->current_frame = frame;
+
+			if (context->has_resume_state) {
+				if (frame == context->handler_frame)
+					SET_RESUME_STATE (context);
+				else
+					goto exit_frame;
+			}
 
 			if (child_frame.ex) {
 				/*
@@ -5291,6 +5351,23 @@ mono_interp_regression_list (int verbose, int count, char *images [])
 	return total;
 }
 
+/*
+ * mono_interp_set_resume_state:
+ *
+ *   Set the state the interpeter will continue to execute from after execution returns to the interpreter.
+ */
+void
+mono_interp_set_resume_state (MonoException *ex, StackFrameInfo *frame, gpointer handler_ip)
+{
+	ThreadContext *context = mono_native_tls_get_value (thread_context_id);
+
+	context->has_resume_state = TRUE;
+	context->handler_frame = frame->interp_frame;
+	/* This is on the stack, so it doesn't need a wbarrier */
+	context->handler_frame->ex = ex;
+	context->handler_ip = handler_ip;
+}
+
 typedef struct {
 	MonoInvocation *current;
 } StackIter;
@@ -5322,10 +5399,12 @@ mono_interp_frame_iter_next (MonoInterpStackIter *iter, StackFrameInfo *frame)
 		return FALSE;
 
 	frame->type = FRAME_TYPE_INTERP;
+	frame->interp_frame = iframe;
 	frame->method = iframe->runtime_method->method;
 	frame->actual_method = frame->method;
 	/* This is the offset in the interpreter IR */
 	frame->native_offset = iframe->ip - iframe->runtime_method->code;
+	frame->ji = iframe->runtime_method->jinfo;
 
 	stack_iter->current = iframe->parent;
 

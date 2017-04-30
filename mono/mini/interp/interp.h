@@ -38,6 +38,9 @@ void
 interp_walk_stack_with_ctx (MonoInternalStackWalk func, MonoContext *ctx, MonoUnwindOptions options, void *user_data);
 
 void
+mono_interp_set_resume_state (MonoException *ex, StackFrameInfo *frame, gpointer handler_ip);
+
+void
 mono_interp_frame_iter_init (MonoInterpStackIter *iter, gpointer interp_exit_data);
 
 gboolean

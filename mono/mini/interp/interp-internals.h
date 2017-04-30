@@ -117,6 +117,13 @@ typedef struct {
 	jmp_buf *current_env;
 	unsigned char search_for_handler;
 	unsigned char managed_code;
+
+	/* Resume state for resuming execution in mixed mode */
+	gboolean       has_resume_state;
+	/* Frame to resume execution at */
+	MonoInvocation *handler_frame;
+	/* IP to resume execution at */
+	gpointer handler_ip;
 } ThreadContext;
 
 extern int mono_interp_traceopt;
