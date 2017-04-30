@@ -3328,6 +3328,8 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 	}
 	g_assert (td.max_stack_height <= (header->max_stack + 1));
 
+	int code_len = td.new_ip - td.new_code;
+
 	rtm->clauses = mono_domain_alloc0 (domain, header->num_clauses * sizeof (MonoExceptionClause));
 	memcpy (rtm->clauses, header->clauses, header->num_clauses * sizeof(MonoExceptionClause));
 	rtm->code = mono_domain_alloc0 (domain, (td.new_ip - td.new_code) * sizeof (gushort));
@@ -3353,6 +3355,25 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 
 	/* Save debug info */
 	interp_save_debug_info (rtm, header, &td, line_numbers);
+
+	/* Create a MonoJitInfo for the interpreted method by reating the interpreter IR as the native code. */
+	int jinfo_len = mono_jit_info_size (0, header->num_clauses, 0);
+	MonoJitInfo *jinfo = (MonoJitInfo *)mono_domain_alloc0 (domain, jinfo_len);
+	rtm->jinfo = jinfo;
+	mono_jit_info_init (jinfo, method, (guint8*)rtm->code, code_len, 0, header->num_clauses, 0);
+	for (i = 0; i < jinfo->num_clauses; ++i) {
+		MonoJitExceptionInfo *ei = &jinfo->clauses [i];
+		MonoExceptionClause *c = rtm->clauses + i;
+
+		ei->flags = c->flags;
+		ei->try_start = rtm->code + c->try_offset;
+		ei->try_end = rtm->code + c->try_offset + c->try_len;
+		ei->handler_start = rtm->code + c->handler_offset;
+		if (ei->flags == MONO_EXCEPTION_CLAUSE_FILTER || ei->flags == MONO_EXCEPTION_CLAUSE_FINALLY) {
+		} else {
+			ei->data.catch_class = c->data.catch_class;
+		}
+	}
 
 	g_free (td.in_offsets);
 	g_free (td.forward_refs);

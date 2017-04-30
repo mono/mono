@@ -4292,7 +4292,7 @@ array_constructed:
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_ENDFINALLY)
 			ip ++;
-			int clause_index = *ip;
+		//int clause_index = *ip;
 			while (sp > frame->stack) {
 				--sp;
 			}

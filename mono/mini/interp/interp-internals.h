@@ -89,6 +89,7 @@ typedef struct _RuntimeMethod
 	gpointer jit_entry;
 	MonoType *rtype;
 	MonoType **param_types;
+	MonoJitInfo *jinfo;
 } RuntimeMethod;
 
 struct _MonoInvocation {
