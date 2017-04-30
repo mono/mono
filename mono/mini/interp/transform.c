@@ -64,6 +64,7 @@ typedef struct
 	int max_data_items;
 	void **data_items;
 	GHashTable *data_hash;
+	int *clause_indexes;
 } TransformData;
 
 #define MINT_TYPE_I1 0
@@ -1002,10 +1003,12 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 	td.max_data_items = 0;
 	td.data_items = NULL;
 	td.data_hash = g_hash_table_new (NULL, NULL);
+	td.clause_indexes = g_malloc (header->code_size * sizeof (int));
 	rtm->data_items = td.data_items;
 	for (i = 0; i < header->code_size; i++) {
 		td.forward_refs [i] = -1;
 		td.stack_height [i] = -1;
+		td.clause_indexes [i] = -1;
 	}
 	td.new_ip = td.new_code;
 	td.last_new_ip = NULL;
@@ -1036,6 +1039,13 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 			td.stack_state [c->data.filter_offset] = g_malloc0(sizeof(StackInfo));
 			td.stack_state [c->data.filter_offset][0].type = STACK_TYPE_O;
 			td.stack_state [c->data.filter_offset][0].klass = NULL; /*FIX*/
+		}
+
+		if (c->flags & MONO_EXCEPTION_CLAUSE_FINALLY) {
+			for (int j = c->handler_offset; j < c->handler_offset + c->handler_len; ++j) {
+				if (td.clause_indexes [j] == -1)
+					td.clause_indexes [j] = i;
+			}
 		}
 	}
 
@@ -2861,8 +2871,10 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 			++td.ip;
 			break;
 		case CEE_ENDFINALLY:
+			g_assert (td.clause_indexes [in_offset] != -1);
 			td.sp = td.stack;
 			SIMPLE_OP (td, MINT_ENDFINALLY);
+			ADD_CODE (&td, td.clause_indexes [in_offset]);
 			generating_code = 0;
 			break;
 		case CEE_LEAVE:
@@ -3352,6 +3364,7 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 	g_free (td.data_items);
 	g_free (td.stack);
 	g_hash_table_destroy (td.data_hash);
+	g_free (td.clause_indexes);
 	g_array_free (line_numbers, TRUE);
 }
 

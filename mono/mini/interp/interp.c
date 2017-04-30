@@ -4291,6 +4291,8 @@ array_constructed:
 			BINOP_CAST(l, -, guint64);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_ENDFINALLY)
+			ip ++;
+			int clause_index = *ip;
 			while (sp > frame->stack) {
 				--sp;
 			}
