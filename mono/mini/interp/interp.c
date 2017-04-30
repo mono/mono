@@ -148,7 +148,8 @@ db_match_method (gpointer data, gpointer user_data)
 		break_on_method = 1;
 }
 
-static void debug_enter (MonoInvocation *frame, int *tracing)
+static void
+debug_enter (MonoInvocation *frame, int *tracing)
 {
 	if (db_methods) {
 		g_list_foreach (db_methods, db_match_method, (gpointer)frame->runtime_method->method);
@@ -902,6 +903,7 @@ ves_pinvoke_method (MonoInvocation *frame, MonoMethodSignature *sig, MonoFuncV a
 	MonoInvocation *old_frame = context->current_frame;
 	MonoInvocation *old_env_frame = context->env_frame;
 	jmp_buf *old_env = context->current_env;
+	MonoLMFExt ext;
 
 	if (setjmp (env)) {
 		context->current_frame = old_frame;
@@ -932,7 +934,19 @@ ves_pinvoke_method (MonoInvocation *frame, MonoMethodSignature *sig, MonoFuncV a
 	context->current_frame = frame;
 	context->managed_code = 0;
 
+	/*
+	 * Push an LMF frame on the LMF stack
+	 * to mark the transition to native code.
+	 */
+	memset (&ext, 0, sizeof (ext));
+	ext.interp_exit = TRUE;
+	ext.interp_exit_data = frame;
+
+	mono_push_lmf (&ext);
+
 	mono_interp_enter_icall_trampoline (addr, margs);
+
+	mono_pop_lmf (&ext.lmf);
 
 	context->managed_code = 1;
 	/* domain can only be changed by native code */
@@ -1301,12 +1315,10 @@ mono_interp_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoOb
 
 	if (context == NULL) {
 		context = &context_struct;
+		memset (context, 0, sizeof (ThreadContext));
 		context_struct.base_frame = &frame;
-		context_struct.current_frame = NULL;
 		context_struct.env_frame = &frame;
 		context_struct.current_env = &env;
-		context_struct.search_for_handler = 0;
-		context_struct.managed_code = 0;
 		mono_native_tls_set_value (thread_context_id, context);
 	}
 	else
@@ -2410,6 +2422,7 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, uns
 			MonoFtnDesc ftndesc;
 			guint8 res_buf [256];
 			MonoType *type;
+			MonoLMFExt ext;
 
 			//printf ("%s\n", mono_method_full_name (rmethod->method, 1));
 
@@ -2506,6 +2519,16 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, uns
 				}
 			}
 
+			/*
+			 * Push an LMF frame on the LMF stack
+			 * to mark the transition to compiled code.
+			 */
+			memset (&ext, 0, sizeof (ext));
+			ext.interp_exit = TRUE;
+			ext.interp_exit_data = frame;
+
+			mono_push_lmf (&ext);
+
 			switch (pindex) {
 			case 0: {
 				void (*func)(gpointer) = rmethod->jit_wrapper;
@@ -2559,6 +2582,8 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, uns
 				g_assert_not_reached ();
 				break;
 			}
+
+			mono_pop_lmf (&ext.lmf);
 
 			MonoType *rtype = rmethod->rtype;
 			switch (rtype->type) {

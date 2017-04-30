@@ -567,7 +567,7 @@ mono_find_jit_info_ext (MonoDomain *domain, MonoJitTlsData *jit_tls,
 	if (!err)
 		return FALSE;
 
-	if (*lmf && ((*lmf) != jit_tls->first_lmf) && ((gpointer)MONO_CONTEXT_GET_SP (new_ctx) >= (gpointer)(*lmf))) {
+	if (frame->type != FRAME_TYPE_INTERP_TO_MANAGED && *lmf && ((*lmf) != jit_tls->first_lmf) && ((gpointer)MONO_CONTEXT_GET_SP (new_ctx) >= (gpointer)(*lmf))) {
 		/*
 		 * Remove any unused lmf.
 		 * Mask out the lower bits which might be used to hold additional information.
