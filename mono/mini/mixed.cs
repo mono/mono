@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
+using System.Diagnostics;
 
 /*
  * Regression tests for the mixed-mode execution.
@@ -73,6 +74,11 @@ class InterpClass
 		return i;
 	}
 
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static StackTrace get_stacktrace_interp () {
+		new Object ();
+		return new StackTrace ();
+	}
 }
 
 /* The methods in this class will always be JITted */
@@ -140,6 +146,11 @@ class JitClass
 	public static void exit_byref (ref int i) {
 		i += 1;
 	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static StackTrace get_stacktrace_jit () {
+		return InterpClass.get_stacktrace_interp ();
+	}
 }
 
 #if __MOBILE__
@@ -177,6 +188,23 @@ class Tests
 		JitClass.exit_byref (ref anint);
 		if (anint != 2)
 			return 4;
+		return 0;
+	}
+
+	public static int test_0_stack_traces () {
+		//
+		// Get a stacktrace for an interp->jit->interp call stack
+		//
+		StackTrace st = JitClass.get_stacktrace_jit ();
+		var frame = st.GetFrame (0);
+		if (frame.GetMethod ().Name != "get_stacktrace_interp")
+			return 1;
+		frame = st.GetFrame (1);
+		if (frame.GetMethod ().Name != "get_stacktrace_jit")
+			return 2;
+		frame = st.GetFrame (2);
+		if (frame.GetMethod ().Name != "test_0_stack_traces")
+			return 3;
 		return 0;
 	}
 }

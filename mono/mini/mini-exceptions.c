@@ -58,6 +58,7 @@
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/reflection-internals.h>
 #include <mono/metadata/gc-internals.h>
+#include <mono/metadata/debug-internals.h>
 #include <mono/metadata/mono-debug.h>
 #include <mono/metadata/profiler.h>
 #include <mono/metadata/mono-endian.h>
@@ -1119,6 +1120,9 @@ ves_icall_get_frame_info (gint32 skip, MonoBoolean need_file_info,
 	MonoMethod *jmethod = NULL, *actual_method;
 	StackFrameInfo frame;
 	gboolean res;
+	MonoInterpStackIter interp_iter;
+	gboolean in_interp = FALSE;
+	int il_offset = -1;
 
 	MONO_ARCH_CONTEXT_DEF;
 
@@ -1162,27 +1166,51 @@ ves_icall_get_frame_info (gint32 skip, MonoBoolean need_file_info,
 
 		new_ctx = ctx;
 		do {
-			ctx = new_ctx;
-			res = mono_find_jit_info_ext (domain, jit_tls, NULL, &ctx, &new_ctx, NULL, &lmf, NULL, &frame);
-			if (!res)
-				return FALSE;
+			if (in_interp) {
+				res = mono_interp_frame_iter_next (&interp_iter, &frame);
+				if (!res) {
+					in_interp = FALSE;
+					continue;
+				}
+			} else {
+				ctx = new_ctx;
+				res = mono_find_jit_info_ext (domain, jit_tls, NULL, &ctx, &new_ctx, NULL, &lmf, NULL, &frame);
+				if (!res)
+					return FALSE;
+			}
 
-			if (frame.type == FRAME_TYPE_MANAGED_TO_NATIVE ||
-				frame.type == FRAME_TYPE_DEBUGGER_INVOKE ||
-				frame.type == FRAME_TYPE_TRAMPOLINE)
+			switch (frame.type) {
+			case FRAME_TYPE_MANAGED_TO_NATIVE:
+			case FRAME_TYPE_DEBUGGER_INVOKE:
+			case FRAME_TYPE_TRAMPOLINE:
 				continue;
-
-			ji = frame.ji;
-			*native_offset = frame.native_offset;
-
-			/* The skip count passed by the caller depends on us not filtering out MANAGED_TO_NATIVE */
-			jmethod = jinfo_get_method (ji);
-			if (jmethod->wrapper_type != MONO_WRAPPER_NONE && jmethod->wrapper_type != MONO_WRAPPER_DYNAMIC_METHOD && jmethod->wrapper_type != MONO_WRAPPER_MANAGED_TO_NATIVE)
+			case FRAME_TYPE_INTERP_TO_MANAGED:
+				mono_interp_frame_iter_init (&interp_iter, frame.interp_exit_data);
+				in_interp = TRUE;
 				continue;
-			skip--;
+			case FRAME_TYPE_INTERP:
+				skip--;
+				break;
+			default:
+				ji = frame.ji;
+				*native_offset = frame.native_offset;
+
+				/* The skip count passed by the caller depends on us not filtering out MANAGED_TO_NATIVE */
+				jmethod = jinfo_get_method (ji);
+				if (jmethod->wrapper_type != MONO_WRAPPER_NONE && jmethod->wrapper_type != MONO_WRAPPER_DYNAMIC_METHOD && jmethod->wrapper_type != MONO_WRAPPER_MANAGED_TO_NATIVE)
+					continue;
+				skip--;
+				break;
+			}
 		} while (skip >= 0);
 
-		actual_method = get_method_from_stack_frame (ji, get_generic_info_from_stack_frame (ji, &ctx));
+		if (frame.type == FRAME_TYPE_INTERP) {
+			jmethod = frame.method;
+			actual_method = frame.actual_method;
+			il_offset = frame.il_offset;
+		} else {
+			actual_method = get_method_from_stack_frame (ji, get_generic_info_from_stack_frame (ji, &ctx));
+		}
 	}
 
 	MonoReflectionMethod *rm = mono_method_get_object_checked (domain, actual_method, NULL, &error);
@@ -1192,7 +1220,11 @@ ves_icall_get_frame_info (gint32 skip, MonoBoolean need_file_info,
 	}
 	mono_gc_wbarrier_generic_store (method, (MonoObject*) rm);
 
-	location = mono_debug_lookup_source_location (jmethod, *native_offset, domain);
+	if (il_offset != -1) {
+		location = mono_debug_lookup_source_location_by_il (jmethod, il_offset, domain);
+	} else {
+		location = mono_debug_lookup_source_location (jmethod, *native_offset, domain);
+	}
 	if (location)
 		*iloffset = location->il_offset;
 	else

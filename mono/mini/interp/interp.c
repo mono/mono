@@ -1579,7 +1579,7 @@ interp_entry (InterpEntryData *data)
 		}
 	}
 
-	init_frame (&frame, context->current_frame, data->rmethod, args, &result);
+	init_frame (&frame, NULL, data->rmethod, args, &result);
 	context->managed_code = 1;
 
 	type = rmethod->rtype;
@@ -5289,3 +5289,41 @@ mono_interp_regression_list (int verbose, int count, char *images [])
 	return total;
 }
 
+typedef struct {
+	MonoInvocation *current;
+} StackIter;
+
+/*
+ * mono_interp_frame_iter_init:
+ *
+ *   Initialize an iterator for iterating through interpreted frames.
+ */
+void
+mono_interp_frame_iter_init (MonoInterpStackIter *iter, gpointer interp_exit_data)
+{
+	StackIter *stack_iter = (StackIter*)iter;
+
+	stack_iter->current = (MonoInvocation*)interp_exit_data;
+}
+
+gboolean
+mono_interp_frame_iter_next (MonoInterpStackIter *iter, StackFrameInfo *frame)
+{
+	StackIter *stack_iter = (StackIter*)iter;
+	MonoInvocation *iframe = stack_iter->current;
+
+	memset (frame, 0, sizeof (StackFrameInfo));
+	/* pinvoke frames doesn't have runtime_method set */
+	while (iframe && !iframe->runtime_method)
+		iframe = iframe->parent;
+	if (!iframe)
+		return FALSE;
+
+	frame->type = FRAME_TYPE_INTERP;
+	frame->method = iframe->runtime_method->method;
+	frame->actual_method = frame->method;
+
+	stack_iter->current = iframe->parent;
+
+	return TRUE;
+}
