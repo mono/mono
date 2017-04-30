@@ -107,7 +107,7 @@ void ves_exec_method (MonoInvocation *frame);
 static char* dump_stack (stackval *stack, stackval *sp);
 static char* dump_frame (MonoInvocation *inv);
 static MonoArray *get_trace_ips (MonoDomain *domain, MonoInvocation *top);
-static void ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, unsigned short *start_with_ip, MonoException *filter_exception);
+static void ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, unsigned short *start_with_ip, MonoException *filter_exception, int exit_at_finally);
 
 typedef void (*ICallMethod) (MonoInvocation *frame);
 
@@ -1450,7 +1450,7 @@ handle_enum:
 	if (exc)
 		frame.invoke_trap = 1;
 	context->managed_code = 1;
-	ves_exec_method_with_context (&frame, context, NULL, NULL);
+	ves_exec_method_with_context (&frame, context, NULL, NULL, -1);
 	context->managed_code = 0;
 	if (context == &context_struct)
 		mono_native_tls_set_value (thread_context_id, NULL);
@@ -1606,7 +1606,7 @@ interp_entry (InterpEntryData *data)
 		break;
 	}
 
-	ves_exec_method_with_context (&frame, context, NULL, NULL);
+	ves_exec_method_with_context (&frame, context, NULL, NULL, -1);
 	context->managed_code = 0;
 	if (context == &context_struct)
 		mono_native_tls_set_value (thread_context_id, NULL);
@@ -2036,8 +2036,11 @@ static int opcode_counts[512];
 #define MINT_IN_DEFAULT default:
 #endif
 
+/*
+ * If EXIT_AT_FINALLY is not -1, exit after exiting the finally clause with that index.
+ */
 static void 
-ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, unsigned short *start_with_ip, MonoException *filter_exception)
+ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, unsigned short *start_with_ip, MonoException *filter_exception, int exit_at_finally)
 {
 	MonoInvocation child_frame;
 	GSList *finally_ips = NULL;
@@ -2289,7 +2292,9 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, uns
 				}
 			}
 
-			ves_exec_method_with_context (&child_frame, context, NULL, NULL);
+			ves_exec_method_with_context (&child_frame, context, NULL, NULL, -1);
+
+			context->current_frame = frame;
 
 			if (context->has_resume_state) {
 				if (frame == context->handler_frame)
@@ -2297,8 +2302,6 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, uns
 				else
 					goto exit_frame;
 			}
-
-			context->current_frame = frame;
 
 			if (child_frame.ex) {
 				/*
@@ -2387,7 +2390,7 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, uns
 				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
 			}
 
-			ves_exec_method_with_context (&child_frame, context, NULL, NULL);
+			ves_exec_method_with_context (&child_frame, context, NULL, NULL, -1);
 
 			context->current_frame = frame;
 
@@ -2434,7 +2437,7 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, uns
 				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
 			}
 
-			ves_exec_method_with_context (&child_frame, context, NULL, NULL);
+			ves_exec_method_with_context (&child_frame, context, NULL, NULL, -1);
 
 			context->current_frame = frame;
 
@@ -2624,6 +2627,19 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, uns
 
 			mono_pop_lmf (&ext.lmf);
 
+			if (context->has_resume_state) {
+				/*
+				 * If this bit is set, it means the call has thrown the exception, and we
+				 * reached this point because the EH code in mono_handle_exception ()
+				 * unwound all the JITted frames below us. mono_interp_set_resume_state ()
+				 * has set the fields in context to indicate where we have to resume execution.
+				 */
+				if (frame == context->handler_frame)
+					SET_RESUME_STATE (context);
+				else
+					goto exit_frame;
+			}
+
 			MonoType *rtype = rmethod->rtype;
 			switch (rtype->type) {
 			case MONO_TYPE_VOID:
@@ -2704,7 +2720,7 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, uns
 				sp [0].data.p = unboxed;
 			}
 
-			ves_exec_method_with_context (&child_frame, context, NULL, NULL);
+			ves_exec_method_with_context (&child_frame, context, NULL, NULL, -1);
 
 			context->current_frame = frame;
 
@@ -2758,7 +2774,7 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, uns
 				sp [0].data.p = unboxed;
 			}
 
-			ves_exec_method_with_context (&child_frame, context, NULL, NULL);
+			ves_exec_method_with_context (&child_frame, context, NULL, NULL, -1);
 
 			context->current_frame = frame;
 
@@ -3555,7 +3571,7 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, uns
 
 			g_assert (csig->call_convention == MONO_CALL_DEFAULT);
 
-			ves_exec_method_with_context (&child_frame, context, NULL, NULL);
+			ves_exec_method_with_context (&child_frame, context, NULL, NULL, -1);
 
 			context->current_frame = frame;
 
@@ -4352,7 +4368,9 @@ array_constructed:
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_ENDFINALLY)
 			ip ++;
-		//int clause_index = *ip;
+			int clause_index = *ip;
+			if (clause_index == exit_at_finally)
+				goto exit_frame;
 			while (sp > frame->stack) {
 				--sp;
 			}
@@ -4826,7 +4844,7 @@ array_constructed:
 					stackval retval;
 					memcpy (&dup_frame, inv, sizeof (MonoInvocation));
 					dup_frame.retval = &retval;
-					ves_exec_method_with_context (&dup_frame, context, inv->runtime_method->code + clause->data.filter_offset, frame->ex);
+					ves_exec_method_with_context (&dup_frame, context, inv->runtime_method->code + clause->data.filter_offset, frame->ex, -1);
 					if (dup_frame.retval->data.i) {
 #if DEBUG_INTERP
 						if (tracing)
@@ -5004,7 +5022,7 @@ ves_exec_method (MonoInvocation *frame)
 	frame->runtime_method = mono_interp_get_runtime_method (context->domain, frame->method, &error);
 	mono_error_cleanup (&error); /* FIXME: don't swallow the error */
 	context->managed_code = 1;
-	ves_exec_method_with_context (frame, context, NULL, NULL);
+	ves_exec_method_with_context (frame, context, NULL, NULL, -1);
 	context->managed_code = 0;
 	if (frame->ex) {
 		if (context != &context_struct && context->current_env) {
@@ -5366,6 +5384,21 @@ mono_interp_set_resume_state (MonoException *ex, StackFrameInfo *frame, gpointer
 	/* This is on the stack, so it doesn't need a wbarrier */
 	context->handler_frame->ex = ex;
 	context->handler_ip = handler_ip;
+}
+
+/*
+ * mono_interp_run_finally:
+ *
+ *   Run the finally clause identified by CLAUSE_INDEX in the intepreter frame given by
+ * frame->interp_frame.
+ */
+void
+mono_interp_run_finally (StackFrameInfo *frame, int clause_index, gpointer handler_ip)
+{
+       MonoInvocation *iframe = frame->interp_frame;
+       ThreadContext *context = mono_native_tls_get_value (thread_context_id);
+
+       ves_exec_method_with_context (iframe, context, handler_ip, NULL, clause_index);
 }
 
 typedef struct {

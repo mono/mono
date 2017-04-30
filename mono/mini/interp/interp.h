@@ -41,6 +41,9 @@ void
 mono_interp_set_resume_state (MonoException *ex, StackFrameInfo *frame, gpointer handler_ip);
 
 void
+mono_interp_run_finally (StackFrameInfo *frame, int clause_index, gpointer handler_ip);
+
+void
 mono_interp_frame_iter_init (MonoInterpStackIter *iter, gpointer interp_exit_data);
 
 gboolean

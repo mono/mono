@@ -76,8 +76,13 @@ class InterpClass
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static StackTrace get_stacktrace_interp () {
-		new Object ();
-		return new StackTrace ();
+		var o = new object ();
+		return new StackTrace (true);
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void throw_ex () {
+		JitClass.throw_ex ();
 	}
 }
 
@@ -148,6 +153,11 @@ class JitClass
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void throw_ex () {
+		throw new Exception ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static StackTrace get_stacktrace_jit () {
 		return InterpClass.get_stacktrace_interp ();
 	}
@@ -189,6 +199,49 @@ class Tests
 		if (anint != 2)
 			return 4;
 		return 0;
+	}
+
+	public static int test_0_throw () {
+		// Throw an exception from jitted code, catch it in interpreted code
+		try {
+			JitClass.throw_ex ();
+		} catch {
+			return 0;
+		}
+		return 1;
+	}
+
+	public static int test_0_throw_child () {
+		try {
+			InterpClass.throw_ex ();
+		} catch {
+			return 0;
+		}
+		return 1;
+	}
+
+	static bool finally_called;
+
+	public static void call_finally () {
+		try {
+			JitClass.throw_ex ();
+		} finally {
+			finally_called = true;
+		}
+	}
+
+	public static int test_0_eh2 () {
+		finally_called = false;
+
+		// Throw an exception from jitted code, execute finally in interpreted code
+		try {
+			call_finally ();
+		} catch {
+			return 0;
+		}
+		if (!finally_called)
+			return 2;
+		return 1;
 	}
 
 	public static int test_0_stack_traces () {

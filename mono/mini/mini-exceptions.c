@@ -1540,6 +1540,9 @@ mono_handle_exception_internal_first_pass (MonoContext *ctx, MonoObject *obj, gi
 	filter_idx = 0;
 	initial_ctx = *ctx;
 
+	MonoInterpStackIter interp_iter;
+	gboolean in_interp = FALSE;
+
 	while (1) {
 		MonoContext new_ctx;
 		guint32 free_stack;
@@ -1551,23 +1554,46 @@ mono_handle_exception_internal_first_pass (MonoContext *ctx, MonoObject *obj, gi
 		if (out_prev_ji)
 			*out_prev_ji = ji;
 
-		unwind_res = mono_find_jit_info_ext (domain, jit_tls, NULL, ctx, &new_ctx, NULL, &lmf, NULL, &frame);
-		if (unwind_res) {
-			if (frame.type == FRAME_TYPE_DEBUGGER_INVOKE ||
-					frame.type == FRAME_TYPE_MANAGED_TO_NATIVE ||
-					frame.type == FRAME_TYPE_TRAMPOLINE) {
-				*ctx = new_ctx;
+		if (in_interp) {
+			unwind_res = mono_interp_frame_iter_next (&interp_iter, &frame);
+			if (!unwind_res) {
+				in_interp = FALSE;
 				continue;
 			}
-			g_assert (frame.type == FRAME_TYPE_MANAGED);
 			ji = frame.ji;
+		} else {
+			unwind_res = mono_find_jit_info_ext (domain, jit_tls, NULL, ctx, &new_ctx, NULL, &lmf, NULL, &frame);
+			if (!unwind_res) {
+				setup_stack_trace (mono_ex, dynamic_methods, &trace_ips);
+				g_slist_free (dynamic_methods);
+				return FALSE;
+			}
+
+			switch (frame.type) {
+			case FRAME_TYPE_DEBUGGER_INVOKE:
+			case FRAME_TYPE_MANAGED_TO_NATIVE:
+			case FRAME_TYPE_TRAMPOLINE:
+				*ctx = new_ctx;
+				continue;
+			case FRAME_TYPE_INTERP_TO_MANAGED:
+				mono_interp_frame_iter_init (&interp_iter, frame.interp_exit_data);
+				in_interp = TRUE;
+				continue;
+			case FRAME_TYPE_MANAGED:
+				ji = frame.ji;
+				break;
+			default:
+				g_assert_not_reached ();
+				break;
+			}
 		}
 
-		if (!unwind_res) {
-			setup_stack_trace (mono_ex, dynamic_methods, &trace_ips);
-			g_slist_free (dynamic_methods);
-			return FALSE;
-		}
+		gpointer ip;
+
+		if (in_interp)
+			ip = (guint16*)ji->code_start + frame.native_offset;
+		else
+			ip = MONO_CONTEXT_GET_IP (ctx);
 
 		frame_count ++;
 		method = jinfo_get_method (ji);
@@ -1610,7 +1636,7 @@ mono_handle_exception_internal_first_pass (MonoContext *ctx, MonoObject *obj, gi
 			if (free_stack <= (64 * 1024))
 				continue;
 
-			if (is_address_protected (ji, ei, MONO_CONTEXT_GET_IP (ctx))) {
+			if (is_address_protected (ji, ei, ip)) {
 				/* catch block */
 				MonoClass *catch_class = get_exception_catch_class (ei, ji, ctx);
 
@@ -1682,7 +1708,8 @@ mono_handle_exception_internal_first_pass (MonoContext *ctx, MonoObject *obj, gi
 						*out_ji = ji;
 
 					/* mono_debugger_agent_handle_exception () needs this */
-					MONO_CONTEXT_SET_IP (ctx, ei->handler_start);
+					if (!in_interp)
+						MONO_CONTEXT_SET_IP (ctx, ei->handler_start);
 					return TRUE;
 				}
 				mono_error_cleanup (&isinst_error);
@@ -1881,11 +1908,16 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 	filter_idx = 0;
 	initial_ctx = *ctx;
 
+	MonoInterpStackIter interp_iter;
+	gboolean in_interp = FALSE;
+
 	while (1) {
 		MonoContext new_ctx;
 		guint32 free_stack;
 		int clause_index_start = 0;
 		gboolean unwind_res = TRUE;
+		StackFrameInfo frame;
+		gpointer ip;
 		
 		if (resume) {
 			resume = FALSE;
@@ -1896,18 +1928,34 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 			first_filter_idx = jit_tls->resume_state.first_filter_idx;
 			filter_idx = jit_tls->resume_state.filter_idx;
 		} else {
-			StackFrameInfo frame;
-
-			unwind_res = mono_find_jit_info_ext (domain, jit_tls, NULL, ctx, &new_ctx, NULL, &lmf, NULL, &frame);
-			if (unwind_res) {
-				if (frame.type == FRAME_TYPE_DEBUGGER_INVOKE ||
-						frame.type == FRAME_TYPE_MANAGED_TO_NATIVE ||
-						frame.type == FRAME_TYPE_TRAMPOLINE) {
-					*ctx = new_ctx;
+			if (in_interp) {
+				unwind_res = mono_interp_frame_iter_next (&interp_iter, &frame);
+				if (!unwind_res) {
+					in_interp = FALSE;
 					continue;
 				}
-				g_assert (frame.type == FRAME_TYPE_MANAGED);
 				ji = frame.ji;
+			} else {
+				unwind_res = mono_find_jit_info_ext (domain, jit_tls, NULL, ctx, &new_ctx, NULL, &lmf, NULL, &frame);
+				if (unwind_res) {
+					switch (frame.type) {
+					case FRAME_TYPE_DEBUGGER_INVOKE:
+					case FRAME_TYPE_MANAGED_TO_NATIVE:
+					case FRAME_TYPE_TRAMPOLINE:
+						*ctx = new_ctx;
+						continue;
+					case FRAME_TYPE_INTERP_TO_MANAGED:
+						mono_interp_frame_iter_init (&interp_iter, frame.interp_exit_data);
+						in_interp = TRUE;
+						continue;
+					case FRAME_TYPE_MANAGED:
+						ji = frame.ji;
+						break;
+					default:
+						g_assert_not_reached ();
+						break;
+					}
+				}
 			}
 		}
 
@@ -1917,6 +1965,11 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 			jit_tls->abort_func (obj);
 			g_assert_not_reached ();
 		}
+
+		if (in_interp)
+			ip = (guint16*)ji->code_start + frame.native_offset;
+		else
+			ip = MONO_CONTEXT_GET_IP (ctx);
 
 		method = jinfo_get_method (ji);
 		frame_count ++;
@@ -1942,7 +1995,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 			if (free_stack <= (64 * 1024))
 				continue;
 
-			if (is_address_protected (ji, ei, MONO_CONTEXT_GET_IP (ctx))) {
+			if (is_address_protected (ji, ei, ip)) {
 				/* catch block */
 				MonoClass *catch_class = get_exception_catch_class (ei, ji, ctx);
 
@@ -2025,7 +2078,27 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 					mono_profiler_exception_clause_handler (method, ei->flags, i);
 					jit_tls->orig_ex_ctx_set = FALSE;
 					mini_set_abort_threshold (ctx);
-					MONO_CONTEXT_SET_IP (ctx, ei->handler_start);
+
+					if (in_interp) {
+						/*
+						 * ctx->pc points into the interpreter, after the call which transitioned to
+						 * JITted code. Store the unwind state into the
+						 * interpeter state, then resume, the interpreter will unwind itself until
+						 * it reaches the target frame and will continue execution from there.
+						 * The resuming is kinda hackish, from the native code standpoint, it looks
+						 * like the call which transitioned to JITted code has succeeded, but the
+						 * return value register etc. is not set, so we have to be careful.
+						 */
+						mono_interp_set_resume_state (mono_ex, &frame, ei->handler_start);
+#ifdef TARGET_AMD64
+						/* Adjust IP */
+						ctx->gregs [AMD64_RIP] ++;
+#else
+						NOT_IMPLEMENTED;
+#endif
+					} else {
+						MONO_CONTEXT_SET_IP (ctx, ei->handler_start);
+					}
 					mono_set_lmf (lmf);
 #ifndef DISABLE_PERFCOUNTERS
 					mono_perfcounters->exceptions_depth += frame_count;
@@ -2077,7 +2150,10 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 						return 0;
 					} else {
 						mini_set_abort_threshold (ctx);
-						call_filter (ctx, ei->handler_start);
+						if (in_interp)
+							mono_interp_run_finally (&frame, i, ei->handler_start);
+						else
+							call_filter (ctx, ei->handler_start);
 					}
 				}
 			}
