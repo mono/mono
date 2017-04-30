@@ -631,6 +631,44 @@ mono_find_jit_info_ext (MonoDomain *domain, MonoJitTlsData *jit_tls,
 	return TRUE;
 }
 
+typedef struct {
+	gboolean in_interp;
+	MonoInterpStackIter interp_iter;
+} Unwinder;
+
+static void
+unwinder_init (Unwinder *unwinder)
+{
+	memset (unwinder, 0, sizeof (Unwinder));
+}
+
+static gboolean
+unwinder_unwind_frame (Unwinder *unwinder,
+					   MonoDomain *domain, MonoJitTlsData *jit_tls,
+					   MonoJitInfo *prev_ji, MonoContext *ctx,
+					   MonoContext *new_ctx, char **trace, MonoLMF **lmf,
+					   mgreg_t **save_locations,
+					   StackFrameInfo *frame)
+{
+	if (unwinder->in_interp) {
+		unwinder->in_interp = mono_interp_frame_iter_next (&unwinder->interp_iter, frame);
+		if (!unwinder->in_interp) {
+			return unwinder_unwind_frame (unwinder, domain, jit_tls, prev_ji, ctx, new_ctx, trace, lmf, save_locations, frame);
+		}
+		return TRUE;
+	} else {
+		gboolean res = mono_find_jit_info_ext (domain, jit_tls, prev_ji, ctx, new_ctx, trace, lmf,
+											   save_locations, frame);
+		if (!res)
+			return FALSE;
+		if (frame->type == FRAME_TYPE_INTERP_TO_MANAGED) {
+			unwinder->in_interp = TRUE;
+			mono_interp_frame_iter_init (&unwinder->interp_iter, frame->interp_exit_data);
+		}
+		return TRUE;
+	}
+}
+
 /*
  * This function is async-safe.
  */
@@ -1120,8 +1158,7 @@ ves_icall_get_frame_info (gint32 skip, MonoBoolean need_file_info,
 	MonoMethod *jmethod = NULL, *actual_method;
 	StackFrameInfo frame;
 	gboolean res;
-	MonoInterpStackIter interp_iter;
-	gboolean in_interp = FALSE;
+	Unwinder unwinder;
 	int il_offset = -1;
 
 	MONO_ARCH_CONTEXT_DEF;
@@ -1164,29 +1201,19 @@ ves_icall_get_frame_info (gint32 skip, MonoBoolean need_file_info,
 		MONO_INIT_CONTEXT_FROM_FUNC (&ctx, ves_icall_get_frame_info);
 #endif
 
+		unwinder_init (&unwinder);
+
 		new_ctx = ctx;
 		do {
-			if (in_interp) {
-				res = mono_interp_frame_iter_next (&interp_iter, &frame);
-				if (!res) {
-					in_interp = FALSE;
-					continue;
-				}
-			} else {
-				ctx = new_ctx;
-				res = mono_find_jit_info_ext (domain, jit_tls, NULL, &ctx, &new_ctx, NULL, &lmf, NULL, &frame);
-				if (!res)
-					return FALSE;
-			}
-
+			ctx = new_ctx;
+			res = unwinder_unwind_frame (&unwinder, domain, jit_tls, NULL, &ctx, &new_ctx, NULL, &lmf, NULL, &frame);
+			if (!res)
+				return FALSE;
 			switch (frame.type) {
 			case FRAME_TYPE_MANAGED_TO_NATIVE:
 			case FRAME_TYPE_DEBUGGER_INVOKE:
 			case FRAME_TYPE_TRAMPOLINE:
-				continue;
 			case FRAME_TYPE_INTERP_TO_MANAGED:
-				mono_interp_frame_iter_init (&interp_iter, frame.interp_exit_data);
-				in_interp = TRUE;
 				continue;
 			case FRAME_TYPE_INTERP:
 				skip--;
@@ -1501,6 +1528,8 @@ mono_handle_exception_internal_first_pass (MonoContext *ctx, MonoObject *obj, gi
 	gint32 filter_idx;
 	int i;
 	MonoObject *ex_obj;
+	Unwinder unwinder;
+	gboolean in_interp;
 
 	g_assert (ctx != NULL);
 
@@ -1540,8 +1569,7 @@ mono_handle_exception_internal_first_pass (MonoContext *ctx, MonoObject *obj, gi
 	filter_idx = 0;
 	initial_ctx = *ctx;
 
-	MonoInterpStackIter interp_iter;
-	gboolean in_interp = FALSE;
+	unwinder_init (&unwinder);
 
 	while (1) {
 		MonoContext new_ctx;
@@ -1554,42 +1582,32 @@ mono_handle_exception_internal_first_pass (MonoContext *ctx, MonoObject *obj, gi
 		if (out_prev_ji)
 			*out_prev_ji = ji;
 
-		if (in_interp) {
-			unwind_res = mono_interp_frame_iter_next (&interp_iter, &frame);
-			if (!unwind_res) {
-				in_interp = FALSE;
-				continue;
-			}
-			ji = frame.ji;
-		} else {
-			unwind_res = mono_find_jit_info_ext (domain, jit_tls, NULL, ctx, &new_ctx, NULL, &lmf, NULL, &frame);
-			if (!unwind_res) {
-				setup_stack_trace (mono_ex, dynamic_methods, &trace_ips);
-				g_slist_free (dynamic_methods);
-				return FALSE;
-			}
-
-			switch (frame.type) {
-			case FRAME_TYPE_DEBUGGER_INVOKE:
-			case FRAME_TYPE_MANAGED_TO_NATIVE:
-			case FRAME_TYPE_TRAMPOLINE:
-				*ctx = new_ctx;
-				continue;
-			case FRAME_TYPE_INTERP_TO_MANAGED:
-				mono_interp_frame_iter_init (&interp_iter, frame.interp_exit_data);
-				in_interp = TRUE;
-				continue;
-			case FRAME_TYPE_MANAGED:
-				ji = frame.ji;
-				break;
-			default:
-				g_assert_not_reached ();
-				break;
-			}
+		unwind_res = unwinder_unwind_frame (&unwinder, domain, jit_tls, NULL, ctx, &new_ctx, NULL, &lmf, NULL, &frame);
+		if (!unwind_res) {
+			setup_stack_trace (mono_ex, dynamic_methods, &trace_ips);
+			g_slist_free (dynamic_methods);
+			return FALSE;
 		}
 
-		gpointer ip;
+		switch (frame.type) {
+		case FRAME_TYPE_DEBUGGER_INVOKE:
+		case FRAME_TYPE_MANAGED_TO_NATIVE:
+		case FRAME_TYPE_TRAMPOLINE:
+		case FRAME_TYPE_INTERP_TO_MANAGED:
+			*ctx = new_ctx;
+			continue;
+		case FRAME_TYPE_INTERP:
+		case FRAME_TYPE_MANAGED:
+			break;
+		default:
+			g_assert_not_reached ();
+			break;
+		}
 
+		in_interp = frame.type == FRAME_TYPE_INTERP;
+		ji = frame.ji;
+
+		gpointer ip;
 		if (in_interp)
 			ip = (guint16*)ji->code_start + frame.native_offset;
 		else
@@ -1746,6 +1764,8 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 	int i;
 	MonoObject *ex_obj;
 	MonoObject *non_exception = NULL;
+	Unwinder unwinder;
+	gboolean in_interp;
 
 	g_assert (ctx != NULL);
 	if (!obj) {
@@ -1908,8 +1928,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 	filter_idx = 0;
 	initial_ctx = *ctx;
 
-	MonoInterpStackIter interp_iter;
-	gboolean in_interp = FALSE;
+	unwinder_init (&unwinder);
 
 	while (1) {
 		MonoContext new_ctx;
@@ -1928,42 +1947,30 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 			first_filter_idx = jit_tls->resume_state.first_filter_idx;
 			filter_idx = jit_tls->resume_state.filter_idx;
 		} else {
-			if (in_interp) {
-				unwind_res = mono_interp_frame_iter_next (&interp_iter, &frame);
-				if (!unwind_res) {
-					in_interp = FALSE;
-					continue;
-				}
-				ji = frame.ji;
-			} else {
-				unwind_res = mono_find_jit_info_ext (domain, jit_tls, NULL, ctx, &new_ctx, NULL, &lmf, NULL, &frame);
-				if (unwind_res) {
-					switch (frame.type) {
-					case FRAME_TYPE_DEBUGGER_INVOKE:
-					case FRAME_TYPE_MANAGED_TO_NATIVE:
-					case FRAME_TYPE_TRAMPOLINE:
-						*ctx = new_ctx;
-						continue;
-					case FRAME_TYPE_INTERP_TO_MANAGED:
-						mono_interp_frame_iter_init (&interp_iter, frame.interp_exit_data);
-						in_interp = TRUE;
-						continue;
-					case FRAME_TYPE_MANAGED:
-						ji = frame.ji;
-						break;
-					default:
-						g_assert_not_reached ();
-						break;
-					}
-				}
+			unwind_res = unwinder_unwind_frame (&unwinder, domain, jit_tls, NULL, ctx, &new_ctx, NULL, &lmf, NULL, &frame);
+			if (!unwind_res) {
+				*(mono_get_lmf_addr ()) = lmf;
+
+				jit_tls->abort_func (obj);
+				g_assert_not_reached ();
 			}
-		}
-
-		if (!unwind_res) {
-			*(mono_get_lmf_addr ()) = lmf;
-
-			jit_tls->abort_func (obj);
-			g_assert_not_reached ();
+			switch (frame.type) {
+			case FRAME_TYPE_DEBUGGER_INVOKE:
+			case FRAME_TYPE_MANAGED_TO_NATIVE:
+			case FRAME_TYPE_TRAMPOLINE:
+				*ctx = new_ctx;
+				continue;
+			case FRAME_TYPE_INTERP_TO_MANAGED:
+				continue;
+			case FRAME_TYPE_INTERP:
+			case FRAME_TYPE_MANAGED:
+				break;
+			default:
+				g_assert_not_reached ();
+				break;
+			}
+			in_interp = frame.type == FRAME_TYPE_INTERP;
+			ji = frame.ji;
 		}
 
 		if (in_interp)
