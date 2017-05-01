@@ -20,6 +20,7 @@
 MonoInst* emit_get_gsharedvt_info_klass (MonoCompile *cfg, MonoClass *klass, MonoRgctxInfoType rgctx_type);
 MonoInst* mono_emit_calli (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **args, MonoInst *addr, MonoInst *imt_arg, MonoInst *rgctx_arg);
 MonoMethod* get_memcpy_method (void);
+MonoMethod* get_memset_method (void);
 MonoInst* emit_memory_barrier (MonoCompile *cfg, int kind);
 MonoInst* emit_runtime_constant (MonoCompile *cfg, MonoJumpInfoType patch_type, gpointer data);
 int mini_class_check_context_used (MonoCompile *cfg, MonoClass *klass);
@@ -27,11 +28,18 @@ gboolean mono_emit_wb_aware_memcpy (MonoCompile *cfg, MonoClass *klass, MonoInst
 void emit_write_barrier (MonoCompile *cfg, MonoInst *ptr, MonoInst *value);
 
 
+//new funcs to go to mini.h later
+void mini_emit_memory_copy_bytes (MonoCompile *cfg, MonoInst *dest, MonoInst *src, MonoInst *size, int ins_flag);
+void mini_emit_memory_copy (MonoCompile *cfg, MonoInst *dest, MonoInst *src, MonoClass *klass, int ins_flag);
+void mini_emit_memory_store (MonoCompile *cfg, MonoClass *klass, MonoInst *dest_address, MonoInst *src, int ins_flag);
+MonoInst* mini_emit_memory_load (MonoCompile *cfg, MonoClass *klass, MonoInst *src_address, int ins_flag);
+void mini_emit_memory_init_bytes (MonoCompile *cfg, MonoInst *dest, MonoInst *value, MonoInst *size, int ins_flag);
+
 
 //new stuff
 
 /* Can only copy ref-free memory */
-static void 
+static void
 mini_emit_unrolled_memcpy (MonoCompile *cfg, int destreg, int doffset, int srcreg, int soffset, int size, int align)
 {
 	int cur_reg;
@@ -46,6 +54,18 @@ mini_emit_unrolled_memcpy (MonoCompile *cfg, int destreg, int doffset, int srcre
 		if (align == 2)
 			goto copy_2;
 		goto copy_1;
+	}
+
+	//Unaligned offsets don't naturaly happen in the runtime, so it's ok to be conservative in how we copy
+	//On input src and dest must be aligned to `align` so offset just worsen it
+	int offsets_mask = (doffset | soffset) & 0x7; //we only care about the misalignment part
+	if (offsets_mask) {
+		if (offsets_mask % 2 == 1)
+			goto copy_1;
+		if (offsets_mask % 4 == 2)
+			goto copy_2;
+		if (SIZEOF_VOID_P == 8 && offsets_mask % 8 == 4)
+			goto copy_4;
 	}
 
 	if (SIZEOF_VOID_P == 8) {
@@ -90,12 +110,89 @@ copy_1:
 	}
 }
 
+
+static void
+mini_emit_unrolled_memset (MonoCompile *cfg, int destreg, int size, int val, int align)
+{
+	/* FIXME support value != 0 using patterning */
+	int val_reg;
+	int offset = 0;
+
+	g_assert (val == 0);
+	g_assert (align > 0);
+
+	if ((size <= SIZEOF_REGISTER) && (size <= align)) {
+		switch (size) {
+		case 1:
+			MONO_EMIT_NEW_STORE_MEMBASE_IMM (cfg, OP_STOREI1_MEMBASE_IMM, destreg, offset, val);
+			return;
+		case 2:
+			MONO_EMIT_NEW_STORE_MEMBASE_IMM (cfg, OP_STOREI2_MEMBASE_IMM, destreg, offset, val);
+			return;
+		case 4:
+			MONO_EMIT_NEW_STORE_MEMBASE_IMM (cfg, OP_STOREI4_MEMBASE_IMM, destreg, offset, val);
+			return;
+#if SIZEOF_REGISTER == 8
+		case 8:
+			MONO_EMIT_NEW_STORE_MEMBASE_IMM (cfg, OP_STOREI8_MEMBASE_IMM, destreg, offset, val);
+			return;
+#endif
+		}
+	}
+
+	val_reg = alloc_preg (cfg);
+
+	if (SIZEOF_REGISTER == 8)
+		MONO_EMIT_NEW_I8CONST (cfg, val_reg, val);
+	else
+		MONO_EMIT_NEW_ICONST (cfg, val_reg, val);
+
+	if (align < SIZEOF_VOID_P) {
+		if (align == 4)
+			goto set_4;
+		if (align == 2)
+			goto set_2;
+		goto set_1;
+	}
+
+	if (SIZEOF_REGISTER == 8) {
+		while (size >= 8) {
+			MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREI8_MEMBASE_REG, destreg, offset, val_reg);
+			offset += 8;
+			size -= 8;
+		}
+	}
+
+set_4:
+	while (size >= 4) {
+		MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREI4_MEMBASE_REG, destreg, offset, val_reg);
+		offset += 4;
+		size -= 4;
+	}
+
+set_2:
+	while (size >= 2) {
+		MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREI2_MEMBASE_REG, destreg, offset, val_reg);
+		offset += 2;
+		size -= 2;
+	}
+
+set_1:
+	while (size >= 1) {
+		MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREI1_MEMBASE_REG, destreg, offset, val_reg);
+		offset += 1;
+		size -= 1;
+	}
+}
+
+
+
 static void 
 mini_emit_memcpy_internal (MonoCompile *cfg, MonoInst *dest, MonoInst *src, MonoInst *size_ins, int size, int align)
 {
 	/* FIXME: Optimize the case when src/dest is OP_LDADDR */
 	if (cfg->verbose_level)
-		printf ("\tEMITING memcpy [%d] <= [%d] size_ins %d size %lld align %d\n", dest->dreg, src->dreg, size_ins ? size_ins->dreg : -1, size, align);
+		printf ("\tEMITING memcpy [%d] <= [%d] size_ins %d size %d align %d\n", dest->dreg, src->dreg, size_ins ? size_ins->dreg : -1, size, align);
 	/*
 	We can't do copies at a smaller granule than the provided alignment
 	*/
@@ -112,11 +209,45 @@ mini_emit_memcpy_internal (MonoCompile *cfg, MonoInst *dest, MonoInst *src, Mono
 		mini_emit_unrolled_memcpy (cfg, dest->dreg, 0, src->dreg, 0, size, align);
 	}
 }
+static void 
+mini_emit_memset_internal (MonoCompile *cfg, MonoInst *dest, MonoInst *value_ins, int value, MonoInst *size_ins, int size, int align)
+{
+	/* FIXME: Optimize the case when dest is OP_LDADDR */
+
+	if (cfg->verbose_level)
+		printf ("\tEMITING memset [%d] value R%d (v %d) size R%d (v %d) align %d\n", dest->dreg, value_ins ? value_ins->dreg : -1, value, size_ins ? size_ins->dreg : -1, size, align);
+	/*
+	We can't do copies at a smaller granule than the provided alignment
+	*/
+	if (value_ins || size_ins || value != 0 || ((size / align > MAX_INLINE_COPIES) && !(cfg->opt & MONO_OPT_INTRINS))) {
+		MonoInst *iargs [3];
+		iargs [0] = dest;
+
+		if (!value_ins)
+			EMIT_NEW_ICONST (cfg, value_ins, value);
+		iargs [1] = value_ins;
+
+		if (!size_ins)
+			EMIT_NEW_ICONST (cfg, size_ins, size);
+		iargs [2] = size_ins;
+
+		mono_emit_method_call (cfg, get_memset_method (), iargs, NULL);
+	} else {
+		mini_emit_unrolled_memset (cfg, dest->dreg, size, value, align);
+	}
+}
 
 static void
 mini_emit_memcpy_const_size (MonoCompile *cfg, MonoInst *dest, MonoInst *src, int size, int align)
 {
 	mini_emit_memcpy_internal (cfg, dest, src, NULL, size, align);
+}
+
+
+static void
+mini_emit_memset_const_size (MonoCompile *cfg, MonoInst *dest, int value, int size, int align)
+{
+	mini_emit_memset_internal (cfg, dest, NULL, value, NULL, size, align);
 }
 
 //XXXX HACK HACK
@@ -221,14 +352,51 @@ mini_emit_memory_copy_bytes (MonoCompile *cfg, MonoInst *dest, MonoInst *src, Mo
 
 	int align = (ins_flag & MONO_INST_UNALIGNED) ? 1 : SIZEOF_VOID_P;
 
+
+	/* FIXME: See mini_emit_memory_copy caveat */
+	if (ins_flag & MONO_INST_VOLATILE) {
+		/* Volatile loads have acquire semantics, see 12.6.7 in Ecma 335 */
+		emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_SEQ);
+	}
+
 	if ((cfg->opt & MONO_OPT_INTRINS) && (size->opcode == OP_ICONST)) {
 		if (cfg->verbose_level > 3)
-			printf ("EMITING CONST COPY for %d bytes\n", size->inst_c0);
+			printf ("EMITING CONST COPY for %lld bytes\n", size->inst_c0);
 		mini_emit_memcpy_const_size (cfg, dest, src, size->inst_c0, align);
 	} else {
 		if (cfg->verbose_level > 3)
 			printf ("EMITING REGULAR COPY\n");
 		mini_emit_memcpy_internal (cfg, dest, src, size, 0, align);
+	}
+
+	if (ins_flag & MONO_INST_VOLATILE) {
+		/* Volatile loads have acquire semantics, see 12.6.7 in Ecma 335 */
+		emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_SEQ);
+	}
+}
+
+void
+mini_emit_memory_init_bytes (MonoCompile *cfg, MonoInst *dest, MonoInst *value, MonoInst *size, int ins_flag)
+{
+	if (cfg->verbose_level > 3)
+		printf ("EMITING MEMORY INIT BYTES TO R%d size-ins R%d flags %x\n", dest->dreg, size ? size->dreg : 1, ins_flag);
+
+	int align = (ins_flag & MONO_INST_UNALIGNED) ? 1 : SIZEOF_VOID_P;
+
+	if (ins_flag & MONO_INST_VOLATILE) {
+		/* Volatile stores have release semantics, see 12.6.7 in Ecma 335 */
+		emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_REL);
+	}
+
+	//FIXME unrolled memset only supports zeroing
+	if ((cfg->opt & MONO_OPT_INTRINS) && (size->opcode == OP_ICONST) && (value->opcode == OP_ICONST) && (value->inst_c0 == 0)) {
+		if (cfg->verbose_level > 3)
+			printf ("EMITING CONST INIT for %lld bytes with %lld value\n", size->inst_c0, size->inst_c0);
+		mini_emit_memset_const_size (cfg, dest, value->inst_c0, size->inst_c0, align);
+	} else {
+		if (cfg->verbose_level > 3)
+			printf ("EMITING REGULAR MEMSET\n");
+		mini_emit_memset_internal (cfg, dest, value, 0, size, 0, align);
 	}
 
 }
@@ -263,7 +431,6 @@ mini_emit_memory_copy (MonoCompile *cfg, MonoInst *dest, MonoInst *src, MonoClas
 		emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_SEQ);
 	}
 }
-
 
 MonoInst*
 mini_emit_memory_load (MonoCompile *cfg, MonoClass *klass, MonoInst *src_address, int ins_flag)
