@@ -796,7 +796,7 @@ mono_debug_lookup_source_location (MonoMethod *method, guint32 address, MonoDoma
 /**
  * mono_debug_lookup_source_location_by_il:
  *
- *   Same as mono_debug_lookup_source_location_by_il but take an IL_OFFSET argument.
+ *   Same as mono_debug_lookup_source_location but take an IL_OFFSET argument.
  */
 MonoDebugSourceLocation *
 mono_debug_lookup_source_location_by_il (MonoMethod *method, guint32 il_offset, MonoDomain *domain)
