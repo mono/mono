@@ -563,6 +563,8 @@ AC_ARG_ENABLE(visibility-hidden,
 [  --disable-visibility-hidden    disable usage of -fvisiblity=hidden],
    disable_visibility_hidden=yes, disable_visibility_hidden=no)
 
+AC_ARG_ENABLE(lto, [ --disable-lto   disable link time optimization], [disable_lto=yes], [disable_lto=no])
+
 WARN=''
 if test x"$GCC" = xyes; then
         WARN='-Wall -Wunused -Wmissing-prototypes -Wmissing-declarations -Wstrict-prototypes  -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wno-cast-qual -Wwrite-strings -Wno-switch -Wno-switch-enum -Wno-unused-value -Wno-attributes -Wno-format-zero-length'
@@ -575,6 +577,12 @@ if test x"$GCC" = xyes; then
 
 		# We rely on signed overflow to behave
 		CFLAGS="$CFLAGS -fwrapv"
+
+		if test x"$disable_lto" = xno; then
+			# Enable Link Time Optimization
+			CFLAGS="$CFLAGS -flto"
+			LDFLAGS="$LDFLAGS -flto"
+		fi
 
 		CFLAGS="$CFLAGS -DMONO_DLL_EXPORT"
 		if test x"$disable_visibility_hidden" = xno; then
