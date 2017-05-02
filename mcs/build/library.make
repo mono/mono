@@ -29,9 +29,9 @@ LIB_MCS_FLAGS += $(patsubst %,-r:%.dll, $(subst =,=$(topdir)/class/lib/$(PROFILE
 sourcefile = $(LIBRARY).sources
 
 # If the directory contains the per profile include file, generate list file.
-PROFILE_sources := $(wildcard $(PROFILE)_$(LIBRARY).sources)
+PROFILE_sources := $(firstword $(wildcard $(HOST_PLATFORM)_$(PROFILE)_$(LIBRARY).sources) $(wildcard $(PROFILE)_$(LIBRARY).sources))
 ifdef PROFILE_sources
-PROFILE_excludes = $(wildcard $(PROFILE)_$(LIBRARY).exclude.sources)
+PROFILE_excludes = $(firstword $(wildcard $(HOST_PLATFORM)_$(PROFILE)_$(LIBRARY).exclude.sources) $(wildcard $(PROFILE)_$(LIBRARY).exclude.sources))
 sourcefile = $(depsdir)/$(PROFILE)_$(LIBRARY).sources
 library_CLEAN_FILES += $(sourcefile)
 
