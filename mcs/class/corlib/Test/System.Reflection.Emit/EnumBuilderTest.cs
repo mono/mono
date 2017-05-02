@@ -303,6 +303,31 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.AreEqual (FieldAttributes.RTSpecialName, value.Attributes & FieldAttributes.RTSpecialName);
 		}
 
+		[Test]
+		public void TestCreateTypeIncompleteEnumStaticField ()
+		{
+			ModuleBuilder modBuilder = GenerateModule ();
+			EnumBuilder enumBuilder = GenerateEnum (modBuilder);
+			GenerateField (enumBuilder);
+
+			var tb = modBuilder.DefineType ("T", TypeAttributes.Public);
+
+			tb.DefineDefaultConstructor (MethodAttributes.Public);
+			tb.DefineField ("e", enumBuilder, FieldAttributes.Static | FieldAttributes.Public);
+
+			var t = tb.CreateType ();
+			Assert.IsNotNull (t);
+			bool caught = false;
+			try {
+				object x = Activator.CreateInstance (t);
+			} catch (TypeLoadException exn) {
+				Assert.AreEqual (t.Name, exn.TypeName);
+				caught = true;
+			}
+			if (!caught)
+				Assert.Fail ("Expected CreateInstance of a broken type to throw TLE");
+		}
+
 		private static void VerifyType (Type type)
 		{
 			Assert.IsNotNull (type.Assembly, "#V1");
