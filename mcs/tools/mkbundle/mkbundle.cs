@@ -69,6 +69,7 @@ class MakeBundle {
 	static string aot_args = "static";
 	static string aot_mode = "";
 	static string aot_runtime = null;
+	static int? aot_dedup_assembly = null;
 	static string sdk_path = null;
 	static string lib_path = null;
 	static Dictionary<string,string> environment = new Dictionary<string,string>();
@@ -360,12 +361,28 @@ class MakeBundle {
 			case "--aot-runtime":
 				aot_runtime = args [++i];
 				break;
-			case "--aot-mode":
+			case "--aot-dedup":
 				if (i+1 == top) {
-					Console.WriteLine ("Need string of aot mode");
+					Console.WriteLine ("Usage: --aot-dedup <container_dll> ");
 					return 1;
 				}
+				var dedup_file = args [++i];
+				sources.Add (dedup_file);
+				aot_dedup_assembly = sources.Count () - 1;
+				break;
+			case "--aot-mode":
+				if (i+1 == top) {
+					Console.WriteLine ("Need string of aot mode (full, llvmonly). Omit for normal AOT.");
+					return 1;
+				}
+
 				aot_mode = args [++i];
+
+				if (aot_mode != "full" && aot_mode != "llvmonly") {
+					Console.WriteLine ("Need string of aot mode (full, llvmonly). Omit for normal AOT.");
+					return 1;
+				}
+
 				aot_compile = true;
 				break;
 			case "--aot-args":
@@ -1373,18 +1390,42 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		if (aot_runtime == null)
 			aot_runtime = runtime;
 
-		foreach (var fileName in files) {
+		var aot_mode_string = "";
+		if (aot_mode != null)
+			aot_mode_string = "," + aot_mode;
+
+		var dedup_mode_string = "";
+		StringBuilder all_assemblies = null;
+		if (aot_dedup_assembly != null) {
+			dedup_mode_string = ",dedup-skip";
+			all_assemblies = new StringBuilder("");
+		}
+
+		for (int i=0; i < files.Count; i++) {
+			var fileName = files [i];
 			string path = LocateFile (new Uri (fileName).LocalPath);
 			string outPath = String.Format ("{0}.aot_out", path);
 			aot_paths.Add (outPath);
 			var name = System.Reflection.Assembly.LoadFrom(path).GetName().Name;
 			aot_names.Add (EncodeAotSymbol (name));
-			var aot_mode_string = "";
-			if (aot_mode != null)
-				aot_mode_string = "," + aot_mode;
-			Execute (String.Format ("{0} --aot={1},outfile={2}{3} {4}", aot_runtime, aot_args, outPath, aot_mode_string, path));
+
+			if (aot_dedup_assembly != null && i != (int) aot_dedup_assembly) {
+				all_assemblies.Append (path);
+				all_assemblies.Append (" ");
+				Execute (String.Format ("{0} --aot={1},outfile={2}{3}{4} {5}",
+					aot_runtime, aot_args, outPath, aot_mode_string, dedup_mode_string, path));
+			}
+		}
+		if (aot_dedup_assembly != null) {
+			string fileName = files [(int) aot_dedup_assembly];
+			string path = LocateFile (new Uri (fileName).LocalPath);
+			dedup_mode_string = String.Format (",dedup-include={0}", path);
+			string outPath = String.Format ("{0}.aot_out", path);
+			Execute (String.Format ("{0} --aot={1},outfile={2}{3}{4} {5} {6}",
+				aot_runtime, aot_args, outPath, aot_mode_string, dedup_mode_string, path, all_assemblies.ToString ()));
 		}
 	}
+
 
 	static void Execute (string cmdLine)
 	{
