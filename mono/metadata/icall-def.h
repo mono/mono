@@ -759,6 +759,9 @@ ICALL_TYPE(REMSER, "System.Runtime.Remoting.RemotingServices", REMSER_0)
 ICALL(REMSER_0, "GetVirtualMethod", ves_icall_Remoting_RemotingServices_GetVirtualMethod)
 ICALL(REMSER_1, "InternalExecute", ves_icall_InternalExecute)
 ICALL(REMSER_2, "IsTransparentProxy", ves_icall_IsTransparentProxy)
+#else
+ICALL_TYPE(REMSER, "System.Runtime.Remoting.RemotingServices", REMSER_0)
+ICALL(REMSER_0, "IsTransparentProxy", ves_icall_IsTransparentProxy)
 #endif
 
 ICALL_TYPE(RVH, "System.Runtime.Versioning.VersioningHelper", RVH_1)

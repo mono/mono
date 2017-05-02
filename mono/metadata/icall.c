@@ -6997,6 +6997,12 @@ ves_icall_System_Runtime_Activation_ActivationServices_EnableProxyActivation (Mo
 	g_assert_not_reached ();
 }
 
+ICALL_EXPORT MonoBoolean
+ves_icall_IsTransparentProxy (MonoObject *proxy)
+{
+	return 0;
+}
+
 #endif
 
 ICALL_EXPORT MonoObject *
