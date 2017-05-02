@@ -22,8 +22,8 @@ VERSION = 0.93
 
 Q=$(if $(V),,@)
 # echo -e "\\t" does not work on some systems, so use 5 spaces
-Q_MCS=$(if $(V),,@echo "$(if $(MCS_MODE),MCS,CSC)     [$(intermediate)$(PROFILE)] $(notdir $(@))";)
-Q_AOT=$(if $(V),,@echo "AOT     [$(intermediate)$(PROFILE)] $(notdir $(@))";)
+Q_MCS=$(if $(V),,@echo "$(if $(MCS_MODE),MCS,CSC)     [$(intermediate)$(PROFILE)$(if $(PROFILE_PLATFORM),-$(PROFILE_PLATFORM))] $(notdir $(@))";)
+Q_AOT=$(if $(V),,@echo "AOT     [$(intermediate)$(PROFILE)$(if $(PROFILE_PLATFORM),-$(PROFILE_PLATFORM))] $(notdir $(@))";)
 
 ifndef BUILD_TOOLS_PROFILE
 BUILD_TOOLS_PROFILE = build
@@ -83,6 +83,8 @@ include $(topdir)/build/config-default.make
 # Platform config
 
 include $(topdir)/build/platforms/$(BUILD_PLATFORM).make
+
+PROFILE_PLATFORM = $(if $(PLATFORMS),$(if $(filter $(PLATFORMS),$(HOST_PLATFORM)),$(HOST_PLATFORM),$(error Unknown platform "$(HOST_PLATFORM)" for profile "$(PROFILE)")))
 
 ifdef PLATFORM_CORLIB
 corlib = $(PLATFORM_CORLIB)
@@ -307,6 +309,8 @@ dist-default:
 
 ## Documentation stuff
 
-Q_MDOC =$(if $(V),,@echo "MDOC    [$(PROFILE)] $(notdir $(@))";)
+Q_MDOC =$(if $(V),,@echo "MDOC    [$(PROFILE)$(if $(PROFILE_PLATFORM),-$(PROFILE_PLATFORM))] $(notdir $(@))";)
 MDOC   =$(Q_MDOC) MONO_PATH="$(topdir)/class/lib/$(DEFAULT_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(topdir)/class/lib/$(DEFAULT_PROFILE)/mdoc.exe
 
+Q_MDOC_UP=$(if $(V),,@echo "MDOC-UP [$(PROFILE)$(if $(PROFILE_PLATFORM),-$(PROFILE_PLATFORM))] $(notdir $(@))";)
+MDOC_UP  =$(Q_MDOC_UP) MONO_PATH="$(topdir)/class/lib/$(DEFAULT_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(topdir)/class/lib/$(DEFAULT_PROFILE)/mdoc.exe update --delete -o Documentation/en

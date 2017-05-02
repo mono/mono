@@ -4562,6 +4562,13 @@ fi
       echo "BUILD_PLATFORM = linux" >> $mcs_topdir/build/config.make
     fi
 
+    if test x$host_darwin = xyes; then
+      echo "HOST_PLATFORM ?= darwin" >> $mcs_topdir/build/config.make
+    elif test x$host_win32 = xyes; then
+      echo "HOST_PLATFORM ?= win32" >> $mcs_topdir/build/config.make
+    else
+      echo "HOST_PLATFORM ?= linux" >> $mcs_topdir/build/config.make
+    fi
 
     if test "x$PLATFORM_AOT_SUFFIX" != "x"; then
       echo "PLATFORM_AOT_SUFFIX = $PLATFORM_AOT_SUFFIX" >> $mcs_topdir/build/config.make
