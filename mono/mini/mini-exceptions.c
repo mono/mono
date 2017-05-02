@@ -2097,8 +2097,8 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 						 * return value register etc. is not set, so we have to be careful.
 						 */
 						mono_interp_set_resume_state (mono_ex, &frame, ei->handler_start);
+						/* Undo the IP adjustment done by mono_arch_unwind_frame () */
 #ifdef TARGET_AMD64
-						/* Adjust IP */
 						ctx->gregs [AMD64_RIP] ++;
 #else
 						NOT_IMPLEMENTED;

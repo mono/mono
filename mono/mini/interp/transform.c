@@ -943,7 +943,7 @@ interp_save_debug_info (RuntimeMethod *rtm, MonoMethodHeader *header, TransformD
 		return;
 
 	/*
-	 * We save the debug info in the save way the JIT does it, treating the interpreter IR as the native code.
+	 * We save the debug info in the same way the JIT does it, treating the interpreter IR as the native code.
 	 */
 
 	dinfo = g_new0 (MonoDebugMethodJitInfo, 1);
@@ -1041,7 +1041,7 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 			td.stack_state [c->data.filter_offset][0].klass = NULL; /*FIX*/
 		}
 
-		if (c->flags & MONO_EXCEPTION_CLAUSE_FINALLY) {
+		if ((c->flags & MONO_EXCEPTION_CLAUSE_FINALLY) || (c->flags & MONO_EXCEPTION_CLAUSE_FAULT)) {
 			for (int j = c->handler_offset; j < c->handler_offset + c->handler_len; ++j) {
 				if (td.clause_indexes [j] == -1)
 					td.clause_indexes [j] = i;
@@ -3356,7 +3356,7 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 	/* Save debug info */
 	interp_save_debug_info (rtm, header, &td, line_numbers);
 
-	/* Create a MonoJitInfo for the interpreted method by reating the interpreter IR as the native code. */
+	/* Create a MonoJitInfo for the interpreted method by creating the interpreter IR as the native code. */
 	int jinfo_len = mono_jit_info_size (0, header->num_clauses, 0);
 	MonoJitInfo *jinfo = (MonoJitInfo *)mono_domain_alloc0 (domain, jinfo_len);
 	rtm->jinfo = jinfo;
