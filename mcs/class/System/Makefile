@@ -70,9 +70,7 @@ endif
 
 ifndef PROFILE_DISABLE_BTLS
 ifdef HAVE_BTLS
-
 LIB_MCS_FLAGS += -d:MONO_FEATURE_BTLS
-
 endif
 endif
 
@@ -100,6 +98,12 @@ ifeq (secxml/, $(intermediate))
 LOCAL_MCS_FLAGS =
 LIB_REFS += bare/System.Xml $(MONO_SECURITY_REF)
 LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP $(EXTERN_ALIAS_FLAGS)
+
+PROFILE_sources_override := $(PROFILE)_XXX_$(LIBRARY).sources
+endif
+
+ifeq (bare/,$(intermediate))
+PROFILE_sources_override := $(PROFILE)_YYY_$(LIBRARY).sources
 endif
 
 #
@@ -108,6 +112,10 @@ endif
 ifndef intermediate
 LIB_REFS += System.Xml $(MONO_SECURITY_REF)
 LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP $(EXTERN_ALIAS_FLAGS)
+
+ifndef PROFILE_DISABLE_TLS
+LIB_MCS_FLAGS += -d:MONO_FEATURE_TLS
+endif
 
 ifndef MOBILE_PROFILE
 LIB_REFS += System.Configuration
@@ -147,32 +155,38 @@ artifacts = $(system_library_deps) 			\
 .NOTPARALLEL: $(system_library_deps)
 
 $(the_libdir_base)System.dll: $(system_library_deps) ../Mono.Security/Makefile
+	
+V_MAKE = $(if $(V),$(MAKE) V=1,$(MAKE))
 
 ifeq (bare/,$(intermediate))
 build-bare:
 else
 $(bare_libdir)/System.dll:
-	$(MAKE) intermediate=bare/ $(bare_libdir)/System.dll
+	echo "TEST: |$(PROFILE)|$(sourcefile)|"
+	echo "$(V_MAKE) intermediate=bare/ $(bare_libdir)/System.dll"
+	$(V_MAKE) intermediate=bare/ $(bare_libdir)/System.dll
 endif
 
 ifneq (secxml/,$(intermediate))
 $(secxml_libdir)/System.dll: $(bare_libdir)/System.dll $(bare_libdir)/System.Xml.dll $(MONO_SECURITY_DLL) $(bare_libdir)/System.dll
-	$(MAKE) intermediate=secxml/ $(secxml_libdir)/System.dll
+	echo "TEST: |$(PROFILE)|$(sourcefile)|"
+	echo "$(V_MAKE) intermediate=secxml/ $(secxml_libdir)/System.dll"
+	$(V_MAKE) intermediate=secxml/ $(secxml_libdir)/System.dll
 else
 build-sec:
 endif
 
 $(the_libdir_base)System.Xml.dll:
-	(cd ../System.XML; $(MAKE) $@)
+	(cd ../System.XML; $(V_MAKE) $@)
 
 $(bare_libdir)/System.Xml.dll:
-	(cd ../System.XML; $(MAKE) $@)
+	(cd ../System.XML; $(V_MAKE) $@)
 
 $(the_libdir_base)Mono.Security.dll: ../Mono.Security/Makefile
-	(cd ../Mono.Security; $(MAKE))
+	(cd ../Mono.Security; $(V_MAKE))
 
 $(the_libdir_base)System.Configuration.dll:
-	(cd ../System.Configuration; $(MAKE))
+	(cd ../System.Configuration; $(V_MAKE))
 
 $(build_lib): $(CYCLIC_DEP_FILES)
 
@@ -191,7 +205,7 @@ fresh: clean
 ifndef intermediate
 ifneq ($(PROFILE),basic)
 csproj-local:
-	$(MAKE) csproj-local intermediate=bare/
-	$(MAKE) csproj-local intermediate=secxml/
+	$(V_MAKE) csproj-local intermediate=bare/
+	$(V_MAKE) csproj-local intermediate=secxml/
 endif
 endif

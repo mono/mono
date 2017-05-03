@@ -29,7 +29,11 @@ LIB_MCS_FLAGS += $(patsubst %,-r:%.dll, $(subst =,=$(topdir)/class/lib/$(PROFILE
 sourcefile = $(LIBRARY).sources
 
 # If the directory contains the per profile include file, generate list file.
+ifneq ($(PROFILE_sources_override),,)
+PROFILE_sources := $(wildcard $(PROFILE_sources_override))
+else
 PROFILE_sources := $(wildcard $(PROFILE)_$(LIBRARY).sources)
+endif
 ifdef PROFILE_sources
 PROFILE_excludes = $(wildcard $(PROFILE)_$(LIBRARY).exclude.sources)
 sourcefile = $(depsdir)/$(PROFILE)_$(LIBRARY).sources
@@ -350,6 +354,10 @@ $(response): $(sourcefile)
 endif
 
 endif
+
+martin-test:
+	echo "MARTIN TEST: |$(PROFILE)|$(LIBRARY_SUBDIR)|$(intermediate)| - $(makefrag)"
+	ls -l $(makefrag)
 
 -include $(makefrag)
 
