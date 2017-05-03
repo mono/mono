@@ -29,9 +29,11 @@
 //
 
 #if SECURITY_DEP
-
+using System;
+using System.Net;
 using System.Threading;
-namespace System.Net {
+
+namespace Mono.Net {
 	class ListenerAsyncResult : IAsyncResult {
 		ManualResetEvent handle;
 		bool synch;

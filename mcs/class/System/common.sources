@@ -49,6 +49,7 @@ Mono.Net/EndPointListener.cs
 Mono.Net/EndPointManager.cs
 Mono.Net/HttpConnection.cs
 Mono.Net/HttpStreamAsyncResult.cs
+Mono.Net/ListenerAsyncResult.cs
 Mono.Net/ListenerPrefix.cs
 Mono.Net/RequestStream.cs
 Mono.Net/ResponseStream.cs
@@ -81,7 +82,6 @@ System.Net/ICredentialPolicy.cs
 System.Net/IPv6Address.cs
 System.Net/IWebConnectionState.cs
 System.Net/IWebProxyScript.cs
-System.Net/ListenerAsyncResult.cs
 System.Net/MacProxy.cs
 System.Net/MonoHttpDate.cs
 System.Net/NetConfig.cs

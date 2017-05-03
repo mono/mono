@@ -1,33 +1,22 @@
 namespace System.Net {
-	static class ChunkStream {
-		
-	}
+	static class ChunkStream { }
 
-	static class ChunkedInputStream {
-		
-	}
+	static class ChunkedInputStream { }
 
-	static class RequestStream {
-		
-	}
+	static class EndPointListener { }
 
-	static class ResponseStream {
-		
-	}
+	static class EndPointManager { }
 
-	static class HttpStreamAsyncResult {
-		
-	}
+	static class HttpConnection { }
 
-	static class ListenerPrefix {
-		
-	}
+	static class HttpStreamAsyncResult { }
 
-	static class EndPointListener {
-		
-	}
+	static class ListenerAsyncResult { }
 
-	static class EndPointManager {
-		
-	}
+	static class ListenerPrefix { }
+
+	static class RequestStream { }
+
+	static class ResponseStream { }
+
 }

@@ -53,6 +53,7 @@ using XRequestStream = Mono.Net.RequestStream;
 using XResponseStream = Mono.Net.ResponseStream;
 using XEndPointManager = Mono.Net.EndPointManager;
 using XEndPointListener = Mono.Net.EndPointListener;
+using XListenerAsyncResult = Mono.Net.ListenerAsyncResult;
 using XListenerPrefix = Mono.Net.ListenerPrefix;
 
 //TODO: logging
@@ -317,7 +318,7 @@ namespace System.Net {
 
 				lock (wait_queue) {
 					Exception exc = new ObjectDisposedException ("listener");
-					foreach (ListenerAsyncResult ares in wait_queue) {
+					foreach (XListenerAsyncResult ares in wait_queue) {
 						ares.Complete (exc);
 					}
 					wait_queue.Clear ();
@@ -331,7 +332,7 @@ namespace System.Net {
 			if (!listening)
 				throw new InvalidOperationException ("Please, call Start before using this method.");
 
-			ListenerAsyncResult ares = new ListenerAsyncResult (callback, state);
+			XListenerAsyncResult ares = new XListenerAsyncResult (callback, state);
 
 			// lock wait_queue early to avoid race conditions
 			lock (wait_queue) {
@@ -355,7 +356,7 @@ namespace System.Net {
 			if (asyncResult == null)
 				throw new ArgumentNullException ("asyncResult");
 
-			ListenerAsyncResult ares = asyncResult as ListenerAsyncResult;
+			XListenerAsyncResult ares = asyncResult as XListenerAsyncResult;
 			if (ares == null)
 				throw new ArgumentException ("Wrong IAsyncResult.", "asyncResult");
 			if (ares.EndCalled)
@@ -390,7 +391,7 @@ namespace System.Net {
 			if (prefixes.Count == 0)
 				throw new InvalidOperationException ("Please, call AddPrefix before using this method.");
 
-			ListenerAsyncResult ares = (ListenerAsyncResult) BeginGetContext (null, null);
+			XListenerAsyncResult ares = (XListenerAsyncResult) BeginGetContext (null, null);
 			ares.InGet = true;
 			return EndGetContext (ares);
 		}
@@ -448,13 +449,13 @@ namespace System.Net {
 			lock (registry)
 				registry [context] = context;
 
-			ListenerAsyncResult ares = null;
+			XListenerAsyncResult ares = null;
 			lock (wait_queue) {
 				if (wait_queue.Count == 0) {
 					lock (ctx_queue)
 						ctx_queue.Add (context);
 				} else {
-					ares = (ListenerAsyncResult) wait_queue [0];
+					ares = (XListenerAsyncResult) wait_queue [0];
 					wait_queue.RemoveAt (0);
 				}
 			}
