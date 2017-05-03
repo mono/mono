@@ -42,6 +42,7 @@ System.IO/RenamedEventHandler.cs
 System.IO/WaitForChangedResult.cs
 System.IO/WatcherChangeTypes.cs
 
+Mono.Net/Dummy.cs
 Mono.Net/RequestStream.cs
 Mono.Net/ResponseStream.cs
 Mono.Net/ChunkedInputStream.cs

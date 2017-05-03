@@ -46,7 +46,10 @@ using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using Mono.Net;
+
+using XChunkedInputStream = Mono.Net.ChunkedInputStream;
+using XRequestStream = Mono.Net.RequestStream;
+using XResponseStream = Mono.Net.ResponseStream;
 
 namespace System.Net {
 	sealed class HttpConnection
@@ -61,8 +64,8 @@ namespace System.Net {
 		HttpListenerContext context;
 		StringBuilder current_line;
 		ListenerPrefix prefix;
-		RequestStream i_stream;
-		ResponseStream o_stream;
+		XRequestStream i_stream;
+		XResponseStream o_stream;
 		bool chunked;
 		int reuses;
 		bool context_bound;
@@ -182,7 +185,7 @@ namespace System.Net {
 			}
 		}
 
-		public RequestStream GetRequestStream (bool chunked, long contentlength)
+		internal XRequestStream GetRequestStream (bool chunked, long contentlength)
 		{
 			if (i_stream == null) {
 				byte [] buffer = ms.GetBuffer ();
@@ -191,24 +194,24 @@ namespace System.Net {
 				if (chunked) {
 					this.chunked = true;
 					context.Response.SendChunked = true;
-					i_stream = new ChunkedInputStream (context, stream, buffer, position, length - position);
+					i_stream = new XChunkedInputStream (context, stream, buffer, position, length - position);
 				} else {
-					i_stream = new RequestStream (stream, buffer, position, length - position, contentlength);
+					i_stream = new XRequestStream (stream, buffer, position, length - position, contentlength);
 				}
 			}
 			return i_stream;
 		}
 
-		public ResponseStream GetResponseStream ()
+		internal XResponseStream GetResponseStream ()
 		{
 			// TODO: can we get this stream before reading the input?
 			if (o_stream == null) {
 				HttpListener listener = context.Listener;
 				
 				if(listener == null)
-					return new ResponseStream (stream, context.Response, true);
+					return new XResponseStream (stream, context.Response, true);
 
-				o_stream = new ResponseStream (stream, context.Response, listener.IgnoreWriteExceptions);
+				o_stream = new XResponseStream (stream, context.Response, listener.IgnoreWriteExceptions);
 			}
 			return o_stream;
 		}

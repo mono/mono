@@ -38,7 +38,8 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Security.Authentication.ExtendedProtection;
 using System.Threading.Tasks;
-using Mono.Net;
+
+using XResponseStream = Mono.Net.ResponseStream;
 
 namespace System.Net {
 	public sealed class HttpListenerRequest
@@ -254,7 +255,7 @@ namespace System.Net {
 			}
 
 			if (String.Compare (Headers ["Expect"], "100-continue", StringComparison.OrdinalIgnoreCase) == 0) {
-				ResponseStream output = context.Connection.GetResponseStream ();
+				XResponseStream output = context.Connection.GetResponseStream ();
 				output.InternalWrite (_100continue, 0, _100continue.Length);
 			}
 		}

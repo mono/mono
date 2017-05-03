@@ -31,8 +31,11 @@
 using System.Globalization;
 using System.IO;
 using System.Text;
-using Mono.Net;
+
+using XResponseStream = Mono.Net.ResponseStream;
+
 namespace System.Net {
+
 	public sealed class HttpListenerResponse : IDisposable
 	{
 		bool disposed;
@@ -43,7 +46,7 @@ namespace System.Net {
 		CookieCollection cookies;
 		WebHeaderCollection headers = new WebHeaderCollection ();
 		bool keep_alive = true;
-		ResponseStream output_stream;
+		XResponseStream output_stream;
 		Version version = HttpVersion.Version11;
 		string location;
 		int status_code = 200;
