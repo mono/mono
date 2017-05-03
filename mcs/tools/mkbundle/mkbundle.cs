@@ -1458,8 +1458,9 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		}
 		if (aot_dedup_assembly != null) {
 			string fileName = files [(int) aot_dedup_assembly];
-			string path = LocateFile (new Uri (fileName).LocalPath);
-			dedup_mode_string = String.Format (",dedup-include={0}", path);
+			var filePath = new Uri (fileName).LocalPath;
+			string path = LocateFile (filePath);
+			dedup_mode_string = String.Format (",dedup-include={0}", Path.GetFileName(filePath));
 			string outPath = String.Format ("{0}.aot_out", path);
 			Execute (String.Format ("{0} --aot={1},outfile={2}{3}{4} {5} {6}",
 				aot_runtime, aot_args, outPath, aot_mode_string, dedup_mode_string, path, all_assemblies.ToString ()));
