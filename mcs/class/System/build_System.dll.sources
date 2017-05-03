@@ -1,3 +1,2 @@
-#include common_full.sources
+#include basic_System.dll.sources
 
-System.Net.Security/SslStream.platformnotsupported.cs

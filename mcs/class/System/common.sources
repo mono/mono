@@ -302,7 +302,6 @@ Mono.Net.Security/MobileTlsContext.cs
 Mono.Net.Security/LegacyTlsProvider.cs
 Mono.Net.Security/MonoTlsProviderFactory.cs
 Mono.Net.Security/MonoTlsStream.cs
-Mono.Net.Security/NoReflectionHelper.cs
 Mono.Net.Security/SystemCertificateValidator.cs
 
 Mono.Util/MonoPInvokeCallbackAttribute.cs
