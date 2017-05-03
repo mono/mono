@@ -28,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP
+#if SECURITY_DEP && MONO_FEATURE_HTTPLISTENER
 using System;
 using System.Net;
 using System.Threading;

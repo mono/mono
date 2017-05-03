@@ -113,7 +113,7 @@ namespace Mono.Net.Security
 
 		internal static object CreateHttpListener (object certificate, object provider, object settings)
 		{
-			#if SECURITY_DEP
+			#if SECURITY_DEP && MONO_FEATURE_HTTPLISTENER
 			return new HttpListener ((X509Certificate)certificate, (MSI.MonoTlsProvider)provider, (MSI.MonoTlsSettings)settings);
 			#else
 			throw new NotSupportedException ();
@@ -129,13 +129,13 @@ namespace Mono.Net.Security
 			#endif
 		}
 
-		internal static object GetMonoSslStream (HttpListenerContext context)
+		internal static object GetMonoSslStream (object context)
 		{
-#if SECURITY_DEP
-			return context.Connection.SslStream?.Impl;
-#else
+			#if SECURITY_DEP && MONO_FEATURE_HTTPLISTENER
+			return ((HttpListenerContext)context).Connection.SslStream?.Impl;
+			#else
 			throw new NotSupportedException ();
-#endif
+			#endif
 		}
 
 		internal static bool IsProviderSupported (string name)

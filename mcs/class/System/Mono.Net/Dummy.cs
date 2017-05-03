@@ -18,5 +18,4 @@ namespace System.Net {
 	static class RequestStream { }
 
 	static class ResponseStream { }
-
 }

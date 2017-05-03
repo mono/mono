@@ -25,7 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if SECURITY_DEP || EMBEDDED_IN_1_0
+#if SECURITY_DEP && MONO_FEATURE_HTTPLISTENER
 
 using System.Collections;
 using System.Collections.Generic;
@@ -35,14 +35,8 @@ using XEndPointListener = Mono.Net.EndPointListener;
 using XListenerPrefix = Mono.Net.ListenerPrefix;
 
 namespace System.Net {
-#if EMBEDDED_IN_1_0
-	public class HttpListenerPrefixCollection : IEnumerable, ICollection {
-		ArrayList prefixes;
-		
-#else
 	public class HttpListenerPrefixCollection : ICollection<string>, IEnumerable<string>, IEnumerable {
 		List<string> prefixes = new List<string> ();
-#endif
 		HttpListener listener;
 
 		internal HttpListenerPrefixCollection (HttpListener listener)
@@ -100,13 +94,6 @@ namespace System.Net {
 			((ICollection) prefixes).CopyTo (array, offset);
 		}
 
-#if !EMBEDDED_IN_1_0
-		public IEnumerator<string> GetEnumerator ()
-		{
-			return prefixes.GetEnumerator ();
-		}
-#endif
-	
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
 			return prefixes.GetEnumerator ();
