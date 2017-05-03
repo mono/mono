@@ -703,7 +703,6 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/_TimerThread.cs
 ../referencesource/System/net/System/Net/_WebProxyDataBuilder.cs
 ../referencesource/System/net/System/Net/AuthenticationScheme.cs
-../referencesource/System/net/System/Net/AuthenticationSchemeSelector.cs
 ../referencesource/System/net/System/Net/Authorization.cs
 ../referencesource/System/net/System/Net/CredentialCache.cs
 ../referencesource/System/net/System/Net/cookie.cs
@@ -970,6 +969,8 @@ corefx/SR.cs
 
 ../../../external/corefx/src/System.Net.HttpListener/src/System/Net/WebSockets/HttpListenerWebSocketContext.cs
 
+../../../external/corefx/src/System.Net.HttpListener/src/System/Net/AuthenticationSchemeSelector.cs
+../../../external/corefx/src/System.Net.HttpListener/src/System/Net/AuthenticationTypes.cs
 ../../../external/corefx/src/System.Net.HttpListener/src/System/Net/HttpListenerException.cs
 ../../../external/corefx/src/System.Net.HttpListener/src/System/Net/HttpListenerRequestUriBuilder.cs
 ../../../external/corefx/src/System.Net.HttpListener/src/System/Net/HttpListenerBasicIdentity.cs
