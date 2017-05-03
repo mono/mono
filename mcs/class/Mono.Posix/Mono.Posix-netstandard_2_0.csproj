@@ -11,6 +11,10 @@
     <IntermediateOutputPath>obj-netstandard2.0</IntermediateOutputPath>-->
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(ForceUseLibC)' == 'true'">
+    <DefineConstants>FORCE_USE_LIBC_NOT_MSVC</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="**\*.cs" />
     <Compile Include=".\Assembly\**\*.cs" />

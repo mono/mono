@@ -380,7 +380,7 @@ namespace Mono.Unix.Native {
 	//
 	public class Stdlib
 	{
-#if NETSTANDARD2_0
+#if FORCE_USE_LIBC_NOT_MSVC
 		internal const string LIBC = "c";
 #else
 		internal const string LIBC = "msvcrt";
