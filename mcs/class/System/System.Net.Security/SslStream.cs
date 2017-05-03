@@ -24,8 +24,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if SECURITY_DEP
-
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 #endif
@@ -389,82 +387,3 @@ namespace System.Net.Security
 		}
 	}
 }
-#else // !SECURITY_DEP
-
-using System.IO;
-using System.Threading.Tasks;
-
-namespace System.Net.Security
-{
-	public class SslStream : Stream
-	{
-		public SslStream (object innerStream)
-		{
-		}
-
-		public override bool CanRead {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public override bool CanSeek {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public override bool CanWrite {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public override long Length {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public override long Position {
-			get {
-				throw new NotImplementedException ();
-			}
-
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public override void Flush ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override int Read (System.Byte [] buffer, int offset, int count)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override long Seek (long offset, SeekOrigin origin)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override void SetLength (long value)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override void Write (System.Byte [] buffer, int offset, int count)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public virtual Task AuthenticateAsClientAsync (string targetHost, object clientCertificates, object enabledSslProtocols, bool checkCertificateRevocation)
-		{
-			throw new NotImplementedException ();
-		}
-	}
-}
-#endif

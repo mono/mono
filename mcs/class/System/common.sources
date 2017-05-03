@@ -144,7 +144,6 @@ System.Net.Security/LocalCertificateSelectionCallback.cs
 System.Net.Security/NegotiateStream.cs
 System.Net.Security/RemoteCertificateValidationCallback.cs
 System.Net.Security/SslPolicyErrors.cs
-System.Net.Security/SslStream.cs
 
 System.Net.Sockets/SafeSocketHandle.cs
 System.Net.Sockets/Socket.cs
