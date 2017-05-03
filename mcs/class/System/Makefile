@@ -118,6 +118,8 @@ endif
 
 EXTRA_DISTFILES = \
 	common.sources					\
+	common_full.sources				\
+	security-dep.sources			\
 	Test/test-config-file				\
 	Test/System.Security.Cryptography.X509Certificates/pkits/Makefile	\
 	Test/System.Security.Cryptography.X509Certificates/pkits/README		\
