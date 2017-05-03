@@ -28,8 +28,10 @@
 //
 
 #if SECURITY_DEP
+using System;
+using System.Net;
 
-namespace System.Net {
+namespace Mono.Net {
 	sealed class ListenerPrefix
 	{
 		string original;

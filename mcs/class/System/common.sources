@@ -43,11 +43,14 @@ System.IO/WaitForChangedResult.cs
 System.IO/WatcherChangeTypes.cs
 
 Mono.Net/Dummy.cs
-Mono.Net/RequestStream.cs
-Mono.Net/ResponseStream.cs
 Mono.Net/ChunkedInputStream.cs
 Mono.Net/ChunkStream.cs
+Mono.Net/EndPointListener.cs
+Mono.Net/EndPointManager.cs
 Mono.Net/HttpStreamAsyncResult.cs
+Mono.Net/ListenerPrefix.cs
+Mono.Net/RequestStream.cs
+Mono.Net/ResponseStream.cs
 
 System.Net/AuthenticationManager.cs
 System.Net/BasicClient.cs
@@ -56,8 +59,6 @@ System.Net/DecompressionMethods.cs
 System.Net/DefaultCertificatePolicy.cs
 System.Net/DigestClient.cs
 System.Net/Dns.cs
-System.Net/EndPointListener.cs
-System.Net/EndPointManager.cs
 System.Net/EndpointPermission.cs
 System.Net/FtpAsyncResult.cs
 System.Net/FtpDataStream.cs
@@ -81,7 +82,6 @@ System.Net/IPv6Address.cs
 System.Net/IWebConnectionState.cs
 System.Net/IWebProxyScript.cs
 System.Net/ListenerAsyncResult.cs
-System.Net/ListenerPrefix.cs
 System.Net/MacProxy.cs
 System.Net/MonoHttpDate.cs
 System.Net/NetConfig.cs

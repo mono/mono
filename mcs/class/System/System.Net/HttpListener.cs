@@ -47,6 +47,13 @@ using System.Security.Authentication.ExtendedProtection;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
+using XChunkedInputStream = Mono.Net.ChunkedInputStream;
+using XRequestStream = Mono.Net.RequestStream;
+using XResponseStream = Mono.Net.ResponseStream;
+using XEndPointManager = Mono.Net.EndPointManager;
+using XEndPointListener = Mono.Net.EndPointListener;
+using XListenerPrefix = Mono.Net.ListenerPrefix;
+
 //TODO: logging
 namespace System.Net {
 	public sealed class HttpListener : IDisposable {
@@ -275,7 +282,7 @@ namespace System.Net {
 		void Close (bool force)
 		{
 			CheckDisposed ();
-			EndPointManager.RemoveListener (this);
+			XEndPointManager.RemoveListener (this);
 			Cleanup (force);
 		}
 
@@ -393,7 +400,7 @@ namespace System.Net {
 			if (listening)
 				return;
 
-			EndPointManager.AddListener (this);
+			XEndPointManager.AddListener (this);
 			listening = true;
 		}
 

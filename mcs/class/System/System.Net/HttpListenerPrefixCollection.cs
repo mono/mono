@@ -29,6 +29,11 @@
 
 using System.Collections;
 using System.Collections.Generic;
+
+using XEndPointManager = Mono.Net.EndPointManager;
+using XEndPointListener = Mono.Net.EndPointListener;
+using XListenerPrefix = Mono.Net.ListenerPrefix;
+
 namespace System.Net {
 #if EMBEDDED_IN_1_0
 	public class HttpListenerPrefixCollection : IEnumerable, ICollection {
@@ -60,13 +65,13 @@ namespace System.Net {
 		public void Add (string uriPrefix)
 		{
 			listener.CheckDisposed ();
-			ListenerPrefix.CheckUri (uriPrefix);
+			XListenerPrefix.CheckUri (uriPrefix);
 			if (prefixes.Contains (uriPrefix))
 				return;
 
 			prefixes.Add (uriPrefix);
 			if (listener.IsListening)
-				EndPointManager.AddPrefix (uriPrefix, listener);
+				XEndPointManager.AddPrefix (uriPrefix, listener);
 		}
 
 		public void Clear ()
@@ -74,7 +79,7 @@ namespace System.Net {
 			listener.CheckDisposed ();
 			prefixes.Clear ();
 			if (listener.IsListening)
-				EndPointManager.RemoveListener (listener);
+				XEndPointManager.RemoveListener (listener);
 		}
 
 		public bool Contains (string uriPrefix)
@@ -115,7 +120,7 @@ namespace System.Net {
 
 			bool result = prefixes.Remove (uriPrefix);
 			if (result && listener.IsListening)
-				EndPointManager.RemovePrefix (uriPrefix, listener);
+				XEndPointManager.RemovePrefix (uriPrefix, listener);
 
 			return result;
 		}

@@ -50,6 +50,9 @@ using System.Security.Cryptography.X509Certificates;
 using XChunkedInputStream = Mono.Net.ChunkedInputStream;
 using XRequestStream = Mono.Net.RequestStream;
 using XResponseStream = Mono.Net.ResponseStream;
+using XEndPointManager = Mono.Net.EndPointManager;
+using XEndPointListener = Mono.Net.EndPointListener;
+using XListenerPrefix = Mono.Net.ListenerPrefix;
 
 namespace System.Net {
 	sealed class HttpConnection
@@ -58,12 +61,12 @@ namespace System.Net {
 		const int BufferSize = 8192;
 		Socket sock;
 		Stream stream;
-		EndPointListener epl;
+		XEndPointListener epl;
 		MemoryStream ms;
 		byte [] buffer;
 		HttpListenerContext context;
 		StringBuilder current_line;
-		ListenerPrefix prefix;
+		XListenerPrefix prefix;
 		XRequestStream i_stream;
 		XResponseStream o_stream;
 		bool chunked;
@@ -79,7 +82,7 @@ namespace System.Net {
 		X509Certificate2 client_cert;
 		SslStream ssl_stream;
 
-		public HttpConnection (Socket sock, EndPointListener epl, bool secure, X509Certificate cert)
+		internal HttpConnection (Socket sock, XEndPointListener epl, bool secure, X509Certificate cert)
 		{
 			this.sock = sock;
 			this.epl = epl;
@@ -158,7 +161,7 @@ namespace System.Net {
 			get { return secure; }
 		}
 
-		public ListenerPrefix Prefix {
+		internal XListenerPrefix Prefix {
 			get { return prefix; }
 			set { prefix = value; }
 		}

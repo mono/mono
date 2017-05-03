@@ -36,7 +36,9 @@ using MonoSecurity::Mono.Security.Authenticode;
 using Mono.Security.Authenticode;
 #endif
 
+using System;
 using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Collections;
 using System.Collections.Generic;
@@ -44,7 +46,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 
-namespace System.Net {
+namespace Mono.Net {
 	sealed class EndPointListener
 	{
 		HttpListener listener;

@@ -18,4 +18,16 @@ namespace System.Net {
 	static class HttpStreamAsyncResult {
 		
 	}
+
+	static class ListenerPrefix {
+		
+	}
+
+	static class EndPointListener {
+		
+	}
+
+	static class EndPointManager {
+		
+	}
 }
