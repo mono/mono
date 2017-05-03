@@ -234,18 +234,6 @@ int GC_thread_unregister_foreign ()
   LONG my_max;
 
   LOCK ();
-  my_max = GC_get_max_thread_index ();
-  for (i = 0;
-       i <= my_max &&
-       (!thread_table[i].in_use || thread_table[i].id != thread_id);
-       /* Must still be in_use, since nobody else can store our thread_id. */
-       i++) {}
-  if (i > my_max) {
-    WARN("Deregistering nonexistent thread %ld\n", (GC_word)thread_id);
-	  UNLOCK ();
-	  return FALSE;
-  }
-
   GC_delete_thread (thread_id);
   UNLOCK ();
   return TRUE;
