@@ -42,11 +42,14 @@ System.IO/RenamedEventHandler.cs
 System.IO/WaitForChangedResult.cs
 System.IO/WatcherChangeTypes.cs
 
+Mono.Net/RequestStream.cs
+Mono.Net/ResponseStream.cs
+Mono.Net/ChunkedInputStream.cs
+Mono.Net/ChunkStream.cs
+
 System.Net/AuthenticationManager.cs
 System.Net/BasicClient.cs
 System.Net/BindIPEndPoint.cs
-System.Net/ChunkedInputStream.cs
-System.Net/ChunkStream.cs
 System.Net/DecompressionMethods.cs
 System.Net/DefaultCertificatePolicy.cs
 System.Net/DigestClient.cs
@@ -82,8 +85,6 @@ System.Net/MacProxy.cs
 System.Net/MonoHttpDate.cs
 System.Net/NetConfig.cs
 System.Net/NtlmClient.cs
-System.Net/RequestStream.cs
-System.Net/ResponseStream.cs
 System.Net/ServicePoint.cs
 System.Net/ServicePointManager.cs
 System.Net/ServicePointManager.extra.cs
