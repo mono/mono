@@ -194,6 +194,57 @@ mono_set_assemblies_path (const char* path)
 	}
 }
 
+/**
+* mono_set_assemblies_path_null_separated:
+* @path: list of paths that contain directories where Mono will look for assemblies
+*
+* Use this method to override the standard assembly lookup system and
+* override any assemblies coming from the GAC.  This is the method
+* that supports the MONO_PATH variable.
+*
+* Notice that MONO_PATH and this method are really a very bad idea as
+* it prevents the GAC from working and it prevents the standard
+* resolution mechanisms from working.  Nonetheless, for some debugging
+* situations and bootstrapping setups, this is useful to have.
+*/
+void
+mono_set_assemblies_path_null_separated(const char* path)
+{
+    char **dest, **print_assembly_str;
+    char *current_path, *path_count_ptr;
+    int numPaths = 0;
+    
+    path_count_ptr = path;
+    while (*path_count_ptr)
+    {
+        path_count_ptr += strlen(path_count_ptr) + 1;
+        numPaths++;
+    }
+    dest = g_new(char**, sizeof(char*) * (numPaths + 1));
+
+    if (assemblies_path)
+        g_strfreev(assemblies_path);
+    assemblies_path = dest;
+    current_path = path;
+    while (*current_path)
+    {
+        *dest++ = mono_path_canonicalize(current_path);
+        current_path += strlen(current_path) + 1;
+    }
+    *dest = NULL;
+
+    if (g_getenv("MONO_DEBUG") == NULL)
+        return;
+
+    print_assembly_str = assemblies_path;
+    while (*print_assembly_str) {
+        if (**print_assembly_str && !g_file_test(*print_assembly_str, G_FILE_TEST_IS_DIR))
+            g_warning("'%s' in MONO_PATH doesn't exist or has wrong permissions.", *print_assembly_str);
+
+        print_assembly_str++;
+    }
+}
+
 static void
 check_path_env (void)
 {
