@@ -31,6 +31,7 @@
 using System.Globalization;
 using System.IO;
 using System.Text;
+using Mono.Net;
 namespace System.Net {
 	public sealed class HttpListenerResponse : IDisposable
 	{

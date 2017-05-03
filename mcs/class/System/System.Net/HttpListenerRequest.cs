@@ -38,7 +38,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Security.Authentication.ExtendedProtection;
 using System.Threading.Tasks;
-using System.Net;
+using Mono.Net;
 
 namespace System.Net {
 	public sealed class HttpListenerRequest

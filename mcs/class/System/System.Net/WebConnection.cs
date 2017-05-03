@@ -35,6 +35,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Diagnostics;
+using Mono.Net;
 using Mono.Net.Security;
 
 namespace System.Net
