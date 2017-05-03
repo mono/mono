@@ -26,8 +26,10 @@ net_4_5_dirs := \
 	pdb2mdb		\
 	sqlsharp	\
 	sqlmetal	\
+	svcutil		\
 	ictool		\
 	disco		\
+	soapsuds	\
 	browsercaps-updater	\
 	cil-strip	\
 	macpack		\

@@ -209,6 +209,7 @@ net_4_x_dirs := \
 	System.Web			\
 	System.Web.Services		\
 	System.Design			\
+	System.Runtime.Remoting		\
 	System.Configuration.Install 	\
 	System.Management		\
 	System.Data.OracleClient	\
@@ -232,13 +233,33 @@ net_4_x_dirs := \
 	System.Runtime.DurableInstancing \
 	System.IdentityModel		\
 	System.IdentityModel.Selectors	\
+	System.ServiceModel		\
+	System.Web.Extensions		\
+	System.Web.Extensions.Design	\
+	System.Web.DynamicData		\
 	Mono.CSharp			\
 	System.Net			\
 	System.Json		\
 	Microsoft.CSharp	\
 	System.Xaml \
 	WindowsBase \
-	System.Runtime.Caching
+	System.ServiceModel.Activation \
+	System.ServiceModel.Routing \
+	System.ServiceModel.Discovery \
+	System.Runtime.Caching \
+	Microsoft.Web.Infrastructure \
+	System.ServiceModel.Web \
+	System.Net.Http	\
+	System.Net.Http.WebRequest \
+	System.Web.Razor \
+	System.Web.WebPages.Deployment \
+	System.Web.WebPages \
+	System.Web.WebPages.Razor \
+	System.Web.Mvc3 \
+	System.Net.Http.Formatting \
+	System.Web.Http \
+	System.Web.Http.SelfHost \
+	System.Web.Http.WebHost
 
 # These are the subdirs which depends on libs in net_4_x_dirs
 # or have proper dependencies between each other
@@ -273,10 +294,15 @@ net_4_x_parallel_dirs := \
 	System.Reactive.Observable.Aliases \
 	System.Reactive.Experimental \
 	System.Reactive.Debugger \
+	System.Data.Services.Client	\
+	System.Data.Services \
+	System.Data.Entity \
+	System.Data.DataSetExtensions	\
 	System.Json.Microsoft \
 	System.Threading.Tasks.Dataflow \
 	System.ComponentModel.Composition.4.5 \
 	System.Windows \
+	System.Xml.Serialization \
 	System.DirectoryServices.Protocols	\
 	RabbitMQ.Client			\
 	Microsoft.VisualC		\
