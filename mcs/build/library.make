@@ -42,7 +42,7 @@ $(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(topdir)/build/gensources
 	$(SHELL) $(topdir)/build/gensources.sh $@ '$(PROFILE_sources)' '$(PROFILE_excludes)'
 endif
 
-PLATFORM_excludes := $(wildcard $(LIBRARY).$(PLATFORM)-excludes)
+PLATFORM_excludes := $(wildcard $(LIBRARY).$(BUILD_PLATFORM)-excludes)
 
 ifndef PLATFORM_excludes
 ifeq (cat,$(PLATFORM_CHANGE_SEPARATOR_CMD))
@@ -110,7 +110,7 @@ SN = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARA
 endif
 endif
 
-ifeq ($(PLATFORM), win32)
+ifeq ($(BUILD_PLATFORM), win32)
 GACDIR = `cygpath -w $(mono_libdir)`
 GACROOT = `cygpath -w $(DESTDIR)$(mono_libdir)`
 test_flags += -d:WINDOWS

@@ -6,12 +6,12 @@ Peter Williams <peter@newton.cx>
 It's pretty easy. You can create two files in this directory to tweak
 settings: pre-config.make and config.make.
 
-pre-config.make is included before $(PLATFORM).make and
+pre-config.make is included before $(BUILD_PLATFORM).make and
 $(PROFILE).make, so you can set either of these variables if you want
 to change the default.
 
 Just about any other change should go in config.make, which is
-included after $(PLATFORM).make and $(PROFILE).make, so you can use
+included after $(BUILD_PLATFORM).make and $(PROFILE).make, so you can use
 the values defined in those files if you wish. For example,
 
     MCS_FLAGS = $(DEFAULT_MCS_FLAGS) /my-experimental-optimizer-flag
