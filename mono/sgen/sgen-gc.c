@@ -233,6 +233,7 @@ static gboolean disable_minor_collections = FALSE;
 static gboolean disable_major_collections = FALSE;
 static gboolean do_verify_nursery = FALSE;
 static gboolean do_dump_nursery_content = FALSE;
+static gboolean do_dump_on_oom = FALSE;
 static gboolean enable_nursery_canaries = FALSE;
 
 static gboolean precleaning_enabled = TRUE;
@@ -324,6 +325,12 @@ gboolean
 nursery_canaries_enabled (void)
 {
 	return enable_nursery_canaries;
+}
+
+gboolean
+dump_on_oom_enabled (void)
+{
+	return do_dump_on_oom;
 }
 
 #define safe_object_get_size	sgen_safe_object_get_size
@@ -3339,6 +3346,8 @@ sgen_gc_init (void)
 				do_concurrent_checks = TRUE;
 			} else if (!strcmp (opt, "dump-nursery-at-minor-gc")) {
 				do_dump_nursery_content = TRUE;
+			} else if (!strcmp (opt, "dump-on-oom")) {
+				do_dump_on_oom = TRUE;
 			} else if (!strcmp (opt, "disable-minor")) {
 				disable_minor_collections = TRUE;
 			} else if (!strcmp (opt, "disable-major")) {
@@ -3379,6 +3388,7 @@ sgen_gc_init (void)
 				fprintf (stderr, "  verify-before-collections\n");
 				fprintf (stderr, "  verify-nursery-at-minor-gc\n");
 				fprintf (stderr, "  dump-nursery-at-minor-gc\n");
+				fprintf (stderr, "  dump-on-oom\n");
 				fprintf (stderr, "  disable-minor\n");
 				fprintf (stderr, "  disable-major\n");
 				fprintf (stderr, "  check-concurrent\n");
