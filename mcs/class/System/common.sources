@@ -62,7 +62,6 @@ System.Net/FtpWebRequest.cs
 System.Net/FtpWebResponse.cs
 System.Net/HttpConnection.cs
 System.Net/HttpListener.cs
-System.Net/HttpListenerBasicIdentity.cs
 System.Net/HttpListenerContext.cs
 System.Net/HttpListenerPrefixCollection.cs
 System.Net/HttpListenerRequest.cs
@@ -716,8 +715,6 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/filewebrequest.cs
 ../referencesource/System/net/System/Net/filewebresponse.cs
 ../referencesource/System/net/System/Net/GlobalProxySelection.cs
-../referencesource/System/net/System/Net/HttpListenerException.cs
-../referencesource/System/net/System/Net/HttpListenerRequestUriBuilder.cs
 ../referencesource/System/net/System/Net/HttpRequestHeader.cs
 ../referencesource/System/net/System/Net/HttpResponseHeader.cs
 ../referencesource/System/net/System/Net/HttpStatusCode.cs
@@ -970,6 +967,10 @@ corefx/SR.cs
 ../../../external/corefx/src/System.Net.WebSockets.Client/src/System/Net/WebSockets/WebSocketHandle.Managed.cs
 
 ../../../external/corefx/src/System.Net.HttpListener/src/System/Net/WebSockets/HttpListenerWebSocketContext.cs
+
+../../../external/corefx/src/System.Net.HttpListener/src/System/Net/HttpListenerException.cs
+../../../external/corefx/src/System.Net.HttpListener/src/System/Net/HttpListenerRequestUriBuilder.cs
+../../../external/corefx/src/System.Net.HttpListener/src/System/Net/HttpListenerBasicIdentity.cs
 
 ../../../external/corefx/src/System.Private.Uri/src/System/UriBuilder.cs
 
