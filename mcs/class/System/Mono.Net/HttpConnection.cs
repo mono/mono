@@ -38,7 +38,9 @@ using MSI = MonoSecurity::Mono.Security.Interface;
 using MSI = Mono.Security.Interface;
 #endif
 
+using System;
 using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -47,28 +49,21 @@ using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
-using XChunkedInputStream = Mono.Net.ChunkedInputStream;
-using XRequestStream = Mono.Net.RequestStream;
-using XResponseStream = Mono.Net.ResponseStream;
-using XEndPointManager = Mono.Net.EndPointManager;
-using XEndPointListener = Mono.Net.EndPointListener;
-using XListenerPrefix = Mono.Net.ListenerPrefix;
-
-namespace System.Net {
+namespace Mono.Net {
 	sealed class HttpConnection
 	{
 		static AsyncCallback onread_cb = new AsyncCallback (OnRead);
 		const int BufferSize = 8192;
 		Socket sock;
 		Stream stream;
-		XEndPointListener epl;
+		EndPointListener epl;
 		MemoryStream ms;
 		byte [] buffer;
 		HttpListenerContext context;
 		StringBuilder current_line;
-		XListenerPrefix prefix;
-		XRequestStream i_stream;
-		XResponseStream o_stream;
+		ListenerPrefix prefix;
+		RequestStream i_stream;
+		ResponseStream o_stream;
 		bool chunked;
 		int reuses;
 		bool context_bound;
@@ -82,7 +77,7 @@ namespace System.Net {
 		X509Certificate2 client_cert;
 		SslStream ssl_stream;
 
-		internal HttpConnection (Socket sock, XEndPointListener epl, bool secure, X509Certificate cert)
+		internal HttpConnection (Socket sock, EndPointListener epl, bool secure, X509Certificate cert)
 		{
 			this.sock = sock;
 			this.epl = epl;
@@ -161,7 +156,7 @@ namespace System.Net {
 			get { return secure; }
 		}
 
-		internal XListenerPrefix Prefix {
+		internal ListenerPrefix Prefix {
 			get { return prefix; }
 			set { prefix = value; }
 		}
@@ -188,7 +183,7 @@ namespace System.Net {
 			}
 		}
 
-		internal XRequestStream GetRequestStream (bool chunked, long contentlength)
+		internal RequestStream GetRequestStream (bool chunked, long contentlength)
 		{
 			if (i_stream == null) {
 				byte [] buffer = ms.GetBuffer ();
@@ -197,24 +192,24 @@ namespace System.Net {
 				if (chunked) {
 					this.chunked = true;
 					context.Response.SendChunked = true;
-					i_stream = new XChunkedInputStream (context, stream, buffer, position, length - position);
+					i_stream = new ChunkedInputStream (context, stream, buffer, position, length - position);
 				} else {
-					i_stream = new XRequestStream (stream, buffer, position, length - position, contentlength);
+					i_stream = new RequestStream (stream, buffer, position, length - position, contentlength);
 				}
 			}
 			return i_stream;
 		}
 
-		internal XResponseStream GetResponseStream ()
+		internal ResponseStream GetResponseStream ()
 		{
 			// TODO: can we get this stream before reading the input?
 			if (o_stream == null) {
 				HttpListener listener = context.Listener;
 				
 				if(listener == null)
-					return new XResponseStream (stream, context.Response, true);
+					return new ResponseStream (stream, context.Response, true);
 
-				o_stream = new XResponseStream (stream, context.Response, listener.IgnoreWriteExceptions);
+				o_stream = new ResponseStream (stream, context.Response, listener.IgnoreWriteExceptions);
 			}
 			return o_stream;
 		}

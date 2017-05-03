@@ -47,6 +47,7 @@ Mono.Net/ChunkedInputStream.cs
 Mono.Net/ChunkStream.cs
 Mono.Net/EndPointListener.cs
 Mono.Net/EndPointManager.cs
+Mono.Net/HttpConnection.cs
 Mono.Net/HttpStreamAsyncResult.cs
 Mono.Net/ListenerPrefix.cs
 Mono.Net/RequestStream.cs
@@ -66,7 +67,6 @@ System.Net/FtpRequestCreator.cs
 System.Net/FtpStatus.cs
 System.Net/FtpWebRequest.cs
 System.Net/FtpWebResponse.cs
-System.Net/HttpConnection.cs
 System.Net/HttpListener.cs
 System.Net/HttpListenerContext.cs
 System.Net/HttpListenerPrefixCollection.cs

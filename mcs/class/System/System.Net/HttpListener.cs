@@ -48,6 +48,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
 using XChunkedInputStream = Mono.Net.ChunkedInputStream;
+using XHttpConnection = Mono.Net.HttpConnection;
 using XRequestStream = Mono.Net.RequestStream;
 using XResponseStream = Mono.Net.ResponseStream;
 using XEndPointManager = Mono.Net.EndPointManager;
@@ -301,7 +302,7 @@ namespace System.Net {
 
 				lock (connections.SyncRoot) {
 					ICollection keys = connections.Keys;
-					var conns = new HttpConnection [keys.Count];
+					var conns = new XHttpConnection [keys.Count];
 					keys.CopyTo (conns, 0);
 					connections.Clear ();
 					for (int i = conns.Length - 1; i >= 0; i--)
@@ -472,12 +473,12 @@ namespace System.Net {
 			}
 		}
 
-		internal void AddConnection (HttpConnection cnc)
+		internal void AddConnection (XHttpConnection cnc)
 		{
 			connections [cnc] = cnc;
 		}
 
-		internal void RemoveConnection (HttpConnection cnc)
+		internal void RemoveConnection (XHttpConnection cnc)
 		{
 			connections.Remove (cnc);
 		}

@@ -386,7 +386,7 @@ namespace System.Net {
 
 		public int ClientCertificateError {
 			get {
-				HttpConnection cnc = context.Connection;
+				var cnc = context.Connection;
 				if (cnc.ClientCertificate == null)
 					throw new InvalidOperationException ("No client certificate");
 				int [] errors = cnc.ClientCertificateErrors;
