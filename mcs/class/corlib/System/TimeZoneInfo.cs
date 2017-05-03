@@ -152,7 +152,7 @@ namespace System
 #if !MONODROID && !MONOTOUCH && !XAMMAC
 		static TimeZoneInfo CreateLocal ()
 		{
-#if (!FULL_AOT_DESKTOP || WIN_PLATFORM) && !XAMMAC_4_5
+#if WIN_PLATFORM
 			if (IsWindows && LocalZoneKey != null) {
 				string name = (string)LocalZoneKey.GetValue ("TimeZoneKeyName");
 				if (name == null)
@@ -206,7 +206,7 @@ namespace System
 
 		static void GetSystemTimeZonesCore (List<TimeZoneInfo> systemTimeZones)
 		{
-#if (!FULL_AOT_DESKTOP || WIN_PLATFORM) && !XAMMAC_4_5
+#if WIN_PLATFORM
 			if (TimeZoneKey != null) {
 				foreach (string id in TimeZoneKey.GetSubKeyNames ()) {
 					try {
