@@ -166,7 +166,7 @@ namespace System.Net {
 }
 #else
 namespace System.Net {
-	public sealed class HttpListenerContext {
+	public sealed partial class HttpListenerContext {
 	}
 }
 #endif

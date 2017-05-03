@@ -488,7 +488,7 @@ namespace System.Net {
 #else // SECURITY_DEP
 namespace System.Net
 {
-	public sealed class HttpListener
+	public sealed partial class HttpListener
 	{
 	}
 }
