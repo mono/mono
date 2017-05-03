@@ -25,9 +25,10 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System;
 using System.Threading;
 
-namespace System.Net {
+namespace Mono.Net {
 	class HttpStreamAsyncResult : IAsyncResult {
 		object locker = new object ();
 		ManualResetEvent handle;

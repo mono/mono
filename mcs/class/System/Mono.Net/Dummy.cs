@@ -14,4 +14,8 @@ namespace System.Net {
 	static class ResponseStream {
 		
 	}
+
+	static class HttpStreamAsyncResult {
+		
+	}
 }

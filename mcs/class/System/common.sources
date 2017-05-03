@@ -47,6 +47,7 @@ Mono.Net/RequestStream.cs
 Mono.Net/ResponseStream.cs
 Mono.Net/ChunkedInputStream.cs
 Mono.Net/ChunkStream.cs
+Mono.Net/HttpStreamAsyncResult.cs
 
 System.Net/AuthenticationManager.cs
 System.Net/BasicClient.cs
@@ -73,7 +74,6 @@ System.Net/HttpListenerResponse.cs
 System.Net/HttpListenerResponseHelper.cs
 System.Net/HttpListenerTimeoutManager.cs
 System.Net/HttpRequestCreator.cs
-System.Net/HttpStreamAsyncResult.cs
 System.Net/HttpWebRequest.cs
 System.Net/HttpWebResponse.cs
 System.Net/ICredentialPolicy.cs
