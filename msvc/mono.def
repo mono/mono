@@ -780,6 +780,7 @@ mono_security_enable_core_clr
 mono_security_set_core_clr_platform_callback
 mono_set_allocator_vtable
 mono_set_assemblies_path
+mono_set_assemblies_path_null_separated
 mono_set_break_policy
 mono_set_config_dir
 mono_set_crash_chaining
