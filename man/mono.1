@@ -311,6 +311,9 @@ Instructs the AOT compiler to emit (or not emit) debug symbol information.
 For more information about AOT, see: http://www.mono-project.com/docs/advanced/aot/
 .RE
 .TP
+\fB--aot-path=PATH\fR
+List of additional directories to search for AOT images.
+.TP
 \fB--apply-bindings=FILE\fR
 Apply the assembly bindings from the specified configuration file when running
 the AOT compiler.  This is useful when compiling an auxiliary assembly that is
@@ -321,6 +324,13 @@ app.exe.config available when compiling lib.dll ahead of time, use:
 	mono --apply-bindings=app.exe.config --aot lib.dll
 .fi
 .TP
+\fB--assembly-loader=MODE\fR
+If mode is \fBstrict\fR, Mono will check that the public key token, culture and version
+of a candidate assembly matches the requested strong name.  If mode is \fBlegacy\fR, as
+long as the name matches, the candidate will be allowed. \fBstrict\fR is the behavior
+consistent with .NET Framework but may break some existing mono-based applications.
+The default is \fBlegacy\fR.
+.TP
 \fB--attach=[options]\fR
 Currently the only option supported by this command line argument is
 \fBdisable\fR which disables the attach functionality.
@@ -330,9 +340,6 @@ Load the specified configuration file instead of the default one(s).
 The default files are /etc/mono/config and ~/.mono/config or the file
 specified in the MONO_CONFIG environment variable, if set.  See the
 mono-config(5) man page for details on the format of this file.
-.TP
-\fB--aot-path=PATH\fR
-List of additional directories to search for AOT images.
 .TP
 \fB--debugger-agent=[options]\fR 
 This instructs the Mono runtime to
