@@ -991,7 +991,7 @@ MONO_API MonoArray*
 mono_unity_array_new_3d (MonoDomain *domain, MonoClass *eklass, size_t size0, size_t size1, size_t size2)
 {
 	MonoError error;
-	uintptr_t sizes[] = { (uintptr_t)size0, (uintptr_t)size1, (uintptr_t)size1 };
+	uintptr_t sizes[] = { (uintptr_t)size0, (uintptr_t)size1, (uintptr_t)size2 };
 	MonoClass* ac = mono_array_class_get (eklass, 3);
 
 	MonoArray* array =  mono_array_new_full_checked (domain, ac, sizes, NULL, &error);
