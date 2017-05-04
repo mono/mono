@@ -1,2 +1,3 @@
 #include common.sources
+#include security_dep.sources
 System.IO/FileSystemWatcher_mobile.cs

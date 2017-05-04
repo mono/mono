@@ -138,14 +138,14 @@ namespace System.Net
 		public const int DefaultPersistentConnectionLimit = 2;
 #endif
 
-#if !MOBILE
+#if !MOBILE && !BOOTSTRAP_BASIC
 		const string configKey = "system.net/connectionManagement";
 		static ConnectionManagementData manager;
 #endif
 		
 		static ServicePointManager ()
 		{
-#if !MOBILE
+#if !MOBILE && !BOOTSTRAP_BASIC
 #if CONFIGURATION_DEP
 			object cfg = ConfigurationManager.GetSection (configKey);
 			ConnectionManagementSection s = cfg as ConnectionManagementSection;
@@ -203,7 +203,7 @@ namespace System.Net
 					throw new ArgumentOutOfRangeException ("value");
 
 				defaultConnectionLimit = value; 
-#if !MOBILE
+#if !MOBILE && !BOOTSTRAP_BASIC
                 if (manager != null)
 					manager.Add ("*", defaultConnectionLimit);
 #endif
@@ -372,7 +372,7 @@ namespace System.Net
 					throw new InvalidOperationException ("maximum number of service points reached");
 
 				int limit;
-#if MOBILE
+#if MOBILE || BOOTSTRAP_BASIC
 				limit = defaultConnectionLimit;
 #else
 				string addr = address.ToString ();

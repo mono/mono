@@ -43,20 +43,20 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Messaging;
 using System.Threading.Tasks;
 
-#if !MOBILE
+#if !MOBILE && !BOOTSTRAP_BASIC
 using Mono.Net.Dns;
 #endif
 
 namespace System.Net {
 	public static class Dns {
-#if !MOBILE
+#if !MOBILE && !BOOTSTRAP_BASIC
 		static bool use_mono_dns;
 		static SimpleResolver resolver;
 #endif
 
 		static Dns ()
 		{
-#if !MOBILE
+#if !MOBILE && !BOOTSTRAP_BASIC
 			if (Environment.GetEnvironmentVariable ("MONO_DNS") != null) {
 				resolver = new SimpleResolver ();
 				use_mono_dns = true;
@@ -64,7 +64,7 @@ namespace System.Net {
 #endif
 		}
 
-#if !MOBILE
+#if !MOBILE && !BOOTSTRAP_BASIC
 		internal static bool UseMonoDns {
 			get { return use_mono_dns; }
 		}
@@ -76,7 +76,7 @@ namespace System.Net {
 		private delegate IPHostEntry GetHostEntryIPCallback (IPAddress hostAddress);
 		private delegate IPAddress [] GetHostAddressesCallback (string hostName);
 
-#if !MOBILE
+#if !MOBILE && !BOOTSTRAP_BASIC
 		static void OnCompleted (object sender, SimpleResolverEventArgs e)
 		{
 			DnsAsyncResult ares = (DnsAsyncResult) e.UserToken;
@@ -136,7 +136,7 @@ namespace System.Net {
 			if (hostName == null)
 				throw new ArgumentNullException ("hostName");
 
-#if !MOBILE
+#if !MOBILE && !BOOTSTRAP_BASIC
 			if (use_mono_dns)
 				return BeginAsyncCall (hostName, requestCallback, stateObject);
 #endif
@@ -155,7 +155,7 @@ namespace System.Net {
 			if (hostName == null)
 				throw new ArgumentNullException ("hostName");
 
-#if !MOBILE
+#if !MOBILE && !BOOTSTRAP_BASIC
 			if (use_mono_dns)
 				return BeginAsyncCall (hostName, requestCallback, stateObject);
 #endif
@@ -175,7 +175,7 @@ namespace System.Net {
 					"cannot use them as target address.",
 					"hostNameOrAddress");
 
-#if !MOBILE
+#if !MOBILE && !BOOTSTRAP_BASIC
 			if (use_mono_dns)
 				return BeginAsyncCallAddresses (hostNameOrAddress, requestCallback, state);
 #endif
@@ -197,7 +197,7 @@ namespace System.Net {
 					"cannot use them as target address.",
 					"hostNameOrAddress");
 
-#if !MOBILE
+#if !MOBILE && !BOOTSTRAP_BASIC
 			if (use_mono_dns)
 				return BeginAsyncCall (hostNameOrAddress, requestCallback, stateObject);
 #endif
@@ -215,7 +215,7 @@ namespace System.Net {
 			if (address == null)
 				throw new ArgumentNullException ("address");
 
-#if !MOBILE
+#if !MOBILE && !BOOTSTRAP_BASIC
 			if (use_mono_dns)
 				return BeginAsyncCall (address.ToString (), requestCallback, stateObject);
 #endif
@@ -231,7 +231,7 @@ namespace System.Net {
 			if (asyncResult == null)
 				throw new ArgumentNullException ("asyncResult");
 
-#if !MOBILE
+#if !MOBILE && !BOOTSTRAP_BASIC
 			if (use_mono_dns)
 				return EndAsyncCall (asyncResult as DnsAsyncResult);
 #endif
@@ -247,7 +247,7 @@ namespace System.Net {
 			if (asyncResult == null)
 				throw new ArgumentNullException ("asyncResult");
 
-#if !MOBILE
+#if !MOBILE && !BOOTSTRAP_BASIC
 			if (use_mono_dns)
 				return EndAsyncCall (asyncResult as DnsAsyncResult);
 #endif
@@ -262,7 +262,7 @@ namespace System.Net {
 			if (asyncResult == null)
 				throw new ArgumentNullException ("asyncResult");
 
-#if !MOBILE
+#if !MOBILE && !BOOTSTRAP_BASIC
 			if (use_mono_dns) {
 				IPHostEntry entry = EndAsyncCall (asyncResult as DnsAsyncResult);
 				if (entry == null)
@@ -281,7 +281,7 @@ namespace System.Net {
 			if (asyncResult == null)
 				throw new ArgumentNullException ("asyncResult");
 
-#if !MOBILE
+#if !MOBILE && !BOOTSTRAP_BASIC
 			if (use_mono_dns)
 				return EndAsyncCall (asyncResult as DnsAsyncResult);
 #endif

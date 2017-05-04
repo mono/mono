@@ -49,12 +49,12 @@ using System.Security.Cryptography;
 
 namespace Mono.Net.Security
 {
-	class MonoTlsStream
-	{
-#if SECURITY_DEP		
+	class MonoTlsStream {
+#if SECURITY_DEP && !BOOTSTRAP_BASIC
 		readonly MonoTlsProvider provider;
-		readonly NetworkStream networkStream;		
+		readonly NetworkStream networkStream;
 		readonly HttpWebRequest request;
+		readonly MonoTlsSettings settings;
 
 		internal HttpWebRequest Request {
 			get { return request; }
@@ -67,34 +67,33 @@ namespace Mono.Net.Security
 		}
 #endif
 
-		WebExceptionStatus status;
-
 		internal WebExceptionStatus ExceptionStatus {
-			get { return status; }
+			get;
+			private set;
 		}
 
 		internal bool CertificateValidationFailed {
 			get; set;
 		}
 
-#if SECURITY_DEP
-//		readonly ChainValidationHelper validationHelper;
-		readonly MonoTlsSettings settings;
 
 		public MonoTlsStream (HttpWebRequest request, NetworkStream networkStream)
 		{
+#if SECURITY_DEP && !BOOTSTRAP_BASIC
 			this.request = request;
 			this.networkStream = networkStream;
 
 			settings = request.TlsSettings;
 			provider = request.TlsProvider ?? MonoTlsProviderFactory.GetProviderInternal ();
-			status = WebExceptionStatus.SecureChannelFailure;
+			ExceptionStatus = WebExceptionStatus.SecureChannelFailure;
 
-			/*validationHelper =*/ ChainValidationHelper.Create (provider, ref settings, this);
+			ChainValidationHelper.Create (provider, ref settings, this);
+#endif
 		}
 
 		internal Stream CreateStream (byte[] buffer)
 		{
+#if SECURITY_DEP && !BOOTSTRAP_BASIC
 			sslStream = provider.CreateSslStream (networkStream, false, settings);
 
 			try {
@@ -110,15 +109,15 @@ namespace Mono.Net.Security
 					(SslProtocols)ServicePointManager.SecurityProtocol,
 					ServicePointManager.CheckCertificateRevocationList);
 
-				status = WebExceptionStatus.Success;
+				ExceptionStatus = WebExceptionStatus.Success;
 			} catch (Exception) {
-				status = WebExceptionStatus.SecureChannelFailure;
+				ExceptionStatus = WebExceptionStatus.SecureChannelFailure;
 				throw;
 			} finally {
 				if (CertificateValidationFailed)
-					status = WebExceptionStatus.TrustFailure;
+					ExceptionStatus = WebExceptionStatus.TrustFailure;
 
-				if (status == WebExceptionStatus.Success)
+				if (ExceptionStatus == WebExceptionStatus.Success)
 					request.ServicePoint.UpdateClientCertificate (sslStream.InternalLocalCertificate);
 				else {
 					request.ServicePoint.UpdateClientCertificate (null);
@@ -130,13 +129,15 @@ namespace Mono.Net.Security
 				if (buffer != null)
 					sslStream.Write (buffer, 0, buffer.Length);
 			} catch {
-				status = WebExceptionStatus.SendFailure;
+				ExceptionStatus = WebExceptionStatus.SendFailure;
 				sslStream = null;
 				throw;
 			}
 
 			return sslStream.AuthenticatedStream;
-		}
+#else
+			throw new NotSupportedException ();
 #endif
+		}
 	}
 }
