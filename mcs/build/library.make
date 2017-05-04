@@ -28,11 +28,22 @@ LIB_MCS_FLAGS += $(patsubst %,-r:%.dll, $(subst =,=$(topdir)/class/lib/$(PROFILE
 
 sourcefile = $(LIBRARY).sources
 
+profile_library = $(PROFILE)_$(LIBRARY)
+
 # If the directory contains the per profile include file, generate list file.
-PROFILE_sources := $(wildcard $(PROFILE)_$(LIBRARY).sources)
+ifdef intermediate
+PROFILE_sources := $(wildcard $(PROFILE)_$(intermediate)_$(LIBRARY).sources)
 ifdef PROFILE_sources
-PROFILE_excludes = $(wildcard $(PROFILE)_$(LIBRARY).exclude.sources)
-sourcefile = $(depsdir)/$(PROFILE)_$(LIBRARY).sources
+profile_library = $(PROFILE)_$(intermediate)_$(LIBRARY)
+else
+PROFILE_sources := $(wildcard $(PROFILE)_$(LIBRARY).sources)
+endif
+else
+PROFILE_sources := $(wildcard $(PROFILE)_$(LIBRARY).sources)
+endif
+ifdef PROFILE_sources
+PROFILE_excludes = $(wildcard $(profile_library).exclude.sources)
+sourcefile = $(depsdir)/$(profile_library).sources
 library_CLEAN_FILES += $(sourcefile)
 
 # Note, gensources.sh can create a $(sourcefile).makefrag if it sees any '#include's
@@ -66,6 +77,7 @@ lib_dir = lib
 endif
 
 ifdef LIBRARY_SUBDIR
+profile_library = $(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY)
 the_libdir_base = $(topdir)/class/$(lib_dir)/$(PROFILE)/$(LIBRARY_SUBDIR)/
 else
 the_libdir_base = $(topdir)/class/$(lib_dir)/$(PROFILE)/
@@ -327,7 +339,7 @@ all-local-aot: $(the_lib)$(PLATFORM_AOT_SUFFIX)
 endif
 
 
-makefrag = $(depsdir)/$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).makefrag
+makefrag = $(depsdir)/$(profile_library).makefrag
 library_CLEAN_FILES += $(makefrag)
 $(makefrag): $(sourcefile)
 #	@echo Creating $@ ...
