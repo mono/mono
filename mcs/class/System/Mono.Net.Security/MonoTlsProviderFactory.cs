@@ -210,22 +210,23 @@ namespace Mono.Net.Security
 				providerRegistration.Add ("default", appleTlsEntry);
 				providerRegistration.Add ("apple", appleTlsEntry);
 #else
-				var legacyEntry = new Tuple<Guid,String> (BtlsId, "Mono.Net.Security.LegacyTlsProvider");
-#if MONO_FEATURE_BTLS
-				var btlsEntry = new Tuple<Guid,String> (LegacyId, "Mono.Btls.MonoBtlsProvider");
-#endif
-
+				var legacyEntry = new Tuple<Guid,String> (LegacyId, "Mono.Net.Security.LegacyTlsProvider");
 				providerRegistration.Add ("legacy", legacyEntry);
+
+				Tuple<Guid,String> btlsEntry = null;
+#if MONO_FEATURE_BTLS
+				if (IsBtlsSupported ()) {
+					btlsEntry = new Tuple<Guid,String> (BtlsId, "Mono.Btls.MonoBtlsProvider");
+					providerRegistration.Add ("btls", btlsEntry);
+				}
+#endif
 
 				if (Platform.IsMacOS)
 					providerRegistration.Add ("default", appleTlsEntry);
+				else if (btlsEntry != null)
+					providerRegistration.Add ("default", btlsEntry);
 				else
 					providerRegistration.Add ("default", legacyEntry);
-
-#if MONO_FEATURE_BTLS
-				if (IsBtlsSupported ())
-					providerRegistration.Add ("btls", btlsEntry);
-#endif
 
 				providerRegistration.Add ("apple", appleTlsEntry);
 #endif
