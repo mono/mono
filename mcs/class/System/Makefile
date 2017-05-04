@@ -162,31 +162,27 @@ ifeq (bare/,$(intermediate))
 build-bare:
 else
 $(bare_libdir)/System.dll:
-	echo "TEST: |$(PROFILE)|$(sourcefile)|"
-	echo "$(V_MAKE) intermediate=bare/ $(bare_libdir)/System.dll"
-	$(V_MAKE) intermediate=bare/ $(bare_libdir)/System.dll
+	$(MAKE) $(MAKE_V) intermediate=bare/ $(bare_libdir)/System.dll
 endif
 
 ifneq (secxml/,$(intermediate))
 $(secxml_libdir)/System.dll: $(bare_libdir)/System.dll $(bare_libdir)/System.Xml.dll $(MONO_SECURITY_DLL) $(bare_libdir)/System.dll
-	echo "TEST: |$(PROFILE)|$(sourcefile)|"
-	echo "$(V_MAKE) intermediate=secxml/ $(secxml_libdir)/System.dll"
-	$(V_MAKE) intermediate=secxml/ $(secxml_libdir)/System.dll
+	$(MAKE) $(MAKE_V) intermediate=secxml/ $(secxml_libdir)/System.dll
 else
 build-sec:
 endif
 
 $(the_libdir_base)System.Xml.dll:
-	(cd ../System.XML; $(V_MAKE) $@)
+	(cd ../System.XML; $(MAKE) $(MAKE_V) $@)
 
 $(bare_libdir)/System.Xml.dll:
-	(cd ../System.XML; $(V_MAKE) $@)
+	(cd ../System.XML; $(MAKE) $(MAKE_V) $@)
 
 $(the_libdir_base)Mono.Security.dll: ../Mono.Security/Makefile
-	(cd ../Mono.Security; $(V_MAKE))
+	(cd ../Mono.Security; $(MAKE) $(MAKE_V))
 
 $(the_libdir_base)System.Configuration.dll:
-	(cd ../System.Configuration; $(V_MAKE))
+	(cd ../System.Configuration; $(MAKE) $(MAKE_V))
 
 $(build_lib): $(CYCLIC_DEP_FILES)
 
@@ -205,7 +201,7 @@ fresh: clean
 ifndef intermediate
 ifneq ($(PROFILE),basic)
 csproj-local:
-	$(V_MAKE) csproj-local intermediate=bare/
-	$(V_MAKE) csproj-local intermediate=secxml/
+	$(MAKE) $(MAKE_V) csproj-local intermediate=bare/
+	$(MAKE) $(MAKE_V) csproj-local intermediate=secxml/
 endif
 endif
