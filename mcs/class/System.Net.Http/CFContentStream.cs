@@ -97,7 +97,7 @@ namespace System.Net.Http
 			if (gotMutex) {
 				var stream = (CFHTTPStream)sender;
 				if (e.EventType == CFStreamEventType.ErrorOccurred)
-					Volatile.Write (http_exception, ExceptionDispatchInfo.Capture (stream.GetError ()));
+					Volatile.Write (ref http_exception, ExceptionDispatchInfo.Capture (stream.GetError ()));
 				data_mutex.ReleaseMutex ();
 			}
 		}
