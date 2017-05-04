@@ -3,3 +3,4 @@
 System.Net.Security/SslStream.platformnotsupported.cs
 
 Mono.Net.Security/NoReflectionHelper.platformnotsupported.cs
+Mono.Net.Security/MonoTlsStream.platformnotsupported.cs

@@ -105,15 +105,10 @@ ifndef intermediate
 LIB_REFS += System.Xml $(MONO_SECURITY_REF)
 LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP $(EXTERN_ALIAS_FLAGS)
 
-ifndef PROFILE_DISABLE_TLS
-LIB_MCS_FLAGS += -d:MONO_FEATURE_TLS
-endif
-
 ifndef MOBILE_PROFILE
 LIB_REFS += System.Configuration
 LIB_MCS_FLAGS += -d:CONFIGURATION_DEP
 endif
-
 endif
 
 EXTRA_DISTFILES = \

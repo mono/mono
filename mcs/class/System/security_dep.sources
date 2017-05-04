@@ -16,6 +16,7 @@ Mono.Net.Security/CallbackHelpers.cs
 Mono.Net.Security/ChainValidationHelper.cs
 Mono.Net.Security/MobileAuthenticatedStream.cs
 Mono.Net.Security/MobileTlsContext.cs
+Mono.Net.Security/MonoTlsStream.cs
 Mono.Net.Security/SystemCertificateValidator.cs
 
 Mono.Btls/MonoBtlsBio.cs

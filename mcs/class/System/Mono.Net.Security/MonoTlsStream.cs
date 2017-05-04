@@ -36,10 +36,6 @@ using Mono.Security.Interface;
 #endif
 #endif
 
-#if MONO_FEATURE_TLS && !SECURITY_DEP
-#error "MONO_FEATURE_TLS && !SECURITY_DEP"
-#endif
-
 using System;
 using System.IO;
 using System.Net;
@@ -54,7 +50,6 @@ using System.Security.Cryptography;
 namespace Mono.Net.Security
 {
 	class MonoTlsStream {
-#if SECURITY_DEP && MONO_FEATURE_TLS
 		readonly MonoTlsProvider provider;
 		readonly NetworkStream networkStream;
 		readonly HttpWebRequest request;
@@ -69,7 +64,6 @@ namespace Mono.Net.Security
 		internal IMonoSslStream SslStream {
 			get { return sslStream; }
 		}
-#endif
 
 		internal WebExceptionStatus ExceptionStatus {
 			get;
@@ -83,7 +77,6 @@ namespace Mono.Net.Security
 
 		public MonoTlsStream (HttpWebRequest request, NetworkStream networkStream)
 		{
-#if SECURITY_DEP && MONO_FEATURE_TLS
 			this.request = request;
 			this.networkStream = networkStream;
 
@@ -92,12 +85,10 @@ namespace Mono.Net.Security
 			ExceptionStatus = WebExceptionStatus.SecureChannelFailure;
 
 			ChainValidationHelper.Create (provider, ref settings, this);
-#endif
 		}
 
 		internal Stream CreateStream (byte[] buffer)
 		{
-#if SECURITY_DEP && MONO_FEATURE_TLS
 			sslStream = provider.CreateSslStream (networkStream, false, settings);
 
 			try {
@@ -139,9 +130,6 @@ namespace Mono.Net.Security
 			}
 
 			return sslStream.AuthenticatedStream;
-#else
-			throw new NotSupportedException ();
-#endif
 		}
 	}
 }
