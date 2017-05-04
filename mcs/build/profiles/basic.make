@@ -66,8 +66,6 @@ post-profile-cleanup:
 PROFILE_EXE = $(depsdir)/basic-profile-check.exe
 PROFILE_OUT = $(PROFILE_EXE:.exe=.out)
 
-MAKE_Q=$(if $(V),,-s)
-
 do-profile-check: $(depsdir)/.stamp
 	@ok=:; \
 	rm -f $(PROFILE_EXE) $(PROFILE_OUT); \
