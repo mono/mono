@@ -36,9 +36,6 @@ NO_TEST = yes
 NO_INSTALL = yes
 FRAMEWORK_VERSION = 4.0
 
-PROFILE_DISABLE_BTLS = 1
-PROFILE_DISABLE_TLS = 1
-
 # Compiler all using same bootstrap compiler
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 
