@@ -32,9 +32,10 @@ profile_library = $(PROFILE)_$(LIBRARY)
 
 # If the directory contains the per profile include file, generate list file.
 ifdef intermediate
-PROFILE_sources := $(wildcard $(PROFILE)_$(intermediate)_$(LIBRARY).sources)
+intermediate_name = $(patsubst %_,%,$(subst /,_,$(intermediate)))
+PROFILE_sources := $(wildcard $(PROFILE)_$(intermediate_name)_$(LIBRARY).sources)
 ifdef PROFILE_sources
-profile_library = $(PROFILE)_$(intermediate)_$(LIBRARY)
+profile_library = $(PROFILE)_$(intermediate_name)_$(LIBRARY)
 else
 PROFILE_sources := $(wildcard $(PROFILE)_$(LIBRARY).sources)
 endif
