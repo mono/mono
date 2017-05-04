@@ -98,12 +98,6 @@ ifeq (secxml/, $(intermediate))
 LOCAL_MCS_FLAGS =
 LIB_REFS += bare/System.Xml $(MONO_SECURITY_REF)
 LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP $(EXTERN_ALIAS_FLAGS)
-
-PROFILE_sources_override := $(PROFILE)_XXX_$(LIBRARY).sources
-endif
-
-ifeq (bare/,$(intermediate))
-PROFILE_sources_override := $(PROFILE)_YYY_$(LIBRARY).sources
 endif
 
 #
@@ -155,8 +149,6 @@ artifacts = $(system_library_deps) 			\
 .NOTPARALLEL: $(system_library_deps)
 
 $(the_libdir_base)System.dll: $(system_library_deps) ../Mono.Security/Makefile
-	
-V_MAKE = $(if $(V),$(MAKE) V=1,$(MAKE))
 
 ifeq (bare/,$(intermediate))
 build-bare:
