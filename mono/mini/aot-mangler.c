@@ -278,7 +278,7 @@ static gboolean
 append_mangled_klass (GString *s, MonoClass *klass)
 {
 	char *klass_desc = mono_class_full_name (klass);
-	g_string_append_printf (s, "[ namespace: %s name: %s ]", klass->name_space, klass_desc);
+	g_string_append_printf (s, "[ klass namespace: %s name: %s ]", klass->name_space, klass_desc);
 	g_free (klass_desc);
 
 	// Success
@@ -424,23 +424,22 @@ append_mangled_wrapper (GString *s, MonoMethod *method)
 static void
 append_mangled_context (GString *str, MonoGenericContext *context)
 {
-	GString *res = g_string_new ("");
-
-	g_string_append_printf (res, "gens_");
-	g_string_append (res, "00");
+	g_string_append_printf (str, "[ gens");
 
 	gboolean good = context->class_inst && context->class_inst->type_argc > 0;
 	good = good || (context->method_inst && context->method_inst->type_argc > 0);
 	g_assert (good);
 
-	if (context->class_inst)
-		mono_ginst_get_desc (res, context->class_inst);
-	if (context->method_inst) {
-		if (context->class_inst)
-			g_string_append (res, "11");
-		mono_ginst_get_desc (res, context->method_inst);
+	if (context->class_inst) {
+		g_string_append (str, " class_inst ");
+		mono_ginst_get_desc (str, context->class_inst);
 	}
-	g_string_append_printf (str, "gens_%s", res->str);
+
+	if (context->method_inst) {
+		g_string_append (str, " method_inst ");
+		mono_ginst_get_desc (str, context->method_inst);
+	}
+	g_string_append_printf (str, " ] ");
 }	
 
 // Tells you the length of the area inside of the parenthesis
@@ -482,13 +481,45 @@ describe_mangled_sig (GString *out, gchar **in, size_t len)
 static int
 describe_mangled_context (GString *out, gchar **in, size_t len)
 {
-	return extract_inside_parens (in, len);
+	g_assert (!strcmp (in [0], "["));
+	g_assert (!strcmp (in [1], "gens"));
+	int i = 2;
+	if (!strcmp (in [i], "class_inst")) {
+		g_string_append_printf (out, "class_inst: \"%s\"", in [i+1]);
+		i += 2;
+	}
+	if (!strcmp (in [i], "method_inst")) {
+		g_string_append_printf (out, "method_inst: \"%s\"", in [i+1]);
+		i += 2;
+	}
+	g_assert (!strcmp (in [i], "]"));
+	return i + 1;
 }
 
 static int
-describe_mangled_class (GString *out, gchar **in, size_t len)
+describe_mangled_klass (GString *out, gchar **in, size_t len)
 {
-	return extract_inside_parens (in, len);
+	int i = 0;
+	g_assert (!strcmp (in [i++], "["));
+	g_assert (!strcmp (in [i++], "klass"));
+	g_assert (!strcmp (in [i++], "namespace:"));
+
+	gchar *name = "";
+	gchar *name_space = "";
+
+	if (!strcmp (in [i], "name:")) {
+		name = in [i+1];
+		i += 2;
+	} else {
+		name_space = in [i+1];
+		i += 1;
+	}
+	if (!strcmp (in [i], "name:")) {
+		name = in [i++];
+	}
+	g_assert (!strcmp (in [i++], "]"));
+	g_string_append_printf (out, "namespace: \"%s\", name: \"%s\"", name_space, name);
+	return i;
 }
 
 /*
@@ -506,11 +537,11 @@ describe_mangled_method (GString *out, gchar **in, size_t len)
 		g_assert_not_reached ();
 
 	// FIXME wrappers
-	if (strcmp (in [1], "[") || strcmp (in [2], "method") || strcmp (in [3], "asm:"))
-	    return -1;
+	if (strcmp (in [0], "[") || strcmp (in [1], "method") || strcmp (in [2], "asm:"))
+	    g_assert_not_reached ();
 
-	gchar *aname = in [4];
-	int i = 5;
+	gchar *aname = in [3];
+	int i = 4;
 
 	GString *mangled_context = g_string_new ("");
 	GString *nested_mangled_method;
@@ -518,21 +549,19 @@ describe_mangled_method (GString *out, gchar **in, size_t len)
 	if (!strcmp (in [i], "inflated:")) {
 		i++;
 		int cont_off = describe_mangled_context (mangled_context, &in [i], len - i);
-		g_assert (cont_off > 0);
 		i += cont_off;
 
-		if (strcmp (in [i++], "declaring"))
+		if (strcmp (in [i++], "declaring:"))
 			g_assert_not_reached ();
 
 		nested_mangled_method = g_string_new ("");
 		int declaring_off = describe_mangled_method (nested_mangled_method, &in [i], len - i);
-		g_assert (declaring_off > 0);
 		i += declaring_off;
 	
 		if (strcmp (in [i], "]"))
 			g_assert_not_reached ();
 
-		g_string_append_printf (out, "context: %s declaring: { \n\t%s\n } ", cont_off, declaring_off);
+		g_string_append_printf (out, "context: %s declaring: { \n\t%s} ", mangled_context->str, nested_mangled_method->str);
 
 		return i;
 	} else if (!strcmp (in [i], "gtd:")) {
@@ -545,7 +574,7 @@ describe_mangled_method (GString *out, gchar **in, size_t len)
 	GString *class_decoded = g_string_new ("");
 	if (strcmp (in [i], "["))
 		g_assert_not_reached ();
-	int class_off = describe_mangled_class (class_decoded, &in[i], len - i);
+	int class_off = describe_mangled_klass (class_decoded, &in[i], len - i);
 	i += class_off;
 	// Ensure class terminated correctly
 	if (strcmp (in [i-1], "]"))
@@ -584,14 +613,14 @@ append_mangled_method (GString *s, MonoMethod *method)
 	g_string_append_printf (s, "[ method asm: %s ", method->klass->image->assembly->aname.name);
 
 	if (method->is_inflated) {
-		g_string_append_printf (s, "inflated:");
+		g_string_append_printf (s, "inflated: ");
 		MonoMethodInflated *imethod = (MonoMethodInflated*) method;
 		g_assert (imethod->context.class_inst != NULL || imethod->context.method_inst != NULL);
 
 		append_mangled_context (s, &imethod->context);
-		g_string_append_printf (s, "declaring:");
+		g_string_append_printf (s, " declaring: ");
 		success = success && append_mangled_method (s, imethod->declaring);
-		g_string_append_printf (s, " ]");
+		g_string_append_printf (s, " ] ");
 
 		return success;
 	} else if (method->is_generic) {
@@ -620,7 +649,8 @@ mono_get_mangled_method (char *name)
 	for (len=0; tokens [len] != NULL; len++);
 
 	GString *json = g_string_new ("");
-	g_assert (describe_mangled_method (json, tokens, len) > 0);
+	g_assert (!strcmp (tokens [0], "mono_aot"));
+	g_assert (describe_mangled_method (json, &tokens [1], len) > 0);
 	char *tmp = g_string_free (json, FALSE);
 	g_strfreev (tokens);
 	g_free (str);
