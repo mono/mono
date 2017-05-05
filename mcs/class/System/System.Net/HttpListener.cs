@@ -28,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP
+#if SECURITY_DEP && MONO_FEATURE_HTTPLISTENER
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 using MonoSecurity::Mono.Security.Authenticode;
@@ -46,6 +46,15 @@ using System.Net.Security;
 using System.Security.Authentication.ExtendedProtection;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+
+using XChunkedInputStream = Mono.Net.ChunkedInputStream;
+using XHttpConnection = Mono.Net.HttpConnection;
+using XRequestStream = Mono.Net.RequestStream;
+using XResponseStream = Mono.Net.ResponseStream;
+using XEndPointManager = Mono.Net.EndPointManager;
+using XEndPointListener = Mono.Net.EndPointListener;
+using XListenerAsyncResult = Mono.Net.ListenerAsyncResult;
+using XListenerPrefix = Mono.Net.ListenerPrefix;
 
 //TODO: logging
 namespace System.Net {
@@ -275,7 +284,7 @@ namespace System.Net {
 		void Close (bool force)
 		{
 			CheckDisposed ();
-			EndPointManager.RemoveListener (this);
+			XEndPointManager.RemoveListener (this);
 			Cleanup (force);
 		}
 
@@ -294,7 +303,7 @@ namespace System.Net {
 
 				lock (connections.SyncRoot) {
 					ICollection keys = connections.Keys;
-					var conns = new HttpConnection [keys.Count];
+					var conns = new XHttpConnection [keys.Count];
 					keys.CopyTo (conns, 0);
 					connections.Clear ();
 					for (int i = conns.Length - 1; i >= 0; i--)
@@ -309,7 +318,7 @@ namespace System.Net {
 
 				lock (wait_queue) {
 					Exception exc = new ObjectDisposedException ("listener");
-					foreach (ListenerAsyncResult ares in wait_queue) {
+					foreach (XListenerAsyncResult ares in wait_queue) {
 						ares.Complete (exc);
 					}
 					wait_queue.Clear ();
@@ -323,7 +332,7 @@ namespace System.Net {
 			if (!listening)
 				throw new InvalidOperationException ("Please, call Start before using this method.");
 
-			ListenerAsyncResult ares = new ListenerAsyncResult (callback, state);
+			XListenerAsyncResult ares = new XListenerAsyncResult (callback, state);
 
 			// lock wait_queue early to avoid race conditions
 			lock (wait_queue) {
@@ -347,7 +356,7 @@ namespace System.Net {
 			if (asyncResult == null)
 				throw new ArgumentNullException ("asyncResult");
 
-			ListenerAsyncResult ares = asyncResult as ListenerAsyncResult;
+			XListenerAsyncResult ares = asyncResult as XListenerAsyncResult;
 			if (ares == null)
 				throw new ArgumentException ("Wrong IAsyncResult.", "asyncResult");
 			if (ares.EndCalled)
@@ -382,7 +391,7 @@ namespace System.Net {
 			if (prefixes.Count == 0)
 				throw new InvalidOperationException ("Please, call AddPrefix before using this method.");
 
-			ListenerAsyncResult ares = (ListenerAsyncResult) BeginGetContext (null, null);
+			XListenerAsyncResult ares = (XListenerAsyncResult) BeginGetContext (null, null);
 			ares.InGet = true;
 			return EndGetContext (ares);
 		}
@@ -393,7 +402,7 @@ namespace System.Net {
 			if (listening)
 				return;
 
-			EndPointManager.AddListener (this);
+			XEndPointManager.AddListener (this);
 			listening = true;
 		}
 
@@ -440,13 +449,13 @@ namespace System.Net {
 			lock (registry)
 				registry [context] = context;
 
-			ListenerAsyncResult ares = null;
+			XListenerAsyncResult ares = null;
 			lock (wait_queue) {
 				if (wait_queue.Count == 0) {
 					lock (ctx_queue)
 						ctx_queue.Add (context);
 				} else {
-					ares = (ListenerAsyncResult) wait_queue [0];
+					ares = (XListenerAsyncResult) wait_queue [0];
 					wait_queue.RemoveAt (0);
 				}
 			}
@@ -465,12 +474,12 @@ namespace System.Net {
 			}
 		}
 
-		internal void AddConnection (HttpConnection cnc)
+		internal void AddConnection (XHttpConnection cnc)
 		{
 			connections [cnc] = cnc;
 		}
 
-		internal void RemoveConnection (HttpConnection cnc)
+		internal void RemoveConnection (XHttpConnection cnc)
 		{
 			connections.Remove (cnc);
 		}
@@ -479,7 +488,7 @@ namespace System.Net {
 #else // SECURITY_DEP
 namespace System.Net
 {
-	public sealed class HttpListener
+	public sealed partial class HttpListener
 	{
 	}
 }

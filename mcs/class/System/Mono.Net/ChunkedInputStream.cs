@@ -25,12 +25,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if SECURITY_DEP
-
+#if SECURITY_DEP && MONO_FEATURE_HTTPLISTENER
+using System;
 using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
-namespace System.Net {
+namespace Mono.Net {
 	class ChunkedInputStream : RequestStream {
 		bool disposed;
 		ChunkStream decoder;
@@ -138,7 +139,7 @@ namespace System.Net {
 					return;
 				}
 				ares.Offset = 0;
-				ares.Count = Math.Min (8192, decoder.ChunkLeft + 6);
+				ares.Count = System.Math.Min (8192, decoder.ChunkLeft + 6);
 				base.BeginRead (ares.Buffer, ares.Offset, ares.Count, OnRead, rb);
 			} catch (Exception e) {
 				context.Connection.SendError (e.Message, 400);

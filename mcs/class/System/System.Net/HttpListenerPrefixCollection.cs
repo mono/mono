@@ -25,19 +25,18 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if SECURITY_DEP || EMBEDDED_IN_1_0
+#if SECURITY_DEP && MONO_FEATURE_HTTPLISTENER
 
 using System.Collections;
 using System.Collections.Generic;
+
+using XEndPointManager = Mono.Net.EndPointManager;
+using XEndPointListener = Mono.Net.EndPointListener;
+using XListenerPrefix = Mono.Net.ListenerPrefix;
+
 namespace System.Net {
-#if EMBEDDED_IN_1_0
-	public class HttpListenerPrefixCollection : IEnumerable, ICollection {
-		ArrayList prefixes;
-		
-#else
 	public class HttpListenerPrefixCollection : ICollection<string>, IEnumerable<string>, IEnumerable {
 		List<string> prefixes = new List<string> ();
-#endif
 		HttpListener listener;
 
 		internal HttpListenerPrefixCollection (HttpListener listener)
@@ -60,13 +59,13 @@ namespace System.Net {
 		public void Add (string uriPrefix)
 		{
 			listener.CheckDisposed ();
-			ListenerPrefix.CheckUri (uriPrefix);
+			XListenerPrefix.CheckUri (uriPrefix);
 			if (prefixes.Contains (uriPrefix))
 				return;
 
 			prefixes.Add (uriPrefix);
 			if (listener.IsListening)
-				EndPointManager.AddPrefix (uriPrefix, listener);
+				XEndPointManager.AddPrefix (uriPrefix, listener);
 		}
 
 		public void Clear ()
@@ -74,7 +73,7 @@ namespace System.Net {
 			listener.CheckDisposed ();
 			prefixes.Clear ();
 			if (listener.IsListening)
-				EndPointManager.RemoveListener (listener);
+				XEndPointManager.RemoveListener (listener);
 		}
 
 		public bool Contains (string uriPrefix)
@@ -95,13 +94,6 @@ namespace System.Net {
 			((ICollection) prefixes).CopyTo (array, offset);
 		}
 
-#if !EMBEDDED_IN_1_0
-		public IEnumerator<string> GetEnumerator ()
-		{
-			return prefixes.GetEnumerator ();
-		}
-#endif
-	
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
 			return prefixes.GetEnumerator ();
@@ -115,7 +107,7 @@ namespace System.Net {
 
 			bool result = prefixes.Remove (uriPrefix);
 			if (result && listener.IsListening)
-				EndPointManager.RemovePrefix (uriPrefix, listener);
+				XEndPointManager.RemovePrefix (uriPrefix, listener);
 
 			return result;
 		}

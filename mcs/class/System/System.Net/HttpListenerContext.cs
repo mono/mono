@@ -26,7 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP
+#if SECURITY_DEP && MONO_FEATURE_HTTPLISTENER
 
 using System.Collections.Specialized;
 using System.IO;
@@ -35,17 +35,19 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.WebSockets;
 
+using XHttpConnection = Mono.Net.HttpConnection;
+
 namespace System.Net {
 	public sealed class HttpListenerContext {
 		HttpListenerRequest request;
 		HttpListenerResponse response;
 		IPrincipal user;
-		HttpConnection cnc;
+		XHttpConnection cnc;
 		string error;
 		int err_status = 400;
 		internal HttpListener Listener;
 
-		internal HttpListenerContext (HttpConnection cnc)
+		internal HttpListenerContext (XHttpConnection cnc)
 		{
 			this.cnc = cnc;
 			request = new HttpListenerRequest (this);
@@ -66,7 +68,7 @@ namespace System.Net {
 			get { return (error != null); }
 		}
 
-		internal HttpConnection Connection {
+		internal XHttpConnection Connection {
 			get { return cnc; }
 		}
 
@@ -164,7 +166,7 @@ namespace System.Net {
 }
 #else
 namespace System.Net {
-	public sealed class HttpListenerContext {
+	public sealed partial class HttpListenerContext {
 	}
 }
 #endif

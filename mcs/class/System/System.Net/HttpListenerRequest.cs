@@ -28,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP
+#if SECURITY_DEP && MONO_FEATURE_HTTPLISTENER
 
 using System.Collections;
 using System.Collections.Specialized;
@@ -38,7 +38,8 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Security.Authentication.ExtendedProtection;
 using System.Threading.Tasks;
-using System.Net;
+
+using XResponseStream = Mono.Net.ResponseStream;
 
 namespace System.Net {
 	public sealed class HttpListenerRequest
@@ -254,7 +255,7 @@ namespace System.Net {
 			}
 
 			if (String.Compare (Headers ["Expect"], "100-continue", StringComparison.OrdinalIgnoreCase) == 0) {
-				ResponseStream output = context.Connection.GetResponseStream ();
+				XResponseStream output = context.Connection.GetResponseStream ();
 				output.InternalWrite (_100continue, 0, _100continue.Length);
 			}
 		}
@@ -385,7 +386,7 @@ namespace System.Net {
 
 		public int ClientCertificateError {
 			get {
-				HttpConnection cnc = context.Connection;
+				var cnc = context.Connection;
 				if (cnc.ClientCertificate == null)
 					throw new InvalidOperationException ("No client certificate");
 				int [] errors = cnc.ClientCertificateErrors;

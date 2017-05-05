@@ -26,13 +26,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP
-
+#if SECURITY_DEP && MONO_FEATURE_HTTPLISTENER
+using System;
 using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Runtime.InteropServices;
-namespace System.Net {
+namespace Mono.Net {
 	// FIXME: Does this buffer the response until Close?
 	// Update: we send a single packet for the first non-chunked Write
 	// What happens when we set content-length to X and write X-1 bytes then close?
@@ -157,7 +158,7 @@ namespace System.Net {
 					ms.Write (bytes, 0, bytes.Length);
 				}
 
-				int new_count = Math.Min (count, 16384 - (int) ms.Position + (int) start);
+				int new_count = System.Math.Min (count, 16384 - (int) ms.Position + (int) start);
 				ms.Write (buffer, offset, new_count);
 				count -= new_count;
 				offset += new_count;

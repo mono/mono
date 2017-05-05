@@ -26,11 +26,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP
-
+#if SECURITY_DEP && MONO_FEATURE_HTTPLISTENER
+using System;
+using System.Net;
 using System.Collections;
 using System.Collections.Generic;
-namespace System.Net {
+namespace Mono.Net {
 	sealed class EndPointManager
 	{
 		// Dictionary<IPAddress, Dictionary<int, EndPointListener>>
@@ -86,7 +87,7 @@ namespace System.Net {
 				addr = IPAddress.Any;
 			else if (IPAddress.TryParse(host, out addr) == false){
 				try {
-					IPHostEntry iphost = Dns.GetHostByName(host);
+					IPHostEntry iphost = System.Net.Dns.GetHostByName(host);
 					if (iphost != null)
 						addr = iphost.AddressList[0];
 					else

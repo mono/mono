@@ -37,6 +37,8 @@ using System.Threading;
 using System.Diagnostics;
 using Mono.Net.Security;
 
+using XChunkStream = Mono.Net.ChunkStream;
+
 namespace System.Net
 {
 	enum ReadState
@@ -63,7 +65,7 @@ namespace System.Net
 		AbortHelper abortHelper;
 		internal WebConnectionData Data;
 		bool chunkedRead;
-		ChunkStream chunkStream;
+		XChunkStream chunkStream;
 		Queue queue;
 		bool reused;
 		int position;
@@ -89,7 +91,7 @@ namespace System.Net
 		static extern void xamarin_start_wwan (string uri);
 #endif
 
-		internal ChunkStream ChunkStream {
+		internal XChunkStream ChunkStream {
 			get { return chunkStream; }
 		}
 
@@ -539,7 +541,7 @@ namespace System.Net
 				}
 			} else if (chunkStream == null) {
 				try {
-					chunkStream = new ChunkStream (buffer, pos, nread, data.Headers);
+					chunkStream = new XChunkStream (buffer, pos, nread, data.Headers);
 				} catch (Exception e) {
 					HandleError (WebExceptionStatus.ServerProtocolViolation, e, "ReadDone5");
 					return;

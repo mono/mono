@@ -27,7 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP
+#if SECURITY_DEP && MONO_FEATURE_HTTPLISTENER
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 #endif
@@ -38,7 +38,9 @@ using MSI = MonoSecurity::Mono.Security.Interface;
 using MSI = Mono.Security.Interface;
 #endif
 
+using System;
 using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -47,7 +49,7 @@ using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
-namespace System.Net {
+namespace Mono.Net {
 	sealed class HttpConnection
 	{
 		static AsyncCallback onread_cb = new AsyncCallback (OnRead);
@@ -75,7 +77,7 @@ namespace System.Net {
 		X509Certificate2 client_cert;
 		SslStream ssl_stream;
 
-		public HttpConnection (Socket sock, EndPointListener epl, bool secure, X509Certificate cert)
+		internal HttpConnection (Socket sock, EndPointListener epl, bool secure, X509Certificate cert)
 		{
 			this.sock = sock;
 			this.epl = epl;
@@ -154,7 +156,7 @@ namespace System.Net {
 			get { return secure; }
 		}
 
-		public ListenerPrefix Prefix {
+		internal ListenerPrefix Prefix {
 			get { return prefix; }
 			set { prefix = value; }
 		}
@@ -181,7 +183,7 @@ namespace System.Net {
 			}
 		}
 
-		public RequestStream GetRequestStream (bool chunked, long contentlength)
+		internal RequestStream GetRequestStream (bool chunked, long contentlength)
 		{
 			if (i_stream == null) {
 				byte [] buffer = ms.GetBuffer ();
@@ -198,7 +200,7 @@ namespace System.Net {
 			return i_stream;
 		}
 
-		public ResponseStream GetResponseStream ()
+		internal ResponseStream GetResponseStream ()
 		{
 			// TODO: can we get this stream before reading the input?
 			if (o_stream == null) {

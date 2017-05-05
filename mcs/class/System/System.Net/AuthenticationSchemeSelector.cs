@@ -1,13 +1,10 @@
 //
-// System.Net.Security.LocalCertificateSelectionCallback.cs
+// System.Net.AuthenticationSchemeSelector.cs
 //
-// Authors:
-//	Tim Coleman (tim@timcoleman.com)
+// Author:
+//	Gonzalo Paniagua Javier  <gonzalo@novell.com>
 //
-// Copyright (C) Tim Coleman, 2004
-// (c) 2004 Novell, Inc. (http://www.novell.com)
-//
-
+// Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,14 +26,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Security.Cryptography.X509Certificates;
+#if SECURITY_DEP && MONO_FEATURE_HTTPLISTENER
 
-namespace System.Net.Security 
-{
-	public delegate X509Certificate LocalCertificateSelectionCallback (
-		object sender,
-		string targetHost,
-		X509CertificateCollection localCertificates,
-		X509Certificate remoteCertificate,
-		string [] acceptableIssuers);
+namespace System.Net {
+	public delegate AuthenticationSchemes AuthenticationSchemeSelector (HttpListenerRequest httpRequest);
 }
+#endif
+

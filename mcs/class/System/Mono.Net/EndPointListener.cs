@@ -27,7 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP
+#if SECURITY_DEP && MONO_FEATURE_HTTPLISTENER
 
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
@@ -36,7 +36,9 @@ using MonoSecurity::Mono.Security.Authenticode;
 using Mono.Security.Authenticode;
 #endif
 
+using System;
 using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Collections;
 using System.Collections.Generic;
@@ -44,7 +46,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 
-namespace System.Net {
+namespace Mono.Net {
 	sealed class EndPointListener
 	{
 		HttpListener listener;

@@ -25,10 +25,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if SECURITY_DEP && MONO_FEATURE_HTTPLISTENER
+using System;
 using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
-namespace System.Net {
+namespace Mono.Net {
 	class RequestStream : Stream
 	{
 		byte [] buffer;
@@ -107,12 +110,12 @@ namespace System.Net {
 			if (this.length == 0)
 				return 0;
 
-			int size = Math.Min (this.length, count);
+			int size = System.Math.Min (this.length, count);
 			if (this.remaining_body > 0)
-				size = (int) Math.Min (size, this.remaining_body);
+				size = (int) System.Math.Min (size, this.remaining_body);
 
 			if (this.offset > this.buffer.Length - size) {
-				size = Math.Min (size, this.buffer.Length - this.offset);
+				size = System.Math.Min (size, this.buffer.Length - this.offset);
 			}
 			if (size == 0)
 				return 0;
@@ -158,7 +161,7 @@ namespace System.Net {
 				ares.Count = count;
 				ares.Callback = cback;
 				ares.State = state;
-				ares.SynchRead = Math.Max (0, nread);
+				ares.SynchRead = System.Math.Max (0, nread);
 				ares.Complete ();
 				return ares;
 			}
@@ -166,7 +169,7 @@ namespace System.Net {
 			// Avoid reading past the end of the request to allow
 			// for HTTP pipelining
 			if (remaining_body >= 0 && count > remaining_body)
-				count = (int) Math.Min (Int32.MaxValue, remaining_body);
+				count = (int) System.Math.Min (Int32.MaxValue, remaining_body);
 			return stream.BeginRead (buffer, offset, count, cback, state);
 		}
 
@@ -219,4 +222,4 @@ namespace System.Net {
 		}
 	}
 }
-
+#endif
