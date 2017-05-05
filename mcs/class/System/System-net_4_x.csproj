@@ -1181,7 +1181,7 @@
     <Compile Include="System.Net\BasicClient.cs" />
     <Compile Include="System.Net\BindIPEndPoint.cs" />
     <Compile Include="System.Net\ChunkedInputStream.cs" />
-    <Compile Include="System.Net\ChunkStream.cs" />
+    <Compile Include="System.Net\MonoChunkStream.cs" />
     <Compile Include="System.Net\DecompressionMethods.cs" />
     <Compile Include="System.Net\DefaultCertificatePolicy.cs" />
     <Compile Include="System.Net\DigestClient.cs" />

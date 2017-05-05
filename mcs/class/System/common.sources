@@ -46,7 +46,7 @@ System.Net/AuthenticationManager.cs
 System.Net/BasicClient.cs
 System.Net/BindIPEndPoint.cs
 System.Net/ChunkedInputStream.cs
-System.Net/ChunkStream.cs
+System.Net/MonoChunkStream.cs
 System.Net/DecompressionMethods.cs
 System.Net/DefaultCertificatePolicy.cs
 System.Net/DigestClient.cs
