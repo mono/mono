@@ -71,7 +71,7 @@ namespace System.Net.Security
 		X509Certificate remoteCertificate,
 		string[] acceptableIssuers);
 
-	public class SslStream : AuthenticatedStream, MNS.IMonoSslStream
+	public class SslStream : AuthenticatedStream
 	{
 		MonoTlsProvider provider;
 		IMonoSslStream impl;
@@ -104,7 +104,7 @@ namespace System.Net.Security
 			: base (innerStream, leaveInnerStreamOpen)
 		{
 			provider = GetProvider ();
-			impl = provider.CreateSslStream (innerStream, leaveInnerStreamOpen);
+			impl = provider.CreateSslStreamInternal (this, innerStream, leaveInnerStreamOpen, null);
 		}
 
 		public SslStream (Stream innerStream, bool leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback)
@@ -128,10 +128,17 @@ namespace System.Net.Security
 		{
 		}
 
-		internal SslStream (Stream innerStream, bool leaveInnerStreamOpen, IMonoSslStream impl)
+		SslStream (Stream innerStream, bool leaveInnerStreamOpen, MonoTlsProvider provider, MonoTlsSettings settings)
 			: base (innerStream, leaveInnerStreamOpen)
 		{
-			this.impl = impl;
+			this.provider = provider;
+			impl = provider.CreateSslStreamInternal (this, innerStream, leaveInnerStreamOpen, settings);
+		}
+
+		internal static IMonoSslStream CreateMonoSslStream (Stream innerStream, bool leaveInnerStreamOpen, MonoTlsProvider provider, MonoTlsSettings settings)
+		{
+			var sslStream = new SslStream (innerStream, leaveInnerStreamOpen, provider, settings);
+			return sslStream.Impl;
 		}
 
 		public virtual void AuthenticateAsClient (string targetHost)
@@ -240,10 +247,6 @@ namespace System.Net.Security
 
 		public virtual bool CheckCertRevocationStatus {
 			get { return Impl.CheckCertRevocationStatus; }
-		}
-
-		X509Certificate MNS.IMonoSslStream.InternalLocalCertificate {
-			get { return Impl.InternalLocalCertificate; }
 		}
 
 		public virtual X509Certificate LocalCertificate {
@@ -383,19 +386,6 @@ namespace System.Net.Security
 		public override void EndWrite (IAsyncResult asyncResult)
 		{
 			Impl.EndWrite (asyncResult);
-		}
-
-		AuthenticatedStream MNS.IMonoSslStream.AuthenticatedStream {
-			get { return this; }
-		}
-
-		MonoTlsProvider MNS.IMonoSslStream.Provider {
-			get { return provider; }
-		}
-
-		MonoTlsConnectionInfo MNS.IMonoSslStream.GetConnectionInfo ()
-		{
-			return Impl.GetConnectionInfo ();
 		}
 	}
 }

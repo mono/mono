@@ -52,7 +52,7 @@ namespace Mono.Net.Security
 	class MonoTlsStream
 	{
 #if SECURITY_DEP		
-		readonly IMonoTlsProvider provider;
+		readonly MonoTlsProvider provider;
 		readonly NetworkStream networkStream;		
 		readonly HttpWebRequest request;
 
@@ -90,7 +90,7 @@ namespace Mono.Net.Security
 			provider = request.TlsProvider ?? MonoTlsProviderFactory.GetProviderInternal ();
 			status = WebExceptionStatus.SecureChannelFailure;
 
-			/*validationHelper =*/ ChainValidationHelper.Create (provider.Provider, ref settings, this);
+			/*validationHelper =*/ ChainValidationHelper.Create (provider, ref settings, this);
 		}
 
 		internal Stream CreateStream (byte[] buffer)

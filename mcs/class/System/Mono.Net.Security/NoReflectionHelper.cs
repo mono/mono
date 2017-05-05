@@ -105,7 +105,7 @@ namespace Mono.Net.Security
 		internal static HttpWebRequest CreateHttpsRequest (Uri requestUri, object provider, object settings)
 		{
 			#if SECURITY_DEP
-			return MonoTlsProviderFactory.CreateHttpsRequest (requestUri, (MSI.MonoTlsProvider)provider, (MSI.MonoTlsSettings)settings);
+			return new HttpWebRequest (requestUri, (MSI.MonoTlsProvider)provider, (MSI.MonoTlsSettings)settings);
 			#else
 			throw new NotSupportedException ();
 			#endif
@@ -114,7 +114,7 @@ namespace Mono.Net.Security
 		internal static object CreateHttpListener (object certificate, object provider, object settings)
 		{
 			#if SECURITY_DEP
-			return MonoTlsProviderFactory.CreateHttpListener ((X509Certificate)certificate, (MSI.MonoTlsProvider)provider, (MSI.MonoTlsSettings)settings);
+			return new HttpListener ((X509Certificate)certificate, (MSI.MonoTlsProvider)provider, (MSI.MonoTlsSettings)settings);
 			#else
 			throw new NotSupportedException ();
 			#endif
@@ -127,6 +127,15 @@ namespace Mono.Net.Security
 			#else
 			throw new NotSupportedException ();
 			#endif
+		}
+
+		internal static object GetMonoSslStream (HttpListenerContext context)
+		{
+#if SECURITY_DEP
+			return context.Connection.SslStream?.Impl;
+#else
+			throw new NotSupportedException ();
+#endif
 		}
 
 		internal static bool IsProviderSupported (string name)
