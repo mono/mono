@@ -1,3 +1,15 @@
+/**
+ * \file
+ * Aot Mangler Functions
+ *
+ * Authors:
+ *   Alexander Kyte (alkyte@microsoft.com)
+ *
+ * Copyright 2017 Microsoft, Inc (http://www.microsoft.com)
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
+ */
+
+
 /*
  * Mono Method Mangler:
  *
@@ -115,7 +127,7 @@
 static gboolean
 append_mangled_type (GString *s, MonoType *t)
 {
-	g_string_append_printf (s, "[type ");
+	g_string_append_printf (s, "[ type ");
 	if (t->byref)
 		g_string_append_printf (s, "byref ");
 	switch (t->type) {
@@ -127,15 +139,8 @@ append_mangled_type (GString *s, MonoType *t)
 		g_string_append_printf (s, "other %x %s", strlen (fullname), fullname);
 	}
 	}
-	g_string_append_printf (s, "] ");
+	g_string_append_printf (s, " ]");
 	return TRUE;
-}
-
-// Returns length of input consumed
-static int
-describe_mangled_type (char *mangle) 
-{
-	return -1;
 }
 
 static gboolean
@@ -144,12 +149,12 @@ append_mangled_signature (GString *s, MonoMethodSignature *sig)
 	int i;
 	gboolean supported;
 
-	g_string_append_printf (s, "[sig ");
+	g_string_append_printf (s, "[ sig ");
 	supported = append_mangled_type (s, sig->ret);
 	if (!supported)
 		return FALSE;
 	if (sig->hasthis)
-		g_string_append_printf (s, "hasthis ");
+		g_string_append_printf (s, " hasthis ");
 	for (i = 0; i < sig->param_count; ++i) {
 		supported = append_mangled_type (s, sig->params [i]);
 		if (!supported)
@@ -216,9 +221,16 @@ static char *
 sanitize_mangled_string (const char *input)
 {
 	GString *s = g_string_new ("");
+	char prev_c = 'A'; // Not ' ', doesn't really matter what it is
 
 	for (int i=0; input [i] != '\0'; i++) {
 		char c = input [i];
+
+		// Scrub out double spaces to make compact and consistent
+		if (c == ' ' && prev_c == ' ')
+			continue;
+		prev_c = c;
+
 		switch (c) {
 #define X(FWD, BCK) MonoForwardSanitize(FWD, BCK)
 MonoMangleSanitizeTable
@@ -266,7 +278,7 @@ static gboolean
 append_mangled_klass (GString *s, MonoClass *klass)
 {
 	char *klass_desc = mono_class_full_name (klass);
-	g_string_append_printf (s, "_%s_%s_", klass->name_space, klass_desc);
+	g_string_append_printf (s, "[ namespace: %s name: %s ]", klass->name_space, klass_desc);
 	g_free (klass_desc);
 
 	// Success
@@ -431,35 +443,52 @@ append_mangled_context (GString *str, MonoGenericContext *context)
 	g_string_append_printf (str, "gens_%s", res->str);
 }	
 
+// Tells you the length of the area inside of the parenthesis
+// the array of strings contains
 static int
-describe_mangled_sig (GString *out, gchar **in, size_t len)
+extract_inside_parens (gchar **in, int len)
 {
+	// FIXME: Error handling
 	if (len < 2 || strcmp (in [0], "[")) 
 		g_assert_not_reached ();
 	int i;
-	for (i = 1; strcmp (in [i], "]"); i++);
+
+	int nesting = 0;
+	for (i = 1; i < len; i++) {
+		if (!strcmp (in [i], "]"))
+			if (nesting == 0)
+				break;
+			else
+				nesting--;
+		else if (!strcmp (in [i], "["))
+			nesting++;
+	}
+	g_assert (nesting == 0);
+
+	if (i == len)
+		g_assert_not_reached ();
+	else
+		i++; // Count closing bracket
 	return i;
+}
+
+
+static int
+describe_mangled_sig (GString *out, gchar **in, size_t len)
+{
+	return extract_inside_parens (in, len);
 }
 
 static int
 describe_mangled_context (GString *out, gchar **in, size_t len)
 {
-	if (len < 2 || strcmp (in [0], "[")) 
-		g_assert_not_reached ();
-	int i;
-	for (i = 1; strcmp (in [i], "]"); i++);
-	return i;
+	return extract_inside_parens (in, len);
 }
 
 static int
 describe_mangled_class (GString *out, gchar **in, size_t len)
 {
-	if (len < 2 || strcmp (in [0], "[")) 
-		g_assert_not_reached ();
-
-	int i;
-	for (i = 1; strcmp (in [i], "]"); i++);
-	return i;
+	return extract_inside_parens (in, len);
 }
 
 /*
@@ -473,15 +502,15 @@ describe_mangled_class (GString *out, gchar **in, size_t len)
 static int
 describe_mangled_method (GString *out, gchar **in, size_t len)
 {
-	if (len < 4)
-		return -1;
+	if (len < 5)
+		g_assert_not_reached ();
 
 	// FIXME wrappers
-	if (strcmp (in [0], "[") || strcmp (in [1], "method") || strcmp (in [2], "asm:"))
+	if (strcmp (in [1], "[") || strcmp (in [2], "method") || strcmp (in [3], "asm:"))
 	    return -1;
 
-	gchar *aname = in [3];
-	int i = 4;
+	gchar *aname = in [4];
+	int i = 5;
 
 	GString *mangled_context = g_string_new ("");
 	GString *nested_mangled_method;
@@ -493,7 +522,7 @@ describe_mangled_method (GString *out, gchar **in, size_t len)
 		i += cont_off;
 
 		if (strcmp (in [i++], "declaring"))
-			return -1;
+			g_assert_not_reached ();
 
 		nested_mangled_method = g_string_new ("");
 		int declaring_off = describe_mangled_method (nested_mangled_method, &in [i], len - i);
@@ -501,7 +530,7 @@ describe_mangled_method (GString *out, gchar **in, size_t len)
 		i += declaring_off;
 	
 		if (strcmp (in [i], "]"))
-			return -1;
+			g_assert_not_reached ();
 
 		g_string_append_printf (out, "context: %s declaring: { \n\t%s\n } ", cont_off, declaring_off);
 
@@ -514,20 +543,30 @@ describe_mangled_method (GString *out, gchar **in, size_t len)
 
 	// decode class
 	GString *class_decoded = g_string_new ("");
+	if (strcmp (in [i], "["))
+		g_assert_not_reached ();
 	int class_off = describe_mangled_class (class_decoded, &in[i], len - i);
 	i += class_off;
+	// Ensure class terminated correctly
+	if (strcmp (in [i-1], "]"))
+		g_assert_not_reached ();
 
 	gchar *method_name = in [i++];
 
 	GString *signature = g_string_new ("");
+	if (strcmp (in [i], "["))
+		g_assert_not_reached ();
 	int sig_off = describe_mangled_sig (signature, &in [i], len - i);
 	i += sig_off;
+	// Ensure signature terminated correctly
+	if (strcmp (in [i-1], "]"))
+		g_assert_not_reached ();
 
 	// Ensure delimiters honored
 	if (strcmp (in [i], "]"))
-		return -1;
+		g_assert_not_reached ();
 
-	g_string_append_printf (out, "aname: %s name: %s, sig: %s, class: %s\n", aname, method_name, sig_off, class_off);
+	g_string_append_printf (out, "aname: %s name: %s, sig: %s, class: %s\n", aname, method_name, signature->str, class_decoded->str);
 
 	return i;
 }
@@ -564,7 +603,11 @@ append_mangled_method (GString *s, MonoMethod *method)
 
 	success = success && append_mangled_klass (s, method->klass);
 	g_string_append_printf (s, " %s ", method->name);
-	return success && append_mangled_signature (s, mono_method_signature (method));
+	success = success && append_mangled_signature (s, mono_method_signature (method));
+
+	g_string_append_printf (s, " ] ");
+
+	return success;
 }
 
 static char *
@@ -577,7 +620,7 @@ mono_get_mangled_method (char *name)
 	for (len=0; tokens [len] != NULL; len++);
 
 	GString *json = g_string_new ("");
-	describe_mangled_method (json, tokens, len);
+	g_assert (describe_mangled_method (json, tokens, len) > 0);
 	char *tmp = g_string_free (json, FALSE);
 	g_strfreev (tokens);
 	g_free (str);
