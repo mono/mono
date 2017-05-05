@@ -403,7 +403,12 @@ typedef struct {
 
 #define MONO_ARCH_LLVM_SUPPORTED 1
 #define MONO_ARCH_HAVE_HANDLER_BLOCK_GUARD 1
+
+// Will be safe to remove this ifndef and enable always as of 5.4
+#ifndef TARGET_ORBIS
 #define MONO_ARCH_HAVE_HANDLER_BLOCK_GUARD_AOT 1
+#endif
+
 #define MONO_ARCH_HAVE_CARD_TABLE_WBARRIER 1
 #define MONO_ARCH_HAVE_SETUP_RESUME_FROM_SIGNAL_HANDLER_CTX 1
 #define MONO_ARCH_GC_MAPS_SUPPORTED 1
