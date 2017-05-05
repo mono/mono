@@ -1209,8 +1209,10 @@ static const char info[] =
 #ifdef PLATFORM_WIN32
 BOOL APIENTRY DllMain (HMODULE module_handle, DWORD reason, LPVOID reserved)
 {
+#if defined(GC_DLL) || defined(GC_INSIDE_DLL)
 	if (!GC_DllMain (module_handle, reason, reserved))
 		return FALSE;
+#endif
 
 	switch (reason)
 	{

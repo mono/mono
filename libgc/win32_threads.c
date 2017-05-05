@@ -50,7 +50,6 @@ struct GC_thread_Rep {
 			/* 0 ==> entry not valid.	*/
 			/* !in_use ==> stack_base == 0	*/
   GC_bool suspended;
-  GC_bool should_scan;
 
 # ifdef CYGWIN32
     void *status; /* hold exit value until join in case it's a pointer */
@@ -79,27 +78,25 @@ extern LONG WINAPI GC_write_fault_handler(struct _EXCEPTION_POINTERS *exc_info);
 
 int GC_thread_is_registered (void)
 {
-#if defined(GC_DLL) || defined(GC_INSIDE_DLL)
-	
   int i;
   DWORD thread_id = GetCurrentThreadId();
-  LONG my_max = GC_get_max_thread_index();
+  LONG my_max;
 
+  LOCK ();
+  my_max = GC_get_max_thread_index ();
   for (i = 0;
        i <= my_max &&
        (!thread_table[i].in_use || thread_table[i].id != thread_id);
        /* Must still be in_use, since nobody else can store our thread_id. */
        i++) {}
   if (i > my_max) {
+	  UNLOCK ();
 	  return FALSE;
   } else {
-	  return thread_table[i].should_scan;
+	  int is_registered = thread_table[i].stack_base ? TRUE : FALSE;
+	  UNLOCK ();
+	  return is_registered;
   }
-
-#else
-	/* FIXME: */
-	return 0;
-#endif
 }
 
 /*
@@ -167,7 +164,6 @@ static GC_thread GC_new_thread(void) {
   /* Up until this point, this entry is viewed as reserved but invalid	*/
   /* by GC_delete_thread.						*/
   thread_table[i].id = GetCurrentThreadId();
-  thread_table[i].should_scan = GC_use_dll_main;
   /* If this thread is being created while we are trying to stop	*/
   /* the world, wait here.  Hopefully this can't happen on any	*/
   /* systems that don't allow us to block here.			*/
@@ -223,42 +219,24 @@ static void GC_delete_thread(DWORD thread_id) {
 
 int GC_thread_register_foreign (void *base_addr)
 {
-  int i;
-  DWORD thread_id = GetCurrentThreadId();
-  LONG my_max = GC_get_max_thread_index();
-
-  for (i = 0;
-       i <= my_max &&
-       (!thread_table[i].in_use || thread_table[i].id != thread_id);
-       /* Must still be in_use, since nobody else can store our thread_id. */
-       i++) {}
-  if (i > my_max) {
-    WARN("Registering nonexistent thread %ld\n", (GC_word)thread_id);
-	  return FALSE;
-  } else {
-	  thread_table[i].should_scan = TRUE;
-	  return TRUE;
-  }
+  if (GC_main_thread == GetCurrentThreadId ())
+    return FALSE;
+  LOCK ();
+  GC_new_thread ();
+  UNLOCK ();
+  return TRUE;
 }
 
 int GC_thread_unregister_foreign ()
 {
   int i;
   DWORD thread_id = GetCurrentThreadId();
-  LONG my_max = GC_get_max_thread_index();
+  LONG my_max;
 
-  for (i = 0;
-       i <= my_max &&
-       (!thread_table[i].in_use || thread_table[i].id != thread_id);
-       /* Must still be in_use, since nobody else can store our thread_id. */
-       i++) {}
-  if (i > my_max) {
-    WARN("Deregistering nonexistent thread %ld\n", (GC_word)thread_id);
-	  return FALSE;
-  } else {
-	  thread_table[i].should_scan = (GC_use_dll_main || FALSE);
-	  return TRUE;
-  }
+  LOCK ();
+  GC_delete_thread (thread_id);
+  UNLOCK ();
+  return TRUE;
 }
 
 #ifdef CYGWIN32
@@ -317,7 +295,7 @@ void GC_stop_world()
 # endif /* !CYGWIN32 */
   for (i = 0; i <= GC_get_max_thread_index(); i++)
     if (thread_table[i].stack_base != 0
-	&& thread_table[i].id != thread_id && thread_table[i].should_scan) {
+	&& thread_table[i].id != thread_id) {
 #     ifdef MSWINCE
         /* SuspendThread will fail if thread is running kernel code */
 	while (SuspendThread(thread_table[i].handle) == (DWORD)-1)
@@ -429,7 +407,7 @@ void GC_push_all_stacks()
   
   for (i = 0; i <= my_max; i++) {
     thread = thread_table + i;
-    if (thread -> in_use && thread->should_scan && thread -> stack_base) {
+    if (thread -> in_use && thread -> stack_base) {
       if (thread -> id == thread_id) {
 	sp = (ptr_t) &dummy;
 	found_me = TRUE;
@@ -583,12 +561,9 @@ GC_API HANDLE WINAPI GC_CreateThread(
 static DWORD WINAPI thread_start(LPVOID arg)
 {
     DWORD ret = 0;
-    GC_thread me = NULL;
     thread_args *args = (thread_args *)arg;
 
-    me = GC_new_thread();
-    me->should_scan = TRUE;
-
+    GC_thread_register_foreign (&ret);
 
     /* Clear the thread entry even if we exit with an exception.	*/
     /* This is probably pointless, since an uncaught exception is	*/
@@ -600,8 +575,8 @@ static DWORD WINAPI thread_start(LPVOID arg)
 #ifndef __GNUC__
     } __finally {
 #endif /* __GNUC__ */
-	GC_free(args);
-	GC_delete_thread(GetCurrentThreadId());
+    GC_free(args);
+    GC_thread_unregister_foreign ();
 #ifndef __GNUC__
     }
 #endif /* __GNUC__ */
@@ -672,8 +647,7 @@ void GC_thr_init() {
     GC_thr_initialized = TRUE;
 
     /* Add the initial thread, so we can stop it.	*/
-    me = GC_new_thread();
-    me->should_scan = TRUE;
+    GC_new_thread();
 }
 
 #ifdef CYGWIN32
