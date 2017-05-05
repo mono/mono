@@ -10,7 +10,7 @@
 CODEPAGE = 65001
 
 RUNTIME_FLAGS =
-TEST_HARNESS = $(topdir)/class/lib/$(PROFILE)/$(PARENT_PROFILE)nunit-lite-console.exe
+TEST_HARNESS = $(topdir)/class/lib/$(PROFILE_DIRECTORY)/$(PARENT_PROFILE)nunit-lite-console.exe
 PLATFORM_DEBUG_FLAGS = /debug:portable
 MCS_FLAGS = 
 MBAS_FLAGS = -debug
