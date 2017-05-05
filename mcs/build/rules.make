@@ -25,6 +25,10 @@ Q=$(if $(V),,@)
 Q_MCS=$(if $(V),,@echo "$(if $(MCS_MODE),MCS,CSC)     [$(intermediate)$(PROFILE)] $(notdir $(@))";)
 Q_AOT=$(if $(V),,@echo "AOT     [$(intermediate)$(PROFILE)] $(notdir $(@))";)
 
+MAKE_Q=$(if $(V),,-s)
+MAKE_V=$(if $(V),V=1,)
+
+
 ifndef BUILD_TOOLS_PROFILE
 BUILD_TOOLS_PROFILE = build
 endif

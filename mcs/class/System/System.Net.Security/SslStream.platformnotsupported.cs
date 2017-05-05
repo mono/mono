@@ -31,6 +31,23 @@ using System.Threading.Tasks;
 
 namespace System.Net.Security
 {
+	/*
+	 * These two are defined by the referencesource; add them heere to make
+	 * it easy to switch between the two implementations.
+	 */
+
+	internal delegate bool RemoteCertValidationCallback (
+		string host,
+		X509Certificate certificate,
+		X509Chain chain,
+		SslPolicyErrors sslPolicyErrors);
+
+	internal delegate X509Certificate LocalCertSelectionCallback (
+		string targetHost,
+		X509CertificateCollection localCertificates,
+		X509Certificate remoteCertificate,
+		string[] acceptableIssuers);
+
 	public class SslStream : AuthenticatedStream
 	{
 		const string EXCEPTION_MESSAGE = "System.Net.Security.SslStream is not supported on the current platform.";

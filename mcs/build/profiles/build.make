@@ -19,3 +19,4 @@ NO_TEST = yes
 NO_INSTALL = yes
 
 FRAMEWORK_VERSION = 4.5
+

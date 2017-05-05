@@ -68,12 +68,8 @@ ifdef ONLY_APPLETLS
 LIB_MCS_FLAGS += -d:ONLY_APPLETLS
 endif
 
-ifndef PROFILE_DISABLE_BTLS
-ifdef HAVE_BTLS
-
+ifdef MONO_FEATURE_BTLS
 LIB_MCS_FLAGS += -d:MONO_FEATURE_BTLS
-
-endif
 endif
 
 ifndef NO_THREAD_ABORT
@@ -113,11 +109,12 @@ ifndef MOBILE_PROFILE
 LIB_REFS += System.Configuration
 LIB_MCS_FLAGS += -d:CONFIGURATION_DEP
 endif
-
 endif
 
 EXTRA_DISTFILES = \
 	common.sources					\
+	common_full.sources				\
+	security-dep.sources			\
 	Test/test-config-file				\
 	Test/System.Security.Cryptography.X509Certificates/pkits/Makefile	\
 	Test/System.Security.Cryptography.X509Certificates/pkits/README		\
@@ -150,27 +147,27 @@ ifeq (bare/,$(intermediate))
 build-bare:
 else
 $(bare_libdir)/System.dll:
-	$(MAKE) intermediate=bare/ $(bare_libdir)/System.dll
+	$(MAKE) $(MAKE_V) intermediate=bare/ $(bare_libdir)/System.dll
 endif
 
 ifneq (secxml/,$(intermediate))
 $(secxml_libdir)/System.dll: $(bare_libdir)/System.dll $(bare_libdir)/System.Xml.dll $(MONO_SECURITY_DLL) $(bare_libdir)/System.dll
-	$(MAKE) intermediate=secxml/ $(secxml_libdir)/System.dll
+	$(MAKE) $(MAKE_V) intermediate=secxml/ $(secxml_libdir)/System.dll
 else
 build-sec:
 endif
 
 $(the_libdir_base)System.Xml.dll:
-	(cd ../System.XML; $(MAKE) $@)
+	(cd ../System.XML; $(MAKE) $(MAKE_V) $@)
 
 $(bare_libdir)/System.Xml.dll:
-	(cd ../System.XML; $(MAKE) $@)
+	(cd ../System.XML; $(MAKE) $(MAKE_V) $@)
 
 $(the_libdir_base)Mono.Security.dll: ../Mono.Security/Makefile
-	(cd ../Mono.Security; $(MAKE))
+	(cd ../Mono.Security; $(MAKE) $(MAKE_V))
 
 $(the_libdir_base)System.Configuration.dll:
-	(cd ../System.Configuration; $(MAKE))
+	(cd ../System.Configuration; $(MAKE) $(MAKE_V))
 
 $(build_lib): $(CYCLIC_DEP_FILES)
 
@@ -189,7 +186,7 @@ fresh: clean
 ifndef intermediate
 ifneq ($(PROFILE),basic)
 csproj-local:
-	$(MAKE) csproj-local intermediate=bare/
-	$(MAKE) csproj-local intermediate=secxml/
+	$(MAKE) $(MAKE_V) csproj-local intermediate=bare/
+	$(MAKE) $(MAKE_V) csproj-local intermediate=secxml/
 endif
 endif

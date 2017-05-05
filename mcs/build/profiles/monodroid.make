@@ -34,3 +34,9 @@ NO_INSTALL = yes
 MOBILE_DYNAMIC = yes
 MOBILE_PROFILE = yes
 NO_CONSOLE = yes
+
+ifndef intermediate
+ifdef HAVE_BTLS
+MONO_FEATURE_BTLS = 1
+endif
+endif
