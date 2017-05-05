@@ -161,18 +161,28 @@ namespace Mono.Net.Security
 				if (providerRegistration != null)
 					return;
 				providerRegistration = new Dictionary<string,string> ();
-				providerRegistration.Add ("legacy", "Mono.Net.Security.LegacyTlsProvider");
-			
-				if (Platform.IsMacOS)
-					providerRegistration.Add ("default", "Mono.AppleTls.AppleTlsProvider");
-				else
-					providerRegistration.Add ("default", "Mono.Net.Security.LegacyTlsProvider");
 
-				if (IsBtlsSupported ())
-					providerRegistration.Add ("btls", "Mono.Btls.MonoBtlsProvider");
+				string legacyProvider = "Mono.Net.Security.LegacyTlsProvider";
+				providerRegistration.Add ("legacy", legacyProvider);
+
+				string defaultProvider = null;
+				if (IsBtlsSupported ()) {
+					var btlsProvider = "Mono.Btls.MonoBtlsProvider";
+					providerRegistration.Add ("btls", btlsProvider);
+					defaultProvider = btlsProvider;
+				}
 			
-				providerRegistration.Add ("apple", "Mono.AppleTls.AppleTlsProvider");
-				
+				if (Platform.IsMacOS) {
+					var appleProvider = "Mono.AppleTls.AppleTlsProvider";
+					providerRegistration.Add ("apple", appleProvider);
+					defaultProvider = appleProvider;
+				}
+
+				if (defaultProvider == null)
+					defaultProvider = legacyProvider;
+
+				providerRegistration.Add ("default", defaultProvider);
+
 				X509Helper2.Initialize ();
 			}
 		}

@@ -9,7 +9,8 @@ LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)/Facades
 
 LIBRARY = netstandard.dll
 
-KEY_FILE = ../../msfinal.pub
+KEY_FILE = ../../Open.snk
+LIBRARY_SNK = $(KEY_FILE)
 SIGN_FLAGS = /delaysign /keyfile:$(KEY_FILE) /nowarn:1616,1699 /nowarn:618
 LIB_REFS = System System.Xml System.Xml.Linq System.Runtime.Serialization System.Core System.Numerics System.Net.Http System.Transactions \
 System.IO.Compression System.Data System.ComponentModel.Composition System.IO.Compression.FileSystem \
@@ -21,7 +22,7 @@ else
 LIB_REFS += System.Web System.Drawing
 endif
 
-LIB_MCS_FLAGS = $(SIGN_FLAGS)
+LIB_MCS_FLAGS = $(SIGN_FLAGS) $(EXTRA_LIB_MCS_FLAGS)
 
 PLATFORM_DEBUG_FLAGS =
 
