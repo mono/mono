@@ -1,5 +1,5 @@
-//
-// Mono.Cairo.GLSurface.cs
+﻿//
+// Mono.Cairo.Device.cs
 //
 // Authors:
 //			JP Bruyère (jp_bruyere@hotmail.com)
@@ -27,35 +27,19 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 using System;
 
-namespace Cairo {
-
-	public class GLSurface : Surface
+namespace Cairo
+{
+	public class WGLDevice : Device
 	{
-		
-		public GLSurface (IntPtr ptr, bool own) : base (ptr, own)
-		{}
+		public WGLDevice (IntPtr hglrc) : base (NativeMethods.cairo_wgl_device_create (hglrc), true)
+		{
+		}
 
-		public GLSurface (Device device, Cairo.Content content, uint tex, int width, int height)
-			: base (NativeMethods.cairo_gl_surface_create_for_texture (device.Handle, (uint)content, tex, width, height), true)
-		{}
-
-		public GLSurface (EGLDevice device, IntPtr eglSurf, int width, int height)
-			: base (NativeMethods.cairo_gl_surface_create_for_egl (device.Handle, eglSurf, width, height), true)
-		{}
-
-		public GLSurface (GLXDevice device, IntPtr window, int width, int height)
-			: base (NativeMethods.cairo_gl_surface_create_for_window (device.Handle, window, width, height),true)
-		{}
-
-		public GLSurface (WGLDevice device, IntPtr hdc, int width, int height)
-			: base (NativeMethods.cairo_gl_surface_create_for_dc (device.Handle, hdc, width, height), true)
-		{}
-
-		public void SwapBuffers(){
-			NativeMethods.cairo_gl_surface_swapbuffers (this.Handle);
+		public IntPtr Context {
+			get { return NativeMethods.cairo_wgl_device_get_context (Handle); }
 		}
 	}
 }
+

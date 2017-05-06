@@ -5,13 +5,11 @@
 //          Hisham Mardam Bey (hisham.mardambey@gmail.com)
 //          John Luke (john.luke@gmail.com)
 //          Alp Toker (alp@atoker.com)
-//			JP Bruyère (jp_bruyere@hotmail.com)
 //
 // (C) Ximian, Inc. 2003
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 // Copyright (C) 2005 John Luke
 // Copyright (C) 2006 Alp Toker
-// Copyright (C) 2016 JP Bruyère
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -873,21 +871,64 @@ namespace Cairo
 		
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
 		internal static extern void cairo_xlib_surface_set_size (IntPtr surface, int width, int height);
-		
-		// GLSurface
+
+		#region GLSurface
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern IntPtr cairo_gl_surface_create (IntPtr device, uint content, int width, int height);
+
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
 		internal static extern IntPtr cairo_gl_surface_create_for_texture (IntPtr device, uint content, uint tex, int width, int height);
 
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
-		internal static extern IntPtr cairo_gl_surface_create_for_window (IntPtr device, IntPtr window, int width, int height);
+		internal static extern void cairo_gl_surface_set_size (IntPtr surface, int width, int height);
 
-		//Device
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern int cairo_gl_surface_get_width (IntPtr surface);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern int cairo_gl_surface_get_height (IntPtr surface);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern void cairo_gl_surface_swapbuffers (IntPtr surf);
+		#endregion
+
+		#region GLX Functions
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
 		internal static extern IntPtr cairo_glx_device_create (IntPtr dpy, IntPtr gl_ctx);
 
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern IntPtr cairo_glx_device_get_display (IntPtr device);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern IntPtr cairo_glx_device_get_context (IntPtr device);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern IntPtr cairo_gl_surface_create_for_window (IntPtr device, IntPtr window, int width, int height);
+		#endregion
+
+		#region WGL Fucntions
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern IntPtr cairo_wgl_device_create (IntPtr hglrc);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern IntPtr cairo_wgl_device_get_context (IntPtr device);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern IntPtr cairo_gl_surface_create_for_dc (IntPtr device, IntPtr hdc, int width, int height);
+		#endregion
+
+		#region EGL Functions
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern IntPtr cairo_egl_device_create (IntPtr dpy, IntPtr gl_ctx);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern IntPtr cairo_gl_surface_create_for_egl (IntPtr device, IntPtr eglSurface, int width, int height);
+		#endregion
+
+		#region Device
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
 		internal static extern IntPtr cairo_device_reference (IntPtr device);
-				 
+
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
 		internal static extern Status cairo_device_status(IntPtr device);
 
@@ -899,5 +940,9 @@ namespace Cairo
 
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
 		internal static extern void cairo_device_release(IntPtr device);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern void cairo_gl_device_set_thread_aware(IntPtr device, int value);
+		#endregion
 	}
 }

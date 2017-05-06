@@ -56,3 +56,6 @@
 ./Mono.Cairo/XlibSurface.cs
 ./Mono.Cairo/GLSurface.cs
 ./Mono.Cairo/Device.cs
+./Mono.Cairo/GLXDevice.cs
+./Mono.Cairo/EGLDevice.cs
+./Mono.Cairo/WGLDevice.cs
