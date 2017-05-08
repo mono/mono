@@ -42,6 +42,7 @@ using System.Net.Security;
 using System.Security.Authentication.ExtendedProtection;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using MNS = Mono.Net.Security;
 
 namespace System.Net {
 	partial class HttpListener {
@@ -86,7 +87,7 @@ namespace System.Net {
 			}
 		}
 
-		internal SslStream CreateSslStream (Stream innerStream, bool ownsStream, MSI.MonoRemoteCertificateValidationCallback callback)
+		internal SslStream CreateSslStream (Stream innerStream, bool ownsStream, RemoteCertificateValidationCallback callback)
 		{
 			lock (registry) {
 				if (tlsProvider == null)
@@ -94,7 +95,7 @@ namespace System.Net {
 				if (tlsSettings == null)
 					tlsSettings = MSI.MonoTlsSettings.CopyDefaultSettings ();
 				if (tlsSettings.RemoteCertificateValidationCallback == null)
-					tlsSettings.RemoteCertificateValidationCallback = callback;
+					tlsSettings.RemoteCertificateValidationCallback = MNS.Private.CallbackHelpers.PublicToMono (callback);
 				var sslStream = tlsProvider.CreateSslStream (innerStream, ownsStream, tlsSettings);
 				return sslStream.SslStream;
 			}
