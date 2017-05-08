@@ -28,16 +28,6 @@
 //
 
 #if SECURITY_DEP
-#if MONO_SECURITY_ALIAS
-extern alias MonoSecurity;
-#endif
-
-#if MONO_SECURITY_ALIAS
-using MSI = MonoSecurity::Mono.Security.Interface;
-#else
-using MSI = Mono.Security.Interface;
-#endif
-
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
