@@ -2498,6 +2498,52 @@ public class DebuggerTests
 	}
 
 	[Test]
+	public void MultiDomainLoad () {
+		Event e = run_until ("multi_domain_load");
+
+		vm.EnableEvents (EventType.AppDomainCreate, EventType.AppDomainUnload, EventType.AssemblyUnload,  EventType.AssemblyLoad);
+
+		vm.Resume ();
+		var listOfAllAssembliesLoaded=new List<AssemblyMirror>();
+		bool exitLoop = false;
+		while (!exitLoop) {
+			e = GetNextEvent ();
+			switch(e)
+			{
+				case AssemblyLoadEvent al:
+					Console.WriteLine($"({al.Assembly.Id})Assembly loaded {al.Assembly.Location} in {al.Assembly.Domain.FriendlyName} at thread:{e.Thread.Name}");
+					listOfAllAssembliesLoaded.Add(((AssemblyLoadEvent)e).Assembly);
+					vm.Resume();
+				break;
+				case AssemblyUnloadEvent au:
+					Console.WriteLine($"({au.Assembly.Id})Assembly unloaded {au.Assembly.Location} in {au.Assembly.Domain.FriendlyName} at thread:{e.Thread.Name}");
+					vm.Resume();
+				break;
+				case AppDomainCreateEvent dc:
+					Console.WriteLine($"Domain created {dc.Domain.FriendlyName} at thread:{e.Thread.Name}");
+					vm.Resume();
+				break;
+				case AppDomainUnloadEvent du:
+					Console.WriteLine($"Domain unloaded {du.Domain.FriendlyName} at thread:{e.Thread.Name}");
+					vm.Resume();
+				break;
+				case VMDeathEvent vmd:
+					exitLoop=true;
+				break;
+				default:
+					Console.WriteLine(e.GetType().FullName);
+					vm.Resume();
+				break;
+			}
+		}
+		Assert.AreEqual(
+			1/*Mono.Security.dll which loads before AppDomains are created*/+
+			2/*appdomain-client.exe which loads twice for 2 domains, see dtest-app.cs*/+
+			1/*System.Core.dll which loads at end*/
+			,listOfAllAssembliesLoaded.Count);
+	}
+
+	[Test]
 	public void AssemblyLoad () {
 		Event e = run_until ("assembly_load");
 

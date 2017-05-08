@@ -21,7 +21,7 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
-		internal long Id {
+		public long Id {
 			get {
 				return id;
 			}

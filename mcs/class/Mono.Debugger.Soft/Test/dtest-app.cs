@@ -292,6 +292,28 @@ public class Tests : TestsBase, ITest2
 		evt.WaitOne ();
 	}
 
+	static void multi_domain_load()
+	{
+		var setup = new AppDomainSetup();
+		setup.ApplicationBase = ".";
+
+		AppDomain newDomain = AppDomain.CreateDomain("multi_domain_load_domain_1", null, setup);
+
+		string[] args = { "1", "2", "3" };
+		newDomain.ExecuteAssembly("appdomain-client.exe", null, args);
+
+
+		AppDomainSetup setup2 = new AppDomainSetup();
+		setup2.ApplicationBase = ".";
+
+		AppDomain newDomain2 = AppDomain.CreateDomain($"multi_domain_load_domain_2", null, setup2);
+
+		newDomain2.ExecuteAssembly("appdomain-client.exe", null, args);
+
+		AppDomain.Unload(newDomain);
+		AppDomain.Unload(newDomain2);
+	}
+
 	public static int Main (String[] args) {
 		tls_i = 42;
 
@@ -323,6 +345,7 @@ public class Tests : TestsBase, ITest2
 			return 0;
 		}
 		assembly_load ();
+		multi_domain_load();
 		breakpoints ();
 		single_stepping ();
 		arguments ();
