@@ -29,15 +29,6 @@
 //
 
 #if SECURITY_DEP
-#if MONO_SECURITY_ALIAS
-extern alias MonoSecurity;
-using MonoSecurity::Mono.Security.Authenticode;
-using MSI = MonoSecurity::Mono.Security.Interface;
-#else
-using Mono.Security.Authenticode;
-using MSI = Mono.Security.Interface;
-#endif
-
 using System.IO;
 using System.Collections;
 using System.Threading;
@@ -49,7 +40,7 @@ using System.Security.Cryptography.X509Certificates;
 
 //TODO: logging
 namespace System.Net {
-	public sealed class HttpListener : IDisposable {
+	public sealed partial class HttpListener : IDisposable {
 		AuthenticationSchemes auth_schemes;
 		HttpListenerPrefixCollection prefixes;
 		AuthenticationSchemeSelector auth_selector; 
@@ -58,10 +49,6 @@ namespace System.Net {
 		bool unsafe_ntlm_auth;
 		bool listening;
 		bool disposed;
-
-		MSI.MonoTlsProvider tlsProvider;
-		MSI.MonoTlsSettings tlsSettings;
-		X509Certificate certificate;
 
 		Hashtable registry;   // Dictionary<HttpListenerContext,HttpListenerContext> 
 		ArrayList ctx_queue;  // List<HttpListenerContext> ctx_queue;
@@ -86,56 +73,6 @@ namespace System.Net {
 			extendedProtectionPolicy = new ExtendedProtectionPolicy (PolicyEnforcement.Never);
 		}
 
-		internal HttpListener (X509Certificate certificate, MSI.MonoTlsProvider tlsProvider, MSI.MonoTlsSettings tlsSettings)
-			: this ()
-		{
-			this.certificate = certificate;
-			this.tlsProvider = tlsProvider;
-			this.tlsSettings = tlsSettings;
-		}
-
-		internal X509Certificate LoadCertificateAndKey (IPAddress addr, int port)
-		{
-			lock (registry) {
-				if (certificate != null)
-					return certificate;
-
-				// Actually load the certificate
-				try {
-					string dirname = Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData);
-					string path = Path.Combine (dirname, ".mono");
-					path = Path.Combine (path, "httplistener");
-					string cert_file = Path.Combine (path, String.Format ("{0}.cer", port));
-					if (!File.Exists (cert_file))
-						return null;
-					string pvk_file = Path.Combine (path, String.Format ("{0}.pvk", port));
-					if (!File.Exists (pvk_file))
-						return null;
-					var cert = new X509Certificate2 (cert_file);
-					cert.PrivateKey = PrivateKey.CreateFromFile (pvk_file).RSA;
-					certificate = cert;
-					return certificate;
-				} catch {
-					// ignore errors
-					certificate = null;
-					return null;
-				}
-			}
-		}
-
-		internal SslStream CreateSslStream (Stream innerStream, bool ownsStream, MSI.MonoRemoteCertificateValidationCallback callback)
-		{
-			lock (registry) {
-				if (tlsProvider == null)
-					tlsProvider = MSI.MonoTlsProviderFactory.GetProvider ();
-				if (tlsSettings == null)
-					tlsSettings = MSI.MonoTlsSettings.CopyDefaultSettings ();
-				if (tlsSettings.RemoteCertificateValidationCallback == null)
-					tlsSettings.RemoteCertificateValidationCallback = callback;
-				var sslStream = tlsProvider.CreateSslStream (innerStream, ownsStream, tlsSettings);
-				return sslStream.SslStream;
-			}
-		}
 
 		// TODO: Digest, NTLM and Negotiate require ControlPrincipal
 		public AuthenticationSchemes AuthenticationSchemes {
