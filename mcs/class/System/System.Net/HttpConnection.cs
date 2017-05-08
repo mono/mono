@@ -27,7 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
@@ -38,8 +37,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
 namespace System.Net {
-	sealed class HttpConnection
-	{
+	sealed class HttpConnection {
 		static AsyncCallback onread_cb = new AsyncCallback (OnRead);
 		const int BufferSize = 8192;
 		Socket sock;
@@ -485,5 +483,4 @@ namespace System.Net {
 		}
 	}
 }
-#endif
 
