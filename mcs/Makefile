@@ -175,10 +175,17 @@ $(MONO_API_SNAPSHOT_PROFILE_PATH)%.cs: $(topdir)class/lib/$(PROFILE)/%.dll $(GEN
 
 mono-api-current: $(MONO_API_ASSEMBLIES_CS)
 
+mono-api-current-clean:
+	$(Q) rm -rf "$(MONO_API_SNAPSHOT_PROFILE_PATH)"
+
 mono-api-diff:
 	@echo "Regenerating API snapshot..."
-	$(Q) rm -rf "$(MONO_API_SNAPSHOT_PROFILE_PATH)"
-	$(Q) $(MAKE) mono-api-current
+	$(Q) $(MAKE) mono-api-current-clean PROFILE=net_4_x
+	$(Q) $(MAKE) mono-api-current-clean PROFILE=monotouch
+	$(Q) $(MAKE) mono-api-current-clean PROFILE=monodroid
+	$(Q) $(MAKE) mono-api-current PROFILE=net_4_x
+	$(Q) $(MAKE) mono-api-current PROFILE=monotouch
+	$(Q) $(MAKE) mono-api-current PROFILE=monodroid
 	@echo "Checking public API differences..."
 	$(Q) cd $(MONO_API_SNAPSHOT_PATH); git add -A .
 	$(Q) cd $(MONO_API_SNAPSHOT_PATH); git diff --no-renames HEAD > $(abspath $(topdir))/temp.patch
