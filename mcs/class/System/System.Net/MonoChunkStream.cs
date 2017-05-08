@@ -1,5 +1,5 @@
 //
-// System.Net.ChunkStream
+// System.Net.MonoChunkStream
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
@@ -36,7 +36,7 @@ using System.Text;
 
 namespace System.Net
 {
-	class ChunkStream
+	class MonoChunkStream
 	{
 		enum State {
 			None,
@@ -76,13 +76,13 @@ namespace System.Net
 		int trailerState;
 		ArrayList chunks;
 		
-		public ChunkStream (byte [] buffer, int offset, int size, WebHeaderCollection headers)
+		public MonoChunkStream (byte [] buffer, int offset, int size, WebHeaderCollection headers)
 					: this (headers)
 		{
 			Write (buffer, offset, size);
 		}
 
-		public ChunkStream (WebHeaderCollection headers)
+		public MonoChunkStream (WebHeaderCollection headers)
 		{
 			this.headers = headers;
 			saved = new StringBuilder ();

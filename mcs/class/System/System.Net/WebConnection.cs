@@ -63,7 +63,7 @@ namespace System.Net
 		AbortHelper abortHelper;
 		internal WebConnectionData Data;
 		bool chunkedRead;
-		ChunkStream chunkStream;
+		MonoChunkStream chunkStream;
 		Queue queue;
 		bool reused;
 		int position;
@@ -89,7 +89,7 @@ namespace System.Net
 		static extern void xamarin_start_wwan (string uri);
 #endif
 
-		internal ChunkStream ChunkStream {
+		internal MonoChunkStream MonoChunkStream {
 			get { return chunkStream; }
 		}
 
@@ -539,7 +539,7 @@ namespace System.Net
 				}
 			} else if (chunkStream == null) {
 				try {
-					chunkStream = new ChunkStream (buffer, pos, nread, data.Headers);
+					chunkStream = new MonoChunkStream (buffer, pos, nread, data.Headers);
 				} catch (Exception e) {
 					HandleError (WebExceptionStatus.ServerProtocolViolation, e, "ReadDone5");
 					return;
@@ -889,7 +889,7 @@ namespace System.Net
 				WebAsyncResult wr = new WebAsyncResult (cb, state, buffer, offset, size);
 				wr.InnerAsyncResult = result;
 				if (result == null) {
-					// Will be completed from the data in ChunkStream
+					// Will be completed from the data in MonoChunkStream
 					wr.SetCompleted (true, (Exception) null);
 					wr.DoCallback ();
 				}
@@ -951,7 +951,7 @@ namespace System.Net
 			return (nbytes != 0) ? nbytes : -1;
 		}
 
-		// To be called on chunkedRead when we can read no data from the ChunkStream yet
+		// To be called on chunkedRead when we can read no data from the MonoChunkStream yet
 		int EnsureRead (byte [] buffer, int offset, int size)
 		{
 			byte [] morebytes = null;
