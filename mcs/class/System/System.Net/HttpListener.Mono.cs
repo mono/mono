@@ -60,7 +60,7 @@ namespace System.Net {
 
 		internal X509Certificate LoadCertificateAndKey (IPAddress addr, int port)
 		{
-			lock (registry) {
+			lock (_internalLock) {
 				if (certificate != null)
 					return certificate;
 
@@ -89,7 +89,7 @@ namespace System.Net {
 
 		internal SslStream CreateSslStream (Stream innerStream, bool ownsStream, RemoteCertificateValidationCallback callback)
 		{
-			lock (registry) {
+			lock (_internalLock) {
 				if (tlsProvider == null)
 					tlsProvider = MSI.MonoTlsProviderFactory.GetProvider ();
 				if (tlsSettings == null)
