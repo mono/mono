@@ -32,7 +32,7 @@ using System.Threading.Tasks;
 namespace System.Net.Security
 {
 	/*
-	 * These two are defined by the referencesource; add them heere to make
+	 * These two are defined by the referencesource; add them here to make
 	 * it easy to switch between the two implementations.
 	 */
 
