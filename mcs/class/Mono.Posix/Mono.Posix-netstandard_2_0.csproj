@@ -7,16 +7,16 @@
     <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <EnableDefaultItems>false</EnableDefaultItems>
     <!--<BaseIntermediateOutputPath>obj-netstandard2.0</BaseIntermediateOutputPath>
     <IntermediateOutputPath>obj-netstandard2.0</IntermediateOutputPath>-->
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(ForceUseLibC)' == 'true'">
-    <DefineConstants>FORCE_USE_LIBC_NOT_MSVC</DefineConstants>
+    <DefineConstants>$(DefineConstants);FORCE_USE_LIBC_NOT_MSVC</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="**\*.cs" />
     <Compile Include=".\Assembly\**\*.cs" />
     <Compile Include=".\Mono.Posix\**\*.cs" />
     <Compile Include=".\Mono.Unix\**\*.cs" />
