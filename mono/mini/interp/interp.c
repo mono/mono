@@ -5378,6 +5378,8 @@ mono_interp_frame_iter_next (MonoInterpStackIter *iter, StackFrameInfo *frame)
 		return FALSE;
 
 	frame->type = FRAME_TYPE_INTERP;
+	// FIXME:
+	frame->domain = mono_domain_get ();
 	frame->interp_frame = iframe;
 	frame->method = iframe->runtime_method->method;
 	frame->actual_method = frame->method;

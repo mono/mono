@@ -3052,7 +3052,7 @@ process_frame (StackFrameInfo *info, MonoContext *ctx, gpointer user_data)
 	SeqPoint sp;
 	int flags = 0;
 
-	if (info->type != FRAME_TYPE_MANAGED) {
+	if (info->type != FRAME_TYPE_MANAGED && info->type != FRAME_TYPE_INTERP) {
 		if (info->type == FRAME_TYPE_DEBUGGER_INVOKE) {
 			/* Mark the last frame as an invoke frame */
 			if (ud->frames)
@@ -4771,7 +4771,7 @@ get_notify_debugger_of_wait_completion_method ()
 }
 
 static void
-process_breakpoint_inner (DebuggerTlsData *tls, gboolean from_signal)
+process_breakpoint (DebuggerTlsData *tls, gboolean from_signal)
 {
 	MonoJitInfo *ji;
 	guint8 *ip;
@@ -4970,9 +4970,9 @@ process_signal_event (void (*func) (DebuggerTlsData*, gboolean))
 }
 
 static void
-process_breakpoint (void)
+process_breakpoint_from_signal (void)
 {
-	process_signal_event (process_breakpoint_inner);
+	process_signal_event (process_breakpoint);
 }
 
 static void
@@ -5014,7 +5014,7 @@ mono_debugger_agent_breakpoint_hit (void *sigctx)
 	 * problems, like the original signal is disabled, libgc can't handle altstack, etc.
 	 * So set up the signal context to return to the real breakpoint handler function.
 	 */
-	resume_from_signal_handler (sigctx, process_breakpoint);
+	resume_from_signal_handler (sigctx, process_breakpoint_from_signal);
 }
 
 static gboolean
@@ -5264,7 +5264,7 @@ debugger_agent_breakpoint_from_context (MonoContext *ctx)
 	mono_thread_state_init_from_monoctx (&tls->restore_state, ctx);
 	memcpy (&tls->handler_ctx, ctx, sizeof (MonoContext));
 
-	process_breakpoint_inner (tls, FALSE);
+	process_breakpoint (tls, FALSE);
 
 	memcpy (ctx, &tls->restore_state.ctx, sizeof (MonoContext));
 	memcpy (&tls->restore_state, &orig_restore_state, sizeof (MonoThreadUnwindState));

@@ -1070,6 +1070,7 @@ mono_walk_stack_full (MonoJitStackWalk func, MonoContext *start_ctx, MonoDomain 
 	mgreg_t *new_reg_locations [MONO_MAX_IREGS];
 	gboolean get_reg_locations = unwind_options & MONO_UNWIND_REG_LOCATIONS;
 	gboolean async = mono_thread_info_is_async_context ();
+	Unwinder unwinder;
 
 	if (mono_llvm_only) {
 		GSList *l, *ips;
@@ -1114,9 +1115,11 @@ mono_walk_stack_full (MonoJitStackWalk func, MonoContext *start_ctx, MonoDomain 
 	memcpy (&ctx, start_ctx, sizeof (MonoContext));
 	memset (reg_locations, 0, sizeof (reg_locations));
 
+	unwinder_init (&unwinder);
+
 	while (MONO_CONTEXT_GET_SP (&ctx) < jit_tls->end_of_stack) {
 		frame.lmf = lmf;
-		res = mono_find_jit_info_ext (domain, jit_tls, NULL, &ctx, &new_ctx, NULL, &lmf, get_reg_locations ? new_reg_locations : NULL, &frame);
+		res = unwinder_unwind_frame (&unwinder, domain, jit_tls, NULL, &ctx, &new_ctx, NULL, &lmf, get_reg_locations ? new_reg_locations : NULL, &frame);
 		if (!res)
 			return;
 
