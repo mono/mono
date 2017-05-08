@@ -1236,6 +1236,8 @@ namespace Mono.Debugger.Soft
 					bool res = ReceivePacket ();
 					if (!res)
 						break;
+				} catch (ThreadAbortException) {
+					break;
 				} catch (Exception ex) {
 					if (!closed) {
 						Console.WriteLine (ex);
