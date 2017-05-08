@@ -1,15 +1,17 @@
 # -*- makefile -*-
 
-with_mono_path_monolite = MONO_PATH="$(topdir)/class/lib/monolite$(PLATFORM_PATH_SEPARATOR)$(topdir)/class/lib/monolite/Facades$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
+monolite_path := $(topdir)/class/lib/monolite/$(MONO_CORLIB_VERSION)
+
+with_mono_path_monolite = MONO_PATH="$(monolite_path)$(PLATFORM_PATH_SEPARATOR)$(monolite_path)/Facades$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
 
 monolite_flag := $(depsdir)/use-monolite
 use_monolite := $(wildcard $(monolite_flag))
 
-MONOLITE_MSCORLIB = $(topdir)/class/lib/monolite/mscorlib.dll
+MONOLITE_MSCORLIB = $(monolite_path)/mscorlib.dll
 
 ifdef use_monolite
 ifdef MCS_MODE
-	CSC_LOCATION = $(topdir)/class/lib/monolite/mcs.exe
+	CSC_LOCATION = $(monolite_path)/mcs.exe
 endif
 
 PROFILE_RUNTIME = $(with_mono_path_monolite) $(RUNTIME)
@@ -79,8 +81,7 @@ do-profile-check: $(depsdir)/.stamp
 		$(MAKE) $(MAKE_Q) do-profile-check-monolite ; \
 	    else \
 		echo "*** The runtime '$(PROFILE_RUNTIME)' doesn't appear to be usable." 1>&2; \
-                echo "*** You need Mono version 4.8 or better installed to build MCS" 1>&2 ; \
-                echo "*** Check mono README for information on how to bootstrap a Mono installation." 1>&2 ; \
+                echo "*** Check README for information on how to bootstrap a Mono installation." 1>&2 ; \
 	        exit 1; fi; fi
 
 
@@ -89,7 +90,7 @@ ifdef use_monolite
 do-get-monolite:
 
 do-profile-check-monolite:
-	@echo "*** The contents of your 'monolite' directory may be out-of-date" 1>&2
+	@echo "*** The contents of your 'monolite/$(MONO_CORLIB_VERSION)' directory may be out-of-date" 1>&2
 	@echo "*** You may want to try 'make get-monolite-latest'" 1>&2
 	rm -f $(monolite_flag)
 	exit 1
@@ -97,12 +98,12 @@ do-profile-check-monolite:
 else
 
 do-get-monolite:
-	@echo "*** Downloading bootstrap required 'monolite'" 1>&2
+	@echo "*** Downloading bootstrap required 'monolite/$(MONO_CORLIB_VERSION)'" 1>&2
 	$(MAKE) $(MAKE_Q) -C $(mono_build_root) get-monolite-latest
 
 do-profile-check-monolite: $(depsdir)/.stamp
 	@echo "*** The runtime '$(PROFILE_RUNTIME)' doesn't appear to be usable." 1>&2
-	@echo "*** Trying the 'monolite' directory." 1>&2
+	@echo "*** Trying the 'monolite/$(MONO_CORLIB_VERSION)' directory." 1>&2
 	@echo dummy > $(monolite_flag)
 	$(MAKE) do-profile-check
 

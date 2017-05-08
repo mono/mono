@@ -47,7 +47,7 @@ namespace Mono.Net
 		public static extern IntPtr dlopen (string path, int mode);
 
 		[DllImport (SystemLibrary)]
-		public static extern IntPtr dlsym (IntPtr handle, string symbol);
+		static extern IntPtr dlsym (IntPtr handle, string symbol);
 
 		[DllImport (SystemLibrary)]
 		public static extern void dlclose (IntPtr handle);
@@ -469,7 +469,18 @@ namespace Mono.Net
 		{
 			return new CFDictionary (CFDictionaryCreate (IntPtr.Zero, new IntPtr[] { key }, new IntPtr [] { obj }, (IntPtr)1, KeyCallbacks, ValueCallbacks), true);
 		}
-		
+
+		public static CFDictionary FromKeysAndObjects (IList<Tuple<IntPtr,IntPtr>> items)
+		{
+			var keys = new IntPtr [items.Count];
+			var values = new IntPtr [items.Count];
+			for (int i = 0; i < items.Count; i++) {
+				keys [i] = items [i].Item1;
+				values [i] = items [i].Item2;
+			}
+			return new CFDictionary (CFDictionaryCreate (IntPtr.Zero, keys, values, (IntPtr)items.Count, KeyCallbacks, ValueCallbacks), true);
+		}
+
 		[DllImport (CoreFoundationLibrary)]
 		extern static IntPtr CFDictionaryCreate (IntPtr allocator, IntPtr[] keys, IntPtr[] vals, IntPtr len, IntPtr keyCallbacks, IntPtr valCallbacks);
 
@@ -513,8 +524,20 @@ namespace Mono.Net
 			CFDictionarySetValue (Handle, key, val);
 		}
 
+		public static CFMutableDictionary Create ()
+		{
+			var handle = CFDictionaryCreateMutable (IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+			if (handle == IntPtr.Zero)
+				throw new InvalidOperationException ();
+			return new CFMutableDictionary (handle, true);
+		}
+
 		[DllImport (CoreFoundationLibrary)]
 		extern static void CFDictionarySetValue (IntPtr handle, IntPtr key, IntPtr val);
+
+		[DllImport (CoreFoundationLibrary)]
+		extern static IntPtr CFDictionaryCreateMutable (IntPtr allocator, IntPtr capacity, IntPtr keyCallback, IntPtr valueCallbacks);
+
 	}
 
 	internal class CFUrl : CFObject
@@ -1249,8 +1272,8 @@ namespace Mono.Net
 			if (handle == IntPtr.Zero)
 				return;
 			try {
-				True  = new CFBoolean (CFObject.dlsym (handle, "kCFBooleanTrue"), false);
-				False = new CFBoolean (CFObject.dlsym (handle, "kCFBooleanFalse"), false);
+				True  = new CFBoolean (CFObject.GetCFObjectHandle (handle, "kCFBooleanTrue"), false);
+				False = new CFBoolean (CFObject.GetCFObjectHandle (handle, "kCFBooleanFalse"), false);
 			}
 			finally {
 				CFObject.dlclose (handle);

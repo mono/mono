@@ -400,7 +400,7 @@ all-local $(STD_TARGETS:=-local):
 
 all-local-aot:
 
-monolite_dir := monolite
+monolite_dir := monolite/$(MONO_CORLIB_VERSION)
 
 # Files needed to bootstrap C# compiler
 build_files = mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Core.dll System.Security.dll System.Configuration.dll \

@@ -249,7 +249,12 @@ namespace Mono.CSharp
 			sdk_directory.Add ("4", new string[] { "4.0-api", "v4.0.30319" });
 			sdk_directory.Add ("4.0", new string[] { "4.0-api", "v4.0.30319" });
 			sdk_directory.Add ("4.5", new string[] { "4.5-api", "v4.0.30319" });
-			sdk_directory.Add ("4.6", new string [] { "4.5", "net_4_x", "v4.0.30319" });
+			sdk_directory.Add ("4.5.1", new string[] { "4.5.1-api", "v4.0.30319" });
+			sdk_directory.Add ("4.5.2", new string[] { "4.5.2-api", "v4.0.30319" });
+			sdk_directory.Add ("4.6", new string[] { "4.6-api", "v4.0.30319" });
+			sdk_directory.Add ("4.6.1", new string[] { "4.6.1-api", "v4.0.30319" });
+			sdk_directory.Add ("4.6.2", new string [] { "4.6.2-api", "v4.0.30319" });
+			sdk_directory.Add ("4.x", new string [] { "4.5", "net_4_x", "v4.0.30319" });
 		}
 
 		public StaticLoader (StaticImporter importer, CompilerContext compiler)
@@ -269,7 +274,7 @@ namespace Mono.CSharp
 
 				string sdk_path = null;
 
-				string sdk_version = compiler.Settings.SdkVersion ?? "4.6";
+				string sdk_version = compiler.Settings.SdkVersion ?? "4.x";
 				string[] sdk_sub_dirs;
 
 				if (!sdk_directory.TryGetValue (sdk_version, out sdk_sub_dirs))

@@ -1,4 +1,4 @@
-#if SECURITY_DEP && MONO_FEATURE_APPLETLS
+﻿#if SECURITY_DEP && MONO_FEATURE_APPLETLS
 // 
 // Items.cs: Implements the KeyChain query access APIs
 //
@@ -40,13 +40,32 @@ using Mono.Net;
 namespace Mono.AppleTls {
 
 	enum SecKind {
-		Identity
+		Identity,
+		Certificate
 	}
 
+#if MONOTOUCH
 	static class SecKeyChain {
-		static readonly IntPtr MatchLimitAll;
-		static readonly IntPtr MatchLimitOne;
-		static readonly IntPtr MatchLimit;
+#else
+	class SecKeyChain : INativeObject, IDisposable {
+#endif
+		internal static readonly IntPtr MatchLimitAll;
+		internal static readonly IntPtr MatchLimitOne;
+		internal static readonly IntPtr MatchLimit;
+
+#if !MONOTOUCH
+		IntPtr handle;
+
+		internal SecKeyChain (IntPtr handle, bool owns = false)
+		{
+			if (handle == IntPtr.Zero)
+				throw new ArgumentException ("Invalid handle");
+
+			this.handle = handle;
+			if (!owns)
+				CFObject.CFRetain (handle);
+		}
+#endif
 
 		static SecKeyChain ()
 		{
@@ -98,39 +117,47 @@ namespace Mono.AppleTls {
 
 			return null;
 		}
-		
-		public static INativeObject[] QueryAsReference (SecRecord query, int max, out SecStatusCode result)
+
+		static INativeObject [] QueryAsReference (SecRecord query, int max, out SecStatusCode result)
 		{
-			if (query == null){
+			if (query == null) {
 				result = SecStatusCode.Param;
 				return null;
 			}
 
-			using (var copy = query.queryDict.MutableCopy ()) {
+			using (var copy = query.QueryDict.MutableCopy ()) {
 				copy.SetValue (CFBoolean.True.Handle, SecItem.ReturnRef);
 				SetLimit (copy, max);
-
-				IntPtr ptr;
-				result = SecItem.SecItemCopyMatching (copy.Handle, out ptr);
-				if ((result == SecStatusCode.Success) && (ptr != IntPtr.Zero)) {
-					var array = CFArray.ArrayFromHandle<INativeObject> (ptr, p => {
-						IntPtr cfType = CFType.GetTypeID (p);
-						if (cfType == SecCertificate.GetTypeID ())
-							return new SecCertificate (p, true);
-						else if (cfType == SecKey.GetTypeID ())
-							return new SecKey (p, true);
-						else if (cfType == SecIdentity.GetTypeID ())
-							return new SecIdentity (p, true);
-						else
-							throw new Exception (String.Format ("Unexpected type: 0x{0:x}", cfType));
-					});
-					return array;
-				}
-				return null;
+				return QueryAsReference (copy, out result);
 			}
 		}
 
-		static CFNumber SetLimit (CFMutableDictionary dict, int max)
+		static INativeObject [] QueryAsReference (CFDictionary query, out SecStatusCode result)
+		{
+			if (query == null) {
+				result = SecStatusCode.Param;
+				return null;
+			}
+
+			IntPtr ptr;
+			result = SecItem.SecItemCopyMatching (query.Handle, out ptr);
+			if (result == SecStatusCode.Success && ptr != IntPtr.Zero) {
+				var array = CFArray.ArrayFromHandle<INativeObject> (ptr, p => {
+					IntPtr cfType = CFType.GetTypeID (p);
+					if (cfType == SecCertificate.GetTypeID ())
+						return new SecCertificate (p, true);
+					if (cfType == SecKey.GetTypeID ())
+						return new SecKey (p, true);
+					if (cfType == SecIdentity.GetTypeID ())
+						return new SecIdentity (p, true);
+					throw new Exception (String.Format ("Unexpected type: 0x{0:x}", cfType));
+				});
+				return array;
+			}
+			return null;
+		}
+
+		internal static CFNumber SetLimit (CFMutableDictionary dict, int max)
 		{
 			CFNumber n = null;
 			IntPtr val;
@@ -142,47 +169,61 @@ namespace Mono.AppleTls {
 				n = CFNumber.FromInt32 (max);
 				val = n.Handle;
 			}
-			
+
 			dict.SetValue (val, SecKeyChain.MatchLimit);
 			return n;
 		}
-	}
-	
-	class SecRecord : IDisposable {
 
-		static readonly IntPtr SecClassKey;
-		static SecRecord ()
+#if !MONOTOUCH
+		[DllImport (AppleTlsContext.SecurityLibrary)]
+		extern static /* OSStatus */ SecStatusCode SecKeychainCreate (/* const char * */ IntPtr pathName, uint passwordLength, /* const void * */ IntPtr password,
+									      bool promptUser, /* SecAccessRef */ IntPtr initialAccess,
+									      /* SecKeychainRef  _Nullable * */ out IntPtr keychain);
+
+		internal static SecKeyChain Create (string pathName, string password)
 		{
-			var handle = CFObject.dlopen (AppleTlsContext.SecurityLibrary, 0);
-			if (handle == IntPtr.Zero)
-				return;
+			IntPtr handle;
+			var pathNamePtr = Marshal.StringToHGlobalAnsi (pathName);
+			var passwordPtr = Marshal.StringToHGlobalAnsi (password);
+			var result = SecKeychainCreate (pathNamePtr, (uint)password.Length, passwordPtr, false, IntPtr.Zero, out handle);
+			if (result != SecStatusCode.Success)
+				throw new InvalidOperationException (result.ToString ());
+			return new SecKeyChain (handle, true);
+		}
 
-			try {		
-				SecClassKey = CFObject.GetIntPtr (handle, "kSecClassKey");
+		[DllImport (AppleTlsContext.SecurityLibrary)]
+		extern static /* OSStatus */ SecStatusCode SecKeychainOpen (/* const char * */ IntPtr pathName, /* SecKeychainRef  _Nullable * */ out IntPtr keychain);
+
+		internal static SecKeyChain Open (string pathName)
+		{
+			IntPtr handle;
+			IntPtr pathNamePtr = IntPtr.Zero;
+			try {
+				pathNamePtr = Marshal.StringToHGlobalAnsi (pathName);
+				var result = SecKeychainOpen (pathNamePtr, out handle);
+				if (result != SecStatusCode.Success)
+					throw new InvalidOperationException (result.ToString ());
+				return new SecKeyChain (handle, true);
 			} finally {
-				CFObject.dlclose (handle);
+				if (pathNamePtr != IntPtr.Zero)
+					Marshal.FreeHGlobal (pathNamePtr);
 			}
 		}
 
-		// Fix <= iOS 6 Behaviour - Desk #83099
-		// NSCFDictionary: mutating method sent to immutable object
-		// iOS 6 returns an inmutable NSDictionary handle and when we try to set its values it goes kaboom
-		// By explicitly calling `MutableCopy` we ensure we always have a mutable reference we expect that.
-		CFDictionary _queryDict;
-		internal CFDictionary queryDict 
-		{ 
-			get {
-				return _queryDict;
-			}
-			set {
-				_queryDict = value != null ? value.Copy () : null;
-			}
-		}
-
-		public SecRecord (SecKind secKind)
+		internal static SecKeyChain OpenSystemRootCertificates ()
 		{
-			var kind = SecClass.FromSecKind (secKind);
-			queryDict = CFDictionary.FromObjectAndKey (kind, SecClassKey);
+			return Open ("/System/Library/Keychains/SystemRootCertificates.keychain");
+		}
+
+		~SecKeyChain ()
+		{
+			Dispose (false);
+		}
+
+		public IntPtr Handle {
+			get {
+				return handle;
+			}
 		}
 
 		public void Dispose ()
@@ -193,10 +234,61 @@ namespace Mono.AppleTls {
 
 		protected virtual void Dispose (bool disposing)
 		{
-			if (queryDict != null){
+			if (handle != IntPtr.Zero) {
+				CFObject.CFRelease (handle);
+				handle = IntPtr.Zero;
+			}
+		}
+#endif
+	}
+
+	class SecRecord : IDisposable {
+
+		internal static readonly IntPtr SecClassKey;
+		static SecRecord ()
+		{
+			var handle = CFObject.dlopen (AppleTlsContext.SecurityLibrary, 0);
+			if (handle == IntPtr.Zero)
+				return;
+
+			try {
+				SecClassKey = CFObject.GetIntPtr (handle, "kSecClass");
+			} finally {
+				CFObject.dlclose (handle);
+			}
+		}
+
+		CFMutableDictionary _queryDict;
+		internal CFMutableDictionary QueryDict {
+			get {
+				return _queryDict;
+			}
+		}
+
+		internal void SetValue (IntPtr key, IntPtr value)
+		{
+			_queryDict.SetValue (key, value);
+		}
+
+		public SecRecord (SecKind secKind)
+		{
+			var kind = SecClass.FromSecKind (secKind);
+			_queryDict = CFMutableDictionary.Create ();
+			_queryDict.SetValue (SecClassKey, kind);
+		}
+
+		public void Dispose ()
+		{
+			Dispose (true);
+			GC.SuppressFinalize (this);
+		}
+
+		protected virtual void Dispose (bool disposing)
+		{
+			if (_queryDict != null){
 				if (disposing){
-					queryDict.Dispose ();
-					queryDict = null;
+					_queryDict.Dispose ();
+					_queryDict = null;
 				}
 			}
 		}
@@ -209,6 +301,7 @@ namespace Mono.AppleTls {
 	
 	partial class SecItem {
 		public static readonly IntPtr ReturnRef;
+		public static readonly IntPtr MatchSearchList;
 		
 		static SecItem ()
 		{
@@ -218,6 +311,7 @@ namespace Mono.AppleTls {
 
 			try {		
 				ReturnRef = CFObject.GetIntPtr (handle, "kSecReturnRef");
+				MatchSearchList = CFObject.GetIntPtr (handle, "kSecMatchSearchList");
 			} finally {
 				CFObject.dlclose (handle);
 			}
@@ -230,6 +324,7 @@ namespace Mono.AppleTls {
 	static partial class SecClass {
 	
 		public static readonly IntPtr Identity;
+		public static readonly IntPtr Certificate;
 		
 		static SecClass ()
 		{
@@ -237,8 +332,9 @@ namespace Mono.AppleTls {
 			if (handle == IntPtr.Zero)
 				return;
 
-			try {		
+			try {
 				Identity = CFObject.GetIntPtr (handle, "kSecClassIdentity");
+				Certificate = CFObject.GetIntPtr (handle, "kSecClassCertificate");
 			} finally {
 				CFObject.dlclose (handle);
 			}
@@ -249,6 +345,8 @@ namespace Mono.AppleTls {
 			switch (secKind){
 			case SecKind.Identity:
 				return Identity;
+			case SecKind.Certificate:
+				return Certificate;
 			default:
 				throw new ArgumentException ("secKind");
 			}
