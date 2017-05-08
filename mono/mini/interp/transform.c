@@ -15,6 +15,7 @@
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/tabledefs.h>
+#include <mono/metadata/seq-points-data.h>
 
 #include <mono/mini/mini.h>
 
@@ -65,6 +66,8 @@ typedef struct
 	void **data_items;
 	GHashTable *data_hash;
 	int *clause_indexes;
+	gboolean gen_sdb_seq_points;
+	GArray *seq_points;
 } TransformData;
 
 #define MINT_TYPE_I1 0
@@ -956,6 +959,37 @@ interp_save_debug_info (RuntimeMethod *rtm, MonoMethodHeader *header, TransformD
 }
 
 static void
+save_seq_points (RuntimeMethod *rtm, TransformData *td)
+{
+	GByteArray *array;
+	int i, seq_info_size;
+	MonoSeqPointInfo *info;
+	MonoDomain *domain = mono_domain_get ();
+
+	if (!td->gen_sdb_seq_points)
+		return;
+
+	array = g_byte_array_new ();
+	SeqPoint zero_seq_point = {0};
+	SeqPoint* last_seq_point = &zero_seq_point;
+	for (i = 0; i < td->seq_points->len; ++i) {
+		SeqPoint *sp = (SeqPoint*)(td->seq_points->data) + i;
+
+		if (mono_seq_point_info_add_seq_point (array, sp, last_seq_point, NULL, TRUE))
+			last_seq_point = sp;
+	}
+
+	info = mono_seq_point_info_new (array->len, TRUE, array->data, TRUE, &seq_info_size);
+	mono_jit_stats.allocated_seq_points_size += seq_info_size;
+
+	g_byte_array_free (array, TRUE);
+
+	mono_domain_lock (domain);
+	g_hash_table_insert (domain_jit_info (domain)->seq_points, rtm->method, info);
+	mono_domain_unlock (domain);
+}
+
+static void
 generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, MonoGenericContext *generic_context)
 {
 	MonoMethodHeader *header = mono_method_get_header (method);
@@ -976,8 +1010,12 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 	TransformData td;
 	int generating_code = 1;
 	GArray *line_numbers;
+	MonoDebugMethodInfo *minfo;
+	MonoBitSet *seq_point_locs = NULL;
+	MonoBitSet *seq_point_set_locs = NULL;
+	gboolean sym_seq_points = FALSE;
 
-	memset(&td, 0, sizeof(td));
+	memset (&td, 0, sizeof(td));
 	td.method = method;
 	td.rtm = rtm;
 	td.is_bb_start = is_bb_start;
@@ -997,12 +1035,41 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 	td.data_items = NULL;
 	td.data_hash = g_hash_table_new (NULL, NULL);
 	td.clause_indexes = g_malloc (header->code_size * sizeof (int));
+	td.gen_sdb_seq_points = debug_options.gen_sdb_seq_points;
+	td.seq_points = g_array_new (FALSE, TRUE, sizeof (SeqPoint));
 	rtm->data_items = td.data_items;
 	for (i = 0; i < header->code_size; i++) {
 		td.forward_refs [i] = -1;
 		td.stack_height [i] = -1;
 		td.clause_indexes [i] = -1;
 	}
+
+	if (td.gen_sdb_seq_points) {
+		minfo = mono_debug_lookup_method (method);
+
+		if (minfo) {
+			MonoSymSeqPoint *sps;
+			int i, n_il_offsets;
+
+			mono_debug_get_seq_points (minfo, NULL, NULL, NULL, &sps, &n_il_offsets);
+			// FIXME: Free
+			seq_point_locs = mono_bitset_new (header->code_size, 0);
+			seq_point_set_locs = mono_bitset_new (header->code_size, 0);
+			sym_seq_points = TRUE;
+
+			for (i = 0; i < n_il_offsets; ++i) {
+				if (sps [i].il_offset < header->code_size)
+					mono_bitset_set_fast (seq_point_locs, sps [i].il_offset);
+			}
+			g_free (sps);
+		} else if (!method->wrapper_type && !method->dynamic && mono_debug_image_has_debug_info (method->klass->image)) {
+			/* Methods without line number info like auto-generated property accessors */
+			seq_point_locs = mono_bitset_new (header->code_size, 0);
+			seq_point_set_locs = mono_bitset_new (header->code_size, 0);
+			sym_seq_points = TRUE;
+		}
+	}
+
 	td.new_ip = td.new_code;
 	td.last_new_ip = NULL;
 
@@ -1138,6 +1205,21 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 				(td.sp > td.stack && (td.sp [-1].type == STACK_TYPE_O || td.sp [-1].type == STACK_TYPE_VT)) ? (td.sp [-1].klass == NULL ? "?" : td.sp [-1].klass->name) : "",
 				td.vt_sp, td.max_vt_sp);
 		}
+
+		if (sym_seq_points && mono_bitset_test_fast (seq_point_locs, td.ip - header->code)) {
+			SeqPoint seqp;
+
+			memset (&seqp, 0, sizeof (SeqPoint));
+			seqp.il_offset = td.ip - td.il_code;
+			seqp.native_offset = td.new_ip - td.new_code;
+
+			ADD_CODE(&td, MINT_SDB_SEQ_POINT);
+			td.in_offsets [td.ip - td.il_code] += 1;
+			g_array_append_val (td.seq_points, seqp);
+
+			mono_bitset_set_fast (seq_point_set_locs, td.ip - header->code);
+		}
+
 		switch (*td.ip) {
 		case CEE_NOP: 
 			/* lose it */
@@ -3383,6 +3465,7 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 	/* Create a MonoJitInfo for the interpreted method by creating the interpreter IR as the native code. */
 	int jinfo_len = mono_jit_info_size (0, header->num_clauses, 0);
 	MonoJitInfo *jinfo = (MonoJitInfo *)mono_domain_alloc0 (domain, jinfo_len);
+	jinfo->is_interp = 1;
 	rtm->jinfo = jinfo;
 	mono_jit_info_init (jinfo, method, (guint8*)rtm->code, code_len, 0, header->num_clauses, 0);
 	for (i = 0; i < jinfo->num_clauses; ++i) {
@@ -3399,6 +3482,8 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 		}
 	}
 
+	save_seq_points (rtm, &td);
+
 	g_free (td.in_offsets);
 	g_free (td.forward_refs);
 	for (i = 0; i < header->code_size; ++i)
@@ -3410,7 +3495,10 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 	g_free (td.stack);
 	g_hash_table_destroy (td.data_hash);
 	g_free (td.clause_indexes);
+	g_array_free (td.seq_points, TRUE);
 	g_array_free (line_numbers, TRUE);
+	mono_bitset_free (seq_point_locs);
+	mono_bitset_free (seq_point_set_locs);
 }
 
 static mono_mutex_t calc_section;
@@ -3707,7 +3795,8 @@ mono_interp_transform_method (RuntimeMethod *runtime_method, ThreadContext *cont
 
 	g_free (is_bb_start);
 
-	mono_profiler_method_end_jit (method, NULL, MONO_PROFILE_OK);
+	// FIXME: Add a different callback ?
+	mono_profiler_method_end_jit (method, runtime_method->jinfo, MONO_PROFILE_OK);
 	runtime_method->transformed = TRUE;
 	mono_os_mutex_unlock(&calc_section);
 

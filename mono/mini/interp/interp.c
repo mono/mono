@@ -66,6 +66,7 @@
 
 #include <mono/mini/mini.h>
 #include <mono/mini/jit-icalls.h>
+#include <mono/mini/debugger-agent.h>
 
 #ifdef TARGET_ARM
 #include <mono/mini/mini-arm.h>
@@ -233,6 +234,19 @@ ves_real_abort (int line, MonoMethod *mh,
 		ves_real_abort(__LINE__, frame->runtime_method->method, ip, frame->stack, sp); \
 		THROW_EX (mono_get_exception_execution_engine (NULL), ip); \
 	} while (0);
+
+static RuntimeMethod*
+lookup_runtime_method (MonoDomain *domain, MonoMethod *method)
+{
+	RuntimeMethod *rtm;
+	MonoJitDomainInfo *info;
+
+	info = domain_jit_info (domain);
+	mono_domain_jit_code_hash_lock (domain);
+	rtm = mono_internal_hash_table_lookup (&info->interp_code_hash, method);
+	mono_domain_jit_code_hash_unlock (domain);
+	return rtm;
+}
 
 RuntimeMethod*
 mono_interp_get_runtime_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
@@ -4516,6 +4530,35 @@ array_constructed:
 			++ip;
 			mono_jit_set_domain (context->original_domain);
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_SDB_SEQ_POINT)
+			/* Just a placeholder for a breakpoint */
+			++ip;
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_SDB_BREAKPOINT) {
+			MonoLMFExt ext;
+
+			static void (*bp_tramp) (void);
+			if (!bp_tramp) {
+				void *tramp = mini_get_breakpoint_trampoline ();
+				mono_memory_barrier ();
+				bp_tramp = tramp;
+			}
+
+			frame->ip = ip;
+
+			/* Push an lmf frame to enable stack walks */
+			memset (&ext, 0, sizeof (ext));
+			ext.interp_exit = TRUE;
+			ext.interp_exit_data = frame;
+
+			mono_push_lmf (&ext);
+			/* Use the same trampoline as the JIT */
+			bp_tramp ();
+			mono_pop_lmf (&ext.lmf);
+
+			++ip;
+			MINT_IN_BREAK;
+		}
 
 #define RELOP(datamem, op) \
 	--sp; \
@@ -5345,4 +5388,42 @@ mono_interp_frame_iter_next (MonoInterpStackIter *iter, StackFrameInfo *frame)
 	stack_iter->current = iframe->parent;
 
 	return TRUE;
+}
+
+MonoJitInfo*
+mono_interp_find_jit_info (MonoDomain *domain, MonoMethod *method)
+{
+	RuntimeMethod* rtm;
+
+	rtm = lookup_runtime_method (domain, method);
+	if (rtm)
+		return rtm->jinfo;
+	else
+		return NULL;
+}
+
+void
+mono_interp_set_breakpoint (MonoJitInfo *jinfo, gpointer ip)
+{
+	guint16 *code = (guint16*)ip;
+	g_assert (*code == MINT_SDB_SEQ_POINT);
+	*code = MINT_SDB_BREAKPOINT;
+}
+
+MonoJitInfo*
+mono_interp_frame_get_jit_info (MonoInterpFrameHandle frame)
+{
+	MonoInvocation *iframe = (MonoInvocation*)frame;
+
+	g_assert (iframe->runtime_method);
+	return iframe->runtime_method->jinfo;
+}
+
+gpointer
+mono_interp_frame_get_ip (MonoInterpFrameHandle frame)
+{
+	MonoInvocation *iframe = (MonoInvocation*)frame;
+
+	g_assert (iframe->runtime_method);
+	return (gpointer)iframe->ip;
 }

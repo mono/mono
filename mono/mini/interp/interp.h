@@ -28,6 +28,8 @@ struct _MonoInterpStackIter {
 	gpointer dummy [8];
 };
 
+typedef gpointer MonoInterpFrameHandle;
+
 int
 mono_interp_regression_list (int verbose, int count, char *images []);
 
@@ -63,5 +65,17 @@ mono_interp_frame_iter_init (MonoInterpStackIter *iter, gpointer interp_exit_dat
 
 gboolean
 mono_interp_frame_iter_next (MonoInterpStackIter *iter, StackFrameInfo *frame);
+
+MonoJitInfo*
+mono_interp_find_jit_info (MonoDomain *domain, MonoMethod *method);
+
+void
+mono_interp_set_breakpoint (MonoJitInfo *jinfo, gpointer ip);
+
+MonoJitInfo*
+mono_interp_frame_get_jit_info (MonoInterpFrameHandle frame);
+
+gpointer
+mono_interp_frame_get_ip (MonoInterpFrameHandle frame);
 
 #endif /* __MONO_MINI_INTERPRETER_H__ */

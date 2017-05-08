@@ -72,10 +72,11 @@
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/networking.h>
 #include <mono/utils/mono-proclib.h>
+#include <mono/utils/w32api.h>
 #include "debugger-agent.h"
 #include "mini.h"
 #include "seq-points.h"
-#include <mono/utils/w32api.h>
+#include "interp/interp.h"
 
 /*
  * On iOS we can't use System.Environment.Exit () as it will do the wrong
@@ -4211,7 +4212,10 @@ insert_breakpoint (MonoSeqPointInfo *seq_points, MonoDomain *domain, MonoJitInfo
 	inst = g_new0 (BreakpointInstance, 1);
 	inst->il_offset = it.seq_point.il_offset;
 	inst->native_offset = it.seq_point.native_offset;
-	inst->ip = (guint8*)ji->code_start + it.seq_point.native_offset;
+	if (ji->is_interp)
+		inst->ip = (guint8*)ji->code_start + (it.seq_point.native_offset * 2);
+	else
+		inst->ip = (guint8*)ji->code_start + it.seq_point.native_offset;
 	inst->ji = ji;
 	inst->domain = domain;
 
@@ -4229,11 +4233,15 @@ insert_breakpoint (MonoSeqPointInfo *seq_points, MonoDomain *domain, MonoJitInfo
 	if (it.seq_point.native_offset == SEQ_POINT_NATIVE_OFFSET_DEAD_CODE) {
 		DEBUG_PRINTF (1, "[dbg] Attempting to insert seq point at dead IL offset %d, ignoring.\n", (int)bp->il_offset);
 	} else if (count == 0) {
+		if (ji->is_interp) {
+			mono_interp_set_breakpoint (ji, inst->ip);
+		} else {
 #ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED
-		mono_arch_set_breakpoint (ji, inst->ip);
+			mono_arch_set_breakpoint (ji, inst->ip);
 #else
-		NOT_IMPLEMENTED;
+			NOT_IMPLEMENTED;
 #endif
+		}
 	}
 
 	DEBUG_PRINTF (1, "[dbg] Inserted breakpoint at %s:[il=0x%x,native=0x%x] [%p](%d).\n", mono_method_full_name (jinfo_get_method (ji), TRUE), (int)it.seq_point.il_offset, (int)it.seq_point.native_offset, inst->ip, count);
@@ -4372,12 +4380,19 @@ set_bp_in_method (MonoDomain *domain, MonoMethod *method, MonoSeqPointInfo *seq_
 		/* Might be AOTed code */
 		mono_class_init (method->klass);
 		code = mono_aot_get_method_checked (domain, method, &oerror);
-		g_assert (code);
-		mono_error_assert_ok (&oerror);
-		ji = mono_jit_info_table_find (domain, (char *)code);
+		if (code) {
+			mono_error_assert_ok (&oerror);
+			ji = mono_jit_info_table_find (domain, (char *)code);
+		} else {
+			/* Might be interpreted */
+#ifdef ENABLE_INTERPRETER
+			ji = mono_interp_find_jit_info (domain, method);
+#else
+			ji = NULL;
+#endif
+		}
 		g_assert (ji);
 	}
-	g_assert (code);
 
 	insert_breakpoint (seq_points, domain, ji, bp, error);
 }
@@ -4777,11 +4792,30 @@ process_breakpoint_inner (DebuggerTlsData *tls, gboolean from_signal)
 
 	ip = (guint8 *)MONO_CONTEXT_GET_IP (ctx);
 	ji = mini_jit_info_table_find (mono_domain_get (), (char*)ip, NULL);
+
+	if (!ji) {
+		/* Interpreter */
+		// FIXME: Pass a flag instead to detect this
+		MonoLMF *lmf = mono_get_lmf ();
+		MonoInterpFrameHandle *frame;
+
+		g_assert (((guint64)lmf->previous_lmf) & 2);
+		MonoLMFExt *ext = (MonoLMFExt*)lmf;
+
+		g_assert (ext->interp_exit);
+		frame = ext->interp_exit_data;
+		ji = mono_interp_frame_get_jit_info (frame);
+		ip = mono_interp_frame_get_ip (frame);
+	}
+
 	g_assert (ji && !ji->is_trampoline);
 	method = jinfo_get_method (ji);
 
 	/* Compute the native offset of the breakpoint from the ip */
-	native_offset = ip - (guint8*)ji->code_start;	
+	if (ji->is_interp)
+		native_offset = (guint16*)ip - (guint16*)ji->code_start;
+	else
+		native_offset = ip - (guint8*)ji->code_start;
 
 	/* 
 	 * Skip the instruction causing the breakpoint signal.
