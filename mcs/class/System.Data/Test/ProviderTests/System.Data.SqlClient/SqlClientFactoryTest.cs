@@ -41,7 +41,7 @@ using System.Security;
 namespace MonoTests.System.Data.Connected.SqlClient
 {
 	[TestFixture]
-	[Category ("sqlserver")]
+	[Category ("CAS")]
 	public class SqlClientFactoryTest
 	{
 		[Test]
