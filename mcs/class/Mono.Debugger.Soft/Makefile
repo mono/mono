@@ -19,10 +19,13 @@ TEST_HELPERS_SOURCES = \
 	../test-helpers/NetworkHelpers.cs \
 	Test/TypeLoadClass.cs
 
-test-local: dtest-app.exe dtest-excfilter.exe
+test-local: dtest-app.exe dtest-excfilter.exe appdomain-client.exe
 
 dtest-app.exe: Test/dtest-app.cs $(TEST_HELPERS_SOURCES)
 	$(CSCOMPILE) -r:$(topdir)/class/lib/$(PROFILE)/System.Core.dll -r:$(topdir)/class/lib/$(PROFILE)/System.dll -out:$@ -unsafe $(PLATFORM_DEBUG_FLAGS) -optimize- Test/dtest-app.cs $(TEST_HELPERS_SOURCES)
+
+appdomain-client.exe: ../../../mono/tests/appdomain-client.cs
+	$(CSCOMPILE) -r:$(topdir)/class/lib/$(PROFILE)/System.Core.dll -r:$(topdir)/class/lib/$(PROFILE)/System.dll -out:appdomain-client.exe -unsafe $(PLATFORM_DEBUG_FLAGS) -optimize- ../../../mono/tests/appdomain-client.cs
 
 dtest-excfilter.exe: Test/dtest-excfilter.il
 	MONO_PATH=$(topdir)/class/lib/$(PROFILE) $(INTERNAL_ILASM) -out:$@ /exe /debug Test/dtest-excfilter.il

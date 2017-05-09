@@ -292,6 +292,30 @@ public class Tests : TestsBase, ITest2
 		evt.WaitOne ();
 	}
 
+	static void LoadDomain()
+	{
+		while(true) {
+			var setup = new AppDomainSetup();
+			setup.ApplicationBase = ".";
+
+			AppDomain newDomain = AppDomain.CreateDomain("multi_domain_load_domain", null, setup);
+
+			string[] args = { "1", "2", "3" };
+			newDomain.ExecuteAssembly("appdomain-client.exe", null, args);
+
+			AppDomain.Unload(newDomain);
+		}
+	}
+
+	static void multi_domain_load()
+	{
+		var threads = new Thread[10];
+		for (int i=0;i<threads.Length;i++) {
+			threads[i] = new Thread(new ThreadStart(LoadDomain));
+			threads[i].Start();
+		}
+	}
+
 	public static int Main (String[] args) {
 		tls_i = 42;
 
@@ -323,6 +347,7 @@ public class Tests : TestsBase, ITest2
 			return 0;
 		}
 		assembly_load ();
+		multi_domain_load();
 		breakpoints ();
 		single_stepping ();
 		arguments ();
