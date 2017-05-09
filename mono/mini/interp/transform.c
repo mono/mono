@@ -35,6 +35,13 @@ typedef struct
 	unsigned char flags;
 } StackInfo;
 
+typedef struct {
+	guint8 *ip;
+	GSList *preds;
+	GSList *seq_points;
+	SeqPoint *last_seq_point;
+} InterpBasicBlock;
+
 typedef struct
 {
 	MonoMethod *method;
@@ -67,7 +74,10 @@ typedef struct
 	GHashTable *data_hash;
 	int *clause_indexes;
 	gboolean gen_sdb_seq_points;
-	GArray *seq_points;
+	GPtrArray *seq_points;
+	InterpBasicBlock **offset_to_bb;
+	MonoMemPool     *mempool;
+	GList *basic_blocks;
 } TransformData;
 
 #define MINT_TYPE_I1 0
@@ -929,6 +939,110 @@ interp_field_from_token (MonoMethod *method, guint32 token, MonoClass **klass, M
 	return field;
 }
 
+static InterpBasicBlock*
+get_bb (TransformData *td, InterpBasicBlock *cbb, unsigned char *ip)
+{
+	int offset = ip - td->il_code;
+	InterpBasicBlock *bb = td->offset_to_bb [offset];
+
+	if (!bb) {
+		bb = mono_mempool_alloc0 (td->mempool, sizeof (InterpBasicBlock));
+		bb->ip = ip;
+		td->offset_to_bb [offset] = bb;
+
+		td->basic_blocks = g_list_append_mempool (td->mempool, td->basic_blocks, bb);
+	}
+
+	if (cbb)
+		bb->preds = g_slist_prepend_mempool (td->mempool, bb->preds, cbb);
+	return bb;
+}
+
+/*
+ * get_basic_blocks:
+ *
+ *   Compute the set of IL level basic blocks.
+ */
+static int
+get_basic_blocks (TransformData *td)
+{
+	guint8 *start = (guint8*)td->il_code;
+	guint8 *end = (guint8*)td->il_code + td->code_size;
+	guint8 *ip = start;
+	unsigned char *target;
+	int i;
+	guint cli_addr;
+	const MonoOpcode *opcode;
+	InterpBasicBlock *cbb;
+
+	td->offset_to_bb = mono_mempool_alloc0 (td->mempool, sizeof (InterpBasicBlock*) * (end - start + 1));
+	cbb = get_bb (td, NULL, start);
+
+	while (ip < end) {
+		cli_addr = ip - start;
+		td->offset_to_bb [cli_addr] = cbb;
+		i = mono_opcode_value ((const guint8 **)&ip, end);
+		opcode = &mono_opcodes [i];
+		switch (opcode->argument) {
+		case MonoInlineNone:
+			ip++;
+			break;
+		case MonoInlineString:
+		case MonoInlineType:
+		case MonoInlineField:
+		case MonoInlineMethod:
+		case MonoInlineTok:
+		case MonoInlineSig:
+		case MonoShortInlineR:
+		case MonoInlineI:
+			ip += 5;
+			break;
+		case MonoInlineVar:
+			ip += 3;
+			break;
+		case MonoShortInlineVar:
+		case MonoShortInlineI:
+			ip += 2;
+			break;
+		case MonoShortInlineBrTarget:
+			target = start + cli_addr + 2 + (signed char)ip [1];
+			get_bb (td, cbb, target);
+			ip += 2;
+			cbb = get_bb (td, cbb, ip);
+			break;
+		case MonoInlineBrTarget:
+			target = start + cli_addr + 5 + (gint32)read32 (ip + 1);
+			get_bb (td, cbb, target);
+			ip += 5;
+			cbb = get_bb (td, cbb, ip);
+			break;
+		case MonoInlineSwitch: {
+			guint32 n = read32 (ip + 1);
+			guint32 j;
+			ip += 5;
+			cli_addr += 5 + 4 * n;
+			target = start + cli_addr;
+			get_bb (td, cbb, target);
+
+			for (j = 0; j < n; ++j) {
+				target = start + cli_addr + (gint32)read32 (ip);
+				get_bb (td, cbb, target);
+				ip += 4;
+			}
+			cbb = get_bb (td, cbb, ip);
+			break;
+		}
+		case MonoInlineR:
+		case MonoInlineI8:
+			ip += 9;
+			break;
+		default:
+			g_assert_not_reached ();
+		}
+	}
+	return 0;
+}
+
 static void
 interp_save_debug_info (RuntimeMethod *rtm, MonoMethodHeader *header, TransformData *td, GArray *line_numbers)
 {
@@ -971,23 +1085,56 @@ interp_save_debug_info (RuntimeMethod *rtm, MonoMethodHeader *header, TransformD
 }
 
 static void
-save_seq_points (RuntimeMethod *rtm, TransformData *td)
+save_seq_points (TransformData *td)
 {
+	RuntimeMethod *rtm = td->rtm;
 	GByteArray *array;
 	int i, seq_info_size;
 	MonoSeqPointInfo *info;
 	MonoDomain *domain = mono_domain_get ();
+	GSList **next = NULL;
+	GList *bblist;
 
 	if (!td->gen_sdb_seq_points)
 		return;
 
+	/*
+	 * For each sequence point, compute the list of sequence points immediately
+	 * following it, this is needed to implement 'step over' in the debugger agent.
+	 * Similar to the code in mono_save_seq_point_info ().
+	 */
+	for (i = 0; i < td->seq_points->len; ++i) {
+		SeqPoint *sp = g_ptr_array_index (td->seq_points, i);
+
+		/* Store the seq point index here temporarily */
+		sp->next_offset = i;
+	}
+	next = mono_mempool_alloc0 (td->mempool, sizeof (GList*) * td->seq_points->len);
+	for (bblist = td->basic_blocks; bblist; bblist = bblist->next) {
+		InterpBasicBlock *bb = bblist->data;
+
+		GSList *bb_seq_points = g_slist_reverse (bb->seq_points);
+		SeqPoint *last = NULL;
+		for (GSList *l = bb_seq_points; l; l = l->next) {
+			SeqPoint *sp = l->data;
+
+			if (last != NULL) {
+				/* Link with the previous seq point in the same bb */
+				next [last->next_offset] = g_slist_append_mempool (td->mempool, next [last->next_offset], GINT_TO_POINTER (sp->next_offset));
+			}
+			last = sp;
+		}
+	}
+
+	/* Serialize the seq points into a byte array */
 	array = g_byte_array_new ();
 	SeqPoint zero_seq_point = {0};
 	SeqPoint* last_seq_point = &zero_seq_point;
 	for (i = 0; i < td->seq_points->len; ++i) {
-		SeqPoint *sp = (SeqPoint*)(td->seq_points->data) + i;
+		SeqPoint *sp = (SeqPoint*)g_ptr_array_index (td->seq_points, i);
 
-		if (mono_seq_point_info_add_seq_point (array, sp, last_seq_point, NULL, TRUE))
+		sp->next_offset = 0;
+		if (mono_seq_point_info_add_seq_point (array, sp, last_seq_point, next [i], TRUE))
 			last_seq_point = sp;
 	}
 
@@ -1037,6 +1184,7 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 	td.max_code_size = td.code_size;
 	td.new_code = (unsigned short *)g_malloc(td.max_code_size * sizeof(gushort));
 	td.new_code_end = td.new_code + td.max_code_size;
+	td.mempool = mono_mempool_new ();
 	td.in_offsets = g_malloc0(header->code_size * sizeof(int));
 	td.forward_refs = g_malloc(header->code_size * sizeof(int));
 	td.stack_state = g_malloc0(header->code_size * sizeof(StackInfo *));
@@ -1048,7 +1196,7 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 	td.data_hash = g_hash_table_new (NULL, NULL);
 	td.clause_indexes = g_malloc (header->code_size * sizeof (int));
 	td.gen_sdb_seq_points = debug_options.gen_sdb_seq_points;
-	td.seq_points = g_array_new (FALSE, TRUE, sizeof (SeqPoint));
+	td.seq_points = g_ptr_array_new ();
 	rtm->data_items = td.data_items;
 	for (i = 0; i < header->code_size; i++) {
 		td.forward_refs [i] = -1;
@@ -1057,6 +1205,8 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 	}
 
 	if (td.gen_sdb_seq_points) {
+		get_basic_blocks (&td);
+
 		minfo = mono_debug_lookup_method (method);
 
 		if (minfo) {
@@ -1219,15 +1369,20 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 		}
 
 		if (sym_seq_points && mono_bitset_test_fast (seq_point_locs, td.ip - header->code)) {
-			SeqPoint seqp;
+			SeqPoint *seqp = mono_mempool_alloc0 (td.mempool, sizeof (SeqPoint));
 
-			memset (&seqp, 0, sizeof (SeqPoint));
-			seqp.il_offset = td.ip - td.il_code;
-			seqp.native_offset = td.new_ip - td.new_code;
+			memset (seqp, 0, sizeof (SeqPoint));
+			seqp->il_offset = td.ip - td.il_code;
+			seqp->native_offset = td.new_ip - td.new_code;
 
 			ADD_CODE(&td, MINT_SDB_SEQ_POINT);
 			td.in_offsets [td.ip - td.il_code] += 1;
-			g_array_append_val (td.seq_points, seqp);
+			g_ptr_array_add (td.seq_points, seqp);
+
+			InterpBasicBlock *cbb = td.offset_to_bb [td.ip - header->code];
+			g_assert (cbb);
+			cbb->seq_points = g_slist_prepend_mempool (td.mempool, cbb->seq_points, seqp);
+			cbb->last_seq_point = seqp;
 
 			mono_bitset_set_fast (seq_point_set_locs, td.ip - header->code);
 		}
@@ -3494,7 +3649,7 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 		}
 	}
 
-	save_seq_points (rtm, &td);
+	save_seq_points (&td);
 
 	g_free (td.in_offsets);
 	g_free (td.forward_refs);
@@ -3507,8 +3662,9 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 	g_free (td.stack);
 	g_hash_table_destroy (td.data_hash);
 	g_free (td.clause_indexes);
-	g_array_free (td.seq_points, TRUE);
+	g_ptr_array_free (td.seq_points, TRUE);
 	g_array_free (line_numbers, TRUE);
+	mono_mempool_destroy (td.mempool);
 	mono_bitset_free (seq_point_locs);
 	mono_bitset_free (seq_point_set_locs);
 }

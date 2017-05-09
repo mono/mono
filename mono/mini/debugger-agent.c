@@ -4265,7 +4265,10 @@ remove_breakpoint (BreakpointInstance *inst)
 	g_assert (count > 0);
 
 	if (count == 1 && inst->native_offset != SEQ_POINT_NATIVE_OFFSET_DEAD_CODE) {
-		mono_arch_clear_breakpoint (ji, ip);
+		if (ji->is_interp)
+			mono_interp_clear_breakpoint (ji, ip);
+		else
+			mono_arch_clear_breakpoint (ji, ip);
 		DEBUG_PRINTF (1, "[dbg] Clear breakpoint at %s [%p].\n", mono_method_full_name (jinfo_get_method (ji), TRUE), ip);
 	}
 #else

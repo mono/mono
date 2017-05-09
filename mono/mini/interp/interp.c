@@ -5414,6 +5414,14 @@ mono_interp_set_breakpoint (MonoJitInfo *jinfo, gpointer ip)
 	*code = MINT_SDB_BREAKPOINT;
 }
 
+void
+mono_interp_clear_breakpoint (MonoJitInfo *jinfo, gpointer ip)
+{
+	guint16 *code = (guint16*)ip;
+	g_assert (*code == MINT_SDB_BREAKPOINT);
+	*code = MINT_SDB_SEQ_POINT;
+}
+
 MonoJitInfo*
 mono_interp_frame_get_jit_info (MonoInterpFrameHandle frame)
 {

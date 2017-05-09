@@ -72,6 +72,9 @@ mono_interp_find_jit_info (MonoDomain *domain, MonoMethod *method);
 void
 mono_interp_set_breakpoint (MonoJitInfo *jinfo, gpointer ip);
 
+void
+mono_interp_clear_breakpoint (MonoJitInfo *jinfo, gpointer ip);
+
 MonoJitInfo*
 mono_interp_frame_get_jit_info (MonoInterpFrameHandle frame);
 
