@@ -1,4 +1,5 @@
 Mono.Http/NtlmClient.cs
+System.Net/NtlmClient.cs
 
 Mono.Net.Security/AsyncProtocolRequest.cs
 Mono.Net.Security/CallbackHelpers.cs
