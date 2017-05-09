@@ -5,8 +5,6 @@
 //------------------------------------------------------------------------------
 
 namespace System.Net {
-#if SECURITY_DEP
     public delegate AuthenticationSchemes AuthenticationSchemeSelector(HttpListenerRequest httpRequest);
-#endif
 }
 
