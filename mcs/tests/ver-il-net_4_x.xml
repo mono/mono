@@ -52661,6 +52661,29 @@
       </method>
     </type>
   </test>
+  <test name="test-942.cs">
+    <type name="ConditionalAttributeTesting.MainClass">
+      <method name="Int32 Main()" attrs="150">
+        <size>14</size>
+      </method>
+      <method name="Int32 HelloWorld()" attrs="150">
+        <size>52</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="ConditionalAttributeTesting.BaseAttribute">
+      <method name="Void .ctor()" attrs="6276">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="ConditionalAttributeTesting.SomeAttribute">
+      <method name="Void .ctor(String)" attrs="6278">
+        <size>8</size>
+      </method>
+    </type>
+  </test>
   <test name="test-95.cs">
     <type name="X">
       <method name="Int32 Main()" attrs="150">
