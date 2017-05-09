@@ -53,6 +53,8 @@ mono_100ns_ticks (void)
 			return mono_100ns_datetime ();
 		QueryPerformanceCounter (&value);
 		start_time = value.QuadPart;
+		/* subtract 1 to ensure the calcualtion below doesn't return 0*/
+		start_time--;
 	}
 	QueryPerformanceCounter (&value);
 	cur_time = value.QuadPart;
