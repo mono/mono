@@ -78,4 +78,13 @@ mono_interp_frame_get_jit_info (MonoInterpFrameHandle frame);
 gpointer
 mono_interp_frame_get_ip (MonoInterpFrameHandle frame);
 
+gpointer
+mono_interp_frame_get_arg (MonoInterpFrameHandle frame, int pos);
+
+gpointer
+mono_interp_frame_get_local (MonoInterpFrameHandle frame, int pos);
+
+gpointer
+mono_interp_frame_get_this (MonoInterpFrameHandle frame);
+
 #endif /* __MONO_MINI_INTERPRETER_H__ */

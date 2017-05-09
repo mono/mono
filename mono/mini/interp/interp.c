@@ -2126,6 +2126,7 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, uns
 	vtalloc = vt_sp;
 #endif
 	locals = (unsigned char *) vt_sp + rtm->vt_stack_size;
+	frame->locals = locals;
 	child_frame.parent = frame;
 
 	if (filter_exception) {
@@ -2271,6 +2272,7 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, uns
 			vtalloc = vt_sp;
 #endif
 			locals = vt_sp + rtm->vt_stack_size;
+			frame->locals = locals;
 			ip = rtm->new_body_start; /* bypass storing input args from callers frame */
 			MINT_IN_BREAK;
 		}
@@ -5428,4 +5430,39 @@ mono_interp_frame_get_ip (MonoInterpFrameHandle frame)
 
 	g_assert (iframe->runtime_method);
 	return (gpointer)iframe->ip;
+}
+
+gpointer
+mono_interp_frame_get_arg (MonoInterpFrameHandle frame, int pos)
+{
+	MonoInvocation *iframe = (MonoInvocation*)frame;
+
+	g_assert (iframe->runtime_method);
+
+	int arg_offset = iframe->runtime_method->arg_offsets [pos + (iframe->runtime_method->hasthis ? 1 : 0)];
+
+	return iframe->args + arg_offset;
+}
+
+gpointer
+mono_interp_frame_get_local (MonoInterpFrameHandle frame, int pos)
+{
+	MonoInvocation *iframe = (MonoInvocation*)frame;
+
+	g_assert (iframe->runtime_method);
+
+	return iframe->locals + iframe->runtime_method->local_offsets [pos];
+}
+
+gpointer
+mono_interp_frame_get_this (MonoInterpFrameHandle frame)
+{
+	MonoInvocation *iframe = (MonoInvocation*)frame;
+
+	g_assert (iframe->runtime_method);
+	g_assert (iframe->runtime_method->hasthis);
+
+	int arg_offset = iframe->runtime_method->arg_offsets [0];
+
+	return iframe->args + arg_offset;
 }

@@ -943,14 +943,26 @@ interp_save_debug_info (RuntimeMethod *rtm, MonoMethodHeader *header, TransformD
 	 */
 
 	dinfo = g_new0 (MonoDebugMethodJitInfo, 1);
+	dinfo->num_params = rtm->param_count;
+	dinfo->params = g_new0 (MonoDebugVarInfo, dinfo->num_params);
 	dinfo->num_locals = header->num_locals;
 	dinfo->locals = g_new0 (MonoDebugVarInfo, header->num_locals);
 	dinfo->code_start = (guint8*)rtm->code;
 	dinfo->code_size = td->new_ip - td->new_code;
 	dinfo->epilogue_begin = 0;
-	dinfo->has_var_info = FALSE;
+	dinfo->has_var_info = TRUE;
 	dinfo->num_line_numbers = line_numbers->len;
 	dinfo->line_numbers = g_new0 (MonoDebugLineNumberEntry, dinfo->num_line_numbers);
+
+	for (i = 0; i < dinfo->num_params; i++) {
+		MonoDebugVarInfo *var = &dinfo->params [i];
+		var->type = rtm->param_types [i];
+	}
+	for (i = 0; i < dinfo->num_locals; i++) {
+		MonoDebugVarInfo *var = &dinfo->locals [i];
+		var->type = header->locals [i];
+	}
+
 	for (i = 0; i < dinfo->num_line_numbers; i++)
 		dinfo->line_numbers [i] = g_array_index (line_numbers, MonoDebugLineNumberEntry, i);
 	mono_debug_add_method (rtm->method, dinfo, mono_domain_get ());
