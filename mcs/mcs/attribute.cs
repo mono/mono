@@ -1125,7 +1125,7 @@ namespace Mono.CSharp {
 				cdata = encoder.ToArray ();
 			}
 
-			if (!ctor.DeclaringType.IsConditionallyExcluded (context)) {
+			if (!IsConditionallyExcluded (ctor.DeclaringType)) {
 				try {
 					foreach (Attributable target in targets)
 						target.ApplyAttributeBuilder (this, ctor, cdata, predefined);
@@ -1164,6 +1164,18 @@ namespace Mono.CSharp {
 
 				NamedArguments.CheckArrayAsAttribute (context.Module.Compiler);
 			}
+		}
+
+		bool IsConditionallyExcluded (TypeSpec type)
+		{
+			do {
+				if (type.IsConditionallyExcluded (context))
+					return true;
+
+				type = type.BaseType;
+			} while (type != null);
+
+			return false;
 		}
 
 		private Expression GetValue () 
