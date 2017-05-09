@@ -49,7 +49,7 @@ net_4_5_dirs := \
 	mono-symbolicate	\
 	linker-analyzer
 
-build_SUBDIRS = resgen gacutil security culevel cil-stringreplacer commoncryptogenerator
+build_SUBDIRS = resgen gacutil security culevel cil-stringreplacer commoncryptogenerator resx2sr
 net_4_5_SUBDIRS = gacutil
 net_4_5_PARALLEL_SUBDIRS = $(net_4_5_dirs)
 

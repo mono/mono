@@ -385,11 +385,5 @@ $(the_libdir)/.doc-stamp: $(the_lib)
 gen-deps:
 	@echo "$(DEPS_TARGET_DIR): $(DEP_DIRS) $(DEP_LIBS)" >> $(DEPS_FILE)
 
-# Should be $(BUILD_TOOLS_PROFILE) but still missing System.Windows.Forms
-resx2sr=$(topdir)/class/lib/net_4_x/resx2sr.exe
-
-update-corefx-sr: $(resx2sr) $(RESX_RESOURCE_STRING)
-	MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(resx2sr) $(RESX_RESOURCE_STRING) >corefx/SR.cs
-
-$(resx2sr):
-	$(MAKE) -C $(topdir)/tools/resx2sr
+update-corefx-sr: $(RESX_RESOURCE_STRING)
+	MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/resx2sr.exe $(RESX_RESOURCE_STRING) >corefx/SR.cs
