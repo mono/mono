@@ -16,6 +16,9 @@ ReferenceSources/Win32NativeMethods.cs
 ReferenceSources/SqlInternalConnectionTds.cs
 
 corefx/SR.cs
+corefx/DBCommandBuilder.cs
+corefx/FieldNameLookup.cs
+corefx/DbConnection.cs
 
 Microsoft.SqlServer.Server/SqlDataRecord.cs
 Microsoft.SqlServer.Server/SqlMetaData.cs

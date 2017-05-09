@@ -223,7 +223,6 @@
 ../../../external/corefx/src/System.Data.Common/src/System/Data/UpdateRowSource.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/updatestatus.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/XDRSchema.cs
-../../../external/corefx/src/System.Data.Common/src/System/Data/XmlContent.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/XmlDataLoader.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/XMLDiffLoader.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/XmlKeywords.cs
@@ -293,3 +292,6 @@
 ../referencesource/System.Data/System/Data/SqlClient/SqlUtil.cs
 ../referencesource/System.Data/System/Data/SqlClient/TdsEnums.cs
 ../referencesource/System.Data/System/Data/SqlClient/TdsParserStaticMethods.cs
+
+corefx/DataView.cs
+corefx/Index.cs
