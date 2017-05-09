@@ -48,6 +48,7 @@
  * mangled strings
  */
 
+#include <mono/utils/json.h>
 #include "config.h"
 #include "aot-compiler.h"
 
@@ -293,19 +294,22 @@ static gboolean
 append_mangled_method (GString *s, MonoMethod *method);
 
 static int
-describe_mangled_wrapper (GString *out, gchar **in, size_t len)
+describe_mangled_wrapper (JsonWriter *out, gchar **in, size_t len)
 {
 	g_assert (!strcmp (in [0], "["));
 	g_assert (!strcmp (in [1], "wrapper"));
-	g_string_append_printf (out, "wrapper attributes: [");
+	
+	mono_json_writer_object_begin (out);
+	mono_json_writer_indent (out);
+	mono_json_writer_object_key (out, "wrapper_attributes:");
+	mono_json_writer_array_begin (out);
+
 	int i = 2;
-	gboolean first = TRUE;
 	while (strcmp (in [i], "]")) {
-		g_string_append_printf (out, "%s\"%s\"", first ? " " : ", ", in [i]);
-		first = FALSE;
+		mono_json_writer_printf (out, "\"%s\",\n", in [i]);
 		i++;
 	}
-	g_string_append_printf (out, "]");
+	mono_json_writer_array_end (out);
 
 	return i + 1;
 }
@@ -494,7 +498,7 @@ extract_inside_parens (gchar **in, int len)
 }
 
 static int
-describe_mangled_type (GString *out, gchar **in, size_t len)
+describe_mangled_type (JsonWriter *out, gchar **in, size_t len)
 {
 	static GHashTable *tbl = NULL;
 	g_assert (!strcmp (in [0], "["));
@@ -509,7 +513,7 @@ describe_mangled_type (GString *out, gchar **in, size_t len)
 
 	if (tbl == NULL) {
 		GHashTable *tmp = g_hash_table_new (g_str_hash, g_str_equal);
-#define X(FWD, BCK) fprintf (stderr, "Inserting %s\n", BCK); g_hash_table_insert (tmp, (gpointer) g_strdup(BCK), (gpointer) g_strdup (#FWD));
+#define X(FWD, BCK) g_hash_table_insert (tmp, (gpointer) g_strdup(BCK), (gpointer) g_strdup (#FWD));
 MonoMangleTypeTable
 #undef X
 		tbl = tmp;
@@ -517,6 +521,7 @@ MonoMangleTypeTable
 
 	GString *type_tag = g_string_new ("");
 	if (!strcmp (in [i], "other")) {
+		i++;
 		g_string_append_printf (type_tag, "Other Type:");
 		while (strcmp (in [i], "]"))
 			g_string_append_printf (type_tag, " %s ", in [i++]);
@@ -524,67 +529,115 @@ MonoMangleTypeTable
 		gchar *name = g_hash_table_lookup (tbl, in [i]);
 		g_assert (name);
 		i += 1;
-		g_string_append_printf (type_tag, "Type: %s", name);
+		g_string_append_printf (type_tag, "%s", name);
 	}
 
 	g_assert (!strcmp (in [i], "]"));
 
-	g_string_append_printf (out, "\n\t{\n\t\ttype %s %s \n\t}\n", type_tag->str, byref ? "byref" : "");
+	mono_json_writer_object_begin (out);
+
+	mono_json_writer_indent (out);
+	mono_json_writer_object_key (out, "type_name");
+	mono_json_writer_printf (out, "\"%s\",\n", type_tag->str);
+
+	mono_json_writer_indent (out);
+	mono_json_writer_object_key (out, "byref");
+	mono_json_writer_printf (out, "\"%s\"\n", byref ? "True" : "False");
+
+	mono_json_writer_indent_pop (out);
+	mono_json_writer_indent (out);
+	mono_json_writer_object_end (out);
 
 	return i + 1;
 }
 
 static int
-describe_mangled_signature (GString *out, gchar **in, size_t len)
+describe_mangled_signature (JsonWriter *out, gchar **in, size_t len)
 {
 	g_assert (!strcmp (in [0], "["));
 	g_assert (!strcmp (in [1], "sig"));
 	int i = 2;
 
-	g_string_append_printf (out, "return value:");
+	mono_json_writer_object_begin (out);
+	mono_json_writer_indent (out);
+	mono_json_writer_object_key(out, "return_value");
 	int ret_size = describe_mangled_type (out, &in[i], len - i);
+	mono_json_writer_printf (out, ",\n");
 	i += ret_size;
 
-	gboolean hasthis = FALSE;
+	mono_json_writer_indent (out);
+	mono_json_writer_object_key(out, "has_this:");
 	if (!strcmp (in [i], "hasthis")) {
-		hasthis = TRUE;
+		mono_json_writer_printf (out, "\"True\",\n");
 		i++;
+	} else {
+		mono_json_writer_printf (out, "\"False\",\n");
 	}
 
+	mono_json_writer_indent (out);
+	mono_json_writer_object_key(out, "parameters:");
+	mono_json_writer_array_begin (out);
+	gboolean first = TRUE;
 	while (strcmp (in [i], "]")) {
+		if (!first) {
+			mono_json_writer_printf (out, ",\n");
+		}
+		mono_json_writer_indent (out);
+		first = FALSE;
 		int param_size = describe_mangled_type (out, &in[i], len - i);
 		i += param_size;
 	}
+	mono_json_writer_printf (out, "\n");
 	g_assert (!strcmp (in [i], "]"));
+	mono_json_writer_indent_pop (out);
+	mono_json_writer_indent (out);
+	mono_json_writer_array_end (out);
+	mono_json_writer_printf (out, "\n");
+
+	mono_json_writer_indent (out);
+	mono_json_writer_object_end (out);
+	mono_json_writer_indent_pop (out);
+
 	return i + 1;
 }
 
 static int
-describe_mangled_context (GString *out, gchar **in, size_t len)
+describe_mangled_context (JsonWriter *out, gchar **in, size_t len)
 {
 	g_assert (!strcmp (in [0], "["));
 	g_assert (!strcmp (in [1], "gens"));
+
+	mono_json_writer_object_begin(out);
+
 	int i = 2;
 	if (!strcmp (in [i], "class_inst")) {
-		g_string_append_printf (out, "class_inst: [");
+		mono_json_writer_indent (out);
+		mono_json_writer_object_key(out, "class_inst");
+		mono_json_writer_array_begin (out);
 		i++;
 
 		while (strcmp (in [i], "method_inst") && strcmp (in [i], "]"))
-			g_string_append_printf (out, " %s ", in [i++]);
+			mono_json_writer_printf (out, "\"%s\",\n", in [i++]);
+		mono_json_writer_array_end (out);
 	}
 	if (!strcmp (in [i], "method_inst")) {
-		g_string_append_printf (out, "method_inst: [");
+		mono_json_writer_indent (out);
+		mono_json_writer_object_key(out, "method_inst");
+		mono_json_writer_array_begin (out);
 		i += 1;
 		while (strcmp (in [i], "method_inst") && strcmp (in [i], "]"))
-			g_string_append_printf (out, " %s ", in [i++]);
+			mono_json_writer_printf (out, "\"%s\",\n", in [i++]);
+		mono_json_writer_array_end (out);
 	}
 	g_assert (!strcmp (in [i], "]"));
-	g_string_append_printf (out, " ] ");
+	mono_json_writer_indent_pop (out);
+	mono_json_writer_indent (out);
+	mono_json_writer_object_end (out);
 	return i + 1;
 }
 
 static int
-describe_mangled_klass (GString *out, gchar **in, size_t len)
+describe_mangled_klass (JsonWriter *out, gchar **in, size_t len)
 {
 	int i = 0;
 	g_assert (!strcmp (in [i++], "["));
@@ -606,20 +659,35 @@ describe_mangled_klass (GString *out, gchar **in, size_t len)
 		i += 2;
 	}
 	g_assert (!strcmp (in [i], "]"));
-	g_string_append_printf (out, "namespace: \"%s\", name: \"%s\"", name_space, name);
+
+	mono_json_writer_object_begin (out);
+	mono_json_writer_indent (out);
+	mono_json_writer_object_key(out, "namespace");
+	mono_json_writer_printf (out, "\"%s\",\n", name_space);
+
+	mono_json_writer_indent (out);
+	mono_json_writer_object_key(out, "name");
+	mono_json_writer_printf (out, "\"%s\"\n", name);
+
+	mono_json_writer_indent_pop (out);
+	mono_json_writer_indent (out);
+	mono_json_writer_object_end (out);
+
 	return i + 1;
 }
 
 /*
  * decribe_mangled_method: 
  *
+ * out: JsonWriter that has been initialized. This emits a
+ * 	json Object, complete with enclosing braces
  * s: Array of strings
  * len: length of array
  * Returns: number of tokens consumed
  * -1 on failure.
  */
 static int
-describe_mangled_method (GString *out, gchar **in, size_t len)
+describe_mangled_method (JsonWriter *out, gchar **in, size_t len)
 {
 	if (len > 2 && !strcmp (in [0], "[") && !strcmp (in [1], "wrapper"))
 		return describe_mangled_wrapper (out, in,len);
@@ -630,50 +698,72 @@ describe_mangled_method (GString *out, gchar **in, size_t len)
 	gchar *aname = in [3];
 	int i = 4;
 
-	GString *mangled_context = g_string_new ("");
-	GString *nested_mangled_method;
+	mono_json_writer_object_begin(out);
+	mono_json_writer_indent (out);
+	mono_json_writer_object_key(out, "assembly_name");
+	mono_json_writer_printf (out, "\"%s\",\n", aname);
 
 	if (!strcmp (in [i], "inflated:")) {
 		i++;
-		int cont_off = describe_mangled_context (mangled_context, &in [i], len - i);
+		mono_json_writer_indent (out);
+		mono_json_writer_object_key(out, "context");
+		int cont_off = describe_mangled_context (out, &in [i], len - i);
+		mono_json_writer_printf (out, ",\n");
 		i += cont_off;
 
 		if (strcmp (in [i++], "declaring:"))
 			g_assert_not_reached ();
 
-		nested_mangled_method = g_string_new ("");
-		int declaring_off = describe_mangled_method (nested_mangled_method, &in [i], len - i);
+		mono_json_writer_indent (out);
+		mono_json_writer_object_key(out, "declaring");
+		int declaring_off = describe_mangled_method (out, &in [i], len - i);
+		mono_json_writer_printf (out, ",\n");
 		i += declaring_off;
 	
 		if (strcmp (in [i], "]"))
 			g_assert_not_reached ();
 
-		g_string_append_printf (out, "context: %s declaring: { \n\t%s} ", mangled_context->str, nested_mangled_method->str);
+		mono_json_writer_indent (out);
+		mono_json_writer_indent_pop (out);
+		mono_json_writer_object_end(out);
 
-		return i;
+		return i + 1;
 	} else if (!strcmp (in [i], "gtd:")) {
 		i++;
-		int cont_off = describe_mangled_context (mangled_context, &in [i], len - i);
+		mono_json_writer_indent (out);
+		mono_json_writer_object_key(out, "context");
+		int cont_off = describe_mangled_context (out, &in [i], len - i);
+		mono_json_writer_printf (out, ",\n");
 		i += cont_off;
-		g_string_append_printf (out, "context: %s", mangled_context->str);
 	}
 
 	// decode class
-	GString *class_decoded = g_string_new ("");
 	if (strcmp (in [i], "["))
 		g_assert_not_reached ();
-	int class_off = describe_mangled_klass (class_decoded, &in[i], len - i);
+
+	mono_json_writer_indent (out);
+	mono_json_writer_object_key(out, "class");
+	int class_off = describe_mangled_klass (out, &in[i], len - i);
+	mono_json_writer_printf (out, ",\n");
 	i += class_off;
 	// Ensure class terminated correctly
 	if (strcmp (in [i-1], "]"))
 		g_assert_not_reached ();
 
-	gchar *method_name = in [i++];
 
-	GString *signature = g_string_new ("");
+	gchar *method_name = in [i++];
+	mono_json_writer_indent (out);
+	mono_json_writer_object_key(out, "method_name");
+	mono_json_writer_printf (out, "\"%s\",\n", method_name);
+
 	if (strcmp (in [i], "["))
 		g_assert_not_reached ();
-	int sig_off = describe_mangled_signature (signature, &in [i], len - i);
+
+	mono_json_writer_indent (out);
+	mono_json_writer_object_key(out, "signature");
+	int sig_off = describe_mangled_signature (out, &in [i], len - i);
+	mono_json_writer_printf (out, "\n");
+
 	i += sig_off;
 	// Ensure signature terminated correctly
 	if (strcmp (in [i-1], "]"))
@@ -683,9 +773,11 @@ describe_mangled_method (GString *out, gchar **in, size_t len)
 	if (strcmp (in [i], "]"))
 		g_assert_not_reached ();
 
-	g_string_append_printf (out, "aname: %s name: %s, sig: %s, class: %s\n", aname, method_name, signature->str, class_decoded->str);
+	mono_json_writer_indent_pop (out);
+	mono_json_writer_indent (out);
+	mono_json_writer_object_end (out);
 
-	return i;
+	return i + 1;
 }
 
 // Todo: add as run option for mono, step that only decodes mangled
@@ -736,21 +828,25 @@ mono_get_mangled_method (char *name)
 	int len;
 	for (len=0; tokens [len] != NULL; len++);
 
-	GString *json = g_string_new ("");
 	g_assert (!strcmp (tokens [0], "mono_aot"));
-	g_assert (describe_mangled_method (json, &tokens [1], len) > 0);
-	char *tmp = g_string_free (json, FALSE);
+
+	JsonWriter json;
+	mono_json_writer_init (&json);
+	g_assert (describe_mangled_method (&json, &tokens [1], len) > 0);
+	gchar *ret = g_strdup (json.text->str);
+	mono_json_writer_destroy (&json);
+
 	g_strfreev (tokens);
 	g_free (str);
 
-	return tmp;
+	return ret;
 }
 
 void
 dump_mangled_method (char *name)
 {
 	char *tmp = mono_get_mangled_method (name);
-	fprintf (stderr, "Mangled Method Encodes: %s", tmp);
+	fprintf (stderr, "Mangled Method Encodes:\n%s\n", tmp);
 	g_free (tmp);
 }
 
@@ -772,7 +868,6 @@ mono_aot_get_mangled_method_name (MonoMethod *method)
 		char *reverse = desanitize_mangled_string (cleaned);
 
 		dump_mangled_method (cleaned);
-		/*fprintf (stderr, "Input (%s) output (%s) bidirectional (%s)\n", out, cleaned, reverse);*/
 
 		g_free (out);
 		return cleaned;
