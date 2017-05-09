@@ -53,7 +53,7 @@
 
 #define MonoForwardMangle(FWD, BCK) \
 	case FWD: \
-		g_string_append_printf (s, "BCK"); \
+		g_string_append_printf (s, "%s", BCK); \
 		break; 
 
 #define MonoMangleTypeTable \
@@ -72,6 +72,8 @@
 	X(MONO_TYPE_U, "ui") \
 	X(MONO_TYPE_R4, "fl") \
 	X(MONO_TYPE_R8, "do")
+
+static int num_mono_type_cases = 15;
 
 #define MonoMangleWrapperTable \
 	X(MONO_WRAPPER_REMOTING_INVOKE, "remoting_invoke") \
@@ -127,7 +129,7 @@
 static gboolean
 append_mangled_type (GString *s, MonoType *t)
 {
-	g_string_append_printf (s, "[ type ");
+	g_string_append_printf (s, " [ type ");
 	if (t->byref)
 		g_string_append_printf (s, "byref ");
 	switch (t->type) {
@@ -136,10 +138,10 @@ append_mangled_type (GString *s, MonoType *t)
 #undef X
 	default: {
 		char *fullname = mono_type_full_name (t);
-		g_string_append_printf (s, "other %x %s", strlen (fullname), fullname);
+		g_string_append_printf (s, "other %s", fullname);
 	}
 	}
-	g_string_append_printf (s, " ]");
+	g_string_append_printf (s, " ] ");
 	return TRUE;
 }
 
@@ -168,6 +170,7 @@ append_mangled_signature (GString *s, MonoMethodSignature *sig)
 static void
 append_mangled_wrapper_type (GString *s, guint32 wrapper_type) 
 {
+	g_string_append_printf (s, "type:");
 	switch (wrapper_type) {
 #define X(FWD, BCK) MonoForwardMangle(FWD, BCK)
 MonoMangleWrapperTable
@@ -182,6 +185,7 @@ MonoMangleWrapperTable
 static void
 append_mangled_wrapper_subtype (GString *s, WrapperSubtype subtype) 
 {
+	g_string_append_printf (s, "subtype:");
 	switch (subtype) 
 	{
 #define X(FWD, BCK) MonoForwardMangle(FWD, BCK)
@@ -288,12 +292,30 @@ append_mangled_klass (GString *s, MonoClass *klass)
 static gboolean
 append_mangled_method (GString *s, MonoMethod *method);
 
+static int
+describe_mangled_wrapper (GString *out, gchar **in, size_t len)
+{
+	g_assert (!strcmp (in [0], "["));
+	g_assert (!strcmp (in [1], "wrapper"));
+	g_string_append_printf (out, "wrapper attributes: [");
+	int i = 2;
+	gboolean first = TRUE;
+	while (strcmp (in [i], "]")) {
+		g_string_append_printf (out, "%s\"%s\"", first ? " " : ", ", in [i]);
+		first = FALSE;
+		i++;
+	}
+	g_string_append_printf (out, "]");
+
+	return i + 1;
+}
+
 static gboolean
 append_mangled_wrapper (GString *s, MonoMethod *method) 
 {
 	gboolean success = TRUE;
 	WrapperInfo *info = mono_marshal_get_wrapper_info (method);
-	g_string_append_printf (s, "wrapper_");
+	g_string_append_printf (s, "[ wrapper ");
 
 	append_mangled_wrapper_type (s, method->wrapper_type);
 
@@ -317,9 +339,9 @@ append_mangled_wrapper (GString *s, MonoMethod *method)
 	case MONO_WRAPPER_ALLOC: {
 		/* The GC name is saved once in MonoAotFileInfo */
 		g_assert (info->d.alloc.alloc_type != -1);
-		g_string_append_printf (s, "%d_", info->d.alloc.alloc_type);
+		g_string_append_printf (s, " %d ", info->d.alloc.alloc_type);
 		// SlowAlloc, etc
-		g_string_append_printf (s, "%s_", method->name);
+		g_string_append_printf (s, " %s ", method->name);
 		break;
 	}
 	case MONO_WRAPPER_WRITE_BARRIER: {
@@ -328,7 +350,7 @@ append_mangled_wrapper (GString *s, MonoMethod *method)
 	case MONO_WRAPPER_STELEMREF: {
 		append_mangled_wrapper_subtype (s, info->subtype);
 		if (info->subtype == WRAPPER_SUBTYPE_VIRTUAL_STELEMREF)
-			g_string_append_printf (s, "%d", info->d.virtual_stelemref.kind);
+			g_string_append_printf (s, " %d ", info->d.virtual_stelemref.kind);
 		break;
 	}
 	case MONO_WRAPPER_UNKNOWN: {
@@ -349,7 +371,7 @@ append_mangled_wrapper (GString *s, MonoMethod *method)
 	case MONO_WRAPPER_MANAGED_TO_NATIVE: {
 		append_mangled_wrapper_subtype (s, info->subtype);
 		if (info->subtype == WRAPPER_SUBTYPE_ICALL_WRAPPER) {
-			g_string_append_printf (s, "%s", method->name);
+			g_string_append_printf (s, " %s ", method->name);
 		} else if (info->subtype == WRAPPER_SUBTYPE_NATIVE_FUNC_AOT) {
 			success = success && append_mangled_method (s, info->d.managed_to_native.method);
 		} else {
@@ -371,8 +393,8 @@ append_mangled_wrapper (GString *s, MonoMethod *method)
 		append_mangled_wrapper_subtype (s, info->subtype);
 
 		if (info->subtype == WRAPPER_SUBTYPE_ELEMENT_ADDR) {
-			g_string_append_printf (s, "%d_", info->d.element_addr.rank);
-			g_string_append_printf (s, "%d_", info->d.element_addr.elem_size);
+			g_string_append_printf (s, " %d ", info->d.element_addr.rank);
+			g_string_append_printf (s, " %d ", info->d.element_addr.elem_size);
 		} else if (info->subtype == WRAPPER_SUBTYPE_STRING_CTOR) {
 			success = success && append_mangled_method (s, info->d.string_ctor.method);
 		} else {
@@ -397,15 +419,15 @@ append_mangled_wrapper (GString *s, MonoMethod *method)
 	case MONO_WRAPPER_DELEGATE_END_INVOKE: {
 		if (method->is_inflated) {
 			/* These wrappers are identified by their class */
-			g_string_append_printf (s, "i_");
+			g_string_append_printf (s, " i ");
 			success = success && append_mangled_klass (s, method->klass);
 		} else {
 			WrapperInfo *info = mono_marshal_get_wrapper_info (method);
 
-			g_string_append_printf (s, "u_");
+			g_string_append_printf (s, " u ");
 			if (method->wrapper_type == MONO_WRAPPER_DELEGATE_INVOKE)
 				append_mangled_wrapper_subtype (s, info->subtype);
-			g_string_append_printf (s, "u_sigstart");
+			g_string_append_printf (s, " u sigstart ");
 		}
 		break;
 	}
@@ -471,11 +493,70 @@ extract_inside_parens (gchar **in, int len)
 	return i;
 }
 
+static int
+describe_mangled_type (GString *out, gchar **in, size_t len)
+{
+	static GHashTable *tbl = NULL;
+	g_assert (!strcmp (in [0], "["));
+	g_assert (!strcmp (in [1], "type"));
+	int i = 2;
+
+	gboolean byref = FALSE;
+	if (!strcmp (in [i], "byref")) {
+		byref = TRUE;
+		i++;
+	}
+
+	if (tbl == NULL) {
+		GHashTable *tmp = g_hash_table_new (g_str_hash, g_str_equal);
+#define X(FWD, BCK) fprintf (stderr, "Inserting %s\n", BCK); g_hash_table_insert (tmp, (gpointer) g_strdup(BCK), (gpointer) g_strdup (#FWD));
+MonoMangleTypeTable
+#undef X
+		tbl = tmp;
+	}
+
+	GString *type_tag = g_string_new ("");
+	if (!strcmp (in [i], "other")) {
+		g_string_append_printf (type_tag, "Other Type:");
+		while (strcmp (in [i], "]"))
+			g_string_append_printf (type_tag, " %s ", in [i++]);
+	} else {
+		gchar *name = g_hash_table_lookup (tbl, in [i]);
+		g_assert (name);
+		i += 1;
+		g_string_append_printf (type_tag, "Type: %s", name);
+	}
+
+	g_assert (!strcmp (in [i], "]"));
+
+	g_string_append_printf (out, "\n\t{\n\t\ttype %s %s \n\t}\n", type_tag->str, byref ? "byref" : "");
+
+	return i + 1;
+}
 
 static int
-describe_mangled_sig (GString *out, gchar **in, size_t len)
+describe_mangled_signature (GString *out, gchar **in, size_t len)
 {
-	return extract_inside_parens (in, len);
+	g_assert (!strcmp (in [0], "["));
+	g_assert (!strcmp (in [1], "sig"));
+	int i = 2;
+
+	g_string_append_printf (out, "return value:");
+	int ret_size = describe_mangled_type (out, &in[i], len - i);
+	i += ret_size;
+
+	gboolean hasthis = FALSE;
+	if (!strcmp (in [i], "hasthis")) {
+		hasthis = TRUE;
+		i++;
+	}
+
+	while (strcmp (in [i], "]")) {
+		int param_size = describe_mangled_type (out, &in[i], len - i);
+		i += param_size;
+	}
+	g_assert (!strcmp (in [i], "]"));
+	return i + 1;
 }
 
 static int
@@ -485,14 +566,20 @@ describe_mangled_context (GString *out, gchar **in, size_t len)
 	g_assert (!strcmp (in [1], "gens"));
 	int i = 2;
 	if (!strcmp (in [i], "class_inst")) {
-		g_string_append_printf (out, "class_inst: \"%s\"", in [i+1]);
-		i += 2;
+		g_string_append_printf (out, "class_inst: [");
+		i++;
+
+		while (strcmp (in [i], "method_inst") && strcmp (in [i], "]"))
+			g_string_append_printf (out, " %s ", in [i++]);
 	}
 	if (!strcmp (in [i], "method_inst")) {
-		g_string_append_printf (out, "method_inst: \"%s\"", in [i+1]);
-		i += 2;
+		g_string_append_printf (out, "method_inst: [");
+		i += 1;
+		while (strcmp (in [i], "method_inst") && strcmp (in [i], "]"))
+			g_string_append_printf (out, " %s ", in [i++]);
 	}
 	g_assert (!strcmp (in [i], "]"));
+	g_string_append_printf (out, " ] ");
 	return i + 1;
 }
 
@@ -515,11 +602,12 @@ describe_mangled_klass (GString *out, gchar **in, size_t len)
 		i += 1;
 	}
 	if (!strcmp (in [i], "name:")) {
-		name = in [i++];
+		name = in [i + 1];
+		i += 2;
 	}
-	g_assert (!strcmp (in [i++], "]"));
+	g_assert (!strcmp (in [i], "]"));
 	g_string_append_printf (out, "namespace: \"%s\", name: \"%s\"", name_space, name);
-	return i;
+	return i + 1;
 }
 
 /*
@@ -533,11 +621,10 @@ describe_mangled_klass (GString *out, gchar **in, size_t len)
 static int
 describe_mangled_method (GString *out, gchar **in, size_t len)
 {
-	if (len < 5)
-		g_assert_not_reached ();
+	if (len > 2 && !strcmp (in [0], "[") && !strcmp (in [1], "wrapper"))
+		return describe_mangled_wrapper (out, in,len);
 
-	// FIXME wrappers
-	if (strcmp (in [0], "[") || strcmp (in [1], "method") || strcmp (in [2], "asm:"))
+	if (len < 5 || strcmp (in [0], "[") || strcmp (in [1], "method") || strcmp (in [2], "asm:"))
 	    g_assert_not_reached ();
 
 	gchar *aname = in [3];
@@ -565,9 +652,10 @@ describe_mangled_method (GString *out, gchar **in, size_t len)
 
 		return i;
 	} else if (!strcmp (in [i], "gtd:")) {
+		i++;
 		int cont_off = describe_mangled_context (mangled_context, &in [i], len - i);
 		i += cont_off;
-		g_string_append_printf (out, "context: %s ", cont_off);
+		g_string_append_printf (out, "context: %s", mangled_context->str);
 	}
 
 	// decode class
@@ -585,7 +673,7 @@ describe_mangled_method (GString *out, gchar **in, size_t len)
 	GString *signature = g_string_new ("");
 	if (strcmp (in [i], "["))
 		g_assert_not_reached ();
-	int sig_off = describe_mangled_sig (signature, &in [i], len - i);
+	int sig_off = describe_mangled_signature (signature, &in [i], len - i);
 	i += sig_off;
 	// Ensure signature terminated correctly
 	if (strcmp (in [i-1], "]"))
@@ -624,7 +712,7 @@ append_mangled_method (GString *s, MonoMethod *method)
 
 		return success;
 	} else if (method->is_generic) {
-		g_string_append_printf (s, "gtd:");
+		g_string_append_printf (s, "gtd: ");
 
 		MonoGenericContainer *container = mono_method_get_generic_container (method);
 		append_mangled_context (s, &container->context);
@@ -684,8 +772,8 @@ mono_aot_get_mangled_method_name (MonoMethod *method)
 		char *reverse = desanitize_mangled_string (cleaned);
 
 		dump_mangled_method (cleaned);
-		fprintf (stderr, "Input (%s) output (%s) bidirectional (%s)\n", out, cleaned, reverse);
-		g_assert_not_reached ();
+		/*fprintf (stderr, "Input (%s) output (%s) bidirectional (%s)\n", out, cleaned, reverse);*/
+
 		g_free (out);
 		return cleaned;
 	}
