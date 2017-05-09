@@ -222,6 +222,8 @@ MonoMangleWrapperSubtypeTable
 // Keep in sync with above
 #define num_sanitize_cases 13
 
+static GHashTable *desanitize_table = NULL;
+
 static char *
 sanitize_mangled_string (const char *input)
 {
@@ -251,8 +253,7 @@ MonoMangleSanitizeTable
 static char *
 desanitize_mangled_string (char *name) 
 {
-	static GHashTable *tbl = NULL;
-	if (tbl == NULL) {
+	if (desanitize_table == NULL) {
 		GHashTable *tmp = g_hash_table_new (g_str_hash, g_str_equal);
 		int i = 0;
 		gchar *mem = g_malloc (sizeof (gchar) * num_sanitize_cases);
@@ -263,12 +264,12 @@ MonoMangleSanitizeTable
 #define X(FWD, BCK) g_hash_table_insert (tmp, (gpointer) g_strdup(BCK), (gpointer) &mem [i++]);
 MonoMangleSanitizeTable
 #undef X
-		tbl = tmp;
+		desanitize_table = tmp;
 	}
 	gchar **split = g_strsplit (name, "_", 1000);
 	GString *accum = g_string_new ("");
 	for (int i=0; split [i] != NULL; i++) {
-		gchar *output = g_hash_table_lookup (tbl, split [i]);
+		gchar *output = g_hash_table_lookup (desanitize_table, split [i]);
 		if (output) {
 			g_string_append_c (accum, *output);
 		} else {
@@ -497,10 +498,11 @@ extract_inside_parens (gchar **in, int len)
 	return i;
 }
 
+static GHashTable *mangled_type_table = NULL;
+
 static int
 describe_mangled_type (JsonWriter *out, gchar **in, size_t len)
 {
-	static GHashTable *tbl = NULL;
 	g_assert (!strcmp (in [0], "["));
 	g_assert (!strcmp (in [1], "type"));
 	int i = 2;
@@ -511,12 +513,12 @@ describe_mangled_type (JsonWriter *out, gchar **in, size_t len)
 		i++;
 	}
 
-	if (tbl == NULL) {
+	if (mangled_type_table == NULL) {
 		GHashTable *tmp = g_hash_table_new (g_str_hash, g_str_equal);
 #define X(FWD, BCK) g_hash_table_insert (tmp, (gpointer) g_strdup(BCK), (gpointer) g_strdup (#FWD));
 MonoMangleTypeTable
 #undef X
-		tbl = tmp;
+		mangled_type_table = tmp;
 	}
 
 	GString *type_tag = g_string_new ("");
@@ -871,6 +873,19 @@ mono_aot_get_mangled_method_name (MonoMethod *method)
 
 		g_free (out);
 		return cleaned;
+	}
+}
+
+void
+mono_mangler_cleanup (void)
+{
+	if (desanitize_table) {
+		g_hash_table_destroy (desanitize_table);
+		desanitize_table = NULL;
+	}
+	if (mangled_type_table) {
+		g_hash_table_destroy (mangled_type_table);
+		mangled_type_table = NULL;
 	}
 }
 

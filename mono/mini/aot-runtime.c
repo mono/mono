@@ -2372,6 +2372,8 @@ mono_aot_cleanup (void)
 		g_hash_table_destroy (aot_jit_icall_hash);
 	if (aot_modules)
 		g_hash_table_destroy (aot_modules);
+
+	mono_mangler_cleanup ();
 }
 
 static gboolean
