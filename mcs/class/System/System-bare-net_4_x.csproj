@@ -1181,7 +1181,6 @@
     <Compile Include="System.Net\BasicClient.cs" />
     <Compile Include="System.Net\BindIPEndPoint.cs" />
     <Compile Include="System.Net\ChunkedInputStream.cs" />
-    <Compile Include="System.Net\MonoChunkStream.cs" />
     <Compile Include="System.Net\DecompressionMethods.cs" />
     <Compile Include="System.Net\DefaultCertificatePolicy.cs" />
     <Compile Include="System.Net\DigestClient.cs" />
@@ -1200,6 +1199,7 @@
     <Compile Include="System.Net\FtpWebResponse.cs" />
     <Compile Include="System.Net\HttpConnection.cs" />
     <Compile Include="System.Net\HttpListener.cs" />
+    <Compile Include="System.Net\HttpListener.Mono.cs" />
     <Compile Include="System.Net\HttpListenerBasicIdentity.cs" />
     <Compile Include="System.Net\HttpListenerContext.cs" />
     <Compile Include="System.Net\HttpListenerPrefixCollection.cs" />
@@ -1218,6 +1218,7 @@
     <Compile Include="System.Net\ListenerAsyncResult.cs" />
     <Compile Include="System.Net\ListenerPrefix.cs" />
     <Compile Include="System.Net\MacProxy.cs" />
+    <Compile Include="System.Net\MonoChunkStream.cs" />
     <Compile Include="System.Net\MonoHttpDate.cs" />
     <Compile Include="System.Net\NetConfig.cs" />
     <Compile Include="System.Net\NtlmClient.cs" />
