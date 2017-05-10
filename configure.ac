@@ -3264,6 +3264,77 @@ case "$host" in
 		;;
 esac
 
+COREFX_PAL_SUPPORTED=no
+COREFX_PAL_ARCH=
+COREFX_PAL_OS=
+
+case "$host" in
+  i*86-*-linux*)
+	COREFX_PAL_SUPPORTED=yes
+	COREFX_PAL_ARCH=x86
+	COREFX_PAL_OS=linux
+	;;
+  i*86-*-darwin*)
+	COREFX_PAL_SUPPORTED=yes
+	COREFX_PAL_ARCH=x86
+	COREFX_PAL_OS=osx
+	;;
+  i*86-*-freebsd*|i*86-*-kfreebsd-gnu*)
+	COREFX_PAL_SUPPORTED=yes
+	COREFX_PAL_ARCH=x86
+	COREFX_PAL_OS=freebsd
+	;;
+  x86_64-*-linux*|amd64-*-linux*)
+	COREFX_PAL_SUPPORTED=yes
+	COREFX_PAL_ARCH=x64
+	COREFX_PAL_OS=linux
+	;;
+  x86_64-*-darwin*|amd64-*-darwin*)
+	COREFX_PAL_SUPPORTED=yes
+	COREFX_PAL_ARCH=x64
+	COREFX_PAL_OS=osx
+	;;
+  x86_64-*-freebsd*|amd64-*-freebsd*|x86_64-*-kfreebsd-gnu*|amd64-*-kfreebsd-gnu*)
+	COREFX_PAL_SUPPORTED=yes
+	COREFX_PAL_ARCH=x64
+	COREFX_PAL_OS=freebsd
+	;;
+  arm*-*-darwin*)
+	COREFX_PAL_SUPPORTED=yes
+	COREFX_PAL_ARCH=arm
+	COREFX_PAL_OS=osx
+	;;
+  arm*-*-linux*)
+	COREFX_PAL_SUPPORTED=yes
+	COREFX_PAL_ARCH=arm
+	COREFX_PAL_OS=linux
+	;;
+  arm*-*-freebsd*|arm*-*-kfreebsd-gnu*)
+	COREFX_PAL_SUPPORTED=yes
+	COREFX_PAL_ARCH=arm
+	COREFX_PAL_OS=freebsd
+	;;
+  aarch64-*-darwin*)
+	COREFX_PAL_SUPPORTED=yes
+	COREFX_PAL_ARCH=arm64
+	COREFX_PAL_OS=osx
+	;;
+  aarch64-*-linux*)
+	COREFX_PAL_SUPPORTED=yes
+	COREFX_PAL_ARCH=arm64
+	COREFX_PAL_OS=linux
+	;;
+  aarch64-*-freebsd*|aarch64-*-kfreebsd-gnu*)
+	COREFX_PAL_SUPPORTED=yes
+	COREFX_PAL_ARCH=arm64
+	COREFX_PAL_OS=freebsd
+	;;
+esac
+
+AM_CONDITIONAL(COREFX_PAL_SUPPORTED, [test x$COREFX_PAL_SUPPORTED = xyes])
+AC_SUBST(COREFX_PAL_ARCH)
+AC_SUBST(COREFX_PAL_OS)
+
 HOST=$TARGET
 
 if test "x$host" != "x$target"; then
@@ -4423,6 +4494,7 @@ scripts/mono-find-provides
 scripts/mono-find-requires
 mono/Makefile
 mono/btls/Makefile
+mono/pal/Makefile
 mono/utils/Makefile
 mono/metadata/Makefile
 mono/dis/Makefile
