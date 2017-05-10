@@ -30,7 +30,7 @@
 //
 using System;
 using System.Runtime.InteropServices;
-using ObjCRuntime;
+using ObjCRuntimeInternal;
 using Mono.Net;
 
 namespace Mono.AppleTls {
