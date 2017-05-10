@@ -272,7 +272,6 @@
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\UpdateRowSource.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\updatestatus.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\XDRSchema.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\XmlContent.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\XmlDataLoader.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\XMLDiffLoader.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\XmlKeywords.cs" />
@@ -449,6 +448,11 @@
     <Compile Include="..\referencesource\System.Data\System\Data\SqlClient\TdsParserStaticMethods.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\SQLTypes\SqlTypesSchemaImporter.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="corefx\DataView.cs" />
+    <Compile Include="corefx\DBCommandBuilder.cs" />
+    <Compile Include="corefx\DbConnection.cs" />
+    <Compile Include="corefx\FieldNameLookup.cs" />
+    <Compile Include="corefx\Index.cs" />
     <Compile Include="corefx\SR.cs" />
     <Compile Include="Microsoft.SqlServer.Server\SqlDataRecord.cs" />
     <Compile Include="Microsoft.SqlServer.Server\SqlMetaData.cs" />
