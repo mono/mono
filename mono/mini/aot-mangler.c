@@ -52,6 +52,21 @@
 #include "config.h"
 #include "aot-compiler.h"
 
+// Set to cause prompt assertions during demangling errors
+
+#if 0
+#define demangle_assert(ERROR, COND) g_assert ((COND))
+#else
+#define demangle_assert(ERROR, COND) \
+	{ \
+		if (!(COND)) { \
+			mono_error_set_execution_engine(ERROR, "Demangling assertion failure (%s) at (%s %d)\n", #COND, __FILE__, __LINE__); \
+		} \
+	}
+#endif
+
+
+
 #define MonoForwardMangle(FWD, BCK) \
 	case FWD: \
 		g_string_append_printf (s, "%s", BCK); \
@@ -251,7 +266,7 @@ MonoMangleSanitizeTable
 }
 
 static char *
-desanitize_mangled_string (char *name) 
+desanitize_mangled_string (const char *name) 
 {
 	if (desanitize_table == NULL) {
 		GHashTable *tmp = g_hash_table_new (g_str_hash, g_str_equal);
@@ -292,28 +307,29 @@ append_mangled_klass (GString *s, MonoClass *klass)
 }
 
 static int
-describe_mangled_context (JsonWriter *out, gchar **in, size_t len);
+describe_mangled_context (JsonWriter *out, gchar **in, size_t len, MonoError *error);
 
 static int
-describe_mangled_type (JsonWriter *out, gchar **in, size_t len);
+describe_mangled_type (JsonWriter *out, gchar **in, size_t len, MonoError *error);
 
 static int
-describe_mangled_klass (JsonWriter *out, gchar **in, size_t len);
+describe_mangled_klass (JsonWriter *out, gchar **in, size_t len, MonoError *error);
 
 static int
-describe_mangled_signature (JsonWriter *out, gchar **in, size_t len);
+describe_mangled_signature (JsonWriter *out, gchar **in, size_t len, MonoError *error);
 
 static int
-describe_mangled_method (JsonWriter *out, gchar **in, size_t len);
+describe_mangled_method (JsonWriter *out, gchar **in, size_t len, MonoError *error);
 
 static gboolean
 append_mangled_method (GString *s, MonoMethod *method);
 
 static int
-describe_mangled_wrapper (JsonWriter *out, gchar **in, size_t len)
+describe_mangled_wrapper (JsonWriter *out, gchar **in, size_t len, MonoError *error)
 {
-	g_assert (!strcmp (in [0], "["));
-	g_assert (!strcmp (in [1], "wrapper"));
+	error_init (error);
+	demangle_assert(error, !strcmp (in [0], "["));
+	demangle_assert(error, !strcmp (in [1], "wrapper"));
 	
 	mono_json_writer_object_begin (out);
 
@@ -328,6 +344,9 @@ describe_mangled_wrapper (JsonWriter *out, gchar **in, size_t len)
 	int i = 2;
 	int depth = 0;
 	while (i < len - 1) {
+		if (!mono_error_ok (error))
+			goto fail;
+
 		if (!strcmp (in [i], "")) {
 			i++;
 			continue;
@@ -337,17 +356,17 @@ describe_mangled_wrapper (JsonWriter *out, gchar **in, size_t len)
 			int offset = 0;
 			mono_json_writer_indent (out);
 			if (!strcmp (in [i+1], "type"))
-				offset = describe_mangled_type (out, &in [i], len - i);
+				offset = describe_mangled_type (out, &in [i], len - i, error);
 			else if (!strcmp (in [i+1], "sig"))
-				offset = describe_mangled_signature (out, &in [i], len - i);
+				offset = describe_mangled_signature (out, &in [i], len - i, error);
 			else if (!strcmp (in [i+1], "klass"))
-				offset = describe_mangled_klass (out, &in [i], len - i);
+				offset = describe_mangled_klass (out, &in [i], len - i, error);
 			else if (!strcmp (in [i+1], "gens"))
-				offset = describe_mangled_context (out, &in [i], len - i);
+				offset = describe_mangled_context (out, &in [i], len - i, error);
 			else if (!strcmp (in [i+1], "method"))
-				offset = describe_mangled_method (out, &in [i], len - i);
+				offset = describe_mangled_method (out, &in [i], len - i, error);
 			else if (!strcmp (in [i+1], "wrapper"))
-				offset = describe_mangled_wrapper (out, &in [i], len - i);
+				offset = describe_mangled_wrapper (out, &in [i], len - i, error);
 			else
 				depth++;
 
@@ -355,10 +374,11 @@ describe_mangled_wrapper (JsonWriter *out, gchar **in, size_t len)
 				mono_json_writer_printf (out, ",\n");
 
 			i += offset;
-			if (offset)
-				g_assert (!strcmp (in [i-1], "]"));
-			else
+			if (offset) {
+				demangle_assert(error, !strcmp (in [i-1], "]"));
+			} else {
 				i++;
+			}
 		} else if (!strcmp (in [i], "]")) {
 			mono_json_writer_indent (out);
 			mono_json_writer_object_end (out);
@@ -382,6 +402,9 @@ describe_mangled_wrapper (JsonWriter *out, gchar **in, size_t len)
 	mono_json_writer_object_end (out);
 
 	return i + 1;
+
+fail:
+	return -1;
 }
 
 static gboolean
@@ -541,10 +564,13 @@ append_mangled_context (GString *str, MonoGenericContext *context)
 static GHashTable *mangled_type_table = NULL;
 
 static int
-describe_mangled_type (JsonWriter *out, gchar **in, size_t len)
+describe_mangled_type (JsonWriter *out, gchar **in, size_t len, MonoError *error)
 {
-	g_assert (!strcmp (in [0], "["));
-	g_assert (!strcmp (in [1], "type"));
+	error_init (error);
+	demangle_assert(error, !strcmp (in [0], "["));
+	demangle_assert(error, !strcmp (in [1], "type"));
+	if (!mono_error_ok (error))
+		goto fail;
 	int i = 2;
 
 	gboolean byref = FALSE;
@@ -569,7 +595,9 @@ MonoMangleTypeTable
 			g_string_append_printf (type_tag, " %s ", in [i++]);
 	} else {
 		gchar *name = g_hash_table_lookup (mangled_type_table, in [i]);
-		g_assert (name);
+		demangle_assert(error, name);
+		if (!mono_error_ok (error))
+			goto fail;
 		i += 1;
 		g_string_append_printf (type_tag, "%s", name);
 	}
@@ -592,15 +620,25 @@ MonoMangleTypeTable
 	mono_json_writer_indent (out);
 	mono_json_writer_object_end (out);
 
-	g_assert (!strcmp (in [i], "]"));
+	demangle_assert(error, !strcmp (in [i], "]"));
+	if (!mono_error_ok (error))
+		goto fail;
+
 	return i + 1;
+
+fail:
+	return -1;
 }
 
 static int
-describe_mangled_signature (JsonWriter *out, gchar **in, size_t len)
+describe_mangled_signature (JsonWriter *out, gchar **in, size_t len, MonoError *error)
 {
-	g_assert (!strcmp (in [0], "["));
-	g_assert (!strcmp (in [1], "sig"));
+	error_init (error);
+	demangle_assert(error, !strcmp (in [0], "["));
+	demangle_assert(error, !strcmp (in [1], "sig"));
+	if (!mono_error_ok (error))
+		goto fail;
+
 	int i = 2;
 
 	mono_json_writer_object_begin (out);
@@ -611,7 +649,7 @@ describe_mangled_signature (JsonWriter *out, gchar **in, size_t len)
 
 	mono_json_writer_indent (out);
 	mono_json_writer_object_key(out, "return_value");
-	int ret_size = describe_mangled_type (out, &in[i], len - i);
+	int ret_size = describe_mangled_type (out, &in[i], len - i, error);
 	mono_json_writer_printf (out, ",\n");
 	i += ret_size;
 
@@ -633,12 +671,16 @@ describe_mangled_signature (JsonWriter *out, gchar **in, size_t len)
 			mono_json_writer_printf (out, ",");
 		mono_json_writer_indent (out);
 		first = FALSE;
-		int param_size = describe_mangled_type (out, &in[i], len - i);
+		int param_size = describe_mangled_type (out, &in[i], len - i, error);
 		i += param_size;
-		g_assert (!strcmp (in[i-1], "]"));
+		demangle_assert(error, !strcmp (in[i-1], "]"));
 	}
 	mono_json_writer_printf (out, "\n");
-	g_assert (!strcmp (in [i], "]"));
+
+	demangle_assert(error, !strcmp (in [i], "]"));
+	if (!mono_error_ok (error))
+		goto fail;
+
 	mono_json_writer_indent_pop (out);
 	mono_json_writer_indent (out);
 	mono_json_writer_array_end (out);
@@ -649,13 +691,19 @@ describe_mangled_signature (JsonWriter *out, gchar **in, size_t len)
 	mono_json_writer_indent_pop (out);
 
 	return i + 1;
+
+fail:
+	return -1;
 }
 
 static int
-describe_mangled_context (JsonWriter *out, gchar **in, size_t len)
+describe_mangled_context (JsonWriter *out, gchar **in, size_t len, MonoError *error)
 {
-	g_assert (!strcmp (in [0], "["));
-	g_assert (!strcmp (in [1], "gens"));
+	error_init (error);
+	demangle_assert(error, !strcmp (in [0], "["));
+	demangle_assert(error, !strcmp (in [1], "gens"));
+	if (!mono_error_ok (error))
+		goto fail;
 
 	mono_json_writer_object_begin (out);
 
@@ -693,19 +741,29 @@ describe_mangled_context (JsonWriter *out, gchar **in, size_t len)
 		mono_json_writer_array_end (out);
 		mono_json_writer_printf (out, "\n");
 	}
-	g_assert (!strcmp (in [i], "]"));
+
+	demangle_assert(error, !strcmp (in [i], "]"));
+	if (!mono_error_ok (error))
+		goto fail;
+
 	mono_json_writer_indent (out);
 	mono_json_writer_object_end (out);
 	return i + 1;
+
+fail:
+	return -1;
 }
 
 static int
-describe_mangled_klass (JsonWriter *out, gchar **in, size_t len)
+describe_mangled_klass (JsonWriter *out, gchar **in, size_t len, MonoError *error)
 {
 	int i = 0;
-	g_assert (!strcmp (in [i++], "["));
-	g_assert (!strcmp (in [i++], "klass"));
-	g_assert (!strcmp (in [i++], "namespace:"));
+	error_init (error);
+	demangle_assert(error, !strcmp (in [i++], "["));
+	demangle_assert(error, !strcmp (in [i++], "klass"));
+	demangle_assert(error, !strcmp (in [i++], "namespace:"));
+	if (!mono_error_ok (error))
+		goto fail;
 
 	mono_json_writer_object_begin (out);
 
@@ -721,7 +779,10 @@ describe_mangled_klass (JsonWriter *out, gchar **in, size_t len)
 		mono_json_writer_printf (out, "%s", in [i++]);
 	mono_json_writer_printf (out, "\",\n");
 
-	g_assert (!strcmp (in [i], "name:"));
+	demangle_assert(error, !strcmp (in [i], "name:"));
+	if (!mono_error_ok (error))
+		goto fail;
+
 	mono_json_writer_indent (out);
 	mono_json_writer_object_key(out, "name");
 	mono_json_writer_printf (out, "\"");
@@ -731,13 +792,18 @@ describe_mangled_klass (JsonWriter *out, gchar **in, size_t len)
 		mono_json_writer_printf (out, "%s", in [i++]);
 	mono_json_writer_printf (out, "\",\n");
 
-	g_assert (!strcmp (in [i], "]"));
+	demangle_assert(error, !strcmp (in [i], "]"));
+	if (!mono_error_ok (error))
+		goto fail;
 
 	mono_json_writer_indent_pop (out);
 	mono_json_writer_indent (out);
 	mono_json_writer_object_end (out);
 
 	return i + 1;
+
+fail:
+	return -1;
 }
 
 /*
@@ -751,13 +817,15 @@ describe_mangled_klass (JsonWriter *out, gchar **in, size_t len)
  * -1 on failure.
  */
 static int
-describe_mangled_method (JsonWriter *out, gchar **in, size_t len)
+describe_mangled_method (JsonWriter *out, gchar **in, size_t len, MonoError *error)
 {
+	error_init (error);
 	if (len > 2 && !strcmp (in [0], "[") && !strcmp (in [1], "wrapper"))
-		return describe_mangled_wrapper (out, in,len);
+		return describe_mangled_wrapper (out, in, len, error);
 
-	if (len < 5 || strcmp (in [0], "[") || strcmp (in [1], "method") || strcmp (in [2], "asm:"))
-	    g_assert_not_reached ();
+	demangle_assert(error, !(len < 3 || strcmp (in [0], "[") || strcmp (in [1], "method") || strcmp (in [2], "asm:")));
+	if (!mono_error_ok (error))
+		goto fail;
 
 	gchar *aname = in [3];
 	int i = 4;
@@ -776,21 +844,23 @@ describe_mangled_method (JsonWriter *out, gchar **in, size_t len)
 		i++;
 		mono_json_writer_indent (out);
 		mono_json_writer_object_key(out, "context");
-		int cont_off = describe_mangled_context (out, &in [i], len - i);
+		int cont_off = describe_mangled_context (out, &in [i], len - i, error);
 		mono_json_writer_printf (out, ",\n");
 		i += cont_off;
 
-		if (strcmp (in [i++], "declaring:"))
-			g_assert_not_reached ();
+		demangle_assert(error, !strcmp (in [i++], "declaring:"));
+		if (!mono_error_ok (error))
+			goto fail;
 
 		mono_json_writer_indent (out);
 		mono_json_writer_object_key(out, "declaring");
-		int declaring_off = describe_mangled_method (out, &in [i], len - i);
+		int declaring_off = describe_mangled_method (out, &in [i], len - i, error);
 		mono_json_writer_printf (out, ",\n");
 		i += declaring_off;
 	
-		if (strcmp (in [i], "]"))
-			g_assert_not_reached ();
+		demangle_assert(error, !strcmp (in [i], "]"));
+		if (!mono_error_ok (error))
+			goto fail;
 
 		mono_json_writer_indent (out);
 		mono_json_writer_indent_pop (out);
@@ -801,51 +871,57 @@ describe_mangled_method (JsonWriter *out, gchar **in, size_t len)
 		i++;
 		mono_json_writer_indent (out);
 		mono_json_writer_object_key(out, "context");
-		int cont_off = describe_mangled_context (out, &in [i], len - i);
+		int cont_off = describe_mangled_context (out, &in [i], len - i, error);
 		mono_json_writer_printf (out, ",\n");
 		i += cont_off;
 	}
 
 	// decode class
-	if (strcmp (in [i], "["))
-		g_assert_not_reached ();
+	demangle_assert(error, !strcmp (in [i], "["));
+	if (!mono_error_ok (error))
+		goto fail;
 
 	mono_json_writer_indent (out);
 	mono_json_writer_object_key(out, "class");
-	int class_off = describe_mangled_klass (out, &in[i], len - i);
+	int class_off = describe_mangled_klass (out, &in[i], len - i, error);
 	mono_json_writer_printf (out, ",\n");
 	i += class_off;
 	// Ensure class terminated correctly
-	if (strcmp (in [i-1], "]"))
-		g_assert_not_reached ();
-
+	demangle_assert(error, !strcmp (in [i-1], "]"));
+	if (!mono_error_ok (error))
+		goto fail;
 
 	gchar *method_name = in [i++];
 	mono_json_writer_indent (out);
 	mono_json_writer_object_key(out, "method_name");
 	mono_json_writer_printf (out, "\"%s\",\n", method_name);
 
-	if (strcmp (in [i], "["))
-		g_assert_not_reached ();
+	demangle_assert(error, !strcmp (in [i], "["));
+	if (!mono_error_ok (error))
+		goto fail;
 
 	mono_json_writer_indent (out);
 	mono_json_writer_object_key(out, "signature");
-	int sig_off = describe_mangled_signature (out, &in [i], len - i);
+	int sig_off = describe_mangled_signature (out, &in [i], len - i, error);
 	mono_json_writer_printf (out, "\n");
-
 	i += sig_off;
+
 	// Ensure signature terminated correctly
-	if (strcmp (in [i-1], "]"))
-		g_assert_not_reached ();
+	demangle_assert(error, !strcmp (in [i-1], "]"));
 
 	// Ensure delimiters honored
-	if (strcmp (in [i], "]"))
-		g_assert_not_reached ();
+	demangle_assert(error, !strcmp (in [i], "]"));
+
+	if (!mono_error_ok (error))
+		goto fail;
 
 	mono_json_writer_indent (out);
 	mono_json_writer_object_end (out);
 
 	return i + 1;
+
+fail:
+	return -1;
 }
 
 // Todo: add as run option for mono, step that only decodes mangled
@@ -888,7 +964,7 @@ append_mangled_method (GString *s, MonoMethod *method)
 }
 
 static char *
-mono_get_mangled_method (char *name)
+mono_get_mangled_method (const char *name)
 {
 	gchar *str = desanitize_mangled_string (name);
 
@@ -896,14 +972,24 @@ mono_get_mangled_method (char *name)
 	int len;
 	for (len=0; tokens [len] != NULL; len++);
 
-	g_assert (!strcmp (tokens [0], "mono_aot"));
+	MonoError error;
+	error_init (&error);
+	demangle_assert(&error, !strcmp (tokens [0], "mono_aot"));
 
 	JsonWriter json;
 	mono_json_writer_init (&json);
-	g_assert (describe_mangled_method (&json, &tokens [1], len) > 0);
-	gchar *ret = g_strdup (json.text->str);
-	mono_json_writer_destroy (&json);
+	int length = describe_mangled_method (&json, &tokens [1], len, &error);
 
+	gchar *ret = NULL;
+	if (mono_error_ok (&error)) {
+		ret = g_strdup (json.text->str);
+		mono_json_writer_destroy (&json);
+		g_assert (length > 0);
+	} else {
+		fprintf (stderr, "Unable to demangle method because %s. Mangled string: (%s) \n", mono_error_get_message (&error), name);
+	}
+
+	mono_error_cleanup (&error);
 	g_strfreev (tokens);
 	g_free (str);
 
@@ -911,11 +997,13 @@ mono_get_mangled_method (char *name)
 }
 
 void
-dump_mangled_method (char *name)
+dump_mangled_method (const char *name)
 {
 	char *tmp = mono_get_mangled_method (name);
-	fprintf (stderr, "Mangled Method Encodes:\n%s\n", tmp);
-	g_free (tmp);
+	if (tmp) {
+		fprintf (stderr, "Mangled Method Encodes:\n%s\n", tmp);
+		g_free (tmp);
+	}
 }
 
 /*
