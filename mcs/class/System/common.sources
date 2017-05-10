@@ -50,6 +50,8 @@ System.Net/DefaultCertificatePolicy.cs
 System.Net/DigestClient.cs
 System.Net/Dns.cs
 System.Net/EndpointPermission.cs
+System.Net/HttpListenerBasicIdentity.cs
+System.Net/HttpListenerResponseHelper.cs
 System.Net/HttpRequestCreator.cs
 System.Net/HttpStreamAsyncResult.cs
 System.Net/ICredentialPolicy.cs
