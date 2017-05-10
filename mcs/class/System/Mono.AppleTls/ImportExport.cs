@@ -31,7 +31,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using ObjCRuntime;
+using ObjCRuntimeInternal;
 using Mono.Net;
 
 #if MONO_FEATURE_BTLS

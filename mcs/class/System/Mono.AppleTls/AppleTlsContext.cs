@@ -35,7 +35,7 @@ using Mono.Net;
 using Mono.Net.Security;
 using Mono.Util;
 
-using ObjCRuntime;
+using ObjCRuntimeInternal;
 
 namespace Mono.AppleTls
 {
