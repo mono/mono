@@ -56,7 +56,7 @@ if (not $skipbuild)
 	#rmtree($bintarget);
 	#rmtree($libtarget);
 
-	my $archflags = '-DLINUX';
+	my $archflags = '-DLINUX=1';
 
 	if (not $build64 and not $build_armel)
 	{
