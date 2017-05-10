@@ -13,6 +13,7 @@ System.Net/HttpListenerContext.platformnotsupported.cs
 System.Net/HttpListenerPrefixCollection.platformnotsupported.cs
 System.Net/HttpListenerRequest.platformnotsupported.cs
 System.Net/HttpListenerResponse.platformnotsupported.cs
+System.Net/HttpListenerTimeoutManager.platformnotsupported.cs
 System.Net/HttpWebRequest.platformnotsupported.cs
 System.Net/HttpWebResponse.platformnotsupported.cs
 System.Net/ServicePoint.platformnotsupported.cs
