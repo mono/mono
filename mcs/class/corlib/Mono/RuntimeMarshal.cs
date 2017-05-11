@@ -7,7 +7,20 @@ namespace Mono {
 		internal static string PtrToUtf8String (IntPtr ptr)
 		{
 			unsafe {
-				return new String ((sbyte*)ptr);
+				if (ptr == IntPtr.Zero)
+					return string.Empty;
+
+				byte* bytes = (byte*)ptr;
+				int length = 0;
+
+				try {
+					while (bytes++ [0] != 0)
+						length++;
+				} catch (NullReferenceException) {
+					throw new ArgumentOutOfRangeException ("ptr", "Value does not refer to a valid string.");
+				}
+
+				return new String ((sbyte*)ptr, 0, length, System.Text.Encoding.UTF8);
 			}
 		}
 
