@@ -19,7 +19,11 @@
 #include <linux/netlink.h>
 #include <linux/rtnetlink.h>
 #include <linux/if_arp.h>
+#if ANDROID
+#define LIBC_SO "libc.so.6"
+#else
 #include <gnu/lib-names.h> // for LIBC_SO define
+#endif
 #endif /* def LINUX */
 #ifndef WIN32
 #include <netinet/in.h>
