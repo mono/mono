@@ -23,37 +23,8 @@ _FILTER_OUT = $(foreach x,$(2),$(if $(findstring $(1),$(x)),,$(x)))
 LIB_REFS_FULL = $(call _FILTER_OUT,=, $(LIB_REFS))
 LIB_REFS_ALIAS = $(filter-out $(LIB_REFS_FULL),$(LIB_REFS))
 
-LIB_MCS_FLAGS += $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE)/%.dll,$(LIB_REFS_FULL))
-LIB_MCS_FLAGS += $(patsubst %,-r:%.dll, $(subst =,=$(topdir)/class/lib/$(PROFILE)/,$(LIB_REFS_ALIAS)))
-
-sourcefile = $(LIBRARY).sources
-
-# If the directory contains the per profile include file, generate list file.
-PROFILE_sources := $(wildcard $(PROFILE)_$(LIBRARY).sources)
-ifdef PROFILE_sources
-PROFILE_excludes = $(wildcard $(PROFILE)_$(LIBRARY).exclude.sources)
-sourcefile = $(depsdir)/$(PROFILE)_$(LIBRARY).sources
-library_CLEAN_FILES += $(sourcefile)
-
-# Note, gensources.sh can create a $(sourcefile).makefrag if it sees any '#include's
-# We don't include it in the dependencies since it isn't always created
-$(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(topdir)/build/gensources.sh
-	@echo Creating the per profile list $@ ...
-	$(SHELL) $(topdir)/build/gensources.sh $@ '$(PROFILE_sources)' '$(PROFILE_excludes)'
-endif
-
-PLATFORM_excludes := $(wildcard $(LIBRARY).$(PLATFORM)-excludes)
-
-ifndef PLATFORM_excludes
-ifeq (cat,$(PLATFORM_CHANGE_SEPARATOR_CMD))
-response = $(sourcefile)
-endif
-endif
-
-ifndef response
-response = $(depsdir)/$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).response
-library_CLEAN_FILES += $(response)
-endif
+LIB_MCS_FLAGS += $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/%.dll,$(LIB_REFS_FULL))
+LIB_MCS_FLAGS += $(patsubst %,-r:%.dll, $(subst =,=$(topdir)/class/lib/$(PROFILE_DIRECTORY)/,$(LIB_REFS_ALIAS)))
 
 ifndef LIBRARY_NAME
 LIBRARY_NAME = $(LIBRARY)
@@ -65,11 +36,7 @@ else
 lib_dir = lib
 endif
 
-ifdef LIBRARY_SUBDIR
-the_libdir_base = $(topdir)/class/$(lib_dir)/$(PROFILE)/$(LIBRARY_SUBDIR)/
-else
-the_libdir_base = $(topdir)/class/$(lib_dir)/$(PROFILE)/
-endif
+the_libdir_base = $(topdir)/class/$(lib_dir)/$(PROFILE_DIRECTORY)/$(if $(LIBRARY_SUBDIR),$(LIBRARY_SUBDIR)/)
 
 ifdef RESOURCE_STRINGS
 ifneq (basic, $(PROFILE))
@@ -110,7 +77,7 @@ SN = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARA
 endif
 endif
 
-ifeq ($(PLATFORM), win32)
+ifeq ($(BUILD_PLATFORM), win32)
 GACDIR = `cygpath -w $(mono_libdir)`
 GACROOT = `cygpath -w $(DESTDIR)$(mono_libdir)`
 test_flags += -d:WINDOWS
@@ -296,11 +263,51 @@ endif
 
 # The library
 
-$(the_lib): $(the_libdir)/.stamp
+# If the directory contains the per profile include file, generate list file.
+PROFILE_sources := $(firstword $(if $(PROFILE_PLATFORM),$(wildcard $(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY).sources)) $(wildcard $(PROFILE)_$(LIBRARY).sources) $(wildcard $(LIBRARY).sources))
+PROFILE_excludes = $(firstword $(if $(PROFILE_PLATFORM),$(wildcard $(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY).exclude.sources)) $(wildcard $(PROFILE)_$(LIBRARY).exclude.sources))
+
+# Note, gensources.sh can create a $(sourcefile).makefrag if it sees any '#include's
+# We don't include it in the dependencies since it isn't always created
+sourcefile = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).sources
+$(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(topdir)/build/gensources.sh $(depsdir)/.stamp
+	$(SHELL) $(topdir)/build/gensources.sh $@ '$(PROFILE_sources)' '$(PROFILE_excludes)'
+
+library_CLEAN_FILES += $(sourcefile)
+
+response = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).response
+$(response): $(sourcefile) $(topdir)/build/library.make $(depsdir)/.stamp
+	$(PLATFORM_CHANGE_SEPARATOR_CMD) <$(sourcefile) >$@
+
+library_CLEAN_FILES += $(response)
+
+makefrag = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).makefrag
+$(makefrag): $(sourcefile) $(topdir)/build/library.make $(depsdir)/.stamp
+#	@echo Creating $@ ...
+	@sed 's,^,$(build_lib): ,' $< >$@
+	@if test ! -f $(sourcefile).makefrag; then :; else \
+	   cat $(sourcefile).makefrag >> $@ ; \
+	   echo '$@: $(sourcefile).makefrag' >> $@; \
+	   echo '$(sourcefile).makefrag:' >> $@; fi
+
+library_CLEAN_FILES += $(makefrag)
+
+ifndef NO_BUILD
+all-local: $(makefrag)
+endif
+
+-include $(makefrag)
+
+$(the_lib): $(the_libdir)/.stamp $(if $(PROFILE_PLATFORM),$(if $(filter $(HOST_PLATFORM),$(BUILD_PLATFORM)),$(topdir)/class/$(lib_dir)/$(PROFILE)/.stamp))
+
+ifdef PROFILE_PLATFORM
+$(topdir)/class/$(lib_dir)/$(PROFILE)/.stamp: | $(topdir)/class/$(lib_dir)/$(PROFILE)-$(HOST_PLATFORM)/.stamp
+	$(if $(filter $(HOST_PLATFORM),$(BUILD_PLATFORM)),$(if $(filter $(BUILD_PLATFORM),win32),CYGWIN=winsymlinks:nativestrict) ln -s $(abspath $(topdir)/class/$(lib_dir)/$(PROFILE)-$(BUILD_PLATFORM)) $(abspath $(topdir)/class/$(lib_dir)/$(PROFILE)))
+endif
 
 ifndef NO_BUILD
 
-$(build_lib): $(response) $(sn) $(BUILT_SOURCES) $(build_libdir:=/.stamp) $(GEN_RESOURCE_DEPS)
+$(build_lib): $(response) $(sn) $(BUILT_SOURCES) $(build_libdir)/.stamp $(GEN_RESOURCE_DEPS)
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) $(GEN_RESOURCE_FLAGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
 ifdef RESOURCE_STRINGS_FILES
 	$(Q) $(STRING_REPLACER) $(RESOURCE_STRINGS_FILES) $@
@@ -317,7 +324,7 @@ endif
 
 endif
 
-library_CLEAN_FILES += $(PROFILE)_aot.log
+library_CLEAN_FILES += $(PROFILE)_$(LIBRARY_NAME)_aot.log
 
 ifdef PLATFORM_AOT_SUFFIX
 $(the_lib)$(PLATFORM_AOT_SUFFIX): $(the_lib)
@@ -326,33 +333,6 @@ $(the_lib)$(PLATFORM_AOT_SUFFIX): $(the_lib)
 all-local-aot: $(the_lib)$(PLATFORM_AOT_SUFFIX)
 endif
 
-
-makefrag = $(depsdir)/$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).makefrag
-library_CLEAN_FILES += $(makefrag)
-$(makefrag): $(sourcefile)
-#	@echo Creating $@ ...
-	@sed 's,^,$(build_lib): ,' $< >$@
-	@if test ! -f $(sourcefile).makefrag; then :; else \
-	   cat $(sourcefile).makefrag >> $@ ; \
-	   echo '$@: $(sourcefile).makefrag' >> $@; \
-	   echo '$(sourcefile).makefrag:' >> $@; fi
-
-ifneq ($(response),$(sourcefile))
-
-ifdef PLATFORM_excludes
-$(response): $(sourcefile) $(PLATFORM_excludes)
-	@echo Filtering $(sourcefile) to $@ ...
-	@sort $(sourcefile) $(PLATFORM_excludes) | uniq -u | $(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
-else
-$(response): $(sourcefile)
-	@echo Converting $(sourcefile) to $@ ...
-	@cat $(sourcefile) | $(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
-endif
-
-endif
-
--include $(makefrag)
-
 # for now, don't give any /lib flags or set MONO_PATH, since we
 # give a full path to the assembly.
 
@@ -360,25 +340,17 @@ endif
 include $(topdir)/build/corcompare.make
 
 ifndef NO_BUILD
-all-local: $(makefrag) $(test_makefrag) $(btest_makefrag)
+all-local: $(test_makefrag) $(btest_makefrag)
 endif
 
-ifneq ($(response),$(sourcefile))
-$(response): $(topdir)/build/library.make $(depsdir)/.stamp
-endif
-$(makefrag) $(test_response) $(test_makefrag) $(btest_response) $(btest_makefrag): $(topdir)/build/library.make $(depsdir)/.stamp
+$(test_response) $(test_makefrag) $(btest_response) $(btest_makefrag): $(topdir)/build/library.make $(depsdir)/.stamp
 
 ## Documentation stuff
-
-Q_MDOC_UP=$(if $(V),,@echo "MDOC-UP [$(PROFILE)] $(notdir $(@))";)
-MDOC_UP  =$(Q_MDOC_UP) \
-		MONO_PATH="$(topdir)/class/lib/$(DEFAULT_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(topdir)/class/lib/$(DEFAULT_PROFILE)/mdoc.exe \
-		update --delete -o Documentation/en $(the_lib)
 
 doc-update-local: $(the_libdir)/.doc-stamp
 
 $(the_libdir)/.doc-stamp: $(the_lib)
-	$(MDOC_UP)
+	$(MDOC_UP) $(the_lib)
 	@echo "doc-stamp" > $@
 
 # Need to be here so it comes after the definition of DEP_DIRS/DEP_LIBS

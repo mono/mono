@@ -22,8 +22,8 @@ VERSION = 0.93
 
 Q=$(if $(V),,@)
 # echo -e "\\t" does not work on some systems, so use 5 spaces
-Q_MCS=$(if $(V),,@echo "$(if $(MCS_MODE),MCS,CSC)     [$(intermediate)$(PROFILE)] $(notdir $(@))";)
-Q_AOT=$(if $(V),,@echo "AOT     [$(intermediate)$(PROFILE)] $(notdir $(@))";)
+Q_MCS=$(if $(V),,@echo "$(if $(MCS_MODE),MCS,CSC)     [$(intermediate)$(PROFILE_DIRECTORY)] $(notdir $(@))";)
+Q_AOT=$(if $(V),,@echo "AOT     [$(intermediate)$(PROFILE_DIRECTORY)] $(notdir $(@))";)
 
 ifndef BUILD_TOOLS_PROFILE
 BUILD_TOOLS_PROFILE = build
@@ -56,7 +56,6 @@ depsdir = $(topdir)/build/deps
 
 # Make sure these propagate if set manually
 
-export PLATFORM
 export PROFILE
 export MCS
 export MCS_FLAGS
@@ -75,31 +74,18 @@ export RESGEN
 default: all
 
 # Get initial configuration. pre-config is so that the builder can
-# override PLATFORM or PROFILE
+# override BUILD_PLATFORM or PROFILE
 
 include $(topdir)/build/config-default.make
 -include $(topdir)/build/pre-config.make
 -include $(topdir)/build/config.make
 
-# Default PLATFORM and PROFILE if they're not already defined.
-
-ifndef PLATFORM
-ifeq ($(OS),Windows_NT)
-ifneq ($(V),)
-$(info *** Assuming PLATFORM is 'win32'.)
-endif
-PLATFORM = win32
-else
-ifneq ($(V),)
-$(info *** Assuming PLATFORM is 'linux'.)
-endif
-PLATFORM = linux
-endif
-endif
-
 # Platform config
 
-include $(topdir)/build/platforms/$(PLATFORM).make
+include $(topdir)/build/platforms/$(BUILD_PLATFORM).make
+
+PROFILE_PLATFORM = $(if $(PLATFORMS),$(if $(filter $(PLATFORMS),$(HOST_PLATFORM)),$(HOST_PLATFORM),$(error Unknown platform "$(HOST_PLATFORM)" for profile "$(PROFILE)")))
+PROFILE_DIRECTORY = $(PROFILE)$(if $(PROFILE_PLATFORM),-$(PROFILE_PLATFORM))
 
 ifdef PLATFORM_CORLIB
 corlib = $(PLATFORM_CORLIB)
@@ -224,36 +210,33 @@ csproj: do-csproj
 # be listed _before_ including rules.make.  However, the default
 # SUBDIRS list can come after, so don't use the eager := syntax when
 # using the defaults.
-PROFILE_SUBDIRS := $($(PROFILE)_SUBDIRS)
-ifndef PROFILE_SUBDIRS
-PROFILE_SUBDIRS = $(SUBDIRS)
-endif
+PROFILE_SUBDIRS = $(or $($(PROFILE)_SUBDIRS),$(SUBDIRS))
 
 # These subdirs can be built in parallel
-PROFILE_PARALLEL_SUBDIRS := $($(PROFILE)_PARALLEL_SUBDIRS)
-ifndef PROFILE_PARALLEL_SUBDIRS
-PROFILE_PARALLEL_SUBDIRS = $(PARALLEL_SUBDIRS)
-endif
+PROFILE_PARALLEL_SUBDIRS = $(or $($(PROFILE)_PARALLEL_SUBDIRS),$(PARALLEL_SUBDIRS))
 
 ifndef FRAMEWORK_VERSION_MAJOR
 FRAMEWORK_VERSION_MAJOR = $(basename $(FRAMEWORK_VERSION))
 endif
 
 %-recursive:
-	@set . $$MAKEFLAGS; final_exit=:; \
+	@set . $$MAKEFLAGS; \
 	case $$2 in --unix) shift ;; esac; \
 	case $$2 in *=*) dk="exit 1" ;; *k*) dk=: ;; *) dk="exit 1" ;; esac; \
-	list='$(PROFILE_SUBDIRS)'; for d in $$list ; do \
-	    (cd $$d && $(MAKE) $*) || { final_exit="exit 1"; $$dk; } ; \
-	done; \
-	if [ $* = "all" -a -n "$(PROFILE_PARALLEL_SUBDIRS)" ]; then \
-		$(MAKE) do-all-parallel ENABLE_PARALLEL_SUBDIR_BUILD=1 || { final_exit="exit 1"; $$dk; } ; \
-	else \
-		list='$(PROFILE_PARALLEL_SUBDIRS)'; for d in $$list ; do \
-		    (cd $$d && $(MAKE) $*) || { final_exit="exit 1"; $$dk; } ; \
-		done; \
-	fi; \
+	final_exit=:; \
+	$(foreach subdir,$(PROFILE_SUBDIRS),$(MAKE) -C $(subdir) $* || { final_exit="exit 1"; $$dk; };) \
+	$(if $(PROFILE_PARALLEL_SUBDIRS), \
+		$(if $(filter $*,all), \
+			$(MAKE) $(PROFILE_PARALLEL_SUBDIRS) ENABLE_PARALLEL_SUBDIR_BUILD=1 || { final_exit="exit 1"; $$dk; };, \
+			$(foreach subdir,$(PROFILE_PARALLEL_SUBDIRS),$(MAKE) -C $(subdir) $* || { final_exit="exit 1"; $$dk; };))) \
 	$$final_exit
+
+ifdef ENABLE_PARALLEL_SUBDIR_BUILD
+.PHONY: $(PROFILE_PARALLEL_SUBDIRS)
+$(PROFILE_PARALLEL_SUBDIRS):
+	@set . $$MAKEFLAGS; \
+	$(MAKE) -C $@ all
+endif
 
 #
 # Parallel build support
@@ -286,16 +269,6 @@ clean-dep-dir:
 	$(RM) $(dep_dirs)
 
 clean-local: clean-dep-dir
-
-ifdef ENABLE_PARALLEL_SUBDIR_BUILD
-.PHONY: do-all-parallel $(PROFILE_PARALLEL_SUBDIRS)
-
-do-all-parallel: $(PROFILE_PARALLEL_SUBDIRS)
-
-$(PROFILE_PARALLEL_SUBDIRS):
-	@set . $$MAKEFLAGS; \
-	cd $@ && $(MAKE)
-endif
 
 ifndef DIST_SUBDIRS
 DIST_SUBDIRS = $(SUBDIRS) $(DIST_ONLY_SUBDIRS)
@@ -337,6 +310,8 @@ dist-default:
 
 ## Documentation stuff
 
-Q_MDOC =$(if $(V),,@echo "MDOC    [$(PROFILE)] $(notdir $(@))";)
+Q_MDOC =$(if $(V),,@echo "MDOC    [$(PROFILE_DIRECTORY)] $(notdir $(@))";)
 MDOC   =$(Q_MDOC) MONO_PATH="$(topdir)/class/lib/$(DEFAULT_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(topdir)/class/lib/$(DEFAULT_PROFILE)/mdoc.exe
 
+Q_MDOC_UP=$(if $(V),,@echo "MDOC-UP [$(PROFILE_DIRECTORY)] $(notdir $(@))";)
+MDOC_UP  =$(Q_MDOC_UP) MONO_PATH="$(topdir)/class/lib/$(DEFAULT_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(topdir)/class/lib/$(DEFAULT_PROFILE)/mdoc.exe update --delete -o Documentation/en
