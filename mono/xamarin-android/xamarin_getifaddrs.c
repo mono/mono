@@ -19,6 +19,7 @@
 #include <linux/netlink.h>
 #include <linux/rtnetlink.h>
 #include <linux/if_arp.h>
+#include <gnu/lib-names.h> // for LIBC_SO define
 #endif /* def LINUX */
 #ifndef WIN32
 #include <netinet/in.h>
@@ -254,7 +255,7 @@ get_ifaddrs_impl (int (**getifaddrs_impl) (struct _monodroid_ifaddrs **ifap), vo
 	assert (getifaddrs_impl);
 	assert (freeifaddrs_impl);
 
-	libc = dlopen ("libc.so", RTLD_NOW);
+	libc = dlopen (LIBC_SO, RTLD_NOW);
 	if (libc) {
 		*getifaddrs_impl = dlsym (libc, "getifaddrs");
 		if (*getifaddrs_impl)
