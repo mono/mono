@@ -4591,13 +4591,12 @@ namespace System.Windows.Forms {
 				Cursor = new_cursor;
 
 				// We have never been in a cell before
-				if (hover_cell == null) {
-					hover_cell = new_cell;
-					OnCellMouseEnter (new DataGridViewCellEventArgs (hit.ColumnIndex, hit.RowIndex));
-					
-					Rectangle display = GetCellDisplayRectangle (hit.ColumnIndex, hit.RowIndex, false);
-					OnCellMouseMove (new DataGridViewCellMouseEventArgs (hit.ColumnIndex, hit.RowIndex, e.X - display.X, e.Y - display.Y, e));
-					
+				if (hover_cell == null && new_cell.ColumnIndex != -1) {
+                    hover_cell = new_cell;
+                    OnCellMouseEnter(new DataGridViewCellEventArgs(hit.ColumnIndex, hit.RowIndex));
+
+                    Rectangle display = GetCellDisplayRectangle(hit.ColumnIndex, hit.RowIndex, false);
+                    OnCellMouseMove(new DataGridViewCellMouseEventArgs(hit.ColumnIndex, hit.RowIndex, e.X - display.X, e.Y - display.Y, e));
 					return;
 				}
 			
@@ -4608,11 +4607,23 @@ namespace System.Windows.Forms {
 				
 					return;
 				}
-			
-				// We are changing cells
-				OnCellMouseLeave (new DataGridViewCellEventArgs (hover_cell.ColumnIndex, hover_cell.RowIndex));
 
-				hover_cell = new_cell;
+                // the old cell does not exist
+                if (hover_cell.ColumnIndex != -1)
+                {
+                    // We are changing cells
+                    OnCellMouseLeave(new DataGridViewCellEventArgs(hover_cell.ColumnIndex, hover_cell.RowIndex));
+                    
+                }
+                // check if the new cell exists
+                if(new_cell.ColumnIndex != -1)
+                {
+                    hover_cell = new_cell;
+                }
+                else
+                {
+                    hover_cell = null;
+                }
 				
 				OnCellMouseEnter (new DataGridViewCellEventArgs (hit.ColumnIndex, hit.RowIndex));
 
@@ -4669,7 +4680,10 @@ namespace System.Windows.Forms {
 
 				// We have left the cell area
 				if (hover_cell != null) {
-					OnCellMouseLeave (new DataGridViewCellEventArgs (hover_cell.ColumnIndex, hover_cell.RowIndex));
+                    if (hover_cell.ColumnIndex != -1)
+                    {
+                        OnCellMouseLeave(new DataGridViewCellEventArgs(hover_cell.ColumnIndex, hover_cell.RowIndex));
+                    }
 					hover_cell = null;
 				}
 			}
