@@ -1194,7 +1194,7 @@ namespace System.Drawing
 
 		private const string MetafileEnumeration = "Metafiles enumeration, for both WMF and EMF formats, isn't supported.";
 
-		[MonoTODO (MetafileEnumeration)]
+        [MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, Point [] destPoints, EnumerateMetafileProc callback)
 		{
 			throw new NotImplementedException ();
@@ -1693,8 +1693,7 @@ namespace System.Drawing
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public static Graphics FromHdcInternal (IntPtr hdc)
 		{
-			GDIPlus.Display = hdc;
-			return null;
+            return FromHdc(hdc);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]		
@@ -1781,8 +1780,10 @@ namespace System.Drawing
 		[MonoTODO]
 		public static IntPtr GetHalftonePalette ()
 		{
-			throw new NotImplementedException ();
-		}
+            var bmp = new Bitmap(10, 10, PixelFormat.Format8bppIndexed);
+            var ans = bmp.Palette.getGDIPalette();
+            return ans;
+        }
 
 		public IntPtr GetHdc ()
 		{
@@ -2441,8 +2442,26 @@ namespace System.Drawing
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public object GetContextInfo ()
 		{
-			// only known source of information @ http://blogs.wdevs.com/jdunlap/Default.aspx
-			throw new NotImplementedException ();
-		}
+            Region clip = this.Clip;
+            Matrix transform = this.Transform;
+            PointF pointF = PointF.Empty;
+            PointF empty = PointF.Empty;
+            if (!transform.IsIdentity)
+            {
+                float[] elements = transform.Elements;
+                pointF.X = elements[4];
+                pointF.Y = elements[5];
+            }
+           
+            if (!empty.IsEmpty)
+            {
+                clip.Translate(-empty.X, -empty.Y);
+            }
+            return new object[]
+            {
+        clip,
+        transform
+            };
+        }
 	}
 }
