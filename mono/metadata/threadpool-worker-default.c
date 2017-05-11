@@ -123,9 +123,9 @@ typedef union {
 typedef struct {
 	MonoRefCount ref;
 
-	MonoThreadPoolWorkerCallback callback;
-
 	ThreadPoolWorkerCounter counters;
+
+	MonoThreadPoolWorkerCallback callback;
 
 	MonoCoopMutex parked_threads_lock;
 	gint32 parked_threads_count;
