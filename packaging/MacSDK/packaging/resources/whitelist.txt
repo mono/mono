@@ -104,7 +104,6 @@ nuget
 nunit-console
 nunit-console2
 nunit-console4
-opt
 pdb2mdb
 pedump
 permview
