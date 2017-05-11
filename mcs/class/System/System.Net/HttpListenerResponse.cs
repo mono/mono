@@ -217,7 +217,7 @@ namespace System.Net {
 				if (value < 100 || value > 999)
 					throw new ProtocolViolationException ("StatusCode must be between 100 and 999.");
 				status_code = value;
-				status_description = HttpListenerResponseHelper.GetStatusDescription (value);
+				status_description = HttpStatusDescription.Get (value);
 			}
 		}
 

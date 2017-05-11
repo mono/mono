@@ -51,7 +51,6 @@ System.Net/DigestClient.cs
 System.Net/Dns.cs
 System.Net/EndpointPermission.cs
 System.Net/HttpListenerBasicIdentity.cs
-System.Net/HttpListenerResponseHelper.cs
 System.Net/HttpRequestCreator.cs
 System.Net/HttpStreamAsyncResult.cs
 System.Net/ICredentialPolicy.cs
@@ -866,6 +865,7 @@ corefx/SR.cs
 ../../../external/corefx/src/Common/src/System/Collections/Generic/EnumerableHelpers.cs
 ../../../external/corefx/src/Common/src/System/Collections/Generic/LargeArrayBuilder.cs
 
+../../../external/corefx/src/Common/src/System/Net/HttpStatusDescription.cs
 ../../../external/corefx/src/Common/src/System/Net/SecurityProtocol.cs
 ../../../external/corefx/src/Common/src/System/Net/UriScheme.cs
 
