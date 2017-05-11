@@ -40,6 +40,10 @@ typedef struct {
 	GSList *preds;
 	GSList *seq_points;
 	SeqPoint *last_seq_point;
+
+	// This will hold a list of last sequence points of incoming basic blocks
+	SeqPoint **pred_seq_points;
+	guint num_pred_seq_points;
 } InterpBasicBlock;
 
 typedef struct
@@ -54,6 +58,7 @@ typedef struct
 	int code_size;
 	int *in_offsets;
 	int *forward_refs;
+	int *patch_loc;
 	StackInfo **stack_state;
 	int *stack_height;
 	int *vt_stack_size;
@@ -76,6 +81,7 @@ typedef struct
 	gboolean gen_sdb_seq_points;
 	GPtrArray *seq_points;
 	InterpBasicBlock **offset_to_bb;
+	InterpBasicBlock *entry_bb;
 	MonoMemPool     *mempool;
 	GList *basic_blocks;
 } TransformData;
@@ -184,6 +190,7 @@ handle_branch(TransformData *td, int short_op, int long_op, int offset)
 		int prev = td->forward_refs [target];
 		td->forward_refs [td->ip - td->il_code] = prev;
 		td->forward_refs [target] = td->ip - td->il_code;
+		td->patch_loc [td->ip - td->il_code] = td->new_ip - td->new_code;
 		offset = 0;
 		if (td->header->code_size <= 25000) /* FIX to be precise somehow? */
 			shorten_branch = 1;
@@ -976,7 +983,7 @@ get_basic_blocks (TransformData *td)
 	InterpBasicBlock *cbb;
 
 	td->offset_to_bb = mono_mempool_alloc0 (td->mempool, sizeof (InterpBasicBlock*) * (end - start + 1));
-	cbb = get_bb (td, NULL, start);
+	td->entry_bb = cbb = get_bb (td, NULL, start);
 
 	while (ip < end) {
 		cli_addr = ip - start;
@@ -1084,6 +1091,93 @@ interp_save_debug_info (RuntimeMethod *rtm, MonoMethodHeader *header, TransformD
 	mono_debug_free_method_jit_info (dinfo);
 }
 
+/* Same as the code in seq-points.c */
+static void
+insert_pred_seq_point (SeqPoint *last_sp, SeqPoint *sp, GSList **next)
+{
+	GSList *l;
+	int src_index = last_sp->next_offset;
+	int dst_index = sp->next_offset;
+
+	/* bb->in_bb might contain duplicates */
+	for (l = next [src_index]; l; l = l->next)
+		if (GPOINTER_TO_UINT (l->data) == dst_index)
+			break;
+	if (!l)
+		next [src_index] = g_slist_append (next [src_index], GUINT_TO_POINTER (dst_index));
+}
+
+static void
+recursively_make_pred_seq_points (TransformData *td, InterpBasicBlock *bb)
+{
+	const gpointer MONO_SEQ_SEEN_LOOP = GINT_TO_POINTER(-1);
+	GSList *l;
+
+	GArray *predecessors = g_array_new (FALSE, TRUE, sizeof (gpointer));
+	GHashTable *seen = g_hash_table_new_full (g_direct_hash, NULL, NULL, NULL);
+
+	// Insert/remove sentinel into the memoize table to detect loops containing bb
+	bb->pred_seq_points = MONO_SEQ_SEEN_LOOP;
+
+	for (l = bb->preds; l; l = l->next) {
+		InterpBasicBlock *in_bb = l->data;
+
+		// This bb has the last seq point, append it and continue
+		if (in_bb->last_seq_point != NULL) {
+			predecessors = g_array_append_val (predecessors, in_bb->last_seq_point);
+			continue;
+		}
+
+		// We've looped or handled this before, exit early.
+		// No last sequence points to find.
+		if (in_bb->pred_seq_points == MONO_SEQ_SEEN_LOOP)
+			continue;
+
+		// Take sequence points from incoming basic blocks
+
+		if (in_bb == td->entry_bb)
+			continue;
+
+		if (in_bb->pred_seq_points == NULL)
+			recursively_make_pred_seq_points (td, in_bb);
+
+		// Union sequence points with incoming bb's
+		for (int i=0; i < in_bb->num_pred_seq_points; i++) {
+			if (!g_hash_table_lookup (seen, in_bb->pred_seq_points [i])) {
+				g_array_append_val (predecessors, in_bb->pred_seq_points [i]);
+				g_hash_table_insert (seen, in_bb->pred_seq_points [i], (gpointer)&MONO_SEQ_SEEN_LOOP);
+			}
+		}
+		// predecessors = g_array_append_vals (predecessors, in_bb->pred_seq_points, in_bb->num_pred_seq_points);
+	}
+
+	g_hash_table_destroy (seen);
+
+	if (predecessors->len != 0) {
+		bb->pred_seq_points = mono_mempool_alloc0 (td->mempool, sizeof (SeqPoint *) * predecessors->len);
+		bb->num_pred_seq_points = predecessors->len;
+
+		for (int newer = 0; newer < bb->num_pred_seq_points; newer++) {
+			bb->pred_seq_points [newer] = g_array_index (predecessors, gpointer, newer);
+		}
+	}
+
+	g_array_free (predecessors, TRUE);
+}
+
+static void
+collect_pred_seq_points (TransformData *td, InterpBasicBlock *bb, SeqPoint *seqp, GSList **next)
+{
+	// Doesn't have a last sequence point, must find from incoming basic blocks
+	if (bb->pred_seq_points == NULL && bb != td->entry_bb)
+		recursively_make_pred_seq_points (td, bb);
+
+	for (int i = 0; i < bb->num_pred_seq_points; i++)
+		insert_pred_seq_point (bb->pred_seq_points [i], seqp, next);
+
+	return;
+}
+
 static void
 save_seq_points (TransformData *td)
 {
@@ -1121,6 +1215,9 @@ save_seq_points (TransformData *td)
 			if (last != NULL) {
 				/* Link with the previous seq point in the same bb */
 				next [last->next_offset] = g_slist_append_mempool (td->mempool, next [last->next_offset], GINT_TO_POINTER (sp->next_offset));
+			} else {
+				/* Link with the last bb in the previous bblocks */
+				collect_pred_seq_points (td, bb, sp, next);
 			}
 			last = sp;
 		}
@@ -1136,6 +1233,25 @@ save_seq_points (TransformData *td)
 		sp->next_offset = 0;
 		if (mono_seq_point_info_add_seq_point (array, sp, last_seq_point, next [i], TRUE))
 			last_seq_point = sp;
+	}
+
+	if (mono_interp_traceopt) {
+		printf ("\nSEQ POINT MAP FOR %s: \n", td->method->name);
+
+		for (i = 0; i < td->seq_points->len; ++i) {
+			SeqPoint *sp = (SeqPoint*)g_ptr_array_index (td->seq_points, i);
+			GSList *l;
+
+			if (!next [i])
+				continue;
+
+			printf ("\tIL0x%x[0x%0x] ->", sp->il_offset, sp->native_offset);
+			for (l = next [i]; l; l = l->next) {
+				int next_index = GPOINTER_TO_UINT (l->data);
+				printf (" IL0x%x", ((SeqPoint*)g_ptr_array_index (td->seq_points, next_index))->il_offset);
+			}
+			printf ("\n");
+		}
 	}
 
 	info = mono_seq_point_info_new (array->len, TRUE, array->data, TRUE, &seq_info_size);
@@ -1187,6 +1303,7 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 	td.mempool = mono_mempool_new ();
 	td.in_offsets = g_malloc0(header->code_size * sizeof(int));
 	td.forward_refs = g_malloc(header->code_size * sizeof(int));
+	td.patch_loc = mono_mempool_alloc (td.mempool, header->code_size * sizeof(int));
 	td.stack_state = g_malloc0(header->code_size * sizeof(StackInfo *));
 	td.stack_height = g_malloc(header->code_size * sizeof(int));
 	td.vt_stack_size = g_malloc(header->code_size * sizeof(int));
@@ -1310,7 +1427,7 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 
 		MonoDebugLineNumberEntry lne;
 		lne.native_offset = td.new_ip - td.new_code;
-		lne.il_offset = td.ip - header->code;
+		lne.il_offset = in_offset;
 		g_array_append_val (line_numbers, lne);
 
 		while (td.forward_refs [in_offset] >= 0) {
@@ -1327,17 +1444,16 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 				td.new_code [slot] = * (unsigned short *)(&offset);
 				td.new_code [slot + 1] = * ((unsigned short *)&offset + 1);
 			} else {
-				int op = td.new_code [td.in_offsets [j]];
+				int patch_loc = td.patch_loc [j];
+				int op = td.new_code [patch_loc];
 				if (mono_interp_opargtype [op] == MintOpShortBranch) {
 					offset = (td.new_ip - td.new_code) - td.in_offsets [j];
 					g_assert (offset <= 32767);
-					slot = td.in_offsets [j] + 1;
-					td.new_code [slot] = offset;
+					td.new_code [patch_loc + 1] = offset;
 				} else {
 					offset = (td.new_ip - td.new_code) - td.in_offsets [j];
-					slot = td.in_offsets [j] + 1;
-					td.new_code [slot] = * (unsigned short *)(&offset);
-					td.new_code [slot + 1] = * ((unsigned short *)&offset + 1);
+					td.new_code [patch_loc + 1] = * (unsigned short *)(&offset);
+					td.new_code [patch_loc + 2] = * ((unsigned short *)&offset + 1);
 				}
 			}
 		}
@@ -1372,11 +1488,11 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 			SeqPoint *seqp = mono_mempool_alloc0 (td.mempool, sizeof (SeqPoint));
 
 			memset (seqp, 0, sizeof (SeqPoint));
-			seqp->il_offset = td.ip - td.il_code;
+			seqp->il_offset = in_offset;
 			seqp->native_offset = td.new_ip - td.new_code;
 
 			ADD_CODE(&td, MINT_SDB_SEQ_POINT);
-			td.in_offsets [td.ip - td.il_code] += 1;
+			//td.in_offsets [td.ip - td.il_code] += 1;
 			g_ptr_array_add (td.seq_points, seqp);
 
 			InterpBasicBlock *cbb = td.offset_to_bb [td.ip - header->code];
