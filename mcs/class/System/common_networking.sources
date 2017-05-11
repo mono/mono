@@ -29,6 +29,7 @@ System.Net/FtpWebResponse.cs
 System.Net/HttpConnection.cs
 System.Net/HttpListener.cs
 System.Net/HttpListener.Mono.cs
+System.Net/HttpListenerBasicIdentity.cs
 System.Net/HttpListenerContext.cs
 System.Net/HttpListenerPrefixCollection.cs
 System.Net/HttpListenerRequest.cs
