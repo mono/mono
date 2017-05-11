@@ -30,6 +30,6 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyCompany ("Xamarin, Inc.")]
 [assembly: AssemblyProduct ("Mono Common Language Infrastructure")]
 [assembly: AssemblyCopyright ("Copyright (c) 2013 Xamarin Inc. (http://www.xamarin.com)")]
-[assembly: AssemblyVersion ("4.1.1.0")]
+[assembly: AssemblyVersion ("4.2.0.0")]
 [assembly: AssemblyInformationalVersion ("4.0.0.0")]
 [assembly: AssemblyFileVersion ("4.0.0.0")]
