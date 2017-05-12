@@ -1475,11 +1475,6 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 
 		if (sym_seq_points && mono_bitset_test_fast (seq_point_locs, td.ip - header->code)) {
 			SeqPoint *seqp = mono_mempool_alloc0 (td.mempool, sizeof (SeqPoint));
-
-			memset (seqp, 0, sizeof (SeqPoint));
-			seqp->il_offset = in_offset;
-			seqp->native_offset = td.new_ip - td.new_code;
-
 			InterpBasicBlock *cbb = td.offset_to_bb [td.ip - header->code];
 			g_assert (cbb);
 
@@ -1489,6 +1484,11 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 			 */
 			if (in_offset == 0 || g_slist_length (cbb->preds) > 1)
 				ADD_CODE (&td, MINT_SDB_INTR_LOC);
+
+			memset (seqp, 0, sizeof (SeqPoint));
+			seqp->il_offset = in_offset;
+			seqp->native_offset = td.new_ip - td.new_code;
+
 			ADD_CODE(&td, MINT_SDB_SEQ_POINT);
 			g_ptr_array_add (td.seq_points, seqp);
 
