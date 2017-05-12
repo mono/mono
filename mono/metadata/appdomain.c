@@ -105,10 +105,10 @@ static void
 add_assemblies_to_domain (MonoDomain *domain, MonoAssembly *ass, GHashTable *hash);
 
 static MonoAppDomainHandle
-mono_domain_create_appdomain_internal (char *friendly_name, MonoAppDomainSetupHandle setup, MonoError *error);
+mono_domain_create_appdomain_internal (const char *friendly_name, MonoAppDomainSetupHandle setup, MonoError *error);
 
 static MonoDomain *
-mono_domain_create_appdomain_checked (char *friendly_name, char *configuration_file, MonoError *error);
+mono_domain_create_appdomain_checked (const char *friendly_name, char *configuration_file, MonoError *error);
 
 
 static void
@@ -464,7 +464,7 @@ mono_runtime_quit ()
  * \returns a \c MonoDomain initialized with the appdomain
  */
 MonoDomain *
-mono_domain_create_appdomain (char *friendly_name, char *configuration_file)
+mono_domain_create_appdomain (const char *friendly_name, char *configuration_file)
 {
 	HANDLE_FUNCTION_ENTER ();
 	MonoError error;
@@ -482,7 +482,7 @@ mono_domain_create_appdomain (char *friendly_name, char *configuration_file)
  * \returns a MonoDomain initialized with the appdomain.  On failure sets \p error and returns NULL.
  */
 MonoDomain *
-mono_domain_create_appdomain_checked (char *friendly_name, char *configuration_file, MonoError *error)
+mono_domain_create_appdomain_checked (const char *friendly_name, char *configuration_file, MonoError *error)
 {
 	HANDLE_FUNCTION_ENTER ();
 	error_init (error);
@@ -615,7 +615,7 @@ leave:
 }
 
 static MonoAppDomainHandle
-mono_domain_create_appdomain_internal (char *friendly_name, MonoAppDomainSetupHandle setup, MonoError *error)
+mono_domain_create_appdomain_internal (const char *friendly_name, MonoAppDomainSetupHandle setup, MonoError *error)
 {
 	HANDLE_FUNCTION_ENTER ();
 	MonoAppDomainHandle result = MONO_HANDLE_NEW (MonoAppDomain, NULL);
