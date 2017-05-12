@@ -55,6 +55,10 @@ namespace Microsoft.Win32
 		{
 		}
 
+		public void Close ()
+		{
+		}
+
 		public RegistryKey CreateSubKey (string subkey)
 		{
 			throw new PlatformNotSupportedException ();
@@ -66,6 +70,26 @@ namespace Microsoft.Win32
 		}
 
 		public RegistryKey CreateSubKey (String subkey, bool writable, RegistryOptions options)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public RegistryKey CreateSubKey (string subkey, RegistryKeyPermissionCheck permissionCheck)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public RegistryKey CreateSubKey (string subkey, RegistryKeyPermissionCheck permissionCheck, RegistryOptions registryOptions)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public RegistryKey CreateSubKey (string subkey, RegistryKeyPermissionCheck permissionCheck, RegistrySecurity registrySecurity)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public RegistryKey CreateSubKey (string subkey, RegistryKeyPermissionCheck permissionCheck, RegistryOptions registryOptions, RegistrySecurity registrySecurity)
 		{
 			throw new PlatformNotSupportedException ();
 		}
@@ -128,6 +152,16 @@ namespace Microsoft.Win32
 			throw new PlatformNotSupportedException ();
 		}
 
+		public RegistrySecurity GetAccessControl ()
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public RegistrySecurity GetAccessControl (AccessControlSections includeSections)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
 		public RegistryValueKind GetValueKind (string name)
 		{
 			throw new PlatformNotSupportedException ();
@@ -154,6 +188,31 @@ namespace Microsoft.Win32
 		}
 
 		public RegistryKey OpenSubKey (string name, RegistryRights rights)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public RegistryKey OpenSubKey (string name, RegistryKeyPermissionCheck permissionCheck)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public RegistryKey OpenSubKey (string name, RegistryKeyPermissionCheck permissionCheck, RegistryRights rights)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public static RegistryKey OpenRemoteBaseKey (RegistryHive hKey, string machineName)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public static RegistryKey OpenRemoteBaseKey (RegistryHive hKey, string machineName, RegistryView view)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public void SetAccessControl (RegistrySecurity registrySecurity)
 		{
 			throw new PlatformNotSupportedException ();
 		}

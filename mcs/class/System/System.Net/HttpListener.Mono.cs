@@ -100,12 +100,9 @@ namespace System.Net {
 			lock (_internalLock) {
 				if (tlsProvider == null)
 					tlsProvider = MonoTlsProviderFactory.GetProvider ();
-				if (tlsSettings == null)
-					tlsSettings = MonoTlsSettings.CopyDefaultSettings ();
-				if (tlsSettings.RemoteCertificateValidationCallback == null)
-					tlsSettings.RemoteCertificateValidationCallback = MNS.Private.CallbackHelpers.PublicToMono (callback);
-				var sslStream = tlsProvider.CreateSslStream (innerStream, ownsStream, tlsSettings);
-				return sslStream.SslStream;
+				var settings = (tlsSettings ?? MonoTlsSettings.DefaultSettings).Clone ();
+				settings.RemoteCertificateValidationCallback = MNS.Private.CallbackHelpers.PublicToMono (callback);
+				return new SslStream (innerStream, ownsStream, tlsProvider, settings);
 			}
 #else
 			throw new PlatformNotSupportedException ();
