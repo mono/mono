@@ -42,6 +42,7 @@ System.IO/RenamedEventHandler.cs
 System.IO/WaitForChangedResult.cs
 System.IO/WatcherChangeTypes.cs
 
+System.Net/AuthenticationManager.cs
 System.Net/BasicClient.cs
 System.Net/BindIPEndPoint.cs
 System.Net/MonoChunkStream.cs
@@ -50,19 +51,35 @@ System.Net/DefaultCertificatePolicy.cs
 System.Net/DigestClient.cs
 System.Net/Dns.cs
 System.Net/EndpointPermission.cs
+System.Net/FtpAsyncResult.cs
+System.Net/FtpDataStream.cs
+System.Net/FtpRequestCreator.cs
+System.Net/FtpStatus.cs
+System.Net/FtpWebRequest.cs
+System.Net/FtpWebResponse.cs
+System.Net/HttpListener.Mono.cs
 System.Net/HttpRequestCreator.cs
-System.Net/HttpStreamAsyncResult.cs
+System.Net/HttpWebRequest.cs
+System.Net/HttpWebResponse.cs
 System.Net/ICredentialPolicy.cs
 System.Net/IPv6Address.cs
+System.Net/IWebConnectionState.cs
 System.Net/IWebProxyScript.cs
-System.Net/ListenerPrefix.cs
+System.Net/MacProxy.cs
 System.Net/MonoHttpDate.cs
 System.Net/NetConfig.cs
-System.Net/RequestStream.cs
+System.Net/NtlmClient.cs
+System.Net/ServicePoint.cs
+System.Net/ServicePointManager.cs
+System.Net/ServicePointManager.extra.cs
 System.Net/SimpleAsyncResult.cs
 System.Net/SocketPermissionAttribute.cs
 System.Net/SocketPermission.cs
 System.Net/WebAsyncResult.cs
+System.Net/WebConnection.cs
+System.Net/WebConnectionData.cs
+System.Net/WebConnectionGroup.cs
+System.Net/WebConnectionStream.cs
 
 System.Net.Mail/AlternateView.cs
 System.Net.Mail/AlternateViewCollection.cs
@@ -78,6 +95,7 @@ System.Net.Mail/MailMessage.cs
 System.Net.Mail/MailPriority.cs
 System.Net.Mail/SendCompletedEventHandler.cs
 System.Net.Mail/SmtpAccess.cs
+System.Net.Mail/SmtpClient.cs
 System.Net.Mail/SmtpDeliveryFormat.cs
 System.Net.Mail/SmtpDeliveryMethod.cs
 System.Net.Mail/SmtpException.cs
@@ -110,6 +128,7 @@ System.Net.Security/LocalCertificateSelectionCallback.cs
 System.Net.Security/NegotiateStream.cs
 System.Net.Security/RemoteCertificateValidationCallback.cs
 System.Net.Security/SslPolicyErrors.cs
+System.Net.Security/SslStream.cs
 
 System.Net.Sockets/SafeSocketHandle.cs
 System.Net.Sockets/Socket.cs
@@ -243,6 +262,8 @@ Mono.Btls/MonoBtlsX509VerifyParam.cs
 Mono.Btls/X509CertificateImplBtls.cs
 Mono.Btls/X509ChainImplBtls.cs
 
+Mono.Http/NtlmClient.cs
+
 Mono.AppleTls/AppleCertificateHelper.cs
 Mono.AppleTls/AppleTlsContext.cs
 Mono.AppleTls/AppleTlsProvider.cs
@@ -256,6 +277,18 @@ Mono.AppleTls/Policy.cs
 Mono.AppleTls/Trust.cs
 Mono.AppleTls/SslConnection.cs
 Mono.AppleTls/Items.cs
+
+Mono.Net.Security/AsyncProtocolRequest.cs
+Mono.Net.Security/CallbackHelpers.cs
+Mono.Net.Security/ChainValidationHelper.cs
+Mono.Net.Security/LegacySslStream.cs
+Mono.Net.Security/MobileAuthenticatedStream.cs
+Mono.Net.Security/MobileTlsContext.cs
+Mono.Net.Security/LegacyTlsProvider.cs
+Mono.Net.Security/MonoTlsProviderFactory.cs
+Mono.Net.Security/MonoTlsStream.cs
+Mono.Net.Security/NoReflectionHelper.cs
+Mono.Net.Security/SystemCertificateValidator.cs
 
 Mono.Util/MonoPInvokeCallbackAttribute.cs
 
@@ -649,11 +682,9 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/_ProxyChain.cs
 ../referencesource/System/net/System/Net/_ScatterGatherBuffers.cs
 ../referencesource/System/net/System/Net/_Semaphore.cs
-../referencesource/System/net/System/Net/_ServiceNameStore.cs
 ../referencesource/System/net/System/Net/_TimerThread.cs
 ../referencesource/System/net/System/Net/_WebProxyDataBuilder.cs
 ../referencesource/System/net/System/Net/AuthenticationScheme.cs
-../referencesource/System/net/System/Net/AuthenticationSchemeSelector.cs
 ../referencesource/System/net/System/Net/Authorization.cs
 ../referencesource/System/net/System/Net/CredentialCache.cs
 ../referencesource/System/net/System/Net/cookie.cs
@@ -667,8 +698,6 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/filewebrequest.cs
 ../referencesource/System/net/System/Net/filewebresponse.cs
 ../referencesource/System/net/System/Net/GlobalProxySelection.cs
-../referencesource/System/net/System/Net/HttpListenerException.cs
-../referencesource/System/net/System/Net/HttpListenerRequestUriBuilder.cs
 ../referencesource/System/net/System/Net/HttpRequestHeader.cs
 ../referencesource/System/net/System/Net/HttpResponseHeader.cs
 ../referencesource/System/net/System/Net/HttpStatusCode.cs
@@ -736,8 +765,11 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/Sockets/SocketOptionName.cs
 ../referencesource/System/net/System/Net/Sockets/SocketShutdown.cs
 ../referencesource/System/net/System/Net/Sockets/SocketType.cs
+../referencesource/System/net/System/Net/Sockets/TCPClient.cs
+../referencesource/System/net/System/Net/Sockets/TCPListener.cs
 ../referencesource/System/net/System/Net/Sockets/TransmitFileFlags.cs
 ../referencesource/System/net/System/Net/Sockets/UdpReceiveResult.cs
+../referencesource/System/net/System/Net/Sockets/UDPClient.cs
 
 ../referencesource/System/net/System/Net/NetworkInformation/DuplicateAddressDetectionState.cs
 ../referencesource/System/net/System/Net/NetworkInformation/GatewayIPAddressInformation.cs
@@ -917,8 +949,6 @@ corefx/SR.cs
 ../../../external/corefx/src/System.Net.WebSockets.Client/src/System/Net/WebSockets/ClientWebSocket.cs
 ../../../external/corefx/src/System.Net.WebSockets.Client/src/System/Net/WebSockets/ClientWebSocketOptions.cs
 ../../../external/corefx/src/System.Net.WebSockets.Client/src/System/Net/WebSockets/WebSocketHandle.Managed.cs
-
-../../../external/corefx/src/System.Net.HttpListener/src/System/Net/WebSockets/HttpListenerWebSocketContext.cs
 
 ../../../external/corefx/src/System.Private.Uri/src/System/UriBuilder.cs
 
