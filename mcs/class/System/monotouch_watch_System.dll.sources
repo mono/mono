@@ -9,6 +9,7 @@ System.Net/FtpRequestCreator.platformnotsupported.cs
 System.Net/FtpWebRequest.platformnotsupported.cs
 System.Net/FtpWebResponse.platformnotsupported.cs
 System.Net/HttpListener.platformnotsupported.cs
+System.Net/HttpListenerBasicIdentity.platformnotsupported.cs
 System.Net/HttpListenerContext.platformnotsupported.cs
 System.Net/HttpListenerPrefixCollection.platformnotsupported.cs
 System.Net/HttpListenerRequest.platformnotsupported.cs
