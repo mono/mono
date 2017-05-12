@@ -1332,8 +1332,8 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 
 			mono_debug_get_seq_points (minfo, NULL, NULL, NULL, &sps, &n_il_offsets);
 			// FIXME: Free
-			seq_point_locs = mono_bitset_new (header->code_size, 0);
-			seq_point_set_locs = mono_bitset_new (header->code_size, 0);
+			seq_point_locs = mono_bitset_mem_new (mono_mempool_alloc0 (td.mempool, mono_bitset_alloc_size (header->code_size, 0)), header->code_size, 0);
+			seq_point_set_locs = mono_bitset_mem_new (mono_mempool_alloc0 (td.mempool, mono_bitset_alloc_size (header->code_size, 0)), header->code_size, 0);
 			sym_seq_points = TRUE;
 
 			for (i = 0; i < n_il_offsets; ++i) {
@@ -3781,8 +3781,6 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 	g_ptr_array_free (td.seq_points, TRUE);
 	g_array_free (line_numbers, TRUE);
 	mono_mempool_destroy (td.mempool);
-	mono_bitset_free (seq_point_locs);
-	mono_bitset_free (seq_point_set_locs);
 }
 
 static mono_mutex_t calc_section;
