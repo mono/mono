@@ -90,4 +90,10 @@ mono_interp_frame_get_local (MonoInterpFrameHandle frame, int pos);
 gpointer
 mono_interp_frame_get_this (MonoInterpFrameHandle frame);
 
+void
+mono_interp_start_single_stepping (void);
+
+void
+mono_interp_stop_single_stepping (void);
+
 #endif /* __MONO_MINI_INTERPRETER_H__ */

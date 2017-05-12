@@ -105,6 +105,8 @@ init_frame (MonoInvocation *frame, MonoInvocation *parent_frame, RuntimeMethod *
  * Used for testing.
  */
 GSList *jit_classes;
+/* If TRUE, interpreted code will be interrupted at function entry/backward branches */
+static gboolean ss_enabled;
 
 void ves_exec_method (MonoInvocation *frame);
 
@@ -4532,6 +4534,33 @@ array_constructed:
 			++ip;
 			mono_jit_set_domain (context->original_domain);
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_SDB_INTR_LOC)
+			if (G_UNLIKELY (ss_enabled)) {
+				MonoLMFExt ext;
+				static void (*ss_tramp) (void);
+
+				if (!ss_tramp) {
+					void *tramp = mini_get_single_step_trampoline ();
+					mono_memory_barrier ();
+					ss_tramp = tramp;
+				}
+
+				frame->ip = ip;
+
+				/* Push an lmf frame to enable stack walks */
+				memset (&ext, 0, sizeof (ext));
+				ext.interp_exit = TRUE;
+				ext.interp_exit_data = frame;
+
+				mono_push_lmf (&ext);
+
+				/* Use the same trampoline as the JIT */
+				ss_tramp ();
+
+				mono_pop_lmf (&ext.lmf);
+			}
+			++ip;
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_SDB_SEQ_POINT)
 			/* Just a placeholder for a breakpoint */
 			++ip;
@@ -5473,4 +5502,16 @@ mono_interp_frame_get_this (MonoInterpFrameHandle frame)
 	int arg_offset = iframe->runtime_method->arg_offsets [0];
 
 	return iframe->args + arg_offset;
+}
+
+void
+mono_interp_start_single_stepping (void)
+{
+	ss_enabled = TRUE;
+}
+
+void
+mono_interp_stop_single_stepping (void)
+{
+	ss_enabled = FALSE;
 }

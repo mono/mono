@@ -1480,12 +1480,18 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 			seqp->il_offset = in_offset;
 			seqp->native_offset = td.new_ip - td.new_code;
 
-			ADD_CODE(&td, MINT_SDB_SEQ_POINT);
-			//td.in_offsets [td.ip - td.il_code] += 1;
-			g_ptr_array_add (td.seq_points, seqp);
-
 			InterpBasicBlock *cbb = td.offset_to_bb [td.ip - header->code];
 			g_assert (cbb);
+
+			/*
+			 * Make methods interruptable at the beginning, and at the targets of
+			 * backward branches.
+			 */
+			if (in_offset == 0 || g_slist_length (cbb->preds) > 1)
+				ADD_CODE (&td, MINT_SDB_INTR_LOC);
+			ADD_CODE(&td, MINT_SDB_SEQ_POINT);
+			g_ptr_array_add (td.seq_points, seqp);
+
 			cbb->seq_points = g_slist_prepend_mempool (td.mempool, cbb->seq_points, seqp);
 			cbb->last_seq_point = seqp;
 

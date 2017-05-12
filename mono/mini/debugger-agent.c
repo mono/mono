@@ -2754,7 +2754,21 @@ process_suspend (DebuggerTlsData *tls, MonoContext *ctx)
 	}
 
 	ji = mini_jit_info_table_find (mono_domain_get (), (char*)ip, NULL);
+	if (!ji) {
+		/* Could be an interpreter method */
 
+		// FIXME: factor this out into a function
+		MonoLMF *lmf = mono_get_lmf ();
+		MonoInterpFrameHandle *frame;
+
+		g_assert (((guint64)lmf->previous_lmf) & 2);
+		MonoLMFExt *ext = (MonoLMFExt*)lmf;
+
+		g_assert (ext->interp_exit);
+		frame = ext->interp_exit_data;
+		ji = mono_interp_frame_get_jit_info (frame);
+	}
+	g_assert (ji);
 	/* Can't suspend in these methods */
 	method = jinfo_get_method (ji);
 	if (method->klass == mono_defaults.string_class && (!strcmp (method->name, "memset") || strstr (method->name, "memcpy")))
@@ -5289,8 +5303,10 @@ start_single_stepping (void)
 #ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED
 	int val = InterlockedIncrement (&ss_count);
 
-	if (val == 1)
+	if (val == 1) {
 		mono_arch_start_single_stepping ();
+		mono_interp_start_single_stepping ();
+	}
 #else
 	g_assert_not_reached ();
 #endif
@@ -5302,8 +5318,10 @@ stop_single_stepping (void)
 #ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED
 	int val = InterlockedDecrement (&ss_count);
 
-	if (val == 0)
+	if (val == 0) {
 		mono_arch_stop_single_stepping ();
+		mono_interp_stop_single_stepping ();
+	}
 #else
 	g_assert_not_reached ();
 #endif
