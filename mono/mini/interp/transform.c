@@ -46,6 +46,20 @@ typedef struct {
 	guint num_pred_seq_points;
 } InterpBasicBlock;
 
+typedef enum {
+	RELOC_SHORT_BRANCH,
+	RELOC_LONG_BRANCH,
+	RELOC_SWITCH
+} RelocType;
+
+typedef struct {
+	RelocType type;
+	/* In the interpreter IR */
+	int offset;
+	/* In the IL code */
+	int target;
+} Reloc;
+
 typedef struct
 {
 	MonoMethod *method;
@@ -57,8 +71,6 @@ typedef struct
 	const unsigned char *in_start;
 	int code_size;
 	int *in_offsets;
-	int *forward_refs;
-	int *patch_loc;
 	StackInfo **stack_state;
 	int *stack_height;
 	int *vt_stack_size;
@@ -84,6 +96,7 @@ typedef struct
 	InterpBasicBlock *entry_bb;
 	MonoMemPool     *mempool;
 	GList *basic_blocks;
+	GPtrArray *relocs;
 } TransformData;
 
 #define MINT_TYPE_I1 0
@@ -169,7 +182,7 @@ grow_code (TransformData *td)
 	} while (0)
 
 static void 
-handle_branch(TransformData *td, int short_op, int long_op, int offset) 
+handle_branch (TransformData *td, int short_op, int long_op, int offset)
 {
 	int shorten_branch = 0;
 	int target = td->ip + offset - td->il_code;
@@ -187,13 +200,18 @@ handle_branch(TransformData *td, int short_op, int long_op, int offset)
 			shorten_branch = 1;
 		}
 	} else {
-		int prev = td->forward_refs [target];
-		td->forward_refs [td->ip - td->il_code] = prev;
-		td->forward_refs [target] = td->ip - td->il_code;
-		td->patch_loc [td->ip - td->il_code] = td->new_ip - td->new_code;
-		offset = 0;
+		offset = 0xffff;
 		if (td->header->code_size <= 25000) /* FIX to be precise somehow? */
 			shorten_branch = 1;
+
+		Reloc *reloc = mono_mempool_alloc0 (td->mempool, sizeof (Reloc));
+		if (shorten_branch)
+			reloc->type = RELOC_SHORT_BRANCH;
+		else
+			reloc->type = RELOC_LONG_BRANCH;
+		reloc->offset = td->new_ip - td->new_code;
+		reloc->target = target;
+		g_ptr_array_add (td->relocs, reloc);
 	}
 	if (shorten_branch) {
 		ADD_CODE(td, short_op);
@@ -1302,8 +1320,6 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 	td.new_code_end = td.new_code + td.max_code_size;
 	td.mempool = mono_mempool_new ();
 	td.in_offsets = g_malloc0(header->code_size * sizeof(int));
-	td.forward_refs = g_malloc(header->code_size * sizeof(int));
-	td.patch_loc = mono_mempool_alloc (td.mempool, header->code_size * sizeof(int));
 	td.stack_state = g_malloc0(header->code_size * sizeof(StackInfo *));
 	td.stack_height = g_malloc(header->code_size * sizeof(int));
 	td.vt_stack_size = g_malloc(header->code_size * sizeof(int));
@@ -1314,9 +1330,9 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 	td.clause_indexes = g_malloc (header->code_size * sizeof (int));
 	td.gen_sdb_seq_points = debug_options.gen_sdb_seq_points;
 	td.seq_points = g_ptr_array_new ();
+	td.relocs = g_ptr_array_new ();
 	rtm->data_items = td.data_items;
 	for (i = 0; i < header->code_size; i++) {
-		td.forward_refs [i] = -1;
 		td.stack_height [i] = -1;
 		td.clause_indexes [i] = -1;
 	}
@@ -1430,33 +1446,6 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 		lne.il_offset = in_offset;
 		g_array_append_val (line_numbers, lne);
 
-		while (td.forward_refs [in_offset] >= 0) {
-			int j = td.forward_refs [in_offset];
-			int slot;
-			td.forward_refs [in_offset] = td.forward_refs [j];
-			if (td.in_offsets [j] < 0) {                        
-				int old_switch_offset = -td.in_offsets [j];
-				int new_switch_offset = td.in_offsets [old_switch_offset];
-				int switch_case = (j - old_switch_offset - 5) / 4;
-				int n_cases = read32 (header->code + old_switch_offset + 1);
-				offset = (td.new_ip - td.new_code) - (new_switch_offset + 2 * n_cases + 3);
-				slot = new_switch_offset + 3 + 2 * switch_case;
-				td.new_code [slot] = * (unsigned short *)(&offset);
-				td.new_code [slot + 1] = * ((unsigned short *)&offset + 1);
-			} else {
-				int patch_loc = td.patch_loc [j];
-				int op = td.new_code [patch_loc];
-				if (mono_interp_opargtype [op] == MintOpShortBranch) {
-					offset = (td.new_ip - td.new_code) - td.in_offsets [j];
-					g_assert (offset <= 32767);
-					td.new_code [patch_loc + 1] = offset;
-				} else {
-					offset = (td.new_ip - td.new_code) - td.in_offsets [j];
-					td.new_code [patch_loc + 1] = * (unsigned short *)(&offset);
-					td.new_code [patch_loc + 2] = * ((unsigned short *)&offset + 1);
-				}
-			}
-		}
 		if (td.stack_height [in_offset] >= 0) {
 			g_assert (is_bb_start [in_offset]);
 			if (td.stack_height [in_offset] > 0)
@@ -1821,15 +1810,12 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 		case CEE_SWITCH: {
 			guint32 n;
 			const unsigned char *next_ip;
-			const unsigned char *base_ip = td.ip;
-			unsigned short *next_new_ip;
 			++td.ip;
 			n = read32 (td.ip);
 			ADD_CODE (&td, MINT_SWITCH);
 			WRITE32 (&td, &n);
 			td.ip += 4;
 			next_ip = td.ip + n * 4;
-			next_new_ip = td.new_ip + n * 2;
 			--td.sp;
 			int stack_height = td.sp - td.stack;
 			for (i = 0; i < n; i++) {
@@ -1840,16 +1826,19 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 					if (stack_height > 0 && stack_height != td.stack_height [target])
 						g_warning ("SWITCH with back branch and non-empty stack");
 #endif
-					target = td.in_offsets [target] - (next_new_ip - td.new_code);
+					target = td.in_offsets [target] - (td.new_ip - td.new_code);
 				} else {
 					td.stack_height [target] = stack_height;
 					td.vt_stack_size [target] = td.vt_sp;
 					if (stack_height > 0)
 						td.stack_state [target] = g_memdup (td.stack, stack_height * sizeof (td.stack [0]));
-					int prev = td.forward_refs [target];
-					td.forward_refs [td.ip - td.il_code] = prev;
-					td.forward_refs [target] = td.ip - td.il_code;
-					td.in_offsets [td.ip - td.il_code] = - (base_ip - td.il_code);
+
+					Reloc *reloc = mono_mempool_alloc0 (td.mempool, sizeof (Reloc));
+					reloc->type = RELOC_SWITCH;
+					reloc->offset = td.new_ip - td.new_code;
+					reloc->target = target;
+					g_ptr_array_add (td.relocs, reloc);
+					target = 0xffff;
 				}
 				WRITE32 (&td, &target);
 				td.ip += 4;
@@ -3706,6 +3695,32 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 		td.last_ip = td.in_start;
 	}
 
+	/* Handle relocations */
+	for (int i = 0; i < td.relocs->len; ++i) {
+		Reloc *reloc = g_ptr_array_index (td.relocs, i);
+
+		int offset = td.in_offsets [reloc->target] - reloc->offset;
+
+		switch (reloc->type) {
+		case RELOC_SHORT_BRANCH:
+			g_assert (td.new_code [reloc->offset + 1] == 0xffff);
+			td.new_code [reloc->offset + 1] = offset;
+			break;
+		case RELOC_LONG_BRANCH:
+			g_assert_not_reached ();
+			break;
+		case RELOC_SWITCH: {
+			guint16 *v = (guint16*)&offset;
+			td.new_code [reloc->offset] = *(guint16*)v;
+			td.new_code [reloc->offset + 1] = *(guint16*)(v + 1);
+			break;
+		}
+		default:
+			g_assert_not_reached ();
+			break;
+		}
+	}
+
 	if (mono_interp_traceopt) {
 		const guint16 *p = td.new_code;
 		printf("Runtime method: %p, VT stack size: %d\n", rtm, td.max_vt_sp);
@@ -3768,7 +3783,6 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 	save_seq_points (&td);
 
 	g_free (td.in_offsets);
-	g_free (td.forward_refs);
 	for (i = 0; i < header->code_size; ++i)
 		g_free (td.stack_state [i]);
 	g_free (td.stack_state);
@@ -3780,6 +3794,7 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 	g_free (td.clause_indexes);
 	g_ptr_array_free (td.seq_points, TRUE);
 	g_array_free (line_numbers, TRUE);
+	g_ptr_array_free (td.relocs, TRUE);
 	mono_mempool_destroy (td.mempool);
 }
 

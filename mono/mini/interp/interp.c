@@ -3126,7 +3126,7 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, uns
 				gint offset;
 				ip += 2 * (guint32)sp->data.i;
 				offset = READ32 (ip);
-				ip = st + offset;
+				ip = ip + offset;
 			} else {
 				ip = st;
 			}
