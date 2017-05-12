@@ -197,6 +197,79 @@ namespace MonoTests.System.Runtime.InteropServices
 			private readonly string _assemblyName;
 		}
 #endif
+
+		class AnyClass
+		{
+		}
+
+		struct StructWithReferenceTypeInside
+		{
+			public string myStr;
+		}
+
+		struct GenericStruct<T>
+		{
+			public T myItem;
+		}
+
+		[StructLayout (LayoutKind.Auto)]
+		struct StructWithIntInsideAutoLayout
+		{
+			public int myInt;
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CannotAllocAPinnedGCHandleToAnArrayOfStrings ()
+		{
+			var arrayOfStrings = new string[] { "a", "B" };
+			GCHandle.Alloc (arrayOfStrings, GCHandleType.Pinned);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CannotAllocAPinnedGCHandleToAnArrayOfIntArrays ()
+		{
+			var arrayOfIntArrays = new int[][] { new int[] {1, 2}, new int[] {3, 4, 5} };
+			GCHandle.Alloc (arrayOfIntArrays, GCHandleType.Pinned);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CannotAllocAPinnedGCHandleToAClass ()
+		{
+			GCHandle.Alloc (new AnyClass (), GCHandleType.Pinned);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CannotAllocAPinnedGCHandleToANonBlittableStruct ()
+		{
+			var nonBlittableStruct = default (StructWithReferenceTypeInside);
+			GCHandle.Alloc(nonBlittableStruct, GCHandleType.Pinned);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CannotAllocAPinnedGCHandleToAGenericStruct ()
+		{
+			var nonBlittableGenericStruct = default (GenericStruct<string>);
+			GCHandle.Alloc (nonBlittableGenericStruct, GCHandleType.Pinned);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CannotAllocAPinnedGCHandleToADateTime ()
+		{
+			GCHandle.Alloc (default (DateTime), GCHandleType.Pinned);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CannotAllocAPinnedGCHandleToAnAutoLayoutStruct ()
+		{
+			GCHandle.Alloc (default (StructWithIntInsideAutoLayout), GCHandleType.Pinned);
+		}
 	}
 
 }
