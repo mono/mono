@@ -31,9 +31,6 @@ wget https://www.nuget.org/api/v2/package/System.Reflection.DispatchProxy/4.3.0 
 wget https://www.nuget.org/api/v2/package/System.Reflection.DispatchProxy/4.0.1 -O nugets/system.reflection.dispatchproxy.4.0.1.nupkg
 wget https://www.nuget.org/api/v2/package/System.Reflection.DispatchProxy/4.0.0 -O nugets/system.reflection.dispatchproxy.4.0.0.nupkg
 
-#System.ValueTuple
-wget https://www.nuget.org/api/v2/package/System.ValueTuple/4.3.0 -O nugets/system.valuetuple.4.3.0.nupkg
-
 #System.Threading.Overlapped
 wget https://www.nuget.org/api/v2/package/System.Threading.Overlapped/4.3.0 -O nugets/system.threading.overlapped.4.3.0.nupkg
 wget https://www.nuget.org/api/v2/package/System.Threading.Overlapped/4.0.1 -O nugets/system.threading.overlapped.4.0.1.nupkg
