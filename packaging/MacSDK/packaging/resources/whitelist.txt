@@ -71,6 +71,7 @@ mod-mono-server
 mod-mono-server2
 mod-mono-server4
 mono
+mono32
 mono64
 mono-boehm
 mono-api-info
