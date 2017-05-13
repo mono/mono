@@ -770,6 +770,7 @@ guint32
 mono_dynimage_encode_typedef_or_ref_full (MonoDynamicImage *assembly, MonoType *type, gboolean try_typespec)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
+	HANDLE_FUNCTION_ENTER ();
 
 	MonoDynamicTable *table;
 	guint32 *values;
@@ -778,10 +779,10 @@ mono_dynimage_encode_typedef_or_ref_full (MonoDynamicImage *assembly, MonoType *
 
 	/* if the type requires a typespec, we must try that first*/
 	if (try_typespec && (token = create_typespec (assembly, type)))
-		return token;
+		goto leave;
 	token = GPOINTER_TO_UINT (g_hash_table_lookup (assembly->typeref, type));
 	if (token)
-		return token;
+		goto leave;
 	klass = mono_class_from_mono_type (type);
 
 	MonoReflectionTypeBuilderHandle tb = MONO_HANDLE_CAST (MonoReflectionTypeBuilder, mono_class_get_ref_info (klass));
@@ -792,7 +793,7 @@ mono_dynimage_encode_typedef_or_ref_full (MonoDynamicImage *assembly, MonoType *
 			(type->type != MONO_TYPE_MVAR)) {
 		token = MONO_TYPEDEFORREF_TYPEDEF | (MONO_HANDLE_GETVAL (tb, table_idx) << MONO_TYPEDEFORREF_BITS);
 		mono_dynamic_image_register_token (assembly, token, MONO_HANDLE_CAST (MonoObject, tb));
-		return token;
+		goto leave;
 	}
 
 	if (klass->nested_in) {
@@ -815,7 +816,8 @@ mono_dynimage_encode_typedef_or_ref_full (MonoDynamicImage *assembly, MonoType *
 	g_hash_table_insert (assembly->typeref, type, GUINT_TO_POINTER(token));
 	table->next_idx ++;
 	mono_dynamic_image_register_token (assembly, token, MONO_HANDLE_CAST (MonoObject, tb));
-	return token;
+leave:
+	HANDLE_FUNCTION_RETURN_VAL (token);
 }
 
 /*
