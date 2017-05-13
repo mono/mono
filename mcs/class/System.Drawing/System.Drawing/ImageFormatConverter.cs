@@ -154,9 +154,9 @@ namespace System.Drawing
 					return prop != null ? prop : c.ToString ();
 				} else if (destinationType == typeof (InstanceDescriptor)) {
 					if (prop != null){
-						return new InstanceDescriptor (typeof (ImageFormat).GetProperty (prop), null);
+						return new InstanceDescriptor (typeof (ImageFormat).GetTypeInfo ().GetProperty (prop), null);
 					} else {
-						ConstructorInfo ctor = typeof(ImageFormat).GetConstructor (new Type[] {typeof(Guid)} );
+						ConstructorInfo ctor = typeof(ImageFormat).GetTypeInfo ().GetConstructor (new Type[] {typeof(Guid)} );
 						return new InstanceDescriptor (ctor, new object[] {c.Guid});
 					}
 				}
