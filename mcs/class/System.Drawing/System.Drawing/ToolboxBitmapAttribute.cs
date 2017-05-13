@@ -33,6 +33,7 @@
 //
 
 using System;
+using System.Reflection;
 
 namespace System.Drawing
 {
