@@ -44,6 +44,7 @@ namespace System.Drawing.Printing {
 //			this.settings = settings;
 		}
 
+#if !NETSTANDARD1_6
 		protected InvalidPrinterException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
@@ -56,6 +57,7 @@ namespace System.Drawing.Printing {
 
 			base.GetObjectData (info, context);
 		}
+#endif
 
 		private static string GetMessage(PrinterSettings settings)
 		{

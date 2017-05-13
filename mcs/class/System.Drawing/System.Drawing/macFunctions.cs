@@ -48,6 +48,7 @@ namespace System.Drawing {
 #endif
 
 		static MacSupport () {
+#if !NETSTANDARD1_6
 			foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies ()) {
 				if (String.Equals (asm.GetName ().Name, "System.Windows.Forms")) {
 					Type driver_type = asm.GetType ("System.Windows.Forms.XplatUICarbon");
@@ -56,6 +57,7 @@ namespace System.Drawing {
 					}
 				}
 			}
+#endif
 		}
 
 		internal static CocoaContext GetCGContextForNSView (IntPtr handle) {
