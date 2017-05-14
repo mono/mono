@@ -795,7 +795,8 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 	CHECK_STACK (td, csignature->param_count + csignature->hasthis);
 	if (!calli && (!virtual || (target_method->flags & METHOD_ATTRIBUTE_VIRTUAL) == 0) &&
 		(target_method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) == 0 && 
-		(target_method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) == 0) {
+		(target_method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) == 0 &&
+		!(target_method->iflags & METHOD_IMPL_ATTRIBUTE_NOINLINING)) {
 		int called_inited = mono_class_vtable (domain, target_method->klass)->initialized;
 		MonoMethodHeader *mheader = mono_method_get_header (target_method);
 
