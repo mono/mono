@@ -2104,8 +2104,21 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, uns
 		g_print ("(%p) Transforming %s\n", mono_thread_internal_current (), mn);
 		g_free (mn);
 #endif
+
+		MonoLMFExt ext;
+
+		/* Push an LMF frame so debugger stack walks work */
+		memset (&ext, 0, sizeof (ext));
+		ext.interp_exit = TRUE;
+		ext.interp_exit_data = frame->parent;
+
+		mono_push_lmf (&ext);
+
 		frame->ex = mono_interp_transform_method (frame->runtime_method, context);
 		context->managed_code = 1;
+
+		mono_pop_lmf (&ext.lmf);
+
 		if (frame->ex) {
 			rtm = NULL;
 			ip = NULL;
@@ -2837,7 +2850,7 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, uns
 			goto exit_frame;
 		MINT_IN_CASE(MINT_RET_VOID)
 			if (sp > frame->stack)
-				g_warning ("ret.void: more values on stack: %d", sp-frame->stack);
+				g_warning ("ret.void: more values on stack: %d %s", sp-frame->stack, mono_method_full_name (frame->runtime_method->method, TRUE));
 			goto exit_frame;
 		MINT_IN_CASE(MINT_RET_VT)
 			i32 = READ32(ip + 1);
@@ -4545,7 +4558,11 @@ array_constructed:
 					ss_tramp = tramp;
 				}
 
-				frame->ip = ip;
+				/*
+				 * Make this point to the MINT_SDB_SEQ_POINT instruction which follows this since
+				 * the address of that instruction is stored as the seq point address.
+				 */
+				frame->ip = ip + 1;
 
 				/* Push an lmf frame to enable stack walks */
 				memset (&ext, 0, sizeof (ext));
@@ -5403,7 +5420,7 @@ mono_interp_frame_iter_next (MonoInterpStackIter *iter, StackFrameInfo *frame)
 
 	memset (frame, 0, sizeof (StackFrameInfo));
 	/* pinvoke frames doesn't have runtime_method set */
-	while (iframe && !iframe->runtime_method)
+	while (iframe && !(iframe->runtime_method && iframe->runtime_method->code))
 		iframe = iframe->parent;
 	if (!iframe)
 		return FALSE;

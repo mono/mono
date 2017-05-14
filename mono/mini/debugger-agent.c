@@ -2482,6 +2482,30 @@ static void invoke_method (void);
  * SUSPEND/RESUME
  */
 
+static MonoJitInfo*
+get_top_method_ji (gpointer ip, MonoDomain **domain)
+{
+	MonoJitInfo *ji;
+
+	ji = mini_jit_info_table_find (mono_domain_get (), (char*)ip, domain);
+	if (!ji) {
+		/* Could be an interpreter method */
+
+		MonoLMF *lmf = mono_get_lmf ();
+		MonoInterpFrameHandle *frame;
+
+		g_assert (((guint64)lmf->previous_lmf) & 2);
+		MonoLMFExt *ext = (MonoLMFExt*)lmf;
+
+		g_assert (ext->interp_exit);
+		frame = ext->interp_exit_data;
+		ji = mono_interp_frame_get_jit_info (frame);
+		if (domain)
+			*domain = mono_domain_get ();
+	}
+	return ji;
+}
+
 /*
  * save_thread_context:
  *
@@ -2753,21 +2777,7 @@ process_suspend (DebuggerTlsData *tls, MonoContext *ctx)
 		return;
 	}
 
-	ji = mini_jit_info_table_find (mono_domain_get (), (char*)ip, NULL);
-	if (!ji) {
-		/* Could be an interpreter method */
-
-		// FIXME: factor this out into a function
-		MonoLMF *lmf = mono_get_lmf ();
-		MonoInterpFrameHandle *frame;
-
-		g_assert (((guint64)lmf->previous_lmf) & 2);
-		MonoLMFExt *ext = (MonoLMFExt*)lmf;
-
-		g_assert (ext->interp_exit);
-		frame = ext->interp_exit_data;
-		ji = mono_interp_frame_get_jit_info (frame);
-	}
+	ji = get_top_method_ji (ip, NULL);
 	g_assert (ji);
 	/* Can't suspend in these methods */
 	method = jinfo_get_method (ji);
@@ -4113,7 +4123,7 @@ jit_end (MonoProfiler *prof, MonoMethod *method, MonoJitInfo *jinfo, int result)
 
 	send_type_load (method->klass);
 
-	if (!result)
+	if (!result && jinfo)
 		add_pending_breakpoints (method, jinfo);
 }
 
@@ -5131,7 +5141,7 @@ process_single_step_inner (DebuggerTlsData *tls, gboolean from_signal)
 		DEBUG_PRINTF (1, "[%p] Single step event (depth=%s) at %s (%p)[0x%x], sp %p, last sp %p\n", (gpointer) (gsize) mono_native_thread_id_get (), ss_depth_to_string (ss_req->depth), mono_method_full_name (jinfo_get_method (ji), TRUE), MONO_CONTEXT_GET_IP (ctx), (int)((guint8*)MONO_CONTEXT_GET_IP (ctx) - (guint8*)ji->code_start), MONO_CONTEXT_GET_SP (ctx), ss_req->last_sp);
 	}
 
-	ji = mini_jit_info_table_find (mono_domain_get (), (char*)ip, &domain);
+	ji = get_top_method_ji (ip, &domain);
 	g_assert (ji && !ji->is_trampoline);
 	method = jinfo_get_method (ji);
 	g_assert (method);
@@ -6769,7 +6779,10 @@ set_interp_var (MonoType *t, gpointer addr, guint8 *val_buf)
 {
 	int size;
 
-	g_assert (!t->byref);
+	if (t->byref) {
+		addr = *(gpointer*)addr;
+		g_assert (addr);
+	}
 
 	if (MONO_TYPE_IS_REFERENCE (t))
 		size = sizeof (gpointer);
