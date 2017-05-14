@@ -1302,7 +1302,7 @@ add_seq_point (TransformData *td, int il_offset, InterpBasicBlock *cbb)
 
 	seqp = mono_mempool_alloc0 (td->mempool, sizeof (SeqPoint));
 	seqp->il_offset = il_offset;
-	seqp->native_offset = td->new_ip - td->new_code;
+	seqp->native_offset = (guint8*)td->new_ip - (guint8*)td->new_code;
 
 	ADD_CODE (td, MINT_SDB_SEQ_POINT);
 	g_ptr_array_add (td->seq_points, seqp);
@@ -3815,9 +3815,9 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 		MonoExceptionClause *c = rtm->clauses + i;
 
 		ei->flags = c->flags;
-		ei->try_start = rtm->code + c->try_offset;
-		ei->try_end = rtm->code + c->try_offset + c->try_len;
-		ei->handler_start = rtm->code + c->handler_offset;
+		ei->try_start = (guint8*)rtm->code + c->try_offset;
+		ei->try_end = (guint8*)rtm->code + c->try_offset + c->try_len;
+		ei->handler_start = (guint8*)rtm->code + c->handler_offset;
 		if (ei->flags == MONO_EXCEPTION_CLAUSE_FILTER || ei->flags == MONO_EXCEPTION_CLAUSE_FINALLY) {
 		} else {
 			ei->data.catch_class = c->data.catch_class;

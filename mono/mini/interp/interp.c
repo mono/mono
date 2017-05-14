@@ -5445,7 +5445,7 @@ mono_interp_frame_iter_next (MonoInterpStackIter *iter, StackFrameInfo *frame)
 	frame->method = iframe->runtime_method->method;
 	frame->actual_method = frame->method;
 	/* This is the offset in the interpreter IR */
-	frame->native_offset = iframe->ip - iframe->runtime_method->code;
+	frame->native_offset = (guint8*)iframe->ip - (guint8*)iframe->runtime_method->code;
 	frame->ji = iframe->runtime_method->jinfo;
 
 	stack_iter->current = iframe->parent;

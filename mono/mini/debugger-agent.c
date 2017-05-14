@@ -2483,9 +2483,12 @@ static void invoke_method (void);
  */
 
 static MonoJitInfo*
-get_top_method_ji (gpointer ip, MonoDomain **domain)
+get_top_method_ji (gpointer ip, MonoDomain **domain, gpointer *out_ip)
 {
 	MonoJitInfo *ji;
+
+	if (out_ip)
+		*out_ip = ip;
 
 	ji = mini_jit_info_table_find (mono_domain_get (), (char*)ip, domain);
 	if (!ji) {
@@ -2502,6 +2505,8 @@ get_top_method_ji (gpointer ip, MonoDomain **domain)
 		ji = mono_interp_frame_get_jit_info (frame);
 		if (domain)
 			*domain = mono_domain_get ();
+		if (out_ip)
+			*out_ip = mono_interp_frame_get_ip (frame);
 	}
 	return ji;
 }
@@ -2777,7 +2782,7 @@ process_suspend (DebuggerTlsData *tls, MonoContext *ctx)
 		return;
 	}
 
-	ji = get_top_method_ji (ip, NULL);
+	ji = get_top_method_ji (ip, NULL, NULL);
 	g_assert (ji);
 	/* Can't suspend in these methods */
 	method = jinfo_get_method (ji);
@@ -4238,10 +4243,7 @@ insert_breakpoint (MonoSeqPointInfo *seq_points, MonoDomain *domain, MonoJitInfo
 	inst = g_new0 (BreakpointInstance, 1);
 	inst->il_offset = it.seq_point.il_offset;
 	inst->native_offset = it.seq_point.native_offset;
-	if (ji->is_interp)
-		inst->ip = (guint8*)ji->code_start + (it.seq_point.native_offset * 2);
-	else
-		inst->ip = (guint8*)ji->code_start + it.seq_point.native_offset;
+	inst->ip = (guint8*)ji->code_start + it.seq_point.native_offset;
 	inst->ji = ji;
 	inst->domain = domain;
 
@@ -4841,10 +4843,7 @@ process_breakpoint (DebuggerTlsData *tls, gboolean from_signal)
 	method = jinfo_get_method (ji);
 
 	/* Compute the native offset of the breakpoint from the ip */
-	if (ji->is_interp)
-		native_offset = (guint16*)ip - (guint16*)ji->code_start;
-	else
-		native_offset = ip - (guint8*)ji->code_start;
+	native_offset = ip - (guint8*)ji->code_start;
 
 	/* 
 	 * Skip the instruction causing the breakpoint signal.
@@ -5129,8 +5128,6 @@ process_single_step_inner (DebuggerTlsData *tls, gboolean from_signal)
 	SeqPoint sp;
 	MonoSeqPointInfo *info;
 
-	ip = (guint8 *)MONO_CONTEXT_GET_IP (ctx);
-
 	/* Skip the instruction causing the single step */
 	if (from_signal)
 		mono_arch_skip_single_step (ctx);
@@ -5150,14 +5147,15 @@ process_single_step_inner (DebuggerTlsData *tls, gboolean from_signal)
 	if (mono_thread_internal_current () != ss_req->thread)
 		return;
 
-	if (log_level > 0) {
-		ji = mini_jit_info_table_find (mono_domain_get (), (char*)ip, &domain);
+	ip = (guint8 *)MONO_CONTEXT_GET_IP (ctx);
 
+	ji = get_top_method_ji (ip, &domain, (gpointer*)&ip);
+	g_assert (ji && !ji->is_trampoline);
+
+	if (log_level > 0) {
 		DEBUG_PRINTF (1, "[%p] Single step event (depth=%s) at %s (%p)[0x%x], sp %p, last sp %p\n", (gpointer) (gsize) mono_native_thread_id_get (), ss_depth_to_string (ss_req->depth), mono_method_full_name (jinfo_get_method (ji), TRUE), MONO_CONTEXT_GET_IP (ctx), (int)((guint8*)MONO_CONTEXT_GET_IP (ctx) - (guint8*)ji->code_start), MONO_CONTEXT_GET_SP (ctx), ss_req->last_sp);
 	}
 
-	ji = get_top_method_ji (ip, &domain);
-	g_assert (ji && !ji->is_trampoline);
 	method = jinfo_get_method (ji);
 	g_assert (method);
 
@@ -5192,8 +5190,10 @@ process_single_step_inner (DebuggerTlsData *tls, gboolean from_signal)
 	 * The ip points to the instruction causing the single step event, which is before
 	 * the offset recorded in the seq point map, so find the next seq point after ip.
 	 */
-	if (!mono_find_next_seq_point_for_native_offset (domain, method, (guint8*)ip - (guint8*)ji->code_start, &info, &sp))
+	if (!mono_find_next_seq_point_for_native_offset (domain, method, (guint8*)ip - (guint8*)ji->code_start, &info, &sp)) {
+		g_assert_not_reached ();
 		return;
+	}
 
 	il_offset = sp.il_offset;
 
@@ -9706,21 +9706,26 @@ frame_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		MonoType *t;
 		MonoDebugVarInfo *var;
 
-		if (frame->ji->is_interp)
-			return ERR_NOT_IMPLEMENTED;
-
 		t = &frame->actual_method->klass->byval_arg;
 		/* Checked by the sender */
 		g_assert (MONO_TYPE_ISSTRUCT (t));
-		var = jit->this_var;
-		g_assert (var);
 
 		val_buf = (guint8 *)g_alloca (mono_class_instance_size (mono_class_from_mono_type (t)));
 		err = decode_value (t, frame->domain, val_buf, p, &p, end);
 		if (err != ERR_NONE)
 			return err;
 
-		set_var (&frame->actual_method->klass->this_arg, var, &frame->ctx, frame->domain, val_buf, frame->reg_locations, &tls->restore_state.ctx);
+		if (frame->ji->is_interp) {
+			guint8 *addr;
+
+			addr = mono_interp_frame_get_this (frame->interp_frame);
+			set_interp_var (&frame->actual_method->klass->this_arg, addr, val_buf);
+		} else {
+			var = jit->this_var;
+			g_assert (var);
+
+			set_var (&frame->actual_method->klass->this_arg, var, &frame->ctx, frame->domain, val_buf, frame->reg_locations, &tls->restore_state.ctx);
+		}
 		break;
 	}
 	default:
