@@ -2166,10 +2166,23 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, uns
 		MINT_IN_CASE(MINT_NOP)
 			++ip;
 			MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_BREAK)
+		MINT_IN_CASE(MINT_BREAK) {
 			++ip;
-			G_BREAKPOINT (); /* this is not portable... */
+
+			MonoLMFExt ext;
+
+			/* Push an LMF frame so debugger stack walks work */
+			memset (&ext, 0, sizeof (ext));
+			ext.interp_exit = TRUE;
+			ext.interp_exit_data = frame;
+
+			mono_push_lmf (&ext);
+
+			mono_debugger_agent_user_break ();
+
+			mono_pop_lmf (&ext.lmf);
 			MINT_IN_BREAK;
+		}
 		MINT_IN_CASE(MINT_LDNULL) 
 			sp->data.p = NULL;
 			++ip;

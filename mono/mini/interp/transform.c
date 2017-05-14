@@ -734,22 +734,8 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 			else
 				target_method = (MonoMethod *)mono_method_get_wrapper_data (method, token);
 			csignature = mono_method_signature (target_method);
-			if (target_method->klass == mono_defaults.string_class) {
-				if (target_method->name [0] == 'g') {
-					if (strcmp (target_method->name, "get_Chars") == 0)
-						op = MINT_GETCHR;
-					else if (strcmp (target_method->name, "get_Length") == 0)
-						op = MINT_STRLEN;
-				}
-			} else if (mono_class_is_subclass_of (target_method->klass, mono_defaults.array_class, FALSE)) {
-				if (!strcmp (target_method->name, "get_Rank")) {
-					op = MINT_ARRAY_RANK;
-				} else if (!strcmp (target_method->name, "get_Length")) {
-					op = MINT_LDLEN;
-				} else if (!strcmp (target_method->name, "Address")) {
-					op = readonly ? MINT_LDELEMA : MINT_LDELEMA_TC;
-				}
-			} else if (target_method && generic_context) {
+
+			if (generic_context) {
 				csignature = mono_inflate_generic_signature (csignature, generic_context, &error);
 				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
 				target_method = mono_class_inflate_generic_method_checked (target_method, generic_context, &error);
@@ -758,6 +744,33 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 		}
 	} else {
 		csignature = mono_method_signature (target_method);
+	}
+
+	/* Intrinsics */
+	if (target_method) {
+		if (target_method->klass == mono_defaults.string_class) {
+			if (target_method->name [0] == 'g') {
+				if (strcmp (target_method->name, "get_Chars") == 0)
+					op = MINT_GETCHR;
+				else if (strcmp (target_method->name, "get_Length") == 0)
+					op = MINT_STRLEN;
+			}
+		} else if (mono_class_is_subclass_of (target_method->klass, mono_defaults.array_class, FALSE)) {
+			if (!strcmp (target_method->name, "get_Rank")) {
+				op = MINT_ARRAY_RANK;
+			} else if (!strcmp (target_method->name, "get_Length")) {
+				op = MINT_LDLEN;
+			} else if (!strcmp (target_method->name, "Address")) {
+				op = readonly ? MINT_LDELEMA : MINT_LDELEMA_TC;
+			}
+		} else if (target_method->klass->image == mono_defaults.corlib &&
+				   (strcmp (target_method->klass->name_space, "System.Diagnostics") == 0) &&
+				   (strcmp (target_method->klass->name, "Debugger") == 0)) {
+			if (!strcmp (target_method->name, "Break") && csignature->param_count == 0) {
+				if (mini_should_insert_breakpoint (method))
+					op = MINT_BREAK;
+			}
+		}
 	}
 
 	if (constrained_class) {
@@ -831,7 +844,7 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 		mono_class_init (target_method->klass);
 
 	CHECK_STACK (td, csignature->param_count + csignature->hasthis);
-	if (!calli && (!virtual || (target_method->flags & METHOD_ATTRIBUTE_VIRTUAL) == 0) &&
+	if (!calli && op == -1 && (!virtual || (target_method->flags & METHOD_ATTRIBUTE_VIRTUAL) == 0) &&
 		(target_method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) == 0 && 
 		(target_method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) == 0 &&
 		!(target_method->iflags & METHOD_IMPL_ATTRIBUTE_NOINLINING)) {
