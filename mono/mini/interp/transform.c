@@ -820,9 +820,10 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 			if (mheader && *mheader->code == CEE_RET && called_inited) {
 				if (mono_interp_traceopt)
 					g_print ("Inline (empty) call of %s.%s\n", target_method->klass->name, target_method->name);
-				for (i = 0; i < csignature->param_count; i++)
+				for (i = 0; i < csignature->param_count; i++) {
 					ADD_CODE (td, MINT_POP); /*FIX: vt */
 					ADD_CODE (td, 0);
+				}
 				if (csignature->hasthis) {
 					if (virtual)
 						ADD_CODE(td, MINT_CKNULL);
