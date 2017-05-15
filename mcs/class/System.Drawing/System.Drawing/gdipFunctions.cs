@@ -49,10 +49,8 @@ namespace System.Drawing
 	internal static class GDIPlus {
 
 #if NETSTANDARD1_6
-		public const CharSet GdiPlusCharSet = CharSet.Unicode;
 		public const UnmanagedType GdiPlusCustomMarshaler = UnmanagedType.Interface;
 #else
-		public const CharSet GdiPlusCharSet = CharSet.Auto;
 		public const UnmanagedType GdiPlusCustomMarshaler = UnmanagedType.CustomMarshaler;
 #endif
 
@@ -996,7 +994,7 @@ namespace System.Drawing
 		internal static extern Status GdipBitmapSetPixel (IntPtr bmp, int x, int y, int argb);
 
 		// Image functions
-		[DllImport(GdiPlus, CharSet=GdiPlusCharSet)]
+		[DllImport(GdiPlus, CharSet=CharSet.Unicode)]
 		internal static extern Status GdipLoadImageFromFile ( [MarshalAs(UnmanagedType.LPWStr)] string filename, out IntPtr image );
 
 #if !TEST
@@ -1011,7 +1009,7 @@ namespace System.Drawing
 		[DllImport(GdiPlus)]
 		internal static extern Status GdipCloneImage(IntPtr image, out IntPtr imageclone);
 
-		[DllImport(GdiPlus, CharSet=GDIPlus.GdiPlusCharSet)]
+		[DllImport(GdiPlus, CharSet=GDIPlus.CharSet.Unicode)]
 		internal static extern Status GdipLoadImageFromFileICM ( [MarshalAs(UnmanagedType.LPWStr)] string filename, out IntPtr image );
 
 		[DllImport(GdiPlus)]
@@ -1176,10 +1174,10 @@ namespace System.Drawing
 		[DllImport(GdiPlus)]
 		internal static extern Status GdipCreateHBITMAPFromBitmap (IntPtr bmp, out IntPtr HandleBmp, int clrbackground);
 
-		[DllImport(GdiPlus, CharSet=GdiPlusCharSet)]
+		[DllImport(GdiPlus, CharSet=CharSet.Unicode)]
 		internal static extern Status GdipCreateBitmapFromFile ([MarshalAs (UnmanagedType.LPWStr)] string filename, out IntPtr bitmap);
 
-		[DllImport(GdiPlus, CharSet= GdiPlusCharSet)]
+		[DllImport(GdiPlus, CharSet= CharSet.Unicode)]
 		internal static extern Status GdipCreateBitmapFromFileICM ([MarshalAs (UnmanagedType.LPWStr)] string filename, out IntPtr bitmap);
 
 		[DllImport(GdiPlus)]
@@ -1424,7 +1422,7 @@ namespace System.Drawing
 		internal static extern Status GdipSetImageAttributesOutputChannel (IntPtr imageattr,
 			ColorAdjustType type, bool enableFlag, 	ColorChannelFlag channelFlags);
 
-		[DllImport (GdiPlus, CharSet=GdiPlusCharSet)]
+		[DllImport (GdiPlus, CharSet=CharSet.Unicode)]
 		internal static extern Status GdipSetImageAttributesOutputChannelColorProfile (IntPtr imageattr,
 			ColorAdjustType type, bool enableFlag, [MarshalAs (UnmanagedType.LPWStr)] string profileName);
 
@@ -1453,12 +1451,12 @@ namespace System.Drawing
 		internal static extern Status GdipCreateFont (IntPtr fontFamily, float emSize, FontStyle style, GraphicsUnit unit, out IntPtr font);
 		[DllImport(GdiPlus)]
 		internal static extern Status GdipDeleteFont (IntPtr font);
-		[DllImport(GdiPlus, CharSet=GdiPlusCharSet)]
+		[DllImport(GdiPlus, CharSet=CharSet.Unicode)]
 		internal static extern Status GdipGetLogFont(IntPtr font, IntPtr graphics, [MarshalAs(UnmanagedType.AsAny), Out] object logfontA);
 
 		[DllImport(GdiPlus)]
 		internal static extern Status GdipCreateFontFromDC(IntPtr hdc, out IntPtr font);
-		[DllImport(GdiPlus, SetLastError=true, CharSet=GdiPlusCharSet)]
+		[DllImport(GdiPlus, SetLastError=true, CharSet=CharSet.Unicode)]
 		internal static extern Status GdipCreateFontFromLogfont(IntPtr hdc, ref LOGFONT lf, out IntPtr ptr);
 
 		// These are our private functions, they exists in our own libgdiplus library, this way we
@@ -1467,7 +1465,7 @@ namespace System.Drawing
 		internal static extern Status GdipCreateFontFromHfont(IntPtr hdc, out IntPtr font, ref LOGFONT lf);
 
 		// This is win32/gdi, not gdiplus, but it's easier to keep in here, also see above comment
-		[DllImport("gdi32.dll", CallingConvention=CallingConvention.StdCall, CharSet = GdiPlusCharSet)]
+		[DllImport("gdi32.dll", CallingConvention=CallingConvention.StdCall, CharSet = CharSet.Unicode)]
 		internal static extern IntPtr CreateFontIndirect (ref LOGFONT logfont);
 		[DllImport("user32.dll", EntryPoint="GetDC", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
 		internal static extern IntPtr GetDC(IntPtr hwnd);
@@ -1548,7 +1546,7 @@ namespace System.Drawing
 		[DllImport (GdiPlus)]
 		internal static extern Status GdipDeletePrivateFontCollection (ref IntPtr collection);
 
-		[DllImport (GdiPlus, CharSet=GdiPlusCharSet)]
+		[DllImport (GdiPlus, CharSet=CharSet.Unicode)]
 		internal static extern Status GdipPrivateAddFontFile (IntPtr collection,
 				[MarshalAs (UnmanagedType.LPWStr)] string fileName );
 
@@ -1556,7 +1554,7 @@ namespace System.Drawing
 		internal static extern Status GdipPrivateAddMemoryFont (IntPtr collection, IntPtr mem, int length);
 
 		//FontFamily
-		[DllImport (GdiPlus, CharSet=GdiPlusCharSet)]
+		[DllImport (GdiPlus, CharSet=CharSet.Unicode)]
 		internal static extern Status GdipCreateFontFamilyFromName (
 			[MarshalAs(UnmanagedType.LPWStr)] string fName, IntPtr collection, out IntPtr fontFamily);
 
@@ -1646,13 +1644,13 @@ namespace System.Drawing
 		internal static extern Status GdipGetStringFormatTabStops(IntPtr format, int count, out float firstTabOffset, [In, Out] float [] tabStops);
 
 		// metafile
-		[DllImport (GdiPlus, CharSet = GdiPlusCharSet)]
+		[DllImport (GdiPlus, CharSet = CharSet.Unicode)]
 		internal static extern Status GdipCreateMetafileFromFile ([MarshalAs (UnmanagedType.LPWStr)] string filename, out IntPtr metafile);
 		[DllImport (GdiPlus)]
 		internal static extern Status GdipCreateMetafileFromEmf (IntPtr hEmf, bool deleteEmf, out IntPtr metafile);
 		[DllImport (GdiPlus)]
 		internal static extern Status GdipCreateMetafileFromWmf (IntPtr hWmf, bool deleteWmf, WmfPlaceableFileHeader wmfPlaceableFileHeader, out IntPtr metafile);
-		[DllImport (GdiPlus, CharSet = GdiPlusCharSet)]
+		[DllImport (GdiPlus, CharSet = CharSet.Unicode)]
 		internal static extern Status GdipGetMetafileHeaderFromFile ([MarshalAs (UnmanagedType.LPWStr)] string filename, IntPtr header);
 		[DllImport (GdiPlus)]
 		internal static extern Status GdipGetMetafileHeaderFromMetafile (IntPtr metafile, IntPtr header);

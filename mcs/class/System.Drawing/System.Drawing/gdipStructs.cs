@@ -81,7 +81,7 @@ namespace System.Drawing
     		internal int to;
 	}
 
-	[StructLayout(LayoutKind.Sequential, CharSet=GDIPlus.GdiPlusCharSet)]
+	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
 	internal struct LOGFONT
 	{
 		internal int    lfHeight;
