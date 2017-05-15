@@ -14,6 +14,8 @@ using System;
 using System.IO;
 using System.Globalization;
 using System.Threading;
+using System.Runtime.InteropServices;
+
 
 using NUnit.Framework;
 
@@ -2679,6 +2681,60 @@ namespace MonoTests.System.IO
 			MoveTest (FileAccess.ReadWrite, FileShare.Read | FileShare.Delete, true);
 			MoveTest (FileAccess.ReadWrite, FileShare.Write | FileShare.Delete, true);
 			MoveTest (FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete, true);
+		}
+
+
+		[DllImport ("libc", SetLastError=true)]
+		public static extern int symlink (string oldpath, string newpath);
+
+		[DllImport ("libc", SetLastError=true)]
+		public static extern int rename (string oldpath, string newpath);
+
+		static void DeleteBadSymLink (string path) {
+			string newpath = path + new Random ().Next ();
+			rename (path, newpath);
+			File.Delete (newpath);
+		}
+
+		[Test]
+		public void SymLinkLoop ()
+		{
+			if (!RunningOnUnix)
+				Assert.Ignore ("Symlink are hard on windows");
+
+			var name1 = "f0ew4fuweo";
+			var name2 = "jneruyhbv32ir";
+			var path1 = Path.Combine (Path.GetTempPath (), name1);
+			var path2 = Path.Combine (Path.GetTempPath (), name2);
+
+			DeleteBadSymLink (path1);
+			DeleteBadSymLink (path2);
+			try {
+				symlink (path1, path2);
+				symlink (path2, path1);
+
+				Assert.IsFalse (File.Exists (path1), "File.Exists must return false for symlink loops");
+
+				try {
+					using (var f = File.Open (path1, FileMode.Open, FileAccess.Read)) {
+						Assert.Fail ("File.Exists must throw for symlink loops");
+					}
+				} catch (UnauthorizedAccessException ex) {
+					Assert.AreEqual (0x80070005u, (uint)ex.HResult, "Ensure HRESULT is correct");
+				}
+
+
+				try {
+					File.Delete (path1);
+				} catch (UnauthorizedAccessException ex) {
+					Assert.AreEqual (0x80070005u, (uint)ex.HResult, "Ensure HRESULT is correct");
+				}
+
+			} finally {
+				DeleteBadSymLink (path1);
+				DeleteBadSymLink (path2);
+
+			}
 		}
 	}
 }
