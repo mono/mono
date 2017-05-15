@@ -1636,7 +1636,7 @@ mono_handle_exception_internal_first_pass (MonoContext *ctx, MonoObject *obj, gi
 
 		gpointer ip;
 		if (in_interp)
-			ip = (guint16*)ji->code_start + frame.native_offset;
+			ip = (guint8*)ji->code_start + frame.native_offset;
 		else
 			ip = MONO_CONTEXT_GET_IP (ctx);
 
@@ -2012,7 +2012,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 		}
 
 		if (in_interp)
-			ip = (guint16*)ji->code_start + frame.native_offset;
+			ip = (guint8*)ji->code_start + frame.native_offset;
 		else
 			ip = MONO_CONTEXT_GET_IP (ctx);
 
