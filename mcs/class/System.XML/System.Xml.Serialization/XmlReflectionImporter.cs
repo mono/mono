@@ -1013,11 +1013,14 @@ namespace System.Xml.Serialization {
 						cname = choiceEnumMap.GetEnumName (choiceEnumType.FullName,
 							elem.Namespace.ToString () + ":" + elem.ElementName);
 					if (cname == null)
-						throw new InvalidOperationException (string.Format (
-							CultureInfo.InvariantCulture, "Type {0} is missing"
-							+ " enumeration value '{1}' for element '{1} from"
-							+ " namespace '{2}'.", choiceEnumType, elem.ElementName,
-							elem.Namespace));
+						cname = choiceEnumMap.GetEnumName(choiceEnumType.FullName,elem.Namespace.ToString() + ":" +elem.ElementName);
+						if (cname == null)
+							throw new InvalidOperationException (string.Format (
+								CultureInfo.InvariantCulture, "Type {0} is missing"
+								+ " enumeration value '{1}' for element '{1} from"
+								+ " namespace '{2}'.", choiceEnumType, elem.ElementName,
+								elem.Namespace));
+
 					elem.ChoiceValue = Enum.Parse (choiceEnumType, cname, false);
 				}
 					
