@@ -97,6 +97,7 @@ typedef struct
 	MonoMemPool     *mempool;
 	GList *basic_blocks;
 	GPtrArray *relocs;
+	gboolean verbose_level;
 } TransformData;
 
 #define MINT_TYPE_I1 0
@@ -853,7 +854,7 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 
 		if (/*mono_metadata_signature_equal (method->signature, target_method->signature) */ method == target_method && *(td->ip + 5) == CEE_RET) {
 			int offset;
-			if (mono_interp_traceopt)
+			if (td->verbose_level)
 				g_print ("Optimize tail call of %s.%s\n", target_method->klass->name, target_method->name);
 
 			for (i = csignature->param_count - 1 + !!csignature->hasthis; i >= 0; --i)
@@ -869,7 +870,7 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 		} else {
 			/* mheader might not exist if this is a delegate invoc, etc */
 			if (mheader && *mheader->code == CEE_RET && called_inited) {
-				if (mono_interp_traceopt)
+				if (td->verbose_level)
 					g_print ("Inline (empty) call of %s.%s\n", target_method->klass->name, target_method->name);
 				for (i = 0; i < csignature->param_count; i++) {
 					ADD_CODE (td, MINT_POP); /*FIX: vt */
@@ -1243,6 +1244,10 @@ save_seq_points (TransformData *td)
 		for (GSList *l = bb_seq_points; l; l = l->next) {
 			SeqPoint *sp = l->data;
 
+			if (sp->il_offset == METHOD_ENTRY_IL_OFFSET || sp->il_offset == METHOD_EXIT_IL_OFFSET)
+				/* Used to implement method entry/exit events */
+				continue;
+
 			if (last != NULL) {
 				/* Link with the previous seq point in the same bb */
 				next [last->next_offset] = g_slist_append_mempool (td->mempool, next [last->next_offset], GINT_TO_POINTER (sp->next_offset));
@@ -1266,7 +1271,7 @@ save_seq_points (TransformData *td)
 			last_seq_point = sp;
 	}
 
-	if (mono_interp_traceopt) {
+	if (td->verbose_level) {
 		printf ("\nSEQ POINT MAP FOR %s: \n", td->method->name);
 
 		for (i = 0; i < td->seq_points->len; ++i) {
@@ -1296,13 +1301,15 @@ save_seq_points (TransformData *td)
 }
 
 static void
-add_seq_point (TransformData *td, int il_offset, InterpBasicBlock *cbb)
+emit_seq_point (TransformData *td, int il_offset, InterpBasicBlock *cbb, gboolean nonempty_stack)
 {
 	SeqPoint *seqp;
 
 	seqp = mono_mempool_alloc0 (td->mempool, sizeof (SeqPoint));
 	seqp->il_offset = il_offset;
 	seqp->native_offset = (guint8*)td->new_ip - (guint8*)td->new_code;
+	if (nonempty_stack)
+		seqp->flags |= MONO_SEQ_POINT_FLAG_NONEMPTY_STACK;
 
 	ADD_CODE (td, MINT_SDB_SEQ_POINT);
 	g_ptr_array_add (td->seq_points, seqp);
@@ -1337,6 +1344,13 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 	MonoBitSet *seq_point_set_locs = NULL;
 	gboolean sym_seq_points = FALSE;
 	InterpBasicBlock *bb_exit = NULL;
+	static gboolean verbose_method_inited;
+	static char* verbose_method_name;
+
+	if (!verbose_method_inited) {
+		verbose_method_name = getenv ("MONO_VERBOSE_METHOD");
+		verbose_method_inited = TRUE;
+	}
 
 	memset (&td, 0, sizeof(td));
 	td.method = method;
@@ -1361,10 +1375,28 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 	td.gen_sdb_seq_points = debug_options.gen_sdb_seq_points;
 	td.seq_points = g_ptr_array_new ();
 	td.relocs = g_ptr_array_new ();
+	td.verbose_level = mono_interp_traceopt;
 	rtm->data_items = td.data_items;
 	for (i = 0; i < header->code_size; i++) {
 		td.stack_height [i] = -1;
 		td.clause_indexes [i] = -1;
+	}
+
+	if (verbose_method_name) {
+		const char *name = verbose_method_name;
+
+		if ((strchr (name, '.') > name) || strchr (name, ':')) {
+			MonoMethodDesc *desc;
+
+			desc = mono_method_desc_new (name, TRUE);
+			if (mono_method_desc_full_match (desc, method)) {
+				td.verbose_level = 4;
+			}
+			mono_method_desc_free (desc);
+		} else {
+			if (strcmp (method->name, name) == 0)
+				td.verbose_level = 4;
+		}
 	}
 
 	if (td.gen_sdb_seq_points) {
@@ -1437,7 +1469,7 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 	td.ip = header->code;
 	end = td.ip + header->code_size;
 
-	if (mono_interp_traceopt) {
+	if (td.verbose_level) {
 		char *tmp = mono_disasm_code (NULL, method, td.ip, end);
 		char *name = mono_method_full_name (method, TRUE);
 		g_print ("Method %s, original code:\n", name);
@@ -1464,7 +1496,7 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 	if (sym_seq_points) {
 		InterpBasicBlock *cbb = td.offset_to_bb [0];
 		g_assert (cbb);
-		add_seq_point (&td, METHOD_ENTRY_IL_OFFSET, cbb);
+		emit_seq_point (&td, METHOD_ENTRY_IL_OFFSET, cbb, FALSE);
 	}
 
 	while (td.ip < end) {
@@ -1497,7 +1529,7 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 				++td.ip;
 			continue;
 		}
-		if (mono_interp_traceopt > 1) {
+		if (td.verbose_level > 1) {
 			printf("IL_%04lx %s %-10s -> IL_%04lx, sp %ld, %s %-12s vt_sp %u (max %u)\n", 
 				td.ip - td.il_code,
 				td.is_bb_start [td.ip - td.il_code] == 3 ? "<>" :
@@ -1520,7 +1552,7 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 			if (in_offset == 0 || g_slist_length (cbb->preds) > 1)
 				ADD_CODE (&td, MINT_SDB_INTR_LOC);
 
-			add_seq_point (&td, in_offset, cbb);
+			emit_seq_point (&td, in_offset, cbb, FALSE);
 
 			mono_bitset_set_fast (seq_point_set_locs, td.ip - header->code);
 		}
@@ -1708,7 +1740,20 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 		case CEE_CALLVIRT: /* Fall through */
 		case CEE_CALLI:    /* Fall through */
 		case CEE_CALL: {
+			gboolean need_seq_point = FALSE;
+
+			if (sym_seq_points && !mono_bitset_test_fast (seq_point_locs, td.ip + 5 - header->code))
+				need_seq_point = TRUE;
+
 			interp_transform_call (&td, method, NULL, domain, generic_context, is_bb_start, body_start_offset, constrained_class, readonly);
+
+			if (need_seq_point) {
+				InterpBasicBlock *cbb = td.offset_to_bb [td.ip - header->code];
+				g_assert (cbb);
+
+				emit_seq_point (&td, td.ip - header->code, cbb, TRUE);
+			}
+
 			constrained_class = NULL;
 			readonly = FALSE;
 			break;
@@ -1731,7 +1776,7 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 			if (sym_seq_points) {
 				InterpBasicBlock *cbb = td.offset_to_bb [td.ip - header->code];
 				g_assert (cbb);
-				add_seq_point (&td, METHOD_EXIT_IL_OFFSET, bb_exit);
+				emit_seq_point (&td, METHOD_EXIT_IL_OFFSET, bb_exit, FALSE);
 			}
 
 			if (vt_size == 0)
@@ -3765,7 +3810,7 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 		}
 	}
 
-	if (mono_interp_traceopt) {
+	if (td.verbose_level) {
 		const guint16 *p = td.new_code;
 		printf("Runtime method: %s %p, VT stack size: %d\n", mono_method_full_name (method, TRUE), rtm, td.max_vt_sp);
 		printf("Calculated stack size: %d, stated size: %d\n", td.max_stack_height, header->max_stack);

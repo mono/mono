@@ -4682,16 +4682,15 @@ ss_update (SingleStepReq *req, MonoJitInfo *ji, SeqPoint *sp, DebuggerTlsData *t
 		}
 	}
 
-	MonoDebugMethodAsyncInfo* asyncMethod = mono_debug_lookup_method_async_debug_info (method);
-	if (asyncMethod) {
-		for (int i = 0; i < asyncMethod->num_awaits; i++)
-		{
-			if (asyncMethod->yield_offsets[i] == sp->il_offset || asyncMethod->resume_offsets[i] == sp->il_offset) {
-				mono_debug_free_method_async_debug_info (asyncMethod);
+	MonoDebugMethodAsyncInfo* async_method = mono_debug_lookup_method_async_debug_info (method);
+	if (async_method) {
+		for (int i = 0; i < async_method->num_awaits; i++) {
+			if (async_method->yield_offsets[i] == sp->il_offset || async_method->resume_offsets[i] == sp->il_offset) {
+				mono_debug_free_method_async_debug_info (async_method);
 				return FALSE;
 			}
 		}
-		mono_debug_free_method_async_debug_info (asyncMethod);
+		mono_debug_free_method_async_debug_info (async_method);
 	}
 
 	if (req->size != STEP_SIZE_LINE)
