@@ -52,7 +52,7 @@ namespace System.Drawing {
 				if (String.Equals (asm.GetName ().Name, "System.Windows.Forms")) {
 					Type driver_type = asm.GetType ("System.Windows.Forms.XplatUICarbon");
 					if (driver_type != null) {
-						hwnd_delegate = (Delegate) driver_type.GetField ("HwndDelegate", BindingFlags.NonPublic | BindingFlags.Static).GetValue (null);
+						hwnd_delegate = (Delegate) driver_type.GetTypeInfo() .GetField ("HwndDelegate", BindingFlags.NonPublic | BindingFlags.Static).GetValue (null);
 					}
 				}
 			}

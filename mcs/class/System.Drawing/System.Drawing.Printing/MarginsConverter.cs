@@ -103,7 +103,7 @@ namespace System.Drawing.Printing {
 			}
 			if (destinationType == typeof (InstanceDescriptor) && value is Margins) {
 				Margins c = (Margins) value;
-				ConstructorInfo ctor = typeof(Margins).GetConstructor (new Type[] {typeof(int), typeof(int), typeof(int), typeof(int)} );
+				ConstructorInfo ctor = typeof(Margins).GetTypeInfo ().GetConstructor (new Type[] {typeof(int), typeof(int), typeof(int), typeof(int)} );
 				return new InstanceDescriptor (ctor, new object[] {c.Left, c.Right, c.Top, c.Bottom});
 			}
 
