@@ -294,6 +294,30 @@ mono_interp_create_trampoline (MonoDomain *domain, MonoMethod *method, MonoError
 	return mono_interp_get_runtime_method (domain, method, error);
 }
 
+/*
+ * interp_push_lmf:
+ *
+ * Push an LMF frame on the LMF stack
+ * to mark the transition to native code.
+ * This is needed for the native code to
+ * be able to do stack walks.
+ */
+static void
+interp_push_lmf (MonoLMFExt *ext, MonoInvocation *frame)
+{
+	memset (ext, 0, sizeof (MonoLMFExt));
+	ext->interp_exit = TRUE;
+	ext->interp_exit_data = frame;
+
+	mono_push_lmf (ext);
+}
+
+static void
+interp_pop_lmf (MonoLMFExt *ext)
+{
+	mono_pop_lmf (&ext->lmf);
+}
+
 static inline RuntimeMethod*
 get_virtual_method (MonoDomain *domain, RuntimeMethod *runtime_method, MonoObject *obj)
 {
@@ -959,19 +983,11 @@ ves_pinvoke_method (MonoInvocation *frame, MonoMethodSignature *sig, MonoFuncV a
 	context->current_frame = frame;
 	context->managed_code = 0;
 
-	/*
-	 * Push an LMF frame on the LMF stack
-	 * to mark the transition to native code.
-	 */
-	memset (&ext, 0, sizeof (ext));
-	ext.interp_exit = TRUE;
-	ext.interp_exit_data = frame;
-
-	mono_push_lmf (&ext);
+	interp_push_lmf (&ext, frame);
 
 	mono_interp_enter_icall_trampoline (addr, margs);
 
-	mono_pop_lmf (&ext.lmf);
+	interp_pop_lmf (&ext);
 
 	context->managed_code = 1;
 	/* domain can only be changed by native code */
@@ -2107,17 +2123,13 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, uns
 
 		MonoLMFExt ext;
 
-		/* Push an LMF frame so debugger stack walks work */
-		memset (&ext, 0, sizeof (ext));
-		ext.interp_exit = TRUE;
-		ext.interp_exit_data = frame->parent;
-
-		mono_push_lmf (&ext);
+		/* Use the parent frame as the current frame is not complete yet */
+		interp_push_lmf (&ext, frame->parent);
 
 		frame->ex = mono_interp_transform_method (frame->runtime_method, context);
 		context->managed_code = 1;
 
-		mono_pop_lmf (&ext.lmf);
+		interp_pop_lmf (&ext);
 
 		if (frame->ex) {
 			rtm = NULL;
@@ -2171,16 +2183,11 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, uns
 
 			MonoLMFExt ext;
 
-			/* Push an LMF frame so debugger stack walks work */
-			memset (&ext, 0, sizeof (ext));
-			ext.interp_exit = TRUE;
-			ext.interp_exit_data = frame;
-
-			mono_push_lmf (&ext);
+			interp_push_lmf (&ext, frame);
 
 			mono_debugger_agent_user_break ();
 
-			mono_pop_lmf (&ext.lmf);
+			interp_pop_lmf (&ext);
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_LDNULL) 
@@ -2611,15 +2618,7 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, uns
 				}
 			}
 
-			/*
-			 * Push an LMF frame on the LMF stack
-			 * to mark the transition to compiled code.
-			 */
-			memset (&ext, 0, sizeof (ext));
-			ext.interp_exit = TRUE;
-			ext.interp_exit_data = frame;
-
-			mono_push_lmf (&ext);
+			interp_push_lmf (&ext, frame);
 
 			switch (pindex) {
 			case 0: {
@@ -2675,7 +2674,7 @@ ves_exec_method_with_context (MonoInvocation *frame, ThreadContext *context, uns
 				break;
 			}
 
-			mono_pop_lmf (&ext.lmf);
+			interp_pop_lmf (&ext);
 
 			if (context->has_resume_state) {
 				/*
@@ -4577,17 +4576,14 @@ array_constructed:
 				 */
 				frame->ip = ip + 1;
 
-				/* Push an lmf frame to enable stack walks */
-				memset (&ext, 0, sizeof (ext));
-				ext.interp_exit = TRUE;
-				ext.interp_exit_data = frame;
-
-				mono_push_lmf (&ext);
-
-				/* Use the same trampoline as the JIT */
+				interp_push_lmf (&ext, frame);
+				/*
+				 * Use the same trampoline as the JIT. This ensures that
+				 * the debugger has the context for the last interpreter
+				 * native frame.
+				 */
 				ss_tramp ();
-
-				mono_pop_lmf (&ext.lmf);
+				interp_pop_lmf (&ext);
 			}
 			++ip;
 			MINT_IN_BREAK;
@@ -4607,15 +4603,10 @@ array_constructed:
 
 			frame->ip = ip;
 
-			/* Push an lmf frame to enable stack walks */
-			memset (&ext, 0, sizeof (ext));
-			ext.interp_exit = TRUE;
-			ext.interp_exit_data = frame;
-
-			mono_push_lmf (&ext);
+			interp_push_lmf (&ext, frame);
 			/* Use the same trampoline as the JIT */
 			bp_tramp ();
-			mono_pop_lmf (&ext.lmf);
+			interp_pop_lmf (&ext);
 
 			++ip;
 			MINT_IN_BREAK;
