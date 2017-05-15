@@ -557,7 +557,7 @@ typedef struct _UNWIND_INFO {
  *	OPTIONAL ULONG ExceptionData[]; */
 } UNWIND_INFO, *PUNWIND_INFO;
 
-inline guint
+static inline guint
 mono_arch_unwindinfo_get_size (guchar code_count)
 {
 	// Returned size will be used as the allocated size for unwind data trailing the memory used by compiled method.
@@ -597,7 +597,7 @@ mono_arch_code_chunk_destroy (void *chunk);
 #define MONO_TRAMPOLINE_UNWINDINFO_SIZE(max_code_count) (mono_arch_unwindinfo_get_size (max_code_count))
 #define MONO_MAX_TRAMPOLINE_UNWINDINFO_SIZE (MONO_TRAMPOLINE_UNWINDINFO_SIZE(3))
 
-inline gboolean
+static inline gboolean
 mono_arch_unwindinfo_validate_size (GSList *unwind_ops, guint max_size)
 {
 	guint current_size = mono_arch_unwindinfo_get_size (mono_arch_unwindinfo_get_code_count (unwind_ops));
@@ -609,7 +609,7 @@ mono_arch_unwindinfo_validate_size (GSList *unwind_ops, guint max_size)
 #define MONO_TRAMPOLINE_UNWINDINFO_SIZE(max_code_count) 0
 #define MONO_MAX_TRAMPOLINE_UNWINDINFO_SIZE 0
 
-inline gboolean
+static inline gboolean
 mono_arch_unwindinfo_validate_size (GSList *unwind_ops, guint max_size)
 {
 	return TRUE;
