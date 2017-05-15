@@ -152,7 +152,6 @@ namespace System.ServiceModel.Channels.Http
 					return element.AuthenticationScheme;
 				};
 				l.Realm = element.Realm;
-				l.UnsafeConnectionNtlmAuthentication = element.UnsafeConnectionNtlmAuthentication;
 			}
 
 			// Start here. It is shared between channel listeners
