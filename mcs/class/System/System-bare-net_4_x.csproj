@@ -9,7 +9,10 @@
     <ProjectGuid>{483DB7F6-9145-4AE2-B9B2-2B5EE6FDEFB4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,436</NoWarn>
-    <OutputPath>./../../class/lib/net_4_x/bare</OutputPath>
+    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Windows_NT'">win32</HostPlatform>
+    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">darwin</HostPlatform>
+    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix'">linux</HostPlatform>
+    <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)/bare</OutputPath>
     <IntermediateOutputPath>obj-bare</IntermediateOutputPath>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
@@ -57,6 +60,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\LargeArrayBuilder.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\CSharpHelpers.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\TempFileCollection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpStatusDescription.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Logging\NetEventSource.Common.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\SecurityProtocol.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\UriScheme.cs" />
@@ -1205,7 +1209,6 @@
     <Compile Include="System.Net\HttpListenerPrefixCollection.cs" />
     <Compile Include="System.Net\HttpListenerRequest.cs" />
     <Compile Include="System.Net\HttpListenerResponse.cs" />
-    <Compile Include="System.Net\HttpListenerResponseHelper.cs" />
     <Compile Include="System.Net\HttpListenerTimeoutManager.cs" />
     <Compile Include="System.Net\HttpRequestCreator.cs" />
     <Compile Include="System.Net\HttpStreamAsyncResult.cs" />
