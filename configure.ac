@@ -3228,6 +3228,11 @@ case "$host" in
 		CPPFLAGS="$CPPFLAGS -D__ARM_EABI__"
 		BTLS_SUPPORTED=yes
 		BTLS_PLATFORM=arm
+		case "$target" in
+		arm*-linux*-gnueabi)
+			BTLS_PLATFORM=armsoft
+			;;
+		esac
 		;;
 	arm*-netbsd*-eabi*)
 		TARGET=ARM;
@@ -4116,6 +4121,10 @@ if test "x$enable_btls" = "xyes"; then
 		;;
 	arm)
 		btls_arch=arm
+		;;
+	armsoft)
+		btls_arch=arm
+		btls_cflags="-DOPENSSL_NO_ASM=1"
 		;;
 	aarch64)
 		btls_arch=aarch64
