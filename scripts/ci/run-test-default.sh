@@ -55,7 +55,6 @@ ${TESTCMD} --label=System.Configuration --timeout=5m make -w -C mcs/class/System
 ${TESTCMD} --label=System.Transactions --timeout=5m make -w -C mcs/class/System.Transactions run-test
 ${TESTCMD} --label=System.Web.Extensions --timeout=5m make -w -C mcs/class/System.Web.Extensions run-test
 ${TESTCMD} --label=System.Core --timeout=15m make -w -C mcs/class/System.Core run-test
-if [[ ${label} == w* ]]; then ${TESTCMD} --label=symbolicate --skip; else ${TESTCMD} --label=symbolicate --timeout=60m make -w -C mcs/tools/mono-symbolicate check; fi
 ${TESTCMD} --label=System.Xml.Linq --timeout=5m make -w -C mcs/class/System.Xml.Linq run-test
 ${TESTCMD} --label=System.Data.DSE --timeout=5m make -w -C mcs/class/System.Data.DataSetExtensions run-test
 ${TESTCMD} --label=System.Web.Abstractions --timeout=5m make -w -C mcs/class/System.Web.Abstractions run-test
@@ -93,6 +92,9 @@ ${TESTCMD} --label=Microsoft.Build.Framework-14 --timeout=60m make -w -C mcs/cla
 ${TESTCMD} --label=Microsoft.Build.Tasks-14 --timeout=60m make -w -C mcs/class/Microsoft.Build.Tasks run-test PROFILE=xbuild_14
 ${TESTCMD} --label=Microsoft.Build.Utilities-14 --timeout=60m make -w -C mcs/class/Microsoft.Build.Utilities run-test PROFILE=xbuild_14
 ${TESTCMD} --label=System.IO.Compression --timeout=5m make -w -C mcs/class/System.IO.Compression run-test
+if [[ ${label} == w* ]]; then ${TESTCMD} --label=symbolicate --skip; else ${TESTCMD} --label=symbolicate --timeout=60m make -w -C mcs/tools/mono-symbolicate check; fi
+${TESTCMD} --label=monolinker --timeout=10m make -w -C mcs/tools/linker check
+
 if [[ ${label} == osx-* ]]
 then ${TESTCMD} --label=ms-test-suite --timeout=30m make -w -C acceptance-tests check-ms-test-suite
 else ${TESTCMD} --label=ms-test-suite --skip;
