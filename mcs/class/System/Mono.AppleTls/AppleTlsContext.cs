@@ -33,7 +33,6 @@ using Mono.Security.Interface;
 
 using Mono.Net;
 using Mono.Net.Security;
-using Mono.Util;
 
 using ObjCRuntimeInternal;
 
@@ -682,7 +681,7 @@ namespace Mono.AppleTls
 		[DllImport (SecurityLibrary)]
 		extern static /* OSStatus */ SslStatus SSLSetIOFuncs (/* SSLContextRef */ IntPtr context, /* SSLReadFunc */ SslReadFunc readFunc, /* SSLWriteFunc */ SslWriteFunc writeFunc);
 
-		[MonoPInvokeCallback (typeof (SslReadFunc))]
+		[Mono.Util.MonoPInvokeCallback (typeof (SslReadFunc))]
 		static SslStatus NativeReadCallback (IntPtr ptr, IntPtr data, ref IntPtr dataLength)
 		{
 			var handle = GCHandle.FromIntPtr (ptr);
@@ -702,7 +701,7 @@ namespace Mono.AppleTls
 			}
 		}
 
-		[MonoPInvokeCallback (typeof (SslWriteFunc))]
+		[Mono.Util.MonoPInvokeCallback (typeof (SslWriteFunc))]
 		static SslStatus NativeWriteCallback (IntPtr ptr, IntPtr data, ref IntPtr dataLength)
 		{
 			var handle = GCHandle.FromIntPtr (ptr);
