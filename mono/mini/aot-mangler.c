@@ -30,15 +30,26 @@
  * make our emitted replacements unique, unable to clash with user-provided names. In our case
  * this is done by escaping the separator character we insert, the underscore.
  *
+ * Mangler Grammar: (pseudo-BNF using parens for optional data, asterisk for "0 or more")
+ * 	MANGLED_NAME: mono_aot METHOD_DEF
+ * 	METHOD_DEF: "[" "method" "assembly_name" assembly_name METHOD_ATTRS
+ * 	METHOD_ATTRS: "inflated" CONTEXT_DEF "declaring" METHOD_DEF "]" | "gtd" CONTEXT_DEF KLASS_DEF method_name SIG_DEF "]" | KLASS_DEF method_name SIG_DEF "]"
+ * 	CONTEXT_DEF: "[" "gens" ("class_inst" class_inst) ("method_inst" method_inst) "]"
+ * 	SIG_DEF: "[" "sig" TYPE_DEF ("hasthis") (TYPE_DEF)* "]"
+ * 	KLASS_DEF: "[" "klass" "namespace:" namespace "name:" name ""]""
+ * 	TYPE_DEF "[" "type" ("byref") type_str "]"
+ * 	WRAPPER_DEF: "[" "wrapper" wrapper_type (wrapper_attribute)* "]"
+ *
+ * Wrapper attributes vary between all of the above DEFs, and added strings which are specific
+ * to the wrapper type.
+ *
  * This makes for long, difficult-to-read strings with lots of structural nesting.
  * 
  * This motivated the creation of a demangler that prints verbose information about the
  * mangled string in question.
  *
- *
  * example mangled string:
  *     mono_underscore_aot_space__lbrack__space_method_space_asm:_space_mscorlib_space__lbrack__space_klass_space_namespace:_space_System_space_name:_space_byte_space__rbrack__space_System_dot_IConvertible_dot_ToUInt32_space__lbrack__space_sig_space__lbrack__space_type_space_u4_space__rbrack__space_hasthis_space__lbrack__space_type_space_other_space_System_dot_IFormatProvider_space__rbrack__space__rbrack__space__rbrack__space_
- * 
  *
  * example demangler output:
  *    {
@@ -1143,13 +1154,16 @@ fail:
  *  Either fails, prints an error, and returns NULL, or 
  *  returns a json-ish summary of the mangled type
  *
+ * \param verbosity The degree of verbosity to dump. 1 = s-expression, 2 = json
  * \param name The mangled name of the method to demangle
  *
  */
 static char *
-demangle_method (const char *name)
+demangle_method (const char *name, int verbosity)
 {
 	gchar *str = desanitize_mangled_string (name);
+	if (verbosity < 2)
+		return str;
 
 	gchar **tokens = g_strsplit (str, " ", strlen (name));
 	int len;
@@ -1185,12 +1199,13 @@ demangle_method (const char *name)
  *
  *  Print a json-ish summary of the mangled type
  *
+ * \param verbosity The degree of verbosity to dump. 1 = s-expression, 2 = json
  * \param name The mangled name of the method to dump and print
  */
 void
-dump_mangled_method (const char *name)
+dump_mangled_method (const char *name, int verbosity)
 {
-	char *tmp = demangle_method (name);
+	char *tmp = demangle_method (name, verbosity);
 	if (tmp) {
 		fprintf (stderr, "\tDemangled:\n%s\n\n", tmp);
 		g_free (tmp);
@@ -1216,7 +1231,8 @@ mono_aot_get_mangled_method_name (MonoMethod *method)
 		char *cleaned = sanitize_mangled_string (out);
 
 		// To test demangling
-		/*dump_mangled_method (cleaned);*/
+		// dump_mangled_method (cleaned, 1); // s-expression
+		// dump_mangled_method (cleaned, 2); // json 
 
 		g_free (out);
 		return cleaned;
