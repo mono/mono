@@ -30,10 +30,6 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
-#if MONOTOUCH
-using MonoTouch;
-#endif
-
 namespace Mono.Btls
 {
 	delegate int MonoBtlsVerifyCallback (MonoBtlsX509StoreCtx ctx);
@@ -250,9 +246,7 @@ namespace Mono.Btls
 
 		delegate int PrintErrorsCallbackFunc (IntPtr str, IntPtr len, IntPtr ctx);
 
-#if MONOTOUCH
-		[MonoPInvokeCallback (typeof (PrintErrorsCallbackFunc))]
-#endif
+		[Mono.Util.MonoPInvokeCallback (typeof (PrintErrorsCallbackFunc))]
 		static int PrintErrorsCallback (IntPtr str, IntPtr len, IntPtr ctx)
 		{
 			var sb = (StringBuilder)GCHandle.FromIntPtr (ctx).Target;
