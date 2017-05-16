@@ -16,6 +16,7 @@ libgc_static_libs=$(monodir)/libgc/libmonogc-static.la
 boehm_libs=	\
 	$(monodir)/mono/metadata/libmonoruntime.la	\
 	$(monodir)/mono/utils/libmonoutils.la \
+	$(if $(HOST_WIN32),,$(monodir)/mono/pal/System.Native.a) \
 	$(GLIB_LIBS) $(LIBICONV) \
 	$(libgc_libs)
 
@@ -23,11 +24,13 @@ sgen_libs = \
 	$(monodir)/mono/metadata/libmonoruntimesgen.la	\
 	$(monodir)/mono/sgen/libmonosgen.la	\
 	$(monodir)/mono/utils/libmonoutils.la \
+	$(if $(HOST_WIN32),,$(monodir)/mono/pal/System.Native.a) \
 	$(GLIB_LIBS) $(LIBICONV)
 
 boehm_static_libs=	\
 	$(monodir)/mono/metadata/libmonoruntime-static.la	\
 	$(monodir)/mono/utils/libmonoutils.la \
+	$(if $(HOST_WIN32),,$(monodir)/mono/pal/System.Native.a) \
 	$(GLIB_LIBS) $(LIBICONV) \
 	$(libgc_static_libs)
 
@@ -35,6 +38,7 @@ sgen_static_libs = \
 	$(monodir)/mono/metadata/libmonoruntimesgen-static.la	\
 	$(monodir)/mono/sgen/libmonosgen-static.la	\
 	$(monodir)/mono/utils/libmonoutils.la \
+	$(if $(HOST_WIN32),,$(monodir)/mono/pal/System.Native.a) \
 	$(GLIB_LIBS) $(LIBICONV)
 
 if FULL_AOT_TESTS
