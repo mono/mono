@@ -3226,6 +3226,8 @@ case "$host" in
 		ACCESS_UNALIGNED="no"
 		AOT_SUPPORTED="yes"
 		CPPFLAGS="$CPPFLAGS -D__ARM_EABI__"
+		BTLS_SUPPORTED=yes
+		BTLS_PLATFORM=arm
 		;;
 	arm*-netbsd*-eabi*)
 		TARGET=ARM;
@@ -3246,6 +3248,8 @@ case "$host" in
 		arch_target=arm64
 		boehm_supported=false
 		AOT_SUPPORTED="yes"
+		BTLS_SUPPORTED=yes
+		BTLS_PLATFORM=aarch64
 		;;
 	s390x-*-linux*)
 		TARGET=S390X;
@@ -4109,6 +4113,12 @@ if test "x$enable_btls" = "xyes"; then
 		;;
 	x86_64)
 		btls_arch=x86_64
+		;;
+	arm)
+		btls_arch=arm
+		;;
+	aarch64)
+		btls_arch=aarch64
 		;;
 	android-armv5)
 		BTLS_CMAKE_ARGS="-DANDROID_ABI=\"armeabi\" -DANDROID_NATIVE_API_LEVEL=12"
