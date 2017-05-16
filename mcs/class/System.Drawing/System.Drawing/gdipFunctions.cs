@@ -1009,7 +1009,7 @@ namespace System.Drawing
 		[DllImport(GdiPlus)]
 		internal static extern Status GdipCloneImage(IntPtr image, out IntPtr imageclone);
 
-		[DllImport(GdiPlus, CharSet=GDIPlus.CharSet.Unicode)]
+		[DllImport(GdiPlus, CharSet=CharSet.Unicode)]
 		internal static extern Status GdipLoadImageFromFileICM ( [MarshalAs(UnmanagedType.LPWStr)] string filename, out IntPtr image );
 
 		[DllImport(GdiPlus)]
@@ -1451,7 +1451,7 @@ namespace System.Drawing
 		internal static extern Status GdipCreateFont (IntPtr fontFamily, float emSize, FontStyle style, GraphicsUnit unit, out IntPtr font);
 		[DllImport(GdiPlus)]
 		internal static extern Status GdipDeleteFont (IntPtr font);
-		[DllImport(GdiPlus, CharSet=CharSet.Unicode)]
+		[DllImport(GdiPlus, CharSet=CharSet.Auto)]
 		internal static extern Status GdipGetLogFont(IntPtr font, IntPtr graphics, [MarshalAs(UnmanagedType.AsAny), Out] object logfontA);
 
 		[DllImport(GdiPlus)]
