@@ -207,13 +207,76 @@ static void debug_enter (MonoInvocation *frame, int *tracing)
 /* Set the current execution state to the resume state in context */
 #define SET_RESUME_STATE(context) do { \
 		ip = (context)->handler_ip;						\
+		if (frame->ex) { \
 		sp->data.p = frame->ex;											\
 		++sp;															\
+		} \
 		frame->ex = NULL;												\
 		(context)->has_resume_state = 0;								\
 		(context)->handler_frame = NULL;								\
 		goto main_loop;													\
 	} while (0)
+
+static void
+set_context (ThreadContext *context)
+{
+	MonoJitTlsData *jit_tls;
+
+	mono_native_tls_set_value (thread_context_id, context);
+	jit_tls = mono_tls_get_jit_tls ();
+	g_assert (jit_tls);
+	if (jit_tls)
+		jit_tls->interp_context = context;
+}
+
+static void
+interp_ex_handler (MonoException *ex)
+{
+	MonoError error;
+	ThreadContext *context = mono_native_tls_get_value (thread_context_id);
+	char *stack_trace;
+	if (context == NULL)
+		return;
+	stack_trace = dump_frame (context->current_frame);
+	ex->stack_trace = mono_string_new_checked (mono_domain_get(), stack_trace, &error);
+	mono_error_cleanup (&error); /* FIXME: don't swallow the error */
+	g_free (stack_trace);
+	if (context->current_env == NULL || strcmp(ex->object.vtable->klass->name, "ExecutionEngineException") == 0) {
+		char *strace = mono_string_to_utf8_checked (ex->stack_trace, &error);
+		mono_error_cleanup (&error); /* FIXME: don't swallow the error */
+		fprintf(stderr, "Nothing can catch this exception: ");
+		fprintf(stderr, "%s", ex->object.vtable->klass->name);
+		if (ex->message != NULL) {
+			char *m = mono_string_to_utf8_checked (ex->message, &error);
+			mono_error_cleanup (&error); /* FIXME: don't swallow the error */
+			fprintf(stderr, ": %s", m);
+			g_free(m);
+		}
+		fprintf(stderr, "\n%s\n", strace);
+		g_free (strace);
+		if (ex->inner_ex != NULL) {
+			ex = (MonoException *)ex->inner_ex;
+			fprintf(stderr, "Inner exception: %s", ex->object.vtable->klass->name);
+			if (ex->message != NULL) {
+				char *m = mono_string_to_utf8_checked (ex->message, &error);
+				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
+				fprintf(stderr, ": %s", m);
+				g_free(m);
+			}
+			strace = mono_string_to_utf8_checked (ex->stack_trace, &error);
+			mono_error_cleanup (&error); /* FIXME: don't swallow the error */
+			fprintf(stderr, "\n");
+			fprintf(stderr, "%s\n", strace);
+			g_free (strace);
+		}
+		/* wait for other threads to also collapse */
+		// Sleep(1000); // TODO: proper sleep
+		exit(1);
+	}
+	context->env_frame->ex = ex;
+	context->search_for_handler = 1;
+	longjmp (*context->current_env, 1);
+}
 
 static void
 ves_real_abort (int line, MonoMethod *mh,
@@ -1355,8 +1418,8 @@ mono_interp_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoOb
 			context->domain = mono_domain_get ();
 			context->current_frame = old_frame;
 			context->managed_code = 0;
-		} else 
-			mono_native_tls_set_value (thread_context_id, NULL);
+		} else
+			set_context (NULL);
 		if (exc != NULL)
 			*exc = (MonoObject *)frame.ex;
 		return retval;
@@ -1368,7 +1431,7 @@ mono_interp_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoOb
 		context_struct.base_frame = &frame;
 		context_struct.env_frame = &frame;
 		context_struct.current_env = &env;
-		mono_native_tls_set_value (thread_context_id, context);
+		set_context (context);
 	}
 	else
 		old_frame = context->current_frame;
@@ -1491,7 +1554,7 @@ handle_enum:
 	ves_exec_method_with_context (&frame, context, NULL, NULL, -1);
 	context->managed_code = 0;
 	if (context == &context_struct)
-		mono_native_tls_set_value (thread_context_id, NULL);
+		set_context (NULL);
 	else
 		context->current_frame = old_frame;
 	if (frame.ex != NULL) {
@@ -1551,10 +1614,10 @@ interp_entry (InterpEntryData *data)
 		memset (context, 0, sizeof (ThreadContext));
 		context_struct.base_frame = &frame;
 		context_struct.env_frame = &frame;
-		mono_native_tls_set_value (thread_context_id, context);
-	}
-	else
+		set_context (context);
+	} else {
 		old_frame = context->current_frame;
+	}
 	context->domain = mono_domain_get ();
 
 	args = alloca (sizeof (stackval) * (sig->param_count + (sig->hasthis ? 1 : 0)));
@@ -1647,7 +1710,7 @@ interp_entry (InterpEntryData *data)
 	ves_exec_method_with_context (&frame, context, NULL, NULL, -1);
 	context->managed_code = 0;
 	if (context == &context_struct)
-		mono_native_tls_set_value (thread_context_id, NULL);
+		set_context (NULL);
 	else
 		context->current_frame = old_frame;
 
@@ -4584,6 +4647,13 @@ array_constructed:
 				 */
 				ss_tramp ();
 				interp_pop_lmf (&ext);
+
+				if (context->has_resume_state) {
+					if (frame == context->handler_frame)
+						SET_RESUME_STATE (context);
+					else
+						goto exit_frame;
+				}
 			}
 			++ip;
 			MINT_IN_BREAK;
@@ -4607,6 +4677,13 @@ array_constructed:
 			/* Use the same trampoline as the JIT */
 			bp_tramp ();
 			interp_pop_lmf (&ext);
+
+			if (context->has_resume_state) {
+				if (frame == context->handler_frame)
+					SET_RESUME_STATE (context);
+				else
+					goto exit_frame;
+			}
 
 			++ip;
 			MINT_IN_BREAK;
@@ -5156,7 +5233,7 @@ ves_exec_method (MonoInvocation *frame)
 		context_struct.current_env = &env;
 		context_struct.search_for_handler = 0;
 		context_struct.managed_code = 0;
-		mono_native_tls_set_value (thread_context_id, context);
+		set_context (context);
 	}
 	frame->ip = NULL;
 	frame->parent = context->current_frame;
@@ -5174,7 +5251,7 @@ ves_exec_method (MonoInvocation *frame)
 			mono_unhandled_exception ((MonoObject*)frame->ex);
 	}
 	if (context->base_frame == frame)
-		mono_native_tls_set_value (thread_context_id, NULL);
+		set_context (NULL);
 	else
 		context->current_frame = frame->parent;
 }
@@ -5197,7 +5274,7 @@ void
 mono_interp_init ()
 {
 	mono_native_tls_alloc (&thread_context_id, NULL);
-	mono_native_tls_set_value (thread_context_id, NULL);
+	set_context (NULL);
 
 	mono_interp_transform_init ();
 }
@@ -5373,12 +5450,16 @@ mono_interp_regression_list (int verbose, int count, char *images [])
  *   Set the state the interpeter will continue to execute from after execution returns to the interpreter.
  */
 void
-mono_interp_set_resume_state (MonoException *ex, StackFrameInfo *frame, gpointer handler_ip)
+mono_interp_set_resume_state (MonoJitTlsData *jit_tls, MonoException *ex, MonoInterpFrameHandle interp_frame, gpointer handler_ip)
 {
-	ThreadContext *context = mono_native_tls_get_value (thread_context_id);
+	ThreadContext *context;
+
+	g_assert (jit_tls);
+	context = jit_tls->interp_context;
+	g_assert (context);
 
 	context->has_resume_state = TRUE;
-	context->handler_frame = frame->interp_frame;
+	context->handler_frame = interp_frame;
 	/* This is on the stack, so it doesn't need a wbarrier */
 	context->handler_frame->ex = ex;
 	context->handler_ip = handler_ip;

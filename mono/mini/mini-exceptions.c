@@ -2134,7 +2134,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 						 * like the call which transitioned to JITted code has succeeded, but the
 						 * return value register etc. is not set, so we have to be careful.
 						 */
-						mono_interp_set_resume_state (mono_ex, &frame, ei->handler_start);
+						mono_interp_set_resume_state (jit_tls, mono_ex, frame.interp_frame, ei->handler_start);
 						/* Undo the IP adjustment done by mono_arch_unwind_frame () */
 #if defined(TARGET_AMD64)
 						ctx->gregs [AMD64_RIP] ++;
@@ -3414,7 +3414,7 @@ mono_debug_personality (void)
 #ifndef ENABLE_INTERPRETER
 /* Stubs of interpreter functions */
 void
-mono_interp_set_resume_state (MonoException *ex, StackFrameInfo *frame, gpointer handler_ip)
+mono_interp_set_resume_state (MonoJitTlsData *jit_tls, MonoException *ex, MonoInterpFrameHandle interp_frame, gpointer handler_ip)
 {
 	g_assert_not_reached ();
 }

@@ -1217,11 +1217,12 @@ typedef struct {
 	 */
 	gpointer abort_exc_stack_threshold;
 
-
 	/*
 	 * List of methods being JIT'd in the current thread.
 	 */
 	int active_jit_methods;
+
+	gpointer interp_context;
 } MonoJitTlsData;
 
 /*

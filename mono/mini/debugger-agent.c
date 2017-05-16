@@ -9475,7 +9475,13 @@ thread_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		// FIXME: Check that the ip change is safe
 
 		DEBUG_PRINTF (1, "[dbg] Setting IP to %s:0x%0x(0x%0x)\n", tls->frames [0]->actual_method->name, (int)sp.il_offset, (int)sp.native_offset);
-		MONO_CONTEXT_SET_IP (&tls->restore_state.ctx, (guint8*)tls->frames [0]->ji->code_start + sp.native_offset);
+
+		if (tls->frames [0]->ji->is_interp) {
+			MonoJitTlsData *jit_data = ((MonoThreadInfo*)thread->thread_info)->jit_data;
+			mono_interp_set_resume_state (jit_data, NULL, tls->frames [0]->interp_frame, (guint8*)tls->frames [0]->ji->code_start + sp.native_offset);
+		} else {
+			MONO_CONTEXT_SET_IP (&tls->restore_state.ctx, (guint8*)tls->frames [0]->ji->code_start + sp.native_offset);
+		}
 		break;
 	}
 	default:
