@@ -93,16 +93,10 @@ install-pcl-targets:
 	done
 
 install-web-targets:
-	$(MKINSTALLDIRS) $(DESTDIR)$(VS_TARGETS_DIR)/v9.0/WebApplications
-	$(INSTALL_DATA) targets/Microsoft.WebApplication.targets $(DESTDIR)$(VS_TARGETS_DIR)/v9.0/WebApplications
-	$(MKINSTALLDIRS) $(DESTDIR)$(VS_TARGETS_DIR)/v10.0/WebApplications
-	$(INSTALL_DATA) targets/Microsoft.WebApplication.targets $(DESTDIR)$(VS_TARGETS_DIR)/v10.0/WebApplications
-	$(MKINSTALLDIRS) $(DESTDIR)$(VS_TARGETS_DIR)/v11.0/WebApplications
-	$(INSTALL_DATA) targets/Microsoft.WebApplication.targets $(DESTDIR)$(VS_TARGETS_DIR)/v11.0/WebApplications
-	$(MKINSTALLDIRS) $(DESTDIR)$(VS_TARGETS_DIR)/v12.0/WebApplications
-	$(INSTALL_DATA) targets/Microsoft.WebApplication.targets $(DESTDIR)$(VS_TARGETS_DIR)/v12.0/WebApplications
-	$(MKINSTALLDIRS) $(DESTDIR)$(VS_TARGETS_DIR)/v14.0/WebApplications
-	$(INSTALL_DATA) targets/Microsoft.WebApplication.targets $(DESTDIR)$(VS_TARGETS_DIR)/v14.0/WebApplications
+	for VERSION in v9.0 v10.0 v11.0 v12.0 v14.0 v15.0; do \
+		$(MKINSTALLDIRS) $(DESTDIR)$(VS_TARGETS_DIR)/$$VERSION/WebApplications; \
+		$(INSTALL_DATA) targets/Microsoft.WebApplication.targets $(DESTDIR)$(VS_TARGETS_DIR)/$$VERSION/WebApplications; \
+	done
 
 NUGET_BUILDTASKS_REPO_DIR=$(topdir)/../external/nuget-buildtasks
 
