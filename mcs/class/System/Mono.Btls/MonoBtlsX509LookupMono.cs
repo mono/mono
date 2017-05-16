@@ -93,9 +93,7 @@ namespace Mono.Btls
 
 		protected abstract MonoBtlsX509 OnGetBySubject (MonoBtlsX509Name name);
 
-#if MONOTOUCH
-		[MonoTouch.MonoPInvokeCallback (typeof (BySubjectFunc))]
-#endif
+		[Mono.Util.MonoPInvokeCallback (typeof (BySubjectFunc))]
 		static int OnGetBySubject (IntPtr instance, IntPtr name_ptr, out IntPtr x509_ptr)
 		{
 			try {

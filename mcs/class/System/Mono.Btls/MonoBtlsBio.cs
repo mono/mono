@@ -30,10 +30,6 @@ using System.Text;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-#if MONOTOUCH
-using MonoTouch;
-#endif
-
 namespace Mono.Btls
 {
 	class MonoBtlsBio : MonoBtlsObject
@@ -308,9 +304,7 @@ namespace Mono.Btls
 			return ret;
 		}
 
-#if MONOTOUCH
-		[MonoPInvokeCallback (typeof (BioReadFunc))]
-#endif
+		[Mono.Util.MonoPInvokeCallback (typeof (BioReadFunc))]
 		static int OnRead (IntPtr instance, IntPtr data, int dataLength, out int wantMore)
 		{
 			var c = (MonoBtlsBioMono)GCHandle.FromIntPtr (instance).Target;
@@ -331,9 +325,7 @@ namespace Mono.Btls
 			return ok ? dataLength : -1;
 		}
 
-#if MONOTOUCH
-		[MonoPInvokeCallback (typeof (BioWriteFunc))]
-#endif
+		[Mono.Util.MonoPInvokeCallback (typeof (BioWriteFunc))]
 		static int OnWrite (IntPtr instance, IntPtr data, int dataLength)
 		{
 			var c = (MonoBtlsBioMono)GCHandle.FromIntPtr (instance).Target;
@@ -345,9 +337,7 @@ namespace Mono.Btls
 			}
 		}
 
-#if MONOTOUCH
-		[MonoPInvokeCallback (typeof (BioControlFunc))]
-#endif
+		[Mono.Util.MonoPInvokeCallback (typeof (BioControlFunc))]
 		static long Control (IntPtr instance, ControlCommand command, long arg)
 		{
 			var c = (MonoBtlsBioMono)GCHandle.FromIntPtr (instance).Target;
