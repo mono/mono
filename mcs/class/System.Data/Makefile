@@ -24,19 +24,13 @@ LIB_REFS += $(MONO_DATA_TDS) System.Transactions
 LIB_MCS_FLAGS += -d:NO_CODEDOM -d:NO_OLEDB -d:NO_ODBC -d:NO_CONFIGURATION
 else
 LIB_REFS += System.EnterpriseServices $(MONO_DATA_TDS) System.Configuration System.Transactions
-BUILT_SOURCES = \
-	gen_OdbcConnection.cs \
-	gen_OleDbConnection.cs \
-	gen_OdbcParameter.cs \
-	gen_OleDbParameter.cs \
-	gen_OdbcParameterCollection.cs \
-	gen_OleDbParameterCollection.cs
 endif
 
 TXT_RESOURCE_STRINGS = ../referencesource/System.Data/system.data.txt
-
 RESX_RESOURCE_STRING = \
-	../../../external/corefx/src/System.Data.Common/src/Resources/Strings.resx
+	../../../external/corefx/src/System.Data.Common/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Data.SqlClient/src/Resources/Strings.resx	\
+	../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/Resources/Strings.resx
 
 TEST_LIB_REFS = System.Core Mono.Data.Sqlite
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:618,169,612,219,168
