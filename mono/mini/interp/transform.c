@@ -593,11 +593,13 @@ load_local(TransformData *td, int n)
 		WRITE32(td, &size);
 	} else {
 		g_assert (mt < MINT_TYPE_VT);
-		if (mt == MINT_TYPE_I4 && !td->is_bb_start [td->in_start - td->il_code] && td->last_new_ip != NULL &&
+		if (!td->gen_sdb_seq_points &&
+			mt == MINT_TYPE_I4 && !td->is_bb_start [td->in_start - td->il_code] && td->last_new_ip != NULL &&
 			td->last_new_ip [0] == MINT_STLOC_I4 && td->last_new_ip [1] == offset) {
 			td->last_new_ip [0] = MINT_STLOC_NP_I4;
-		} else if (mt == MINT_TYPE_O && !td->is_bb_start [td->in_start - td->il_code] && td->last_new_ip != NULL &&
-			td->last_new_ip [0] == MINT_STLOC_O && td->last_new_ip [1] == offset) {
+		} else if (!td->gen_sdb_seq_points &&
+				   mt == MINT_TYPE_O && !td->is_bb_start [td->in_start - td->il_code] && td->last_new_ip != NULL &&
+				   td->last_new_ip [0] == MINT_STLOC_O && td->last_new_ip [1] == offset) {
 			td->last_new_ip [0] = MINT_STLOC_NP_O;
 		} else {
 			ADD_CODE(td, MINT_LDLOC_I1 + (mt - MINT_TYPE_I1));
