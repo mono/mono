@@ -2650,12 +2650,22 @@ thread_interrupt (DebuggerTlsData *tls, MonoThreadInfo *info, MonoJitInfo *ji)
 			 * suspended when it returns to managed code, so the parent's ctx should
 			 * remain valid.
 			 */
+			MonoThreadUnwindState *state = mono_thread_info_get_suspend_state (info);
+
 			data.last_frame_set = FALSE;
-			mono_get_eh_callbacks ()->mono_walk_stack_with_state (get_last_frame, mono_thread_info_get_suspend_state (info), MONO_UNWIND_SIGNAL_SAFE, &data);
+			mono_get_eh_callbacks ()->mono_walk_stack_with_state (get_last_frame, state, MONO_UNWIND_SIGNAL_SAFE, &data);
 			if (data.last_frame_set) {
 				gpointer jit_tls = ((MonoThreadInfo*)tls->thread->thread_info)->jit_data;
 
 				memcpy (&tls->async_last_frame, &data.last_frame, sizeof (StackFrameInfo));
+
+				if (data.last_frame.type == FRAME_TYPE_INTERP_TO_MANAGED) {
+					/*
+					 * Store the current lmf instead of the parent one, since that
+					 * contains the interp exit data.
+					 */
+					data.lmf = state->unwind_data [MONO_UNWIND_DATA_LMF];
+				}
 
 				copy_unwind_state_from_frame_data (&tls->async_state, &data, jit_tls);
 				copy_unwind_state_from_frame_data (&tls->context, &data, jit_tls);
