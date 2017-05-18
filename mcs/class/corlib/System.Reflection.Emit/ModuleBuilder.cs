@@ -109,17 +109,20 @@ namespace System.Reflection.Emit {
 
 			if (emitSymbolInfo) {
 				Assembly asm = Assembly.LoadWithPartialName ("Mono.CompilerServices.SymbolWriter");
-				if (asm == null) {
-					WarnAboutSymbolWriter ("Failed to load the default Mono.CompilerServices.SymbolWriter assembly");
-					return;
-				}
 
-				Type t = asm.GetType ("Mono.CompilerServices.SymbolWriter.SymbolWriterImpl", true);
-				try {
-					symbolWriter = (ISymbolWriter) Activator.CreateInstance (t, new object[] { this });
-				} catch (System.MissingMethodException) {
-					WarnAboutSymbolWriter ("The default Mono.CompilerServices.SymbolWriter is not available on this platform");					
-					return;
+				Type t = null;
+				if (asm != null)
+					t = asm.GetType ("Mono.CompilerServices.SymbolWriter.SymbolWriterImpl");
+
+				if (t == null) {
+					WarnAboutSymbolWriter ("Failed to load the default Mono.CompilerServices.SymbolWriter assembly");
+				} else {
+					try {
+						symbolWriter = (ISymbolWriter) Activator.CreateInstance (t, new object[] { this });
+					} catch (System.MissingMethodException) {
+						WarnAboutSymbolWriter ("The default Mono.CompilerServices.SymbolWriter is not available on this platform");					
+						return;
+					}
 				}
 				
 				string fileName = fqname;
@@ -129,7 +132,7 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		private static void WarnAboutSymbolWriter (string message) 
+		static void WarnAboutSymbolWriter (string message) 
 		{
 			if (has_warned_about_symbolWriter)
 				return;
