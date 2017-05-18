@@ -731,5 +731,4 @@ partial class SR
 	public const string net_invalid_enum = "The specified value is not valid in the '{0}' enumeration.";
 	public const string SSPIInvalidHandleType = "'{0}' is not a supported handle type.";
 	public const string LocalDBNotSupported = "LocalDB is not supported on this Platform.";
-	public const string Argument_EmptyValue = "Value cannot be empty.";
 }
