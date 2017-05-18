@@ -978,40 +978,16 @@ ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_RunModuleConstructor (M
 ICALL_EXPORT MonoBoolean
 ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_SufficientExecutionStack (void)
 {
-#if defined(TARGET_WIN32) || defined(HOST_WIN32)
-	// It does not work on win32
-#elif defined(TARGET_ANDROID)
-	// No need for now
-#else
-	guint8 *stack_addr;
-	guint8 *current;
-	size_t stack_size;
-	int min_size;
-	MonoInternalThread *thread;
+	MonoThreadInfo *info = mono_thread_info_current ();
 
-	mono_thread_info_get_stack_bounds (&stack_addr, &stack_size);
-	/* if we have no info we are optimistic and assume there is enough room */
-	if (!stack_addr)
-		return TRUE;
+	char *start = info->stack_start_limit;
+	char *end = info->stack_end;
+	char *current = (char*)&end;
 
-	thread = mono_thread_internal_current ();
-	// .net seems to check that at least 50% of stack is available
-	min_size = thread->stack_size / 2;
+	/* min_size will be > 0 as sgen can't work otherwise */
+	size_t min_size = (end - start) / 2;
 
-	// TODO: It's not always set
-	if (!min_size)
-		return TRUE;
-
-	current = (guint8 *)&stack_addr;
-	if (current > stack_addr) {
-		if ((current - stack_addr) < min_size)
-			return FALSE;
-	} else {
-		if (current - (stack_addr - stack_size) < min_size)
-			return FALSE;
-	}
-#endif
-	return TRUE;
+	return (current - start) >= min_size;
 }
 
 ICALL_EXPORT MonoObject *
