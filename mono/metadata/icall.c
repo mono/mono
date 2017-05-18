@@ -984,8 +984,12 @@ ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_SufficientExecutionStac
 	char *end = info->stack_end;
 	char *current = (char*)&end;
 
-	/* min_size will be > 0 as sgen can't work otherwise */
-	size_t min_size = (end - start) / 2;
+	//This is a lot less than CoreCLR demands. We run with significantly smaller stacks.
+#if SIZEOF_VOID_P == 8
+	size_t min_size = 64 * 1024;
+#else
+	size_t min_size = 32 * 1024;
+#endif
 
 	return (current - start) >= min_size;
 }
