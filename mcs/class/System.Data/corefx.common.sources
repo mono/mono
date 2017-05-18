@@ -25,10 +25,12 @@ System.Data.SqlClient/SqlNotificationSource.cs
 
 
 # https://github.com/dotnet/corefx/pull/19808
+#../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Common/AdapterUtil.SqlClient.cs
 #../../../external/corefx/src/Common/src/System/Data/Common/DbConnectionOptions.Common.cs
 #../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbConnectionOptions.cs
 #../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Common/DbConnectionOptions.cs
 # temp workaround while waiting the PR to be merged:
+corefx/TEMP/AdapterUtil.SqlClient.cs
 corefx/TEMP/DbConnectionOptions.SqlClient.cs
 corefx/TEMP/DbConnectionOptions.Common.cs
 corefx/TEMP/DbConnectionOptions.cs
@@ -320,7 +322,6 @@ corefx/TEMP/DbConnectionOptions.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlDbColumn.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Common/ActivityCorrelator.cs
 ../../../external/corefx/src/common/src/System/Data/Common/AdapterUtil.cs
-../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Common/AdapterUtil.SqlClient.cs
 ../../../external/corefx/src/common/src/System/Data/Common/DbConnectionPoolKey.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Common/DbConnectionStringCommon.cs
 ../../../external/corefx/src/common/src/System/Data/Common/FieldNameLookup.cs
