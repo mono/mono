@@ -17,6 +17,9 @@ corefx/SR.GetResourceString.cs
 ../../../external/corefx/src/System.Diagnostics.DiagnosticSource/src/System/Diagnostics/DiagnosticListener.cs
 ../../../external/corefx/src/System.Diagnostics.DiagnosticSource/src/System/Diagnostics/DiagnosticSourceEventSource.cs
 ../referencesource/System.Data/System/Data/SQLTypes/SqlTypesSchemaImporter.cs
+System.Data.SqlClient/SqlNotificationType.cs
+System.Data.SqlClient/SqlNotificationInfo.cs
+System.Data.SqlClient/SqlNotificationSource.cs
 
 # https://github.com/dotnet/corefx/pull/19808
 #../../../external/corefx/src/Common/src/System/Data/Common/DbConnectionOptions.Common.cs
