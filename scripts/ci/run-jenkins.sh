@@ -12,6 +12,14 @@ else
     export CFLAGS="-ggdb3 -O2"
 fi
 
+if [[ "$CI_TAGS" =~ collect-coverage ]]; then
+    # Collect coverage for further use by lcov and similar tools.
+    # Coverage must be collected with -O0 and debug information.
+    CFLAGS="$CFLAGS --coverage -O0"
+    # Collect coverage on all optimizations
+    export MONO_ENV_OPTIONS="$MONO_ENV_OPTIONS -O=all"
+fi
+
 if [[ ${label} == 'osx-i386' ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib --build=i386-apple-darwin11.2.0"; fi
 if [[ ${label} == 'osx-amd64' ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib "; fi
 if [[ ${label} == 'w32' ]]; then PLATFORM=Win32; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --host=i686-w64-mingw32"; export MONO_EXECUTABLE="${MONO_REPO_ROOT}/msvc/build/sgen/Win32/bin/Release/mono-sgen.exe"; fi
