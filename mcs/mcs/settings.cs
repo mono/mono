@@ -576,7 +576,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			var unit = new SourceFile (fileName, path, sourceFiles.Count + 1, null);
+			var unit = new SourceFile (fileName, path, sourceFiles.Count + 1);
 			sourceFiles.Add (unit);
 			source_file_index.Add (path, unit.Index);
 		}

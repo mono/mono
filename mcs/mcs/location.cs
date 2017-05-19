@@ -67,6 +67,10 @@ namespace Mono.CSharp
 		byte[] algGuid, checksum;
 		List<LocationRegion> hidden_lines;
 
+		public SourceFile (string name, string path, int index) : this (name, path, index, null)
+		{
+		}
+
 		public SourceFile (string name, string path, int index, GetInputStreamDelegate inputStreamDelegate)
 		{
 			this.Index = index;
