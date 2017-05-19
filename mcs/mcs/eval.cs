@@ -958,7 +958,14 @@ namespace Mono.CSharp
 				importer.ImportAssembly (a, module.GlobalRootNamespace);
 			}
 		}
-	}
+
+		public void ImportTypes(bool importExtensionTypes, params Type[] types) {
+#if !STATIC
+			importer.ImportTypes(types, module.GlobalRootNamespace, importExtensionTypes);
+#endif
+		}
+
+    }
 
 	
 	/// <summary>

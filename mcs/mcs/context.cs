@@ -692,7 +692,7 @@ namespace Mono.CSharp
 			if (all_source_files.TryGetValue (path, out retval))
 				return retval;
 
-			retval = new SourceFile (name, path, all_source_files.Count + 1);
+			retval = new SourceFile (name, path, all_source_files.Count + 1, null);
 			Location.AddFile (retval);
 			all_source_files.Add (path, retval);
 			return retval;
