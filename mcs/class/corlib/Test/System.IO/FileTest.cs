@@ -26,6 +26,7 @@ namespace MonoTests.System.IO
 	{
 		CultureInfo old_culture;
 		static string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
+		static Random random = new Random ();
 
 		[SetUp]
 		public void SetUp ()
@@ -2690,8 +2691,19 @@ namespace MonoTests.System.IO
 		[DllImport ("libc", SetLastError=true)]
 		public static extern int rename (string oldpath, string newpath);
 
+		/* This deserves some examplation:
+		Calling File.Delete on a bad symlink will throw UnauthorizedAccessException so they are highlander files to managed code.
+		The hack here is to break the cycle and make them dangling symlinks instead.
+		 */
 		static void DeleteBadSymLink (string path) {
-			string newpath = path + new Random ().Next ();
+			string newpath;
+
+			lock (random) {
+				do {
+					newpath = path + random.Next ();
+				} while (File.Exists (newpath));
+			}
+
 			rename (path, newpath);
 			File.Delete (newpath);
 		}
@@ -2701,9 +2713,12 @@ namespace MonoTests.System.IO
 		{
 			if (!RunningOnUnix)
 				Assert.Ignore ("Symlink are hard on windows");
+			string name1, name2;
+			lock (random) {
+				name1 = "first_file" + random.Next ();
+				name2 = "second_file" + random.Next ();
+			}
 
-			var name1 = "f0ew4fuweo";
-			var name2 = "jneruyhbv32ir";
 			var path1 = Path.Combine (Path.GetTempPath (), name1);
 			var path2 = Path.Combine (Path.GetTempPath (), name2);
 
