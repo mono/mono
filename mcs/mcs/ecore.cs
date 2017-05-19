@@ -1130,6 +1130,16 @@ namespace Mono.CSharp {
 			Report.Error (214, loc, "Pointers and fixed size buffers may only be used in an unsafe context");
 		}
 
+		public static void UnsafeInsideIteratorError (ResolveContext rc, Location loc)
+		{
+			UnsafeInsideIteratorError (rc.Report, loc);
+		}
+
+		public static void UnsafeInsideIteratorError (Report report, Location loc)
+		{
+			report.Error (1629, loc, "Unsafe code may not appear in iterators");
+		}
+
 		//
 		// Converts `source' to an int, uint, long or ulong.
 		//
@@ -3456,8 +3466,12 @@ namespace Mono.CSharp {
 				CheckProtectedMemberAccess (rc, member);
 			}
 
-			if (member.MemberType.IsPointer && !rc.IsUnsafe) {
-				UnsafeError (rc, loc);
+			if (member.MemberType.IsPointer) {
+				if (rc.CurrentIterator != null) {
+					UnsafeInsideIteratorError (rc, loc);
+				} else if (!rc.IsUnsafe) {
+					UnsafeError (rc, loc);
+				}
 			}
 
 			var dep = member.GetMissingDependencies ();
@@ -6075,8 +6089,12 @@ namespace Mono.CSharp {
 				arg_count++;
 			}
 
-			if (has_unsafe_arg && !ec.IsUnsafe) {
-				Expression.UnsafeError (ec, loc);
+			if (has_unsafe_arg) {
+				if (ec.CurrentIterator != null) {
+					Expression.UnsafeInsideIteratorError (ec, loc);
+				} else if (!ec.IsUnsafe) {
+					Expression.UnsafeError (ec, loc);
+				}
 			}
 
 			//

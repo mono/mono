@@ -718,8 +718,11 @@ namespace Mono.CSharp
 
 		Expression ResolveAddressOf (ResolveContext ec)
 		{
-			if (!ec.IsUnsafe)
+			if (ec.CurrentIterator != null) {
+				UnsafeInsideIteratorError (ec, loc);
+			} else if (!ec.IsUnsafe) {
 				UnsafeError (ec, loc);
+			}
 
 			Expr = Expr.DoResolveLValue (ec, EmptyExpression.UnaryAddress);
 			if (Expr == null || Expr.eclass != ExprClass.Variable) {
@@ -737,7 +740,7 @@ namespace Mono.CSharp
 				is_fixed = vr.IsFixed;
 				vr.SetHasAddressTaken ();
 
-				if (vr.IsHoisted) {
+				if (vr.IsHoisted && ec.CurrentIterator == null) {
 					AnonymousMethodExpression.Error_AddressOfCapturedVar (ec, vr, loc);
 				}
 			} else {
@@ -984,8 +987,11 @@ namespace Mono.CSharp
 			if (expr == null)
 				return null;
 
-			if (!ec.IsUnsafe)
+			if (ec.CurrentIterator != null) {
+				UnsafeInsideIteratorError (ec, loc);
+			} else if (!ec.IsUnsafe) {
 				UnsafeError (ec, loc);
+			}
 
 			var pc = expr.Type as PointerContainer;
 
@@ -2453,8 +2459,12 @@ namespace Mono.CSharp
 				return null;
 			}
 
-			if (type.IsPointer && !ec.IsUnsafe) {
-				UnsafeError (ec, loc);
+			if (type.IsPointer) {
+				if (ec.CurrentIterator != null) {
+					UnsafeInsideIteratorError (ec, loc);
+				} else if (!ec.IsUnsafe) {
+					UnsafeError (ec, loc);
+				}
 			}
 
 			eclass = ExprClass.Value;
@@ -10485,8 +10495,12 @@ namespace Mono.CSharp
 			}
 
 			type = ac.Element;
-			if (type.IsPointer && !ec.IsUnsafe) {
-				UnsafeError (ec, ea.Location);
+			if (type.IsPointer) {
+				if (ec.CurrentIterator != null) {
+					UnsafeInsideIteratorError (ec, ea.Location);
+				} else if (!ec.IsUnsafe) {
+					UnsafeError (ec, ea.Location);
+				}
 			}
 
 			if (conditional_access_receiver)
@@ -11404,7 +11418,10 @@ namespace Mono.CSharp
 				if (!(ec.CurrentMemberDefinition is Field) && !TypeManager.VerifyUnmanaged (ec.Module, type, loc))
 					return null;
 
-				if (!ec.IsUnsafe) {
+				var rc = ec as ResolveContext;
+				if (rc?.CurrentIterator != null) {
+					UnsafeInsideIteratorError (ec.Module.Compiler.Report, loc);
+				} else if (!ec.IsUnsafe) {
 					UnsafeError (ec.Module.Compiler.Report, loc);
 				}
 

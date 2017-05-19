@@ -6357,7 +6357,7 @@ namespace Mono.CSharp {
 		public override bool Resolve (BlockContext ec)
 		{
 			if (ec.CurrentIterator != null)
-				ec.Report.Error (1629, loc, "Unsafe code may not appear in iterators");
+				Expression.UnsafeInsideIteratorError (ec, loc);
 
 			using (ec.Set (ResolveContext.Options.UnsafeScope))
 				return Block.Resolve (ec);
