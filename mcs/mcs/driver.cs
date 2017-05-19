@@ -49,12 +49,12 @@ namespace Mono.CSharp
 
 			try {
 				if (sourceFile.GetInputStream != null) {
-					reader = sourceFile.GetInputStream(sourceFile);
+					reader = sourceFile.GetInputStream (sourceFile);
 					if (reader == null) {
-						throw new FileNotFoundException("Delegate returned null", sourceFile.Name);
+						throw new FileNotFoundException ("Delegate returned null", sourceFile.Name);
 					}
 				} else {
-					input = File.OpenRead(sourceFile.Name);
+					input = File.OpenRead (sourceFile.Name);
 				}
 			} catch {
 				Report.Error (2001, "Source file `" + sourceFile.Name + "' could not be found");
@@ -63,26 +63,26 @@ namespace Mono.CSharp
 
 			if (reader == null) {
 				using (input) {
-					reader = new SeekableStreamReader(input, ctx.Settings.Encoding);
-					DoTokenize(sourceFile, module, session, reader);
+					reader = new SeekableStreamReader (input, ctx.Settings.Encoding);
+					DoTokenize (sourceFile, module, session, reader);
 				}
 			} else {
-				DoTokenize(sourceFile, module, session, reader);
+				DoTokenize (sourceFile, module, session, reader);
 			}
 		}
 
-		private void DoTokenize(SourceFile sourceFile, ModuleContainer module, ParserSession session, SeekableStreamReader reader) {
-			var file = new CompilationSourceFile(module, sourceFile);
+		private void DoTokenize (SourceFile sourceFile, ModuleContainer module, ParserSession session, SeekableStreamReader reader) {
+			var file = new CompilationSourceFile (module, sourceFile);
 
-			Tokenizer lexer = new Tokenizer(reader, file, session, ctx.Report);
+			Tokenizer lexer = new Tokenizer (reader, file, session, ctx.Report);
 			int token, tokens = 0, errors = 0;
 
-			while ((token = lexer.token()) != Token.EOF) {
+			while ((token = lexer.token ()) != Token.EOF) {
 				tokens++;
 				if (token == Token.ERROR)
 					errors++;
 			}
-			Console.WriteLine("Tokenized: " + tokens + " found " + errors + " errors");
+			Console.WriteLine ("Tokenized: " + tokens + " found " + errors + " errors");
 		}
 
 		void Parse (ModuleContainer module)
@@ -148,12 +148,12 @@ namespace Mono.CSharp
 
 			try {
 				if (file.GetInputStream != null) {
-					reader = file.GetInputStream(file);
+					reader = file.GetInputStream (file);
 					if (reader == null) {
-						throw new FileNotFoundException("Delegate returned null", file.Name);
+						throw new FileNotFoundException ("Delegate returned null", file.Name);
 					}
 				} else {
-					input = File.OpenRead(file.Name);
+					input = File.OpenRead (file.Name);
 				}
 			} catch {
 				report.Error (2001, "Source file `{0}' could not be found", file.Name);
@@ -163,29 +163,29 @@ namespace Mono.CSharp
 			if (reader == null) {
 				using (input) {
 					// Check 'MZ' header
-					if (input.ReadByte() == 77 && input.ReadByte() == 90) {
+					if (input.ReadByte () == 77 && input.ReadByte () == 90) {
 
-						report.Error(2015, "Source file `{0}' is a binary file and not a text file", file.Name);
+						report.Error (2015, "Source file `{0}' is a binary file and not a text file", file.Name);
 						return;
 					}
 
 					input.Position = 0;
-					reader = new SeekableStreamReader(input, ctx.Settings.Encoding, session.StreamReaderBuffer);
+					reader = new SeekableStreamReader (input, ctx.Settings.Encoding, session.StreamReaderBuffer);
 
-					DoParse(file, module, session, report, reader);
+					DoParse (file, module, session, report, reader);
 				}
 			} else {
-				DoParse(file, module, session, report, reader);
+				DoParse (file, module, session, report, reader);
 			}
 		}
 
-		private void DoParse(SourceFile file, ModuleContainer module, ParserSession session, Report report, SeekableStreamReader reader) {
-			Parse(reader, file, module, session, report);
+		void DoParse (SourceFile file, ModuleContainer module, ParserSession session, Report report, SeekableStreamReader reader) {
+			Parse (reader, file, module, session, report);
 
 			if (ctx.Settings.GenerateDebugInfo && report.Errors == 0 && !file.HasChecksum) {
 				reader.Stream.Position = 0;
-				var checksum = session.GetChecksumAlgorithm();
-				file.SetChecksum(checksum.ComputeHash(reader.Stream));
+				var checksum = session.GetChecksumAlgorithm ();
+				file.SetChecksum (checksum.ComputeHash (reader.Stream));
 			}
 		}
 

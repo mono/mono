@@ -959,13 +959,12 @@ namespace Mono.CSharp
 			}
 		}
 
-		public void ImportTypes(bool importExtensionTypes, params Type[] types) {
+		public void ImportTypes (bool importExtensionTypes, params Type[] types) {
 #if !STATIC
-			importer.ImportTypes(types, module.GlobalRootNamespace, importExtensionTypes);
+			importer.ImportTypes (types, module.GlobalRootNamespace, importExtensionTypes);
 #endif
 		}
-
-    }
+	}
 
 	
 	/// <summary>
