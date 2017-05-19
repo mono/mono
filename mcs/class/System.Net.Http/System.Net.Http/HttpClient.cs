@@ -236,7 +236,7 @@ namespace System.Net.Http
 			return SendAsync (request, HttpCompletionOption.ResponseContentRead, cancellationToken);
 		}
 
-		public Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, HttpCompletionOption completionOption, CancellationToken cancellationToken)
+		public virtual Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, HttpCompletionOption completionOption, CancellationToken cancellationToken)
 		{
 			if (request == null)
 				throw new ArgumentNullException ("request");
