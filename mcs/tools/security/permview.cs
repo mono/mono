@@ -375,28 +375,29 @@ namespace Mono.Tools {
 					return 0;
 
 				string assemblyName = args [args.Length - 1];
-				AssemblyDefinition ad = AssemblyDefinition.ReadAssembly (assemblyName);
-				if (ad != null) {
-					bool complete = false;
-					
-					if (declarative) {
-						// full output (assembly+classes+methods)
-						complete = ProcessAssemblyComplete (tw, ad);
-					} else if (xmloutput) {
-						// full output in XML (for easier diffs after c14n)
-						complete = ProcessAssemblyXml (tw, ad);
-					} else {
-						// default (assembly only)
-						complete = ProcessAssemblyOnly (tw, ad);
-					}
+				using (AssemblyDefinition ad = AssemblyDefinition.ReadAssembly (assemblyName)) {
+					if (ad != null) {
+						bool complete = false;
 
-					if (!complete) {
-						Console.Error.WriteLine ("Couldn't reflect informations.");
-						return 1;
+						if (declarative) {
+							// full output (assembly+classes+methods)
+							complete = ProcessAssemblyComplete (tw, ad);
+						} else if (xmloutput) {
+							// full output in XML (for easier diffs after c14n)
+							complete = ProcessAssemblyXml (tw, ad);
+						} else {
+							// default (assembly only)
+							complete = ProcessAssemblyOnly (tw, ad);
+						}
+
+						if (!complete) {
+							Console.Error.WriteLine ("Couldn't reflect informations.");
+							return 1;
+						}
+					} else {
+						Console.Error.WriteLine ("Couldn't load assembly '{0}'.", assemblyName);
+						return 2;
 					}
-				} else {
-					Console.Error.WriteLine ("Couldn't load assembly '{0}'.", assemblyName);
-					return 2;
 				}
 				tw.Close ();
 			}
