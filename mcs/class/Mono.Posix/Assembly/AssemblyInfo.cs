@@ -36,7 +36,12 @@ using System.Security.Permissions;
 
 [assembly: AssemblyVersion (Consts.FxVersion)]
 
+#if MONO_POSIX_NETSTANDARD_BUILD
+[assembly: AssemblyTitle("Mono.Posix.NETStandard.dll")]
+#else
 [assembly: AssemblyTitle("Mono.Posix.dll")]
+#endif
+
 [assembly: AssemblyDescription("Unix Integration Classes")]
 
 [assembly: CLSCompliant (true)]

@@ -3,13 +3,17 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <AssemblyName>Mono.Posix</AssemblyName>
+    <AssemblyName>Mono.Posix.NETStandard</AssemblyName>
     <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <EnableDefaultItems>false</EnableDefaultItems>
     <!--<BaseIntermediateOutputPath>obj-netstandard2.0</BaseIntermediateOutputPath>
     <IntermediateOutputPath>obj-netstandard2.0</IntermediateOutputPath>-->
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);MONO_POSIX_NETSTANDARD_BUILD</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(ForceUseLibC)' == 'true'">
