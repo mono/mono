@@ -44,7 +44,7 @@ namespace GuiCompare {
 		AssemblyDefinition ProcessFile (string file)
 		{
 			AddSearchDirectory (Path.GetDirectoryName (file));
-			var assembly = AssemblyDefinition.ReadAssembly (file, new ReaderParameters { AssemblyResolver = this });
+			var assembly = AssemblyDefinition.ReadAssembly (file, new ReaderParameters { AssemblyResolver = this, InMemory = true });
 			RegisterAssembly (assembly);
 
 			return assembly;
