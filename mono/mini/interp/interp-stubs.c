@@ -62,13 +62,11 @@ mono_interp_frame_get_this (MonoInterpFrameHandle frame)
 void
 mono_interp_start_single_stepping (void)
 {
-	g_assert_not_reached ();
 }
 
 void
 mono_interp_stop_single_stepping (void)
 {
-	g_assert_not_reached ();
 }
 
 #endif
