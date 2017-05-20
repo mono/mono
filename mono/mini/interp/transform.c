@@ -1512,7 +1512,7 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 		td.in_start = td.ip;
 
 		MonoDebugLineNumberEntry lne;
-		lne.native_offset = td.new_ip - td.new_code;
+		lne.native_offset = (guint8*)td.new_ip - (guint8*)td.new_code;
 		lne.il_offset = in_offset;
 		g_array_append_val (line_numbers, lne);
 
