@@ -2073,7 +2073,8 @@ set_accessor_declaration
 	;
 
 accessor_body
-	: block 
+	: block
+	| expression_block
 	| SEMICOLON
 	  {
 		// TODO: lbag
@@ -2085,6 +2086,7 @@ accessor_body
 	  	$$ = null;
 	  }
 	;
+
 
 interface_declaration
 	: opt_attributes
@@ -2742,7 +2744,8 @@ event_accessor_block
 		report.Error (73, lexer.Location, "An add or remove accessor must have a body");
 		$$ = null;
 	  }
-	| block;
+	| block
+	| expression_block
 	;
 
 attributes_without_members

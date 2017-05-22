@@ -68574,6 +68574,28 @@
       </method>
     </type>
   </test>
+  <test name="test-expression-bodied-03.cs">
+    <type name="X">
+      <method name="Int32 get_Prop()" attrs="2182">
+        <size>9</size>
+      </method>
+      <method name="Void set_Prop(Int32)" attrs="2182">
+        <size>8</size>
+      </method>
+      <method name="Void add_A(System.Action)" attrs="2182">
+        <size>8</size>
+      </method>
+      <method name="Void remove_A(System.Action)" attrs="2182">
+        <size>8</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-externalias-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
