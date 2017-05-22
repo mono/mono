@@ -4,15 +4,15 @@ import fileinput
 class NuGetBinary (Package):
 
     def __init__(self):
-        Package.__init__(self, name='NuGet', version='4.5.0', sources=[
-                         'https://dist.nuget.org/win-x86-commandline/v%{version}/NuGet.exe'])
+        Package.__init__(self, name='NuGet', version='4.3.0-preview1', sources=[
+                         'https://dist.nuget.org/win-x86-commandline/v%{version}/nuget.exe'])
 
     def build(self):
         pass
 
     def install(self):
-        source = os.path.join(self.workspace, 'NuGet.exe')
-        target = os.path.join(self.staged_prefix, 'lib/mono/nuget/NuGet.exe')
+        source = os.path.join(self.workspace, 'nuget.exe')
+        target = os.path.join(self.staged_prefix, 'lib/mono/nuget/nuget.exe')
         ensure_dir(os.path.dirname(target))
         shutil.move(source, target)
 
