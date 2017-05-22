@@ -34,11 +34,13 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 
-[assembly: AssemblyVersion (Consts.FxVersion)]
+
 
 #if MONO_POSIX_NETSTANDARD_BUILD
+[assembly: AssemblyVersion ("1.0.0.0")]
 [assembly: AssemblyTitle("Mono.Posix.NETStandard.dll")]
 #else
+[assembly: AssemblyVersion (Consts.FxVersion)]
 [assembly: AssemblyTitle("Mono.Posix.dll")]
 #endif
 
@@ -53,9 +55,11 @@ using System.Security.Permissions;
 
 */
 
+#if !MONO_POSIX_NETSTANDARD_BUILD
+// We are using ../Open.snk for MONO_POSIX_NETSTANDARD_BUILD
 [assembly: AssemblyDelaySign (true)]
 [assembly: AssemblyKeyFile ("../mono.pub")]
-
+#endif
 /*
  * TODO:
  * 

@@ -8,6 +8,9 @@
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <EnableDefaultItems>false</EnableDefaultItems>
+    <SignAssembly>true</SignAssembly>
+    <DelaySign>true</DelaySign>
+    <AssemblyOriginatorKeyFile>..\Open.snk</AssemblyOriginatorKeyFile>
     <!--<BaseIntermediateOutputPath>obj-netstandard2.0</BaseIntermediateOutputPath>
     <IntermediateOutputPath>obj-netstandard2.0</IntermediateOutputPath>-->
   </PropertyGroup>
