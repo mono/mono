@@ -5402,10 +5402,8 @@ namespace Mono.CSharp {
 
 		static TypeSpec MoreSpecific (TypeSpec p, TypeSpec q)
 		{
-			if (TypeManager.IsGenericParameter (p) && !TypeManager.IsGenericParameter (q))
-				return q;
-			if (!TypeManager.IsGenericParameter (p) && TypeManager.IsGenericParameter (q))
-				return p;
+			if (p.IsGenericParameter != q.IsGenericParameter)
+				return p.IsGenericParameter ? q : p;
 
 			var ac_p = p as ArrayContainer;
 			if (ac_p != null) {
@@ -5418,18 +5416,22 @@ namespace Mono.CSharp {
 					return p;
 				if (specific == ac_q.Element)
 					return q;
-			} else if (p.IsGeneric && q.IsGeneric) {
-				var pargs = TypeManager.GetTypeArguments (p);
-				var qargs = TypeManager.GetTypeArguments (q);
+
+				return null;
+			}
+
+			if (p.IsGeneric && q.IsGeneric) {
+				var pargs = p.TypeArguments;
+				var qargs = q.TypeArguments;
 
 				bool p_specific_at_least_once = false;
 				bool q_specific_at_least_once = false;
 
 				for (int i = 0; i < pargs.Length; i++) {
-					TypeSpec specific = MoreSpecific (pargs[i], qargs[i]);
-					if (specific == pargs[i])
+					TypeSpec specific = MoreSpecific (pargs [i], qargs [i]);
+					if (specific == pargs [i])
 						p_specific_at_least_once = true;
-					if (specific == qargs[i])
+					if (specific == qargs [i])
 						q_specific_at_least_once = true;
 				}
 
