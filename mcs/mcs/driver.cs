@@ -71,7 +71,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		private void DoTokenize (SourceFile sourceFile, ModuleContainer module, ParserSession session, SeekableStreamReader reader) {
+		void DoTokenize (SourceFile sourceFile, ModuleContainer module, ParserSession session, SeekableStreamReader reader) {
 			var file = new CompilationSourceFile (module, sourceFile);
 
 			Tokenizer lexer = new Tokenizer (reader, file, session, ctx.Report);
