@@ -1092,7 +1092,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		protected void ImportTypes (MetaType[] types, Namespace targetNamespace, bool importExtensionTypes)
+		public void ImportTypes (MetaType[] types, Namespace targetNamespace, bool importExtensionTypes)
 		{
 			Namespace ns = targetNamespace;
 			string prev_namespace = null;
