@@ -974,6 +974,12 @@ ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_RunModuleConstructor (M
 			mono_error_set_pending_exception (&error);
 	}
 }
+/*
+This is a lot less than CoreCLR demands. We run with significantly smaller stacks.
+
+*/
+#define MIN_STACK_SIZE_FOR_EXECUTION SIZEOF_VOID_P * 8 * 1024
+
 
 ICALL_EXPORT MonoBoolean
 ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_SufficientExecutionStack (void)
@@ -984,14 +990,7 @@ ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_SufficientExecutionStac
 	char *end = info->stack_end;
 	char *current = (char*)&end;
 
-	//This is a lot less than CoreCLR demands. We run with significantly smaller stacks.
-#if SIZEOF_VOID_P == 8
-	size_t min_size = 64 * 1024;
-#else
-	size_t min_size = 32 * 1024;
-#endif
-
-	return (current - start) >= min_size;
+	return (current - start) >= MIN_STACK_SIZE_FOR_EXECUTION;
 }
 
 ICALL_EXPORT MonoObject *
