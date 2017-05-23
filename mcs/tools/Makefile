@@ -58,13 +58,6 @@ SUBDIRS = $(build_SUBDIRS) $(net_4_5_dirs)
 include ../build/rules.make
 
 DISTFILES = \
-	assemblies.xml			\
-	mono-win32-setup-dark.bmp	\
-	mono-win32-setup-light.bmp	\
-	mono-win32-setup.nsi		\
-	scan-tests.pl			\
-	tinderbox/smtp.c		\
-	tinderbox/tinderbox.sh		\
 	removecomments.sh
 
 test-local csproj-local run-test-local run-test-ondotnet-local all-local install-local uninstall-local doc-update-local:
