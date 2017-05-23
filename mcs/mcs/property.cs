@@ -820,8 +820,10 @@ namespace Mono.CSharp
 			Parent.PartialContainer.Members.Add (BackingField);
 
 			FieldExpr fe = new FieldExpr (BackingField, Location);
-			if ((BackingField.ModFlags & Modifiers.STATIC) == 0)
+			if ((BackingField.ModFlags & Modifiers.STATIC) == 0) {
 				fe.InstanceExpression = new CompilerGeneratedThis (Parent.CurrentType, Location);
+				Parent.PartialContainer.HasInstanceField = true;
+			}
 
 			//
 			// Create get block but we careful with location to

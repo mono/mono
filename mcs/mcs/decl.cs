@@ -290,7 +290,8 @@ namespace Mono.CSharp {
 			HasInstanceConstructor = 1 << 16,
 			HasUserOperators = 1 << 17,
 			CanBeReused = 1 << 18,
-			InterfacesExpanded = 1 << 19
+			InterfacesExpanded = 1 << 19,
+			HasInstanceField = 1 << 20
 		}
 
 		/// <summary>
