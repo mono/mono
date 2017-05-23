@@ -26,7 +26,6 @@ namespace MonoTests.System.IO
 	{
 		CultureInfo old_culture;
 		static string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
-		static Random random = new Random ();
 
 		[SetUp]
 		public void SetUp ()
@@ -2688,66 +2687,46 @@ namespace MonoTests.System.IO
 		[DllImport ("libc", SetLastError=true)]
 		public static extern int symlink (string oldpath, string newpath);
 
-		[DllImport ("libc", SetLastError=true)]
-		public static extern int rename (string oldpath, string newpath);
-
-		/* This deserves some examplation:
-		Calling File.Delete on a bad symlink will throw UnauthorizedAccessException so they are highlander files to managed code.
-		The hack here is to break the cycle and make them dangling symlinks instead.
-		 */
-		static void DeleteBadSymLink (string path) {
-			string newpath;
-
-			lock (random) {
-				do {
-					newpath = path + random.Next ();
-				} while (File.Exists (newpath));
-			}
-
-			rename (path, newpath);
-			File.Delete (newpath);
-		}
-
 		[Test]
 		public void SymLinkLoop ()
 		{
 			if (!RunningOnUnix)
 				Assert.Ignore ("Symlink are hard on windows");
-			string name1, name2;
-			lock (random) {
-				name1 = "first_file" + random.Next ();
-				name2 = "second_file" + random.Next ();
-			}
+
+			var name1 = Path.GetRandomFileName ();
+			var name2 = Path.GetRandomFileName ();
 
 			var path1 = Path.Combine (Path.GetTempPath (), name1);
 			var path2 = Path.Combine (Path.GetTempPath (), name2);
 
-			DeleteBadSymLink (path1);
-			DeleteBadSymLink (path2);
+			File.Delete (path1);
+			File.Delete (path2);
+
 			try {
 				symlink (path1, path2);
 				symlink (path2, path1);
 
-				Assert.IsFalse (File.Exists (path1), "File.Exists must return false for symlink loops");
+				Assert.IsTrue (File.Exists (path1), "File.Exists must return true for path1 symlink loop");
+				Assert.IsTrue (File.Exists (path2), "File.Exists must return true for path2 symlink loop");
 
 				try {
 					using (var f = File.Open (path1, FileMode.Open, FileAccess.Read)) {
-						Assert.Fail ("File.Exists must throw for symlink loops");
+						Assert.Fail ("File.Open must throw for symlink loops");
 					}
-				} catch (UnauthorizedAccessException ex) {
-					Assert.AreEqual (0x80070005u, (uint)ex.HResult, "Ensure HRESULT is correct");
+				} catch (IOException ex) {
+					Assert.AreEqual (0x80070781u, (uint)ex.HResult, "Ensure HRESULT is correct");
 				}
 
-
-				try {
-					File.Delete (path1);
-				} catch (UnauthorizedAccessException ex) {
-					Assert.AreEqual (0x80070005u, (uint)ex.HResult, "Ensure HRESULT is correct");
-				}
+				File.Delete (path1); //Delete must not throw and must work
+				Assert.IsFalse (File.Exists (path1), "File.Delete must delete symlink loops");
 
 			} finally {
-				DeleteBadSymLink (path1);
-				DeleteBadSymLink (path2);
+				try {
+					File.Delete (path1);
+					File.Delete (path2);
+				} catch (IOException) {
+					//Don't double fault any exception from the tests.
+				}
 
 			}
 		}
