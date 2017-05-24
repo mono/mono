@@ -578,7 +578,7 @@ namespace System
 			try {
 				stream = File.OpenRead (filepath);	
 			} catch (Exception ex) {
-				throw new TimeZoneNotFoundException (ex);
+				throw new TimeZoneNotFoundException ("Couldn't read time zone file " + filepath, ex);
 			}
 			try {
 				return BuildFromStream (id, stream);
