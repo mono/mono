@@ -95,8 +95,7 @@ DISTFILES = \
 	mkinstalldirs		\
 	MonoIcon.png		\
 	README			\
-	ScalableMonoIcon.svg	\
-	winexe.in
+	ScalableMonoIcon.svg
 
 dist-local: dist-default
 
