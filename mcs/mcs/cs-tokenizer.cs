@@ -1267,7 +1267,8 @@ namespace Mono.CSharp
 			else if (the_token == Token.INTERR_NULLABLE || the_token == Token.STAR)
 				goto again;
 			else if (the_token == Token.OP_GENERICS_LT) {
-				if (!parse_less_than (ref genericDimension))
+				int unused = 0;
+				if (!parse_less_than (ref unused))
 					return false;
 				goto again;
 			} else if (the_token == Token.OPEN_BRACKET) {
