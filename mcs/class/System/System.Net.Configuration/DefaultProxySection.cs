@@ -63,6 +63,7 @@ namespace System.Net.Configuration
 			properties.Add (bypassListProp);
 			properties.Add (moduleProp);
 			properties.Add (proxyProp);
+			properties.Add (useDefaultCredentialsProp);
 		}
 
 		public DefaultProxySection ()
