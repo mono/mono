@@ -362,7 +362,11 @@ namespace System.Net {
             }
             
             // If it matches the primary domain, it's local.  (Whether or not the hostname matches.)
+#if MONO
+            string local = "." + IPGlobalProperties.GetIPGlobalProperties().DomainName;
+#else
             string local = "." + IPGlobalProperties.InternalGetIPGlobalProperties().DomainName;
+#endif
             if (local !=  null && local.Length == (hostString.Length - dot) &&
                 string.Compare(local, 0, hostString, dot, local.Length, StringComparison.OrdinalIgnoreCase ) == 0) {
                 return true;

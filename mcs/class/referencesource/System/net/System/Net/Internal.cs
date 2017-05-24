@@ -42,6 +42,7 @@ namespace System.Net {
         }
     }
 
+#if !MONO
     internal class InternalException : SystemException
     {
         internal InternalException()
@@ -53,6 +54,7 @@ namespace System.Net {
             base(serializationInfo, streamingContext)
         { }
     }
+#endif
 
     internal static class NclUtilities
     {

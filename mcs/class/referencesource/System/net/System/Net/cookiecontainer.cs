@@ -119,7 +119,11 @@ namespace System.Net {
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
         public CookieContainer() {
+#if MONO
+            string domain = IPGlobalProperties.GetIPGlobalProperties().DomainName;
+#else
             string domain = IPGlobalProperties.InternalGetIPGlobalProperties().DomainName;
+#endif
             if (domain != null && domain.Length > 1)
             {
                 m_fqdnMyDomain = '.' + domain;
