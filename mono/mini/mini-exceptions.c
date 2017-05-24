@@ -2263,6 +2263,9 @@ mono_debugger_run_finally (MonoContext *start_ctx)
  * mono_handle_exception:
  * \param ctx saved processor state
  * \param obj the exception object
+ *
+ *   Handle the exception OBJ starting from the state CTX. Modify CTX to point to the handler clause if the exception is caught, and
+ * return TRUE.
  */
 gboolean
 mono_handle_exception (MonoContext *ctx, MonoObject *obj)
@@ -3408,33 +3411,5 @@ void
 mono_debug_personality (void)
 {
 	g_assert_not_reached ();
-}
-#endif
-
-#ifndef ENABLE_INTERPRETER
-/* Stubs of interpreter functions */
-void
-mono_interp_set_resume_state (MonoJitTlsData *jit_tls, MonoException *ex, MonoInterpFrameHandle interp_frame, gpointer handler_ip)
-{
-	g_assert_not_reached ();
-}
-
-void
-mono_interp_run_finally (StackFrameInfo *frame, int clause_index, gpointer handler_ip)
-{
-	g_assert_not_reached ();
-}
-
-void
-mono_interp_frame_iter_init (MonoInterpStackIter *iter, gpointer interp_exit_data)
-{
-	g_assert_not_reached ();
-}
-
-gboolean
-mono_interp_frame_iter_next (MonoInterpStackIter *iter, StackFrameInfo *frame)
-{
-	g_assert_not_reached ();
-	return FALSE;
 }
 #endif

@@ -4426,11 +4426,7 @@ set_bp_in_method (MonoDomain *domain, MonoMethod *method, MonoSeqPointInfo *seq_
 			ji = mono_jit_info_table_find (domain, (char *)code);
 		} else {
 			/* Might be interpreted */
-#ifdef ENABLE_INTERPRETER
 			ji = mono_interp_find_jit_info (domain, method);
-#else
-			ji = NULL;
-#endif
 		}
 		g_assert (ji);
 	}

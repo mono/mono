@@ -1004,7 +1004,7 @@ get_bb (TransformData *td, InterpBasicBlock *cbb, unsigned char *ip)
  *
  *   Compute the set of IL level basic blocks.
  */
-static int
+static void
 get_basic_blocks (TransformData *td)
 {
 	guint8 *start = (guint8*)td->il_code;
@@ -1081,7 +1081,6 @@ get_basic_blocks (TransformData *td)
 			g_assert_not_reached ();
 		}
 	}
-	return 0;
 }
 
 static void
@@ -1274,7 +1273,7 @@ save_seq_points (TransformData *td)
 	}
 
 	if (td->verbose_level) {
-		printf ("\nSEQ POINT MAP FOR %s: \n", td->method->name);
+		g_print ("\nSEQ POINT MAP FOR %s: \n", td->method->name);
 
 		for (i = 0; i < td->seq_points->len; ++i) {
 			SeqPoint *sp = (SeqPoint*)g_ptr_array_index (td->seq_points, i);
@@ -1283,12 +1282,12 @@ save_seq_points (TransformData *td)
 			if (!next [i])
 				continue;
 
-			printf ("\tIL0x%x[0x%0x] ->", sp->il_offset, sp->native_offset);
+			g_print ("\tIL0x%x[0x%0x] ->", sp->il_offset, sp->native_offset);
 			for (l = next [i]; l; l = l->next) {
 				int next_index = GPOINTER_TO_UINT (l->data);
-				printf (" IL0x%x", ((SeqPoint*)g_ptr_array_index (td->seq_points, next_index))->il_offset);
+				g_print (" IL0x%x", ((SeqPoint*)g_ptr_array_index (td->seq_points, next_index))->il_offset);
 			}
-			printf ("\n");
+			g_print ("\n");
 		}
 	}
 

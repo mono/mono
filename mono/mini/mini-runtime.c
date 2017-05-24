@@ -4560,7 +4560,7 @@ static MonoBreakPolicyFunc break_policy_func = always_insert_breakpoint;
  * mono_set_break_policy:
  * \param policy_callback the new callback function
  *
- * Allow embedders to decide wherther to actually obey breakpoint instructions
+ * Allow embedders to decide whether to actually obey breakpoint instructions
  * (both break IL instructions and \c Debugger.Break method calls), for example
  * to not allow an app to be aborted by a perfectly valid IL opcode when executing
  * untrusted or semi-trusted code.

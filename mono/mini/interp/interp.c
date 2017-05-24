@@ -224,58 +224,8 @@ set_context (ThreadContext *context)
 
 	mono_native_tls_set_value (thread_context_id, context);
 	jit_tls = mono_tls_get_jit_tls ();
-	g_assert (jit_tls);
 	if (jit_tls)
 		jit_tls->interp_context = context;
-}
-
-static void
-interp_ex_handler (MonoException *ex)
-{
-	MonoError error;
-	ThreadContext *context = mono_native_tls_get_value (thread_context_id);
-	char *stack_trace;
-	if (context == NULL)
-		return;
-	stack_trace = dump_frame (context->current_frame);
-	ex->stack_trace = mono_string_new_checked (mono_domain_get(), stack_trace, &error);
-	mono_error_cleanup (&error); /* FIXME: don't swallow the error */
-	g_free (stack_trace);
-	if (context->current_env == NULL || strcmp(ex->object.vtable->klass->name, "ExecutionEngineException") == 0) {
-		char *strace = mono_string_to_utf8_checked (ex->stack_trace, &error);
-		mono_error_cleanup (&error); /* FIXME: don't swallow the error */
-		fprintf(stderr, "Nothing can catch this exception: ");
-		fprintf(stderr, "%s", ex->object.vtable->klass->name);
-		if (ex->message != NULL) {
-			char *m = mono_string_to_utf8_checked (ex->message, &error);
-			mono_error_cleanup (&error); /* FIXME: don't swallow the error */
-			fprintf(stderr, ": %s", m);
-			g_free(m);
-		}
-		fprintf(stderr, "\n%s\n", strace);
-		g_free (strace);
-		if (ex->inner_ex != NULL) {
-			ex = (MonoException *)ex->inner_ex;
-			fprintf(stderr, "Inner exception: %s", ex->object.vtable->klass->name);
-			if (ex->message != NULL) {
-				char *m = mono_string_to_utf8_checked (ex->message, &error);
-				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
-				fprintf(stderr, ": %s", m);
-				g_free(m);
-			}
-			strace = mono_string_to_utf8_checked (ex->stack_trace, &error);
-			mono_error_cleanup (&error); /* FIXME: don't swallow the error */
-			fprintf(stderr, "\n");
-			fprintf(stderr, "%s\n", strace);
-			g_free (strace);
-		}
-		/* wait for other threads to also collapse */
-		// Sleep(1000); // TODO: proper sleep
-		exit(1);
-	}
-	context->env_frame->ex = ex;
-	context->search_for_handler = 1;
-	longjmp (*context->current_env, 1);
 }
 
 static void
@@ -1402,7 +1352,7 @@ mono_interp_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoOb
 	int i, type, isobject = 0;
 	void *ret = NULL;
 	stackval result;
-	stackval *args = alloca (sizeof (stackval) * (sig->param_count + !!sig->hasthis));
+	stackval *args;
 	ThreadContext context_struct;
 	MonoInvocation *old_frame = NULL;
 	jmp_buf env;
@@ -1479,6 +1429,7 @@ mono_interp_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoOb
 		break;
 	}
 
+	args = alloca (sizeof (stackval) * (sig->param_count + !!sig->hasthis));
 	if (sig->hasthis)
 		args [0].data.p = obj;
 
@@ -1548,6 +1499,7 @@ handle_enum:
 	if (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)
 		method = mono_marshal_get_native_wrapper (method, FALSE, FALSE);
 	INIT_FRAME (&frame,context->current_frame,args,&result,mono_get_root_domain (),method,error);
+
 	if (exc)
 		frame.invoke_trap = 1;
 	context->managed_code = 1;
@@ -3770,6 +3722,7 @@ array_constructed:
 			frame->ex_handler = NULL;
 			if (!sp->data.p)
 				sp->data.p = mono_get_exception_null_reference ();
+
 			THROW_EX ((MonoException *)sp->data.p, ip);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDFLDA_UNSAFE)
