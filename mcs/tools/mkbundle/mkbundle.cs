@@ -1110,7 +1110,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		}
 
 		if (error != null) {
-			Console.Error.WriteLine ("Failure to load i18n assemblies, the following diretories were searched for the assemblies:");
+			Console.Error.WriteLine ("Failure to load i18n assemblies, the following directories were searched for the assemblies:");
 			foreach (var path in link_paths){
 				Console.Error.WriteLine ("   Path: " + path);
 			}
