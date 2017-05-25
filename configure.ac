@@ -63,6 +63,8 @@ esac
 #
 libgc_configure_args=
 
+CFLAGS=$CFLAGS -O0 -g
+
 # These variables are the CPPFLAGS/CFLAGS passed to libgc's configure
 # libgc should inherit the original CFLAGS/CPPFLAGS passed to configure, i.e. -O0
 CPPFLAGS_FOR_LIBGC=$CPPFLAGS
