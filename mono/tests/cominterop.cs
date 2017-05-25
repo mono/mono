@@ -531,6 +531,9 @@ public class Tests
 			if (TestITestDelegate (itest) != 0)
 				return 174;
 
+			if (TestIfaceNoIcall (itest as ITestPresSig) != 0)
+				return 201;
+
 			itest = new TestClass ();
 
 			if (TestITest (itest) != 0)
@@ -771,6 +774,8 @@ public class Tests
 		void ITestIn ([MarshalAs (UnmanagedType.Interface)]ITest val);
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		void ITestOut ([MarshalAs (UnmanagedType.Interface)]out ITest val);
+
+		int Return22NoICall();
 	}
 
 	[ComImport ()]
@@ -822,6 +827,8 @@ public class Tests
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		[PreserveSig ()]
 		int ITestOut ([MarshalAs (UnmanagedType.Interface)]out ITestPresSig val);
+	    [PreserveSig ()]
+		int Return22NoICall();
 	}
 
 	[System.Runtime.InteropServices.GuidAttribute ("00000000-0000-0000-0000-000000000002")]
@@ -861,6 +868,9 @@ public class Tests
 		public virtual extern void ITestIn ([MarshalAs (UnmanagedType.Interface)]ITest val);
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		public virtual extern void ITestOut ([MarshalAs (UnmanagedType.Interface)]out ITest val);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		public virtual extern int Return22NoICall();
 	}
 
 	[System.Runtime.InteropServices.GuidAttribute ("00000000-0000-0000-0000-000000000002")]
@@ -1000,6 +1010,10 @@ public class Tests
 			val = new ManagedTestPresSig ();
 			return 0;
 		}
+		public int Return22NoICall()
+		{
+			return 88;
+		}
 	}
 
 	public class ManagedTest : ITest
@@ -1088,6 +1102,11 @@ public class Tests
 			{
 				return new ManagedTest ();
 			}
+		}
+
+		public int Return22NoICall()
+		{
+			return 99;
 		}
 	}
 
@@ -1301,6 +1320,10 @@ public class Tests
 			return 1;
 		}
 		return 0;
+	}
+
+	public static int TestIfaceNoIcall (ITestPresSig itest) {
+		return itest.Return22NoICall () == 22 ? 0 : 1;
 	}
 }
 
