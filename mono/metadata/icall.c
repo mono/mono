@@ -990,6 +990,11 @@ ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_SufficientExecutionStac
 	char *end = info->stack_end;
 	char *current = (char*)&end;
 
+	if ((current - start) < MIN_STACK_SIZE_FOR_EXECUTION) {
+		g_print ("INSUFICIENT STACK! start %p end %p current %p size %zu asked %zu\n",
+			start, end, current,
+			(current - start), MIN_STACK_SIZE_FOR_EXECUTION);
+	}
 	return (current - start) >= MIN_STACK_SIZE_FOR_EXECUTION;
 }
 
