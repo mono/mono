@@ -62,8 +62,8 @@ ifdef NO_SIGN_ASSEMBLY
 SN = :
 else
 ifeq ("$(SN)","")
-sn = $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/sn.exe
-SN = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(sn) -q
+sn = $(topdir)/class/lib/$(BOOTSTRAP_PROFILE)/sn.exe
+SN = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(sn) -q
 endif
 endif
 
@@ -333,4 +333,4 @@ gen-deps:
 	@echo "$(DEPS_TARGET_DIR): $(DEP_DIRS) $(DEP_LIBS)" >> $(DEPS_FILE)
 
 update-corefx-sr: $(RESX_RESOURCE_STRING)
-	MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/resx2sr.exe $(RESX_RESOURCE_STRING) >corefx/SR.cs
+	MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BOOTSTRAP_PROFILE)/resx2sr.exe $(RESX_RESOURCE_STRING) >corefx/SR.cs

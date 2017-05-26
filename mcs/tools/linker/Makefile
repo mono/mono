@@ -28,7 +28,7 @@ run-tests: $(TEST_CASES:.cs=.exe)
 
 LINKER_OUTPUT := illink-output-$(PROFILE_DIRECTORY)
 PROFILE_PATH = $(topdir)/class/lib/$(PROFILE_DIRECTORY)
-LINKER = MONO_PATH=$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE) $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/monolinker.exe -c link -out $(LINKER_OUTPUT) -b true -d $(PROFILE_PATH)
+LINKER = MONO_PATH=$(topdir)/class/lib/$(BOOTSTRAP_PROFILE) $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BOOTSTRAP_PROFILE)/monolinker.exe -c link -out $(LINKER_OUTPUT) -b true -d $(PROFILE_PATH)
 TEST_EXEC = MONO_PATH=$(LINKER_OUTPUT) $(RUNTIME) $(RUNTIME_FLAGS) --debug -O=-aot
 
 .NOTPARALLEL:

@@ -1,7 +1,5 @@
 # -*- makefile -*-
 
-BOOTSTRAP_PROFILE = build
-
 PLATFORMS = darwin linux win32
 
 # nuttzing!

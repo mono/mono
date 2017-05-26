@@ -26,8 +26,8 @@ ifdef base_prog_config
 PROGRAM_config := $(the_libdir)$(PROGRAM).config
 endif
 
-sn = $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/sn.exe
-SN = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(sn) -q
+sn = $(topdir)/class/lib/$(BOOTSTRAP_PROFILE)/sn.exe
+SN = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(sn) -q
 
 the_lib = $(the_libdir)$(base_prog)
 

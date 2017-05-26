@@ -1,7 +1,6 @@
 # -*- makefile -*-
 
 BOOTSTRAP_PROFILE = basic
-BUILD_TOOLS_PROFILE = basic
 
 PLATFORMS = darwin linux win32
 

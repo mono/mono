@@ -1,4 +1,3 @@
-BOOTSTRAP_PROFILE = build
 
 profile-check:
 	@:
