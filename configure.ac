@@ -3264,7 +3264,7 @@ case "$host" in
 		;;
 esac
 
-COREFX_PAL_SUPPORTED=no
+COREFX_PAL_SUPPORTED=
 COREFX_PAL_ARCH=
 COREFX_PAL_OS=
 
@@ -3330,10 +3330,6 @@ case "$host" in
 	COREFX_PAL_OS=FreeBSD
 	;;
 esac
-
-AM_CONDITIONAL(COREFX_PAL_SUPPORTED, [test x$COREFX_PAL_SUPPORTED = xyes])
-AC_SUBST(COREFX_PAL_ARCH)
-AC_SUBST(COREFX_PAL_OS)
 
 HOST=$TARGET
 
@@ -4687,7 +4683,6 @@ fi
         echo "HAVE_DYNAMIC_BTLS=1" >> $srcdir/$mcsdir/build/config.make
       fi
     fi
-
   fi
 
 )

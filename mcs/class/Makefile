@@ -10,6 +10,7 @@ endif
 
 # The minimal set of csc dependencies
 basic_SUBDIRS := \
+	System.Native \
 	corlib \
 	Mono.Security \
 	System \
@@ -23,6 +24,7 @@ basic_SUBDIRS := \
 	../tools/cil-stringreplacer
 
 build_SUBDIRS :=  \
+	System.Native \
 	corlib \
 	Mono.Security \
 	System \
@@ -131,6 +133,7 @@ winaot_dirs := \
 	$(pcl_facade_dirs)
 
 xammac_4_5_dirs := \
+	System.Native \
 	corlib	\
 	Mono.Security \
 	System	\
@@ -179,6 +182,7 @@ xammac_4_5_dirs := \
 	$(pcl_facade_dirs)
 
 net_4_x_dirs := \
+	System.Native \
 	corlib				\
 	Mono.Security \
 	System				\
