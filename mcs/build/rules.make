@@ -39,13 +39,11 @@ INSTALL_LIB = $(INSTALL_BIN)
 MKINSTALLDIRS = $(SHELL) $(topdir)/mkinstalldirs
 INTERNAL_MBAS = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/mbas/mbas.exe
 INTERNAL_ILASM = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/ilasm.exe
-INTERNAL_CSC_LOCATION = $(CSC_LOCATION)
-
-# Using CSC_SDK_PATH_DISABLED for sanity check that all references have path specified
-INTERNAL_CSC = CSC_SDK_PATH_DISABLED= $(RUNTIME) $(RUNTIME_FLAGS) $(CSC_RUNTIME_FLAGS) $(INTERNAL_CSC_LOCATION)
 
 BOOTSTRAP_PROFILE = build
-BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_CSC)
+# Using CSC_SDK_PATH_DISABLED for sanity check that all references have path specified
+BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" CSC_SDK_PATH_DISABLED= \
+	$(RUNTIME) $(RUNTIME_FLAGS) $(CSC_RUNTIME_FLAGS) $(if $(MCS_MODE),$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)/mcs.exe,$(CSC_LOCATION))
 
 RESGEN = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(RESGEN_EXE) $(topdir)/class/lib/$(BOOTSTRAP_PROFILE)/resgen.exe
 STRING_REPLACER = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BOOTSTRAP_PROFILE)/cil-stringreplacer.exe
@@ -105,12 +103,9 @@ PROFILE_MCS_FLAGS += -optimize
 endif
 
 ifdef MCS_MODE
-INTERNAL_CSC_LOCATION = $(topdir)/class/lib/$(BOOTSTRAP_PROFILE)/mcs.exe
-
 ifdef PLATFORM_DEBUG_FLAGS
 PLATFORM_DEBUG_FLAGS = /debug:full
 endif
-
 endif
 
 # Design:
