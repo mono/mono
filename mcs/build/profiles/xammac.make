@@ -1,7 +1,5 @@
 BOOTSTRAP_PROFILE = build
 
-BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_CSC)
-
 profile-check:
 	@:
 
