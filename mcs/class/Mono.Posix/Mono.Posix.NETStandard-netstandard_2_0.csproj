@@ -28,7 +28,6 @@
     <Compile Include=".\Mono.Posix\**\*.cs" />
     <Compile Include=".\Mono.Unix\**\*.cs" />
     <Compile Include=".\Mono.Unix.Native\**\*.cs" />
-    <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Remove=".\Mono.Unix.Native\CdeclFunction.cs" />
   </ItemGroup>
