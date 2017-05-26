@@ -169,7 +169,7 @@ endif
 ifdef HAVE_CS_TESTS
 
 $(test_lib): $(the_assembly) $(test_response) $(test_nunit_dep)
-	$(TEST_COMPILE) $(LIBRARY_FLAGS) -target:library -out:$@ $(test_flags) $(LOCAL_TEST_COMPILER_ONDOTNET_FLAGS) @$(test_response)
+	$(TEST_COMPILE) -target:library -out:$@ $(test_flags) $(LOCAL_TEST_COMPILER_ONDOTNET_FLAGS) @$(test_response)
 
 test_response_preprocessed = $(test_response)_preprocessed
 
@@ -223,7 +223,7 @@ run-xunit-test-lib: xunit-test-local
 	@rm -f xunit.execution.desktop.dll
 
 $(xunit_test_lib): $(the_assembly) $(xtest_response) $(xunit_libs_dep)
-	$(TEST_COMPILE) $(LIBRARY_FLAGS) $(XTEST_LIB_FLAGS) -target:library -out:$@ $(xtest_flags) @$(xtest_response)
+	$(TEST_COMPILE) $(XTEST_LIB_FLAGS) -target:library -out:$@ $(xtest_flags) @$(xtest_response)
 
 xtest_response_preprocessed = $(xtest_response)_preprocessed
 

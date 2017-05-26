@@ -14,7 +14,6 @@ TEST_HARNESS = $(topdir)/class/lib/$(PROFILE_DIRECTORY)/$(PARENT_PROFILE)nunit-l
 PLATFORM_DEBUG_FLAGS = /debug:portable
 MCS_FLAGS = 
 MBAS_FLAGS = -debug
-LIBRARY_FLAGS =
 ifndef CFLAGS
 CFLAGS = -g -O2
 endif

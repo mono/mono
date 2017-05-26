@@ -88,7 +88,7 @@ csproj-library:
 	case "$(thisdir)" in *"Facades"*) config_file=Facades_$$config_file;; *"legacy"*) config_file=legacy_$$config_file;; esac; \
 	echo $(thisdir):$$config_file >> $(topdir)/../msvc/scripts/order; \
 	(echo $(if $(filter $(PROFILE),basic),true,false); \
-	echo $(USE_MCS_FLAGS) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS); \
+	echo $(USE_MCS_FLAGS) $(LIB_MCS_FLAGS); \
 	echo $(LIBRARY_NAME); \
 	echo $(BUILT_SOURCES_cmdline); \
 	echo $(the_lib); \
@@ -288,7 +288,7 @@ endif
 ifndef NO_BUILD
 
 $(the_lib): $(response) $(sn) $(BUILT_SOURCES) $(the_libdir)/.stamp $(GEN_RESOURCE_DEPS)
-	$(CSCOMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) $(GEN_RESOURCE_FLAGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
+	$(CSCOMPILE) $(LIB_MCS_FLAGS) $(GEN_RESOURCE_FLAGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
 ifdef RESOURCE_STRINGS_FILES
 	$(Q) $(STRING_REPLACER) $(RESOURCE_STRINGS_FILES) $@
 endif

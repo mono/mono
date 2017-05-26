@@ -320,9 +320,8 @@ include ../../build/library.make
 
 Where you library is called $(LIBRARY); it will be put into
 $(topdir)/class/lib. LIB_MCS_FLAGS is the set of MCS flags to use when
-compiling the library; in addition, a global set of flags called
-$(LIBRARY_FLAGS) is added (that variable is defined in
-config-defaults.make), as well as the usual $(LOCAL_MCS_FLAGS).
+compiling the library; in addition, a set of flags called
+$(LOCAL_MCS_FLAGS) is added.
 
 As in executable.make, the sources for your library are listed in
 $(LIBRARY).sources. Note: these source lists should have Unix forward
