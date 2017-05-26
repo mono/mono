@@ -3312,6 +3312,7 @@ typedef struct
 	int (STDCALL *DoubleIn)(MonoComObject* pUnk, double a);
 	int (STDCALL *ITestIn)(MonoComObject* pUnk, MonoComObject* pUnk2);
 	int (STDCALL *ITestOut)(MonoComObject* pUnk, MonoComObject* *ppUnk);
+	int (STDCALL *Return22NoICall)(MonoComObject* pUnk);
 } MonoIUnknown;
 
 struct MonoComObject
@@ -3428,6 +3429,13 @@ ITestOut(MonoComObject* pUnk, MonoComObject* *ppUnk)
 	return S_OK;
 }
 
+LIBTEST_API int STDCALL
+Return22NoICall(MonoComObject* pUnk)
+{
+	return 22;
+}
+
+
 static void create_com_object (MonoComObject** pOut);
 
 LIBTEST_API int STDCALL 
@@ -3459,6 +3467,7 @@ static void create_com_object (MonoComObject** pOut)
 	(*pOut)->vtbl->ITestIn = ITestIn;
 	(*pOut)->vtbl->ITestOut = ITestOut;
 	(*pOut)->vtbl->get_ITest = get_ITest;
+	(*pOut)->vtbl->Return22NoICall = Return22NoICall;
 }
 
 static MonoComObject* same_object = NULL;
