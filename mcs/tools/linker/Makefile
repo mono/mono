@@ -14,7 +14,7 @@ TEST_CASES += \
 	mscorlib/test-reflection.cs
 endif
 
-TESTS_COMPILER = $(MCS) -nologo -noconfig -debug:portable -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll
+TESTS_COMPILER = $(BOOTSTRAP_MCS) -nologo -noconfig -debug:portable -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll
 
 check: compile-tests
 	$(MAKE) run-tests

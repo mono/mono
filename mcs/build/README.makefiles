@@ -418,13 +418,15 @@ just "mono --debug".
 
 
 
-* Calling the compiler directly? Use $(MCS).
+* Calling the compiler directly? Use $(BOOTSTRAP_MCS).
 
-Really, you should use $(CSCOMPILE) whenever possible, but $(MCS) is
-out there. $(BOOTSTRAP_MCS) is the C# compiler that we use to build
-mcs.exe; on Linux, we then use mcs.exe to build everything else, but
-on Windows, we use csc.exe to build everything. Only use
-$(BOOTSTRAP_MCS) if you know what you're doing.
+Really, you should use $(CSCOMPILE) whenever possible, but $(BOOTSTRAP_MCS) is
+out there. For the `basic` profile, $(BOOTSTRAP_MCS) is the C# compiler that we
+use to build mcs.exe; on Linux, we then use mcs.exe to build everything else,
+but on Windows, we use csc.exe to build everything. For the `build` profile,
+$(BOOTSTRAP_MCS) is the C# compiler we built in the `basic` profile. For the
+other profiles, $(BOOTSTRAP_MCS) is the C# compiler we built in the `build`
+profile.
 
 
 

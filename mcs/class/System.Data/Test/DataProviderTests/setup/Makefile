@@ -13,10 +13,10 @@ NO_SIGN_ASSEMBLY=yes
 include $(topdir)/build/library.make
 
 SetupDb.exe: $(the_lib)
-	$(MCS) /r:$(the_lib) SetupDb.cs
+	$(BOOTSTRAP_MCS) /r:$(the_lib) SetupDb.cs
 
 Setup.dll: 
-	$(MCS) /r:$(REFERENCES) /target:library /out:Setup.dll @$(SOURCEFILE)
+	$(BOOTSTRAP_MCS) /r:$(REFERENCES) /target:library /out:Setup.dll @$(SOURCEFILE)
 
 run-test-local: run-test-db
 run-test-db: SetupDb.exe
