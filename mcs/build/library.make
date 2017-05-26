@@ -80,12 +80,6 @@ ifndef NO_BUILD
 all-local: $(the_lib) $(extra_targets)
 endif
 
-ifeq ($(LIBRARY_COMPILE),$(BOOT_COMPILE))
-is_boot=true
-else
-is_boot=false
-endif
-
 csproj-local: csproj-library csproj-test
 
 intermediate_clean=$(subst /,-,$(intermediate))
@@ -93,7 +87,7 @@ csproj-library:
 	config_file=`basename $(LIBRARY) .dll`-$(intermediate_clean)$(PROFILE).input; \
 	case "$(thisdir)" in *"Facades"*) config_file=Facades_$$config_file;; *"legacy"*) config_file=legacy_$$config_file;; esac; \
 	echo $(thisdir):$$config_file >> $(topdir)/../msvc/scripts/order; \
-	(echo $(is_boot); \
+	(echo $(if $(filter $(PROFILE),basic),true,false); \
 	echo $(USE_MCS_FLAGS) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS); \
 	echo $(LIBRARY_NAME); \
 	echo $(BUILT_SOURCES_cmdline); \
@@ -234,10 +228,6 @@ dist-local: dist-default
 	for d in . $$subs ; do \
 	  case $$d in .) : ;; *) test ! -f $$d/ChangeLog || cp -p $$d/ChangeLog $(distdir)/$$d ;; esac ; done
 
-ifndef LIBRARY_COMPILE
-LIBRARY_COMPILE = $(CSCOMPILE)
-endif
-
 ifndef LIBRARY_SNK
 LIBRARY_SNK = $(topdir)/class/mono.snk
 endif
@@ -298,7 +288,7 @@ endif
 ifndef NO_BUILD
 
 $(the_lib): $(response) $(sn) $(BUILT_SOURCES) $(the_libdir)/.stamp $(GEN_RESOURCE_DEPS)
-	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) $(GEN_RESOURCE_FLAGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
+	$(CSCOMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) $(GEN_RESOURCE_FLAGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
 ifdef RESOURCE_STRINGS_FILES
 	$(Q) $(STRING_REPLACER) $(RESOURCE_STRINGS_FILES) $@
 endif

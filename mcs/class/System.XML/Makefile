@@ -5,13 +5,6 @@ include ../../build/rules.make
 LIBRARY = System.Xml.dll
 
 lib_file := $(wildcard ../lib/$(PROFILE)/System.Xml.dll)
-ifndef lib_file
-USE_BOOT_COMPILE = yes
-endif
-
-ifdef USE_BOOT_COMPILE
-LIBRARY_COMPILE = $(BOOT_COMPILE)
-endif
 
 TXT_RESOURCE_STRINGS = \
 	../referencesource/System.Xml/System.Xml.txt \

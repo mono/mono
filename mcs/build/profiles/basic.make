@@ -34,9 +34,6 @@ NO_TEST = yes
 NO_INSTALL = yes
 FRAMEWORK_VERSION = 4.0
 
-# Compiler all using same bootstrap compiler
-LIBRARY_COMPILE = $(BOOT_COMPILE)
-
 # Verbose basic only
 # V = 1
 

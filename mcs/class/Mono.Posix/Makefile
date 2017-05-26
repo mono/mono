@@ -10,8 +10,6 @@ LIB_MCS_FLAGS = /unsafe /nowarn:0618,612
 TEST_MCS_FLAGS = /unsafe /nowarn:0219,0618
 TEST_LIB_REFS = Mono.Posix System
 
-LIBRARY_COMPILE = $(BOOT_COMPILE)
-
 include ../../build/library.make
 
 update-mappings:

@@ -28,7 +28,6 @@ RESX_RESOURCE_STRING = \
 	../../../external/corert/src/System.Private.CoreLib/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Collections.Concurrent/src/Resources/Strings.resx
 
-LIBRARY_COMPILE = $(BOOT_COMPILE)
 LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 
 RESOURCE_FILES = \

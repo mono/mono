@@ -25,7 +25,7 @@ VALID_PROFILE := $(filter $(DEFAULT_PROFILE), $(PROFILE))
 ifdef VALID_PROFILE
 # casts
 bootstrap-cast.exe: gen-cast-test.cs
-	$(BOOT_COMPILE) -target:exe /out:$@ $<
+	$(CSCOMPILE) -target:exe /out:$@ $<
 
 casts.cs: bootstrap-cast.exe
 	$(with_mono_path) $(RUNTIME) $(RUNTIME_FLAGS) $< >$@
@@ -34,7 +34,7 @@ casts-mcs.exe: casts.cs
 	$(CSCOMPILE) -target:exe /out:$@ $<
 
 casts-boot.exe: casts.cs
-	$(BOOT_COMPILE) -target:exe /out:$@ $<
+	$(CSCOMPILE) -target:exe /out:$@ $<
 
 boot-casts.out: casts-boot.exe
 	$(with_mono_path) $(RUNTIME) $(RUNTIME_FLAGS) $< >$@
