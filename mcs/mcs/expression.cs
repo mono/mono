@@ -7570,14 +7570,21 @@ namespace Mono.CSharp
 			bool is_value_type = type.IsStructOrEnum;
 			VariableReference vr = target as VariableReference;
 
+			bool prepare_await = ec.HasSet (BuilderContext.Options.AsyncBody) && arguments?.ContainsEmitWithAwait () == true;
+
 			if (target != null && is_value_type && (vr != null || method == null)) {
+				if (prepare_await) {
+					arguments = arguments.Emit (ec, false, true);
+					prepare_await = false;
+				}
+				
 				target.AddressOf (ec, AddressOp.Store);
 			} else if (vr != null && vr.IsRef) {
 				vr.EmitLoad (ec);
 			}
 
 			if (arguments != null) {
-				if (ec.HasSet (BuilderContext.Options.AsyncBody) && (arguments.Count > (this is NewInitialize ? 0 : 1)) && arguments.ContainsEmitWithAwait ())
+				if (prepare_await)
 					arguments = arguments.Emit (ec, false, true);
 
 				arguments.Emit (ec);
