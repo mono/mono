@@ -52684,6 +52684,24 @@
       </method>
     </type>
   </test>
+  <test name="test-943.cs">
+    <type name="MyStruct">
+      <method name="Int32 get_X()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_X(Int32)" attrs="2182">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Int32 Main()" attrs="150">
+        <size>44</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-95.cs">
     <type name="X">
       <method name="Int32 Main()" attrs="150">
@@ -66702,6 +66720,32 @@
     <type name="TestClass+&lt;Test&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
         <size>309</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-async-92.cs">
+    <type name="A">
+      <method name="System.Threading.Tasks.Task`1[ValueType] Test1(Int32)" attrs="134">
+        <size>33</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>20</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="ValueType">
+      <method name="Void .ctor(Int32)" attrs="6278">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="A+&lt;Test1&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>174</size>
       </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
