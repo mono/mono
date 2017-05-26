@@ -28,7 +28,7 @@ PLATFORM_CHANGE_SEPARATOR_CMD
 	A command to change filename separators given on stdin. Leave undefined
 	if Unixy filenames will work. See win32.make.
 
-BOOTSTRAP_MCS
+BUILD_MCS
 	The C# compiler used to compile mcs/mcs.exe, and possibly other
 	assemblies if the user is doing a standalone build (that is, not
 	a bootstrap).

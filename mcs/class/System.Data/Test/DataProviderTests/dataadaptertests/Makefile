@@ -13,10 +13,10 @@ NO_SIGN_ASSEMBLY=yes
 include $(topdir)/build/library.make
 
 Runtests.exe: $(the_lib)
-	$(BOOTSTRAP_MCS) /r:$(the_lib) Runtests.cs
+	$(BUILD_MCS) /r:$(the_lib) Runtests.cs
 
 DbAdapter.dll: 
-	$(BOOTSTRAP_MCS) /r:$(REFERENCES) /target:library /out:DbAdapter.dll @$(SOURCEFILE)
+	$(BUILD_MCS) /r:$(REFERENCES) /target:library /out:DbAdapter.dll @$(SOURCEFILE)
 
 run-test-local: run-test-db
 run-test-db: Runtests.exe

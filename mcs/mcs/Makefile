@@ -76,7 +76,7 @@ do-time : $(PROGRAM)
 do-corlib:
 	@ echo -n "corlib:  "
 	@ rm -f ../class/lib/mscorlib.dll
-	@ cd ../class/corlib ; $(MAKE) BOOTSTRAP_MCS='$(FRIENDLY_TIME) mono $$(topdir)/class/lib/$(PROFILE)/mcs.exe' > /dev/null || (echo FAILED; exit 1)
+	@ cd ../class/corlib ; $(MAKE) BUILD_MCS='$(FRIENDLY_TIME) mono $$(topdir)/class/lib/$(PROFILE)/mcs.exe' > /dev/null || (echo FAILED; exit 1)
 
 PROFILER=default
 

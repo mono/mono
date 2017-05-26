@@ -28,8 +28,8 @@ Q_AOT=$(if $(V),,@echo "AOT     [$(intermediate)$(PROFILE_DIRECTORY)] $(notdir $
 USE_MCS_FLAGS = /codepage:$(CODEPAGE) /nologo /noconfig /deterministic $(LOCAL_MCS_FLAGS) $(PLATFORM_MCS_FLAGS) $(PROFILE_MCS_FLAGS) $(MCS_FLAGS)
 USE_MBAS_FLAGS = /codepage:$(CODEPAGE) $(LOCAL_MBAS_FLAGS) $(PLATFORM_MBAS_FLAGS) $(PROFILE_MBAS_FLAGS) $(MBAS_FLAGS)
 USE_CFLAGS = $(LOCAL_CFLAGS) $(CFLAGS) $(CPPFLAGS)
-CSCOMPILE = $(Q_MCS) $(BOOTSTRAP_MCS) $(USE_MCS_FLAGS)
-CSC_RUNTIME_FLAGS = --aot-path=$(abspath $(topdir)/class/lib/$(BOOTSTRAP_PROFILE)) --gc-params=nursery-size=64m
+CSCOMPILE = $(Q_MCS) $(BUILD_MCS) $(USE_MCS_FLAGS)
+CSC_RUNTIME_FLAGS = --aot-path=$(abspath $(topdir)/class/lib/$(BUILD_PROFILE)) --gc-params=nursery-size=64m
 BASCOMPILE = $(MBAS) $(USE_MBAS_FLAGS)
 CCOMPILE = $(CC) $(USE_CFLAGS)
 INSTALL = $(SHELL) $(topdir)/../mono/install-sh
@@ -40,13 +40,13 @@ MKINSTALLDIRS = $(SHELL) $(topdir)/mkinstalldirs
 INTERNAL_MBAS = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/mbas/mbas.exe
 INTERNAL_ILASM = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/ilasm.exe
 
-BOOTSTRAP_PROFILE = build
+BUILD_PROFILE = build
 # Using CSC_SDK_PATH_DISABLED for sanity check that all references have path specified
-BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" CSC_SDK_PATH_DISABLED= \
-	$(RUNTIME) $(RUNTIME_FLAGS) $(CSC_RUNTIME_FLAGS) $(if $(MCS_MODE),$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)/mcs.exe,$(CSC_LOCATION))
+BUILD_MCS = MONO_PATH="$(topdir)/class/lib/$(BUILD_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" CSC_SDK_PATH_DISABLED= \
+	$(RUNTIME) $(RUNTIME_FLAGS) $(CSC_RUNTIME_FLAGS) $(if $(MCS_MODE),$(topdir)/class/lib/$(BUILD_PROFILE)/mcs.exe,$(CSC_LOCATION))
 
-RESGEN = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(RESGEN_EXE) $(topdir)/class/lib/$(BOOTSTRAP_PROFILE)/resgen.exe
-STRING_REPLACER = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BOOTSTRAP_PROFILE)/cil-stringreplacer.exe
+RESGEN = MONO_PATH="$(topdir)/class/lib/$(BUILD_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(RESGEN_EXE) $(topdir)/class/lib/$(BUILD_PROFILE)/resgen.exe
+STRING_REPLACER = MONO_PATH="$(topdir)/class/lib/$(BUILD_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_PROFILE)/cil-stringreplacer.exe
 
 depsdir = $(topdir)/build/deps
 
@@ -142,8 +142,8 @@ endif
 ifdef NO_INSTALL
 GACUTIL = :
 else
-gacutil = $(topdir)/class/lib/$(BOOTSTRAP_PROFILE)/gacutil.exe
-GACUTIL = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(gacutil)
+gacutil = $(topdir)/class/lib/$(BUILD_PROFILE)/gacutil.exe
+GACUTIL = MONO_PATH="$(topdir)/class/lib/$(BUILD_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(gacutil)
 endif
 
 STD_TARGETS = test run-test run-test-ondotnet clean install uninstall doc-update

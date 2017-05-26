@@ -7,7 +7,7 @@ all-local:
 PROFILE_DIR=$(DESTDIR)$(mono_libdir)/mono
 
 build-reference-assemblies:
-	$(MAKE) -C ../../../external/binary-reference-assemblies CSC="$(BOOTSTRAP_MCS)"
+	$(MAKE) -C ../../../external/binary-reference-assemblies CSC="$(BUILD_MCS)"
 
 install-local:
 	$(MKINSTALLDIRS) $(PROFILE_DIR)/2.0-api
