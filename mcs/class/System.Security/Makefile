@@ -29,7 +29,7 @@ RESX_RESOURCE_STRING = ../../../external/corefx/src/System.Security.Cryptography
 
 include ../../build/library.make
 
-$(build_lib): $(secxml_libdir)/System.dll $(MONO_SECURITY_DLL)
+$(the_lib): $(secxml_libdir)/System.dll $(MONO_SECURITY_DLL)
 
 $(secxml_libdir)/System.dll:
 	(cd ../System; $(MAKE) $@)

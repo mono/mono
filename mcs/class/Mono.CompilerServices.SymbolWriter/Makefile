@@ -18,7 +18,7 @@ endif
 
 include ../../build/library.make
 
-$(build_lib): $(bare_libdir)/System.dll
+$(the_lib): $(bare_libdir)/System.dll
 
 $(bare_libdir)/System.dll:
 	(cd ../System; make $@)

@@ -19,7 +19,7 @@ configuration_library_deps = \
 	$(the_libdir_base)System.Security.dll 	\
 	$(bare_libdir)/System.Xml.dll
 
-$(build_lib): $(configuration_library_deps)
+$(the_lib): $(configuration_library_deps)
 
 test-local:
 	cp Test/appSettings.config $(dir $(NUNITLITE_CONFIG_FILE))/Test-appSettings.config

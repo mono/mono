@@ -38,11 +38,8 @@ endif
 
 the_libdir_base = $(topdir)/class/$(lib_dir)/$(PROFILE_DIRECTORY)/$(if $(LIBRARY_SUBDIR),$(LIBRARY_SUBDIR)/)
 
-ifdef RESOURCE_STRINGS
-ifneq (basic, $(PROFILE))
-RESOURCE_STRINGS_FILES += $(RESOURCE_STRINGS:%=--resourcestrings:%)
-endif
-endif
+the_libdir = $(the_libdir_base)$(intermediate)
+the_lib   = $(the_libdir)$(LIBRARY_NAME)
 
 #
 # The bare directory contains the plain versions of System and System.Xml
@@ -55,18 +52,11 @@ bare_libdir = $(the_libdir_base)bare
 #
 secxml_libdir = $(the_libdir_base)secxml
 
-the_libdir = $(the_libdir_base)$(intermediate)
-
-ifdef LIBRARY_USE_INTERMEDIATE_FILE
-build_libdir = $(the_libdir)tmp/
-else
-build_libdir = $(the_libdir)
+ifdef RESOURCE_STRINGS
+ifneq (basic, $(PROFILE))
+RESOURCE_STRINGS_FILES += $(RESOURCE_STRINGS:%=--resourcestrings:%)
 endif
-
-the_lib   = $(the_libdir)$(LIBRARY_NAME)
-build_lib = $(build_libdir)$(LIBRARY_NAME)
-library_CLEAN_FILES += $(the_lib)   $(the_lib).so   $(the_lib).mdb   $(the_lib:.dll=.pdb)
-library_CLEAN_FILES += $(build_lib) $(build_lib).so $(build_lib).mdb $(build_lib:.dll=.pdb)
+endif
 
 ifdef NO_SIGN_ASSEMBLY
 SN = :
@@ -107,7 +97,7 @@ csproj-library:
 	echo $(USE_MCS_FLAGS) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS); \
 	echo $(LIBRARY_NAME); \
 	echo $(BUILT_SOURCES_cmdline); \
-	echo $(build_lib); \
+	echo $(the_lib); \
 	echo $(FRAMEWORK_VERSION); \
 	echo $(PROFILE); \
 	echo $(RESOURCE_DEFS); \
@@ -284,7 +274,7 @@ library_CLEAN_FILES += $(response)
 makefrag = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).makefrag
 $(makefrag): $(sourcefile) $(topdir)/build/library.make $(depsdir)/.stamp
 #	@echo Creating $@ ...
-	@sed 's,^,$(build_lib): ,' $< >$@
+	@sed 's,^,$(the_lib): ,' $< >$@
 	@if test ! -f $(sourcefile).makefrag; then :; else \
 	   cat $(sourcefile).makefrag >> $@ ; \
 	   echo '$@: $(sourcefile).makefrag' >> $@; \
@@ -307,30 +297,25 @@ endif
 
 ifndef NO_BUILD
 
-$(build_lib): $(response) $(sn) $(BUILT_SOURCES) $(build_libdir)/.stamp $(GEN_RESOURCE_DEPS)
+$(the_lib): $(response) $(sn) $(BUILT_SOURCES) $(the_libdir)/.stamp $(GEN_RESOURCE_DEPS)
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) $(GEN_RESOURCE_FLAGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
 ifdef RESOURCE_STRINGS_FILES
 	$(Q) $(STRING_REPLACER) $(RESOURCE_STRINGS_FILES) $@
 endif
 	$(Q) $(SN) -R $@ $(LIBRARY_SNK)
 
-ifdef LIBRARY_USE_INTERMEDIATE_FILE
-$(the_lib): $(build_lib)
-	$(Q) cp $(build_lib) $@
-	$(Q) $(SN) -v $@
-	$(Q) test ! -f $(build_lib).mdb || mv $(build_lib).mdb $@.mdb
-	$(Q) test ! -f $(build_lib:.dll=.pdb) || mv $(build_lib:.dll=.pdb) $(the_lib:.dll=.pdb)
-endif
-
-endif
-
-library_CLEAN_FILES += $(PROFILE)_$(LIBRARY_NAME)_aot.log
+library_CLEAN_FILES += $(the_lib) $(the_lib).mdb $(the_lib:.dll=.pdb)
 
 ifdef PLATFORM_AOT_SUFFIX
+
 $(the_lib)$(PLATFORM_AOT_SUFFIX): $(the_lib)
 	$(Q_AOT) MONO_PATH='$(the_libdir_base)' > $(PROFILE)_$(LIBRARY_NAME)_aot.log 2>&1 $(RUNTIME) $(AOT_BUILD_FLAGS) --debug $(the_lib)
 
 all-local-aot: $(the_lib)$(PLATFORM_AOT_SUFFIX)
+
+library_CLEAN_FILES += $(the_lib)$(PLATFORM_AOT_SUFFIX) $(PROFILE)_$(LIBRARY_NAME)_aot.log
+
+endif
 endif
 
 # for now, don't give any /lib flags or set MONO_PATH, since we

@@ -175,7 +175,7 @@ $(the_libdir_base)Mono.Security.dll: ../Mono.Security/Makefile
 $(the_libdir_base)System.Configuration.dll:
 	(cd ../System.Configuration; $(MAKE))
 
-$(build_lib): $(CYCLIC_DEP_FILES)
+$(the_lib): $(CYCLIC_DEP_FILES)
 
 $(test_lib): $(TEST_RESOURCES)
 
