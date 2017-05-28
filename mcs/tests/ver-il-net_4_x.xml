@@ -52723,6 +52723,16 @@
       </method>
     </type>
   </test>
+  <test name="test-944.cs">
+    <type name="Class2">
+      <method name="Void Main()" attrs="150">
+        <size>15</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-95.cs">
     <type name="X">
       <method name="Int32 Main()" attrs="150">
