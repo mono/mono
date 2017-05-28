@@ -58,9 +58,6 @@ corefx/SR.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Conversions.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/COperators.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Declarations/AggregateDeclaration.cs
-../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Declarations/Declaration.cs
-../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Declarations/GlobalAttributeDeclaration.cs
-../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Declarations/NamespaceDeclaration.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/ExplicitConversion.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/ExpressionBinder.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/ExpressionKind.cs
@@ -91,7 +88,6 @@ corefx/SR.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Symbols/EventSymbol.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Symbols/FieldSymbol.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Symbols/IndexerSymbol.cs
-../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Symbols/LabelSymbol.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Symbols/LocalVariableSymbol.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Symbols/MethodOrPropertySymbol.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Symbols/MethodSymbol.cs
@@ -109,13 +105,11 @@ corefx/SR.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Symbols/SymbolTable.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Symbols/SymFactory.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Symbols/SymFactoryBase.cs
-../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Symbols/TransparentIdentifierMemberSymbol.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Symbols/TypeParameterSymbol.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Symbols/UnresolvedAggregateSymbol.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Symbols/VariableSymbol.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Tree/ArrayIndex.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Tree/ArrayInitialization.cs
-../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Tree/ArrayLength.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Tree/Assignment.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Tree/BinaryOperator.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Tree/Block.cs
@@ -125,7 +119,6 @@ corefx/SR.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Tree/Class.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Tree/CompoundOperator.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Tree/Concatenate.cs
-../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Tree/ConditionalOperator.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Tree/Constant.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Tree/Event.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Tree/EXPR.cs
