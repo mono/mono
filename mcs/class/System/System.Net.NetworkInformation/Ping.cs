@@ -243,7 +243,7 @@ namespace System.Net.NetworkInformation {
 		private PingReply SendPrivileged (IPAddress address, int timeout, byte [] buffer, PingOptions options)
 		{
 			IPEndPoint target = new IPEndPoint (address, 0);
-			IPEndPoint client = new IPEndPoint (GetNonLoopbackIPV4 (), 0);
+			IPEndPoint client = new IPEndPoint (address, 0);
 
 			// FIXME: support IPv6
 			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.Icmp)) {
