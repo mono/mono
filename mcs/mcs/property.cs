@@ -1793,6 +1793,18 @@ namespace Mono.CSharp
 		}
 		#endregion
 
+		public static ParametersImported CreateParametersFromSetter (MethodSpec setter, int set_param_count)
+		{
+			//
+			// Creates indexer parameters based on setter method parameters (the last parameter has to be removed)
+			//
+			var data = new IParameterData [set_param_count];
+			var types = new TypeSpec [set_param_count];
+			Array.Copy (setter.Parameters.FixedParameters, data, set_param_count);
+			Array.Copy (setter.Parameters.Types, types, set_param_count);
+			return new ParametersImported (data, types, setter.Parameters.HasParams);
+		}
+
 		public override string GetSignatureForDocumentation ()
 		{
 			return base.GetSignatureForDocumentation () + parameters.GetSignatureForDocumentation ();

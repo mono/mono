@@ -645,14 +645,7 @@ namespace Mono.CSharp
 					if (set_param_count == 0) {
 						set_based_param = ParametersCompiled.EmptyReadOnlyParameters;
 					} else {
-						//
-						// Create indexer parameters based on setter method parameters (the last parameter has to be removed)
-						//
-						var data = new IParameterData[set_param_count];
-						var types = new TypeSpec[set_param_count];
-						Array.Copy (set.Parameters.FixedParameters, data, set_param_count);
-						Array.Copy (set.Parameters.Types, types, set_param_count);
-						set_based_param = new ParametersImported (data, types, set.Parameters.HasParams);
+						set_based_param = IndexerSpec.CreateParametersFromSetter (set, set_param_count);
 					}
 
 					mod = set.Modifiers;
