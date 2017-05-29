@@ -207,17 +207,6 @@ namespace System.Net.NetworkInformation {
 			return Send (addresses [0], timeout, buffer, options);
 		}
 
-		static IPAddress GetNonLoopbackIPV4 ()
-		{
-#pragma warning disable 618
-			foreach (IPAddress addr in Dns.GetHostByName (Dns.GetHostName ()).AddressList)
-				if (!IPAddress.IsLoopback (addr) && addr.AddressFamily == AddressFamily.InterNetwork)
-					return addr;
-#pragma warning restore 618
-
-			throw new InvalidOperationException ("Could not resolve non-loopback IP address for localhost");
-		}
-
 		public PingReply Send (IPAddress address, int timeout, byte [] buffer, PingOptions options)
 		{
 			if (address == null)
@@ -243,8 +232,7 @@ namespace System.Net.NetworkInformation {
 		private PingReply SendPrivileged (IPAddress address, int timeout, byte [] buffer, PingOptions options)
 		{
 			IPEndPoint target = new IPEndPoint (address, 0);
-			IPEndPoint client = new IPEndPoint (GetNonLoopbackIPV4 (), 0);
-
+			
 			// FIXME: support IPv6
 			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.Icmp)) {
 				if (options != null) {
@@ -264,7 +252,7 @@ namespace System.Net.NetworkInformation {
 				// receive
 				bytes = new byte [100];
 				do {
-					EndPoint endpoint = client;
+					EndPoint endpoint = target;
 					SocketError error = 0;
 					int rc = s.ReceiveFrom (bytes, 0, 100, SocketFlags.None,
 							ref endpoint, out error);
