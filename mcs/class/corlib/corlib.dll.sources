@@ -1658,6 +1658,7 @@ corert/ThreadPoolBoundHandle.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Diagnostics/Debug.cs
 
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/CompilerServices/IsReadOnlyAttribute.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/CompilerServices/IsByRefLikeAttribute.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/CompilerServices/ITuple.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/CompilerServices/RuntimeFeature.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/CompilerServices/TupleElementNamesAttribute.cs
@@ -1677,6 +1678,8 @@ corert/ThreadPoolBoundHandle.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/NonRandomizedStringEqualityComparer.cs
 
 corefx/SR.cs
+
+../../../external/corefx/src/System.Collections/src/System/Collections/Generic/CollectionExtensions.cs
 
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/CDSCollectionETWBCLProvider.cs
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/ConcurrentDictionary.cs
