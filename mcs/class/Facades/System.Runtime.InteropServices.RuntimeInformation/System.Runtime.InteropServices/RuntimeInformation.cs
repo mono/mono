@@ -35,12 +35,9 @@ namespace System.Runtime.InteropServices
 {
 	public static class RuntimeInformation
 	{
-		[DllImport ("__Internal")]
-		extern static string mono_get_runtime_build_info ();
-
 		public static string FrameworkDescription {
 			get {
-				return mono_get_runtime_build_info ();
+				return "Mono " + Mono.Runtime.GetDisplayName ();
 			}
 		}
 
