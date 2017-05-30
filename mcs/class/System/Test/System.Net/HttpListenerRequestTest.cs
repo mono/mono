@@ -243,7 +243,6 @@ namespace MonoTests.System.Net
 			var prefix = "http://localhost:" + NetworkHelpers.FindFreePort () + "/";
 			var key = "Product/1";
 
-			var expectedUrl = prefix + key + "/";
 			var rawUrl = prefix + Uri.EscapeDataString (key) + "/";
 
 			HttpListener listener = new HttpListener ();
@@ -257,7 +256,15 @@ namespace MonoTests.System.Net
 
 			Assert.IsTrue (contextTask.Wait (1000));
 
-			Assert.AreEqual (expectedUrl, contextTask.Result.Request.Url.AbsoluteUri);
+			/*
+			 * This was previously configurable via
+			 * 
+			 *   <system.net><settings><httpListener unescapeRequestUrl="false"/></settings></system.net>
+			 * 
+			 * in your app.config.  HttpListener from CoreFX does not use this setting
+			 * anymore and assumes "false".
+			 */
+			Assert.AreEqual (rawUrl, contextTask.Result.Request.Url.AbsoluteUri);
 
 			listener.Close ();
 		}
