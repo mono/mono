@@ -7459,6 +7459,10 @@ namespace Mono.CSharp {
 						ec.Emit (OpCodes.Br, end);
 
 					ec.MarkLabel (labels [i + 1]);
+
+					ec.EmitInt (0);
+					ec.Emit (OpCodes.Stloc, state_variable);
+
 					c = catch_sm [i];
 					ec.AsyncThrowVariable = c.Variable;
 					c.Block.Emit (ec);
