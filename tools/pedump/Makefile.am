@@ -20,6 +20,7 @@ pedump_LDADD = 			\
 	$(top_builddir)/mono/metadata/libmonoruntimesgen-static.la \
 	$(top_builddir)/mono/sgen/libmonosgen-static.la \
 	$(top_builddir)/mono/utils/libmonoutils.la \
+	$(top_builddir)/mono/mini/libmini-static.la \
 	$(LLVM_LIBS)			\
 	$(LLVM_LDFLAGS)			\
 	$(GLIB_LIBS)			\
