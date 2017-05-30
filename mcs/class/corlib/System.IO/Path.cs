@@ -291,6 +291,30 @@ namespace System.IO {
 #endif
 			return fullpath;
 		}
+		
+		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+		// http://msdn.microsoft.com/en-us/library/windows/desktop/aa364963%28v=vs.85%29.aspx
+		// http://www.codeproject.com/Tips/223321/Win32-API-GetFullPathName
+		private static extern int GetFullPathName(string path, int numBufferChars, StringBuilder buffer, ref IntPtr lpFilePartOrNull); 
+		
+		internal static string GetFullPathName(string path)
+		{
+			const int MAX_PATH = 260;
+			StringBuilder buffer = new StringBuilder(MAX_PATH);
+			IntPtr ptr = IntPtr.Zero;
+			int length = GetFullPathName(path, MAX_PATH, buffer, ref ptr);
+			if (length == 0)
+			{
+				int error = Marshal.GetLastWin32Error();
+				throw new IOException("Windows API call to GetFullPathName failed, Windows error code: " + error);
+			}
+			else if (length > MAX_PATH)
+			{
+				buffer = new StringBuilder(length);
+				GetFullPathName(path, length, buffer, ref ptr);
+			}
+			return buffer.ToString();
+		}
 
 		internal static String GetFullPathInternal(String path)
 		{
