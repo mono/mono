@@ -2705,6 +2705,8 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 		}
 	}
 
+	mono_clear_gclass_recording ();
+
 	mono_domain_set (domain, FALSE);
 	/* Notify OnDomainUnload listeners */
 	method = mono_class_get_method_from_name (domain->domain->mbr.obj.vtable->klass, "DoDomainUnload", -1);	
