@@ -167,12 +167,8 @@ mcs-compileall: mono-wrapper etc/mono/config
 	if [ "$$ok" = "false" ]; then echo "<?xml version='1.0' encoding='utf-8'?><test-results failures='1' total='1' not-run='0' name='verify' date='$$(date +%F)' time='$$(date +%T)'><test-suite name='mcs-compileall' success='False' time='0'><results><test-case name='fail' executed='True' success='False' time='0'><failure><message>Verifying framework assemblies failed. Check the log for more details.</message><stack-trace></stack-trace></failure></test-case></results></test-suite></test-results>" > TestResult-verify.xml; fi; \
 	$$ok
 
-if NACL_CODEGEN
-check-local:
-else
 check-local: mcs-compileall mcs-do-test-profiles
 	$(MAKE) mcs-do-run-test-profiles
-endif
 
 # Compile all mcs tests
 test: mcs-do-test-profiles
