@@ -389,7 +389,6 @@ partial class SR
 	public const string net_invalidPingBufferSize = "The buffer length must not exceed 65500 bytes.";
 	public const string net_cant_perform_during_shutdown = "This operation cannot be performed while the AppDomain is shutting down.";
 	public const string net_cant_create_environment = "Unable to create another web proxy script environment at this time.";
-	public const string net_completed_result = "This operation cannot be performed on a completed asynchronous result object.";
 	public const string net_protocol_invalid_family = "'{0}' Client can only accept InterNetwork or InterNetworkV6 addresses.";
 	public const string net_protocol_invalid_multicast_family = "Multicast family is not the same as the family of the '{0}' Client.";
 	public const string net_empty_osinstalltype = "The Registry value '{0}' was either empty or not a string type.";
@@ -548,7 +547,6 @@ partial class SR
 	public const string net_perm_invalid_val_in_element = "The '{0}' element contains one or more invalid values.";
 	public const string net_invalid_ip_addr = "IPv4 address 0.0.0.0 and IPv6 address ::0 are unspecified addresses that cannot be used as a target address.";
 	public const string dns_bad_ip_address = "An invalid IP address was specified.";
-	public const string net_bad_mac_address = "An invalid physical address was specified.";
 	public const string net_ping = "An exception occurred during a Ping request.";
 	public const string net_bad_ip_address_prefix = "An invalid IP address prefix was specified.";
 	public const string net_max_ip_address_list_length_exceeded = "Too many addresses to sort. The maximum number of addresses allowed are {0}.";
@@ -625,7 +623,6 @@ partial class SR
 	public const string net_cache_not_configured = "No cache protocol is available for this request.";
 	public const string net_cache_non_seekable_stream_not_supported = "The transport stream instance passed in the RangeStream constructor is not seekable and therefore is not supported.";
 	public const string net_invalid_cast = "Invalid cast from {0} to {1}.";
-	public const string net_collection_readonly = "The collection is read-only.";
 	public const string net_not_ipermission = "Specified value does not contain 'IPermission' as its tag.";
 	public const string net_no_classname = "Specified value does not contain a 'class' attribute.";
 	public const string net_no_typename = "The value class attribute is not valid.";

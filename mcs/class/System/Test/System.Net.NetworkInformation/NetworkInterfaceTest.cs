@@ -18,6 +18,13 @@ namespace MonoTests.System.Net.NetworkInformation
 	[TestFixture]
 	public class NetworkInterfaceTest
 	{
+		static bool RunningOnUnix {
+			get {
+				int p = (int)Environment.OSVersion.Platform;
+				return ((p == 128) || (p == 4) || (p == 6));
+			}
+		}
+
 		[Test]
 		public void IsNetworkAvailable ()
 		{
@@ -70,6 +77,9 @@ namespace MonoTests.System.Net.NetworkInformation
 		[Test]
 		public void FirstInterfaceSpeed ()
 		{
+			if (RunningOnUnix)
+				Assert.Ignore ();
+
 			NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces ();
 			Assert.IsTrue (adapters[0].Speed > 0);
 		}

@@ -208,6 +208,10 @@ System.Net.Configuration/WebRequestModulesSection.cs
 System.Net.Mail/SmtpPermission.cs
 System.Net.Mail/SmtpPermissionAttribute.cs
 
+System.Net.NetworkInformation/Ping.cs
+System.Net.NetworkInformation/PingCompletedEventArgs.cs
+System.Net.NetworkInformation/PingCompletedEventHandler.cs
+
 System.Runtime.InteropServices/StandardOleMarshalObject.cs
 
 System.Security.Permissions/PermissionHelper.cs
@@ -259,13 +263,26 @@ ReferenceSources/SR2.cs
 ../referencesource/System/compmod/system/diagnostics/TypedElement.cs
 ../referencesource/System/compmod/system/diagnostics/XmlWriterTraceListener.cs
 
+../referencesource/System/net/System/Net/NetworkInformation/IPAddressCollection.cs
+../referencesource/System/net/System/Net/NetworkInformation/IPStatus.cs
+../referencesource/System/net/System/Net/NetworkInformation/NetworkInformationPermission.cs
+../referencesource/System/net/System/Net/NetworkInformation/pingexception.cs
+../referencesource/System/net/System/Net/NetworkInformation/PingOptions.cs
+../referencesource/System/net/System/Net/NetworkInformation/PingReply.cs
+
 ../../../external/corefx/src/Common/src/System/CSharpHelpers.cs
+../../../external/corefx/src/Common/src/System/NotImplemented.cs
 
 ../../../external/corefx/src/Common/src/System/IO/TempFileCollection.cs
 
 ../../../external/corefx/src/Common/src/System/CodeDom/CodeObject.cs
 ../../../external/corefx/src/Common/src/System/CodeDom/CodeTypeReference.cs
 ../../../external/corefx/src/Common/src/System/CodeDom/CodeTypeReferenceCollection.cs
+
+../../../external/corefx/src/Common/src/System/Net/LazyAsyncResult.cs
+
+../../../external/corefx/src/Common/src/System/Net/NetworkInformation/HostInformation.cs
+../../../external/corefx/src/Common/src/System/Net/NetworkInformation/NetworkInformationException.cs
 
 ../../../external/corefx/src/System.CodeDom/src/Microsoft/CSharp/CSharpCodeGenerator.cs
 ../../../external/corefx/src/System.CodeDom/src/Microsoft/CSharp/CSharpCodeProvider.cs
@@ -379,3 +396,39 @@ ReferenceSources/SR2.cs
 ../../../external/corefx/src/System.CodeDom/src/System/CodeDom/FieldDirection.cs
 ../../../external/corefx/src/System.CodeDom/src/System/CodeDom/MemberAttributes.cs
 ../../../external/corefx/src/System.CodeDom/src/System/Collections/Specialized/FixedStringLookup.cs
+
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/DuplicateAddressDetectionState.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/GatewayIPAddressInformation.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/GatewayIPAddressInformationCollection.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/IPAddressInformation.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/IPAddressInformationCollection.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/IPGlobalProperties.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/IPGlobalStatistics.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/IPInterfaceProperties.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/IPInterfaceStatistics.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/IPv4InterfaceProperties.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/IPv6InterfaceProperties.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/IcmpV4Statistics.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/IcmpV6Statistics.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/InternalIPAddressCollection.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/Ipv4InterfaceStatistics.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/MulticastIPAddressInformation.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/MulticastIPAddressInformationCollection.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/NetBiosNodeType.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/NetEventSource.NetworkInformation.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/NetworkAvailabilityEventArgs.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/NetworkChangeDelegates.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/NetworkInterface.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/NetworkInterfaceComponent.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/NetworkInterfaceType.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/OperationalStatus.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/PhysicalAddress.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/PrefixOrigin.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/ScopeLevel.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/SuffixOrigin.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/TcpConnection.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/TcpState.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/TcpStatistics.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/UdpStatistics.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/UnicastIPAddressInformation.cs
+../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/UnicastIPAddressInformationCollection.cs

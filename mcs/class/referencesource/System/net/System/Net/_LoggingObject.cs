@@ -552,6 +552,7 @@ namespace System.Net {
 
 #endif
 
+#if !MONO
     [Flags]
     internal enum ThreadKinds
     {
@@ -580,6 +581,7 @@ namespace System.Net {
         SafeSources    = SourceMask & ~(Timer | Finalization),  // Methods that "unsafe" sources can call must be explicitly marked.
         ThreadPool     = CompletionPort | Worker,               // Like Thread.CurrentThread.IsThreadPoolThread
     }
+#endif
 
     /// <internalonly/>
     /// <devdoc>
