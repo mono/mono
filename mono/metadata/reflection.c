@@ -7593,6 +7593,24 @@ mono_reflection_get_token (MonoObject *obj)
 	return token;
 }
 
+static MonoClass*
+load_cattr_enum_type(MonoImage *image, const char *p, const char **end)
+{
+    char *n;
+    MonoType *t;
+    int slen = mono_metadata_decode_value(p, &p);
+
+    n = (char *)g_memdup(p, slen + 1);
+    n[slen] = 0;
+    t = mono_reflection_type_from_name(n, image);
+    g_free(n);
+    if (t == NULL)
+        return NULL;
+    p += slen;
+    *end = p;
+    return mono_class_from_mono_type(t);
+}
+
 static void*
 load_cattr_value (MonoImage *image, MonoType *t, const char *p, const char **end)
 {
@@ -7699,12 +7717,22 @@ handle_type:
 			int etype = *p;
 			p ++;
 
-			if (etype == 0x51)
-				/* See Partition II, Appendix B3 */
-				etype = MONO_TYPE_OBJECT;
 			type = MONO_TYPE_SZARRAY;
-			simple_type.type = etype;
-			tklass = mono_class_from_mono_type (&simple_type);
+			if (etype == 0x50) {
+				tklass = mono_defaults.systemtype_class;
+			}
+			else if (etype == 0x55) {
+				tklass = load_cattr_enum_type(image, p, &p);
+				if (tklass == NULL)
+					return NULL;
+			}
+			else {
+				if (etype == 0x51)
+					/* See Partition II, Appendix B3 */
+					etype = MONO_TYPE_OBJECT;
+				simple_type.type = (MonoTypeEnum)etype;
+				tklass = mono_class_from_mono_type(&simple_type);
+			}
 			goto handle_enum;
 		} else if (subt == 0x55) {
 			char *n;
