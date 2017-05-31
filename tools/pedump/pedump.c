@@ -658,6 +658,7 @@ main (int argc, char *argv [])
 	mono_perfcounters_init ();
 #endif
 	mono_counters_init ();
+	mono_tls_init_runtime_keys ();
 	mono_metadata_init ();
 	mono_images_init ();
 	mono_assemblies_init ();
@@ -701,7 +702,7 @@ main (int argc, char *argv [])
 	if (verify_pe || run_new_metadata_verifier) {
 		run_new_metadata_verifier = 1;
 	}
-	
+
 	if (run_new_metadata_verifier) {
 		mono_verifier_set_mode (verifier_mode);
 

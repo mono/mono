@@ -1826,7 +1826,7 @@ mono_arch_create_vars (MonoCompile *cfg)
 
 	if (cfg->method->save_lmf) {
 		cfg->lmf_ir = TRUE;
-#if !defined(TARGET_WIN32)
+#if !defined(TARGET_WIN32) && !defined(TARGET_ANDROID)
 		if (!optimize_for_xen)
 			cfg->lmf_ir_mono_lmf = TRUE;
 #endif
