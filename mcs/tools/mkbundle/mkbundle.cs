@@ -65,12 +65,26 @@ class MakeBundle {
 	static string fetch_target = null;
 	static bool custom_mode = true;
 	static string embedded_options = null;
-	static string runtime = null;
+
+	static string runtime_bin = null;
+
+	static string runtime {
+		get {
+			if (runtime_bin == null && IsUnix)
+				runtime_bin = Process.GetCurrentProcess().MainModule.FileName;
+			return runtime_bin;
+		}
+
+		set { runtime_bin = value; }
+	}
+	
 	static bool aot_compile = false;
 	static string aot_args = "static";
 	static string aot_mode = "";
 	static string aot_runtime = null;
 	static int? aot_dedup_assembly = null;
+	static string cil_strip_path = null;
+	static string managed_linker_path = null;
 	static string sdk_path = null;
 	static string lib_path = null;
 	static Dictionary<string,string> environment = new Dictionary<string,string>();
@@ -366,6 +380,20 @@ class MakeBundle {
 				}
 				in_tree = args [++i];
 				break;
+			case "--managed-linker":
+				if (i+1 == top) {
+					Console.WriteLine ("Usage: --managed-linker <path/to/exe> ");
+					return 1;
+				}
+				managed_linker_path = args [++i];
+				break;
+			case "--cil-strip":
+				if (i+1 == top) {
+					Console.WriteLine ("Usage: --cil-strip <path/to/exe> ");
+					return 1;
+				}
+				cil_strip_path = args [++i];
+				break;
 			case "--aot-runtime":
 				if (i+1 == top) {
 					Console.WriteLine ("Usage: --aot-runtime <path/to/runtime> ");
@@ -474,6 +502,8 @@ class MakeBundle {
 		foreach (string file in assemblies)
 			if (!QueueAssembly (files, file))
 				return 1;
+
+		PreprocessAssemblies (assemblies, files);
 
 		if (aot_compile)
 			AotCompile (files);
@@ -695,12 +725,8 @@ class MakeBundle {
 	static bool GeneratePackage (List<string> files)
 	{
 		if (runtime == null){
-			if (IsUnix)
-				runtime = Process.GetCurrentProcess().MainModule.FileName;
-			else {
-				Error ("You must specify at least one runtime with --runtime or --cross");
-				Environment.Exit (1);
-			}
+			Error ("You must specify at least one runtime with --runtime or --cross");
+			Environment.Exit (1);
 		}
 		if (!File.Exists (runtime)){
 			Error ($"The specified runtime at {runtime} does not exist");
@@ -1459,13 +1485,9 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		if (aot_runtime == null)
 			aot_runtime = runtime;
 
-		if (aot_runtime == null || aot_runtime.Length == 0){
-			if (IsUnix)
-				aot_runtime = Process.GetCurrentProcess().MainModule.FileName;
-			else {
-				Error ("You must specify at least one aot runtime with --runtime or --cross or --aot_runtime when AOT compiling");
-				Environment.Exit (1);
-			}
+		if (aot_runtime == null) {
+			Error ("You must specify at least one aot runtime with --runtime or --cross or --aot_runtime when AOT compiling");
+			Environment.Exit (1);
 		}
 
 		var aot_mode_string = "";
@@ -1479,6 +1501,8 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			all_assemblies = new StringBuilder("");
 		}
 
+		Console.WriteLine ("Aoting files:");
+
 		for (int i=0; i < files.Count; i++) {
 			var fileName = files [i];
 			string path = LocateFile (new Uri (fileName).LocalPath);
@@ -1490,11 +1514,11 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			if (aot_dedup_assembly != null && i != (int) aot_dedup_assembly) {
 				all_assemblies.Append (path);
 				all_assemblies.Append (" ");
-				Execute (String.Format ("{0} --aot={1},outfile={2}{3}{4} {5}",
-					aot_runtime, aot_args, outPath, aot_mode_string, dedup_mode_string, path));
+				Execute (String.Format ("MONO_PATH={6} {0} --aot={1},outfile={2}{3}{4} {5}",
+					aot_runtime, aot_args, outPath, aot_mode_string, dedup_mode_string, path, Path.GetDirectoryName (path)));
 			} else {
-				Execute (String.Format ("{0} --aot={1},outfile={2}{3} {4}",
-					aot_runtime, aot_args, outPath, aot_mode_string, path));
+				Execute (String.Format ("MONO_PATH={5} {0} --aot={1},outfile={2}{3} {4}",
+					aot_runtime, aot_args, outPath, aot_mode_string, path, Path.GetDirectoryName (path)));
 			}
 		}
 		if (aot_dedup_assembly != null) {
@@ -1503,8 +1527,68 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			string path = LocateFile (filePath);
 			dedup_mode_string = String.Format (",dedup-include={0}", Path.GetFileName(filePath));
 			string outPath = String.Format ("{0}.aot_out", path);
-			Execute (String.Format ("{0} --aot={1},outfile={2}{3}{4} {5} {6}",
-				aot_runtime, aot_args, outPath, aot_mode_string, dedup_mode_string, path, all_assemblies.ToString ()));
+			Execute (String.Format ("MONO_PATH={7} {0} --aot={1},outfile={2}{3}{4} {5} {6}",
+				aot_runtime, aot_args, outPath, aot_mode_string, dedup_mode_string, path, all_assemblies.ToString (), Path.GetDirectoryName (path)));
+		}
+
+		if ((aot_mode == "full" || aot_mode == "llvmonly") && cil_strip_path != null) {
+			for (int i=0; i < files.Count; i++) {
+				var inName = new Uri (files [i]).LocalPath;
+				var cmd = String.Format ("{0} {1} {2}", aot_runtime, cil_strip_path, inName);
+				Execute (cmd);
+			}
+		}
+	}
+
+	static void LinkManaged (List <string> files, string outDir)
+	{
+		if (managed_linker_path == null)
+			return;
+
+		var paths = new StringBuilder ("");
+		foreach (var file in files) {
+			paths.Append (" -a  ");
+			paths.Append (new Uri (file).LocalPath);
+		}
+
+		var cmd = String.Format ("{0} {1} -b true -out {2} {3} -c link -p copy ", runtime, managed_linker_path, outDir, paths.ToString ());
+		Execute (cmd);
+	}
+
+	static void PreprocessAssemblies (List <string> chosenFiles, List <string> files)
+	{
+		if (aot_mode == "" || (cil_strip_path == null && managed_linker_path == null))
+			return;
+
+		var temp_dir = Path.Combine(Directory.GetCurrentDirectory(), "temp_assemblies");
+		var d_info = new DirectoryInfo (temp_dir);
+		if (d_info.Exists) {
+			Console.WriteLine ("Removing previous build cache at {0}", temp_dir);
+			d_info.Delete (true);
+		}
+		d_info.Create ();
+
+		//if (managed_linker_path != null) {
+			//LinkManaged (chosenFiles, temp_dir);
+
+			//// Replace list with new list of files
+			//files.Clear ();
+			//Console.WriteLine ("Iterating {0}", temp_dir);
+			//d_info = new DirectoryInfo (temp_dir);
+			//foreach (var file in d_info.GetFiles ()) {
+				//files.Append (String.Format ("file:///{0}", file));
+				//Console.WriteLine (String.Format ("file:///{0}", file));
+			//}
+			//return;
+		//}
+
+		// Fix file references
+		for (int i=0; i < files.Count; i++) {
+			var inName = new Uri (files [i]).LocalPath;
+			var outName = Path.Combine (temp_dir, Path.GetFileName (inName));
+			//if (managed_linker_path == null)
+				File.Copy (inName, outName);
+			files [i] = files[i].Replace (Path.GetDirectoryName (inName), temp_dir);
 		}
 	}
 
