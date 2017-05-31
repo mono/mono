@@ -119,6 +119,9 @@ namespace Mono.Debugger.Soft
 		public int[] live_range_end;
 		public int[] scopes_start;
 		public int[] scopes_end;
+		public int nhoisted;
+		public int[] hoisted_scopes_start;
+		public int[] hoisted_scopes_end;
 	}
 
 	struct PropInfo {
@@ -420,7 +423,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 45;
+		internal const int MINOR_VERSION = 46;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -1926,6 +1929,15 @@ namespace Mono.Debugger.Soft
 					info.scopes_start [i] = last_start + res.ReadInt ();
 					info.scopes_end [i] = info.scopes_start [i] + res.ReadInt ();
 					last_start = info.scopes_start [i];
+				}
+				if (Version.AtLeast (2, 46)) {
+					info.nhoisted = res.ReadInt ();
+					info.hoisted_scopes_start = new int [info.nhoisted];
+					info.hoisted_scopes_end = new int [info.nhoisted];
+					for (int i = 0; i < info.nhoisted; ++i) {
+						info.hoisted_scopes_start [i] = res.ReadInt ();
+						info.hoisted_scopes_end [i] = res.ReadInt ();
+					}
 				}
 			}
 
