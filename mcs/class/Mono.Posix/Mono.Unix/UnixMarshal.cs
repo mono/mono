@@ -325,20 +325,20 @@ namespace Mono.Unix {
 			if (encoding == null)
 				throw new ArgumentNullException ("encoding");
 
-			int null_terminator_count = encoding.GetMaxByteCount (1);
-			int lengthWithoutNull = encoding.GetByteCount(s);
-			int marshalLength = lengthWithoutNull + null_terminator_count;
-
-			IntPtr mem = AllocHeap (marshalLength);
-			if (mem == IntPtr.Zero)
-				throw new UnixIOException (Native.Errno.ENOMEM);
-
 			if (index < 0 || count < 0)
 				throw new ArgumentOutOfRangeException ((index < 0 ? "index" : "count"),
 					 "Non - negative number required.");
 
 			if (s.Length - index < count)
 				throw new ArgumentOutOfRangeException ("s", "Index and count must refer to a location within the string.");
+
+			int null_terminator_count = encoding.GetMaxByteCount (1);
+			int lengthWithoutNull = encoding.GetByteCount(s);
+			int marshalLength = lengthWithoutNull + 1;
+
+			IntPtr mem = AllocHeap (marshalLength);
+			if (mem == IntPtr.Zero)
+				throw new UnixIOException (Native.Errno.ENOMEM);
 
 			unsafe {
 				fixed (char* p = s) {
