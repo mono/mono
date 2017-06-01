@@ -334,7 +334,7 @@ namespace Mono.Unix {
 
 			int null_terminator_count = encoding.GetMaxByteCount(1);
 			int length_without_null = encoding.GetByteCount(s);
-			int marshalLength = length_without_null + null_terminator_count;
+			int marshalLength = checked (length_without_null + null_terminator_count);
 
 			IntPtr mem = AllocHeap (marshalLength);
 			if (mem == IntPtr.Zero)
