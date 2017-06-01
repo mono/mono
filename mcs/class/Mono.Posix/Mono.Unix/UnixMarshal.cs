@@ -332,8 +332,8 @@ namespace Mono.Unix {
 			if (s.Length - index < count)
 				throw new ArgumentOutOfRangeException ("s", "Index and count must refer to a location within the string.");
 
-			int null_terminator_count = encoding.GetMaxByteCount(1);
-			int length_without_null = encoding.GetByteCount(s);
+			int null_terminator_count = encoding.GetMaxByteCount (1);
+			int length_without_null = encoding.GetByteCount (s);
 			int marshalLength = checked (length_without_null + null_terminator_count);
 
 			IntPtr mem = AllocHeap (marshalLength);
