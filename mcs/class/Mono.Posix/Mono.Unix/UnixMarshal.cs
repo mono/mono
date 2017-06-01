@@ -343,12 +343,20 @@ namespace Mono.Unix {
 			unsafe {
 				fixed (char* p = s) {
 					byte* marshal = (byte*)mem;
-					int bytes_copied = encoding.GetBytes (p + index, count, marshal, marshalLength);
+					int bytes_copied;
+
+					try {
+						bytes_copied = encoding.GetBytes (p + index, count, marshal, marshalLength);
+					} catch {
+						FreeHeap (mem);
+						throw;
+					}
 
 					if (bytes_copied != length_without_null) {
 						FreeHeap (mem);
 						throw new NotSupportedException ("encoding.GetBytes() doesn't equal encoding.GetByteCount()!");
 					}
+
 					marshal += length_without_null;
 					for (int i = 0; i < null_terminator_count; ++i)
 						marshal[i] = 0;
