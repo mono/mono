@@ -279,38 +279,26 @@ public class UnixEncoding : Encoding
 		return InternalGetBytes (chars, charIndex, charCount, bytes, byteIndex, ref leftOver, true);
 	}
 
-	// Convenience wrappers for "GetBytes".
-	public override int GetBytes (String s, int charIndex, int charCount,
-								 byte[] bytes, int byteIndex)
+	public unsafe override int GetBytes(char* chars, int charCount, byte* bytes, int byteCount)
 	{
-		// Validate the parameters.
-		if (s == null) {
-			throw new ArgumentNullException ("s");
-		}
-		if (bytes == null) {
-			throw new ArgumentNullException ("bytes");
-		}
-		if (charIndex < 0 || charIndex > s.Length) {
-			throw new ArgumentOutOfRangeException ("charIndex", _("ArgRange_StringIndex"));
-		}
-		if (charCount < 0 || charCount > (s.Length - charIndex)) {
-			throw new ArgumentOutOfRangeException ("charCount", _("ArgRange_StringRange"));
-		}
-		if (byteIndex < 0 || byteIndex > bytes.Length) {
-			throw new ArgumentOutOfRangeException ("byteIndex", _("ArgRange_Array"));
-		}
+		if (bytes == null || chars == null)
+			throw new ArgumentNullException(bytes == null ? "bytes" : "chars");
 
+		if (charCount < 0 || byteCount < 0)
+			throw new ArgumentOutOfRangeException((charCount < 0 ? "charCount" : "byteCount"));
+			
 		// Convert the characters into bytes.
 		char ch;
-		int length = bytes.Length;
+		int length = byteCount;
 		uint pair;
-		int posn = byteIndex;
+		int posn = 0;
+		int charIndex = 0;
 		while (charCount > 0) {
 			// Fetch the next UTF-16 character pair value.
-			ch = s[charIndex++];
+			ch = chars[charIndex++];
 			if (ch >= '\uD800' && ch <= '\uDBFF' && charCount > 1) {
 				// This may be the start of a surrogate pair.
-				pair = (uint)(s[charIndex]);
+				pair = (uint)(chars[charIndex]);
 				if (pair >= (uint)0xDC00 && pair <= (uint)0xDFFF) {
 					pair = (pair - (uint)0xDC00) +
 						   ((((uint)ch) - (uint)0xD800) << 10) +
@@ -326,7 +314,7 @@ public class UnixEncoding : Encoding
 				}
 				charCount -= 2;
 				if (charCount >= 0) {
-					bytes[posn++] = (byte) s [charIndex++];
+					bytes[posn++] = (byte) chars [charIndex++];
 				}
 				continue;
 			} else {
@@ -365,7 +353,37 @@ public class UnixEncoding : Encoding
 		}
 
 		// Return the final count to the caller.
-		return posn - byteIndex;
+		return posn;
+	}
+
+	// Convenience wrappers for "GetBytes".
+	public override int GetBytes (String s, int charIndex, int charCount,
+								 byte[] bytes, int byteIndex)
+	{
+		// Validate the parameters.
+		if (s == null) {
+			throw new ArgumentNullException ("s");
+		}
+		if (bytes == null) {
+			throw new ArgumentNullException ("bytes");
+		}
+		if (charIndex < 0 || charIndex > s.Length) {
+			throw new ArgumentOutOfRangeException ("charIndex", _("ArgRange_StringIndex"));
+		}
+		if (charCount < 0 || charCount > (s.Length - charIndex)) {
+			throw new ArgumentOutOfRangeException ("charCount", _("ArgRange_StringRange"));
+		}
+		if (byteIndex < 0 || byteIndex > bytes.Length) {
+			throw new ArgumentOutOfRangeException ("byteIndex", _("ArgRange_Array"));
+		}
+
+		unsafe {
+			fixed (char *p = s) {
+				fixed (byte *b = bytes) {
+					return GetBytes(p + charIndex, charCount, b + byteIndex, bytes.Length - byteIndex);
+				}
+			}
+		}
 	}
 
 	// Internal version of "GetCharCount" which can handle a rolling

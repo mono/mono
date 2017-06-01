@@ -331,8 +331,7 @@ namespace Mono.Unix {
 
 			if (s.Length - index < count)
 				throw new ArgumentOutOfRangeException ("s", "Index and count must refer to a location within the string.");
-
-			int null_terminator_count = encoding.GetMaxByteCount (1);
+			
 			int lengthWithoutNull = encoding.GetByteCount(s);
 			int marshalLength = lengthWithoutNull + 1;
 
@@ -349,9 +348,7 @@ namespace Mono.Unix {
 						FreeHeap (mem);
 						throw new NotSupportedException ("encoding.GetBytes() doesn't equal encoding.GetByteCount()!");
 					}
-					marshal += lengthWithoutNull;
-					for (int i = 0; i < null_terminator_count; ++i)
-						marshal[i] = 0;
+					marshal[lengthWithoutNull] = 0;
 				}
 			}
 
