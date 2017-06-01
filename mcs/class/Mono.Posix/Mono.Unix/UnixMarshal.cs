@@ -331,9 +331,10 @@ namespace Mono.Unix {
 
 			if (s.Length - index < count)
 				throw new ArgumentOutOfRangeException ("s", "Index and count must refer to a location within the string.");
-			
-			int lengthWithoutNull = encoding.GetByteCount(s);
-			int marshalLength = lengthWithoutNull + 1;
+
+			int null_terminator_count = encoding.GetMaxByteCount(1);
+			int length_without_null = encoding.GetByteCount(s);
+			int marshalLength = length_without_null + null_terminator_count;
 
 			IntPtr mem = AllocHeap (marshalLength);
 			if (mem == IntPtr.Zero)
@@ -344,11 +345,13 @@ namespace Mono.Unix {
 					byte* marshal = (byte*)mem;
 					int bytes_copied = encoding.GetBytes (p + index, count, marshal, marshalLength);
 
-					if (bytes_copied != lengthWithoutNull) {
+					if (bytes_copied != length_without_null) {
 						FreeHeap (mem);
 						throw new NotSupportedException ("encoding.GetBytes() doesn't equal encoding.GetByteCount()!");
 					}
-					marshal[lengthWithoutNull] = 0;
+					marshal += length_without_null;
+					for (int i = 0; i < null_terminator_count; ++i)
+						marshal[i] = 0;
 				}
 			}
 
