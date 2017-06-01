@@ -303,6 +303,7 @@ namespace System.Runtime.InteropServices
         VARFLAG_FIMMEDIATEBIND    =0x1000
     }
 
+#if !FULL_AOT_RUNTIME
     [Obsolete("Use System.Runtime.InteropServices.ComTypes.ITypeInfo instead. http://go.microsoft.com/fwlink/?linkid=14202", false)]
     [Guid("00020401-0000-0000-C000-000000000046")]
     [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
@@ -329,4 +330,5 @@ namespace System.Runtime.InteropServices
         void ReleaseFuncDesc(IntPtr pFuncDesc);
         void ReleaseVarDesc(IntPtr pVarDesc);
     }
+#endif
 }
