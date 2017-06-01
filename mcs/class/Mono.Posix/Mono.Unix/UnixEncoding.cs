@@ -301,9 +301,9 @@ public class UnixEncoding : Encoding
 		}
 
 		unsafe {
-			fixed (char *p = s) {
-				fixed (byte *b = bytes) {
-					return GetBytes(p + charIndex, charCount, b + byteIndex, bytes.Length - byteIndex);
+			fixed (char* p = s) {
+				fixed (byte* b = bytes) {
+					return GetBytes (p + charIndex, charCount, b + byteIndex, bytes.Length - byteIndex);
 				}
 			}
 		}
@@ -312,10 +312,10 @@ public class UnixEncoding : Encoding
 	public unsafe override int GetBytes(char* chars, int charCount, byte* bytes, int byteCount)
 	{
 		if (bytes == null || chars == null)
-			throw new ArgumentNullException(bytes == null ? "bytes" : "chars");
+			throw new ArgumentNullException (bytes == null ? "bytes" : "chars");
 
 		if (charCount < 0 || byteCount < 0)
-			throw new ArgumentOutOfRangeException((charCount < 0 ? "charCount" : "byteCount"));
+			throw new ArgumentOutOfRangeException (charCount < 0 ? "charCount" : "byteCount");
 			
 		// Convert the characters into bytes.
 		char ch;
@@ -325,7 +325,7 @@ public class UnixEncoding : Encoding
 		int charIndex = 0;
 		while (charCount > 0) {
 			// Fetch the next UTF-16 character pair value.
-			ch = chars[charIndex++];
+			ch = chars [charIndex++];
 			if (ch >= '\uD800' && ch <= '\uDBFF' && charCount > 1) {
 				// This may be the start of a surrogate pair.
 				pair = (uint)(chars[charIndex]);
@@ -344,7 +344,7 @@ public class UnixEncoding : Encoding
 				}
 				charCount -= 2;
 				if (charCount >= 0) {
-					bytes[posn++] = (byte) chars [charIndex++];
+					bytes[posn++] = (byte)chars [charIndex++];
 				}
 				continue;
 			} else {
@@ -412,7 +412,7 @@ public class UnixEncoding : Encoding
 		uint leftSoFar = (leftOverCount & (uint)0x0F);
 		uint leftSize = ((leftOverCount >> 4) & (uint)0x0F);
 		while (count > 0) {
-			ch = (uint)(bytes[index++]);
+			ch = (uint)(bytes [index++]);
 			++next_raw;
 			--count;
 			if (leftSize == 0) {
