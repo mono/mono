@@ -326,7 +326,8 @@ namespace Mono.Unix {
 				throw new ArgumentNullException ("encoding");
 
 			int null_terminator_count = encoding.GetMaxByteCount (1);
-			int marshalLength = encoding.GetByteCount (s) + null_terminator_count;
+			int lengthWithoutNull = encoding.GetByteCount(s);
+			int marshalLength = lengthWithoutNull + null_terminator_count;
 
 			IntPtr mem = AllocHeap (marshalLength);
 			if (mem == IntPtr.Zero)
@@ -344,11 +345,11 @@ namespace Mono.Unix {
 					byte* marshal = (byte*)mem;
 					int bytes_copied = encoding.GetBytes (p + index, count, marshal, marshalLength);
 
-					if (bytes_copied != (marshalLength - null_terminator_count)) {
+					if (bytes_copied != lengthWithoutNull) {
 						FreeHeap (mem);
 						throw new NotSupportedException ("encoding.GetBytes() doesn't equal encoding.GetByteCount()!");
 					}
-					marshal += marshalLength - null_terminator_count;
+					marshal += lengthWithoutNull;
 					for (int i = 0; i < null_terminator_count; ++i)
 						marshal[i] = 0;
 				}
