@@ -279,6 +279,36 @@ public class UnixEncoding : Encoding
 		return InternalGetBytes (chars, charIndex, charCount, bytes, byteIndex, ref leftOver, true);
 	}
 
+	// Convenience wrappers for "GetBytes".
+	public override int GetBytes (String s, int charIndex, int charCount,
+								 byte[] bytes, int byteIndex)
+	{
+		// Validate the parameters.
+		if (s == null) {
+			throw new ArgumentNullException ("s");
+		}
+		if (bytes == null) {
+			throw new ArgumentNullException ("bytes");
+		}
+		if (charIndex < 0 || charIndex > s.Length) {
+			throw new ArgumentOutOfRangeException ("charIndex", _("ArgRange_StringIndex"));
+		}
+		if (charCount < 0 || charCount > (s.Length - charIndex)) {
+			throw new ArgumentOutOfRangeException ("charCount", _("ArgRange_StringRange"));
+		}
+		if (byteIndex < 0 || byteIndex > bytes.Length) {
+			throw new ArgumentOutOfRangeException ("byteIndex", _("ArgRange_Array"));
+		}
+
+		unsafe {
+			fixed (char *p = s) {
+				fixed (byte *b = bytes) {
+					return GetBytes(p + charIndex, charCount, b + byteIndex, bytes.Length - byteIndex);
+				}
+			}
+		}
+	}
+
 	public unsafe override int GetBytes(char* chars, int charCount, byte* bytes, int byteCount)
 	{
 		if (bytes == null || chars == null)
@@ -354,36 +384,6 @@ public class UnixEncoding : Encoding
 
 		// Return the final count to the caller.
 		return posn;
-	}
-
-	// Convenience wrappers for "GetBytes".
-	public override int GetBytes (String s, int charIndex, int charCount,
-								 byte[] bytes, int byteIndex)
-	{
-		// Validate the parameters.
-		if (s == null) {
-			throw new ArgumentNullException ("s");
-		}
-		if (bytes == null) {
-			throw new ArgumentNullException ("bytes");
-		}
-		if (charIndex < 0 || charIndex > s.Length) {
-			throw new ArgumentOutOfRangeException ("charIndex", _("ArgRange_StringIndex"));
-		}
-		if (charCount < 0 || charCount > (s.Length - charIndex)) {
-			throw new ArgumentOutOfRangeException ("charCount", _("ArgRange_StringRange"));
-		}
-		if (byteIndex < 0 || byteIndex > bytes.Length) {
-			throw new ArgumentOutOfRangeException ("byteIndex", _("ArgRange_Array"));
-		}
-
-		unsafe {
-			fixed (char *p = s) {
-				fixed (byte *b = bytes) {
-					return GetBytes(p + charIndex, charCount, b + byteIndex, bytes.Length - byteIndex);
-				}
-			}
-		}
 	}
 
 	// Internal version of "GetCharCount" which can handle a rolling
