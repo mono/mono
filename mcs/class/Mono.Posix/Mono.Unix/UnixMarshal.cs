@@ -325,27 +325,33 @@ namespace Mono.Unix {
 			if (encoding == null)
 				throw new ArgumentNullException ("encoding");
 
-			int min_byte_count = encoding.GetMaxByteCount(1);
-			char[] copy = s.ToCharArray (index, count);
-			byte[] marshal = new byte [encoding.GetByteCount (copy) + min_byte_count];
+			int min_byte_count = encoding.GetMaxByteCount (1);
+			int marshalLength = encoding.GetByteCount (s) + min_byte_count;
 
-			int bytes_copied = encoding.GetBytes (copy, 0, copy.Length, marshal, 0);
-
-			if (bytes_copied != (marshal.Length-min_byte_count))
-				throw new NotSupportedException ("encoding.GetBytes() doesn't equal encoding.GetByteCount()!");
-
-			IntPtr mem = AllocHeap (marshal.Length);
+			IntPtr mem = AllocHeap (marshalLength);
 			if (mem == IntPtr.Zero)
 				throw new UnixIOException (Native.Errno.ENOMEM);
 
-			bool copied = false;
-			try {
-				Marshal.Copy (marshal, 0, mem, marshal.Length);
-				copied = true;
-			}
-			finally {
-				if (!copied)
-					FreeHeap (mem);
+			if (index < 0 || count < 0)
+				throw new ArgumentOutOfRangeException ((index < 0 ? "index" : "count"),
+					 "Non - negative number required.");
+
+			if (s.Length - index < count)
+				throw new ArgumentOutOfRangeException ("s", "Index and count must refer to a location within the string.");
+
+			unsafe {
+				fixed (char* p = s) {
+					byte* marshal = (byte*)mem;
+					int bytes_copied = encoding.GetBytes (p + index, count, marshal, marshalLength);
+
+					if (bytes_copied != (marshalLength - min_byte_count)) {
+						FreeHeap (mem);
+						throw new NotSupportedException ("encoding.GetBytes() doesn't equal encoding.GetByteCount()!");
+					}
+					marshal += marshalLength - min_byte_count;
+					for (int i = 0; i < min_byte_count; ++i)
+						marshal[i] = 0;
+				}
 			}
 
 			return mem;
