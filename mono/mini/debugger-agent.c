@@ -5725,7 +5725,7 @@ event_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 				int n = decode_int (p, &p, end);
 				int j;
 
-				req->modifiers [i].data.assemblies = g_new0 (MonoAssembly*, n);
+				req->modifiers [i].data.assemblies = g_new0 (MonoAssembly*, n + 1);
 				for (j = 0; j < n; ++j) {
 					req->modifiers [i].data.assemblies [j] = decode_assemblyid (p, &p, end, &domain, &err);
 					if (err) {
