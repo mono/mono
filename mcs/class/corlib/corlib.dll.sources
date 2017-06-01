@@ -257,7 +257,6 @@ System.Reflection/MonoProperty.cs
 System.Reflection/ParameterInfo.cs
 System.Reflection/PortableExecutableKinds.cs
 System.Reflection/PropertyInfo.cs
-System.Reflection/ReflectionTypeLoadException.cs
 System.Reflection/StrongNameKeyPair.cs
 System.Reflection.Emit/AssemblyBuilder.cs
 System.Reflection.Emit/AssemblyBuilderAccess.cs
@@ -362,24 +361,13 @@ System.Runtime.InteropServices/_Type.cs
 System.Runtime.InteropServices/_TypeBuilder.cs
 System.Runtime.InteropServices/BIND_OPTS.cs
 System.Runtime.InteropServices/BINDPTR.cs
-System.Runtime.InteropServices/CALLCONV.cs
 System.Runtime.InteropServices/DESCKIND.cs
-System.Runtime.InteropServices/DISPPARAMS.cs
-System.Runtime.InteropServices/ELEMDESC.cs
-System.Runtime.InteropServices/EXCEPINFO.cs
 System.Runtime.InteropServices/ExporterEventKind.cs
 System.Runtime.InteropServices/ExtensibleClassFactory.cs
 System.Runtime.InteropServices/FILETIME.cs
-System.Runtime.InteropServices/FUNCDESC.cs
-System.Runtime.InteropServices/FUNCFLAGS.cs
-System.Runtime.InteropServices/FUNCKIND.cs
 System.Runtime.InteropServices/GCHandle.cs
 System.Runtime.InteropServices/GCHandleType.cs
-System.Runtime.InteropServices/IDLDESC.cs
-System.Runtime.InteropServices/IDLFLAG.cs
 System.Runtime.InteropServices/IErrorInfo.cs
-System.Runtime.InteropServices/IMPLTYPEFLAGS.cs
-System.Runtime.InteropServices/INVOKEKIND.cs
 System.Runtime.InteropServices/ITypeLibConverter.cs
 System.Runtime.InteropServices/ITypeLibExporterNameProvider.cs
 System.Runtime.InteropServices/ITypeLibExporterNotifySink.cs
@@ -389,8 +377,6 @@ System.Runtime.InteropServices/LIBFLAGS.cs
 System.Runtime.InteropServices/ManagedErrorInfo.cs
 System.Runtime.InteropServices/Marshal.cs
 System.Runtime.InteropServices/MarshalAsAttribute.cs
-System.Runtime.InteropServices/PARAMDESC.cs
-System.Runtime.InteropServices/PARAMFLAG.cs
 System.Runtime.InteropServices/RegistrationClassContext.cs
 System.Runtime.InteropServices/RegistrationConnectionType.cs
 System.Runtime.InteropServices/STATSTG.cs
@@ -398,10 +384,6 @@ System.Runtime.InteropServices/RegistrationServices.cs
 System.Runtime.InteropServices/SafeBuffer.cs
 System.Runtime.InteropServices/SafeHandle.cs
 System.Runtime.InteropServices/SYSKIND.cs
-System.Runtime.InteropServices/TYPEATTR.cs
-System.Runtime.InteropServices/TYPEDESC.cs
-System.Runtime.InteropServices/TYPEFLAGS.cs
-System.Runtime.InteropServices/TYPEKIND.cs
 System.Runtime.InteropServices/TYPELIBATTR.cs
 System.Runtime.InteropServices/TypeLibConverter.cs
 System.Runtime.InteropServices/TypeLibExporterFlags.cs
@@ -418,10 +400,7 @@ System.Runtime.InteropServices/UCOMIPersistFile.cs
 System.Runtime.InteropServices/UCOMIRunningObjectTable.cs
 System.Runtime.InteropServices/UCOMIStream.cs
 System.Runtime.InteropServices/UCOMITypeComp.cs
-System.Runtime.InteropServices/UCOMITypeInfo.cs
 System.Runtime.InteropServices/UCOMITypeLib.cs
-System.Runtime.InteropServices/VARDESC.cs
-System.Runtime.InteropServices/VARFLAGS.cs
 System.Runtime.InteropServices/CustomQueryInterfaceMode.cs
 System.Runtime.InteropServices/ComEventsHelper.cs
 
@@ -1233,6 +1212,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/reflection/pointer.cs
 ../referencesource/mscorlib/system/reflection/propertyattributes.cs
 ../referencesource/mscorlib/system/reflection/reflectioncontext.cs
+../referencesource/mscorlib/system/reflection/reflectiontypeloadexception.cs
 ../referencesource/mscorlib/system/reflection/resourceattributes.cs
 ../referencesource/mscorlib/system/reflection/RuntimeReflectionExtensions.cs
 ../referencesource/mscorlib/system/reflection/targetexception.cs
@@ -1301,6 +1281,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/runtime/interopservices/safearraytypemismatchexception.cs
 ../referencesource/mscorlib/system/runtime/interopservices/safehandle.cs
 ../referencesource/mscorlib/system/runtime/interopservices/sehexception.cs
+../referencesource/mscorlib/system/runtime/interopservices/ucomitypeinfo.cs
 ../referencesource/mscorlib/system/runtime/interopservices/ucomienumconnections.cs
 ../referencesource/mscorlib/system/runtime/interopservices/unknownwrapper.cs
 ../referencesource/mscorlib/system/runtime/interopservices/variantWrapper.cs
