@@ -1050,6 +1050,11 @@ public class DebuggerTests
 
 		e = step_in_await ("ss_await", e);//ss_await_1_exc (true, false).Wait ();//out
 		e = step_in_await ("MoveNext", e);//{
+
+		// Check hoisted scope information
+		var hoisted = (e as StepEvent).Method.GetHoistedScopes ();
+		Assert.AreEqual (2, hoisted.Length);
+
 		e = step_out_await ("ss_await", e);//ss_await_1_exc (true, true).Wait ();//out
 	}
 
