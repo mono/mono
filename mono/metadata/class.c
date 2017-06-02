@@ -24,6 +24,7 @@
 #include <mono/metadata/assembly-internals.h>
 #include <mono/metadata/metadata.h>
 #include <mono/metadata/metadata-internals.h>
+#include <mono/metadata/mono-adapt-set.h>
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/tokentype.h>
@@ -1030,6 +1031,7 @@ mono_class_inflate_generic_method_full_checked (MonoMethod *method, MonoClass *k
 	MonoMethodInflated *iresult, *cached;
 	MonoMethodSignature *sig;
 	MonoGenericContext tmp_context;
+	MonoMethodInflated tmp_result;
 
 	error_init (error);
 
@@ -1061,7 +1063,8 @@ mono_class_inflate_generic_method_full_checked (MonoMethod *method, MonoClass *k
 		(mono_class_is_gtd (method->klass) && context->class_inst)))
 		return method;
 
-	iresult = g_new0 (MonoMethodInflated, 1);
+	iresult = &tmp_result;
+	memset (iresult, 0, sizeof (MonoMethodInflated));
 	iresult->context = *context;
 	iresult->declaring = method;
 
@@ -1084,10 +1087,10 @@ mono_class_inflate_generic_method_full_checked (MonoMethod *method, MonoClass *k
 	cached = (MonoMethodInflated *)g_hash_table_lookup (set->gmethod_cache, iresult);
 	mono_image_set_unlock (set);
 
-	if (cached) {
-		g_free (iresult);
+	if (cached)
 		return (MonoMethod*)cached;
-	}
+
+	iresult = g_memdup (iresult, sizeof (MonoMethodInflated));
 
 	mono_stats.inflated_method_count++;
 
@@ -2900,7 +2903,7 @@ mono_get_unique_iid (MonoClass *klass)
 }
 
 static void
-collect_implemented_interfaces_aux (MonoClass *klass, GPtrArray **res, GHashTable **ifaces, MonoError *error)
+collect_implemented_interfaces_aux (MonoClass *klass, GPtrArray **res, MonoAdaptSet *ifaces, MonoError *error)
 {
 	int i;
 	MonoClass *ic;
@@ -2913,12 +2916,10 @@ collect_implemented_interfaces_aux (MonoClass *klass, GPtrArray **res, GHashTabl
 
 		if (*res == NULL)
 			*res = g_ptr_array_new ();
-		if (*ifaces == NULL)
-			*ifaces = g_hash_table_new (NULL, NULL);
-		if (g_hash_table_lookup (*ifaces, ic))
+		if (mono_adapt_set_contains (ifaces, ic))
 			continue;
 		g_ptr_array_add (*res, ic);
-		g_hash_table_insert (*ifaces, ic, ic);
+		mono_adapt_set_add (ifaces, ic);
 		mono_class_init (ic);
 		if (mono_class_has_failure (ic)) {
 			mono_error_set_type_load_class (error, ic, "Error Loading class");
@@ -2934,11 +2935,11 @@ GPtrArray*
 mono_class_get_implemented_interfaces (MonoClass *klass, MonoError *error)
 {
 	GPtrArray *res = NULL;
-	GHashTable *ifaces = NULL;
+	MonoAdaptSet ifaces;
 
+	mono_adapt_set_init (&ifaces);
 	collect_implemented_interfaces_aux (klass, &res, &ifaces, error);
-	if (ifaces)
-		g_hash_table_destroy (ifaces);
+	mono_adapt_set_destroy (&ifaces);
 	if (!mono_error_ok (error)) {
 		if (res)
 			g_ptr_array_free (res, TRUE);
@@ -7712,7 +7713,7 @@ search_modules (MonoImage *image, const char *name_space, const char *name, Mono
 }
 
 static MonoClass *
-mono_class_from_name_checked_aux (MonoImage *image, const char* name_space, const char *name, GHashTable* visited_images, MonoError *error)
+mono_class_from_name_checked_aux (MonoImage *image, const char* name_space, const char *name, MonoAdaptSet* visited_images, MonoError *error)
 {
 	GHashTable *nspace_table;
 	MonoImage *loaded_image;
@@ -7725,10 +7726,10 @@ mono_class_from_name_checked_aux (MonoImage *image, const char* name_space, cons
 	error_init (error);
 
 	// Checking visited images avoids stack overflows when cyclic references exist.
-	if (g_hash_table_lookup (visited_images, image))
+	if (mono_adapt_set_contains (visited_images, image))
 		return NULL;
 
-	g_hash_table_insert (visited_images, image, GUINT_TO_POINTER(1));
+	mono_adapt_set_add (visited_images, image);
 
 	if ((nested = strchr (name, '/'))) {
 		int pos = nested - name;
@@ -7845,13 +7846,13 @@ MonoClass *
 mono_class_from_name_checked (MonoImage *image, const char* name_space, const char *name, MonoError *error)
 {
 	MonoClass *klass;
-	GHashTable *visited_images;
+	MonoAdaptSet visited_images;
+	
+	mono_adapt_set_init (&visited_images);
 
-	visited_images = g_hash_table_new (g_direct_hash, g_direct_equal);
+	klass = mono_class_from_name_checked_aux (image, name_space, name, &visited_images, error);
 
-	klass = mono_class_from_name_checked_aux (image, name_space, name, visited_images, error);
-
-	g_hash_table_destroy (visited_images);
+	mono_adapt_set_destroy (&visited_images);
 
 	return klass;
 }
@@ -9920,6 +9921,7 @@ mono_classes_init (void)
 	mono_counters_register ("MonoClass size",
 							MONO_COUNTER_METADATA | MONO_COUNTER_INT, &classes_size);
 }
+
 
 /**
  * mono_classes_cleanup:

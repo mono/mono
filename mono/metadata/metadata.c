@@ -3274,7 +3274,11 @@ mono_metadata_inflate_generic_inst (MonoGenericInst *ginst, MonoGenericContext *
 	if (!ginst->is_open)
 		return ginst;
 
-	type_argv = g_new0 (MonoType*, ginst->type_argc);
+	if (ginst->type_argc > MONO_GENERIC_ARG_COUNT_MAX) {
+		mono_error_set_bad_image_name (error, "<Unknown>", "Generic instantiation with too many arguments (%d)", ginst->type_argc);
+		return NULL;
+	}
+	type_argv = g_alloca (sizeof (MonoType*) * ginst->type_argc);
 
 	for (i = 0; i < ginst->type_argc; i++) {
 		type_argv [i] = mono_class_inflate_generic_type_checked (ginst->type_argv [i], context, error);
@@ -3288,7 +3292,6 @@ mono_metadata_inflate_generic_inst (MonoGenericInst *ginst, MonoGenericContext *
 cleanup:
 	for (i = 0; i < count; i++)
 		mono_metadata_free_type (type_argv [i]);
-	g_free (type_argv);
 
 	return nginst;
 }

@@ -51,6 +51,14 @@ struct _MonoType {
 #define MONO_PROCESSOR_ARCHITECTURE_AMD64 4
 #define MONO_PROCESSOR_ARCHITECTURE_ARM 5
 
+/* Artificial limits we impose on types */
+
+//Maximun number of generic arguments a type can have.
+#define MONO_GENERIC_ARG_COUNT_MAX 255
+
+
+
+
 struct _MonoAssemblyName {
 	const char *name;
 	const char *culture;
