@@ -152,6 +152,11 @@ namespace System.Net.Security
 			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
 		}
 
+		public virtual Task ShutdownAsync ()
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
 		public override bool IsAuthenticated {
 			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
 		}

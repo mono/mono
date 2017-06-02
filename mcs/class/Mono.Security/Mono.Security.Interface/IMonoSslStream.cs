@@ -86,6 +86,8 @@ namespace Mono.Security.Interface
 
 		void EndWrite (IAsyncResult asyncResult);
 
+		Task ShutdownAsync ();
+
 		TransportContext TransportContext {
 			get;
 		}

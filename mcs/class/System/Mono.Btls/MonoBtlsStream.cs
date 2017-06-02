@@ -53,12 +53,12 @@ namespace Mono.Btls
 		}
 
 		protected override MNS.MobileTlsContext CreateContext (
-			MNS.MobileAuthenticatedStream parent, bool serverMode, string targetHost,
-			SslProtocols enabledProtocols, X509Certificate serverCertificate,
-			X509CertificateCollection clientCertificates, bool askForClientCert)
+			bool serverMode, string targetHost, SslProtocols enabledProtocols,
+			X509Certificate serverCertificate, X509CertificateCollection clientCertificates,
+			bool askForClientCert)
 		{
 			return new MonoBtlsContext (
-				parent, serverMode, targetHost,
+				this, serverMode, targetHost,
 				enabledProtocols, serverCertificate,
 				clientCertificates, askForClientCert);
 		}
