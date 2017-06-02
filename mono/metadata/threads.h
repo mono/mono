@@ -57,6 +57,9 @@ MONO_API mono_bool mono_thread_is_foreign (MonoThread *thread);
 
 extern MONO_API mono_bool mono_thread_detach_if_exiting (void);
 
+extern MONO_API void mono_thread_push_appdomain_ref (MonoDomain *domain);
+extern MONO_API void mono_thread_pop_appdomain_ref (void);
+
 MONO_END_DECLS
 
 #endif /* _MONO_METADATA_THREADS_H_ */
