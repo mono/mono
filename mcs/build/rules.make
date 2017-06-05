@@ -104,6 +104,12 @@ endif
 
 include $(topdir)/build/profiles/$(PROFILE).make
 
+ifdef PROFILE_APPLETLS
+ifdef PLATFORM_APPLETLS
+MONO_FEATURE_APPLETLS=1
+endif
+endif
+
 ifdef BCL_OPTIMIZE
 PROFILE_MCS_FLAGS += -optimize
 endif
