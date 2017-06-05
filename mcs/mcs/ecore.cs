@@ -995,6 +995,11 @@ namespace Mono.CSharp {
 		{
 		}
 
+		public virtual Reachability MarkReachable (Reachability rc)
+		{
+			return rc;
+		}
+
 		//
 		// Special version of flow analysis for expressions which can return different
 		// on-true and on-false result. Used by &&, ||, ?: expressions
@@ -1295,10 +1300,6 @@ namespace Mono.CSharp {
 	/// </summary>
 	public abstract class ExpressionStatement : Expression
 	{
-		public virtual void MarkReachable (Reachability rc)
-		{
-		}
-
 		public virtual ExpressionStatement ResolveStatement (BlockContext ec)
 		{
 			Expression e = Resolve (ec);
@@ -1458,6 +1459,11 @@ namespace Mono.CSharp {
 				SLE.Expression.ConvertChecked (child.MakeExpression (ctx), type.GetMetaInfo ()) :
 				SLE.Expression.Convert (child.MakeExpression (ctx), type.GetMetaInfo ());
 #endif
+		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			return child.MarkReachable (rc);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
@@ -2407,6 +2413,11 @@ namespace Mono.CSharp {
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
 			return orig_expr.MakeExpression (ctx);
+		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			return expr.MarkReachable (rc);
 		}
 	}
 

@@ -219,7 +219,7 @@ namespace Mono.CSharp
 %token STRUCT	
 %token SWITCH	
 %token THIS	
-%token THROW	
+%token THROW
 %token TRUE	
 %token TRY	
 %token TYPEOF	
@@ -261,6 +261,7 @@ namespace Mono.CSharp
 %token WHEN
 %token INTERPOLATED_STRING
 %token INTERPOLATED_STRING_END
+%token THROW_EXPR
 
 /* C# keywords which are not really keywords */
 %token GET
@@ -4310,6 +4311,13 @@ unary_expression
 		
 		$$ = new Await ((Expression) $2, GetLocation ($1));
 	  }
+	| THROW_EXPR prefixed_unary_expression
+	  {
+		if (lang_version < LanguageVersion.V_7)
+			FeatureIsNotAvailable (lexer.Location, "throw expression");
+
+		$$ = new ThrowExpression ((Expression) $2, GetLocation ($1));
+	  }
 	| BANG error
 	  {
 		Error_SyntaxError (yyToken);
@@ -6366,10 +6374,15 @@ return_statement
 	;
 
 throw_statement
-	: THROW opt_expression SEMICOLON
+	: THROW expression SEMICOLON
 	  {
 		$$ = new Throw ((Expression) $2, GetLocation ($1));
 		lbag.AddStatement ($$, GetLocation ($3));
+	  }
+	| THROW SEMICOLON
+	  {
+		$$ = new Throw (null, GetLocation ($1));
+		lbag.AddStatement ($$, GetLocation ($2));
 	  }
 	| THROW expression error
 	  {
@@ -8081,6 +8094,7 @@ static string GetTokenName (int token)
 	case Token.THIS:
 		return "this";
 	case Token.THROW:
+	case Token.THROW_EXPR:
 		return "throw";
 	case Token.TRUE:
 		return "true";

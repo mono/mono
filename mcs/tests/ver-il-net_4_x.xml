@@ -72786,6 +72786,77 @@
       </method>
     </type>
   </test>
+  <test name="test-throw-expr-01.cs">
+    <type name="X">
+      <method name="Void Main()" attrs="150">
+        <size>32</size>
+      </method>
+      <method name="Int32 Test()" attrs="134">
+        <size>10</size>
+      </method>
+      <method name="System.Object Foo()" attrs="129">
+        <size>10</size>
+      </method>
+      <method name="System.Object Test2()" attrs="134">
+        <size>23</size>
+      </method>
+      <method name="Void Test3(Int32 ByRef)" attrs="145">
+        <size>3</size>
+      </method>
+      <method name="Int32 get_Item(Int32)" attrs="2177">
+        <size>10</size>
+      </method>
+      <method name="Void add_Event(System.Action)" attrs="2182">
+        <size>3</size>
+      </method>
+      <method name="Void remove_Event(System.Action)" attrs="2182">
+        <size>3</size>
+      </method>
+      <method name="Void TestExpr_1(Boolean)" attrs="129">
+        <size>21</size>
+      </method>
+      <method name="Void TestExpr_2(Boolean)" attrs="129">
+        <size>21</size>
+      </method>
+      <method name="Void TestExpr_3(System.String)" attrs="129">
+        <size>18</size>
+      </method>
+      <method name="Void TestExpr_4()" attrs="129">
+        <size>16</size>
+      </method>
+      <method name="Void TestExpr_5()" attrs="129">
+        <size>32</size>
+      </method>
+      <method name="System.Object &lt;Main&gt;m__0()" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Void &lt;TestExpr_5&gt;m__1()" attrs="145">
+        <size>3</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+      <method name="Int32 TestExpr_6(Int32 ByRef)" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Int32 TestExpr_7(Int32 ByRef)" attrs="129">
+        <size>15</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-throw-expr-02.cs">
+    <type name="Program">
+      <method name="Int32 Main()" attrs="150">
+        <size>63</size>
+      </method>
+      <method name="System.String M(System.Object)" attrs="145">
+        <size>33</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-var-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">

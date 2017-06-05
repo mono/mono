@@ -894,6 +894,17 @@ namespace Mono.CSharp
 					res = -1;
 
 				break;
+			case Token.THROW:
+				switch (current_token) {
+				case Token.ARROW:
+				case Token.OP_COALESCING:
+				case Token.INTERR:
+				case Token.COLON:
+					res = Token.THROW_EXPR;
+					break;
+				}
+
+				break;
 			}
 
 
@@ -1345,6 +1356,7 @@ namespace Mono.CSharp
 			case Token.THIS:
 			case Token.NEW:
 			case Token.INTERPOLATED_STRING:
+			case Token.THROW:
 				next_token = Token.INTERR;
 				break;
 				

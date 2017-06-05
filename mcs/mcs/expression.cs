@@ -12735,4 +12735,68 @@ namespace Mono.CSharp
 			return value;
 		}
 	}
+
+	class ThrowExpression : ExpressionStatement
+	{
+		Expression expr;
+
+		public ThrowExpression (Expression expr, Location loc)
+		{
+			this.expr = expr;
+			this.loc = loc;
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Expression t)
+		{
+			var target = (ThrowExpression)t;
+			target.expr = expr.Clone (clonectx);
+		}
+
+		public override bool ContainsEmitWithAwait ()
+		{
+			return expr.ContainsEmitWithAwait ();
+		}
+
+		public override Expression CreateExpressionTree (ResolveContext rc)
+		{
+			rc.Report.Error (8188, loc, "An expression tree cannot not contain a throw expression");
+			return expr;
+		}
+
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			expr = expr.Resolve (rc, ResolveFlags.Type | ResolveFlags.VariableOrValue);
+
+			if (expr == null)
+				return null;
+
+			expr = Throw.ConvertType (rc, expr);
+
+			eclass = ExprClass.Value;
+			type = InternalType.ThrowExpr;
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			EmitStatement (ec);
+		}
+
+		public override void EmitStatement (EmitContext ec)
+		{
+			expr.Emit (ec);
+
+			ec.Emit (OpCodes.Throw);
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			expr.FlowAnalysis (fc);
+		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			return Reachability.CreateUnreachable ();
+		}
+	}
 }

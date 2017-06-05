@@ -1114,6 +1114,7 @@ namespace Mono.CSharp {
 	public class Return : ExitStatement
 	{
 		Expression expr;
+		bool expr_returns;
 
 		public Return (Expression expr, Location l)
 		{
@@ -1339,7 +1340,9 @@ namespace Mono.CSharp {
 			if (expr != null)
 				expr.FlowAnalysis (fc);
 
-			base.DoFlowAnalysis (fc);
+			if (!expr_returns)
+				base.DoFlowAnalysis (fc);
+			
 			return true;
 		}
 
@@ -1352,6 +1355,12 @@ namespace Mono.CSharp {
 		public override Reachability MarkReachable (Reachability rc)
 		{
 			base.MarkReachable (rc);
+
+			if (Expr != null) {
+				rc = Expr.MarkReachable (rc);
+				expr_returns = rc.IsUnreachable;
+			}
+
 			return Reachability.CreateUnreachable ();
 		}
 
@@ -1767,6 +1776,19 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public static Expression ConvertType (ResolveContext rc, Expression expr)
+		{
+			var et = rc.BuiltinTypes.Exception;
+			if (Convert.ImplicitConversionExists (rc, expr, et))
+				expr = Convert.ImplicitConversion (rc, expr, et, expr.Location);
+			else {
+				rc.Report.Error (155, expr.Location, "The type caught or thrown must be derived from System.Exception");
+				expr = EmptyCast.Create (expr, et);
+			}
+
+			return expr;
+		}
+
 		public override bool Resolve (BlockContext ec)
 		{
 			if (expr == null) {
@@ -1790,11 +1812,7 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return false;
 
-			var et = ec.BuiltinTypes.Exception;
-			if (Convert.ImplicitConversionExists (ec, expr, et))
-				expr = Convert.ImplicitConversion (ec, expr, et, loc);
-			else
-				ec.Report.Error (155, expr.Location, "The type caught or thrown must be derived from System.Exception");
+			expr = ConvertType (ec, expr);
 
 			return true;
 		}
@@ -2251,11 +2269,8 @@ namespace Mono.CSharp {
 
 		public override Reachability MarkReachable (Reachability rc)
 		{
-			var init = initializer as ExpressionStatement;
-			if (init != null)
-				init.MarkReachable (rc);
-
-			return base.MarkReachable (rc);
+			base.MarkReachable (rc);
+			return initializer == null ? rc : initializer.MarkReachable (rc);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement target)

@@ -503,11 +503,9 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override void MarkReachable (Reachability rc)
+		public override Reachability MarkReachable (Reachability rc)
 		{
-			var es = source as ExpressionStatement;
-			if (es != null)
-				es.MarkReachable (rc);
+			return source.MarkReachable (rc);
 		}
 	}
 
