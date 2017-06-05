@@ -2974,12 +2974,22 @@ mono_runtime_try_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 MonoObject*
 mono_runtime_invoke_checked (MonoMethod *method, void *obj, void **params, MonoError* error)
 {
+	MonoObject* res;
+	MonoException* exc = NULL;
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	if (mono_runtime_get_no_exec ())
 		g_warning ("Invoking method '%s' when running in no-exec mode.\n", mono_method_full_name (method, TRUE));
 
-	return do_runtime_invoke (method, obj, params, NULL, error);
+	/* Always pass an exception pointer to runtime invoke so that
+	 * the managed call is done inside a try/catch handler. Then
+	 * store any resulting exception in the error object.
+	*/
+	res = do_runtime_invoke (method, obj, params, &exc, error);
+	if (exc)
+		mono_error_set_exception_instance (error, exc);
+
+	return res;
 }
 
 /**
