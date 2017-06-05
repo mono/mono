@@ -41,6 +41,9 @@ System.Net/WebConnectionStream.cs
 ../../../external/corefx/src/System.Net.HttpListener/src/System/Net/WebSockets/HttpListenerWebSocketContext.cs
 ../../../external/corefx/src/System.Net.HttpListener/src/System/Net/AuthenticationSchemeSelector.cs
 ../../../external/corefx/src/System.Net.HttpListener/src/System/Net/AuthenticationTypes.cs
+../../../external/corefx/src/System.Net.HttpListener/src/System/Net/BoundaryType.cs
+../../../external/corefx/src/System.Net.HttpListener/src/System/Net/EntitySendFormat.cs
+../../../external/corefx/src/System.Net.HttpListener/src/System/Net/ListenerClientCertState.cs
 ../../../external/corefx/src/System.Net.HttpListener/src/System/Net/HttpListener.cs
 ../../../external/corefx/src/System.Net.HttpListener/src/System/Net/HttpListenerBasicIdentity.cs
 ../../../external/corefx/src/System.Net.HttpListener/src/System/Net/HttpListenerContext.cs
