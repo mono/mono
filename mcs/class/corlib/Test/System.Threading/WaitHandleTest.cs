@@ -628,6 +628,19 @@ namespace MonoTests.System.Threading {
 			}
 		}
 #endif // MONO_FEATURE_THREAD_SUSPEND_RESUME
+
+		[Test]
+		public static void SignalAndWait()
+		{
+			using (var eventToSignal = new AutoResetEvent (false))
+			using (var eventToWait = new AutoResetEvent (false))
+			{
+				eventToWait.Set ();
+
+				Assert.IsTrue (WaitHandle.SignalAndWait (eventToSignal, eventToWait), "#1");
+				Assert.IsTrue (eventToSignal.WaitOne (), "#2");
+			}
+		}
 	}
 }
 
