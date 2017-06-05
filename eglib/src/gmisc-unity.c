@@ -5,7 +5,7 @@
 #include "Locale-c-api.h"
 #include "Path-c-api.h"
 
-const gchar *
+gchar *
 g_getenv(const gchar *variable)
 {
     return UnityPalGetEnvironmentVariable(variable);

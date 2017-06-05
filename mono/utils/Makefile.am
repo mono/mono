@@ -24,10 +24,12 @@ platform_sources = $(unix_sources)
 endif
 
 unity_files = 		\
-	unity-rand.c 	
+	unity-rand.c 	\
+	unity-time.c
 
 mono_only_files =	\
-	mono-rand.c
+	mono-rand.c 	\
+	mono-time.c
 
 monoutils_sources = \
 	$(platform_sources)	\
