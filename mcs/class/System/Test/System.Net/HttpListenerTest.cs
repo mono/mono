@@ -63,7 +63,6 @@ namespace MonoTests.System.Net {
 			Assert.AreEqual (false, listener.IsListening, "#03");
 			Assert.AreEqual (0, listener.Prefixes.Count, "#04");
 			Assert.AreEqual (null, listener.Realm, "#05");
-			Assert.AreEqual (false, listener.UnsafeConnectionNtlmAuthentication, "#06");
 		}
 
 		[Test]
@@ -353,7 +352,6 @@ namespace MonoTests.System.Net {
 			Assert.AreEqual (false, listener.IgnoreWriteExceptions, "#03");
 			Assert.AreEqual (false, listener.IsListening, "#03");
 			Assert.AreEqual (null, listener.Realm, "#05");
-			Assert.AreEqual (false, listener.UnsafeConnectionNtlmAuthentication, "#06");
 		}
 
 		[Test]
@@ -431,7 +429,6 @@ namespace MonoTests.System.Net {
 		{
 			HttpListener listener = new HttpListener ();
 			listener.Close ();
-			listener.UnsafeConnectionNtlmAuthentication = true;
 		}
 
 		[Test]
