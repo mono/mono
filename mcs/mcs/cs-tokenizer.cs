@@ -899,7 +899,6 @@ namespace Mono.CSharp
 				case Token.ARROW:
 				case Token.OP_COALESCING:
 				case Token.INTERR:
-				case Token.COLON:
 					res = Token.THROW_EXPR;
 					break;
 				}

@@ -4852,6 +4852,15 @@ conditional_expression
 		$$ = new Conditional (new BooleanExpression ((Expression) $1), (Expression) $3, (Expression) $5, GetLocation ($2));
 		lbag.AddLocation ($$, GetLocation ($4));
 	  }
+	| null_coalescing_expression INTERR expression COLON THROW prefixed_unary_expression
+	  {
+		if (lang_version < LanguageVersion.V_7)
+			FeatureIsNotAvailable (lexer.Location, "throw expression");
+
+		var expr = new ThrowExpression ((Expression) $6, GetLocation ($5));
+		$$ = new Conditional (new BooleanExpression ((Expression) $1), (Expression) $3, expr, GetLocation ($2));
+		lbag.AddLocation ($$, GetLocation ($4));
+	  }
 	| null_coalescing_expression INTERR expression error
 	  {
 		Error_SyntaxError (yyToken);
