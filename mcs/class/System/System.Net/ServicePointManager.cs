@@ -187,7 +187,7 @@ namespace System.Net
 
 		internal static ICertificatePolicy GetLegacyCertificatePolicy ()
 		{
-			return policy;
+			return CertificatePolicy;
 		}
 
 		[MonoTODO("CRL checks not implemented")]
