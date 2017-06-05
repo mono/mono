@@ -586,9 +586,9 @@ namespace Mono.Net.Security
 			writeBuffer.Offset = writeBuffer.Size = 0;
 		}
 
-		#endregion
+#endregion
 
-		#region Main async I/O loop
+#region Main async I/O loop
 
 		internal AsyncOperationStatus ProcessHandshake (AsyncOperationStatus status)
 		{
@@ -867,7 +867,7 @@ namespace Mono.Net.Security
 			}
 		}
 
-		#region Need to Implement
+#region Need to Implement
 		public int CipherStrength {
 			get {
 				throw new NotImplementedException ();
@@ -889,7 +889,7 @@ namespace Mono.Net.Security
 			}
 		}
 
-		#endregion
+#endregion
 	}
 }
 #endif
