@@ -7795,6 +7795,13 @@ ves_icall_Mono_TlsProviderFactory_IsBtlsSupported (void)
 #endif
 }
 
+ICALL_EXPORT MonoBoolean
+ves_icall_Mono_Runtime_CheckShutdown (void)
+{
+	extern gboolean shutting_down_inited;
+	return shutting_down_inited;
+}
+
 #ifndef DISABLE_COM
 
 ICALL_EXPORT int
