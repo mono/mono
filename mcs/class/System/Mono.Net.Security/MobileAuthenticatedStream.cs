@@ -88,7 +88,7 @@ namespace Mono.Net.Security
 		internal void CheckThrow (bool authSuccessCheck, bool shutdownCheck = false)
 		{
 			if (lastException != null)
-				throw lastException.SourceException;
+				lastException.Throw ();
 			if (authSuccessCheck && !IsAuthenticated)
 				throw new InvalidOperationException (SR.net_auth_noauth);
 			if (shutdownCheck && shutdown)
@@ -234,7 +234,7 @@ namespace Mono.Net.Security
 			}
 
 			if (lastException != null)
-				throw lastException.SourceException;
+				lastException.Throw ();
 
 			var asyncRequest = new AsyncHandshakeRequest (this, runSynchronously);
 			if (Interlocked.CompareExchange (ref asyncHandshakeRequest, asyncRequest, null) != null)
@@ -311,7 +311,6 @@ namespace Mono.Net.Security
 		{
 			var asyncRequest = new AsyncReadRequest (this, true, buffer, offset, count);
 			var task = StartOperation (OperationType.Read, asyncRequest, CancellationToken.None);
-			task.Wait ();
 			return task.Result;
 		}
 
@@ -345,15 +344,11 @@ namespace Mono.Net.Security
 			Debug ("StartOperationAsync: {0} {1}", asyncRequest, type);
 
 			if (type == OperationType.Read) {
-				if (Interlocked.CompareExchange (ref asyncReadRequest, asyncRequest, null) != null) {
-					Console.Error.WriteLine ("INVALID NESTED CALL!");
+				if (Interlocked.CompareExchange (ref asyncReadRequest, asyncRequest, null) != null)
 					throw new InvalidOperationException ("Invalid nested call.");
-				}
 			} else {
-				if (Interlocked.CompareExchange (ref asyncWriteRequest, asyncRequest, null) != null) {
-					Console.Error.WriteLine ("INVALID NESTED CALL!");
+				if (Interlocked.CompareExchange (ref asyncWriteRequest, asyncRequest, null) != null)
 					throw new InvalidOperationException ("Invalid nested call.");
-				}
 			}
 
 			AsyncProtocolResult result;
