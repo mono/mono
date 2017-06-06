@@ -1118,10 +1118,10 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 	
 	static readonly Universe universe = new Universe ();
 	static readonly Dictionary<string, string> loaded_assemblies = new Dictionary<string, string> ();
-	static readonly string resourcePathSeparator = (Path.DirectorySeparatorChar == '\\') ? $"\\{Path.DirectorySeparatorChar}" : $"{Path.DirectorySeparatorChar}";
 
 	public static string GetAssemblyName (string path)
 	{
+		string resourcePathSeparator = style == "windows" ? "\\\\" : "/";
 		string name = Path.GetFileName (path);
 
 		// A bit of a hack to support satellite assemblies. They all share the same name but
