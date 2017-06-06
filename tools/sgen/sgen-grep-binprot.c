@@ -241,7 +241,7 @@ static int
 index_color (int index, int num_nums, int *match_indices)
 {
 	int result;
-	for (result = 0; result < num_nums + 1; ++result)
+	for (result = 0; result < num_nums; ++result)
 		if (index == match_indices [result])
 			return result;
 	return NO_COLOR;
