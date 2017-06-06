@@ -1091,11 +1091,6 @@ code generation backend.   For example \fBLLVM_COUNT=10\fR would only
 compile 10 methods with LLVM and then switch to the Mono JIT engine.
 \fBLLVM_COUNT=0\fR would disable the LLVM engine altogether.
 .TP
-\fBMONO_AOT_CACHE\fR
-If set, this variable will instruct Mono to ahead-of-time compile new
-assemblies on demand and store the result into a cache in
-~/.mono/aot-cache. 
-.TP
 \fBMONO_ASPNET_INHIBIT_SETTINGSMAP\fR
 Mono contains a feature which allows modifying settings in the .config files shipped
 with Mono by using config section mappers. The mappers and the mapping rules are
