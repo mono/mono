@@ -6,5 +6,7 @@
     <ClCompile Include="$(MonoSourceLocation)\eglib\src\gdate-unity.c" />
     <ClCompile Include="$(MonoSourceLocation)\eglib\src\gpath-unity.c" />
     <ClCompile Include="$(MonoSourceLocation)\eglib\src\gdir-unity.c" />
+    <!-- hack for now -->
+    <ClCompile Include="$(MonoSourceLocation)\eglib\src\gunicode-win32.c" />
   </ItemGroup>
 </Project>

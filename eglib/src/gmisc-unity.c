@@ -5,6 +5,12 @@
 #include "Locale-c-api.h"
 #include "Path-c-api.h"
 
+gboolean
+g_hasenv(const gchar *variable)
+{
+	return g_getenv(variable) != NULL;
+}
+
 gchar *
 g_getenv(const gchar *variable)
 {
