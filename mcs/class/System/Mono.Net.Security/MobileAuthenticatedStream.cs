@@ -36,6 +36,11 @@ namespace Mono.Net.Security
 {
 	abstract class MobileAuthenticatedStream : AuthenticatedStream, MSI.IMonoSslStream
 	{
+		/*
+		 * This is intentionally called `xobileTlsContext'.  It is a "dangerous" object
+		 * that must not be touched outside the `ioLock' and we need to be very careful
+		 * where we access it.
+		 */
 		MobileTlsContext xobileTlsContext;
 		Exception lastException;
 
@@ -78,13 +83,6 @@ namespace Mono.Net.Security
 			get { return xobileTlsContext != null; }
 		}
 
-		internal MobileTlsContext Context {
-			get {
-				CheckThrow (true);
-				return xobileTlsContext;
-			}
-		}
-
 		internal void CheckThrow (bool authSuccessCheck)
 		{
 			if (closeRequested != 0)
@@ -98,8 +96,6 @@ namespace Mono.Net.Security
 		Exception SetException (Exception e)
 		{
 			e = SetException_internal (e);
-			if (e != null && xobileTlsContext != null)
-				xobileTlsContext.Dispose ();
 			return e;
 		}
 
@@ -577,7 +573,9 @@ namespace Mono.Net.Security
 			 * start the handshake.
 			*/
 			if (status == AsyncOperationStatus.Initialize) {
-				xobileTlsContext.StartHandshake ();
+				lock (ioLock) {
+					xobileTlsContext.StartHandshake ();
+				}
 				return AsyncOperationStatus.Continue;
 			} else if (status == AsyncOperationStatus.ReadDone) {
 				// remote prematurely closed connection.
@@ -590,16 +588,17 @@ namespace Mono.Net.Security
 			 * SSLHandshake() will return repeatedly with 'SslStatus.WouldBlock', we then need
 			 * to take care of I/O and call it again.
 			*/
-			if (!xobileTlsContext.ProcessHandshake ()) {
-				/*
-				 * Flush the internal write buffer.
-				 */
-				InnerFlush ();
-				return AsyncOperationStatus.Continue;
+			lock (ioLock) {
+				if (xobileTlsContext.ProcessHandshake ()) {
+					xobileTlsContext.FinishHandshake ();
+					return AsyncOperationStatus.Complete;
+				}
 			}
-
-			xobileTlsContext.FinishHandshake ();
-			return AsyncOperationStatus.Complete;
+			/*
+			 * Flush the internal write buffer.
+			 */
+			InnerFlush ();
+			return AsyncOperationStatus.Continue;
 		}
 
 		AsyncOperationStatus ProcessRead (AsyncProtocolRequest asyncRequest, AsyncOperationStatus status)
@@ -609,7 +608,7 @@ namespace Mono.Net.Security
 			int ret;
 			bool wantMore;
 			lock (ioLock) {
-				ret = Context.Read (asyncRequest.UserBuffer.Buffer, asyncRequest.UserBuffer.Offset, asyncRequest.UserBuffer.Size, out wantMore);
+				ret = xobileTlsContext.Read (asyncRequest.UserBuffer.Buffer, asyncRequest.UserBuffer.Offset, asyncRequest.UserBuffer.Size, out wantMore);
 			}
 			Debug ("ProcessRead - read user done: {0} - {1} {2}", asyncRequest.UserBuffer, ret, wantMore);
 
@@ -644,7 +643,7 @@ namespace Mono.Net.Security
 			int ret;
 			bool wantMore;
 			lock (ioLock) {
-				ret = Context.Write (asyncRequest.UserBuffer.Buffer, asyncRequest.UserBuffer.Offset, asyncRequest.UserBuffer.Size, out wantMore);
+				ret = xobileTlsContext.Write (asyncRequest.UserBuffer.Buffer, asyncRequest.UserBuffer.Offset, asyncRequest.UserBuffer.Size, out wantMore);
 			}
 			Debug ("ProcessWrite - write user done: {0} - {1} {2}", asyncRequest.UserBuffer, ret, wantMore);
 
@@ -688,18 +687,31 @@ namespace Mono.Net.Security
 		#endregion
 
 		public override bool IsServer {
-			get { return xobileTlsContext != null && xobileTlsContext.IsServer; }
+			get {
+				CheckThrow (false);
+				return xobileTlsContext != null && xobileTlsContext.IsServer;
+			}
 		}
 
 		public override bool IsAuthenticated {
-			get { return xobileTlsContext != null && lastException == null && xobileTlsContext.IsAuthenticated; }
+			get {
+				lock (ioLock) {
+					// Don't use CheckThrow(), we want to return false if we're not authenticated.
+					return xobileTlsContext != null && lastException == null && xobileTlsContext.IsAuthenticated;
+				}
+			}
 		}
 
 		public override bool IsMutuallyAuthenticated {
 			get {
-				return IsAuthenticated &&
-					(Context.IsServer? Context.LocalServerCertificate: Context.LocalClientCertificate) != null &&
-					Context.IsRemoteCertificateAvailable;
+				lock (ioLock) {
+					// Don't use CheckThrow() here.
+					if (!IsAuthenticated)
+						return false;
+					if ((xobileTlsContext.IsServer ? xobileTlsContext.LocalServerCertificate : xobileTlsContext.LocalClientCertificate) == null)
+						return false;
+					return xobileTlsContext.IsRemoteCertificateAvailable;
+				}
 			}
 		}
 
@@ -740,6 +752,52 @@ namespace Mono.Net.Security
 
 			var asyncRequest = new AsyncProtocolRequest (this, null);
 			StartOperation (ref asyncWriteRequest, ref writeBuffer, ProcessClose, asyncRequest, "close");
+		}
+
+		public SslProtocols SslProtocol {
+			get {
+				lock (ioLock) {
+					CheckThrow (true);
+					return (SslProtocols)xobileTlsContext.NegotiatedProtocol;
+				}
+			}
+		}
+
+		public X509Certificate RemoteCertificate {
+			get {
+				lock (ioLock) {
+					CheckThrow (true);
+					return xobileTlsContext.RemoteCertificate;
+				}
+			}
+		}
+
+		public X509Certificate LocalCertificate {
+			get {
+				lock (ioLock) {
+					CheckThrow (true);
+					return InternalLocalCertificate;
+				}
+			}
+		}
+
+		public X509Certificate InternalLocalCertificate {
+			get {
+				lock (ioLock) {
+					CheckThrow (false);
+					if (xobileTlsContext == null)
+						return null;
+					return xobileTlsContext.IsServer ? xobileTlsContext.LocalServerCertificate : xobileTlsContext.LocalClientCertificate;
+				}
+			}
+		}
+
+		public MSI.MonoTlsConnectionInfo GetConnectionInfo ()
+		{
+			lock (ioLock) {
+				CheckThrow (true);
+				return xobileTlsContext.ConnectionInfo;
+			}
 		}
 
 		//
@@ -803,46 +861,10 @@ namespace Mono.Net.Security
 			set { InnerStream.WriteTimeout = value; }
 		}
 
-		public SslProtocols SslProtocol {
-			get {
-				CheckThrow (true);
-				return (SslProtocols)Context.NegotiatedProtocol;
-			}
-		}
-
-		public X509Certificate RemoteCertificate {
-			get {
-				CheckThrow (true);
-				return Context.RemoteCertificate;
-			}
-		}
-
-		public X509Certificate LocalCertificate {
-			get {
-				CheckThrow (true);
-				return InternalLocalCertificate;
-			}
-		}
-
-		public X509Certificate InternalLocalCertificate {
-			get {
-				CheckThrow (false);
-				if (!HasContext)
-					return null;
-				return Context.IsServer ? Context.LocalServerCertificate : Context.LocalClientCertificate;
-			}
-		}
-
-		public MSI.MonoTlsConnectionInfo GetConnectionInfo ()
-		{
-			CheckThrow (true);
-			return Context.ConnectionInfo;
-		}
-
 		public SSA.CipherAlgorithmType CipherAlgorithm {
 			get {
 				CheckThrow (true);
-				var info = Context.ConnectionInfo;
+				var info = GetConnectionInfo ();
 				if (info == null)
 					return SSA.CipherAlgorithmType.None;
 				switch (info.CipherAlgorithmType) {
@@ -861,7 +883,7 @@ namespace Mono.Net.Security
 		public SSA.HashAlgorithmType HashAlgorithm {
 			get {
 				CheckThrow (true);
-				var info = Context.ConnectionInfo;
+				var info = GetConnectionInfo ();
 				if (info == null)
 					return SSA.HashAlgorithmType.None;
 				switch (info.HashAlgorithmType) {
@@ -883,7 +905,7 @@ namespace Mono.Net.Security
 		public SSA.ExchangeAlgorithmType KeyExchangeAlgorithm {
 			get {
 				CheckThrow (true);
-				var info = Context.ConnectionInfo;
+				var info = GetConnectionInfo ();
 				if (info == null)
 					return SSA.ExchangeAlgorithmType.None;
 				switch (info.ExchangeAlgorithmType) {
