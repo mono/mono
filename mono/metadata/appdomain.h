@@ -67,7 +67,7 @@ mono_domain_create         (void);
 
 MONO_RT_EXTERNAL_ONLY
 MONO_API MonoDomain *
-mono_domain_create_appdomain (char *friendly_name, char *configuration_file);
+mono_domain_create_appdomain (const char *friendly_name, char *configuration_file);
 
 MONO_RT_EXTERNAL_ONLY
 MONO_API void
