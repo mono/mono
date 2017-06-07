@@ -80,6 +80,7 @@ class MakeBundle {
 	
 	static bool aot_compile = false;
 	static string aot_args = "static";
+	static DirectoryInfo aot_temp_dir = null;
 	static string aot_mode = "";
 	static string aot_runtime = null;
 	static int? aot_dedup_assembly = null;
@@ -1184,6 +1185,8 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 				if (!compile_only){
 					File.Delete (temp_c);
 				}
+				if (aot_temp_dir != null)
+					aot_temp_dir.Delete (true);
 				File.Delete (temp_s);
 			}
 		}
@@ -1569,13 +1572,13 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		if (aot_mode == "" || (cil_strip_path == null && managed_linker_path == null))
 			return;
 
-		var temp_dir = Path.Combine(Directory.GetCurrentDirectory(), "temp_assemblies");
-		var d_info = new DirectoryInfo (temp_dir);
-		if (d_info.Exists) {
-			Console.WriteLine ("Removing previous build cache at {0}", temp_dir);
-			d_info.Delete (true);
+		var temp_dir_name = Path.Combine(Directory.GetCurrentDirectory(), "temp_assemblies");
+		aot_temp_dir = new DirectoryInfo (temp_dir_name);
+		if (aot_temp_dir.Exists) {
+			Console.WriteLine ("Removing previous build cache at {0}", temp_dir_name);
+			aot_temp_dir.Delete (true);
 		}
-		d_info.Create ();
+		aot_temp_dir.Create ();
 
 		//if (managed_linker_path != null) {
 			//LinkManaged (chosenFiles, temp_dir);
@@ -1583,8 +1586,8 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			//// Replace list with new list of files
 			//files.Clear ();
 			//Console.WriteLine ("Iterating {0}", temp_dir);
-			//d_info = new DirectoryInfo (temp_dir);
-			//foreach (var file in d_info.GetFiles ()) {
+			//aot_temp_dir = new DirectoryInfo (temp_dir);
+			//foreach (var file in aot_temp_dir.GetFiles ()) {
 				//files.Append (String.Format ("file:///{0}", file));
 				//Console.WriteLine (String.Format ("file:///{0}", file));
 			//}
@@ -1594,10 +1597,9 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		// Fix file references
 		for (int i=0; i < files.Count; i++) {
 			var inName = new Uri (files [i]).LocalPath;
-			var outName = Path.Combine (temp_dir, Path.GetFileName (inName));
-			//if (managed_linker_path == null)
-				File.Copy (inName, outName);
-			files [i] = files[i].Replace (Path.GetDirectoryName (inName), temp_dir);
+			var outName = Path.Combine (temp_dir_name, Path.GetFileName (inName));
+			File.Copy (inName, outName);
+			files [i] = outName;
 		}
 	}
 
