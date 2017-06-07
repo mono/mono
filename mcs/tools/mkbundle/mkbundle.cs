@@ -63,6 +63,8 @@ class MakeBundle {
 	static bool custom_mode = true;
 	static string embedded_options = null;
 	static string runtime = null;
+	static bool aot_compile = false;
+	static string aot_args = "static";
 	static string sdk_path = null;
 	static string lib_path = null;
 	static Dictionary<string,string> environment = new Dictionary<string,string>();
@@ -351,11 +353,20 @@ class MakeBundle {
 			case "--bundled-header":
 				bundled_header = true;
 				break;
+			case "--aot-compile":
+				aot_compile = true;
+				break;
+			case "--aot-args":
+				if (i+1 == top) {
+					Console.WriteLine ("AOT arguments are passed as a comma-delimited list");
+					return 1;
+				}
+				aot_args = String.Format("static,{0}", args [++i]);
+				break;
 			default:
 				sources.Add (args [i]);
 				break;
 			}
-
 		}
 		// Modern bundling starts here
 		if (!custom_mode){
@@ -411,6 +422,8 @@ class MakeBundle {
 		foreach (string file in assemblies)
 			if (!QueueAssembly (files, file))
 				return 1;
+		if (aot_compile)
+			AotCompile (files);
 		if (custom_mode)
 			GenerateBundles (files);
 		else 
@@ -543,7 +556,6 @@ class MakeBundle {
 					Console.WriteLine ("At {0:x} with input {1}", package.Position, fileStream.Length);
 				fileStream.CopyTo (package);
 				package.Position = package.Position + (align - (package.Position % align));
-
 				return (int) ret;
 			}
 		}
@@ -829,6 +841,10 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 				} catch (FileNotFoundException) {
 					/* we ignore if the config file doesn't exist */
 				}
+			}
+
+			if (aot_compile) {
+				// Read in static AOT file
 			}
 
 			if (config_file != null){
@@ -1278,6 +1294,14 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		get {
 			int p = (int) Environment.OSVersion.Platform;
 			return ((p == 4) || (p == 128) || (p == 6));
+		}
+	}
+
+	static void AotCompile (List<string> files)
+	{
+		foreach (var fileName in files) {
+			string path = LocateFile (new Uri (fileName).LocalPath);
+			Execute (String.Format ("{0} --aot={1} {2}", runtime, aot_args, path));
 		}
 	}
 
