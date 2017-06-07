@@ -94,8 +94,12 @@ endif
 
 test_assemblies :=
 
+test_lib_dir = $(topdir)/class/lib/$(PROFILE)/tests
+
+test_lib_output = $(topdir)/class/lib/$(PROFILE)/tests/$(test_lib)
+
 ifdef HAVE_CS_TESTS
-test_assemblies += $(test_lib)
+test_assemblies += $(test_lib_output)
 endif
 
 ifdef test_assemblies
@@ -183,7 +187,10 @@ endif
 
 ifdef HAVE_CS_TESTS
 
-$(test_lib): $(the_assembly) $(test_response) $(test_nunit_dep)
+$(test_lib_dir):
+	mkdir -p $@
+
+$(test_lib_output): $(the_assembly) $(test_response) $(test_nunit_dep) $(test_lib_dir)
 	$(TEST_COMPILE) $(LIBRARY_FLAGS) -target:library -out:$@ $(test_flags) $(LOCAL_TEST_COMPILER_ONDOTNET_FLAGS) @$(test_response)
 
 test_response_preprocessed = $(test_response)_preprocessed
@@ -203,7 +210,7 @@ $(test_makefrag): $(test_response)
 
 -include $(test_makefrag)
 
-build-test-lib: $(test_lib)
+build-test-lib: $(test_lib_output)
 	@echo Building testing lib
 
 endif
