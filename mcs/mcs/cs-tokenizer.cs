@@ -1314,7 +1314,8 @@ namespace Mono.CSharp
 			}
 
 			if (d == '.') {
-				return Token.INTERR_OPERATOR;
+				d = reader.Peek ();
+				return d >= '0' && d <= '9' ? Token.INTERR : Token.INTERR_OPERATOR;
 			}
 
 			if (d != ' ') {
