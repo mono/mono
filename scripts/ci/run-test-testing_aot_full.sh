@@ -1,5 +1,10 @@
 #!/bin/bash -e
 
+if test -n "${MONO_STATIC_AOT}";
+then
+${TESTCMD} --label=mkbundle --timeout=25m make -j 4 -w -C mcs/class/corlib -k mkbundle-all-tests
+fi
+
 if test -n "${MONO_LLVMONLY}";
 then
 ${TESTCMD} --label=mini --timeout=25m make -j 4 -w -C mono/mini -k llvmonlycheck
