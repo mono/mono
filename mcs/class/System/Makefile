@@ -177,7 +177,7 @@ $(the_libdir_base)System.Configuration.dll:
 
 $(build_lib): $(CYCLIC_DEP_FILES)
 
-$(test_lib): $(TEST_RESOURCES)
+$(test_lib_output): $(TEST_RESOURCES)
 
 CLEAN_FILES = $(test_lib).config $(bare_libdir)/System.dll $(secxml_libdir)/System.dll $(bare_libdir)/System.dll.mdb $(secxml_libdir)/System.dll.mdb
 
