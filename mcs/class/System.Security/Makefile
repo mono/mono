@@ -31,6 +31,10 @@ include ../../build/library.make
 
 $(build_lib): $(secxml_libdir)/System.dll $(MONO_SECURITY_DLL)
 
+ifdef MOBILE_PROFILE
+NO_TEST = yes
+endif
+
 $(secxml_libdir)/System.dll:
 	(cd ../System; $(MAKE) $@)
 
