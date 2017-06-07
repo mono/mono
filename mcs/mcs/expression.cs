@@ -2562,12 +2562,18 @@ namespace Mono.CSharp
 
 		public override Expression CreateExpressionTree (ResolveContext rc)
 		{
-			rc.Report.Error (8046, loc, "An expression tree cannot contain a declaration expression");
+			rc.Report.Error (8198, loc, "An expression tree cannot contain out variable declaration");
 			return null;
 		}
 
 		bool DoResolveCommon (ResolveContext rc)
 		{
+			if (rc.HasAny (ResolveContext.Options.BaseInitializer | ResolveContext.Options.FieldInitializerScope)) {
+				rc.Report.Error (8200, loc, "Out variable and pattern variable declarations are not allowed within constructor initializers, field initializers, or property initializers");
+			} else if (rc.HasSet (ResolveContext.Options.QueryClauseScope)) {
+				rc.Report.Error (8201, loc, "Out variable and pattern variable declarations are not allowed within a query clause");
+			}
+
 			var var_expr = VariableType as VarExpr;
 			if (var_expr != null) {
 				type = InternalType.VarOutType;

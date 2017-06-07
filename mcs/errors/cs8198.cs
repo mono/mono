@@ -1,6 +1,5 @@
-// CS8046: An expression tree cannot contain a declaration expression
+// CS8198: An expression tree cannot contain out variable declaration
 // Line: 11
-// Compiler options: -langversion:experimental
 
 using System;
 using System.Linq.Expressions;

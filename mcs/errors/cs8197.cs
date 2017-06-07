@@ -1,6 +1,5 @@
-// CS8047: Declaration expression cannot be used in this context
-// Line: 8
-// Compiler options: -langversion:experimental
+// CS8197: Cannot infer the type of implicitly-typed out variable `y'
+// Line: 9
 
 public class C
 {
