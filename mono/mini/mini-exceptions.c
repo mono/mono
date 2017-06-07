@@ -2452,7 +2452,7 @@ static void print_process_map (void)
 #endif
 }
 
-static gboolean handling_sigsegv = FALSE;
+static gboolean handle_crash_loop = FALSE;
 
 /*
  * mono_handle_native_crash:
@@ -2468,9 +2468,7 @@ mono_handle_native_crash (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_T
 #endif
 	MonoJitTlsData *jit_tls = (MonoJitTlsData *)mono_tls_get_jit_tls ();
 
-	gboolean is_sigsegv = !strcmp ("SIGSEGV", signal);
-
-	if (handling_sigsegv && is_sigsegv)
+	if (handle_crash_loop)
 		return;
 
 	if (mini_get_debug_options ()->suspend_on_native_crash) {
@@ -2485,9 +2483,8 @@ mono_handle_native_crash (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_T
 #endif
 	}
 
-	/* To prevent infinite loops when the stack walk causes a crash */
-	if (is_sigsegv)
-		handling_sigsegv = TRUE;
+	/* prevent infinite loops in crash handling */
+	handle_crash_loop = TRUE;
 
 	/* !jit_tls means the thread was not registered with the runtime */
 	if (jit_tls && mono_thread_internal_current ()) {
