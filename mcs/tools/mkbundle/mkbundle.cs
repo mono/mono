@@ -44,6 +44,7 @@ class MakeBundle {
 	static List<string> aot_names = new List<string> ();
 	static Dictionary<string,string> libraries = new Dictionary<string,string> ();
 	static bool autodeps = false;
+	static string in_tree = null;
 	static bool keeptemp = false;
 	static bool compile_only = false;
 	static bool static_link = false;
@@ -358,8 +359,21 @@ class MakeBundle {
 			case "--bundled-header":
 				bundled_header = true;
 				break;
+			case "--in-tree":
+				if (i+1 == top) {
+					Console.WriteLine ("Usage: --in-tree <path/to/headers> ");
+					return 1;
+				}
+				in_tree = args [++i];
+				break;
 			case "--aot-runtime":
+				if (i+1 == top) {
+					Console.WriteLine ("Usage: --aot-runtime <path/to/runtime> ");
+					return 1;
+				}
 				aot_runtime = args [++i];
+				aot_compile = true;
+				static_link = true;
 				break;
 			case "--aot-dedup":
 				if (i+1 == top) {
@@ -370,6 +384,7 @@ class MakeBundle {
 				sources.Add (dedup_file);
 				aot_dedup_assembly = sources.Count () - 1;
 				aot_compile = true;
+				static_link = true;
 				break;
 			case "--aot-mode":
 				if (i+1 == top) {
@@ -384,6 +399,7 @@ class MakeBundle {
 				}
 
 				aot_compile = true;
+				static_link = true;
 				break;
 			case "--aot-args":
 				if (i+1 == top) {
@@ -396,11 +412,13 @@ class MakeBundle {
 				}
 				aot_args = String.Format("static,{0}", args [++i]);
 				aot_compile = true;
+				static_link = true;
 				break;
 			default:
 				sources.Add (args [i]);
 				break;
 			}
+
 		}
 		// Modern bundling starts here
 		if (!custom_mode){
@@ -766,7 +784,11 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			} else {
 				tc.WriteLine ("#include <mono/metadata/mono-config.h>");
 				tc.WriteLine ("#include <mono/metadata/assembly.h>\n");
-				tc.WriteLine ("#include <mono/jit/jit.h>\n");
+
+				if (in_tree != null)
+					tc.WriteLine ("#include <mono/mini/jit.h>\n");
+				else
+					tc.WriteLine ("#include <mono/jit/jit.h>\n");
 			}
 
 			if (compress) {
@@ -1103,10 +1125,17 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 						platform_libs = "";
 					}
 
-					cmd = String.Format("{4} -o '{2}' -Wall `pkg-config --cflags mono-2` {0} {3} " +
+					string in_tree_include = "";
+					
+					if (in_tree != null) {
+						smonolib = String.Format ("{0}/mono/mini/.libs/libmonosgen-2.0.a", in_tree);
+						in_tree_include = String.Format (" -I{0} ", in_tree);
+					}
+
+					cmd = String.Format("{4} -o '{2}' -Wall `pkg-config --cflags mono-2` {7} {0} {3} " +
 						"`pkg-config --libs-only-L mono-2` {5} {6} " + platform_libs +
 						"`pkg-config --libs-only-l mono-2 | sed -e \"s/\\-lmono-2.0 //\"` {1} -g ",
-						temp_c, temp_o, output, zlib, cc, smonolib, String.Join (" ", aot_paths));
+						temp_c, temp_o, output, zlib, cc, smonolib, String.Join (" ", aot_paths), in_tree_include);
 				}
 				else
 				{
