@@ -154,8 +154,8 @@ BUNDLED_ASSEMBLIES := $(sort $(patsubst .//%,%,$(filter-out %.exe.static %.dll.d
 $(MKBUNDLE_EXE):
 	make -C $(topdir)/tools/mkbundle
 
-$(TEST_HARNESS_BIN): $(MKBUNDLE_EXE)
-	$(TEST_RUNTIME) $(MKBUNDLE_EXE) -L $(topdir)/class/lib/$(PROFILE) -v --deps $(TEST_HARNESS) $(BUNDLED_ASSEMBLIES) -o $(TEST_HARNESS_BIN) --aot-mode $(STATIC_AOT_BUNDLE) --aot-runtime $(RUNTIME)
+$(TEST_HARNESS_BIN): $(MKBUNDLE_EXE) $(test_assemblies) $(BUNDLED_ASSEMBLIES)
+	PKG_CONFIG_PATH="$(topdir)/../data" $(TEST_RUNTIME) $(MKBUNDLE_EXE) -L $(topdir)/class/lib/$(PROFILE) -v --deps $(TEST_HARNESS) $(test_assemblies) $(BUNDLED_ASSEMBLIES) -o $(TEST_HARNESS_BIN) --aot-mode $(AOT_MODE) --aot-runtime $(RUNTIME) --aot-args $(AOT_BUILD_ATTRS) --in-tree $(topdir)/.. --keeptemp
 
 else 
 TEST_HARNESS_EXEC = $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(TEST_COVERAGE_FLAGS) $(AOT_RUN_FLAGS) $(TEST_HARNESS) 
