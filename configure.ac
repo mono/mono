@@ -862,6 +862,7 @@ elif test x$with_runtime_preset = xfullaot; then
    mono_feature_disable_reflection_emit_save='yes'
    mono_feature_disable_reflection_emit='yes'
    mono_feature_disable_appdomains='yes'
+   mono_feature_disable_jit='yes'
 
    AOT_BUILD_FLAGS="--runtime=mobile -O=gsharedvt --aot=full,$INVARIANT_AOT_OPTIONS"
 
@@ -879,6 +880,7 @@ elif test x$with_runtime_preset = xbitcode; then
    mono_feature_disable_reflection_emit_save='yes'
    mono_feature_disable_reflection_emit='yes'
    mono_feature_disable_appdomains='yes'
+   mono_feature_disable_jit='yes'
 
    AOT_BUILD_FLAGS="--runtime=mobile --aot=llvmonly,$INVARIANT_AOT_OPTIONS"
    AOT_RUN_FLAGS="--runtime=mobile --llvmonly"
