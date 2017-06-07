@@ -113,6 +113,9 @@ namespace Mono.CSharp
 
 			if (rc.HasSet (ResolveContext.Options.BaseInitializer))
 				flags |= ResolveContext.Options.BaseInitializer;
+
+			if (rc.HasSet (ResolveContext.Options.QueryClauseScope))
+				flags |= ResolveContext.Options.QueryClauseScope;
 		}
 
 		public ExceptionStatement CurrentTryBlock { get; set; }
@@ -195,6 +198,8 @@ namespace Mono.CSharp
 			DontSetConditionalAccessReceiver = 1 << 16,
 
 			NameOfScope = 1 << 17,
+
+			QueryClauseScope = 1 << 18,
 
 			///
 			/// Indicates the current context is in probing mode, no errors are reported. 

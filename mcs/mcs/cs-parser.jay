@@ -918,11 +918,25 @@ named_argument
 		$$ = new NamedArgument (lt.Value, lt.Location, (Expression) $4, arg_mod);
 		lbag.AddLocation ($$, GetLocation($2));
 	  }
+	| identifier_inside_body COLON OUT named_argument_expr_or_out_variable_declaration
+	  {
+		if (lang_version <= LanguageVersion.V_3)
+			FeatureIsNotAvailable (GetLocation ($1), "named argument");
+
+		var lt = (LocatedToken) $1;
+		$$ = new NamedArgument (lt.Value, lt.Location, (Expression) $4, Argument.AType.Out);
+		lbag.AddLocation ($$, GetLocation($2));
+	  }
+
 	;
 
 named_argument_expr
 	: expression_or_error
-//	| declaration_expression
+	;
+
+named_argument_expr_or_out_variable_declaration
+	: expression_or_error
+	| out_variable_declaration
 	;
 	
 opt_named_modifier
@@ -930,10 +944,6 @@ opt_named_modifier
 	| REF
 	  { 
 		$$ = Argument.AType.Ref;
-	  }
-	| OUT
-	  { 
-		$$ = Argument.AType.Out;
 	  }
 	;
 		  
@@ -3722,16 +3732,12 @@ non_simple_argument
 		$$ = new Argument ((Expression) $2, Argument.AType.Ref);
 		lbag.AddLocation ($$, GetLocation ($1));
 	  }
-	| REF declaration_expression
-	  {
-		$$ = new Argument ((Expression) $2, Argument.AType.Ref);
-	  }
 	| OUT variable_reference 
 	  { 
 		$$ = new Argument ((Expression) $2, Argument.AType.Out);
 		lbag.AddLocation ($$, GetLocation ($1));
 	  }
-	| OUT declaration_expression
+	| OUT out_variable_declaration
 	  {
 		$$ = new Argument ((Expression) $2, Argument.AType.Out);
 	  }
@@ -3747,45 +3753,16 @@ non_simple_argument
 	  }	  
 	;
 
-declaration_expression
-	: OPEN_PARENS declaration_expression CLOSE_PARENS
+out_variable_declaration
+	: variable_type identifier_inside_body
 	  {
-		$$ = new ParenthesizedExpression ((Expression) $2, GetLocation ($1));
-		lbag.AddLocation ($$, GetLocation ($1), GetLocation ($3));
-	  }
-/*
-	| CHECKED open_parens_any declaration_expression CLOSE_PARENS
-	  {
-		$$ = new CheckedExpr ((Expression) $3, GetLocation ($1));
-		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($4));
-	  }
-	| UNCHECKED open_parens_any declaration_expression CLOSE_PARENS
-	  {
-		$$ = new UnCheckedExpr ((Expression) $3, GetLocation ($1));
-		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($4));
-	  }
-*/
-	| variable_type identifier_inside_body
-	  {
-		if (lang_version != LanguageVersion.Experimental)
-			FeatureIsNotAvailable (GetLocation ($1), "declaration expression");
+		if (lang_version < LanguageVersion.V_7)
+			FeatureIsNotAvailable (GetLocation ($1), "out variable declaration");
 
 		var lt = (LocatedToken) $2;
 		var lv = new LocalVariable (current_block, lt.Value, lt.Location);
 		current_block.AddLocalName (lv);
 		$$ = new DeclarationExpression ((FullNamedExpression) $1, lv);
-	  }
-	| variable_type identifier_inside_body ASSIGN expression
-	  {
-		if (lang_version != LanguageVersion.Experimental)
-			FeatureIsNotAvailable (GetLocation ($1), "declaration expression");
-
-		var lt = (LocatedToken) $2;
-		var lv = new LocalVariable (current_block, lt.Value, lt.Location);
-		current_block.AddLocalName (lv);
-		$$ = new DeclarationExpression ((FullNamedExpression) $1, lv) {
-			Initializer = (Expression) $4
-		};
 	  }
 	;
 

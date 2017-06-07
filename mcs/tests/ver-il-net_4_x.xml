@@ -68400,7 +68400,7 @@
   <test name="test-decl-expr-01.cs">
     <type name="DeclarationExpression">
       <method name="Int32 Main()" attrs="150">
-        <size>223</size>
+        <size>121</size>
       </method>
       <method name="Boolean Out(Int32 ByRef)" attrs="145">
         <size>13</size>
@@ -68408,27 +68408,62 @@
       <method name="Boolean Out2(Int32 ByRef, System.String)" attrs="145">
         <size>14</size>
       </method>
-      <method name="Void Out3[T](T ByRef)" attrs="145">
-        <size>17</size>
-      </method>
-      <method name="Void Ref(Int32 ByRef)" attrs="145">
-        <size>8</size>
-      </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
     </type>
   </test>
   <test name="test-decl-expr-02.cs">
-    <type name="DeclarationExpressions">
+    <type name="C">
       <method name="Void Main()" attrs="150">
         <size>2</size>
       </method>
-      <method name="Void M2()" attrs="129">
-        <size>2</size>
+      <method name="Boolean get_Test1()" attrs="2177">
+        <size>20</size>
       </method>
-      <method name="Int32 Test(Int32)" attrs="145">
+      <method name="Int32 get_Test2()" attrs="2177">
+        <size>32</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-decl-expr-03.cs">
+    <type name="C">
+      <method name="Void Main()" attrs="150">
+        <size>153</size>
+      </method>
+      <method name="T Foo[T](T, T ByRef)" attrs="150">
+        <size>18</size>
+      </method>
+      <method name="Char &lt;Main&gt;m__0(Char)" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Char &lt;Main&gt;m__1(Char)" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Char &lt;Main&gt;m__2(Char)" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Char &lt;Main&gt;m__3(Char, Char)" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-decl-expr-04.cs">
+    <type name="C">
+      <method name="Void Main()" attrs="150">
         <size>16</size>
+      </method>
+      <method name="Int32 Test(Int32 ByRef)" attrs="145">
+        <size>13</size>
+      </method>
+      <method name="Int32 Test2(Int32, Int32)" attrs="145">
+        <size>10</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
