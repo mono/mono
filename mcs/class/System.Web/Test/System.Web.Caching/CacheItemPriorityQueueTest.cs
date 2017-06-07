@@ -91,12 +91,10 @@ namespace MonoTests.System.Web.Caching
 
 		static CacheItemPriorityQueueTest ()
 		{
-			dataDir =
-				Path.Combine (
-					Path.Combine (
-						Path.Combine (Path.GetDirectoryName (Assembly.GetExecutingAssembly ().Location), "Test"),
-						"System.Web.Caching"),
-					DATA_DIR);
+			// Assumes this is compiled into mcs/class/lib/<profile>/test
+			string class_dir = Directory.GetParent (Path.GetDirectoryName (Assembly.GetExecutingAssembly ().Location)).Parent.Parent.FullName;
+			string system_web_dir = Path.Combine (class_dir, "System.Web", "Test", "System.Web.Caching");
+			dataDir = Path.Combine (system_web_dir, DATA_DIR);
 		}
 		
 		void RunTest (string testsFileName, string listFileName)

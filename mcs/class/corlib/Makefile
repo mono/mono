@@ -166,7 +166,7 @@ TEST_RESOURCES = $(TEST_RESX_RESOURCES) $(TEST_RESX_RESOURCES_SATELITE)
 satellite_assembly1 = es-ES/$(patsubst %.dll,%.resources.dll,$(test_lib))
 satellite_assembly2 = nn-NO/$(patsubst %.dll,%.resources.dll,$(test_lib))
 
-$(test_lib): $(TEST_RESOURCES) $(satellite_assembly1) $(satellite_assembly2) 
+$(test_lib_output): $(TEST_RESOURCES) $(satellite_assembly1) $(satellite_assembly2) $(test_lib_dir)
 
 $(satellite_assembly1): Test/resources/culture-es-ES.cs Test/resources/Resources.es-ES.resources
 	@mkdir -p es-ES
