@@ -150,25 +150,32 @@ ifdef TEST_NUNITLITE_APP_CONFIG_RUNTIME
 	sed -i -e "/__INSERT_CUSTOM_APP_CONFIG_RUNTIME__/r $(TEST_NUNITLITE_APP_CONFIG_RUNTIME)" $(NUNITLITE_CONFIG_FILE)
 endif
 
-ifdef STATIC_AOT_BUNDLE
+ifdef PLATFORM_AOT_SUFFIX
 
-TEST_HARNESS_EXEC = $(TEST_HARNESS).static
-TEST_HARNESS_BIN = $(TEST_HARNESS_EXEC)
+MKBUNDLE_TEST_BIN = $(TEST_HARNESS).static
 MKBUNDLE_EXE = $(topdir)/class/lib/$(PROFILE)/mkbundle.exe
 BUNDLED_ASSEMBLIES := $(sort $(patsubst .//%,%,$(filter-out %.exe.static %.dll.dll %.exe.dll %bare% %plaincore% %secxml% %Facades% %ilasm%,$(filter %.dll %.exe,$(wildcard $(topdir)/class/lib/$(PROFILE)/*)))))
 
-$(MKBUNDLE_EXE):
+$(MKBUNDLE_EXE): $(topdir)/tools/mkbundle/mkbundle.cs
 	make -C $(topdir)/tools/mkbundle
 
-$(TEST_HARNESS_BIN): $(MKBUNDLE_EXE) $(test_assemblies) $(BUNDLED_ASSEMBLIES)
-	PKG_CONFIG_PATH="$(topdir)/../data" $(TEST_RUNTIME) $(MKBUNDLE_EXE) -L $(topdir)/class/lib/$(PROFILE) -v --deps $(TEST_HARNESS) $(test_assemblies) $(BUNDLED_ASSEMBLIES) -o $(TEST_HARNESS_BIN) --aot-mode $(AOT_MODE) --aot-runtime $(RUNTIME) --aot-args $(AOT_BUILD_ATTRS) --in-tree $(topdir)/.. --keeptemp
+mkbundle-all-tests: $(MKBUNDLE_EXE)
+	$(Q_AOT) $(MAKE) -C $(topdir)/class do-test
+	$(Q_AOT) $(MAKE) $(MKBUNDLE_TEST_BIN) # recursive make re-computes variables for BUNDLED_ASSEMBLIES
 
+$(MKBUNDLE_TEST_BIN): $(BUNDLED_ASSEMBLIES) $(TEST_HARNESS)
+	$(Q_AOT) MONO_PATH="$(dir $<)" PKG_CONFIG_PATH="$(topdir)/../data" $(RUNTIME) $(RUNTIME_FLAGS) $(MKBUNDLE_EXE) -L $(topdir)/class/lib/$(PROFILE) -v --deps $(TEST_HARNESS) $(BUNDLED_ASSEMBLIES) -o $(MKBUNDLE_TEST_BIN) --aot-mode $(AOT_MODE) --aot-runtime $(RUNTIME) --aot-args $(AOT_BUILD_ATTRS) --in-tree $(topdir)/.. 
+
+endif # PLATFORM_AOT_SUFFIX
+
+ifneq ($(wildcard $(MKBUNDLE_TEST_BIN)),)
+TEST_HARNESS_EXEC = $(MKBUNDLE_TEST_BIN)
 else 
 TEST_HARNESS_EXEC = $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(TEST_COVERAGE_FLAGS) $(AOT_RUN_FLAGS) $(TEST_HARNESS) 
 endif
 
 ## FIXME: i18n problem in the 'sed' command below
-run-test-lib: test-local test-local-aot-compile patch-nunitlite-appconfig $(TEST_HARNESS_BIN)
+run-test-lib: test-local test-local-aot-compile patch-nunitlite-appconfig $(MKBUNDLE_TEST_BIN)
 	ok=:; \
 	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" MONO_REGISTRY_PATH="$(HOME)/.mono/registry" MONO_TESTS_IN_PROGRESS="yes" $(TEST_HARNESS_EXEC) $(test_assemblies) $(NOSHADOW_FLAG) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) $(TEST_HARNESS_EXCLUDES) $(LABELS_ARG) -format:nunit2 -result:TestResult-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG)|| ok=false; \
 	if [ ! -f "TestResult-$(PROFILE).xml" ]; then echo "<?xml version='1.0' encoding='utf-8'?><test-results failures='1' total='1' not-run='0' name='bcl-tests' date='$$(date +%F)' time='$$(date +%T)'><test-suite name='$(strip $(test_assemblies))' success='False' time='0'><results><test-case name='crash' executed='True' success='False' time='0'><failure><message>The test runner didn't produce a test result XML, probably due to a crash of the runtime. Check the log for more details.</message><stack-trace></stack-trace></failure></test-case></results></test-suite></test-results>" > TestResult-$(PROFILE).xml; fi; \
