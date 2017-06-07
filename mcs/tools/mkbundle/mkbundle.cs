@@ -372,6 +372,7 @@ class MakeBundle {
 				var dedup_file = args [++i];
 				sources.Add (dedup_file);
 				aot_dedup_assembly = sources.Count () - 1;
+				aot_compile = true;
 				break;
 			case "--aot-mode":
 				if (i+1 == top) {
@@ -379,6 +380,7 @@ class MakeBundle {
 					return 1;
 				}
 				aot_mode = args [++i];
+				aot_compile = true;
 				break;
 			case "--aot-args":
 				if (i+1 == top) {
@@ -390,6 +392,7 @@ class MakeBundle {
 					return 1;
 				}
 				aot_args = String.Format("static,{0}", args [++i]);
+				aot_compile = true;
 				break;
 			default:
 				sources.Add (args [i]);
@@ -1424,6 +1427,15 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		if (aot_runtime == null)
 			aot_runtime = runtime;
 
+		if (aot_runtime == null || aot_runtime.Length == 0){
+			if (IsUnix)
+				aot_runtime = Process.GetCurrentProcess().MainModule.FileName;
+			else {
+				Error ("You must specify at least one aot runtime with --runtime or --cross or --aot_runtime when AOT compiling");
+				Environment.Exit (1);
+			}
+		}
+
 		var aot_mode_string = "";
 		if (aot_mode != null)
 			aot_mode_string = "," + aot_mode;
@@ -1448,6 +1460,9 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 				all_assemblies.Append (" ");
 				Execute (String.Format ("{0} --aot={1},outfile={2}{3}{4} {5}",
 					aot_runtime, aot_args, outPath, aot_mode_string, dedup_mode_string, path));
+			} else {
+				Execute (String.Format ("{0} --aot={1},outfile={2}{3} {4}",
+					aot_runtime, aot_args, outPath, aot_mode_string, path));
 			}
 		}
 		if (aot_dedup_assembly != null) {
