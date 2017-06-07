@@ -40,6 +40,8 @@ class MakeBundle {
 	static string output = "a.out";
 	static string object_out = null;
 	static List<string> link_paths = new List<string> ();
+	static List<string> aot_paths = new List<string> ();
+	static List<string> aot_names = new List<string> ();
 	static Dictionary<string,string> libraries = new Dictionary<string,string> ();
 	static bool autodeps = false;
 	static bool keeptemp = false;
@@ -65,6 +67,8 @@ class MakeBundle {
 	static string runtime = null;
 	static bool aot_compile = false;
 	static string aot_args = "static";
+	static string aot_mode = "";
+	static string aot_runtime = null;
 	static string sdk_path = null;
 	static string lib_path = null;
 	static Dictionary<string,string> environment = new Dictionary<string,string>();
@@ -353,7 +357,15 @@ class MakeBundle {
 			case "--bundled-header":
 				bundled_header = true;
 				break;
-			case "--aot-compile":
+			case "--aot-runtime":
+				aot_runtime = args [++i];
+				break;
+			case "--aot-mode":
+				if (i+1 == top) {
+					Console.WriteLine ("Need string of aot mode");
+					return 1;
+				}
+				aot_mode = args [++i];
 				aot_compile = true;
 				break;
 			case "--aot-args":
@@ -361,7 +373,12 @@ class MakeBundle {
 					Console.WriteLine ("AOT arguments are passed as a comma-delimited list");
 					return 1;
 				}
+				if (args [i + 1].Contains ("outfile")) {
+					Console.WriteLine ("Per-aot-output arguments (ex: outfile, llvm-outfile) cannot be given");
+					return 1;
+				}
 				aot_args = String.Format("static,{0}", args [++i]);
+				aot_compile = true;
 				break;
 			default:
 				sources.Add (args [i]);
@@ -422,8 +439,10 @@ class MakeBundle {
 		foreach (string file in assemblies)
 			if (!QueueAssembly (files, file))
 				return 1;
+
 		if (aot_compile)
 			AotCompile (files);
+
 		if (custom_mode)
 			GenerateBundles (files);
 		else 
@@ -558,7 +577,6 @@ class MakeBundle {
 		{
 			var p = package.Position;
 			var size = AddFile (fname);
-			
 			locations [entry] = Tuple.Create(p, size);
 		}
 
@@ -731,6 +749,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			} else {
 				tc.WriteLine ("#include <mono/metadata/mono-config.h>");
 				tc.WriteLine ("#include <mono/metadata/assembly.h>\n");
+				tc.WriteLine ("#include <mono/jit/jit.h>\n");
 			}
 
 			if (compress) {
@@ -833,10 +852,6 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 				}
 			}
 
-			if (aot_compile) {
-				// Read in static AOT file
-			}
-
 			if (config_file != null){
 				FileStream conf;
 				try {
@@ -875,6 +890,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			}
 			ts.Close ();
 
+			// Managed assemblies baked in
 			if (compress)
 				tc.WriteLine ("\nstatic const CompressedAssembly *compressed [] = {");
 			else
@@ -884,6 +900,37 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 				tc.WriteLine ("\t&{0},", c);
 			}
 			tc.WriteLine ("\tNULL\n};\n");
+
+
+			// AOT baked in plus loader
+			foreach (string asm in aot_names){
+				tc.WriteLine ("\textern const void *mono_aot_module_{0}_info;", asm);
+			}
+
+			tc.WriteLine ("\nstatic void install_aot_modules (void) {\n");
+			foreach (string asm in aot_names){
+				tc.WriteLine ("\tmono_aot_register_module (mono_aot_module_{0}_info);\n", asm);
+			}
+
+			string enum_aot_mode;
+			switch (aot_mode) {
+			case "full": 
+				enum_aot_mode = "MONO_AOT_MODE_FULL";
+				break;
+			case "llvmonly": 
+				enum_aot_mode = "MONO_AOT_MODE_LLVMONLY";
+				break;
+			case "": 
+				enum_aot_mode = "MONO_AOT_MODE_NORMAL";
+				break;
+			default:
+				throw new Exception ("Unsupported AOT mode");
+			}
+			tc.WriteLine ("\tmono_jit_set_aot_mode ({0});", enum_aot_mode);
+
+			tc.WriteLine ("\n}\n");
+
+
 			tc.WriteLine ("static char *image_name = \"{0}\";", prog);
 
 			if (ctor_func != null) {
@@ -1034,10 +1081,11 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 						smonolib = "`pkg-config --variable=libdir mono-2`/libmono-2.0.a ";
 					else
 						smonolib = "-Wl,-Bstatic -lmono-2.0 -Wl,-Bdynamic ";
+
 					cmd = String.Format("{4} -o '{2}' -Wall `pkg-config --cflags mono-2` {0} {3} " +
-						"`pkg-config --libs-only-L mono-2` " + smonolib +
-						"`pkg-config --libs-only-l mono-2 | sed -e \"s/\\-lmono-2.0 //\"` {1}",
-						temp_c, temp_o, output, zlib, cc);
+						"`pkg-config --libs-only-L mono-2` {5} {6} " +
+						"`pkg-config --libs-only-l mono-2 | sed -e \"s/\\-lmono-2.0 //\"` {1} -g ",
+						temp_c, temp_o, output, zlib, cc, smonolib, String.Join (" ", aot_paths));
 				}
 				else
 				{
@@ -1338,11 +1386,39 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		}
 	}
 
+
+	static string EncodeAotSymbol (string symbol)
+	{
+		var sb = new StringBuilder ();
+		/* This mimics what the aot-compiler does */
+		foreach (var b in System.Text.Encoding.UTF8.GetBytes (symbol)) {
+			char c = (char) b;
+			if ((c >= '0' && c <= '9') ||
+				(c >= 'a' && c <= 'z') ||
+				(c >= 'A' && c <= 'Z')) {
+				sb.Append (c);
+				continue;
+			}
+			sb.Append ('_');
+		}
+		return sb.ToString ();
+	}
+
 	static void AotCompile (List<string> files)
 	{
+		if (aot_runtime == null)
+			aot_runtime = runtime;
+
 		foreach (var fileName in files) {
 			string path = LocateFile (new Uri (fileName).LocalPath);
-			Execute (String.Format ("{0} --aot={1} {2}", runtime, aot_args, path));
+			string outPath = String.Format ("{0}.aot_out", path);
+			aot_paths.Add (outPath);
+			var name = System.Reflection.Assembly.LoadFrom(path).GetName().Name;
+			aot_names.Add (EncodeAotSymbol (name));
+			var aot_mode_string = "";
+			if (aot_mode != null)
+				aot_mode_string = "," + aot_mode;
+			Execute (String.Format ("{0} --aot={1},outfile={2}{3} {4}", aot_runtime, aot_args, outPath, aot_mode_string, path));
 		}
 	}
 
