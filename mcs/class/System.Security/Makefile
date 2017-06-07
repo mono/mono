@@ -28,6 +28,10 @@ EXTRA_DISTFILES = \
 
 RESX_RESOURCE_STRING = ../../../external/corefx/src/System.Security.Cryptography.Xml/src/Resources/Strings.resx
 
+ifdef MOBILE_PROFILE
+NO_TEST = yes
+endif
+
 include ../../build/library.make
 
 $(build_lib): $(secxml_libdir)/System.dll $(MONO_SECURITY_DLL)
