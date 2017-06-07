@@ -169,7 +169,7 @@ mkbundle-all-tests:
 	$(Q_AOT) $(MAKE) $(MKBUNDLE_TEST_BIN) # recursive make re-computes variables for TEST_ASSEMBLIES
 
 $(MKBUNDLE_TEST_BIN): $(TEST_ASSEMBLIES) $(TEST_HARNESS) $(MKBUNDLE_EXE)
-	$(Q_AOT) MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)" PKG_CONFIG_PATH="$(topdir)/../data" $(RUNTIME) $(RUNTIME_FLAGS) $(MKBUNDLE_EXE) -L $(topdir)/class/lib/$(PROFILE) -v --deps $(TEST_HARNESS) $(TEST_ASSEMBLIES) -o $(MKBUNDLE_TEST_BIN) --aot-mode $(AOT_MODE) --aot-runtime $(RUNTIME) --aot-args $(AOT_BUILD_ATTRS) --in-tree $(topdir)/.. --cil-strip $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/mono-cil-strip.exe --managed-linker $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/monolinker.exe --config $(topdir)/../data/config
+	$(Q_AOT) MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)" PKG_CONFIG_PATH="$(topdir)/../data" $(RUNTIME) $(RUNTIME_FLAGS) $(MKBUNDLE_EXE) -L $(topdir)/class/lib/$(PROFILE) -v --deps $(TEST_HARNESS) $(TEST_ASSEMBLIES) -o $(MKBUNDLE_TEST_BIN) --aot-mode $(AOT_MODE) --aot-runtime $(RUNTIME) --aot-args $(AOT_BUILD_ATTRS) --in-tree $(topdir)/.. --cil-strip $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/mono-cil-strip.exe --managed-linker $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/monolinker.exe --config $(topdir)/../data/config --i18n all
 
 endif # PLATFORM_AOT_SUFFIX
 
