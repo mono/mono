@@ -38,7 +38,6 @@ namespace MonoTests.Mono.Security
 	public class TestProvider
 	{
 		[Test]
-		[Category ("Martin")]
 		public void GetProvider ()
 		{
 			var provider = MonoTlsProviderFactory.GetProvider ();
