@@ -229,7 +229,12 @@ namespace System.Reflection.Emit {
 		}
 
 		internal FieldInfo RuntimeResolve () {
-			return typeb.CreateType ().GetField (this);
+			var t = typeb.CreateType ();
+			foreach (var fi in t.GetFields (BindingFlags.Instance|BindingFlags.Static|BindingFlags.DeclaredOnly|BindingFlags.Public|BindingFlags.NonPublic)) {
+				if (fi.Name == Name && ((Type)fi.FieldType == (Type)ModuleBuilder.RuntimeResolve (FieldType)) && fi.IsStatic == IsStatic)
+					return fi;
+			}
+			throw new NotImplementedException (ToString ());
 		}
 
 		public override Module Module {

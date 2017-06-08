@@ -806,5 +806,9 @@ namespace System
 				return false;
 			}
 		}
+
+		internal override Type RuntimeResolve () {
+			return this;
+		}
 	}
 }

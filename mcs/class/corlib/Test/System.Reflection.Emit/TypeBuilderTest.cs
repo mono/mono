@@ -11306,5 +11306,33 @@ namespace MonoTests.System.Reflection.Emit
 
 			Assert.AreSame (buildX, defX);
 		}
+
+		[Test]
+		public void FieldsWithSameName () {
+			string fileName = CreateTempAssembly ();
+
+            var assemblyName = new AssemblyName { Name = "test" };
+            var dynamicAssembly = AssemblyBuilder.DefineDynamicAssembly (assemblyName, AssemblyBuilderAccess.RunAndSave);
+            var dynamicModule = dynamicAssembly.DefineDynamicModule (assemblyName.Name, fileName);
+            var typeBuilder = dynamicModule.DefineType ("type1", TypeAttributes.Public | TypeAttributes.Class);
+
+            var mainMethod = typeBuilder.DefineMethod ("Main", MethodAttributes.Public | MethodAttributes.Static, typeof (int), new Type[0]);
+            var mainMethodIl = mainMethod.GetILGenerator ();
+
+            var f1 = typeBuilder.DefineField ("x", typeBuilder, FieldAttributes.Private | FieldAttributes.Static);
+            var f2 = typeBuilder.DefineField ("x", typeof (sbyte), FieldAttributes.Private | FieldAttributes.Static);
+
+            mainMethodIl.Emit (OpCodes.Ldsflda, f1);
+            mainMethodIl.Emit (OpCodes.Ldsflda, f2);
+            mainMethodIl.Emit (OpCodes.Pop);
+            mainMethodIl.Emit (OpCodes.Pop);
+            mainMethodIl.Emit (OpCodes.Ldc_I4_0);
+            mainMethodIl.Emit (OpCodes.Ret);
+
+            typeBuilder.CreateType ();
+            dynamicAssembly.SetEntryPoint (mainMethod);
+
+			dynamicAssembly.Save (fileName);
+		}
 	}
 }
