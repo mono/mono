@@ -229,7 +229,9 @@ namespace System.Reflection.Emit {
 		}
 
 		internal FieldInfo RuntimeResolve () {
-			return typeb.CreateType ().GetField (this);
+			// typeb.CreateType() populates this.handle
+			var type_handle = new RuntimeTypeHandle (typeb.CreateType () as RuntimeType);
+			return FieldInfo.GetFieldFromHandle (handle, type_handle);
 		}
 
 		public override Module Module {
