@@ -11306,5 +11306,91 @@ namespace MonoTests.System.Reflection.Emit
 
 			Assert.AreSame (buildX, defX);
 		}
+
+		[Test]
+		public void FieldsWithSameName () {
+			// Regression test for https://bugzilla.xamarin.com/show_bug.cgi?id=57222
+			string fileName = CreateTempAssembly ();
+
+			var assemblyName = new AssemblyName { Name = "test" };
+			var dynamicAssembly = AssemblyBuilder.DefineDynamicAssembly (assemblyName, AssemblyBuilderAccess.RunAndSave);
+			var dynamicModule = dynamicAssembly.DefineDynamicModule (assemblyName.Name, fileName);
+			var typeBuilder = dynamicModule.DefineType ("type1", TypeAttributes.Public | TypeAttributes.Class);
+
+			var mainMethod = typeBuilder.DefineMethod ("Main", MethodAttributes.Public | MethodAttributes.Static, typeof (int), new Type[0]);
+			var mainMethodIl = mainMethod.GetILGenerator ();
+
+			var f1 = typeBuilder.DefineField ("x", typeof (byte), FieldAttributes.Private | FieldAttributes.Static);
+			var f2 = typeBuilder.DefineField ("x", typeof (sbyte), FieldAttributes.Private | FieldAttributes.Static);
+
+			mainMethodIl.Emit (OpCodes.Ldsflda, f1);
+			mainMethodIl.Emit (OpCodes.Ldsflda, f2);
+			mainMethodIl.Emit (OpCodes.Pop);
+			mainMethodIl.Emit (OpCodes.Pop);
+			mainMethodIl.Emit (OpCodes.Ldc_I4_0);
+			mainMethodIl.Emit (OpCodes.Ret);
+
+			typeBuilder.CreateType ();
+			dynamicAssembly.SetEntryPoint (mainMethod);
+
+			dynamicAssembly.Save (fileName);
+		}
+		[Test]
+		public void FieldsWithSameNameAndType () {
+			// https://bugzilla.xamarin.com/show_bug.cgi?id=57222
+			string fileName = CreateTempAssembly ();
+
+			var assemblyName = new AssemblyName { Name = "test" };
+			var dynamicAssembly = AssemblyBuilder.DefineDynamicAssembly (assemblyName, AssemblyBuilderAccess.RunAndSave);
+			var dynamicModule = dynamicAssembly.DefineDynamicModule (assemblyName.Name, fileName);
+			var typeBuilder = dynamicModule.DefineType ("type1", TypeAttributes.Public | TypeAttributes.Class);
+
+			var mainMethod = typeBuilder.DefineMethod ("Main", MethodAttributes.Public | MethodAttributes.Static, typeof (int), new Type[0]);
+			var mainMethodIl = mainMethod.GetILGenerator ();
+
+			var f1 = typeBuilder.DefineField ("x", typeof (sbyte), FieldAttributes.Private | FieldAttributes.Static);
+			var f2 = typeBuilder.DefineField ("x", typeof (sbyte), FieldAttributes.Private | FieldAttributes.Static);
+
+			mainMethodIl.Emit (OpCodes.Ldsflda, f1);
+			mainMethodIl.Emit (OpCodes.Ldsflda, f2);
+			mainMethodIl.Emit (OpCodes.Pop);
+			mainMethodIl.Emit (OpCodes.Pop);
+			mainMethodIl.Emit (OpCodes.Ldc_I4_0);
+			mainMethodIl.Emit (OpCodes.Ret);
+
+			typeBuilder.CreateType ();
+			dynamicAssembly.SetEntryPoint (mainMethod);
+
+			dynamicAssembly.Save (fileName);
+		}
+
+		[Test]
+		public void MethodsWithSameNameAndSig () {
+			// https://bugzilla.xamarin.com/show_bug.cgi?id=57222
+			string fileName = CreateTempAssembly ();
+
+			var assemblyName = new AssemblyName { Name = "test" };
+			var dynamicAssembly = AssemblyBuilder.DefineDynamicAssembly (assemblyName, AssemblyBuilderAccess.RunAndSave);
+			var dynamicModule = dynamicAssembly.DefineDynamicModule (assemblyName.Name, fileName);
+			var typeBuilder = dynamicModule.DefineType ("type1", TypeAttributes.Public | TypeAttributes.Class);
+
+			var mainMethod = typeBuilder.DefineMethod ("Main", MethodAttributes.Public | MethodAttributes.Static, typeof (int), new Type[0]);
+			var mainMethodIl = mainMethod.GetILGenerator ();
+
+			var m1 = typeBuilder.DefineMethod ("X", MethodAttributes.Private | MethodAttributes.Static, typeof (void), new Type [0]);
+			var m2 = typeBuilder.DefineMethod ("X", MethodAttributes.Private | MethodAttributes.Static, typeof (void), new Type [0]);
+			m1.GetILGenerator ().Emit (OpCodes.Ret);
+			m2.GetILGenerator ().Emit (OpCodes.Ret);
+
+			mainMethodIl.Emit (OpCodes.Call, m1);
+			mainMethodIl.Emit (OpCodes.Call, m2);
+			mainMethodIl.Emit (OpCodes.Ldc_I4_0);
+			mainMethodIl.Emit (OpCodes.Ret);
+
+			typeBuilder.CreateType ();
+			dynamicAssembly.SetEntryPoint (mainMethod);
+
+			dynamicAssembly.Save (fileName);
+		}
 	}
 }
