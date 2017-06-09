@@ -181,6 +181,16 @@ Gives the path for the temporary LLVM bitcode file created during AOT.
 .I info
 Print the architecture the AOT in this copy of Mono targets and quit.
 .TP
+.I interp
+Generates all required wrappers, so that it is possible to run --interpreter without
+any code generation at runtime.  This option only makes sense with \fBmscorlib.dll\fR.
+Embedders can set
+
+.nf
+mono_jit_set_aot_mode (MONO_AOT_MODE_INTERP);
+.fi
+.ne
+.TP
 .I ld-flags
 Additional flags to pass to the C linker (if the current AOT mode calls for invoking it).
 .TP
