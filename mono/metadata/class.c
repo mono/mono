@@ -6618,7 +6618,7 @@ mono_class_from_name (MonoImage *image, const char* name_space, const char *name
 			if (class)
 			{
 				if (nested)
-					return class ? return_nested_in (class, nested) : NULL;
+					return return_nested_in (class, nested);
 				else
 					return class;
 			}
