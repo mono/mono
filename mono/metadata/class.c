@@ -6615,10 +6615,13 @@ mono_class_from_name (MonoImage *image, const char* name_space, const char *name
 		if (res) {
 			if (!class)
 				class = search_modules (image, name_space, name);
-			if (nested)
-				return class ? return_nested_in (class, nested) : NULL;
-			else
-				return class;
+			if (class)
+			{
+				if (nested)
+					return return_nested_in (class, nested);
+				else
+					return class;
+			}
 		}
 	}
 
