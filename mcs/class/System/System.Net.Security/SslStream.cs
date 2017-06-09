@@ -223,6 +223,11 @@ namespace System.Net.Security
 			return Impl.AuthenticateAsServerAsync (serverCertificate, clientCertificateRequired, enabledSslProtocols, checkCertificateRevocation);
 		}
 
+		public virtual Task ShutdownAsync ()
+		{
+			return Impl.ShutdownAsync ();
+		}
+
 		public override bool IsAuthenticated {
 			get { return Impl.IsAuthenticated; }
 		}
