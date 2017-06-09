@@ -1828,11 +1828,13 @@ ves_icall_System_Threading_Thread_Join_internal(MonoThread *this_obj, int ms)
 	}
 	THREAD_DEBUG (g_message ("%s: joining thread handle %p, %d ms", __func__, handle, ms));
 	
+	mono_w32handle_ref(handle);
 	mono_thread_set_state (cur_thread, ThreadState_WaitSleepJoin);
 
 	ret=mono_join_uninterrupted (handle, ms, &error);
 
 	mono_thread_clr_state (cur_thread, ThreadState_WaitSleepJoin);
+	mono_w32handle_unref(handle);
 
 	mono_error_set_pending_exception (&error);
 
@@ -1917,29 +1919,26 @@ mono_wait_uninterrupted (MonoInternalThread *thread, guint32 numhandles, gpointe
 	return ret;
 }
 
+
+
 gint32 ves_icall_System_Threading_WaitHandle_WaitAll_internal(MonoArray *mono_handles, gint32 ms)
 {
+	MonoArrayHandle array_handle = MONO_HANDLE_NEW (MonoArray, mono_handles);
 	MonoError error;
-	HANDLE *handles;
-	guint32 numhandles;
+	HANDLE handles [MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS];
+	uintptr_t numhandles;
 	MonoW32HandleWaitRet ret;
 	guint32 i;
-	MonoObject *waitHandle;
 	MonoInternalThread *thread = mono_thread_internal_current ();
+
+	error_init (&error);
 
 	/* Do this WaitSleepJoin check before creating objects */
 	if (mono_thread_current_check_pending_interrupt ())
 		return map_native_wait_result_to_managed (MONO_W32HANDLE_WAIT_RET_FAILED, 0);
 
-	/* We fail in managed if the array has more than 64 elements */
-	numhandles = (guint32)mono_array_length(mono_handles);
-	handles = g_new0(HANDLE, numhandles);
+	numhandles = mono_w32handle_load_from_monoarray (array_handle, handles, MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS, &error);
 
-	for(i = 0; i < numhandles; i++) {	
-		waitHandle = mono_array_get(mono_handles, MonoObject*, i);
-		handles [i] = mono_wait_handle_get_handle ((MonoWaitHandle *) waitHandle);
-	}
-	
 	if(ms== -1) {
 		ms=MONO_INFINITE_WAIT;
 	}
@@ -1950,36 +1949,35 @@ gint32 ves_icall_System_Threading_WaitHandle_WaitAll_internal(MonoArray *mono_ha
 
 	mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
 
-	g_free(handles);
+	for(i = 0; i < numhandles; i++) {
+		mono_w32handle_unref (handles [i]);
+	}
 
 	mono_error_set_pending_exception (&error);
+	mono_error_cleanup(&error);
 
 	return map_native_wait_result_to_managed (ret, numhandles);
 }
 
 gint32 ves_icall_System_Threading_WaitHandle_WaitAny_internal(MonoArray *mono_handles, gint32 ms)
 {
+	MonoArrayHandle array_handle = MONO_HANDLE_NEW (MonoArray, mono_handles);
 	MonoError error;
 	HANDLE handles [MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS];
 	uintptr_t numhandles;
 	MonoW32HandleWaitRet ret;
 	guint32 i;
-	MonoObject *waitHandle;
 	MonoInternalThread *thread = mono_thread_internal_current ();
+
+	error_init (&error);
 
 	/* Do this WaitSleepJoin check before creating objects */
 	if (mono_thread_current_check_pending_interrupt ())
 		return map_native_wait_result_to_managed (MONO_W32HANDLE_WAIT_RET_FAILED, 0);
 
-	numhandles = mono_array_length(mono_handles);
-	if (numhandles > MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS)
-		return map_native_wait_result_to_managed (MONO_W32HANDLE_WAIT_RET_FAILED, 0);
+	numhandles = mono_w32handle_load_from_monoarray (array_handle, &handles, MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS, &error);
+	mono_error_assert_ok (&error); /* this is for testing, should probably throw exception */
 
-	for(i = 0; i < numhandles; i++) {	
-		waitHandle = mono_array_get(mono_handles, MonoObject*, i);
-		handles [i] = mono_wait_handle_get_handle ((MonoWaitHandle *) waitHandle);
-	}
-	
 	if(ms== -1) {
 		ms=MONO_INFINITE_WAIT;
 	}
@@ -1992,7 +1990,14 @@ gint32 ves_icall_System_Threading_WaitHandle_WaitAny_internal(MonoArray *mono_ha
 
 	THREAD_WAIT_DEBUG (g_message ("%s: (%"G_GSIZE_FORMAT") returning %d", __func__, mono_native_thread_id_get (), ret));
 
+	MONO_ENTER_GC_SAFE;
+	for(i = 0; i < numhandles; i++) {
+		mono_w32handle_unref (handles [i]);
+	}
+	MONO_EXIT_GC_SAFE;
+
 	mono_error_set_pending_exception (&error);
+	mono_error_cleanup(&error);
 
 	return map_native_wait_result_to_managed (ret, numhandles);
 }
@@ -2012,11 +2017,13 @@ gint32 ves_icall_System_Threading_WaitHandle_WaitOne_internal(HANDLE handle, gin
 	if (mono_thread_current_check_pending_interrupt ())
 		return map_native_wait_result_to_managed (MONO_W32HANDLE_WAIT_RET_FAILED, 0);
 
+	mono_w32handle_ref(handle);
 	mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
 	
 	ret = mono_wait_uninterrupted (thread, 1, &handle, FALSE, ms, &error);
 	
 	mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
+	mono_w32handle_unref(handle);
 
 	mono_error_set_pending_exception (&error);
 	return map_native_wait_result_to_managed (ret, 1);

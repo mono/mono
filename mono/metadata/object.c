@@ -7364,6 +7364,23 @@ mono_wait_handle_get_handle (MonoWaitHandle *handle)
 	return sh->handle;
 }
 
+HANDLE
+mono_wait_handle_get_safe_handle_from_coop_handle (MonoWaitHandleHandle handle)
+{
+	static MonoClassField *f_safe_handle = NULL;
+
+	if (!f_safe_handle) {
+		f_safe_handle = mono_class_get_field_from_name (mono_defaults.manualresetevent_class, "safeWaitHandle");
+		g_assert (f_safe_handle);
+	}
+	MonoSafeHandleHandle sh = MONO_HANDLE_NEW_GET_FIELD (handle, MonoSafeHandle, f_safe_handle);
+
+	if (MONO_HANDLE_IS_NULL (sh))
+		return -1;
+
+	return (HANDLE) MONO_HANDLE_GETVAL (sh, handle);
+}
+
 
 static MonoObject*
 mono_runtime_capture_context (MonoDomain *domain, MonoError *error)
