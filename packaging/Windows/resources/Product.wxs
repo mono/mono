@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
+<?if $(sys.BUILDARCH)=x86 ?>
+  <?define UpgradeCode="177a37ab-9354-487f-ac97-8407195c3043" ?>
+  <?define ProgramFilesX86orX64="ProgramFilesFolder" ?>
+  <?define SystemFolderX86orX64="SystemFolder" ?>
+  <?define MonoProgramFilesGuid="9B7A0108-39DA-4332-AE40-545E28919736" ?>
+  <?define ApplicationShortcutsGuid="CF93ABFD-416B-4C10-9126-EA93BC1D7154" ?>
+<?elseif $(sys.BUILDARCH)=x64 ?>
+  <?define UpgradeCode="1f58e2dd-d88a-402d-a67f-a27e1efaaf48" ?>
+  <?define ProgramFilesX86orX64="ProgramFiles64Folder" ?>
+  <?define SystemFolderX86orX64="System64Folder" ?>
+  <?define MonoProgramFilesGuid="b4d95bcc-9fa9-48c4-a2d0-1d83f031e974" ?>
+  <?define ApplicationShortcutsGuid="8a74633a-86bb-4891-b9aa-1e7aaf7597c6" ?>
+<?else?>
+  <?error $(sys.BUILDARCH) is not supported ?>
+<?endif?>
+
+  <Product Id="*"
+           Name="Mono for Windows ($(sys.BUILDARCH))"
+           Language="1033"
+           Version="$(env.MONO_VERSION)"
+           Manufacturer="Xamarin, Inc."
+           UpgradeCode="$(var.UpgradeCode)">
+    <Package InstallerVersion="405" Compressed="yes" InstallScope="perMachine" Platform="$(sys.BUILDARCH)" />
+
+
+    <MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Icon Id="app.ico" SourceFile="setup-files\app.ico"/>
+
+    <!-- Entries for the 'Add & Remove Programs' section in control panel -->
+    <Property Id="ARPPRODUCTICON" Value="app.ico" />
+    <Property Id="ARPHELPLINK" Value="http://www.mono-project.com/" />
+    <Property Id="ARPURLINFOABOUT" Value="http://www.mono-project.com/" />
+    <Property Id="ARPURLUPDATEINFO" Value="http://www.mono-project.com/docs/about-mono/releases/" />
+
+    <Property Id="MSIFASTINSTALL" Value="7" />
+
+    <Condition Message="This application is only supported on Windows Vista or higher.">
+      <![CDATA[Installed OR (VersionNT >= 600)]]>
+    </Condition>
+
+    <UIRef Id="WixUI_Minimal" />
+    <WixVariable Id="WixUILicenseRtf" Value="setup-files\license.rtf" />
+    <WixVariable Id="WixUIBannerBmp" Value="setup-files\banner.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="setup-files\dialog.bmp" />
+
+    <Feature Id="ProductFeature" Title="Mono" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+    </Feature>
+    <DirectoryRef Id="TARGETDIR">
+      <Merge Id="VCRedist2013" SourceFile="$(env.CommonProgramFiles(x86))\Merge Modules\Microsoft_VC120_CRT_x86.msm" DiskId="1" Language="0"/>
+      <Merge Id="VCRedist2015" SourceFile="$(env.CommonProgramFiles(x86))\Merge Modules\Microsoft_VC140_CRT_$(sys.BUILDARCH).msm" DiskId="1" Language="0"/>
+    </DirectoryRef>
+    <Feature Id="VCRedist2013" Title="Visual C++ 12.0 Runtime (x86)" AllowAdvertise="no" Display="hidden" Level="1">
+      <MergeRef Id="VCRedist2013"/>
+    </Feature>
+    <Feature Id="VCRedist2015" Title="Visual C++ 14.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+      <MergeRef Id="VCRedist2015"/>
+    </Feature>
+  </Product>
+
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="$(var.ProgramFilesX86orX64)">
+        <Directory Id="INSTALLFOLDER" Name="Mono">
+          <Directory Id="binFolder" Name="bin">
+            <Component Id="MonoProgramFiles" Guid="$(var.MonoProgramFilesGuid)">
+              <File KeyPath="yes" Source="bat\setmonopath.bat" />
+              <RegistryValue Root="HKLM" Key="Software\Mono" Name="Installed" Type="integer" Value="1" />
+              <RegistryValue Root="HKLM" Key="Software\Mono" Name="Version" Type="string" Value="$(env.MONO_VERSION)" />
+              <RegistryValue Root="HKLM" Key="Software\Mono" Name="SdkInstallRoot" Type="string" Value="[INSTALLFOLDER]" />
+              <RegistryValue Root="HKLM" Key="Software\Mono" Name="FrameworkAssemblyDirectory" Type="string" Value="[INSTALLFOLDER]lib\" />
+              <RegistryValue Root="HKLM" Key="Software\Mono" Name="MonoConfigDir" Type="string" Value="[INSTALLFOLDER]etc\" />
+              <RegistryValue Root="HKLM" Key="Software\Mono" Name="Architecture" Type="string" Value="$(sys.BUILDARCH)" />
+            </Component>
+          </Directory>
+        </Directory>
+      </Directory>
+
+      <!-- Start Menu Shortcut -->
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="Mono">
+          <Component Id="ApplicationShortcuts" Guid="$(var.ApplicationShortcutsGuid)">
+            <Shortcut Id="ApplicationStartMenuShortcutMono"
+                      Name="Open Mono $(sys.BUILDARCH) Command Prompt"
+                      Target="[$(var.SystemFolderX86orX64)]cmd.exe"
+                      Arguments="/k &quot;[INSTALLFOLDER]\bin\setmonopath.bat&quot;"
+                      WorkingDirectory="INSTALLFOLDER"/>
+            <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
+            <RegistryValue Root="HKCU" Key="Software\Mono" Name="Installed" Type="integer" Value="1" KeyPath="yes"/>
+          </Component>
+        </Directory>
+      </Directory>
+    </Directory>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <ComponentGroupRef Id="MonoFiles" />
+      <ComponentRef Id="MonoProgramFiles" />
+      <ComponentRef Id="ApplicationShortcuts" />
+    </ComponentGroup>
+  </Fragment>
+</Wix>
