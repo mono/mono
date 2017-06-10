@@ -10,7 +10,7 @@ if [ "$total_tests" -lt "1600" ]
 	exit 1
 fi
 
-${TESTCMD} --label=check-roslyn --timeout=30m make -C acceptance-tests check-roslyn PREFIX=${WORKSPACE}/tmp/mono-acceptance-tests
+${TESTCMD} --label=check-roslyn --timeout=30m make -C acceptance-tests check-roslyn PREFIX=${MONO_REPO_ROOT}/tmp/mono-acceptance-tests
 rm -rf ${MONO_REPO_ROOT}/tmp/mono-acceptance-tests  # cleanup the Mono installation used for Roslyn tests
 
 ${TESTCMD} --label=coreclr-compile-tests --timeout=80m --fatal make -C acceptance-tests coreclr-compile-tests

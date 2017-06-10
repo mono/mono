@@ -1,0 +1,73 @@
+#!/bin/bash -xe
+
+REPO="https://dl.xamarin.com/GTKforWindows/Windows/gtk-sharp-2.12.44.msi"
+REPODIR=$(dirname $(realpath $0))/../repos/gtksharp
+
+error()
+{
+    echo "$(date "+%F@%T") :: $1" 1>&2
+    exit 1
+}
+
+report()
+{
+    echo "$(date "+%F@%T") :: $1"
+}
+
+download()
+{
+	mkdir -p ${REPODIR}
+	if [ ! -d "${REPODIR}/lessmsi" ]
+		then report "Downloading LessMSIerables"
+		wget --quiet -O ${REPODIR}/lessmsi.zip https://github.com/activescott/lessmsi/releases/download/v1.2.0/lessmsi-v1.2.0.zip
+		mkdir -p ${REPODIR}/lessmsi
+		unzip -d ${REPODIR}/lessmsi ${REPODIR}/lessmsi.zip
+		chmod a+x ${REPODIR}/lessmsi/*.exe ${REPODIR}/lessmsi/*.dll
+	fi
+	report "Downloading GTK# for Windows - ${REPO}"
+	wget --quiet -O ${REPODIR}/gtksharp.msi ${REPO}
+}
+
+clean()
+{
+	pushd ${REPODIR}
+	report "Deleting interstitial output"
+	rm -rf	${REPODIR}/gtksharp
+	popd
+}
+
+build()
+{
+	pushd ${REPODIR}
+	report "Unpacking GTK# for Windows"
+	mkdir -p gtksharp
+	pushd lessmsi
+	./lessmsi.exe x ../gtksharp.msi
+	mv gtksharp/SourceDir/PFiles/GtkSharp/2.12/* ../gtksharp
+	rm -rf gtksharp
+	popd
+	popd
+}
+
+install()
+{
+	pushd ${REPODIR}
+	cp -r gtksharp/etc/* ../../tmp/mono/etc/
+	cp -r gtksharp/bin/* ../../tmp/mono/bin/
+	cp -r gtksharp/lib/* ../../tmp/mono/lib/
+	cp -r gtksharp/share/* ../../tmp/mono/share/
+	pushd ../../tmp/mono/
+	for i in lib/gtk-sharp-2.0/*.dll
+		do bin/gacutil -i $i
+	done
+	popd
+	cp -r ../../resources/pkgconfig ../../tmp/mono/lib/
+	popd
+}
+
+prerequisites()
+{
+	which wget 		2>/dev/null || error "*** wget is not in \$PATH ***"
+}
+
+$@
