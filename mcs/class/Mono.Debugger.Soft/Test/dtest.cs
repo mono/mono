@@ -2617,6 +2617,11 @@ public class DebuggerTests
 		m = s.Type.GetMethod ("ToString");
 		v = s.InvokeMethod (e.Thread, m, null);
 
+		// pass nullable as argument
+		m = t.GetMethod ("invoke_pass_nullable");
+		v = this_obj.InvokeMethod (e.Thread, m, new Value [] { s });
+		AssertValue (42, v);
+
 		// return nullable null
 		m = t.GetMethod ("invoke_return_nullable_null");
 		v = this_obj.InvokeMethod (e.Thread, m, null);
@@ -2629,6 +2634,13 @@ public class DebuggerTests
 		//m = vm.RootDomain.Corlib.GetType ("System.Object").GetMethod ("ToString");
 		m = s.Type.GetMethod ("ToString");
 		v = s.InvokeMethod (e.Thread, m, null);
+
+		// pass nullable null as argument
+		m = t.GetMethod ("invoke_pass_nullable_null");
+		v = this_obj.InvokeMethod (e.Thread, m, new Value [] { s });
+		AssertValue (2, v);
+
+		return;
 
 		// pass primitive
 		m = t.GetMethod ("invoke_pass_primitive");
