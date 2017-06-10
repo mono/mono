@@ -73,7 +73,7 @@ ${TESTCMD} --label=System.Web.DynamicData --timeout=5m make -w -C mcs/class/Syst
 ${TESTCMD} --label=Mono.CSharp --timeout=5m make -w -C mcs/class/Mono.CSharp run-test
 ${TESTCMD} --label=WindowsBase --timeout=5m make -w -C mcs/class/WindowsBase run-test
 ${TESTCMD} --label=System.Numerics --timeout=5m make -w -C mcs/class/System.Numerics run-test
-${TESTCMD} --label=System.Numerics --timeout=5m make -w -C mcs/class/System.Numerics run-xunit-test
+if [[ ${label} == w* ]]; then ${TESTCMD} --label=System.Numerics-xunit --skip; else ${TESTCMD} --label=System.Numerics-xunit --timeout=5m make -w -C mcs/class/System.Numerics run-xunit-test; fi
 ${TESTCMD} --label=System.Runtime.DurableInstancing --timeout=5m make -w -C mcs/class/System.Runtime.DurableInstancing run-test
 ${TESTCMD} --label=System.ServiceModel.Discovery --timeout=5m make -w -C mcs/class/System.ServiceModel.Discovery run-test
 ${TESTCMD} --label=System.Xaml --timeout=5m make -w -C mcs/class/System.Xaml run-test
