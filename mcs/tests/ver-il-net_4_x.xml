@@ -72221,30 +72221,16 @@
   <test name="test-pattern-01.cs">
     <type name="TypePattern">
       <method name="Int32 Main()" attrs="150">
-        <size>227</size>
+        <size>118</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-    </type>
-  </test>
-  <test name="test-pattern-02.cs">
-    <type name="ConstantPattern">
-      <method name="Int32 Main()" attrs="150">
-        <size>609</size>
+      <method name="Void Test1(System.Object)" attrs="145">
+        <size>24</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="&lt;PatternMatchingHelper&gt;">
-      <method name="Boolean NumberMatcher(System.Object, System.Object, Boolean)" attrs="150">
-        <size>69</size>
-      </method>
-    </type>
-    <type name="ConstantPattern">
-      <method name="Boolean Generic[T](T)" attrs="145">
-        <size>28</size>
+      <method name="System.String Test2(System.Object)" attrs="145">
+        <size>39</size>
       </method>
     </type>
   </test>
