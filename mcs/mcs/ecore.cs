@@ -239,6 +239,15 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		protected void CheckExpressionVariable (ResolveContext rc)
+		{
+			if (rc.HasAny (ResolveContext.Options.BaseInitializer | ResolveContext.Options.FieldInitializerScope)) {
+				rc.Report.Error (8200, loc, "Out variable and pattern variable declarations are not allowed within constructor initializers, field initializers, or property initializers");
+			} else if (rc.HasSet (ResolveContext.Options.QueryClauseScope)) {
+				rc.Report.Error (8201, loc, "Out variable and pattern variable declarations are not allowed within a query clause");
+			}
+		}
+
 		public static void ErrorIsInaccesible (IMemberContext rc, string member, Location loc)
 		{
 			rc.Module.Compiler.Report.Error (122, loc, "`{0}' is inaccessible due to its protection level", member);
@@ -636,6 +645,10 @@ namespace Mono.CSharp {
 		{
 			Emit (ec);
 			ec.Emit (OpCodes.Pop);
+		}
+
+		public virtual void EmitPrepare (EmitContext ec)
+		{
 		}
 
 		//

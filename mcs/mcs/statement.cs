@@ -558,6 +558,8 @@ namespace Mono.CSharp {
 				ec.Emit (OpCodes.Br, ec.LoopBegin);
 				ec.MarkLabel (while_loop);
 
+				expr.EmitPrepare (ec);
+
 				Statement.Emit (ec);
 			
 				ec.MarkLabel (ec.LoopBegin);
@@ -2430,6 +2432,12 @@ namespace Mono.CSharp {
 			}
 			set {
 				hoisted_variant = value;
+			}
+		}
+
+		public bool Created {
+			get {
+				return builder != null;
 			}
 		}
 

@@ -565,6 +565,11 @@ namespace Mono.CSharp
 			variable.SetAssigned (DefiniteAssignment, generatedAssignment);
 		}
 
+		public void SetVariableAssigned (VariableInfo variable, DefiniteAssignmentBitSet da)
+		{
+			variable.SetAssigned (da, false);
+		}
+
 		public void SetStructFieldAssigned (VariableInfo variable, string name)
 		{
 			variable.SetStructFieldAssigned (DefiniteAssignment, name);

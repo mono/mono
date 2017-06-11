@@ -2642,15 +2642,10 @@ event_declarator
 	  	$$ = new FieldDeclarator (new SimpleMemberName (lt.Value, lt.Location), null);
 	  	lbag.AddLocation ($$, GetLocation ($1));
 	  }
-	| COMMA IDENTIFIER ASSIGN
+	| COMMA IDENTIFIER ASSIGN event_variable_initializer
 	  {
-		++lexer.parsing_block;
-	  }
-	  event_variable_initializer
-	  {
-		--lexer.parsing_block;
 		var lt = (LocatedToken) $2;	  
-	  	$$ = new FieldDeclarator (new SimpleMemberName (lt.Value, lt.Location), (Expression) $5);
+		$$ = new FieldDeclarator (new SimpleMemberName (lt.Value, lt.Location), (Expression) $4);
 	  	lbag.AddLocation ($$, GetLocation ($1), GetLocation ($3));
 	  }
 	;
@@ -2665,11 +2660,19 @@ event_variable_initializer
 	  	if ((current_event_field.ModFlags & Modifiers.ABSTRACT) != 0) {
 			report.Error (74, lexer.Location, "`{0}': abstract event cannot have an initializer",
 				current_event_field.GetSignatureForError ());
-	  	}		
+	  	}
+
+		++lexer.parsing_block;
+		current_local_parameters = ParametersCompiled.EmptyReadOnlyParameters;
+		start_block (lexer.Location);
 	  }
 	  variable_initializer
 	  {
 		$$ = $2;
+
+		--lexer.parsing_block;
+		end_block (lexer.Location);
+		current_local_parameters = null;
 	  }
 	;
 	
@@ -4464,12 +4467,13 @@ additive_expression
 	  {
 		var is_expr = new Is ((Expression) $1, (Expression) $3, GetLocation ($2));
 		if ($4 != null) {
-			if (lang_version != LanguageVersion.Experimental)
-				FeatureIsNotAvailable (GetLocation ($4), "type pattern matching");
+			if (lang_version < LanguageVersion.V_7)
+				FeatureIsNotAvailable (GetLocation ($4), "pattern matching");
 
 			var lt = (LocatedToken) $4;
-			is_expr.Variable = new LocalVariable (current_block, lt.Value, lt.Location);
-			current_block.AddLocalName (is_expr.Variable);
+			var lv = new LocalVariable (current_block, lt.Value, lt.Location);
+			is_expr.Variable = lv;
+			current_block.AddLocalName (lv);
 		}
 
 		$$ = is_expr;
@@ -7702,8 +7706,7 @@ void start_block (Location loc)
 	}
 }
 
-Block
-end_block (Location loc)
+Block end_block (Location loc)
 {
 	Block retval = current_block.Explicit;
 	retval.SetEndLocation (loc);

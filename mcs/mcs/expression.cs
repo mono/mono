@@ -1490,6 +1490,11 @@ namespace Mono.CSharp
 			expr.EmitSideEffect (ec);
 		}
 
+		public override void EmitPrepare (EmitContext ec)
+		{
+			expr.EmitPrepare (ec);
+		}
+
 		public override void FlowAnalysis (FlowAnalysisContext fc)
 		{
 			expr.FlowAnalysis (fc);
@@ -1535,7 +1540,7 @@ namespace Mono.CSharp
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			if (Variable != null)
-				throw new NotSupportedException ();
+				ec.Report.Error (8122, loc, "An expression tree cannot contain a pattern matching operator");
 
 			Arguments args = Arguments.CreateForExpressionTree (ec, null,
 				expr.CreateExpressionTree (ec),
@@ -1588,6 +1593,14 @@ namespace Mono.CSharp
 			}
 
 			ec.Emit (on_true ? OpCodes.Brtrue : OpCodes.Brfalse, target);
+		}
+
+		public override void EmitPrepare (EmitContext ec)
+		{
+			base.EmitPrepare (ec);
+
+			if (Variable != null)
+				Variable.CreateBuilder (ec);
 		}
 
 		void EmitPatternMatch (EmitContext ec)
@@ -1695,7 +1708,13 @@ namespace Mono.CSharp
 					value_on_stack = false;
 				}
 
-				Variable.CreateBuilder (ec);
+				//
+				// It's ok to have variable builder create out of order. It simplified emit
+				// of statements like while (condition) { }
+				//
+				if (!Variable.Created)
+					Variable.CreateBuilder (ec);
+				
 				Variable.EmitAssign (ec);
 
 				if (expr_unwrap != null) {
@@ -1737,6 +1756,21 @@ namespace Mono.CSharp
 
 			if (Variable != null)
 				fc.SetVariableAssigned (Variable.VariableInfo, true);
+		}
+
+		public override void FlowAnalysisConditional (FlowAnalysisContext fc)
+		{
+			if (Variable == null) {
+				base.FlowAnalysisConditional (fc);
+				return;
+			}
+
+			expr.FlowAnalysis (fc);
+
+			fc.DefiniteAssignmentOnTrue = fc.BranchDefiniteAssignment ();
+			fc.DefiniteAssignmentOnFalse = fc.DefiniteAssignment;
+
+			fc.SetVariableAssigned (Variable.VariableInfo, fc.DefiniteAssignmentOnTrue);
 		}
 
 		protected override void ResolveProbeType (ResolveContext rc)
@@ -1849,6 +1883,15 @@ namespace Mono.CSharp
 
 		Expression ResolveResultExpression (ResolveContext ec)
 		{
+			if (Variable != null) {
+				if (expr is NullLiteral) {
+					ec.Report.Error (8117, loc, "Cannot use null as pattern matching operand");
+					return this;
+				}
+
+				CheckExpressionVariable (ec);
+			}
+
 			TypeSpec d = expr.Type;
 			bool d_is_nullable = false;
 
@@ -1856,7 +1899,7 @@ namespace Mono.CSharp
 			// If E is a method group or the null literal, or if the type of E is a reference
 			// type or a nullable type and the value of E is null, the result is false
 			//
-			if (expr.IsNull || expr.eclass == ExprClass.MethodGroup)
+			if (expr.IsNull)
 				return CreateConstantResult (ec, false);
 
 			if (d.IsNullableType) {
@@ -1870,6 +1913,11 @@ namespace Mono.CSharp
 			TypeSpec t = probe_type_expr;
 			bool t_is_nullable = false;
 			if (t.IsNullableType) {
+				if (Variable != null) {
+					ec.Report.Error (8116, loc, "The nullable type `{0}' pattern matching is not allowed. Consider using underlying type `{1}'",
+									 t.GetSignatureForError (), Nullable.NullableInfo.GetUnderlyingType (t).GetSignatureForError ());
+				}
+
 				var ut = Nullable.NullableInfo.GetUnderlyingType (t);
 				if (!ut.IsGenericParameter) {
 					t = ut;
@@ -1914,9 +1962,13 @@ namespace Mono.CSharp
 					return ResolveGenericParameter (ec, d, tps);
 
 				if (t.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
-					ec.Report.Warning (1981, 3, loc,
-						"Using `{0}' to test compatibility with `{1}' is identical to testing compatibility with `object'",
-						OperatorName, t.GetSignatureForError ());
+					if (Variable != null) {
+						ec.Report.Error (8208, loc, "The type `{0}' pattern matching is not allowed", t.GetSignatureForError ());
+					} else {
+						ec.Report.Warning (1981, 3, loc,
+							"Using `{0}' to test compatibility with `{1}' is identical to testing compatibility with `object'",
+							OperatorName, t.GetSignatureForError ());
+					}
 				}
 
 				if (TypeManager.IsGenericParameter (d))
@@ -2568,11 +2620,7 @@ namespace Mono.CSharp
 
 		bool DoResolveCommon (ResolveContext rc)
 		{
-			if (rc.HasAny (ResolveContext.Options.BaseInitializer | ResolveContext.Options.FieldInitializerScope)) {
-				rc.Report.Error (8200, loc, "Out variable and pattern variable declarations are not allowed within constructor initializers, field initializers, or property initializers");
-			} else if (rc.HasSet (ResolveContext.Options.QueryClauseScope)) {
-				rc.Report.Error (8201, loc, "Out variable and pattern variable declarations are not allowed within a query clause");
-			}
+			CheckExpressionVariable (rc);
 
 			var var_expr = VariableType as VarExpr;
 			if (var_expr != null) {
