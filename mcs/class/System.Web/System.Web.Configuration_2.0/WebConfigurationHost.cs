@@ -174,7 +174,11 @@ namespace System.Web.Configuration
 		{
 			string fullPath = (string) hostInitConfigurationParams [1];
 			map = (WebConfigurationFileMap) hostInitConfigurationParams [0];
-			bool inAnotherApp = (bool) hostInitConfigurationParams [7];
+			bool inAnotherApp = false;
+
+			if ((hostInitConfigurationParams.Length > 7)
+				&& (hostInitConfigurationParams[7] is bool))
+				inAnotherApp = (bool) hostInitConfigurationParams[7];
 
 			if (inAnotherApp)
 				appVirtualPath = fullPath;
