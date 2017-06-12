@@ -42,6 +42,7 @@ class MakeBundle {
 	static List<string> link_paths = new List<string> ();
 	static List<string> aot_paths = new List<string> ();
 	static List<string> aot_names = new List<string> ();
+	static string dedup_aot_name = null;
 	static Dictionary<string,string> libraries = new Dictionary<string,string> ();
 	static bool autodeps = false;
 	static string in_tree = null;
@@ -83,7 +84,7 @@ class MakeBundle {
 	static DirectoryInfo aot_temp_dir = null;
 	static string aot_mode = "";
 	static string aot_runtime = null;
-	static int? aot_dedup_assembly = null;
+	static string aot_dedup_assembly = null;
 	static string cil_strip_path = null;
 	static string managed_linker_path = null;
 	static string sdk_path = null;
@@ -409,9 +410,12 @@ class MakeBundle {
 					Console.WriteLine ("Usage: --aot-dedup <container_dll> ");
 					return 1;
 				}
-				var dedup_file = args [++i];
-				sources.Add (dedup_file);
-				aot_dedup_assembly = sources.Count () - 1;
+				var rel_path = args [++i];
+				var asm = LoadAssembly (rel_path);
+				if (asm != null)
+					aot_dedup_assembly = new Uri(asm.CodeBase).LocalPath;
+
+				sources.Add (rel_path);
 				aot_compile = true;
 				static_link = true;
 				break;
@@ -974,9 +978,13 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			}
 
 			tc.WriteLine ("\nstatic void install_aot_modules (void) {\n");
-			foreach (string asm in aot_names){
-				tc.WriteLine ("\tmono_aot_register_module (mono_aot_module_{0}_info);\n", asm);
-			}
+
+			if (dedup_aot_name != null)
+				tc.WriteLine ("\tmono_aot_register_module_container (mono_aot_module_{0}_info);\n", dedup_aot_name);
+
+			foreach (string asm in aot_names)
+				if (asm != dedup_aot_name)
+					tc.WriteLine ("\tmono_aot_register_module (mono_aot_module_{0}_info);\n", asm);
 
 			string enum_aot_mode;
 			switch (aot_mode) {
@@ -1507,26 +1515,31 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		Console.WriteLine ("Aoting files:");
 
 		for (int i=0; i < files.Count; i++) {
-			var fileName = files [i];
-			string path = LocateFile (new Uri (fileName).LocalPath);
+			var file_name = files [i];
+			string path = LocateFile (new Uri (file_name).LocalPath);
 			string outPath = String.Format ("{0}.aot_out", path);
 			aot_paths.Add (outPath);
 			var name = System.Reflection.Assembly.LoadFrom(path).GetName().Name;
 			aot_names.Add (EncodeAotSymbol (name));
 
-			if (aot_dedup_assembly != null && i != (int) aot_dedup_assembly) {
+			Console.WriteLine ("Filename {0} Aot dedup {1}", file_name, aot_dedup_assembly);
+			if (file_name == aot_dedup_assembly) {
+				dedup_aot_name = EncodeAotSymbol (name); 
+				continue;
+			}
+
+			if (aot_dedup_assembly != null) {
 				all_assemblies.Append (path);
 				all_assemblies.Append (" ");
-				Execute (String.Format ("MONO_PATH={6} {0} --aot={1},outfile={2}{3}{4} {5}",
-					aot_runtime, aot_args, outPath, aot_mode_string, dedup_mode_string, path, Path.GetDirectoryName (path)));
+				Execute (String.Format ("MONO_PATH={0} {1} --aot={2},outfile={3}{4}{5} {6}",
+					Path.GetDirectoryName (path), aot_runtime, aot_args, outPath, aot_mode_string, dedup_mode_string, path));
 			} else {
-				Execute (String.Format ("MONO_PATH={5} {0} --aot={1},outfile={2}{3} {4}",
-					aot_runtime, aot_args, outPath, aot_mode_string, path, Path.GetDirectoryName (path)));
+				Execute (String.Format ("MONO_PATH={0} {1} --aot={2},outfile={3}{4} {5}",
+					Path.GetDirectoryName (path), aot_runtime, aot_args, outPath, aot_mode_string, path));
 			}
 		}
 		if (aot_dedup_assembly != null) {
-			string fileName = files [(int) aot_dedup_assembly];
-			var filePath = new Uri (fileName).LocalPath;
+			var filePath = new Uri (aot_dedup_assembly).LocalPath;
 			string path = LocateFile (filePath);
 			dedup_mode_string = String.Format (",dedup-include={0}", Path.GetFileName(filePath));
 			string outPath = String.Format ("{0}.aot_out", path);
@@ -1536,8 +1549,8 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 
 		if ((aot_mode == "full" || aot_mode == "llvmonly") && cil_strip_path != null) {
 			for (int i=0; i < files.Count; i++) {
-				var inName = new Uri (files [i]).LocalPath;
-				var cmd = String.Format ("{0} {1} {2}", aot_runtime, cil_strip_path, inName);
+				var in_name = new Uri (files [i]).LocalPath;
+				var cmd = String.Format ("{0} {1} {2}", aot_runtime, cil_strip_path, in_name);
 				Execute (cmd);
 			}
 		}
@@ -1587,10 +1600,13 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 
 		// Fix file references
 		for (int i=0; i < files.Count; i++) {
-			var inName = new Uri (files [i]).LocalPath;
-			var outName = Path.Combine (temp_dir_name, Path.GetFileName (inName));
-			File.Copy (inName, outName);
-			files [i] = outName;
+			var in_name = new Uri (files [i]).LocalPath;
+			var out_name = Path.Combine (temp_dir_name, Path.GetFileName (in_name));
+			File.Copy (in_name, out_name);
+			files [i] = out_name;
+			Console.WriteLine ("Preprocess before: {0} aot_dedup_assembly {1}", in_name, aot_dedup_assembly);
+			if (in_name == aot_dedup_assembly)
+				aot_dedup_assembly = out_name;
 		}
 	}
 

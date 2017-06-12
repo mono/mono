@@ -2556,6 +2556,7 @@ void     mono_aot_init_gshared_method_vtable  (gpointer aot_module, guint32 meth
 
 /* This is an exported function */
 MONO_API void     mono_aot_register_module           (gpointer *aot_info);
+MONO_API void     mono_aot_register_module_eager     (gpointer *aot_info);
 
 /* These are used to load the AOT data for aot images compiled with MONO_AOT_FILE_FLAG_SEPARATE_DATA */
 /*

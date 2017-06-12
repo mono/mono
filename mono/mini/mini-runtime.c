@@ -75,6 +75,7 @@
 #include <ctype.h>
 #include "trace.h"
 #include "version.h"
+#include "aot-compiler.h"
 
 #include "jit-icalls.h"
 
