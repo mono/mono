@@ -315,6 +315,7 @@ net_4_x_parallel_dirs := \
 	System.Workflow.ComponentModel \
 	System.Workflow.Runtime \
 	System.Reflection.Context \
+	Mono.Profiler.Log	\
 	legacy/Mono.Cecil \
 	$(pcl_facade_dirs)
 
