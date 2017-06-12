@@ -1,3 +1,0 @@
-#include common.sources
-#include common_networking.sources
-System.IO/FileSystemWatcher_mobile.cs

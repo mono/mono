@@ -25,7 +25,8 @@ Q=$(if $(V),,@)
 Q_MCS=$(if $(V),,@echo "$(if $(MCS_MODE),MCS,CSC)     [$(intermediate)$(PROFILE_DIRECTORY)] $(notdir $(@))";)
 Q_AOT=$(if $(V),,@echo "AOT     [$(intermediate)$(PROFILE_DIRECTORY)] $(notdir $(@))";)
 
-USE_MCS_FLAGS = /codepage:$(CODEPAGE) /nologo /noconfig /deterministic $(LOCAL_MCS_FLAGS) $(PLATFORM_MCS_FLAGS) $(PROFILE_MCS_FLAGS) $(MCS_FLAGS)
+DEFAULT_REFERENCES = -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll
+USE_MCS_FLAGS = /codepage:$(CODEPAGE) /nologo /noconfig /deterministic $(LOCAL_MCS_FLAGS) $(PLATFORM_MCS_FLAGS) $(PROFILE_MCS_FLAGS) $(MCS_FLAGS) $(DEFAULT_REFERENCES)
 USE_MBAS_FLAGS = /codepage:$(CODEPAGE) $(LOCAL_MBAS_FLAGS) $(PLATFORM_MBAS_FLAGS) $(PROFILE_MBAS_FLAGS) $(MBAS_FLAGS)
 USE_CFLAGS = $(LOCAL_CFLAGS) $(CFLAGS) $(CPPFLAGS)
 CSCOMPILE = $(Q_MCS) $(BUILD_MCS) $(USE_MCS_FLAGS)
@@ -43,7 +44,7 @@ INTERNAL_ILASM = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/ilas
 BUILD_PROFILE = build
 # Using CSC_SDK_PATH_DISABLED for sanity check that all references have path specified
 BUILD_MCS = MONO_PATH="$(topdir)/class/lib/$(BUILD_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" CSC_SDK_PATH_DISABLED= \
-	$(RUNTIME) $(RUNTIME_FLAGS) $(CSC_RUNTIME_FLAGS) $(if $(MCS_MODE),$(topdir)/class/lib/$(BUILD_PROFILE)/mcs.exe,$(CSC_LOCATION))
+	$(RUNTIME) $(RUNTIME_FLAGS) $(CSC_RUNTIME_FLAGS) $(CSC_LOCATION)
 
 RESGEN = MONO_PATH="$(topdir)/class/lib/$(BUILD_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(RESGEN_EXE) $(topdir)/class/lib/$(BUILD_PROFILE)/resgen.exe
 STRING_REPLACER = MONO_PATH="$(topdir)/class/lib/$(BUILD_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_PROFILE)/cil-stringreplacer.exe
@@ -91,6 +92,10 @@ PLATFORM_MONO_NATIVE = yes
 endif
 
 # Rest of the configuration
+
+ifdef MCS_MODE
+CSC_LOCATION = $(topdir)/class/lib/$(BUILD_PROFILE)/mcs.exe
+endif
 
 ifndef PROFILE
 PROFILE = $(DEFAULT_PROFILE)

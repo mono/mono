@@ -1,7 +1,0 @@
-#include common_System.Core.dll.sources
-#include dynamic_System.Core.dll.sources
-
-System.Security.Cryptography/AesCryptoServiceProvider.cs
-System.Security.Cryptography/AesTransform.cs
-
-../referencesource/System.Core/System/Security/Cryptography/AesManaged.cs

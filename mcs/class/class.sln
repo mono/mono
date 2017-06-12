@@ -1,0 +1,173 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "corlib", "corlib/corlib.csproj", "{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Security", "Mono.Security/Mono.Security.csproj", "{42D59DE7-586F-4ACF-BDD5-E7869E39E3EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System", "System/System.csproj", "{2762E921-91A8-4C87-91E9-BA628013F753}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Xml", "System.XML/System.Xml.csproj", "{87FD2F0F-5222-4AE6-BD63-2D4975E11E5B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Configuration", "System.Configuration/System.Configuration.csproj", "{D5CDC09C-F19A-4811-A6C8-70F51CBFB644}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Security", "System.Security/System.Security.csproj", "{3ED36717-A9D1-4289-8949-9B7F39766DEB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Core", "System.Core/System.Core.csproj", "{359142A1-D80F-401E-AA64-7167C9317649}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.CompilerServices.SymbolWriter", "Mono.CompilerServices.SymbolWriter/Mono.CompilerServices.SymbolWriter.csproj", "{88177C4B-894F-485D-B95A-44199C06BE9F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		basic|Any CPU = basic|Any CPU
+		build-darwin|Any CPU = build-darwin|Any CPU
+		build-linux|Any CPU = build-linux|Any CPU
+		build-win32|Any CPU = build-win32|Any CPU
+		net_4_x-darwin|Any CPU = net_4_x-darwin|Any CPU
+		net_4_x-linux|Any CPU = net_4_x-linux|Any CPU
+		net_4_x-win32|Any CPU = net_4_x-win32|Any CPU
+		binary_reference_assemblies|Any CPU = binary_reference_assemblies|Any CPU
+		xbuild_12|Any CPU = xbuild_12|Any CPU
+		xbuild_14|Any CPU = xbuild_14|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}.basic|Any CPU.ActiveCfg = basic|Any CPU
+		{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}.basic|Any CPU.Build.0 = basic|Any CPU
+		{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}.build-darwin|Any CPU.ActiveCfg = build-darwin|Any CPU
+		{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}.build-darwin|Any CPU.Build.0 = build-darwin|Any CPU
+		{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}.build-linux|Any CPU.ActiveCfg = build-linux|Any CPU
+		{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}.build-linux|Any CPU.Build.0 = build-linux|Any CPU
+		{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}.build-win32|Any CPU.ActiveCfg = build-win32|Any CPU
+		{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}.build-win32|Any CPU.Build.0 = build-win32|Any CPU
+		{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}.net_4_x-darwin|Any CPU.ActiveCfg = net_4_x-darwin|Any CPU
+		{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}.net_4_x-darwin|Any CPU.Build.0 = net_4_x-darwin|Any CPU
+		{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}.net_4_x-linux|Any CPU.ActiveCfg = net_4_x-linux|Any CPU
+		{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}.net_4_x-linux|Any CPU.Build.0 = net_4_x-linux|Any CPU
+		{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}.net_4_x-win32|Any CPU.ActiveCfg = net_4_x-win32|Any CPU
+		{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}.net_4_x-win32|Any CPU.Build.0 = net_4_x-win32|Any CPU
+		{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}.binary_reference_assemblies|Any CPU.ActiveCfg = binary_reference_assemblies|Any CPU
+		{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}.xbuild_12|Any CPU.ActiveCfg = xbuild_12|Any CPU
+		{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}.xbuild_14|Any CPU.ActiveCfg = xbuild_14|Any CPU
+		{42D59DE7-586F-4ACF-BDD5-E7869E39E3EF}.basic|Any CPU.ActiveCfg = basic|Any CPU
+		{42D59DE7-586F-4ACF-BDD5-E7869E39E3EF}.basic|Any CPU.Build.0 = basic|Any CPU
+		{42D59DE7-586F-4ACF-BDD5-E7869E39E3EF}.build-darwin|Any CPU.ActiveCfg = build-darwin|Any CPU
+		{42D59DE7-586F-4ACF-BDD5-E7869E39E3EF}.build-darwin|Any CPU.Build.0 = build-darwin|Any CPU
+		{42D59DE7-586F-4ACF-BDD5-E7869E39E3EF}.build-linux|Any CPU.ActiveCfg = build-linux|Any CPU
+		{42D59DE7-586F-4ACF-BDD5-E7869E39E3EF}.build-linux|Any CPU.Build.0 = build-linux|Any CPU
+		{42D59DE7-586F-4ACF-BDD5-E7869E39E3EF}.build-win32|Any CPU.ActiveCfg = build-win32|Any CPU
+		{42D59DE7-586F-4ACF-BDD5-E7869E39E3EF}.build-win32|Any CPU.Build.0 = build-win32|Any CPU
+		{42D59DE7-586F-4ACF-BDD5-E7869E39E3EF}.net_4_x-darwin|Any CPU.ActiveCfg = net_4_x-darwin|Any CPU
+		{42D59DE7-586F-4ACF-BDD5-E7869E39E3EF}.net_4_x-darwin|Any CPU.Build.0 = net_4_x-darwin|Any CPU
+		{42D59DE7-586F-4ACF-BDD5-E7869E39E3EF}.net_4_x-linux|Any CPU.ActiveCfg = net_4_x-linux|Any CPU
+		{42D59DE7-586F-4ACF-BDD5-E7869E39E3EF}.net_4_x-linux|Any CPU.Build.0 = net_4_x-linux|Any CPU
+		{42D59DE7-586F-4ACF-BDD5-E7869E39E3EF}.net_4_x-win32|Any CPU.ActiveCfg = net_4_x-win32|Any CPU
+		{42D59DE7-586F-4ACF-BDD5-E7869E39E3EF}.net_4_x-win32|Any CPU.Build.0 = net_4_x-win32|Any CPU
+		{42D59DE7-586F-4ACF-BDD5-E7869E39E3EF}.binary_reference_assemblies|Any CPU.ActiveCfg = binary_reference_assemblies|Any CPU
+		{42D59DE7-586F-4ACF-BDD5-E7869E39E3EF}.xbuild_12|Any CPU.ActiveCfg = xbuild_12|Any CPU
+		{42D59DE7-586F-4ACF-BDD5-E7869E39E3EF}.xbuild_14|Any CPU.ActiveCfg = xbuild_14|Any CPU
+		{2762E921-91A8-4C87-91E9-BA628013F753}.basic|Any CPU.ActiveCfg = basic|Any CPU
+		{2762E921-91A8-4C87-91E9-BA628013F753}.basic|Any CPU.Build.0 = basic|Any CPU
+		{2762E921-91A8-4C87-91E9-BA628013F753}.build-darwin|Any CPU.ActiveCfg = build-darwin|Any CPU
+		{2762E921-91A8-4C87-91E9-BA628013F753}.build-darwin|Any CPU.Build.0 = build-darwin|Any CPU
+		{2762E921-91A8-4C87-91E9-BA628013F753}.build-linux|Any CPU.ActiveCfg = build-linux|Any CPU
+		{2762E921-91A8-4C87-91E9-BA628013F753}.build-linux|Any CPU.Build.0 = build-linux|Any CPU
+		{2762E921-91A8-4C87-91E9-BA628013F753}.build-win32|Any CPU.ActiveCfg = build-win32|Any CPU
+		{2762E921-91A8-4C87-91E9-BA628013F753}.build-win32|Any CPU.Build.0 = build-win32|Any CPU
+		{2762E921-91A8-4C87-91E9-BA628013F753}.net_4_x-darwin|Any CPU.ActiveCfg = net_4_x-darwin|Any CPU
+		{2762E921-91A8-4C87-91E9-BA628013F753}.net_4_x-darwin|Any CPU.Build.0 = net_4_x-darwin|Any CPU
+		{2762E921-91A8-4C87-91E9-BA628013F753}.net_4_x-linux|Any CPU.ActiveCfg = net_4_x-linux|Any CPU
+		{2762E921-91A8-4C87-91E9-BA628013F753}.net_4_x-linux|Any CPU.Build.0 = net_4_x-linux|Any CPU
+		{2762E921-91A8-4C87-91E9-BA628013F753}.net_4_x-win32|Any CPU.ActiveCfg = net_4_x-win32|Any CPU
+		{2762E921-91A8-4C87-91E9-BA628013F753}.net_4_x-win32|Any CPU.Build.0 = net_4_x-win32|Any CPU
+		{2762E921-91A8-4C87-91E9-BA628013F753}.binary_reference_assemblies|Any CPU.ActiveCfg = binary_reference_assemblies|Any CPU
+		{2762E921-91A8-4C87-91E9-BA628013F753}.xbuild_12|Any CPU.ActiveCfg = xbuild_12|Any CPU
+		{2762E921-91A8-4C87-91E9-BA628013F753}.xbuild_14|Any CPU.ActiveCfg = xbuild_14|Any CPU
+		{87FD2F0F-5222-4AE6-BD63-2D4975E11E5B}.basic|Any CPU.ActiveCfg = basic|Any CPU
+		{87FD2F0F-5222-4AE6-BD63-2D4975E11E5B}.basic|Any CPU.Build.0 = basic|Any CPU
+		{87FD2F0F-5222-4AE6-BD63-2D4975E11E5B}.build-darwin|Any CPU.ActiveCfg = build-darwin|Any CPU
+		{87FD2F0F-5222-4AE6-BD63-2D4975E11E5B}.build-darwin|Any CPU.Build.0 = build-darwin|Any CPU
+		{87FD2F0F-5222-4AE6-BD63-2D4975E11E5B}.build-linux|Any CPU.ActiveCfg = build-linux|Any CPU
+		{87FD2F0F-5222-4AE6-BD63-2D4975E11E5B}.build-linux|Any CPU.Build.0 = build-linux|Any CPU
+		{87FD2F0F-5222-4AE6-BD63-2D4975E11E5B}.build-win32|Any CPU.ActiveCfg = build-win32|Any CPU
+		{87FD2F0F-5222-4AE6-BD63-2D4975E11E5B}.build-win32|Any CPU.Build.0 = build-win32|Any CPU
+		{87FD2F0F-5222-4AE6-BD63-2D4975E11E5B}.net_4_x-darwin|Any CPU.ActiveCfg = net_4_x-darwin|Any CPU
+		{87FD2F0F-5222-4AE6-BD63-2D4975E11E5B}.net_4_x-darwin|Any CPU.Build.0 = net_4_x-darwin|Any CPU
+		{87FD2F0F-5222-4AE6-BD63-2D4975E11E5B}.net_4_x-linux|Any CPU.ActiveCfg = net_4_x-linux|Any CPU
+		{87FD2F0F-5222-4AE6-BD63-2D4975E11E5B}.net_4_x-linux|Any CPU.Build.0 = net_4_x-linux|Any CPU
+		{87FD2F0F-5222-4AE6-BD63-2D4975E11E5B}.net_4_x-win32|Any CPU.ActiveCfg = net_4_x-win32|Any CPU
+		{87FD2F0F-5222-4AE6-BD63-2D4975E11E5B}.net_4_x-win32|Any CPU.Build.0 = net_4_x-win32|Any CPU
+		{87FD2F0F-5222-4AE6-BD63-2D4975E11E5B}.binary_reference_assemblies|Any CPU.ActiveCfg = binary_reference_assemblies|Any CPU
+		{87FD2F0F-5222-4AE6-BD63-2D4975E11E5B}.xbuild_12|Any CPU.ActiveCfg = xbuild_12|Any CPU
+		{87FD2F0F-5222-4AE6-BD63-2D4975E11E5B}.xbuild_14|Any CPU.ActiveCfg = xbuild_14|Any CPU
+		{D5CDC09C-F19A-4811-A6C8-70F51CBFB644}.basic|Any CPU.ActiveCfg = basic|Any CPU
+		{D5CDC09C-F19A-4811-A6C8-70F51CBFB644}.basic|Any CPU.Build.0 = basic|Any CPU
+		{D5CDC09C-F19A-4811-A6C8-70F51CBFB644}.build-darwin|Any CPU.ActiveCfg = build-darwin|Any CPU
+		{D5CDC09C-F19A-4811-A6C8-70F51CBFB644}.build-darwin|Any CPU.Build.0 = build-darwin|Any CPU
+		{D5CDC09C-F19A-4811-A6C8-70F51CBFB644}.build-linux|Any CPU.ActiveCfg = build-linux|Any CPU
+		{D5CDC09C-F19A-4811-A6C8-70F51CBFB644}.build-linux|Any CPU.Build.0 = build-linux|Any CPU
+		{D5CDC09C-F19A-4811-A6C8-70F51CBFB644}.build-win32|Any CPU.ActiveCfg = build-win32|Any CPU
+		{D5CDC09C-F19A-4811-A6C8-70F51CBFB644}.build-win32|Any CPU.Build.0 = build-win32|Any CPU
+		{D5CDC09C-F19A-4811-A6C8-70F51CBFB644}.net_4_x-darwin|Any CPU.ActiveCfg = net_4_x-darwin|Any CPU
+		{D5CDC09C-F19A-4811-A6C8-70F51CBFB644}.net_4_x-darwin|Any CPU.Build.0 = net_4_x-darwin|Any CPU
+		{D5CDC09C-F19A-4811-A6C8-70F51CBFB644}.net_4_x-linux|Any CPU.ActiveCfg = net_4_x-linux|Any CPU
+		{D5CDC09C-F19A-4811-A6C8-70F51CBFB644}.net_4_x-linux|Any CPU.Build.0 = net_4_x-linux|Any CPU
+		{D5CDC09C-F19A-4811-A6C8-70F51CBFB644}.net_4_x-win32|Any CPU.ActiveCfg = net_4_x-win32|Any CPU
+		{D5CDC09C-F19A-4811-A6C8-70F51CBFB644}.net_4_x-win32|Any CPU.Build.0 = net_4_x-win32|Any CPU
+		{D5CDC09C-F19A-4811-A6C8-70F51CBFB644}.binary_reference_assemblies|Any CPU.ActiveCfg = binary_reference_assemblies|Any CPU
+		{D5CDC09C-F19A-4811-A6C8-70F51CBFB644}.xbuild_12|Any CPU.ActiveCfg = xbuild_12|Any CPU
+		{D5CDC09C-F19A-4811-A6C8-70F51CBFB644}.xbuild_14|Any CPU.ActiveCfg = xbuild_14|Any CPU
+		{3ED36717-A9D1-4289-8949-9B7F39766DEB}.basic|Any CPU.ActiveCfg = basic|Any CPU
+		{3ED36717-A9D1-4289-8949-9B7F39766DEB}.basic|Any CPU.Build.0 = basic|Any CPU
+		{3ED36717-A9D1-4289-8949-9B7F39766DEB}.build-darwin|Any CPU.ActiveCfg = build-darwin|Any CPU
+		{3ED36717-A9D1-4289-8949-9B7F39766DEB}.build-darwin|Any CPU.Build.0 = build-darwin|Any CPU
+		{3ED36717-A9D1-4289-8949-9B7F39766DEB}.build-linux|Any CPU.ActiveCfg = build-linux|Any CPU
+		{3ED36717-A9D1-4289-8949-9B7F39766DEB}.build-linux|Any CPU.Build.0 = build-linux|Any CPU
+		{3ED36717-A9D1-4289-8949-9B7F39766DEB}.build-win32|Any CPU.ActiveCfg = build-win32|Any CPU
+		{3ED36717-A9D1-4289-8949-9B7F39766DEB}.build-win32|Any CPU.Build.0 = build-win32|Any CPU
+		{3ED36717-A9D1-4289-8949-9B7F39766DEB}.net_4_x-darwin|Any CPU.ActiveCfg = net_4_x-darwin|Any CPU
+		{3ED36717-A9D1-4289-8949-9B7F39766DEB}.net_4_x-darwin|Any CPU.Build.0 = net_4_x-darwin|Any CPU
+		{3ED36717-A9D1-4289-8949-9B7F39766DEB}.net_4_x-linux|Any CPU.ActiveCfg = net_4_x-linux|Any CPU
+		{3ED36717-A9D1-4289-8949-9B7F39766DEB}.net_4_x-linux|Any CPU.Build.0 = net_4_x-linux|Any CPU
+		{3ED36717-A9D1-4289-8949-9B7F39766DEB}.net_4_x-win32|Any CPU.ActiveCfg = net_4_x-win32|Any CPU
+		{3ED36717-A9D1-4289-8949-9B7F39766DEB}.net_4_x-win32|Any CPU.Build.0 = net_4_x-win32|Any CPU
+		{3ED36717-A9D1-4289-8949-9B7F39766DEB}.binary_reference_assemblies|Any CPU.ActiveCfg = binary_reference_assemblies|Any CPU
+		{3ED36717-A9D1-4289-8949-9B7F39766DEB}.xbuild_12|Any CPU.ActiveCfg = xbuild_12|Any CPU
+		{3ED36717-A9D1-4289-8949-9B7F39766DEB}.xbuild_14|Any CPU.ActiveCfg = xbuild_14|Any CPU
+		{359142A1-D80F-401E-AA64-7167C9317649}.basic|Any CPU.ActiveCfg = basic|Any CPU
+		{359142A1-D80F-401E-AA64-7167C9317649}.basic|Any CPU.Build.0 = basic|Any CPU
+		{359142A1-D80F-401E-AA64-7167C9317649}.build-darwin|Any CPU.ActiveCfg = build-darwin|Any CPU
+		{359142A1-D80F-401E-AA64-7167C9317649}.build-darwin|Any CPU.Build.0 = build-darwin|Any CPU
+		{359142A1-D80F-401E-AA64-7167C9317649}.build-linux|Any CPU.ActiveCfg = build-linux|Any CPU
+		{359142A1-D80F-401E-AA64-7167C9317649}.build-linux|Any CPU.Build.0 = build-linux|Any CPU
+		{359142A1-D80F-401E-AA64-7167C9317649}.build-win32|Any CPU.ActiveCfg = build-win32|Any CPU
+		{359142A1-D80F-401E-AA64-7167C9317649}.build-win32|Any CPU.Build.0 = build-win32|Any CPU
+		{359142A1-D80F-401E-AA64-7167C9317649}.net_4_x-darwin|Any CPU.ActiveCfg = net_4_x-darwin|Any CPU
+		{359142A1-D80F-401E-AA64-7167C9317649}.net_4_x-darwin|Any CPU.Build.0 = net_4_x-darwin|Any CPU
+		{359142A1-D80F-401E-AA64-7167C9317649}.net_4_x-linux|Any CPU.ActiveCfg = net_4_x-linux|Any CPU
+		{359142A1-D80F-401E-AA64-7167C9317649}.net_4_x-linux|Any CPU.Build.0 = net_4_x-linux|Any CPU
+		{359142A1-D80F-401E-AA64-7167C9317649}.net_4_x-win32|Any CPU.ActiveCfg = net_4_x-win32|Any CPU
+		{359142A1-D80F-401E-AA64-7167C9317649}.net_4_x-win32|Any CPU.Build.0 = net_4_x-win32|Any CPU
+		{359142A1-D80F-401E-AA64-7167C9317649}.binary_reference_assemblies|Any CPU.ActiveCfg = binary_reference_assemblies|Any CPU
+		{359142A1-D80F-401E-AA64-7167C9317649}.xbuild_12|Any CPU.ActiveCfg = xbuild_12|Any CPU
+		{359142A1-D80F-401E-AA64-7167C9317649}.xbuild_14|Any CPU.ActiveCfg = xbuild_14|Any CPU
+		{88177C4B-894F-485D-B95A-44199C06BE9F}.basic|Any CPU.ActiveCfg = basic|Any CPU
+		{88177C4B-894F-485D-B95A-44199C06BE9F}.build-darwin|Any CPU.ActiveCfg = build-darwin|Any CPU
+		{88177C4B-894F-485D-B95A-44199C06BE9F}.build-darwin|Any CPU.Build.0 = build-darwin|Any CPU
+		{88177C4B-894F-485D-B95A-44199C06BE9F}.build-linux|Any CPU.ActiveCfg = build-linux|Any CPU
+		{88177C4B-894F-485D-B95A-44199C06BE9F}.build-linux|Any CPU.Build.0 = build-linux|Any CPU
+		{88177C4B-894F-485D-B95A-44199C06BE9F}.build-win32|Any CPU.ActiveCfg = build-win32|Any CPU
+		{88177C4B-894F-485D-B95A-44199C06BE9F}.build-win32|Any CPU.Build.0 = build-win32|Any CPU
+		{88177C4B-894F-485D-B95A-44199C06BE9F}.net_4_x-darwin|Any CPU.ActiveCfg = net_4_x-darwin|Any CPU
+		{88177C4B-894F-485D-B95A-44199C06BE9F}.net_4_x-darwin|Any CPU.Build.0 = net_4_x-darwin|Any CPU
+		{88177C4B-894F-485D-B95A-44199C06BE9F}.net_4_x-linux|Any CPU.ActiveCfg = net_4_x-linux|Any CPU
+		{88177C4B-894F-485D-B95A-44199C06BE9F}.net_4_x-linux|Any CPU.Build.0 = net_4_x-linux|Any CPU
+		{88177C4B-894F-485D-B95A-44199C06BE9F}.net_4_x-win32|Any CPU.ActiveCfg = net_4_x-win32|Any CPU
+		{88177C4B-894F-485D-B95A-44199C06BE9F}.net_4_x-win32|Any CPU.Build.0 = net_4_x-win32|Any CPU
+		{88177C4B-894F-485D-B95A-44199C06BE9F}.binary_reference_assemblies|Any CPU.ActiveCfg = binary_reference_assemblies|Any CPU
+		{88177C4B-894F-485D-B95A-44199C06BE9F}.xbuild_12|Any CPU.ActiveCfg = xbuild_12|Any CPU
+		{88177C4B-894F-485D-B95A-44199C06BE9F}.xbuild_14|Any CPU.ActiveCfg = xbuild_14|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

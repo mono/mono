@@ -10,25 +10,15 @@ endif
 
 # The minimal set of csc dependencies
 basic_SUBDIRS := \
-	corlib \
-	Mono.Security \
-	System \
-	System.XML \
-	System.Core \
 	System.ComponentModel.Composition.4.5 \
 	System.Numerics \
 	System.Xml.Linq \
 	Mono.Cecil \
 	$(MCS_MODE_dirs) \
+	System.Xaml \
 	../tools/cil-stringreplacer
 
 build_SUBDIRS :=  \
-	corlib \
-	Mono.Security \
-	System \
-	System.XML \
-	Mono.Posix \
-	System.Core \
 	System.ComponentModel.Composition.4.5 \
 	System.Numerics \
 	System.Xml.Linq \
@@ -36,8 +26,8 @@ build_SUBDIRS :=  \
 	System.Drawing			\
 	Mono.Cecil \
 	$(MCS_MODE_dirs) \
-	Mono.CompilerServices.SymbolWriter	\
-	PEAPI \
+	PEAPI	\
+	System.Xaml \
 	../tools/cil-stringreplacer
 
 ifdef MCS_MODE
@@ -179,15 +169,6 @@ xammac_4_5_dirs := \
 	$(pcl_facade_dirs)
 
 net_4_x_dirs := \
-	corlib				\
-	Mono.Security \
-	System				\
-	System.XML			\
-	Mono.CompilerServices.SymbolWriter \
-	Mono.Posix			\
-	System.Core			\
-	System.Security			\
-	System.Configuration	\
 	System.Drawing			\
 	System.IO.Compression 		\
 	System.IO.Compression.FileSystem \
@@ -393,7 +374,7 @@ monolite_dir = monolite-$(HOST_PLATFORM)/$(MONO_CORLIB_VERSION)
 
 # Files needed to bootstrap C# compiler
 build_files = mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Core.dll System.Security.dll System.Configuration.dll \
-	System.Numerics.dll System.Xml.Linq.dll \
+	System.Numerics.dll System.Xml.Linq.dll System.Xaml \
 	Facades/System.Collections.Concurrent.dll Facades/System.Linq.dll Facades/System.Runtime.dll Facades/System.Collections.dll	\
 	Facades/System.Reflection.Extensions.dll Facades/System.Text.Encoding.Extensions.dll Facades/System.Diagnostics.Debug.dll \
 	Facades/System.Reflection.Primitives.dll Facades/System.Text.Encoding.dll Facades/System.Diagnostics.Tools.dll Facades/System.Reflection.dll \
@@ -402,7 +383,7 @@ build_files = mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Co
 	Facades/System.IO.dll Facades/System.Runtime.InteropServices.dll Facades/System.Xml.ReaderWriter.dll Facades/System.Linq.Expressions.dll \
 	Facades/System.Runtime.Numerics.dll Facades/System.Xml.XDocument.dll Facades/System.IO.FileSystem.Primitives.dll Facades/System.IO.FileSystem.dll \
 	Facades/System.Diagnostics.FileVersionInfo.dll Facades/System.Security.Cryptography.Primitives.dll Facades/System.Security.Cryptography.Algorithms.dll \
-	Facades/System.ValueTuple.dll Facades/System.Text.Encoding.CodePages.dll
+	Facades/System.ValueTuple.dll Facades/System.Text.Encoding.CodePages.dll Facades/System.Diagnostics.Tracing.dll 
 
 monolite_files = $(build_files:%=lib/$(monolite_dir)/%)
 
@@ -453,5 +434,15 @@ dist-local: dist-default
 
 csproj-local:
 
-do-clean:
+.PHONY: all-msbuild
+all-msbuild:
+	$(Q_MSBUILD) CSC_SDK_PATH_DISABLED= MONO_ENV_OPTIONS="$(RUNTIME_FLAGS) $(CSC_RUNTIME_FLAGS) $$MONO_ENV_OPTIONS" msbuild class.sln /p:CscToolPath=$(abspath $(dir $(CSC_LOCATION))) /p:CscToolExe=$(notdir $(CSC_LOCATION)) /p:Configuration=$(PROFILE)$(if $(PROFILE_PLATFORM),-$(PROFILE_PLATFORM)) /p:Profile=$(PROFILE) /p:HostPlatform=$(HOST_PLATFORM) /m /verbosity:$(if $(V),$(if $(filter $(V),1),normal,$(if $(filter $(V),2),detailed,diagnostic)),minimal)
+
+all-recursive: all-msbuild
+
+.PHONY: clean-msbuild
+clean-msbuild:
+	$(Q_MSBUILD) CSC_SDK_PATH_DISABLED= MONO_ENV_OPTIONS="$(RUNTIME_FLAGS) $(CSC_RUNTIME_FLAGS) $$MONO_ENV_OPTIONS" msbuild class.sln /t:Clean /p:Configuration=$(PROFILE)$(if $(PROFILE_PLATFORM),-$(PROFILE_PLATFORM)) /p:Profile=$(PROFILE) /p:HostPlatform=$(HOST_PLATFORM) 
+
+do-clean: clean-msbuild
 	$(RM) -rf $(topdir)/class/lib/$(PROFILE)

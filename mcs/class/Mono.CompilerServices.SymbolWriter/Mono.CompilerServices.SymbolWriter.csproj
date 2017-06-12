@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\build\msbuild.props" />
+
+  <PropertyGroup>
+    <AssemblyName>Mono.CompilerServices.SymbolWriter</AssemblyName>
+    <ProjectGuid>{88177C4B-894F-485D-B95A-44199C06BE9F}</ProjectGuid>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\System\System.csproj" />
+  </ItemGroup>
+
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
+  <ItemGroup>
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="..\..\build\common\Consts.cs" />
+    <Compile Include="..\..\build\common\Locale.cs" />
+    <Compile Include="MonoSymbolWriter.cs" />
+    <Compile Include="MonoSymbolTable.cs" />
+    <Compile Include="MonoSymbolFile.cs" />
+    <Compile Include="SourceMethodBuilder.cs" />
+    <Compile Include="SymbolWriterImpl.cs" />
+  </ItemGroup>
+</Project>
+

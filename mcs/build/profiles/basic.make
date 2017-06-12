@@ -10,20 +10,25 @@ use_monolite := $(wildcard $(monolite_flag))
 MONOLITE_MSCORLIB = $(monolite_path)/mscorlib.dll
 
 ifdef use_monolite
-ifdef MCS_MODE
-	CSC_LOCATION = $(monolite_path)/mcs.exe
-endif
-
 PROFILE_RUNTIME = $(with_mono_path_monolite) $(RUNTIME)
-BUILD_MCS = $(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(CSC_LOCATION)
-
 else
 PROFILE_RUNTIME = $(EXTERNAL_RUNTIME)
-ifdef MCS_MODE
-	BUILD_MCS = mcs
-else
-	BUILD_MCS = $(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(CSC_LOCATION)
 endif
+
+# ifdef use_monolite
+# BUILD_MCS = $(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(CSC_LOCATION)
+# else
+# ifdef MCS_MODE
+# BUILD_MCS = mcs
+# else
+# BUILD_MCS = $(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(CSC_LOCATION)
+# endif
+# endif
+
+BUILD_MCS = $(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(CSC_LOCATION)
+
+ifdef MCS_MODE
+CSC_LOCATION = $(if $(use_monolite),$(monolite_path)/)mcs.exe
 endif
 
 DEFAULT_REFERENCES = -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll

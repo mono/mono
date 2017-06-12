@@ -3,32 +3,18 @@ SUBDIRS =
 include ../../build/rules.make
 export __SECURITY_BOOTSTRAP_DB=$(topdir)/class/corlib
 
-LIBRARY = corlib.dll
-LIBRARY_NAME = mscorlib.dll
-
-LIB_MCS_FLAGS = $(REFERENCE_SOURCES_FLAGS) $(RESOURCE_FILES:%=-resource:%)
-
-ifeq (2, $(FRAMEWORK_VERSION_MAJOR))
-LIB_MCS_FLAGS += -runtimemetadataversion:v4.0.30319
-else
-ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
-LIB_MCS_FLAGS += -runtimemetadataversion:v4.0.30319
-else
-$(error Unknown framework version)
-endif
-endif
+ASSEMBLY = corlib.dll
+ASSEMBLY_NAME = mscorlib.dll
 
 ifeq ($(PROFILE),build)
-CSC_RUNTIME_FLAGS=--profile=aot:output=$(topdir)/class/lib/$(PROFILE)/csc.$(LIBRARY).aotprofile
+CSC_RUNTIME_FLAGS=--profile=aot:output=$(topdir)/class/lib/$(PROFILE)/csc.$(ASSEMBLY).aotprofile
 endif
-
-RESOURCE_STRINGS = ../referencesource/mscorlib/mscorlib.txt
 
 RESX_RESOURCE_STRING = \
 	../../../external/corert/src/System.Private.CoreLib/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Collections.Concurrent/src/Resources/Strings.resx
 
-LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
+ASSEMBLY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 
 RESOURCE_FILES = \
 	resources/charinfo.nlp \
@@ -41,50 +27,17 @@ RESOURCE_FILES = \
 	resources/collation.cjkKOlv2.bin \
 	LinkerDescriptor/mscorlib.xml
 
-REFERENCE_SOURCES_FLAGS = -d:FEATURE_PAL,GENERICS_WORK,FEATURE_LIST_PREDICATES,FEATURE_SERIALIZATION,FEATURE_ASCII,FEATURE_LATIN1,FEATURE_UTF7,FEATURE_UTF32,MONO_HYBRID_ENCODING_SUPPORT,FEATURE_ASYNC_IO,NEW_EXPERIMENTAL_ASYNC_IO,FEATURE_UTF32,FEATURE_EXCEPTIONDISPATCHINFO,FEATURE_CORRUPTING_EXCEPTIONS,FEATURE_EXCEPTION_NOTIFICATIONS,FEATURE_STRONGNAME_MIGRATION,FEATURE_USE_LCID,FEATURE_FUSION,FEATURE_CRYPTO,FEATURE_X509_SECURESTRINGS,FEATURE_SYNCHRONIZATIONCONTEXT,FEATURE_SYNCHRONIZATIONCONTEXT_WAIT,HAS_CORLIB_CONTRACTS
-
-ifndef MOBILE_PROFILE
-REFERENCE_SOURCES_FLAGS += -d:FEATURE_MACL
-endif
-
-ifndef AOT_FRIENDLY_PROFILE
-REFERENCE_SOURCES_FLAGS += -d:FEATURE_REMOTING,MONO_COM,FEATURE_COMINTEROP,FEATURE_ROLE_BASED_SECURITY
-endif
-
 ifndef NO_THREAD_ABORT
-REFERENCE_SOURCES_FLAGS += -d:MONO_FEATURE_THREAD_ABORT
 TEST_MCS_FLAGS += -d:MONO_FEATURE_THREAD_ABORT
 endif
 
 ifndef NO_THREAD_SUSPEND_RESUME
-REFERENCE_SOURCES_FLAGS += -d:MONO_FEATURE_THREAD_SUSPEND_RESUME
 TEST_MCS_FLAGS += -d:MONO_FEATURE_THREAD_SUSPEND_RESUME
 endif
 
 ifndef NO_MULTIPLE_APPDOMAINS
-REFERENCE_SOURCES_FLAGS += -d:MONO_FEATURE_MULTIPLE_APPDOMAINS
 TEST_MCS_FLAGS += -d:MONO_FEATURE_MULTIPLE_APPDOMAINS
 endif
-
-ifndef NO_CONSOLE
-LIB_MCS_FLAGS += -d:MONO_FEATURE_CONSOLE
-endif
-
-ifdef MONO_FEATURE_APPLETLS
-LIB_MCS_FLAGS += -d:MONO_FEATURE_APPLETLS
-endif
-
-ifdef ONLY_APPLETLS
-LIB_MCS_FLAGS += -d:ONLY_APPLETLS
-endif
-
-ifdef MONO_FEATURE_APPLE_X509
-LIB_MCS_FLAGS += -d:MONO_FEATURE_APPLE_X509
-endif
-
-WARNING_ABOUT_DISABLED_WARNING=1635
-LOCAL_MCS_FLAGS = -unsafe -nostdlib -nowarn:612,618,$(WARNING_ABOUT_DISABLED_WARNING) -d:INSIDE_CORLIB,MONO_CULTURE_DATA -d:LIBC $(REFERENCE_SOURCES_FLAGS)
-DEFAULT_REFERENCES =
 
 TEST_LIB_REFS = System.Core System
 
@@ -97,28 +50,6 @@ endif
 # System.IO/DirectoryInfoTest.cs needs Mono.Posix
 TEST_MCS_FLAGS += -debug -nowarn:168,219,618,672 -unsafe \
 				 -define:MONO_DATACONVERTER_STATIC_METHODS $(TEST_RESX_RESOURCES:%=-resource:%)
-
-
-CC_PROFILE := $(filter monotouch% xammac, $(PROFILE))
-ifdef CC_PROFILE
-
-BUILT_SOURCES = \
-	CommonCrypto/MD5CryptoServiceProvider.g.cs	\
-	CommonCrypto/SHA256Managed.g.cs \
-	CommonCrypto/RC2CryptoServiceProvider.g.cs \
-	CommonCrypto/SHA384Managed.g.cs \
-	CommonCrypto/DESCryptoServiceProvider.g.cs \
-	CommonCrypto/SHA1CryptoServiceProvider.g.cs	\
-	CommonCrypto/SHA512Managed.g.cs \
-	CommonCrypto/MD2Managed.g.cs \
-	CommonCrypto/SHA1Managed.g.cs \
-	CommonCrypto/TripleDESCryptoServiceProvider.g.cs \
-	CommonCrypto/MD4Managed.g.cs
-
-CommonCrypto/%.g.cs:
-	$(MAKE) -C CommonCrypto
-
-endif
 
 EXTRA_DISTFILES = \
 	Test/resources/MyResources.resources	\
@@ -143,7 +74,7 @@ TEST_RESX_RESOURCES_SATELITE = \
 
 CLEAN_FILES += $(TEST_RESX_RESOURCES)
 
-include $(topdir)/build/library.make
+include $(topdir)/build/msbuild.make
 
 $(TEST_RESX_RESOURCES) $(TEST_RESX_RESOURCES_SATELITE): %.resources: %.resx
 	$(RESGEN) $< || cp $@.prebuilt $@

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProfileDirectory>$(Profile)-$(HostPlatform)</ProfileDirectory>
+    <DefineConstants>$(DefineConstants);NET_4_0;NET_4_5;MONO;WIN_PLATFORM</DefineConstants>
+    <FrameworkVersion>4.5</FrameworkVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(MSBuildThisFileDirectory)\..\..\class\corlib\corlib.csproj" Condition="'$(AssemblyName)' != 'mscorlib'" />
+  </ItemGroup>
+</Project>
+

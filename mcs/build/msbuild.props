@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Choose>
+    <When Condition="'$(BuildPlatform)' == 'darwin'">
+    </When>
+    <When Condition="'$(BuildPlatform)' == 'linux'">
+    </When>
+    <When Condition="'$(BuildPlatform)' == 'win32'">
+    </When>
+  </Choose>
+
+  <Choose>
+    <When Condition="'$(Profile)' == '' AND '$(HostPlatform)' == '' AND '$(Configuration)' == 'basic'">
+      <PropertyGroup>
+        <Profile>basic</Profile>
+        <HostPlatform>$(BuildPlatform)</HostPlatform>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$(Profile)' == '' AND '$(HostPlatform)' == '' AND '$(Configuration)' == 'build-darwin'">
+      <PropertyGroup>
+        <Profile>build</Profile>
+        <HostPlatform>darwin</HostPlatform>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$(Profile)' == '' AND '$(HostPlatform)' == '' AND '$(Configuration)' == 'build-linux'">
+      <PropertyGroup>
+        <Profile>build</Profile>
+        <HostPlatform>linux</HostPlatform>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$(Profile)' == '' AND '$(HostPlatform)' == '' AND '$(Configuration)' == 'build-win32'">
+      <PropertyGroup>
+        <Profile>build</Profile>
+        <HostPlatform>win32</HostPlatform>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$(Profile)' == '' AND '$(HostPlatform)' == '' AND '$(Configuration)' == 'net_4_x-darwin'">
+      <PropertyGroup>
+        <Profile>net_4_x</Profile>
+        <HostPlatform>darwin</HostPlatform>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$(Profile)' == '' AND '$(HostPlatform)' == '' AND '$(Configuration)' == 'net_4_x-linux'">
+      <PropertyGroup>
+        <Profile>net_4_x</Profile>
+        <HostPlatform>linux</HostPlatform>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$(Profile)' == '' AND '$(HostPlatform)' == '' AND '$(Configuration)' == 'net_4_x-win32'">
+      <PropertyGroup>
+        <Profile>net_4_x</Profile>
+        <HostPlatform>win32</HostPlatform>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$(Profile)' == '' AND '$(HostPlatform)' == '' AND '$(Configuration)' == 'binary_reference_assemblies'">
+      <PropertyGroup>
+        <Profile>binary_reference_assemblies</Profile>
+        <HostPlatform>$(BuildPlatform)</HostPlatform>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$(Profile)' == '' AND '$(HostPlatform)' == '' AND '$(Configuration)' == 'xbuild_12-darwin'">
+      <PropertyGroup>
+        <Profile>xbuild_12</Profile>
+        <HostPlatform>darwin</HostPlatform>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$(Profile)' == '' AND '$(HostPlatform)' == '' AND '$(Configuration)' == 'xbuild_12-linux'">
+      <PropertyGroup>
+        <Profile>xbuild_12</Profile>
+        <HostPlatform>linux</HostPlatform>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$(Profile)' == '' AND '$(HostPlatform)' == '' AND '$(Configuration)' == 'xbuild_12-win32'">
+      <PropertyGroup>
+        <Profile>xbuild_12</Profile>
+        <HostPlatform>win32</HostPlatform>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$(Profile)' == '' AND '$(HostPlatform)' == '' AND '$(Configuration)' == 'xbuild_14-darwin'">
+      <PropertyGroup>
+        <Profile>xbuild_14</Profile>
+        <HostPlatform>darwin</HostPlatform>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$(Profile)' == '' AND '$(HostPlatform)' == '' AND '$(Configuration)' == 'xbuild_14-linux'">
+      <PropertyGroup>
+        <Profile>xbuild_14</Profile>
+        <HostPlatform>linux</HostPlatform>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$(Profile)' == '' AND '$(HostPlatform)' == '' AND '$(Configuration)' == 'xbuild_14-win32'">
+      <PropertyGroup>
+        <Profile>xbuild_14</Profile>
+        <HostPlatform>win32</HostPlatform>
+      </PropertyGroup>
+    </When>
+  </Choose>
+
+  <Import Project="$(MSBuildThisFileDirectory)\profiles\$(Profile).props" />
+
+  <PropertyGroup>
+    <BuildPlatform Condition="'$(BuildPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">darwin</BuildPlatform>
+    <BuildPlatform Condition="'$(BuildPlatform)' == '' and '$(OS)' == 'Unix'">linux</BuildPlatform>
+    <BuildPlatform Condition="'$(BuildPlatform)' == '' and '$(OS)' == 'Windows_NT'">win32</BuildPlatform>
+    <HostPlatform Condition="'$(HostPlatform)' == ''">$(BuildPlatform)</HostPlatform>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <CodePage Condition="'$(CodePage)' == ''">65001</CodePage>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IntermediateOutputPath Condition="'$(IntermediateOutputPath)' == '' AND '$(BuildIntermediate)' == ''">obj-$(ProfileDirectory)</IntermediateOutputPath>
+    <IntermediateOutputPath Condition="'$(IntermediateOutputPath)' == '' AND '$(BuildIntermediate)' != ''">obj-$(ProfileDirectory)-$(BuildIntermediate)</IntermediateOutputPath>
+    <OutputPath Condition="'$(OutputPath)' == '' AND '$(BuildIntermediate)' == ''">$(MSBuildThisFileDirectory)\..\class\lib\$(ProfileDirectory)</OutputPath>
+    <OutputPath Condition="'$(OutputPath)' == '' AND '$(BuildIntermediate)' != ''">$(MSBuildThisFileDirectory)\..\class\lib\$(ProfileDirectory)\$(BuildIntermediate)</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <NoConfig>true</NoConfig>
+    <NoLogo>true</NoLogo>
+    <NoWarn>$(NoWarn),1699</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <BypassFrameworkInstallChecks>true</BypassFrameworkInstallChecks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+    Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+    is a problem to compile the Mono mscorlib.dll -->
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <NoStdLib>true</NoStdLib>
+    <NoExplicitReferenceToStdLib>true</NoExplicitReferenceToStdLib>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+    <CopyNuGetImplementations>false</CopyNuGetImplementations>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- <SignAssembly>true</SignAssembly> -->
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)\..\class\mono.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <Choose>
+    <When Condition="'$(Configuration)' == 'Debug'">
+      <PropertyGroup>
+        <DebugSymbols Condition="'$(DebugSymbols)' == ''">true</DebugSymbols>
+        <Optimize Condition="'$(Optimize)' == ''">false</Optimize>
+        <DebugType Condition="'$(DebugType)' == ''">full</DebugType>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$(Configuration)' == 'Release'">
+      <PropertyGroup>
+        <DebugSymbols Condition="'$(DebugSymbols)' == ''">true</DebugSymbols>
+        <Optimize Condition="'$(Optimize)' == ''">true</Optimize>
+        <!-- <DebugType Condition="'$(DebugType)' == ''">pdbonly</DebugType> -->
+      </PropertyGroup>
+    </When>
+  </Choose>
+
+  <PropertyGroup>
+    <!-- Build library by default -->
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+</Project>
+

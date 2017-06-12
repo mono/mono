@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProfileDirectory>$(Profile)</ProfileDirectory>
+    <DefineConstants>$(DefineConstants);NET_4_0;NET_4_5;NET_4_6;MONO;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;NO_SYSTEM_DRAWING_DEPENDENCY;NO_WINFORMS_DEPENDENCY;NO_SYSTEM_WEB_DEPENDENCY;XAMMAC_4_5;XAMARIN_MODERN</DefineConstants>
+    <FrameworkVersion>4.5</FrameworkVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DisableWindowsBase>true</DisableWindowsBase>
+    <DisableSystemWebDependency>true</DisableSystemWebDependency>
+    <DisableSystemWebAppServicesDependency>true</DisableSystemWebAppServicesDependency>
+    <DisableSystemWinformsDependency>true</DisableSystemWinformsDependency>
+    <DisableSystemDrawingDependency>true</DisableSystemDrawingDependency>
+    <DisableSystemServiceModelActivationDependency>true</DisableSystemServiceModelActivationDependency>
+    <DisableSystemDesignDependency>true</DisableSystemDesignDependency>
+    <DisableSystemDirectoryServicesDependency>true</DisableSystemDirectoryServicesDependency>
+    <DisableBoringTls>true</DisableBoringTls>
+    <EnableAppleTls>true</EnableAppleTls>
+    <EnableAppleTlsOnly>true</EnableAppleTlsOnly>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(MSBuildThisFileDirectory)\..\..\class\corlib\corlib.csproj" Condition="'$(AssemblyName)' != 'mscorlib'" />
+  </ItemGroup>
+</Project>
+

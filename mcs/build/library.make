@@ -292,7 +292,7 @@ $(the_lib): $(response) $(sn) $(BUILT_SOURCES) $(the_libdir)/.stamp $(GEN_RESOUR
 ifdef RESOURCE_STRINGS_FILES
 	$(Q) $(STRING_REPLACER) $(RESOURCE_STRINGS_FILES) $@
 endif
-	$(Q) $(SN) -R $@ $(LIBRARY_SNK)
+	echo $(Q) $(SN) -R $@ $(LIBRARY_SNK)
 
 library_CLEAN_FILES += $(the_lib) $(the_lib).mdb $(the_lib:.dll=.pdb)
 

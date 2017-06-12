@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildThisFileDirectory)\monotouch_runtime.props" />
+
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);MONOTOUCH_TV</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DisableThreadAbort>true</DisableThreadAbort>
+    <DisableThreadSuspendResume>true</DisableThreadSuspendResume>
+    <!-- The binding generator (btv) still needs to execute processes, so we need a System.dll that can do that -->
+    <!-- <DisableProcessStart>true</DisableProcessStart> -->
+  </PropertyGroup>
+</Project>
+

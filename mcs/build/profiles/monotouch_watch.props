@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildThisFileDirectory)\monotouch.props" />
+
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);FEATURE_NO_BSD_SOCKETS;MONOTOUCH_WATCH</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DisableThreadAbort>true</DisableThreadAbort>
+    <DisableThreadSuspendResume>true</DisableThreadSuspendResume>
+    <DisableAppDomains>true</DisableAppDomains>
+    <DisableProcessStart>true</DisableProcessStart>
+    <DisableMonoSecurity>true</DisableMonoSecurity>
+    <EnableAppleTls>true</EnableAppleTls>
+    <EnableAppleTlsOnly>true</EnableAppleTlsOnly>
+    <EnableAppleX509>true</EnableAppleX509>
+  </PropertyGroup>
+</Project>
+

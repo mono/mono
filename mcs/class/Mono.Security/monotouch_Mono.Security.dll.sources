@@ -1,3 +1,0 @@
-#include Mono.Security.dll.sources
-../corlib/CommonCrypto/CommonCrypto.cs
-../corlib/CommonCrypto/RC4CommonCrypto.cs

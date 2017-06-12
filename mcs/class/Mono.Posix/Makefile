@@ -2,15 +2,12 @@ thisdir = class/Mono.Posix
 SUBDIRS = 
 include ../../build/rules.make
 
-LIBRARY = Mono.Posix.dll
-# Don't warn about [Obsolete] members, as there are now *lots* of [Obsolete]
-# members, generating volumes of output.
-LIB_REFS = System
-LIB_MCS_FLAGS = /unsafe /nowarn:0618,612
+ASSEMBLY = Mono.Posix.dll
+
 TEST_MCS_FLAGS = /unsafe /nowarn:0219,0618
 TEST_LIB_REFS = Mono.Posix System
 
-include ../../build/library.make
+include ../../build/msbuild.make
 
 update-mappings:
 	cp `pkg-config --variable=Sources create-native-map` Mono.Unix.Native

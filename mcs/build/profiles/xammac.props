@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProfileDirectory>$(Profile)</ProfileDirectory>
+    <DefineConstants>$(DefineConstants);NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_DYNAMIC;XAMMAC;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;XAMARIN_MODERN</DefineConstants>
+    <FrameworkVersion>2.1</FrameworkVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <ProfileIsMobile>true</ProfileIsMobile>
+    <ProfileIsMobileDynamic>true</ProfileIsMobileDynamic>
+    <DisableConsole>true</DisableConsole>
+    <DisableBoringTls>true</DisableBoringTls>
+    <EnableAppleTls>true</EnableAppleTls>
+    <EnableAppleTlsOnly>true</EnableAppleTlsOnly>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(MSBuildThisFileDirectory)\..\..\class\corlib\corlib.csproj" Condition="'$(AssemblyName)' != 'mscorlib'" />
+  </ItemGroup>
+</Project>
+
