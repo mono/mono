@@ -21,14 +21,6 @@
 
 #include <errno.h>
 
-#if defined(PLATFORM_ANDROID) && !defined(TARGET_ARM64) && !defined(TARGET_AMD64)
-#define USE_TKILL_ON_ANDROID 1
-#endif
-
-#ifdef USE_TKILL_ON_ANDROID
-extern int tkill (pid_t tid, int signal);
-#endif
-
 #if defined(_POSIX_VERSION) || defined(__native_client__)
 
 #include <pthread.h>
@@ -183,15 +175,7 @@ int
 mono_threads_pthread_kill (MonoThreadInfo *info, int signum)
 {
 	THREADS_SUSPEND_DEBUG ("sending signal %d to %p[%p]\n", signum, info, mono_thread_info_get_tid (info));
-#ifdef USE_TKILL_ON_ANDROID
-	int result, old_errno = errno;
-	result = tkill (info->native_handle, signum);
-	if (result < 0) {
-		result = errno;
-		errno = old_errno;
-	}
-	return result;
-#elif defined(__native_client__)
+#if defined(__native_client__)
 	/* Workaround pthread_kill abort() in NaCl glibc. */
 	return 0;
 #elif !defined(HAVE_PTHREAD_KILL)

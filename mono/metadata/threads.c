@@ -61,16 +61,8 @@
 #include <objbase.h>
 #endif
 
-#if defined(PLATFORM_ANDROID) && !defined(TARGET_ARM64) && !defined(TARGET_AMD64)
-#define USE_TKILL_ON_ANDROID 1
-#endif
-
 #ifdef PLATFORM_ANDROID
 #include <errno.h>
-
-#ifdef USE_TKILL_ON_ANDROID
-extern int tkill (pid_t tid, int signal);
-#endif
 #endif
 
 /*#define THREAD_DEBUG(a) do { a; } while (0)*/
