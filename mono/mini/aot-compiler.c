@@ -346,6 +346,8 @@ typedef struct MonoAotCompile {
 	FILE *data_outfile;
 	int datafile_offset;
 	int gc_name_offset;
+	// In this mode, we are emitting dedupable methods that we encounter
+	gboolean dedup_emit_mode;
 } MonoAotCompile;
 
 typedef struct {
@@ -12057,6 +12059,8 @@ mono_add_deferred_extra_methods (MonoAotCompile *acfg, MonoAotState *astate)
 	gchar *name = NULL;
 	MonoMethod *method = NULL;
 
+	acfg->dedup_emit_mode = TRUE;
+
 	g_hash_table_iter_init (&iter, astate->cache);
 	while (g_hash_table_iter_next (&iter, (gpointer *) &name, (gpointer *) &method))
 		add_method_full (acfg, method, TRUE, 0);
@@ -12266,6 +12270,12 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 
 	if (mono_threads_is_coop_enabled ())
 		acfg->flags = (MonoAotFileFlags)(acfg->flags | MONO_AOT_FILE_FLAG_SAFEPOINTS);
+
+	// The methods in dedup-emit amodules must be available on runtime startup
+	// Note: Only one such amodule can have this attribute
+	if (astate->emit_inflated_methods)
+		acfg->flags = (MonoAotFileFlags)(acfg->flags | MONO_AOT_FILE_FLAG_EAGER_LOAD);
+
 
 	if (acfg->aot_opts.instances_logfile_path) {
 		acfg->instances_logfile = fopen (acfg->aot_opts.instances_logfile_path, "w");
