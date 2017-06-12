@@ -60,6 +60,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\OrderablePartitioner.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\Partitioner.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\PartitionerStatic.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\CollectionExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\X509ContentType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\X509KeyStorageFlags.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
@@ -76,6 +77,7 @@
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Collections\Generic\KeyValuePair.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Diagnostics\Debug.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\IO\Win32Marshal.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\CompilerServices\IsByRefLikeAttribute.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\CompilerServices\IsReadOnlyAttribute.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\CompilerServices\ITuple.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\CompilerServices\RuntimeFeature.cs" />
@@ -444,6 +446,7 @@
     <Compile Include="..\referencesource\mscorlib\system\reflection\pointer.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\propertyattributes.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\reflectioncontext.cs" />
+    <Compile Include="..\referencesource\mscorlib\system\reflection\reflectiontypeloadexception.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\resourceattributes.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\RuntimeReflectionExtensions.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\targetexception.cs" />
@@ -589,6 +592,7 @@
     <Compile Include="..\referencesource\mscorlib\system\runtime\interopservices\safehandle.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\interopservices\sehexception.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\interopservices\ucomienumconnections.cs" />
+    <Compile Include="..\referencesource\mscorlib\system\runtime\interopservices\ucomitypeinfo.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\interopservices\unknownwrapper.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\interopservices\variantWrapper.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\interopservices\windowsruntime\attributes.cs" />
@@ -1083,7 +1087,6 @@
     <Compile Include="System.Reflection\ParameterInfo.cs" />
     <Compile Include="System.Reflection\PortableExecutableKinds.cs" />
     <Compile Include="System.Reflection\PropertyInfo.cs" />
-    <Compile Include="System.Reflection\ReflectionTypeLoadException.cs" />
     <Compile Include="System.Reflection\StrongNameKeyPair.cs" />
     <Compile Include="System.Resources\Win32Resources.cs" />
     <Compile Include="System.Runtime.CompilerServices\ConditionalWeakTable.cs" />
@@ -1127,27 +1130,16 @@
     <Compile Include="System.Runtime.InteropServices\_TypeBuilder.cs" />
     <Compile Include="System.Runtime.InteropServices\BIND_OPTS.cs" />
     <Compile Include="System.Runtime.InteropServices\BINDPTR.cs" />
-    <Compile Include="System.Runtime.InteropServices\CALLCONV.cs" />
     <Compile Include="System.Runtime.InteropServices\ComEventsHelper.cs" />
     <Compile Include="System.Runtime.InteropServices\CustomQueryInterfaceMode.cs" />
     <Compile Include="System.Runtime.InteropServices\DESCKIND.cs" />
-    <Compile Include="System.Runtime.InteropServices\DISPPARAMS.cs" />
-    <Compile Include="System.Runtime.InteropServices\ELEMDESC.cs" />
-    <Compile Include="System.Runtime.InteropServices\EXCEPINFO.cs" />
     <Compile Include="System.Runtime.InteropServices\ExporterEventKind.cs" />
     <Compile Include="System.Runtime.InteropServices\ExtensibleClassFactory.cs" />
     <Compile Include="System.Runtime.InteropServices\FILETIME.cs" />
-    <Compile Include="System.Runtime.InteropServices\FUNCDESC.cs" />
-    <Compile Include="System.Runtime.InteropServices\FUNCFLAGS.cs" />
-    <Compile Include="System.Runtime.InteropServices\FUNCKIND.cs" />
     <Compile Include="System.Runtime.InteropServices\GCHandle.cs" />
     <Compile Include="System.Runtime.InteropServices\GCHandleType.cs" />
-    <Compile Include="System.Runtime.InteropServices\IDLDESC.cs" />
-    <Compile Include="System.Runtime.InteropServices\IDLFLAG.cs" />
     <Compile Include="System.Runtime.InteropServices\IErrorInfo.cs" />
-    <Compile Include="System.Runtime.InteropServices\IMPLTYPEFLAGS.cs" />
     <Compile Include="System.Runtime.InteropServices\ImporterEventKind.cs" />
-    <Compile Include="System.Runtime.InteropServices\INVOKEKIND.cs" />
     <Compile Include="System.Runtime.InteropServices\ITypeLibConverter.cs" />
     <Compile Include="System.Runtime.InteropServices\ITypeLibExporterNameProvider.cs" />
     <Compile Include="System.Runtime.InteropServices\ITypeLibExporterNotifySink.cs" />
@@ -1156,8 +1148,6 @@
     <Compile Include="System.Runtime.InteropServices\ManagedErrorInfo.cs" />
     <Compile Include="System.Runtime.InteropServices\Marshal.cs" />
     <Compile Include="System.Runtime.InteropServices\MarshalAsAttribute.cs" />
-    <Compile Include="System.Runtime.InteropServices\PARAMDESC.cs" />
-    <Compile Include="System.Runtime.InteropServices\PARAMFLAG.cs" />
     <Compile Include="System.Runtime.InteropServices\RegistrationClassContext.cs" />
     <Compile Include="System.Runtime.InteropServices\RegistrationConnectionType.cs" />
     <Compile Include="System.Runtime.InteropServices\RegistrationServices.cs" />
@@ -1165,10 +1155,6 @@
     <Compile Include="System.Runtime.InteropServices\SafeHandle.cs" />
     <Compile Include="System.Runtime.InteropServices\STATSTG.cs" />
     <Compile Include="System.Runtime.InteropServices\SYSKIND.cs" />
-    <Compile Include="System.Runtime.InteropServices\TYPEATTR.cs" />
-    <Compile Include="System.Runtime.InteropServices\TYPEDESC.cs" />
-    <Compile Include="System.Runtime.InteropServices\TYPEFLAGS.cs" />
-    <Compile Include="System.Runtime.InteropServices\TYPEKIND.cs" />
     <Compile Include="System.Runtime.InteropServices\TYPELIBATTR.cs" />
     <Compile Include="System.Runtime.InteropServices\TypeLibConverter.cs" />
     <Compile Include="System.Runtime.InteropServices\TypeLibExporterFlags.cs" />
@@ -1185,10 +1171,7 @@
     <Compile Include="System.Runtime.InteropServices\UCOMIRunningObjectTable.cs" />
     <Compile Include="System.Runtime.InteropServices\UCOMIStream.cs" />
     <Compile Include="System.Runtime.InteropServices\UCOMITypeComp.cs" />
-    <Compile Include="System.Runtime.InteropServices\UCOMITypeInfo.cs" />
     <Compile Include="System.Runtime.InteropServices\UCOMITypeLib.cs" />
-    <Compile Include="System.Runtime.InteropServices\VARDESC.cs" />
-    <Compile Include="System.Runtime.InteropServices\VARFLAGS.cs" />
     <Compile Include="System.Runtime.Remoting.Activation\ActivationServices.cs" />
     <Compile Include="System.Runtime.Remoting.Activation\ActivatorLevel.cs" />
     <Compile Include="System.Runtime.Remoting.Activation\AppDomainLevelActivator.cs" />
@@ -1752,6 +1735,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
       <LogicalName>collation.cjkKOlv2.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
+      <LogicalName>mscorlib.xml</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
 </Project>
