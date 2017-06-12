@@ -129,3 +129,14 @@ tmpinst-dir.stamp
 msvc/scripts/inputs/
 extensions-config.h
 
+
+tools/pedump/.libs/lt-pedump.c
+tools/sgen/.libs/lt-sgen-grep-binprot.c
+tools/sgen/.libs/sgen-grep-binprot_ltshwrapper
+tools/pedump/.libs/pedump_ltshwrapper
+mcs/build/library.make
+.vs/net_4_x/v14/vbcs.cache/storage.ide
+.vs/net_4_x/v14/vbcs.cache/edbres00002.jrs
+.vs/net_4_x/v14/vbcs.cache/edbres00001.jrs
+.vs/net_4_x/v14/vbcs.cache/storage.jfm
+.vs/net_4_x/v14/vbcs.cache/edb.chk
