@@ -1,6 +1,5 @@
 #!/bin/bash -xe
 
-REPO=${2:-"http://storage.bos.internalx.com/mono-mac-4.0.0-branch/79/7975f5090d8b0d266dc0ba824295d92edd8873da/MonoFramework-MDK-4.0.0.0.macos10.xamarin.x86.pkg"}
 REPODIR=$(dirname $(realpath $0))/../repos/managed-components
 
 error()
@@ -19,8 +18,8 @@ download()
 	mkdir -p ${REPODIR}
 	report "Downloading Xar"
 	wget --quiet -O ${REPODIR}/xar.tar.gz https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/xar/xar-1.5.2.tar.gz || error "*** Could not download Xar ***"
-	report "Downloading Mono MDK for Mac - ${REPO}"
-	wget --quiet -O ${REPODIR}/mono.xar ${REPO}
+	report "Copying Mono MDK for Mac"
+	cp ${2} ${REPODIR}/mono.xar
 }
 
 clean()

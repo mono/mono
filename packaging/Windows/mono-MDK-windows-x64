@@ -4,7 +4,7 @@ for i in ${COMPONENTS}
 	do defs/$i prerequisites
 done
 COMPONENTS="managed-components"
-defs/mono64 download ${monosha1}
+defs/mono64 download
 defs/managed-components download ${mdk}
 COMPONENTS="mono64 managed-components"
 for i in ${COMPONENTS}

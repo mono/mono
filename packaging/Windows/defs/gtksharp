@@ -1,6 +1,6 @@
 #!/bin/bash -xe
 
-REPO=${2:-"http://download.xamarin.com/GTKforWindows/Windows/gtk-sharp-2.12.26.msi"}
+REPO="https://dl.xamarin.com/GTKforWindows/Windows/gtk-sharp-2.12.44.msi"
 REPODIR=$(dirname $(realpath $0))/../repos/gtksharp
 
 error()
