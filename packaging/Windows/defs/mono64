@@ -29,7 +29,7 @@ build()
 	pushd ${REPODIR}
 	report "Building Mono"
 	mkdir -p ${INSTALLDIR}
-	WORKSPACE=${REPODIR} EXTRA_CONF_FLAGS="--prefix=${INSTALLDIR}" ghprbPullId=1 CI_TAGS="no-tests" label="w64" scripts/ci/run-jenkins.sh || error "*** Could not run autogen ***"
+	EXTRA_CONF_FLAGS="--prefix=${INSTALLDIR}" CI_TAGS="no-tests" label="w64" scripts/ci/run-jenkins.sh || error "*** Could not run autogen ***"
 	popd
 }
 
