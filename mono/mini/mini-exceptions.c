@@ -2625,7 +2625,7 @@ static gboolean handling_sigsegv = FALSE;
 void
 mono_handle_native_crash (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_TYPE *info)
 {
-#ifdef MONO_ARCH_USE_SIGACTION
+#if !defined(HOST_WIN32) && !defined(HOST_WATCHOS)
 	struct sigaction sa;
 #endif
 	MonoJitTlsData *jit_tls = (MonoJitTlsData *)mono_tls_get_jit_tls ();
@@ -2747,7 +2747,7 @@ mono_handle_native_crash (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_T
 			 "=================================================================\n",
 			signal);
 
-#ifdef MONO_ARCH_USE_SIGACTION
+#if !defined(HOST_WIN32) && !defined(HOST_WATCHOS)
 	sa.sa_handler = SIG_DFL;
 	sigemptyset (&sa.sa_mask);
 	sa.sa_flags = 0;
