@@ -70,7 +70,7 @@ install()
 				then EXENAME=$(basename `grep -ho '.:/.*\.exe' $i`)
 			fi
 			if [ -f "../lib/mono/${RUNTIME}/${EXENAME}" ]
-				then sed "s#@@RUNTIME@@#${RUNTIME}#g" $(dirname $0)/../resources/wrapper.bat > $i.bat
+				then sed "s#@@RUNTIME@@#${RUNTIME}#g" ${REPODIR}/packaging/Windows/resources/wrapper.bat > $i.bat
 				sed -i "s#@@COMMAND@@#${EXENAME}#g" $i.bat
 				sed -i 's#/#\\#g' $i.bat
 			fi
