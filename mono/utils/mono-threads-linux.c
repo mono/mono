@@ -13,7 +13,8 @@
 #include <inttypes.h>
 #include "glib.h"
 
-
+#include <sys/time.h>
+#include <sys/resource.h>
 
 static void
 slow_get_thread_bounds (guint8 *current, guint8 **staddr, size_t *stsize)
@@ -49,15 +50,21 @@ mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize)
 {
 	pthread_attr_t attr;
 	guint8 *current = (guint8*)&attr;
-
+	static rlim_t stack_size_max;
 	*staddr = NULL;
 	*stsize = (size_t)-1;
 
 	pthread_getattr_np (pthread_self (), &attr);
-	pthread_attr_getstack (&attr, (void**)staddr, stsize);
+	int res = pthread_attr_getstack (&attr, (void**)staddr, stsize);
 	pthread_attr_destroy (&attr);
 
-	if (*staddr && ((current <= *staddr) || (current > *staddr + *stsize)))
+	if (!stack_size_max) {
+		struct rlimit r;
+		getrlimit (RLIMIT_STACK, &r);
+		stack_size_max = r.rlim_max;
+	}
+
+	if (res || (*staddr && ((current <= *staddr) || (current > *staddr + *stsize))) || (*stsize > stack_size_max))
 		slow_get_thread_bounds (current, staddr, stsize);
 }
 
