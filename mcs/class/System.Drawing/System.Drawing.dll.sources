@@ -21,7 +21,7 @@ System.Drawing/CopyPixelOperation.cs
 System.Drawing/Font.cs
 System.Drawing/FontConverter.cs
 System.Drawing/FontFamily.cs
-System.Drawing/FontStyle.cs
+../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/FontStyle.cs
 System.Drawing/Graphics.cs
 System.Drawing/GraphicsUnit.cs
 System.Drawing/gdipEnums.cs
@@ -52,12 +52,12 @@ System.Drawing/SizeF.cs
 System.Drawing/SizeFConverter.cs
 System.Drawing/SolidBrush.cs
 System.Drawing/SRDescriptionAttribute.cs
-System.Drawing/StringAligment.cs
-System.Drawing/StringDigitSubstitute.cs
+../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/StringAlignment.cs
+../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/StringDigitSubstitute.cs
 System.Drawing/StringFormat.cs
-System.Drawing/StringFormatFlags.cs
-System.Drawing/StringTrimming.cs
-System.Drawing/StringUnit.cs
+../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/StringFormatFlags.cs
+../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/StringTrimming.cs
+../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/StringUnit.cs
 System.Drawing/SystemBrushes.cs
 System.Drawing/SystemColors.cs
 System.Drawing/SystemFonts.cs
@@ -190,8 +190,8 @@ System.Drawing.Printing/PrintRange.cs
 System.Drawing.Printing/StandardPrintController.cs
 System.Drawing.Text/FontCollection.cs
 System.Drawing.Text/PrivateFontCollection.cs
-System.Drawing.Text/GenericFontFamilies.cs
-System.Drawing.Text/HotkeyPrefix.cs
+../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Text/GenericFontFamilies.cs
+../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Text/HotkeyPrefix.cs
 System.Drawing.Text/InstalledFontCollection.cs
-System.Drawing.Text/TextRenderingHint.cs
+../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Text/TextRenderingHint.cs
 
