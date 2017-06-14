@@ -1821,6 +1821,13 @@ ves_icall_System_Threading_Thread_Join_internal(MonoThread *this_obj, int ms)
 		return FALSE;
 	}
 
+#ifdef HOST_WIN32
+	gboolean is_runtime_thread = FALSE;
+	if ((thread->state & (ThreadState_Stopped | ThreadState_Aborted)) == 0) {
+		is_runtime_thread = ((MonoThreadInfo*) thread->thread_info)->runtime_thread;
+	}
+#endif
+
 	UNLOCK_THREAD (thread);
 
 	if(ms== -1) {
@@ -1837,6 +1844,13 @@ ves_icall_System_Threading_Thread_Join_internal(MonoThread *this_obj, int ms)
 	mono_error_set_pending_exception (&error);
 
 	if(ret==MONO_THREAD_INFO_WAIT_RET_SUCCESS_0) {
+#ifdef HOST_WIN32
+		if (is_runtime_thread) {
+			// The thread was created by the runtime. Make sure the underlying
+			// native thread has terminated before we return.
+			WaitForSingleObjectEx (thread->native_handle, INFINITE, FALSE);
+		}
+#endif
 		THREAD_DEBUG (g_message ("%s: join successful", __func__));
 
 		return(TRUE);
