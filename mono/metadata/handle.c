@@ -84,16 +84,54 @@ chunk_element_objslot (HandleChunk *chunk, int idx)
 #define SET_OWNER(chunk,idx) do { } while (0)
 #endif
 
+
 #ifdef HAVE_BOEHM_GC
-#define NEW_HANDLE_STACK() ((HandleStack *)mono_gc_alloc_fixed (sizeof(HandleStack), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_HANDLE, "Thread Handle Stack"))
-#define NEW_HANDLE_CHUNK() ((HandleChunk *)GC_MALLOC (sizeof(HandleChunk)))
-#define FREE_HANDLE_STACK(s) mono_gc_free_fixed(s)
-#define FREE_HANDLE_CHUNK(c) do { } while (0)
+static HandleStack*
+new_handle_stack ()
+{
+	return (HandleStack *)mono_gc_alloc_fixed (sizeof (HandleStack), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_HANDLE, "Thread Handle Stack");
+}
+
+static void
+free_handle_stack (HandleStack *stack)
+{
+	mono_gc_free_fixed (stack);
+}
+
+static HandleChunk*
+new_handle_chunk ()
+{
+	return (HandleChunk *)GC_MALLOC (sizeof (HandleChunk));
+}
+
+static void
+free_handle_chunk (HandleChunk *chunk)
+{
+}
 #else
-#define NEW_HANDLE_STACK() g_new (HandleStack, 1)
-#define NEW_HANDLE_CHUNK() g_new (HandleChunk, 1)
-#define FREE_HANDLE_STACK(s) g_free(s)
-#define FREE_HANDLE_CHUNK(c) g_free(c)
+static HandleStack*
+new_handle_stack ()
+{
+	return g_new (HandleStack, 1);
+}
+
+static void
+free_handle_stack (HandleStack *stack)
+{
+	g_free (stack);
+}
+
+static HandleChunk*
+new_handle_chunk ()
+{
+	return g_new (HandleChunk, 1);
+}
+
+static void
+free_handle_chunk (HandleChunk *chunk)
+{
+	g_free (chunk);
+}
 #endif
 
 /* Actual handles implementation */
@@ -136,7 +174,7 @@ retry:
 		handles->top = top;
 		goto retry;
 	}
-	HandleChunk *new_chunk = NEW_HANDLE_CHUNK ();
+	HandleChunk *new_chunk = new_handle_chunk ();
 	new_chunk->size = 0;
 	new_chunk->prev = top;
 	new_chunk->next = NULL;
@@ -152,8 +190,8 @@ retry:
 HandleStack*
 mono_handle_stack_alloc (void)
 {
-	HandleStack *stack = NEW_HANDLE_STACK ();
-	HandleChunk *chunk = NEW_HANDLE_CHUNK ();
+	HandleStack *stack = new_handle_stack ();
+	HandleChunk *chunk = new_handle_chunk ();
 
 	chunk->size = 0;
 	chunk->prev = chunk->next = NULL;
@@ -172,11 +210,11 @@ mono_handle_stack_free (HandleStack *stack)
 	mono_memory_write_barrier ();
 	while (c) {
 		HandleChunk *next = c->next;
-		FREE_HANDLE_CHUNK (c);
+		free_handle_chunk (c);
 		c = next;
 	}
-	FREE_HANDLE_CHUNK (c);
-	FREE_HANDLE_STACK (stack);
+	free_handle_chunk (c);
+	free_handle_stack (stack);
 }
 
 void
