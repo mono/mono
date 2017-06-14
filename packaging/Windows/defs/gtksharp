@@ -67,6 +67,7 @@ install()
 
 prerequisites()
 {
+	which wget 		2>/dev/null || error "*** wget is not in \$PATH ***"
 }
 
 $@
