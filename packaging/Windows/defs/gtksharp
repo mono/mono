@@ -67,7 +67,6 @@ install()
 
 prerequisites()
 {
-	which msiexec 2>/dev/null || error "*** msiexec is not in \$PATH ***"
 }
 
 $@
