@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -xe
 COMPONENTS="mono gtksharp managed-components"
 for i in ${COMPONENTS}
 	do defs/$i prerequisites
@@ -6,7 +6,7 @@ done
 COMPONENTS="gtksharp managed-components"
 defs/mono download
 defs/gtksharp download
-defs/managed-components download ${mdk}
+defs/managed-components download "${mdk}"
 COMPONENTS="mono gtksharp managed-components"
 for i in ${COMPONENTS}
 	do defs/$i clean
