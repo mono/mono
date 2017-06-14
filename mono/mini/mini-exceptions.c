@@ -3278,15 +3278,19 @@ mono_llvm_load_exception (void)
 
 	MonoException *mono_ex = (MonoException*)mono_gchandle_get_target (jit_tls->thrown_exc);
 
-	if (mono_ex->trace_ips) {
+	// Get a view of the trace_ips guaranteed not to be vulnerable to modification 
+	// (mono_ex is shared between threads)
+	MonoArray *mono_ex_ips = (MonoException*)mono_gchandle_get_target (jit_tls->thrown_exc);
+
+	if (mono_ex_ips) {
 		GList *trace_ips = NULL;
 		gpointer ip = __builtin_return_address (0);
 
-		size_t upper = mono_array_length (mono_ex->trace_ips);
+		size_t upper = mono_array_length (mono_ex_ips);
 
 		for (int i = 0; i < upper; i+= 2) {
-			gpointer curr_ip = mono_array_get (mono_ex->trace_ips, gpointer, i);
-			gpointer curr_info = mono_array_get (mono_ex->trace_ips, gpointer, i + 1);
+			gpointer curr_ip = mono_array_get (mono_ex_ips, gpointer, i);
+			gpointer curr_info = mono_array_get (mono_ex_ips, gpointer, i + 1);
 			trace_ips = g_list_append (trace_ips, curr_ip);
 			trace_ips = g_list_append (trace_ips, curr_info);
 
