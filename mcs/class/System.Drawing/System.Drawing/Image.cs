@@ -169,6 +169,12 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		return img;
 	}
 
+	// For compatiblity with CoreFX sources
+	internal static Image CreateImageObject (IntPtr nativeImage)
+	{
+		return CreateFromHandle (nativeImage);
+	}
+
 	internal static Image CreateFromHandle (IntPtr handle)
 	{
 		ImageType type;
@@ -789,6 +795,13 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		}
 		set	{
 			nativeObject = value;
+		}
+	}
+
+	// For compatiblity with CoreFX sources
+	internal IntPtr nativeImage {
+		get {
+			return nativeObject;
 		}
 	}
 	
