@@ -129,7 +129,7 @@ mono_gc_base_init (void)
 	 * we used to do this only when running on valgrind,
 	 * but it happens also in other setups.
 	 */
-#if defined(HAVE_PTHREAD_GETATTR_NP) && defined(HAVE_PTHREAD_ATTR_GETSTACK) && !defined(__native_client__)
+#if defined(HAVE_PTHREAD_GETATTR_NP) && defined(HAVE_PTHREAD_ATTR_GETSTACK)
 	{
 		size_t size;
 		void *sstart;
@@ -138,12 +138,6 @@ mono_gc_base_init (void)
 		pthread_attr_getstack (&attr, &sstart, &size);
 		pthread_attr_destroy (&attr); 
 		/*g_print ("stackbottom pth is: %p\n", (char*)sstart + size);*/
-#ifdef __ia64__
-		/*
-		 * The calculation above doesn't seem to work on ia64, also we need to set
-		 * GC_register_stackbottom as well, but don't know how.
-		 */
-#else
 		/* apparently with some linuxthreads implementations sstart can be NULL,
 		 * fallback to the more imprecise method (bug# 78096).
 		 */
@@ -156,7 +150,6 @@ mono_gc_base_init (void)
 			stack_bottom &= ~4095;
 			GC_stackbottom = (char*)stack_bottom;
 		}
-#endif
 	}
 #elif defined(HAVE_PTHREAD_GET_STACKSIZE_NP) && defined(HAVE_PTHREAD_GET_STACKADDR_NP)
 		GC_stackbottom = (char*)pthread_get_stackaddr_np (pthread_self ());
@@ -171,8 +164,6 @@ mono_gc_base_init (void)
 
 		GC_stackbottom = (char*)ss.ss_sp;
 	}
-#elif defined(__native_client__)
-	/* Do nothing, GC_stackbottom is set correctly in libgc */
 #else
 	{
 		int dummy;

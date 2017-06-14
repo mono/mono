@@ -49,11 +49,6 @@
 #include "mono/metadata/security-manager.h"
 #include "mono/metadata/exception.h"
 
-#ifdef __native_client_codegen__
-#include <nacl/nacl_dyncode.h>
-#endif
-
-
 /*
  * The mini code should not have any compile time dependencies on the GC being used, so the same object file from mini/
  * can be linked into both mono and mono-sgen.
@@ -594,6 +589,20 @@ extern const gint8 ins_sreg_counts [];
 #define MONO_BB_FOR_EACH_INS_REVERSE_SAFE(bb, p, ins) for ((ins) = (bb)->last_ins, p = (ins) ? (ins)->prev : NULL; (ins); (ins) = (p), (p) = (ins) ? (ins)->prev : NULL)
 
 #define mono_bb_first_ins(bb) (bb)->code
+
+/*
+ * Iterate through all used registers in the instruction.
+ * Relies on the existing order of the MONO_INST enum: MONO_INST_{DREG,SREG1,SREG2,SREG3,LEN}
+ * INS is the instruction, IDX is the register index, REG is the pointer to a register.
+ */
+#define MONO_INS_FOR_EACH_REG(ins, idx, reg) for ((idx) = INS_INFO ((ins)->opcode)[MONO_INST_DEST] != ' ' ? MONO_INST_DEST : \
+							  (mono_inst_get_num_src_registers (ins) ? MONO_INST_SRC1 : MONO_INST_LEN); \
+						  (reg) = (idx) == MONO_INST_DEST ? &(ins)->dreg : \
+							  ((idx) == MONO_INST_SRC1 ? &(ins)->sreg1 : \
+							   ((idx) == MONO_INST_SRC2 ? &(ins)->sreg2 : \
+							    ((idx) == MONO_INST_SRC3 ? &(ins)->sreg3 : NULL))), \
+							  idx < MONO_INST_LEN; \
+						  (idx) = (idx) > mono_inst_get_num_src_registers (ins) + (INS_INFO ((ins)->opcode)[MONO_INST_DEST] != ' ') ? MONO_INST_LEN : (idx) + 1)
 
 struct MonoSpillInfo {
 	int offset;
@@ -1203,11 +1212,12 @@ typedef struct {
 	 */
 	gpointer abort_exc_stack_threshold;
 
-
 	/*
 	 * List of methods being JIT'd in the current thread.
 	 */
 	int active_jit_methods;
+
+	gpointer interp_context;
 } MonoJitTlsData;
 
 /*
@@ -1664,11 +1674,6 @@ typedef struct {
 	MonoInst *stack_inbalance_var;
 
 	unsigned char   *cil_start;
-#ifdef __native_client_codegen__
-	/* this alloc is not aligned, native_code */
-	/* is the 32-byte aligned version of this */
-	unsigned char   *native_code_alloc;
-#endif
 	unsigned char   *native_code;
 	guint            code_size;
 	guint            code_len;
@@ -2467,6 +2472,7 @@ MonoInst* mono_emit_jit_icall_by_info (MonoCompile *cfg, int il_offset, MonoJitI
 MonoInst* mono_emit_method_call (MonoCompile *cfg, MonoMethod *method, MonoInst **args, MonoInst *this_ins);
 void      mono_create_helper_signatures (void);
 MonoInst* mono_emit_native_call (MonoCompile *cfg, gconstpointer func, MonoMethodSignature *sig, MonoInst **args);
+gboolean  mini_should_insert_breakpoint (MonoMethod *method);
 
 gboolean  mini_class_is_system_array (MonoClass *klass);
 MonoMethodSignature *mono_get_element_address_signature (int arity);
@@ -2483,12 +2489,6 @@ void      mono_liveness_handle_exception_clauses (MonoCompile *cfg);
 
 /* Native Client functions */
 gpointer mono_realloc_native_code(MonoCompile *cfg);
-
-#if defined(__native_client__) || defined(__native_client_codegen__)
-extern volatile int __nacl_thread_suspension_needed;
-void __nacl_suspend_thread_if_needed(void);
-void mono_nacl_gc(void);
-#endif
 
 extern MonoDebugOptions debug_options;
 
@@ -2638,9 +2638,11 @@ MonoInst*         mini_emit_get_gsharedvt_info_klass (MonoCompile *cfg, MonoClas
 MonoInst*         mini_emit_calli (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **args, MonoInst *addr, MonoInst *imt_arg, MonoInst *rgctx_arg);
 MonoInst*         mini_emit_memory_barrier (MonoCompile *cfg, int kind);
 void              mini_emit_write_barrier (MonoCompile *cfg, MonoInst *ptr, MonoInst *value);
-gboolean          mini_emit_wb_aware_memcpy (MonoCompile *cfg, MonoClass *klass, MonoInst *iargs[4], int size, int align);
 MonoInst*         mini_emit_memory_load (MonoCompile *cfg, MonoType *type, MonoInst *src, int offset, int ins_flag);
 void              mini_emit_memory_store (MonoCompile *cfg, MonoType *type, MonoInst *dest, MonoInst *value, int ins_flag);
+void              mini_emit_memory_copy_bytes (MonoCompile *cfg, MonoInst *dest, MonoInst *src, MonoInst *size, int ins_flag);
+void              mini_emit_memory_init_bytes (MonoCompile *cfg, MonoInst *dest, MonoInst *value, MonoInst *size, int ins_flag);
+void              mini_emit_memory_copy (MonoCompile *cfg, MonoInst *dest, MonoInst *src, MonoClass *klass, gboolean native, int ins_flag);
 
 MonoMethod*       mini_get_memcpy_method (void);
 MonoMethod*       mini_get_memset_method (void);
@@ -2796,6 +2798,9 @@ gboolean  mono_arch_is_breakpoint_event         (void *info, void *sigctx);
 void     mono_arch_skip_breakpoint              (MonoContext *ctx, MonoJitInfo *ji);
 void     mono_arch_skip_single_step             (MonoContext *ctx);
 gpointer mono_arch_get_seq_point_info           (MonoDomain *domain, guint8 *code);
+#endif
+
+#ifdef MONO_ARCH_HAVE_INIT_LMF_EXT
 void     mono_arch_init_lmf_ext                 (MonoLMFExt *ext, gpointer prev_lmf);
 #endif
 

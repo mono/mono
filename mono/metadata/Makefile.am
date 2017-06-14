@@ -193,6 +193,7 @@ common_sources = \
 	mono-endian.c		\
 	mono-endian.h		\
 	mono-hash.h		\
+	mono-conc-hash.h		\
 	mono-mlist.c		\
 	mono-mlist.h		\
 	mono-perfcounters.c	\
@@ -202,7 +203,6 @@ common_sources = \
 	mono-route.c		\
 	mono-route.h		\
 	monitor.h		\
-	nacl-stub.c		\
 	normalization-tables.h	\
 	number-formatter.h	\
 	number-ms.c		\
@@ -280,6 +280,7 @@ gc_dependent_sources = \
 	gc.c		\
 	monitor.c	\
 	mono-hash.c	\
+	mono-conc-hash.c	\
 	object.c	\
 	dynamic-image.c	\
 	sre.c	\

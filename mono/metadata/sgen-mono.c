@@ -245,7 +245,7 @@ mono_gc_is_critical_method (MonoMethod *method)
 	return sgen_is_critical_method (method);
 }
 
-#ifndef DISABLE_JIT
+#ifdef ENABLE_ILGEN
 
 static void
 emit_nursery_check (MonoMethodBuilder *mb, int *nursery_check_return_labels, gboolean is_concurrent)
@@ -317,7 +317,7 @@ mono_gc_get_specific_write_barrier (gboolean is_concurrent)
 	else
 		mb = mono_mb_new (mono_defaults.object_class, "wbarrier_noconc", MONO_WRAPPER_WRITE_BARRIER);
 
-#ifndef DISABLE_JIT
+#ifdef ENABLE_ILGEN
 #ifdef MANAGED_WBARRIER
 	emit_nursery_check (mb, nursery_check_labels, is_concurrent);
 	/*
@@ -893,6 +893,10 @@ mono_gc_clear_domain (MonoDomain * domain)
 
 	sgen_clear_nursery_fragments ();
 
+	FOREACH_THREAD (info) {
+		mono_handle_stack_free_domain ((HandleStack*)info->client_info.info.handle_stack, domain);
+	} FOREACH_THREAD_END
+
 	if (sgen_mono_xdomain_checks && domain != mono_get_root_domain ()) {
 		sgen_scan_for_registered_roots_in_domain (domain, ROOT_TYPE_NORMAL);
 		sgen_scan_for_registered_roots_in_domain (domain, ROOT_TYPE_WBARRIER);
@@ -1122,7 +1126,7 @@ create_allocator (int atype, ManagedAllocatorVariant variant)
 
 	mb = mono_mb_new (mono_defaults.object_class, name, MONO_WRAPPER_ALLOC);
 
-#ifndef DISABLE_JIT
+#ifdef ENABLE_ILGEN
 	if (slowpath) {
 		switch (atype) {
 		case ATYPE_NORMAL:
@@ -1457,7 +1461,7 @@ create_allocator (int atype, ManagedAllocatorVariant variant)
 	info->d.alloc.gc_name = "sgen";
 	info->d.alloc.alloc_type = atype;
 
-#ifndef DISABLE_JIT
+#ifdef ENABLE_ILGEN
 	mb->init_locals = FALSE;
 #endif
 
@@ -2665,7 +2669,7 @@ void*
 mono_gc_get_nursery (int *shift_bits, size_t *size)
 {
 	*size = sgen_nursery_size;
-	*shift_bits = DEFAULT_NURSERY_BITS;
+	*shift_bits = sgen_nursery_bits;
 	return sgen_get_nursery_start ();
 }
 

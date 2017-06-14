@@ -62,7 +62,7 @@ MONO = \
 
 DIFF = diff -rup
 DIFF_QUIET = diff --brief
-ifeq ($(PLATFORM), win32)
+ifeq ($(BUILD_PLATFORM), win32)
 DIFF = diff -rupZ
 DIFF_QUIET = diff --brief -Z
 endif

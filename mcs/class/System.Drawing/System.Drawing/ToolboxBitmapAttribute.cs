@@ -33,6 +33,7 @@
 //
 
 using System;
+using System.Reflection;
 
 namespace System.Drawing
 {
@@ -116,7 +117,7 @@ namespace System.Drawing
 				imageName = t.Name + ".bmp";
 
 			try {
-				using (System.IO.Stream s = t.Assembly.GetManifestResourceStream (t.Namespace + "." + imageName)){
+				using (System.IO.Stream s = t.GetTypeInfo ().Assembly.GetManifestResourceStream (t.Namespace + "." + imageName)){
 					if (s == null) {
 						return null;
 					} else {

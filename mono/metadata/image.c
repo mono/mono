@@ -1122,8 +1122,7 @@ typedef enum {
 	SYS_NET_HTTP = 3, //System.Net.Http
 	SYS_TEXT_ENC_CODEPAGES = 4, //System.Text.Encoding.CodePages
 	SYS_REF_DISP_PROXY = 5, //System.Reflection.DispatchProxy
-	SYS_VALUE_TUPLE = 6, //System.ValueTuple
-	SYS_THREADING_OVERLAPPED = 7, //System.Threading.Overlapped
+	SYS_THREADING_OVERLAPPED = 6, //System.Threading.Overlapped
 } IgnoredAssemblyNames;
 
 typedef struct {
@@ -1144,8 +1143,7 @@ const char *ignored_assemblies_file_names[] = {
 	"System.Net.Http.dll",
 	"System.Text.Encoding.CodePages.dll",
 	"System.Reflection.DispatchProxy.dll",
-	"System.Threading.Overlapped.dll",
-	"System.ValueTuple.dll"
+	"System.Threading.Overlapped.dll"
 };
 
 #define IGNORED_ASSEMBLY(HASH, NAME, GUID, VER_STR)	{ .hash = HASH, .assembly_name = NAME, .guid = GUID }
@@ -1160,6 +1158,7 @@ static const IgnoredAssembly ignored_assemblies [] = {
 	IGNORED_ASSEMBLY (0x10CADA75, SYS_NET_HTTP, "EA2EC6DC-51DD-479C-BFC2-E713FB9E7E47", "4.1.1 net46"),
 	IGNORED_ASSEMBLY (0x8437178B, SYS_NET_HTTP, "C0E04D9C-70CF-48A6-A179-FBFD8CE69FD0", "4.3.0 net46"),
 	IGNORED_ASSEMBLY (0xFAFDA422, SYS_NET_HTTP, "817F01C3-4011-477D-890A-98232B85553D", "4.3.1 net46"),
+	IGNORED_ASSEMBLY (0x472FA630, SYS_NET_HTTP, "09D4A140-061C-4884-9B63-22067E841931", "4.3.2 net46"),
 	IGNORED_ASSEMBLY (0x4A15555E, SYS_REF_DISP_PROXY, "E40AFEB4-CABE-4124-8412-B46AB79C92FD", "4.0.0 net46"),
 	IGNORED_ASSEMBLY (0xD20D9783, SYS_REF_DISP_PROXY, "2A69F0AD-B86B-40F2-8E4C-5B671E47479F", "4.0.1 netstandard1.3"),
 	IGNORED_ASSEMBLY (0xA33A7E68, SYS_REF_DISP_PROXY, "D4E8D2DB-BD65-4168-99EA-D2C1BDEBF9CC", "4.3.0 netstandard1.3"),
@@ -1169,8 +1168,7 @@ static const IgnoredAssembly ignored_assemblies [] = {
 	IGNORED_ASSEMBLY (0xFA686A38, SYS_TEXT_ENC_CODEPAGES, "FD178CD4-EF4F-44D5-9C3F-812B1E25126B", "4.3.0 net46"),
 	IGNORED_ASSEMBLY (0xAA21986B, SYS_THREADING_OVERLAPPED, "9F5D4F09-787A-458A-BA08-553AA71470F1", "4.0.0 net46"),
 	IGNORED_ASSEMBLY (0x7D927C2A, SYS_THREADING_OVERLAPPED, "FCBD003B-2BB4-4940-BAEF-63AF520C2336", "4.0.1 net46"),
-	IGNORED_ASSEMBLY (0x6FE03EE2, SYS_THREADING_OVERLAPPED, "87697E71-D192-4F0B-BAD4-02BBC7793005", "4.3.0 net46"),
-	IGNORED_ASSEMBLY (0x75B4B041, SYS_VALUE_TUPLE, "F81A4140-A898-4E2B-B6E9-55CE78C273EC", "4.3.0 netstandard1.0"),
+	IGNORED_ASSEMBLY (0x6FE03EE2, SYS_THREADING_OVERLAPPED, "87697E71-D192-4F0B-BAD4-02BBC7793005", "4.3.0 net46")
 };
 
 
@@ -1181,8 +1179,7 @@ const char *ignored_assemblies_names[] = {
 	"System.Net.Http",
 	"System.Text.Encoding.CodePages",
 	"System.Reflection.DispatchProxy",
-	"System.Threading.Overlapped",
-	"System.ValueTuple"
+	"System.Threading.Overlapped"
 };
 
 #define IGNORED_ASM_VER(NAME, MAJOR, MINOR, BUILD, REVISION) { .assembly_name = NAME, .major = MAJOR, .minor = MINOR, .build = BUILD, .revision = REVISION }
@@ -1196,6 +1193,7 @@ static const IgnoredAssemblyVersion ignored_assembly_versions [] = {
 	IGNORED_ASM_VER (SYS_NET_HTTP, 4, 1, 0, 0),
 	IGNORED_ASM_VER (SYS_NET_HTTP, 4, 1, 0, 1),
 	IGNORED_ASM_VER (SYS_NET_HTTP, 4, 1, 1, 0),
+	IGNORED_ASM_VER (SYS_NET_HTTP, 4, 1, 1, 1),
 	IGNORED_ASM_VER (SYS_REF_DISP_PROXY, 4, 0, 0, 0),
 	IGNORED_ASM_VER (SYS_REF_DISP_PROXY, 4, 0, 1, 0),
 	IGNORED_ASM_VER (SYS_REF_DISP_PROXY, 4, 0, 2, 0),
@@ -1206,7 +1204,6 @@ static const IgnoredAssemblyVersion ignored_assembly_versions [] = {
 	IGNORED_ASM_VER (SYS_THREADING_OVERLAPPED, 4, 0, 0, 0),
 	IGNORED_ASM_VER (SYS_THREADING_OVERLAPPED, 4, 0, 1, 0),
 	IGNORED_ASM_VER (SYS_THREADING_OVERLAPPED, 4, 0, 2, 0),
-	IGNORED_ASM_VER (SYS_VALUE_TUPLE, 4, 0, 1, 0),
 };
 
 gboolean
@@ -1700,7 +1697,7 @@ mono_image_open_a_lot (const char *fname, MonoImageOpenStatus *status, gboolean 
 	}
 #endif
 
-	absfname = mono_path_canonicalize (fname);
+	absfname = mono_path_resolve_symlinks (fname);
 
 	/*
 	 * The easiest solution would be to do all the loading inside the mutex,

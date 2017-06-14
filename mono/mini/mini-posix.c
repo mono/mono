@@ -75,7 +75,7 @@
 #include <mach/clock.h>
 #endif
 
-#if defined(__native_client__) || defined(HOST_WATCHOS)
+#if defined(HOST_WATCHOS)
 
 void
 mono_runtime_setup_stat_profiler (void)
@@ -581,16 +581,28 @@ static void
 clock_init (void)
 {
 	switch (mono_profiler_get_sampling_mode ()) {
-	case MONO_PROFILER_STAT_MODE_PROCESS:
+	case MONO_PROFILER_STAT_MODE_PROCESS: {
+	/*
+	 * If we don't have clock_nanosleep (), measuring the process time
+	 * makes very little sense as we can only use nanosleep () to sleep on
+	 * real time.
+	 */
 #ifdef HAVE_CLOCK_NANOSLEEP
+		struct timespec ts = { 0 };
+
 		/*
-		 * If we don't have clock_nanosleep (), measuring the process time
-		 * makes very little sense as we can only use nanosleep () to sleep on
-		 * real time.
+		 * Some systems (e.g. Windows Subsystem for Linux) declare the
+		 * CLOCK_PROCESS_CPUTIME_ID clock but don't actually support it. For
+		 * those systems, we fall back to CLOCK_MONOTONIC if we get EINVAL.
 		 */
-		sampling_posix_clock = CLOCK_PROCESS_CPUTIME_ID;
-		break;
+		if (clock_nanosleep (CLOCK_PROCESS_CPUTIME_ID, TIMER_ABSTIME, &ts, NULL) != EINVAL) {
+			sampling_posix_clock = CLOCK_PROCESS_CPUTIME_ID;
+			break;
+		}
 #endif
+
+		// fallthrough
+	}
 	case MONO_PROFILER_STAT_MODE_REAL: sampling_posix_clock = CLOCK_MONOTONIC; break;
 	default: g_assert_not_reached (); break;
 	}
@@ -828,16 +840,7 @@ mono_runtime_setup_stat_profiler (void)
 
 #endif
 
-#endif /* defined(__native_client__) || defined(HOST_WATCHOS) */
-
-#if defined(__native_client__)
-
-void
-mono_gdb_render_native_backtraces (pid_t crashed_pid)
-{
-}
-
-#else
+#endif /* defined(HOST_WATCHOS) */
 
 static gboolean
 native_stack_with_gdb (pid_t crashed_pid, const char **argv, FILE *commands, char* commands_filename)
@@ -933,8 +936,6 @@ exec:
 	fprintf (stderr, "mono_gdb_render_native_backtraces not supported on this platform\n");
 #endif // HAVE_EXECV
 }
-
-#endif /* defined(__native_client__) */
 
 #if !defined (__MACH__)
 

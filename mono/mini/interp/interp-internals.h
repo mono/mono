@@ -39,6 +39,10 @@ typedef struct {
 	union {
 		gint32 i;
 		gint64 l;
+		struct {
+			gint32 lo;
+			gint32 hi;
+		} pair;
 		double f;
 		/* native size integer and pointer types */
 		gpointer p;
@@ -90,6 +94,7 @@ typedef struct _RuntimeMethod
 	MonoType *rtype;
 	MonoType **param_types;
 	MonoJitInfo *jinfo;
+	MonoDomain *domain;
 } RuntimeMethod;
 
 struct _MonoInvocation {
@@ -101,6 +106,7 @@ struct _MonoInvocation {
 	stackval       *stack_args; /* parent */
 	stackval       *stack;
 	stackval       *sp; /* For GC stack marking */
+	unsigned char  *locals;
 	/* exception info */
 	unsigned char  invoke_trap;
 	const unsigned short  *ip;
@@ -109,7 +115,6 @@ struct _MonoInvocation {
 };
 
 typedef struct {
-	MonoDomain *domain;
 	MonoDomain *original_domain;
 	MonoInvocation *base_frame;
 	MonoInvocation *current_frame;

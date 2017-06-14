@@ -83,6 +83,8 @@ namespace Mono.Net.Security
 				if (initialized)
 					return;
 
+				InitializeProviderRegistration ();
+
 				MSI.MonoTlsProvider provider;
 				try {
 					provider = CreateDefaultProviderImpl ();

@@ -820,8 +820,10 @@ namespace Mono.CSharp
 			Parent.PartialContainer.Members.Add (BackingField);
 
 			FieldExpr fe = new FieldExpr (BackingField, Location);
-			if ((BackingField.ModFlags & Modifiers.STATIC) == 0)
+			if ((BackingField.ModFlags & Modifiers.STATIC) == 0) {
 				fe.InstanceExpression = new CompilerGeneratedThis (Parent.CurrentType, Location);
+				Parent.PartialContainer.HasInstanceField = true;
+			}
 
 			//
 			// Create get block but we careful with location to
@@ -1790,6 +1792,18 @@ namespace Mono.CSharp
 			}
 		}
 		#endregion
+
+		public static ParametersImported CreateParametersFromSetter (MethodSpec setter, int set_param_count)
+		{
+			//
+			// Creates indexer parameters based on setter method parameters (the last parameter has to be removed)
+			//
+			var data = new IParameterData [set_param_count];
+			var types = new TypeSpec [set_param_count];
+			Array.Copy (setter.Parameters.FixedParameters, data, set_param_count);
+			Array.Copy (setter.Parameters.Types, types, set_param_count);
+			return new ParametersImported (data, types, setter.Parameters.HasParams);
+		}
 
 		public override string GetSignatureForDocumentation ()
 		{

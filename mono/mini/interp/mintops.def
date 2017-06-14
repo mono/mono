@@ -490,6 +490,9 @@ OPDEF(MINT_CLT_UN_I8, "clt.un.i8", 1, MintOpNoArgs)
 OPDEF(MINT_CLT_UN_R8, "clt.un.r8", 1, MintOpNoArgs)
 
 OPDEF(MINT_CKFINITE, "ckfinite", 1, MintOpNoArgs)
+OPDEF(MINT_MKREFANY, "mkrefany", 2, MintOpClassToken)
+OPDEF(MINT_REFANYTYPE, "refanytype", 1, MintOpNoArgs)
+OPDEF(MINT_REFANYVAL, "refanyval", 1, MintOpNoArgs)
 
 OPDEF(MINT_CKNULL, "cknull", 1, MintOpNoArgs)
 
@@ -518,3 +521,6 @@ OPDEF(MINT_MONO_JIT_DETACH, "mono_jit_detach", 1, MintOpNoArgs)
 
 // FIXME: MintOp
 OPDEF(MINT_JIT_CALL, "mono_jit_call", 2, MintOpNoArgs)
+OPDEF(MINT_SDB_INTR_LOC, "sdb_intr_loc", 1, MintOpNoArgs)
+OPDEF(MINT_SDB_SEQ_POINT, "sdb_seq_point", 1, MintOpNoArgs)
+OPDEF(MINT_SDB_BREAKPOINT, "sdb_breakpoint", 1, MintOpNoArgs)

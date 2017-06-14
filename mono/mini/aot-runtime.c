@@ -505,6 +505,7 @@ decode_klass_ref (MonoAotModule *module, guint8 *buf, guint8 **endbuf, MonoError
 				return NULL;
 
 			t = mini_get_shared_gparam (&par_klass->byval_arg, gshared_constraint);
+			mono_metadata_free_type (gshared_constraint);
 			klass = mono_class_from_mono_type (t);
 		} else {
 			int type = decode_value (p, &p);
@@ -1014,6 +1015,8 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 				ref->method = mono_marshal_get_gsharedvt_in_wrapper ();
 			} else if (subtype == WRAPPER_SUBTYPE_GSHAREDVT_OUT) {
 				ref->method = mono_marshal_get_gsharedvt_out_wrapper ();
+			} else if (subtype == WRAPPER_SUBTYPE_INTERP_IN) {
+				ref->method = mini_get_interp_in_wrapper (target->signature);
 			} else if (subtype == WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG) {
 				MonoMethodSignature *sig = decode_signature (module, p, &p);
 				if (!sig)
@@ -2016,7 +2019,7 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 			}
 		}
 		if (!sofile) {
-			if (mono_aot_only && assembly->image->tables [MONO_TABLE_METHOD].rows) {
+			if (mono_aot_only && !mono_use_interpreter && assembly->image->tables [MONO_TABLE_METHOD].rows) {
 				aot_name = g_strdup_printf ("%s%s", assembly->image->name, MONO_SOLIB_EXT);
 				g_error ("Failed to load AOT module '%s' in aot-only mode.\n", aot_name);
 				g_free (aot_name);
@@ -2060,7 +2063,7 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 	}
 
 	if (!usable) {
-		if (mono_aot_only) {
+		if (mono_aot_only && !mono_use_interpreter) {
 			g_error ("Failed to load AOT module '%s' while running in aot-only mode: %s.\n", found_aot_name, msg);
 		} else {
 			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_AOT, "AOT: module %s is unusable: %s.", found_aot_name, msg);
@@ -2282,16 +2285,6 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 	 * non-lazily, since we can't handle out-of-date errors later.
 	 * The cached class info also depends on the exact assemblies.
 	 */
-#if defined(__native_client__)
-	/* TODO: Don't 'load_image' on mscorlib due to a */
-	/* recursive loading problem.  This should be    */
-	/* removed if mscorlib is loaded from disk.      */
-	if (strncmp(assembly->aname.name, "mscorlib", 8)) {
-		do_load_image = TRUE;
-	} else {
-		do_load_image = FALSE;
-	}
-#endif
 	if (do_load_image) {
 		for (i = 0; i < amodule->image_table_len; ++i) {
 			MonoError error;
@@ -2352,9 +2345,7 @@ mono_aot_init (void)
 	mono_os_mutex_init_recursive (&aot_page_mutex);
 	aot_modules = g_hash_table_new (NULL, NULL);
 
-#ifndef __native_client__
 	mono_install_assembly_load_hook (load_aot_module, NULL);
-#endif
 	mono_counters_register ("Async JIT info size", MONO_COUNTER_INT|MONO_COUNTER_JIT, &async_jit_info_size);
 
 	char *lastaot = g_getenv ("MONO_LASTAOT");
@@ -3940,9 +3931,11 @@ load_method (MonoDomain *domain, MonoAotModule *amodule, MonoImage *image, MonoM
 					if (!method)
 						return NULL;
 				}
-				full_name = mono_method_full_name (method, TRUE);
-				mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_AOT, "AOT: NOT FOUND: %s.", full_name);
-				g_free (full_name);
+				if (!(method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL)) {
+					full_name = mono_method_full_name (method, TRUE);
+					mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_AOT, "AOT: NOT FOUND: %s.", full_name);
+					g_free (full_name);
+				}
 			}
 			return NULL;
 		}

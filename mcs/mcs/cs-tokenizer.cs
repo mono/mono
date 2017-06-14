@@ -894,6 +894,16 @@ namespace Mono.CSharp
 					res = -1;
 
 				break;
+			case Token.THROW:
+				switch (current_token) {
+				case Token.ARROW:
+				case Token.OP_COALESCING:
+				case Token.INTERR:
+					res = Token.THROW_EXPR;
+					break;
+				}
+
+				break;
 			}
 
 
@@ -1267,7 +1277,8 @@ namespace Mono.CSharp
 			else if (the_token == Token.INTERR_NULLABLE || the_token == Token.STAR)
 				goto again;
 			else if (the_token == Token.OP_GENERICS_LT) {
-				if (!parse_less_than (ref genericDimension))
+				int unused = 0;
+				if (!parse_less_than (ref unused))
 					return false;
 				goto again;
 			} else if (the_token == Token.OPEN_BRACKET) {
@@ -1314,7 +1325,8 @@ namespace Mono.CSharp
 			}
 
 			if (d == '.') {
-				return Token.INTERR_OPERATOR;
+				d = reader.Peek ();
+				return d >= '0' && d <= '9' ? Token.INTERR : Token.INTERR_OPERATOR;
 			}
 
 			if (d != ' ') {
@@ -1344,6 +1356,7 @@ namespace Mono.CSharp
 			case Token.THIS:
 			case Token.NEW:
 			case Token.INTERPOLATED_STRING:
+			case Token.THROW:
 				next_token = Token.INTERR;
 				break;
 				

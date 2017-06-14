@@ -639,6 +639,15 @@ namespace Mono.CSharp
 			}
 		}
 
+		public bool HasInstanceField {
+			get {
+				return (caching_flags & Flags.HasInstanceField) != 0;
+			}
+			set {
+				caching_flags |= Flags.HasInstanceField;
+			}
+		}
+
 		// Indicated whether container has StructLayout attribute set Explicit
 		public bool HasExplicitLayout {
 			get { return (caching_flags & Flags.HasExplicitLayout) != 0; }
@@ -848,18 +857,22 @@ namespace Mono.CSharp
 			if ((field.ModFlags & Modifiers.STATIC) != 0)
 				return true;
 
-			var first_field = PartialContainer.first_nonstatic_field;
-			if (first_field == null) {
+			if (!PartialContainer.HasInstanceField) {
+				PartialContainer.HasInstanceField = true;
 				PartialContainer.first_nonstatic_field = field;
 				return true;
 			}
 
-			if (Kind == MemberKind.Struct && first_field.Parent != field.Parent) {
-				Report.SymbolRelatedToPreviousError (first_field.Parent);
-				Report.Warning (282, 3, field.Location,
-					"struct instance field `{0}' found in different declaration from instance field `{1}'",
-					field.GetSignatureForError (), first_field.GetSignatureForError ());
+			if (Kind == MemberKind.Struct) {
+				var first_field = PartialContainer.first_nonstatic_field;
+				if (first_field.Parent != field.Parent) {
+					Report.SymbolRelatedToPreviousError (first_field.Parent);
+					Report.Warning (282, 3, field.Location,
+						"struct instance field `{0}' found in different declaration from instance field `{1}'",
+						field.GetSignatureForError (), first_field.GetSignatureForError ());
+				}
 			}
+
 			return true;
 		}
 
@@ -1299,7 +1312,7 @@ namespace Mono.CSharp
 			//
 			// Sets .size to 1 for structs with no instance fields
 			//
-			int type_size = Kind == MemberKind.Struct && first_nonstatic_field == null && !(this is StateMachine) ? 1 : 0;
+			int type_size = Kind == MemberKind.Struct && !HasInstanceField && !(this is StateMachine) ? 1 : 0;
 
 			var parent_def = Parent as TypeDefinition;
 			if (parent_def == null) {
@@ -2214,6 +2227,10 @@ namespace Mono.CSharp
 				Module.PredefinedAttributes.CompilerGenerated.EmitAttribute (TypeBuilder);
 
 #if STATIC
+			if (Kind == MemberKind.Struct && HasInstanceField) {
+				TypeBuilder.__SetLayout (0, 0);
+			}
+
 			if ((TypeBuilder.Attributes & TypeAttributes.StringFormatMask) == 0 && Module.HasDefaultCharSet)
 				TypeBuilder.__SetAttributes (TypeBuilder.Attributes | Module.DefaultCharSetType);
 #endif
@@ -3146,7 +3163,7 @@ namespace Mono.CSharp
 				return false;
 			}
 
-			if (first_nonstatic_field != null) {
+			if (HasInstanceField) {
 				requires_delayed_unmanagedtype_check = true;
 
 				foreach (var member in Members) {

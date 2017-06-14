@@ -19,8 +19,14 @@ package module which drives the compilation of this directory.
 	class/
 		The class libraries.
 
+	docs/
+		Some notes on the compiler and the class libraries.
+
 	errors/
 		Sample programs that should generate errors by the C# compiler.
+
+	ilasm/
+		The IL assembler.
 
 	jay/
 		Yacc-based parser generator.
@@ -28,22 +34,19 @@ package module which drives the compilation of this directory.
 	mcs/
 		The Mono C# compiler
 
+	nunit24/
+		An old copy of the NUnit 2.4 library that we ship for historical reasons.
+
+	packages/
+		Integrates some packages from NuGet (like Roslyn) into the build system.
+
 	tests/
 		Regression test suite for the C# compiler
 
-	docs/
-		Some notes on the compiler and the class libraries.
-
-	nant/
-		A copy of nant source code, used during the build process
-		on Windows.
-
 	tools/
 		Various small development tools: CorCompare used to compare
-	 	two assemblies for differences in the API;   TypeReflector is 
-		a tool used to introspect types from assemblies from the 
-		command line;  MonoStyle helps you keep your code indendented
-		with the Mono programming style.
+		two assemblies for differences in the API; csharp is a C# REPL;
+		cil-strip trims IL from assemblies.
 
 * Building Individual Directories
 =================================
@@ -51,14 +54,14 @@ package module which drives the compilation of this directory.
 You can build individual components in the hierarchy by running the command
 "make", and to install it use "make install".
 
-By default, the 2.x profile is built, if you want to build the net 1.1 profile,
+By default, the 4.x profile is built, if you want to build other profiles,
 use the following command:
 
-	make PROFILE=net_1_1
+	make PROFILE=<profilename>
 
 And to install:
 
-	make PROFILE=net_1_1 install
+	make PROFILE=<profilename> install
 
 To turn on verbose mode in the build (for example to diagnose a
 problem), you can use the V=1 flag, like this:
@@ -68,16 +71,14 @@ problem), you can use the V=1 flag, like this:
 * Running Unit tests
 ====================
 
-You can run unit tests in individual components by running the command
-"make run-test".  If you want to run tests for a different profile (say
-'net_1_1')
+You can run unit tests in individual components by running the command:
 
-	make run-test PROFILE=net_1_1
+	make run-test
 
 If you want to only run the tests in a single fixture (say
 'MonoTests.System.TypeTest'), you can use
 
-	make run-test TEST_HARNESS_FLAGS=/fixture:MonoTests.System.TypeTest
+	make run-test TEST_FIXTURE=System.TypeTest
 
 * Acknowledgements
 ==================

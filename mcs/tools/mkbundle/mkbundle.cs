@@ -1110,6 +1110,14 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		}
 
 		if (error != null) {
+			Console.Error.WriteLine ("Failure to load i18n assemblies, the following directories were searched for the assemblies:");
+			foreach (var path in link_paths){
+				Console.Error.WriteLine ("   Path: " + path);
+			}
+			if (custom_mode){
+				Console.WriteLine ("In Custom mode, you need to provide the directory to lookup assemblies from using -L");
+			}
+			
 			Error ("Couldn't load one or more of the i18n assemblies: " + error);
 			Environment.Exit (1);
 		}
@@ -1118,10 +1126,10 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 	
 	static readonly Universe universe = new Universe ();
 	static readonly Dictionary<string, string> loaded_assemblies = new Dictionary<string, string> ();
-	static readonly string resourcePathSeparator = (Path.DirectorySeparatorChar == '\\') ? $"\\{Path.DirectorySeparatorChar}" : $"{Path.DirectorySeparatorChar}";
 
 	public static string GetAssemblyName (string path)
 	{
+		string resourcePathSeparator = style == "windows" ? "\\\\" : "/";
 		string name = Path.GetFileName (path);
 
 		// A bit of a hack to support satellite assemblies. They all share the same name but
@@ -1183,7 +1191,12 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		Assembly a = null;
 		
 		try {
+			if (!quiet)
+				Console.WriteLine ("Attempting to load assembly: {0}", assembly);
 			a = universe.LoadFile (assembly);
+			if (!quiet)
+				Console.WriteLine ("Assembly {0} loaded successfully.", assembly);
+			
 		} catch (FileNotFoundException){
 			Error ($"Cannot find assembly `{assembly}'");
 		} catch (IKVM.Reflection.BadImageFormatException f) {
@@ -1206,6 +1219,8 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		string total_log = "";
 		foreach (string dir in link_paths){
 			string full_path = Path.Combine (dir, assembly);
+			if (!quiet)
+				Console.WriteLine ("Attempting to load assembly from: " + full_path);
 			if (!assembly.EndsWith (".dll") && !assembly.EndsWith (".exe"))
 				full_path += ".dll";
 			

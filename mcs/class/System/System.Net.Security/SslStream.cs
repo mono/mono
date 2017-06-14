@@ -130,7 +130,7 @@ namespace System.Net.Security
 		{
 		}
 
-		SslStream (Stream innerStream, bool leaveInnerStreamOpen, MonoTlsProvider provider, MonoTlsSettings settings)
+		internal SslStream (Stream innerStream, bool leaveInnerStreamOpen, MonoTlsProvider provider, MonoTlsSettings settings)
 			: base (innerStream, leaveInnerStreamOpen)
 		{
 			this.provider = provider;
@@ -221,6 +221,11 @@ namespace System.Net.Security
 		public virtual Task AuthenticateAsServerAsync (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
 		{
 			return Impl.AuthenticateAsServerAsync (serverCertificate, clientCertificateRequired, enabledSslProtocols, checkCertificateRevocation);
+		}
+
+		public virtual Task ShutdownAsync ()
+		{
+			return Impl.ShutdownAsync ();
 		}
 
 		public override bool IsAuthenticated {

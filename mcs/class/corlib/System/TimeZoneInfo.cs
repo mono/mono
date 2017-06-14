@@ -574,11 +574,17 @@ namespace System
 #if LIBC
 		private static TimeZoneInfo FindSystemTimeZoneByFileName (string id, string filepath)
 		{
-			if (!File.Exists (filepath))
-				throw new TimeZoneNotFoundException ();
-
-			using (FileStream stream = File.OpenRead (filepath)) {
+			FileStream stream = null;
+			try {
+				stream = File.OpenRead (filepath);	
+			} catch (Exception ex) {
+				throw new TimeZoneNotFoundException ("Couldn't read time zone file " + filepath, ex);
+			}
+			try {
 				return BuildFromStream (id, stream);
+			} finally {
+				if (stream != null)
+					stream.Dispose();
 			}
 		}
 #endif

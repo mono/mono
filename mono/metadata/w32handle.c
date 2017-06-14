@@ -25,7 +25,7 @@
 
 #undef DEBUG_REFS
 
-#define SLOT_MAX		(1024 * 16)
+#define SLOT_MAX		(1024 * 32)
 
 /* must be a power of 2 */
 #define HANDLE_PER_SLOT	(256)
@@ -809,7 +809,7 @@ mono_w32handle_ops_signal (gpointer handle)
 	type = handle_data->type;
 
 	if (handle_ops[type] != NULL && handle_ops[type]->signal != NULL) {
-		handle_ops[type]->signal (handle);
+		handle_ops[type]->signal (handle, handle_data->specific);
 	}
 }
 

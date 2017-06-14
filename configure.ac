@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 #AC_PREREQ([2.62])
 
-AC_INIT(mono, [5.3.0],
+AC_INIT(mono, [5.5.0],
         [http://bugzilla.xamarin.com/enter_bug.cgi?classification=Mono])
 
 AC_CONFIG_SRCDIR([README.md])
@@ -40,7 +40,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # This can be reset to 0 when Mono's version number is bumped
 # since it's part of the corlib version (the prefix '1' in the full
 # version number is to ensure the number isn't treated as octal in C)
-MONO_CORLIB_COUNTER=1
+MONO_CORLIB_COUNTER=2
 MONO_CORLIB_VERSION=`printf "1%02d%02d%02d%03d" $MONO_VERSION_MAJOR $MONO_VERSION_MINOR $MONO_VERSION_BUILD $MONO_CORLIB_COUNTER`
 
 AC_DEFINE_UNQUOTED(MONO_CORLIB_VERSION,$MONO_CORLIB_VERSION,[Version of the corlib-runtime interface])
@@ -264,17 +264,8 @@ case "$host" in
 		with_sgen_default_concurrent=yes
 		;;
 	*-*-nacl*)
-		CPPFLAGS="$CPPFLAGS -DGC_LINUX_THREADS -D_GNU_SOURCE -D_REENTRANT -DUSE_MMAP"
-		if test "x$disable_munmap" != "xyes"; then
-			CPPFLAGS="$CPPFLAGS -DUSE_MUNMAP"
-		fi
-		libmono_cflags="-D_REENTRANT"
-		libdl=
-		libgc_threads=pthreads
-		use_sigposix=yes
-		ikvm_native=no
-		AC_DEFINE(DISABLE_SOCKETS,1,[Disable sockets support])
-		AC_DEFINE(DISABLE_ATTACH, 1, [Disable agent attach support])
+		echo "nacl no longer supported."
+		exit 1
 		;;
 	*-*-hpux*)
 		CPPFLAGS="$CPPFLAGS -DGC_HPUX_THREADS -D_HPUX_SOURCE -D_XOPEN_SOURCE_EXTENDED -D_REENTRANT"
@@ -742,10 +733,6 @@ if test "x$enable_libraries" = "xno"; then
 fi
 
 AM_CONDITIONAL(DISABLE_LIBRARIES, test x$enable_libraries = xno)
-
-case $host in
-*nacl* ) with_shared_mono=yes;;
-esac
 
 if test "x$host_win32" = "xyes"; then
    # Boehm GC requires the runtime to be in its own dll
@@ -1370,8 +1357,6 @@ AC_TRY_COMPILE([
 	AC_MSG_RESULT(no)
 	AC_DEFINE_UNQUOTED(MONO_ZERO_LEN_ARRAY, 1, [Length of zero length arrays])
 ])
-
-AC_CHECK_HEADERS(nacl/nacl_dyncode.h)
 
 dnl ***********************************
 dnl *** Checks for signals
@@ -2220,13 +2205,11 @@ if test x$host_win32 = xno; then
 	dnl **********************************
 	dnl *** epoll			   ***
 	dnl **********************************
-	if test "x$ac_cv_header_nacl_nacl_dyncode_h" = "xno"; then
-		AC_CHECK_HEADERS(sys/epoll.h)
-		haveepoll=no
-		AC_CHECK_FUNCS(epoll_ctl, [haveepoll=yes], )
-		if test "x$haveepoll" = "xyes" -a "x$ac_cv_header_sys_epoll_h" = "xyes"; then
-			AC_DEFINE(HAVE_EPOLL, 1, [epoll supported])
-		fi
+	AC_CHECK_HEADERS(sys/epoll.h)
+	haveepoll=no
+	AC_CHECK_FUNCS(epoll_ctl, [haveepoll=yes], )
+	if test "x$haveepoll" = "xyes" -a "x$ac_cv_header_sys_epoll_h" = "xyes"; then
+		AC_DEFINE(HAVE_EPOLL, 1, [epoll supported])
 	fi
 
 	havekqueue=no
@@ -2859,40 +2842,6 @@ fi
 AM_CONDITIONAL(ENABLE_DTRACE, [test x$enable_dtrace = xyes])
 AM_CONDITIONAL(DTRACE_G_REQUIRED, [test x$dtrace_g = xyes])
 
-dnl **************
-dnl ***  NaCl  ***
-dnl **************
-
-AC_ARG_ENABLE(nacl_codegen, [  --enable-nacl-codegen      Enable Native Client code generation], enable_nacl_codegen=$enableval, enable_nacl_codegen=no)
-AC_ARG_ENABLE(nacl_gc, [  --enable-nacl-gc           Enable Native Client garbage collection], enable_nacl_gc=$enableval, enable_nacl_gc=no)
-
-AM_CONDITIONAL(NACL_CODEGEN, test x$enable_nacl_codegen != xno)
-
-dnl
-dnl Hack to use system mono for operations in build/install not allowed in NaCl.
-dnl
-nacl_self_host=""
-if test "x$ac_cv_header_nacl_nacl_dyncode_h" = "xyes"; then
-   nacl_self_host="nacl_self_host"
-fi
-AC_SUBST(nacl_self_host)
-
-if test "x$enable_nacl_codegen" = "xyes"; then
-   MONO_NACL_ALIGN_MASK_OFF=1
-   AC_DEFINE(TARGET_NACL, 1, [...])
-   AC_DEFINE(__native_client_codegen__, 1, [...])
-fi
-if test "x$enable_nacl_gc" = "xyes"; then
-   if test "x$TARGET" = "xAMD64" -o "x$TARGET" = "xX86"; then
-      INSTRUMENT_CFLAG="-finstrument-for-thread-suspension"
-   else
-      # Not yet implemented
-      INSTRUMENT_CFLAG=""
-   fi
-   CPPFLAGS="$CPPFLAGS $INSTRUMENT_CFLAG -D__native_client_gc__"
-fi
-AC_SUBST(MONO_NACL_ALIGN_MASK_OFF)
-
 dnl **************************
 dnl *** AOT cross offsets  ***
 dnl **************************
@@ -3155,21 +3104,6 @@ case "$host" in
 		  mingw*)
 			;;
 		esac
-		case "$host" in
-			x86_64-*-nacl*)
-				AC_DEFINE(__mono_ilp32__, 1, [64 bit mode with 4 byte longs and pointers])
-				sizeof_register=8
-				;;
-		esac
-		;;
-	ia64-*-*)
-		TARGET=IA64
-		arch_target=ia64
-		ACCESS_UNALIGNED="no"
-		LIBC="libc.so.6.1"
-		INTL="libc.so.6.1"
-		AC_CHECK_LIB(unwind, _U_dyn_register, [], [AC_MSG_ERROR(library libunwind not found)])
-		libmono_ldflags="-lunwind"
 		;;
 	sparc*-*-*)
 		if test "x$ac_cv_sizeof_void_p" = "x8"; then
@@ -3235,6 +3169,14 @@ case "$host" in
 		ACCESS_UNALIGNED="no"
 		AOT_SUPPORTED="yes"
 		CPPFLAGS="$CPPFLAGS -D__ARM_EABI__"
+		BTLS_SUPPORTED=yes
+		BTLS_PLATFORM=arm
+		AC_CHECK_HEADER(stdalign.h,[],[BTLS_SUPPORTED=no])
+		case "$target" in
+		arm*-linux*-gnueabi)
+			BTLS_PLATFORM=armsoft
+			;;
+		esac
 		;;
 	arm*-netbsd*-eabi*)
 		TARGET=ARM;
@@ -3242,19 +3184,15 @@ case "$host" in
 		ACCESS_UNALIGNED="no"
 		CPPFLAGS="$CPPFLAGS -D__ARM_EABI__"
 		;;
-# TODO: make proper support for NaCl host.
-#        arm*-*nacl)
-#		TARGET=ARM;
-#		arch_target=arm;
-#		ACCESS_UNALIGNED="no"
-#		AOT_SUPPORTED="no"
-#		;;
 	aarch64-*)
 		# https://lkml.org/lkml/2012/7/15/133
 		TARGET=ARM64
 		arch_target=arm64
 		boehm_supported=false
 		AOT_SUPPORTED="yes"
+		BTLS_SUPPORTED=yes
+		BTLS_PLATFORM=aarch64
+		AC_CHECK_HEADER(stdalign.h,[],[BTLS_SUPPORTED=no])
 		;;
 	s390x-*-linux*)
 		TARGET=S390X;
@@ -3305,38 +3243,6 @@ if test "x$host" != "x$target"; then
 		# uses this define
 		sizeof_register=8
 		target_byte_order=G_BIG_ENDIAN
-		;;
-   x86_64-*-nacl)
-		TARGET=AMD64
-		arch_target=amd64
-		AC_DEFINE(TARGET_AMD64, 1, [...])
-		AC_DEFINE(__mono_ilp32__, 1, [64 bit mode with 4 byte longs and pointers])
-		sizeof_register=8
-		;;
-# TODO: make proper support for NaCl target.
-#   arm*-*nacl)
-#		TARGET=ARM
-#		arch_target=arm
-#		AC_DEFINE(TARGET_ARM, 1, [...])
-#		ACCESS_UNALIGNED="no"
-#		sizeof_register=4
-#               CPPFLAGS="$CPPFLAGS \
-#                    -D__ARM_EABI__ \
-#                    -D__arm__ \
-#                    -D__portable_native_client__ \
-#                    -Dtimezone=_timezone \
-#                    -DDISABLE_SOCKETS \
-#                    -DDISABLE_ATTACH \
-#                    -DUSE_NEWLIB"
-		# Can't use tls, since it depends on the runtime detection of tls offsets
-		# in mono-compiler.h
-#		with_tls=pthread
-#		;;
-   i686-*-nacl)
-		TARGET=X86
-		arch_target=x86
-		AC_DEFINE(TARGET_X86, 1, [...])
-		sizeof_register=4
 		;;
    arm*-linux-*)
 		TARGET=ARM;
@@ -3468,9 +3374,6 @@ S390X)
 MIPS)
 	AC_DEFINE(TARGET_MIPS, 1, [...])
 	;;
-IA64)
-	AC_DEFINE(TARGET_IA64, 1, [...])
-	;;
 SPARC)
 	AC_DEFINE(TARGET_SPARC, 1, [...])
 	;;
@@ -3504,9 +3407,6 @@ S390X)
 	;;
 MIPS)
 	AC_DEFINE(HOST_MIPS, 1, [...])
-	;;
-IA64)
-	AC_DEFINE(HOST_IA64, 1, [...])
 	;;
 SPARC)
 	AC_DEFINE(HOST_SPARC, 1, [...])
@@ -3633,7 +3533,6 @@ if test "x$enable_interpreter" = "xyes"; then
 fi
 
 AM_CONDITIONAL(ENABLE_INTERPRETER, [test x$enable_interpreter = xyes])
-
 
 dnl 
 dnl Simple Generational checks (sgen)
@@ -4095,8 +3994,6 @@ dnl **************
 AC_ARG_ENABLE(btls, [  --disable-btls             Disable the BoringTls provider], enable_btls=$enableval, enable_btls=$BTLS_SUPPORTED)
 AC_ARG_WITH(btls_android_ndk, [  --with-btls-android-ndk        Android NDK for BoringTls])
 
-AC_ARG_ENABLE(dynamic-btls, [ --enable-dynamic-btls Place the BTLS provider into a separate shared library/archive.], enable_dynamic_btls=$enableval, enable_dynamic_btls=no)
-
 AM_CONDITIONAL(BTLS, test x$enable_btls = xyes)
 
 btls_android=no
@@ -4124,6 +4021,16 @@ if test "x$enable_btls" = "xyes"; then
 		;;
 	x86_64)
 		btls_arch=x86_64
+		;;
+	arm)
+		btls_arch=arm
+		;;
+	armsoft)
+		btls_arch=arm
+		btls_cflags="-DOPENSSL_NO_ASM=1"
+		;;
+	aarch64)
+		btls_arch=aarch64
 		;;
 	android-armv5)
 		BTLS_CMAKE_ARGS="-DANDROID_ABI=\"armeabi\" -DANDROID_NATIVE_API_LEVEL=12"
@@ -4192,7 +4099,6 @@ AM_CONDITIONAL(SPARC, test x$TARGET = xSPARC)
 AM_CONDITIONAL(SPARC64, test x$TARGET = xSPARC64)
 AM_CONDITIONAL(X86, test x$TARGET = xX86)
 AM_CONDITIONAL(AMD64, test x$TARGET = xAMD64)
-AM_CONDITIONAL(IA64, test x$TARGET = xIA64)
 AM_CONDITIONAL(MIPS, test x$TARGET = xMIPS)
 AM_CONDITIONAL(POWERPC, test x$TARGET = xPOWERPC)
 AM_CONDITIONAL(POWERPC64, test x$TARGET = xPOWERPC64)
@@ -4228,7 +4134,7 @@ AC_SUBST(mono_build_root)
 mono_runtime=mono/mini/mono
 AC_SUBST(mono_runtime)
 
-CSC_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.1.0/tools/csc.exe
+CSC_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.3.0/tools/csc.exe
 
 if test $csc_compiler = mcs; then
   CSC=$mcs_topdir/class/lib/build/mcs.exe
@@ -4435,7 +4341,6 @@ mono/arch/sparc/Makefile
 mono/arch/s390x/Makefile
 mono/arch/arm/Makefile
 mono/arch/arm64/Makefile
-mono/arch/ia64/Makefile
 mono/arch/mips/Makefile
 mono/sgen/Makefile
 mono/tests/Makefile
@@ -4555,7 +4460,19 @@ fi
     echo "MONO_CORLIB_VERSION = $MONO_CORLIB_VERSION" >> $mcs_topdir/build/config.make
 
     if test x$host_darwin = xyes; then
-      echo "PLATFORM = darwin" >> $mcs_topdir/build/config.make
+      echo "BUILD_PLATFORM = darwin" >> $mcs_topdir/build/config.make
+    elif test x$host_win32 = xyes; then
+      echo "BUILD_PLATFORM = win32" >> $mcs_topdir/build/config.make
+    else
+      echo "BUILD_PLATFORM = linux" >> $mcs_topdir/build/config.make
+    fi
+
+    if test x$host_darwin = xyes; then
+      echo "HOST_PLATFORM ?= darwin" >> $mcs_topdir/build/config.make
+    elif test x$host_win32 = xyes; then
+      echo "HOST_PLATFORM ?= win32" >> $mcs_topdir/build/config.make
+    else
+      echo "HOST_PLATFORM ?= linux" >> $mcs_topdir/build/config.make
     fi
 
     if test "x$PLATFORM_AOT_SUFFIX" != "x"; then
@@ -4597,9 +4514,6 @@ fi
 
     if test "x$enable_btls" = "xyes"; then
       echo "HAVE_BTLS=1" >> $srcdir/$mcsdir/build/config.make
-      if test "x$enable_dynamic_btls" = "xyes"; then
-        echo "HAVE_DYNAMIC_BTLS=1" >> $srcdir/$mcsdir/build/config.make
-      fi
     fi
 
   fi

@@ -95,8 +95,7 @@ DISTFILES = \
 	mkinstalldirs		\
 	MonoIcon.png		\
 	README			\
-	ScalableMonoIcon.svg	\
-	winexe.in
+	ScalableMonoIcon.svg
 
 dist-local: dist-default
 
@@ -138,34 +137,12 @@ distcheck: dist-tarball
 	rm -f before.list after.list distdist.list ; \
 	rm -rf $(package) InstallTest
 
-monocharge:
-	chargedir=monocharge-`date -u +%Y%m%d` ; \
-	mkdir "$$chargedir" ; \
-	DESTDIR=`cd "$$chargedir" && pwd` ; \
-	$(MAKE) install DESTDIR="$$DESTDIR" || exit 1 ; \
-	tar cvjf "$$chargedir".tar.bz2 "$$chargedir" ; \
-	rm -rf "$$chargedir"
-
-# A bare-bones monocharge.
-
-monocharge-lite:
-	chargedir=monocharge-lite-`date -u +%Y%m%d` ; \
-	mkdir "$$chargedir" ; \
-	DESTDIR=`cd "$$chargedir" && pwd` ; \
-	$(MAKE) -C mcs install DESTDIR="$$DESTDIR" || exit 1; \
-	$(MAKE) -C class/corlib install DESTDIR="$$DESTDIR" || exit 1; \
-	$(MAKE) -C class/System install DESTDIR="$$DESTDIR" || exit 1; \
-	$(MAKE) -C class/System.XML install DESTDIR="$$DESTDIR" || exit 1; \
-	$(MAKE) -C class/Mono.CSharp.Debugger install DESTDIR="$$DESTDIR" || exit 1; \
-	tar cvjf "$$chargedir".tar.bz2 "$$chargedir" ; \
-	rm -rf "$$chargedir"
-
 # Targets for creating API diffs of the framework
 
 MONO_API_SNAPSHOT_PATH := $(topdir)../external/api-snapshot/
 GENAPI := $(MONO_API_SNAPSHOT_PATH)tools/genapi/GenAPI.exe
 MONO_API_SNAPSHOT_PROFILE_PATH := $(MONO_API_SNAPSHOT_PATH)profiles/$(PROFILE)/
-MONO_API_ASSEMBLIES_IGNORED := $(addprefix $(topdir)class/lib/$(PROFILE)/, SystemWebTestShim.dll standalone-runner-support.dll nunit.core.dll nunit.core.extensions.dll nunit.core.interfaces.dll nunit.framework.dll nunit.framework.extensions.dll nunit.mocks.dll nunit.util.dll nunit-console-runner.dll nunitlite.dll)
+MONO_API_ASSEMBLIES_IGNORED := $(addprefix $(topdir)class/lib/$(PROFILE)/, Mono.CSharp.dll SystemWebTestShim.dll standalone-runner-support.dll nunit.core.dll nunit.core.extensions.dll nunit.core.interfaces.dll nunit.framework.dll nunit.framework.extensions.dll nunit.mocks.dll nunit.util.dll nunit-console-runner.dll nunitlite.dll)
 MONO_API_ASSEMBLIES := $(filter-out $(MONO_API_ASSEMBLIES_IGNORED), $(wildcard $(topdir)class/lib/$(PROFILE)/*.dll)) $(wildcard $(topdir)class/lib/$(PROFILE)/Facades/*.dll)
 MONO_API_ASSEMBLIES_CS := $(MONO_API_ASSEMBLIES:$(topdir)class/lib/$(PROFILE)/%.dll=$(MONO_API_SNAPSHOT_PROFILE_PATH)%.cs)
 

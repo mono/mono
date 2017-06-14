@@ -451,5 +451,20 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 			}
 		}
 
+		[Test]
+		public void OpenSameFileMultipleTimes ()
+		{
+			// See bug 56493 - https://bugzilla.xamarin.com/show_bug.cgi?id=56493
+			for (var iteration = 0; iteration < 5; iteration++) {
+				using (var mmf = MemoryMappedFile.CreateFromFile(fname, FileMode.Open)) {
+					using (var accessor = mmf.CreateViewAccessor(0, 5)) {
+						var a = new byte [5];
+						accessor.ReadArray (0, a, 0, a.Length);
+						var s = new string (Array.ConvertAll (a, b => (char) b));
+						Assert.AreEqual ("Hello", s);
+					}
+				}
+			}
+		}
 	}
 }

@@ -9,8 +9,11 @@
     <ProjectGuid>{DABF9F75-63AD-4991-9D2B-9234E7032B32}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>./../../class/lib/net_4_x</OutputPath>
-    <IntermediateOutputPath>obj-net_4_x</IntermediateOutputPath>
+    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Windows_NT'">win32</HostPlatform>
+    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">darwin</HostPlatform>
+    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix'">linux</HostPlatform>
+    <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
+    <IntermediateOutputPath>obj-net_4_x-$(HostPlatform)</IntermediateOutputPath>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
     
@@ -103,9 +106,6 @@
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Conversions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\COperators.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Declarations\AggregateDeclaration.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Declarations\Declaration.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Declarations\GlobalAttributeDeclaration.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Declarations\NamespaceDeclaration.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\ExplicitConversion.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\ExpressionBinder.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\ExpressionKind.cs" />
@@ -136,7 +136,6 @@
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Symbols\EventSymbol.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Symbols\FieldSymbol.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Symbols\IndexerSymbol.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Symbols\LabelSymbol.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Symbols\LocalVariableSymbol.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Symbols\MethodOrPropertySymbol.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Symbols\MethodSymbol.cs" />
@@ -154,13 +153,11 @@
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Symbols\SymbolTable.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Symbols\SymFactory.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Symbols\SymFactoryBase.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Symbols\TransparentIdentifierMemberSymbol.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Symbols\TypeParameterSymbol.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Symbols\UnresolvedAggregateSymbol.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Symbols\VariableSymbol.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\ArrayIndex.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\ArrayInitialization.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\ArrayLength.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\Assignment.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\BinaryOperator.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\Block.cs" />
@@ -170,7 +167,6 @@
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\Class.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\CompoundOperator.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\Concatenate.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\ConditionalOperator.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\Constant.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\Event.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\EXPR.cs" />

@@ -3916,10 +3916,6 @@ collect_appdomain_thread (gpointer key, gpointer value, gpointer user_data)
 gboolean
 mono_threads_abort_appdomain_threads (MonoDomain *domain, int timeout)
 {
-#ifdef __native_client__
-	return FALSE;
-#endif
-
 	abort_appdomain_data user_data;
 	gint64 start_time;
 	int orig_timeout = timeout;
@@ -4435,14 +4431,17 @@ mono_thread_execute_interruption (void)
 	LOCK_THREAD (thread);
 
 	/* MonoThread::interruption_requested can only be changed with atomics */
-	if (mono_thread_clear_interruption_requested (thread)) {
-		/* this will consume pending APC calls */
-#ifdef HOST_WIN32
-		WaitForSingleObjectEx (GetCurrentThread(), 0, TRUE);
-#endif
-		/* Clear the interrupted flag of the thread so it can wait again */
-		mono_thread_info_clear_self_interrupt ();
+	if (!mono_thread_clear_interruption_requested (thread)) {
+		UNLOCK_THREAD (thread);
+		return NULL;
 	}
+
+	/* this will consume pending APC calls */
+#ifdef HOST_WIN32
+	WaitForSingleObjectEx (GetCurrentThread(), 0, TRUE);
+#endif
+	/* Clear the interrupted flag of the thread so it can wait again */
+	mono_thread_info_clear_self_interrupt ();
 
 	/* If there's a pending exception and an AbortRequested, the pending exception takes precedence */
 	if (sys_thread->pending_exception) {

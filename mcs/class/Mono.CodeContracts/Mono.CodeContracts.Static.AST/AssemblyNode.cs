@@ -72,7 +72,7 @@ namespace Mono.CodeContracts.Static.AST {
 
 		public static AssemblyNode ReadAssembly (string filename)
 		{
-			var readerParameters = new ReaderParameters ();
+			var readerParameters = new ReaderParameters () { InMemory = true };
 			AssemblyDefinition definition = AssemblyDefinition.ReadAssembly (filename, readerParameters);
 
 			return new AssemblyNode (definition);

@@ -1089,16 +1089,6 @@ mono_lconv_to_r8_un (guint64 a)
 }
 #endif
 
-#if defined(__native_client_codegen__) || defined(__native_client__)
-/* When we cross-compile to Native Client we can't directly embed calls */
-/* to the math library on the host. This will use the fmod on the target*/
-double
-mono_fmod(double a, double b)
-{
-	return fmod(a, b);
-}
-#endif
-
 gpointer
 mono_helper_compile_generic_method (MonoObject *obj, MonoMethod *method, gpointer *this_arg)
 {
@@ -1458,11 +1448,15 @@ mono_generic_class_init (MonoVTable *vtable)
 }
 
 void
-ves_icall_mono_delegate_ctor (MonoObject *this_obj, MonoObject *target, gpointer addr)
+ves_icall_mono_delegate_ctor (MonoObject *this_obj_raw, MonoObject *target_raw, gpointer addr)
 {
+	HANDLE_FUNCTION_ENTER ();
 	MonoError error;
+	MONO_HANDLE_DCL (MonoObject, this_obj);
+	MONO_HANDLE_DCL (MonoObject, target);
 	mono_delegate_ctor (this_obj, target, addr, &error);
 	mono_error_set_pending_exception (&error);
+	HANDLE_FUNCTION_RETURN ();
 }
 
 gpointer

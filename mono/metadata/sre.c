@@ -1650,10 +1650,18 @@ mono_reflection_type_handle_mono_type (MonoReflectionTypeHandle ref, MonoError *
 			goto leave;
 		g_assert (base);
 		gint32 rank = MONO_HANDLE_GETVAL (sre_array, rank);
-		if (rank == 0) //single dimentional array
-			result = &mono_array_class_get (mono_class_from_mono_type (base), 1)->byval_arg;
-		else
-			result = &mono_bounded_array_class_get (mono_class_from_mono_type (base), rank, TRUE)->byval_arg;
+		MonoClass *eclass = mono_class_from_mono_type (base);
+		result = mono_image_new0 (eclass->image, MonoType, 1);
+		if (rank == 0)  {
+			result->type = MONO_TYPE_SZARRAY;
+			result->data.klass = eclass;
+		} else {
+			MonoArrayType *at = (MonoArrayType *)mono_image_alloc0 (eclass->image, sizeof (MonoArrayType));
+			result->type = MONO_TYPE_ARRAY;
+			result->data.array = at;
+			at->eklass = eclass;
+			at->rank = rank;
+		}
 		MONO_HANDLE_SETVAL (ref, type, MonoType*, result);
 	} else if (is_sre_byref (klass)) {
 		MonoReflectionDerivedTypeHandle sre_byref = MONO_HANDLE_CAST (MonoReflectionDerivedType, ref);
@@ -4317,16 +4325,12 @@ ves_icall_ModuleBuilder_RegisterToken (MonoReflectionModuleBuilderHandle mb, Mon
 	mono_dynamic_image_register_token (MONO_HANDLE_GETVAL (mb, dynamic_image), token, obj);
 }
 
-MonoObject*
-ves_icall_ModuleBuilder_GetRegisteredToken (MonoReflectionModuleBuilder *mb, guint32 token)
+MonoObjectHandle
+ves_icall_ModuleBuilder_GetRegisteredToken (MonoReflectionModuleBuilderHandle mb, guint32 token, MonoError *error)
 {
-	MonoObject *obj;
-
-	mono_loader_lock ();
-	obj = (MonoObject *)mono_g_hash_table_lookup (mb->dynamic_image->tokens, GUINT_TO_POINTER (token));
-	mono_loader_unlock ();
-
-	return obj;
+	error_init (error);
+	MonoDynamicImage *dynamic_image = MONO_HANDLE_GETVAL (mb, dynamic_image);
+	return mono_dynamic_image_get_registered_token (dynamic_image, token, error);
 }
 
 #ifndef DISABLE_REFLECTION_EMIT
@@ -4347,10 +4351,12 @@ ves_icall_AssemblyBuilder_basic_init (MonoReflectionAssemblyBuilder *assemblyb)
 }
 
 void
-ves_icall_EnumBuilder_setup_enum_type (MonoReflectionType *enumtype,
-									   MonoReflectionType *t)
+ves_icall_EnumBuilder_setup_enum_type (MonoReflectionTypeHandle enumtype,
+				       MonoReflectionTypeHandle t,
+				       MonoError *error)
 {
-	enumtype->type = t->type;
+	error_init (error);
+	MONO_HANDLE_SETVAL (enumtype, type, MonoType*, MONO_HANDLE_GETVAL (t, type));
 }
 
 void
@@ -4367,10 +4373,12 @@ ves_icall_ModuleBuilder_getUSIndex (MonoReflectionModuleBuilderHandle module, Mo
 }
 
 void
-ves_icall_ModuleBuilder_set_wrappers_type (MonoReflectionModuleBuilder *moduleb, MonoReflectionType *type)
+ves_icall_ModuleBuilder_set_wrappers_type (MonoReflectionModuleBuilderHandle moduleb, MonoReflectionTypeHandle ref_type, MonoError *error)
 {
-	MonoDynamicImage *image = moduleb->dynamic_image;
+	error_init (error);
+	MonoDynamicImage *image = MONO_HANDLE_GETVAL (moduleb, dynamic_image);
+	MonoType *type = MONO_HANDLE_GETVAL (ref_type, type);
 
-	g_assert (type->type);
-	image->wrappers_type = mono_class_from_mono_type (type->type);
+	g_assert (type);
+	image->wrappers_type = mono_class_from_mono_type (type);
 }

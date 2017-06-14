@@ -219,7 +219,7 @@ namespace Mono.CSharp
 %token STRUCT	
 %token SWITCH	
 %token THIS	
-%token THROW	
+%token THROW
 %token TRUE	
 %token TRY	
 %token TYPEOF	
@@ -261,6 +261,7 @@ namespace Mono.CSharp
 %token WHEN
 %token INTERPOLATED_STRING
 %token INTERPOLATED_STRING_END
+%token THROW_EXPR
 
 /* C# keywords which are not really keywords */
 %token GET
@@ -917,11 +918,25 @@ named_argument
 		$$ = new NamedArgument (lt.Value, lt.Location, (Expression) $4, arg_mod);
 		lbag.AddLocation ($$, GetLocation($2));
 	  }
+	| identifier_inside_body COLON OUT named_argument_expr_or_out_variable_declaration
+	  {
+		if (lang_version <= LanguageVersion.V_3)
+			FeatureIsNotAvailable (GetLocation ($1), "named argument");
+
+		var lt = (LocatedToken) $1;
+		$$ = new NamedArgument (lt.Value, lt.Location, (Expression) $4, Argument.AType.Out);
+		lbag.AddLocation ($$, GetLocation($2));
+	  }
+
 	;
 
 named_argument_expr
 	: expression_or_error
-//	| declaration_expression
+	;
+
+named_argument_expr_or_out_variable_declaration
+	: expression_or_error
+	| out_variable_declaration
 	;
 	
 opt_named_modifier
@@ -929,10 +944,6 @@ opt_named_modifier
 	| REF
 	  { 
 		$$ = Argument.AType.Ref;
-	  }
-	| OUT
-	  { 
-		$$ = Argument.AType.Out;
 	  }
 	;
 		  
@@ -2073,7 +2084,8 @@ set_accessor_declaration
 	;
 
 accessor_body
-	: block 
+	: block
+	| expression_block
 	| SEMICOLON
 	  {
 		// TODO: lbag
@@ -2085,6 +2097,7 @@ accessor_body
 	  	$$ = null;
 	  }
 	;
+
 
 interface_declaration
 	: opt_attributes
@@ -2629,15 +2642,10 @@ event_declarator
 	  	$$ = new FieldDeclarator (new SimpleMemberName (lt.Value, lt.Location), null);
 	  	lbag.AddLocation ($$, GetLocation ($1));
 	  }
-	| COMMA IDENTIFIER ASSIGN
+	| COMMA IDENTIFIER ASSIGN event_variable_initializer
 	  {
-		++lexer.parsing_block;
-	  }
-	  event_variable_initializer
-	  {
-		--lexer.parsing_block;
 		var lt = (LocatedToken) $2;	  
-	  	$$ = new FieldDeclarator (new SimpleMemberName (lt.Value, lt.Location), (Expression) $5);
+		$$ = new FieldDeclarator (new SimpleMemberName (lt.Value, lt.Location), (Expression) $4);
 	  	lbag.AddLocation ($$, GetLocation ($1), GetLocation ($3));
 	  }
 	;
@@ -2652,11 +2660,19 @@ event_variable_initializer
 	  	if ((current_event_field.ModFlags & Modifiers.ABSTRACT) != 0) {
 			report.Error (74, lexer.Location, "`{0}': abstract event cannot have an initializer",
 				current_event_field.GetSignatureForError ());
-	  	}		
+	  	}
+
+		++lexer.parsing_block;
+		current_local_parameters = ParametersCompiled.EmptyReadOnlyParameters;
+		start_block (lexer.Location);
 	  }
 	  variable_initializer
 	  {
 		$$ = $2;
+
+		--lexer.parsing_block;
+		end_block (lexer.Location);
+		current_local_parameters = null;
 	  }
 	;
 	
@@ -2742,7 +2758,8 @@ event_accessor_block
 		report.Error (73, lexer.Location, "An add or remove accessor must have a body");
 		$$ = null;
 	  }
-	| block;
+	| block
+	| expression_block
 	;
 
 attributes_without_members
@@ -3718,16 +3735,12 @@ non_simple_argument
 		$$ = new Argument ((Expression) $2, Argument.AType.Ref);
 		lbag.AddLocation ($$, GetLocation ($1));
 	  }
-	| REF declaration_expression
-	  {
-		$$ = new Argument ((Expression) $2, Argument.AType.Ref);
-	  }
 	| OUT variable_reference 
 	  { 
 		$$ = new Argument ((Expression) $2, Argument.AType.Out);
 		lbag.AddLocation ($$, GetLocation ($1));
 	  }
-	| OUT declaration_expression
+	| OUT out_variable_declaration
 	  {
 		$$ = new Argument ((Expression) $2, Argument.AType.Out);
 	  }
@@ -3743,45 +3756,16 @@ non_simple_argument
 	  }	  
 	;
 
-declaration_expression
-	: OPEN_PARENS declaration_expression CLOSE_PARENS
+out_variable_declaration
+	: variable_type identifier_inside_body
 	  {
-		$$ = new ParenthesizedExpression ((Expression) $2, GetLocation ($1));
-		lbag.AddLocation ($$, GetLocation ($1), GetLocation ($3));
-	  }
-/*
-	| CHECKED open_parens_any declaration_expression CLOSE_PARENS
-	  {
-		$$ = new CheckedExpr ((Expression) $3, GetLocation ($1));
-		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($4));
-	  }
-	| UNCHECKED open_parens_any declaration_expression CLOSE_PARENS
-	  {
-		$$ = new UnCheckedExpr ((Expression) $3, GetLocation ($1));
-		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($4));
-	  }
-*/
-	| variable_type identifier_inside_body
-	  {
-		if (lang_version != LanguageVersion.Experimental)
-			FeatureIsNotAvailable (GetLocation ($1), "declaration expression");
+		if (lang_version < LanguageVersion.V_7)
+			FeatureIsNotAvailable (GetLocation ($1), "out variable declaration");
 
 		var lt = (LocatedToken) $2;
 		var lv = new LocalVariable (current_block, lt.Value, lt.Location);
 		current_block.AddLocalName (lv);
 		$$ = new DeclarationExpression ((FullNamedExpression) $1, lv);
-	  }
-	| variable_type identifier_inside_body ASSIGN expression
-	  {
-		if (lang_version != LanguageVersion.Experimental)
-			FeatureIsNotAvailable (GetLocation ($1), "declaration expression");
-
-		var lt = (LocatedToken) $2;
-		var lv = new LocalVariable (current_block, lt.Value, lt.Location);
-		current_block.AddLocalName (lv);
-		$$ = new DeclarationExpression ((FullNamedExpression) $1, lv) {
-			Initializer = (Expression) $4
-		};
 	  }
 	;
 
@@ -4307,6 +4291,13 @@ unary_expression
 		
 		$$ = new Await ((Expression) $2, GetLocation ($1));
 	  }
+	| THROW_EXPR prefixed_unary_expression
+	  {
+		if (lang_version < LanguageVersion.V_7)
+			FeatureIsNotAvailable (lexer.Location, "throw expression");
+
+		$$ = new ThrowExpression ((Expression) $2, GetLocation ($1));
+	  }
 	| BANG error
 	  {
 		Error_SyntaxError (yyToken);
@@ -4476,12 +4467,13 @@ additive_expression
 	  {
 		var is_expr = new Is ((Expression) $1, (Expression) $3, GetLocation ($2));
 		if ($4 != null) {
-			if (lang_version != LanguageVersion.Experimental)
-				FeatureIsNotAvailable (GetLocation ($4), "type pattern matching");
+			if (lang_version < LanguageVersion.V_7)
+				FeatureIsNotAvailable (GetLocation ($4), "pattern matching");
 
 			var lt = (LocatedToken) $4;
-			is_expr.Variable = new LocalVariable (current_block, lt.Value, lt.Location);
-			current_block.AddLocalName (is_expr.Variable);
+			var lv = new LocalVariable (current_block, lt.Value, lt.Location);
+			is_expr.Variable = lv;
+			current_block.AddLocalName (lv);
 		}
 
 		$$ = is_expr;
@@ -4839,6 +4831,15 @@ conditional_expression
 	| null_coalescing_expression INTERR expression COLON expression
 	  {
 		$$ = new Conditional (new BooleanExpression ((Expression) $1), (Expression) $3, (Expression) $5, GetLocation ($2));
+		lbag.AddLocation ($$, GetLocation ($4));
+	  }
+	| null_coalescing_expression INTERR expression COLON THROW prefixed_unary_expression
+	  {
+		if (lang_version < LanguageVersion.V_7)
+			FeatureIsNotAvailable (lexer.Location, "throw expression");
+
+		var expr = new ThrowExpression ((Expression) $6, GetLocation ($5));
+		$$ = new Conditional (new BooleanExpression ((Expression) $1), (Expression) $3, expr, GetLocation ($2));
 		lbag.AddLocation ($$, GetLocation ($4));
 	  }
 	| null_coalescing_expression INTERR expression error
@@ -6363,10 +6364,15 @@ return_statement
 	;
 
 throw_statement
-	: THROW opt_expression SEMICOLON
+	: THROW expression SEMICOLON
 	  {
 		$$ = new Throw ((Expression) $2, GetLocation ($1));
 		lbag.AddStatement ($$, GetLocation ($3));
+	  }
+	| THROW SEMICOLON
+	  {
+		$$ = new Throw (null, GetLocation ($1));
+		lbag.AddStatement ($$, GetLocation ($2));
 	  }
 	| THROW expression error
 	  {
@@ -7700,8 +7706,7 @@ void start_block (Location loc)
 	}
 }
 
-Block
-end_block (Location loc)
+Block end_block (Location loc)
 {
 	Block retval = current_block.Explicit;
 	retval.SetEndLocation (loc);
@@ -8078,6 +8083,7 @@ static string GetTokenName (int token)
 	case Token.THIS:
 		return "this";
 	case Token.THROW:
+	case Token.THROW_EXPR:
 		return "throw";
 	case Token.TRUE:
 		return "true";

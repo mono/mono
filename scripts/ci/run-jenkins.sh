@@ -5,7 +5,13 @@ export TESTCMD=${MONO_REPO_ROOT}/scripts/ci/run-step.sh
 
 export TEST_HARNESS_VERBOSE=1
 
-if [[ ${label} == w* ]]; then
+if [[ $CI_TAGS == *'collect-coverage'* ]]; then
+    # Collect coverage for further use by lcov and similar tools.
+    # Coverage must be collected with -O0 and debug information.
+    export CFLAGS="-ggdb3 --coverage -O0"
+    # Collect coverage on all optimizations
+    export MONO_ENV_OPTIONS="$MONO_ENV_OPTIONS -O=all"
+elif [[ ${label} == w* ]]; then
     # Passing -ggdb3 on Cygwin breaks linking against libmonosgen-x.y.dll
     export CFLAGS="-g -O2"
 else

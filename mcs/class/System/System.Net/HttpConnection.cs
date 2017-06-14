@@ -379,7 +379,7 @@ namespace System.Net {
 				HttpListenerResponse response = context.Response;
 				response.StatusCode = status;
 				response.ContentType = "text/html";
-				string description = HttpListenerResponseHelper.GetStatusDescription (status);
+				string description = HttpStatusDescription.Get (status);
 				string str;
 				if (msg != null)
 					str = String.Format ("<h1>{0} ({1})</h1>", description, msg);

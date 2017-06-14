@@ -744,6 +744,9 @@ namespace Mono.CSharp {
 			if (expr_type == target_type)
 				return true;
 
+			if (expr_type == InternalType.ThrowExpr)
+				return target_type.Kind != MemberKind.InternalCompilerType;
+
 			if (target_type.IsNullableType)
 				return ImplicitNulableConversion (null, expr, target_type) != null;
 
@@ -1370,7 +1373,7 @@ namespace Mono.CSharp {
 			Expression e;
 
 			if (expr_type == target_type) {
-				if (expr_type != InternalType.NullLiteral && expr_type != InternalType.AnonymousMethod)
+				if (expr_type != InternalType.NullLiteral && expr_type != InternalType.AnonymousMethod && expr_type != InternalType.ThrowExpr)
 					return expr;
 				return null;
 			}
@@ -1394,6 +1397,10 @@ namespace Mono.CSharp {
 				}
 
 				return null;
+			}
+
+			if (expr_type == InternalType.ThrowExpr) {
+				return target_type.Kind == MemberKind.InternalCompilerType ? null : EmptyCast.Create (expr, target_type);
 			}
 
 			if (target_type.IsNullableType)

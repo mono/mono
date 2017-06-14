@@ -1001,14 +1001,17 @@ get_call_info (MonoMemPool *mp, MonoMethodSignature *sig)
 		case MONO_TYPE_I1:
 		case MONO_TYPE_U1:
 			add_general (&gr, &stack_size, ainfo);
+			ainfo->byte_arg_size = 1;
 			break;
 		case MONO_TYPE_I2:
 		case MONO_TYPE_U2:
 			add_general (&gr, &stack_size, ainfo);
+			ainfo->byte_arg_size = 2;
 			break;
 		case MONO_TYPE_I4:
 		case MONO_TYPE_U4:
 			add_general (&gr, &stack_size, ainfo);
+			ainfo->byte_arg_size = 4;
 			break;
 		case MONO_TYPE_I:
 		case MONO_TYPE_U:
@@ -1637,13 +1640,6 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 
 	/* Allocate locals */
 	offsets = mono_allocate_stack_slots (cfg, cfg->arch.omit_fp ? FALSE: TRUE, &locals_stack_size, &locals_stack_align);
-	if (locals_stack_size > MONO_ARCH_MAX_FRAME_SIZE) {
-		char *mname = mono_method_full_name (cfg->method, TRUE);
-		mono_cfg_set_exception_invalid_program (cfg, g_strdup_printf ("Method %s stack is too big.", mname));
-		g_free (mname);
-		return;
-	}
-		
 	if (locals_stack_align) {
 		offset += (locals_stack_align - 1);
 		offset &= ~(locals_stack_align - 1);
@@ -2302,7 +2298,7 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 		load->klass = vtaddr->klass;
 		load->dreg = mono_alloc_ireg (cfg);
 		MONO_ADD_INS (cfg->cbb, load);
-		mini_emit_memcpy (cfg, load->dreg, 0, src->dreg, 0, size, 4);
+		mini_emit_memcpy (cfg, load->dreg, 0, src->dreg, 0, size, SIZEOF_VOID_P);
 
 		if (ainfo->pair_storage [0] == ArgInIReg) {
 			MONO_INST_NEW (cfg, arg, OP_X86_LEA_MEMBASE);
@@ -2330,10 +2326,10 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 			MONO_EMIT_NEW_LOAD_MEMBASE (cfg, dreg, src->dreg, 0);
 			MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, AMD64_RSP, ainfo->offset, dreg);
 		} else if (size <= 40) {
-			mini_emit_memcpy (cfg, AMD64_RSP, ainfo->offset, src->dreg, 0, size, 4);
+			mini_emit_memcpy (cfg, AMD64_RSP, ainfo->offset, src->dreg, 0, size, SIZEOF_VOID_P);
 		} else {
 			// FIXME: Code growth
-			mini_emit_memcpy (cfg, AMD64_RSP, ainfo->offset, src->dreg, 0, size, 4);
+			mini_emit_memcpy (cfg, AMD64_RSP, ainfo->offset, src->dreg, 0, size, SIZEOF_VOID_P);
 		}
 
 		if (cfg->compute_gc_maps) {
@@ -3233,7 +3229,7 @@ mono_emit_stack_alloc (MonoCompile *cfg, guchar *code, MonoInst* tree)
 #if defined(TARGET_WIN32)
 	need_touch = TRUE;
 #elif defined(MONO_ARCH_SIGSEGV_ON_ALTSTACK)
-	if (!tree->flags & MONO_INST_INIT)
+	if (!(tree->flags & MONO_INST_INIT))
 		need_touch = TRUE;
 #endif
 
@@ -4833,7 +4829,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_mov_membase_reg (code, spvar->inst_basereg, spvar->inst_offset, AMD64_RSP, sizeof(gpointer));
 
 			if ((MONO_BBLOCK_IS_IN_REGION (bb, MONO_REGION_FINALLY) ||
-				 MONO_BBLOCK_IS_IN_REGION (bb, MONO_REGION_FINALLY)) &&
+				 MONO_BBLOCK_IS_IN_REGION (bb, MONO_REGION_FILTER)) &&
 				cfg->param_area) {
 				amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, ALIGN_TO (cfg->param_area, MONO_ARCH_FRAME_ALIGNMENT));
 			}
@@ -6676,7 +6672,26 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		/* See mono_emit_stack_alloc */
 #if defined(MONO_ARCH_SIGSEGV_ON_ALTSTACK)
 		guint32 remaining_size = alloc_size;
-		/*FIXME handle unbounded code expansion, we should use a loop in case of more than X interactions*/
+
+		/* Use a loop for large sizes */
+		if (remaining_size > 10 * 0x1000) {
+			amd64_mov_reg_imm (code, X86_EAX, remaining_size / 0x1000);
+			guint8 *label = code;
+			amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, 0x1000);
+			amd64_test_membase_reg (code, AMD64_RSP, 0, AMD64_RSP);
+			amd64_alu_reg_imm (code, X86_SUB, AMD64_RAX, 1);
+			amd64_alu_reg_imm (code, X86_CMP, AMD64_RAX, 0);
+			guint8 *label2 = code;
+			x86_branch8 (code, X86_CC_NE, 0, FALSE);
+			amd64_patch (label2, label);
+			if (cfg->arch.omit_fp) {
+				cfa_offset += (remaining_size / 0x1000) * 0x1000;
+				mono_emit_unwind_op_def_cfa_offset (cfg, code, cfa_offset);
+			}
+
+			remaining_size = remaining_size % 0x1000;
+		}
+
 		guint32 required_code_size = ((remaining_size / 0x1000) + 1) * 11; /*11 is the max size of amd64_alu_reg_imm + amd64_test_membase_reg*/
 		guint32 offset = code - cfg->native_code;
 		if (G_UNLIKELY (required_code_size >= (cfg->code_size - offset))) {

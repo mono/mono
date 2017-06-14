@@ -372,16 +372,6 @@ mono_global_codeman_foreach (MonoCodeManagerFunc func, void *user_data)
 	mono_jit_unlock ();
 }
 
-#if defined(__native_client_codegen__) && defined(__native_client__)
-void
-mono_nacl_gc()
-{
-#ifdef __native_client_gc__
-	__nacl_suspend_thread_if_needed();
-#endif
-}
-#endif /* __native_client__ */
-
 /**
  * mono_create_unwind_op:
  *
@@ -496,6 +486,13 @@ mono_tramp_info_register_internal (MonoTrampInfo *info, MonoDomain *domain, gboo
 	if (info->unwind_ops) {
 		copy->uw_info = mono_unwind_ops_encode (info->unwind_ops, &copy->uw_info_len);
 		copy->owns_uw_info = TRUE;
+		if (domain) {
+			/* Move unwind info into the domain's memory pool so that it is removed once the domain is released. */
+			guint8 *temp = copy->uw_info;
+			copy->uw_info = mono_domain_alloc (domain, copy->uw_info_len);
+			memcpy (copy->uw_info, temp, copy->uw_info_len);
+			g_free (temp);
+		}
 	} else {
 		/* Trampolines from aot have the unwind ops already encoded */
 		copy->uw_info = info->uw_info;
@@ -576,22 +573,22 @@ break_count (void)
 G_GNUC_UNUSED gboolean
 mono_debug_count (void)
 {
-	static int count = 0;
+	static int count = 0, int_val = 0;
 	static gboolean inited;
-	static char *value;
 
 	count ++;
 
 	if (!inited) {
-		value = g_getenv ("COUNT");
+		char *value = g_getenv ("COUNT");
+		if (value) {
+			int_val = atoi (value);
+			g_free (value);
+		}
 		inited = TRUE;
 	}
 
-	if (!value)
+	if (!int_val)
 		return TRUE;
-
-	int int_val = atoi (value);
-	g_free (value);
 
 	if (count == int_val)
 		break_count ();
@@ -1396,21 +1393,12 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		break;
 	}
 	case MONO_PATCH_INFO_GC_SAFE_POINT_FLAG:
-#if defined(__native_client_codegen__)
-		target = (gpointer)&__nacl_thread_suspension_needed;
-#else
 		g_assert (mono_threads_is_coop_enabled ());
 		target = (gpointer)&mono_polling_required;
-#endif
 		break;
 	case MONO_PATCH_INFO_SWITCH: {
 		gpointer *jump_table;
 		int i;
-#if defined(__native_client__) && defined(__native_client_codegen__)
-		/* This memory will leak, but we don't care if we're */
-		/* not deleting JIT'd methods anyway                 */
-		jump_table = g_malloc0 (sizeof(gpointer) * patch_info->data.table->table_size);
-#else
 		if (method && method->dynamic) {
 			jump_table = (void **)mono_code_manager_reserve (mono_dynamic_code_hash_lookup (domain, method)->code_mp, sizeof (gpointer) * patch_info->data.table->table_size);
 		} else {
@@ -1420,7 +1408,6 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 				jump_table = (void **)mono_domain_code_reserve (domain, sizeof (gpointer) * patch_info->data.table->table_size);
 			}
 		}
-#endif
 
 		for (i = 0; i < patch_info->data.table->table_size; i++) {
 			jump_table [i] = code + GPOINTER_TO_INT (patch_info->data.table->table [i]);
@@ -1750,6 +1737,27 @@ mono_get_jit_info_from_method (MonoDomain *domain, MonoMethod *method)
 	return lookup_method (domain, method);
 }
 
+MonoClass*
+mini_get_class (MonoMethod *method, guint32 token, MonoGenericContext *context)
+{
+	MonoError error;
+	MonoClass *klass;
+
+	if (method->wrapper_type != MONO_WRAPPER_NONE) {
+		klass = (MonoClass *)mono_method_get_wrapper_data (method, token);
+		if (context) {
+			klass = mono_class_inflate_generic_class_checked (klass, context, &error);
+			mono_error_cleanup (&error); /* FIXME don't swallow the error */
+		}
+	} else {
+		klass = mono_class_get_and_inflate_typespec_checked (method->klass->image, token, context, &error);
+		mono_error_cleanup (&error); /* FIXME don't swallow the error */
+	}
+	if (klass)
+		mono_class_init (klass);
+	return klass;
+}
+
 #if ENABLE_JIT_MAP
 static FILE* perf_map_file;
 
@@ -2055,7 +2063,18 @@ lookup_start:
 
 #ifdef MONO_USE_AOT_COMPILER
 	if (opt & MONO_OPT_AOT) {
-		MonoDomain *domain = mono_domain_get ();
+		MonoDomain *domain = NULL;
+
+		if (mono_aot_mode == MONO_AOT_MODE_INTERP && method->wrapper_type == MONO_WRAPPER_UNKNOWN) {
+			WrapperInfo *info = mono_marshal_get_wrapper_info (method);
+			g_assert (info);
+			if (info->subtype == WRAPPER_SUBTYPE_INTERP_IN)
+				/* AOT'd wrappers for interp must be owned by root domain */
+				domain = mono_get_root_domain ();
+		}
+
+		if (!domain)
+			domain = mono_domain_get ();
 
 		mono_class_init (method->klass);
 
@@ -3467,19 +3486,14 @@ mini_get_debug_options (void)
 static gpointer
 mini_create_ftnptr (MonoDomain *domain, gpointer addr)
 {
-#if !defined(__ia64__) && (!defined(__ppc64__) && !defined(__powerpc64__) || _CALL_ELF == 2)
+#if (!defined(__ppc64__) && !defined(__powerpc64__) || _CALL_ELF == 2)
 	return addr;
 #else
 	gpointer* desc = NULL;
 
 	if ((desc = g_hash_table_lookup (domain->ftnptrs_hash, addr)))
 		return desc;
-#	ifdef __ia64__
-	desc = mono_domain_code_reserve (domain, 2 * sizeof (gpointer));
-
-	desc [0] = addr;
-	desc [1] = NULL;
-#	elif defined(__ppc64__) || defined(__powerpc64__)
+#	if defined(__ppc64__) || defined(__powerpc64__)
 
 	desc = mono_domain_alloc0 (domain, 3 * sizeof (gpointer));
 
@@ -3495,7 +3509,7 @@ mini_create_ftnptr (MonoDomain *domain, gpointer addr)
 static gpointer
 mini_get_addr_from_ftnptr (gpointer descr)
 {
-#if defined(__ia64__) || ((defined(__ppc64__) || defined(__powerpc64__)) && _CALL_ELF != 2)
+#if ((defined(__ppc64__) || defined(__powerpc64__)) && _CALL_ELF != 2)
 	return *(gpointer*)descr;
 #else
 	return descr;
@@ -3761,7 +3775,7 @@ mini_init (const char *filename, const char *runtime_version)
 
 	CHECKED_MONO_INIT ();
 
-#if defined(__linux__) && !defined(__native_client__)
+#if defined(__linux__)
 	if (access ("/proc/self/maps", F_OK) != 0) {
 		g_print ("Mono requires /proc to be mounted.\n");
 		exit (1);
@@ -4065,10 +4079,6 @@ register_icalls (void)
 	register_icall (mono_thread_interruption_checkpoint, "mono_thread_interruption_checkpoint", "object", FALSE);
 	register_icall (mono_thread_force_interruption_checkpoint_noraise, "mono_thread_force_interruption_checkpoint_noraise", "object", FALSE);
 
-#if defined(__native_client__) || defined(__native_client_codegen__)
-	register_icall (mono_nacl_gc, "mono_nacl_gc", "void", FALSE);
-#endif
-
 	if (mono_threads_is_coop_enabled ())
 		register_icall (mono_threads_state_poll, "mono_threads_state_poll", "void", FALSE);
 
@@ -4137,12 +4147,8 @@ register_icalls (void)
 	register_opcode_emulation (OP_LCONV_TO_R_UN, "__emul_lconv_to_r8_un", "double long", mono_lconv_to_r8_un, "mono_lconv_to_r8_un", FALSE);
 #endif
 #ifdef MONO_ARCH_EMULATE_FREM
-#if !defined(__native_client__)
 	register_opcode_emulation (OP_FREM, "__emul_frem", "double double double", fmod, "fmod", FALSE);
 	register_opcode_emulation (OP_RREM, "__emul_rrem", "float float float", fmodf, "fmodf", FALSE);
-#else
-	register_opcode_emulation (OP_FREM, "__emul_frem", "double double double", mono_fmod, "mono_fmod", FALSE);
-#endif
 #endif
 
 #ifdef MONO_ARCH_SOFT_FLOAT_FALLBACK
@@ -4543,6 +4549,56 @@ mono_personality (void)
 {
 	/* Not used */
 	g_assert_not_reached ();
+}
+
+
+static MonoBreakPolicy
+always_insert_breakpoint (MonoMethod *method)
+{
+	return MONO_BREAK_POLICY_ALWAYS;
+}
+
+static MonoBreakPolicyFunc break_policy_func = always_insert_breakpoint;
+
+/**
+ * mono_set_break_policy:
+ * \param policy_callback the new callback function
+ *
+ * Allow embedders to decide whether to actually obey breakpoint instructions
+ * (both break IL instructions and \c Debugger.Break method calls), for example
+ * to not allow an app to be aborted by a perfectly valid IL opcode when executing
+ * untrusted or semi-trusted code.
+ *
+ * \p policy_callback will be called every time a break point instruction needs to
+ * be inserted with the method argument being the method that calls \c Debugger.Break
+ * or has the IL \c break instruction. The callback should return \c MONO_BREAK_POLICY_NEVER
+ * if it wants the breakpoint to not be effective in the given method.
+ * \c MONO_BREAK_POLICY_ALWAYS is the default.
+ */
+void
+mono_set_break_policy (MonoBreakPolicyFunc policy_callback)
+{
+	if (policy_callback)
+		break_policy_func = policy_callback;
+	else
+		break_policy_func = always_insert_breakpoint;
+}
+
+gboolean
+mini_should_insert_breakpoint (MonoMethod *method)
+{
+	switch (break_policy_func (method)) {
+	case MONO_BREAK_POLICY_ALWAYS:
+		return TRUE;
+	case MONO_BREAK_POLICY_NEVER:
+		return FALSE;
+	case MONO_BREAK_POLICY_ON_DBG:
+		g_warning ("mdb no longer supported");
+		return FALSE;
+	default:
+		g_warning ("Incorrect value returned from break policy callback");
+		return FALSE;
+	}
 }
 
 // Custom handlers currently only implemented by Windows.

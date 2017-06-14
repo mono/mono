@@ -2,6 +2,7 @@
 ../../../external/linker/linker/Mono.Linker/AssemblyInfo.cs
 ../../../external/linker/linker/Mono.Linker/AssemblyResolver.cs
 ../../../external/linker/linker/Mono.Linker/TypePreserve.cs
+../../../external/linker/linker/Mono.Linker/TypeReferenceExtensions.cs
 ../../../external/linker/linker/Mono.Linker/Annotations.cs
 ../../../external/linker/linker/Mono.Linker/LinkContext.cs
 ../../../external/linker/linker/Mono.Linker/AssemblyAction.cs
@@ -12,6 +13,7 @@
 ../../../external/linker/linker/Mono.Linker/IXApiVisitor.cs
 ../../../external/linker/linker/Mono.Linker/LoadException.cs
 ../../../external/linker/linker/Mono.Linker/MarkException.cs
+../../../external/linker/linker/Mono.Linker/MethodReferenceExtensions.cs
 ../../../external/linker/linker/Mono.Linker.Steps/BaseStep.cs
 ../../../external/linker/linker/Mono.Linker.Steps/LoadReferencesStep.cs
 ../../../external/linker/linker/Mono.Linker.Steps/LoadI18nAssemblies.cs

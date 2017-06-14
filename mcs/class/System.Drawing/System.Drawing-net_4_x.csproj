@@ -9,8 +9,11 @@
     <ProjectGuid>{584A5E46-2958-4CB2-8DF9-188B420D0BB0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>./../../class/lib/net_4_x</OutputPath>
-    <IntermediateOutputPath>obj-net_4_x</IntermediateOutputPath>
+    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Windows_NT'">win32</HostPlatform>
+    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">darwin</HostPlatform>
+    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix'">linux</HostPlatform>
+    <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
+    <IntermediateOutputPath>obj-net_4_x-$(HostPlatform)</IntermediateOutputPath>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
     
@@ -49,28 +52,40 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\BitmapSuffixInSameAssemblyAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\BitmapSuffixInSatelliteAssemblyAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\CategoryNameCollection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\IPropertyValueUIService.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\IToolboxItemProvider.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\IToolboxService.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\IToolboxUser.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\PaintValueEventArgs.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\PropertyValueUIHandler.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\PropertyValueUIItem.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\PropertyValueUIItemInvokeHandler.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\ToolboxComponentsCreatedEventArgs.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\ToolboxComponentsCreatedEventHandler.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\ToolboxComponentsCreatingEventArgs.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\ToolboxComponentsCreatingEventHandler.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\ToolboxItemCollection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\ToolboxItemCreatorCallback.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\UITypeEditorEditStyle.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\IDeviceContext.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PreviewPageInfo.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintAction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrinterUnit.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintEventHandler.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintingPermissionLevel.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintPageEventHandler.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\QueryPageSettingsEventArgs.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\QueryPageSettingsEventHandler.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\RotateFlipType.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
-    <Compile Include="System.Drawing.Design\CategoryNameCollection.cs" />
-    <Compile Include="System.Drawing.Design\IPropertyValueUIService.cs" />
-    <Compile Include="System.Drawing.Design\IToolboxItemProvider.cs" />
-    <Compile Include="System.Drawing.Design\IToolboxService.cs" />
-    <Compile Include="System.Drawing.Design\IToolboxUser.cs" />
-    <Compile Include="System.Drawing.Design\PaintValueEventArgs.cs" />
-    <Compile Include="System.Drawing.Design\PropertyValueItem.cs" />
-    <Compile Include="System.Drawing.Design\PropertyValueUIHandler.cs" />
-    <Compile Include="System.Drawing.Design\PropertyValueUIItemInvokeHandler.cs" />
-    <Compile Include="System.Drawing.Design\ToolboxComponentsCreatedEventArgs.cs" />
-    <Compile Include="System.Drawing.Design\ToolboxComponentsCreatedEventHandler.cs" />
-    <Compile Include="System.Drawing.Design\ToolboxComponentsCreatingEventArgs.cs" />
-    <Compile Include="System.Drawing.Design\ToolboxComponentsCreatingEventHandler.cs" />
     <Compile Include="System.Drawing.Design\ToolboxItem.cs" />
-    <Compile Include="System.Drawing.Design\ToolboxItemCollection.cs" />
-    <Compile Include="System.Drawing.Design\ToolboxItemCreatorCallback.cs" />
     <Compile Include="System.Drawing.Design\UITypeEditor.cs" />
-    <Compile Include="System.Drawing.Design\UITypeEditorEditStyle.cs" />
     <Compile Include="System.Drawing.Drawing2D\AdjustableArrowCap.cs" />
     <Compile Include="System.Drawing.Drawing2D\Blend.cs" />
     <Compile Include="System.Drawing.Drawing2D\ColorBlend.cs" />
@@ -149,29 +164,21 @@
     <Compile Include="System.Drawing.Printing\PaperSize.cs" />
     <Compile Include="System.Drawing.Printing\PaperSource.cs" />
     <Compile Include="System.Drawing.Printing\PaperSourceKind.cs" />
-    <Compile Include="System.Drawing.Printing\PreviewPageInfo.cs" />
     <Compile Include="System.Drawing.Printing\PreviewPrintController.cs" />
-    <Compile Include="System.Drawing.Printing\PrintAction.cs" />
     <Compile Include="System.Drawing.Printing\PrintController.cs" />
     <Compile Include="System.Drawing.Printing\PrintDocument.cs" />
     <Compile Include="System.Drawing.Printing\PrinterResolution.cs" />
     <Compile Include="System.Drawing.Printing\PrinterResolutionKind.cs" />
     <Compile Include="System.Drawing.Printing\PrinterSettings.cs" />
-    <Compile Include="System.Drawing.Printing\PrinterUnit.cs" />
     <Compile Include="System.Drawing.Printing\PrinterUnitConvert.cs" />
     <Compile Include="System.Drawing.Printing\PrintEventArgs.cs" />
-    <Compile Include="System.Drawing.Printing\PrintEventHandler.cs" />
     <Compile Include="System.Drawing.Printing\PrintingPermission.cs" />
     <Compile Include="System.Drawing.Printing\PrintingPermissionAttribute.cs" />
-    <Compile Include="System.Drawing.Printing\PrintingPermissionLevel.cs" />
     <Compile Include="System.Drawing.Printing\PrintingServices.cs" />
     <Compile Include="System.Drawing.Printing\PrintingServicesUnix.cs" />
     <Compile Include="System.Drawing.Printing\PrintingServicesWin32.cs" />
     <Compile Include="System.Drawing.Printing\PrintPageEventArgs.cs" />
-    <Compile Include="System.Drawing.Printing\PrintPageEventHandler.cs" />
     <Compile Include="System.Drawing.Printing\PrintRange.cs" />
-    <Compile Include="System.Drawing.Printing\QueryPageSettingsEventArgs.cs" />
-    <Compile Include="System.Drawing.Printing\QueryPageSettingsEventHandler.cs" />
     <Compile Include="System.Drawing.Printing\StandardPrintController.cs" />
     <Compile Include="System.Drawing.Text\FontCollection.cs" />
     <Compile Include="System.Drawing.Text\GenericFontFamilies.cs" />
@@ -180,8 +187,6 @@
     <Compile Include="System.Drawing.Text\PrivateFontCollection.cs" />
     <Compile Include="System.Drawing.Text\TextRenderingHint.cs" />
     <Compile Include="System.Drawing\Bitmap.cs" />
-    <Compile Include="System.Drawing\BitmapSuffixInSameAssemblyAttribute.cs" />
-    <Compile Include="System.Drawing\BitmapSuffixInSatelliteAssemblyAttribute.cs" />
     <Compile Include="System.Drawing\Brush.cs" />
     <Compile Include="System.Drawing\Brushes.cs" />
     <Compile Include="System.Drawing\BufferedGraphics.cs" />
@@ -206,7 +211,6 @@
     <Compile Include="System.Drawing\GraphicsUnit.cs" />
     <Compile Include="System.Drawing\Icon.cs" />
     <Compile Include="System.Drawing\IconConverter.cs" />
-    <Compile Include="System.Drawing\IDeviceContext.cs" />
     <Compile Include="System.Drawing\Image.cs" />
     <Compile Include="System.Drawing\ImageAnimator.cs" />
     <Compile Include="System.Drawing\ImageConverter.cs" />
@@ -223,7 +227,6 @@
     <Compile Include="System.Drawing\RectangleConverter.cs" />
     <Compile Include="System.Drawing\RectangleF.cs" />
     <Compile Include="System.Drawing\Region.cs" />
-    <Compile Include="System.Drawing\RotateFlipType.cs" />
     <Compile Include="System.Drawing\Size.cs" />
     <Compile Include="System.Drawing\SizeConverter.cs" />
     <Compile Include="System.Drawing\SizeF.cs" />

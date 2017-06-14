@@ -54,7 +54,7 @@
  *                    - column: The column on the line
  */
 #include <config.h>
-#include "mono-profiler-log.h"
+#include "log.h"
 #include <string.h>
 #include <assert.h>
 #include <stdio.h>
@@ -75,11 +75,6 @@
 
 #define HASH_SIZE 9371
 #define SMALL_HASH_SIZE 31
-
-#if defined(__native_client__) || defined(__native_client_codegen__)
-volatile int __nacl_thread_suspension_needed = 0;
-void __nacl_suspend_thread_if_needed() {}
-#endif
 
 static int debug = 0;
 static int collect_traces = 0;

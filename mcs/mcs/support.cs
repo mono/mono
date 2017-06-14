@@ -73,7 +73,7 @@ namespace Mono.CSharp {
 #endif
 
 		StreamReader reader;
-		Stream stream;
+		public readonly Stream Stream;
 
 		char[] buffer;
 		int read_ahead_length;	// the length of read buffer
@@ -83,7 +83,7 @@ namespace Mono.CSharp {
 
 		public SeekableStreamReader (Stream stream, Encoding encoding, char[] sharedBuffer = null)
 		{
-			this.stream = stream;
+			this.Stream = stream;
 			this.buffer = sharedBuffer;
 
 			InitializeStream (DefaultReadAheadSize);
@@ -105,7 +105,7 @@ namespace Mono.CSharp {
 			if (buffer == null || buffer.Length < required_buffer_size)
 				buffer = new char [required_buffer_size];
 
-			stream.Position = 0;
+			Stream.Position = 0;
 			buffer_start = char_count = pos = 0;
 		}
 
@@ -134,7 +134,7 @@ namespace Mono.CSharp {
 					// Cannot use handy reader.DiscardBufferedData () because it for
 					// some strange reason resets encoding as well
 					//
-					reader = new StreamReader (stream, reader.CurrentEncoding, true);
+					reader = new StreamReader (Stream, reader.CurrentEncoding, true);
 				}
 
 				while (value > buffer_start + char_count) {
