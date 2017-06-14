@@ -15,21 +15,6 @@ corefx/RuntimeInformation.cs
 ../../build/common/SR.cs
 ../referencesource/System.Data/System/Data/SQLTypes/SqlTypesSchemaImporter.cs
 ../referencesource/System.Data/System/Data/Sql/SqlDataSourceEnumerator.cs
-System.Data.SqlClient/SqlNotificationType.cs
-System.Data.SqlClient/SqlNotificationInfo.cs
-System.Data.SqlClient/SqlNotificationSource.cs
-
-
-# https://github.com/dotnet/corefx/pull/19808
-#../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Common/AdapterUtil.SqlClient.cs
-#../../../external/corefx/src/Common/src/System/Data/Common/DbConnectionOptions.Common.cs
-#../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbConnectionOptions.cs
-#../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Common/DbConnectionOptions.cs
-# temp workaround while waiting the PR to be merged:
-corefx/TEMP/AdapterUtil.SqlClient.cs
-corefx/TEMP/DbConnectionOptions.SqlClient.cs
-corefx/TEMP/DbConnectionOptions.Common.cs
-corefx/TEMP/DbConnectionOptions.cs
 
 #
 # corefx uses these files but we don't need them:
@@ -45,6 +30,7 @@ corefx/TEMP/DbConnectionOptions.cs
 #
 # System.Data.Common
 #
+../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbConnectionOptions.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbColumn.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/IDbColumnSchemaGenerator.cs
 ../../../external/corefx/src/System.Data.Common/src/System.Data.Common.TypeForwards.cs
@@ -225,6 +211,7 @@ corefx/TEMP/DbConnectionOptions.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/Int64Storage.cs
 ../../../external/corefx/src/common/src/System/Data/Common/MultipartIdentifier.cs
 ../../../external/corefx/src/common/src/System/Data/Common/NameValuePair.cs
+../../../external/corefx/src/Common/src/System/Data/Common/DbConnectionOptions.Common.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/ObjectStorage.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/RowUpdatedEventArgs.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/RowUpdatingEventArgs.cs
@@ -316,10 +303,12 @@ corefx/TEMP/DbConnectionOptions.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/Microsoft/SqlServer/Server/ValueUtilsSmi.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/OperationAbortedException.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlDbColumn.cs
-../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Common/ActivityCorrelator.cs
 ../../../external/corefx/src/common/src/System/Data/Common/AdapterUtil.cs
 ../../../external/corefx/src/common/src/System/Data/Common/DbConnectionPoolKey.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Common/ActivityCorrelator.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Common/DbConnectionStringCommon.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Common/AdapterUtil.SqlClient.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Common/DbConnectionOptions.cs
 ../../../external/corefx/src/common/src/System/Data/Common/FieldNameLookup.cs
 ../../../external/corefx/src/common/src/System/Data/Common/BasicFieldNameLookup.cs
 ../../../external/corefx/src/common/src/System/Data/Common/MultipartIdentifier.cs
@@ -334,8 +323,10 @@ corefx/TEMP/DbConnectionOptions.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/DbConnectionPoolOptions.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/DbConnectionPoolProviderInfo.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/DbReferenceCollection.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/DbMetaDataFactory.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/TimeoutTimer.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Sql/SqlMetaData.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Sql/SqlNotificationRequest.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/ApplicationIntent.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/LocalDBAPI.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/ParameterPeekAheadValue.cs
@@ -351,7 +342,9 @@ corefx/TEMP/DbConnectionOptions.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlClientDiagnosticListenerExtensions.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlClientFactory.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlCommand.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlCommandBuilder.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlConnection.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlCommandSet.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlConnectionFactory.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlConnectionHelper.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlConnectionPoolGroupProviderInfo.cs
@@ -364,6 +357,7 @@ corefx/TEMP/DbConnectionOptions.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlDataReader.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlEnums.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlError.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlMetaDataFactory.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlErrorCollection.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlException.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlInfoMessageEvent.cs
@@ -395,6 +389,14 @@ corefx/TEMP/DbConnectionOptions.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/TdsParserStaticMethods.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/TdsRecordBufferSetter.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/TdsValueSetter.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlNotificationType.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlNotificationSource.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlNotificationInfo.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlNotificationEventArgs.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlDependencyListener.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlDependencyUtils.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlDependency.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/OnChangedEventHandler.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlTypes/SqlTypeWorkarounds.cs
 ../../../external/corefx/src/common/src/System/Data/Common/SQLResource.cs
 ../../../external/corefx/src/common/src/System/NotImplemented.cs

@@ -3,7 +3,7 @@
 ../../../external/corefx/src/System.Data.SqlClient/src/Interop/SNINativeMethodWrapper.Windows.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/TdsParserSafeHandles.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/TdsParserStateObjectNative.cs
-../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/TdsParserStateObjectFactory.Windows.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/TdsParserStateObjectFactory.Managed.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/TdsParser.Windows.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/LocalDBAPI.Windows.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SNI/LocalDB.Windows.cs
