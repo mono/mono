@@ -3657,6 +3657,11 @@ add_extra_method_with_depth (MonoAotCompile *acfg, MonoMethod *method, int depth
 		/* Use the gsharedvt version */
 		method = mini_get_shared_method_full (method, TRUE, TRUE);
 
+	if (method->is_inflated && acfg->aot_opts.dedup_include) {
+		g_hash_table_insert (acfg->dedup_cache, mono_aot_get_mangled_method_name (method), method);
+		return;
+	}
+
 	if (acfg->aot_opts.log_generics)
 		aot_printf (acfg, "%*sAdding method %s.\n", depth, "", mono_method_get_full_name (method));
 
@@ -3666,12 +3671,7 @@ add_extra_method_with_depth (MonoAotCompile *acfg, MonoMethod *method, int depth
 static void
 add_extra_method (MonoAotCompile *acfg, MonoMethod *method)
 {
-	// Add to dummy MonoAotCompile
-	if (method->is_inflated && acfg->aot_opts.dedup_include) {
-		g_hash_table_insert (acfg->dedup_cache, mono_aot_get_mangled_method_name (method), method);
-	} else {
-		add_extra_method_with_depth (acfg, method, 0);
-	}
+	add_extra_method_with_depth (acfg, method, 0);
 }
 
 static void
@@ -5691,7 +5691,12 @@ emit_method_code (MonoAotCompile *acfg, MonoCompile *cfg)
 		 *   yet supported.
 		 * - it allows the setting of breakpoints of aot-ed methods.
 		 */
-		debug_sym = get_debug_sym (method, "", acfg->method_label_hash);
+		/*debug_sym = get_debug_sym (method, "", acfg->method_label_hash);*/
+
+		// Comment out to force dedup to link these symbols and forbid compiling
+		// in duplicated code. This is an "assert when linking if broken" trick.
+		debug_sym = mono_aot_get_mangled_method_name (method);
+
 		cfg->asm_debug_symbol = g_strdup (debug_sym);
 
 		if (acfg->need_no_dead_strip)
@@ -8107,9 +8112,10 @@ append_mangled_type (GString *s, MonoType *t)
 		/* Include the length to avoid different length type names aliasing each other */
 		g_string_append_printf (s, "cl%x_%s_", strlen (temps), temps);
 		g_free (temps);
-		return TRUE;
 	}
 	}
+	if (t->attrs)
+		g_string_append_printf (s, "_attrs_%d", t->attrs);
 	return TRUE;
 }
 
@@ -8124,6 +8130,8 @@ append_mangled_signature (GString *s, MonoMethodSignature *sig)
 		return FALSE;
 	if (sig->hasthis)
 		g_string_append_printf (s, "this_");
+	if (sig->pinvoke)
+		g_string_append_printf (s, "pinvoke_");
 	for (i = 0; i < sig->param_count; ++i) {
 		supported = append_mangled_type (s, sig->params [i]);
 		if (!supported)
@@ -8344,6 +8352,9 @@ sanitize_mangled_string (const char *input)
 		case ',':
 			g_string_append (s, "_comma_");
 			break;
+		case ':':
+			g_string_append (s, "_colon_");
+			break;
 		default:
 			g_string_append_c (s, c);
 		}
@@ -8401,6 +8412,7 @@ append_mangled_wrapper (GString *s, MonoMethod *method)
 		break;
 	}
 	case MONO_WRAPPER_WRITE_BARRIER: {
+		g_string_append_printf (s, "%s_", method->name);
 		break;
 	}
 	case MONO_WRAPPER_STELEMREF: {
@@ -8453,6 +8465,8 @@ append_mangled_wrapper (GString *s, MonoMethod *method)
 			g_string_append_printf (s, "%d_", info->d.element_addr.elem_size);
 		} else if (info->subtype == WRAPPER_SUBTYPE_STRING_CTOR) {
 			success = success && append_mangled_method (s, info->d.string_ctor.method);
+		} else if (info->subtype == WRAPPER_SUBTYPE_GENERIC_ARRAY_HELPER) {
+			success = success && append_mangled_method (s, info->d.generic_array_helper.method);
 		} else {
 			success = FALSE;
 		}
@@ -8500,6 +8514,34 @@ append_mangled_wrapper (GString *s, MonoMethod *method)
 }
 
 static void
+append_mangled_ginst (GString *str, MonoGenericInst *ginst)
+{
+	int i;
+
+	for (i = 0; i < ginst->type_argc; ++i) {
+		if (i > 0)
+			g_string_append (str, ", ");
+		MonoType *type = ginst->type_argv [i];
+		switch (type->type) {
+		case MONO_TYPE_VAR:
+		case MONO_TYPE_MVAR: {
+			MonoType *constraint = NULL;
+			if (type->data.generic_param)
+				constraint = type->data.generic_param->gshared_constraint;
+			if (constraint) {
+				g_assert (constraint->type != MONO_TYPE_VAR && constraint->type != MONO_TYPE_VAR);
+				mono_type_get_desc (str, constraint, TRUE);
+				break;
+			}
+			// Else falls through to common case
+		}
+		default:
+			mono_type_get_desc (str, type, TRUE);
+		}
+	}
+}
+
+static void
 append_mangled_context (GString *str, MonoGenericContext *context)
 {
 	GString *res = g_string_new ("");
@@ -8512,11 +8554,11 @@ append_mangled_context (GString *str, MonoGenericContext *context)
 	g_assert (good);
 
 	if (context->class_inst)
-		mono_ginst_get_desc (res, context->class_inst);
+		append_mangled_ginst (res, context->class_inst);
 	if (context->method_inst) {
 		if (context->class_inst)
 			g_string_append (res, "11");
-		mono_ginst_get_desc (res, context->method_inst);
+		append_mangled_ginst (res, context->method_inst);
 	}
 	g_string_append_printf (str, "gens_%s", res->str);
 	g_free (res);
@@ -11568,10 +11610,8 @@ mono_add_deferred_extra_methods (MonoAotCompile *acfg, MonoAotState *astate)
 	MonoMethod *method = NULL;
 
 	g_hash_table_iter_init (&iter, astate->cache);
-	while (g_hash_table_iter_next (&iter, (gpointer *) &name, (gpointer *) &method)) {
+	while (g_hash_table_iter_next (&iter, (gpointer *) &name, (gpointer *) &method))
 		add_method_full (acfg, method, TRUE, 0);
-		/*fprintf (stderr, "Added deferred %s\n", name);*/
-	}
 	return;
 }
 
