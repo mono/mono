@@ -364,7 +364,7 @@ corefx/TdsParser.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlDataReader.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlEnums.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlError.cs
-../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlMetaDataFactory.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/sqlmetadatafactory.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlErrorCollection.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlException.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlInfoMessageEvent.cs
