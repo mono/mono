@@ -4134,7 +4134,7 @@ public class DebuggerTests
 
 		frames = thread.GetFrames ();
 		Assert.AreEqual (8, frames.Length, "#7");
-		Assert.AreEqual ("WaitOne_internal", frames [0].Method.Name, "#8.0");
+		Assert.AreEqual ("Wait_internal", frames [0].Method.Name, "#8.0");
 		Assert.AreEqual ("WaitOneNative", frames [1].Method.Name, "#8.1");
 		Assert.AreEqual ("InternalWaitOne", frames [2].Method.Name, "#8.2");
 		Assert.AreEqual ("WaitOne", frames [3].Method.Name, "#8.3");
