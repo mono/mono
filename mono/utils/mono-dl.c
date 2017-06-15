@@ -19,6 +19,10 @@
 #include <string.h>
 #include <glib.h>
 
+#ifdef PLATFORM_UNITY
+#include <LibraryLoader-c-api.h>
+#endif
+
 #ifndef HOST_WIN32 && defined (HAVE_DL_LOADER)
 #include <dlfcn.h>
 #endif
@@ -177,7 +181,11 @@ mono_dl_open (const char *name, int flags, char **error_msg)
 	}
 	module->main_module = name == NULL? TRUE: FALSE;
 
+#if defined(PLATFORM_UNITY)
+	lib = UnityPalLibraryLoaderLoadDynamicLibrary(name, lflags);
+#else
 	lib = mono_dl_open_file (name, lflags);
+#endif
 
 	if (!lib) {
 		GSList *node;
@@ -256,11 +264,21 @@ mono_dl_symbol (MonoDl *module, const char *name, void **symbol)
 			char *usname = g_malloc (strlen (name) + 2);
 			*usname = '_';
 			strcpy (usname + 1, name);
-			sym = mono_dl_lookup_symbol (module, usname);
+
+#if defined(PLATFORM_UNITY)
+		sym = UnityPalLibraryLoaderGetFunctionPointer(module->handle, usname);
+#else
+		sym = mono_dl_lookup_symbol (module, usname);
+#endif /* PLATFORM_UNITY */
+
 			g_free (usname);
 		}
 #else
-		sym = mono_dl_lookup_symbol (module, name);
+#if defined(PLATFORM_UNITY)
+	sym = UnityPalLibraryLoaderGetFunctionPointer(module->handle, name);
+#else
+	sym = mono_dl_lookup_symbol (module, name);
+#endif /* PLATFORM_UNITY */
 #endif
 	}
 #ifndef HOST_WIN32
@@ -297,8 +315,14 @@ mono_dl_close (MonoDl *module)
 	if (dl_fallback){
 		if (dl_fallback->close_func != NULL)
 			dl_fallback->close_func (module->handle, dl_fallback->user_data);
-	} else
+	} else {
+ 
+#if defined(PLATFORM_UNITY)
+		UnityPalLibraryLoaderCloseLoadedLibrary(&module->handle);
+#else
 		mono_dl_close_handle (module);
+#endif
+ 	}
 	
 	g_free (module);
 }
