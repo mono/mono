@@ -8,6 +8,7 @@ corefx/SR.GetResourceString.cs
 corefx/ADP.cs
 corefx/DiagnosticListener.cs
 corefx/RuntimeInformation.cs
+corefx/TdsParser.cs
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
@@ -15,6 +16,10 @@ corefx/RuntimeInformation.cs
 ../../build/common/SR.cs
 ../referencesource/System.Data/System/Data/SQLTypes/SqlTypesSchemaImporter.cs
 ../referencesource/System.Data/System/Data/Sql/SqlDataSourceEnumerator.cs
+../referencesource/System.Data/System/Data/CodeGen/datacache.cs
+../referencesource/System.Data/System/Data/CodeGen/StrongTypingException.cs
+../referencesource/System.Data/System/Data/OleDb/PropertyAttributes.cs
+../referencesource/System.Data/System/Data/Common/DBDataPermissionAttribute.cs
 
 #
 # corefx uses these files but we don't need them:
