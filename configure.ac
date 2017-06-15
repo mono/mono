@@ -46,6 +46,11 @@ MONO_CORLIB_VERSION=`printf "1%02d%02d%02d%03d" $MONO_VERSION_MAJOR $MONO_VERSIO
 AC_DEFINE_UNQUOTED(MONO_CORLIB_VERSION,$MONO_CORLIB_VERSION,[Version of the corlib-runtime interface])
 AC_SUBST(MONO_CORLIB_VERSION)
 
+# Work around strange autoconf edge case where cross_compiling is "maybe"
+if test "x$cross_compiling" != "xno" && test "x$cross_compiling" != "xyes"; then
+        AC_MSG_ERROR([The autoconf-assigned value of \$cross_compiling is currently "$cross_compiling", but Mono only understands the values "yes" and "no". Try adding an explicit --build option, such as "./configure --build=`./config.guess`", instead of leaving configure to autodetect.])
+fi
+
 case $host_os in
 *cygwin* )
 		 echo "Run configure using ./configure --host=i686-pc-mingw32"
