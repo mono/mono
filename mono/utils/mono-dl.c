@@ -19,7 +19,7 @@
 #include <string.h>
 #include <glib.h>
 
-#ifndef HOST_WIN32 && defined (HAVE_DL_LOADER)
+#if !defined (HOST_WIN32) && defined (HAVE_DL_LOADER) && !defined (PLATFORM_UNITY)
 #include <dlfcn.h>
 #endif
 
