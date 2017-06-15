@@ -4,6 +4,7 @@
 Assembly/AssemblyInfo.cs
 ReferenceSources/ThisAssembly.cs
 System.Data.SqlClient/SqlCredential.cs
+ReferenceSources/PoolBlockingPeriod.cs
 corefx/SR.cs
 corefx/SR.GetResourceString.cs
 corefx/ADP.cs
