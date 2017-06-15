@@ -332,6 +332,7 @@ corefx/TdsParser.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/TimeoutTimer.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Sql/SqlMetaData.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Sql/SqlNotificationRequest.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlClientMetaDataCollectionNames.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/ApplicationIntent.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/LocalDBAPI.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/ParameterPeekAheadValue.cs
