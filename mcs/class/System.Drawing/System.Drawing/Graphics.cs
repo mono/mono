@@ -754,7 +754,7 @@ namespace System.Drawing
 			Status status = GDIPlus.GdipDrawImagePointsRectI (nativeObject, image.NativeObject,
 				destPoints, destPoints.Length , srcRect.X, srcRect.Y,
 				srcRect.Width, srcRect.Height, srcUnit,
-				imageAttr != null ? imageAttr.NativeObject : IntPtr.Zero, null, IntPtr.Zero);
+				imageAttr != null ? imageAttr.nativeImageAttributes : IntPtr.Zero, null, IntPtr.Zero);
 			GDIPlus.CheckStatus (status);
 		}
 		
@@ -777,7 +777,7 @@ namespace System.Drawing
 			Status status = GDIPlus.GdipDrawImagePointsRect (nativeObject, image.NativeObject,
 				destPoints, destPoints.Length , srcRect.X, srcRect.Y,
 				srcRect.Width, srcRect.Height, srcUnit, 
-				imageAttr != null ? imageAttr.NativeObject : IntPtr.Zero, null, IntPtr.Zero);
+				imageAttr != null ? imageAttr.nativeImageAttributes : IntPtr.Zero, null, IntPtr.Zero);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -814,7 +814,7 @@ namespace System.Drawing
 			Status status = GDIPlus.GdipDrawImagePointsRect (nativeObject, image.NativeObject,
 				destPoints, destPoints.Length , srcRect.X, srcRect.Y,
 				srcRect.Width, srcRect.Height, srcUnit, 
-				imageAttr != null ? imageAttr.NativeObject : IntPtr.Zero, callback, IntPtr.Zero);
+				imageAttr != null ? imageAttr.nativeImageAttributes : IntPtr.Zero, callback, IntPtr.Zero);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -828,7 +828,7 @@ namespace System.Drawing
 			Status status = GDIPlus.GdipDrawImagePointsRectI (nativeObject, image.NativeObject,
 				destPoints, destPoints.Length , srcRect.X, srcRect.Y,
 				srcRect.Width, srcRect.Height, srcUnit, 
-				imageAttr != null ? imageAttr.NativeObject : IntPtr.Zero, callback, IntPtr.Zero);
+				imageAttr != null ? imageAttr.nativeImageAttributes : IntPtr.Zero, callback, IntPtr.Zero);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -842,7 +842,7 @@ namespace System.Drawing
 			Status status = GDIPlus.GdipDrawImagePointsRectI (nativeObject, image.NativeObject,
 				destPoints, destPoints.Length , srcRect.X, srcRect.Y, 
 				srcRect.Width, srcRect.Height, srcUnit, 
-				imageAttr != null ? imageAttr.NativeObject : IntPtr.Zero, callback, (IntPtr) callbackData);
+				imageAttr != null ? imageAttr.nativeImageAttributes : IntPtr.Zero, callback, (IntPtr) callbackData);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -854,7 +854,7 @@ namespace System.Drawing
                                 destRect.X, destRect.Y, destRect.Width, destRect.Height,
                        		srcX, srcY, srcWidth, srcHeight, srcUnit, IntPtr.Zero, 
                        		null, IntPtr.Zero);
-			GDIPlus.CheckStatus (status); 					
+			GDIPlus.CheckStatus (status);
 		}
 		
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback, int callbackData)
@@ -862,7 +862,7 @@ namespace System.Drawing
 			Status status = GDIPlus.GdipDrawImagePointsRect (nativeObject, image.NativeObject,
 				destPoints, destPoints.Length , srcRect.X, srcRect.Y,
 				srcRect.Width, srcRect.Height, srcUnit, 
-				imageAttr != null ? imageAttr.NativeObject : IntPtr.Zero, callback, (IntPtr) callbackData);
+				imageAttr != null ? imageAttr.nativeImageAttributes : IntPtr.Zero, callback, (IntPtr) callbackData);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -884,7 +884,7 @@ namespace System.Drawing
 			Status status = GDIPlus.GdipDrawImageRectRect (nativeObject, image.NativeObject,
                                 destRect.X, destRect.Y, destRect.Width, destRect.Height,
                        		srcX, srcY, srcWidth, srcHeight, srcUnit,
-				imageAttrs != null ? imageAttrs.NativeObject : IntPtr.Zero, null, IntPtr.Zero);
+				imageAttrs != null ? imageAttrs.nativeImageAttributes : IntPtr.Zero, null, IntPtr.Zero);
 			GDIPlus.CheckStatus (status);
 		}
 		
@@ -895,7 +895,7 @@ namespace System.Drawing
 			Status status = GDIPlus.GdipDrawImageRectRectI (nativeObject, image.NativeObject, 
                                         destRect.X, destRect.Y, destRect.Width, 
 					destRect.Height, srcX, srcY, srcWidth, srcHeight,
-					srcUnit, imageAttr != null ? imageAttr.NativeObject : IntPtr.Zero, null, IntPtr.Zero);
+					srcUnit, imageAttr != null ? imageAttr.nativeImageAttributes : IntPtr.Zero, null, IntPtr.Zero);
 			GDIPlus.CheckStatus (status);
 		}
 		
@@ -906,7 +906,7 @@ namespace System.Drawing
 			Status status = GDIPlus.GdipDrawImageRectRectI (nativeObject, image.NativeObject, 
                                         destRect.X, destRect.Y, destRect.Width, 
 					destRect.Height, srcX, srcY, srcWidth, srcHeight,
-					srcUnit, imageAttr != null ? imageAttr.NativeObject : IntPtr.Zero, callback,
+					srcUnit, imageAttr != null ? imageAttr.nativeImageAttributes : IntPtr.Zero, callback,
 					IntPtr.Zero);
 			GDIPlus.CheckStatus (status);
 		}
@@ -918,7 +918,7 @@ namespace System.Drawing
 			Status status = GDIPlus.GdipDrawImageRectRect (nativeObject, image.NativeObject, 
                                         destRect.X, destRect.Y, destRect.Width, 
 					destRect.Height, srcX, srcY, srcWidth, srcHeight,
-					srcUnit, imageAttrs != null ? imageAttrs.NativeObject : IntPtr.Zero, 
+					srcUnit, imageAttrs != null ? imageAttrs.nativeImageAttributes : IntPtr.Zero, 
 					callback, IntPtr.Zero);
 			GDIPlus.CheckStatus (status);
 		}
@@ -930,7 +930,7 @@ namespace System.Drawing
 			Status status = GDIPlus.GdipDrawImageRectRect (nativeObject, image.NativeObject, 
 				destRect.X, destRect.Y, destRect.Width, destRect.Height,
 				srcX, srcY, srcWidth, srcHeight, srcUnit, 
-				imageAttrs != null ? imageAttrs.NativeObject : IntPtr.Zero, callback, callbackData);
+				imageAttrs != null ? imageAttrs.nativeImageAttributes : IntPtr.Zero, callback, callbackData);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -941,7 +941,7 @@ namespace System.Drawing
 			Status status = GDIPlus.GdipDrawImageRectRect (nativeObject, image.NativeObject, 
                        		destRect.X, destRect.Y, destRect.Width, destRect.Height,
 				srcX, srcY, srcWidth, srcHeight, srcUnit,
-				imageAttrs != null ? imageAttrs.NativeObject : IntPtr.Zero, callback, callbackData);
+				imageAttrs != null ? imageAttrs.nativeImageAttributes : IntPtr.Zero, callback, callbackData);
 			GDIPlus.CheckStatus (status);
 		}		
 		

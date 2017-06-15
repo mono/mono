@@ -331,7 +331,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 
 		try {
 			status = GDIPlus.GdipGetEncoderParameterList (nativeObject, ref encoder, sz, rawEPList);
-			eps = EncoderParameters.FromNativePtr (rawEPList);
+			eps = EncoderParameters.ConvertFromMemory (rawEPList);
 			GDIPlus.CheckStatus (status);
 		}
 		finally {
@@ -457,7 +457,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		if (encoderParams == null) {
 			st = GDIPlus.GdipSaveImageToFile (nativeObject, filename, ref guid, IntPtr.Zero);
 		} else {
-			IntPtr nativeEncoderParams = encoderParams.ToNativePtr ();
+			IntPtr nativeEncoderParams = encoderParams.ConvertToMemory ();
 			st = GDIPlus.GdipSaveImageToFile (nativeObject, filename, ref guid, nativeEncoderParams);
 			Marshal.FreeHGlobal (nativeEncoderParams);
 		}
@@ -484,7 +484,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		if (encoderParams == null)
 			nativeEncoderParams = IntPtr.Zero;
 		else
-			nativeEncoderParams = encoderParams.ToNativePtr ();
+			nativeEncoderParams = encoderParams.ConvertToMemory ();
 
 		try {
 			if (GDIPlus.RunningOnUnix ()) {
@@ -508,7 +508,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	{
 		Status st;
 		
-		IntPtr nativeEncoderParams = encoderParams.ToNativePtr ();
+		IntPtr nativeEncoderParams = encoderParams.ConvertToMemory ();
 		st = GDIPlus.GdipSaveAdd (nativeObject, nativeEncoderParams);
 		Marshal.FreeHGlobal (nativeEncoderParams);
 		GDIPlus.CheckStatus (st);
@@ -518,7 +518,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	{
 		Status st;
 		
-		IntPtr nativeEncoderParams = encoderParams.ToNativePtr ();
+		IntPtr nativeEncoderParams = encoderParams.ConvertToMemory ();
 		st = GDIPlus.GdipSaveAddImage (nativeObject, image.NativeObject, nativeEncoderParams);
 		Marshal.FreeHGlobal (nativeEncoderParams);
 		GDIPlus.CheckStatus (st);
@@ -632,7 +632,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		try {
 			st = GDIPlus.GdipGetImagePalette (nativeObject, palette_data, bytes);
 			GDIPlus.CheckStatus (st);
-			ret.setFromGDIPalette (palette_data);
+			ret.ConvertFromMemory (palette_data);
 			return ret;
 		}
 
@@ -646,7 +646,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		if (palette == null) {
 			throw new ArgumentNullException("palette");
 		}
-		IntPtr palette_data = palette.getGDIPalette();
+		IntPtr palette_data = palette.ConvertToMemory ();
 		if (palette_data == IntPtr.Zero) {
 			return;
 		}
