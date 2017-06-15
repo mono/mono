@@ -75,6 +75,15 @@ namespace System.Drawing {
 			}
 		}
 
+		// For CoreFX compatibility
+		internal IntPtr NativeFamily
+		{            
+			get	
+			{
+				return nativeFontFamily;
+			}
+		}
+
 		public FontFamily (GenericFontFamilies genericFamily) 
 		{
 			Status status;

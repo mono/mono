@@ -96,7 +96,7 @@ System.Drawing/ToolboxBitmapAttribute.cs
 System.Drawing.Design/ToolboxItem.cs
 System.Drawing.Design/UITypeEditor.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Design/ToolboxItemCollection.cs
-System.Drawing.Drawing2D/AdjustableArrowCap.cs
+../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Drawing2D/AdjustableArrowCap.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Drawing2D/Blend.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Drawing2D/BrushType.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Drawing2D/ColorBlend.cs
@@ -104,16 +104,16 @@ System.Drawing.Drawing2D/AdjustableArrowCap.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Drawing2D/CompositingMode.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Drawing2D/CompositingQuality.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Drawing2D/CoordinateSpace.cs
-System.Drawing.Drawing2D/CustomLineCap.cs
+../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Drawing2D/CustomLineCap.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Drawing2D/CustomLineCapType.cs
-System.Drawing.Drawing2D/DashCap.cs
+../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/DashCap.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Drawing2D/DashStyle.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Drawing2D/FillMode.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Drawing2D/FlushIntention.cs
 System.Drawing.Drawing2D/GraphicsContainer.cs
 System.Drawing.Drawing2D/GraphicsPath.cs
-System.Drawing.Drawing2D/GraphicsPathIterator.cs
-System.Drawing.Drawing2D/GraphicsState.cs
+../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Drawing2D/GraphicsPathIterator.cs
+../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Drawing2D/GraphicsState.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Drawing2D/HatchBrush.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Drawing2D/HatchStyle.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Drawing2D/InterpolationMode.cs
@@ -132,6 +132,7 @@ System.Drawing.Drawing2D/PathGradientBrush.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Drawing2D/PixelOffsetMode.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Drawing2D/QualityMode.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Drawing2D/RegionData.cs
+../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Drawing2D/SafeCustomLineCapHandle.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Drawing2D/SmoothingMode.cs
 ../../build/common/MonoTODOAttribute.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Drawing2D/WrapMode.cs
@@ -206,10 +207,10 @@ System.Drawing.Printing/PrintRange.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Printing/QueryPageSettingsEventArgs.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Printing/QueryPageSettingsEventHandler.cs
 System.Drawing.Printing/StandardPrintController.cs
-System.Drawing.Text/FontCollection.cs
+../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Text/FontCollection.cs
 System.Drawing.Text/PrivateFontCollection.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Text/GenericFontFamilies.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Text/HotkeyPrefix.cs
-System.Drawing.Text/InstalledFontCollection.cs
+../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Text/InstalledFontCollection.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Text/TextRenderingHint.cs
 
