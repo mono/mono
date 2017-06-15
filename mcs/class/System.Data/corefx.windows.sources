@@ -41,3 +41,6 @@
 ../../../external/corefx/src/common/src/System/Net/ContextFlagsAdapterPal.Windows.cs
 ../../../external/corefx/src/common/src/System/Net/SecurityStatusAdapterPal.Windows.cs
 ../../../external/corefx/src/common/src/System/Collections/Generic/BidirectionalDictionary.cs
+
+# ODBC:
+../../../external/corefx/src/System.Data.Odbc/src/Common/System/Data/Common/ExternDll.Windows.cs

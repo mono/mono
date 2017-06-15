@@ -15,3 +15,8 @@
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/TdsParser.Unix.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/LocalDBAPI.Unix.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SNI/LocalDB.Unix.cs
+
+#TODO: create corefx.linux.sources and corefx.osx.sources
+#../../../external/corefx/src/System.Data.Odbc/src/Common/System/Data/Common/ExternDll.Linux.cs
+
+../../../external/corefx/src/System.Data.Odbc/src/Common/System/Data/Common/ExternDll.Osx.cs
