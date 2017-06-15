@@ -175,7 +175,7 @@ namespace System.Drawing
 
 			set {
 				if (isModifiable) {
-					Status status = GDIPlus.GdipSetPenCustomEndCap (nativeObject, value.nativeObject);
+					Status status = GDIPlus.GdipSetPenCustomEndCap (nativeObject, value.nativeCap);
 					GDIPlus.CheckStatus (status);
 					endCap = value;
 				} else
@@ -190,7 +190,7 @@ namespace System.Drawing
 
 			set {
 				if (isModifiable) {
-					Status status = GDIPlus.GdipSetPenCustomStartCap (nativeObject, value.nativeObject);
+					Status status = GDIPlus.GdipSetPenCustomStartCap (nativeObject, value.nativeCap);
 					GDIPlus.CheckStatus (status);
 					startCap = value;
 				} else
@@ -422,6 +422,12 @@ namespace System.Drawing
 					GDIPlus.CheckStatus (status);
 				} else
 					throw new ArgumentException (Locale.GetText ("This Pen object can't be modified."));
+			}
+		}
+
+		internal IntPtr NativePen {
+			get {
+				return nativeObject;
 			}
 		}
 

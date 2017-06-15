@@ -91,6 +91,13 @@ namespace System.Drawing
 			}
 		}
 
+		// For CoreFX compatibility
+		internal IntPtr NativeGraphics {
+			get {
+				return nativeObject;
+			}
+		}
+
 		internal IntPtr NativeObject {
 			get {
 				return nativeObject;
@@ -315,7 +322,7 @@ namespace System.Drawing
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
 			
-			status = GDIPlus.GdipDrawArc (nativeObject, pen.nativeObject,
+			status = GDIPlus.GdipDrawArc (nativeObject, pen.NativePen,
                                         x, y, width, height, startAngle, sweepAngle);
 			GDIPlus.CheckStatus (status);
 		}
@@ -328,7 +335,7 @@ namespace System.Drawing
 			Status status;
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
-			status = GDIPlus.GdipDrawArcI (nativeObject, pen.nativeObject,
+			status = GDIPlus.GdipDrawArcI (nativeObject, pen.NativePen,
 						x, y, width, height, startAngle, sweepAngle);
 			GDIPlus.CheckStatus (status);
 		}
@@ -338,7 +345,7 @@ namespace System.Drawing
 			Status status;
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
-			status = GDIPlus.GdipDrawBezier (nativeObject, pen.nativeObject,
+			status = GDIPlus.GdipDrawBezier (nativeObject, pen.NativePen,
 							pt1.X, pt1.Y, pt2.X, pt2.Y, pt3.X,
 							pt3.Y, pt4.X, pt4.Y);
 			GDIPlus.CheckStatus (status);
@@ -349,7 +356,7 @@ namespace System.Drawing
 			Status status;
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
-			status = GDIPlus.GdipDrawBezierI (nativeObject, pen.nativeObject,
+			status = GDIPlus.GdipDrawBezierI (nativeObject, pen.NativePen,
 							pt1.X, pt1.Y, pt2.X, pt2.Y, pt3.X,
 							pt3.Y, pt4.X, pt4.Y);
 			GDIPlus.CheckStatus (status);
@@ -360,7 +367,7 @@ namespace System.Drawing
 			Status status;
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
-			status = GDIPlus.GdipDrawBezier (nativeObject, pen.nativeObject, x1,
+			status = GDIPlus.GdipDrawBezier (nativeObject, pen.NativePen, x1,
 							y1, x2, y2, x3, y3, x4, y4);
 			GDIPlus.CheckStatus (status);
 		}
@@ -385,7 +392,7 @@ namespace System.Drawing
                                 Point p4 = points [i + 3];
 
                                 status = GDIPlus.GdipDrawBezier (nativeObject, 
-							pen.nativeObject,
+							pen.NativePen,
                                                         p1.X, p1.Y, p2.X, p2.Y, 
                                                         p3.X, p3.Y, p4.X, p4.Y);
 				GDIPlus.CheckStatus (status);
@@ -412,7 +419,7 @@ namespace System.Drawing
                                 PointF p4 = points [i + 3];
 
                                 status = GDIPlus.GdipDrawBezier (nativeObject, 
-							pen.nativeObject,
+							pen.NativePen,
                                                         p1.X, p1.Y, p2.X, p2.Y, 
                                                         p3.X, p3.Y, p4.X, p4.Y);
 				GDIPlus.CheckStatus (status);
@@ -428,7 +435,7 @@ namespace System.Drawing
 				throw new ArgumentNullException ("points");
 			
 			Status status;
-			status = GDIPlus.GdipDrawClosedCurve (nativeObject, pen.nativeObject, points, points.Length);
+			status = GDIPlus.GdipDrawClosedCurve (nativeObject, pen.NativePen, points, points.Length);
 			GDIPlus.CheckStatus (status);
 		}
 		
@@ -440,7 +447,7 @@ namespace System.Drawing
 				throw new ArgumentNullException ("points");
 			
 			Status status;
-			status = GDIPlus.GdipDrawClosedCurveI (nativeObject, pen.nativeObject, points, points.Length);
+			status = GDIPlus.GdipDrawClosedCurveI (nativeObject, pen.NativePen, points, points.Length);
 			GDIPlus.CheckStatus (status);
 		}
  			
@@ -454,7 +461,7 @@ namespace System.Drawing
 				throw new ArgumentNullException ("points");
 			
 			Status status;
-			status = GDIPlus.GdipDrawClosedCurve2I (nativeObject, pen.nativeObject, points, points.Length, tension);
+			status = GDIPlus.GdipDrawClosedCurve2I (nativeObject, pen.NativePen, points, points.Length, tension);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -468,7 +475,7 @@ namespace System.Drawing
 				throw new ArgumentNullException ("points");
 			
 			Status status;
-			status = GDIPlus.GdipDrawClosedCurve2 (nativeObject, pen.nativeObject, points, points.Length, tension);
+			status = GDIPlus.GdipDrawClosedCurve2 (nativeObject, pen.NativePen, points, points.Length, tension);
 			GDIPlus.CheckStatus (status);
 		}
 		
@@ -480,7 +487,7 @@ namespace System.Drawing
 				throw new ArgumentNullException ("points");
 			
 			Status status;
-			status = GDIPlus.GdipDrawCurveI (nativeObject, pen.nativeObject, points, points.Length);
+			status = GDIPlus.GdipDrawCurveI (nativeObject, pen.NativePen, points, points.Length);
 			GDIPlus.CheckStatus (status);
 		}
 		
@@ -492,7 +499,7 @@ namespace System.Drawing
 				throw new ArgumentNullException ("points");
 			
 			Status status;
-			status = GDIPlus.GdipDrawCurve (nativeObject, pen.nativeObject, points, points.Length);
+			status = GDIPlus.GdipDrawCurve (nativeObject, pen.NativePen, points, points.Length);
 			GDIPlus.CheckStatus (status);
 		}
 		
@@ -504,7 +511,7 @@ namespace System.Drawing
 				throw new ArgumentNullException ("points");
 			
 			Status status;
-			status = GDIPlus.GdipDrawCurve2 (nativeObject, pen.nativeObject, points, points.Length, tension);
+			status = GDIPlus.GdipDrawCurve2 (nativeObject, pen.NativePen, points, points.Length, tension);
 			GDIPlus.CheckStatus (status);
 		}
 		
@@ -516,7 +523,7 @@ namespace System.Drawing
 				throw new ArgumentNullException ("points");
 			
 			Status status;
-			status = GDIPlus.GdipDrawCurve2I (nativeObject, pen.nativeObject, points, points.Length, tension);		
+			status = GDIPlus.GdipDrawCurve2I (nativeObject, pen.NativePen, points, points.Length, tension);		
 			GDIPlus.CheckStatus (status);
 		}
 		
@@ -528,7 +535,7 @@ namespace System.Drawing
 				throw new ArgumentNullException ("points");
 			
 			Status status;
-			status = GDIPlus.GdipDrawCurve3 (nativeObject, pen.nativeObject,
+			status = GDIPlus.GdipDrawCurve3 (nativeObject, pen.NativePen,
 							points, points.Length, offset,
 							numberOfSegments, 0.5f);
 			GDIPlus.CheckStatus (status);
@@ -542,7 +549,7 @@ namespace System.Drawing
 				throw new ArgumentNullException ("points");
 			
 			Status status;
-			status = GDIPlus.GdipDrawCurve3I (nativeObject, pen.nativeObject,
+			status = GDIPlus.GdipDrawCurve3I (nativeObject, pen.NativePen,
 							points, points.Length, offset,
 							numberOfSegments, tension);
 			GDIPlus.CheckStatus (status);
@@ -556,7 +563,7 @@ namespace System.Drawing
 				throw new ArgumentNullException ("points");
 			
 			Status status;
-			status = GDIPlus.GdipDrawCurve3 (nativeObject, pen.nativeObject,
+			status = GDIPlus.GdipDrawCurve3 (nativeObject, pen.NativePen,
 							points, points.Length, offset,
 							numberOfSegments, tension);
 			GDIPlus.CheckStatus (status);
@@ -582,7 +589,7 @@ namespace System.Drawing
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
 			Status status;
-			status = GDIPlus.GdipDrawEllipseI (nativeObject, pen.nativeObject, x, y, width, height);
+			status = GDIPlus.GdipDrawEllipseI (nativeObject, pen.NativePen, x, y, width, height);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -590,7 +597,7 @@ namespace System.Drawing
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
-			Status status = GDIPlus.GdipDrawEllipse (nativeObject, pen.nativeObject, x, y, width, height);
+			Status status = GDIPlus.GdipDrawEllipse (nativeObject, pen.NativePen, x, y, width, height);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -987,7 +994,7 @@ namespace System.Drawing
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
-                        Status status = GDIPlus.GdipDrawLine (nativeObject, pen.nativeObject,
+                        Status status = GDIPlus.GdipDrawLine (nativeObject, pen.NativePen,
 		                                pt1.X, pt1.Y, pt2.X, pt2.Y);
 			GDIPlus.CheckStatus (status);
 		}
@@ -996,7 +1003,7 @@ namespace System.Drawing
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
-                        Status status = GDIPlus.GdipDrawLineI (nativeObject, pen.nativeObject,
+                        Status status = GDIPlus.GdipDrawLineI (nativeObject, pen.NativePen,
 		                                pt1.X, pt1.Y, pt2.X, pt2.Y);
 			GDIPlus.CheckStatus (status);
 		}
@@ -1005,7 +1012,7 @@ namespace System.Drawing
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
-			Status status = GDIPlus.GdipDrawLineI (nativeObject, pen.nativeObject, x1, y1, x2, y2);
+			Status status = GDIPlus.GdipDrawLineI (nativeObject, pen.NativePen, x1, y1, x2, y2);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -1015,7 +1022,7 @@ namespace System.Drawing
 				throw new ArgumentNullException ("pen");
 			if (!float.IsNaN(x1) && !float.IsNaN(y1) &&
 			    !float.IsNaN(x2) && !float.IsNaN(y2)) {
-				Status status = GDIPlus.GdipDrawLine (nativeObject, pen.nativeObject, x1, y1, x2, y2);
+				Status status = GDIPlus.GdipDrawLine (nativeObject, pen.NativePen, x1, y1, x2, y2);
 				GDIPlus.CheckStatus (status);
 			}
 		}
@@ -1026,7 +1033,7 @@ namespace System.Drawing
 				throw new ArgumentNullException ("pen");
 			if (points == null)
 				throw new ArgumentNullException ("points");
-			Status status = GDIPlus.GdipDrawLines (nativeObject, pen.nativeObject, points, points.Length);
+			Status status = GDIPlus.GdipDrawLines (nativeObject, pen.NativePen, points, points.Length);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -1036,7 +1043,7 @@ namespace System.Drawing
 				throw new ArgumentNullException ("pen");
 			if (points == null)
 				throw new ArgumentNullException ("points");
-			Status status = GDIPlus.GdipDrawLinesI (nativeObject, pen.nativeObject, points, points.Length);
+			Status status = GDIPlus.GdipDrawLinesI (nativeObject, pen.NativePen, points, points.Length);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -1046,7 +1053,7 @@ namespace System.Drawing
 				throw new ArgumentNullException ("pen");
 			if (path == null)
 				throw new ArgumentNullException ("path");
-			Status status = GDIPlus.GdipDrawPath (nativeObject, pen.nativeObject, path.nativePath);
+			Status status = GDIPlus.GdipDrawPath (nativeObject, pen.NativePen, path.nativePath);
 			GDIPlus.CheckStatus (status);
 		}
 		
@@ -1068,7 +1075,7 @@ namespace System.Drawing
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
-			Status status = GDIPlus.GdipDrawPie (nativeObject, pen.nativeObject, x, y, width, height, startAngle, sweepAngle);
+			Status status = GDIPlus.GdipDrawPie (nativeObject, pen.NativePen, x, y, width, height, startAngle, sweepAngle);
 			GDIPlus.CheckStatus (status);
 		}
 		
@@ -1079,7 +1086,7 @@ namespace System.Drawing
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
-			Status status = GDIPlus.GdipDrawPieI (nativeObject, pen.nativeObject, x, y, width, height, startAngle, sweepAngle);
+			Status status = GDIPlus.GdipDrawPieI (nativeObject, pen.NativePen, x, y, width, height, startAngle, sweepAngle);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -1089,7 +1096,7 @@ namespace System.Drawing
 				throw new ArgumentNullException ("pen");
 			if (points == null)
 				throw new ArgumentNullException ("points");
-			Status status = GDIPlus.GdipDrawPolygonI (nativeObject, pen.nativeObject, points, points.Length);
+			Status status = GDIPlus.GdipDrawPolygonI (nativeObject, pen.NativePen, points, points.Length);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -1099,7 +1106,7 @@ namespace System.Drawing
 				throw new ArgumentNullException ("pen");
 			if (points == null)
 				throw new ArgumentNullException ("points");
-			Status status = GDIPlus.GdipDrawPolygon (nativeObject, pen.nativeObject, points, points.Length);
+			Status status = GDIPlus.GdipDrawPolygon (nativeObject, pen.NativePen, points, points.Length);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -1114,7 +1121,7 @@ namespace System.Drawing
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
-			Status status = GDIPlus.GdipDrawRectangle (nativeObject, pen.nativeObject, x, y, width, height);
+			Status status = GDIPlus.GdipDrawRectangle (nativeObject, pen.NativePen, x, y, width, height);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -1122,7 +1129,7 @@ namespace System.Drawing
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
-			Status status = GDIPlus.GdipDrawRectangleI (nativeObject, pen.nativeObject, x, y, width, height);
+			Status status = GDIPlus.GdipDrawRectangleI (nativeObject, pen.NativePen, x, y, width, height);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -1132,7 +1139,7 @@ namespace System.Drawing
 				throw new ArgumentNullException ("image");
 			if (rects == null)
 				throw new ArgumentNullException ("rects");
-			Status status = GDIPlus.GdipDrawRectangles (nativeObject, pen.nativeObject, rects, rects.Length);
+			Status status = GDIPlus.GdipDrawRectangles (nativeObject, pen.NativePen, rects, rects.Length);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -1142,7 +1149,7 @@ namespace System.Drawing
 				throw new ArgumentNullException ("image");
 			if (rects == null)
 				throw new ArgumentNullException ("rects");
-			Status status = GDIPlus.GdipDrawRectanglesI (nativeObject, pen.nativeObject, rects, rects.Length);
+			Status status = GDIPlus.GdipDrawRectanglesI (nativeObject, pen.NativePen, rects, rects.Length);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -1520,7 +1527,7 @@ namespace System.Drawing
 				throw new ArgumentNullException ("brush");
 			if (path == null)
 				throw new ArgumentNullException ("path");
-			Status status = GDIPlus.GdipFillPath (nativeObject, brush.NativeBrush,  path.NativeObject);
+			Status status = GDIPlus.GdipFillPath (nativeObject, brush.NativeBrush,  path.nativePath);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -2049,7 +2056,7 @@ namespace System.Drawing
 		public void Restore (GraphicsState gstate)
 		{			
 			// the possible NRE thrown by gstate.nativeState match MS behaviour
-			Status status = GDIPlus.GdipRestoreGraphics (nativeObject, gstate.nativeState);
+			Status status = GDIPlus.GdipRestoreGraphics (nativeObject, (uint)gstate.nativeState);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -2070,8 +2077,7 @@ namespace System.Drawing
 			Status status = GDIPlus.GdipSaveGraphics (nativeObject, out saveState);
 			GDIPlus.CheckStatus (status);
 
-			GraphicsState state = new GraphicsState ();
-			state.nativeState = saveState;
+			GraphicsState state = new GraphicsState ((int)saveState);
 			return state;
 		}
 
@@ -2148,7 +2154,7 @@ namespace System.Drawing
 		{
 			if (path == null)
 				throw new ArgumentNullException ("path");
-			Status status = GDIPlus.GdipSetClipPath (nativeObject, path.NativeObject, combineMode);
+			Status status = GDIPlus.GdipSetClipPath (nativeObject, path.nativePath, combineMode);
 			GDIPlus.CheckStatus (status);
 		}
 

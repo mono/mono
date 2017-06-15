@@ -47,7 +47,7 @@ namespace System.Drawing.Drawing2D {
 				throw new ArgumentNullException ("path");
 
 			IntPtr nativeObject;
-			Status status = GDIPlus.GdipCreatePathGradientFromPath (path.NativeObject, out nativeObject);
+			Status status = GDIPlus.GdipCreatePathGradientFromPath (path.nativePath, out nativeObject);
 			GDIPlus.CheckStatus (status);
 			SetNativeBrush (nativeObject);
 		}
