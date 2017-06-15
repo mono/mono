@@ -1,3 +1,5 @@
+corefx/SR.cs
+System.Drawing/SR.cs
 Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
@@ -11,7 +13,6 @@ Assembly/AssemblyInfo.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Internal/GPRECT.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Internal/GPRECTF.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Internal/ISystemEventTracker.cs
-System.Drawing/SR.cs
 System.Drawing/Bitmap.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/BitmapSuffixInSameAssemblyAttribute.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/BitmapSuffixInSatelliteAssemblyAttribute.cs

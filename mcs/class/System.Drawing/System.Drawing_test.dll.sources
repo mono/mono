@@ -14,6 +14,7 @@
 ../../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Imaging/MetafileHeaderEmf.cs
 ../../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Imaging/EmfPlusFlags.cs
 ../../../../external/corefx/src/System.Drawing.Common/src/misc/HandleCollector.cs
+../corefx/SR.cs
 ../System.Drawing/SR.cs
 ../System.Drawing/ExternDll.cs
 ../System.Drawing/gdipEnums.cs    

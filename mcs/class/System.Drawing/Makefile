@@ -10,6 +10,8 @@ LIB_MCS_FLAGS = /unsafe \
 	-resource:Assembly/Error.ico,Error.ico -resource:Assembly/Warning.ico,Warning.ico \
 	-resource:Assembly/Question.ico,Question.ico -resource:Assembly/Shield.ico,Shield.ico
 
+RESX_RESOURCE_STRING = ../../../external/corefx/src/System.Drawing.Common/src/Resources/Strings.resx
+
 ifeq (winaot, $(PROFILE))
 LIB_MCS_FLAGS += /keyfile:../msfinal.pub
 else ifeq (orbis, $(PROFILE))
