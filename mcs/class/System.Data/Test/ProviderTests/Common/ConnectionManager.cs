@@ -103,8 +103,12 @@ namespace MonoTests.System.Data.Connected
 			if (string.IsNullOrEmpty (connectionString))
 				return null;
 
+#if COREFX_NS
+			var connection = new OdbcConnection();
+#else
 			DbProviderFactory factory = DbProviderFactories.GetFactory ("System.Data.Odbc");
 			var connection = (OdbcConnection)factory.CreateConnection ();
+#endif
 
 			var engine = new EngineConfig {
 				Type = EngineType.MySQL,

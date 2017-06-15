@@ -24,7 +24,7 @@ LIB_REFS += $(MONO_DATA_TDS) System.Transactions
 LIB_MCS_FLAGS += -d:NO_CODEDOM -d:NO_OLEDB -d:NO_ODBC -d:NO_CONFIGURATION
 else
 LIB_REFS += System.EnterpriseServices $(MONO_DATA_TDS) System.Configuration System.Transactions
-LIB_MCS_FLAGS += -d:NO_OLEDB -d:NO_ODBC -d:COREFX_NS
+LIB_MCS_FLAGS += -d:NO_OLEDB -d:COREFX_NS
 endif
 
 TXT_RESOURCE_STRINGS = ../referencesource/System.Data/system.data.txt
