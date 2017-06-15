@@ -16,6 +16,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="$(MonoSourceLocation)\mono\utils\os-event-win32.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MonoSourceLocation)\mono\utils\mono-threads-posix-signals.h" />
