@@ -2397,6 +2397,7 @@ ves_icall_System_Net_Sockets_Socket_Shutdown_internal (gsize sock, gint32 how, g
 gint
 ves_icall_System_Net_Sockets_Socket_IOControl_internal (gsize sock, gint32 code, MonoArray *input, MonoArray *output, gint32 *werror)
 {
+#if !defined(PLATFORM_UNITY)
 	glong output_bytes = 0;
 	gchar *i_buffer, *o_buffer;
 	gint i_len, o_len;
@@ -2436,6 +2437,10 @@ ves_icall_System_Net_Sockets_Socket_IOControl_internal (gsize sock, gint32 code,
 	}
 
 	return (gint)output_bytes;
+#else
+	g_assert_not_reached();
+	return 0;
+#endif
 }
 
 MonoBoolean
@@ -2612,7 +2617,9 @@ ves_icall_System_Net_Dns_GetHostByAddr_internal (MonoString *addr, MonoString **
 	MonoAddressInfo *info = NULL;
 	MonoError error;
 	gint32 family;
+#if !defined(PLATFORM_UNITY)
 	gchar hostname [NI_MAXHOST] = { 0 };
+#endif
 	gboolean ret;
 
 	address = mono_string_to_utf8_checked (addr, &error);
@@ -2641,7 +2648,11 @@ ves_icall_System_Net_Dns_GetHostByAddr_internal (MonoString *addr, MonoString **
 #if HAVE_SOCKADDR_IN_SIN_LEN
 		saddr.sin_len = sizeof (saddr);
 #endif
+#if !defined(PLATFORM_UNITY)
 		ret = getnameinfo ((struct sockaddr*)&saddr, sizeof (saddr), hostname, sizeof (hostname), NULL, 0, 0) == 0;
+#else
+		g_assert_not_reached();
+#endif
 		break;
 	}
 #ifdef HAVE_STRUCT_SOCKADDR_IN6
@@ -2649,7 +2660,11 @@ ves_icall_System_Net_Dns_GetHostByAddr_internal (MonoString *addr, MonoString **
 #if HAVE_SOCKADDR_IN6_SIN_LEN
 		saddr6.sin6_len = sizeof (saddr6);
 #endif
+#if !defined(PLATFORM_UNITY)
 		ret = getnameinfo ((struct sockaddr*)&saddr6, sizeof (saddr6), hostname, sizeof (hostname), NULL, 0, 0) == 0;
+#else
+		g_assert_not_reached();
+#endif
 		break;
 	}
 #endif
@@ -2662,9 +2677,12 @@ ves_icall_System_Net_Dns_GetHostByAddr_internal (MonoString *addr, MonoString **
 	if (!ret)
 		return FALSE;
 
+#if !defined(PLATFORM_UNITY)
 	if (mono_get_address_info (hostname, 0, hint | MONO_HINT_CANONICAL_NAME | MONO_HINT_CONFIGURED_ONLY, &info) != 0)
 		return FALSE;
-
+#else
+	g_assert_not_reached();
+#endif
 	MonoBoolean result = addrinfo_to_IPHostEntry (info, h_name, h_aliases, h_addr_list, FALSE, &error);
 	mono_error_set_pending_exception (&error);
 	return result;
@@ -2673,6 +2691,7 @@ ves_icall_System_Net_Dns_GetHostByAddr_internal (MonoString *addr, MonoString **
 MonoBoolean
 ves_icall_System_Net_Dns_GetHostName_internal (MonoString **h_name)
 {
+#if !defined (PLATFORM_UNITY)
 	gchar hostname [NI_MAXHOST] = { 0 };
 	int ret;
 
@@ -2681,7 +2700,9 @@ ves_icall_System_Net_Dns_GetHostName_internal (MonoString **h_name)
 		return FALSE;
 
 	*h_name = mono_string_new (mono_domain_get (), hostname);
-
+#else
+	g_assert_not_reached();
+#endif
 	return TRUE;
 }
 
