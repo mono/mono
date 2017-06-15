@@ -44,6 +44,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 	[Category ("CAS")]
 	public class SqlClientFactoryTest
 	{
+#if !COREFX_NS
 		[Test]
 		public void CreatePermissionTest ()
 		{
@@ -53,6 +54,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 			perm = factory.CreatePermission (PermissionState.Unrestricted);
 			Assert.AreEqual (false, perm.IsSubsetOf (permission), "#1");
 		}
+#endif
 	}
 }
 

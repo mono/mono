@@ -77,7 +77,7 @@ namespace MonoTests.System.Data.Connected
 				return null;
 
 			SqlConnection connection;
-#if MOBILE
+#if MOBILE || COREFX_NS
 			connection = new SqlConnection ();
 #else
 			DbProviderFactory factory = DbProviderFactories.GetFactory ("System.Data.SqlClient");

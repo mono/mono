@@ -97,7 +97,9 @@ namespace MonoTests.System.Data.Connected.SqlClient
 				Assert.IsNull (cmd.Container, "#A5");
 				Assert.IsTrue (cmd.DesignTimeVisible, "#A6");
 				Assert.IsNull (cmd.Notification, "#A7");
+#if !COREFX_NS
 				Assert.IsTrue (cmd.NotificationAutoEnlist, "#A8");
+#endif
 				Assert.IsNotNull (cmd.Parameters, "#A9");
 				Assert.AreEqual (0, cmd.Parameters.Count, "#A10");
 				Assert.IsNull (cmd.Site, "#A11");
@@ -127,7 +129,9 @@ namespace MonoTests.System.Data.Connected.SqlClient
 				Assert.IsNull (cmd.Container, "#B5");
 				Assert.IsTrue (cmd.DesignTimeVisible, "#B6");
 				Assert.IsNull (cmd.Notification, "#B7");
+#if !COREFX_NS
 				Assert.IsTrue (cmd.NotificationAutoEnlist, "#B8");
+#endif
 				Assert.IsNotNull (cmd.Parameters, "#B9");
 				Assert.AreEqual (0, cmd.Parameters.Count, "#B10");
 				Assert.IsNull (cmd.Site, "#B11");
@@ -2452,6 +2456,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 			Assert.AreEqual (15, cmd.Notification.Timeout, "#2 The value should be 15 as the constructor is initiated with this value");
 		}
 
+#if !COREFX_NS
 		[Test]
 		public void NotificationAutoEnlistTest ()
 		{
@@ -2506,6 +2511,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 				ConnectionManager.Instance.Sql.CloseConnection ();
 			}
 		}
+#endif
 
 		[Test]
 		public void SqlCommandDisposeTest ()

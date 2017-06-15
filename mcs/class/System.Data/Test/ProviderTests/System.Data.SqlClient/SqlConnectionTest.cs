@@ -791,6 +791,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 			Assert.AreEqual(true, conn.StatisticsEnabled, "#1 The value should be true after setting the property to true");
 		}
 
+#if !COREFX_NS
 		[Test]
 		[Category("NotWorking")]
 		public void ChangePasswordTest ()
@@ -802,6 +803,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 			connBuilder.Password = tmpPassword;
 			SqlConnection.ChangePassword (connBuilder.ConnectionString, oldPassword); // Modify to the original password
 		}
+#endif
 
 		static int GetConnectionCount (SqlConnection conn)
 		{

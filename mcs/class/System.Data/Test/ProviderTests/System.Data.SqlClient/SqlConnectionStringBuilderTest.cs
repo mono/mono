@@ -63,6 +63,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 			Assert.AreEqual ("Data Source=localhost", builder.ConnectionString, "#DVT1 default values is wrong");
 		}
 
+#if !COREFX_NS
 		[Test]
 		public void PropertiesTest ()
 		{
@@ -73,6 +74,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 					 builder.ConnectionString.Contains ("Asynchronous Processing=True"),
 					 "#PT1 boolean value must be true");
 		}
+#endif
 		
 		[Test]
 		public void ItemTest ()
@@ -160,6 +162,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 			Assert.AreEqual ("User Instance=True", builder.ConnectionString, "#1 The value of the key User Instance should be added to the connection string");			
 		}
 
+#if !COREFX_NS
 		[Test]
 		public void ContextConnectionTest ()
 		{
@@ -177,6 +180,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 			builder["Context Connection"] = true;
 			Assert.AreEqual ("Context Connection=True", builder.ConnectionString, "#1 The value of the key Context Connection should be added to the connection string");			
 		}
+#endif
 	}
 }
 
