@@ -45,6 +45,13 @@ namespace System.Drawing.Imaging {
 				return nativeImageAttr;
 			}
 		}
+
+		// For compatibility with CoreFX sources
+		internal IntPtr nativeImageAttributes {
+			get {
+				return nativeImageAttr;
+			}
+		}
 		
 		internal ImageAttributes (IntPtr native)
 		{
