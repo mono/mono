@@ -236,7 +236,7 @@ ip_in_critical_region (MonoDomain *domain, gpointer ip)
 
 	method = mono_jit_info_get_method (ji);
 
-	return mono_runtime_is_critical_method (method) || sgen_is_critical_method (method);
+	return sgen_is_critical_method (method);
 }
 
 gboolean

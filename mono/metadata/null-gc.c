@@ -31,10 +31,6 @@ mono_gc_base_init (void)
 #endif
 
 	memset (&cb, 0, sizeof (cb));
-	/* TODO: This casts away an incompatible pointer type warning in the same
-	         manner that boehm-gc does it. This is probably worth investigating
-	         more carefully. */
-	cb.method_is_critical = (gpointer)mono_runtime_is_critical_method;
 
 	mono_thread_info_init (&cb, sizeof (MonoThreadInfo));
 

@@ -841,8 +841,6 @@ WB trampoline. Another option is to encode wb ranges in MonoJitInfo, but that is
 static gboolean
 is_thread_in_critical_region (MonoThreadInfo *info)
 {
-	MonoMethod *method;
-	MonoJitInfo *ji;
 	gpointer stack_start;
 	MonoThreadUnwindState *state;
 
@@ -871,16 +869,7 @@ is_thread_in_critical_region (MonoThreadInfo *info)
 	if (threads_callbacks.ip_in_critical_region)
 		return threads_callbacks.ip_in_critical_region ((MonoDomain *) state->unwind_data [MONO_UNWIND_DATA_DOMAIN], (char *) MONO_CONTEXT_GET_IP (&state->ctx));
 
-	ji = mono_jit_info_table_find (
-		(MonoDomain *) state->unwind_data [MONO_UNWIND_DATA_DOMAIN],
-		(char *) MONO_CONTEXT_GET_IP (&state->ctx));
-
-	if (!ji)
-		return FALSE;
-
-	method = mono_jit_info_get_method (ji);
-
-	return threads_callbacks.method_is_critical (method);
+	return FALSE;
 }
 
 gboolean

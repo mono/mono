@@ -2081,7 +2081,7 @@ lookup_start:
 		if ((code = mono_aot_get_method_checked (domain, method, error))) {
 			MonoVTable *vtable;
 
-			if (mono_runtime_is_critical_method (method) || mono_gc_is_critical_method (method)) {
+			if (mono_gc_is_critical_method (method)) {
 				/*
 				 * The suspend code needs to be able to lookup these methods by ip in async context,
 				 * so preload their jit info.
