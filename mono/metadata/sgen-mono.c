@@ -2862,7 +2862,7 @@ sgen_client_init (void)
 	cb.thread_attach = sgen_thread_attach;
 	cb.thread_detach = sgen_thread_detach;
 	cb.thread_detach_with_lock = sgen_thread_detach_with_lock;
-	cb.mono_thread_in_critical_region = thread_in_critical_region;
+	cb.thread_in_critical_region = thread_in_critical_region;
 	cb.ip_in_critical_region = ip_in_critical_region;
 
 	mono_threads_init (&cb, sizeof (SgenThreadInfo));

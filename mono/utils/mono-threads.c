@@ -854,7 +854,7 @@ is_thread_in_critical_region (MonoThreadInfo *info)
 		return TRUE;
 
 	/* Are we inside a GC critical region? */
-	if (threads_callbacks.mono_thread_in_critical_region && threads_callbacks.mono_thread_in_critical_region (info)) {
+	if (threads_callbacks.thread_in_critical_region && threads_callbacks.thread_in_critical_region (info)) {
 		return TRUE;
 	}
 
@@ -880,7 +880,7 @@ is_thread_in_critical_region (MonoThreadInfo *info)
 
 	method = mono_jit_info_get_method (ji);
 
-	return threads_callbacks.mono_method_is_critical (method);
+	return threads_callbacks.method_is_critical (method);
 }
 
 gboolean

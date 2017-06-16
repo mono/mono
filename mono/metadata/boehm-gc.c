@@ -241,7 +241,7 @@ mono_gc_base_init (void)
 	cb.thread_attach = boehm_thread_attach;
 	cb.thread_detach = boehm_thread_detach;
 	cb.thread_detach_with_lock = boehm_thread_detach_with_lock;
-	cb.mono_method_is_critical = (gboolean (*)(void *))mono_runtime_is_critical_method;
+	cb.method_is_critical = (gboolean (*)(void *))mono_runtime_is_critical_method;
 
 	mono_threads_init (&cb, sizeof (MonoThreadInfo));
 	mono_os_mutex_init (&mono_gc_lock);
