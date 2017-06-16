@@ -102,6 +102,18 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
+		public int EndLineNumber {
+			get {
+				return Location.EndLineNumber;
+			}
+		}
+
+		public int EndColumnNumber {
+			get {
+				return Location.EndColumnNumber;
+			}
+		}
+
 		public bool IsDebuggerInvoke {
 			get {
 				return (flags & StackFrameFlags.DEBUGGER_INVOKE) != 0;
