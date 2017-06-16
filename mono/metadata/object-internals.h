@@ -257,6 +257,8 @@ typedef struct {
 	MonoMarshalByRefObject object;
 	gpointer     handle;
 } MonoWaitHandle;
+/* Safely access System.Threading.WaitHandle from native code */
+TYPED_HANDLE_DECL (MonoWaitHandle);
 
 /* This is a copy of System.Runtime.Remoting.Messaging.CallType */
 typedef enum {
@@ -648,6 +650,9 @@ mono_wait_handle_new	    (MonoDomain *domain, gpointer handle, MonoError *error)
 
 gpointer
 mono_wait_handle_get_handle (MonoWaitHandle *handle);
+
+gpointer
+mono_wait_handle_get_safe_handle_from_coop_handle (MonoWaitHandleHandle handle);
 
 gboolean
 mono_message_init	    (MonoDomain *domain, MonoMethodMessage *this_obj, 

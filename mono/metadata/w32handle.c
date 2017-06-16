@@ -1284,13 +1284,6 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 	if (timeout != MONO_INFINITE_WAIT)
 		start = mono_msec_ticks ();
 
-	for (i = 0; i < nhandles; ++i) {
-		/* Add a reference, as we need to ensure the handle wont
-		 * disappear from under us while we're waiting in the loop
-		 * (not lock, as we don't want exclusive access here) */
-		mono_w32handle_ref (handles [i]);
-	}
-
 	for (;;) {
 		gsize count, lowest;
 		gboolean signalled;
@@ -1397,11 +1390,6 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 	}
 
 done:
-	for (i = 0; i < nhandles; i++) {
-		/* Unref everything we reffed above */
-		mono_w32handle_unref (handles [i]);
-	}
-
 	return ret;
 }
 
@@ -1490,4 +1478,76 @@ done:
 	mono_w32handle_unlock_handle (wait_handle);
 
 	return ret;
+}
+
+uintptr_t
+mono_w32handle_load_from_monoarray (MonoArrayHandle source, gpointer *dest, uintptr_t buffer_size, MonoError *error)
+{
+	HANDLE_FUNCTION_ENTER ();
+	/* attempts to take a robust copy reference-take of a handle array, and aborts if not */
+	/* able to grab all handles. Uses some tricks from mono_w32handle_foreach() */
+
+	guint32 i = 0, ri = 0;
+	gboolean success = FALSE;
+	uintptr_t numhandles = mono_array_handle_length (source);
+	MonoW32HandleBase *handle_data;
+
+	error_init (error);
+
+	if (numhandles > MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS) {
+		mono_error_set_invalid_operation (error, "numhandles (%lu)> MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS (%lu)", numhandles, MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS);
+		goto end;
+	}
+
+	if (numhandles > buffer_size) {
+		mono_error_set_invalid_operation (error, "numhandles (%lu) > buffer_size (%lu)", numhandles, buffer_size);
+		goto end;
+	}
+
+	/* pause new handle allocation. Prevents the scenario where an array handle
+	 * is destroyed, and we end up copying the new one that took its slot. */
+	mono_os_mutex_lock (&scan_mutex);
+
+	MonoWaitHandleHandle waitHandle = MONO_HANDLE_NEW (MonoWaitHandle, NULL);
+
+	for(i = 0; i < numhandles; i++) {
+		MONO_HANDLE_ARRAY_GETREF (waitHandle, source, i);
+		dest [i] = mono_wait_handle_get_safe_handle_from_coop_handle (waitHandle);
+	}
+
+	/* the handles are still liable to be disposed until we add references to all of them */
+	for(i = 0; i < numhandles; i++) {
+		if (mono_w32handle_get_type (dest [i]) == MONO_W32HANDLE_UNUSED) { 
+			mono_error_set_generic_error (error, "io-layer", "mono_w32handle_load_from_monoarray", "A handle was zeroed before we could add a reference");
+			goto unlock_scan_and_end;
+		}
+	}
+
+	for (ri = 0; ri < numhandles; ri++) {
+		if (!mono_w32handle_ref_core (dest [ri], handle_data)) {
+			/* we are racing with mono_w32handle_unref:
+			 *  the handle ref has been decremented, but it
+			 *  hasn't yet been destroyed. */
+			mono_error_set_generic_error (error, "io-layer", "mono_w32handle_load_from_monoarray", "A handle was already being disposed before we could add a reference");
+			goto unlock_scan_and_end;
+			}
+	}
+	success = TRUE;
+unlock_scan_and_end:
+	mono_os_mutex_unlock (&scan_mutex);
+end:
+	if (!success) {
+		if (ri > 0) {
+	}
+		/* the ref'ing loop failed at X, so roll back
+		 * (unref the 0..ri-1 handles) */
+		for (i = 0; i < ri; i++) {
+			MONO_ENTER_GC_SAFE;
+			mono_w32handle_unref (dest [i]);
+			MONO_EXIT_GC_SAFE;
+		}
+		return 0;
+	}
+
+	HANDLE_FUNCTION_RETURN_VAL (numhandles);
 }

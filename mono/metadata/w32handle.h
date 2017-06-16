@@ -12,6 +12,8 @@
 #include <windows.h>
 #endif
 
+#include <mono/metadata/object-internals.h>
+
 #ifndef INVALID_HANDLE_VALUE
 #define INVALID_HANDLE_VALUE (gpointer)-1
 #endif
@@ -163,6 +165,12 @@ mono_w32handle_trylock_handle (gpointer handle);
 
 void
 mono_w32handle_unlock_handle (gpointer handle);
+
+uintptr_t
+mono_w32handle_load_from_monoarray (MonoArrayHandle source, gpointer *dest, uintptr_t buffer_size, MonoError *error);
+
+gboolean
+mono_w32handle_unload (gpointer *buffer, uintptr_t numhandles);
 
 MonoW32HandleWaitRet
 mono_w32handle_wait_one (gpointer handle, guint32 timeout, gboolean alertable);
