@@ -57,6 +57,8 @@ build()
 
 install()
 {
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/ironpython				${REPODIR}/../../tmp/mono/lib/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/ironruby					${REPODIR}/../../tmp/mono/lib/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/xsp					${REPODIR}/../../tmp/mono/lib/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/Microsoft*				${REPODIR}/../../tmp/mono/lib/mono/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/msbuild				${REPODIR}/../../tmp/mono/lib/mono/
@@ -71,6 +73,8 @@ install()
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/4.5/xsp4.exe				${REPODIR}/../../tmp/mono/lib/mono/4.5/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/fsharp				${REPODIR}/../../tmp/mono/lib/mono/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/4.0-api/Microsoft.VisualBasic.dll	${REPODIR}/../../tmp/mono/lib/mono/4.0-api/
+	rsync -a --copy-links ${REPODIR}/mono-mac/bin/ir*					${REPODIR}/../../tmp/mono/bin/
+	rsync -a --copy-links ${REPODIR}/mono-mac/bin/ipy*					${REPODIR}/../../tmp/mono/bin/
 	rsync -a --copy-links ${REPODIR}/mono-mac/bin/fsharp*					${REPODIR}/../../tmp/mono/bin/
 	rsync -a --copy-links ${REPODIR}/mono-mac/bin/xsp*					${REPODIR}/../../tmp/mono/bin/
 	rsync -a --copy-links ${REPODIR}/mono-mac/bin/nuget					${REPODIR}/../../tmp/mono/bin/
@@ -84,7 +88,7 @@ install()
 	rsync -a --copy-links ${REPODIR}/../../tmp/mono/lib/mono/Microsoft\ SDKs/F\#/4.1/Framework/v4.0/*	${REPODIR}/../../tmp/mono/lib/mono/Microsoft\ SDKs/F\#/4.1/Framework/v4.0/
 	pushd ${REPODIR}/../../tmp/mono/bin
 	rm -f xsp
-	for i in xsp2 xsp4 fsharpc fsharpi fsharpiAnyCpu nuget msbuild
+	for i in ir ir64 irw irw64 xsp2 xsp4 fsharpc fsharpi fsharpiAnyCpu nuget msbuild ipy ipy64 ipyw ipyw64
 		do echo "Processing $i"
 		sed -i 's#/Library.*mono #\"\$\{BASH_SOURCE%/\*\}\"/mono #' $i
 		sed -i 's#/Library.*cli #\"\$\{BASH_SOURCE%/\*\}\"/cli #' $i
