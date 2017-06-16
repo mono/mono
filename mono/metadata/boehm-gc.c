@@ -375,12 +375,6 @@ mono_gc_is_gc_thread (void)
 	return GC_thread_is_registered ();
 }
 
-gboolean
-mono_gc_register_thread (void)
-{
-	return mono_thread_info_attach () != NULL;
-}
-
 static void*
 boehm_thread_register (MonoThreadInfo* info)
 {

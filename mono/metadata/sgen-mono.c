@@ -2304,15 +2304,6 @@ sgen_thread_detach (SgenThreadInfo *p)
 }
 
 /**
- * mono_gc_register_thread:
- */
-gboolean
-mono_gc_register_thread (void)
-{
-	return mono_thread_info_attach () != NULL;
-}
-
-/**
  * mono_gc_is_gc_thread:
  */
 gboolean

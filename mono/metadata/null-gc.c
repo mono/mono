@@ -93,12 +93,6 @@ mono_gc_is_gc_thread (void)
 	return TRUE;
 }
 
-gboolean
-mono_gc_register_thread (void)
-{
-	return TRUE;
-}
-
 int
 mono_gc_walk_heap (int flags, MonoGCReferences callback, void *data)
 {
