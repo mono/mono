@@ -56,6 +56,7 @@ namespace System.ComponentModel
 			case 6000: /* ERROR_ENCRYPTION_FAILED */ return "Encryption failed";
 			case 10004: /* WSAEINTR */ return "interrupted";
 			case 10009: /* WSAEBADF */ return "Bad file number";
+			case 10013: /* WSAEACCES */ return "Access denied";
 			case 10014: /* WSAEFAULT */ return "Bad address";
 			case 10022: /* WSAEINVAL */ return "Invalid arguments";
 			case 10024: /* WSAEMFILE */ return "Too many open files";
@@ -1600,7 +1601,6 @@ namespace System.ComponentModel
 			case 9904: /* DNS_ERROR_DP_ALREADY_ENLISTED */ return "DNS error dp already enlisted";
 			case 10110: /* WSA_E_NO_MORE */ return "E_NO_MORE";
 			case 10111: /* WSA_E_CANCELLED */ return "E_CANCELLED";
-			case 10013: /* WSAEACCES */ return "Access denied";
 			case 11005: /* WSA_QOS_RECEIVERS */ return "QOS receivers";
 			case 11006: /* WSA_QOS_SENDERS */ return "QOS senders";
 			case 11007: /* WSA_QOS_NO_SENDERS */ return "QOS no senders";
