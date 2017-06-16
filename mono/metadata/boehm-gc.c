@@ -57,9 +57,9 @@ static gboolean gc_initialized = FALSE;
 static mono_mutex_t mono_gc_lock;
 
 static void*
-boehm_thread_register (MonoThreadInfo* info);
+boehm_thread_attach (MonoThreadInfo* info);
 static void
-boehm_thread_unregister (MonoThreadInfo *p);
+boehm_thread_detach_with_lock (MonoThreadInfo *p);
 static void
 boehm_thread_detach (MonoThreadInfo *p);
 static void
@@ -238,9 +238,9 @@ mono_gc_base_init (void)
 	}
 
 	memset (&cb, 0, sizeof (cb));
-	cb.thread_register = boehm_thread_register;
-	cb.thread_unregister = boehm_thread_unregister;
+	cb.thread_attach = boehm_thread_attach;
 	cb.thread_detach = boehm_thread_detach;
+	cb.thread_detach_with_lock = boehm_thread_detach_with_lock;
 	cb.mono_method_is_critical = (gboolean (*)(void *))mono_runtime_is_critical_method;
 
 	mono_threads_init (&cb, sizeof (MonoThreadInfo));
@@ -376,7 +376,7 @@ mono_gc_is_gc_thread (void)
 }
 
 static void*
-boehm_thread_register (MonoThreadInfo* info)
+boehm_thread_attach (MonoThreadInfo* info)
 {
 	struct GC_stack_base sb;
 	int res;
@@ -393,7 +393,7 @@ boehm_thread_register (MonoThreadInfo* info)
 }
 
 static void
-boehm_thread_unregister (MonoThreadInfo *p)
+boehm_thread_detach_with_lock (MonoThreadInfo *p)
 {
 	MonoNativeThreadId tid;
 

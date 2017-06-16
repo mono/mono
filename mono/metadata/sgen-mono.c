@@ -2209,7 +2209,7 @@ mono_gc_get_gc_callbacks ()
 }
 
 void
-sgen_client_thread_register (SgenThreadInfo* info)
+sgen_client_thread_attach (SgenThreadInfo* info)
 {
 	mono_tls_set_sgen_thread_info (info);
 
@@ -2235,7 +2235,7 @@ sgen_client_thread_register (SgenThreadInfo* info)
 }
 
 void
-sgen_client_thread_unregister (SgenThreadInfo *p)
+sgen_client_thread_detach_with_lock (SgenThreadInfo *p)
 {
 	MonoNativeThreadId tid;
 
@@ -2281,13 +2281,6 @@ static gboolean
 thread_in_critical_region (SgenThreadInfo *info)
 {
 	return info->client_info.in_critical_region;
-}
-
-static void
-sgen_thread_attach (SgenThreadInfo *info)
-{
-	if (mono_gc_get_gc_callbacks ()->thread_attach_func && !info->client_info.runtime_data)
-		info->client_info.runtime_data = mono_gc_get_gc_callbacks ()->thread_attach_func ();
 }
 
 static void
@@ -2866,10 +2859,9 @@ sgen_client_init (void)
 {
 	MonoThreadInfoCallbacks cb;
 
-	cb.thread_register = sgen_thread_register;
-	cb.thread_detach = sgen_thread_detach;
-	cb.thread_unregister = sgen_thread_unregister;
 	cb.thread_attach = sgen_thread_attach;
+	cb.thread_detach = sgen_thread_detach;
+	cb.thread_detach_with_lock = sgen_thread_detach_with_lock;
 	cb.mono_thread_in_critical_region = thread_in_critical_region;
 	cb.ip_in_critical_region = ip_in_critical_region;
 
