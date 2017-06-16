@@ -94,6 +94,14 @@ namespace Mono.Profiler.Log {
 		{
 		}
 
+		public virtual void Visit (HeapRootRegisterEvent ev)
+		{
+		}
+
+		public virtual void Visit (HeapRootDeregisterEvent ev)
+		{
+		}
+
 		public virtual void Visit (GCEvent ev)
 		{
 		}

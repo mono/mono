@@ -319,7 +319,7 @@ static MonoLinkedListSet profiler_thread_list;
  *
  * type heap format
  * type: TYPE_HEAP
- * exinfo: one of TYPE_HEAP_START, TYPE_HEAP_END, TYPE_HEAP_OBJECT, TYPE_HEAP_ROOT
+ * exinfo: one of TYPE_HEAP_START, TYPE_HEAP_END, TYPE_HEAP_OBJECT, TYPE_HEAP_ROOT, TYPE_HEAP_REGISTER
  * if exinfo == TYPE_HEAP_OBJECT
  * 	[object: sleb128] the object as a difference from obj_base
  * 	[class: sleb128] the object MonoClass* as a difference from ptr_base
@@ -334,11 +334,14 @@ static MonoLinkedListSet profiler_thread_list;
  * 	provide additional referenced objects.
  * if exinfo == TYPE_HEAP_ROOT
  * 	[num_roots: uleb128] number of root references
- * 	[num_gc: uleb128] number of major gcs
- * 	[object: sleb128] the object as a difference from obj_base
- * 	[root_type: byte] the root_type: MonoProfileGCRootType (profiler.h)
- * 	[extra_info: uleb128] the extra_info value
- * 	object, root_type and extra_info are repeated num_roots times
+ *  num_roots runs of the following:
+ * 	  [address: sleb128] the root address as a difference from ptr_base
+ * 	  [object: sleb128] the object address as a difference from obj_base
+ * if exinfo == TYPE_HEAP_REGISTER
+ *  [start:sleb128] start address as a different from ptr_base
+ *  [size:uleb] size of the root region
+ *  [kind:byte] type of the buffer
+ *  [arg0:sleb] kind dependent value as a different from ptr_base
  *
  * type sample format
  * type: TYPE_SAMPLE
@@ -1423,6 +1426,7 @@ gc_reference (MonoObject *obj, MonoClass *klass, uintptr_t size, uintptr_t num, 
 		)
 	);
 
+	// printf ("FOUND OBJ %p -> %s\n", obj, mono_class_get_name (klass));
 	emit_event (logbuffer, TYPE_HEAP_OBJECT | TYPE_HEAP);
 	emit_obj (logbuffer, obj);
 	emit_ptr (logbuffer, klass);
@@ -1451,7 +1455,7 @@ static gboolean do_heap_walk = FALSE;
 static gboolean ignore_heap_events;
 
 static void
-gc_roots (MonoProfiler *prof, int num, void **objects, int *root_types, uintptr_t *extra_info)
+gc_roots (MonoProfiler *prof, int num, void **addresses, void **objects)
 {
 	if (ignore_heap_events)
 		return;
@@ -1459,27 +1463,61 @@ gc_roots (MonoProfiler *prof, int num, void **objects, int *root_types, uintptr_
 	ENTER_LOG (&heap_roots_ctr, logbuffer,
 		EVENT_SIZE /* event */ +
 		LEB128_SIZE /* num */ +
-		LEB128_SIZE /* collections */ +
 		num * (
-			LEB128_SIZE /* object */ +
-			LEB128_SIZE /* root type */ +
-			LEB128_SIZE /* extra info */
+			LEB128_SIZE /* address */ +
+			LEB128_SIZE /* object */
 		)
 	);
 
 	emit_event (logbuffer, TYPE_HEAP_ROOT | TYPE_HEAP);
 	emit_value (logbuffer, num);
-	emit_value (logbuffer, mono_gc_collection_count (mono_gc_max_generation ()));
 
 	for (int i = 0; i < num; ++i) {
+		emit_ptr (logbuffer, addresses [i]);
 		emit_obj (logbuffer, objects [i]);
-		emit_byte (logbuffer, root_types [i]);
-		emit_value (logbuffer, extra_info [i]);
 	}
 
 	EXIT_LOG_EXPLICIT (DO_SEND);
 }
 
+static void
+gc_root_register (MonoProfiler *prof, void *start, size_t size, MonoGCRootSource kind, void *key, const char *msg)
+{
+	// printf( "ROOT [%p %p] -> %s\n", start, (char*)start + size, msg);
+
+	int msg_len = msg ? strlen (msg) + 1 : 0;
+	ENTER_LOG (&heap_roots_ctr, logbuffer,
+		EVENT_SIZE /* event */ +
+		LEB128_SIZE /* start */ +
+		LEB128_SIZE /* size */ +
+		BYTE_SIZE /* kind */ +
+		LEB128_SIZE /* key */ +
+		msg_len /*msg */
+	);
+
+	emit_event (logbuffer, TYPE_HEAP_REGISTER | TYPE_HEAP);
+	emit_ptr (logbuffer, start);
+	emit_uvalue (logbuffer, size);
+	emit_byte (logbuffer, kind);
+	emit_ptr (logbuffer, key);
+	emit_string (logbuffer, msg, msg_len);
+
+	EXIT_LOG;
+}
+
+static void
+gc_root_deregister (MonoProfiler *prof, void *start)
+{
+	ENTER_LOG (&heap_roots_ctr, logbuffer,
+		EVENT_SIZE /* event */ +
+		LEB128_SIZE /* start */
+	);
+
+	emit_event (logbuffer, TYPE_HEAP_UNREGISTER | TYPE_HEAP);
+	emit_ptr (logbuffer, start);
+
+	EXIT_LOG;
+}
 
 static void
 trigger_on_demand_heapshot (void)
@@ -4807,12 +4845,18 @@ mono_profiler_startup (const char *desc)
 	}
 
 	// TODO split those in two profiler events
-	if (config.effective_mask & (PROFLOG_GC_ROOT_EVENTS | PROFLOG_GC_HANDLE_EVENTS)) {
+	if (config.effective_mask & (PROFLOG_GC_HANDLE_EVENTS)) {
 		events |= MONO_PROFILE_GC_ROOTS;
-		mono_profiler_install_gc_roots (
-			config.effective_mask & (PROFLOG_GC_HANDLE_EVENTS) ? gc_handle : NULL,
-			(config.effective_mask & PROFLOG_GC_ROOT_EVENTS) ? gc_roots : NULL);
+		mono_profiler_install_gc_roots (gc_handle, NULL);
 	}
+
+	if (config.effective_mask & (PROFLOG_GC_ROOT_EVENTS)) {
+		events |= MONO_PROFILE_GC_ROOTS;
+		mono_profiler_install_gc_roots2 (gc_roots);
+		mono_profiler_install_gc_root_register (gc_root_register);
+		mono_profiler_install_gc_root_deregister (gc_root_deregister);
+	}
+
 
 	if (config.effective_mask & PROFLOG_CONTEXT_EVENTS) {
 		events |= MONO_PROFILE_CONTEXT_EVENTS;

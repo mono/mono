@@ -101,7 +101,9 @@ struct _ProfilerDesc {
 	MonoProfileGCResizeFunc  gc_heap_resize;
 	MonoProfileGCMoveFunc    gc_moves;
 	MonoProfileGCHandleFunc  gc_handle;
-	MonoProfileGCRootFunc    gc_roots;
+	MonoProfileGCRootFunc2    gc_roots;
+	MonoProfileGCRootRegisterFunc gc_root_register;
+	MonoProfileGCRootDeregisterFunc gc_root_deregister;
 
 	MonoProfileGCFinalizeFunc gc_finalize_begin;
 	MonoProfileGCFinalizeObjectFunc gc_finalize_object_begin;
@@ -961,14 +963,35 @@ mono_profiler_gc_handle (int op, int type, uintptr_t handle, MonoObject *obj)
 }
 
 void
-mono_profiler_gc_roots (int num, void **objects, int *root_types, uintptr_t *extra_info)
+mono_profiler_gc_roots (int num, void **addresses, void **objects)
 {
 	ProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_GC_ROOTS) && prof->gc_roots)
-			prof->gc_roots (prof->profiler, num, objects, root_types, extra_info);
-	}
+			prof->gc_roots (prof->profiler, num, addresses, objects);
+	}	
 }
+
+void
+mono_profiler_gc_root_register (void *start, size_t size, MonoGCRootSource kind, void *key, const char *msg)
+{
+	ProfilerDesc *prof;
+	for (prof = prof_list; prof; prof = prof->next) {
+		if ((prof->events & MONO_PROFILE_GC_ROOTS) && prof->gc_root_register)
+			prof->gc_root_register (prof->profiler, start, size, kind, key, msg);
+	}	
+}
+
+void 
+mono_profiler_gc_root_deregister (void *start)
+{
+	ProfilerDesc *prof;
+	for (prof = prof_list; prof; prof = prof->next) {
+		if ((prof->events & MONO_PROFILE_GC_ROOTS) && prof->gc_root_deregister)
+			prof->gc_root_deregister (prof->profiler, start);
+	}	
+}	
+
 
 /**
  * mono_profiler_install_gc:
@@ -1026,8 +1049,34 @@ mono_profiler_install_gc_roots (MonoProfileGCHandleFunc handle_callback, MonoPro
 	if (!prof_list)
 		return;
 	prof_list->gc_handle = handle_callback;
+	if (roots_callback)
+		g_warning ("mono_profiler_install_gc_roots:: The roots_callback is deprecated and the runtime won't emit events for it.");
+}
+
+void
+mono_profiler_install_gc_roots2 (MonoProfileGCRootFunc2 roots_callback)
+{
+	if (!prof_list)
+		return;
 	prof_list->gc_roots = roots_callback;
 }
+
+void
+mono_profiler_install_gc_root_register (MonoProfileGCRootRegisterFunc gc_root_register_callback)
+{
+	if (!prof_list)
+		return;
+	prof_list->gc_root_register = gc_root_register_callback;
+}
+
+void
+mono_profiler_install_gc_root_deregister (MonoProfileGCRootDeregisterFunc gc_root_deregister_callback)
+{
+	if (!prof_list)
+		return;
+	prof_list->gc_root_deregister = gc_root_deregister_callback;
+}
+
 
 void
 mono_profiler_gc_finalize_begin (void)

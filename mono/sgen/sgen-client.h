@@ -120,6 +120,19 @@ void sgen_client_collecting_major_3 (SgenPointerQueue *fin_ready_queue, SgenPoin
 void sgen_client_pinned_los_object (GCObject *obj);
 
 /*
+ * Called for each cemented obj 
+ */
+void sgen_client_pinned_cemented_object (GCObject *obj);
+
+/*
+ * Called for each major heap obj pinned
+ */
+void sgen_client_pinned_major_heap_object (GCObject *obj);
+
+void sgen_client_pinning_start (void);
+void sgen_client_pinning_end (void);
+
+/*
  * Called for every degraded allocation.  No action is necessary.
  */
 void sgen_client_degraded_allocation (size_t size);

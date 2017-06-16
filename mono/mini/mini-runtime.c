@@ -3937,7 +3937,6 @@ mini_init (const char *filename, const char *runtime_version)
 
 	if (mini_profiler_enabled ()) {
 		mono_profiler_load (mini_profiler_get_options ());
-		mono_profiler_thread_name (MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ()), "Main");
 	}
 
 	if (debug_options.collect_pagefault_stats)
@@ -4015,6 +4014,7 @@ mini_init (const char *filename, const char *runtime_version)
 	mono_runtime_init_checked (domain, mono_thread_start_cb, mono_thread_attach_cb, &error);
 	mono_error_assert_ok (&error);
 	mono_thread_attach (domain);
+	mono_profiler_thread_name (MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ()), "Main");
 #endif
 
 	if (mono_profiler_get_events () & MONO_PROFILE_STATISTICAL)

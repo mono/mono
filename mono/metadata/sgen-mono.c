@@ -984,13 +984,13 @@ mono_gc_alloc_mature (MonoVTable *vtable, size_t size)
  * mono_gc_alloc_fixed:
  */
 void*
-mono_gc_alloc_fixed (size_t size, MonoGCDescriptor descr, MonoGCRootSource source, const char *msg)
+mono_gc_alloc_fixed (size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg)
 {
 	/* FIXME: do a single allocation */
 	void *res = g_calloc (1, size);
 	if (!res)
 		return NULL;
-	if (!mono_gc_register_root ((char *)res, size, descr, source, msg)) {
+	if (!mono_gc_register_root ((char *)res, size, descr, source, key, msg)) {
 		g_free (res);
 		res = NULL;
 	}
@@ -1849,12 +1849,11 @@ mono_gc_set_string_length (MonoString *str, gint32 new_length)
  * Profiling
  */
 
-#define GC_ROOT_NUM 32
+#define MAX_GC_ROOT_COUNT2 32
 typedef struct {
 	int count;		/* must be the first field */
-	void *objects [GC_ROOT_NUM];
-	int root_types [GC_ROOT_NUM];
-	uintptr_t extra_info [GC_ROOT_NUM];
+	void *addresses [MAX_GC_ROOT_COUNT2];
+	void *objects [MAX_GC_ROOT_COUNT2];
 } GCRootReport;
 
 static void
@@ -1862,74 +1861,52 @@ notify_gc_roots (GCRootReport *report)
 {
 	if (!report->count)
 		return;
-	mono_profiler_gc_roots (report->count, report->objects, report->root_types, report->extra_info);
+	mono_profiler_gc_roots (report->count, report->addresses, report->objects);
 	report->count = 0;
 }
 
 static void
-add_profile_gc_root (GCRootReport *report, void *object, int rtype, uintptr_t extra_info)
+report_gc_root (GCRootReport *report, void *address, void *object)
 {
-	if (report->count == GC_ROOT_NUM)
+	if (report->count == MAX_GC_ROOT_COUNT2)
 		notify_gc_roots (report);
+	report->addresses [report->count] = address;
 	report->objects [report->count] = object;
-	report->root_types [report->count] = rtype;
-	report->extra_info [report->count++] = (uintptr_t)SGEN_LOAD_VTABLE (object)->klass;
+	report->count++;
 }
 
-void
-sgen_client_nursery_objects_pinned (void **definitely_pinned, int count)
+// #define DEBUG_PRINTF(ARGS...) printf (ARGS)
+#define DEBUG_PRINTF(ARGS...)
+static void
+single_arg_report_root2 (MonoObject **obj, void *gc_data)
 {
-	if (mono_profiler_get_events () & MONO_PROFILE_GC_ROOTS) {
-		GCRootReport report;
-		int idx;
-		report.count = 0;
-		for (idx = 0; idx < count; ++idx)
-			add_profile_gc_root (&report, definitely_pinned [idx], MONO_PROFILE_GC_ROOT_PINNING | MONO_PROFILE_GC_ROOT_MISC, 0);
-		notify_gc_roots (&report);
+	GCRootReport *report = gc_data;
+	if (*obj) {
+		DEBUG_PRINTF ("\tUSER ROOT %p -> %p\n", obj, *obj);
+		report_gc_root (report, obj, *obj);
 	}
 }
 
 static void
-report_finalizer_roots_from_queue (SgenPointerQueue *queue)
+two_args_report_root2 (void *address, MonoObject *obj, void *gc_data)
 {
-	GCRootReport report;
-	size_t i;
-
-	report.count = 0;
-	for (i = 0; i < queue->next_slot; ++i) {
-		void *obj = queue->data [i];
-		if (!obj)
-			continue;
-		add_profile_gc_root (&report, obj, MONO_PROFILE_GC_ROOT_FINALIZER, 0);
+	GCRootReport *report = gc_data;
+	if (obj) {
+		DEBUG_PRINTF ("\tUSER ROOT2 %p -> %p\n", address, obj);
+		report_gc_root (report, address, obj);
 	}
-	notify_gc_roots (&report);
 }
 
 static void
-report_finalizer_roots (SgenPointerQueue *fin_ready_queue, SgenPointerQueue *critical_fin_queue)
-{
-	report_finalizer_roots_from_queue (fin_ready_queue);
-	report_finalizer_roots_from_queue (critical_fin_queue);
-}
-
-static GCRootReport *root_report;
-
-static void
-single_arg_report_root (MonoObject **obj, void *gc_data)
-{
-	if (*obj)
-		add_profile_gc_root (root_report, *obj, MONO_PROFILE_GC_ROOT_OTHER, 0);
-}
-
-static void
-precisely_report_roots_from (GCRootReport *report, void** start_root, void** end_root, mword desc)
+precisely_report_roots_from2 (GCRootReport *report, void** start_root, void** end_root, mword desc)
 {
 	switch (desc & ROOT_DESC_TYPE_MASK) {
 	case ROOT_DESC_BITMAP:
 		desc >>= ROOT_DESC_TYPE_SHIFT;
 		while (desc) {
 			if ((desc & 1) && *start_root) {
-				add_profile_gc_root (report, *start_root, MONO_PROFILE_GC_ROOT_OTHER, 0);
+				DEBUG_PRINTF ("\tBITMAP ROOT %p ->%p\n", start_root, *start_root);
+				report_gc_root (report, start_root, *start_root);
 			}
 			desc >>= 1;
 			start_root++;
@@ -1945,7 +1922,8 @@ precisely_report_roots_from (GCRootReport *report, void** start_root, void** end
 			void **objptr = start_run;
 			while (bmap) {
 				if ((bmap & 1) && *objptr) {
-					add_profile_gc_root (report, *objptr, MONO_PROFILE_GC_ROOT_OTHER, 0);
+					DEBUG_PRINTF ("\tCOMPLEX ROOT %p ->%p\n", objptr, *objptr);
+					report_gc_root (report, objptr, *objptr);
 				}
 				bmap >>= 1;
 				++objptr;
@@ -1958,15 +1936,20 @@ precisely_report_roots_from (GCRootReport *report, void** start_root, void** end
 		void **p;
 
 		for (p = start_root; p < end_root; p++) {
-			if (*p)
-				add_profile_gc_root (report, *p, MONO_PROFILE_GC_ROOT_OTHER, 0);
+			if (*p) {
+				DEBUG_PRINTF ("\tVECTOR ROOT %p ->%p\n", p, *p);
+				report_gc_root (report, p, *p);
+			}
 		}
 		break;
 	}
 	case ROOT_DESC_USER: {
 		MonoGCRootMarkFunc marker = (MonoGCRootMarkFunc)sgen_get_user_descriptor_func (desc);
-		root_report = report;
-		marker ((MonoObject**)start_root, single_arg_report_root, NULL);
+
+		if ((void*)marker == (void*)sgen_mark_normal_gc_handles)
+			sgen_gc_handles_report_roots (two_args_report_root2, report);
+		else
+			marker ((MonoObject**)start_root, single_arg_report_root2, report);
 		break;
 	}
 	case ROOT_DESC_RUN_LEN:
@@ -1976,68 +1959,347 @@ precisely_report_roots_from (GCRootReport *report, void** start_root, void** end
 	}
 }
 
-static void
-report_registered_roots_by_type (int root_type)
+//Thread scanning JUJU
+
+
+static unsigned int
+mix_hash1 (ssize_t source)
 {
-	GCRootReport report;
-	void **start_root;
-	RootRecord *root;
-	report.count = 0;
-	SGEN_HASH_TABLE_FOREACH (&roots_hash [root_type], void **, start_root, RootRecord *, root) {
-		SGEN_LOG (6, "Precise root scan %p-%p (desc: %p)", start_root, root->end_root, (void*)root->root_desc);
-		precisely_report_roots_from (&report, start_root, (void**)root->end_root, root->root_desc);
-	} SGEN_HASH_TABLE_FOREACH_END;
+	unsigned int hash = source;
+
+	// Actual hash
+	hash = (((hash * 215497) >> 16) ^ ((hash * 1823231) + hash));
+
+	// Mix in highest bits on 64-bit systems only
+	if (sizeof (source) > 4)
+		hash = hash ^ (source >> 32);
+
+	return hash;
+}
+
+static unsigned int
+mix_hash2 (ssize_t source)
+{
+	unsigned int hash = source;
+
+	// Actual hash
+	hash = (((hash * 106721) >> 16) ^ ((hash * 160073) + hash));
+
+	// Mix in highest bits on 64-bit systems only
+	if (sizeof (source) > 4)
+		hash = hash ^ ((source >> 32) * 71143);
+
+	return hash;
+}
+
+
+static ssize_t
+align_down (ssize_t addr, ssize_t val)
+{
+	return addr & ~(val - 1);
+}
+
+static void
+set_bit (char *bitmap, unsigned idx)
+{
+	bitmap [idx / 8] |= 1 << (idx % 8);
+}
+
+static int
+test_bit (char *bitmap, unsigned idx)
+{
+	return bitmap[idx / 8] & (1 << (idx % 8));
+}
+
+static void
+report_pinning_roots (GCRootReport *report, void **start, void **end)
+{
+	while (start < end) {
+		mword addr = (mword)*start;
+		addr &= ~(SGEN_ALLOC_ALIGN - 1);
+		DEBUG_PRINTF ("PINNING ROOT %p -> %p\n", start, (void*)addr);
+		if (addr)
+			report_gc_root (report, start, (void*)addr);
+
+		start++;
+	}
+}
+
+static SgenPointerQueue pinned_objects;
+static mword lower_bound, upper_bound;
+
+static GCObject*
+find_pinned_obj (char *addr)
+{
+	size_t idx = sgen_pointer_queue_search (&pinned_objects, addr);
+
+	if (idx != pinned_objects.next_slot) {
+		if (pinned_objects.data [idx] == addr)
+			return pinned_objects.data [idx];
+		if (idx == 0)
+			return NULL;
+	}
+
+	GCObject *obj = pinned_objects.data [idx - 1];
+	if (addr > (char*)obj && addr < ((char*)obj + sgen_safe_object_get_size (obj)))
+		return obj;
+	return NULL;
+}
+
+
+/*
+ * We pass @report_addr_start to make it easy to report registers
+*/
+static void
+report_conservative_roots (GCRootReport *report, char *report_addr_start, void **start, void **end)
+{
+	int reported = 0;
+
+	while (start < end) {
+		mword addr = (mword)*start;
+		addr &= ~(SGEN_ALLOC_ALIGN - 1);
+
+		if (addr < lower_bound || addr > upper_bound) {
+			++start;
+			continue;
+		}
+
+		GCObject *obj = find_pinned_obj ((char*)addr);
+		if (obj) {
+			printf ("\t%p -> %p\n", report_addr_start + reported, obj);
+			report_gc_root (report, report_addr_start + reported, obj);
+			++reported;
+		}
+		start++;
+	}
+}
+
+static void
+report_stack_roots (void)
+{
+	GCRootReport report = {0};
+	FOREACH_THREAD (info) {
+		void *aligned_stack_start;
+
+		if (info->client_info.skip) {
+			continue;
+		} else if (info->client_info.gc_disabled) {
+			continue;
+		} else if (!mono_thread_info_is_live (info)) {
+			continue;
+		} else if (!info->client_info.stack_start) {
+			continue;
+		}
+
+		g_assert (info->client_info.stack_start);
+		g_assert (info->client_info.info.stack_end);
+
+		aligned_stack_start = (void*)(mword) ALIGN_TO ((mword)info->client_info.stack_start, SIZEOF_VOID_P);
+#ifdef HOST_WIN32
+		/* Windows uses a guard page before the committed stack memory pages to detect when the
+		   stack needs to be grown. If we suspend a thread just after a function prolog has
+		   decremented the stack pointer to point into the guard page but before the thread has
+		   been able to read or write to that page, starting the stack scan at aligned_stack_start
+		   will raise a STATUS_GUARD_PAGE_VIOLATION and the process will crash. This code uses
+		   VirtualQuery() to determine whether stack_start points into the guard page and then
+		   updates aligned_stack_start to point at the next non-guard page. */
+		MEMORY_BASIC_INFORMATION mem_info;
+		SIZE_T result = VirtualQuery(info->client_info.stack_start, &mem_info, sizeof(mem_info));
+		g_assert (result != 0);
+		if (mem_info.Protect & PAGE_GUARD) {
+			aligned_stack_start = ((char*) mem_info.BaseAddress) + mem_info.RegionSize;
+		}
+#endif
+
+		g_assert (info->client_info.suspend_done);
+
+		printf ("SCANNING THREAD %p\n", mono_thread_info_get_tid (info));
+		//TODO report on handle stack
+		report_conservative_roots (&report, aligned_stack_start, (void **)aligned_stack_start, (void **)info->client_info.info.stack_end);
+		report_conservative_roots (&report, aligned_stack_start, (void**)&info->client_info.ctx, (void**)(&info->client_info.ctx + 1));
+
+	} FOREACH_THREAD_END
+
+
 	notify_gc_roots (&report);
 }
 
 static void
-report_registered_roots (void)
+report_pin_queue (void)
 {
-	report_registered_roots_by_type (ROOT_TYPE_NORMAL);
-	report_registered_roots_by_type (ROOT_TYPE_WBARRIER);
+	lower_bound = SIZE_MAX;
+	upper_bound = 0;
+
+	//sort the addresses
+	sgen_pointer_queue_sort_uniq (&pinned_objects);
+
+	for (int i = 0; i < pinned_objects.next_slot; ++i) {
+		GCObject *obj = pinned_objects.data [i];
+		ssize_t size = sgen_safe_object_get_size (obj);
+
+		ssize_t addr = (ssize_t)obj;
+		lower_bound = MIN (lower_bound, addr);
+		upper_bound = MAX (upper_bound, addr + size);
+	}
+
+	report_stack_roots ();
+	
+	sgen_pointer_queue_free (&pinned_objects);
 }
 
 void
-sgen_client_collecting_minor (SgenPointerQueue *fin_ready_queue, SgenPointerQueue *critical_fin_queue)
+sgen_client_pinning_start (void)
 {
-	if (mono_profiler_get_events () & MONO_PROFILE_GC_ROOTS)
-		report_registered_roots ();
-	if (mono_profiler_get_events () & MONO_PROFILE_GC_ROOTS)
-		report_finalizer_roots (fin_ready_queue, critical_fin_queue);
+	if ((mono_profiler_get_events () & MONO_PROFILE_GC_ROOTS) == 0)
+		return;
+
+	sgen_pointer_queue_init (&pinned_objects, INTERNAL_MEM_TEMPORARY);
 }
 
-static GCRootReport major_root_report;
-static gboolean profile_roots;
+void
+sgen_client_pinning_end (void)
+{
+	if ((mono_profiler_get_events () & MONO_PROFILE_GC_ROOTS) == 0)
+		return;
+}
 
 void
-sgen_client_collecting_major_1 (void)
+sgen_client_nursery_objects_pinned (void **definitely_pinned, int count)
 {
-	profile_roots = mono_profiler_get_events () & MONO_PROFILE_GC_ROOTS;
-	memset (&major_root_report, 0, sizeof (GCRootReport));
+	if ((mono_profiler_get_events () & MONO_PROFILE_GC_ROOTS) == 0)
+		return;
+	
+	for (int i = 0; i < count; ++i) {
+		// printf ("NURSERY PINNED %p\n", definitely_pinned [i]);
+		sgen_pointer_queue_add (&pinned_objects, definitely_pinned [i]);
+	}
 }
 
 void
 sgen_client_pinned_los_object (GCObject *obj)
 {
-	if (profile_roots)
-		add_profile_gc_root (&major_root_report, (char*)obj, MONO_PROFILE_GC_ROOT_PINNING | MONO_PROFILE_GC_ROOT_MISC, 0);
+	if ((mono_profiler_get_events () & MONO_PROFILE_GC_ROOTS) == 0)
+		return;
+	
+	// printf ("LOS PINNED %p\n", obj);
+	sgen_pointer_queue_add (&pinned_objects, obj);
+}
+
+void
+sgen_client_pinned_cemented_object (GCObject *obj)
+{
+	if ((mono_profiler_get_events () & MONO_PROFILE_GC_ROOTS) == 0)
+		return;
+	
+	printf ("CEMENT PINNING %p\n", obj);
+}
+
+void
+sgen_client_pinned_major_heap_object (GCObject *obj)
+{
+	if ((mono_profiler_get_events () & MONO_PROFILE_GC_ROOTS) == 0)
+		return;
+
+	// printf ("MAJOR PIN %p\n", obj);
+	sgen_pointer_queue_add (&pinned_objects, obj);
+}
+
+	// if (mono_profiler_get_events () & MONO_PROFILE_GC_ROOTS) {
+	// 	GCRootReport report;
+	// 	int idx;
+	// 	report.count = 0;
+	// 	for (idx = 0; idx < count; ++idx)
+	// 		add_profile_gc_root (&report, definitely_pinned [idx], MONO_PROFILE_GC_ROOT_PINNING | MONO_PROFILE_GC_ROOT_MISC, 0);
+	// 	notify_gc_roots (&report);
+	// }
+
+#define MAGIC_ADDRESS_FIN_QUEUE ((void*)1)
+
+static void
+report_finalizer_roots_from_queue (SgenPointerQueue *queue)
+{
+	GCRootReport report;
+	size_t i;
+
+	report.count = 0;
+	for (i = 0; i < queue->next_slot; ++i) {
+		void *obj = queue->data [i];
+		if (!obj)
+			continue;
+		report_gc_root (&report, MAGIC_ADDRESS_FIN_QUEUE, obj);
+	}
+	notify_gc_roots (&report);
+}
+
+static void
+report_finalizer_roots (SgenPointerQueue *fin_ready_queue, SgenPointerQueue *critical_fin_queue)
+{
+	report_finalizer_roots_from_queue (fin_ready_queue);
+	report_finalizer_roots_from_queue (critical_fin_queue);
+}
+
+static void
+report_registered_roots_by_type (int root_type)
+{
+	GCRootReport report = { 0 };
+	GCRootReport report2 = {0 };
+	void **start_root;
+	RootRecord *root;
+	report.count = 0;
+	SGEN_HASH_TABLE_FOREACH (&roots_hash [root_type], void **, start_root, RootRecord *, root) {
+		SGEN_LOG (6, "Precise root scan %p-%p (desc: %p)", start_root, root->end_root, (void*)root->root_desc);
+		DEBUG_PRINTF ("Precise root scan %p-%p (desc: %p) src %d msg %s\n", start_root, root->end_root, (void*)root->root_desc, root->source, root->msg);
+		if (root_type == ROOT_TYPE_PINNED)
+			report_pinning_roots (&report2, start_root, (void**)root->end_root);
+		else
+			precisely_report_roots_from2 (&report2, start_root, (void**)root->end_root, root->root_desc);
+	} SGEN_HASH_TABLE_FOREACH_END;
+	notify_gc_roots (&report2);
+}
+
+static void
+report_registered_roots (void)
+{
+	for (int i = 0; i < ROOT_TYPE_NUM; ++i)
+		report_registered_roots_by_type (i);
+}
+
+static void
+sgen_report_all_roots (SgenPointerQueue *fin_ready_queue, SgenPointerQueue *critical_fin_queue)
+{
+	if ((mono_profiler_get_events () & MONO_PROFILE_GC_ROOTS) == 0)
+		return;
+
+	report_registered_roots ();
+	report_pin_queue ();
+
+	// TODO
+	// report_finalizer_roots (fin_ready_queue, critical_fin_queue);
+}
+
+void
+sgen_client_collecting_minor (SgenPointerQueue *fin_ready_queue, SgenPointerQueue *critical_fin_queue)
+{
+	//TODO rename me
+	sgen_report_all_roots (fin_ready_queue, critical_fin_queue);
+}
+void
+sgen_client_collecting_major_1 (void)
+{
+	//TODO remove me
 }
 
 void
 sgen_client_collecting_major_2 (void)
 {
-	if (profile_roots)
-		notify_gc_roots (&major_root_report);
-
-	if (mono_profiler_get_events () & MONO_PROFILE_GC_ROOTS)
-		report_registered_roots ();
+	//TODO remove me
 }
 
 void
 sgen_client_collecting_major_3 (SgenPointerQueue *fin_ready_queue, SgenPointerQueue *critical_fin_queue)
 {
-	if (mono_profiler_get_events () & MONO_PROFILE_GC_ROOTS)
-		report_finalizer_roots (fin_ready_queue, critical_fin_queue);
+	//TODO rename me
+	sgen_report_all_roots (fin_ready_queue, critical_fin_queue);
 }
 
 #define MOVED_OBJECTS_NUM 64
@@ -2093,7 +2355,9 @@ mono_sgen_gc_event_moves (void)
  * Heap walking
  */
 
-#define REFS_SIZE 128
+#define REFS_SIZE 64
+
+
 typedef struct {
 	void *data;
 	MonoGCReferences callback;
@@ -2461,15 +2725,17 @@ mono_gc_set_stack_end (void *stack_end)
  */
 
 int
-mono_gc_register_root (char *start, size_t size, MonoGCDescriptor descr, MonoGCRootSource source, const char *msg)
+mono_gc_register_root (char *start, size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg)
 {
-	return sgen_register_root (start, size, descr, descr ? ROOT_TYPE_NORMAL : ROOT_TYPE_PINNED, source, msg);
+	// printf ("registering %s\n", msg);
+	return sgen_register_root (start, size, descr, descr ? ROOT_TYPE_NORMAL : ROOT_TYPE_PINNED, source, key, msg);
 }
 
 int
-mono_gc_register_root_wbarrier (char *start, size_t size, MonoGCDescriptor descr, MonoGCRootSource source, const char *msg)
+mono_gc_register_root_wbarrier (char *start, size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg)
 {
-	return sgen_register_root (start, size, descr, ROOT_TYPE_WBARRIER, source, msg);
+	// printf ("registering %s\n", msg);
+	return sgen_register_root (start, size, descr, ROOT_TYPE_WBARRIER, source, key, msg);
 }
 
 void

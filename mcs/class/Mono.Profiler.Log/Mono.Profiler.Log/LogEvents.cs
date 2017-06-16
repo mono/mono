@@ -252,16 +252,34 @@ namespace Mono.Profiler.Log {
 
 		public struct HeapRoot {
 
+			public long AddressPointer { get; internal set; }
+
 			public long ObjectPointer { get; internal set; }
-
-			public LogHeapRootAttributes Attributes { get; internal set; }
-
-			public long ExtraInfo { get; internal set; }
 		}
 
-		public long MaxGenerationCollectionCount { get; internal set; }
-
 		public IReadOnlyList<HeapRoot> Roots { get; internal set; }
+
+		internal override void Accept (LogEventVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
+	}
+
+	public sealed class HeapRootRegisterEvent : LogEvent {
+		public long Start { get; internal set; }
+		public long Size { get; internal set; }
+		public HeapRootKind Kind { get; internal set; }
+		public long Key { get; internal set; }
+		public string Message { get; internal set; }
+
+		internal override void Accept (LogEventVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
+	}
+
+	public sealed class HeapRootDeregisterEvent : LogEvent {
+		public long Start { get; internal set; }
 
 		internal override void Accept (LogEventVisitor visitor)
 		{

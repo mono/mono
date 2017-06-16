@@ -503,8 +503,9 @@ on_gc_heap_resize (size_t new_size)
 }
 
 int
-mono_gc_register_root (char *start, size_t size, void *descr, MonoGCRootSource source, const char *msg)
+mono_gc_register_root (char *start, size_t size, void *descr, MonoGCRootSource source, void *key, const char *msg)
 {
+	mono_profiler_gc_root_register (start, size, source, key, msg);
 	/* for some strange reason, they want one extra byte on the end */
 	GC_add_roots (start, start + size + 1);
 
@@ -512,14 +513,16 @@ mono_gc_register_root (char *start, size_t size, void *descr, MonoGCRootSource s
 }
 
 int
-mono_gc_register_root_wbarrier (char *start, size_t size, MonoGCDescriptor descr, MonoGCRootSource source, const char *msg)
+mono_gc_register_root_wbarrier (char *start, size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg)
 {
-	return mono_gc_register_root (start, size, descr, source, msg);
+	return mono_gc_register_root (start, size, descr, source, key, msg);
 }
 
 void
 mono_gc_deregister_root (char* addr)
 {
+	mono_profiler_gc_root_deregister (addr);
+	
 #ifndef HOST_WIN32
 	/* FIXME: libgc doesn't define this work win32 for some reason */
 	/* FIXME: No size info */
@@ -606,14 +609,17 @@ mono_gc_make_root_descr_all_refs (int numbits)
 }
 
 void*
-mono_gc_alloc_fixed (size_t size, void *descr, MonoGCRootSource source, const char *msg)
+mono_gc_alloc_fixed (size_t size, void *descr, MonoGCRootSource source, void *key, const char *msg)
 {
-	return GC_MALLOC_UNCOLLECTABLE (size);
+	void *start = GC_MALLOC_UNCOLLECTABLE (size);
+	mono_profiler_gc_root_register (start, size, source, key, msg);
+	return start;
 }
 
 void
 mono_gc_free_fixed (void* addr)
 {
+	mono_profiler_gc_root_deregister (addr);
 	GC_FREE (addr);
 }
 
@@ -1572,7 +1578,7 @@ handle_data_alloc_entries (HandleData *handles)
 		handles->entries = (void **)g_malloc0 (sizeof (*handles->entries) * handles->size);
 		handles->domain_ids = (guint16 *)g_malloc0 (sizeof (*handles->domain_ids) * handles->size);
 	} else {
-		handles->entries = (void **)mono_gc_alloc_fixed (sizeof (*handles->entries) * handles->size, NULL, MONO_ROOT_SOURCE_GC_HANDLE, "gc handles table");
+		handles->entries = (void **)mono_gc_alloc_fixed (sizeof (*handles->entries) * handles->size, NULL, MONO_ROOT_SOURCE_GC_HANDLE, NULL, "gc handles table");
 	}
 	handles->bitmap = (guint32 *)g_malloc0 (handles->size / CHAR_BIT);
 }
@@ -1639,7 +1645,7 @@ handle_data_grow (HandleData *handles, gboolean track)
 		handles->domain_ids = domain_ids;
 	} else {
 		gpointer *entries;
-		entries = (void **)mono_gc_alloc_fixed (sizeof (*handles->entries) * new_size, NULL, MONO_ROOT_SOURCE_GC_HANDLE, "gc handles table");
+		entries = (void **)mono_gc_alloc_fixed (sizeof (*handles->entries) * new_size, NULL, MONO_ROOT_SOURCE_GC_HANDLE, NULL, "gc handles table");
 		mono_gc_memmove_aligned (entries, handles->entries, sizeof (*handles->entries) * handles->size);
 		mono_gc_free_fixed (handles->entries);
 		handles->entries = entries;

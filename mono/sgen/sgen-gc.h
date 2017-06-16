@@ -392,7 +392,7 @@ enum {
 
 extern SgenHashTable roots_hash [ROOT_TYPE_NUM];
 
-int sgen_register_root (char *start, size_t size, SgenDescriptor descr, int root_type, int source, const char *msg);
+int sgen_register_root (char *start, size_t size, SgenDescriptor descr, int root_type, int source, void *key, const char *msg);
 void sgen_deregister_root (char* addr);
 
 typedef void (*IterateObjectCallbackFunc) (GCObject*, size_t, void*);
@@ -972,6 +972,7 @@ typedef gpointer (*SgenGCHandleIterateCallback) (gpointer hidden, GCHandleType h
 void sgen_gchandle_iterate (GCHandleType handle_type, int max_generation, SgenGCHandleIterateCallback callback, gpointer user);
 void sgen_gchandle_set_target (guint32 gchandle, GCObject *obj);
 void sgen_mark_normal_gc_handles (void *addr, SgenUserMarkFunc mark_func, void *gc_data);
+void sgen_gc_handles_report_roots (SgenUserReportRootFunc mark_func, void *gc_data);
 gpointer sgen_gchandle_get_metadata (guint32 gchandle);
 
 /* Other globals */

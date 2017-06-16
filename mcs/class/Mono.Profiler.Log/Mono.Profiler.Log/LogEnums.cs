@@ -55,6 +55,8 @@ namespace Mono.Profiler.Log {
 		HeapEnd = 1 << 4,
 		HeapObject = 2 << 4,
 		HeapRoots = 3 << 4,
+		HeapRootRegister = 4 << 4,
+		HeapRootDeregister = 5 << 4,
 
 		SampleHit = 0 << 4,
 		SampleUnmanagedSymbol = 1 << 4,
@@ -208,5 +210,24 @@ namespace Mono.Profiler.Log {
 		Periodic = 0,
 		WorldStop = 1,
 		WorldStart = 2,
+	}
+
+
+	public enum HeapRootKind {
+		External = 0,
+		Stack,
+		FinalizerQueue,
+		StaticVariables,
+		ThreadLocalVariables,
+		ContextLocalVariables,
+		GCHandles,
+		Jit,
+		Threading,
+		AppDomain,
+		Reflection,
+		Marshalling,
+		ThreadPool,
+		Debugger,
+		RuntimeHandles,
 	}
 }

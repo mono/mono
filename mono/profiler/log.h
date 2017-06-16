@@ -66,6 +66,10 @@
                changed address field in TYPE_SAMPLE_UBIN to be based on ptr_base
                added an image pointer field to assembly load events
                added an exception object field to TYPE_CLAUSE
+			   Events/feature should be explicitly enabled as by default they won't be emited (use legacy option to get closer)
+			   Heap events (moves, roots, objects) are now all emitted around HEAD_START / HEAD_END events to make it easy to isolate a heapshot
+			   End-of-GC sync points are now emitted with the world stopped, eliminating the window it races with the mutator.
+			   GC Roots events now have a different, and saner, format.
  */
 
 enum {
@@ -85,6 +89,8 @@ enum {
 	TYPE_HEAP_END    = 1 << 4,
 	TYPE_HEAP_OBJECT = 2 << 4,
 	TYPE_HEAP_ROOT   = 3 << 4,
+	TYPE_HEAP_REGISTER = 4 << 4,
+	TYPE_HEAP_UNREGISTER = 5 << 4,
 	/* extended type for TYPE_METADATA */
 	TYPE_END_LOAD     = 2 << 4,
 	TYPE_END_UNLOAD   = 4 << 4,

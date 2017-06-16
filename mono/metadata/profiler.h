@@ -7,6 +7,7 @@
 
 #include <mono/metadata/object.h>
 #include <mono/metadata/appdomain.h>
+#include <mono/metadata/mono-gc.h>
 
 MONO_BEGIN_DECLS
 
@@ -134,6 +135,10 @@ typedef enum {
 	MONO_PROFILE_GC_ROOT_TYPEMASK = 0xff
 } MonoProfileGCRootType;
 
+typedef enum {
+	MONO_PROFILE_GC_ROOT_KIND_STATIC = 1
+} MonoProfileGCRootKind;
+
 /*
  * Functions that the runtime will call on the profiler.
  */
@@ -172,6 +177,9 @@ typedef void (*MonoProfileGCMoveFunc)     (MonoProfiler *prof, void **objects, i
 typedef void (*MonoProfileGCResizeFunc)   (MonoProfiler *prof, int64_t new_size);
 typedef void (*MonoProfileGCHandleFunc)   (MonoProfiler *prof, int op, int type, uintptr_t handle, MonoObject *obj);
 typedef void (*MonoProfileGCRootFunc)     (MonoProfiler *prof, int num_roots, void **objects, int *root_types, uintptr_t *extra_info);
+typedef void (*MonoProfileGCRootFunc2)     (MonoProfiler *prof, int num_roots, void **addresses, void **objects);
+typedef void (*MonoProfileGCRootRegisterFunc) (MonoProfiler *prof, void *start, size_t size, MonoGCRootSource kind, void *key, const char *msg);
+typedef void (*MonoProfileGCRootDeregisterFunc) (MonoProfiler *prof, void *start);
 
 typedef void (*MonoProfileGCFinalizeFunc)  (MonoProfiler *prof);
 typedef void (*MonoProfileGCFinalizeObjectFunc) (MonoProfiler *prof, MonoObject *obj);
@@ -224,6 +232,10 @@ MONO_API void mono_profiler_coverage_get  (MonoProfiler *prof, MonoMethod *metho
 MONO_API void mono_profiler_install_gc    (MonoProfileGCFunc callback, MonoProfileGCResizeFunc heap_resize_callback);
 MONO_API void mono_profiler_install_gc_moves    (MonoProfileGCMoveFunc callback);
 MONO_API void mono_profiler_install_gc_roots    (MonoProfileGCHandleFunc handle_callback, MonoProfileGCRootFunc roots_callback);
+MONO_API void mono_profiler_install_gc_roots2    (MonoProfileGCRootFunc2 roots_callback);
+MONO_API void mono_profiler_install_gc_root_register    (MonoProfileGCRootRegisterFunc gc_root_register_callback);
+MONO_API void mono_profiler_install_gc_root_deregister (MonoProfileGCRootDeregisterFunc gc_root_deregister_callback);
+
 MONO_API void mono_profiler_install_gc_finalize (MonoProfileGCFinalizeFunc begin, MonoProfileGCFinalizeObjectFunc begin_obj, MonoProfileGCFinalizeObjectFunc end_obj, MonoProfileGCFinalizeFunc end);
 MONO_API void mono_profiler_install_runtime_initialized (MonoProfileFunc runtime_initialized_callback);
 

@@ -354,22 +354,33 @@ namespace Mono.Profiler.Log {
 					return ev;
 				}
 				case LogEventType.HeapRoots: {
-					// TODO: This entire event makes no sense.
-
 					var ev = new HeapRootsEvent ();
 					var list = new HeapRootsEvent.HeapRoot [(int) Reader.ReadULeb128 ()];
 
-					ev.MaxGenerationCollectionCount = (long) Reader.ReadULeb128 ();
-
 					for (var i = 0; i < list.Length; i++) {
 						list [i] = new HeapRootsEvent.HeapRoot {
-							ObjectPointer = ReadObject (),
-							Attributes = (LogHeapRootAttributes) Reader.ReadByte (),
-							ExtraInfo = (long) Reader.ReadULeb128 (),
+							AddressPointer = ReadPointer (),
+							ObjectPointer = ReadObject ()
 						};
 					}
 
 					ev.Roots = list;
+
+					return ev;
+				}
+				case LogEventType.HeapRootRegister: {
+					var ev = new HeapRootRegisterEvent ();
+					ev.Start = ReadPointer ();
+					ev.Size = (long)Reader.ReadULeb128 ();
+					ev.Kind = (HeapRootKind)Reader.ReadByte ();
+					ev.Key = ReadPointer ();
+					ev.Message = Reader.ReadCString ();
+
+					return ev;
+				}
+				case LogEventType.HeapRootDeregister: {
+					var ev = new HeapRootDeregisterEvent ();
+					ev.Start = ReadPointer ();
 
 					return ev;
 				}
@@ -548,7 +559,10 @@ namespace Mono.Profiler.Log {
 
 		long ReadObject ()
 		{
-			return Reader.ReadSLeb128 () + _bufferHeader.ObjectBase;
+			var delta = Reader.ReadSLeb128 ();
+			var obj = (_bufferHeader.ObjectBase + delta) << 3;
+
+			return obj;
 		}
 
 		long ReadMethod ()

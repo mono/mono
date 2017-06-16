@@ -76,7 +76,7 @@ void mono_profiler_gc_event       (MonoGCEvent e, int generation);
 void mono_profiler_gc_heap_resize (gint64 new_size);
 void mono_profiler_gc_moves       (void **objects, int num);
 void mono_profiler_gc_handle      (int op, int type, uintptr_t handle, MonoObject *obj);
-void mono_profiler_gc_roots       (int num, void **objects, int *root_types, uintptr_t *extra_info);
+void mono_profiler_gc_roots       (int num, void **addresses, void **objects);
 
 void mono_profiler_gc_finalize_begin (void);
 void mono_profiler_gc_finalize_object_begin (MonoObject *obj);
@@ -91,6 +91,9 @@ void mono_profiler_runtime_initialized (void);
 
 int64_t mono_profiler_get_sampling_rate (void);
 MonoProfileSamplingMode mono_profiler_get_sampling_mode (void);
+
+void mono_profiler_gc_root_register (void *start, size_t size, MonoGCRootSource kind, void *key, const char *msg);
+void mono_profiler_gc_root_deregister (void *start);
 
 #endif /* __MONO_PROFILER_PRIVATE_H__ */
 
