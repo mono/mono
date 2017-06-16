@@ -239,9 +239,6 @@ void mono_threads_perform_thread_dump (void);
 gboolean
 mono_thread_create_checked (MonoDomain *domain, gpointer func, gpointer arg, MonoError *error);
 
-MonoThread *
-mono_thread_attach_full (MonoDomain *domain, gboolean force_attach);
-
 /* Can't include utils/mono-threads.h because of the THREAD_INFO_TYPE wizardry */
 void mono_threads_add_joinable_thread (gpointer tid);
 void mono_threads_join_threads (void);

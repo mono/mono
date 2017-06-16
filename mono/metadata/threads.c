@@ -1077,18 +1077,7 @@ mono_thread_create_checked (MonoDomain *domain, gpointer func, gpointer arg, Mon
 	return (NULL != mono_thread_create_internal (domain, func, arg, MONO_THREAD_CREATE_FLAGS_NONE, error));
 }
 
-/**
- * mono_thread_attach:
- */
-MonoThread *
-mono_thread_attach (MonoDomain *domain)
-{
-	MonoThread *thread = mono_thread_attach_full (domain, FALSE);
-
-	return thread;
-}
-
-MonoThread *
+static MonoThread *
 mono_thread_attach_full (MonoDomain *domain, gboolean force_attach)
 {
 	MonoInternalThread *internal;
@@ -1129,6 +1118,15 @@ mono_thread_attach_full (MonoDomain *domain, gboolean force_attach)
 		mono_profiler_thread_start (MONO_NATIVE_THREAD_ID_TO_UINT (tid));
 
 	return thread;
+}
+
+/**
+ * mono_thread_attach:
+ */
+MonoThread *
+mono_thread_attach (MonoDomain *domain)
+{
+	return mono_thread_attach_full (domain, FALSE);
 }
 
 void
