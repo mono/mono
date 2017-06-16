@@ -2642,6 +2642,17 @@ public class DebuggerTests
 
 		return;
 
+		// string constructor
+		var stringType = vm.RootDomain.Corlib.GetType ("System.String");
+		var stringConstructor = stringType.GetMethods ().Single (c=>
+			c.Name == ".ctor" &&
+			c.GetParameters ().Length == 2 &&
+			c.GetParameters ()[0].ParameterType.Name == "Char" &&
+			c.GetParameters ()[1].ParameterType.Name == "Int32");
+		var str = stringType.NewInstance (e.Thread, stringConstructor,  new Value [] { vm.CreateValue ('a'), vm.CreateValue (3)});
+
+		AssertValue("aaa", str);
+
 		// pass primitive
 		m = t.GetMethod ("invoke_pass_primitive");
 		Value[] args = new Value [] {
