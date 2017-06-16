@@ -730,6 +730,7 @@ namespace Mono.Debugger.Soft
 					l.Add (new ThreadStartEvent (vm, req_id, id));
 					break;
 				case EventType.ThreadDeath:
+					vm.GetThread (id).InvalidateFrames ();
 					vm.InvalidateThreadCache ();
 					l.Add (new ThreadDeathEvent (vm, req_id, id));
 					break;

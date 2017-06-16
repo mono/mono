@@ -96,8 +96,11 @@ namespace Mono.Debugger.Soft
 				info.FileName = "valgrind";
 			info.UseShellExecute = false;
 
-			info.StandardErrorEncoding = Encoding.UTF8;
-			info.StandardOutputEncoding = Encoding.UTF8;
+			if (info.RedirectStandardError)
+				info.StandardErrorEncoding = Encoding.UTF8;
+
+			if (info.RedirectStandardOutput)
+				info.StandardOutputEncoding = Encoding.UTF8;
 
 			ITargetProcess p;
 			if (options != null && options.CustomProcessLauncher != null)
