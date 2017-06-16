@@ -124,7 +124,7 @@ main (int argc, char *argv [])
 
 	mono_metadata_init ();
 
-	mono_threads_init (&thread_callbacks, 0);
+	mono_thread_info_init (&thread_callbacks, 0);
 
 	mono_lls_init (&lls, free_node);
 

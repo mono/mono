@@ -610,7 +610,7 @@ mono_thread_info_attach (void)
 	{
 		/* This can happen from DllMain(DLL_THREAD_ATTACH) on Windows, if a
 		 * thread is created before an embedding API user initialized Mono. */
-		THREADS_DEBUG ("mono_thread_info_attach called before mono_threads_init\n");
+		THREADS_DEBUG ("mono_thread_info_attach called before mono_thread_info_init\n");
 		return NULL;
 	}
 #endif
@@ -640,7 +640,7 @@ mono_thread_info_detach (void)
 	{
 		/* This can happen from DllMain(THREAD_DETACH) on Windows, if a thread
 		 * is created before an embedding API user initialized Mono. */
-		THREADS_DEBUG ("mono_thread_info_detach called before mono_threads_init\n");
+		THREADS_DEBUG ("mono_thread_info_detach called before mono_thread_info_init\n");
 		return;
 	}
 #endif
@@ -685,7 +685,7 @@ thread_info_key_dtor (void *arg)
 #endif
 
 void
-mono_threads_init (MonoThreadInfoCallbacks *callbacks, size_t info_size)
+mono_thread_info_init (MonoThreadInfoCallbacks *callbacks, size_t info_size)
 {
 	gboolean res;
 	threads_callbacks = *callbacks;
@@ -737,13 +737,13 @@ mono_threads_init (MonoThreadInfoCallbacks *callbacks, size_t info_size)
 }
 
 void
-mono_threads_signals_init (void)
+mono_thread_info_signals_init (void)
 {
 	mono_threads_suspend_init_signals ();
 }
 
 void
-mono_threads_runtime_init (MonoThreadInfoRuntimeCallbacks *callbacks)
+mono_thread_info_runtime_init (MonoThreadInfoRuntimeCallbacks *callbacks)
 {
 	runtime_callbacks = *callbacks;
 }

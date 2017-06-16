@@ -36,7 +36,7 @@ mono_gc_base_init (void)
 	         more carefully. */
 	cb.method_is_critical = (gpointer)mono_runtime_is_critical_method;
 
-	mono_threads_init (&cb, sizeof (MonoThreadInfo));
+	mono_thread_info_init (&cb, sizeof (MonoThreadInfo));
 
 	mono_thread_info_attach ();
 }

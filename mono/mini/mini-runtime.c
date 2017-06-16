@@ -3852,7 +3852,7 @@ mini_init (const char *filename, const char *runtime_version)
 	mono_w32handle_init ();
 #endif
 
-	mono_threads_runtime_init (&ticallbacks);
+	mono_thread_info_runtime_init (&ticallbacks);
 
 	if (g_hasenv ("MONO_DEBUG")) {
 		mini_parse_debug_options ();
@@ -3917,7 +3917,7 @@ mini_init (const char *filename, const char *runtime_version)
 	mono_set_generic_sharing_supported (TRUE);
 #endif
 
-	mono_threads_signals_init ();
+	mono_thread_info_signals_init ();
 
 #ifndef MONO_CROSS_COMPILE
 	mono_runtime_install_handlers ();

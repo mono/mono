@@ -2865,7 +2865,7 @@ sgen_client_init (void)
 	cb.thread_in_critical_region = thread_in_critical_region;
 	cb.ip_in_critical_region = ip_in_critical_region;
 
-	mono_threads_init (&cb, sizeof (SgenThreadInfo));
+	mono_thread_info_init (&cb, sizeof (SgenThreadInfo));
 
 	///* Keep this the default for now */
 	/* Precise marking is broken on all supported targets. Disable until fixed. */

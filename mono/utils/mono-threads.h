@@ -298,13 +298,13 @@ mono_thread_info_set_tid (THREAD_INFO_TYPE *info, MonoNativeThreadId tid)
  * a single block with info from both camps. 
  */
 void
-mono_threads_init (MonoThreadInfoCallbacks *callbacks, size_t thread_info_size);
+mono_thread_info_init (MonoThreadInfoCallbacks *callbacks, size_t thread_info_size);
 
 void
-mono_threads_signals_init (void);
+mono_thread_info_signals_init (void);
 
 void
-mono_threads_runtime_init (MonoThreadInfoRuntimeCallbacks *callbacks);
+mono_thread_info_runtime_init (MonoThreadInfoRuntimeCallbacks *callbacks);
 
 MonoThreadInfoRuntimeCallbacks *
 mono_threads_get_runtime_callbacks (void);
