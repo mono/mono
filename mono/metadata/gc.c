@@ -758,7 +758,7 @@ static volatile gboolean finished;
 void
 mono_gc_finalize_notify (void)
 {
-#ifdef DEBUG
+#if defined(DEBUG) && !defined(IL2CPP_DEBUG)
 	g_message ( "%s: prodding finalizer", __func__);
 #endif
 

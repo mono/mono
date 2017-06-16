@@ -4615,7 +4615,7 @@ mono_metadata_localscope_from_methoddef (MonoImage *meta, guint32 index)
 	return loc.result + 1;
 }
 
-#ifdef DEBUG
+#if defined(DEBUG) && !defined(IL2CPP_DEBUG)
 static void
 mono_backtrace (int limit)
 {
