@@ -380,6 +380,8 @@ register_thread (MonoThreadInfo *info)
 
 	info->stackdata = g_byte_array_new ();
 
+	info->internal_thread_gchandle = G_MAXUINT32;
+
 	mono_threads_suspend_register (info);
 
 	THREADS_DEBUG ("registering info %p tid %p small id %x\n", info, mono_thread_info_get_tid (info), info->small_id);
@@ -652,6 +654,33 @@ mono_thread_info_detach (void)
 		THREADS_DEBUG ("detaching %p\n", info);
 		unregister_thread (info);
 	}
+}
+
+gboolean
+mono_thread_info_try_get_internal_thread_gchandle (MonoThreadInfo *info, guint32 *gchandle)
+{
+	g_assert (info);
+
+	if (info->internal_thread_gchandle == G_MAXUINT32)
+		return FALSE;
+
+	*gchandle = info->internal_thread_gchandle;
+	return TRUE;
+}
+
+void
+mono_thread_info_set_internal_thread_gchandle (MonoThreadInfo *info, guint32 gchandle)
+{
+	g_assert (info);
+	g_assert (gchandle != G_MAXUINT32);
+	info->internal_thread_gchandle = gchandle;
+}
+
+void
+mono_thread_info_unset_internal_thread_gchandle (THREAD_INFO_TYPE *info)
+{
+	g_assert (info);
+	info->internal_thread_gchandle = G_MAXUINT32;
 }
 
 /*

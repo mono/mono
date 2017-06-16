@@ -658,8 +658,18 @@ mono_thread_attach_internal (MonoThread *thread, gboolean force_attach, gboolean
 	g_assert (thread);
 
 	info = mono_thread_info_current ();
+	g_assert (info);
 
 	internal = thread->internal_thread;
+	g_assert (internal);
+
+	/* It is needed to store the MonoInternalThread on the MonoThreadInfo, because of the following case:
+	 *  - the MonoInternalThread TLS key is destroyed: set it to NULL
+	 *  - the MonoThreadInfo TLS key is destroyed: calls mono_thread_info_detach
+	 *    - it calls MonoThreadInfoCallbacks.thread_detach
+	 *      - mono_thread_internal_current returns NULL -> fails to detach the MonoInternalThread. */
+	mono_thread_info_set_internal_thread_gchandle (info, mono_gchandle_new ((MonoObject*) internal, FALSE));
+
 	internal->handle = mono_threads_open_thread_handle (info->handle);
 #ifdef HOST_WIN32
 	internal->native_handle = OpenThread (THREAD_ALL_ACCESS, FALSE, GetCurrentThreadId ());
@@ -1135,6 +1145,7 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 	gboolean removed;
 
 	g_assert (thread != NULL);
+	SET_CURRENT_OBJECT (thread);
 
 	THREAD_DEBUG (g_message ("%s: mono_thread_detach for %p (%"G_GSIZE_FORMAT")", __func__, thread, (gsize)thread->tid));
 
@@ -1262,6 +1273,8 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 done:
 	SET_CURRENT_OBJECT (NULL);
 	mono_domain_unset ();
+
+	mono_thread_info_unset_internal_thread_gchandle ((MonoThreadInfo*) thread->thread_info);
 
 	/* Don't need to close the handle to this thread, even though we took a
 	 * reference in mono_thread_attach (), because the GC will do it
@@ -3040,6 +3053,7 @@ static void
 thread_detach (MonoThreadInfo *info)
 {
 	MonoInternalThread *internal;
+	guint32 gchandle;
 
 	/* If a delegate is passed to native code and invoked on a thread we dont
 	 * know about, marshal will register it with mono_threads_attach_coop, but
@@ -3047,9 +3061,17 @@ thread_detach (MonoThreadInfo *info)
 	 * so we assume that if the domain is still registered, we can detach
 	 * the thread */
 
-	internal = mono_thread_internal_current ();
-	if (internal)
-		mono_thread_detach_internal (internal);
+	g_assert (info);
+
+	if (!mono_thread_info_try_get_internal_thread_gchandle (info, &gchandle))
+		return;
+
+	internal = (MonoInternalThread*) mono_gchandle_get_target (gchandle);
+	g_assert (internal);
+
+	mono_gchandle_free (gchandle);
+
+	mono_thread_detach_internal (internal);
 }
 
 static void

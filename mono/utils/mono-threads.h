@@ -219,6 +219,9 @@ typedef struct {
 
 	/* Stack mark for targets that explicitly require one */
 	gpointer stack_mark;
+
+	/* GCHandle to MonoInternalThread */
+	guint32 internal_thread_gchandle;
 } MonoThreadInfo;
 
 typedef struct {
@@ -319,6 +322,15 @@ mono_thread_info_attach (void);
 
 MONO_API void
 mono_thread_info_detach (void);
+
+gboolean
+mono_thread_info_try_get_internal_thread_gchandle (THREAD_INFO_TYPE *info, guint32 *gchandle);
+
+void
+mono_thread_info_set_internal_thread_gchandle (THREAD_INFO_TYPE *info, guint32 gchandle);
+
+void
+mono_thread_info_unset_internal_thread_gchandle (THREAD_INFO_TYPE *info);
 
 gboolean
 mono_thread_info_is_exiting (void);
