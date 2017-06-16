@@ -685,10 +685,9 @@ thread_info_key_dtor (void *arg)
 #endif
 
 void
-mono_thread_info_init (MonoThreadInfoCallbacks *callbacks, size_t info_size)
+mono_thread_info_init (size_t info_size)
 {
 	gboolean res;
-	threads_callbacks = *callbacks;
 	thread_info_size = info_size;
 	char *sleepLimit;
 #ifdef HOST_WIN32
@@ -734,6 +733,12 @@ mono_thread_info_init (MonoThreadInfoCallbacks *callbacks, size_t info_size)
 	mono_threads_inited = TRUE;
 
 	g_assert (sizeof (MonoNativeThreadId) <= sizeof (uintptr_t));
+}
+
+void
+mono_thread_info_callbacks_init (MonoThreadInfoCallbacks *callbacks)
+{
+	threads_callbacks = *callbacks;
 }
 
 void

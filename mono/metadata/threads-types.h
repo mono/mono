@@ -59,6 +59,9 @@ typedef void (*MonoThreadCleanupFunc) (MonoNativeThreadId tid);
 /* INFO has type MonoThreadInfo* */
 typedef void (*MonoThreadNotifyPendingExcFunc) (gpointer info);
 
+void
+mono_thread_callbacks_init (void);
+
 typedef enum {
 	MONO_THREAD_CREATE_FLAGS_NONE         = 0x0,
 	MONO_THREAD_CREATE_FLAGS_THREADPOOL   = 0x1,

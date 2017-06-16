@@ -327,12 +327,11 @@ thread_state_init (MonoThreadUnwindState *ctx)
 int
 main (void)
 {
-	MonoThreadInfoCallbacks cb = { NULL };
 	MonoThreadInfoRuntimeCallbacks ticallbacks;
 	int res = 0;
 
 	CHECKED_MONO_INIT ();
-	mono_thread_info_init (&cb, sizeof (MonoThreadInfo));
+	mono_thread_info_init (sizeof (MonoThreadInfo));
 	memset (&ticallbacks, 0, sizeof (ticallbacks));
 	ticallbacks.thread_state_init = thread_state_init;
 	mono_thread_info_runtime_init (&ticallbacks);

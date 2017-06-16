@@ -3030,6 +3030,75 @@ void mono_thread_init (MonoThreadStartCB start_cb,
 	mono_thread_attach_cb = attach_cb;
 }
 
+static gpointer
+thread_attach (MonoThreadInfo *info)
+{
+	return mono_gc_thread_attach (info);
+}
+
+static void
+thread_detach (MonoThreadInfo *info)
+{
+	MonoInternalThread *internal;
+
+	/* If a delegate is passed to native code and invoked on a thread we dont
+	 * know about, marshal will register it with mono_threads_attach_coop, but
+	 * we have no way of knowing when that thread goes away.  SGen has a TSD
+	 * so we assume that if the domain is still registered, we can detach
+	 * the thread */
+
+	internal = mono_thread_internal_current ();
+	if (internal)
+		mono_thread_detach_internal (internal);
+}
+
+static void
+thread_detach_with_lock (MonoThreadInfo *info)
+{
+	return mono_gc_thread_detach_with_lock (info);
+}
+
+static gboolean
+thread_in_critical_region (MonoThreadInfo *info)
+{
+	return mono_gc_thread_in_critical_region (info);
+}
+
+static gboolean
+ip_in_critical_region (MonoDomain *domain, gpointer ip)
+{
+	MonoJitInfo *ji;
+	MonoMethod *method;
+
+	/*
+	 * We pass false for 'try_aot' so this becomes async safe.
+	 * It won't find aot methods whose jit info is not yet loaded,
+	 * so we preload their jit info in the JIT.
+	 */
+	ji = mono_jit_info_table_find_internal (domain, ip, FALSE, FALSE);
+	if (!ji)
+		return FALSE;
+
+	method = mono_jit_info_get_method (ji);
+	g_assert (method);
+
+	return mono_gc_is_critical_method (method);
+}
+
+void
+mono_thread_callbacks_init (void)
+{
+	MonoThreadInfoCallbacks cb;
+
+	memset (&cb, 0, sizeof(cb));
+	cb.thread_attach = thread_attach;
+	cb.thread_detach = thread_detach;
+	cb.thread_detach_with_lock = thread_detach_with_lock;
+	cb.ip_in_critical_region = ip_in_critical_region;
+	cb.thread_in_critical_region = thread_in_critical_region;
+	mono_thread_info_callbacks_init (&cb);
+}
+
 /**
  * mono_thread_cleanup:
  */
