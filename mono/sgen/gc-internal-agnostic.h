@@ -84,7 +84,7 @@ typedef void* MonoGCDescriptor;
  * Try to register a foreign thread with the GC, if we fail or the backend
  * can't cope with this concept - we return FALSE.
  */
-extern gboolean mono_gc_register_thread (void *baseptr);
+extern gboolean mono_gc_register_thread (void);
 
 gboolean mono_gc_parse_environment_string_extract_number (const char *str, size_t *out);
 

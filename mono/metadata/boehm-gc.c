@@ -57,7 +57,7 @@ static gboolean gc_initialized = FALSE;
 static mono_mutex_t mono_gc_lock;
 
 static void*
-boehm_thread_register (MonoThreadInfo* info, void *baseptr);
+boehm_thread_register (MonoThreadInfo* info);
 static void
 boehm_thread_unregister (MonoThreadInfo *p);
 static void
@@ -110,7 +110,6 @@ mono_gc_base_init (void)
 {
 	MonoThreadInfoCallbacks cb;
 	const char *env;
-	int dummy;
 
 	if (gc_initialized)
 		return;
@@ -248,7 +247,7 @@ mono_gc_base_init (void)
 	mono_os_mutex_init (&mono_gc_lock);
 	mono_os_mutex_init_recursive (&handle_section);
 
-	mono_thread_info_attach (&dummy);
+	mono_thread_info_attach ();
 
 	GC_set_on_collection_event (on_gc_notification);
 	GC_on_heap_resize = on_gc_heap_resize;
@@ -377,19 +376,19 @@ mono_gc_is_gc_thread (void)
 }
 
 gboolean
-mono_gc_register_thread (void *baseptr)
+mono_gc_register_thread (void)
 {
-	return mono_thread_info_attach (baseptr) != NULL;
+	return mono_thread_info_attach () != NULL;
 }
 
 static void*
-boehm_thread_register (MonoThreadInfo* info, void *baseptr)
+boehm_thread_register (MonoThreadInfo* info)
 {
 	struct GC_stack_base sb;
 	int res;
 
 	/* TODO: use GC_get_stack_base instead of baseptr. */
-	sb.mem_base = baseptr;
+	sb.mem_base = info->stack_end;
 	res = GC_register_my_thread (&sb);
 	if (res == GC_UNIMPLEMENTED)
 	    return NULL; /* Cannot happen with GC v7+. */

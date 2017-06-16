@@ -222,7 +222,7 @@ typedef struct {
 } MonoThreadInfo;
 
 typedef struct {
-	void* (*thread_register)(THREAD_INFO_TYPE *info, void *baseaddr);
+	void* (*thread_register)(THREAD_INFO_TYPE *info);
 	/*
 	This callback is called with @info still on the thread list.
 	This call is made while holding the suspend lock, so don't do callbacks.
@@ -314,7 +314,7 @@ int
 mono_thread_info_register_small_id (void);
 
 THREAD_INFO_TYPE *
-mono_thread_info_attach (void *baseptr);
+mono_thread_info_attach (void);
 
 MONO_API void
 mono_thread_info_detach (void);

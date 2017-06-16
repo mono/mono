@@ -155,7 +155,7 @@ void sgen_client_pre_collection_checks (void);
  *
  * `stack_bottom_fallback` is the value passed through via `sgen_thread_register()`.
  */
-void sgen_client_thread_register (SgenThreadInfo* info, void *stack_bottom_fallback);
+void sgen_client_thread_register (SgenThreadInfo* info);
 
 void sgen_client_thread_unregister (SgenThreadInfo *p);
 

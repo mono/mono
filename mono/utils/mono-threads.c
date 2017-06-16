@@ -353,15 +353,15 @@ thread_handle_destroy (gpointer data)
 	g_free (thread_handle);
 }
 
-static void*
-register_thread (MonoThreadInfo *info, gpointer baseptr)
+static gboolean
+register_thread (MonoThreadInfo *info)
 {
 	size_t stsize = 0;
 	guint8 *staddr = NULL;
-	int small_id = mono_thread_info_register_small_id ();
 	gboolean result;
+
+	info->small_id = mono_thread_info_register_small_id ();
 	mono_thread_info_set_tid (info, mono_native_thread_id_get ());
-	info->small_id = small_id;
 
 	info->handle = g_new0 (MonoThreadHandle, 1);
 	mono_refcount_init (info->handle, thread_handle_destroy);
@@ -372,17 +372,6 @@ register_thread (MonoThreadInfo *info, gpointer baseptr)
 	/*set TLS early so SMR works */
 	mono_native_tls_set_value (thread_info_key, info);
 
-	THREADS_DEBUG ("registering info %p tid %p small id %x\n", info, mono_thread_info_get_tid (info), info->small_id);
-
-	if (threads_callbacks.thread_register) {
-		if (threads_callbacks.thread_register (info, baseptr) == NULL) {
-			// g_warning ("thread registation failed\n");
-			mono_native_tls_set_value (thread_info_key, NULL);
-			g_free (info);
-			return NULL;
-		}
-	}
-
 	mono_thread_info_get_stack_bounds (&staddr, &stsize);
 	g_assert (staddr);
 	g_assert (stsize);
@@ -392,6 +381,16 @@ register_thread (MonoThreadInfo *info, gpointer baseptr)
 	info->stackdata = g_byte_array_new ();
 
 	mono_threads_suspend_register (info);
+
+	THREADS_DEBUG ("registering info %p tid %p small id %x\n", info, mono_thread_info_get_tid (info), info->small_id);
+
+	if (threads_callbacks.thread_register) {
+		if (!threads_callbacks.thread_register (info)) {
+			// g_warning ("thread registation failed\n");
+			mono_native_tls_set_value (thread_info_key, NULL);
+			return FALSE;
+		}
+	}
 
 	/*
 	Transition it before taking any locks or publishing itself to reduce the chance
@@ -405,7 +404,8 @@ register_thread (MonoThreadInfo *info, gpointer baseptr)
 	result = mono_thread_info_insert (info);
 	g_assert (result);
 	mono_thread_info_suspend_unlock ();
-	return info;
+
+	return TRUE;
 }
 
 static void
@@ -583,7 +583,6 @@ mono_thread_info_list_head (void)
 void
 mono_threads_attach_tools_thread (void)
 {
-	int dummy = 0;
 	MonoThreadInfo *info;
 
 	/* Must only be called once */
@@ -593,14 +592,14 @@ mono_threads_attach_tools_thread (void)
 		mono_thread_info_usleep (10);
 	}
 
-	info = mono_thread_info_attach (&dummy);
+	info = mono_thread_info_attach ();
 	g_assert (info);
 
 	info->tools_thread = TRUE;
 }
 
 MonoThreadInfo*
-mono_thread_info_attach (void *baseptr)
+mono_thread_info_attach (void)
 {
 	MonoThreadInfo *info;
 	if (!mono_threads_inited)
@@ -618,8 +617,10 @@ mono_thread_info_attach (void *baseptr)
 	if (!info) {
 		info = (MonoThreadInfo *) g_malloc0 (thread_info_size);
 		THREADS_DEBUG ("attaching %p\n", info);
-		if (!register_thread (info, baseptr))
+		if (!register_thread (info)) {
+			g_free (info);
 			return NULL;
+		}
 	} else if (threads_callbacks.thread_attach) {
 		threads_callbacks.thread_attach (info);
 	}
