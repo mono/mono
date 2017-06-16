@@ -3915,12 +3915,6 @@ if test "x$DISABLE_MCS_DOCS" = "xdefault"; then
    DISABLE_MCS_DOCS=$DISABLE_MCS_DOCS_default
 fi
 
-AC_ARG_WITH(lazy_gc_thread_creation, [  --with-lazy-gc-thread-creation=yes|no      Enable lazy runtime thread creation, embedding host must do it explicitly (defaults to no)],[
-	if test x$with_lazy_gc_thread_creation != xno ; then
-		AC_DEFINE(LAZY_GC_THREAD_CREATION,1,[Enable lazy gc thread creation by the embedding host.])
-	fi
-], [with_lazy_gc_thread_creation=no])
-
 AC_ARG_WITH(cooperative_gc, [  --with-cooperative-gc=yes|no      Enable cooperative stop-the-world garbage collection (sgen only) (defaults to no)], [], [with_cooperative_gc=default])
 
 if test x$with_cooperative_gc = xdefault; then

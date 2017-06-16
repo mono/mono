@@ -19,6 +19,16 @@
 
 #ifdef HAVE_NULL_GC
 
+static void
+null_thread_detach (MonoThreadInfo *p, gpointer user_data)
+{
+	MonoInternalThread *internal;
+
+	internal = (MonoInternalThread*) user_data;
+	if (internal)
+		mono_thread_detach_internal (internal);
+}
+
 void
 mono_gc_base_init (void)
 {
@@ -35,6 +45,7 @@ mono_gc_base_init (void)
 	/* TODO: This casts away an incompatible pointer type warning in the same
 	         manner that boehm-gc does it. This is probably worth investigating
 	         more carefully. */
+	cb.thread_detach = null_thread_detach;
 	cb.mono_method_is_critical = (gpointer)mono_runtime_is_critical_method;
 
 	mono_threads_init (&cb, sizeof (MonoThreadInfo));
@@ -90,12 +101,6 @@ mono_gc_get_heap_size (void)
 
 gboolean
 mono_gc_is_gc_thread (void)
-{
-	return TRUE;
-}
-
-gboolean
-mono_gc_register_thread (void *baseptr)
 {
 	return TRUE;
 }

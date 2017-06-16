@@ -353,147 +353,6 @@ thread_handle_destroy (gpointer data)
 	g_free (thread_handle);
 }
 
-static void*
-register_thread (MonoThreadInfo *info, gpointer baseptr)
-{
-	size_t stsize = 0;
-	guint8 *staddr = NULL;
-	int small_id = mono_thread_info_register_small_id ();
-	gboolean result;
-	mono_thread_info_set_tid (info, mono_native_thread_id_get ());
-	info->small_id = small_id;
-
-	info->handle = g_new0 (MonoThreadHandle, 1);
-	mono_refcount_init (info->handle, thread_handle_destroy);
-	mono_os_event_init (&info->handle->event, FALSE);
-
-	mono_os_sem_init (&info->resume_semaphore, 0);
-
-	/*set TLS early so SMR works */
-	mono_native_tls_set_value (thread_info_key, info);
-
-	THREADS_DEBUG ("registering info %p tid %p small id %x\n", info, mono_thread_info_get_tid (info), info->small_id);
-
-	if (threads_callbacks.thread_register) {
-		if (threads_callbacks.thread_register (info, baseptr) == NULL) {
-			// g_warning ("thread registation failed\n");
-			mono_native_tls_set_value (thread_info_key, NULL);
-			g_free (info);
-			return NULL;
-		}
-	}
-
-	mono_thread_info_get_stack_bounds (&staddr, &stsize);
-	g_assert (staddr);
-	g_assert (stsize);
-	info->stack_start_limit = staddr;
-	info->stack_end = staddr + stsize;
-
-	info->stackdata = g_byte_array_new ();
-
-	mono_threads_suspend_register (info);
-
-	/*
-	Transition it before taking any locks or publishing itself to reduce the chance
-	of others witnessing a detached thread.
-	We can reasonably expect that until this thread gets published, no other thread will
-	try to manipulate it.
-	*/
-	mono_threads_transition_attach (info);
-	mono_thread_info_suspend_lock ();
-	/*If this fail it means a given thread has been registered twice, which doesn't make sense. */
-	result = mono_thread_info_insert (info);
-	g_assert (result);
-	mono_thread_info_suspend_unlock ();
-	return info;
-}
-
-static void
-mono_thread_info_suspend_lock_with_info (MonoThreadInfo *info);
-
-static void
-mono_threads_signal_thread_handle (MonoThreadHandle* thread_handle);
-
-static void
-unregister_thread (void *arg)
-{
-	gpointer gc_unsafe_stackdata;
-	MonoThreadInfo *info;
-	int small_id;
-	gboolean result;
-	gpointer handle;
-
-	info = (MonoThreadInfo *) arg;
-	g_assert (info);
-	g_assert (mono_thread_info_is_current (info));
-	g_assert (mono_thread_info_is_live (info));
-
-	/* Pump the HP queue while the thread is alive.*/
-	mono_thread_hazardous_try_free_some ();
-
-	small_id = info->small_id;
-
-	/* We only enter the GC unsafe region, as when exiting this function, the thread
-	 * will be detached, and the current MonoThreadInfo* will be destroyed. */
-	mono_threads_enter_gc_unsafe_region_unbalanced_with_info (info, &gc_unsafe_stackdata);
-
-	THREADS_DEBUG ("unregistering info %p\n", info);
-
-	mono_native_tls_set_value (thread_exited_key, GUINT_TO_POINTER (1));
-
-	/*
-	 * TLS destruction order is not reliable so small_id might be cleaned up
-	 * before us.
-	 */
-#ifndef HAVE_KW_THREAD
-	mono_native_tls_set_value (small_id_key, GUINT_TO_POINTER (info->small_id + 1));
-#endif
-
-	/* we need to duplicate it, as the info->handle is going
-	 * to be closed when unregistering from the platform */
-	handle = mono_threads_open_thread_handle (info->handle);
-
-	/*
-	First perform the callback that requires no locks.
-	This callback has the potential of taking other locks, so we do it before.
-	After it completes, the thread remains functional.
-	*/
-	if (threads_callbacks.thread_detach)
-		threads_callbacks.thread_detach (info);
-
-	mono_thread_info_suspend_lock_with_info (info);
-
-	/*
-	Now perform the callback that must be done under locks.
-	This will render the thread useless and non-suspendable, so it must
-	be done while holding the suspend lock to give no other thread chance
-	to suspend it.
-	*/
-	if (threads_callbacks.thread_unregister)
-		threads_callbacks.thread_unregister (info);
-
-	/* The thread is no longer active, so unref its handle */
-	mono_threads_close_thread_handle (info->handle);
-	info->handle = NULL;
-
-	result = mono_thread_info_remove (info);
-	g_assert (result);
-	mono_threads_transition_detach (info);
-
-	mono_thread_info_suspend_unlock ();
-
-	g_byte_array_free (info->stackdata, /*free_segment=*/TRUE);
-
-	/*now it's safe to free the thread info.*/
-	mono_thread_hazardous_try_free (info, free_thread_info);
-
-	mono_thread_small_id_free (small_id);
-
-	mono_threads_signal_thread_handle (handle);
-
-	mono_threads_close_thread_handle (handle);
-}
-
 static void
 thread_exited_dtor (void *arg)
 {
@@ -603,33 +462,97 @@ MonoThreadInfo*
 mono_thread_info_attach (void *baseptr)
 {
 	MonoThreadInfo *info;
+	gsize stsize = 0;
+	guint8 *staddr = NULL;
+	gboolean result;
+
+#ifdef HOST_WIN32
 	if (!mono_threads_inited)
 	{
-#ifdef HOST_WIN32
 		/* This can happen from DllMain(DLL_THREAD_ATTACH) on Windows, if a
 		 * thread is created before an embedding API user initialized Mono. */
 		THREADS_DEBUG ("mono_thread_info_attach called before mono_threads_init\n");
 		return NULL;
-#else
-		g_assert (mono_threads_inited);
+	}
 #endif
-	}
+
+	g_assert (mono_threads_inited);
+
 	info = (MonoThreadInfo *) mono_native_tls_get_value (thread_info_key);
-	if (!info) {
-		info = (MonoThreadInfo *) g_malloc0 (thread_info_size);
-		THREADS_DEBUG ("attaching %p\n", info);
-		if (!register_thread (info, baseptr))
-			return NULL;
-	} else if (threads_callbacks.thread_attach) {
-		threads_callbacks.thread_attach (info);
+	if (info) {
+		if (threads_callbacks.thread_attach)
+			threads_callbacks.thread_attach (info);
+
+		return info;
 	}
+
+	info = (MonoThreadInfo *) g_malloc0 (thread_info_size);
+	THREADS_DEBUG ("attaching %p\n", info);
+
+	info->small_id = mono_thread_info_register_small_id ();
+
+	mono_thread_info_set_tid (info, mono_native_thread_id_get ());
+
+	info->handle = g_new0 (MonoThreadHandle, 1);
+	mono_refcount_init (info->handle, thread_handle_destroy);
+	mono_os_event_init (&info->handle->event, FALSE);
+
+	mono_os_sem_init (&info->resume_semaphore, 0);
+
+	/*set TLS early so SMR works */
+	mono_native_tls_set_value (thread_info_key, info);
+
+	THREADS_DEBUG ("registering info %p tid %p small id %x\n", info, mono_thread_info_get_tid (info), info->small_id);
+
+	if (threads_callbacks.thread_register && !threads_callbacks.thread_register (info, baseptr)) {
+		// g_warning ("thread registation failed\n");
+		mono_native_tls_set_value (thread_info_key, NULL);
+		g_free (info);
+		return NULL;
+	}
+
+	mono_thread_info_get_stack_bounds (&staddr, &stsize);
+	g_assert (staddr);
+	g_assert (stsize);
+	info->stack_start_limit = staddr;
+	info->stack_end = staddr + stsize;
+
+	info->stackdata = g_byte_array_new ();
+
+	mono_threads_suspend_register (info);
+
+	/*
+	Transition it before taking any locks or publishing itself to reduce the chance
+	of others witnessing a detached thread.
+	We can reasonably expect that until this thread gets published, no other thread will
+	try to manipulate it.
+	*/
+	mono_threads_transition_attach (info);
+	mono_thread_info_suspend_lock ();
+	/*If this fail it means a given thread has been registered twice, which doesn't make sense. */
+	result = mono_thread_info_insert (info);
+	g_assert (result);
+	mono_thread_info_suspend_unlock ();
+
 	return info;
 }
+
+static void
+mono_thread_info_suspend_lock_with_info (MonoThreadInfo *info);
+
+static void
+mono_threads_signal_thread_handle (MonoThreadHandle* thread_handle);
 
 void
 mono_thread_info_detach (void)
 {
 	MonoThreadInfo *info;
+	gpointer gc_unsafe_stackdata;
+	gint small_id;
+	gboolean result;
+	gpointer handle;
+
+#ifdef HOST_WIN32
 	if (!mono_threads_inited)
 	{
 		/* This can happen from DllMain(THREAD_DETACH) on Windows, if a thread
@@ -637,12 +560,88 @@ mono_thread_info_detach (void)
 		THREADS_DEBUG ("mono_thread_info_detach called before mono_threads_init\n");
 		return;
 	}
+#endif
+
 	info = (MonoThreadInfo *) mono_native_tls_get_value (thread_info_key);
-	if (info) {
-		THREADS_DEBUG ("detaching %p\n", info);
-		unregister_thread (info);
-		mono_native_tls_set_value (thread_info_key, NULL);
-	}
+	if (!info)
+		return;
+
+	THREADS_DEBUG ("detaching %p\n", info);
+
+	g_assert (mono_thread_info_is_live (info));
+
+	/* Pump the HP queue while the thread is alive.*/
+	mono_thread_hazardous_try_free_some ();
+
+	small_id = info->small_id;
+
+	/* We only enter the GC unsafe region, as when exiting this function, the thread
+	 * will be detached, and the current MonoThreadInfo* will be destroyed. */
+	mono_threads_enter_gc_unsafe_region_unbalanced_with_info (info, &gc_unsafe_stackdata);
+
+	THREADS_DEBUG ("unregistering info %p\n", info);
+
+	mono_native_tls_set_value (thread_exited_key, GUINT_TO_POINTER (1));
+
+	/*
+	 * TLS destruction order is not reliable so small_id might be cleaned up
+	 * before us.
+	 */
+#ifndef HAVE_KW_THREAD
+	mono_native_tls_set_value (small_id_key, GUINT_TO_POINTER (info->small_id + 1));
+#endif
+
+	/* we need to duplicate it, as the info->handle is going
+	 * to be closed when unregistering from the platform */
+	handle = mono_threads_open_thread_handle (info->handle);
+
+	/*
+	First perform the callback that requires no locks.
+	This callback has the potential of taking other locks, so we do it before.
+	After it completes, the thread remains functional.
+	*/
+	if (threads_callbacks.thread_detach)
+		threads_callbacks.thread_detach (info, info->detach_user_data);
+
+	mono_thread_info_suspend_lock_with_info (info);
+
+	/*
+	Now perform the callback that must be done under locks.
+	This will render the thread useless and non-suspendable, so it must
+	be done while holding the suspend lock to give no other thread chance
+	to suspend it.
+	*/
+	if (threads_callbacks.thread_unregister)
+		threads_callbacks.thread_unregister (info);
+
+	/* The thread is no longer active, so unref its handle */
+	mono_threads_close_thread_handle (info->handle);
+	info->handle = NULL;
+
+	result = mono_thread_info_remove (info);
+	g_assert (result);
+	mono_threads_transition_detach (info);
+
+	mono_thread_info_suspend_unlock ();
+
+	g_byte_array_free (info->stackdata, /*free_segment=*/TRUE);
+
+	/*now it's safe to free the thread info.*/
+	mono_thread_hazardous_try_free (info, free_thread_info);
+
+	mono_thread_small_id_free (small_id);
+
+	mono_threads_signal_thread_handle (handle);
+
+	mono_threads_close_thread_handle (handle);
+
+	mono_native_tls_set_value (thread_info_key, NULL);
+}
+
+void
+mono_thread_info_set_detach_user_data (MonoThreadInfo *info, gpointer user_data)
+{
+	info->detach_user_data = user_data;
 }
 
 /*
@@ -670,7 +669,7 @@ thread_info_key_dtor (void *arg)
 	 * take the GC lock which may block which requires a coop
 	 * state transition. */
 	mono_native_tls_set_value (thread_info_key, arg);
-	unregister_thread (arg);
+	mono_thread_info_detach ();
 	mono_native_tls_set_value (thread_info_key, NULL);
 }
 #endif

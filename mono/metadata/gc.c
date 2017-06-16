@@ -912,20 +912,11 @@ finalizer_thread (gpointer unused)
 	return 0;
 }
 
-#ifndef LAZY_GC_THREAD_CREATION
-static
-#endif
-void
-mono_gc_init_finalizer_thread (void)
-{
-	MonoError error;
-	gc_thread = mono_thread_create_internal (mono_domain_get (), finalizer_thread, NULL, MONO_THREAD_CREATE_FLAGS_NONE, &error);
-	mono_error_assert_ok (&error);
-}
-
 void
 mono_gc_init (void)
 {
+	MonoError error;
+
 	mono_coop_mutex_init_recursive (&finalizer_mutex);
 	mono_coop_mutex_init_recursive (&reference_queue_mutex);
 
@@ -953,9 +944,8 @@ mono_gc_init (void)
 	mono_coop_cond_init (&exited_cond);
 	mono_coop_sem_init (&finalizer_sem, 0);
 
-#ifndef LAZY_GC_THREAD_CREATION
-	mono_gc_init_finalizer_thread ();
-#endif
+	gc_thread = mono_thread_create_internal (mono_domain_get (), finalizer_thread, NULL, MONO_THREAD_CREATE_FLAGS_NONE, &error);
+	mono_error_assert_ok (&error);
 }
 
 void

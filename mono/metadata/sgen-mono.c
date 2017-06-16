@@ -2305,25 +2305,20 @@ sgen_thread_attach (SgenThreadInfo *info)
 }
 
 static void
-sgen_thread_detach (SgenThreadInfo *p)
+sgen_thread_detach (SgenThreadInfo *info, gpointer user_data)
 {
+	MonoInternalThread *internal;
+
 	/* If a delegate is passed to native code and invoked on a thread we dont
 	 * know about, marshal will register it with mono_threads_attach_coop, but
 	 * we have no way of knowing when that thread goes away.  SGen has a TSD
 	 * so we assume that if the domain is still registered, we can detach
 	 * the thread
 	 */
-	if (mono_thread_internal_current_is_attached ())
-		mono_thread_detach_internal (mono_thread_internal_current ());
-}
 
-/**
- * mono_gc_register_thread:
- */
-gboolean
-mono_gc_register_thread (void *baseptr)
-{
-	return mono_thread_info_attach (baseptr) != NULL;
+	internal = (MonoInternalThread*) user_data;
+	if (internal)
+		mono_thread_detach_internal (internal);
 }
 
 /**
@@ -2909,7 +2904,7 @@ sgen_client_init (void)
 
 	mono_tls_init_gc_keys ();
 
-	mono_gc_register_thread (&dummy);
+	mono_thread_info_attach (&dummy);
 }
 
 gboolean
