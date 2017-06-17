@@ -2640,19 +2640,6 @@ public class DebuggerTests
 		v = this_obj.InvokeMethod (e.Thread, m, new Value [] { s });
 		AssertValue (2, v);
 
-		return;
-
-		// string constructor
-		var stringType = vm.RootDomain.Corlib.GetType ("System.String");
-		var stringConstructor = stringType.GetMethods ().Single (c=>
-			c.Name == ".ctor" &&
-			c.GetParameters ().Length == 2 &&
-			c.GetParameters ()[0].ParameterType.Name == "Char" &&
-			c.GetParameters ()[1].ParameterType.Name == "Int32");
-		var str = stringType.NewInstance (e.Thread, stringConstructor,  new Value [] { vm.CreateValue ('a'), vm.CreateValue (3)});
-
-		AssertValue("aaa", str);
-
 		// pass primitive
 		m = t.GetMethod ("invoke_pass_primitive");
 		Value[] args = new Value [] {
@@ -2745,6 +2732,17 @@ public class DebuggerTests
 		m = t.GetMethod ("invoke_static_pass_ref");
 		task = t.InvokeMethodAsync (e.Thread, m, new Value [] { vm.RootDomain.CreateString ("ABC") });
 		AssertValue ("ABC", task.Result);
+
+		// string constructor
+		var stringType = vm.RootDomain.Corlib.GetType ("System.String");
+		var stringConstructor = stringType.GetMethods ().Single (c=>
+			c.Name == ".ctor" &&
+			c.GetParameters ().Length == 2 &&
+			c.GetParameters ()[0].ParameterType.Name == "Char" &&
+			c.GetParameters ()[1].ParameterType.Name == "Int32");
+		var str = stringType.NewInstance (e.Thread, stringConstructor,  new Value [] { vm.CreateValue ('a'), vm.CreateValue (3)});
+
+		AssertValue("aaa", str);
 
 		// Argument checking
 		
