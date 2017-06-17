@@ -58,6 +58,8 @@ static mono_mutex_t mono_gc_lock;
 static void*
 boehm_thread_register (MonoThreadInfo* info, void *baseptr);
 static void
+boehm_thread_detach (MonoThreadInfo *info);
+static void
 boehm_thread_unregister (MonoThreadInfo *p);
 static void
 boehm_thread_detach (MonoThreadInfo *p);
@@ -252,6 +254,7 @@ mono_gc_base_init (void)
 
 	memset (&cb, 0, sizeof (cb));
 	cb.thread_register = boehm_thread_register;
+	cb.thread_detach = boehm_thread_detach;
 	cb.thread_unregister = boehm_thread_unregister;
 	cb.thread_detach = boehm_thread_detach;
 	cb.mono_method_is_critical = (gboolean (*)(void *))mono_runtime_is_critical_method;
@@ -413,6 +416,17 @@ boehm_thread_register (MonoThreadInfo* info, void *baseptr)
 }
 
 static void
+boehm_thread_detach (MonoThreadInfo *info)
+{
+	/* Free in detach rather than unregister since 
+	 * Boehm handle stack uses GC memory and acquires
+	 * GC lock to free it. The detach callback 
+	 * does not hold any locks while unregister does.
+	 */
+	mono_handle_stack_free (info->handle_stack);
+}
+
+static void
 boehm_thread_unregister (MonoThreadInfo *p)
 {
 	MonoNativeThreadId tid;
@@ -421,8 +435,6 @@ boehm_thread_unregister (MonoThreadInfo *p)
 
 	if (p->runtime_thread)
 		mono_threads_add_joinable_thread ((gpointer)tid);
-
-	mono_handle_stack_free (p->handle_stack);
 
 #if HAVE_BDWGC_GC
 	GC_unregister_my_thread ();
