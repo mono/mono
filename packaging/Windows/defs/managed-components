@@ -64,6 +64,16 @@ install()
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/msbuild				${REPODIR}/../../tmp/mono/lib/mono/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/nuget				${REPODIR}/../../tmp/mono/lib/mono/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild-frameworks			${REPODIR}/../../tmp/mono/lib/mono/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Microsoft/NuGet/Microsoft.NuGet*					${REPODIR}/../../tmp/mono/lib/mono/xbuild/  # note: we can't copy the symlink in xbuild/ so we copy the file it points to
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/NuGet*					${REPODIR}/../../tmp/mono/lib/mono/xbuild/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Newtonsoft.Json*					${REPODIR}/../../tmp/mono/lib/mono/xbuild/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/15.0					${REPODIR}/../../tmp/mono/lib/mono/xbuild/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Microsoft/Portable/VisualStudio					${REPODIR}/../../tmp/mono/lib/mono/xbuild/Microsoft/Portable/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Microsoft/VisualStudio/v/FSharp					${REPODIR}/../../tmp/mono/lib/mono/xbuild/Microsoft/VisualStudio/v/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Microsoft/VisualStudio/v11.0/FSharp				${REPODIR}/../../tmp/mono/lib/mono/xbuild/Microsoft/VisualStudio/v11.0/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Microsoft/VisualStudio/v12.0/FSharp				${REPODIR}/../../tmp/mono/lib/mono/xbuild/Microsoft/VisualStudio/v12.0/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Microsoft/VisualStudio/v14.0/FSharp				${REPODIR}/../../tmp/mono/lib/mono/xbuild/Microsoft/VisualStudio/v14.0/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Microsoft/VisualStudio/v15.0/FSharp				${REPODIR}/../../tmp/mono/lib/mono/xbuild/Microsoft/VisualStudio/v15.0/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/gac/FSharp.Core/4.4.1.0__b03f5f7f11d50a3a/FSharp*				${REPODIR}/../../tmp/mono/lib/mono/4.5/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/gac/nunit*/2.4.8.0__96d09a1eb7f44a77/*.dll*					${REPODIR}/../../tmp/mono/lib/mono/4.5/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/4.5/Microsoft.VisualBasic.dll	${REPODIR}/../../tmp/mono/lib/mono/4.5/
