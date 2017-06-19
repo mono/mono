@@ -9739,10 +9739,11 @@ namespace MonoTests.System.Reflection.Emit
 
 				assembly.SetEntryPoint (main);
                 G.CreateType ();
-                P.CreateType ();
+                var PCreated = P.CreateType ();
 
                 assembly.Save ("Instance.exe");
-				Thread.GetDomain ().ExecuteAssembly(Path.Combine (tempDir, "Instance.exe"));
+
+		PCreated.InvokeMember ("Main", BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, null);
 		}
 
 		[Test]
