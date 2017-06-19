@@ -68,8 +68,6 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		public void TearDown () 
 		{
 			Thread.CurrentThread.CurrentCulture = oldcult;
-			File.Delete("temp.cer");
-			File.Delete("temp.b64");
 		}
 
 #if !MOBILE && !MONOMAC
