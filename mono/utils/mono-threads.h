@@ -607,7 +607,6 @@ typedef enum {
 	MONO_THREAD_INFO_WAIT_RET_SUCCESS_0   =  0,
 	MONO_THREAD_INFO_WAIT_RET_ALERTED     = -1,
 	MONO_THREAD_INFO_WAIT_RET_TIMEOUT     = -2,
-	MONO_THREAD_INFO_WAIT_RET_FAILED      = -3,
 } MonoThreadInfoWaitRet;
 
 MonoThreadInfoWaitRet
