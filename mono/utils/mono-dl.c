@@ -42,7 +42,35 @@ static GSList *fallback_handlers;
  * Symbol names registered by mono_dl_register_symbol ().                                                                                                                                         
  */                                                                                                                                                                                               
 static GHashTable *static_dl_symbols;                                                                                                                                                             
-                                                                                                                                                                                                  
+
+
+static void* load_library (const char *name, int flags)
+{
+#if defined(PLATFORM_UNITY)
+	return UnityPalLibraryLoaderLoadDynamicLibrary(name, flags);
+#else
+	return mono_dl_open_file (name, flags);
+#endif
+}
+        
+static void* load_function(MonoDl *module, const char* name)
+{
+#if defined(PLATFORM_UNITY)
+		return UnityPalLibraryLoaderGetFunctionPointer(module->handle, name);
+#else
+		return mono_dl_lookup_symbol (module, name);
+#endif /* PLATFORM_UNITY */
+}
+
+void close_loaded_library(MonoDl *module)
+{
+#if defined(PLATFORM_UNITY)
+		UnityPalLibraryLoaderCloseLoadedLibrary(&module->handle);
+#else
+		mono_dl_close_handle (module);
+#endif
+}
+
 /*                                                                                                                                                                                                
  * mono_dl_register_symbol:                                                                                                                                                                       
  *                                                                                                                                                                                                
@@ -181,11 +209,7 @@ mono_dl_open (const char *name, int flags, char **error_msg)
 	}
 	module->main_module = name == NULL? TRUE: FALSE;
 
-#if defined(PLATFORM_UNITY)
-	lib = UnityPalLibraryLoaderLoadDynamicLibrary(name, lflags);
-#else
-	lib = mono_dl_open_file (name, lflags);
-#endif
+	lib = load_library(name, flags);
 
 	if (!lib) {
 		GSList *node;
@@ -265,20 +289,12 @@ mono_dl_symbol (MonoDl *module, const char *name, void **symbol)
 			*usname = '_';
 			strcpy (usname + 1, name);
 
-#if defined(PLATFORM_UNITY)
-		sym = UnityPalLibraryLoaderGetFunctionPointer(module->handle, usname);
-#else
-		sym = mono_dl_lookup_symbol (module, usname);
-#endif /* PLATFORM_UNITY */
+			sym = load_function(module, usname);
 
 			g_free (usname);
 		}
 #else
-#if defined(PLATFORM_UNITY)
-	sym = UnityPalLibraryLoaderGetFunctionPointer(module->handle, name);
-#else
-	sym = mono_dl_lookup_symbol (module, name);
-#endif /* PLATFORM_UNITY */
+		sym = load_function(module, name);
 #endif
 	}
 #ifndef HOST_WIN32
@@ -315,16 +331,9 @@ mono_dl_close (MonoDl *module)
 	if (dl_fallback){
 		if (dl_fallback->close_func != NULL)
 			dl_fallback->close_func (module->handle, dl_fallback->user_data);
-	} else {
- 
-#if defined(PLATFORM_UNITY)
-		UnityPalLibraryLoaderCloseLoadedLibrary(&module->handle);
-#else
-		mono_dl_close_handle (module);
-#endif
- 	}
-	
-	g_free (module);
+	} else
+ 		close_loaded_library(module);
+ 	g_free (module);
 }
 
 /**
