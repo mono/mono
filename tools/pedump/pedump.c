@@ -12,24 +12,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <mono/metadata/image.h>
 #include <glib.h>
+#include <mono/metadata/image.h>
 #include <mono/metadata/cil-coff.h>
 #include <mono/metadata/mono-endian.h>
 #include <mono/metadata/verify.h>
 #include <mono/metadata/class.h>
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/tokentype.h>
-#include <mono/metadata/appdomain.h>
 #include <mono/metadata/assembly-internals.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/verify-internals.h>
-#include <mono/metadata/marshal.h>
-#include <mono/metadata/w32handle.h>
-#include "mono/utils/mono-digest.h"
-#include <mono/utils/mono-mmap.h>
-#include <mono/utils/mono-counters.h>
+#include <mono/mini/jit.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #ifdef HAVE_UNISTD_H
@@ -460,21 +455,8 @@ verify_image_file (const char *fname)
 	image->assembly = assembly;
 	mono_assembly_fill_assembly_name (image, &assembly->aname);
 
-	/*Finish initializing the runtime*/
-	mono_install_assembly_load_hook (pedump_assembly_load_hook, NULL);
-	mono_install_assembly_search_hook (pedump_assembly_search_hook, NULL);
-
-	mono_init_version ("pedump", image->version);
-
-	mono_install_assembly_preload_hook (pedump_preload, GUINT_TO_POINTER (FALSE));
-
-	mono_icall_init ();
-	mono_marshal_init ();
-
-
 	if (!verify_partial_md && !mono_verifier_verify_full_table_data (image, &errors))
 		goto invalid_image;
-
 
 	table = &image->tables [MONO_TABLE_TYPEDEF];
 	for (i = 1; i <= table->rows; ++i) {
@@ -617,11 +599,6 @@ pedump_assembly_search_hook (MonoAssemblyName *aname, gpointer user_data)
        return NULL;
 }
 
-static void
-thread_state_init (MonoThreadUnwindState *ctx)
-{
-}
-
 #define VALID_ONLY_FLAG 0x08000000
 #define VERIFY_CODE_ONLY MONO_VERIFY_ALL + 1 
 #define VERIFY_METADATA_ONLY VERIFY_CODE_ONLY + 1
@@ -638,7 +615,6 @@ main (int argc, char *argv [])
 	const char *flag_desc [] = {"error", "warn", "cls", "all", "code", "fail-on-verifiable", "non-strict", "valid-only", "metadata", "partial-md", NULL};
 	guint flag_vals [] = {MONO_VERIFY_ERROR, MONO_VERIFY_WARNING, MONO_VERIFY_CLS, MONO_VERIFY_ALL, VERIFY_CODE_ONLY, MONO_VERIFY_FAIL_FAST, MONO_VERIFY_NON_STRICT, VALID_ONLY_FLAG, VERIFY_METADATA_ONLY, VERIFY_PARTIAL_METADATA, 0};
 	int i, verify_flags = MONO_VERIFY_REPORT_ALL_ERRORS, run_new_metadata_verifier = 0;
-	MonoThreadInfoRuntimeCallbacks ticallbacks;
 	
 	for (i = 1; i < argc; i++){
 		if (argv [i][0] != '-'){
@@ -661,23 +637,7 @@ main (int argc, char *argv [])
 	if (!file)
 		usage ();
 
-#ifndef DISABLE_PERFCOUNTERS
-	mono_perfcounters_init ();
-#endif
-	mono_counters_init ();
-	mono_tls_init_runtime_keys ();
-	memset (&ticallbacks, 0, sizeof (ticallbacks));
-	ticallbacks.thread_state_init = thread_state_init;
-#ifndef HOST_WIN32
-	mono_w32handle_init ();
-#endif
-	mono_threads_runtime_init (&ticallbacks);
-
-	mono_metadata_init ();
-	mono_images_init ();
-	mono_assemblies_init ();
-	mono_loader_init ();
- 
+	mono_jit_init (file);
 
 	if (verify_pe) {
 		char *tok = strtok (flags, ",");
