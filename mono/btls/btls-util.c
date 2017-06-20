@@ -31,6 +31,7 @@ mono_btls_util_asn1_time_to_ticks (ASN1_TIME *time)
 	memset (&tm, 0, sizeof (tm));
 
 	gtime = ASN1_TIME_to_generalizedtime (time, NULL);
+	/* FIXME: check return value of  asn1_generalizedtime_to_tm () */
 	asn1_generalizedtime_to_tm (&tm, gtime);
 	ASN1_GENERALIZEDTIME_free (gtime);
 	epoch = btls_timegm64 (&tm);

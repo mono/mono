@@ -102,7 +102,7 @@ static void on_gc_heap_resize (size_t new_size);
 void
 mono_gc_base_init (void)
 {
-    char *env;
+	char *env;
 
 	if (gc_initialized)
 		return;
