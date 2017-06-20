@@ -58,13 +58,17 @@ if (not $skipbuild)
 
 	my $archflags = '-DLINUX=1';
 
-	if (not $build64 and not $build_armel)
+	if ($build64)
 	{
-		$archflags = '-m32';
+		$archflags = '-fPIC -ftls-model=initial-exec -mtls-dialect=gnu2';
 	}
-	if ($build_armel)
+	elsif ($build_armel)
 	{
 		$archflags = '-marm -DARM_FPU_NONE';
+	}
+	else # x86
+	{
+		$archflags = '-m32';
 	}
 	if ($debug)
 	{
