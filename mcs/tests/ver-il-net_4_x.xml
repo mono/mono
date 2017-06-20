@@ -52719,7 +52719,7 @@
     </type>
     <type name="X">
       <method name="Int32 Main()" attrs="150">
-        <size>44</size>
+        <size>102</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
