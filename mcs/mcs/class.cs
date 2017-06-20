@@ -2227,7 +2227,7 @@ namespace Mono.CSharp
 				Module.PredefinedAttributes.CompilerGenerated.EmitAttribute (TypeBuilder);
 
 #if STATIC
-			if (Kind == MemberKind.Struct && HasInstanceField) {
+			if (Kind == MemberKind.Struct && !HasStructLayout && HasInstanceField) {
 				TypeBuilder.__SetLayout (0, 0);
 			}
 
