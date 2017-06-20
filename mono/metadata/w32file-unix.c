@@ -1368,8 +1368,8 @@ static guint32 file_seek(gpointer handle, gint32 movedistance,
 #ifdef HAVE_LARGE_FILE_SUPPORT
 	if(highmovedistance==NULL) {
 		offset=movedistance;
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: setting offset to %lld (low %d)", __func__,
-				  (long long) offset, movedistance);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: setting offset to %" G_GINT64_FORMAT " (low %d)", __func__,
+				  offset, movedistance);
 	} else {
 		offset=((gint64) *highmovedistance << 32) | (guint32)movedistance;
 		
