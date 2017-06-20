@@ -3097,7 +3097,7 @@ wait_for_tids (struct wait_data *wait, guint32 timeout, gboolean check_state_cha
 	MONO_EXIT_GC_SAFE;
 
 	if (ret == MONO_THREAD_INFO_WAIT_RET_FAILED) {
-		/* See the comment in build_wait_tids() */
+		/* See the comment in build_wait_threads() */
 		THREAD_DEBUG (g_message ("%s: Wait failed", __func__));
 		return;
 	}
@@ -3120,7 +3120,8 @@ wait_for_tids (struct wait_data *wait, guint32 timeout, gboolean check_state_cha
 	}
 }
 
-static void build_wait_tids (gpointer key, gpointer value, gpointer user)
+static void
+build_wait_threads (gpointer key, gpointer value, gpointer user)
 {
 	struct wait_data *wait=(struct wait_data *)user;
 
@@ -3174,7 +3175,7 @@ static void build_wait_tids (gpointer key, gpointer value, gpointer user)
 }
 
 static gboolean
-remove_and_abort_threads (gpointer key, gpointer value, gpointer user)
+build_abort_threads (gpointer key, gpointer value, gpointer user)
 {
 	struct wait_data *wait=(struct wait_data *)user;
 	MonoNativeThreadId self = mono_native_thread_id_get ();
@@ -3253,41 +3254,47 @@ void
 mono_thread_manage (void)
 {
 	struct wait_data wait_data;
-	struct wait_data *wait = &wait_data;
 
-	memset (wait, 0, sizeof (struct wait_data));
 	/* join each thread that's still running */
 	THREAD_DEBUG (g_message ("%s: Joining each running thread...", __func__));
-	
+
 	mono_threads_lock ();
-	if(threads==NULL) {
+
+	if (!threads) {
 		THREAD_DEBUG (g_message("%s: No threads", __func__));
 		mono_threads_unlock ();
 		return;
 	}
-	mono_threads_unlock ();
-	
-	do {
-		mono_threads_lock ();
+
+	for (;;) {
 		if (shutting_down) {
 			/* somebody else is shutting down */
-			mono_threads_unlock ();
 			break;
 		}
-		THREAD_DEBUG (g_message ("%s: There are %d threads to join", __func__, mono_g_hash_table_size (threads));
-			mono_g_hash_table_foreach (threads, print_tids, NULL));
-	
+
+		THREAD_DEBUG (
+			g_message ("%s: joining %d threads", __func__, mono_g_hash_table_size (threads));
+			mono_g_hash_table_foreach (threads, print_tids, NULL)
+		);
+
 		mono_os_event_reset (&background_change_event);
-		wait->num=0;
-		/* We must zero all InternalThread pointers to avoid making the GC unhappy. */
-		memset (wait->threads, 0, MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS * SIZEOF_VOID_P);
-		mono_g_hash_table_foreach (threads, build_wait_tids, wait);
+
+		memset (&wait_data, 0, sizeof (wait_data));
+		mono_g_hash_table_foreach (threads, build_wait_threads, &wait_data);
+
+		if (wait_data.num == 0)
+			break;
+
 		mono_threads_unlock ();
-		if (wait->num > 0)
-			/* Something to wait for */
-			wait_for_tids (wait, MONO_INFINITE_WAIT, TRUE);
-		THREAD_DEBUG (g_message ("%s: I have %d threads after waiting.", __func__, wait->num));
-	} while(wait->num>0);
+
+		THREAD_DEBUG (g_message ("%s: waiting %d threads", __func__, wait_data.num));
+
+		wait_for_tids (&wait_data, MONO_INFINITE_WAIT, TRUE);
+
+		mono_threads_lock ();
+	}
+
+	mono_threads_unlock ();
 
 	/* Mono is shutting down, so just wait for the end */
 	if (!mono_runtime_try_shutdown ()) {
@@ -3296,27 +3303,30 @@ mono_thread_manage (void)
 		mono_thread_execute_interruption ();
 	}
 
+	mono_threads_lock ();
+
 	/* 
 	 * Remove everything but the finalizer thread and self.
 	 * Also abort all the background threads
 	 * */
-	do {
-		mono_threads_lock ();
+	for (;;) {
+		memset (&wait_data, 0, sizeof (wait_data));
+		mono_g_hash_table_foreach_remove (threads, build_abort_threads, &wait_data);
 
-		wait->num = 0;
-		/*We must zero all InternalThread pointers to avoid making the GC unhappy.*/
-		memset (wait->threads, 0, MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS * SIZEOF_VOID_P);
-		mono_g_hash_table_foreach_remove (threads, remove_and_abort_threads, wait);
+		if (wait_data.num == 0)
+			break;
 
 		mono_threads_unlock ();
 
-		THREAD_DEBUG (g_message ("%s: wait->num is now %d", __func__, wait->num));
-		if (wait->num > 0) {
-			/* Something to wait for */
-			wait_for_tids (wait, MONO_INFINITE_WAIT, FALSE);
-		}
-	} while (wait->num > 0);
-	
+		THREAD_DEBUG (g_message ("%s: aborting %d threads", __func__, wait_data.num));
+
+		wait_for_tids (&wait_data, MONO_INFINITE_WAIT, FALSE);
+
+		mono_threads_lock ();
+	}
+
+	mono_threads_unlock ();
+
 	/* 
 	 * give the subthreads a chance to really quit (this is mainly needed
 	 * to get correct user and system times from getrusage/wait/time(1)).
