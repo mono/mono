@@ -19,7 +19,6 @@
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\dynamic-stream.c" />
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\environment.c" />
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\exception.c" />
-    <ClCompile Include="$(MonoSourceLocation)\mono\metadata\file-mmap-windows.c" />
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\filewatcher.c" />
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\gc-stats.c" />
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\gc.c" />

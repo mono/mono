@@ -422,8 +422,6 @@ boehm_thread_unregister (MonoThreadInfo *p)
 	if (p->runtime_thread)
 		mono_threads_add_joinable_thread ((gpointer)tid);
 
-	mono_handle_stack_free (p->handle_stack);
-
 #if HAVE_BDWGC_GC
 	GC_unregister_my_thread ();
 #endif
@@ -434,6 +432,13 @@ boehm_thread_detach (MonoThreadInfo *p)
 {
 	if (mono_thread_internal_current_is_attached ())
 		mono_thread_detach_internal (mono_thread_internal_current ());
+
+	/* Free in detach rather than unregister since 
+	 * Boehm handle stack uses GC memory and acquires
+	 * GC lock to free it. The detach callback 
+	 * does not hold any locks while unregister does.
+	 */
+	mono_handle_stack_free (p->handle_stack);
 }
 
 gboolean
