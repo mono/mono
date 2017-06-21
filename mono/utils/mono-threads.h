@@ -588,7 +588,7 @@ typedef enum {
 
 
 void mono_threads_transition_attach (THREAD_INFO_TYPE* info);
-gboolean mono_threads_transition_detach (THREAD_INFO_TYPE *info);
+void mono_threads_transition_detach (THREAD_INFO_TYPE *info);
 MonoRequestAsyncSuspendResult mono_threads_transition_request_async_suspension (THREAD_INFO_TYPE *info);
 MonoSelfSupendResult mono_threads_transition_state_poll (THREAD_INFO_TYPE *info);
 MonoResumeResult mono_threads_transition_request_resume (THREAD_INFO_TYPE* info);

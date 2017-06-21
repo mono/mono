@@ -126,11 +126,8 @@ retry_state_change:
 /*
 This is the transition that signals that a thread is no longer registered with the runtime.
 Its main goal is to catch threads been witnessed after they detach.
-
-This returns TRUE is the transition succeeded.
-If it returns false it means that there's a pending suspend that should be acted upon.
 */
-gboolean
+void
 mono_threads_transition_detach (MonoThreadInfo *info)
 {
 	int raw_state, cur_state, suspend_count;
@@ -145,9 +142,7 @@ retry_state_change:
 		if (InterlockedCompareExchange (&info->thread_state, STATE_DETACHED, raw_state) != raw_state)
 			goto retry_state_change;
 		trace_state_change ("DETACH", info, raw_state, STATE_DETACHED, 0);
-		return TRUE;
-	case STATE_ASYNC_SUSPEND_REQUESTED: //Can't detach until whoever asked us to suspend to be happy with us
-		return FALSE;
+		break;
 
 /*
 STATE_ASYNC_SUSPENDED: Code should not be running while suspended.
