@@ -3577,14 +3577,6 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 				ADD_CODE (&td, MINT_MONO_MEMORY_BARRIER);
 				++td.ip;
 				break;
-			case CEE_MONO_JIT_ATTACH:
-				ADD_CODE (&td, MINT_MONO_JIT_ATTACH);
-				++td.ip;
-				break;
-			case CEE_MONO_JIT_DETACH:
-				ADD_CODE (&td, MINT_MONO_JIT_DETACH);
-				++td.ip;
-				break;
 			case CEE_MONO_LDDOMAIN:
 				ADD_CODE (&td, MINT_MONO_LDDOMAIN);
 				td.sp [0].type = STACK_TYPE_I;

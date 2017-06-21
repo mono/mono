@@ -4507,21 +4507,6 @@ array_constructed:
 			mono_memory_barrier ();
 			MINT_IN_BREAK;
 		}
-		MINT_IN_CASE(MINT_MONO_JIT_ATTACH) {
-			++ip;
-
-			context->original_domain = NULL;
-			MonoDomain *tls_domain = (MonoDomain *) ((gpointer (*)()) mono_tls_get_tls_getter (TLS_KEY_DOMAIN, FALSE)) ();
-			gpointer tls_jit = ((gpointer (*)()) mono_tls_get_tls_getter (TLS_KEY_DOMAIN, FALSE)) ();
-
-			if (tls_domain != rtm->domain || !tls_jit)
-				context->original_domain = mono_jit_thread_attach (rtm->domain);
-			MINT_IN_BREAK;
-		}
-		MINT_IN_CASE(MINT_MONO_JIT_DETACH)
-			++ip;
-			mono_jit_set_domain (context->original_domain);
-			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_MONO_LDDOMAIN)
 			sp->data.p = mono_domain_get ();
 			++sp;

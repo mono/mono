@@ -837,6 +837,8 @@ mono_thread_info_core_resume (MonoThreadInfo *info)
 		resume_blocking_suspended (info);
 		res = TRUE;
 		break;
+	default:
+		g_assert_not_reached ();
 	}
 
 	return res;
