@@ -671,7 +671,7 @@ main (int argc, char *argv [])
 #ifndef HOST_WIN32
 	mono_w32handle_init ();
 #endif
-	mono_threads_runtime_init (&ticallbacks);
+	mono_thread_info_runtime_init (&ticallbacks);
 
 	mono_metadata_init ();
 	mono_images_init ();

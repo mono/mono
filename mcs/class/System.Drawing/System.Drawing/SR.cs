@@ -1,14 +1,12 @@
 //
-// System.Drawing.Drawing2D.GraphicsState.cs
+// SR.cs
 //
 // Author:
-//   Dennis Hayes (dennish@Raytek.com)
+//   Frederik Carlier (frederik.carlier@quamotion.mobi)
 //
-// (C) 2002/3 Ximian, Inc
+// Copyright (C) 2017 Quamotion bvba http://quamotion.mobi
 //
 
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,23 +27,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
 
-namespace System.Drawing.Drawing2D {
-	/// <summary>
-	/// Summary description for GraphicsState.
-	/// </summary>
-	public sealed class GraphicsState : MarshalByRefObject
+partial class SR
+{
+	public static string Format (string format, params object[] args)
 	{
-		// All members inherited		
-		internal uint nativeState;
-		
-		// Constructor
-		internal GraphicsState()
-		{
-			// Nothing to be done here
-		}
-
-		
-	}
+		return string.Format (format, args);
+	} 
 }

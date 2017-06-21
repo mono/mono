@@ -67,7 +67,7 @@ namespace System.Drawing
 			}
 
 			setProperties (family, emSize, style, unit, charSet, isVertical);           
-			Status status = GDIPlus.GdipCreateFont (family.NativeObject, emSize,  style, unit, out fontObject);
+			Status status = GDIPlus.GdipCreateFont (family.NativeFamily, emSize,  style, unit, out fontObject);
 			
 			if (status == Status.FontStyleNotFound)
 				throw new ArgumentException (Locale.GetText ("Style {0} isn't supported by font {1}.", style.ToString (), familyName));
@@ -112,6 +112,11 @@ namespace System.Drawing
 				// check the status code (throw) at the last step
 				GDIPlus.CheckStatus (status);
 			}
+		}
+
+		internal void SetSystemFontName (string newSystemFontName)
+		{
+			systemFontName = newSystemFontName;
 		}
 
 		internal void unitConversion (GraphicsUnit fromUnit, GraphicsUnit toUnit, float nSrc, out float nTrg)
@@ -295,7 +300,7 @@ namespace System.Drawing
 			// no null checks, MS throws a NullReferenceException if original is null
 			setProperties (prototype.FontFamily, prototype.Size, newStyle, prototype.Unit, prototype.GdiCharSet, prototype.GdiVerticalFont);
 				
-			Status status = GDIPlus.GdipCreateFont (_fontFamily.NativeObject, Size, Style, Unit, out fontObject);
+			Status status = GDIPlus.GdipCreateFont (_fontFamily.NativeFamily, Size, Style, Unit, out fontObject);
 			GDIPlus.CheckStatus (status);			
 		}
 
@@ -337,7 +342,7 @@ namespace System.Drawing
 
 			Status status;
 			setProperties (family, emSize, style, unit, gdiCharSet,  gdiVerticalFont );		
-			status = GDIPlus.GdipCreateFont (family.NativeObject, emSize,  style,   unit,  out fontObject);
+			status = GDIPlus.GdipCreateFont (family.NativeFamily, emSize,  style,   unit,  out fontObject);
 			GDIPlus.CheckStatus (status);
 		}
 

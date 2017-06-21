@@ -1,12 +1,12 @@
 //
-// System.Drawing.PrinterResolutionKind.cs
+// ExternDll.cs
 //
-// (C) 2002 Ximian, Inc.  http://www.ximian.com
-// Author: Dennis Hayes (dennish@raytek.com)
+// Author:
+//   Frederik Carlier (frederik.carlier@quamotion.mobi)
+//
+// Copyright (C) 2017 Quamotion bvba http://quamotion.mobi
 //
 
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,15 +27,19 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
-namespace System.Drawing.Printing 
+
+namespace System.Drawing
 {
-	[Serializable]
-	public enum PrinterResolutionKind {
-		Custom = 0,
-		Draft = -1,
-		High = -4,
-		Low = -2,
-		Medium = -3
+	internal class ExternDll
+	{ 
+		public const string Gdiplus = "gdiplus";		
+		public const string User32 = "user32";		
+		public const string Gdi32 = "gdi32";		
+		public const string Kernel32 = "kernel32";		
+		public const string Winspool = "winspool.drv";		
+		public const string Comdlg32 = "comdlg32.dll";		
+		public const string Comctl32 = "comctl32.dll";		
+		public const string Shell32 = "shell32.dll";		
+		public const string Oleaut32 = "oleaut32.dll";		
 	}
 }

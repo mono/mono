@@ -13,6 +13,8 @@ namespace Mono.Debugger.Soft
 		ManualResetEvent fetchingEvent = new ManualResetEvent (false);
 		ThreadInfo info;
 		StackFrame[] frames;
+		bool threadStateInvalid = true;
+		ThreadState threadState;
 
 		internal ThreadMirror (VirtualMachine vm, long id) : base (vm, id) {
 		}
@@ -30,6 +32,7 @@ namespace Mono.Debugger.Soft
 
 		internal void InvalidateFrames () {
 			cacheInvalid = true;
+			threadStateInvalid = true;
 		}
 
 		internal void FetchFrames (bool mustFetch = false) {
@@ -91,7 +94,11 @@ namespace Mono.Debugger.Soft
 
 		public ThreadState ThreadState {
 			get {
-				return (ThreadState)vm.conn.Thread_GetState (id);
+				if (threadStateInvalid) {
+					threadState = (ThreadState) vm.conn.Thread_GetState (id);
+					threadStateInvalid = false;
+				}
+				return threadState;
 			}
 		}
 

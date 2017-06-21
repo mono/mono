@@ -22,24 +22,16 @@
 void
 mono_gc_base_init (void)
 {
-	MonoThreadInfoCallbacks cb;
-	int dummy;
-
 	mono_counters_init ();
 
 #ifndef HOST_WIN32
 	mono_w32handle_init ();
 #endif
 
-	memset (&cb, 0, sizeof (cb));
-	/* TODO: This casts away an incompatible pointer type warning in the same
-	         manner that boehm-gc does it. This is probably worth investigating
-	         more carefully. */
-	cb.mono_method_is_critical = (gpointer)mono_runtime_is_critical_method;
+	mono_thread_callbacks_init ();
+	mono_thread_info_init (sizeof (MonoThreadInfo));
 
-	mono_threads_init (&cb, sizeof (MonoThreadInfo));
-
-	mono_thread_info_attach (&dummy);
+	mono_thread_info_attach ();
 }
 
 void
@@ -90,12 +82,6 @@ mono_gc_get_heap_size (void)
 
 gboolean
 mono_gc_is_gc_thread (void)
-{
-	return TRUE;
-}
-
-gboolean
-mono_gc_register_thread (void *baseptr)
 {
 	return TRUE;
 }
@@ -299,6 +285,23 @@ mono_gc_wbarrier_object_copy (MonoObject* obj, MonoObject *src)
 
 gboolean
 mono_gc_is_critical_method (MonoMethod *method)
+{
+	return FALSE;
+}
+
+gpointer
+mono_gc_thread_attach (MonoThreadInfo* info)
+{
+	return info;
+}
+
+void
+mono_gc_thread_detach_with_lock (MonoThreadInfo *p)
+{
+}
+
+gboolean
+mono_gc_thread_in_critical_region (MonoThreadInfo *info)
 {
 	return FALSE;
 }

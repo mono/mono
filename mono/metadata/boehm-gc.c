@@ -56,12 +56,6 @@ void *pthread_get_stackaddr_np(pthread_t);
 static gboolean gc_initialized = FALSE;
 static mono_mutex_t mono_gc_lock;
 
-static void*
-boehm_thread_register (MonoThreadInfo* info, void *baseptr);
-static void
-boehm_thread_unregister (MonoThreadInfo *p);
-static void
-boehm_thread_detach (MonoThreadInfo *p);
 static void
 register_test_toggleref_callback (void);
 
@@ -108,9 +102,7 @@ static void on_gc_heap_resize (size_t new_size);
 void
 mono_gc_base_init (void)
 {
-	MonoThreadInfoCallbacks cb;
 	const char *env;
-	int dummy;
 
 	if (gc_initialized)
 		return;
@@ -238,17 +230,12 @@ mono_gc_base_init (void)
 		g_strfreev (opts);
 	}
 
-	memset (&cb, 0, sizeof (cb));
-	cb.thread_register = boehm_thread_register;
-	cb.thread_unregister = boehm_thread_unregister;
-	cb.thread_detach = boehm_thread_detach;
-	cb.mono_method_is_critical = (gboolean (*)(void *))mono_runtime_is_critical_method;
-
-	mono_threads_init (&cb, sizeof (MonoThreadInfo));
+	mono_thread_callbacks_init ();
+	mono_thread_info_init (sizeof (MonoThreadInfo));
 	mono_os_mutex_init (&mono_gc_lock);
 	mono_os_mutex_init_recursive (&handle_section);
 
-	mono_thread_info_attach (&dummy);
+	mono_thread_info_attach ();
 
 	GC_set_on_collection_event (on_gc_notification);
 	GC_on_heap_resize = on_gc_heap_resize;
@@ -376,20 +363,14 @@ mono_gc_is_gc_thread (void)
 	return GC_thread_is_registered ();
 }
 
-gboolean
-mono_gc_register_thread (void *baseptr)
-{
-	return mono_thread_info_attach (baseptr) != NULL;
-}
-
-static void*
-boehm_thread_register (MonoThreadInfo* info, void *baseptr)
+gpointer
+mono_gc_thread_attach (MonoThreadInfo* info)
 {
 	struct GC_stack_base sb;
 	int res;
 
 	/* TODO: use GC_get_stack_base instead of baseptr. */
-	sb.mem_base = baseptr;
+	sb.mem_base = info->stack_end;
 	res = GC_register_my_thread (&sb);
 	if (res == GC_UNIMPLEMENTED)
 	    return NULL; /* Cannot happen with GC v7+. */
@@ -399,8 +380,8 @@ boehm_thread_register (MonoThreadInfo* info, void *baseptr)
 	return info;
 }
 
-static void
-boehm_thread_unregister (MonoThreadInfo *p)
+void
+mono_gc_thread_detach_with_lock (MonoThreadInfo *p)
 {
 	MonoNativeThreadId tid;
 
@@ -408,13 +389,14 @@ boehm_thread_unregister (MonoThreadInfo *p)
 
 	if (p->runtime_thread)
 		mono_threads_add_joinable_thread ((gpointer)tid);
+
+	mono_handle_stack_free (p->handle_stack);
 }
 
-static void
-boehm_thread_detach (MonoThreadInfo *p)
+gboolean
+mono_gc_thread_in_critical_region (MonoThreadInfo *info)
 {
-	if (mono_thread_internal_current_is_attached ())
-		mono_thread_detach_internal (mono_thread_internal_current ());
+	return FALSE;
 }
 
 gboolean

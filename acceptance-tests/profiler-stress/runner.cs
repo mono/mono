@@ -44,6 +44,26 @@ namespace Mono.Profiling.Tests.Stress {
 
 	static class Program {
 
+		static readonly string[] _options = new [] {
+			"domain",
+			"assembly",
+			"module",
+			"class",
+			"jit",
+			"exception",
+			"gcalloc",
+			"gc",
+			"thread",
+			// "calls", // Way too heavy.
+			"monitor",
+			"gcmove",
+			"gcroot",
+			"context",
+			"finalization",
+			"counter",
+			"gchandle",
+		};
+
 		static readonly TimeSpan _timeout = TimeSpan.FromHours (6);
 
 		static string FilterInvalidXmlChars (string text) {
@@ -80,9 +100,11 @@ namespace Mono.Profiling.Tests.Stress {
 				var maxSamples = rand.Next (0, cpus * 2000 + 1);
 				var heapShotFreq = rand.Next (0, 11);
 				var maxFrames = rand.Next (0, 33);
-				var allocMode = rand.Next (0, 2) == 1 ? "alloc" : "noalloc";
+				var options = _options.ToDictionary (x => x, _ => rand.Next (0, 2) == 1)
+				                      .Select (x => (x.Value ? string.Empty : "no") + x.Key)
+				                      .ToArray ();
 
-				var profOptions = $"sample=cycles/{sampleFreq},sampling-{sampleMode},maxsamples={maxSamples},heapshot={heapShotFreq}gc,maxframes={maxFrames},{allocMode},output=/dev/null";
+				var profOptions = $"sample={sampleFreq},sampling-{sampleMode},maxsamples={maxSamples},heapshot={heapShotFreq}gc,maxframes={maxFrames},{string.Join (",", options)},output=/dev/null";
 
 				var info = new ProcessStartInfo {
 					UseShellExecute = false,

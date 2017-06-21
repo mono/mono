@@ -1237,6 +1237,7 @@ mono_patch_info_hash (gconstpointer data)
 		return (ji->type << 8) | (gssize)info->klass | (gssize)info->method;
 	}
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
+	case MONO_PATCH_INFO_JIT_ICALL_ADDR_NOCALL:
 		return (ji->type << 8) | g_str_hash (ji->data.target);
 	case MONO_PATCH_INFO_GSHAREDVT_IN_WRAPPER:
 		return (ji->type << 8) | mono_signature_hash (ji->data.sig);
@@ -1301,6 +1302,7 @@ mono_patch_info_equal (gconstpointer ka, gconstpointer kb)
 	case MONO_PATCH_INFO_VIRT_METHOD:
 		return ji1->data.virt_method->klass == ji2->data.virt_method->klass && ji1->data.virt_method->method == ji2->data.virt_method->method;
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
+	case MONO_PATCH_INFO_JIT_ICALL_ADDR_NOCALL:
 		if (ji1->data.target == ji2->data.target)
 			return 1;
 		return strcmp (ji1->data.target, ji2->data.target) == 0 ? 1 : 0;
@@ -1353,7 +1355,8 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		target = mono_icall_get_wrapper (mi);
 		break;
 	}
-	case MONO_PATCH_INFO_JIT_ICALL_ADDR: {
+	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
+	case MONO_PATCH_INFO_JIT_ICALL_ADDR_NOCALL: {
 		MonoJitICallInfo *mi = mono_find_jit_icall_by_name (patch_info->data.name);
 		if (!mi) {
 			g_warning ("unknown MONO_PATCH_INFO_JIT_ICALL_ADDR %s", patch_info->data.name);
@@ -2081,7 +2084,7 @@ lookup_start:
 		if ((code = mono_aot_get_method_checked (domain, method, error))) {
 			MonoVTable *vtable;
 
-			if (mono_runtime_is_critical_method (method) || mono_gc_is_critical_method (method)) {
+			if (mono_gc_is_critical_method (method)) {
 				/*
 				 * The suspend code needs to be able to lookup these methods by ip in async context,
 				 * so preload their jit info.
@@ -3852,7 +3855,7 @@ mini_init (const char *filename, const char *runtime_version)
 	mono_w32handle_init ();
 #endif
 
-	mono_threads_runtime_init (&ticallbacks);
+	mono_thread_info_runtime_init (&ticallbacks);
 
 	if (g_hasenv ("MONO_DEBUG")) {
 		mini_parse_debug_options ();
@@ -3917,7 +3920,7 @@ mini_init (const char *filename, const char *runtime_version)
 	mono_set_generic_sharing_supported (TRUE);
 #endif
 
-	mono_threads_signals_init ();
+	mono_thread_info_signals_init ();
 
 #ifndef MONO_CROSS_COMPILE
 	mono_runtime_install_handlers ();
