@@ -1772,15 +1772,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 	 * also note that if the function uses alloca, we use FP
 	 * to point at the local variables.
 	 */
-	offset = 0; /* linkage area */
-	/* align the offset to 16 bytes: not sure this is needed here  */
-	//offset += 8 - 1;
-	//offset &= ~(8 - 1);
-
-	/* add parameter area size for called functions */
-	offset += cfg->param_area;
-	offset += 8 - 1;
-	offset &= ~(8 - 1);
+	offset = 0;
 	if (cfg->flags & MONO_CFG_HAS_FPOUT)
 		offset += 8;
 
@@ -1873,6 +1865,11 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 		ins->inst_offset = offset;
 		offset += size;
 	}
+
+	/* add parameter area size for called functions */
+	offset += cfg->param_area;
+	offset += 8 - 1;
+	offset &= ~(8 - 1);
 
 	if (cfg->has_atomic_exchange_i4 || cfg->has_atomic_cas_i4 || cfg->has_atomic_add_i4) {
 		/* Allocate a temporary used by the atomic ops */
