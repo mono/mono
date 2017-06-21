@@ -12165,7 +12165,7 @@ mono_marshal_get_thunk_invoke_wrapper (MonoMethod *method)
 	g_assert (method);
 
 	// FIXME: we need to store the exception into a MonoHandle
-	g_assert (!mono_threads_is_coop_enabled ());
+	g_assert (!mono_threads_safepoints_enabled ());
 
 	klass = method->klass;
 	image = method->klass->image;

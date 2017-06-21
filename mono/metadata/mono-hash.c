@@ -240,7 +240,7 @@ rehash (MonoGHashTable *hash)
 		mono_gc_register_root_wbarrier ((char*)data.values, sizeof (MonoObject*) * data.new_size, mono_gc_make_vector_descr (), hash->source, hash->msg);
 #endif
 
-	if (!mono_threads_is_coop_enabled ()) {
+	if (!mono_threads_safepoints_enabled ()) {
 		mono_gc_invoke_with_gc_lock (do_rehash, &data);
 	} else {
 		/* We cannot be preempted */
