@@ -14,6 +14,7 @@ corefx/TdsParser.cs
 corefx/AdapterUtil.cs
 corefx/DbConnectionOptions.cs
 corefx/DbConnectionStringCommon.cs
+corefx/TempStubs.cs
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
@@ -25,6 +26,7 @@ corefx/DbConnectionStringCommon.cs
 ../referencesource/System.Data/System/Data/CodeGen/StrongTypingException.cs
 ../referencesource/System.Data/System/Data/OleDb/PropertyAttributes.cs
 ../referencesource/System.Data/System/Data/Common/DBDataPermissionAttribute.cs
+../referencesource/System.Data/System/Data/DataSet.cs
 
 #
 # corefx uses these files but we don't need them:
@@ -175,7 +177,7 @@ corefx/DbConnectionStringCommon.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/UInt64Storage.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/AdapterSwitches.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/AdapterUtil.Common.cs
-../../../external/corefx/src/common/src/System/Data/Common/AdapterUtil.cs
+../../../external/corefx/src/Common/src/System/Data/Common/AdapterUtil.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/BigIntegerStorage.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/BooleanStorage.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/ByteStorage.cs
@@ -193,7 +195,7 @@ corefx/DbConnectionStringCommon.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbCommand.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DBCommandBuilder.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbConnection.cs
-../../../external/corefx/src/common/src/System/Data/Common/DbConnectionPoolKey.cs
+../../../external/corefx/src/Common/src/System/Data/Common/DbConnectionPoolKey.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbConnectionStringBuilder.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbConnectionStringBuilderDescriptor.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbDataAdapter.cs
@@ -219,8 +221,8 @@ corefx/DbConnectionStringCommon.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/Int16Storage.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/Int32Storage.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/Int64Storage.cs
-../../../external/corefx/src/common/src/System/Data/Common/MultipartIdentifier.cs
-../../../external/corefx/src/common/src/System/Data/Common/NameValuePair.cs
+../../../external/corefx/src/Common/src/System/Data/Common/MultipartIdentifier.cs
+../../../external/corefx/src/Common/src/System/Data/Common/NameValuePair.cs
 ../../../external/corefx/src/Common/src/System/Data/Common/DbConnectionOptions.Common.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/ObjectStorage.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/RowUpdatedEventArgs.cs
@@ -275,7 +277,7 @@ corefx/DbConnectionStringCommon.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/SQLTypes/SQLInt32.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/SQLTypes/SQLInt64.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/SQLTypes/SQLMoney.cs
-../../../external/corefx/src/common/src/System/Data/Common/SQLResource.cs
+../../../external/corefx/src/Common/src/System/Data/Common/SQLResource.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/SQLTypes/SQLSingle.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/SQLTypes/SQLString.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/SQLTypes/SQLUtility.cs
@@ -313,16 +315,16 @@ corefx/DbConnectionStringCommon.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/Microsoft/SqlServer/Server/ValueUtilsSmi.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/OperationAbortedException.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlDbColumn.cs
-../../../external/corefx/src/common/src/System/Data/Common/AdapterUtil.cs
-../../../external/corefx/src/common/src/System/Data/Common/DbConnectionPoolKey.cs
+../../../external/corefx/src/Common/src/System/Data/Common/AdapterUtil.cs
+../../../external/corefx/src/Common/src/System/Data/Common/DbConnectionPoolKey.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Common/ActivityCorrelator.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Common/DbConnectionStringCommon.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Common/AdapterUtil.SqlClient.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Common/DbConnectionOptions.cs
-../../../external/corefx/src/common/src/System/Data/Common/FieldNameLookup.cs
-../../../external/corefx/src/common/src/System/Data/Common/BasicFieldNameLookup.cs
-../../../external/corefx/src/common/src/System/Data/Common/MultipartIdentifier.cs
-../../../external/corefx/src/common/src/System/Data/Common/NameValuePair.cs
+../../../external/corefx/src/Common/src/System/Data/Common/FieldNameLookup.cs
+../../../external/corefx/src/Common/src/System/Data/Common/BasicFieldNameLookup.cs
+../../../external/corefx/src/Common/src/System/Data/Common/MultipartIdentifier.cs
+../../../external/corefx/src/Common/src/System/Data/Common/NameValuePair.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/DbConnectionClosed.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/DbConnectionFactory.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/DbConnectionInternal.cs
@@ -409,9 +411,9 @@ corefx/DbConnectionStringCommon.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlDependency.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/OnChangedEventHandler.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlTypes/SqlTypeWorkarounds.cs
-../../../external/corefx/src/common/src/System/Data/Common/SQLResource.cs
-../../../external/corefx/src/common/src/System/NotImplemented.cs
-../../../external/corefx/src/common/src/System/Threading/Tasks/TaskToApm.cs
+../../../external/corefx/src/Common/src/System/Data/Common/SQLResource.cs
+../../../external/corefx/src/Common/src/System/NotImplemented.cs
+../../../external/corefx/src/Common/src/System/Threading/Tasks/TaskToApm.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SNI/SNIError.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SNI/SNIHandle.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SNI/SNILoadHandle.cs
@@ -429,16 +431,16 @@ corefx/DbConnectionStringCommon.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SNI/SSRP.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/TdsParserStateObjectManaged.cs
 
-../../../external/corefx/src/common/src/System/Net/ContextFlagsPal.cs
-../../../external/corefx/src/common/src/System/Net/SecurityStatusPal.cs
-../../../external/corefx/src/common/src/System/Net/Security/SecurityBufferType.cs
-../../../external/corefx/src/common/src/System/Net/Security/SecurityBuffer.cs
-../../../external/corefx/src/common/src/System/Net/DebugSafeHandle.cs
-../../../external/corefx/src/common/src/System/Net/DebugCriticalHandleMinusOneIsInvalid.cs
-../../../external/corefx/src/common/src/System/Net/Logging/NetEventSource.Common.cs
-../../../external/corefx/src/common/src/System/Net/Logging/DebugThreadTracking.cs
-../../../external/corefx/src/common/src/System/Net/InternalException.cs
-../../../external/corefx/src/common/src/System/Net/NegotiationInfoClass.cs
+../../../external/corefx/src/Common/src/System/Net/ContextFlagsPal.cs
+../../../external/corefx/src/Common/src/System/Net/SecurityStatusPal.cs
+../../../external/corefx/src/Common/src/System/Net/Security/SecurityBufferType.cs
+../../../external/corefx/src/Common/src/System/Net/Security/SecurityBuffer.cs
+../../../external/corefx/src/Common/src/System/Net/DebugSafeHandle.cs
+../../../external/corefx/src/Common/src/System/Net/DebugCriticalHandleMinusOneIsInvalid.cs
+../../../external/corefx/src/Common/src/System/Net/Logging/NetEventSource.Common.cs
+../../../external/corefx/src/Common/src/System/Net/Logging/DebugThreadTracking.cs
+../../../external/corefx/src/Common/src/System/Net/InternalException.cs
+../../../external/corefx/src/Common/src/System/Net/NegotiationInfoClass.cs
 
 #
 # System.Data.Odbc:

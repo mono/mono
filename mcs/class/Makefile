@@ -212,7 +212,6 @@ net_4_x_dirs := \
 	System.Runtime.Remoting		\
 	System.Configuration.Install 	\
 	System.Management		\
-	System.Data.OracleClient	\
 	Cscompmgd			\
 	Commons.Xml.Relaxng		\
 	Mono.Messaging			\
@@ -296,8 +295,6 @@ net_4_x_parallel_dirs := \
 	System.Reactive.Debugger \
 	System.Data.Services.Client	\
 	System.Data.Services \
-	System.Data.Entity \
-	System.Data.DataSetExtensions	\
 	System.Json.Microsoft \
 	System.Threading.Tasks.Dataflow \
 	System.ComponentModel.Composition.4.5 \

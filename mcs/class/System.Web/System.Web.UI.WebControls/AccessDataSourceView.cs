@@ -33,7 +33,7 @@ using System.Collections.Specialized;
 using System.Text;
 using System.Data;
 using System.ComponentModel;
-using System.Data.OleDb;
+//using System.Data.OleDb;
 using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls
@@ -41,21 +41,22 @@ namespace System.Web.UI.WebControls
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class AccessDataSourceView : SqlDataSourceView
 	{
-		OleDbConnection oleConnection;
-		OleDbCommand oleCommand;
+		//OleDbConnection oleConnection;
+		//OleDbCommand oleCommand;
 		AccessDataSource dataSource;
 		public AccessDataSourceView (AccessDataSource owner, string name, HttpContext context)
 			: base (owner, name, context)
 		{
 			dataSource = owner;
-			oleConnection = new OleDbConnection (owner.ConnectionString);
+			//oleConnection = new OleDbConnection (owner.ConnectionString);
 		}
 
 		[MonoTODO ("Handle arguments")]
 		protected internal override IEnumerable ExecuteSelect (
 						DataSourceSelectArguments arguments)
 		{
-			oleCommand = new OleDbCommand (this.SelectCommand, oleConnection);
+			return null;
+			/*oleCommand = new OleDbCommand (this.SelectCommand, oleConnection);
 			SqlDataSourceSelectingEventArgs cmdEventArgs = new SqlDataSourceSelectingEventArgs (oleCommand, arguments);
 			OnSelecting (cmdEventArgs);
 			IEnumerable enums = null; 
@@ -76,7 +77,7 @@ namespace System.Web.UI.WebControls
 			OnSelected (statusEventArgs);
 			if (exception !=null)
 				throw exception;
-			return enums;			
+			return enums;*/
 		}						
 	}	
 }
