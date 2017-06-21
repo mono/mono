@@ -269,7 +269,7 @@ namespace Mono.CSharp {
 
 			var da_false = new DefiniteAssignmentBitSet (fc.DefiniteAssignmentOnFalse);
 
-			fc.DefiniteAssignment = fc.DefiniteAssignmentOnTrue;
+			fc.BranchDefiniteAssignment (fc.DefiniteAssignmentOnTrue);
 			var labels = fc.CopyLabelStack ();
 
 			var res = TrueStatement.FlowAnalysis (fc);
@@ -576,8 +576,9 @@ namespace Mono.CSharp {
 		{
 			expr.FlowAnalysisConditional (fc);
 
-			fc.DefiniteAssignment = fc.DefiniteAssignmentOnTrue;
 			var da_false = new DefiniteAssignmentBitSet (fc.DefiniteAssignmentOnFalse);
+
+			fc.BranchDefiniteAssignment (fc.DefiniteAssignmentOnTrue);
 
 			Statement.FlowAnalysis (fc);
 
