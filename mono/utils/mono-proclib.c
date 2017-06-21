@@ -29,7 +29,7 @@
 #ifdef HAVE_SYS_SYSCTL_H
 #include <sys/sysctl.h>
 #endif
-#if !defined(PLATFORM_UNITY)
+#ifdef HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
 #endif
 #endif
