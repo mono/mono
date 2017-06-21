@@ -23,7 +23,7 @@
 #include <LibraryLoader-c-api.h>
 #endif
 
-#ifndef HOST_WIN32 && defined (HAVE_DL_LOADER)
+#if !defined (HOST_WIN32) && defined (HAVE_DL_LOADER)
 #include <dlfcn.h>
 #endif
 
@@ -37,11 +37,11 @@ struct MonoDlFallbackHandler {
 static GSList *fallback_handlers;
 
 
-/*                                                                                                                                                                                                
- * Maps static symbol names to the address                                                                                                                                                        
- * Symbol names registered by mono_dl_register_symbol ().                                                                                                                                         
- */                                                                                                                                                                                               
-static GHashTable *static_dl_symbols;                                                                                                                                                             
+/*
+ * Maps static symbol names to the address
+ * Symbol names registered by mono_dl_register_symbol ().
+ */
+static GHashTable *static_dl_symbols;
 
 
 static void* load_library (const char *name, int flags)
@@ -52,7 +52,7 @@ static void* load_library (const char *name, int flags)
 	return mono_dl_open_file (name, flags);
 #endif
 }
-        
+
 static void* load_function(MonoDl *module, const char* name)
 {
 #if defined(PLATFORM_UNITY)
@@ -71,23 +71,23 @@ void close_loaded_library(MonoDl *module)
 #endif
 }
 
-/*                                                                                                                                                                                                
- * mono_dl_register_symbol:                                                                                                                                                                       
- *                                                                                                                                                                                                
- *   This should be called by embedding code to register AOT modules statically linked                                                                                                            
- * into the executable. AOT_INFO should be the value of the                                                                                                                                       
- * 'mono_aot_module_<ASSEMBLY_NAME>_info' global symbol from the AOT module.                                                                                                                      
- */                                                                                                                                                                                               
-void                                                                                                                                                                                              
-mono_dl_register_symbol (const char* name, gpointer *addr)                                                                                                                                        
-{                                                                                                                                                                                                 
-       if (!static_dl_symbols)                                                                                                                                                                    
-               static_dl_symbols = g_hash_table_new (g_str_hash, g_str_equal);                                                                                                                    
-                                                                                                                                                                                                  
-       g_hash_table_insert (static_dl_symbols, name, addr);                                                                                                                                       
-                                                                                                                                                                                                  
-}                                                                                                                                                                                                 
-              
+/*
+ * mono_dl_register_symbol:
+ *
+ *   This should be called by embedding code to register AOT modules statically linked
+ * into the executable. AOT_INFO should be the value of the
+ * 'mono_aot_module_<ASSEMBLY_NAME>_info' global symbol from the AOT module.
+ */
+void
+mono_dl_register_symbol (const char* name, gpointer *addr)
+{
+       if (!static_dl_symbols)
+               static_dl_symbols = g_hash_table_new (g_str_hash, g_str_equal);
+
+       g_hash_table_insert (static_dl_symbols, name, addr);
+
+}
+
 
 /*
  * read a value string from line with any of the following formats:
@@ -217,11 +217,11 @@ mono_dl_open (const char *name, int flags, char **error_msg)
 			MonoDlFallbackHandler *handler = (MonoDlFallbackHandler *) node->data;
 			if (error_msg)
 				*error_msg = NULL;
-			
+
 			lib = handler->load_func (name, lflags, error_msg, handler->user_data);
 			if (error_msg && *error_msg != NULL)
 				g_free (*error_msg);
-			
+
 			if (lib != NULL){
 				dl_fallback = handler;
 				break;
@@ -238,7 +238,7 @@ mono_dl_open (const char *name, int flags, char **error_msg)
 			g_free (module);
 			return NULL;
 		}
-		
+
 		suff = ".la";
 		ext = strrchr (name, '.');
 		if (ext && strcmp (ext, ".la") == 0)
@@ -298,11 +298,11 @@ mono_dl_symbol (MonoDl *module, const char *name, void **symbol)
 #endif
 	}
 #ifndef HOST_WIN32
-	// lookup in static table                                                                                                                                                                  
-	if (!sym && module->handle == RTLD_DEFAULT)                                                                                                                                               
-	{                                                                                                                                                                                         
-	       if (static_dl_symbols)                                                                                                                                                            
-	               sym = g_hash_table_lookup (static_dl_symbols, name);                                                                                                                      
+	// lookup in static table
+	if (!sym && module->handle == RTLD_DEFAULT)
+	{
+	       if (static_dl_symbols)
+	               sym = g_hash_table_lookup (static_dl_symbols, name);
 	}
 #endif
 	if (sym) {
@@ -327,7 +327,7 @@ void
 mono_dl_close (MonoDl *module)
 {
 	MonoDlFallbackHandler *dl_fallback = module->dl_fallback;
-	
+
 	if (dl_fallback){
 		if (dl_fallback->close_func != NULL)
 			dl_fallback->close_func (module->handle, dl_fallback->user_data);
@@ -412,7 +412,7 @@ MonoDlFallbackHandler *
 mono_dl_fallback_register (MonoDlFallbackLoad load_func, MonoDlFallbackSymbol symbol_func, MonoDlFallbackClose close_func, void *user_data)
 {
 	MonoDlFallbackHandler *handler;
-	
+
 	g_return_val_if_fail (load_func != NULL, NULL);
 	g_return_val_if_fail (symbol_func != NULL, NULL);
 
@@ -423,7 +423,7 @@ mono_dl_fallback_register (MonoDlFallbackLoad load_func, MonoDlFallbackSymbol sy
 	handler->user_data = user_data;
 
 	fallback_handlers = g_slist_prepend (fallback_handlers, handler);
-	
+
 	return handler;
 }
 

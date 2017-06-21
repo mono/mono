@@ -3,7 +3,9 @@
 
 #include "w32process.h"
 #include "w32process-internals.h"
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) && defined(HOST_WIN32)
 #include "w32process-win32-internals.h"
+#endif
 #include "w32file.h"
 #include "object.h"
 #include "object-internals.h"
