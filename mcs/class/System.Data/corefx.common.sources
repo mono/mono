@@ -221,6 +221,7 @@ corefx/TempStubs.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbParameter.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbParameterCollection.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbProviderFactory.cs
+../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbProviderFactory.CreatePermission.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbProviderSpecificTypePropertyAttribute.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DBSchemaRow.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DBSchemaTable.cs

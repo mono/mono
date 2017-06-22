@@ -7,12 +7,10 @@ Assembly/AssemblyInfo.cs
 
 System.Data.SqlClient/SQLDebugging.cs
 
-#../referencesource/System.Data/System/Data/Common/DbProviderConfigurationHandler.cs
-#../referencesource/System.Data/System/Data/Common/DbProviderFactoriesConfigurationHandler.cs
+../referencesource/System.Data/System/Data/Common/DbProviderConfigurationHandler.cs
+../referencesource/System.Data/System/Data/Common/DbProviderFactoriesConfigurationHandler.cs
 #../referencesource/System.Data/System/Data/Common/DbProviderFactories.cs
-#../referencesource/System.Data/System/Data/Common/HandlerBase.cs
-
-../referencesource/System.Data/System/Data/Odbc/OdbcPermission.cs
+../referencesource/System.Data/System/Data/Common/HandlerBase.cs
 
 #include corefx.common.sources
 #include corefx.windows.sources
