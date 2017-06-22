@@ -18,15 +18,7 @@ using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Xml.Serialization;
 
-namespace System.Data.Common
-{
-    public static class DbProviderFactories 
-    {
-        static public DbProviderFactory GetFactory(string providerInvariantName) => null;
-        static public DataTable GetFactoryClasses() => null;
-    }
-}
-
 namespace System.Data.OleDb
 {
+    public sealed class OleDbFactory : DbProviderFactory { }
 }

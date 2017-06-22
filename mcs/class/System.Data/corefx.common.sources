@@ -11,6 +11,7 @@ corefx/DiagnosticListener.cs
 corefx/RuntimeInformation.cs
 corefx/TdsParser.cs
 corefx/AdapterUtil.cs
+corefx/DbConnection.cs
 corefx/DbConnectionOptions.cs
 corefx/DbConnectionStringCommon.cs
 corefx/TempStubs.cs
