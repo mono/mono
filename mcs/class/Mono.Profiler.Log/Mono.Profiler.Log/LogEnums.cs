@@ -148,7 +148,7 @@ namespace Mono.Profiler.Log {
 		BranchMisses = 6,
 	}
 
-	// mono/metadata/profiler.h : MonoProfileGCRootType
+	// mono/metadata/profiler.h : MonoProfilerGCRootType
 	[Flags]
 	public enum LogHeapRootAttributes {
 		Pinning = 1 << 8,
@@ -164,7 +164,7 @@ namespace Mono.Profiler.Log {
 		TypeMask = 0xff,
 	}
 
-	// mono/metadata/profiler.h : MonoProfilerMonitorEvent
+	// mono/profiler/log.h : MonoProfilerMonitorEvent
 	public enum LogMonitorEvent {
 		Contention = 1,
 		Done = 2,
@@ -179,7 +179,7 @@ namespace Mono.Profiler.Log {
 		Fault = 4,
 	}
 
-	// mono/metadata/profiler.h : MonoGCEvent
+	// mono/metadata/profiler.h : MonoProfilerGCEvent
 	public enum LogGCEvent {
 		Begin = 0,
 		MarkBegin = 1,
@@ -195,7 +195,7 @@ namespace Mono.Profiler.Log {
 		PostStartWorldUnlocked = 11,
 	}
 
-	// mono/sgen/gc-internal-agnostic.h : GCHandleType
+	// mono/metadata/mono-gc.h : MonoGCHandleType
 	public enum LogGCHandleType {
 		Weak = 0,
 		WeakTrackResurrection = 1,
