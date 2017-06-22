@@ -6,7 +6,7 @@ ReferenceSources/ThisAssembly.cs
 System.Data.SqlClient/SqlCredential.cs
 ReferenceSources/PoolBlockingPeriod.cs
 corefx/SR.cs
-corefx/SR.GetResourceString.cs
+corefx/Res.cs
 corefx/ADP.cs
 corefx/DiagnosticListener.cs
 corefx/RuntimeInformation.cs
@@ -27,6 +27,19 @@ corefx/TempStubs.cs
 ../referencesource/System.Data/System/Data/OleDb/PropertyAttributes.cs
 ../referencesource/System.Data/System/Data/Common/DBDataPermissionAttribute.cs
 ../referencesource/System.Data/System/Data/DataSet.cs
+../referencesource/System.Data/Microsoft/SqlServer/Server/SqlTriggerContext.cs
+../referencesource/System.Data/System/Data/Sql/IBinarySerialize.cs
+../referencesource/System.Data/System/Data/Sql/invalidudtexception.cs
+../referencesource/System.Data/System/Data/Sql/SqlDataSourceEnumerator.cs
+../referencesource/System.Data/System/Data/Sql/SqlFacetAttribute.cs
+../referencesource/System.Data/System/Data/Sql/SqlFunctionAttribute.cs
+../referencesource/System.Data/System/Data/Sql/SqlGenericUtil.cs
+../referencesource/System.Data/System/Data/Sql/SqlMethodAttribute.cs
+../referencesource/System.Data/System/Data/Sql/SqlProcedureAttribute.cs
+../referencesource/System.Data/System/Data/Sql/SqlTriggerAttribute.cs
+../referencesource/System.Data/System/Data/Sql/SqlUserDefinedAggregateAttribute.cs
+../referencesource/System.Data/System/Data/Sql/SqlUserDefinedTypeAttribute.cs
+../referencesource/System.Data/System/Data/Sql/TriggerAction.cs
 
 #
 # corefx uses these files but we don't need them:

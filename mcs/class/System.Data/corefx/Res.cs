@@ -16,4 +16,9 @@ internal static partial class Res
 	internal const string CodeGen_TypeCantBeNull = "Column '{0}': Type '{1}' cannot be null";
 	internal const string CodeGen_NoCtor0 = "Column '{0}': Type '{1}' does not have parameterless constructor";
 	internal const string CodeGen_NoCtor1 = "Column '{0}': Type '{1}' does not have constructor with string argument";
+
+	internal const string SQLUDT_MaxByteSizeValue = "SQLUDT_MaxByteSizeValue";
+	internal const string SqlUdt_InvalidUdtMessage = "SqlUdt_InvalidUdtMessage";
+	internal const string Sql_NullCommandText = "Sql_NullCommandText";
+	internal const string Sql_MismatchedMetaDataDirectionArrayLengths = "Sql_MismatchedMetaDataDirectionArrayLengths";
 }

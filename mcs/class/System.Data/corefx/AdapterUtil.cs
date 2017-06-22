@@ -124,5 +124,28 @@ namespace System.Data.Common
             Debug.Assert(8 == ADP.PtrSize, "8 != IntPtr.Size"); // MDAC 73747
             return (IntPtr)checked(pbase.ToInt64() + offset);
         }
+
+        static internal ArgumentOutOfRangeException NotSupportedUserDefinedTypeSerializationFormat(Microsoft.SqlServer.Server.Format value, string method) {
+            return ADP.NotSupportedEnumerationValue(typeof(Microsoft.SqlServer.Server.Format), value.ToString(), method);
+        }
+
+        static internal ArgumentOutOfRangeException InvalidUserDefinedTypeSerializationFormat(Microsoft.SqlServer.Server.Format value) {
+#if DEBUG
+            switch(value) {
+            case Microsoft.SqlServer.Server.Format.Unknown:
+            case Microsoft.SqlServer.Server.Format.Native:
+            case Microsoft.SqlServer.Server.Format.UserDefined:
+                Debug.Assert(false, "valid UserDefinedTypeSerializationFormat " + value.ToString());
+                break;
+            }
+#endif
+            return InvalidEnumerationValue(typeof(Microsoft.SqlServer.Server.Format), (int) value);
+        }
+
+        static internal ArgumentOutOfRangeException ArgumentOutOfRange(string message, string parameterName, object value) {
+            ArgumentOutOfRangeException e = new ArgumentOutOfRangeException(parameterName, value, message);
+            TraceExceptionAsReturnValue(e);
+            return e;
+        }
     }
 }
