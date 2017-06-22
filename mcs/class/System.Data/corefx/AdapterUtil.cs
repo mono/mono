@@ -9,6 +9,10 @@ using System.Runtime.CompilerServices;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.Versioning;
 using System.Text;
+using System.Security.Permissions;
+using System.ComponentModel;
+using System.Configuration;
+using System.Xml;
 
 namespace System.Data.Common
 {
@@ -147,5 +151,83 @@ namespace System.Data.Common
             TraceExceptionAsReturnValue(e);
             return e;
         }
+
+        static internal Exception InvalidXMLBadVersion() {
+            return Argument(Res.GetString(Res.ADP_InvalidXMLBadVersion));
+        }
+        
+        static internal Exception NotAPermissionElement() {
+            return Argument(Res.GetString(Res.ADP_NotAPermissionElement));
+        }
+
+        static internal Exception PermissionTypeMismatch() {
+            return Argument(Res.GetString(Res.ADP_PermissionTypeMismatch));
+        }
+
+        static internal ArgumentOutOfRangeException InvalidPermissionState(PermissionState value) {
+#if DEBUG
+            switch(value) {
+            case PermissionState.Unrestricted:
+            case PermissionState.None:
+                Debug.Assert(false, "valid PermissionState " + value.ToString());
+                break;
+            }
+#endif
+            return InvalidEnumerationValue(typeof(PermissionState), (int) value);
+        }
+        
+#if !MOBILE
+        static internal ConfigurationException Configuration(string message) {
+            ConfigurationException e = new ConfigurationErrorsException(message);
+            TraceExceptionAsReturnValue(e);
+            return e;
+        }
+        static internal ConfigurationException Configuration(string message, XmlNode node) {
+            ConfigurationException e = new ConfigurationErrorsException(message, node);
+            TraceExceptionAsReturnValue(e);
+            return e;
+        }
+#endif
+
+        static internal ArgumentException ConfigProviderNotFound() {
+            return Argument(Res.GetString(Res.ConfigProviderNotFound));
+        }
+        static internal InvalidOperationException ConfigProviderInvalid() {
+            return InvalidOperation(Res.GetString(Res.ConfigProviderInvalid));
+        }
+
+#if !MOBILE
+        static internal ConfigurationException ConfigProviderNotInstalled() {
+            return Configuration(Res.GetString(Res.ConfigProviderNotInstalled));
+        }
+        static internal ConfigurationException ConfigProviderMissing() {
+            return Configuration(Res.GetString(Res.ConfigProviderMissing));
+        }
+
+        //
+        // DbProviderConfigurationHandler
+        //
+        static internal ConfigurationException ConfigBaseNoChildNodes(XmlNode node) { // Res.Config_base_no_child_nodes
+            return Configuration(Res.GetString(Res.ConfigBaseNoChildNodes), node);
+        }
+        static internal ConfigurationException ConfigBaseElementsOnly(XmlNode node) { // Res.Config_base_elements_only
+            return Configuration(Res.GetString(Res.ConfigBaseElementsOnly), node);
+        }
+        static internal ConfigurationException ConfigUnrecognizedAttributes(XmlNode node) { // Res.Config_base_unrecognized_attribute
+            return Configuration(Res.GetString(Res.ConfigUnrecognizedAttributes, node.Attributes[0].Name), node);
+        }
+        static internal ConfigurationException ConfigUnrecognizedElement(XmlNode node) { // Res.Config_base_unrecognized_element
+            return Configuration(Res.GetString(Res.ConfigUnrecognizedElement), node);
+        }
+        static internal ConfigurationException ConfigSectionsUnique(string sectionName) { // Res.Res.ConfigSectionsUnique
+            return Configuration(Res.GetString(Res.ConfigSectionsUnique, sectionName));
+        }
+        static internal ConfigurationException ConfigRequiredAttributeMissing(string name, XmlNode node) { // Res.Config_base_required_attribute_missing
+            return Configuration(Res.GetString(Res.ConfigRequiredAttributeMissing, name), node);
+        }
+        static internal ConfigurationException ConfigRequiredAttributeEmpty(string name, XmlNode node) { // Res.Config_base_required_attribute_empty
+            return Configuration(Res.GetString(Res.ConfigRequiredAttributeEmpty, name), node);
+        }
+#endif
     }
 }

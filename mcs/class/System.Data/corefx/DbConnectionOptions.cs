@@ -168,6 +168,22 @@ namespace System.Data.Common
             }
             return value;
         }
+
+        internal bool HasBlankPassword {
+            get {
+                if (!ConvertValueToIntegratedSecurity()) {
+                    if (_parsetable.ContainsKey(KEY.Password)) {
+                        return ADP.IsEmpty((string)_parsetable[KEY.Password]);
+                    } else
+                    if (_parsetable.ContainsKey(SYNONYM.Pwd)) {
+                        return ADP.IsEmpty((string)_parsetable[SYNONYM.Pwd]); // MDAC 83097
+                    } else {
+                        return ((_parsetable.ContainsKey(KEY.User_ID) && !ADP.IsEmpty((string)_parsetable[KEY.User_ID])) || (_parsetable.ContainsKey(SYNONYM.UID) && !ADP.IsEmpty((string)_parsetable[SYNONYM.UID])));
+                    }
+                }
+                return false;
+            }
+        }
     }
 
 

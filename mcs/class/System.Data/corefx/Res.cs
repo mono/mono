@@ -21,4 +21,20 @@ internal static partial class Res
 	internal const string SqlUdt_InvalidUdtMessage = "SqlUdt_InvalidUdtMessage";
 	internal const string Sql_NullCommandText = "Sql_NullCommandText";
 	internal const string Sql_MismatchedMetaDataDirectionArrayLengths = "Sql_MismatchedMetaDataDirectionArrayLengths";
+	
+	public const string ADP_InvalidXMLBadVersion = "Invalid Xml; can only parse elements of version one.";
+	public const string ADP_NotAPermissionElement = "Given security element is not a permission element.";
+	public const string ADP_PermissionTypeMismatch = "Type mismatch.";
+
+	public const string ConfigProviderNotFound = "Unable to find the requested .Net Framework Data Provider.  It may not be installed.";
+	public const string ConfigProviderInvalid = "The requested .Net Framework Data Provider's implementation does not have an Instance field of a System.Data.Common.DbProviderFactory derived type.";
+	public const string ConfigProviderNotInstalled = "Failed to find or load the registered .Net Framework Data Provider.";
+	public const string ConfigProviderMissing = "The missing .Net Framework Data Provider's assembly qualified name is required.";
+	public const string ConfigBaseElementsOnly = "Only elements allowed.";
+	public const string ConfigBaseNoChildNodes = "Child nodes not allowed.";
+	public const string ConfigUnrecognizedAttributes = "Unrecognized attribute '{0}'.";
+	public const string ConfigUnrecognizedElement = "Unrecognized element.";
+	public const string ConfigSectionsUnique = "The '{0}' section can only appear once per config file.";
+	public const string ConfigRequiredAttributeMissing = "Required attribute '{0}' not found.";
+	public const string ConfigRequiredAttributeEmpty = "Required attribute '{0}' cannot be empty.";
 }

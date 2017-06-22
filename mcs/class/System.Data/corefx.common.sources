@@ -1,7 +1,6 @@
 #
 # corefx doesn't fully cover our API yet, these files fill the gaps:
 #
-Assembly/AssemblyInfo.cs
 ReferenceSources/ThisAssembly.cs
 System.Data.SqlClient/SqlCredential.cs
 ReferenceSources/PoolBlockingPeriod.cs
@@ -15,11 +14,6 @@ corefx/AdapterUtil.cs
 corefx/DbConnectionOptions.cs
 corefx/DbConnectionStringCommon.cs
 corefx/TempStubs.cs
-../../build/common/Consts.cs
-../../build/common/Locale.cs
-../../build/common/MonoTODOAttribute.cs
-../../build/common/AssemblyRef.cs
-../../build/common/SR.cs
 ../referencesource/System.Data/System/Data/SQLTypes/SqlTypesSchemaImporter.cs
 ../referencesource/System.Data/System/Data/Sql/SqlDataSourceEnumerator.cs
 ../referencesource/System.Data/System/Data/CodeGen/datacache.cs
@@ -40,6 +34,10 @@ corefx/TempStubs.cs
 ../referencesource/System.Data/System/Data/Sql/SqlUserDefinedAggregateAttribute.cs
 ../referencesource/System.Data/System/Data/Sql/SqlUserDefinedTypeAttribute.cs
 ../referencesource/System.Data/System/Data/Sql/TriggerAction.cs
+../referencesource/System.Data/System/Data/Common/DBDataPermission.cs
+../referencesource/System.Data/System/Data/Common/DBDataPermissionAttribute.cs
+../referencesource/System.Data/System/Data/Odbc/OdbcPermission.cs
+../referencesource/System.Data/System/Data/SqlClient/SqlClientPermission.cs
 
 #
 # corefx uses these files but we don't need them:

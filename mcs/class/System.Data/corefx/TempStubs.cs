@@ -26,3 +26,7 @@ namespace System.Data.Common
         static public DataTable GetFactoryClasses() => null;
     }
 }
+
+namespace System.Data.OleDb
+{
+}
