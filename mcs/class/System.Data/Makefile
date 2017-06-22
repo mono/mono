@@ -11,6 +11,7 @@ LIB_MCS_FLAGS = \
 	-d:PLATFORM_UNIX \
 	-d:USEOFFSET \
 	-d:MONO_PARTIAL_DATA_IMPORT \
+	-resource:../../../external/corefx/src/System.Data.SqlClient/src/Resources/System.Data.SqlClient.SqlMetaData.xml	\
 	-unsafe
 
 ifdef NO_MONO_SECURITY
