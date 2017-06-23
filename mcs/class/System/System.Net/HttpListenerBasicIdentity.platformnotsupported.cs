@@ -24,11 +24,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
+using System.Security.Principal;
 namespace System.Net {
-	public class HttpListenerBasicIdentity {
-		internal const string EXCEPTION_MESSAGE = "System.Net.HttpListenerBasicIdentity is not supported on the current platform.";
+	public class HttpListenerBasicIdentity : GenericIdentity {
+		const string EXCEPTION_MESSAGE = "System.Net.HttpListenerBasicIdentity is not supported on the current platform.";
 
-		public HttpListenerBasicIdentity (string username, string password)
+		public HttpListenerBasicIdentity (string username, string password) : base (username, "Basic")
 		{
 			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
 		}
