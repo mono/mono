@@ -3,7 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LOCAL_MCS_FLAGS =
-LIB_REFS = System
+LIB_REFS = System Mono.Cecil
 
 PROGRAM = mono-cil-strip.exe
 
