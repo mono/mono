@@ -256,7 +256,7 @@
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\w32socket.c">
       <Filter>Source Files</Filter>
     </ClCompile> 
-    
+    <!-- These should be replaced with Unity PAL versions in the -unity.targets.filters file and moved to the -mono.targets.filters file -->
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\console-win32-uwp.c">
       <Filter>Source Files</Filter>
     </ClCompile>
