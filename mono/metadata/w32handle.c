@@ -1108,7 +1108,7 @@ dump_callback (gpointer handle, gpointer handle_specific, gpointer user_data)
 		g_error ("cannot dump unknown handle %p", handle);
 
 	g_print ("%p [%7s] signalled: %5s ref: %3d ",
-		handle, mono_w32handle_ops_typename (handle_data->type), handle_data->signalled ? "true" : "false", handle_data->ref);
+		handle, mono_w32handle_ops_typename (handle_data->type), handle_data->signalled ? "true" : "false", handle_data->ref - 1 /* foreach increase ref by 1 */);
 	mono_w32handle_ops_details (handle_data->type, handle_data->specific);
 	g_print ("\n");
 
