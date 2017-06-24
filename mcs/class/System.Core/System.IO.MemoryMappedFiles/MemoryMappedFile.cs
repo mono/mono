@@ -310,19 +310,20 @@ namespace System.IO.MemoryMappedFiles
 		[MonoLimitation ("Named mappings scope is process local")]
 		public static MemoryMappedFile OpenExisting (string mapName)
 		{
-			throw new NotImplementedException ();
+			return OpenExisting (mapName, MemoryMappedFileRights.ReadWrite);
 		}
 
 		[MonoLimitation ("Named mappings scope is process local")]
 		public static MemoryMappedFile OpenExisting (string mapName, MemoryMappedFileRights desiredAccessRights)
 		{
-			throw new NotImplementedException ();
+			return OpenExisting (mapName, desiredAccessRights, HandleInheritability.None);
 		}
 
 		[MonoLimitation ("Named mappings scope is process local")]
 		public static MemoryMappedFile OpenExisting (string mapName, MemoryMappedFileRights desiredAccessRights, HandleInheritability inheritability)
 		{
-			throw new NotImplementedException ();
+			// FIXME: Actually use desiredAccessRights
+			return CoreShmCreate (mapName, 0, MemoryMappedFileAccess.ReadWrite, MemoryMappedFileOptions.None, null, inheritability, FileMode.Open);
 		}
 
 		public MemoryMappedViewStream CreateViewStream ()
@@ -393,10 +394,9 @@ namespace System.IO.MemoryMappedFiles
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public SafeMemoryMappedFileHandle SafeMemoryMappedFileHandle {
 			get {
-				throw new NotImplementedException ();
+				return handle;
 			}
 		}
 
