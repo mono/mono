@@ -2576,10 +2576,10 @@ print_stack_frame_to_stderr (StackFrameInfo *frame, MonoContext *ctx, gpointer d
 
 	if (method) {
 		gchar *location = mono_debug_print_stack_frame (method, frame->native_offset, mono_domain_get ());
-		mono_runtime_printf_err ("  %s", location);
+		mono_runtime_printf_err ("\t%s", location);
 		g_free (location);
 	} else
-		mono_runtime_printf_err ("  at <unknown> <0x%05x>", frame->native_offset);
+		mono_runtime_printf_err ("\tat <unknown> <0x%05x>", frame->native_offset);
 
 	return FALSE;
 }
@@ -2608,15 +2608,15 @@ print_stack_frame_to_string (StackFrameInfo *frame, MonoContext *ctx, gpointer d
 static void print_process_map (void)
 {
 #ifdef __linux__
+	mono_runtime_printf_err ("Attempting to read /proc/self/maps:\n");
+
 	FILE *fp = fopen ("/proc/self/maps", "r");
 	char line [256];
 
 	if (fp == NULL) {
-		mono_runtime_printf_err ("no /proc/self/maps, not on linux?\n");
+		mono_runtime_printf_err ("Could not open /proc/self/maps: %s\n", g_strerror (errno));
 		return;
 	}
-
-	mono_runtime_printf_err ("/proc/self/maps:");
 
 	while (fgets (line, sizeof (line), fp)) {
 		// strip newline
@@ -2628,12 +2628,15 @@ static void print_process_map (void)
 	}
 
 	fclose (fp);
+
+	mono_runtime_printf_err ("");
 #else
 	/* do nothing */
 #endif
 }
 
-static gboolean handle_crash_loop = FALSE;
+static volatile gboolean native_crash_loop,
+	trying_maps, trying_gdb, trying_glibc, trying_managed;
 
 /*
  * mono_handle_native_crash:
@@ -2644,129 +2647,165 @@ static gboolean handle_crash_loop = FALSE;
 void
 mono_handle_native_crash (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_TYPE *info)
 {
-#ifdef MONO_ARCH_USE_SIGACTION
-	struct sigaction sa;
-#endif
-	MonoJitTlsData *jit_tls = (MonoJitTlsData *)mono_tls_get_jit_tls ();
+	if (native_crash_loop) {
+		if (trying_managed)
+			mono_runtime_printf_err ("Got a %s while trying to get a managed stack trace.", signal);
+		else if (trying_glibc)
+			mono_runtime_printf_err ("Got a %s while trying to use backtrace ().", signal);
+		else if (trying_gdb)
+			mono_runtime_printf_err ("Got a %s while trying to get debug info from GDB/LLDB.", signal);
+		else if (trying_maps)
+			mono_runtime_printf_err ("Got a %s while trying to read /proc/self/maps.", signal);
+		else
+			mono_runtime_printf_err ("Got a %s while trying to diagnose a native crash.", signal);
 
-	if (handle_crash_loop)
+		mono_runtime_printf_err ("\nCannot diagnose the crash further.");
 		return;
+	}
+
+	native_crash_loop = TRUE;
 
 	if (mini_get_debug_options ()->suspend_on_native_crash) {
 		mono_runtime_printf_err ("Received %s, suspending...", signal);
-#ifdef HOST_WIN32
+
 		while (1)
-			;
+#ifdef HOST_WIN32
+			Sleep (1);
 #else
-		while (1) {
 			sleep (1);
-		}
 #endif
 	}
 
-	/* prevent infinite loops in crash handling */
-	handle_crash_loop = TRUE;
+	/*
+	 * A crash signal in native code indicates something went very wrong so we
+	 * can no longer depend on anything working. So try to print out lots of
+	 * diagnostics, starting with the ones most useful for diagnosing the
+	 * problem.
+	 */
+	mono_runtime_printf_err (
+			"=================================================================\n"
+			"Got a %s while executing native code. This usually indicates a\n"
+			"fatal error in the Mono runtime or one of the native libraries\n"
+			"used by your application.\n"
+			"\n"
+			"Mono will now attempt to print as much diagnostic information as\n"
+			"possible. Not all of these attempts will work if the process is in\n"
+			"a sufficiently corrupted state.\n"
+			"=================================================================\n",
+			signal);
 
-	/* !jit_tls means the thread was not registered with the runtime */
-	if (jit_tls && mono_thread_internal_current ()) {
-		mono_runtime_printf_err ("Stacktrace:\n");
-
-		/* FIXME: Is MONO_UNWIND_LOOKUP_IL_OFFSET correct here? */
-		mono_walk_stack (print_stack_frame_to_stderr, MONO_UNWIND_LOOKUP_IL_OFFSET, NULL);
-	}
+	trying_maps = TRUE;
 
 	print_process_map ();
 
-#ifdef HAVE_BACKTRACE_SYMBOLS
- {
-	void *array [256];
-	char **names;
-	int i, size;
+	trying_maps = FALSE;
 
-	mono_runtime_printf_err ("\nNative stacktrace:\n");
+#ifdef PLATFORM_ANDROID
 
-	size = backtrace (array, 256);
-	names = backtrace_symbols (array, size);
-	for (i =0; i < size; ++i) {
-		mono_runtime_printf_err ("\t%s", names [i]);
-	}
-	g_free (names);
+	/*
+	 * set DUMPABLE for this process so debuggerd can attach with ptrace(2), see:
+	 * https://android.googlesource.com/platform/bionic/+/151da681000c07da3c24cd30a3279b1ca017f452/linker/debugger.cpp#206
+	 * this has changed on later versions of Android.  Also, we don't want to
+	 * set this on start-up as DUMPABLE has security implications.
+	 */
+	prctl (PR_SET_DUMPABLE, 1);
 
-	/* Try to get more meaningful information using gdb */
+	mono_runtime_printf_err ("No native Android stack trace collected (see debuggerd output).");
 
-#if !defined(HOST_WIN32) && defined(HAVE_SYS_SYSCALL_H) && defined(SYS_fork)
+#else // defined (PLATFORM_ANDROID)
+
+#if !defined (HOST_WIN32) && defined (HAVE_SYS_SYSCALL_H) && defined (SYS_fork)
+
 	if (!mini_get_debug_options ()->no_gdb_backtrace) {
+		trying_gdb = TRUE;
+
+		mono_runtime_printf_err ("Attempting to get debug info from GDB/LLDB:\n");
+
 		/* From g_spawn_command_line_sync () in eglib */
-		pid_t pid;
-		int status;
 		pid_t crashed_pid = getpid ();
+		pid_t pid;
 
 		/*
 		 * glibc fork acquires some locks, so if the crash happened inside malloc/free,
 		 * it will deadlock. Call the syscall directly instead.
 		 */
-#if defined(PLATFORM_ANDROID)
-		/* SYS_fork is defined to be __NR_fork which is not defined in some ndk versions */
-		g_assert_not_reached ();
-#elif !defined(PLATFORM_MACOSX) && defined(SYS_fork)
-		pid = (pid_t) syscall (SYS_fork);
-#elif defined(PLATFORM_MACOSX) && HAVE_FORK
-		pid = (pid_t) fork ();
+#if defined (PLATFORM_MACOSX) && defined (HAVE_FORK)
+		pid = fork ();
 #else
-		g_assert_not_reached ();
+		pid = (pid_t) syscall (SYS_fork);
 #endif
 
-#if defined (HAVE_PRCTL) && defined(PR_SET_PTRACER)
 		if (pid > 0) {
-			// Allow gdb to attach to the process even if ptrace_scope sysctl variable is set to
-			// a value other than 0 (the most permissive ptrace scope). Most modern Linux
-			// distributions set the scope to 1 which allows attaching only to direct children of
-			// the current process
+#if defined (HAVE_PRCTL) && defined (PR_SET_PTRACER)
+			/*
+			 * Allow gdb to attach to the process even if ptrace_scope sysctl variable is set to
+			 * a value other than 0 (the most permissive ptrace scope). Most modern Linux
+			 * distributions set the scope to 1 which allows attaching only to direct children of
+			 * the current process
+			 */
 			prctl (PR_SET_PTRACER, pid, 0, 0, 0);
-		}
 #endif
-		if (pid == 0) {
-			dup2 (STDERR_FILENO, STDOUT_FILENO);
 
+			int status;
+
+			if (waitpid (pid, &status, 0) == -1)
+				mono_runtime_printf_err ("Could not wait for the GDB/LLDB process: %s", g_strerror (errno));
+		} else if (pid == 0) {
+			dup2 (STDERR_FILENO, STDOUT_FILENO);
 			mono_gdb_render_native_backtraces (crashed_pid);
 			exit (1);
-		}
+		} else if (pid == -1)
+			mono_runtime_printf_err ("Could not fork a GDB/LLDB process: %s", g_strerror (errno));
 
-		mono_runtime_printf_err ("\nDebug info from gdb:\n");
-		waitpid (pid, &status, 0);
+		trying_gdb = FALSE;
 	}
-#endif
- }
-#else
-#ifdef PLATFORM_ANDROID
-	/* set DUMPABLE for this process so debuggerd can attach with ptrace(2), see:
-	 * https://android.googlesource.com/platform/bionic/+/151da681000c07da3c24cd30a3279b1ca017f452/linker/debugger.cpp#206
-	 * this has changed on later versions of Android.  Also, we don't want to
-	 * set this on start-up as DUMPABLE has security implications. */
-	prctl (PR_SET_DUMPABLE, 1);
 
-	mono_runtime_printf_err ("\nNo native Android stacktrace (see debuggerd output).\n");
-#endif
-#endif
+#endif // !defined (HOST_WIN32) && defined (HAVE_SYS_SYSCALL_H) && defined (SYS_fork)
 
-	/*
-	 * A SIGSEGV indicates something went very wrong so we can no longer depend
-	 * on anything working. So try to print out lots of diagnostics, starting 
-	 * with ones which have a greater chance of working.
-	 */
-	mono_runtime_printf_err (
-			 "\n"
-			 "=================================================================\n"
-			 "Got a %s while executing native code. This usually indicates\n"
-			 "a fatal error in the mono runtime or one of the native libraries \n"
-			 "used by your application.\n"
-			 "=================================================================\n",
-			signal);
+#ifdef HAVE_BACKTRACE_SYMBOLS
+
+	trying_glibc = TRUE;
+
+	mono_runtime_printf_err ("\nAttempting to get a native stack trace from libc:\n");
+
+	void *array [256];
+	int size = backtrace (array, G_N_ELEMENTS (array));
+	char **names = backtrace_symbols (array, size);
+
+	if (names) {
+		for (int i = 0; i < size; ++i)
+			mono_runtime_printf_err ("\t%s", names [i]);
+	} else
+		mono_runtime_printf_err ("Could not resolve backtrace symbols.");
+
+	g_free (names);
+
+	trying_glibc = FALSE;
+
+#endif // HAVE_BACKTRACE_SYMBOLS
+
+#endif // !defined (PLATFORM_ANDROID)
+
+	/* !jit_tls means the thread was not registered with the runtime */
+	if (mono_tls_get_jit_tls () && mono_thread_internal_current ()) {
+		trying_managed = TRUE;
+
+		mono_runtime_printf_err ("\nAttempting to get a managed stack trace:\n");
+		mono_walk_stack (print_stack_frame_to_stderr, MONO_UNWIND_NONE, NULL);
+
+		trying_managed = FALSE;
+	}
+
+	mono_runtime_printf_err ("");
 
 #ifdef MONO_ARCH_USE_SIGACTION
-	sa.sa_handler = SIG_DFL;
+
+	struct sigaction sa = {
+		.sa_handler = SIG_DFL,
+		.sa_flags = 0,
+	};
+
 	sigemptyset (&sa.sa_mask);
-	sa.sa_flags = 0;
 
 	/* Remove our SIGABRT handler */
 	g_assert (sigaction (SIGABRT, &sa, NULL) != -1);
@@ -2774,7 +2813,8 @@ mono_handle_native_crash (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_T
 	/* On some systems we get a SIGILL when calling abort (), because it might
 	 * fail to raise SIGABRT */
 	g_assert (sigaction (SIGILL, &sa, NULL) != -1);
-#endif
+
+#endif // MONO_ARCH_USE_SIGACTION
 
 	if (!mono_do_crash_chaining) {
 		/*Android abort is a fluke, it doesn't abort, it triggers another segv. */
