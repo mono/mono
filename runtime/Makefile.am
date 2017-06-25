@@ -185,6 +185,8 @@ etc/mono/config: ../data/config Makefile $(symlinks)
 	sed 's,target="$$mono_libdir/libMonoPosixHelper$(libsuffix)",target="'$$d'/libMonoPosixHelper.la",' ../data/config > $@t
 	d=`cd ../mono/btls/build-shared && pwd`; \
 	sed 's,target="$$mono_libdir/libmono-btls-shared$(libsuffix)",target="'$$d'/libmono-btls-shared$(libsuffix)",' $@t > $@tt
+	d=`cd ../mono/rtpal && pwd`; \
+	sed 's,target="$$mono_libdir/System.Native.CoreRT$(libsuffix)",target="'$$d'/System.Native.CoreRT$(libsuffix)",' $@t > $@tt
 	if test -z "$(libgdiplus_loc)"; then :; else \
 	  sed 's,target="$(libgdiplus_install_loc)",target="$(libgdiplus_loc)",' $@tt > $@ttt; \
 	  mv -f $@ttt $@tt; fi

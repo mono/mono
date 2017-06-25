@@ -3405,6 +3405,77 @@ if test "x$host" != "x$target"; then
 	esac
 fi
 
+CORERT_PAL_SUPPORTED=no
+CORERT_PAL_ARCH=
+CORERT_PAL_OS=
+
+case "$host" in
+  i*86-*-linux*)
+	CORERT_PAL_SUPPORTED=yes
+	CORERT_PAL_ARCH=x86
+	CORERT_PAL_OS=Linux
+	;;
+  i*86-*-darwin*)
+	CORERT_PAL_SUPPORTED=yes
+	CORERT_PAL_ARCH=x86
+	CORERT_PAL_OS=OSX
+	;;
+  i*86-*-freebsd*|i*86-*-kfreebsd-gnu*)
+	CORERT_PAL_SUPPORTED=yes
+	CORERT_PAL_ARCH=x86
+	CORERT_PAL_OS=FreeBSD
+	;;
+  x86_64-*-linux*|amd64-*-linux*)
+	CORERT_PAL_SUPPORTED=yes
+	CORERT_PAL_ARCH=x64
+	CORERT_PAL_OS=Linux
+	;;
+  x86_64-*-darwin*|amd64-*-darwin*)
+	CORERT_PAL_SUPPORTED=yes
+	CORERT_PAL_ARCH=x64
+	CORERT_PAL_OS=OSX
+	;;
+  x86_64-*-freebsd*|amd64-*-freebsd*|x86_64-*-kfreebsd-gnu*|amd64-*-kfreebsd-gnu*)
+	CORERT_PAL_SUPPORTED=yes
+	CORERT_PAL_ARCH=x64
+	CORERT_PAL_OS=FreeBSD
+	;;
+  arm*-*-darwin*)
+	CORERT_PAL_SUPPORTED=yes
+	CORERT_PAL_ARCH=arm
+	CORERT_PAL_OS=OSX
+	;;
+  arm*-*-linux*)
+	CORERT_PAL_SUPPORTED=yes
+	CORERT_PAL_ARCH=arm
+	CORERT_PAL_OS=Linux
+	;;
+  arm*-*-freebsd*|arm*-*-kfreebsd-gnu*)
+	CORERT_PAL_SUPPORTED=yes
+	CORERT_PAL_ARCH=arm
+	CORERT_PAL_OS=FreeBSD
+	;;
+  aarch64-*-darwin*)
+	CORERT_PAL_SUPPORTED=yes
+	CORERT_PAL_ARCH=arm64
+	CORERT_PAL_OS=OSX
+	;;
+  aarch64-*-linux*)
+	CORERT_PAL_SUPPORTED=yes
+	CORERT_PAL_ARCH=arm64
+	CORERT_PAL_OS=Linux
+	;;
+  aarch64-*-freebsd*|aarch64-*-kfreebsd-gnu*)
+	CORERT_PAL_SUPPORTED=yes
+	CORERT_PAL_ARCH=arm64
+	CORERT_PAL_OS=FreeBSD
+	;;
+esac
+
+AM_CONDITIONAL(CORERT_PAL_SUPPORTED, [test x$CORERT_PAL_SUPPORTED = xyes])
+AC_SUBST(CORERT_PAL_ARCH)
+AC_SUBST(CORERT_PAL_OS)
+
 case "$TARGET" in
 X86)
 	AC_DEFINE(TARGET_X86, 1, [...])
@@ -4566,6 +4637,7 @@ scripts/mono-find-provides
 scripts/mono-find-requires
 mono/Makefile
 mono/btls/Makefile
+mono/rtpal/Makefile
 mono/utils/Makefile
 mono/metadata/Makefile
 mono/dis/Makefile

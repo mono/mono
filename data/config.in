@@ -16,6 +16,7 @@
 	<dllmap dll="i:msvcrt.dll" target="@LIBC@" os="!windows"/>
 	<dllmap dll="sqlite" target="@SQLITE@" os="!windows"/>
 	<dllmap dll="sqlite3" target="@SQLITE3@" os="!windows"/>
+	<dllmap dll="System.Native.CoreRT" target="$mono_libdir/System.Native.CoreRT@libsuffix@" os="!windows" />
 	<dllmap dll="libX11" target="@X11@" os="!windows" />
 	<dllmap dll="libgdk-x11-2.0" target="@GDKX11@" os="!windows"/>
 	<dllmap dll="libgdk_pixbuf-2.0" target="libgdk_pixbuf-2.0.so.0" os="!windows"/>
