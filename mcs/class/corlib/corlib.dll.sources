@@ -209,7 +209,34 @@ System.IO/FileAttributes.cs
 System.IO/FileMode.cs
 System.IO/FileOptions.cs
 System.IO/FileShare.cs
-System.IO/FileStream.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/IO/FileStream.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/IO/FileStream.Unix.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/IO/Stream.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/IO/PathInternal.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/Diagnostics/ConditionalAttribute.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/IO/PathInternal.Unix.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/IO/Error.cs
+../../../external/corert/src/System.Private.CoreLib/shared/Interop/Unix/System.Native/Interop.OpenFlags.cs
+../../../external/corert/src/System.Private.CoreLib/shared/Interop/Windows/Kernel32/Interop.SECURITY_ATTRIBUTES.cs
+../../../external/corert/src/System.Private.CoreLib/shared/Interop/Windows/Interop.BOOL.cs
+../../../external/corert/src/System.Private.CoreLib/shared/Interop/Unix/System.Native/Interop.Open.cs
+../../../external/corert/src/System.Private.CoreLib/shared/Interop/Unix/System.Native/Interop.Close.cs
+../../../external/corert/src/System.Private.CoreLib/shared/Interop/Unix/System.Native/Interop.Stat.cs
+../../../external/corert/src/System.Private.CoreLib/shared/Interop/Unix/System.Native/Interop.FLock.cs
+../../../external/corert/src/System.Private.CoreLib/shared/Interop/Unix/System.Native/Interop.LSeek.cs
+../../../external/corert/src/System.Private.CoreLib/shared/Interop/Unix/System.Native/Interop.PosixFAdvise.cs
+../../../external/corert/src/System.Private.CoreLib/shared/Interop/Unix/System.Native/Interop.Permissions.cs
+../../../external/corert/src/System.Private.CoreLib/shared/Interop/Unix/System.Native/Interop.Unlink.cs
+../../../external/corert/src/System.Private.CoreLib/shared/Interop/Unix/System.Native/Interop.FSync.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/Buffers/ArrayPool.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/Buffers/ConfigurableArrayPool.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/Buffers/TlsOverPerCoreLockedStacksArrayPool.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/Buffers/Utilities.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Buffers/ArrayPoolEventSource.cs
+../../../external/corert/src/System.Private.CoreLib/shared/Microsoft/Win32/SafeHandles/SafeFileHandle.Unix.cs
+../../../external/corert/src/System.Private.CoreLib/shared/Interop/Unix/Interop.Libraries.cs
+../../../external/corert/src/System.Private.CoreLib/shared/Interop/Unix/Interop.Errors.cs
+../../../external/corert/src/System.Private.CoreLib/shared/Interop/Unix/Interop.IOErrors.cs
 System.IO/FileStreamAsyncResult.cs
 System.IO/HGlobalUnmanagedMemoryStream.cs
 System.IO/LogcatTextWriter.cs
@@ -894,7 +921,6 @@ ReferenceSources/Buffer.cs
 ReferenceSources/TextInfo.cs
 ReferenceSources/win32native.cs
 ReferenceSources/SecurityContext.cs
-ReferenceSources/PathInternal.cs
 ReferenceSources/BinaryCompatibility.cs
 ReferenceSources/String.cs
 ReferenceSources/Type.cs
@@ -1106,7 +1132,6 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/diagnostics/assert.cs
 ../referencesource/mscorlib/system/diagnostics/assertfilter.cs
 ../referencesource/mscorlib/system/diagnostics/assertfilters.cs
-../referencesource/mscorlib/system/diagnostics/conditionalattribute.cs
 ../referencesource/mscorlib/system/diagnostics/debuggerattributes.cs
 
 ../referencesource/mscorlib/system/diagnostics/codeanalysis/suppressmessageattribute.cs
@@ -1185,7 +1210,6 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/io/memorystream.cs
 ../referencesource/mscorlib/system/io/pathtoolongexception.cs
 ../referencesource/mscorlib/system/io/pinnedbuffermemorystream.cs
-../referencesource/mscorlib/system/io/stream.cs
 ../referencesource/mscorlib/system/io/streamreader.cs
 ../referencesource/mscorlib/system/io/streamwriter.cs
 ../referencesource/mscorlib/system/io/stringreader.cs
@@ -1627,7 +1651,6 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/threading/Tasks/ProducerConsumerQueues.cs
 ../referencesource/mscorlib/system/threading/Tasks/TaskToApm.cs
 
-../referencesource/mscorlib/microsoft/win32/safehandles/safefilehandle.cs
 ../referencesource/mscorlib/microsoft/win32/safehandles/safefindhandle.cs
 ../referencesource/mscorlib/microsoft/win32/safehandles/saferegistryhandle.cs
 ../referencesource/mscorlib/microsoft/win32/safehandles/safewaithandle.cs
