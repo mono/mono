@@ -25,17 +25,15 @@ namespace Mono.CilStripper {
 
 			string file = args [0];
 			string output = args.Length > 1 ? args [1] : file;
-			bool replace = file == output;
 
 			try {
-				using (var assembly = AssemblyDefinition.ReadAssembly (file, new ReaderParameters { ReadWrite = replace })) {
-					StripAssembly (assembly, replace ? null : output);
-				}
+				AssemblyDefinition assembly = AssemblyFactory.GetAssembly (file);
+				StripAssembly (assembly, output);
 
-				if (replace)
-					Console.WriteLine ("Assembly {0} stripped", file);
-				else
+				if (file != output)
 					Console.WriteLine ("Assembly {0} stripped out into {1}", file, output);
+				else
+					Console.WriteLine ("Assembly {0} stripped", file);
 				return 0;
 			} catch (TargetInvocationException tie) {
 				Console.WriteLine ("Error: {0}", tie.InnerException);
