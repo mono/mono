@@ -49,6 +49,45 @@ static MonoW32HandleOps *handle_ops [MONO_W32HANDLE_COUNT];
 #define SLOT_INDEX(x)	(x / HANDLE_PER_SLOT)
 #define SLOT_OFFSET(x)	(x % HANDLE_PER_SLOT)
 
+static struct {
+	gint64 handle_count;
+	gint64 total_handles_created;
+	gint64 maximum_handle_number;
+	gboolean rescanned;
+} handle_metrics = { 0 } ;
+
+static inline void
+increment_handle_count ()
+{
+	guint old;
+
+	do {
+		old = handle_metrics.handle_count;
+	} while (InterlockedIncrement64 (&handle_metrics.handle_count) == old);
+
+	if (old % 10 == 0)
+		printf ("[%d] w32h count: %d\n", getpid(), old + 1);
+
+	do {
+		old = handle_metrics.total_handles_created;
+	} while (InterlockedIncrement64 (&handle_metrics.total_handles_created) == old);
+
+	if (old % 100 == 0)
+			printf ("[%d] Total w32handles created: %d\n", getpid(), old + 1);
+}
+
+static inline void
+decrement_handle_count ()
+{
+	guint old;
+
+	do {
+		old = handle_metrics.handle_count;
+		if (old == 0)
+			g_error ("%s: More handles were destroyed than created!");
+	} while (InterlockedDecrement64 (&handle_metrics.handle_count) == old);
+}
+
 static MonoW32HandleBase *private_handles [SLOT_MAX];
 static guint32 private_handles_count = 0;
 static guint32 private_handles_slots_count = 0;
@@ -329,6 +368,8 @@ static void mono_w32handle_init_handle (MonoW32HandleBase *handle,
 
 	if (handle_specific)
 		handle->specific = g_memdup (handle_specific, mono_w32handle_ops_typesize (type));
+
+	increment_handle_count ();
 }
 
 /*
@@ -343,7 +384,7 @@ static guint32 mono_w32handle_new_internal (MonoW32HandleType type,
 					  gpointer handle_specific)
 {
 	guint32 i, k, count;
-	static guint32 last = 0;
+	guint32 last = 0;
 	gboolean retry = FALSE;
 	
 	/* A linear scan should be fast enough.  Start from the last
@@ -427,7 +468,6 @@ mono_w32handle_new (MonoW32HandleType type, gpointer handle_specific)
 	handle = GUINT_TO_POINTER (handle_idx);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: create %s handle %p", __func__, mono_w32handle_ops_typename (type), handle);
-
 done:
 	return(handle);
 }
@@ -684,6 +724,7 @@ w32handle_destroy (gpointer handle)
 	}
 
 	g_free (handle_specific);
+	decrement_handle_count ();
 }
 
 /* The handle must not be locked on entry to this function */

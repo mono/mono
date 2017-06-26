@@ -208,6 +208,8 @@ mono_os_cond_timedwait (mono_cond_t *cond, mono_mutex_t *mutex, guint32 timeout_
 
 	ts.tv_sec += timeout_ms / 1000;
 	ts.tv_nsec += (timeout_ms % 1000) * 1000 * 1000;
+	if (ts.tv_nsec < 0)
+		g_error ("%s: Overflow in ts.tv_nsec (%d", __func__, ts.tv_nsec);
 	if (ts.tv_nsec >= 1000 * 1000 * 1000) {
 		ts.tv_nsec -= 1000 * 1000 * 1000;
 		ts.tv_sec ++;
