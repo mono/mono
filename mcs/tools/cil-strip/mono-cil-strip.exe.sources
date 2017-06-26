@@ -1,7 +1,5 @@
 ./cilstrip.cs
 ./AssemblyStripper.cs
-# IMPORTANT: we need to keep this old copy of Cecil since newer Cecil
-# doesn't support keeping metadata tokens the same which would break AOT compilation
 ./Mono.Cecil/AggressiveReflectionReader.cs
 ./Mono.Cecil/ArrayDimension.cs
 ./Mono.Cecil/ArrayDimensionCollection.cs
