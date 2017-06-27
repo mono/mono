@@ -220,6 +220,12 @@ partial class SR
 	public const string IO_PipeBroken = "Pipe is broken.";
 	public const string IO_SharingViolation_File = "The process cannot access the file '{0}' because it is being used by another process.";
 	public const string IO_InvalidPipeHandle = "Invalid pipe handle.";
+	public const string ArgumentOutOfRange_FileLengthTooBig = "Specified file length was too large for the file system.";
+	public const string ArgumentOutOfRange_PathLengthInvalid = "The path '{0}' is of an invalid length for use with domain sockets on this platform.  The length must be between 1 and {1} characters, inclusive.";
+	public const string PlatformNotSupported_RemotePipes = "Access to remote named pipes is not supported on this platform.";
+	public const string PlatformNotSupproted_InvalidNameChars = "The name of a pipe on this platform must only include characters valid in file names.";
+	public const string PlatformNotSupported_MessageTransmissionMode = "Message transmission mode is not supported on this platform.";
+	public const string PlatformNotSupported_OperatingSystemError = "The operating system returned error '{0}' indicating that the operation is not supported.";
 
 
 }

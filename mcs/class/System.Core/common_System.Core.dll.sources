@@ -38,7 +38,9 @@ System.IO.Pipes/PipeSecurity.cs
 
 ../../../external/corefx/src/Common/src/System/IO/StreamHelpers.CopyValidation.cs
 ../../../external/corefx/src/Common/src/System/Threading/Tasks/TaskToApm.cs
-../../../external\corefx\src\System.IO.Pipes.AccessControl\src\System\IO\PipesAclExtensions.cs
+../../../external/corefx/src/System.IO.Pipes.AccessControl/src/System/IO/PipesAclExtensions.cs
+
+
 
 
 

@@ -7,7 +7,7 @@
 ../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/NamedPipeClientStream.Unix.cs
 ../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/NamedPipeServerStream.Unix.cs
 ../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/PipeStream.Unix.cs
-../../../external/corefx/src/System.Net.Pipes/src/System/Net/Sockets/UnixDomainSocketEndPoint.cs
+../../../external/corefx/src/System.IO.Pipes/src/System/Net/Sockets/UnixDomainSocketEndPoint.cs
 
 ../../../external/corefx/src/Common/src/Microsoft/Win32/SafeHandles/SafeFileHandleHelper.Unix.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/Interop.Libraries.cs
