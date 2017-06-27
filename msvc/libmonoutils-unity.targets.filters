@@ -7,5 +7,9 @@
     <ClCompile Include="$(MonoSourceLocation)\mono\utils\unity-time.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <!-- This should be replaced with Unity PAL version when implemented -->
+    <ClCompile Include="$(MonoSourceLocation)\mono\utils\os-event-win32.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

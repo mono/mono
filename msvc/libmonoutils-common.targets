@@ -83,8 +83,6 @@
     <ClCompile Include="$(MonoSourceLocation)\mono\utils\bsearch.c" />
     <ClCompile Include="$(MonoSourceLocation)\mono\utils\memfuncs.c" />
     <ClCompile Include="$(MonoSourceLocation)\mono\utils\parse.c" />
-    <!-- This should be replaced with Unity PAL versions in the -unity.targets file and moved to the -mono.targets file -->
-    <ClCompile Include="$(MonoSourceLocation)\mono\utils\os-event-win32.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MonoSourceLocation)\mono\utils\dlmalloc.h" />

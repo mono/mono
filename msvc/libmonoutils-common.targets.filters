@@ -172,10 +172,6 @@
     <ClCompile Include="$(MonoSourceLocation)\mono\utils\parse.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <!-- This should be replaced with Unity PAL versions in the -unity.targets.filters file and moved to the -mono.targets.filters file -->
-    <ClCompile Include="$(MonoSourceLocation)\mono\utils\os-event-win32.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MonoSourceLocation)\mono\utils\dlmalloc.h">

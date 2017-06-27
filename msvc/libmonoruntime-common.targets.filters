@@ -256,37 +256,6 @@
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\w32socket.c">
       <Filter>Source Files</Filter>
     </ClCompile> 
-    <!-- These should be replaced with Unity PAL versions in the -unity.targets.filters file and moved to the -mono.targets.filters file -->
-    <ClCompile Include="$(MonoSourceLocation)\mono\metadata\console-win32-uwp.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MonoSourceLocation)\mono\metadata\console-win32.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MonoSourceLocation)\mono\metadata\w32error-win32.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MonoSourceLocation)\mono\metadata\w32event-win32.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MonoSourceLocation)\mono\metadata\w32file-win32.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MonoSourceLocation)\mono\metadata\w32mutex-win32.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MonoSourceLocation)\mono\metadata\w32process-win32-uwp.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MonoSourceLocation)\mono\metadata\w32process-win32.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MonoSourceLocation)\mono\metadata\w32semaphore-win32.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MonoSourceLocation)\mono\metadata\w32socket-win32.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MonoSourceLocation)\mono\metadata\appdomain.h">
