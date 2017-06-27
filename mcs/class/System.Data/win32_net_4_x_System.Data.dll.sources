@@ -1,3 +1,6 @@
+#include corefx.common.sources
+#include net_4_x_System.Data.dll.sources
+
 #../../../external/corefx/src/Common/src/Microsoft/Win32/SafeHandles/GssSafeHandles.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/DbConnectionPoolIdentity.Windows.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/Interop/SNINativeMethodWrapper.Windows.cs
