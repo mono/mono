@@ -55,6 +55,15 @@ void *pthread_get_stackaddr_np(pthread_t);
 static gboolean gc_initialized = FALSE;
 static mono_mutex_t mono_gc_lock;
 
+#ifndef HAVE_BDWGC_GC
+#define GC_CALLBACK
+typedef void (GC_CALLBACK * GC_push_other_roots_proc)();
+#endif
+
+static GC_push_other_roots_proc default_push_other_roots;
+static GHashTable *roots;
+
+static void GC_CALLBACK mono_push_other_roots(void);
 static void*
 boehm_thread_register (MonoThreadInfo* info, void *baseptr);
 static void
@@ -183,6 +192,15 @@ mono_gc_base_init (void)
 		/*g_print ("stackbottom is: %p\n", (char*)stack_bottom);*/
 		GC_stackbottom = (char*)stack_bottom;
 	}
+#endif
+
+	roots = g_hash_table_new (NULL, NULL);
+#if HAVE_BDWGC_GC
+	default_push_other_roots = GC_get_push_other_roots ();
+	GC_set_push_other_roots (mono_push_other_roots);
+#else
+	default_push_other_roots = GC_push_other_roots;
+	GC_push_other_roots = mono_push_other_roots;
 #endif
 
 #if !defined(PLATFORM_ANDROID)
@@ -544,11 +562,26 @@ on_gc_heap_resize (size_t new_size)
 	mono_profiler_gc_heap_resize (new_size);
 }
 
+typedef struct {
+	char *start;
+	char *end;
+} RootData;
+
+static gpointer
+register_root (gpointer arg)
+{
+	RootData* root_data = arg;
+	g_hash_table_insert (roots, root_data->start, root_data->end);
+	return NULL;
+}
+
 int
 mono_gc_register_root (char *start, size_t size, void *descr, MonoGCRootSource source, const char *msg)
 {
-	/* for some strange reason, they want one extra byte on the end */
-	GC_add_roots (start, start + size + 1);
+	RootData root_data;
+	root_data.start = start;
+	root_data.end = start + size + 1;
+	GC_call_with_alloc_lock (register_root, &root_data);
 
 	return TRUE;
 }
@@ -559,14 +592,32 @@ mono_gc_register_root_wbarrier (char *start, size_t size, MonoGCDescriptor descr
 	return mono_gc_register_root (start, size, descr, source, msg);
 }
 
+static gpointer
+deregister_root (gpointer arg)
+{
+	gboolean removed = g_hash_table_remove (roots, arg);
+	g_assert (removed);
+	return NULL;
+}
+
 void
 mono_gc_deregister_root (char* addr)
 {
-#ifndef HOST_WIN32
-	/* FIXME: libgc doesn't define this work win32 for some reason */
-	/* FIXME: No size info */
-	GC_remove_roots (addr, addr + sizeof (gpointer) + 1);
-#endif
+	GC_call_with_alloc_lock (deregister_root, addr);
+}
+
+static void
+push_root (gpointer key, gpointer value, gpointer user_data)
+{
+	GC_push_all (key, value);
+}
+
+static void GC_CALLBACK
+mono_push_other_roots (void)
+{
+	g_hash_table_foreach (roots, push_root, NULL);
+	if (default_push_other_roots)
+		default_push_other_roots ();
 }
 
 static void
