@@ -3,5 +3,7 @@
   <ItemGroup>
     <ClCompile Include="$(MonoSourceLocation)\mono\utils\unity-rand.c" /> 
     <ClCompile Include="$(MonoSourceLocation)\mono\utils\unity-time.c" /> 
+    <!-- This should be replaced with Unity PAL version when implemented -->
+    <ClCompile Include="$(MonoSourceLocation)\mono\utils\os-event-win32.c" />
   </ItemGroup>
 </Project>
