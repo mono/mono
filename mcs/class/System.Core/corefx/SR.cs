@@ -212,4 +212,14 @@ partial class SR
 	public const string NoMethodOnType = "There is no method '{0}' on type '{1}'";
 	public const string NoMethodOnTypeMatchingArguments = "There is no method '{0}' on type '{1}' that matches the specified arguments";
 	public const string EnumeratingNullEnumerableExpression = "Cannot enumerate a query created from a null IEnumerable<>";
+
+	public const string ArgumentOutOfRange_NeedPosNum = "Positive number required.";
+	public const string IO_AlreadyExists_Name = "Cannot create \"{0}\" because a file or directory with the same name already exists.";
+	public const string IO_SharingViolation_NoFileName = "The process cannot access the file because it is being used by another process.";
+	public const string IO_FileExists_Name = "The file '{0}' already exists.";
+	public const string IO_PipeBroken = "Pipe is broken.";
+	public const string IO_SharingViolation_File = "The process cannot access the file '{0}' because it is being used by another process.";
+	public const string IO_InvalidPipeHandle = "Invalid pipe handle.";
+
+
 }

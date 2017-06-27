@@ -1,9 +1,6 @@
 #include common_System.Core.dll.sources
 #include dynamic_System.Core.dll.sources
 
-System.IO.Pipes/PipeUnix.cs
-System.IO.Pipes/PipeWin32.cs
-
 System.Security.Cryptography/AesCryptoServiceProvider.cs
 System.Security.Cryptography/AesTransform.cs
 System.Security.Cryptography/MD5Cng.cs
