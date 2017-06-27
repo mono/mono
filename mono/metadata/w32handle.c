@@ -312,11 +312,149 @@ mono_w32handle_cleanup (void)
 		g_free (private_handles [i]);
 }
 
+
+#define HANDLE_MAX (1000 * 1000 * 8)
+#define OATMEAL_COOKIE 0
+
+static int live_handle_count;
+static int handle_rc [HANDLE_MAX];
+static int handle_cookie [HANDLE_MAX];
+static int cookie_counter = 1;
+
+typedef struct {
+	int rc, cookie;
+} HandleUseData;
+
+void
+init_handle (int idx)
+{
+	int rc = handle_rc [idx];
+	int cookie = handle_cookie [idx];
+	
+	if (idx < 0 || idx >= HANDLE_MAX)
+		g_error ("Invalid idx %d, max is %d", idx, HANDLE_MAX);
+
+	if (rc != 0)
+		g_error ("Trying to init in-use slot %d rc %d cookie %d\n", idx, rc, cookie);
+
+	if (cookie != OATMEAL_COOKIE)
+		g_error ("Trying to init bad cookie slot %d rc %d cookie %d\n", idx, rc, cookie);
+
+	cookie = InterlockedIncrement (&cookie_counter);
+	while (cookie == OATMEAL_COOKIE)
+		cookie = InterlockedIncrement (&cookie_counter);
+
+	handle_rc [idx] = 1;
+	handle_cookie [idx] = cookie;
+}
+
+void
+destroy_handle (int idx)
+{
+	int rc = handle_rc [idx];
+	int cookie = handle_cookie [idx];
+
+	if (idx < 0 || idx >= HANDLE_MAX)
+		g_error ("Invalid idx %d, max is %d", idx, HANDLE_MAX);
+
+	if (rc != 0)
+		g_error ("Trying to destroy handle %d with non-zero RC %d cookie %d\n", idx, rc, cookie);
+
+	if (cookie == OATMEAL_COOKIE)
+		g_error ("Trying to destroy handle %d with bad cookie RC %d cookie %d\n", idx, rc, cookie);
+
+	handle_rc [idx] = 0;
+	handle_cookie [idx] = OATMEAL_COOKIE;
+}
+
+void
+incref_handle (int idx)
+{
+	int rc = handle_rc [idx];
+	int cookie = handle_cookie [idx];
+
+	if (idx < 0 || idx >= HANDLE_MAX)
+		g_error ("Invalid idx %d, max is %d", idx, HANDLE_MAX);
+
+	if (rc <= 0)
+		g_error ("Trying to inc handle %d with non-zero RC %d cookie %d\n", idx, rc, cookie);
+
+	if (cookie == OATMEAL_COOKIE)
+		g_error ("Trying to inc handle %d with bad cookie RC %d cookie %d\n", idx, rc, cookie);
+
+	int res = InterlockedIncrement (&handle_rc [idx]);
+	if (res <= 1)
+		g_error ("Inc raced to 1 handle %d with bad cookie RC %d cookie %d after CAS rc %d\n", idx, rc, cookie, res);
+}
+
+void
+decref_handle (int idx)
+{
+	int rc = handle_rc [idx];
+	int cookie = handle_cookie [idx];
+
+	if (idx < 0 || idx >= HANDLE_MAX)
+		g_error ("Invalid idx %d, max is %d", idx, HANDLE_MAX);
+
+	if (rc <= 0)
+		g_error ("Trying to inc handle %d with non-zero RC %d cookie %d\n", idx, rc, cookie);
+
+	if (cookie == OATMEAL_COOKIE)
+		g_error ("Trying to inc handle %d with bad cookie RC %d cookie %d\n", idx, rc, cookie);
+
+	int res = InterlockedDecrement (&handle_rc [idx]);
+	if (res < 0)
+		g_error ("Desc raced to negative handle %d with bad cookie RC %d cookie %d after CAS rc %d\n", idx, rc, cookie, res);
+	
+}
+
+void
+begin_use_handle (int idx, HandleUseData *data)
+{
+	int rc = handle_rc [idx];
+	int cookie = handle_cookie [idx];
+	if (rc <= 0)
+		g_error ("Starting to use at invalid handle %d rc %d cookie %d", idx, rc, cookie);
+
+	if (cookie == OATMEAL_COOKIE)
+		g_error ("Found bad cookie handle %d rc %d cookie %d", idx, rc, cookie);
+
+	data->rc = rc;
+	data->cookie = cookie;
+}
+
+void
+end_use_handle (int idx, HandleUseData *data)
+{
+	int rc = handle_rc [idx];
+	int cookie = handle_cookie [idx];
+	if (rc <= 0)
+		g_error ("Bad rc at end-use of handle %d with negative rc %d old rc %d cookie %d old cookie %d", idx, rc, data->rc, cookie, data->cookie);
+
+	if (cookie != data->cookie)
+		g_error ("Bad cookie at end-use of handle %d with negative rc %d old rc %d cookie %d old cookie %d", idx, rc, data->rc, cookie, data->cookie);
+}
+
+void
+begin_use_multiple (int count, gpointer handles[], HandleUseData *data)
+{
+	for (int i = 0; i < count; ++i)
+		begin_use_handle ((int)handles[i], &data[i]);
+}
+
+void
+end_use_multiple (int count, gpointer handles[], HandleUseData *data)
+{
+	for (int i = 0; i < count; ++i)
+		end_use_handle ((int)handles[i], &data[i]);
+}
+
+
 static gsize
 mono_w32handle_ops_typesize (MonoW32HandleType type);
 
 static void mono_w32handle_init_handle (MonoW32HandleBase *handle,
-			       MonoW32HandleType type, gpointer handle_specific)
+			       MonoW32HandleType type, gpointer handle_specific, int index)
 {
 	g_assert (handle->ref == 0);
 
@@ -329,6 +467,11 @@ static void mono_w32handle_init_handle (MonoW32HandleBase *handle,
 
 	if (handle_specific)
 		handle->specific = g_memdup (handle_specific, mono_w32handle_ops_typesize (type));
+
+	init_handle (index);
+
+	// printf ("init handle %x [%p]\n", index, handle);
+	InterlockedIncrement (&live_handle_count);
 }
 
 /*
@@ -368,7 +511,7 @@ again:
 				if(handle->type == MONO_W32HANDLE_UNUSED) {
 					last = count + 1;
 
-					mono_w32handle_init_handle (handle, type, handle_specific);
+					mono_w32handle_init_handle (handle, type, handle_specific, count);
 					return (count);
 				}
 				count++;
@@ -473,7 +616,7 @@ gpointer mono_w32handle_new_fd (MonoW32HandleType type, int fd,
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: create %s handle %p", __func__, mono_w32handle_ops_typename (type), GUINT_TO_POINTER(fd));
 
-	mono_w32handle_init_handle (handle_data, type, handle_specific);
+	mono_w32handle_init_handle (handle_data, type, handle_specific, fd);
 
 	return(GUINT_TO_POINTER(fd));
 }
@@ -601,6 +744,8 @@ mono_w32handle_ref_core (gpointer handle, MonoW32HandleBase *handle_data)
 		new = old + 1;
 	} while (InterlockedCompareExchange ((gint32*) &handle_data->ref, new, old) != old);
 
+	incref_handle ((int)handle);
+
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: ref %s handle %p, ref: %d -> %d",
 		__func__, mono_w32handle_ops_typename (handle_data->type), handle, old, new);
 
@@ -622,6 +767,8 @@ mono_w32handle_unref_core (gpointer handle, MonoW32HandleBase *handle_data)
 
 		new = old - 1;
 	} while (InterlockedCompareExchange ((gint32*) &handle_data->ref, new, old) != old);
+
+	decref_handle ((int)handle);
 
 	/* handle_data might contain invalid data from now on, if
 	 * another thread is unref'ing this handle at the same time */
@@ -668,6 +815,7 @@ w32handle_destroy (gpointer handle)
 	handle_specific = handle_data->specific;
 
 	mono_os_mutex_lock (&scan_mutex);
+	destroy_handle ((int)handle);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: destroy %s handle %p", __func__, mono_w32handle_ops_typename (type), handle);
 
@@ -684,6 +832,11 @@ w32handle_destroy (gpointer handle)
 	}
 
 	g_free (handle_specific);
+	// printf ("destroy %p [%p]\n", handle, handle_data);
+
+	// InterlockedDecrement (&live_handle_count);
+	// if (live_handle_count < 0)
+	// 	g_error ("FUDEU %d", live_handle_count);
 }
 
 /* The handle must not be locked on entry to this function */
@@ -1080,10 +1233,12 @@ mono_w32handle_timedwait_signal_handle (gpointer handle, guint32 timeout, gboole
 		*alerted = FALSE;
 
 	if (alerted) {
-		mono_thread_info_install_interrupt (signal_handle_and_unref, handle, alerted);
-		if (*alerted)
-			return 0;
 		mono_w32handle_ref (handle);
+		mono_thread_info_install_interrupt (signal_handle_and_unref, handle, alerted);
+		if (*alerted) {
+			mono_w32handle_unref (handle);
+			return 0;
+		}
 	}
 
 	res = mono_w32handle_timedwait_signal_naked (&handle_data->signal_cond, &handle_data->signal_mutex, timeout, poll, alerted);
@@ -1149,20 +1304,27 @@ mono_w32handle_wait_one (gpointer handle, guint32 timeout, gboolean alertable)
 	gboolean alerted;
 	gint64 start;
 	gboolean abandoned = FALSE;
+	HandleUseData debug_data;
 
 	alerted = FALSE;
+
+	//first use of the handle
+	begin_use_handle ((int)handle, &debug_data);
 
 	if (mono_w32handle_test_capabilities (handle, MONO_W32HANDLE_CAP_SPECIAL_WAIT)) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p has special wait",
 			__func__, handle);
 
-		return mono_w32handle_ops_specialwait (handle, timeout, alertable ? &alerted : NULL);
+		ret = mono_w32handle_ops_specialwait (handle, timeout, alertable ? &alerted : NULL);
+		end_use_handle ((int)handle, &debug_data);
+		return ret;
 	}
 
 	if (!mono_w32handle_test_capabilities (handle, MONO_W32HANDLE_CAP_WAIT)) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p can't be waited for",
 			__func__, handle);
 
+		end_use_handle ((int)handle, &debug_data);
 		return MONO_W32HANDLE_WAIT_RET_FAILED;
 	}
 
@@ -1220,6 +1382,7 @@ mono_w32handle_wait_one (gpointer handle, guint32 timeout, gboolean alertable)
 	}
 
 done:
+	end_use_handle ((int)handle, &debug_data);
 	mono_w32handle_unlock_handle (handle);
 
 	return ret;
@@ -1234,6 +1397,7 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 	gint64 start;
 	gpointer handles_sorted [MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS];
 	gboolean abandoned [MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS] = {0};
+	HandleUseData debug_data[MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS];
 
 	if (nhandles == 0)
 		return MONO_W32HANDLE_WAIT_RET_FAILED;
@@ -1250,6 +1414,9 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 		return MONO_W32HANDLE_WAIT_RET_FAILED;
 	}
 
+	//this is the first point we poke at those handle, so we check here
+	begin_use_multiple (nhandles, handles, debug_data);
+
 	for (i = 0; i < nhandles; ++i) {
 		if (!mono_w32handle_test_capabilities (handles[i], MONO_W32HANDLE_CAP_WAIT)
 			 && !mono_w32handle_test_capabilities (handles[i], MONO_W32HANDLE_CAP_SPECIAL_WAIT))
@@ -1257,6 +1424,7 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p can't be waited for",
 				   __func__, handles [i]);
 
+			end_use_multiple (nhandles, handles, debug_data);
 			return MONO_W32HANDLE_WAIT_RET_FAILED;
 		}
 
@@ -1269,6 +1437,7 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p is duplicated",
 				__func__, handles_sorted [i]);
 
+			end_use_multiple (nhandles, handles, debug_data);
 			return MONO_W32HANDLE_WAIT_RET_FAILED;
 		}
 	}
@@ -1397,6 +1566,8 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 	}
 
 done:
+	end_use_multiple (nhandles, handles, debug_data);
+
 	for (i = 0; i < nhandles; i++) {
 		/* Unref everything we reffed above */
 		mono_w32handle_unref (handles [i]);
@@ -1413,6 +1584,7 @@ mono_w32handle_signal_and_wait (gpointer signal_handle, gpointer wait_handle, gu
 	gboolean alerted;
 	gboolean abandoned = FALSE;
 	gpointer handles [2];
+	HandleUseData debug_data [2];
 
 	alerted = FALSE;
 
@@ -1428,6 +1600,7 @@ mono_w32handle_signal_and_wait (gpointer signal_handle, gpointer wait_handle, gu
 
 	handles [0] = wait_handle;
 	handles [1] = signal_handle;
+	begin_use_multiple (2, handles, debug_data);
 
 	mono_w32handle_lock_handles (handles, 2);
 
@@ -1487,6 +1660,7 @@ mono_w32handle_signal_and_wait (gpointer signal_handle, gpointer wait_handle, gu
 	}
 
 done:
+	end_use_multiple (2, handles, debug_data);
 	mono_w32handle_unlock_handle (wait_handle);
 
 	return ret;
