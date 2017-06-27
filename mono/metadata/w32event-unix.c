@@ -171,7 +171,7 @@ mono_w32event_create (gboolean manual, gboolean initial)
 gboolean
 mono_w32event_close (gpointer handle)
 {
-	return mono_w32handle_close (handle);
+	return mono_w32handle_close (handle, MONO_W32HANDLE_EVENT);
 }
 
 void
@@ -384,7 +384,7 @@ ves_icall_System_Threading_Events_ResetEvent_internal (gpointer handle)
 void
 ves_icall_System_Threading_Events_CloseEvent_internal (gpointer handle)
 {
-	mono_w32handle_close (handle);
+	mono_w32handle_close (handle, MONO_W32HANDLE_EVENT);
 }
 
 gpointer
