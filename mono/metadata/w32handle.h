@@ -22,6 +22,11 @@
 #define MONO_INFINITE_WAIT ((guint32) 0xFFFFFFFF)
 #endif
 
+/*
+ * Look up HANDLE asserting that it exists and its of type HANDLE_TYPE.
+ */
+#define MONO_W32HANDLE_LOOKUP(handle, handle_type) mono_w32handle_lookup_debug ((handle), (handle_type), __func__)
+
 typedef enum {
 	MONO_W32HANDLE_UNUSED = 0,
 	MONO_W32HANDLE_FILE,
@@ -127,6 +132,9 @@ mono_w32handle_get_typename (MonoW32HandleType type);
 
 gboolean
 mono_w32handle_lookup (gpointer handle, MonoW32HandleType type, gpointer *handle_specific);
+
+gpointer
+mono_w32handle_lookup_debug (gpointer handle, MonoW32HandleType type, const char *caller);
 
 void
 mono_w32handle_foreach (gboolean (*on_each)(gpointer handle, gpointer data, gpointer user_data), gpointer user_data);

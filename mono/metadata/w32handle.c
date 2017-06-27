@@ -517,6 +517,18 @@ mono_w32handle_lookup (gpointer handle, MonoW32HandleType type,
 	return(TRUE);
 }
 
+gpointer
+mono_w32handle_lookup_debug (gpointer handle, MonoW32HandleType type, const char *caller)
+{
+	gpointer handle_data;
+	gboolean res;
+
+	res = mono_w32handle_lookup (handle, type, &handle_data);
+	if (!res)
+		g_error ("%s: error looking up handle %p of type %s", caller, handle, mono_w32handle_get_typename (type));
+	return handle_data;
+}
+
 static gboolean
 mono_w32handle_ref_core (gpointer handle, MonoW32HandleBase *handle_data);
 

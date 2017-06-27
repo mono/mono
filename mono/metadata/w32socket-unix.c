@@ -165,10 +165,7 @@ mono_w32socket_accept (SOCKET sock, struct sockaddr *addr, socklen_t *addrlen, g
 	}
 
 	handle = GUINT_TO_POINTER (sock);
-	if (!mono_w32handle_lookup (handle, MONO_W32HANDLE_SOCKET, (gpointer *)&socket_handle)) {
-		mono_w32socket_set_last_error (WSAENOTSOCK);
-		return INVALID_SOCKET;
-	}
+	socket_handle = MONO_W32HANDLE_LOOKUP (handle, MONO_W32HANDLE_SOCKET);
 
 	info = mono_thread_info_current ();
 
@@ -219,10 +216,7 @@ mono_w32socket_connect (SOCKET sock, const struct sockaddr *addr, int addrlen, g
 	MonoW32HandleSocket *socket_handle;
 
 	handle = GUINT_TO_POINTER (sock);
-	if (!mono_w32handle_lookup (handle, MONO_W32HANDLE_SOCKET, (gpointer *)&socket_handle)) {
-		mono_w32socket_set_last_error (WSAENOTSOCK);
-		return SOCKET_ERROR;
-	}
+	socket_handle = MONO_W32HANDLE_LOOKUP (handle, MONO_W32HANDLE_SOCKET);
 
 	if (connect (sock, addr, addrlen) == -1) {
 		MonoThreadInfo *info;
@@ -309,10 +303,7 @@ mono_w32socket_recvfrom (SOCKET sock, char *buf, int len, int flags, struct sock
 	MonoThreadInfo *info;
 
 	handle = GUINT_TO_POINTER (sock);
-	if (!mono_w32handle_lookup (handle, MONO_W32HANDLE_SOCKET, (gpointer *)&socket_handle)) {
-		mono_w32socket_set_last_error (WSAENOTSOCK);
-		return SOCKET_ERROR;
-	}
+	socket_handle = MONO_W32HANDLE_LOOKUP (handle, MONO_W32HANDLE_SOCKET);
 
 	info = mono_thread_info_current ();
 
@@ -387,10 +378,7 @@ mono_w32socket_recvbuffers (SOCKET sock, WSABUF *buffers, guint32 count, guint32
 	g_assert (complete == NULL);
 
 	handle = GUINT_TO_POINTER (sock);
-	if (!mono_w32handle_lookup (handle, MONO_W32HANDLE_SOCKET, (gpointer *)&socket_handle)) {
-		mono_w32socket_set_last_error (WSAENOTSOCK);
-		return SOCKET_ERROR;
-	}
+	socket_handle = MONO_W32HANDLE_LOOKUP (handle, MONO_W32HANDLE_SOCKET);
 
 	info = mono_thread_info_current ();
 
@@ -773,10 +761,7 @@ mono_w32socket_getsockopt (SOCKET sock, gint level, gint optname, gpointer optva
 	MonoW32HandleSocket *socket_handle;
 
 	handle = GUINT_TO_POINTER (sock);
-	if (!mono_w32handle_lookup (handle, MONO_W32HANDLE_SOCKET, (gpointer *)&socket_handle)) {
-		mono_w32socket_set_last_error (WSAENOTSOCK);
-		return SOCKET_ERROR;
-	}
+	socket_handle = MONO_W32HANDLE_LOOKUP (handle, MONO_W32HANDLE_SOCKET);
 
 	tmp_val = optval;
 	if (level == SOL_SOCKET &&
@@ -906,10 +891,7 @@ mono_w32socket_shutdown (SOCKET sock, gint how)
 	gint ret;
 
 	handle = GUINT_TO_POINTER (sock);
-	if (!mono_w32handle_lookup (handle, MONO_W32HANDLE_SOCKET, (gpointer *)&socket_handle)) {
-		mono_w32socket_set_last_error (WSAENOTSOCK);
-		return SOCKET_ERROR;
-	}
+	socket_handle = MONO_W32HANDLE_LOOKUP (handle, MONO_W32HANDLE_SOCKET);
 
 	if (how == SHUT_RD || how == SHUT_RDWR)
 		socket_handle->still_readable = 0;
@@ -940,10 +922,7 @@ mono_w32socket_disconnect (SOCKET sock, gboolean reuse)
 	 * if we really wanted to */
 
 	handle = GUINT_TO_POINTER (sock);
-	if (!mono_w32handle_lookup (handle, MONO_W32HANDLE_SOCKET, (gpointer *)&socket_handle)) {
-		mono_w32socket_set_last_error (WSAENOTSOCK);
-		return SOCKET_ERROR;
-	}
+	socket_handle = MONO_W32HANDLE_LOOKUP (handle, MONO_W32HANDLE_SOCKET);
 
 	newsock = socket (socket_handle->domain, socket_handle->type, socket_handle->protocol);
 	if (newsock == -1) {

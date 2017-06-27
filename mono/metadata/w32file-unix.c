@@ -1147,18 +1147,10 @@ static gboolean
 file_read(gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread)
 {
 	MonoW32HandleFile *file_handle;
-	gboolean ok;
 	gint fd, ret;
 	MonoThreadInfo *info = mono_thread_info_current ();
 	
-	ok=mono_w32handle_lookup (handle, MONO_W32HANDLE_FILE,
-				(gpointer *)&file_handle);
-	if(ok==FALSE) {
-		g_warning ("%s: error looking up file handle %p", __func__,
-			   handle);
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return(FALSE);
-	}
+	file_handle = MONO_W32HANDLE_LOOKUP (handle, MONO_W32HANDLE_FILE);
 
 	fd = file_handle->fd;
 	if(bytesread!=NULL) {
@@ -1201,19 +1193,11 @@ static gboolean
 file_write(gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten)
 {
 	MonoW32HandleFile *file_handle;
-	gboolean ok;
 	gint ret, fd;
 	off_t current_pos = 0;
 	MonoThreadInfo *info = mono_thread_info_current ();
 	
-	ok=mono_w32handle_lookup (handle, MONO_W32HANDLE_FILE,
-				(gpointer *)&file_handle);
-	if(ok==FALSE) {
-		g_warning ("%s: error looking up file handle %p", __func__,
-			   handle);
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return(FALSE);
-	}
+	file_handle = MONO_W32HANDLE_LOOKUP (handle, MONO_W32HANDLE_FILE);
 
 	fd = file_handle->fd;
 	
@@ -1283,17 +1267,9 @@ file_write(gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byt
 static gboolean file_flush(gpointer handle)
 {
 	MonoW32HandleFile *file_handle;
-	gboolean ok;
 	gint ret, fd;
 	
-	ok=mono_w32handle_lookup (handle, MONO_W32HANDLE_FILE,
-				(gpointer *)&file_handle);
-	if(ok==FALSE) {
-		g_warning ("%s: error looking up file handle %p", __func__,
-			   handle);
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return(FALSE);
-	}
+	file_handle = MONO_W32HANDLE_LOOKUP (handle, MONO_W32HANDLE_FILE);
 
 	fd = file_handle->fd;
 
@@ -1323,19 +1299,11 @@ static guint32 file_seek(gpointer handle, gint32 movedistance,
 			 gint32 *highmovedistance, gint method)
 {
 	MonoW32HandleFile *file_handle;
-	gboolean ok;
 	gint64 offset, newpos;
 	gint whence, fd;
 	guint32 ret;
 	
-	ok=mono_w32handle_lookup (handle, MONO_W32HANDLE_FILE,
-				(gpointer *)&file_handle);
-	if(ok==FALSE) {
-		g_warning ("%s: error looking up file handle %p", __func__,
-			   handle);
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return(INVALID_SET_FILE_POINTER);
-	}
+	file_handle = MONO_W32HANDLE_LOOKUP (handle, MONO_W32HANDLE_FILE);
 	
 	fd = file_handle->fd;
 
@@ -1424,20 +1392,12 @@ static guint32 file_seek(gpointer handle, gint32 movedistance,
 static gboolean file_setendoffile(gpointer handle)
 {
 	MonoW32HandleFile *file_handle;
-	gboolean ok;
 	struct stat statbuf;
 	off_t pos;
 	gint ret, fd;
 	MonoThreadInfo *info = mono_thread_info_current ();
-	
-	ok=mono_w32handle_lookup (handle, MONO_W32HANDLE_FILE,
-				(gpointer *)&file_handle);
-	if(ok==FALSE) {
-		g_warning ("%s: error looking up file handle %p", __func__,
-			   handle);
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return(FALSE);
-	}
+
+	file_handle = MONO_W32HANDLE_LOOKUP (handle, MONO_W32HANDLE_FILE);
 	fd = file_handle->fd;
 	
 	if(!(file_handle->fileaccess & GENERIC_WRITE) &&
@@ -1541,20 +1501,12 @@ static gboolean file_setendoffile(gpointer handle)
 static guint32 file_getfilesize(gpointer handle, guint32 *highsize)
 {
 	MonoW32HandleFile *file_handle;
-	gboolean ok;
 	struct stat statbuf;
 	guint32 size;
 	gint ret;
 	gint fd;
-	
-	ok=mono_w32handle_lookup (handle, MONO_W32HANDLE_FILE,
-				(gpointer *)&file_handle);
-	if(ok==FALSE) {
-		g_warning ("%s: error looking up file handle %p", __func__,
-			   handle);
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return(INVALID_FILE_SIZE);
-	}
+
+	file_handle = MONO_W32HANDLE_LOOKUP (handle, MONO_W32HANDLE_FILE);
 	fd = file_handle->fd;
 	
 	if(!(file_handle->fileaccess & GENERIC_READ) &&
@@ -1634,19 +1586,11 @@ static gboolean file_getfiletime(gpointer handle, FILETIME *create_time,
 				 FILETIME *write_time)
 {
 	MonoW32HandleFile *file_handle;
-	gboolean ok;
 	struct stat statbuf;
 	guint64 create_ticks, access_ticks, write_ticks;
 	gint ret, fd;
 	
-	ok=mono_w32handle_lookup (handle, MONO_W32HANDLE_FILE,
-				(gpointer *)&file_handle);
-	if(ok==FALSE) {
-		g_warning ("%s: error looking up file handle %p", __func__,
-			   handle);
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return(FALSE);
-	}
+	file_handle = MONO_W32HANDLE_LOOKUP (handle, MONO_W32HANDLE_FILE);
 	fd = file_handle->fd;
 
 	if(!(file_handle->fileaccess & GENERIC_READ) &&
@@ -1717,20 +1661,12 @@ static gboolean file_setfiletime(gpointer handle,
 				 const FILETIME *write_time)
 {
 	MonoW32HandleFile *file_handle;
-	gboolean ok;
 	struct utimbuf utbuf;
 	struct stat statbuf;
 	guint64 access_ticks, write_ticks;
 	gint ret, fd;
 	
-	ok=mono_w32handle_lookup (handle, MONO_W32HANDLE_FILE,
-				(gpointer *)&file_handle);
-	if(ok==FALSE) {
-		g_warning ("%s: error looking up file handle %p", __func__,
-			   handle);
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return(FALSE);
-	}
+	file_handle = MONO_W32HANDLE_LOOKUP (handle, MONO_W32HANDLE_FILE);
 	fd = file_handle->fd;
 	
 	if(!(file_handle->fileaccess & GENERIC_WRITE) &&
@@ -1871,18 +1807,10 @@ static gboolean
 console_read(gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread)
 {
 	MonoW32HandleFile *console_handle;
-	gboolean ok;
 	gint ret, fd;
 	MonoThreadInfo *info = mono_thread_info_current ();
 
-	ok=mono_w32handle_lookup (handle, MONO_W32HANDLE_CONSOLE,
-				(gpointer *)&console_handle);
-	if(ok==FALSE) {
-		g_warning ("%s: error looking up console handle %p", __func__,
-			   handle);
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return(FALSE);
-	}
+	console_handle = MONO_W32HANDLE_LOOKUP (handle, MONO_W32HANDLE_CONSOLE);
 	fd = console_handle->fd;
 	
 	if(bytesread!=NULL) {
@@ -1923,18 +1851,10 @@ static gboolean
 console_write(gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten)
 {
 	MonoW32HandleFile *console_handle;
-	gboolean ok;
 	gint ret, fd;
 	MonoThreadInfo *info = mono_thread_info_current ();
 	
-	ok=mono_w32handle_lookup (handle, MONO_W32HANDLE_CONSOLE,
-				(gpointer *)&console_handle);
-	if(ok==FALSE) {
-		g_warning ("%s: error looking up console handle %p", __func__,
-			   handle);
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return(FALSE);
-	}
+	console_handle = MONO_W32HANDLE_LOOKUP (handle, MONO_W32HANDLE_CONSOLE);
 	fd = console_handle->fd;
 	
 	if(byteswritten!=NULL) {
@@ -2029,18 +1949,10 @@ static gboolean
 pipe_read (gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread)
 {
 	MonoW32HandleFile *pipe_handle;
-	gboolean ok;
 	gint ret, fd;
 	MonoThreadInfo *info = mono_thread_info_current ();
 
-	ok=mono_w32handle_lookup (handle, MONO_W32HANDLE_PIPE,
-				(gpointer *)&pipe_handle);
-	if(ok==FALSE) {
-		g_warning ("%s: error looking up pipe handle %p", __func__,
-			   handle);
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return(FALSE);
-	}
+	pipe_handle = MONO_W32HANDLE_LOOKUP (handle, MONO_W32HANDLE_PIPE);
 	fd = pipe_handle->fd;
 
 	if(bytesread!=NULL) {
@@ -2091,18 +2003,10 @@ static gboolean
 pipe_write(gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten)
 {
 	MonoW32HandleFile *pipe_handle;
-	gboolean ok;
 	gint ret, fd;
 	MonoThreadInfo *info = mono_thread_info_current ();
 	
-	ok=mono_w32handle_lookup (handle, MONO_W32HANDLE_PIPE,
-				(gpointer *)&pipe_handle);
-	if(ok==FALSE) {
-		g_warning ("%s: error looking up pipe handle %p", __func__,
-			   handle);
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return(FALSE);
-	}
+	pipe_handle = MONO_W32HANDLE_LOOKUP (handle, MONO_W32HANDLE_PIPE);
 	fd = pipe_handle->fd;
 	
 	if(byteswritten!=NULL) {
@@ -3469,7 +3373,6 @@ gboolean
 mono_w32file_find_next (gpointer handle, WIN32_FIND_DATA *find_data)
 {
 	MonoW32HandleFind *find_handle;
-	gboolean ok;
 	struct stat buf, linkbuf;
 	gint result;
 	gchar *filename;
@@ -3479,14 +3382,7 @@ mono_w32file_find_next (gpointer handle, WIN32_FIND_DATA *find_data)
 	glong bytes;
 	gboolean ret = FALSE;
 	
-	ok=mono_w32handle_lookup (handle, MONO_W32HANDLE_FIND,
-				(gpointer *)&find_handle);
-	if(ok==FALSE) {
-		g_warning ("%s: error looking up find handle %p", __func__,
-			   handle);
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return(FALSE);
-	}
+	find_handle = MONO_W32HANDLE_LOOKUP (handle, MONO_W32HANDLE_FIND);
 
 	mono_w32handle_lock_handle (handle);
 	
@@ -3597,21 +3493,8 @@ gboolean
 mono_w32file_find_close (gpointer handle)
 {
 	MonoW32HandleFind *find_handle;
-	gboolean ok;
-
-	if (handle == NULL) {
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return(FALSE);
-	}
 	
-	ok=mono_w32handle_lookup (handle, MONO_W32HANDLE_FIND,
-				(gpointer *)&find_handle);
-	if(ok==FALSE) {
-		g_warning ("%s: error looking up find handle %p", __func__,
-			   handle);
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return(FALSE);
-	}
+	find_handle = MONO_W32HANDLE_LOOKUP (handle, MONO_W32HANDLE_FIND);
 
 	mono_w32handle_lock_handle (handle);
 	
@@ -4951,11 +4834,7 @@ LockFile (gpointer handle, guint32 offset_low, guint32 offset_high, guint32 leng
 	MonoW32HandleFile *file_handle;
 	off_t offset, length;
 
-	if (!mono_w32handle_lookup (handle, MONO_W32HANDLE_FILE, (gpointer *)&file_handle)) {
-		g_warning ("%s: error looking up file handle %p", __func__, handle);
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return FALSE;
-	}
+	file_handle = MONO_W32HANDLE_LOOKUP (handle, MONO_W32HANDLE_FILE);
 
 	if (!(file_handle->fileaccess & GENERIC_READ) && !(file_handle->fileaccess & GENERIC_WRITE) && !(file_handle->fileaccess & GENERIC_ALL)) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: handle %p doesn't have GENERIC_READ or GENERIC_WRITE access: %u", __func__, handle, file_handle->fileaccess);
@@ -4988,11 +4867,7 @@ UnlockFile (gpointer handle, guint32 offset_low, guint32 offset_high, guint32 le
 	MonoW32HandleFile *file_handle;
 	off_t offset, length;
 
-	if (!mono_w32handle_lookup (handle, MONO_W32HANDLE_FILE, (gpointer *)&file_handle)) {
-		g_warning ("%s: error looking up file handle %p", __func__, handle);
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return FALSE;
-	}
+	file_handle = MONO_W32HANDLE_LOOKUP (handle, MONO_W32HANDLE_FILE);
 
 	if (!(file_handle->fileaccess & GENERIC_READ) && !(file_handle->fileaccess & GENERIC_WRITE) && !(file_handle->fileaccess & GENERIC_ALL)) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: handle %p doesn't have GENERIC_READ or GENERIC_WRITE access: %u", __func__, handle, file_handle->fileaccess);

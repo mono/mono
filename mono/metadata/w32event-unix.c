@@ -51,17 +51,9 @@ static void event_handle_signal (gpointer handle, MonoW32HandleType type, MonoW3
 
 static gboolean event_handle_own (gpointer handle, MonoW32HandleType type, gboolean *abandoned)
 {
-	MonoW32HandleEvent *event_handle;
-	gboolean ok;
+	MonoW32HandleEvent *event_handle = MONO_W32HANDLE_LOOKUP (handle, type);
 
 	*abandoned = FALSE;
-
-	ok = mono_w32handle_lookup (handle, type, (gpointer *)&event_handle);
-	if (!ok) {
-		g_warning ("%s: error looking up %s handle %p",
-			__func__, mono_w32handle_get_typename (type), handle);
-		return FALSE;
-	}
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: owning %s handle %p",
 		__func__, mono_w32handle_get_typename (type), handle);
@@ -307,11 +299,6 @@ ves_icall_System_Threading_Events_SetEvent_internal (gpointer handle)
 	MonoW32HandleType type;
 	MonoW32HandleEvent *event_handle;
 
-	if (handle == NULL) {
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return(FALSE);
-	}
-
 	switch (type = mono_w32handle_get_type (handle)) {
 	case MONO_W32HANDLE_EVENT:
 	case MONO_W32HANDLE_NAMEDEVENT:
@@ -321,11 +308,7 @@ ves_icall_System_Threading_Events_SetEvent_internal (gpointer handle)
 		return FALSE;
 	}
 
-	if (!mono_w32handle_lookup (handle, type, (gpointer *)&event_handle)) {
-		g_warning ("%s: error looking up %s handle %p",
-			__func__, mono_w32handle_get_typename (type), handle);
-		return FALSE;
-	}
+	event_handle = MONO_W32HANDLE_LOOKUP (handle, type);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: setting %s handle %p",
 		__func__, mono_w32handle_get_typename (type), handle);
@@ -352,11 +335,6 @@ ves_icall_System_Threading_Events_ResetEvent_internal (gpointer handle)
 
 	mono_w32error_set_last (ERROR_SUCCESS);
 
-	if (handle == NULL) {
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return(FALSE);
-	}
-
 	switch (type = mono_w32handle_get_type (handle)) {
 	case MONO_W32HANDLE_EVENT:
 	case MONO_W32HANDLE_NAMEDEVENT:
@@ -366,11 +344,7 @@ ves_icall_System_Threading_Events_ResetEvent_internal (gpointer handle)
 		return FALSE;
 	}
 
-	if (!mono_w32handle_lookup (handle, type, (gpointer *)&event_handle)) {
-		g_warning ("%s: error looking up %s handle %p",
-			__func__, mono_w32handle_get_typename (type), handle);
-		return FALSE;
-	}
+	event_handle = MONO_W32HANDLE_LOOKUP (handle, type);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: resetting %s handle %p",
 		__func__, mono_w32handle_get_typename (type), handle);
