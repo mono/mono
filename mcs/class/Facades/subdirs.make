@@ -73,6 +73,12 @@ winaot_PARALLEL_SUBDIRS :=
 
 orbis_PARALLEL_SUBDIRS :=
 
+unityjit_SUBDIRS = $(common_DEPS_SUBDIRS) $(drawing_DEPS_SUBDIRS) netstandard
+unityjit_PARALLEL_SUBDIRS = $(common_SUBDIRS)
+
+unityaot_SUBDIRS = $(common_DEPS_SUBDIRS) $(drawing_DEPS_SUBDIRS) $(mobile_only_DEPS_SUBDIRS) netstandard
+unityaot_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
+
 mobile_only_SUBDIRS = System.Net.Ping System.Runtime.Serialization.Formatters System.Security.Cryptography.Csp System.Security.Cryptography.Pkcs \
 System.Security.Cryptography.Cng
 
