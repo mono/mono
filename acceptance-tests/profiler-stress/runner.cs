@@ -95,16 +95,22 @@ namespace Mono.Profiling.Tests.Stress {
 			for (var i = 0; i < benchmarks.Length; i++) {
 				var bench = benchmarks [i];
 
-				var sampleFreq = rand.Next (0, 1001);
+				var sampleFreq = rand.Next (-1000, 1001);
 				var sampleMode = rand.Next (0, 2) == 1 ? "real" : "process";
 				var maxSamples = rand.Next (0, cpus * 2000 + 1);
-				var heapShotFreq = rand.Next (0, 11);
+				var heapShotFreq = rand.Next (-10, 11);
 				var maxFrames = rand.Next (0, 33);
 				var options = _options.ToDictionary (x => x, _ => rand.Next (0, 2) == 1)
 				                      .Select (x => (x.Value ? string.Empty : "no") + x.Key)
 				                      .ToArray ();
 
-				var profOptions = $"sample={sampleFreq},sampling-{sampleMode},maxsamples={maxSamples},heapshot={heapShotFreq}gc,maxframes={maxFrames},{string.Join (",", options)},output=/dev/null";
+				var profOptions = $"maxframes={maxFrames},{string.Join (",", options)},output=/dev/null";
+
+				if (sampleFreq > 0)
+					profOptions += $",sample={sampleFreq},sampling-{sampleMode},maxsamples={maxSamples}";
+
+				if (heapShotFreq > 0)
+					profOptions += $",heapshot={heapShotFreq}gc";
 
 				var info = new ProcessStartInfo {
 					UseShellExecute = false,
