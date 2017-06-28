@@ -47,15 +47,9 @@ static void sem_handle_signal (gpointer handle, MonoW32HandleType type, MonoW32H
 
 static gboolean sem_handle_own (gpointer handle, MonoW32HandleType type, gboolean *abandoned)
 {
-	MonoW32HandleSemaphore *sem_handle;
+	MonoW32HandleSemaphore *sem_handle = MONO_W32HANDLE_LOOKUP (handle, type);
 
 	*abandoned = FALSE;
-
-	if (!mono_w32handle_lookup (handle, type, (gpointer *)&sem_handle)) {
-		g_warning ("%s: error looking up %s handle %p",
-			__func__, mono_w32handle_get_typename (type), handle);
-		return FALSE;
-	}
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: owning %s handle %p",
 		__func__, mono_w32handle_get_typename (type), handle);
@@ -282,11 +276,6 @@ ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (gpointer handle,
 	MonoW32HandleSemaphore *sem_handle;
 	MonoBoolean ret;
 
-	if (!handle) {
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return FALSE;
-	}
-
 	switch (type = mono_w32handle_get_type (handle)) {
 	case MONO_W32HANDLE_SEM:
 	case MONO_W32HANDLE_NAMEDSEM:
@@ -296,10 +285,7 @@ ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (gpointer handle,
 		return FALSE;
 	}
 
-	if (!mono_w32handle_lookup (handle, type, (gpointer *)&sem_handle)) {
-		g_warning ("%s: error looking up sem handle %p", __func__, handle);
-		return FALSE;
-	}
+	sem_handle = MONO_W32HANDLE_LOOKUP (handle, type);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: releasing %s handle %p",
 		__func__, mono_w32handle_get_typename (type), handle);
