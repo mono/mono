@@ -1220,6 +1220,7 @@ namespace MonoTests.System.Net
 
 
 		[Test]
+		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif

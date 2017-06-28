@@ -94,8 +94,10 @@ endif
 
 test_assemblies :=
 
+test_lib_output = $(topdir)/class/lib/$(PROFILE)/$(test_lib)
+
 ifdef HAVE_CS_TESTS
-test_assemblies += $(test_lib)
+test_assemblies += $(test_lib_output)
 endif
 
 ifdef test_assemblies
@@ -122,8 +124,8 @@ LABELS_ARG = -labels
 endif
 
 ifdef ALWAYS_AOT
-test-local-aot-compile: $(topdir)/build/deps/nunit-$(PROFILE).stamp
-	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" MONO_REGISTRY_PATH="$(HOME)/.mono/registry" MONO_TESTS_IN_PROGRESS="yes" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(AOT_BUILD_FLAGS) $(test_assemblies)
+test-local-aot-compile: $(topdir)/build/deps/nunit-$(PROFILE).stamp $(test_assemblies)
+	make -C $(topdir)/class aot-all-profile
 
 else
 test-local-aot-compile: $(topdir)/build/deps/nunit-$(PROFILE).stamp
@@ -141,10 +143,36 @@ ifdef TEST_NUNITLITE_APP_CONFIG_RUNTIME
 	sed -i -e "/__INSERT_CUSTOM_APP_CONFIG_RUNTIME__/r $(TEST_NUNITLITE_APP_CONFIG_RUNTIME)" $(NUNITLITE_CONFIG_FILE)
 endif
 
+ifdef PLATFORM_AOT_SUFFIX
+
+MKBUNDLE_TEST_BIN = $(TEST_HARNESS).static
+MKBUNDLE_EXE = $(topdir)/class/lib/$(PROFILE)/mkbundle.exe
+TEST_ASSEMBLIES := $(sort $(patsubst .//%,%,$(filter-out %.exe.static %.dll.dll %.exe.dll %bare% %plaincore% %secxml% %Facades% %ilasm%,$(filter %test.dll nunit%.dll nunit%.exe,$(wildcard $(topdir)/class/lib/$(PROFILE)/*)))))
+
+$(MKBUNDLE_EXE): $(topdir)/tools/mkbundle/mkbundle.cs
+	make -C $(topdir)/tools/mkbundle
+
+mkbundle-all-tests:
+	$(Q_AOT) $(MAKE) -C $(topdir)/class do-test
+	$(Q_AOT) $(MAKE) -C $(topdir)/tools/mkbundle
+	$(Q_AOT) $(MAKE) $(MKBUNDLE_TEST_BIN) # recursive make re-computes variables for TEST_ASSEMBLIES
+
+$(MKBUNDLE_TEST_BIN): $(TEST_ASSEMBLIES) $(TEST_HARNESS) $(MKBUNDLE_EXE)
+	$(Q_AOT) MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)" PKG_CONFIG_PATH="$(topdir)/../data" $(RUNTIME) $(RUNTIME_FLAGS) $(MKBUNDLE_EXE) -L $(topdir)/class/lib/$(PROFILE) -v --deps $(TEST_HARNESS) $(TEST_ASSEMBLIES) -o $(MKBUNDLE_TEST_BIN) --aot-mode $(AOT_MODE) --aot-runtime $(RUNTIME) --aot-args $(AOT_BUILD_ATTRS) --in-tree $(topdir)/.. --cil-strip $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/mono-cil-strip.exe --managed-linker $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/monolinker.exe --config $(topdir)/../data/config --i18n all
+
+endif # PLATFORM_AOT_SUFFIX
+
+ifneq ($(wildcard $(MKBUNDLE_TEST_BIN)),)
+TEST_HARNESS_EXEC=$(MKBUNDLE_TEST_BIN)
+TEST_HARNESS_EXCLUDES:=$(TEST_HARNESS_EXCLUDES),StaticLinkedAotNotWorking
+else 
+TEST_HARNESS_EXEC=$(TEST_RUNTIME) $(RUNTIME_FLAGS) $(AOT_RUN_FLAGS) $(TEST_HARNESS) 
+endif
+
 ## FIXME: i18n problem in the 'sed' command below
-run-test-lib: test-local test-local-aot-compile patch-nunitlite-appconfig
+run-test-lib: test-local test-local-aot-compile patch-nunitlite-appconfig 
 	ok=:; \
-	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" MONO_REGISTRY_PATH="$(HOME)/.mono/registry" MONO_TESTS_IN_PROGRESS="yes" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(AOT_RUN_FLAGS) $(TEST_HARNESS) $(test_assemblies) $(NOSHADOW_FLAG) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) $(TEST_HARNESS_EXCLUDES) $(LABELS_ARG) -format:nunit2 -result:TestResult-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG)|| ok=false; \
+	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" MONO_REGISTRY_PATH="$(HOME)/.mono/registry" MONO_TESTS_IN_PROGRESS="yes" $(TEST_HARNESS_EXEC) $(test_assemblies) $(NOSHADOW_FLAG) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) $(TEST_HARNESS_EXCLUDES) $(LABELS_ARG) -format:nunit2 -result:TestResult-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG)|| ok=false; \
 	if [ ! -f "TestResult-$(PROFILE).xml" ]; then echo "<?xml version='1.0' encoding='utf-8'?><test-results failures='1' total='1' not-run='0' name='bcl-tests' date='$$(date +%F)' time='$$(date +%T)'><test-suite name='$(strip $(test_assemblies))' success='False' time='0'><results><test-case name='crash' executed='True' success='False' time='0'><failure><message>The test runner didn't produce a test result XML, probably due to a crash of the runtime. Check the log for more details.</message><stack-trace></stack-trace></failure></test-case></results></test-suite></test-results>" > TestResult-$(PROFILE).xml; fi; \
 	$$ok
 
@@ -166,7 +194,7 @@ endif
 
 ifdef HAVE_CS_TESTS
 
-$(test_lib): $(the_assembly) $(test_response) $(test_nunit_dep)
+$(test_lib_output): $(the_assembly) $(test_response) $(test_nunit_dep)
 	$(TEST_COMPILE) $(LIBRARY_FLAGS) -target:library -out:$@ $(test_flags) $(LOCAL_TEST_COMPILER_ONDOTNET_FLAGS) @$(test_response)
 
 test_response_preprocessed = $(test_response)_preprocessed
@@ -186,7 +214,7 @@ $(test_makefrag): $(test_response)
 
 -include $(test_makefrag)
 
-build-test-lib: $(test_lib)
+build-test-lib: $(test_lib_output)
 	@echo Building testing lib
 
 endif
