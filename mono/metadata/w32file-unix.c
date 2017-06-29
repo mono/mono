@@ -2487,7 +2487,7 @@ mono_w32file_close (gpointer handle)
 	/* FIXME: we transition here and not in file_close, pipe_close,
 	 * console_close because w32handle_close is not coop aware yet, but it
 	 * calls back into w32file. */
-	res = mono_w32handle_close (handle);
+	res = mono_w32handle_close (handle, MONO_W32HANDLE_FILE | MONO_W32HANDLE_CONSOLE);
 	MONO_EXIT_GC_SAFE;
 	return res;
 }
@@ -3488,7 +3488,7 @@ mono_w32file_find_next (gpointer handle, WIN32_FIND_DATA *find_data)
 		return(FALSE);
 	}
 
-	mono_w32handle_lock_handle (handle);
+	mono_w32handle_lock_handle (handle, MONO_W32HANDLE_FIND);
 	
 retry:
 	if (find_handle->count >= find_handle->num) {
@@ -3588,7 +3588,7 @@ retry:
 	g_free (utf16_basename);
 
 cleanup:
-	mono_w32handle_unlock_handle (handle);
+	mono_w32handle_unlock_handle (handle, MONO_W32HANDLE_FIND);
 	
 	return(ret);
 }
@@ -3613,15 +3613,15 @@ mono_w32file_find_close (gpointer handle)
 		return(FALSE);
 	}
 
-	mono_w32handle_lock_handle (handle);
+	mono_w32handle_lock_handle (handle, MONO_W32HANDLE_FIND);
 	
 	g_strfreev (find_handle->namelist);
 	g_free (find_handle->dir_part);
 
-	mono_w32handle_unlock_handle (handle);
+	mono_w32handle_unlock_handle (handle, MONO_W32HANDLE_FIND);
 	
 	MONO_ENTER_GC_SAFE;
-	mono_w32handle_unref (handle);
+	mono_w32handle_unref (handle, MONO_W32HANDLE_FIND);
 	MONO_EXIT_GC_SAFE;
 	
 	return(TRUE);
@@ -3992,7 +3992,7 @@ mono_w32file_create_pipe (gpointer *readpipe, gpointer *writepipe, guint32 size)
 		g_warning ("%s: error creating pipe write handle", __func__);
 
 		MONO_ENTER_GC_SAFE;
-		mono_w32handle_unref (read_handle);
+		mono_w32handle_unref (read_handle, MONO_W32HANDLE_PIPE);
 		
 		close (filedes[0]);
 		close (filedes[1]);

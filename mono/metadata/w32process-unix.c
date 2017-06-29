@@ -736,7 +736,7 @@ processes_cleanup (void)
 		if (process->signalled && process->handle) {
 			/* This process has exited and we need to remove the artifical ref
 			 * on the handle */
-			mono_w32handle_unref (process->handle);
+			mono_w32handle_unref (process->handle, MONO_W32HANDLE_PROCESS);
 			process->handle = NULL;
 		}
 	}
@@ -2173,7 +2173,7 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStar
 			goto done;
 		}
 		/* Shell exec should not return a process handle when it spawned a GUI thing, like a browser. */
-		mono_w32handle_close (process_info->process_handle);
+		mono_w32handle_close (process_info->process_handle, MONO_W32HANDLE_PROCESS);
 		process_info->process_handle = NULL;
 	}
 
@@ -2356,7 +2356,7 @@ ves_icall_Microsoft_Win32_NativeMethods_GetExitCodeProcess (gpointer handle, gin
 MonoBoolean
 ves_icall_Microsoft_Win32_NativeMethods_CloseProcess (gpointer handle)
 {
-	return mono_w32handle_close (handle);
+	return mono_w32handle_close (handle, MONO_W32HANDLE_PROCESS);
 }
 
 MonoBoolean
