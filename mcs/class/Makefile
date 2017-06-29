@@ -325,6 +325,7 @@ net_4_x_parallel_dirs := \
 
 unityjit_dirs := \
 	$(net_4_x_dirs) \
+	System.ComponentModel.Composition.4.5 \
 	$(pcl_facade_dirs)
 
 unityaot_dirs := \
