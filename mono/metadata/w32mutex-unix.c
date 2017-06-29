@@ -61,7 +61,7 @@ thread_disown_mutex (MonoInternalThread *internal, gpointer handle)
 	removed = g_ptr_array_remove (internal->owned_mutexes, handle);
 	g_assert (removed);
 
-	mono_w32handle_unref (handle);
+	mono_w32handle_unref (handle, MONO_W32HANDLE_MUTEX);
 }
 
 static gboolean
@@ -284,14 +284,14 @@ static gpointer mutex_handle_create (MonoW32HandleMutex *mutex_handle, MonoW32Ha
 		return NULL;
 	}
 
-	mono_w32handle_lock_handle (handle);
+	mono_w32handle_lock_handle (handle, type);
 
 	if (owned)
 		mutex_handle_own (handle, type, &abandoned);
 	else
 		mono_w32handle_set_signal_state (handle, TRUE, FALSE);
 
-	mono_w32handle_unlock_handle (handle);
+	mono_w32handle_unlock_handle (handle, type);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: created %s handle %p",
 		__func__, mono_w32handle_get_typename (type), handle);
@@ -405,7 +405,7 @@ ves_icall_System_Threading_Mutex_ReleaseMutex_internal (gpointer handle)
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: releasing %s handle %p, tid: %p recursion: %d",
 		__func__, mono_w32handle_get_typename (type), handle, (gpointer) mutex_handle->tid, mutex_handle->recursion);
 
-	mono_w32handle_lock_handle (handle);
+	mono_w32handle_lock_handle (handle, MONO_W32HANDLE_MUTEX);
 
 	tid = pthread_self ();
 
@@ -434,7 +434,7 @@ ves_icall_System_Threading_Mutex_ReleaseMutex_internal (gpointer handle)
 		}
 	}
 
-	mono_w32handle_unlock_handle (handle);
+	mono_w32handle_unlock_handle (handle, MONO_W32HANDLE_MUTEX);
 
 	return ret;
 }
@@ -526,7 +526,7 @@ mono_w32mutex_abandon (void)
 			g_error ("%s: trying to release mutex %p acquired by thread %p from thread %p",
 				__func__, handle, (gpointer) mutex_handle->tid, (gpointer) tid);
 
-		mono_w32handle_lock_handle (handle);
+		mono_w32handle_lock_handle (handle, type);
 
 		mutex_handle->recursion = 0;
 		mutex_handle->tid = 0;
@@ -539,7 +539,7 @@ mono_w32mutex_abandon (void)
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: abandoned %s handle %p",
 			__func__, mono_w32handle_get_typename (type), handle);
 
-		mono_w32handle_unlock_handle (handle);
+		mono_w32handle_unlock_handle (handle, type);
 	}
 
 	g_ptr_array_free (internal->owned_mutexes, TRUE);

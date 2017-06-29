@@ -24,20 +24,19 @@
 
 typedef enum {
 	MONO_W32HANDLE_UNUSED = 0,
-	MONO_W32HANDLE_FILE,
-	MONO_W32HANDLE_CONSOLE,
-	MONO_W32HANDLE_THREAD,
-	MONO_W32HANDLE_SEM,
-	MONO_W32HANDLE_MUTEX,
-	MONO_W32HANDLE_EVENT,
-	MONO_W32HANDLE_SOCKET,
-	MONO_W32HANDLE_FIND,
-	MONO_W32HANDLE_PROCESS,
-	MONO_W32HANDLE_PIPE,
-	MONO_W32HANDLE_NAMEDMUTEX,
-	MONO_W32HANDLE_NAMEDSEM,
-	MONO_W32HANDLE_NAMEDEVENT,
-	MONO_W32HANDLE_COUNT
+	MONO_W32HANDLE_FILE = 1 << 0,
+	MONO_W32HANDLE_CONSOLE = 1 << 1,
+	MONO_W32HANDLE_SEM = 1 << 2,
+	MONO_W32HANDLE_MUTEX = 1 << 3,
+	MONO_W32HANDLE_EVENT = 1 << 4,
+	MONO_W32HANDLE_SOCKET = 1 << 5,
+	MONO_W32HANDLE_FIND = 1 << 6,
+	MONO_W32HANDLE_PROCESS = 1 << 7,
+	MONO_W32HANDLE_PIPE = 1 << 8,
+	MONO_W32HANDLE_NAMEDMUTEX = 1 << 9,
+	MONO_W32HANDLE_NAMEDSEM = 1 << 10,
+	MONO_W32HANDLE_NAMEDEVENT = 1 << 11,
+	MONO_W32HANDLE_COUNT = 12
 } MonoW32HandleType;
 
 typedef enum {
@@ -117,7 +116,7 @@ gpointer
 mono_w32handle_new_fd (MonoW32HandleType type, int fd, gpointer handle_specific);
 
 gboolean
-mono_w32handle_close (gpointer handle);
+mono_w32handle_close (gpointer handle, MonoW32HandleType type);
 
 MonoW32HandleType
 mono_w32handle_get_type (gpointer handle);
@@ -138,7 +137,7 @@ void
 mono_w32handle_ref (gpointer handle);
 
 void
-mono_w32handle_unref (gpointer handle);
+mono_w32handle_unref (gpointer handle, MonoW32HandleType expected_types);
 
 void
 mono_w32handle_register_capabilities (MonoW32HandleType type, MonoW32HandleCapability caps);
@@ -159,10 +158,10 @@ void
 mono_w32handle_lock_handle (gpointer handle);
 
 gboolean
-mono_w32handle_trylock_handle (gpointer handle);
+mono_w32handle_trylock_handle (gpointer handle, MonoW32HandleType expected_types);
 
 void
-mono_w32handle_unlock_handle (gpointer handle);
+mono_w32handle_unlock_handle (gpointer handle, MonoW32HandleType expected_types);
 
 MonoW32HandleWaitRet
 mono_w32handle_wait_one (gpointer handle, guint32 timeout, gboolean alertable);
