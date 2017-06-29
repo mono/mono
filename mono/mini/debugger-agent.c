@@ -64,6 +64,7 @@
 #include <mono/metadata/verify-internals.h>
 #include <mono/metadata/reflection-internals.h>
 #include <mono/metadata/w32socket.h>
+#include <mono/metadata/w32socket-internals.h>
 #include <mono/utils/mono-coop-mutex.h>
 #include <mono/utils/mono-coop-semaphore.h>
 #include <mono/utils/mono-error-internals.h>
@@ -1184,7 +1185,11 @@ static int
 socket_transport_accept (int socket_fd)
 {
 	MONO_ENTER_GC_SAFE;
+#ifdef HOST_WIN32
+	conn_fd = mono_w32socket_accept (socket_fd, NULL, NULL, TRUE);
+#else
 	conn_fd = accept (socket_fd, NULL, NULL);
+#endif
 	MONO_EXIT_GC_SAFE;
 
 	if (conn_fd == -1) {
@@ -1388,6 +1393,8 @@ socket_transport_close1 (void)
 	/* Close the read part only so it can still send back replies */
 	/* Also shut down the connection listener so that we can exit normally */
 #ifdef HOST_WIN32
+	MonoThreadInfo* info = mono_thread_info_lookup (debugger_thread_id);
+	mono_threads_suspend_abort_syscall (info);
 	/* SD_RECEIVE doesn't break the recv in the debugger thread */
 	shutdown (conn_fd, SD_BOTH);
 	shutdown (listen_fd, SD_BOTH);
