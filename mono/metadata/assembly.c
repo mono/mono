@@ -1963,7 +1963,11 @@ has_reference_assembly_attribute_iterator (MonoImage *image, guint32 typeref_sco
 gboolean
 mono_assembly_has_reference_assembly_attribute (MonoAssembly *assembly, MonoError *error)
 {
-	mono_error_init (error);
+	g_assert (assembly && assembly->image);
+	/* .NET Framework appears to ignore the attribute on dynamic
+	 * assemblies, so don't call this function for dynamic assemblies. */
+	g_assert (!image_is_dynamic (assembly->image));
+	error_init (error);
 
 	/*
 	 * This might be called during assembly loading, so do everything using the low-level
@@ -3341,9 +3345,12 @@ static MonoAssembly*
 prevent_reference_assembly_from_running (MonoAssembly* candidate, gboolean refonly)
 {
 	MonoError refasm_error;
-	mono_error_init (&refasm_error);
-	if (candidate && !refonly && mono_assembly_has_reference_assembly_attribute (candidate, &refasm_error)) {
-		candidate = NULL;
+	error_init (&refasm_error);
+	if (candidate && !refonly) {
+		/* .NET Framework seems to not check for ReferenceAssemblyAttribute on dynamic assemblies */
+		if (!image_is_dynamic (candidate->image) &&
+		    mono_assembly_has_reference_assembly_attribute (candidate, &refasm_error))
+			candidate = NULL;
 	}
 	mono_error_cleanup (&refasm_error);
 	return candidate;
