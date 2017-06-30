@@ -61,7 +61,7 @@ thread_disown_mutex (MonoInternalThread *internal, gpointer handle)
 	removed = g_ptr_array_remove (internal->owned_mutexes, handle);
 	g_assert (removed);
 
-	mono_w32handle_unref (handle);
+	mono_w32handle_unref (handle, MONO_W32HANDLE_MUTEX);
 }
 
 static gboolean

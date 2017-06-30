@@ -49,6 +49,49 @@ static MonoW32HandleOps *handle_ops [MONO_W32HANDLE_COUNT];
 #define SLOT_INDEX(x)	(x / HANDLE_PER_SLOT)
 #define SLOT_OFFSET(x)	(x % HANDLE_PER_SLOT)
 
+static struct {
+	gint64 handle_count;
+	gint64 total_handles_created;
+	gint64 maximum_handle_number;
+	gboolean rescanned;
+} handle_metrics = { 0 } ;
+
+static struct {
+	gboolean in_use;
+} handles_debug_table [SLOT_MAX * HANDLE_PER_SLOT] = {0};
+
+static inline void
+increment_handle_count ()
+{
+	guint old;
+
+	do {
+		old = handle_metrics.handle_count;
+	} while (InterlockedCompareExchange64 (&handle_metrics.handle_count, old + 1, old) != old);
+
+//	if (old % 10 == 0)
+//		printf ("[%d] w32h count: %d\n", getpid(), handle_metrics.handle_count);
+
+	do {
+		old = handle_metrics.total_handles_created;
+	} while (InterlockedCompareExchange64 (&handle_metrics.total_handles_created, old + 1, old) != old);
+
+//	if (old % 100 == 0)
+//			printf ("[%d] Total w32handles created: %d\n", getpid(), handle_metrics.handle_count);
+}
+	
+static inline void
+decrement_handle_count ()
+{
+	guint old;
+
+	do {
+		old = handle_metrics.handle_count;
+		if (old == 0)
+			g_error ("%s: More handles were destroyed than created!!", __func__);
+	} while (InterlockedCompareExchange64 (&handle_metrics.handle_count, old - 1, old) != old);
+}
+
 static MonoW32HandleBase *private_handles [SLOT_MAX];
 static guint32 private_handles_count = 0;
 static guint32 private_handles_slots_count = 0;
@@ -214,7 +257,7 @@ mono_w32handle_lock_handle (gpointer handle)
 }
 
 gboolean
-mono_w32handle_trylock_handle (gpointer handle)
+mono_w32handle_trylock_handle (gpointer handle, MonoW32HandleType type)
 {
 	MonoW32HandleBase *handle_data;
 	gboolean locked;
@@ -236,7 +279,7 @@ mono_w32handle_trylock_handle (gpointer handle)
 }
 
 void
-mono_w32handle_unlock_handle (gpointer handle)
+mono_w32handle_unlock_handle (gpointer handle, MonoW32HandleType type)
 {
 	MonoW32HandleBase *handle_data;
 
@@ -247,7 +290,7 @@ mono_w32handle_unlock_handle (gpointer handle)
 
 	mono_os_mutex_unlock (&handle_data->signal_mutex);
 
-	mono_w32handle_unref (handle);
+	mono_w32handle_unref (handle, type);
 }
 
 void
@@ -303,7 +346,7 @@ mono_w32handle_cleanup (void)
 			gpointer handle = GINT_TO_POINTER (i*HANDLE_PER_SLOT+j);
 
 			for(k = handle_data->ref; k > 0; k--) {
-				mono_w32handle_unref (handle);
+				mono_w32handle_unref (handle, MONO_W32HANDLE_UNUSED);
 			}
 		}
 	}
@@ -329,6 +372,8 @@ static void mono_w32handle_init_handle (MonoW32HandleBase *handle,
 
 	if (handle_specific)
 		handle->specific = g_memdup (handle_specific, mono_w32handle_ops_typesize (type));
+
+	increment_handle_count ();
 }
 
 /*
@@ -343,7 +388,7 @@ static guint32 mono_w32handle_new_internal (MonoW32HandleType type,
 					  gpointer handle_specific)
 {
 	guint32 i, k, count;
-	static guint32 last = 0;
+	guint32 last = 0;
 	gboolean retry = FALSE;
 	
 	/* A linear scan should be fast enough.  Start from the last
@@ -427,7 +472,6 @@ mono_w32handle_new (MonoW32HandleType type, gpointer handle_specific)
 	handle = GUINT_TO_POINTER (handle_idx);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: create %s handle %p", __func__, mono_w32handle_ops_typename (type), handle);
-
 done:
 	return(handle);
 }
@@ -479,7 +523,7 @@ gpointer mono_w32handle_new_fd (MonoW32HandleType type, int fd,
 }
 
 gboolean
-mono_w32handle_close (gpointer handle)
+mono_w32handle_close (gpointer handle, MonoW32HandleType type)
 {
 	if (handle == INVALID_HANDLE_VALUE)
 		return FALSE;
@@ -492,7 +536,7 @@ mono_w32handle_close (gpointer handle)
 		return FALSE;
 	}
 
-	mono_w32handle_unref (handle);
+	mono_w32handle_unref (handle, type);
 	return TRUE;
 }
 
@@ -684,11 +728,12 @@ w32handle_destroy (gpointer handle)
 	}
 
 	g_free (handle_specific);
+	decrement_handle_count ();
 }
 
 /* The handle must not be locked on entry to this function */
 void
-mono_w32handle_unref (gpointer handle)
+mono_w32handle_unref (gpointer handle, MonoW32HandleType expected_types)
 {
 	MonoW32HandleBase *handle_data;
 	gboolean destroy;
@@ -698,6 +743,12 @@ mono_w32handle_unref (gpointer handle)
 			__func__, handle);
 		return;
 	}
+
+	if (handle_data->type & expected_types == 0)
+	{
+		g_error ("%s: handle has unexpected type %d, allowed types must match mask %d", handle_data->type, expected_types);
+	}
+		
 
 	destroy = mono_w32handle_unref_core (handle, handle_data);
 	if (destroy)
@@ -1061,7 +1112,7 @@ signal_handle_and_unref (gpointer handle)
 	mono_os_cond_broadcast (cond);
 	mono_os_mutex_unlock (mutex);
 
-	mono_w32handle_unref (handle);
+	mono_w32handle_unref (handle, MONO_W32HANDLE_ANY);
 }
 
 static int
@@ -1092,7 +1143,7 @@ mono_w32handle_timedwait_signal_handle (gpointer handle, guint32 timeout, gboole
 		mono_thread_info_uninstall_interrupt (alerted);
 		if (!*alerted) {
 			/* if it is alerted, then the handle is unref in the interrupt callback */
-			mono_w32handle_unref (handle);
+			mono_w32handle_unref (handle, MONO_W32HANDLE_ANY);
 		}
 	}
 
@@ -1399,7 +1450,7 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 done:
 	for (i = 0; i < nhandles; i++) {
 		/* Unref everything we reffed above */
-		mono_w32handle_unref (handles [i]);
+		mono_w32handle_unref (handles [i], MONO_W32HANDLE_ANY);
 	}
 
 	return ret;
