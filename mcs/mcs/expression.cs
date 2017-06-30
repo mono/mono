@@ -2420,6 +2420,12 @@ namespace Mono.CSharp
 			eclass = ExprClass.Value;
 			TypeSpec etype = expr.Type;
 
+			if (expr is TupleLiteral && TupleLiteral.ContainsNoTypeElement (etype)) {
+				ec.Report.Error (8307, expr.Location, "The first operand of an `as' operator may not be a tuple literal without a natural type");
+				type = InternalType.ErrorType;
+				return this;
+			}
+
 			if (type == null) {
 				type = InternalType.ErrorType;
 				return this;
@@ -7108,6 +7114,16 @@ namespace Mono.CSharp
 			return DoResolveInvocation (rc);
 		}
 
+		public override Expression DoResolveLValue (ResolveContext rc, Expression right_side)
+		{
+			var sn = expr as SimpleName;
+			if (sn != null && sn.Name == "var" && sn.Arity == 0 && arguments?.Count > 1) {
+				throw new NotImplementedException ("var deconstruct");
+			}
+
+			return base.DoResolveLValue (rc, right_side);
+		}
+
 		Expression DoResolveInvocation (ResolveContext ec)
 		{
 			Expression member_expr;
@@ -7504,6 +7520,10 @@ namespace Mono.CSharp
 		
 		protected override Expression DoResolve (ResolveContext ec)
 		{
+			if (RequestedType is TupleTypeExpr) {
+				ec.Report.Error (8181, loc, "Tuple type cannot be used in an object creation expression. Use a tuple literal expression instead.");
+			}
+
 			type = RequestedType.ResolveAsType (ec);
 			if (type == null)
 				return null;
@@ -8668,9 +8688,7 @@ namespace Mono.CSharp
 			array_element_type = best_type_inference.InferredTypeArguments[0];
 			best_type_inference = null;
 
-			if (array_element_type == null ||
-				array_element_type == InternalType.NullLiteral || array_element_type == InternalType.MethodGroup || array_element_type == InternalType.AnonymousMethod ||
-				arguments.Count != rank.Dimension) {
+			if (array_element_type == null || InternalType.HasNoType (array_element_type) || arguments.Count != rank.Dimension) {
 				ec.Report.Error (826, loc,
 					"The type of an implicitly typed array cannot be inferred from the initializer. Try specifying array type explicitly");
 				return null;
@@ -12563,7 +12581,7 @@ namespace Mono.CSharp
 			}
 
 			type = e.Type;
-			if (type.Kind == MemberKind.Void || type == InternalType.NullLiteral || type == InternalType.AnonymousMethod || type.IsPointer) {
+			if (type.Kind == MemberKind.Void || InternalType.HasNoType (type) || type.IsPointer || (e is TupleLiteral && TupleLiteral.ContainsNoTypeElement (type))) {
 				Error_InvalidInitializer (ec, type.GetSignatureForError ());
 				return null;
 			}

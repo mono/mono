@@ -1,4 +1,4 @@
-// CS1026: Unexpected symbol `;', expecting `)'
+// CS1026: Unexpected symbol `;', expecting `)' or `,'
 // Line: 10
 
 using System;

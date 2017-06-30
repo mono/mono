@@ -1,4 +1,4 @@
-// CS1525: Unexpected symbol `==', expecting `type'
+// CS1525: Unexpected symbol `==', expecting `(' or `type'
 // Line: 8
 
 class A

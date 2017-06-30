@@ -134,7 +134,7 @@ namespace Mono.CSharp
 				if (t.Name[0] == '<')
 					continue;
 
-				var it = CreateType (t, null, new DynamicTypeReader (t), true);
+				var it = CreateType (t, null, new AttributesTypeInfoReader (t), true);
 				if (it == null)
 					continue;
 

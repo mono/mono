@@ -35,7 +35,7 @@
     </type>
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
-        <size>1292</size>
+        <size>1316</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -47,6 +47,11 @@
       </method>
       <method name="System.Object EndInvoke(System.IAsyncResult)" attrs="454">
         <size>0</size>
+      </method>
+    </type>
+    <type name="B`1[T]">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -72244,53 +72249,6 @@
       </method>
     </type>
   </test>
-  <test name="test-pattern-04.cs">
-    <type name="RecursivePattern">
-      <method name="Int32 Main()" attrs="145">
-        <size>750</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="C1">
-      <method name="Boolean op_Is(C1, Int32 ByRef)" attrs="2198">
-        <size>13</size>
-      </method>
-      <method name="Boolean op_Is(C1, C1 ByRef, C1 ByRef)" attrs="2198">
-        <size>16</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="S">
-      <method name="Boolean op_Is(S, System.Nullable`1[System.Int32] ByRef, System.Decimal ByRef)" attrs="2198">
-        <size>34</size>
-      </method>
-    </type>
-  </test>
-  <test name="test-pattern-05.cs">
-    <type name="RecursiveNamedPattern">
-      <method name="Int32 Main()" attrs="150">
-        <size>204</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="C">
-      <method name="Boolean op_Is(C, Int64 ByRef, System.String ByRef)" attrs="2198">
-        <size>22</size>
-      </method>
-      <method name="Boolean op_Is(C)" attrs="2198">
-        <size>10</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
   <test name="test-pattern-06.cs">
     <type name="RecursiveNamedPattern">
       <method name="Int32 Main()" attrs="150">
@@ -72317,62 +72275,6 @@
     <type name="&lt;PatternMatchingHelper&gt;">
       <method name="Boolean NumberMatcher(System.Object, System.Object, Boolean)" attrs="150">
         <size>69</size>
-      </method>
-    </type>
-  </test>
-  <test name="test-pattern-07.cs">
-    <type name="PropertyPattern">
-      <method name="Int32 Main()" attrs="145">
-        <size>684</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="X">
-      <method name="System.Object get_Field()" attrs="2182">
-        <size>14</size>
-      </method>
-      <method name="Void set_Field(System.Object)" attrs="2182">
-        <size>8</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Y">
-      <method name="Char get_Prop()" attrs="2182">
-        <size>14</size>
-      </method>
-      <method name="Void set_Prop(Char)" attrs="2182">
-        <size>8</size>
-      </method>
-      <method name="Boolean op_Is(Y, Int32 ByRef)" attrs="2198">
-        <size>13</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="X">
-      <method name="System.Object get_Value()" attrs="2182">
-        <size>14</size>
-      </method>
-      <method name="Void set_Value(System.Object)" attrs="2182">
-        <size>8</size>
-      </method>
-    </type>
-    <type name="&lt;PatternMatchingHelper&gt;">
-      <method name="Boolean NumberMatcher(System.Object, System.Object, Boolean)" attrs="150">
-        <size>69</size>
-      </method>
-    </type>
-    <type name="X">
-      <method name="System.Nullable`1[System.Int64] get_NullableValue()" attrs="2182">
-        <size>14</size>
-      </method>
-      <method name="Void set_NullableValue(System.Nullable`1[System.Int64])" attrs="2182">
-        <size>8</size>
       </method>
     </type>
   </test>
@@ -72888,6 +72790,147 @@
       </method>
       <method name="System.String M(System.Object)" attrs="145">
         <size>33</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-tuple-01.cs">
+    <type name="X">
+      <method name="System.ValueTuple`2[System.Int32,System.String] Test1()" attrs="145">
+        <size>20</size>
+      </method>
+      <method name="Void Test2(System.ValueTuple`2[System.Int32,System.Int32])" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Test3(System.ValueTuple`2[System.Int32,System.String])" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="System.ValueTuple`2[System.Int32,System.String] Test4()" attrs="145">
+        <size>40</size>
+      </method>
+      <method name="Int32 Main()" attrs="145">
+        <size>210</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-tuple-02.cs">
+    <type name="TupleConversions">
+      <method name="Void Main()" attrs="150">
+        <size>314</size>
+      </method>
+      <method name="Void Foo[T](T)" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Test3(System.ValueTuple`2[System.Int64,System.Object])" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-tuple-03.cs">
+    <type name="TupleDeconstruct">
+      <method name="Int32 Main()" attrs="150">
+        <size>42</size>
+      </method>
+      <method name="Void Test2()" attrs="145">
+        <size>22</size>
+      </method>
+      <method name="Void var1(System.Object, System.Object)" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void TestCustom()" attrs="145">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="ClassWithDeconstruct">
+      <method name="Void Deconstruct(System.String ByRef, System.String ByRef)" attrs="134">
+        <size>16</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 get_Prop1()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_Prop1(Int32)" attrs="2182">
+        <size>8</size>
+      </method>
+      <method name="Int32 get_Prop2()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_Prop2(Int32)" attrs="2182">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-tuple-04.cs">
+    <type name="Test">
+      <method name="Int32 Main()" attrs="150">
+        <size>60</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-tuple-05.cs">
+    <type name="B`1[T]">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void set_Prop(System.ValueTuple`2[System.Int32,System.Int32])" attrs="2182">
+        <size>28</size>
+      </method>
+      <method name="System.ValueTuple`2[System.Int32,System.Int32] get_Prop()" attrs="2182">
+        <size>34</size>
+      </method>
+      <method name="Void set_Prop2(System.ValueTuple`2[System.Int32,System.Int32])" attrs="2182">
+        <size>2</size>
+      </method>
+      <method name="Void set_Item(System.ValueTuple`2[System.Int32,System.Int32], System.Nullable`1[System.ValueTuple`2[System.Int32,System.Int32]])" attrs="2182">
+        <size>2</size>
+      </method>
+      <method name="System.Nullable`1[System.ValueTuple`2[System.Int32,System.Int32]] get_Item(System.ValueTuple`2[System.Int32,System.Int32])" attrs="2182">
+        <size>18</size>
+      </method>
+      <method name="System.Nullable`1[System.ValueTuple`2[System.Int32,System.Int32]] Method(System.ValueTuple`2[System.Int32,System.Int32] ByRef)" attrs="134">
+        <size>18</size>
+      </method>
+      <method name="Void .ctor(ValueTuple`2)" attrs="6278">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="Del">
+      <method name="System.ValueTuple`2[System.Int32,System.Int32] Invoke(System.ValueTuple`2[System.Int32,System.Int32])" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="System.IAsyncResult BeginInvoke(System.ValueTuple`2[System.Int32,System.Int32], System.AsyncCallback, System.Object)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="System.ValueTuple`2[System.Int32,System.Int32] EndInvoke(System.IAsyncResult)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)" attrs="6278">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()" attrs="150">
+        <size>1338</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>

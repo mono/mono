@@ -92,6 +92,12 @@ namespace Mono.CSharp
 			}
 		}
 
+		public bool HasNamedTupleElement {
+			get {
+				return (state & StateFlags.HasNamedTupleElement) != 0;
+			}
+		}
+
 		//
 		// Returns a list of all interfaces including
 		// interfaces from base type or base interfaces
@@ -228,6 +234,18 @@ namespace Mono.CSharp
 			}
 			set {
 				state = value ? state | StateFlags.GenericTask : state & ~StateFlags.GenericTask;
+			}
+		}
+
+		//
+		// Returns true for instances of any System.ValueTuple<......> type
+		//
+		public virtual bool IsTupleType {
+			get {
+				return (state & StateFlags.Tuple) != 0;
+			}
+			set {
+				state = value ? state | StateFlags.Tuple : state & ~StateFlags.Tuple;
 			}
 		}
 
@@ -533,7 +551,9 @@ namespace Mono.CSharp
 			if (IsNested) {
 				s = DeclaringType.GetSignatureForError ();
 			} else if (MemberDefinition is AnonymousTypeClass) {
-				return ((AnonymousTypeClass) MemberDefinition).GetSignatureForError ();
+				return ((AnonymousTypeClass)MemberDefinition).GetSignatureForError ();
+			} else if (IsTupleType) {
+				return FormatTupleSignature ();
 			} else {
 				s = MemberDefinition.Namespace;
 			}
@@ -542,6 +562,21 @@ namespace Mono.CSharp
 				s += ".";
 
 			return s + Name + GetTypeNameSignature ();
+		}
+
+		string FormatTupleSignature ()
+		{
+			var sb = new StringBuilder ();
+			sb.Append ("(");
+			for (int i = 0; i < TypeArguments.Length; ++i) {
+				if (i != 0)
+					sb.Append (", ");
+
+				sb.Append (TypeArguments[i].GetSignatureForError ());
+			}
+			sb.Append (")");
+
+			return sb.ToString ();
 		}
 
 		public string GetSignatureForErrorIncludingAssemblyName ()
@@ -1574,6 +1609,11 @@ namespace Mono.CSharp
 		}
 
 		#endregion
+
+		public static bool HasNoType (TypeSpec type)
+		{
+			return type == AnonymousMethod || type == MethodGroup || type == NullLiteral || type == ThrowExpr;
+		}
 	}
 
 	//

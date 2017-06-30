@@ -926,6 +926,7 @@ namespace Mono.CSharp {
 			MissingDependency = 1 << 5,
 			HasDynamicElement = 1 << 6,
 			ConstraintsChecked = 1 << 7,
+			HasNamedTupleElement = 1 << 8,
 
 			IsAccessor = 1 << 9,		// Method is an accessor
 			IsGeneric = 1 << 10,		// Member contains type arguments
@@ -942,6 +943,7 @@ namespace Mono.CSharp {
 			GenericIterateInterface = 1 << 21,
 			GenericTask = 1 << 22,
 			InterfacesImported = 1 << 23,
+			Tuple = 1 << 24
 		}
 
 		//
@@ -951,7 +953,7 @@ namespace Mono.CSharp {
 			StateFlags.CLSCompliant | StateFlags.CLSCompliant_Undetected |
 			StateFlags.Obsolete | StateFlags.Obsolete_Undetected |
 			StateFlags.MissingDependency | StateFlags.MissingDependency_Undetected |
-			StateFlags.HasDynamicElement;
+			StateFlags.HasDynamicElement | StateFlags.HasNamedTupleElement;
 
 		protected Modifiers modifiers;
 		public StateFlags state;
