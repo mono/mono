@@ -76,9 +76,8 @@ namespace System.Net.NetworkInformation {
 		const int default_timeout = 4000; // 4 sec.
 		ushort identifier;
 
-		// This value is correct as of Linux kernel version 2.6.25.9
-		// See /usr/include/linux/capability.h
-		const UInt32 linux_cap_version = 0x20071026;
+		// Request 32-bit capabilities by using version 1
+		const UInt32 _LINUX_CAPABILITY_VERSION_1 = 0x19980330;
 		
 		static readonly byte [] default_buffer = new byte [0];
 		
@@ -132,7 +131,7 @@ namespace System.Net.NetworkInformation {
 				cap_user_header_t header = new cap_user_header_t ();
 				cap_user_data_t data = new cap_user_data_t ();
 
-				header.version = linux_cap_version;
+				header.version = _LINUX_CAPABILITY_VERSION_1;
 
 				int ret = -1;
 

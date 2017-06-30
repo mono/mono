@@ -25,8 +25,8 @@ fi
 if [[ ${label} == osx-* ]] || [[ ${label} == w* ]]
 then ${TESTCMD} --label=Windows.Forms --skip;
 else
-    if make -C mcs/class/System.Windows.Forms test-simple;
-    then ${TESTCMD} --label=Windows.Forms --timeout=5m make -w -C mcs/class/System.Windows.Forms run-test
+    if xvfb-run -a -- make -C mcs/class/System.Windows.Forms test-simple;
+    then ${TESTCMD} --label=Windows.Forms --timeout=5m xvfb-run -a -- make -w -C mcs/class/System.Windows.Forms run-test
     else echo "The simple test failed (maybe because of missing X server), skipping test suite." && ${TESTCMD} --label=Windows.Forms --skip; fi
 fi
 ${TESTCMD} --label=System.Data --timeout=5m make -w -C mcs/class/System.Data run-test

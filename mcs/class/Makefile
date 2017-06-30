@@ -130,6 +130,11 @@ winaot_dirs := \
 	System.Drawing			\
 	$(pcl_facade_dirs)
 
+unreal_dirs := \
+	$(mobile_common_dirs)	\
+	System.Drawing			\
+	$(pcl_facade_dirs)
+
 xammac_4_5_dirs := \
 	corlib	\
 	Mono.Security \
@@ -353,10 +358,11 @@ xbuild_12_SUBDIRS := $(xbuild_4_0_dirs)
 xbuild_14_SUBDIRS := $(xbuild_4_0_dirs) Microsoft.NuGet.Build.Tasks
 winaot_SUBDIRS := $(winaot_dirs)
 orbis_SUBDIRS := $(orbis_dirs)
+unreal_SUBDIRS := $(unreal_dirs)
 
 include ../build/rules.make
 
-SUBDIRS = $(testing_aot_full_dirs) $(testing_aot_hybrid_dirs) $(monotouch_dirs) $(monodroid_dirs) $(xammac_dirs) $(net_4_x_dirs) $(net_4_x_parallel_dirs) $(xammac_net_4_5_SUBDIRS)
+SUBDIRS = $(testing_aot_full_dirs) $(testing_aot_hybrid_dirs) $(monotouch_dirs) $(monodroid_dirs) $(xammac_dirs) $(net_4_x_dirs) $(net_4_x_parallel_dirs) $(xammac_net_4_5_SUBDIRS) $(unreal_dirs)
 
 DIST_ONLY_SUBDIRS = dlr aot-compiler reference-assemblies $(xbuild_4_0_dirs) Microsoft.NuGet.Build.Tasks
 
