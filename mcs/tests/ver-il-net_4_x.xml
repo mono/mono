@@ -72834,13 +72834,10 @@
   <test name="test-tuple-03.cs">
     <type name="TupleDeconstruct">
       <method name="Int32 Main()" attrs="150">
-        <size>42</size>
+        <size>144</size>
       </method>
       <method name="Void Test2()" attrs="145">
         <size>22</size>
-      </method>
-      <method name="Void var1(System.Object, System.Object)" attrs="145">
-        <size>2</size>
       </method>
       <method name="Void TestCustom()" attrs="145">
         <size>7</size>
@@ -72872,6 +72869,11 @@
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
+      </method>
+    </type>
+    <type name="TupleDeconstruct">
+      <method name="System.ValueTuple`2[System.Int32,System.Int64] Test3()" attrs="145">
+        <size>17</size>
       </method>
     </type>
   </test>

@@ -428,16 +428,24 @@ namespace Mono.CSharp
 		}
 	}
 
-	class TupleDeconstruct : ExpressionStatement
+	class TupleDeconstruct : ExpressionStatement, IAssignMethod
 	{
 		Expression source;
 		List<Expression> targetExprs;
+		List<LocalVariable> variablesToInfer;
+		Expression instance;
 
 		public TupleDeconstruct (List<Expression> targetExprs, Expression source, Location loc)
 		{
 			this.source = source;
 			this.targetExprs = targetExprs;
 			this.loc = loc;
+		}
+
+		public TupleDeconstruct (List<Expression> targetExprs, List<LocalVariable> variables, Expression source, Location loc)
+			: this (targetExprs, source, loc)
+		{
+			this.variablesToInfer = variables;
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -458,16 +466,40 @@ namespace Mono.CSharp
 				return null;
 			}
 
-			var tupleLiteral = src as TupleLiteral;
-			if (tupleLiteral != null) {
-				if (tupleLiteral.Elements.Count != targetExprs.Count) {
-					rc.Report.Error (8132, loc, "Cannot deconstruct a tuple of `{0}' elements into `{0}' variables",
-						tupleLiteral.Elements.Count.ToString (), targetExprs.Count.ToString ());
+			var src_type = src.Type;
+
+			if (src_type.IsTupleType) {
+				if (src_type.Arity != targetExprs.Count) {
+					rc.Report.Error (8132, loc, "Cannot deconstruct a tuple of `{0}' elements into `{1}' variables",
+						src_type.Arity.ToString (), targetExprs.Count.ToString ());
 					return null;
 				}
 
+				var tupleLiteral = src as TupleLiteral;
+				if (tupleLiteral == null && !ExpressionAnalyzer.IsInexpensiveLoad (src)) {
+					var expr_variable = LocalVariable.CreateCompilerGenerated (source.Type, rc.CurrentBlock, loc);
+					source = new CompilerAssign (expr_variable.CreateReferenceExpression (rc, loc), source, loc);
+					instance = expr_variable.CreateReferenceExpression (rc, loc);
+				}
+
 				for (int i = 0; i < targetExprs.Count; ++i) {
-					targetExprs [i] = new SimpleAssign (targetExprs [i], tupleLiteral.Elements [i].Expr).Resolve (rc);
+					var tle = src_type.TypeArguments [i];
+
+					var lv = variablesToInfer? [i];
+					if (lv != null) {
+						if (InternalType.HasNoType (tle)) {
+							rc.Report.Error (8130, Location, "Cannot infer the type of implicitly-typed deconstruction variable `{0}'", lv.Name);
+							lv.Type = InternalType.ErrorType;
+							continue;
+						}
+
+						lv.Type = tle;
+						lv.PrepareAssignmentAnalysis ((BlockContext) rc);
+					}
+
+
+					var element_src = tupleLiteral == null ? new MemberAccess (instance, NamedTupleSpec.GetElementPropertyName (i)) : tupleLiteral.Elements [i].Expr;
+					targetExprs [i] = new SimpleAssign (targetExprs [i], element_src).Resolve (rc);
 				}
 
 				eclass = ExprClass.Value;
@@ -475,12 +507,22 @@ namespace Mono.CSharp
 				return this;
 			}
 
-			if (src.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
+			if (src_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 				rc.Report.Error (8133, loc, "Cannot deconstruct dynamic objects");
 				return null;
 			}
 
-			throw new NotImplementedException ("Deconstruct assignment");
+			/*
+			var args = new Arguments (targetExprs.Count);
+			foreach (var t in targetExprs) {
+				args.Add (new Argument (t, Argument.AType.Out));
+			}
+
+			var invocation = new Invocation (new MemberAccess (src, "Deconstruct"), args);
+			var res = invocation.Resolve (rc);
+			*/
+
+			throw new NotImplementedException ("Custom deconstruct");
 		}
 
 		public override void Emit (EmitContext ec)
@@ -490,14 +532,42 @@ namespace Mono.CSharp
 
 		public override void EmitStatement (EmitContext ec)
 		{
+			if (instance != null)
+				((ExpressionStatement) source).EmitStatement (ec);
+			
 			foreach (ExpressionStatement expr in targetExprs)
 				expr.EmitStatement (ec);
+		}
+
+		public void Emit (EmitContext ec, bool leave_copy)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool isCompound)
+		{
+			if (leave_copy)
+				throw new NotImplementedException ();
+
+			foreach (var lv in variablesToInfer)
+				lv.CreateBuilder (ec);
+
+			EmitStatement (ec);
 		}
 
 		public override void FlowAnalysis (FlowAnalysisContext fc)
 		{
 			foreach (var expr in targetExprs)
 				expr.FlowAnalysis (fc);
+		}
+
+		public void SetGeneratedFieldAssigned (FlowAnalysisContext fc)
+		{
+			if (variablesToInfer == null)
+				return;
+
+			foreach (var lv in variablesToInfer)
+				fc.SetVariableAssigned (lv.VariableInfo);
 		}
 	}
 }

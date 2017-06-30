@@ -502,6 +502,12 @@ namespace Mono.CSharp {
 				pe.SetBackingFieldAssigned (fc);
 				return;
 			}
+
+			var td = target as TupleDeconstruct;
+			if (td != null) {
+				td.SetGeneratedFieldAssigned (fc);
+				return;
+			}
 		}
 
 		public override Reachability MarkReachable (Reachability rc)

@@ -7118,7 +7118,24 @@ namespace Mono.CSharp
 		{
 			var sn = expr as SimpleName;
 			if (sn != null && sn.Name == "var" && sn.Arity == 0 && arguments?.Count > 1) {
-				throw new NotImplementedException ("var deconstruct");
+				var targets = new List<Expression> (arguments.Count);
+				var variables = new List<LocalVariable> (arguments.Count);
+				foreach (var arg in arguments) {
+					var arg_sn = arg.Expr as SimpleName;
+					if (arg_sn == null || arg_sn.Arity != 0) {
+						rc.Report.Error (8199, loc, "The syntax `var (...)' as an lvalue is reserved");
+						return ErrorExpression.Instance;
+					}
+
+					var lv = new LocalVariable (rc.CurrentBlock, arg_sn.Name, arg.Expr.Location);
+					rc.CurrentBlock.AddLocalName (lv);
+					variables.Add (lv);
+
+					targets.Add (new LocalVariableReference (lv, arg_sn.Location));
+				}
+
+				var res = new TupleDeconstruct (targets, variables, right_side, loc);
+				return res.Resolve (rc);
 			}
 
 			return base.DoResolveLValue (rc, right_side);
