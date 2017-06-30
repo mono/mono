@@ -1386,7 +1386,7 @@ mono_file_remap_path(const char** path)
 	return TRUE;
 }
 
-void
+MONO_API void
 mono_unity_register_path_remapper(RemapPathFunction func)
 {
 	g_RemapPathFunc = func;
