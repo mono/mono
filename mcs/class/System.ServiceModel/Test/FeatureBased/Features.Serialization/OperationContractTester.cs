@@ -27,14 +27,13 @@ namespace MonoTests.Features.Serialization
 				sleepTime = 5 * 1000;
 				failTime = 2 * 1000;
 			}
-			DateTime start = DateTime.Now;
+			var sw = global::System.Diagnostics.Stopwatch.StartNew ();
 			Client.Sleep (sleepTime);
-			DateTime end = DateTime.Now;
-			TimeSpan diff = end.Subtract (start);
+			sw.Stop ();
 			TimeSpan max = TimeSpan.FromMilliseconds(failTime);
-			Assert.IsTrue (diff < max, "Sleep({0} milisec) must end in less than {1} seconds",sleepTime,failTime);
-			if (sleepTime > (int) diff.TotalMilliseconds)
-				Thread.Sleep (sleepTime - (int)diff.TotalMilliseconds); // wait for server thread to release itself
+			Assert.IsTrue (sw.Elapsed < max, "Sleep({0} milisec) must end in less than {1} seconds",sleepTime,failTime);
+			if (sleepTime > (int) sw.ElapsedMilliseconds)
+				Thread.Sleep (sleepTime - (int)sw.ElapsedMilliseconds); // wait for server thread to release itself
 		}
 
 		[Test]

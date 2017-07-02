@@ -95,7 +95,7 @@ namespace System.ServiceModel.PeerResolvers
 			if (node == null)
 				return new RefreshResponseInfo () { Result = RefreshResult.RegistrationNotFound };
 			node.Refresh ();
-			return new RefreshResponseInfo () { Result = RefreshResult.Success, RegistrationLifetime = RefreshInterval - (DateTime.Now - node.LastRefreshTime) };
+			return new RefreshResponseInfo () { Result = RefreshResult.Success, RegistrationLifetime = RefreshInterval - (DateTime.UtcNow - node.LastRefreshTime) };
 		}
 
 		public RegisterResponseInfo Register (RegisterInfo registerInfo)
@@ -163,7 +163,7 @@ namespace System.ServiceModel.PeerResolvers
 			lock (mesh) {
 				var node = new Node () { ClientId = clientId, Address = addr };
 				mesh.Add (node);
-				node.LastRefreshTime = DateTime.Now;
+				node.LastRefreshTime = DateTime.UtcNow;
 				return node;
 			}
 		}
@@ -201,13 +201,13 @@ namespace System.ServiceModel.PeerResolvers
 
 		public void Refresh ()
 		{
-			LastRefreshTime = DateTime.Now;
+			LastRefreshTime = DateTime.UtcNow;
 		}
 
 		public void Update (PeerNodeAddress addr)
 		{
 			Address = addr;
-			LastRefreshTime = DateTime.Now;
+			LastRefreshTime = DateTime.UtcNow;
 		}
 	}
 }

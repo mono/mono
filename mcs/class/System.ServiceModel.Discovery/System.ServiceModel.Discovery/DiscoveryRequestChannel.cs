@@ -107,9 +107,9 @@ namespace System.ServiceModel.Discovery
 		protected override void OnOpen (TimeSpan timeout)
 		{
 			// FIXME: use timeout
-			DateTime start = DateTime.Now;
+			DateTime start = DateTime.UtcNow;
 			inner = CreateDiscoveryInnerChannel<TChannel> (factory);
-			((IChannel) inner).Open (timeout - (DateTime.Now - start));
+			((IChannel) inner).Open (timeout - (DateTime.UtcNow - start));
 		}
 
 		public Message Request (Message msg)

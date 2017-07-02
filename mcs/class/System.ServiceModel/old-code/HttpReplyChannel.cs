@@ -85,14 +85,14 @@ namespace System.ServiceModel.Channels
 
 		protected override void OnClose (TimeSpan timeout)
 		{
-			DateTime start = DateTime.Now;
+			DateTime start = DateTime.UtcNow;
 			if (reqctx != null)
 				reqctx.Close (timeout);
 
 			// FIXME: consider timeout
-			AbortConnections (timeout - (DateTime.Now - start));
+			AbortConnections (timeout - (DateTime.UtcNow - start));
 
-			base.OnClose (timeout - (DateTime.Now - start));
+			base.OnClose (timeout - (DateTime.UtcNow - start));
 		}
 
 		public override bool TryReceiveRequest (TimeSpan timeout, out RequestContext context)
