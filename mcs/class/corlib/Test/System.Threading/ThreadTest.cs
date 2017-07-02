@@ -1349,9 +1349,9 @@ namespace MonoTests.System.Threading
 		
 		public static void WhileAlive (Thread t, bool alive, string s)
 		{
-			DateTime ti = DateTime.Now;
+			var sw = SD.Stopwatch.StartNew ();
 			while (t.IsAlive == alive) {
-				if ((DateTime.Now - ti).TotalSeconds > 10) {
+				if (sw.Elapsed.TotalSeconds > 10) {
 					if (alive) Assert.Fail ("Timeout while waiting for not alive state. " + s);
 					else Assert.Fail ("Timeout while waiting for alive state. " + s);
 				}
@@ -1360,12 +1360,12 @@ namespace MonoTests.System.Threading
 
 		public static bool WhileAliveOrStop (Thread t, bool alive, string s)
 		{
-			DateTime ti = DateTime.Now;
+			var sw = SD.Stopwatch.StartNew ();
 			while (t.IsAlive == alive) {
 				if (t.ThreadState == ThreadState.Stopped)
 					return false;
 
-				if ((DateTime.Now - ti).TotalSeconds > 10) {
+				if (sw.Elapsed.TotalSeconds > 10) {
 					if (alive) Assert.Fail ("Timeout while waiting for not alive state. " + s);
 					else Assert.Fail ("Timeout while waiting for alive state. " + s);
 				}

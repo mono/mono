@@ -2512,7 +2512,7 @@ namespace MonoTests.Microsoft.Win32
 			string subKeyName = Guid.NewGuid ().ToString ();
 
 			try {
-				object rawValue = DateTime.Now;
+				object rawValue = DateTime.UtcNow;
 
 				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
 					// we created a new subkey, so value should not exist
