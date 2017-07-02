@@ -27,6 +27,7 @@
 //
 
 using System;
+using System.Diagnostics;
 using System.Threading;
 using NUnit.Framework;
 
@@ -91,8 +92,8 @@ namespace MonoTests.System.Threading
 				else
 					ThreadPool.QueueUserWorkItem (_ => { Interlocked.Increment (ref sum); Interlocked.Increment (ref total); });
 			}
-			var start = DateTime.Now;
-			while ((total != n || sum != 0) && (DateTime.Now - start).TotalSeconds < 60)
+			var sw = Stopwatch.StartNew ();
+			while ((total != n || sum != 0) && sw.Elapsed.TotalSeconds < 60)
 				Thread.Sleep (1000);
 			Assert.IsTrue (total == n, "#1");
 			Assert.IsTrue (sum   == 0, "#2");
@@ -160,7 +161,7 @@ namespace MonoTests.System.Threading
 		public void GetAvailableThreads ()
 		{
 			ManualResetEvent mre = new ManualResetEvent (false);
-			DateTime start = DateTime.Now;
+			var sw = Stopwatch.StartNew ();
 			int i, workerThreads, completionPortThreads;
 
 			try {
@@ -173,7 +174,7 @@ namespace MonoTests.System.Threading
 
 					Console.WriteLine ("workerThreads = {0}, completionPortThreads = {1}", workerThreads, completionPortThreads);
 
-					if ((DateTime.Now - start).TotalSeconds >= 10)
+					if (sw.Elapsed.TotalSeconds >= 10)
 						Assert.Fail ("did not reach 0 available threads");
 
 					ThreadPool.QueueUserWorkItem (GetAvailableThreads_Callback, mre);
