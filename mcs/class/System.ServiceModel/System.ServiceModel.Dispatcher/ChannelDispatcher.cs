@@ -414,7 +414,7 @@ namespace System.ServiceModel.Dispatcher
 				if (loop_thread == null)
 					return;
 
-				close_started = DateTime.Now;
+				close_started = DateTime.UtcNow;
 				close_timeout = timeout;
 				loop = false;
 				creator_handle.Set ();
@@ -467,7 +467,7 @@ namespace System.ServiceModel.Dispatcher
 					}
 					else {
 						try {
-							ch.Close (close_timeout - (DateTime.Now - close_started));
+							ch.Close (close_timeout - (DateTime.UtcNow - close_started));
 						} catch (Exception ex) {
 							// FIXME: log it.
 							Logger.Error (String.Format ("Exception on closing channel ({0})", ch.GetType ()), ex);

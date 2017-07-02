@@ -221,7 +221,7 @@ namespace System.ServiceModel.Channels
 		{
 			ThrowIfDisposedOrNotOpen ();
 
-			DateTime start = DateTime.Now;
+			DateTime start = DateTime.UtcNow;
 
 			// FIXME: give max buffer size
 			var mb = message.CreateBufferedCopy (0x10000);
@@ -234,14 +234,14 @@ namespace System.ServiceModel.Channels
 					pc.Status = RemotePeerStatus.Error; // prepare for cases that it resulted in an error in the middle.
 					var inner = CreateInnerClient (pc);
 					pc.Channel = inner;
-					inner.Open (timeout - (DateTime.Now - start));
-					inner.OperationTimeout = timeout - (DateTime.Now - start);
+					inner.Open (timeout - (DateTime.UtcNow - start));
+					inner.OperationTimeout = timeout - (DateTime.UtcNow - start);
 					inner.Connect (new ConnectInfo () { Address = local_node_address, NodeId = (uint) node.NodeId });
-					pc.Instance.WaitForConnectResponse (timeout - (DateTime.Now - start));
+					pc.Instance.WaitForConnectResponse (timeout - (DateTime.UtcNow - start));
 					pc.Status = RemotePeerStatus.Connected;
 				}
 
-				pc.Channel.OperationTimeout = timeout - (DateTime.Now - start);
+				pc.Channel.OperationTimeout = timeout - (DateTime.UtcNow - start);
 
 				// see [MC-PRCH] 3.2.4.1
 				if (message.Headers.MessageId == null)
@@ -265,7 +265,6 @@ namespace System.ServiceModel.Channels
 		public override bool TryReceive (TimeSpan timeout, out Message message)
 		{
 			ThrowIfDisposedOrNotOpen ();
-			DateTime start = DateTime.Now;
 
 			if (queue.Count > 0 || receive_handle.WaitOne (timeout)) {
 				message = queue.Dequeue ();
@@ -296,21 +295,21 @@ namespace System.ServiceModel.Channels
 
 		protected override void OnClose (TimeSpan timeout)
 		{
-			DateTime start = DateTime.Now;
+			DateTime start = DateTime.UtcNow;
 			if (client_factory != null)
-				client_factory.Close (timeout - (DateTime.Now - start));
+				client_factory.Close (timeout - (DateTime.UtcNow - start));
 			peers.Clear ();
-			resolver.Unregister (node.RegisteredId, timeout - (DateTime.Now - start));
+			resolver.Unregister (node.RegisteredId, timeout - (DateTime.UtcNow - start));
 			node.SetOffline ();
 			if (listener_host != null)
-				listener_host.Close (timeout - (DateTime.Now - start));
+				listener_host.Close (timeout - (DateTime.UtcNow - start));
 			node.RegisteredId = null;
 		}
 
 
 		protected override void OnOpen (TimeSpan timeout)
 		{
-			DateTime start = DateTime.Now;
+			DateTime start = DateTime.UtcNow;
 
 			// FIXME: supply maxAddresses
 			foreach (var a in resolver.Resolve (node.MeshId, 3, timeout))
@@ -323,7 +322,7 @@ namespace System.ServiceModel.Channels
 			int port = 0;
 			var rnd = new Random ();
 			for (int i = 0; i < 1000; i++) {
-				if (DateTime.Now - start > timeout)
+				if (DateTime.UtcNow - start > timeout)
 					throw new TimeoutException ();
 				try {
 					port = rnd.Next (50000, 51000);
@@ -351,13 +350,13 @@ namespace System.ServiceModel.Channels
 			// FIXME: remove debugging code
 			listener_host.UnknownMessageReceived += delegate (object obj, UnknownMessageReceivedEventArgs earg) { Console.WriteLine ("%%%%% UNKOWN MESSAGE " + earg.Message); };
 
-			listener_host.Open (timeout - (DateTime.Now - start));
+			listener_host.Open (timeout - (DateTime.UtcNow - start));
 
 			var nid = (ulong) new Random ().Next (0, int.MaxValue);
 			var ea = new EndpointAddress (uri);
 			var pna = new PeerNodeAddress (ea, new ReadOnlyCollection<IPAddress> (Dns.GetHostEntry (name).AddressList));
 			local_node_address = pna;
-			node.RegisteredId = resolver.Register (node.MeshId, pna, timeout - (DateTime.Now - start));
+			node.RegisteredId = resolver.Register (node.MeshId, pna, timeout - (DateTime.UtcNow - start));
 			node.NodeId = nid;
 
 			// Add itself to the local list as well.
