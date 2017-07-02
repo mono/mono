@@ -201,9 +201,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <CustomBuildBeforeTargets>PreBuildEvent</CustomBuildBeforeTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <CustomBuildBeforeTargets>PreBuildEvent</CustomBuildBeforeTargets>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PreBuildEvent>
@@ -228,6 +230,11 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <PostBuildEvent />
+    <CustomBuildStep>
+      <Command>runmdesc.bat "$(TargetPath)" $(Platform)</Command>
+      <Outputs>$(MONO_INCLUDE_DIR)\mini\cpu-x86.h</Outputs>
+      <Inputs>$(MONO_INCLUDE_DIR)\mini\cpu-x86.md</Inputs>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <PreBuildEvent>
@@ -252,6 +259,15 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <PostBuildEvent />
+    <CustomBuildStep>
+      <Command>runmdesc.bat "$(TargetPath)" $(Platform)</Command>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Outputs>$(MONO_INCLUDE_DIR)/mini/cpu-amd64.h</Outputs>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Inputs>$(MONO_INCLUDE_DIR)/mini/cpu-amd64.md</Inputs>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <PreBuildEvent>
@@ -312,9 +328,6 @@
   <ItemGroup>
     <ProjectReference Include="eglib.vcxproj">
       <Project>{158073ed-99ae-4196-9edc-ddb2344f8466}</Project>
-    </ProjectReference>
-    <ProjectReference Include="genmdesc.vcxproj">
-      <Project>{b7098dfa-31e6-4006-8a15-1c9a4e925149}</Project>
     </ProjectReference>
     <ProjectReference Include="libgc.vcxproj">
       <Project>{eb56000b-c80b-4e8b-908d-d84d31b517d3}</Project>
