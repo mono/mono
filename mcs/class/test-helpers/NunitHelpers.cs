@@ -89,12 +89,27 @@ namespace NUnit.Framework
 			Assert.That(arg1, Is.GreaterThan(arg2), message, args);
 		}
 
+		public static void Greater(System.DateTime arg1, System.DateTime arg2, string message = null, params object[] args) 
+		{
+			Assert.That(arg1, Is.GreaterThan(arg2), message, args);
+		}
+
 		public static void GreaterOrEqual(int arg1, int arg2, string message = null, params object[] args)
 		{
 			Assert.That(arg1, Is.GreaterThanOrEqualTo(arg2), message, args);
 		}
 
 		public static void GreaterOrEqual(long arg1, long arg2, string message = null, params object[] args)
+		{
+			Assert.That(arg1, Is.GreaterThanOrEqualTo(arg2), message, args);
+		}
+
+		public static void GreaterOrEqual(System.DateTime arg1, System.DateTime arg2, string message = null, params object[] args)
+		{
+			Assert.That(arg1, Is.GreaterThanOrEqualTo(arg2), message, args);
+		}
+
+		public static void GreaterOrEqual(System.TimeSpan arg1, System.TimeSpan arg2, string message = null, params object[] args)
 		{
 			Assert.That(arg1, Is.GreaterThanOrEqualTo(arg2), message, args);
 		}
