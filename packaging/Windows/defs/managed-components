@@ -18,6 +18,10 @@ download()
 	mkdir -p ${REPODIR}
 	report "Downloading Xar"
 	wget --quiet -O ${REPODIR}/xar.tar.gz https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/xar/xar-1.5.2.tar.gz || error "*** Could not download Xar ***"
+	report "Downloading x64 hostfxr.dll"
+	wget --quiet -O ${REPODIR}/hostfxr-x64.zip https://www.nuget.org/api/v2/package/runtime.win-x64.Microsoft.NETCore.DotNetHostResolver/2.0.0-preview2-25407-01 || error "*** Could not download 64bit hostfxr.dll ***"
+	report "Downloading x86 hostfxr.dll"
+	wget --quiet -O ${REPODIR}/hostfxr-x86.zip https://www.nuget.org/api/v2/package/runtime.win-x86.Microsoft.NETCore.DotNetHostResolver/2.0.0-preview2-25407-01 || error "*** Could not download 64bit hostfxr.dll ***"
 	report "Copying Mono MDK for Mac"
 	cp $1 ${REPODIR}/mono.xar
 }
@@ -28,6 +32,8 @@ clean()
 	report "Deleting interstitial output"
 	rm -rf	${REPODIR}/mono-mac \
 		${REPODIR}/xar \
+		${REPODIR}/hostfxr-x64 \
+		${REPODIR}/hostfxr-x86 \
 		${REPODIR}/Distribution \
 		${REPODIR}/mono.pkg \
 		${REPODIR}/Resources \
@@ -48,6 +54,12 @@ build()
 		make
 		popd
 	fi
+	report "Unpacking x64 hostfxr.dll"
+	mkdir -p hostfxr-x64
+	unzip -j "${REPODIR}/hostfxr-x64.zip" "runtimes/win-x64/native/hostfxr.dll" -d "hostfxr-x64"
+	report "Unpacking x86 hostfxr.dll"
+	mkdir -p hostfxr-x86
+	unzip -j "${REPODIR}/hostfxr-x86.zip" "runtimes/win-x86/native/hostfxr.dll" -d "hostfxr-x86"
 	report "Unpacking Mono for Mac"
 	xar/src/xar -x -f mono.xar
 	zcat mono.pkg/Payload | bsdcpio -i
@@ -63,6 +75,11 @@ install()
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/Microsoft*				${REPODIR}/../../tmp/mono/lib/mono/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/msbuild				${REPODIR}/../../tmp/mono/lib/mono/
 	rm -f ${REPODIR}/../../tmp/mono/lib/mono/msbuild/15.0/bin/SdkResolvers/Microsoft.DotNet.MSBuildSdkResolver/libhostfxr.dylib
+	if [ "$1" = "x64" ]; then
+		cp {REPODIR}/hostfxr-x64/hostfxr.dll ${REPODIR}/../../tmp/mono/lib/mono/msbuild/15.0/bin/SdkResolvers/Microsoft.DotNet.MSBuildSdkResolver/
+	else
+		cp {REPODIR}/hostfxr-x86/hostfxr.dll ${REPODIR}/../../tmp/mono/lib/mono/msbuild/15.0/bin/SdkResolvers/Microsoft.DotNet.MSBuildSdkResolver/
+	fi
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/nuget				${REPODIR}/../../tmp/mono/lib/mono/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild-frameworks			${REPODIR}/../../tmp/mono/lib/mono/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Microsoft/NuGet/Microsoft.NuGet*					${REPODIR}/../../tmp/mono/lib/mono/xbuild/  # note: we can't copy the symlink in xbuild/ so we copy the file it points to
@@ -148,6 +165,7 @@ prerequisites()
 	which bsdcpio		2>/dev/null || error "*** bsdcpio is not in \$PATH ***"
 	which wget 		2>/dev/null || error "*** wget is not in \$PATH ***"
 	which xml2-config	2>/dev/null || error "*** xml2-config is not in \$PATH ***"
+	which unzip		2>/dev/null || error "*** unzip is not in \$PATH ***"
 	if [ ! -e "/usr/include/openssl/crypto.h" ]
 		then error "*** openssl-devel is not installed ***"
 	fi

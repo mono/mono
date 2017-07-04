@@ -11,6 +11,6 @@ COMPONENTS="mono gtksharp managed-components"
 for i in ${COMPONENTS}
 	do defs/$i clean
 	defs/$i build
-	defs/$i install
+	defs/$i install "x86"
 done
 resources/build.bat

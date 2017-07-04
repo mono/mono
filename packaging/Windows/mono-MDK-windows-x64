@@ -10,6 +10,6 @@ COMPONENTS="mono64 managed-components"
 for i in ${COMPONENTS}
 	do defs/$i clean
 	defs/$i build
-	defs/$i install
+	defs/$i install "x64"
 done
 resources/build64.bat
