@@ -482,7 +482,8 @@ namespace System.Diagnostics
 			if (proc == IntPtr.Zero)
 				throw new ArgumentException ("Can't find process with ID " + processId.ToString ());
 
-			return (new Process (new SafeProcessHandle (proc, false), processId));
+			/* The handle returned by GetProcess_internal is owned by its caller, so we must pass true to SafeProcessHandle */
+			return (new Process (new SafeProcessHandle (proc, true), processId));
 		}
 
 		public static Process[] GetProcessesByName(string processName, string machineName)
