@@ -337,10 +337,14 @@ namespace CppSharp
                 break;
             case TargetPlatform.WatchOS:
             case TargetPlatform.iOS: {
-                string targetPath = Path.Combine (MaccoreDir, "builds");
-                if (!Directory.Exists (MonoDir))
-                    MonoDir = Path.GetFullPath (Path.Combine (targetPath, "../../mono"));
-                targetBuild = Path.Combine(targetPath, target.Build);
+                if (!string.IsNullOrEmpty (TargetDir)) {
+                    targetBuild = TargetDir;
+                } else {
+                    string targetPath = Path.Combine (MaccoreDir, "builds");
+                    if (!Directory.Exists (MonoDir))
+                        MonoDir = Path.GetFullPath (Path.Combine (targetPath, "../../mono"));
+                    targetBuild = Path.Combine(targetPath, target.Build);
+                }
                 break;
             }
             default:
