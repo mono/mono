@@ -99,9 +99,25 @@ namespace Mono.Btls
 		GCHandle instance;
 		IntPtr instancePtr;
 
-		public MonoBtlsSslCtx ()
-			: this (new BoringSslCtxHandle (mono_btls_ssl_ctx_new ()))
+		internal static MonoBtlsSslCtx Create ()
 		{
+			var ctx = mono_btls_ssl_ctx_new ();
+			if (ctx != IntPtr.Zero)
+				return new MonoBtlsSslCtx (new BoringSslCtxHandle (ctx));
+
+			string file;
+			int line;
+			var error = MonoBtlsError.GetError (out file, out line);
+
+			var message = "MonoBtlsSslCtx.Create() failed";
+			Console.Error.WriteLine ($"{message}: {file} {line}");
+
+			var text = MonoBtlsError.GetErrorString (error);
+
+			if (file != null)
+				throw new MonoBtlsException ($"{message}: {error}\n  at {file}:{line}");
+			else
+				throw new MonoBtlsException ($"{message}: {error}");
 		}
 
 		internal MonoBtlsSslCtx (BoringSslCtxHandle handle)

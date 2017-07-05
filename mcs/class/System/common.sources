@@ -62,7 +62,6 @@ System.Net/RequestStream.cs
 System.Net/SimpleAsyncResult.cs
 System.Net/SocketPermissionAttribute.cs
 System.Net/SocketPermission.cs
-System.Net/WebAsyncResult.cs
 
 System.Net.Mail/AlternateView.cs
 System.Net.Mail/AlternateViewCollection.cs

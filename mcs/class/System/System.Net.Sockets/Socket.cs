@@ -91,6 +91,9 @@ namespace System.Net.Sockets
 		int m_IntCleanedUp;
 		internal bool connect_in_progress;
 
+		static int nextId;
+		public readonly int ID = ++nextId;
+
 #region Constructors
 
 

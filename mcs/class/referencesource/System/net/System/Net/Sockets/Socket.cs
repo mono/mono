@@ -3,7 +3,7 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
-
+#define MARTIN_DEBUG
 #if MONO
 #undef FEATURE_PAL
 #endif
@@ -1165,7 +1165,8 @@ namespace System.Net.Sockets {
         /// </devdoc>
         public void Close()
         {
-            GlobalLog.Print("Socket#" + ValidationHelper.HashString(this) + "::Close() timeout = " + m_CloseTimeout);
+			WebConnection.Debug ($"SOCKET CLOSE: {ID}");
+			GlobalLog.Print("Socket#" + ValidationHelper.HashString(this) + "::Close() timeout = " + m_CloseTimeout);
             if (s_LoggingEnabled) Logging.Enter(Logging.Sockets, this, "Close", null);
             ((IDisposable)this).Dispose();
             if (s_LoggingEnabled) Logging.Exit(Logging.Sockets, this, "Close", null);
@@ -1173,7 +1174,8 @@ namespace System.Net.Sockets {
 
         public void Close(int timeout)
         {
-            if (timeout < -1)
+			WebConnection.Debug ($"SOCKET CLOSE: {ID} {timeout}");
+			if (timeout < -1)
             {
                 throw new ArgumentOutOfRangeException("timeout");
             }
@@ -1533,9 +1535,11 @@ namespace System.Net.Sockets {
 
         public int Send(byte[] buffer, int offset, int size, SocketFlags socketFlags) {
             SocketError errorCode;
-            int bytesTransferred = Send(buffer, offset, size, socketFlags, out errorCode);
-            if(errorCode != SocketError.Success){
-                throw new SocketException(errorCode);
+			WebConnection.Debug ($"SOCKET SEND: {ID} {offset} {size} {socketFlags}");
+			int bytesTransferred = Send(buffer, offset, size, socketFlags, out errorCode);
+			WebConnection.Debug ($"SOCKET SEND #1: {ID} {offset} {size} {socketFlags} - {bytesTransferred} {errorCode}");
+			if(errorCode != SocketError.Success){
+				throw new SocketException ((int)errorCode, $"SOCKET ERROR: {ID} {errorCode}");
             }
             return bytesTransferred;
         }
@@ -5696,7 +5700,8 @@ namespace System.Net.Sockets {
         ///    </para>
         /// </devdoc>
         public void Shutdown(SocketShutdown how) {
-            if(s_LoggingEnabled)Logging.Enter(Logging.Sockets, this, "Shutdown", how);
+			WebConnection.Debug ($"SOCKET SHUTDOWN: {ID} {how}");
+			if(s_LoggingEnabled)Logging.Enter(Logging.Sockets, this, "Shutdown", how);
             if (CleanedUp) {
                 throw new ObjectDisposedException(this.GetType().FullName);
             }
@@ -8964,6 +8969,8 @@ namespace System.Net.Sockets {
 
         // Dispose call to implement IDisposable.
         public void Dispose() {
+
+			WebConnection.Debug ($"SOCKET DISPOSE: {ID}");
 
             // Remember that Dispose was called.
             m_DisposeCalled = true;

@@ -1805,20 +1805,9 @@ namespace System.Net {
             OnOpenReadCompleted((OpenReadCompletedEventArgs)arg);
         }
         private void OpenReadAsyncCallback(IAsyncResult result) {
-#if MONO
-            // It can be removed when we are full referencesource
-            AsyncOperation asyncOp = (AsyncOperation) result.AsyncState;
-            WebRequest request;
-            if (result is WebAsyncResult) {
-                request = (WebRequest) ((WebAsyncResult) result).AsyncObject;
-            } else {
-                request = (WebRequest) ((LazyAsyncResult) result).AsyncObject;
-            }
-#else
-            LazyAsyncResult lazyAsyncResult = (LazyAsyncResult) result;
-            AsyncOperation asyncOp = (AsyncOperation) lazyAsyncResult.AsyncState;
-            WebRequest request = (WebRequest) lazyAsyncResult.AsyncObject;
-#endif
+            Tuple<WebRequest,AsyncOperation> userData = (Tuple<WebRequest,AsyncOperation>)result.AsyncState;
+            WebRequest request = userData.Item1;
+            AsyncOperation asyncOp = userData.Item2;
             Stream stream = null;
             Exception exception = null;
             try {
@@ -1857,7 +1846,7 @@ namespace System.Net {
             m_AsyncOp = asyncOp;
             try {
                 WebRequest request = m_WebRequest = GetWebRequest(GetUri(address));
-                request.BeginGetResponse(new AsyncCallback(OpenReadAsyncCallback), asyncOp);
+                request.BeginGetResponse(new AsyncCallback(OpenReadAsyncCallback), new Tuple<WebRequest,AsyncOperation>(request, asyncOp));
             } catch (Exception e) {
                 if (e is ThreadAbortException || e is StackOverflowException || e is OutOfMemoryException) {
                     throw;
@@ -1887,13 +1876,9 @@ namespace System.Net {
             OnOpenWriteCompleted((OpenWriteCompletedEventArgs)arg);
         }
         private void OpenWriteAsyncCallback(IAsyncResult result) {
-#if MONO
-            var lazyAsyncResult = (WebAsyncResult) result;
-#else
-            LazyAsyncResult lazyAsyncResult = (LazyAsyncResult) result;
-#endif
-            AsyncOperation asyncOp = (AsyncOperation) lazyAsyncResult.AsyncState;
-            WebRequest request = (WebRequest) lazyAsyncResult.AsyncObject;
+            Tuple<WebRequest,AsyncOperation> userData = (Tuple<WebRequest,AsyncOperation>)result.AsyncState;
+            WebRequest request = userData.Item1;
+            AsyncOperation asyncOp = userData.Item2;
             WebClientWriteStream stream = null;
             Exception exception = null;
 
@@ -1943,7 +1928,7 @@ namespace System.Net {
             try {
                 m_Method = method;
                 WebRequest request = m_WebRequest = GetWebRequest(GetUri(address));
-                request.BeginGetRequestStream(new AsyncCallback(OpenWriteAsyncCallback), asyncOp);
+                request.BeginGetRequestStream(new AsyncCallback(OpenWriteAsyncCallback), new Tuple<WebRequest,AsyncOperation>(request, asyncOp));
             } catch (Exception e) {
                 if (e is ThreadAbortException || e is StackOverflowException || e is OutOfMemoryException) {
                     throw;
