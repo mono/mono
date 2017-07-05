@@ -653,7 +653,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dtd2rng-net_4_x", "mcs/tool
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dtd2xsd-net_4_x", "mcs/tools/dtd2xsd/dtd2xsd-net_4_x.csproj", "{D22ABC86-1275-431C-911C-D14EE2A20FD7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mdoc-net_4_x", "mcs/tools/mdoc/mdoc-net_4_x.csproj", "{15871CCA-A500-4AE3-89D7-1F3429614403}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mdoc-net_4_x", "mcs/tools/mdoc/mdoc-net_4_x.csproj", "{168C7E2B-C125-484E-BDB3-F5D2D83EE7B3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mod-net_4_x", "mcs/tools/mod/mod-net_4_x.csproj", "{135520B4-D83D-4726-B043-3B4FBF306F94}"
 EndProject
@@ -1991,10 +1991,10 @@ Global
 		{D22ABC86-1275-431C-911C-D14EE2A20FD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D22ABC86-1275-431C-911C-D14EE2A20FD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D22ABC86-1275-431C-911C-D14EE2A20FD7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{15871CCA-A500-4AE3-89D7-1F3429614403}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{15871CCA-A500-4AE3-89D7-1F3429614403}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{15871CCA-A500-4AE3-89D7-1F3429614403}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{15871CCA-A500-4AE3-89D7-1F3429614403}.Release|Any CPU.Build.0 = Release|Any CPU
+		{168C7E2B-C125-484E-BDB3-F5D2D83EE7B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{168C7E2B-C125-484E-BDB3-F5D2D83EE7B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{168C7E2B-C125-484E-BDB3-F5D2D83EE7B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{168C7E2B-C125-484E-BDB3-F5D2D83EE7B3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{135520B4-D83D-4726-B043-3B4FBF306F94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{135520B4-D83D-4726-B043-3B4FBF306F94}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{135520B4-D83D-4726-B043-3B4FBF306F94}.Release|Any CPU.ActiveCfg = Release|Any CPU
