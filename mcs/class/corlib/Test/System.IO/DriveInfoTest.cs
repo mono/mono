@@ -41,23 +41,30 @@ namespace MonoTests.System.IO
 	public class DriveInfoTest
 	{
 		[Test]
-		[Category ("MobileNotWorking")]
 		public void Constructor ()
 		{
-			var drive = new DriveInfo (Environment.OSVersion.Platform == PlatformID.Unix ? "/" : "C:\\");
+			if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+				Assert.Ignore ("The Jenkins builders don't have '/' mounted, just testing Windows for now.");
+
+			var drive = new DriveInfo ("C:\\");
 			ValidateDriveInfo (drive);
 			Assert.AreEqual (DriveType.Fixed, drive.DriveType);
+		}
+
+		[Test]
+		public void ConstructorThrowsOnNonExistingDrive ()
+		{
+			Assert.Throws<ArgumentException> (() => new DriveInfo ("/monodriveinfotest"));
 		}
 
 		[Test]
 		public void GetDrivesNotEmpty ()
 		{
 			var drives = DriveInfo.GetDrives ();
-			Assert.That (drives, Is.Not.Empty);
+			CollectionAssert.IsNotEmpty (drives);
 		}
 
 		[Test]
-		[Category ("MobileNotWorking")]
 		public void GetDrivesValidInfo ()
 		{
 			var drives = DriveInfo.GetDrives ();
@@ -69,17 +76,21 @@ namespace MonoTests.System.IO
 
 		void ValidateDriveInfo (DriveInfo d)
 		{
-			Assert.That (d.Name, Is.Not.Empty);
-			Assert.That (d.VolumeLabel, Is.Not.Empty);
+			AssertHelper.IsNotEmpty (d.Name);
+			AssertHelper.IsNotEmpty (d.VolumeLabel);
 			Assert.NotNull (d.RootDirectory);
 
-			AssertHelper.GreaterOrEqual (d.AvailableFreeSpace, 0);
-			AssertHelper.GreaterOrEqual (d.TotalFreeSpace, 0);
-			AssertHelper.GreaterOrEqual (d.TotalSize, 0);
+			if (d.DriveFormat != null) {
+				Assert.AreNotEqual ("", d.DriveFormat);
+				Assert.AreNotEqual (DriveType.Unknown, d.DriveType, "DriveFormat=" + d.DriveFormat);
+			}
 
-			Assert.That (d.DriveFormat, Is.Not.Empty);
-			if (d.DriveType == DriveType.Fixed)
+			if (d.DriveType == DriveType.Fixed) { // just consider fixed drives for now
 				Assert.True (d.IsReady);
+				AssertHelper.GreaterOrEqual (d.AvailableFreeSpace, 0);
+				AssertHelper.GreaterOrEqual (d.TotalFreeSpace, 0);
+				AssertHelper.GreaterOrEqual (d.TotalSize, 0);
+			}
 		}
 	}
 }

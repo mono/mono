@@ -30,6 +30,11 @@ namespace NUnit.Framework
 		{
 			Assert.That(collection, new EmptyCollectionConstraint(), message, args);
 		}
+
+		public static void IsNotEmpty(IEnumerable collection, string message = null, params object[] args)
+		{
+			Assert.That(collection, Is.Not.Empty, message, args);
+		}
 	}
 
 	static class FileAssert

@@ -533,6 +533,12 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		public void Delete_NonExisting_NoException ()
+		{
+			File.Delete (Path.Combine (Directory.GetDirectoryRoot (Directory.GetCurrentDirectory ()), "monononexistingfile.dat"));
+		}
+
+		[Test]
 		public void GetAttributes_Archive ()
 		{
 			if (RunningOnUnix)
