@@ -303,7 +303,8 @@ namespace MonoTests.System.Net
 				request.Method = "GET";
 
 				try {
-					request.BeginGetRequestStream (null, null);
+					var result = request.BeginGetRequestStream (null, null);
+					request.EndGetRequestStream (result);
 					Assert.Fail ("#A1");
 				} catch (ProtocolViolationException ex) {
 					// Cannot send a content-body with this
@@ -358,7 +359,8 @@ namespace MonoTests.System.Net
 				req.AllowWriteStreamBuffering = false;
 
 				try {
-					req.BeginGetRequestStream (null, null);
+					var result = req.BeginGetRequestStream (null, null);
+					req.EndGetRequestStream (result);
 					Assert.Fail ("#A1");
 				} catch (ProtocolViolationException ex) {
 					// When performing a write operation with

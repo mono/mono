@@ -1183,6 +1183,9 @@ namespace System.Net
 
 		public override WebResponse EndGetResponse (IAsyncResult asyncResult)
 		{
+			if (asyncResult == null)
+				throw new ArgumentNullException (nameof (asyncResult));
+
 			try {
 				return TaskToApm.End<HttpWebResponse> (asyncResult);
 			} catch (Exception e) {
@@ -1192,6 +1195,9 @@ namespace System.Net
 
 		public Stream EndGetRequestStream (IAsyncResult asyncResult, out TransportContext context)
 		{
+			if (asyncResult == null)
+				throw new ArgumentNullException (nameof (asyncResult));
+
 			context = null;
 			return EndGetRequestStream (asyncResult);
 		}

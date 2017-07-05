@@ -109,6 +109,7 @@ namespace System.Net
 		{
 			if (!CanRead)
 				throw new NotSupportedException (SR.net_writeonlystream);
+			Operation.ThrowIfClosedOrDisposed ();
 
 			try {
 				return ReadAsync (buffer, offset, size, CancellationToken.None).Result;
@@ -122,6 +123,7 @@ namespace System.Net
 		{
 			if (!CanRead)
 				throw new NotSupportedException (SR.net_writeonlystream);
+			Operation.ThrowIfClosedOrDisposed ();
 
 			var task = ReadAsync (buffer, offset, size, CancellationToken.None);
 			return TaskToApm.Begin (task, cb, state);
@@ -129,6 +131,9 @@ namespace System.Net
 
 		public override int EndRead (IAsyncResult r)
 		{
+			if (r == null)
+				throw new ArgumentNullException (nameof (r));
+
 			try {
 				return TaskToApm.End<int> (r);
 			} catch (Exception e) {
@@ -141,6 +146,7 @@ namespace System.Net
 		{
 			if (!CanWrite)
 				throw new NotSupportedException (SR.net_readonlystream);
+			Operation.ThrowIfClosedOrDisposed ();
 
 			var task = WriteAsync (buffer, offset, size, CancellationToken.None);
 			return TaskToApm.Begin (task, cb, state);
@@ -149,7 +155,7 @@ namespace System.Net
 		public override void EndWrite (IAsyncResult r)
 		{
 			if (r == null)
-				throw new ArgumentNullException ("r");
+				throw new ArgumentNullException (nameof (r));
 
 			try {
 				TaskToApm.End (r);
@@ -162,6 +168,7 @@ namespace System.Net
 		{
 			if (!CanWrite)
 				throw new NotSupportedException (SR.net_readonlystream);
+			Operation.ThrowIfClosedOrDisposed ();
 
 			try {
 				WriteAsync (buffer, offset, size).Wait ();

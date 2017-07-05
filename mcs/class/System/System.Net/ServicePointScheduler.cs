@@ -347,7 +347,7 @@ namespace System.Net
 				ConnectionGroup group;
 				if (string.IsNullOrEmpty (groupName))
 					group = defaultGroup;
-				else if (!groups.TryGetValue (groupName, out group))
+				else if (groups == null || !groups.TryGetValue (groupName, out group))
 					return false;
 
 				Debug ($"CLOSE CONNECTION GROUP: group={group.ID}");
