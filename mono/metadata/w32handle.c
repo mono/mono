@@ -104,6 +104,9 @@ Handle state layout:
 #define RC_VERSION_MASK 0xFF000000
 #define RC_VERSION_SHIFT 24
 
+#define GET_VERSION(VAL) ((VAL) & RC_VERSION_MASK)
+
+
 static void
 set_handle_state_raw (MonoW32HandleBase *data, guint old, guint new)
 {
@@ -352,20 +355,20 @@ mono_w32handle_unlock_signal_mutex (void)
 }
 
 static void
-mono_w32handle_ref (gpointer handle);
+mono_w32handle_ref (gpointer handle, guint32 *version);
 
 static void
-mono_w32handle_unref (gpointer handle);
+mono_w32handle_unref (gpointer handle, guint32 *version);
 
 void
-mono_w32handle_lock_handle (gpointer handle)
+mono_w32handle_lock_handle (gpointer handle, guint32 *version)
 {
 	MonoW32HandleBase *handle_data;
 
 	if (!mono_w32handle_lookup_data (handle, &handle_data))
 		g_error ("%s: failed to lookup handle %p", __func__, handle);
 
-	mono_w32handle_ref (handle);
+	mono_w32handle_ref (handle, version);
 
 	mono_os_mutex_lock (&handle_data->signal_mutex);
 
@@ -373,7 +376,7 @@ mono_w32handle_lock_handle (gpointer handle)
 }
 
 gboolean
-mono_w32handle_trylock_handle (gpointer handle)
+mono_w32handle_trylock_handle (gpointer handle, guint32 *version)
 {
 	MonoW32HandleBase *handle_data;
 	gboolean locked;
@@ -383,11 +386,11 @@ mono_w32handle_trylock_handle (gpointer handle)
 	if (!mono_w32handle_lookup_data (handle, &handle_data))
 		g_error ("%s: failed to lookup handle %p", __func__, handle);
 
-	mono_w32handle_ref (handle);
+	mono_w32handle_ref (handle, version);
 
 	locked = mono_os_mutex_trylock (&handle_data->signal_mutex) == 0;
 	if (!locked)
-		mono_w32handle_unref (handle);
+		mono_w32handle_unref (handle, version);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: trylock handle %p, locked: %s", __func__, handle, locked ? "true" : "false");
 
@@ -395,7 +398,7 @@ mono_w32handle_trylock_handle (gpointer handle)
 }
 
 void
-mono_w32handle_unlock_handle (gpointer handle)
+mono_w32handle_unlock_handle (gpointer handle, guint32 *version)
 {
 	MonoW32HandleBase *handle_data;
 
@@ -406,7 +409,7 @@ mono_w32handle_unlock_handle (gpointer handle)
 
 	mono_os_mutex_unlock (&handle_data->signal_mutex);
 
-	mono_w32handle_unref (handle);
+	mono_w32handle_unref (handle, version);
 }
 
 void
@@ -625,14 +628,17 @@ gpointer mono_w32handle_new_fd (MonoW32HandleType type, int fd,
 }
 
 static gboolean
-mono_w32handle_ref_core (gpointer handle, MonoW32HandleBase *handle_data);
+mono_w32handle_ref_core (gpointer handle, MonoW32HandleBase *handle_data, guint32 *version);
 
 static gboolean
-mono_w32handle_unref_core (gpointer handle, MonoW32HandleBase *handle_data);
+mono_w32handle_unref_core (gpointer handle, MonoW32HandleBase *handle_data, guint32 *version);
 
 static void
 w32handle_destroy (gpointer handle);
 
+/*
+ * Only use duplicate/close if usage doesn't follow the lexical scope
+ */
 gpointer
 mono_w32handle_duplicate (gpointer handle)
 {
@@ -645,12 +651,15 @@ mono_w32handle_duplicate (gpointer handle)
 	if (handle == (gpointer) 0 && handle_data->type != MONO_W32HANDLE_CONSOLE)
 		return handle;
 
-	if (!mono_w32handle_ref_core (handle, handle_data))
+	if (!mono_w32handle_ref_core (handle, handle_data, NULL))
 		g_error ("%s: failed to ref handle %p", __func__, handle);
 
 	return handle;
 };
 
+/*
+ * Only use duplicate/close if usage doesn't follow the lexical scope
+ */
 gboolean
 mono_w32handle_close (gpointer handle)
 {
@@ -670,7 +679,7 @@ mono_w32handle_close (gpointer handle)
 		return FALSE;
 	}
 
-	destroy = mono_w32handle_unref_core (handle, handle_data);
+	destroy = mono_w32handle_unref_core (handle, handle_data, NULL);
 	if (destroy)
 		w32handle_destroy (handle);
 
@@ -715,6 +724,7 @@ mono_w32handle_foreach (gboolean (*on_each)(gpointer handle, gpointer data, gpoi
 			MonoW32HandleBase *handle_data = NULL;
 			gpointer handle;
 			gboolean destroy, finished;
+			guint32 handle_version = 0;
 
 			handle_data = &private_handles [i][k];
 			if (handle_data->type == MONO_W32HANDLE_UNUSED) {
@@ -724,7 +734,7 @@ mono_w32handle_foreach (gboolean (*on_each)(gpointer handle, gpointer data, gpoi
 
 			handle = GUINT_TO_POINTER (i * HANDLE_PER_SLOT + k);
 
-			if (!mono_w32handle_ref_core (handle, handle_data)) {
+			if (!mono_w32handle_ref_core (handle, handle_data, &handle_version)) {
 				/* we are racing with mono_w32handle_unref:
 				 *  the handle ref has been decremented, but it
 				 *  hasn't yet been destroyed. */
@@ -735,7 +745,7 @@ mono_w32handle_foreach (gboolean (*on_each)(gpointer handle, gpointer data, gpoi
 
 			/* we might have to destroy the handle here, as
 			 * it could have been unrefed in another thread */
-			destroy = mono_w32handle_unref_core (handle, handle_data);
+			destroy = mono_w32handle_unref_core (handle, handle_data, &handle_version);
 			if (destroy) {
 				/* we do not destroy it while holding the scan_mutex
 				 * lock, because w32handle_destroy also needs to take
@@ -780,7 +790,7 @@ get_caller (void)
 #endif
 
 static gboolean
-mono_w32handle_ref_core (gpointer handle, MonoW32HandleBase *handle_data)
+mono_w32handle_ref_core (gpointer handle, MonoW32HandleBase *handle_data, guint32 *version)
 {
 	guint old, new;
 
@@ -796,6 +806,9 @@ mono_w32handle_ref_core (gpointer handle, MonoW32HandleBase *handle_data)
 		new = old + 1;
 	} while (InterlockedCompareExchange ((gint32*) &handle_data->handle_state, new, old) != old);
 
+	if (version)
+		*version = new & RC_VERSION_MASK;
+
 #ifdef DEBUG_HANDLE_RC
 	char *caller = get_caller ();
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: ref %s handle %p, ref: %x -> %x from: %s",
@@ -810,7 +823,7 @@ mono_w32handle_ref_core (gpointer handle, MonoW32HandleBase *handle_data)
 }
 
 static gboolean
-mono_w32handle_unref_core (gpointer handle, MonoW32HandleBase *handle_data)
+mono_w32handle_unref_core (gpointer handle, MonoW32HandleBase *handle_data, guint32 *version)
 {
 	MonoW32HandleType type;
 	guint old, new;
@@ -830,6 +843,9 @@ mono_w32handle_unref_core (gpointer handle, MonoW32HandleBase *handle_data)
 			new = old - 1;
 	} while (InterlockedCompareExchange ((gint32*) &handle_data->handle_state, new, old) != old);
 
+	if (version && GET_VERSION (old) != GET_VERSION (*version))
+		g_error ("Unref of handle %p doesn't have the same version of its matching ref calls. Old state %x new state %x", handle, *version, old);
+
 	/* handle_data might contain invalid data from now on, if
 	 * another thread is unref'ing this handle at the same time */
 
@@ -846,14 +862,14 @@ mono_w32handle_unref_core (gpointer handle, MonoW32HandleBase *handle_data)
 }
 
 static void
-mono_w32handle_ref (gpointer handle)
+mono_w32handle_ref (gpointer handle, guint32 *version)
 {
 	MonoW32HandleBase *handle_data;
 
 	if (!mono_w32handle_lookup_data (handle, &handle_data))
 		g_error ("%s: failed to ref handle %p, unknown handle", __func__, handle);
 
-	if (!mono_w32handle_ref_core (handle, handle_data))
+	if (!mono_w32handle_ref_core (handle, handle_data, version))
 		g_error ("%s: failed to ref handle %p", __func__, handle);
 }
 
@@ -911,7 +927,7 @@ w32handle_destroy (gpointer handle)
 
 /* The handle must not be locked on entry to this function */
 static void
-mono_w32handle_unref (gpointer handle)
+mono_w32handle_unref (gpointer handle, guint32 *version)
 {
 	MonoW32HandleBase *handle_data;
 	gboolean destroy;
@@ -919,7 +935,7 @@ mono_w32handle_unref (gpointer handle)
 	if (!mono_w32handle_lookup_data (handle, &handle_data))
 		g_error ("%s: failed to unref handle %p, unknown handle", __func__, handle);
 
-	destroy = mono_w32handle_unref_core (handle, handle_data);
+	destroy = mono_w32handle_unref_core (handle, handle_data, version);
 	if (destroy)
 		w32handle_destroy (handle);
 }
@@ -1132,7 +1148,7 @@ spin (guint32 ms)
 }
 
 static void
-mono_w32handle_lock_handles (gpointer *handles, gsize numhandles)
+mono_w32handle_lock_handles (gpointer *handles, guint32 handle_versions[], gsize numhandles)
 {
 	guint32 i, iter=0;
 
@@ -1143,7 +1159,7 @@ again:
 
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: attempting to lock %p", __func__, handle);
 
-		if (!mono_w32handle_trylock_handle (handle)) {
+		if (!mono_w32handle_trylock_handle (handle, &handle_versions [i])) {
 			/* Bummer */
 
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: attempt failed for %p.", __func__,
@@ -1152,7 +1168,7 @@ again:
 			while (i--) {
 				handle = handles[i];
 
-				mono_w32handle_unlock_handle (handle);
+				mono_w32handle_unlock_handle (handle, &handle_versions [i]);
 			}
 
 			/* If iter ever reaches 100 the nanosleep will
@@ -1178,7 +1194,7 @@ again:
 }
 
 static void
-mono_w32handle_unlock_handles (gpointer *handles, gsize numhandles)
+mono_w32handle_unlock_handles (gpointer *handles, guint32 handle_versions[], gsize numhandles)
 {
 	guint32 i;
 
@@ -1187,7 +1203,7 @@ mono_w32handle_unlock_handles (gpointer *handles, gsize numhandles)
 
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: unlocking handle %p", __func__, handle);
 
-		mono_w32handle_unlock_handle (handle);
+		mono_w32handle_unlock_handle (handle, &handle_versions [i]);
 	}
 }
 
@@ -1377,6 +1393,7 @@ mono_w32handle_wait_one (gpointer handle, guint32 timeout, gboolean alertable)
 	gboolean alerted;
 	gint64 start;
 	gboolean abandoned = FALSE;
+	guint32 handle_version;
 
 	alerted = FALSE;
 
@@ -1394,7 +1411,7 @@ mono_w32handle_wait_one (gpointer handle, guint32 timeout, gboolean alertable)
 		return MONO_W32HANDLE_WAIT_RET_FAILED;
 	}
 
-	mono_w32handle_lock_handle (handle);
+	mono_w32handle_lock_handle (handle, &handle_version);
 
 	if (mono_w32handle_test_capabilities (handle, MONO_W32HANDLE_CAP_OWN)) {
 		if (own_if_owned (handle, &abandoned)) {
@@ -1452,7 +1469,7 @@ mono_w32handle_wait_one (gpointer handle, guint32 timeout, gboolean alertable)
 done:
 	mono_w32handle_set_in_use (handle, FALSE);
 
-	mono_w32handle_unlock_handle (handle);
+	mono_w32handle_unlock_handle (handle, &handle_version);
 
 	return ret;
 }
@@ -1465,6 +1482,7 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 	gint i;
 	gint64 start;
 	gpointer handles_sorted [MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS];
+	guint32 handle_versions [MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS];
 	gboolean abandoned [MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS] = {0};
 
 	if (nhandles == 0)
@@ -1520,10 +1538,11 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 		/* Add a reference, as we need to ensure the handle wont
 		 * disappear from under us while we're waiting in the loop
 		 * (not lock, as we don't want exclusive access here) */
-		mono_w32handle_ref (handles [i]);
+		mono_w32handle_ref (handles [i], &handle_versions [i]);
 	}
 
 	for (;;) {
+		guint32 handle_versions_loop [MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS];
 		gsize count, lowest;
 		gboolean signalled;
 		gint waited;
@@ -1531,7 +1550,7 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 		count = 0;
 		lowest = nhandles;
 
-		mono_w32handle_lock_handles (handles, nhandles);
+		mono_w32handle_lock_handles (handles, handle_versions_loop, nhandles);
 
 		for (i = 0; i < nhandles; i++) {
 			if ((mono_w32handle_test_capabilities (handles [i], MONO_W32HANDLE_CAP_OWN) && mono_w32handle_ops_isowned (handles [i]))
@@ -1551,7 +1570,7 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 				own_if_signalled (handles [i], &abandoned [i]);
 		}
 
-		mono_w32handle_unlock_handles (handles, nhandles);
+		mono_w32handle_unlock_handles (handles, handle_versions_loop, nhandles);
 
 		if (signalled) {
 			ret = MONO_W32HANDLE_WAIT_RET_SUCCESS_0 + lowest;
@@ -1631,7 +1650,7 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 done:
 	for (i = 0; i < nhandles; i++) {
 		/* Unref everything we reffed above */
-		mono_w32handle_unref (handles [i]);
+		mono_w32handle_unref (handles [i], &handle_versions [i]);
 	}
 
 	return ret;
@@ -1645,6 +1664,7 @@ mono_w32handle_signal_and_wait (gpointer signal_handle, gpointer wait_handle, gu
 	gboolean alerted;
 	gboolean abandoned = FALSE;
 	gpointer handles [2];
+	guint32 handle_versions [2];
 
 	alerted = FALSE;
 
@@ -1661,11 +1681,11 @@ mono_w32handle_signal_and_wait (gpointer signal_handle, gpointer wait_handle, gu
 	handles [0] = wait_handle;
 	handles [1] = signal_handle;
 
-	mono_w32handle_lock_handles (handles, 2);
+	mono_w32handle_lock_handles (handles, handle_versions, 2);
 
 	mono_w32handle_ops_signal (signal_handle);
 
-	mono_w32handle_unlock_handle (signal_handle);
+	mono_w32handle_unlock_handle (signal_handle, &handle_versions [1]);
 
 	if (mono_w32handle_test_capabilities (wait_handle, MONO_W32HANDLE_CAP_OWN)) {
 		if (own_if_owned (wait_handle, &abandoned)) {
@@ -1719,7 +1739,7 @@ mono_w32handle_signal_and_wait (gpointer signal_handle, gpointer wait_handle, gu
 	}
 
 done:
-	mono_w32handle_unlock_handle (wait_handle);
+	mono_w32handle_unlock_handle (wait_handle, &handle_versions [0]);
 
 	return ret;
 }
