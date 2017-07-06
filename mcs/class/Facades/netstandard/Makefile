@@ -22,6 +22,10 @@ else
 LIB_REFS += System.Web System.Drawing
 endif
 
+ifeq (unityaot, $(PROFILE))
+LIB_REFS += System.Drawing
+endif
+
 LIB_MCS_FLAGS = $(SIGN_FLAGS) $(EXTRA_LIB_MCS_FLAGS)
 
 PLATFORM_DEBUG_FLAGS =

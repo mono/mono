@@ -20,6 +20,10 @@ LIB_REFS += System.Drawing
 endif
 endif
 
+ifeq (unityaot, $(PROFILE))
+LIB_REFS += System.Drawing
+endif
+
 PLATFORM_DEBUG_FLAGS =
 
 NO_TEST = yes
