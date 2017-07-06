@@ -153,13 +153,13 @@ gboolean
 mono_w32handle_issignalled (gpointer handle);
 
 void
-mono_w32handle_lock_handle (gpointer handle);
+mono_w32handle_lock_handle (gpointer handle, guint32 *version);
 
 gboolean
-mono_w32handle_trylock_handle (gpointer handle);
+mono_w32handle_trylock_handle (gpointer handle, guint32 *version);
 
 void
-mono_w32handle_unlock_handle (gpointer handle);
+mono_w32handle_unlock_handle (gpointer handle, guint32 *version);
 
 MonoW32HandleWaitRet
 mono_w32handle_wait_one (gpointer handle, guint32 timeout, gboolean alertable);
