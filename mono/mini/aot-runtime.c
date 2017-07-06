@@ -4193,6 +4193,15 @@ find_aot_method (MonoMethod *method, MonoAotModule **out_amodule)
 	GPtrArray *modules;
 	int i;
 	guint32 hash = mono_aot_method_hash (method);
+	gboolean dedupable = mono_aot_can_dedup (method);
+
+	/* Try the place we expect to have moved the method only 
+	 * We don't probe, as that causes hard-to-debug issues when we fail
+	 * to find the method */
+	if (container_amodule && dedupable) {
+		index = find_aot_method_in_amodule (container_amodule, method, hash);
+		return index;
+	}
 
 	/* Try the method's module first */
 	*out_amodule = (MonoAotModule *)method->klass->image->aot_module;
@@ -4475,6 +4484,8 @@ mono_aot_get_method_checked (MonoDomain *domain, MonoMethod *method, MonoError *
 		}
 	}
 
+	gboolean dedupable = mono_aot_can_dedup (method);
+
 	if (!amodule)
 		return NULL;
 
@@ -4500,32 +4511,7 @@ mono_aot_get_method_checked (MonoDomain *domain, MonoMethod *method, MonoError *
 	/* Find method index */
 	method_index = 0xffffff;
 
-	gboolean dedupable = mono_aot_can_dedup (method);
-
-	// If an extra method and container, check there first
-	if (container_amodule && dedupable) {
-			g_assert (!container_amodule->out_of_date);
-			amodule_lock (container_amodule);
-			code = (guint8 *)g_hash_table_lookup (container_amodule->method_to_code, method);
-			amodule_unlock (container_amodule);
-			if (code)
-				return code;
-
-			guint32 hash = mono_aot_method_hash (method);
-
-			method_index = find_aot_method_in_amodule (container_amodule, method, hash);
-
-			if (method_index != 0xffffff) {
-				cache_result = TRUE;
-				g_assert (container_amodule->info.nmethods > method_index);
-				amodule = container_amodule;
-				amodule_lock (container_amodule);
-				g_hash_table_insert (container_amodule->extra_methods, GUINT_TO_POINTER (method_index), method);
-				amodule_unlock (container_amodule);
-			}
-	} 
-	
-	if (method_index == 0xffffff && method->is_inflated && !method->wrapper_type && mono_method_is_generic_sharable_full (method, TRUE, FALSE, FALSE)) {
+	if (method->is_inflated && !method->wrapper_type && mono_method_is_generic_sharable_full (method, TRUE, FALSE, FALSE) && !dedupable) {
 		MonoMethod *orig_method = method;
 		/* 
 		 * For generic methods, we store the fully shared instance in place of the
