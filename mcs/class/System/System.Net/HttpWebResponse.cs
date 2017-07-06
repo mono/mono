@@ -313,9 +313,6 @@ namespace System.Net
 
 		public override void Close ()
 		{
-			if (disposed)
-				return;
-			disposed = true;
 			var st = Interlocked.Exchange (ref stream, null);
 			if (st != null)
 				st.Close ();

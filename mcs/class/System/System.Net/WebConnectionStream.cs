@@ -105,16 +105,35 @@ namespace System.Net
 			}
 		}
 
+		protected Exception GetException (Exception e)
+		{
+			e = HttpWebRequest.FlattenException (e);
+			if (e is WebException)
+				return e;
+			if (Operation.Aborted || e is OperationCanceledException || e is ObjectDisposedException)
+				return HttpWebRequest.CreateRequestAbortedException ();
+			return e;
+		}
+
 		public override int Read (byte[] buffer, int offset, int size)
 		{
 			if (!CanRead)
 				throw new NotSupportedException (SR.net_writeonlystream);
 			Operation.ThrowIfClosedOrDisposed ();
 
+			if (buffer == null)
+				throw new ArgumentNullException (nameof (buffer));
+
+			int length = buffer.Length;
+			if (offset < 0 || length < offset)
+				throw new ArgumentOutOfRangeException (nameof (offset));
+			if (size < 0 || (length - offset) < size)
+				throw new ArgumentOutOfRangeException (nameof (size));
+
 			try {
 				return ReadAsync (buffer, offset, size, CancellationToken.None).Result;
 			} catch (Exception e) {
-				throw HttpWebRequest.FlattenException (e);
+				throw GetException (e);
 			}
 		}
 
@@ -124,6 +143,15 @@ namespace System.Net
 			if (!CanRead)
 				throw new NotSupportedException (SR.net_writeonlystream);
 			Operation.ThrowIfClosedOrDisposed ();
+
+			if (buffer == null)
+				throw new ArgumentNullException (nameof (buffer));
+
+			int length = buffer.Length;
+			if (offset < 0 || length < offset)
+				throw new ArgumentOutOfRangeException (nameof (offset));
+			if (size < 0 || (length - offset) < size)
+				throw new ArgumentOutOfRangeException (nameof (size));
 
 			var task = ReadAsync (buffer, offset, size, CancellationToken.None);
 			return TaskToApm.Begin (task, cb, state);
@@ -137,7 +165,7 @@ namespace System.Net
 			try {
 				return TaskToApm.End<int> (r);
 			} catch (Exception e) {
-				throw HttpWebRequest.FlattenException (e);
+				throw GetException (e);
 			}
 		}
 
@@ -147,6 +175,15 @@ namespace System.Net
 			if (!CanWrite)
 				throw new NotSupportedException (SR.net_readonlystream);
 			Operation.ThrowIfClosedOrDisposed ();
+
+			if (buffer == null)
+				throw new ArgumentNullException (nameof (buffer));
+
+			int length = buffer.Length;
+			if (offset < 0 || length < offset)
+				throw new ArgumentOutOfRangeException (nameof (offset));
+			if (size < 0 || (length - offset) < size)
+				throw new ArgumentOutOfRangeException (nameof (size));
 
 			var task = WriteAsync (buffer, offset, size, CancellationToken.None);
 			return TaskToApm.Begin (task, cb, state);
@@ -160,7 +197,7 @@ namespace System.Net
 			try {
 				TaskToApm.End (r);
 			} catch (Exception e) {
-				throw HttpWebRequest.FlattenException (e);
+				throw GetException (e);
 			}
 		}
 
@@ -170,10 +207,19 @@ namespace System.Net
 				throw new NotSupportedException (SR.net_readonlystream);
 			Operation.ThrowIfClosedOrDisposed ();
 
+			if (buffer == null)
+				throw new ArgumentNullException (nameof (buffer));
+
+			int length = buffer.Length;
+			if (offset < 0 || length < offset)
+				throw new ArgumentOutOfRangeException (nameof (offset));
+			if (size < 0 || (length - offset) < size)
+				throw new ArgumentOutOfRangeException (nameof (size));
+
 			try {
 				WriteAsync (buffer, offset, size).Wait ();
 			} catch (Exception e) {
-				throw HttpWebRequest.FlattenException (e);
+				throw GetException (e);
 			}
 		}
 
@@ -190,10 +236,6 @@ namespace System.Net
 
 		public override void Close ()
 		{
-			if (disposed)
-				return;
-			disposed = true;
-
 			Close_internal (ref disposed);
 		}
 

@@ -119,13 +119,13 @@ namespace System.Net
 				throw new InvalidOperationException ();
 
 			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
+				throw new ArgumentNullException (nameof (buffer));
 
 			int length = buffer.Length;
 			if (offset < 0 || length < offset)
-				throw new ArgumentOutOfRangeException ("offset");
+				throw new ArgumentOutOfRangeException (nameof (offset));
 			if (size < 0 || (length - offset) < size)
-				throw new ArgumentOutOfRangeException ("size");
+				throw new ArgumentOutOfRangeException (nameof (size));
 
 			var myWriteTcs = new TaskCompletionSource<int> ();
 			if (Interlocked.CompareExchange (ref pendingWrite, myWriteTcs, null) != null)
@@ -360,27 +360,28 @@ namespace System.Net
 
 		protected override void Close_internal (ref bool disposed)
 		{
+			WebConnection.Debug ($"{ME} CLOSE: {disposed} {requestWritten} {allowBuffering}");
+
+			if (disposed)
+				return;
+			disposed = true;
+
 			if (sendChunked) {
-				if (disposed)
-					return;
-				disposed = true;
 				WriteChunkTrailer ().Wait ();
 				return;
 			}
 
-			if (!allowBuffering) {
+			if (!allowBuffering || requestWritten) {
 				Operation.CompleteRequestWritten (this);
 				return;
 			}
-
-			if (disposed || requestWritten)
-				return;
 
 			long length = Request.ContentLength;
 
 			if (!sendChunked && !Operation.IsNtlmChallenge && length != -1 && totalWritten != length) {
 				IOException io = new IOException ("Cannot close the stream until all bytes are written");
 				closed = true;
+				disposed = true;
 				var throwMe = new WebException ("Request was cancelled.", WebExceptionStatus.RequestCanceled, WebExceptionInternalStatus.RequestFatal, io);
 				Operation.CompleteRequestWritten (this, throwMe);
 				throw throwMe;

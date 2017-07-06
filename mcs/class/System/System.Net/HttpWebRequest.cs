@@ -861,7 +861,7 @@ namespace System.Net
 
 		Task<Stream> MyGetRequestStreamAsync ()
 		{
-			return RunWithTimeout (MyGetRequestStreamAsync, "The request timed out");
+			return RunWithTimeout (MyGetRequestStreamAsync);
 		}
 
 		async Task<Stream> MyGetRequestStreamAsync (Task timeoutTask, CancellationToken cancellationToken)
@@ -944,23 +944,28 @@ namespace System.Net
 			throw new NotImplementedException ();
 		}
 
-		async Task<T> RunWithTimeout<T> (Func<Task, CancellationToken, Task<T>> func, string message)
+		internal static async Task<T> RunWithTimeout<T> (Func<Task, CancellationToken, Task<T>> func, int timeout, Action abort)
 		{
 			using (var cts = new CancellationTokenSource ()) {
 				cts.CancelAfter (timeout);
-				cts.Token.Register (() => Abort ());
+				cts.Token.Register (() => abort ());
 				var timeoutTask = Task.Delay (timeout);
 				var workerTask = func (timeoutTask, cts.Token);
 				var ret = await Task.WhenAny (workerTask, timeoutTask).ConfigureAwait (false);
 				if (ret == timeoutTask)
-					throw new WebException (message, WebExceptionStatus.Timeout);
+					throw new WebException (SR.net_timeout, WebExceptionStatus.Timeout);
 				return workerTask.Result;
 			}
 		}
 
+		Task<T> RunWithTimeout<T> (Func<Task, CancellationToken, Task<T>> func)
+		{
+			return RunWithTimeout (func, timeout, Abort);
+		}
+
 		Task<HttpWebResponse> MyGetResponseAsync ()
 		{
-			return RunWithTimeout (MyGetResponseAsync, "The request timed out");
+			return RunWithTimeout (MyGetResponseAsync);
 		}
 
 		async Task<HttpWebResponse> MyGetResponseAsync (Task timeoutTask, CancellationToken cancellationToken)
@@ -1040,7 +1045,7 @@ namespace System.Net
 					throwMe = GetWebException (e);
 				}
 
-				WebConnection.Debug ($"HWR GET RESPONSE LOOP #1: Req={ID} - {redirect} {mustReadAll} {writeBuffer != null} {ntlm != null} - {throwMe != null}");
+				WebConnection.Debug ($"HWR GET RESPONSE LOOP #1: Req={ID} - redirect={redirect} mustReadAll={mustReadAll} writeBuffer={writeBuffer != null} ntlm={ntlm != null} - {throwMe != null}");
 
 				lock (locker) {
 					if (throwMe != null) {
@@ -1067,6 +1072,7 @@ namespace System.Net
 				try {
 					if (mustReadAll)
 						await stream.ReadAllAsync (cancellationToken).ConfigureAwait (false);
+					operation.CompleteResponseRead (stream, true);
 					response.Close ();
 				} catch (Exception e) {
 					throwMe = GetWebException (e);
@@ -1140,8 +1146,6 @@ namespace System.Net
 				bool isChallenge;
 				(ntlm, isChallenge) = HandleNtlmAuth (stream, response, writeBuffer, cancellationToken);
 				WebConnection.Debug ($"HWR REDIRECT: {ntlm} {isChallenge} {mustReadAll}");
-				if (ntlm != null && !isChallenge)
-					mustReadAll = true;
 			}
 
 			return (response, true, mustReadAll, writeBuffer, ntlm);
@@ -1161,14 +1165,16 @@ namespace System.Net
 		WebException GetWebException (Exception e)
 		{
 			e = FlattenException (e);
+			if (e is WebException wexc) {
+				if (!Aborted || wexc.Status == WebExceptionStatus.RequestCanceled || wexc.Status == WebExceptionStatus.Timeout)
+					return wexc;
+			}
 			if (Aborted || e is OperationCanceledException || e is ObjectDisposedException)
 				return CreateRequestAbortedException ();
-			if (e is WebException wexc)
-				return wexc;
 			return new WebException (e.Message, e, WebExceptionStatus.ProtocolError, null);
 		}
 
-		static WebException CreateRequestAbortedException ()
+		internal static WebException CreateRequestAbortedException ()
 		{
 			return new WebException (SR.Format (SR.net_reqaborted, WebExceptionStatus.RequestCanceled), WebExceptionStatus.RequestCanceled);
 		}
@@ -1226,9 +1232,6 @@ namespace System.Net
 				return;
 
 			WebConnection.Debug ($"HWR ABORT: Req={ID}");
-
-			if (haveResponse && finished_reading)
-				return;
 
 			haveResponse = true;
 			var operation = currentOperation;

@@ -84,6 +84,7 @@ namespace System.Net
 		{
 			RequestStream = request;
 			ME = $"WRP(Cnc={Connection.ID}, Op={Operation.ID})";
+			request.InnerStream.ReadTimeout = ReadTimeout;
 		}
 
 		public override long Length {
@@ -106,6 +107,17 @@ namespace System.Net
 			private set;
 		}
 
+		Task<T> RunWithTimeout<T> (Func<Task, CancellationToken, Task<T>> func)
+		{
+			return HttpWebRequest.RunWithTimeout (func, ReadTimeout, () => Abort ());
+		}
+
+		void Abort ()
+		{
+			Operation.Abort ();
+			InnerStream.Dispose ();
+		}
+
 		public override async Task<int> ReadAsync (byte[] buffer, int offset, int size, CancellationToken cancellationToken)
 		{
 			WebConnection.Debug ($"{ME} READ ASYNC");
@@ -113,13 +125,13 @@ namespace System.Net
 			cancellationToken.ThrowIfCancellationRequested ();
 
 			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
+				throw new ArgumentNullException (nameof (buffer));
 
 			int length = buffer.Length;
 			if (offset < 0 || length < offset)
-				throw new ArgumentOutOfRangeException ("offset");
+				throw new ArgumentOutOfRangeException (nameof (offset));
 			if (size < 0 || (length - offset) < size)
-				throw new ArgumentOutOfRangeException ("size");
+				throw new ArgumentOutOfRangeException (nameof (size));
 
 			if (Interlocked.CompareExchange (ref nestedRead, 1, 0) != 0)
 				throw new InvalidOperationException ("Invalid nested call.");
@@ -142,9 +154,11 @@ namespace System.Net
 			Exception throwMe = null;
 
 			try {
-				(oldBytes, nbytes) = await ProcessRead (buffer, offset, size, cancellationToken).ConfigureAwait (false);
+				// FIXME: NetworkStream.ReadAsync() does not support cancellation.
+				(oldBytes, nbytes) = await RunWithTimeout (
+					(timeout, ct) => ProcessRead (buffer, offset, size, ct)).ConfigureAwait (false);
 			} catch (Exception e) {
-				throwMe = HttpWebRequest.FlattenException (e);
+				throwMe = GetReadException (WebExceptionStatus.ReceiveFailure, e, "ReadAsync");
 			}
 
 			WebConnection.Debug ($"{ME} READ ASYNC #3: {totalRead} {contentLength} - {oldBytes} {nbytes} {throwMe?.Message}");
@@ -494,22 +508,27 @@ namespace System.Net
 			if (!closed && !nextReadCalled) {
 				nextReadCalled = true;
 				if (totalRead >= contentLength) {
+					disposed = true;
 					Operation.CompleteResponseRead (this, true);
 				} else {
 					// If we have not read all the contents
 					closed = true;
+					disposed = true;
 					Operation.CompleteResponseRead (this, false);
 				}
 			}
 		}
 
-		internal static WebException GetReadException (WebExceptionStatus status, Exception error, string where)
+		WebException GetReadException (WebExceptionStatus status, Exception error, string where)
 		{
+			error = GetException (error);
 			string msg = $"Error getting response stream ({where}): {status}";
 			if (error == null)
 				return new WebException ($"Error getting response stream ({where}): {status}", status);
-			if (error is WebException wex)
-				return wex;
+			if (error is WebException wexc)
+				return wexc;
+			if (Operation.Aborted || error is OperationCanceledException || error is ObjectDisposedException)
+				return HttpWebRequest.CreateRequestAbortedException ();
 			return new WebException ($"Error getting response stream ({where}): {status} {error.Message}", status,
 						 WebExceptionInternalStatus.RequestFatal, error);
 		}

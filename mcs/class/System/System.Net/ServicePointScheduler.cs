@@ -43,6 +43,8 @@ namespace System.Net
 		public int MaxIdleTime {
 			get { return maxIdleTime; }
 			set {
+				if (value < Timeout.Infinite || value > Int32.MaxValue)
+					throw new ArgumentOutOfRangeException ();
 				if (value == maxIdleTime)
 					return;
 				maxIdleTime = value;
@@ -51,15 +53,31 @@ namespace System.Net
 			}
 		}
 
-		public ServicePointScheduler (ServicePoint servicePoint)
+		public int ConnectionLimit {
+			get { return connectionLimit; }
+			set {
+				if (value <= 0)
+					throw new ArgumentOutOfRangeException ();
+
+				if (value == connectionLimit)
+					return;
+				connectionLimit = value;
+				Debug ($"CONNECTION LIMIT = {value}");
+				Run ();
+			}
+		}
+
+		public ServicePointScheduler (ServicePoint servicePoint, int connectionLimit, int maxIdleTime)
 		{
 			ServicePoint = servicePoint;
+			this.connectionLimit = connectionLimit;
+			this.maxIdleTime = maxIdleTime;
 
 			schedulerEvent = new AsyncManualResetEvent (false);
-			maxIdleTime = servicePoint.MaxIdleTime;
 			defaultGroup = new ConnectionGroup (this, string.Empty);
 			operations = new LinkedList<(ConnectionGroup, WebOperation)> ();
 			idleConnections = new LinkedList<(ConnectionGroup, WebConnection, Task)> ();
+			idleSince = DateTime.UtcNow;
 		}
 
 		[Conditional ("MARTIN_WEB_DEBUG")]
@@ -82,10 +100,18 @@ namespace System.Net
 		LinkedList<(ConnectionGroup, WebOperation)> operations;
 		LinkedList<(ConnectionGroup, WebConnection, Task)> idleConnections;
 		int currentConnections;
+		int connectionLimit;
+		DateTime idleSince;
 
 		public int CurrentConnections {
 			get {
 				return currentConnections;
+			}
+		}
+
+		public DateTime IdleSince {
+			get {
+				return idleSince;
 			}
 		}
 
@@ -108,6 +134,8 @@ namespace System.Net
 
 		async void StartScheduler ()
 		{
+			idleSince = DateTime.UtcNow + TimeSpan.FromDays (3650);
+
 			while (true) {
 				Debug ($"MAIN LOOP");
 
@@ -120,6 +148,7 @@ namespace System.Net
 					if (groups == null && defaultGroup.IsEmpty () && operations.Count == 0 && idleConnections.Count == 0) {
 						Debug ($"MAIN LOOP DONE");
 						running = 0;
+						idleSince = DateTime.UtcNow;
 						schedulerEvent.Reset ();
 						return;
 					}

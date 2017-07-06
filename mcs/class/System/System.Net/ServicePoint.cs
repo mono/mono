@@ -43,10 +43,6 @@ namespace System.Net
 	public class ServicePoint
 	{
 		readonly Uri uri;
-		int connectionLimit;
-		int maxIdleTime;
-		int currentConnections;
-		DateTime idleSince;
 		DateTime lastDnsResolve;
 		Version protocolVersion;
 		IPHostEntry host;
@@ -59,19 +55,14 @@ namespace System.Net
 		bool tcp_keepalive;
 		int tcp_keepalive_time;
 		int tcp_keepalive_interval;
-		Timer idleTimer;
 
 		// Constructors
 
 		internal ServicePoint (Uri uri, int connectionLimit, int maxIdleTime)
 		{
 			this.uri = uri;
-			this.connectionLimit = connectionLimit;
-			this.maxIdleTime = maxIdleTime;
-			this.currentConnections = 0;
-			this.idleSince = DateTime.UtcNow;
 
-			Scheduler = new ServicePointScheduler (this);
+			Scheduler = new ServicePointScheduler (this, connectionLimit, maxIdleTime);
 		}
 
 		internal ServicePointScheduler Scheduler {
@@ -105,13 +96,8 @@ namespace System.Net
 		}
 
 		public int ConnectionLimit {
-			get { return connectionLimit; }
-			set {
-				if (value <= 0)
-					throw new ArgumentOutOfRangeException ();
-
-				connectionLimit = value;
-			}
+			get { return Scheduler.ConnectionLimit; }
+			set { Scheduler.ConnectionLimit = value; }
 		}
 
 		public string ConnectionName {
@@ -126,23 +112,13 @@ namespace System.Net
 
 		public DateTime IdleSince {
 			get {
-				return idleSince.ToLocalTime ();
+				return Scheduler.IdleSince.ToLocalTime ();
 			}
 		}
 
 		public int MaxIdleTime {
-			get { return maxIdleTime; }
-			set {
-				if (value < Timeout.Infinite || value > Int32.MaxValue)
-					throw new ArgumentOutOfRangeException ();
-
-				lock (this) {
-					Scheduler.MaxIdleTime = value;
-					maxIdleTime = value;
-					if (idleTimer != null)
-						idleTimer.Change (maxIdleTime, maxIdleTime);
-				}
-			}
+			get { return Scheduler.MaxIdleTime; }
+			set { Scheduler.MaxIdleTime = value; }
 		}
 
 		public virtual Version ProtocolVersion {
