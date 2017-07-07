@@ -539,14 +539,16 @@ mono_arch_create_handler_block_trampoline (MonoTrampInfo **info, gboolean aot)
 	/*
 	 * We are in a method frame after the call emitted by OP_CALL_HANDLER.
 	 */
+	/* Call a helper to obtain jit_tls->handler_block_return_address */
 	if (aot)
 		code = mono_arm_emit_aotconst (&ji, code, buf, ARMREG_IP0, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mono_arm_handler_block_trampoline_helper");
 	else
 		code = mono_arm_emit_imm64 (code, ARMREG_IP0, (guint64)mono_arm_handler_block_trampoline_helper);
+	arm_blrx (code, ARMREG_IP0);
 	/* Set it as the return address so the trampoline will return to it */
-	arm_movx (code, ARMREG_LR, ARMREG_IP0);
+	arm_movx (code, ARMREG_LR, ARMREG_R0);
 
-	/* Call the trampoline */
+	/* Call the C trampoline function */
 	if (aot) {
 		char *name = g_strdup_printf ("trampoline_func_%d", MONO_TRAMPOLINE_HANDLER_BLOCK_GUARD);
 		code = mono_arm_emit_aotconst (&ji, code, buf, ARMREG_IP0, MONO_PATCH_INFO_JIT_ICALL_ADDR, name);
@@ -557,7 +559,7 @@ mono_arch_create_handler_block_trampoline (MonoTrampInfo **info, gboolean aot)
 	arm_brx (code, ARMREG_IP0);
 
 	mono_arch_flush_icache (buf, code - buf);
-	mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_HELPER, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (buf, code - buf, MONO_PROFILER_CODE_BUFFER_HELPER, NULL));
 	g_assert (code - buf <= tramp_size);
 
 	*info = mono_tramp_info_create ("handler_block_trampoline", buf, code - buf, ji, unwind_ops);
@@ -806,7 +808,7 @@ mono_arch_get_enter_icall_trampoline (MonoTrampInfo **info)
 	g_assert (code - start < buf_len);
 
 	mono_arch_flush_icache (start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
 
 	if (info)
 		*info = mono_tramp_info_create ("enter_icall_trampoline", start, code - start, ji, unwind_ops);

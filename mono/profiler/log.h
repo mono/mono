@@ -150,6 +150,17 @@ typedef enum {
 	SYNC_POINT_WORLD_START
 } MonoProfilerSyncPointType;
 
+typedef enum {
+	MONO_PROFILER_MONITOR_CONTENTION = 1,
+	MONO_PROFILER_MONITOR_DONE = 2,
+	MONO_PROFILER_MONITOR_FAIL = 3,
+} MonoProfilerMonitorEvent;
+
+enum {
+	MONO_PROFILER_GC_HANDLE_CREATED,
+	MONO_PROFILER_GC_HANDLE_DESTROYED,
+};
+
 // Sampling sources
 // Unless you have compiled with --enable-perf-events, only SAMPLE_CYCLES is available
 enum {
@@ -201,7 +212,7 @@ enum {
 
 //The follow flags are the common aliases we want ppl to use
 #define PROFLOG_TYPELOADING_ALIAS (PROFLOG_DOMAIN_EVENTS | PROFLOG_ASSEMBLY_EVENTS | PROFLOG_MODULE_EVENTS | PROFLOG_CLASS_EVENTS)
-#define PROFLOG_CODECOV_ALIAS (PROFLOG_GC_EVENTS | PROFLOG_THREAD_EVENTS | PROFLOG_CALL_EVENTS | PROFLOG_INS_COVERAGE_EVENTS | PROFLOG_CODE_COV_FEATURE)
+#define PROFLOG_CODECOV_ALIAS (PROFLOG_INS_COVERAGE_EVENTS | PROFLOG_CODE_COV_FEATURE)
 #define PROFLOG_PERF_SAMPLING_ALIAS (PROFLOG_TYPELOADING_ALIAS | PROFLOG_THREAD_EVENTS | PROFLOG_SAMPLING_EVENTS | PROFLOG_SAMPLING_FEATURE)
 #define PROFLOG_GC_ALLOC_ALIAS (PROFLOG_TYPELOADING_ALIAS | PROFLOG_THREAD_EVENTS | PROFLOG_GC_EVENTS | PROFLOG_ALLOCATION_EVENTS)
 #define PROFLOG_HEAPSHOT_ALIAS (PROFLOG_TYPELOADING_ALIAS | PROFLOG_THREAD_EVENTS | PROFLOG_GC_EVENTS | PROFLOG_GC_ROOT_EVENTS | PROFLOG_HEAPSHOT_FEATURE)
@@ -231,9 +242,6 @@ typedef struct {
 
 	//If true, don't generate stacktraces
 	gboolean notraces;
-
-	//If true, emit coverage but don't emit enter/exit events - this happens cuz they share an event
-	gboolean only_coverage;
 
 	//If true, heapshots are generated on demand only
 	gboolean hs_mode_ondemand;
@@ -265,7 +273,7 @@ typedef struct {
 	//Max size of the sample hit buffer, we'll drop frames if it's reached
 	int max_allocated_sample_hits;
 
-	MonoProfileSamplingMode sampling_mode;
+	MonoProfilerSampleMode sampling_mode;
 } ProfilerConfig;
 
 void proflog_parse_args (ProfilerConfig *config, const char *desc);
