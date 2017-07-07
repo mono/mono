@@ -531,7 +531,7 @@ namespace Mono.Net.Security
 		internal async Task<int> InnerRead (bool sync, int requestedSize, CancellationToken cancellationToken)
 		{
 			cancellationToken.ThrowIfCancellationRequested ();
-			Debug ("InnerRead: {0} {1} {2} {3}", readBuffer.Offset, readBuffer.Size, readBuffer.Remaining, requestedSize);
+			Debug ("InnerRead: {0} {1} {2} {3} {4}", sync, readBuffer.Offset, readBuffer.Size, readBuffer.Remaining, requestedSize);
 
 			var len = System.Math.Min (readBuffer.Remaining, requestedSize);
 			if (len == 0)
