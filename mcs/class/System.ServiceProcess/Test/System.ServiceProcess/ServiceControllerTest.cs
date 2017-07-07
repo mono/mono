@@ -58,13 +58,13 @@ namespace MonoTests.System.ServiceProcess
 		static ServiceInfo DISK_DRIVER_SERVICE = new ServiceInfo { ServiceName = "disk", DisplayName = "Disk Driver", ServiceType = ServiceType.KernelDriver };
 		static ServiceInfo ROUTING_AND_REMOTE_ACCESS_SERVICE = new ServiceInfo { ServiceName = "RemoteAccess", DisplayName = "Routing and Remote Access", DependedOn = new [] { "bfe", "http", "rasman", "rpcss" } };
 		static ServiceInfo SECONDARY_LOGON_SERVICE = new ServiceInfo { ServiceName = "seclogon", DisplayName = "Secondary Logon", Dependents = new [] { "te.service" } };
-		static ServiceInfo SECURITY_ACCOUNTS_MANAGER_SERVICE = new ServiceInfo { ServiceName = "SamSs", DisplayName = "Security Accounts Manager", Dependents = new [] { "browser", "ktmrm", "lanmanserver", "msdtc" }, DependedOn = new [] { "rpcss" } };
+		static ServiceInfo SECURITY_ACCOUNTS_MANAGER_SERVICE = new ServiceInfo { ServiceName = "SamSs", DisplayName = "Security Accounts Manager", Dependents = new [] { "ktmrm", "lanmanserver", "msdtc" }, DependedOn = new [] { "rpcss" } };
 		static ServiceInfo COMPLUS_EVENTSYSTEM_SERVICE = new ServiceInfo { ServiceName = "EventSystem", DisplayName = "COM+ Event System", ServiceType = ServiceType.Win32ShareProcess, Dependents = new [] { "comsysapp", "sens" }, DependedOn = new [] { "rpcss" } };
 		static ServiceInfo WINDOWS_IMAGE_ACQUISITION_SERVICE = new ServiceInfo { ServiceName = "stisvc", DisplayName = "Windows Image Acquisition (WIA)", ServiceType = ServiceType.Win32OwnProcess, DependedOn = new [] { "rpcss" } };
 		static ServiceInfo WINDOWS_SEARCH_SERVICE = new ServiceInfo { ServiceName = "WSearch", DisplayName = "Windows Search", ServiceType = ServiceType.Win32OwnProcess, Dependents = new [] { "wmpnetworksvc", "workfolderssvc" }, DependedOn = new [] { "rpcss" } };
 		static ServiceInfo WINDOWS_TIME_SERVICE = new ServiceInfo { ServiceName = "W32Time", DisplayName = "Windows Time" };
 		static ServiceInfo WINDOWS_UPDATE_SERVICE = new ServiceInfo { ServiceName = "wuauserv", DisplayName = "Windows Update", DependedOn = new [] { "rpcss" } };
-		static ServiceInfo WORKSTATION_SERVICE = new ServiceInfo { ServiceName = "LanmanWorkstation", DisplayName = "Workstation", Dependents = new [] { "browser", "netlogon", "sessionenv" }, DependedOn = new [] { "bowser", "mrxsmb20", "nsi" } };
+		static ServiceInfo WORKSTATION_SERVICE = new ServiceInfo { ServiceName = "LanmanWorkstation", DisplayName = "Workstation", Dependents = new [] { "netlogon", "sessionenv" }, DependedOn = new [] { "bowser", "mrxsmb20", "nsi" } };
 
 		// A service which is expected to be disabled by default on all supported Windows versions.
 		static ServiceInfo DISABLED_SERVICE = ROUTING_AND_REMOTE_ACCESS_SERVICE;
