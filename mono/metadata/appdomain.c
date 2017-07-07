@@ -1112,6 +1112,7 @@ leave:
 MonoAssembly*
 mono_try_assembly_resolve_handle (MonoDomain *domain, MonoStringHandle fname, MonoAssembly *requesting, gboolean refonly, MonoError *error)
 {
+	HANDLE_FUNCTION_ENTER ();
 	MonoAssembly *ret = NULL;
 	MonoMethod *method;
 	MonoBoolean isrefonly;
@@ -1120,7 +1121,7 @@ mono_try_assembly_resolve_handle (MonoDomain *domain, MonoStringHandle fname, Mo
 	mono_error_init (error);
 
 	if (mono_runtime_get_no_exec ())
-		return ret;
+		goto leave;
 
 	g_assert (domain != NULL && !MONO_HANDLE_IS_NULL (fname));
 
@@ -1131,14 +1132,23 @@ mono_try_assembly_resolve_handle (MonoDomain *domain, MonoStringHandle fname, Mo
 	MonoReflectionAssemblyHandle requesting_handle;
 	if (requesting) {
 		requesting_handle = mono_assembly_get_object_handle (domain, requesting, error);
-		return_val_if_nok (error, ret);
+		if (!is_ok (error))
+			goto leave;
 	}
 	params [0] = MONO_HANDLE_RAW (fname);
 	params[1] = requesting ? MONO_HANDLE_RAW (requesting_handle) : NULL;
 	params [2] = &isrefonly;
 	MonoReflectionAssemblyHandle result = MONO_HANDLE_NEW (MonoReflectionAssembly, mono_runtime_invoke_checked (method, domain->domain, params, error));
 	ret = !MONO_HANDLE_IS_NULL (result) ? MONO_HANDLE_GETVAL (result, assembly) : NULL;
-	return ret;
+
+	if (ret && !refonly && ret->ref_only) {
+		/* .NET Framework throws System.IO.FileNotFoundException in this case */
+		mono_error_set_file_not_found (error, "AssemblyResolveEvent handlers cannot return Assemblies loaded for reflection only");
+		ret = NULL;
+		goto leave;
+	}
+leave:
+	HANDLE_FUNCTION_RETURN_VAL (ret);
 }
 
 MonoAssembly *

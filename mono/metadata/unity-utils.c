@@ -345,6 +345,14 @@ MonoMethod* mono_unity_method_alloc0(MonoClass* klass)
 	return mono_image_alloc0(klass->image, sizeof(MonoMethod));
 }
 
+MonoMethod* mono_unity_method_delegate_invoke_wrapper(MonoClass* klass)
+{
+	MonoMethod* method = (MonoMethod*)mono_image_alloc0(klass->image, sizeof(MonoMethod));
+	MonoMethod *invoke = mono_get_delegate_invoke (klass);
+	method->signature = mono_metadata_signature_dup_full (klass->image, mono_method_signature (invoke));
+	return method;
+}
+
 gboolean mono_unity_method_is_static(MonoMethod *method)
 {
 	return method->flags & METHOD_ATTRIBUTE_STATIC;
