@@ -3848,10 +3848,14 @@ cleanup_reusable_samples (MonoProfiler *prof)
 }
 
 static void
-log_shutdown (MonoProfiler *prof)
+log_shutting_down (MonoProfiler *prof)
 {
 	InterlockedWrite (&in_shutdown, 1);
+}
 
+static void
+log_shutdown (MonoProfiler *prof)
+{
 	if (!no_counters)
 		counters_and_perfcounters_sample (prof);
 
@@ -4248,32 +4252,34 @@ handle_writer_queue_entry (MonoProfiler *prof)
 			mono_conc_hashtable_insert (prof->method_table, info->method, info->method);
 			mono_os_mutex_unlock (&prof->method_table_mutex);
 
-			char *name = mono_method_full_name (info->method, 1);
-			int nlen = strlen (name) + 1;
-			void *cstart = info->ji ? mono_jit_info_get_code_start (info->ji) : NULL;
-			int csize = info->ji ? mono_jit_info_get_code_size (info->ji) : 0;
+			if (!in_shutdown) {
+				char *name = mono_method_full_name (info->method, 1);
+				int nlen = strlen (name) + 1;
+				void *cstart = info->ji ? mono_jit_info_get_code_start (info->ji) : NULL;
+				int csize = info->ji ? mono_jit_info_get_code_size (info->ji) : 0;
 
-			ENTER_LOG (&method_jits_ctr, logbuffer,
-				EVENT_SIZE /* event */ +
-				LEB128_SIZE /* method */ +
-				LEB128_SIZE /* start */ +
-				LEB128_SIZE /* size */ +
-				nlen /* name */
-			);
+				ENTER_LOG (&method_jits_ctr, logbuffer,
+					EVENT_SIZE /* event */ +
+					LEB128_SIZE /* method */ +
+					LEB128_SIZE /* start */ +
+					LEB128_SIZE /* size */ +
+					nlen /* name */
+				);
 
-			emit_event_time (logbuffer, TYPE_JIT | TYPE_METHOD, info->time);
-			emit_method_inner (logbuffer, info->method);
-			emit_ptr (logbuffer, cstart);
-			emit_value (logbuffer, csize);
+				emit_event_time (logbuffer, TYPE_JIT | TYPE_METHOD, info->time);
+				emit_method_inner (logbuffer, info->method);
+				emit_ptr (logbuffer, cstart);
+				emit_value (logbuffer, csize);
 
-			memcpy (logbuffer->cursor, name, nlen);
-			logbuffer->cursor += nlen;
+				memcpy (logbuffer->cursor, name, nlen);
+				logbuffer->cursor += nlen;
 
-			EXIT_LOG_EXPLICIT (NO_SEND);
+				EXIT_LOG_EXPLICIT (NO_SEND);
 
-			mono_free (name);
+				mono_free (name);
 
-			wrote_methods = TRUE;
+				wrote_methods = TRUE;
+			}
 
 		free_info:
 			g_free (info);
@@ -4686,6 +4692,7 @@ mono_profiler_init (const char *desc)
 	MonoProfilerHandle handle = log_profiler->handle = mono_profiler_install (log_profiler);
 
 	//Required callbacks
+	mono_profiler_set_runtime_shutdown_begin_callback (handle, log_shutting_down);
 	mono_profiler_set_runtime_shutdown_end_callback (handle, log_shutdown);
 	mono_profiler_set_runtime_initialized_callback (handle, runtime_initialized);
 
