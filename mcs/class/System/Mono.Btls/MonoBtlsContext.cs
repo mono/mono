@@ -220,7 +220,7 @@ namespace Mono.Btls
 
 		void InitializeConnection ()
 		{
-			ctx = MonoBtlsSslCtx.Create ();
+			ctx = new MonoBtlsSslCtx ();
 
 #if MARTIN_DEBUG
 			errbio = MonoBtlsBio.CreateMonoStream (Console.OpenStandardError ());
