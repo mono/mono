@@ -41,6 +41,12 @@
     <MONO_C_RUNTIME Condition="'$(Configuration)'=='Debug'">MultiThreadedDebugDLL</MONO_C_RUNTIME>
     <MONO_C_RUNTIME Condition="'$(Configuration)'!='Debug'">MultiThreadedDLL</MONO_C_RUNTIME>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
   <PropertyGroup Label="MonoSGEN" Condition="$(MONO_TARGET_GC)=='sgen'">
     <SGEN_DEFINES>HAVE_SGEN_GC;HAVE_MOVING_COLLECTOR;HAVE_WRITE_BARRIERS</SGEN_DEFINES>
     <GC_DEFINES>$(SGEN_DEFINES)</GC_DEFINES>
