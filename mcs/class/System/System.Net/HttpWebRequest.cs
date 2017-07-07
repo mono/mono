@@ -197,7 +197,7 @@ namespace System.Net
 		}
 
 		static int nextId;
-		public readonly int ID = ++nextId;
+		internal readonly int ID = ++nextId;
 
 		void ResetAuthorization ()
 		{
@@ -455,8 +455,7 @@ namespace System.Net
 			}
 		}
 
-		public
-		string Host {
+		public string Host {
 			get {
 				if (host == null)
 					return actualUri.Authority;
