@@ -78,6 +78,7 @@ gboolean mono_class_is_blittable(MonoClass *klass);
 MonoMethod* mono_unity_method_get_generic_definition(MonoMethod* method);
 MonoReflectionMethod* mono_unity_method_get_object(MonoMethod *method);
 MonoMethod* mono_unity_method_alloc0(MonoClass* klass);
+MonoMethod* mono_unity_method_delegate_invoke_wrapper(MonoClass* klass);
 gboolean mono_unity_method_is_static(MonoMethod *method);
 MonoClass* mono_unity_method_get_class(const MonoMethod *method);
 
