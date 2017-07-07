@@ -75,16 +75,34 @@ namespace System.Net
 			ServicePoint = sPoint;
 		}
 
+#if MARTIN_WEB_DEBUG
+		internal static bool EnableWebDebug {
+			get; set;
+		}
+
+		static WebConnection ()
+		{
+			if (Environment.GetEnvironmentVariable ("MARTIN_WEB_DEBUG") != null)
+				EnableWebDebug = true;
+		}
+#endif
+
 		[Conditional ("MARTIN_WEB_DEBUG")]
 		internal static void Debug (string message, params object[] args)
 		{
-			Console.Error.WriteLine (string.Format (message, args));
+#if MARTIN_WEB_DEBUG
+			if (EnableWebDebug)
+				Console.Error.WriteLine (string.Format (message, args));
+#endif
 		}
 
 		[Conditional ("MARTIN_WEB_DEBUG")]
 		internal static void Debug (string message)
 		{
-			Console.Error.WriteLine (message);
+#if MARTIN_WEB_DEBUG
+			if (EnableWebDebug)
+				Console.Error.WriteLine (message);
+#endif
 		}
 
 		bool CanReuse ()
