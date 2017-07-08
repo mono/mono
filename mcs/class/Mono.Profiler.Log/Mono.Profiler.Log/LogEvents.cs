@@ -443,8 +443,6 @@ namespace Mono.Profiler.Log {
 
 	public sealed class SampleHitEvent : LogEvent {
 
-		public LogSampleHitType Type { get; internal set; }
-
 		public long ThreadId { get; internal set; }
 
 		public IReadOnlyList<long> UnmanagedBacktrace { get; internal set; }
