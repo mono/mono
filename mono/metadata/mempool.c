@@ -95,6 +95,18 @@ mono_mempool_new (void)
  * \param initial_size the amount of memory to initially reserve for the memory pool.
  * \returns a new memory pool with a specific initial memory reservation.
  */
+#if defined(__has_feature)
+#if __has_feature(thread_sanitizer)
+// clang's ThreadSanitizer detects races of total_bytes_allocated and pool->d.allocated throughout the functions
+//   * mono_mempool_alloc
+//   * mono_mempool_new_size
+//   * mono_mempool_destroy
+// while these races could lead to wrong values, total_bytes_allocated is just used for debugging / reporting and since
+// the mempool.c functions are called quite often, a discussion led the the conclusion of ignoring these races:
+// https://bugzilla.xamarin.com/show_bug.cgi?id=57936
+__attribute__ ((no_sanitize("thread")))
+#endif
+#endif
 MonoMemPool *
 mono_mempool_new_size (int initial_size)
 {
@@ -124,6 +136,18 @@ mono_mempool_new_size (int initial_size)
  *
  * Free all memory associated with this pool.
  */
+#if defined(__has_feature)
+#if __has_feature(thread_sanitizer)
+// clang's ThreadSanitizer detects races of total_bytes_allocated and pool->d.allocated throughout the functions
+//   * mono_mempool_alloc
+//   * mono_mempool_new_size
+//   * mono_mempool_destroy
+// while these races could lead to wrong values, total_bytes_allocated is just used for debugging / reporting and since
+// the mempool.c functions are called quite often, a discussion led the the conclusion of ignoring these races:
+// https://bugzilla.xamarin.com/show_bug.cgi?id=57936
+__attribute__ ((no_sanitize("thread")))
+#endif
+#endif
 void
 mono_mempool_destroy (MonoMemPool *pool)
 {
@@ -258,6 +282,18 @@ get_next_size (MonoMemPool *pool, int size)
  *
  * \returns the address of a newly allocated memory block.
  */
+#if defined(__has_feature)
+#if __has_feature(thread_sanitizer)
+// clang's ThreadSanitizer detects races of total_bytes_allocated and pool->d.allocated throughout the functions
+//   * mono_mempool_alloc
+//   * mono_mempool_new_size
+//   * mono_mempool_destroy
+// while these races could lead to wrong values, total_bytes_allocated is just used for debugging / reporting and since
+// the mempool.c functions are called quite often, a discussion led the the conclusion of ignoring these races:
+// https://bugzilla.xamarin.com/show_bug.cgi?id=57936
+__attribute__ ((no_sanitize("thread")))
+#endif
+#endif
 gpointer
 mono_mempool_alloc (MonoMemPool *pool, guint size)
 {
