@@ -380,7 +380,6 @@ namespace Mono.Profiler.Log {
 				switch (extType) {
 				case LogEventType.SampleHit:
 					return new SampleHitEvent {
-						Type = (LogSampleHitType) Reader.ReadByte (),
 						ThreadId = ReadPointer (),
 						UnmanagedBacktrace = ReadBacktrace (true, false),
 						ManagedBacktrace = ReadBacktrace (true),

@@ -138,16 +138,6 @@ namespace Mono.Profiler.Log {
 		ExceptionHandling = 10,
 	}
 
-	// mono/profiler/log.h : SAMPLE_*
-	public enum LogSampleHitType {
-		Cycles = 1,
-		Instructions = 2,
-		CacheMisses = 3,
-		CacheHits = 4,
-		Branches = 5,
-		BranchMisses = 6,
-	}
-
 	// mono/metadata/profiler.h : MonoProfilerGCRootType
 	[Flags]
 	public enum LogHeapRootAttributes {
