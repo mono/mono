@@ -5698,11 +5698,7 @@ emit_method_code (MonoAotCompile *acfg, MonoCompile *cfg)
 		 *   yet supported.
 		 * - it allows the setting of breakpoints of aot-ed methods.
 		 */
-		debug_sym = get_debug_sym (method, "", acfg->method_label_hash);
-
-		// Comment out to force dedup to link these symbols and forbid compiling
-		// in duplicated code. This is an "assert when linking if broken" trick.
-		/*debug_sym = mono_aot_get_mangled_method_name (method);*/
+		debug_sym = mono_aot_get_mangled_method_name (method);
 
 		cfg->asm_debug_symbol = g_strdup (debug_sym);
 

@@ -4099,8 +4099,14 @@ load_method (MonoDomain *domain, MonoAotModule *amodule, MonoImage *image, MonoM
 	return NULL;
 }
 
+/** find_aot_method_in_amodule
+	* 
+	* \param code_amodule The AOT module containing the code pointer
+	* \param method The method to find the code index for
+	* \param hash_full The hash for the method
+	*/
 static guint32
-find_aot_method_in_amodule (MonoAotModule *amodule, MonoMethod *method, guint32 hash_full)
+find_aot_method_in_amodule (MonoAotModule *code_amodule, MonoMethod *method, guint32 hash_full)
 {
 	MonoError error;
 	guint32 table_size, entry_size, hash;
@@ -4108,12 +4114,18 @@ find_aot_method_in_amodule (MonoAotModule *amodule, MonoMethod *method, guint32 
 	guint32 index;
 	static guint32 n_extra_decodes;
 
-	if (!amodule || amodule->out_of_date)
+	// The AOT module containing the MonoMethod 
+	// The reference to the metadata amodule will differ among multiple dedup methods
+	// which mangle to the same name but live in different assemblies. This leads to
+	// the caching breaking. The solution seems to be to cache using the "metadata" amodule.
+	MonoAotModule *metadata_amodule = (MonoAotModule *)method->klass->image->aot_module;
+
+	if (!metadata_amodule || metadata_amodule->out_of_date || !code_amodule || code_amodule->out_of_date)
 		return 0xffffff;
 
-	table_size = amodule->extra_method_table [0];
+	table_size = code_amodule->extra_method_table [0];
 	hash = hash_full % table_size;
-	table = amodule->extra_method_table + 1;
+	table = code_amodule->extra_method_table + 1;
 	entry_size = 3;
 
 	entry = &table [hash * entry_size];
@@ -4129,25 +4141,25 @@ find_aot_method_in_amodule (MonoAotModule *amodule, MonoMethod *method, guint32 
 		MonoMethod *m;
 		guint8 *p, *orig_p;
 
-		p = amodule->blob + key;
+		p = code_amodule->blob + key;
 		orig_p = p;
 
-		amodule_lock (amodule);
-		if (!amodule->method_ref_to_method)
-			amodule->method_ref_to_method = g_hash_table_new (NULL, NULL);
-		m = (MonoMethod *)g_hash_table_lookup (amodule->method_ref_to_method, p);
-		amodule_unlock (amodule);
+		amodule_lock (metadata_amodule);
+		if (!metadata_amodule->method_ref_to_method)
+			metadata_amodule->method_ref_to_method = g_hash_table_new (NULL, NULL);
+		m = (MonoMethod *)g_hash_table_lookup (metadata_amodule->method_ref_to_method, p);
+		amodule_unlock (metadata_amodule);
 		if (!m) {
-			m = decode_resolve_method_ref_with_target (amodule, method, p, &p, &error);
+			m = decode_resolve_method_ref_with_target (code_amodule, method, p, &p, &error);
 			mono_error_cleanup (&error); /* FIXME don't swallow the error */
 			/*
 			 * Can't catche runtime invoke wrappers since it would break
 			 * the check in decode_method_ref_with_target ().
 			 */
 			if (m && m->wrapper_type != MONO_WRAPPER_RUNTIME_INVOKE) {
-				amodule_lock (amodule);
-				g_hash_table_insert (amodule->method_ref_to_method, orig_p, m);
-				amodule_unlock (amodule);
+				amodule_lock (metadata_amodule);
+				g_hash_table_insert (metadata_amodule->method_ref_to_method, orig_p, m);
+				amodule_unlock (metadata_amodule);
 			}
 		}
 		if (m == method) {
@@ -4168,7 +4180,7 @@ find_aot_method_in_amodule (MonoAotModule *amodule, MonoMethod *method, guint32 
 	}
 
 	if (index != 0xffffff)
-		g_assert (index < amodule->info.nmethods);
+		g_assert (index < code_amodule->info.nmethods);
 
 	return index;
 }
@@ -4199,6 +4211,7 @@ find_aot_method (MonoMethod *method, MonoAotModule **out_amodule)
 	 * We don't probe, as that causes hard-to-debug issues when we fail
 	 * to find the method */
 	if (container_amodule && dedupable) {
+		*out_amodule = container_amodule;
 		index = find_aot_method_in_amodule (container_amodule, method, hash);
 		return index;
 	}
@@ -4527,7 +4540,9 @@ mono_aot_get_method_checked (MonoDomain *domain, MonoMethod *method, MonoError *
 			g_hash_table_insert (amodule->extra_methods, GUINT_TO_POINTER (method_index), orig_method);
 			amodule_unlock (amodule);
 		}
-	} else if (method->is_inflated || !method->token) {
+	}
+
+	if (method_index == 0xffffff && (method->is_inflated || !method->token)) {
 		/* This hash table is used to avoid the slower search in the extra_method_table in the AOT image */
 		amodule_lock (amodule);
 		code = (guint8 *)g_hash_table_lookup (amodule->method_to_code, method);
