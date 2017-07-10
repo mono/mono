@@ -145,6 +145,14 @@ endif
 
 ifdef PLATFORM_AOT_SUFFIX
 
+DEDUP_DUMMY_CS=$(topdir)/class/lib/$(PROFILE)/DummyInflated.cs
+DEDUP_DUMMY=$(topdir)/class/lib/$(PROFILE)/DummyInflated.dll
+
+$(DEDUP_DUMMY):
+	echo " // Empty Assembly \n\n" > $(DEDUP_DUMMY_CS)
+	$(CSCOMPILE) -t:library -out:$(DEDUP_DUMMY) $(DEDUP_DUMMY_CS) 
+	rm $(DEDUP_DUMMY_CS)
+
 MKBUNDLE_TEST_BIN = $(TEST_HARNESS).static
 MKBUNDLE_EXE = $(topdir)/class/lib/$(PROFILE)/mkbundle.exe
 TEST_ASSEMBLIES := $(sort $(patsubst .//%,%,$(filter-out %.exe.static %.dll.dll %.exe.dll %bare% %plaincore% %secxml% %Facades% %ilasm%,$(filter %test.dll nunit%.dll nunit%.exe,$(wildcard $(topdir)/class/lib/$(PROFILE)/*)))))
@@ -157,8 +165,13 @@ mkbundle-all-tests:
 	$(Q_AOT) $(MAKE) -C $(topdir)/tools/mkbundle
 	$(Q_AOT) $(MAKE) $(MKBUNDLE_TEST_BIN) # recursive make re-computes variables for TEST_ASSEMBLIES
 
-$(MKBUNDLE_TEST_BIN): $(TEST_ASSEMBLIES) $(TEST_HARNESS) $(MKBUNDLE_EXE)
-	$(Q_AOT) MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)" PKG_CONFIG_PATH="$(topdir)/../data" $(RUNTIME) $(RUNTIME_FLAGS) $(MKBUNDLE_EXE) -L $(topdir)/class/lib/$(PROFILE) -v --deps $(TEST_HARNESS) $(TEST_ASSEMBLIES) -o $(MKBUNDLE_TEST_BIN) --aot-mode $(AOT_MODE) --aot-runtime $(RUNTIME) --aot-args $(AOT_BUILD_ATTRS) --in-tree $(topdir)/.. --cil-strip $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/mono-cil-strip.exe --managed-linker $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/monolinker.exe --config $(topdir)/../data/config --i18n all
+ifdef MKBUNDLE_DEDUP
+MKBUNDLE_DEDUP_COND := $(DEDUP_DUMMY)
+DEDUP_ARGS=--aot-dedup $(DEDUP_DUMMY)
+endif
+
+$(MKBUNDLE_TEST_BIN): $(TEST_ASSEMBLIES) $(TEST_HARNESS) $(MKBUNDLE_EXE) $(MKBUNDLE_DEDUP_COND)
+	$(Q_AOT) MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)" PKG_CONFIG_PATH="$(topdir)/../data" $(RUNTIME) $(RUNTIME_FLAGS) $(MKBUNDLE_EXE) -L $(topdir)/class/lib/$(PROFILE) -v --deps $(TEST_HARNESS) $(TEST_ASSEMBLIES) -o $(MKBUNDLE_TEST_BIN) --aot-mode $(AOT_MODE) --aot-runtime $(RUNTIME) --aot-args $(AOT_BUILD_ATTRS) --in-tree $(topdir)/.. --managed-linker $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/monolinker.exe --config $(topdir)/../data/config --i18n all $(DEDUP_ARGS) --keeptemp
 
 endif # PLATFORM_AOT_SUFFIX
 

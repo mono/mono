@@ -1604,7 +1604,6 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			var out_name = Path.Combine (temp_dir_name, Path.GetFileName (in_name));
 			File.Copy (in_name, out_name);
 			files [i] = out_name;
-			Console.WriteLine ("Preprocess before: {0} aot_dedup_assembly {1}", in_name, aot_dedup_assembly);
 			if (in_name == aot_dedup_assembly)
 				aot_dedup_assembly = out_name;
 		}
