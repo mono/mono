@@ -95,7 +95,7 @@ System.Drawing/ToolboxBitmapAttribute.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Design/ToolboxComponentsCreatingEventHandler.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Design/ToolboxItemCreatorCallback.cs
 System.Drawing.Design/ToolboxItem.cs
-	../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Design/UITypeEditor.cs
+../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Design/UITypeEditor.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Design/ToolboxItemCollection.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Drawing2D/AdjustableArrowCap.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Drawing2D/Blend.cs
