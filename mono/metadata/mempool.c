@@ -93,16 +93,18 @@ mono_mempool_new (void)
 
 /**
  * mono_mempool_new_size:
+ *
+ *   clang's ThreadSanitizer detects races of total_bytes_allocated and pool->d.allocated throughout the functions
+ *     * mono_mempool_alloc
+ *     * mono_mempool_new_size
+ *     * mono_mempool_destroy
+ *   while these races could lead to wrong values, total_bytes_allocated is just used for debugging / reporting and since
+ *   the mempool.c functions are called quite often, a discussion led the the conclusion of ignoring these races:
+ *   https://bugzilla.xamarin.com/show_bug.cgi?id=57936
+ *
  * \param initial_size the amount of memory to initially reserve for the memory pool.
  * \returns a new memory pool with a specific initial memory reservation.
  */
-// clang's ThreadSanitizer detects races of total_bytes_allocated and pool->d.allocated throughout the functions
-//   * mono_mempool_alloc
-//   * mono_mempool_new_size
-//   * mono_mempool_destroy
-// while these races could lead to wrong values, total_bytes_allocated is just used for debugging / reporting and since
-// the mempool.c functions are called quite often, a discussion led the the conclusion of ignoring these races:
-// https://bugzilla.xamarin.com/show_bug.cgi?id=57936
 MONO_NO_SANITIZE_THREAD
 MonoMemPool *
 mono_mempool_new_size (int initial_size)
@@ -129,17 +131,19 @@ mono_mempool_new_size (int initial_size)
 
 /**
  * mono_mempool_destroy:
+ *
+ *   clang's ThreadSanitizer detects races of total_bytes_allocated and pool->d.allocated throughout the functions
+ *     * mono_mempool_alloc
+ *     * mono_mempool_new_size
+ *     * mono_mempool_destroy
+ *   while these races could lead to wrong values, total_bytes_allocated is just used for debugging / reporting and since
+ *   the mempool.c functions are called quite often, a discussion led the the conclusion of ignoring these races:
+ *   https://bugzilla.xamarin.com/show_bug.cgi?id=57936
+ *
  * \param pool the memory pool to destroy
  *
  * Free all memory associated with this pool.
  */
-// clang's ThreadSanitizer detects races of total_bytes_allocated and pool->d.allocated throughout the functions
-//   * mono_mempool_alloc
-//   * mono_mempool_new_size
-//   * mono_mempool_destroy
-// while these races could lead to wrong values, total_bytes_allocated is just used for debugging / reporting and since
-// the mempool.c functions are called quite often, a discussion led the the conclusion of ignoring these races:
-// https://bugzilla.xamarin.com/show_bug.cgi?id=57936
 MONO_NO_SANITIZE_THREAD
 void
 mono_mempool_destroy (MonoMemPool *pool)
@@ -268,6 +272,15 @@ get_next_size (MonoMemPool *pool, int size)
 
 /**
  * mono_mempool_alloc:
+ *
+ *   clang's ThreadSanitizer detects races of total_bytes_allocated and pool->d.allocated throughout the functions
+ *     * mono_mempool_alloc
+ *     * mono_mempool_new_size
+ *     * mono_mempool_destroy
+ *   while these races could lead to wrong values, total_bytes_allocated is just used for debugging / reporting and since
+ *   the mempool.c functions are called quite often, a discussion led the the conclusion of ignoring these races:
+ *   https://bugzilla.xamarin.com/show_bug.cgi?id=57936
+ *
  * \param pool the memory pool to use
  * \param size size of the memory block
  *
@@ -275,13 +288,6 @@ get_next_size (MonoMemPool *pool, int size)
  *
  * \returns the address of a newly allocated memory block.
  */
-// clang's ThreadSanitizer detects races of total_bytes_allocated and pool->d.allocated throughout the functions
-//   * mono_mempool_alloc
-//   * mono_mempool_new_size
-//   * mono_mempool_destroy
-// while these races could lead to wrong values, total_bytes_allocated is just used for debugging / reporting and since
-// the mempool.c functions are called quite often, a discussion led the the conclusion of ignoring these races:
-// https://bugzilla.xamarin.com/show_bug.cgi?id=57936
 MONO_NO_SANITIZE_THREAD
 gpointer
 mono_mempool_alloc (MonoMemPool *pool, guint size)
