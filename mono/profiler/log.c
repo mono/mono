@@ -3850,6 +3850,29 @@ cleanup_reusable_samples (MonoProfiler *prof)
 static void
 log_shutdown (MonoProfiler *prof)
 {
+	// Take a final heapshot, and trigger a sync point.
+	mono_gc_collect (mono_gc_max_generation ());
+
+#define _MONO_PROFILER_EVENT(name) \
+	mono_profiler_set_ ## name ## _callback (log_profiler->handle, NULL);
+#define MONO_PROFILER_EVENT_0(name, type) \
+	_MONO_PROFILER_EVENT(name)
+#define MONO_PROFILER_EVENT_1(name, type, arg1_type, arg1_name) \
+	_MONO_PROFILER_EVENT(name)
+#define MONO_PROFILER_EVENT_2(name, type, arg1_type, arg1_name, arg2_type, arg2_name) \
+	_MONO_PROFILER_EVENT(name)
+#define MONO_PROFILER_EVENT_3(name, type, arg1_type, arg1_name, arg2_type, arg2_name, arg3_type, arg3_name) \
+	_MONO_PROFILER_EVENT(name)
+#define MONO_PROFILER_EVENT_4(name, type, arg1_type, arg1_name, arg2_type, arg2_name, arg3_type, arg3_name, arg4_type, arg4_name) \
+	_MONO_PROFILER_EVENT(name)
+#include <mono/metadata/profiler-events.h>
+#undef MONO_PROFILER_EVENT_0
+#undef MONO_PROFILER_EVENT_1
+#undef MONO_PROFILER_EVENT_2
+#undef MONO_PROFILER_EVENT_3
+#undef MONO_PROFILER_EVENT_4
+#undef _MONO_PROFILER_EVENT
+
 	InterlockedWrite (&in_shutdown, 1);
 
 	if (!no_counters)
@@ -4685,7 +4708,7 @@ mono_profiler_init (const char *desc)
 	MonoProfilerHandle handle = log_profiler->handle = mono_profiler_install (log_profiler);
 
 	//Required callbacks
-	mono_profiler_set_runtime_shutdown_end_callback (handle, log_shutdown);
+	mono_profiler_set_runtime_shutdown_begin_callback (handle, log_shutdown);
 	mono_profiler_set_runtime_initialized_callback (handle, runtime_initialized);
 
 	mono_profiler_set_gc_event_callback (handle, gc_event);
