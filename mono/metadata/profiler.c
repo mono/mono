@@ -81,6 +81,9 @@ struct _ProfilerDesc {
 	MonoProfileThreadFunc   thread_start;
 	MonoProfileThreadFunc   thread_end;
 
+	MonoProfileThreadFunc   thread_fast_attach;
+	MonoProfileThreadFunc   thread_fast_detach;
+
 	MonoProfileCoverageFilterFunc coverage_filter_cb;
 
 	MonoProfileFunc shutdown_callback;
@@ -235,6 +238,15 @@ mono_profiler_install_thread (MonoProfileThreadFunc start, MonoProfileThreadFunc
 		return;
 	prof_list->thread_start = start;
 	prof_list->thread_end = end;
+}
+
+void
+mono_profiler_install_thread_fast_attach_detach (MonoProfileThreadFunc fast_attach, MonoProfileThreadFunc fast_detach)
+{
+	if (!prof_list)
+		return;
+	prof_list->thread_fast_attach = fast_attach;
+	prof_list->thread_fast_detach = fast_detach;
 }
 
 void 
@@ -539,6 +551,26 @@ mono_profiler_thread_end (gsize tid)
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_THREADS) && prof->thread_end)
 			prof->thread_end (prof->profiler, tid);
+	}
+}
+
+void
+mono_profiler_thread_fast_attach (gsize tid)
+{
+	ProfilerDesc *prof;
+	for (prof = prof_list; prof; prof = prof->next) {
+		if ((prof->events & MONO_PROFILE_THREADS) && prof->thread_fast_attach)
+			prof->thread_fast_attach (prof->profiler, tid);
+	}
+}
+
+void
+mono_profiler_thread_fast_detach(gsize tid)
+{
+	ProfilerDesc *prof;
+	for (prof = prof_list; prof; prof = prof->next) {
+		if ((prof->events & MONO_PROFILE_THREADS) && prof->thread_fast_detach)
+			prof->thread_fast_detach (prof->profiler, tid);
 	}
 }
 
