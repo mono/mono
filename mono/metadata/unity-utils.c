@@ -14,6 +14,7 @@
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/metadata-internals.h>
+#include <mono/metadata/profiler-private.h>
 #include <mono/metadata/reflection-internals.h>
 #include <mono/metadata/threads.h>
 #include <mono/metadata/threadpool.h>
@@ -1093,5 +1094,45 @@ MONO_API gpointer
 mono_unity_alloc(gsize size)
 {
 	return g_malloc(size);
+}
+
+
+MONO_API void
+mono_unity_thread_fast_attach (MonoDomain *domain)
+{
+	MonoInternalThread *thread;
+
+	g_assert (domain);
+	g_assert (domain != mono_get_root_domain ());
+
+	thread = mono_thread_internal_current ();
+	g_assert (thread);
+
+	mono_thread_push_appdomain_ref (domain);
+	g_assert (mono_domain_set (domain, FALSE));
+
+	mono_profiler_thread_fast_attach (thread->tid);
+}
+
+MONO_API void
+mono_unity_thread_fast_detach ()
+{
+	MonoInternalThread *thread;
+	MonoDomain *current_domain;
+
+	thread = mono_thread_internal_current ();
+	g_assert (thread);
+
+	current_domain = mono_domain_get ();
+
+	g_assert (current_domain);
+	g_assert (current_domain != mono_get_root_domain ());
+
+	mono_profiler_thread_fast_detach (thread->tid);
+
+	// Migrating to the root domain and popping the domain reference allows
+	// the thread to stay alive and keep running while the domain can be unloaded
+	g_assert (mono_domain_set (mono_get_root_domain (), FALSE));
+	mono_thread_pop_appdomain_ref ();
 }
 

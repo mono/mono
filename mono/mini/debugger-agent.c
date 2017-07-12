@@ -204,6 +204,8 @@ typedef struct {
 	MonoContext handler_ctx;
 	/* Whenever thread_stop () was called for this thread */
 	gboolean terminated;
+	/* If thread should be suspended and processed. FALSE if fast detach has been called */
+	gboolean attached;
 
 	/* Whenever to disable breakpoints (used during invokes) */
 	gboolean disable_breakpoints;
@@ -748,6 +750,10 @@ static void thread_startup (MonoProfiler *prof, uintptr_t tid);
 
 static void thread_end (MonoProfiler *prof, uintptr_t tid);
 
+static void thread_fast_attach (MonoProfiler *prof, uintptr_t tid);
+
+static void thread_fast_detach (MonoProfiler *prof, uintptr_t tid);
+
 static void appdomain_load (MonoProfiler *prof, MonoDomain *domain, int result);
 
 static void appdomain_start_unload (MonoProfiler *prof, MonoDomain *domain);
@@ -993,6 +999,7 @@ mono_debugger_agent_init (void)
 	mono_profiler_install_runtime_initialized (runtime_initialized);
 	mono_profiler_install_appdomain (NULL, appdomain_load, appdomain_start_unload, appdomain_unload);
 	mono_profiler_install_thread (thread_startup, thread_end);
+	mono_profiler_install_thread_fast_attach_detach (thread_fast_attach, thread_fast_detach);
 	mono_profiler_install_assembly (NULL, assembly_load, assembly_unload, NULL);
 	mono_profiler_install_jit_end (jit_end);
 
@@ -1187,6 +1194,8 @@ socket_transport_accept (int socket_fd)
 	MONO_ENTER_GC_SAFE;
 #ifdef HOST_WIN32
 	conn_fd = mono_w32socket_accept (socket_fd, NULL, NULL, TRUE);
+	if (conn_fd != -1)
+		mono_w32socket_set_blocking (conn_fd, TRUE);
 #else
 	conn_fd = accept (socket_fd, NULL, NULL);
 #endif
@@ -1394,7 +1403,8 @@ socket_transport_close1 (void)
 	/* Also shut down the connection listener so that we can exit normally */
 #ifdef HOST_WIN32
 	MonoThreadInfo* info = mono_thread_info_lookup (debugger_thread_id);
-	mono_threads_suspend_abort_syscall (info);
+	if (info)
+		mono_threads_suspend_abort_syscall (info);
 	/* SD_RECEIVE doesn't break the recv in the debugger thread */
 	shutdown (conn_fd, SD_BOTH);
 	shutdown (listen_fd, SD_BOTH);
@@ -3914,6 +3924,40 @@ thread_end (MonoProfiler *prof, uintptr_t tid)
 
 		process_profiler_event (EVENT_KIND_THREAD_DEATH, thread);
 	}
+}
+
+static void
+thread_fast_attach (MonoProfiler *prof, uintptr_t tid)
+{
+	MonoInternalThread *thread;
+	DebuggerTlsData *tls = NULL;
+
+	mono_loader_lock ();
+	thread = (MonoInternalThread *)mono_g_hash_table_lookup (tid_to_thread, GUINT_TO_POINTER (tid));
+	if (thread) {
+		tls = (DebuggerTlsData *)mono_g_hash_table_lookup (thread_to_tls, thread);
+		if (tls) {
+			tls->attached = TRUE;
+		}
+	}
+	mono_loader_unlock ();
+}
+
+static void
+thread_fast_detach (MonoProfiler *prof, uintptr_t tid)
+{
+	MonoInternalThread *thread;
+	DebuggerTlsData *tls = NULL;
+
+	mono_loader_lock ();
+	thread = (MonoInternalThread *)mono_g_hash_table_lookup (tid_to_thread, GUINT_TO_POINTER (tid));
+	if (thread) {
+		tls = (DebuggerTlsData *)mono_g_hash_table_lookup (thread_to_tls, thread);
+		if (tls) {
+			tls->attached = FALSE;
+		}
+	}
+	mono_loader_unlock ();
 }
 
 static void
