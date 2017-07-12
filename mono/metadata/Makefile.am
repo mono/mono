@@ -287,6 +287,8 @@ common_sources = \
 	w32handle.h	\
 	w32handle.c	\
 	w32error.h \
+	unity-memory-info.c \
+	unity-memory-info.h \
 	unity-utils.c   \
 	unity-utils.h   \
 	unity-liveness.c

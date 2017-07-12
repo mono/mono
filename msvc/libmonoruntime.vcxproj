@@ -18,8 +18,8 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <Import Project="libmonoruntime-common.targets"/>
-  <Import Project="libmonoruntime-mono.targets"/>
+  <Import Project="libmonoruntime-common.targets" />
+  <Import Project="libmonoruntime-mono.targets" />
   <ItemGroup>
     <ProjectReference Include="eglib.vcxproj">
       <Project>{158073ed-99ae-4196-9edc-ddb2344f8466}</Project>
@@ -27,6 +27,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\mono\metadata\Makefile.am" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\mono\metadata\unity-memory-info.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\mono\metadata\unity-memory-info.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C36612BD-22D3-4B95-85E2-7FDC4FC5D739}</ProjectGuid>
