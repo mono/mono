@@ -4143,6 +4143,8 @@ mono_marshal_get_runtime_invoke (MonoMethod *method, gboolean virtual)
 
 	if (virtual)
 		need_direct_wrapper = TRUE;
+	if (method->dynamic)
+		need_direct_wrapper = TRUE;
 
 	/* 
 	 * Use a separate cache indexed by methods to speed things up and to avoid the
