@@ -3927,7 +3927,7 @@ thread_end (MonoProfiler *prof, uintptr_t tid)
 }
 
 static void
-thread_fast_attach (MonoProfiler *prof, gsize tid)
+thread_fast_attach (MonoProfiler *prof, uintptr_t tid)
 {
 	MonoInternalThread *thread;
 	DebuggerTlsData *tls = NULL;
@@ -3944,7 +3944,7 @@ thread_fast_attach (MonoProfiler *prof, gsize tid)
 }
 
 static void
-thread_fast_detach (MonoProfiler *prof, gsize tid)
+thread_fast_detach (MonoProfiler *prof, uintptr_t tid)
 {
 	MonoInternalThread *thread;
 	DebuggerTlsData *tls = NULL;
