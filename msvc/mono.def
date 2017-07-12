@@ -817,3 +817,5 @@ mono_runtime_unhandled_exception_policy_set
 set_vprintf_func
 mono_type_is_reference
 mono_array_addr_with_size
+mono_unity_thread_fast_attach
+mono_unity_thread_fast_detach
