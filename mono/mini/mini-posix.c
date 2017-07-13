@@ -640,7 +640,11 @@ init:
 	mono_profiler_get_sample_mode (NULL, &mode, NULL);
 
 	if (mode == MONO_PROFILER_SAMPLE_MODE_NONE) {
-		mono_profiler_sampling_thread_sleep ();
+		mono_profiler_sampling_thread_wait ();
+
+		if (!InterlockedRead (&sampling_thread_running))
+			goto done;
+
 		goto init;
 	}
 
@@ -676,9 +680,10 @@ init:
 		} FOREACH_THREAD_SAFE_END
 	}
 
-	InterlockedWrite (&sampling_thread_exiting, 1);
-
 	clock_cleanup ();
+
+done:
+	InterlockedWrite (&sampling_thread_exiting, 1);
 
 	pthread_setschedparam (pthread_self (), old_policy, &old_sched);
 
@@ -711,6 +716,7 @@ mono_runtime_shutdown_stat_profiler (void)
 	// Did it shut down already?
 	if ((info = mono_thread_info_lookup (sampling_thread))) {
 		while (!InterlockedRead (&sampling_thread_exiting)) {
+			mono_profiler_sampling_thread_post ();
 			mono_threads_pthread_kill (info, profiler_signal);
 			mono_thread_info_usleep (10 * 1000 /* 10ms */);
 		}
