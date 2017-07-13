@@ -54,6 +54,8 @@ namespace Mono.Profiler.Log {
 		HeapEnd = 1 << 4,
 		HeapObject = 2 << 4,
 		HeapRoots = 3 << 4,
+		HeapRootRegister = 4 << 4,
+		HeapRootUnregister = 5 << 4,
 
 		SampleHit = 0 << 4,
 		SampleUnmanagedSymbol = 1 << 4,
@@ -74,6 +76,7 @@ namespace Mono.Profiler.Log {
 		AppDomain = 4,
 		Thread = 5,
 		Context = 6,
+		VTable = 7,
 	}
 
 	// mono/utils/mono-counters.h : MONO_COUNTER_*
@@ -133,6 +136,7 @@ namespace Mono.Profiler.Log {
 
 	// mono/metadata/profiler.h : MonoProfilerGCRootType
 	[Flags]
+	[Obsolete ("The event field using this enum is no longer produced.")]
 	public enum LogHeapRootAttributes {
 		Pinning = 1 << 8,
 		WeakReference = 2 << 8,
@@ -145,6 +149,25 @@ namespace Mono.Profiler.Log {
 		Miscellaneous = 1 << 4,
 
 		TypeMask = 0xff,
+	}
+
+	// mono/metadata/mono-gc.h : MonoGCRootSource
+	public enum LogHeapRootSource {
+		External = 0,
+		Stack = 1,
+		FinalizerQueue = 2,
+		Static = 3,
+		ThreadStatic = 4,
+		ContextStatic = 5,
+		GCHandle = 6,
+		Jit = 7,
+		Threading = 8,
+		AppDomain = 9,
+		Reflection = 10,
+		Marshal = 11,
+		ThreadPool = 12,
+		Debugger = 13,
+		Handle = 14,
 	}
 
 	// mono/profiler/log.h : MonoProfilerMonitorEvent

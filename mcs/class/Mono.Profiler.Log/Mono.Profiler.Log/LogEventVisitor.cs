@@ -66,6 +66,10 @@ namespace Mono.Profiler.Log {
 		{
 		}
 
+		public virtual void Visit (VTableLoadEvent ev)
+		{
+		}
+
 		public virtual void Visit (JitEvent ev)
 		{
 		}
@@ -91,6 +95,14 @@ namespace Mono.Profiler.Log {
 		}
 
 		public virtual void Visit (HeapRootsEvent ev)
+		{
+		}
+
+		public virtual void Visit (HeapRootRegisterEvent ev)
+		{
+		}
+
+		public virtual void Visit (HeapRootUnregisterEvent ev)
 		{
 		}
 
