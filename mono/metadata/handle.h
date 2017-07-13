@@ -388,7 +388,7 @@ uintptr_t mono_array_handle_length (MonoArrayHandle arr);
 static inline void
 mono_handle_array_getref (MonoObjectHandleOut dest, MonoArrayHandle array, uintptr_t index)
 {
-	mono_gc_wbarrier_generic_store (&dest->__obj, mono_array_get (MONO_HANDLE_RAW (array),gpointer, index));
+	mono_gc_wbarrier_generic_store (&dest->__obj, (MonoObject *)mono_array_get (MONO_HANDLE_RAW (array),gpointer, index));
 }
 
 #define mono_handle_class(o) mono_object_class (MONO_HANDLE_RAW (o))
