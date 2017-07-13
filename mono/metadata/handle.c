@@ -73,7 +73,7 @@ Combine: MonoDefaults, GENERATE_GET_CLASS_WITH_CACHE, TYPED_HANDLE_DECL and frie
 static HandleStack*
 new_handle_stack (void)
 {
-	return (HandleStack *)mono_gc_alloc_fixed (sizeof (HandleStack), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_HANDLE, "Thread Handle Stack");
+	return (HandleStack *)mono_gc_alloc_fixed (sizeof (HandleStack), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_HANDLE, MONO_UINT_TO_NATIVE_THREAD_ID (mono_native_thread_id_get ()), "Thread Handle Stack");
 }
 
 static void

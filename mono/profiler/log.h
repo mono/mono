@@ -2,7 +2,6 @@
 #define __MONO_PROFLOG_H__
 
 #include <glib.h>
-#define MONO_PROFILER_UNSTABLE_GC_ROOTS
 #include <mono/metadata/profiler.h>
 
 #define BUF_ID 0x4D504C01
@@ -16,6 +15,10 @@
  * version 1.0: removed sysid field from header
  *              added args, arch, os fields to header
  *
+ * Version 2.0: Reworked argument parsing, defaults now are a lot more saner
+ *              Events/feature should be explicitly enabled as by default they won't be emited (use legacy option to get closer)
+ *              Heap events (moves, roots, objects) are now all emitted around HEAD_START / HEAD_END events to make it easy to isolate a heapshot
+ *              End-of-GC sync points are now emitted with the world stopped, eliminating the window it races with the mutator.
  * Changes in data versions:
  * version 2: added offsets in heap walk
  * version 3: added GC roots
@@ -70,6 +73,8 @@
                class unload events no longer exist (they were never emitted)
                removed type field from TYPE_SAMPLE_HIT
                removed MONO_GC_EVENT_{MARK,RECLAIM}_{START,END}
+               GC Roots events now have a different, and saner, format.
+               added gc root register/unregister events to be used to source gc root information
  */
 
 /*
@@ -248,7 +253,7 @@
  *
  * type heap format
  * type: TYPE_HEAP
- * exinfo: one of TYPE_HEAP_START, TYPE_HEAP_END, TYPE_HEAP_OBJECT, TYPE_HEAP_ROOT
+ * exinfo: one of TYPE_HEAP_START, TYPE_HEAP_END, TYPE_HEAP_OBJECT, TYPE_HEAP_ROOT, TYPE_HEAP_ROOT_REGISTER, TYPE_HEAP_ROOT_UNREGISTER
  * if exinfo == TYPE_HEAP_OBJECT
  * 	[object: sleb128] the object as a difference from obj_base
  * 	[class: sleb128] the object MonoClass* as a difference from ptr_base
@@ -263,11 +268,17 @@
  * 	provide additional referenced objects.
  * if exinfo == TYPE_HEAP_ROOT
  * 	[num_roots: uleb128] number of root references
- * 	[num_gc: uleb128] number of major gcs
- * 	[object: sleb128] the object as a difference from obj_base
- * 	[root_type: byte] the root_type: MonoProfileGCRootType (profiler.h)
- * 	[extra_info: uleb128] the extra_info value
- * 	object, root_type and extra_info are repeated num_roots times
+ *  num_roots runs of the following:
+ * 	  [address: sleb128] the root address as a difference from ptr_base
+ * 	  [object: sleb128] the object address as a difference from obj_base
+ * if exinfo == TYPE_HEAP_ROOT_REGISTER
+ *  [start:sleb128] start address as a different from ptr_base
+ *  [size:uleb] size of the root region
+ *  [kind:byte] type of the buffer
+ *  [key:sleb] root key, meaning dependent on type, value as a different from ptr_base
+ *  [desc:string] description of the root, as null terminated string
+ * if exinfo == TYPE_HEAP_ROOT_UNREGISTER
+ *  [start:sleb128] start address as a different from ptr_base
  *
  * type sample format
  * type: TYPE_SAMPLE
@@ -374,6 +385,8 @@ enum {
 	TYPE_HEAP_END    = 1 << 4,
 	TYPE_HEAP_OBJECT = 2 << 4,
 	TYPE_HEAP_ROOT   = 3 << 4,
+	TYPE_HEAP_ROOT_REGISTER = 4 << 4,
+	TYPE_HEAP_ROOT_UNREGISTER = 5 << 4,
 	/* extended type for TYPE_METADATA */
 	TYPE_END_LOAD     = 2 << 4,
 	TYPE_END_UNLOAD   = 4 << 4,

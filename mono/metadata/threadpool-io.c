@@ -541,7 +541,7 @@ initialize (void)
 
 	mono_coop_mutex_init (&threadpool_io->updates_lock);
 	mono_coop_cond_init (&threadpool_io->updates_cond);
-	mono_gc_register_root ((char *)&threadpool_io->updates [0], sizeof (threadpool_io->updates), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_THREAD_POOL, "i/o thread pool updates list");
+	mono_gc_register_root ((char *)&threadpool_io->updates [0], sizeof (threadpool_io->updates), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_THREAD_POOL, 0, "i/o thread pool updates list");
 
 	threadpool_io->updates_size = 0;
 
