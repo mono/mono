@@ -547,7 +547,7 @@ namespace Mono.Profiler.Log {
 
 		long ReadObject ()
 		{
-			return Reader.ReadSLeb128 () + _bufferHeader.ObjectBase;
+			return Reader.ReadSLeb128 () + _bufferHeader.ObjectBase << 3;
 		}
 
 		long ReadMethod ()
