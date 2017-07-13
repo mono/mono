@@ -3791,6 +3791,12 @@ dump_heap_shots (void)
 	int i;
 	if (!heap_shots)
 		return;
+	gboolean not_empty = FALSE;
+	for (int j = 0; j < num_heap_shots; j++)
+		if (heap_shots [j].objects_count)
+			not_empty = TRUE;
+	if (!not_empty)
+		return;
 	hs_sorted = (HeapShot **) g_malloc (num_heap_shots * sizeof (void*));
 	fprintf (outfile, "\nHeap shot summary\n");
 	i = 0;
