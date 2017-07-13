@@ -45,23 +45,16 @@ namespace Mono.Profiling.Tests.Stress {
 	static class Program {
 
 		static readonly string[] _options = new [] {
-			"domain",
-			"assembly",
-			"module",
-			"class",
-			"jit",
 			"exception",
-			"gcalloc",
-			"gc",
-			"thread",
-			// "calls", // Way too heavy.
 			"monitor",
+			"gc",
+			"gcalloc",
 			"gcmove",
 			"gcroot",
-			"context",
+			"gchandle",
 			"finalization",
 			"counter",
-			"gchandle",
+			"jit",
 		};
 
 		static readonly TimeSpan _timeout = TimeSpan.FromHours (6);
@@ -96,7 +89,7 @@ namespace Mono.Profiling.Tests.Stress {
 				var bench = benchmarks [i];
 
 				var sampleFreq = rand.Next (-1000, 1001);
-				var sampleMode = rand.Next (0, 2) == 1 ? "real" : "process";
+				var sampleMode = rand.Next (0, 2) == 1 ? "-real" : string.Empty;
 				var maxSamples = rand.Next (0, cpus * 2000 + 1);
 				var heapShotFreq = rand.Next (-10, 11);
 				var maxFrames = rand.Next (0, 33);
@@ -107,7 +100,7 @@ namespace Mono.Profiling.Tests.Stress {
 				var profOptions = $"maxframes={maxFrames},{string.Join (",", options)},output=/dev/null";
 
 				if (sampleFreq > 0)
-					profOptions += $",sample={sampleFreq},sampling-{sampleMode},maxsamples={maxSamples}";
+					profOptions += $",sample{sampleMode}={sampleFreq},maxsamples={maxSamples}";
 
 				if (heapShotFreq > 0)
 					profOptions += $",heapshot={heapShotFreq}gc";
