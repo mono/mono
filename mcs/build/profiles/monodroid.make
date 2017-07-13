@@ -25,7 +25,6 @@ PROFILE_MCS_FLAGS = \
 	-d:MOBILE_DYNAMIC \
 	-d:MONODROID \
 	-d:ANDROID \
-	-d:NETSTANDARD \
 	-nowarn:1699 \
 	-nostdlib \
 	$(DEFAULT_REFERENCES) \

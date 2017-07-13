@@ -825,6 +825,8 @@ AC_ARG_WITH(testing_aot_hybrid,  [  --with-testing_aot_hybrid=yes,no    If you w
 AC_ARG_WITH(testing_aot_full,    [  --with-testing_aot_full=yes,no      If you want to build the testing_aot_full assemblies (defaults to no)],     [], [with_testing_aot_full=default])
 AC_ARG_WITH(winaot,              [  --with-winaot=yes,no                If you want to build the Windows friendly AOT assemblies (defaults to no)], [], [with_winaot=default])
 AC_ARG_WITH(orbis,              [  --with-orbis=yes,no                  If you want to build the Orbis assemblies (defaults to no)], [], [with_orbis=default])
+AC_ARG_WITH(unityjit,              [  --with-unityjit=yes,no                  If you want to build the Unity JIT friendly assemblies (defaults to no)], [], [with_unityjit=default])
+AC_ARG_WITH(unityaot,              [  --with-unityaot=yes,no                  If you want to build the Unity AOT friendly assemblies (defaults to no)], [], [with_unityaot=default])
 
 
 AC_ARG_WITH(runtime_preset, [  --with-runtime_preset=net_4_x,all,aot,hybridaot,fullaot,bitcode   Which default profile to build (defaults to net_4_x)],  [], [with_runtime_preset=net_4_x])
@@ -845,6 +847,8 @@ with_testing_aot_hybrid_default=no
 with_testing_aot_full_default=no
 with_winaot_default=no
 with_orbis_default=no
+with_unityjit_default=no
+with_unityaot_default=no
 
 with_bitcode_default=no
 with_cooperative_gc_default=no
@@ -864,6 +868,8 @@ elif test x$with_runtime_preset = xall; then
    with_xammac_default=yes
    with_winaot_default=yes
    with_orbis_default=yes
+   with_unityjit_default=yes
+   with_unityaot_default=yes
 elif test x$with_runtime_preset = xfullaot; then
    DISABLE_MCS_DOCS_default=yes
    with_testing_aot_full_default=yes
@@ -938,6 +944,25 @@ elif test x$with_runtime_preset = xorbis; then
 
    AOT_BUILD_FLAGS="--aot=full,$INVARIANT_AOT_OPTIONS"
    AOT_RUN_FLAGS="--full-aot"
+elif test x$with_runtime_preset = xunityjit; then
+   DISABLE_MCS_DOCS_default=yes
+   with_unityjit_default=yes
+   TEST_PROFILE=unityjit
+
+   mono_feature_disable_remoting='yes'
+elif test x$with_runtime_preset = xunityaot; then
+   DISABLE_MCS_DOCS_default=yes
+   with_unityaot_default=yes
+   TEST_PROFILE=unityaot
+
+   #mono_feature_disable_com='yes'
+   mono_feature_disable_remoting='yes'
+   mono_feature_disable_reflection_emit_save='yes'
+   mono_feature_disable_reflection_emit='yes'
+   mono_feature_disable_appdomains='yes'
+
+   AOT_BUILD_FLAGS="--aot=full,$INVARIANT_AOT_OPTIONS"
+   AOT_RUN_FLAGS="--full-aot"
 else
    with_profile4_x_default=yes
 fi
@@ -984,6 +1009,12 @@ fi
 if test "x$with_orbis" = "xdefault"; then
    with_orbis=$with_orbis_default
 fi
+if test "x$with_unityjit = "xdefault"; then
+   with_unityjit=$with_unityjit_default
+fi
+if test "x$with_unityaot = "xdefault"; then
+   with_unityaot=$with_unityaot_default
+fi
 
 
 AM_CONDITIONAL(INSTALL_4_x, [test "x$with_profile4_x" = "xyes"])
@@ -997,6 +1028,8 @@ AM_CONDITIONAL(INSTALL_TESTING_AOT_HYBRID, [test "x$with_testing_aot_hybrid" != 
 AM_CONDITIONAL(INSTALL_TESTING_AOT_FULL, [test "x$with_testing_aot_full" != "xno"])
 AM_CONDITIONAL(INSTALL_WINAOT, [test "x$with_winaot" != "xno"])
 AM_CONDITIONAL(INSTALL_ORBIS, [test "x$with_orbis" != "xno"])
+AM_CONDITIONAL(INSTALL_UNITYJIT, [test "x$with_unityjit" != "xno"])
+AM_CONDITIONAL(INSTALL_UNITYAOT, [test "x$with_unityaot" != "xno"])
 AM_CONDITIONAL(FULL_AOT_TESTS, [test "x$TEST_PROFILE" = "xtesting_aot_full"] || [test "x$TEST_PROFILE" = "xwinaot"] || [test "x$TEST_PROFILE" = "xorbis"])
 AM_CONDITIONAL(HYBRID_AOT_TESTS, [test "x$TEST_PROFILE" = "xtesting_aot_hybrid"])
 
@@ -1021,6 +1054,12 @@ if test -z "$INSTALL_WINAOT_TRUE"; then :
 fi
 if test -z "$INSTALL_ORBIS_TRUE"; then :
    default_profile=orbis
+fi
+if test -z "$INSTALL_UNITYJIT_TRUE"; then :
+   default_profile=unityjit
+fi
+if test -z "$INSTALL_UNITYAOT_TRUE"; then :
+   default_profile=unityaot
 fi
 if test -z "$INSTALL_4_x_TRUE"; then :
    default_profile=net_4_x
@@ -4629,6 +4668,8 @@ echo "
 	Xamarin.Mac:     $with_xammac
 	Windows AOT:     $with_winaot
 	Orbis:           $with_orbis
+	Unity JIT:       $with_unityjit
+	Unity AOT:       $with_unityaot
 	Test profiles:   AOT Full ($with_testing_aot_full), AOT Hybrid ($with_testing_aot_hybrid)
 	JNI support:     $jdk_headers_found
 	libgdiplus:      $libgdiplus_msg
