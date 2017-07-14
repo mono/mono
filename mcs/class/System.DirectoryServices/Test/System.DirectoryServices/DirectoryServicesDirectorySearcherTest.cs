@@ -15,7 +15,6 @@ using System.Threading;
 namespace MonoTests.System.DirectoryServices 
 {
 	[TestFixture]
-	[Category ("InetAccess")]
 	public class DirectoryServicesDirectorySearcherTest
 	{
 		#region Fields
@@ -33,6 +32,9 @@ namespace MonoTests.System.DirectoryServices
 		{
 			de = null;			
 			configuration = new TestConfiguration ();
+
+			if (String.IsNullOrEmpty (configuration.ConnectionString))
+				Assert.Ignore ("No configuration");
 		}
 
 

@@ -43,7 +43,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category ("InetAccess")]
 		public void DownloadTwice ()
 		{
 			WebClient wc = new WebClient();

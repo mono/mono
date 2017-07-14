@@ -41,16 +41,6 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsNull (enumBuilder.DeclaringType, "#3");
 			Assert.IsNull (enumBuilder.ReflectedType, "#4");
 			Assert.AreEqual (_enumType, enumBuilder.UnderlyingSystemType, "#5");
-		}
-
-		[Test]
-		[Category ("ValueAdd")]
-		public void TestEnumBuilder_NotInMono ()
-		{
-			// If we decide to fix this (I dont see why we should),
-			// move to the routine above
-
-			EnumBuilder enumBuilder = GenerateEnum ();
 			Assert.IsFalse (enumBuilder.IsSerializable);
 		}
 
@@ -187,7 +177,6 @@ namespace MonoTests.System.Reflection.Emit
 
 		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
-		[Category ("ValueAdd")]
 		public void TestFindMembersIncomplete ()
 		{
 			EnumBuilder enumBuilder = GenerateEnum ();
@@ -229,7 +218,6 @@ namespace MonoTests.System.Reflection.Emit
 
 		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
-		[Category ("ValueAdd")]
 		public void TestGetConstructorIncomplete ()
 		{
 			EnumBuilder enumBuilder = GenerateEnum ();

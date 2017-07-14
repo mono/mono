@@ -18,7 +18,7 @@ namespace MonoTests.System.Web.Services.Discovery {
 	public class DiscoveryClientProtocolTest {
 
 		[Test] // Covers #36116
-		[Category ("InetAccess")]
+		[Category ("NotWorking")]
 		public void ReadWriteTest ()
 		{
 			string directory = Path.Combine (Path.GetTempPath (), Path.GetRandomFileName ());
