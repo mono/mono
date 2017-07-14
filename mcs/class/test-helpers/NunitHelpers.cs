@@ -124,6 +124,21 @@ namespace NUnit.Framework
 			Assert.That(arg1, Is.LessThanOrEqualTo(arg2), message, args);
 		}
 
+		public static void LessOrEqual(long arg1, long arg2, string message = null, params object[] args)
+		{
+			Assert.That(arg1, Is.LessThanOrEqualTo(arg2), message, args);
+		}
+
+		public static void LessOrEqual(System.DateTime arg1, System.DateTime arg2, string message = null, params object[] args)
+		{
+			Assert.That(arg1, Is.LessThanOrEqualTo(arg2), message, args);
+		}
+
+		public static void LessOrEqual(System.TimeSpan arg1, System.TimeSpan arg2, string message = null, params object[] args)
+		{
+			Assert.That(arg1, Is.LessThanOrEqualTo(arg2), message, args);
+		}
+
 		public static void IsNotInstanceOfType(System.Type expected, object actual, string message, params object[] args )
 		{
 			Assert.IsFalse (actual.GetType ().IsInstanceOfType (expected), message, args);
