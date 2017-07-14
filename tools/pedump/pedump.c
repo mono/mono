@@ -488,13 +488,21 @@ verify_image_file (const char *fname)
 		}
 		mono_class_init (klass);
 		if (mono_class_has_failure (klass)) {
-			printf ("Error verifying class(0x%08x) %s.%s a type load error happened\n", token, klass->name_space, klass->name);
+			MonoError type_load_error;
+			error_init (&type_load_error);
+			mono_error_set_for_class_failure (&type_load_error, klass);
+			printf ("Could not initialize class(0x%08x) %s.%s due to %s\n", token, klass->name_space, klass->name, mono_error_get_message (&type_load_error));
+			mono_error_cleanup (&type_load_error);
 			++count;
 		}
 
 		mono_class_setup_vtable (klass);
 		if (mono_class_has_failure (klass)) {
-			printf ("Error verifying class(0x%08x) %s.%s a type load error happened\n", token, klass->name_space, klass->name);
+			MonoError type_load_error;
+			error_init (&type_load_error);
+			mono_error_set_for_class_failure (&type_load_error, klass);
+			printf ("Could not initialize vtable of class(0x%08x) %s.%s due to %s\n", token, klass->name_space, klass->name, mono_error_get_message (&type_load_error));
+			mono_error_cleanup (&type_load_error);
 			++count;
 		}
 	}
