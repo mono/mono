@@ -81,35 +81,29 @@ namespace MonoTests.Microsoft.Build.Execution
 		[Test]
 		public void EndBuildWaitsForSubmissionCompletion ()
 		{
-			// Windows does not have useful sleep or alternative, so skip it
-			bool is_windows = true;
-			switch (Environment.OSVersion.Platform) {
-			case PlatformID.Unix:
-			case PlatformID.MacOSX:
-				is_windows = false;
-				break;
-			}
 			string project_xml = string.Format (@"<Project DefaultTargets='Wait1Sec' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
   <Target Name='Wait1Sec'>
     <Exec Command='{0}' />
   </Target>
-</Project>", is_windows ? "powershell -command \"Start-Sleep -s 1\"" : "/bin/sleep 1");
+</Project>", Environment.OSVersion.Platform == PlatformID.Win32NT ? "powershell -command \"Start-Sleep -s 1\"" : "/bin/sleep 1");
 			var xml = XmlReader.Create (new StringReader (project_xml));
 			var root = ProjectRootElement.Create (xml);
 			root.FullPath = "BuildSubmissionTest.EndBuildWaitsForSubmissionCompletion.proj";
 			var proj = new ProjectInstance (root);
 			var bm = new BuildManager ();
 			bm.BeginBuild (new BuildParameters ());
-			DateTime waitDone = DateTime.MinValue;
-			DateTime beforeExec = DateTime.UtcNow;
+			var waitDone = TimeSpan.MinValue;
+			var sw = System.Diagnostics.Stopwatch.StartNew ();
 			var sub = bm.PendBuildRequest (new BuildRequestData (proj, new string [] { "Wait1Sec" }));
-			sub.ExecuteAsync (delegate { waitDone = DateTime.UtcNow; }, null);
+			sub.ExecuteAsync (cb => waitDone = sw.Elapsed, null);
 			bm.EndBuild ();
 			Assert.AreEqual (BuildResultCode.Success, sub.BuildResult.OverallResult, "#1");
-			DateTime endBuildDone = DateTime.UtcNow;
-			AssertHelper.GreaterOrEqual (endBuildDone - beforeExec, TimeSpan.FromSeconds (1), "#2");
-			AssertHelper.GreaterOrEqual (waitDone, beforeExec, "#3");
+			var endBuildDone = sw.Elapsed;
+			AssertHelper.GreaterOrEqual (endBuildDone, TimeSpan.FromSeconds (1), "#2");
+			AssertHelper.GreaterOrEqual (waitDone, TimeSpan.FromSeconds (1), "#3");
 			AssertHelper.GreaterOrEqual (endBuildDone, waitDone, "#4");
+			AssertHelper.LessOrEqual (endBuildDone, TimeSpan.FromSeconds (1.5), "#5");
+			AssertHelper.LessOrEqual (waitDone, TimeSpan.FromSeconds (1.5), "#6");
 		}
 		
 		[Test]
