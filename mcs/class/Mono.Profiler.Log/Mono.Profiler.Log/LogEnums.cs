@@ -171,17 +171,13 @@ namespace Mono.Profiler.Log {
 
 	// mono/metadata/profiler.h : MonoProfilerGCEvent
 	public enum LogGCEvent {
-		Begin = 0,
-		MarkBegin = 1,
-		MarkEnd = 2,
-		ReclaimBegin = 3,
-		ReclaimEnd = 4,
-		End = 5,
 		PreStopWorld = 6,
+		PreStopWorldLocked = 10,
 		PostStopWorld = 7,
+		Begin = 0,
+		End = 5,
 		PreStartWorld = 8,
 		PostStartWorld = 9,
-		PreStopWorldLocked = 10,
 		PostStartWorldUnlocked = 11,
 	}
 
