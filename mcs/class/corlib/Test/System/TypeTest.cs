@@ -2261,11 +2261,14 @@ namespace MonoTests.System
 
 		[Test]
 		public void GetGenericMethodDefinitionOverInflatedMethodOnGTD () {
+			var s = new List<int> () { 1, 2, 3 }.ConvertAll ( i => i.ToString () );
+			Assert.AreEqual (3, s.Count);
 			var l = typeof (List<>);
 			var m = l.GetMethod ("ConvertAll");
 			var infl = m.MakeGenericMethod (typeof (int));
 			var res = m.GetGenericMethodDefinition ();
 			Assert.AreEqual (m, res, "#1");
+			Assert.AreEqual (1, infl.GetGenericArguments().Length, "#2");
 		}
 
 		[Test]
