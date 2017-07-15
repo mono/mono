@@ -561,7 +561,7 @@ namespace MonoTests.System.Net {
 					Assert.AreEqual ("ValueM", c.Value, "#6");
 					Assert.AreEqual ("\"/p2\"", c.Path, "#7");
 					Assert.AreEqual ("\"99\"", c.Port, "#8");
-					Assert.AreEqual ("\"test\"", c.Domain, "#9");
+					Assert.AreEqual ("test", c.Domain, "#9");
 				} else if (c.Name == "Cookie2") {
 					Assert.AreEqual ("Value2", c.Value, "#10");
 					Assert.AreEqual ("\"/foo\"", c.Path, "#11");
