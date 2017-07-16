@@ -3,7 +3,7 @@ System.Drawing/SR.cs
 Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
-../../../external/corefx/src/System.Drawing.Common/src/misc/ClientUtils.cs
+../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/ClientUtils.cs
 ../../../external/corefx/src/System.Drawing.Common/src/misc/HandleCollector.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Gdiplus.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/NativeMethods.cs
