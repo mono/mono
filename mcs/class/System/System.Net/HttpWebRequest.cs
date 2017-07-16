@@ -134,7 +134,9 @@ namespace System.Net
 		{
 			defaultMaxResponseHeadersLength = 64 * 1024;
 #if !MOBILE
+#pragma warning disable 618
 			NetConfig config = ConfigurationSettings.GetConfig ("system.net/settings") as NetConfig;
+#pragma warning restore 618
 			if (config != null) {
 				int x = config.MaxResponseHeadersLength;
 				if (x != -1)

@@ -94,6 +94,7 @@ namespace Mono.Net.Security
 
 			ChainValidationHelper.Create (provider, ref settings, this);
 #else
+			status = WebExceptionStatus.SecureChannelFailure;
 			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
 #endif
 		}
