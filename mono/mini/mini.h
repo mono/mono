@@ -220,6 +220,8 @@ typedef struct MonoAotFileInfo
 	/* Points to the get_method () function in the LLVM image or NULL */
 	gpointer llvm_get_method;
 	/* Points to the get_unbox_tramp () function in the LLVM image or NULL */
+	gpointer llvm_get_module;
+	/* Points to the get_unbox_tramp () function in the LLVM image or NULL */
 	gpointer llvm_get_unbox_tramp;
 	gpointer jit_code_start;
 	gpointer jit_code_end;
@@ -2528,10 +2530,11 @@ gboolean mono_aot_is_pagefault              (void *ptr);
 void     mono_aot_handle_pagefault          (void *ptr);
 void     mono_aot_register_jit_icall        (const char *name, gpointer addr);
 guint32  mono_aot_find_method_index         (MonoMethod *method);
-void     mono_aot_init_llvm_method          (gpointer aot_module, guint32 method_index);
-void     mono_aot_init_gshared_method_this  (gpointer aot_module, guint32 method_index, MonoObject *this_ins);
-void     mono_aot_init_gshared_method_mrgctx  (gpointer aot_module, guint32 method_index, MonoMethodRuntimeGenericContext *rgctx);
-void     mono_aot_init_gshared_method_vtable  (gpointer aot_module, guint32 method_index, MonoVTable *vtable);
+void     mono_aot_init_llvm_method          (gpointer aot_module, intptr_t code);
+void     mono_aot_init_gshared_method_this  (gpointer aot_module, intptr_t code, MonoObject *this_ins);
+void     mono_aot_init_gshared_method_mrgctx  (gpointer aot_module, intptr_t code, MonoMethodRuntimeGenericContext *rgctx);
+void     mono_aot_init_gshared_method_vtable  (gpointer aot_module, intptr_t code, MonoVTable *vtable);
+void     mono_aot_poll_amodule_got_init (void);
 
 /* This is an exported function */
 MONO_API void     mono_aot_register_module           (gpointer *aot_info);

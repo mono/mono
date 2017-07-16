@@ -121,6 +121,9 @@ mono_llvm_di_builder_finalize (void *di_builder);
 void
 mono_llvm_di_set_location (LLVMBuilderRef builder, void *loc_md);
 
+void 
+mono_llvm_set_comdat (LLVMValueRef val, LLVMModuleRef module_val);
+
 G_END_DECLS
 
 #endif /* __MONO_MINI_LLVM_CPP_H__ */  

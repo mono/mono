@@ -7996,18 +7996,7 @@ mono_aot_get_method_name (MonoCompile *cfg)
 gboolean
 mono_aot_is_linkonce_method (MonoMethod *method)
 {
-	return FALSE;
-#if 0
-	WrapperInfo *info;
-
-	// FIXME: Add more cases
-	if (method->wrapper_type != MONO_WRAPPER_UNKNOWN)
-		return FALSE;
-	info = mono_marshal_get_wrapper_info (method);
-	if ((info && (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG || info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_OUT_SIG)))
-		return TRUE;
-	return FALSE;
-#endif
+	return TRUE;
 }
 
 static gboolean
@@ -9962,6 +9951,8 @@ emit_aot_file_info (MonoAotCompile *acfg, MonoAotFileInfo *info)
 		symbols [sindex ++] = NULL;
 	}
 	/* llvm_get_method */
+	symbols [sindex ++] = NULL;
+	/* llvm_get_module */
 	symbols [sindex ++] = NULL;
 	/* llvm_get_unbox_tramp */
 	symbols [sindex ++] = NULL;

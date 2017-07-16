@@ -137,7 +137,7 @@ static GSList *tramp_infos;
 
 static void register_icalls (void);
 
-static gboolean mini_profiler_enabled (void) { return mini_enable_profiler; }
+static gboolean mini_profiler_enabled (void) { return FALSE; }
 static const char* mini_profiler_get_options (void) {  return mini_profiler_options;  }
 
 gboolean
@@ -1539,8 +1539,9 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 			if (run_cctors) {
 				target = mono_lookup_pinvoke_call (patch_info->data.method, &exc_class, &exc_arg);
 				if (!target) {
+					fprintf (stderr, "Unable to resolve pinvoke method '%s' Re-run with MONO_LOG_LEVEL=debug for more information.\n", mono_method_full_name (patch_info->data.method, TRUE));
 					if (mono_aot_only) {
-						mono_error_set_exception_instance (error, mono_exception_from_name_msg (mono_defaults.corlib, "System", exc_class, exc_arg));
+						/*mono_error_set_exception_instance (error, mono_exception_from_name_msg (mono_defaults.corlib, "System", exc_class, exc_arg));*/
 						return NULL;
 					}
 					g_error ("Unable to resolve pinvoke method '%s' Re-run with MONO_LOG_LEVEL=debug for more information.\n", mono_method_full_name (patch_info->data.method, TRUE));
@@ -3995,6 +3996,8 @@ mini_init (const char *filename, const char *runtime_version)
 	register_icalls ();
 
 	mono_generic_sharing_init ();
+
+	mono_aot_poll_amodule_got_init ();
 #endif
 
 #ifdef MONO_ARCH_SIMD_INTRINSICS
