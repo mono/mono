@@ -43,6 +43,8 @@ namespace System.Net
 		long totalWritten;
 		byte[] headers;
 		bool headersSent;
+		int completeRequestWritten;
+		int chunkTrailerWritten;
 
 		internal string ME {
 			get;
@@ -109,6 +111,26 @@ namespace System.Net
 			return new BufferOffsetSize (buffer, 0, (int)writeBuffer.Length, false);
 		}
 
+		async Task FinishWriting (CancellationToken cancellationToken)
+		{
+			if (Interlocked.CompareExchange (ref completeRequestWritten, 1, 0) != 0)
+				return;
+
+			WebConnection.Debug ($"{ME} FINISH WRITING: {sendChunked}");
+			try {
+				Operation.ThrowIfClosedOrDisposed (cancellationToken);
+				if (sendChunked)
+					await WriteChunkTrailer_inner (cancellationToken).ConfigureAwait (false);
+			} catch (Exception ex) {
+				Operation.CompleteRequestWritten (this, ex);
+				throw;
+			} finally {
+				WebConnection.Debug ($"{ME} FINISH WRITING DONE");
+			}
+
+			Operation.CompleteRequestWritten (this);
+		}
+
 		public override async Task WriteAsync (byte[] buffer, int offset, int size, CancellationToken cancellationToken)
 		{
 			WebConnection.Debug ($"{ME} WRITE ASYNC: {buffer.Length}/{offset}/{size}");
@@ -137,7 +159,7 @@ namespace System.Net
 				WebConnection.Debug ($"{ME} WRITE ASYNC #1: {allowBuffering} {sendChunked} {Request.ContentLength} {totalWritten}");
 
 				if (allowBuffering && Request.ContentLength > 0 && totalWritten == Request.ContentLength)
-					Operation.CompleteRequestWritten (this);
+					await FinishWriting (cancellationToken);
 
 				pendingWrite = null;
 				myWriteTcs.TrySetResult (0);
@@ -320,10 +342,20 @@ namespace System.Net
 
 			WebConnection.Debug ($"{ME} WRITE REQUEST #1: {buffer != null}");
 
+			Operation.ThrowIfClosedOrDisposed (cancellationToken);
 			if (buffer != null && buffer.Size > 0)
-				await InnerStream.WriteAsync (buffer.Buffer, 0, buffer.Size, cancellationToken).ConfigureAwait (false);
+				await InnerStream.WriteAsync (buffer.Buffer, 0, buffer.Size, cancellationToken);
 
-			Operation.CompleteRequestWritten (this);
+			await FinishWriting (cancellationToken);
+		}
+
+		async Task WriteChunkTrailer_inner (CancellationToken cancellationToken)
+		{
+			if (Interlocked.CompareExchange (ref chunkTrailerWritten, 1, 0) != 0)
+				return;
+			Operation.ThrowIfClosedOrDisposed (cancellationToken);
+			byte[] chunk = Encoding.ASCII.GetBytes ("0\r\n\r\n");
+			await InnerStream.WriteAsync (chunk, 0, chunk.Length, cancellationToken).ConfigureAwait (false);
 		}
 
 		async Task WriteChunkTrailer ()
@@ -342,9 +374,7 @@ namespace System.Net
 				}
 
 				try {
-					Operation.ThrowIfClosedOrDisposed (cts.Token);
-					byte[] chunk = Encoding.ASCII.GetBytes ("0\r\n\r\n");
-					await InnerStream.WriteAsync (chunk, 0, chunk.Length, cts.Token).ConfigureAwait (false);
+					await WriteChunkTrailer_inner (cts.Token).ConfigureAwait (false);
 				} catch {
 					;
 				} finally {
@@ -372,6 +402,11 @@ namespace System.Net
 			disposed = true;
 
 			if (sendChunked) {
+				// Don't use FinishWriting() here, we need to block on 'pendingWrite' to ensure that
+				// any pending WriteAsync() has been completed.
+				//
+				// FIXME: I belive .NET simply aborts if you call Close() or Dispose() while writing,
+				//        need to check this.  2017/07/17 Martin.
 				WriteChunkTrailer ().Wait ();
 				return;
 			}
