@@ -39,7 +39,6 @@
 #include <mono/metadata/threads.h>
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/debug-helpers.h>
-#include "mono/metadata/profiler.h"
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/mono-config.h>
 #include <mono/metadata/environment.h>
@@ -574,7 +573,7 @@ G_GNUC_UNUSED gboolean
 mono_debug_count (void)
 {
 	static int count = 0, int_val = 0;
-	static gboolean inited;
+	static gboolean inited, has_value = FALSE;
 
 	count ++;
 
@@ -583,11 +582,12 @@ mono_debug_count (void)
 		if (value) {
 			int_val = atoi (value);
 			g_free (value);
+			has_value = TRUE;
 		}
 		inited = TRUE;
 	}
 
-	if (!int_val)
+	if (!has_value)
 		return TRUE;
 
 	if (count == int_val)
@@ -840,7 +840,7 @@ mono_jit_thread_attach (MonoDomain *domain)
 	MonoDomain *orig;
 	gboolean attached;
 
-	g_assert (!mono_threads_is_coop_enabled ());
+	g_assert (!mono_threads_is_blocking_transition_enabled ());
 
 	if (!domain) {
 		/* Happens when called from AOTed code which is only used in the root domain. */
@@ -873,7 +873,7 @@ mono_jit_thread_attach (MonoDomain *domain)
 void
 mono_jit_set_domain (MonoDomain *domain)
 {
-	g_assert (!mono_threads_is_coop_enabled ());
+	g_assert (!mono_threads_is_blocking_transition_enabled ());
 
 	if (domain)
 		mono_domain_set (domain, TRUE);
@@ -1217,6 +1217,7 @@ mono_patch_info_hash (gconstpointer data)
 	case MONO_PATCH_INFO_GC_SAFE_POINT_FLAG:
 	case MONO_PATCH_INFO_AOT_MODULE:
 	case MONO_PATCH_INFO_JIT_THREAD_ATTACH:
+	case MONO_PATCH_INFO_PROFILER_ALLOCATION_COUNT:
 		return (ji->type << 8);
 	case MONO_PATCH_INFO_CASTCLASS_CACHE:
 		return (ji->type << 8) | (ji->data.index);
@@ -1645,6 +1646,10 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		MonoJitICallInfo *mi = mono_find_jit_icall_by_name ("mono_jit_thread_attach");
 		g_assert (mi);
 		target = mi->func;
+		break;
+	}
+	case MONO_PATCH_INFO_PROFILER_ALLOCATION_COUNT: {
+		target = (gpointer) &mono_profiler_state.gc_allocation_count;
 		break;
 	}
 	default:
@@ -3935,10 +3940,10 @@ mini_init (const char *filename, const char *runtime_version)
 	mono_install_get_class_from_name (mono_aot_get_class_from_name);
 	mono_install_jit_info_find_in_aot (mono_aot_find_jit_info);
 
-	if (mini_profiler_enabled ()) {
+	if (mini_profiler_enabled ())
 		mono_profiler_load (mini_profiler_get_options ());
-		mono_profiler_thread_name (MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ()), "Main");
-	}
+
+	mono_profiler_started ();
 
 	if (debug_options.collect_pagefault_stats)
 		mono_aot_set_make_unreadable (TRUE);
@@ -4015,12 +4020,13 @@ mini_init (const char *filename, const char *runtime_version)
 	mono_runtime_init_checked (domain, mono_thread_start_cb, mono_thread_attach_cb, &error);
 	mono_error_assert_ok (&error);
 	mono_thread_attach (domain);
+	MONO_PROFILER_RAISE (thread_name, (MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ()), "Main"));
 #endif
 
-	if (mono_profiler_get_events () & MONO_PROFILE_STATISTICAL)
+	if (mono_profiler_sampling_enabled ())
 		mono_runtime_setup_stat_profiler ();
 
-	mono_profiler_runtime_initialized ();
+	MONO_PROFILER_RAISE (runtime_initialized, ());
 
 	MONO_VES_INIT_END ();
 
@@ -4051,8 +4057,8 @@ register_icalls (void)
 	 * the wrapper would call the icall which would call the wrapper and
 	 * so on.
 	 */
-	register_icall (mono_profiler_method_enter, "mono_profiler_method_enter", "void ptr", TRUE);
-	register_icall (mono_profiler_method_leave, "mono_profiler_method_leave", "void ptr", TRUE);
+	register_icall (mono_profiler_raise_method_enter, "mono_profiler_raise_method_enter", "void ptr", TRUE);
+	register_icall (mono_profiler_raise_method_leave, "mono_profiler_raise_method_leave", "void ptr", TRUE);
 
 	register_icall (mono_trace_enter_method, "mono_trace_enter_method", NULL, TRUE);
 	register_icall (mono_trace_leave_method, "mono_trace_leave_method", NULL, TRUE);
@@ -4245,7 +4251,8 @@ register_icalls (void)
 	register_icall (mono_gsharedvt_constrained_call, "mono_gsharedvt_constrained_call", "object ptr ptr ptr ptr ptr", FALSE);
 	register_icall (mono_gsharedvt_value_copy, "mono_gsharedvt_value_copy", "void ptr ptr ptr", TRUE);
 
-	register_icall_no_wrapper (mono_gc_get_range_copy_func (), "mono_gc_range_copy", "void ptr ptr int");
+	//WARNING We do runtime selection here but the string *MUST* be to a fallback function that has same signature and behavior
+	register_icall_no_wrapper (mono_gc_get_range_copy_func (), "mono_gc_wbarrier_range_copy", "void ptr ptr int");
 
 	register_icall (mono_object_castclass_with_cache, "mono_object_castclass_with_cache", "object object ptr ptr", FALSE);
 	register_icall (mono_object_isinst_with_cache, "mono_object_isinst_with_cache", "object object ptr ptr", FALSE);
@@ -4347,8 +4354,10 @@ print_jit_stats (void)
 void
 mini_cleanup (MonoDomain *domain)
 {
-	if (mono_profiler_get_events () & MONO_PROFILE_STATISTICAL)
+	if (mono_profiler_sampling_enabled ())
 		mono_runtime_shutdown_stat_profiler ();
+
+	MONO_PROFILER_RAISE (runtime_shutdown_begin, ());
 
 #ifndef DISABLE_COM
 	cominterop_release_all_rcws ();
@@ -4371,7 +4380,9 @@ mini_cleanup (MonoDomain *domain)
 
 	mono_threadpool_cleanup ();
 
-	mono_profiler_shutdown ();
+	MONO_PROFILER_RAISE (runtime_shutdown_end, ());
+
+	mono_profiler_cleanup ();
 
 	free_jit_tls_data ((MonoJitTlsData *)mono_tls_get_jit_tls ());
 

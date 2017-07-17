@@ -69,7 +69,9 @@ namespace System.Net
 					}
 				}
 #else
+#pragma warning disable 618
 				ConfigurationSettings.GetConfig ("system.net/authenticationModules");
+#pragma warning restore 618
 #endif
 			}
 		}

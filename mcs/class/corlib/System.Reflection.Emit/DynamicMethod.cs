@@ -131,7 +131,7 @@ namespace System.Reflection.Emit {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern void create_dynamic_method (DynamicMethod m);
+		private static extern void create_dynamic_method (DynamicMethod m);
 
 		private void CreateDynMethod () {
 			if (mhandle.Value == IntPtr.Zero) {

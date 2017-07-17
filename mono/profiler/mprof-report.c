@@ -896,6 +896,23 @@ lookup_unmanaged_binary (uintptr_t addr)
 	return NULL;
 }
 
+// For backwards compatibility.
+enum {
+	SAMPLE_CYCLES = 1,
+	SAMPLE_INSTRUCTIONS,
+	SAMPLE_CACHE_MISSES,
+	SAMPLE_CACHE_REFS,
+	SAMPLE_BRANCHES,
+	SAMPLE_BRANCH_MISSES,
+};
+
+enum {
+	MONO_GC_EVENT_MARK_START = 1,
+	MONO_GC_EVENT_MARK_END = 2,
+	MONO_GC_EVENT_RECLAIM_START = 3,
+	MONO_GC_EVENT_RECLAIM_END = 4,
+};
+
 static const char*
 sample_type_name (int type)
 {
@@ -1357,7 +1374,7 @@ heap_shot_mark_objects (HeapShot *hs)
 		}
 		obj = hs->objects_hash [oi];
 		cd = obj->hklass;
-		if (hs->roots_types [i] & MONO_PROFILE_GC_ROOT_PINNING)
+		if (hs->roots_types [i] & MONO_PROFILER_GC_ROOT_PINNING)
 			cd->pinned_references++;
 		cd->root_references++;
 	}
@@ -1959,12 +1976,12 @@ get_handle_name (int htype)
 static const char*
 get_root_name (int rtype)
 {
-	switch (rtype & MONO_PROFILE_GC_ROOT_TYPEMASK) {
-	case MONO_PROFILE_GC_ROOT_STACK: return "stack";
-	case MONO_PROFILE_GC_ROOT_FINALIZER: return "finalizer";
-	case MONO_PROFILE_GC_ROOT_HANDLE: return "handle";
-	case MONO_PROFILE_GC_ROOT_OTHER: return "other";
-	case MONO_PROFILE_GC_ROOT_MISC: return "misc";
+	switch (rtype & MONO_PROFILER_GC_ROOT_TYPEMASK) {
+	case MONO_PROFILER_GC_ROOT_STACK: return "stack";
+	case MONO_PROFILER_GC_ROOT_FINALIZER: return "finalizer";
+	case MONO_PROFILER_GC_ROOT_HANDLE: return "handle";
+	case MONO_PROFILER_GC_ROOT_OTHER: return "other";
+	case MONO_PROFILER_GC_ROOT_MISC: return "misc";
 	default: return "unknown";
 	}
 }
@@ -2480,8 +2497,7 @@ decode_buffer (ProfContext *ctx)
 					decode_uleb128 (p, &p); /* flags */
 				if (debug)
 					fprintf (outfile, "%s class %p (%s in %p) at %llu\n", load_str, (void*)(ptr_base + ptrdiff), p, (void*)(ptr_base + imptrdiff), (unsigned long long) time_base);
-				if (subtype == TYPE_END_LOAD)
-					add_class (ptr_base + ptrdiff, (char*)p);
+				add_class (ptr_base + ptrdiff, (char*)p);
 				while (*p) p++;
 				p++;
 			} else if (mtype == TYPE_IMAGE) {
@@ -2896,7 +2912,10 @@ decode_buffer (ProfContext *ctx)
 					uint64_t tdiff = decode_uleb128 (p + 1, &p);
 					LOG_TIME (time_base, tdiff);
 					time_base += tdiff;
-					sample_type = *p++;
+					if (ctx->data_version < 14)
+						sample_type = *p++;
+					else
+						sample_type = SAMPLE_CYCLES;
 					tstamp = time_base;
 				} else {
 					sample_type = decode_uleb128 (p + 1, &p);

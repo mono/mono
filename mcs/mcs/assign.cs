@@ -390,6 +390,7 @@ namespace Mono.CSharp {
 
 			return System.Linq.Expressions.Expression.Assign (target_object, source_object);
 		}
+
 		protected virtual Expression ResolveConversions (ResolveContext ec)
 		{
 			source = Convert.ImplicitConversionRequired (ec, source, target.Type, source.Location);
@@ -499,6 +500,12 @@ namespace Mono.CSharp {
 			var pe = target as PropertyExpr;
 			if (pe != null) {
 				pe.SetBackingFieldAssigned (fc);
+				return;
+			}
+
+			var td = target as TupleDeconstruct;
+			if (td != null) {
+				td.SetGeneratedFieldAssigned (fc);
 				return;
 			}
 		}

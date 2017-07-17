@@ -258,6 +258,11 @@ namespace Mono.CSharp {
 			Report.Error (1970, loc, "Do not use `{0}' directly. Use `dynamic' keyword instead", GetSignatureForError ());
 		}
 
+		public void Error_MisusedTupleAttribute ()
+		{
+			Report.Error (8138, loc, "Do not use `{0}' directly. Use the tuple syntax instead", GetSignatureForError ());
+		}
+
 		void Error_AttributeEmitError (string inner)
 		{
 			Report.Error (647, Location, "Error during emitting `{0}' attribute. The reason is `{1}'",
@@ -1126,6 +1131,11 @@ namespace Mono.CSharp {
 			}
 
 			if (!IsConditionallyExcluded (ctor.DeclaringType)) {
+				if (Type == predefined.TupleElementNames) {
+					Error_MisusedTupleAttribute ();
+					return;
+				}
+
 				try {
 					foreach (Attributable target in targets)
 						target.ApplyAttributeBuilder (this, ctor, cdata, predefined);
@@ -1742,6 +1752,9 @@ namespace Mono.CSharp {
 		// New in .NET 4.5
 		public readonly PredefinedStateMachineAttribute AsyncStateMachine;
 
+		// New in .NET 4.7
+		public readonly PredefinedTupleElementNamesAttribute TupleElementNames;
+
 		//
 		// Optional types which are used as types and for member lookup
 		//
@@ -1820,6 +1833,8 @@ namespace Mono.CSharp {
 			CallerMemberNameAttribute = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "CallerMemberNameAttribute");
 			CallerLineNumberAttribute = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "CallerLineNumberAttribute");
 			CallerFilePathAttribute = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "CallerFilePathAttribute");
+
+			TupleElementNames = new PredefinedTupleElementNamesAttribute (module, "System.Runtime.CompilerServices", "TupleElementNamesAttribute");
 
 			// TODO: Should define only attributes which are used for comparison
 			const System.Reflection.BindingFlags all_fields = System.Reflection.BindingFlags.Public |
@@ -2169,6 +2184,85 @@ namespace Mono.CSharp {
 
 			tctor = module.PredefinedMembers.DynamicAttributeCtor.Resolve (loc);
 			return tctor != null;
+		}
+	}
+
+	public class PredefinedTupleElementNamesAttribute : PredefinedAttribute
+	{
+		MethodSpec tctor;
+
+		public PredefinedTupleElementNamesAttribute (ModuleContainer module, string ns, string name)
+			: base (module, ns, name)
+		{
+		}
+
+		public void EmitAttribute (FieldBuilder builder, TypeSpec type, Location loc)
+		{
+			var cab = CreateCustomAttributeBuilder (type, loc);
+			if (cab != null)
+				builder.SetCustomAttribute (cab);
+		}
+
+		public void EmitAttribute (ParameterBuilder builder, TypeSpec type, Location loc)
+		{
+			var cab = CreateCustomAttributeBuilder (type, loc);
+			if (cab != null)
+				builder.SetCustomAttribute (cab);
+		}
+
+		public void EmitAttribute (PropertyBuilder builder, TypeSpec type, Location loc)
+		{
+			var cab = CreateCustomAttributeBuilder (type, loc);
+			if (cab != null)
+				builder.SetCustomAttribute (cab);
+		}
+
+		public void EmitAttribute (TypeBuilder builder, TypeSpec type, Location loc)
+		{
+			var cab = CreateCustomAttributeBuilder (type, loc);
+			if (cab != null)
+				builder.SetCustomAttribute (cab);
+		}
+
+		CustomAttributeBuilder CreateCustomAttributeBuilder (TypeSpec type, Location loc)
+		{
+			if (tctor == null) {
+				tctor = module.PredefinedMembers.TupleElementNamesAttributeCtor.Resolve (loc);
+				if (tctor == null)
+					return null;
+			}
+
+			var names = new List<string> (type.TypeArguments.Length);
+			BuildStringElements (type, names);
+			return new CustomAttributeBuilder ((ConstructorInfo)tctor.GetMetaInfo (), new object [] { names.ToArray () });
+		}
+
+		//
+		// Returns an array of names when any element of the type is
+		// tuple with named element. The array is built for top level
+		// type therefore it can contain multiple tuple types
+		//
+		// Example: Func<(int, int), int, (int a, int b)[]>
+		// Output: { null, null, "a", "b" }
+		//
+		static void BuildStringElements (TypeSpec type, List<string> names)
+		{
+			while (type is ArrayContainer) {
+				type = ((ArrayContainer)type).Element;
+			}
+
+			var nts = type as NamedTupleSpec;
+			if (nts != null) {
+				names.AddRange (nts.Elements);
+			} else {
+				for (int i = 0; i < type.Arity; ++i) {
+					names.Add (null);
+				}
+			}
+
+			foreach (var ta in type.TypeArguments) {
+				BuildStringElements (ta, names);
+			}
 		}
 	}
 }

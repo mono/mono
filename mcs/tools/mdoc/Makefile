@@ -25,18 +25,6 @@ LOCAL_MCS_FLAGS = $(MDOC_RESOURCES_COMMAND) $(MONODOC_RESOURCES_COMMAND)
 PROGRAM = $(topdir)/class/lib/$(PROFILE)/mdoc.exe
 PROGRAM_DEPS = $(topdir)/class/lib/$(PROFILE)/monodoc.dll
 
-ifdef NET
-all : copy-with-deps
-
-copy-with-deps:
-	-mkdir mdoc-net
-	cp $(PROGRAM) mdoc-net
-	cp $(topdir)/class/lib/$(PROFILE)/Commons.Xml.Relaxng.dll mdoc-net
-	cp $(topdir)/class/lib/$(PROFILE)/ICSharpCode.SharpZipLib.dll mdoc-net
-	cp $(topdir)/class/lib/$(PROFILE)/Mono.Cecil.dll mdoc-net
-	cp $(topdir)/class/lib/$(PROFILE)/monodoc.dll mdoc-net
-endif
-
 MDOC_TEST_FILES = \
 	Test/CLILibraryTypes.dtd				  \
 	Test/DocTest-v1.cs                                        \

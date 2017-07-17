@@ -1297,6 +1297,8 @@ static MonoCustomAttrInfo*
 mono_custom_attrs_from_module (MonoImage *image, MonoError *error)
 {
 	guint32 idx;
+
+	error_init (error);
 	
 	if (image_is_dynamic (image))
 		return lookup_custom_attr (image, image);
@@ -1322,6 +1324,8 @@ MonoCustomAttrInfo*
 mono_custom_attrs_from_property_checked (MonoClass *klass, MonoProperty *property, MonoError *error)
 {
 	guint32 idx;
+
+	error_init (error);
 	
 	if (image_is_dynamic (klass->image)) {
 		property = mono_metadata_get_corresponding_property_from_generic_type_definition (property);
@@ -1349,6 +1353,8 @@ MonoCustomAttrInfo*
 mono_custom_attrs_from_event_checked (MonoClass *klass, MonoEvent *event, MonoError *error)
 {
 	guint32 idx;
+
+	error_init (error);
 	
 	if (image_is_dynamic (klass->image)) {
 		event = mono_metadata_get_corresponding_event_from_generic_type_definition (event);
@@ -1944,6 +1950,9 @@ mono_assembly_metadata_foreach_custom_attr (MonoAssembly *assembly, MonoAssembly
 	 */
 
 	image = assembly->image;
+	/* Dynamic images would need to go through the AssemblyBuilder's
+	 * CustomAttributeBuilder array.  Going through the tables below
+	 * definitely won't work. */
 	g_assert (!image_is_dynamic (image));
 	idx = 1; /* there is only one assembly */
 	idx <<= MONO_CUSTOM_ATTR_BITS;

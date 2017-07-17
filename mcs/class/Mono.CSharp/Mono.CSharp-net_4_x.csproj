@@ -104,6 +104,7 @@
     <Compile Include="..\..\mcs\settings.cs" />
     <Compile Include="..\..\mcs\statement.cs" />
     <Compile Include="..\..\mcs\support.cs" />
+    <Compile Include="..\..\mcs\tuples.cs" />
     <Compile Include="..\..\mcs\typemanager.cs" />
     <Compile Include="..\..\mcs\typespec.cs" />
     <Compile Include="..\..\mcs\visit.cs" />

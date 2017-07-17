@@ -726,6 +726,10 @@ namespace Mono.CSharp {
 				} else if (parameter_type.HasDynamicElement) {
 					pa.Dynamic.EmitAttribute (builder, parameter_type, Location);
 				}
+
+				if (parameter_type.HasNamedTupleElement) {
+					pa.TupleElementNames.EmitAttribute (builder, parameter_type, Location);
+				}
 			}
 		}
 

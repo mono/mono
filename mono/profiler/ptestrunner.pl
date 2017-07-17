@@ -62,7 +62,7 @@ if ($report ne "missing binary") {
 	report_errors ();
 }
 # test heapshot traces
-$report = run_test_sgen ("test-heapshot.exe", "heapshot,output=-traces.mlpd,legacy", "--traces traces.mlpd");
+$report = run_test_sgen ("test-heapshot.exe", "heapshot,output=traces.mlpd,legacy", "--traces traces.mlpd");
 if ($report ne "missing binary") {
 	check_report_basics ($report);
 	check_report_heapshot ($report, 0, {"T" => 5000});
@@ -76,7 +76,7 @@ if ($report ne "missing binary") {
 	report_errors ();
 }
 # test traces
-$report = run_test ("test-traces.exe", "legacy,calls,alloc,output=-traces.mlpd", "--traces traces.mlpd");
+$report = run_test ("test-traces.exe", "legacy,calls,alloc,output=traces.mlpd", "--maxframes=7 --traces traces.mlpd");
 check_report_basics ($report);
 check_call_traces ($report,
 	"T:level3 (int)" => [2020, "T:Main (string[])"],
@@ -92,7 +92,7 @@ check_alloc_traces ($report,
 );
 report_errors ();
 # test traces without enter/leave events
-$report = run_test ("test-traces.exe", "legacy,alloc,output=-traces.mlpd", "--traces traces.mlpd");
+$report = run_test ("test-traces.exe", "legacy,alloc,output=traces.mlpd", "--traces traces.mlpd");
 check_report_basics ($report);
 # this has been broken recently
 check_exception_traces ($report,
@@ -317,8 +317,10 @@ sub check_alloc_traces
 			while (@desc) {
 				my $dm = pop @desc;
 				my $fm = pop @frames;
-				$fm = pop @frames if $fm =~ /wrapper/;
-				push @errors, "Wrong frame $fm for alloc of $type." unless $dm eq $fm;
+				while ($fm =~ /wrapper/) {
+					$fm = pop @frames;
+				}
+				push @errors, "Wrong frame $fm for alloc of $type (expected $dm)." unless $dm eq $fm;
 			}
 		} else {
 			push @errors, "No alloc frames for $type.";

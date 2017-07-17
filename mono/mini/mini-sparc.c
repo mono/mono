@@ -2407,10 +2407,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 	cpos = bb->max_offset;
 
-	if (cfg->prof_options & MONO_PROFILE_COVERAGE) {
-		NOT_IMPLEMENTED;
-	}
-
 	MONO_BB_FOR_EACH_INS (bb, ins) {
 		guint8* code_start;
 
@@ -4103,9 +4099,6 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 		max_epilog_size += 128;
 	
 	if (mono_jit_trace_calls != NULL)
-		max_epilog_size += 50;
-
-	if (cfg->prof_options & MONO_PROFILE_ENTER_LEAVE)
 		max_epilog_size += 50;
 
 	while (cfg->code_len + max_epilog_size > (cfg->code_size - 16)) {

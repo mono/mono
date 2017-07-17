@@ -1733,6 +1733,7 @@ namespace System.ComponentModel
 			case 13882: /* ERROR_IPSEC_IKE_MM_LIMIT */ return "IPSEC IKE mm limit";
 			case 13883: /* ERROR_IPSEC_IKE_NEGOTIATION_DISABLED */ return "IPSEC IKE negotiation disabled";
 			case 13884: /* ERROR_IPSEC_IKE_NEG_STATUS_END */ return "IPSEC IKE neg status end";
+			case 100001: /* WSAENXIO */ return "Device not configured";
 #endif // MOBILE
 			default:
 				return string.Format ("mono-io-layer-error ({0})", error);

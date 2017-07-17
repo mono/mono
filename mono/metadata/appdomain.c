@@ -636,7 +636,7 @@ mono_domain_create_appdomain_internal (char *friendly_name, MonoAppDomainSetupHa
 	data->domain = MONO_HANDLE_RAW (ad);
 	data->friendly_name = g_strdup (friendly_name);
 
-	mono_profiler_appdomain_name (data, data->friendly_name);
+	MONO_PROFILER_RAISE (domain_name, (data, data->friendly_name));
 
 	MonoStringHandle app_base = MONO_HANDLE_NEW_GET (MonoString, setup, application_base);
 	if (MONO_HANDLE_IS_NULL (app_base)) {
@@ -1176,6 +1176,13 @@ mono_try_assembly_resolve_handle (MonoDomain *domain, MonoStringHandle fname, Mo
 	params [2] = &isrefonly;
 	MonoReflectionAssemblyHandle result = MONO_HANDLE_NEW (MonoReflectionAssembly, mono_runtime_invoke_checked (method, domain->domain, params, error));
 	ret = !MONO_HANDLE_IS_NULL (result) ? MONO_HANDLE_GETVAL (result, assembly) : NULL;
+
+	if (ret && !refonly && ret->ref_only) {
+		/* .NET Framework throws System.IO.FileNotFoundException in this case */
+		mono_error_set_file_not_found (error, "AssemblyResolveEvent handlers cannot return Assemblies loaded for reflection only");
+		ret = NULL;
+		goto leave;
+	}
 leave:
 	HANDLE_FUNCTION_RETURN_VAL (ret);
 }

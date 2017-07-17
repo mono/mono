@@ -69,9 +69,9 @@ Combine: MonoDefaults, GENERATE_GET_CLASS_WITH_CACHE, TYPED_HANDLE_DECL and frie
  * points to a valid value.
  */
 
-#ifdef HAVE_BOEHM_GC
+#if defined(HAVE_BOEHM_GC) || defined(HAVE_NULL_GC)
 static HandleStack*
-new_handle_stack ()
+new_handle_stack (void)
 {
 	return (HandleStack *)mono_gc_alloc_fixed (sizeof (HandleStack), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_HANDLE, "Thread Handle Stack");
 }
@@ -83,18 +83,25 @@ free_handle_stack (HandleStack *stack)
 }
 
 static HandleChunk*
-new_handle_chunk ()
+new_handle_chunk (void)
 {
+#if defined(HAVE_BOEHM_GC)
 	return (HandleChunk *)GC_MALLOC (sizeof (HandleChunk));
+#elif defined(HAVE_NULL_GC)
+	return (HandleChunk *)g_malloc (sizeof (HandleChunk));
+#endif
 }
 
 static void
 free_handle_chunk (HandleChunk *chunk)
 {
+#if defined(HAVE_NULL_GC)
+	g_free (chunk);
+#endif
 }
 #else
 static HandleStack*
-new_handle_stack ()
+new_handle_stack (void)
 {
 	return g_new (HandleStack, 1);
 }
@@ -106,7 +113,7 @@ free_handle_stack (HandleStack *stack)
 }
 
 static HandleChunk*
-new_handle_chunk ()
+new_handle_chunk (void)
 {
 	return g_new (HandleChunk, 1);
 }
@@ -550,6 +557,16 @@ mono_string_handle_pin_chars (MonoStringHandle handle, uint32_t *gchandle)
 	*gchandle = mono_gchandle_from_handle (MONO_HANDLE_CAST (MonoObject, handle), TRUE);
 	MonoString *raw = MONO_HANDLE_RAW (handle);
 	return mono_string_chars (raw);
+}
+
+gpointer
+mono_object_handle_pin_unbox (MonoObjectHandle obj, uint32_t *gchandle)
+{
+	g_assert (!MONO_HANDLE_IS_NULL (obj));
+	MonoClass *klass = mono_handle_class (obj);
+	g_assert (klass->valuetype);
+	*gchandle = mono_gchandle_from_handle (obj, TRUE);
+	return mono_object_unbox (MONO_HANDLE_RAW (obj));
 }
 
 void

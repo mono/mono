@@ -2171,6 +2171,14 @@ namespace Mono.CSharp
 
 		public override void Emit ()
 		{
+			if (Interfaces != null) {
+				foreach (var iface in Interfaces) {
+					if (iface.HasNamedTupleElement) {
+						throw new NotImplementedException ("named tuples for .interfaceimpl");
+					}
+				}
+			}
+
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
 
@@ -2901,8 +2909,11 @@ namespace Mono.CSharp
 			if ((ModFlags & Modifiers.METHOD_EXTENSION) != 0)
 				Module.PredefinedAttributes.Extension.EmitAttribute (TypeBuilder);
 
-			if (base_type != null && base_type.HasDynamicElement) {
-				Module.PredefinedAttributes.Dynamic.EmitAttribute (TypeBuilder, base_type, Location);
+			if (base_type != null) {
+				if (base_type.HasDynamicElement)
+					Module.PredefinedAttributes.Dynamic.EmitAttribute (TypeBuilder, base_type, Location);
+				if (base_type.HasNamedTupleElement)
+					Module.PredefinedAttributes.TupleElementNames.EmitAttribute (TypeBuilder, base_type, Location);
 			}
 		}
 
@@ -3513,7 +3524,7 @@ namespace Mono.CSharp
 				ok = false;
 			}
 
-			var base_member_type = ((IInterfaceMemberSpec) base_member).MemberType;
+			var base_member_type = ((IInterfaceMemberSpec)base_member).MemberType;
 			if (!TypeSpecComparer.Override.IsEqual (MemberType, base_member_type)) {
 				Report.SymbolRelatedToPreviousError (base_member);
 				if (this is PropertyBasedMember) {
@@ -3524,6 +3535,20 @@ namespace Mono.CSharp
 						GetSignatureForError (), base_member_type.GetSignatureForError (), base_member.GetSignatureForError ());
 				}
 				ok = false;
+			} else if (!NamedTupleSpec.CheckOverrideName (MemberType, base_member_type)) {
+				// CSC: Should be different error code
+				Report.Error (8139, Location, "`{0}': cannot change return type tuple element names when overriding inherited member `{1}'",
+							  GetSignatureForError (), base_member.GetSignatureForError ());
+				ok = false;
+			}
+
+			var base_params = base_member as IParametersMember;
+			if (base_params != null) {
+				if (!NamedTupleSpec.CheckOverrideName ((IParametersMember)this, base_params)) {
+					Report.Error (8139, Location, "`{0}': cannot change tuple element names when overriding inherited member `{1}'",
+								  GetSignatureForError (), base_member.GetSignatureForError ());
+					ok = false;
+				}
 			}
 
 			return ok;

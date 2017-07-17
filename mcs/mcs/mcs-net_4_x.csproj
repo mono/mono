@@ -114,6 +114,7 @@
     <Compile Include="settings.cs" />
     <Compile Include="statement.cs" />
     <Compile Include="support.cs" />
+    <Compile Include="tuples.cs" />
     <Compile Include="typemanager.cs" />
     <Compile Include="typespec.cs" />
     <Compile Include="visit.cs" />

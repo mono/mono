@@ -121,7 +121,9 @@ null_sources = \
 	console-null.c
 
 null_gc_sources = \
-	null-gc.c
+	null-gc.c \
+	null-gc-handles.h \
+	null-gc-handles.c
 
 common_sources = \
 	$(platform_sources)	\
@@ -218,6 +220,7 @@ common_sources = \
 	w32process.h		\
 	w32process-internals.h		\
 	profiler.c		\
+	profiler-events.h	\
 	profiler-private.h	\
 	rand.h			\
 	rand.c			\

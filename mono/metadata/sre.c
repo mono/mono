@@ -1204,6 +1204,25 @@ mono_image_create_token (MonoDynamicImage *assembly, MonoObjectHandle obj,
 
 #ifndef DISABLE_REFLECTION_EMIT
 
+static gboolean
+assemblybuilderaccess_can_refonlyload (guint32 access)
+{
+	return (access & 0x4) != 0;
+}
+
+static gboolean
+assemblybuilderaccess_can_run (guint32 access)
+{
+	return (access & MonoAssemblyBuilderAccess_Run) != 0;
+}
+
+static gboolean
+assemblybuilderaccess_can_save (guint32 access)
+{
+	return (access & MonoAssemblyBuilderAccess_Save) != 0;
+}
+
+
 /*
  * mono_reflection_dynimage_basic_init:
  * @assembly: an assembly builder object
@@ -1224,7 +1243,7 @@ mono_reflection_dynimage_basic_init (MonoReflectionAssemblyBuilder *assemblyb)
 
 	assembly = assemblyb->dynamic_assembly = g_new0 (MonoDynamicAssembly, 1);
 
-	mono_profiler_assembly_event (&assembly->assembly, MONO_PROFILE_START_LOAD);
+	MONO_PROFILER_RAISE (assembly_loading, (&assembly->assembly));
 	
 	assembly->assembly.ref_count = 1;
 	assembly->assembly.dynamic = TRUE;
@@ -1260,8 +1279,9 @@ mono_reflection_dynimage_basic_init (MonoReflectionAssemblyBuilder *assemblyb)
 			assembly->assembly.aname.revision = 0;
         }
 
-	assembly->run = assemblyb->access != 2;
-	assembly->save = assemblyb->access != 1;
+	assembly->assembly.ref_only = assemblybuilderaccess_can_refonlyload (assemblyb->access);
+	assembly->run = assemblybuilderaccess_can_run (assemblyb->access);
+	assembly->save = assemblybuilderaccess_can_save (assemblyb->access);
 	assembly->domain = domain;
 
 	char *assembly_name = mono_string_to_utf8_checked (assemblyb->name, &error);
@@ -1285,7 +1305,7 @@ mono_reflection_dynimage_basic_init (MonoReflectionAssemblyBuilder *assemblyb)
 
 	register_assembly (mono_object_domain (assemblyb), &assemblyb->assembly, &assembly->assembly);
 	
-	mono_profiler_assembly_loaded (&assembly->assembly, MONO_PROFILE_OK);
+	MONO_PROFILER_RAISE (assembly_loaded, (&assembly->assembly));
 	
 	mono_assembly_invoke_load_hook ((MonoAssembly*)assembly);
 }
@@ -2433,7 +2453,7 @@ reflection_setup_internal_class_internal (MonoReflectionTypeBuilderHandle ref_tb
 	klass->type_token = MONO_TOKEN_TYPE_DEF | table_idx;
 	mono_class_set_flags (klass, MONO_HANDLE_GETVAL (ref_tb, attrs));
 	
-	mono_profiler_class_event (klass, MONO_PROFILE_START_LOAD);
+	MONO_PROFILER_RAISE (class_loading, (klass));
 
 	klass->element_class = klass;
 
@@ -2525,7 +2545,7 @@ reflection_setup_internal_class_internal (MonoReflectionTypeBuilderHandle ref_tb
 
 	/*g_print ("setup %s as %s (%p)\n", klass->name, ((MonoObject*)tb)->vtable->klass->name, tb);*/
 
-	mono_profiler_class_loaded (klass, MONO_PROFILE_OK);
+	MONO_PROFILER_RAISE (class_loaded, (klass));
 	
 leave:
 	mono_loader_unlock ();
@@ -4267,7 +4287,7 @@ mono_reflection_type_handle_mono_type (MonoReflectionTypeHandle ref, MonoError *
 void
 mono_sre_generic_param_table_entry_free (GenericParamTableEntry *entry)
 {
-	mono_gc_deregister_root ((char*) &entry->gparam);
+	MONO_GC_UNREGISTER_ROOT_IF_MOVING (entry->gparam);
 	g_free (entry);
 }
 

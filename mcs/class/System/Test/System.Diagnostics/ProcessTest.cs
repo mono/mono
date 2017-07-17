@@ -714,11 +714,11 @@ namespace MonoTests.System.Diagnostics
 			byte [] buffer = new byte [200];
 
 			// start async Read operation
-			DateTime start = DateTime.Now;
+			var sw = Stopwatch.StartNew ();
 			IAsyncResult ar = stdout.BeginRead (buffer, 0, buffer.Length,
 							    new AsyncCallback (Read), stdout);
 
-			Assert.IsTrue ((DateTime.Now - start).TotalMilliseconds < 1000, "#01 BeginRead was not async");
+			Assert.IsTrue (sw.ElapsedMilliseconds < 1000, "#01 BeginRead was not async");
 			p.WaitForExit ();
 			Assert.AreEqual (0, p.ExitCode, "#02 script failure");
 

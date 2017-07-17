@@ -1329,6 +1329,14 @@ emit_seq_point (TransformData *td, int il_offset, InterpBasicBlock *cbb, gboolea
 	cbb->last_seq_point = seqp;
 }
 
+#define BARRIER_IF_VOLATILE(td) \
+	do { \
+		if (volatile_) { \
+			ADD_CODE (&td, MINT_MONO_MEMORY_BARRIER); \
+			volatile_ = FALSE; \
+		} \
+	} while (0)
+
 static void
 generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, MonoGenericContext *generic_context)
 {
@@ -1340,6 +1348,7 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 	MonoError error;
 	int offset, mt, i, i32;
 	gboolean readonly = FALSE;
+	gboolean volatile_ = FALSE;
 	MonoClass *klass;
 	MonoClassField *field;
 	const unsigned char *end;
@@ -1946,95 +1955,114 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 			CHECK_STACK (&td, 1);
 			SIMPLE_OP (td, MINT_LDIND_I1);
 			SET_SIMPLE_TYPE(td.sp - 1, STACK_TYPE_I4);
+			BARRIER_IF_VOLATILE (td);
 			break;
 		case CEE_LDIND_U1:
 			CHECK_STACK (&td, 1);
 			SIMPLE_OP (td, MINT_LDIND_U1);
 			SET_SIMPLE_TYPE(td.sp - 1, STACK_TYPE_I4);
+			BARRIER_IF_VOLATILE (td);
 			break;
 		case CEE_LDIND_I2:
 			CHECK_STACK (&td, 1);
 			SIMPLE_OP (td, MINT_LDIND_I2);
 			SET_SIMPLE_TYPE(td.sp - 1, STACK_TYPE_I4);
+			BARRIER_IF_VOLATILE (td);
 			break;
 		case CEE_LDIND_U2:
 			CHECK_STACK (&td, 1);
 			SIMPLE_OP (td, MINT_LDIND_U2);
 			SET_SIMPLE_TYPE(td.sp - 1, STACK_TYPE_I4);
+			BARRIER_IF_VOLATILE (td);
 			break;
 		case CEE_LDIND_I4:
 			CHECK_STACK (&td, 1);
 			SIMPLE_OP (td, MINT_LDIND_I4);
 			SET_SIMPLE_TYPE(td.sp - 1, STACK_TYPE_I4);
+			BARRIER_IF_VOLATILE (td);
 			break;
 		case CEE_LDIND_U4:
 			CHECK_STACK (&td, 1);
 			SIMPLE_OP (td, MINT_LDIND_U4);
 			SET_SIMPLE_TYPE(td.sp - 1, STACK_TYPE_I4);
+			BARRIER_IF_VOLATILE (td);
 			break;
 		case CEE_LDIND_I8:
 			CHECK_STACK (&td, 1);
 			SIMPLE_OP (td, MINT_LDIND_I8);
 			SET_SIMPLE_TYPE(td.sp - 1, STACK_TYPE_I8);
+			BARRIER_IF_VOLATILE (td);
 			break;
 		case CEE_LDIND_I:
 			CHECK_STACK (&td, 1);
 			SIMPLE_OP (td, MINT_LDIND_I);
 			ADD_CODE (&td, 0);
 			SET_SIMPLE_TYPE(td.sp - 1, STACK_TYPE_I);
+			BARRIER_IF_VOLATILE (td);
 			break;
 		case CEE_LDIND_R4:
 			CHECK_STACK (&td, 1);
 			SIMPLE_OP (td, MINT_LDIND_R4);
 			SET_SIMPLE_TYPE(td.sp - 1, STACK_TYPE_R8);
+			BARRIER_IF_VOLATILE (td);
 			break;
 		case CEE_LDIND_R8:
 			CHECK_STACK (&td, 1);
 			SIMPLE_OP (td, MINT_LDIND_R8);
 			SET_SIMPLE_TYPE(td.sp - 1, STACK_TYPE_R8);
+			BARRIER_IF_VOLATILE (td);
 			break;
 		case CEE_LDIND_REF:
 			CHECK_STACK (&td, 1);
 			SIMPLE_OP (td, MINT_LDIND_REF);
+			BARRIER_IF_VOLATILE (td);
 			SET_SIMPLE_TYPE(td.sp - 1, STACK_TYPE_O);
 			break;
 		case CEE_STIND_REF:
 			CHECK_STACK (&td, 2);
+			BARRIER_IF_VOLATILE (td);
 			SIMPLE_OP (td, MINT_STIND_REF);
 			td.sp -= 2;
 			break;
 		case CEE_STIND_I1:
 			CHECK_STACK (&td, 2);
+			BARRIER_IF_VOLATILE (td);
 			SIMPLE_OP (td, MINT_STIND_I1);
 			td.sp -= 2;
 			break;
 		case CEE_STIND_I2:
 			CHECK_STACK (&td, 2);
+			BARRIER_IF_VOLATILE (td);
 			SIMPLE_OP (td, MINT_STIND_I2);
 			td.sp -= 2;
 			break;
 		case CEE_STIND_I4:
 			CHECK_STACK (&td, 2);
+			BARRIER_IF_VOLATILE (td);
 			SIMPLE_OP (td, MINT_STIND_I4);
 			td.sp -= 2;
 			break;
 		case CEE_STIND_I:
 			CHECK_STACK (&td, 2);
+			BARRIER_IF_VOLATILE (td);
 			SIMPLE_OP (td, MINT_STIND_I);
 			td.sp -= 2;
 			break;
 		case CEE_STIND_I8:
 			CHECK_STACK (&td, 2);
+			BARRIER_IF_VOLATILE (td);
 			SIMPLE_OP (td, MINT_STIND_I8);
 			td.sp -= 2;
 			break;
 		case CEE_STIND_R4:
 			CHECK_STACK (&td, 2);
+			BARRIER_IF_VOLATILE (td);
 			SIMPLE_OP (td, MINT_STIND_R4);
 			td.sp -= 2;
 			break;
 		case CEE_STIND_R8:
 			CHECK_STACK (&td, 2);
+			BARRIER_IF_VOLATILE (td);
 			SIMPLE_OP (td, MINT_STIND_R8);
 			td.sp -= 2;
 			break;
@@ -2387,6 +2415,7 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 			}
 			td.ip += 5;
 			SET_TYPE(td.sp - 1, stack_type[mint_type(&klass->byval_arg)], klass);
+			BARRIER_IF_VOLATILE (td);
 			break;
 		}
 		case CEE_LDSTR: {
@@ -2604,6 +2633,7 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 			}
 			td.ip += 5;
 			SET_TYPE(td.sp - 1, stack_type [mt], field_klass);
+			BARRIER_IF_VOLATILE (td);
 			break;
 		}
 		case CEE_STFLD: {
@@ -2613,6 +2643,8 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 			gboolean is_static = !!(field->type->attrs & FIELD_ATTRIBUTE_STATIC);
 			mono_class_init (klass);
 			mt = mint_type(field->type);
+
+			BARRIER_IF_VOLATILE (td);
 
 #ifndef DISABLE_REMOTING
 			if (klass->marshalbyref) {
@@ -2695,6 +2727,7 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 			else
 				klass = mini_get_class (method, token, generic_context);
 
+			BARRIER_IF_VOLATILE (td);
 			ADD_CODE(&td, td.sp [-1].type == STACK_TYPE_VT ? MINT_STOBJ_VT : MINT_STOBJ);
 			ADD_CODE(&td, get_data_item_index (&td, klass));
 			if (td.sp [-1].type == STACK_TYPE_VT) {
@@ -3540,12 +3573,22 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 				PUSH_TYPE (&td, STACK_TYPE_MP, NULL);
 				++td.ip;
 				break;
+			case CEE_MONO_MEMORY_BARRIER:
+				ADD_CODE (&td, MINT_MONO_MEMORY_BARRIER);
+				++td.ip;
+				break;
 			case CEE_MONO_JIT_ATTACH:
 				ADD_CODE (&td, MINT_MONO_JIT_ATTACH);
 				++td.ip;
 				break;
 			case CEE_MONO_JIT_DETACH:
 				ADD_CODE (&td, MINT_MONO_JIT_DETACH);
+				++td.ip;
+				break;
+			case CEE_MONO_LDDOMAIN:
+				ADD_CODE (&td, MINT_MONO_LDDOMAIN);
+				td.sp [0].type = STACK_TYPE_I;
+				++td.sp;
 				++td.ip;
 				break;
 			default:
@@ -3699,7 +3742,7 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 				break;
 			case CEE_VOLATILE_:
 				++td.ip;
-				/* FIX: should do something? */;
+				volatile_ = TRUE;
 				break;
 			case CEE_TAIL_:
 				++td.ip;
@@ -3723,7 +3766,10 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 			case CEE_CPBLK:
 				CHECK_STACK(&td, 3);
 				/* FIX? convert length to I8? */
+				if (volatile_)
+					ADD_CODE (&td, MINT_MONO_MEMORY_BARRIER);
 				ADD_CODE(&td, MINT_CPBLK);
+				BARRIER_IF_VOLATILE (td);
 				td.sp -= 3;
 				++td.ip;
 				break;
@@ -3739,16 +3785,15 @@ generate (MonoMethod *method, RuntimeMethod *rtm, unsigned char *is_bb_start, Mo
 				break;
 			case CEE_INITBLK:
 				CHECK_STACK(&td, 3);
+				BARRIER_IF_VOLATILE (td);
 				ADD_CODE(&td, MINT_INITBLK);
 				td.sp -= 3;
 				td.ip += 1;
 				break;
-#if 0
 			case CEE_NO_:
 				/* FIXME: implement */
-				ip += 2;
+				td.ip += 2;
 				break;
-#endif
 			case CEE_RETHROW: {
 				int clause_index = td.clause_indexes [in_offset];
 				g_assert (clause_index != -1);
@@ -3967,7 +4012,7 @@ mono_interp_transform_method (RuntimeMethod *runtime_method, ThreadContext *cont
 		context->current_env = old_env;
 	}
 
-	mono_profiler_method_jit (method); /* sort of... */
+	MONO_PROFILER_RAISE (jit_begin, (method));
 
 	if (mono_method_signature (method)->is_inflated)
 		generic_context = mono_method_get_context (method);
@@ -3982,7 +4027,7 @@ mono_interp_transform_method (RuntimeMethod *runtime_method, ThreadContext *cont
 		mono_os_mutex_lock(&calc_section);
 		if (runtime_method->transformed) {
 			mono_os_mutex_unlock(&calc_section);
-			mono_profiler_method_end_jit (method, runtime_method->jinfo, MONO_PROFILE_OK);
+			MONO_PROFILER_RAISE (jit_done, (method, runtime_method->jinfo));
 			return NULL;
 		}
 
@@ -4016,7 +4061,7 @@ mono_interp_transform_method (RuntimeMethod *runtime_method, ThreadContext *cont
 			runtime_method->alloca_size = runtime_method->stack_size;
 			runtime_method->transformed = TRUE;
 			mono_os_mutex_unlock(&calc_section);
-			mono_profiler_method_end_jit (method, NULL, MONO_PROFILE_OK);
+			MONO_PROFILER_RAISE (jit_done, (method, NULL));
 			return NULL;
 		}
 		method = nm;
@@ -4033,7 +4078,7 @@ mono_interp_transform_method (RuntimeMethod *runtime_method, ThreadContext *cont
 				runtime_method->transformed = TRUE;
 			}
 			mono_os_mutex_unlock(&calc_section);
-			mono_profiler_method_end_jit (method, NULL, MONO_PROFILE_OK);
+			MONO_PROFILER_RAISE (jit_done, (method, NULL));
 			return NULL;
 		} else if (!strcmp (method->name, "UnsafeStore")) {
 			g_error ("TODO");
@@ -4157,7 +4202,7 @@ mono_interp_transform_method (RuntimeMethod *runtime_method, ThreadContext *cont
 	if (runtime_method->transformed) {
 		mono_os_mutex_unlock(&calc_section);
 		g_free (is_bb_start);
-		mono_profiler_method_end_jit (method, runtime_method->jinfo, MONO_PROFILE_OK);
+		MONO_PROFILER_RAISE (jit_done, (method, runtime_method->jinfo));
 		return NULL;
 	}
 
@@ -4217,7 +4262,7 @@ mono_interp_transform_method (RuntimeMethod *runtime_method, ThreadContext *cont
 	g_free (is_bb_start);
 
 	// FIXME: Add a different callback ?
-	mono_profiler_method_end_jit (method, runtime_method->jinfo, MONO_PROFILE_OK);
+	MONO_PROFILER_RAISE (jit_done, (method, runtime_method->jinfo));
 	runtime_method->transformed = TRUE;
 	mono_os_mutex_unlock(&calc_section);
 

@@ -1351,8 +1351,7 @@ mono_arch_compute_omit_fp (MonoCompile *cfg)
 		cfg->arch.omit_fp = FALSE;
 	if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG))
 		cfg->arch.omit_fp = FALSE;
-	if ((mono_jit_trace_calls != NULL && mono_trace_eval (cfg->method)) ||
-		(cfg->prof_options & MONO_PROFILE_ENTER_LEAVE))
+	if ((mono_jit_trace_calls != NULL && mono_trace_eval (cfg->method)))
 		cfg->arch.omit_fp = FALSE;
 	/*
 	 * On MIPS, fp points to the bottom of the frame, so it can be eliminated even if
@@ -3217,21 +3216,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 	cpos = bb->max_offset;
 
-#if 0
-	if (cfg->prof_options & MONO_PROFILE_COVERAGE) {
-		MonoCoverageInfo *cov = mono_get_coverage_info (cfg->method);
-		g_assert (!mono_compile_aot);
-		cpos += 20;
-		if (bb->cil_code)
-			cov->data [bb->dfn].iloffset = bb->cil_code - cfg->cil_code;
-		/* this is not thread save, but good enough */
-		/* fixme: howto handle overflows? */
-		mips_load_const (code, mips_at, &cov->data [bb->dfn].count);
-		mips_lw (code, mips_temp, mips_at, 0);
-		mips_addiu (code, mips_temp, mips_temp, 1);
-		mips_sw (code, mips_temp, mips_at, 0);
-	}
-#endif
 	MONO_BB_FOR_EACH_INS (bb, ins) {
 		offset = code - cfg->native_code;
 
@@ -4832,9 +4816,6 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		MonoInst *ins = bb->code;
 		bb->max_offset = max_offset;
 
-		if (cfg->prof_options & MONO_PROFILE_COVERAGE)
-			max_offset += 6; 
-
 		MONO_BB_FOR_EACH_INS (bb, ins)
 			max_offset += ((guint8 *)ins_get_spec (ins->opcode))[MONO_INST_LEN];
 	}
@@ -5308,9 +5289,6 @@ mono_arch_emit_epilog_sub (MonoCompile *cfg, guint8 *code)
 		max_epilog_size += 128;
 	
 	if (mono_jit_trace_calls != NULL)
-		max_epilog_size += 50;
-
-	if (cfg->prof_options & MONO_PROFILE_ENTER_LEAVE)
 		max_epilog_size += 50;
 
 	if (code)

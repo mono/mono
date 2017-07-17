@@ -127,7 +127,7 @@ namespace System.IO {
 				data = (DefaultWatcherData) watches [fsw];
 				if (data != null) {
 					data.Enabled = false;
-					data.DisabledTime = DateTime.Now;
+					data.DisabledTime = DateTime.UtcNow;
 				}
 			}
 		}
@@ -171,7 +171,7 @@ namespace System.IO {
 		{
 			if (!data.Enabled) {
 				return (data.DisabledTime != DateTime.MaxValue &&
-					(DateTime.Now - data.DisabledTime).TotalSeconds > 5);
+					(DateTime.UtcNow - data.DisabledTime).TotalSeconds > 5);
 			}
 
 			DoFiles (data, data.Directory, dispatch);

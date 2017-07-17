@@ -680,6 +680,10 @@ namespace Mono.CSharp
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (PropertyBuilder, member_type, Location);
 			}
 
+			if (member_type.HasNamedTupleElement) {
+				Module.PredefinedAttributes.TupleElementNames.EmitAttribute (PropertyBuilder, member_type, Location);
+			}
+
 			ConstraintChecker.Check (this, member_type, type_expr.Location);
 
 			first.Emit (Parent);

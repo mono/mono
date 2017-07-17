@@ -113,12 +113,12 @@ namespace System.ServiceModel.Channels.Http
 					return;
 				close_started = true;
 			}
-			DateTime start = DateTime.Now;
+			DateTime start = DateTime.UtcNow;
 
 			// FIXME: consider timeout
-			AbortConnections (timeout - (DateTime.Now - start));
+			AbortConnections (timeout - (DateTime.UtcNow - start));
 
-			base.OnClose (timeout - (DateTime.Now - start));
+			base.OnClose (timeout - (DateTime.UtcNow - start));
 		}
 
 		protected string GetHeaderItem (string raw)

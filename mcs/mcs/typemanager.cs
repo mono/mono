@@ -240,6 +240,9 @@ namespace Mono.CSharp
 		public readonly PredefinedType FormattableString;
 		public readonly PredefinedType FormattableStringFactory;
 
+		// C# 7.0
+		public readonly PredefinedType[] Tuples;
+
 		public PredefinedTypes (ModuleContainer module)
 		{
 			TypedReference = new PredefinedType (module, MemberKind.Struct, "System", "TypedReference");
@@ -337,6 +340,14 @@ namespace Mono.CSharp
 
 			IFormattable.Define ();
 			FormattableString.Define ();
+
+			Tuples = new PredefinedType [8];
+			for (int i = 0; i < Tuples.Length; i++) {
+				var pt = new PredefinedType (module, MemberKind.Struct, "System", "ValueTuple", i + 1);
+				Tuples [i] = pt;
+				if (pt.Define ())
+					pt.TypeSpec.IsTupleType = true;
+			}
 		}
 	}
 
@@ -403,6 +414,7 @@ namespace Mono.CSharp
 		public readonly PredefinedMember<FieldSpec> StructLayoutCharSet;
 		public readonly PredefinedMember<FieldSpec> StructLayoutSize;
 		public readonly PredefinedMember<MethodSpec> TypeGetTypeFromHandle;
+		public readonly PredefinedMember<MethodSpec> TupleElementNamesAttributeCtor;
 
 		public PredefinedMembers (ModuleContainer module)
 		{
@@ -715,6 +727,10 @@ namespace Mono.CSharp
 				MemberFilter.Field ("Size", btypes.Int));
 
 			TypeGetTypeFromHandle = new PredefinedMember<MethodSpec> (module, btypes.Type, "GetTypeFromHandle", btypes.RuntimeTypeHandle);
+
+			TupleElementNamesAttributeCtor = new PredefinedMember<MethodSpec> (module, atypes.TupleElementNames,
+				MemberFilter.Constructor (ParametersCompiled.CreateFullyResolved (
+					ArrayContainer.MakeType (module, btypes.String))));
 		}
 	}
 

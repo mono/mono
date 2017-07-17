@@ -1844,5 +1844,68 @@ public class AssemblyBuilderTest
 		} catch (NotSupportedException e) {
 		}
      }
+
+	class AssemblyBuilderResolver {
+		private Assembly mock;
+		private ResolveEventHandler d;
+		private string theName;
+
+		public AssemblyBuilderResolver (string theName) {
+			mock = CreateMock (theName);
+			d = new ResolveEventHandler (HandleResolveEvent);
+			this.theName = theName;
+		}
+
+		public void StartHandling () {
+			AppDomain.CurrentDomain.AssemblyResolve += d;
+		}
+
+		public void StopHandling () {
+			AppDomain.CurrentDomain.AssemblyResolve -= d;
+		}
+
+		public Assembly HandleResolveEvent (Object sender, ResolveEventArgs args) {
+			if (args.Name.StartsWith (theName))
+				return mock;
+			else
+				return null;
+		}
+
+		private static Assembly CreateMock (string name) {
+			var an = new AssemblyName (name);
+			var ab = AssemblyBuilder.DefineDynamicAssembly (an, AssemblyBuilderAccess.ReflectionOnly);
+			var mb = ab.DefineDynamicModule (an.Name);
+
+			// Just make some content for the assembly
+			var tb = mb.DefineType ("Foo", TypeAttributes.Public);
+			tb.DefineDefaultConstructor (MethodAttributes.Public);
+
+			tb.CreateType ();
+
+			return ab;
+		}
+	}
+
+	[Test]
+	public void ResolveEventHandlerReflectionOnlyError ()
+	{
+		// Regression test for 57850.
+
+		// If a ResolveEventHandler returns a reflection-only
+		// AssemblyBuilder, we should throw a FileNotFoundException.
+		var s = "ResolveEventHandlerReflectionOnlyErrorAssembly";
+		var h = new AssemblyBuilderResolver (s);
+		Assert.Throws<FileNotFoundException>(() => {
+				h.StartHandling ();
+				var aName = new AssemblyName (s);
+				try {
+					AppDomain.CurrentDomain.Load (aName);
+				} finally {
+					h.StopHandling ();
+				}
+			});
+	}
+
+
 }
 }

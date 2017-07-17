@@ -335,6 +335,7 @@ namespace Mono.CSharp
 %token GENERIC_DIMENSION
 %token DEFAULT_COLON
 %token OPEN_BRACKET_EXPR
+%token OPEN_PARENS_DECONSTRUCT
 
 // Make the parser go into eval mode parsing (statements and compilation units).
 %token EVAL_STATEMENT_PARSER
@@ -927,7 +928,6 @@ named_argument
 		$$ = new NamedArgument (lt.Value, lt.Location, (Expression) $4, Argument.AType.Out);
 		lbag.AddLocation ($$, GetLocation($2));
 	  }
-
 	;
 
 named_argument_expr
@@ -3239,6 +3239,52 @@ type_expression
 		$$ = new ComposedCast ((ATypeNameExpression) $1, (ComposedTypeSpecifier) $2);
 	  }
 	| builtin_type_expression
+	| OPEN_PARENS tuple_elements CLOSE_PARENS opt_nullable
+	  {
+		if (lang_version < LanguageVersion.V_7)
+			FeatureIsNotAvailable (GetLocation ($1), "tuples");
+
+		var a = (Tuple<TypeArguments, List<string>>) $2;
+		if (a.Item1.Count < 2) {
+			report.Error (8124, GetLocation ($1), "Tuple must contain at least two elements");
+		}
+
+		$$ = new TupleTypeExpr (a.Item1, a.Item2, GetLocation ($1));
+
+		if ($4 != null)
+			$$ = new ComposedCast ((FullNamedExpression) $$, (ComposedTypeSpecifier) $4);
+	  }
+	;
+
+tuple_elements
+	: tuple_element tuple_element_name
+	  {
+		var type_args = new TypeArguments ();
+		type_args.Add ((FullNamedExpression) $1);
+
+		var names = new List<string> (2);
+		var lt = (LocatedToken) $2;
+		names.Add (lt?.Value);
+
+		$$ = Tuple.Create (type_args, names);
+	  }
+	| tuple_elements COMMA tuple_element tuple_element_name
+	  {
+		var a = (Tuple<TypeArguments, List<string>>) $1;
+		a.Item1.Add ((FullNamedExpression) $3);
+		var lt = (LocatedToken) $4;
+		a.Item2.Add (lt?.Value);
+		$$ = a;
+	  }
+	;
+
+tuple_element_name
+	: /* empty */
+	| IDENTIFIER
+	;
+
+tuple_element
+	: parameter_type
 	;
 
 void_invalid
@@ -3356,6 +3402,7 @@ type_name_expression
 
 literal
 	: boolean_literal
+	| tuple_literal
 	| LITERAL
 	| NULL			{ $$ = new NullLiteral (GetLocation ($1)); }
 	;
@@ -3363,6 +3410,42 @@ literal
 boolean_literal
 	: TRUE			{ $$ = new BoolLiteral (compiler.BuiltinTypes, true, GetLocation ($1)); }
 	| FALSE			{ $$ = new BoolLiteral (compiler.BuiltinTypes, false, GetLocation ($1)); }
+	;
+
+tuple_literal
+	: OPEN_PARENS tuple_literal_elements CLOSE_PARENS
+	  {
+		if (lang_version < LanguageVersion.V_7)
+			FeatureIsNotAvailable (GetLocation ($1), "tuples");
+
+		$$ = new TupleLiteral ((List<TupleLiteralElement>)$2, GetLocation ($1));
+	  }
+	;
+
+tuple_literal_elements
+	: tuple_literal_element COMMA tuple_literal_element
+	  {
+		$$ = new List<TupleLiteralElement> () {
+			(TupleLiteralElement) $1, (TupleLiteralElement) $3
+		};
+	  }
+	| tuple_literal_elements COMMA tuple_literal_element
+	  {
+		var list = (List<TupleLiteralElement>)$1;
+		list.Add ((TupleLiteralElement) $3);
+	  }
+	;
+
+tuple_literal_element
+	: expression
+	  {
+		$$ = new TupleLiteralElement ((Expression) $1);
+	  }
+	| IDENTIFIER COLON expression
+	  {
+		var lt = (LocatedToken) $1;
+		$$ = new TupleLiteralElement (lt.Value, (Expression) $3, lt.Location);
+	  }
 	;
 
 interpolated_string
@@ -4391,7 +4474,6 @@ prefixed_unary_expression
 
 		$$ = new Unary (Unary.Operator.AddressOf, null, GetLocation ($1));
 	  }
-	;
 
 multiplicative_expression
 	: prefixed_unary_expression
@@ -4535,16 +4617,18 @@ pattern_expr
 	  {
 		$$ = new WildcardPattern (GetLocation ($1));
 	  }
-	| pattern_expr_invocation
+/*	| pattern_expr_invocation */
 	| pattern_property
 	;
 
+/*
 pattern_expr_invocation
 	: type_name_expression OPEN_PARENS opt_pattern_list CLOSE_PARENS
 	  {
 		$$ = new RecursivePattern ((ATypeNameExpression) $1, (Arguments) $3, GetLocation ($2));
 	  }
 	;
+*/
 
 pattern_property
 	: type_name_expression OPEN_BRACE pattern_property_list CLOSE_BRACE
@@ -4588,8 +4672,9 @@ pattern
 	  }
 	;
 
+/*
 opt_pattern_list
-	: /* empty */
+	: // empty
 	  {
 		$$ = new Arguments (0);
 	  }
@@ -4614,6 +4699,7 @@ pattern_list
 	  }
 	;
 
+
 pattern_argument
 	: pattern
 	  {
@@ -4625,6 +4711,7 @@ pattern_argument
 		$$ = new NamedArgument (lt.Value, lt.Location, (Expression) $3);
 	  }
 	;
+*/
 
 shift_expression
 	: additive_expression
@@ -4920,6 +5007,30 @@ assignment_expression
 	  {
 		$$ = new CompoundAssign (Binary.Operator.ExclusiveOr, (Expression) $1, (Expression) $3);
 		lbag.AddLocation ($$, GetLocation ($2));
+	  }
+	| OPEN_PARENS_DECONSTRUCT deconstruct_exprs CLOSE_PARENS ASSIGN expression
+	  {
+		if (lang_version < LanguageVersion.V_7)
+			FeatureIsNotAvailable (GetLocation ($1), "tuples");
+
+	  	var exprs = (List<Expression>) $2;
+		$$ = new TupleDeconstruct (exprs, (Expression) $5, GetLocation ($4));
+	  }
+	;
+
+deconstruct_exprs
+	: expression COMMA expression
+	  {
+		$$ = new List<Expression> () {
+			(Expression) $1,
+			(Expression) $3
+	  	};
+	  }
+	| deconstruct_exprs COMMA expression
+	  {
+		var src = (List<Expression>) $1;
+		src.Add ((Expression) $3);
+		$$ = src;
 	  }
 	;
 
@@ -5693,20 +5804,6 @@ variable_type
 variable_type_simple
 	: type_name_expression opt_nullable
 	  { 
-		// Ok, the above "primary_expression" is there to get rid of
-		// both reduce/reduce and shift/reduces in the grammar, it should
-		// really just be "type_name".  If you use type_name, a reduce/reduce
-		// creeps up.  If you use namespace_or_type_name (which is all we need
-		// really) two shift/reduces appear.
-		// 
-
-		// So the super-trick is that primary_expression
-		// can only be either a SimpleName or a MemberAccess. 
-		// The MemberAccess case arises when you have a fully qualified type-name like :
-		// Foo.Bar.Blah i;
-		// SimpleName is when you have
-		// Blah i;
-		
 		var expr = (ATypeNameExpression) $1;
 		if ($2 == null) {
 			if (expr.Name == "var" && expr is SimpleName)
@@ -5723,9 +5820,54 @@ variable_type_simple
 		$$ = new ComposedCast (expr, (ComposedTypeSpecifier) $2);
 	  }
 	| builtin_type_expression
+	| tuple_type opt_nullable
+	  {
+		if ($2 == null)
+			$$ = $1;
+		else
+			$$ = new ComposedCast ((FullNamedExpression) $1, (ComposedTypeSpecifier) $2);
+	  }
 	| void_invalid
 	;
-	
+
+tuple_type
+	: OPEN_PARENS tuple_type_elements CLOSE_PARENS
+	  {
+		if (lang_version < LanguageVersion.V_7)
+			FeatureIsNotAvailable (GetLocation ($1), "tuples");
+
+		var a = (Tuple<TypeArguments, List<string>>) $2;
+
+		$$ = new TupleTypeExpr (a.Item1, a.Item2, GetLocation ($1));
+	  }
+	;
+
+tuple_type_elements
+	: variable_type IDENTIFIER /* opt_identifier */ COMMA variable_type IDENTIFIER /* opt_identifier */
+	  {
+		var type_args = new TypeArguments ();
+
+		type_args.Add ((FullNamedExpression) $1);
+		type_args.Add ((FullNamedExpression) $4);
+
+		var names = new List<string> (2);
+		var lt = (LocatedToken) $2;
+		names.Add (lt?.Value);
+		lt = (LocatedToken) $5;
+		names.Add (lt?.Value);
+
+		$$ = Tuple.Create (type_args, names);
+	  }
+	| tuple_type_elements COMMA variable_type IDENTIFIER /* opt_identifier */
+	  {
+		var a = (Tuple<TypeArguments, List<string>>) $1;
+		a.Item1.Add ((FullNamedExpression) $3);
+		var lt = (LocatedToken) $4;
+		a.Item2.Add (lt?.Value);
+		$$ = a;
+	  }
+	;
+
 pointer_stars
 	: pointer_star
 	| pointer_star pointer_stars
@@ -8157,6 +8299,7 @@ static string GetTokenName (int token)
 		return "]";
 	case Token.OPEN_PARENS_CAST:
 	case Token.OPEN_PARENS_LAMBDA:
+	case Token.OPEN_PARENS_DECONSTRUCT:
 	case Token.OPEN_PARENS:
 		return "(";
 	case Token.CLOSE_PARENS:

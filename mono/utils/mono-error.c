@@ -459,6 +459,20 @@ mono_error_set_invalid_operation (MonoError *oerror, const char *msg_format, ...
 	va_end (args);
 }
 
+/**
+ * mono_error_set_file_not_found:
+ *
+ * System.IO.FileNotFoundException
+ */
+void
+mono_error_set_file_not_found (MonoError *oerror, const char *msg_format, ...)
+{
+	va_list args;
+	va_start (args, msg_format);
+	mono_error_set_generic_errorv (oerror, "System.IO", "FileNotFoundException", msg_format, args);
+	va_end (args);
+}
+
 void
 mono_error_set_invalid_program (MonoError *oerror, const char *msg_format, ...)
 {
@@ -468,6 +482,17 @@ mono_error_set_invalid_program (MonoError *oerror, const char *msg_format, ...)
 	error->error_code = MONO_ERROR_INVALID_PROGRAM;
 
 	set_error_message ();
+}
+
+/**
+ * mono_error_set_invalid_cast:
+ *
+ * System.InvalidCastException
+ */
+void
+mono_error_set_invalid_cast (MonoError *oerror)
+{
+        mono_error_set_generic_error (oerror, "System", "InvalidCastException", "");
 }
 
 void

@@ -3978,6 +3978,8 @@ add_wrappers (MonoAotCompile *acfg)
 				add_method (acfg, m);
 			if ((m = mono_gc_get_managed_allocator_by_type (i, MANAGED_ALLOCATOR_SLOW_PATH)))
 				add_method (acfg, m);
+			if ((m = mono_gc_get_managed_allocator_by_type (i, MANAGED_ALLOCATOR_PROFILER)))
+				add_method (acfg, m);
 		}
 
 		/* write barriers */
@@ -5817,6 +5819,8 @@ encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info, guint8 *buf, guint
 		encode_field_info (acfg, patch_info->data.field, p, &p);
 		break;
 	case MONO_PATCH_INFO_INTERRUPTION_REQUEST_FLAG:
+		break;
+	case MONO_PATCH_INFO_PROFILER_ALLOCATION_COUNT:
 		break;
 	case MONO_PATCH_INFO_RGCTX_FETCH:
 	case MONO_PATCH_INFO_RGCTX_SLOT_INDEX: {
@@ -11627,7 +11631,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 #ifdef ENABLE_LLVM
 	if (acfg->llvm) {
 		llvm_acfg = acfg;
-		mono_llvm_create_aot_module (acfg->image->assembly, acfg->global_prefix, TRUE, acfg->aot_opts.static_link, acfg->aot_opts.llvm_only);
+		mono_llvm_create_aot_module (acfg->image->assembly, acfg->global_prefix, acfg->nshared_got_entries, TRUE, acfg->aot_opts.static_link, acfg->aot_opts.llvm_only);
 	}
 #endif
 
@@ -11696,8 +11700,14 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 			acfg->tmpfname = g_strdup_printf ("%s.s", acfg->image->name);
 		acfg->fp = fopen (acfg->tmpfname, "w+");
 	} else {
-		int i = g_file_open_tmp ("mono_aot_XXXXXX", &acfg->tmpfname, NULL);
-		acfg->fp = fdopen (i, "w+");
+		if (strcmp (acfg->aot_opts.temp_path, "") == 0) {
+			int i = g_file_open_tmp ("mono_aot_XXXXXX", &acfg->tmpfname, NULL);
+			acfg->fp = fdopen (i, "w+");
+		} else {
+			acfg->tmpbasename = g_build_filename (acfg->aot_opts.temp_path, "temp", NULL);
+			acfg->tmpfname = g_strdup_printf ("%s.s", acfg->tmpbasename);
+			acfg->fp = fopen (acfg->tmpfname, "w+");
+		}
 	}
 	if (acfg->fp == 0 && !acfg->aot_opts.llvm_only) {
 		aot_printerrf (acfg, "Unable to open file '%s': %s\n", acfg->tmpfname, strerror (errno));

@@ -27,7 +27,6 @@
 #include <mono/metadata/threads.h>
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/debug-helpers.h>
-#include "mono/metadata/profiler.h"
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/mono-config.h>
 #include <mono/metadata/environment.h>
@@ -271,11 +270,15 @@ thread_timer_expired (HANDLE thread)
 
 	context.ContextFlags = CONTEXT_CONTROL;
 	if (GetThreadContext (thread, &context)) {
+		guchar *ip;
+
 #ifdef _WIN64
-		mono_profiler_stat_hit ((guchar *) context.Rip, &context);
+		ip = (guchar *) context.Rip;
 #else
-		mono_profiler_stat_hit ((guchar *) context.Eip, &context);
+		ip = (guchar *) context.Eip;
 #endif
+
+		MONO_PROFILER_RAISE (sample_hit, (ip, &context));
 	}
 }
 

@@ -1264,7 +1264,7 @@ mono_get_domainvar (MonoCompile *cfg)
 MonoInst *
 mono_get_got_var (MonoCompile *cfg)
 {
-	if (!cfg->compile_aot || !cfg->backend->need_got_var)
+	if (!cfg->compile_aot || !cfg->backend->need_got_var || cfg->llvm_only)
 		return NULL;
 	if (!cfg->got_var) {
 		cfg->got_var = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
@@ -1765,7 +1765,7 @@ emit_pop_lmf (MonoCompile *cfg)
 }
 
 static void
-emit_instrumentation_call (MonoCompile *cfg, void *func)
+emit_instrumentation_call (MonoCompile *cfg, void *func, gboolean entry)
 {
 	MonoInst *iargs [1];
 
@@ -1776,7 +1776,7 @@ emit_instrumentation_call (MonoCompile *cfg, void *func)
 	if (cfg->method != cfg->current_method)
 		return;
 
-	if (cfg->prof_options & MONO_PROFILE_ENTER_LEAVE) {
+	if (mono_profiler_should_instrument_method (cfg->method, entry)) {
 		EMIT_NEW_METHODCONST (cfg, iargs [0], cfg->method);
 		mono_emit_jit_icall (cfg, func, iargs);
 	}
@@ -2247,7 +2247,7 @@ mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig,
 		tail = FALSE;
 
 	if (tail) {
-		emit_instrumentation_call (cfg, mono_profiler_method_leave);
+		emit_instrumentation_call (cfg, mono_profiler_raise_method_leave, FALSE);
 
 		MONO_INST_NEW_CALL (cfg, call, OP_TAILCALL);
 	} else
@@ -5055,11 +5055,15 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			g_assert (ctx);
 			g_assert (ctx->method_inst);
 			g_assert (ctx->method_inst->type_argc == 1);
-			MonoType *t = mini_get_underlying_type (ctx->method_inst->type_argv [0]);
-			MonoClass *klass = mono_class_from_mono_type (t);
+			MonoType *arg_type = ctx->method_inst->type_argv [0];
+			MonoType *t;
+			MonoClass *klass;
 
 			ins = NULL;
 
+			/* Resolve the argument class as possible so we can handle common cases fast */
+			t = mini_get_underlying_type (arg_type);
+			klass = mono_class_from_mono_type (t);
 			mono_class_init (klass);
 			if (MONO_TYPE_IS_REFERENCE (t))
 				EMIT_NEW_ICONST (cfg, ins, 1);
@@ -5072,10 +5076,12 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			else {
 				g_assert (cfg->gshared);
 
-				int context_used = mini_class_check_context_used (cfg, klass);
+				/* Have to use the original argument class here */
+				MonoClass *arg_class = mono_class_from_mono_type (arg_type);
+				int context_used = mini_class_check_context_used (cfg, arg_class);
 
 				/* This returns 1 or 2 */
-				MonoInst *info = mini_emit_get_rgctx_klass (cfg, context_used, klass, 	MONO_RGCTX_INFO_CLASS_IS_REF_OR_CONTAINS_REFS);
+				MonoInst *info = mini_emit_get_rgctx_klass (cfg, context_used, arg_class, MONO_RGCTX_INFO_CLASS_IS_REF_OR_CONTAINS_REFS);
 				int dreg = alloc_ireg (cfg);
 				EMIT_NEW_BIALU_IMM (cfg, ins, OP_ISUB_IMM, dreg, info->dreg, 1);
 			}
@@ -5861,7 +5867,7 @@ mini_redirect_call (MonoCompile *cfg, MonoMethod *method,
 {
 	if (method->klass == mono_defaults.string_class) {
 		/* managed string allocation support */
-		if (strcmp (method->name, "InternalAllocateStr") == 0 && !(mono_profiler_events & MONO_PROFILE_ALLOCATIONS) && !(cfg->opt & MONO_OPT_SHARED)) {
+		if (strcmp (method->name, "InternalAllocateStr") == 0 && !(cfg->opt & MONO_OPT_SHARED)) {
 			MonoInst *iargs [2];
 			MonoVTable *vtable = mono_class_vtable (cfg->domain, method->klass);
 			MonoMethod *managed_alloc = NULL;
@@ -7304,8 +7310,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	cfg->dont_inline = g_list_prepend (cfg->dont_inline, method);
 	if (cfg->method == method) {
 
-		if (cfg->prof_options & MONO_PROFILE_INS_COVERAGE)
-			cfg->coverage_info = mono_profiler_coverage_alloc (cfg->method, header->code_size);
+		cfg->coverage_info = mono_profiler_coverage_alloc (cfg->method, header->code_size);
 
 		/* ENTRY BLOCK */
 		NEW_BBLOCK (cfg, start_bblock);
@@ -7701,18 +7706,25 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 		if ((cfg->method == method) && cfg->coverage_info) {
 			guint32 cil_offset = ip - header->code;
+			gpointer counter = &cfg->coverage_info->data [cil_offset].count;
 			cfg->coverage_info->data [cil_offset].cil_code = ip;
 
-			/* TODO: Use an increment here */
-#if defined(TARGET_X86)
-			MONO_INST_NEW (cfg, ins, OP_STORE_MEM_IMM);
-			ins->inst_p0 = &(cfg->coverage_info->data [cil_offset].count);
-			ins->inst_imm = 1;
-			MONO_ADD_INS (cfg->cbb, ins);
-#else
-			EMIT_NEW_PCONST (cfg, ins, &(cfg->coverage_info->data [cil_offset].count));
-			MONO_EMIT_NEW_STORE_MEMBASE_IMM (cfg, OP_STORE_MEMBASE_IMM, ins->dreg, 0, 1);
-#endif
+			if (mono_arch_opcode_supported (OP_ATOMIC_ADD_I4)) {
+				MonoInst *one_ins, *load_ins;
+
+				EMIT_NEW_PCONST (cfg, load_ins, counter);
+				EMIT_NEW_ICONST (cfg, one_ins, 1);
+				MONO_INST_NEW (cfg, ins, OP_ATOMIC_ADD_I4);
+				ins->dreg = mono_alloc_ireg (cfg);
+				ins->inst_basereg = load_ins->dreg;
+				ins->inst_offset = 0;
+				ins->sreg2 = one_ins->dreg;
+				ins->type = STACK_I4;
+				MONO_ADD_INS (cfg->cbb, ins);
+			} else {
+				EMIT_NEW_PCONST (cfg, ins, counter);
+				MONO_EMIT_NEW_STORE_MEMBASE_IMM (cfg, OP_STORE_MEMBASE_IMM, ins->dreg, 0, 1);
+			}
 		}
 
 		if (cfg->verbose_level > 3)
@@ -7816,7 +7828,12 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_STACK_OVF (1);
 			n = ip [1];
 			CHECK_LOCAL (n);
-			EMIT_NEW_LOCLOAD (cfg, ins, n);
+			if ((ip [2] == CEE_LDFLD) && ip_in_bb (cfg, cfg->cbb, ip + 2) && MONO_TYPE_ISSTRUCT (header->locals [n])) {
+				/* Avoid loading a struct just to load one of its fields */
+				EMIT_NEW_LOCLOADA (cfg, ins, n);
+			} else {
+				EMIT_NEW_LOCLOAD (cfg, ins, n);
+			}
 			*sp++ = ins;
 			ip += 2;
 			break;
@@ -8026,7 +8043,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (cfg->gshared && mono_method_check_context_used (cmethod))
 				GENERIC_SHARING_FAILURE (CEE_JMP);
 
-			emit_instrumentation_call (cfg, mono_profiler_method_leave);
+			emit_instrumentation_call (cfg, mono_profiler_raise_method_leave, FALSE);
 
 			fsig = mono_method_signature (cmethod);
 			n = fsig->param_count + fsig->hasthis;
@@ -8968,7 +8985,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					/* Handle tail calls similarly to normal calls */
 					tail_call = TRUE;
 				} else {
-					emit_instrumentation_call (cfg, mono_profiler_method_leave);
+					emit_instrumentation_call (cfg, mono_profiler_raise_method_leave, FALSE);
 
 					MONO_INST_NEW_CALL (cfg, call, OP_JMP);
 					call->tail_call = TRUE;
@@ -9102,7 +9119,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					cfg->ret_var_set = TRUE;
 				} 
 			} else {
-				emit_instrumentation_call (cfg, mono_profiler_method_leave);
+				emit_instrumentation_call (cfg, mono_profiler_raise_method_leave, FALSE);
 
 				if (cfg->lmf_var && cfg->cbb->in_count && !cfg->llvm_only)
 					emit_pop_lmf (cfg);
@@ -11482,7 +11499,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			case CEE_MONO_LDPTR_CARD_TABLE:
 			case CEE_MONO_LDPTR_NURSERY_START:
 			case CEE_MONO_LDPTR_NURSERY_BITS:
-			case CEE_MONO_LDPTR_INT_REQ_FLAG: {
+			case CEE_MONO_LDPTR_INT_REQ_FLAG:
+			case CEE_MONO_LDPTR_PROFILER_ALLOCATION_COUNT: {
 				CHECK_STACK_OVF (1);
 
 				switch (ip [1]) {
@@ -11497,6 +11515,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					break;
 				case CEE_MONO_LDPTR_INT_REQ_FLAG:
 					ins = mini_emit_runtime_constant (cfg, MONO_PATCH_INFO_INTERRUPTION_REQUEST_FLAG, NULL);
+					break;
+				case CEE_MONO_LDPTR_PROFILER_ALLOCATION_COUNT:
+					ins = mini_emit_runtime_constant (cfg, MONO_PATCH_INFO_PROFILER_ALLOCATION_COUNT, NULL);
 					break;
 				default:
 					g_assert_not_reached ();
@@ -11765,7 +11786,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				MonoInst *ad_ins, *jit_tls_ins;
 				MonoBasicBlock *next_bb = NULL, *call_bb = NULL;
 
-				g_assert (!mono_threads_is_coop_enabled ());
+				g_assert (!mono_threads_is_blocking_transition_enabled ());
 
 				cfg->orig_domain_var = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
 
@@ -12271,7 +12292,12 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				CHECK_OPSIZE (4);
 				n = read16 (ip + 2);
 				CHECK_LOCAL (n);
-				EMIT_NEW_LOCLOAD (cfg, ins, n);
+				if ((ip [4] == CEE_LDFLD) && ip_in_bb (cfg, cfg->cbb, ip + 4) && header->locals [n]->type == MONO_TYPE_VALUETYPE) {
+					/* Avoid loading a struct just to load one of its fields */
+					EMIT_NEW_LOCLOADA (cfg, ins, n);
+				} else {
+					EMIT_NEW_LOCLOAD (cfg, ins, n);
+				}
 				*sp++ = ins;
 				ip += 4;
 				break;
@@ -12605,7 +12631,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	}
 
 	cfg->cbb = init_localsbb;
-	emit_instrumentation_call (cfg, mono_profiler_method_enter);
+	emit_instrumentation_call (cfg, mono_profiler_raise_method_enter, TRUE);
 
 	if (seq_points) {
 		MonoBasicBlock *bb;

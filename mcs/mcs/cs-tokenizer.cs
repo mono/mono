@@ -1027,7 +1027,7 @@ namespace Mono.CSharp
 		}
 
 		//
-		// Open parens micro parser. Detects both lambda and cast ambiguity.
+		// Open parens micro parser
 		//	
 		int TokenizeOpenParens ()
 		{
@@ -1037,6 +1037,7 @@ namespace Mono.CSharp
 			int bracket_level = 0;
 			bool is_type = false;
 			bool can_be_type = false;
+			bool at_least_one_comma = false;
 			
 			while (true) {
 				ptoken = current_token;
@@ -1051,6 +1052,12 @@ namespace Mono.CSharp
 					//
 					if (current_token == Token.ARROW)
 						return Token.OPEN_PARENS_LAMBDA;
+
+					//
+					// Expression inside parens is deconstruct expression, (a, x.y) = ...
+					//
+					if (current_token == Token.ASSIGN && at_least_one_comma)
+						return Token.OPEN_PARENS_DECONSTRUCT;
 
 					//
 					// Expression inside parens is single type, (int[])
@@ -1164,6 +1171,7 @@ namespace Mono.CSharp
 					if (bracket_level == 0) {
 						bracket_level = 100;
 						can_be_type = is_type = false;
+						at_least_one_comma = true;
 					}
 					continue;
 
@@ -1264,6 +1272,21 @@ namespace Mono.CSharp
 				}
 
 				return false;
+			case Token.OPEN_PARENS:
+				if (!parsing_generic_declaration)
+					return false;
+				
+				while (true) {
+					switch (token ()) {
+					case Token.COMMA:
+						// tuple declaration after <
+						return true;
+					case Token.OP_GENERICS_GT:
+					case Token.EOF:
+						return false;
+					}
+				}
+
 			default:
 				return false;
 			}
@@ -3481,6 +3504,7 @@ namespace Mono.CSharp
 						case Token.DEFAULT:
 						case Token.DELEGATE:
 						case Token.OP_GENERICS_GT:
+						case Token.REFVALUE:
 							return Token.OPEN_PARENS;
 						}
 
