@@ -17,7 +17,6 @@ namespace Mono.Profiler.Log {
 		Heap = 6,
 		Sample = 7,
 		Runtime = 8,
-		Coverage = 9,
 		Meta = 10,
 
 		AllocationNoBacktrace = 0 << 4,
@@ -63,11 +62,6 @@ namespace Mono.Profiler.Log {
 		SampleCounters = 4 << 4,
 
 		RuntimeJitHelper = 1 << 4,
-
-		CoverageAssembly = 0 << 4,
-		CoverageMethod = 1 << 4,
-		CoverageStatement = 2 << 4,
-		CoverageClass = 3 << 4,
 
 		MetaSynchronizationPoint = 0 << 4,
 	}

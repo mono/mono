@@ -483,47 +483,6 @@ namespace Mono.Profiler.Log {
 				default:
 					throw new LogException ($"Invalid extended event type ({extType}).");
 				}
-			case LogEventType.Coverage:
-				switch (extType) {
-				case LogEventType.CoverageAssembly:
-					return new AssemblyCoverageEvent {
-						AssemblyName = Reader.ReadCString (),
-						Guid = Guid.Parse (Reader.ReadCString ()),
-						FileName = Reader.ReadCString (),
-						NumberOfMethods = (long) Reader.ReadULeb128 (),
-						FullyCovered = (long) Reader.ReadULeb128 (),
-						PartiallyCovered = (long) Reader.ReadULeb128 (),
-					};
-				case LogEventType.CoverageMethod:
-					return new MethodCoverageEvent {
-						AssemblyName = Reader.ReadCString (),
-						ClassName = Reader.ReadCString (),
-						MethodName = Reader.ReadCString (),
-						MethodSignature = Reader.ReadCString (),
-						FileName = Reader.ReadCString (),
-						MetadataToken = Reader.ReadULeb128 (),
-						MethodId = (long) Reader.ReadULeb128 (),
-						NumberOfStatements = (long) Reader.ReadULeb128 (),
-					};
-				case LogEventType.CoverageStatement:
-					return new StatementCoverageEvent {
-						MethodId = (long) Reader.ReadULeb128 (),
-						RelativeILOffset = (long) Reader.ReadULeb128 (),
-						Counter = Reader.ReadULeb128 (),
-						Line = (long) Reader.ReadULeb128 (),
-						Column = (long) Reader.ReadULeb128 (),
-					};
-				case LogEventType.CoverageClass:
-					return new ClassCoverageEvent {
-						AssemblyName = Reader.ReadCString (),
-						ClassName = Reader.ReadCString (),
-						NumberOfMethods = (long) Reader.ReadULeb128 (),
-						FullyCovered = (long) Reader.ReadULeb128 (),
-						PartiallyCovered = (long) Reader.ReadULeb128 (),
-					};
-				default:
-					throw new LogException ($"Invalid extended event type ({extType}).");
-				}
 			case LogEventType.Meta:
 				switch (extType) {
 				case LogEventType.MetaSynchronizationPoint:

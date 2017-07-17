@@ -174,22 +174,6 @@ namespace Mono.Profiler.Log {
 		{
 		}
 
-		public virtual void Visit (AssemblyCoverageEvent ev)
-		{
-		}
-
-		public virtual void Visit (ClassCoverageEvent ev)
-		{
-		}
-
-		public virtual void Visit (MethodCoverageEvent ev)
-		{
-		}
-
-		public virtual void Visit (StatementCoverageEvent ev)
-		{
-		}
-
 		public virtual void Visit (SynchronizationPointEvent ev)
 		{
 		}
