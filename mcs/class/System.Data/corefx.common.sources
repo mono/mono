@@ -39,6 +39,7 @@ corefx/TempStubs.cs
 ../referencesource/System.Data/System/Data/Common/DBDataPermissionAttribute.cs
 ../referencesource/System.Data/System/Data/Odbc/OdbcPermission.cs
 ../referencesource/System.Data/System/Data/SqlClient/SqlClientPermission.cs
+../referencesource/System.Data/System/Data/Sql/SqlDataSourceEnumerator.cs
 
 #
 # corefx uses these files but we don't need them:

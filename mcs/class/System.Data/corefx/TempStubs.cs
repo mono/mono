@@ -8,6 +8,7 @@ using System;
 using System.Collections;
 using System.Configuration;
 using System.Data;
+using System.Data.Sql;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Globalization;
@@ -30,17 +31,46 @@ namespace System.Data.Odbc
 {
     partial class OdbcFactory
     {        
-        public override CodeAccessPermission CreatePermission(PermissionState state) {
-            return new OdbcPermission(state);
-        }
+        public override CodeAccessPermission CreatePermission(PermissionState state) =>
+            new OdbcPermission(state);
     }
 }
 
 namespace System.Data.SqlClient
 {
+    partial class SqlClientFactory
+    {
+        public override bool CanCreateDataSourceEnumerator => true;
+
+        public override DbDataSourceEnumerator CreateDataSourceEnumerator() => 
+            SqlDataSourceEnumerator.Instance;
+
+		public override CodeAccessPermission CreatePermission (PermissionState state) =>
+			new SqlClientPermission(state);
+    }
+
+    partial class SqlParameter
+    {
+        public SqlParameter(string parameterName, SqlDbType dbType, int size, ParameterDirection direction, bool isNullable, byte precision, byte scale, string sourceColumn, DataRowVersion sourceVersion, object value)
+        {
+            if (parameterName == null)
+                parameterName = string.Empty;
+
+            _isNull = isNullable;
+            Value = value;
+            Scale = scale;
+            Size = size;
+            Precision = precision;
+            SqlDbType = dbType;
+            Direction = direction;
+            SourceColumn = sourceColumn;
+            SourceVersion = sourceVersion;
+        }
+    }
+
     partial class SqlException
     {
-		private const string DEF_MESSAGE = "SQL Exception has occured.";
+        private const string DEF_MESSAGE = "SQL Exception has occured.";
 
         public override string Message {
 			get {
@@ -86,5 +116,16 @@ namespace System.Data.SqlClient
         [System.Security.Permissions.HostProtectionAttribute(ExternalThreading=true)]
         public IAsyncResult BeginExecuteReader(CommandBehavior behavior) =>
             BeginExecuteReader(behavior, null, null);
+    }
+}
+
+namespace Microsoft.SqlServer.Server
+{
+    partial class SqlMetaData
+    {
+		public SqlMetaData (string name, SqlDbType dbType, Type userDefinedType) :
+            this (name, dbType, -1, 0, 0, 0, System.Data.SqlTypes.SqlCompareOptions.None, userDefinedType)
+		{
+		}
     }
 }
