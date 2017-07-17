@@ -111,7 +111,7 @@ namespace System.Net
 
 		public override async Task WriteAsync (byte[] buffer, int offset, int size, CancellationToken cancellationToken)
 		{
-			WebConnection.Debug ($"{ME} WRITE ASYNC");
+			WebConnection.Debug ($"{ME} WRITE ASYNC: {buffer.Length}/{offset}/{size}");
 
 			Operation.ThrowIfClosedOrDisposed (cancellationToken);
 
@@ -134,7 +134,9 @@ namespace System.Net
 			try {
 				await ProcessWrite (buffer, offset, size, cancellationToken).ConfigureAwait (false);
 
-				if (allowBuffering && !sendChunked && Request.ContentLength > 0 && totalWritten == Request.ContentLength)
+				WebConnection.Debug ($"{ME} WRITE ASYNC #1: {allowBuffering} {sendChunked} {Request.ContentLength} {totalWritten}");
+
+				if (allowBuffering && Request.ContentLength > 0 && totalWritten == Request.ContentLength)
 					Operation.CompleteRequestWritten (this);
 
 				pendingWrite = null;
@@ -142,6 +144,8 @@ namespace System.Net
 			} catch (Exception ex) {
 				KillBuffer ();
 				closed = true;
+
+				WebConnection.Debug ($"{ME} WRITE ASYNC EX: {ex.Message}");
 
 				if (ex is SocketException)
 					ex = new IOException ("Error writing request", ex);
@@ -152,7 +156,6 @@ namespace System.Net
 				myWriteTcs.TrySetException (ex);
 				throw;
 			}
-
 		}
 
 		async Task ProcessWrite (byte[] buffer, int offset, int size, CancellationToken cancellationToken)
@@ -174,8 +177,9 @@ namespace System.Net
 					if (writeBuffer == null)
 						writeBuffer = new MemoryStream ();
 					writeBuffer.Write (buffer, offset, size);
-					totalWritten += size;
 				}
+
+				totalWritten += size;
 
 				buffer = newBuffer;
 				offset = 0;
@@ -196,6 +200,8 @@ namespace System.Net
 					buffer = writeBuffer.GetBuffer ();
 					offset = 0;
 					size = (int)totalWritten;
+				} else {
+					totalWritten += size;
 				}
 			}
 
@@ -205,7 +211,6 @@ namespace System.Net
 				if (!IgnoreIOErrors)
 					throw;
 			}
-			totalWritten += size;
 		}
 
 		void CheckWriteOverflow (long contentLength, long totalWritten, long size)
