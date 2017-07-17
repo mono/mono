@@ -66,6 +66,13 @@ namespace System.Data.SqlClient
             SourceColumn = sourceColumn;
             SourceVersion = sourceVersion;
         }
+
+        [MonoTODO]
+        public string UdtTypeName
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
     }
 
     partial class SqlException
