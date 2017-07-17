@@ -195,4 +195,20 @@ namespace Mono.Profiler.Log {
 		WorldStop = 1,
 		WorldStart = 2,
 	}
+
+	// mono/metadata/profiler.h : MonoProfilerSampleMode
+	public enum LogSampleMode {
+		None = 0,
+		Process = 1,
+		Real = 2,
+	}
+
+	// mono/profiler/log.h : MonoProfilerHeapshotMode
+	public enum LogHeapshotMode {
+		None = 0,
+		EveryMajor = 1,
+		OnDemand = 2,
+		Milliseconds = 3,
+		Collections = 4,
+	}
 }
