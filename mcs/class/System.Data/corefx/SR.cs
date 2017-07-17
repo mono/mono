@@ -461,6 +461,8 @@ partial class SR
 	public const string ADP_ConnectionAlreadyOpen = "The connection was not closed. {0}";
 	public const string ADP_InternalConnectionError = "Internal DbConnection Error: {0}";
 	public const string ADP_InvalidOffsetValue = "Invalid parameter Offset value '{0}'. The value must be greater than or equal to 0.";
+	public const string ADP_TransactionPresent = "Connection currently has transaction enlisted.  Finish current transaction and retry.";
+	public const string ADP_LocalTransactionPresent = "Cannot enlist in the transaction because a local transaction is in progress on the connection.  Finish local transaction and retry.";
 	public const string ADP_NoConnectionString = "The ConnectionString property has not been initialized.";
 	public const string ADP_OpenConnectionPropertySet = "Not allowed to change the '{0}' property. {1}";
 	public const string ADP_PendingAsyncOperation = "Can not start another operation while there is an asynchronous operation pending.";
@@ -574,6 +576,7 @@ partial class SR
 	public const string SQL_StreamNotSupportOnColumnType = "Invalid attempt to GetStream on column '{0}'. The GetStream function can only be used on columns of type Binary, Image, Udt or VarBinary.";
 	public const string SQL_TextReaderNotSupportOnColumnType = "Invalid attempt to GetTextReader on column '{0}'. The GetTextReader function can only be used on columns of type Char, NChar, NText, NVarChar, Text or VarChar.";
 	public const string SQL_XmlReaderNotSupportOnColumnType = "Invalid attempt to GetXmlReader on column '{0}'. The GetXmlReader function can only be used on columns of type Xml.";
+	public const string SqlDelegatedTransaction_PromotionFailed = "Failure while attempting to promote transaction.";
 	public const string SQL_BulkLoadMappingInaccessible = "The mapped collection is in use and cannot be accessed at this time;";
 	public const string SQL_BulkLoadMappingsNamesOrOrdinalsOnly = "Mappings must be either all name or all ordinal based.";
 	public const string SQL_BulkLoadCannotConvertValue = "The given value of type {0} from the data source cannot be converted to type {1} of the specified target column.";
@@ -591,6 +594,7 @@ partial class SR
 	public const string SQL_BulkLoadNotAllowDBNull = "Column '{0}' does not allow DBNull.Value.";
 	public const string Sql_BulkLoadLcidMismatch = "The locale id '{0}' of the source column '{1}' and the locale id '{2}' of the destination column '{3}' do not match.";
 	public const string SQL_BulkLoadPendingOperation = "Attempt to invoke bulk copy on an object that has a pending operation.";
+	public const string SQL_CannotGetDTCAddress = "Unable to get the address of the distributed transaction coordinator for the server, from the server.  Is DTC enabled on the server?";
 	public const string SQL_ConnectionDoomed = "The requested operation cannot be completed because the connection has been broken.";
 	public const string SQL_OpenResultCountExceeded = "Open result count exceeded.";
 	public const string SQL_StreamWriteNotSupported = "The Stream does not support writing.";
@@ -600,12 +604,14 @@ partial class SR
 	public const string SQL_ExErrorNumberStateClass = "Error Number:{0},State:{1},Class:{2}";
 	public const string SQL_ExOriginalClientConnectionId = "ClientConnectionId before routing:{0}";
 	public const string SQL_ExRoutingDestination = "Routing Destination:{0}";
+	public const string SQL_UnsupportedSysTxVersion = "The currently loaded System.Transactions.dll does not support Global Transactions.";
 	public const string SqlMisc_StreamErrorMessage = "An error occurred while reading.";
 	public const string SqlMisc_TruncationMaxDataMessage = "Data returned is larger than 2Gb in size. Use SequentialAccess command behavior in order to get all of the data.";
 	public const string SqlMisc_SubclassMustOverride = "Subclass did not override a required method.";
 	public const string Sql_InternalError = "Internal Error";
 	public const string ADP_OperationAborted = "Operation aborted.";
 	public const string ADP_OperationAbortedExceptionMessage = "Operation aborted due to an exception (see InnerException for details).";
+	public const string ADP_TransactionCompletedButNotDisposed = "The transaction associated with the current connection has completed but has not been disposed.  The transaction must be disposed before the connection can be used to execute SQL statements.";
 	public const string SqlParameter_UnsupportedTVPOutputParameter = "ParameterDirection '{0}' specified for parameter '{1}' is not supported. Table-valued parameters only support ParameterDirection.Input.";
 	public const string SqlParameter_DBNullNotSupportedForTVP = "DBNull value for parameter '{0}' is not supported. Table-valued parameters cannot be DBNull.";
 	public const string SqlParameter_UnexpectedTypeNameForNonStruct = "TypeName specified for parameter '{0}'.  TypeName must only be set for Structured parameters.";
@@ -613,6 +619,8 @@ partial class SR
 	public const string InvalidSchemaTableOrdinals = "Invalid column ordinals in schema table.  ColumnOrdinals, if present, must not have duplicates or gaps.";
 	public const string SQL_EnumeratedRecordMetaDataChanged = "Metadata for field '{0}' of record '{1}' did not match the original record's metadata.";
 	public const string SQL_EnumeratedRecordFieldCountChanged = "Number of fields in record '{0}' does not match the number in the original record.";
+	public const string GT_Disabled = "Global Transactions are not enabled for this Azure SQL Database. Please contact Azure SQL Database support for assistance.";
+	public const string SQL_UnknownSysTxIsolationLevel = "Unrecognized System.Transactions.IsolationLevel enumeration value: {0}.";
 	public const string SQLNotify_AlreadyHasCommand = "This SqlCommand object is already associated with another SqlDependency object.";
 	public const string SqlDependency_DatabaseBrokerDisabled = "The SQL Server Service Broker for the current database is not enabled, and as a result query notifications are not supported.  Please enable the Service Broker for this database if you wish to use notifications.";
 	public const string SqlDependency_DefaultOptionsButNoStart = "When using SqlDependency without providing an options value, SqlDependency.Start() must be called prior to execution of a command added to the SqlDependency instance.";

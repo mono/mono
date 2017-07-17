@@ -352,6 +352,7 @@ corefx/TempStubs.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/TimeoutTimer.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Sql/SqlMetaData.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Sql/SqlNotificationRequest.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlDelegatedTransaction.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlClientMetaDataCollectionNames.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/ApplicationIntent.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/LocalDBAPI.cs
@@ -427,6 +428,7 @@ corefx/TempStubs.cs
 ../../../external/corefx/src/Common/src/System/Data/Common/SQLResource.cs
 ../../../external/corefx/src/Common/src/System/NotImplemented.cs
 ../../../external/corefx/src/Common/src/System/Threading/Tasks/TaskToApm.cs
+../../../external/corefx/src/System.Data.SqlClient/src/Interop/SNINativeMethodWrapper.Common.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SNI/SNIError.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SNI/SNIHandle.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SNI/SNILoadHandle.cs
