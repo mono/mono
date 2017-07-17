@@ -375,8 +375,9 @@ namespace System.Net.Http
 
 						wrequest.ResendContentFactory = content.CopyTo;
 
-						var stream = await wrequest.GetRequestStreamAsync ().ConfigureAwait (false);
-						await request.Content.CopyToAsync (stream).ConfigureAwait (false);
+						using (var stream = await wrequest.GetRequestStreamAsync ().ConfigureAwait (false)) {
+							await request.Content.CopyToAsync (stream).ConfigureAwait (false);
+						}
 					} else if (HttpMethod.Post.Equals (request.Method) || HttpMethod.Put.Equals (request.Method) || HttpMethod.Delete.Equals (request.Method)) {
 						// Explicitly set this to make sure we're sending a "Content-Length: 0" header.
 						// This fixes the issue that's been reported on the forums:
