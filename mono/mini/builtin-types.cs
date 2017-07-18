@@ -1,5 +1,5 @@
-#define ARCH_32
-// #define NINT_JIT_OPTIMIZED
+// #define ARCH_32
+#define NINT_JIT_OPTIMIZED
 
 using System;
 using System.Diagnostics;
