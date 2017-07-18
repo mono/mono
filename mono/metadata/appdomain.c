@@ -2114,12 +2114,14 @@ ves_icall_System_AppDomain_LoadAssemblyRaw (MonoAppDomainHandle ad,
 
 	ass = mono_assembly_load_from_full (image, "", &status, refonly);
 
-
 	if (!ass) {
 		mono_image_close (image);
 		mono_error_set_bad_image_name (error, g_strdup (""), "%s", "");
 		return refass; 
 	}
+
+	/* Clear the reference added by mono_image_open_from_data_full */
+	mono_image_close (image);
 
 	refass = mono_assembly_get_object_handle (domain, ass, error);
 	if (!MONO_HANDLE_IS_NULL(refass))
