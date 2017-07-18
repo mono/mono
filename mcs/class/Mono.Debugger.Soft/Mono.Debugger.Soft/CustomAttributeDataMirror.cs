@@ -113,6 +113,7 @@ namespace Mono.Debugger.Soft {
 				for (int j = 0; j < ctor_args.Length; ++j)
 					ctor_args [j] = CreateArg (vm, attr.ctor_args [j]);
 				var named_args = new object [attr.named_args.Length];
+				var named_args_deletes = new bool [attr.named_args.Length];
 				for (int j = 0; j < named_args.Length; ++j) {
 					CattrNamedArgInfo arg = attr.named_args [j];
 					CustomAttributeTypedArgumentMirror val;
@@ -135,9 +136,16 @@ namespace Mono.Debugger.Soft {
 						t = t.BaseType;
 					}
 					if (named_args [j] == null)
-						throw new NotImplementedException ();
+						named_args_deletes [j] = true;
 				}
-				res [i] = new CustomAttributeDataMirror (ctor, ctor_args, named_args);
+				var named_args_list = new List<object> (named_args);
+				for (int j = 0, k = 0; j < attr.named_args.Length; ++j) {
+					if (named_args_deletes [j])
+						named_args_list.RemoveAt (k);
+					else
+						++k;
+				}
+				res [i] = new CustomAttributeDataMirror (ctor, ctor_args, named_args_list.ToArray ());
 			}
 
 			return res;
