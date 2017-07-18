@@ -494,6 +494,7 @@ test_sources = 			\
 	basic-calls.cs 		\
 	basic-long.cs 		\
 	bench.cs 		\
+	builtin-types.cs 	\
 	objects.cs 		\
 	arrays.cs		\
 	basic-float.cs		\
@@ -519,6 +520,7 @@ regtests_UNIVERSAL = \
 	basic-float.exe \
 	basic-long.exe \
 	basic-calls.exe \
+	builtin-types.exe \
 	objects.exe \
 	arrays.exe \
 	basic-math.exe \
