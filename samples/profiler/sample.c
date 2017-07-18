@@ -43,7 +43,7 @@ sample_instrumentation_filter (MonoProfiler *prof, MonoMethod *method)
 
 /* the entry point */
 void
-mono_profiler_init (const char *desc)
+mono_profiler_init_sample (const char *desc)
 {
 	MonoProfiler *prof;
 
