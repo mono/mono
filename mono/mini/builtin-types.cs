@@ -2,6 +2,7 @@
 // #define NINT_JIT_OPTIMIZED
 
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -798,52 +799,363 @@ public class BuiltinTests {
 namespace System
 {
 	[Serializable]
-	public struct nint : IFormattable, IConvertible, IComparable, IComparable<nint>, IEquatable <nint>
+	[DebuggerDisplay ("{v,nq}")]
+	public unsafe struct nint : IFormattable, IConvertible, IComparable, IComparable<nint>, IEquatable <nint>
 	{
-		public nint (nint v) { this.v = v.v; }
+		internal nint (nint v) { this.v = v.v; }
 		public nint (Int32 v) { this.v = v; }
 
 #if ARCH_32
+		public static readonly int Size = 4;
+
 		public static readonly nint MaxValue = Int32.MaxValue;
 		public static readonly nint MinValue = Int32.MinValue;
 
-		public Int32 v;
+		[DebuggerBrowsable (DebuggerBrowsableState.Never)]
+		internal Int32 v;
 
 		public nint (Int64 v) { this.v = (Int32)v; }
 #else
-		public static readonly nint MaxValue = Int32.MaxValue;
-		public static readonly nint MinValue = Int32.MinValue;
+		public static readonly int Size = 8;
 
-		Int64 v;
+		public static readonly nint MaxValue = (nint) Int64.MaxValue; // 64-bit only codepath
+		public static readonly nint MinValue = (nint) Int64.MinValue; // 64-bit only codepath
+
+		[DebuggerBrowsable (DebuggerBrowsableState.Never)]
+		internal Int64 v;
 
 		public nint (Int64 v) { this.v = v; }
 #endif
 
-#if ARCH_32
-#	if NINT_JIT_OPTIMIZED
-		public static implicit operator Int32 (nint v) { throw new NotImplementedException (); }
-		public static implicit operator nint (Int32 v) { throw new NotImplementedException (); }
-		public static implicit operator Int64 (nint v) { throw new NotImplementedException (); }
-		public static explicit operator nint (Int64 v) { throw new NotImplementedException (); }
-#	else
-		public static implicit operator Int32 (nint v) { return v.v; }
-		public static implicit operator nint (Int32 v) { return new nint (v); }
-		public static implicit operator Int64 (nint v) { return (Int64)v.v; }
-		public static explicit operator nint (Int64 v) { return new nint (v); }
-#	endif
+		public static explicit operator nint (nuint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nint ((int)v.v);
 #else
-#	if NINT_JIT_OPTIMIZED
-		public static explicit operator Int32 (nint v) { throw new NotImplementedException (); }
-		public static implicit operator nint (Int32 v) { throw new NotImplementedException (); }
-		public static implicit operator Int64 (nint v) { throw new NotImplementedException (); }
-		public static implicit operator nint (Int64 v) { throw new NotImplementedException (); }
-#	else
-		public static explicit operator Int32 (nint v) { return (Int32)v.v; }
-		public static implicit operator nint (Int32 v) { return new nint (v); }
-		public static implicit operator Int64 (nint v) { return v.v; }
-		public static implicit operator nint (Int64 v) { return new nint (v); }
-#	endif
+			return new nint ((long)v.v);
 #endif
+		}
+
+		public static explicit operator nuint (nint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nuint ((uint)v.v);
+#else
+			return new nuint ((ulong)v.v);
+#endif
+		}
+
+		public static explicit operator nint (nfloat v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nint ((int)v.v);
+#else
+			return new nint ((long)v.v);
+#endif
+		}
+
+		public static implicit operator nfloat (nint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nfloat ((float)v.v);
+#else
+			return new nfloat ((double)v.v);
+#endif
+		}
+
+		public static explicit operator nint (IntPtr v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nint (*((int *)&v));
+#else
+			return new nint (*((long *)&v));
+#endif
+		}
+
+		public static explicit operator IntPtr (nint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return *((IntPtr *)&v.v);
+#else
+			return *((IntPtr *)&v.v);
+#endif
+		}
+
+		public static implicit operator nint (sbyte v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nint ((int)v);
+#else
+			return new nint ((long)v);
+#endif
+		}
+
+		public static explicit operator sbyte (nint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (sbyte)v.v;
+#else
+			return (sbyte)v.v;
+#endif
+		}
+
+		public static implicit operator nint (byte v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nint ((int)v);
+#else
+			return new nint ((long)v);
+#endif
+		}
+
+		public static explicit operator byte (nint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (byte)v.v;
+#else
+			return (byte)v.v;
+#endif
+		}
+
+		public static implicit operator nint (char v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nint ((int)v);
+#else
+			return new nint ((long)v);
+#endif
+		}
+
+		public static explicit operator char (nint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (char)v.v;
+#else
+			return (char)v.v;
+#endif
+		}
+
+		public static implicit operator nint (short v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nint ((int)v);
+#else
+			return new nint ((long)v);
+#endif
+		}
+
+		public static explicit operator short (nint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (short)v.v;
+#else
+			return (short)v.v;
+#endif
+		}
+
+		public static explicit operator nint (ushort v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nint ((int)v);
+#else
+			return new nint ((long)v);
+#endif
+		}
+
+		public static explicit operator ushort (nint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (ushort)v.v;
+#else
+			return (ushort)v.v;
+#endif
+		}
+
+		public static implicit operator nint (int v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nint ((int)v);
+#else
+			return new nint ((long)v);
+#endif
+		}
+
+		public static explicit operator int (nint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (int)v.v;
+#else
+			return (int)v.v;
+#endif
+		}
+
+		public static explicit operator nint (uint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nint ((int)v);
+#else
+			return new nint ((long)v);
+#endif
+		}
+
+		public static explicit operator uint (nint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (uint)v.v;
+#else
+			return (uint)v.v;
+#endif
+		}
+
+		public static explicit operator nint (long v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nint ((int)v);
+#else
+			return new nint ((long)v);
+#endif
+		}
+
+		public static implicit operator long (nint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (long)v.v;
+#else
+			return (long)v.v;
+#endif
+		}
+
+		public static explicit operator nint (ulong v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nint ((int)v);
+#else
+			return new nint ((long)v);
+#endif
+		}
+
+		public static explicit operator ulong (nint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (ulong)v.v;
+#else
+			return (ulong)v.v;
+#endif
+		}
+
+		public static explicit operator nint (float v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nint ((int)v);
+#else
+			return new nint ((long)v);
+#endif
+		}
+
+		public static implicit operator float (nint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (float)v.v;
+#else
+			return (float)v.v;
+#endif
+		}
+
+		public static explicit operator nint (double v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nint ((int)v);
+#else
+			return new nint ((long)v);
+#endif
+		}
+
+		public static implicit operator double (nint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (double)v.v;
+#else
+			return (double)v.v;
+#endif
+		}
+
+		public static explicit operator nint (decimal v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nint ((int)v);
+#else
+			return new nint ((long)v);
+#endif
+		}
+
+		public static implicit operator decimal (nint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (decimal)v.v;
+#else
+			return (decimal)v.v;
+#endif
+		}
 
 #if NINT_JIT_OPTIMIZED
 		public static nint operator + (nint v) { throw new NotImplementedException (); }
@@ -859,7 +1171,6 @@ namespace System
 		public static nint operator ++ (nint v) { throw new NotImplementedException (); }
 		public static nint operator -- (nint v) { throw new NotImplementedException (); }
 #else
-		[MethodImpl (MethodImplOptions.AggressiveInlining)]
 		public static nint operator ++ (nint v) { return new nint (v.v + 1); }
 		public static nint operator -- (nint v) { return new nint (v.v - 1); }
 #endif
@@ -907,24 +1218,34 @@ namespace System
 #endif
 
 		public int CompareTo (nint value) { return v.CompareTo (value.v); }
-		public int CompareTo (object value) { return v.CompareTo (value); }
+		public int CompareTo (object value)
+		{
+			if (value is nint)
+				return v.CompareTo (((nint) value).v);
+			return v.CompareTo (value);
+		}
 		public bool Equals (nint obj) { return v.Equals (obj.v); }
-		public override bool Equals (object obj) { return v.Equals (obj); }
+		public override bool Equals (object obj)
+		{
+			if (obj is nint)
+				return v.Equals (((nint) obj).v);
+			return v.Equals (obj);
+		}
 		public override int GetHashCode () { return v.GetHashCode (); }
 
 #if ARCH_32
-		public static nint Parse (string s, IFormatProvider provider) { return Int32.Parse (s, provider); }
-		public static nint Parse (string s, NumberStyles style) { return Int32.Parse (s, style); }
-		public static nint Parse (string s) { return Int32.Parse (s); }
+		public static nint Parse (string s, IFormatProvider provider) { return (nint)Int32.Parse (s, provider); }
+		public static nint Parse (string s, NumberStyles style) { return (nint)Int32.Parse (s, style); }
+		public static nint Parse (string s) { return (nint)Int32.Parse (s); }
 		public static nint Parse (string s, NumberStyles style, IFormatProvider provider) {
-			return Int32.Parse (s, style, provider);
+			return (nint)Int32.Parse (s, style, provider);
 		}
 
 		public static bool TryParse (string s, out nint result)
 		{
 			Int32 v;
 			var r = Int32.TryParse (s, out v);
-			result = v;
+			result = (nint)v;
 			return r;
 		}
 
@@ -932,22 +1253,22 @@ namespace System
 		{
 			Int32 v;
 			var r = Int32.TryParse (s, style, provider, out v);
-			result = v;
+			result = (nint)v;
 			return r;
 		}
 #else
-		public static nint Parse (string s, IFormatProvider provider) { return Int64.Parse (s, provider); }
-		public static nint Parse (string s, NumberStyles style) { return Int64.Parse (s, style); }
-		public static nint Parse (string s) { return Int64.Parse (s); }
+		public static nint Parse (string s, IFormatProvider provider) { return (nint)Int64.Parse (s, provider); }
+		public static nint Parse (string s, NumberStyles style) { return (nint)Int64.Parse (s, style); }
+		public static nint Parse (string s) { return (nint)Int64.Parse (s); }
 		public static nint Parse (string s, NumberStyles style, IFormatProvider provider) {
-			return Int64.Parse (s, style, provider);
+			return (nint)Int64.Parse (s, style, provider);
 		}
 
 		public static bool TryParse (string s, out nint result)
 		{
 			Int64 v;
 			var r = Int64.TryParse (s, out v);
-			result = v;
+			result = (nint)v;
 			return r;
 		}
 
@@ -955,7 +1276,7 @@ namespace System
 		{
 			Int64 v;
 			var r = Int64.TryParse (s, style, provider, out v);
-			result = v;
+			result = (nint)v;
 			return r;
 		}
 #endif
@@ -985,55 +1306,381 @@ namespace System
 		object IConvertible.ToType (Type targetType, IFormatProvider provider) {
 			return ((IConvertible)v).ToType (targetType, provider);
 		}
-	}
 
+		public static void CopyArray (IntPtr source, nint [] destination, int startIndex, int length)
+		{
+			if (source == IntPtr.Zero)
+				throw new ArgumentNullException ("source");
+			if (destination == null)
+				throw new ArgumentNullException ("destination");
+			if (destination.Rank != 1)
+				throw new ArgumentException ("destination", "array is multi-dimensional");
+			if (startIndex < 0)
+				throw new ArgumentException ("startIndex", "must be >= 0");
+			if (length < 0)
+				throw new ArgumentException ("length", "must be >= 0");
+			if (startIndex + length > destination.Length)
+				throw new ArgumentException ("length", "startIndex + length > destination.Length");
+
+			for (int i = 0; i < length; i++)
+				destination [i + startIndex] = (nint)Marshal.ReadIntPtr (source, i * nint.Size);
+		}
+
+		public static void CopyArray (nint [] source, int startIndex, IntPtr destination, int length)
+		{
+			if (source == null)
+				throw new ArgumentNullException ("source");
+			if (destination == IntPtr.Zero)
+				throw new ArgumentNullException ("destination");
+			if (source.Rank != 1)
+				throw new ArgumentException ("source", "array is multi-dimensional");
+			if (startIndex < 0)
+				throw new ArgumentException ("startIndex", "must be >= 0");
+			if (length < 0)
+				throw new ArgumentException ("length", "must be >= 0");
+			if (startIndex + length > source.Length)
+				throw new ArgumentException ("length", "startIndex + length > source.Length");
+
+			for (int i = 0; i < length; i++)
+				Marshal.WriteIntPtr (destination, i * nint.Size, (IntPtr)source [i + startIndex]);
+		}
+	}
 	[Serializable]
-	public struct nuint : IFormattable, IConvertible, IComparable, IComparable<nuint>, IEquatable <nuint>
+	[DebuggerDisplay ("{v,nq}")]
+	public unsafe struct nuint : IFormattable, IConvertible, IComparable, IComparable<nuint>, IEquatable <nuint>
 	{
-		public nuint (nuint v) { this.v = v.v; }
+		internal nuint (nuint v) { this.v = v.v; }
 		public nuint (UInt32 v) { this.v = v; }
 
 #if ARCH_32
+		public static readonly int Size = 4;
+
 		public static readonly nuint MaxValue = UInt32.MaxValue;
 		public static readonly nuint MinValue = UInt32.MinValue;
 
-		UInt32 v;
+		[DebuggerBrowsable (DebuggerBrowsableState.Never)]
+		internal UInt32 v;
 
 		public nuint (UInt64 v) { this.v = (UInt32)v; }
 #else
-		public static readonly nuint MaxValue = UInt32.MaxValue;
-		public static readonly nuint MinValue = UInt32.MinValue;
+		public static readonly int Size = 8;
 
-		UInt64 v;
+		public static readonly nuint MaxValue = (nuint) UInt64.MaxValue; // 64-bit only codepath
+		public static readonly nuint MinValue = (nuint) UInt64.MinValue; // 64-bit only codepath
+
+		[DebuggerBrowsable (DebuggerBrowsableState.Never)]
+		internal UInt64 v;
 
 		public nuint (UInt64 v) { this.v = v; }
 #endif
 
-#if ARCH_32
-#	if NINT_JIT_OPTIMIZED
-		public static implicit operator UInt32 (nuint v) { throw new NotImplementedException (); }
-		public static implicit operator nuint (UInt32 v) { throw new NotImplementedException (); }
-		public static implicit operator UInt64 (nuint v) { throw new NotImplementedException (); }
-		public static explicit operator nuint (UInt64 v) { throw new NotImplementedException (); }
-#	else
-		public static implicit operator UInt32 (nuint v) { return v.v; }
-		public static implicit operator nuint (UInt32 v) { return new nuint (v); }
-		public static implicit operator UInt64 (nuint v) { return (UInt64)v.v; }
-		public static explicit operator nuint (UInt64 v) { return new nuint (v); }
-#	endif
+		public static explicit operator nuint (nfloat v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nuint ((uint)v.v);
 #else
-#	if NINT_JIT_OPTIMIZED
-		public static explicit operator UInt32 (nuint v) { throw new NotImplementedException (); }
-		public static implicit operator nuint (UInt32 v) { throw new NotImplementedException (); }
-		public static implicit operator UInt64 (nuint v) { throw new NotImplementedException (); }
-		public static implicit operator nuint (UInt64 v) { throw new NotImplementedException (); }
-#	else
-		public static explicit operator UInt32 (nuint v) { return (UInt32)v.v; }
-		public static implicit operator nuint (UInt32 v) { return new nuint (v); }
-		public static implicit operator UInt64 (nuint v) { return v.v; }
-		public static implicit operator nuint (UInt64 v) { return new nuint (v); }
-#	endif
+			return new nuint ((ulong)v.v);
 #endif
+		}
+
+		public static implicit operator nfloat (nuint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nfloat ((float)v.v);
+#else
+			return new nfloat ((double)v.v);
+#endif
+		}
+
+		public static explicit operator nuint (IntPtr v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nuint (*((uint *)&v));
+#else
+			return new nuint (*((ulong *)&v));
+#endif
+		}
+
+		public static explicit operator IntPtr (nuint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return *((IntPtr *)&v.v);
+#else
+			return *((IntPtr *)&v.v);
+#endif
+		}
+
+		public static explicit operator nuint (sbyte v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nuint ((uint)v);
+#else
+			return new nuint ((ulong)v);
+#endif
+		}
+
+		public static explicit operator sbyte (nuint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (sbyte)v.v;
+#else
+			return (sbyte)v.v;
+#endif
+		}
+
+		public static implicit operator nuint (byte v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nuint ((uint)v);
+#else
+			return new nuint ((ulong)v);
+#endif
+		}
+
+		public static explicit operator byte (nuint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (byte)v.v;
+#else
+			return (byte)v.v;
+#endif
+		}
+
+		public static implicit operator nuint (char v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nuint ((uint)v);
+#else
+			return new nuint ((ulong)v);
+#endif
+		}
+
+		public static explicit operator char (nuint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (char)v.v;
+#else
+			return (char)v.v;
+#endif
+		}
+
+		public static explicit operator nuint (short v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nuint ((uint)v);
+#else
+			return new nuint ((ulong)v);
+#endif
+		}
+
+		public static explicit operator short (nuint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (short)v.v;
+#else
+			return (short)v.v;
+#endif
+		}
+
+		public static implicit operator nuint (ushort v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nuint ((uint)v);
+#else
+			return new nuint ((ulong)v);
+#endif
+		}
+
+		public static explicit operator ushort (nuint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (ushort)v.v;
+#else
+			return (ushort)v.v;
+#endif
+		}
+
+		public static explicit operator nuint (int v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nuint ((uint)v);
+#else
+			return new nuint ((ulong)v);
+#endif
+		}
+
+		public static explicit operator int (nuint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (int)v.v;
+#else
+			return (int)v.v;
+#endif
+		}
+
+		public static implicit operator nuint (uint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nuint ((uint)v);
+#else
+			return new nuint ((ulong)v);
+#endif
+		}
+
+		public static explicit operator uint (nuint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (uint)v.v;
+#else
+			return (uint)v.v;
+#endif
+		}
+
+		public static explicit operator nuint (long v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nuint ((uint)v);
+#else
+			return new nuint ((ulong)v);
+#endif
+		}
+
+		public static explicit operator long (nuint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (long)v.v;
+#else
+			return (long)v.v;
+#endif
+		}
+
+		public static explicit operator nuint (ulong v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nuint ((uint)v);
+#else
+			return new nuint ((ulong)v);
+#endif
+		}
+
+		public static implicit operator ulong (nuint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (ulong)v.v;
+#else
+			return (ulong)v.v;
+#endif
+		}
+
+		public static explicit operator nuint (float v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nuint ((uint)v);
+#else
+			return new nuint ((ulong)v);
+#endif
+		}
+
+		public static implicit operator float (nuint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (float)v.v;
+#else
+			return (float)v.v;
+#endif
+		}
+
+		public static explicit operator nuint (double v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nuint ((uint)v);
+#else
+			return new nuint ((ulong)v);
+#endif
+		}
+
+		public static implicit operator double (nuint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (double)v.v;
+#else
+			return (double)v.v;
+#endif
+		}
+
+		public static explicit operator nuint (decimal v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nuint ((uint)v);
+#else
+			return new nuint ((ulong)v);
+#endif
+		}
+
+		public static implicit operator decimal (nuint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (decimal)v.v;
+#else
+			return (decimal)v.v;
+#endif
+		}
 
 #if NINT_JIT_OPTIMIZED
 		public static nuint operator + (nuint v) { throw new NotImplementedException (); }
@@ -1047,7 +1694,6 @@ namespace System
 		public static nuint operator ++ (nuint v) { throw new NotImplementedException (); }
 		public static nuint operator -- (nuint v) { throw new NotImplementedException (); }
 #else
-		[MethodImpl (MethodImplOptions.AggressiveInlining)]
 		public static nuint operator ++ (nuint v) { return new nuint (v.v + 1); }
 		public static nuint operator -- (nuint v) { return new nuint (v.v - 1); }
 #endif
@@ -1095,24 +1741,34 @@ namespace System
 #endif
 
 		public int CompareTo (nuint value) { return v.CompareTo (value.v); }
-		public int CompareTo (object value) { return v.CompareTo (value); }
+		public int CompareTo (object value)
+		{
+			if (value is nuint)
+				return v.CompareTo (((nuint) value).v);
+			return v.CompareTo (value);
+		}
 		public bool Equals (nuint obj) { return v.Equals (obj.v); }
-		public override bool Equals (object obj) { return v.Equals (obj); }
+		public override bool Equals (object obj)
+		{
+			if (obj is nuint)
+				return v.Equals (((nuint) obj).v);
+			return v.Equals (obj);
+		}
 		public override int GetHashCode () { return v.GetHashCode (); }
 
 #if ARCH_32
-		public static nuint Parse (string s, IFormatProvider provider) { return UInt32.Parse (s, provider); }
-		public static nuint Parse (string s, NumberStyles style) { return UInt32.Parse (s, style); }
-		public static nuint Parse (string s) { return UInt32.Parse (s); }
+		public static nuint Parse (string s, IFormatProvider provider) { return (nuint)UInt32.Parse (s, provider); }
+		public static nuint Parse (string s, NumberStyles style) { return (nuint)UInt32.Parse (s, style); }
+		public static nuint Parse (string s) { return (nuint)UInt32.Parse (s); }
 		public static nuint Parse (string s, NumberStyles style, IFormatProvider provider) {
-			return UInt32.Parse (s, style, provider);
+			return (nuint)UInt32.Parse (s, style, provider);
 		}
 
 		public static bool TryParse (string s, out nuint result)
 		{
 			UInt32 v;
 			var r = UInt32.TryParse (s, out v);
-			result = v;
+			result = (nuint)v;
 			return r;
 		}
 
@@ -1120,22 +1776,22 @@ namespace System
 		{
 			UInt32 v;
 			var r = UInt32.TryParse (s, style, provider, out v);
-			result = v;
+			result = (nuint)v;
 			return r;
 		}
 #else
-		public static nuint Parse (string s, IFormatProvider provider) { return UInt64.Parse (s, provider); }
-		public static nuint Parse (string s, NumberStyles style) { return UInt64.Parse (s, style); }
-		public static nuint Parse (string s) { return UInt64.Parse (s); }
+		public static nuint Parse (string s, IFormatProvider provider) { return (nuint)UInt64.Parse (s, provider); }
+		public static nuint Parse (string s, NumberStyles style) { return (nuint)UInt64.Parse (s, style); }
+		public static nuint Parse (string s) { return (nuint)UInt64.Parse (s); }
 		public static nuint Parse (string s, NumberStyles style, IFormatProvider provider) {
-			return UInt64.Parse (s, style, provider);
+			return (nuint)UInt64.Parse (s, style, provider);
 		}
 
 		public static bool TryParse (string s, out nuint result)
 		{
 			UInt64 v;
 			var r = UInt64.TryParse (s, out v);
-			result = v;
+			result = (nuint)v;
 			return r;
 		}
 
@@ -1143,7 +1799,7 @@ namespace System
 		{
 			UInt64 v;
 			var r = UInt64.TryParse (s, style, provider, out v);
-			result = v;
+			result = (nuint)v;
 			return r;
 		}
 #endif
@@ -1173,63 +1829,367 @@ namespace System
 		object IConvertible.ToType (Type targetType, IFormatProvider provider) {
 			return ((IConvertible)v).ToType (targetType, provider);
 		}
-	}
 
+		public static void CopyArray (IntPtr source, nuint [] destination, int startIndex, int length)
+		{
+			if (source == IntPtr.Zero)
+				throw new ArgumentNullException ("source");
+			if (destination == null)
+				throw new ArgumentNullException ("destination");
+			if (destination.Rank != 1)
+				throw new ArgumentException ("destination", "array is multi-dimensional");
+			if (startIndex < 0)
+				throw new ArgumentException ("startIndex", "must be >= 0");
+			if (length < 0)
+				throw new ArgumentException ("length", "must be >= 0");
+			if (startIndex + length > destination.Length)
+				throw new ArgumentException ("length", "startIndex + length > destination.Length");
+
+			for (int i = 0; i < length; i++)
+				destination [i + startIndex] = (nuint)Marshal.ReadIntPtr (source, i * nuint.Size);
+		}
+
+		public static void CopyArray (nuint [] source, int startIndex, IntPtr destination, int length)
+		{
+			if (source == null)
+				throw new ArgumentNullException ("source");
+			if (destination == IntPtr.Zero)
+				throw new ArgumentNullException ("destination");
+			if (source.Rank != 1)
+				throw new ArgumentException ("source", "array is multi-dimensional");
+			if (startIndex < 0)
+				throw new ArgumentException ("startIndex", "must be >= 0");
+			if (length < 0)
+				throw new ArgumentException ("length", "must be >= 0");
+			if (startIndex + length > source.Length)
+				throw new ArgumentException ("length", "startIndex + length > source.Length");
+
+			for (int i = 0; i < length; i++)
+				Marshal.WriteIntPtr (destination, i * nuint.Size, (IntPtr)source [i + startIndex]);
+		}
+	}
 	[Serializable]
-	public struct nfloat : IFormattable, IConvertible, IComparable, IComparable<nfloat>, IEquatable <nfloat>
+	[DebuggerDisplay ("{v,nq}")]
+	public unsafe struct nfloat : IFormattable, IConvertible, IComparable, IComparable<nfloat>, IEquatable <nfloat>
 	{
-		public nfloat (nfloat v) { this.v = v.v; }
+		internal nfloat (nfloat v) { this.v = v.v; }
 		public nfloat (Single v) { this.v = v; }
 
 #if ARCH_32
+		public static readonly int Size = 4;
+
 		public static readonly nfloat MaxValue = Single.MaxValue;
 		public static readonly nfloat MinValue = Single.MinValue;
-		public static readonly nfloat Epsilon = Single.Epsilon;
-		public static readonly nfloat NaN = Single.NaN;
-		public static readonly nfloat NegativeInfinity = Single.NegativeInfinity;
-		public static readonly nfloat PositiveInfinity = Single.PositiveInfinity;
+		public static readonly nfloat Epsilon = (nfloat)Single.Epsilon;
+		public static readonly nfloat NaN = (nfloat)Single.NaN;
+		public static readonly nfloat NegativeInfinity = (nfloat)Single.NegativeInfinity;
+		public static readonly nfloat PositiveInfinity = (nfloat)Single.PositiveInfinity;
 
-		Single v;
+		[DebuggerBrowsable (DebuggerBrowsableState.Never)]
+		internal Single v;
 
 		public nfloat (Double v) { this.v = (Single)v; }
 #else
-		public static readonly nfloat MaxValue = Single.MaxValue;
-		public static readonly nfloat MinValue = Single.MinValue;
-		public static readonly nfloat Epsilon = Double.Epsilon;
-		public static readonly nfloat NaN = Double.NaN;
-		public static readonly nfloat NegativeInfinity = Double.NegativeInfinity;
-		public static readonly nfloat PositiveInfinity = Double.PositiveInfinity;
+		public static readonly int Size = 8;
 
-		Double v;
+		public static readonly nfloat MaxValue = (nfloat) Double.MaxValue; // 64-bit only codepath
+		public static readonly nfloat MinValue = (nfloat) Double.MinValue; // 64-bit only codepath
+		public static readonly nfloat Epsilon = (nfloat)Double.Epsilon;
+		public static readonly nfloat NaN = (nfloat)Double.NaN;
+		public static readonly nfloat NegativeInfinity = (nfloat)Double.NegativeInfinity;
+		public static readonly nfloat PositiveInfinity = (nfloat)Double.PositiveInfinity;
+
+		[DebuggerBrowsable (DebuggerBrowsableState.Never)]
+		internal Double v;
 
 		public nfloat (Double v) { this.v = v; }
 #endif
 
-#if ARCH_32
-#	if NINT_JIT_OPTIMIZED
-		public static implicit operator Single (nfloat v) { throw new NotImplementedException (); }
-		public static implicit operator nfloat (Single v) { throw new NotImplementedException (); }
-		public static implicit operator Double (nfloat v) { throw new NotImplementedException (); }
-		public static explicit operator nfloat (Double v) { throw new NotImplementedException (); }
-#	else
-		public static implicit operator Single (nfloat v) { return v.v; }
-		public static implicit operator nfloat (Single v) { return new nfloat (v); }
-		public static implicit operator Double (nfloat v) { return (Double)v.v; }
-		public static explicit operator nfloat (Double v) { return new nfloat (v); }
-#	endif
+		public static explicit operator nfloat (IntPtr v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nfloat (*((float *)&v));
 #else
-#	if NINT_JIT_OPTIMIZED
-		public static explicit operator Single (nfloat v) { throw new NotImplementedException (); }
-		public static implicit operator nfloat (Single v) { throw new NotImplementedException (); }
-		public static implicit operator Double (nfloat v) { throw new NotImplementedException (); }
-		public static implicit operator nfloat (Double v) { throw new NotImplementedException (); }
-#	else
-		public static explicit operator Single (nfloat v) { return (Single)v.v; }
-		public static implicit operator nfloat (Single v) { return new nfloat (v); }
-		public static implicit operator Double (nfloat v) { return v.v; }
-		public static implicit operator nfloat (Double v) { return new nfloat (v); }
-#	endif
+			return new nfloat (*((double *)&v));
 #endif
+		}
+
+		public static explicit operator IntPtr (nfloat v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return *((IntPtr *)&v.v);
+#else
+			return *((IntPtr *)&v.v);
+#endif
+		}
+
+		public static implicit operator nfloat (sbyte v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nfloat ((float)v);
+#else
+			return new nfloat ((double)v);
+#endif
+		}
+
+		public static explicit operator sbyte (nfloat v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (sbyte)v.v;
+#else
+			return (sbyte)v.v;
+#endif
+		}
+
+		public static implicit operator nfloat (byte v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nfloat ((float)v);
+#else
+			return new nfloat ((double)v);
+#endif
+		}
+
+		public static explicit operator byte (nfloat v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (byte)v.v;
+#else
+			return (byte)v.v;
+#endif
+		}
+
+		public static implicit operator nfloat (char v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nfloat ((float)v);
+#else
+			return new nfloat ((double)v);
+#endif
+		}
+
+		public static explicit operator char (nfloat v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (char)v.v;
+#else
+			return (char)v.v;
+#endif
+		}
+
+		public static implicit operator nfloat (short v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nfloat ((float)v);
+#else
+			return new nfloat ((double)v);
+#endif
+		}
+
+		public static explicit operator short (nfloat v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (short)v.v;
+#else
+			return (short)v.v;
+#endif
+		}
+
+		public static implicit operator nfloat (ushort v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nfloat ((float)v);
+#else
+			return new nfloat ((double)v);
+#endif
+		}
+
+		public static explicit operator ushort (nfloat v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (ushort)v.v;
+#else
+			return (ushort)v.v;
+#endif
+		}
+
+		public static implicit operator nfloat (int v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nfloat ((float)v);
+#else
+			return new nfloat ((double)v);
+#endif
+		}
+
+		public static explicit operator int (nfloat v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (int)v.v;
+#else
+			return (int)v.v;
+#endif
+		}
+
+		public static implicit operator nfloat (uint v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nfloat ((float)v);
+#else
+			return new nfloat ((double)v);
+#endif
+		}
+
+		public static explicit operator uint (nfloat v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (uint)v.v;
+#else
+			return (uint)v.v;
+#endif
+		}
+
+		public static implicit operator nfloat (long v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nfloat ((float)v);
+#else
+			return new nfloat ((double)v);
+#endif
+		}
+
+		public static explicit operator long (nfloat v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (long)v.v;
+#else
+			return (long)v.v;
+#endif
+		}
+
+		public static implicit operator nfloat (ulong v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nfloat ((float)v);
+#else
+			return new nfloat ((double)v);
+#endif
+		}
+
+		public static explicit operator ulong (nfloat v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (ulong)v.v;
+#else
+			return (ulong)v.v;
+#endif
+		}
+
+		public static implicit operator nfloat (float v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nfloat ((float)v);
+#else
+			return new nfloat ((double)v);
+#endif
+		}
+
+		public static explicit operator float (nfloat v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (float)v.v;
+#else
+			return (float)v.v;
+#endif
+		}
+
+		public static explicit operator nfloat (double v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nfloat ((float)v);
+#else
+			return new nfloat ((double)v);
+#endif
+		}
+
+		public static implicit operator double (nfloat v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (double)v.v;
+#else
+			return (double)v.v;
+#endif
+		}
+
+		public static explicit operator nfloat (decimal v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return new nfloat ((float)v);
+#else
+			return new nfloat ((double)v);
+#endif
+		}
+
+		public static explicit operator decimal (nfloat v)
+		{
+#if NINT_JIT_OPTIMIZED
+			throw new NotImplementedException ();
+#elif ARCH_32
+			return (decimal)v.v;
+#else
+			return (decimal)v.v;
+#endif
+		}
 
 #if NINT_JIT_OPTIMIZED
 		public static nfloat operator + (nfloat v) { throw new NotImplementedException (); }
@@ -1243,7 +2203,6 @@ namespace System
 		public static nfloat operator ++ (nfloat v) { throw new NotImplementedException (); }
 		public static nfloat operator -- (nfloat v) { throw new NotImplementedException (); }
 #else
-		[MethodImpl (MethodImplOptions.AggressiveInlining)]
 		public static nfloat operator ++ (nfloat v) { return new nfloat (v.v + 1); }
 		public static nfloat operator -- (nfloat v) { return new nfloat (v.v - 1); }
 #endif
@@ -1279,29 +2238,39 @@ namespace System
 #endif
 
 		public int CompareTo (nfloat value) { return v.CompareTo (value.v); }
-		public int CompareTo (object value) { return v.CompareTo (value); }
+		public int CompareTo (object value)
+		{
+			if (value is nfloat)
+				return v.CompareTo (((nfloat) value).v);
+			return v.CompareTo (value);
+		}
 		public bool Equals (nfloat obj) { return v.Equals (obj.v); }
-		public override bool Equals (object obj) { return v.Equals (obj); }
+		public override bool Equals (object obj)
+		{
+			if (obj is nfloat)
+				return v.Equals (((nfloat) obj).v);
+			return v.Equals (obj);
+		}
 		public override int GetHashCode () { return v.GetHashCode (); }
 
 #if ARCH_32
-		public static bool IsNaN              (nfloat f) { return Single.IsNaN (f); }
-		public static bool IsInfinity         (nfloat f) { return Single.IsInfinity (f); }
-		public static bool IsPositiveInfinity (nfloat f) { return Single.IsPositiveInfinity (f); }
-		public static bool IsNegativeInfinity (nfloat f) { return Single.IsNegativeInfinity (f); }
+		public static bool IsNaN              (nfloat f) { return Single.IsNaN ((Single)f); }
+		public static bool IsInfinity         (nfloat f) { return Single.IsInfinity ((Single)f); }
+		public static bool IsPositiveInfinity (nfloat f) { return Single.IsPositiveInfinity ((Single)f); }
+		public static bool IsNegativeInfinity (nfloat f) { return Single.IsNegativeInfinity ((Single)f); }
 
-		public static nfloat Parse (string s, IFormatProvider provider) { return Single.Parse (s, provider); }
-		public static nfloat Parse (string s, NumberStyles style) { return Single.Parse (s, style); }
-		public static nfloat Parse (string s) { return Single.Parse (s); }
+		public static nfloat Parse (string s, IFormatProvider provider) { return (nfloat)Single.Parse (s, provider); }
+		public static nfloat Parse (string s, NumberStyles style) { return (nfloat)Single.Parse (s, style); }
+		public static nfloat Parse (string s) { return (nfloat)Single.Parse (s); }
 		public static nfloat Parse (string s, NumberStyles style, IFormatProvider provider) {
-			return Single.Parse (s, style, provider);
+			return (nfloat)Single.Parse (s, style, provider);
 		}
 
 		public static bool TryParse (string s, out nfloat result)
 		{
 			Single v;
 			var r = Single.TryParse (s, out v);
-			result = v;
+			result = (nfloat)v;
 			return r;
 		}
 
@@ -1309,27 +2278,27 @@ namespace System
 		{
 			Single v;
 			var r = Single.TryParse (s, style, provider, out v);
-			result = v;
+			result = (nfloat)v;
 			return r;
 		}
 #else
-		public static bool IsNaN              (nfloat f) { return Double.IsNaN (f); }
-		public static bool IsInfinity         (nfloat f) { return Double.IsInfinity (f); }
-		public static bool IsPositiveInfinity (nfloat f) { return Double.IsPositiveInfinity (f); }
-		public static bool IsNegativeInfinity (nfloat f) { return Double.IsNegativeInfinity (f); }
+		public static bool IsNaN              (nfloat f) { return Double.IsNaN ((Double)f); }
+		public static bool IsInfinity         (nfloat f) { return Double.IsInfinity ((Double)f); }
+		public static bool IsPositiveInfinity (nfloat f) { return Double.IsPositiveInfinity ((Double)f); }
+		public static bool IsNegativeInfinity (nfloat f) { return Double.IsNegativeInfinity ((Double)f); }
 
-		public static nfloat Parse (string s, IFormatProvider provider) { return Double.Parse (s, provider); }
-		public static nfloat Parse (string s, NumberStyles style) { return Double.Parse (s, style); }
-		public static nfloat Parse (string s) { return Double.Parse (s); }
+		public static nfloat Parse (string s, IFormatProvider provider) { return (nfloat)Double.Parse (s, provider); }
+		public static nfloat Parse (string s, NumberStyles style) { return (nfloat)Double.Parse (s, style); }
+		public static nfloat Parse (string s) { return (nfloat)Double.Parse (s); }
 		public static nfloat Parse (string s, NumberStyles style, IFormatProvider provider) {
-			return Double.Parse (s, style, provider);
+			return (nfloat)Double.Parse (s, style, provider);
 		}
 
 		public static bool TryParse (string s, out nfloat result)
 		{
 			Double v;
 			var r = Double.TryParse (s, out v);
-			result = v;
+			result = (nfloat)v;
 			return r;
 		}
 
@@ -1337,7 +2306,7 @@ namespace System
 		{
 			Double v;
 			var r = Double.TryParse (s, style, provider, out v);
-			result = v;
+			result = (nfloat)v;
 			return r;
 		}
 #endif
@@ -1366,6 +2335,44 @@ namespace System
 
 		object IConvertible.ToType (Type targetType, IFormatProvider provider) {
 			return ((IConvertible)v).ToType (targetType, provider);
+		}
+
+		public static void CopyArray (IntPtr source, nfloat [] destination, int startIndex, int length)
+		{
+			if (source == IntPtr.Zero)
+				throw new ArgumentNullException ("source");
+			if (destination == null)
+				throw new ArgumentNullException ("destination");
+			if (destination.Rank != 1)
+				throw new ArgumentException ("destination", "array is multi-dimensional");
+			if (startIndex < 0)
+				throw new ArgumentException ("startIndex", "must be >= 0");
+			if (length < 0)
+				throw new ArgumentException ("length", "must be >= 0");
+			if (startIndex + length > destination.Length)
+				throw new ArgumentException ("length", "startIndex + length > destination.Length");
+
+			for (int i = 0; i < length; i++)
+				destination [i + startIndex] = (nfloat)Marshal.ReadIntPtr (source, i * nfloat.Size);
+		}
+
+		public static void CopyArray (nfloat [] source, int startIndex, IntPtr destination, int length)
+		{
+			if (source == null)
+				throw new ArgumentNullException ("source");
+			if (destination == IntPtr.Zero)
+				throw new ArgumentNullException ("destination");
+			if (source.Rank != 1)
+				throw new ArgumentException ("source", "array is multi-dimensional");
+			if (startIndex < 0)
+				throw new ArgumentException ("startIndex", "must be >= 0");
+			if (length < 0)
+				throw new ArgumentException ("length", "must be >= 0");
+			if (startIndex + length > source.Length)
+				throw new ArgumentException ("length", "startIndex + length > source.Length");
+
+			for (int i = 0; i < length; i++)
+				Marshal.WriteIntPtr (destination, i * nfloat.Size, (IntPtr)source [i + startIndex]);
 		}
 	}
 }
