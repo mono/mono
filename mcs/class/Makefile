@@ -330,7 +330,30 @@ unityjit_dirs := \
 	$(pcl_facade_dirs)
 
 unityaot_dirs := \
-	$(mobile_common_dirs)	\
+	corlib	\
+	Mono.Security \
+	System	\
+	System.Core	\
+	System.Security	\
+	System.XML	\
+	I18N		\
+	System.ServiceModel.Internals	\
+	System.Runtime.Serialization	\
+	System.Xml.Linq	\
+	System.Json	\
+	Mono.Data.Tds	\
+	System.Transactions	\
+	System.Numerics	\
+	System.Numerics.Vectors		\
+	System.Data	\
+	Mono.Data.Sqlite	\
+	System.IO.Compression \
+	System.IO.Compression.FileSystem \
+	System.ComponentModel.DataAnnotations \
+	System.ComponentModel.Composition.4.5 \
+	System.Net \
+	System.Net.Http	\
+	System.Runtime.InteropServices.RuntimeInformation	\
 	System.Drawing			\
 	$(pcl_facade_dirs)
 
