@@ -230,7 +230,6 @@ System.IO/FileShare.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/Interop/Unix/System.Native/Interop.FSync.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Buffers/ArrayPool.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Buffers/ConfigurableArrayPool.cs
-../../../external/corert/src/System.Private.CoreLib/shared/System/Buffers/TlsOverPerCoreLockedStacksArrayPool.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Buffers/Utilities.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Buffers/ArrayPoolEventSource.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/Microsoft/Win32/SafeHandles/SafeFileHandle.Unix.cs
