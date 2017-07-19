@@ -7,7 +7,7 @@
 // Copyright 2013-2014 Xamarin Inc.
 //
 
-#if MOBILE
+#if MOBILE && !UNITY_AOT
 
 using System;
 using System.Collections.Generic;
