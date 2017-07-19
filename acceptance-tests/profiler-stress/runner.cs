@@ -57,7 +57,7 @@ namespace Mono.Profiling.Tests.Stress {
 			"jit",
 		};
 
-		static readonly TimeSpan _timeout = TimeSpan.FromHours (8);
+		static readonly TimeSpan _timeout = TimeSpan.FromHours (10);
 
 		static string FilterInvalidXmlChars (string text) {
 			return Regex.Replace (text, @"[^\x09\x0A\x0D\x20-\uD7FF\uE000-\uFFFD\u10000-\u10FFFF]", string.Empty);
