@@ -376,32 +376,10 @@ namespace System.Reflection {
 			
 		public override object GetValue (object obj, object[] index)
 		{
-			if (index == null || index.Length == 0) {
-				/*FIXME we should check if the number of arguments matches the expected one, otherwise the error message will be pretty criptic.*/
-#if !FULL_AOT_RUNTIME
-				if (cached_getter == null) {
-					MethodInfo method = GetGetMethod (true);
-					if (!DeclaringType.IsValueType && !method.ContainsGenericParameters) { //FIXME find a way to build an invoke delegate for value types.
-						if (method == null)
-							throw new ArgumentException ("Get Method not found for '" + Name + "'");
-						cached_getter = CreateGetterDelegate (method);
-						// The try-catch preserves the .Invoke () behaviour
-						try {
-							return cached_getter (obj);
-						} catch (Exception ex) {
-							throw new TargetInvocationException (ex);
-						}
-					}
-				} else {
-					try {
-						return cached_getter (obj);
-					} catch (Exception ex) {
-						throw new TargetInvocationException (ex);
-					}
-				}
-#endif
-			}
-
+      // In 2017.1, Unity only ships with the full .NET 4.6 profile. It does not use the
+      // AOT profile. This is the AOT-friendly code path, but it also works for JIT, so
+      // use it in both cases. In later Unity versions (maybe 2017.2), AOT platformsx
+      // will use a profile compiled for AOT, so this change won't be necessary then.
 			return GetValue (obj, BindingFlags.Default, null, index, null);
 		}
 
