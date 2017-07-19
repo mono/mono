@@ -276,7 +276,7 @@ namespace CppSharp
                 { "android-ndk=", "Path to Android NDK", v => AndroidNdkPath = v },
                 { "targetdir=", "Path to the directory containing the mono build", v =>TargetDir = v },
                 { "mono=", "include directory", v => MonoDir = v },
-                { "gen-ios", "generate iOS offsets", v => GenIOS != null },
+                { "gen-ios", "generate iOS offsets", v => GenIOS = v != null },
                 { "h|help",  "show this message and exit",  v => showHelp = v != null },
             };
 
