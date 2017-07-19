@@ -155,7 +155,7 @@ mono_g_hash_table_new_type (GHashFunc hash_func, GEqualFunc key_equal_func, Mono
 #ifdef HAVE_SGEN_GC
 	hash = mg_new0 (MonoGHashTable, 1);
 #else
-	hash = mono_gc_alloc_fixed (sizeof (MonoGHashTable), MONO_GC_ROOT_DESCR_FOR_FIXED (sizeof (MonoGHashTable)), source, msg);
+	hash = mono_gc_alloc_fixed (sizeof (MonoGHashTable), MONO_GC_ROOT_DESCR_FOR_FIXED (sizeof (MonoGHashTable)), source, NULL, msg);
 #endif
 
 	hash->hash_func = hash_func;
@@ -174,9 +174,9 @@ mono_g_hash_table_new_type (GHashFunc hash_func, GEqualFunc key_equal_func, Mono
 
 #ifdef HAVE_SGEN_GC
 	if (hash->gc_type & MONO_HASH_KEY_GC)
-		mono_gc_register_root_wbarrier ((char*)hash->keys, sizeof (MonoObject*) * hash->table_size, mono_gc_make_vector_descr (), hash->source, hash->msg);
+		mono_gc_register_root_wbarrier ((char*)hash->keys, sizeof (MonoObject*) * hash->table_size, mono_gc_make_vector_descr (), hash->source, NULL, hash->msg);
 	if (hash->gc_type & MONO_HASH_VALUE_GC)
-		mono_gc_register_root_wbarrier ((char*)hash->values, sizeof (MonoObject*) * hash->table_size, mono_gc_make_vector_descr (), hash->source, hash->msg);
+		mono_gc_register_root_wbarrier ((char*)hash->values, sizeof (MonoObject*) * hash->table_size, mono_gc_make_vector_descr (), hash->source, NULL, hash->msg);
 #endif
 
 	return hash;
@@ -235,9 +235,9 @@ rehash (MonoGHashTable *hash)
 
 #ifdef HAVE_SGEN_GC
 	if (hash->gc_type & MONO_HASH_KEY_GC)
-		mono_gc_register_root_wbarrier ((char*)data.keys, sizeof (MonoObject*) * data.new_size, mono_gc_make_vector_descr (), hash->source, hash->msg);
+		mono_gc_register_root_wbarrier ((char*)data.keys, sizeof (MonoObject*) * data.new_size, mono_gc_make_vector_descr (), hash->source, NULL, hash->msg);
 	if (hash->gc_type & MONO_HASH_VALUE_GC)
-		mono_gc_register_root_wbarrier ((char*)data.values, sizeof (MonoObject*) * data.new_size, mono_gc_make_vector_descr (), hash->source, hash->msg);
+		mono_gc_register_root_wbarrier ((char*)data.values, sizeof (MonoObject*) * data.new_size, mono_gc_make_vector_descr (), hash->source, NULL, hash->msg);
 #endif
 
 	if (!mono_threads_is_coop_enabled ()) {

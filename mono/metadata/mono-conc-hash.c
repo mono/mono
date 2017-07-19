@@ -58,7 +58,7 @@ conc_table_new (MonoConcGHashTable *hash, int size)
 #ifdef HAVE_SGEN_GC
 	conc_table *table = mg_new0 (conc_table, 1);
 #else
-	conc_table *table = mono_gc_alloc_fixed (sizeof (conc_table), MONO_GC_ROOT_DESCR_FOR_FIXED (sizeof (conc_table)), hash->source, hash->msg);
+	conc_table *table = mono_gc_alloc_fixed (sizeof (conc_table), MONO_GC_ROOT_DESCR_FOR_FIXED (sizeof (conc_table)), hash->source, NULL, hash->msg);
 #endif
 	
 	table->keys = mg_new0 (void*, size);
@@ -68,9 +68,9 @@ conc_table_new (MonoConcGHashTable *hash, int size)
 
 #ifdef HAVE_SGEN_GC
 	if (hash->gc_type & MONO_HASH_KEY_GC)
-		mono_gc_register_root_wbarrier ((char*)table->keys, sizeof (MonoObject*) * size, mono_gc_make_vector_descr (), hash->source, hash->msg);
+		mono_gc_register_root_wbarrier ((char*)table->keys, sizeof (MonoObject*) * size, mono_gc_make_vector_descr (), hash->source, NULL, hash->msg);
 	if (hash->gc_type & MONO_HASH_VALUE_GC)
-		mono_gc_register_root_wbarrier ((char*)table->values, sizeof (MonoObject*) * size, mono_gc_make_vector_descr (), hash->source, hash->msg);
+		mono_gc_register_root_wbarrier ((char*)table->values, sizeof (MonoObject*) * size, mono_gc_make_vector_descr (), hash->source, NULL, hash->msg);
 #endif
 
 	return table;
