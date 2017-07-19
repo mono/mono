@@ -71,8 +71,8 @@ MonoClass* mono_unity_class_get_castclass(MonoClass *klass);
 guint32 mono_unity_class_get_native_size(MonoClass* klass);
 MonoBoolean mono_unity_class_is_string(MonoClass* klass);
 MonoBoolean mono_unity_class_is_class_type(MonoClass* klass);
-gboolean mono_class_is_generic(MonoClass *klass);
-gboolean mono_class_is_blittable(MonoClass *klass);
+MONO_API gboolean mono_class_is_generic(MonoClass *klass);
+MONO_API gboolean mono_class_is_blittable(MonoClass *klass);
 
 //method 
 MonoMethod* mono_unity_method_get_generic_definition(MonoMethod* method);
@@ -93,7 +93,7 @@ const char* mono_unity_method_get_name(const MonoMethod *method);
 guint64 mono_unity_method_get_hash(MonoMethod *method, gboolean inflate);
 MonoMethod* mono_unity_method_get_aot_array_helper_from_wrapper(MonoMethod *method);
 MonoObject* mono_unity_method_convert_return_type_if_needed(MonoMethod *method, void *value);
-gboolean unity_mono_method_is_inflated(MonoMethod* method);
+MONO_API gboolean unity_mono_method_is_inflated(MonoMethod* method);
 guint32 mono_unity_method_get_token(MonoMethod *method);
 
 //domain
@@ -156,9 +156,9 @@ void* mono_unity_get_field_address(MonoObject *obj, MonoVTable *vt, MonoClassFie
 gboolean mono_unity_thread_state_init_from_handle(MonoThreadUnwindState *tctx, MonoThreadInfo *info);
 void mono_unity_stackframe_set_method(MonoStackFrame *sf, MonoMethod *method);
 MonoType* mono_unity_reflection_type_get_type(MonoReflectionType *type);
-void mono_unity_set_data_dir(const char* dir);
-char* mono_unity_get_data_dir();
-MonoClass* mono_unity_class_get(MonoImage* image, guint32 type_token);
-gpointer mono_unity_alloc(gsize size);
+MONO_API void mono_unity_set_data_dir(const char* dir);
+MONO_API char* mono_unity_get_data_dir();
+MONO_API MonoClass* mono_unity_class_get(MonoImage* image, guint32 type_token);
+MONO_API gpointer mono_unity_alloc(gsize size);
 
 #endif
