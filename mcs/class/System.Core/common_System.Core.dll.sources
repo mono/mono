@@ -24,22 +24,6 @@ System.IO.Pipes/PipeAuditRule.cs
 System.IO.Pipes/PipeInterfaces.cs
 System.IO.Pipes/PipeSecurity.cs
 
-../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/PipeDirection.cs
-../../../external/corefx/src/System.IO.Pipes/src/Microsoft/Win32/SafeHandles/SafePipeHandle.cs
-../../../external/corefx/src/System.IO.Pipes/src/System/IO/Error.cs
-../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/AnonymousPipeClientStream.cs
-../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/AnonymousPipeServerStream.cs
-../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/PipeOptions.cs
-../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/PipeTransmissionMode.cs
-../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/NamedPipeClientStream.cs
-../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/NamedPipeServerStream.cs
-../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/PipeState.cs
-../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/PipeStream.cs
-
-../../../external/corefx/src/Common/src/System/IO/StreamHelpers.CopyValidation.cs
-../../../external/corefx/src/Common/src/System/Threading/Tasks/TaskToApm.cs
-../../../external/corefx/src/System.IO.Pipes.AccessControl/src/System/IO/PipesAclExtensions.cs
-
 
 
 ReferenceSources/SR.cs
