@@ -264,7 +264,7 @@ endif
 # The library
 
 # If the directory contains the per profile include file, generate list file.
-PROFILE_sources := $(firstword $(if $(PROFILE_PLATFORM),$(wildcard $(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY).sources)) $(if $(filter $(PROFILE),basic),$(wildcard $(BUILD_PLATFORM)_$(PROFILE)_$(LIBRARY).sources))  $(if $(filter $(PROFILE),build),$(wildcard $(BUILD_PLATFORM)_$(PROFILE)_$(LIBRARY).sources))   $(wildcard $(PROFILE)_$(LIBRARY).sources) $(wildcard $(LIBRARY).sources))
+PROFILE_sources := $(firstword $(if $(PROFILE_PLATFORM),$(wildcard $(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY).sources)) $(if $(filter $(PROFILE),basic),$(wildcard $(BUILD_PLATFORM)_$(PROFILE)_$(LIBRARY).sources))  $(if $(filter $(PROFILE),build),$(wildcard $(BUILD_PLATFORM)_$(PROFILE)_$(LIBRARY).sources))  $(wildcard $(PROFILE)_$(LIBRARY).sources) $(wildcard $(LIBRARY).sources))
 PROFILE_excludes = $(firstword $(if $(PROFILE_PLATFORM),$(wildcard $(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY).exclude.sources)) $(wildcard $(PROFILE)_$(LIBRARY).exclude.sources))
 
 # Note, gensources.sh can create a $(sourcefile).makefrag if it sees any '#include's
