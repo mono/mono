@@ -826,6 +826,7 @@ mono_magic_trampoline (mgreg_t *regs, guint8 *code, gpointer arg, guint8* tramp)
 	gpointer res;
 
 	MONO_ENTER_GC_UNSAFE_UNBALANCED;
+	mono_enter_runtime_from_managed (&res);
 
 	MonoError error;
 
@@ -834,6 +835,7 @@ mono_magic_trampoline (mgreg_t *regs, guint8 *code, gpointer arg, guint8* tramp)
 	res = common_call_trampoline (regs, code, (MonoMethod *)arg, NULL, NULL, &error);
 	mono_error_set_pending_exception (&error);
 
+	mono_exit_runtime_from_managed ();
 	mono_interruption_checkpoint_from_trampoline ();
 
 	MONO_EXIT_GC_UNSAFE_UNBALANCED;
@@ -859,6 +861,7 @@ mono_vcall_trampoline (mgreg_t *regs, guint8 *code, int slot, guint8 *tramp)
 	gpointer addr, res = NULL;
 
 	trampoline_calls ++;
+	mono_enter_runtime_from_managed (&res);
 
 	/*
 	 * We need to obtain the following pieces of information:
@@ -888,7 +891,9 @@ mono_vcall_trampoline (mgreg_t *regs, guint8 *code, int slot, guint8 *tramp)
 			if (mono_domain_owns_vtable_slot (mono_domain_get (), vtable_slot))
 				*vtable_slot = addr;
 
-			return mono_create_ftnptr (mono_domain_get (), addr);
+			res = mono_create_ftnptr (mono_domain_get (), addr);
+			mono_exit_runtime_from_managed ();
+			return res;
 		}
 
 		/*
@@ -916,8 +921,10 @@ mono_vcall_trampoline (mgreg_t *regs, guint8 *code, int slot, guint8 *tramp)
 leave:
 	if (!mono_error_ok (&error)) {
 		mono_error_set_pending_exception (&error);
+		mono_exit_runtime_from_managed ();
 		return NULL;
 	}
+	mono_exit_runtime_from_managed ();
 	return res;
 }
 
@@ -932,6 +939,7 @@ mono_generic_virtual_remoting_trampoline (mgreg_t *regs, guint8 *code, MonoMetho
 	MonoMethod *imt_method, *declaring;
 	gpointer addr;
 
+	mono_enter_runtime_from_managed (&addr);
 	trampoline_calls ++;
 
 	g_assert (m->is_generic);
@@ -956,10 +964,11 @@ mono_generic_virtual_remoting_trampoline (mgreg_t *regs, guint8 *code, MonoMetho
 	addr = mono_jit_compile_method (m, &error);
 	if (!mono_error_ok (&error)) {
 		mono_error_set_pending_exception (&error);
+		mono_exit_runtime_from_managed ();
 		return NULL;
 	}
 	g_assert (addr);
-
+	mono_exit_runtime_from_managed ();
 	return addr;
 }
 #endif
@@ -984,6 +993,7 @@ mono_aot_trampoline (mgreg_t *regs, guint8 *code, guint8 *token_info,
 	guint8 *plt_entry;
 	MonoError error;
 
+	mono_enter_runtime_from_managed (&addr);
 	trampoline_calls ++;
 
 	image = (MonoImage *)*(gpointer*)(gpointer)token_info;
@@ -998,6 +1008,7 @@ mono_aot_trampoline (mgreg_t *regs, guint8 *code, guint8 *token_info,
 		if (!method)
 			g_error ("Could not load AOT trampoline due to %s", mono_error_get_message (&error));
 
+		mono_exit_runtime_from_managed ();
 		/* Use the generic code */
 		return mono_magic_trampoline (regs, code, method, tramp);
 	}
@@ -1010,6 +1021,7 @@ mono_aot_trampoline (mgreg_t *regs, guint8 *code, guint8 *token_info,
 
 	mono_aot_patch_plt_entry (code, plt_entry, NULL, regs, (guint8 *)addr);
 
+	mono_exit_runtime_from_managed ();
 	return addr;
 }
 
@@ -1028,17 +1040,21 @@ mono_aot_plt_trampoline (mgreg_t *regs, guint8 *code, guint8 *aot_module,
 	gpointer res;
 	MonoError error;
 
+	mono_enter_runtime_from_managed (&res);
 	trampoline_calls ++;
 
 	res = mono_aot_plt_resolve (aot_module, plt_info_offset, code, &error);
+
 	if (!res) {
 		if (!mono_error_ok (&error)) {
 			mono_error_set_pending_exception (&error);
+			mono_exit_runtime_from_managed ();
 			return NULL;
 		}
 		// FIXME: Error handling (how ?)
 		g_assert (res);
 	}
+	mono_exit_runtime_from_managed ();
 
 	return res;
 }
@@ -1109,6 +1125,8 @@ mono_delegate_trampoline (mgreg_t *regs, guint8 *code, gpointer *arg, guint8* tr
 	gpointer addr, compiled_method;
 	gboolean is_remote = FALSE;
 
+	mono_enter_runtime_from_managed (&addr);
+
 	trampoline_calls ++;
 
 	/* Obtain the delegate object according to the calling convention */
@@ -1142,6 +1160,7 @@ mono_delegate_trampoline (mgreg_t *regs, guint8 *code, gpointer *arg, guint8* tr
 				sig = mono_method_signature_checked (method, &err);
 				if (!sig) {
 					mono_error_set_pending_exception (&err);
+					mono_exit_runtime_from_managed ();
 					return NULL;
 				}
 			}
@@ -1176,6 +1195,7 @@ mono_delegate_trampoline (mgreg_t *regs, guint8 *code, gpointer *arg, guint8* tr
 			sig = mono_method_signature_checked (method, &err);
 			if (!sig) {
 				mono_error_set_pending_exception (&err);
+				mono_exit_runtime_from_managed ();
 				return NULL;
 			}
 		}
@@ -1229,6 +1249,7 @@ mono_delegate_trampoline (mgreg_t *regs, guint8 *code, gpointer *arg, guint8* tr
 			compiled_method = addr = mono_jit_compile_method (method, &error);
 			if (!mono_error_ok (&error)) {
 				mono_error_set_pending_exception (&error);
+				mono_exit_runtime_from_managed ();
 				return NULL;
 			}
 			addr = mini_add_method_trampoline (method, compiled_method, need_rgctx_tramp, need_unbox_tramp);
@@ -1259,6 +1280,7 @@ mono_delegate_trampoline (mgreg_t *regs, guint8 *code, gpointer *arg, guint8* tr
 		code = (guint8 *)mono_jit_compile_method (m, &error);
 		if (!mono_error_ok (&error)) {
 			mono_error_set_pending_exception (&error);
+			mono_exit_runtime_from_managed ();
 			return NULL;
 		}
 		code = (guint8 *)mini_add_method_trampoline (m, code, mono_method_needs_static_rgctx_invoke (m, FALSE), FALSE);
@@ -1270,6 +1292,7 @@ mono_delegate_trampoline (mgreg_t *regs, guint8 *code, gpointer *arg, guint8* tr
 		tramp_info->invoke_impl = delegate->invoke_impl;
 	}
 
+	mono_exit_runtime_from_managed ();
 	return code;
 }
 

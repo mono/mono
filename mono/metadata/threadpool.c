@@ -354,6 +354,7 @@ worker_callback (void)
 		mono_thread_clr_state (thread, (MonoThreadState)~ThreadState_Background);
 		if (!mono_thread_test_state (thread , ThreadState_Background))
 			ves_icall_System_Threading_Thread_SetState (thread, ThreadState_Background);
+		mono_enter_runtime_from_managed ((gpointer*)&tpdomain);
 
 		mono_thread_push_appdomain_ref (tpdomain->domain);
 		if (mono_domain_set (tpdomain->domain, FALSE)) {
@@ -373,6 +374,7 @@ worker_callback (void)
 			mono_domain_set (mono_get_root_domain (), TRUE);
 		}
 		mono_thread_pop_appdomain_ref ();
+		mono_exit_runtime_from_managed ();
 
 		domains_lock ();
 

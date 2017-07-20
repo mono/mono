@@ -62,6 +62,8 @@ struct _SgenClientThreadInfo {
 	void *stack_start;
 	void *stack_start_limit;
 
+	void *stack_segments;
+
 	MonoContext ctx;		/* ditto */
 };
 

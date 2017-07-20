@@ -374,6 +374,7 @@ mono_remoting_wrapper (MonoMethod *method, gpointer *params)
 	MonoObject *res, *exc;
 	MonoArray *out_args;
 
+	mono_enter_runtime_from_managed (&params);
 	this_obj = *((MonoTransparentProxy **)params [0]);
 
 	g_assert (this_obj);
@@ -432,8 +433,10 @@ mono_remoting_wrapper (MonoMethod *method, gpointer *params)
 	mono_method_return_message_restore (method, params, out_args, &error);
 	if (!is_ok (&error)) goto fail;
 
+	mono_exit_runtime_from_managed ();
 	return res;
 fail:
+	mono_exit_runtime_from_managed ();
 	/* This icall will be called from managed code, and more over
 	 * from a protected wrapper so interruptions such as pending
 	 * exceptions will not be honored.  (See
@@ -2007,6 +2010,7 @@ mono_marshal_xdomain_copy_value_handle (MonoObjectHandle val, MonoError *error)
 	MonoDomain *domain = mono_domain_get ();
 
 	MonoClass *klass = mono_handle_class (val);
+	g_assert (klass != NULL);
 
 	switch (klass->byval_arg.type) {
 	case MONO_TYPE_VOID:

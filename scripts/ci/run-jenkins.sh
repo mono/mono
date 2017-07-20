@@ -101,6 +101,9 @@ if [[ ${label} == 'debian-8-ppc64el' ]]; then make_parallelism=-j1; fi
 
 ${TESTCMD} --label=make --timeout=${make_timeout} --fatal make ${make_parallelism} -w V=1
 
+export ALEKSEY_HACK_COOP=1
+export MONO_ENABLE_COOP=1
+
 if [[ ${CI_TAGS} == *'checked-coop'* ]]; then export MONO_CHECK_MODE=gc,thread; fi
 if [[ ${CI_TAGS} == *'checked-all'* ]]; then export MONO_CHECK_MODE=all; fi
 

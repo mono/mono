@@ -1186,20 +1186,24 @@ mono_create_corlib_exception_0 (guint32 token)
 MonoException *
 mono_create_corlib_exception_1 (guint32 token, MonoString *arg)
 {
+	mono_enter_runtime_from_managed ((gpointer*)&arg);
 	MonoError error;
 	MonoException *ret = mono_exception_from_token_two_strings_checked (
 		mono_defaults.corlib, token, arg, NULL, &error);
 	mono_error_set_pending_exception (&error);
+	mono_exit_runtime_from_managed ();
 	return ret;
 }
 
 MonoException *
 mono_create_corlib_exception_2 (guint32 token, MonoString *arg1, MonoString *arg2)
 {
+	mono_enter_runtime_from_managed ((gpointer*)&arg2);
 	MonoError error;
 	MonoException *ret = mono_exception_from_token_two_strings_checked (
 		mono_defaults.corlib, token, arg1, arg2, &error);
 	mono_error_set_pending_exception (&error);
+	mono_exit_runtime_from_managed ();
 	return ret;
 }
 
@@ -1443,8 +1447,10 @@ void
 mono_generic_class_init (MonoVTable *vtable)
 {
 	MonoError error;
+	mono_enter_runtime_from_managed ((gpointer*)&vtable);
 	mono_runtime_class_init_full (vtable, &error);
 	mono_error_set_pending_exception (&error);
+	mono_exit_runtime_from_managed ();
 }
 
 void
@@ -1915,11 +1921,13 @@ mono_throw_method_access (MonoMethod *caller, MonoMethod *callee)
 	char *callee_name = mono_method_get_reflection_name (callee);
 	MonoError error;
 
+	mono_enter_runtime_from_managed ((gpointer*)&callee);
 	error_init (&error);
 	mono_error_set_generic_error (&error, "System", "MethodAccessException", "Method `%s' is inaccessible from method `%s'", callee_name, caller_name);
 	mono_error_set_pending_exception (&error);
 	g_free (callee_name);
 	g_free (caller_name);
+	mono_exit_runtime_from_managed ();
 }
 
 void

@@ -5152,6 +5152,9 @@ mono_threads_attach_coop (MonoDomain *domain, gpointer *dummy)
 		mono_domain_set (domain, TRUE);
 
 	if (mono_threads_is_blocking_transition_enabled ()) {
+#ifdef HAVE_SGEN_GC
+		mono_stack_segments_native_to_managed_enter (info, dummy);
+#endif
 		if (external) {
 			/* mono_thread_attach put the thread in RUNNING mode from STARTING, but we need to
 			 * return the right cookie. */
@@ -5184,6 +5187,9 @@ mono_threads_detach_coop (gpointer cookie, gpointer *dummy)
 	g_assert (domain);
 
 	if (mono_threads_is_blocking_transition_enabled ()) {
+#ifdef HAVE_SGEN_GC
+		mono_stack_segments_native_to_managed_leave (mono_thread_info_current ());
+#endif
 		/* it won't do anything if cookie is NULL
 		 * thread state RUNNING -> (RUNNING|BLOCKING) */
 		mono_threads_exit_gc_unsafe_region (*dummy, dummy);
