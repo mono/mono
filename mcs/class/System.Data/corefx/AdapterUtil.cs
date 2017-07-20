@@ -38,6 +38,7 @@ namespace System.Data.Common
         internal const string RollbackTransaction = "RollbackTransaction";
 
         internal static bool NeedManualEnlistment() => false;
+        internal static bool IsEmpty(string str) => string.IsNullOrEmpty(str);
         
         internal static Exception DatabaseNameTooLong()
         {
