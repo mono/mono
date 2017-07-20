@@ -741,7 +741,7 @@ namespace System.Runtime.InteropServices
 #else
 		public static bool IsComObject (object o)
 		{
-			throw new PlatformNotSupportedException ();
+			return false;
 		}
 #endif
 
