@@ -54,7 +54,7 @@ namespace MonoTests.System.Data.Connected
 		private ConnectionManager ()
 		{
 			//Environment.SetEnvironmentVariable(OdbcEnvVar, @"Driver={MySQL ODBC 5.3 Unicode Driver};server=127.0.0.1;uid=sa;pwd=qwerty123;");
-			//Environment.SetEnvironmentVariable(SqlEnvVar, @"server=127.0.0.1;database=master;user id=sa;password=qwerty123");
+			//Environment.SetEnvironmentVariable(SqlEnvVar, @"Server=.\SQLEXPRESS;Database=master;User Id=sa;Password=qwerty123;");
 
 			// Generate a random db name
 			DatabaseName = "monotest" + Guid.NewGuid().ToString().Substring(0, 7);
@@ -77,7 +77,7 @@ namespace MonoTests.System.Data.Connected
 				return null;
 
 			SqlConnection connection;
-#if MOBILE || COREFX_NS
+#if MOBILE
 			connection = new SqlConnection ();
 #else
 			DbProviderFactory factory = DbProviderFactories.GetFactory ("System.Data.SqlClient");
@@ -175,8 +175,7 @@ namespace MonoTests.System.Data.Connected
 		// Split SQL script by "GO" statements
 		private static IEnumerable<string> SplitSqlStatements(string sqlScript)
 		{
-			var statements = Regex.Split(sqlScript,
-					$@"^[\t ]*GO[\t ]*\d*[\t ]*(?:--.*)?$",
+			var statements = Regex.Split(sqlScript,	@"^\s*GO.*$",
 					RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase);
 			return statements.Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.Trim(' ', '\r', '\n'));
 		}

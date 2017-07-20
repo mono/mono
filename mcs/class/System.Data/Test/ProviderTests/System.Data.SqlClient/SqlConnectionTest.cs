@@ -162,7 +162,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 				// Cannot open database "invalidDB" requested
 				// by the login. The login failed
 				Assert.AreEqual (typeof (SqlException), ex.GetType (), "#2");
-				Assert.AreEqual ((byte) 14, ex.Class, "#3");
+				Assert.AreEqual ((byte) 11, ex.Class, "#3");
 				Assert.IsNull (ex.InnerException, "#4");
 				Assert.IsNotNull (ex.Message, "#5");
 				Assert.AreEqual (18456, ex.Number, "#7");

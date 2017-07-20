@@ -36,6 +36,8 @@ namespace System.Data.Common
         internal const string GetSchemaTable = "GetSchemaTable";
         internal const string Prepare = "Prepare";
         internal const string RollbackTransaction = "RollbackTransaction";
+        internal const string QuoteIdentifier = "QuoteIdentifier";
+        internal const string UnquoteIdentifier = "UnquoteIdentifier";
 
         internal static bool NeedManualEnlistment() => false;
         internal static bool IsEmpty(string str) => string.IsNullOrEmpty(str);
@@ -83,6 +85,11 @@ namespace System.Data.Common
         internal static ArgumentException InvalidDataType(TypeCode typecode)
         {
             return Argument(SR.GetString(SR.ADP_InvalidDataType, typecode.ToString()));
+        }
+
+        static internal InvalidOperationException QuotePrefixNotSet(string method) 
+        {
+            return InvalidOperation(Res.GetString(Res.ADP_QuotePrefixNotSet, method));
         }
         
         [ResourceExposure(ResourceScope.Machine)]

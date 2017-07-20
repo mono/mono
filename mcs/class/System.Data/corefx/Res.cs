@@ -41,4 +41,5 @@ internal static partial class Res
 	public const string ConfigSectionsUnique = "The '{0}' section can only appear once per config file.";
 	public const string ConfigRequiredAttributeMissing = "Required attribute '{0}' not found.";
 	public const string ConfigRequiredAttributeEmpty = "Required attribute '{0}' cannot be empty.";
+	public const string ADP_QuotePrefixNotSet = "{0} requires open connection when the quote prefix has not been set.";
 }
