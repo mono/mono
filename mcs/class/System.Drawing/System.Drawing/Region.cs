@@ -52,7 +52,7 @@ namespace System.Drawing
 		{
 			if (path == null)
 				throw new ArgumentNullException ("path");
-			Status status = GDIPlus.GdipCreateRegionPath (path.NativeObject, out nativeRegion);
+			Status status = GDIPlus.GdipCreateRegionPath (path.nativePath, out nativeRegion);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -87,7 +87,7 @@ namespace System.Drawing
 		{
 			if (path == null)
 				throw new ArgumentNullException ("path");
-			Status status = GDIPlus.GdipCombineRegionPath (nativeRegion, path.NativeObject, CombineMode.Union);
+			Status status = GDIPlus.GdipCombineRegionPath (nativeRegion, path.nativePath, CombineMode.Union);
                         GDIPlus.CheckStatus (status);                        
 		}
 
@@ -120,7 +120,7 @@ namespace System.Drawing
                 {
 			if (path == null)
 				throw new ArgumentNullException ("path");
-                        Status status = GDIPlus.GdipCombineRegionPath (nativeRegion, path.NativeObject, CombineMode.Intersect);
+                        Status status = GDIPlus.GdipCombineRegionPath (nativeRegion, path.nativePath, CombineMode.Intersect);
                         GDIPlus.CheckStatus (status);  
 		}
 
@@ -151,7 +151,7 @@ namespace System.Drawing
 		{
 			if (path == null)
 				throw new ArgumentNullException ("path");
-                        Status status = GDIPlus.GdipCombineRegionPath (nativeRegion, path.NativeObject, CombineMode.Complement);
+                        Status status = GDIPlus.GdipCombineRegionPath (nativeRegion, path.nativePath, CombineMode.Complement);
                         GDIPlus.CheckStatus (status);  
 		}
 
@@ -182,7 +182,7 @@ namespace System.Drawing
 		{
 			if (path == null)
 				throw new ArgumentNullException ("path");
-                        Status status = GDIPlus.GdipCombineRegionPath (nativeRegion, path.NativeObject, CombineMode.Exclude);
+                        Status status = GDIPlus.GdipCombineRegionPath (nativeRegion, path.nativePath, CombineMode.Exclude);
                         GDIPlus.CheckStatus (status);                                                   
 		}
 
@@ -213,7 +213,7 @@ namespace System.Drawing
 		{
 			if (path == null)
 				throw new ArgumentNullException ("path");
-                        Status status = GDIPlus.GdipCombineRegionPath (nativeRegion, path.NativeObject, CombineMode.Xor);
+                        Status status = GDIPlus.GdipCombineRegionPath (nativeRegion, path.nativePath, CombineMode.Xor);
                         GDIPlus.CheckStatus (status);  
 		}
 
@@ -554,8 +554,7 @@ namespace System.Drawing
 			status = GDIPlus.GdipGetRegionData (nativeRegion, buff, size, out filled);
 			GDIPlus.CheckStatus (status);                      
 			
-			RegionData rgndata = new RegionData();
-			rgndata.Data = buff;
+			RegionData rgndata = new RegionData (buff);
 			
 			return rgndata;
 		}

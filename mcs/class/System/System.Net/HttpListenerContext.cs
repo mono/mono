@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP
-
 using System.Collections.Specialized;
 using System.IO;
 using System.Security.Principal;
@@ -162,5 +160,3 @@ namespace System.Net {
 		}
 	}
 }
-#endif
-

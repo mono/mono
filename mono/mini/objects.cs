@@ -1035,6 +1035,19 @@ class Tests {
 		return 0;
 	}
 
+	static Nullable<bool> s_nullb;
+	static AStruct s_struct1;
+
+	/* test if VES uses correct sizes for value type write to static field */
+	public static int test_0_static_nullable_bool () {
+		s_struct1 = new AStruct (0x1337dead);
+		s_nullb = true;
+		/* make sure that the write to s_nullb didn't smash the value after it */
+		if (s_struct1.i != 0x1337dead)
+			return 2;
+		return 0;
+	}
+
 	public static int test_71_long_shift_right () {
 		ulong value = 38654838087;
 		int x = 0;
@@ -1796,6 +1809,25 @@ ncells ) {
 
         return 0;
     }
+
+	public static int test_0_typedref () {
+		int i = 5;
+		System.TypedReference r = __makeref(i);
+		System.Type t = __reftype(r);
+
+		if (t != typeof (int))
+			return 1;
+		int j = __refvalue(r, int);
+		if (j != 5)
+			return 2;
+
+		try {
+			object o = __refvalue (r, object);
+		} catch (InvalidCastException) {
+		}
+
+		return 0;
+	}
 }
 
 #if __MOBILE__

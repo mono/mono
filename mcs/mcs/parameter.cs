@@ -142,6 +142,9 @@ namespace Mono.CSharp {
 	}
 
 	public class ParamsParameter : Parameter {
+
+		bool ParamsAttributeEmit;
+
 		public ParamsParameter (FullNamedExpression type, string name, Attributes attrs, Location loc):
 			base (type, name, Parameter.Modifier.PARAMS, attrs, loc)
 		{
@@ -158,13 +161,18 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			var mc = ec as MemberCore;
+			ParamsAttributeEmit = mc == null || (mc.ModFlags & Modifiers.OVERRIDE) == 0;
+
 			return parameter_type;
 		}
 
 		public override void ApplyAttributes (MethodBuilder mb, ConstructorBuilder cb, int index, PredefinedAttributes pa)
 		{
 			base.ApplyAttributes (mb, cb, index, pa);
-			pa.ParamArray.EmitAttribute (builder);
+
+			if (ParamsAttributeEmit)
+				pa.ParamArray.EmitAttribute (builder);
 		}
 	}
 
@@ -717,6 +725,10 @@ namespace Mono.CSharp {
 					pa.Dynamic.EmitAttribute (builder);
 				} else if (parameter_type.HasDynamicElement) {
 					pa.Dynamic.EmitAttribute (builder, parameter_type, Location);
+				}
+
+				if (parameter_type.HasNamedTupleElement) {
+					pa.TupleElementNames.EmitAttribute (builder, parameter_type, Location);
 				}
 			}
 		}

@@ -257,7 +257,6 @@ System.Reflection/MonoProperty.cs
 System.Reflection/ParameterInfo.cs
 System.Reflection/PortableExecutableKinds.cs
 System.Reflection/PropertyInfo.cs
-System.Reflection/ReflectionTypeLoadException.cs
 System.Reflection/StrongNameKeyPair.cs
 System.Reflection.Emit/AssemblyBuilder.cs
 System.Reflection.Emit/AssemblyBuilderAccess.cs
@@ -362,24 +361,13 @@ System.Runtime.InteropServices/_Type.cs
 System.Runtime.InteropServices/_TypeBuilder.cs
 System.Runtime.InteropServices/BIND_OPTS.cs
 System.Runtime.InteropServices/BINDPTR.cs
-System.Runtime.InteropServices/CALLCONV.cs
 System.Runtime.InteropServices/DESCKIND.cs
-System.Runtime.InteropServices/DISPPARAMS.cs
-System.Runtime.InteropServices/ELEMDESC.cs
-System.Runtime.InteropServices/EXCEPINFO.cs
 System.Runtime.InteropServices/ExporterEventKind.cs
 System.Runtime.InteropServices/ExtensibleClassFactory.cs
 System.Runtime.InteropServices/FILETIME.cs
-System.Runtime.InteropServices/FUNCDESC.cs
-System.Runtime.InteropServices/FUNCFLAGS.cs
-System.Runtime.InteropServices/FUNCKIND.cs
 System.Runtime.InteropServices/GCHandle.cs
 System.Runtime.InteropServices/GCHandleType.cs
-System.Runtime.InteropServices/IDLDESC.cs
-System.Runtime.InteropServices/IDLFLAG.cs
 System.Runtime.InteropServices/IErrorInfo.cs
-System.Runtime.InteropServices/IMPLTYPEFLAGS.cs
-System.Runtime.InteropServices/INVOKEKIND.cs
 System.Runtime.InteropServices/ITypeLibConverter.cs
 System.Runtime.InteropServices/ITypeLibExporterNameProvider.cs
 System.Runtime.InteropServices/ITypeLibExporterNotifySink.cs
@@ -389,8 +377,6 @@ System.Runtime.InteropServices/LIBFLAGS.cs
 System.Runtime.InteropServices/ManagedErrorInfo.cs
 System.Runtime.InteropServices/Marshal.cs
 System.Runtime.InteropServices/MarshalAsAttribute.cs
-System.Runtime.InteropServices/PARAMDESC.cs
-System.Runtime.InteropServices/PARAMFLAG.cs
 System.Runtime.InteropServices/RegistrationClassContext.cs
 System.Runtime.InteropServices/RegistrationConnectionType.cs
 System.Runtime.InteropServices/STATSTG.cs
@@ -398,10 +384,6 @@ System.Runtime.InteropServices/RegistrationServices.cs
 System.Runtime.InteropServices/SafeBuffer.cs
 System.Runtime.InteropServices/SafeHandle.cs
 System.Runtime.InteropServices/SYSKIND.cs
-System.Runtime.InteropServices/TYPEATTR.cs
-System.Runtime.InteropServices/TYPEDESC.cs
-System.Runtime.InteropServices/TYPEFLAGS.cs
-System.Runtime.InteropServices/TYPEKIND.cs
 System.Runtime.InteropServices/TYPELIBATTR.cs
 System.Runtime.InteropServices/TypeLibConverter.cs
 System.Runtime.InteropServices/TypeLibExporterFlags.cs
@@ -418,10 +400,7 @@ System.Runtime.InteropServices/UCOMIPersistFile.cs
 System.Runtime.InteropServices/UCOMIRunningObjectTable.cs
 System.Runtime.InteropServices/UCOMIStream.cs
 System.Runtime.InteropServices/UCOMITypeComp.cs
-System.Runtime.InteropServices/UCOMITypeInfo.cs
 System.Runtime.InteropServices/UCOMITypeLib.cs
-System.Runtime.InteropServices/VARDESC.cs
-System.Runtime.InteropServices/VARFLAGS.cs
 System.Runtime.InteropServices/CustomQueryInterfaceMode.cs
 System.Runtime.InteropServices/ComEventsHelper.cs
 
@@ -605,7 +584,6 @@ System.Runtime.Remoting.Proxies/ProxyAttribute.cs
 System.Runtime.Remoting.Services/EnterpriseServicesHelper.cs
 System.Runtime.Remoting.Services/ITrackingHandler.cs
 System.Runtime.Remoting.Services/TrackingServices.cs
-System.Runtime.Loader/AssemblyLoadContext.cs
 System.Runtime.Versioning/CompatibilitySwitch.cs
 System.Security/CodeAccessPermission.cs
 System.Security/HostProtectionException.cs
@@ -871,7 +849,6 @@ System.Threading.Tasks/DecoupledTask.cs
 ../Mono.Parallel/Mono.Threading/AtomicBoolean.cs
 
 ReferenceSources/__ConsoleStream.cs
-ReferenceSources/AppContextSwitches.cs
 ReferenceSources/Array.cs
 ReferenceSources/BCLDebug.cs
 ReferenceSources/CalendarData.cs
@@ -879,7 +856,6 @@ ReferenceSources/CompatibilitySwitches.cs
 ReferenceSources/CultureData.cs
 ReferenceSources/DefaultBinder.cs
 ReferenceSources/Environment.cs
-ReferenceSources/HashHelpers.cs
 ReferenceSources/ParseNumbers.cs
 ReferenceSources/AppDomain.cs
 ReferenceSources/CLRConfig.cs
@@ -1054,6 +1030,8 @@ ReferenceSources/Type.cs
 ../referencesource/mscorlib/system/version.cs
 
 ../referencesource/mscorlib/system/AppContext/AppContext.cs
+../referencesource/mscorlib/system/AppContext/AppContextSwitches.cs
+ReferenceSources/AppContextDefaultValues.cs
 
 ../referencesource/mscorlib/system/collections/arraylist.cs
 ../referencesource/mscorlib/system/collections/bitarray.cs
@@ -1234,6 +1212,7 @@ ReferenceSources/Type.cs
 ../referencesource/mscorlib/system/reflection/pointer.cs
 ../referencesource/mscorlib/system/reflection/propertyattributes.cs
 ../referencesource/mscorlib/system/reflection/reflectioncontext.cs
+../referencesource/mscorlib/system/reflection/reflectiontypeloadexception.cs
 ../referencesource/mscorlib/system/reflection/resourceattributes.cs
 ../referencesource/mscorlib/system/reflection/RuntimeReflectionExtensions.cs
 ../referencesource/mscorlib/system/reflection/targetexception.cs
@@ -1302,6 +1281,7 @@ ReferenceSources/Type.cs
 ../referencesource/mscorlib/system/runtime/interopservices/safearraytypemismatchexception.cs
 ../referencesource/mscorlib/system/runtime/interopservices/safehandle.cs
 ../referencesource/mscorlib/system/runtime/interopservices/sehexception.cs
+../referencesource/mscorlib/system/runtime/interopservices/ucomitypeinfo.cs
 ../referencesource/mscorlib/system/runtime/interopservices/ucomienumconnections.cs
 ../referencesource/mscorlib/system/runtime/interopservices/unknownwrapper.cs
 ../referencesource/mscorlib/system/runtime/interopservices/variantWrapper.cs
@@ -1639,31 +1619,18 @@ coreclr/SorterArray.cs
 corert/AddrofIntrinsics.cs
 corert/Debug.cs
 corert/EnvironmentAugments.cs
-corert/Interop.cs
-corert/Interop.MemAllocFree.cs
 corert/RelocatedTypeAttribute.cs
 corert/RuntimeThread.cs
+corert/ThreadPoolBoundHandle.cs
 
 ../../../external/corert/src/Common/src/Interop/Unix/Interop.Libraries.cs
-
-../../../external/corert/src/Common/src/Interop/Unix/System.Private.CoreLib.Native/Interop.MemAllocFree.cs
-
-../../../external/corert/src/Common/src/Interop/Windows/Interop.Libraries.cs
-
-../../../external/corert/src/Common/src/Interop/Windows/mincore/Interop.MemAllocFree.cs
-../../../external/corert/src/Common/src/Interop/Windows/mincore/Interop.ThreadPoolIO.cs
 
 ../../../external/corert/src/Common/src/System/Numerics/Hashing/HashHelpers.cs
 
 ../../../external/corert/src/Runtime.Base/src/System/Runtime/InteropServices/NativeCallableAttribute.cs
 
-
-../../../external/corert/src/System.Private.CoreLib/shared/Interop/Windows/Interop.Errors.cs
-../../../external/corert/src/System.Private.CoreLib/shared/Interop/Windows/Interop.Libraries.cs
-
-../../../external/corert/src/System.Private.CoreLib/shared/Interop/Windows/Kernel32/Interop.FormatMessage.cs
-
 ../../../external/corert/src/System.Private.CoreLib/shared/System/TupleExtensions.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/ValueTuple.cs
 
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Collections/DictionaryEntry.cs
 
@@ -1671,19 +1638,17 @@ corert/RuntimeThread.cs
 
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Diagnostics/Debug.cs
 
-../../../external/corert/src/System.Private.CoreLib/shared/System/IO/Win32Marshal.cs
-
+../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/CompilerServices/IsReadOnlyAttribute.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/CompilerServices/IsByRefLikeAttribute.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/CompilerServices/ITuple.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/CompilerServices/RuntimeFeature.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/CompilerServices/TupleElementNamesAttribute.cs
 
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Threading/DeferredDisposableLifetime.cs
 
 
-../../../external/corert/src/System.Private.CoreLib/src/Microsoft/Win32/SafeHandles/SafeThreadPoolIOHandle.cs
-
 ../../../external/corert/src/System.Private.CoreLib/src/System/Array.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Tuple.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/ValueTuple.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/LowLevelComparer.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/ObjectEqualityComparer.cs
@@ -1691,14 +1656,11 @@ corert/RuntimeThread.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/ArraySortHelper.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/IDictionaryDebugView.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/Dictionary.cs
-
-../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolBoundHandle.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolNativeOverlapped.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolNativeOverlapped.ExecutionContextCallbackArgs.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolNativeOverlapped.OverlappedData.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolPreAllocatedOverlapped.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/NonRandomizedStringEqualityComparer.cs
 
 corefx/SR.cs
+
+../../../external/corefx/src/System.Collections/src/System/Collections/Generic/CollectionExtensions.cs
 
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/CDSCollectionETWBCLProvider.cs
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/ConcurrentDictionary.cs

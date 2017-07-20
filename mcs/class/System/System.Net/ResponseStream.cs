@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP
-
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
@@ -248,5 +246,4 @@ namespace System.Net {
 		}
 	}
 }
-#endif
 

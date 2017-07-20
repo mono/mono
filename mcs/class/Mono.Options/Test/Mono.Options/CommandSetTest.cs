@@ -228,7 +228,7 @@ namespace MonoTests.Mono.Options
 			e.Run = (args) => e.CommandSet.Out.WriteLine (string.Join (" ", args));
 
 			var o = new StringWriter ();
-			var c = new CommandSet ("set", output:o) {
+			var c = new CommandSet ("set", output:o, error: Console.Error) {
 				e,
 			};
 			Assert.AreEqual (0, c.Run (new [] { "help", "echo" }));

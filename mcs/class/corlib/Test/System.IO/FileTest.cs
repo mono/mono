@@ -14,6 +14,8 @@ using System;
 using System.IO;
 using System.Globalization;
 using System.Threading;
+using System.Runtime.InteropServices;
+
 
 using NUnit.Framework;
 
@@ -528,6 +530,12 @@ namespace MonoTests.System.IO
 				File.SetAttributes (path, FileAttributes.Normal);
 				DeleteFile (path);
 			}
+		}
+
+		[Test]
+		public void Delete_NonExisting_NoException ()
+		{
+			File.Delete (Path.Combine (Directory.GetDirectoryRoot (Directory.GetCurrentDirectory ()), "monononexistingfile.dat"));
 		}
 
 		[Test]
@@ -2679,6 +2687,54 @@ namespace MonoTests.System.IO
 			MoveTest (FileAccess.ReadWrite, FileShare.Read | FileShare.Delete, true);
 			MoveTest (FileAccess.ReadWrite, FileShare.Write | FileShare.Delete, true);
 			MoveTest (FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete, true);
+		}
+
+
+		[DllImport ("libc", SetLastError=true)]
+		public static extern int symlink (string oldpath, string newpath);
+
+		[Test]
+		public void SymLinkLoop ()
+		{
+			if (!RunningOnUnix)
+				Assert.Ignore ("Symlink are hard on windows");
+
+			var name1 = Path.GetRandomFileName ();
+			var name2 = Path.GetRandomFileName ();
+
+			var path1 = Path.Combine (Path.GetTempPath (), name1);
+			var path2 = Path.Combine (Path.GetTempPath (), name2);
+
+			File.Delete (path1);
+			File.Delete (path2);
+
+			try {
+				symlink (path1, path2);
+				symlink (path2, path1);
+
+				Assert.IsTrue (File.Exists (path1), "File.Exists must return true for path1 symlink loop");
+				Assert.IsTrue (File.Exists (path2), "File.Exists must return true for path2 symlink loop");
+
+				try {
+					using (var f = File.Open (path1, FileMode.Open, FileAccess.Read)) {
+						Assert.Fail ("File.Open must throw for symlink loops");
+					}
+				} catch (IOException ex) {
+					Assert.AreEqual (0x80070781u, (uint)ex.HResult, "Ensure HRESULT is correct");
+				}
+
+				File.Delete (path1); //Delete must not throw and must work
+				Assert.IsFalse (File.Exists (path1), "File.Delete must delete symlink loops");
+
+			} finally {
+				try {
+					File.Delete (path1);
+					File.Delete (path2);
+				} catch (IOException) {
+					//Don't double fault any exception from the tests.
+				}
+
+			}
 		}
 	}
 }

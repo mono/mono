@@ -36,7 +36,6 @@
 #include <mono/metadata/threads.h>
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/debug-helpers.h>
-#include "mono/metadata/profiler.h"
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/mono-config.h>
 #include <mono/metadata/environment.h>
@@ -2078,8 +2077,11 @@ mono_compile_create_vars (MonoCompile *cfg)
 	if (cfg->verbose_level > 2)
 		g_print ("creating locals\n");
 
-	for (i = 0; i < header->num_locals; ++i)
+	for (i = 0; i < header->num_locals; ++i) {
+		if (cfg->verbose_level > 2)
+			g_print ("\tlocal [%d]: ", i);
 		cfg->locals [i] = mono_compile_create_var (cfg, header->locals [i], OP_LOCAL);
+	}
 
 	if (cfg->verbose_level > 2)
 		g_print ("locals done\n");
@@ -2152,18 +2154,11 @@ mono_postprocess_patches (MonoCompile *cfg)
 		}
 		case MONO_PATCH_INFO_SWITCH: {
 			gpointer *table;
-#if defined(__native_client__) && defined(__native_client_codegen__)
-			/* This memory will leak.  */
-			/* TODO: can we free this when  */
-			/* making the final jump table? */
-			table = g_malloc0 (sizeof(gpointer) * patch_info->data.table->table_size);
-#else
 			if (cfg->method->dynamic) {
 				table = (void **)mono_code_manager_reserve (cfg->dynamic_info->code_mp, sizeof (gpointer) * patch_info->data.table->table_size);
 			} else {
 				table = (void **)mono_domain_code_reserve (cfg->domain, sizeof (gpointer) * patch_info->data.table->table_size);
 			}
-#endif
 
 			for (i = 0; i < patch_info->data.table->table_size; i++) {
 				/* Might be NULL if the switch is eliminated */
@@ -2236,9 +2231,6 @@ mono_codegen (MonoCompile *cfg)
 		if (cfg->gen_seq_points && !cfg->gen_sdb_seq_points)
 			mono_bb_deduplicate_op_il_seq_points (cfg, bb);
 	}
-
-	if (cfg->prof_options & MONO_PROFILE_COVERAGE)
-		cfg->coverage_info = mono_profiler_coverage_alloc (cfg->method, cfg->num_bblocks);
 
 	code = mono_arch_emit_prolog (cfg);
 
@@ -2385,10 +2377,7 @@ mono_codegen (MonoCompile *cfg)
 	} else {
 		mono_domain_code_commit (code_domain, cfg->native_code, cfg->code_size, cfg->code_len);
 	}
-#if defined(__native_client_codegen__) && defined(__native_client__)
-	cfg->native_code = code_dest;
-#endif
-	mono_profiler_code_buffer_new (cfg->native_code, cfg->code_len, MONO_PROFILER_CODE_BUFFER_METHOD, cfg->method);
+	MONO_PROFILER_RAISE (jit_code_buffer, (cfg->native_code, cfg->code_len, MONO_PROFILER_CODE_BUFFER_METHOD, cfg->method));
 	
 	mono_arch_flush_icache (cfg->native_code, cfg->code_len);
 
@@ -2869,12 +2858,8 @@ mono_create_gc_safepoint (MonoCompile *cfg, MonoBasicBlock *bblock)
 	if (cfg->verbose_level > 1)
 		printf ("ADDING SAFE POINT TO BB %d\n", bblock->block_num);
 
-#if defined(__native_client_codegen__)
-	NEW_AOTCONST (cfg, poll_addr, MONO_PATCH_INFO_GC_SAFE_POINT_FLAG, (gpointer)&__nacl_thread_suspension_needed);
-#else
 	g_assert (mono_threads_is_coop_enabled ());
 	NEW_AOTCONST (cfg, poll_addr, MONO_PATCH_INFO_GC_SAFE_POINT_FLAG, (gpointer)&mono_polling_required);
-#endif
 
 	MONO_INST_NEW (cfg, ins, OP_GC_SAFE_POINT);
 	ins->sreg1 = poll_addr->dreg;
@@ -2919,19 +2904,13 @@ mono_insert_safepoints (MonoCompile *cfg)
 {
 	MonoBasicBlock *bb;
 
-#if !defined(__native_client_codegen__)
 	if (!mono_threads_is_coop_enabled ())
 		return;
-#endif
 
 	if (cfg->method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {
 		WrapperInfo *info = mono_marshal_get_wrapper_info (cfg->method);
-#if defined(__native_client__) || defined(__native_client_codegen__)
-		gpointer poll_func = &mono_nacl_gc;
-#else
 		g_assert (mono_threads_is_coop_enabled ());
 		gpointer poll_func = &mono_threads_state_poll;
-#endif
 
 		if (info && info->subtype == WRAPPER_SUBTYPE_ICALL_WRAPPER && info->d.icall.func == poll_func) {
 			if (cfg->verbose_level > 1)
@@ -3117,8 +3096,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	static char *verbose_method_name;
 
 	InterlockedIncrement (&mono_jit_stats.methods_compiled);
-	if (mono_profiler_get_events () & MONO_PROFILE_JIT_COMPILATION)
-		mono_profiler_method_jit (method);
+	MONO_PROFILER_RAISE (jit_begin, (method));
 	if (MONO_METHOD_COMPILE_BEGIN_ENABLED ())
 		MONO_PROBE_METHOD_COMPILE_BEGIN (method);
 
@@ -3181,7 +3159,6 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	cfg->method = method_to_compile;
 	cfg->mempool = mono_mempool_new ();
 	cfg->opt = opts;
-	cfg->prof_options = mono_profiler_get_events ();
 	cfg->run_cctors = run_cctors;
 	cfg->domain = domain;
 	cfg->verbose_level = mini_verbose;
@@ -3207,13 +3184,9 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 		cfg->gen_seq_points = FALSE;
 		cfg->gen_sdb_seq_points = FALSE;
 	}
-	/* coop / nacl requires loop detection to happen */
-#if defined(__native_client_codegen__)
-	cfg->opt |= MONO_OPT_LOOP;
-#else
+	/* coop requires loop detection to happen */
 	if (mono_threads_is_coop_enabled ())
 		cfg->opt |= MONO_OPT_LOOP;
-#endif
 	cfg->explicit_null_checks = debug_options.explicit_null_checks || (flags & JIT_FLAG_EXPLICIT_NULL_CHECKS);
 	cfg->soft_breakpoints = debug_options.soft_breakpoints;
 	cfg->check_pinvoke_callconv = debug_options.check_pinvoke_callconv;
@@ -4063,7 +4036,6 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 	MonoJitInfo *jinfo, *info;
 	MonoVTable *vtable;
 	MonoException *ex = NULL;
-	guint32 prof_options;
 	GTimer *jit_timer;
 	MonoMethod *prof_method, *shared;
 
@@ -4094,7 +4066,7 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 		if (!jinfo)
 			jinfo = mono_jit_info_table_find (mono_domain_get (), (char *)code);
 		if (jinfo)
-			mono_profiler_method_end_jit (method, jinfo, MONO_PROFILE_OK);
+			MONO_PROFILER_RAISE (jit_done, (method, jinfo));
 		return code;
 	} else if ((method->iflags & METHOD_IMPL_ATTRIBUTE_RUNTIME)) {
 		const char *name = method->name;
@@ -4235,8 +4207,7 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 	}
 
 	if (ex) {
-		if (cfg->prof_options & MONO_PROFILE_JIT_COMPILATION)
-			mono_profiler_method_end_jit (method, NULL, MONO_PROFILE_FAILED);
+		MONO_PROFILER_RAISE (jit_failed, (method));
 
 		mono_destroy_compile (cfg);
 		mono_error_set_exception_instance (error, ex);
@@ -4278,8 +4249,6 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 	}
 
 	jinfo = cfg->jit_info;
-
-	prof_options = cfg->prof_options;
 
 	/*
 	 * Update global stats while holding a lock, instead of doing many
@@ -4345,22 +4314,23 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 		return NULL;
 	}
 
-	if (prof_options & MONO_PROFILE_JIT_COMPILATION) {
-		if (method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {
-			if (mono_marshal_method_from_wrapper (method)) {
-				/* Native func wrappers have no method */
-				/* The profiler doesn't know about wrappers, so pass the original icall method */
-				mono_profiler_method_end_jit (mono_marshal_method_from_wrapper (method), jinfo, MONO_PROFILE_OK);
-			}
-		}
-		mono_profiler_method_end_jit (method, jinfo, MONO_PROFILE_OK);
-		if (prof_method != method) {
-			mono_profiler_method_end_jit (prof_method, jinfo, MONO_PROFILE_OK);
+	if (method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {
+		if (mono_marshal_method_from_wrapper (method)) {
+			/* Native func wrappers have no method */
+			/* The profiler doesn't know about wrappers, so pass the original icall method */
+			MONO_PROFILER_RAISE (jit_done, (mono_marshal_method_from_wrapper (method), jinfo));
 		}
 	}
+	MONO_PROFILER_RAISE (jit_done, (method, jinfo));
+	if (prof_method != method)
+		MONO_PROFILER_RAISE (jit_done, (prof_method, jinfo));
 
-	if (!mono_runtime_class_init_full (vtable, error))
-		return NULL;
+	if (!(method->wrapper_type == MONO_WRAPPER_REMOTING_INVOKE ||
+		  method->wrapper_type == MONO_WRAPPER_REMOTING_INVOKE_WITH_CHECK ||
+		  method->wrapper_type == MONO_WRAPPER_XDOMAIN_INVOKE)) {
+		if (!mono_runtime_class_init_full (vtable, error))
+			return NULL;
+	}
 	return code;
 }
 

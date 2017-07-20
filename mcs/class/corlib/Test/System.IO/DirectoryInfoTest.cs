@@ -978,7 +978,7 @@ namespace MonoTests.System.IO
 		public void LastAccessTimeUtc ()
 		{
 			DirectoryInfo info = new DirectoryInfo (TempFolder);
-			info.LastAccessTimeUtc = DateTime.Now;
+			info.LastAccessTimeUtc = DateTime.UtcNow;
 		}
 
 		[Test]
@@ -992,7 +992,7 @@ namespace MonoTests.System.IO
 		public void CreationTimeUtc ()
 		{
 			DirectoryInfo info = new DirectoryInfo (TempFolder);
-			info.CreationTimeUtc = DateTime.Now;
+			info.CreationTimeUtc = DateTime.UtcNow;
 		}
 
 		[Test]

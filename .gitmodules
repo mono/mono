@@ -20,18 +20,12 @@
 [submodule "external/reference-assemblies"]
 	path = external/binary-reference-assemblies
 	url = git://github.com/mono/reference-assemblies.git
-[submodule "external/Lucene.Net.Light"]
-	path = external/Lucene.Net.Light
-	url = git://github.com/mono/Lucene.Net.Light.git
 [submodule "external/nunit-lite"]
 	path = external/nunit-lite
 	url = git://github.com/mono/NUnitLite.git
 [submodule "external/nuget-buildtasks"]
 	path = external/nuget-buildtasks
 	url = git://github.com/mono/NuGet.BuildTasks
-[submodule "external/buildtools"]
-	path = external/buildtools
-	url = git://github.com/mono/buildtools.git
 [submodule "external/cecil-legacy"]
 	path = external/cecil-legacy
 	url = git://github.com/mono/cecil.git
@@ -58,3 +52,9 @@
 [submodule "external/xunit-binaries"]
 	path = external/xunit-binaries
 	url = git://github.com/mono/xunit-binaries.git
+[submodule "external/api-doc-tools"]
+	path = external/api-doc-tools
+	url = git://github.com/mono/api-doc-tools.git
+[submodule "external/api-snapshot"]
+	path = external/api-snapshot
+	url = git://github.com/mono/api-snapshot.git

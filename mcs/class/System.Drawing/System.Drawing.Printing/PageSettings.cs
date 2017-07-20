@@ -199,10 +199,10 @@ namespace System.Drawing.Printing
 		public object Clone ()
 		{
 			// We do a deep copy
-			PrinterResolution pres = new PrinterResolution (this.printerResolution.X, this.printerResolution.Y, this.printerResolution.Kind);
-			PaperSource psource = new PaperSource (this.paperSource.SourceName, this.paperSource.Kind);
+			PrinterResolution pres = new PrinterResolution (this.printerResolution.Kind, this.printerResolution.X, this.printerResolution.Y);
+			PaperSource psource = new PaperSource (this.paperSource.Kind, this.paperSource.SourceName);
 			PaperSize psize = new PaperSize (this.paperSize.PaperName, this.paperSize.Width, this.paperSize.Height);
-			psize.SetKind (this.paperSize.Kind);
+			psize.RawKind = (int)this.paperSize.Kind;
 
 			PageSettings ps = new PageSettings (this.printerSettings, this.color, this.landscape,
 					psize, psource, pres);

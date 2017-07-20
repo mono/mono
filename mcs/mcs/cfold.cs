@@ -469,27 +469,37 @@ namespace Mono.CSharp {
 				//
 				lc = left as EnumConstant;
 				rc = right as EnumConstant;
-				if (lc != null || rc != null){
+				if (lc != null || rc != null) {
+					TypeSpec res_type;
 					if (lc == null) {
-						lc = rc;
-						lt = lc.Type;
-						right = left;
+						res_type = right.Type;
+
+						// Y has to be implicitly convertible to E.base
+						left = left.ConvertImplicitly (rc.Child.Type);
+						if (left == null)
+							return null;
+
+						right = rc.Child;
+					} else {
+						res_type = left.Type;
+
+						// U has to be implicitly convertible to E.base
+						right = right.ConvertImplicitly (lc.Child.Type);
+						if (right == null)
+							return null;
+
+						left = lc.Child;
 					}
 
-					// U has to be implicitly convetible to E.base
-					right = right.ConvertImplicitly (lc.Child.Type);
-					if (right == null)
-						return null;
-
-					result = BinaryFold (ec, oper, lc.Child, right, loc);
+					result = BinaryFold (ec, oper, left, right, loc);
 					if (result == null)
 						return null;
 
-					result = result.Reduce (ec, lt);
+					result = result.Reduce (ec, res_type);
 					if (result == null)
 						return null;
 
-					return new EnumConstant (result, lt);
+					return new EnumConstant (result, res_type);
 				}
 
 				if (left is NullLiteral && right is NullLiteral) {

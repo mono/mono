@@ -5,7 +5,13 @@ export TESTCMD=${MONO_REPO_ROOT}/scripts/ci/run-step.sh
 
 export TEST_HARNESS_VERBOSE=1
 
-if [[ ${label} == w* ]]; then
+if [[ $CI_TAGS == *'collect-coverage'* ]]; then
+    # Collect coverage for further use by lcov and similar tools.
+    # Coverage must be collected with -O0 and debug information.
+    export CFLAGS="-ggdb3 --coverage -O0"
+    # Collect coverage on all optimizations
+    export MONO_ENV_OPTIONS="$MONO_ENV_OPTIONS -O=all"
+elif [[ ${label} == w* ]]; then
     # Passing -ggdb3 on Cygwin breaks linking against libmonosgen-x.y.dll
     export CFLAGS="-g -O2"
 else
@@ -19,8 +25,8 @@ if [[ ${label} == 'w64' ]]; then PLATFORM=x64; EXTRA_CONF_FLAGS="${EXTRA_CONF_FL
 
 if [[ ${CI_TAGS} == *'coop-gc'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-cooperative-gc=yes"; fi
 
-if [[ ${CI_TAGS} == *'checked-coop'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-checked-build=gc,thread"; export MONO_CHECK_MODE=gc,thread; fi
-if [[ ${CI_TAGS} == *'checked-all'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-checked-build=all"; export MONO_CHECK_MODE=all; fi
+if [[ ${CI_TAGS} == *'checked-coop'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-checked-build=gc,thread"; fi
+if [[ ${CI_TAGS} == *'checked-all'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-checked-build=all"; fi
 
 if [[ ${CI_TAGS} == *'mcs-compiler'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-csc=mcs"; fi
 
@@ -82,6 +88,9 @@ make_parallelism=-j4
 if [[ ${label} == 'debian-8-ppc64el' ]]; then make_parallelism=-j1; fi
 
 ${TESTCMD} --label=make --timeout=300m --fatal make ${make_parallelism} -w V=1
+
+if [[ ${CI_TAGS} == *'checked-coop'* ]]; then export MONO_CHECK_MODE=gc,thread; fi
+if [[ ${CI_TAGS} == *'checked-all'* ]]; then export MONO_CHECK_MODE=all; fi
 
 if [[ ${CI_TAGS} == *'acceptance-tests'* ]];
     then

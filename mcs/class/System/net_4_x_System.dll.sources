@@ -1,4 +1,5 @@
 #include common.sources
+#include common_networking.sources
 
 Microsoft.CSharp/CSharpCodeGenerator.cs
 Microsoft.VisualBasic/VBCodeGenerator.cs
@@ -244,7 +245,6 @@ Mono.Net.Dns/ResolverError.cs
 Mono.Net.Dns/SimpleResolverEventArgs.cs
 ReferenceSources/BinaryCompatibility.cs
 ReferenceSources/ConfigurationManagerInternalFactory.cs
-ReferenceSources/SR2.cs
 
 ../referencesource/System/misc/PrivilegedConfigurationManager.cs
 

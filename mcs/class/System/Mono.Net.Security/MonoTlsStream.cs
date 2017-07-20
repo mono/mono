@@ -41,6 +41,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Net.Security;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
@@ -52,9 +53,11 @@ namespace Mono.Net.Security
 	class MonoTlsStream
 	{
 #if SECURITY_DEP		
-		readonly IMonoTlsProvider provider;
+		readonly MonoTlsProvider provider;
 		readonly NetworkStream networkStream;		
 		readonly HttpWebRequest request;
+
+		readonly MonoTlsSettings settings;
 
 		internal HttpWebRequest Request {
 			get { return request; }
@@ -65,6 +68,8 @@ namespace Mono.Net.Security
 		internal IMonoSslStream SslStream {
 			get { return sslStream; }
 		}
+#else
+		const string EXCEPTION_MESSAGE = "System.Net.Security.SslStream is not supported on the current platform.";
 #endif
 
 		WebExceptionStatus status;
@@ -77,12 +82,9 @@ namespace Mono.Net.Security
 			get; set;
 		}
 
-#if SECURITY_DEP
-//		readonly ChainValidationHelper validationHelper;
-		readonly MonoTlsSettings settings;
-
 		public MonoTlsStream (HttpWebRequest request, NetworkStream networkStream)
 		{
+#if SECURITY_DEP
 			this.request = request;
 			this.networkStream = networkStream;
 
@@ -90,11 +92,16 @@ namespace Mono.Net.Security
 			provider = request.TlsProvider ?? MonoTlsProviderFactory.GetProviderInternal ();
 			status = WebExceptionStatus.SecureChannelFailure;
 
-			/*validationHelper =*/ ChainValidationHelper.Create (provider.Provider, ref settings, this);
+			ChainValidationHelper.Create (provider, ref settings, this);
+#else
+			status = WebExceptionStatus.SecureChannelFailure;
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+#endif
 		}
 
 		internal Stream CreateStream (byte[] buffer)
 		{
+#if SECURITY_DEP
 			sslStream = provider.CreateSslStream (networkStream, false, settings);
 
 			try {
@@ -111,7 +118,7 @@ namespace Mono.Net.Security
 					ServicePointManager.CheckCertificateRevocationList);
 
 				status = WebExceptionStatus.Success;
-			} catch (Exception) {
+			} catch {
 				status = WebExceptionStatus.SecureChannelFailure;
 				throw;
 			} finally {
@@ -136,7 +143,9 @@ namespace Mono.Net.Security
 			}
 
 			return sslStream.AuthenticatedStream;
-		}
+#else
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
 #endif
+		}
 	}
 }

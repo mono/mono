@@ -1165,8 +1165,16 @@ public class Tests : TestsBase, ITest2
 		return 42;
 	}
 
+	public int invoke_pass_nullable (int? i) {
+		return (int)i;
+	}
+
 	public int? invoke_return_nullable_null () {
 		return null;
+	}
+
+	public int invoke_pass_nullable_null (int? i) {
+		return i.HasValue ? 1 : 2;
 	}
 
 	public void invoke_type_load () {

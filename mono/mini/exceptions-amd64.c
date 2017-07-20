@@ -13,6 +13,11 @@
 
 #include <config.h>
 
+// Secret password to unlock wcscat_s on mxe, must happen before string.h included
+#ifdef __MINGW32__
+#define MINGW_HAS_SECURE_API 1
+#endif
+
 #include <glib.h>
 #include <string.h>
 
@@ -198,7 +203,7 @@ mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 	amd64_jump_reg (code, AMD64_R11);
 
 	mono_arch_flush_icache (start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
 
 	if (info)
 		*info = mono_tramp_info_create ("restore_context", start, code - start, ji, unwind_ops);
@@ -286,7 +291,7 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 	g_assert ((code - start) < kMaxCodeSize);
 
 	mono_arch_flush_icache (start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
 
 	if (info)
 		*info = mono_tramp_info_create ("call_filter", start, code - start, ji, unwind_ops);
@@ -469,7 +474,7 @@ get_throw_trampoline (MonoTrampInfo **info, gboolean rethrow, gboolean corlib, g
 	g_assert ((code - start) < kMaxCodeSize);
 	g_assert_checked (mono_arch_unwindinfo_validate_size (unwind_ops, MONO_MAX_TRAMPOLINE_UNWINDINFO_SIZE));
 
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
 
 	if (info)
 		*info = mono_tramp_info_create (tramp_name, start, code - start, ji, unwind_ops);
@@ -582,19 +587,23 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		guint64 rip;
 
 		if (((guint64)(*lmf)->previous_lmf) & 2) {
-			/* 
-			 * This LMF entry is created by the soft debug code to mark transitions to
-			 * managed code done during invokes.
-			 */
 			MonoLMFExt *ext = (MonoLMFExt*)(*lmf);
 
-			g_assert (ext->debugger_invoke);
-
-			memcpy (new_ctx, &ext->ctx, sizeof (MonoContext));
+			if (ext->debugger_invoke) {
+				/*
+				 * This LMF entry is created by the soft debug code to mark transitions to
+				 * managed code done during invokes.
+				 */
+				frame->type = FRAME_TYPE_DEBUGGER_INVOKE;
+				memcpy (new_ctx, &ext->ctx, sizeof (MonoContext));
+			} else if (ext->interp_exit) {
+				frame->type = FRAME_TYPE_INTERP_TO_MANAGED;
+				frame->interp_exit_data = ext->interp_exit_data;
+			} else {
+				g_assert_not_reached ();
+			}
 
 			*lmf = (MonoLMF *)(((guint64)(*lmf)->previous_lmf) & ~7);
-
-			frame->type = FRAME_TYPE_DEBUGGER_INVOKE;
 
 			return TRUE;
 		}
@@ -895,6 +904,7 @@ mono_arch_exceptions_init (void)
 	}
 }
 
+// Implies defined(TARGET_WIN32)
 #ifdef MONO_ARCH_HAVE_UNWIND_TABLE
 
 static void
@@ -1471,7 +1481,7 @@ mono_arch_unwindinfo_find_rt_func_in_table (const gpointer code, gsize code_size
 	return found_rt_func;
 }
 
-inline PRUNTIME_FUNCTION
+static inline PRUNTIME_FUNCTION
 mono_arch_unwindinfo_find_pc_rt_func_in_table (const gpointer pc)
 {
 	return mono_arch_unwindinfo_find_rt_func_in_table (pc, 0);
@@ -1815,7 +1825,7 @@ mono_tasklets_arch_restore (void)
 	g_assert ((code - start) <= kMaxCodeSize);
 
 	mono_arch_flush_icache (start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
 
 	saved = start;
 	return (MonoContinuationRestore)saved;

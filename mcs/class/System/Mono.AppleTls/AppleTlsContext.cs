@@ -33,9 +33,8 @@ using Mono.Security.Interface;
 
 using Mono.Net;
 using Mono.Net.Security;
-using Mono.Util;
 
-using ObjCRuntime;
+using ObjCRuntimeInternal;
 
 namespace Mono.AppleTls
 {
@@ -682,7 +681,7 @@ namespace Mono.AppleTls
 		[DllImport (SecurityLibrary)]
 		extern static /* OSStatus */ SslStatus SSLSetIOFuncs (/* SSLContextRef */ IntPtr context, /* SSLReadFunc */ SslReadFunc readFunc, /* SSLWriteFunc */ SslWriteFunc writeFunc);
 
-		[MonoPInvokeCallback (typeof (SslReadFunc))]
+		[Mono.Util.MonoPInvokeCallback (typeof (SslReadFunc))]
 		static SslStatus NativeReadCallback (IntPtr ptr, IntPtr data, ref IntPtr dataLength)
 		{
 			var handle = GCHandle.FromIntPtr (ptr);
@@ -702,7 +701,7 @@ namespace Mono.AppleTls
 			}
 		}
 
-		[MonoPInvokeCallback (typeof (SslWriteFunc))]
+		[Mono.Util.MonoPInvokeCallback (typeof (SslWriteFunc))]
 		static SslStatus NativeWriteCallback (IntPtr ptr, IntPtr data, ref IntPtr dataLength)
 		{
 			var handle = GCHandle.FromIntPtr (ptr);
@@ -849,12 +848,12 @@ namespace Mono.AppleTls
 		[DllImport (SecurityLibrary)]
 		extern static /* OSStatus */ SslStatus SSLClose (/* SSLContextRef */ IntPtr context);
 
-		public override void Close ()
+		public override void Shutdown ()
 		{
 			if (Interlocked.Exchange (ref pendingIO, 1) == 1)
 				throw new InvalidOperationException ();
 
-			Debug ("Close");
+			Debug ("Shutdown");
 
 			lastException = null;
 
@@ -863,7 +862,7 @@ namespace Mono.AppleTls
 					return;
 
 				var status = SSLClose (Handle);
-				Debug ("Close done: {0}", status);
+				Debug ("Shutdown done: {0}", status);
 				CheckStatusAndThrow (status);
 			} finally {
 				closed = true;

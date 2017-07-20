@@ -1795,7 +1795,7 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 				soffset += sizeof (gpointer);
 			}
 		if (ovf_size != 0)
-			mini_emit_memcpy (cfg, ppc_r1, doffset + soffset, src->dreg, soffset, ovf_size * sizeof (gpointer), 0);
+			mini_emit_memcpy (cfg, ppc_r1, doffset + soffset, src->dreg, soffset, ovf_size * sizeof (gpointer), SIZEOF_VOID_P);
 	} else if (ainfo->regtype == RegTypeFPStructByVal) {
 		soffset = 0;
 		for (i = 0; i < ainfo->vtregs; ++i) {
@@ -1810,7 +1810,7 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 			soffset += ainfo->size;
 			}
 		if (ovf_size != 0)
-			mini_emit_memcpy (cfg, ppc_r1, doffset + soffset, src->dreg, soffset, ovf_size * sizeof (gpointer), 0);
+			mini_emit_memcpy (cfg, ppc_r1, doffset + soffset, src->dreg, soffset, ovf_size * sizeof (gpointer), SIZEOF_VOID_P);
 	} else if (ainfo->regtype == RegTypeFP) {
 		int tmpr = mono_alloc_freg (cfg);
 		if (ainfo->size == 4)
@@ -1836,7 +1836,7 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 			g_assert (ovf_size > 0);
 
 		EMIT_NEW_VARLOADA (cfg, load, vtcopy, vtcopy->inst_vtype);
-		mini_emit_memcpy (cfg, load->dreg, 0, src->dreg, 0, size, 0);
+		mini_emit_memcpy (cfg, load->dreg, 0, src->dreg, 0, size, SIZEOF_VOID_P);
 
 		if (ainfo->offset)
 			MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, ppc_r1, ainfo->offset, load->dreg);
@@ -3182,17 +3182,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		g_print ("Basic block %d starting at offset 0x%x\n", bb->block_num, bb->native_offset);
 
 	cpos = bb->max_offset;
-
-	if (cfg->prof_options & MONO_PROFILE_COVERAGE) {
-		//MonoCoverageInfo *cov = mono_get_coverage_info (cfg->method);
-		//g_assert (!mono_compile_aot);
-		//cpos += 6;
-		//if (bb->cil_code)
-		//	cov->data [bb->dfn].iloffset = bb->cil_code - cfg->cil_code;
-		/* this is not thread save, but good enough */
-		/* fixme: howto handle overflows? */
-		//x86_inc_mem (code, &cov->data [bb->dfn].count); 
-	}
 
 	MONO_BB_FOR_EACH_INS (bb, ins) {
 		offset = code - cfg->native_code;
@@ -4918,9 +4907,6 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		MonoInst *ins;
 		bb->max_offset = max_offset;
 
-		if (cfg->prof_options & MONO_PROFILE_COVERAGE)
-			max_offset += 6; 
-
 		MONO_BB_FOR_EACH_INS (bb, ins)
 			max_offset += ins_native_length (cfg, ins);
 	}
@@ -5327,9 +5313,6 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 		max_epilog_size += 128;
 	
 	if (mono_jit_trace_calls != NULL)
-		max_epilog_size += 50;
-
-	if (cfg->prof_options & MONO_PROFILE_ENTER_LEAVE)
 		max_epilog_size += 50;
 
 	while (cfg->code_len + max_epilog_size > (cfg->code_size - 16)) {

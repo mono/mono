@@ -1236,6 +1236,8 @@ namespace Mono.Debugger.Soft
 					bool res = ReceivePacket ();
 					if (!res)
 						break;
+				} catch (ThreadAbortException) {
+					break;
 				} catch (Exception ex) {
 					if (!closed) {
 						Console.WriteLine (ex);
@@ -2212,7 +2214,7 @@ namespace Mono.Debugger.Soft
 		internal ValueImpl[] Type_GetValues (long id, long[] fields, long thread_id) {
 			int len = fields.Length;
 			PacketReader r;
-			if (thread_id != 0)
+			if (thread_id != 0 && Version.AtLeast(2, 3))
 				r = SendReceive (CommandSet.TYPE, (int)CmdType.GET_VALUES_2, new PacketWriter ().WriteId (id).WriteId (thread_id).WriteInt (len).WriteIds (fields));
 			else
 				r = SendReceive (CommandSet.TYPE, (int)CmdType.GET_VALUES, new PacketWriter ().WriteId (id).WriteInt (len).WriteIds (fields));

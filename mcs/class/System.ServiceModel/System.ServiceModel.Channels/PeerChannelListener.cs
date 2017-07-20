@@ -70,11 +70,11 @@ namespace System.ServiceModel.Channels
 
 		protected override TChannel OnAcceptChannel (TimeSpan timeout)
 		{
-			DateTime start = DateTime.Now;
+			DateTime start = DateTime.UtcNow;
 			if (channel != null)
 				if (!accept_handle.WaitOne (timeout))
 					throw new TimeoutException ();
-			channel = PopulateChannel (timeout - (DateTime.Now - start));
+			channel = PopulateChannel (timeout - (DateTime.UtcNow - start));
 			((CommunicationObject) (object) channel).Closed += delegate {
 				this.channel = null;
 				accept_handle.Set ();

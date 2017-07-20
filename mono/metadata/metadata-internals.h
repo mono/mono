@@ -51,6 +51,11 @@ struct _MonoType {
 #define MONO_PROCESSOR_ARCHITECTURE_AMD64 4
 #define MONO_PROCESSOR_ARCHITECTURE_ARM 5
 
+#if !defined(DISABLE_JIT) || defined(ENABLE_INTERPRETER)
+/* Some VES is available at runtime */
+#define ENABLE_ILGEN
+#endif
+
 struct _MonoAssemblyName {
 	const char *name;
 	const char *culture;
@@ -935,7 +940,7 @@ mono_image_set_description (MonoImageSet *);
 MonoImageSet *
 mono_find_image_set_owner (void *ptr);
 
-void
+MONO_API void
 mono_loader_register_module (const char *name, MonoDl *module);
 
 gboolean
@@ -943,6 +948,12 @@ mono_assembly_is_problematic_version (const char *name, guint16 major, guint16 m
 
 void
 mono_ginst_get_desc (GString *str, MonoGenericInst *ginst);
+
+void
+mono_loader_set_strict_strong_names (gboolean enabled);
+
+gboolean
+mono_loader_get_strict_strong_names (void);
 
 #endif /* __MONO_METADATA_INTERNALS_H__ */
 

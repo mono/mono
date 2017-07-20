@@ -78,7 +78,7 @@ namespace System.ServiceModel.Channels
 
 		public override Message Request (Message input, TimeSpan timeout)
 		{
-			DateTime start = DateTime.Now;
+			DateTime start = DateTime.UtcNow;
 
 			CreateClient (timeout);
 
@@ -87,11 +87,11 @@ namespace System.ServiceModel.Channels
 			if (input.Headers.MessageId == null)
 				input.Headers.MessageId = new UniqueId ();
 
-			frame.WriteUnsizedMessage (input, timeout - (DateTime.Now - start));
+			frame.WriteUnsizedMessage (input, timeout - (DateTime.UtcNow - start));
 
 			frame.WriteEndRecord ();
 
-			var ret = frame.ReadUnsizedMessage (timeout - (DateTime.Now - start));
+			var ret = frame.ReadUnsizedMessage (timeout - (DateTime.UtcNow - start));
 			frame.ReadEndRecord ();
 			return ret;
 		}

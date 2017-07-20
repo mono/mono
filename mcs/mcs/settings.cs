@@ -29,9 +29,10 @@ namespace Mono.CSharp {
 		V_4 = 4,
 		V_5 = 5,
 		V_6 = 6,
+		V_7 = 7,
 		Experimental = 100,
 
-		Default = LanguageVersion.V_6,
+		Default = V_7,
 	}
 
 	public enum RuntimeVersion
@@ -1163,15 +1164,15 @@ namespace Mono.CSharp {
 				case "6":
 					settings.Version = LanguageVersion.V_6;
 					return ParseResult.Success;
+				case "7":
+					settings.Version = LanguageVersion.V_7;
+					return ParseResult.Success;
 				case "experimental":
 					settings.Version = LanguageVersion.Experimental;
 					return ParseResult.Success;
-				case "future":
-					report.Warning (8000, 1, "Language version `future' is no longer supported");
-					goto case "6";
 				}
 
-				report.Error (1617, "Invalid -langversion option `{0}'. It must be `ISO-1', `ISO-2', Default or value in range 1 to 6", value);
+				report.Error (1617, "Invalid -langversion option `{0}'. It must be `ISO-1', `ISO-2', Default or value in range 1 to 7", value);
 				return ParseResult.Error;
 
 			case "/codepage":

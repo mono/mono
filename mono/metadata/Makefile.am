@@ -121,7 +121,9 @@ null_sources = \
 	console-null.c
 
 null_gc_sources = \
-	null-gc.c
+	null-gc.c \
+	null-gc-handles.h \
+	null-gc-handles.c
 
 common_sources = \
 	$(platform_sources)	\
@@ -193,6 +195,7 @@ common_sources = \
 	mono-endian.c		\
 	mono-endian.h		\
 	mono-hash.h		\
+	mono-conc-hash.h		\
 	mono-mlist.c		\
 	mono-mlist.h		\
 	mono-perfcounters.c	\
@@ -202,7 +205,6 @@ common_sources = \
 	mono-route.c		\
 	mono-route.h		\
 	monitor.h		\
-	nacl-stub.c		\
 	normalization-tables.h	\
 	number-formatter.h	\
 	number-ms.c		\
@@ -218,6 +220,7 @@ common_sources = \
 	w32process.h		\
 	w32process-internals.h		\
 	profiler.c		\
+	profiler-events.h	\
 	profiler-private.h	\
 	rand.h			\
 	rand.c			\
@@ -280,6 +283,7 @@ gc_dependent_sources = \
 	gc.c		\
 	monitor.c	\
 	mono-hash.c	\
+	mono-conc-hash.c	\
 	object.c	\
 	dynamic-image.c	\
 	sre.c	\

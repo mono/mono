@@ -16,6 +16,7 @@
 #include <glib.h>
 
 #include <mono/metadata/object.h>
+#include "mono/metadata/handle.h"
 #include "mono/utils/mono-compiler.h"
 #include "mono/utils/mono-membar.h"
 #include "mono/utils/mono-threads.h"
@@ -58,6 +59,9 @@ typedef void (*MonoThreadCleanupFunc) (MonoNativeThreadId tid);
 /* INFO has type MonoThreadInfo* */
 typedef void (*MonoThreadNotifyPendingExcFunc) (gpointer info);
 
+void
+mono_thread_callbacks_init (void);
+
 typedef enum {
 	MONO_THREAD_CREATE_FLAGS_NONE         = 0x0,
 	MONO_THREAD_CREATE_FLAGS_THREADPOOL   = 0x1,
@@ -88,10 +92,8 @@ MonoObject* ves_icall_System_Threading_Thread_GetCachedCurrentUICulture (MonoInt
 void ves_icall_System_Threading_Thread_SetCachedCurrentUICulture (MonoThread *this_obj, MonoObject *culture);
 MonoThread *ves_icall_System_Threading_Thread_GetCurrentThread (void);
 
-gint32 ves_icall_System_Threading_WaitHandle_WaitAll_internal(MonoArray *mono_handles, gint32 ms);
-gint32 ves_icall_System_Threading_WaitHandle_WaitAny_internal(MonoArray *mono_handles, gint32 ms);
-gint32 ves_icall_System_Threading_WaitHandle_WaitOne_internal(gpointer handle, gint32 ms);
-gint32 ves_icall_System_Threading_WaitHandle_SignalAndWait_Internal (gpointer toSignal, gpointer toWait, gint32 ms);
+gint32 ves_icall_System_Threading_WaitHandle_Wait_internal(gpointer *handles, gint32 numhandles, MonoBoolean waitall, gint32 ms, MonoError *error);
+gint32 ves_icall_System_Threading_WaitHandle_SignalAndWait_Internal (gpointer toSignal, gpointer toWait, gint32 ms, MonoError *error);
 
 MonoArray* ves_icall_System_Threading_Thread_ByteArrayToRootDomain (MonoArray *arr);
 MonoArray* ves_icall_System_Threading_Thread_ByteArrayToCurrentDomain (MonoArray *arr);
@@ -177,8 +179,13 @@ void ves_icall_System_Threading_Thread_MemoryBarrier (void);
 void ves_icall_System_Threading_Thread_Interrupt_internal (MonoThread *this_obj);
 void ves_icall_System_Threading_Thread_SpinWait_nop (void);
 
-void ves_icall_System_Runtime_Remoting_Contexts_Context_RegisterContext (MonoAppContext *ctx);
-void ves_icall_System_Runtime_Remoting_Contexts_Context_ReleaseContext (MonoAppContext *ctx);
+void
+mono_threads_register_app_context (MonoAppContext* ctx, MonoError *error);
+void
+mono_threads_release_app_context (MonoAppContext* ctx, MonoError *error);
+
+void ves_icall_System_Runtime_Remoting_Contexts_Context_RegisterContext (MonoAppContextHandle ctx, MonoError *error);
+void ves_icall_System_Runtime_Remoting_Contexts_Context_ReleaseContext (MonoAppContextHandle ctx, MonoError *error);
 
 MonoInternalThread *mono_thread_internal_current (void);
 
@@ -233,15 +240,10 @@ void mono_threads_perform_thread_dump (void);
 gboolean
 mono_thread_create_checked (MonoDomain *domain, gpointer func, gpointer arg, MonoError *error);
 
-MonoThread *
-mono_thread_attach_full (MonoDomain *domain, gboolean force_attach);
-
 /* Can't include utils/mono-threads.h because of the THREAD_INFO_TYPE wizardry */
 void mono_threads_add_joinable_thread (gpointer tid);
 void mono_threads_join_threads (void);
 void mono_thread_join (gpointer tid);
-
-void mono_thread_detach_internal (MonoInternalThread *thread);
 
 void ves_icall_System_Threading_Thread_GetStackTraces (MonoArray **out_threads, MonoArray **out_stack_traces);
 

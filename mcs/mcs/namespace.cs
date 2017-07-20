@@ -1157,7 +1157,7 @@ namespace Mono.CSharp {
 					match = texpr_fne;
 			}
 
-			if (types_using_table != null) {
+			if (types_using_table != null && (mode & LookupMode.IgnoreStaticUsing) == 0) {
 				foreach (var using_type in types_using_table) {
 					var type = MemberCache.FindNestedType (using_type, name, arity, true);
 					if (type == null)

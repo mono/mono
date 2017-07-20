@@ -92,8 +92,14 @@ namespace System.Drawing
 
 		static GDIPlus ()
 		{
+#if NETSTANDARD1_6
+			bool isUnix = !RuntimeInformation.IsOSPlatform (OSPlatform.Windows);
+#else
 			int platform = (int) Environment.OSVersion.Platform;
-			if ((platform == 4) || (platform == 6) || (platform == 128)) {
+			bool isUnix = (platform == 4) || (platform == 6) || (platform == 128);
+#endif
+
+			if (isUnix) {
 				if (Environment.GetEnvironmentVariable ("not_supported_MONO_MWF_USE_NEW_X11_BACKEND") != null || Environment.GetEnvironmentVariable ("MONO_MWF_MAC_FORCE_X11") != null) {
 					UseX11Drawable = true;
 				} else {
@@ -127,7 +133,9 @@ namespace System.Drawing
 			}
 
 			// under MS 1.x this event is raised only for the default application domain
+#if !NETSTANDARD1_6
 			AppDomain.CurrentDomain.ProcessExit += new EventHandler (ProcessExit);
+#endif
 		}
 
 		static public bool RunningOnWindows ()
@@ -1891,7 +1899,7 @@ namespace System.Drawing
 
 			public void StreamCloseImpl ()
 			{
-				stream.Close ();
+				stream.Dispose ();
 			}
 
 			public StreamCloseDelegate CloseDelegate {

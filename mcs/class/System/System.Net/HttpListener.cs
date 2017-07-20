@@ -28,30 +28,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP
-#if MONO_SECURITY_ALIAS
-extern alias MonoSecurity;
-using MonoSecurity::Mono.Security.Authenticode;
-using MSI = MonoSecurity::Mono.Security.Interface;
-#else
-using Mono.Security.Authenticode;
-using MSI = Mono.Security.Interface;
-#endif
-
 using System.IO;
 using System.Collections;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Net.Security;
 using System.Security.Authentication.ExtendedProtection;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
-using Mono.Net.Security;
-
-
 //TODO: logging
 namespace System.Net {
-	public sealed class HttpListener : IDisposable {
+	public sealed partial class HttpListener : IDisposable {
 		AuthenticationSchemes auth_schemes;
 		HttpListenerPrefixCollection prefixes;
 		AuthenticationSchemeSelector auth_selector; 
@@ -61,9 +49,7 @@ namespace System.Net {
 		bool listening;
 		bool disposed;
 
-		IMonoTlsProvider tlsProvider;
-		MSI.MonoTlsSettings tlsSettings;
-		X509Certificate certificate;
+		readonly object _internalLock; // don't rename to match CoreFx
 
 		Hashtable registry;   // Dictionary<HttpListenerContext,HttpListenerContext> 
 		ArrayList ctx_queue;  // List<HttpListenerContext> ctx_queue;
@@ -78,6 +64,7 @@ namespace System.Net {
 
 		public HttpListener ()
 		{
+			_internalLock = new object ();
 			prefixes = new HttpListenerPrefixCollection (this);
 			registry = new Hashtable ();
 			connections = Hashtable.Synchronized (new Hashtable ());
@@ -88,55 +75,6 @@ namespace System.Net {
 			extendedProtectionPolicy = new ExtendedProtectionPolicy (PolicyEnforcement.Never);
 		}
 
-		internal HttpListener (X509Certificate certificate, IMonoTlsProvider tlsProvider, MSI.MonoTlsSettings tlsSettings)
-			: this ()
-		{
-			this.certificate = certificate;
-			this.tlsProvider = tlsProvider;
-			this.tlsSettings = tlsSettings;
-		}
-
-		internal X509Certificate LoadCertificateAndKey (IPAddress addr, int port)
-		{
-			lock (registry) {
-				if (certificate != null)
-					return certificate;
-
-				// Actually load the certificate
-				try {
-					string dirname = Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData);
-					string path = Path.Combine (dirname, ".mono");
-					path = Path.Combine (path, "httplistener");
-					string cert_file = Path.Combine (path, String.Format ("{0}.cer", port));
-					if (!File.Exists (cert_file))
-						return null;
-					string pvk_file = Path.Combine (path, String.Format ("{0}.pvk", port));
-					if (!File.Exists (pvk_file))
-						return null;
-					var cert = new X509Certificate2 (cert_file);
-					cert.PrivateKey = PrivateKey.CreateFromFile (pvk_file).RSA;
-					certificate = cert;
-					return certificate;
-				} catch {
-					// ignore errors
-					certificate = null;
-					return null;
-				}
-			}
-		}
-
-		internal IMonoSslStream CreateSslStream (Stream innerStream, bool ownsStream, MSI.MonoRemoteCertificateValidationCallback callback)
-		{
-			lock (registry) {
-				if (tlsProvider == null)
-					tlsProvider = MonoTlsProviderFactory.GetProviderInternal ();
-				if (tlsSettings == null)
-					tlsSettings = MSI.MonoTlsSettings.CopyDefaultSettings ();
-				if (tlsSettings.RemoteCertificateValidationCallback == null)
-					tlsSettings.RemoteCertificateValidationCallback = callback;
-				return tlsProvider.CreateSslStream (innerStream, ownsStream, tlsSettings);
-			}
-		}
 
 		// TODO: Digest, NTLM and Negotiate require ControlPrincipal
 		public AuthenticationSchemes AuthenticationSchemes {
@@ -282,7 +220,7 @@ namespace System.Net {
 
 		void Cleanup (bool close_existing)
 		{
-			lock (registry) {
+			lock (_internalLock) {
 				if (close_existing) {
 					// Need to copy this since closing will call UnregisterContext
 					ICollection keys = registry.Keys;
@@ -438,7 +376,7 @@ namespace System.Net {
 
 		internal void RegisterContext (HttpListenerContext context)
 		{
-			lock (registry)
+			lock (_internalLock)
 				registry [context] = context;
 
 			ListenerAsyncResult ares = null;
@@ -457,7 +395,7 @@ namespace System.Net {
 
 		internal void UnregisterContext (HttpListenerContext context)
 		{
-			lock (registry)
+			lock (_internalLock)
 				registry.Remove (context);
 			lock (ctx_queue) {
 				int idx = ctx_queue.IndexOf (context);
@@ -477,11 +415,3 @@ namespace System.Net {
 		}
 	}
 }
-#else // SECURITY_DEP
-namespace System.Net
-{
-	public sealed class HttpListener
-	{
-	}
-}
-#endif

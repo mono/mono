@@ -309,6 +309,7 @@ namespace Mono.Unix.Native {
 	public delegate void SignalHandler (int signal);
 
 
+#if !NETSTANDARD2_0
 	internal class XPrintfFunctions
 	{
 		internal delegate object XPrintf (object[] parameters);
@@ -335,6 +336,7 @@ namespace Mono.Unix.Native {
 			syslog = new XPrintf (_syslog.Invoke);
 		}
 	}
+#endif
 
 	//
 	// Convention: Functions that are part of the C standard library go here.
@@ -378,7 +380,11 @@ namespace Mono.Unix.Native {
 	//
 	public class Stdlib
 	{
+#if FORCE_USE_LIBC_NOT_MSVC
+		internal const string LIBC = "c";
+#else
 		internal const string LIBC = "msvcrt";
+#endif
 		internal const string MPH  = "MonoPosixHelper";
 
 		// It is possible for Mono.Posix and MonoPosixHelper to get out of sync,
@@ -771,6 +777,7 @@ namespace Mono.Unix.Native {
 			return sys_fprintf (stream, "%s", message);
 		}
 
+#if !NETSTANDARD2_0
 		[Obsolete ("Not necessarily portable due to cdecl restrictions.\n" +
 				"Use fprintf (IntPtr, string) instead.")]
 		public static int fprintf (IntPtr stream, string format, params object[] parameters)
@@ -781,6 +788,7 @@ namespace Mono.Unix.Native {
 			Array.Copy (parameters, 0, _parameters, 2, parameters.Length);
 			return (int) XPrintfFunctions.fprintf (_parameters);
 		}
+#endif
 
 		/* SKIP: fscanf(3) */
 
@@ -793,6 +801,7 @@ namespace Mono.Unix.Native {
 			return sys_printf ("%s", message);
 		}
 
+#if !NETSTANDARD2_0
 		[Obsolete ("Not necessarily portable due to cdecl restrictions.\n" +
 				"Use printf (string) instead.")]
 		public static int printf (string format, params object[] parameters)
@@ -802,6 +811,7 @@ namespace Mono.Unix.Native {
 			Array.Copy (parameters, 0, _parameters, 1, parameters.Length);
 			return (int) XPrintfFunctions.printf (_parameters);
 		}
+#endif
 
 		/* SKIP: scanf(3) */
 
@@ -823,6 +833,7 @@ namespace Mono.Unix.Native {
 			return sys_snprintf (s, (ulong) s.Capacity, "%s", message);
 		}
 
+#if !NETSTANDARD2_0
 		[CLSCompliant (false)]
 		[Obsolete ("Not necessarily portable due to cdecl restrictions.\n" +
 				"Use snprintf (StringBuilder, string) instead.")]
@@ -853,6 +864,7 @@ namespace Mono.Unix.Native {
 			Array.Copy (parameters, 0, _parameters, 3, parameters.Length);
 			return (int) XPrintfFunctions.snprintf (_parameters);
 		}
+#endif
 
 		/*
 		 * SKIP:

@@ -101,9 +101,7 @@ namespace Mono.CSharp {
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Target == AttributeTargets.ReturnValue) {
-				if (return_attributes == null)
-					return_attributes = new ReturnParameter (this, InvokeBuilder.MethodBuilder, Location);
-
+				CreateReturnBuilder ();
 				return_attributes.ApplyAttributeBuilder (a, ctor, cdata, pa);
 				return;
 			}
@@ -120,6 +118,11 @@ namespace Mono.CSharp {
 			get {
 				return AttributeTargets.Delegate;
 			}
+		}
+
+		ReturnParameter CreateReturnBuilder ()
+		{
+			return return_attributes ?? (return_attributes = new ReturnParameter (this, InvokeBuilder.MethodBuilder, Location));
 		}
 
 		protected override bool DoDefineMembers ()
@@ -329,13 +332,16 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (ReturnType.Type != null) {
-				if (ReturnType.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
-					return_attributes = new ReturnParameter (this, InvokeBuilder.MethodBuilder, Location);
-					Module.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder);
-				} else if (ReturnType.Type.HasDynamicElement) {
-					return_attributes = new ReturnParameter (this, InvokeBuilder.MethodBuilder, Location);
-					Module.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder, ReturnType.Type, Location);
+			var rtype = ReturnType.Type;
+			if (rtype != null) {
+				if (rtype.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
+					Module.PredefinedAttributes.Dynamic.EmitAttribute (CreateReturnBuilder ().Builder);
+				} else if (rtype.HasDynamicElement) {
+					Module.PredefinedAttributes.Dynamic.EmitAttribute (CreateReturnBuilder ().Builder, rtype, Location);
+				}
+
+				if (rtype.HasNamedTupleElement) {
+					Module.PredefinedAttributes.TupleElementNames.EmitAttribute (CreateReturnBuilder ().Builder, rtype, Location);
 				}
 
 				ConstraintChecker.Check (this, ReturnType.Type, ReturnType.Location);

@@ -4387,6 +4387,7 @@ namespace Mono.Unix.Native {
 			return UnixMarshal.EscapeFormatString (message, new char[]{'m'});
 		}
 
+#if !NETSTANDARD2_0
 		[Obsolete ("Not necessarily portable due to cdecl restrictions.\n" +
 				"Use syslog(SyslogFacility, SyslogLevel, string) instead.")]
 		public static int syslog (SyslogFacility facility, SyslogLevel level, 
@@ -4415,6 +4416,7 @@ namespace Mono.Unix.Native {
 			Array.Copy (parameters, 0, _parameters, 2, parameters.Length);
 			return (int) XPrintfFunctions.syslog (_parameters);
 		}
+#endif
 
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_closelog")]

@@ -20,9 +20,10 @@ TEST_RUNTIME_WRAPPERS_PATH = $(shell dirname $(RUNTIME))/_tmpinst/bin
 ifndef NO_TEST
 
 test_nunit_lib = nunitlite.dll
-xunit_core := xunit.core xunit.abstractions xunit.assert
+xunit_core := xunit.core xunit.abstractions xunit.assert Xunit.NetCore.Extensions
 xunit_deps := System.Runtime
-xunit_class_deps := Xunit.NetCore.Extensions
+xunit_src  := $(patsubst %,$(topdir)/../external/xunit-binaries/%,BenchmarkAttribute.cs BenchmarkDiscover.cs)
+xunit_class_deps := 
 
 xunit_libs_ref = $(patsubst %,-r:$(topdir)/../external/xunit-binaries/%.dll,$(xunit_core))
 xunit_libs_ref += $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE)/Facades/%.dll,$(xunit_deps))
@@ -55,15 +56,17 @@ tests_CLEAN_FILES += $(ASSEMBLY:$(ASSEMBLY_EXT)=_test*.dll) $(ASSEMBLY:$(ASSEMBL
 
 xtest_sourcefile = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.sources)
 
-ifeq ($(wildcard $(xtest_sourcefile)),)
-xtest_sourcefile = $(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.sources)
-endif
 
 xunit_test_lib = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xunit-test.dll)
 
-xtest_response = $(depsdir)/$(xtest_lib).response
-xtest_makefrag = $(depsdir)/$(xtest_lib).makefrag
+xtest_response = $(depsdir)/$(xunit_test_lib).response
+xtest_makefrag = $(depsdir)/$(xunit_test_lib).makefrag
 xtest_flags = -r:$(the_assembly) $(xunit_libs_ref) $(XTEST_MCS_FLAGS) $(XTEST_LIB_MCS_FLAGS)
+
+ifeq ($(wildcard $(xtest_sourcefile)),)
+xtest_sourcefile = $(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.sources)
+tests_CLEAN_FILES += $(xunit_test_lib) $(xtest_response) $(xtest_makefrag)
+endif
 
 ifndef HAVE_CS_TESTS
 HAVE_CS_TESTS := $(wildcard $(test_sourcefile))
@@ -87,9 +90,6 @@ endif
 
 tests_CLEAN_FILES += $(topdir)/build/deps/nunit-$(PROFILE).stamp
 
-$(topdir)/class/lib/$(PROFILE)/$(PARENT_PROFILE)Xunit.NetCore.Extensions.dll:
-	$(MAKE) -C $(topdir)/class/Xunit.NetCore.Extensions
-
 endif
 
 test_assemblies :=
@@ -104,7 +104,7 @@ test-local: $(test_assemblies)
 run-test-local: run-test-lib
 run-test-ondotnet-local: run-test-ondotnet-lib
 
-TEST_HARNESS_EXCLUDES = -exclude=$(PLATFORM_TEST_HARNESS_EXCLUDES)$(PROFILE_TEST_HARNESS_EXCLUDES)NotWorking,ValueAdd,CAS,InetAccess
+TEST_HARNESS_EXCLUDES = -exclude=$(PLATFORM_TEST_HARNESS_EXCLUDES)$(PROFILE_TEST_HARNESS_EXCLUDES)NotWorking,CAS
 TEST_HARNESS_EXCLUDES_ONDOTNET = /exclude:$(PLATFORM_TEST_HARNESS_EXCLUDES)$(PROFILE_TEST_HARNESS_EXCLUDES)NotDotNet,CAS
 
 NOSHADOW_FLAG =
@@ -220,8 +220,8 @@ run-xunit-test-lib: xunit-test-local
 	$$ok
 	@rm -f xunit.execution.desktop.dll
 
-$(xunit_test_lib): $(the_assembly) $(xtest_response) $(xunit_libs_dep)
-	$(TEST_COMPILE) $(LIBRARY_FLAGS) $(XTEST_LIB_FLAGS) -target:library -out:$@ $(xtest_flags) @$(xtest_response)
+$(xunit_test_lib): $(the_assembly) $(xtest_response) $(xunit_libs_dep) $(xunit_src)
+	$(TEST_COMPILE) $(LIBRARY_FLAGS) $(XTEST_LIB_FLAGS) -target:library -out:$@ $(xtest_flags) @$(xtest_response) $(xunit_src)
 
 xtest_response_preprocessed = $(xtest_response)_preprocessed
 

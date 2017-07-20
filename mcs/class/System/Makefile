@@ -17,7 +17,10 @@ endif
 RESX_RESOURCE_STRING = \
 	../../../external/corefx/src/System.Collections.Concurrent/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Collections/src/Resources/Strings.resx \
-	../../../external/corefx/src/System.Buffers/src/Resources/Strings.resx
+	../../../external/corefx/src/System.Buffers/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Private.Uri/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.IO.Ports/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Net.HttpListener/src/Resources/Strings.resx
 
 TEST_RESOURCES = \
 	Test/System/test-uri-props.txt \
@@ -117,6 +120,7 @@ endif
 
 EXTRA_DISTFILES = \
 	common.sources					\
+	common_networking.sources		\
 	Test/test-config-file				\
 	Test/System.Security.Cryptography.X509Certificates/pkits/Makefile	\
 	Test/System.Security.Cryptography.X509Certificates/pkits/README		\

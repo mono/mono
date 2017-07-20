@@ -9,7 +9,10 @@
     <ProjectGuid>{ECE97482-6E06-424A-8E60-46C5B1CCB47C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,1616,1699,618</NoWarn>
-    <OutputPath>./../../../class/lib/net_4_x/Facades</OutputPath>
+    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Windows_NT'">win32</HostPlatform>
+    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">darwin</HostPlatform>
+    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix'">linux</HostPlatform>
+    <OutputPath>./../../../class/lib/net_4_x-$(HostPlatform)/Facades</OutputPath>
     <IntermediateOutputPath>obj-Facades</IntermediateOutputPath>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
@@ -28,14 +31,14 @@
     <DelaySign>true</DelaySign>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>../../msfinal.pub</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>../../Open.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699,1616,1699,618</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM</DefineConstants>
+    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -43,7 +46,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,1616,1699,618</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -135,9 +138,9 @@
       <Project>{9E61FF2E-493E-4CA0-BBDA-2EF96A4CB058}</Project>
       <Name>System.IO.Compression.FileSystem-net_4_x</Name>
     </ProjectReference>
-    <ProjectReference Include="../../System.Runtime.InteropServices.RuntimeInformation/System.Runtime.InteropServices.RuntimeInformation-net_4_x.csproj">
-      <Project>{1E1BC1A8-EAD2-496C-A6D6-8AFABD741F56}</Project>
-      <Name>System.Runtime.InteropServices.RuntimeInformation-net_4_x</Name>
+    <ProjectReference Include="../System.Runtime.InteropServices.RuntimeInformation/Facades_System.Runtime.InteropServices.RuntimeInformation-net_4_x.csproj">
+      <Project>{71D02788-3AD8-4C43-BDEB-1A3D277496BA}</Project>
+      <Name>Facades_System.Runtime.InteropServices.RuntimeInformation-net_4_x</Name>
     </ProjectReference>
     <ProjectReference Include="../System.Security.Cryptography.Algorithms/Facades_System.Security.Cryptography.Algorithms-net_4_x.csproj">
       <Project>{B044DB11-DC90-4C35-B766-F2D24D7C3009}</Project>

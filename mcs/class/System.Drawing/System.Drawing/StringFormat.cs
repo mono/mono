@@ -261,6 +261,14 @@ namespace System.Drawing {
 			}
 		}
 
+		// For CoreFX compat
+		internal IntPtr nativeFormat
+                {            
+			get{
+				return nativeStrFmt;
+			}
+		}
+
                 public void SetTabStops(float firstTabOffset, float[] tabStops)
                 {
 			Status status = GDIPlus.GdipSetStringFormatTabStops(nativeStrFmt, firstTabOffset, tabStops.Length, tabStops);

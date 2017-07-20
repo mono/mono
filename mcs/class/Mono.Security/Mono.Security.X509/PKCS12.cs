@@ -387,7 +387,7 @@ namespace Mono.Security.X509 {
 					byte[] nullPassword = {0, 0};
 					calculatedMac = MAC(nullPassword, macSalt.Value, _iterations, authSafeData);
 					if (!Compare (macValue, calculatedMac))
-						throw new CryptographicException ("Invalid MAC - file may have been tampe red!");
+						throw new CryptographicException ("Invalid MAC - file may have been tampered with!");
 					_password = nullPassword;
 				}
 			}

@@ -30,6 +30,11 @@ namespace NUnit.Framework
 		{
 			Assert.That(collection, new EmptyCollectionConstraint(), message, args);
 		}
+
+		public static void IsNotEmpty(IEnumerable collection, string message = null, params object[] args)
+		{
+			Assert.That(collection, Is.Not.Empty, message, args);
+		}
 	}
 
 	static class FileAssert
@@ -89,6 +94,11 @@ namespace NUnit.Framework
 			Assert.That(arg1, Is.GreaterThan(arg2), message, args);
 		}
 
+		public static void Greater(System.DateTime arg1, System.DateTime arg2, string message = null, params object[] args) 
+		{
+			Assert.That(arg1, Is.GreaterThan(arg2), message, args);
+		}
+
 		public static void GreaterOrEqual(int arg1, int arg2, string message = null, params object[] args)
 		{
 			Assert.That(arg1, Is.GreaterThanOrEqualTo(arg2), message, args);
@@ -99,7 +109,32 @@ namespace NUnit.Framework
 			Assert.That(arg1, Is.GreaterThanOrEqualTo(arg2), message, args);
 		}
 
+		public static void GreaterOrEqual(System.DateTime arg1, System.DateTime arg2, string message = null, params object[] args)
+		{
+			Assert.That(arg1, Is.GreaterThanOrEqualTo(arg2), message, args);
+		}
+
+		public static void GreaterOrEqual(System.TimeSpan arg1, System.TimeSpan arg2, string message = null, params object[] args)
+		{
+			Assert.That(arg1, Is.GreaterThanOrEqualTo(arg2), message, args);
+		}
+
 		public static void LessOrEqual (int arg1, int arg2, string message = null, params object[] args)
+		{
+			Assert.That(arg1, Is.LessThanOrEqualTo(arg2), message, args);
+		}
+
+		public static void LessOrEqual(long arg1, long arg2, string message = null, params object[] args)
+		{
+			Assert.That(arg1, Is.LessThanOrEqualTo(arg2), message, args);
+		}
+
+		public static void LessOrEqual(System.DateTime arg1, System.DateTime arg2, string message = null, params object[] args)
+		{
+			Assert.That(arg1, Is.LessThanOrEqualTo(arg2), message, args);
+		}
+
+		public static void LessOrEqual(System.TimeSpan arg1, System.TimeSpan arg2, string message = null, params object[] args)
 		{
 			Assert.That(arg1, Is.LessThanOrEqualTo(arg2), message, args);
 		}

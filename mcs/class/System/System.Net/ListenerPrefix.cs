@@ -27,8 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP
-
 namespace System.Net {
 	sealed class ListenerPrefix
 	{
@@ -160,4 +158,3 @@ namespace System.Net {
 		}
 	}
 }
-#endif

@@ -45,7 +45,7 @@ namespace Mono.CSharp {
 		PropertyAccess,
 		EventAccess,
 		IndexerAccess,
-		Nothing, 
+		Nothing,
 	}
 
 	/// <remarks>
@@ -237,6 +237,15 @@ namespace Mono.CSharp {
 				e.Error_UnexpectedKind (rc, ResolveFlags.Type, loc);
 
 			return null;
+		}
+
+		protected void CheckExpressionVariable (ResolveContext rc)
+		{
+			if (rc.HasAny (ResolveContext.Options.BaseInitializer | ResolveContext.Options.FieldInitializerScope)) {
+				rc.Report.Error (8200, loc, "Out variable and pattern variable declarations are not allowed within constructor initializers, field initializers, or property initializers");
+			} else if (rc.HasSet (ResolveContext.Options.QueryClauseScope)) {
+				rc.Report.Error (8201, loc, "Out variable and pattern variable declarations are not allowed within a query clause");
+			}
 		}
 
 		public static void ErrorIsInaccesible (IMemberContext rc, string member, Location loc)
@@ -638,6 +647,10 @@ namespace Mono.CSharp {
 			ec.Emit (OpCodes.Pop);
 		}
 
+		public virtual void EmitPrepare (EmitContext ec)
+		{
+		}
+
 		//
 		// Emits the expression into temporary field variable. The method
 		// should be used for await expressions only
@@ -863,6 +876,15 @@ namespace Mono.CSharp {
 					return MemberLookupToExpression (rc, members, errorMode, queried_type, name, arity, restrictions, loc);
 			}
 
+			if ((restrictions & MemberLookupRestrictions.InvocableOnly) == 0) {
+				var ntuple = queried_type as NamedTupleSpec;
+				if (ntuple != null) {
+					var ms = ntuple.FindElement (rc, name, loc);
+					if (ms != null)
+						return ExprClassFromMemberInfo (ms, loc);
+				}
+			}
+
 			return null;
 		}
 
@@ -993,6 +1015,11 @@ namespace Mono.CSharp {
 
 		public virtual void FlowAnalysis (FlowAnalysisContext fc)
 		{
+		}
+
+		public virtual Reachability MarkReachable (Reachability rc)
+		{
+			return rc;
 		}
 
 		//
@@ -1128,6 +1155,16 @@ namespace Mono.CSharp {
 		public static void UnsafeError (Report Report, Location loc)
 		{
 			Report.Error (214, loc, "Pointers and fixed size buffers may only be used in an unsafe context");
+		}
+
+		public static void UnsafeInsideIteratorError (ResolveContext rc, Location loc)
+		{
+			UnsafeInsideIteratorError (rc.Report, loc);
+		}
+
+		public static void UnsafeInsideIteratorError (Report report, Location loc)
+		{
+			report.Error (1629, loc, "Unsafe code may not appear in iterators");
 		}
 
 		//
@@ -1285,10 +1322,6 @@ namespace Mono.CSharp {
 	/// </summary>
 	public abstract class ExpressionStatement : Expression
 	{
-		public virtual void MarkReachable (Reachability rc)
-		{
-		}
-
 		public virtual ExpressionStatement ResolveStatement (BlockContext ec)
 		{
 			Expression e = Resolve (ec);
@@ -1448,6 +1481,11 @@ namespace Mono.CSharp {
 				SLE.Expression.ConvertChecked (child.MakeExpression (ctx), type.GetMetaInfo ()) :
 				SLE.Expression.Convert (child.MakeExpression (ctx), type.GetMetaInfo ());
 #endif
+		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			return child.MarkReachable (rc);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
@@ -2398,6 +2436,11 @@ namespace Mono.CSharp {
 		{
 			return orig_expr.MakeExpression (ctx);
 		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			return expr.MarkReachable (rc);
+		}
 	}
 
 	//
@@ -2752,9 +2795,13 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public bool IsPossibleTypeOrNamespace (IMemberContext mc)
+		bool IsPossibleTypeOrNamespace (IMemberContext mc)
 		{
-			return mc.LookupNamespaceOrType (Name, Arity, LookupMode.Probing, loc) != null;
+			//
+			// Has to ignore static usings because we are looking for any member not just type
+			// in this context
+			//
+			return mc.LookupNamespaceOrType (Name, Arity, LookupMode.Probing | LookupMode.IgnoreStaticUsing, loc) != null;
 		}
 
 		public bool IsPossibleType (IMemberContext mc)
@@ -2876,6 +2923,15 @@ namespace Mono.CSharp {
 					return me;
 				}
 
+				//
+				// Stage 3: Lookup nested types, namespaces and type parameters in the context
+				//
+				if ((restrictions & MemberLookupRestrictions.InvocableOnly) == 0 && !variable_found) {
+					if (IsPossibleTypeOrNamespace (rc)) {
+						return ResolveAsTypeOrNamespace (rc, false);
+					}
+				}
+
 				var expr = NamespaceContainer.LookupStaticUsings (rc, Name, Arity, loc);
 				if (expr != null) {
 					if (Arity > 0) {
@@ -2886,15 +2942,6 @@ namespace Mono.CSharp {
 							me.SetTypeArguments (rc, targs);
 					}
 					return expr;
-				}
-
-				//
-				// Stage 3: Lookup nested types, namespaces and type parameters in the context
-				//
-				if ((restrictions & MemberLookupRestrictions.InvocableOnly) == 0 && !variable_found) {
-					if (IsPossibleTypeOrNamespace (rc)) {
-						return ResolveAsTypeOrNamespace (rc, false);
-					}
 				}
 
 				if ((restrictions & MemberLookupRestrictions.NameOfExcluded) == 0 && Name == "nameof")
@@ -3456,8 +3503,12 @@ namespace Mono.CSharp {
 				CheckProtectedMemberAccess (rc, member);
 			}
 
-			if (member.MemberType.IsPointer && !rc.IsUnsafe) {
-				UnsafeError (rc, loc);
+			if (member.MemberType.IsPointer) {
+				if (rc.CurrentIterator != null) {
+					UnsafeInsideIteratorError (rc, loc);
+				} else if (!rc.IsUnsafe) {
+					UnsafeError (rc, loc);
+				}
 			}
 
 			var dep = member.GetMissingDependencies ();
@@ -5388,10 +5439,8 @@ namespace Mono.CSharp {
 
 		static TypeSpec MoreSpecific (TypeSpec p, TypeSpec q)
 		{
-			if (TypeManager.IsGenericParameter (p) && !TypeManager.IsGenericParameter (q))
-				return q;
-			if (!TypeManager.IsGenericParameter (p) && TypeManager.IsGenericParameter (q))
-				return p;
+			if (p.IsGenericParameter != q.IsGenericParameter)
+				return p.IsGenericParameter ? q : p;
 
 			var ac_p = p as ArrayContainer;
 			if (ac_p != null) {
@@ -5404,18 +5453,22 @@ namespace Mono.CSharp {
 					return p;
 				if (specific == ac_q.Element)
 					return q;
-			} else if (p.IsGeneric && q.IsGeneric) {
-				var pargs = TypeManager.GetTypeArguments (p);
-				var qargs = TypeManager.GetTypeArguments (q);
+
+				return null;
+			}
+
+			if (p.IsGeneric && q.IsGeneric) {
+				var pargs = p.TypeArguments;
+				var qargs = q.TypeArguments;
 
 				bool p_specific_at_least_once = false;
 				bool q_specific_at_least_once = false;
 
 				for (int i = 0; i < pargs.Length; i++) {
-					TypeSpec specific = MoreSpecific (pargs[i], qargs[i]);
-					if (specific == pargs[i])
+					TypeSpec specific = MoreSpecific (pargs [i], qargs [i]);
+					if (specific == pargs [i])
 						p_specific_at_least_once = true;
-					if (specific == qargs[i])
+					if (specific == qargs [i])
 						q_specific_at_least_once = true;
 				}
 
@@ -6075,8 +6128,12 @@ namespace Mono.CSharp {
 				arg_count++;
 			}
 
-			if (has_unsafe_arg && !ec.IsUnsafe) {
-				Expression.UnsafeError (ec, loc);
+			if (has_unsafe_arg) {
+				if (ec.CurrentIterator != null) {
+					Expression.UnsafeInsideIteratorError (ec, loc);
+				} else if (!ec.IsUnsafe) {
+					Expression.UnsafeError (ec, loc);
+				}
 			}
 
 			//
@@ -7750,13 +7807,14 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public bool InferType (ResolveContext ec, Expression right_side)
+		public bool InferType (ResolveContext ec, Expression rhs)
 		{
 			if (type != null)
 				throw new InternalErrorException ("An implicitly typed local variable could not be redefined");
 			
-			type = right_side.Type;
-			if (type == InternalType.NullLiteral || type.Kind == MemberKind.Void || type == InternalType.AnonymousMethod || type == InternalType.MethodGroup) {
+			type = rhs.Type;
+
+			if (type.Kind == MemberKind.Void || InternalType.HasNoType (type) || (rhs is TupleLiteral && TupleLiteral.ContainsNoTypeElement (type))) {
 				ec.Report.Error (815, loc,
 					"An implicitly typed local variable declaration cannot be initialized with `{0}'",
 					type.GetSignatureForError ());

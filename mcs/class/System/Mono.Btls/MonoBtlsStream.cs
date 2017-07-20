@@ -30,6 +30,7 @@ extern alias MonoSecurity;
 
 using System;
 using System.IO;
+using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 
@@ -45,18 +46,19 @@ namespace Mono.Btls
 {
 	class MonoBtlsStream : MNS.MobileAuthenticatedStream
 	{
-		public MonoBtlsStream (Stream innerStream, bool leaveInnerStreamOpen, MonoTlsSettings settings, MonoTlsProvider provider)
-			: base (innerStream, leaveInnerStreamOpen, settings, provider)
+		public MonoBtlsStream (Stream innerStream, bool leaveInnerStreamOpen, SslStream owner,
+		                       MonoTlsSettings settings, MonoTlsProvider provider)
+			: base (innerStream, leaveInnerStreamOpen, owner, settings, provider)
 		{
 		}
 
 		protected override MNS.MobileTlsContext CreateContext (
-			MNS.MobileAuthenticatedStream parent, bool serverMode, string targetHost,
-			SslProtocols enabledProtocols, X509Certificate serverCertificate,
-			X509CertificateCollection clientCertificates, bool askForClientCert)
+			bool serverMode, string targetHost, SslProtocols enabledProtocols,
+			X509Certificate serverCertificate, X509CertificateCollection clientCertificates,
+			bool askForClientCert)
 		{
 			return new MonoBtlsContext (
-				parent, serverMode, targetHost,
+				this, serverMode, targetHost,
 				enabledProtocols, serverCertificate,
 				clientCertificates, askForClientCert);
 		}

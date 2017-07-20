@@ -316,6 +316,9 @@ namespace Mono.Btls
 				if (status == MonoBtlsSslError.WantRead) {
 					wantMore = true;
 					return 0;
+				} else if (status == MonoBtlsSslError.ZeroReturn) {
+					wantMore = false;
+					return size;
 				} else if (status != MonoBtlsSslError.None) {
 					throw GetException (status);
 				}
@@ -358,26 +361,11 @@ namespace Mono.Btls
 			}
 		}
 
-		public override void Close ()
+		public override void Shutdown ()
 		{
-			Debug ("Close!");
-
-			if (ssl != null) {
-				ssl.Dispose ();
-				ssl = null;
-			}
-			if (ctx != null) {
-				ctx.Dispose ();
-				ctx = null;
-			}
-			if (bio != null) {
-				bio.Dispose ();
-				bio = null;
-			}
-			if (errbio != null) {
-				errbio.Dispose ();
-				errbio = null;
-			}
+			Debug ("Shutdown!");
+//			ssl.SetQuietShutdown ();
+			ssl.Shutdown ();
 		}
 
 		void Dispose<T> (ref T disposable)
@@ -397,12 +385,12 @@ namespace Mono.Btls
 		{
 			try {
 				if (disposing) {
+					Dispose (ref ssl);
+					Dispose (ref ctx);
 					Dispose (ref remoteCertificate);
 					Dispose (ref nativeServerCertificate);
 					Dispose (ref nativeClientCertificate);
 					Dispose (ref clientCertificate);
-					Dispose (ref ctx);
-					Dispose (ref ssl);
 					Dispose (ref bio);
 					Dispose (ref errbio);
 				}

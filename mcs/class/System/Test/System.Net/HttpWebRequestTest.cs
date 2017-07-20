@@ -63,7 +63,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category("InetAccess")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -135,7 +134,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		//[Category("InetAccess")]
 		[Category ("NotWorking")] // Disabled until a server that meets requirements is found
 		public void Cookies1 ()
 		{
@@ -1356,7 +1354,7 @@ namespace MonoTests.System.Net
 				req.Headers.Add (HttpRequestHeader.IfNoneMatch, "898bbr2347056cc2e096afc66e104653");
 				req.IfModifiedSince = new DateTime (2010, 01, 04);
 
-				DateTime start = DateTime.Now;
+				var sw = global::System.Diagnostics.Stopwatch.StartNew ();
 				HttpWebResponse response = null;
 
 				try {
@@ -1373,7 +1371,7 @@ namespace MonoTests.System.Net
 					Assert.AreEqual (0, bytesRead, "#3");
 				}
 
-				TimeSpan elapsed = DateTime.Now - start;
+				TimeSpan elapsed = sw.Elapsed;
 				Assert.IsTrue (elapsed.TotalMilliseconds < 2000, "#4");
 			}
 		}
@@ -1426,14 +1424,14 @@ namespace MonoTests.System.Net
 					var req = (HttpWebRequest) WebRequest.Create (url_to_test);
 					req.Timeout = TimeOutInMilliSeconds;
 
-					Start = DateTime.Now;
+					Start = DateTime.UtcNow;
 					using (var resp = (HttpWebResponse) req.GetResponse ())
 					{
 						var sr = new StreamReader (resp.GetResponseStream (), Encoding.UTF8);
 						Body = sr.ReadToEnd ();
 					}
 				} catch (Exception e) {
-					End = DateTime.Now;
+					End = DateTime.UtcNow;
 					Exception = e;
 				}
 			}

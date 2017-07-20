@@ -12,6 +12,7 @@
 #include <pthread.h>
 #include <string.h>
 #include <stdlib.h>
+#include <sys/types.h>
 #include <sys/socket.h>
 #ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
@@ -27,7 +28,6 @@
 #endif
 #include <errno.h>
 #include <fcntl.h>
-#include <sys/types.h>
 #ifdef HAVE_SYS_UIO_H
 #include <sys/uio.h>
 #endif
@@ -1325,14 +1325,18 @@ mono_w32socket_convert_error (gint error)
 #ifdef EPROTOTYPE
 	case EPROTOTYPE: return WSAEPROTOTYPE;
 #endif
+#ifdef ENXIO
+	case ENXIO: return WSAENXIO;
+#endif
 	default:
 		g_error ("%s: no translation into winsock error for (%d) \"%s\"", __func__, error, g_strerror (error));
 	}
 }
 
 gboolean
-ves_icall_System_Net_Sockets_Socket_SupportPortReuse (MonoProtocolType proto)
+ves_icall_System_Net_Sockets_Socket_SupportPortReuse (MonoProtocolType proto, MonoError *error)
 {
+	error_init (error);
 #if defined (SO_REUSEPORT)
 	return TRUE;
 #else

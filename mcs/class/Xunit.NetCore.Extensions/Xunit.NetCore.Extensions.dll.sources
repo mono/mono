@@ -1,6 +1,0 @@
-../../../external/buildtools/src/xunit.netcore.extensions/*.cs
-../../../external/buildtools/src/xunit.netcore.extensions/Attributes/*.cs
-../../../external/buildtools/src/xunit.netcore.extensions/Discoverers/*.cs
-
-Microsoft.Xunit.Performance/BenchmarkAttribute.cs
-Microsoft.Xunit.Performance/BenchmarkDiscover.cs

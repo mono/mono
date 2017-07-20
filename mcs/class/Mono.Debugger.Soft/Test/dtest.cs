@@ -2617,6 +2617,11 @@ public class DebuggerTests
 		m = s.Type.GetMethod ("ToString");
 		v = s.InvokeMethod (e.Thread, m, null);
 
+		// pass nullable as argument
+		m = t.GetMethod ("invoke_pass_nullable");
+		v = this_obj.InvokeMethod (e.Thread, m, new Value [] { s });
+		AssertValue (42, v);
+
 		// return nullable null
 		m = t.GetMethod ("invoke_return_nullable_null");
 		v = this_obj.InvokeMethod (e.Thread, m, null);
@@ -2629,6 +2634,11 @@ public class DebuggerTests
 		//m = vm.RootDomain.Corlib.GetType ("System.Object").GetMethod ("ToString");
 		m = s.Type.GetMethod ("ToString");
 		v = s.InvokeMethod (e.Thread, m, null);
+
+		// pass nullable null as argument
+		m = t.GetMethod ("invoke_pass_nullable_null");
+		v = this_obj.InvokeMethod (e.Thread, m, new Value [] { s });
+		AssertValue (2, v);
 
 		// pass primitive
 		m = t.GetMethod ("invoke_pass_primitive");
@@ -2722,6 +2732,17 @@ public class DebuggerTests
 		m = t.GetMethod ("invoke_static_pass_ref");
 		task = t.InvokeMethodAsync (e.Thread, m, new Value [] { vm.RootDomain.CreateString ("ABC") });
 		AssertValue ("ABC", task.Result);
+
+		// string constructor
+		var stringType = vm.RootDomain.Corlib.GetType ("System.String");
+		var stringConstructor = stringType.GetMethods ().Single (c=>
+			c.Name == ".ctor" &&
+			c.GetParameters ().Length == 2 &&
+			c.GetParameters ()[0].ParameterType.Name == "Char" &&
+			c.GetParameters ()[1].ParameterType.Name == "Int32");
+		var str = stringType.NewInstance (e.Thread, stringConstructor,  new Value [] { vm.CreateValue ('a'), vm.CreateValue (3)});
+
+		AssertValue("aaa", str);
 
 		// Argument checking
 		
@@ -4122,7 +4143,7 @@ public class DebuggerTests
 
 		frames = thread.GetFrames ();
 		Assert.AreEqual (8, frames.Length, "#7");
-		Assert.AreEqual ("WaitOne_internal", frames [0].Method.Name, "#8.0");
+		Assert.AreEqual ("Wait_internal", frames [0].Method.Name, "#8.0");
 		Assert.AreEqual ("WaitOneNative", frames [1].Method.Name, "#8.1");
 		Assert.AreEqual ("InternalWaitOne", frames [2].Method.Name, "#8.2");
 		Assert.AreEqual ("WaitOne", frames [3].Method.Name, "#8.3");

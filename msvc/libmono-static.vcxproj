@@ -48,6 +48,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\mono\mini\mini.c" />
+    <ClCompile Include="..\mono\mini\memory-access.c" />
     <ClInclude Include="..\mono\metadata\remoting.h" />
     <ClInclude Include="..\mono\mini\ir-emit.h" />
     <ClCompile Include="..\mono\mini\method-to-ir.c" />
@@ -136,6 +137,7 @@
     <ClCompile Include="..\mono\mini\mini-native-types.c" />
     <ClCompile Include="..\mono\mini\type-checking.c" />
     <ClCompile Include="..\mono\mini\lldb.c" />
+    <ClCompile Include="..\mono\mini\interp\interp-stubs.c" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{CB0D9E92-293C-439C-9AC7-C5F59B6E0772}</ProjectGuid>

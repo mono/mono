@@ -613,6 +613,30 @@ namespace System.Data.SqlClient {
 		}
 
 		[MonoTODO]
+		public Task WriteToServerAsync (DataRow[] rows)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public Task WriteToServerAsync (DataRow[] rows, CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public Task WriteToServerAsync (IDataReader reader)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public Task WriteToServerAsync (IDataReader reader, CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
 		public Task WriteToServerAsync (DbDataReader reader)
 		{
 			throw new NotImplementedException ();
@@ -620,6 +644,30 @@ namespace System.Data.SqlClient {
 
 		[MonoTODO]
 		public Task WriteToServerAsync (DbDataReader reader, CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public Task WriteToServerAsync (DataTable table)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public Task WriteToServerAsync (DataTable table, CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public Task WriteToServerAsync (DataTable table, DataRowState rowState)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public Task WriteToServerAsync (DataTable table, DataRowState rowState, CancellationToken cancellationToken)
 		{
 			throw new NotImplementedException ();
 		}

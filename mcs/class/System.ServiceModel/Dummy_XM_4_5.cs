@@ -22,7 +22,7 @@ namespace System.ServiceModel
 			get { throw new NotImplementedException (); }
 		}
 
-		IExtensionCollection<InstanceContext> IExtensibleObject<InstanceContext>.Extensions
+		public IExtensionCollection<InstanceContext> Extensions
 		{
 			get { throw new NotImplementedException (); }
 		}

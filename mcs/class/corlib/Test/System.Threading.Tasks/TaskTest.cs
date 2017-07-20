@@ -847,7 +847,7 @@ namespace MonoTests.System.Threading.Tasks
 				int r1 = 0, r2 = 0;
 				ThreadPool.QueueUserWorkItem (delegate {
 						cntd.Signal ();
-						if (!t.Wait (1000))
+						if (!t.Wait (2000))
 							r1 = 20; // 20 -> task wait failed
 						else if (t.Result != 1)
 							r1 = 30 + t.Result; // 30 -> task result is bad
@@ -861,7 +861,7 @@ namespace MonoTests.System.Threading.Tasks
 					});
 				ThreadPool.QueueUserWorkItem (delegate {
 						cntd.Signal ();
-						if (!t.Wait (1000))
+						if (!t.Wait (2000))
 							r2 = 40; // 40 -> task wait failed
 						else if (t.Result != 1)
 							r2 = 50 + t.Result; // 50 -> task result is bad
@@ -874,9 +874,9 @@ namespace MonoTests.System.Threading.Tasks
 							Monitor.Pulse (monitor);
 						}
 					});
-				Assert.IsTrue (cntd.Wait (2000), "#1");
+				Assert.IsTrue (cntd.Wait (4000), "#1");
 				evt.Set ();
-				Assert.IsTrue (cntd2.Wait (2000), "#2");
+				Assert.IsTrue (cntd2.Wait (4000), "#2");
 				Assert.AreEqual (2, r1, "r1");
 				Assert.AreEqual (3, r2, "r2");
 

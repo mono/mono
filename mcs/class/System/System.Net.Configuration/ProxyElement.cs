@@ -62,6 +62,7 @@ namespace System.Net.Configuration
 
 			properties = new ConfigurationPropertyCollection ();
 								    
+			properties.Add (autoDetectProp);
 			properties.Add (bypassOnLocalProp);
 			properties.Add (proxyAddressProp);
 			properties.Add (scriptLocationProp);

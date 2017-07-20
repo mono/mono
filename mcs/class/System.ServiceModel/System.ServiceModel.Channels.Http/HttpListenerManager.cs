@@ -94,7 +94,7 @@ namespace System.ServiceModel.Channels.Http
 
 		public bool TryDequeueRequest (ChannelDispatcher channel, TimeSpan timeout, out HttpContextInfo context)
 		{
-			DateTime start = DateTime.Now;
+			DateTime start = DateTime.UtcNow;
 
 			context = null;
 			HttpChannelListenerEntry ce = null;
@@ -111,7 +111,7 @@ namespace System.ServiceModel.Channels.Http
 					if (timeout == TimeSpan.MaxValue)
 						waitTimeout = TimeSpan.FromMilliseconds (int.MaxValue);
 					bool ret = ce.WaitHandle.WaitOne (waitTimeout);
-					return ret && TryDequeueRequest (channel, waitTimeout - (DateTime.Now - start), out context); // recurse, am lazy :/
+					return ret && TryDequeueRequest (channel, waitTimeout - (DateTime.UtcNow - start), out context); // recurse, am lazy :/
 				}
 				context = q.Dequeue ();
 				return true;

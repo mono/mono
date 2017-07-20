@@ -127,10 +127,9 @@ namespace Mono.CSharp
 			stmt.EmitStatement (ec);
 		}
 
-		public override void MarkReachable (Reachability rc)
+		public override Reachability MarkReachable (Reachability rc)
 		{
-			base.MarkReachable (rc);
-			stmt.MarkReachable (rc);
+			return stmt.MarkReachable (rc);
 		}
 
 		public override object Accept (StructuralVisitor visitor)
@@ -514,11 +513,12 @@ namespace Mono.CSharp
 			ec.Emit (OpCodes.Ret);
 		}
 
-		public override void MarkReachable (Reachability rc)
+		public override Reachability MarkReachable (Reachability rc)
 		{
 			//
 			// Reachability has been done in AsyncInitializerStatement
 			//
+			return rc;
 		}
 	}
 

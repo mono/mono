@@ -112,12 +112,52 @@ namespace System.Data.SqlClient {
 			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
 		}
 
+		public Task WriteToServerAsync (DataRow[] rows)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public Task WriteToServerAsync (DataRow[] rows, CancellationToken cancellationToken)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public Task WriteToServerAsync (IDataReader reader)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public Task WriteToServerAsync (IDataReader reader, CancellationToken cancellationToken)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
 		public Task WriteToServerAsync (DbDataReader reader)
 		{
 			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
 		}
 
 		public Task WriteToServerAsync (DbDataReader reader, CancellationToken cancellationToken)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public Task WriteToServerAsync (DataTable table)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public Task WriteToServerAsync (DataTable table, CancellationToken cancellationToken)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public Task WriteToServerAsync (DataTable table, DataRowState rowState)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public Task WriteToServerAsync (DataTable table, DataRowState rowState, CancellationToken cancellationToken)
 		{
 			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
 		}

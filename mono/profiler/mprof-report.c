@@ -54,7 +54,7 @@
  *                    - column: The column on the line
  */
 #include <config.h>
-#include "mono-profiler-log.h"
+#include "log.h"
 #include <string.h>
 #include <assert.h>
 #include <stdio.h>
@@ -75,11 +75,6 @@
 
 #define HASH_SIZE 9371
 #define SMALL_HASH_SIZE 31
-
-#if defined(__native_client__) || defined(__native_client_codegen__)
-volatile int __nacl_thread_suspension_needed = 0;
-void __nacl_suspend_thread_if_needed() {}
-#endif
 
 static int debug = 0;
 static int collect_traces = 0;
@@ -901,6 +896,23 @@ lookup_unmanaged_binary (uintptr_t addr)
 	return NULL;
 }
 
+// For backwards compatibility.
+enum {
+	SAMPLE_CYCLES = 1,
+	SAMPLE_INSTRUCTIONS,
+	SAMPLE_CACHE_MISSES,
+	SAMPLE_CACHE_REFS,
+	SAMPLE_BRANCHES,
+	SAMPLE_BRANCH_MISSES,
+};
+
+enum {
+	MONO_GC_EVENT_MARK_START = 1,
+	MONO_GC_EVENT_MARK_END = 2,
+	MONO_GC_EVENT_RECLAIM_START = 3,
+	MONO_GC_EVENT_RECLAIM_END = 4,
+};
+
 static const char*
 sample_type_name (int type)
 {
@@ -1243,6 +1255,8 @@ heap_shot_find_obj_slot (HeapShot *hs, uintptr_t objaddr)
 	uintptr_t i;
 	uintptr_t start_pos;
 	HeapObjectDesc **hash = hs->objects_hash;
+	if (hs->objects_hash_size == 0)
+		return -1;
 	start_pos = ((uintptr_t)objaddr >> 3) % hs->objects_hash_size;
 	i = start_pos;
 	do {
@@ -1360,7 +1374,7 @@ heap_shot_mark_objects (HeapShot *hs)
 		}
 		obj = hs->objects_hash [oi];
 		cd = obj->hklass;
-		if (hs->roots_types [i] & MONO_PROFILE_GC_ROOT_PINNING)
+		if (hs->roots_types [i] & MONO_PROFILER_GC_ROOT_PINNING)
 			cd->pinned_references++;
 		cd->root_references++;
 	}
@@ -1962,12 +1976,12 @@ get_handle_name (int htype)
 static const char*
 get_root_name (int rtype)
 {
-	switch (rtype & MONO_PROFILE_GC_ROOT_TYPEMASK) {
-	case MONO_PROFILE_GC_ROOT_STACK: return "stack";
-	case MONO_PROFILE_GC_ROOT_FINALIZER: return "finalizer";
-	case MONO_PROFILE_GC_ROOT_HANDLE: return "handle";
-	case MONO_PROFILE_GC_ROOT_OTHER: return "other";
-	case MONO_PROFILE_GC_ROOT_MISC: return "misc";
+	switch (rtype & MONO_PROFILER_GC_ROOT_TYPEMASK) {
+	case MONO_PROFILER_GC_ROOT_STACK: return "stack";
+	case MONO_PROFILER_GC_ROOT_FINALIZER: return "finalizer";
+	case MONO_PROFILER_GC_ROOT_HANDLE: return "handle";
+	case MONO_PROFILER_GC_ROOT_OTHER: return "other";
+	case MONO_PROFILER_GC_ROOT_MISC: return "misc";
 	default: return "unknown";
 	}
 }
@@ -2483,8 +2497,7 @@ decode_buffer (ProfContext *ctx)
 					decode_uleb128 (p, &p); /* flags */
 				if (debug)
 					fprintf (outfile, "%s class %p (%s in %p) at %llu\n", load_str, (void*)(ptr_base + ptrdiff), p, (void*)(ptr_base + imptrdiff), (unsigned long long) time_base);
-				if (subtype == TYPE_END_LOAD)
-					add_class (ptr_base + ptrdiff, (char*)p);
+				add_class (ptr_base + ptrdiff, (char*)p);
 				while (*p) p++;
 				p++;
 			} else if (mtype == TYPE_IMAGE) {
@@ -2497,6 +2510,8 @@ decode_buffer (ProfContext *ctx)
 				while (*p) p++;
 				p++;
 			} else if (mtype == TYPE_ASSEMBLY) {
+				if (ctx->data_version > 13)
+					decode_sleb128 (p, &p); // image
 				if (ctx->data_version < 13)
 					decode_uleb128 (p, &p); /* flags */
 				if (debug)
@@ -2739,9 +2754,13 @@ decode_buffer (ProfContext *ctx)
 			break;
 		}
 		case TYPE_MONITOR: {
-			int event = (*p >> 4) & 0x3;
 			int has_bt = *p & TYPE_MONITOR_BT;
+			int event;
+			if (ctx->data_version < 13)
+				event = (*p >> 4) & 0x3;
 			uint64_t tdiff = decode_uleb128 (p + 1, &p);
+			if (ctx->data_version > 13)
+				event = *p++;
 			intptr_t objdiff = decode_sleb128 (p, &p);
 			MethodDesc* sframes [8];
 			MethodDesc** frames = sframes;
@@ -2752,26 +2771,13 @@ decode_buffer (ProfContext *ctx)
 			record = (!thread_filter || thread_filter == thread->thread_id);
 			if (!(time_base >= time_from && time_base < time_to))
 				record = 0;
+			MonitorDesc *mdesc = lookup_monitor (OBJ_ADDR (objdiff));
 			if (event == MONO_PROFILER_MONITOR_CONTENTION) {
-				MonitorDesc *mdesc = lookup_monitor (OBJ_ADDR (objdiff));
 				if (record) {
 					monitor_contention++;
 					mdesc->contentions++;
 					thread->monitor = mdesc;
 					thread->contention_start = time_base;
-				}
-				if (has_bt) {
-					num_bt = 8;
-					frames = decode_bt (ctx, sframes, &num_bt, p, &p, ptr_base, &method_base);
-					if (!frames) {
-						fprintf (outfile, "Cannot load backtrace\n");
-						return 0;
-					}
-					if (record)
-						add_trace_methods (frames, num_bt, &mdesc->traces, 1);
-				} else {
-					if (record)
-						add_trace_thread (thread, &mdesc->traces, 1);
 				}
 			} else if (event == MONO_PROFILER_MONITOR_FAIL) {
 				if (record) {
@@ -2797,6 +2803,19 @@ decode_buffer (ProfContext *ctx)
 						thread->contention_start = 0;
 					}
 				}
+			}
+			if (has_bt) {
+				num_bt = 8;
+				frames = decode_bt (ctx, sframes, &num_bt, p, &p, ptr_base, &method_base);
+				if (!frames) {
+					fprintf (outfile, "Cannot load backtrace\n");
+					return 0;
+				}
+				if (record && event == MONO_PROFILER_MONITOR_CONTENTION)
+					add_trace_methods (frames, num_bt, &mdesc->traces, 1);
+			} else {
+				if (record)
+					add_trace_thread (thread, &mdesc->traces, 1);
 			}
 			if (debug)
 				fprintf (outfile, "monitor %s for object %p\n", monitor_ev_name (event), (void*)OBJ_ADDR (objdiff));
@@ -2825,6 +2844,8 @@ decode_buffer (ProfContext *ctx)
 				int clause_num = decode_uleb128 (p, &p);
 				int64_t ptrdiff = decode_sleb128 (p, &p);
 				method_base += ptrdiff;
+				if (ctx->data_version > 13)
+					decode_uleb128 (p, &p); // exception object
 				if (record)
 					clause_summary [clause_type]++;
 				if (debug)
@@ -2891,7 +2912,10 @@ decode_buffer (ProfContext *ctx)
 					uint64_t tdiff = decode_uleb128 (p + 1, &p);
 					LOG_TIME (time_base, tdiff);
 					time_base += tdiff;
-					sample_type = *p++;
+					if (ctx->data_version < 14)
+						sample_type = *p++;
+					else
+						sample_type = SAMPLE_CYCLES;
 					tstamp = time_base;
 				} else {
 					sample_type = decode_uleb128 (p + 1, &p);
@@ -2945,6 +2969,8 @@ decode_buffer (ProfContext *ctx)
 				/* un unmanaged binary loaded in memory */
 				uint64_t tdiff = decode_uleb128 (p + 1, &p);
 				uintptr_t addr = decode_sleb128 (p, &p);
+				if (ctx->data_version > 13)
+					addr += ptr_base;
 				uint64_t offset G_GNUC_UNUSED = decode_uleb128 (p, &p);
 				uintptr_t size = decode_uleb128 (p, &p);
 				char *name;

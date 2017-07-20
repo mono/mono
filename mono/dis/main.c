@@ -1951,8 +1951,10 @@ monodis_assembly_search_hook (MonoAssemblyName *aname, gpointer user_data)
 static void
 usage (void)
 {
-	GString *args = g_string_new ("[--output=filename] [--filter=filename] [--help] [--mscorlib]\n");
+	GString *args = g_string_new ("[--output=filename] [--filter=filename]\n");
 	int i;
+
+	g_string_append (args, "[--help] [--mscorlib] [--show-tokens] [--show-method-tokens]\n");
 	
 	for (i = 0; table_list [i].name != NULL; i++){
 		g_string_append (args, "[");
@@ -2036,7 +2038,7 @@ main (int argc, char *argv [])
 #ifndef HOST_WIN32
 	mono_w32handle_init ();
 #endif
-	mono_threads_runtime_init (&ticallbacks);
+	mono_thread_info_runtime_init (&ticallbacks);
 
 	mono_install_assembly_load_hook (monodis_assembly_load_hook, NULL);
 	mono_install_assembly_search_hook (monodis_assembly_search_hook, NULL);

@@ -59,6 +59,7 @@ monoutils_sources = \
 	mono-mmap-internals.h	\
 	mono-mmap-windows-internals.h	\
 	mono-os-mutex.h		\
+	mono-os-mutex.c		\
 	mono-coop-mutex.h		\
 	mono-once.h		\
 	mono-lazy-init.h		\
@@ -238,10 +239,6 @@ endif
 
 if SPARC64
 arch_sources += mono-hwcap-sparc.c
-endif
-
-if IA64
-arch_sources += mono-hwcap-ia64.c
 endif
 
 if S390X

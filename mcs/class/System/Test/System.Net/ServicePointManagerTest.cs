@@ -47,7 +47,7 @@ public class ServicePointManagerTest
 	}
 
         [Test, ExpectedException (typeof (InvalidOperationException))]
-		[Category ("InetAccess")]
+		[Category ("NotWorking")]
         public void MaxServicePointManagers ()
         {
 		Assert.AreEqual (0, ServicePointManager.MaxServicePoints, "#1");

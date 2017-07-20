@@ -18,7 +18,7 @@ G_BEGIN_DECLS
 void*
 Mono_Unix_VersionString ()
 {
-	return "MonoProject-2015-12-1";
+	return (void *) "MonoProject-2015-12-1";
 }
 
 gint32

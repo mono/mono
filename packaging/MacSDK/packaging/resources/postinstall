@@ -24,8 +24,8 @@ WHITELIST=$(cat "$(dirname "$0")/whitelist.txt")
 MONO_COMMANDS_FILE=/etc/paths.d/mono-commands
 FW_WHITELISTED_COMMANDS=${FW_CURRENT}/Commands
 
-mkdir ${FW_WHITELISTED_COMMANDS}
-mkdir /etc/paths.d
+mkdir -p ${FW_WHITELISTED_COMMANDS}
+mkdir -p $(dirname ${MONO_COMMANDS_FILE})
 
 if test -e ${MONO_COMMANDS_FILE}; then
     rm "${MONO_COMMANDS_FILE}"
@@ -37,8 +37,11 @@ if [ -d "${FW}"/Commands ]; then
     for i in ${WHITELIST}; do
         if test -e "${FW}/Commands/${i}"; then
             ln -s "${FW}/Commands/${i}" "${FW_WHITELISTED_COMMANDS}/${i}"
+            #Cleanup any old symlinks in /usr/local/bin that we used to install
+            rm -rf "/usr/local/bin/${i}"
         fi
     done;
+    eval $(/usr/libexec/path_helper -s)
 else
     echo "${FW}/Commands does not exist"
     echo "Can not add command links to $PATH."

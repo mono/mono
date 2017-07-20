@@ -325,10 +325,14 @@ namespace MonoTests.System.Threading
 			} catch (ObjectDisposedException) {
 			}
 
-			try {
-				token.Register (() => { });
-				Assert.Fail ("#3");
-			} catch (ObjectDisposedException) {
+			bool throwOnDispose = false;
+			AppContext.TryGetSwitch ("Switch.System.Threading.ThrowExceptionIfDisposedCancellationTokenSource", out throwOnDispose);
+			if (throwOnDispose) { 
+				try {
+					token.Register (() => { });
+					Assert.Fail ("#3");
+				} catch (ObjectDisposedException) {
+				}
 			}
 
 			try {
@@ -337,10 +341,12 @@ namespace MonoTests.System.Threading
 			} catch (ObjectDisposedException) {
 			}
 
-			try {
-				CancellationTokenSource.CreateLinkedTokenSource (token);
-				Assert.Fail ("#5");
-			} catch (ObjectDisposedException) {
+			if (throwOnDispose) {
+				try {
+					CancellationTokenSource.CreateLinkedTokenSource (token);
+					Assert.Fail ("#5");
+				} catch (ObjectDisposedException) {
+				}
 			}
 
 			try {

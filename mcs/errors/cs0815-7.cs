@@ -1,16 +1,10 @@
-// CS0815: An implicitly typed local variable declaration cannot be initialized with `void'
+// CS0815: An implicitly typed local variable declaration cannot be initialized with `(int, method group)'
 // Line: 8
-// Compiler options: -langversion:experimental
 
-class X
+class XX
 {
 	public static void Main ()
 	{
-		Foo (out var x = Main ());
-	}
-
-	static void Foo (out int i)
-	{
-		i = 0;
+		var m = (1, Main);
 	}
 }

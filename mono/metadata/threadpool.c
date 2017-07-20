@@ -339,14 +339,16 @@ worker_callback (void)
 		g_assert (tpdomain->outstanding_request >= 0);
 
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] worker running in domain %p (outstanding requests %d)",
-			mono_native_thread_id_get (), tpdomain->domain, tpdomain->outstanding_request);
+			GUINT_TO_POINTER (MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ())), tpdomain->domain, tpdomain->outstanding_request);
 
 		g_assert (tpdomain->threadpool_jobs >= 0);
 		tpdomain->threadpool_jobs ++;
 
 		domains_unlock ();
 
-		mono_thread_set_name_internal (thread, mono_string_new (mono_get_root_domain (), "Threadpool worker"), FALSE, TRUE, &error);
+		MonoString *thread_name = mono_string_new_checked (mono_get_root_domain (), "Threadpool worker", &error);
+		mono_error_assert_ok (&error);
+		mono_thread_set_name_internal (thread, thread_name, FALSE, TRUE, &error);
 		mono_error_assert_ok (&error);
 
 		mono_thread_clr_state (thread, (MonoThreadState)~ThreadState_Background);

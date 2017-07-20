@@ -198,7 +198,7 @@ sgen_client_update_copied_object (char *destination, GCVTable gc_vtable, void *o
 		SGEN_LOG (9, "Array instance %p: size: %lu, rank: %d, length: %lu", array, (unsigned long)objsize, vt->rank, (unsigned long)mono_array_length (array));
 	}
 
-	if (G_UNLIKELY (mono_profiler_events & MONO_PROFILE_GC_MOVES))
+	if (MONO_PROFILER_ENABLED (gc_moves))
 		mono_sgen_register_moved_object (obj, destination);
 }
 
@@ -293,7 +293,7 @@ sgen_client_binary_protocol_collection_begin (int minor_gc_count, int generation
 {
 	MONO_GC_BEGIN (generation);
 
-	mono_profiler_gc_event (MONO_GC_EVENT_START, generation);
+	MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_START, generation));
 
 #ifndef DISABLE_PERFCOUNTERS
 	if (generation == GENERATION_NURSERY)
@@ -308,7 +308,7 @@ sgen_client_binary_protocol_collection_end (int minor_gc_count, int generation, 
 {
 	MONO_GC_END (generation);
 
-	mono_profiler_gc_event (MONO_GC_EVENT_END, generation);
+	MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_END, generation));
 }
 
 static void G_GNUC_UNUSED
@@ -345,32 +345,24 @@ static void G_GNUC_UNUSED
 sgen_client_binary_protocol_world_stopping (int generation, long long timestamp, gpointer thread)
 {
 	MONO_GC_WORLD_STOP_BEGIN ();
-
-	mono_profiler_gc_event (MONO_GC_EVENT_PRE_STOP_WORLD, generation);
 }
 
 static void G_GNUC_UNUSED
 sgen_client_binary_protocol_world_stopped (int generation, long long timestamp, long long total_major_cards, long long marked_major_cards, long long total_los_cards, long long marked_los_cards)
 {
 	MONO_GC_WORLD_STOP_END ();
-
-	mono_profiler_gc_event (MONO_GC_EVENT_POST_STOP_WORLD, generation);
 }
 
 static void G_GNUC_UNUSED
 sgen_client_binary_protocol_world_restarting (int generation, long long timestamp, long long total_major_cards, long long marked_major_cards, long long total_los_cards, long long marked_los_cards)
 {
 	MONO_GC_WORLD_RESTART_BEGIN (generation);
-
-	mono_profiler_gc_event (MONO_GC_EVENT_PRE_START_WORLD, generation);
 }
 
 static void G_GNUC_UNUSED
 sgen_client_binary_protocol_world_restarted (int generation, long long timestamp)
 {
 	MONO_GC_WORLD_RESTART_END (generation);
-
-	mono_profiler_gc_event (MONO_GC_EVENT_POST_START_WORLD, generation);
 }
 
 static void G_GNUC_UNUSED
@@ -391,25 +383,21 @@ sgen_client_binary_protocol_block_set_state (gpointer addr, size_t size, int old
 static void G_GNUC_UNUSED
 sgen_client_binary_protocol_mark_start (int generation)
 {
-	mono_profiler_gc_event (MONO_GC_EVENT_MARK_START, generation);
 }
 
 static void G_GNUC_UNUSED
 sgen_client_binary_protocol_mark_end (int generation)
 {
-	mono_profiler_gc_event (MONO_GC_EVENT_MARK_END, generation);
 }
 
 static void G_GNUC_UNUSED
 sgen_client_binary_protocol_reclaim_start (int generation)
 {
-	mono_profiler_gc_event (MONO_GC_EVENT_RECLAIM_START, generation);
 }
 
 static void G_GNUC_UNUSED
 sgen_client_binary_protocol_reclaim_end (int generation)
 {
-	mono_profiler_gc_event (MONO_GC_EVENT_RECLAIM_END, generation);
 }
 
 static void
@@ -695,6 +683,16 @@ sgen_client_binary_protocol_header (long long check, int version, int ptr_size, 
 
 static void G_GNUC_UNUSED
 sgen_client_binary_protocol_pin_stats (int objects_pinned_in_nursery, size_t bytes_pinned_in_nursery, int objects_pinned_in_major, size_t bytes_pinned_in_major)
+{
+}
+
+static void G_GNUC_UNUSED
+sgen_client_binary_protocol_worker_finish_stats (int worker_index, int generation, gboolean forced, long long major_scan, long long los_scan, long long work_time)
+{
+}
+
+static void G_GNUC_UNUSED
+sgen_client_binary_protocol_collection_end_stats (long long major_scan, long long los_scan, long long finish_stack)
 {
 }
 

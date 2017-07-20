@@ -34,7 +34,7 @@
 using System;
 using System.Collections;
 using System.Runtime.InteropServices;
-using ObjCRuntime;
+using ObjCRuntimeInternal;
 using Mono.Net;
 
 namespace Mono.AppleTls {
@@ -44,11 +44,16 @@ namespace Mono.AppleTls {
 		Certificate
 	}
 
+#if MONOTOUCH
+	static class SecKeyChain {
+#else
 	class SecKeyChain : INativeObject, IDisposable {
+#endif
 		internal static readonly IntPtr MatchLimitAll;
 		internal static readonly IntPtr MatchLimitOne;
 		internal static readonly IntPtr MatchLimit;
 
+#if !MONOTOUCH
 		IntPtr handle;
 
 		internal SecKeyChain (IntPtr handle, bool owns = false)
@@ -60,6 +65,7 @@ namespace Mono.AppleTls {
 			if (!owns)
 				CFObject.CFRetain (handle);
 		}
+#endif
 
 		static SecKeyChain ()
 		{
@@ -168,6 +174,7 @@ namespace Mono.AppleTls {
 			return n;
 		}
 
+#if !MONOTOUCH
 		[DllImport (AppleTlsContext.SecurityLibrary)]
 		extern static /* OSStatus */ SecStatusCode SecKeychainCreate (/* const char * */ IntPtr pathName, uint passwordLength, /* const void * */ IntPtr password,
 									      bool promptUser, /* SecAccessRef */ IntPtr initialAccess,
@@ -232,6 +239,7 @@ namespace Mono.AppleTls {
 				handle = IntPtr.Zero;
 			}
 		}
+#endif
 	}
 
 	class SecRecord : IDisposable {

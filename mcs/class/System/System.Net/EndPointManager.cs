@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP
-
 using System.Collections;
 using System.Collections.Generic;
 namespace System.Net {
@@ -86,7 +84,9 @@ namespace System.Net {
 				addr = IPAddress.Any;
 			else if (IPAddress.TryParse(host, out addr) == false){
 				try {
+#pragma warning disable 618
 					IPHostEntry iphost = Dns.GetHostByName(host);
+#pragma warning restore 618
 					if (iphost != null)
 						addr = iphost.AddressList[0];
 					else
@@ -158,5 +158,4 @@ namespace System.Net {
 		}
 	}
 }
-#endif
 

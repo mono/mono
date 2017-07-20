@@ -181,6 +181,16 @@ Gives the path for the temporary LLVM bitcode file created during AOT.
 .I info
 Print the architecture the AOT in this copy of Mono targets and quit.
 .TP
+.I interp
+Generates all required wrappers, so that it is possible to run --interpreter without
+any code generation at runtime.  This option only makes sense with \fBmscorlib.dll\fR.
+Embedders can set
+
+.nf
+mono_jit_set_aot_mode (MONO_AOT_MODE_INTERP);
+.fi
+.ne
+.TP
 .I ld-flags
 Additional flags to pass to the C linker (if the current AOT mode calls for invoking it).
 .TP
@@ -290,7 +300,7 @@ mono_aot_register_module (mono_aot_module_hello_info);
 .I stats
 Print various stats collected during AOT compilation.
 .TP
-.I temp_path=[path]
+.I temp-path=[path]
 Explicitly specify path to store temporary files created during AOT compilation.
 .TP
 .I threads=[number]
@@ -311,6 +321,26 @@ Instructs the AOT compiler to emit (or not emit) debug symbol information.
 For more information about AOT, see: http://www.mono-project.com/docs/advanced/aot/
 .RE
 .TP
+\fB--aot-path=PATH\fR
+List of additional directories to search for AOT images.
+.TP
+\fB--apply-bindings=FILE\fR
+Apply the assembly bindings from the specified configuration file when running
+the AOT compiler.  This is useful when compiling an auxiliary assembly that is
+referenced by a main assembly that provides a configuration file.  For example,
+if app.exe uses lib.dll then in order to make the assembly bindings from
+app.exe.config available when compiling lib.dll ahead of time, use:
+.nf
+	mono --apply-bindings=app.exe.config --aot lib.dll
+.fi
+.TP
+\fB--assembly-loader=MODE\fR
+If mode is \fBstrict\fR, Mono will check that the public key token, culture and version
+of a candidate assembly matches the requested strong name.  If mode is \fBlegacy\fR, as
+long as the name matches, the candidate will be allowed. \fBstrict\fR is the behavior
+consistent with .NET Framework but may break some existing mono-based applications.
+The default is \fBlegacy\fR.
+.TP
 \fB--attach=[options]\fR
 Currently the only option supported by this command line argument is
 \fBdisable\fR which disables the attach functionality.
@@ -320,9 +350,6 @@ Load the specified configuration file instead of the default one(s).
 The default files are /etc/mono/config and ~/.mono/config or the file
 specified in the MONO_CONFIG environment variable, if set.  See the
 mono-config(5) man page for details on the format of this file.
-.TP
-\fB--aot-path=PATH\fR
-List of additional directories to search for AOT images.
 .TP
 \fB--debugger-agent=[options]\fR 
 This instructs the Mono runtime to
@@ -1074,11 +1101,6 @@ code generation backend.   For example \fBLLVM_COUNT=10\fR would only
 compile 10 methods with LLVM and then switch to the Mono JIT engine.
 \fBLLVM_COUNT=0\fR would disable the LLVM engine altogether.
 .TP
-\fBMONO_AOT_CACHE\fR
-If set, this variable will instruct Mono to ahead-of-time compile new
-assemblies on demand and store the result into a cache in
-~/.mono/aot-cache. 
-.TP
 \fBMONO_ASPNET_INHIBIT_SETTINGSMAP\fR
 Mono contains a feature which allows modifying settings in the .config files shipped
 with Mono by using config section mappers. The mappers and the mapping rules are
@@ -1287,10 +1309,19 @@ first generation (of two).  A larger nursery will usually speed up the
 program but will obviously use more memory.  The default nursery size
 4 MB.
 .TP
-\fBmajor=\fIcollector\fR Specifies which major collector to use.
-Options are `marksweep' for the Mark&Sweep collector, and
-`marksweep-conc' for concurrent Mark&Sweep.  The non-concurrent
-Mark&Sweep collector is the default.
+\fBmajor=\fIcollector\fR
+Specifies which major collector to use.
+Options are `marksweep' for the Mark&Sweep collector, `marksweep-conc'
+for concurrent Mark&Sweep and `marksweep-conc-par' for parallel and
+concurrent Mark&Sweep.  The concurrent Mark&Sweep collector is the default.
+.TP
+\fBmode=balanced|throughput|pause\fR[:\fImax-pause\fR]
+Specifies what should be the garbage collector's target. The `throughput'
+mode aims to reduce time spent in the garbage collector and improve
+application speed, the `pause' mode aims to keep pause times to a minimum
+and it receives the argument \fImax-pause\fR which specifies the maximum
+pause time in milliseconds that is acceptable and the `balanced' mode
+which is a general purpose optimal mode.
 .TP
 \fBsoft-heap-limit=\fIsize\fR
 Once the heap size gets larger than this size, ignore what the default
@@ -1353,9 +1384,11 @@ more memory when it reaches a stable size.
 This option is EXPERIMENTAL, so it might disappear in later versions of mono.
 .TP
 \fBminor=\fIminor-collector\fR
-Specifies which minor collector to use. Options are 'simple' which
-promotes all objects from the nursery directly to the old generation
-and 'split' which lets object stay longer on the nursery before promoting.
+Specifies which minor collector to use. Options are `simple' which
+promotes all objects from the nursery directly to the old generation,
+`simple-par' which has same promotion behavior as `simple' but using
+multiple workers and `split' which lets objects stay longer on the nursery
+before promoting.
 .TP
 \fBalloc-ratio=\fIratio\fR
 Specifies the ratio of memory from the nursery to be use by the alloc space.

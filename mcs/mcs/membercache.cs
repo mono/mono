@@ -1501,6 +1501,12 @@ namespace Mono.CSharp {
 							}
 							return false;
 						}
+
+						var pm_member = (MethodCore)member;
+						if (!NamedTupleSpec.CheckOverrideName (pm, pm_member) || !NamedTupleSpec.CheckOverrideName (pm.MemberType, pm_member.MemberType)) {
+							Report.Error (8142, member.Location,
+								"A partial method declaration and partial method implementation must both use the same tuple element names");
+						}
 					}
 				}
 

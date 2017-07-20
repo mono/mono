@@ -130,9 +130,7 @@ typedef struct {
 /*
  * Process describes processes we create.
  * It contains a semaphore that can be waited on in order to wait
- * for process termination. It's accessed in our SIGCHLD handler,
- * when status is updated (and pid cleared, to not clash with
- * subsequent processes that may get executed).
+ * for process termination.
  */
 typedef struct _Process {
 	pid_t pid; /* the pid of the process. This value is only valid until the process has exited. */
@@ -143,7 +141,6 @@ typedef struct _Process {
 	 * the process has exited, so that the information there isn't lost.
 	 */
 	gpointer handle;
-	gboolean freeable;
 	gboolean signalled;
 	struct _Process *next;
 } Process;
@@ -530,18 +527,6 @@ static mono_lazy_init_t process_sig_chld_once = MONO_LAZY_INIT_STATUS_NOT_INITIA
 
 static gchar *cli_launcher;
 
-/* The signal-safe logic to use processes goes like this:
- * - The list must be safe to traverse for the signal handler at all times.
- *   It's safe to: prepend an entry (which is a single store to 'processes'),
- *   unlink an entry (assuming the unlinked entry isn't freed and doesn't
- *   change its 'next' pointer so that it can still be traversed).
- * When cleaning up we first unlink an entry, then we verify that
- * the read lock isn't locked. Then we can free the entry, since
- * we know that nobody is using the old version of the list (including
- * the unlinked entry).
- * We also need to lock when adding and cleaning up so that those two
- * operations don't mess with eachother. (This lock is not used in the
- * signal handler) */
 static Process *processes;
 static mono_mutex_t processes_mutex;
 
@@ -610,7 +595,7 @@ process_wait (gpointer handle, guint32 timeout, gboolean *alerted)
 	Process *process;
 	gboolean res;
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %u)", __func__, handle, timeout);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT ")", __func__, handle, timeout);
 
 	if (alerted)
 		*alerted = FALSE;
@@ -623,21 +608,21 @@ process_wait (gpointer handle, guint32 timeout, gboolean *alerted)
 
 	if (process_handle->exited) {
 		/* We've already done this one */
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %u): Process already exited", __func__, handle, timeout);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): Process already exited", __func__, handle, timeout);
 		return MONO_W32HANDLE_WAIT_RET_SUCCESS_0;
 	}
 
 	pid = process_handle->pid;
 
 	if (pid == mono_process_current_pid ()) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %u): waiting on current process", __func__, handle, timeout);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): waiting on current process", __func__, handle, timeout);
 		return MONO_W32HANDLE_WAIT_RET_TIMEOUT;
 	}
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %u): PID: %d", __func__, handle, timeout, pid);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): PID: %d", __func__, handle, timeout, pid);
 
 	if (!process_handle->child) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %u): waiting on non-child process", __func__, handle, timeout);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): waiting on non-child process", __func__, handle, timeout);
 
 		if (!process_is_alive (pid)) {
 			/* assume the process has exited */
@@ -645,11 +630,11 @@ process_wait (gpointer handle, guint32 timeout, gboolean *alerted)
 			process_handle->exitstatus = -1;
 			mono_w32handle_set_signal_state (handle, TRUE, TRUE);
 
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %u): non-child process is not alive anymore (2)", __func__, handle, timeout);
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): non-child process is not alive anymore (2)", __func__, handle, timeout);
 			return MONO_W32HANDLE_WAIT_RET_SUCCESS_0;
 		}
 
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %u): non-child process wait failed, error : %s (%d))", __func__, handle, timeout, g_strerror (errno), errno);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): non-child process wait failed, error : %s (%d))", __func__, handle, timeout, g_strerror (errno), errno);
 		return MONO_W32HANDLE_WAIT_RET_FAILED;
 	}
 
@@ -663,11 +648,11 @@ process_wait (gpointer handle, guint32 timeout, gboolean *alerted)
 
 	while (1) {
 		if (timeout != MONO_INFINITE_WAIT) {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %u): waiting on semaphore for %li ms...",
-				__func__, handle, timeout, (long)(timeout - (now - start)));
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): waiting on semaphore for %" G_GINT64_FORMAT " ms...",
+				__func__, handle, timeout, timeout - (now - start));
 			ret = mono_os_sem_timedwait (&process->exit_sem, (timeout - (now - start)), alerted ? MONO_SEM_FLAGS_ALERTABLE : MONO_SEM_FLAGS_NONE);
 		} else {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %u): waiting on semaphore forever...",
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): waiting on semaphore forever...",
 				__func__, handle, timeout);
 			ret = mono_os_sem_wait (&process->exit_sem, alerted ? MONO_SEM_FLAGS_ALERTABLE : MONO_SEM_FLAGS_NONE);
 		}
@@ -679,25 +664,25 @@ process_wait (gpointer handle, guint32 timeout, gboolean *alerted)
 		}
 
 		if (ret == MONO_SEM_TIMEDWAIT_RET_TIMEDOUT) {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %u): wait timeout (timeout = 0)", __func__, handle, timeout);
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): wait timeout (timeout = 0)", __func__, handle, timeout);
 			return MONO_W32HANDLE_WAIT_RET_TIMEOUT;
 		}
 
 		now = mono_msec_ticks ();
 		if (now - start >= timeout) {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %u): wait timeout", __func__, handle, timeout);
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): wait timeout", __func__, handle, timeout);
 			return MONO_W32HANDLE_WAIT_RET_TIMEOUT;
 		}
 
 		if (alerted && ret == MONO_SEM_TIMEDWAIT_RET_ALERTED) {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %u): wait alerted", __func__, handle, timeout);
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): wait alerted", __func__, handle, timeout);
 			*alerted = TRUE;
 			return MONO_W32HANDLE_WAIT_RET_ALERTED;
 		}
 	}
 
 	/* Process must have exited */
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %u): Waited successfully", __func__, handle, timeout);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): Waited successfully", __func__, handle, timeout);
 
 	status = process->status;
 	if (WIFSIGNALED (status))
@@ -709,7 +694,7 @@ process_wait (gpointer handle, guint32 timeout, gboolean *alerted)
 
 	process_handle->exited = TRUE;
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %u): Setting pid %d signalled, exit status %d",
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): Setting pid %d signalled, exit status %d",
 		   __func__, handle, timeout, process_handle->pid, process_handle->exitstatus);
 
 	mono_w32handle_set_signal_state (handle, TRUE, TRUE);
@@ -723,8 +708,6 @@ processes_cleanup (void)
 	static gint32 cleaning_up;
 	Process *process;
 	Process *prev = NULL;
-	GSList *finished = NULL;
-	GSList *l;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s", __func__);
 
@@ -732,53 +715,38 @@ processes_cleanup (void)
 	if (InterlockedCompareExchange (&cleaning_up, 1, 0) != 0)
 		return;
 
+	/*
+	 * This needs to be done outside the lock but atomically, hence the CAS above.
+	 */
 	for (process = processes; process; process = process->next) {
 		if (process->signalled && process->handle) {
 			/* This process has exited and we need to remove the artifical ref
 			 * on the handle */
-			mono_w32handle_unref (process->handle);
+			mono_w32handle_close (process->handle);
 			process->handle = NULL;
 		}
 	}
 
-	/*
-	 * Remove processes which exited from the processes list.
-	 * We need to synchronize with the sigchld handler here, which runs
-	 * asynchronously. The handler requires that the processes list
-	 * remain valid.
-	 */
 	mono_os_mutex_lock (&processes_mutex);
 
-	for (process = processes; process; process = process->next) {
-		if (process->handle_count == 0 && process->freeable) {
+	for (process = processes; process;) {
+		Process *next = process->next;
+		if (process->handle_count == 0 && process->signalled) {
 			/*
 			 * Unlink the entry.
-			 * This code can run parallel with the sigchld handler, but the
-			 * modifications it makes are safe.
 			 */
 			if (process == processes)
 				processes = process->next;
 			else
 				prev->next = process->next;
-			finished = g_slist_prepend (finished, process);
+
+			mono_os_sem_destroy (&process->exit_sem);
+			g_free (process);
 		} else {
 			prev = process;
 		}
+		process = next;
 	}
-
-	mono_memory_barrier ();
-
-	for (l = finished; l; l = l->next) {
-		/*
-		 * All the entries in the finished list are unlinked from processes, and
-		 * they have the 'finished' flag set, which means the sigchld handler is done
-		 * accessing them.
-		 */
-		process = (Process *)l->data;
-		mono_os_sem_destroy (&process->exit_sem);
-		g_free (process);
-	}
-	g_slist_free (finished);
 
 	mono_os_mutex_unlock (&processes_mutex);
 
@@ -862,7 +830,7 @@ mono_w32process_init (void)
 	process_set_name (&process_handle);
 
 	current_process = mono_w32handle_new (MONO_W32HANDLE_PROCESS, &process_handle);
-	g_assert (current_process);
+	g_assert (current_process != INVALID_HANDLE_VALUE);
 
 	mono_os_mutex_init (&processes_mutex);
 }
@@ -965,8 +933,7 @@ get_process_foreach_callback (gpointer handle, gpointer handle_specific, gpointe
 	if (mono_w32handle_issignalled (handle))
 		return FALSE;
 
-	mono_w32handle_ref (handle);
-	foreach_data->handle = handle;
+	foreach_data->handle = mono_w32handle_duplicate (handle);
 	return TRUE;
 }
 
@@ -1053,7 +1020,7 @@ match_procname_to_modulename (char *procname, char *modulename)
 	g_free (pname);
 	g_free (mname);
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: result is %d", __func__, result);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: result is %" G_GINT32_FORMAT, __func__, result);
 	return result;
 }
 
@@ -1171,10 +1138,10 @@ mono_w32process_module_get_filename (gpointer process, gpointer module, gunichar
 	bytes += 2;
 
 	if (size < bytes) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Size %d smaller than needed (%zd); truncating", __func__, size, bytes);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Size %" G_GUINT32_FORMAT " smaller than needed (%zd); truncating", __func__, size, bytes);
 		memcpy (basename, proc_path, size);
 	} else {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Size %d larger than needed (%zd)", __func__, size, bytes);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Size %" G_GUINT32_FORMAT " larger than needed (%zd)", __func__, size, bytes);
 		memcpy (basename, proc_path, bytes);
 	}
 
@@ -1197,7 +1164,7 @@ mono_w32process_module_get_name (gpointer process, gpointer module, gunichar2 *b
 	char *pname = NULL;
 	gboolean res;
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Getting module base name, process handle %p module %p basename %p size %d",
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Getting module base name, process handle %p module %p basename %p size %" G_GUINT32_FORMAT,
 		   __func__, process, module, basename, size);
 
 	size = size * sizeof (gunichar2); /* adjust for unicode characters */
@@ -1268,11 +1235,11 @@ mono_w32process_module_get_name (gpointer process, gpointer module, gunichar2 *b
 		bytes += 2;
 
 		if (size < bytes) {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Size %d smaller than needed (%zd); truncating", __func__, size, bytes);
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Size %" G_GUINT32_FORMAT " smaller than needed (%zd); truncating", __func__, size, bytes);
 
 			memcpy (basename, procname, size);
 		} else {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Size %d larger than needed (%zd)",
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Size %" G_GUINT32_FORMAT " larger than needed (%zd)",
 				   __func__, size, bytes);
 
 			memcpy (basename, procname, bytes);
@@ -1361,6 +1328,39 @@ switch_dir_separators (char *path)
 
 MONO_SIGNAL_HANDLER_FUNC (static, mono_sigchld_signal_handler, (int _dummy, siginfo_t *info, void *context))
 {
+	/*
+	 * Don't want to do any complicated processing here so just wake up the finalizer thread which will call
+	 * mono_w32process_signal_finished ().
+	 */
+	int old_errno = errno;
+
+	mono_gc_finalize_notify ();
+
+	errno = old_errno;
+}
+
+static void
+process_add_sigchld_handler (void)
+{
+	struct sigaction sa;
+
+	sa.sa_sigaction = mono_sigchld_signal_handler;
+	sigemptyset (&sa.sa_mask);
+	sa.sa_flags = SA_NOCLDSTOP | SA_SIGINFO | SA_RESTART;
+	g_assert (sigaction (SIGCHLD, &sa, NULL) != -1);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "Added SIGCHLD handler");
+}
+
+#endif
+
+/*
+ * mono_w32process_signal_finished:
+ *
+ *   Signal the exit semaphore for processes which have finished.
+ */
+void
+mono_w32process_signal_finished (void)
+{
 	int status;
 	int pid;
 	Process *process;
@@ -1373,9 +1373,8 @@ MONO_SIGNAL_HANDLER_FUNC (static, mono_sigchld_signal_handler, (int _dummy, sigi
 		if (pid <= 0)
 			break;
 
-		/*
-		 * This can run concurrently with the code in the rest of this module.
-		 */
+		mono_os_mutex_lock (&processes_mutex);
+
 		for (process = processes; process; process = process->next) {
 			if (process->pid != pid)
 				continue;
@@ -1385,27 +1384,12 @@ MONO_SIGNAL_HANDLER_FUNC (static, mono_sigchld_signal_handler, (int _dummy, sigi
 			process->signalled = TRUE;
 			process->status = status;
 			mono_os_sem_post (&process->exit_sem);
-			mono_memory_barrier ();
-			/* Mark this as freeable, the pointer becomes invalid afterwards */
-			process->freeable = TRUE;
 			break;
 		}
+
+		mono_os_mutex_unlock (&processes_mutex);
 	} while (1);
 }
-
-static void
-process_add_sigchld_handler (void)
-{
-	struct sigaction sa;
-
-	sa.sa_sigaction = mono_sigchld_signal_handler;
-	sigemptyset (&sa.sa_mask);
-	sa.sa_flags = SA_NOCLDSTOP | SA_SIGINFO;
-	g_assert (sigaction (SIGCHLD, &sa, NULL) != -1);
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "Added SIGCHLD handler");
-}
-
-#endif
 
 static gboolean
 is_readable_or_executable (const char *prog)
@@ -1968,10 +1952,10 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: exec()ing [%s] in dir [%s]", __func__, cmd,
 			   dir == NULL?".":dir);
 		for (i = 0; argv[i] != NULL; i++)
-			g_message ("arg %d: [%s]", i, argv[i]);
+			g_message ("arg %" G_GUINT32_FORMAT ": [%s]", i, argv[i]);
 
 		for (i = 0; env_strings[i] != NULL; i++)
-			g_message ("env %d: [%s]", i, env_strings[i]);
+			g_message ("env %" G_GUINT32_FORMAT ": [%s]", i, env_strings[i]);
 #endif
 
 		/* set cwd */
@@ -2019,8 +2003,7 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 
 		/* Keep the process handle artificially alive until the process
 		 * exits so that the information in the handle isn't lost. */
-		mono_w32handle_ref (handle);
-		process->handle = handle;
+		process->handle = mono_w32handle_duplicate (handle);
 
 		mono_os_mutex_lock (&processes_mutex);
 		process->next = processes;
@@ -2753,7 +2736,7 @@ find_pe_file_resources32 (gpointer file_map, guint32 map_size, guint32 res_id, g
 	}
 
 	if (map_size < sizeof(IMAGE_NT_HEADERS32) + GUINT32_FROM_LE (dos_header->e_lfanew)) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: File is too small: %d", __func__, map_size);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: File is too small: %" G_GUINT32_FORMAT, __func__, map_size);
 
 		mono_w32error_set_last (ERROR_BAD_LENGTH);
 		return(NULL);
@@ -2825,7 +2808,7 @@ find_pe_file_resources64 (gpointer file_map, guint32 map_size, guint32 res_id, g
 	}
 
 	if (map_size < sizeof(IMAGE_NT_HEADERS64) + GUINT32_FROM_LE (dos_header->e_lfanew)) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: File is too small: %d", __func__, map_size);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: File is too small: %" G_GUINT32_FORMAT, __func__, map_size);
 
 		mono_w32error_set_last (ERROR_BAD_LENGTH);
 		return(NULL);
@@ -2958,7 +2941,7 @@ map_pe_file (gunichar2 *filename, gint32 *map_size, void **handle)
 
 	/* Check basic file size */
 	if (statbuf.st_size < sizeof(IMAGE_DOS_HEADER)) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: File %s is too small: %lld", __func__, filename_ext, statbuf.st_size);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: File %s is too small: %lld", __func__, filename_ext, (long long) statbuf.st_size);
 
 		mono_w32error_set_last (ERROR_BAD_LENGTH);
 		g_free (filename_ext);

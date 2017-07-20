@@ -66,7 +66,7 @@ update_current_thread_stack (void *start)
 
 	info->client_info.stack_start = align_pointer (&stack_guard);
 	g_assert (info->client_info.stack_start);
-	g_assert (info->client_info.stack_start >= info->client_info.stack_start_limit && info->client_info.stack_start < info->client_info.stack_end);
+	g_assert (info->client_info.stack_start >= info->client_info.info.stack_start_limit && info->client_info.stack_start < info->client_info.info.stack_end);
 
 #if !defined(MONO_CROSS_COMPILE) && MONO_ARCH_HAS_MONO_CONTEXT
 	MONO_CONTEXT_GET_CURRENT (info->client_info.ctx);
@@ -104,14 +104,11 @@ sgen_client_stop_world (int generation)
 {
 	TV_DECLARE (end_handshake);
 
-	/* notify the profiler of the leftovers */
-	/* FIXME this is the wrong spot at we can STW for non collection reasons. */
-	if (G_UNLIKELY (mono_profiler_events & MONO_PROFILE_GC_MOVES))
-		mono_sgen_gc_event_moves ();
+	MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_PRE_STOP_WORLD, generation));
 
 	acquire_gc_locks ();
 
-	mono_profiler_gc_event (MONO_GC_EVENT_PRE_STOP_WORLD_LOCKED, generation);
+	MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_PRE_STOP_WORLD_LOCKED, generation));
 
 	/* We start to scan after locks are taking, this ensures we won't be interrupted. */
 	sgen_process_togglerefs ();
@@ -125,6 +122,8 @@ sgen_client_stop_world (int generation)
 	sgen_unified_suspend_stop_world ();
 
 	SGEN_LOG (3, "world stopped");
+
+	MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_POST_STOP_WORLD, generation));
 
 	TV_GETTIME (end_handshake);
 	time_stop_world += TV_ELAPSED (stop_world_time, end_handshake);
@@ -144,8 +143,10 @@ sgen_client_restart_world (int generation, gint64 *stw_time)
 
 	/* notify the profiler of the leftovers */
 	/* FIXME this is the wrong spot at we can STW for non collection reasons. */
-	if (G_UNLIKELY (mono_profiler_events & MONO_PROFILE_GC_MOVES))
+	if (MONO_PROFILER_ENABLED (gc_moves))
 		mono_sgen_gc_event_moves ();
+
+	MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_PRE_START_WORLD, generation));
 
 	FOREACH_THREAD (info) {
 		info->client_info.stack_start = NULL;
@@ -164,6 +165,8 @@ sgen_client_restart_world (int generation, gint64 *stw_time)
 
 	SGEN_LOG (2, "restarted (pause time: %d usec, max: %d)", (int)usec, (int)max_pause_usec);
 
+	MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_POST_START_WORLD, generation));
+
 	/*
 	 * We must release the thread info suspend lock after doing
 	 * the thread handshake.  Otherwise, if the GC stops the world
@@ -176,7 +179,7 @@ sgen_client_restart_world (int generation, gint64 *stw_time)
 	 */
 	release_gc_locks ();
 
-	mono_profiler_gc_event (MONO_GC_EVENT_POST_START_WORLD_UNLOCKED, generation);
+	MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_POST_START_WORLD_UNLOCKED, generation));
 
 	*stw_time = usec;
 }
@@ -227,8 +230,7 @@ sgen_is_thread_in_current_stw (SgenThreadInfo *info, int *reason)
 	We can't suspend the workers that will do all the heavy lifting.
 	FIXME Use some state bit in SgenThreadInfo for this.
 	*/
-	if (sgen_thread_pool_is_thread_pool_thread (major_collector.get_sweep_pool (), mono_thread_info_get_tid (info)) ||
-			sgen_workers_is_worker_thread (mono_thread_info_get_tid (info))) {
+	if (sgen_thread_pool_is_thread_pool_thread (mono_thread_info_get_tid (info))) {
 		if (reason)
 			*reason = 4;
 		return FALSE;
@@ -360,8 +362,8 @@ sgen_unified_suspend_stop_world (void)
 		/* Once we remove the old suspend code, we should move sgen to directly access the state in MonoThread */
 		info->client_info.stack_start = (gpointer) ((char*)MONO_CONTEXT_GET_SP (&info->client_info.ctx) - REDZONE_SIZE);
 
-		if (info->client_info.stack_start < info->client_info.stack_start_limit
-			 || info->client_info.stack_start >= info->client_info.stack_end) {
+		if (info->client_info.stack_start < info->client_info.info.stack_start_limit
+			 || info->client_info.stack_start >= info->client_info.info.stack_end) {
 			/*
 			 * Thread context is in unhandled state, most likely because it is
 			 * dying. We don't scan it.
@@ -375,7 +377,7 @@ sgen_unified_suspend_stop_world (void)
 		binary_protocol_thread_suspend ((gpointer) mono_thread_info_get_tid (info), stopped_ip);
 
 		THREADS_STW_DEBUG ("[GC-STW-SUSPEND-END] thread %p is suspended, stopped_ip = %p, stack = %p -> %p\n",
-			mono_thread_info_get_tid (info), stopped_ip, info->client_info.stack_start, info->client_info.stack_start ? info->client_info.stack_end : NULL);
+			mono_thread_info_get_tid (info), stopped_ip, info->client_info.stack_start, info->client_info.stack_start ? info->client_info.info.stack_end : NULL);
 	} FOREACH_THREAD_END
 }
 

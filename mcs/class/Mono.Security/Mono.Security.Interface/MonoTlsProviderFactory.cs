@@ -161,20 +161,9 @@ namespace Mono.Security.Interface
 			return (IMonoSslStream)NoReflectionHelper.GetMonoSslStream (stream);
 		}
 
-		#endregion
-
-		#region Obsolete APIs
-
-		[Obsolete ("Use GetProvider() instead.")]
-		public static MonoTlsProvider GetDefaultProvider ()
+		public static IMonoSslStream GetMonoSslStream (HttpListenerContext context)
 		{
-			return GetProvider ();
-		}
-
-		[Obsolete ("Use Initialize(string provider) instead.")]
-		public static void SetDefaultProvider (string name)
-		{
-			Initialize (name);
+			return (IMonoSslStream)NoReflectionHelper.GetMonoSslStream (context);
 		}
 
 		#endregion

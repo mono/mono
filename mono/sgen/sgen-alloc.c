@@ -211,7 +211,7 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 			/* when running in degraded mode, we continue allocing that way
 			 * for a while, to decrease the number of useless nursery collections.
 			 */
-			if (degraded_mode && degraded_mode < DEFAULT_NURSERY_SIZE)
+			if (degraded_mode && degraded_mode < sgen_nursery_size)
 				return alloc_degraded (vtable, size, FALSE);
 
 			available_in_tlab = (int)(TLAB_REAL_END - TLAB_NEXT);//We'll never have tlabs > 2Gb
@@ -241,7 +241,7 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 						p = (void **)sgen_nursery_alloc (size);
 				}
 				if (!p)
-					return alloc_degraded (vtable, size, FALSE);
+					return alloc_degraded (vtable, size, TRUE);
 
 				zero_tlab_if_necessary (p, size);
 			} else {
@@ -258,7 +258,7 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 						p = (void **)sgen_nursery_alloc_range (tlab_size, size, &alloc_size);
 				}
 				if (!p)
-					return alloc_degraded (vtable, size, FALSE);
+					return alloc_degraded (vtable, size, TRUE);
 
 				/* Allocate a new TLAB from the current nursery fragment */
 				TLAB_START = (char*)p;

@@ -180,7 +180,7 @@ namespace System
 #if !MONODROID && !MONOTOUCH && !XAMMAC
 		static TimeZoneInfo CreateLocal ()
 		{
-#if !FULL_AOT_DESKTOP || WIN_PLATFORM
+#if WIN_PLATFORM
 			if (IsWindows && LocalZoneKey != null) {
 				/* Wine Mono hack: Wine doesn't set TimeZoneKeyName, so use
 				GetTimeZoneInformation to get the name. This may not quite be
@@ -239,7 +239,7 @@ namespace System
 
 		static void GetSystemTimeZonesCore (List<TimeZoneInfo> systemTimeZones)
 		{
-#if !FULL_AOT_DESKTOP || WIN_PLATFORM
+#if WIN_PLATFORM
 			if (TimeZoneKey != null) {
 				foreach (string id in TimeZoneKey.GetSubKeyNames ()) {
 					try {
@@ -311,7 +311,7 @@ namespace System
 #endif
 		private AdjustmentRule [] adjustmentRules;
 
-#if !MOBILE || !FULL_AOT_DESKTOP || WIN_PLATFORM
+#if (!MOBILE || !FULL_AOT_DESKTOP || WIN_PLATFORM) && !XAMMAC_4_5
 		/// <summary>
 		/// Determine whether windows of not (taken Stephane Delcroix's code)
 		/// </summary>
@@ -338,7 +338,7 @@ namespace System
 			
 			return str.Substring (Istart, Iend-Istart+1);
 		}
-		
+
 #if !FULL_AOT_DESKTOP || WIN_PLATFORM
 		static RegistryKey timeZoneKey;
 		static RegistryKey TimeZoneKey {
@@ -607,11 +607,17 @@ namespace System
 #if LIBC
 		private static TimeZoneInfo FindSystemTimeZoneByFileName (string id, string filepath)
 		{
-			if (!File.Exists (filepath))
-				throw new TimeZoneNotFoundException ();
-
-			using (FileStream stream = File.OpenRead (filepath)) {
+			FileStream stream = null;
+			try {
+				stream = File.OpenRead (filepath);	
+			} catch (Exception ex) {
+				throw new TimeZoneNotFoundException ("Couldn't read time zone file " + filepath, ex);
+			}
+			try {
 				return BuildFromStream (id, stream);
+			} finally {
+				if (stream != null)
+					stream.Dispose();
 			}
 		}
 #endif

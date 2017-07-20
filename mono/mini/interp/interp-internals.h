@@ -7,6 +7,7 @@
 #include <mono/metadata/object.h>
 #include <mono/metadata/domain-internals.h>
 #include <mono/metadata/class-internals.h>
+#include <mono/metadata/debug-internals.h>
 #include "config.h"
 
 enum {
@@ -38,6 +39,10 @@ typedef struct {
 	union {
 		gint32 i;
 		gint64 l;
+		struct {
+			gint32 lo;
+			gint32 hi;
+		} pair;
 		double f;
 		/* native size integer and pointer types */
 		gpointer p;
@@ -80,6 +85,7 @@ typedef struct _RuntimeMethod
 	int transformed;
 	guint32 *arg_offsets;
 	guint32 *local_offsets;
+	guint32 *exvar_offsets;
 	unsigned int param_count;
 	unsigned int hasthis;
 	gpointer jit_wrapper;
@@ -88,6 +94,8 @@ typedef struct _RuntimeMethod
 	gpointer jit_entry;
 	MonoType *rtype;
 	MonoType **param_types;
+	MonoJitInfo *jinfo;
+	MonoDomain *domain;
 } RuntimeMethod;
 
 struct _MonoInvocation {
@@ -99,6 +107,7 @@ struct _MonoInvocation {
 	stackval       *stack_args; /* parent */
 	stackval       *stack;
 	stackval       *sp; /* For GC stack marking */
+	unsigned char  *locals;
 	/* exception info */
 	unsigned char  invoke_trap;
 	const unsigned short  *ip;
@@ -107,13 +116,20 @@ struct _MonoInvocation {
 };
 
 typedef struct {
-	MonoDomain *domain;
+	MonoDomain *original_domain;
 	MonoInvocation *base_frame;
 	MonoInvocation *current_frame;
 	MonoInvocation *env_frame;
 	jmp_buf *current_env;
 	unsigned char search_for_handler;
 	unsigned char managed_code;
+
+	/* Resume state for resuming execution in mixed mode */
+	gboolean       has_resume_state;
+	/* Frame to resume execution at */
+	MonoInvocation *handler_frame;
+	/* IP to resume execution at */
+	gpointer handler_ip;
 } ThreadContext;
 
 extern int mono_interp_traceopt;

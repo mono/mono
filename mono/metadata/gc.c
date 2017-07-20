@@ -32,6 +32,7 @@
 #include <mono/metadata/marshal.h> /* for mono_delegate_free_ftnptr () */
 #include <mono/metadata/attach.h>
 #include <mono/metadata/console-io.h>
+#include <mono/metadata/w32process.h>
 #include <mono/utils/mono-os-semaphore.h>
 #include <mono/utils/mono-memory-model.h>
 #include <mono/utils/mono-counters.h>
@@ -305,11 +306,11 @@ mono_gc_run_finalize (void *obj, void *data)
 	if (log_finalizers)
 		g_log ("mono-gc-finalizers", G_LOG_LEVEL_MESSAGE, "<%s at %p> Calling finalizer.", o->vtable->klass->name, o);
 
-	mono_profiler_gc_finalize_object_begin (o);
+	MONO_PROFILER_RAISE (gc_finalizing_object, (o));
 
 	runtime_invoke (o, NULL, &exc, NULL);
 
-	mono_profiler_gc_finalize_object_end (o);
+	MONO_PROFILER_RAISE (gc_finalized_object, (o));
 
 	if (log_finalizers)
 		g_log ("mono-gc-finalizers", G_LOG_LEVEL_MESSAGE, "<%s at %p> Returned from finalizer.", o->vtable->klass->name, o);
@@ -415,10 +416,6 @@ mono_domain_finalize (MonoDomain *domain, guint32 timeout)
 	gint res;
 	gboolean ret;
 	gint64 start;
-
-#if defined(__native_client__)
-	return FALSE;
-#endif
 
 	if (mono_thread_internal_current () == gc_thread)
 		/* We are called from inside a finalizer, not much we can do here */
@@ -711,6 +708,7 @@ static volatile gboolean finished;
  *
  *   Notify the finalizer thread that finalizers etc.
  * are available to be processed.
+ * This is async signal safe.
  */
 void
 mono_gc_finalize_notify (void)
@@ -845,7 +843,9 @@ finalizer_thread (gpointer unused)
 	MonoError error;
 	gboolean wait = TRUE;
 
-	mono_thread_set_name_internal (mono_thread_internal_current (), mono_string_new (mono_get_root_domain (), "Finalizer"), FALSE, FALSE, &error);
+	MonoString *finalizer = mono_string_new_checked (mono_get_root_domain (), "Finalizer", &error);
+	mono_error_assert_ok (&error);
+	mono_thread_set_name_internal (mono_thread_internal_current (), finalizer, FALSE, FALSE, &error);
 	mono_error_assert_ok (&error);
 
 	/* Register a hazard free queue pump callback */
@@ -875,18 +875,20 @@ finalizer_thread (gpointer unused)
 
 		finalize_domain_objects ();
 
-		mono_profiler_gc_finalize_begin ();
+		MONO_PROFILER_RAISE (gc_finalizing, ());
 
 		/* If finished == TRUE, mono_gc_cleanup has been called (from mono_runtime_cleanup),
 		 * before the domain is unloaded.
 		 */
 		mono_gc_invoke_finalizers ();
 
-		mono_profiler_gc_finalize_end ();
+		MONO_PROFILER_RAISE (gc_finalized, ());
 
 		mono_threads_join_threads ();
 
 		reference_queue_proccess_all ();
+
+		mono_w32process_signal_finished ();
 
 		hazard_free_queue_pump ();
 

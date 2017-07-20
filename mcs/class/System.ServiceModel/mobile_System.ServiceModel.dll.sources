@@ -177,6 +177,7 @@ System.ServiceModel.Dispatcher/IParameterInspector.cs
 System.ServiceModel.Security/HttpDigestClientCredential.cs
 System.ServiceModel.Security/MessageSecurityException.cs
 System.ServiceModel.Security/SecurityAccessDeniedException.cs
+System.ServiceModel.Security/SecurityNegotiationException.cs
 System.ServiceModel.Security/UserNamePasswordClientCredential.cs
 System.ServiceModel.Security/WindowsClientCredential.cs
 System.ServiceModel.Security/X509CertificateInitiatorClientCredential.cs

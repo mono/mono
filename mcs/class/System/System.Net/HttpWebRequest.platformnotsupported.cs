@@ -48,7 +48,7 @@ namespace System.Net
 			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
 		}
 
-		internal HttpWebRequest (Uri uri, object /* IMonoTlsProvider */ tlsProvider, object /* MonoTlsSettings */ settings = null)
+		internal HttpWebRequest (Uri uri, object /* MonoTlsProvider */ tlsProvider, object /* MonoTlsSettings */ settings = null)
 		{
 			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
 		}

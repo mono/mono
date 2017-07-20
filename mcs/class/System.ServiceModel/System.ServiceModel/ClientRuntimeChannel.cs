@@ -383,7 +383,6 @@ namespace System.ServiceModel.MonoInternal
 
 		protected override void OnClose (TimeSpan timeout)
 		{
-			DateTime start = DateTime.Now;
 			if (channel.State == CommunicationState.Opened)
 				channel.Close (timeout);
 		}
@@ -593,9 +592,9 @@ namespace System.ServiceModel.MonoInternal
 			// FIXME: implement ConcurrencyMode check:
 			// if it is .Single && this instance for a callback channel && the operation is invoked inside service operation, then error.
 
-			DateTime startTime = DateTime.Now;
+			DateTime startTime = DateTime.UtcNow;
 			OutputChannel.Send (msg, timeout);
-			return ((IDuplexChannel) channel).Receive (timeout - (DateTime.Now - startTime));
+			return ((IDuplexChannel) channel).Receive (timeout - (DateTime.UtcNow - startTime));
 		}
 
 		internal IAsyncResult BeginRequest (Message msg, TimeSpan timeout, AsyncCallback callback, object state)

@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AssemblyName>Mono.Posix.NETStandard</AssemblyName>
+    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
+    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <SignAssembly>true</SignAssembly>
+    <DelaySign>true</DelaySign>
+    <AssemblyOriginatorKeyFile>..\Open.snk</AssemblyOriginatorKeyFile>
+    <!--<BaseIntermediateOutputPath>obj-netstandard2.0</BaseIntermediateOutputPath>
+    <IntermediateOutputPath>obj-netstandard2.0</IntermediateOutputPath>-->
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);MONO_POSIX_NETSTANDARD_BUILD</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(ForceUseLibC)' == 'true'">
+    <DefineConstants>$(DefineConstants);FORCE_USE_LIBC_NOT_MSVC</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include=".\Assembly\**\*.cs" />
+    <Compile Include=".\Mono.Posix\**\*.cs" />
+    <Compile Include=".\Mono.Unix\**\*.cs" />
+    <Compile Include=".\Mono.Unix.Native\**\*.cs" />
+    <Compile Include="..\..\build\common\Locale.cs" />
+    <Compile Remove=".\Mono.Unix.Native\CdeclFunction.cs" />
+  </ItemGroup>
+
+</Project>

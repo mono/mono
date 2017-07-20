@@ -519,6 +519,13 @@ mono_tables_names [] = {
 
 #endif
 
+/* If TRUE (but also see DISABLE_STICT_STRONG_NAMES #define), Mono will check
+ * that the public key token, culture and version of a candidate assembly matches
+ * the requested strong name.  If FALSE, as long as the name matches, the candidate
+ * will be allowed.
+ */
+static gboolean check_strong_names_strictly = FALSE;
+
 // Amount initially reserved in each imageset's mempool.
 // FIXME: This number is arbitrary, a more practical number should be found
 #define INITIAL_IMAGE_SET_SIZE    1024
@@ -2549,8 +2556,11 @@ get_image_set (MonoImage **images, int nimages)
 			}
 
 			// If we iterated all the way through images without breaking, all items in images were found in set->images
-			if (j == nimages)
-				break; // Break on "found a set with equal members"
+			if (j == nimages) {
+				// Break on "found a set with equal members".
+				// This happens in case of a hash collision with a previously cached set.
+				break;
+			}
 		}
 
 		l = l->next;
@@ -2574,9 +2584,10 @@ get_image_set (MonoImage **images, int nimages)
 
 		g_ptr_array_add (image_sets, set);
 		++img_set_count;
-
-		img_set_cache_add (set);
 	}
+
+	/* Cache the set. If there was a cache collision, the previously cached value will be replaced. */
+	img_set_cache_add (set);
 
 	if (nimages == 1 && images [0] == mono_defaults.corlib) {
 		mono_memory_barrier ();
@@ -3073,6 +3084,18 @@ mono_metadata_get_image_set_for_method (MonoMethodInflated *method)
 	return set;
 }
 
+static gboolean
+type_is_gtd (MonoType *type)
+{
+	switch (type->type) {
+	case MONO_TYPE_CLASS:
+	case MONO_TYPE_VALUETYPE:
+		return mono_class_is_gtd (type->data.klass);
+	default:
+		return FALSE;
+	}
+}
+
 /*
  * mono_metadata_get_generic_inst:
  *
@@ -3099,6 +3122,13 @@ mono_metadata_get_generic_inst (int type_argc, MonoType **type_argv)
 	ginst->is_open = is_open;
 	ginst->type_argc = type_argc;
 	memcpy (ginst->type_argv, type_argv, type_argc * sizeof (MonoType *));
+
+	for (i = 0; i < type_argc; ++i) {
+		MonoType *t = ginst->type_argv [i];
+		if (type_is_gtd (t)) {
+			ginst->type_argv [i] = mono_class_gtd_get_canonical_inst (t->data.klass);
+		}
+	}
 
 	return mono_metadata_get_canonical_generic_inst (ginst);
 }
@@ -6899,4 +6929,16 @@ mono_find_image_set_owner (void *ptr)
 	image_sets_unlock ();
 
 	return owner;
+}
+
+void
+mono_loader_set_strict_strong_names (gboolean enabled)
+{
+	check_strong_names_strictly = enabled;
+}
+
+gboolean
+mono_loader_get_strict_strong_names (void)
+{
+	return check_strong_names_strictly;
 }

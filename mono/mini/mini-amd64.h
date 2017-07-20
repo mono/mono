@@ -175,9 +175,6 @@ struct sigcontext {
  * reproduceable results for benchmarks */
 #define MONO_ARCH_CODE_ALIGNMENT 32
 
-/*This is the max size of the locals area of a given frame. I think 1MB is a safe default for now*/
-#define MONO_ARCH_MAX_FRAME_SIZE 0x100000
-
 struct MonoLMF {
 	/* 
 	 * If the lowest bit is set, then this LMF has the rip field set. Otherwise,
@@ -312,6 +309,8 @@ typedef struct {
 	int nregs;
 	/* Only if storage == ArgOnStack */
 	int arg_size; // Bytes, will always be rounded up/aligned to 8 byte boundary
+	// Size in bytes for small arguments
+	int byte_arg_size;
 	guint8 pass_empty_struct : 1; // Set in scenarios when empty structs needs to be represented as argument.
 } ArgInfo;
 
@@ -447,6 +446,7 @@ typedef struct {
 #define MONO_ARCH_HAVE_PATCH_CODE_NEW 1
 #define MONO_ARCH_HAVE_OP_GENERIC_CLASS_INIT 1
 #define MONO_ARCH_HAVE_GENERAL_RGCTX_LAZY_FETCH_TRAMPOLINE 1
+#define MONO_ARCH_HAVE_INIT_LMF_EXT 1
 
 #if defined(TARGET_OSX) || defined(__linux__)
 #define MONO_ARCH_HAVE_UNWIND_BACKTRACE 1
@@ -555,7 +555,7 @@ typedef struct _UNWIND_INFO {
  *	OPTIONAL ULONG ExceptionData[]; */
 } UNWIND_INFO, *PUNWIND_INFO;
 
-inline guint
+static inline guint
 mono_arch_unwindinfo_get_size (guchar code_count)
 {
 	// Returned size will be used as the allocated size for unwind data trailing the memory used by compiled method.
@@ -595,7 +595,7 @@ mono_arch_code_chunk_destroy (void *chunk);
 #define MONO_TRAMPOLINE_UNWINDINFO_SIZE(max_code_count) (mono_arch_unwindinfo_get_size (max_code_count))
 #define MONO_MAX_TRAMPOLINE_UNWINDINFO_SIZE (MONO_TRAMPOLINE_UNWINDINFO_SIZE(3))
 
-inline gboolean
+static inline gboolean
 mono_arch_unwindinfo_validate_size (GSList *unwind_ops, guint max_size)
 {
 	guint current_size = mono_arch_unwindinfo_get_size (mono_arch_unwindinfo_get_code_count (unwind_ops));
@@ -607,7 +607,7 @@ mono_arch_unwindinfo_validate_size (GSList *unwind_ops, guint max_size)
 #define MONO_TRAMPOLINE_UNWINDINFO_SIZE(max_code_count) 0
 #define MONO_MAX_TRAMPOLINE_UNWINDINFO_SIZE 0
 
-inline gboolean
+static inline gboolean
 mono_arch_unwindinfo_validate_size (GSList *unwind_ops, guint max_size)
 {
 	return TRUE;

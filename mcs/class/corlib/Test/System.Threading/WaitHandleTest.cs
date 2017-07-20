@@ -28,6 +28,7 @@
 
 
 using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -558,8 +559,8 @@ namespace MonoTests.System.Threading {
 
 				Thread.Sleep (10); // wait a bit so we enter mre.WaitOne
 
-				DateTime end = DateTime.Now.AddMilliseconds (500);
-				while (DateTime.Now < end) {
+				var sw = Stopwatch.StartNew ();
+				while (sw.ElapsedMilliseconds <= 500) {
 					thread.Suspend ();
 					thread.Resume ();
 				}
@@ -588,8 +589,8 @@ namespace MonoTests.System.Threading {
 
 				Thread.Sleep (10); // wait a bit so we enter WaitHandle.WaitAny ({mre1, mre2})
 
-				DateTime end = DateTime.Now.AddMilliseconds (500);
-				while (DateTime.Now < end) {
+				var sw = Stopwatch.StartNew ();
+				while (sw.ElapsedMilliseconds <= 500) {
 					thread.Suspend ();
 					thread.Resume ();
 				}
@@ -618,8 +619,8 @@ namespace MonoTests.System.Threading {
 
 				Thread.Sleep (10); // wait a bit so we enter WaitHandle.WaitAll ({mre1, mre2})
 
-				DateTime end = DateTime.Now.AddMilliseconds (500);
-				while (DateTime.Now < end) {
+				var sw = Stopwatch.StartNew ();
+				while (sw.ElapsedMilliseconds <= 500) {
 					thread.Suspend ();
 					thread.Resume ();
 				}
@@ -628,6 +629,19 @@ namespace MonoTests.System.Threading {
 			}
 		}
 #endif // MONO_FEATURE_THREAD_SUSPEND_RESUME
+
+		[Test]
+		public static void SignalAndWait()
+		{
+			using (var eventToSignal = new AutoResetEvent (false))
+			using (var eventToWait = new AutoResetEvent (false))
+			{
+				eventToWait.Set ();
+
+				Assert.IsTrue (WaitHandle.SignalAndWait (eventToSignal, eventToWait), "#1");
+				Assert.IsTrue (eventToSignal.WaitOne (), "#2");
+			}
+		}
 	}
 }
 

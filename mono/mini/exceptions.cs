@@ -1462,7 +1462,6 @@ class Tests
 		return 0;
 	}
 	
-	[Category ("NaClDisable")]
 	public static int test_0_div_zero () {
 		int d = 1;
 		int q = 0;
@@ -1633,7 +1632,6 @@ class Tests
 		return 0;
 	}
 
-	[Category ("NaClDisable")]
 	public static int test_0_long_div_zero () {
 		long d = 1;
 		long q = 0;
@@ -2318,7 +2316,6 @@ class Tests
 		Console.WriteLine ();
 	}
 
-	[Category ("!INTERPRETER")]
 	[Category ("!BITCODE")]
 	public static int test_0_rethrow_stacktrace () {
 		// Check that rethrowing an exception preserves the original stack trace
@@ -2872,6 +2869,7 @@ class Tests
 		}
 	}
 
+	[Category ("!BITCODE")]
 	public static int test_1_basic_filter_catch () {
 		try {
 			MyException e = new MyException ("");
@@ -2883,6 +2881,7 @@ class Tests
 		return 0;
 	}
 
+	[Category ("!BITCODE")]
 	public static int test_1234_complicated_filter_catch () {
 		string res = "init";
 		try {
@@ -2911,6 +2910,27 @@ class Tests
 		}
 		// Console.WriteLine ("res2: " + res);
 		return "outerFinally_fwos_fromFilter_2ndcatch_innerFinally_init" == res ? 1234 : 0;
+	}
+
+    public struct FooStruct
+    {
+        public long Part1 { get; }
+        public long Part2 { get; }
+
+        public byte Part3 { get; }
+    }
+
+    [MethodImpl( MethodImplOptions.NoInlining )]
+    private static bool ExceptionFilter( byte x, FooStruct item ) => true;
+
+	[Category ("!BITCODE")]
+	public static int test_0_filter_caller_area () {
+        try {
+            throw new Exception();
+        }
+        catch (Exception) when (ExceptionFilter (default(byte), default (FooStruct))) {
+        }
+		return 0;
 	}
 }
 

@@ -28,8 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP
-
 using System.Threading;
 namespace System.Net {
 	class ListenerAsyncResult : IAsyncResult {
@@ -181,5 +179,4 @@ namespace System.Net {
 		}
 	}
 }
-#endif
 

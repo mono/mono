@@ -1001,14 +1001,17 @@ get_call_info (MonoMemPool *mp, MonoMethodSignature *sig)
 		case MONO_TYPE_I1:
 		case MONO_TYPE_U1:
 			add_general (&gr, &stack_size, ainfo);
+			ainfo->byte_arg_size = 1;
 			break;
 		case MONO_TYPE_I2:
 		case MONO_TYPE_U2:
 			add_general (&gr, &stack_size, ainfo);
+			ainfo->byte_arg_size = 2;
 			break;
 		case MONO_TYPE_I4:
 		case MONO_TYPE_U4:
 			add_general (&gr, &stack_size, ainfo);
+			ainfo->byte_arg_size = 4;
 			break;
 		case MONO_TYPE_I:
 		case MONO_TYPE_U:
@@ -1330,8 +1333,7 @@ mono_arch_compute_omit_fp (MonoCompile *cfg)
 		cfg->arch.omit_fp = FALSE;
 	if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG))
 		cfg->arch.omit_fp = FALSE;
-	if ((mono_jit_trace_calls != NULL && mono_trace_eval (cfg->method)) ||
-		(cfg->prof_options & MONO_PROFILE_ENTER_LEAVE))
+	if ((mono_jit_trace_calls != NULL && mono_trace_eval (cfg->method)))
 		cfg->arch.omit_fp = FALSE;
 	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
 		ArgInfo *ainfo = &cinfo->args [i];
@@ -1637,13 +1639,6 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 
 	/* Allocate locals */
 	offsets = mono_allocate_stack_slots (cfg, cfg->arch.omit_fp ? FALSE: TRUE, &locals_stack_size, &locals_stack_align);
-	if (locals_stack_size > MONO_ARCH_MAX_FRAME_SIZE) {
-		char *mname = mono_method_full_name (cfg->method, TRUE);
-		mono_cfg_set_exception_invalid_program (cfg, g_strdup_printf ("Method %s stack is too big.", mname));
-		g_free (mname);
-		return;
-	}
-		
 	if (locals_stack_align) {
 		offset += (locals_stack_align - 1);
 		offset &= ~(locals_stack_align - 1);
@@ -2302,7 +2297,7 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 		load->klass = vtaddr->klass;
 		load->dreg = mono_alloc_ireg (cfg);
 		MONO_ADD_INS (cfg->cbb, load);
-		mini_emit_memcpy (cfg, load->dreg, 0, src->dreg, 0, size, 4);
+		mini_emit_memcpy (cfg, load->dreg, 0, src->dreg, 0, size, SIZEOF_VOID_P);
 
 		if (ainfo->pair_storage [0] == ArgInIReg) {
 			MONO_INST_NEW (cfg, arg, OP_X86_LEA_MEMBASE);
@@ -2330,10 +2325,10 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 			MONO_EMIT_NEW_LOAD_MEMBASE (cfg, dreg, src->dreg, 0);
 			MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, AMD64_RSP, ainfo->offset, dreg);
 		} else if (size <= 40) {
-			mini_emit_memcpy (cfg, AMD64_RSP, ainfo->offset, src->dreg, 0, size, 4);
+			mini_emit_memcpy (cfg, AMD64_RSP, ainfo->offset, src->dreg, 0, size, SIZEOF_VOID_P);
 		} else {
 			// FIXME: Code growth
-			mini_emit_memcpy (cfg, AMD64_RSP, ainfo->offset, src->dreg, 0, size, 4);
+			mini_emit_memcpy (cfg, AMD64_RSP, ainfo->offset, src->dreg, 0, size, SIZEOF_VOID_P);
 		}
 
 		if (cfg->compute_gc_maps) {
@@ -3233,7 +3228,7 @@ mono_emit_stack_alloc (MonoCompile *cfg, guchar *code, MonoInst* tree)
 #if defined(TARGET_WIN32)
 	need_touch = TRUE;
 #elif defined(MONO_ARCH_SIGSEGV_ON_ALTSTACK)
-	if (!tree->flags & MONO_INST_INIT)
+	if (!(tree->flags & MONO_INST_INIT))
 		need_touch = TRUE;
 #endif
 
@@ -3635,16 +3630,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 	if (cfg->verbose_level > 2)
 		g_print ("Basic block %d starting at offset 0x%x\n", bb->block_num, bb->native_offset);
-
-	if ((cfg->prof_options & MONO_PROFILE_COVERAGE) && cfg->coverage_info) {
-		MonoProfileCoverageInfo *cov = cfg->coverage_info;
-		g_assert (!cfg->compile_aot);
-
-		cov->data [bb->dfn].cil_code = bb->cil_code;
-		amd64_mov_reg_imm (code, AMD64_R11, (guint64)&cov->data [bb->dfn].count);
-		/* this is not thread save, but good enough */
-		amd64_inc_membase (code, AMD64_R11, 0);
-	}
 
 	offset = code - cfg->native_code;
 
@@ -4833,7 +4818,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_mov_membase_reg (code, spvar->inst_basereg, spvar->inst_offset, AMD64_RSP, sizeof(gpointer));
 
 			if ((MONO_BBLOCK_IS_IN_REGION (bb, MONO_REGION_FINALLY) ||
-				 MONO_BBLOCK_IS_IN_REGION (bb, MONO_REGION_FINALLY)) &&
+				 MONO_BBLOCK_IS_IN_REGION (bb, MONO_REGION_FILTER)) &&
 				cfg->param_area) {
 				amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, ALIGN_TO (cfg->param_area, MONO_ARCH_FRAME_ALIGNMENT));
 			}
@@ -6513,9 +6498,6 @@ get_max_epilog_size (MonoCompile *cfg)
 	if (mono_jit_trace_calls != NULL)
 		max_epilog_size += 50;
 
-	if (cfg->prof_options & MONO_PROFILE_ENTER_LEAVE)
-		max_epilog_size += 50;
-
 	max_epilog_size += (AMD64_NREG * 2);
 
 	return max_epilog_size;
@@ -6676,7 +6658,26 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		/* See mono_emit_stack_alloc */
 #if defined(MONO_ARCH_SIGSEGV_ON_ALTSTACK)
 		guint32 remaining_size = alloc_size;
-		/*FIXME handle unbounded code expansion, we should use a loop in case of more than X interactions*/
+
+		/* Use a loop for large sizes */
+		if (remaining_size > 10 * 0x1000) {
+			amd64_mov_reg_imm (code, X86_EAX, remaining_size / 0x1000);
+			guint8 *label = code;
+			amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, 0x1000);
+			amd64_test_membase_reg (code, AMD64_RSP, 0, AMD64_RSP);
+			amd64_alu_reg_imm (code, X86_SUB, AMD64_RAX, 1);
+			amd64_alu_reg_imm (code, X86_CMP, AMD64_RAX, 0);
+			guint8 *label2 = code;
+			x86_branch8 (code, X86_CC_NE, 0, FALSE);
+			amd64_patch (label2, label);
+			if (cfg->arch.omit_fp) {
+				cfa_offset += (remaining_size / 0x1000) * 0x1000;
+				mono_emit_unwind_op_def_cfa_offset (cfg, code, cfa_offset);
+			}
+
+			remaining_size = remaining_size % 0x1000;
+		}
+
 		guint32 required_code_size = ((remaining_size / 0x1000) + 1) * 11; /*11 is the max size of amd64_alu_reg_imm + amd64_test_membase_reg*/
 		guint32 offset = code - cfg->native_code;
 		if (G_UNLIKELY (required_code_size >= (cfg->code_size - offset))) {
@@ -6802,8 +6803,6 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 			MonoInst *ins;
 			int max_length = 0;
 
-			if (cfg->prof_options & MONO_PROFILE_COVERAGE)
-				max_length += 6;
 			/* max alignment for loops */
 			if ((cfg->opt & MONO_OPT_LOOP) && bb_is_loop_start (bb))
 				max_length += LOOP_ALIGNMENT;
@@ -6935,9 +6934,6 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		args_clobbered = TRUE;
 		code = (guint8 *)mono_arch_instrument_prolog (cfg, mono_trace_enter_method, code, TRUE);
 	}
-
-	if (cfg->prof_options & MONO_PROFILE_ENTER_LEAVE)
-		args_clobbered = TRUE;
 
 	/*
 	 * Optimize the common case of the first bblock making a call with the same
@@ -7103,9 +7099,14 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 		} else {
 			/* FIXME: maybe save the jit tls in the prolog */
 		}
-		if (cfg->used_int_regs & (1 << AMD64_RBP)) {
+		if (cfg->used_int_regs & (1 << AMD64_RBP))
 			amd64_mov_reg_membase (code, AMD64_RBP, cfg->frame_reg, lmf_offset + MONO_STRUCT_OFFSET (MonoLMF, rbp), 8);
-		}
+		if (cfg->arch.omit_fp)
+			/*
+			 * emit_setup_lmf () marks RBP as saved, we have to mark it as same value here before clearing up the stack
+			 * since its stack slot will become invalid.
+			 */
+			mono_emit_unwind_op_same_value (cfg, code, AMD64_RBP);
 	}
 
 	/* Restore callee saved regs */
@@ -7113,9 +7114,9 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 		if (AMD64_IS_CALLEE_SAVED_REG (i) && (cfg->arch.saved_iregs & (1 << i))) {
 			/* Restore only used_int_regs, not arch.saved_iregs */
 #if defined(MONO_SUPPORT_TASKLETS)
-			int restore_reg=1;
+			int restore_reg = 1;
 #else
-			int restore_reg=(cfg->used_int_regs & (1 << i));
+			int restore_reg = (cfg->used_int_regs & (1 << i));
 #endif
 			if (restore_reg) {
 				amd64_mov_reg_membase (code, i, cfg->frame_reg, save_area_offset, 8);
@@ -7676,7 +7677,7 @@ get_delegate_invoke_impl (MonoTrampInfo **info, gboolean has_target, guint32 par
 		if (!has_target)
 			g_free (buff);
 	}
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL));
 
 	return start;
 }
@@ -7710,7 +7711,7 @@ get_delegate_virtual_invoke_impl (MonoTrampInfo **info, gboolean load_imt_reg, i
 	/* Load the vtable */
 	amd64_mov_reg_membase (code, AMD64_RAX, AMD64_ARG_REG1, MONO_STRUCT_OFFSET (MonoObject, vtable), 8);
 	amd64_jump_membase (code, AMD64_RAX, offset);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL));
 
 	tramp_name = mono_get_delegate_virtual_invoke_impl_name (load_imt_reg, offset);
 	*info = mono_tramp_info_create (tramp_name, start, code - start, NULL, unwind_ops);
@@ -8010,7 +8011,7 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 	g_assert (code - start <= size);
 	g_assert_checked (mono_arch_unwindinfo_validate_size (unwind_ops, MONO_TRAMPOLINE_UNWINDINFO_SIZE(0)));
 
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_IMT_TRAMPOLINE, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_IMT_TRAMPOLINE, NULL));
 
 	mono_tramp_info_register (mono_tramp_info_create (NULL, start, code - start, NULL, unwind_ops), domain);
 

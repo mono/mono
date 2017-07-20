@@ -14,6 +14,8 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Collections.Generic;
 
+#pragma warning disable CS1718
+
 namespace MonoTests.System
 {
 	[TestFixture]

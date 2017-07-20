@@ -27,29 +27,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP
-#if MONO_SECURITY_ALIAS
-extern alias MonoSecurity;
-#endif
-
-#if MONO_SECURITY_ALIAS
-using MSI = MonoSecurity::Mono.Security.Interface;
-#else
-using MSI = Mono.Security.Interface;
-#endif
-
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using Mono.Net.Security;
 
 namespace System.Net {
-	sealed class HttpConnection
-	{
+	sealed class HttpConnection {
 		static AsyncCallback onread_cb = new AsyncCallback (OnRead);
 		const int BufferSize = 8192;
 		Socket sock;
@@ -73,7 +61,7 @@ namespace System.Net {
 		HttpListener last_listener;
 		int [] client_cert_errors;
 		X509Certificate2 client_cert;
-		IMonoSslStream ssl_stream;
+		SslStream ssl_stream;
 
 		public HttpConnection (Socket sock, EndPointListener epl, bool secure, X509Certificate cert)
 		{
@@ -94,10 +82,16 @@ namespace System.Net {
 					client_cert_errors = new int[] { (int)e };
 					return true;
 				});
-				stream = ssl_stream.AuthenticatedStream;
+				stream = ssl_stream;
 			}
 			timer = new Timer (OnTimeout, null, Timeout.Infinite, Timeout.Infinite);
+			if (ssl_stream != null)
+				ssl_stream.AuthenticateAsServer (cert, true, (SslProtocols)ServicePointManager.SecurityProtocol, false);
 			Init ();
+		}
+
+		internal SslStream SslStream {
+			get { return ssl_stream; }
 		}
 
 		internal int [] ClientCertificateErrors {
@@ -110,10 +104,6 @@ namespace System.Net {
 
 		void Init ()
 		{
-			if (ssl_stream != null) {
-				ssl_stream.AuthenticateAsServer (cert, true, (SslProtocols)ServicePointManager.SecurityProtocol, false);
-			}
-
 			context_bound = false;
 			i_stream = null;
 			o_stream = null;
@@ -389,7 +379,7 @@ namespace System.Net {
 				HttpListenerResponse response = context.Response;
 				response.StatusCode = status;
 				response.ContentType = "text/html";
-				string description = HttpListenerResponseHelper.GetStatusDescription (status);
+				string description = HttpStatusDescription.Get (status);
 				string str;
 				if (msg != null)
 					str = String.Format ("<h1>{0} ({1})</h1>", description, msg);
@@ -493,5 +483,4 @@ namespace System.Net {
 		}
 	}
 }
-#endif
 

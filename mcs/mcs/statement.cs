@@ -269,7 +269,7 @@ namespace Mono.CSharp {
 
 			var da_false = new DefiniteAssignmentBitSet (fc.DefiniteAssignmentOnFalse);
 
-			fc.DefiniteAssignment = fc.DefiniteAssignmentOnTrue;
+			fc.BranchDefiniteAssignment (fc.DefiniteAssignmentOnTrue);
 			var labels = fc.CopyLabelStack ();
 
 			var res = TrueStatement.FlowAnalysis (fc);
@@ -558,6 +558,8 @@ namespace Mono.CSharp {
 				ec.Emit (OpCodes.Br, ec.LoopBegin);
 				ec.MarkLabel (while_loop);
 
+				expr.EmitPrepare (ec);
+
 				Statement.Emit (ec);
 			
 				ec.MarkLabel (ec.LoopBegin);
@@ -576,8 +578,9 @@ namespace Mono.CSharp {
 		{
 			expr.FlowAnalysisConditional (fc);
 
-			fc.DefiniteAssignment = fc.DefiniteAssignmentOnTrue;
 			var da_false = new DefiniteAssignmentBitSet (fc.DefiniteAssignmentOnFalse);
+
+			fc.BranchDefiniteAssignment (fc.DefiniteAssignmentOnTrue);
 
 			Statement.FlowAnalysis (fc);
 
@@ -1114,6 +1117,7 @@ namespace Mono.CSharp {
 	public class Return : ExitStatement
 	{
 		Expression expr;
+		bool expr_returns;
 
 		public Return (Expression expr, Location l)
 		{
@@ -1339,7 +1343,9 @@ namespace Mono.CSharp {
 			if (expr != null)
 				expr.FlowAnalysis (fc);
 
-			base.DoFlowAnalysis (fc);
+			if (!expr_returns)
+				base.DoFlowAnalysis (fc);
+			
 			return true;
 		}
 
@@ -1352,6 +1358,12 @@ namespace Mono.CSharp {
 		public override Reachability MarkReachable (Reachability rc)
 		{
 			base.MarkReachable (rc);
+
+			if (Expr != null) {
+				rc = Expr.MarkReachable (rc);
+				expr_returns = rc.IsUnreachable;
+			}
+
 			return Reachability.CreateUnreachable ();
 		}
 
@@ -1767,6 +1779,19 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public static Expression ConvertType (ResolveContext rc, Expression expr)
+		{
+			var et = rc.BuiltinTypes.Exception;
+			if (Convert.ImplicitConversionExists (rc, expr, et))
+				expr = Convert.ImplicitConversion (rc, expr, et, expr.Location);
+			else {
+				rc.Report.Error (155, expr.Location, "The type caught or thrown must be derived from System.Exception");
+				expr = EmptyCast.Create (expr, et);
+			}
+
+			return expr;
+		}
+
 		public override bool Resolve (BlockContext ec)
 		{
 			if (expr == null) {
@@ -1790,11 +1815,7 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return false;
 
-			var et = ec.BuiltinTypes.Exception;
-			if (Convert.ImplicitConversionExists (ec, expr, et))
-				expr = Convert.ImplicitConversion (ec, expr, et, loc);
-			else
-				ec.Report.Error (155, expr.Location, "The type caught or thrown must be derived from System.Exception");
+			expr = ConvertType (ec, expr);
 
 			return true;
 		}
@@ -2251,11 +2272,8 @@ namespace Mono.CSharp {
 
 		public override Reachability MarkReachable (Reachability rc)
 		{
-			var init = initializer as ExpressionStatement;
-			if (init != null)
-				init.MarkReachable (rc);
-
-			return base.MarkReachable (rc);
+			base.MarkReachable (rc);
+			return initializer == null ? rc : initializer.MarkReachable (rc);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement target)
@@ -2415,6 +2433,12 @@ namespace Mono.CSharp {
 			}
 			set {
 				hoisted_variant = value;
+			}
+		}
+
+		public bool Created {
+			get {
+				return builder != null;
 			}
 		}
 
@@ -6357,7 +6381,7 @@ namespace Mono.CSharp {
 		public override bool Resolve (BlockContext ec)
 		{
 			if (ec.CurrentIterator != null)
-				ec.Report.Error (1629, loc, "Unsafe code may not appear in iterators");
+				Expression.UnsafeInsideIteratorError (ec, loc);
 
 			using (ec.Set (ResolveContext.Options.UnsafeScope))
 				return Block.Resolve (ec);
@@ -7459,6 +7483,10 @@ namespace Mono.CSharp {
 						ec.Emit (OpCodes.Br, end);
 
 					ec.MarkLabel (labels [i + 1]);
+
+					ec.EmitInt (0);
+					ec.Emit (OpCodes.Stloc, state_variable);
+
 					c = catch_sm [i];
 					ec.AsyncThrowVariable = c.Variable;
 					c.Block.Emit (ec);

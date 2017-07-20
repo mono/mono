@@ -1337,7 +1337,7 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 	ArgInfo *ainfo = (ArgInfo*)ins->inst_p1;
 	int size = ins->backend.size;
 
-	mini_emit_memcpy (cfg, sparc_sp, ainfo->offset, src->dreg, 0, size, 0);
+	mini_emit_memcpy (cfg, sparc_sp, ainfo->offset, src->dreg, 0, size, SIZEOF_VOID_P);
 }
 
 void
@@ -2406,10 +2406,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		g_print ("Basic block %d starting at offset 0x%x\n", bb->block_num, bb->native_offset);
 
 	cpos = bb->max_offset;
-
-	if (cfg->prof_options & MONO_PROFILE_COVERAGE) {
-		NOT_IMPLEMENTED;
-	}
 
 	MONO_BB_FOR_EACH_INS (bb, ins) {
 		guint8* code_start;
@@ -4103,9 +4099,6 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 		max_epilog_size += 128;
 	
 	if (mono_jit_trace_calls != NULL)
-		max_epilog_size += 50;
-
-	if (cfg->prof_options & MONO_PROFILE_ENTER_LEAVE)
 		max_epilog_size += 50;
 
 	while (cfg->code_len + max_epilog_size > (cfg->code_size - 16)) {

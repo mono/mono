@@ -398,7 +398,7 @@ mono_domain_create (void)
 	domain->friendly_name = NULL;
 	domain->search_path = NULL;
 
-	mono_profiler_appdomain_event (domain, MONO_PROFILE_START_LOAD);
+	MONO_PROFILER_RAISE (domain_loading, (domain));
 
 	domain->mp = mono_mempool_new ();
 	domain->code_mp = mono_code_manager_new ();
@@ -409,7 +409,6 @@ mono_domain_create (void)
 	domain->assembly_bindings_parsed = FALSE;
 	domain->class_vtable_array = g_ptr_array_new ();
 	domain->proxy_vtable_hash = g_hash_table_new ((GHashFunc)mono_ptrarray_hash, (GCompareFunc)mono_ptrarray_equal);
-	domain->static_data_array = NULL;
 	mono_jit_code_hash_init (&domain->jit_code_hash);
 	domain->ldstr_table = mono_g_hash_table_new_type ((GHashFunc)mono_string_hash, (GCompareFunc)mono_string_equal, MONO_HASH_KEY_VALUE_GC, MONO_ROOT_SOURCE_DOMAIN, "domain string constants table");
 	domain->num_jit_info_tables = 1;
@@ -440,7 +439,7 @@ mono_domain_create (void)
 	if (create_domain_hook)
 		create_domain_hook (domain);
 
-	mono_profiler_appdomain_loaded (domain, MONO_PROFILE_OK);
+	MONO_PROFILER_RAISE (domain_loaded, (domain));
 	
 	return domain;
 }
@@ -465,7 +464,7 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	MonoAssembly *ass = NULL;
 	MonoImageOpenStatus status = MONO_IMAGE_OK;
 	const MonoRuntimeInfo* runtimes [G_N_ELEMENTS (supported_runtimes) + 1] = { NULL };
-	int n, dummy;
+	int n;
 
 #ifdef DEBUG_DOMAIN_UNLOAD
 	debug_domain_unload = TRUE;
@@ -502,7 +501,7 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	mono_counters_register ("Max HashTable Chain Length", MONO_COUNTER_INT|MONO_COUNTER_METADATA, &mono_g_hash_table_max_chain_length);
 
 	mono_gc_base_init ();
-	mono_thread_info_attach (&dummy);
+	mono_thread_info_attach ();
 
 	mono_coop_mutex_init_recursive (&appdomains_mutex);
 
@@ -763,7 +762,7 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 
 	domain->friendly_name = g_path_get_basename (filename);
 
-	mono_profiler_appdomain_name (domain, domain->friendly_name);
+	MONO_PROFILER_RAISE (domain_name, (domain, domain->friendly_name));
 
 	return domain;
 }
@@ -1034,13 +1033,9 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 	if (mono_dont_free_domains)
 		return;
 
-	mono_profiler_appdomain_event (domain, MONO_PROFILE_START_UNLOAD);
+	MONO_PROFILER_RAISE (domain_unloading, (domain));
 
 	mono_debug_domain_unload (domain);
-
-	mono_appdomains_lock ();
-	appdomains_list [domain->domain_id] = NULL;
-	mono_appdomains_unlock ();
 
 	/* must do this early as it accesses fields and types */
 	if (domain->special_static_fields) {
@@ -1125,7 +1120,7 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 	 * Send this after the assemblies have been unloaded and the domain is still in a 
 	 * usable state.
 	 */
-	mono_profiler_appdomain_event (domain, MONO_PROFILE_END_UNLOAD);
+	MONO_PROFILER_RAISE (domain_unloaded, (domain));
 
 	if (free_domain_hook)
 		free_domain_hook (domain);
@@ -1150,10 +1145,6 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 	domain->class_vtable_array = NULL;
 	g_hash_table_destroy (domain->proxy_vtable_hash);
 	domain->proxy_vtable_hash = NULL;
-	if (domain->static_data_array) {
-		mono_gc_free_fixed (domain->static_data_array);
-		domain->static_data_array = NULL;
-	}
 	mono_internal_hash_table_destroy (&domain->jit_code_hash);
 
 	/*
@@ -1217,7 +1208,13 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 
 	domain->setup = NULL;
 
+#ifndef HAVE_BOEHM_GC
 	mono_gc_deregister_root ((char*)&(domain->MONO_DOMAIN_FIRST_GC_TRACKED));
+#endif
+
+	mono_appdomains_lock ();
+	appdomains_list [domain->domain_id] = NULL;
+	mono_appdomains_unlock ();
 
 	/* FIXME: anything else required ? */
 
@@ -1399,6 +1396,12 @@ mono_context_set (MonoAppContext * new_context)
 	SET_APPCONTEXT (new_context);
 }
 
+void
+mono_context_set_handle (MonoAppContextHandle new_context)
+{
+	SET_APPCONTEXT (MONO_HANDLE_RAW (new_context));
+}
+
 /**
  * mono_context_get:
  *
@@ -1408,6 +1411,17 @@ MonoAppContext *
 mono_context_get (void)
 {
 	return GET_APPCONTEXT ();
+}
+
+/**
+ * mono_context_get_handle:
+ *
+ * Returns: the current Mono Application Context.
+ */
+MonoAppContextHandle
+mono_context_get_handle (void)
+{
+	return MONO_HANDLE_NEW (MonoAppContext, GET_APPCONTEXT ());
 }
 
 /**
@@ -1434,40 +1448,6 @@ gint32
 mono_context_get_domain_id (MonoAppContext *context)
 {
 	return context->domain_id;
-}
-
-/* LOCKING: the caller holds the lock for this domain */
-void
-mono_domain_add_class_static_data (MonoDomain *domain, MonoClass *klass, gpointer data, guint32 *bitmap)
-{
-	/* Note [Domain Static Data Array]:
-	 *
-	 * Entry 0 in the array is the index of the next free slot.
-	 * Entry 1 is the total size of the array.
-	 */
-	int next;
-	if (domain->static_data_array) {
-		int size = GPOINTER_TO_INT (domain->static_data_array [1]);
-		next = GPOINTER_TO_INT (domain->static_data_array [0]);
-		if (next >= size) {
-			/* 'data' is allocated by alloc_fixed */
-			gpointer *new_array = (gpointer *)mono_gc_alloc_fixed (sizeof (gpointer) * (size * 2), MONO_GC_ROOT_DESCR_FOR_FIXED (size * 2), MONO_ROOT_SOURCE_DOMAIN, "static field list");
-			mono_gc_memmove_aligned (new_array, domain->static_data_array, sizeof (gpointer) * size);
-			size *= 2;
-			new_array [1] = GINT_TO_POINTER (size);
-			mono_gc_free_fixed (domain->static_data_array);
-			domain->static_data_array = new_array;
-		}
-	} else {
-		int size = 32;
-		gpointer *new_array = (gpointer *)mono_gc_alloc_fixed (sizeof (gpointer) * size, MONO_GC_ROOT_DESCR_FOR_FIXED (size), MONO_ROOT_SOURCE_DOMAIN, "static field list");
-		next = 2;
-		new_array [0] = GINT_TO_POINTER (next);
-		new_array [1] = GINT_TO_POINTER (size);
-		domain->static_data_array = new_array;
-	}
-	domain->static_data_array [next++] = data;
-	domain->static_data_array [0] = GINT_TO_POINTER (next);
 }
 
 /**

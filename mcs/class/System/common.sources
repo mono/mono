@@ -42,60 +42,27 @@ System.IO/RenamedEventHandler.cs
 System.IO/WaitForChangedResult.cs
 System.IO/WatcherChangeTypes.cs
 
-System.Net/AuthenticationManager.cs
 System.Net/BasicClient.cs
 System.Net/BindIPEndPoint.cs
-System.Net/ChunkedInputStream.cs
-System.Net/ChunkStream.cs
+System.Net/MonoChunkStream.cs
 System.Net/DecompressionMethods.cs
 System.Net/DefaultCertificatePolicy.cs
 System.Net/DigestClient.cs
 System.Net/Dns.cs
-System.Net/EndPointListener.cs
-System.Net/EndPointManager.cs
 System.Net/EndpointPermission.cs
-System.Net/FtpAsyncResult.cs
-System.Net/FtpDataStream.cs
-System.Net/FtpRequestCreator.cs
-System.Net/FtpStatus.cs
-System.Net/FtpWebRequest.cs
-System.Net/FtpWebResponse.cs
-System.Net/HttpConnection.cs
-System.Net/HttpListener.cs
-System.Net/HttpListenerBasicIdentity.cs
-System.Net/HttpListenerContext.cs
-System.Net/HttpListenerPrefixCollection.cs
-System.Net/HttpListenerRequest.cs
-System.Net/HttpListenerResponse.cs
-System.Net/HttpListenerResponseHelper.cs
-System.Net/HttpListenerTimeoutManager.cs
 System.Net/HttpRequestCreator.cs
 System.Net/HttpStreamAsyncResult.cs
-System.Net/HttpWebRequest.cs
-System.Net/HttpWebResponse.cs
 System.Net/ICredentialPolicy.cs
 System.Net/IPv6Address.cs
-System.Net/IWebConnectionState.cs
 System.Net/IWebProxyScript.cs
-System.Net/ListenerAsyncResult.cs
 System.Net/ListenerPrefix.cs
-System.Net/MacProxy.cs
 System.Net/MonoHttpDate.cs
 System.Net/NetConfig.cs
-System.Net/NtlmClient.cs
 System.Net/RequestStream.cs
-System.Net/ResponseStream.cs
-System.Net/ServicePoint.cs
-System.Net/ServicePointManager.cs
-System.Net/ServicePointManager.extra.cs
 System.Net/SimpleAsyncResult.cs
 System.Net/SocketPermissionAttribute.cs
 System.Net/SocketPermission.cs
 System.Net/WebAsyncResult.cs
-System.Net/WebConnection.cs
-System.Net/WebConnectionData.cs
-System.Net/WebConnectionGroup.cs
-System.Net/WebConnectionStream.cs
 
 System.Net.Mail/AlternateView.cs
 System.Net.Mail/AlternateViewCollection.cs
@@ -111,7 +78,6 @@ System.Net.Mail/MailMessage.cs
 System.Net.Mail/MailPriority.cs
 System.Net.Mail/SendCompletedEventHandler.cs
 System.Net.Mail/SmtpAccess.cs
-System.Net.Mail/SmtpClient.cs
 System.Net.Mail/SmtpDeliveryFormat.cs
 System.Net.Mail/SmtpDeliveryMethod.cs
 System.Net.Mail/SmtpException.cs
@@ -144,7 +110,6 @@ System.Net.Security/LocalCertificateSelectionCallback.cs
 System.Net.Security/NegotiateStream.cs
 System.Net.Security/RemoteCertificateValidationCallback.cs
 System.Net.Security/SslPolicyErrors.cs
-System.Net.Security/SslStream.cs
 
 System.Net.Sockets/SafeSocketHandle.cs
 System.Net.Sockets/Socket.cs
@@ -278,8 +243,6 @@ Mono.Btls/MonoBtlsX509VerifyParam.cs
 Mono.Btls/X509CertificateImplBtls.cs
 Mono.Btls/X509ChainImplBtls.cs
 
-Mono.Http/NtlmClient.cs
-
 Mono.AppleTls/AppleCertificateHelper.cs
 Mono.AppleTls/AppleTlsContext.cs
 Mono.AppleTls/AppleTlsProvider.cs
@@ -293,23 +256,6 @@ Mono.AppleTls/Policy.cs
 Mono.AppleTls/Trust.cs
 Mono.AppleTls/SslConnection.cs
 Mono.AppleTls/Items.cs
-
-Mono.Net.Security/AsyncProtocolRequest.cs
-Mono.Net.Security/CallbackHelpers.cs
-Mono.Net.Security/ChainValidationHelper.cs
-Mono.Net.Security/IMonoTlsProvider.cs
-Mono.Net.Security/IMonoSslStream.cs
-Mono.Net.Security/LegacySslStream.cs
-Mono.Net.Security/MobileAuthenticatedStream.cs
-Mono.Net.Security/MobileTlsContext.cs
-Mono.Net.Security/LegacyTlsProvider.cs
-Mono.Net.Security/MonoSslStreamImpl.cs
-Mono.Net.Security/MonoSslStreamWrapper.cs
-Mono.Net.Security/MonoTlsProviderFactory.cs
-Mono.Net.Security/MonoTlsProviderWrapper.cs
-Mono.Net.Security/MonoTlsStream.cs
-Mono.Net.Security/NoReflectionHelper.cs
-Mono.Net.Security/SystemCertificateValidator.cs
 
 Mono.Util/MonoPInvokeCallbackAttribute.cs
 
@@ -330,6 +276,7 @@ ReferenceSources/SettingsSectionInternal.cs
 ReferenceSources/SecureStringHelper.cs
 ReferenceSources/Socket.cs
 ReferenceSources/SR.cs
+ReferenceSources/SR2.cs
 ReferenceSources/SRCategoryAttribute.cs
 ReferenceSources/Win32Exception.cs
 
@@ -680,7 +627,6 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/GenericUriParser.cs
 ../referencesource/System/net/System/IriHelper.cs
 ../referencesource/System/net/System/URI.cs
-../referencesource/System/net/System/uribuilder.cs
 ../referencesource/System/net/System/UriEnumTypes.cs
 ../referencesource/System/net/System/UriExt.cs
 ../referencesource/System/net/System/URIFormatException.cs
@@ -791,11 +737,8 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/Sockets/SocketOptionName.cs
 ../referencesource/System/net/System/Net/Sockets/SocketShutdown.cs
 ../referencesource/System/net/System/Net/Sockets/SocketType.cs
-../referencesource/System/net/System/Net/Sockets/TCPClient.cs
-../referencesource/System/net/System/Net/Sockets/TCPListener.cs
 ../referencesource/System/net/System/Net/Sockets/TransmitFileFlags.cs
 ../referencesource/System/net/System/Net/Sockets/UdpReceiveResult.cs
-../referencesource/System/net/System/Net/Sockets/UDPClient.cs
 
 ../referencesource/System/net/System/Net/NetworkInformation/DuplicateAddressDetectionState.cs
 ../referencesource/System/net/System/Net/NetworkInformation/GatewayIPAddressInformation.cs
@@ -922,6 +865,7 @@ corefx/SR.cs
 ../../../external/corefx/src/Common/src/System/Collections/Generic/EnumerableHelpers.cs
 ../../../external/corefx/src/Common/src/System/Collections/Generic/LargeArrayBuilder.cs
 
+../../../external/corefx/src/Common/src/System/Net/HttpStatusDescription.cs
 ../../../external/corefx/src/Common/src/System/Net/SecurityProtocol.cs
 ../../../external/corefx/src/Common/src/System/Net/UriScheme.cs
 
@@ -975,6 +919,6 @@ corefx/SR.cs
 ../../../external/corefx/src/System.Net.WebSockets.Client/src/System/Net/WebSockets/ClientWebSocketOptions.cs
 ../../../external/corefx/src/System.Net.WebSockets.Client/src/System/Net/WebSockets/WebSocketHandle.Managed.cs
 
-../../../external/corefx/src/System.Net.HttpListener/src/System/Net/WebSockets/HttpListenerWebSocketContext.cs
+../../../external/corefx/src/System.Private.Uri/src/System/UriBuilder.cs
 
 ../../../external/corefx/src/System.Runtime.Extensions/src/System/CodeDom/Compiler/IndentedTextWriter.cs

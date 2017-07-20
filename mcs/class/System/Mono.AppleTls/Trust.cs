@@ -32,7 +32,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Cryptography.X509Certificates;
-using ObjCRuntime;
+using ObjCRuntimeInternal;
 using Mono.Net;
 
 namespace Mono.AppleTls {

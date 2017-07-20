@@ -38,7 +38,7 @@ public class ServicePointTest
 #endif
 
         [Test]
-		[Category ("InetAccess")]
+		[Category ("NotWorking")]
         public void All ()
         {
 		ServicePoint p = ServicePointManager.FindServicePoint (new Uri ("mailto:xx@yyy.com"));
@@ -124,7 +124,7 @@ public class ServicePointTest
 	// while ConnectionLimit equals 2
 
 	[Test]
-	[Category ("InetAccess")]
+	[Category ("NotWorking")]
 	public void ConnectionLimit ()
 	{		
 		// the default is already 2, just in case it isn't..
@@ -156,8 +156,7 @@ public class ServicePointTest
 	}
 
 	[Test]
-	[Category ("InetAccess")]
-	[Category ("AndroidNotWorking")] // #A1 fails
+	[Category ("NotWorking")] // #A1 fails
 	public void EndPointBind ()
 	{
 		Uri uri = new Uri ("http://www.go-mono.com/");

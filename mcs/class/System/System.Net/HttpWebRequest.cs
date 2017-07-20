@@ -112,8 +112,8 @@ namespace System.Net
 		int maxResponseHeadersLength;
 		static int defaultMaxResponseHeadersLength;
 		int readWriteTimeout = 300000; // ms
-		IMonoTlsProvider tlsProvider;
 #if SECURITY_DEP
+		MonoTlsProvider tlsProvider;
 		MonoTlsSettings tlsSettings;
 #endif
 		ServerCertValidationCallback certValidationCallback;
@@ -134,7 +134,9 @@ namespace System.Net
 		{
 			defaultMaxResponseHeadersLength = 64 * 1024;
 #if !MOBILE
+#pragma warning disable 618
 			NetConfig config = ConfigurationSettings.GetConfig ("system.net/settings") as NetConfig;
+#pragma warning restore 618
 			if (config != null) {
 				int x = config.MaxResponseHeadersLength;
 				if (x != -1)
@@ -161,7 +163,7 @@ namespace System.Net
 		}
 
 #if SECURITY_DEP
-		internal HttpWebRequest (Uri uri, IMonoTlsProvider tlsProvider, MonoTlsSettings settings = null)
+		internal HttpWebRequest (Uri uri, MonoTlsProvider tlsProvider, MonoTlsSettings settings = null)
 			: this (uri)
 		{
 			this.tlsProvider = tlsProvider;
@@ -274,16 +276,16 @@ namespace System.Net
 			}
 		}
 
-		internal IMonoTlsProvider TlsProvider {
+#if SECURITY_DEP
+		internal MonoTlsProvider TlsProvider {
 			get { return tlsProvider; }
 		}
 
-#if SECURITY_DEP
 		internal MonoTlsSettings TlsSettings {
 			get { return tlsSettings; }
 		}
 #endif
-		
+
 		public X509CertificateCollection ClientCertificates {
 			get {
 				if (certificates == null)

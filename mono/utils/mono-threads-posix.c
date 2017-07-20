@@ -30,7 +30,7 @@
 extern int tkill (pid_t tid, int signal);
 #endif
 
-#if defined(_POSIX_VERSION) || defined(__native_client__)
+#if defined(_POSIX_VERSION)
 
 #include <pthread.h>
 
@@ -142,22 +142,29 @@ int
 mono_threads_pthread_kill (MonoThreadInfo *info, int signum)
 {
 	THREADS_SUSPEND_DEBUG ("sending signal %d to %p[%p]\n", signum, info, mono_thread_info_get_tid (info));
+
+	int result;
+
 #ifdef USE_TKILL_ON_ANDROID
-	int result, old_errno = errno;
+	int old_errno = errno;
+
 	result = tkill (info->native_handle, signum);
+
 	if (result < 0) {
 		result = errno;
 		errno = old_errno;
 	}
-	return result;
-#elif defined(__native_client__)
-	/* Workaround pthread_kill abort() in NaCl glibc. */
-	return 0;
-#elif !defined(HAVE_PTHREAD_KILL)
-	g_error ("pthread_kill() is not supported by this platform");
+#elif defined (HAVE_PTHREAD_KILL)
+	result = pthread_kill (mono_thread_info_get_tid (info), signum);
 #else
-	return pthread_kill (mono_thread_info_get_tid (info), signum);
+	result = -1;
+	g_error ("pthread_kill () is not supported by this platform");
 #endif
+
+	if (result && result != ESRCH)
+		g_error ("%s: pthread_kill failed with error %d - potential kernel OOM or signal queue overflow", __func__, result);
+
+	return result;
 }
 
 MonoNativeThreadId
@@ -234,7 +241,7 @@ mono_native_thread_join (MonoNativeThreadId tid)
 	return !pthread_join (tid, &res);
 }
 
-#endif /* defined(_POSIX_VERSION) || defined(__native_client__) */
+#endif /* defined(_POSIX_VERSION) */
 
 #if defined(USE_POSIX_BACKEND)
 

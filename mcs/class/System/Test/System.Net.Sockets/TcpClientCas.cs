@@ -50,7 +50,6 @@ namespace MonoCasTests.System.Net.Sockets {
 		}
 
 		// async tests (for stack propagation)
-/* Oops - not yet implemented in Mono
 		private void ConnectCallback (IAsyncResult ar)
 		{
 			TcpClient c = (TcpClient)ar.AsyncState;
@@ -71,7 +70,6 @@ namespace MonoCasTests.System.Net.Sockets {
 
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Read = "USERNAME")]
-		[Category ("InetAccess")]
 		public void AsyncConnect_StringIntAsyncCallbackObject ()
 		{
 			TcpClient s = new TcpClient ();
@@ -86,7 +84,6 @@ namespace MonoCasTests.System.Net.Sockets {
 
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Read = "USERNAME")]
-		[Category ("InetAccess")]
 		public void AsyncConnect_IPAddressIntAsyncCallbackObject ()
 		{
 			IPHostEntry host = Dns.Resolve ("www.google.com");
@@ -102,7 +99,6 @@ namespace MonoCasTests.System.Net.Sockets {
 
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Read = "USERNAME")]
-		[Category ("InetAccess")]
 		public void AsyncConnect_IPAddressArrayIntAsyncCallbackObject ()
 		{
 			IPHostEntry host = Dns.Resolve ("www.google.com");
@@ -115,6 +111,5 @@ namespace MonoCasTests.System.Net.Sockets {
 				Assert.Ignore ("Timeout");
 			Assert.IsNull (message, message);
 		}
-*/
 	}
 }

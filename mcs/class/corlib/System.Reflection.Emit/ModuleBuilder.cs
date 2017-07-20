@@ -62,6 +62,7 @@ namespace System.Reflection.Emit {
 		private FieldBuilder[] global_fields;
 		bool is_main;
 		private MonoResource[] resources;
+		private IntPtr unparented_classes;
 		#endregion
 #pragma warning restore 169, 414
 		
@@ -75,6 +76,8 @@ namespace System.Reflection.Emit {
 		ModuleBuilderTokenGenerator token_gen;
 		Hashtable resource_writers;
 		ISymbolWriter symbolWriter;
+
+		static bool has_warned_about_symbolWriter;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void basic_init (ModuleBuilder ab);
@@ -106,16 +109,36 @@ namespace System.Reflection.Emit {
 
 			if (emitSymbolInfo) {
 				Assembly asm = Assembly.LoadWithPartialName ("Mono.CompilerServices.SymbolWriter");
-				if (asm == null)
-					throw new TypeLoadException ("The assembly for default symbol writer cannot be loaded");
 
-				Type t = asm.GetType ("Mono.CompilerServices.SymbolWriter.SymbolWriterImpl", true);
-				symbolWriter = (ISymbolWriter) Activator.CreateInstance (t, new object[] { this });
+				Type t = null;
+				if (asm != null)
+					t = asm.GetType ("Mono.CompilerServices.SymbolWriter.SymbolWriterImpl");
+
+				if (t == null) {
+					WarnAboutSymbolWriter ("Failed to load the default Mono.CompilerServices.SymbolWriter assembly");
+				} else {
+					try {
+						symbolWriter = (ISymbolWriter) Activator.CreateInstance (t, new object[] { this });
+					} catch (System.MissingMethodException) {
+						WarnAboutSymbolWriter ("The default Mono.CompilerServices.SymbolWriter is not available on this platform");					
+						return;
+					}
+				}
+				
 				string fileName = fqname;
 				if (assemblyb.AssemblyDir != null)
 					fileName = Path.Combine (assemblyb.AssemblyDir, fileName);
 				symbolWriter.Initialize (IntPtr.Zero, fileName, true);
 			}
+		}
+
+		static void WarnAboutSymbolWriter (string message) 
+		{
+			if (has_warned_about_symbolWriter)
+				return;
+
+			has_warned_about_symbolWriter = true;
+			Console.Error.WriteLine ("WARNING: {0}", message);
 		}
 
 		public override string FullyQualifiedName {get { return fqname;}}

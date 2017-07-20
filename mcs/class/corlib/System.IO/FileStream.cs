@@ -224,14 +224,6 @@ namespace System.IO
 				}
 			}
 
-			if (access == FileAccess.Read && mode != FileMode.Create && mode != FileMode.OpenOrCreate &&
-					mode != FileMode.CreateNew && !File.Exists (path)) {
-				// don't leak the path information for isolated storage
-				string msg = Locale.GetText ("Could not find file \"{0}\".");
-				string fname = GetSecureFileName (path);
-				throw new FileNotFoundException (String.Format (msg, fname), fname);
-			}
-
 			// IsolatedStorage needs to keep the Name property to the default "[Unknown]"
 			if (!anonymous)
 				this.name = path;

@@ -329,7 +329,7 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_DYN_CALL_SUPPORTED 1
 #define MONO_ARCH_DYN_CALL_PARAM_AREA (DYN_CALL_STACK_ARGS * sizeof (mgreg_t))
 
-#ifndef MONO_CROSS_COMPILE
+#if !(defined(TARGET_ANDROID) && defined(MONO_CROSS_COMPILE))
 #define MONO_ARCH_SOFT_DEBUG_SUPPORTED 1
 #endif
 
@@ -341,7 +341,9 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_HAVE_SETUP_ASYNC_CALLBACK 1
 #define MONO_ARCH_HAVE_CONTEXT_SET_INT_REG 1
 #define MONO_ARCH_HAVE_HANDLER_BLOCK_GUARD 1
+#ifndef TARGET_IOS
 #define MONO_ARCH_HAVE_HANDLER_BLOCK_GUARD_AOT 1
+#endif
 #define MONO_ARCH_HAVE_SETUP_RESUME_FROM_SIGNAL_HANDLER_CTX 1
 #define MONO_ARCH_GSHAREDVT_SUPPORTED 1
 #define MONO_ARCH_HAVE_GENERAL_RGCTX_LAZY_FETCH_TRAMPOLINE 1
@@ -352,6 +354,7 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_HAVE_SDB_TRAMPOLINES 1
 #define MONO_ARCH_HAVE_PATCH_CODE_NEW 1
 #define MONO_ARCH_HAVE_OP_GENERIC_CLASS_INIT 1
+#define MONO_ARCH_HAVE_INIT_LMF_EXT 1
 
 #if defined(TARGET_WATCHOS) || (defined(__linux__) && !defined(TARGET_ANDROID))
 #define MONO_ARCH_DISABLE_HW_TRAPS 1
@@ -386,6 +389,12 @@ mono_arm_resume_unwind (guint32 dummy1, mgreg_t pc, mgreg_t sp, mgreg_t *int_reg
 
 gboolean
 mono_arm_thumb_supported (void);
+
+gboolean
+mono_arm_eabi_supported (void);
+
+int
+mono_arm_i8_align (void);
 
 GSList*
 mono_arm_get_exception_trampolines (gboolean aot);

@@ -325,6 +325,9 @@ MonoMethod *
 mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt, gboolean static_method_with_first_arg_bound, MonoMethod *target_method);
 
 MonoMethod *
+mono_marshal_get_runtime_invoke_full (MonoMethod *method, gboolean virtual_, gboolean need_direct_wrapper);
+
+MonoMethod *
 mono_marshal_get_runtime_invoke (MonoMethod *method, gboolean is_virtual);
 
 MonoMethod*
@@ -436,8 +439,8 @@ void
 ves_icall_System_Runtime_InteropServices_Marshal_copy_from_unmanaged (gpointer src, gint32 start_index,
 								      MonoArray *dest, gint32 length);
 
-MonoString *
-ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi (char *ptr);
+MonoStringHandle
+ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi (char *ptr, MonoError *error);
 
 MonoString *
 ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi_len (char *ptr, gint32 len);
@@ -458,7 +461,7 @@ guint32
 ves_icall_System_Runtime_InteropServices_Marshal_GetLastWin32Error (void);
 
 guint32 
-ves_icall_System_Runtime_InteropServices_Marshal_SizeOf (MonoReflectionType *rtype);
+ves_icall_System_Runtime_InteropServices_Marshal_SizeOf (MonoReflectionTypeHandle rtype, MonoError *error);
 
 void
 ves_icall_System_Runtime_InteropServices_Marshal_StructureToPtr (MonoObject *obj, gpointer dst, MonoBoolean delete_old);
@@ -470,7 +473,7 @@ MonoObject *
 ves_icall_System_Runtime_InteropServices_Marshal_PtrToStructure_type (gpointer src, MonoReflectionType *type);
 
 int
-ves_icall_System_Runtime_InteropServices_Marshal_OffsetOf (MonoReflectionType *type, MonoString *field_name);
+ves_icall_System_Runtime_InteropServices_Marshal_OffsetOf (MonoReflectionTypeHandle type, MonoStringHandle field_name, MonoError *error);
 
 gpointer
 ves_icall_System_Runtime_InteropServices_Marshal_StringToBSTR (MonoString *string);
@@ -514,11 +517,11 @@ ves_icall_System_Runtime_InteropServices_Marshal_FreeBSTR (void *ptr);
 void*
 ves_icall_System_Runtime_InteropServices_Marshal_UnsafeAddrOfPinnedArrayElement (MonoArray *arrayobj, int index);
 
-MonoDelegate*
-ves_icall_System_Runtime_InteropServices_Marshal_GetDelegateForFunctionPointerInternal (void *ftn, MonoReflectionType *type);
+MonoDelegateHandle
+ves_icall_System_Runtime_InteropServices_Marshal_GetDelegateForFunctionPointerInternal (void *ftn, MonoReflectionTypeHandle type, MonoError *error);
 
 gpointer
-ves_icall_System_Runtime_InteropServices_Marshal_GetFunctionPointerForDelegateInternal (MonoDelegate *delegate);
+ves_icall_System_Runtime_InteropServices_Marshal_GetFunctionPointerForDelegateInternal (MonoDelegateHandle delegate, MonoError *error);
 
 int
 ves_icall_System_Runtime_InteropServices_Marshal_AddRefInternal (gpointer pUnk);

@@ -41,16 +41,6 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsNull (enumBuilder.DeclaringType, "#3");
 			Assert.IsNull (enumBuilder.ReflectedType, "#4");
 			Assert.AreEqual (_enumType, enumBuilder.UnderlyingSystemType, "#5");
-		}
-
-		[Test]
-		[Category ("ValueAdd")]
-		public void TestEnumBuilder_NotInMono ()
-		{
-			// If we decide to fix this (I dont see why we should),
-			// move to the routine above
-
-			EnumBuilder enumBuilder = GenerateEnum ();
 			Assert.IsFalse (enumBuilder.IsSerializable);
 		}
 
@@ -187,7 +177,6 @@ namespace MonoTests.System.Reflection.Emit
 
 		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
-		[Category ("ValueAdd")]
 		public void TestFindMembersIncomplete ()
 		{
 			EnumBuilder enumBuilder = GenerateEnum ();
@@ -229,7 +218,6 @@ namespace MonoTests.System.Reflection.Emit
 
 		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
-		[Category ("ValueAdd")]
 		public void TestGetConstructorIncomplete ()
 		{
 			EnumBuilder enumBuilder = GenerateEnum ();
@@ -301,6 +289,31 @@ namespace MonoTests.System.Reflection.Emit
 			Type enumType = enumBuilder.CreateType ();
 			FieldInfo value = enumType.GetField ("value__", BindingFlags.Instance | BindingFlags.NonPublic);
 			Assert.AreEqual (FieldAttributes.RTSpecialName, value.Attributes & FieldAttributes.RTSpecialName);
+		}
+
+		[Test]
+		public void TestCreateTypeIncompleteEnumStaticField ()
+		{
+			ModuleBuilder modBuilder = GenerateModule ();
+			EnumBuilder enumBuilder = GenerateEnum (modBuilder);
+			GenerateField (enumBuilder);
+
+			var tb = modBuilder.DefineType ("T", TypeAttributes.Public);
+
+			tb.DefineDefaultConstructor (MethodAttributes.Public);
+			tb.DefineField ("e", enumBuilder, FieldAttributes.Static | FieldAttributes.Public);
+
+			var t = tb.CreateType ();
+			Assert.IsNotNull (t);
+			bool caught = false;
+			try {
+				object x = Activator.CreateInstance (t);
+			} catch (TypeLoadException exn) {
+				Assert.AreEqual (t.Name, exn.TypeName);
+				caught = true;
+			}
+			if (!caught)
+				Assert.Fail ("Expected CreateInstance of a broken type to throw TLE");
 		}
 
 		private static void VerifyType (Type type)

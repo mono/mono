@@ -639,6 +639,15 @@ namespace Mono.CSharp
 			}
 		}
 
+		public bool HasInstanceField {
+			get {
+				return (caching_flags & Flags.HasInstanceField) != 0;
+			}
+			set {
+				caching_flags |= Flags.HasInstanceField;
+			}
+		}
+
 		// Indicated whether container has StructLayout attribute set Explicit
 		public bool HasExplicitLayout {
 			get { return (caching_flags & Flags.HasExplicitLayout) != 0; }
@@ -848,18 +857,22 @@ namespace Mono.CSharp
 			if ((field.ModFlags & Modifiers.STATIC) != 0)
 				return true;
 
-			var first_field = PartialContainer.first_nonstatic_field;
-			if (first_field == null) {
+			if (!PartialContainer.HasInstanceField) {
+				PartialContainer.HasInstanceField = true;
 				PartialContainer.first_nonstatic_field = field;
 				return true;
 			}
 
-			if (Kind == MemberKind.Struct && first_field.Parent != field.Parent) {
-				Report.SymbolRelatedToPreviousError (first_field.Parent);
-				Report.Warning (282, 3, field.Location,
-					"struct instance field `{0}' found in different declaration from instance field `{1}'",
-					field.GetSignatureForError (), first_field.GetSignatureForError ());
+			if (Kind == MemberKind.Struct) {
+				var first_field = PartialContainer.first_nonstatic_field;
+				if (first_field.Parent != field.Parent) {
+					Report.SymbolRelatedToPreviousError (first_field.Parent);
+					Report.Warning (282, 3, field.Location,
+						"struct instance field `{0}' found in different declaration from instance field `{1}'",
+						field.GetSignatureForError (), first_field.GetSignatureForError ());
+				}
 			}
+
 			return true;
 		}
 
@@ -1299,7 +1312,7 @@ namespace Mono.CSharp
 			//
 			// Sets .size to 1 for structs with no instance fields
 			//
-			int type_size = Kind == MemberKind.Struct && first_nonstatic_field == null && !(this is StateMachine) ? 1 : 0;
+			int type_size = Kind == MemberKind.Struct && !HasInstanceField && !(this is StateMachine) ? 1 : 0;
 
 			var parent_def = Parent as TypeDefinition;
 			if (parent_def == null) {
@@ -2158,6 +2171,14 @@ namespace Mono.CSharp
 
 		public override void Emit ()
 		{
+			if (Interfaces != null) {
+				foreach (var iface in Interfaces) {
+					if (iface.HasNamedTupleElement) {
+						throw new NotImplementedException ("named tuples for .interfaceimpl");
+					}
+				}
+			}
+
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
 
@@ -2214,6 +2235,10 @@ namespace Mono.CSharp
 				Module.PredefinedAttributes.CompilerGenerated.EmitAttribute (TypeBuilder);
 
 #if STATIC
+			if (Kind == MemberKind.Struct && !HasStructLayout && HasInstanceField) {
+				TypeBuilder.__SetLayout (0, 0);
+			}
+
 			if ((TypeBuilder.Attributes & TypeAttributes.StringFormatMask) == 0 && Module.HasDefaultCharSet)
 				TypeBuilder.__SetAttributes (TypeBuilder.Attributes | Module.DefaultCharSetType);
 #endif
@@ -2884,8 +2909,11 @@ namespace Mono.CSharp
 			if ((ModFlags & Modifiers.METHOD_EXTENSION) != 0)
 				Module.PredefinedAttributes.Extension.EmitAttribute (TypeBuilder);
 
-			if (base_type != null && base_type.HasDynamicElement) {
-				Module.PredefinedAttributes.Dynamic.EmitAttribute (TypeBuilder, base_type, Location);
+			if (base_type != null) {
+				if (base_type.HasDynamicElement)
+					Module.PredefinedAttributes.Dynamic.EmitAttribute (TypeBuilder, base_type, Location);
+				if (base_type.HasNamedTupleElement)
+					Module.PredefinedAttributes.TupleElementNames.EmitAttribute (TypeBuilder, base_type, Location);
 			}
 		}
 
@@ -3146,7 +3174,7 @@ namespace Mono.CSharp
 				return false;
 			}
 
-			if (first_nonstatic_field != null) {
+			if (HasInstanceField) {
 				requires_delayed_unmanagedtype_check = true;
 
 				foreach (var member in Members) {
@@ -3496,7 +3524,7 @@ namespace Mono.CSharp
 				ok = false;
 			}
 
-			var base_member_type = ((IInterfaceMemberSpec) base_member).MemberType;
+			var base_member_type = ((IInterfaceMemberSpec)base_member).MemberType;
 			if (!TypeSpecComparer.Override.IsEqual (MemberType, base_member_type)) {
 				Report.SymbolRelatedToPreviousError (base_member);
 				if (this is PropertyBasedMember) {
@@ -3507,6 +3535,20 @@ namespace Mono.CSharp
 						GetSignatureForError (), base_member_type.GetSignatureForError (), base_member.GetSignatureForError ());
 				}
 				ok = false;
+			} else if (!NamedTupleSpec.CheckOverrideName (MemberType, base_member_type)) {
+				// CSC: Should be different error code
+				Report.Error (8139, Location, "`{0}': cannot change return type tuple element names when overriding inherited member `{1}'",
+							  GetSignatureForError (), base_member.GetSignatureForError ());
+				ok = false;
+			}
+
+			var base_params = base_member as IParametersMember;
+			if (base_params != null) {
+				if (!NamedTupleSpec.CheckOverrideName ((IParametersMember)this, base_params)) {
+					Report.Error (8139, Location, "`{0}': cannot change tuple element names when overriding inherited member `{1}'",
+								  GetSignatureForError (), base_member.GetSignatureForError ());
+					ok = false;
+				}
 			}
 
 			return ok;

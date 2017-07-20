@@ -107,10 +107,11 @@ namespace Mono
 						continue;
 					}
 
-					var assembly = AssemblyDefinition.ReadAssembly (assemblyPath);
-
-					var mvid = assembly.MainModule.Mvid.ToString ("N");
-					var mvidDir = Path.Combine (msymDir, mvid);
+					string mvidDir;
+					using (var assembly = AssemblyDefinition.ReadAssembly (assemblyPath)) {
+						var mvid = assembly.MainModule.Mvid.ToString ("N");
+						mvidDir = Path.Combine (msymDir, mvid);
+					}
 
 					if (Directory.Exists (mvidDir)) {
 						try {

@@ -504,7 +504,7 @@ namespace System.Net {
 #if MONO
         public static IWebProxy CreateDefaultProxy ()
         {
-#if FEATURE_NO_BSD_SOCKETS || ORBIS
+#if FEATURE_NO_BSD_SOCKETS
             throw new PlatformNotSupportedException ();
 #elif MONOTOUCH
             return Mono.Net.CFNetwork.GetDefaultProxy ();
@@ -514,6 +514,8 @@ namespace System.Net {
             if (data != null)
                 return data;
 
+            return new WebProxy (true);
+#elif ORBIS
             return new WebProxy (true);
 #else
             if (Platform.IsMacOS) {

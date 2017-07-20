@@ -37,7 +37,6 @@ public void SetUp () {
 [TearDown]
 public void TearDown () {
 	Thread.CurrentThread.CurrentCulture = oldcult;
-	File.Delete("temp.b64");
 	try {
 		File.Delete (temp_certificate_filename);
 	} catch {

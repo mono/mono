@@ -145,10 +145,10 @@ namespace System.ServiceModel.Channels
 		protected override TChannel OnAcceptChannel (TimeSpan timeout)
 		{
 			// HTTP channel listeners do not accept more than one channel at a time.
-			DateTime start = DateTime.Now;
-			accept_channel_handle.WaitOne (timeout - (DateTime.Now - start));
+			DateTime start = DateTime.UtcNow;
+			accept_channel_handle.WaitOne (timeout - (DateTime.UtcNow - start));
 			accept_channel_handle.Reset ();
-			TChannel ch = CreateChannel (timeout - (DateTime.Now - start));
+			TChannel ch = CreateChannel (timeout - (DateTime.UtcNow - start));
 			ch.Closed += delegate {
 				accept_channel_handle.Set ();
 			};

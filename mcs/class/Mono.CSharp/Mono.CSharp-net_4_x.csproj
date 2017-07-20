@@ -9,8 +9,11 @@
     <ProjectGuid>{BEFCA993-98B4-48E9-8D68-1ACCB1FA7200}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>./../../class/lib/net_4_x</OutputPath>
-    <IntermediateOutputPath>obj-net_4_x</IntermediateOutputPath>
+    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Windows_NT'">win32</HostPlatform>
+    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">darwin</HostPlatform>
+    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix'">linux</HostPlatform>
+    <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
+    <IntermediateOutputPath>obj-net_4_x-$(HostPlatform)</IntermediateOutputPath>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
     
@@ -29,7 +32,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MONO_FEATURE_THREAD_ABORT</DefineConstants>
+    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;MONO_FEATURE_THREAD_ABORT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -37,7 +40,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MONO_FEATURE_THREAD_ABORT</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;MONO_FEATURE_THREAD_ABORT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -68,7 +71,6 @@
     <Compile Include="..\..\mcs\constant.cs" />
     <Compile Include="..\..\mcs\context.cs" />
     <Compile Include="..\..\mcs\convert.cs" />
-    <Compile Include="..\..\mcs\cs-parser.cs" />
     <Compile Include="..\..\mcs\cs-tokenizer.cs" />
     <Compile Include="..\..\mcs\decl.cs" />
     <Compile Include="..\..\mcs\delegate.cs" />
@@ -102,12 +104,14 @@
     <Compile Include="..\..\mcs\settings.cs" />
     <Compile Include="..\..\mcs\statement.cs" />
     <Compile Include="..\..\mcs\support.cs" />
+    <Compile Include="..\..\mcs\tuples.cs" />
     <Compile Include="..\..\mcs\typemanager.cs" />
     <Compile Include="..\..\mcs\typespec.cs" />
     <Compile Include="..\..\mcs\visit.cs" />
     <Compile Include="..\..\tools\monop\outline.cs" />
     <Compile Include="aot.cs" />
-    <Compile Include="Assembly\AssemblyInfo.cs" />  </ItemGroup>
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="net_4_x-parser.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

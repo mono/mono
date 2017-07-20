@@ -152,7 +152,7 @@ namespace System.ServiceModel.Discovery.Udp
 
 		public bool TryReceive (TimeSpan timeout, out Message msg)
 		{
-			DateTime start = DateTime.Now;
+			DateTime start = DateTime.UtcNow;
 			ThrowIfDisposedOrNotOpen ();
 			msg = null;
 
@@ -188,7 +188,7 @@ namespace System.ServiceModel.Discovery.Udp
 			msg = message_encoder.ReadMessage (new MemoryStream (bytes), int.MaxValue);
 			var id = msg.Headers.MessageId;
 			if (message_ids.Contains (id))
-				return TryReceive (timeout - (DateTime.Now - start), out msg);
+				return TryReceive (timeout - (DateTime.UtcNow - start), out msg);
 			if (id != null) {
 				message_ids.Enqueue (id);
 				if (message_ids.Count >= binding_element.TransportSettings.DuplicateMessageHistoryLength)

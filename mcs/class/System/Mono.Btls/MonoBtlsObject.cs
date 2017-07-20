@@ -102,6 +102,20 @@ namespace Mono.Btls
 			CheckError (ret == 1, callerName);
 		}
 
+		protected internal void CheckLastError ([CallerMemberName] string callerName = null)
+		{
+			var error = Interlocked.Exchange (ref lastError, null);
+			if (error == null)
+				return;
+
+			string message;
+			if (callerName != null)
+				message = string.Format ("Caught unhandled exception in {0}.{1}.", GetType ().Name, callerName);
+			else
+				message = string.Format ("Caught unhandled exception.");
+			throw new MonoBtlsException (message, error);
+		}
+
 		[DllImport (BTLS_DYLIB)]
 		extern static void mono_btls_free (IntPtr data);
 

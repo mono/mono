@@ -30,5 +30,6 @@ ${TESTCMD} --label=Mono.CSharp --timeout=5m make -w -C mcs/class/Mono.CSharp run
 ${TESTCMD} --label=System.Numerics --timeout=5m make -w -C mcs/class/System.Numerics run-test
 ${TESTCMD} --label=System.Net.Http --timeout=5m make -w -C mcs/class/System.Net.Http run-test
 ${TESTCMD} --label=System.Json --timeout=5m make -w -C mcs/class/System.Json run-test
+${TESTCMD} --label=monolinker --timeout=10m make -w -C mcs/tools/linker check
 
 rm -fr /tmp/jenkins-temp-aspnet*

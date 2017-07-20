@@ -13,10 +13,10 @@ Date:   Wed Feb 8 18:44:41 2017 -0500
     F# yet.
 
 diff --git a/src/fsharp/FSharp.Build/Microsoft.FSharp.targets b/src/fsharp/FSharp.Build/Microsoft.FSharp.targets
-index 82125d2..e7ddac2 100644
+index e185bdf..2788988 100644
 --- a/src/fsharp/FSharp.Build/Microsoft.FSharp.targets
 +++ b/src/fsharp/FSharp.Build/Microsoft.FSharp.targets
-@@ -40,6 +40,10 @@ Copyright (C) Microsoft Corporation. Apache 2.0 License.
+@@ -38,6 +38,10 @@ this file.
          <RootNamespace Condition="'$(RootNamespace)'==''">RootNamespace</RootNamespace>
          <Actual32Bit Condition="'$(TargetFrameworkVersion)'=='v2.0' or '$(TargetFrameworkVersion)'=='v3.0' or '$(TargetFrameworkVersion)'=='v3.5' or '$(TargetFrameworkVersion)'=='v4.0'">false</Actual32Bit>
          <Actual32Bit Condition="!('$(TargetFrameworkVersion)'=='v2.0' or '$(TargetFrameworkVersion)'=='v3.0' or '$(TargetFrameworkVersion)'=='v3.5' or '$(TargetFrameworkVersion)'=='v4.0')">$(Prefer32Bit)</Actual32Bit>
@@ -25,5 +25,5 @@ index 82125d2..e7ddac2 100644
 +        <_DebugFileExt Condition="'$(FscDebugFileExt)' != ''">$(FscDebugFileExt)</_DebugFileExt>
 +        <_DebugFileExt Condition="'$(_DebugFileExt)' == ''">.mdb</_DebugFileExt>
      </PropertyGroup>
-
+ 
      <!--

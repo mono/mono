@@ -14,6 +14,7 @@ certmgr
 cert-sync
 chktrust
 ClassInitGenerator
+csc
 csharp
 csharp2
 dbsessmgr
@@ -70,6 +71,7 @@ mod-mono-server
 mod-mono-server2
 mod-mono-server4
 mono
+mono32
 mono64
 mono-boehm
 mono-api-info
@@ -103,7 +105,6 @@ nuget
 nunit-console
 nunit-console2
 nunit-console4
-opt
 pdb2mdb
 pedump
 permview

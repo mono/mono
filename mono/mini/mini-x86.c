@@ -971,8 +971,7 @@ needs_stack_frame (MonoCompile *cfg)
 		result = TRUE;
 	else if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG))
 		result = TRUE;
-	else if ((mono_jit_trace_calls != NULL && mono_trace_eval (cfg->method)) ||
-		(cfg->prof_options & MONO_PROFILE_ENTER_LEAVE))
+	else if ((mono_jit_trace_calls != NULL && mono_trace_eval (cfg->method)))
 		result = TRUE;
 
 	set_needs_stack_frame (cfg, result);
@@ -2427,16 +2426,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		g_print ("Basic block %d starting at offset 0x%x\n", bb->block_num, bb->native_offset);
 
 	cpos = bb->max_offset;
-
-	if ((cfg->prof_options & MONO_PROFILE_COVERAGE) && cfg->coverage_info) {
-		MonoProfileCoverageInfo *cov = cfg->coverage_info;
-		g_assert (!cfg->compile_aot);
-		cpos += 6;
-
-		cov->data [bb->dfn].cil_code = bb->cil_code;
-		/* this is not thread save, but good enough */
-		x86_inc_mem (code, &cov->data [bb->dfn].count); 
-	}
 
 	offset = code - cfg->native_code;
 
@@ -5019,9 +5008,6 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 	cfg->code_size = MAX (cfg->header->code_size * 4, 10240);
 
-	if (cfg->prof_options & MONO_PROFILE_ENTER_LEAVE)
-		cfg->code_size += 512;
-
 	code = cfg->native_code = g_malloc (cfg->code_size);
 
 #if 0
@@ -5169,8 +5155,6 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 			MonoInst *ins;
 			bb->max_offset = max_offset;
 
-			if (cfg->prof_options & MONO_PROFILE_COVERAGE)
-				max_offset += 6;
 			/* max alignment for loops */
 			if ((cfg->opt & MONO_OPT_LOOP) && bb_is_loop_start (bb))
 				max_offset += LOOP_ALIGNMENT;
@@ -5670,7 +5654,7 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 		g_free (buff);
 	}
 
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_IMT_TRAMPOLINE, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_IMT_TRAMPOLINE, NULL));
 
 	mono_tramp_info_register (mono_tramp_info_create (NULL, start, code - start, NULL, unwind_ops), domain);
 
@@ -5941,7 +5925,7 @@ get_delegate_invoke_impl (MonoTrampInfo **info, gboolean has_target, guint32 par
 		if (!has_target)
 			g_free (buff);
 	}
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL));
 
 	return start;
 }
@@ -5981,7 +5965,7 @@ get_delegate_virtual_invoke_impl (MonoTrampInfo **info, gboolean load_imt_reg, i
 	/* Load the vtable */
 	x86_mov_reg_membase (code, X86_EAX, X86_ECX, MONO_STRUCT_OFFSET (MonoObject, vtable), 4);
 	x86_jump_membase (code, X86_EAX, offset);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL));
 
 	tramp_name = mono_get_delegate_virtual_invoke_impl_name (load_imt_reg, offset);
 	*info = mono_tramp_info_create (tramp_name, start, code - start, NULL, unwind_ops);

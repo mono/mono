@@ -901,12 +901,11 @@ namespace System.Net.Sockets
 				SocketAsyncResult ares;
 
 				if (!GetCheckedIPs (e, out addresses)) {
-					e.socket_async_result.EndPoint = e.RemoteEndPoint;
+					//NOTE: DualMode may cause Socket's RemoteEndpoint to differ in AddressFamily from the
+					// SocketAsyncEventArgs, but the SocketAsyncEventArgs itself is not changed
 					ares = (SocketAsyncResult) BeginConnect (e.RemoteEndPoint, ConnectAsyncCallback, e);
 				} else {
-					DnsEndPoint dep = (e.RemoteEndPoint as DnsEndPoint);
-					e.socket_async_result.Addresses = addresses;
-					e.socket_async_result.Port = dep.Port;
+					DnsEndPoint dep = (DnsEndPoint)e.RemoteEndPoint;
 					ares = (SocketAsyncResult) BeginConnect (addresses, dep.Port, ConnectAsyncCallback, e);
 				}
 
@@ -977,60 +976,7 @@ namespace System.Net.Sockets
 				EndPoint = remoteEP,
 			};
 
-			// Bug #75154: Connect() should not succeed for .Any addresses.
-			if (remoteEP is IPEndPoint) {
-				IPEndPoint ep = (IPEndPoint) remoteEP;
-				if (ep.Address.Equals (IPAddress.Any) || ep.Address.Equals (IPAddress.IPv6Any)) {
-					sockares.Complete (new SocketException ((int) SocketError.AddressNotAvailable), true);
-					return sockares;
-				}
-				
-				remoteEP = RemapIPEndPoint (ep);
-			}
-
-			int error = 0;
-
-			if (connect_in_progress) {
-				// This could happen when multiple IPs are used
-				// Calling connect() again will reset the connection attempt and cause
-				// an error. Better to just close the socket and move on.
-				connect_in_progress = false;
-				m_Handle.Dispose ();
-				m_Handle = new SafeSocketHandle (Socket_internal (addressFamily, socketType, protocolType, out error), true);
-				if (error != 0)
-					throw new SocketException (error);
-			}
-
-			bool blk = is_blocking;
-			if (blk)
-				Blocking = false;
-			Connect_internal (m_Handle, remoteEP.Serialize (), out error, false);
-			if (blk)
-				Blocking = true;
-
-			if (error == 0) {
-				// succeeded synch
-				is_connected = true;
-				is_bound = true;
-				sockares.Complete (true);
-				return sockares;
-			}
-
-			if (error != (int) SocketError.InProgress && error != (int) SocketError.WouldBlock) {
-				// error synch
-				is_connected = false;
-				is_bound = false;
-				sockares.Complete (new SocketException (error), true);
-				return sockares;
-			}
-
-			// continue asynch
-			is_connected = false;
-			is_bound = false;
-			connect_in_progress = true;
-
-			IOSelector.Add (sockares.Handle, new IOSelectorJob (IOOperation.Write, BeginConnectCallback, sockares));
-
+			BeginSConnect (sockares);
 			return sockares;
 		}
 
@@ -1056,39 +1002,85 @@ namespace System.Net.Sockets
 
 			is_connected = false;
 
-			return BeginMConnect (sockares);
+			BeginMConnect (sockares);
+			return sockares;
 		}
 
-		internal IAsyncResult BeginMConnect (SocketAsyncResult sockares)
+		static void BeginMConnect (SocketAsyncResult sockares)
 		{
-			SocketAsyncResult ares = null;
 			Exception exc = null;
-			AsyncCallback callback;
 
 			for (int i = sockares.CurrentAddress; i < sockares.Addresses.Length; i++) {
 				try {
 					sockares.CurrentAddress++;
+					sockares.EndPoint = new IPEndPoint (sockares.Addresses [i], sockares.Port);
 
-					ares = (SocketAsyncResult) BeginConnect (new IPEndPoint (sockares.Addresses [i], sockares.Port), null, sockares);
-					if (ares.IsCompleted && ares.CompletedSynchronously) {
-						ares.CheckIfThrowDelayedException ();
-
-						callback = ares.AsyncCallback;
-						if (callback != null)
-							ThreadPool.UnsafeQueueUserWorkItem (_ => callback (ares), null);
-					}
-
-					break;
+					BeginSConnect (sockares);
+					return;
 				} catch (Exception e) {
 					exc = e;
-					ares = null;
 				}
 			}
 
-			if (ares == null)
-				throw exc;
+			throw exc;
+		}
 
-			return sockares;
+		static void BeginSConnect (SocketAsyncResult sockares)
+		{
+			EndPoint remoteEP = sockares.EndPoint;
+			// Bug #75154: Connect() should not succeed for .Any addresses.
+			if (remoteEP is IPEndPoint) {
+				IPEndPoint ep = (IPEndPoint) remoteEP;
+				if (ep.Address.Equals (IPAddress.Any) || ep.Address.Equals (IPAddress.IPv6Any)) {
+					sockares.Complete (new SocketException ((int) SocketError.AddressNotAvailable), true);
+					return;
+				}
+
+				sockares.EndPoint = remoteEP = sockares.socket.RemapIPEndPoint (ep);
+			}
+
+			int error = 0;
+
+			if (sockares.socket.connect_in_progress) {
+				// This could happen when multiple IPs are used
+				// Calling connect() again will reset the connection attempt and cause
+				// an error. Better to just close the socket and move on.
+				sockares.socket.connect_in_progress = false;
+				sockares.socket.m_Handle.Dispose ();
+				sockares.socket.m_Handle = new SafeSocketHandle (sockares.socket.Socket_internal (sockares.socket.addressFamily, sockares.socket.socketType, sockares.socket.protocolType, out error), true);
+				if (error != 0)
+					throw new SocketException (error);
+			}
+
+			bool blk = sockares.socket.is_blocking;
+			if (blk)
+				sockares.socket.Blocking = false;
+			Connect_internal (sockares.socket.m_Handle, remoteEP.Serialize (), out error, false);
+			if (blk)
+				sockares.socket.Blocking = true;
+
+			if (error == 0) {
+				// succeeded synch
+				sockares.socket.is_connected = true;
+				sockares.socket.is_bound = true;
+				sockares.Complete (true);
+				return;
+			}
+
+			if (error != (int) SocketError.InProgress && error != (int) SocketError.WouldBlock) {
+				// error synch
+				sockares.socket.is_connected = false;
+				sockares.socket.is_bound = false;
+				sockares.Complete (new SocketException (error), true);
+				return;
+			}
+
+			// continue asynch
+			sockares.socket.is_connected = false;
+			sockares.socket.is_bound = false;
+			sockares.socket.connect_in_progress = true;
+
+			IOSelector.Add (sockares.Handle, new IOSelectorJob (IOOperation.Write, BeginConnectCallback, sockares));
 		}
 
 		static IOAsyncCallback BeginConnectCallback = new IOAsyncCallback (ares => {
@@ -1099,18 +1091,11 @@ namespace System.Net.Sockets
 				return;
 			}
 
-			SocketAsyncResult mconnect = sockares.AsyncState as SocketAsyncResult;
-			bool is_mconnect = mconnect != null && mconnect.Addresses != null;
-
 			try {
-				EndPoint ep = sockares.EndPoint;
-				int error_code = (int) sockares.socket.GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error);
+				int error = (int) sockares.socket.GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error);
 
-				if (error_code == 0) {
-					if (is_mconnect)
-						sockares = mconnect;
-
-					sockares.socket.seed_endpoint = ep;
+				if (error == 0) {
+					sockares.socket.seed_endpoint = sockares.EndPoint;
 					sockares.socket.is_connected = true;
 					sockares.socket.is_bound = true;
 					sockares.socket.connect_in_progress = false;
@@ -1119,26 +1104,21 @@ namespace System.Net.Sockets
 					return;
 				}
 
-				if (!is_mconnect) {
+				if (sockares.Addresses == null) {
 					sockares.socket.connect_in_progress = false;
-					sockares.Complete (new SocketException (error_code));
+					sockares.Complete (new SocketException (error));
 					return;
 				}
 
-				if (mconnect.CurrentAddress >= mconnect.Addresses.Length) {
-					mconnect.Complete (new SocketException (error_code));
+				if (sockares.CurrentAddress >= sockares.Addresses.Length) {
+					sockares.Complete (new SocketException (error));
 					return;
 				}
 
-				mconnect.socket.BeginMConnect (mconnect);
+				BeginMConnect (sockares);
 			} catch (Exception e) {
 				sockares.socket.connect_in_progress = false;
-
-				if (is_mconnect)
-					sockares = mconnect;
-
 				sockares.Complete (e);
-				return;
 			}
 		});
 

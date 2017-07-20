@@ -162,10 +162,10 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
-using System.Runtime.Serialization;
 #if PCL
 using System.Reflection;
 #else
+using System.Runtime.Serialization;
 using System.Security.Permissions;
 #endif
 using System.Text;
@@ -634,7 +634,7 @@ namespace Mono.Options
 		public abstract string Description { get; }
 		public abstract bool GetArguments (string value, out IEnumerable<string> replacement);
 
-#if !PCL
+#if !PCL || NETSTANDARD1_3
 		public static IEnumerable<string> GetArgumentsFromFile (string file)
 		{
 			return GetArguments (File.OpenText (file), true);
@@ -690,7 +690,7 @@ namespace Mono.Options
 		}
 	}
 
-#if !PCL
+#if !PCL || NETSTANDARD1_3
 	public class ResponseFileSource : ArgumentSource {
 
 		public override string[] GetNames ()
@@ -1586,14 +1586,26 @@ namespace Mono.Options
 
 		internal    OptionSet       Options     => options;
 
-		public CommandSet (string suite, MessageLocalizerConverter localizer = null, TextWriter output = null, TextWriter error = null)
+#if !PCL || NETSTANDARD1_3
+		public CommandSet(string suite, MessageLocalizerConverter localizer = null)
+			: this(suite, Console.Out, Console.Error, localizer)
+		{
+		}
+#endif
+		
+		public CommandSet (string suite, TextWriter output, TextWriter error, MessageLocalizerConverter localizer = null)
 		{
 			if (suite == null)
 				throw new ArgumentNullException (nameof (suite));
+			if (output == null)
+				throw new ArgumentNullException (nameof (output));
+			if (error == null)
+				throw new ArgumentNullException (nameof (error));
+
 			this.suite  = suite;
 			options     = new CommandOptionSet (this, localizer);
-			outWriter   = output    ?? Console.Out;
-			errorWriter = error     ?? Console.Error;
+			outWriter   = output;
+			errorWriter = error;
 		}
 
 		public  string                          Suite               => suite;

@@ -121,7 +121,6 @@ static int vfp_scratch2 = ARM_VFP_D1;
 static int i8_align;
 
 static gpointer single_step_tramp, breakpoint_tramp;
-static gpointer get_tls_tramp;
 
 /*
  * The code generated for sequence points reads from this location, which is
@@ -212,6 +211,19 @@ emit_big_add (guint8 *code, int dreg, int sreg, int imm)
 	} else {
 		code = mono_arm_emit_load_imm (code, dreg, imm);
 		ARM_ADD_REG_REG (code, dreg, dreg, sreg);
+	}
+	return code;
+}
+
+static guint8*
+emit_ldr_imm (guint8 *code, int dreg, int sreg, int imm)
+{
+	if (!arm_is_imm12 (imm)) {
+		g_assert (dreg != sreg);
+		code = emit_big_add (code, dreg, sreg, imm);
+		ARM_LDR_IMM (code, dreg, dreg, 0);
+	} else {
+		ARM_LDR_IMM (code, dreg, sreg, imm);
 	}
 	return code;
 }
@@ -323,7 +335,7 @@ mono_arm_patchable_bl (guint8 *code, int cond)
 	return code;
 }
 
-#if defined(__ARM_EABI__) && defined(__linux__) && !defined(PLATFORM_ANDROID) && !defined(__native_client__)
+#if defined(__ARM_EABI__) && defined(__linux__) && !defined(PLATFORM_ANDROID) && !defined(MONO_CROSS_COMPILE)
 #define HAVE_AEABI_READ_TP 1
 #endif
 
@@ -337,7 +349,6 @@ mono_arch_have_fast_tls (void)
 #ifdef HAVE_AEABI_READ_TP
 	static gboolean have_fast_tls = FALSE;
         static gboolean inited = FALSE;
-	gpointer tp1, tp2;
 
 	if (mini_get_debug_options ()->use_fallback_tls)
 		return FALSE;
@@ -345,10 +356,14 @@ mono_arch_have_fast_tls (void)
 	if (inited)
 		return have_fast_tls;
 
-	tp1 = __aeabi_read_tp ();
-	asm volatile("mrc p15, 0, %0, c13, c0, 3" : "=r" (tp2));
+	if (v7_supported) {
+		gpointer tp1, tp2;
 
-	have_fast_tls = tp1 && tp1 == tp2;
+		tp1 = __aeabi_read_tp ();
+		asm volatile("mrc p15, 0, %0, c13, c0, 3" : "=r" (tp2));
+
+		have_fast_tls = tp1 && tp1 == tp2;
+	}
 	inited = TRUE;
 	return have_fast_tls;
 #else
@@ -359,6 +374,7 @@ mono_arch_have_fast_tls (void)
 static guint8*
 emit_tls_get (guint8 *code, int dreg, int tls_offset)
 {
+	g_assert (v7_supported);
 	ARM_MRC (code, 15, 0, dreg, 13, 0, 3);
 	ARM_LDR_IMM (code, dreg, dreg, tls_offset);
 	return code;
@@ -368,6 +384,7 @@ static guint8*
 emit_tls_set (guint8 *code, int sreg, int tls_offset)
 {
 	int tp_reg = (sreg != ARMREG_R0) ? ARMREG_R0 : ARMREG_R1;
+	g_assert (v7_supported);
 	ARM_MRC (code, 15, 0, tp_reg, 13, 0, 3);
 	ARM_STR_IMM (code, sreg, tp_reg, tls_offset);
 	return code;
@@ -633,7 +650,7 @@ get_delegate_invoke_impl (MonoTrampInfo **info, gboolean has_target, gboolean pa
 		 g_free (name);
 	}
 
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL));
 
 	return start;
 }
@@ -759,7 +776,7 @@ mono_arch_cpu_init (void)
 void
 mono_arch_init (void)
 {
-	const char *cpu_arch;
+	char *cpu_arch;
 
 #ifdef TARGET_WATCHOS
 	mini_get_debug_options ()->soft_breakpoints = TRUE;
@@ -808,7 +825,7 @@ mono_arch_init (void)
 	 * works. Most ARM devices have VFP units these days, so
 	 * normally soft float code would not be exercised much.
 	 */
-	const char *soft = g_getenv ("MONO_ARM_FORCE_SOFT_FLOAT");
+	char *soft = g_getenv ("MONO_ARM_FORCE_SOFT_FLOAT");
 
 	if (soft && !strncmp (soft, "1", 1))
 		arm_fpu = MONO_ARM_FPU_NONE;
@@ -1681,8 +1698,7 @@ mono_arch_compute_omit_fp (MonoCompile *cfg)
 		cfg->arch.omit_fp = FALSE;
 	if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG))
 		cfg->arch.omit_fp = FALSE;
-	if ((mono_jit_trace_calls != NULL && mono_trace_eval (cfg->method)) ||
-		(cfg->prof_options & MONO_PROFILE_ENTER_LEAVE))
+	if ((mono_jit_trace_calls != NULL && mono_trace_eval (cfg->method)))
 		cfg->arch.omit_fp = FALSE;
 	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
 		ArgInfo *ainfo = &cinfo->args [i];
@@ -2165,8 +2181,6 @@ mono_arch_get_llvm_call_info (MonoCompile *cfg, MonoMethodSignature *sig)
 				lainfo->nslots = ainfo->struct_size / sizeof (gpointer);
 				lainfo->esize = 4;
 			}
-
-			printf ("D: %d\n", ainfo->align);
 			break;
 		case RegTypeStructByAddr:
 		case RegTypeStructByAddrOnStack:
@@ -4035,6 +4049,18 @@ mono_arm_thumb_supported (void)
 	return thumb_supported;
 }
 
+gboolean
+mono_arm_eabi_supported (void)
+{
+	return eabi_supported;
+}
+
+int
+mono_arm_i8_align (void)
+{
+	return i8_align;
+}
+
 #ifndef DISABLE_JIT
 
 static guint8*
@@ -4165,17 +4191,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		g_print ("Basic block %d starting at offset 0x%x\n", bb->block_num, bb->native_offset);
 
 	cpos = bb->max_offset;
-
-	if (cfg->prof_options & MONO_PROFILE_COVERAGE) {
-		//MonoCoverageInfo *cov = mono_get_coverage_info (cfg->method);
-		//g_assert (!mono_compile_aot);
-		//cpos += 6;
-		//if (bb->cil_code)
-		//	cov->data [bb->dfn].iloffset = bb->cil_code - cfg->cil_code;
-		/* this is not thread save, but good enough */
-		/* fixme: howto handle overflows? */
-		//x86_inc_mem (code, &cov->data [bb->dfn].count); 
-	}
 
     if (mono_break_at_bb_method && mono_method_desc_full_match (mono_break_at_bb_method, cfg->method) && bb->block_num == mono_break_at_bb_bb_num) {
 		mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_INTERNAL_METHOD, 
@@ -4548,7 +4563,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (cfg->compile_aot) {
 				g_assert (info_var);
 				g_assert (info_var->opcode == OP_REGOFFSET);
-				g_assert (arm_is_imm12 (info_var->inst_offset));
 			}
 
 			if (!cfg->soft_breakpoints && !cfg->compile_aot) {
@@ -4568,9 +4582,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 					var = ss_method_var;
 					g_assert (var);
 					g_assert (var->opcode == OP_REGOFFSET);
-					g_assert (arm_is_imm12 (var->inst_offset));
-					ARM_LDR_IMM (code, dreg, var->inst_basereg, var->inst_offset);
-
+					code = emit_ldr_imm (code, dreg, var->inst_basereg, var->inst_offset);
 					/* Read the value and check whether it is non-zero. */
 					ARM_LDR_IMM (code, dreg, dreg, 0);
 					ARM_CMP_REG_IMM (code, dreg, 0, 0);
@@ -4582,8 +4594,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 						var = ss_trigger_page_var;
 						g_assert (var);
 						g_assert (var->opcode == OP_REGOFFSET);
-						g_assert (arm_is_imm12 (var->inst_offset));
-						ARM_LDR_IMM (code, dreg, var->inst_basereg, var->inst_offset);
+						code = emit_ldr_imm (code, dreg, var->inst_basereg, var->inst_offset);
 					} else {
 						ARM_LDR_IMM (code, dreg, ARMREG_PC, 0);
 						ARM_B (code, 0);
@@ -4601,7 +4612,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				guint32 offset = code - cfg->native_code;
 				guint32 val;
 
-				ARM_LDR_IMM (code, dreg, info_var->inst_basereg, info_var->inst_offset);
+				var = info_var;
+				code = emit_ldr_imm (code, dreg, var->inst_basereg, var->inst_offset);
 				/* Add the offset */
 				val = ((offset / 4) * sizeof (guint8*)) + MONO_STRUCT_OFFSET (SeqPointInfo, bp_addrs);
 				/* Load the info->bp_addrs [offset], which is either 0 or the address of a trigger page */
@@ -6128,9 +6140,6 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		MonoInst *ins = bb->code;
 		bb->max_offset = max_offset;
 
-		if (cfg->prof_options & MONO_PROFILE_COVERAGE)
-			max_offset += 6; 
-
 		MONO_BB_FOR_EACH_INS (bb, ins)
 			max_offset += ((guint8 *)ins_get_spec (ins->opcode))[MONO_INST_LEN];
 	}
@@ -6427,9 +6436,8 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 		if (info_var) {
 			g_assert (info_var->opcode == OP_REGOFFSET);
-			g_assert (arm_is_imm12 (info_var->inst_offset));
 
-			ARM_LDR_IMM (code, dreg, info_var->inst_basereg, info_var->inst_offset);
+			code = emit_ldr_imm (code, dreg, info_var->inst_basereg, info_var->inst_offset);
 			/* Load the trigger page addr */
 			ARM_LDR_IMM (code, dreg, dreg, MONO_STRUCT_OFFSET (SeqPointInfo, ss_trigger_page));
 			ARM_STR_IMM (code, dreg, ss_trigger_page_var->inst_basereg, ss_trigger_page_var->inst_offset);
@@ -6491,9 +6499,6 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 		max_epilog_size += 128;
 	
 	if (mono_jit_trace_calls != NULL)
-		max_epilog_size += 50;
-
-	if (cfg->prof_options & MONO_PROFILE_ENTER_LEAVE)
 		max_epilog_size += 50;
 
 	while (cfg->code_len + max_epilog_size > (cfg->code_size - 16)) {
@@ -7043,7 +7048,7 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 	g_free (constant_pool_starts);
 
 	mono_arch_flush_icache ((guint8*)start, size);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_IMT_TRAMPOLINE, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_IMT_TRAMPOLINE, NULL));
 	mono_stats.imt_trampolines_size += code - start;
 
 	g_assert (DISTANCE (start, code) <= size);

@@ -27,6 +27,7 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Sockets.LingerOption))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Sockets.MulticastOption))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Sockets.NetworkStream))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Sockets.ProtocolFamily))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Sockets.ProtocolType))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Sockets.SelectMode))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Sockets.SendPacketsElement))]

@@ -170,6 +170,11 @@ public class ConditionalParsing
 		var t = (Int32)sbyte.MaxValue;
 	}
 
+	void Test_22 (bool args)
+	{
+		var x = args ?.2f : -.2f;
+	}
+
 	static void Helper<T> (T arg)
 	{
 	}

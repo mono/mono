@@ -49,6 +49,7 @@ class MakeBundle {
 	static string machine_config_file = null;
 	static string config_dir = null;
 	static string style = "linux";
+	static bool bundled_header = false;
 	static string os_message = "";
 	static bool compress;
 	static bool nomain;
@@ -346,6 +347,9 @@ class MakeBundle {
 					environment.Add (env, "");
 				else
 					environment.Add (env.Substring (0, p), env.Substring (p+1));
+				break;
+			case "--bundled-header":
+				bundled_header = true;
 				break;
 			default:
 				sources.Add (args [i]);
@@ -700,10 +704,10 @@ class MakeBundle {
 			using (StreamWriter tc = new StreamWriter (File.Create (temp_c))) {
 			string prog = null;
 
-#if XAMARIN_ANDROID
-			tc.WriteLine ("/* This source code was produced by mkbundle, do not edit */");
-			tc.WriteLine ("\n#ifndef NULL\n#define NULL (void *)0\n#endif");
-			tc.WriteLine (@"
+			if (bundled_header) {
+				tc.WriteLine ("/* This source code was produced by mkbundle, do not edit */");
+				tc.WriteLine ("\n#ifndef NULL\n#define NULL (void *)0\n#endif");
+				tc.WriteLine (@"
 typedef struct {
 	const char *name;
 	const unsigned char *data;
@@ -712,10 +716,10 @@ typedef struct {
 void          mono_register_bundled_assemblies (const MonoBundledAssembly **assemblies);
 void          mono_register_config_for_assembly (const char* assembly_name, const char* config_xml);
 ");
-#else
-			tc.WriteLine ("#include <mono/metadata/mono-config.h>");
-			tc.WriteLine ("#include <mono/metadata/assembly.h>\n");
-#endif
+			} else {
+				tc.WriteLine ("#include <mono/metadata/mono-config.h>");
+				tc.WriteLine ("#include <mono/metadata/assembly.h>\n");
+			}
 
 			if (compress) {
 				tc.WriteLine ("typedef struct _compressed_data {");
@@ -1106,6 +1110,14 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		}
 
 		if (error != null) {
+			Console.Error.WriteLine ("Failure to load i18n assemblies, the following directories were searched for the assemblies:");
+			foreach (var path in link_paths){
+				Console.Error.WriteLine ("   Path: " + path);
+			}
+			if (custom_mode){
+				Console.WriteLine ("In Custom mode, you need to provide the directory to lookup assemblies from using -L");
+			}
+			
 			Error ("Couldn't load one or more of the i18n assemblies: " + error);
 			Environment.Exit (1);
 		}
@@ -1114,10 +1126,10 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 	
 	static readonly Universe universe = new Universe ();
 	static readonly Dictionary<string, string> loaded_assemblies = new Dictionary<string, string> ();
-	static readonly string resourcePathSeparator = (Path.DirectorySeparatorChar == '\\') ? $"\\{Path.DirectorySeparatorChar}" : $"{Path.DirectorySeparatorChar}";
 
 	public static string GetAssemblyName (string path)
 	{
+		string resourcePathSeparator = style == "windows" ? "\\\\" : "/";
 		string name = Path.GetFileName (path);
 
 		// A bit of a hack to support satellite assemblies. They all share the same name but
@@ -1179,7 +1191,12 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		Assembly a = null;
 		
 		try {
+			if (!quiet)
+				Console.WriteLine ("Attempting to load assembly: {0}", assembly);
 			a = universe.LoadFile (assembly);
+			if (!quiet)
+				Console.WriteLine ("Assembly {0} loaded successfully.", assembly);
+			
 		} catch (FileNotFoundException){
 			Error ($"Cannot find assembly `{assembly}'");
 		} catch (IKVM.Reflection.BadImageFormatException f) {
@@ -1202,6 +1219,8 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		string total_log = "";
 		foreach (string dir in link_paths){
 			string full_path = Path.Combine (dir, assembly);
+			if (!quiet)
+				Console.WriteLine ("Attempting to load assembly from: " + full_path);
 			if (!assembly.EndsWith (".dll") && !assembly.EndsWith (".exe"))
 				full_path += ".dll";
 			
@@ -1238,6 +1257,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 				   "    --skip-scan          Skip scanning assemblies that could not be loaded (but still embed them).\n" +
 				   "    --i18n ENCODING      none, all or comma separated list of CJK, MidWest, Other, Rare, West.\n" +
 				   "    -v                   Verbose output\n" + 
+				   "    --bundled-header     Do not attempt to include 'mono-config.h'. Define the entry points directly in the generated code\n" +
 				   "\n" + 
 				   "--simple   Simple mode does not require a C toolchain and can cross compile\n" + 
 				   "    --cross TARGET       Generates a binary for the given TARGET\n"+

@@ -174,8 +174,10 @@ void mono_gc_wbarrier_set_root (gpointer ptr, MonoObject *value);
 typedef enum {
 	// Regular fast path allocator.
 	MANAGED_ALLOCATOR_REGULAR,
-	// Managed allocator that just calls into the runtime. Used when allocation profiling w/ AOT.
+	// Managed allocator that just calls into the runtime.
 	MANAGED_ALLOCATOR_SLOW_PATH,
+	// Managed allocator that works like the regular one but also calls into the profiler.
+	MANAGED_ALLOCATOR_PROFILER,
 } ManagedAllocatorVariant;
 
 int mono_gc_get_aligned_size_for_allocator (int size);
@@ -193,7 +195,10 @@ MonoMethod* mono_gc_get_specific_write_barrier (gboolean is_concurrent);
 MonoMethod* mono_gc_get_write_barrier (void);
 
 /* Fast valuetype copy */
-void mono_gc_wbarrier_value_copy_bitmap (gpointer dest, gpointer src, int size, unsigned bitmap);
+/* WARNING: [dest, dest + size] must be within the bounds of a single type, otherwise the GC will lose remset entries */
+void mono_gc_wbarrier_range_copy (gpointer dest, gpointer src, int size);
+void* mono_gc_get_range_copy_func (void);
+
 
 /* helper for the managed alloc support */
 MonoString *
@@ -347,6 +352,12 @@ guint mono_gc_get_vtable_bits (MonoClass *klass);
 void mono_gc_register_altstack (gpointer stack, gint32 stack_size, gpointer altstack, gint32 altstack_size);
 
 gboolean mono_gc_is_critical_method (MonoMethod *method);
+
+gpointer mono_gc_thread_attach (THREAD_INFO_TYPE *info);
+
+void mono_gc_thread_detach_with_lock (THREAD_INFO_TYPE *info);
+
+gboolean mono_gc_thread_in_critical_region (THREAD_INFO_TYPE *info);
 
 /* If set, print debugging messages around finalizers. */
 extern gboolean log_finalizers;

@@ -894,6 +894,16 @@ namespace Mono.CSharp
 					res = -1;
 
 				break;
+			case Token.THROW:
+				switch (current_token) {
+				case Token.ARROW:
+				case Token.OP_COALESCING:
+				case Token.INTERR:
+					res = Token.THROW_EXPR;
+					break;
+				}
+
+				break;
 			}
 
 
@@ -1017,7 +1027,7 @@ namespace Mono.CSharp
 		}
 
 		//
-		// Open parens micro parser. Detects both lambda and cast ambiguity.
+		// Open parens micro parser
 		//	
 		int TokenizeOpenParens ()
 		{
@@ -1027,6 +1037,7 @@ namespace Mono.CSharp
 			int bracket_level = 0;
 			bool is_type = false;
 			bool can_be_type = false;
+			bool at_least_one_comma = false;
 			
 			while (true) {
 				ptoken = current_token;
@@ -1041,6 +1052,12 @@ namespace Mono.CSharp
 					//
 					if (current_token == Token.ARROW)
 						return Token.OPEN_PARENS_LAMBDA;
+
+					//
+					// Expression inside parens is deconstruct expression, (a, x.y) = ...
+					//
+					if (current_token == Token.ASSIGN && at_least_one_comma)
+						return Token.OPEN_PARENS_DECONSTRUCT;
 
 					//
 					// Expression inside parens is single type, (int[])
@@ -1154,6 +1171,7 @@ namespace Mono.CSharp
 					if (bracket_level == 0) {
 						bracket_level = 100;
 						can_be_type = is_type = false;
+						at_least_one_comma = true;
 					}
 					continue;
 
@@ -1254,6 +1272,21 @@ namespace Mono.CSharp
 				}
 
 				return false;
+			case Token.OPEN_PARENS:
+				if (!parsing_generic_declaration)
+					return false;
+				
+				while (true) {
+					switch (token ()) {
+					case Token.COMMA:
+						// tuple declaration after <
+						return true;
+					case Token.OP_GENERICS_GT:
+					case Token.EOF:
+						return false;
+					}
+				}
+
 			default:
 				return false;
 			}
@@ -1267,7 +1300,8 @@ namespace Mono.CSharp
 			else if (the_token == Token.INTERR_NULLABLE || the_token == Token.STAR)
 				goto again;
 			else if (the_token == Token.OP_GENERICS_LT) {
-				if (!parse_less_than (ref genericDimension))
+				int unused = 0;
+				if (!parse_less_than (ref unused))
 					return false;
 				goto again;
 			} else if (the_token == Token.OPEN_BRACKET) {
@@ -1314,7 +1348,8 @@ namespace Mono.CSharp
 			}
 
 			if (d == '.') {
-				return Token.INTERR_OPERATOR;
+				d = reader.Peek ();
+				return d >= '0' && d <= '9' ? Token.INTERR : Token.INTERR_OPERATOR;
 			}
 
 			if (d != ' ') {
@@ -1344,6 +1379,7 @@ namespace Mono.CSharp
 			case Token.THIS:
 			case Token.NEW:
 			case Token.INTERPOLATED_STRING:
+			case Token.THROW:
 				next_token = Token.INTERR;
 				break;
 				
@@ -3468,6 +3504,7 @@ namespace Mono.CSharp
 						case Token.DEFAULT:
 						case Token.DELEGATE:
 						case Token.OP_GENERICS_GT:
+						case Token.REFVALUE:
 							return Token.OPEN_PARENS;
 						}
 

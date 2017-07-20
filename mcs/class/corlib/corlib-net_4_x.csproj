@@ -9,8 +9,11 @@
     <ProjectGuid>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>612,618,1635,1699</NoWarn>
-    <OutputPath>./../../class/lib/net_4_x</OutputPath>
-    <IntermediateOutputPath>obj-net_4_x</IntermediateOutputPath>
+    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Windows_NT'">win32</HostPlatform>
+    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">darwin</HostPlatform>
+    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix'">linux</HostPlatform>
+    <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
+    <IntermediateOutputPath>obj-net_4_x-$(HostPlatform)</IntermediateOutputPath>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
     
@@ -29,7 +32,7 @@
     <DebugType>full</DebugType>
     <NoWarn>612,618,1635,1699</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;INSIDE_CORLIB;MONO_CULTURE_DATA;LIBC;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_MACL;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_MACL;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_FEATURE_CONSOLE;MONO_FEATURE_APPLETLS</DefineConstants>
+    <DefineConstants>TRACE;INSIDE_CORLIB;MONO_CULTURE_DATA;LIBC;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_MACL;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_MACL;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_FEATURE_CONSOLE;MONO_FEATURE_APPLETLS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -37,7 +40,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>612,618,1635,1699</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>INSIDE_CORLIB;MONO_CULTURE_DATA;LIBC;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_MACL;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_MACL;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_FEATURE_CONSOLE;MONO_FEATURE_APPLETLS</DefineConstants>
+    <DefineConstants>INSIDE_CORLIB;MONO_CULTURE_DATA;LIBC;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_MACL;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_MACL;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_FEATURE_CONSOLE;MONO_FEATURE_APPLETLS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -57,6 +60,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\OrderablePartitioner.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\Partitioner.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\PartitionerStatic.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\CollectionExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\X509ContentType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\X509KeyStorageFlags.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
@@ -73,15 +77,20 @@
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Collections\Generic\KeyValuePair.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Diagnostics\Debug.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\IO\Win32Marshal.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\CompilerServices\IsByRefLikeAttribute.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\CompilerServices\IsReadOnlyAttribute.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\CompilerServices\ITuple.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\CompilerServices\RuntimeFeature.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\CompilerServices\TupleElementNamesAttribute.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Threading\DeferredDisposableLifetime.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\TupleExtensions.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\ValueTuple.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\Microsoft\Win32\SafeHandles\SafeThreadPoolIOHandle.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Array.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\Generic\ArraySortHelper.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\Generic\Dictionary.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\Generic\IDictionaryDebugView.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\LowLevelComparer.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\ObjectEqualityComparer.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Win32ThreadPoolBoundHandle.cs" />
@@ -90,7 +99,6 @@
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Win32ThreadPoolNativeOverlapped.OverlappedData.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Win32ThreadPoolPreAllocatedOverlapped.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Tuple.cs" />
-    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\ValueTuple.cs" />
     <Compile Include="..\..\build\common\AssemblyRef.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
@@ -156,6 +164,7 @@
     <Compile Include="..\referencesource\mscorlib\system\activator.cs" />
     <Compile Include="..\referencesource\mscorlib\system\AggregateException.cs" />
     <Compile Include="..\referencesource\mscorlib\system\AppContext\AppContext.cs" />
+    <Compile Include="..\referencesource\mscorlib\system\AppContext\AppContextSwitches.cs" />
     <Compile Include="..\referencesource\mscorlib\system\appdomainattributes.cs" />
     <Compile Include="..\referencesource\mscorlib\system\appdomainunloadedexception.cs" />
     <Compile Include="..\referencesource\mscorlib\system\applicationexception.cs" />
@@ -437,6 +446,7 @@
     <Compile Include="..\referencesource\mscorlib\system\reflection\pointer.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\propertyattributes.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\reflectioncontext.cs" />
+    <Compile Include="..\referencesource\mscorlib\system\reflection\reflectiontypeloadexception.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\resourceattributes.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\RuntimeReflectionExtensions.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\targetexception.cs" />
@@ -582,6 +592,7 @@
     <Compile Include="..\referencesource\mscorlib\system\runtime\interopservices\safehandle.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\interopservices\sehexception.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\interopservices\ucomienumconnections.cs" />
+    <Compile Include="..\referencesource\mscorlib\system\runtime\interopservices\ucomitypeinfo.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\interopservices\unknownwrapper.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\interopservices\variantWrapper.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\interopservices\windowsruntime\attributes.cs" />
@@ -845,6 +856,7 @@
     <Compile Include="corert\Interop.MemAllocFree.cs" />
     <Compile Include="corert\RelocatedTypeAttribute.cs" />
     <Compile Include="corert\RuntimeThread.cs" />
+    <Compile Include="corert\ThreadPoolBoundHandle.cs" />
     <Compile Include="Microsoft.Win32\IRegistryApi.cs" />
     <Compile Include="Microsoft.Win32\Registry.cs" />
     <Compile Include="Microsoft.Win32\RegistryHive.cs" />
@@ -883,7 +895,7 @@
     <Compile Include="Mono\SafeGPtrArrayHandle.cs" />
     <Compile Include="Mono\SafeStringMarshal.cs" />
     <Compile Include="ReferenceSources\__ConsoleStream.cs" />
-    <Compile Include="ReferenceSources\AppContextSwitches.cs" />
+    <Compile Include="ReferenceSources\AppContextDefaultValues.cs" />
     <Compile Include="ReferenceSources\AppDomain.cs" />
     <Compile Include="ReferenceSources\Array.cs" />
     <Compile Include="ReferenceSources\BCLDebug.cs" />
@@ -898,7 +910,6 @@
     <Compile Include="ReferenceSources\EncodingDataItem.cs" />
     <Compile Include="ReferenceSources\EncodingTable.cs" />
     <Compile Include="ReferenceSources\Environment.cs" />
-    <Compile Include="ReferenceSources\HashHelpers.cs" />
     <Compile Include="ReferenceSources\JitHelpers.cs" />
     <Compile Include="ReferenceSources\MethodBase.cs" />
     <Compile Include="ReferenceSources\NativeMethods.cs" />
@@ -1076,7 +1087,6 @@
     <Compile Include="System.Reflection\ParameterInfo.cs" />
     <Compile Include="System.Reflection\PortableExecutableKinds.cs" />
     <Compile Include="System.Reflection\PropertyInfo.cs" />
-    <Compile Include="System.Reflection\ReflectionTypeLoadException.cs" />
     <Compile Include="System.Reflection\StrongNameKeyPair.cs" />
     <Compile Include="System.Resources\Win32Resources.cs" />
     <Compile Include="System.Runtime.CompilerServices\ConditionalWeakTable.cs" />
@@ -1120,27 +1130,16 @@
     <Compile Include="System.Runtime.InteropServices\_TypeBuilder.cs" />
     <Compile Include="System.Runtime.InteropServices\BIND_OPTS.cs" />
     <Compile Include="System.Runtime.InteropServices\BINDPTR.cs" />
-    <Compile Include="System.Runtime.InteropServices\CALLCONV.cs" />
     <Compile Include="System.Runtime.InteropServices\ComEventsHelper.cs" />
     <Compile Include="System.Runtime.InteropServices\CustomQueryInterfaceMode.cs" />
     <Compile Include="System.Runtime.InteropServices\DESCKIND.cs" />
-    <Compile Include="System.Runtime.InteropServices\DISPPARAMS.cs" />
-    <Compile Include="System.Runtime.InteropServices\ELEMDESC.cs" />
-    <Compile Include="System.Runtime.InteropServices\EXCEPINFO.cs" />
     <Compile Include="System.Runtime.InteropServices\ExporterEventKind.cs" />
     <Compile Include="System.Runtime.InteropServices\ExtensibleClassFactory.cs" />
     <Compile Include="System.Runtime.InteropServices\FILETIME.cs" />
-    <Compile Include="System.Runtime.InteropServices\FUNCDESC.cs" />
-    <Compile Include="System.Runtime.InteropServices\FUNCFLAGS.cs" />
-    <Compile Include="System.Runtime.InteropServices\FUNCKIND.cs" />
     <Compile Include="System.Runtime.InteropServices\GCHandle.cs" />
     <Compile Include="System.Runtime.InteropServices\GCHandleType.cs" />
-    <Compile Include="System.Runtime.InteropServices\IDLDESC.cs" />
-    <Compile Include="System.Runtime.InteropServices\IDLFLAG.cs" />
     <Compile Include="System.Runtime.InteropServices\IErrorInfo.cs" />
-    <Compile Include="System.Runtime.InteropServices\IMPLTYPEFLAGS.cs" />
     <Compile Include="System.Runtime.InteropServices\ImporterEventKind.cs" />
-    <Compile Include="System.Runtime.InteropServices\INVOKEKIND.cs" />
     <Compile Include="System.Runtime.InteropServices\ITypeLibConverter.cs" />
     <Compile Include="System.Runtime.InteropServices\ITypeLibExporterNameProvider.cs" />
     <Compile Include="System.Runtime.InteropServices\ITypeLibExporterNotifySink.cs" />
@@ -1149,8 +1148,6 @@
     <Compile Include="System.Runtime.InteropServices\ManagedErrorInfo.cs" />
     <Compile Include="System.Runtime.InteropServices\Marshal.cs" />
     <Compile Include="System.Runtime.InteropServices\MarshalAsAttribute.cs" />
-    <Compile Include="System.Runtime.InteropServices\PARAMDESC.cs" />
-    <Compile Include="System.Runtime.InteropServices\PARAMFLAG.cs" />
     <Compile Include="System.Runtime.InteropServices\RegistrationClassContext.cs" />
     <Compile Include="System.Runtime.InteropServices\RegistrationConnectionType.cs" />
     <Compile Include="System.Runtime.InteropServices\RegistrationServices.cs" />
@@ -1158,10 +1155,6 @@
     <Compile Include="System.Runtime.InteropServices\SafeHandle.cs" />
     <Compile Include="System.Runtime.InteropServices\STATSTG.cs" />
     <Compile Include="System.Runtime.InteropServices\SYSKIND.cs" />
-    <Compile Include="System.Runtime.InteropServices\TYPEATTR.cs" />
-    <Compile Include="System.Runtime.InteropServices\TYPEDESC.cs" />
-    <Compile Include="System.Runtime.InteropServices\TYPEFLAGS.cs" />
-    <Compile Include="System.Runtime.InteropServices\TYPEKIND.cs" />
     <Compile Include="System.Runtime.InteropServices\TYPELIBATTR.cs" />
     <Compile Include="System.Runtime.InteropServices\TypeLibConverter.cs" />
     <Compile Include="System.Runtime.InteropServices\TypeLibExporterFlags.cs" />
@@ -1178,11 +1171,7 @@
     <Compile Include="System.Runtime.InteropServices\UCOMIRunningObjectTable.cs" />
     <Compile Include="System.Runtime.InteropServices\UCOMIStream.cs" />
     <Compile Include="System.Runtime.InteropServices\UCOMITypeComp.cs" />
-    <Compile Include="System.Runtime.InteropServices\UCOMITypeInfo.cs" />
     <Compile Include="System.Runtime.InteropServices\UCOMITypeLib.cs" />
-    <Compile Include="System.Runtime.InteropServices\VARDESC.cs" />
-    <Compile Include="System.Runtime.InteropServices\VARFLAGS.cs" />
-    <Compile Include="System.Runtime.Loader\AssemblyLoadContext.cs" />
     <Compile Include="System.Runtime.Remoting.Activation\ActivationServices.cs" />
     <Compile Include="System.Runtime.Remoting.Activation\ActivatorLevel.cs" />
     <Compile Include="System.Runtime.Remoting.Activation\AppDomainLevelActivator.cs" />
@@ -1746,6 +1735,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
       <LogicalName>collation.cjkKOlv2.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
+      <LogicalName>mscorlib.xml</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
 </Project>

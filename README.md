@@ -193,22 +193,18 @@ disable the compilation of a Mono runtime with the SGen garbage
 collector.
 
   * On platforms that support it, after building Mono, you will have
-both a `mono` binary and a `mono-sgen` binary. `mono` uses Boehm,
+both a `mono-boehm` binary and a `mono-sgen` binary. `mono-boehm` uses Boehm,
 while `mono-sgen` uses the Simple Generational GC.
 
-* `--with-gc=[included, boehm, none]` - Selects the default Boehm
+* `--with-libgc=[included, none]` - Selects the default Boehm
 garbage collector engine to use.
 
   * *included*: (*slightly modified Boehm GC*) This is the default
 value for the Boehm GC, and it's the most feature complete, it will
 allow Mono to use typed allocations and support the debugger.
 
-  * *boehm*: This is used to use a system-install Boehm GC, it is
-useful to test new features available in Boehm GC, but we do not
-recommend that people use this, as it disables a few features.
-
   * *none*:
-Disables the inclusion of a garbage collector.
+Disables the inclusion of a Boehm garbage collector.
 
   * This defaults to `included`.
 

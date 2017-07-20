@@ -28,10 +28,6 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-#if MONOTOUCH
-using MonoTouch;
-#endif
-
 namespace Mono.Btls
 {
 	class MonoBtlsSslCtx : MonoBtlsObject
@@ -141,9 +137,7 @@ namespace Mono.Btls
 			return 0;
 		}
 
-#if MONOTOUCH
-		[MonoPInvokeCallback (typeof (NativeVerifyFunc))]
-#endif
+		[Mono.Util.MonoPInvokeCallback (typeof (NativeVerifyFunc))]
 		static int NativeVerifyCallback (IntPtr instance, int preverify_ok, IntPtr store_ctx)
 		{
 			var c = (MonoBtlsSslCtx)GCHandle.FromIntPtr (instance).Target;
@@ -164,9 +158,7 @@ namespace Mono.Btls
 			return 1;
 		}
 
-#if MONOTOUCH
-		[MonoPInvokeCallback (typeof (NativeSelectFunc))]
-#endif
+		[Mono.Util.MonoPInvokeCallback (typeof (NativeSelectFunc))]
 		static int NativeSelectCallback (IntPtr instance)
 		{
 			var c = (MonoBtlsSslCtx)GCHandle.FromIntPtr (instance).Target;

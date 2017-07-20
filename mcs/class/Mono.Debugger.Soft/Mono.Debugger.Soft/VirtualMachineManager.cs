@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Remoting.Messaging;
+using System.Text;
 
 namespace Mono.Debugger.Soft
 {
@@ -94,6 +95,12 @@ namespace Mono.Debugger.Soft
 			if (options != null && options.Valgrind)
 				info.FileName = "valgrind";
 			info.UseShellExecute = false;
+
+			if (info.RedirectStandardError)
+				info.StandardErrorEncoding = Encoding.UTF8;
+
+			if (info.RedirectStandardOutput)
+				info.StandardOutputEncoding = Encoding.UTF8;
 
 			ITargetProcess p;
 			if (options != null && options.CustomProcessLauncher != null)

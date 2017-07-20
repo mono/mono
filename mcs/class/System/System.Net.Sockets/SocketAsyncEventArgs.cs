@@ -262,7 +262,6 @@ namespace System.Net.Sockets
 			SetResults(SocketError.Success, bytesTransferred, flags);
 			current_socket = connectSocket;
 
-			Complete ();
 			OnCompleted (this);
 		}
 

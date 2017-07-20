@@ -40,7 +40,7 @@ namespace System.Drawing.Text {
 
 		public PrivateFontCollection ()
 		{
-			Status status = GDIPlus.GdipNewPrivateFontCollection (out nativeFontCollection);
+			Status status = GDIPlus.GdipNewPrivateFontCollection (out _nativeFontCollection);
 			GDIPlus.CheckStatus (status);
 		}
 		
@@ -57,27 +57,27 @@ namespace System.Drawing.Text {
 				throw new FileNotFoundException ();
 
 			// note: MS throw the same exception FileNotFoundException if the file exists but isn't a valid font file
-			Status status = GDIPlus.GdipPrivateAddFontFile (nativeFontCollection, fname);
+			Status status = GDIPlus.GdipPrivateAddFontFile (_nativeFontCollection, fname);
 			GDIPlus.CheckStatus (status);			
 		}
 
 		public void AddMemoryFont (IntPtr memory, int length) 
 		{
 			// note: MS throw FileNotFoundException if something is bad with the data (except for a null pointer)
-			Status status = GDIPlus.GdipPrivateAddMemoryFont (nativeFontCollection, memory, length);
+			Status status = GDIPlus.GdipPrivateAddMemoryFont (_nativeFontCollection, memory, length);
 			GDIPlus.CheckStatus (status);						
 		}
 		
 		// methods	
 		protected override void Dispose (bool disposing)
 		{
-			if (nativeFontCollection!=IntPtr.Zero) {
-				GDIPlus.GdipDeletePrivateFontCollection (ref nativeFontCollection);							
+			if (_nativeFontCollection!=IntPtr.Zero) {
+				GDIPlus.GdipDeletePrivateFontCollection (ref _nativeFontCollection);							
 
 				// This must be zeroed out, otherwise our base will also call
 				// the GDI+ delete method on unix platforms. We're keeping the
 				// base.Dispose() call in case other cleanup ever gets added there
-				nativeFontCollection = IntPtr.Zero;
+				_nativeFontCollection = IntPtr.Zero;
 			}
 			
 			base.Dispose (disposing);

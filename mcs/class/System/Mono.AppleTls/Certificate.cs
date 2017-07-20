@@ -36,7 +36,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using Mono.Net;
 
-using ObjCRuntime;
+using ObjCRuntimeInternal;
 
 namespace Mono.AppleTls {
 
@@ -245,29 +245,46 @@ namespace Mono.AppleTls {
 			}
 		}
 
-		static CFDictionary CreateImportOptions (CFString password, SecKeyChain keychain, SecAccess access)
+		internal class ImportOptions
 		{
+#if !MONOTOUCH
+			public SecAccess Access {
+				get; set;
+			}
+			public SecKeyChain KeyChain {
+				get; set;
+			}
+#endif
+		}
+
+		static CFDictionary CreateImportOptions (CFString password, ImportOptions options = null)
+		{
+			if (options == null)
+				return CFDictionary.FromObjectAndKey (password.Handle, ImportExportPassphase.Handle);
+
 			var items = new List<Tuple<IntPtr, IntPtr>> ();
 			items.Add (new Tuple<IntPtr, IntPtr> (ImportExportPassphase.Handle, password.Handle));
 
-			if (keychain != null)
-				items.Add (new Tuple<IntPtr, IntPtr> (ImportExportKeychain.Handle, keychain.Handle));
-			if (access != null)
-				items.Add (new Tuple<IntPtr, IntPtr> (ImportExportAccess.Handle, access.Handle));
+#if !MONOTOUCH
+			if (options.KeyChain != null)
+				items.Add (new Tuple<IntPtr, IntPtr> (ImportExportKeychain.Handle, options.KeyChain.Handle));
+			if (options.Access != null)
+				items.Add (new Tuple<IntPtr, IntPtr> (ImportExportAccess.Handle, options.Access.Handle));
+#endif
 
 			return CFDictionary.FromKeysAndObjects (items);
 		}
 
-		public static SecIdentity Import (byte[] data, string password, SecKeyChain keychain = null, SecAccess access = null)
+		public static SecIdentity Import (byte[] data, string password, ImportOptions options = null)
 		{
 			if (data == null)
 				throw new ArgumentNullException ("data");
 			if (string.IsNullOrEmpty (password)) // SecPKCS12Import() doesn't allow empty passwords.
 				throw new ArgumentException ("password");
 			using (var pwstring = CFString.Create (password))
-			using (var options = CreateImportOptions (pwstring, keychain, access)) {
+			using (var optionDict = CreateImportOptions (pwstring, options)) {
 				CFDictionary [] array;
-				SecStatusCode result = SecImportExport.ImportPkcs12 (data, options, out array);
+				SecStatusCode result = SecImportExport.ImportPkcs12 (data, optionDict, out array);
 				if (result != SecStatusCode.Success)
 					throw new InvalidOperationException (result.ToString ());
 
@@ -275,7 +292,7 @@ namespace Mono.AppleTls {
 			}
 		}
 
-		public static SecIdentity Import (X509Certificate2 certificate, SecKeyChain keychain = null, SecAccess access = null)
+		public static SecIdentity Import (X509Certificate2 certificate, ImportOptions options = null)
 		{
 			if (certificate == null)
 				throw new ArgumentNullException ("certificate");
@@ -288,7 +305,7 @@ namespace Mono.AppleTls {
 			 */
 			var password = Guid.NewGuid ().ToString ();
 			var pkcs12 = certificate.Export (X509ContentType.Pfx, password);
-			return Import (pkcs12, password, keychain, access);
+			return Import (pkcs12, password, options);
 		}
 
 		~SecIdentity ()
@@ -371,6 +388,7 @@ namespace Mono.AppleTls {
 		}
 	}
 
+#if !MONOTOUCH
 	class SecAccess : INativeObject, IDisposable {
 		internal IntPtr handle;
 
@@ -427,5 +445,6 @@ namespace Mono.AppleTls {
 			}
 		}
 	}
+#endif
 }
 #endif

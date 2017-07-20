@@ -4851,6 +4851,7 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1.2-M02/b138117/ldsfldainitonlyvt.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V2.0-Beta2/b309555/x86-test-1084346006.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V2.0-Beta2/b323557/1087985874.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V2.0-Beta2/b353858/b353858.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V2.0-Beta2/b374944/helper.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V2.0-Beta2/b409617/b409617.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V2.0-Beta2/b415164/b415164.il	\
@@ -5057,9 +5058,6 @@ CORECLR_DISABLED_TEST_IL_SRC +=	\
 CORECLR_DISABLED_TEST_IL_SRC +=	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/lcliimpl.il
 
-# https://bugzilla.xamarin.com/show_bug.cgi?id=55083
-CORECLR_DISABLED_TEST_IL_SRC +=	\
-	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V2.0-Beta2/b353858/b353858.il
 
 # FIXME: these tests are baselined, i.e. we don't have time to investigate
 # them right now but want to make sure we don't introduce new regressions

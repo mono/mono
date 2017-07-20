@@ -205,13 +205,13 @@ namespace System.Drawing
 					return sb.ToString ();
 				} else if (destinationType == typeof (InstanceDescriptor)) {
 					if (color.IsEmpty) {
-						return new InstanceDescriptor (typeof (Color).GetField ("Empty"), null);
+						return new InstanceDescriptor (typeof (Color).GetTypeInfo ().GetField ("Empty"), null);
 					} else if (color.IsSystemColor) {
-						return new InstanceDescriptor (typeof (SystemColors).GetProperty (color.Name), null);
+						return new InstanceDescriptor (typeof (SystemColors).GetTypeInfo ().GetProperty (color.Name), null);
 					} else if (color.IsKnownColor){
-						return new InstanceDescriptor (typeof (Color).GetProperty (color.Name), null);
+						return new InstanceDescriptor (typeof (Color).GetTypeInfo ().GetProperty (color.Name), null);
 					} else {
-						MethodInfo met = typeof(Color).GetMethod ("FromArgb", new Type[] { typeof(int), typeof(int), typeof(int), typeof(int) } );
+						MethodInfo met = typeof(Color).GetTypeInfo ().GetMethod ("FromArgb", new Type[] { typeof(int), typeof(int), typeof(int), typeof(int) } );
 						return new InstanceDescriptor (met, new object[] {color.A, color.R, color.G, color.B });
 					}
 				}

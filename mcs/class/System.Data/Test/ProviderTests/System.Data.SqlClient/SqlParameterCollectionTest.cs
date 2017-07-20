@@ -41,6 +41,14 @@ namespace MonoTests.System.Data.Connected.SqlClient
 
 	public class SqlParameterCollectionTest
 	{
+		EngineConfig engine;
+
+		[SetUp]
+		public void SetUp ()
+		{
+			engine = ConnectionManager.Instance.Sql.EngineConfig;
+		}
+
 		[Test]
 		public void CopyToTest ()
 		{

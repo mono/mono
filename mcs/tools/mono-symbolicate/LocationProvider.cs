@@ -11,7 +11,7 @@ namespace Mono
 {
 	class AssemblyLocationProvider
 	{
-		AssemblyDefinition assembly;
+		string assemblyFullPath;
 		Logger logger;
 
 		public AssemblyLocationProvider (string assemblyPath, Logger logger)
@@ -22,85 +22,88 @@ namespace Mono
 			if (!File.Exists (assemblyPath))
 				throw new ArgumentException ("assemblyPath does not exist: "+ assemblyPath);
 
-			var readerParameters = new ReaderParameters { ReadSymbols = true };
-			assembly = AssemblyDefinition.ReadAssembly (assemblyPath, readerParameters);
+			assemblyFullPath = assemblyPath;
 		}
 
 		public bool TryResolveLocation (StackFrameData sfData, SeqPointInfo seqPointInfo)
 		{
-			if (!assembly.MainModule.HasSymbols)
-				return false;
+			var readerParameters = new ReaderParameters { ReadSymbols = true };
+			using (var assembly = AssemblyDefinition.ReadAssembly (assemblyFullPath, readerParameters)) {
 
-			TypeDefinition type = null;
-			string[] nested;
-			if (sfData.TypeFullName.IndexOf ('/') >= 0)
-				 nested = sfData.TypeFullName.Split ('/');
-			else
-				nested = sfData.TypeFullName.Split ('+');
+				if (!assembly.MainModule.HasSymbols)
+					return false;
 
-			var types = assembly.MainModule.Types;
-			foreach (var ntype in nested) {
-				if (type == null) {
-					// Use namespace first time.
-					type = types.FirstOrDefault (t => t.FullName == ntype);
+				TypeDefinition type = null;
+				string[] nested;
+				if (sfData.TypeFullName.IndexOf ('/') >= 0)
+					nested = sfData.TypeFullName.Split ('/');
+				else
+					nested = sfData.TypeFullName.Split ('+');
+
+				var types = assembly.MainModule.Types;
+				foreach (var ntype in nested) {
+					if (type == null) {
+						// Use namespace first time.
+						type = types.FirstOrDefault (t => t.FullName == ntype);
+					} else {
+						type = types.FirstOrDefault (t => t.Name == ntype);
+					}
+
+					if (type == null) {
+						logger.LogWarning ("Could not find type: {0}", ntype);
+						return false;
+					}
+
+					types = type.NestedTypes;
+				}
+
+				var parensStart = sfData.MethodSignature.IndexOf ('(');
+				var methodName = sfData.MethodSignature.Substring (0, parensStart).TrimEnd ();
+				var methodParameters = sfData.MethodSignature.Substring (parensStart);
+				var methods = type.Methods.Where (m => CompareName (m, methodName) && CompareParameters (m.Parameters, methodParameters)).ToArray ();
+				if (methods.Length == 0) {
+					logger.LogWarning ("Could not find method: {0}", methodName);
+					return false;
+				}
+				if (methods.Length > 1) {
+					logger.LogWarning ("Ambiguous match for method: {0}", sfData.MethodSignature);
+					return false;
+				}
+				var method = methods [0];
+
+				int ilOffset;
+				if (sfData.IsILOffset) {
+					ilOffset = sfData.Offset;
 				} else {
-					type = types.FirstOrDefault (t => t.Name == ntype);
+					if (seqPointInfo == null)
+						return false;
+
+					ilOffset = seqPointInfo.GetILOffset (method.MetadataToken.ToInt32 (), sfData.MethodIndex, sfData.Offset);
 				}
 
-				if (type == null) {
-					logger.LogWarning ("Could not find type: {0}", ntype);
+				if (ilOffset < 0)
 					return false;
+
+				if (!method.DebugInformation.HasSequencePoints)
+					return false;
+
+				SequencePoint prev = null;
+				foreach (var sp in method.DebugInformation.SequencePoints.OrderBy (l => l.Offset)) {
+					if (sp.Offset >= ilOffset) {
+						sfData.SetLocation (sp.Document.Url, sp.StartLine);
+						return true;
+					}
+
+					prev = sp;
 				}
 
-				types = type.NestedTypes;
-			}
-
-			var parensStart = sfData.MethodSignature.IndexOf ('(');
-			var methodName = sfData.MethodSignature.Substring (0, parensStart).TrimEnd ();
-			var methodParameters = sfData.MethodSignature.Substring (parensStart);
-			var methods = type.Methods.Where (m => CompareName (m, methodName) && CompareParameters (m.Parameters, methodParameters)).ToArray ();
-			if (methods.Length == 0) {
-				logger.LogWarning ("Could not find method: {0}", methodName);
-				return false;
-			}
-			if (methods.Length > 1) {
-				logger.LogWarning ("Ambiguous match for method: {0}", sfData.MethodSignature);
-				return false;
-			}
-			var method = methods [0];
-
-			int ilOffset;
-			if (sfData.IsILOffset) {
-				ilOffset = sfData.Offset;
-			} else {
-				if (seqPointInfo == null)
-					return false;
-
-				ilOffset = seqPointInfo.GetILOffset (method.MetadataToken.ToInt32 (), sfData.MethodIndex, sfData.Offset);
-			}
-
-			if (ilOffset < 0)
-				return false;
-
-			if (!method.DebugInformation.HasSequencePoints)
-				return false;
-
-			SequencePoint prev = null;
-			foreach (var sp in method.DebugInformation.SequencePoints.OrderBy (l => l.Offset)) {
-				if (sp.Offset >= ilOffset) {
-					sfData.SetLocation (sp.Document.Url, sp.StartLine);
+				if (prev != null) {
+					sfData.SetLocation (prev.Document.Url, prev.StartLine);
 					return true;
 				}
 
-				prev = sp;
+				return false;
 			}
-
-			if (prev != null) {
-				sfData.SetLocation (prev.Document.Url, prev.StartLine);
-				return true;
-			}
-
-			return false;
 		}
 
 		static bool CompareName (MethodDefinition candidate, string expected)

@@ -63,7 +63,7 @@ mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 
 	g_assert ((code - start) < size);
 	mono_arch_flush_icache (start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
 
 	if (info)
 		*info = mono_tramp_info_create ("restore_context", start, code - start, ji, unwind_ops);
@@ -152,7 +152,7 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 
 	g_assert ((code - start) < size);
 	mono_arch_flush_icache (start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
 
 	if (info)
 		*info = mono_tramp_info_create ("call_filter", start, code - start, ji, unwind_ops);
@@ -249,7 +249,7 @@ get_throw_trampoline (int size, gboolean corlib, gboolean rethrow, gboolean llvm
 
 	g_assert ((code - start) < size);
 	mono_arch_flush_icache (start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
 
 	if (info)
 		*info = mono_tramp_info_create (tramp_name, start, code - start, ji, unwind_ops);
@@ -484,19 +484,23 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		return TRUE;
 	} else if (*lmf) {
 		if (((gsize)(*lmf)->previous_lmf) & 2) {
-			/* 
-			 * This LMF entry is created by the soft debug code to mark transitions to
-			 * managed code done during invokes.
-			 */
 			MonoLMFExt *ext = (MonoLMFExt*)(*lmf);
 
-			g_assert (ext->debugger_invoke);
-
-			memcpy (new_ctx, &ext->ctx, sizeof (MonoContext));
+			if (ext->debugger_invoke) {
+				/*
+				 * This LMF entry is created by the soft debug code to mark transitions to
+				 * managed code done during invokes.
+				 */
+				frame->type = FRAME_TYPE_DEBUGGER_INVOKE;
+				memcpy (new_ctx, &ext->ctx, sizeof (MonoContext));
+			} else if (ext->interp_exit) {
+				frame->type = FRAME_TYPE_INTERP_TO_MANAGED;
+				frame->interp_exit_data = ext->interp_exit_data;
+			} else {
+				g_assert_not_reached ();
+			}
 
 			*lmf = (gpointer)(((gsize)(*lmf)->previous_lmf) & ~3);
-
-			frame->type = FRAME_TYPE_DEBUGGER_INVOKE;
 
 			return TRUE;
 		}

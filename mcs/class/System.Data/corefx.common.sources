@@ -1,3 +1,9 @@
+../../../external/corefx/src/Common/src/System/Data/Common/DbConnectionPoolKey.cs
+../../../external/corefx/src/Common/src/System/Data/Common/MultipartIdentifier.cs
+../../../external/corefx/src/Common/src/System/Data/Common/NameValuePair.cs
+../../../external/corefx/src/Common/src/System/Data/Common/SQLResource.cs
+
+../../../external/corefx/src/System.Data.Common/src/System/HResults.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/AcceptRejectRule.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/AggregateType.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/BaseCollection.cs
@@ -24,7 +30,6 @@
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbCommand.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DBCommandBuilder.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbConnection.cs
-../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbConnectionPoolKey.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbConnectionStringBuilder.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbDataAdapter.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbDataReader.cs
@@ -52,8 +57,6 @@
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/Int16Storage.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/Int32Storage.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/Int64Storage.cs
-../../../external/corefx/src/System.Data.Common/src/System/Data/Common/MultipartIdentifier.cs
-../../../external/corefx/src/System.Data.Common/src/System/Data/Common/NameValuePair.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/ObjectStorage.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/RowUpdatedEventArgs.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/RowUpdatingEventArgs.cs
@@ -206,7 +209,6 @@
 ../../../external/corefx/src/System.Data.Common/src/System/Data/SQLTypes/SQLInt32.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/SQLTypes/SQLInt64.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/SQLTypes/SQLMoney.cs
-../../../external/corefx/src/System.Data.Common/src/System/Data/SQLTypes/SQLResource.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/SQLTypes/SQLSingle.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/SQLTypes/SQLString.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/SQLTypes/SQLUtility.cs
@@ -221,7 +223,6 @@
 ../../../external/corefx/src/System.Data.Common/src/System/Data/UpdateRowSource.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/updatestatus.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/XDRSchema.cs
-../../../external/corefx/src/System.Data.Common/src/System/Data/XmlContent.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/XmlDataLoader.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/XMLDiffLoader.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/XmlKeywords.cs
@@ -250,7 +251,6 @@
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlError.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlErrorCollection.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlInfoMessageEvent.cs
-../../../external/corefx/src/System.Private.Xml/src/Misc/HResults.cs
 ../referencesource/System.Data/Microsoft/SqlServer/Server/SqlTriggerContext.cs
 ../referencesource/System.Data/Misc/ExternDll.cs
 ../referencesource/System.Data/System/Data/CodeGen/StrongTypingException.cs
@@ -292,3 +292,6 @@
 ../referencesource/System.Data/System/Data/SqlClient/SqlUtil.cs
 ../referencesource/System.Data/System/Data/SqlClient/TdsEnums.cs
 ../referencesource/System.Data/System/Data/SqlClient/TdsParserStaticMethods.cs
+
+corefx/DataView.cs
+corefx/Index.cs

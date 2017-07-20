@@ -1555,8 +1555,10 @@ namespace Mono.Data.Sqlite
                       while (rdIndexes.Read())
                       {
                         if (rdIndexes.IsDBNull(4) == false)
+                        {
                           row["INDEX_DEFINITION"] = rdIndexes.GetString(4);
-                        break;
+                          break;
+                        }
                       }
                     }
 

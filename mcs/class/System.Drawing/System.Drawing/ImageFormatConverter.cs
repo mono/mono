@@ -99,25 +99,25 @@ namespace System.Drawing
 					return ImageFormat.Wmf;
 			} else {
 				// case #3, this is probably a short format
-				if (String.Compare (strFormat, "Bmp", true, CultureInfo.InvariantCulture) == 0)
+				if (String.Compare (strFormat, "Bmp", StringComparison.OrdinalIgnoreCase) == 0)
 					return ImageFormat.Bmp;
-				else if (String.Compare (strFormat, "Emf", true, CultureInfo.InvariantCulture) == 0)
+				else if (String.Compare (strFormat, "Emf", StringComparison.OrdinalIgnoreCase) == 0)
 					return ImageFormat.Emf;
-				else if (String.Compare (strFormat, "Exif", true, CultureInfo.InvariantCulture) == 0)
+				else if (String.Compare (strFormat, "Exif", StringComparison.OrdinalIgnoreCase) == 0)
 					return ImageFormat.Exif;
-				else if (String.Compare (strFormat, "Gif", true, CultureInfo.InvariantCulture) == 0)
+				else if (String.Compare (strFormat, "Gif", StringComparison.OrdinalIgnoreCase) == 0)
 					return ImageFormat.Gif;
-				else if (String.Compare (strFormat, "Icon", true, CultureInfo.InvariantCulture) == 0)
+				else if (String.Compare (strFormat, "Icon", StringComparison.OrdinalIgnoreCase) == 0)
 					return ImageFormat.Icon;
-				else if (String.Compare (strFormat, "Jpeg", true, CultureInfo.InvariantCulture) == 0)
+				else if (String.Compare (strFormat, "Jpeg", StringComparison.OrdinalIgnoreCase) == 0)
 					return ImageFormat.Jpeg;
-				else if (String.Compare (strFormat, "MemoryBmp", true, CultureInfo.InvariantCulture) == 0)
+				else if (String.Compare (strFormat, "MemoryBmp", StringComparison.OrdinalIgnoreCase) == 0)
 					return ImageFormat.MemoryBmp;
-				else if (String.Compare (strFormat, "Png", true, CultureInfo.InvariantCulture) == 0)
+				else if (String.Compare (strFormat, "Png", StringComparison.OrdinalIgnoreCase) == 0)
 					return ImageFormat.Png;
-				else if (String.Compare (strFormat, "Tiff", true, CultureInfo.InvariantCulture) == 0)
+				else if (String.Compare (strFormat, "Tiff", StringComparison.OrdinalIgnoreCase) == 0)
 					return ImageFormat.Tiff;
-				else if (String.Compare (strFormat, "Wmf", true, CultureInfo.InvariantCulture) == 0)
+				else if (String.Compare (strFormat, "Wmf", StringComparison.OrdinalIgnoreCase) == 0)
 					return ImageFormat.Wmf;
 			}
 			// last case, this is an unknown string
@@ -154,9 +154,9 @@ namespace System.Drawing
 					return prop != null ? prop : c.ToString ();
 				} else if (destinationType == typeof (InstanceDescriptor)) {
 					if (prop != null){
-						return new InstanceDescriptor (typeof (ImageFormat).GetProperty (prop), null);
+						return new InstanceDescriptor (typeof (ImageFormat).GetTypeInfo ().GetProperty (prop), null);
 					} else {
-						ConstructorInfo ctor = typeof(ImageFormat).GetConstructor (new Type[] {typeof(Guid)} );
+						ConstructorInfo ctor = typeof(ImageFormat).GetTypeInfo ().GetConstructor (new Type[] {typeof(Guid)} );
 						return new InstanceDescriptor (ctor, new object[] {c.Guid});
 					}
 				}

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="..\mono\metadata\assembly.c">
@@ -115,9 +115,6 @@
     <ClCompile Include="..\mono\metadata\mono-security.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\mono\metadata\nacl-stub.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\mono\metadata\null-gc.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -197,6 +194,9 @@
       <Filter>Source Files\gc</Filter>
     </ClCompile>
     <ClCompile Include="..\mono\metadata\mono-hash.c">
+      <Filter>Source Files\gc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mono\metadata\mono-conc-hash.c">
       <Filter>Source Files\gc</Filter>
     </ClCompile>
     <ClCompile Include="..\mono\metadata\object.c">
@@ -394,6 +394,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\mono\metadata\mono-hash.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mono\metadata\mono-conc-hash.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\mono\metadata\mono-mlist.h">

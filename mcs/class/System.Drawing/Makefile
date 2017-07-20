@@ -10,9 +10,11 @@ LIB_MCS_FLAGS = /unsafe \
 	-resource:Assembly/Error.ico,Error.ico -resource:Assembly/Warning.ico,Warning.ico \
 	-resource:Assembly/Question.ico,Question.ico -resource:Assembly/Shield.ico,Shield.ico
 
-ifeq (winaot, $(PROFILE))
-LIB_MCS_FLAGS += /keyfile:../msfinal.pub
-else ifeq (orbis, $(PROFILE))
+RESX_RESOURCE_STRING = ../../../external/corefx/src/System.Drawing.Common/src/Resources/Strings.resx
+
+MOBILE_LIKE := $(filter winaot orbis unreal, $(PROFILE))
+
+ifdef MOBILE_LIKE
 LIB_MCS_FLAGS += /keyfile:../msfinal.pub
 else
 LIB_MCS_FLAGS += -d:FEATURE_TYPECONVERTER,SUPPORTS_WINDOWS_COLORS

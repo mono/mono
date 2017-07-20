@@ -282,7 +282,7 @@ namespace Mono.CSharp
 			foreach (var arg in arguments) {
 				if (arg.Type == InternalType.VarOutType) {
 					// Should be special error message about dynamic dispatch
-					rc.Report.Error (8047, arg.Expr.Location, "Declaration expression cannot be used in this context");
+					rc.Report.Error (8197, arg.Expr.Location, "Cannot infer the type of implicitly-typed out variable `{0}'", ((DeclarationExpression) arg.Expr).Variable.Name);
 				}
 			}
 

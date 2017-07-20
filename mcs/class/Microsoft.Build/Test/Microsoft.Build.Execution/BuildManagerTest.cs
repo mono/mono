@@ -150,18 +150,18 @@ namespace MonoTests.Microsoft.Build.Execution
 			var bm = new BuildManager ();
 			bm.BeginBuild (new BuildParameters () { Loggers = new ILogger [] {new ConsoleLogger (LoggerVerbosity.Diagnostic, TextWriter.Null.WriteLine, null, null)} });
 			DateTime waitDone = DateTime.MinValue;
-			DateTime beforeExec = DateTime.Now;
+			DateTime beforeExec = DateTime.UtcNow;
 			var l = new List<BuildSubmission> ();
 			for (int i = 0; i < 10; i++) {
 				var sub = bm.PendBuildRequest (new BuildRequestData (proj, new string [] { "Wait1Sec" }));
 				l.Add (sub);
-				sub.ExecuteAsync (delegate { waitDone = DateTime.Now; }, null);
+				sub.ExecuteAsync (delegate { waitDone = DateTime.UtcNow; }, null);
 			}
 			bm.EndBuild ();
 			Assert.IsTrue (l.All (s => s.BuildResult.OverallResult == BuildResultCode.Success), "#1");
-			DateTime endBuildDone = DateTime.Now;
-			Assert.IsTrue (endBuildDone - beforeExec >= TimeSpan.FromSeconds (1), "#2");
-			Assert.IsTrue (endBuildDone > waitDone, "#3");
+			DateTime endBuildDone = DateTime.UtcNow;
+			AssertHelper.GreaterOrEqual (endBuildDone - beforeExec, TimeSpan.FromSeconds (1), "#2");
+			AssertHelper.Greater (endBuildDone, waitDone, "#3");
 		}
 		
 		[Test]

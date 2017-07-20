@@ -185,7 +185,7 @@ dynamic_image_unlock (MonoDynamicImage *image)
 	mono_image_unlock ((MonoImage*)image);
 }
 
-#ifndef DISABLE_REFLECTION_INIT
+#ifndef DISABLE_REFLECTION_EMIT
 /*
  * mono_dynamic_image_register_token:
  *
@@ -221,6 +221,22 @@ lookup_dyn_token (MonoDynamicImage *assembly, guint32 token)
 
 	return obj;
 }
+
+#ifndef DISABLE_REFLECTION_EMIT
+MonoObjectHandle
+mono_dynamic_image_get_registered_token (MonoDynamicImage *dynimage, guint32 token, MonoError *error)
+{
+	error_init (error);
+	return MONO_HANDLE_NEW (MonoObject, lookup_dyn_token (dynimage, token));
+}
+#else /* DISABLE_REFLECTION_EMIT */
+MonoObjectHandle
+mono_dynamic_image_get_registered_token (MonoDynamicImage *dynimage, guint32 token, MonoError *error)
+{
+	g_assert_not_reached ();
+	return NULL_HANDLE;
+}
+#endif
 
 /**
  * 
@@ -298,14 +314,9 @@ mono_dynamic_image_create (MonoDynamicAssembly *assembly, char *assembly_name, c
 	else
 		version = mono_get_runtime_info ()->runtime_version;
 
-#if HAVE_BOEHM_GC
-	/* The MonoGHashTable's need GC tracking */
-	image = (MonoDynamicImage *)GC_MALLOC (sizeof (MonoDynamicImage));
-#else
 	image = g_new0 (MonoDynamicImage, 1);
-#endif
 
-	mono_profiler_module_event (&image->image, MONO_PROFILE_START_LOAD);
+	MONO_PROFILER_RAISE (image_loading, (&image->image));
 	
 	/*g_print ("created image %p\n", image);*/
 	/* keep in sync with image.c */
@@ -364,7 +375,7 @@ mono_dynamic_image_create (MonoDynamicAssembly *assembly, char *assembly_name, c
 	image->pe_kind = 0x1; /* ILOnly */
 	image->machine = 0x14c; /* I386 */
 	
-	mono_profiler_module_loaded (&image->image, MONO_PROFILE_OK);
+	MONO_PROFILER_RAISE (image_loaded, (&image->image));
 
 	dynamic_images_lock ();
 
@@ -533,10 +544,5 @@ mono_dynamic_image_free (MonoDynamicImage *image)
 void
 mono_dynamic_image_free_image (MonoDynamicImage *image)
 {
-	/* See create_dynamic_mono_image () */
-#if HAVE_BOEHM_GC
-	/* Allocated using GC_MALLOC */
-#else
 	g_free (image);
-#endif
 }

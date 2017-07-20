@@ -59,7 +59,7 @@ namespace Mono.Debugger.Soft
 				sb.Append (ReturnType.Name);
 				sb.Append (' ');
 				if (type_namespace != String.Empty)
-					sb.Append (type_namespace + ".");
+					sb.Append (type_namespace).Append (".");
 				sb.Append(type_name);
 				sb.Append(":");
 				sb.Append(Name);

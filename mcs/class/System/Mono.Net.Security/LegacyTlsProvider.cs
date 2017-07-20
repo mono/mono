@@ -48,10 +48,8 @@ namespace Mono.Net.Security
 	 */
 	class LegacyTlsProvider : MSI.MonoTlsProvider
 	{
-		static readonly Guid id = new Guid ("809e77d5-56cc-4da8-b9f0-45e65ba9cceb");
-
 		public override Guid ID {
-			get { return id; }
+			get { return MonoTlsProviderFactory.LegacyId; }
 		}
 
 		public override string Name {
@@ -78,8 +76,14 @@ namespace Mono.Net.Security
 			Stream innerStream, bool leaveInnerStreamOpen,
 			MSI.MonoTlsSettings settings = null)
 		{
-			var impl = new Private.LegacySslStream (innerStream, leaveInnerStreamOpen, this, settings);
-			return new Private.MonoSslStreamImpl (impl);
+			return SslStream.CreateMonoSslStream (innerStream, leaveInnerStreamOpen, this, settings);
+		}
+
+		internal override MSI.IMonoSslStream CreateSslStreamInternal (
+			SslStream sslStream, Stream innerStream, bool leaveInnerStreamOpen,
+			MSI.MonoTlsSettings settings)
+		{
+			return new Private.LegacySslStream (innerStream, leaveInnerStreamOpen, sslStream, this, settings);
 		}
 
 		internal override bool ValidateCertificate (

@@ -79,6 +79,8 @@ install-frameworks:
 	$(INSTALL_DATA) frameworks/net_4.6.1.xml $(DESTDIR)$(NETFRAMEWORK_DIR)/v4.6.1/RedistList/FrameworkList.xml
 	$(MKINSTALLDIRS) $(DESTDIR)$(NETFRAMEWORK_DIR)/v4.6.2/RedistList
 	$(INSTALL_DATA) frameworks/net_4.6.2.xml $(DESTDIR)$(NETFRAMEWORK_DIR)/v4.6.2/RedistList/FrameworkList.xml
+	$(MKINSTALLDIRS) $(DESTDIR)$(NETFRAMEWORK_DIR)/v4.7/RedistList
+	$(INSTALL_DATA) frameworks/net_4.7.xml $(DESTDIR)$(NETFRAMEWORK_DIR)/v4.7/RedistList/FrameworkList.xml
 
 install-pcl-targets:
 	$(MKINSTALLDIRS) $(DESTDIR)$(PORTABLE_TARGETS_DIR)
@@ -93,16 +95,10 @@ install-pcl-targets:
 	done
 
 install-web-targets:
-	$(MKINSTALLDIRS) $(DESTDIR)$(VS_TARGETS_DIR)/v9.0/WebApplications
-	$(INSTALL_DATA) targets/Microsoft.WebApplication.targets $(DESTDIR)$(VS_TARGETS_DIR)/v9.0/WebApplications
-	$(MKINSTALLDIRS) $(DESTDIR)$(VS_TARGETS_DIR)/v10.0/WebApplications
-	$(INSTALL_DATA) targets/Microsoft.WebApplication.targets $(DESTDIR)$(VS_TARGETS_DIR)/v10.0/WebApplications
-	$(MKINSTALLDIRS) $(DESTDIR)$(VS_TARGETS_DIR)/v11.0/WebApplications
-	$(INSTALL_DATA) targets/Microsoft.WebApplication.targets $(DESTDIR)$(VS_TARGETS_DIR)/v11.0/WebApplications
-	$(MKINSTALLDIRS) $(DESTDIR)$(VS_TARGETS_DIR)/v12.0/WebApplications
-	$(INSTALL_DATA) targets/Microsoft.WebApplication.targets $(DESTDIR)$(VS_TARGETS_DIR)/v12.0/WebApplications
-	$(MKINSTALLDIRS) $(DESTDIR)$(VS_TARGETS_DIR)/v14.0/WebApplications
-	$(INSTALL_DATA) targets/Microsoft.WebApplication.targets $(DESTDIR)$(VS_TARGETS_DIR)/v14.0/WebApplications
+	for VERSION in v9.0 v10.0 v11.0 v12.0 v14.0 v15.0; do \
+		$(MKINSTALLDIRS) $(DESTDIR)$(VS_TARGETS_DIR)/$$VERSION/WebApplications; \
+		$(INSTALL_DATA) targets/Microsoft.WebApplication.targets $(DESTDIR)$(VS_TARGETS_DIR)/$$VERSION/WebApplications; \
+	done
 
 NUGET_BUILDTASKS_REPO_DIR=$(topdir)/../external/nuget-buildtasks
 
@@ -183,6 +179,7 @@ EXTRA_DISTFILES = \
 	frameworks/net_4.6.xml \
 	frameworks/net_4.6.1.xml \
 	frameworks/net_4.6.2.xml \
+	frameworks/net_4.7.xml \
 	targets/Microsoft.WebApplication.targets	\
 	$(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/ImportBeforeAfter/Microsoft.NuGet.ImportBefore.props	\
 	$(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/ImportBeforeAfter/Microsoft.NuGet.ImportAfter.targets	\

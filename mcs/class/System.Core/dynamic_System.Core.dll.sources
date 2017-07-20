@@ -6,7 +6,7 @@
 
 ../../../external/corefx/src/Common/src/System/Collections/Generic/ReferenceEqualityComparer.cs
 
-../../../external/corefx/src/Common/src/System/Linq/Expressions/Compiler/AssemblyGen.cs
+../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/AssemblyGen.cs
 
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/AnalyzedTree.cs
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/BoundConstants.cs

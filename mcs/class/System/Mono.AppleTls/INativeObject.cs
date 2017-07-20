@@ -1,6 +1,6 @@
 using System;
 
-namespace ObjCRuntime {
+namespace ObjCRuntimeInternal {
 
 	internal interface INativeObject {
 		IntPtr Handle { 

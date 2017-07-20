@@ -35,19 +35,25 @@ sample_method_leave (MonoProfiler *prof, MonoMethod *method)
 {
 }
 
+static MonoProfilerCallInstrumentationFlags
+sample_instrumentation_filter (MonoProfiler *prof, MonoMethod *method)
+{
+	return MONO_PROFILER_CALL_INSTRUMENTATION_PROLOGUE | MONO_PROFILER_CALL_INSTRUMENTATION_EPILOGUE;
+}
+
 /* the entry point */
 void
-mono_profiler_startup (const char *desc)
+mono_profiler_init_sample (const char *desc)
 {
 	MonoProfiler *prof;
 
 	prof = g_new0 (MonoProfiler, 1);
 
-	mono_profiler_install (prof, sample_shutdown);
-	
-	mono_profiler_install_enter_leave (sample_method_enter, sample_method_leave);
-
-	mono_profiler_set_events (MONO_PROFILE_ENTER_LEAVE);
+	MonoProfilerHandle handle = mono_profiler_install (prof);
+	mono_profiler_set_runtime_shutdown_callback (handle, sample_shutdown);
+	mono_profiler_set_call_instrumentation_filter_callback (handle, sample_instrumentation_filter);
+	mono_profiler_set_method_enter_callback (handle, sample_method_enter);
+	mono_profiler_set_method_leave_callback (handle, sample_method_leave);
 }
 
 

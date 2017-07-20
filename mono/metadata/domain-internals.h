@@ -12,6 +12,7 @@
 #include <mono/metadata/lock-tracer.h>
 #include <mono/utils/mono-codeman.h>
 #include <mono/metadata/mono-hash.h>
+#include <mono/metadata/mono-conc-hash.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-internal-hash.h>
 #include <mono/metadata/mempool-internals.h>
@@ -69,6 +70,7 @@ struct _MonoJitInfoTable
 {
 	MonoDomain	       *domain;
 	int			num_chunks;
+	int			num_valid;
 	MonoJitInfoTableChunk  *chunks [MONO_ZERO_LEN_ARRAY];
 };
 
@@ -184,12 +186,22 @@ typedef struct {
 	int thunks_size;
 } MonoThunkJitInfo;
 
+typedef struct {
+	guint8 *unw_info;
+	int unw_info_len;
+} MonoUnwindJitInfo;
+
 typedef enum {
 	JIT_INFO_NONE = 0,
 	JIT_INFO_HAS_GENERIC_JIT_INFO = (1 << 0),
 	JIT_INFO_HAS_TRY_BLOCK_HOLES = (1 << 1),
 	JIT_INFO_HAS_ARCH_EH_INFO = (1 << 2),
-	JIT_INFO_HAS_THUNK_INFO = (1 << 3)
+	JIT_INFO_HAS_THUNK_INFO = (1 << 3),
+	/*
+	 * If this is set, the unwind info is stored in the structure, instead of being pointed to by the
+	 * 'unwind_info' field.
+	 */
+	JIT_INFO_HAS_UNWIND_INFO = (1 << 4)
 } MonoJitInfoFlags;
 
 struct _MonoJitInfo {
@@ -217,6 +229,7 @@ struct _MonoJitInfo {
 	gboolean    has_try_block_holes:1;
 	gboolean    has_arch_eh_info:1;
 	gboolean    has_thunk_info:1;
+	gboolean    has_unwind_info:1;
 	gboolean    from_aot:1;
 	gboolean    from_llvm:1;
 	gboolean    dbg_attrs_inited:1;
@@ -230,6 +243,8 @@ struct _MonoJitInfo {
 	 * d.tramp_info contains additional data in this case.
 	 */
 	gboolean    is_trampoline:1;
+	/* Whenever this jit info refers to an interpreter method */
+	gboolean    is_interp:1;
 
 	/* FIXME: Embed this after the structure later*/
 	gpointer    gc_info; /* Currently only used by SGen */
@@ -325,12 +340,7 @@ struct _MonoDomain {
 	MonoGHashTable     *ldstr_table;
 	/* hashtables for Reflection handles */
 	MonoGHashTable     *type_hash;
-	MonoGHashTable     *refobject_hash;
-	/*
-	 * A GC-tracked array to keep references to the static fields of types.
-	 * See note [Domain Static Data Array].
-	 */
-	gpointer           *static_data_array;
+	MonoConcGHashTable     *refobject_hash;
 	/* maps class -> type initialization exception object */
 	MonoGHashTable    *type_init_exception_hash;
 	/* maps delegate trampoline addr -> delegate object */
@@ -527,6 +537,9 @@ mono_domain_unset (void);
 void
 mono_domain_set_internal_with_options (MonoDomain *domain, gboolean migrate_exception);
 
+gboolean
+mono_domain_set_config_checked (MonoDomain *domain, const char *base_dir, const char *config_file_name, MonoError *error);
+
 MonoTryBlockHoleTableJitInfo*
 mono_jit_info_get_try_block_hole_table_info (MonoJitInfo *ji);
 
@@ -535,6 +548,9 @@ mono_jit_info_get_arch_eh_info (MonoJitInfo *ji);
 
 MonoThunkJitInfo*
 mono_jit_info_get_thunk_info (MonoJitInfo *ji);
+
+MonoUnwindJitInfo*
+mono_jit_info_get_unwind_info (MonoJitInfo *ji);
 
 /* 
  * Installs a new function which is used to return a MonoJitInfo for a method inside
@@ -558,15 +574,15 @@ mono_runtime_set_no_exec (gboolean val);
 gboolean
 mono_runtime_get_no_exec (void);
 
+void
+mono_domain_parse_assembly_bindings (MonoDomain *domain, int amajor, int aminor, gchar *domain_config_file_name);
+
 gboolean
 mono_assembly_name_parse (const char *name, MonoAssemblyName *aname);
 
 MonoImage *mono_assembly_open_from_bundle (const char *filename,
 					   MonoImageOpenStatus *status,
 					   gboolean refonly);
-
-MONO_API void
-mono_domain_add_class_static_data (MonoDomain *domain, MonoClass *klass, gpointer data, guint32 *bitmap);
 
 MonoAssembly *
 mono_try_assembly_resolve (MonoDomain *domain, const char *fname, MonoAssembly *requesting, gboolean refonly, MonoError *error);

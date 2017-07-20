@@ -70,6 +70,13 @@ mono_marshal_xdomain_copy_out_value (MonoObject *src, MonoObject *dst);
 static MonoReflectionType *
 type_from_handle (MonoType *handle);
 
+static void
+mono_context_set_icall (MonoAppContext *new_context);
+
+static MonoAppContext*
+mono_context_get_icall (void);
+
+
 /* Class lazy loading functions */
 static GENERATE_GET_CLASS_WITH_CACHE (remoting_services, "System.Runtime.Remoting", "RemotingServices")
 static GENERATE_GET_CLASS_WITH_CACHE (call_context, "System.Runtime.Remoting.Messaging", "CallContext")
@@ -204,6 +211,9 @@ mono_remoting_marshal_init (void)
 #ifndef DISABLE_JIT
 		register_icall (mono_compile_method_icall, "mono_compile_method_icall", "ptr ptr", FALSE);
 #endif
+
+		register_icall (mono_context_get_icall, "mono_context_get_icall", "object", FALSE);
+		register_icall (mono_context_set_icall, "mono_context_set_icall", "void object", FALSE);
 
 	}
 
@@ -661,8 +671,8 @@ mono_marshal_get_xappdomain_dispatch (MonoMethod *method, int *marshal_types, in
 	int i, j, param_index, copy_locals_base;
 	MonoClass *ret_class = NULL;
 	int loc_array=0, loc_return=0, loc_serialized_exc=0;
-	MonoExceptionClause *main_clause;
-	int pos, pos_leave;
+	MonoExceptionClause *clauses, *main_clause, *serialization_clause;
+	int pos, pos_leave, pos_leave_serialization;
 	gboolean copy_return;
 	WrapperInfo *info;
 
@@ -704,7 +714,8 @@ mono_marshal_get_xappdomain_dispatch (MonoMethod *method, int *marshal_types, in
 
 	/* try */
 
-	main_clause = (MonoExceptionClause *)mono_image_alloc0 (method->klass->image, sizeof (MonoExceptionClause));
+	clauses = (MonoExceptionClause *)mono_image_alloc0 (method->klass->image, 2 * sizeof (MonoExceptionClause));
+	main_clause = &clauses [0];
 	main_clause->try_offset = mono_mb_get_label (mb);
 
 	/* Clean the call context */
@@ -884,15 +895,48 @@ mono_marshal_get_xappdomain_dispatch (MonoMethod *method, int *marshal_types, in
 	
 	/* handler code */
 	main_clause->handler_offset = mono_mb_get_label (mb);
+
+	/*
+	 * We deserialize the exception in another try-catch so we can catch
+	 * serialization failure exceptions.
+	 */
+	serialization_clause = &clauses [1];
+	serialization_clause->try_offset = mono_mb_get_label (mb);
+
+	mono_mb_emit_managed_call (mb, method_rs_serialize_exc, NULL);
+	mono_mb_emit_stloc (mb, loc_serialized_exc);
+	mono_mb_emit_ldarg (mb, 2);
+	mono_mb_emit_ldloc (mb, loc_serialized_exc);
+	mono_mb_emit_byte (mb, CEE_STIND_REF);
+	pos_leave_serialization = mono_mb_emit_branch (mb, CEE_LEAVE);
+
+	/* Serialization exception catch */
+	serialization_clause->flags = MONO_EXCEPTION_CLAUSE_NONE;
+	serialization_clause->try_len = mono_mb_get_pos (mb) - serialization_clause->try_offset;
+	serialization_clause->data.catch_class = mono_defaults.object_class;
+
+	/* handler code */
+	serialization_clause->handler_offset = mono_mb_get_label (mb);
+
+	/*
+	 * If the serialization of the original exception failed we serialize the newly
+	 * thrown exception, which should always succeed, passing it over to the calling
+	 * domain.
+	 */
 	mono_mb_emit_managed_call (mb, method_rs_serialize_exc, NULL);
 	mono_mb_emit_stloc (mb, loc_serialized_exc);
 	mono_mb_emit_ldarg (mb, 2);
 	mono_mb_emit_ldloc (mb, loc_serialized_exc);
 	mono_mb_emit_byte (mb, CEE_STIND_REF);
 	mono_mb_emit_branch (mb, CEE_LEAVE);
-	main_clause->handler_len = mono_mb_get_pos (mb) - main_clause->handler_offset;
-	/* end catch */
 
+	/* end serialization exception catch */
+	serialization_clause->handler_len = mono_mb_get_pos (mb) - serialization_clause->handler_offset;
+	mono_mb_patch_branch (mb, pos_leave_serialization);
+
+	mono_mb_emit_branch (mb, CEE_LEAVE);
+	/* end main catch */
+	main_clause->handler_len = mono_mb_get_pos (mb) - main_clause->handler_offset;
 	mono_mb_patch_branch (mb, pos_leave);
 	
 	if (copy_return)
@@ -900,7 +944,7 @@ mono_marshal_get_xappdomain_dispatch (MonoMethod *method, int *marshal_types, in
 
 	mono_mb_emit_byte (mb, CEE_RET);
 
-	mono_mb_set_clauses (mb, 1, main_clause);
+	mono_mb_set_clauses (mb, 2, clauses);
 #endif
 
 	info = mono_wrapper_info_create (mb, WRAPPER_SUBTYPE_NONE);
@@ -996,7 +1040,7 @@ mono_marshal_get_xappdomain_invoke (MonoMethod *method)
 
 	/* Save thread domain data */
 
-	mono_mb_emit_icall (mb, mono_context_get);
+	mono_mb_emit_icall (mb, mono_context_get_icall);
 	mono_mb_emit_byte (mb, CEE_DUP);
 	mono_mb_emit_stloc (mb, loc_context);
 
@@ -1137,7 +1181,7 @@ mono_marshal_get_xappdomain_invoke (MonoMethod *method)
 	/* Restore thread domain data */
 	
 	mono_mb_emit_ldloc (mb, loc_context);
-	mono_mb_emit_icall (mb, mono_context_set);
+	mono_mb_emit_icall (mb, mono_context_set_icall);
 	
 	/* if (loc_serialized_exc != null) ... */
 
@@ -1593,7 +1637,7 @@ mono_marshal_get_ldflda_wrapper (MonoType *type)
 	mono_mb_emit_byte (mb, CEE_LDIND_REF);
 	mono_mb_emit_ldflda (mb, MONO_STRUCT_OFFSET (MonoRealProxy, context));
 	mono_mb_emit_byte (mb, CEE_LDIND_REF);
-	mono_mb_emit_icall (mb, mono_context_get);
+	mono_mb_emit_icall (mb, mono_context_get_icall);
 	pos3 = mono_mb_emit_branch (mb, CEE_BEQ);
 
 	mono_mb_emit_exception_full (mb, "System", "InvalidOperationException", "Attempt to load field address from object in another context.");
@@ -2049,4 +2093,21 @@ ves_icall_mono_marshal_xdomain_copy_value (MonoObject *val)
 	MonoObject *result = mono_marshal_xdomain_copy_value (val, &error);
 	mono_error_set_pending_exception (&error);
 	return result;
+}
+
+void
+mono_context_set_icall (MonoAppContext *new_context_raw)
+{
+	HANDLE_FUNCTION_ENTER ();
+	MONO_HANDLE_DCL (MonoAppContext, new_context);
+	mono_context_set_handle (new_context);
+	HANDLE_FUNCTION_RETURN ();
+}
+
+static MonoAppContext* 
+mono_context_get_icall (void)
+{
+	HANDLE_FUNCTION_ENTER ();
+	MonoAppContextHandle context = mono_context_get_handle ();
+	HANDLE_FUNCTION_RETURN_OBJ (context);
 }
