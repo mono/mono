@@ -11,7 +11,12 @@ namespace System.Data.SqlClient
 {
     partial class SqlCommand
     {
-        public bool NotificationAutoEnlist => Notification != null;
+        [MonoTODO]
+        public bool NotificationAutoEnlist
+        {
+            get => Notification != null;
+            set => throw new NotImplementedException();
+        }
 
         [System.Security.Permissions.HostProtectionAttribute(ExternalThreading=true)]
         public IAsyncResult BeginExecuteNonQuery() => BeginExecuteNonQuery(null, null);
