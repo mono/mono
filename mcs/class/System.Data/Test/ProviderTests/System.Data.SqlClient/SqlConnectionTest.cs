@@ -165,7 +165,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 				Assert.AreEqual ((byte) 11, ex.Class, "#3");
 				Assert.IsNull (ex.InnerException, "#4");
 				Assert.IsNotNull (ex.Message, "#5");
-				Assert.AreEqual (18456, ex.Number, "#7");
+				Assert.AreEqual (4060, ex.Number, "#7");
 				Assert.AreEqual ((byte) 1, ex.State, "#8");
 			} finally {
 				conn.Close ();
