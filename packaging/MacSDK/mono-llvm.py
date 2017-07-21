@@ -21,11 +21,12 @@ class MonoLlvmPackage (GitHubPackage):
         self.cpp_flags = []
 
     def arch_build(self, arch):
+        Package.profile.arch_build(arch, self)
         if arch == 'darwin-64':  # 64-bit  build pass
-            self.local_configure_flags = ['--build=x86_64-apple-darwin11.2.0']
+            self.local_configure_flags.extend(['--build=x86_64-apple-darwin11.2.0'])
 
         if arch == 'darwin-32':
-            self.local_configure_flags = ['--build=i386-apple-darwin11.2.0']
+            self.local_configure_flags.extend(['--build=i386-apple-darwin11.2.0'])
 
         # LLVM says that libstdc++4.6 is broken and we should use libstdc++4.7.
         # This switches it to the right libstdc++.
