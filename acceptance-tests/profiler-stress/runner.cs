@@ -152,12 +152,14 @@ namespace Mono.Profiling.Tests.Stress {
 
 					proc.OutputDataReceived += (sender, args) => {
 						if (args.Data != null)
-							stdout.AppendLine (args.Data);
+							lock (result)
+								stdout.AppendLine (args.Data);
 					};
 
 					proc.ErrorDataReceived += (sender, args) => {
 						if (args.Data != null)
-							stderr.AppendLine (args.Data);
+							lock (result)
+								stderr.AppendLine (args.Data);
 					};
 
 					result.Stopwatch.Start ();
