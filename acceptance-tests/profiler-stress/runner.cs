@@ -57,7 +57,7 @@ namespace Mono.Profiling.Tests.Stress {
 			"jit",
 		};
 
-		static readonly TimeSpan _timeout = TimeSpan.FromHours (24);
+		static readonly TimeSpan _timeout = TimeSpan.FromHours (8);
 
 		static readonly Dictionary<string, Action<TestResult>> _processors = new Dictionary<string, Action<TestResult>> () {
 			{ "msbiology", Process32BitOutOfMemory },
