@@ -59,12 +59,25 @@ namespace Mono.Profiling.Tests.Stress {
 
 		static readonly TimeSpan _timeout = TimeSpan.FromHours (8);
 
-		static readonly Dictionary<string, Action<TestResult>> _processors = new Dictionary<string, Action<TestResult>> () {
+		static readonly Dictionary<string, Predicate<Benchmark>> _filters = new Dictionary<string, Predicate<Benchmark>> {
+			{ "ironjs-v8", FilterArmArchitecture },
+		};
+
+		static readonly Dictionary<string, Action<TestResult>> _processors = new Dictionary<string, Action<TestResult>> {
 			{ "msbiology", Process32BitOutOfMemory },
 		};
 
 		static string FilterInvalidXmlChars (string text) {
 			return Regex.Replace (text, @"[^\x09\x0A\x0D\x20-\uD7FF\uE000-\uFFFD\u10000-\u10FFFF]", string.Empty);
+		}
+
+		static bool FilterArmArchitecture (Benchmark benchmark)
+		{
+#if ARCH_arm || ARCH_arm64
+			return false;
+#else
+			return true;
+#endif
 		}
 
 		static void Process32BitOutOfMemory (TestResult result)
@@ -79,6 +92,11 @@ namespace Mono.Profiling.Tests.Stress {
 				result.ExitCode = 0;
 		}
 
+		static bool IsSupported (Benchmark benchmark)
+		{
+			return _filters.TryGetValue (benchmark.Name, out var filter) ? filter (benchmark) : true;
+		}
+
 		static int Main ()
 		{
 			var depDir = Path.Combine ("..", "external", "benchmarker");
@@ -87,7 +105,7 @@ namespace Mono.Profiling.Tests.Stress {
 
 			var benchmarks = Directory.EnumerateFiles (benchDir, "*.benchmark")
 			                 .Select (Benchmark.Load)
-			                 .Where (b => !b.OnlyExplicit && b.ClientCommandLine == null)
+			                 .Where (b => !b.OnlyExplicit && b.ClientCommandLine == null && IsSupported (b))
 			                 .OrderBy (b => b.Name)
 			                 .ToArray ();
 
