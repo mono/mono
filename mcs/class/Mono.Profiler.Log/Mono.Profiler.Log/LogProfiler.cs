@@ -5,6 +5,7 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Security;
 
 namespace Mono.Profiler.Log {
 
@@ -20,7 +21,7 @@ namespace Mono.Profiler.Log {
 				try {
 					GetMaxStackTraceFrames ();
 					return (bool) (_attached = true);
-				} catch (MissingMethodException) {
+				} catch (Exception e) when (e is MissingMethodException || e is SecurityException) {
 					return (bool) (_attached = false);
 				}
 			}
