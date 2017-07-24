@@ -148,6 +148,12 @@ mono_unity_oop_init(
     g_oop.userData = userdata;
 }
 
+MONO_API void
+mono_unity_oop_shutdown(void)
+{
+    memset(&g_oop, 0, sizeof(g_oop));
+}
+
 #ifdef _M_X64
 gboolean TryAcquireSpinWait(PSRWLOCK lock, unsigned int spinWait)
 {
