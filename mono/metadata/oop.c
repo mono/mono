@@ -359,14 +359,13 @@ oop_jit_info_table_find(
             beyond what we're looking for, we have to end the
             search. */
             if ((gint8*)addr < (gint8*)ji.code_start)
-                goto not_found;
+                return NULL;
         }
 
         ++chunk_pos;
         pos = 0;
     } while (chunk_pos < num_chunks);
 
-not_found:
     return NULL;
 }
 
