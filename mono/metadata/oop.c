@@ -84,29 +84,39 @@ MonoBoolean oop_copy_jit_info_table(
 
 static int oop_jit_info_table_index(
     const MonoOutOfProcessParameters* oopCfg,
-    const MonoJitInfoTableChunk** chunks, // non-local
-    int num_chunks,
+    const MonoJitInfoTable* table, // non-local
     const gint8* addr)
 {
-    MonoJitInfoTableChunk chunk;
+    static const int error = 0x7fffffff;
 
+    int num_chunks = 0;
+    if (!oop_copy(oopCfg, num_chunks, oop_member_address(MonoJitInfoTable, table, num_chunks)))
+        return error;
+
+    const MonoJitInfoTableChunk* chunks = (const MonoJitInfoTableChunk*) oop_member_address(MonoJitInfoTable, table, chunks);
+    
     int left = 0, right = num_chunks;
 
     g_assert(left < right);
 
     do {
         int pos = (left + right) / 2;
-        oop_copy(oopCfg, chunk, oop_fetch_ptr(oopCfg, chunks + pos));
 
-        if (addr < chunk.last_code_end)
+        gint8* last_code_end;
+        if (!oop_copy(oopCfg, last_code_end, oop_member_address(MonoJitInfoTableChunk, oop_fetch_ptr(oopCfg, chunks + pos), last_code_end)))
+            return error;
+
+        if (addr < last_code_end)
             right = pos;
         else
             left = pos + 1;
     } while (left < right);
+
     g_assert(left == right);
 
     if (left >= num_chunks)
-        return num_chunks - 1;
+        return error;
+
     return left;
 }
 
@@ -117,6 +127,8 @@ oop_jit_info_table_chunk_index(
     int num_elements,
     const gint8 *addr)
 {
+    static const int error = 0x7fffffff;
+
     MonoJitInfo ji;
     int left = 0, right = num_elements;
 
@@ -124,7 +136,9 @@ oop_jit_info_table_chunk_index(
         int pos = (left + right) / 2;
         gint8 *code_end;
 
-        oop_copy(oopCfg, ji, oop_fetch_ptr(oopCfg, chunk_data + pos));
+        if (!oop_copy(oopCfg, ji, oop_fetch_ptr(oopCfg, chunk_data + pos)))
+            return error;
+
         code_end = (gint8*)ji.code_start + ji.code_size;
 
         if (addr < code_end)
@@ -132,6 +146,7 @@ oop_jit_info_table_chunk_index(
         else
             left = pos + 1;
     }
+
     g_assert(left == right);
 
     return left;
@@ -143,21 +158,37 @@ oop_jit_info_table_find(
     const MonoDomain *domain,
     const char *addr)
 {
-    MonoJitInfoTable table;
+    const MonoJitInfoTable* tablePtr;
+    const MonoJitInfoTableChunk* chunkListPtr;
     MonoJitInfoTableChunk chunk;
-    MonoJitInfo jiLocal;
-    const MonoJitInfo * jiPtr;
+    const MonoJitInfo* jiPtr;
+    MonoJitInfo ji;
     int chunk_pos, pos;
     
-    // Copy the domain's jit_info_table.
-    if (!oop_copy_jit_info_table(oopCfg, domain, &table))
-        return 0;
+    // Get the domain's jit_info_table pointer.
+    tablePtr = oop_fetch_ptr(oopCfg, oop_member_address(MonoDomain, domain, jit_info_table));
+    if (tablePtr == NULL)
+        return NULL;
 
-    chunk_pos = oop_jit_info_table_index(oopCfg, table.chunks, table.num_chunks, (const gint8*)addr);
-    g_assert(chunk_pos < table.num_chunks);
+    int num_chunks = 0;
+    if (!oop_copy(oopCfg, num_chunks, oop_member_address(MonoJitInfoTable, tablePtr, num_chunks)))
+        return NULL;
 
-    oop_copy(oopCfg, chunk, oop_fetch_ptr(oopCfg, table.chunks + chunk_pos));
+    // Get the chunk array
+    chunkListPtr = (const MonoJitInfoTableChunk*) oop_member_address(MonoJitInfoTable, tablePtr, chunks);
+    if (chunkListPtr == NULL)
+        return NULL;
+
+    chunk_pos = oop_jit_info_table_index(oopCfg, tablePtr, (const gint8*)addr);
+    if (chunk_pos >= num_chunks)
+        return NULL;
+
+    if (!oop_copy(oopCfg, chunk, oop_fetch_ptr(oopCfg, chunkListPtr + chunk_pos)))
+        return NULL;
+
     pos = oop_jit_info_table_chunk_index(oopCfg, (const MonoJitInfo**) chunk.data, chunk.num_elements, addr);
+    if (pos >= chunk.num_elements)
+        return NULL;
 
     /* We now have a position that's very close to that of the
     first element whose end address is higher than the one
@@ -165,32 +196,34 @@ oop_jit_info_table_find(
     then we have a position below that one, so we'll just
     search upward until we find our element. */
     do {
-        oop_copy(oopCfg, chunk, oop_fetch_ptr(oopCfg, table.chunks + chunk_pos));
+        if (!oop_copy(oopCfg, chunk, oop_fetch_ptr(oopCfg, chunkListPtr + chunk_pos)))
+            return NULL;
 
         while (pos < chunk.num_elements) {
             jiPtr = (const MonoJitInfo*)oop_fetch_ptr(oopCfg, chunk.data + pos);
-            oop_copy(oopCfg, jiLocal, jiPtr);
+            if (!oop_copy(oopCfg, ji, jiPtr))
+                return NULL;
 
             ++pos;
 
-            if (jiLocal.d.method == NULL) {
+            if (ji.d.method == NULL) {
                 continue;
             }
-            if ((gint8*)addr >= (gint8*)jiLocal.code_start
-                && (gint8*)addr < (gint8*)jiLocal.code_start + jiLocal.code_size) {
+            if ((gint8*)addr >= (gint8*)ji.code_start
+                && (gint8*)addr < (gint8*)ji.code_start + ji.code_size) {
                 return jiPtr;
             }
 
             /* If we find a non-tombstone element which is already
             beyond what we're looking for, we have to end the
             search. */
-            if ((gint8*)addr < (gint8*)jiLocal.code_start)
+            if ((gint8*)addr < (gint8*)ji.code_start)
                 goto not_found;
         }
 
         ++chunk_pos;
         pos = 0;
-    } while (chunk_pos < table.num_chunks);
+    } while (chunk_pos < num_chunks);
 
 not_found:
     return NULL;
