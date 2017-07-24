@@ -989,4 +989,10 @@ mono_unity_thread_fast_attach
 mono_unity_thread_fast_detach
 
 ; Out-of-process inspection
-mono_oop_get_stack_frame_details
+mono_unity_oop_init
+mono_unity_oop_iterate_dynamic_function_access_tables64
+mono_unity_oop_get_dynamic_function_access_table64
+
+; Accessors for FATs in X64
+mono_unity_lock_dynamic_function_access_tables64
+mono_unity_unlock_dynamic_function_access_tables64

@@ -36,246 +36,140 @@
 #include <metadata/profiler-private.h>
 #include <mono/metadata/coree.h>
 
-G_BEGIN_DECLS
-typedef int(*MonoReadMemoryCallback)(
-    void* userData,
-    const void* address,
-    void* buffer,
-    size_t size,
-    size_t* readSize);
+#ifdef _M_X64
+#include <mono/mini/mini-amd64.h>
+extern GList* g_dynamic_function_table_begin;
+extern SRWLOCK g_dynamic_function_table_lock;
+#endif
 
-// petele: todo: move this structure into a mono header
-typedef struct _MonoStackFrameDetails
-{
-    char* methodName;
-    size_t methodNameLen;
-    char* signature;
-    size_t signatureLen;
-    char* assemblyName;
-    size_t assemblyNameLen;
-    char* sourceFile;
-    size_t sourceFileLen;
-    int lineNo;
-} MonoStackFrameDetails;
+typedef gboolean(*ReadMemoryCallback)(void* buffer, void* address, gsize size, void* userdata);
 
-struct _MonoOutOfProcessParameters
+typedef struct _OutOfProcessMono
 {
-    MonoReadMemoryCallback readMemoryCallback;
+    ReadMemoryCallback readMemory;
     void* userData;
-};
+} OutOfProcessMono;
 
-typedef struct _MonoOutOfProcessParameters MonoOutOfProcessParameters;
+static OutOfProcessMono g_oop = { NULL, NULL };
 
-G_END_DECLS
+#define OFFSET_MEMBER(type, base, member) ((gpointer)((gchar*)(base) + offsetof(type, member)))
 
-typedef const void * gooppointer;
-
-gooppointer oop_fetch_ptr(
-    const MonoOutOfProcessParameters* oopCfg,
-    gooppointer ptr)
+gboolean read_memory(void* buffer, void* address, gsize size)
 {
-    gpointer out = NULL;
-    if (!oopCfg->readMemoryCallback(oopCfg->userData, ptr, &out, sizeof(out), NULL))
-        return NULL;
-    return out;
+    if (!g_oop.readMemory)
+        return FALSE;
+    return g_oop.readMemory(buffer, address, size, g_oop.userData);
 }
 
-#define oop_copy(oopCfg, storage, address) (oopCfg->readMemoryCallback(oopCfg->userData, (address), &(storage), sizeof(storage), NULL))
-#define oop_member_address(type, base, member) ((const gint8*)(base) + offsetof(type, member))
-
-MonoBoolean oop_copy_jit_info_table(
-    const MonoOutOfProcessParameters* oopCfg,
-    const MonoDomain* domain,
-    MonoJitInfoTable* table)
+gpointer read_pointer(void* address)
 {
-    gooppointer srcTable = oop_fetch_ptr(oopCfg, oop_member_address(MonoDomain, domain, jit_info_table));
-    return oopCfg->readMemoryCallback(oopCfg->userData, srcTable, table, sizeof(MonoJitInfoTable), NULL);
+    gpointer ptr = NULL;
+    if (!read_memory(&ptr, address, sizeof(ptr)))
+        return NULL;
+    return ptr;
 }
 
-static int oop_jit_info_table_index(
-    const MonoOutOfProcessParameters* oopCfg,
-    const MonoJitInfoTableChunk** chunks, // non-local
-    int num_chunks,
-    const gint8* addr)
+gint64 read_qword(void* address)
 {
-    static const int error = 0x7fffffff;
-
-    int left = 0, right = num_chunks;
-
-    g_assert(left < right);
-
-    do {
-        const MonoJitInfoTableChunk* chunkPtr;
-        const gint8* last_code_end;
-        int pos = (left + right) / 2;
-
-        chunkPtr = oop_fetch_ptr(oopCfg, chunks + pos);
-        if (chunkPtr == NULL)
-            return error;
-
-        last_code_end = oop_fetch_ptr(oopCfg, oop_member_address(MonoJitInfoTableChunk, chunkPtr, last_code_end));
-        if (last_code_end == NULL)
-            return error;
-
-        if (addr < last_code_end)
-            right = pos;
-        else
-            left = pos + 1;
-    } while (left < right);
-    g_assert(left == right);
-
-    if (left >= num_chunks)
-        return num_chunks - 1;
-    return left;
+    gint64 v = 0;
+    if (!read_memory(&v, address, sizeof(v)))
+        return 0;
+    return v;
 }
 
-static int
-oop_jit_info_table_chunk_index(
-    const MonoOutOfProcessParameters* oopCfg,
-    const MonoJitInfo** chunk_data,
-    int num_elements,
-    const gint8 *addr)
+gint32 read_dword(void* address)
 {
-    static const int error = 0x7fffffff;
-
-    MonoJitInfo ji;
-    int left = 0, right = num_elements;
-
-    while (left < right) {
-        int pos = (left + right) / 2;
-        const gint8 *code_end;
-
-        if (!oop_copy(oopCfg, ji, oop_fetch_ptr(oopCfg, chunk_data + pos)))
-            return error;
-
-        code_end = (const gint8*)ji.code_start + ji.code_size;
-
-        if (addr < code_end)
-            right = pos;
-        else
-            left = pos + 1;
-    }
-
-    g_assert(left == right);
-
-    return left;
+    gint32 v = 0;
+    if (!read_memory(&v, address, sizeof(v)))
+        return 0;
+    return v;
 }
 
-static const MonoJitInfo*
-oop_jit_info_table_find(
-    const MonoOutOfProcessParameters* oopCfg,
-    const MonoDomain *domain,
-    const char *addr)
+GList* read_glist_next(GList* list) { return (GList*) read_pointer(OFFSET_MEMBER(GList, list, next)); }
+gpointer read_glist_data(GList* list) { return read_pointer(OFFSET_MEMBER(GList, list, data)); }
+
+MONO_API void
+mono_unity_oop_init(
+    ReadMemoryCallback rmcb, 
+    void* userdata) 
 {
-    const MonoJitInfoTable* tablePtr;
-    const MonoJitInfoTableChunk** chunkListPtr;
-    MonoJitInfoTableChunk chunk;
-    const MonoJitInfo* jiPtr;
-    MonoJitInfo ji;
-    int chunk_pos, pos;
-    
-    // Get the domain's jit_info_table pointer.
-    tablePtr = oop_fetch_ptr(oopCfg, oop_member_address(MonoDomain, domain, jit_info_table));
-    if (tablePtr == NULL)
-        return NULL;
-
-    int num_chunks = 0;
-    if (!oop_copy(oopCfg, num_chunks, oop_member_address(MonoJitInfoTable, tablePtr, num_chunks)))
-        return NULL;
-
-    // Get the chunk array
-    chunkListPtr = (const MonoJitInfoTableChunk**) oop_member_address(MonoJitInfoTable, tablePtr, chunks);
-
-    chunk_pos = oop_jit_info_table_index(oopCfg, chunkListPtr, num_chunks, (const gint8*)addr);
-    if (chunk_pos > num_chunks)
-        return NULL;
-
-    if (!oop_copy(oopCfg, chunk, oop_fetch_ptr(oopCfg, chunkListPtr + chunk_pos)))
-        return NULL;
-
-    pos = oop_jit_info_table_chunk_index(oopCfg, (const MonoJitInfo**) chunk.data, chunk.num_elements, addr);
-    if (pos > chunk.num_elements)
-        return NULL;
-
-    /* We now have a position that's very close to that of the
-    first element whose end address is higher than the one
-    we're looking for.  If we don't have the exact position,
-    then we have a position below that one, so we'll just
-    search upward until we find our element. */
-    do {
-        if (!oop_copy(oopCfg, chunk, oop_fetch_ptr(oopCfg, chunkListPtr + chunk_pos)))
-            return NULL;
-
-        while (pos < chunk.num_elements) {
-            jiPtr = (const MonoJitInfo*)oop_fetch_ptr(oopCfg, chunk.data + pos);
-            if (!oop_copy(oopCfg, ji, jiPtr))
-                return NULL;
-
-            ++pos;
-
-            if (ji.d.method == NULL) {
-                continue;
-            }
-            if ((gint8*)addr >= (gint8*)ji.code_start
-                && (gint8*)addr < (gint8*)ji.code_start + ji.code_size) {
-                return jiPtr;
-            }
-
-            /* If we find a non-tombstone element which is already
-            beyond what we're looking for, we have to end the
-            search. */
-            if ((gint8*)addr < (gint8*)ji.code_start)
-                goto not_found;
-        }
-
-        ++chunk_pos;
-        pos = 0;
-    } while (chunk_pos < num_chunks);
-
-not_found:
-    return NULL;
+    g_oop.readMemory = rmcb;
+    g_oop.userData = userdata;
 }
 
-int oop_read_string(
-    const MonoOutOfProcessParameters* oopCfg,
-    char* buf,
-    size_t* bufLen,
-    const char* src)
+#ifdef _M_X64
+gboolean TryAcquireSpinWait(PSRWLOCK lock, unsigned int spinWait)
 {
-    size_t read = 0;
-    int ret = oopCfg->readMemoryCallback(oopCfg->userData, src, buf, *bufLen, &read);
-
-    *bufLen = read;
-    return ret ? ret : read > 0;
-}
-
-int
-mono_oop_get_stack_frame_details(
-    const MonoDomain* domain,
-    const void* frameAddress,
-    MonoReadMemoryCallback readMemoryCallback,
-    void* userData,
-    MonoStackFrameDetails* frameDetails)
-{
-    const MonoJitInfo* ji;
-
-    MonoOutOfProcessParameters oopCfg;
-    oopCfg.readMemoryCallback = readMemoryCallback;
-    oopCfg.userData = userData;
-
-    ji = oop_jit_info_table_find(&oopCfg, domain, (const char*) frameAddress);
-    if (ji)
+    do
     {
-        const MonoMethod* method = oop_fetch_ptr(&oopCfg, oop_member_address(MonoJitInfo, ji, d.method));
+        if (TryAcquireSRWLockExclusive(&g_dynamic_function_table_lock))
+            return TRUE;
+    } while (spinWait--);
 
-        oop_read_string(&
-            oopCfg, 
-            frameDetails->methodName,
-            &frameDetails->methodNameLen,
-            oop_fetch_ptr(&oopCfg, oop_member_address(MonoMethod, method, name)));
+    return FALSE;
+}
+#endif
 
-        return 1;
+MONO_API GList*
+mono_unity_lock_dynamic_function_access_tables64(unsigned int spinWait) 
+{
+#ifdef _M_X64
+    if (spinWait >= 0x7fffffff) {
+        AcquireSRWLockExclusive(&g_dynamic_function_table_lock);
     }
+    else if (!TryAcquireSpinWait(&g_dynamic_function_table_lock, spinWait)) {
+        return NULL;
+    }
+    return g_dynamic_function_table_begin;
+#else
+    return NULL;
+#endif
+}
 
-    return 0;
+MONO_API void
+mono_unity_unlock_dynamic_function_access_tables64(void) 
+{
+#ifdef _M_X64
+    ReleaseSRWLockExclusive(&g_dynamic_function_table_lock);
+#else
+    return NULL;
+#endif
+}
+
+MONO_API GList*
+mono_unity_oop_iterate_dynamic_function_access_tables64(
+    GList* current) 
+{
+#ifdef _M_X64
+    if (current != NULL)
+        return read_glist_next(current);
+    else
+        return NULL;
+#else
+    return NULL;
+#endif
+}
+
+MONO_API gboolean
+mono_unity_oop_get_dynamic_function_access_table64(
+    GList* tableEntry,
+    gsize* moduleStart,
+    gsize* moduleEnd,
+    void** functionTable,
+    gsize* functionTableSize)
+{
+#ifdef _M_X64
+    if (!tableEntry || !moduleStart || !moduleEnd || !functionTable || !functionTableSize)
+        return FALSE;
+
+    const DynamicFunctionTableEntry* entry = read_glist_data(tableEntry);
+    *moduleStart = read_qword(OFFSET_MEMBER(DynamicFunctionTableEntry, entry, begin_range));
+    *moduleEnd = read_qword(OFFSET_MEMBER(DynamicFunctionTableEntry, entry, end_range));
+    *functionTable = read_pointer(OFFSET_MEMBER(DynamicFunctionTableEntry, entry, rt_funcs));
+    *functionTableSize = read_dword(OFFSET_MEMBER(DynamicFunctionTableEntry, entry, rt_funcs_max_count));
+
+    return TRUE;
+#else
+    return FALSE;
+#endif
 }
