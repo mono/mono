@@ -19,6 +19,9 @@
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\unity-icall.c">
       <Filter>Source Files$(MonoRuntimeFilterSubFolder)\unity</Filter>
     </ClCompile>
+    <ClCompile Include="$(MonoSourceLocation)\mono\metadata\oop.c">
+      <Filter>Source Files$(MonoRuntimeFilterSubFolder)\unity</Filter>
+    </ClCompile>
 
   </ItemGroup>
   <ItemGroup>
