@@ -47,13 +47,10 @@ typedef struct _MonoStackFrameDetails
 {
     char* methodName;
     size_t methodNameLen;
-    char* signature;
-    size_t signatureLen;
+    char* className;
+    size_t classNameLen;
     char* assemblyName;
     size_t assemblyNameLen;
-    char* sourceFile;
-    size_t sourceFileLen;
-    int lineNo;
 } MonoStackFrameDetails;
 
 typedef gboolean(*ReadMemoryCallback)(void* buffer, gsize* read, const void* address, gsize size, void* userdata);
@@ -385,26 +382,15 @@ mono_unity_oop_get_stack_frame_details(
             frameDetails->methodNameLen,
             read_pointer(OFFSET_MEMBER(MonoMethod, method, name)));
 
+        frameDetails->classNameLen = read_nt_string(
+            frameDetails->className,
+            frameDetails->classNameLen,
+            read_pointer(OFFSET_MEMBER(MonoClass, klass, name)));
+
         frameDetails->assemblyNameLen = read_nt_string(
             frameDetails->assemblyName,
             frameDetails->assemblyNameLen,
             read_pointer(OFFSET_MEMBER(MonoImage, image, assembly_name)));
-
-        /*
-        const char* signature = mono_method_full_name(ji->method, true);
-        g_free((void*)signature);
-
-        //TODO: On 64bits couldn't the subtraction below overflow the conversion?
-        guint32 offset = (guint32)((UIntPtr)frameAddress - (UIntPtr)ji->code_start);
-        MonoDebugSourceLocation* sourceLocation = mono_debug_lookup_source_location(ji->method, offset, monoDomain);
-
-        if (sourceLocation)
-        {
-            stackFrame.sourceFile = sourceLocation->source_file;
-            stackFrame.lineNumber = sourceLocation->row;
-            g_free(sourceLocation);
-        }
-        */
 
         return TRUE;
     }
