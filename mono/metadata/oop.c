@@ -376,16 +376,33 @@ mono_unity_oop_get_stack_frame_details(
         const MonoMethod* method = read_pointer(OFFSET_MEMBER(MonoJitInfo, ji, d.method));
         const MonoClass* klass = read_pointer(OFFSET_MEMBER(MonoMethod, method, klass));
         const MonoImage* image = read_pointer(OFFSET_MEMBER(MonoClass, klass, image));
+        size_t classNameLen = max(frameDetails->classNameLen, 256);
+        char* className = (char*)malloc(classNameLen);
+        char* nsName = (char*)malloc(classNameLen);
 
         frameDetails->methodNameLen = read_nt_string(
             frameDetails->methodName,
             frameDetails->methodNameLen,
             read_pointer(OFFSET_MEMBER(MonoMethod, method, name)));
 
-        frameDetails->classNameLen = read_nt_string(
-            frameDetails->className,
-            frameDetails->classNameLen,
-            read_pointer(OFFSET_MEMBER(MonoClass, klass, name)));
+        if (frameDetails->className && frameDetails->classNameLen > 0) {
+            read_nt_string(
+                nsName,
+                classNameLen,
+                read_pointer(OFFSET_MEMBER(MonoClass, klass, name_space)));
+
+            read_nt_string(
+                className,
+                classNameLen,
+                read_pointer(OFFSET_MEMBER(MonoClass, klass, name)));
+
+            frameDetails->classNameLen = sprintf_s(
+                frameDetails->className,
+                frameDetails->classNameLen,
+                "%s.%s",
+                nsName,
+                className);
+        }
 
         frameDetails->assemblyNameLen = read_nt_string(
             frameDetails->assemblyName,
