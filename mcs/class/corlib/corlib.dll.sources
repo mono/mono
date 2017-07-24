@@ -212,6 +212,7 @@ System.IO/FileShare.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/IO/FileStream.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/IO/FileStream.Unix.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/IO/FileStream.Linux.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/IO/StreamHelpers.CopyValidation.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/IO/Stream.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/IO/PathInternal.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/IO/PathInternal.Unix.cs
@@ -237,6 +238,10 @@ System.IO/FileShare.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/Interop/Unix/Interop.Libraries.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/Interop/Unix/Interop.Errors.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/Interop/Unix/Interop.IOErrors.cs
+../../../external/corert/src/System.Private.CoreLib/shared/Interop/Unix/System.Native/Interop.LockFileRegion.cs
+../../../external/corert/src/System.Private.CoreLib/shared/Interop/Unix/System.Native/Interop.FTruncate.cs
+../../../external/corert/src/System.Private.CoreLib/shared/Interop/Unix/System.Native/Interop.Read.cs
+../../../external/corert/src/System.Private.CoreLib/shared/Interop/Unix/System.Native/Interop.Write.cs
 System.IO/FileStreamAsyncResult.cs
 System.IO/HGlobalUnmanagedMemoryStream.cs
 System.IO/LogcatTextWriter.cs

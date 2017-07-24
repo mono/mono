@@ -164,7 +164,7 @@ namespace System.Resources {
         public ResourceReader(String fileName)
         {
             _resCache = new Dictionary<String, ResourceLocator>(FastResourceComparer.Default);
-            _store = new BinaryReader(new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read, DefaultFileStreamBufferSize, FileOptions.RandomAccess, Path.GetFileName(fileName), false), Encoding.UTF8);
+            _store = new BinaryReader(new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read, DefaultFileStreamBufferSize, FileOptions.RandomAccess/*, Path.GetFileName(fileName), false*/), Encoding.UTF8);
             BCLDebug.Log("RESMGRFILEFORMAT", "ResourceReader .ctor(String).  UnmanagedMemoryStream: "+(_ums!=null));
 
             try {
