@@ -300,6 +300,7 @@ oop_jit_info_table_chunk_index(
     return left;
 }
 
+/* This method is an out-of-process version of jit_info_table_find. */
 static const MonoJitInfo*
 oop_jit_info_table_find(
     const MonoDomain *domain,
