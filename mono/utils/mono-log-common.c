@@ -110,7 +110,7 @@ mono_log_write_logfile (const char *log_domain, GLogLevelFlags level, mono_bool 
 		pid_t pid;
 		char logTime [80];
 
-#ifndef HOST_WIN32
+#ifdef HAVE_LOCALTIME_R
 		struct tm tod;
 		time(&t);
 		localtime_r(&t, &tod);
