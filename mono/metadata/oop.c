@@ -42,11 +42,13 @@ extern GList* g_dynamic_function_table_begin;
 extern SRWLOCK g_dynamic_function_table_lock;
 #endif
 
-typedef gboolean(*ReadMemoryCallback)(void* buffer, void* address, gsize size, void* userdata);
+typedef gboolean(*ReadMemoryCallback)(void* buffer, const void* address, gsize size, void* userdata);
+typedef gboolean(*ReadExceptionCallback)(const void* address, gsize size, void* userdata);
 
 typedef struct _OutOfProcessMono
 {
     ReadMemoryCallback readMemory;
+    ReadExceptionCallback readException;
     void* userData;
 } OutOfProcessMono;
 
@@ -54,34 +56,41 @@ static OutOfProcessMono g_oop = { NULL, NULL };
 
 #define OFFSET_MEMBER(type, base, member) ((gpointer)((gchar*)(base) + offsetof(type, member)))
 
-gboolean read_memory(void* buffer, void* address, gsize size)
+void read_exception(void* address, gsize size)
 {
-    if (!g_oop.readMemory)
-        return FALSE;
-    return g_oop.readMemory(buffer, address, size, g_oop.userData);
+    g_oop.readException(address, size, g_oop.userData);
 }
 
-gpointer read_pointer(void* address)
+void read_memory(void* buffer, const void* address, gsize size)
+{
+    if (!g_oop.readMemory || !g_oop.readMemory(buffer, address, size, g_oop.userData)) {
+        if (g_oop.readException) {
+            g_oop.readException(address, size, g_oop.userData);
+        }
+        else {
+            abort();
+        }
+    }
+}
+
+gpointer read_pointer(const void* address)
 {
     gpointer ptr = NULL;
-    if (!read_memory(&ptr, address, sizeof(ptr)))
-        return NULL;
+    read_memory(&ptr, address, sizeof(ptr));
     return ptr;
 }
 
-gint64 read_qword(void* address)
+gint64 read_qword(const void* address)
 {
     gint64 v = 0;
-    if (!read_memory(&v, address, sizeof(v)))
-        return 0;
+    read_memory(&v, address, sizeof(v));
     return v;
 }
 
-gint32 read_dword(void* address)
+gint32 read_dword(const void* address)
 {
     gint32 v = 0;
-    if (!read_memory(&v, address, sizeof(v)))
-        return 0;
+    read_memory(&v, address, sizeof(v));
     return v;
 }
 
@@ -91,9 +100,11 @@ gpointer read_glist_data(GList* list) { return read_pointer(OFFSET_MEMBER(GList,
 MONO_API void
 mono_unity_oop_init(
     ReadMemoryCallback rmcb, 
+    ReadExceptionCallback recb,
     void* userdata) 
 {
     g_oop.readMemory = rmcb;
+    g_oop.readException = recb;
     g_oop.userData = userdata;
 }
 
