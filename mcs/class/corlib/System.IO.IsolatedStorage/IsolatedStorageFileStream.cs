@@ -122,9 +122,10 @@ namespace System.IO.IsolatedStorage {
 		}
 
 		// FIXME: Further limit the assertion when imperative Assert is implemented
+		// TODO : Figure out a way to get the argument anonymous into the corert FileStream constructor.
 		[FileIOPermission (SecurityAction.Assert, Unrestricted = true)]
 		public IsolatedStorageFileStream (string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, IsolatedStorageFile isf)
-			: base (CreateIsolatedPath (isf, path, mode), mode, access, share, bufferSize, false, true)
+			: base (CreateIsolatedPath (isf, path, mode), mode, access, share, bufferSize, false/*, true*/)
 		{
 		}
 

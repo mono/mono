@@ -223,8 +223,9 @@ namespace System.IO
         [ResourceConsumption(ResourceScope.Machine)]
         private static Stream CreateFile(String path, bool append, bool checkHost) {
             FileMode mode = append? FileMode.Append: FileMode.Create;
+            // The commented out arguments weren't even being used by mono's FileStream constructor.
             FileStream f = new FileStream(path, mode, FileAccess.Write, FileShare.Read,
-                DefaultFileStreamBufferSize, FileOptions.SequentialScan, Path.GetFileName(path), false, false, checkHost);
+                DefaultFileStreamBufferSize, FileOptions.SequentialScan/*, Path.GetFileName(path), false, false, checkHost*/);
             return f;
         }
 

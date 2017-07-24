@@ -211,10 +211,11 @@ System.IO/FileOptions.cs
 System.IO/FileShare.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/IO/FileStream.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/IO/FileStream.Unix.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/IO/FileStream.Linux.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/IO/Stream.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/IO/PathInternal.cs
-../../../external/corert/src/System.Private.CoreLib/shared/System/Diagnostics/ConditionalAttribute.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/IO/PathInternal.Unix.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/Diagnostics/ConditionalAttribute.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/IO/Error.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/Interop/Unix/System.Native/Interop.OpenFlags.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/Interop/Windows/Kernel32/Interop.SECURITY_ATTRIBUTES.cs
@@ -920,6 +921,7 @@ ReferenceSources/Buffer.cs
 ReferenceSources/TextInfo.cs
 ReferenceSources/win32native.cs
 ReferenceSources/SecurityContext.cs
+ReferenceSources/PathInternal.cs
 ReferenceSources/BinaryCompatibility.cs
 ReferenceSources/String.cs
 ReferenceSources/Type.cs

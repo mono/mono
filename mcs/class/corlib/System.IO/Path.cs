@@ -498,8 +498,9 @@ namespace System.IO {
 				path = Path.Combine (tmp_path, "tmp" + num.ToString ("x", CultureInfo.InvariantCulture) + ".tmp");
 
 				try {
+					// Since anonymous = false was being passed here, we get rid of that and use corert's version of constructor instead.
 					f = new FileStream (path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read,
-							    8192, false, (FileOptions) 1);
+							    8192, (FileOptions) 1);
 				} catch (IOException ex){
 					if (ex._HResult != MonoIO.FileAlreadyExistsHResult || count ++ > 65536)
 						throw;

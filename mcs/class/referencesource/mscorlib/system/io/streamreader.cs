@@ -236,8 +236,8 @@ namespace System.IO
             if (bufferSize <= 0)
                 throw new ArgumentOutOfRangeException("bufferSize", Environment.GetResourceString("ArgumentOutOfRange_NeedPosNum"));
             Contract.EndContractBlock();
-
-            Stream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, DefaultFileStreamBufferSize, FileOptions.SequentialScan, Path.GetFileName(path), false, false, checkHost);
+            // The commented out args are not even used by mono's FileStream constructor
+            Stream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, DefaultFileStreamBufferSize, FileOptions.SequentialScan/*, Path.GetFileName(path), false, false, checkHost*/);
             Init(stream, encoding, detectEncodingFromByteOrderMarks, bufferSize, false);
         }
         
@@ -1130,7 +1130,7 @@ namespace System.IO
 
         #region Private properties for async method performance
         // Access to instance fields of MarshalByRefObject-derived types requires special JIT helpers that check
-        // if the instance operated on is remote. This is optimised for fields on “this” but if a method is Async
+        // if the instance operated on is remote. This is optimised for fields on ï¿½thisï¿½ but if a method is Async
         // and is thus lifted to a state machine type, access will be slow.
         // As a workaround, we either cache instance fields in locals or use properties to access such fields.
 

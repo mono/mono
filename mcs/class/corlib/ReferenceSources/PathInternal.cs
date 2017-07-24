@@ -1,11 +1,12 @@
 namespace System.IO
 {
-	static class PathInternal
+	static partial class PathInternal
 	{
-		public static bool IsPartiallyQualified (string path)
+		// Removing since this is already defined by corert's PathInternal
+		/*public static bool IsPartiallyQualified (string path)
 		{
 			return false;
-		}
+		}*/
 
 		public static bool HasIllegalCharacters (string path, bool checkAdditional)
 		{

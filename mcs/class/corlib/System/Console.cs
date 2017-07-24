@@ -36,6 +36,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Permissions;
 using System.Text;
+using Microsoft.Win32.SafeHandles;
 
 namespace System
 {
