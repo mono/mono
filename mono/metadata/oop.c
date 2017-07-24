@@ -37,14 +37,24 @@
 #include <mono/metadata/coree.h>
 
 G_BEGIN_DECLS
-typedef int(*MonoReadMemoryCallback)(void* userData, const void* address, void* buffer, size_t size);
+typedef int(*MonoReadMemoryCallback)(
+    void* userData,
+    const void* address,
+    void* buffer,
+    size_t size,
+    size_t* readSize);
 
+// petele: todo: move this structure into a mono header
 typedef struct _MonoStackFrameDetails
 {
     char* methodName;
+    size_t methodNameLen;
     char* signature;
+    size_t signatureLen;
     char* assemblyName;
+    size_t assemblyNameLen;
     char* sourceFile;
+    size_t sourceFileLen;
     int lineNo;
 } MonoStackFrameDetails;
 
@@ -65,12 +75,12 @@ gooppointer oop_fetch_ptr(
     gooppointer ptr)
 {
     gpointer out = NULL;
-    if (!oopCfg->readMemoryCallback(oopCfg->userData, ptr, &out, sizeof(out)))
+    if (!oopCfg->readMemoryCallback(oopCfg->userData, ptr, &out, sizeof(out), NULL))
         return NULL;
     return out;
 }
 
-#define oop_copy(oopCfg, storage, address) (oopCfg->readMemoryCallback(oopCfg->userData, address, &storage, sizeof(storage)))
+#define oop_copy(oopCfg, storage, address) (oopCfg->readMemoryCallback(oopCfg->userData, address, &storage, sizeof(storage), NULL))
 #define oop_member_address(type, base, member) ((const gint8*)base + offsetof(type, member))
 
 MonoBoolean oop_copy_jit_info_table(
@@ -79,22 +89,17 @@ MonoBoolean oop_copy_jit_info_table(
     MonoJitInfoTable* table)
 {
     gooppointer srcTable = oop_fetch_ptr(oopCfg, oop_member_address(MonoDomain, domain, jit_info_table));
-    return oopCfg->readMemoryCallback(oopCfg->userData, srcTable, table, sizeof(MonoJitInfoTable));
+    return oopCfg->readMemoryCallback(oopCfg->userData, srcTable, table, sizeof(MonoJitInfoTable), NULL);
 }
 
 static int oop_jit_info_table_index(
     const MonoOutOfProcessParameters* oopCfg,
-    const MonoJitInfoTable* table, // non-local
+    const MonoJitInfoTableChunk* chunks, // non-local
+    int num_chunks,
     const gint8* addr)
 {
     static const int error = 0x7fffffff;
 
-    int num_chunks = 0;
-    if (!oop_copy(oopCfg, num_chunks, oop_member_address(MonoJitInfoTable, table, num_chunks)))
-        return error;
-
-    const MonoJitInfoTableChunk* chunks = (const MonoJitInfoTableChunk*) oop_member_address(MonoJitInfoTable, table, chunks);
-    
     int left = 0, right = num_chunks;
 
     g_assert(left < right);
@@ -179,7 +184,7 @@ oop_jit_info_table_find(
     if (chunkListPtr == NULL)
         return NULL;
 
-    chunk_pos = oop_jit_info_table_index(oopCfg, tablePtr, (const gint8*)addr);
+    chunk_pos = oop_jit_info_table_index(oopCfg, chunkListPtr, num_chunks, (const gint8*)addr);
     if (chunk_pos >= num_chunks)
         return NULL;
 
@@ -229,6 +234,14 @@ not_found:
     return NULL;
 }
 
+int oop_read_string(
+    const MonoOutOfProcessParameters* oopCfg,
+    char* buf,
+    size_t* bufLen,
+    char* src)
+{
+    return 0;
+}
 
 int
 mono_oop_get_stack_frame_details(
@@ -247,6 +260,15 @@ mono_oop_get_stack_frame_details(
     ji = oop_jit_info_table_find(&oopCfg, domain, (const char*) frameAddress);
     if (ji)
     {
+        const MonoMethod* method = oop_fetch_ptr(&oopCfg, oop_member_address(MonoJitInfo, ji, d.method));
+
+        // get the relevant strings
+        oop_read_string(&
+            oopCfg, 
+            frameDetails->methodName,
+            &frameDetails->methodNameLen,
+            oop_fetch_ptr(&oopCfg, oop_member_address(MonoMethod, method, name)));
+
         return 1;
     }
 
