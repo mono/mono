@@ -69,10 +69,11 @@ static OutOfProcessMono g_oop = { NULL, NULL };
 
 void read_exception(const void* address, gsize size)
 {
+    g_assert(g_oop.readException);
     if (g_oop.readException)
         g_oop.readException(address, size, g_oop.userData);
     else
-        abort();
+        eg_unreachable();
 }
 
 gsize read_memory(void* buffer, const void* address, gsize size)
