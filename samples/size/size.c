@@ -133,6 +133,6 @@ void install_icall (MonoProfiler *prof, MonoMethod *method, MonoJitInfo* jinfo)
 void
 mono_profiler_init_size (const char *desc)
 {
-	MonoProfilerHandle handle = mono_profiler_install (NULL);
+	MonoProfilerHandle handle = mono_profiler_create (NULL);
 	mono_profiler_set_jit_done_callback (handle, install_icall);
 }
