@@ -42,7 +42,21 @@ extern GList* g_dynamic_function_table_begin;
 extern SRWLOCK g_dynamic_function_table_lock;
 #endif
 
-typedef gboolean(*ReadMemoryCallback)(void* buffer, const void* address, gsize size, void* userdata);
+// petele: todo: move this structure into a mono header
+typedef struct _MonoStackFrameDetails
+{
+    char* methodName;
+    size_t methodNameLen;
+    char* signature;
+    size_t signatureLen;
+    char* assemblyName;
+    size_t assemblyNameLen;
+    char* sourceFile;
+    size_t sourceFileLen;
+    int lineNo;
+} MonoStackFrameDetails;
+
+typedef gboolean(*ReadMemoryCallback)(void* buffer, gsize* read, const void* address, gsize size, void* userdata);
 typedef gboolean(*ReadExceptionCallback)(const void* address, gsize size, void* userdata);
 
 typedef struct _OutOfProcessMono
@@ -56,21 +70,50 @@ static OutOfProcessMono g_oop = { NULL, NULL };
 
 #define OFFSET_MEMBER(type, base, member) ((gpointer)((gchar*)(base) + offsetof(type, member)))
 
-void read_exception(void* address, gsize size)
+void read_exception(const void* address, gsize size)
 {
-    g_oop.readException(address, size, g_oop.userData);
+    if (g_oop.readException)
+        g_oop.readException(address, size, g_oop.userData);
+    else
+        abort();
 }
 
-void read_memory(void* buffer, const void* address, gsize size)
+gsize read_memory(void* buffer, const void* address, gsize size)
 {
-    if (!g_oop.readMemory || !g_oop.readMemory(buffer, address, size, g_oop.userData)) {
-        if (g_oop.readException) {
-            g_oop.readException(address, size, g_oop.userData);
-        }
-        else {
-            abort();
-        }
+    if (!buffer || !size)
+        return 0;
+
+    gsize read = 0;
+    if (!g_oop.readMemory || !g_oop.readMemory(buffer, &read, address, size, g_oop.userData)) {
+        read_exception(address, size);
     }
+    
+    return read;
+}
+
+// Read a null-terminated string out-of-process
+gsize read_nt_string(char* buffer, gsize max_size, const void* address)
+{
+    if (!buffer || !max_size)
+        return 0;
+
+    if (!g_oop.readMemory) {
+        read_exception(address, 1);
+        return 0;
+    }
+
+    gsize read = 0;
+    if (!g_oop.readMemory(buffer, &read, address, max_size, g_oop.userData)) {
+        // Failed to read, but just because we may not have read max_size, we still
+        // might be OK if at least one character was read (i.e. the null-terminator)
+        if (read == 0)
+            read_exception(address, 1);
+    }
+
+    // Ensure there's a null-terminator
+    buffer[min(read, max_size-1)] = '\0';
+
+    return read;
 }
 
 gpointer read_pointer(const void* address)
@@ -183,4 +226,188 @@ mono_unity_oop_get_dynamic_function_access_table64(
 #else
     return FALSE;
 #endif
+}
+
+static int oop_jit_info_table_index(
+    const MonoJitInfoTableChunk** chunks, // non-local
+    int num_chunks,
+    const gint8* addr)
+{
+    static const int error = 0x7fffffff;
+
+    int left = 0, right = num_chunks;
+
+    g_assert(left < right);
+
+    do {
+        const MonoJitInfoTableChunk* chunkPtr;
+        const gint8* last_code_end;
+        int pos = (left + right) / 2;
+
+        chunkPtr = read_pointer(chunks + pos);
+        if (chunkPtr == NULL)
+            return error;
+
+        last_code_end = read_pointer(OFFSET_MEMBER(MonoJitInfoTableChunk, chunkPtr, last_code_end));
+        if (last_code_end == NULL)
+            return error;
+
+        if (addr < last_code_end)
+            right = pos;
+        else
+            left = pos + 1;
+    } while (left < right);
+    g_assert(left == right);
+
+    if (left >= num_chunks)
+        return num_chunks - 1;
+    return left;
+}
+
+static int
+oop_jit_info_table_chunk_index(
+    const MonoJitInfo** chunk_data,
+    int num_elements,
+    const gint8 *addr)
+{
+    const MonoJitInfo* ji;
+    int left = 0, right = num_elements;
+
+    while (left < right) {
+        int pos = (left + right) / 2;
+
+        const gint8 *code_start;
+        const gint8 *code_end;
+        int code_size;
+
+        ji = chunk_data[pos];
+
+        code_start = (const gint8*)read_pointer(OFFSET_MEMBER(MonoJitInfo, ji, code_start));
+        code_size = read_dword(OFFSET_MEMBER(MonoJitInfo, ji, code_size));
+        code_end = code_start + code_size;
+
+        if (addr < code_end)
+            right = pos;
+        else
+            left = pos + 1;
+    }
+
+    g_assert(left == right);
+
+    return left;
+}
+
+static const MonoJitInfo*
+oop_jit_info_table_find(
+    const MonoDomain *domain,
+    const char *addr)
+{
+    const MonoJitInfoTable* tablePtr;
+    const MonoJitInfoTableChunk** chunkListPtr;
+    MonoJitInfoTableChunk chunk;
+    MonoJitInfo ji;
+    int chunk_pos, pos;
+
+    // Get the domain's jit_info_table pointer.
+    tablePtr = read_pointer(OFFSET_MEMBER(MonoDomain, domain, jit_info_table));
+    if (tablePtr == NULL)
+        return NULL;
+
+    int num_chunks = read_dword(OFFSET_MEMBER(MonoJitInfoTable, tablePtr, num_chunks));
+
+    // Get the chunk array
+    chunkListPtr = (const MonoJitInfoTableChunk**)OFFSET_MEMBER(MonoJitInfoTable, tablePtr, chunks);
+
+    chunk_pos = oop_jit_info_table_index(chunkListPtr, num_chunks, (const gint8*)addr);
+    if (chunk_pos > num_chunks)
+        return NULL;
+    
+    // read the entire chunk
+    read_memory(&chunk, read_pointer(chunkListPtr + chunk_pos), sizeof(MonoJitInfoTableChunk));
+
+    pos = oop_jit_info_table_chunk_index((const MonoJitInfo**)chunk.data, chunk.num_elements, addr);
+    if (pos > chunk.num_elements)
+        return NULL;
+
+    /* We now have a position that's very close to that of the
+    first element whose end address is higher than the one
+    we're looking for.  If we don't have the exact position,
+    then we have a position below that one, so we'll just
+    search upward until we find our element. */
+    do {
+        read_memory(&chunk, read_pointer(chunkListPtr + chunk_pos), sizeof(MonoJitInfoTableChunk));
+
+        while (pos < chunk.num_elements) {
+            read_memory(&ji, chunk.data[pos], sizeof(ji));
+
+            ++pos;
+
+            if (ji.d.method == NULL) {
+                continue;
+            }
+            if ((gint8*)addr >= (gint8*)ji.code_start
+                && (gint8*)addr < (gint8*)ji.code_start + ji.code_size) {
+                return chunk.data[pos];
+            }
+
+            /* If we find a non-tombstone element which is already
+            beyond what we're looking for, we have to end the
+            search. */
+            if ((gint8*)addr < (gint8*)ji.code_start)
+                goto not_found;
+        }
+
+        ++chunk_pos;
+        pos = 0;
+    } while (chunk_pos < num_chunks);
+
+not_found:
+    return NULL;
+}
+
+int
+mono_unity_oop_get_stack_frame_details(
+    const MonoDomain* domain,
+    const void* frameAddress,
+    MonoStackFrameDetails* frameDetails)
+{
+    const MonoJitInfo* ji;
+
+    ji = oop_jit_info_table_find(domain, (const char*)frameAddress);
+    if (ji)
+    {
+        const MonoMethod* method = read_pointer(OFFSET_MEMBER(MonoJitInfo, ji, d.method));
+        const MonoClass* klass = read_pointer(OFFSET_MEMBER(MonoMethod, method, klass));
+        const MonoImage* image = read_pointer(OFFSET_MEMBER(MonoClass, klass, image));
+
+        frameDetails->methodNameLen = read_nt_string(
+            frameDetails->methodName,
+            frameDetails->methodNameLen,
+            read_pointer(OFFSET_MEMBER(MonoMethod, method, name)));
+
+        frameDetails->assemblyNameLen = read_nt_string(
+            frameDetails->assemblyName,
+            frameDetails->assemblyNameLen,
+            read_pointer(OFFSET_MEMBER(MonoImage, image, assembly_name)));
+
+        /*
+        const char* signature = mono_method_full_name(ji->method, true);
+        g_free((void*)signature);
+
+        //TODO: On 64bits couldn't the subtraction below overflow the conversion?
+        guint32 offset = (guint32)((UIntPtr)frameAddress - (UIntPtr)ji->code_start);
+        MonoDebugSourceLocation* sourceLocation = mono_debug_lookup_source_location(ji->method, offset, monoDomain);
+
+        if (sourceLocation)
+        {
+            stackFrame.sourceFile = sourceLocation->source_file;
+            stackFrame.lineNumber = sourceLocation->row;
+            g_free(sourceLocation);
+        }
+        */
+
+        return TRUE;
+    }
+
+    return FALSE;
 }
