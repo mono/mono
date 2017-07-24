@@ -80,8 +80,8 @@ gooppointer oop_fetch_ptr(
     return out;
 }
 
-#define oop_copy(oopCfg, storage, address) (oopCfg->readMemoryCallback(oopCfg->userData, address, &storage, sizeof(storage), NULL))
-#define oop_member_address(type, base, member) ((const gint8*)base + offsetof(type, member))
+#define oop_copy(oopCfg, storage, address) (oopCfg->readMemoryCallback(oopCfg->userData, (address), &(storage), sizeof(storage), NULL))
+#define oop_member_address(type, base, member) ((const gint8*)(base) + offsetof(type, member))
 
 MonoBoolean oop_copy_jit_info_table(
     const MonoOutOfProcessParameters* oopCfg,
@@ -94,7 +94,7 @@ MonoBoolean oop_copy_jit_info_table(
 
 static int oop_jit_info_table_index(
     const MonoOutOfProcessParameters* oopCfg,
-    const MonoJitInfoTableChunk* chunks, // non-local
+    const MonoJitInfoTableChunk** chunks, // non-local
     int num_chunks,
     const gint8* addr)
 {
@@ -105,10 +105,16 @@ static int oop_jit_info_table_index(
     g_assert(left < right);
 
     do {
+        const MonoJitInfoTableChunk* chunkPtr;
+        const gint8* last_code_end;
         int pos = (left + right) / 2;
 
-        gint8* last_code_end;
-        if (!oop_copy(oopCfg, last_code_end, oop_member_address(MonoJitInfoTableChunk, oop_fetch_ptr(oopCfg, chunks + pos), last_code_end)))
+        chunkPtr = oop_fetch_ptr(oopCfg, chunks + pos);
+        if (chunkPtr == NULL)
+            return error;
+
+        last_code_end = oop_fetch_ptr(oopCfg, oop_member_address(MonoJitInfoTableChunk, chunkPtr, last_code_end));
+        if (last_code_end == NULL)
             return error;
 
         if (addr < last_code_end)
@@ -116,12 +122,10 @@ static int oop_jit_info_table_index(
         else
             left = pos + 1;
     } while (left < right);
-
     g_assert(left == right);
 
     if (left >= num_chunks)
-        return error;
-
+        return num_chunks - 1;
     return left;
 }
 
@@ -139,12 +143,12 @@ oop_jit_info_table_chunk_index(
 
     while (left < right) {
         int pos = (left + right) / 2;
-        gint8 *code_end;
+        const gint8 *code_end;
 
         if (!oop_copy(oopCfg, ji, oop_fetch_ptr(oopCfg, chunk_data + pos)))
             return error;
 
-        code_end = (gint8*)ji.code_start + ji.code_size;
+        code_end = (const gint8*)ji.code_start + ji.code_size;
 
         if (addr < code_end)
             right = pos;
@@ -164,7 +168,7 @@ oop_jit_info_table_find(
     const char *addr)
 {
     const MonoJitInfoTable* tablePtr;
-    const MonoJitInfoTableChunk* chunkListPtr;
+    const MonoJitInfoTableChunk** chunkListPtr;
     MonoJitInfoTableChunk chunk;
     const MonoJitInfo* jiPtr;
     MonoJitInfo ji;
@@ -180,19 +184,17 @@ oop_jit_info_table_find(
         return NULL;
 
     // Get the chunk array
-    chunkListPtr = (const MonoJitInfoTableChunk*) oop_member_address(MonoJitInfoTable, tablePtr, chunks);
-    if (chunkListPtr == NULL)
-        return NULL;
+    chunkListPtr = (const MonoJitInfoTableChunk**) oop_member_address(MonoJitInfoTable, tablePtr, chunks);
 
     chunk_pos = oop_jit_info_table_index(oopCfg, chunkListPtr, num_chunks, (const gint8*)addr);
-    if (chunk_pos >= num_chunks)
+    if (chunk_pos > num_chunks)
         return NULL;
 
     if (!oop_copy(oopCfg, chunk, oop_fetch_ptr(oopCfg, chunkListPtr + chunk_pos)))
         return NULL;
 
     pos = oop_jit_info_table_chunk_index(oopCfg, (const MonoJitInfo**) chunk.data, chunk.num_elements, addr);
-    if (pos >= chunk.num_elements)
+    if (pos > chunk.num_elements)
         return NULL;
 
     /* We now have a position that's very close to that of the
@@ -238,9 +240,13 @@ int oop_read_string(
     const MonoOutOfProcessParameters* oopCfg,
     char* buf,
     size_t* bufLen,
-    char* src)
+    const char* src)
 {
-    return 0;
+    size_t read = 0;
+    int ret = oopCfg->readMemoryCallback(oopCfg->userData, src, buf, *bufLen, &read);
+
+    *bufLen = read;
+    return ret ? ret : read > 0;
 }
 
 int
@@ -262,7 +268,6 @@ mono_oop_get_stack_frame_details(
     {
         const MonoMethod* method = oop_fetch_ptr(&oopCfg, oop_member_address(MonoJitInfo, ji, d.method));
 
-        // get the relevant strings
         oop_read_string(&
             oopCfg, 
             frameDetails->methodName,
