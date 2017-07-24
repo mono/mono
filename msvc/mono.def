@@ -987,3 +987,6 @@ mono_unity_capture_memory_snapshot
 mono_unity_free_captured_memory_snapshot
 mono_unity_thread_fast_attach
 mono_unity_thread_fast_detach
+
+; Out-of-process inspection
+mono_oop_get_stack_frame_details
