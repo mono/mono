@@ -113,6 +113,47 @@ static inline gint64 InterlockedAdd64(volatile gint64 *dest, gint64 add)
 #endif
 #endif
 
+/* InterlockedSubtract and InterlockedSubtract64 are not defined anywhere
+ * which is why we can safely define them without major checks */
+
+#if defined(__sync_sub_and_fetch)
+
+static inline gint32 InterlockedSubtract(volatile gint32 *dest, gint32 sub)
+{
+	return __sync_sub_and_fetch (dest, sub);
+}
+
+static inline gint64 InterlockedSubtract64(volatile gint64 *dest, gint64 sub)
+{
+	return __sync_sub_and_fetch (dest, sub);
+}
+
+#else
+
+static inline gint32 InterlockedSubtract(volatile gint32 *dest, gint32 sub)
+{
+	gint32 prev_value;
+
+	do {
+		prev_value = *dest;
+	} while (prev_value != InterlockedCompareExchange(dest, prev_value - sub, prev_value));
+
+	return prev_value - sub;
+}
+
+static inline gint64 InterlockedSubtract64(volatile gint64 *dest, gint64 sub)
+{
+	gint64 prev_value;
+
+	do {
+		prev_value = *dest;
+	} while (prev_value != InterlockedCompareExchange64(dest, prev_value - sub, prev_value));
+
+	return prev_value - sub;
+}
+
+#endif
+
 #ifdef HOST_WIN32
 #define TO_INTERLOCKED_ARGP(ptr) ((volatile LONG*)(ptr))
 #else
@@ -230,6 +271,11 @@ static inline gint32 InterlockedAdd(volatile gint32 *dest, gint32 add)
 	return gcc_sync_add_and_fetch (dest, add);
 }
 
+static inline gint32 InterlockedSubtract(volatile gint32 *dest, gint32 sub)
+{
+	return gcc_sync_sub_and_fetch (dest, sub);
+}
+
 static inline gint32 InterlockedIncrement(volatile gint32 *val)
 {
 	return gcc_sync_add_and_fetch (val, 1);
@@ -323,6 +369,11 @@ static inline gint64 InterlockedAdd64(volatile gint64 *dest, gint64 add)
 	return gcc_sync_add_and_fetch (dest, add);
 }
 
+static inline gint64 InterlockedSubtract64(volatile gint64 *dest, gint64 sub)
+{
+	return gcc_sync_sub_and_fetch (dest, sub);
+}
+
 static inline gint64 InterlockedIncrement64(volatile gint64 *val)
 {
 	return gcc_sync_add_and_fetch (val, 1);
@@ -393,6 +444,16 @@ static inline gint64 InterlockedAdd64(volatile gint64 *dest, gint64 add)
 	return set;
 }
 
+static inline gint64 InterlockedSubtract64(volatile gint64 *dest, gint64 sub)
+{
+	gint64 get, set;
+	do {
+		get = *dest;
+		set = get - sub;
+	} while (InterlockedCompareExchange64 (dest, set, get) != get);
+	return set;
+}
+
 static inline gint64 InterlockedRead64(volatile gint64 *src)
 {
 	return InterlockedCompareExchange64 (src, 0, 0);
@@ -455,6 +516,27 @@ extern void InterlockedWrite16(volatile gint16 *dst, gint16 val);
 extern void InterlockedWrite(volatile gint32 *dst, gint32 val);
 extern void InterlockedWrite64(volatile gint64 *dst, gint64 val);
 extern void InterlockedWritePointer(volatile gpointer *dst, gpointer val);
+
+/* Since InterlockedSubtract and InterlockedSubtract64 are not part
+ * of any standard, we can safely define them */
+
+static inline gint32 InterlockedSubtract(volatile gint32 *dest, gint32 sub)
+{
+	gint32 prev_value;
+	do {
+		prev_value = *dest;
+	} while (prev_value != InterlockedCompareExchange(dest, prev_value - sub, prev_value));
+	return prev_value - sub;
+}
+
+static inline gint64 InterlockedSubtract64(volatile gint64 *dest, gint64 sub)
+{
+	gint64 prev_value;
+	do {
+		prev_value = *dest;
+	} while (prev_value != InterlockedCompareExchange64(dest, prev_value - sub, prev_value));
+	return prev_value - sub;
+}
 
 #endif
 
