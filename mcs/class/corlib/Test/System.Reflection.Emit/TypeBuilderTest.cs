@@ -570,6 +570,40 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		public void TestEnumWithLateUnderlyingField ()
+		{
+			TypeBuilder enumToCreate = module.DefineType (genTypeName (), TypeAttributes.Public, typeof (Enum));
+			enumToCreate.DefineField ("value__", typeof (Int32),
+				FieldAttributes.Public | FieldAttributes.SpecialName | FieldAttributes.RTSpecialName);
+
+			TypeBuilder enumToCreate2 = module.DefineType (genTypeName (), TypeAttributes.Public, typeof (Enum));
+
+			TypeBuilder ivTypeBld = module.DefineType (genTypeName (), TypeAttributes.Public);
+
+			ConstructorBuilder ivCtor = ivTypeBld.DefineConstructor (MethodAttributes.Public, CallingConventions.Standard, Type.EmptyTypes);
+
+			ILGenerator ctorIL = ivCtor.GetILGenerator ();
+
+			ctorIL.Emit (OpCodes.Ldtoken, typeof (Object));
+			ctorIL.Emit (OpCodes.Pop);
+			ctorIL.Emit (OpCodes.Ldtoken, enumToCreate);
+			ctorIL.Emit (OpCodes.Pop);
+			ctorIL.Emit (OpCodes.Ldtoken, enumToCreate2);
+			ctorIL.Emit (OpCodes.Pop);
+			ctorIL.Emit (OpCodes.Ret);
+
+			var ivType = ivTypeBld.CreateType ();
+
+			enumToCreate2.DefineField ("value__", typeof (Int32), FieldAttributes.Public | FieldAttributes.SpecialName | FieldAttributes.RTSpecialName);
+
+			FieldBuilder fb = enumToCreate2.DefineField ("A", enumToCreate, FieldAttributes.Public | FieldAttributes.Static | FieldAttributes.Literal);
+			fb.SetConstant (0);
+
+			enumToCreate.CreateType ();
+			enumToCreate2.CreateType ();
+		}
+
+		[Test]
 		public void TestIsAbstract ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
