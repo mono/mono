@@ -1,19 +1,17 @@
-ACLOCAL_AMFLAGS = -I m4
-
 AM_CFLAGS = $(WERROR_CFLAGS)
 
 if HOST_WIN32
-SUBDIRS = m4 src
+SUBDIRS = src
 else
 if PLATFORM_DARWIN
-SUBDIRS = m4 src
+SUBDIRS = src
 else
 if CROSS_COMPILING
-SUBDIRS = m4 src
+SUBDIRS = src
 else
-SUBDIRS = m4 src test
+SUBDIRS = src test
 endif
 endif
 endif
 
-EXTRA_DIST = autogen.sh README NEWS AUTHORS winconfig.h
+EXTRA_DIST = README NEWS AUTHORS winconfig.h
