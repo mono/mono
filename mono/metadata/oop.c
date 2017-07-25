@@ -403,13 +403,21 @@ mono_unity_oop_get_stack_frame_details(
                 className,
                 classNameLen,
                 read_pointer(OFFSET_MEMBER(MonoClass, klass, name)));
-
-            frameDetails->classNameLen = sprintf_s(
-                frameDetails->className,
-                frameDetails->classNameLen,
-                "%s.%s",
-                nsName,
-                className);
+            
+            if (*nsName) {
+                frameDetails->classNameLen = sprintf_s(
+                    frameDetails->className,
+                    frameDetails->classNameLen,
+                    "%s.%s",
+                    nsName,
+                    className);
+            } else {
+                frameDetails->classNameLen = sprintf_s(
+                    frameDetails->className,
+                    frameDetails->classNameLen,
+                    "%s",
+                    className);
+            }
         }
 
         frameDetails->assemblyNameLen = read_nt_string(
