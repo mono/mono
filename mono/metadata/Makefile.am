@@ -276,7 +276,11 @@ common_sources = \
 	w32handle-namespace.c	\
 	w32handle.h	\
 	w32handle.c	\
-	w32error.h
+	w32error.h	\
+	dynamic-image.c	\
+	sre-encode.c	\
+	sre-save.c	\
+	custom-attrs.c
 
 # These source files have compile time dependencies on GC code
 gc_dependent_sources = \
@@ -286,13 +290,8 @@ gc_dependent_sources = \
 	mono-hash.c	\
 	mono-conc-hash.c	\
 	object.c	\
-	dynamic-image.c	\
-	sre.c	\
-	sre-encode.c	\
-	sre-save.c	\
-	custom-attrs.c	\
-	reflection.c
-
+	reflection.c	\
+	sre.c
 
 boehm_sources = \
 	boehm-gc.c
