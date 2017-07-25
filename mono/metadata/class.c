@@ -6397,7 +6397,14 @@ mono_image_init_name_cache (MonoImage *image)
 		int i;
 
 		for (i = 0; i < t->rows; ++i) {
+			guint32 impl;
 			mono_metadata_decode_row (t, i, cols, MONO_EXP_TYPE_SIZE);
+
+			impl = cols[MONO_EXP_TYPE_IMPLEMENTATION];
+			if ((impl & MONO_IMPLEMENTATION_MASK) == MONO_IMPLEMENTATION_EXP_TYPE)
+				/* Nested type */
+				continue;
+
 			name = mono_metadata_string_heap (image, cols [MONO_EXP_TYPE_NAME]);
 			nspace = mono_metadata_string_heap (image, cols [MONO_EXP_TYPE_NAMESPACE]);
 
@@ -6618,7 +6625,7 @@ mono_class_from_name (MonoImage *image, const char* name_space, const char *name
 			if (class)
 			{
 				if (nested)
-					return return_nested_in (class, nested);
+					return class ? return_nested_in (class, nested) : NULL;
 				else
 					return class;
 			}
@@ -6684,11 +6691,15 @@ mono_class_from_name (MonoImage *image, const char* name_space, const char *name
 			g_assert (image->references [assembly_idx - 1]);
 			if (image->references [assembly_idx - 1] == (gpointer)-1)
 				return NULL;			
-			else
+			else {
 				/* FIXME: Cycle detection */
-				return mono_class_from_name (image->references [assembly_idx - 1]->image, name_space, name);
+				class = mono_class_from_name (image->references [assembly_idx - 1]->image, name_space, name);
+				if (nested)
+					return return_nested_in (class, nested);
+				return class;
+			}
 		} else {
-			g_error ("not yet implemented");
+			g_assert_not_reached ();
 		}
 	}
 
