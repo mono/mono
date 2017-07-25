@@ -21,6 +21,7 @@ partial class SR
 	public const string Cryptography_Xml_InvalidReference = "Malformed reference element.";
 	public const string Cryptography_Xml_InvalidSignatureLength = "The length of the signature with a MAC should be less than the hash output length.";
 	public const string Cryptography_Xml_InvalidSignatureLength2 = "The length in bits of the signature with a MAC should be a multiple of 8.";
+	public const string Cryptography_Xml_InvalidX509IssuerSerialNumber = "X509 issuer serial number is invalid.";
 	public const string Cryptography_Xml_KeyInfoRequired = "A KeyInfo element is required to check the signature.";
 	public const string Cryptography_Xml_KW_BadKeySize = "The length of the encrypted data in Key Wrap is either 32, 40 or 48 bytes.";
 	public const string Cryptography_Xml_LoadKeyFailed = "Signing key is not loaded.";
