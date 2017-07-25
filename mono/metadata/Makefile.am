@@ -277,7 +277,9 @@ common_sources = \
 	w32handle.h	\
 	w32handle.c	\
 	w32error.h	\
+	reflection.c	\
 	dynamic-image.c	\
+	sre.c	\
 	sre-encode.c	\
 	sre-save.c	\
 	custom-attrs.c
@@ -289,9 +291,7 @@ gc_dependent_sources = \
 	monitor.c	\
 	mono-hash.c	\
 	mono-conc-hash.c	\
-	object.c	\
-	reflection.c	\
-	sre.c
+	object.c
 
 boehm_sources = \
 	boehm-gc.c
