@@ -251,7 +251,6 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-		[Category ("NotDotNet")]
 		// see LoadInputAsXmlNodeList2 description
 		public void LoadInputAsXmlNodeList () 
 		{
@@ -260,11 +259,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInput (doc.ChildNodes);
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
-			Assert.AreEqual ("<Test></Test>", output, "XmlChildNodes");
+			Assert.AreEqual ("<Test xmlns=\"http://www.go-mono.com/\"></Test>", output, "XmlChildNodes");
 		}
 
 		[Test]
-		[Category ("NotDotNet")]
 		// MS has a bug that those namespace declaration nodes in
 		// the node-set are written to output. Related spec section is:
 		// http://www.w3.org/TR/2001/REC-xml-c14n-20010315#ProcessingModel
@@ -274,7 +272,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInput (doc.SelectNodes ("//*"));
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
-			string expected = @"<Test><Toto></Toto></Test>";
+			string expected = "<Test xmlns=\"http://www.go-mono.com/\"><Toto></Toto></Test>";
 			Assert.AreEqual (expected, output, "XmlChildNodes");
 		}
 
