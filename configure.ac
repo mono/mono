@@ -3509,6 +3509,7 @@ if test "x$target_mach" = "xyes"; then
           CPPFLAGS_FOR_LIBGC="$CPPFLAGS_FOR_LIBGC -DTARGET_IOS"
           CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -DTARGET_IOS"
           BTLS_SUPPORTED=no
+		  target_ios=yes
        ])
 	fi
    AC_DEFINE(TARGET_MACH,1,[The JIT/AOT targets Apple platforms])
@@ -3654,11 +3655,7 @@ AC_SUBST(GNUC_UNUSED)
 AC_SUBST(GNUC_NORETURN)
 AC_SUBST(BREAKPOINT)
 
-#CFLAGS="$CFLAGS -g -D_GNU_SOURCE"
-
 AC_C_BIGENDIAN([ORDER=G_BIG_ENDIAN],[ORDER=G_LITTLE_ENDIAN])
-
-platform_darwin=no
 
 case $host in
 *-*-msdos* | *-*-go32* | *-*-mingw32* | *-*-cygwin* | *-*-windows*)
@@ -3666,21 +3663,6 @@ case $host in
     SEARCHSEP=';'
     OS="WIN32"
     PIDTYPE='void *'
-    ;;
-*-*darwin*)
-    platform_darwin=yes
-    PATHSEP='/'
-    SEARCHSEP=':'
-    OS="UNIX"
-    PIDTYPE='int'
-    ;;
-*-*-linux-android*)
-    platform_android=yes
-	AC_DEFINE(PLATFORM_ANDROID,1,[Targeting the Android platform])
-    PATHSEP='/'
-    SEARCHSEP=':'
-    OS="UNIX"
-    PIDTYPE='int'
     ;;
 *)
     PATHSEP='/'
@@ -3711,25 +3693,6 @@ i*86-*-darwin*)
     LDFLAGS="$LDFLAGS -pthread"
     ;;
 esac
-
-target_osx=no
-target_ios=no
-
-if test "x$platform_darwin" = "xyes"; then
-	AC_TRY_COMPILE([#include "TargetConditionals.h"],[
-	#if TARGET_IPHONE_SIMULATOR == 1 || TARGET_OS_IPHONE == 1
-	#error fail this for ios
-	#endif
-	return 0;
-	], [
-		AC_DEFINE(TARGET_OSX,1,[The JIT/AOT targets OSX])
-		target_osx=yes
-	], [
-		AC_DEFINE(TARGET_IOS,1,[The JIT/AOT targets iOS])
-		target_ios=yes
-	])
-   AC_DEFINE(TARGET_MACH,1,[The JIT/AOT targets Apple platforms])
-fi
 
 AC_SUBST(ORDER)
 AC_SUBST(CFLAGS)
