@@ -413,6 +413,9 @@ mono_unity_oop_get_stack_frame_details(
             frameDetails->assemblyNameLen,
             read_pointer(OFFSET_MEMBER(MonoImage, image, assembly_name)));
 
+        free(className);
+        free(nsName);
+
         return TRUE;
     }
 
