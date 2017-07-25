@@ -302,7 +302,8 @@ oop_jit_info_table_chunk_index(
 static const MonoJitInfo*
 oop_jit_info_table_find(
     const MonoDomain *domain,
-    const char *addr)
+    const char *addr, 
+    gboolean allow_trampolines)
 {
     const MonoJitInfoTable* tablePtr;
     const MonoJitInfoTableChunk** chunkListPtr;
@@ -349,7 +350,10 @@ oop_jit_info_table_find(
             }
             if ((gint8*)addr >= (gint8*)ji.code_start
                 && (gint8*)addr < (gint8*)ji.code_start + ji.code_size) {
-                return chunk.data[pos];
+                if (ji.is_trampoline && !allow_trampolines) {
+                    return NULL;
+                }
+                return chunk.data[pos-1];
             }
 
             /* If we find a non-tombstone element which is already
@@ -374,7 +378,7 @@ mono_unity_oop_get_stack_frame_details(
 {
     const MonoJitInfo* ji;
 
-    ji = oop_jit_info_table_find(domain, (const char*)frameAddress);
+    ji = oop_jit_info_table_find(domain, (const char*)frameAddress, FALSE);
     if (ji)
     {
         const MonoMethod* method = read_pointer(OFFSET_MEMBER(MonoJitInfo, ji, d.method));
