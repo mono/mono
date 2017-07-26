@@ -201,8 +201,10 @@ namespace Mono.Profiling.Tests.Stress {
 
 					result.Stopwatch.Stop ();
 
-					result.StandardOutput = stdout.ToString ();
-					result.StandardError = stderr.ToString ();
+					lock (result) {
+						result.StandardOutput = stdout.ToString ();
+						result.StandardError = stderr.ToString ();
+					}
 				}
 
 				var resultStr = result.ExitCode == null ? "timed out" : $"exited with code: {result.ExitCode}";
