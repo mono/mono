@@ -30,6 +30,7 @@ System.Reflection.Emit/ParameterBuilderTest.cs
 System.Reflection.Emit/PropertyBuilderTest.cs
 System.Reflection.Emit/SignatureHelperTest.cs
 System.Reflection.Emit/TypeBuilderTest.cs
+System.Reflection.Emit/SaveTest.cs
 System.Runtime.Remoting/ContextTest.cs
 System.Runtime.Remoting/RemotingConfigurationTest.cs
 System.Runtime.Remoting/RemotingServicesTest.cs
