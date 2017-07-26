@@ -441,6 +441,7 @@ int_ble: len:8
 int_ble_un: len:8
 
 card_table_wbarrier: src1:a src2:i clob:d len:56
+prefetch: src1:i len:3
 
 relaxed_nop: len:2
 hard_nop: len:1

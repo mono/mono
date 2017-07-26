@@ -1306,7 +1306,12 @@ create_allocator (int atype, ManagedAllocatorVariant variant)
 	mono_mb_emit_ldloc (mb, tlab_next_addr_var);
 	mono_mb_emit_byte (mb, CEE_LDIND_I);
 	mono_mb_emit_stloc (mb, p_var);
-	
+
+	/* __builtin_prefetch (p); */
+	mono_mb_emit_ldloc (mb, p_var);
+	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+	mono_mb_emit_byte (mb, CEE_MONO_PREFETCH);
+
 	/* new_next = (char*)p + size; */
 	new_next_var = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
 	mono_mb_emit_ldloc (mb, p_var);
