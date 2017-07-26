@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Mono.CSharp</RootNamespace>
     <AssemblyName>Mono.CSharp</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -229,6 +229,9 @@
     </Compile>
     <Compile Include="..\Mono.CompilerServices.SymbolWriter\SourceMethodBuilder.cs">
       <Link>SourceMethodBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\tuples.cs">
+      <Link>tuples.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
