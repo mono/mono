@@ -52,6 +52,7 @@
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\null-gc.c" />
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\number-ms.c" />
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\object.c" />
+    <ClCompile Include="$(MonoSourceLocation)\mono\metadata\oop.c" />
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\opcodes.c" />
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\profiler.c" />
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\property-bag.c" />

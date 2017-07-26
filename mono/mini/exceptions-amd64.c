@@ -1151,11 +1151,11 @@ mono_arch_unwindinfo_add_alloc_stack (PUNWIND_INFO unwindinfo, MonoUnwindOp *unw
 static gboolean g_dyn_func_table_inited;
 
 // Dynamic function table used when registering unwind info for OS unwind support.
-static GList *g_dynamic_function_table_begin;
-static GList *g_dynamic_function_table_end;
+GList *g_dynamic_function_table_begin;
+GList *g_dynamic_function_table_end;
 
 // SRW lock (lightweight read/writer lock) protecting dynamic function table.
-static SRWLOCK g_dynamic_function_table_lock = SRWLOCK_INIT;
+SRWLOCK g_dynamic_function_table_lock = SRWLOCK_INIT;
 
 // Module handle used when explicit loading ntdll.
 static HMODULE g_ntdll;

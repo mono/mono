@@ -154,6 +154,9 @@
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\object.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="$(MonoSourceLocation)\mono\metadata\oop.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\opcodes.c">
       <Filter>Source Files</Filter>
     </ClCompile>
