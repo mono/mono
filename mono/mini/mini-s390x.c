@@ -4716,7 +4716,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_GC_SAFE_POINT: {
 			guint8 *br;
 
-			g_assert (mono_threads_is_coop_enabled ());
+			g_assert (mono_threads_safepoints_enabled ());
 
 			s390_chi (code, ins->sreg1, 1);	
 			s390_je  (code, 0); CODEPTR(code, br);

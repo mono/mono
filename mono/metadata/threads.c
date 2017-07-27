@@ -4714,7 +4714,7 @@ self_interrupt_thread (void *_unused)
 
 	exc = mono_thread_execute_interruption ();
 	if (!exc) {
-		if (mono_threads_is_coop_enabled ()) {
+		if (mono_threads_safepoints_enabled ()) {
 			/* We can return from an async call in coop, as
 			 * it's simply called when exiting the safepoint */
 			return;
@@ -4757,10 +4757,10 @@ mono_thread_info_get_last_managed (MonoThreadInfo *info)
 	 * any runtime locks while unwinding. In coop case we shouldn't safepoint in regions
 	 * where we hold runtime locks.
 	 */
-	if (!mono_threads_is_coop_enabled ())
+	if (!mono_threads_safepoints_enabled ())
 		mono_thread_info_set_is_async_context (TRUE);
 	mono_get_eh_callbacks ()->mono_walk_stack_with_state (last_managed, mono_thread_info_get_suspend_state (info), MONO_UNWIND_SIGNAL_SAFE, &ji);
-	if (!mono_threads_is_coop_enabled ())
+	if (!mono_threads_safepoints_enabled ())
 		mono_thread_info_set_is_async_context (FALSE);
 	return ji;
 }
@@ -4868,7 +4868,7 @@ async_suspend_critical (MonoThreadInfo *info, gpointer ud)
 	running_managed = mono_jit_info_match (ji, MONO_CONTEXT_GET_IP (&mono_thread_info_get_suspend_state (info)->ctx));
 
 	if (running_managed && !protected_wrapper) {
-		if (mono_threads_is_coop_enabled ()) {
+		if (mono_threads_safepoints_enabled ()) {
 			mono_thread_info_setup_async_call (info, self_interrupt_thread, NULL);
 			return MonoResumeThread;
 		} else {
@@ -5106,9 +5106,7 @@ ves_icall_System_Threading_Thread_GetStackTraces (MonoArray **out_threads, MonoA
 /*
  * mono_threads_attach_coop: called by native->managed wrappers
  *
- *  - @dummy:
- *    - blocking mode: contains gc unsafe transition cookie
- *    - non-blocking mode: contains random data
+ *  - @dummy: contains gc unsafe transition cookie
  *  - @return: the original domain which needs to be restored, or NULL.
  */
 gpointer
@@ -5130,8 +5128,7 @@ mono_threads_attach_coop (MonoDomain *domain, gpointer *dummy)
 	 * If we try to reattach we do a BLOCKING->RUNNING transition.  If the thread
 	 * is fresh, mono_thread_attach() will do a STARTING->RUNNING transition so
 	 * we're only responsible for making the cookie. */
-	if (mono_threads_is_blocking_transition_enabled ())
-		external = !(info = mono_thread_info_current_unchecked ()) || !mono_thread_info_is_live (info);
+	external = !(info = mono_thread_info_current_unchecked ()) || !mono_thread_info_is_live (info);
 
 	if (!mono_thread_internal_current ()) {
 		mono_thread_attach_full (domain, FALSE);
@@ -5143,15 +5140,13 @@ mono_threads_attach_coop (MonoDomain *domain, gpointer *dummy)
 	if (orig != domain)
 		mono_domain_set (domain, TRUE);
 
-	if (mono_threads_is_blocking_transition_enabled ()) {
-		if (external) {
-			/* mono_thread_attach put the thread in RUNNING mode from STARTING, but we need to
-			 * return the right cookie. */
-			*dummy = mono_threads_enter_gc_unsafe_region_cookie ();
-		} else {
-			/* thread state (BLOCKING|RUNNING) -> RUNNING */
-			*dummy = mono_threads_enter_gc_unsafe_region (dummy);
-		}
+	if (external) {
+		/* mono_thread_attach put the thread in RUNNING mode from STARTING, but we need to
+		 * return the right cookie. */
+		*dummy = mono_threads_enter_gc_unsafe_region_cookie ();
+	} else {
+		/* thread state (BLOCKING|RUNNING) -> RUNNING */
+		*dummy = mono_threads_enter_gc_unsafe_region (dummy);
 	}
 
 	return orig;
@@ -5161,9 +5156,7 @@ mono_threads_attach_coop (MonoDomain *domain, gpointer *dummy)
  * mono_threads_detach_coop: called by native->managed wrappers
  *
  *  - @cookie: the original domain which needs to be restored, or NULL.
- *  - @dummy:
- *    - blocking mode: contains gc unsafe transition cookie
- *    - non-blocking mode: contains random data
+ *  - @dummy: contains gc unsafe transition cookie
  */
 void
 mono_threads_detach_coop (gpointer cookie, gpointer *dummy)
@@ -5175,11 +5168,9 @@ mono_threads_detach_coop (gpointer cookie, gpointer *dummy)
 	domain = mono_domain_get ();
 	g_assert (domain);
 
-	if (mono_threads_is_blocking_transition_enabled ()) {
-		/* it won't do anything if cookie is NULL
-		 * thread state RUNNING -> (RUNNING|BLOCKING) */
-		mono_threads_exit_gc_unsafe_region (*dummy, dummy);
-	}
+	/* it won't do anything if cookie is NULL
+	 * thread state RUNNING -> (RUNNING|BLOCKING) */
+	mono_threads_exit_gc_unsafe_region (*dummy, dummy);
 
 	if (orig != domain) {
 		if (!orig)

@@ -7695,12 +7695,10 @@ mono_marshal_emit_native_wrapper (MonoImage *image, MonoMethodBuilder *mb, MonoM
 		mono_mb_add_local (mb, sig->ret);
 	}
 
-	if (mono_threads_is_blocking_transition_enabled ()) {
-		/* local 4, dummy local used to get a stack address for suspend funcs */
-		coop_gc_stack_dummy = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
-		/* local 5, the local to be used when calling the suspend funcs */
-		coop_gc_var = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
-	}
+	/* local 4, dummy local used to get a stack address for suspend funcs */
+	coop_gc_stack_dummy = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
+	/* local 5, the local to be used when calling the suspend funcs */
+	coop_gc_var = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
 
 	/*
 	 * cookie = mono_threads_enter_gc_safe_region_unbalanced (ref dummy);
@@ -7736,19 +7734,21 @@ mono_marshal_emit_native_wrapper (MonoImage *image, MonoMethodBuilder *mb, MonoM
 	}
 
 	// In coop mode need to register blocking state during native call
-	if (mono_threads_is_blocking_transition_enabled ()) {
-		// Perform an extra, early lookup of the function address, so any exceptions
-		// potentially resulting from the lookup occur before entering blocking mode.
-		if (!func_param && !MONO_CLASS_IS_IMPORT (mb->method->klass) && aot) {
-			mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
-			mono_mb_emit_op (mb, CEE_MONO_ICALL_ADDR, &piinfo->method);
-			mono_mb_emit_byte (mb, CEE_POP); // Result not needed yet
-		}
-
-		mono_mb_emit_ldloc_addr (mb, coop_gc_stack_dummy);
-		mono_mb_emit_icall (mb, mono_threads_enter_gc_safe_region_unbalanced);
-		mono_mb_emit_stloc (mb, coop_gc_var);
+	// Perform an extra, early lookup of the function address, so any exceptions
+	// potentially resulting from the lookup occur before entering blocking mode.
+	if (!func_param && !MONO_CLASS_IS_IMPORT (mb->method->klass) && aot) {
+		mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+		mono_mb_emit_op (mb, CEE_MONO_ICALL_ADDR, &piinfo->method);
+		mono_mb_emit_byte (mb, CEE_POP); // Result not needed yet
 	}
+
+	mono_mb_emit_ldloc_addr (mb, coop_gc_stack_dummy);
+	mono_mb_emit_icall (mb, mono_threads_enter_gc_safe_region_unbalanced);
+	mono_mb_emit_stloc (mb, coop_gc_var);
+
+	mono_mb_emit_ldloc_addr (mb, coop_gc_stack_dummy);
+	mono_mb_emit_icall (mb, mono_threads_enter_gc_safe_region_unbalanced);
+	mono_mb_emit_stloc (mb, coop_gc_var);
 
 	/* push all arguments */
 
@@ -7821,11 +7821,9 @@ mono_marshal_emit_native_wrapper (MonoImage *image, MonoMethodBuilder *mb, MonoM
 	}
 
 	/* Unblock before converting the result, since that can involve calls into the runtime */
-	if (mono_threads_is_blocking_transition_enabled ()) {
-		mono_mb_emit_ldloc (mb, coop_gc_var);
-		mono_mb_emit_ldloc_addr (mb, coop_gc_stack_dummy);
-		mono_mb_emit_icall (mb, mono_threads_exit_gc_safe_region_unbalanced);
-	}
+	mono_mb_emit_ldloc (mb, coop_gc_var);
+	mono_mb_emit_ldloc_addr (mb, coop_gc_stack_dummy);
+	mono_mb_emit_icall (mb, mono_threads_exit_gc_safe_region_unbalanced);
 
 	/* convert the result */
 	if (!sig->ret->byref) {
@@ -8590,21 +8588,16 @@ mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *i
 	/* try { */
 	clause_catch->try_offset = clause_finally->try_offset = mono_mb_get_label (mb);
 
-	if (!mono_threads_is_blocking_transition_enabled ()) {
-		mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
-		mono_mb_emit_byte (mb, CEE_MONO_JIT_ATTACH);
-	} else {
-		/* mono_threads_attach_coop (); */
-		mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
-		mono_mb_emit_byte (mb, CEE_MONO_LDDOMAIN);
-		mono_mb_emit_ldloc_addr (mb, attach_dummy_local);
-		/*
-		 * This icall is special cased in the JIT so it works in native-to-managed wrappers in unattached threads.
-		 * Keep this in sync with the CEE_JIT_ICALL code in the JIT.
-		 */
-		mono_mb_emit_icall (mb, mono_threads_attach_coop);
-		mono_mb_emit_stloc (mb, attach_cookie_local);
-	}
+	/* mono_threads_attach_coop (); */
+	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+	mono_mb_emit_byte (mb, CEE_MONO_LDDOMAIN);
+	mono_mb_emit_ldloc_addr (mb, attach_dummy_local);
+	/*
+	 * This icall is special cased in the JIT so it works in native-to-managed wrappers in unattached threads.
+	 * Keep this in sync with the CEE_JIT_ICALL code in the JIT.
+	 */
+	mono_mb_emit_icall (mb, mono_threads_attach_coop);
+	mono_mb_emit_stloc (mb, attach_cookie_local);
 
 	/* <interrupt check> */
 	emit_thread_interrupt_checkpoint (mb);
@@ -8772,15 +8765,10 @@ mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *i
 	clause_finally->try_len = mono_mb_get_label (mb) - clause_finally->try_offset;
 	clause_finally->handler_offset = mono_mb_get_label (mb);
 
-	if (!mono_threads_is_blocking_transition_enabled ()) {
-		mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
-		mono_mb_emit_byte (mb, CEE_MONO_JIT_DETACH);
-	} else {
-		/* mono_threads_detach_coop (); */
-		mono_mb_emit_ldloc (mb, attach_cookie_local);
-		mono_mb_emit_ldloc_addr (mb, attach_dummy_local);
-		mono_mb_emit_icall (mb, mono_threads_detach_coop);
-	}
+	/* mono_threads_detach_coop (); */
+	mono_mb_emit_ldloc (mb, attach_cookie_local);
+	mono_mb_emit_ldloc_addr (mb, attach_dummy_local);
+	mono_mb_emit_icall (mb, mono_threads_detach_coop);
 
 	/* if (ex != -1) */
 	mono_mb_emit_ldloc (mb, ex_local);
@@ -12180,7 +12168,7 @@ mono_marshal_get_thunk_invoke_wrapper (MonoMethod *method)
 	g_assert (method);
 
 	// FIXME: we need to store the exception into a MonoHandle
-	g_assert (!mono_threads_is_coop_enabled ());
+	g_assert (!mono_threads_safepoints_enabled ());
 
 	klass = method->klass;
 	image = method->klass->image;

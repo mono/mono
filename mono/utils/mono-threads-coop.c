@@ -117,8 +117,6 @@ mono_threads_state_poll (void)
 static void
 mono_threads_state_poll_with_info (MonoThreadInfo *info)
 {
-	g_assert (mono_threads_is_blocking_transition_enabled ());
-
 	++coop_do_polling_count;
 
 	if (!info)
@@ -206,9 +204,6 @@ mono_threads_enter_gc_safe_region_with_info (MonoThreadInfo *info, gpointer *sta
 {
 	gpointer cookie;
 
-	if (!mono_threads_is_blocking_transition_enabled ())
-		return NULL;
-
 	cookie = mono_threads_enter_gc_safe_region_unbalanced_with_info (info, stackdata);
 
 #ifdef ENABLE_CHECKED_BUILD_GC
@@ -228,9 +223,6 @@ mono_threads_enter_gc_safe_region_unbalanced (gpointer *stackdata)
 static gpointer
 mono_threads_enter_gc_safe_region_unbalanced_with_info (MonoThreadInfo *info, gpointer *stackdata)
 {
-	if (!mono_threads_is_blocking_transition_enabled ())
-		return NULL;
-
 	++coop_do_blocking_count;
 
 	check_info (info, "enter", "safe");
@@ -255,9 +247,6 @@ retry:
 void
 mono_threads_exit_gc_safe_region (gpointer cookie, gpointer *stackdata)
 {
-	if (!mono_threads_is_blocking_transition_enabled ())
-		return;
-
 #ifdef ENABLE_CHECKED_BUILD_GC
 	if (mono_check_mode_enabled (MONO_CHECK_MODE_GC))
 		coop_tls_pop (cookie);
@@ -270,9 +259,6 @@ void
 mono_threads_exit_gc_safe_region_unbalanced (gpointer cookie, gpointer *stackdata)
 {
 	MonoThreadInfo *info;
-
-	if (!mono_threads_is_blocking_transition_enabled ())
-		return;
 
 	info = (MonoThreadInfo *)cookie;
 
@@ -314,9 +300,6 @@ mono_threads_enter_gc_unsafe_region_with_info (THREAD_INFO_TYPE *info, gpointer 
 {
 	gpointer cookie;
 
-	if (!mono_threads_is_blocking_transition_enabled ())
-		return NULL;
-
 	cookie = mono_threads_enter_gc_unsafe_region_unbalanced_with_info (info, stackdata);
 
 #ifdef ENABLE_CHECKED_BUILD_GC
@@ -336,9 +319,6 @@ mono_threads_enter_gc_unsafe_region_unbalanced (gpointer *stackdata)
 gpointer
 mono_threads_enter_gc_unsafe_region_unbalanced_with_info (MonoThreadInfo *info, gpointer *stackdata)
 {
-	if (!mono_threads_is_blocking_transition_enabled ())
-		return NULL;
-
 	++coop_reset_blocking_count;
 
 	check_info (info, "enter", "unsafe");
@@ -376,8 +356,6 @@ mono_threads_enter_gc_unsafe_region_cookie (void)
 {
 	MonoThreadInfo *info;
 
-	g_assert (mono_threads_is_blocking_transition_enabled ());
-
 	info = mono_thread_info_current_unchecked ();
 
 	check_info (info, "enter (cookie)", "unsafe");
@@ -393,9 +371,6 @@ mono_threads_enter_gc_unsafe_region_cookie (void)
 void
 mono_threads_exit_gc_unsafe_region (gpointer cookie, gpointer *stackdata)
 {
-	if (!mono_threads_is_blocking_transition_enabled ())
-		return;
-
 #ifdef ENABLE_CHECKED_BUILD_GC
 	if (mono_check_mode_enabled (MONO_CHECK_MODE_GC))
 		coop_tls_pop (cookie);
@@ -407,9 +382,6 @@ mono_threads_exit_gc_unsafe_region (gpointer cookie, gpointer *stackdata)
 void
 mono_threads_exit_gc_unsafe_region_unbalanced (gpointer cookie, gpointer *stackdata)
 {
-	if (!mono_threads_is_blocking_transition_enabled ())
-		return;
-
 	if (!cookie)
 		return;
 
@@ -423,7 +395,7 @@ mono_threads_assert_gc_unsafe_region (void)
 }
 
 gboolean
-mono_threads_is_coop_enabled (void)
+mono_threads_safepoints_enabled (void)
 {
 #if defined(USE_COOP_GC)
 	return TRUE;
@@ -452,9 +424,6 @@ mono_threads_is_blocking_transition_enabled (void)
 void
 mono_threads_coop_init (void)
 {
-	if (!mono_threads_is_coop_enabled () && !mono_threads_is_blocking_transition_enabled ())
-		return;
-
 	mono_counters_register ("Coop Reset Blocking", MONO_COUNTER_GC | MONO_COUNTER_INT, &coop_reset_blocking_count);
 	mono_counters_register ("Coop Try Blocking", MONO_COUNTER_GC | MONO_COUNTER_INT, &coop_try_blocking_count);
 	mono_counters_register ("Coop Do Blocking", MONO_COUNTER_GC | MONO_COUNTER_INT, &coop_do_blocking_count);
@@ -470,13 +439,13 @@ mono_threads_coop_init (void)
 void
 mono_threads_coop_begin_global_suspend (void)
 {
-	if (mono_threads_is_coop_enabled ())
+	if (mono_threads_safepoints_enabled ())
 		mono_polling_required = 1;
 }
 
 void
 mono_threads_coop_end_global_suspend (void)
 {
-	if (mono_threads_is_coop_enabled ())
+	if (mono_threads_safepoints_enabled ())
 		mono_polling_required = 0;
 }
