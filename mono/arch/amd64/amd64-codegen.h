@@ -608,6 +608,18 @@ typedef union {
 	amd64_codegen_post(inst); \
 } while (0)
 
+#define amd64_prefetch2(inst,reg) do { \
+	*(inst)++ = 0x0f; \
+	*(inst)++ = 0x18; \
+	{   \
+		const int style = 3; \
+		guint8 val = ((style << 3) | ((reg) & 0x7)); \
+		*(inst)++ = val; \
+	} \
+} while (0)
+
+/* x86_reg_emit ((inst),1,(reg) & 0x7); */
+
 /* From the AMD64 Software Optimization Manual */
 #define amd64_padding_size(inst,size) \
     do { \

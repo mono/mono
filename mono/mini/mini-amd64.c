@@ -5686,6 +5686,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				x86_mfence (code);
 			break;
 		}
+		case OP_PREFETCH:
+			amd64_prefetch2 (code, ins->sreg1);
+			break;
 		case OP_CARD_TABLE_WBARRIER: {
 			int ptr = ins->sreg1;
 			int value = ins->sreg2;
