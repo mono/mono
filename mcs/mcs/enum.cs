@@ -42,6 +42,12 @@ namespace Mono.CSharp
 			{
 				return underlyingType;
 			}
+
+			public override Type UnderlyingSystemType {
+				get {
+					return underlyingType;
+				}
+			}
 		}
 #endif
 
