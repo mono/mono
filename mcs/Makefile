@@ -23,6 +23,8 @@ xbuild_12_SUBDIRS := build class tools/xbuild
 xbuild_14_SUBDIRS := build class tools/xbuild
 winaot_SUBDIRS := build class
 orbis_SUBDIRS := build class
+unityjit_SUBDIRS := build class
+unityaot_SUBDIRS := build class
 
 include build/rules.make
 
@@ -77,6 +79,8 @@ $(_boot_:%=profile-do--testing_aot_hybrid--%):        profile-do--testing_aot_hy
 $(_boot_:%=profile-do--testing_aot_full--%):          profile-do--testing_aot_full--%:          profile-do--build--%
 $(_boot_:%=profile-do--winaot--%):              profile-do--winaot--%:              profile-do--build--%
 $(_boot_:%=profile-do--orbis--%):              profile-do--orbis--%:              profile-do--build--%
+$(_boot_:%=profile-do--unityjit--%):              profile-do--unityjit--%:              profile-do--build--%
+$(_boot_:%=profile-do--unityaot--%):              profile-do--unityaot--%:              profile-do--build--%
 $(_boot_:%=profile-do--build--%):             profile-do--build--%:             profile-do--basic--%
 
 testcorlib:

@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NETSTANDARD
-
 namespace System.Reflection.Metadata
 {
 	public static class AssemblyExtensions
@@ -42,5 +40,3 @@ namespace System.Reflection.Metadata
 		}
 	}
 }
-
-#endif

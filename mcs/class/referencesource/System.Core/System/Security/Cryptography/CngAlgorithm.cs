@@ -242,7 +242,6 @@ namespace System.Security.Cryptography {
             }
         }
 
-#if NETSTANDARD
         public static CngAlgorithm ECDiffieHellman {
             get {
                 throw new NotImplementedException ();
@@ -254,6 +253,5 @@ namespace System.Security.Cryptography {
                 throw new NotImplementedException ();
             }
         }
-#endif
     }
 }

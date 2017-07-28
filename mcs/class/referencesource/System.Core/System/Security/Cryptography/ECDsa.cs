@@ -41,7 +41,6 @@ namespace System.Security.Cryptography {
             return CryptoConfig.CreateFromName(algorithm) as ECDsa;
         }
 
-#if NETSTANDARD
         public static ECDsa Create (ECCurve curve)
         {
             throw new NotImplementedException ();
@@ -71,7 +70,6 @@ namespace System.Security.Cryptography {
         {
             throw new NotImplementedException ();
         }
-#endif
 
         //
         // Signature operations

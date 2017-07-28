@@ -6,3 +6,7 @@ AssemblyInfo.cs
 ../../System.Drawing/System.Drawing/RectangleF.cs
 ../../System.Drawing/System.Drawing/Size.cs
 ../../System.Drawing/System.Drawing/SizeF.cs
+
+../../System.Drawing/System.Drawing/Color.cs
+../../System.Drawing/System.Drawing/KnownColor.cs
+../../System.Drawing/System.Drawing/KnownColors.cs

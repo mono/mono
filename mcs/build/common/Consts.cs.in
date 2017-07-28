@@ -40,7 +40,7 @@ static class Consts
 	public const string MonoCopyright = "(c) Various Mono authors";
 	public const int MonoCorlibVersion = @MONO_CORLIB_VERSION@;
 
-#if MOBILE
+#if MOBILE && !UNITY_AOT
 	// Versions of .NET Framework for Silverlight 4.0
 	public const string FxVersion = "2.0.5.0";
 	public const string VsVersion = "9.0.0.0"; // unused, but needed for compilation
@@ -78,7 +78,7 @@ static class Consts
 #error No profile symbols defined.
 #endif
 
-#if MOBILE
+#if MOBILE && !UNITY_AOT
 	const string PublicKeyToken = "7cec85d7bea7798e";
 #else
 	const string PublicKeyToken = "b77a5c561934e089";

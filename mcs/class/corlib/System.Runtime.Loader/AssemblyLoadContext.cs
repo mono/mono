@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NETSTANDARD
-
 namespace System.Runtime.Loader
 {
 	//
@@ -106,5 +104,3 @@ namespace System.Runtime.Loader
 #pragma warning restore
 	}
 }
-
-#endif

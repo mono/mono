@@ -119,7 +119,6 @@ namespace System.Security.Cryptography {
             }
         }
 
-#if NETSTANDARD
         public static CngKeyBlobFormat EccFullPrivateBlob {
             get {
                 throw new NotImplementedException ();
@@ -131,7 +130,6 @@ namespace System.Security.Cryptography {
                 throw new NotImplementedException ();
             }
         }
-#endif
 
         public static CngKeyBlobFormat GenericPrivateBlob {
             get {

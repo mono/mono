@@ -33,7 +33,6 @@ namespace System
             }
         }
 
-#if NETSTANDARD
         public static string TargetFrameworkName
         {
             get
@@ -46,7 +45,6 @@ namespace System
         {
             throw new NotImplementedException();
         }
-#endif
 
         #region Switch APIs
 
