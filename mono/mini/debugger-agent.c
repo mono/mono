@@ -193,6 +193,8 @@ typedef struct {
 	MonoContext handler_ctx;
 	/* Whenever thread_stop () was called for this thread */
 	gboolean terminated;
+	/* Whenever thread_stop () was called for this thread */
+	gboolean attached;
 
 	/* Number of thread interruptions not yet processed */
 	gint32 interrupt_count;
@@ -602,6 +604,10 @@ static void thread_startup (MonoProfiler *prof, gsize tid);
 
 static void thread_end (MonoProfiler *prof, gsize tid);
 
+static void thread_fast_attach (MonoProfiler *prof, gsize tid);
+
+static void thread_fast_detach (MonoProfiler *prof, gsize tid);
+
 static void appdomain_load (MonoProfiler *prof, MonoDomain *domain, int result);
 
 static void appdomain_unload (MonoProfiler *prof, MonoDomain *domain);
@@ -819,6 +825,7 @@ mono_debugger_agent_init (void)
 	mono_profiler_install_runtime_initialized (runtime_initialized);
 	mono_profiler_install_appdomain (NULL, appdomain_load, NULL, appdomain_unload);
 	mono_profiler_install_thread (thread_startup, thread_end);
+	mono_profiler_install_thread_fast_attach_detach (thread_fast_attach, thread_fast_detach);
 	mono_profiler_install_assembly (NULL, assembly_load, assembly_unload, NULL);
 	mono_profiler_install_jit_end (jit_end);
 	mono_profiler_install_method_invoke (start_runtime_invoke, end_runtime_invoke);
@@ -2414,7 +2421,7 @@ count_thread (gpointer key, gpointer value, gpointer user_data)
 {
 	DebuggerTlsData *tls = value;
 
-	if (!tls->suspended && !tls->terminated)
+	if (!tls->suspended && !tls->terminated && tls->attached)
 		*(int*)user_data = *(int*)user_data + 1;
 }
 
@@ -3175,6 +3182,7 @@ thread_startup (MonoProfiler *prof, gsize tid)
 	tls->resume_event = CreateEvent (NULL, FALSE, FALSE, NULL);
 	MONO_GC_REGISTER_ROOT (tls->thread);
 	tls->thread = thread;
+	tls->attached = TRUE;
 	tls->invoke_addr_stack = NULL;
 	TlsSetValue (debugger_tls_id, tls);
 
@@ -3226,6 +3234,40 @@ thread_end (MonoProfiler *prof, gsize tid)
 		DEBUG (1, fprintf (log_file, "[%p] Thread terminated, obj=%p, tls=%p.\n", (gpointer)tid, thread, tls));
 		process_profiler_event (EVENT_KIND_THREAD_DEATH, thread);
 	}
+}
+
+static
+void thread_fast_attach (MonoProfiler *prof, gsize tid)
+{
+	MonoInternalThread *thread;
+	DebuggerTlsData *tls = NULL;
+
+	mono_loader_lock ();
+	thread = mono_g_hash_table_lookup (tid_to_thread, (gpointer)tid);
+	if (thread) {
+		tls = mono_g_hash_table_lookup (thread_to_tls, thread);
+		if (tls) {
+			tls->attached = TRUE;
+		}
+	}
+	mono_loader_unlock ();
+}
+
+static
+void thread_fast_detach (MonoProfiler *prof, gsize tid)
+{
+	MonoInternalThread *thread;
+	DebuggerTlsData *tls = NULL;
+
+	mono_loader_lock ();
+	thread = mono_g_hash_table_lookup (tid_to_thread, (gpointer)tid);
+	if (thread) {
+		tls = mono_g_hash_table_lookup (thread_to_tls, thread);
+		if (tls) {
+			tls->attached = FALSE;
+		}
+	}
+	mono_loader_unlock ();
 }
 
 static void

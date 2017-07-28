@@ -148,6 +148,7 @@ void mono_profiler_install_method_free (MonoProfileMethodFunc callback);
 void mono_profiler_install_method_invoke (MonoProfileMethodFunc start, MonoProfileMethodFunc end);
 void mono_profiler_install_enter_leave (MonoProfileMethodFunc enter, MonoProfileMethodFunc fleave);
 void mono_profiler_install_thread      (MonoProfileThreadFunc start, MonoProfileThreadFunc end);
+void mono_profiler_install_thread_fast_attach_detach (MonoProfileThreadFunc fast_attach, MonoProfileThreadFunc fast_detach);
 void mono_profiler_install_transition  (MonoProfileMethodResult callback);
 void mono_profiler_install_allocation  (MonoProfileAllocFunc callback);
 void mono_profiler_install_monitor     (MonoProfileMonitorFunc callback);
