@@ -807,22 +807,6 @@ static void file_close (gpointer handle, gpointer data);
 static void file_details (gpointer data);
 static const gchar* file_typename (void);
 static gsize file_typesize (void);
-static gint file_getfiletype(void);
-static gboolean file_read(gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread);
-static gboolean file_write(gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten);
-static gboolean file_flush(gpointer handle);
-static guint32 file_seek(gpointer handle, gint32 movedistance,
-			 gint32 *highmovedistance, gint method);
-static gboolean file_setendoffile(gpointer handle);
-static guint32 file_getfilesize(gpointer handle, guint32 *highsize);
-static gboolean file_getfiletime(gpointer handle, FILETIME *create_time,
-				 FILETIME *access_time,
-				 FILETIME *write_time);
-static gboolean file_setfiletime(gpointer handle,
-				 const FILETIME *create_time,
-				 const FILETIME *access_time,
-				 const FILETIME *write_time);
-static guint32 GetDriveTypeFromPath (const gchar *utf8_root_path_name);
 
 /* File handle is only signalled for overlapped IO */
 static MonoW32HandleOps _wapi_file_ops = {
@@ -841,9 +825,6 @@ static void console_close (gpointer handle, gpointer data);
 static void console_details (gpointer data);
 static const gchar* console_typename (void);
 static gsize console_typesize (void);
-static gint console_getfiletype(void);
-static gboolean console_read(gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread);
-static gboolean console_write(gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten);
 
 /* Console is mostly the same as file, except it can block waiting for
  * input or output
@@ -879,9 +860,6 @@ static void pipe_close (gpointer handle, gpointer data);
 static void pipe_details (gpointer data);
 static const gchar* pipe_typename (void);
 static gsize pipe_typesize (void);
-static gint pipe_getfiletype (void);
-static gboolean pipe_read (gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread);
-static gboolean pipe_write (gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten);
 
 /* Pipe handles
  */
@@ -895,63 +873,6 @@ static MonoW32HandleOps _wapi_pipe_ops = {
 	pipe_details,	/* details */
 	pipe_typename,	/* typename */
 	pipe_typesize,	/* typesize */
-};
-
-static const struct {
-	/* File, console and pipe handles */
-	gint (*getfiletype)(void);
-	
-	/* File, console and pipe handles */
-	gboolean (*readfile)(gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread);
-	gboolean (*writefile)(gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten);
-	gboolean (*flushfile)(gpointer handle);
-	
-	/* File handles */
-	guint32 (*seek)(gpointer handle, gint32 movedistance,
-			gint32 *highmovedistance, gint method);
-	gboolean (*setendoffile)(gpointer handle);
-	guint32 (*getfilesize)(gpointer handle, guint32 *highsize);
-	gboolean (*getfiletime)(gpointer handle, FILETIME *create_time,
-				FILETIME *access_time,
-				FILETIME *write_time);
-	gboolean (*setfiletime)(gpointer handle,
-				const FILETIME *create_time,
-				const FILETIME *access_time,
-				const FILETIME *write_time);
-} io_ops[MONO_W32HANDLE_COUNT]={
-	{NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
-	/* file */
-	{file_getfiletype,
-	 file_read, file_write,
-	 file_flush, file_seek,
-	 file_setendoffile,
-	 file_getfilesize,
-	 file_getfiletime,
-	 file_setfiletime},
-	/* console */
-	{console_getfiletype,
-	 console_read,
-	 console_write,
-	 NULL, NULL, NULL, NULL, NULL, NULL},
-	/* thread */
-	{NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
-	/* sem */
-	{NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
-	/* mutex */
-	{NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
-	/* event */
-	{NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
-	/* socket (will need at least read and write) */
-	{NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
-	/* find */
-	{NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
-	/* process */
-	{NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
-	/* pipe */
-	{pipe_getfiletype,
-	 pipe_read,
-	 pipe_write,
-	 NULL, NULL, NULL, NULL, NULL, NULL},
 };
 
 static gboolean lock_while_writing = FALSE;
@@ -1136,11 +1057,6 @@ static const gchar* file_typename (void)
 static gsize file_typesize (void)
 {
 	return sizeof (MonoW32HandleFile);
-}
-
-static gint file_getfiletype(void)
-{
-	return(FILE_TYPE_DISK);
 }
 
 static gboolean
@@ -1863,11 +1779,6 @@ static gsize console_typesize (void)
 	return sizeof (MonoW32HandleFile);
 }
 
-static gint console_getfiletype(void)
-{
-	return(FILE_TYPE_CHAR);
-}
-
 static gboolean
 console_read(gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread)
 {
@@ -2019,11 +1930,6 @@ static const gchar* pipe_typename (void)
 static gsize pipe_typesize (void)
 {
 	return sizeof (MonoW32HandleFile);
-}
-
-static gint pipe_getfiletype(void)
-{
-	return(FILE_TYPE_PIPE);
 }
 
 static gboolean
@@ -3098,139 +3004,121 @@ mono_w32file_get_std_handle (gint stdhandle)
 gboolean
 mono_w32file_read (gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread)
 {
-	MonoW32HandleType type;
-
-	type = mono_w32handle_get_type (handle);
-	
-	if(io_ops[type].readfile==NULL) {
+	switch (mono_w32handle_get_type (handle)) {
+	case MONO_W32HANDLE_FILE:
+		return file_read(handle, buffer, numbytes, bytesread);
+	case MONO_W32HANDLE_CONSOLE:
+		return console_read(handle, buffer, numbytes, bytesread);
+	case MONO_W32HANDLE_PIPE:
+		return pipe_read(handle, buffer, numbytes, bytesread);
+	default:
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return(FALSE);
+		return FALSE;
 	}
-	
-	return(io_ops[type].readfile (handle, buffer, numbytes, bytesread));
 }
 
 gboolean
 mono_w32file_write (gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten)
 {
-	MonoW32HandleType type;
-
-	type = mono_w32handle_get_type (handle);
-	
-	if(io_ops[type].writefile==NULL) {
+	switch (mono_w32handle_get_type (handle)) {
+	case MONO_W32HANDLE_FILE:
+		return file_write(handle, buffer, numbytes, byteswritten);
+	case MONO_W32HANDLE_CONSOLE:
+		return console_write(handle, buffer, numbytes, byteswritten);
+	case MONO_W32HANDLE_PIPE:
+		return pipe_write(handle, buffer, numbytes, byteswritten);
+	default:
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return(FALSE);
+		return FALSE;
 	}
-	
-	return(io_ops[type].writefile (handle, buffer, numbytes, byteswritten));
 }
 
 gboolean
 mono_w32file_flush (gpointer handle)
 {
-	MonoW32HandleType type;
-
-	type = mono_w32handle_get_type (handle);
-	
-	if(io_ops[type].flushfile==NULL) {
+	switch (mono_w32handle_get_type (handle)) {
+	case MONO_W32HANDLE_FILE:
+		return file_flush(handle);
+	default:
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return(FALSE);
+		return FALSE;
 	}
-	
-	return(io_ops[type].flushfile (handle));
 }
 
 gboolean
 mono_w32file_truncate (gpointer handle)
 {
-	MonoW32HandleType type;
-
-	type = mono_w32handle_get_type (handle);
-	
-	if (io_ops[type].setendoffile == NULL) {
+	switch (mono_w32handle_get_type (handle)) {
+	case MONO_W32HANDLE_FILE:
+		return file_setendoffile(handle);
+	default:
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return(FALSE);
+		return FALSE;
 	}
-	
-	return(io_ops[type].setendoffile (handle));
 }
 
 guint32
 mono_w32file_seek (gpointer handle, gint32 movedistance, gint32 *highmovedistance, guint32 method)
 {
-	MonoW32HandleType type;
-
-	type = mono_w32handle_get_type (handle);
-	
-	if (io_ops[type].seek == NULL) {
+	switch (mono_w32handle_get_type (handle)) {
+	case MONO_W32HANDLE_FILE:
+		return file_seek (handle, movedistance, highmovedistance, method);
+	default:
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return(INVALID_SET_FILE_POINTER);
+		return INVALID_SET_FILE_POINTER;
 	}
-	
-	return(io_ops[type].seek (handle, movedistance, highmovedistance,
-				  method));
 }
 
 gint
 mono_w32file_get_type(gpointer handle)
 {
-	MonoW32HandleType type;
-
-	type = mono_w32handle_get_type (handle);
-	
-	if (io_ops[type].getfiletype == NULL) {
+	switch (mono_w32handle_get_type (handle)) {
+	case MONO_W32HANDLE_FILE:
+		return FILE_TYPE_DISK;
+	case MONO_W32HANDLE_CONSOLE:
+		return FILE_TYPE_CHAR;
+	case MONO_W32HANDLE_PIPE:
+		return FILE_TYPE_PIPE;
+	default:
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return(FILE_TYPE_UNKNOWN);
+		return FILE_TYPE_UNKNOWN;
 	}
-	
-	return(io_ops[type].getfiletype ());
 }
 
 static guint32
 GetFileSize(gpointer handle, guint32 *highsize)
 {
-	MonoW32HandleType type;
-
-	type = mono_w32handle_get_type (handle);
-	
-	if (io_ops[type].getfilesize == NULL) {
+	switch (mono_w32handle_get_type (handle)) {
+	case MONO_W32HANDLE_FILE:
+		return file_getfilesize(handle, highsize);
+	default:
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return(INVALID_FILE_SIZE);
+		return INVALID_FILE_SIZE;
 	}
-	
-	return(io_ops[type].getfilesize (handle, highsize));
 }
 
 gboolean
 mono_w32file_get_times(gpointer handle, FILETIME *create_time, FILETIME *access_time, FILETIME *write_time)
 {
-	MonoW32HandleType type;
-
-	type = mono_w32handle_get_type (handle);
-	
-	if (io_ops[type].getfiletime == NULL) {
+	switch (mono_w32handle_get_type (handle)) {
+	case MONO_W32HANDLE_FILE:
+		return file_getfiletime(handle, create_time, access_time, write_time);
+	default:
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return(FALSE);
+		return FALSE;
 	}
-	
-	return(io_ops[type].getfiletime (handle, create_time, access_time,
-					 write_time));
 }
 
 gboolean
 mono_w32file_set_times(gpointer handle, const FILETIME *create_time, const FILETIME *access_time, const FILETIME *write_time)
 {
-	MonoW32HandleType type;
-
-	type = mono_w32handle_get_type (handle);
-	
-	if (io_ops[type].setfiletime == NULL) {
+	switch (mono_w32handle_get_type (handle)) {
+	case MONO_W32HANDLE_FILE:
+		return file_setfiletime(handle, create_time, access_time, write_time);
+	default:
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return(FALSE);
+		return FALSE;
 	}
-	
-	return(io_ops[type].setfiletime (handle, create_time, access_time,
-					 write_time));
 }
 
 /* A tick is a 100-nanosecond interval.  File time epoch is Midnight,
