@@ -161,7 +161,6 @@ namespace Mono.CSharp
 
 		protected override void CloneTo (CloneContext clonectx, Statement target)
 		{
-			throw new NotSupportedException ();
 		}
 
 		protected override bool DoResolve (BlockContext bc)

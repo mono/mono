@@ -67,8 +67,8 @@
     <Compile Include="Mono.Profiler.Log\LogEventVisitor.cs" />
     <Compile Include="Mono.Profiler.Log\LogException.cs" />
     <Compile Include="Mono.Profiler.Log\LogProcessor.cs" />
+    <Compile Include="Mono.Profiler.Log\LogProfiler.cs" />
     <Compile Include="Mono.Profiler.Log\LogReader.cs" />
-    <Compile Include="Mono.Profiler.Log\LogRuntimeProfiler.cs" />
     <Compile Include="Mono.Profiler.Log\LogStream.cs" />
     <Compile Include="Mono.Profiler.Log\LogStreamHeader.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

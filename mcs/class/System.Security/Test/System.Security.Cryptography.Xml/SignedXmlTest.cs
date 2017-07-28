@@ -790,6 +790,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			signedXml.SignedInfo.CanonicalizationMethod = SignedXml.XmlDsigExcC14NTransformUrl;
 
 			Reference reference = new Reference ();
+			reference.DigestMethod = SignedXml.XmlDsigSHA1Url;
 			reference.Uri = "";
 
 			XmlDsigEnvelopedSignatureTransform env = new XmlDsigEnvelopedSignatureTransform ();

@@ -28,7 +28,12 @@
 
 namespace System.Security.Cryptography.X509Certificates
 {
-	public static class RSACertificateExtensions
+#if SYSTEM_SECURITY_DLL
+	internal
+#else
+	public
+#endif
+	static class RSACertificateExtensions
 	{
 		public static RSA GetRSAPrivateKey(this X509Certificate2 certificate)
 		{
