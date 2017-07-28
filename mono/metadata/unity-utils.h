@@ -73,6 +73,7 @@ MonoBoolean mono_unity_class_is_string(MonoClass* klass);
 MonoBoolean mono_unity_class_is_class_type(MonoClass* klass);
 MONO_API gboolean mono_class_is_generic(MonoClass *klass);
 MONO_API gboolean mono_class_is_blittable(MonoClass *klass);
+MONO_API gboolean mono_class_is_inflated(MonoClass *klass);
 
 //method 
 MonoMethod* mono_unity_method_get_generic_definition(MonoMethod* method);
