@@ -2561,6 +2561,8 @@ leave2:
 	return is_ok (error);
 }
 
+#if !defined(PLATFORM_UNITY) || !defined(UNITY_USE_PLATFORM_STUBS)
+
 MonoBoolean
 ves_icall_System_Net_Dns_GetHostByName_internal (MonoString *host, MonoString **h_name, MonoArray **h_aliases, MonoArray **h_addr_list, gint32 hint)
 {
@@ -2605,6 +2607,8 @@ ves_icall_System_Net_Dns_GetHostByName_internal (MonoString *host, MonoString **
 	}
 	return FALSE;
 }
+
+#endif // !PLATFORM_UNITY)|| !UNITY_USE_PLATFORM_STUBS
 
 MonoBoolean
 ves_icall_System_Net_Dns_GetHostByAddr_internal (MonoString *addr, MonoString **h_name, MonoArray **h_aliases, MonoArray **h_addr_list, gint32 hint)

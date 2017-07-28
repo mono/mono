@@ -926,13 +926,23 @@ mono_gc_suspend_finalizers (void)
 int
 mono_gc_get_suspend_signal (void)
 {
+#if defined(PLATFORM_UNITY) && defined(UNITY_USE_PLATFORM_STUBS)
+	g_assert(0 && "This function is not yet implemented for the Unity platform.");
+	return 0;
+#else
 	return GC_get_suspend_signal ();
+#endif /* PLATFORM_UNITY && UNITY_USE_PLATFORM_STUBS */
 }
 
 int
 mono_gc_get_restart_signal (void)
 {
+#if defined(PLATFORM_UNITY) && defined(UNITY_USE_PLATFORM_STUBS)
+	g_assert(0 && "This function is not yet implemented for the Unity platform.");
+	return 0;
+#else
 	return GC_get_thr_restart_signal ();
+#endif /* PLATFORM_UNITY && UNITY_USE_PLATFORM_STUBS */
 }
 
 #if defined(USE_COMPILER_TLS) && defined(__linux__) && (defined(__i386__) || defined(__x86_64__)) && !defined(HAVE_BDWGC_GC)
@@ -1500,9 +1510,14 @@ mono_gc_register_for_finalization (MonoObject *obj, void *user_data)
 int
 mono_gc_pthread_create (pthread_t *new_thread, const pthread_attr_t *attr, void *(*start_routine)(void *), void *arg)
 {
+#if defined(PLATFORM_UNITY) && defined(UNITY_USE_PLATFORM_STUBS)
+	g_assert(0 && "This function is not yet implemented for the Unity platform.");
+	return 0;
+#else
 	/* it is being replaced by GC_pthread_create on some
 	 * platforms, see libgc/include/gc_pthread_redirects.h */
 	return pthread_create (new_thread, attr, start_routine, arg);
+#endif /* PLATFORM_UNITY && UNITY_USE_PLATFORM_STUBS */
 }
 #endif
 
