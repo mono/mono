@@ -140,9 +140,6 @@ gboolean
 mono_w32handle_test_capabilities (gpointer handle, MonoW32HandleCapability caps);
 
 void
-mono_w32handle_force_close (gpointer handle, gpointer data);
-
-void
 mono_w32handle_set_signal_state (gpointer handle, gboolean state, gboolean broadcast);
 
 gboolean

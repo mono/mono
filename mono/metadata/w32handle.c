@@ -717,15 +717,6 @@ mono_w32handle_unref (gpointer handle)
 		w32handle_destroy (handle);
 }
 
-static void
-mono_w32handle_ops_close (gpointer handle, gpointer data);
-
-void
-mono_w32handle_force_close (gpointer handle, gpointer data)
-{
-	mono_w32handle_ops_close (handle, data);
-}
-
 void
 mono_w32handle_register_ops (MonoW32HandleType type, MonoW32HandleOps *ops)
 {
@@ -764,24 +755,6 @@ static void (*_wapi_handle_ops_get_close_func (MonoW32HandleType type))(gpointer
 	}
 
 	return (NULL);
-}
-
-static void
-mono_w32handle_ops_close (gpointer handle, gpointer data)
-{
-	MonoW32HandleBase *handle_data;
-	MonoW32HandleType type;
-
-	if (!mono_w32handle_lookup_data (handle, &handle_data)) {
-		return;
-	}
-
-	type = handle_data->type;
-
-	if (handle_ops[type] != NULL &&
-	    handle_ops[type]->close != NULL) {
-		handle_ops[type]->close (handle, data);
-	}
 }
 
 static void

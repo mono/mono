@@ -63,8 +63,6 @@ typedef struct {
 	int still_readable;
 } MonoW32HandleSocket;
 
-static guint32 in_cleanup = 0;
-
 static void
 socket_close (gpointer handle, gpointer data)
 {
@@ -86,12 +84,10 @@ socket_close (gpointer handle, gpointer data)
 	if (ret == -1) {
 		gint errnum = errno;
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: close error: %s", __func__, g_strerror (errno));
-		if (!in_cleanup)
-			mono_w32socket_set_last_error (mono_w32socket_convert_error (errnum));
+		mono_w32socket_set_last_error (mono_w32socket_convert_error (errnum));
 	}
 
-	if (!in_cleanup)
-		socket_handle->saved_error = 0;
+	socket_handle->saved_error = 0;
 }
 
 static void
@@ -130,23 +126,9 @@ mono_w32socket_initialize (void)
 	mono_w32handle_register_ops (MONO_W32HANDLE_SOCKET, &ops);
 }
 
-static gboolean
-cleanup_close (gpointer handle, gpointer data, gpointer user_data)
-{
-	if (mono_w32handle_get_type (handle) == MONO_W32HANDLE_SOCKET)
-		mono_w32handle_force_close (handle, data);
-
-	return FALSE;
-}
-
 void
 mono_w32socket_cleanup (void)
 {
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: cleaning up", __func__);
-
-	in_cleanup = 1;
-	mono_w32handle_foreach (cleanup_close, NULL);
-	in_cleanup = 0;
 }
 
 SOCKET
