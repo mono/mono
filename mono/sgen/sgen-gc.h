@@ -31,6 +31,7 @@ typedef struct _SgenThreadInfo SgenThreadInfo;
 #include "mono/utils/atomic.h"
 #include "mono/utils/mono-os-mutex.h"
 #include "mono/utils/mono-coop-mutex.h"
+#include "mono/utils/ward.h"
 #include "mono/sgen/sgen-conf.h"
 #include "mono/sgen/sgen-hash-table.h"
 #include "mono/sgen/sgen-protocol.h"
@@ -797,23 +798,28 @@ void sgen_clear_togglerefs (char *start, char *end, ScanCopyContext ctx);
 void sgen_process_togglerefs (void);
 void sgen_register_test_toggleref_callback (void);
 
-void sgen_mark_bridge_object (GCObject *obj);
-void sgen_collect_bridge_objects (int generation, ScanCopyContext ctx);
+void sgen_mark_bridge_object (GCObject *obj)
+	MONO_PERMIT (need (sgen_gc_locked));
+void sgen_collect_bridge_objects (int generation, ScanCopyContext ctx)
+	MONO_PERMIT (need (sgen_gc_locked));
 
 typedef gboolean (*SgenObjectPredicateFunc) (GCObject *obj, void *user_data);
 
 void sgen_null_links_if (SgenObjectPredicateFunc predicate, void *data, int generation, gboolean track);
 
 gboolean sgen_gc_is_object_ready_for_finalization (GCObject *object);
-void sgen_gc_lock (void);
-void sgen_gc_unlock (void);
+void sgen_gc_lock (void) MONO_PERMIT (grant (sgen_gc_locked));
+void sgen_gc_unlock (void) MONO_PERMIT (use (sgen_gc_locked), revoke (sgen_gc_locked));
 
 void sgen_queue_finalization_entry (GCObject *obj);
 const char* sgen_generation_name (int generation);
 
-void sgen_finalize_in_range (int generation, ScanCopyContext ctx);
-void sgen_null_link_in_range (int generation, ScanCopyContext ctx, gboolean track);
-void sgen_process_fin_stage_entries (void);
+void sgen_finalize_in_range (int generation, ScanCopyContext ctx)
+	MONO_PERMIT (need (sgen_gc_locked));
+void sgen_null_link_in_range (int generation, ScanCopyContext ctx, gboolean track)
+	MONO_PERMIT (need (sgen_gc_locked));
+void sgen_process_fin_stage_entries (void)
+	MONO_PERMIT (need (sgen_gc_locked));
 gboolean sgen_have_pending_finalizers (void);
 void sgen_object_register_for_finalization (GCObject *obj, void *user_data);
 
@@ -839,9 +845,11 @@ enum {
 void sgen_pin_object (GCObject *object, SgenGrayQueue *queue);
 void sgen_set_pinned_from_failed_allocation (mword objsize);
 
-void sgen_ensure_free_space (size_t size, int generation);
+void sgen_ensure_free_space (size_t size, int generation)
+	MONO_PERMIT (need (sgen_gc_locked));
 void sgen_gc_collect (int generation);
-void sgen_perform_collection (size_t requested_size, int generation_to_collect, const char *reason, gboolean wait_to_finish, gboolean stw);
+void sgen_perform_collection (size_t requested_size, int generation_to_collect, const char *reason, gboolean wait_to_finish, gboolean stw)
+	MONO_PERMIT (need (sgen_gc_locked));
 
 int sgen_gc_collection_count (int generation);
 /* FIXME: what exactly does this return? */
@@ -850,8 +858,10 @@ size_t sgen_gc_get_total_heap_allocation (void);
 
 /* STW */
 
-void sgen_stop_world (int generation);
-void sgen_restart_world (int generation);
+void sgen_stop_world (int generation)
+	MONO_PERMIT (need (sgen_gc_locked));
+void sgen_restart_world (int generation)
+	MONO_PERMIT (need (sgen_gc_locked));
 gboolean sgen_is_world_stopped (void);
 
 gboolean sgen_set_allow_synchronous_major (gboolean flag);
@@ -874,7 +884,8 @@ extern mword los_memory_usage;
 extern mword los_memory_usage_total;
 
 void sgen_los_free_object (LOSObject *obj);
-void* sgen_los_alloc_large_inner (GCVTable vtable, size_t size);
+void* sgen_los_alloc_large_inner (GCVTable vtable, size_t size)
+	MONO_PERMIT (need (sgen_gc_locked));
 void sgen_los_sweep (void);
 gboolean sgen_ptr_is_in_los (char *ptr, char **start);
 void sgen_los_iterate_objects (IterateObjectCallbackFunc cb, void *user_data);
@@ -912,7 +923,8 @@ void sgen_nursery_alloc_prepare_for_major (void);
 
 GCObject* sgen_alloc_for_promotion (GCObject *obj, size_t objsize, gboolean has_references);
 
-GCObject* sgen_alloc_obj_nolock (GCVTable vtable, size_t size);
+GCObject* sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
+	MONO_PERMIT (need (sgen_gc_locked));
 GCObject* sgen_try_alloc_obj_nolock (GCVTable vtable, size_t size);
 
 /* Threads */
@@ -964,7 +976,8 @@ int sgen_gc_invoke_finalizers (void);
 
 void sgen_init_gchandles (void);
 
-void sgen_null_links_if (SgenObjectPredicateFunc predicate, void *data, int generation, gboolean track);
+void sgen_null_links_if (SgenObjectPredicateFunc predicate, void *data, int generation, gboolean track)
+	MONO_PERMIT (need (sgen_gc_locked));
 
 typedef gpointer (*SgenGCHandleIterateCallback) (gpointer hidden, GCHandleType handle_type, int max_generation, gpointer user);
 
@@ -1028,7 +1041,8 @@ void sgen_check_remset_consistency (void);
 void sgen_check_mod_union_consistency (void);
 void sgen_check_major_refs (void);
 void sgen_check_whole_heap (gboolean allow_missing_pinning);
-void sgen_check_whole_heap_stw (void);
+void sgen_check_whole_heap_stw (void)
+	MONO_PERMIT (need (sgen_gc_locked));
 void sgen_check_objref (char *obj);
 void sgen_check_heap_marked (gboolean nursery_must_be_pinned);
 void sgen_check_nursery_objects_pinned (gboolean pinned);
