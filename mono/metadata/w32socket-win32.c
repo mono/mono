@@ -315,3 +315,15 @@ ves_icall_System_Net_Sockets_Socket_SupportPortReuse (MonoProtocolType proto, Mo
 	error_init (error);
 	return TRUE;
 }
+
+gboolean
+mono_w32socket_duplicate (gpointer handle, gint32 targetProcessId, gpointer *duplicate_handle)
+{
+	gboolean ret;
+
+	MONO_ENTER_GC_SAFE;
+	ret = DuplicateHandle (GetCurrentProcess(), handle, GINT_TO_POINTER(targetProcessId), duplicate_handle, 0, 0, 0x00000002 /* DUPLICATE_SAME_ACCESS */);
+	MONO_EXIT_GC_SAFE;
+
+	return ret;
+}

@@ -1348,3 +1348,15 @@ ves_icall_System_Net_Sockets_Socket_SupportPortReuse (MonoProtocolType proto, Mo
 	return FALSE;
 #endif
 }
+
+gboolean
+mono_w32socket_duplicate (gpointer handle, gint32 targetProcessId, gpointer *duplicate_handle)
+{
+	*duplicate_handle = mono_w32handle_duplicate (handle);
+	if (*duplicate_handle == INVALID_HANDLE_VALUE) {
+		mono_w32error_set_last (ERROR_INVALID_HANDLE);
+		return FALSE;
+	}
+
+	return TRUE;
+}

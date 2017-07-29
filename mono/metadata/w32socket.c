@@ -1399,6 +1399,23 @@ ves_icall_System_Net_Sockets_Socket_Disconnect_internal (gsize sock, MonoBoolean
 }
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT) */
 
+MonoBoolean
+ves_icall_System_Net_Sockets_Socket_Duplicate_internal (gpointer handle, gint32 targetProcessId, gpointer *duplicate_handle, gint32 *werror, MonoError *error)
+{
+	gboolean ret;
+
+	*werror = 0;
+	error_init (error);
+
+	ret = mono_w32socket_duplicate (handle, targetProcessId, duplicate_handle);
+	if (!ret) {
+		*werror = mono_w32error_get_last ();
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
 gint32
 ves_icall_System_Net_Sockets_Socket_Receive_internal (gsize sock, MonoArrayHandle buffer, gint32 offset, gint32 count, gint32 flags, gint32 *werror, gboolean blocking, MonoError *error)
 {
