@@ -72,10 +72,7 @@ static gboolean
 type_is_fd (MonoW32HandleType type)
 {
 	switch (type) {
-	case MONO_W32HANDLE_FILE:
-	case MONO_W32HANDLE_CONSOLE:
 	case MONO_W32HANDLE_SOCKET:
-	case MONO_W32HANDLE_PIPE:
 		return TRUE;
 	default:
 		return FALSE;
@@ -496,8 +493,6 @@ mono_w32handle_duplicate (gpointer handle)
 		return handle;
 	if (!mono_w32handle_lookup_data (handle, &handle_data))
 		return INVALID_HANDLE_VALUE;
-	if (handle == (gpointer) 0 && handle_data->type != MONO_W32HANDLE_CONSOLE)
-		return handle;
 
 	if (!mono_w32handle_ref_core (handle, handle_data))
 		g_error ("%s: failed to ref handle %p", __func__, handle);
@@ -515,14 +510,6 @@ mono_w32handle_close (gpointer handle)
 		return FALSE;
 	if (!mono_w32handle_lookup_data (handle, &handle_data))
 		return FALSE;
-	if (handle == (gpointer) 0 && handle_data->type != MONO_W32HANDLE_CONSOLE) {
-		/* Problem: because we map file descriptors to the
-		 * same-numbered handle we can't tell the difference
-		 * between a bogus handle and the handle to stdin.
-		 * Assume that it's the console handle if that handle
-		 * exists... */
-		return FALSE;
-	}
 
 	destroy = mono_w32handle_unref_core (handle, handle_data);
 	if (destroy)
