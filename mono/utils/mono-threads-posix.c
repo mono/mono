@@ -205,7 +205,7 @@ mono_native_thread_set_name (MonoNativeThreadId tid, const char *name)
 		pthread_setname_np ("");
 	} else {
 		size_t len = 63;
-		char n [len];
+		char *n = alloca (len);
 
 		strncpy (n, name, len - 1);
 		n [len - 1] = '\0';
@@ -216,7 +216,7 @@ mono_native_thread_set_name (MonoNativeThreadId tid, const char *name)
 		pthread_setname_np (tid, "%s", (void*)"");
 	} else {
 		size_t len = PTHREAD_MAX_NAMELEN_NP;
-		char n [len];
+		char *n = alloca (len);
 
 		strncpy (n, name, len - 1);
 		n [len - 1] = '\0';
@@ -227,7 +227,7 @@ mono_native_thread_set_name (MonoNativeThreadId tid, const char *name)
 		pthread_setname_np (tid, "");
 	} else {
 		size_t len = 16;
-		char n [len];
+		char *n = alloca (len);
 
 		strncpy (n, name, len - 1);
 		n [len - 1] = '\0';
