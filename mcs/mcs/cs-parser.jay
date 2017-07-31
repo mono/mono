@@ -1337,7 +1337,7 @@ method_declaration
 
 		// Was added earlier in the case of body being eof for full ast
 	  }
-	  method_body_expression_block
+	  method_body
 	  {
 		Method method = (Method) $1;
 		method.Block = (ToplevelBlock) $3;
@@ -1492,14 +1492,36 @@ method_header
 	  }
 	;
 
-method_body_expression_block
-	: method_body
-	| expression_block
-	;
-
 method_body
 	: block
+	| expression_block
 	| SEMICOLON		{ $$ = null; }
+	;
+
+destructor_body
+	: method_body
+	;
+
+constructor_body
+	: block_prepared
+	| SEMICOLON 		{ current_block = null; $$ = null; }
+	| ARROW
+	 {
+		if (lang_version < LanguageVersion.V_7) {
+			FeatureIsNotAvailable (GetLocation ($1), "expression body constructor");
+		}
+
+		++lexer.parsing_block;
+	 }
+	 expression SEMICOLON
+	 {
+		lexer.parsing_block = 0;
+		current_block.AddStatement (new ContextualReturn ((Expression) $3));
+		var b = end_block (GetLocation ($4));
+		b.IsCompilerGenerated = true;
+		$$ = b;
+		current_block = null;
+	 }
 	;
 
 expression_block
@@ -2197,7 +2219,7 @@ operator_declaration
 	: opt_attributes opt_modifiers operator_declarator 
 	  {
 	  }
-	  method_body_expression_block
+	  method_body
 	  {
 		OperatorDeclaration decl = (OperatorDeclaration) $3;
 		if (decl != null) {
@@ -2464,11 +2486,6 @@ constructor_declarator
 	  }
 	;
 
-constructor_body
-	: block_prepared
-	| SEMICOLON 		{ current_block = null; $$ = null; }
-	;
-
 opt_constructor_initializer
 	: /* Empty */
 	| constructor_initializer
@@ -2518,7 +2535,7 @@ destructor_declaration
 		
 		current_local_parameters = ParametersCompiled.EmptyReadOnlyParameters;
 	  }
-	  IDENTIFIER OPEN_PARENS CLOSE_PARENS method_body
+	  IDENTIFIER OPEN_PARENS CLOSE_PARENS destructor_body
 	  {
 		var lt = (LocatedToken) $5;
 		if (lt.Value != current_container.MemberName.Name){
@@ -4547,7 +4564,7 @@ additive_expression
 	  }
 	| additive_expression IS pattern_type_expr opt_identifier
 	  {
-		var is_expr = new Is ((Expression) $1, (Expression) $3, GetLocation ($2));
+		var is_expr = new Is ((Expression) $1, ((FullNamedExpression) $3), GetLocation ($2));
 		if ($4 != null) {
 			if (lang_version < LanguageVersion.V_7)
 				FeatureIsNotAvailable (GetLocation ($4), "pattern matching");
@@ -6194,6 +6211,18 @@ switch_label
 		lbag.AddLocation ($$, GetLocation ($3));
 	  }
 */
+
+	| CASE pattern_type_expr IDENTIFIER COLON
+	  {
+		if (lang_version < LanguageVersion.V_7)
+			FeatureIsNotAvailable (GetLocation ($1), "pattern matching");
+
+//		$$ = new SwitchLabel ((FullNamedExpression) $2), GetLocation ($1)) {
+//			PatternMatching = true
+//		};
+
+		throw new NotImplementedException ("type pattern matching");
+	  }
 	| DEFAULT_COLON
 	  {
 		$$ = new SwitchLabel (null, GetLocation ($1));
