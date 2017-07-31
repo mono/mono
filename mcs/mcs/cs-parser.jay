@@ -4547,7 +4547,7 @@ additive_expression
 	  }
 	| additive_expression IS pattern_type_expr opt_identifier
 	  {
-		var is_expr = new Is ((Expression) $1, (Expression) $3, GetLocation ($2));
+		var is_expr = new Is ((Expression) $1, ((FullNamedExpression) $3), GetLocation ($2));
 		if ($4 != null) {
 			if (lang_version < LanguageVersion.V_7)
 				FeatureIsNotAvailable (GetLocation ($4), "pattern matching");
@@ -6194,6 +6194,18 @@ switch_label
 		lbag.AddLocation ($$, GetLocation ($3));
 	  }
 */
+
+	| CASE pattern_type_expr IDENTIFIER COLON
+	  {
+		if (lang_version < LanguageVersion.V_7)
+			FeatureIsNotAvailable (GetLocation ($1), "pattern matching");
+
+//		$$ = new SwitchLabel ((FullNamedExpression) $2), GetLocation ($1)) {
+//			PatternMatching = true
+//		};
+
+		throw new NotImplementedException ("type pattern matching");
+	  }
 	| DEFAULT_COLON
 	  {
 		$$ = new SwitchLabel (null, GetLocation ($1));
