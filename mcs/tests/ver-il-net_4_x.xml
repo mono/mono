@@ -68783,6 +68783,22 @@
       </method>
     </type>
   </test>
+  <test name="test-expression-bodied-04.cs">
+    <type name="VV">
+      <method name="Void Finalize()" attrs="196">
+        <size>19</size>
+      </method>
+      <method name="Void Test()" attrs="129">
+        <size>2</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6273">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
   <test name="test-externalias-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
