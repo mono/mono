@@ -71,6 +71,9 @@ namespace System.Reflection.Emit {
 			return _tb.InternalResolve (); 
 		}
 
+		internal override Type RuntimeResolve () {
+			return _tb.RuntimeResolve ();
+		}
 
 		public override Assembly Assembly {
 			get {
