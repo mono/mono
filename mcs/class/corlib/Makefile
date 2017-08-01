@@ -91,6 +91,8 @@ DEFAULT_REFERENCES =
 
 TEST_LIB_REFS = System.Core System
 
+XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks Facades/System.Runtime.InteropServices.RuntimeInformation
+
 ifndef AOT_FRIENDLY_PROFILE
 ifneq ($(PROFILE),testing_aot_hybrid)
 TEST_LIB_REFS += Mono.Posix
