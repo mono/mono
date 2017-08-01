@@ -2330,15 +2330,15 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 }
 
 /*
- * mono_aot_register_module_internal:
+ * mono_aot_register_module:
+ *
+ * This should be called by embedding code to register normal AOT modules statically linked
+ * into the executable. 
  *
  * \param aot_info the value of the 'mono_aot_module_<ASSEMBLY_NAME>_info' global symbol from the AOT module.
- * \param eager_load whether the current module should be loaded eagerly (before any others) such as in the case of
- *        dedup container modules and other modules which won't be triggered by a load of the associated .dll before AOT
- *        code in it is needed
  */
-static void
-mono_aot_register_module_internal (gpointer *aot_info, gboolean eager_load)
+void
+mono_aot_register_module (gpointer *aot_info)
 {
 	gpointer *globals;
 	char *aname;
@@ -2362,41 +2362,13 @@ mono_aot_register_module_internal (gpointer *aot_info, gboolean eager_load)
 
 	g_hash_table_insert (static_aot_modules, aname, info);
 
-	if (eager_load) {
+	if (info->flags & MONO_AOT_FILE_FLAG_EAGER_LOAD) {
+		g_assert (!container_assm_name);
 		container_assm_name = aname;
 	}
 
 	if (aot_modules)
 		mono_aot_unlock ();
-}
-
-/*
- * mono_aot_register_module:
- *
- * This should be called by embedding code to register normal AOT modules statically linked
- * into the executable. 
- *
- * \param aot_info the value of the 'mono_aot_module_<ASSEMBLY_NAME>_info' global symbol from the AOT module.
- */
-void
-mono_aot_register_module (gpointer *aot_info)
-{
-	mono_aot_register_module_internal (aot_info, FALSE);
-}
-
-/*
- * mono_aot_register_module_container:
- *
- * This should be called by embedding code to register "container" AOT modules statically linked
- * into the executable. A container module is one which carries code and metadata for other AOT modules.
- * Dedup is an example of a subsystem that creates container modules 
- *
- * \param aot_info the value of the 'mono_aot_module_<ASSEMBLY_NAME>_info' global symbol from the AOT module.
- */
-void
-mono_aot_register_module_container (gpointer *aot_info)
-{
-	mono_aot_register_module_internal (aot_info, TRUE);
 }
 
 void

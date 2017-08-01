@@ -184,6 +184,7 @@ typedef enum {
 	MONO_AOT_FILE_FLAG_LLVM_ONLY = 16,
 	MONO_AOT_FILE_FLAG_SAFEPOINTS = 32,
 	MONO_AOT_FILE_FLAG_SEPARATE_DATA = 64,
+	MONO_AOT_FILE_FLAG_EAGER_LOAD = 128,
 } MonoAotFileFlags;
 
 typedef enum {
@@ -2557,7 +2558,6 @@ void     mono_aot_init_gshared_method_vtable  (gpointer aot_module, guint32 meth
 
 /* This is an exported function */
 MONO_API void     mono_aot_register_module           (gpointer *aot_info);
-MONO_API void     mono_aot_register_module_container     (gpointer *aot_info);
 
 /* These are used to load the AOT data for aot images compiled with MONO_AOT_FILE_FLAG_SEPARATE_DATA */
 /*
