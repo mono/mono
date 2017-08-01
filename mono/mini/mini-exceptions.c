@@ -2166,8 +2166,6 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 					jit_tls->orig_ex_ctx_set = TRUE;
 					mono_profiler_exception_clause_handler (method, ei->flags, i);
 					jit_tls->orig_ex_ctx_set = FALSE;
-					mini_set_abort_threshold (ctx);
-					call_filter (ctx, ei->handler_start);
 				}
 				if (ei->flags == MONO_EXCEPTION_CLAUSE_FINALLY) {
 					if (mono_trace_is_enabled () && mono_trace_eval (method))
@@ -2178,6 +2176,8 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 #ifndef DISABLE_PERFCOUNTERS
 					mono_perfcounters->exceptions_finallys++;
 #endif
+				}
+				if (ei->flags == MONO_EXCEPTION_CLAUSE_FAULT || ei->flags == MONO_EXCEPTION_CLAUSE_FINALLY) {
 					mono_set_lmf (lmf);
 					if (ji->from_llvm) {
 						/* 
