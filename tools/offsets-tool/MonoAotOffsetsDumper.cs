@@ -787,7 +787,8 @@ namespace CppSharp
                 "MonoTypedRef",
                 "MonoThreadsSync",
                 "SgenThreadInfo",
-                "SgenClientThreadInfo"
+                "SgenClientThreadInfo",
+                "MonoProfilerCallContext"
             };
 
             DumpClasses(writer, ctx, types);
