@@ -252,6 +252,8 @@ namespace Xamarin.ApiDiff {
 
 		public override void Removed (XElement source)
 		{
+			if (source.Elements ("attributes").SelectMany (a => a.Elements ("attribute")).Any (c => c.Attribute ("name")?.Value == "System.ObsoleteAttribute"))
+				return;
 			Output.Write ("<h3>Removed Type <span class='breaking' data-is-breaking>{0}.{1}</span></h3>", State.Namespace, GetTypeName (source));
 		}
 
