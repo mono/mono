@@ -43,13 +43,13 @@ sample_instrumentation_filter (MonoProfiler *prof, MonoMethod *method)
 
 /* the entry point */
 void
-mono_profiler_init (const char *desc)
+mono_profiler_init_sample (const char *desc)
 {
 	MonoProfiler *prof;
 
 	prof = g_new0 (MonoProfiler, 1);
 
-	MonoProfilerHandle handle = mono_profiler_install (prof);
+	MonoProfilerHandle handle = mono_profiler_create (prof);
 	mono_profiler_set_runtime_shutdown_callback (handle, sample_shutdown);
 	mono_profiler_set_call_instrumentation_filter_callback (handle, sample_instrumentation_filter);
 	mono_profiler_set_method_enter_callback (handle, sample_method_enter);

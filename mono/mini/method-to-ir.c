@@ -1764,24 +1764,6 @@ emit_pop_lmf (MonoCompile *cfg)
 	EMIT_NEW_STORE_MEMBASE (cfg, ins, OP_STORE_MEMBASE_REG, lmf_addr_reg, 0, prev_lmf_reg);
 }
 
-static void
-emit_instrumentation_call (MonoCompile *cfg, void *func, gboolean entry)
-{
-	MonoInst *iargs [1];
-
-	/*
-	 * Avoid instrumenting inlined methods since it can
-	 * distort profiling results.
-	 */
-	if (cfg->method != cfg->current_method)
-		return;
-
-	if (mono_profiler_should_instrument_method (cfg->method, entry)) {
-		EMIT_NEW_METHODCONST (cfg, iargs [0], cfg->method);
-		mono_emit_jit_icall (cfg, func, iargs);
-	}
-}
-
 static int
 ret_type_to_call_opcode (MonoCompile *cfg, MonoType *type, int calli, int virt)
 {
@@ -2247,7 +2229,7 @@ mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig,
 		tail = FALSE;
 
 	if (tail) {
-		emit_instrumentation_call (cfg, mono_profiler_raise_method_leave, FALSE);
+		mini_profiler_emit_instrumentation_call (cfg, mono_profiler_raise_method_leave, FALSE, NULL, NULL);
 
 		MONO_INST_NEW_CALL (cfg, call, OP_TAILCALL);
 	} else
@@ -4360,6 +4342,9 @@ mono_method_check_inlining (MonoCompile *cfg, MonoMethod *method)
 #endif
 
 	if (g_list_find (cfg->dont_inline, method))
+		return FALSE;
+
+	if (mono_profiler_get_call_instrumentation_flags (method))
 		return FALSE;
 
 	return TRUE;
@@ -7345,6 +7330,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			tblock->real_offset = clause->handler_offset;
 			tblock->flags |= BB_EXCEPTION_HANDLER;
 
+			if (clause->flags == MONO_EXCEPTION_CLAUSE_FINALLY)
+				mono_create_exvar_for_offset (cfg, clause->handler_offset);
 			/*
 			 * Linking the try block with the EH block hinders inlining as we won't be able to 
 			 * merge the bblocks from inlining and produce an artificial hole for no good reason.
@@ -8043,7 +8030,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (cfg->gshared && mono_method_check_context_used (cmethod))
 				GENERIC_SHARING_FAILURE (CEE_JMP);
 
-			emit_instrumentation_call (cfg, mono_profiler_raise_method_leave, FALSE);
+			mini_profiler_emit_instrumentation_call (cfg, mono_profiler_raise_method_leave, FALSE, NULL, NULL);
 
 			fsig = mono_method_signature (cmethod);
 			n = fsig->param_count + fsig->hasthis;
@@ -8985,7 +8972,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					/* Handle tail calls similarly to normal calls */
 					tail_call = TRUE;
 				} else {
-					emit_instrumentation_call (cfg, mono_profiler_raise_method_leave, FALSE);
+					mini_profiler_emit_instrumentation_call (cfg, mono_profiler_raise_method_leave, FALSE, NULL, NULL);
 
 					MONO_INST_NEW_CALL (cfg, call, OP_JMP);
 					call->tail_call = TRUE;
@@ -9096,6 +9083,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			break;
 		}
 		case CEE_RET:
+			mini_profiler_emit_instrumentation_call (cfg, mono_profiler_raise_method_leave, FALSE, sp - 1, sig->ret);
+
 			if (cfg->method != method) {
 				/* return from inlined method */
 				/* 
@@ -9119,8 +9108,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					cfg->ret_var_set = TRUE;
 				} 
 			} else {
-				emit_instrumentation_call (cfg, mono_profiler_raise_method_leave, FALSE);
-
 				if (cfg->lmf_var && cfg->cbb->in_count && !cfg->llvm_only)
 					emit_pop_lmf (cfg);
 
@@ -11408,18 +11395,35 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			if ((handlers = mono_find_final_block (cfg, ip, target, MONO_EXCEPTION_CLAUSE_FINALLY))) {
 				GList *tmp;
-				MonoExceptionClause *clause;
 
 				for (tmp = handlers; tmp; tmp = tmp->next) {
-					clause = (MonoExceptionClause *)tmp->data;
+					MonoExceptionClause *clause = (MonoExceptionClause *)tmp->data;
+					MonoInst *abort_exc = (MonoInst *)mono_find_exvar_for_offset (cfg, clause->handler_offset);
+					MonoBasicBlock *dont_throw;
+
 					tblock = cfg->cil_offset_to_bb [clause->handler_offset];
 					g_assert (tblock);
 					link_bblock (cfg, cfg->cbb, tblock);
+
+					MONO_EMIT_NEW_PCONST (cfg, abort_exc->dreg, 0);
+
 					MONO_INST_NEW (cfg, ins, OP_CALL_HANDLER);
 					ins->inst_target_bb = tblock;
 					ins->inst_eh_block = clause;
 					MONO_ADD_INS (cfg->cbb, ins);
 					cfg->cbb->has_call_handler = 1;
+
+					/* Throw exception if exvar is set */
+					/* FIXME Do we need this for calls from catch/filter ? */
+					NEW_BBLOCK (cfg, dont_throw);
+					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, abort_exc->dreg, 0);
+					MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBEQ, dont_throw);
+					mono_emit_jit_icall (cfg, mono_thread_self_abort, NULL);
+					cfg->cbb->clause_hole = clause;
+
+					MONO_START_BB (cfg, dont_throw);
+					cfg->cbb->clause_hole = clause;
+
 					if (COMPILE_LLVM (cfg)) {
 						MonoBasicBlock *target_bb;
 
@@ -12631,7 +12635,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	}
 
 	cfg->cbb = init_localsbb;
-	emit_instrumentation_call (cfg, mono_profiler_raise_method_enter, TRUE);
+	mini_profiler_emit_instrumentation_call (cfg, mono_profiler_raise_method_enter, TRUE, NULL, NULL);
 
 	if (seq_points) {
 		MonoBasicBlock *bb;

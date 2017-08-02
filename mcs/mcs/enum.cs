@@ -22,10 +22,35 @@ using MetaType = System.Type;
 using System.Reflection;
 #endif
 
-namespace Mono.CSharp {
+namespace Mono.CSharp
+{
 
 	public class EnumMember : Const
 	{
+#if !STATIC
+		class MemberTypeDelegator : TypeDelegator
+		{
+			Type underlyingType;
+
+			public MemberTypeDelegator (Type delegatingType, Type underlyingType)
+				: base (delegatingType)
+			{
+				this.underlyingType = underlyingType;
+			}
+
+			public override Type GetEnumUnderlyingType ()
+			{
+				return underlyingType;
+			}
+
+			public override Type UnderlyingSystemType {
+				get {
+					return underlyingType;
+				}
+			}
+		}
+#endif
+
 		class EnumTypeExpr : TypeExpr
 		{
 			public override TypeSpec ResolveAsType (IMemberContext ec, bool allowUnboundTypeArguments)
@@ -85,8 +110,17 @@ namespace Mono.CSharp {
 			if (!ResolveMemberType ())
 				return false;
 
+			MetaType ftype = MemberType.GetMetaInfo ();
+#if !STATIC
+			//
+			// Workaround for .net SRE limitation which cannot define field of unbaked enum type
+			// which is how all enums are declared
+			//
+			ftype = new MemberTypeDelegator (ftype, ((Enum)Parent).UnderlyingType.GetMetaInfo ());
+#endif
+
 			const FieldAttributes attr = FieldAttributes.Public | FieldAttributes.Static | FieldAttributes.Literal;
-			FieldBuilder = Parent.TypeBuilder.DefineField (Name, MemberType.GetMetaInfo (), attr);
+			FieldBuilder = Parent.TypeBuilder.DefineField (Name, ftype, attr);
 			spec = new ConstSpec (Parent.Definition, this, MemberType, FieldBuilder, ModFlags, initializer);
 
 			Parent.MemberCache.AddMember (spec);

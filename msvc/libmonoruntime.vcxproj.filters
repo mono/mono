@@ -438,10 +438,13 @@
     <ClInclude Include="..\mono\metadata\w32process-win32-internals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\mono\metadata\profiler.h">
+    <ClInclude Include="..\mono\metadata\profiler-events.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\mono\metadata\profiler-private.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mono\metadata\profiler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\mono\metadata\rand.h">

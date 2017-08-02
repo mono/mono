@@ -125,5 +125,11 @@ namespace MonoTests.EvaluatorTest
 			object res = Evaluator.Evaluate ("attr.GetType().Name;");
 			Assert.AreEqual ("A", res);
 		}
+
+		[Test]
+		public void EnumType ()
+		{
+			Evaluator.Run ("public class TestClass { private TestEnum _te; public string Get() { return _te.ToString(); } } public enum TestEnum { First, Second }");
+		}
 	}
 }

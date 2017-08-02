@@ -127,6 +127,8 @@ null_gc_sources = \
 
 common_sources = \
 	$(platform_sources)	\
+	appdomain.c	\
+	domain.c	\
 	appdomain-icalls.h	\
 	assembly.c		\
 	assembly-internals.h	\
@@ -209,6 +211,7 @@ common_sources = \
 	number-formatter.h	\
 	number-ms.c		\
 	number-ms.h		\
+	object.c	\
 	object-internals.h	\
 	opcodes.c		\
 	property-bag.h	\
@@ -273,25 +276,21 @@ common_sources = \
 	w32handle-namespace.c	\
 	w32handle.h	\
 	w32handle.c	\
-	w32error.h
-
-# These source files have compile time dependencies on GC code
-gc_dependent_sources = \
-	appdomain.c	\
-	domain.c	\
-	gc-stats.c	\
-	gc.c		\
-	monitor.c	\
-	mono-hash.c	\
-	mono-conc-hash.c	\
-	object.c	\
+	w32error.h	\
+	reflection.c	\
 	dynamic-image.c	\
 	sre.c	\
 	sre-encode.c	\
 	sre-save.c	\
-	custom-attrs.c	\
-	reflection.c
+	custom-attrs.c
 
+# These source files have compile time dependencies on GC code
+gc_dependent_sources = \
+	gc-stats.c	\
+	gc.c		\
+	monitor.c	\
+	mono-hash.c	\
+	mono-conc-hash.c
 
 boehm_sources = \
 	boehm-gc.c

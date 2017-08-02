@@ -53,11 +53,11 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\AssemblyRef.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\misc\ClientUtils.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\misc\HandleCollector.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\BitmapSuffixInSameAssemblyAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\BitmapSuffixInSatelliteAssemblyAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Brush.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\ClientUtils.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\DashCap.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\CategoryNameCollection.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\IPropertyValueUIService.cs" />

@@ -28,6 +28,7 @@ namespace CppSharp
         static string AndroidNdkPath = @"";
         static string MaccoreDir = @"";
         static string TargetDir = @"";
+        static bool GenIOS;
 
         public enum TargetPlatform
         {
@@ -206,7 +207,7 @@ namespace CppSharp
                 MaccoreDir = Path.Combine (maccoreDir);
             }
 
-            if (Directory.Exists(MaccoreDir))
+            if (Directory.Exists(MaccoreDir) || GenIOS)
                 SetupiOSTargets();
 
             foreach (var target in Targets)
@@ -244,6 +245,7 @@ namespace CppSharp
 
                 source.Options.AddDefines ("HAVE_SGEN_GC");
                 source.Options.AddDefines ("HAVE_MOVING_COLLECTOR");
+                source.Options.AddDefines("MONO_GENERATING_OFFSETS");
             }
         }
 
@@ -274,6 +276,7 @@ namespace CppSharp
                 { "android-ndk=", "Path to Android NDK", v => AndroidNdkPath = v },
                 { "targetdir=", "Path to the directory containing the mono build", v =>TargetDir = v },
                 { "mono=", "include directory", v => MonoDir = v },
+                { "gen-ios", "generate iOS offsets", v => GenIOS = v != null },
                 { "h|help",  "show this message and exit",  v => showHelp = v != null },
             };
 
@@ -307,6 +310,7 @@ namespace CppSharp
             parserOptions.AddArguments("-xc");
             parserOptions.AddArguments("-std=gnu99");
             parserOptions.AddDefines("CPPSHARP");
+            parserOptions.AddDefines("MONO_GENERATING_OFFSETS");
 
             foreach (var define in target.Defines)
                 parserOptions.AddDefines(define);
@@ -783,7 +787,8 @@ namespace CppSharp
                 "MonoTypedRef",
                 "MonoThreadsSync",
                 "SgenThreadInfo",
-                "SgenClientThreadInfo"
+                "SgenClientThreadInfo",
+                "MonoProfilerCallContext"
             };
 
             DumpClasses(writer, ctx, types);

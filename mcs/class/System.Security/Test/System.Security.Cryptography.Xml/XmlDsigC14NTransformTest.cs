@@ -157,7 +157,6 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-		[Category ("NotDotNet")]
 		// see LoadInputAsXmlNodeList2 description
 		public void LoadInputAsXmlNodeList () 
 		{
@@ -166,11 +165,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInput (doc.ChildNodes);
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
-			Assert.AreEqual ("<Test></Test>", output, "XmlChildNodes");
+			Assert.AreEqual ("<Test xmlns=\"http://www.go-mono.com/\"></Test>", output, "XmlChildNodes");
 		}
 
 		[Test]
-		[Category ("NotDotNet")]
 		// MS has a bug that those namespace declaration nodes in
 		// the node-set are written to output. Related spec section is:
 		// http://www.w3.org/TR/2001/REC-xml-c14n-20010315#ProcessingModel
@@ -180,7 +178,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInput (doc.SelectNodes ("//*"));
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
-			string expected = @"<Test><Toto></Toto></Test>";
+			string expected = "<Test xmlns=\"http://www.go-mono.com/\"><Toto></Toto></Test>";
 			Assert.AreEqual (expected, output, "XmlChildNodes");
 		}
 
@@ -505,20 +503,6 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
 			Assert.AreEqual (xml, output);
-		}
-
-		[Test]
-		public void PrefixlessNamespaceOutput ()
-		{
-			XmlDocument doc = new XmlDocument ();
-			doc.AppendChild (doc.CreateElement ("foo", "urn:foo"));
-			doc.DocumentElement.AppendChild (doc.CreateElement ("bar", "urn:bar"));
-			Assert.AreEqual (String.Empty, doc.DocumentElement.GetAttribute ("xmlns"), "#1");
-			XmlDsigC14NTransform t = new XmlDsigC14NTransform ();
-			t.LoadInput (doc);
-			Stream s = t.GetOutput () as Stream;
-			Assert.AreEqual (new StreamReader (s, Encoding.UTF8).ReadToEnd (), "<foo xmlns=\"urn:foo\"><bar xmlns=\"urn:bar\"></bar></foo>");
-			Assert.AreEqual ("urn:foo", doc.DocumentElement.GetAttribute ("xmlns"), "#2");
 		}
 
 		[Test]

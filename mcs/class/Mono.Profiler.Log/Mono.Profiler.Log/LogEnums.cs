@@ -17,7 +17,6 @@ namespace Mono.Profiler.Log {
 		Heap = 6,
 		Sample = 7,
 		Runtime = 8,
-		Coverage = 9,
 		Meta = 10,
 
 		AllocationNoBacktrace = 0 << 4,
@@ -63,11 +62,6 @@ namespace Mono.Profiler.Log {
 		SampleCounters = 4 << 4,
 
 		RuntimeJitHelper = 1 << 4,
-
-		CoverageAssembly = 0 << 4,
-		CoverageMethod = 1 << 4,
-		CoverageStatement = 2 << 4,
-		CoverageClass = 3 << 4,
 
 		MetaSynchronizationPoint = 0 << 4,
 	}
@@ -194,5 +188,21 @@ namespace Mono.Profiler.Log {
 		Periodic = 0,
 		WorldStop = 1,
 		WorldStart = 2,
+	}
+
+	// mono/metadata/profiler.h : MonoProfilerSampleMode
+	public enum LogSampleMode {
+		None = 0,
+		Process = 1,
+		Real = 2,
+	}
+
+	// mono/profiler/log.h : MonoProfilerHeapshotMode
+	public enum LogHeapshotMode {
+		None = 0,
+		EveryMajor = 1,
+		OnDemand = 2,
+		Milliseconds = 3,
+		Collections = 4,
 	}
 }

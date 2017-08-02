@@ -799,7 +799,6 @@ mono_arch_init (void)
 	mono_aot_register_jit_icall ("mono_arm_start_gsharedvt_call", mono_arm_start_gsharedvt_call);
 #endif
 	mono_aot_register_jit_icall ("mono_arm_unaligned_stack", mono_arm_unaligned_stack);
-	mono_aot_register_jit_icall ("mono_arm_handler_block_trampoline_helper", mono_arm_handler_block_trampoline_helper);
 #if defined(__ARM_EABI__)
 	eabi_supported = TRUE;
 #endif
@@ -5891,7 +5890,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			arm_patch (buf [0], code);
 			break;
 		}
-
+		case OP_FILL_PROF_CALL_CTX:
+			for (int i = 0; i < ARMREG_MAX; i++)
+				if ((MONO_ARCH_CALLEE_SAVED_REGS & (1 << i)) || i == ARMREG_SP || i == ARMREG_FP)
+					ARM_STR_IMM (code, i, ins->sreg1, MONO_STRUCT_OFFSET (MonoContext, regs) + i * sizeof (mgreg_t));
+			break;
 		default:
 			g_warning ("unknown opcode %s in %s()\n", mono_inst_name (ins->opcode), __FUNCTION__);
 			g_assert_not_reached ();
@@ -7080,26 +7083,6 @@ GSList *
 mono_arch_get_trampolines (gboolean aot)
 {
 	return mono_arm_get_exception_trampolines (aot);
-}
-
-gpointer
-mono_arch_install_handler_block_guard (MonoJitInfo *ji, MonoJitExceptionInfo *clause, MonoContext *ctx, gpointer new_value)
-{
-	gpointer *lr_loc;
-	char *old_value;
-	char *bp;
-
-	/*Load the spvar*/
-	bp = MONO_CONTEXT_GET_BP (ctx);
-	lr_loc = (gpointer*)(bp + clause->exvar_offset);
-
-	old_value = *lr_loc;
-	if ((char*)old_value < (char*)ji->code_start || (char*)old_value > ((char*)ji->code_start + ji->code_size))
-		return old_value;
-
-	*lr_loc = new_value;
-
-	return old_value;
 }
 
 #if defined(MONO_ARCH_SOFT_DEBUG_SUPPORTED)

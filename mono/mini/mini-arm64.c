@@ -234,7 +234,6 @@ mono_arch_init (void)
 {
 	mono_aot_register_jit_icall ("mono_arm_throw_exception", mono_arm_throw_exception);
 	mono_aot_register_jit_icall ("mono_arm_resume_unwind", mono_arm_resume_unwind);
-	mono_aot_register_jit_icall ("mono_arm_handler_block_trampoline_helper", mono_arm_handler_block_trampoline_helper);
 
 	if (!mono_aot_only)
 		bp_trampoline = mini_get_breakpoint_trampoline ();
@@ -4330,7 +4329,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 #endif
 			break;
 		}
-
+		case OP_FILL_PROF_CALL_CTX:
+			for (int i = 0; i < MONO_MAX_IREGS; i++)
+				if ((MONO_ARCH_CALLEE_SAVED_REGS & (1 << i)) || i == ARMREG_SP || i == ARMREG_FP)
+					arm_strx (code, i, ins->sreg1, MONO_STRUCT_OFFSET (MonoContext, regs) + i * sizeof (mgreg_t));
+			break;
 		default:
 			g_warning ("unknown opcode %s in %s()\n", mono_inst_name (ins->opcode), __FUNCTION__);
 			g_assert_not_reached ();
@@ -5241,22 +5244,3 @@ mono_arch_get_call_info (MonoMemPool *mp, MonoMethodSignature *sig)
 	return get_call_info (mp, sig);
 }
 
-gpointer
-mono_arch_install_handler_block_guard (MonoJitInfo *ji, MonoJitExceptionInfo *clause, MonoContext *ctx, gpointer new_value)
-{
-	gpointer *lr_loc;
-	char *old_value;
-	char *bp;
-
-	/*Load the spvar*/
-	bp = MONO_CONTEXT_GET_BP (ctx);
-	lr_loc = (gpointer*)(bp + clause->exvar_offset);
-
-	old_value = *lr_loc;
-	if ((char*)old_value < (char*)ji->code_start || (char*)old_value > ((char*)ji->code_start + ji->code_size))
-		return old_value;
-
-	*lr_loc = new_value;
-
-	return old_value;
-}

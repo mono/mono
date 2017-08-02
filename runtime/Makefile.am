@@ -68,6 +68,10 @@ if INSTALL_ORBIS
 build_profiles += orbis
 endif
 
+if INSTALL_UNREAL
+build_profiles += unreal
+endif
+
 test_profiles = $(build_profiles)
 
 if BUILD_MCS

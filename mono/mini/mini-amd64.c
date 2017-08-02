@@ -1168,7 +1168,6 @@ mono_arch_init (void)
 	mono_aot_register_jit_icall ("mono_amd64_throw_corlib_exception", mono_amd64_throw_corlib_exception);
 	mono_aot_register_jit_icall ("mono_amd64_resume_unwind", mono_amd64_resume_unwind);
 	mono_aot_register_jit_icall ("mono_amd64_get_original_ip", mono_amd64_get_original_ip);
-	mono_aot_register_jit_icall ("mono_amd64_handler_block_trampoline_helper", mono_amd64_handler_block_trampoline_helper);
 
 #if defined(MONO_ARCH_GSHAREDVT_SUPPORTED)
 	mono_aot_register_jit_icall ("mono_amd64_start_gsharedvt_call", mono_amd64_start_gsharedvt_call);
@@ -6420,6 +6419,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_GET_LAST_ERROR:
 			emit_get_last_error(code, ins->dreg);
 			break;
+		case OP_FILL_PROF_CALL_CTX:
+			for (int i = 0; i < AMD64_NREG; i++)
+				if (AMD64_IS_CALLEE_SAVED_REG (i) || i == AMD64_RSP)
+					amd64_mov_membase_reg (code, ins->sreg1, MONO_STRUCT_OFFSET (MonoContext, gregs) + i * sizeof (mgreg_t), i, sizeof (mgreg_t));
+			break;
 		default:
 			g_warning ("unknown opcode %s in %s()\n", mono_inst_name (ins->opcode), __FUNCTION__);
 			g_assert_not_reached ();
@@ -8130,25 +8134,6 @@ void
 mono_arch_context_set_int_reg (MonoContext *ctx, int reg, mgreg_t val)
 {
 	ctx->gregs [reg] = val;
-}
-
-gpointer
-mono_arch_install_handler_block_guard (MonoJitInfo *ji, MonoJitExceptionInfo *clause, MonoContext *ctx, gpointer new_value)
-{
-	gpointer *sp, old_value;
-	char *bp;
-
-	/*Load the spvar*/
-	bp = (char *)MONO_CONTEXT_GET_BP (ctx);
-	sp = (gpointer *)*(gpointer*)(bp + clause->exvar_offset);
-
-	old_value = *sp;
-	if (old_value < ji->code_start || (char*)old_value > ((char*)ji->code_start + ji->code_size))
-		return old_value;
-
-	*sp = new_value;
-
-	return old_value;
 }
 
 /*

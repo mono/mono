@@ -134,31 +134,31 @@ namespace System.Security.Cryptography.Xml {
 						foreach (XmlNode xn in ((XmlElement) n).GetElementsByTagName (XmlSignature.ElementNames.Transform, XmlSignature.NamespaceURI)) {
 							Transform t = null;
 							switch (((XmlElement) xn).Attributes [XmlSignature.AttributeNames.Algorithm].Value) {
-							case XmlSignature.AlgorithmNamespaces.XmlDsigBase64Transform:
+							case SignedXml.XmlDsigBase64TransformUrl:
 								t = new XmlDsigBase64Transform ();
 								break;
-							case XmlSignature.AlgorithmNamespaces.XmlDsigC14NTransform:
+							case SignedXml.XmlDsigC14NTransformUrl:
 								t = new XmlDsigC14NTransform ();
 								break;
-							case XmlSignature.AlgorithmNamespaces.XmlDsigC14NWithCommentsTransform:
+							case SignedXml.XmlDsigC14NWithCommentsTransformUrl:
 								t = new XmlDsigC14NWithCommentsTransform ();
 								break;
-							case XmlSignature.AlgorithmNamespaces.XmlDsigEnvelopedSignatureTransform:
+							case SignedXml.XmlDsigEnvelopedSignatureTransformUrl:
 								t = new XmlDsigEnvelopedSignatureTransform ();
 								break;
-							case XmlSignature.AlgorithmNamespaces.XmlDsigXPathTransform:
+							case SignedXml.XmlDsigXPathTransformUrl:
 								t = new XmlDsigXPathTransform ();
 								break;
-							case XmlSignature.AlgorithmNamespaces.XmlDsigXsltTransform:
+							case SignedXml.XmlDsigXsltTransformUrl:
 								t = new XmlDsigXsltTransform ();
 								break;
-							case XmlSignature.AlgorithmNamespaces.XmlDsigExcC14NTransform:
+							case SignedXml.XmlDsigExcC14NTransformUrl:
 								t = new XmlDsigExcC14NTransform ();
 								break;
-							case XmlSignature.AlgorithmNamespaces.XmlDsigExcC14NWithCommentsTransform:
+							case SignedXml.XmlDsigExcC14NWithCommentsTransformUrl:
 								t = new XmlDsigExcC14NWithCommentsTransform ();
 								break;
-							case XmlSignature.AlgorithmNamespaces.XmlDecryptionTransform:
+							case SignedXml.XmlDecryptionTransformUrl:
 								t = new XmlDecryptionTransform ();
 								break;
 							default:

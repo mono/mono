@@ -214,6 +214,7 @@ void mono_threads_set_shutting_down (void);
 gunichar2* mono_thread_get_name (MonoInternalThread *this_obj, guint32 *name_len);
 
 MONO_API MonoException* mono_thread_get_undeniable_exception (void);
+void mono_thread_self_abort (void);
 
 void mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, gboolean permanent, gboolean reset, MonoError *error);
 
@@ -244,8 +245,6 @@ mono_thread_create_checked (MonoDomain *domain, gpointer func, gpointer arg, Mon
 void mono_threads_add_joinable_thread (gpointer tid);
 void mono_threads_join_threads (void);
 void mono_thread_join (gpointer tid);
-
-void mono_thread_detach_internal (MonoInternalThread *thread);
 
 void ves_icall_System_Threading_Thread_GetStackTraces (MonoArray **out_threads, MonoArray **out_stack_traces);
 

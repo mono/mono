@@ -191,6 +191,7 @@
     <ClInclude Include="..\mono\metadata\object-internals.h" />
     <ClInclude Include="..\mono\metadata\object.h" />
     <ClInclude Include="..\mono\metadata\opcodes.h" />
+    <ClInclude Include="..\mono\metadata\profiler-events.h" />
     <ClInclude Include="..\mono\metadata\profiler-private.h" />
     <ClInclude Include="..\mono\metadata\profiler.h" />
     <ClInclude Include="..\mono\metadata\rand.h" />

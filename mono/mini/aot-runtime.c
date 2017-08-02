@@ -3005,6 +3005,7 @@ decode_exception_debug_info (MonoAotModule *amodule, MonoDomain *domain,
 				g_slist_free (nesting [i]);
 			g_free (nesting);
 		}
+		jinfo->from_llvm = 1;
 	} else {
 		len = mono_jit_info_size (flags, num_clauses, num_holes);
 		jinfo = (MonoJitInfo *)alloc0_jit_info_data (domain, len, async);
@@ -4631,24 +4632,6 @@ mono_aot_get_method_checked (MonoDomain *domain, MonoMethod *method, MonoError *
 		amodule_unlock (amodule);
 	}
 	return code;
-}
-
-/*
- * mono_aot_get_method:
- *
- *   Return a pointer to the AOTed native code for METHOD if it can be found,
- * NULL otherwise.
- * On platforms with function pointers, this doesn't return a function pointer.
- */
-gpointer
-mono_aot_get_method (MonoDomain *domain, MonoMethod *method)
-{
-	MonoError error;
-
-	gpointer res = mono_aot_get_method_checked (domain, method, &error);
-	/* This is external only, so its ok to raise here */
-	mono_error_raise_exception (&error); /* OK to throw, external only without a good alternative */
-	return res;
 }
 
 /**

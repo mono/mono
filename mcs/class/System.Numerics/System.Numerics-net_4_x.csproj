@@ -53,8 +53,8 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Globalization\FormatProvider.Number.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\MathF.netstandard.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Numerics\Hashing\HashHelpers.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Numerics.Vectors\src\System\MathF.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Numerics.Vectors\src\System\Numerics\JitIntrinsicAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Numerics.Vectors\src\System\Numerics\Matrix3x2.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Numerics.Vectors\src\System\Numerics\Matrix4x4.cs" />

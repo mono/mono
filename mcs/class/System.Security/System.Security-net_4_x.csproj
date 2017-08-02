@@ -8,7 +8,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{3ED36717-A9D1-4289-8949-9B7F39766DEB}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <NoWarn>1699,618,414</NoWarn>
+    <NoWarn>1699,414,618</NoWarn>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Windows_NT'">win32</HostPlatform>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">darwin</HostPlatform>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix'">linux</HostPlatform>
@@ -30,17 +30,17 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <NoWarn>1699,618,414</NoWarn>
+    <NoWarn>1699,414,618</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;SECURITY_DEP</DefineConstants>
+    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;SECURITY_DEP;SYSTEM_SECURITY_DLL</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <NoWarn>1699,618,414</NoWarn>
+    <NoWarn>1699,414,618</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;SECURITY_DEP</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;SECURITY_DEP;SYSTEM_SECURITY_DLL</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -52,14 +52,61 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\AncestralNamespaceContextManager.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\AttributeSortOrder.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\C14NAncestralNamespaceContextManager.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\CanonicalizationDispatcher.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\CanonicalXml.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\CanonicalXmlAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\CanonicalXmlCDataSection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\CanonicalXmlComment.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\CanonicalXmlDocument.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\CanonicalXmlElement.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\CanonicalXmlEntityReference.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\CanonicalXmlNodeList.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\CanonicalXmlProcessingInstruction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\CanonicalXmlSignificantWhitespace.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\CanonicalXmlText.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\CanonicalXmlWhitespace.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\CertUsageType.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\CryptoHelpers.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\DocPosition.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\DSASignatureDescription.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\ExcAncestralNamespaceContextManager.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\ExcCanonicalXml.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\ICanonicalizableNode.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\MyXmlDocument.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\NamespaceFrame.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\NamespaceSortOrder.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\Reference.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\ReferenceTargetType.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\RSAPKCS1SHA1SignatureDescription.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\RSAPKCS1SHA256SignatureDescription.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\RSAPKCS1SHA384SignatureDescription.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\RSAPKCS1SHA512SignatureDescription.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\RSAPKCS1SignatureDescription.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SignedXmlDebugLog.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\Transform.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\TransformChain.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\Utils.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlDecryptionTransform.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlDsigBase64Transform.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlDsigC14NTransform.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlDsigC14NWithCommentsTransform.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlDsigEnvelopedSignatureTransform.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlDsigExcC14NTransform.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlDsigExcC14NWithCommentsTransform.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlDsigXPathTransform.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlDsigXsltTransform.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlLicenseTransform.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="..\System.Core\System.Security.Cryptography.X509Certificates\RSACertificateExtensions.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="corefx\SR.cs" />
     <Compile Include="Mono.Security.Cryptography\ManagedProtection.cs" />
     <Compile Include="Mono.Security.Cryptography\NativeDapiProtection.cs" />
-    <Compile Include="Mono.Xml\XmlCanonicalizer.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\AlgorithmIdentifier.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\CmsRecipient.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\CmsRecipientCollection.cs" />
@@ -114,30 +161,15 @@
     <Compile Include="System.Security.Cryptography.Xml\KeyInfoX509Data.cs" />
     <Compile Include="System.Security.Cryptography.Xml\KeyReference.cs" />
     <Compile Include="System.Security.Cryptography.Xml\Manifest.cs" />
-    <Compile Include="System.Security.Cryptography.Xml\Reference.cs" />
     <Compile Include="System.Security.Cryptography.Xml\ReferenceList.cs" />
     <Compile Include="System.Security.Cryptography.Xml\RSAKeyValue.cs" />
     <Compile Include="System.Security.Cryptography.Xml\Signature.cs" />
     <Compile Include="System.Security.Cryptography.Xml\SignedInfo.cs" />
     <Compile Include="System.Security.Cryptography.Xml\SignedXml.cs" />
     <Compile Include="System.Security.Cryptography.Xml\SymmetricKeyWrap.cs" />
-    <Compile Include="System.Security.Cryptography.Xml\Transform.cs" />
-    <Compile Include="System.Security.Cryptography.Xml\TransformChain.cs" />
     <Compile Include="System.Security.Cryptography.Xml\X509IssuerSerial.cs" />
-    <Compile Include="System.Security.Cryptography.Xml\XmlDecryptionTransform.cs" />
-    <Compile Include="System.Security.Cryptography.Xml\XmlDsigBase64Transform.cs" />
-    <Compile Include="System.Security.Cryptography.Xml\XmlDsigC14NTransform.cs" />
-    <Compile Include="System.Security.Cryptography.Xml\XmlDsigC14NWithCommentsTransform.cs" />
-    <Compile Include="System.Security.Cryptography.Xml\XmlDsigEnvelopedSignatureTransform.cs" />
-    <Compile Include="System.Security.Cryptography.Xml\XmlDsigExcC14NTransform.cs" />
-    <Compile Include="System.Security.Cryptography.Xml\XmlDsigExcC14NWithCommentsTransform.cs" />
-    <Compile Include="System.Security.Cryptography.Xml\XmlDsigNodeList.cs" />
-    <Compile Include="System.Security.Cryptography.Xml\XmlDsigXPathTransform.cs" />
-    <Compile Include="System.Security.Cryptography.Xml\XmlDsigXsltTransform.cs" />
     <Compile Include="System.Security.Cryptography.Xml\XmlEncryption.cs" />
-    <Compile Include="System.Security.Cryptography.Xml\XmlLicenseTransform.cs" />
     <Compile Include="System.Security.Cryptography.Xml\XmlSignature.cs" />
-    <Compile Include="System.Security.Cryptography.Xml\XmlSignatureStreamReader.cs" />
     <Compile Include="System.Security.Cryptography\CryptographicAttribute.cs" />
     <Compile Include="System.Security.Cryptography\CryptographicAttributeCollection.cs" />
     <Compile Include="System.Security.Cryptography\CryptographicAttributeEnumerator.cs" />

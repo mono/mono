@@ -2077,8 +2077,11 @@ mono_compile_create_vars (MonoCompile *cfg)
 	if (cfg->verbose_level > 2)
 		g_print ("creating locals\n");
 
-	for (i = 0; i < header->num_locals; ++i)
+	for (i = 0; i < header->num_locals; ++i) {
+		if (cfg->verbose_level > 2)
+			g_print ("\tlocal [%d]: ", i);
 		cfg->locals [i] = mono_compile_create_var (cfg, header->locals [i], OP_LOCAL);
+	}
 
 	if (cfg->verbose_level > 2)
 		g_print ("locals done\n");
@@ -2251,6 +2254,9 @@ mono_codegen (MonoCompile *cfg)
 			mono_arch_emit_epilog (cfg);
 			cfg->epilog_end = cfg->code_len;
 		}
+
+		if (bb->clause_hole)
+			mono_cfg_add_try_hole (cfg, bb->clause_hole, cfg->native_code + bb->native_offset, bb);
 	}
 
 	mono_arch_emit_exceptions (cfg);
@@ -2649,27 +2655,15 @@ create_jit_info (MonoCompile *cfg, MonoMethod *method_to_compile)
 			MonoExceptionClause *ec = &header->clauses [i];
 			MonoJitExceptionInfo *ei = &jinfo->clauses [i];
 			MonoBasicBlock *tblock;
-			MonoInst *exvar, *spvar;
+			MonoInst *exvar;
 
 			ei->flags = ec->flags;
 
 			if (G_UNLIKELY (cfg->verbose_level >= 4))
 				printf ("IL clause: try 0x%x-0x%x handler 0x%x-0x%x filter 0x%x\n", ec->try_offset, ec->try_offset + ec->try_len, ec->handler_offset, ec->handler_offset + ec->handler_len, ec->flags == MONO_EXCEPTION_CLAUSE_FILTER ? ec->data.filter_offset : 0);
 
-			/*
-			 * The spvars are needed by mono_arch_install_handler_block_guard ().
-			 */
-			if (ei->flags == MONO_EXCEPTION_CLAUSE_FINALLY) {
-				int region;
-
-				region = ((i + 1) << 8) | MONO_REGION_FINALLY | ec->flags;
-				spvar = mono_find_spvar_for_region (cfg, region);
-				g_assert (spvar);
-				ei->exvar_offset = spvar->inst_offset;
-			} else {
-				exvar = mono_find_exvar_for_offset (cfg, ec->handler_offset);
-				ei->exvar_offset = exvar ? exvar->inst_offset : 0;
-			}
+			exvar = mono_find_exvar_for_offset (cfg, ec->handler_offset);
+			ei->exvar_offset = exvar ? exvar->inst_offset : 0;
 
 			if (ei->flags == MONO_EXCEPTION_CLAUSE_FILTER) {
 				tblock = cfg->cil_offset_to_bb [ec->data.filter_offset];
@@ -3300,8 +3294,10 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	}
 #endif
 
+	cfg->prof_flags = mono_profiler_get_call_instrumentation_flags (cfg->method);
+
 	/* The debugger has no liveness information, so avoid sharing registers/stack slots */
-	if (debug_options.mdb_optimizations) {
+	if (debug_options.mdb_optimizations || MONO_CFG_PROFILE_CALL_CONTEXT (cfg)) {
 		cfg->disable_reuse_registers = TRUE;
 		cfg->disable_reuse_stack_slots = TRUE;
 		/* 

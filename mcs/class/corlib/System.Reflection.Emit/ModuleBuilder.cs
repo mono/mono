@@ -709,8 +709,7 @@ namespace System.Reflection.Emit {
 		static int typespec_tokengen =  0x1bffffff;
 		static int memberref_tokengen =  0x0affffff;
 		static int methoddef_tokengen =  0x06ffffff;
-		Dictionary<MemberInfo, int> inst_tokens = new Dictionary<MemberInfo, int> ();
-		Dictionary<MemberInfo, int> inst_tokens_open = new Dictionary<MemberInfo, int> ();
+		Dictionary<MemberInfo, int> inst_tokens, inst_tokens_open;
 
 		//
 		// Assign a pseudo token to the various TypeBuilderInst objects, so the runtime
@@ -720,16 +719,20 @@ namespace System.Reflection.Emit {
 		// still encounter these objects, it will resolve them by calling their
 		// RuntimeResolve () methods.
 		//
-		int GetPseudoToken (MemberInfo member, bool create_open_instance) {
+		int GetPseudoToken (MemberInfo member, bool create_open_instance)
+		{
 			int token;
-
-			if (create_open_instance) {
-				if (inst_tokens_open.TryGetValue (member, out token))
-					return token;
-			} else {
-				if (inst_tokens.TryGetValue (member, out token))
-					return token;
+			var dict = create_open_instance ? inst_tokens_open : inst_tokens;
+			if (dict == null) {
+				dict = new Dictionary<MemberInfo, int> (ReferenceEqualityComparer<MemberInfo>.Instance);
+				if (create_open_instance)
+					inst_tokens_open = dict;
+				else
+					inst_tokens = dict;
+			} else if (dict.TryGetValue (member, out token)) {
+				return token;
 			}
+
 			// Count backwards to avoid collisions with the tokens
 			// allocated by the runtime
 			if (member is TypeBuilderInstantiation || member is SymbolType)
@@ -749,6 +752,11 @@ namespace System.Reflection.Emit {
 					token = typedef_tokengen --;
 				else
 					token = typeref_tokengen --;
+			} else if (member is EnumBuilder) {
+				token = GetPseudoToken ((member as  EnumBuilder).GetTypeBuilder(), create_open_instance);
+				dict[member] = token;
+				// n.b. don't register with the runtime, the TypeBuilder already did it.
+				return token;
 			} else if (member is ConstructorBuilder) {
 				if (member.Module == this && !(member as ConstructorBuilder).TypeBuilder.ContainsGenericParameters)
 					token = methoddef_tokengen --;
@@ -764,10 +772,8 @@ namespace System.Reflection.Emit {
 				token = typespec_tokengen --;
 			} else
 				throw new NotImplementedException ();
-			if (create_open_instance)
-				inst_tokens_open [member] = token;
-			else
-				inst_tokens [member] = token;
+
+			dict [member] = token;
 			RegisterToken (member, token);
 			return token;
 		}
@@ -779,7 +785,8 @@ namespace System.Reflection.Emit {
 		}
 
 		internal int GetToken (MemberInfo member, bool create_open_instance) {
-			if (member is TypeBuilderInstantiation || member is FieldOnTypeBuilderInst || member is ConstructorOnTypeBuilderInst || member is MethodOnTypeBuilderInst || member is SymbolType || member is FieldBuilder || member is TypeBuilder || member is ConstructorBuilder || member is MethodBuilder || member is GenericTypeParameterBuilder)
+			if (member is TypeBuilderInstantiation || member is FieldOnTypeBuilderInst || member is ConstructorOnTypeBuilderInst || member is MethodOnTypeBuilderInst || member is SymbolType || member is FieldBuilder || member is TypeBuilder || member is ConstructorBuilder || member is MethodBuilder || member is GenericTypeParameterBuilder ||
+			    member is EnumBuilder)
 				return GetPseudoToken (member, create_open_instance);
 			return getToken (this, member, create_open_instance);
 		}
@@ -872,6 +879,8 @@ namespace System.Reflection.Emit {
 					finished = (member as FieldBuilder).RuntimeResolve ();
 				} else if (member is TypeBuilder) {
 					finished = (member as TypeBuilder).RuntimeResolve ();
+				} else if (member is EnumBuilder) {
+					finished = (member as EnumBuilder).RuntimeResolve ();
 				} else if (member is ConstructorBuilder) {
 					finished = (member as ConstructorBuilder).RuntimeResolve ();
 				} else if (member is MethodBuilder) {
@@ -893,11 +902,14 @@ namespace System.Reflection.Emit {
 		//
 		// Fixup the pseudo tokens assigned to the various SRE objects
 		//
-		void FixupTokens () {
+		void FixupTokens ()
+		{
 			var token_map = new Dictionary<int, int> ();
 			var member_map = new Dictionary<int, MemberInfo> ();
-			FixupTokens (token_map, member_map, inst_tokens, false);
-			FixupTokens (token_map, member_map, inst_tokens_open, true);
+			if (inst_tokens != null)
+				FixupTokens (token_map, member_map, inst_tokens, false);
+			if (inst_tokens_open != null)
+				FixupTokens (token_map, member_map, inst_tokens_open, true);
 
 			// Replace the tokens in the IL stream
 			if (types != null) {
