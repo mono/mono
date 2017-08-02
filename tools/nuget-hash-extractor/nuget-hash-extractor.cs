@@ -34,12 +34,13 @@ class Driver {
 		}
 	}
 
-	static bool dump_asm, dump_ver;
+	static bool dump_asm, dump_ver, dump_guids_for_msbuild;
 	static void Main (string[] args) {
 
 		if (args.Length > 1) {
 			dump_asm = args [1].Equals ("asm");
 			dump_ver = args [1].Equals ("ver");
+			dump_guids_for_msbuild = args [1].Equals ("guids_for_msbuild");
 		} else {
 			dump_asm = true;
 		}
@@ -61,7 +62,7 @@ class Driver {
 		var data = StreamToArray (entry.Open ());
 		AppDomain ad = AppDomain.CreateDomain ("parse_" + ++domain_id);
 		DoParse p = (DoParse)ad.CreateInstanceAndUnwrap (typeof (DoParse).Assembly.FullName, typeof (DoParse).FullName);
-		p.ParseAssembly (data, version, entry.Name, entry.FullName, dump_asm, dump_ver);
+		p.ParseAssembly (data, version, entry.Name, entry.FullName, dump_asm, dump_ver, dump_guids_for_msbuild);
 		AppDomain.Unload (ad);
 	}
 }
@@ -92,7 +93,7 @@ class DoParse : MarshalByRefObject {
 		return parts[parts.Length - 2];
 	}
 
-	public void ParseAssembly (byte[] data, string version, string name, string fullname, bool dump_asm, bool dump_ver) {
+	public void ParseAssembly (byte[] data, string version, string name, string fullname, bool dump_asm, bool dump_ver, bool dump_guids_for_msbuild) {
 		var a = Assembly.ReflectionOnlyLoad (data);
 		var m = a.GetModules ()[0];
 		var id = m.ModuleVersionId.ToString ().ToUpper ();
@@ -106,8 +107,12 @@ class DoParse : MarshalByRefObject {
 
 		//IGNORED_ASM_VER (SYS_IO_COMPRESSION, 4, 1, 2, 0),
 		var ver = a.GetName ().Version;
-		if (dump_ver)
+		if (dump_ver) {
 			Console.WriteLine ($"IGNORED_ASM_VER ({str}, {ver.Major}, {ver.Minor}, {ver.Build}, {ver.Revision}),");
+		} else if (dump_guids_for_msbuild) {
+			// This needs to be kept in sync with FilterDeniedAssemblies msbuild task in msbuild
+			Console.WriteLine ($"{name},{id},{ver.Major},{ver.Minor},{ver.Build},{ver.Revision}");
+		}
 		
 	}
 }
