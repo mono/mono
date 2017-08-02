@@ -204,33 +204,30 @@ mono_native_thread_set_name (MonoNativeThreadId tid, const char *name)
 	if (!name) {
 		pthread_setname_np ("");
 	} else {
-		size_t len = 63;
-		char *n = alloca (len);
+		char n [63];
 
-		strncpy (n, name, len - 1);
-		n [len - 1] = '\0';
+		strncpy (n, name, sizeof (n) - 1);
+		n [sizeof (n) - 1] = '\0';
 		pthread_setname_np (n);
 	}
 #elif defined (__NetBSD__)
 	if (!name) {
 		pthread_setname_np (tid, "%s", (void*)"");
 	} else {
-		size_t len = PTHREAD_MAX_NAMELEN_NP;
-		char *n = alloca (len);
+		char n [PTHREAD_MAX_NAMELEN_NP];
 
-		strncpy (n, name, len - 1);
-		n [len - 1] = '\0';
+		strncpy (n, name, sizeof (n) - 1);
+		n [sizeof (n) - 1] = '\0';
 		pthread_setname_np (tid, "%s", (void*)n);
 	}
 #elif defined (HAVE_PTHREAD_SETNAME_NP)
 	if (!name) {
 		pthread_setname_np (tid, "");
 	} else {
-		size_t len = 16;
-		char *n = alloca (len);
+		char n [16];
 
-		strncpy (n, name, len - 1);
-		n [len - 1] = '\0';
+		strncpy (n, name, sizeof (n) - 1);
+		n [sizeof (n) - 1] = '\0';
 		pthread_setname_np (tid, n);
 	}
 #endif
