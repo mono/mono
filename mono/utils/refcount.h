@@ -71,7 +71,7 @@ mono_refcount_decrement (MonoRefCount *refcount)
 			g_error ("%s: cannot decrement a ref with value 0", __func__);
 
 		newref = oldref - 1;
-	} while ((guint32)MonoInterlockedCompareExchange32 ((guint32*) &refcount->ref, (gint32)newref, (gint32)oldref) != oldref);
+	} while ((guint32)MonoInterlockedCompareExchange32 ((gint32*) &refcount->ref, (gint32)newref, (gint32)oldref) != oldref);
 
 	if (newref == 0 && refcount->destructor)
 		refcount->destructor ((gpointer) refcount);
