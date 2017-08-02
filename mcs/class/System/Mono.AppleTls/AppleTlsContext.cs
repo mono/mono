@@ -665,7 +665,7 @@ namespace Mono.AppleTls
 				if (value == IntPtr.Zero)
 					throw new TlsException (AlertDescription.CertificateUnknown);
 			}
-			return (value == IntPtr.Zero) ? null : new SecTrust (value);
+			return (value == IntPtr.Zero) ? null : new SecTrust (value, true);
 		}
 
 		#endregion
@@ -867,6 +867,7 @@ namespace Mono.AppleTls
 			} finally {
 				closed = true;
 				pendingIO = 0;
+				handle.Free ();
 			}
 		}
 
