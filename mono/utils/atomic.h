@@ -177,6 +177,11 @@ static inline void InterlockedWrite16(volatile gint16 *dst, gint16 val)
 	mono_memory_barrier ();
 }
 
+static inline gint32 MonoInterlockedCompareExchange32 (volatile gint32 *dest, gint32 exch, gint32 comp)
+{
+	return (gint32)InterlockedCompareExchange ((volatile LONG*)dest, (LONG)exch, (LONG)comp);
+}
+
 #elif defined(PLATFORM_UNITY)
 
 #include "Atomic-c-api.h"
@@ -184,6 +189,11 @@ static inline void InterlockedWrite16(volatile gint16 *dst, gint16 val)
 static inline gint32 InterlockedCompareExchange(volatile gint32 *dest, gint32 exch, gint32 comp)
 {
     return UnityPalCompareExchange(dest, exch, comp);
+}
+
+static inline gint32 MonoInterlockedCompareExchange32 (volatile gint32 *dest, gint32 exch, gint32 comp)
+{
+	return InterlockedCompareExchange (dest, exch, comp);
 }
 
 static inline gint64 InterlockedCompareExchange64(volatile gint64 *dest, gint64 exch, gint64 comp)
@@ -341,6 +351,11 @@ static inline gint32 InterlockedCompareExchange(volatile gint32 *dest,
 						gint32 exch, gint32 comp)
 {
 	return gcc_sync_val_compare_and_swap (dest, comp, exch);
+}
+
+static inline gint32 MonoInterlockedCompareExchange32 (volatile gint32 *dest, gint32 exch, gint32 comp)
+{
+	return InterlockedCompareExchange (dest, exch, comp);
 }
 
 static inline gpointer InterlockedCompareExchangePointer(volatile gpointer *dest, gpointer exch, gpointer comp)
@@ -555,6 +570,7 @@ static inline void InterlockedWrite64(volatile gint64 *dst, gint64 val)
 #define WAPI_NO_ATOMIC_ASM
 
 extern gint32 InterlockedCompareExchange(volatile gint32 *dest, gint32 exch, gint32 comp);
+extern gint32 MonoInterlockedCompareExchange32 (volatile gint32 *dest, gint32 exch, gint32 comp);
 extern gint64 InterlockedCompareExchange64(volatile gint64 *dest, gint64 exch, gint64 comp);
 extern gpointer InterlockedCompareExchangePointer(volatile gpointer *dest, gpointer exch, gpointer comp);
 extern gint32 InterlockedAdd(volatile gint32 *dest, gint32 add);
