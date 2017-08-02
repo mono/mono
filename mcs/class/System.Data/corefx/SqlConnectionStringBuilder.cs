@@ -19,5 +19,12 @@ namespace System.Data.SqlClient
         [Obsolete("ConnectionReset has been deprecated.  SqlConnection will ignore the 'connection reset'" +
             "keyword and always reset the connection")]
         public bool ConnectionReset { get; set; }
+
+        [MonoTODO("Not implemented in corefx: https://github.com/dotnet/corefx/issues/22474")]
+        public bool ContextConnection
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
     }
 }

@@ -102,9 +102,8 @@ namespace MonoTests.System.Data.Connected
 			string connectionString = Environment.GetEnvironmentVariable (envVarName);
 			if (string.IsNullOrEmpty (connectionString))
 				return null;
-
-#if COREFX_NS
-			var connection = new OdbcConnection();
+#if MOBILE
+			connection = new OdbcConnection ();
 #else
 			DbProviderFactory factory = DbProviderFactories.GetFactory ("System.Data.Odbc");
 			var connection = (OdbcConnection)factory.CreateConnection ();

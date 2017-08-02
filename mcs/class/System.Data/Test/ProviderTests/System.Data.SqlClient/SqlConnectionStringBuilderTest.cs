@@ -63,8 +63,8 @@ namespace MonoTests.System.Data.Connected.SqlClient
 			Assert.AreEqual ("Data Source=localhost", builder.ConnectionString, "#DVT1 default values is wrong");
 		}
 
-#if !COREFX_NS
 		[Test]
+		[Category("NotWorking")] // https://github.com/dotnet/corefx/issues/22474
 		public void PropertiesTest ()
 		{
 			builder = new SqlConnectionStringBuilder ("SERVER=localhost;");
@@ -74,9 +74,9 @@ namespace MonoTests.System.Data.Connected.SqlClient
 					 builder.ConnectionString.Contains ("Asynchronous Processing=True"),
 					 "#PT1 boolean value must be true");
 		}
-#endif
 		
 		[Test]
+		[Category("NotWorking")] //https://github.com/dotnet/corefx/issues/22474
 		public void ItemTest ()
 		{
 			builder = new SqlConnectionStringBuilder ("SERVER=localhost;");
@@ -104,6 +104,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 		
 		[Test, ExpectedException (typeof (ArgumentException))]
+		[Category("NotWorking")] //https://github.com/dotnet/corefx/issues/22474
 		public void InvalidKeyTest ()
 		{
 			builder = new SqlConnectionStringBuilder ("SERVER=localhost;Network=DBMSSOCN");
@@ -112,6 +113,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test]
+		[Category("NotWorking")] //https://github.com/dotnet/corefx/issues/22474
 		public void RemoveTest ()
 		{
 			builder = new SqlConnectionStringBuilder ("SERVER = localhost ;Network=DBMSSOCN");
@@ -162,8 +164,8 @@ namespace MonoTests.System.Data.Connected.SqlClient
 			Assert.AreEqual ("User Instance=True", builder.ConnectionString, "#1 The value of the key User Instance should be added to the connection string");			
 		}
 
-#if !COREFX_NS
 		[Test]
+		[Category("NotWorking")] // https://github.com/dotnet/corefx/issues/22474
 		public void ContextConnectionTest ()
 		{
 			builder = new SqlConnectionStringBuilder ();
@@ -174,13 +176,13 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test]
+		[Category("NotWorking")] // https://github.com/dotnet/corefx/issues/22474
 		public void SettingContextConnectionTest ()
 		{
 			builder = new SqlConnectionStringBuilder ();
 			builder["Context Connection"] = true;
 			Assert.AreEqual ("Context Connection=True", builder.ConnectionString, "#1 The value of the key Context Connection should be added to the connection string");			
 		}
-#endif
 	}
 }
 
