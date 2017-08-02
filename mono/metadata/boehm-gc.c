@@ -279,7 +279,9 @@ mono_gc_base_init (void)
 	mono_os_mutex_init_recursive (&handle_section);
 
 	mono_thread_info_attach (&dummy);
-#if !HAVE_BDWGC_GC
+#ifdef HAVE_BDWGC_GC
+	GC_set_on_event (on_gc_notification);
+#else
 	GC_set_on_collection_event (on_gc_notification);
 #endif
 	GC_on_heap_resize = on_gc_heap_resize;
