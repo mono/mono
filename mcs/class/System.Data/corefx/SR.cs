@@ -552,6 +552,7 @@ partial class SR
 	public const string SQL_SevereError = "A severe error occurred on the current command.  The results, if any, should be discarded.";
 	public const string SQL_SSPIGenerateError = "Failed to generate SSPI context.";
 	public const string SQL_KerberosTicketMissingError = "Cannot access Kerberos ticket. Ensure Kerberos has been initialized with 'kinit'.";
+	public const string SQL_SqlServerBrowserNotAccessible = "Cannot connect to SQL Server Browser. Ensure SQL Server Browser has been started.";
 	public const string SQL_InvalidSSPIPacketSize = "Invalid SSPI packet size.";
 	public const string SQL_SSPIInitializeError = "Cannot initialize SSPI package.";
 	public const string SQL_Timeout = "Timeout expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.";
@@ -756,7 +757,7 @@ partial class SR
 	public const string event_OperationReturnedSomething = "{0} returned {1}.";
 	public const string net_invalid_enum = "The specified value is not valid in the '{0}' enumeration.";
 	public const string SSPIInvalidHandleType = "'{0}' is not a supported handle type.";
-	public const string LocalDBNotSupported = "LocalDB is not supported on this Platform.";
+	public const string LocalDBNotSupported = "LocalDB is not supported on this platform.";
 	public const string PlatformNotSupported_DataSqlClient = "System.Data.SqlClient is not supported on this platform.";
 	public const string SqlParameter_InvalidTableDerivedPrecisionForTvp = "Precision '{0}' required to send all values in column '{1}' exceeds the maximum supported precision '{2}'. The values must all fit in a single precision.";
 	public const string SqlProvider_InvalidDataColumnMaxLength = "The size of column '{0}' is not supported. The size is {1}.";

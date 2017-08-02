@@ -487,7 +487,8 @@ corefx/SR.cs
 ../../../external/corefx/src/System.Data.Odbc/src/System/Data/Odbc/OdbcConnectionFactory.cs
 ../../../external/corefx/src/System.Data.Odbc/src/System/Data/Odbc/OdbcConnectionHandle.cs
 ../../../external/corefx/src/System.Data.Odbc/src/System/Data/Odbc/OdbcConnectionHelper.cs
-../../../external/corefx/src/System.Data.Odbc/src/System/Data/Odbc/OdbcConnectionOpen.cs
+corefx/OdbcConnectionOpen.cs
+#../../../external/corefx/src/System.Data.Odbc/src/System/Data/Odbc/OdbcConnectionOpen.cs
 ../../../external/corefx/src/System.Data.Odbc/src/System/Data/Odbc/OdbcConnectionPoolProviderInfo.cs
 ../../../external/corefx/src/System.Data.Odbc/src/System/Data/Odbc/OdbcConnectionString.cs
 ../../../external/corefx/src/System.Data.Odbc/src/System/Data/Odbc/OdbcConnectionStringbuilder.cs

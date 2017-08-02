@@ -16,7 +16,7 @@ namespace System.Data.SqlClient
             "https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/asynchronous-programming")]
         public bool AsynchronousProcessing { get; set; }
 
-        [Obsolete("ConnectionReset has been deprecated.  SqlConnection will ignore the 'connection reset' +
+        [Obsolete("ConnectionReset has been deprecated.  SqlConnection will ignore the 'connection reset'" +
             "keyword and always reset the connection")]
         public bool ConnectionReset { get; set; }
     }
