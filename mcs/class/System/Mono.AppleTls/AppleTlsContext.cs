@@ -867,6 +867,7 @@ namespace Mono.AppleTls
 			} finally {
 				closed = true;
 				pendingIO = 0;
+				handle.Free ();
 			}
 		}
 
@@ -894,7 +895,6 @@ namespace Mono.AppleTls
 				}
 			} finally {
 				disposed = true;
-				handle.Free ();
 				if (context != IntPtr.Zero) {
 					CFObject.CFRelease (context);
 					context = IntPtr.Zero;
