@@ -328,6 +328,7 @@ struct _MonoClass {
 	guint has_finalize_inited    : 1; /* has_finalize is initialized */
 	guint fields_inited : 1; /* setup_fields () has finished */
 	guint has_failure : 1; /* See mono_class_get_exception_data () for a MonoErrorBoxed with the details */
+	guint has_weak_fields : 1; /* class has weak reference fields */
 
 	MonoClass  *parent;
 	MonoClass  *nested_in;
@@ -1528,6 +1529,12 @@ mono_class_set_declsec_flags (MonoClass *klass, guint32 value);
 
 void
 mono_class_set_is_com_object (MonoClass *klass);
+
+void
+mono_class_set_weak_bitmap (MonoClass *klass, int nbits, gsize *bits);
+
+gsize*
+mono_class_get_weak_bitmap (MonoClass *klass, int *nbits);
 
 /*Now that everything has been defined, let's include the inline functions */
 #include <mono/metadata/class-inlines.h>

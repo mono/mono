@@ -47,6 +47,7 @@
 #include <mono/utils/checked-build.h>
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-threads-coop.h>
+#include <mono/utils/mono-logger-internals.h>
 #include "cominterop.h"
 #include <mono/utils/w32api.h>
 #include <mono/utils/unlocked.h>
@@ -1002,6 +1003,11 @@ ves_icall_string_alloc (int length)
 }
 
 /* LOCKING: Acquires the loader lock */
+/*
+ * Sets the following fields in KLASS:
+ * - gc_desc
+ * - gc_descr_inited
+ */
 void
 mono_class_compute_gc_descriptor (MonoClass *klass)
 {
@@ -1017,6 +1023,9 @@ mono_class_compute_gc_descriptor (MonoClass *klass)
 
 	if (klass->gc_descr_inited)
 		return;
+
+	gsize *weak_bitmap = NULL;
+	int weak_bitmap_nbits = 0;
 
 	bitmap = default_bitmap;
 	if (klass == mono_defaults.string_class) {
@@ -1034,23 +1043,34 @@ mono_class_compute_gc_descriptor (MonoClass *klass)
 			gc_descr = mono_gc_make_descr_for_array (klass->byval_arg.type == MONO_TYPE_SZARRAY, bitmap, mono_array_element_size (klass) / sizeof (gpointer), mono_array_element_size (klass));
 			/*printf ("new vt array descriptor: 0x%x for %s.%s\n", class->gc_descr,
 				class->name_space, class->name);*/
-			if (bitmap != default_bitmap)
-				g_free (bitmap);
 		}
 	} else {
 		/*static int count = 0;
 		if (count++ > 58)
 			return;*/
 		bitmap = compute_class_bitmap (klass, default_bitmap, sizeof (default_bitmap) * 8, 0, &max_set, FALSE);
-		gc_descr = mono_gc_make_descr_for_object (bitmap, max_set + 1, klass->instance_size);
 		/*
 		if (class->gc_descr == MONO_GC_DESCRIPTOR_NULL)
 			g_print ("disabling typed alloc (%d) for %s.%s\n", max_set, class->name_space, class->name);
 		*/
 		/*printf ("new descriptor: %p 0x%x for %s.%s\n", class->gc_descr, bitmap [0], class->name_space, class->name);*/
-		if (bitmap != default_bitmap)
-			g_free (bitmap);
+
+		if (klass->has_weak_fields) {
+			weak_bitmap = mono_class_get_weak_bitmap (klass, &weak_bitmap_nbits);
+
+			for (int pos = 0; pos < weak_bitmap_nbits; ++pos) {
+				if (weak_bitmap [pos / BITMAP_EL_SIZE] & ((gsize)1) << (pos % BITMAP_EL_SIZE)) {
+					/* Clear the normal bitmap so these refs don't keep an object alive */
+					bitmap [pos / BITMAP_EL_SIZE] &= ~((gsize)1) << (pos % BITMAP_EL_SIZE);
+				}
+			}
+		}
+
+		gc_descr = mono_gc_make_descr_for_object (bitmap, max_set + 1, klass->instance_size);
 	}
+
+	if (bitmap != default_bitmap)
+		g_free (bitmap);
 
 	/* Publish the data */
 	mono_loader_lock ();
@@ -5435,8 +5455,12 @@ mono_object_new_alloc_specific_checked (MonoVTable *vtable, MonoError *error)
 
 	if (G_UNLIKELY (!o))
 		mono_error_set_out_of_memory (error, "Could not allocate %i bytes", vtable->klass->instance_size);
-	else if (G_UNLIKELY (vtable->klass->has_finalize))
-		mono_object_register_finalizer (o);
+	else if (G_UNLIKELY (vtable->klass->has_finalize || vtable->klass->has_weak_fields)) {
+		if (vtable->klass->has_finalize)
+			mono_object_register_finalizer (o);
+		if (vtable->klass->has_weak_fields)
+			mono_gc_register_obj_with_weak_fields (o);
+	}
 
 	return o;
 }
