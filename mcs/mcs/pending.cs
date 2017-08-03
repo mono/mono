@@ -545,12 +545,15 @@ namespace Mono.CSharp {
 
 				if (new_implementation) {
 					MemberFilter filter;
-					if (mi.Parameters.Count > 1) {
-						var indexer_params = mi.Name [0] == 'g' ? mi.Parameters : IndexerSpec.CreateParametersFromSetter (mi, mi.Parameters.Count - 1);
-						filter = new MemberFilter (MemberCache.IndexerNameAlias, 0, MemberKind.Indexer, indexer_params, null);
+					bool getter = mi.Name [0] == 'g';
+					if (mi.Parameters.Count > (getter ? 0 : 1)) {
+						var indexer_params = getter ? mi.Parameters : IndexerSpec.CreateParametersFromSetter (mi, mi.Parameters.Count - 1);
+						var ptype = getter ? mi.ReturnType : mi.Parameters.Types [mi.Parameters.Count - 1];
+						filter = new MemberFilter (MemberCache.IndexerNameAlias, 0, MemberKind.Indexer, indexer_params, ptype);
 					} else {
 						var pname = mi.Name.Substring (4);
-						filter = MemberFilter.Property (pname, null);
+						var ptype = getter ? mi.ReturnType : mi.Parameters.Types [0];
+						filter = MemberFilter.Property (pname, ptype);
 					}
 
 					var prop = MemberCache.FindMember (container.CurrentType, filter, BindingRestriction.DeclaredOnly | BindingRestriction.InstanceOnly);

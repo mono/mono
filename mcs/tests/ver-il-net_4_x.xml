@@ -52775,6 +52775,39 @@
       </method>
     </type>
   </test>
+  <test name="test-947.cs">
+    <type name="B">
+      <method name="Int64 get_Prop()" attrs="2182">
+        <size>10</size>
+      </method>
+      <method name="Int32 IA.get_Prop()" attrs="2529">
+        <size>9</size>
+      </method>
+      <method name="Int64 get_Item(Int32)" attrs="2182">
+        <size>10</size>
+      </method>
+      <method name="Int32 IA.get_Item(Int32)" attrs="2529">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6276">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="System.String get_Prop()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="System.String get_Item(Int32)" attrs="2182">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-95.cs">
     <type name="X">
       <method name="Int32 Main()" attrs="150">
