@@ -293,7 +293,8 @@ enum {
 	SGEN_GC_BIT_FINALIZER_AWARE = 4,
 };
 
-void sgen_gc_init (void);
+void sgen_gc_init (void)
+    MONO_PERMIT (need (sgen_lock_gc));
 
 void sgen_os_init (void);
 
@@ -393,8 +394,10 @@ enum {
 
 extern SgenHashTable roots_hash [ROOT_TYPE_NUM];
 
-int sgen_register_root (char *start, size_t size, SgenDescriptor descr, int root_type, int source, const char *msg);
-void sgen_deregister_root (char* addr);
+int sgen_register_root (char *start, size_t size, SgenDescriptor descr, int root_type, int source, const char *msg)
+	MONO_PERMIT (need (sgen_lock_gc));
+void sgen_deregister_root (char* addr)
+	MONO_PERMIT (need (sgen_lock_gc));
 
 typedef void (*IterateObjectCallbackFunc) (GCObject*, size_t, void*);
 
@@ -809,8 +812,8 @@ void sgen_null_links_if (SgenObjectPredicateFunc predicate, void *data, int gene
 	MONO_PERMIT (need (sgen_gc_locked, sgen_world_stopped));
 
 gboolean sgen_gc_is_object_ready_for_finalization (GCObject *object);
-void sgen_gc_lock (void) MONO_PERMIT (grant (sgen_gc_locked));
-void sgen_gc_unlock (void) MONO_PERMIT (use (sgen_gc_locked), revoke (sgen_gc_locked));
+void sgen_gc_lock (void) MONO_PERMIT (use (sgen_lock_gc), grant (sgen_gc_locked), revoke (sgen_lock_gc));
+void sgen_gc_unlock (void) MONO_PERMIT (use (sgen_gc_locked), revoke (sgen_gc_locked), grant (sgen_lock_gc));
 
 void sgen_queue_finalization_entry (GCObject *obj);
 const char* sgen_generation_name (int generation);
@@ -822,9 +825,11 @@ void sgen_null_link_in_range (int generation, ScanCopyContext ctx, gboolean trac
 void sgen_process_fin_stage_entries (void)
 	MONO_PERMIT (need (sgen_gc_locked));
 gboolean sgen_have_pending_finalizers (void);
-void sgen_object_register_for_finalization (GCObject *obj, void *user_data);
+void sgen_object_register_for_finalization (GCObject *obj, void *user_data)
+	MONO_PERMIT (need (sgen_lock_gc));
 
-void sgen_finalize_if (SgenObjectPredicateFunc predicate, void *user_data);
+void sgen_finalize_if (SgenObjectPredicateFunc predicate, void *user_data)
+	MONO_PERMIT (need (sgen_lock_gc));
 void sgen_remove_finalizers_if (SgenObjectPredicateFunc predicate, void *user_data, int generation);
 void sgen_set_suspend_finalizers (void);
 
@@ -848,13 +853,15 @@ void sgen_set_pinned_from_failed_allocation (mword objsize);
 
 void sgen_ensure_free_space (size_t size, int generation)
 	MONO_PERMIT (need (sgen_gc_locked));
-void sgen_gc_collect (int generation);
+void sgen_gc_collect (int generation)
+	MONO_PERMIT (need (sgen_lock_gc));
 void sgen_perform_collection (size_t requested_size, int generation_to_collect, const char *reason, gboolean wait_to_finish, gboolean stw)
 	MONO_PERMIT (need (sgen_gc_locked));
 
 int sgen_gc_collection_count (int generation);
 /* FIXME: what exactly does this return? */
-size_t sgen_gc_get_used_size (void);
+size_t sgen_gc_get_used_size (void)
+	MONO_PERMIT (need (sgen_lock_gc));
 size_t sgen_gc_get_total_heap_allocation (void);
 
 /* STW */
@@ -971,7 +978,8 @@ sgen_is_object_alive_for_current_gen (GCObject *object)
 	return sgen_major_is_object_alive (object);
 }
 
-int sgen_gc_invoke_finalizers (void);
+int sgen_gc_invoke_finalizers (void)
+	MONO_PERMIT (need (sgen_lock_gc));
 
 /* GC handles */
 
@@ -1034,9 +1042,12 @@ typedef enum {
 
 void sgen_clear_tlabs (void);
 
-GCObject* sgen_alloc_obj (GCVTable vtable, size_t size);
-GCObject* sgen_alloc_obj_pinned (GCVTable vtable, size_t size);
-GCObject* sgen_alloc_obj_mature (GCVTable vtable, size_t size);
+GCObject* sgen_alloc_obj (GCVTable vtable, size_t size)
+	MONO_PERMIT (need (sgen_lock_gc));
+GCObject* sgen_alloc_obj_pinned (GCVTable vtable, size_t size)
+	MONO_PERMIT (need (sgen_lock_gc));
+GCObject* sgen_alloc_obj_mature (GCVTable vtable, size_t size)
+	MONO_PERMIT (need (sgen_lock_gc));
 
 /* Debug support */
 
