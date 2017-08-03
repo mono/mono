@@ -1971,6 +1971,9 @@ mono_w32file_create(const gunichar2 *name, guint32 fileaccess, guint32 sharemode
 	}
 
 	fd_data = fd_data_create (fd, filename);
+	fd_data->fileaccess = fileaccess;
+	fd_data->sharemode = sharemode;
+	fd_data->attrs = attrs;
 
 	MONO_ENTER_GC_SAFE;
 	ret = fstat (fd_data->fd, &statbuf);
@@ -1986,8 +1989,7 @@ mono_w32file_create(const gunichar2 *name, guint32 fileaccess, guint32 sharemode
 		return(INVALID_HANDLE_VALUE);
 	}
 
-	if (share_allows_open (&statbuf, sharemode, fileaccess,
-			 &fd_data->share_info) == FALSE) {
+	if (!share_allows_open (&statbuf, fd_data->sharemode, fd_data->fileaccess, &fd_data->share_info)) {
 		mono_w32error_set_last (ERROR_SHARING_VIOLATION);
 		MONO_ENTER_GC_SAFE;
 		close (fd_data->fd);
@@ -1996,7 +1998,7 @@ mono_w32file_create(const gunichar2 *name, guint32 fileaccess, guint32 sharemode
 		fd_data_unref(fd_data);
 		return (INVALID_HANDLE_VALUE);
 	}
-	if (fd_data->share_info == NULL) {
+	if (!fd_data->share_info) {
 		/* No space, so no more files can be opened */
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: No space in the share table", __func__);
 
@@ -2008,10 +2010,6 @@ mono_w32file_create(const gunichar2 *name, guint32 fileaccess, guint32 sharemode
 		fd_data_unref(fd_data);
 		return(INVALID_HANDLE_VALUE);
 	}
-
-	fd_data->fileaccess = fileaccess;
-	fd_data->sharemode = sharemode;
-	fd_data->attrs = attrs;
 
 #ifdef HAVE_POSIX_FADVISE
 	if (attrs & FILE_FLAG_SEQUENTIAL_SCAN) {
