@@ -14,3 +14,4 @@ System.Data.SqlClient/SQLDebugging.cs
 ../referencesource/System.Data/System/Data/Common/DbProviderFactoriesConfigurationHandler.cs
 ../referencesource/System.Data/System/Data/Common/DbProviderFactories.cs
 ../referencesource/System.Data/System/Data/Common/HandlerBase.cs
+../referencesource/System.Data/System/Data/SQLTypes/SqlTypesSchemaImporter.cs
