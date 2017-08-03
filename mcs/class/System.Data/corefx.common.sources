@@ -20,7 +20,6 @@ corefx/DbConnection.cs
 corefx/DbConnectionOptions.cs
 corefx/DiagnosticListener.cs
 corefx/OleDbFactory.cs
-corefx/RuntimeInformation.cs
 corefx/SqlClientFactory.cs
 corefx/SqlCommand.cs
 corefx/SqlException.cs
