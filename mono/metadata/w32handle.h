@@ -94,8 +94,6 @@ typedef enum {
 	MONO_W32HANDLE_CAP_SPECIAL_WAIT = 0x08,
 } MonoW32HandleCapability;
 
-extern guint32 mono_w32handle_fd_reserve;
-
 void
 mono_w32handle_init (void);
 
