@@ -2266,7 +2266,7 @@ m_Handle, buffer, offset + sent, size - sent, socketFlags, out nativeError, is_b
 #region DuplicateAndClose
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		static extern bool Duplicate_internal(IntPtr handle, int targetProcessId, out IntPtr duplicateHandle, out int error);
+		static extern bool Duplicate_internal(IntPtr handle, int targetProcessId, out IntPtr duplicateHandle, out MonoIOError error);
 
 		[MonoLimitation ("We do not support passing sockets across processes, we merely allow this API to pass the socket across AppDomains")]
 		public SocketInformation DuplicateAndClose (int targetProcessId)
@@ -2279,7 +2279,7 @@ m_Handle, buffer, offset + sent, size - sent, socketFlags, out nativeError, is_b
 				(useOverlappedIO ? SocketInformationOptions.UseOnlyOverlappedIO : 0);
 
 			IntPtr duplicateHandle;
-			if (!Duplicate_internal (Handle, targetProcessId, out duplicateHandle, out int error))
+			if (!Duplicate_internal (Handle, targetProcessId, out duplicateHandle, out MonoIOError error))
 				throw MonoIO.GetException (error);
 
 			si.ProtocolInformation = Mono.DataConverter.Pack ("iiiil", (int)addressFamily, (int)socketType, (int)protocolType, is_bound ? 1 : 0, (long)duplicateHandle);
