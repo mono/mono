@@ -42,9 +42,10 @@ namespace Mono.AppleTls
 	{
 		public const string SecurityLibrary = "/System/Library/Frameworks/Security.framework/Security";
 
+		// A GCHandle to a WeakReference that points to this instance.
 		GCHandle handle;
 		IntPtr context;
-		IntPtr connectionId;
+
 		SslReadFunc readFunc;
 		SslWriteFunc writeFunc;
 
@@ -73,8 +74,8 @@ namespace Mono.AppleTls
 			: base (parent, serverMode, targetHost, enabledProtocols,
 				serverCertificate, clientCertificates, askForClientCert)
 		{
-			handle = GCHandle.Alloc (this);
-			connectionId = GCHandle.ToIntPtr (handle);
+			var target = new WeakReference (this);
+			handle = GCHandle.Alloc (target);
 			readFunc = NativeReadCallback;
 			writeFunc = NativeWriteCallback;
 
@@ -274,7 +275,7 @@ namespace Mono.AppleTls
 			var result = SSLSetIOFuncs (Handle, readFunc, writeFunc);
 			CheckStatusAndThrow (result);
 
-			result = SSLSetConnection (Handle, connectionId);
+			result = SSLSetConnection (Handle, GCHandle.ToIntPtr (handle));
 			CheckStatusAndThrow (result);
 
 			if ((EnabledProtocols & SSA.SslProtocols.Tls) != 0)
@@ -684,18 +685,23 @@ namespace Mono.AppleTls
 		[Mono.Util.MonoPInvokeCallback (typeof (SslReadFunc))]
 		static SslStatus NativeReadCallback (IntPtr ptr, IntPtr data, ref IntPtr dataLength)
 		{
-			var handle = GCHandle.FromIntPtr (ptr);
-			if (!handle.IsAllocated)
-				return SslStatus.Internal;
-
-			var context = (AppleTlsContext) handle.Target;
-			if (context.disposed)
-				return SslStatus.ClosedAbort;
-
+			AppleTlsContext context = null;
 			try {
+				var weakHandle = GCHandle.FromIntPtr (ptr);
+				if (!weakHandle.IsAllocated)
+					return SslStatus.Internal;
+
+				var weakReference = (WeakReference) weakHandle.Target;
+				if (!weakReference.IsAlive)
+					return SslStatus.ClosedAbort;
+
+				context = (AppleTlsContext) weakReference.Target;
+				if (context == null || context.disposed)
+					return SslStatus.ClosedAbort;
+
 				return context.NativeReadCallback (data, ref dataLength);
 			} catch (Exception ex) {
-				if (context.lastException == null)
+				if (context != null && context.lastException == null)
 					context.lastException = ex;
 				return SslStatus.Internal;
 			}
@@ -704,18 +710,23 @@ namespace Mono.AppleTls
 		[Mono.Util.MonoPInvokeCallback (typeof (SslWriteFunc))]
 		static SslStatus NativeWriteCallback (IntPtr ptr, IntPtr data, ref IntPtr dataLength)
 		{
-			var handle = GCHandle.FromIntPtr (ptr);
-			if (!handle.IsAllocated)
-				return SslStatus.Internal;
-
-			var context = (AppleTlsContext) handle.Target;
-			if (context.disposed)
-				return SslStatus.ClosedAbort;
-
+			AppleTlsContext context = null;
 			try {
+				var weakHandle = GCHandle.FromIntPtr (ptr);
+				if (!weakHandle.IsAllocated)
+					return SslStatus.Internal;
+
+				var weakReference = (WeakReference) weakHandle.Target;
+				if (!weakReference.IsAlive)
+					return SslStatus.ClosedAbort;
+
+				context = (AppleTlsContext) weakReference.Target;
+				if (context == null || context.disposed)
+					return SslStatus.ClosedAbort;
+
 				return context.NativeWriteCallback (data, ref dataLength);
 			} catch (Exception ex) {
-				if (context.lastException == null)
+				if (context != null && context.lastException == null)
 					context.lastException = ex;
 				return SslStatus.Internal;
 			}
