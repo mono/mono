@@ -25,7 +25,6 @@ LIB_REFS += $(MONO_DATA_TDS) System.Transactions
 LIB_MCS_FLAGS += -d:NO_CODEDOM -d:NO_OLEDB -d:NO_ODBC -d:NO_CONFIGURATION
 else
 LIB_REFS += System.EnterpriseServices $(MONO_DATA_TDS) System.Configuration System.Transactions
-LIB_MCS_FLAGS += -d:COREFX_NS
 endif
 
 TXT_RESOURCE_STRINGS = ../referencesource/System.Data/system.data.txt
@@ -53,44 +52,18 @@ EXTRA_DISTFILES = \
 	SqliteTest.db	\
 	corefx.common.sources
 
-gen_OdbcConnection.cs: ../referencesource/System.Data/System/Data/ProviderBase/DbConnectionHelper.cs
-	sed -e "s/NAMESPACE/System.Data.Odbc/g" $< |\
-	sed -e "s/CONNECTIONFACTORYOBJECTNAME/OdbcConnectionFactory.SingletonInstance/g" |\
-	sed -e "s/CONNECTIONOBJECTNAME/OdbcConnection/g" >$@
 gen_OleDbConnection.cs: ../referencesource/System.Data/System/Data/ProviderBase/DbConnectionHelper.cs
 	sed -e s/NAMESPACE/System.Data.OleDb/g $< |\
 	sed -e s/CONNECTIONFACTORYOBJECTNAME/OleDbConnectionFactory.SingletonInstance/g |\
 	sed -e s/CONNECTIONOBJECTNAME/OleDbConnection/g >$@
-gen_SqlConnection.cs: ../referencesource/System.Data/System/Data/ProviderBase/DbConnectionHelper.cs
-	sed -e s/NAMESPACE/System.Data.SqlClient/g $< |\
-	sed -e s/CONNECTIONFACTORYOBJECTNAME/SqlConnectionFactory.SingletonInstance/g |\
-	sed -e s/CONNECTIONOBJECTNAME/SqlConnection/g >$@
-gen_OdbcParameter.cs: ../referencesource/System.Data/System/Data/ProviderBase/DbParameterHelper.cs
-	sed -e s/RESNAMESPACE/System.Data/g $< |\
-	sed -e s/NAMESPACE/System.Data.Odbc/g |\
-	sed -e s/PARAMETEROBJECTNAME/OdbcParameter/g >$@
 gen_OleDbParameter.cs: ../referencesource/System.Data/System/Data/ProviderBase/DbParameterHelper.cs
 	sed -e s/RESNAMESPACE/System.Data/g $< |\
 	sed -e s/NAMESPACE/System.Data.OleDb/g |\
 	sed -e s/PARAMETEROBJECTNAME/OleDbParameter/g >$@
-gen_SqlParameter.cs: ../referencesource/System.Data/System/Data/ProviderBase/DbParameterHelper.cs
-	sed -e s/RESNAMESPACE/System.Data/g $< |\
-	sed -e s/NAMESPACE/System.Data.SqlClient/g |\
-	sed -e s/PARAMETEROBJECTNAME/SqlParameter/g >$@
-gen_OdbcParameterCollection.cs: ../referencesource/System.Data/System/Data/ProviderBase/DbParameterCollectionHelper.cs
-	sed -e s/RESNAMESPACE/System.Data/g $< |\
-	sed -e s/NAMESPACE/System.Data.Odbc/g |\
-	sed -e s/PARAMETERCOLLECTIONOBJECTNAME/OdbcParameterCollection/g |\
-	sed -e s/PARAMETEROBJECTNAME/OdbcParameter/g >$@
 gen_OleDbParameterCollection.cs: ../referencesource/System.Data/System/Data/ProviderBase/DbParameterCollectionHelper.cs
 	sed -e s/RESNAMESPACE/System.Data/g $< |\
 	sed -e s/NAMESPACE/System.Data.OleDb/g |\
 	sed -e s/PARAMETERCOLLECTIONOBJECTNAME/OleDbParameterCollection/g |\
 	sed -e s/PARAMETEROBJECTNAME/OleDbParameter/g >$@
-gen_SqlParameterCollection.cs: ../referencesource/System.Data/System/Data/ProviderBase/DbParameterCollectionHelper.cs
-	sed -e s/RESNAMESPACE/System.Data/g $< |\
-	sed -e s/NAMESPACE/System.Data.SqlClient/g |\
-	sed -e s/PARAMETERCOLLECTIONOBJECTNAME/SqlParameterCollection/g |\
-	sed -e s/PARAMETEROBJECTNAME/SqlParameter/g >$@
 
 include ../../build/library.make
