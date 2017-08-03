@@ -13,14 +13,10 @@ namespace System.Data.OleDb
 {
     [MonoTODO] // OLEDB is not implemented
     public sealed class OleDbFactory : DbProviderFactory { }
-
+    
     [MonoTODO] // OLEDB is not implemented
-    [Serializable] 
-    public class OleDbPermission : DBDataPermission 
-    {
-        [Obsolete("OleDbPermission() has been deprecated.  Use the OleDbPermission(PermissionState.None) constructor.  http://go.microsoft.com/fwlink/?linkid=14202", true) ] // MDAC 86034
-        public OleDbPermission() : this(PermissionState.None) { }
-
-        public OleDbPermission(PermissionState state) : base(state) { }
+    internal sealed class OleDbConnectionString : DbConnectionOptions 
+    { 
+        internal OleDbConnectionString(string connectionString, bool validate) : base(connectionString, null) { }
     }
 }
