@@ -109,9 +109,6 @@ gpointer
 mono_w32handle_new (MonoW32HandleType type, gpointer handle_specific);
 
 gpointer
-mono_w32handle_new_fd (MonoW32HandleType type, int fd, gpointer handle_specific);
-
-gpointer
 mono_w32handle_duplicate (gpointer handle);
 
 gboolean
