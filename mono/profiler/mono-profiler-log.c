@@ -1594,6 +1594,25 @@ emit_bt (MonoProfiler *prof, LogBuffer *logbuffer, FrameData *data)
 }
 
 static void
+object_fileio (MonoProfiler *prof, int count, int kind)
+{
+	ENTER_LOG (&gc_allocs_ctr, logbuffer,
+				EVENT_SIZE /* event */ +
+				LEB128_SIZE /* count */ +
+				LEB128_SIZE /* kind */
+				);
+
+	if (kind == 0)
+		emit_event (logbuffer, TYPE_FILEIO|TYPE_FILEIO_READ);
+	else
+		emit_event (logbuffer, TYPE_FILEIO|TYPE_FILEIO_WRITE);
+	emit_value (logbuffer, count);
+	emit_value (logbuffer, kind);
+
+	EXIT_LOG;
+}
+
+static void
 gc_alloc (MonoProfiler *prof, MonoObject *obj, MonoClass *klass)
 {
 	init_thread (prof, TRUE);
@@ -4806,7 +4825,7 @@ mono_profiler_startup (const char *desc)
 		MONO_PROFILE_ENTER_LEAVE|MONO_PROFILE_JIT_COMPILATION|MONO_PROFILE_EXCEPTIONS|
 		MONO_PROFILE_MONITOR_EVENTS|MONO_PROFILE_MODULE_EVENTS|MONO_PROFILE_GC_ROOTS|
 		MONO_PROFILE_INS_COVERAGE|MONO_PROFILE_APPDOMAIN_EVENTS|MONO_PROFILE_CONTEXT_EVENTS|
-		MONO_PROFILE_ASSEMBLY_EVENTS|MONO_PROFILE_GC_FINALIZATION;
+		MONO_PROFILE_ASSEMBLY_EVENTS|MONO_PROFILE_GC_FINALIZATION|MONO_PROFILE_FILEIO;
 
 	max_allocated_sample_hits = mono_cpu_count () * 1000;
 
@@ -5014,6 +5033,7 @@ mono_profiler_startup (const char *desc)
 	mono_profiler_install (prof, log_shutdown);
 	mono_profiler_install_gc (gc_event, gc_resize);
 	mono_profiler_install_allocation (gc_alloc);
+	mono_profiler_install_fileio (object_fileio);
 	mono_profiler_install_gc_moves (gc_moves);
 	mono_profiler_install_gc_roots (gc_handle, gc_roots);
 	mono_profiler_install_gc_finalize (finalize_begin, finalize_object_begin, finalize_object_end, finalize_end);

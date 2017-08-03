@@ -37,6 +37,7 @@ void mono_profiler_code_transition (MonoMethod *method, int result);
 void mono_profiler_allocation      (MonoObject *obj);
 void mono_profiler_monitor_event   (MonoObject *obj, MonoProfilerMonitorEvent event);
 void mono_profiler_stat_hit        (guchar *ip, void *context);
+void mono_profiler_fileio          (int kind, int count);
 void mono_profiler_stat_call_chain (int call_chain_depth, guchar **ips, void *context);
 int  mono_profiler_stat_get_call_chain_depth (void);
 MonoProfilerCallChainStrategy  mono_profiler_stat_get_call_chain_strategy (void);

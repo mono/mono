@@ -10,6 +10,7 @@
 #include <winsock2.h>
 #include <windows.h>
 #include "mono/metadata/w32file-win32-internals.h"
+#include "mono/metadata/profiler-private.h"
 
 void
 mono_w32file_init (void)
@@ -71,13 +72,21 @@ mono_w32file_delete (const gunichar2 *name)
 gboolean
 mono_w32file_read(gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread)
 {
-	return ReadFile (handle, buffer, numbytes, bytesread, NULL);
+	gboolean ret = ReadFile (handle, buffer, numbytes, bytesread, NULL);
+	if (mono_profiler_get_events () & MONO_PROFILE_FILEIO)
+		mono_profiler_fileio (1, *bytesread);
+
+	return ret;
 }
 
 gboolean
 mono_w32file_write (gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten)
 {
-	return WriteFile (handle, buffer, numbytes, byteswritten, NULL);
+	gboolean ret = WriteFile (handle, buffer, numbytes, byteswritten, NULL);
+	if (mono_profiler_get_events () & MONO_PROFILE_FILEIO)
+		mono_profiler_fileio (0, *byteswritten);
+
+	return ret;
 }
 
 gboolean
