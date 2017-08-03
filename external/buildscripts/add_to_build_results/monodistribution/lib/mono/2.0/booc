@@ -1,0 +1,6 @@
+#!/bin/sh
+. $(dirname $0)/mono-env
+
+BOOC=$MONO_PATH/booc.exe
+
+exec $MONO $MONO_OPTIONS --runtime=v2.0.50727 $BOOC "$@"

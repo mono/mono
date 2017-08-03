@@ -1,0 +1,5 @@
+for myfile in `ls *.dylib`;
+  do for i in `otool -L $myfile | egrep -o \/Library\/Frameworks\/Mono.framework\/Versions\/2.6.7\/lib\/.*\.dylib | awk -F/ '{ print $8 }'`;
+	do install_name_tool -change /Library/Frameworks/Mono.framework/Versions/2.6.7/lib/$i @executable_path/../lib/$i $myfile
+  done
+done
