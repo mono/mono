@@ -1596,24 +1596,24 @@ emit_bt (MonoProfiler *prof, LogBuffer *logbuffer, FrameData *data)
 static void
 object_fileio (MonoProfiler *prof, MonoObject *obj, MonoClass *klass, int count, int kind)
 {
-    ENTER_LOG (&gc_allocs_ctr, logbuffer,
-               EVENT_SIZE /* event */ +
-               LEB128_SIZE /* klass */ +
-               LEB128_SIZE /* obj */ +
-               LEB128_SIZE /* count */ +
-               LEB128_SIZE /* kind */
-               );
+	ENTER_LOG (&gc_allocs_ctr, logbuffer,
+				EVENT_SIZE /* event */ +
+				LEB128_SIZE /* klass */ +
+				LEB128_SIZE /* obj */ +
+				LEB128_SIZE /* count */ +
+				LEB128_SIZE /* kind */
+				);
 
-    if (kind == 0)
-        emit_event (logbuffer, TYPE_FILEIO|TYPE_FILEIO_READ);
-    else
-        emit_event (logbuffer, TYPE_FILEIO|TYPE_FILEIO_WRITE);
-    emit_ptr (logbuffer, klass);
-    emit_obj (logbuffer, obj);
-    emit_value (logbuffer, count);
-    emit_value (logbuffer, kind);
+	if (kind == 0)
+		emit_event (logbuffer, TYPE_FILEIO|TYPE_FILEIO_READ);
+	else
+		emit_event (logbuffer, TYPE_FILEIO|TYPE_FILEIO_WRITE);
+	emit_ptr (logbuffer, klass);
+	emit_obj (logbuffer, obj);
+	emit_value (logbuffer, count);
+	emit_value (logbuffer, kind);
 
-    EXIT_LOG;
+	EXIT_LOG;
 }
 
 static void

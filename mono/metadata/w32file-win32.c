@@ -72,19 +72,21 @@ mono_w32file_delete (const gunichar2 *name)
 gboolean
 mono_w32file_read(gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread)
 {
-    gboolean ret = ReadFile (handle, buffer, numbytes, bytesread, NULL);
-    if (mono_profiler_get_events () & MONO_PROFILE_FILEIO)
-        mono_profiler_fileio (NULL, NULL, 1, *bytesread);
+	gboolean ret = ReadFile (handle, buffer, numbytes, bytesread, NULL);
+	if (mono_profiler_get_events () & MONO_PROFILE_FILEIO)
+		mono_profiler_fileio (NULL, NULL, 1, *bytesread);
 
-    return ret;
+	return ret;
 }
 
 gboolean
 mono_w32file_write (gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten)
 {
-    gboolean ret = WriteFile (handle, buffer, numbytes, byteswritten, NULL);
-    if (mono_profiler_get_events () & MONO_PROFILE_FILEIO)
-        mono_profiler_fileio (NULL, NULL, 0, *byteswritten);
+	gboolean ret = WriteFile (handle, buffer, numbytes, byteswritten, NULL);
+	if (mono_profiler_get_events () & MONO_PROFILE_FILEIO)
+		mono_profiler_fileio (NULL, NULL, 0, *byteswritten);
+
+	return ret;
 }
 
 gboolean
