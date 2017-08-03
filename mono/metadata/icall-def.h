@@ -63,6 +63,8 @@
  * Note:  valuetypes use the same calling convention as normal.
  * Limitations: "out" and "ref" arguments are not supported yet. 
  */
+ICALL_TYPE(CLR_INTEROP, "Interop/RunLoop", CLR_INTEROP_1)
+ICALL(CLR_INTEROP_1, "CFRunLoopRun", ves_icall_CoreFX_Interop_RunLoop_CFRunLoopRun)
 
 #ifndef DISABLE_PROCESS_HANDLING
 ICALL_TYPE(NATIVEMETHODS, "Microsoft.Win32.NativeMethods", NATIVEMETHODS_1)

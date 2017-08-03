@@ -133,16 +133,23 @@ System.Diagnostics/PerformanceCounterType.cs
 System.Diagnostics/TraceSourceInfo.cs
 System.Diagnostics/Win32EventLog.cs
 
-System.IO/DefaultWatcher.cs
-System.IO/FAMWatcher.cs
-System.IO/NullFileWatcher.cs
-System.IO/FileAction.cs
-System.IO/FileSystemWatcher.cs
-System.IO/IFileWatcher.cs
-System.IO/InotifyWatcher.cs
-System.IO/KeventWatcher.cs
-System.IO/SearchPattern.cs
-System.IO/WindowsWatcher.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/PatternMatcher.cs
+../../../external/corefx/src/Common/src/Interop/Windows/Interop.Errors.cs
+../../../external/corefx/src/Common/src/Interop/Unix/Interop.Errors.cs
+../../../external/corefx/src/Common/src/Interop/OSX/Interop.EventStream.cs
+../../../external/corefx/src/Common/src/Interop/Unix/Interop.IOErrors.cs
+../../../external/corefx/src/Common/src/Interop/OSX/Interop.RunLoop.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.OSX.cs
+../../../external/corefx/src/Common/src/Interop/OSX/Interop.CoreFoundation.cs
+../../../external/corefx/src/Common/src/Interop/OSX/Interop.Libraries.cs
+../../../external/corefx/src/Common/src/Interop/Unix/Interop.Libraries.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.RealPath.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Sync.cs
+../../../external/corefx/src/Common/src/System/IO/PathInternal.CaseSensitivity.cs
+corefx/SR.cs
+../../../external/corefx/src/Common/src/Microsoft/Win32/SafeHandles/SafeCreateHandle.OSX.cs
+../../../external/corefx/src/Common/src/Microsoft/Win32/SafeHandles/SafeEventStreamHandle.OSX.cs
 
 System.IO.Ports/Handshake.cs
 System.IO.Ports/ISerialStream.cs
