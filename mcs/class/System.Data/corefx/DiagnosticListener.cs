@@ -6,8 +6,8 @@ using System;
 
 internal class DiagnosticListener 
 {
-    internal bool diagnosticListenerEnabled = false;
+    internal static bool DiagnosticListenerEnabled = false;
     internal DiagnosticListener(string s) {}
-    internal bool IsEnabled(string s) => diagnosticListenerEnabled;
+    internal bool IsEnabled(string s) => DiagnosticListenerEnabled;
     internal void Write(string s1, object s2) { System.Console.WriteLine($"|| {s1},  {s2}");}
 }

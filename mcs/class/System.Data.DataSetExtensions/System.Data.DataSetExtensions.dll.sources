@@ -12,3 +12,15 @@ Assembly/AssemblyInfo.cs
 #../referencesource/System.Data.DataSetExtensions/System/Data/TypedTableBase.cs
 #../referencesource/System.Data.DataSetExtensions/System/Data/TypedTableBaseExtensions.cs
 ReferenceSources/Strings.cs
+
+#needs "bump corefx":
+#../../../external/corefx/src/System.Data.DataSetExtensions/src/System/Data/DataRowComparer.cs
+#../../../external/corefx/src/System.Data.DataSetExtensions/src/System/Data/DataRowExtensions.cs
+#../../../external/corefx/src/System.Data.DataSetExtensions/src/System/Data/DataSetUtil.cs
+#../../../external/corefx/src/System.Data.DataSetExtensions/src/System/Data/DataTableExtensions.cs
+#../../../external/corefx/src/System.Data.DataSetExtensions/src/System/Data/EnumerableRowCollection.cs
+#../../../external/corefx/src/System.Data.DataSetExtensions/src/System/Data/EnumerableRowCollectionExtensions.cs
+#../../../external/corefx/src/System.Data.DataSetExtensions/src/System/Data/OrderedEnumerableRowCollection.cs
+#../../../external/corefx/src/System.Data.DataSetExtensions/src/System/Data/SortExpressionBuilder.cs
+#../../../external/corefx/src/System.Data.DataSetExtensions/src/System/Data/TypedTableBase.cs
+#../../../external/corefx/src/System.Data.DataSetExtensions/src/System/Data/TypedTableBaseExtensions.cs

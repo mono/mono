@@ -249,6 +249,8 @@ namespace MonoTests.System.Data.Connected
 			EngineConfig = engineConfig;
 			this.connection = connection;
 			ConnectionString = connectionString;
+			if (!ConnectionString.EndsWith(";"))
+				ConnectionString += ";";
 		}
 
 		public bool IsAzure => ConnectionString.ToLower().Contains("database.windows.net");

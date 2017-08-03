@@ -12,14 +12,14 @@ ReferenceSources/ThisAssembly.cs
 System.Data.SqlClient/SqlCredential.cs
 System.Data.SqlClient/SQLDebugging.cs
 ReferenceSources/PoolBlockingPeriod.cs
-corefx/AdapterUtil.cs
+corefx/Odbc/AdapterUtil.cs
+corefx/Odbc/OdbcFactory.cs
+corefx/Odbc/Res.cs
+corefx/Odbc/DbConnectionStringCommon.cs
 corefx/DbConnection.cs
 corefx/DbConnectionOptions.cs
-corefx/DbConnectionStringCommon.cs
 corefx/DiagnosticListener.cs
-corefx/OdbcFactory.cs
 corefx/OleDbFactory.cs
-corefx/Res.cs
 corefx/RuntimeInformation.cs
 corefx/SqlClientFactory.cs
 corefx/SqlCommand.cs
@@ -487,7 +487,7 @@ corefx/SR.cs
 ../../../external/corefx/src/System.Data.Odbc/src/System/Data/Odbc/OdbcConnectionFactory.cs
 ../../../external/corefx/src/System.Data.Odbc/src/System/Data/Odbc/OdbcConnectionHandle.cs
 ../../../external/corefx/src/System.Data.Odbc/src/System/Data/Odbc/OdbcConnectionHelper.cs
-corefx/OdbcConnectionOpen.cs
+../referencesource/System.Data/System/Data/Odbc/OdbcConnectionOpen.cs
 #../../../external/corefx/src/System.Data.Odbc/src/System/Data/Odbc/OdbcConnectionOpen.cs
 ../../../external/corefx/src/System.Data.Odbc/src/System/Data/Odbc/OdbcConnectionPoolProviderInfo.cs
 ../../../external/corefx/src/System.Data.Odbc/src/System/Data/Odbc/OdbcConnectionString.cs

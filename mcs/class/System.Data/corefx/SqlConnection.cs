@@ -11,8 +11,10 @@ namespace System.Data.SqlClient
 {
     partial class SqlConnection
     {
+        [MonoTODO] //https://github.com/dotnet/corefx/issues/11958
         public static void ChangePassword (string connectionString, string newPassword)
 		{
+            throw new NotImplementedException();
         }
     }
 }
