@@ -569,12 +569,12 @@ mono_profiler_monitor_event      (MonoObject *obj, MonoProfilerMonitorEvent even
 }
 
 void
-mono_profiler_fileio (MonoObject *obj, MonoClass *klass, int kind, int count)
+mono_profiler_fileio (int kind, int count)
 {
 	ProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_FILEIO) && prof->fileio_cb)
-			prof->fileio_cb (prof->profiler, obj, klass, kind, count);
+			prof->fileio_cb (prof->profiler, kind, count);
     }
 }
 

@@ -74,7 +74,7 @@ mono_w32file_read(gpointer handle, gpointer buffer, guint32 numbytes, guint32 *b
 {
 	gboolean ret = ReadFile (handle, buffer, numbytes, bytesread, NULL);
 	if (mono_profiler_get_events () & MONO_PROFILE_FILEIO)
-		mono_profiler_fileio (NULL, NULL, 1, *bytesread);
+		mono_profiler_fileio (1, *bytesread);
 
 	return ret;
 }
@@ -84,7 +84,7 @@ mono_w32file_write (gpointer handle, gconstpointer buffer, guint32 numbytes, gui
 {
 	gboolean ret = WriteFile (handle, buffer, numbytes, byteswritten, NULL);
 	if (mono_profiler_get_events () & MONO_PROFILE_FILEIO)
-		mono_profiler_fileio (NULL, NULL, 0, *byteswritten);
+		mono_profiler_fileio (0, *byteswritten);
 
 	return ret;
 }
