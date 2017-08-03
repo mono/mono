@@ -91,7 +91,7 @@ if ($artifact)
 	}
 
 	# Create universal binaries
-	for my $file ('libmonobdwgc-2.0.dylib','libmonosgen-2.0.dylib','libMonoPosixHelper.dylib','libmonoruntime-unity-il2cpp-bdwgc.a','libmonoutils-unity-il2cpp.a','libeglib-unity.a')
+	for my $file ('libmonobdwgc-2.0.dylib','libmonosgen-2.0.dylib','libMonoPosixHelper.dylib')
 	{
 		print(">>> lipo $embedDirSource32/$file $embedDirSource64/$file -create -output $embedDirDestination/$file\n\n");
 		system ('lipo', "$embedDirSource32/$file", "$embedDirSource64/$file", '-create', '-output', "$embedDirDestination/$file");
