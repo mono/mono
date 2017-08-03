@@ -71,12 +71,7 @@ static gboolean shutting_down = FALSE;
 static gboolean
 type_is_fd (MonoW32HandleType type)
 {
-	switch (type) {
-	case MONO_W32HANDLE_SOCKET:
-		return TRUE;
-	default:
-		return FALSE;
-	}
+	return FALSE;
 }
 
 static gboolean
