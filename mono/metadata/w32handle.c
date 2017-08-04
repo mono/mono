@@ -297,7 +297,7 @@ static guint32 mono_w32handle_new_internal (MonoW32HandleType type,
 					  gpointer handle_specific)
 {
 	guint32 i, k, count;
-	static guint32 last = -1;
+	static guint32 last = 0;
 	gboolean retry = FALSE;
 	
 	/* A linear scan should be fast enough.  Start from the last
@@ -306,8 +306,9 @@ static guint32 mono_w32handle_new_internal (MonoW32HandleType type,
 	 * descriptors
 	 */
 
-	if (last < 0) {
-		last = 0;
+	if (last == 0) {
+		/* We need to go from 1 since a handle of value 0 can be considered invalid in managed code */
+		last = 1;
 	} else {
 		retry = TRUE;
 	}
@@ -343,7 +344,7 @@ again:
 
 	if (retry) {
 		/* Try again from the beginning */
-		last = 0;
+		last = 1;
 		retry = FALSE;
 		goto again;
 	}
