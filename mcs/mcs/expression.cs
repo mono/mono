@@ -1687,8 +1687,15 @@ namespace Mono.CSharp
 				ec.Emit (OpCodes.Dup);
 				no_value_label = ec.DefineLabel ();
 				ec.Emit (OpCodes.Brfalse_S, no_value_label);
+
+				if (Variable.HoistedVariant != null)
+					ec.EmitThis ();
+
 				expr_unwrap.Emit (ec);
 			} else {
+				if (Variable?.HoistedVariant != null)
+					ec.EmitThis ();
+
 				expr.Emit (ec);
 
 				// Only to make verifier happy
@@ -1708,19 +1715,29 @@ namespace Mono.CSharp
 					value_on_stack = false;
 				}
 
-				//
-				// It's ok to have variable builder created out of order. It simplifies emit
-				// of statements like while (condition) { }
-				//
-				if (!Variable.Created)
-					Variable.CreateBuilder (ec);
-				
-				Variable.EmitAssign (ec);
+				if (Variable.HoistedVariant != null) {
+					Variable.HoistedVariant.EmitAssignFromStack (ec);
 
-				if (expr_unwrap != null) {
-					ec.MarkLabel (no_value_label);
-				} else if (!value_on_stack) {
-					Variable.Emit (ec);
+					if (expr_unwrap != null) {
+						ec.MarkLabel (no_value_label);
+					} else if (!value_on_stack) {
+						Variable.HoistedVariant.Emit (ec);
+					}
+				} else {
+					//
+					// It's ok to have variable builder created out of order. It simplifies emit
+					// of statements like while (condition) { }
+					//
+					if (!Variable.Created)
+						Variable.CreateBuilder (ec);
+
+					Variable.EmitAssign (ec);
+
+					if (expr_unwrap != null) {
+						ec.MarkLabel (no_value_label);
+					} else if (!value_on_stack) {
+						Variable.Emit (ec);
+					}
 				}
 			}
 		}
