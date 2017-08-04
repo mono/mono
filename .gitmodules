@@ -51,7 +51,8 @@
 	url = git://github.com/mono/roslyn-binaries.git
 [submodule "external/corert"]
 	path = external/corert
-	url = git://github.com/mono/corert.git
+	url = git://github.com/nishant21gupta/corert.git
+	branch = corert-filestream
 [submodule "external/xunit-binaries"]
 	path = external/xunit-binaries
 	url = git://github.com/mono/xunit-binaries.git
