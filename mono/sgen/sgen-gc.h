@@ -852,11 +852,11 @@ void sgen_pin_object (GCObject *object, SgenGrayQueue *queue);
 void sgen_set_pinned_from_failed_allocation (mword objsize);
 
 void sgen_ensure_free_space (size_t size, int generation)
-	MONO_PERMIT (need (sgen_gc_locked));
+	MONO_PERMIT (need (sgen_gc_locked, sgen_stop_world));
 void sgen_gc_collect (int generation)
-	MONO_PERMIT (need (sgen_lock_gc));
+	MONO_PERMIT (need (sgen_lock_gc, sgen_stop_world));
 void sgen_perform_collection (size_t requested_size, int generation_to_collect, const char *reason, gboolean wait_to_finish, gboolean stw)
-	MONO_PERMIT (need (sgen_gc_locked));
+	MONO_PERMIT (need (sgen_gc_locked, sgen_stop_world));
 
 int sgen_gc_collection_count (int generation);
 /* FIXME: what exactly does this return? */
@@ -867,9 +867,9 @@ size_t sgen_gc_get_total_heap_allocation (void);
 /* STW */
 
 void sgen_stop_world (int generation)
-	MONO_PERMIT (need (sgen_gc_locked), grant (sgen_world_stopped));
+	MONO_PERMIT (need (sgen_gc_locked), use (sgen_stop_world), grant (sgen_world_stopped), revoke (sgen_stop_world));
 void sgen_restart_world (int generation)
-	MONO_PERMIT (need (sgen_gc_locked), use (sgen_world_stopped), revoke (sgen_world_stopped));
+	MONO_PERMIT (need (sgen_gc_locked), use (sgen_world_stopped), revoke (sgen_world_stopped), grant (sgen_stop_world));
 gboolean sgen_is_world_stopped (void);
 
 gboolean sgen_set_allow_synchronous_major (gboolean flag);
@@ -893,7 +893,7 @@ extern mword los_memory_usage_total;
 
 void sgen_los_free_object (LOSObject *obj);
 void* sgen_los_alloc_large_inner (GCVTable vtable, size_t size)
-	MONO_PERMIT (need (sgen_gc_locked));
+	MONO_PERMIT (need (sgen_gc_locked, sgen_stop_world));
 void sgen_los_sweep (void);
 gboolean sgen_ptr_is_in_los (char *ptr, char **start);
 void sgen_los_iterate_objects (IterateObjectCallbackFunc cb, void *user_data);
@@ -932,7 +932,7 @@ void sgen_nursery_alloc_prepare_for_major (void);
 GCObject* sgen_alloc_for_promotion (GCObject *obj, size_t objsize, gboolean has_references);
 
 GCObject* sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
-	MONO_PERMIT (need (sgen_gc_locked));
+	MONO_PERMIT (need (sgen_gc_locked, sgen_stop_world));
 GCObject* sgen_try_alloc_obj_nolock (GCVTable vtable, size_t size);
 
 /* Threads */
@@ -1043,11 +1043,11 @@ typedef enum {
 void sgen_clear_tlabs (void);
 
 GCObject* sgen_alloc_obj (GCVTable vtable, size_t size)
-	MONO_PERMIT (need (sgen_lock_gc));
+	MONO_PERMIT (need (sgen_lock_gc, sgen_stop_world));
 GCObject* sgen_alloc_obj_pinned (GCVTable vtable, size_t size)
-	MONO_PERMIT (need (sgen_lock_gc));
+	MONO_PERMIT (need (sgen_lock_gc, sgen_stop_world));
 GCObject* sgen_alloc_obj_mature (GCVTable vtable, size_t size)
-	MONO_PERMIT (need (sgen_lock_gc));
+	MONO_PERMIT (need (sgen_lock_gc, sgen_stop_world));
 
 /* Debug support */
 
@@ -1056,7 +1056,7 @@ void sgen_check_mod_union_consistency (void);
 void sgen_check_major_refs (void);
 void sgen_check_whole_heap (gboolean allow_missing_pinning);
 void sgen_check_whole_heap_stw (void)
-	MONO_PERMIT (need (sgen_gc_locked));
+	MONO_PERMIT (need (sgen_gc_locked, sgen_stop_world));
 void sgen_check_objref (char *obj);
 void sgen_check_heap_marked (gboolean nursery_must_be_pinned);
 void sgen_check_nursery_objects_pinned (gboolean pinned);
