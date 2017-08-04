@@ -15,20 +15,16 @@ namespace MonoTests.Helpers {
 
 		public static IPEndPoint LocalEphemeralEndPoint ()
 		{
-			bool success = false;
-
-			do {
+			while (true) {
 				var ep = new IPEndPoint (IPAddress.Loopback, rndPort.Next (10000, 60000));
 				var socket = new Socket (ep.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
 				try {
 					socket.Bind (ep);
 					socket.Close ();
-					success = true;
+					return ep;
 				} catch (SocketException) { }
-
-				return ep;
-			} while (!success);
+			}
 		}
 	}
 }
