@@ -186,7 +186,7 @@ namespace System
 		{
 			try {
 				// TODO: Should use __ConsoleStream from reference sources
-				return new FileStream(new SafeFileHandle(handle, ownsHandle: false), access, bufferSize, isAsync: false);
+				return new FileStream(new SafeFileHandle(handle, ownsHandle: false), access, 1, isAsync: false);
 			} catch (IOException) {
 				return Stream.Null;
 			}
