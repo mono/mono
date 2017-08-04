@@ -51,123 +51,93 @@
 #include "w32socket.h"
 #include "w32socket-internals.h"
 #include "w32error.h"
+#include "fdhandle.h"
 #include "utils/mono-logger-internals.h"
 #include "utils/mono-poll.h"
-#include "utils/refcount.h"
 
 typedef struct {
-	MonoRefCount ref;
-	gint fd;
+	MonoFDHandle fdhandle;
 	gint domain;
 	gint type;
 	gint protocol;
 	gint saved_error;
 	gint still_readable;
-} FDData;
+} SocketHandle;
 
-static GHashTable *fds;
-static MonoCoopMutex fds_mutex;
-
-static gboolean
-fd_data_lookup_and_ref (gint fd, FDData **fd_data)
+static SocketHandle*
+socket_data_create (MonoFDType type, gint fd)
 {
-	mono_coop_mutex_lock (&fds_mutex);
+	SocketHandle *sockethandle;
 
-	if (!g_hash_table_lookup_extended (fds, GINT_TO_POINTER(fd), NULL, (gpointer*) fd_data)) {
-		mono_coop_mutex_unlock (&fds_mutex);
-		return FALSE;
-	}
+	sockethandle = g_new0 (SocketHandle, 1);
+	mono_fdhandle_init ((MonoFDHandle*) sockethandle, type, fd);
 
-	mono_refcount_inc (*fd_data);
-
-	mono_coop_mutex_unlock (&fds_mutex);
-
-	return TRUE;
+	return sockethandle;
 }
 
 static void
-fd_data_unref (FDData *fd_data)
-{
-	mono_refcount_dec (fd_data);
-}
-
-static void
-fd_data_destroy (gpointer data)
-{
-	FDData *fd_data;
-
-	fd_data = (FDData*) data;
-	g_assert (fd_data);
-
-	g_free (fd_data);
-}
-
-static FDData*
-fd_data_create (gint fd)
-{
-	FDData *fd_data;
-
-	fd_data = g_new0 (FDData, 1);
-	mono_refcount_init (fd_data, fd_data_destroy);
-
-	fd_data->fd = fd;
-
-	return fd_data;
-}
-
-static void
-fds_remove (gpointer data)
+socket_data_close (MonoFDHandle *fdhandle)
 {
 	MonoThreadInfo *info;
-	FDData* fd_data;
+	SocketHandle* sockethandle;
 	gint ret;
 
-	fd_data = (FDData*) data;
-	g_assert (fd_data);
+	sockethandle = (SocketHandle*) fdhandle;
+	g_assert (sockethandle);
 
 	info = mono_thread_info_current ();
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: closing fd %d", __func__, fd_data->fd);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: closing fd %d", __func__, ((MonoFDHandle*) sockethandle)->fd);
 
 	/* Shutdown the socket for reading, to interrupt any potential
 	 * receives that may be blocking for data.  See bug 75705. */
 	MONO_ENTER_GC_SAFE;
-	shutdown (fd_data->fd, SHUT_RD);
+	shutdown (((MonoFDHandle*) sockethandle)->fd, SHUT_RD);
 	MONO_EXIT_GC_SAFE;
 
 retry_close:
 	MONO_ENTER_GC_SAFE;
-	ret = close (fd_data->fd);
+	ret = close (((MonoFDHandle*) sockethandle)->fd);
 	MONO_EXIT_GC_SAFE;
 	if (ret == -1) {
 		if (errno == EINTR && !mono_thread_info_is_interrupt_state (info))
 			goto retry_close;
 	}
 
-	fd_data->saved_error = 0;
+	sockethandle->saved_error = 0;
+}
 
-	fd_data_unref(fd_data);
+static void
+socket_data_destroy (MonoFDHandle *fdhandle)
+{
+	SocketHandle *sockethandle;
+
+	sockethandle = (SocketHandle*) fdhandle;
+	g_assert (sockethandle);
+
+	g_free (sockethandle);
 }
 
 void
 mono_w32socket_initialize (void)
 {
-	fds = g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, fds_remove);
-	mono_coop_mutex_init (&fds_mutex);
+	MonoFDHandleCallback socket_data_callbacks = {
+		.close = socket_data_close,
+		.destroy = socket_data_destroy
+	};
+
+	mono_fdhandle_register (MONO_FDTYPE_SOCKET, &socket_data_callbacks);
 }
 
 void
 mono_w32socket_cleanup (void)
 {
-	/* FIXME: enable destroying the fds */
-	// mono_coop_mutex_destroy (&fds_mutex);
-	// g_hash_table_destroy (fds);
 }
 
 SOCKET
 mono_w32socket_accept (SOCKET sock, struct sockaddr *addr, socklen_t *addrlen, gboolean blocking)
 {
-	FDData *fd_data, *accepted_fd_data;
+	SocketHandle *sockethandle, *accepted_socket_data;
 	MonoThreadInfo *info;
 	gint accepted_fd;
 
@@ -176,7 +146,13 @@ mono_w32socket_accept (SOCKET sock, struct sockaddr *addr, socklen_t *addrlen, g
 		return INVALID_SOCKET;
 	}
 
-	if (!fd_data_lookup_and_ref(sock, &fd_data)) {
+	if (!mono_fdhandle_lookup_and_ref(sock, (MonoFDHandle**) &sockethandle)) {
+		mono_w32error_set_last (WSAENOTSOCK);
+		return INVALID_SOCKET;
+	}
+
+	if (((MonoFDHandle*) sockethandle)->type != MONO_FDTYPE_SOCKET) {
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		mono_w32error_set_last (WSAENOTSOCK);
 		return INVALID_SOCKET;
 	}
@@ -184,49 +160,48 @@ mono_w32socket_accept (SOCKET sock, struct sockaddr *addr, socklen_t *addrlen, g
 	info = mono_thread_info_current ();
 
 	do {
-		accepted_fd = accept (fd_data->fd, addr, addrlen);
+		accepted_fd = accept (((MonoFDHandle*) sockethandle)->fd, addr, addrlen);
 	} while (accepted_fd == -1 && errno == EINTR && !mono_thread_info_is_interrupt_state (info));
 
 	if (accepted_fd == -1) {
 		gint error = mono_w32socket_convert_error (errno);
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: accept error: %s", __func__, g_strerror(errno));
 		mono_w32socket_set_last_error (error);
-		fd_data_unref (fd_data);
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		return INVALID_SOCKET;
 	}
 
-	accepted_fd_data = fd_data_create (accepted_fd);
-	accepted_fd_data->domain = fd_data->domain;
-	accepted_fd_data->type = fd_data->type;
-	accepted_fd_data->protocol = fd_data->protocol;
-	accepted_fd_data->still_readable = 1;
+	accepted_socket_data = socket_data_create (MONO_FDTYPE_SOCKET, accepted_fd);
+	accepted_socket_data->domain = sockethandle->domain;
+	accepted_socket_data->type = sockethandle->type;
+	accepted_socket_data->protocol = sockethandle->protocol;
+	accepted_socket_data->still_readable = 1;
 
-	mono_coop_mutex_lock (&fds_mutex);
+	mono_fdhandle_insert ((MonoFDHandle*) accepted_socket_data);
 
-	if (g_hash_table_lookup_extended (fds, GINT_TO_POINTER(accepted_fd_data->fd), NULL, NULL))
-		g_error("%s: duplicate fd %d", __func__, accepted_fd_data->fd);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: returning accepted handle %p", __func__, GINT_TO_POINTER(((MonoFDHandle*) accepted_socket_data)->fd));
 
-	g_hash_table_insert (fds, GINT_TO_POINTER(accepted_fd_data->fd), accepted_fd_data);
-
-	mono_coop_mutex_unlock (&fds_mutex);
-
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: returning accepted handle %p", __func__, GINT_TO_POINTER(accepted_fd_data->fd));
-
-	fd_data_unref(fd_data);
-	return accepted_fd_data->fd;
+	mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
+	return ((MonoFDHandle*) accepted_socket_data)->fd;
 }
 
 int
 mono_w32socket_connect (SOCKET sock, const struct sockaddr *addr, int addrlen, gboolean blocking)
 {
-	FDData *fd_data;
+	SocketHandle *sockethandle;
 
-	if (!fd_data_lookup_and_ref(sock, &fd_data)) {
+	if (!mono_fdhandle_lookup_and_ref(sock, (MonoFDHandle**) &sockethandle)) {
 		mono_w32error_set_last (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
 
-	if (connect (fd_data->fd, addr, addrlen) == -1) {
+	if (((MonoFDHandle*) sockethandle)->type != MONO_FDTYPE_SOCKET) {
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
+		mono_w32error_set_last (WSAENOTSOCK);
+		return SOCKET_ERROR;
+	}
+
+	if (connect (((MonoFDHandle*) sockethandle)->fd, addr, addrlen) == -1) {
 		MonoThreadInfo *info;
 		mono_pollfd fds;
 		gint errnum, so_error;
@@ -253,32 +228,32 @@ mono_w32socket_connect (SOCKET sock, const struct sockaddr *addr, int addrlen, g
 			if (errnum != WSAEWOULDBLOCK) {
 				/* ECONNRESET means the socket was closed by another thread */
 				/* Async close on mac raises ECONNABORTED. */
-				fd_data->saved_error = errnum;
+				sockethandle->saved_error = errnum;
 			}
-			fd_data_unref (fd_data);
+			mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 			return SOCKET_ERROR;
 		}
 
 		info = mono_thread_info_current ();
 
-		fds.fd = fd_data->fd;
+		fds.fd = ((MonoFDHandle*) sockethandle)->fd;
 		fds.events = MONO_POLLOUT;
 		while (mono_poll (&fds, 1, -1) == -1 && !mono_thread_info_is_interrupt_state (info)) {
 			if (errno != EINTR) {
 				gint errnum = errno;
 				mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: connect poll error: %s", __func__, g_strerror (errno));
 				mono_w32socket_set_last_error (mono_w32socket_convert_error (errnum));
-				fd_data_unref (fd_data);
+				mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 				return SOCKET_ERROR;
 			}
 		}
 
 		len = sizeof(so_error);
-		if (getsockopt (fd_data->fd, SOL_SOCKET, SO_ERROR, &so_error, &len) == -1) {
+		if (getsockopt (((MonoFDHandle*) sockethandle)->fd, SOL_SOCKET, SO_ERROR, &so_error, &len) == -1) {
 			gint errnum = errno;
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: connect getsockopt error: %s", __func__, g_strerror (errno));
 			mono_w32socket_set_last_error (mono_w32socket_convert_error (errnum));
-			fd_data_unref (fd_data);
+			mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 			return SOCKET_ERROR;
 		}
 
@@ -286,18 +261,18 @@ mono_w32socket_connect (SOCKET sock, const struct sockaddr *addr, int addrlen, g
 			gint errnum = mono_w32socket_convert_error (so_error);
 
 			/* Need to save this socket error */
-			fd_data->saved_error = errnum;
+			sockethandle->saved_error = errnum;
 
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: connect getsockopt returned error: %s",
 				   __func__, g_strerror (so_error));
 
 			mono_w32socket_set_last_error (errnum);
-			fd_data_unref (fd_data);
+			mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 			return SOCKET_ERROR;
 		}
 	}
 
-	fd_data_unref (fd_data);
+	mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 	return 0;
 }
 
@@ -310,11 +285,17 @@ mono_w32socket_recv (SOCKET sock, char *buf, int len, int flags, gboolean blocki
 int
 mono_w32socket_recvfrom (SOCKET sock, char *buf, int len, int flags, struct sockaddr *from, socklen_t *fromlen, gboolean blocking)
 {
-	FDData *fd_data;
+	SocketHandle *sockethandle;
 	int ret;
 	MonoThreadInfo *info;
 
-	if (!fd_data_lookup_and_ref(sock, &fd_data)) {
+	if (!mono_fdhandle_lookup_and_ref(sock, (MonoFDHandle**) &sockethandle)) {
+		mono_w32error_set_last (WSAENOTSOCK);
+		return SOCKET_ERROR;
+	}
+
+	if (((MonoFDHandle*) sockethandle)->type != MONO_FDTYPE_SOCKET) {
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		mono_w32error_set_last (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
@@ -322,7 +303,7 @@ mono_w32socket_recvfrom (SOCKET sock, char *buf, int len, int flags, struct sock
 	info = mono_thread_info_current ();
 
 	do {
-		ret = recvfrom (fd_data->fd, buf, len, flags, from, fromlen);
+		ret = recvfrom (((MonoFDHandle*) sockethandle)->fd, buf, len, flags, from, fromlen);
 	} while (ret == -1 && errno == EINTR && !mono_thread_info_is_interrupt_state (info));
 
 	if (ret == 0 && len > 0) {
@@ -344,7 +325,7 @@ mono_w32socket_recvfrom (SOCKET sock, char *buf, int len, int flags, struct sock
 		 * still_readable != 1 then shutdown
 		 * (SHUT_RD|SHUT_RDWR) has been called locally.
 		 */
-		if (fd_data->still_readable != 1) {
+		if (sockethandle->still_readable != 1) {
 			ret = -1;
 			errno = EINTR;
 		}
@@ -354,10 +335,10 @@ mono_w32socket_recvfrom (SOCKET sock, char *buf, int len, int flags, struct sock
 		gint errnum = errno;
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: recv error: %s", __func__, g_strerror(errno));
 		mono_w32socket_set_last_error (mono_w32socket_convert_error (errnum));
-		fd_data_unref (fd_data);
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		return SOCKET_ERROR;
 	}
-	fd_data_unref (fd_data);
+	mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 	return ret;
 }
 
@@ -384,7 +365,7 @@ msghdr_iov_free (struct msghdr *hdr)
 int
 mono_w32socket_recvbuffers (SOCKET sock, WSABUF *buffers, guint32 count, guint32 *received, guint32 *flags, gpointer overlapped, gpointer complete, gboolean blocking)
 {
-	FDData *fd_data;
+	SocketHandle *sockethandle;
 	MonoThreadInfo *info;
 	gint ret;
 	struct msghdr hdr;
@@ -392,7 +373,13 @@ mono_w32socket_recvbuffers (SOCKET sock, WSABUF *buffers, guint32 count, guint32
 	g_assert (overlapped == NULL);
 	g_assert (complete == NULL);
 
-	if (!fd_data_lookup_and_ref(sock, &fd_data)) {
+	if (!mono_fdhandle_lookup_and_ref(sock, (MonoFDHandle**) &sockethandle)) {
+		mono_w32error_set_last (WSAENOTSOCK);
+		return SOCKET_ERROR;
+	}
+
+	if (((MonoFDHandle*) sockethandle)->type != MONO_FDTYPE_SOCKET) {
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		mono_w32error_set_last (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
@@ -402,14 +389,14 @@ mono_w32socket_recvbuffers (SOCKET sock, WSABUF *buffers, guint32 count, guint32
 	wsabuf_to_msghdr (buffers, count, &hdr);
 
 	do {
-		ret = recvmsg (fd_data->fd, &hdr, *flags);
+		ret = recvmsg (((MonoFDHandle*) sockethandle)->fd, &hdr, *flags);
 	} while (ret == -1 && errno == EINTR && !mono_thread_info_is_interrupt_state (info));
 
 	msghdr_iov_free (&hdr);
 
 	if (ret == 0) {
 		/* see mono_w32socket_recvfrom */
-		if (fd_data->still_readable != 1) {
+		if (sockethandle->still_readable != 1) {
 			ret = -1;
 			errno = EINTR;
 		}
@@ -419,25 +406,31 @@ mono_w32socket_recvbuffers (SOCKET sock, WSABUF *buffers, guint32 count, guint32
 		gint errnum = errno;
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: recvmsg error: %s", __func__, g_strerror(errno));
 		mono_w32socket_set_last_error (mono_w32socket_convert_error (errnum));
-		fd_data_unref (fd_data);
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		return SOCKET_ERROR;
 	}
 
 	*received = ret;
 	*flags = hdr.msg_flags;
 
-	fd_data_unref (fd_data);
+	mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 	return 0;
 }
 
 int
 mono_w32socket_send (SOCKET sock, char *buf, int len, int flags, gboolean blocking)
 {
-	FDData *fd_data;
+	SocketHandle *sockethandle;
 	int ret;
 	MonoThreadInfo *info;
 
-	if (!fd_data_lookup_and_ref(sock, &fd_data)) {
+	if (!mono_fdhandle_lookup_and_ref(sock, (MonoFDHandle**) &sockethandle)) {
+		mono_w32error_set_last (WSAENOTSOCK);
+		return SOCKET_ERROR;
+	}
+
+	if (((MonoFDHandle*) sockethandle)->type != MONO_FDTYPE_SOCKET) {
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		mono_w32error_set_last (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
@@ -445,7 +438,7 @@ mono_w32socket_send (SOCKET sock, char *buf, int len, int flags, gboolean blocki
 	info = mono_thread_info_current ();
 
 	do {
-		ret = send (fd_data->fd, buf, len, flags);
+		ret = send (((MonoFDHandle*) sockethandle)->fd, buf, len, flags);
 	} while (ret == -1 && errno == EINTR && !mono_thread_info_is_interrupt_state (info));
 
 	if (ret == -1) {
@@ -456,27 +449,33 @@ mono_w32socket_send (SOCKET sock, char *buf, int len, int flags, gboolean blocki
 		/* At least linux returns EAGAIN/EWOULDBLOCK when the timeout has been set on
 		 * a blocking socket. See bug #599488 */
 		if (errnum == EAGAIN) {
-			ret = fcntl (fd_data->fd, F_GETFL, 0);
+			ret = fcntl (((MonoFDHandle*) sockethandle)->fd, F_GETFL, 0);
 			if (ret != -1 && (ret & O_NONBLOCK) == 0)
 				errnum = ETIMEDOUT;
 		}
 #endif /* O_NONBLOCK */
 		mono_w32socket_set_last_error (mono_w32socket_convert_error (errnum));
-		fd_data_unref (fd_data);
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		return SOCKET_ERROR;
 	}
-	fd_data_unref (fd_data);
+	mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 	return ret;
 }
 
 int
 mono_w32socket_sendto (SOCKET sock, const char *buf, int len, int flags, const struct sockaddr *to, int tolen, gboolean blocking)
 {
-	FDData *fd_data;
+	SocketHandle *sockethandle;
 	int ret;
 	MonoThreadInfo *info;
 
-	if (!fd_data_lookup_and_ref(sock, &fd_data)) {
+	if (!mono_fdhandle_lookup_and_ref(sock, (MonoFDHandle**) &sockethandle)) {
+		mono_w32error_set_last (WSAENOTSOCK);
+		return SOCKET_ERROR;
+	}
+
+	if (((MonoFDHandle*) sockethandle)->type != MONO_FDTYPE_SOCKET) {
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		mono_w32error_set_last (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
@@ -484,17 +483,17 @@ mono_w32socket_sendto (SOCKET sock, const char *buf, int len, int flags, const s
 	info = mono_thread_info_current ();
 
 	do {
-		ret = sendto (fd_data->fd, buf, len, flags, to, tolen);
+		ret = sendto (((MonoFDHandle*) sockethandle)->fd, buf, len, flags, to, tolen);
 	} while (ret == -1 && errno == EINTR &&  !mono_thread_info_is_interrupt_state (info));
 
 	if (ret == -1) {
 		gint errnum = errno;
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: send error: %s", __func__, g_strerror (errno));
 		mono_w32socket_set_last_error (mono_w32socket_convert_error (errnum));
-		fd_data_unref (fd_data);
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		return SOCKET_ERROR;
 	}
-	fd_data_unref (fd_data);
+	mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 	return ret;
 }
 
@@ -503,13 +502,19 @@ mono_w32socket_sendbuffers (SOCKET sock, WSABUF *buffers, guint32 count, guint32
 {
 	struct msghdr hdr;
 	MonoThreadInfo *info;
-	FDData *fd_data;
+	SocketHandle *sockethandle;
 	gint ret;
 
 	g_assert (overlapped == NULL);
 	g_assert (complete == NULL);
 
-	if (!fd_data_lookup_and_ref(sock, &fd_data)) {
+	if (!mono_fdhandle_lookup_and_ref(sock, (MonoFDHandle**) &sockethandle)) {
+		mono_w32error_set_last (WSAENOTSOCK);
+		return SOCKET_ERROR;
+	}
+
+	if (((MonoFDHandle*) sockethandle)->type != MONO_FDTYPE_SOCKET) {
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		mono_w32error_set_last (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
@@ -519,7 +524,7 @@ mono_w32socket_sendbuffers (SOCKET sock, WSABUF *buffers, guint32 count, guint32
 	wsabuf_to_msghdr (buffers, count, &hdr);
 
 	do {
-		ret = sendmsg (fd_data->fd, &hdr, flags);
+		ret = sendmsg (((MonoFDHandle*) sockethandle)->fd, &hdr, flags);
 	} while (ret == -1 && errno == EINTR && !mono_thread_info_is_interrupt_state (info));
 
 	msghdr_iov_free (&hdr);
@@ -528,12 +533,12 @@ mono_w32socket_sendbuffers (SOCKET sock, WSABUF *buffers, guint32 count, guint32
 		gint errnum = errno;
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: sendmsg error: %s", __func__, g_strerror (errno));
 		mono_w32socket_set_last_error (mono_w32socket_convert_error (errnum));
-		fd_data_unref (fd_data);
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		return SOCKET_ERROR;
 	}
 
 	*sent = ret;
-	fd_data_unref (fd_data);
+	mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 	return 0;
 }
 
@@ -543,7 +548,7 @@ BOOL
 mono_w32socket_transmit_file (SOCKET sock, gpointer file_handle, TRANSMIT_FILE_BUFFERS *buffers, guint32 flags, gboolean blocking)
 {
 	MonoThreadInfo *info;
-	FDData *fd_data;
+	SocketHandle *sockethandle;
 	gint file;
 	gssize ret;
 #if defined(HAVE_SENDFILE) && (defined(__linux__) || defined(DARWIN))
@@ -552,16 +557,22 @@ mono_w32socket_transmit_file (SOCKET sock, gpointer file_handle, TRANSMIT_FILE_B
 	gchar *buffer;
 #endif
 
-	if (!fd_data_lookup_and_ref(sock, &fd_data)) {
+	if (!mono_fdhandle_lookup_and_ref(sock, (MonoFDHandle**) &sockethandle)) {
+		mono_w32error_set_last (WSAENOTSOCK);
+		return SOCKET_ERROR;
+	}
+
+	if (((MonoFDHandle*) sockethandle)->type != MONO_FDTYPE_SOCKET) {
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		mono_w32error_set_last (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
 
 	/* Write the header */
 	if (buffers != NULL && buffers->Head != NULL && buffers->HeadLength > 0) {
-		ret = mono_w32socket_send (fd_data->fd, buffers->Head, buffers->HeadLength, 0, FALSE);
+		ret = mono_w32socket_send (((MonoFDHandle*) sockethandle)->fd, buffers->Head, buffers->HeadLength, 0, FALSE);
 		if (ret == SOCKET_ERROR) {
-			fd_data_unref (fd_data);
+			mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 			return FALSE;
 		}
 	}
@@ -575,17 +586,17 @@ mono_w32socket_transmit_file (SOCKET sock, gpointer file_handle, TRANSMIT_FILE_B
 	if (ret == -1) {
 		gint errnum = errno;
 		mono_w32socket_set_last_error (mono_w32socket_convert_error (errnum));
-		fd_data_unref (fd_data);
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		return SOCKET_ERROR;
 	}
 
 	do {
 #ifdef __linux__
-		ret = sendfile (fd_data->fd, file, NULL, statbuf.st_size);
+		ret = sendfile (((MonoFDHandle*) sockethandle)->fd, file, NULL, statbuf.st_size);
 #elif defined(DARWIN)
 		/* TODO: header/tail could be sent in the 5th argument */
 		/* TODO: Might not send the entire file for non-blocking sockets */
-		ret = sendfile (file, fd_data->fd, 0, &statbuf.st_size, NULL, 0);
+		ret = sendfile (file, ((MonoFDHandle*) sockethandle)->fd, 0, &statbuf.st_size, NULL, 0);
 #endif
 	} while (ret != -1 && errno == EINTR && !mono_thread_info_is_interrupt_state (info));
 #else
@@ -600,7 +611,7 @@ mono_w32socket_transmit_file (SOCKET sock, gpointer file_handle, TRANSMIT_FILE_B
 			break;
 
 		do {
-			ret = send (fd_data->fd, buffer, ret, 0); /* short sends? enclose this in a loop? */
+			ret = send (((MonoFDHandle*) sockethandle)->fd, buffer, ret, 0); /* short sends? enclose this in a loop? */
 		} while (ret == -1 && errno == EINTR && !mono_thread_info_is_interrupt_state (info));
 	} while (ret != -1 && errno == EINTR && !mono_thread_info_is_interrupt_state (info));
 
@@ -610,30 +621,30 @@ mono_w32socket_transmit_file (SOCKET sock, gpointer file_handle, TRANSMIT_FILE_B
 	if (ret == -1) {
 		gint errnum = errno;
 		mono_w32socket_set_last_error (mono_w32socket_convert_error (errnum));
-		fd_data_unref (fd_data);
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		return FALSE;
 	}
 
 	/* Write the tail */
 	if (buffers != NULL && buffers->Tail != NULL && buffers->TailLength > 0) {
-		ret = mono_w32socket_send (fd_data->fd, buffers->Tail, buffers->TailLength, 0, FALSE);
+		ret = mono_w32socket_send (((MonoFDHandle*) sockethandle)->fd, buffers->Tail, buffers->TailLength, 0, FALSE);
 		if (ret == SOCKET_ERROR) {
-			fd_data_unref (fd_data);
+			mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 			return FALSE;
 		}
 	}
 
 	if ((flags & TF_DISCONNECT) == TF_DISCONNECT)
-		mono_w32socket_close (fd_data->fd);
+		mono_w32socket_close (((MonoFDHandle*) sockethandle)->fd);
 
-	fd_data_unref (fd_data);
+	mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 	return TRUE;
 }
 
 SOCKET
 mono_w32socket_socket (int domain, int type, int protocol)
 {
-	FDData *fd_data;
+	SocketHandle *sockethandle;
 	gint fd;
 
 retry_socket:
@@ -652,11 +663,11 @@ retry_socket:
 		return INVALID_SOCKET;
 	}
 
-	fd_data = fd_data_create(fd);
-	fd_data->domain = domain;
-	fd_data->type = type;
-	fd_data->protocol = protocol;
-	fd_data->still_readable = 1;
+	sockethandle = socket_data_create(MONO_FDTYPE_SOCKET, fd);
+	sockethandle->domain = domain;
+	sockethandle->type = type;
+	sockethandle->protocol = protocol;
+	sockethandle->still_readable = 1;
 
 	/* .net seems to set this by default for SOCK_STREAM, not for
 	 * SOCK_DGRAM (see bug #36322)
@@ -676,112 +687,129 @@ retry_socket:
 	{
 		int ret, true_ = 1;
 
-		ret = setsockopt (fd_data->fd, SOL_SOCKET, SO_REUSEADDR, &true_, sizeof (true_));
+		ret = setsockopt (((MonoFDHandle*) sockethandle)->fd, SOL_SOCKET, SO_REUSEADDR, &true_, sizeof (true_));
 		if (ret == -1) {
 			gint errnum = errno;
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Error setting SO_REUSEADDR", __func__);
 			mono_w32socket_set_last_error (mono_w32socket_convert_error (errnum));
-			close (fd_data->fd);
-			fd_data_unref (fd_data);
+			close (((MonoFDHandle*) sockethandle)->fd);
+			mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 			return INVALID_SOCKET;
 		}
 	}
 
-	mono_coop_mutex_lock (&fds_mutex);
+	mono_fdhandle_insert ((MonoFDHandle*) sockethandle);
 
-	if (g_hash_table_lookup_extended (fds, GINT_TO_POINTER(fd_data->fd), NULL, NULL))
-		g_error("%s: duplicate fd %d", __func__, fd_data->fd);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: returning socket handle %p", __func__, GINT_TO_POINTER(((MonoFDHandle*) sockethandle)->fd));
 
-	g_hash_table_insert (fds, GINT_TO_POINTER(fd_data->fd), fd_data);
-
-	mono_coop_mutex_unlock (&fds_mutex);
-
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: returning socket handle %p", __func__, GINT_TO_POINTER(fd_data->fd));
-
-	return fd_data->fd;
+	return ((MonoFDHandle*) sockethandle)->fd;
 }
 
 gint
 mono_w32socket_bind (SOCKET sock, struct sockaddr *addr, socklen_t addrlen)
 {
-	FDData *fd_data;
+	SocketHandle *sockethandle;
 	int ret;
 
-	if (!fd_data_lookup_and_ref(sock, &fd_data)) {
+	if (!mono_fdhandle_lookup_and_ref(sock, (MonoFDHandle**) &sockethandle)) {
 		mono_w32error_set_last (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
 
-	ret = bind (fd_data->fd, addr, addrlen);
+	if (((MonoFDHandle*) sockethandle)->type != MONO_FDTYPE_SOCKET) {
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
+		mono_w32error_set_last (WSAENOTSOCK);
+		return SOCKET_ERROR;
+	}
+
+	ret = bind (((MonoFDHandle*) sockethandle)->fd, addr, addrlen);
 	if (ret == -1) {
 		gint errnum = errno;
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: bind error: %s", __func__, g_strerror(errno));
 		mono_w32socket_set_last_error (mono_w32socket_convert_error (errnum));
-		fd_data_unref (fd_data);
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		return SOCKET_ERROR;
 	}
 
-	fd_data_unref (fd_data);
+	mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 	return 0;
 }
 
 gint
 mono_w32socket_getpeername (SOCKET sock, struct sockaddr *name, socklen_t *namelen)
 {
-	FDData *fd_data;
+	SocketHandle *sockethandle;
 	gint ret;
 
-	if (!fd_data_lookup_and_ref(sock, &fd_data)) {
+	if (!mono_fdhandle_lookup_and_ref(sock, (MonoFDHandle**) &sockethandle)) {
 		mono_w32error_set_last (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
 
-	ret = getpeername (fd_data->fd, name, namelen);
+	if (((MonoFDHandle*) sockethandle)->type != MONO_FDTYPE_SOCKET) {
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
+		mono_w32error_set_last (WSAENOTSOCK);
+		return SOCKET_ERROR;
+	}
+
+	ret = getpeername (((MonoFDHandle*) sockethandle)->fd, name, namelen);
 	if (ret == -1) {
 		gint errnum = errno;
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: getpeername error: %s", __func__, g_strerror (errno));
 		mono_w32socket_set_last_error (mono_w32socket_convert_error (errnum));
-		fd_data_unref (fd_data);
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		return SOCKET_ERROR;
 	}
 
-	fd_data_unref (fd_data);
+	mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 	return 0;
 }
 
 gint
 mono_w32socket_getsockname (SOCKET sock, struct sockaddr *name, socklen_t *namelen)
 {
-	FDData *fd_data;
+	SocketHandle *sockethandle;
 	gint ret;
 
-	if (!fd_data_lookup_and_ref(sock, &fd_data)) {
+	if (!mono_fdhandle_lookup_and_ref(sock, (MonoFDHandle**) &sockethandle)) {
 		mono_w32error_set_last (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
 
-	ret = getsockname (fd_data->fd, name, namelen);
+	if (((MonoFDHandle*) sockethandle)->type != MONO_FDTYPE_SOCKET) {
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
+		mono_w32error_set_last (WSAENOTSOCK);
+		return SOCKET_ERROR;
+	}
+
+	ret = getsockname (((MonoFDHandle*) sockethandle)->fd, name, namelen);
 	if (ret == -1) {
 		gint errnum = errno;
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: getsockname error: %s", __func__, g_strerror (errno));
 		mono_w32socket_set_last_error (mono_w32socket_convert_error (errnum));
-		fd_data_unref (fd_data);
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		return SOCKET_ERROR;
 	}
 
-	fd_data_unref (fd_data);
+	mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 	return 0;
 }
 
 gint
 mono_w32socket_getsockopt (SOCKET sock, gint level, gint optname, gpointer optval, socklen_t *optlen)
 {
-	FDData *fd_data;
+	SocketHandle *sockethandle;
 	gint ret;
 	struct timeval tv;
 	gpointer tmp_val;
 
-	if (!fd_data_lookup_and_ref(sock, &fd_data)) {
+	if (!mono_fdhandle_lookup_and_ref(sock, (MonoFDHandle**) &sockethandle)) {
+		mono_w32error_set_last (WSAENOTSOCK);
+		return SOCKET_ERROR;
+	}
+
+	if (((MonoFDHandle*) sockethandle)->type != MONO_FDTYPE_SOCKET) {
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		mono_w32error_set_last (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
@@ -793,12 +821,12 @@ mono_w32socket_getsockopt (SOCKET sock, gint level, gint optname, gpointer optva
 		*optlen = sizeof (tv);
 	}
 
-	ret = getsockopt (fd_data->fd, level, optname, tmp_val, optlen);
+	ret = getsockopt (((MonoFDHandle*) sockethandle)->fd, level, optname, tmp_val, optlen);
 	if (ret == -1) {
 		gint errnum = errno;
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: getsockopt error: %s", __func__, g_strerror (errno));
 		mono_w32socket_set_last_error (mono_w32socket_convert_error (errnum));
-		fd_data_unref (fd_data);
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		return SOCKET_ERROR;
 	}
 
@@ -810,20 +838,20 @@ mono_w32socket_getsockopt (SOCKET sock, gint level, gint optname, gpointer optva
 	if (optname == SO_ERROR) {
 		if (*((int *)optval) != 0) {
 			*((int *) optval) = mono_w32socket_convert_error (*((int *)optval));
-			fd_data->saved_error = *((int *)optval);
+			sockethandle->saved_error = *((int *)optval);
 		} else {
-			*((int *)optval) = fd_data->saved_error;
+			*((int *)optval) = sockethandle->saved_error;
 		}
 	}
 
-	fd_data_unref (fd_data);
+	mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 	return 0;
 }
 
 gint
 mono_w32socket_setsockopt (SOCKET sock, gint level, gint optname, const gpointer optval, socklen_t optlen)
 {
-	FDData *fd_data;
+	SocketHandle *sockethandle;
 	gint ret;
 	gpointer tmp_val;
 #if defined (__linux__)
@@ -832,7 +860,13 @@ mono_w32socket_setsockopt (SOCKET sock, gint level, gint optname, const gpointer
 #endif
 	struct timeval tv;
 
-	if (!fd_data_lookup_and_ref(sock, &fd_data)) {
+	if (!mono_fdhandle_lookup_and_ref(sock, (MonoFDHandle**) &sockethandle)) {
+		mono_w32error_set_last (WSAENOTSOCK);
+		return SOCKET_ERROR;
+	}
+
+	if (((MonoFDHandle*) sockethandle)->type != MONO_FDTYPE_SOCKET) {
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		mono_w32error_set_last (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
@@ -860,12 +894,12 @@ mono_w32socket_setsockopt (SOCKET sock, gint level, gint optname, const gpointer
 	}
 #endif
 
-	ret = setsockopt (fd_data->fd, level, optname, tmp_val, optlen);
+	ret = setsockopt (((MonoFDHandle*) sockethandle)->fd, level, optname, tmp_val, optlen);
 	if (ret == -1) {
 		gint errnum = errno;
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: setsockopt error: %s", __func__, g_strerror (errno));
 		mono_w32socket_set_last_error (mono_w32socket_convert_error (errnum));
-		fd_data_unref (fd_data);
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		return SOCKET_ERROR;
 	}
 
@@ -875,72 +909,84 @@ mono_w32socket_setsockopt (SOCKET sock, gint level, gint optname, const gpointer
 		int type;
 		socklen_t type_len = sizeof (type);
 
-		if (!getsockopt (fd_data->fd, level, SO_TYPE, &type, &type_len)) {
+		if (!getsockopt (((MonoFDHandle*) sockethandle)->fd, level, SO_TYPE, &type, &type_len)) {
 			if (type == SOCK_DGRAM || type == SOCK_STREAM)
-				setsockopt (fd_data->fd, level, SO_REUSEPORT, tmp_val, optlen);
+				setsockopt (((MonoFDHandle*) sockethandle)->fd, level, SO_REUSEPORT, tmp_val, optlen);
 		}
 	}
 #endif
 
-	fd_data_unref (fd_data);
+	mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 	return ret;
 }
 
 gint
 mono_w32socket_listen (SOCKET sock, gint backlog)
 {
-	FDData *fd_data;
+	SocketHandle *sockethandle;
 	gint ret;
 
-	if (!fd_data_lookup_and_ref(sock, &fd_data)) {
+	if (!mono_fdhandle_lookup_and_ref(sock, (MonoFDHandle**) &sockethandle)) {
 		mono_w32error_set_last (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
 
-	ret = listen (fd_data->fd, backlog);
+	if (((MonoFDHandle*) sockethandle)->type != MONO_FDTYPE_SOCKET) {
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
+		mono_w32error_set_last (WSAENOTSOCK);
+		return SOCKET_ERROR;
+	}
+
+	ret = listen (((MonoFDHandle*) sockethandle)->fd, backlog);
 	if (ret == -1) {
 		gint errnum = errno;
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: listen error: %s", __func__, g_strerror (errno));
 		mono_w32socket_set_last_error (mono_w32socket_convert_error (errnum));
-		fd_data_unref (fd_data);
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		return SOCKET_ERROR;
 	}
 
-	fd_data_unref (fd_data);
+	mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 	return 0;
 }
 
 gint
 mono_w32socket_shutdown (SOCKET sock, gint how)
 {
-	FDData *fd_data;
+	SocketHandle *sockethandle;
 	gint ret;
 
-	if (!fd_data_lookup_and_ref(sock, &fd_data)) {
+	if (!mono_fdhandle_lookup_and_ref(sock, (MonoFDHandle**) &sockethandle)) {
+		mono_w32error_set_last (WSAENOTSOCK);
+		return SOCKET_ERROR;
+	}
+
+	if (((MonoFDHandle*) sockethandle)->type != MONO_FDTYPE_SOCKET) {
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		mono_w32error_set_last (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
 
 	if (how == SHUT_RD || how == SHUT_RDWR)
-		fd_data->still_readable = 0;
+		sockethandle->still_readable = 0;
 
-	ret = shutdown (fd_data->fd, how);
+	ret = shutdown (((MonoFDHandle*) sockethandle)->fd, how);
 	if (ret == -1) {
 		gint errnum = errno;
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: shutdown error: %s", __func__, g_strerror (errno));
 		mono_w32socket_set_last_error (mono_w32socket_convert_error (errnum));
-		fd_data_unref (fd_data);
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		return SOCKET_ERROR;
 	}
 
-	fd_data_unref (fd_data);
+	mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 	return ret;
 }
 
 gint
 mono_w32socket_disconnect (SOCKET sock, gboolean reuse)
 {
-	FDData *fd_data;
+	SocketHandle *sockethandle;
 	SOCKET newsock;
 	gint ret;
 
@@ -950,17 +996,23 @@ mono_w32socket_disconnect (SOCKET sock, gboolean reuse)
 	 * SOCK_STREAM, SOCK_SEQPACKET or SOCK_RDM (according to msdn)
 	 * if we really wanted to */
 
-	if (!fd_data_lookup_and_ref(sock, &fd_data)) {
+	if (!mono_fdhandle_lookup_and_ref(sock, (MonoFDHandle**) &sockethandle)) {
 		mono_w32error_set_last (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
 
-	newsock = socket (fd_data->domain, fd_data->type, fd_data->protocol);
+	if (((MonoFDHandle*) sockethandle)->type != MONO_FDTYPE_SOCKET) {
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
+		mono_w32error_set_last (WSAENOTSOCK);
+		return SOCKET_ERROR;
+	}
+
+	newsock = socket (sockethandle->domain, sockethandle->type, sockethandle->protocol);
 	if (newsock == -1) {
 		gint errnum = errno;
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: socket error: %s", __func__, g_strerror (errnum));
 		mono_w32socket_set_last_error (mono_w32socket_convert_error (errnum));
-		fd_data_unref (fd_data);
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		return SOCKET_ERROR;
 	}
 
@@ -969,20 +1021,20 @@ mono_w32socket_disconnect (SOCKET sock, gboolean reuse)
 	 * should not be a race condition between the old fd being
 	 * closed and the new socket fd being copied over */
 	do {
-		ret = dup2 (newsock, fd_data->fd);
+		ret = dup2 (newsock, ((MonoFDHandle*) sockethandle)->fd);
 	} while (ret == -1 && errno == EAGAIN);
 
 	if (ret == -1) {
 		gint errnum = errno;
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: dup2 error: %s", __func__, g_strerror (errnum));
 		mono_w32socket_set_last_error (mono_w32socket_convert_error (errnum));
-		fd_data_unref (fd_data);
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		return SOCKET_ERROR;
 	}
 
 	close (newsock);
 
-	fd_data_unref (fd_data);
+	mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 	return 0;
 }
 
@@ -1011,11 +1063,17 @@ static struct {
 gint
 mono_w32socket_ioctl (SOCKET sock, gint32 command, gchar *input, gint inputlen, gchar *output, gint outputlen, glong *written)
 {
-	FDData *fd_data;
+	SocketHandle *sockethandle;
 	gint ret;
 	gchar *buffer;
 
-	if (!fd_data_lookup_and_ref(sock, &fd_data)) {
+	if (!mono_fdhandle_lookup_and_ref(sock, (MonoFDHandle**) &sockethandle)) {
+		mono_w32error_set_last (WSAENOTSOCK);
+		return SOCKET_ERROR;
+	}
+
+	if (((MonoFDHandle*) sockethandle)->type != MONO_FDTYPE_SOCKET) {
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		mono_w32error_set_last (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
@@ -1029,21 +1087,21 @@ mono_w32socket_ioctl (SOCKET sock, gint32 command, gchar *input, gint inputlen, 
 			 * actually set an error here...
 			 */
 			mono_w32socket_set_last_error (WSAEINVAL);
-			fd_data_unref (fd_data);
+			mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 			return SOCKET_ERROR;
 		}
 
 		if (outputlen < sizeof(gpointer)) {
 			/* Or here... */
 			mono_w32socket_set_last_error (WSAEINVAL);
-			fd_data_unref (fd_data);
+			mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 			return SOCKET_ERROR;
 		}
 
 		if (output == NULL) {
 			/* Or here */
 			mono_w32socket_set_last_error (WSAEINVAL);
-			fd_data_unref (fd_data);
+			mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 			return SOCKET_ERROR;
 		}
 
@@ -1052,13 +1110,13 @@ mono_w32socket_ioctl (SOCKET sock, gint32 command, gchar *input, gint inputlen, 
 			if (memcmp (guid, &extension_functions[i].guid, sizeof(GUID)) == 0) {
 				memcpy (output, &extension_functions[i].func, sizeof(gpointer));
 				*written = sizeof(gpointer);
-				fd_data_unref (fd_data);
+				mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 				return 0;
 			}
 		}
 
 		mono_w32socket_set_last_error (WSAEINVAL);
-		fd_data_unref (fd_data);
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		return SOCKET_ERROR;
 	}
 
@@ -1067,16 +1125,16 @@ mono_w32socket_ioctl (SOCKET sock, gint32 command, gchar *input, gint inputlen, 
 
 		if (inputlen < 3 * sizeof (guint32)) {
 			mono_w32socket_set_last_error (WSAEINVAL);
-			fd_data_unref (fd_data);
+			mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 			return SOCKET_ERROR;
 		}
 
 		onoff = *((guint32*) input);
 
-		ret = setsockopt (fd_data->fd, SOL_SOCKET, SO_KEEPALIVE, &onoff, sizeof (guint32));
+		ret = setsockopt (((MonoFDHandle*) sockethandle)->fd, SOL_SOCKET, SO_KEEPALIVE, &onoff, sizeof (guint32));
 		if (ret < 0) {
 			mono_w32socket_set_last_error (mono_w32socket_convert_error (errno));
-			fd_data_unref (fd_data);
+			mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 			return SOCKET_ERROR;
 		}
 
@@ -1093,45 +1151,45 @@ mono_w32socket_ioctl (SOCKET sock, gint32 command, gchar *input, gint inputlen, 
 			keepalivetime /= 1000;
 			if (keepalivetime == 0 || rem >= 500)
 				keepalivetime++;
-			ret = setsockopt (fd_data->fd, IPPROTO_TCP, TCP_KEEPIDLE, &keepalivetime, sizeof (guint32));
+			ret = setsockopt (((MonoFDHandle*) sockethandle)->fd, IPPROTO_TCP, TCP_KEEPIDLE, &keepalivetime, sizeof (guint32));
 			if (ret == 0) {
 				rem = keepaliveinterval % 1000;
 				keepaliveinterval /= 1000;
 				if (keepaliveinterval == 0 || rem >= 500)
 					keepaliveinterval++;
-				ret = setsockopt (fd_data->fd, IPPROTO_TCP, TCP_KEEPINTVL, &keepaliveinterval, sizeof (guint32));
+				ret = setsockopt (((MonoFDHandle*) sockethandle)->fd, IPPROTO_TCP, TCP_KEEPINTVL, &keepaliveinterval, sizeof (guint32));
 			}
 			if (ret != 0) {
 				mono_w32socket_set_last_error (mono_w32socket_convert_error (errno));
-				fd_data_unref (fd_data);
+				mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 				return SOCKET_ERROR;
 			}
 
-			fd_data_unref (fd_data);
+			mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 			return 0;
 		}
 #endif
 
-		fd_data_unref (fd_data);
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		return 0;
 	}
 
 	buffer = inputlen > 0 ? (gchar*) g_memdup (input, inputlen) : NULL;
 
-	ret = ioctl (fd_data->fd, command, buffer);
+	ret = ioctl (((MonoFDHandle*) sockethandle)->fd, command, buffer);
 	if (ret == -1) {
 		g_free (buffer);
 
 		gint errnum = errno;
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: WSAIoctl error: %s", __func__, g_strerror (errno));
 		mono_w32socket_set_last_error (mono_w32socket_convert_error (errnum));
-		fd_data_unref (fd_data);
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		return SOCKET_ERROR;
 	}
 
 	if (!buffer) {
 		*written = 0;
-		fd_data_unref (fd_data);
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		return 0;
 	}
 
@@ -1147,29 +1205,17 @@ mono_w32socket_ioctl (SOCKET sock, gint32 command, gchar *input, gint inputlen, 
 	g_free (buffer);
 	*written = inputlen;
 
-	fd_data_unref (fd_data);
+	mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 	return 0;
 }
 
 gboolean
 mono_w32socket_close (SOCKET sock)
 {
-	FDData *fd_data;
-	gboolean removed;
-
-	mono_coop_mutex_lock (&fds_mutex);
-
-	if (!g_hash_table_lookup_extended (fds, GINT_TO_POINTER(sock), NULL, (gpointer*) &fd_data)) {
-		mono_coop_mutex_unlock (&fds_mutex);
-
+	if (!mono_fdhandle_close (sock)) {
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
 		return FALSE;
 	}
-
-	removed = g_hash_table_remove (fds, GINT_TO_POINTER(fd_data->fd));
-	g_assert (removed);
-
-	mono_coop_mutex_unlock (&fds_mutex);
 
 	return TRUE;
 }
@@ -1178,10 +1224,16 @@ gint
 mono_w32socket_set_blocking (SOCKET sock, gboolean blocking)
 {
 #ifdef O_NONBLOCK
-	FDData *fd_data;
+	SocketHandle *sockethandle;
 	gint ret;
 
-	if (!fd_data_lookup_and_ref(sock, &fd_data)) {
+	if (!mono_fdhandle_lookup_and_ref(sock, (MonoFDHandle**) &sockethandle)) {
+		mono_w32error_set_last (WSAENOTSOCK);
+		return SOCKET_ERROR;
+	}
+
+	if (((MonoFDHandle*) sockethandle)->type != MONO_FDTYPE_SOCKET) {
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		mono_w32error_set_last (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
@@ -1189,25 +1241,25 @@ mono_w32socket_set_blocking (SOCKET sock, gboolean blocking)
 	/* This works better than ioctl(...FIONBIO...)
 	 * on Linux (it causes connect to return
 	 * EINPROGRESS, but the ioctl doesn't seem to) */
-	ret = fcntl (fd_data->fd, F_GETFL, 0);
+	ret = fcntl (((MonoFDHandle*) sockethandle)->fd, F_GETFL, 0);
 	if (ret == -1) {
 		gint errnum = mono_w32socket_convert_error (errno);
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fcntl(F_GETFL) error: %s", __func__, g_strerror (errno));
 		mono_w32socket_set_last_error (errnum);
-		fd_data_unref (fd_data);
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		return SOCKET_ERROR;
 	}
 
-	ret = fcntl (fd_data->fd, F_SETFL, blocking ? (ret & (~O_NONBLOCK)) : (ret | (O_NONBLOCK)));
+	ret = fcntl (((MonoFDHandle*) sockethandle)->fd, F_SETFL, blocking ? (ret & (~O_NONBLOCK)) : (ret | (O_NONBLOCK)));
 	if (ret == -1) {
 		gint errnum = mono_w32socket_convert_error (errno);
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fcntl(F_SETFL) error: %s", __func__, g_strerror (errno));
 		mono_w32socket_set_last_error (errnum);
-		fd_data_unref (fd_data);
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		return SOCKET_ERROR;
 	}
 
-	fd_data_unref (fd_data);
+	mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 	return 0;
 #else
 	mono_w32socket_set_last_error (ERROR_NOT_SUPPORTED);
@@ -1218,10 +1270,16 @@ mono_w32socket_set_blocking (SOCKET sock, gboolean blocking)
 gint
 mono_w32socket_get_available (SOCKET sock, guint64 *amount)
 {
-	FDData *fd_data;
+	SocketHandle *sockethandle;
 	gint ret;
 
-	if (!fd_data_lookup_and_ref(sock, &fd_data)) {
+	if (!mono_fdhandle_lookup_and_ref(sock, (MonoFDHandle**) &sockethandle)) {
+		mono_w32error_set_last (WSAENOTSOCK);
+		return SOCKET_ERROR;
+	}
+
+	if (((MonoFDHandle*) sockethandle)->type != MONO_FDTYPE_SOCKET) {
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		mono_w32error_set_last (WSAENOTSOCK);
 		return SOCKET_ERROR;
 	}
@@ -1238,26 +1296,26 @@ mono_w32socket_get_available (SOCKET sock, guint64 *amount)
 	// the ip buffer.
 
 	socklen_t optlen = sizeof (int);
-	ret = getsockopt (fd_data->fd, SOL_SOCKET, SO_NREAD, (gulong*) amount, &optlen);
+	ret = getsockopt (((MonoFDHandle*) sockethandle)->fd, SOL_SOCKET, SO_NREAD, (gulong*) amount, &optlen);
 	if (ret == -1) {
 		gint errnum = mono_w32socket_convert_error (errno);
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: getsockopt error: %s", __func__, g_strerror (errno));
 		mono_w32socket_set_last_error (errnum);
-		fd_data_unref (fd_data);
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		return SOCKET_ERROR;
 	}
 #else
-	ret = ioctl (fd_data->fd, FIONREAD, (gulong*) amount);
+	ret = ioctl (((MonoFDHandle*) sockethandle)->fd, FIONREAD, (gulong*) amount);
 	if (ret == -1) {
 		gint errnum = mono_w32socket_convert_error (errno);
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: ioctl error: %s", __func__, g_strerror (errno));
 		mono_w32socket_set_last_error (errnum);
-		fd_data_unref (fd_data);
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		return SOCKET_ERROR;
 	}
 #endif
 
-	fd_data_unref (fd_data);
+	mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 	return 0;
 }
 
@@ -1408,9 +1466,15 @@ ves_icall_System_Net_Sockets_Socket_SupportPortReuse (MonoProtocolType proto, Mo
 gboolean
 mono_w32socket_duplicate (gpointer handle, gint32 targetProcessId, gpointer *duplicate_handle)
 {
-	FDData *fd_data;
+	SocketHandle *sockethandle;
 
-	if (!fd_data_lookup_and_ref (GPOINTER_TO_INT(handle), &fd_data)) {
+	if (!mono_fdhandle_lookup_and_ref (GPOINTER_TO_INT(handle), (MonoFDHandle**) &sockethandle)) {
+		mono_w32error_set_last (ERROR_INVALID_HANDLE);
+		return FALSE;
+	}
+
+	if (((MonoFDHandle*) sockethandle)->type != MONO_FDTYPE_SOCKET) {
+		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
 		return FALSE;
 	}
