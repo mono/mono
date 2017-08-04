@@ -1709,7 +1709,7 @@ namespace Mono.CSharp
 				}
 
 				//
-				// It's ok to have variable builder create out of order. It simplified emit
+				// It's ok to have variable builder created out of order. It simplifies emit
 				// of statements like while (condition) { }
 				//
 				if (!Variable.Created)
