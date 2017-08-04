@@ -84,31 +84,6 @@ chunk_element_objslot (HandleChunk *chunk, int idx)
 #define SET_OWNER(chunk,idx) do { } while (0)
 #endif
 
-
-#ifdef HAVE_BOEHM_GC
-static HandleStack*
-new_handle_stack ()
-{
-	return (HandleStack *)mono_gc_alloc_fixed (sizeof (HandleStack), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_HANDLE, "Thread Handle Stack");
-}
-
-static void
-free_handle_stack (HandleStack *stack)
-{
-	mono_gc_free_fixed (stack);
-}
-
-static HandleChunk*
-new_handle_chunk ()
-{
-	return (HandleChunk *)GC_MALLOC (sizeof (HandleChunk));
-}
-
-static void
-free_handle_chunk (HandleChunk *chunk)
-{
-}
-#else
 static HandleStack*
 new_handle_stack ()
 {
@@ -132,7 +107,6 @@ free_handle_chunk (HandleChunk *chunk)
 {
 	g_free (chunk);
 }
-#endif
 
 /* Actual handles implementation */
 MonoRawHandle
