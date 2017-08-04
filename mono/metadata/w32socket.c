@@ -1402,13 +1402,10 @@ ves_icall_System_Net_Sockets_Socket_Disconnect_internal (gsize sock, MonoBoolean
 MonoBoolean
 ves_icall_System_Net_Sockets_Socket_Duplicate_internal (gpointer handle, gint32 targetProcessId, gpointer *duplicate_handle, gint32 *werror, MonoError *error)
 {
-	gboolean ret;
-
-	*werror = 0;
 	error_init (error);
 
-	ret = mono_w32socket_duplicate (handle, targetProcessId, duplicate_handle);
-	if (!ret) {
+	*werror = 0;
+	if (!mono_w32socket_duplicate (handle, targetProcessId, duplicate_handle)) {
 		*werror = mono_w32error_get_last ();
 		return FALSE;
 	}
