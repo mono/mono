@@ -74,8 +74,7 @@ namespace Mono.AppleTls
 			: base (parent, serverMode, targetHost, enabledProtocols,
 				serverCertificate, clientCertificates, askForClientCert)
 		{
-			var target = new WeakReference (this);
-			handle = GCHandle.Alloc (target);
+			handle = GCHandle.Alloc (this, GCHandleType.Weak);
 			readFunc = NativeReadCallback;
 			writeFunc = NativeWriteCallback;
 
@@ -691,11 +690,7 @@ namespace Mono.AppleTls
 				if (!weakHandle.IsAllocated)
 					return SslStatus.Internal;
 
-				var weakReference = (WeakReference) weakHandle.Target;
-				if (!weakReference.IsAlive)
-					return SslStatus.ClosedAbort;
-
-				context = (AppleTlsContext) weakReference.Target;
+				context = (AppleTlsContext) weakHandle.Target;
 				if (context == null || context.disposed)
 					return SslStatus.ClosedAbort;
 
@@ -716,11 +711,6 @@ namespace Mono.AppleTls
 				if (!weakHandle.IsAllocated)
 					return SslStatus.Internal;
 
-				var weakReference = (WeakReference) weakHandle.Target;
-				if (!weakReference.IsAlive)
-					return SslStatus.ClosedAbort;
-
-				context = (AppleTlsContext) weakReference.Target;
 				if (context == null || context.disposed)
 					return SslStatus.ClosedAbort;
 
