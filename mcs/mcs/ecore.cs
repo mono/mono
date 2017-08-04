@@ -4059,6 +4059,11 @@ namespace Mono.CSharp {
 			throw new NotSupportedException ();
 		}
 
+		public override void EmitPrepare (EmitContext ec)
+		{
+			InstanceExpression?.EmitPrepare (ec);
+		}
+
 		public void EmitCall (EmitContext ec, Arguments arguments, bool statement)
 		{
 			var call = new CallEmitter ();

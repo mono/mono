@@ -2616,7 +2616,8 @@ namespace Mono.CSharp
 
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
-			Variable.CreateBuilder (ec);
+			if (!Variable.Created)
+				Variable.CreateBuilder (ec);
 
 			if (Initializer != null) {
 				lvr.EmitAssign (ec, Initializer, false, false);
@@ -2688,6 +2689,11 @@ namespace Mono.CSharp
 		public override void Emit (EmitContext ec)
 		{
 			throw new NotImplementedException ();
+		}
+
+		public override void EmitPrepare (EmitContext ec)
+		{
+			Variable.CreateBuilder (ec);
 		}
 	}
 	
@@ -7387,7 +7393,14 @@ namespace Mono.CSharp
 			else
 				mg.EmitCall (ec, arguments, false);
 		}
-		
+
+		public override void EmitPrepare (EmitContext ec)
+		{
+			mg.EmitPrepare (ec);
+
+			arguments?.EmitPrepare (ec);
+		}
+
 		public override void EmitStatement (EmitContext ec)
 		{
 			if (mg.IsConditionallyExcluded)
