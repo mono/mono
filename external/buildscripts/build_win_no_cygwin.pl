@@ -157,7 +157,6 @@ if ($build)
 
 	system("$winPerl", "$winMonoRoot/external/buildscripts/build_runtime_vs.pl", "--build=$build", "--arch32=$arch32", "--msbuildversion=$msBuildVersion", "--clean=$clean", "--debug=$debug", "--gc=bdwgc") eq 0 or die ('failed building mono bdwgc with VS\n');
 	system("$winPerl", "$winMonoRoot/external/buildscripts/build_runtime_vs.pl", "--build=$build", "--arch32=$arch32", "--msbuildversion=$msBuildVersion", "--clean=$clean", "--debug=$debug", "--gc=sgen") eq 0 or die ('failed building mono sgen with VS\n');
-    system("$winPerl", "$winMonoRoot/external/buildscripts/build_runtime_vs.pl", "--build=$build", "--arch32=$arch32", "--msbuildversion=$msBuildVersion", "--clean=$clean", "--debug=$debug", "--il2cpp=1",  "--gc=bdwgc") eq 0 or die ('failed building IL2CPP libmonoruntime bdwgc with VS\n');
 
 	if (!(-d "$monoroot\\tmp"))
 	{
@@ -194,11 +193,6 @@ if ($build)
 
 	copy("$monoroot/msvc/build/bdwgc/$archNameForBuild/bin/$configDirName/MonoPosixHelper.dll", "$monoprefix/bin/.") or die ("failed copying MonoPosixHelper.dll\n");
 	copy("$monoroot/msvc/build/bdwgc/$archNameForBuild/bin/$configDirName/MonoPosixHelper.pdb", "$monoprefix/bin/.") or die ("failed copying MonoPosixHelper.pdb\n");
-
-	# copy the static libraries used by il2cpp on mono
-	copy("$monoroot/msvc/build/bdwgc/$archNameForBuild/lib/$configDirName/libmonoruntime-unity-il2cpp-bdwgc.lib", "$monoprefix/bin/.") or die ("failed copying IL2CPP libmonoruntime-unity-il2cpp-bdwgc.lib\n");
-	copy("$monoroot/msvc/build/bdwgc/$archNameForBuild/lib/$configDirName/libmonoutils-unity-il2cpp.lib", "$monoprefix/bin/.") or die ("failed copying IL2CPP libmonoutils-unity-il2cpp.lib\n");
-	copy("$monoroot/msvc/build/bdwgc/$archNameForBuild/lib/$configDirName/eglib-unity.lib", "$monoprefix/bin/.") or die ("failed copying IL2CPP eglib-unity.lib\n");
 
 	system("xcopy /y /f $addtoresultsdistdir\\bin\\*.* $monoprefix\\bin\\") eq 0 or die ("Failed copying $addtoresultsdistdir/bin to $monoprefix/bin\n");
 }
@@ -265,11 +259,6 @@ if ($artifact)
 
 	copy("$monoprefix/bin/MonoPosixHelper.dll", "$embedDirArchDestination/.") or die ("failed copying MonoPosixHelper.dll\n");
 	copy("$monoprefix/bin/MonoPosixHelper.pdb", "$embedDirArchDestination/.") or die ("failed copying MonoPosixHelper.pdb\n");
-
-	# copy over the static libraries used by il2cpp on mono
-	copy("$monoprefix/bin/libmonoruntime-unity-il2cpp-bdwgc.lib", "$embedDirArchDestination/.") or die ("failed copying IL2CPP libmonoruntime-unity-il2cpp-bdwgc.lib\n");
-	copy("$monoprefix/bin/libmonoutils-unity-il2cpp.lib", "$embedDirArchDestination/.") or die ("failed copying IL2CPP libmonoutils-unity-il2cpp.lib\n");
-	copy("$monoprefix/bin/eglib-unity.lib", "$embedDirArchDestination/.") or die ("failed copying IL2CPP eglib-unity.lib\n");
 
 	# monodistribution directory setup
 	print(">>> Creating monodistribution directory\n");

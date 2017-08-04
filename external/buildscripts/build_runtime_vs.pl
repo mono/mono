@@ -17,7 +17,6 @@ my $build = 0;
 my $clean = 0;
 my $arch32 = 0;
 my $debug = 0;
-my $il2cpp = 0;
 my $gc = "bdwgc";
 my $msBuildVersion = "";
 
@@ -27,20 +26,12 @@ GetOptions(
 	'arch32=i'=>\$arch32,
 	'debug=i'=>\$debug,
 	'msbuildversion=s'=>\$msBuildVersion,
-	'il2cpp=i'=>\$il2cpp,
 	'gc=s'=>\$gc,
 ) or die ("illegal cmdline options");
 
 if ($build)
 {
-	if ($il2cpp)
-	{
-        CompileVCProj("$monoroot/msvc/mono-il2cpp.sln");
-	}
-	else
-	{
-		CompileVCProj("$monoroot/msvc/mono.sln");
-	}
+	CompileVCProj("$monoroot/msvc/mono.sln");
 }
 
 sub CompileVCProj
