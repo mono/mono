@@ -61,7 +61,10 @@ namespace MonoTests.System.Security.AccessControl
 				// Let's use the SafeHandle overload to check it.
 				AuthorizationRuleCollection rules;
 				using (FileStream file = File.Open (path, FileMode.Open, FileAccess.Read)) {
-					security = file.GetAccessControl ();
+					security = new FileSecurity (file.SafeFileHandle,
+						 AccessControlSections.Owner |
+						 AccessControlSections.Group |
+						 AccessControlSections.Access);
 					rules = security.GetAccessRules (true, false, typeof (SecurityIdentifier));
 
 					Assert.AreEqual (1, rules.Count);

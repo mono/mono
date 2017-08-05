@@ -56,24 +56,6 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[ExpectedException (typeof (ObjectDisposedException))]
-		public void GetAccessControl ()
-		{
-			var fs = GetFileStreamWithClosedHandle ();
-
-			fs.GetAccessControl ();
-		}
-
-		[Test]
-		[ExpectedException (typeof (ObjectDisposedException))]
-		public void SetAccessControl ()
-		{
-			var fs = GetFileStreamWithClosedHandle ();
-
-			fs.SetAccessControl (new FileSecurity ());
-		}
-
-		[Test]
-		[ExpectedException (typeof (ObjectDisposedException))]
 		public void Flush ()
 		{
 			var fs = GetFileStreamWithClosedHandle ();

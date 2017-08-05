@@ -55,7 +55,10 @@ namespace MonoTests.System.Security.AccessControl
 				// Create a file. It will have no explicit rules.
 				filepath = Path.Combine (dirpath, Path.GetRandomFileName ());
 				using (FileStream file = new FileStream (filepath, FileMode.Create, FileAccess.ReadWrite)) {
-					fileSecurity = file.GetAccessControl ();
+					fileSecurity = new FileSecurity (file.SafeFileHandle,
+						 AccessControlSections.Owner |
+						 AccessControlSections.Group |
+						 AccessControlSections.Access);
 
 					rules = fileSecurity.GetAccessRules (true, false, typeof (SecurityIdentifier));
 					Assert.AreEqual (0, rules.Count);
