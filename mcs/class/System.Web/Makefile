@@ -243,6 +243,7 @@ TXT_RESOURCE_STRINGS = ../referencesource/System.Web/System.Web.txt
 
 LIB_REFS = System System.Core System.Drawing System.Data System.Xml System.EnterpriseServices System.Runtime.Serialization.Formatters.Soap \
 	System.ComponentModel.DataAnnotations System.Web.ApplicationServices System.Configuration Mono.Data.Sqlite
+KEYFILE = ../msfinal.pub
 LIB_MCS_FLAGS = \
 	-unsafe \
 	-nowarn:612,618	\

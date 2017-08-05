@@ -55,7 +55,6 @@ using System.Runtime.InteropServices;
 [assembly: NeutralResourcesLanguage ("en-US")]
 [assembly: CLSCompliant (true)]
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../winfx.pub")]
 
 [assembly: ComVisible (false)]
 [assembly: AllowPartiallyTrustedCallers]

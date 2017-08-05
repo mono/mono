@@ -50,6 +50,7 @@ RUN_STANDALONE += --test=$(TESTNAME)
 endif
 
 LIB_REFS = System System.Core System.Drawing System.Data System.Data.Linq System.Xml System.Web System.Web.Services System.Configuration System.EnterpriseServices System.ServiceModel
+KEYFILE = ../winfx.pub
 LIB_MCS_FLAGS = \
 	-unsafe \
 	-define:NET_3_5	-nowarn:436		\

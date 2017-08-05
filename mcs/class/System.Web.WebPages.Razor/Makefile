@@ -10,10 +10,10 @@ RESOURCE_DEFS = \
 	System.Web.WebPages.Razor.Resources.RazorWebResources,../../../external/aspnetwebstack/src/System.Web.WebPages.Razor/Resources/RazorWebResources.resx
 
 LIB_REFS = System System.Core System.Configuration System.Web System.Web.WebPages System.Web.Razor
+KEYFILE = ../winfx.pub
 LIB_MCS_FLAGS = \
-		/warn:1 \
-		/keyfile:../winfx.pub \
-		/delaysign \
+			/warn:1 \
+			/delaysign \
 	        /d:ASPNETWEBPAGES
 
 include ../../build/library.make

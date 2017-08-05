@@ -58,7 +58,6 @@ using System.Security.Permissions;
 #if !MONO_POSIX_NETSTANDARD_BUILD
 // We are using ../Open.snk for MONO_POSIX_NETSTANDARD_BUILD
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../mono.pub")]
 #endif
 /*
  * TODO:

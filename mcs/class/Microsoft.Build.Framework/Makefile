@@ -8,6 +8,7 @@ include $(XBUILD_DIR)/xbuild.make
 LIBRARY = Microsoft.Build.Framework.dll
 
 LIB_REFS = $(PARENT_PROFILE)System
+KEYFILE = ../msfinal.pub
 LIB_MCS_FLAGS =
 
 TEST_NUNITLITE_APP_CONFIG_RUNTIME=Test/test-config-file-$(PROFILE)

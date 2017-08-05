@@ -48,4 +48,3 @@ using System.Security;
 [assembly: AssemblyTitle ("Microsoft.Web.Infrastructure")]
 [assembly: AssemblyDescription ("")]
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile("../winfx.pub")]
