@@ -46,7 +46,7 @@
 #include <mono/utils/mono-logger-internals.h>
 #include <mono/utils/mono-memory-model.h>
 #include <mono/utils/atomic.h>
-#include <mono/utils/racing.h>
+#include <mono/utils/unlocked.h>
 #include <mono/utils/bsearch.h>
 #include <mono/utils/checked-build.h>
 
@@ -865,7 +865,7 @@ mono_class_inflate_generic_type_with_mempool (MonoImage *image, MonoType *type, 
 		}
 	}
 
-	RacingIncrementSize (&mono_stats.inflated_type_count);
+	UnlockedIncrementSize (&mono_stats.inflated_type_count);
 	return inflated;
 }
 
@@ -929,7 +929,7 @@ mono_class_inflate_generic_type_no_copy (MonoImage *image, MonoType *type, MonoG
 	if (!inflated)
 		return type;
 
-	RacingIncrementSize (&mono_stats.inflated_type_count);
+	UnlockedIncrementSize (&mono_stats.inflated_type_count);
 	return inflated;
 }
 
@@ -1090,7 +1090,7 @@ mono_class_inflate_generic_method_full_checked (MonoMethod *method, MonoClass *k
 		return (MonoMethod*)cached;
 	}
 
-	RacingIncrementSize (&mono_stats.inflated_method_count);
+	UnlockedIncrementSize (&mono_stats.inflated_method_count);
 
 	inflated_methods_size += sizeof (MonoMethodInflated);
 
@@ -3569,7 +3569,7 @@ mono_class_setup_vtable_full (MonoClass *klass, GList *in_setup)
 		return;
 	}
 
-	RacingIncrementSize (&mono_stats.generic_vtable_count);
+	UnlockedIncrementSize (&mono_stats.generic_vtable_count);
 	in_setup = g_list_prepend (in_setup, klass);
 
 	if (mono_class_is_ginst (klass)) {
@@ -4903,7 +4903,7 @@ mono_class_init (MonoClass *klass)
 			goto leave;
 	}
 
-	RacingIncrementSize (&mono_stats.initialized_class_count);
+	UnlockedIncrementSize (&mono_stats.initialized_class_count);
 
 	if (mono_class_is_ginst (klass) && !mono_class_get_generic_class (klass)->is_dynamic) {
 		MonoClass *gklass = mono_class_get_generic_class (klass)->container_class;
@@ -5048,10 +5048,10 @@ mono_class_init (MonoClass *klass)
 		return !mono_class_has_failure (klass);
 	}
 
-	RacingIncrementSize (&mono_stats.initialized_class_count);
+	UnlockedIncrementSize (&mono_stats.initialized_class_count);
 
 	if (mono_class_is_ginst (klass) && !mono_class_get_generic_class (klass)->is_dynamic)
-		RacingIncrementSize (&mono_stats.generic_class_count);
+		UnlockedIncrementSize (&mono_stats.generic_class_count);
 
 	if (mono_class_is_ginst (klass) || image_is_dynamic (klass->image) || !klass->type_token || (has_cached_info && !cached_info.has_nested_classes))
 		klass->nested_classes_inited = TRUE;

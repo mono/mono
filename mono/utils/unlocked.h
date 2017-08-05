@@ -6,41 +6,37 @@
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
-#ifndef _RACING_H_
-#define _RACING_H_
+#ifndef _UNLOCKED_H_
+#define _UNLOCKED_H_
 
 #include <glib.h>
 #include <mono/utils/mono-compiler.h>
 
-#if defined(__has_feature)
-#if __has_feature(thread_sanitizer)
-#define MONO_RACING_ATTRS MONO_NO_SANITIZE_THREAD static
+#if MONO_HAS_CLANG_THREAD_SANITIZER
+#define MONO_UNLOCKED_ATTRS MONO_NO_SANITIZE_THREAD MONO_NEVER_INLINE static
 #else
-#define MONO_RACING_ATTRS MONO_ALWAYS_INLINE static inline
-#endif
-#else
-#define MONO_RACING_ATTRS MONO_ALWAYS_INLINE static inline
+#define MONO_UNLOCKED_ATTRS MONO_ALWAYS_INLINE static inline
 #endif
 
-MONO_RACING_ATTRS
+MONO_UNLOCKED_ATTRS
 gint32
-RacingIncrement (gint32 *val)
+UnlockedIncrement (gint32 *val)
 {
 	return ++*val;
 }
 
-MONO_RACING_ATTRS
+MONO_UNLOCKED_ATTRS
 gint64
-RacingIncrement64 (gint64 *val)
+UnlockedIncrement64 (gint64 *val)
 {
 	return ++*val;
 }
 
-MONO_RACING_ATTRS
+MONO_UNLOCKED_ATTRS
 gsize
-RacingIncrementSize (gsize *val)
+UnlockedIncrementSize (gsize *val)
 {
 	return ++*val;
 }
 
-#endif /* _RACING_H_ */
+#endif /* _UNLOCKED_H_ */
