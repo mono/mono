@@ -13,11 +13,7 @@ LIB_MCS_FLAGS = /unsafe \
 
 RESX_RESOURCE_STRING = ../../../external/corefx/src/System.Drawing.Common/src/Resources/Strings.resx
 
-MOBILE_LIKE := $(filter winaot orbis unreal, $(PROFILE))
-
-ifdef MOBILE_LIKE
-LIB_MCS_FLAGS += /keyfile:../msfinal.pub
-else
+ifndef MOBILE_PROFILE
 LIB_MCS_FLAGS += -d:FEATURE_TYPECONVERTER,SUPPORTS_WINDOWS_COLORS
 endif
 
