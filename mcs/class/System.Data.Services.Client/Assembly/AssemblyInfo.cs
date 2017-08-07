@@ -41,7 +41,6 @@ using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../ecma.pub")]
 
 [assembly: System.Security.SecurityCritical]
 [assembly: ComVisible(false)]

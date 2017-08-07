@@ -4,7 +4,8 @@ include ../../build/rules.make
 
 LIBRARY = System.Interactive.Async.dll
 LIB_REFS = System System.Core
-LIB_MCS_FLAGS = @more_build_args
+KEYFILE = ../reactive.pub
+LIB_MCS_FLAGS = -d:SIGNED -delaysign
 
 ifeq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:NO_TASK_DELAY -d:HAS_AWAIT
@@ -17,7 +18,7 @@ endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
-EXTRA_DISTFILES = more_build_args
+EXTRA_DISTFILES =
 
 INSTALL_PROFILE := $(filter net_4_x, $(PROFILE))
 ifndef INSTALL_PROFILE

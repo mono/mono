@@ -5,7 +5,8 @@ LIBRARY = Mono.Profiler.Log.dll
 LIBRARY_SNK = ../mono.snk
 
 LIB_REFS = System System.Core
-LIB_MCS_FLAGS = /unsafe /keyfile:$(LIBRARY_SNK) /publicsign
+KEYFILE = $(LIBRARY_SNK)
+LIB_MCS_FLAGS = /unsafe /publicsign
 
 NO_TEST = yes
 

@@ -55,7 +55,6 @@ using System.Runtime.Versioning;
 [assembly: ComVisible (false)]
 [assembly: CLSCompliant (true)]
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile("../msfinal.pub")]
 
 [assembly: AssemblyFileVersion (XBuildConsts.FileVersion)]
 [assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]

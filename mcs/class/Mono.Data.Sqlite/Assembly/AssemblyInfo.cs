@@ -57,4 +57,3 @@ using System.Runtime.ConstrainedExecution;
 #endif
 
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../mono.pub")]

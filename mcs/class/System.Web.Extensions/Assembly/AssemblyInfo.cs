@@ -57,7 +57,6 @@ using System.Security.Permissions;
 #if !(TARGET_DOTNET)
 	[assembly: CLSCompliant (true)]
 	[assembly: AssemblyDelaySign (true)]
-	[assembly: AssemblyKeyFile ("../winfx.pub")]
 
 #endif
 

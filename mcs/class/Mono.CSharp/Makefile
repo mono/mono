@@ -5,6 +5,7 @@ include ../../build/rules.make
 LIBRARY = Mono.CSharp.dll
 
 LIB_REFS = System.Core System.Xml System
+KEYFILE = ../mono.pub
 LIB_MCS_FLAGS =
 
 ifdef AOT_FRIENDLY_PROFILE

@@ -55,10 +55,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDelaySign (true)]
 #if MOBILE
 [assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
-[assembly: AssemblyKeyFile ("../silverlight.pub")]
 #else
 [assembly: AssemblyInformationalVersion ("3.5.594.0")]
-[assembly: AssemblyKeyFile("../winfx.pub")]
 #endif
 
 #if MOBILE

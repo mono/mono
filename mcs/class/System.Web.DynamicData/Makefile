@@ -4,6 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = System.Web.DynamicData.dll
 LIB_REFS = System System.Core System.ComponentModel.DataAnnotations System.Data System.Data.Linq System.Drawing System.Web System.Web.Extensions System.Web.Abstractions System.Web.Routing
+KEYFILE = ../winfx.pub
 LIB_MCS_FLAGS =
 
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
