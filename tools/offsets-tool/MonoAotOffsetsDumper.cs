@@ -361,11 +361,11 @@ namespace CppSharp
             var includeDirs = new[]
             {
                 targetBuild,
-                Path.Combine(targetBuild, "eglib", "src"),
+                Path.Combine(targetBuild, "mono", "eglib"),
                 MonoDir,
                 Path.Combine(MonoDir, "mono"),
                 Path.Combine(MonoDir, "mono", "mini"),
-                Path.Combine(MonoDir, "eglib", "src")
+                Path.Combine(MonoDir, "mono", "eglib")
             };
 
             foreach (var inc in includeDirs)
