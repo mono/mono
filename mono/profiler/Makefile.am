@@ -30,6 +30,9 @@ lib_LTLIBRARIES = \
 suppressiondir = $(datadir)/mono-$(API_VER)/mono/profiler
 suppression_DATA = mono-profiler-log.suppression
 
+check_LTLIBRARIES = \
+	libmono-profiler-testinline.la
+
 if PLATFORM_DARWIN
 if BITCODE
 prof_ldflags = -no-undefined
@@ -50,7 +53,7 @@ endif
 
 # FIXME fix the profiler tests to work with coop.
 if !ENABLE_COOP
-check_targets = testlog
+check_targets = testlog testinline
 endif
 
 endif
@@ -94,12 +97,23 @@ libmono_profiler_vtune_static_la_CFLAGS = $(VTUNE_CFLAGS)
 libmono_profiler_vtune_static_la_LIBADD = $(VTUNE_LIBS)
 endif
 
+libmono_profiler_testinline_la_SOURCES = test_inline.c
+libmono_profiler_testinline_la_LIBADD = $(libmono_dep) $(GLIB_LIBS) $(LIBICONV)
+#the rpath hack coerces libtool into producing a shared lib for a test
+#it basically specifies to libtool where the library will eventually
+#be installed, but since it's a test lib, we don't install it. Without
+#-rpath, libtool does not create a shared library.
+libmono_profiler_testinline_la_LDFLAGS = $(prof_ldflags) -rpath /dev/null
+
 mprof_report_SOURCES = mprof-report.c
 mprof_report_LDADD = $(Z_LIBS) $(GLIB_LIBS) $(LIBICONV)
 
 PLOG_TESTS_SRC=test-alloc.cs test-busy.cs test-monitor.cs test-excleave.cs \
 	test-heapshot.cs test-traces.cs
 PLOG_TESTS=$(PLOG_TESTS_SRC:.cs=.exe)
+
+PINLINE_TESTS_SRC=test-prof-inline.cs
+PINLINE_TESTS=$(PINLINE_TESTS_SRC:.cs=.exe)
 
 CLASS=$(mcs_topdir)/class/lib/$(DEFAULT_PROFILE)
 
@@ -111,6 +125,10 @@ MCS = $(TOOLS_RUNTIME) $(CSC) -lib:$(CLASS) -unsafe -nologo -noconfig -nowarn:01
 
 testlog: $(PLOG_TESTS)
 	MONO_PATH=$(CLASS) perl $(srcdir)/ptestrunner.pl $(top_builddir)
+
+testinline: $(PINLINE_TESTS) libmono-profiler-testinline.la
+	MONO_PATH=$(CLASS) $(srcdir)/profile_test_runner.sh $(top_builddir)/mono/mini/mono testinline:bar:1 test-prof-inline.exe
+	MONO_PATH=$(CLASS) $(srcdir)/profile_test_runner.sh $(top_builddir)/mono/mini/mono testinline:foo:2 test-prof-inline.exe
 
 check-local: $(check_targets)
 
