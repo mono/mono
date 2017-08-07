@@ -21,17 +21,23 @@ endif
 endif
 
 ifeq ($(PROFILE),build)
-CSC_RUNTIME_FLAGS=--profile=aot:output=$(topdir)/class/lib/$(PROFILE)/csc.$(LIBRARY).aotprofile
+CSC_RUNTIME_FLAGS=--profile=aot:output=$(topdir)/class/lib/$(PROFILE_DIRECTORY)/csc.$(LIBRARY).aotprofile
 endif
-
-RESOURCE_STRINGS = ../referencesource/mscorlib/mscorlib.txt
 
 RESX_RESOURCE_STRING = \
 	../../../external/corert/src/System.Private.CoreLib/src/Resources/Strings.resx \
-	../../../external/corefx/src/System.Collections.Concurrent/src/Resources/Strings.resx
+	../../../external/corefx/src/System.Collections.Concurrent/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Memory/src/Resources/Strings.resx
 
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
+
+ifneq ($(PROFILE),basic)
+RESOURCE_STRINGS = ../referencesource/mscorlib/mscorlib.txt
+include il/il.make
+
+MODULE_DEPS = $(IL_REPLACE)
+endif
 
 RESOURCE_FILES = \
 	resources/charinfo.nlp \
@@ -146,7 +152,7 @@ TEST_RESX_RESOURCES_SATELITE = \
 	Test/resources/Resources.es-ES.resources \
 	Test/resources/Resources.nn-NO.resources \
 
-CLEAN_FILES += $(TEST_RESX_RESOURCES)
+CLEAN_FILES += $(TEST_RESX_RESOURCES) $(IL_REPLACE)
 
 include $(topdir)/build/library.make
 
@@ -218,7 +224,8 @@ EXTRA_DISTFILES += \
 	$(vtsdir)/VersionTolerantSerializationTestLib/4.0/Address.cs \
 	$(vtsdir)/VersionTolerantSerializationTestLib/5.0/Address.cs \
 	$(vtsdir)/VersionTolerantSerializationTestLib/6.0/Address.cs \
-	$(vtsdir)/BinarySerializationOverVersions.cs
+	$(vtsdir)/BinarySerializationOverVersions.cs \
+	System.Runtime.CompilerServices/Unsafe.il
 
 #
 # Android TimeZoneInfo testing....

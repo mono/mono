@@ -29,6 +29,7 @@
 //
 
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 namespace System.Drawing.Drawing2D {
 
@@ -386,7 +387,7 @@ namespace System.Drawing.Drawing2D {
 		public override object Clone ()
 		{
 			IntPtr clonePtr;
-			Status status = GDIPlus.GdipCloneBrush (NativeBrush, out clonePtr);
+			Status status = (Status) GDIPlus.GdipCloneBrush (new HandleRef (this, NativeBrush), out clonePtr);
 			GDIPlus.CheckStatus (status);
 
 			return new LinearGradientBrush (clonePtr);
