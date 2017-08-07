@@ -25,12 +25,8 @@
     <AssemblyName>System.Reactive.Linq</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-  </PropertyGroup>
-    <PropertyGroup>
     <SignAssembly>true</SignAssembly>
     <DelaySign>true</DelaySign>
-  </PropertyGroup>
-  <PropertyGroup>
     <AssemblyOriginatorKeyFile>../reactive.pub</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -38,7 +34,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;HAS_EDI;PREFERASYNC;PREFER_ASYNC;HAS_AWAIT;SIGNED</DefineConstants>
+    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;SIGNED;HAS_EDI;PREFERASYNC;PREFER_ASYNC;HAS_AWAIT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -46,7 +42,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;HAS_EDI;PREFERASYNC;PREFER_ASYNC;HAS_AWAIT;SIGNED</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;SIGNED;HAS_EDI;PREFERASYNC;PREFER_ASYNC;HAS_AWAIT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
