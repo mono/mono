@@ -8,7 +8,7 @@
 #../../../external/corefx/src/System.Reflection.Emit/tests/AssemblyBuilderTests.cs
 # ../../../external/corefx/src/System.Reflection.Emit/tests/
 
-#../../../external/corefx/src/System.Reflection.Emit/tests/ConstructorBuilder/ConstructorBuilderDefineParameter.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/ConstructorBuilder/ConstructorBuilderDefineParameter.cs
 #../../../external/corefx/src/System.Reflection.Emit/tests/ConstructorBuilder/ConstructorBuilderGetILGenerator.cs
 ../../../external/corefx/src/System.Reflection.Emit/tests/ConstructorBuilder/ConstructorBuilderInitLocals.cs
 ../../../external/corefx/src/System.Reflection.Emit/tests/ConstructorBuilder/ConstructorBuilderSetCustomAttribute.cs
@@ -26,8 +26,8 @@
 
 ../../../external/corefx/src/System.Reflection.Emit/tests/FieldBuilder/FieldBuilderGetValue.cs
 #../../../external/corefx/src/System.Reflection.Emit/tests/FieldBuilder/FieldBuilderSetConstant.cs
-#../../../external/corefx/src/System.Reflection.Emit/tests/FieldBuilder/FieldBuilderSetCustomAttribute.cs
-#../../../external/corefx/src/System.Reflection.Emit/tests/FieldBuilder/FieldBuilderSetOffset.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/FieldBuilder/FieldBuilderSetCustomAttribute.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/FieldBuilder/FieldBuilderSetOffset.cs
 
 ../../../external/corefx/src/System.Reflection.Emit/tests/GenericTypeParameterBuilder/GenericTyepParameterBuilderSetBaseTypeConstraint.cs
 ../../../external/corefx/src/System.Reflection.Emit/tests/GenericTypeParameterBuilder/GenericTypeParameterBuilderGUID.cs
@@ -35,13 +35,13 @@
 ../../../external/corefx/src/System.Reflection.Emit/tests/GenericTypeParameterBuilder/GenericTypeParameterBuilderMakeByRefType.cs
 ../../../external/corefx/src/System.Reflection.Emit/tests/GenericTypeParameterBuilder/GenericTypeParameterBuilderMakeGenericType.cs
 ../../../external/corefx/src/System.Reflection.Emit/tests/GenericTypeParameterBuilder/GenericTypeParameterBuilderMakePointerType.cs
-#../../../external/corefx/src/System.Reflection.Emit/tests/GenericTypeParameterBuilder/GenericTypeParameterBuilderSetCustomAttribute.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/GenericTypeParameterBuilder/GenericTypeParameterBuilderSetCustomAttribute.cs
 #../../../external/corefx/src/System.Reflection.Emit/tests/GenericTypeParameterBuilder/GenericTypeParameterBuilderSetGenericParameterAttributes.cs
 #../../../external/corefx/src/System.Reflection.Emit/tests/GenericTypeParameterBuilder/GenericTypeParameterBuilderSetInterfaceConstraints.cs
 
 ../../../external/corefx/src/System.Reflection.Emit/tests/MethodBuilder/MethodBuilderContainsGenericParameters.cs
 #../../../external/corefx/src/System.Reflection.Emit/tests/MethodBuilder/MethodBuilderDefineGenericParameters.cs
-#../../../external/corefx/src/System.Reflection.Emit/tests/MethodBuilder/MethodBuilderDefineParameter.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/MethodBuilder/MethodBuilderDefineParameter.cs
 #../../../external/corefx/src/System.Reflection.Emit/tests/MethodBuilder/MethodBuilderEquals.cs
 ../../../external/corefx/src/System.Reflection.Emit/tests/MethodBuilder/MethodBuilderGetGenericArguments.cs
 ../../../external/corefx/src/System.Reflection.Emit/tests/MethodBuilder/MethodBuilderGetGenericMethodDefinition.cs
@@ -60,9 +60,9 @@
 
 ../../../external/corefx/src/System.Reflection.Emit/tests/ModuleBuilder/ModuleBuilderCreateGlobalFunctions.cs
 #../../../external/corefx/src/System.Reflection.Emit/tests/ModuleBuilder/ModuleBuilderDefineEnum.cs
-#../../../external/corefx/src/System.Reflection.Emit/tests/ModuleBuilder/ModuleBuilderDefineInitializedData.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/ModuleBuilder/ModuleBuilderDefineInitializedData.cs
 #../../../external/corefx/src/System.Reflection.Emit/tests/ModuleBuilder/ModuleBuilderDefineType.cs
-#../../../external/corefx/src/System.Reflection.Emit/tests/ModuleBuilder/ModuleBuilderDefineUninitializedData.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/ModuleBuilder/ModuleBuilderDefineUninitializedData.cs
 #../../../external/corefx/src/System.Reflection.Emit/tests/ModuleBuilder/ModuleBuilderGetArrayMethod.cs
 #../../../external/corefx/src/System.Reflection.Emit/tests/ModuleBuilder/ModuleBuilderSetCustomAttribute.cs
 

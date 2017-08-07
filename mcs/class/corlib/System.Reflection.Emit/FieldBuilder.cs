@@ -156,6 +156,9 @@ namespace System.Reflection.Emit {
 		public void SetCustomAttribute (CustomAttributeBuilder customBuilder) {
 			RejectIfCreated ();
 
+			if (customBuilder == null)
+				throw new ArgumentNullException ("customBuilder");
+
 			string attrname = customBuilder.Ctor.ReflectedType.FullName;
 			if (attrname == "System.Runtime.InteropServices.FieldOffsetAttribute") {
 				byte[] data = customBuilder.Data;
@@ -202,6 +205,8 @@ namespace System.Reflection.Emit {
 
 		public void SetOffset( int iOffset) {
 			RejectIfCreated ();
+			if (iOffset < 0)
+				throw new ArgumentException ("Negative field offset is not allowed");
 			offset = iOffset;
 		}
 
