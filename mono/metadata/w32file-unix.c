@@ -3481,7 +3481,8 @@ mono_w32file_find_next (gpointer handle, WIN32_FIND_DATA *find_data)
 	time_t create_time;
 	glong bytes;
 	gboolean ret = FALSE;
-	
+	guint32 handle_version;
+
 	ok=mono_w32handle_lookup (handle, MONO_W32HANDLE_FIND,
 				(gpointer *)&find_handle);
 	if(ok==FALSE) {
@@ -3491,7 +3492,7 @@ mono_w32file_find_next (gpointer handle, WIN32_FIND_DATA *find_data)
 		return(FALSE);
 	}
 
-	mono_w32handle_lock_handle (handle);
+	mono_w32handle_lock_handle (handle, &handle_version);
 	
 retry:
 	if (find_handle->count >= find_handle->num) {
@@ -3591,7 +3592,7 @@ retry:
 	g_free (utf16_basename);
 
 cleanup:
-	mono_w32handle_unlock_handle (handle);
+	mono_w32handle_unlock_handle (handle, &handle_version);
 	
 	return(ret);
 }
@@ -3601,6 +3602,7 @@ mono_w32file_find_close (gpointer handle)
 {
 	MonoW32HandleFind *find_handle;
 	gboolean ok;
+	guint32 handle_version;
 
 	if (handle == NULL) {
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
@@ -3616,12 +3618,12 @@ mono_w32file_find_close (gpointer handle)
 		return(FALSE);
 	}
 
-	mono_w32handle_lock_handle (handle);
+	mono_w32handle_lock_handle (handle, &handle_version);
 	
 	g_strfreev (find_handle->namelist);
 	g_free (find_handle->dir_part);
 
-	mono_w32handle_unlock_handle (handle);
+	mono_w32handle_unlock_handle (handle, &handle_version);
 	
 	MONO_ENTER_GC_SAFE;
 	mono_w32handle_close (handle);
