@@ -2333,7 +2333,7 @@ ves_exec_method_with_context (InterpFrame *frame, ThreadContext *context, unsign
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_NIY)
-			g_error ("mint_niy");
+			g_error ("mint_niy: instruction not implemented yet.  This shouldn't happen.");
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BREAK)
 			++ip;
