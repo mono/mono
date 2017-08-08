@@ -38,8 +38,8 @@ TEST_SUPPORT_FILES = \
 	CS7069-lib.dll \
 	CS8009-lib.dll \
 	CSFriendAssembly-lib.dll \
-	dlls/first/CS1703-lib.dll dlls/first/CS1704-lib.dll \
-	dlls/second/CS1703-lib.dll dlls/second/CS1704-lib.dll
+	dlls/first/CS1704-lib.dll \
+	dlls/second/CS1704-lib.dll
 
 -include $(mcs_topdir)/build/config.make
 
