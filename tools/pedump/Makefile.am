@@ -17,8 +17,8 @@ pedump_SOURCES =		\
 	pedump.c
 
 pedump_LDADD = 			\
-	$(top_builddir)/mono/metadata/libmonoruntimesgen-static.la \
-	$(top_builddir)/mono/sgen/libmonosgen-static.la \
+	$(top_builddir)/mono/metadata/libmonoruntimesgen.la \
+	$(top_builddir)/mono/sgen/libmonosgen.la \
 	$(top_builddir)/mono/utils/libmonoutils.la \
 	$(LLVM_LIBS)			\
 	$(LLVM_LDFLAGS)			\
