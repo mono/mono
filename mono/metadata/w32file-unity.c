@@ -11,7 +11,7 @@
 
 
 #ifdef HOST_WIN32
-Unity.IL2CPP.Common35\MonoInstallationNew.cs
+
 gunichar2
 ves_icall_System_IO_MonoIO_get_VolumeSeparatorChar ()
 {
