@@ -63,7 +63,7 @@ namespace System.ComponentModel.Composition
         public const string MetadataItemSourceType = "MetadataItemSourceType";
         public const string MetadataItemValue      = "MetadataItemValue";
 
-        private static Lock _lock = new Lock();
+        private static Microsoft.Internal.Lock _lock = new Microsoft.Internal.Lock();
         private static Dictionary<Type, Type> _proxies = new Dictionary<Type, Type>();
         private static AssemblyName ProxyAssemblyName = new AssemblyName(string.Format(CultureInfo.InvariantCulture, "MetadataViewProxies_{0}", Guid.NewGuid()));
 #if FEATURE_CAS_APTCA

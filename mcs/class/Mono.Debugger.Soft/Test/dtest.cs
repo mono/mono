@@ -4159,7 +4159,7 @@ public class DebuggerTests
 			Assert.Fail ("Known limitation - can't get info from m2n frames");
 		} catch (AbsentInformationException) {}
 
-		frame = frames [3];
+		frame = frames [4];
 		Assert.IsFalse (frame.IsNativeTransition, "#12.1");
 		var wait_one_this = frame.GetThis ();
 		Assert.IsNotNull (wait_one_this, "#12.2");

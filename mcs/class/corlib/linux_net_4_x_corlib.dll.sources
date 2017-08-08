@@ -1,3 +1,19 @@
 #include net_4_x_corlib.dll.sources
 
 ../../../external/corert/src/Common/src/Interop/Unix/System.Private.CoreLib.Native/Interop.MemAllocFree.cs
+
+../../../external/corert/src/Common/src/Interop/Unix/System.Private.CoreLib.Native/Interop.GetTickCount64.cs
+../../../external/corert/src/Common/src/Interop/Unix/System.Private.CoreLib.Native/Interop.SchedGetCpu.cs
+../../../external/corert/src/Common/src/Interop/Unix/System.Private.CoreLib.Native/Interop.Threading.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Environment.Unix.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/LowLevelLock.Unix.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/LowLevelMonitor.Unix.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/WaitSubsystem.HandleManager.Unix.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/WaitSubsystem.ThreadWaitInfo.Unix.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/WaitSubsystem.WaitableObject.Unix.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/WaitSubsystem.Unix.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/WaitHandle.Unix.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/EventWaitHandle.Unix.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Mutex.Unix.cs
+../../../external/corert/src/System.Private.CoreLib/src/Internal/Runtime/Augments/RuntimeThread.Unix.cs
+corert/RuntimeThread.Unix.cs

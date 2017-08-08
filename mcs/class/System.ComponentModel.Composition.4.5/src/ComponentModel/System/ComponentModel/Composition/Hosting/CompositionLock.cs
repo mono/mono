@@ -29,7 +29,7 @@ namespace System.ComponentModel.Composition.Hosting
     internal sealed class CompositionLock : IDisposable
     {
         // narrow lock
-        private readonly Lock _stateLock = null;
+        private readonly Microsoft.Internal.Lock _stateLock = null;
         // wide lock
         private static object _compositionLock = new object();
 
@@ -43,7 +43,7 @@ namespace System.ComponentModel.Composition.Hosting
             this._isThreadSafe = isThreadSafe;
             if (isThreadSafe)
             {
-                this._stateLock = new Lock();
+                this._stateLock = new Microsoft.Internal.Lock();
             }
         }
 

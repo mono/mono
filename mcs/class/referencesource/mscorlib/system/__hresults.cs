@@ -128,5 +128,6 @@ namespace System {
         internal const int FUSION_E_REF_DEF_MISMATCH = unchecked((int)0x80131040);
         internal const int FUSION_E_INVALID_NAME = unchecked((int)0x80131047);
         internal const int TYPE_E_TYPEMISMATCH = unchecked((int)0x80028ca0);
+        internal const int ERROR_INVALID_HANDLE = unchecked((int)0x80070006);
     }
 }

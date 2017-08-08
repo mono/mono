@@ -1,2 +1,6 @@
 #include net_4_x_System.dll.sources
 
+../../../external/corert/src/System.Private.CoreLib/shared/Interop/Windows/Interop.Errors.cs
+../../../external/corert/src/System.Private.CoreLib/shared/Interop/Windows/Interop.Libraries.cs
+../../../external/corert/src/Common/src/Interop/Windows/mincore/Interop.Threading.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Semaphore.Windows.cs

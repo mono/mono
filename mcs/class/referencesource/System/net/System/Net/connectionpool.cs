@@ -355,7 +355,7 @@ namespace System.Net {
                         // and release the Semaphore to indicate that 
                         // no connection was actually removed so whatever
                         // we had locked is still available.
-                        Semaphore.ReleaseSemaphore();
+                        Semaphore.Release(1);
                         break;
                     }
                 }
@@ -382,7 +382,7 @@ namespace System.Net {
                 // no connections were actually destroyed so signal that a connection is now
                 // available since we are no longer reserving a connection by holding the 
                 // Semaphore
-                Semaphore.ReleaseSemaphore();
+                Semaphore.Release(1);
             }
         }
 
@@ -735,7 +735,7 @@ namespace System.Net {
             m_StackNew.Push(pooledStream);
             // ensure that the semaphore's count is incremented to signal an available connection is in
             // the pool
-            Semaphore.ReleaseSemaphore();
+            Semaphore.Release(1);
             GlobalLog.Leave("ConnectionPool#" + ValidationHelper.HashString(this) + "::PutNew");
         }
 

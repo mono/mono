@@ -7390,7 +7390,7 @@ mono_wait_handle_get_handle (MonoWaitHandle *handle)
 	MonoSafeHandle *sh;
 
 	if (!f_safe_handle) {
-		f_safe_handle = mono_class_get_field_from_name (mono_defaults.manualresetevent_class, "safeWaitHandle");
+		f_safe_handle = mono_class_get_field_from_name (mono_defaults.manualresetevent_class, "_waitHandle");
 		g_assert (f_safe_handle);
 	}
 

@@ -5247,3 +5247,21 @@ mono_thread_internal_is_current (MonoInternalThread *internal)
 	g_assert (internal);
 	return mono_native_thread_id_equals (mono_native_thread_id_get (), MONO_UINT_TO_NATIVE_THREAD_ID (internal->tid));
 }
+
+MonoBoolean
+ves_icall_System_Runtime_RuntimeImports_SetThreadExitCallback (gpointer func)
+{
+	return TRUE;
+}
+
+void 
+ves_icall_System_Runtime_RuntimeImports_SpinWait (int iterations)
+{
+}
+
+gboolean 
+ves_icall_System_Runtime_RuntimeImports_Yield (void)
+{
+	return mono_thread_info_yield ();
+}
+
