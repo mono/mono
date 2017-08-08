@@ -191,25 +191,45 @@ static int stack_type [] = {
 #define MINT_NEG_P MINT_NEG_I4
 #define MINT_NOT_P MINT_NOT_I4
 
+#define MINT_NEG_FP MINT_NEG_R8
+
 #define MINT_ADD_P MINT_ADD_I4
 #define MINT_SUB_P MINT_SUB_I4
 #define MINT_MUL_P MINT_MUL_I4
 #define MINT_DIV_P MINT_DIV_I4
+#define MINT_DIV_UN_P MINT_DIV_UN_I4
 #define MINT_REM_P MINT_REM_I4
+#define MINT_REM_UN_P MINT_REM_UN_I4
 #define MINT_AND_P MINT_AND_I4
 #define MINT_OR_P MINT_OR_I4
 #define MINT_XOR_P MINT_XOR_I4
 #define MINT_SHL_P MINT_SHL_I4
 #define MINT_SHR_P MINT_SHR_I4
+#define MINT_SHR_UN_P MINT_SHR_UN_I4
 
 #define MINT_CEQ_P MINT_CEQ_I4
 #define MINT_CNE_P MINT_CNE_I4
 #define MINT_CLT_P MINT_CLT_I4
+#define MINT_CLT_UN_P MINT_CLT_UN_I4
 #define MINT_CGT_P MINT_CGT_I4
+#define MINT_CGT_UN_P MINT_CGT_UN_I4
 #define MINT_CLE_P MINT_CLE_I4
+#define MINT_CLE_UN_P MINT_CLE_UN_I4
 #define MINT_CGE_P MINT_CGE_I4
+#define MINT_CGE_UN_P MINT_CGE_UN_I4
 
-#define MINT_ADD_FP MINT_ADD_R4
+#define MINT_ADD_FP MINT_ADD_R8
+#define MINT_SUB_FP MINT_SUB_R8
+#define MINT_MUL_FP MINT_MUL_R8
+#define MINT_DIV_FP MINT_DIV_R8
+#define MINT_REM_FP MINT_REM_R8
+
+#define MINT_CNE_FP MINT_CNE_R8
+#define MINT_CEQ_FP MINT_CEQ_R8
+#define MINT_CGT_FP MINT_CGT_R8
+#define MINT_CGE_FP MINT_CGE_R8
+#define MINT_CLT_FP MINT_CLT_R8
+#define MINT_CLE_FP MINT_CLE_R8
 
 #endif
 
@@ -223,7 +243,7 @@ typedef struct {
 static const MagicIntrinsic int_unnop[] = {
 	{ "op_UnaryPlus", {MINT_NOP, MINT_NOP, MINT_NOP}},
 	{ "op_UnaryNegation", {MINT_NEG_P, MINT_NEG_P, MINT_NEG_FP}},
-	{ "op_OnesComplement", {MINT_NOT_P, MINT_NOT_P}}
+	{ "op_OnesComplement", {MINT_NOT_P, MINT_NOT_P, MINT_NIY}}
 };
 
 static const MagicIntrinsic int_binop[] = {
@@ -232,11 +252,11 @@ static const MagicIntrinsic int_binop[] = {
 	{ "op_Multiply", {MINT_MUL_P, MINT_MUL_P, MINT_MUL_FP}},
 	{ "op_Division", {MINT_DIV_P, MINT_DIV_UN_P, MINT_DIV_FP}},
 	{ "op_Modulus", {MINT_REM_P, MINT_REM_UN_P, MINT_REM_FP}},
-	{ "op_BitwiseAnd", {MINT_AND_P, MINT_AND_P}},
-	{ "op_BitwiseOr", {MINT_OR_P, MINT_OR_P}},
-	{ "op_ExclusiveOr", {MINT_XOR_P, MINT_XOR_P}},
-	{ "op_LeftShift", {MINT_SHL_P, MINT_SHL_P}},
-	{ "op_RightShift", {MINT_SHR_P, MINT_SHR_UN_P}},
+	{ "op_BitwiseAnd", {MINT_AND_P, MINT_AND_P, MINT_NIY}},
+	{ "op_BitwiseOr", {MINT_OR_P, MINT_OR_P, MINT_NIY}},
+	{ "op_ExclusiveOr", {MINT_XOR_P, MINT_XOR_P, MINT_NIY}},
+	{ "op_LeftShift", {MINT_SHL_P, MINT_SHL_P, MINT_NIY}},
+	{ "op_RightShift", {MINT_SHR_P, MINT_SHR_UN_P, MINT_NIY}},
 };
 
 static const MagicIntrinsic int_cmpop[] = {
@@ -913,8 +933,16 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 				/* depending on SIZEOF_VOID_P and the type of the value passed to the .ctor we either have to CONV it, or do nothing */
 				int arg_size = type_size (arg);
 
-				if (arg_size > SIZEOF_VOID_P) // 8 -> 4
-					g_error ("not implemented yet: %d vs. %d\n", arg_size, SIZEOF_VOID_P);
+				if (arg_size > SIZEOF_VOID_P) { // 8 -> 4
+					switch (type_index) {
+					case 0: case 1:
+						ADD_CODE (td, MINT_CONV_I8_I4);
+						break;
+					case 2:
+						// ADD_CODE (td, MINT_CONV_R8_R4);
+						break;
+					}
+				}
 
 				if (arg_size < SIZEOF_VOID_P) { // 4 -> 8
 					switch (type_index) {
@@ -929,7 +957,11 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 
 				switch (type_index) {
 				case 0: case 1:
+#if SIZEOF_VOID_P == 4
+					ADD_CODE (td, MINT_STIND_I4);
+#else
 					ADD_CODE (td, MINT_STIND_I8);
+#endif
 					break;
 				case 2:
 #if SIZEOF_VOID_P == 4
@@ -945,8 +977,16 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 				return;
 			} else if (!strcmp ("op_Implicit", tm ) || !strcmp ("op_Explicit", tm)) {
 				int arg_size = type_size (csignature->params [0]);
-				if (arg_size > SIZEOF_VOID_P) // 8 -> 4
-					g_error ("not implemented yet: %d vs. %d\n", arg_size, SIZEOF_VOID_P);
+				if (arg_size > SIZEOF_VOID_P) { // 8 -> 4
+					switch (type_index) {
+					case 0: case 1:
+						ADD_CODE (td, MINT_CONV_I8_I4);
+						break;
+					case 2:
+						// ADD_CODE (td, MINT_CONV_R4_R8);
+						break;
+					}
+				}
 
 				if (arg_size < SIZEOF_VOID_P) { // 4 -> 8
 					switch (type_index) {

@@ -2332,6 +2332,9 @@ ves_exec_method_with_context (InterpFrame *frame, ThreadContext *context, unsign
 		MINT_IN_CASE(MINT_NOP)
 			++ip;
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_NIY)
+			g_error ("mint_niy");
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BREAK)
 			++ip;
 			do_debugger_tramp (mono_debugger_agent_user_break, frame);
@@ -4627,6 +4630,9 @@ array_constructed:
 		MINT_IN_CASE(MINT_CEQ_R8)
 			RELOP_FP(f, ==, 0);
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CNE_I4)
+			RELOP(i, !=);
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CNE_I8)
 			RELOP(l, !=);
 			MINT_IN_BREAK;
@@ -4642,6 +4648,9 @@ array_constructed:
 		MINT_IN_CASE(MINT_CGT_R8)
 			RELOP_FP(f, >, 0);
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CGE_I4)
+			RELOP(i, >=);
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CGE_I8)
 			RELOP(l, >=);
 			MINT_IN_BREAK;
@@ -4654,6 +4663,9 @@ array_constructed:
 	sp [-1].data.i = (type)sp [-1].data.datamem op (type)sp [0].data.datamem; \
 	++ip;
 
+		MINT_IN_CASE(MINT_CGE_UN_I4)
+			RELOP_CAST(l, >=, guint32);
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CGE_UN_I8)
 			RELOP_CAST(l, >=, guint64);
 			MINT_IN_BREAK;
@@ -4685,8 +4697,14 @@ array_constructed:
 		MINT_IN_CASE(MINT_CLT_UN_R8)
 			RELOP_FP(f, <, 1);
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CLE_I4)
+			RELOP(i, <=);
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CLE_I8)
 			RELOP(l, <=);
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CLE_UN_I4)
+			RELOP_CAST(l, <=, guint32);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CLE_UN_I8)
 			RELOP_CAST(l, <=, guint64);
