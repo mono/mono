@@ -42,7 +42,6 @@ namespace Mono.AppleTls
 	{
 		public const string SecurityLibrary = "/System/Library/Frameworks/Security.framework/Security";
 
-		// A GCHandle to a WeakReference that points to this instance.
 		GCHandle handle;
 		IntPtr context;
 
@@ -711,6 +710,7 @@ namespace Mono.AppleTls
 				if (!weakHandle.IsAllocated)
 					return SslStatus.Internal;
 
+				context = (AppleTlsContext) weakHandle.Target;
 				if (context == null || context.disposed)
 					return SslStatus.ClosedAbort;
 
