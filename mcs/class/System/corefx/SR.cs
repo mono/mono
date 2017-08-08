@@ -247,7 +247,6 @@ partial class SR
 	public const string ArgumentOutOfRange_UIntPtrMaxMinusOne = "The length of the buffer must be less than the maximum UIntPtr value for your platform.";
 	public const string Arg_BufferTooSmall = "Not enough space available in the buffer.";
 	public const string InvalidOperation_MustCallInitialize = "You must call Initialize on this object instance before using it.";
-	public const string ArgumentException_BufferNotFromPool = "The buffer is not associated with this pool and may not be returned to it.";
 	public const string Argument_InvalidSafeBufferOffLen = "Offset and length were greater than the size of the SafeBuffer.";
 	public const string Argument_InvalidSeekOrigin = "Invalid seek origin.";
 	public const string Argument_NotEnoughBytesToRead = "There are not enough bytes remaining in the accessor to read at this position.";
