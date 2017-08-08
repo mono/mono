@@ -863,7 +863,7 @@ ves_icall_System_IO_MonoIO_Open (MonoString *filename, gint32 mode,
 		}
 	}
 	
-	ret=mono_w32file_create (chars, convert_access ((MonoFileAccess)access_mode), convert_share ((MonoFileShare)share), convert_mode ((MonoFileMode)mode), attributes);
+	ret=mono_w32file_create (chars, access_mode, share, mode, attributes);
 	if(ret==INVALID_HANDLE_VALUE) {
 		*error=mono_w32error_get_last ();
 	} 
@@ -1052,13 +1052,23 @@ ves_icall_System_IO_MonoIO_SetFileTime (HANDLE handle, gint64 creation_time,
 					gint64 last_write_time, gint32 *error)
 {
 	gboolean ret;
+
+	MONO_ENTER_GC_SAFE;
+	*error=ERROR_SUCCESS;
+
+#if defined(PLATFORM_UNITY)
+
+	ret=mono_w32file_set_times (handle, creation_time, last_access_time, last_write_time);
+	if(ret==FALSE) {
+		*error=mono_w32error_get_last ();
+	}
+
+#else
+
 	const FILETIME *creation_filetime;
 	const FILETIME *access_filetime;
 	const FILETIME *write_filetime;
-	MONO_ENTER_GC_SAFE;
 
-	*error=ERROR_SUCCESS;
-	
 	if (creation_time < 0)
 		creation_filetime = NULL;
 	else
@@ -1078,6 +1088,8 @@ ves_icall_System_IO_MonoIO_SetFileTime (HANDLE handle, gint64 creation_time,
 	if(ret==FALSE) {
 		*error=mono_w32error_get_last ();
 	}
+
+#endif
 
 	MONO_EXIT_GC_SAFE;
 	return(ret);
