@@ -43,5 +43,7 @@ System.Windows.Markup/DependsOnAttributeTest.cs
 System.Windows.Markup/MarkupExtensionReturnTypeAttributeTest.cs
 System.Windows.Markup/ValueSerializerTest.cs
 System.Windows.Media/MatrixTest.cs
+System.Windows.Media/MatrixConverterTest.cs
+System.Windows.Media/MatrixValueSerializerTest.cs
 System.Windows.Threading/DispatcherTest.cs
 System.Windows.Threading/DispatcherTimerTest.cs
