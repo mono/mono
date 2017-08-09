@@ -889,13 +889,20 @@ namespace MonoTests.System.Net.Sockets {
 
 			ManualResetEvent ready = new ManualResetEvent (false);
 			bool got_exc = false;
+			int exc_code = 0;
 
 			Task receive_task = Task.Factory.StartNew (() => {
 				IPEndPoint ep = new IPEndPoint (IPAddress.Any, 0);
 				try {
 					ready.Set ();
-					client.Receive(ref ep);
-				} catch (SocketException) {
+					var bytes = client.Receive (ref ep);
+					Assert.AreEqual (0, bytes.Length);
+				} catch (SocketException exc) {
+					Console.Error.WriteLine ("Receive failed: {0} {1}", exc.ErrorCode, exc.Message);
+					exc_code = exc.ErrorCode;
+					got_exc = true;
+				} catch (Exception exc) {
+					Console.Error.WriteLine ("Receive failed with non-socket error: {0}", exc.Message);
 					got_exc = true;
 				} finally {
 					client.Close ();
@@ -907,7 +914,10 @@ namespace MonoTests.System.Net.Sockets {
 			client.Close();
 
 			Assert.IsTrue (receive_task.Wait (1000));
-			Assert.IsTrue (got_exc);
+			if (got_exc)
+				Assert.AreEqual (10004, exc_code, "Receive failure was not an 'interrupted' SocketException");
+			else
+				Console.Error.WriteLine ("Ignoring Receive success");
 		}
 
 		// Test for bug 324033

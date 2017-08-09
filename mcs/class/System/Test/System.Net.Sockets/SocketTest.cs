@@ -4593,18 +4593,24 @@ namespace MonoTests.System.Net.Sockets
 				var mSent = new ManualResetEvent (false);
 
 				// Async Send File to server
+				Console.Error.WriteLine("Test +BeginSendFile");
 				clientSocket.BeginSendFile(temp, (ar) => {
 					Socket client = (Socket) ar.AsyncState;
+					Console.Error.WriteLine("Test +EndSendFile");
 					client.EndSendFile (ar);
+					Console.Error.WriteLine("Test -EndSendFile");
 					mSent.Set ();
 				}, clientSocket);
+				Console.Error.WriteLine("Test -BeginSendFile");
 
+				Console.Error.WriteLine("mSent.WaitOne");
+				Console.Error.WriteLine("mReceived.WaitOne");
 				Assert.IsTrue (mSent.WaitOne (5000), "#1");
 				Assert.IsTrue (mReceived.WaitOne (5000), "#2");
 			} finally {
 				if (File.Exists (temp))
 					File.Delete (temp);
-					
+				
 				clientSocket.Close ();
 				serverSocket.Close ();
 			}
