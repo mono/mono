@@ -237,13 +237,6 @@ enum {
 	ABORT_PROT_BLOCK_MASK = (((1 << ABORT_PROT_BLOCK_BITS) - 1) << ABORT_PROT_BLOCK_SHIFT)
 };
 
-static int
-mono_thread_get_abort_prot_block_count (MonoInternalThread *thread)
-{
-	gsize state = thread->thread_state;
-	return (state & ABORT_PROT_BLOCK_MASK) >> ABORT_PROT_BLOCK_SHIFT;
-}
-
 void
 mono_threads_begin_abort_protected_block (void)
 {
@@ -5198,6 +5191,13 @@ mono_threads_detach_coop (gpointer cookie, gpointer *dummy)
 }
 
 #if 0
+static int
+mono_thread_get_abort_prot_block_count (MonoInternalThread *thread)
+{
+	gsize state = thread->thread_state;
+	return (state & ABORT_PROT_BLOCK_MASK) >> ABORT_PROT_BLOCK_SHIFT;
+}
+
 /* Returns TRUE if the current thread is ready to be interrupted. */
 gboolean
 mono_threads_is_ready_to_be_interrupted (void)
