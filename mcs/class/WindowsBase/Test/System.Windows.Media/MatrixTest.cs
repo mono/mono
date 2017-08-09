@@ -158,7 +158,6 @@ namespace MonoTests.System.Windows.Media {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Parse ()
 		{
 			CheckMatrix (Matrix.Identity, Matrix.Parse ("Identity"));
