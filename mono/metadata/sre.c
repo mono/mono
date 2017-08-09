@@ -66,7 +66,6 @@ static gboolean is_sre_field_builder (MonoClass *klass);
 static gboolean is_sre_gparam_builder (MonoClass *klass);
 static gboolean is_sre_enum_builder (MonoClass *klass);
 static gboolean is_sr_mono_method (MonoClass *klass);
-static gboolean is_sr_mono_field (MonoClass *klass);
 
 static guint32 mono_image_get_methodspec_token (MonoDynamicImage *assembly, MonoMethod *method);
 static guint32 mono_image_get_inflated_method_token (MonoDynamicImage *assembly, MonoMethod *m);
@@ -1895,13 +1894,6 @@ mono_is_sre_ctor_on_tb_inst (MonoClass *klass)
 }
 
 #endif /* !DISABLE_REFLECTION_EMIT */
-
-
-static gboolean
-is_sr_mono_field (MonoClass *klass)
-{
-	check_corlib_type_cached (klass, "System.Reflection", "MonoField");
-}
 
 gboolean
 mono_is_sr_mono_property (MonoClass *klass)
