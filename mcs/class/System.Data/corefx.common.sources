@@ -429,7 +429,8 @@ corefx/SR.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlNotificationInfo.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlNotificationEventArgs.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlDependencyListener.cs
-../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlDependencyUtils.cs
+#../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlDependencyUtils.cs
+corefx/Temp.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlDependency.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/OnChangedEventHandler.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlTypes/SqlTypeWorkarounds.cs
