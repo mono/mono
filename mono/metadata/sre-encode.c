@@ -36,7 +36,7 @@ static guint32 create_typespec (MonoDynamicImage *assembly, MonoType *type);
 static void    encode_type (MonoDynamicImage *assembly, MonoType *type, SigBuffer *buf);
 static guint32 mono_image_typedef_or_ref (MonoDynamicImage *assembly, MonoType *type);
 
-static guint32
+static G_GNUC_UNUSED guint32
 mono_image_add_stream_data (MonoDynamicStream *stream, const char *data, guint32 len)
 {
 	return mono_dynstream_add_data (stream, data, len);
@@ -476,7 +476,7 @@ mono_dynimage_encode_locals (MonoDynamicImage *assembly, MonoReflectionILGen *il
  * Copy len * nelem bytes from val to dest, swapping bytes to LE if necessary.
  * dest may be misaligned.
  */
-static void
+static G_GNUC_UNUSED void
 swap_with_size (char *dest, const char* val, int len, int nelem) {
 	MONO_REQ_GC_NEUTRAL_MODE;
 #if G_BYTE_ORDER != G_LITTLE_ENDIAN
