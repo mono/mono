@@ -49,6 +49,7 @@ corefx/SR.cs
 ../referencesource/System.Data/System/Data/Common/DBDataPermissionAttribute.cs
 ../referencesource/System.Data/System/Data/SqlClient/SqlClientPermission.cs
 ../referencesource/System.Data/System/Data/Sql/SqlDataSourceEnumerator.cs
+../referencesource/System.Data/System/Data/OleDb/OleDbType.cs
 
 #
 # corefx uses these files but we don't need them:
