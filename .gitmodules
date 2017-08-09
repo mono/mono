@@ -48,7 +48,8 @@
 	url = git://github.com/mono/roslyn-binaries.git
 [submodule "external/corert"]
 	path = external/corert
-	url = git://github.com/mono/corert.git
+	url = git://github.com/dampir/corert.git
+	branch = gsoc-separ-dll-sources
 [submodule "external/xunit-binaries"]
 	path = external/xunit-binaries
 	url = git://github.com/mono/xunit-binaries.git
