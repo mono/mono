@@ -3893,15 +3893,15 @@ mono_type_size (MonoType *t, int *align)
 		return 4;
 	case MONO_TYPE_I8:
 	case MONO_TYPE_U8:
-#if defined(TARGET_ARM)                                                                                                                                                                                                                                               
-                *align = 4;                                                                                                                                                                                                                                            
+#if defined(PLATFORM_IPHONE_XCOMP)
+		*align = 4;
 #else
 		*align = __alignof__(gint64);
 #endif
 		return 8;		
 	case MONO_TYPE_R8:
-#if defined(TARGET_ARM)                                                                                                                                                                                                                                               
-                *align = 4;                                                                                                                                                                                                                                            
+#if defined(PLATFORM_IPHONE_XCOMP)
+		*align = 4;
 #else
 		*align = __alignof__(double);
 #endif
