@@ -4,6 +4,7 @@ include ../../build/rules.make
 LIBRARY = System.Windows.Forms.dll
 
 LIB_REFS = System System.Xml System.Drawing Accessibility System.Data Mono.Posix Mono.WebBrowser System.Configuration System.Runtime.Serialization.Formatters.Soap
+KEYFILE = ../ecma.pub
 LIB_MCS_FLAGS = /unsafe \
 	@System.Windows.Forms.dll.resources \
 	-nowarn:618,612,809

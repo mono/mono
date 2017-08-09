@@ -11,6 +11,12 @@ LIB_REFS += System.Configuration
 LIB_MCS_FLAGS += -d:NET_3_5 -d:NET_3_0
 endif
 
+ifdef MOBILE_PROFILE
+KEYFILE = ../silverlight.pub
+else
+KEYFILE = ../winfx.pub
+endif
+
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES = $(RESOURCE_FILES)

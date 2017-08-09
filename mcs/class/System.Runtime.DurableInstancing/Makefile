@@ -6,6 +6,12 @@ LIBRARY = System.Runtime.DurableInstancing.dll
 LIB_REFS = System System.Xml System.Core System.Xml.Linq System.Transactions System.ServiceModel.Internals System.Runtime.Serialization
 LIB_MCS_FLAGS =
 
+ifdef MOBILE_PROFILE
+KEYFILE = ../silverlight.pub
+else
+KEYFILE = ../winfx.pub
+endif
+
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES = $(RESOURCE_FILES)

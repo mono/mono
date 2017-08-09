@@ -5,6 +5,7 @@ SUBDIRS =
 LIBRARY = System.Drawing.dll
 
 LIB_REFS = System
+KEYFILE = ../msfinal.pub
 LIB_MCS_FLAGS = /unsafe \
 	-resource:Assembly/Mono.ico,Mono.ico -resource:Assembly/Information.ico,Information.ico \
 	-resource:Assembly/Error.ico,Error.ico -resource:Assembly/Warning.ico,Warning.ico \
@@ -12,11 +13,7 @@ LIB_MCS_FLAGS = /unsafe \
 
 RESX_RESOURCE_STRING = ../../../external/corefx/src/System.Drawing.Common/src/Resources/Strings.resx
 
-MOBILE_LIKE := $(filter winaot orbis unreal, $(PROFILE))
-
-ifdef MOBILE_LIKE
-LIB_MCS_FLAGS += /keyfile:../msfinal.pub
-else
+ifndef MOBILE_PROFILE
 LIB_MCS_FLAGS += -d:FEATURE_TYPECONVERTER,SUPPORTS_WINDOWS_COLORS
 endif
 

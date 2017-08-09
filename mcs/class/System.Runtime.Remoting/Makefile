@@ -5,6 +5,7 @@ include ../../build/rules.make
 LIBRARY = System.Runtime.Remoting.dll
 
 LIB_REFS = System System.Xml System.Runtime.Serialization.Formatters.Soap
+KEYFILE = ../ecma.pub
 LIB_MCS_FLAGS =
 
 ifndef NO_SYSTEM_WEB_DEPENDENCY

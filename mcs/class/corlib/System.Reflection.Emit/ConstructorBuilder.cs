@@ -235,7 +235,10 @@ namespace System.Reflection.Emit {
 
 		public ParameterBuilder DefineParameter (int iSequence, ParameterAttributes attributes, string strParamName)
 		{
-			if (iSequence < 1 || iSequence > GetParametersCount ())
+			// The 0th ParameterBuilder does not correspond to an
+			// actual parameter, but .NETFramework lets you define
+			// it anyway. It is not useful.
+			if (iSequence < 0 || iSequence > GetParametersCount ())
 				throw new ArgumentOutOfRangeException ("iSequence");
 			if (type.is_created)
 				throw not_after_created ();

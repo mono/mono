@@ -736,8 +736,6 @@ namespace Mono.CSharp {
 			var tupleLiteralElements = (source as TupleLiteral)?.Elements;
 
 			for (int i = 0; i < targetType.Arity; ++i) {
-				var elementType = srcTypeArgument [i];
-
 				if (tupleLiteralElements != null) {
 					if (!ImplicitStandardConversionExists (tupleLiteralElements[i].Expr, targetTypeArgument [i])) {
 						return false;

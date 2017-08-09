@@ -473,6 +473,13 @@ namespace Mono.CSharp
 			Emit (ec, false, false);
 		}
 
+		public void EmitPrepare (EmitContext ec)
+		{
+			foreach (var a in args) {
+				a.Expr.EmitPrepare (ec);
+			}
+		}
+
 		//
 		// if `dup_args' is true or any of arguments contains await.
 		// A copy of all arguments will be returned to the caller

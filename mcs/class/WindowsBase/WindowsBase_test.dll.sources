@@ -32,6 +32,7 @@ System.Windows/RectTest.cs
 System.Windows/RectConverterTest.cs
 System.Windows/SizeTest.cs
 System.Windows/SizeConverterTest.cs
+System.Windows/SizeValueSerializerTest.cs
 System.Windows/VectorTest.cs
 System.Windows/VectorConverterTest.cs
 System.Windows.Markup/ConstructorArgumentAttributeTest.cs

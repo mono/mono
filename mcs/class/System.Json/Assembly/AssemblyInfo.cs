@@ -51,7 +51,6 @@ using System.Runtime.InteropServices;
 
 [assembly: NeutralResourcesLanguage ("en-US")]
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../winfx.pub")]
 
 [assembly: ComVisible (false)]
 

@@ -4,6 +4,7 @@ include ../../build/rules.make
 LIBRARY = SystemWebTestShim.dll
 
 LIB_REFS = System.Web System
+KEYFILE = ../winfx.pub
 LIB_MCS_FLAGS =
 
 NO_INSTALL = yes

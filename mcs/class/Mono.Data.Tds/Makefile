@@ -4,6 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = Mono.Data.Tds.dll
 LIB_REFS = System System.Xml Mono.Security
+KEYFILE = ../mono.pub
 LIB_MCS_FLAGS =
 
 TEST_MCS_FLAGS =

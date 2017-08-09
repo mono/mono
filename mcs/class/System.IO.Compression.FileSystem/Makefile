@@ -4,6 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = System.IO.Compression.FileSystem.dll
 LIB_REFS = System System.IO.Compression
+KEYFILE = ../ecma.pub
 LIB_MCS_FLAGS = -unsafe
 TEST_MCS_FLAGS =
 TEST_LIB_REFS = System System.Core System.IO.Compression

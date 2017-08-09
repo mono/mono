@@ -37,8 +37,10 @@ typedef struct _MonoMethodPInvoke MonoMethodPInvoke;
 
 #ifdef ENABLE_ICALL_EXPORT
 #pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#define ICALL_DECL_EXPORT MONO_API
 #define ICALL_EXPORT MONO_API
 #else
+#define ICALL_DECL_EXPORT
 #define ICALL_EXPORT static
 #endif
 
@@ -492,7 +494,7 @@ struct MonoVTable {
  */
 struct _MonoGenericInst {
 #ifndef MONO_SMALL_CONFIG
-	guint id;			/* unique ID for debugging */
+	gint32 id;			/* unique ID for debugging */
 #endif
 	guint type_argc    : 22;	/* number of type arguments */
 	guint is_open      :  1;	/* if this is an open type */

@@ -3,6 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Web.Services.dll
+KEYFILE = ../msfinal.pub
 ifdef MOBILE_PROFILE
 LIB_REFS = System System.Xml
 LIB_MCS_FLAGS = \

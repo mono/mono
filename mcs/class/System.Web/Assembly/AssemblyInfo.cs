@@ -59,7 +59,6 @@ using System.Web.UI;
 [assembly: TagPrefix("System.Web.UI.WebControls", "asp")]
 #if !(TARGET_DOTNET)
 [assembly: AssemblyDelaySign(true)]
-[assembly: AssemblyKeyFile("../msfinal.pub")]
 
 [assembly: AssemblyFileVersion (Consts.FxVersion)]
 [assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
