@@ -37,7 +37,7 @@ typedef enum {
 	GSHAREDVT_RET_NUM,
 } GSharedVtRetMarshal;
 
-static const char* ret_marshal_name[] = {
+static G_GNUC_UNUSED const char* ret_marshal_name[] = {
 	"GSHAREDVT_RET_NONE",
 	"GSHAREDVT_RET_I1",
 	"GSHAREDVT_RET_U1",
