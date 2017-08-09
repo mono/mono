@@ -55,6 +55,11 @@ DIFF = diff -rupZ
 DIFF_QUIET = diff --brief -Z
 endif
 
+ifdef MCS_MODE
+DIFF = echo "WARNING: running in mcs mode, tests are specific to roslyn and would fail. Skipping diff check."
+DIFF_QUIET = $(DIFF)
+endif
+
 dist-local: dist-default dist-tests
 
 dist-tests:
