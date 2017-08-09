@@ -24,6 +24,8 @@ corefx/SqlMetaData.cs
 corefx/SqlParameter.cs
 corefx/SqlConnection.cs
 corefx/SqlConnectionStringBuilder.cs
+corefx/SqlParameterCollection.cs
+corefx/TdsEnums.cs
 corefx/SR.cs
 ../referencesource/System.Data/System/Data/Sql/SqlDataSourceEnumerator.cs
 ../referencesource/System.Data/System/Data/CodeGen/StrongTypingException.cs

@@ -11,10 +11,22 @@ namespace System.Data.SqlClient
 {
     partial class SqlConnection
     {
+        public SqlConnection(string connectionString, SqlCredential credential)
+        {
+			ConnectionString = connectionString;
+			Credentials = credential;
+        }        
+
         [MonoTODO] //https://github.com/dotnet/corefx/issues/11958
         public static void ChangePassword (string connectionString, string newPassword)
 		{
             throw new NotImplementedException();
         }
+
+        [MonoTODO] //https://github.com/dotnet/corefx/issues/11542
+		public SqlCredential Credentials {
+			get => throw new NotImplementedException();
+			set => throw new NotImplementedException();
+		}
     }
 }
