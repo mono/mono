@@ -65,6 +65,10 @@
 #include <errno.h>
 #endif
 
+#if defined(PLATFORM_UNITY)
+#include "Handle-c-api.h"
+#endif
+
 /*#define THREAD_DEBUG(a) do { a; } while (0)*/
 #define THREAD_DEBUG(a)
 /*#define THREAD_WAIT_DEBUG(a) do { a; } while (0)*/
@@ -1851,7 +1855,9 @@ mono_wait_uninterrupted (MonoInternalThread *thread, guint32 numhandles, gpointe
 	start = (ms == -1) ? 0 : mono_100ns_ticks ();
 	do {
 		MONO_ENTER_GC_SAFE;
-#ifdef HOST_WIN32
+#if defined(PLATFORM_UNITY)
+		ret = (MonoW32HandleWaitRet)UnityPalWaitForMultipleHandles(handles, numhandles, waitall, wait, TRUE);
+#elif defined(HOST_WIN32)
 		if (numhandles != 1)
 			ret = mono_w32handle_convert_wait_ret (WaitForMultipleObjectsEx (numhandles, handles, waitall, wait, TRUE), numhandles);
 		else
@@ -2006,7 +2012,9 @@ ves_icall_System_Threading_WaitHandle_SignalAndWait_Internal (HANDLE toSignal, H
 	mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
 	
 	MONO_ENTER_GC_SAFE;
-#ifdef HOST_WIN32
+#if defined(PLATFORM_UNITY)
+	ret = (MonoW32HandleWaitRet)UnityPalHandleSignalAndWait(toSignal, toWait, ms, TRUE);
+#elif defined(HOST_WIN32)
 	ret = mono_w32handle_convert_wait_ret (SignalObjectAndWait (toSignal, toWait, ms, TRUE), 1);
 #else
 	ret = mono_w32handle_signal_and_wait (toSignal, toWait, ms, TRUE);
