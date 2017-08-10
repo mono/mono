@@ -72,6 +72,7 @@ enum {
 	TYPE_RUNTIME,
 	TYPE_COVERAGE,
 	TYPE_META,
+	TYPE_FILEIO,
 	/* extended type for TYPE_HEAP */
 	TYPE_HEAP_START  = 0 << 4,
 	TYPE_HEAP_END    = 1 << 4,
@@ -122,6 +123,9 @@ enum {
 	TYPE_COVERAGE_CLASS = 3 << 4,
 	/* extended type for TYPE_META */
 	TYPE_SYNC_POINT = 0 << 4,
+	/* extended type for TYPE_FILEIO */
+	TYPE_FILEIO_READ = 0 << 4,
+	TYPE_FILEIO_WRITE = 1 << 4,
 	TYPE_END
 };
 

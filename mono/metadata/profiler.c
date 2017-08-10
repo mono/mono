@@ -73,6 +73,7 @@ struct _ProfilerDesc {
 	MonoProfileMethodFunc   method_end_invoke;
 	MonoProfileMethodResult man_unman_transition;
 	MonoProfileAllocFunc    allocation_cb;
+	MonoProfileFileIOFunc   fileio_cb;
 	MonoProfileMonitorFunc  monitor_event_cb;
 	MonoProfileStatFunc     statistical_cb;
 	MonoProfileStatCallChainFunc statistical_call_chain_cb;
@@ -286,6 +287,14 @@ mono_profiler_install_allocation (MonoProfileAllocFunc callback)
 	if (!prof_list)
 		return;
 	prof_list->allocation_cb = callback;
+}
+
+void
+mono_profiler_install_fileio (MonoProfileFileIOFunc callback)
+{
+	if (!prof_list)
+		return;
+	prof_list->fileio_cb = callback;
 }
 
 void
@@ -557,6 +566,16 @@ mono_profiler_monitor_event      (MonoObject *obj, MonoProfilerMonitorEvent even
 		if ((prof->events & MONO_PROFILE_MONITOR_EVENTS) && prof->monitor_event_cb)
 			prof->monitor_event_cb (prof->profiler, obj, event);
 	}
+}
+
+void
+mono_profiler_fileio (int kind, int count)
+{
+	ProfilerDesc *prof;
+	for (prof = prof_list; prof; prof = prof->next) {
+		if ((prof->events & MONO_PROFILE_FILEIO) && prof->fileio_cb)
+			prof->fileio_cb (prof->profiler, kind, count);
+    }
 }
 
 void

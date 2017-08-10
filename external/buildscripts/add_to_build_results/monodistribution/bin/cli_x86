@@ -1,0 +1,4 @@
+#!/bin/sh
+. $(dirname $0)/mono-env
+
+arch -i386 $MONO "$@"

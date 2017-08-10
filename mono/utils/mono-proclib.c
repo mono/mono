@@ -507,14 +507,21 @@ get_process_stat_item (int pid, int pos, int sum, MonoProcessError *error)
 #endif
 }
 
+/* The sysconf method is not defined on all platforms.
+ * For the Unity platform, we don't use this code anyway,
+ * so don't compile it.
+*/
+
 static int
 get_user_hz (void)
 {
 	static int user_hz = 0;
 	if (user_hz == 0) {
+#if !defined (PLATFORM_UNITY)
 #ifdef _SC_CLK_TCK
 		user_hz = sysconf (_SC_CLK_TCK);
 #endif
+#endif // PLATFORM_UNITY
 		if (user_hz == 0)
 			user_hz = 100;
 	}

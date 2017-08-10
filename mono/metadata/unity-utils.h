@@ -161,5 +161,6 @@ MONO_API void mono_unity_set_data_dir(const char* dir);
 MONO_API char* mono_unity_get_data_dir();
 MONO_API MonoClass* mono_unity_class_get(MonoImage* image, guint32 type_token);
 MONO_API gpointer mono_unity_alloc(gsize size);
+MONO_API void mono_unity_g_free (void *ptr);
 
 #endif

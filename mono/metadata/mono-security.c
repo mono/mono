@@ -217,7 +217,12 @@ IsMemberOf (gid_t user, struct group *g)
 gpointer
 ves_icall_System_Security_Principal_WindowsIdentity_GetCurrentToken (void)
 {
+#if defined(PLATFORM_UNITY) && defined(UNITY_USE_PLATFORM_STUBS)
+	g_assert(0 && "This function is not yet implemented for the Unity platform.");
+	return NULL;
+#else
 	return GINT_TO_POINTER (geteuid ());
+#endif /* PLATFORM_UNITY && UNITY_USE_PLATFORM_STUBS */
 }
 
 static gint32
@@ -359,6 +364,10 @@ ves_icall_System_Security_Principal_WindowsImpersonationContext_DuplicateToken (
 gboolean
 ves_icall_System_Security_Principal_WindowsImpersonationContext_SetCurrentToken (gpointer token)
 {
+#if defined(PLATFORM_UNITY) && defined(UNITY_USE_PLATFORM_STUBS)
+	g_assert(0 && "This function is not yet implemented for the Unity platform.");
+	return FALSE;
+#else
 #ifdef HOST_WIN32
 	return (ImpersonateLoggedOnUser (token) != 0);
 #else
@@ -369,11 +378,16 @@ ves_icall_System_Security_Principal_WindowsImpersonationContext_SetCurrentToken 
 #endif
 	return geteuid () == itoken;
 #endif
+#endif /* PLATFORM_UNITY && UNITY_USE_PLATFORM_STUBS */
 }
 
 gboolean
 ves_icall_System_Security_Principal_WindowsImpersonationContext_RevertToSelf (void)
 {
+#if defined(PLATFORM_UNITY) && defined(UNITY_USE_PLATFORM_STUBS)
+	g_assert(0 && "This function is not yet implemented for the Unity platform.");
+	return FALSE;
+#else
 #ifdef HOST_WIN32
 	return (RevertToSelf () != 0);
 #else
@@ -394,6 +408,7 @@ ves_icall_System_Security_Principal_WindowsImpersonationContext_RevertToSelf (vo
 #endif
 	return geteuid () == suid;
 #endif
+#endif /* PLATFORM_UNITY && UNITY_USE_PLATFORM_STUBS */
 }
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 

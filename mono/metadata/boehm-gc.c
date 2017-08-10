@@ -62,6 +62,7 @@ typedef void (GC_CALLBACK * GC_push_other_roots_proc)();
 
 static GC_push_other_roots_proc default_push_other_roots;
 static GHashTable *roots;
+static GHashTable *handle_stacks;
 
 static void GC_CALLBACK mono_push_other_roots(void);
 static void*
@@ -195,6 +196,7 @@ mono_gc_base_init (void)
 #endif
 
 	roots = g_hash_table_new (NULL, NULL);
+	handle_stacks = g_hash_table_new (NULL, NULL);
 #if HAVE_BDWGC_GC
 	default_push_other_roots = GC_get_push_other_roots ();
 	GC_set_push_other_roots (mono_push_other_roots);
@@ -279,7 +281,9 @@ mono_gc_base_init (void)
 	mono_os_mutex_init_recursive (&handle_section);
 
 	mono_thread_info_attach (&dummy);
-#if !HAVE_BDWGC_GC
+#ifdef HAVE_BDWGC_GC
+	GC_set_on_event (on_gc_notification);
+#else
 	GC_set_on_collection_event (on_gc_notification);
 #endif
 	GC_on_heap_resize = on_gc_heap_resize;
@@ -413,6 +417,14 @@ mono_gc_register_thread (void *baseptr)
 	return mono_thread_info_attach (baseptr) != NULL;
 }
 
+static gpointer
+insert_handle_stack (gpointer arg)
+{
+	HandleStack* handle_stack = arg;
+	g_hash_table_insert (handle_stacks, handle_stack, NULL);
+	return NULL;
+}
+
 static void*
 boehm_thread_register (MonoThreadInfo* info, void *baseptr)
 {
@@ -426,6 +438,8 @@ boehm_thread_register (MonoThreadInfo* info, void *baseptr)
 	    return NULL; /* Cannot happen with GC v7+. */
 
 	info->handle_stack = mono_handle_stack_alloc ();
+
+	GC_call_with_alloc_lock (insert_handle_stack, info->handle_stack);
 
 	return info;
 }
@@ -445,12 +459,23 @@ boehm_thread_unregister (MonoThreadInfo *p)
 #endif
 }
 
+static gpointer
+remove_handle_stack (gpointer arg)
+{
+	HandleStack* handle_stack = arg;
+	gboolean removed = g_hash_table_remove (handle_stacks, handle_stack);
+	g_assert (removed);
+	return NULL;
+}
+
 static void
 boehm_thread_detach (MonoThreadInfo *p)
 {
 	if (mono_thread_internal_current_is_attached ())
 		mono_thread_detach_internal (mono_thread_internal_current ());
 
+
+	GC_call_with_alloc_lock (remove_handle_stack, p->handle_stack);
 	/* Free in detach rather than unregister since 
 	 * Boehm handle stack uses GC memory and acquires
 	 * GC lock to free it. The detach callback 
@@ -612,10 +637,31 @@ push_root (gpointer key, gpointer value, gpointer user_data)
 	GC_push_all (key, value);
 }
 
+static void
+push_handle_stack (gpointer key, gpointer value, gpointer user_data)
+{
+	HandleStack* stack = key;
+	HandleChunk *cur = stack->bottom;
+	HandleChunk *last = stack->top;
+
+
+	if (!cur)
+		return;
+
+	while (cur) {
+		if (cur->size > 0)
+			GC_push_all (cur->objects, (char*)(cur->objects + cur->size) + 1);
+		if (cur == last)
+			break;
+		cur = cur->next;
+	}
+}
+
 static void GC_CALLBACK
 mono_push_other_roots (void)
 {
 	g_hash_table_foreach (roots, push_root, NULL);
+	g_hash_table_foreach (handle_stacks, push_handle_stack, NULL);
 	if (default_push_other_roots)
 		default_push_other_roots ();
 }
@@ -926,13 +972,23 @@ mono_gc_suspend_finalizers (void)
 int
 mono_gc_get_suspend_signal (void)
 {
+#if defined(PLATFORM_UNITY) && defined(UNITY_USE_PLATFORM_STUBS)
+	g_assert(0 && "This function is not yet implemented for the Unity platform.");
+	return 0;
+#else
 	return GC_get_suspend_signal ();
+#endif /* PLATFORM_UNITY && UNITY_USE_PLATFORM_STUBS */
 }
 
 int
 mono_gc_get_restart_signal (void)
 {
+#if defined(PLATFORM_UNITY) && defined(UNITY_USE_PLATFORM_STUBS)
+	g_assert(0 && "This function is not yet implemented for the Unity platform.");
+	return 0;
+#else
 	return GC_get_thr_restart_signal ();
+#endif /* PLATFORM_UNITY && UNITY_USE_PLATFORM_STUBS */
 }
 
 #if defined(USE_COMPILER_TLS) && defined(__linux__) && (defined(__i386__) || defined(__x86_64__)) && !defined(HAVE_BDWGC_GC)
@@ -1500,9 +1556,14 @@ mono_gc_register_for_finalization (MonoObject *obj, void *user_data)
 int
 mono_gc_pthread_create (pthread_t *new_thread, const pthread_attr_t *attr, void *(*start_routine)(void *), void *arg)
 {
+#if defined(PLATFORM_UNITY) && defined(UNITY_USE_PLATFORM_STUBS)
+	g_assert(0 && "This function is not yet implemented for the Unity platform.");
+	return 0;
+#else
 	/* it is being replaced by GC_pthread_create on some
 	 * platforms, see libgc/include/gc_pthread_redirects.h */
 	return pthread_create (new_thread, attr, start_routine, arg);
+#endif /* PLATFORM_UNITY && UNITY_USE_PLATFORM_STUBS */
 }
 #endif
 

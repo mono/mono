@@ -1,0 +1,6 @@
+#!/bin/sh
+. $(dirname $0)/mono-env
+
+US=$(dirname $0)/us.exe
+
+exec $MONO $MONO_OPTIONS $US "$@"

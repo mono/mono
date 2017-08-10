@@ -6426,6 +6426,10 @@ ves_icall_System_Environment_get_UserName (void)
 static MonoString *
 mono_icall_get_machine_name (void)
 {
+#if defined(PLATFORM_UNITY) && defined(UNITY_USE_PLATFORM_STUBS)
+	g_assert(0 && "This function is not yet implemented for the Unity platform.");
+	return NULL;
+#else
 #if !defined(DISABLE_SOCKETS)
 	MonoString *result;
 	char *buf;
@@ -6448,6 +6452,7 @@ mono_icall_get_machine_name (void)
 #else
 	return mono_string_new (mono_domain_get (), "mono");
 #endif
+#endif /* PLATFORM_UNITY && UNITY_USE_PLATFORM_STUBS */
 }
 #endif /* !HOST_WIN32 */
 
@@ -6614,7 +6619,11 @@ mono_icall_get_environment_variable_names (void)
 ICALL_EXPORT MonoArray *
 ves_icall_System_Environment_GetEnvironmentVariableNames (void)
 {
-	return mono_icall_get_environment_variable_names ();
+#if defined(PLATFORM_UNITY) && defined(UNITY_USE_PLATFORM_STUBS)
+	g_assert(0 && "This function is not yet implemented for the Unity platform.");
+#else
+	return mono_icall_get_environment_variable_names();
+#endif // PLATFORM_UNITY
 }
 
 #ifndef HOST_WIN32
@@ -6762,7 +6771,12 @@ leave:
 ICALL_EXPORT MonoArray *
 ves_icall_System_Environment_GetLogicalDrives (void)
 {
+#if defined(PLATFORM_UNITY) && defined(UNITY_USE_PLATFORM_STUBS)
+	g_assert(0 && "This function is not yet implemented for the Unity platform.");
+	return NULL;
+#else
 	return mono_icall_get_logical_drives ();
+#endif /* PLATFORM_UNITY && UNITY_USE_PLATFORM_STUBS */
 }
 
 ICALL_EXPORT MonoString *

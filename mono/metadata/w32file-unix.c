@@ -43,6 +43,7 @@
 #include "utils/mono-threads.h"
 #include "utils/mono-threads-api.h"
 #include "utils/strenc.h"
+#include "mono/metadata/profiler-private.h"
 
 typedef struct {
 	guint64 device;
@@ -2966,8 +2967,12 @@ mono_w32file_read (gpointer handle, gpointer buffer, guint32 numbytes, guint32 *
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
 		return(FALSE);
 	}
-	
-	return(io_ops[type].readfile (handle, buffer, numbytes, bytesread));
+
+	gboolean ret = io_ops[type].readfile (handle, buffer, numbytes, bytesread);
+	if (mono_profiler_get_events () & MONO_PROFILE_FILEIO)
+    	mono_profiler_fileio (1, *bytesread);
+
+	return ret;
 }
 
 gboolean
@@ -2981,8 +2986,13 @@ mono_w32file_write (gpointer handle, gconstpointer buffer, guint32 numbytes, gui
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
 		return(FALSE);
 	}
-	
-	return(io_ops[type].writefile (handle, buffer, numbytes, byteswritten));
+
+	gboolean ret = io_ops[type].writefile (handle, buffer, numbytes, byteswritten);
+
+	if (mono_profiler_get_events () & MONO_PROFILE_FILEIO)
+		mono_profiler_fileio (0, *byteswritten);
+
+	return ret;
 }
 
 gboolean
