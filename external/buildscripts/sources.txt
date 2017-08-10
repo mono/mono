@@ -293,8 +293,6 @@ mono/metadata/w32event-unity.c
 mono/metadata/w32event-win32.c
 mono/metadata/w32event-unix.c
 mono/metadata/w32file-unity.c
-mono/metadata/w32file-win32.c
-mono/metadata/w32file-unix.c
 mono/metadata/w32file-unix-glob.c
 mono/metadata/w32file.c
 mono/metadata/w32handle-namespace.c
