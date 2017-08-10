@@ -132,12 +132,19 @@ static gboolean alertable_socket_wait (SOCKET sock, int event_bit)
 		blocking ? "blocking" : "non-blocking", sock, ret, _saved_error)); \
 	WSASetLastError (_saved_error);
 
+SOCKET mono_w32socket_accept_internal (SOCKET s, struct sockaddr *addr, socklen_t *addrlen, gboolean blocking)
+{
+	SOCKET newsock = INVALID_SOCKET;
+	ALERTABLE_SOCKET_CALL (FD_ACCEPT_BIT, blocking, TRUE, newsock, accept, s, addr, addrlen);
+	return newsock;
+}
+
 SOCKET mono_w32socket_accept (SOCKET s, struct sockaddr *addr, socklen_t *addrlen, gboolean blocking)
 {
 	MonoInternalThread *curthread = mono_thread_internal_current ();
 	SOCKET newsock = INVALID_SOCKET;
 	curthread->interrupt_on_stop = (gpointer)TRUE;
-	ALERTABLE_SOCKET_CALL (FD_ACCEPT_BIT, blocking, TRUE, newsock, accept, s, addr, addrlen);
+	newsock = mono_w32socket_accept_internal (s, addr, addrlen, blocking);
 	curthread->interrupt_on_stop = (gpointer)FALSE;
 	return newsock;
 }

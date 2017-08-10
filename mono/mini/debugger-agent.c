@@ -1193,7 +1193,7 @@ socket_transport_accept (int socket_fd)
 {
 	MONO_ENTER_GC_SAFE;
 #ifdef HOST_WIN32
-	conn_fd = mono_w32socket_accept (socket_fd, NULL, NULL, TRUE);
+	conn_fd = mono_w32socket_accept_internal (socket_fd, NULL, NULL, TRUE);
 	if (conn_fd != -1)
 		mono_w32socket_set_blocking (conn_fd, TRUE);
 #else
