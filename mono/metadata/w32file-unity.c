@@ -183,6 +183,7 @@ mono_w32file_find_first (const gunichar2 *pattern, WIN32_FIND_DATA *find_data)
 
 	g_free(filename);
 	g_free(palPath);
+	g_free(utf16_basename);
 
 	find_data->dwReserved0 = 0;
 	find_data->dwReserved1 = 0;
@@ -212,6 +213,7 @@ mono_w32file_find_next (gpointer handle, WIN32_FIND_DATA *find_data)
 	memcpy (find_data->cFileName, utf16_basename, bytes < (MAX_PATH * 2) - 2 ? bytes : (MAX_PATH * 2) - 2);
 
 	g_free(filename);
+	g_free(utf16_basename);
 
 	find_data->dwReserved0 = 0;
 	find_data->dwReserved1 = 0;
