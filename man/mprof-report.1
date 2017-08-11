@@ -183,6 +183,9 @@ and time, then do according to \f[I]OUTSPEC\f[]:
 If \f[I]OUTSPEC\f[] begins with a \f[I]|\f[] character, execute the
 rest as a program and feed the data to its standard input.
 .IP \[bu] 2
+If \f[I]OUTSPEC\f[] begins with a \f[I]#\f[] character, parse the
+rest as a file descriptor number, and feed the data to this file
+descriptor.
 .IP \[bu] 2
 otherwise write the data the the named file: note that is a file by
 that name already exists, it is truncated.
