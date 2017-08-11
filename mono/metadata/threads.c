@@ -66,6 +66,7 @@
 #endif
 
 #if defined(PLATFORM_UNITY)
+#include "Thread-c-api.h"
 #include "Handle-c-api.h"
 #endif
 
@@ -664,6 +665,10 @@ mono_thread_attach_internal (MonoThread *thread, gboolean force_attach, gboolean
 	g_assert (thread);
 
 	info = mono_thread_info_current ();
+
+#if defined(PLATFORM_UNITY)
+	UnityPalThreadInitialize();
+#endif
 
 	internal = thread->internal_thread;
 	internal->handle = mono_threads_open_thread_handle (info->handle);
