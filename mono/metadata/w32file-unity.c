@@ -161,23 +161,30 @@ mono_w32file_find_first (const gunichar2 *pattern, WIN32_FIND_DATA *find_data)
 	int32_t resultAttributes = 0;
 
 	int32_t result = 0;
- 	const char* filename;
+	const char* filename;
 
- 	result = UnityPalDirectoryFindFirstFile(findHandle, palPath, &filename, &resultAttributes);
+	result = UnityPalDirectoryFindFirstFile(findHandle, palPath, &filename, &resultAttributes);
 
- 	if (result != 0)
- 	{
- 		mono_w32error_set_last(result);
- 		return INVALID_HANDLE_VALUE;
- 	}
+	if (result != 0)
+	{
+		mono_w32error_set_last(result);
+		return INVALID_HANDLE_VALUE;
+	}
 
 	find_data->dwFileAttributes = resultAttributes;
 
 	gunichar2 *utf16_basename;
 	glong bytes;
 	utf16_basename = g_utf8_to_utf16 (filename, -1, NULL, &bytes, NULL);
+	
+	/* this next section of memset and memcpy is code from mono, the cFileName field is 
+	   gunichar2 cFileName [MAX_PATH].  
+	   Notes from mono:      
+	   Truncating a utf16 string like this might leave the last
+	   gchar incomplete
+	   utf16 is 2 * utf8
+	*/
 	bytes *= 2;
-
 	memset (find_data->cFileName, '\0', (MAX_PATH * 2));
 	memcpy (find_data->cFileName, utf16_basename, bytes < (MAX_PATH * 2) - 2 ? bytes : (MAX_PATH * 2) - 2);
 
@@ -199,7 +206,7 @@ mono_w32file_find_next (gpointer handle, WIN32_FIND_DATA *find_data)
 
 	int32_t resultAttributes = 0;
 	int32_t result;
- 	const char* filename;
+	const char* filename;
 
 	result = UnityPalDirectoryFindNextFile(handle, &filename, &resultAttributes);
 
@@ -226,10 +233,10 @@ mono_w32file_find_next (gpointer handle, WIN32_FIND_DATA *find_data)
 gboolean
 mono_w32file_find_close (gpointer handle)
 {
-    gboolean result = UnityPalDirectoryCloseOSHandle(handle);
-    UnityPalDirectoryFindHandleDelete(handle);
+	gboolean result = UnityPalDirectoryCloseOSHandle(handle);
+	UnityPalDirectoryFindHandleDelete(handle);
   
-    return result;
+	return result;
 }
 
 gboolean
@@ -323,8 +330,8 @@ mono_w32file_move (gunichar2 *path, gunichar2 *dest, gint32 *error)
 	
 	gchar* palPath = mono_unicode_to_external(path);
 	gchar* palDest = mono_unicode_to_external(dest);
-    result =  UnityPalMoveFile(palPath, palDest, error);
-    mono_w32error_set_last(*error);
+	result =  UnityPalMoveFile(palPath, palDest, error);
+	mono_w32error_set_last(*error);
 	g_free(palPath);
 	g_free(palDest);
 
@@ -380,7 +387,7 @@ mono_w32file_copy (gunichar2 *path, gunichar2 *dest, gboolean overwrite, gint32 
 	
 	gchar* palPath = mono_unicode_to_external(path);
 	gchar* palDest = mono_unicode_to_external(dest);
-	result = UnityPalCopyFile( palPath, palDest, overwrite, error);
+	result = UnityPalCopyFile(palPath, palDest, overwrite, error);
 	mono_w32error_set_last(*error);
 	g_free(palPath);
 	g_free(palDest);
@@ -476,7 +483,7 @@ mono_w32file_remove_directory (const gunichar2 *name)
 
 gboolean mono_w32file_delete(const gunichar2 *name)
 {
-    int error = 0;
+	int error = 0;
 
 	gchar* palPath = mono_unicode_to_external (name);
 	gboolean result = UnityPalDeleteFile(palPath, &error);
@@ -495,12 +502,12 @@ mono_w32file_get_cwd (guint32 length, gunichar2 *buffer)
 	int error = 0;
 
 	const char* palPath = UnityPalDirectoryGetCurrent(&error);
-    mono_w32error_set_last (error);
+	mono_w32error_set_last (error);
 	utf16_path = mono_unicode_from_external(palPath, &bytes);
 	count = (bytes / 2) + 1;
 	memcpy(buffer, utf16_path, length);
 	g_free(utf16_path);
-	g_free((void *)palPath);
+	g_free(palPath);
 
 	return count;
 }
