@@ -14,11 +14,7 @@ include ../../build/executable.make
 XBUILD_DIR=.
 include $(XBUILD_DIR)/xbuild_test.make
 
-ifeq (4.0, $(FRAMEWORK_VERSION))
-install-local: xbuild-net4-fail
-else
 install-local: install-extras
-endif
 
 PORTABLE_TARGETS_SRC:=data/Portable/Targets
 PCL5_FX_SRC:=data/Portable/Frameworks/v5.0
