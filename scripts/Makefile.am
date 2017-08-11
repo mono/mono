@@ -37,6 +37,7 @@ bin_SCRIPTS = \
 	peverify		\
 	mcs			\
 	csc					\
+	csi			\
 	mono-package-runtime	\
 	mono-heapviz		\
 	$(scripts_mono_configuration_crypto)
@@ -159,6 +160,7 @@ EXTRA_DIST =			\
 	mcs.in				\
 	csc.in				\
 	dmcs.in				\
+	csi.in			\
 	mono-package-runtime	\
 	mono-test-install	\
 	mono-heapviz		\
@@ -209,6 +211,10 @@ csc: csc.in Makefile
 
 dmcs: dmcs.in Makefile
 	$(REWRITE_COMMON) $(srcdir)/dmcs.in > $@.tmp
+	mv -f $@.tmp $@
+
+csi: csi.in Makefile
+	$(REWRITE_COMMON) $(srcdir)/csi.in > $@.tmp
 	mv -f $@.tmp $@
 
 mono-service: mono-service.in Makefile
