@@ -91,10 +91,10 @@ endif
 
 if SUPPORT_BDWGC
 if DISABLE_EXECUTABLES
-shared_bdwgc_libraries = libmonoruntimebdwgc.la libmonoruntime-unity-il2cpp-bdwgc.la
+shared_bdwgc_libraries = libmonoruntimebdwgc.la
 else
 if SHARED_MONO
-shared_bdwgc_libraries = libmonoruntimebdwgc.la libmonoruntime-unity-il2cpp-bdwgc.la
+shared_bdwgc_libraries = libmonoruntimebdwgc.la
 endif
 endif
 bdwgc_libraries = $(shared_bdwgc_libraries) libmonoruntimebdwgc-static.la
@@ -133,13 +133,6 @@ null_sources = \
 
 null_gc_sources = \
 	null-gc.c
-
-unity_sources =	\
-	file-mmap-unity.c	
-
-mono_sources = \
-	file-mmap-posix.c \
-	file-mmap-windows.c
 
 common_sources = \
 	$(platform_sources)	\
@@ -271,6 +264,8 @@ common_sources = \
 	custom-attrs-internals.h	\
 	sre-internals.h	\
 	reflection-internals.h	\
+	file-mmap-posix.c	\
+	file-mmap-windows.c	\
 	file-mmap.h	\
 	object-offsets.h	\
 	abi-details.h	\
@@ -326,19 +321,15 @@ sgen_sources = \
 	sgen-mono.c		\
 	sgen-client-mono.h
 
-libmonoruntime_la_SOURCES = $(common_sources) $(gc_dependent_sources) $(null_gc_sources) $(boehm_sources) $(mono_sources)
+libmonoruntime_la_SOURCES = $(common_sources) $(gc_dependent_sources) $(null_gc_sources) $(boehm_sources)
 libmonoruntime_la_CFLAGS = $(BOEHM_DEFINES) $(LIBGC_CPPFLAGS)
 libmonoruntime_la_LIBADD = libmonoruntime-config.la
 
-libmonoruntimebdwgc_la_SOURCES = $(common_sources) $(gc_dependent_sources) $(null_gc_sources) $(boehm_sources) $(mono_sources)
+libmonoruntimebdwgc_la_SOURCES = $(common_sources) $(gc_dependent_sources) $(null_gc_sources) $(boehm_sources)
 libmonoruntimebdwgc_la_CFLAGS = $(BDWGC_DEFINES) $(LIBGCBDWGC_CPPFLAGS)
 libmonoruntimebdwgc_la_LIBADD = libmonoruntime-config.la $(btls_libs)
 
-libmonoruntime_unity_il2cpp_bdwgc_la_SOURCES = $(common_sources) $(gc_dependent_sources) $(null_gc_sources) $(boehm_sources) $(unity_sources)
-libmonoruntime_unity_il2cpp_bdwgc_la_CFLAGS = $(libmonoruntimebdwgc_la_CFLAGS) -DIL2CPP_ON_MONO -DDISABLE_JIT -DDISABLE_REMOTING -fexceptions -DPLATFORM_UNITY -I../../../../il2cpp/build/libil2cpp/os/c-api
-libmonoruntime_unity_il2cpp_bdwgc_la_LIBADD = libmonoruntime-config.la $(btls_libs)
-
-libmonoruntimesgen_la_SOURCES = $(common_sources) $(gc_dependent_sources) $(sgen_sources) $(mono_sources)
+libmonoruntimesgen_la_SOURCES = $(common_sources) $(gc_dependent_sources) $(sgen_sources)
 libmonoruntimesgen_la_CFLAGS = $(SGEN_DEFINES)
 libmonoruntimesgen_la_LIBADD = libmonoruntime-config.la
 
