@@ -234,32 +234,41 @@ namespace Mono.AppleTls
 			 * 
 			 */
 
-			var trust = GetPeerTrust (!IsServer);
-			X509CertificateCollection certificates;
-
-			if (trust == null || trust.Count == 0) {
-				remoteCertificate = null;
-				if (!IsServer)
-					throw new TlsException (AlertDescription.CertificateUnknown);
-				certificates = null;
-			} else {
-				if (trust.Count > 1)
-					Debug ("WARNING: Got multiple certificates in SecTrust!");
-
-				certificates = new X509CertificateCollection ();
-				for (int i = 0; i < trust.Count; i++)
-					certificates.Add (trust [(IntPtr)i].ToX509Certificate ());
-
-				remoteCertificate = certificates [0];
-				Debug ("Got peer trust: {0}", remoteCertificate);
-			}
-
 			bool ok;
+			SecTrust trust = null;
+			X509CertificateCollection certificates = null;
+
 			try {
+				trust = GetPeerTrust (!IsServer);
+
+				if (trust == null || trust.Count == 0) {
+					remoteCertificate = null;
+					if (!IsServer)
+						throw new TlsException (AlertDescription.CertificateUnknown);
+					certificates = null;
+				} else {
+					if (trust.Count > 1)
+						Debug ("WARNING: Got multiple certificates in SecTrust!");
+
+					certificates = new X509CertificateCollection ();
+					for (int i = 0; i < trust.Count; i++)
+						certificates.Add (trust.GetCertificate (i));
+
+					remoteCertificate = new X509Certificate (certificates [0]);
+					Debug ("Got peer trust: {0}", remoteCertificate);
+				}
+
 				ok = ValidateCertificate (certificates);
 			} catch (Exception ex) {
 				Debug ("Certificate validation failed: {0}", ex);
 				throw new TlsException (AlertDescription.CertificateUnknown, "Certificate validation threw exception.");
+			} finally {
+				if (trust != null)
+					trust.Dispose ();
+				if (certificates != null) {
+					for (int i = 0; i < certificates.Count; i++)
+						certificates [i].Dispose ();
+				}
 			}
 
 			if (!ok)
