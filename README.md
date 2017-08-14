@@ -80,6 +80,9 @@ If you don't have a working Mono installation, you can try a slightly
 more risky approach: getting the latest version of the 'monolite' distribution,
 which contains just enough to run the 'mcs' compiler. You do this with:
 
+    # git clone recursively to download even the submodules
+    git clone --recursive https://github.com/mono/mono.git
+
     # Run the following line after ./autogen.sh
     make get-monolite-latest
 
