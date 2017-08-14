@@ -509,6 +509,8 @@ mono_w32file_get_cwd (guint32 length, gunichar2 *buffer)
 	g_free(utf16_path);
 	g_free(palPath);
 
+
+
 	return count;
 }
 
@@ -521,6 +523,15 @@ mono_w32file_set_cwd (const gunichar2 *path)
 	gboolean result = UnityPalDirectorySetCurrent(palPath, &error);
 	mono_w32error_set_last (error);
 	g_free(palPath);
+
+	return result;
+}
+
+gboolean
+mono_w32file_set_length (gpointer handle, gint64 length, gint32 *error)
+{
+	gboolean result = UnityPalSetLength(handle, length, error);
+	mono_w32error_set_last(*error);
 
 	return result;
 }

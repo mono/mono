@@ -451,6 +451,8 @@ mono_w32file_get_times (gpointer handle, FILETIME *create_time, FILETIME *access
 #if defined(PLATFORM_UNITY)
 gboolean
 mono_w32file_set_times (gpointer handle, gint64 create_time, gint64 access_time, gint64 write_time);
+gboolean
+mono_w32file_set_length (gpointer handle, gint64 length, gint32 *error);
 #else
 gboolean
 mono_w32file_set_times (gpointer handle, const FILETIME *create_time, const FILETIME *access_time, const FILETIME *write_time);

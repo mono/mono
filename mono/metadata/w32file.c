@@ -1007,12 +1007,15 @@ MonoBoolean
 ves_icall_System_IO_MonoIO_SetLength (HANDLE handle, gint64 length,
 				      gint32 *error)
 {
+	gboolean result;
+	*error=ERROR_SUCCESS;
+
+#if defined(PLATFORM_UNITY)
+	result = mono_w32file_set_length (handle, length, error);
+#else
 	gint64 offset, offset_set;
 	gint32 offset_hi;
 	gint32 length_hi;
-	gboolean result;
-
-	*error=ERROR_SUCCESS;
 	
 	/* save file pointer */
 
@@ -1047,6 +1050,7 @@ ves_icall_System_IO_MonoIO_SetLength (HANDLE handle, gint64 length,
 		*error=mono_w32error_get_last ();
 		return(FALSE);
 	}
+#endif
 
 	return result;
 }
