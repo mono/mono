@@ -764,7 +764,7 @@ GC_thread GC_new_thread(pthread_t id)
     }
     if (result == 0) return(0);
     result -> id = id;
-#ifdef PLATFORM_ANDROID
+#ifdef HOST_ANDROID
     result -> kernel_id = gettid();
 #endif
     result -> next = GC_threads[hv];

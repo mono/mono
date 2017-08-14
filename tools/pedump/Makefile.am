@@ -25,6 +25,6 @@ pedump_LDADD = 			\
 	$(GLIB_LIBS)			\
 	$(LIBICONV)
 
-if PLATFORM_DARWIN
+if HOST_DARWIN
 pedump_LDFLAGS=-framework CoreFoundation -framework Foundation
 endif
