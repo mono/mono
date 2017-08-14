@@ -1,0 +1,3 @@
+#include net_4_x_corlib.dll.sources
+
+../../../external/corert/src/Common/src/Interop/Windows/mincore/Interop.MemAllocFree.cs
