@@ -128,7 +128,7 @@ namespace Mono.AppleTls {
 		{
 			if (handle == IntPtr.Zero)
 				throw new ObjectDisposedException ("SecTrust");
-			if (((long)index < 0) || ((long)index >= Count))
+			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException ("index");
 
 			var ptr = SecTrustGetCertificateAtIndex (handle, (IntPtr)index);
