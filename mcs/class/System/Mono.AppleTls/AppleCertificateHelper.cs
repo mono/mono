@@ -133,22 +133,22 @@ namespace Mono.AppleTls
 					targetHost = targetHost.Substring (0, pos);
 			}
 
-			var policy = SecPolicy.CreateSslPolicy (!serverMode, targetHost);
-			var trust = new SecTrust (certificates, policy);
+			using (var policy = SecPolicy.CreateSslPolicy (!serverMode, targetHost))
+			using (var trust = new SecTrust (certificates, policy)) {
+				if (validator.Settings.TrustAnchors != null) {
+					var status = trust.SetAnchorCertificates (validator.Settings.TrustAnchors);
+					if (status != SecStatusCode.Success)
+						throw new InvalidOperationException (status.ToString ());
+					trust.SetAnchorCertificatesOnly (false);
+				}
 
-			if (validator.Settings.TrustAnchors != null) {
-				var status = trust.SetAnchorCertificates (validator.Settings.TrustAnchors);
-				if (status != SecStatusCode.Success)
-					throw new InvalidOperationException (status.ToString ());
-				trust.SetAnchorCertificatesOnly (false);
+				var result = trust.Evaluate ();
+				if (result == SecTrustResult.Unspecified)
+					return true;
+
+				errors |= MonoSslPolicyErrors.RemoteCertificateChainErrors;
+				return false;
 			}
-
-			var result = trust.Evaluate ();
-			if (result == SecTrustResult.Unspecified)
-				return true;
-
-			errors |= MonoSslPolicyErrors.RemoteCertificateChainErrors;
-			return false;
 		}
 	}
 }
