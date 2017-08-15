@@ -1169,9 +1169,18 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			return true;
 		try {
 			Assembly a = universe.LoadFile (path);
+			if (a == null) {
+				Error ("Unable to to load assembly `{0}'", path);
+				return false;
+			}
 
 			foreach (AssemblyName an in a.GetReferencedAssemblies ()) {
 				a = LoadAssembly (an.Name);
+				if (a == null) {
+					Error ("Unable to load assembly `{0}' referenced by `{1}'", an.Name, path);
+					return false;
+				}
+
 				if (!QueueAssembly (files, a.CodeBase))
 					return false;
 			}
