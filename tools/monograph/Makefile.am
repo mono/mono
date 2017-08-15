@@ -38,7 +38,7 @@ monograph_LDADD = \
 	$(LIBICONV)			\
 	-lm
 
-if PLATFORM_DARWIN
+if HOST_DARWIN
 monograph_LDFLAGS=-framework CoreFoundation
 endif
 

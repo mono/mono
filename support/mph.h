@@ -78,11 +78,11 @@
  * OS X doesn't define MAP_ANONYMOUS, but it does define MAP_ANON.
  * Alias them to fix: https://bugzilla.xamarin.com/show_bug.cgi?id=3419
  */
-#ifdef PLATFORM_MACOSX
+#ifdef HOST_DARWIN
 #ifndef MAP_ANONYMOUS
 #define MAP_ANONYMOUS MAP_ANON
 #endif  /* ndef MAP_ANONYMOUS */
-#endif  /* ndef PLATFORM_MACOSX */
+#endif  /* ndef HOST_DARWIN */
 
 /*
  * XATTR_AUTO is a synonym for 0 within XattrFlags, but most systems don't
