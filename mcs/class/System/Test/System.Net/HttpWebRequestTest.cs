@@ -301,7 +301,8 @@ namespace MonoTests.System.Net
 				request.Method = "GET";
 
 				try {
-					request.BeginGetRequestStream (null, null);
+					var result = request.BeginGetRequestStream (null, null);
+					request.EndGetRequestStream (result);
 					Assert.Fail ("#A1");
 				} catch (ProtocolViolationException ex) {
 					// Cannot send a content-body with this
@@ -314,7 +315,8 @@ namespace MonoTests.System.Net
 				request.Method = "HEAD";
 
 				try {
-					request.BeginGetRequestStream (null, null);
+					var res = request.BeginGetRequestStream (null, null);
+					request.EndGetRequestStream (res);
 					Assert.Fail ("#B1");
 				} catch (ProtocolViolationException ex) {
 					// Cannot send a content-body with this
@@ -356,7 +358,8 @@ namespace MonoTests.System.Net
 				req.AllowWriteStreamBuffering = false;
 
 				try {
-					req.BeginGetRequestStream (null, null);
+					var result = req.BeginGetRequestStream (null, null);
+					req.EndGetRequestStream (result);
 					Assert.Fail ("#A1");
 				} catch (ProtocolViolationException ex) {
 					// When performing a write operation with
@@ -3074,7 +3077,8 @@ namespace MonoTests.System.Net
 				try {
 					Assert.IsTrue (rs.CanWrite, "#1");
 					rs.Close ();
-					Assert.IsFalse (rs.CanWrite, "#2");
+					// CanRead and CanWrite do not change status after closing.
+					Assert.IsTrue (rs.CanWrite, "#2");
 				} finally {
 					rs.Close ();
 					req.Abort ();
