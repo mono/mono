@@ -1825,6 +1825,10 @@ emit_object_to_ptr_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 
 		if (type->type == MONO_TYPE_SZARRAY) {
 			eklass = type->data.klass;
+		} else if (type->type == MONO_TYPE_ARRAY) {
+			eklass = type->data.array->eklass;
+			if (!eklass->blittable)
+				g_assert_not_reached ();
 		} else {
 			g_assert_not_reached ();
 		}
