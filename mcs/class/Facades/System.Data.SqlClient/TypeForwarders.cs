@@ -30,6 +30,7 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Data.SqlClient.SqlBulkCopyColumnMappingCollection))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Data.SqlClient.SqlBulkCopyOptions))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Data.SqlClient.SqlClientFactory))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Data.SqlClient.SqlClientMetaDataCollectionNames))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Data.SqlClient.SqlCommand))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Data.SqlClient.SqlConnection))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Data.SqlClient.SqlConnectionStringBuilder))]
