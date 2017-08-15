@@ -1290,7 +1290,12 @@ namespace System.Net.Sockets
 			ThrowIfBufferOutOfRange (buffer, offset, size);
 
 			int nativeError;
-			int ret = Receive_internal (m_Handle, buffer, offset, size, socketFlags, out nativeError, is_blocking);
+			int ret;
+			unsafe {
+				fixed (byte* pbuffer = buffer) {
+					ret = Receive_internal (m_Handle, &pbuffer[offset], size, socketFlags, out nativeError, is_blocking);
+				}
+			}
 
 			errorCode = (SocketError) nativeError;
 			if (errorCode != SocketError.Success && errorCode != SocketError.WouldBlock && errorCode != SocketError.InProgress) {
@@ -1315,25 +1320,27 @@ namespace System.Net.Sockets
 			int nativeError;
 			int ret;
 
-			/* Only example I can find of sending a byte array reference directly into an internal
-			 * call is in System.Runtime.Remoting/System.Runtime.Remoting.Channels.Ipc.Win32/NamedPipeSocket.cs,
-			 * so taking a lead from that... */
-			WSABUF[] bufarray = new WSABUF[numsegments];
 			GCHandle[] gch = new GCHandle[numsegments];
-
-			for (int i = 0; i < numsegments; i++) {
-				ArraySegment<byte> segment = buffers[i];
-
-				if (segment.Offset < 0 || segment.Count < 0 || segment.Count > segment.Array.Length - segment.Offset)
-					throw new ArgumentOutOfRangeException ("segment");
-
-				gch[i] = GCHandle.Alloc (segment.Array, GCHandleType.Pinned);
-				bufarray[i].len = segment.Count;
-				bufarray[i].buf = Marshal.UnsafeAddrOfPinnedArrayElement (segment.Array, segment.Offset);
-			}
-
 			try {
-				ret = Receive_internal (m_Handle, bufarray, socketFlags, out nativeError, is_blocking);
+				unsafe {
+					fixed (WSABUF* bufarray = new WSABUF[numsegments]) {
+						for (int i = 0; i < numsegments; i++) {
+							ArraySegment<byte> segment = buffers[i];
+
+							if (segment.Offset < 0 || segment.Count < 0 || segment.Count > segment.Array.Length - segment.Offset)
+								throw new ArgumentOutOfRangeException ("segment");
+
+							try {} finally {
+								gch[i] = GCHandle.Alloc (segment.Array, GCHandleType.Pinned);
+							}
+
+							bufarray[i].len = segment.Count;
+							bufarray[i].buf = Marshal.UnsafeAddrOfPinnedArrayElement (segment.Array, segment.Offset);
+						}
+
+						ret = Receive_internal (m_Handle, bufarray, numsegments, socketFlags, out nativeError, is_blocking);
+					}
+				}
 			} finally {
 				for (int i = 0; i < numsegments; i++) {
 					if (gch[i].IsAllocated)
@@ -1422,7 +1429,11 @@ namespace System.Net.Sockets
 			int total = 0;
 
 			try {
-				total = Receive_internal (sockares.socket.m_Handle, sockares.Buffer, sockares.Offset, sockares.Size, sockares.SockFlags, out sockares.error, sockares.socket.is_blocking);
+				unsafe {
+					fixed (byte* pbuffer = sockares.Buffer) {
+						total = Receive_internal (sockares.socket.m_Handle, &pbuffer[sockares.Offset], sockares.Size, sockares.SockFlags, out sockares.error, sockares.socket.is_blocking);
+					}
+				}
 			} catch (Exception e) {
 				sockares.Complete (e);
 				return;
@@ -1488,31 +1499,31 @@ namespace System.Net.Sockets
 			return sockares.Total;
 		}
 
-		static int Receive_internal (SafeSocketHandle safeHandle, WSABUF[] bufarray, SocketFlags flags, out int error, bool blocking)
+		static unsafe int Receive_internal (SafeSocketHandle safeHandle, WSABUF* bufarray, int count, SocketFlags flags, out int error, bool blocking)
 		{
 			try {
 				safeHandle.RegisterForBlockingSyscall ();
-				return Receive_internal (safeHandle.DangerousGetHandle (), bufarray, flags, out error, blocking);
+				return Receive_internal (safeHandle.DangerousGetHandle (), bufarray, count, flags, out error, blocking);
 			} finally {
 				safeHandle.UnRegisterForBlockingSyscall ();
 			}
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static int Receive_internal (IntPtr sock, WSABUF[] bufarray, SocketFlags flags, out int error, bool blocking);
+		extern static unsafe int Receive_internal (IntPtr sock, WSABUF* bufarray, int count, SocketFlags flags, out int error, bool blocking);
 
-		static int Receive_internal (SafeSocketHandle safeHandle, byte[] buffer, int offset, int count, SocketFlags flags, out int error, bool blocking)
+		static unsafe int Receive_internal (SafeSocketHandle safeHandle, byte* buffer, int count, SocketFlags flags, out int error, bool blocking)
 		{
 			try {
 				safeHandle.RegisterForBlockingSyscall ();
-				return Receive_internal (safeHandle.DangerousGetHandle (), buffer, offset, count, flags, out error, blocking);
+				return Receive_internal (safeHandle.DangerousGetHandle (), buffer, count, flags, out error, blocking);
 			} finally {
 				safeHandle.UnRegisterForBlockingSyscall ();
 			}
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static int Receive_internal(IntPtr sock, byte[] buffer, int offset, int count, SocketFlags flags, out int error, bool blocking);
+		extern static unsafe int Receive_internal(IntPtr sock, byte* buffer, int count, SocketFlags flags, out int error, bool blocking);
 
 #endregion
 
@@ -1541,7 +1552,12 @@ namespace System.Net.Sockets
 			SocketAddress sockaddr = remoteEP.Serialize();
 
 			int nativeError;
-			int cnt = ReceiveFrom_internal (m_Handle, buffer, offset, size, socketFlags, ref sockaddr, out nativeError, is_blocking);
+			int cnt;
+			unsafe {
+				fixed (byte* pbuffer = buffer) {
+					cnt = ReceiveFrom_internal (m_Handle, &pbuffer[offset], size, socketFlags, ref sockaddr, out nativeError, is_blocking);
+				}
+			}
 
 			errorCode = (SocketError) nativeError;
 			if (errorCode != SocketError.Success) {
@@ -1672,18 +1688,18 @@ namespace System.Net.Sockets
 
 
 
-		static int ReceiveFrom_internal (SafeSocketHandle safeHandle, byte[] buffer, int offset, int count, SocketFlags flags, ref SocketAddress sockaddr, out int error, bool blocking)
+		static unsafe int ReceiveFrom_internal (SafeSocketHandle safeHandle, byte* buffer, int count, SocketFlags flags, ref SocketAddress sockaddr, out int error, bool blocking)
 		{
 			try {
 				safeHandle.RegisterForBlockingSyscall ();
-				return ReceiveFrom_internal (safeHandle.DangerousGetHandle (), buffer, offset, count, flags, ref sockaddr, out error, blocking);
+				return ReceiveFrom_internal (safeHandle.DangerousGetHandle (), buffer, count, flags, ref sockaddr, out error, blocking);
 			} finally {
 				safeHandle.UnRegisterForBlockingSyscall ();
 			}
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static int ReceiveFrom_internal(IntPtr sock, byte[] buffer, int offset, int count, SocketFlags flags, ref SocketAddress sockaddr, out int error, bool blocking);
+		extern static unsafe int ReceiveFrom_internal(IntPtr sock, byte* buffer, int count, SocketFlags flags, ref SocketAddress sockaddr, out int error, bool blocking);
 
 #endregion
 
@@ -1757,8 +1773,12 @@ namespace System.Net.Sockets
 			int nativeError;
 			int sent = 0;
 			do {
-				sent += Send_internal (
-m_Handle, buffer, offset + sent, size - sent, socketFlags, out nativeError, is_blocking);
+				unsafe {
+					fixed (byte *pbuffer = buffer) {
+						sent += Send_internal (m_Handle, &pbuffer[offset + sent], size - sent, socketFlags, out nativeError, is_blocking);
+					}
+				}
+
 				errorCode = (SocketError)nativeError;
 				if (errorCode != SocketError.Success && errorCode != SocketError.WouldBlock && errorCode != SocketError.InProgress) {
 					is_connected = false;
@@ -1786,27 +1806,31 @@ m_Handle, buffer, offset + sent, size - sent, socketFlags, out nativeError, is_b
 			int nativeError;
 			int ret;
 
-			WSABUF[] bufarray = new WSABUF[numsegments];
 			GCHandle[] gch = new GCHandle[numsegments];
-
-			for(int i = 0; i < numsegments; i++) {
-				ArraySegment<byte> segment = buffers[i];
-
-				if (segment.Offset < 0 || segment.Count < 0 || segment.Count > segment.Array.Length - segment.Offset)
-					throw new ArgumentOutOfRangeException ("segment");
-
-				gch[i] = GCHandle.Alloc (segment.Array, GCHandleType.Pinned);
-				bufarray[i].len = segment.Count;
-				bufarray[i].buf = Marshal.UnsafeAddrOfPinnedArrayElement (segment.Array, segment.Offset);
-			}
-
 			try {
-				ret = Send_internal (m_Handle, bufarray, socketFlags, out nativeError, is_blocking);
-			} finally {
-				for(int i = 0; i < numsegments; i++) {
-					if (gch[i].IsAllocated) {
-						gch[i].Free ();
+				unsafe {
+					fixed (WSABUF* bufarray = new WSABUF[numsegments]) {
+						for(int i = 0; i < numsegments; i++) {
+							ArraySegment<byte> segment = buffers[i];
+
+							if (segment.Offset < 0 || segment.Count < 0 || segment.Count > segment.Array.Length - segment.Offset)
+								throw new ArgumentOutOfRangeException ("segment");
+
+							try {} finally {
+								gch[i] = GCHandle.Alloc (segment.Array, GCHandleType.Pinned);
+							}
+
+							bufarray[i].len = segment.Count;
+							bufarray[i].buf = Marshal.UnsafeAddrOfPinnedArrayElement (segment.Array, segment.Offset);
+						}
+
+						ret = Send_internal (m_Handle, bufarray, numsegments, socketFlags, out nativeError, is_blocking);
 					}
+				}
+			} finally {
+				for (int i = 0; i < numsegments; i++) {
+					if (gch[i].IsAllocated)
+						gch[i].Free();
 				}
 			}
 
@@ -1890,7 +1914,11 @@ m_Handle, buffer, offset + sent, size - sent, socketFlags, out nativeError, is_b
 			int total = 0;
 
 			try {
-				total = Socket.Send_internal (sockares.socket.m_Handle, sockares.Buffer, sockares.Offset, sockares.Size, sockares.SockFlags, out sockares.error, false);
+				unsafe {
+					fixed (byte *pbuffer = sockares.Buffer) {
+						total = Socket.Send_internal (sockares.socket.m_Handle, &pbuffer[sockares.Offset], sockares.Size, sockares.SockFlags, out sockares.error, false);
+					}
+				}
 			} catch (Exception e) {
 				sockares.Complete (e);
 				return;
@@ -1978,31 +2006,31 @@ m_Handle, buffer, offset + sent, size - sent, socketFlags, out nativeError, is_b
 			return sockares.Total;
 		}
 
-		static int Send_internal (SafeSocketHandle safeHandle, WSABUF[] bufarray, SocketFlags flags, out int error, bool blocking)
+		static unsafe int Send_internal (SafeSocketHandle safeHandle, WSABUF* bufarray, int count, SocketFlags flags, out int error, bool blocking)
 		{
 			try {
 				safeHandle.RegisterForBlockingSyscall ();
-				return Send_internal (safeHandle.DangerousGetHandle (), bufarray, flags, out error, blocking);
+				return Send_internal (safeHandle.DangerousGetHandle (), bufarray, count, flags, out error, blocking);
 			} finally {
 				safeHandle.UnRegisterForBlockingSyscall ();
 			}
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static int Send_internal (IntPtr sock, WSABUF[] bufarray, SocketFlags flags, out int error, bool blocking);
+		extern static unsafe int Send_internal (IntPtr sock, WSABUF* bufarray, int count, SocketFlags flags, out int error, bool blocking);
 
-		static int Send_internal (SafeSocketHandle safeHandle, byte[] buf, int offset, int count, SocketFlags flags, out int error, bool blocking)
+		static unsafe int Send_internal (SafeSocketHandle safeHandle, byte* buffer, int count, SocketFlags flags, out int error, bool blocking)
 		{
 			try {
 				safeHandle.RegisterForBlockingSyscall ();
-				return Send_internal (safeHandle.DangerousGetHandle (), buf, offset, count, flags, out error, blocking);
+				return Send_internal (safeHandle.DangerousGetHandle (), buffer, count, flags, out error, blocking);
 			} finally {
 				safeHandle.UnRegisterForBlockingSyscall ();
 			}
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static int Send_internal(IntPtr sock, byte[] buf, int offset, int count, SocketFlags flags, out int error, bool blocking);
+		extern static unsafe int Send_internal(IntPtr sock, byte* buffer, int count, SocketFlags flags, out int error, bool blocking);
 
 #endregion
 
@@ -2018,7 +2046,12 @@ m_Handle, buffer, offset + sent, size - sent, socketFlags, out nativeError, is_b
 				throw new ArgumentNullException("remoteEP");
 
 			int error;
-			int ret = SendTo_internal (m_Handle, buffer, offset, size, socketFlags, remoteEP.Serialize (), out error, is_blocking);
+			int ret;
+			unsafe {
+				fixed (byte *pbuffer = buffer) {
+					ret = SendTo_internal (m_Handle, &pbuffer[offset], size, socketFlags, remoteEP.Serialize (), out error, is_blocking);
+				}
+			}
 
 			SocketError err = (SocketError) error;
 			if (err != 0) {
@@ -2134,18 +2167,18 @@ m_Handle, buffer, offset + sent, size - sent, socketFlags, out nativeError, is_b
 			return sockares.Total;
 		}
 
-		static int SendTo_internal (SafeSocketHandle safeHandle, byte[] buffer, int offset, int count, SocketFlags flags, SocketAddress sa, out int error, bool blocking)
+		static unsafe int SendTo_internal (SafeSocketHandle safeHandle, byte* buffer, int count, SocketFlags flags, SocketAddress sa, out int error, bool blocking)
 		{
 			try {
 				safeHandle.RegisterForBlockingSyscall ();
-				return SendTo_internal (safeHandle.DangerousGetHandle (), buffer, offset, count, flags, sa, out error, blocking);
+				return SendTo_internal (safeHandle.DangerousGetHandle (), buffer, count, flags, sa, out error, blocking);
 			} finally {
 				safeHandle.UnRegisterForBlockingSyscall ();
 			}
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static int SendTo_internal (IntPtr sock, byte[] buffer, int offset, int count, SocketFlags flags, SocketAddress sa, out int error, bool blocking);
+		extern static unsafe int SendTo_internal (IntPtr sock, byte* buffer, int count, SocketFlags flags, SocketAddress sa, out int error, bool blocking);
 
 #endregion
 
