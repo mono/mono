@@ -8,6 +8,12 @@ mkdir nugets
 ## We don’t want to fix all broken nugets we only focus on few system-like that are likely to be used by broad audience and
 ## we have working implementation available in one of Mono assemblies.
 ##
+## PLEASE keep this in sync with mcs/tools/xbuild/data/deniedAssembliesList.txt
+##
+## If any nugets are added or removed here, then make sure to regenerate the above file with:
+##
+##   $ mono nuget-hash-extractor.exe nugets guids_for_msbuild > ../../mcs/tools/xbuild/data/deniedAssembliesList.txt
+##
 
 #System.Runtime.InteropServices.RuntimeInformation
 wget https://www.nuget.org/api/v2/package/System.Runtime.InteropServices.RuntimeInformation/4.3.0 -O nugets/system.runtime.interopservices.runtimeinformation.4.3.0.nupkg
