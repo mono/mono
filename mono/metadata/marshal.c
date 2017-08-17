@@ -12329,7 +12329,7 @@ ftnptr_eh_callback_default (guint32 gchandle)
 
 	mono_gchandle_free (gchandle);
 
-	mono_raise_exception (exc);
+	mono_reraise_exception (exc);
 }
 
 /*
