@@ -123,7 +123,7 @@
 #define mono_simd_shuffle_mask(a,b,c,d) ((a) | ((b) << 2) | ((c) << 4) | ((d) << 6))
 
 /* Remap printf to g_print (we use a mix of these in the mini code) */
-#ifdef PLATFORM_ANDROID
+#ifdef HOST_ANDROID
 #define printf g_print
 #endif
 
@@ -552,7 +552,7 @@ extern MonoMethodDesc *mono_break_at_bb_method;
 extern int mono_break_at_bb_bb_num;
 extern gboolean mono_verify_all;
 extern gboolean mono_do_x86_stack_align;
-extern MONO_API const char *mono_build_date;
+extern const char *mono_build_date;
 extern gboolean mono_do_signal_chaining;
 extern gboolean mono_do_crash_chaining;
 extern MONO_API gboolean mono_use_llvm;
@@ -2926,6 +2926,7 @@ void     mono_llvm_clear_exception              (void);
 MonoObject *mono_llvm_load_exception            (void);
 void     mono_llvm_reset_exception              (void);
 void     mono_llvm_raise_exception              (MonoException *e);
+void     mono_llvm_reraise_exception            (MonoException *e);
 gint32 mono_llvm_match_exception                (MonoJitInfo *jinfo, guint32 region_start, guint32 region_end, gpointer rgctx, MonoObject *this_obj);
 
 gboolean
@@ -3202,6 +3203,8 @@ MonoInst*   mono_emit_simd_field_load (MonoCompile *cfg, MonoClassField *field, 
 guint32     mono_arch_cpu_enumerate_simd_versions (void);
 void        mono_simd_intrinsics_init (void);
 
+gboolean    mono_class_is_magic_int (MonoClass *klass);
+gboolean    mono_class_is_magic_float (MonoClass *klass);
 MonoInst*   mono_emit_native_types_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args);
 MonoType*   mini_native_type_replace_type (MonoType *type) MONO_LLVM_INTERNAL;
 

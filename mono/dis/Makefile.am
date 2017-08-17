@@ -5,10 +5,10 @@ export HOST_CC
 endif
 
 if SUPPORT_SGEN
-metadata_lib=$(top_builddir)/mono/metadata/libmonoruntimesgen.la
-gc_lib=$(top_builddir)/mono/sgen/libmonosgen.la
+metadata_lib=$(top_builddir)/mono/metadata/libmonoruntimesgen-static.la
+gc_lib=$(top_builddir)/mono/sgen/libmonosgen-static.la
 else
-metadata_lib=$(top_builddir)/mono/metadata/libmonoruntime.la
+metadata_lib=$(top_builddir)/mono/metadata/libmonoruntime-static.la
 gc_lib=$(LIBGC_STATIC_LIBS)
 endif
 
@@ -54,7 +54,7 @@ monodis_LDADD = 			\
 	$(GLIB_LIBS)			\
 	$(LIBICONV)
 
-if PLATFORM_DARWIN
+if HOST_DARWIN
 monodis_LDFLAGS=-framework CoreFoundation -framework Foundation
 endif
 

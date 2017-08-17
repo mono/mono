@@ -33,22 +33,24 @@ namespace System.Windows.Media {
 	{
 		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
 		{
-			throw new NotImplementedException ();
+			return sourceType == typeof (string);
 		}
 
 		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
 		{
-			throw new NotImplementedException ();
+			return destinationType == typeof (string);
 		}
 
 		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
-			throw new NotImplementedException ();
+			if (!(value is string))
+				throw new NotSupportedException ("MatrixConverter only supports converting from strings");
+			return Matrix.Parse ((string)value);
 		}
 
 		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
-			throw new NotImplementedException ();
+			return ((Matrix)value).ToString (culture);
 		}
 	}
 

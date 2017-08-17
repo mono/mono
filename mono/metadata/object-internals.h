@@ -643,6 +643,7 @@ typedef struct {
 	gboolean (*mono_current_thread_has_handle_block_guard) (void);
 	gboolean (*mono_above_abort_threshold) (void);
 	void (*mono_clear_abort_threshold) (void);
+	void (*mono_reraise_exception) (MonoException *ex);
 } MonoRuntimeExceptionHandlingCallbacks;
 
 MONO_COLD void mono_set_pending_exception (MonoException *exc);
@@ -1570,6 +1571,9 @@ ves_icall_array_new_specific (MonoVTable *vtable, uintptr_t n);
 #ifndef DISABLE_REMOTING
 MonoRemoteClass*
 mono_remote_class (MonoDomain *domain, MonoStringHandle class_name, MonoClass *proxy_class, MonoError *error);
+
+gboolean
+mono_remote_class_is_interface_proxy (MonoRemoteClass *remote_class);
 
 MonoObject *
 mono_remoting_invoke (MonoObject *real_proxy, MonoMethodMessage *msg, MonoObject **exc, MonoArray **out_args, MonoError *error);

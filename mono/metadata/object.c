@@ -1148,7 +1148,7 @@ mono_method_get_imt_slot (MonoMethod *method)
 
 	sig = mono_method_signature (method);
 	hashes_count = sig->param_count + 4;
-	hashes_start = (guint32 *)malloc (hashes_count * sizeof (guint32));
+	hashes_start = (guint32 *)g_malloc (hashes_count * sizeof (guint32));
 	hashes = hashes_start;
 
 	if (! MONO_CLASS_IS_INTERFACE (method->klass)) {
@@ -1300,7 +1300,7 @@ imt_sort_slot_entries (MonoImtBuilderEntry *entries) {
 	MONO_REQ_GC_NEUTRAL_MODE;
 
 	int number_of_entries = entries->children + 1;
-	MonoImtBuilderEntry **sorted_array = (MonoImtBuilderEntry **)malloc (sizeof (MonoImtBuilderEntry*) * number_of_entries);
+	MonoImtBuilderEntry **sorted_array = (MonoImtBuilderEntry **)g_malloc (sizeof (MonoImtBuilderEntry*) * number_of_entries);
 	GPtrArray *result = g_ptr_array_new ();
 	MonoImtBuilderEntry *current_entry;
 	int i;
@@ -1365,7 +1365,7 @@ build_imt_slots (MonoClass *klass, MonoVTable *vt, MonoDomain *domain, gpointer*
 	int i;
 	GSList *list_item;
 	guint32 imt_collisions_bitmap = 0;
-	MonoImtBuilderEntry **imt_builder = (MonoImtBuilderEntry **)calloc (MONO_IMT_SIZE, sizeof (MonoImtBuilderEntry*));
+	MonoImtBuilderEntry **imt_builder = (MonoImtBuilderEntry **)g_calloc (MONO_IMT_SIZE, sizeof (MonoImtBuilderEntry*));
 	int method_count = 0;
 	gboolean record_method_count_for_max_collisions = FALSE;
 	gboolean has_generic_virtual = FALSE, has_variant_iface = FALSE;
@@ -2156,6 +2156,22 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 
 #ifndef DISABLE_REMOTING
 /**
+ * mono_remote_class_is_interface_proxy:
+ * \param remote_class
+ *
+ * Returns TRUE if the given remote class is a proxying an interface (as
+ * opposed to a class deriving from MarshalByRefObject).
+ */
+gboolean
+mono_remote_class_is_interface_proxy (MonoRemoteClass *remote_class)
+{
+	/* This if condition is taking advantage of how mono_remote_class ()
+	 * works: if that code changes, this needs to change too. */
+	return (remote_class->interface_count >= 1 &&
+		remote_class->proxy_class == mono_defaults.marshalbyrefobject_class);
+}
+
+/**
  * mono_class_proxy_vtable:
  * \param domain the application domain
  * \param remove_class the remote class
@@ -2248,6 +2264,18 @@ mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mono
 	pvt->klass = mono_defaults.transparent_proxy_class;
 	/* we need to keep the GC descriptor for a transparent proxy or we confuse the precise GC */
 	pvt->gc_descr = mono_defaults.transparent_proxy_class->gc_descr;
+
+	if (mono_remote_class_is_interface_proxy (remote_class)) {
+		/* If it's a transparent proxy for an interface, set the
+		 * MonoVTable:type to the interface type, not the placeholder
+		 * MarshalByRefObject class.  This is used when mini JITs calls
+		 * to Object.GetType ()
+		 */
+		MonoType *itf_proxy_type = &remote_class->interfaces[0]->byval_arg;
+		pvt->type = mono_type_get_object_checked (domain, itf_proxy_type, error);
+		if (!is_ok (error))
+			goto failure;
+	}
 
 	/* initialize vtable */
 	mono_class_setup_vtable (klass);
@@ -2516,6 +2544,12 @@ mono_remote_class (MonoDomain *domain, MonoStringHandle class_name, MonoClass *p
 	key = mp_key;
 
 	if (mono_class_is_interface (proxy_class)) {
+		/* If we need to proxy an interface, we use this stylized
+		 * representation (interface_count >= 1, proxy_class is
+		 * MarshalByRefObject).  The code in
+		 * mono_remote_class_is_interface_proxy () depends on being
+		 * able to detect that we're doing this, so if this
+		 * representation changes, change GetType, too. */
 		rc = (MonoRemoteClass *)mono_domain_alloc (domain, MONO_SIZEOF_REMOTE_CLASS + sizeof(MonoClass*));
 		rc->interface_count = 1;
 		rc->interfaces [0] = proxy_class;
@@ -7286,6 +7320,25 @@ mono_raise_exception (MonoException *ex)
 	 * will point into the next function in the executable, not this one.
 	 */	
 	eh_callbacks.mono_raise_exception (ex);
+}
+
+/**
+ * mono_raise_exception:
+ * \param ex exception object
+ * Signal the runtime that the exception \p ex has been raised in unmanaged code.
+ */
+void
+mono_reraise_exception (MonoException *ex)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
+
+	/*
+	 * NOTE: Do NOT annotate this function with G_GNUC_NORETURN, since
+	 * that will cause gcc to omit the function epilog, causing problems when
+	 * the JIT tries to walk the stack, since the return address on the stack
+	 * will point into the next function in the executable, not this one.
+	 */
+	eh_callbacks.mono_reraise_exception (ex);
 }
 
 void
