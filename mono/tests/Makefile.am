@@ -969,6 +969,8 @@ INTERP_DISABLED_TESTS = \
 	bug-46661.exe \
 	bug-47295.exe \
 	bug-48015.exe \
+	bug-58782-plain-throw.exe \
+	bug-58782-capture-and-throw.exe \
 	bug-544446.exe \
 	bug-685908.exe \
 	bug-80307.exe \
