@@ -21,8 +21,31 @@ namespace System.Data.SqlClient
         public bool ConnectionReset { get; set; }
 
         [MonoTODO("Not implemented in corefx: https://github.com/dotnet/corefx/issues/22474")]
-        public bool ContextConnection
-        {
+        public bool ContextConnection {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
+
+        [MonoTODO("Not implemented in corefx: https://github.com/dotnet/corefx/issues/22474")]
+        public string NetworkLibrary {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
+
+        [MonoTODO("Not implemented in corefx: https://github.com/dotnet/corefx/issues/22474")]
+        public PoolBlockingPeriod PoolBlockingPeriod {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
+
+        [MonoTODO("Not implemented in corefx: https://github.com/dotnet/corefx/issues/22474")]
+        public bool TransparentNetworkIPResolution {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
+
+        [MonoTODO("Not implemented in corefx: https://github.com/dotnet/corefx/issues/22474")]
+        public SqlConnectionColumnEncryptionSetting ColumnEncryptionSetting {
             get => throw new NotImplementedException();
             set => throw new NotImplementedException();
         }
