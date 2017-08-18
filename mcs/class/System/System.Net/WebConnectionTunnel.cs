@@ -115,7 +115,7 @@ namespace System.Net
 			sb.Append (':');
 			sb.Append (Request.Address.Port);
 			sb.Append (" HTTP/");
-			if (Request.ServicePoint.ProtocolVersion == HttpVersion.Version11)
+			if (Request.ProtocolVersion == HttpVersion.Version11)
 				sb.Append ("1.1");
 			else
 				sb.Append ("1.0");
