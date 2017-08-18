@@ -72,7 +72,6 @@ scripts_4_0 = \
 	macpack$(SCRIPT_SUFFIX)			\
 	mdoc$(SCRIPT_SUFFIX)                    \
 	mono-cil-strip$(SCRIPT_SUFFIX)		\
-	prj2make$(SCRIPT_SUFFIX)		\
 	soapsuds$(SCRIPT_SUFFIX)		\
 	caspol$(SCRIPT_SUFFIX)			\
 	cert-sync$(SCRIPT_SUFFIX)		\

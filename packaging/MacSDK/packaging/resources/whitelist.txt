@@ -109,7 +109,6 @@ pdb2mdb
 pedump
 permview
 peverify
-prj2make
 resgen
 resgen2
 secutil
