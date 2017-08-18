@@ -218,6 +218,7 @@ BASE_TEST_CS_SRC=		\
 	delegate11.cs		\
 	delegate12.cs		\
 	delegate13.cs		\
+	delegate14.cs		\
 	largeexp.cs		\
 	largeexp2.cs		\
 	marshalbyref1.cs	\
