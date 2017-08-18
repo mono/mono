@@ -209,8 +209,6 @@ mono/metadata/class.c
 mono/metadata/class-accessors.c
 mono/metadata/cominterop.c
 mono/metadata/console-unity.c
-mono/metadata/console-win32.c
-mono/metadata/console-unix.c
 mono/metadata/coree.c
 mono/metadata/custom-attrs.c
 mono/metadata/debug-helpers.c
