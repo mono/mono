@@ -12,9 +12,6 @@ using System.Security.Permissions;
 namespace System.Data.OleDb
 {
     [MonoTODO] // OLEDB is not implemented
-    public sealed class OleDbFactory : DbProviderFactory { }
-    
-    [MonoTODO] // OLEDB is not implemented
     internal sealed class OleDbConnectionString : DbConnectionOptions 
     { 
         internal OleDbConnectionString(string connectionString, bool validate) : base(connectionString, null) { }

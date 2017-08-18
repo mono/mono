@@ -237,5 +237,6 @@ namespace System.Data.Common
             return Configuration(Res.GetString(Res.ConfigRequiredAttributeEmpty, name), node);
         }
 #endif
+        static internal Exception OleDb() => new NotImplementedException("OleDb is not implemented.");
     }
 }

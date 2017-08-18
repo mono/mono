@@ -62,4 +62,5 @@ corefx/Odbc/DbConnectionStringCommon.cs
 
 # OLEDB
 corefx/OleDbFactory.cs
+corefx/OleDbStubs.cs
 ../referencesource/System.Data/System/Data/OleDb/OleDbPermission.cs
