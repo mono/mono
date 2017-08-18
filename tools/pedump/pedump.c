@@ -42,6 +42,8 @@ gboolean verify_metadata = FALSE;
 gboolean verify_code = FALSE;
 gboolean verify_partial_md = FALSE;
 
+static char *assembly_directory[2];
+
 static MonoAssembly *pedump_preload (MonoAssemblyName *aname, gchar **assemblies_path, gpointer user_data);
 static void pedump_assembly_load_hook (MonoAssembly *assembly, gpointer user_data);
 static MonoAssembly *pedump_assembly_search_hook (MonoAssemblyName *aname, gpointer user_data);
@@ -635,6 +637,8 @@ pedump_preload (MonoAssemblyName *aname,
 	if (assemblies_path && assemblies_path [0] != NULL) {
 		result = real_load (assemblies_path, aname->culture, aname->name, refonly);
 	}
+	if (!result)
+		result = real_load (assembly_directory, aname->culture, aname->name, refonly);
 
 	return result;
 }
@@ -707,6 +711,8 @@ main (int argc, char *argv [])
 	//We have to force the runtime to load the corlib under verification as its own corlib so core types are properly populated in mono_defaults.
 	if (strstr (file, "mscorlib.dll"))
 		g_setenv ("MONO_PATH", g_path_get_dirname (file), 1);
+	assembly_directory [0] = g_path_get_dirname (file);
+	assembly_directory [1] = NULL;
 
 #ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters_init ();
