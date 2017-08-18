@@ -58,7 +58,7 @@ namespace System.Data.OleDb
 		public OleDbCommandBuilder (OleDbDataAdapter adapter) => throw ADP.OleDb();
 		public new OleDbDataAdapter DataAdapter { get; set; }
 		protected override void ApplyParameterInfo (DbParameter parameter, DataRow datarow, StatementType statementType, Boolean whereClause) => throw ADP.OleDb();
-		public void DeriveParameters (OleDbCommand command) => throw ADP.OleDb();
+		public static void DeriveParameters (OleDbCommand command) => throw ADP.OleDb();
 		public OleDbCommand GetDeleteCommand () => throw ADP.OleDb();
 		public OleDbCommand GetDeleteCommand (Boolean useColumnsForParameterNames) => throw ADP.OleDb();
 		public OleDbCommand GetInsertCommand () => throw ADP.OleDb();
@@ -68,7 +68,7 @@ namespace System.Data.OleDb
 		protected override String GetParameterPlaceholder (Int32 parameterOrdinal) => throw ADP.OleDb();
 		public new OleDbCommand GetUpdateCommand () => throw ADP.OleDb();
 		public new OleDbCommand GetUpdateCommand (Boolean useColumnsForParameterNames) => throw ADP.OleDb();
-		public String QuoteIdentifier (String unquotedIdentifier) => throw ADP.OleDb();
+		public override String QuoteIdentifier (String unquotedIdentifier) => throw ADP.OleDb();
 		public String QuoteIdentifier (String unquotedIdentifier, OleDbConnection connection) => throw ADP.OleDb();
 		protected override void SetRowUpdatingHandler (DbDataAdapter adapter) => throw ADP.OleDb();
 		public override String UnquoteIdentifier (String quotedIdentifier) => throw ADP.OleDb();
@@ -145,56 +145,55 @@ namespace System.Data.OleDb
 	}
 
 	[MonoTODO("OleDb is not implemented.")]
-	public sealed partial class OleDbDataReader// : System.Data.Common.DbDataReader
+	public sealed partial class OleDbDataReader : System.Data.Common.DbDataReader
 	{
-		public Int32 Depth { get; set; }
-		public Int32 FieldCount { get; set; }
-		public Boolean HasRows { get; set; }
-		public Boolean IsClosed { get; set; }
-		public Object Item { get; set; }
-		public Int32 RecordsAffected { get; set; }
-		public Int32 VisibleFieldCount { get; set; }
-		public void Close () => throw ADP.OleDb();
-		public Boolean GetBoolean (Int32 ordinal) => throw ADP.OleDb();
-		public Byte GetByte (Int32 ordinal) => throw ADP.OleDb();
-		public Int64 GetBytes (Int32 ordinal, Int64 dataIndex, Byte[] buffer, Int32 bufferIndex, Int32 length) => throw ADP.OleDb();
-		public Char GetChar (Int32 ordinal) => throw ADP.OleDb();
-		public Int64 GetChars (Int32 ordinal, Int64 dataIndex, Char[] buffer, Int32 bufferIndex, Int32 length) => throw ADP.OleDb();
-		public OleDbDataReader GetData (Int32 ordinal) => throw ADP.OleDb();
-		public String GetDataTypeName (Int32 index) => throw ADP.OleDb();
-		public DateTime GetDateTime (Int32 ordinal) => throw ADP.OleDb();
-		public DbDataReader GetDbDataReader (Int32 ordinal) => throw ADP.OleDb();
-		public Decimal GetDecimal (Int32 ordinal) => throw ADP.OleDb();
-		public Double GetDouble (Int32 ordinal) => throw ADP.OleDb();
-		public IEnumerator GetEnumerator () => throw ADP.OleDb();
-		public Type GetFieldType (Int32 index) => throw ADP.OleDb();
-		public Single GetFloat (Int32 ordinal) => throw ADP.OleDb();
-		public Guid GetGuid (Int32 ordinal) => throw ADP.OleDb();
-		public Int16 GetInt16 (Int32 ordinal) => throw ADP.OleDb();
-		public Int32 GetInt32 (Int32 ordinal) => throw ADP.OleDb();
-		public Int64 GetInt64 (Int32 ordinal) => throw ADP.OleDb();
-		public String GetName (Int32 index) => throw ADP.OleDb();
-		public Int32 GetOrdinal (String name) => throw ADP.OleDb();
-		public DataTable GetSchemaTable () => throw ADP.OleDb();
-		public String GetString (Int32 ordinal) => throw ADP.OleDb();
-		public TimeSpan GetTimeSpan (Int32 ordinal) => throw ADP.OleDb();
-		public Object GetValue (Int32 ordinal) => throw ADP.OleDb();
-		public Int32 GetValues (Object[] values) => throw ADP.OleDb();
-		public Boolean IsDBNull (Int32 ordinal) => throw ADP.OleDb();
-		public Boolean NextResult () => throw ADP.OleDb();
-		public Boolean Read () => throw ADP.OleDb();
+		public override Int32 Depth => throw ADP.OleDb();
+		public override Int32 FieldCount => throw ADP.OleDb();
+		public override Boolean HasRows => throw ADP.OleDb();
+		public override Boolean IsClosed => throw ADP.OleDb();
+		public override Int32 RecordsAffected => throw ADP.OleDb();
+		public override Int32 VisibleFieldCount => throw ADP.OleDb();
+		public override void Close () => throw ADP.OleDb();
+		public override Boolean GetBoolean (Int32 ordinal) => throw ADP.OleDb();
+		public override Byte GetByte (Int32 ordinal) => throw ADP.OleDb();
+		public override Int64 GetBytes (Int32 ordinal, Int64 dataIndex, Byte[] buffer, Int32 bufferIndex, Int32 length) => throw ADP.OleDb();
+		public override Char GetChar (Int32 ordinal) => throw ADP.OleDb();
+		public override Int64 GetChars (Int32 ordinal, Int64 dataIndex, Char[] buffer, Int32 bufferIndex, Int32 length) => throw ADP.OleDb();
+		public new OleDbDataReader GetData (Int32 ordinal) => throw ADP.OleDb();
+		public override String GetDataTypeName (Int32 index) => throw ADP.OleDb();
+		public override DateTime GetDateTime (Int32 ordinal) => throw ADP.OleDb();
+		public override Decimal GetDecimal (Int32 ordinal) => throw ADP.OleDb();
+		public override Double GetDouble (Int32 ordinal) => throw ADP.OleDb();
+		public override IEnumerator GetEnumerator () => throw ADP.OleDb();
+		public override Type GetFieldType (Int32 index) => throw ADP.OleDb();
+		public override Single GetFloat (Int32 ordinal) => throw ADP.OleDb();
+		public override Guid GetGuid (Int32 ordinal) => throw ADP.OleDb();
+		public override Int16 GetInt16 (Int32 ordinal) => throw ADP.OleDb();
+		public override Int32 GetInt32 (Int32 ordinal) => throw ADP.OleDb();
+		public override Int64 GetInt64 (Int32 ordinal) => throw ADP.OleDb();
+		public override String GetName (Int32 index) => throw ADP.OleDb();
+		public override Int32 GetOrdinal (String name) => throw ADP.OleDb();
+		public override DataTable GetSchemaTable () => throw ADP.OleDb();
+		public override String GetString (Int32 ordinal) => throw ADP.OleDb();
+		public override Object GetValue (Int32 ordinal) => throw ADP.OleDb();
+		public override Int32 GetValues (Object[] values) => throw ADP.OleDb();
+		public override Boolean IsDBNull (Int32 ordinal) => throw ADP.OleDb();
+		public override Boolean NextResult () => throw ADP.OleDb();
+		public override Boolean Read () => throw ADP.OleDb();
+		public override object this[int index] => throw ADP.OleDb();      
+        public override object this[string name] => throw ADP.OleDb();
 	}
 
 	[MonoTODO("OleDb is not implemented.")]
-	public class OleDbEnumerator
+	public sealed partial class OleDbEnumerator
 	{
 		public DataTable GetElements () => throw ADP.OleDb();
-		public OleDbDataReader GetEnumerator (Type type) => throw ADP.OleDb();
-		public OleDbDataReader GetRootEnumerator () => throw ADP.OleDb();
+		public static OleDbDataReader GetEnumerator (Type type) => throw ADP.OleDb();
+		public static OleDbDataReader GetRootEnumerator () => throw ADP.OleDb();
 	}
 
 	[MonoTODO("OleDb is not implemented.")]
-	public class OleDbError
+	public sealed partial class OleDbError
 	{
 		internal OleDbError() { }
 		public String Message => throw ADP.OleDb();
@@ -304,39 +303,40 @@ namespace System.Data.OleDb
 	}        
 
 	[MonoTODO("OleDb is not implemented.")]
-	public class OleDbMetaDataColumnNames
+	public static partial class OleDbMetaDataColumnNames
 	{
-		public OleDbMetaDataColumnNames BooleanFalseLiteral;
-		public OleDbMetaDataColumnNames BooleanTrueLiteral;
-		public OleDbMetaDataColumnNames DateTimeDigits;
-		public OleDbMetaDataColumnNames NativeDataType;
+		public static readonly string BooleanFalseLiteral;
+		public static readonly string BooleanTrueLiteral;
+		public static readonly string DateTimeDigits;
+		public static readonly string NativeDataType;
 	}
 
 	[MonoTODO("OleDb is not implemented.")]
-	public class OleDbParameter
+	public sealed partial class OleDbParameter : System.Data.Common.DbParameter, System.Data.IDataParameter, System.Data.IDbDataParameter, System.ICloneable
 	{
-		public DbType DbType { get; set; }
-		public ParameterDirection Direction { get; set; }
-		public Boolean IsNullable { get; set; }
-		public Int32 Offset { get; set; }
-		public OleDbType OleDbType { get; set; }
-		public String ParameterName { get; set; }
-		public Byte Precision { get; set; }
-		public Byte Scale { get; set; }
-		public Int32 Size { get; set; }
-		public String SourceColumn { get; set; }
-		public Boolean SourceColumnNullMapping { get; set; }
-		public DataRowVersion SourceVersion { get; set; }
-		public Object Value { get; set; }
+		public override DbType DbType { get; set; }
+		public override ParameterDirection Direction { get; set; }
+		public override Boolean IsNullable { get; set; }
+		public int Offset { get; set; }
+		public System.Data.OleDb.OleDbType OleDbType { get; set; }
+		public override String ParameterName { get; set; }
+		public new Byte Precision { get; set; }
+		public new Byte Scale { get; set; }
+		public override Int32 Size { get; set; }
+		public override String SourceColumn { get; set; }
+		public override Boolean SourceColumnNullMapping { get; set; }
+		public override DataRowVersion SourceVersion { get; set; }
+		public override Object Value { get; set; }
+		public OleDbParameter() { }
 		public OleDbParameter (String name, OleDbType dataType) => throw ADP.OleDb();
 		public OleDbParameter (String name, OleDbType dataType, Int32 size) => throw ADP.OleDb();
 		public OleDbParameter (String parameterName, OleDbType dbType, Int32 size, ParameterDirection direction, Boolean isNullable, Byte precision, Byte scale, String srcColumn, DataRowVersion srcVersion, Object value) => throw ADP.OleDb();
 		public OleDbParameter (String parameterName, OleDbType dbType, Int32 size, ParameterDirection direction, Byte precision, Byte scale, String sourceColumn, DataRowVersion sourceVersion, Boolean sourceColumnNullMapping, Object value) => throw ADP.OleDb();
 		public OleDbParameter (String name, OleDbType dataType, Int32 size, String srcColumn) => throw ADP.OleDb();
 		public OleDbParameter (String name, Object value) => throw ADP.OleDb();
-		public void ResetDbType () => throw ADP.OleDb();
-		public void ResetOleDbType () => throw ADP.OleDb();
-		public String ToString () => throw ADP.OleDb();
+		public override void ResetDbType () => throw ADP.OleDb();
+		public override String ToString () => throw ADP.OleDb();
+		object System.ICloneable.Clone() => throw ADP.OleDb();
 	}
 
 	[MonoTODO("OleDb is not implemented.")]
@@ -380,20 +380,24 @@ namespace System.Data.OleDb
 	}
 
 	[MonoTODO("OleDb is not implemented.")]
-	public class OleDbRowUpdatedEventArgs : EventArgs
+	public sealed partial class OleDbRowUpdatedEventArgs : System.Data.Common.RowUpdatedEventArgs      
 	{
-		public OleDbCommand Command { get; set; }
-		public OleDbRowUpdatedEventArgs (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) => throw ADP.OleDb();
+		public new OleDbCommand Command => throw ADP.OleDb();
+		public OleDbRowUpdatedEventArgs (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) 
+			: base (default(System.Data.DataRow), default(System.Data.IDbCommand), default(System.Data.StatementType), default(System.Data.Common.DataTableMapping))
+			=> throw ADP.OleDb();
 	}
 
     public delegate void OleDbRowUpdatedEventHandler(object sender, OleDbRowUpdatedEventArgs e);
 
 	[MonoTODO("OleDb is not implemented.")]
-	public class OleDbRowUpdatingEventArgs : EventArgs
+	public sealed partial class OleDbRowUpdatingEventArgs : System.Data.Common.RowUpdatingEventArgs
 	{
-		public IDbCommand BaseCommand { get; set; }
-		public OleDbCommand Command { get; set; }
-		public OleDbRowUpdatingEventArgs (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) => throw ADP.OleDb();
+		protected override IDbCommand BaseCommand { get; set; }
+		public new OleDbCommand Command { get; set; }
+		public OleDbRowUpdatingEventArgs (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) 
+			: base (default(System.Data.DataRow), default(System.Data.IDbCommand), default(System.Data.StatementType), default(System.Data.Common.DataTableMapping))
+        	=> throw ADP.OleDb();
 	}
 
     public delegate void OleDbRowUpdatingEventHandler(object sender, OleDbRowUpdatingEventArgs e);
