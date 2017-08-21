@@ -3087,8 +3087,6 @@ mono_w32file_get_times(gpointer handle, FILETIME *create_time, FILETIME *access_
 					 write_time));
 }
 
-#if !defined(PLATFORM_UNITY)
-
 gboolean
 mono_w32file_set_times(gpointer handle, const FILETIME *create_time, const FILETIME *access_time, const FILETIME *write_time)
 {
@@ -3104,8 +3102,6 @@ mono_w32file_set_times(gpointer handle, const FILETIME *create_time, const FILET
 	return(io_ops[type].setfiletime (handle, create_time, access_time,
 					 write_time));
 }
-
-#endif
 
 /* A tick is a 100-nanosecond interval.  File time epoch is Midnight,
  * January 1 1601 GMT
