@@ -290,16 +290,12 @@ mono/metadata/w32error-unity.c
 mono/metadata/w32error-win32.c
 mono/metadata/w32error-unix.c
 mono/metadata/w32event-unity.c
-mono/metadata/w32event-win32.c
-mono/metadata/w32event-unix.c
 mono/metadata/w32file-unity.c
 mono/metadata/w32file-unix-glob.c
 mono/metadata/w32file.c
 mono/metadata/w32handle-namespace.c
 mono/metadata/w32handle.c
 mono/metadata/w32mutex-unity.c
-mono/metadata/w32mutex-win32.c
-mono/metadata/w32mutex-unix.c
 mono/metadata/w32process-unity.c
 mono/metadata/w32process-unix-osx.c
 mono/metadata/w32process-unix-default.c
@@ -307,8 +303,6 @@ mono/metadata/w32process-unix.c
 mono/metadata/w32process-win32.c
 mono/metadata/w32process.c
 mono/metadata/w32semaphore-unity.c
-mono/metadata/w32semaphore-win32.c
-mono/metadata/w32semaphore-unix.c
 mono/metadata/w32socket-unity.c
 mono/metadata/w32socket-unix.c
 mono/metadata/w32socket-win32.c

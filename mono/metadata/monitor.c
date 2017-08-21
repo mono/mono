@@ -32,6 +32,10 @@
 #include <mono/utils/atomic.h>
 #include <mono/utils/w32api.h>
 
+#if defined(PLATFORM_UNITY)
+#include "Handle-c-api.h"
+#endif
+
 /*
  * Pull the list of opcodes
  */
@@ -1374,7 +1378,9 @@ ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *obj, guint32 ms)
 	 * signalled before we wait, we still succeed.
 	 */
 	MONO_ENTER_GC_SAFE;
-#ifdef HOST_WIN32
+#if defined (PLATFORM_UNITY)
+	ret = (MonoW32HandleWaitRet)UnityPalHandleWaitMs(event, ms, TRUE);
+#elif defined(HOST_WIN32)
 	ret = mono_w32handle_convert_wait_ret (WaitForSingleObjectEx (event, ms, TRUE), 1);
 #else
 	ret = mono_w32handle_wait_one (event, ms, TRUE);
@@ -1403,7 +1409,9 @@ ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *obj, guint32 ms)
 		 * while we were trying to regain the monitor lock
 		 */
 		MONO_ENTER_GC_SAFE;
-#ifdef HOST_WIN32
+#if defined(PLATFORM_UNITY)
+		ret = (MonoW32HandleWaitRet)UnityPalHandleWaitMs(event, 0, FALSE);
+#elif defined(HOST_WIN32)
 		ret = mono_w32handle_convert_wait_ret (WaitForSingleObjectEx (event, 0, FALSE), 1);
 #else
 		ret = mono_w32handle_wait_one (event, 0, FALSE);
