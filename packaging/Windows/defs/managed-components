@@ -21,7 +21,7 @@ download()
 	report "Downloading x64 hostfxr.dll"
 	wget --quiet -O ${REPODIR}/hostfxr-x64.zip https://www.nuget.org/api/v2/package/runtime.win-x64.Microsoft.NETCore.DotNetHostResolver/2.0.0-preview2-25407-01 || error "*** Could not download 64bit hostfxr.dll ***"
 	report "Downloading x86 hostfxr.dll"
-	wget --quiet -O ${REPODIR}/hostfxr-x86.zip https://www.nuget.org/api/v2/package/runtime.win-x86.Microsoft.NETCore.DotNetHostResolver/2.0.0-preview2-25407-01 || error "*** Could not download 64bit hostfxr.dll ***"
+	wget --quiet -O ${REPODIR}/hostfxr-x86.zip https://www.nuget.org/api/v2/package/runtime.win-x86.Microsoft.NETCore.DotNetHostResolver/2.0.0-preview2-25407-01 || error "*** Could not download 32bit hostfxr.dll ***"
 	report "Copying Mono MDK for Mac"
 	cp $1 ${REPODIR}/mono.xar
 }
