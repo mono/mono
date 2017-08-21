@@ -1486,6 +1486,8 @@ if ($artifact)
 		}
 		system("cp -r $monoprefix/etc $distdir/") eq 0 or die("failed copying etc folder\n");
 
+		system("cp", "$monoprefix/bin/ilasm","$distdir/bin/ilasm") eq 0 or die("failed copying ilasm\n");
+
 		system("cp -R $externalBuildDeps/reference-assemblies/unity $distdirlibmono/unity");
  		system("cp -R $externalBuildDeps/reference-assemblies/unity_web $distdirlibmono/unity_web");
 
