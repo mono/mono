@@ -165,9 +165,9 @@ namespace Mono.Net.Security
 
 		public abstract void Flush ();
 
-		public abstract int Read (byte[] buffer, int offset, int count, out bool wantMore);
+		public abstract (int ret, bool wantMore) Read (byte[] buffer, int offset, int count);
 
-		public abstract int Write (byte[] buffer, int offset, int count, out bool wantMore);
+		public abstract (int ret, bool wantMore) Write (byte[] buffer, int offset, int count);
 
 		public abstract void Shutdown ();
 

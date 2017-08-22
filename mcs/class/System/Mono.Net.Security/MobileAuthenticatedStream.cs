@@ -624,8 +624,7 @@ namespace Mono.Net.Security
 		{
 			lock (ioLock) {
 				// This operates on the internal buffer and will never block.
-				var ret = xobileTlsContext.Read (userBuffer.Buffer, userBuffer.Offset, userBuffer.Size, out bool wantMore);
-				return (ret, wantMore);
+				return xobileTlsContext.Read (userBuffer.Buffer, userBuffer.Offset, userBuffer.Size);
 			}
 		}
 
@@ -633,8 +632,7 @@ namespace Mono.Net.Security
 		{
 			lock (ioLock) {
 				// This operates on the internal buffer and will never block.
-				var ret = xobileTlsContext.Write (userBuffer.Buffer, userBuffer.Offset, userBuffer.Size, out bool wantMore);
-				return (ret, wantMore);
+				return xobileTlsContext.Write (userBuffer.Buffer, userBuffer.Offset, userBuffer.Size);
 			}
 		}
 
