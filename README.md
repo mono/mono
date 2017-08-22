@@ -483,6 +483,16 @@ http://code.google.com/p/nativeclient/
   * Currently this is used with Mono's AOT engine as
 Native Client does not support JIT engines yet.
 
+* `--enable-wasm`
+
+  * Use this option to configure mono to run on WebAssembly. It will
+    set both host and target to the WebAssembly triplet. This overrides
+    the values passed to `--host` or `--target` and ignored what config.sub guesses.
+
+    This is a workaround to enable usage of old automake versions that don't
+    recognize the wasm triplet.
+
+
 Working With Submodules
 =======================
 
