@@ -114,7 +114,7 @@ get_boot_time (void)
 	if (uptime) {
 		double upt;
 		if (fscanf (uptime, "%lf", &upt) == 1) {
-			gint64 now = mono_100ns_datetime ();
+			gint64 now = mono_100ns_ticks ();
 			fclose (uptime);
 			return now - (gint64)(upt * MTICKS_PER_SEC);
 		}
@@ -133,7 +133,7 @@ mono_msec_boottime (void)
 	gint64 now;
 	if (!boot_time)
 		boot_time = get_boot_time ();
-	now = mono_100ns_datetime ();
+	now = mono_100ns_ticks ();
 	/*printf ("now: %llu (boot: %llu) ticks: %llu\n", (gint64)now, (gint64)boot_time, (gint64)(now - boot_time));*/
 	return (now - boot_time)/10000;
 }
