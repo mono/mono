@@ -55,7 +55,18 @@ namespace Mono.Net.Security
 		int closeRequested;
 		bool shutdown;
 
+		Operation operation;
+
 		static int uniqueNameInteger = 123;
+
+		enum Operation : int {
+			None,
+			Handshake,
+			Authenticated,
+			Read,
+			Write,
+			Close
+		}
 
 		public MobileAuthenticatedStream (Stream innerStream, bool leaveInnerStreamOpen, SslStream owner,
 						  MSI.MonoTlsSettings settings, MSI.MonoTlsProvider provider)
@@ -67,6 +78,7 @@ namespace Mono.Net.Security
 
 			readBuffer = new BufferOffsetSize2 (16834);
 			writeBuffer = new BufferOffsetSize2 (16384);
+			operation = Operation.None;
 		}
 
 		public SslStream SslStream {
@@ -107,6 +119,16 @@ namespace Mono.Net.Security
 			if (e is OperationCanceledException || e is IOException || e is ObjectDisposedException || e is AuthenticationException)
 				return e;
 			return new IOException (message, e);
+		}
+
+		internal static Exception GetRenegotiationException (string message)
+		{
+			return new MSI.TlsException (MSI.AlertDescription.UnexpectedMessage, message);
+		}
+
+		internal static Exception GetInternalError ()
+		{
+			throw new InvalidOperationException ("Internal error.");
 		}
 
 		internal ExceptionDispatchInfo SetException (Exception e)
@@ -455,13 +477,37 @@ namespace Mono.Net.Security
 		}
 
 		/*
-		 * We may get called from SSLWrite(), SSLHandshake() or SSLClose().
+		 * We may get called from SSLWrite(), SSLHandshake() or SSLClose(), so we own the 'ioLock'.
+		 *
+		 * When the server sends a renegotiation request during SSLRead(), the native code will send
+		 * the ClientHello, so we can also get called during SSLRead().
+		 *
 		 */
 		internal bool InternalWrite (byte[] buffer, int offset, int size)
 		{
 			try {
-				Debug ("InternalWrite: {0} {1}", offset, size);
-				var asyncRequest = asyncHandshakeRequest ?? asyncWriteRequest;
+				Debug ("InternalWrite: {0} {1} {2}", offset, size, operation);
+
+				AsyncProtocolRequest asyncRequest;
+
+				switch (operation) {
+				case Operation.Handshake:
+					asyncRequest = asyncHandshakeRequest;
+					break;
+				case Operation.Write:
+				case Operation.Close:
+					asyncRequest = asyncWriteRequest;
+					break;
+				case Operation.Read:
+					// We don't support renegotiation yet.
+					throw new MSI.TlsException (MSI.AlertDescription.NoRenegotiation);
+				default:
+					throw GetInternalError ();
+				}
+
+				if (asyncRequest == null && operation != Operation.Close)
+					throw GetInternalError ();
+
 				return InternalWrite (asyncRequest, writeBuffer, buffer, offset, size);
 			} catch (Exception ex) {
 				Debug ("InternalWrite failed: {0}", ex);
@@ -595,16 +641,23 @@ namespace Mono.Net.Security
 			Debug ("ProcessHandshake: {0}", status);
 
 			lock (ioLock) {
+				if (operation != Operation.None && operation != Operation.Handshake)
+					throw GetInternalError ();
+				operation = Operation.Handshake;
+
 				/*
 				 * The first time we're called (AsyncOperationStatus.Initialize), we need to setup the SslContext and
 				 * start the handshake.
 				*/
-				if (status == AsyncOperationStatus.Initialize) {
+				switch (status) {
+				case AsyncOperationStatus.Initialize:
 					xobileTlsContext.StartHandshake ();
 					return AsyncOperationStatus.Continue;
-				} else if (status == AsyncOperationStatus.ReadDone) {
+				case AsyncOperationStatus.ReadDone:
 					throw new IOException (SR.net_auth_eof);
-				} else if (status != AsyncOperationStatus.Continue) {
+				case AsyncOperationStatus.Continue:
+					break;
+				default:
 					throw new InvalidOperationException ();
 				}
 
@@ -615,6 +668,7 @@ namespace Mono.Net.Security
 				var newStatus = AsyncOperationStatus.Continue;
 				if (xobileTlsContext.ProcessHandshake ()) {
 					xobileTlsContext.FinishHandshake ();
+					operation = Operation.Authenticated;
 					newStatus = AsyncOperationStatus.Complete;
 				}
 
@@ -625,7 +679,7 @@ namespace Mono.Net.Security
 			}
 		}
 
-		internal (int, bool) ProcessRead (BufferOffsetSize userBuffer)
+		internal (int ret, bool wantMore) ProcessRead (BufferOffsetSize userBuffer)
 		{
 			lock (ioLock) {
 				// This operates on the internal buffer and will never block.
@@ -636,7 +690,7 @@ namespace Mono.Net.Security
 			}
 		}
 
-		internal (int, bool) ProcessWrite (BufferOffsetSize userBuffer)
+		internal (int ret, bool wantMore) ProcessWrite (BufferOffsetSize userBuffer)
 		{
 			lock (ioLock) {
 				// This operates on the internal buffer and will never block.
@@ -652,8 +706,12 @@ namespace Mono.Net.Security
 			Debug ("ProcessShutdown: {0}", status);
 
 			lock (ioLock) {
+				if (operation != Operation.Authenticated)
+					throw GetInternalError ();
+				operation = Operation.Close;
 				xobileTlsContext.Shutdown ();
 				shutdown = true;
+				operation = Operation.Authenticated;
 				return AsyncOperationStatus.Complete;
 			}
 		}
