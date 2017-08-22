@@ -17,6 +17,7 @@ ClassInitGenerator
 csc
 csharp
 csharp2
+csi
 dbsessmgr
 dbsessmgr2
 dbsessmgr4
