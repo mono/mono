@@ -843,15 +843,37 @@ namespace Mono.AppleTls
 			}
 		}
 
+#if !MONOTOUCH
+		// Available on macOS 10.12+ and iOS 10.0+.
+		[DllImport (SecurityLibrary)]
+		extern static /* OSStatus */ SslStatus SSLReHandshake (/* SSLContextRef */ IntPtr context);
+#endif
+
 		public override bool CanRenegotiate {
 			get {
+#if MONOTOUCH
 				return false;
+#else
+				if (!IsServer)
+					return false;
+				if (Environment.OSVersion.Version < new Version (16, 6))
+					return false;
+				return true;
+#endif
 			}
 		}
 
 		public override void Renegotiate ()
 		{
+#if MONOTOUCH
 			throw new NotSupportedException ();
+#else
+			if (!CanRenegotiate)
+				throw new NotSupportedException ();
+
+			var status = SSLReHandshake (Handle);
+			CheckStatusAndThrow (status);
+#endif
 		}
 
 		[DllImport (SecurityLibrary)]
