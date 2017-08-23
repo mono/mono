@@ -95,12 +95,6 @@ namespace Mono.AppleTls
 			get { return !disposed && context != IntPtr.Zero; }
 		}
 
-		[System.Diagnostics.Conditional ("APPLE_TLS_DEBUG")]
-		protected new void Debug (string message, params object[] args)
-		{
-			Console.Error.WriteLine ("MobileTlsStream({0}): {1}", Parent.ID, string.Format (message, args));
-		}
-
 		void CheckStatusAndThrow (SslStatus status, params SslStatus[] acceptable)
 		{
 			var last = Interlocked.Exchange (ref lastException, null);
@@ -298,11 +292,6 @@ namespace Mono.AppleTls
 				MaxProtocol = SslProtocol.Tls_1_1;
 			else
 				MaxProtocol = SslProtocol.Tls_1_0;
-
-#if APPLE_TLS_DEBUG
-			foreach (var c in GetSupportedCiphers ())
-				Debug ("  {0} SslCipherSuite.{1} {2:x} {3}", IsServer ? "Server" : "Client", c, (int)c, (CipherSuiteCode)c);
-#endif
 
 			if (Settings != null && Settings.EnabledCiphers != null) {
 				SslCipherSuite [] ciphers = new SslCipherSuite [Settings.EnabledCiphers.Length];
@@ -786,7 +775,7 @@ namespace Mono.AppleTls
 		[DllImport (SecurityLibrary)]
 		extern unsafe static /* OSStatus */ SslStatus SSLRead (/* SSLContextRef */ IntPtr context, /* const void* */ byte* data, /* size_t */ IntPtr dataLength, /* size_t* */ out IntPtr processed);
 
-		public override unsafe int Read (byte[] buffer, int offset, int count, out bool wantMore)
+		public override unsafe (int ret, bool wantMore) Read (byte[] buffer, int offset, int count)
 		{
 			if (Interlocked.Exchange (ref pendingIO, 1) == 1)
 				throw new InvalidOperationException ();
@@ -810,13 +799,12 @@ namespace Mono.AppleTls
 					 * when the first inner Read() returns 0.  MobileAuthenticatedStream.InnerRead() attempts
 					 * to distinguish between a graceful close and abnormal termination of connection.
 					 */
-					wantMore = false;
-					return 0;
+					return (0, false);
 				}
 
 				CheckStatusAndThrow (status, SslStatus.WouldBlock, SslStatus.ClosedGraceful);
-				wantMore = status == SslStatus.WouldBlock;
-				return (int)processed;
+				var wantMore = status == SslStatus.WouldBlock;
+				return ((int)processed, wantMore);
 			} catch (Exception ex) {
 				Debug ("Read error: {0}", ex);
 				throw;
@@ -828,7 +816,7 @@ namespace Mono.AppleTls
 		[DllImport (SecurityLibrary)]
 		extern unsafe static /* OSStatus */ SslStatus SSLWrite (/* SSLContextRef */ IntPtr context, /* const void* */ byte* data, /* size_t */ IntPtr dataLength, /* size_t* */ out IntPtr processed);
 
-		public override unsafe int Write (byte[] buffer, int offset, int count, out bool wantMore)
+		public override unsafe (int ret, bool wantMore) Write (byte[] buffer, int offset, int count)
 		{
 			if (Interlocked.Exchange (ref pendingIO, 1) == 1)
 				throw new InvalidOperationException ();
@@ -848,11 +836,44 @@ namespace Mono.AppleTls
 
 				CheckStatusAndThrow (status, SslStatus.WouldBlock);
 
-				wantMore = status == SslStatus.WouldBlock;
-				return (int)processed;
+				var wantMore = status == SslStatus.WouldBlock;
+				return ((int)processed, wantMore);
 			} finally {
 				pendingIO = 0;
 			}
+		}
+
+#if !MONOTOUCH
+		// Available on macOS 10.12+ and iOS 10.0+.
+		[DllImport (SecurityLibrary)]
+		extern static /* OSStatus */ SslStatus SSLReHandshake (/* SSLContextRef */ IntPtr context);
+#endif
+
+		public override bool CanRenegotiate {
+			get {
+#if MONOTOUCH
+				return false;
+#else
+				if (!IsServer)
+					return false;
+				if (Environment.OSVersion.Version < new Version (16, 6))
+					return false;
+				return true;
+#endif
+			}
+		}
+
+		public override void Renegotiate ()
+		{
+#if MONOTOUCH
+			throw new NotSupportedException ();
+#else
+			if (!CanRenegotiate)
+				throw new NotSupportedException ();
+
+			var status = SSLReHandshake (Handle);
+			CheckStatusAndThrow (status);
+#endif
 		}
 
 		[DllImport (SecurityLibrary)]

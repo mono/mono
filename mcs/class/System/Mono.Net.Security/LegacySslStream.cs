@@ -601,6 +601,13 @@ namespace Mono.Net.Security.Private
 			return null;
 		}
 
+		public bool CanRenegotiate => false;
+
+		public void Renegotiate ()
+		{
+			throw new NotSupportedException ();
+		}
+
 		#endregion
 	}
 }

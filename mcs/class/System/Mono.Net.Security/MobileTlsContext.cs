@@ -116,6 +116,10 @@ namespace Mono.Net.Security
 			get { return clientCertificates; }
 		}
 
+		internal bool AllowRenegotiation {
+			get { return false; }
+		}
+
 		protected void GetProtocolVersions (out TlsProtocolCode min, out TlsProtocolCode max)
 		{
 			if ((enabledProtocols & SslProtocols.Tls) != 0)
@@ -165,9 +169,9 @@ namespace Mono.Net.Security
 
 		public abstract void Flush ();
 
-		public abstract int Read (byte[] buffer, int offset, int count, out bool wantMore);
+		public abstract (int ret, bool wantMore) Read (byte[] buffer, int offset, int count);
 
-		public abstract int Write (byte[] buffer, int offset, int count, out bool wantMore);
+		public abstract (int ret, bool wantMore) Write (byte[] buffer, int offset, int count);
 
 		public abstract void Shutdown ();
 
@@ -200,6 +204,12 @@ namespace Mono.Net.Security
 			// FIXME: select onne.
 			throw new NotImplementedException ();
 		}
+
+		public abstract bool CanRenegotiate {
+			get;
+		}
+
+		public abstract void Renegotiate ();
 
 		public void Dispose ()
 		{

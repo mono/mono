@@ -199,6 +199,12 @@ namespace Mono.Security.Interface
 
 
 		MonoTlsConnectionInfo GetConnectionInfo ();
+
+		bool CanRenegotiate {
+			get;
+		}
+
+		void Renegotiate ();
 	}
 }
 
