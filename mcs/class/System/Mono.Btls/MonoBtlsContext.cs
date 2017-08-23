@@ -354,6 +354,17 @@ namespace Mono.Btls
 			}
 		}
 
+		public override bool CanRenegotiate {
+			get {
+				return false;
+			}
+		}
+
+		public override void Renegotiate ()
+		{
+			throw new NotSupportedException ();
+		}
+
 		public override void Shutdown ()
 		{
 			Debug ("Shutdown!");

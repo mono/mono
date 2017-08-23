@@ -843,6 +843,17 @@ namespace Mono.AppleTls
 			}
 		}
 
+		public override bool CanRenegotiate {
+			get {
+				return false;
+			}
+		}
+
+		public override void Renegotiate ()
+		{
+			throw new NotSupportedException ();
+		}
+
 		[DllImport (SecurityLibrary)]
 		extern static /* OSStatus */ SslStatus SSLClose (/* SSLContextRef */ IntPtr context);
 

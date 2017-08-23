@@ -747,6 +747,13 @@ namespace Mono.Net.Security
 			}
 		}
 
+		public bool CanRenegotiate => false;
+
+		public void Renegotiate ()
+		{
+			throw new NotSupportedException ();
+		}
+
 		protected override void Dispose (bool disposing)
 		{
 			try {

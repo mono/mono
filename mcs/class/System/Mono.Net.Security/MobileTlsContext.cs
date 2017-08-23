@@ -205,6 +205,12 @@ namespace Mono.Net.Security
 			throw new NotImplementedException ();
 		}
 
+		public abstract bool CanRenegotiate {
+			get;
+		}
+
+		public abstract void Renegotiate ();
+
 		public void Dispose ()
 		{
 			Dispose (true);
