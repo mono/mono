@@ -32,6 +32,7 @@ System.Windows/RectTest.cs
 System.Windows/RectConverterTest.cs
 System.Windows/SizeTest.cs
 System.Windows/SizeConverterTest.cs
+System.Windows/SizeValueSerializerTest.cs
 System.Windows/VectorTest.cs
 System.Windows/VectorConverterTest.cs
 System.Windows.Markup/ConstructorArgumentAttributeTest.cs
@@ -42,5 +43,7 @@ System.Windows.Markup/DependsOnAttributeTest.cs
 System.Windows.Markup/MarkupExtensionReturnTypeAttributeTest.cs
 System.Windows.Markup/ValueSerializerTest.cs
 System.Windows.Media/MatrixTest.cs
+System.Windows.Media/MatrixConverterTest.cs
+System.Windows.Media/MatrixValueSerializerTest.cs
 System.Windows.Threading/DispatcherTest.cs
 System.Windows.Threading/DispatcherTimerTest.cs

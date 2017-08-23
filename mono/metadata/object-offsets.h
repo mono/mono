@@ -141,6 +141,9 @@ DECL_OFFSET(MonoTypedRef, value)
 DECL_OFFSET(MonoThreadsSync, status)
 DECL_OFFSET(MonoThreadsSync, nest)
 
+DECL_OFFSET(MonoProfilerCallContext, method)
+DECL_OFFSET(MonoProfilerCallContext, return_value)
+
 #ifdef HAVE_SGEN_GC
 DECL_OFFSET(SgenClientThreadInfo, in_critical_region)
 DECL_OFFSET(SgenThreadInfo, tlab_next)

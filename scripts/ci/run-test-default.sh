@@ -5,10 +5,12 @@ if [[ ${label} == w* ]]
 then ${TESTCMD} --label=aot-test --skip;
 else ${TESTCMD} --label=aot-test --timeout=30m make -w -C mono/tests -j4 -k test-aot
 fi
+${TESTCMD} --label=compile-bcl-tests --timeout=40m make -i -w -C runtime -j4 test
 ${TESTCMD} --label=compile-runtime-tests --timeout=40m make -w -C mono/tests -j4 tests
 ${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k test-wrench V=1 CI=1 CI_PR=${ghprbPullId}
 ${TESTCMD} --label=runtime-unit-tests --timeout=5m make -w -C mono/unit-tests -k check
 ${TESTCMD} --label=corlib --timeout=30m make -w -C mcs/class/corlib run-test
+if [[ ${label} == w* ]]; then ${TESTCMD} --label=corlib-xunit --skip; else ${TESTCMD} --label=corlib-xunit --timeout=5m make -w -C mcs/class/corlib run-xunit-test; fi
 ${TESTCMD} --label=verify --timeout=15m make -w -C runtime mcs-compileall
 ${TESTCMD} --label=profiler --timeout=30m make -w -C mono/profiler -k check
 ${TESTCMD} --label=compiler --timeout=30m make -w -C mcs/tests run-test
@@ -97,11 +99,11 @@ ${TESTCMD} --label=System.IO.Compression --timeout=5m make -w -C mcs/class/Syste
 if [[ ${label} == w* ]]; then ${TESTCMD} --label=symbolicate --skip; else ${TESTCMD} --label=symbolicate --timeout=60m make -w -C mcs/tools/mono-symbolicate check; fi
 ${TESTCMD} --label=monolinker --timeout=10m make -w -C mcs/tools/linker check
 
-if [[ ${label} == osx-* ]]
+if [[ $CI_TAGS == *'ms-test-suite'* ]]
 then ${TESTCMD} --label=ms-test-suite --timeout=30m make -w -C acceptance-tests check-ms-test-suite
 else ${TESTCMD} --label=ms-test-suite --skip;
 fi
-if [[ ${label} == 'ubuntu-1404-amd64' ]]; then
+if [[ $CI_TAGS == *'apidiff'* ]]; then
     source ${MONO_REPO_ROOT}/scripts/ci/util.sh
     if ${TESTCMD} --label=apidiff --timeout=15m --fatal make -w -C mcs -j4 mono-api-diff
     then report_github_status "success" "API Diff" "No public API changes found." || true

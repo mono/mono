@@ -25,12 +25,8 @@
     <AssemblyName>System.Collections.NonGeneric</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-  </PropertyGroup>
-    <PropertyGroup>
     <SignAssembly>true</SignAssembly>
     <DelaySign>true</DelaySign>
-  </PropertyGroup>
-  <PropertyGroup>
     <AssemblyOriginatorKeyFile>../../msfinal.pub</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

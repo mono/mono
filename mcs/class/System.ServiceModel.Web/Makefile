@@ -22,6 +22,12 @@ LIB_REFS += System.ServiceModel.Activation
 endif
 endif
 
+ifdef MOBILE_PROFILE
+KEYFILE = ../silverlight.pub
+else
+KEYFILE = ../winfx.pub
+endif
+
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES = $(RESOURCE_FILES) \

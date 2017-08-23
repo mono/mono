@@ -1771,24 +1771,6 @@ emit_pop_lmf (MonoCompile *cfg)
 	EMIT_NEW_STORE_MEMBASE (cfg, ins, OP_STORE_MEMBASE_REG, lmf_addr_reg, 0, prev_lmf_reg);
 }
 
-static void
-emit_instrumentation_call (MonoCompile *cfg, void *func, gboolean entry)
-{
-	MonoInst *iargs [1];
-
-	/*
-	 * Avoid instrumenting inlined methods since it can
-	 * distort profiling results.
-	 */
-	if (cfg->method != cfg->current_method)
-		return;
-
-	if (mono_profiler_should_instrument_method (cfg->method, entry)) {
-		EMIT_NEW_METHODCONST (cfg, iargs [0], cfg->method);
-		mono_emit_jit_icall (cfg, func, iargs);
-	}
-}
-
 static int
 ret_type_to_call_opcode (MonoCompile *cfg, MonoType *type, int calli, int virt)
 {
@@ -2247,7 +2229,7 @@ check_method_sharing (MonoCompile *cfg, MonoMethod *cmethod, gboolean *out_pass_
 
 inline static MonoCallInst *
 mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig, 
-					 MonoInst **args, int calli, int virtual_, int tail, int rgctx, int unbox_trampoline)
+					 MonoInst **args, int calli, int virtual_, int tail, int rgctx, int unbox_trampoline, MonoMethod *target)
 {
 	MonoType *sig_ret;
 	MonoCallInst *call;
@@ -2259,7 +2241,7 @@ mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig,
 		tail = FALSE;
 
 	if (tail) {
-		emit_instrumentation_call (cfg, mono_profiler_raise_method_leave, FALSE);
+		mini_profiler_emit_tail_call (cfg, target);
 
 		MONO_INST_NEW_CALL (cfg, call, OP_TAILCALL);
 	} else
@@ -2392,7 +2374,7 @@ mini_emit_calli (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **args, Mo
 		MONO_ADD_INS (cfg->cbb, ins);
 	}
 
-	call = mono_emit_call_args (cfg, sig, args, TRUE, FALSE, FALSE, rgctx_arg ? TRUE : FALSE, FALSE);
+	call = mono_emit_call_args (cfg, sig, args, TRUE, FALSE, FALSE, rgctx_arg ? TRUE : FALSE, FALSE, NULL);
 
 	call->inst.sreg1 = addr->dreg;
 
@@ -2486,7 +2468,7 @@ mono_emit_method_call_full (MonoCompile *cfg, MonoMethod *method, MonoMethodSign
 
 	need_unbox_trampoline = method->klass == mono_defaults.object_class || mono_class_is_interface (method->klass);
 
-	call = mono_emit_call_args (cfg, sig, args, FALSE, virtual_, tail, rgctx_arg ? TRUE : FALSE, need_unbox_trampoline);
+	call = mono_emit_call_args (cfg, sig, args, FALSE, virtual_, tail, rgctx_arg ? TRUE : FALSE, need_unbox_trampoline, method);
 
 #ifndef DISABLE_REMOTING
 	if (might_be_remote)
@@ -2616,7 +2598,7 @@ mono_emit_native_call (MonoCompile *cfg, gconstpointer func, MonoMethodSignature
 
 	g_assert (sig);
 
-	call = mono_emit_call_args (cfg, sig, args, FALSE, FALSE, FALSE, FALSE, FALSE);
+	call = mono_emit_call_args (cfg, sig, args, FALSE, FALSE, FALSE, FALSE, FALSE, NULL);
 	call->fptr = func;
 
 	MONO_ADD_INS (cfg->cbb, (MonoInst*)call);
@@ -3731,11 +3713,10 @@ handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, int context_
 		/* This happens often in argument checking code, eg. throw new FooException... */
 		/* Avoid relocations and save some space by calling a helper function specialized to mscorlib */
 		EMIT_NEW_ICONST (cfg, iargs [0], mono_metadata_token_index (klass->type_token));
-		return mono_emit_jit_icall (cfg, mono_helper_newobj_mscorlib, iargs);
+		alloc_ftn = mono_helper_newobj_mscorlib;
 	} else {
 		MonoVTable *vtable = mono_class_vtable (cfg->domain, klass);
 		MonoMethod *managed_alloc = NULL;
-		gboolean pass_lw;
 
 		if (!vtable) {
 			mono_cfg_set_exception (cfg, MONO_EXCEPTION_TYPE_LOAD);
@@ -3754,16 +3735,8 @@ handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, int context_
 			EMIT_NEW_ICONST (cfg, iargs [1], size);
 			return mono_emit_method_call (cfg, managed_alloc, iargs, NULL);
 		}
-		alloc_ftn = mono_class_get_allocation_ftn (vtable, for_box, &pass_lw);
-		if (pass_lw) {
-			guint32 lw = vtable->klass->instance_size;
-			lw = ((lw + (sizeof (gpointer) - 1)) & ~(sizeof (gpointer) - 1)) / sizeof (gpointer);
-			EMIT_NEW_ICONST (cfg, iargs [0], lw);
-			EMIT_NEW_VTABLECONST (cfg, iargs [1], vtable);
-		}
-		else {
-			EMIT_NEW_VTABLECONST (cfg, iargs [0], vtable);
-		}
+		alloc_ftn = ves_icall_object_new_specific;
+		EMIT_NEW_VTABLECONST (cfg, iargs [0], vtable);
 	}
 
 	return mono_emit_jit_icall (cfg, alloc_ftn, iargs);
@@ -4011,6 +3984,8 @@ handle_delegate_ctor (MonoCompile *cfg, MonoClass *klass, MonoInst *target, Mono
 	/* Set target field */
 	/* Optimize away setting of NULL target */
 	if (!MONO_INS_IS_PCONST_NULL (target)) {
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, target->dreg, 0);
+		MONO_EMIT_NEW_COND_EXC (cfg, EQ, "NullReferenceException");
 		MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, obj->dreg, MONO_STRUCT_OFFSET (MonoDelegate, target), target->dreg);
 		if (cfg->gen_write_barriers) {
 			dreg = alloc_preg (cfg);
@@ -4372,6 +4347,9 @@ mono_method_check_inlining (MonoCompile *cfg, MonoMethod *method)
 #endif
 
 	if (g_list_find (cfg->dont_inline, method))
+		return FALSE;
+
+	if (mono_profiler_get_call_instrumentation_flags (method))
 		return FALSE;
 
 	return TRUE;
@@ -6643,10 +6621,78 @@ set_exception_type_from_invalid_il (MonoCompile *cfg, MonoMethod *method, unsign
 	cfg->headers_to_free = g_slist_prepend_mempool (cfg->mempool, cfg->headers_to_free, header);
 }
 
+static guint32
+mono_type_to_stloc_coerce (MonoType *type)
+{
+	if (type->byref)
+		return 0;
+
+	type = mini_get_underlying_type (type);
+handle_enum:
+	switch (type->type) {
+	case MONO_TYPE_I1:
+		return OP_ICONV_TO_I1;
+	case MONO_TYPE_U1:
+		return OP_ICONV_TO_U1;
+	case MONO_TYPE_I2:
+		return OP_ICONV_TO_I2;
+	case MONO_TYPE_U2:
+		return OP_ICONV_TO_U2;
+	case MONO_TYPE_I4:
+	case MONO_TYPE_U4:
+	case MONO_TYPE_I:
+	case MONO_TYPE_U:
+	case MONO_TYPE_PTR:
+	case MONO_TYPE_FNPTR:
+	case MONO_TYPE_CLASS:
+	case MONO_TYPE_STRING:
+	case MONO_TYPE_OBJECT:
+	case MONO_TYPE_SZARRAY:
+	case MONO_TYPE_ARRAY:
+	case MONO_TYPE_I8:
+	case MONO_TYPE_U8:
+	case MONO_TYPE_R4:
+	case MONO_TYPE_R8:
+	case MONO_TYPE_TYPEDBYREF:
+	case MONO_TYPE_GENERICINST:
+		return 0;
+	case MONO_TYPE_VALUETYPE:
+		if (type->data.klass->enumtype) {
+			type = mono_class_enum_basetype (type->data.klass);
+			goto handle_enum;
+		}
+		return 0;
+	case MONO_TYPE_VAR:
+	case MONO_TYPE_MVAR: //TODO I believe we don't need to handle gsharedvt as there won't be match and, for example, u1 is not covariant to u32
+		return 0;
+	default:
+		g_error ("unknown type 0x%02x in mono_type_to_stloc_coerce", type->type);
+	}
+	return -1;
+}
+
 static void
 emit_stloc_ir (MonoCompile *cfg, MonoInst **sp, MonoMethodHeader *header, int n)
 {
 	MonoInst *ins;
+	guint32 coerce_op = mono_type_to_stloc_coerce (header->locals [n]);
+
+	if (coerce_op) {
+		if (cfg->cbb->last_ins == sp [0] && sp [0]->opcode == coerce_op) {
+			if (cfg->verbose_level > 2)
+				printf ("Found existing coercing is enough for stloc\n");
+		} else {
+			MONO_INST_NEW (cfg, ins, coerce_op);
+			ins->dreg = alloc_ireg (cfg);
+			ins->sreg1 = sp [0]->dreg;
+			ins->type = STACK_I4;
+			ins->klass = mono_class_from_mono_type (header->locals [n]);
+			MONO_ADD_INS (cfg->cbb, ins);
+			*sp = mono_decompose_opcode (cfg, ins);
+		}
+	}
+
+
 	guint32 opcode = mono_type_to_regmove (cfg, header->locals [n]);
 	if ((opcode == OP_MOVE) && cfg->cbb->last_ins == sp [0]  &&
 			((sp [0]->opcode == OP_ICONST) || (sp [0]->opcode == OP_I8CONST))) {
@@ -6659,6 +6705,30 @@ emit_stloc_ir (MonoCompile *cfg, MonoInst **sp, MonoMethodHeader *header, int n)
 	} else {
 		EMIT_NEW_LOCSTORE (cfg, ins, n, *sp);
 	}
+}
+
+static void
+emit_starg_ir (MonoCompile *cfg, MonoInst **sp, int n)
+{
+	MonoInst *ins;
+	guint32 coerce_op = mono_type_to_stloc_coerce (cfg->arg_types [n]);
+
+	if (coerce_op) {
+		if (cfg->cbb->last_ins == sp [0] && sp [0]->opcode == coerce_op) {
+			if (cfg->verbose_level > 2)
+				printf ("Found existing coercing is enough for starg\n");
+		} else {
+			MONO_INST_NEW (cfg, ins, coerce_op);
+			ins->dreg = alloc_ireg (cfg);
+			ins->sreg1 = sp [0]->dreg;
+			ins->type = STACK_I4;
+			ins->klass = mono_class_from_mono_type (cfg->arg_types [n]);
+			MONO_ADD_INS (cfg->cbb, ins);
+			*sp = mono_decompose_opcode (cfg, ins);
+		}
+	}
+
+	EMIT_NEW_ARGSTORE (cfg, ins, n, *sp);
 }
 
 /*
@@ -7834,7 +7904,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_ARG (n);
 			if (!dont_verify_stloc && target_type_is_incompatible (cfg, param_types [ip [1]], *sp))
 				UNVERIFIED;
-			EMIT_NEW_ARGSTORE (cfg, ins, n, *sp);
+			emit_starg_ir (cfg, sp, n);
 			ip += 2;
 			break;
 		case CEE_LDLOC_S:
@@ -8057,7 +8127,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (cfg->gshared && mono_method_check_context_used (cmethod))
 				GENERIC_SHARING_FAILURE (CEE_JMP);
 
-			emit_instrumentation_call (cfg, mono_profiler_raise_method_leave, FALSE);
+			mini_profiler_emit_tail_call (cfg, cmethod);
 
 			fsig = mono_method_signature (cmethod);
 			n = fsig->param_count + fsig->hasthis;
@@ -8999,7 +9069,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					/* Handle tail calls similarly to normal calls */
 					tail_call = TRUE;
 				} else {
-					emit_instrumentation_call (cfg, mono_profiler_raise_method_leave, FALSE);
+					mini_profiler_emit_tail_call (cfg, cmethod);
 
 					MONO_INST_NEW_CALL (cfg, call, OP_JMP);
 					call->tail_call = TRUE;
@@ -9110,6 +9180,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			break;
 		}
 		case CEE_RET:
+			mini_profiler_emit_leave (cfg, sig->ret->type != MONO_TYPE_VOID ? sp [-1] : NULL);
+
 			if (cfg->method != method) {
 				/* return from inlined method */
 				/* 
@@ -9142,8 +9214,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			     * need bug-for-bug compatibility with .NET so we skip popping
 			     * the return value in these cases. */
 			} else {
-				emit_instrumentation_call (cfg, mono_profiler_raise_method_leave, FALSE);
-
 				if (cfg->lmf_var && cfg->cbb->in_count && !cfg->llvm_only)
 					emit_pop_lmf (cfg);
 
@@ -12333,7 +12403,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				CHECK_ARG (n);
 				if (!dont_verify_stloc && target_type_is_incompatible (cfg, param_types [n], *sp))
 					UNVERIFIED;
-				EMIT_NEW_ARGSTORE (cfg, ins, n, *sp);
+				emit_starg_ir (cfg, sp, n);
 				ip += 4;
 				break;
 			case CEE_LDLOC:
@@ -12680,7 +12750,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	}
 
 	cfg->cbb = init_localsbb;
-	emit_instrumentation_call (cfg, mono_profiler_raise_method_enter, TRUE);
+	mini_profiler_emit_enter (cfg);
 
 	if (seq_points) {
 		MonoBasicBlock *bb;

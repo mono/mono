@@ -47,7 +47,6 @@ using System.Security.Permissions;
 [assembly: NeutralResourcesLanguage ("en-US")]
 
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../msfinal.pub")]
 
 [assembly: AssemblyDefaultAlias ("System.Security.dll")]
 [assembly: AssemblyDescription ("System.Security.dll")]

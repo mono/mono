@@ -173,8 +173,6 @@ debug_enter (InterpFrame *frame, int *tracing)
 		g_print  ("%s)\n", args);
 		g_free (args);
 	}
-	if (mono_profiler_should_instrument_method (frame->imethod->method, TRUE))
-		MONO_PROFILER_RAISE (method_enter, (frame->imethod->method));
 }
 
 
@@ -190,9 +188,7 @@ debug_enter (InterpFrame *frame, int *tracing)
 		g_free (args);	\
 		debug_indent_level--;	\
 		if (tracing == 3) global_tracing = 0; \
-	}	\
-	if (mono_profiler_should_instrument_method (frame->imethod->method, FALSE)) \
-		MONO_PROFILER_RAISE (method_leave, (frame->imethod->method));
+	}
 
 #else
 
@@ -297,6 +293,8 @@ mono_interp_get_imethod (MonoDomain *domain, MonoMethod *method, MonoError *erro
 		mono_internal_hash_table_insert (&info->interp_code_hash, method, rtm);
 	mono_domain_jit_code_hash_unlock (domain);
 
+	rtm->prof_flags = mono_profiler_get_call_instrumentation_flags (rtm->method);
+
 	return rtm;
 }
 
@@ -392,8 +390,9 @@ get_virtual_method (InterpMethod *imethod, MonoObject *obj)
 }
 
 static void inline
-stackval_from_data (MonoType *type, stackval *result, char *data, gboolean pinvoke)
+stackval_from_data (MonoType *type_, stackval *result, char *data, gboolean pinvoke)
 {
+	MonoType *type = mini_native_type_replace_type (type_);
 	if (type->byref) {
 		switch (type->type) {
 		case MONO_TYPE_OBJECT:
@@ -481,8 +480,9 @@ stackval_from_data (MonoType *type, stackval *result, char *data, gboolean pinvo
 }
 
 static void inline
-stackval_to_data (MonoType *type, stackval *val, char *data, gboolean pinvoke)
+stackval_to_data (MonoType *type_, stackval *val, char *data, gboolean pinvoke)
 {
+	MonoType *type = mini_native_type_replace_type (type_);
 	if (type->byref) {
 		gpointer *p = (gpointer*)data;
 		*p = val->data.p;
@@ -603,6 +603,7 @@ fill_in_trace (MonoException *exception, InterpFrame *frame)
 		if (!rethrow) { \
 			FILL_IN_TRACE(frame->ex, frame);	\
 		} \
+		MONO_PROFILER_RAISE (exception_throw, ((MonoObject *) exception));	\
 		goto handle_exception;	\
 	} while (0)
 
@@ -2331,6 +2332,9 @@ ves_exec_method_with_context (InterpFrame *frame, ThreadContext *context, unsign
 		MINT_IN_CASE(MINT_NOP)
 			++ip;
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_NIY)
+			g_error ("mint_niy: instruction not implemented yet.  This shouldn't happen.");
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BREAK)
 			++ip;
 			do_debugger_tramp (mono_debugger_agent_user_break, frame);
@@ -2437,6 +2441,10 @@ ves_exec_method_with_context (InterpFrame *frame, ThreadContext *context, unsign
 		}
 		MINT_IN_CASE(MINT_JMP) {
 			InterpMethod *new_method = rtm->data_items [* (guint16 *)(ip + 1)];
+
+			if (frame->imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_TAIL_CALL)
+				MONO_PROFILER_RAISE (method_tail_call, (frame->imethod->method, new_method->method));
+
 			if (!new_method->transformed) {
 				frame->ip = ip;
 				frame->ex = mono_interp_transform_method (new_method, context);
@@ -3610,6 +3618,15 @@ array_constructed:
 			++sp;
 			MINT_IN_BREAK;
 		}
+		MINT_IN_CASE(MINT_NEWOBJ_MAGIC) {
+			guint32 token;
+
+			frame->ip = ip;
+			token = * (guint16 *)(ip + 1);
+			ip += 2;
+
+			MINT_IN_BREAK;
+		}
 		MINT_IN_CASE(MINT_CASTCLASS)
 			c = rtm->data_items [*(guint16 *)(ip + 1)];
 			if ((o = sp [-1].data.p)) {
@@ -3955,7 +3972,7 @@ array_constructed:
 			c = rtm->data_items [* (guint16 *)(ip + 1)];
 			guint16 offset = * (guint16 *)(ip + 2);
 
-			if (c->byval_arg.type == MONO_TYPE_VALUETYPE && !c->enumtype) {
+			if (c->byval_arg.type == MONO_TYPE_VALUETYPE && !c->enumtype && !(mono_class_is_magic_int (c) || mono_class_is_magic_float (c))) {
 				int size = mono_class_value_size (c, NULL);
 				sp [-1 - offset].data.p = mono_value_box_checked (rtm->domain, c, sp [-1 - offset].data.p, &error);
 				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
@@ -4591,6 +4608,15 @@ array_constructed:
 	--sp; \
 	sp [-1].data.i = sp [-1].data.datamem op sp [0].data.datamem; \
 	++ip;
+
+#define RELOP_FP(datamem, op, noorder) \
+	--sp; \
+	if (isunordered (sp [-1].data.datamem, sp [0].data.datamem)) \
+		sp [-1].data.i = noorder; \
+	else \
+		sp [-1].data.i = sp [-1].data.datamem op sp [0].data.datamem; \
+	++ip;
+
 		MINT_IN_CASE(MINT_CEQ_I4)
 			RELOP(i, ==);
 			MINT_IN_BREAK;
@@ -4602,12 +4628,16 @@ array_constructed:
 			RELOP(l, ==);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CEQ_R8)
-			--sp; 
-			if (isunordered (sp [-1].data.f, sp [0].data.f))
-				sp [-1].data.i = 0;
-			else
-				sp [-1].data.i = sp [-1].data.f == sp [0].data.f;
-			++ip;
+			RELOP_FP(f, ==, 0);
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CNE_I4)
+			RELOP(i, !=);
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CNE_I8)
+			RELOP(l, !=);
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CNE_R8)
+			RELOP_FP(f, !=, 0);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CGT_I4)
 			RELOP(i, >);
@@ -4616,18 +4646,29 @@ array_constructed:
 			RELOP(l, >);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CGT_R8)
-			--sp; 
-			if (isunordered (sp [-1].data.f, sp [0].data.f))
-				sp [-1].data.i = 0;
-			else
-				sp [-1].data.i = sp [-1].data.f > sp [0].data.f;
-			++ip;
+			RELOP_FP(f, >, 0);
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CGE_I4)
+			RELOP(i, >=);
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CGE_I8)
+			RELOP(l, >=);
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CGE_R8)
+			RELOP_FP(f, >=, 0);
 			MINT_IN_BREAK;
 
 #define RELOP_CAST(datamem, op, type) \
 	--sp; \
 	sp [-1].data.i = (type)sp [-1].data.datamem op (type)sp [0].data.datamem; \
 	++ip;
+
+		MINT_IN_CASE(MINT_CGE_UN_I4)
+			RELOP_CAST(l, >=, guint32);
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CGE_UN_I8)
+			RELOP_CAST(l, >=, guint64);
+			MINT_IN_BREAK;
 
 		MINT_IN_CASE(MINT_CGT_UN_I4)
 			RELOP_CAST(i, >, guint32);
@@ -4636,12 +4677,7 @@ array_constructed:
 			RELOP_CAST(l, >, guint64);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CGT_UN_R8)
-			--sp; 
-			if (isunordered (sp [-1].data.f, sp [0].data.f))
-				sp [-1].data.i = 1;
-			else
-				sp [-1].data.i = sp [-1].data.f > sp [0].data.f;
-			++ip;
+			RELOP_FP(f, >, 1);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CLT_I4)
 			RELOP(i, <);
@@ -4650,12 +4686,7 @@ array_constructed:
 			RELOP(l, <);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CLT_R8)
-			--sp; 
-			if (isunordered (sp [-1].data.f, sp [0].data.f))
-				sp [-1].data.i = 0;
-			else
-				sp [-1].data.i = sp [-1].data.f < sp [0].data.f;
-			++ip;
+			RELOP_FP(f, <, 0);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CLT_UN_I4)
 			RELOP_CAST(i, <, guint32);
@@ -4664,13 +4695,28 @@ array_constructed:
 			RELOP_CAST(l, <, guint64);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CLT_UN_R8)
-			--sp; 
-			if (isunordered (sp [-1].data.f, sp [0].data.f))
-				sp [-1].data.i = 1;
-			else
-				sp [-1].data.i = sp [-1].data.f < sp [0].data.f;
-			++ip;
+			RELOP_FP(f, <, 1);
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CLE_I4)
+			RELOP(i, <=);
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CLE_I8)
+			RELOP(l, <=);
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CLE_UN_I4)
+			RELOP_CAST(l, <=, guint32);
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CLE_UN_I8)
+			RELOP_CAST(l, <=, guint64);
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CLE_R8)
+			RELOP_FP(f, <=, 0);
+			MINT_IN_BREAK;
+
+#undef RELOP
+#undef RELOP_FP
+#undef RELOP_CAST
+
 		MINT_IN_CASE(MINT_LDFTN) {
 			sp->data.p = rtm->data_items [* (guint16 *)(ip + 1)];
 			++sp;
@@ -4761,6 +4807,26 @@ array_constructed:
 			i32 = READ32(ip + 2);
 			memcpy (frame->args + rtm->arg_offsets [n], frame->stack_args [n].data.p, i32);
 			ip += 4;
+			MINT_IN_BREAK;
+		}
+
+		MINT_IN_CASE(MINT_PROF_ENTER) {
+			ip += 1;
+
+			if (MONO_PROFILER_ENABLED (method_enter)) {
+				MonoProfilerCallContext *prof_ctx = NULL;
+
+				if (frame->imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_ENTER_CONTEXT) {
+					prof_ctx = g_new0 (MonoProfilerCallContext, 1);
+					prof_ctx->interp_frame = frame;
+					prof_ctx->method = frame->imethod->method;
+				}
+
+				MONO_PROFILER_RAISE (method_enter, (frame->imethod->method, prof_ctx));
+
+				g_free (prof_ctx);
+			}
+
 			MINT_IN_BREAK;
 		}
 
@@ -5120,6 +5186,36 @@ die_on_ex:
 		goto exit_frame;
 	}
 exit_frame:
+
+	if (!frame->ex && MONO_PROFILER_ENABLED (method_leave) &&
+	    frame->imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_LEAVE) {
+		MonoProfilerCallContext *prof_ctx = NULL;
+
+		if (frame->imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_LEAVE_CONTEXT) {
+			prof_ctx = g_new0 (MonoProfilerCallContext, 1);
+			prof_ctx->interp_frame = frame;
+			prof_ctx->method = frame->imethod->method;
+
+			MonoType *rtype = mono_method_signature (frame->imethod->method)->ret;
+
+			switch (rtype->type) {
+			case MONO_TYPE_VOID:
+				break;
+			case MONO_TYPE_VALUETYPE:
+				prof_ctx->return_value = frame->retval->data.p;
+				break;
+			default:
+				prof_ctx->return_value = frame->retval;
+				break;
+			}
+		}
+
+		MONO_PROFILER_RAISE (method_leave, (frame->imethod->method, prof_ctx));
+
+		g_free (prof_ctx);
+	} else if (frame->ex && frame->imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_EXCEPTION_LEAVE)
+		MONO_PROFILER_RAISE (method_exception_leave, (frame->imethod->method, &frame->ex->object));
+
 	DEBUG_LEAVE ();
 }
 

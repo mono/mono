@@ -25,6 +25,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Windows.Markup;
 using System.Windows.Media.Converters;
 using System.Windows.Threading;
@@ -109,7 +110,16 @@ namespace System.Windows.Media {
 
 		public override int GetHashCode ()
 		{
-			throw new NotImplementedException ();
+			unchecked
+			{
+				var hashCode = _m11.GetHashCode ();
+				hashCode = (hashCode * 397) ^ _m12.GetHashCode ();
+				hashCode = (hashCode * 397) ^ _m21.GetHashCode ();
+				hashCode = (hashCode * 397) ^ _m22.GetHashCode ();
+				hashCode = (hashCode * 397) ^ _offsetX.GetHashCode ();
+				hashCode = (hashCode * 397) ^ _offsetY.GetHashCode ();
+				return hashCode;
+			}
 		}
 
 		public void Invert ()
@@ -167,7 +177,39 @@ namespace System.Windows.Media {
 
 		public static Matrix Parse (string source)
 		{
-			throw new NotImplementedException ();
+			if (source == null)
+				throw new ArgumentNullException ("source");
+			Matrix value;
+			if (source.Trim () == "Identity")
+			{
+				value = Identity;
+			}
+			else
+			{
+				var parts = source.Split (',');
+				if (parts.Length != 6)
+					throw new FormatException (string.Format ("Invalid Matrix format: {0}", source));
+				double m11;
+				double m12;
+				double m21;
+				double m22;
+				double offsetX;
+				double offsetY;
+				if (double.TryParse (parts[0], NumberStyles.Float, CultureInfo.InvariantCulture, out m11)
+				    && double.TryParse (parts[1], NumberStyles.Float, CultureInfo.InvariantCulture, out m12)
+				    && double.TryParse (parts[2], NumberStyles.Float, CultureInfo.InvariantCulture, out m21)
+				    && double.TryParse (parts[3], NumberStyles.Float, CultureInfo.InvariantCulture, out m22)
+				    && double.TryParse (parts[4], NumberStyles.Float, CultureInfo.InvariantCulture, out offsetX)
+				    && double.TryParse (parts[5], NumberStyles.Float, CultureInfo.InvariantCulture, out offsetY))
+				{
+					value = new Matrix (m11, m12, m21, m22, offsetX, offsetY);
+				}
+				else
+				{
+					throw new FormatException (string.Format ("Invalid Matrix format: {0}", source));
+				}
+			}
+			return value;
 		}
 
 		public void Prepend (Matrix matrix)
@@ -297,21 +339,19 @@ namespace System.Windows.Media {
 		string IFormattable.ToString (string format,
 					      IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return ToString (provider);
 		}
 
 		public override string ToString ()
 		{
-			if (IsIdentity)
-				return "Identity";
-			else
-				return string.Format ("{0},{1},{2},{3},{4},{5}",
-						      _m11, _m12, _m21, _m22, _offsetX, _offsetY);
+			return ToString (null);
 		}
 
 		public string ToString (IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return IsIdentity
+				? "Identity"
+				: string.Concat (_m11, ",", _m12, ",", _m21, ",", _m22, ",", _offsetX, ",", _offsetY);
 		}
 
 		public Point Transform (Point point)

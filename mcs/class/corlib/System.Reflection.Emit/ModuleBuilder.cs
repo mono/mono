@@ -159,8 +159,8 @@ namespace System.Reflection.Emit {
 			if (data == null)
 				throw new ArgumentNullException ("data");
 
-			FieldBuilder fb = DefineUninitializedData (name, data.Length, 
-													   attributes | FieldAttributes.HasFieldRVA);
+			var maskedAttributes = attributes & ~FieldAttributes.ReservedMask;
+			FieldBuilder fb = DefineDataImpl (name, data.Length, maskedAttributes | FieldAttributes.HasFieldRVA);
 			fb.SetRVAData (data);
 
 			return fb;
@@ -168,12 +168,19 @@ namespace System.Reflection.Emit {
 
 		public FieldBuilder DefineUninitializedData (string name, int size, FieldAttributes attributes)
 		{
+			return DefineDataImpl (name, size, attributes & ~FieldAttributes.ReservedMask);
+		}
+
+		private FieldBuilder DefineDataImpl (string name, int size, FieldAttributes attributes)
+		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
+			if (name == String.Empty)
+				throw new ArgumentException ("name cannot be empty", "name");
 			if (global_type_created != null)
 				throw new InvalidOperationException ("global fields already created");
-			if ((size <= 0) || (size > 0x3f0000))
-				throw new ArgumentException ("size", "Data size must be > 0 and < 0x3f0000");
+			if ((size <= 0) || (size >= 0x3f0000))
+				throw new ArgumentException ("Data size must be > 0 and < 0x3f0000", null as string);
 
 			CreateGlobalType ();
 

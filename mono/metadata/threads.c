@@ -62,11 +62,11 @@
 #include <objbase.h>
 #endif
 
-#if defined(PLATFORM_ANDROID) && !defined(TARGET_ARM64) && !defined(TARGET_AMD64)
+#if defined(HOST_ANDROID) && !defined(TARGET_ARM64) && !defined(TARGET_AMD64)
 #define USE_TKILL_ON_ANDROID 1
 #endif
 
-#ifdef PLATFORM_ANDROID
+#ifdef HOST_ANDROID
 #include <errno.h>
 
 #ifdef USE_TKILL_ON_ANDROID
@@ -462,8 +462,8 @@ typedef union {
 #define SPECIAL_STATIC_OFFSET_TYPE_THREAD 0
 #define SPECIAL_STATIC_OFFSET_TYPE_CONTEXT 1
 
-#define MAKE_SPECIAL_STATIC_OFFSET(index, offset, type) \
-	((SpecialStaticOffset) { .fields = { (index), (offset), (type) } }.raw)
+#define MAKE_SPECIAL_STATIC_OFFSET(idx, off, ty) \
+	((SpecialStaticOffset) { .fields = { .index = (idx), .offset = (off), .type = (ty) } }.raw)
 #define ACCESS_SPECIAL_STATIC_OFFSET(x,f) \
 	(((SpecialStaticOffset *) &(x))->fields.f)
 

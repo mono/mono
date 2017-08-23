@@ -1143,7 +1143,7 @@ static MonoDl *internal_module;
 static gboolean
 is_absolute_path (const char *path)
 {
-#ifdef PLATFORM_MACOSX
+#ifdef HOST_DARWIN
 	if (!strncmp (path, "@executable_path/", 17) || !strncmp (path, "@loader_path/", 13) ||
 	    !strncmp (path, "@rpath/", 7))
 	    return TRUE;
@@ -1658,7 +1658,7 @@ mono_get_method_from_token (MonoImage *image, guint32 token, MonoClass *klass,
 		methods_size += sizeof (MonoMethod);
 	}
 
-	mono_stats.method_count ++;
+	InterlockedIncrement (&mono_stats.method_count);
 
 	result->slot = -1;
 	result->klass = klass;
@@ -1887,7 +1887,7 @@ mono_get_method_constrained_checked (MonoImage *image, guint32 token, MonoClass 
 {
 	error_init (error);
 
-	*cil_method = mono_get_method_from_token (image, token, NULL, context, NULL, error);
+	*cil_method = mono_get_method_checked (image, token, NULL, context, error);
 	if (!*cil_method)
 		return NULL;
 

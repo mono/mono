@@ -15,4 +15,3 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 
 [assembly: AssemblyDelaySign(true)]
-[assembly: AssemblyKeyFile("../mono.snk")]

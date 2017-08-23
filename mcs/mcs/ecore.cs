@@ -2429,7 +2429,12 @@ namespace Mono.CSharp {
 
 		public override void FlowAnalysis (FlowAnalysisContext fc)
 		{
-			expr.FlowAnalysis (fc);
+			orig_expr.FlowAnalysis (fc);
+		}
+
+		public override void FlowAnalysisConditional (FlowAnalysisContext fc)
+		{
+			orig_expr.FlowAnalysisConditional (fc);
 		}
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
@@ -4052,6 +4057,11 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			throw new NotSupportedException ();
+		}
+
+		public override void EmitPrepare (EmitContext ec)
+		{
+			InstanceExpression?.EmitPrepare (ec);
 		}
 
 		public void EmitCall (EmitContext ec, Arguments arguments, bool statement)

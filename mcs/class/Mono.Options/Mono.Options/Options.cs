@@ -32,8 +32,8 @@
 //
 
 // Compile With:
-//   mcs -debug+ -r:System.Core Options.cs -o:Mono.Options.dll
-//   mcs -debug+ -d:LINQ -r:System.Core Options.cs -o:Mono.Options.dll
+//   mcs -debug+ -r:System.Core Options.cs -o:Mono.Options.dll -t:library
+//   mcs -debug+ -d:LINQ -r:System.Core Options.cs -o:Mono.Options.dll -t:library
 //
 // The LINQ version just changes the implementation of
 // OptionSet.Parse(IEnumerable<string>), and confers no semantic changes.

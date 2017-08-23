@@ -643,6 +643,7 @@ typedef struct {
 	gboolean (*mono_current_thread_has_handle_block_guard) (void);
 	gboolean (*mono_above_abort_threshold) (void);
 	void (*mono_clear_abort_threshold) (void);
+	void (*mono_reraise_exception) (MonoException *ex);
 } MonoRuntimeExceptionHandlingCallbacks;
 
 MONO_COLD void mono_set_pending_exception (MonoException *exc);
@@ -682,9 +683,6 @@ mono_delegate_ctor_with_method (MonoObjectHandle this_obj, MonoObjectHandle targ
 
 gboolean
 mono_delegate_ctor	    (MonoObjectHandle this_obj, MonoObjectHandle target, gpointer addr, MonoError *error);
-
-void*
-mono_class_get_allocation_ftn (MonoVTable *vtable, gboolean for_box, gboolean *pass_size_in_words);
 
 void
 mono_runtime_free_method    (MonoDomain *domain, MonoMethod *method);
@@ -1574,6 +1572,9 @@ ves_icall_array_new_specific (MonoVTable *vtable, uintptr_t n);
 MonoRemoteClass*
 mono_remote_class (MonoDomain *domain, MonoStringHandle class_name, MonoClass *proxy_class, MonoError *error);
 
+gboolean
+mono_remote_class_is_interface_proxy (MonoRemoteClass *remote_class);
+
 MonoObject *
 mono_remoting_invoke (MonoObject *real_proxy, MonoMethodMessage *msg, MonoObject **exc, MonoArray **out_args, MonoError *error);
 
@@ -1812,9 +1813,6 @@ mono_object_new_mature (MonoVTable *vtable, MonoError *error);
 
 MonoObject*
 mono_object_new_fast_checked (MonoVTable *vtable, MonoError *error);
-
-MonoObject *
-ves_icall_object_new_fast (MonoVTable *vtable);
 
 MonoObject *
 mono_object_clone_checked (MonoObject *obj, MonoError *error);

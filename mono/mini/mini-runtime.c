@@ -64,6 +64,7 @@
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-threads-coop.h>
 #include <mono/utils/checked-build.h>
+#include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-proclib.h>
 #include <mono/metadata/w32handle.h>
 #include <mono/metadata/threadpool.h>
@@ -1733,12 +1734,6 @@ lookup_method (MonoDomain *domain, MonoMethod *method)
 	}
 
 	return ji;
-}
-
-MonoJitInfo *
-mono_get_jit_info_from_method (MonoDomain *domain, MonoMethod *method)
-{
-	return lookup_method (domain, method);
 }
 
 MonoClass*
@@ -3938,6 +3933,13 @@ mini_init (const char *filename, const char *runtime_version)
 	mono_install_get_class_from_name (mono_aot_get_class_from_name);
 	mono_install_jit_info_find_in_aot (mono_aot_find_jit_info);
 
+	mono_profiler_state.context_enable = mini_profiler_context_enable;
+	mono_profiler_state.context_get_this = mini_profiler_context_get_this;
+	mono_profiler_state.context_get_argument = mini_profiler_context_get_argument;
+	mono_profiler_state.context_get_local = mini_profiler_context_get_local;
+	mono_profiler_state.context_get_result = mini_profiler_context_get_result;
+	mono_profiler_state.context_free_buffer = mini_profiler_context_free_buffer;
+
 	if (profile_options)
 		for (guint i = 0; i < profile_options->len; i++)
 			mono_profiler_load ((const char *) g_ptr_array_index (profile_options, i));
@@ -4044,7 +4046,7 @@ register_icalls (void)
 	mono_add_internal_call ("Mono.Runtime::mono_runtime_cleanup_handlers",
 				mono_runtime_cleanup_handlers);
 
-#if defined(PLATFORM_ANDROID) || defined(TARGET_ANDROID)
+#if defined(HOST_ANDROID) || defined(TARGET_ANDROID)
 	mono_add_internal_call ("System.Diagnostics.Debugger::Mono_UnhandledException_internal",
 				mono_debugger_agent_unhandled_exception);
 #endif
@@ -4056,8 +4058,9 @@ register_icalls (void)
 	 * the wrapper would call the icall which would call the wrapper and
 	 * so on.
 	 */
-	register_icall (mono_profiler_raise_method_enter, "mono_profiler_raise_method_enter", "void ptr", TRUE);
-	register_icall (mono_profiler_raise_method_leave, "mono_profiler_raise_method_leave", "void ptr", TRUE);
+	register_icall (mono_profiler_raise_method_enter, "mono_profiler_raise_method_enter", "void ptr ptr", TRUE);
+	register_icall (mono_profiler_raise_method_leave, "mono_profiler_raise_method_leave", "void ptr ptr", TRUE);
+	register_icall (mono_profiler_raise_method_tail_call, "mono_profiler_raise_method_tail_call", "void ptr ptr", TRUE);
 
 	register_icall (mono_trace_enter_method, "mono_trace_enter_method", NULL, TRUE);
 	register_icall (mono_trace_leave_method, "mono_trace_leave_method", NULL, TRUE);
@@ -4303,6 +4306,11 @@ register_icalls (void)
 
 MonoJitStats mono_jit_stats = {0};
 
+/**
+ * Counters of mono_stats can be read without locking here.
+ * MONO_NO_SANITIZE_THREAD tells Clang's ThreadSanitizer to hide all reports of these (known) races.
+ */
+MONO_NO_SANITIZE_THREAD
 static void
 print_jit_stats (void)
 {
@@ -4313,36 +4321,36 @@ print_jit_stats (void)
 		g_print ("Biggest method:         %ld (%s)\n", mono_jit_stats.biggest_method_size,
 				 mono_jit_stats.biggest_method);
 
-		g_print ("Delegates created:      %ld\n", mono_stats.delegate_creations);
-		g_print ("Initialized classes:    %ld\n", mono_stats.initialized_class_count);
-		g_print ("Used classes:           %ld\n", mono_stats.used_class_count);
-		g_print ("Generic vtables:        %ld\n", mono_stats.generic_vtable_count);
-		g_print ("Methods:                %ld\n", mono_stats.method_count);
-		g_print ("Static data size:       %ld\n", mono_stats.class_static_data_size);
-		g_print ("VTable data size:       %ld\n", mono_stats.class_vtable_size);
+		g_print ("Delegates created:      %" G_GINT32_FORMAT "\n", mono_stats.delegate_creations);
+		g_print ("Initialized classes:    %" G_GINT32_FORMAT "\n", mono_stats.initialized_class_count);
+		g_print ("Used classes:           %" G_GINT32_FORMAT "\n", mono_stats.used_class_count);
+		g_print ("Generic vtables:        %" G_GINT32_FORMAT "\n", mono_stats.generic_vtable_count);
+		g_print ("Methods:                %" G_GINT32_FORMAT "\n", mono_stats.method_count);
+		g_print ("Static data size:       %" G_GINT32_FORMAT "\n", mono_stats.class_static_data_size);
+		g_print ("VTable data size:       %" G_GINT32_FORMAT "\n", mono_stats.class_vtable_size);
 		g_print ("Mscorlib mempool size:  %d\n", mono_mempool_get_allocated (mono_defaults.corlib->mempool));
 
-		g_print ("\nInitialized classes:    %ld\n", mono_stats.generic_class_count);
-		g_print ("Inflated types:         %ld\n", mono_stats.inflated_type_count);
+		g_print ("\nInitialized classes:    %" G_GINT32_FORMAT "\n", mono_stats.generic_class_count);
+		g_print ("Inflated types:         %" G_GINT32_FORMAT "\n", mono_stats.inflated_type_count);
 		g_print ("Generics virtual invokes: %ld\n", mono_jit_stats.generic_virtual_invocations);
 
-		g_print ("Sharable generic methods: %ld\n", mono_stats.generics_sharable_methods);
-		g_print ("Unsharable generic methods: %ld\n", mono_stats.generics_unsharable_methods);
-		g_print ("Shared generic methods: %ld\n", mono_stats.generics_shared_methods);
-		g_print ("Shared vtype generic methods: %ld\n", mono_stats.gsharedvt_methods);
+		g_print ("Sharable generic methods: %" G_GINT32_FORMAT "\n", mono_stats.generics_sharable_methods);
+		g_print ("Unsharable generic methods: %" G_GINT32_FORMAT "\n", mono_stats.generics_unsharable_methods);
+		g_print ("Shared generic methods: %" G_GINT32_FORMAT "\n", mono_stats.generics_shared_methods);
+		g_print ("Shared vtype generic methods: %" G_GINT32_FORMAT "\n", mono_stats.gsharedvt_methods);
 
-		g_print ("IMT tables size:        %ld\n", mono_stats.imt_tables_size);
-		g_print ("IMT number of tables:   %ld\n", mono_stats.imt_number_of_tables);
-		g_print ("IMT number of methods:  %ld\n", mono_stats.imt_number_of_methods);
-		g_print ("IMT used slots:         %ld\n", mono_stats.imt_used_slots);
-		g_print ("IMT colliding slots:    %ld\n", mono_stats.imt_slots_with_collisions);
-		g_print ("IMT max collisions:     %ld\n", mono_stats.imt_max_collisions_in_slot);
-		g_print ("IMT methods at max col: %ld\n", mono_stats.imt_method_count_when_max_collisions);
-		g_print ("IMT trampolines size:   %ld\n", mono_stats.imt_trampolines_size);
+		g_print ("IMT tables size:        %" G_GINT32_FORMAT "\n", mono_stats.imt_tables_size);
+		g_print ("IMT number of tables:   %" G_GINT32_FORMAT "\n", mono_stats.imt_number_of_tables);
+		g_print ("IMT number of methods:  %" G_GINT32_FORMAT "\n", mono_stats.imt_number_of_methods);
+		g_print ("IMT used slots:         %" G_GINT32_FORMAT "\n", mono_stats.imt_used_slots);
+		g_print ("IMT colliding slots:    %" G_GINT32_FORMAT "\n", mono_stats.imt_slots_with_collisions);
+		g_print ("IMT max collisions:     %" G_GINT32_FORMAT "\n", mono_stats.imt_max_collisions_in_slot);
+		g_print ("IMT methods at max col: %" G_GINT32_FORMAT "\n", mono_stats.imt_method_count_when_max_collisions);
+		g_print ("IMT trampolines size:   %" G_GINT32_FORMAT "\n", mono_stats.imt_trampolines_size);
 
-		g_print ("JIT info table inserts: %ld\n", mono_stats.jit_info_table_insert_count);
-		g_print ("JIT info table removes: %ld\n", mono_stats.jit_info_table_remove_count);
-		g_print ("JIT info table lookups: %ld\n", mono_stats.jit_info_table_lookup_count);
+		g_print ("JIT info table inserts: %" G_GINT32_FORMAT "\n", mono_stats.jit_info_table_insert_count);
+		g_print ("JIT info table removes: %" G_GINT32_FORMAT "\n", mono_stats.jit_info_table_remove_count);
+		g_print ("JIT info table lookups: %" G_GINT32_FORMAT "\n", mono_stats.jit_info_table_lookup_count);
 
 		g_free (mono_jit_stats.max_ratio_method);
 		mono_jit_stats.max_ratio_method = NULL;

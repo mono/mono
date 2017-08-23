@@ -44,7 +44,7 @@
 #define THREAD_LOCAL_ALLOC 1
 #include "private/pthread_support.h"
 
-#if defined(PLATFORM_MACOSX) && defined(HAVE_PTHREAD_GET_STACKADDR_NP)
+#if defined(HOST_DARWIN) && defined(HAVE_PTHREAD_GET_STACKADDR_NP)
 void *pthread_get_stackaddr_np(pthread_t);
 #endif
 
@@ -179,7 +179,7 @@ mono_gc_base_init (void)
 	default_push_other_roots = GC_push_other_roots;
 	GC_push_other_roots = mono_push_other_roots;
 
-#if !defined(PLATFORM_ANDROID)
+#if !defined(HOST_ANDROID)
 	/* If GC_no_dls is set to true, GC_find_limit is not called. This causes a seg fault on Android. */
 	GC_no_dls = TRUE;
 #endif
@@ -458,7 +458,7 @@ on_gc_notification (GC_EventType event)
 		if (mono_perfcounters)
 			mono_perfcounters->gc_collections0++;
 #endif
-		gc_stats.major_gc_count ++;
+		InterlockedIncrement (&gc_stats.major_gc_count);
 		gc_start_time = mono_100ns_ticks ();
 		break;
 
@@ -482,7 +482,7 @@ on_gc_notification (GC_EventType event)
 			mono_perfcounters->gc_gen0size = heap_size;
 		}
 #endif
-		gc_stats.major_gc_time += mono_100ns_ticks () - gc_start_time;
+		InterlockedAdd64 (&gc_stats.major_gc_time, mono_100ns_ticks () - gc_start_time);
 		mono_trace_message (MONO_TRACE_GC, "gc took %" G_GINT64_FORMAT " usecs", (mono_100ns_ticks () - gc_start_time) / 10);
 		break;
 	default:
@@ -1171,11 +1171,8 @@ mono_gc_is_critical_method (MonoMethod *method)
  * @klass. The method will typically have an thread-local inline allocation sequence.
  * The signature of the called method is:
  * 	object allocate (MonoVTable *vtable)
- * Some of the logic here is similar to mono_class_get_allocation_ftn () i object.c,
- * keep in sync.
  * The thread local alloc logic is taken from libgc/pthread_support.c.
  */
-
 MonoMethod*
 mono_gc_get_managed_allocator (MonoClass *klass, gboolean for_box, gboolean known_instance_size)
 {

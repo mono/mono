@@ -30,6 +30,7 @@
 #include <mono/metadata/tokentype.h>
 #include <mono/utils/mono-math.h>
 #include <mono/utils/mono-hwcap.h>
+#include <mono/utils/unlocked.h>
 
 #include "mini-sparc.h"
 #include "trace.h"
@@ -2359,7 +2360,7 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 
 	mono_arch_flush_icache ((guint8*)start, (code - start) * 4);
 
-	mono_stats.imt_trampolines_size += (code - start) * 4;
+	UnlockedAdd (&mono_stats.imt_trampolines_size, (code - start) * 4);
 	g_assert (code - start <= size);
 
 	mono_tramp_info_register (mono_tramp_info_create (NULL, start, code - start, NULL, NULL), domain);
@@ -4410,12 +4411,6 @@ mono_arch_get_argument_info (MonoMethodSignature *csig, int param_count, MonoJit
 
 	g_free (cinfo);
 
-	return 0;
-}
-
-gboolean
-mono_arch_print_tree (MonoInst *tree, int arity)
-{
 	return 0;
 }
 

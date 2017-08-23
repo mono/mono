@@ -3125,9 +3125,9 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 
 	if (opts & MONO_OPT_GSHARED) {
 		if (try_generic_shared)
-			mono_stats.generics_sharable_methods++;
+			InterlockedIncrement (&mono_stats.generics_sharable_methods);
 		else if (mono_method_is_generic_impl (method))
-			mono_stats.generics_unsharable_methods++;
+			InterlockedIncrement (&mono_stats.generics_unsharable_methods);
 	}
 
 #ifdef ENABLE_LLVM
@@ -3163,7 +3163,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	cfg->llvm_only = (flags & JIT_FLAG_LLVM_ONLY) != 0;
 	cfg->backend = current_backend;
 
-#ifdef PLATFORM_ANDROID
+#ifdef HOST_ANDROID
 	if (cfg->method->wrapper_type != MONO_WRAPPER_NONE) {
 		/* FIXME: Why is this needed */
 		cfg->gen_seq_points = FALSE;
@@ -3294,8 +3294,10 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	}
 #endif
 
+	cfg->prof_flags = mono_profiler_get_call_instrumentation_flags (cfg->method);
+
 	/* The debugger has no liveness information, so avoid sharing registers/stack slots */
-	if (debug_options.mdb_optimizations) {
+	if (debug_options.mdb_optimizations || MONO_CFG_PROFILE_CALL_CONTEXT (cfg)) {
 		cfg->disable_reuse_registers = TRUE;
 		cfg->disable_reuse_stack_slots = TRUE;
 		/* 
@@ -4234,9 +4236,9 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 		code = cfg->native_code;
 
 		if (cfg->gshared && mono_method_is_generic_sharable (method, FALSE))
-			mono_stats.generics_shared_methods++;
+			InterlockedIncrement (&mono_stats.generics_shared_methods);
 		if (cfg->gsharedvt)
-			mono_stats.gsharedvt_methods++;
+			InterlockedIncrement (&mono_stats.gsharedvt_methods);
 	}
 
 	jinfo = cfg->jit_info;

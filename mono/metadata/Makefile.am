@@ -59,7 +59,7 @@ unix_sources = \
 platform_sources = $(unix_sources)
 endif
 
-if PLATFORM_ANDROID
+if HOST_ANDROID
 platform_sources += ../../support/libm/complex.c
 endif
 
@@ -223,8 +223,6 @@ common_sources = \
 	w32process.h		\
 	w32process-internals.h		\
 	profiler.c		\
-	profiler-events.h	\
-	profiler-legacy.c	\
 	profiler-private.h	\
 	rand.h			\
 	rand.c			\
@@ -283,7 +281,9 @@ common_sources = \
 	sre.c	\
 	sre-encode.c	\
 	sre-save.c	\
-	custom-attrs.c
+	custom-attrs.c	\
+	fdhandle.h	\
+	fdhandle.c
 
 # These source files have compile time dependencies on GC code
 gc_dependent_sources = \
@@ -350,6 +350,7 @@ libmonoruntimeinclude_HEADERS = \
 	object.h		\
 	opcodes.h		\
 	profiler.h		\
+	profiler-events.h	\
 	reflection.h		\
 	row-indexes.h		\
 	tokentype.h		\

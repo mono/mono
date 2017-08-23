@@ -49,6 +49,7 @@
 #include <mono/utils/mono-threads-coop.h>
 #include "cominterop.h"
 #include <mono/utils/w32api.h>
+#include <mono/utils/unlocked.h>
 
 static void
 get_default_field_value (MonoDomain* domain, MonoClassField *field, void *value, MonoError *error);
@@ -239,6 +240,7 @@ mono_type_initialization_init (void)
 	type_initialization_hash = g_hash_table_new (NULL, NULL);
 	blocked_thread_hash = g_hash_table_new (NULL, NULL);
 	mono_os_mutex_init_recursive (&ldstr_section);
+	mono_register_jit_icall (ves_icall_string_alloc, "ves_icall_string_alloc", mono_create_icall_signature ("object int"), FALSE);
 }
 
 void
@@ -1009,18 +1011,7 @@ mono_class_compute_gc_descriptor (MonoClass *klass)
 	int max_set = 0;
 	gsize *bitmap;
 	gsize default_bitmap [4] = {0};
-	static gboolean gcj_inited = FALSE;
 	MonoGCDescriptor gc_descr;
-
-	if (!gcj_inited) {
-		mono_loader_lock ();
-
-		mono_register_jit_icall (ves_icall_object_new_fast, "ves_icall_object_new_fast", mono_create_icall_signature ("object ptr"), FALSE);
-		mono_register_jit_icall (ves_icall_string_alloc, "ves_icall_string_alloc", mono_create_icall_signature ("object int"), FALSE);
-
-		gcj_inited = TRUE;
-		mono_loader_unlock ();
-	}
 
 	if (!klass->inited)
 		mono_class_init (klass);
@@ -1159,7 +1150,7 @@ mono_method_get_imt_slot (MonoMethod *method)
 
 	sig = mono_method_signature (method);
 	hashes_count = sig->param_count + 4;
-	hashes_start = (guint32 *)malloc (hashes_count * sizeof (guint32));
+	hashes_start = (guint32 *)g_malloc (hashes_count * sizeof (guint32));
 	hashes = hashes_start;
 
 	if (! MONO_CLASS_IS_INTERFACE (method->klass)) {
@@ -1228,12 +1219,12 @@ add_imt_builder_entry (MonoImtBuilderEntry **imt_builder, MonoMethod *method, gu
 	if (imt_builder [imt_slot] != NULL) {
 		entry->children = imt_builder [imt_slot]->children + 1;
 		if (entry->children == 1) {
-			mono_stats.imt_slots_with_collisions++;
+			UnlockedIncrement (&mono_stats.imt_slots_with_collisions);
 			*imt_collisions_bitmap |= (1 << imt_slot);
 		}
 	} else {
 		entry->children = 0;
-		mono_stats.imt_used_slots++;
+		UnlockedIncrement (&mono_stats.imt_used_slots);
 	}
 	imt_builder [imt_slot] = entry;
 #if DEBUG_IMT
@@ -1311,7 +1302,7 @@ imt_sort_slot_entries (MonoImtBuilderEntry *entries) {
 	MONO_REQ_GC_NEUTRAL_MODE;
 
 	int number_of_entries = entries->children + 1;
-	MonoImtBuilderEntry **sorted_array = (MonoImtBuilderEntry **)malloc (sizeof (MonoImtBuilderEntry*) * number_of_entries);
+	MonoImtBuilderEntry **sorted_array = (MonoImtBuilderEntry **)g_malloc (sizeof (MonoImtBuilderEntry*) * number_of_entries);
 	GPtrArray *result = g_ptr_array_new ();
 	MonoImtBuilderEntry *current_entry;
 	int i;
@@ -1376,7 +1367,7 @@ build_imt_slots (MonoClass *klass, MonoVTable *vt, MonoDomain *domain, gpointer*
 	int i;
 	GSList *list_item;
 	guint32 imt_collisions_bitmap = 0;
-	MonoImtBuilderEntry **imt_builder = (MonoImtBuilderEntry **)calloc (MONO_IMT_SIZE, sizeof (MonoImtBuilderEntry*));
+	MonoImtBuilderEntry **imt_builder = (MonoImtBuilderEntry **)g_calloc (MONO_IMT_SIZE, sizeof (MonoImtBuilderEntry*));
 	int method_count = 0;
 	gboolean record_method_count_for_max_collisions = FALSE;
 	gboolean has_generic_virtual = FALSE, has_variant_iface = FALSE;
@@ -1488,17 +1479,17 @@ build_imt_slots (MonoClass *klass, MonoVTable *vt, MonoDomain *domain, gpointer*
 
 		if (imt_builder [i] != NULL) {
 			int methods_in_slot = imt_builder [i]->children + 1;
-			if (methods_in_slot > mono_stats.imt_max_collisions_in_slot) {
-				mono_stats.imt_max_collisions_in_slot = methods_in_slot;
+			if (methods_in_slot > UnlockedRead (&mono_stats.imt_max_collisions_in_slot)) {
+				UnlockedWrite (&mono_stats.imt_max_collisions_in_slot, methods_in_slot);
 				record_method_count_for_max_collisions = TRUE;
 			}
 			method_count += methods_in_slot;
 		}
 	}
 	
-	mono_stats.imt_number_of_methods += method_count;
+	UnlockedAdd (&mono_stats.imt_number_of_methods, method_count);
 	if (record_method_count_for_max_collisions) {
-		mono_stats.imt_method_count_when_max_collisions = method_count;
+		UnlockedWrite (&mono_stats.imt_method_count_when_max_collisions, method_count);
 	}
 	
 	for (i = 0; i < MONO_IMT_SIZE; i++) {
@@ -1911,16 +1902,16 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 
 	if (klass->interface_offsets_count) {
 		imt_table_bytes = sizeof (gpointer) * (MONO_IMT_SIZE);
-		mono_stats.imt_number_of_tables++;
-		mono_stats.imt_tables_size += imt_table_bytes;
+		UnlockedIncrement (&mono_stats.imt_number_of_tables);
+		UnlockedAdd (&mono_stats.imt_tables_size, imt_table_bytes);
 	} else {
 		imt_table_bytes = 0;
 	}
 
 	vtable_size = imt_table_bytes + MONO_SIZEOF_VTABLE + vtable_slots * sizeof (gpointer);
 
-	mono_stats.used_class_count++;
-	mono_stats.class_vtable_size += vtable_size;
+	UnlockedIncrement (&mono_stats.used_class_count);
+	UnlockedAdd (&mono_stats.class_vtable_size, vtable_size);
 
 	interface_offsets = alloc_vtable (domain, vtable_size, imt_table_bytes);
 	vt = (MonoVTable*) ((char*)interface_offsets + imt_table_bytes);
@@ -1972,7 +1963,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 			vt->vtable [klass->vtable_size] = mono_domain_alloc0 (domain, class_size);
 		}
 		vt->has_static_fields = TRUE;
-		mono_stats.class_static_data_size += class_size;
+		UnlockedAdd (&mono_stats.class_static_data_size, class_size);
 	}
 
 	iter = NULL;
@@ -2180,6 +2171,22 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 
 #ifndef DISABLE_REMOTING
 /**
+ * mono_remote_class_is_interface_proxy:
+ * \param remote_class
+ *
+ * Returns TRUE if the given remote class is a proxying an interface (as
+ * opposed to a class deriving from MarshalByRefObject).
+ */
+gboolean
+mono_remote_class_is_interface_proxy (MonoRemoteClass *remote_class)
+{
+	/* This if condition is taking advantage of how mono_remote_class ()
+	 * works: if that code changes, this needs to change too. */
+	return (remote_class->interface_count >= 1 &&
+		remote_class->proxy_class == mono_defaults.marshalbyrefobject_class);
+}
+
+/**
  * mono_class_proxy_vtable:
  * \param domain the application domain
  * \param remove_class the remote class
@@ -2256,12 +2263,12 @@ mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mono
 	}
 
 	imt_table_bytes = sizeof (gpointer) * MONO_IMT_SIZE;
-	mono_stats.imt_number_of_tables++;
-	mono_stats.imt_tables_size += imt_table_bytes;
+	UnlockedIncrement (&mono_stats.imt_number_of_tables);
+	UnlockedAdd (&mono_stats.imt_tables_size, imt_table_bytes);
 
 	vtsize = imt_table_bytes + MONO_SIZEOF_VTABLE + klass->vtable_size * sizeof (gpointer);
 
-	mono_stats.class_vtable_size += vtsize + extra_interface_vtsize;
+	UnlockedAdd (&mono_stats.class_vtable_size, vtsize + extra_interface_vtsize);
 
 	interface_offsets = alloc_vtable (domain, vtsize + extra_interface_vtsize, imt_table_bytes);
 	pvt = (MonoVTable*) ((char*)interface_offsets + imt_table_bytes);
@@ -2272,6 +2279,18 @@ mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mono
 	pvt->klass = mono_defaults.transparent_proxy_class;
 	/* we need to keep the GC descriptor for a transparent proxy or we confuse the precise GC */
 	pvt->gc_descr = mono_defaults.transparent_proxy_class->gc_descr;
+
+	if (mono_remote_class_is_interface_proxy (remote_class)) {
+		/* If it's a transparent proxy for an interface, set the
+		 * MonoVTable:type to the interface type, not the placeholder
+		 * MarshalByRefObject class.  This is used when mini JITs calls
+		 * to Object.GetType ()
+		 */
+		MonoType *itf_proxy_type = &remote_class->interfaces[0]->byval_arg;
+		pvt->type = mono_type_get_object_checked (domain, itf_proxy_type, error);
+		if (!is_ok (error))
+			goto failure;
+	}
 
 	/* initialize vtable */
 	mono_class_setup_vtable (klass);
@@ -2540,6 +2559,12 @@ mono_remote_class (MonoDomain *domain, MonoStringHandle class_name, MonoClass *p
 	key = mp_key;
 
 	if (mono_class_is_interface (proxy_class)) {
+		/* If we need to proxy an interface, we use this stylized
+		 * representation (interface_count >= 1, proxy_class is
+		 * MarshalByRefObject).  The code in
+		 * mono_remote_class_is_interface_proxy () depends on being
+		 * able to detect that we're doing this, so if this
+		 * representation changes, change GetType, too. */
 		rc = (MonoRemoteClass *)mono_domain_alloc (domain, MONO_SIZEOF_REMOTE_CLASS + sizeof(MonoClass*));
 		rc->interface_count = 1;
 		rc->interfaces [0] = proxy_class;
@@ -5494,16 +5519,6 @@ mono_object_new_fast_checked (MonoVTable *vtable, MonoError *error)
 	return o;
 }
 
-MonoObject *
-ves_icall_object_new_fast (MonoVTable *vtable)
-{
-	MonoError error;
-	MonoObject *o = mono_object_new_fast_checked (vtable, &error);
-	mono_error_set_pending_exception (&error);
-
-	return o;
-}
-
 MonoObject*
 mono_object_new_mature (MonoVTable *vtable, MonoError *error)
 {
@@ -5521,44 +5536,6 @@ mono_object_new_mature (MonoVTable *vtable, MonoError *error)
 		mono_object_register_finalizer (o);
 
 	return o;
-}
-
-/**
- * mono_class_get_allocation_ftn:
- * \param vtable vtable
- * \param for_box the object will be used for boxing
- * \param pass_size_in_words Unused
- * \returns the allocation function appropriate for the given class.
- */
-void*
-mono_class_get_allocation_ftn (MonoVTable *vtable, gboolean for_box, gboolean *pass_size_in_words)
-{
-	MONO_REQ_GC_NEUTRAL_MODE;
-
-	*pass_size_in_words = FALSE;
-
-	if (mono_class_has_finalizer (vtable->klass) || mono_class_is_marshalbyref (vtable->klass))
-		return ves_icall_object_new_specific;
-
-	if (vtable->gc_descr != MONO_GC_DESCRIPTOR_NULL) {
-
-		return ves_icall_object_new_fast;
-
-		/* 
-		 * FIXME: This is actually slower than ves_icall_object_new_fast, because
-		 * of the overhead of parameter passing.
-		 */
-		/*
-		*pass_size_in_words = TRUE;
-#ifdef GC_REDIRECT_TO_LOCAL
-		return GC_local_gcj_fast_malloc;
-#else
-		return GC_gcj_fast_malloc;
-#endif
-		*/
-	}
-
-	return ves_icall_object_new_specific;
 }
 
 /**
@@ -7388,6 +7365,25 @@ mono_raise_exception (MonoException *ex)
 	eh_callbacks.mono_raise_exception (ex);
 }
 
+/**
+ * mono_raise_exception:
+ * \param ex exception object
+ * Signal the runtime that the exception \p ex has been raised in unmanaged code.
+ */
+void
+mono_reraise_exception (MonoException *ex)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
+
+	/*
+	 * NOTE: Do NOT annotate this function with G_GNUC_NORETURN, since
+	 * that will cause gcc to omit the function epilog, causing problems when
+	 * the JIT tries to walk the stack, since the return address on the stack
+	 * will point into the next function in the executable, not this one.
+	 */
+	eh_callbacks.mono_reraise_exception (ex);
+}
+
 void
 mono_raise_exception_with_context (MonoException *ex, MonoContext *ctx) 
 {
@@ -7913,7 +7909,7 @@ mono_delegate_ctor_with_method (MonoObjectHandle this_obj, MonoObjectHandle targ
 	if (method)
 		MONO_HANDLE_SETVAL (delegate, method, MonoMethod*, method);
 
-	mono_stats.delegate_creations++;
+	UnlockedIncrement (&mono_stats.delegate_creations);
 
 #ifndef DISABLE_REMOTING
 	if (!MONO_HANDLE_IS_NULL (target) && mono_class_is_transparent_proxy (mono_handle_class (target))) {

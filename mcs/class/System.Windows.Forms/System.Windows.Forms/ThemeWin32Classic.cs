@@ -1564,8 +1564,8 @@ namespace System.Windows.Forms
 			Color back_color, fore_color;
 			Rectangle text_draw = e.Bounds;
 			StringFormat string_format = new StringFormat ();
-			string_format.FormatFlags = StringFormatFlags.LineLimit;
-			
+			string_format.FormatFlags = StringFormatFlags.LineLimit | StringFormatFlags.NoWrap;
+
 			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) {
 				back_color = ColorHighlight;
 				fore_color = ColorHighlightText;

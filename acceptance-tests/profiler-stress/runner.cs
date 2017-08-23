@@ -57,7 +57,7 @@ namespace Mono.Profiling.Tests.Stress {
 			"jit",
 		};
 
-		static readonly TimeSpan _timeout = TimeSpan.FromHours (8);
+		static readonly TimeSpan _timeout = TimeSpan.FromHours (9);
 
 		static readonly Dictionary<string, Predicate<Benchmark>> _filters = new Dictionary<string, Predicate<Benchmark>> {
 			{ "ironjs-v8", FilterArmArchitecture },

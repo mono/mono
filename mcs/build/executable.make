@@ -45,6 +45,10 @@ makefrag = $(depsdir)/$(PROFILE)_$(base_prog).makefrag
 MCS_REFERENCES = $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/%.dll,$(LIB_REFS))
 MCS_REFERENCES += $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/%.exe,$(EXE_REFS))
 
+ifdef KEYFILE
+LIB_MCS_FLAGS += /keyfile:$(KEYFILE)
+endif
+
 ifndef NO_BUILD
 all-local: $(the_lib) $(PROGRAM_config)
 endif

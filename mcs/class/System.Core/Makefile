@@ -34,11 +34,9 @@ LIB_MCS_FLAGS += -d:FULL_AOT_RUNTIME
 endif
 
 ifneq (basic, $(PROFILE))
-CLR_PROFILE := $(filter 2.0 4.0 4.5, $(FRAMEWORK_VERSION))
-endif
-
-ifdef CLR_PROFILE
+ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_REFS += Mono.Posix
+endif
 endif
 
 CC_PROFILE := $(filter monotouch% xammac, $(PROFILE))

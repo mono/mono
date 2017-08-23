@@ -447,7 +447,7 @@ HANDLES(ICALL(NDNS_1, "GetHostByAddr_internal(string,string&,string[]&,string[]&
 HANDLES(ICALL(NDNS_2, "GetHostByName_internal(string,string&,string[]&,string[]&,int)", ves_icall_System_Net_Dns_GetHostByName_internal))
 HANDLES(ICALL(NDNS_3, "GetHostName_internal(string&)", ves_icall_System_Net_Dns_GetHostName_internal))
 
-#if defined(PLATFORM_MACOSX) || defined(PLATFORM_BSD)
+#if defined(HOST_DARWIN) || defined(HOST_BSD)
 ICALL_TYPE(MAC_IFACE_PROPS, "System.Net.NetworkInformation.MacOsIPInterfaceProperties", MAC_IFACE_PROPS_1)
 ICALL(MAC_IFACE_PROPS_1, "ParseRouteInfo_internal", ves_icall_System_Net_NetworkInformation_MacOsIPInterfaceProperties_ParseRouteInfo_internal)
 #endif
@@ -459,7 +459,8 @@ HANDLES(ICALL(SOCK_3, "Bind_internal(intptr,System.Net.SocketAddress,int&)", ves
 HANDLES(ICALL(SOCK_4, "Blocking_internal(intptr,bool,int&)", ves_icall_System_Net_Sockets_Socket_Blocking_internal))
 HANDLES(ICALL(SOCK_5, "Close_internal(intptr,int&)", ves_icall_System_Net_Sockets_Socket_Close_internal))
 HANDLES(ICALL(SOCK_6, "Connect_internal(intptr,System.Net.SocketAddress,int&,bool)", ves_icall_System_Net_Sockets_Socket_Connect_internal))
-HANDLES(ICALL (SOCK_6a, "Disconnect_internal(intptr,bool,int&)", ves_icall_System_Net_Sockets_Socket_Disconnect_internal))
+HANDLES(ICALL(SOCK_6a, "Disconnect_internal(intptr,bool,int&)", ves_icall_System_Net_Sockets_Socket_Disconnect_internal))
+HANDLES(ICALL(SOCK_6b, "Duplicate_internal", ves_icall_System_Net_Sockets_Socket_Duplicate_internal))
 HANDLES(ICALL(SOCK_7, "GetSocketOption_arr_internal(intptr,System.Net.Sockets.SocketOptionLevel,System.Net.Sockets.SocketOptionName,byte[]&,int&)", ves_icall_System_Net_Sockets_Socket_GetSocketOption_arr_internal))
 HANDLES(ICALL(SOCK_8, "GetSocketOption_obj_internal(intptr,System.Net.Sockets.SocketOptionLevel,System.Net.Sockets.SocketOptionName,object&,int&)", ves_icall_System_Net_Sockets_Socket_GetSocketOption_obj_internal))
 HANDLES(ICALL(SOCK_21, "IOControl_internal(intptr,int,byte[],byte[],int&)", ves_icall_System_Net_Sockets_Socket_IOControl_internal))

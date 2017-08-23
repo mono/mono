@@ -1,4 +1,0 @@
--d:SIGNED
--delaysign
--keyfile:../reactive.pub
--resource:Strings_PlatformServices.resources,System.Reactive.Strings_PlatformServices.resources

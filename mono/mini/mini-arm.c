@@ -22,6 +22,7 @@
 #include <mono/utils/mono-hwcap.h>
 #include <mono/utils/mono-memory-model.h>
 #include <mono/utils/mono-threads-coop.h>
+#include <mono/utils/unlocked.h>
 
 #include "mini-arm.h"
 #include "cpu-arm.h"
@@ -335,7 +336,7 @@ mono_arm_patchable_bl (guint8 *code, int cond)
 	return code;
 }
 
-#if defined(__ARM_EABI__) && defined(__linux__) && !defined(PLATFORM_ANDROID) && !defined(MONO_CROSS_COMPILE)
+#if defined(__ARM_EABI__) && defined(__linux__) && !defined(HOST_ANDROID) && !defined(MONO_CROSS_COMPILE)
 #define HAVE_AEABI_READ_TP 1
 #endif
 
@@ -5890,7 +5891,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			arm_patch (buf [0], code);
 			break;
 		}
-
+		case OP_FILL_PROF_CALL_CTX:
+			for (int i = 0; i < ARMREG_MAX; i++)
+				if ((MONO_ARCH_CALLEE_SAVED_REGS & (1 << i)) || i == ARMREG_SP || i == ARMREG_FP)
+					ARM_STR_IMM (code, i, ins->sreg1, MONO_STRUCT_OFFSET (MonoContext, regs) + i * sizeof (mgreg_t));
+			break;
 		default:
 			g_warning ("unknown opcode %s in %s()\n", mono_inst_name (ins->opcode), __FUNCTION__);
 			g_assert_not_reached ();
@@ -6748,12 +6753,6 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 	return NULL;
 }
 
-gboolean
-mono_arch_print_tree (MonoInst *tree, int arity)
-{
-	return 0;
-}
-
 #ifndef DISABLE_JIT
 
 #endif
@@ -7048,7 +7047,7 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 
 	mono_arch_flush_icache ((guint8*)start, size);
 	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_IMT_TRAMPOLINE, NULL));
-	mono_stats.imt_trampolines_size += code - start;
+	UnlockedAdd (&mono_stats.imt_trampolines_size, code - start);
 
 	g_assert (DISTANCE (start, code) <= size);
 

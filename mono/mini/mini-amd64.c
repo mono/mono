@@ -37,6 +37,7 @@
 #include <mono/utils/mono-tls.h>
 #include <mono/utils/mono-hwcap.h>
 #include <mono/utils/mono-threads.h>
+#include <mono/utils/unlocked.h>
 
 #include "trace.h"
 #include "ir-emit.h"
@@ -6419,6 +6420,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_GET_LAST_ERROR:
 			emit_get_last_error(code, ins->dreg);
 			break;
+		case OP_FILL_PROF_CALL_CTX:
+			for (int i = 0; i < AMD64_NREG; i++)
+				if (AMD64_IS_CALLEE_SAVED_REG (i) || i == AMD64_RSP)
+					amd64_mov_membase_reg (code, ins->sreg1, MONO_STRUCT_OFFSET (MonoContext, gregs) + i * sizeof (mgreg_t), i, sizeof (mgreg_t));
+			break;
 		default:
 			g_warning ("unknown opcode %s in %s()\n", mono_inst_name (ins->opcode), __FUNCTION__);
 			g_assert_not_reached ();
@@ -8006,7 +8012,7 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 	}
 
 	if (!fail_tramp)
-		mono_stats.imt_trampolines_size += code - start;
+		UnlockedAdd (&mono_stats.imt_trampolines_size, code - start);
 	g_assert (code - start <= size);
 	g_assert_checked (mono_arch_unwindinfo_validate_size (unwind_ops, MONO_TRAMPOLINE_UNWINDINFO_SIZE(0)));
 
@@ -8112,12 +8118,6 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 	return ins;
 }
 #endif
-
-gboolean
-mono_arch_print_tree (MonoInst *tree, int arity)
-{
-	return 0;
-}
 
 mgreg_t
 mono_arch_context_get_int_reg (MonoContext *ctx, int reg)

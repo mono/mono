@@ -342,7 +342,7 @@ namespace System.Reflection.Emit
 			//
 			// Extension: Mono allows position == 0 for the return attribute
 			//
-			if ((position < 0) || (position > parameters.Length))
+			if ((position < 0) || parameters == null || (position > parameters.Length))
 				throw new ArgumentOutOfRangeException ("position");
 
 			ParameterBuilder pb = new ParameterBuilder (this, position, attributes, strParamName);

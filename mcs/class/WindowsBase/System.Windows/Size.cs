@@ -25,6 +25,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Windows.Converters;
 using System.Windows.Markup;
 
@@ -64,29 +65,59 @@ namespace System.Windows {
 
 		public override int GetHashCode ()
 		{
-			throw new NotImplementedException ();
+			unchecked
+			{
+				return (_width.GetHashCode () * 397) ^ _height.GetHashCode ();
+			}
 		}
 
 		public static Size Parse (string source)
 		{
-			throw new NotImplementedException ();
+			if (source == null)
+				throw new ArgumentNullException ("source");
+			Size value;
+			if (source.Trim () == "Empty")
+			{
+				value = Empty;
+			}
+			else
+			{
+				var parts = source.Split (',');
+				if (parts.Length != 2)
+					throw new FormatException (string.Format ("Invalid Size format: {0}", source));
+				double width;
+				double height;
+				if (double.TryParse (parts[0], NumberStyles.Float, CultureInfo.InvariantCulture, out width)
+					&& double.TryParse (parts[1], NumberStyles.Float, CultureInfo.InvariantCulture, out height))
+				{
+					value = new Size (width, height);
+				}
+				else
+				{
+					throw new FormatException (string.Format ("Invalid Size format: {0}", source));
+				}
+			}
+			return value;
 		}
 
 		public override string ToString ()
 		{
-			if (IsEmpty)
-				return "Empty";
-			return String.Format ("{0},{1}", _width, _height);
+			return ConvertToString (null);
 		}
 
 		public string ToString (IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return ConvertToString (provider);
 		}
 
 		string IFormattable.ToString (string format, IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return ConvertToString (provider);
+		}
+
+		private string ConvertToString (IFormatProvider provider)
+		{
+			return IsEmpty ? "Empty" : string.Concat (_width, ",", _height);
 		}
 
 		public bool IsEmpty {
