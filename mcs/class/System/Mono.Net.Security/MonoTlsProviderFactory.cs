@@ -38,6 +38,7 @@ using System.Security.Cryptography.X509Certificates;
 
 using System;
 using System.Net;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
@@ -192,6 +193,25 @@ namespace Mono.Net.Security
 			}
 		}
 
+#if MONO_TLS_DEBUG
+		static bool enableDebug;
+
+		static void InitializeDebug ()
+		{
+			if (Environment.GetEnvironmentVariable ("MONO_TLS_DEBUG") != null)
+				enableDebug = true;
+		}
+#endif
+
+		[Conditional ("MONO_TLS_DEBUG")]
+		internal static void Debug (string message, params object[] args)
+		{
+#if MONO_TLS_DEBUG
+			if (enableDebug)
+				Console.Error.WriteLine (message, args);
+#endif
+		}
+
 #endregion
 
 		internal static readonly Guid AppleTlsId = new Guid ("981af8af-a3a3-419a-9f01-a518e3a17c1c");
@@ -203,6 +223,11 @@ namespace Mono.Net.Security
 			lock (locker) {
 				if (providerRegistration != null)
 					return;
+
+#if MONO_TLS_DEBUG
+				InitializeDebug ();
+#endif
+
 				providerRegistration = new Dictionary<string,Tuple<Guid,string>> ();
 				providerCache = new Dictionary<Guid,MSI.MonoTlsProvider> ();
 
