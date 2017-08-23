@@ -1922,6 +1922,24 @@ mono_throw_method_access (MonoMethod *caller, MonoMethod *callee)
 	g_free (caller_name);
 }
 
+
+
+
+void 
+mono_trace_icall_invocation (guint64 _namespace, guint64 _name)
+{
+	const char * namespace = (const char *)(void *)_namespace;
+	const char * name = (const char *)(void *)_name;
+
+	if (!namespace)
+		namespace = "JIT";
+
+	printf("ic %s::%s\n", namespace, name);
+}
+
+
+
+
 void
 mono_dummy_jit_icall (void)
 {

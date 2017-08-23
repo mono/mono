@@ -4283,6 +4283,15 @@ register_icalls (void)
 	register_icall (mono_get_assembly_object, "mono_get_assembly_object", "object ptr", TRUE);
 	register_icall (mono_get_method_object, "mono_get_method_object", "object ptr", TRUE);
 	register_icall (mono_throw_method_access, "mono_throw_method_access", "void ptr ptr", FALSE);
+
+
+
+
+	register_icall_no_wrapper (mono_trace_icall_invocation, "mono_trace_icall_invocation", "void ulong ulong");
+
+
+
+
 	register_icall_no_wrapper (mono_dummy_jit_icall, "mono_dummy_jit_icall", "void");
 
 	register_icall_with_wrapper (mono_monitor_enter_internal, "mono_monitor_enter_internal", "void obj");

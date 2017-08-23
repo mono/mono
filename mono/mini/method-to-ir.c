@@ -2594,14 +2594,66 @@ mono_emit_native_call (MonoCompile *cfg, gconstpointer func, MonoMethodSignature
 	return (MonoInst*)call;
 }
 
+int process_icall_tracing (MonoCompile *cfg, gconstpointer func, MonoJitICallInfo *info, MonoInst **args) 
+{
+	// If this is a tracing icall we check whether it should be emitted
+	//  based on the current tracing settings. If it shouldn't be emitted,
+	//  we return FALSE to reject the icall entirely.
+
+	if (func == mono_trace_icall_invocation) {
+		g_assert (args[0]->opcode == OP_I8CONST);
+		g_assert (args[1]->opcode == OP_I8CONST);
+
+		{
+			const char * namespace = (const char *)(void *)args[0]->data.i8const;
+			const char * name = (const char *)(void *)args[1]->data.i8const;
+			if (!namespace)
+				namespace = "JIT";
+
+			if (strcasestr(namespace, "Socket")) {
+				printf("emit icall %s::%s\n", namespace, name);
+				return TRUE;
+			} else {
+				// printf("icall rejected %s::%s\n", namespace, name);
+				return FALSE;
+			}
+		}
+
+		return FALSE;
+		// return TRUE;
+	} else {
+		const char * pname = info->c_symbol;
+		if (!pname)
+			pname = info->name;
+
+		MonoInst *trace_args [16];
+		EMIT_NEW_I8CONST(
+			cfg, trace_args[0], (guint64)(void*)0
+		);
+		EMIT_NEW_I8CONST(
+			cfg, trace_args[1], (guint64)(void*)pname
+		);
+
+		mono_emit_jit_icall (cfg, mono_trace_icall_invocation, trace_args);
+
+		return TRUE;
+	}
+}
+
 MonoInst*
 mono_emit_jit_icall (MonoCompile *cfg, gconstpointer func, MonoInst **args)
 {
+	MonoInst *ins;
 	MonoJitICallInfo *info = mono_find_jit_icall_by_addr (func);
 
 	g_assert (info);
 
-	return mono_emit_native_call (cfg, mono_icall_get_wrapper (info), info->sig, args);
+	if (process_icall_tracing (cfg, func, info, args) == TRUE) {
+		ins = mono_emit_native_call (cfg, mono_icall_get_wrapper (info), info->sig, args);
+	} else {
+		MONO_INST_NEW (cfg, ins, OP_NOP);
+	}
+	return ins;
 }
 
 /*
@@ -2739,7 +2791,15 @@ mono_emit_jit_icall_by_info (MonoCompile *cfg, int il_offset, MonoJitICallInfo *
 
 		return args [0];
 	} else {
-		return mono_emit_native_call (cfg, mono_icall_get_wrapper (info), info->sig, args);
+		gconstpointer func = mono_icall_get_wrapper (info);
+
+		if (process_icall_tracing (cfg, func, info, args) == TRUE) {
+			return mono_emit_native_call (cfg, func, info->sig, args);
+		} else {
+			MonoInst * ins;
+			MONO_INST_NEW (cfg, ins, OP_NOP);
+			return ins;
+		}
 	}
 }
  
