@@ -142,18 +142,19 @@ static int is_filenamechar (char p)
 static char *input;
 static char *value;
 
-static void get_string (void)
+static char *get_string (char **in)
 {
-	char *start = input;
-	while (is_filenamechar (*input)){
-		input++;
+	char *start = *in;
+	char *p = *in;
+	while (is_filenamechar (*p)) {
+		p++;
 	}
-	if (value != NULL)
-		g_free (value);
-	size_t len = input - start;
-	value = (char *)g_malloc (len + 1);
-	memcpy (value, start, len);
-	value [len] = 0;
+	size_t len = p - start;
+	char *ret = (char *)g_malloc (len + 1);
+	memcpy (ret, start, len);
+	ret [len] = 0;
+	*in = p;
+	return ret;
 }
 
 enum Token {
@@ -181,24 +182,28 @@ get_token (void)
 	if (input [0] == '\0') {
 		return TOKEN_END;
 	}
+	if (value != NULL) {
+		g_free (value);
+		value = NULL;
+	}
 	if (input [0] == 'M' && input [1] == ':'){
 		input += 2;
-		get_string ();
+		value = get_string (&input);
 		return TOKEN_METHOD;
 	}
 	if (input [0] == 'N' && input [1] == ':'){
 		input += 2;
-		get_string ();
+		value = get_string (&input);
 		return TOKEN_NAMESPACE;
 	}
 	if (input [0] == 'T' && input [1] == ':'){
 		input += 2;
-		get_string ();
+		value = get_string (&input);
 		return TOKEN_CLASS;
 	}
 	if (input [0] == 'E' && input [1] == ':'){
 		input += 2;
-		get_string ();
+		value = get_string (&input);
 		return TOKEN_EXCEPTION;
 	}
 	if (*input == '-'){
@@ -206,7 +211,7 @@ get_token (void)
 		return TOKEN_EXCLUDE;
 	}
 	if (is_filenamechar (*input)){
-		get_string ();
+		value = get_string (&input);
 		if (strcmp (value, "all") == 0)
 			return TOKEN_ALL;
 		if (strcmp (value, "program") == 0)
