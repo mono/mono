@@ -4759,7 +4759,17 @@ get_this (StackFrame *frame)
 
 	guint8 * addr = (guint8 *)mono_arch_context_get_int_reg (&frame->ctx, var->index & ~MONO_DEBUG_VAR_ADDRESS_MODE_FLAGS);
 	addr += (gint32)var->offset;
-	return *(MonoObject**)addr;
+
+	if (frame->method->klass->valuetype) {
+		MonoError error;
+		/* Roslyn generates valuetypes in optimize mode */
+		/* This is ok to do because the caller will not modify the object */
+		MonoObject *obj = mono_value_box_checked (frame->domain, frame->method->klass, *(gpointer*)addr, &error);
+		mono_error_assert_ok (&error);
+		return obj;
+	} else {
+		return *(MonoObject**)addr;
+	}
 }
 
 //This ID is used to figure out if breakpoint hit on resumeOffset belongs to us or not
