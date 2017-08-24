@@ -1,45 +1,49 @@
 #include "w32mutex.h"
-
-#if defined(PLATFORM_UNITY) && defined(UNITY_USE_PLATFORM_STUBS)
+#include "Mutex-c-api.h"
 
 void
 mono_w32mutex_init (void)
 {
-	g_assert(0 && "This function is not yet implemented for the Unity platform.");
 }
 
 gpointer
 ves_icall_System_Threading_Mutex_CreateMutex_internal (MonoBoolean owned, MonoString *name, MonoBoolean *created)
 {
-	g_assert(0 && "This function is not yet implemented for the Unity platform.");
-	return NULL;
+	UnityPalMutex* mutex = NULL;
+
+	*created = TRUE;
+
+	if (!name) {
+		mutex = UnityPalMutexNew (owned);
+	} else {
+		g_assertion_message ("Named mutexes are not supported by the Unity platform.");
+	}
+
+	return UnityPalMutexHandleNew(mutex);
 }
 
 MonoBoolean
 ves_icall_System_Threading_Mutex_ReleaseMutex_internal (gpointer handle)
 {
-	g_assert(0 && "This function is not yet implemented for the Unity platform.");
-	return FALSE;
+	UnityPalMutexUnlock(UnityPalMutexHandleGet(handle));
+	return TRUE;
 }
 
 gpointer
 ves_icall_System_Threading_Mutex_OpenMutex_internal (MonoString *name, gint32 rights, gint32 *error)
 {
-	g_assert(0 && "This function is not yet implemented for the Unity platform.");
+	g_assertion_message ("Named mutexes are not supported by the Unity platform.");
 	return NULL;
 }
 
 MonoW32HandleNamespace*
 mono_w32mutex_get_namespace (MonoW32HandleNamedMutex *mutex)
 {
-	g_assert(0 && "This function is not yet implemented for the Unity platform.");
+	g_assertion_message ("Named mutexes are not supported by the Unity platform.");
 	return NULL;
 }
 
 void
 mono_w32mutex_abandon (void)
 {
-	g_assert(0 && "This function is not yet implemented for the Unity platform.");
 }
-
-#endif /* PLATFORM_UNITY && UNITY_USE_PLATFORM_STUBS */

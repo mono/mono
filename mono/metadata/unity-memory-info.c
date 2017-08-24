@@ -1,3 +1,5 @@
+#include <config.h>
+#include <mono/utils/mono-publib.h>
 #include "unity-memory-info.h"
 
 MonoManagedMemorySnapshot* mono_unity_capture_memory_snapshot()

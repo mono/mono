@@ -166,7 +166,6 @@ if ($android || $iphone || $iphoneCross || $iphoneSimulator || $tizen || $tizenE
 
 # Do any settings agnostic per-platform stuff
 my $externalBuildDeps = "";
-my $externalBuildDepsIl2Cpp = "$monoroot/../../il2cpp/build";
 
 if ($buildDeps ne "" && not $forceDefaultBuildDeps)
 {
@@ -290,18 +289,6 @@ if ($build)
 
 			# Only clean up if the dir exists.   Otherwise abs_path will return empty string
 			$externalBuildDeps = abs_path($externalBuildDeps) if (-d $externalBuildDeps);
-		}
-
-		if (!(-d "$externalBuildDepsIl2Cpp"))
-		{
-			my $il2cpp_repo = "https://bitbucket.org/Unity-Technologies/il2cpp";
-            print(">>> Cloning $il2cpp_repo at $externalBuildDepsIl2Cpp\n");
-            $checkoutResult = system("hg", "clone", $il2cpp_repo, "$externalBuildDepsIl2Cpp");
-
-            if ($checkoutOnTheFly && $checkoutResult ne 0)
-            {
-                die("failed to checkout IL2CPP for the mono build dependencies\n");
-            }
 		}
 
 		if (-d "$existingExternalMono")
@@ -1485,6 +1472,8 @@ if ($artifact)
 			system("cp -r $monoprefix/bin $distdir/") eq 0 or die ("failed copying bin folder\n");
 		}
 		system("cp -r $monoprefix/etc $distdir/") eq 0 or die("failed copying etc folder\n");
+
+		system("cp", "$monoprefix/bin/ilasm","$distdir/bin/ilasm") eq 0 or die("failed copying ilasm\n");
 
 		system("cp -R $externalBuildDeps/reference-assemblies/unity $distdirlibmono/unity");
  		system("cp -R $externalBuildDeps/reference-assemblies/unity_web $distdirlibmono/unity_web");
