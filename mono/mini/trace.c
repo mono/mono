@@ -338,8 +338,6 @@ mono_trace_parse_options (const char *options)
 	while ((token = (get_spec (&last_used))) != TOKEN_END){
 		if (token == TOKEN_ERROR)
 			return NULL;
-		if (token == TOKEN_SEPARATOR)
-			continue;
 	}
 	trace_spec.len = last_used;
 	cleanup ();
