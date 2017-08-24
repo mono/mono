@@ -109,7 +109,7 @@ find_index_in_table (MonoDynamicImage *assembly, int table_idx, int col, guint32
  * Copy len * nelem bytes from val to dest, swapping bytes to LE if necessary.
  * dest may be misaligned.
  */
-static void
+static G_GNUC_UNUSED void
 swap_with_size (char *dest, const char* val, int len, int nelem) {
 	MONO_REQ_GC_NEUTRAL_MODE;
 #if G_BYTE_ORDER != G_LITTLE_ENDIAN

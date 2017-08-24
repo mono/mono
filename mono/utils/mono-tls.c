@@ -162,7 +162,6 @@
 static __thread gpointer mono_tls_thread MONO_TLS_FAST;
 static __thread gpointer mono_tls_jit_tls MONO_TLS_FAST;
 static __thread gpointer mono_tls_domain MONO_TLS_FAST;
-static __thread gpointer mono_tls_lmf MONO_TLS_FAST;
 static __thread gpointer mono_tls_sgen_thread_info MONO_TLS_FAST;
 static __thread gpointer mono_tls_lmf_addr MONO_TLS_FAST;
 

@@ -57,7 +57,7 @@ storage_name (ArgStorage st)
 	}
 }
 
-static char *
+static G_GNUC_UNUSED char *
 arg_info_desc (ArgInfo *info)
 {
 	GString *str = g_string_new ("");

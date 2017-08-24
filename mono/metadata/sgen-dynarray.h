@@ -29,7 +29,7 @@ typedef struct {
 	DynArray array;
 } DynSCCArray;
 
-static void
+static G_GNUC_UNUSED void
 dyn_array_init (DynArray *da)
 {
 	da->size = 0;
@@ -37,7 +37,7 @@ dyn_array_init (DynArray *da)
 	da->data = NULL;
 }
 
-static void
+static G_GNUC_UNUSED void
 dyn_array_uninit (DynArray *da, int elem_size)
 {
 	if (da->capacity < 0) {
@@ -52,7 +52,7 @@ dyn_array_uninit (DynArray *da, int elem_size)
 	da->data = NULL;
 }
 
-static void
+static G_GNUC_UNUSED void
 dyn_array_empty (DynArray *da)
 {
 	if (da->capacity < 0)
@@ -61,7 +61,7 @@ dyn_array_empty (DynArray *da)
 		da->size = 0;
 }
 
-static char *
+static G_GNUC_UNUSED char *
 dyn_array_ensure_capacity_internal (DynArray *da, int capacity, int elem_size)
 {
 	if (da->capacity <= 0)
@@ -72,7 +72,7 @@ dyn_array_ensure_capacity_internal (DynArray *da, int capacity, int elem_size)
 	return (char *)sgen_alloc_internal_dynamic (elem_size * da->capacity, INTERNAL_MEM_BRIDGE_DATA, TRUE);
 }
 
-static void
+static G_GNUC_UNUSED void
 dyn_array_ensure_capacity (DynArray *da, int capacity, int elem_size)
 {
 	int old_capacity = da->capacity;
@@ -90,13 +90,13 @@ dyn_array_ensure_capacity (DynArray *da, int capacity, int elem_size)
 	da->data = new_data;
 }
 
-static gboolean
+static G_GNUC_UNUSED gboolean
 dyn_array_is_copy (DynArray *da)
 {
 	return da->capacity < 0;
 }
 
-static void
+static G_GNUC_UNUSED void
 dyn_array_ensure_independent (DynArray *da, int elem_size)
 {
 	if (!dyn_array_is_copy (da))
@@ -105,7 +105,7 @@ dyn_array_ensure_independent (DynArray *da, int elem_size)
 	g_assert (da->capacity > 0);
 }
 
-static void*
+static G_GNUC_UNUSED void*
 dyn_array_add (DynArray *da, int elem_size)
 {
 	void *p;
@@ -117,7 +117,7 @@ dyn_array_add (DynArray *da, int elem_size)
 	return p;
 }
 
-static void
+static G_GNUC_UNUSED void
 dyn_array_copy (DynArray *dst, DynArray *src, int elem_size)
 {
 	dyn_array_uninit (dst, elem_size);
@@ -131,66 +131,66 @@ dyn_array_copy (DynArray *dst, DynArray *src, int elem_size)
 }
 
 /* int */
-static void
+static G_GNUC_UNUSED void
 dyn_array_int_init (DynIntArray *da)
 {
 	dyn_array_init (&da->array);
 }
 
-static void
+static G_GNUC_UNUSED void
 dyn_array_int_uninit (DynIntArray *da)
 {
 	dyn_array_uninit (&da->array, sizeof (int));
 }
 
-static int
+static G_GNUC_UNUSED int
 dyn_array_int_size (DynIntArray *da)
 {
 	return da->array.size;
 }
 
 #ifdef NEW_XREFS
-static void
+static G_GNUC_UNUSED void
 dyn_array_int_empty (DynIntArray *da)
 {
 	dyn_array_empty (&da->array);
 }
 #endif
 
-static void
+static G_GNUC_UNUSED void
 dyn_array_int_add (DynIntArray *da, int x)
 {
 	int *p = (int *)dyn_array_add (&da->array, sizeof (int));
 	*p = x;
 }
 
-static int
+static G_GNUC_UNUSED int
 dyn_array_int_get (DynIntArray *da, int x)
 {
 	return ((int*)da->array.data)[x];
 }
 
 #ifdef NEW_XREFS
-static void
+static G_GNUC_UNUSED void
 dyn_array_int_set (DynIntArray *da, int idx, int val)
 {
 	((int*)da->array.data)[idx] = val;
 }
 #endif
 
-static void
+static G_GNUC_UNUSED void
 dyn_array_int_ensure_independent (DynIntArray *da)
 {
 	dyn_array_ensure_independent (&da->array, sizeof (int));
 }
 
-static void
+static G_GNUC_UNUSED void
 dyn_array_int_copy (DynIntArray *dst, DynIntArray *src)
 {
 	dyn_array_copy (&dst->array, &src->array, sizeof (int));
 }
 
-static gboolean
+static G_GNUC_UNUSED gboolean
 dyn_array_int_is_copy (DynIntArray *da)
 {
 	return dyn_array_is_copy (&da->array);
@@ -198,13 +198,13 @@ dyn_array_int_is_copy (DynIntArray *da)
 
 /* ptr */
 
-static void
+static G_GNUC_UNUSED void
 dyn_array_ptr_init (DynPtrArray *da)
 {
 	dyn_array_init (&da->array);
 }
 
-static void
+static G_GNUC_UNUSED void
 dyn_array_ptr_uninit (DynPtrArray *da)
 {
 #ifdef OPTIMIZATION_SINGLETON_DYN_ARRAY
@@ -215,13 +215,13 @@ dyn_array_ptr_uninit (DynPtrArray *da)
 		dyn_array_uninit (&da->array, sizeof (void*));
 }
 
-static int
+static G_GNUC_UNUSED int
 dyn_array_ptr_size (DynPtrArray *da)
 {
 	return da->array.size;
 }
 
-static void
+static G_GNUC_UNUSED void
 dyn_array_ptr_empty (DynPtrArray *da)
 {
 #ifdef OPTIMIZATION_SINGLETON_DYN_ARRAY
@@ -232,7 +232,7 @@ dyn_array_ptr_empty (DynPtrArray *da)
 		dyn_array_empty (&da->array);
 }
 
-static void*
+static G_GNUC_UNUSED void*
 dyn_array_ptr_get (DynPtrArray *da, int x)
 {
 #ifdef OPTIMIZATION_SINGLETON_DYN_ARRAY
@@ -244,7 +244,7 @@ dyn_array_ptr_get (DynPtrArray *da, int x)
 	return ((void**)da->array.data)[x];
 }
 
-static void
+static G_GNUC_UNUSED void
 dyn_array_ptr_set (DynPtrArray *da, int x, void *ptr)
 {
 #ifdef OPTIMIZATION_SINGLETON_DYN_ARRAY
@@ -258,7 +258,7 @@ dyn_array_ptr_set (DynPtrArray *da, int x, void *ptr)
 	}
 }
 
-static void
+static G_GNUC_UNUSED void
 dyn_array_ptr_add (DynPtrArray *da, void *ptr)
 {
 	void **p;
@@ -285,7 +285,7 @@ dyn_array_ptr_add (DynPtrArray *da, void *ptr)
 
 #define dyn_array_ptr_push dyn_array_ptr_add
 
-static void*
+static G_GNUC_UNUSED void*
 dyn_array_ptr_pop (DynPtrArray *da)
 {
 	int size = da->array.size;
@@ -306,7 +306,7 @@ dyn_array_ptr_pop (DynPtrArray *da)
 	return p;
 }
 
-static void
+static G_GNUC_UNUSED void
 dyn_array_ptr_ensure_capacity (DynPtrArray *da, int capacity)
 {
 #ifdef OPTIMIZATION_SINGLETON_DYN_ARRAY
@@ -327,7 +327,7 @@ dyn_array_ptr_ensure_capacity (DynPtrArray *da, int capacity)
 	}
 }
 
-static void
+static G_GNUC_UNUSED void
 dyn_array_ptr_set_all (DynPtrArray *dst, DynPtrArray *src)
 {
 	const int copysize = src->array.size;

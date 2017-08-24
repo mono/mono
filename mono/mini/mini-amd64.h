@@ -220,27 +220,30 @@ typedef struct MonoCompileArch {
 
 #ifdef TARGET_WIN32
 
-static AMD64_Reg_No param_regs [] = { AMD64_RCX, AMD64_RDX, AMD64_R8, AMD64_R9 };
+static G_GNUC_UNUSED AMD64_Reg_No param_regs [] = { AMD64_RCX, AMD64_RDX, AMD64_R8, AMD64_R9 };
 
-static AMD64_XMM_Reg_No float_param_regs [] = { AMD64_XMM0, AMD64_XMM1, AMD64_XMM2, AMD64_XMM3 };
+static G_GNUC_UNUSED AMD64_XMM_Reg_No float_param_regs [] = { AMD64_XMM0, AMD64_XMM1, AMD64_XMM2, AMD64_XMM3 };
 
-static AMD64_Reg_No return_regs [] = { AMD64_RAX };
+static G_GNUC_UNUSED AMD64_Reg_No return_regs [] = { AMD64_RAX };
 
-static AMD64_XMM_Reg_No float_return_regs [] = { AMD64_XMM0 };
+static G_GNUC_UNUSED AMD64_XMM_Reg_No float_return_regs [] = { AMD64_XMM0 };
+
+#else
+
+static G_GNUC_UNUSED AMD64_Reg_No param_regs [] = { AMD64_RDI, AMD64_RSI, AMD64_RDX, AMD64_RCX, AMD64_R8, AMD64_R9 };
+
+static G_GNUC_UNUSED AMD64_XMM_Reg_No float_param_regs [] = { AMD64_XMM0, AMD64_XMM1, AMD64_XMM2, AMD64_XMM3, AMD64_XMM4, AMD64_XMM5, AMD64_XMM6, AMD64_XMM7 };
+
+static G_GNUC_UNUSED AMD64_Reg_No return_regs [] = { AMD64_RAX, AMD64_RDX };
+
+static G_GNUC_UNUSED AMD64_XMM_Reg_No float_return_regs [] = { AMD64_XMM0, AMD64_XMM1 };
+
+#endif
 
 #define PARAM_REGS G_N_ELEMENTS(param_regs)
 #define FLOAT_PARAM_REGS G_N_ELEMENTS(float_param_regs)
 #define RETURN_REGS G_N_ELEMENTS(return_regs)
 #define FLOAT_RETURN_REGS G_N_ELEMENTS(float_return_regs)
-
-#else
-#define PARAM_REGS 6
-#define FLOAT_PARAM_REGS 8
-
-static AMD64_Reg_No param_regs [] = { AMD64_RDI, AMD64_RSI, AMD64_RDX, AMD64_RCX, AMD64_R8, AMD64_R9 };
-
-static AMD64_Reg_No return_regs [] = { AMD64_RAX, AMD64_RDX };
-#endif
 
 typedef struct {
 	/* Method address to call */
