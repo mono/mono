@@ -235,20 +235,23 @@ static int
 get_spec (int *last)
 {
 	int token = get_token ();
+	gboolean exclude = FALSE;
 	if (token == TOKEN_EXCLUDE){
-		token = get_spec (last);
-		if (token == TOKEN_EXCLUDE){
+		exclude = TRUE;
+		token = get_token ();
+		if (token == TOKEN_EXCLUDE || token == TOKEN_DISABLED) {
 			fprintf (stderr, "Expecting an expression");
 			return TOKEN_ERROR;
 		}
-		if (token == TOKEN_ERROR)
-			return token;
-		trace_spec.ops [(*last)-1].exclude = 1;
-		return TOKEN_SEPARATOR;
 	}
 	if (token == TOKEN_END || token == TOKEN_SEPARATOR || token == TOKEN_ERROR)
 		return token;
-	
+
+	if (token == TOKEN_DISABLED) {
+		trace_spec.enabled = FALSE;
+		return token;
+	}
+
 	if (token == TOKEN_METHOD){
 		MonoMethodDesc *desc = mono_method_desc_new (value, TRUE);
 		if (desc == NULL){
@@ -281,12 +284,14 @@ get_spec (int *last)
 	} else if (token == TOKEN_STRING){
 		trace_spec.ops [*last].op = MONO_TRACEOP_ASSEMBLY;
 		trace_spec.ops [*last].data = g_strdup (value);
-	} else if (token == TOKEN_DISABLED) {
-		trace_spec.enabled = FALSE;
 	} else {
 		fprintf (stderr, "Syntax error in trace option specification\n");
 		return TOKEN_ERROR;
 	}
+
+	if (exclude)
+		trace_spec.ops[*last].exclude = 1;
+
 	(*last)++;
 	return TOKEN_SEPARATOR;
 }
