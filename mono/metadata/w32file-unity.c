@@ -496,6 +496,8 @@ gboolean mono_w32file_delete(const gunichar2 *name)
 guint32
 mono_w32file_get_cwd (guint32 length, gunichar2 *buffer)
 {
+	/* length is the number of characters in buffer, including the null terminator */
+	/* count is the number of characters in the current directory, including the null terminator */
 	gunichar2 *utf16_path;
 	glong count;
 	uintptr_t bytes;
@@ -505,11 +507,15 @@ mono_w32file_get_cwd (guint32 length, gunichar2 *buffer)
 	mono_w32error_set_last (error);
 	utf16_path = mono_unicode_from_external(palPath, &bytes);
 	count = (bytes / 2) + 1;
-	memcpy(buffer, utf16_path, length);
+
+	if (count <= length) {
+		/* Add the terminator */
+		memset (buffer, '\0', bytes+2);
+		memcpy (buffer, utf16_path, bytes);
+	}
+
 	g_free(utf16_path);
 	g_free(palPath);
-
-
 
 	return count;
 }
