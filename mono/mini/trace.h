@@ -28,8 +28,6 @@ struct MonoTraceSpec {
 	int len;
 	gboolean enabled;
 	MonoTraceOperation *ops;
-
-	MonoAssembly *assembly;
 };
 
 G_BEGIN_DECLS

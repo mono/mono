@@ -35,6 +35,8 @@
 
 static MonoTraceSpec trace_spec;
 
+static MonoAssembly *prog_assembly;
+
 static volatile gint32 output_lock = 0;
 
 gboolean
@@ -86,7 +88,7 @@ mono_trace_eval (MonoMethod *method)
 			inc = 1;
 			break;
 		case MONO_TRACEOP_PROGRAM:
-			if (trace_spec.assembly && (method->klass->image == mono_assembly_get_image (trace_spec.assembly)))
+			if (prog_assembly && (method->klass->image == mono_assembly_get_image (prog_assembly)))
 				inc = 1;
 			break;
 		case MONO_TRACEOP_WRAPPER:
@@ -333,7 +335,7 @@ mono_trace_parse_options (const char *options)
 void
 mono_trace_set_assembly (MonoAssembly *assembly)
 {
-	trace_spec.assembly = assembly;
+	prog_assembly = assembly;
 }
 
 static
