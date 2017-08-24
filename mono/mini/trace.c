@@ -139,9 +139,6 @@ static int is_filenamechar (char p)
 	return FALSE;
 }
 
-static char *input;
-static char *value;
-
 static char *get_string (char **in)
 {
 	char *start = *in;
@@ -237,80 +234,80 @@ static int get_token (char **in, char **extra)
 	return TOKEN_ERROR;
 }
 
-static void
-cleanup (void)
+static int get_spec (char **in, MonoTraceSpec *spec)
 {
-	if (value != NULL)
-		g_free (value);
-}
+	int n = spec->len;
+	char *extra = NULL;
 
-static int
-get_spec (int *last)
-{
-	if (value != NULL) {
-		g_free (value);
-		value = NULL;
-	}
-	int token = get_token (&input, &value);
+	int token = get_token (in, &extra);
 	gboolean exclude = FALSE;
 	if (token == TOKEN_EXCLUDE){
 		exclude = TRUE;
-		token = get_token (&input, &value);
+		token = get_token (in, &extra);
 		if (token == TOKEN_EXCLUDE || token == TOKEN_DISABLED) {
 			fprintf (stderr, "Expecting an expression");
-			return TOKEN_ERROR;
+			token = TOKEN_ERROR;
+			goto out;
 		}
 	}
 	if (token == TOKEN_END || token == TOKEN_SEPARATOR || token == TOKEN_ERROR)
-		return token;
+		goto out;
 
 	if (token == TOKEN_DISABLED) {
-		trace_spec.enabled = FALSE;
-		return token;
+		spec->enabled = FALSE;
+		goto out;
 	}
 
 	if (token == TOKEN_METHOD){
-		MonoMethodDesc *desc = mono_method_desc_new (value, TRUE);
+		MonoMethodDesc *desc = mono_method_desc_new (extra, TRUE);
 		if (desc == NULL){
-			fprintf (stderr, "Invalid method name: %s\n", value);
-			return TOKEN_ERROR;
+			fprintf (stderr, "Invalid method name: %s\n", extra);
+			token = TOKEN_ERROR;
+			goto out;
 		}
-		trace_spec.ops [*last].op = MONO_TRACEOP_METHOD;
-		trace_spec.ops [*last].data = desc;
+		spec->ops[n].op = MONO_TRACEOP_METHOD;
+		spec->ops[n].data = desc;
 	} else if (token == TOKEN_ALL)
-		trace_spec.ops [*last].op = MONO_TRACEOP_ALL;
+		spec->ops[n].op = MONO_TRACEOP_ALL;
 	else if (token == TOKEN_PROGRAM)
-		trace_spec.ops [*last].op = MONO_TRACEOP_PROGRAM;
+		spec->ops[n].op = MONO_TRACEOP_PROGRAM;
 	else if (token == TOKEN_WRAPPER)
-		trace_spec.ops [*last].op = MONO_TRACEOP_WRAPPER;
+		spec->ops[n].op = MONO_TRACEOP_WRAPPER;
 	else if (token == TOKEN_NAMESPACE){
-		trace_spec.ops [*last].op = MONO_TRACEOP_NAMESPACE;
-		trace_spec.ops [*last].data = g_strdup (value);
+		spec->ops[n].op = MONO_TRACEOP_NAMESPACE;
+		spec->ops[n].data = g_strdup (extra);
 	} else if (token == TOKEN_CLASS || token == TOKEN_EXCEPTION){
-		char *p = strrchr (value, '.');
+		char *p = strrchr (extra, '.');
 		if (p) {
 			*p++ = 0;
-			trace_spec.ops [*last].data = g_strdup (value);
-			trace_spec.ops [*last].data2 = g_strdup (p);
+			spec->ops[n].data = g_strdup (extra);
+			spec->ops[n].data2 = g_strdup (p);
 		}
 		else {
-			trace_spec.ops [*last].data = g_strdup ("");
-			trace_spec.ops [*last].data2 = g_strdup (value);
+			spec->ops[n].data = g_strdup ("");
+			spec->ops[n].data2 = g_strdup (extra);
 		}
-		trace_spec.ops [*last].op = token == TOKEN_CLASS ? MONO_TRACEOP_CLASS : MONO_TRACEOP_EXCEPTION;
+		spec->ops[n].op = token == TOKEN_CLASS ? MONO_TRACEOP_CLASS
+						       : MONO_TRACEOP_EXCEPTION;
 	} else if (token == TOKEN_STRING){
-		trace_spec.ops [*last].op = MONO_TRACEOP_ASSEMBLY;
-		trace_spec.ops [*last].data = g_strdup (value);
+		spec->ops[n].op = MONO_TRACEOP_ASSEMBLY;
+		spec->ops[n].data = g_strdup (extra);
 	} else {
 		fprintf (stderr, "Syntax error in trace option specification\n");
-		return TOKEN_ERROR;
+		token = TOKEN_ERROR;
+		goto out;
 	}
 
 	if (exclude)
-		trace_spec.ops[*last].exclude = 1;
+		spec->ops[n].exclude = 1;
 
-	(*last)++;
-	return TOKEN_SEPARATOR;
+	spec->len = n + 1;
+	token = TOKEN_SEPARATOR;
+out:
+	if (extra != NULL) {
+		g_free (extra);
+	}
+	return token;
 }
 
 MonoTraceSpec *
@@ -318,7 +315,6 @@ mono_trace_parse_options (const char *options)
 {
 	char *p = (char*)options;
 	int size = 1;
-	int last_used;
 	int token;
 
 	trace_spec.enabled = TRUE;
@@ -335,15 +331,12 @@ mono_trace_parse_options (const char *options)
 	
 	trace_spec.ops = g_new0 (MonoTraceOperation, size);
 
-	input = (char*)options;
-	last_used = 0;
-	
-	while ((token = (get_spec (&last_used))) != TOKEN_END){
+	p = (char *)options;
+
+	while ((token = (get_spec (&p, &trace_spec))) != TOKEN_END) {
 		if (token == TOKEN_ERROR)
 			return NULL;
 	}
-	trace_spec.len = last_used;
-	cleanup ();
 	return &trace_spec;
 }
 
