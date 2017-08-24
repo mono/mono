@@ -22,4 +22,12 @@ namespace System.Data.SqlClient
         ActiveDirectoryPassword,
         ActiveDirectoryIntegrated,
     }
+
+    public enum SqlCommandColumnEncryptionSetting 
+    {
+        UseConnectionSetting = 0,
+        Enabled,
+        ResultSetOnly,
+        Disabled,
+    }
 }

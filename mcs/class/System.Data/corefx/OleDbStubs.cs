@@ -26,17 +26,17 @@ namespace System.Data.OleDb
 		public OleDbCommand (String cmdText) => throw ADP.OleDb();
 		public OleDbCommand (String cmdText, OleDbConnection connection) => throw ADP.OleDb();
 		public OleDbCommand (String cmdText, OleDbConnection connection, OleDbTransaction transaction) => throw ADP.OleDb();
-		public override string CommandText { get; set; }
-        public override int CommandTimeout { get; set; }
-        public override System.Data.CommandType CommandType { get; set; }
-        public new System.Data.OleDb.OleDbConnection Connection { get; set; }
-        protected override System.Data.Common.DbConnection DbConnection { get; set; }
+		public override string CommandText { get { throw ADP.OleDb(); } set { } }
+        public override int CommandTimeout { get { throw ADP.OleDb(); } set { } }
+        public override System.Data.CommandType CommandType { get { throw ADP.OleDb(); } set { } }
+        public new System.Data.OleDb.OleDbConnection Connection { get { throw ADP.OleDb(); } set { } }
+        protected override System.Data.Common.DbConnection DbConnection { get { throw ADP.OleDb(); } set { } }
         protected override System.Data.Common.DbParameterCollection DbParameterCollection => throw ADP.OleDb();
-        protected override System.Data.Common.DbTransaction DbTransaction { get; set; }
-        public override bool DesignTimeVisible { get; set; }
+        protected override System.Data.Common.DbTransaction DbTransaction { get { throw ADP.OleDb(); } set { } }
+        public override bool DesignTimeVisible { get { throw ADP.OleDb(); } set { } }
         public new System.Data.OleDb.OleDbParameterCollection Parameters => throw ADP.OleDb();
-        public new System.Data.OleDb.OleDbTransaction Transaction { get; set; }
-        public override System.Data.UpdateRowSource UpdatedRowSource { get; set; }
+        public new System.Data.OleDb.OleDbTransaction Transaction { get { throw ADP.OleDb(); } set { } }
+        public override System.Data.UpdateRowSource UpdatedRowSource { get { throw ADP.OleDb(); } set { } }
         public override void Cancel() { }        
 		public OleDbCommand Clone () => throw ADP.OleDb();
 		protected override System.Data.Common.DbParameter CreateDbParameter() { throw null; }
@@ -59,7 +59,7 @@ namespace System.Data.OleDb
 	{
 		public OleDbCommandBuilder() => throw ADP.OleDb();
 		public OleDbCommandBuilder (OleDbDataAdapter adapter) => throw ADP.OleDb();
-		public new OleDbDataAdapter DataAdapter { get; set; }
+		public new OleDbDataAdapter DataAdapter { get { throw ADP.OleDb(); } set { } }
 		protected override void ApplyParameterInfo (DbParameter parameter, DataRow datarow, StatementType statementType, Boolean whereClause) => throw ADP.OleDb();
 		public static void DeriveParameters (OleDbCommand command) => throw ADP.OleDb();
 		public OleDbCommand GetDeleteCommand () => throw ADP.OleDb();
@@ -83,7 +83,7 @@ namespace System.Data.OleDb
 	{
 		public OleDbConnection() => throw ADP.OleDb();
 		public OleDbConnection (String connectionString) => throw ADP.OleDb();
-		public override String ConnectionString { get; set; }
+		public override String ConnectionString { get { throw ADP.OleDb(); } set { } }
 		public override Int32 ConnectionTimeout => throw ADP.OleDb();
 		public override String Database => throw ADP.OleDb();
 		public override String DataSource => throw ADP.OleDb();
@@ -116,13 +116,13 @@ namespace System.Data.OleDb
 	{
 		public OleDbConnectionStringBuilder() => throw ADP.OleDb();
 		public OleDbConnectionStringBuilder (String connectionString) => throw ADP.OleDb();
-		public string DataSource { get; set; }
-		public string FileName { get; set; }
-		public object Item { get; set; }
-		public ICollection Keys { get; set; }
-		public int OleDbServices { get; set; }
-		public bool PersistSecurityInfo { get; set; }
-		public string Provider { get; set; }
+		public string DataSource { get { throw ADP.OleDb(); } set { } }
+		public string FileName { get { throw ADP.OleDb(); } set { } }
+		public object Item { get { throw ADP.OleDb(); } set { } }
+		public ICollection Keys { get { throw ADP.OleDb(); } set { } }
+		public int OleDbServices { get { throw ADP.OleDb(); } set { } }
+		public bool PersistSecurityInfo { get { throw ADP.OleDb(); } set { } }
+		public string Provider { get { throw ADP.OleDb(); } set { } }
 		public override void Clear () => throw ADP.OleDb();
 		public override Boolean ContainsKey (String keyword) => throw ADP.OleDb();
 		protected override void GetProperties (Hashtable propertyDescriptors) => throw ADP.OleDb();
@@ -133,14 +133,14 @@ namespace System.Data.OleDb
 	[MonoTODO("OleDb is not implemented.")]
 	public sealed partial class OleDbDataAdapter : System.Data.Common.DbDataAdapter, System.Data.IDataAdapter, System.Data.IDbDataAdapter, System.ICloneable
 	{
-        public new System.Data.OleDb.OleDbCommand DeleteCommand { get; set; }
-        public new System.Data.OleDb.OleDbCommand InsertCommand { get; set; }
-        public new System.Data.OleDb.OleDbCommand SelectCommand { get; set; }
-        System.Data.IDbCommand System.Data.IDbDataAdapter.DeleteCommand { get; set; }
-        System.Data.IDbCommand System.Data.IDbDataAdapter.InsertCommand { get; set; }
-        System.Data.IDbCommand System.Data.IDbDataAdapter.SelectCommand { get; set; }
-        System.Data.IDbCommand System.Data.IDbDataAdapter.UpdateCommand { get; set; }
-        public new System.Data.OleDb.OleDbCommand UpdateCommand { get; set; }
+        public new System.Data.OleDb.OleDbCommand DeleteCommand { get { throw ADP.OleDb(); } set { } }
+        public new System.Data.OleDb.OleDbCommand InsertCommand { get { throw ADP.OleDb(); } set { } }
+        public new System.Data.OleDb.OleDbCommand SelectCommand { get { throw ADP.OleDb(); } set { } }
+        System.Data.IDbCommand System.Data.IDbDataAdapter.DeleteCommand { get { throw ADP.OleDb(); } set { } }
+        System.Data.IDbCommand System.Data.IDbDataAdapter.InsertCommand { get { throw ADP.OleDb(); } set { } }
+        System.Data.IDbCommand System.Data.IDbDataAdapter.SelectCommand { get { throw ADP.OleDb(); } set { } }
+        System.Data.IDbCommand System.Data.IDbDataAdapter.UpdateCommand { get { throw ADP.OleDb(); } set { } }
+        public new System.Data.OleDb.OleDbCommand UpdateCommand { get { throw ADP.OleDb(); } set { } }
 		public OleDbDataAdapter() { }
 		public OleDbDataAdapter (OleDbCommand selectCommand) => throw ADP.OleDb();
 		public OleDbDataAdapter (String selectCommandText, OleDbConnection selectConnection) => throw ADP.OleDb();
@@ -329,19 +329,19 @@ namespace System.Data.OleDb
 	[MonoTODO("OleDb is not implemented.")]
 	public sealed partial class OleDbParameter : System.Data.Common.DbParameter, System.Data.IDataParameter, System.Data.IDbDataParameter, System.ICloneable
 	{
-		public override DbType DbType { get; set; }
-		public override ParameterDirection Direction { get; set; }
-		public override Boolean IsNullable { get; set; }
-		public int Offset { get; set; }
-		public System.Data.OleDb.OleDbType OleDbType { get; set; }
-		public override String ParameterName { get; set; }
-		public new Byte Precision { get; set; }
-		public new Byte Scale { get; set; }
-		public override Int32 Size { get; set; }
-		public override String SourceColumn { get; set; }
-		public override Boolean SourceColumnNullMapping { get; set; }
-		public override DataRowVersion SourceVersion { get; set; }
-		public override Object Value { get; set; }
+		public override DbType DbType { get { throw ADP.OleDb(); } set { } }
+		public override ParameterDirection Direction { get { throw ADP.OleDb(); } set { } }
+		public override Boolean IsNullable { get { throw ADP.OleDb(); } set { } }
+		public int Offset { get { throw ADP.OleDb(); } set { } }
+		public System.Data.OleDb.OleDbType OleDbType { get { throw ADP.OleDb(); } set { } }
+		public override String ParameterName { get { throw ADP.OleDb(); } set { } }
+		public new Byte Precision { get { throw ADP.OleDb(); } set { } }
+		public new Byte Scale { get { throw ADP.OleDb(); } set { } }
+		public override Int32 Size { get { throw ADP.OleDb(); } set { } }
+		public override String SourceColumn { get { throw ADP.OleDb(); } set { } }
+		public override Boolean SourceColumnNullMapping { get { throw ADP.OleDb(); } set { } }
+		public override DataRowVersion SourceVersion { get { throw ADP.OleDb(); } set { } }
+		public override Object Value { get { throw ADP.OleDb(); } set { } }
 		public OleDbParameter() { }
 		public OleDbParameter (String name, OleDbType dataType) => throw ADP.OleDb();
 		public OleDbParameter (String name, OleDbType dataType, Int32 size) => throw ADP.OleDb();
@@ -355,43 +355,45 @@ namespace System.Data.OleDb
 	}
 
 	[MonoTODO("OleDb is not implemented.")]
-	public class OleDbParameterCollection
+	public class OleDbParameterCollection : System.Data.Common.DbParameterCollection
 	{
-		public Int32 Count { get; set; }
-		public Boolean IsFixedSize { get; set; }
-		public Boolean IsReadOnly { get; set; }
-		public Boolean IsSynchronized { get; set; }
-		public OleDbParameter Item { get; set; }
-		public Object SyncRoot { get; set; }
+		internal OleDbParameterCollection() { }
 		public OleDbParameter Add (OleDbParameter value) => throw ADP.OleDb();
-		public Int32 Add (Object value) => throw ADP.OleDb();
+		public override Int32 Add (Object value) => throw ADP.OleDb();
 		public OleDbParameter Add (String parameterName, OleDbType oleDbType) => throw ADP.OleDb();
 		public OleDbParameter Add (String parameterName, OleDbType oleDbType, Int32 size) => throw ADP.OleDb();
 		public OleDbParameter Add (String parameterName, OleDbType oleDbType, Int32 size, String sourceColumn) => throw ADP.OleDb();
 		public OleDbParameter Add (String parameterName, Object value) => throw ADP.OleDb();
-		public void AddRange (Array values) => throw ADP.OleDb();
+		public override void AddRange (Array values) => throw ADP.OleDb();
 		public void AddRange (OleDbParameter[] values) => throw ADP.OleDb();
 		public OleDbParameter AddWithValue (String parameterName, Object value) => throw ADP.OleDb();
-		public void Clear () => throw ADP.OleDb();
+		public override void Clear () => throw ADP.OleDb();
 		public Boolean Contains (OleDbParameter value) => throw ADP.OleDb();
-		public Boolean Contains (Object value) => throw ADP.OleDb();
-		public Boolean Contains (String value) => throw ADP.OleDb();
-		public void CopyTo (Array array, Int32 index) => throw ADP.OleDb();
+		public override Boolean Contains (Object value) => throw ADP.OleDb();
+		public override Boolean Contains (String value) => throw ADP.OleDb();
+		public override void CopyTo (Array array, Int32 index) => throw ADP.OleDb();
 		public void CopyTo (OleDbParameter[] array, Int32 index) => throw ADP.OleDb();
-		public IEnumerator GetEnumerator () => throw ADP.OleDb();
-		public DbParameter GetParameter (Int32 index) => throw ADP.OleDb();
-		public DbParameter GetParameter (String parameterName) => throw ADP.OleDb();
+		public override IEnumerator GetEnumerator () => throw ADP.OleDb();
+		protected override DbParameter GetParameter (Int32 index) => throw ADP.OleDb();
+		protected override DbParameter GetParameter (String parameterName) => throw ADP.OleDb();
 		public Int32 IndexOf (OleDbParameter value) => throw ADP.OleDb();
-		public Int32 IndexOf (Object value) => throw ADP.OleDb();
-		public Int32 IndexOf (String parameterName) => throw ADP.OleDb();
+		public override Int32 IndexOf (Object value) => throw ADP.OleDb();
+		public override Int32 IndexOf (String parameterName) => throw ADP.OleDb();
 		public void Insert (Int32 index, OleDbParameter value) => throw ADP.OleDb();
-		public void Insert (Int32 index, Object value) => throw ADP.OleDb();
+		public override void Insert (Int32 index, Object value) => throw ADP.OleDb();
 		public void Remove (OleDbParameter value) => throw ADP.OleDb();
-		public void Remove (Object value) => throw ADP.OleDb();
-		public void RemoveAt (Int32 index) => throw ADP.OleDb();
-		public void RemoveAt (String parameterName) => throw ADP.OleDb();
-		public void SetParameter (Int32 index, DbParameter value) => throw ADP.OleDb();
-		public void SetParameter (String parameterName, DbParameter value) => throw ADP.OleDb();
+		public override void Remove (Object value) => throw ADP.OleDb();
+		public override void RemoveAt (Int32 index) => throw ADP.OleDb();
+		public override void RemoveAt (String parameterName) => throw ADP.OleDb();
+		protected override void SetParameter (Int32 index, DbParameter value) => throw ADP.OleDb();
+		protected override void SetParameter (String parameterName, DbParameter value) => throw ADP.OleDb();
+		public override int Count => throw ADP.OleDb();
+        public override bool IsFixedSize => throw ADP.OleDb();
+        public override bool IsReadOnly => throw ADP.OleDb();
+        public override bool IsSynchronized => throw ADP.OleDb();
+        public new System.Data.OleDb.OleDbParameter this[int index] { get { throw ADP.OleDb(); } set { } }
+        public new System.Data.OleDb.OleDbParameter this[string parameterName] { get { throw ADP.OleDb(); } set { } }
+        public override object SyncRoot => throw ADP.OleDb();
 	}
 
 	[MonoTODO("OleDb is not implemented.")]
@@ -408,8 +410,8 @@ namespace System.Data.OleDb
 	[MonoTODO("OleDb is not implemented.")]
 	public sealed partial class OleDbRowUpdatingEventArgs : System.Data.Common.RowUpdatingEventArgs
 	{
-		protected override IDbCommand BaseCommand { get; set; }
-		public new OleDbCommand Command { get; set; }
+		protected override IDbCommand BaseCommand { get { throw ADP.OleDb(); } set { } }
+		public new OleDbCommand Command { get { throw ADP.OleDb(); } set { } }
 		public OleDbRowUpdatingEventArgs (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) 
 			: base (default(System.Data.DataRow), default(System.Data.IDbCommand), default(System.Data.StatementType), default(System.Data.Common.DataTableMapping))
         	=> throw ADP.OleDb();
@@ -472,5 +474,11 @@ namespace System.Data.OleDb
 		protected override void Dispose (Boolean disposing) => throw ADP.OleDb();
 		public override void Rollback () => throw ADP.OleDb();
 	}
+	
+	[MonoTODO("OleDb is not implemented.")]
+    internal sealed class OleDbConnectionString : DbConnectionOptions 
+    { 
+        internal OleDbConnectionString(string connectionString, bool validate) : base(connectionString, null) { }
+    }
 }
 #pragma warning restore 108, 114, 67, 3006
