@@ -3,20 +3,6 @@
 
 #if defined(PLATFORM_UNITY) && defined(UNITY_USE_PLATFORM_STUBS)
 
-void
-ves_icall_System_Net_Sockets_Socket_Disconnect_internal (gsize sock, MonoBoolean reuse, gint32 *error)
-{
-	g_assert(0 && "This function is not yet implemented for the Unity platform.");
-}
-
-gboolean
-ves_icall_System_Net_Sockets_Socket_SendFile_internal (gsize sock, MonoString *filename, MonoArray *pre_buffer,
-	MonoArray *post_buffer, gint flags, gint32 *error, gboolean blocking)
-{
-	g_assert(0 && "This function is not yet implemented for the Unity platform.");
-	return FALSE;
-}
-
 gboolean
 ves_icall_System_Net_Sockets_Socket_SupportPortReuse (MonoProtocolType proto)
 {
