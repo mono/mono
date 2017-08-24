@@ -94,7 +94,7 @@ typedef struct MonoManagedMemorySnapshot
 	void* additionalUserInformation;
 } MonoManagedMemorySnapshot;
 
-MonoManagedMemorySnapshot* mono_unity_capture_memory_snapshot();
-void mono_unity_free_captured_memory_snapshot(MonoManagedMemorySnapshot* snapshot);
+MONO_API MonoManagedMemorySnapshot* mono_unity_capture_memory_snapshot();
+MONO_API void mono_unity_free_captured_memory_snapshot(MonoManagedMemorySnapshot* snapshot);
 
 #endif
