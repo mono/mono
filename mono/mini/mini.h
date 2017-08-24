@@ -2992,7 +2992,7 @@ MONO_API void      mono_debugger_run_finally             (MonoContext *start_ctx
 MONO_API gboolean mono_breakpoint_clean_code (guint8 *method_start, guint8 *code, int offset, guint8 *buf, int size);
 
 /* Tracing */
-MonoTraceSpec *mono_trace_parse_options         (const char *options);
+MonoTraceSpec *mono_trace_set_options           (const char *options);
 void           mono_trace_set_assembly          (MonoAssembly *assembly);
 gboolean       mono_trace_eval                  (MonoMethod *method);
 

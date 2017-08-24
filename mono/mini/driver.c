@@ -1454,7 +1454,7 @@ mono_jit_parse_options (int argc, char * argv[])
 		 * Need to call this before mini_init () so we can trace methods 
 		 * compiled there too.
 		 */
-		mono_jit_trace_calls = mono_trace_parse_options (trace_options);
+		mono_jit_trace_calls = mono_trace_set_options (trace_options);
 		if (mono_jit_trace_calls == NULL)
 			exit (1);
 	}
@@ -2019,7 +2019,7 @@ mono_main (int argc, char* argv[])
 		 * Need to call this before mini_init () so we can trace methods 
 		 * compiled there too.
 		 */
-		mono_jit_trace_calls = mono_trace_parse_options (trace_options);
+		mono_jit_trace_calls = mono_trace_set_options (trace_options);
 		if (mono_jit_trace_calls == NULL)
 			exit (1);
 	}
@@ -2399,7 +2399,7 @@ mono_jit_aot_compiling (void)
 gboolean
 mono_jit_set_trace_options (const char* options)
 {
-	MonoTraceSpec *trace_opt = mono_trace_parse_options (options);
+	MonoTraceSpec *trace_opt = mono_trace_set_options (options);
 	if (trace_opt == NULL)
 		return FALSE;
 	mono_jit_trace_calls = trace_opt;

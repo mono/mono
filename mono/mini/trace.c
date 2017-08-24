@@ -310,8 +310,7 @@ out:
 	return token;
 }
 
-MonoTraceSpec *
-mono_trace_parse_options (const char *options)
+MonoTraceSpec *mono_trace_set_options (const char *options)
 {
 	char *p = (char*)options;
 	int size = 1;
