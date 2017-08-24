@@ -2992,6 +2992,14 @@ MONO_API void      mono_debugger_run_finally             (MonoContext *start_ctx
 MONO_API gboolean mono_breakpoint_clean_code (guint8 *method_start, guint8 *code, int offset, guint8 *buf, int size);
 
 /* Tracing */
+MONO_PROFILER_API gboolean mono_callspec_parse		(const char *options,
+							 MonoTraceSpec *spec);
+MONO_PROFILER_API void     mono_callspec_cleanup	(MonoTraceSpec *spec);
+MONO_PROFILER_API gboolean mono_callspec_eval_exception	(MonoClass *klass,
+							 MonoTraceSpec *spec);
+MONO_PROFILER_API gboolean mono_callspec_eval		(MonoMethod *method,
+							 const MonoTraceSpec *spec);
+
 MonoTraceSpec *mono_trace_set_options           (const char *options);
 void           mono_trace_set_assembly          (MonoAssembly *assembly);
 gboolean       mono_trace_eval                  (MonoMethod *method);

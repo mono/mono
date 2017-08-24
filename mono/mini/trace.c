@@ -40,7 +40,7 @@ static MonoAssembly *prog_assembly;
 static volatile gint32 output_lock = 0;
 
 gboolean
-mono_trace_eval_exception (MonoClass *klass)
+mono_callspec_eval_exception (MonoClass *klass, MonoTraceSpec *spec)
 {
 	int include = 0;
 	int i;
@@ -48,8 +48,8 @@ mono_trace_eval_exception (MonoClass *klass)
 	if (!klass)
 		return FALSE;
 
-	for (i = 0; i < trace_spec.len; i++) {
-		MonoTraceOperation *op = &trace_spec.ops [i];
+	for (i = 0; i < spec->len; i++) {
+		MonoTraceOperation *op = &spec->ops [i];
 		int inc = 0;
 		
 		switch (op->op){
@@ -73,14 +73,18 @@ mono_trace_eval_exception (MonoClass *klass)
 	return include;
 }
 
-gboolean
-mono_trace_eval (MonoMethod *method)
+gboolean mono_trace_eval_exception (MonoClass *klass)
+{
+	return mono_callspec_eval_exception (klass, &trace_spec);
+}
+
+gboolean mono_callspec_eval (MonoMethod *method, const MonoTraceSpec *spec)
 {
 	int include = 0;
 	int i;
 
-	for (i = 0; i < trace_spec.len; i++){
-		MonoTraceOperation *op = &trace_spec.ops [i];
+	for (i = 0; i < spec->len; i++) {
+		MonoTraceOperation *op = &spec->ops[i];
 		int inc = 0;
 		
 		switch (op->op){
@@ -124,6 +128,11 @@ mono_trace_eval (MonoMethod *method)
 		}
 	}
 	return include;
+}
+
+gboolean mono_trace_eval (MonoMethod *method)
+{
+	return mono_callspec_eval (method, &trace_spec);
 }
 
 static int is_filenamechar (char p)
@@ -310,32 +319,50 @@ out:
 	return token;
 }
 
-MonoTraceSpec *mono_trace_set_options (const char *options)
+gboolean mono_callspec_parse (const char *options, MonoTraceSpec *spec)
 {
 	char *p = (char*)options;
 	int size = 1;
 	int token;
 
-	trace_spec.enabled = TRUE;
+	memset (spec, 0, sizeof (*spec));
+
+	spec->enabled = TRUE;
 	if (*p == 0){
-		trace_spec.len = 1;
-		trace_spec.ops = g_new0 (MonoTraceOperation, 1);
-		trace_spec.ops [0].op = MONO_TRACEOP_ALL;
-		return &trace_spec;
+		spec->len = 1;
+		spec->ops = g_new0 (MonoTraceOperation, 1);
+		spec->ops[0].op = MONO_TRACEOP_ALL;
+		return TRUE;
 	}
 		
 	for (p = (char*)options; *p != 0; p++)
 		if (*p == ',')
 			size++;
-	
-	trace_spec.ops = g_new0 (MonoTraceOperation, size);
+
+	spec->ops = g_new0 (MonoTraceOperation, size);
 
 	p = (char *)options;
 
-	while ((token = (get_spec (&p, &trace_spec))) != TOKEN_END) {
+	while ((token = (get_spec (&p, spec))) != TOKEN_END) {
 		if (token == TOKEN_ERROR)
-			return NULL;
+			return FALSE;
 	}
+	return TRUE;
+}
+
+void mono_callspec_cleanup (MonoTraceSpec *spec)
+{
+	if (spec->ops != NULL) {
+		g_free (spec->ops);
+	}
+	memset (spec, 0, sizeof (*spec));
+}
+
+MonoTraceSpec *mono_trace_set_options (const char *options)
+{
+	if (!mono_callspec_parse (options, &trace_spec))
+		return NULL;
+
 	return &trace_spec;
 }
 
