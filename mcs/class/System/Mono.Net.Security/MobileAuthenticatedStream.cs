@@ -612,11 +612,16 @@ namespace Mono.Net.Security
 				 * SSLHandshake() will return repeatedly with 'SslStatus.WouldBlock', we then need
 				 * to take care of I/O and call it again.
 				*/
+				var newStatus = AsyncOperationStatus.Continue;
 				if (xobileTlsContext.ProcessHandshake ()) {
 					xobileTlsContext.FinishHandshake ();
-					return AsyncOperationStatus.Complete;
+					newStatus = AsyncOperationStatus.Complete;
 				}
-				return AsyncOperationStatus.Continue;
+
+				if (lastException != null)
+					lastException.Throw ();
+
+				return newStatus;
 			}
 		}
 
@@ -624,8 +629,10 @@ namespace Mono.Net.Security
 		{
 			lock (ioLock) {
 				// This operates on the internal buffer and will never block.
-				var ret = xobileTlsContext.Read (userBuffer.Buffer, userBuffer.Offset, userBuffer.Size, out bool wantMore);
-				return (ret, wantMore);
+				var ret = xobileTlsContext.Read (userBuffer.Buffer, userBuffer.Offset, userBuffer.Size);
+				if (lastException != null)
+					lastException.Throw ();
+				return ret;
 			}
 		}
 
@@ -633,8 +640,10 @@ namespace Mono.Net.Security
 		{
 			lock (ioLock) {
 				// This operates on the internal buffer and will never block.
-				var ret = xobileTlsContext.Write (userBuffer.Buffer, userBuffer.Offset, userBuffer.Size, out bool wantMore);
-				return (ret, wantMore);
+				var ret = xobileTlsContext.Write (userBuffer.Buffer, userBuffer.Offset, userBuffer.Size);
+				if (lastException != null)
+					lastException.Throw ();
+				return ret;
 			}
 		}
 

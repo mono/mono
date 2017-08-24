@@ -216,6 +216,7 @@ Mono.Btls/MonoBtlsProvider.cs
 Mono.Btls/MonoBtlsSsl.cs
 Mono.Btls/MonoBtlsSslCtx.cs
 Mono.Btls/MonoBtlsSslError.cs
+Mono.Btls/MonoBtlsSslRenegotiateMode.cs
 Mono.Btls/MonoBtlsStream.cs
 Mono.Btls/MonoBtlsUtils.cs
 Mono.Btls/MonoBtlsX509.cs
