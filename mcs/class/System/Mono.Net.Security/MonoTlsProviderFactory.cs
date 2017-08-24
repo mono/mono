@@ -193,23 +193,20 @@ namespace Mono.Net.Security
 			}
 		}
 
-#if MONO_TLS_DEBUG
 		static bool enableDebug;
 
+		[Conditional ("MONO_TLS_DEBUG")]
 		static void InitializeDebug ()
 		{
 			if (Environment.GetEnvironmentVariable ("MONO_TLS_DEBUG") != null)
 				enableDebug = true;
 		}
-#endif
 
 		[Conditional ("MONO_TLS_DEBUG")]
 		internal static void Debug (string message, params object[] args)
 		{
-#if MONO_TLS_DEBUG
 			if (enableDebug)
 				Console.Error.WriteLine (message, args);
-#endif
 		}
 
 #endregion
@@ -224,9 +221,7 @@ namespace Mono.Net.Security
 				if (providerRegistration != null)
 					return;
 
-#if MONO_TLS_DEBUG
 				InitializeDebug ();
-#endif
 
 				providerRegistration = new Dictionary<string,Tuple<Guid,string>> ();
 				providerCache = new Dictionary<Guid,MSI.MonoTlsProvider> ();
