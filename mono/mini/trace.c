@@ -173,61 +173,67 @@ enum Token {
 	TOKEN_ERROR
 };
 
-static int
-get_token (void)
+static int get_token (char **in, char **extra)
 {
-	while (input [0] == '+')
-		input++;
+	char *p = *in;
+	while (p[0] == '+')
+		p++;
 
-	if (input [0] == '\0') {
+	*extra = NULL;
+
+	if (p[0] == '\0') {
+		*in = p;
 		return TOKEN_END;
 	}
-	if (value != NULL) {
-		g_free (value);
-		value = NULL;
-	}
-	if (input [0] == 'M' && input [1] == ':'){
-		input += 2;
-		value = get_string (&input);
+	if (p[0] == 'M' && p[1] == ':') {
+		p += 2;
+		*extra = get_string (&p);
+		*in = p;
 		return TOKEN_METHOD;
 	}
-	if (input [0] == 'N' && input [1] == ':'){
-		input += 2;
-		value = get_string (&input);
+	if (p[0] == 'N' && p[1] == ':') {
+		p += 2;
+		*extra = get_string (&p);
+		*in = p;
 		return TOKEN_NAMESPACE;
 	}
-	if (input [0] == 'T' && input [1] == ':'){
-		input += 2;
-		value = get_string (&input);
+	if (p[0] == 'T' && p[1] == ':') {
+		p += 2;
+		*extra = get_string (&p);
+		*in = p;
 		return TOKEN_CLASS;
 	}
-	if (input [0] == 'E' && input [1] == ':'){
-		input += 2;
-		value = get_string (&input);
+	if (p[0] == 'E' && p[1] == ':') {
+		p += 2;
+		*extra = get_string (&p);
+		*in = p;
 		return TOKEN_EXCEPTION;
 	}
-	if (*input == '-'){
-		input++;
+	if (*p == '-') {
+		p++;
+		*in = p;
 		return TOKEN_EXCLUDE;
 	}
-	if (is_filenamechar (*input)){
-		value = get_string (&input);
-		if (strcmp (value, "all") == 0)
+	if (is_filenamechar (*p)) {
+		*extra = get_string (&p);
+		*in = p;
+		if (strcmp (*extra, "all") == 0)
 			return TOKEN_ALL;
-		if (strcmp (value, "program") == 0)
+		if (strcmp (*extra, "program") == 0)
 			return TOKEN_PROGRAM;
-		if (strcmp (value, "wrapper") == 0)
+		if (strcmp (*extra, "wrapper") == 0)
 			return TOKEN_WRAPPER;
-		if (strcmp (value, "disabled") == 0)
+		if (strcmp (*extra, "disabled") == 0)
 			return TOKEN_DISABLED;
 		return TOKEN_STRING;
 	}
-	if (*input == ','){
-		input++;
+	if (*p == ',') {
+		p++;
+		*in = p;
 		return TOKEN_SEPARATOR;
 	}
 
-	fprintf (stderr, "Syntax error at or around '%s'\n", input);	
+	fprintf (stderr, "Syntax error at or around '%s'\n", p);
 	return TOKEN_ERROR;
 }
 
@@ -241,11 +247,15 @@ cleanup (void)
 static int
 get_spec (int *last)
 {
-	int token = get_token ();
+	if (value != NULL) {
+		g_free (value);
+		value = NULL;
+	}
+	int token = get_token (&input, &value);
 	gboolean exclude = FALSE;
 	if (token == TOKEN_EXCLUDE){
 		exclude = TRUE;
-		token = get_token ();
+		token = get_token (&input, &value);
 		if (token == TOKEN_EXCLUDE || token == TOKEN_DISABLED) {
 			fprintf (stderr, "Expecting an expression");
 			return TOKEN_ERROR;
