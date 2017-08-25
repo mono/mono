@@ -78,10 +78,10 @@ namespace Mono.Net.Security
 			get { return parent.Provider; }
 		}
 
-		[SD.Conditional ("MARTIN_DEBUG")]
+		[SD.Conditional ("MONO_TLS_DEBUG")]
 		protected void Debug (string message, params object[] args)
 		{
-			Console.Error.WriteLine ("{0}: {1}", GetType ().Name, string.Format (message, args));
+			parent.Debug ("{0}: {1}", GetType ().Name, string.Format (message, args));
 		}
 
 		public abstract bool HasContext {
