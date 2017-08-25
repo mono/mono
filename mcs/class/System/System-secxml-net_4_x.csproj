@@ -845,6 +845,7 @@
     <Compile Include="Mono.Btls\MonoBtlsSsl.cs" />
     <Compile Include="Mono.Btls\MonoBtlsSslCtx.cs" />
     <Compile Include="Mono.Btls\MonoBtlsSslError.cs" />
+    <Compile Include="Mono.Btls\MonoBtlsSslRenegotiateMode.cs" />
     <Compile Include="Mono.Btls\MonoBtlsStream.cs" />
     <Compile Include="Mono.Btls\MonoBtlsUtils.cs" />
     <Compile Include="Mono.Btls\MonoBtlsX509.cs" />
