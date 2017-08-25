@@ -32,6 +32,20 @@ UnlockedIncrement (gint32 *val)
 }
 
 MONO_UNLOCKED_ATTRS
+gint64
+UnlockedIncrement64 (gint64 *val)
+{
+	return ++*val;
+}
+
+MONO_UNLOCKED_ATTRS
+gint64
+UnlockedDecrement64 (gint64 *val)
+{
+	return --*val;
+}
+
+MONO_UNLOCKED_ATTRS
 gint32
 UnlockedAdd (gint32 *dest, gint32 add)
 {
@@ -55,6 +69,13 @@ UnlockedSubtract64 (gint64 *dest, gint64 sub)
 MONO_UNLOCKED_ATTRS
 void
 UnlockedWrite (gint32 *dest, gint32 val)
+{
+	*dest = val;
+}
+
+MONO_UNLOCKED_ATTRS
+void
+UnlockedWrite64 (gint64 *dest, gint64 val)
 {
 	*dest = val;
 }
