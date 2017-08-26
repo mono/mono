@@ -46,6 +46,8 @@
 #if (_POSIX_C_SOURCE >= 200112L) && !_GNU_SOURCE
 #define USE_STRERROR_R_XSI
 #endif
+#elif defined(__APPLE__)
+#define USE_STRERROR_R_XSI
 #endif
 
 /* 
