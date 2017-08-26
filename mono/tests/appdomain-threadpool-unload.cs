@@ -21,7 +21,7 @@ class Driver
 		object o = new object ();
 
 		foreach (var i in
-			Enumerable.Range (0, 100)
+			Enumerable.Range (0, 10)
 				.AsParallel ().WithDegreeOfParallelism (Environment.ProcessorCount)
 				.Select (i => {
 					AppDomain ad;

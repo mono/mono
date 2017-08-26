@@ -2788,7 +2788,9 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 	} else {
 		runtime_invoke = (MonoObject *(*)(MonoObject *, void **, MonoObject **, void *))info->runtime_invoke;
 
+		mono_enter_managed_from_runtime (&result);
 		result = runtime_invoke ((MonoObject *)obj, params, exc, info->compiled_method);
+		mono_exit_managed_from_runtime ();
 	}
 	if (catchExcInMonoError && *exc != NULL)
 		mono_error_set_exception_instance (error, (MonoException*) *exc);

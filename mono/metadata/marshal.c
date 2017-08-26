@@ -221,6 +221,12 @@ mono_icall_start (HandleStackMark *stackmark, MonoError *error);
 static void
 mono_icall_end (MonoThreadInfo *info, HandleStackMark *stackmark, MonoError *error);
 
+static void
+mono_runtime_invoke_start (gpointer *seg_begin);
+
+static void
+mono_runtime_invoke_end (gpointer *seg_begin);
+
 static MonoObjectHandle
 mono_icall_handle_new (gpointer rawobj);
 
@@ -398,6 +404,8 @@ mono_marshal_init (void)
 		register_icall (mono_threads_exit_gc_safe_region_unbalanced, "mono_threads_exit_gc_safe_region_unbalanced", "void ptr ptr", TRUE);
 		register_icall (mono_threads_attach_coop, "mono_threads_attach_coop", "ptr ptr ptr", TRUE);
 		register_icall (mono_threads_detach_coop, "mono_threads_detach_coop", "void ptr ptr", TRUE);
+		register_icall (mono_runtime_invoke_start, "mono_runtime_invoke_start", "void ptr", TRUE);
+		register_icall (mono_runtime_invoke_end, "mono_runtime_invoke_end", "void ptr", TRUE);
 		register_icall (mono_icall_start, "mono_icall_start", "ptr ptr ptr", TRUE);
 		register_icall (mono_icall_end, "mono_icall_end", "void ptr ptr ptr", TRUE);
 		register_icall (mono_icall_handle_new, "mono_icall_handle_new", "ptr ptr", TRUE);
@@ -2469,6 +2477,7 @@ mono_marshal_emit_thread_force_interrupt_checkpoint (MonoMethodBuilder *mb)
 static MonoAsyncResult *
 mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 {
+	mono_enter_runtime_from_managed (&params);
 	MonoError error;
 	MonoMulticastDelegate *mcast_delegate;
 	MonoClass *klass;
@@ -2478,6 +2487,7 @@ mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 	mcast_delegate = (MonoMulticastDelegate *) delegate;
 	if (mcast_delegate->delegates != NULL) {
 		mono_set_pending_exception (mono_get_exception_argument (NULL, "The delegate must have only one target"));
+		mono_exit_runtime_from_managed ();
 		return NULL;
 	}
 
@@ -2497,11 +2507,15 @@ mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 			method = delegate->method;
 
 			msg = mono_method_call_message_new (mono_marshal_method_from_wrapper (method), params, NULL, &async_callback, &state, &error);
-			if (mono_error_set_pending_exception (&error))
+			if (mono_error_set_pending_exception (&error)) {
+				mono_exit_runtime_from_managed ();
 				return NULL;
+			}
 			ares = mono_async_result_new (mono_domain_get (), NULL, state, NULL, NULL, &error);
-			if (mono_error_set_pending_exception (&error))
+			if (mono_error_set_pending_exception (&error)) {
+				mono_exit_runtime_from_managed ();
 				return NULL;
+			}
 			MONO_OBJECT_SETREF (ares, async_delegate, (MonoObject *)delegate);
 			MONO_OBJECT_SETREF (ares, async_callback, (MonoObject *)async_callback);
 			MONO_OBJECT_SETREF (msg, async_result, ares);
@@ -2511,10 +2525,12 @@ mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 			mono_remoting_invoke ((MonoObject *)tp->rp, msg, &exc, &out_args, &error);
 			if (!mono_error_ok (&error)) {
 				mono_error_set_pending_exception (&error);
+				mono_exit_runtime_from_managed ();
 				return NULL;
 			}
 			if (exc)
 				mono_set_pending_exception ((MonoException *) exc);
+			mono_exit_runtime_from_managed ();
 			return ares;
 		}
 	}
@@ -2529,6 +2545,7 @@ mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 
 	MonoAsyncResult *result = mono_threadpool_begin_invoke (mono_domain_get (), (MonoObject*) delegate, method, params, &error);
 	mono_error_set_pending_exception (&error);
+	mono_exit_runtime_from_managed ();
 	return result;
 }
 
@@ -4227,11 +4244,14 @@ emit_runtime_invoke_body (MonoMethodBuilder *mb, MonoImage *image, MonoMethod *m
 	 *
 	 * <interrupt check>
 	 * if (exc) {
+	 *       <record native-to-managed transition begin>
 	 *	 try {
-	 *	   return <call>
+	 *	   result = <call>
 	 *	 } catch (Exception e) {
 	 *     *exc = e;
 	 *   }
+         *   <record native-to-managed transition end>
+         *   return result;
 	 * } else {
 	 *     return <call>
 	 * }
@@ -4252,6 +4272,8 @@ emit_runtime_invoke_body (MonoMethodBuilder *mb, MonoImage *image, MonoMethod *m
 	 */
 	labels [1] = mono_mb_get_label (mb);
 	emit_thread_force_interrupt_checkpoint (mb);
+	/* mono_mb_emit_ldloc_addr (mb, loc_res); */
+	/* mono_mb_emit_icall (mb, mono_runtime_invoke_start); */
 	emit_invoke_call (mb, method, sig, callsig, loc_res, virtual_, need_direct_wrapper);
 
 	labels [2] = mono_mb_emit_branch (mb, CEE_LEAVE);
@@ -4278,6 +4300,8 @@ emit_runtime_invoke_body (MonoMethodBuilder *mb, MonoImage *image, MonoMethod *m
 	mono_mb_set_clauses (mb, 1, clause);
 
 	mono_mb_patch_branch (mb, labels [2]);
+	/* mono_mb_emit_ldloc_addr (mb, loc_res); */
+	/* mono_mb_emit_icall (mb, mono_runtime_invoke_end); */
 	mono_mb_emit_ldloc (mb, loc_res);
 	mono_mb_emit_byte (mb, CEE_RET);
 
@@ -8132,13 +8156,14 @@ mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, 
 			call_sig = ret;
 		}
 
-		if (uses_handles) {
-			handle_stack_mark_class = mono_class_load_from_name (mono_get_corlib (), "Mono", "RuntimeStructs/HandleStackMark");
-			error_class = mono_class_load_from_name (mono_get_corlib (), "Mono", "RuntimeStructs/MonoError");
+		handle_stack_mark_class = mono_class_load_from_name (mono_get_corlib (), "Mono", "RuntimeStructs/HandleStackMark");
+		error_class = mono_class_load_from_name (mono_get_corlib (), "Mono", "RuntimeStructs/MonoError");
 
-			thread_info_var = mono_mb_add_local (mb, &mono_get_intptr_class ()->byval_arg);
-			stack_mark_var = mono_mb_add_local (mb, &handle_stack_mark_class->byval_arg);
-			error_var = mono_mb_add_local (mb, &error_class->byval_arg);
+		thread_info_var = mono_mb_add_local (mb, &mono_get_intptr_class ()->byval_arg);
+		stack_mark_var = mono_mb_add_local (mb, &handle_stack_mark_class->byval_arg);
+		error_var = mono_mb_add_local (mb, &error_class->byval_arg);
+
+		if (uses_handles) {
 
 			if (save_handles_to_locals) {
 				/* add a local var to hold the handles for each out arg */
@@ -8174,11 +8199,12 @@ mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, 
 			mono_mb_patch_branch (mb, pos);
 		}
 
+		mono_mb_emit_ldloc_addr (mb, stack_mark_var);
+		mono_mb_emit_ldloc_addr (mb, error_var);
+		mono_mb_emit_icall (mb, mono_icall_start);
+		mono_mb_emit_stloc (mb, thread_info_var);
+
 		if (uses_handles) {
-			mono_mb_emit_ldloc_addr (mb, stack_mark_var);
-			mono_mb_emit_ldloc_addr (mb, error_var);
-			mono_mb_emit_icall (mb, mono_icall_start);
-			mono_mb_emit_stloc (mb, thread_info_var);
 
 			if (sig->hasthis) {
 				mono_mb_emit_byte (mb, CEE_LDARG_0);
@@ -8287,11 +8313,12 @@ mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, 
 			}
 			g_free (handles_locals);
 
-			mono_mb_emit_ldloc (mb, thread_info_var);
-			mono_mb_emit_ldloc_addr (mb, stack_mark_var);
-			mono_mb_emit_ldloc_addr (mb, error_var);
-			mono_mb_emit_icall (mb, mono_icall_end);
 		}
+
+		mono_mb_emit_ldloc (mb, thread_info_var);
+		mono_mb_emit_ldloc_addr (mb, stack_mark_var);
+		mono_mb_emit_ldloc_addr (mb, error_var);
+		mono_mb_emit_icall (mb, mono_icall_end);
 
 		if (check_exceptions)
 			emit_thread_interrupt_checkpoint (mb);
@@ -12390,6 +12417,9 @@ mono_icall_start (HandleStackMark *stackmark, MonoError *error)
 	MonoThreadInfo *info = mono_thread_info_current ();
 
 	mono_stack_mark_init (info, stackmark);
+#ifdef HAVE_SGEN_GC
+	mono_stack_segments_managed_to_native_enter (info, stackmark, FALSE);
+#endif
 	error_init (error);
 	return info;
 }
@@ -12400,6 +12430,25 @@ mono_icall_end (MonoThreadInfo *info, HandleStackMark *stackmark, MonoError *err
 	mono_stack_mark_pop (info, stackmark);
 	if (G_UNLIKELY (!is_ok (error)))
 		mono_error_set_pending_exception (error);
+#ifdef HAVE_SGEN_GC
+	mono_stack_segments_managed_to_native_leave (info, FALSE);
+#endif
+}
+
+static void
+mono_runtime_invoke_start (gpointer *seg_begin)
+{
+#ifdef HAVE_SGEN_GC
+	mono_stack_segments_native_to_managed_enter (mono_thread_info_current (), seg_begin);
+#endif
+}
+
+static void
+mono_runtime_invoke_end (gpointer *seg_end)
+{
+#ifdef HAVE_SGEN_GC
+	mono_stack_segments_native_to_managed_leave (mono_thread_info_current ());
+#endif
 }
 
 static MonoObjectHandle

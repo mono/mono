@@ -47,6 +47,8 @@ static gboolean conservative_stack_mark = FALSE;
 /* If set, check that there are no references to the domain left at domain unload */
 gboolean sgen_mono_xdomain_checks = FALSE;
 
+static gint32 selective_stackwalk_enabled = -1;
+
 /* Functions supplied by the runtime to be called by the GC */
 static MonoGCCallbacks gc_callbacks;
 
@@ -61,6 +63,108 @@ enum {
 };
 
 #undef OPDEF
+
+typedef struct _MonoStackSegment MonoStackSegment;
+struct _MonoStackSegment {
+	gpointer *segment_begin;
+	gpointer *segment_end;
+	MonoStackSegment *next;
+};
+
+static void
+selective_stackwalk_scan (SgenThreadInfo *info, gpointer *stack_curr, MonoStackSegment *seg, void *start_nursery, void *end_nursery);
+
+static MonoStackSegment*
+mono_stack_segments_alloc ()
+{
+	return NULL;
+}
+
+
+static void
+mono_stack_segments_free (MonoStackSegment *seg)
+{
+	while (seg != NULL) {
+		MonoStackSegment *next = seg->next;
+		g_free (seg);
+		seg = next;
+	}
+}
+
+static MonoStackSegment*
+mono_stack_segments_cons (MonoStackSegment *next)
+{
+	MonoStackSegment *s = g_new0 (MonoStackSegment, 1);
+	s->next = next;
+	return s;
+}
+
+static MonoStackSegment*
+mono_stack_segments_pop (MonoStackSegment *top)
+{
+	g_assert (top != NULL);
+	MonoStackSegment *next = top->next;
+	g_free (top);
+	return next;
+}
+
+void
+mono_stack_segments_managed_to_native_enter (SgenThreadInfo *info, gpointer seg_end, gboolean uninit_allowed)
+{
+	if (!mono_threads_is_coop_enabled ())
+		return;
+	MonoStackSegment *seg = info->client_info.stack_segments;
+	if (seg == NULL && uninit_allowed)
+		return;
+	g_assert (seg != NULL);
+	if (! (seg->segment_end == NULL)) {
+		fprintf (stderr, " segment_begin = %p segment_end = %p\n", seg->segment_begin, seg->segment_end);
+		g_assert (seg->segment_end == NULL);
+	}
+	seg->segment_end = seg_end;
+	if (! (seg->segment_end <= seg->segment_begin)) {
+		fprintf (stderr, "\n\tbegin: %p, end: %p\n", seg->segment_begin, seg->segment_end);
+		g_assert (seg->segment_end <= seg->segment_begin);
+	}
+}
+
+void
+mono_stack_segments_managed_to_native_leave (SgenThreadInfo *info, gboolean uninit_allowed)
+{
+	if (!mono_threads_is_coop_enabled ())
+		return;
+	MonoStackSegment *seg = info->client_info.stack_segments;
+	if (seg == NULL && uninit_allowed)
+		return;
+	g_assert (seg != NULL);
+	if (seg->segment_end == NULL) {
+		fprintf (stderr, "  seg->next = %p, seg->segment_begin = %p\n", seg->next, seg->segment_begin);
+		g_assert (seg->segment_end != NULL);
+	}
+	seg->segment_end = NULL;
+}
+
+void
+mono_stack_segments_native_to_managed_enter (SgenThreadInfo *info, gpointer seg_begin)
+{
+	if (!mono_threads_is_coop_enabled ())
+		return;
+	MonoStackSegment *seg = info->client_info.stack_segments;
+	g_assert (seg == NULL || seg->segment_end != NULL);
+	seg = mono_stack_segments_cons (seg);
+	seg->segment_begin = seg_begin;
+	info->client_info.stack_segments = seg;
+}
+
+void
+mono_stack_segments_native_to_managed_leave (SgenThreadInfo *info)
+{
+	if (!mono_threads_is_coop_enabled ())
+		return;
+	info->client_info.stack_segments = mono_stack_segments_pop (info->client_info.stack_segments);
+}
+
+
 
 /*
  * Write barriers
@@ -2242,6 +2346,8 @@ sgen_client_thread_attach (SgenThreadInfo* info)
 
 	SGEN_LOG (3, "registered thread %p (%p) stack end %p", info, (gpointer)mono_thread_info_get_tid (info), info->client_info.info.stack_end);
 
+	g_assert (info->client_info.stack_segments == NULL);
+
 	info->client_info.info.handle_stack = mono_handle_stack_alloc ();
 }
 
@@ -2274,6 +2380,10 @@ sgen_client_thread_detach_with_lock (SgenThreadInfo *p)
 	HandleStack *handles = (HandleStack*) p->client_info.info.handle_stack;
 	p->client_info.info.handle_stack = NULL;
 	mono_handle_stack_free (handles);
+
+	MonoStackSegment *ssegments = (MonoStackSegment*)p->client_info.stack_segments;
+	p->client_info.stack_segments = NULL;
+	mono_stack_segments_free (ssegments);
 }
 
 void
@@ -2352,6 +2462,16 @@ pin_handle_stack_interior_ptrs (void **ptr_slot, void *user_data)
 	sgen_conservatively_pin_objects_from (ptr_slot, ptr_slot+1, ud->start_nursery, ud->end_nursery, PIN_TYPE_STACK);
 }
 
+static gboolean
+mono_selective_stackwalk_conservative_scan_enabled ()
+{
+	if (G_UNLIKELY (selective_stackwalk_enabled < 0)) {
+		char *val = g_getenv ("ALEKSEY_HACK_COOP");
+		selective_stackwalk_enabled = (val != NULL);
+		g_free (val);
+	}
+	return selective_stackwalk_enabled != 0;
+}
 
 /*
  * Mark from thread stacks and registers.
@@ -2424,7 +2544,12 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 				conservative_stack_mark = TRUE;
 			}
 			//FIXME we should eventually use the new stack_mark from coop
-			sgen_conservatively_pin_objects_from ((void **)aligned_stack_start, (void **)info->client_info.info.stack_end, start_nursery, end_nursery, PIN_TYPE_STACK);
+			if (G_UNLIKELY (mono_threads_is_coop_enabled () &&
+					mono_selective_stackwalk_conservative_scan_enabled ())) {
+				selective_stackwalk_scan (info, (gpointer*)aligned_stack_start, info->client_info.stack_segments, start_nursery, end_nursery);
+			} else {
+				sgen_conservatively_pin_objects_from ((void **)aligned_stack_start, (void **)info->client_info.info.stack_end, start_nursery, end_nursery, PIN_TYPE_STACK);
+			}
 		}
 
 		if (!precise) {
@@ -2437,6 +2562,7 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 				//FIXME under coop, for now, what we need to ensure is that we scan any extra memory from info->client_info.info.stack_end to stack_mark
 				MonoThreadUnwindState *state = &info->client_info.info.thread_saved_state [SELF_SUSPEND_STATE_INDEX];
 				if (state && state->gc_stackdata) {
+					/*g_assert_not_reached ();*/ /*XXX aleksey - turns out we get here even on osx64 */
 					sgen_conservatively_pin_objects_from ((void **)state->gc_stackdata, (void**)((char*)state->gc_stackdata + state->gc_stackdata_size),
 						start_nursery, end_nursery, PIN_TYPE_STACK);
 				}
@@ -2461,6 +2587,26 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 	} FOREACH_THREAD_END
 }
 
+static void
+selective_stackwalk_scan (SgenThreadInfo *info, gpointer *stack_curr,  MonoStackSegment *seg, void *start_nursery, void *end_nursery)
+{
+	if (seg && seg->segment_end == NULL) {
+		/* It was suspended in managed mode, stack_start pairs with segment_begin */
+		g_assert (seg->segment_begin != NULL);
+		g_assert (stack_curr <= seg->segment_begin);
+		sgen_conservatively_pin_objects_from (stack_curr, seg->segment_begin, start_nursery, end_nursery, PIN_TYPE_STACK);
+		seg = seg->next;
+	}		
+	while (seg) {
+		fprintf (stderr, "thread info %p segment %p %p\n", info, seg->segment_begin, seg->segment_end);
+		g_assert (seg->segment_begin != NULL);
+		g_assert (seg->segment_end != NULL);
+		g_assert (seg->segment_end <= seg->segment_begin);
+		sgen_conservatively_pin_objects_from (seg->segment_end, seg->segment_begin, start_nursery, end_nursery, PIN_TYPE_STACK);
+		seg = seg->next;
+	}
+}
+
 /*
  * mono_gc_set_stack_end:
  *
@@ -2477,6 +2623,8 @@ mono_gc_set_stack_end (void *stack_end)
 	if (info) {
 		SGEN_ASSERT (0, stack_end < info->client_info.info.stack_end, "Can only lower stack end");
 		info->client_info.info.stack_end = stack_end;
+		/* g_assert (info->client_info.stack_segments == NULL); */
+		/* mono_stack_segments_native_to_managed_enter (info, stack_end); */
 	}
 	UNLOCK_GC;
 }

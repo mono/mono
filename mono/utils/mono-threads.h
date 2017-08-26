@@ -622,6 +622,18 @@ gboolean mono_threads_wait_pending_operations (void);
 void mono_threads_begin_global_suspend (void);
 void mono_threads_end_global_suspend (void);
 
+void
+mono_stack_segments_managed_to_native_enter (THREAD_INFO_TYPE *info, gpointer seg_end, gboolean uninit_allowed);
+
+void
+mono_stack_segments_managed_to_native_leave (THREAD_INFO_TYPE *info, gboolean uninit_allowed);
+
+void
+mono_stack_segments_native_to_managed_enter (THREAD_INFO_TYPE *info, gpointer seg_begin);
+
+void
+mono_stack_segments_native_to_managed_leave (THREAD_INFO_TYPE *info);
+
 gboolean
 mono_thread_info_is_current (THREAD_INFO_TYPE *info);
 

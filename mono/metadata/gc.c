@@ -49,6 +49,43 @@
 #include <pthread.h>
 #endif
 
+
+void
+mono_enter_runtime_from_managed (gpointer *seg_end)
+{
+#ifdef HAVE_SGEN_GC
+	/* we can get here from create_domain_objects () which runs before
+	 * stack end is set.  But we don't expect a GC to interrupt us, I
+	 * guess... */
+	mono_stack_segments_managed_to_native_enter (mono_thread_info_current (), seg_end, TRUE);
+#endif
+}
+
+void
+mono_exit_runtime_from_managed () {
+#ifdef HAVE_SGEN_GC
+	/* We can get here from create_domain_objects () which runs before
+	 * stack end is set.  But we don't expect a GC to happen so soon */
+	mono_stack_segments_managed_to_native_leave (mono_thread_info_current (), TRUE);
+#endif
+}
+
+void
+mono_enter_managed_from_runtime (gpointer *seg_end)
+{
+#ifdef HAVE_SGEN_GC
+	mono_stack_segments_native_to_managed_enter (mono_thread_info_current (), seg_end);
+#endif
+}
+
+void
+mono_exit_managed_from_runtime () {
+#ifdef HAVE_SGEN_GC
+	mono_stack_segments_native_to_managed_leave (mono_thread_info_current ());
+#endif
+}
+
+
 typedef struct DomainFinalizationReq {
 	gint32 ref;
 	MonoDomain *domain;
@@ -308,7 +345,9 @@ mono_gc_run_finalize (void *obj, void *data)
 
 	MONO_PROFILER_RAISE (gc_finalizing_object, (o));
 
+	mono_enter_managed_from_runtime (&o);
 	runtime_invoke (o, NULL, &exc, NULL);
+	mono_exit_managed_from_runtime ();
 
 	MONO_PROFILER_RAISE (gc_finalized_object, (o));
 

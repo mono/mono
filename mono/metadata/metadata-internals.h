@@ -955,5 +955,17 @@ mono_loader_set_strict_strong_names (gboolean enabled);
 gboolean
 mono_loader_get_strict_strong_names (void);
 
+void
+mono_enter_runtime_from_managed (gpointer *seg_end);
+
+void
+mono_exit_runtime_from_managed (void);
+
+void
+mono_enter_managed_from_runtime (gpointer *seg_end);
+
+void
+mono_exit_managed_from_runtime (void);
+
 #endif /* __MONO_METADATA_INTERNALS_H__ */
 
