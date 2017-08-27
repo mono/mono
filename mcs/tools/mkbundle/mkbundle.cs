@@ -659,7 +659,7 @@ class MakeBundle {
 			Console.WriteLine ("     Assembly: " + fname);
 			if (File.Exists (fname + ".config")){
 				maker.Add ("config:" + aname, fname + ".config");
-				Console.WriteLine ("       Config: " + runtime);
+				Console.WriteLine ("       Config: " + fname + ".config");
 			}
 		}
 		
