@@ -135,7 +135,7 @@ class MakeBundle {
 					return 1;
 				}
 				if (sdk_path != null || runtime != null)
-					Error ("You can not specify one of --runtime, --sdk or --cross");
+					Error ("You can only specify one of --runtime, --sdk or --cross");
 				custom_mode = false;
 				autodeps = true;
 				cross_target = args [++i];
@@ -213,7 +213,7 @@ class MakeBundle {
 				autodeps = true;
 				sdk_path = args [++i];
 				if (cross_target != null || runtime != null)
-					Error ("You can not specify one of --runtime, --sdk or --cross");
+					Error ("You can only specify one of --runtime, --sdk or --cross");
 				break;
 			case "--runtime":
 				if (i+1 == top){
