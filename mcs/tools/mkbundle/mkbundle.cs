@@ -624,6 +624,8 @@ class MakeBundle {
 			return false;
 		}
 		maker.Add (code, file);
+		// add a space after code (="systemconfig:" or "machineconfig:")
+		Console.WriteLine (code + " " + file);
 		return true;
 	}
 	
@@ -666,8 +668,10 @@ class MakeBundle {
 		if (!MaybeAddFile (maker, "systemconfig:", config_file) || !MaybeAddFile (maker, "machineconfig:", machine_config_file))
 			return false;
 
-		if (config_dir != null)
+		if (config_dir != null){
 			maker.Add ("config_dir:", config_dir);
+			Console.WriteLine ("   Config_dir: " + config_dir );
+		}
 		if (embedded_options != null)
 			maker.AddString ("options:", embedded_options);
 		if (environment.Count > 0){
