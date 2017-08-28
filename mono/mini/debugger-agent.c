@@ -4504,7 +4504,10 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, EventRequ
 		if (frame->il_offset != -1) {
 			/* FIXME: Sort the table and use a binary search */
 			sp = find_seq_point (frame->domain, frame->method, frame->il_offset, &info);
-			if (!sp) return ERR_NOT_IMPLEMENTED; // This can happen with exceptions when stepping
+			if (!sp) {
+				ss_destroy (ss_req);
+				return ERR_NOT_IMPLEMENTED; // This can happen with exceptions when stepping
+			}
 			method = frame->method;
 		}
 	}
