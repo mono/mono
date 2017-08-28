@@ -5190,9 +5190,11 @@ mono_threads_detach_coop (gpointer cookie, gpointer *dummy)
 	}
 
 	if (orig != domain) {
-		if (!orig)
-			mono_domain_unset ();
-		else
+		/* Match what the JIT does for CEE_MONO_JIT_DETACH via
+		 * mono_jit_set_domain(): only restore the domain if it was
+		 * originally non-NULL.
+		 */
+		if (orig)
 			mono_domain_set (orig, TRUE);
 	}
 }
