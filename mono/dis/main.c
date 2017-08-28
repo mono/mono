@@ -199,7 +199,7 @@ dis_directive_assembly (MonoImage *m)
 		 cols [MONO_ASSEMBLY_BUILD_NUMBER], cols [MONO_ASSEMBLY_REV_NUMBER]);
 	if (cols [MONO_ASSEMBLY_CULTURE]){
 		const char *locale = mono_metadata_string_heap (m, cols [MONO_ASSEMBLY_CULTURE]);
-		glong items_read, items_written;
+		guint32 items_read, items_written;
 		gunichar2 *render = g_utf8_to_utf16 (locale, strlen (locale), &items_read, &items_written, NULL);
 		char *dump = data_dump ((const char *) render, items_written * sizeof (gunichar2), "\t\t");
 		fprintf (output, "  .locale %s\n", dump);
