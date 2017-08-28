@@ -1111,7 +1111,7 @@ guint32
 mono_w32process_module_get_filename (gpointer process, gpointer module, gunichar2 *basename, guint32 size)
 {
 	gint pid, len;
-	gsize bytes;
+	guint32 bytes;
 	gchar *path;
 	gunichar2 *proc_path;
 
@@ -1158,7 +1158,7 @@ mono_w32process_module_get_name (gpointer process, gpointer module, gunichar2 *b
 	gunichar2 *procname;
 	char *procname_ext = NULL;
 	glong len;
-	gsize bytes;
+	guint32 bytes;
 	GSList *mods = NULL, *mods_iter;
 	MonoW32ProcessModule *found_module;
 	char *pname = NULL;
