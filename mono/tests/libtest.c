@@ -369,7 +369,7 @@ mono_test_marshal_char_array (gunichar2 *s)
 {
 	const char m[] = "abcdef";
 	gunichar2* s2;
-	glong len;
+	guint32 len;
 
 	s2 = g_utf8_to_utf16 (m, -1, NULL, &len, NULL);
 	
@@ -397,7 +397,7 @@ mono_test_marshal_unicode_char_array (gunichar2 *s)
 	const char m[] = "abcdef";
 	const char expected[] = "qwer";
 	gunichar2 *s1, *s2;
-	glong len1, len2;
+	guint32 len1, len2;
 
 	s1 = g_utf8_to_utf16 (m, -1, NULL, &len1, NULL);
 	s2 = g_utf8_to_utf16 (expected, -1, NULL, &len2, NULL);
@@ -1168,7 +1168,7 @@ mono_test_marshal_stringbuilder_unicode (gunichar2 *s, int n)
 {
 	const char m[] = "This is my message.  Isn't it nice?";
 	gunichar2* s2;
-	glong len;
+	guint32 len;
 
 	s2 = g_utf8_to_utf16 (m, -1, NULL, &len, NULL);
 	
@@ -1199,7 +1199,7 @@ mono_test_marshal_stringbuilder_out_unicode (gunichar2 **s)
 {
 	const char m[] = "This is my message.  Isn't it nice?";
 	gunichar2 *s2;
-	glong len;
+	guint32 len;
 
 	s2 = g_utf8_to_utf16 (m, -1, NULL, &len, NULL);
 	
@@ -2365,7 +2365,7 @@ mono_test_marshal_return_unicode_string_delegate (UnicodeStringDelegate del)
 {
 	const char m[] = "abcdef";
 	gunichar2 *s2, *res;
-	glong len;
+	guint32 len;
 
 	s2 = g_utf8_to_utf16 (m, -1, NULL, &len, NULL);
 

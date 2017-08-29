@@ -6206,7 +6206,7 @@ mono_string_new_len_checked (MonoDomain *domain, const char *text, guint length,
 	GError *eg_error = NULL;
 	MonoString *o = NULL;
 	guint16 *ut = NULL;
-	glong items_written;
+	guint32 items_written;
 
 	ut = eg_utf8_to_utf16_with_nuls (text, length, NULL, &items_written, &eg_error);
 
@@ -6256,7 +6256,7 @@ mono_string_new_checked (MonoDomain *domain, const char *text, MonoError *error)
     GError *eg_error = NULL;
     MonoString *o = NULL;
     guint16 *ut;
-    glong items_written;
+    guint32 items_written;
     int l;
 
     mono_error_init (error);
