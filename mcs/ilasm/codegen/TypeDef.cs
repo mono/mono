@@ -93,6 +93,8 @@ namespace Mono.ILASM {
                                 this.attr |= PEAPI.TypeAttr.Abstract;
                 }
 
+				public bool NoAutoInherit { get; set; }
+
                 public string Name {
                         get { return name; }
                 }
@@ -389,7 +391,7 @@ namespace Mono.ILASM {
                                                         name_space, name);
                                         }
                                 }
-                                if (FullName == "System.Object")
+                                if (FullName == "System.Object" || NoAutoInherit)
                                         classdef.SpecialNoSuper ();
                         }
 
