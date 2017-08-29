@@ -80,7 +80,7 @@ MCS = $(MCS_NO_LIB)
 
 ILASM = $(TOOLS_RUNTIME) $(mcs_topdir)/class/lib/build/ilasm.exe
 
-TEST_RUNNER = ./test-runner.exe --runtime $(top_builddir)/runtime/mono-wrapper --mono-path "$(CLASS)"
+TEST_RUNNER = ./test-runner.exe --mono-path "$(CLASS)"
 
 if FULL_AOT_TESTS
 TEST_RUNNER += --runtime-args "$(AOT_RUN_FLAGS)"
@@ -91,9 +91,9 @@ TEST_RUNNER += --runtime-args "$(AOT_RUN_FLAGS)"
 endif
 
 if HOST_WIN32
-TEST_RUNNER += --config tests-config --runtime $(if $(MONO_EXECUTABLE),$(shell cygpath -w -a $(MONO_EXECUTABLE) | sed 's/\\/\\\\/g'),mono)
+TEST_RUNNER += --config tests-config --runtime $(if $(MONO_EXECUTABLE),$(shell cygpath -w -a $(MONO_EXECUTABLE) | sed 's/\\/\\\\/g'),$(top_builddir)\runtime\mono-wrapper)
 else
-TEST_RUNNER += --config tests-config --runtime $(if $(MONO_EXECUTABLE),$(MONO_EXECUTABLE),mono)
+TEST_RUNNER += --config tests-config --runtime $(if $(MONO_EXECUTABLE),$(MONO_EXECUTABLE),$(top_builddir)/runtime/mono-wrapper)
 endif
 
 TEST_RUNNER += $(if $(V), --verbose,)
