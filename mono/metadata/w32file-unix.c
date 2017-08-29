@@ -3347,7 +3347,7 @@ mono_w32file_find_next (gpointer handle, WIN32_FIND_DATA *find_data)
 	gchar *utf8_filename, *utf8_basename;
 	gunichar2 *utf16_basename;
 	time_t create_time;
-	guint32 bytes;
+	glong bytes;
 	gboolean ret = FALSE;
 	
 	ok=mono_w32handle_lookup (handle, MONO_W32HANDLE_FIND,
@@ -3757,7 +3757,7 @@ mono_w32file_get_cwd (guint32 length, gunichar2 *buffer)
 {
 	gunichar2 *utf16_path;
 	glong count;
-	guint32 bytes;
+	gsize bytes;
 
 #ifdef __native_client__
 	gchar *path = g_get_current_dir ();
@@ -3896,7 +3896,7 @@ mono_w32file_get_logical_drive (guint32 len, gunichar2 *buf)
 	struct statfs *stats;
 	gint size, n, i;
 	gunichar2 *dir;
-	guint32 length, total = 0;
+	glong length, total = 0;
 	
 	n = getfsstat (NULL, 0, MNT_NOWAIT);
 	if (n == -1)
@@ -4222,7 +4222,7 @@ add_drive_string (guint32 len, gunichar2 *buf, LinuxMountInfoParseState *state)
 
 	if (!ignore_entry) {
 		gunichar2 *dir;
-		guint32 length;
+		glong length;
 		gchar *mountpoint = state->mountpoint_allocated ? state->mountpoint_allocated : state->mountpoint;
 
 		unescape_octal (mountpoint);
@@ -4254,7 +4254,7 @@ GetLogicalDriveStrings_Mtab (guint32 len, gunichar2 *buf)
 {
 	FILE *fp;
 	gunichar2 *ptr, *dir;
-	guint32 length, total = 0;
+	glong length, total = 0;
 	gchar buffer [512];
 	gchar **splitted;
 
@@ -4729,7 +4729,7 @@ mono_w32file_get_volume_information (const gunichar2 *path, gunichar2 *volumenam
 	gchar *utfpath;
 	gchar *fstypename;
 	gboolean status = FALSE;
-	guint32 len;
+	glong len;
 	
 	// We only support getting the file system type
 	if (fsbuffer == NULL)

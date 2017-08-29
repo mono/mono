@@ -149,7 +149,7 @@ compare_utf8_to_utf16_explicit (const gunichar2 *expected, const gchar *utf8, gl
 	GError *error;
 	gunichar2* ret;
 	RESULT result;
-	guint32 in_read, out_read;
+	glong in_read, out_read;
 
 	result = NULL;
 
@@ -208,7 +208,7 @@ RESULT
 test_utf8_seq ()
 {
 	const gchar *src = "\xE5\xB9\xB4\x27";
-	guint32 in_read, out_read;
+	glong in_read, out_read;
 	//gunichar2 expected [6];
 	GError *error = NULL;
 	gunichar2 *dst;
