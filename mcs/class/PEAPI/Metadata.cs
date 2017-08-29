@@ -1641,6 +1641,7 @@ namespace PEAPI {
 	public class ClassDef : Class {
 
 		Class superType;
+		bool setSuperType;
 		ArrayList fields = new ArrayList();
 		ArrayList methods = new ArrayList();
 		ArrayList events;
@@ -1656,9 +1657,6 @@ namespace PEAPI {
 				MetaData md) : base(nsName, name, md) 
 		{
 			metaData = md;
-			if (! ((nsName == "" && name == "<Module>") || (nsName == "System" && name == "Object")) ) {
-				superType = metaData.mscorlib.GetSpecialSystemClass(PrimitiveType.Object);
-			}
 			flags = (uint)attrSet;
 			tabIx = MDTable.TypeDef;
 		}
@@ -1666,6 +1664,7 @@ namespace PEAPI {
 		internal void SetSuper(Class sClass) 
 		{
 			superType = sClass;
+			setSuperType = true;
 			if (! (sClass is GenericTypeInst))
 				typeIndexChecked = false;
 		}
@@ -1677,12 +1676,13 @@ namespace PEAPI {
 			else  
 				superType = metaData.mscorlib.ValueType();
 
+			setSuperType = true;
 			typeIndex = PrimitiveType.ValueType.GetTypeIndex ();
 		}
 
 		public void SpecialNoSuper() 
 		{
-			superType = null;
+			setSuperType = true;
 		}
 
 		/// <summary>
@@ -1924,8 +1924,13 @@ namespace PEAPI {
 
 		internal sealed override void BuildTables(MetaData md) 
 		{
-			if (done) return;
-			if ((flags & (uint)TypeAttr.Interface) != 0) { superType = null; }
+			if (done) 
+				return;
+			
+			if ((flags & (uint)TypeAttr.Interface) != 0) {
+				superType = null;
+				setSuperType = true;
+			}
 			// Console.WriteLine("Building tables for " + name);
 			if (layout != null) md.AddToTable(MDTable.ClassLayout,layout);
 			// Console.WriteLine("adding methods " + methods.Count);
@@ -1958,6 +1963,10 @@ namespace PEAPI {
 							((Property)properties[0]).Row,MDTable.Property));
 			}
 			// Console.WriteLine("End of building tables");
+
+			if (!setSuperType)
+				superType = metaData.mscorlib.GetSpecialSystemClass(PrimitiveType.Object);
+
 			done = true;
 		}
 
@@ -5052,7 +5061,7 @@ namespace PEAPI {
 		private byte heapSizes = 0;
 		MetaDataElement entryPoint;
 		BinaryWriter output;
-		public MSCorLib mscorlib;
+		MSCorLib _mscorlib;
 		private TypeSpec[] systemTypeSpecs = new TypeSpec[PrimitiveType.NumSystemTypes];
 		long mdStart;
 		private ArrayList cattr_list;
@@ -5077,8 +5086,14 @@ namespace PEAPI {
 			for (int i=0; i < lgeCIx.Length; i++) {
 				lgeCIx[i] = false;
 			}
-			mscorlib = new MSCorLib(this);
 		}
+
+		public MSCorLib mscorlib {
+			get {
+				return _mscorlib ?? (_mscorlib = new MSCorLib (this));
+			}
+		}
+
 
 		internal TypeSpec GetPrimitiveTypeSpec(int ix) 
 		{
