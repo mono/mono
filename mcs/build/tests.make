@@ -212,7 +212,7 @@ run-xunit-test: run-xunit-test-local
 xunit-test-local: $(xunit_test_lib)
 run-xunit-test-local: run-xunit-test-lib
 
-# ln -s is a HACK for xunit runner to require xunit.execution.desktop.dll file in local folder on .net only
+# cp -rf is a HACK for xunit runner to require xunit.execution.desktop.dll file in local folder on .net only
 run-xunit-test-lib: xunit-test-local
 	@cp -rf $(XTEST_HARNESS_PATH)/xunit.execution.desktop.dll xunit.execution.desktop.dll
 	ok=:; \
