@@ -2666,6 +2666,54 @@ sgen_client_metadata_for_object (GCObject *obj)
 }
 
 /**
+ * mono_gchandle_new:
+ * \param obj managed object to get a handle for
+ * \param pinned whether the object should be pinned
+ * This returns a handle that wraps the object, this is used to keep a
+ * reference to a managed object from the unmanaged world and preventing the
+ * object from being disposed.
+ * 
+ * If \p pinned is false the address of the object can not be obtained, if it is
+ * true the address of the object can be obtained.  This will also pin the
+ * object so it will not be possible by a moving garbage collector to move the
+ * object. 
+ * 
+ * \returns a handle that can be used to access the object from unmanaged code.
+ */
+guint32
+mono_gchandle_new (MonoObject *obj, gboolean pinned)
+{
+	return sgen_gchandle_new (obj, pinned);
+}
+
+/**
+ * mono_gchandle_new_weakref:
+ * \param obj managed object to get a handle for
+ * \param track_resurrection Determines how long to track the object, if this is set to TRUE, the object is tracked after finalization, if FALSE, the object is only tracked up until the point of finalization.
+ *
+ * This returns a weak handle that wraps the object, this is used to
+ * keep a reference to a managed object from the unmanaged world.
+ * Unlike the \c mono_gchandle_new the object can be reclaimed by the
+ * garbage collector.  In this case the value of the GCHandle will be
+ * set to zero.
+ * 
+ * If \p track_resurrection is TRUE the object will be tracked through
+ * finalization and if the object is resurrected during the execution
+ * of the finalizer, then the returned weakref will continue to hold
+ * a reference to the object.   If \p track_resurrection is FALSE, then
+ * the weak reference's target will become NULL as soon as the object
+ * is passed on to the finalizer.
+ * 
+ * \returns a handle that can be used to access the object from
+ * unmanaged code.
+ */
+guint32
+mono_gchandle_new_weakref (GCObject *obj, gboolean track_resurrection)
+{
+	return sgen_gchandle_new_weakref (obj, track_resurrection);
+}
+
+/**
  * mono_gchandle_is_in_domain:
  * \param gchandle a GCHandle's handle.
  * \param domain An application domain.
@@ -2679,6 +2727,20 @@ mono_gchandle_is_in_domain (guint32 gchandle, MonoDomain *domain)
 }
 
 /**
+ * mono_gchandle_free:
+ * \param gchandle a GCHandle's handle.
+ *
+ * Frees the \p gchandle handle.  If there are no outstanding
+ * references, the garbage collector can reclaim the memory of the
+ * object wrapped. 
+ */
+void
+mono_gchandle_free (guint32 gchandle)
+{
+	sgen_gchandle_free (gchandle);
+}
+
+/**
  * mono_gchandle_free_domain:
  * \param unloading domain that is unloading
  *
@@ -2688,6 +2750,22 @@ mono_gchandle_is_in_domain (guint32 gchandle, MonoDomain *domain)
 void
 mono_gchandle_free_domain (MonoDomain *unloading)
 {
+}
+
+/**
+ * mono_gchandle_get_target:
+ * \param gchandle a GCHandle's handle.
+ *
+ * The handle was previously created by calling \c mono_gchandle_new or
+ * \c mono_gchandle_new_weakref. 
+ *
+ * \returns a pointer to the \c MonoObject* represented by the handle or
+ * NULL for a collected object if using a weakref handle.
+ */
+MonoObject*
+mono_gchandle_get_target (guint32 gchandle)
+{
+	return sgen_gchandle_get_target (gchandle);
 }
 
 static gpointer
@@ -2799,18 +2877,19 @@ mono_gc_add_memory_pressure (gint64 value)
  */
 
 void
-sgen_client_degraded_allocation (size_t size)
+sgen_client_degraded_allocation (void)
 {
-	static int last_major_gc_warned = -1;
-	static int num_degraded = 0;
+	static gint32 last_major_gc_warned = -1;
+	static gint32 num_degraded = 0;
 
-	if (last_major_gc_warned < (int)gc_stats.major_gc_count) {
-		++num_degraded;
-		if (num_degraded == 1 || num_degraded == 3)
+	gint32 major_gc_count = InterlockedRead (&gc_stats.major_gc_count);
+	if (InterlockedRead (&last_major_gc_warned) < major_gc_count) {
+		gint32 num = InterlockedIncrement (&num_degraded);
+		if (num == 1 || num == 3)
 			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "Warning: Degraded allocation.  Consider increasing nursery-size if the warning persists.");
-		else if (num_degraded == 10)
+		else if (num == 10)
 			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "Warning: Repeated degraded allocation.  Consider increasing nursery-size.");
-		last_major_gc_warned = gc_stats.major_gc_count;
+		InterlockedWrite (&last_major_gc_warned, major_gc_count);
 	}
 }
 

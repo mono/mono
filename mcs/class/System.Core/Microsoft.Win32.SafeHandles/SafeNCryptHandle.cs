@@ -37,6 +37,12 @@ namespace Microsoft.Win32.SafeHandles
 		{
 		}
 
+		protected SafeNCryptHandle (IntPtr handle, System.Runtime.InteropServices.SafeHandle parentHandle)
+			: base (false)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public override bool IsInvalid { get { throw new NotImplementedException (); } }
 
 		protected override bool ReleaseHandle ()

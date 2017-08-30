@@ -71,6 +71,7 @@ corefx/SR.missing.cs
 ../referencesource/System.Core/System/Security/Cryptography/ECDiffieHellmanPublicKey.cs
 ../referencesource/System.Core/System/Security/Cryptography/ECDsa.cs
 ../referencesource/System.Core/System/Security/Cryptography/ECDsaCng.cs
+../referencesource/System.Core/System/Security/Cryptography/ECKeyXmlFormat.cs
 ../referencesource/System.Core/System/Security/Cryptography/NCryptNative.cs
 ../referencesource/System.Core/System/Security/Cryptography/RsaCng.cs
 

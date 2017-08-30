@@ -52,7 +52,7 @@ get_function (const char *name)
 			compare_names);
 
 	if (ptr == NULL) {
-		g_warning ("Function '%s' not not found.", name);
+		g_warning ("Function '%s' not found.", name);
 		return NULL;
 	}
 

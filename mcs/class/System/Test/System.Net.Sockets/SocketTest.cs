@@ -4551,6 +4551,7 @@ namespace MonoTests.System.Net.Sockets
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Ignore ("https://bugzilla.xamarin.com/show_bug.cgi?id=43172")]
 		public void SendAsyncFile ()
 		{
 			Socket serverSocket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);

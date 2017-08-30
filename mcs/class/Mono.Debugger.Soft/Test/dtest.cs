@@ -3385,8 +3385,8 @@ public class DebuggerTests
 		Assert.AreEqual (0, frames [0].Location.ILOffset);
 
 		Assert.AreEqual (test_method.Name, frames [1].Location.Method.Name);
-		Assert.AreEqual (37, frames [1].Location.LineNumber);
-		Assert.AreEqual (0x0b, frames [1].Location.ILOffset);
+		Assert.AreEqual (38, frames [1].Location.LineNumber);
+		Assert.AreEqual (0x10, frames [1].Location.ILOffset);
 
 		Assert.AreEqual (test_method.Name, frames [2].Location.Method.Name);
 		Assert.AreEqual (33, frames [2].Location.LineNumber);
