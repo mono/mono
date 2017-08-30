@@ -174,7 +174,7 @@ mono_w32file_find_first (const gunichar2 *pattern, WIN32_FIND_DATA *find_data)
 	find_data->dwFileAttributes = resultAttributes;
 
 	gunichar2 *utf16_basename;
-	guint32 bytes;
+	glong bytes;
 	utf16_basename = g_utf8_to_utf16 (filename, -1, NULL, &bytes, NULL);
 	
 	/* this next section of memset and memcpy is code from mono, the cFileName field is 
@@ -212,7 +212,7 @@ mono_w32file_find_next (gpointer handle, WIN32_FIND_DATA *find_data)
 
 	find_data->dwFileAttributes = resultAttributes;
 	gunichar2 *utf16_basename;
-	guint32 bytes;
+	glong bytes;
 	utf16_basename = g_utf8_to_utf16 (filename, -1, NULL, &bytes, NULL);
 	bytes *= 2;
 
@@ -500,7 +500,7 @@ mono_w32file_get_cwd (guint32 length, gunichar2 *buffer)
 	/* count is the number of characters in the current directory, including the null terminator */
 	gunichar2 *utf16_path;
 	glong count;
-	guint32 bytes;
+	uintptr_t bytes;
 	int error = 0;
 
 	const char* palPath = UnityPalDirectoryGetCurrent(&error);

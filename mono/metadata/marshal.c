@@ -808,7 +808,7 @@ mono_byvalarray_to_array (MonoArray *arr, gpointer native_arr, MonoClass *elclas
 	if (elclass == mono_defaults.byte_class) {
 		GError *error = NULL;
 		guint16 *ut;
-		guint32 items_written;
+		glong items_written;
 
 		ut = g_utf8_to_utf16 ((const gchar *)native_arr, elnum, NULL, &items_written, &error);
 
@@ -937,7 +937,7 @@ mono_string_utf8_to_builder (MonoStringBuilder *sb, char *text)
 		return;
 
 	GError *error = NULL;
-	guint32 copied;
+	glong copied;
 	gunichar2* ut = g_utf8_to_utf16 (text, strlen (text), NULL, &copied, &error);
 	int capacity = mono_string_builder_capacity (sb);
 
