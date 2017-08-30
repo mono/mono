@@ -357,7 +357,8 @@ namespace Mono.Btls
 		public override void Shutdown ()
 		{
 			Debug ("Shutdown!");
-//			ssl.SetQuietShutdown ();
+			if (Settings == null || !Settings.SendCloseNotify)
+				ssl.SetQuietShutdown ();
 			ssl.Shutdown ();
 		}
 
