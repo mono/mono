@@ -41,7 +41,7 @@
 #define ALIGN_TO(val,align) (((val) + ((align) - 1)) & ~((align) - 1))
 
 #ifdef TARGET_WIN32
-static void (*restore_stack) (void *);
+static void (*restore_stack) (void);
 static MonoW32ExceptionHandler fpe_handler;
 static MonoW32ExceptionHandler ill_handler;
 static MonoW32ExceptionHandler segv_handler;
@@ -65,14 +65,8 @@ static LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
 	return EXCEPTION_CONTINUE_SEARCH;
 }
 
-/*
-* mono_win32_get_handle_stackoverflow (void):
-*
-* Returns a pointer to a method which restores the current context stack
-* and calls handle_exceptions, when done restores the original stack.
-*/
 static gpointer
-mono_win32_get_handle_stackoverflow (void)
+get_win32_restore_stack (void)
 {
 	static guint8 *start = NULL;
 	guint8 *code;
@@ -80,108 +74,39 @@ mono_win32_get_handle_stackoverflow (void)
 	if (start)
 		return start;
 
-	/* restore_contect (void *sigctx) */
+	/* restore_stack (void) */
 	start = code = mono_global_codeman_reserve (128);
 
-	/* save context into r12 */
-	amd64_mov_reg_reg (code, AMD64_R12, AMD64_RCX, 8);
+	amd64_push_reg (code, AMD64_RBP);
+	amd64_mov_reg_reg (code, AMD64_RBP, AMD64_RSP, 8);
 
-	/* move current stack into rdi for later restore */
-	amd64_mov_reg_reg (code, AMD64_RDI, AMD64_RSP, 8);
-
-	/* use the new freed stack from sigcontext */
-	amd64_mov_reg_membase (code, AMD64_RSP, AMD64_RCX, (MONO_STRUCT_OFFSET (CONTEXT, Rsp)), 8);
-
-	/* reserve 32 bytes of stack space for Win64 calling convention */
+	/* push 32 bytes of stack space for Win64 calling convention */
 	amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, 32);
 
-	/* get the current domain */
-	amd64_mov_reg_imm (code, AMD64_R11, mono_domain_get);
+	/* restore guard page */
+	amd64_mov_reg_imm (code, AMD64_R11, _resetstkoflw);
 	amd64_call_reg (code, AMD64_R11);
 
-	/* pop 32 bytes of stack space for Win64 calling convention */
-	amd64_alu_reg_imm (code, X86_ADD, AMD64_RSP, 32);
-
-	/* get stack overflow exception from domain object */
-	amd64_mov_reg_membase (code, AMD64_RAX, AMD64_RAX, G_STRUCT_OFFSET (MonoDomain, stack_overflow_ex), 8);
-
-	/* reserve 32 bytes of stack space for Win64 calling convention */
-	amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, 32);
-
-	/* call mono_arch_handle_exception (sctx, stack_overflow_exception_obj, FALSE) */
-	amd64_mov_reg_imm (code, AMD64_R8, 0);
-	amd64_mov_reg_reg (code, AMD64_RDX, AMD64_RAX, 8);
-	amd64_mov_reg_reg (code, AMD64_RCX, AMD64_R12, 8);
-	amd64_mov_reg_imm (code, AMD64_R11, mono_arch_handle_exception);
+	/* get jit_tls with context to restore */
+	amd64_mov_reg_imm (code, AMD64_R11, mono_tls_get_jit_tls);
 	amd64_call_reg (code, AMD64_R11);
 
-	/* pop 32 bytes of stack space for Win64 calling convention */
-	amd64_alu_reg_imm (code, X86_ADD, AMD64_RSP, 32);
+	/* move jit_tls from return reg to arg reg */
+	amd64_mov_reg_reg (code, AMD64_ARG_REG1, AMD64_RAX, 8);
 
-	/* restore the SEH handler stack */
-	amd64_mov_reg_reg (code, AMD64_RSP, AMD64_RDI, 8);
+	/* retrieve pointer to saved context */
+	amd64_alu_reg_imm (code, X86_ADD, AMD64_ARG_REG1, MONO_STRUCT_OFFSET (MonoJitTlsData, stack_restore_ctx));
 
-	/* return */
-	amd64_ret (code);
+	/* this call does not return */
+	amd64_mov_reg_imm (code, AMD64_R11, mono_restore_context);
+	amd64_call_reg (code, AMD64_R11);
 
 	g_assert ((code - start) < 128);
 
+	mono_arch_flush_icache (start, code - start);
+	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
+
 	return start;
-}
-
-/* Special hack to workaround the fact that the
-* when the SEH handler is called the stack is
-* to small to recover.
-*
-* Stack walking part of this method is from mono_handle_exception
-*
-* The idea is simple;
-*  - walk the stack to free some space (64k)
-*  - set esp to new stack location
-*  - call mono_arch_handle_exception with stack overflow exception
-*  - set esp to SEH handlers stack
-*  - done
-*/
-static void
-win32_handle_stack_overflow (EXCEPTION_POINTERS* ep, struct sigcontext *sctx)
-{
-	MonoDomain *domain = mono_domain_get ();
-	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
-	MonoLMF *lmf = jit_tls->lmf;
-	MonoContext initial_ctx;
-	MonoContext ctx;
-	guint32 free_stack = 0;
-	StackFrameInfo frame;
-
-	mono_sigctx_to_monoctx (sctx, &ctx);
-
-	initial_ctx = ctx;
-	free_stack = (guint8*)(MONO_CONTEXT_GET_BP (&ctx)) - (guint8*)(MONO_CONTEXT_GET_BP (&initial_ctx));
-
-	/* try to free 64kb from our stack */
-	do {
-		MonoContext new_ctx;
-		MonoJitInfo* ji;
-
-		ji = mono_jit_info_table_find (domain, MONO_CONTEXT_GET_IP (&ctx));
-		mono_arch_unwind_frame (domain, jit_tls, ji, &ctx, &new_ctx, &lmf, NULL, &frame);
-		if (!frame.ji) {
-			g_warning ("Exception inside function without unwind info");
-			g_assert_not_reached ();
-		}
-
-		if (frame.ji != (gpointer)-1) {
-			free_stack = (guint8*)(MONO_CONTEXT_GET_BP (&ctx)) - (guint8*)(MONO_CONTEXT_GET_BP (&initial_ctx));
-		}
-
-		/* todo: we should call abort if ji is -1 */
-		ctx = new_ctx;
-	} while (free_stack < 64 * 1024 && frame.ji != (gpointer)-1);
-
-	mono_monoctx_to_sigctx (&ctx, sctx);
-
-	/* use the new stack and call mono_arch_handle_exception () */
-	restore_stack (sctx);
 }
 
 /*
@@ -194,6 +119,7 @@ LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 	CONTEXT* ctx;
 	LONG res;
 	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
+	MonoDomain* domain = mono_domain_get ();
 
 	/* If the thread is not managed by the runtime return early */
 	if (!jit_tls)
@@ -207,7 +133,13 @@ LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 
 	switch (er->ExceptionCode) {
 	case EXCEPTION_STACK_OVERFLOW:
-		win32_handle_stack_overflow (ep, ctx);
+		if (mono_arch_handle_exception (ctx, domain->stack_overflow_ex)) {
+			/* need to restore stack protection once stack is unwound
+			* restore_stack will restore stack protection and then
+			* resume control to the saved stack_restore_ctx */
+			mono_sigctx_to_monoctx (ctx, &jit_tls->stack_restore_ctx);
+			ctx->Rip = (guint64)restore_stack;
+		}
 		break;
 	case EXCEPTION_ACCESS_VIOLATION:
 		W32_SEH_HANDLE_EX(segv);
@@ -243,9 +175,7 @@ LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 
 void win32_seh_init()
 {
-	/* install restore stack helper */
-	if (!restore_stack)
-		restore_stack = mono_win32_get_handle_stackoverflow ();
+	restore_stack = get_win32_restore_stack ();
 
 	mono_old_win_toplevel_exception_filter = SetUnhandledExceptionFilter(seh_unhandled_exception_filter);
 	mono_win_vectored_exception_handle = AddVectoredExceptionHandler (1, seh_vectored_exception_handler);

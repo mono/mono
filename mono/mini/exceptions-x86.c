@@ -37,7 +37,7 @@ gpointer
 mono_x86_get_signal_exception_trampoline (MonoTrampInfo **info, gboolean aot);
 
 #ifdef TARGET_WIN32
-static void (*restore_stack) (void *);
+static void (*restore_stack) (void);
 
 static MonoW32ExceptionHandler fpe_handler;
 static MonoW32ExceptionHandler ill_handler;
@@ -67,14 +67,8 @@ LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
 	return EXCEPTION_CONTINUE_SEARCH;
 }
 
-/*
- * mono_win32_get_handle_stackoverflow (void):
- *
- * Returns a pointer to a method which restores the current context stack
- * and calls handle_exceptions, when done restores the original stack.
- */
 static gpointer
-mono_win32_get_handle_stackoverflow (void)
+get_win32_restore_stack (void)
 {
 	static guint8 *start = NULL;
 	guint8 *code;
@@ -82,107 +76,33 @@ mono_win32_get_handle_stackoverflow (void)
 	if (start)
 		return start;
 
-	/* restore_contect (void *sigctx) */
+	/* restore_stack (void) */
 	start = code = mono_global_codeman_reserve (128);
 
-	/* load context into ebx */
-	x86_mov_reg_membase (code, X86_EBX, X86_ESP, 4, 4);
+	/* restore guard page */
+	x86_mov_reg_imm (code, X86_EAX, _resetstkoflw);
+	x86_call_reg (code, X86_EAX);
 
-	/* move current stack into edi for later restore */
-	x86_mov_reg_reg (code, X86_EDI, X86_ESP, 4);
+	/* get jit_tls with context to restore */
+	x86_mov_reg_imm (code, X86_EAX, mono_tls_get_jit_tls);
+	x86_call_reg (code, X86_EAX);
 
-	/* use the new freed stack from sigcontext */
-	/* XXX replace usage of struct sigcontext with MonoContext so we can use MONO_STRUCT_OFFSET */
-	x86_mov_reg_membase (code, X86_ESP, X86_EBX,  G_STRUCT_OFFSET (struct sigcontext, esp), 4);
+	/* retrieve pointer to saved context */
+	x86_alu_reg_imm (code, X86_ADD, X86_EAX, MONO_STRUCT_OFFSET (MonoJitTlsData, stack_restore_ctx));
 
-	/* get the current domain */
-	x86_call_code (code, mono_domain_get);
+	/* move jit_tls from return reg to arg reg */
+	x86_mov_membase_reg (code, X86_ESP, 0, X86_EAX, 4);
 
-	/* get stack overflow exception from domain object */
-	x86_mov_reg_membase (code, X86_EAX, X86_EAX, G_STRUCT_OFFSET (MonoDomain, stack_overflow_ex), 4);
+	/* this call does not return */
+	x86_mov_reg_imm (code, X86_EAX, mono_restore_context);
+	x86_call_reg (code, X86_EAX);
 
-	/* call mono_arch_handle_exception (sctx, stack_overflow_exception_obj) */
-	x86_push_reg (code, X86_EAX);
-	x86_push_reg (code, X86_EBX);
-	x86_call_code (code, mono_arch_handle_exception);
-
-	/* restore the SEH handler stack */
-	x86_mov_reg_reg (code, X86_ESP, X86_EDI, 4);
-
-	/* return */
-	x86_ret (code);
+	g_assert ((code - start) < 128);
 
 	mono_arch_flush_icache (start, code - start);
 	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
 
 	return start;
-}
-
-/* Special hack to workaround the fact that the
- * when the SEH handler is called the stack is
- * to small to recover.
- *
- * Stack walking part of this method is from mono_handle_exception
- *
- * The idea is simple; 
- *  - walk the stack to free some space (64k)
- *  - set esp to new stack location
- *  - call mono_arch_handle_exception with stack overflow exception
- *  - set esp to SEH handlers stack
- *  - done
- */
-static void 
-win32_handle_stack_overflow (EXCEPTION_POINTERS* ep, struct sigcontext *sctx) 
-{
-	SYSTEM_INFO si;
-	DWORD page_size;
-	MonoDomain *domain = mono_domain_get ();
-	MonoJitInfo rji;
-	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
-	MonoLMF *lmf = jit_tls->lmf;		
-	MonoContext initial_ctx;
-	MonoContext ctx;
-	guint32 free_stack = 0;
-	StackFrameInfo frame;
-
-	mono_sigctx_to_monoctx (sctx, &ctx);
-	
-	/* get our os page size */
-	GetSystemInfo(&si);
-	page_size = si.dwPageSize;
-
-	/* Let's walk the stack to recover
-	 * the needed stack space (if possible)
-	 */
-	memset (&rji, 0, sizeof (rji));
-
-	initial_ctx = ctx;
-	free_stack = (guint8*)(MONO_CONTEXT_GET_BP (&ctx)) - (guint8*)(MONO_CONTEXT_GET_BP (&initial_ctx));
-
-	/* try to free 64kb from our stack */
-	do {
-		MonoContext new_ctx;
-
-		mono_arch_unwind_frame (domain, jit_tls, &rji, &ctx, &new_ctx, &lmf, NULL, &frame);
-		if (!frame.ji) {
-			g_warning ("Exception inside function without unwind info");
-			g_assert_not_reached ();
-		}
-
-		if (frame.ji != (gpointer)-1) {
-			free_stack = (guint8*)(MONO_CONTEXT_GET_BP (&ctx)) - (guint8*)(MONO_CONTEXT_GET_BP (&initial_ctx));
-		}
-
-		/* todo: we should call abort if ji is -1 */
-		ctx = new_ctx;
-	} while (free_stack < 64 * 1024 && frame.ji != (gpointer) -1);
-
-	mono_monoctx_to_sigctx (&ctx, sctx);
-
-	/* todo: install new stack-guard page */
-
-	/* use the new stack and call mono_arch_handle_exception () */
-	restore_stack (sctx);
 }
 
 /*
@@ -195,6 +115,7 @@ LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 	CONTEXT* ctx;
 	LONG res;
 	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
+	MonoDomain* domain = mono_domain_get ();
 
 	/* If the thread is not managed by the runtime return early */
 	if (!jit_tls)
@@ -208,7 +129,13 @@ LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 
 	switch (er->ExceptionCode) {
 	case EXCEPTION_STACK_OVERFLOW:
-		win32_handle_stack_overflow (ep, ctx);
+		if (mono_arch_handle_exception (ctx, domain->stack_overflow_ex)) {
+			/* need to restore stack protection once stack is unwound
+			* restore_stack will restore stack protection and then
+			* resume control to the saved stack_restore_ctx */
+			mono_sigctx_to_monoctx (ctx, &jit_tls->stack_restore_ctx);
+			ctx->Eip = (guint32)restore_stack;
+		}
 		break;
 	case EXCEPTION_ACCESS_VIOLATION:
 		W32_SEH_HANDLE_EX(segv);
@@ -244,9 +171,7 @@ LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 
 void win32_seh_init()
 {
-	/* install restore stack helper */
-	if (!restore_stack)
-		restore_stack = mono_win32_get_handle_stackoverflow ();
+	restore_stack = get_win32_restore_stack ();
 
 	mono_old_win_toplevel_exception_filter = SetUnhandledExceptionFilter(seh_unhandled_exception_filter);
 	mono_win_vectored_exception_handle = AddVectoredExceptionHandler (1, seh_vectored_exception_handler);
@@ -1019,18 +944,6 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 
 	/* Pass the ctx parameter in TLS */
 	mono_sigctx_to_monoctx (ctx, &jit_tls->ex_ctx);
-
-	mctx = jit_tls->ex_ctx;
-	mono_setup_async_callback (&mctx, handle_signal_exception, obj);
-	mono_monoctx_to_sigctx (&mctx, sigctx);
-
-	return TRUE;
-#elif defined (TARGET_WIN32)
-	MonoContext mctx;
-	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
-	struct sigcontext *ctx = (struct sigcontext *)sigctx;
-
-	mono_sigctx_to_monoctx (sigctx, &jit_tls->ex_ctx);
 
 	mctx = jit_tls->ex_ctx;
 	mono_setup_async_callback (&mctx, handle_signal_exception, obj);
