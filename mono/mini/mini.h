@@ -1200,6 +1200,11 @@ typedef struct {
 	 * the catch block that caught the ThreadAbortException).
 	 */
 	gpointer abort_exc_stack_threshold;
+
+#if defined(TARGET_WIN32)
+	/* context to resume after restoring stack protection in stack overflow handling */
+	MonoContext stack_restore_ctx;
+#endif
 } MonoJitTlsData;
 
 /*
