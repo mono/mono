@@ -322,7 +322,6 @@ namespace MonoTests.System.Reflection
 
 		[Test]
 		[Category ("AndroidNotWorking")] // Assemblies in Xamarin.Android cannot be accessed as FileStream
-		[Category ("StaticLinkedAotNotWorking")] // Can't find .dll files when bundled in .exe
 		public void GetFiles_False ()
 		{
 			Assembly corlib = typeof (int).Assembly;
@@ -336,7 +335,6 @@ namespace MonoTests.System.Reflection
 
 		[Test]
 		[Category ("AndroidNotWorking")] // Assemblies in Xamarin.Android cannot be accessed as FileStream
-		[Category ("StaticLinkedAotNotWorking")] // Can't find .dll files when bundled in .exe
 		public void GetFiles_True ()
 		{
 			Assembly corlib = typeof (int).Assembly;

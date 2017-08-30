@@ -44,7 +44,6 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
-		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void Constructor_Null ()
 		{
@@ -52,7 +51,6 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
-		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		[ExpectedException (typeof (ArgumentException))]
 		public void Constructor_InvalidCompressionMode ()
 		{
@@ -60,7 +58,6 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
-		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		public void CheckCompressDecompress ()
 		{
 			byte [] data = new byte[100000];
@@ -83,7 +80,6 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
-		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		public void CheckDecompress ()
 		{
 			byte [] data = {0x1f, 0x8b, 0x08, 0x08, 0x70, 0xbb, 0x5d, 0x41, 0x00, 0x03, 0x74, 0x65, 0x73, 0x74, 0x00, 0xf3, 0x48, 0xcd, 0xc9, 0xc9, 0xe7, 0x02, 0x00, 0x16, 0x35, 0x96, 0x31, 0x06, 0x00, 0x00, 0x00 };
@@ -95,7 +91,6 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
-		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void CheckNullRead ()
 		{
@@ -106,7 +101,6 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
-		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void CheckCompressingRead ()
 		{
@@ -117,7 +111,6 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
-		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		[ExpectedException (typeof (ArgumentException))]
 		public void CheckRangeRead ()
 		{
@@ -130,7 +123,6 @@ namespace MonoTests.System.IO.Compression
 
 #if !MOBILE
 		[Test]
-		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		[Category("NotWorking")]
 		public void CheckInvalidDataRead ()
 		{
@@ -147,7 +139,6 @@ namespace MonoTests.System.IO.Compression
 #endif
 
 		[Test]
-		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		public void CheckClosedRead ()
 		{
 			byte [] dummy = new byte[20];
@@ -162,7 +153,6 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
-		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		[ExpectedException (typeof (ObjectDisposedException))]
 		public void CheckClosedFlush ()
 		{
@@ -173,7 +163,6 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
-		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		[ExpectedException (typeof (NotSupportedException))]
 		public void CheckSeek ()
 		{
@@ -183,7 +172,6 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
-		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		[ExpectedException (typeof (NotSupportedException))]
 		public void CheckSetLength ()
 		{
@@ -193,7 +181,6 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
-		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		public void CheckGetCanSeekProp ()
 		{
 			MemoryStream backing = new MemoryStream (compressed_data);
@@ -214,7 +201,6 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
-		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		public void CheckGetCanReadProp ()
 		{
 			MemoryStream backing = new MemoryStream (compressed_data);
@@ -235,7 +221,6 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
-		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		public void CheckGetCanWriteProp ()
 		{
 			MemoryStream backing = new MemoryStream (compressed_data);
@@ -256,7 +241,6 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
-		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		[ExpectedException (typeof (NotSupportedException))]
 		public void CheckSetLengthProp ()
 		{
@@ -266,7 +250,6 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
-		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		[ExpectedException (typeof (NotSupportedException))]
 		public void CheckGetLengthProp ()
 		{
@@ -276,7 +259,6 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
-		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		[ExpectedException (typeof (NotSupportedException))]
 		public void CheckGetPositionProp ()
 		{
@@ -286,7 +268,6 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
-		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		public void DisposeTest ()
 		{
 			MemoryStream backing = new MemoryStream (compressed_data);
@@ -296,7 +277,6 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
-		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		public void DisposeOrderTest ()
 		{
 			var fs = new MemoryStream();
@@ -324,7 +304,6 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
-		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		public void CheckNet45Overloads () // Xambug #21982
 		{
 			MemoryStream dataStream = GenerateStreamFromString("Hello");

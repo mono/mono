@@ -97,7 +97,6 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[Category ("StaticLinkedAotNotWorking")] // Can't find .dll files when bundled in .exe
 		public void TestAsync ()
 		{
 			var loc = Assembly.GetExecutingAssembly ().Location;

@@ -138,10 +138,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			if (!name.EndsWith (".xml"))
 				name = name + ".xml";
 			var uri = new Uri (asm.CodeBase);
-			// Run from mcs/class/lib/<profile>
 			var path = Path.GetDirectoryName (uri.AbsolutePath);
-			path = Directory.GetParent (path).Parent.FullName;
-			path = Path.Combine (path, "System.ServiceModel");
 			path = Path.Combine (path, "Test");
 			path = Path.Combine (path, "MetadataTests");
 			path = Path.Combine (path, "Resources");
@@ -175,8 +172,6 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 				name = name + ".config";
 			var uri = new Uri (asm.CodeBase);
 			var path = Path.GetDirectoryName (uri.AbsolutePath);
-			path = Directory.GetParent (path).Parent.FullName;
-			path = Path.Combine (path, "System.ServiceModel");
 			path = Path.Combine (path, "Test");
 			path = Path.Combine (path, "MetadataTests");
 			path = Path.Combine (path, "Resources");
