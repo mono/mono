@@ -1924,17 +1924,98 @@ mono_throw_method_access (MonoMethod *caller, MonoMethod *callee)
 
 
 
+static mono_mutex_t mono_icall_trace_mutex;
+static gint64 mono_icall_trace_buf_size = 0, mono_icall_trace_buf_used = 0;
+static void * mono_icall_trace_buf = 0;
+
+static void
+mono_icall_trace_dump (void)
+{
+	const char * filename = "icall-trace.log";
+	printf("mono_icall_trace_dump %ld to %s\n", mono_icall_trace_buf_used, filename);
+	if (!mono_icall_trace_buf)
+		return;
+
+	mono_os_mutex_lock(&mono_icall_trace_mutex);
+
+	// FIXME overrun
+	{
+		char * pch = mono_icall_trace_buf;
+		FILE * f = fopen(filename, "w");
+		fwrite(pch, 1, mono_icall_trace_buf_used, f);
+		fclose(f);
+	}
+
+	mono_icall_trace_buf_size = mono_icall_trace_buf_used = 0;
+	free(mono_icall_trace_buf);
+
+	mono_os_mutex_unlock(&mono_icall_trace_mutex);
+	mono_os_mutex_destroy(&mono_icall_trace_mutex);
+}
+
+static void
+mono_icall_trace_write (const char * text, int len) 
+{
+	const gint64 block_size = 81920;
+	g_assert(len >= 0);
+
+	if (!mono_icall_trace_buf) 
+	{
+		mono_os_mutex_init(&mono_icall_trace_mutex);
+		mono_os_mutex_lock(&mono_icall_trace_mutex);
+		if (len > block_size)
+			mono_icall_trace_buf_size = len;
+		else
+			mono_icall_trace_buf_size = block_size;
+		mono_icall_trace_buf = malloc(mono_icall_trace_buf_size);
+		atexit(mono_icall_trace_dump);
+	} 
+	else 
+	{
+		mono_os_mutex_lock(&mono_icall_trace_mutex);
+	}
+
+	{
+		gint64 old_used = mono_icall_trace_buf_used;
+		gint64 new_used = old_used + len;
+
+		if (mono_icall_trace_buf_size < new_used) 
+		{
+			void * old_buf = mono_icall_trace_buf;
+			mono_icall_trace_buf_size = (new_used + (block_size - 1) / block_size) * block_size;
+			void * new_buf = realloc(old_buf, mono_icall_trace_buf_size);
+			g_assert(new_buf);
+			mono_icall_trace_buf = new_buf;
+		}
+
+		mono_icall_trace_buf_used = new_used;
+
+		mono_os_mutex_unlock(&mono_icall_trace_mutex);
+
+		char * pch = mono_icall_trace_buf;
+		memcpy(pch + old_used, text, len);
+	}
+}
+
 
 void 
 mono_trace_icall_invocation (guint64 _namespace, guint64 _name)
 {
+	return;
 	const char * namespace = (const char *)(void *)_namespace;
 	const char * name = (const char *)(void *)_name;
 
 	if (!namespace)
 		namespace = "JIT";
 
-	printf("ic %s::%s\n", namespace, name);
+	const guint32 format_buf_size = 1024;
+	char format_buf[format_buf_size];
+
+	MonoThread * thread = mono_thread_current();
+	guint64 tid = 0;
+
+	int text_len = snprintf(format_buf, format_buf_size, "t%d %s::%s\n", thread, namespace, name);
+	mono_icall_trace_write(format_buf, text_len);
 }
 
 

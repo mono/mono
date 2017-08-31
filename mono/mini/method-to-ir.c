@@ -2610,7 +2610,6 @@ int process_icall_tracing (MonoCompile *cfg, gconstpointer func, MonoJitICallInf
 			if (!namespace)
 				namespace = "JIT";
 
-			return FALSE;
 			if (strcasestr(namespace, "Socket")) {
 				// printf("emit icall %s::%s\n", namespace, name);
 				return TRUE;
