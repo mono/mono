@@ -56,6 +56,7 @@ namespace System.Net
 		object socketLock = new object ();
 		IWebConnectionState state;
 		WebExceptionStatus status;
+		WaitCallback initConn;
 		bool keepAlive;
 		byte [] buffer;
 		static AsyncCallback readDoneDelegate = new AsyncCallback (ReadDone);
