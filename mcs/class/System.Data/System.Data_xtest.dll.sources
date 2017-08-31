@@ -6,7 +6,6 @@
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/DataColumnCollectionTest2.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/DataColumnTest.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/DataColumnTest2.cs
-#../../../external/corefx/src/System.Data.Common/tests/System/Data/DataCommonEventSourceTest.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/DataRelationCollectionTest.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/DataRelationCollectionTest2.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/DataRelationTest.cs
@@ -83,3 +82,67 @@
 ../../../external/corefx/src/System.Data.Common/tests/DataProvider.cs
 ../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/AssertExtensions.cs
 corefx/PlatformDetection.cs
+
+
+# TDS:
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS/AllHeaders/*.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS/ColInfo/*.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS/ColMetadata/*.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS/Done/*.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS/EnvChange/*.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS/Error/*.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS/FeatureExtAck/*.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS/FedAuthInfo/*.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS/FedAuthMessage/*.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS/Info/*.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS/Login7/*.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS/LoginAck/*.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS/Order/*.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS/PreLogin/*.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS/ReturnStatus/*.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS/Row/*.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS/SessionState/*.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS/SQLBatch/*.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS/SSPI/*.cs
+
+# TDS.EndPoint:
+../../../external/corefx/src/Common/src/Interop/Windows/Interop.Libraries.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS/*.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS.EndPoint/*.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS.EndPoint/FederatedAuthentication/*.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS.EndPoint/SSPI/SecBuffer.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS.EndPoint/SSPI/SecBufferDesc.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS.EndPoint/SSPI/SecBufferDescType.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS.EndPoint/SSPI/SecBufferType.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS.EndPoint/SSPI/SecConstants.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS.EndPoint/SSPI/SecContextRequirements.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS.EndPoint/SSPI/SecDataRepresentation.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS.EndPoint/SSPI/SecPgkCredentials.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS.EndPoint/SSPI/SecPkgInfo.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS.EndPoint/SSPI/SecResult.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS.EndPoint/SSPI/SecurityHandle.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS.EndPoint/SSPI/SecurityInteger.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS.EndPoint/SSPI/SecurityWrapper.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS.EndPoint/SSPI/SSPIContext.Unix.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS.EndPoint/SSPI/SSPIResponse.cs
+
+# TDS.Servers:
+../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS.Servers/*.cs
+
+
+# System.Data.SqlClient.FunctionalTests
+../../../external/corefx/src/System.Data.SqlClient/tests/ManualTests/DataCommon/DataTestUtility.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/FunctionalTests/BaseProviderAsyncTest/*.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/FunctionalTests/CloneTests.cs
+# TODO: fix these tests (wrong type of exception is thrown on windows):
+#../../../external/corefx/src/System.Data.SqlClient/tests/FunctionalTests/ExceptionTest.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/FunctionalTests/SqlBulkCopyColumnMappingCollectionTest.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/FunctionalTests/SqlClientFactoryTest.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/FunctionalTests/SqlConnectionTest.RetrieveStatistics.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/FunctionalTests/SqlDataRecordTest.cs
+# TODO: fix CopyTo:
+#../../../external/corefx/src/System.Data.SqlClient/tests/FunctionalTests/SqlErrorCollectionTest.cs
+# TODO: fix ParameterPrecisionOnInterfaceType
+#../../../external/corefx/src/System.Data.SqlClient/tests/FunctionalTests/SqlParameterTest.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/FunctionalTests/TcpDefaultForAzureTest.cs
+../../../external/corefx/src/System.Data.SqlClient/tests/FunctionalTests/TestTdsServer.cs
