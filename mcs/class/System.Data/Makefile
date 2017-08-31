@@ -38,6 +38,8 @@ TEST_LIB_REFS = System.Core Mono.Data.Sqlite
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:618,169,612,219,168
 
 TEST_NUNITLITE_APP_CONFIG_GLOBAL=Test/test-config-file
+XTEST_LIB_REFS = System System.Core System.Xml Facades/System.Text.Encoding.CodePages Facades/System.Threading.Tasks Facades/System.Runtime.InteropServices.RuntimeInformation 
+XTEST_LIB_FLAGS = -unsafe
 
 TEST_MONO_PATH = .
 
