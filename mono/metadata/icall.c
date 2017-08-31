@@ -6205,6 +6205,12 @@ ves_icall_System_Delegate_CreateDelegate_internal (MonoReflectionType *type, Mon
 		}
 	}
 
+	if (method->klass->class_kind == MONO_CLASS_GTD)
+	{
+		mono_set_pending_exception(mono_get_exception_argument("method", " Cannot bind to the target method because the type is not inflated"));
+		return NULL;
+	}
+
 	delegate = mono_object_new_checked (mono_object_domain (type), delegate_class, &error);
 	if (mono_error_set_pending_exception (&error))
 		return NULL;
