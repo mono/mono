@@ -859,24 +859,7 @@ namespace Mono.AppleTls
 
 		public override void Shutdown ()
 		{
-			if (Interlocked.Exchange (ref pendingIO, 1) == 1)
-				throw new InvalidOperationException ();
-
-			Debug ("Shutdown");
-
-			lastException = null;
-
-			try {
-				if (closed || disposed)
-					return;
-
-				var status = SSLClose (Handle);
-				Debug ("Shutdown done: {0}", status);
-				CheckStatusAndThrow (status);
-			} finally {
-				closed = true;
-				pendingIO = 0;
-			}
+			closed = true;
 		}
 
 		#endregion
