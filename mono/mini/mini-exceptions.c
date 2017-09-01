@@ -1796,7 +1796,7 @@ mono_handle_exception_internal_first_pass (MonoContext *ctx, MonoObject *obj, gi
  * \param obj the exception object
  * \param resume whenever to resume unwinding based on the state in \c MonoJitTlsData.
  */
-static gboolean
+static void
 mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resume, MonoJitInfo **out_ji)
 {
 	MonoError error;
@@ -2180,7 +2180,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 					if (obj == (MonoObject *)domain->stack_overflow_ex)
 						jit_tls->handling_stack_ovf = FALSE;
 
-					return 0;
+					return;
 				}
 				mono_error_cleanup (&error);
 				if (ei->flags == MONO_EXCEPTION_CLAUSE_FAULT) {
@@ -2221,7 +2221,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 						jit_tls->resume_state.filter_idx = filter_idx;
 						mini_set_abort_threshold (ctx);
 						MONO_CONTEXT_SET_IP (ctx, ei->handler_start);
-						return 0;
+						return;
 					} else {
 						mini_set_abort_threshold (ctx);
 						if (in_interp)
@@ -2290,10 +2290,9 @@ mono_debugger_run_finally (MonoContext *start_ctx)
  * \param ctx saved processor state
  * \param obj the exception object
  *
- *   Handle the exception OBJ starting from the state CTX. Modify CTX to point to the handler clause if the exception is caught, and
- * return TRUE.
+ *   Handle the exception OBJ starting from the state CTX. Modify CTX to point to the handler clause if the exception is caught.
  */
-gboolean
+void
 mono_handle_exception (MonoContext *ctx, MonoObject *obj)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
@@ -2302,7 +2301,7 @@ mono_handle_exception (MonoContext *ctx, MonoObject *obj)
 	mono_perfcounters->exceptions_thrown++;
 #endif
 
-	return mono_handle_exception_internal (ctx, obj, FALSE, NULL);
+	mono_handle_exception_internal (ctx, obj, FALSE, NULL);
 }
 
 #ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK

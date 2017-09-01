@@ -2840,7 +2840,7 @@ gpointer  mono_arch_get_throw_exception         (MonoTrampInfo **info, gboolean 
 gpointer  mono_arch_get_rethrow_exception       (MonoTrampInfo **info, gboolean aot);
 gpointer  mono_arch_get_throw_corlib_exception  (MonoTrampInfo **info, gboolean aot);
 gpointer  mono_arch_get_throw_pending_exception (MonoTrampInfo **info, gboolean aot);
-gboolean mono_arch_handle_exception             (void *sigctx, gpointer obj);
+void     mono_arch_handle_exception             (void *sigctx, gpointer obj);
 void     mono_arch_handle_altstack_exception    (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *siginfo, gpointer fault_addr, gboolean stack_ovf);
 gboolean mono_handle_soft_stack_ovf             (MonoJitTlsData *jit_tls, MonoJitInfo *ji, void *ctx, MONO_SIG_HANDLER_INFO_TYPE *siginfo, guint8* fault_addr);
 void     mono_handle_hard_stack_ovf             (MonoJitTlsData *jit_tls, MonoJitInfo *ji, void *ctx, guint8* fault_addr);
@@ -2892,7 +2892,7 @@ mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoThreadInfo 
 typedef gboolean (*MonoJitStackWalk)            (StackFrameInfo *frame, MonoContext *ctx, gpointer data);
 
 void     mono_exceptions_init                   (void);
-gboolean mono_handle_exception                  (MonoContext *ctx, MonoObject *obj);
+void     mono_handle_exception                  (MonoContext *ctx, MonoObject *obj);
 void     mono_handle_native_crash               (const char *signal, void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *siginfo);
 MONO_API void     mono_print_thread_dump                 (void *sigctx);
 MONO_API void     mono_print_thread_dump_from_ctx        (MonoContext *ctx);

@@ -549,7 +549,7 @@ handle_signal_exception (gpointer obj)
 /*
  * This is the function called from the signal handler
  */
-gboolean
+void
 mono_arch_handle_exception (void *ctx, gpointer obj)
 {
 #if defined(MONO_CROSS_COMPILE)
@@ -571,8 +571,6 @@ mono_arch_handle_exception (void *ctx, gpointer obj)
 	UCONTEXT_REG_PC (sigctx) = (gsize)handle_signal_exception;
 	UCONTEXT_REG_SP (sigctx) = UCONTEXT_REG_SP (sigctx) - MONO_ARCH_REDZONE_SIZE;
 #endif
-
-	return TRUE;
 }
 
 gpointer

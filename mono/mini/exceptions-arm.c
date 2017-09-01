@@ -554,7 +554,7 @@ get_handle_signal_exception_addr (void)
 /*
  * This is the function called from the signal handler
  */
-gboolean
+void
 mono_arch_handle_exception (void *ctx, gpointer obj)
 {
 #if defined(MONO_CROSS_COMPILE) || !defined(MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX)
@@ -587,20 +587,16 @@ mono_arch_handle_exception (void *ctx, gpointer obj)
 		/* Transition to ARM */
 		UCONTEXT_REG_CPSR (sigctx) &= ~(1 << 5);
 #endif
-
-	return TRUE;
 #else
 	MonoContext mctx;
-	gboolean result;
 
 	mono_sigctx_to_monoctx (ctx, &mctx);
 
-	result = mono_handle_exception (&mctx, obj);
+	mono_handle_exception (&mctx, obj);
 	/* restore the context so that returning from the signal handler will invoke
 	 * the catch clause 
 	 */
 	mono_monoctx_to_sigctx (&mctx, ctx);
-	return result;
 #endif
 }
 
