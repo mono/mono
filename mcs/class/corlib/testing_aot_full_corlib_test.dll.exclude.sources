@@ -33,7 +33,6 @@ System.Reflection.Emit/TypeBuilderTest.cs
 System.Reflection.Emit/SaveTest.cs
 System.Runtime.Remoting/ContextTest.cs
 System.Runtime.Remoting/RemotingConfigurationTest.cs
-System.Runtime.Remoting/RemotingServicesTest.cs
 System.Runtime.Remoting/SoapServicesTest.cs
 System.Runtime.Remoting/SynchronizationAttributeTest.cs
 System.Runtime.Remoting.Channels/ChannelServicesTest.cs

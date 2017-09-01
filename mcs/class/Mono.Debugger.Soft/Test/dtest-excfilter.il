@@ -34,9 +34,11 @@
 
 			leave end
 		} filter {
+		    castclass [mscorlib]System.Exception
 			call int32 class ExceptionFilterTest::Filter([mscorlib]System.Exception)
 			endfilter
 		} {
+		    castclass [mscorlib]System.Exception
 			call void class ExceptionFilterTest::Handler([mscorlib]System.Exception)
 			leave end
 		}

@@ -40,8 +40,8 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # This can be reset to 0 when Mono's version number is bumped
 # since it's part of the corlib version (the prefix '1' in the full
 # version number is to ensure the number isn't treated as octal in C)
-MONO_CORLIB_COUNTER=0
-MONO_CORLIB_VERSION=`printf "1%02d%02d%02d%03d" $MONO_VERSION_MAJOR $MONO_VERSION_MINOR $MONO_VERSION_BUILD $MONO_CORLIB_COUNTER`
+MONO_CORLIB_COUNTER=1
+MONO_CORLIB_VERSION=`printf "1%02d%02d%02d%03d" $MONO_VERSION_MAJOR $MONO_VERSION_MINOR 0 $MONO_CORLIB_COUNTER`
 
 AC_DEFINE_UNQUOTED(MONO_CORLIB_VERSION,$MONO_CORLIB_VERSION,[Version of the corlib-runtime interface])
 AC_SUBST(MONO_CORLIB_VERSION)
@@ -96,8 +96,15 @@ need_link_unlink=no
 #Set to extra linker flags to be passed to the runtime binaries (mono /mono-sgen)
 extra_runtime_ldflags=""
 
+
+# Hack for WASM
+# Current autotools (v1.15) doesn't have a triplet we can use for wasm so the kludge we do is to
+# work around it by using a feature flag instead
+AC_ARG_ENABLE(wasm,[  --enable-wasm	Hack to set the current runtime to target wasm], enable_wasm=$enableval)
+
 # Thread configuration inspired by sleepycat's db
 AC_MSG_CHECKING([host platform characteristics])
+
 libgc_threads=no
 has_dtrace=no
 parallel_mark=yes
@@ -107,6 +114,16 @@ host_win32=no
 target_win32=no
 platform_android=no
 host_darwin=no
+
+
+if test "x$enable_wasm" = "xyes"; then
+CFLAGS="$CFLAGS -D_REENTRANT -D_GNU_SOURCE -DNO_UNALIGNED_ACCESS -s WASM=1 -DWASM -Os"
+CPPFLAGS="$CPPFLAGS -D_REENTRANT -DUSE_MMAP -D_GNU_SOURCE -DNO_UNALIGNED_ACCESS -s WASM=1 -DWASM -Os"
+libdl="-ldl"
+libgc_threads=pthreads
+
+else
+
 case "$host" in
 	*-mingw*|*-*-cygwin*)
 		AC_DEFINE(DISABLE_PORTABILITY,1,[Disable the io-portability layer])
@@ -352,6 +369,10 @@ case "$host" in
 		libdl="-ldl"
 		;;
 esac
+
+# WASM hack
+fi
+
 AC_MSG_RESULT(ok)
 
 if test x$need_link_unlink = xyes; then
@@ -1482,6 +1503,8 @@ if test x$host_win32 = xno; then
 		AC_CHECK_FUNCS(getpwnam_r)
 		AC_CHECK_FUNCS(getpwuid_r)
 	fi
+
+	AC_FUNC_STRERROR_R()
 
 	dnl ****************************************************************
 	dnl *** Check for sched_setaffinity from glibc versions before   ***
@@ -3040,6 +3063,18 @@ jit_wanted=true
 boehm_supported=true
 BTLS_SUPPORTED=no
 BTLS_PLATFORM=
+
+if test "x$enable_wasm" = "xyes"; then
+TARGET=WASM
+HOST=WASM
+arch_target=wasm
+AC_DEFINE(TARGET_WASM, 1, [Target wasm])
+BTLS_SUPPORTED=no
+with_tls=pthread
+target_mach=no
+
+else
+
 case "$host" in
 	mips*)
 		TARGET=MIPS;
@@ -3442,6 +3477,8 @@ SPARC64)
 	;;
 esac
 
+#WASM hack
+fi
 
 
 dnl *************
@@ -4311,6 +4348,8 @@ AM_CONDITIONAL(HOST_X86, test x$HOST = xX86)
 AM_CONDITIONAL(HOST_AMD64, test x$HOST = xAMD64)
 AM_CONDITIONAL(HOST_ARM, test x$HOST = xARM)
 AM_CONDITIONAL(HOST_ARM64, test x$HOST = xARM64)
+AM_CONDITIONAL(HOST_WASM, test x$HOST = xWASM)
+
 AM_CONDITIONAL(CROSS_COMPILE, test "x$host" != "x$target")
 
 AC_SUBST(LIBC)

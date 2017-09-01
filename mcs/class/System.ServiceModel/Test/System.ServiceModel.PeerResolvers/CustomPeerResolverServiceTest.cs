@@ -16,6 +16,8 @@ using System.Text;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel.PeerResolvers
 {
 	[TestFixture]
@@ -26,6 +28,8 @@ namespace MonoTests.System.ServiceModel.PeerResolvers
 		[SetUp]
 		protected void SetUp ()
 		{
+			var port = NetworkHelpers.FindFreePort ();
+			Environment.SetEnvironmentVariable ("MONO_CUSTOMPEERRESOLVERSERVICE_PORT", port.ToString ());
 			cprs = new CustomPeerResolverService ();
 		}
 

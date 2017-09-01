@@ -17,11 +17,12 @@ namespace MonoTests.Helpers {
 		{
 			while (true) {
 				var ep = new IPEndPoint (IPAddress.Loopback, rndPort.Next (10000, 60000));
-				var socket = new Socket (ep.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
 				try {
-					socket.Bind (ep);
-					socket.Close ();
+					using (var socket = new Socket (ep.AddressFamily, SocketType.Stream, ProtocolType.Tcp)) {
+						socket.Bind (ep);
+						socket.Close ();
+					}
 					return ep;
 				} catch (SocketException) { }
 			}
