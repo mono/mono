@@ -10,7 +10,7 @@ ${TESTCMD} --label=compile-runtime-tests --timeout=40m make -w -C mono/tests -j4
 ${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k test-wrench V=1 CI=1 CI_PR=${ghprbPullId}
 ${TESTCMD} --label=runtime-unit-tests --timeout=5m make -w -C mono/unit-tests -k check
 ${TESTCMD} --label=corlib --timeout=30m make -w -C mcs/class/corlib run-test
-if [[ ${label} == w* ]]; then ${TESTCMD} --label=corlib-xunit --skip; else ${TESTCMD} --label=corlib-xunit --timeout=5m make -w -C mcs/class/corlib run-xunit-test; fi
+${TESTCMD} --label=corlib-xunit --timeout=5m make -w -C mcs/class/corlib run-xunit-test
 ${TESTCMD} --label=verify --timeout=15m make -w -C runtime mcs-compileall
 ${TESTCMD} --label=profiler --timeout=30m make -w -C mono/profiler -k check
 ${TESTCMD} --label=compiler --timeout=30m make -w -C mcs/tests run-test
@@ -75,7 +75,7 @@ ${TESTCMD} --label=System.Web.DynamicData --timeout=5m make -w -C mcs/class/Syst
 ${TESTCMD} --label=Mono.CSharp --timeout=5m make -w -C mcs/class/Mono.CSharp run-test
 ${TESTCMD} --label=WindowsBase --timeout=5m make -w -C mcs/class/WindowsBase run-test
 ${TESTCMD} --label=System.Numerics --timeout=5m make -w -C mcs/class/System.Numerics run-test
-if [[ ${label} == w* ]]; then ${TESTCMD} --label=System.Numerics-xunit --skip; else ${TESTCMD} --label=System.Numerics-xunit --timeout=5m make -w -C mcs/class/System.Numerics run-xunit-test; fi
+${TESTCMD} --label=System.Numerics-xunit --timeout=5m make -w -C mcs/class/System.Numerics run-xunit-test
 ${TESTCMD} --label=System.Runtime.DurableInstancing --timeout=5m make -w -C mcs/class/System.Runtime.DurableInstancing run-test
 ${TESTCMD} --label=System.ServiceModel.Discovery --timeout=5m make -w -C mcs/class/System.ServiceModel.Discovery run-test
 ${TESTCMD} --label=System.Xaml --timeout=5m make -w -C mcs/class/System.Xaml run-test
