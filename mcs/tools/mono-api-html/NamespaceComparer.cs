@@ -91,6 +91,10 @@ namespace Xamarin.ApiDiff {
 		public override void Removed (XElement source)
 		{
 			var name = source.Attribute ("name").Value;
+
+			if (State.IgnoreRemoved.Any (re => re.IsMatch (name)))
+				return;
+
 			Output.WriteLine ("<!-- start namespace {0} --> <div>", name);
 			Output.WriteLine ("<h2>Removed Namespace {0}</h2>", name);
 			Output.WriteLine ();
