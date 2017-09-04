@@ -51,13 +51,10 @@ namespace MonoTests.Mono.Data.Tds
 	//require at this point: a listener on port 1433...
 
 	try{
-		Socket Listener = new Socket(AddressFamily.InterNetwork, 
-                                         SocketType.Stream,
-                                         ProtocolType.Tcp);
 		IPAddress hostIP =Dns.GetHostEntry("localhost").AddressList[0];
-        	IPEndPoint ep = new IPEndPoint(hostIP, 1433);
-		Listener.Bind(ep); 
-        	Listener.Listen(1);
+        IPEndPoint ep = new IPEndPoint(hostIP, 1433);
+        TcpListener Listener = new TcpListener (ep);
+        Listener.Start ();
 	} catch (Exception){
 		//ignore
 	}
