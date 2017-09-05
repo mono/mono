@@ -8,7 +8,7 @@ class FsharpPackage(GitHubTarballPackage):
             override_properties={ 'make': 'make' })
 
         self.extra_stage_files = ['lib/mono/xbuild/Microsoft/VisualStudio/v/FSharp/Microsoft.FSharp.Targets']
-        self.sources.extend(['patches/fsharp-fix-mdb-support.patch'])
+        self.sources.extend(['patches/fsharp-portable-pdb.patch'])
 
     def prep(self):
         Package.prep(self)
