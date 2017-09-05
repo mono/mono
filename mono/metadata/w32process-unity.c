@@ -1,4 +1,5 @@
 #include <mono/metadata/w32process.h>
+#include <mono/metadata/w32process-internals.h>
 
 #if defined(PLATFORM_UNITY) && defined(UNITY_USE_PLATFORM_STUBS)
 
@@ -106,18 +107,68 @@ ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcess (void)
 	return FALSE;
 }
 
-MonoString *
-ves_icall_System_Diagnostics_Process_ProcessName_internal (gpointer process)
+gboolean
+mono_w32process_get_fileversion_info (gunichar2 *filename, guint32 handle, guint32 len, gpointer data)
 {
 	g_assert(0 && "This function is not yet implemented for the Unity platform.");
-	return NULL;
+	return FALSE;
 }
 
-MonoArray *
-ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject *this_obj, gpointer process)
+guint32
+mono_w32process_get_fileversion_info_size (gunichar2 *filename, guint32 *handle)
 {
 	g_assert(0 && "This function is not yet implemented for the Unity platform.");
-	return NULL;
+	return 0;
+}
+
+guint32
+mono_w32process_get_pid (gpointer handle)
+{
+	g_assert(0 && "This function is not yet implemented for the Unity platform.");
+	return 0;
+}
+
+guint32
+mono_w32process_module_get_filename (gpointer process, gpointer module, gunichar2 *basename, guint32 size)
+{
+	g_assert(0 && "This function is not yet implemented for the Unity platform.");
+	return 0;
+}
+
+gboolean
+mono_w32process_module_get_information (gpointer process, gpointer module, MODULEINFO *modinfo, guint32 size)
+{
+	g_assert(0 && "This function is not yet implemented for the Unity platform.");
+	return FALSE;
+}
+
+guint32
+mono_w32process_module_get_name (gpointer process, gpointer module, gunichar2 *basename, guint32 size)
+{
+	g_assert(0 && "This function is not yet implemented for the Unity platform.");
+	return 0;
+}
+
+
+gboolean
+mono_w32process_try_get_modules (gpointer process, gpointer *modules, guint32 size, guint32 *needed)
+{
+	g_assert(0 && "This function is not yet implemented for the Unity platform.");
+	return FALSE;
+}
+
+guint32
+mono_w32process_ver_language_name (guint32 lang, gunichar2 *lang_out, guint32 lang_len)
+{
+	g_assert(0 && "This function is not yet implemented for the Unity platform.");
+	return 0;
+}
+
+gboolean
+mono_w32process_ver_query_value (gconstpointer datablock, const gunichar2 *subblock, gpointer *buffer, guint32 *len)
+{
+	g_assert(0 && "This function is not yet implemented for the Unity platform.");
+	return FALSE;
 }
 
 #endif /* PLATFORM_UNITY && UNITY_USE_PLATFORM_STUBS */

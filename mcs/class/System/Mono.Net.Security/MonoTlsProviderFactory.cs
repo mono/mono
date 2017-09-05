@@ -172,11 +172,13 @@ namespace Mono.Net.Security
 					defaultProvider = btlsProvider;
 				}
 			
+#if !UNITY
 				if (Platform.IsMacOS) {
 					var appleProvider = "Mono.AppleTls.AppleTlsProvider";
 					providerRegistration.Add ("apple", appleProvider);
 					defaultProvider = appleProvider;
 				}
+#endif
 
 				if (defaultProvider == null)
 					defaultProvider = legacyProvider;
