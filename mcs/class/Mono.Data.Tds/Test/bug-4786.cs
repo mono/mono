@@ -100,6 +100,7 @@ namespace MonoTests.Mono.Data.Tds
 
 	pool.ReleaseConnection(tds);
 
+	Listener.Stop ();
 	//exit
     }
   }
