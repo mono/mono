@@ -90,7 +90,6 @@
     <Compile Include=".\Mono.Security.Cryptography\SymmetricTransform.cs" />
     <Compile Include=".\Mono.Security.Cryptography\TlsHMAC.cs" />
     <Compile Include=".\Mono.Security.Interface\Alert.cs" />
-    <Compile Include=".\Mono.Security.Interface\BufferOffsetSize.cs" />
     <Compile Include=".\Mono.Security.Interface\CertificateValidationHelper.cs" />
     <Compile Include=".\Mono.Security.Interface\CipherAlgorithmType.cs" />
     <Compile Include=".\Mono.Security.Interface\CipherSuiteCode.cs" />
@@ -98,16 +97,11 @@
     <Compile Include=".\Mono.Security.Interface\HashAlgorithmType.cs" />
     <Compile Include=".\Mono.Security.Interface\IBufferOffsetSize.cs" />
     <Compile Include=".\Mono.Security.Interface\IMonoSslStream.cs" />
-    <Compile Include=".\Mono.Security.Interface\IMonoTlsEventSink.cs" />
     <Compile Include=".\Mono.Security.Interface\MonoTlsConnectionInfo.cs" />
     <Compile Include=".\Mono.Security.Interface\MonoTlsProvider.cs" />
     <Compile Include=".\Mono.Security.Interface\MonoTlsProviderFactory.cs" />
     <Compile Include=".\Mono.Security.Interface\MonoTlsSettings.cs" />
-    <Compile Include=".\Mono.Security.Interface\SecretParameters.cs" />
-    <Compile Include=".\Mono.Security.Interface\SecureBuffer.cs" />
-    <Compile Include=".\Mono.Security.Interface\TlsBuffer.cs" />
     <Compile Include=".\Mono.Security.Interface\TlsException.cs" />
-    <Compile Include=".\Mono.Security.Interface\TlsMultiBuffer.cs" />
     <Compile Include=".\Mono.Security.Interface\TlsProtocolCode.cs" />
     <Compile Include=".\Mono.Security.Interface\TlsProtocols.cs" />
     <Compile Include=".\Mono.Security.Protocol.Ntlm\ChallengeResponse.cs" />
