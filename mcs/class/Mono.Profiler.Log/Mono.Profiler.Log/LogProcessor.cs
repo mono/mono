@@ -102,73 +102,86 @@ namespace Mono.Profiler.Log {
 			var extType = (LogEventType) (type & 0xf0);
 
 			_time = ReadTime ();
+			LogEvent ev = null;
 
 			switch (basicType) {
 			case LogEventType.Allocation:
 				switch (extType) {
 				case LogEventType.AllocationBacktrace:
 				case LogEventType.AllocationNoBacktrace:
-					return new AllocationEvent {
+					ev = new AllocationEvent {
 						ClassPointer = ReadPointer (),
 						ObjectPointer = ReadObject (),
 						ObjectSize = (long) Reader.ReadULeb128 (),
 						Backtrace = ReadBacktrace (extType == LogEventType.AllocationBacktrace),
 					};
+					break;
 				default:
 					throw new LogException ($"Invalid extended event type ({extType}).");
 				}
+				break;
 			case LogEventType.GC:
 				switch (extType) {
 				case LogEventType.GCEvent:
-					return new GCEvent {
+					ev = new GCEvent {
 						Type = (LogGCEvent) Reader.ReadByte (),
 						Generation = Reader.ReadByte (),
 					};
+					break;
 				case LogEventType.GCResize:
-					return new GCResizeEvent {
+					ev = new GCResizeEvent {
 						NewSize = (long) Reader.ReadULeb128 (),
 					};
+					break;
 				case LogEventType.GCMove: {
 					var list = new long [(int) Reader.ReadULeb128 ()];
 
 					for (var i = 0; i < list.Length; i++)
 						list [i] = ReadObject ();
 
-					return new GCMoveEvent {
+					ev = new GCMoveEvent {
 						OldObjectPointers = list.Where ((_, i) => i % 2 == 0).ToArray (),
 						NewObjectPointers = list.Where ((_, i) => i % 2 != 0).ToArray (),
 					};
+					break;
 				}
 				case LogEventType.GCHandleCreationNoBacktrace:
 				case LogEventType.GCHandleCreationBacktrace:
-					return new GCHandleCreationEvent {
+					ev = new GCHandleCreationEvent {
 						Type = (LogGCHandleType) Reader.ReadULeb128 (),
 						Handle = (long) Reader.ReadULeb128 (),
 						ObjectPointer = ReadObject (),
 						Backtrace = ReadBacktrace (extType == LogEventType.GCHandleCreationBacktrace),
 					};
+					break;
 				case LogEventType.GCHandleDeletionNoBacktrace:
 				case LogEventType.GCHandleDeletionBacktrace:
-					return new GCHandleDeletionEvent {
+					ev = new GCHandleDeletionEvent {
 						Type = (LogGCHandleType) Reader.ReadULeb128 (),
 						Handle = (long) Reader.ReadULeb128 (),
 						Backtrace = ReadBacktrace (extType == LogEventType.GCHandleDeletionBacktrace),
 					};
+					break;
 				case LogEventType.GCFinalizeBegin:
-					return new GCFinalizeBeginEvent ();
+					ev = new GCFinalizeBeginEvent ();
+					break;
 				case LogEventType.GCFinalizeEnd:
-					return new GCFinalizeEndEvent ();
+					ev = new GCFinalizeEndEvent ();
+					break;
 				case LogEventType.GCFinalizeObjectBegin:
-					return new GCFinalizeObjectBeginEvent {
+					ev = new GCFinalizeObjectBeginEvent {
 						ObjectPointer = ReadObject (),
 					};
+					break;
 				case LogEventType.GCFinalizeObjectEnd:
-					return new GCFinalizeObjectEndEvent {
+					ev = new GCFinalizeObjectEndEvent {
 						ObjectPointer = ReadObject (),
 					};
+					break;
 				default:
 					throw new LogException ($"Invalid extended event type ({extType}).");
 				}
+				break;
 			case LogEventType.Metadata: {
 				var load = false;
 				var unload = false;
@@ -191,150 +204,169 @@ namespace Mono.Profiler.Log {
 				switch (metadataType) {
 				case LogMetadataType.Class:
 					if (load) {
-						return new ClassLoadEvent {
+						ev = new ClassLoadEvent {
 							ClassPointer = ReadPointer (),
 							ImagePointer = ReadPointer (),
 							Name = Reader.ReadCString (),
 						};
 					} else
 						throw new LogException ("Invalid class metadata event.");
+					break;
 				case LogMetadataType.Image:
 					if (load) {
-						return new ImageLoadEvent {
+						ev = new ImageLoadEvent {
 							ImagePointer = ReadPointer (),
 							Name = Reader.ReadCString (),
 						};
 					} else if (unload) {
-						return new ImageUnloadEvent {
+						ev = new ImageUnloadEvent {
 							ImagePointer = ReadPointer (),
 							Name = Reader.ReadCString (),
 						};
 					} else
 						throw new LogException ("Invalid image metadata event.");
+					break;
 				case LogMetadataType.Assembly:
 					if (load) {
-						return new AssemblyLoadEvent {
+						ev = new AssemblyLoadEvent {
 							AssemblyPointer = ReadPointer (),
 							ImagePointer = ReadPointer (),
 							Name = Reader.ReadCString (),
 						};
 					} else if (unload) {
-						return new AssemblyUnloadEvent {
+						ev = new AssemblyUnloadEvent {
 							AssemblyPointer = ReadPointer (),
 							ImagePointer = ReadPointer (),
 							Name = Reader.ReadCString (),
 						};
 					} else
 						throw new LogException ("Invalid assembly metadata event.");
+					break;
 				case LogMetadataType.AppDomain:
 					if (load) {
-						return new AppDomainLoadEvent {
+						ev = new AppDomainLoadEvent {
 							AppDomainId = ReadPointer (),
 						};
 					} else if (unload) {
-						return new AppDomainUnloadEvent {
+						ev = new AppDomainUnloadEvent {
 							AppDomainId = ReadPointer (),
 						};
 					} else {
-						return new AppDomainNameEvent {
+						ev = new AppDomainNameEvent {
 							AppDomainId = ReadPointer (),
 							Name = Reader.ReadCString (),
 						};
 					}
+					break;
 				case LogMetadataType.Thread:
 					if (load) {
-						return new ThreadStartEvent {
+						ev = new ThreadStartEvent {
 							ThreadId = ReadPointer (),
 						};
 					} else if (unload) {
-						return new ThreadEndEvent {
+						ev = new ThreadEndEvent {
 							ThreadId = ReadPointer (),
 						};
 					} else {
-						return new ThreadNameEvent {
+						ev = new ThreadNameEvent {
 							ThreadId = ReadPointer (),
 							Name = Reader.ReadCString (),
 						};
 					}
+					break;
 				case LogMetadataType.Context:
 					if (load) {
-						return new ContextLoadEvent {
+						ev = new ContextLoadEvent {
 							ContextId = ReadPointer (),
 							AppDomainId = ReadPointer (),
 						};
 					} else if (unload) {
-						return new ContextUnloadEvent {
+						ev = new ContextUnloadEvent {
 							ContextId = ReadPointer (),
 							AppDomainId = ReadPointer (),
 						};
 					} else
 						throw new LogException ("Invalid context metadata event.");
+					break;
 				default:
 					throw new LogException ($"Invalid metadata type ({metadataType}).");
 				}
+				break;
 			}
 			case LogEventType.Method:
 				switch (extType) {
 				case LogEventType.MethodLeave:
-					return new LeaveEvent {
+					ev = new LeaveEvent {
 						MethodPointer = ReadMethod (),
 					};
+					break;
 				case LogEventType.MethodEnter:
-					return new EnterEvent {
+					ev = new EnterEvent {
 						MethodPointer = ReadMethod (),
 					};
+					break;
 				case LogEventType.MethodLeaveExceptional:
-					return new ExceptionalLeaveEvent {
+					ev = new ExceptionalLeaveEvent {
 						MethodPointer = ReadMethod (),
 					};
+					break;
 				case LogEventType.MethodJit:
-					return new JitEvent {
+					ev = new JitEvent {
 						MethodPointer = ReadMethod (),
 						CodePointer = ReadPointer (),
 						CodeSize = (long) Reader.ReadULeb128 (),
 						Name = Reader.ReadCString (),
 					};
+					break;
 				default:
 					throw new LogException ($"Invalid extended event type ({extType}).");
 				}
+				break;
 			case LogEventType.Exception:
 				switch (extType) {
 				case LogEventType.ExceptionThrowNoBacktrace:
 				case LogEventType.ExceptionThrowBacktrace:
-					return new ThrowEvent {
+					ev = new ThrowEvent {
 						ObjectPointer = ReadObject (),
 						Backtrace = ReadBacktrace (extType == LogEventType.ExceptionThrowBacktrace),
 					};
+					break;
 				case LogEventType.ExceptionClause:
-					return new ExceptionClauseEvent {
+					ev = new ExceptionClauseEvent {
 						Type = (LogExceptionClause) Reader.ReadByte (),
 						Index = (long) Reader.ReadULeb128 (),
 						MethodPointer = ReadMethod (),
 						ObjectPointer = ReadObject (),
 					};
+					break;
 				default:
 					throw new LogException ($"Invalid extended event type ({extType}).");
 				}
+				break;
 			case LogEventType.Monitor:
 				switch (extType) {
 				case LogEventType.MonitorNoBacktrace:
 				case LogEventType.MonitorBacktrace:
-					return new MonitorEvent {
+					ev = new MonitorEvent {
 						Event = (LogMonitorEvent) Reader.ReadByte (),
 						ObjectPointer = ReadObject (),
 						Backtrace = ReadBacktrace (extType == LogEventType.MonitorBacktrace),
 					};
+					break;
 				default:
 					throw new LogException ($"Invalid extended event type ({extType}).");
 				}
+				break;
 			case LogEventType.Heap:
 				switch (extType) {
 				case LogEventType.HeapBegin:
-					return new HeapBeginEvent ();
+					ev = new HeapBeginEvent ();
+					break;
 				case LogEventType.HeapEnd:
-					return new HeapEndEvent ();
+					ev = new HeapEndEvent ();
+					break;
 				case LogEventType.HeapObject: {
-					var ev = new HeapObjectEvent {
+					HeapObjectEvent hoe = new HeapObjectEvent {
 						ObjectPointer = ReadObject (),
 						ClassPointer = ReadPointer (),
 						ObjectSize = (long) Reader.ReadULeb128 (),
@@ -349,17 +381,18 @@ namespace Mono.Profiler.Log {
 						};
 					}
 
-					ev.References = list;
+					hoe.References = list;
+					ev = hoe;
 
-					return ev;
+					break;
 				}
+
 				case LogEventType.HeapRoots: {
 					// TODO: This entire event makes no sense.
-
-					var ev = new HeapRootsEvent ();
+					var hre = new HeapRootsEvent ();
 					var list = new HeapRootsEvent.HeapRoot [(int) Reader.ReadULeb128 ()];
 
-					ev.MaxGenerationCollectionCount = (long) Reader.ReadULeb128 ();
+					hre.MaxGenerationCollectionCount = (long) Reader.ReadULeb128 ();
 
 					for (var i = 0; i < list.Length; i++) {
 						list [i] = new HeapRootsEvent.HeapRoot {
@@ -369,36 +402,41 @@ namespace Mono.Profiler.Log {
 						};
 					}
 
-					ev.Roots = list;
+					hre.Roots = list;
+					ev = hre;
 
-					return ev;
+					break;
 				}
 				default:
 					throw new LogException ($"Invalid extended event type ({extType}).");
 				}
+				break;
 			case LogEventType.Sample:
 				switch (extType) {
 				case LogEventType.SampleHit:
-					return new SampleHitEvent {
+					ev = new SampleHitEvent {
 						ThreadId = ReadPointer (),
 						UnmanagedBacktrace = ReadBacktrace (true, false),
 						ManagedBacktrace = ReadBacktrace (true),
 					};
+					break;
 				case LogEventType.SampleUnmanagedSymbol:
-					return new UnmanagedSymbolEvent {
+					ev = new UnmanagedSymbolEvent {
 						CodePointer = ReadPointer (),
 						CodeSize = (long) Reader.ReadULeb128 (),
 						Name = Reader.ReadCString (),
 					};
+					break;
 				case LogEventType.SampleUnmanagedBinary:
-					return new UnmanagedBinaryEvent {
+					ev = new UnmanagedBinaryEvent {
 						SegmentPointer = ReadPointer (),
 						SegmentOffset = (long) Reader.ReadULeb128 (),
 						SegmentSize = (long) Reader.ReadULeb128 (),
 						FileName = Reader.ReadCString (),
 					};
+					break;
 				case LogEventType.SampleCounterDescriptions: {
-					var ev = new CounterDescriptionsEvent ();
+					var cde = new CounterDescriptionsEvent ();
 					var list = new CounterDescriptionsEvent.CounterDescription [(int) Reader.ReadULeb128 ()];
 
 					for (var i = 0; i < list.Length; i++) {
@@ -415,12 +453,13 @@ namespace Mono.Profiler.Log {
 						};
 					}
 
-					ev.Descriptions = list;
+					cde.Descriptions = list;
+					ev = cde;
 
-					return ev;
+					break;
 				}
 				case LogEventType.SampleCounters: {
-					var ev = new CounterSamplesEvent ();
+					var cse = new CounterSamplesEvent ();
 					var list = new List<CounterSamplesEvent.CounterSample> ();
 
 					while (true) {
@@ -461,40 +500,51 @@ namespace Mono.Profiler.Log {
 						});
 					}
 
-					ev.Samples = list;
+					cse.Samples = list;
+					ev = cse;
 
-					return ev;
+					break;
 				}
 				default:
 					throw new LogException ($"Invalid extended event type ({extType}).");
 				}
+				break;
 			case LogEventType.Runtime:
 				switch (extType) {
 				case LogEventType.RuntimeJitHelper: {
 					var helperType = (LogJitHelper) Reader.ReadByte ();
 
-					return new JitHelperEvent {
+					ev = new JitHelperEvent {
 						Type = helperType,
 						BufferPointer = ReadPointer (),
 						BufferSize = (long) Reader.ReadULeb128 (),
 						Name = helperType == LogJitHelper.SpecificTrampoline ? Reader.ReadCString () : string.Empty,
 					};
+					break;
 				}
 				default:
 					throw new LogException ($"Invalid extended event type ({extType}).");
 				}
+				break;
 			case LogEventType.Meta:
 				switch (extType) {
 				case LogEventType.MetaSynchronizationPoint:
-					return new SynchronizationPointEvent {
+					ev = new SynchronizationPointEvent {
 						Type = (LogSynchronizationPoint) Reader.ReadByte (),
 					};
+					break;
 				default:
 					throw new LogException ($"Invalid extended event type ({extType}).");
 				}
+				break;
 			default:
 				throw new LogException ($"Invalid basic event type ({basicType}).");
 			}
+
+			ev.Timestamp = _time;
+			ev.Buffer = _bufferHeader;
+
+			return ev;
 		}
 
 		long ReadPointer ()
