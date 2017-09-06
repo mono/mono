@@ -5686,6 +5686,12 @@ ves_icall_System_Delegate_CreateDelegate_internal (MonoReflectionType *type, Mon
 			mono_raise_exception (mono_get_exception_argument ("method", " Cannot bind to the target method because its signature differs from that of the delegate type"));
 	}
 
+	if (method->klass->is_generic)
+	{
+		mono_set_pending_exception(mono_get_exception_argument("method", " Cannot bind to the target method because the type is not inflated"));
+		return NULL;
+	}
+
 	delegate = mono_object_new (mono_object_domain (type), delegate_class);
 
 	if (method->dynamic) {
