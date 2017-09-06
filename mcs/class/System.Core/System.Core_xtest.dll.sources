@@ -52,10 +52,17 @@
 ../../../external/corefx/src/System.Linq.Expressions/tests/*.cs
 
 # System.Linq.Expressions
-#../../../external/corefx/src/System.Linq.Parallel/tests/Combinatorial/*.cs
-#../../../external/corefx/src/System.Linq.Parallel/tests/Helpers/*.cs
-#../../../external/corefx/src/System.Linq.Parallel/tests/QueryOperators/*.cs
-#../../../external/corefx/src/System.Linq.Parallel/tests/*.cs
-#../../../external/corefx/src/Common/tests/System/Threading/ThreadPoolHelpers.cs
-#../../../external/corefx/src/Common/tests/System/Diagnostics/Tracing/TestEventListener.cs
-#../../../external/corefx/src/Common/tests/System/ShouldNotBeInvokedException.cs
+../../../external/corefx/src/System.Linq.Parallel/tests/Combinatorial/*.cs
+../../../external/corefx/src/System.Linq.Parallel/tests/Helpers/*.cs
+../../../external/corefx/src/System.Linq.Parallel/tests/QueryOperators/*.cs
+../../../external/corefx/src/System.Linq.Parallel/tests/*.cs
+../../../external/corefx/src/Common/tests/System/Threading/ThreadPoolHelpers.cs
+../../../external/corefx/src/Common/tests/System/Diagnostics/Tracing/TestEventListener.cs
+../../../external/corefx/src/Common/tests/System/ShouldNotBeInvokedException.cs
+
+# tests need System.Collections.Immutable.dll
+../../../external/corefx/src/Common/src/System/Runtime/Versioning/NonVersionableAttribute.cs
+../../../external/corefx/src/System.Collections.Immutable/src/System/Collections/Generic/*.cs
+../../../external/corefx/src/System.Collections.Immutable/src/System/Collections/Immutable/*.cs
+../../../external/corefx/src/System.Collections.Immutable/src/Validation/*.cs
+corefx/SR.tests.cs
