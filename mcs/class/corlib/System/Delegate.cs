@@ -499,7 +499,7 @@ namespace System
 
 			m = Method;
 
-			return (m != null ? m.GetHashCode () : GetType ().GetHashCode ()) ^ (m_target != null ? m_target.GetHashCode () : 0);
+			return (m != null ? m.GetHashCode () : GetType ().GetHashCode ()) ^ RuntimeHelpers.GetHashCode (m_target);
 		}
 
 		protected virtual MethodInfo GetMethodImpl ()
