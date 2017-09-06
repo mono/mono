@@ -20,7 +20,7 @@ TEST_RUNTIME_WRAPPERS_PATH = $(shell dirname $(RUNTIME))/_tmpinst/bin
 ifndef NO_TEST
 
 test_nunit_lib = nunitlite.dll
-xunit_core := xunit.core xunit.abstractions xunit.assert Xunit.NetCore.Extensions
+xunit_core := xunit.core xunit.execution.dotnet xunit.abstractions xunit.assert Xunit.NetCore.Extensions
 xunit_deps := System.Runtime
 xunit_src  := $(patsubst %,$(topdir)/../external/xunit-binaries/%,BenchmarkAttribute.cs BenchmarkDiscover.cs)
 xunit_class_deps := 
