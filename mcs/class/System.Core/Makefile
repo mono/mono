@@ -50,6 +50,9 @@ BUILT_SOURCES = \
 endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
+XTEST_LIB_REFS = System Facades/System.Threading.Tasks Microsoft.CSharp Facades/System.Text.RegularExpressions Facades/System.Reflection Facades/System.Reflection.Extensions Facades/System.Runtime.InteropServices.RuntimeInformation Facades/System.Reflection.Emit
+# FEATURE_INTERPRET, FEATURE_COMPILE, NO_FEATURE_STATIC_DELEGATE
+XTEST_LIB_FLAGS = -unsafe -d:FEATURE_COMPILE
 
 include ../../build/library.make
 
