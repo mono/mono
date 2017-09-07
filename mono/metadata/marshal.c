@@ -8096,7 +8096,10 @@ mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, 
 			mono_mb_emit_i8 (mb, (gint64)(void *)method->klass->name);
 			mono_mb_emit_byte (mb, CEE_LDC_I8);
 			mono_mb_emit_i8 (mb, (gint64)(void *)method->name);
+			mono_mb_emit_byte (mb, CEE_LDC_I8);
+			mono_mb_emit_i8 (mb, 0);
 			mono_mb_emit_icall (mb, trace_icall->func);
+			mono_mb_emit_byte (mb, CEE_POP);
 		}
 
 		if (sig->hasthis)
