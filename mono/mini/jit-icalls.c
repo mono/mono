@@ -1927,6 +1927,7 @@ mono_throw_method_access (MonoMethod *caller, MonoMethod *callee)
 static mono_mutex_t mono_icall_trace_mutex;
 static gint64 mono_icall_trace_buf_size = 0, mono_icall_trace_buf_used = 0;
 static void * mono_icall_trace_buf = 0;
+static gint64 mono_icall_trace_next_id = 0;
 
 static void
 mono_icall_trace_dump (void)
@@ -1998,24 +1999,26 @@ mono_icall_trace_write (const char * text, int len)
 }
 
 
-void 
-mono_trace_icall_invocation (guint64 _namespace, guint64 _name)
-{
-	return;
+gint64
+mono_trace_icall_invocation (guint64 _namespace, guint64 _name, gint64 id)
+{	
 	const char * namespace = (const char *)(void *)_namespace;
 	const char * name = (const char *)(void *)_name;
-
-	if (!namespace)
-		namespace = "JIT";
 
 	const guint32 format_buf_size = 1024;
 	char format_buf[format_buf_size];
 
-	MonoThread * thread = mono_thread_current();
-	guint64 tid = 0;
+	int is_start = (id < 0);
+	if (is_start)
+		id = InterlockedIncrement64(&mono_icall_trace_next_id);
 
-	int text_len = snprintf(format_buf, format_buf_size, "t%d %s::%s\n", thread, namespace, name);
+	if (!namespace)
+		namespace = "JIT";
+
+	int text_len = snprintf(format_buf, format_buf_size, "%li %s %s::%s\n", id, is_start ? "+" : "-", namespace, name);
 	mono_icall_trace_write(format_buf, text_len);
+
+	return id;
 }
 
 

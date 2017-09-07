@@ -4287,7 +4287,7 @@ register_icalls (void)
 
 
 
-	register_icall_no_wrapper (mono_trace_icall_invocation, "mono_trace_icall_invocation", "void ulong ulong");
+	register_icall_no_wrapper (mono_trace_icall_invocation, "mono_trace_icall_invocation", "long ulong ulong long");
 
 
 

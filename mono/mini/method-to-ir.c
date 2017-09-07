@@ -2594,50 +2594,70 @@ mono_emit_native_call (MonoCompile *cfg, gconstpointer func, MonoMethodSignature
 	return (MonoInst*)call;
 }
 
-int process_icall_tracing (MonoCompile *cfg, gconstpointer func, MonoJitICallInfo *info, MonoInst **args) 
-{
-	// If this is a tracing icall we check whether it should be emitted
-	//  based on the current tracing settings. If it shouldn't be emitted,
-	//  we return FALSE to reject the icall entirely.
+guint32 emit_icall_start_marker (
+	MonoCompile *cfg, const char * namespace, const char * name
+);
 
-	if (func == mono_trace_icall_invocation) {
-		g_assert (args[0]->opcode == OP_I8CONST);
-		g_assert (args[1]->opcode == OP_I8CONST);
+void emit_icall_end_marker (
+    MonoCompile *cfg, const char * namespace, const char * name, guint32 id_vreg
+);
 
-		{
-			const char * namespace = (const char *)(void *)args[0]->data.i8const;
-			const char * name = (const char *)(void *)args[1]->data.i8const;
-			if (!namespace)
-				namespace = "JIT";
+guint32 emit_icall_start_marker (
+    MonoCompile *cfg, const char * namespace, const char * name
+) {
+	if (!namespace)
+		namespace = "JIT";
 
-			if (strcasestr(namespace, "Socket")) {
-				// printf("emit icall %s::%s\n", namespace, name);
-				return TRUE;
-			} else {
-				// printf("icall rejected %s::%s\n", namespace, name);
-				return FALSE;
-			}
-		}
+	if (!strcasestr(namespace, "Socket")) {
+		printf("icall trace rejected %s::%s\n", namespace, name);
+		return 0xFFFFFFFF;
+	}
 
-		return FALSE;
-		// return TRUE;
-	} else {
+    printf("trace icall %s::%s\n", namespace, name);
+    /*
 		const char * pname = info->c_symbol;
 		if (!pname)
 			pname = info->name;
+    */
 
-		MonoInst *trace_args [16];
-		EMIT_NEW_I8CONST(
-			cfg, trace_args[0], (guint64)(void*)0
-		);
-		EMIT_NEW_I8CONST(
-			cfg, trace_args[1], (guint64)(void*)pname
-		);
+	MonoInst *trace_args [16];
+	EMIT_NEW_I8CONST(
+		cfg, trace_args[0], (guint64)(void*)namespace
+	);
+	EMIT_NEW_I8CONST(
+		cfg, trace_args[1], (guint64)(void*)name
+	);
+    EMIT_NEW_I8CONST(
+        cfg, trace_args[2], 0
+    );
 
-		mono_emit_jit_icall (cfg, mono_trace_icall_invocation, trace_args);
+    guint32 id_vreg = alloc_lreg (cfg);
+    MonoInst * call = mono_emit_jit_icall (cfg, mono_trace_icall_invocation, trace_args);
+    call->dreg = id_vreg;
 
-		return TRUE;
-	}
+    return id_vreg;
+}
+
+void emit_icall_end_marker (
+    MonoCompile *cfg, const char * namespace, const char * name, guint32 id_vreg
+) {
+    if (id_vreg == 0xFFFFFFFF)
+        return;
+
+    MonoInst *trace_args [16];
+    EMIT_NEW_I8CONST(
+        cfg, trace_args[0], (guint64)(void*)namespace
+    );
+    EMIT_NEW_I8CONST(
+        cfg, trace_args[1], (guint64)(void*)name
+    );
+
+    guint32 temp_vreg = alloc_lreg (cfg);
+    EMIT_NEW_UNALU(
+        cfg, trace_args[2], OP_MOVE, temp_vreg, id_vreg
+    );
+
+    mono_emit_jit_icall (cfg, mono_trace_icall_invocation, trace_args);
 }
 
 MonoInst*
@@ -2648,11 +2668,13 @@ mono_emit_jit_icall (MonoCompile *cfg, gconstpointer func, MonoInst **args)
 
 	g_assert (info);
 
-	if (process_icall_tracing (cfg, func, info, args) == TRUE) {
-		ins = mono_emit_native_call (cfg, mono_icall_get_wrapper (info), info->sig, args);
-	} else {
-		MONO_INST_NEW (cfg, ins, OP_NOP);
-	}
+	// Do pre-processing on the icall to emit the start trace if necessary
+	gint32 icall_id_vreg = emit_icall_start_marker (cfg, "JIT", info->c_symbol ? info->c_symbol : info->name);
+
+	ins = mono_emit_native_call (cfg, mono_icall_get_wrapper (info), info->sig, args);
+
+    emit_icall_end_marker (cfg, "JIT", info->c_symbol ? info->c_symbol : info->name, icall_id_vreg);
+
 	return ins;
 }
 
@@ -2793,13 +2815,13 @@ mono_emit_jit_icall_by_info (MonoCompile *cfg, int il_offset, MonoJitICallInfo *
 	} else {
 		gconstpointer func = mono_icall_get_wrapper (info);
 
-		if (process_icall_tracing (cfg, func, info, args) == TRUE) {
-			return mono_emit_native_call (cfg, func, info->sig, args);
-		} else {
-			MonoInst * ins;
-			MONO_INST_NEW (cfg, ins, OP_NOP);
-			return ins;
-		}
+        gint32 icall_id_vreg = emit_icall_start_marker (cfg, "JIT", info->c_symbol ? info->c_symbol : info->name);
+
+		MonoInst* result = mono_emit_native_call (cfg, func, info->sig, args);
+
+        emit_icall_end_marker (cfg, "JIT", info->c_symbol ? info->c_symbol : info->name, icall_id_vreg);
+
+		return result;
 	}
 }
  

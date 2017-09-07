@@ -226,7 +226,7 @@ double mono_ckfinite (double d);
 
 void mono_throw_method_access (MonoMethod *caller, MonoMethod *callee);
 
-void mono_trace_icall_invocation (guint64 namespace, guint64 name);
+gint64 mono_trace_icall_invocation (guint64 namespace, guint64 name, gint64 id);
 
 void mono_dummy_jit_icall (void);
 
