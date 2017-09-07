@@ -52,12 +52,10 @@ static void event_handle_signal (gpointer handle, MonoW32HandleType type, MonoW3
 static gboolean event_handle_own (gpointer handle, MonoW32HandleType type, gboolean *abandoned)
 {
 	MonoW32HandleEvent *event_handle;
-	gboolean ok;
 
 	*abandoned = FALSE;
 
-	ok = mono_w32handle_lookup (handle, type, (gpointer *)&event_handle);
-	if (!ok) {
+	if (!mono_w32handle_lookup_and_ref (handle, type, (gpointer *)&event_handle)) {
 		g_warning ("%s: error looking up %s handle %p",
 			__func__, mono_w32handle_get_typename (type), handle);
 		return FALSE;
@@ -74,6 +72,7 @@ static gboolean event_handle_own (gpointer handle, MonoW32HandleType type, gbool
 			mono_w32handle_set_signal_state (handle, FALSE, FALSE);
 	}
 
+	mono_w32handle_unref (handle);
 	return TRUE;
 }
 
@@ -321,7 +320,7 @@ ves_icall_System_Threading_Events_SetEvent_internal (gpointer handle)
 		return FALSE;
 	}
 
-	if (!mono_w32handle_lookup (handle, type, (gpointer *)&event_handle)) {
+	if (!mono_w32handle_lookup_and_ref (handle, type, (gpointer *)&event_handle)) {
 		g_warning ("%s: error looking up %s handle %p",
 			__func__, mono_w32handle_get_typename (type), handle);
 		return FALSE;
@@ -341,6 +340,7 @@ ves_icall_System_Threading_Events_SetEvent_internal (gpointer handle)
 
 	mono_w32handle_unlock_handle (handle);
 
+	mono_w32handle_unref (handle);
 	return TRUE;
 }
 
@@ -366,7 +366,7 @@ ves_icall_System_Threading_Events_ResetEvent_internal (gpointer handle)
 		return FALSE;
 	}
 
-	if (!mono_w32handle_lookup (handle, type, (gpointer *)&event_handle)) {
+	if (!mono_w32handle_lookup_and_ref (handle, type, (gpointer *)&event_handle)) {
 		g_warning ("%s: error looking up %s handle %p",
 			__func__, mono_w32handle_get_typename (type), handle);
 		return FALSE;
@@ -391,6 +391,7 @@ ves_icall_System_Threading_Events_ResetEvent_internal (gpointer handle)
 
 	mono_w32handle_unlock_handle (handle);
 
+	mono_w32handle_unref (handle);
 	return TRUE;
 }
 

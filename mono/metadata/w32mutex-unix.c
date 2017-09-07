@@ -101,7 +101,7 @@ mutex_handle_own (gpointer handle, MonoW32HandleType type, gboolean *abandoned)
 
 	*abandoned = FALSE;
 
-	if (!mono_w32handle_lookup (handle, type, (gpointer *)&mutex_handle)) {
+	if (!mono_w32handle_lookup_and_ref (handle, type, (gpointer *)&mutex_handle)) {
 		g_warning ("%s: error looking up %s handle %p", __func__, mono_w32handle_get_typename (type), handle);
 		return FALSE;
 	}
@@ -126,6 +126,8 @@ mutex_handle_own (gpointer handle, MonoW32HandleType type, gboolean *abandoned)
 
 	mono_w32handle_set_signal_state (handle, FALSE, FALSE);
 
+	mono_w32handle_unref (handle);
+
 	return TRUE;
 }
 
@@ -134,7 +136,7 @@ mutex_handle_is_owned (gpointer handle, MonoW32HandleType type)
 {
 	MonoW32HandleMutex *mutex_handle;
 
-	if (!mono_w32handle_lookup (handle, type, (gpointer *)&mutex_handle)) {
+	if (!mono_w32handle_lookup_and_ref (handle, type, (gpointer *)&mutex_handle)) {
 		g_warning ("%s: error looking up %s handle %p", __func__, mono_w32handle_get_typename (type), handle);
 		return FALSE;
 	}
@@ -145,10 +147,14 @@ mutex_handle_is_owned (gpointer handle, MonoW32HandleType type)
 	if (mutex_handle->recursion > 0 && pthread_equal (mutex_handle->tid, pthread_self ())) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: %s handle %p owned by %p",
 			__func__, mono_w32handle_get_typename (type), handle, (gpointer) pthread_self ());
+
+		mono_w32handle_unref (handle);
 		return TRUE;
 	} else {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: %s handle %p not owned by %p, tid: %p recursion: %d",
 			__func__, mono_w32handle_get_typename (type), handle, (gpointer) pthread_self (), (gpointer) mutex_handle->tid, mutex_handle->recursion);
+
+		mono_w32handle_unref (handle);
 		return FALSE;
 	}
 }
@@ -194,7 +200,7 @@ static void mutex_handle_prewait (gpointer handle, MonoW32HandleType type)
 	 */
 	MonoW32HandleMutex *mutex_handle;
 
-	if (!mono_w32handle_lookup (handle, type, (gpointer *)&mutex_handle)) {
+	if (!mono_w32handle_lookup_and_ref (handle, type, (gpointer *)&mutex_handle)) {
 		g_warning ("%s: error looking up %s handle %p",
 			__func__, mono_w32handle_get_typename (type), handle);
 		return;
@@ -202,6 +208,8 @@ static void mutex_handle_prewait (gpointer handle, MonoW32HandleType type)
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: pre-waiting %s handle %p, owned? %s",
 		__func__, mono_w32handle_get_typename (type), handle, mutex_handle->recursion != 0 ? "true" : "false");
+
+	mono_w32handle_unref (handle);
 }
 
 /* The shared state is not locked when prewait methods are called */
@@ -425,7 +433,7 @@ ves_icall_System_Threading_Mutex_ReleaseMutex_internal (gpointer handle)
 		return FALSE;
 	}
 
-	if (!mono_w32handle_lookup (handle, type, (gpointer *)&mutex_handle)) {
+	if (!mono_w32handle_lookup_and_ref (handle, type, (gpointer *)&mutex_handle)) {
 		g_warning ("%s: error looking up %s handle %p",
 			__func__, mono_w32handle_get_typename (type), handle);
 		return FALSE;
@@ -464,6 +472,7 @@ ves_icall_System_Threading_Mutex_ReleaseMutex_internal (gpointer handle)
 	}
 
 	mono_w32handle_unlock_handle (handle);
+	mono_w32handle_unref (handle);
 
 	return ret;
 }
@@ -541,7 +550,7 @@ mono_w32mutex_abandon (void)
 			g_assert_not_reached ();
 		}
 
-		if (!mono_w32handle_lookup (handle, type, (gpointer *)&mutex_handle)) {
+		if (!mono_w32handle_lookup_and_ref (handle, type, (gpointer *)&mutex_handle)) {
 			g_error ("%s: error looking up %s handle %p",
 				__func__, mono_w32handle_get_typename (type), handle);
 		}
@@ -569,6 +578,7 @@ mono_w32mutex_abandon (void)
 			__func__, mono_w32handle_get_typename (type), handle);
 
 		mono_w32handle_unlock_handle (handle);
+		mono_w32handle_unref (handle);
 	}
 
 	g_ptr_array_free (internal->owned_mutexes, TRUE);

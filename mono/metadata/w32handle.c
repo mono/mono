@@ -196,9 +196,6 @@ mono_w32handle_unlock_signal_mutex (void)
 static void
 mono_w32handle_ref (gpointer handle);
 
-static void
-mono_w32handle_unref (gpointer handle);
-
 void
 mono_w32handle_lock_handle (gpointer handle)
 {
@@ -430,8 +427,7 @@ mono_w32handle_close (gpointer handle)
 }
 
 gboolean
-mono_w32handle_lookup (gpointer handle, MonoW32HandleType type,
-			      gpointer *handle_specific)
+mono_w32handle_lookup_and_ref (gpointer handle, MonoW32HandleType type, gpointer *handle_specific)
 {
 	MonoW32HandleBase *handle_data;
 
@@ -441,7 +437,16 @@ mono_w32handle_lookup (gpointer handle, MonoW32HandleType type,
 		return(FALSE);
 	}
 
+	if (!mono_w32handle_ref_core (handle, handle_data))
+		return FALSE;
+
 	if (handle_data->type != type) {
+		gboolean destroy;
+
+		destroy = mono_w32handle_unref_core (handle, handle_data);
+		if (destroy)
+			w32handle_destroy (handle);
+
 		return(FALSE);
 	}
 
@@ -614,7 +619,7 @@ w32handle_destroy (gpointer handle)
 }
 
 /* The handle must not be locked on entry to this function */
-static void
+void
 mono_w32handle_unref (gpointer handle)
 {
 	MonoW32HandleBase *handle_data;

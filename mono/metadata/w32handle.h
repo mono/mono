@@ -118,7 +118,10 @@ const gchar*
 mono_w32handle_get_typename (MonoW32HandleType type);
 
 gboolean
-mono_w32handle_lookup (gpointer handle, MonoW32HandleType type, gpointer *handle_specific);
+mono_w32handle_lookup_and_ref (gpointer handle, MonoW32HandleType type, gpointer *handle_specific);
+
+void
+mono_w32handle_unref (gpointer handle);
 
 void
 mono_w32handle_foreach (gboolean (*on_each)(gpointer handle, gpointer data, gpointer user_data), gpointer user_data);
