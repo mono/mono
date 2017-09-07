@@ -427,6 +427,16 @@ ignore_cfg (MonoCompile *cfg)
 	return !cfg || cfg->skip;
 }
 
+gboolean 
+mono_aot_can_dedup (MonoMethod *method) 
+{
+	gboolean not_normal_gshared = method->is_inflated && !mono_method_is_generic_sharable_full (method, TRUE, FALSE, FALSE);
+	gboolean extra_method = (method->wrapper_type != MONO_WRAPPER_NONE) || not_normal_gshared;
+
+	return extra_method;
+}
+
+
 static void
 aot_printf (MonoAotCompile *acfg, const gchar *format, ...)
 {
@@ -5494,18 +5504,18 @@ emit_and_reloc_code (MonoAotCompile *acfg, MonoMethod *method, guint8 *code, gui
 				if ((patch_info->type == MONO_PATCH_INFO_METHOD) && (patch_info->data.method->klass->image == acfg->image)) {
 					if (!got_only && is_direct_callable (acfg, method, patch_info)) {
 						MonoCompile *callee_cfg = (MonoCompile *)g_hash_table_lookup (acfg->method_to_cfg, patch_info->data.method);
-						char *name = mono_aot_get_mangled_method_name (patch_info->data.method);
-						gboolean do_dedup = acfg->aot_opts.dedup;
 
 						// Don't compile inflated methods if we're doing dedup
-						if (!do_dedup || !(callee_cfg->orig_method->is_inflated && !callee_cfg->gshared)) {
+						if (acfg->aot_opts.dedup && !mono_aot_can_dedup (patch_info->data.method)) {
+							char *name = mono_aot_get_mangled_method_name (patch_info->data.method);
 							mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_AOT, "DIRECT CALL: %s by %s", name, method ? mono_method_full_name (method, TRUE) : "");
+							g_free (name);
+
 							direct_call = TRUE;
 							direct_call_target = callee_cfg->asm_symbol;
 							patch_info->type = MONO_PATCH_INFO_NONE;
 							acfg->stats.direct_calls ++;
 						}
-						g_free (name);
 					}
 
 					acfg->stats.all_calls ++;
@@ -8951,27 +8961,34 @@ emit_code (MonoAotCompile *acfg)
 		if (!cfg)
 			continue;
 
+		method = cfg->orig_method;
+
+		gboolean dedup_collect = acfg->aot_opts.dedup || (acfg->aot_opts.dedup_include && !acfg->dedup_emit_mode);
+		gboolean dedupable = mono_aot_can_dedup (method);
+
 		// cfg->skip is vital for LLVM to work, can't just continue in this loop
-		if (cfg->orig_method->is_inflated && !cfg->gshared) {
-			char *name = mono_aot_get_mangled_method_name (cfg->orig_method);
+		if (dedupable && strcmp (method->name, "wbarrier_conc") && dedup_collect) {
+			char *name = mono_aot_get_mangled_method_name (method);
 			g_assert (name);
-			if (strcmp (cfg->orig_method->name, "wbarrier_conc") && acfg->aot_opts.dedup) {
-				g_assert (acfg->dedup_cache);
-				if (!g_hash_table_lookup (acfg->dedup_cache, name)) {
-					// This AOTCompile owns this method
-					acfg->dedup_cache_changed = TRUE;
-					g_hash_table_insert (acfg->dedup_cache, name, acfg);
-				}
-				// Don't compile inflated methods if we're in first phase of
-				// dedup
-				cfg->skip = TRUE;
+			g_assert (acfg->dedup_cache);
+			if (!g_hash_table_lookup (acfg->dedup_cache, name)) {
+				// This AOTCompile owns this method
+				acfg->dedup_cache_changed = TRUE;
+				g_hash_table_insert (acfg->dedup_cache, name, method);
+			} else {
+				g_free (name);
 			}
+			// Don't compile inflated methods if we're in first phase of
+			// dedup
+			cfg->skip = TRUE;
 		}
+		
+		if (acfg->dedup_emit_mode)
+			cfg->skip = !dedupable;
+			
 
 		if (ignore_cfg (cfg))
 			continue;
-
-		method = cfg->orig_method;
 
 		/* Emit unbox trampoline */
 		if (mono_aot_mode_is_full (&acfg->aot_opts) && cfg->orig_method->klass->valuetype) {

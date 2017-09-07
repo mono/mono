@@ -2557,6 +2557,7 @@ gpointer mono_aot_get_imt_trampoline        (MonoVTable *vtable, MonoDomain *dom
 gpointer mono_aot_get_gsharedvt_arg_trampoline(gpointer arg, gpointer addr);
 guint8*  mono_aot_get_unwind_info           (MonoJitInfo *ji, guint32 *unwind_info_len);
 guint32  mono_aot_method_hash               (MonoMethod *method);
+gboolean mono_aot_can_dedup                 (MonoMethod *method);
 MonoMethod* mono_aot_get_array_helper_from_wrapper (MonoMethod *method);
 void     mono_aot_set_make_unreadable       (gboolean unreadable);
 gboolean mono_aot_is_pagefault              (void *ptr);
