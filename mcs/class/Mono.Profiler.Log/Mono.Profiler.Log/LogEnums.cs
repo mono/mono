@@ -173,6 +173,11 @@ namespace Mono.Profiler.Log {
 		PreStartWorld = 8,
 		PostStartWorld = 9,
 		PostStartWorldUnlocked = 11,
+		// Following are v13 and older only
+		MarkBegin = 1,
+		MarkEnd = 2,
+		ReclaimBegin = 3,
+		ReclaimEnd = 4
 	}
 
 	// mono/metadata/mono-gc.h : MonoGCHandleType
