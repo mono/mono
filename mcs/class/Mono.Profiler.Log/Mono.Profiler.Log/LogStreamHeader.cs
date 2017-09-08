@@ -7,6 +7,8 @@ using System;
 namespace Mono.Profiler.Log {
 
 	public sealed class LogStreamHeader {
+		const int MinimumMLPDSupportedVersion = 13;
+		const int MaximumMLPDSupportedVersion = 14;
 
 		const int Id = 0x4d505a01;
 
@@ -41,6 +43,10 @@ namespace Mono.Profiler.Log {
 
 			Version = new Version (reader.ReadByte (), reader.ReadByte ());
 			FormatVersion = reader.ReadByte ();
+
+			if (FormatVersion < MinimumMLPDSupportedVersion || FormatVersion > MaximumMLPDSupportedVersion)
+				throw new LogException ($"Unsupported MLPD version {FormatVersion}. Should be >= {MinimumMLPDSupportedVersion} and <= {MaximumMLPDSupportedVersion}");
+			
 			PointerSize = reader.ReadByte ();
 			StartupTime = reader.ReadUInt64 ();
 			TimerOverhead = reader.ReadInt32 ();
