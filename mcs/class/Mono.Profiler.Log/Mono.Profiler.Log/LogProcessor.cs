@@ -429,8 +429,8 @@ namespace Mono.Profiler.Log {
 					}
 					ev = new SampleHitEvent {
 						ThreadId = ReadPointer (),
-						UnmanagedBacktrace = ReadBacktrace (true, false), // FIXME: isn't this reversed?
-						ManagedBacktrace = ReadBacktrace (true),
+						UnmanagedBacktrace = ReadBacktrace (true, false),
+						ManagedBacktrace = ReadBacktrace (true).Reverse ().ToArray (),
 					};
 					break;
 				case LogEventType.SampleUnmanagedSymbol:
