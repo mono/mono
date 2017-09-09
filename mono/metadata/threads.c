@@ -4999,6 +4999,11 @@ mono_threads_add_joinable_thread (gpointer tid)
 	 * 2fd16f60/r114307. So we collect them and join them when
 	 * we have time (in he finalizer thread).
 	 */
+	if (tid == NULL) {
+		g_warning ("Invalid thread: %p", tid);
+		return;
+	}
+
 	joinable_threads_lock ();
 	if (!joinable_threads)
 		joinable_threads = g_hash_table_new (NULL, NULL);
