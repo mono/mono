@@ -4880,7 +4880,7 @@ mono_class_init (MonoClass *klass)
 	GSList *init_list = (GSList *)mono_native_tls_get_value (init_pending_tls_id);
 	if (g_slist_find (init_list, klass)) {
 		mono_class_set_type_load_failure (klass, "Recursive type definition detected");
-		goto leave;
+		goto leave_no_init_pending;
 	}
 	init_list = g_slist_prepend (init_list, klass);
 	mono_native_tls_set_value (init_pending_tls_id, init_list);
@@ -5079,10 +5079,12 @@ mono_class_init (MonoClass *klass)
 
 	goto leave;
 
- leave:
+leave:
+	init_list = mono_native_tls_get_value (init_pending_tls_id);
 	init_list = g_slist_remove (init_list, klass);
 	mono_native_tls_set_value (init_pending_tls_id, init_list);
 
+leave_no_init_pending:
 	if (locked)
 		mono_loader_unlock ();
 
