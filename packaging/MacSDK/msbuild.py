@@ -3,7 +3,7 @@ import fileinput
 class MSBuild (GitHubPackage):
 	def __init__ (self):
 		GitHubPackage.__init__ (self, 'mono', 'msbuild', '15.4',
-			revision = '5633e38dd86d5ca588a7a3b9c8e961b5f7bdcf62')
+			revision = '9ff3a808aa2228fea19c82e78b912f9e9b9ca445')
 
 	def build (self):
 		self.sh ('./cibuild.sh --scope Compile --target Mono --host Mono --config Release')
