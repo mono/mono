@@ -59,6 +59,10 @@ mono_runtime_set_shutting_down (void);
 MONO_API mono_bool
 mono_runtime_is_shutting_down (void);
 
+typedef void (*MonoAtExitCallback) (void *user_data);
+MONO_API void
+mono_runtime_atexit (MonoAtExitCallback callback, void *user_data);
+
 MONO_API const char*
 mono_check_corlib_version (void);
 

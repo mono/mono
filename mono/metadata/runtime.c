@@ -23,6 +23,15 @@
 #include <mono/metadata/marshal.h>
 #include <mono/utils/atomic.h>
 
+
+struct _MonoAtExitData {
+	MonoAtExitCallback cb;
+	void * user_data;
+	struct _MonoAtExitData *next;
+};
+typedef struct _MonoAtExitData MonoAtExitData;
+
+static MonoAtExitData *mono_atexit = NULL;
 static gboolean shutting_down_inited = FALSE;
 static gboolean shutting_down = FALSE;
 
@@ -79,6 +88,38 @@ mono_runtime_fire_process_exit_event (void)
 #endif
 }
 
+static void
+mono_runtime_call_atexit (void)
+{
+	MonoAtExitData *at;
+	for (at = mono_atexit; at; at = at->next)
+		at->cb (at->user_data);
+}
+
+/**
+ * mono_runtime_atexit:
+ *
+ * Register a callback to be invoked when the runtime begins to shutdown.
+ *
+ * This will be invoked both for active (calling Environment::Exit) and passive shutdown (all threads gone).
+ *
+ * The runtime will be functional at the time the callback is invoked but managed code will already have begun
+ * to cleanup. This means the callback must not block or depend on execution of managed code.
+ *
+ */
+void
+mono_runtime_atexit (MonoAtExitCallback callback, void *user_data)
+{
+	MonoAtExitData *at = g_new (MonoAtExitData, 1);
+	MonoAtExitData *old;
+
+	at->cb = callback;
+	at->user_data = user_data;
+	do {
+		old = mono_atexit;
+		at->next = old;
+	} while (InterlockedCompareExchangePointer ((void*)&mono_atexit, at, old) != old);
+}
 
 /**
  * mono_runtime_try_shutdown:
@@ -94,6 +135,8 @@ mono_runtime_try_shutdown (void)
 {
 	if (InterlockedCompareExchange (&shutting_down_inited, TRUE, FALSE))
 		return FALSE;
+
+	mono_runtime_call_atexit ();
 
 	mono_runtime_fire_process_exit_event ();
 
