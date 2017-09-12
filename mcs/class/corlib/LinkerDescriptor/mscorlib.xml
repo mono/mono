@@ -846,5 +846,16 @@
 		<type fullname="Mono.RuntimeStructs/HandleStackMark" />
 		<!-- marshal.c (mono_marshal_get_native_wrapper) -->
 		<type fullname="Mono.RuntimeStructs/MonoError" />
+
+		<!-- debugger-agent.c -->
+		<type fullname="System.Runtime.CompilerServices.AsyncTaskMethodBuilder">
+			<method name="SetNotificationForWaitCompletion" />
+			<method name="get_ObjectIdForDebugger" />
+		</type>
+		<type fullname="System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1">
+			<method name="SetNotificationForWaitCompletion" />
+			<method name="get_ObjectIdForDebugger" />
+		</type>
+
 	</assembly>
 </linker>
