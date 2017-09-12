@@ -1902,7 +1902,7 @@ m_Handle, buffer, offset + sent, size - sent, socketFlags, out nativeError, is_b
 				sockares.Size -= total;
 
 				if (sockares.socket.CleanedUp) {
-					sockares.Complete (total);
+					sockares.Complete (sent_so_far);
 					return;
 				}
 
@@ -1914,7 +1914,7 @@ m_Handle, buffer, offset + sent, size - sent, socketFlags, out nativeError, is_b
 				sockares.Total = sent_so_far;
 			}
 
-			sockares.Complete (total);
+			sockares.Complete (sent_so_far);
 		}
 
 		[CLSCompliant (false)]
