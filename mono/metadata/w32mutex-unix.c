@@ -63,7 +63,7 @@ thread_disown_mutex (MonoInternalThread *internal, gpointer handle)
 }
 
 static void
-mutex_handle_signal (gpointer handle, MonoW32HandleType type, MonoW32HandleMutex *mutex_handle)
+mutex_handle_signal (gpointer handle, MonoW32Type type, MonoW32HandleMutex *mutex_handle)
 {
 	pthread_t tid;
 
@@ -95,7 +95,7 @@ mutex_handle_signal (gpointer handle, MonoW32HandleType type, MonoW32HandleMutex
 }
 
 static gboolean
-mutex_handle_own (gpointer handle, MonoW32HandleType type, gboolean *abandoned)
+mutex_handle_own (gpointer handle, MonoW32Type type, gboolean *abandoned)
 {
 	MonoW32HandleMutex *mutex_handle;
 
@@ -132,7 +132,7 @@ mutex_handle_own (gpointer handle, MonoW32HandleType type, gboolean *abandoned)
 }
 
 static gboolean
-mutex_handle_is_owned (gpointer handle, MonoW32HandleType type)
+mutex_handle_is_owned (gpointer handle, MonoW32Type type)
 {
 	MonoW32HandleMutex *mutex_handle;
 
@@ -161,36 +161,36 @@ mutex_handle_is_owned (gpointer handle, MonoW32HandleType type)
 
 static void mutex_signal(gpointer handle, gpointer handle_specific)
 {
-	mutex_handle_signal (handle, MONO_W32HANDLE_MUTEX, (MonoW32HandleMutex*) handle_specific);
+	mutex_handle_signal (handle, MONO_W32TYPE_MUTEX, (MonoW32HandleMutex*) handle_specific);
 }
 
 static gboolean mutex_own (gpointer handle, gboolean *abandoned)
 {
-	return mutex_handle_own (handle, MONO_W32HANDLE_MUTEX, abandoned);
+	return mutex_handle_own (handle, MONO_W32TYPE_MUTEX, abandoned);
 }
 
 static gboolean mutex_is_owned (gpointer handle)
 {
-	return mutex_handle_is_owned (handle, MONO_W32HANDLE_MUTEX);
+	return mutex_handle_is_owned (handle, MONO_W32TYPE_MUTEX);
 }
 
 static void namedmutex_signal (gpointer handle, gpointer handle_specific)
 {
-	mutex_handle_signal (handle, MONO_W32HANDLE_NAMEDMUTEX, (MonoW32HandleMutex*) handle_specific);
+	mutex_handle_signal (handle, MONO_W32TYPE_NAMEDMUTEX, (MonoW32HandleMutex*) handle_specific);
 }
 
 /* NB, always called with the shared handle lock held */
 static gboolean namedmutex_own (gpointer handle, gboolean *abandoned)
 {
-	return mutex_handle_own (handle, MONO_W32HANDLE_NAMEDMUTEX, abandoned);
+	return mutex_handle_own (handle, MONO_W32TYPE_NAMEDMUTEX, abandoned);
 }
 
 static gboolean namedmutex_is_owned (gpointer handle)
 {
-	return mutex_handle_is_owned (handle, MONO_W32HANDLE_NAMEDMUTEX);
+	return mutex_handle_is_owned (handle, MONO_W32TYPE_NAMEDMUTEX);
 }
 
-static void mutex_handle_prewait (gpointer handle, MonoW32HandleType type)
+static void mutex_handle_prewait (gpointer handle, MonoW32Type type)
 {
 	/* If the mutex is not currently owned, do nothing and let the
 	 * usual wait carry on.  If it is owned, check that the owner
@@ -215,13 +215,13 @@ static void mutex_handle_prewait (gpointer handle, MonoW32HandleType type)
 /* The shared state is not locked when prewait methods are called */
 static void mutex_prewait (gpointer handle)
 {
-	mutex_handle_prewait (handle, MONO_W32HANDLE_MUTEX);
+	mutex_handle_prewait (handle, MONO_W32TYPE_MUTEX);
 }
 
 /* The shared state is not locked when prewait methods are called */
 static void namedmutex_prewait (gpointer handle)
 {
-	mutex_handle_prewait (handle, MONO_W32HANDLE_NAMEDMUTEX);
+	mutex_handle_prewait (handle, MONO_W32TYPE_NAMEDMUTEX);
 }
 
 static void mutex_details (gpointer data)
@@ -295,16 +295,16 @@ mono_w32mutex_init (void)
 		namedmutex_typesize,	/* typesize */
 	};
 
-	mono_w32handle_register_ops (MONO_W32HANDLE_MUTEX,      &mutex_ops);
-	mono_w32handle_register_ops (MONO_W32HANDLE_NAMEDMUTEX, &namedmutex_ops);
+	mono_w32handle_register_ops (MONO_W32TYPE_MUTEX,      &mutex_ops);
+	mono_w32handle_register_ops (MONO_W32TYPE_NAMEDMUTEX, &namedmutex_ops);
 
-	mono_w32handle_register_capabilities (MONO_W32HANDLE_MUTEX,
+	mono_w32handle_register_capabilities (MONO_W32TYPE_MUTEX,
 		(MonoW32HandleCapability)(MONO_W32HANDLE_CAP_WAIT | MONO_W32HANDLE_CAP_SIGNAL | MONO_W32HANDLE_CAP_OWN));
-	mono_w32handle_register_capabilities (MONO_W32HANDLE_NAMEDMUTEX,
+	mono_w32handle_register_capabilities (MONO_W32TYPE_NAMEDMUTEX,
 		(MonoW32HandleCapability)(MONO_W32HANDLE_CAP_WAIT | MONO_W32HANDLE_CAP_SIGNAL | MONO_W32HANDLE_CAP_OWN));
 }
 
-static gpointer mutex_handle_create (MonoW32HandleMutex *mutex_handle, MonoW32HandleType type, gboolean owned)
+static gpointer mutex_handle_create (MonoW32HandleMutex *mutex_handle, MonoW32Type type, gboolean owned)
 {
 	gpointer handle;
 	gboolean abandoned;
@@ -340,8 +340,8 @@ static gpointer mutex_create (gboolean owned)
 {
 	MonoW32HandleMutex mutex_handle;
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: creating %s handle",
-		__func__, mono_w32handle_get_typename (MONO_W32HANDLE_MUTEX));
-	return mutex_handle_create (&mutex_handle, MONO_W32HANDLE_MUTEX, owned);
+		__func__, mono_w32handle_get_typename (MONO_W32TYPE_MUTEX));
+	return mutex_handle_create (&mutex_handle, MONO_W32TYPE_MUTEX, owned);
 }
 
 static gpointer namedmutex_create (gboolean owned, const gchar *utf8_name)
@@ -349,14 +349,14 @@ static gpointer namedmutex_create (gboolean owned, const gchar *utf8_name)
 	gpointer handle;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: creating %s handle",
-		__func__, mono_w32handle_get_typename (MONO_W32HANDLE_NAMEDMUTEX));
+		__func__, mono_w32handle_get_typename (MONO_W32TYPE_NAMEDMUTEX));
 
 	/* w32 seems to guarantee that opening named objects can't race each other */
 	mono_w32handle_namespace_lock ();
 
 	glong utf8_len = strlen (utf8_name);
 
-	handle = mono_w32handle_namespace_search_handle (MONO_W32HANDLE_NAMEDMUTEX, utf8_name);
+	handle = mono_w32handle_namespace_search_handle (MONO_W32TYPE_NAMEDMUTEX, utf8_name);
 	if (handle == INVALID_HANDLE_VALUE) {
 		/* The name has already been used for a different object. */
 		handle = NULL;
@@ -374,7 +374,7 @@ static gpointer namedmutex_create (gboolean owned, const gchar *utf8_name)
 		memcpy (&namedmutex_handle.sharedns.name [0], utf8_name, len);
 		namedmutex_handle.sharedns.name [len] = '\0';
 
-		handle = mutex_handle_create ((MonoW32HandleMutex*) &namedmutex_handle, MONO_W32HANDLE_NAMEDMUTEX, owned);
+		handle = mutex_handle_create ((MonoW32HandleMutex*) &namedmutex_handle, MONO_W32TYPE_NAMEDMUTEX, owned);
 	}
 
 	mono_w32handle_namespace_unlock ();
@@ -414,7 +414,7 @@ ves_icall_System_Threading_Mutex_CreateMutex_internal (MonoBoolean owned, MonoSt
 MonoBoolean
 ves_icall_System_Threading_Mutex_ReleaseMutex_internal (gpointer handle)
 {
-	MonoW32HandleType type;
+	MonoW32Type type;
 	MonoW32HandleMutex *mutex_handle;
 	pthread_t tid;
 	gboolean ret;
@@ -425,8 +425,8 @@ ves_icall_System_Threading_Mutex_ReleaseMutex_internal (gpointer handle)
 	}
 
 	switch (type = mono_w32handle_get_type (handle)) {
-	case MONO_W32HANDLE_MUTEX:
-	case MONO_W32HANDLE_NAMEDMUTEX:
+	case MONO_W32TYPE_MUTEX:
+	case MONO_W32TYPE_NAMEDMUTEX:
 		break;
 	default:
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
@@ -501,7 +501,7 @@ mono_w32mutex_open (const gchar* utf8_name, gint32 right G_GNUC_UNUSED, gint32 *
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Opening named mutex [%s]",
 		__func__, utf8_name);
 
-	handle = mono_w32handle_namespace_search_handle (MONO_W32HANDLE_NAMEDMUTEX, utf8_name);
+	handle = mono_w32handle_namespace_search_handle (MONO_W32TYPE_NAMEDMUTEX, utf8_name);
 	if (handle == INVALID_HANDLE_VALUE) {
 		/* The name has already been used for a different object. */
 		*error = ERROR_INVALID_HANDLE;
@@ -535,7 +535,7 @@ mono_w32mutex_abandon (void)
 		return;
 
 	while (internal->owned_mutexes->len) {
-		MonoW32HandleType type;
+		MonoW32Type type;
 		MonoW32HandleMutex *mutex_handle;
 		MonoNativeThreadId tid;
 		gpointer handle;
@@ -543,8 +543,8 @@ mono_w32mutex_abandon (void)
 		handle = g_ptr_array_index (internal->owned_mutexes, 0);
 
 		switch (type = mono_w32handle_get_type (handle)) {
-		case MONO_W32HANDLE_MUTEX:
-		case MONO_W32HANDLE_NAMEDMUTEX:
+		case MONO_W32TYPE_MUTEX:
+		case MONO_W32TYPE_NAMEDMUTEX:
 			break;
 		default:
 			g_assert_not_reached ();

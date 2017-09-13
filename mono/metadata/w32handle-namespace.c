@@ -41,12 +41,12 @@ mono_w32handle_namespace_unlock (void)
 }
 
 static gboolean
-has_namespace (MonoW32HandleType type)
+has_namespace (MonoW32Type type)
 {
 	switch (type) {
-	case MONO_W32HANDLE_NAMEDMUTEX:
-	case MONO_W32HANDLE_NAMEDSEM:
-	case MONO_W32HANDLE_NAMEDEVENT:
+	case MONO_W32TYPE_NAMEDMUTEX:
+	case MONO_W32TYPE_NAMEDSEM:
+	case MONO_W32TYPE_NAMEDEVENT:
 		return TRUE;
 	default:
 		return FALSE;
@@ -55,7 +55,7 @@ has_namespace (MonoW32HandleType type)
 
 typedef struct {
 	gpointer ret;
-	MonoW32HandleType type;
+	MonoW32Type type;
 	const gchar *name;
 } NamespaceSearchHandleData;
 
@@ -63,7 +63,7 @@ static gboolean
 mono_w32handle_namespace_search_handle_callback (gpointer handle, gpointer data, gpointer user_data)
 {
 	NamespaceSearchHandleData *search_data;
-	MonoW32HandleType type;
+	MonoW32Type type;
 	MonoW32HandleNamespace *sharedns;
 
 	type = mono_w32handle_get_type (handle);
@@ -73,9 +73,9 @@ mono_w32handle_namespace_search_handle_callback (gpointer handle, gpointer data,
 	search_data = (NamespaceSearchHandleData*) user_data;
 
 	switch (type) {
-	case MONO_W32HANDLE_NAMEDMUTEX: sharedns = mono_w32mutex_get_namespace ((MonoW32HandleNamedMutex*) data); break;
-	case MONO_W32HANDLE_NAMEDSEM:   sharedns = mono_w32semaphore_get_namespace ((MonoW32HandleNamedSemaphore*) data); break;
-	case MONO_W32HANDLE_NAMEDEVENT: sharedns = mono_w32event_get_namespace ((MonoW32HandleNamedEvent*) data); break;
+	case MONO_W32TYPE_NAMEDMUTEX: sharedns = mono_w32mutex_get_namespace ((MonoW32HandleNamedMutex*) data); break;
+	case MONO_W32TYPE_NAMEDSEM:   sharedns = mono_w32semaphore_get_namespace ((MonoW32HandleNamedSemaphore*) data); break;
+	case MONO_W32TYPE_NAMEDEVENT: sharedns = mono_w32event_get_namespace ((MonoW32HandleNamedEvent*) data); break;
 	default:
 		g_assert_not_reached ();
 	}
@@ -101,7 +101,7 @@ mono_w32handle_namespace_search_handle_callback (gpointer handle, gpointer data,
 }
 
 gpointer
-mono_w32handle_namespace_search_handle (MonoW32HandleType type, const gchar *name)
+mono_w32handle_namespace_search_handle (MonoW32Type type, const gchar *name)
 {
 	NamespaceSearchHandleData search_data;
 

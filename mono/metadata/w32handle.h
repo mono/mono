@@ -12,6 +12,8 @@
 #include <windows.h>
 #endif
 
+#include "mono/utils/mono-os-mutex.h"
+
 #ifndef INVALID_HANDLE_VALUE
 #define INVALID_HANDLE_VALUE (gpointer)-1
 #endif
@@ -23,16 +25,26 @@
 #endif
 
 typedef enum {
-	MONO_W32HANDLE_UNUSED = 0,
-	MONO_W32HANDLE_SEM,
-	MONO_W32HANDLE_MUTEX,
-	MONO_W32HANDLE_EVENT,
-	MONO_W32HANDLE_PROCESS,
-	MONO_W32HANDLE_NAMEDMUTEX,
-	MONO_W32HANDLE_NAMEDSEM,
-	MONO_W32HANDLE_NAMEDEVENT,
-	MONO_W32HANDLE_COUNT
-} MonoW32HandleType;
+	MONO_W32TYPE_UNUSED = 0,
+	MONO_W32TYPE_SEM,
+	MONO_W32TYPE_MUTEX,
+	MONO_W32TYPE_EVENT,
+	MONO_W32TYPE_PROCESS,
+	MONO_W32TYPE_NAMEDMUTEX,
+	MONO_W32TYPE_NAMEDSEM,
+	MONO_W32TYPE_NAMEDEVENT,
+	MONO_W32TYPE_COUNT
+} MonoW32Type;
+
+typedef struct {
+	MonoW32Type type;
+	guint ref;
+	gboolean signalled;
+	gboolean in_use;
+	mono_mutex_t signal_mutex;
+	mono_cond_t signal_cond;
+	gpointer specific;
+} MonoW32Handle;
 
 typedef enum {
 	MONO_W32HANDLE_WAIT_RET_SUCCESS_0   =  0,
@@ -100,10 +112,10 @@ void
 mono_w32handle_cleanup (void);
 
 void
-mono_w32handle_register_ops (MonoW32HandleType type, MonoW32HandleOps *ops);
+mono_w32handle_register_ops (MonoW32Type type, MonoW32HandleOps *ops);
 
 gpointer
-mono_w32handle_new (MonoW32HandleType type, gpointer handle_specific);
+mono_w32handle_new (MonoW32Type type, gpointer handle_specific);
 
 gpointer
 mono_w32handle_duplicate (gpointer handle);
@@ -111,14 +123,14 @@ mono_w32handle_duplicate (gpointer handle);
 gboolean
 mono_w32handle_close (gpointer handle);
 
-MonoW32HandleType
+MonoW32Type
 mono_w32handle_get_type (gpointer handle);
 
 const gchar*
-mono_w32handle_get_typename (MonoW32HandleType type);
+mono_w32handle_get_typename (MonoW32Type type);
 
 gboolean
-mono_w32handle_lookup_and_ref (gpointer handle, MonoW32HandleType type, gpointer *handle_specific);
+mono_w32handle_lookup_and_ref (gpointer handle, MonoW32Type type, gpointer *handle_specific);
 
 void
 mono_w32handle_unref (gpointer handle);
@@ -130,7 +142,7 @@ void
 mono_w32handle_dump (void);
 
 void
-mono_w32handle_register_capabilities (MonoW32HandleType type, MonoW32HandleCapability caps);
+mono_w32handle_register_capabilities (MonoW32Type type, MonoW32HandleCapability caps);
 
 gboolean
 mono_w32handle_test_capabilities (gpointer handle, MonoW32HandleCapability caps);

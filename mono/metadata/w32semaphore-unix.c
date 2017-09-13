@@ -27,7 +27,7 @@ struct MonoW32HandleNamedSemaphore {
 	MonoW32HandleNamespace sharedns;
 };
 
-static void sem_handle_signal (gpointer handle, MonoW32HandleType type, MonoW32HandleSemaphore *sem_handle)
+static void sem_handle_signal (gpointer handle, MonoW32Type type, MonoW32HandleSemaphore *sem_handle)
 {
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: signalling %s handle %p",
 		__func__, mono_w32handle_get_typename (type), handle);
@@ -45,7 +45,7 @@ static void sem_handle_signal (gpointer handle, MonoW32HandleType type, MonoW32H
 	}
 }
 
-static gboolean sem_handle_own (gpointer handle, MonoW32HandleType type, gboolean *abandoned)
+static gboolean sem_handle_own (gpointer handle, MonoW32Type type, gboolean *abandoned)
 {
 	MonoW32HandleSemaphore *sem_handle;
 
@@ -72,23 +72,23 @@ static gboolean sem_handle_own (gpointer handle, MonoW32HandleType type, gboolea
 
 static void sema_signal(gpointer handle, gpointer handle_specific)
 {
-	sem_handle_signal (handle, MONO_W32HANDLE_SEM, (MonoW32HandleSemaphore*) handle_specific);
+	sem_handle_signal (handle, MONO_W32TYPE_SEM, (MonoW32HandleSemaphore*) handle_specific);
 }
 
 static gboolean sema_own (gpointer handle, gboolean *abandoned)
 {
-	return sem_handle_own (handle, MONO_W32HANDLE_SEM, abandoned);
+	return sem_handle_own (handle, MONO_W32TYPE_SEM, abandoned);
 }
 
 static void namedsema_signal (gpointer handle, gpointer handle_specific)
 {
-	sem_handle_signal (handle, MONO_W32HANDLE_NAMEDSEM, (MonoW32HandleSemaphore*) handle_specific);
+	sem_handle_signal (handle, MONO_W32TYPE_NAMEDSEM, (MonoW32HandleSemaphore*) handle_specific);
 }
 
 /* NB, always called with the shared handle lock held */
 static gboolean namedsema_own (gpointer handle, gboolean *abandoned)
 {
-	return sem_handle_own (handle, MONO_W32HANDLE_NAMEDSEM, abandoned);
+	return sem_handle_own (handle, MONO_W32TYPE_NAMEDSEM, abandoned);
 }
 
 static void sema_details (gpointer data)
@@ -150,17 +150,17 @@ mono_w32semaphore_init (void)
 		namedsema_typesize,	/* typesize */
 	};
 
-	mono_w32handle_register_ops (MONO_W32HANDLE_SEM,      &sem_ops);
-	mono_w32handle_register_ops (MONO_W32HANDLE_NAMEDSEM, &namedsem_ops);
+	mono_w32handle_register_ops (MONO_W32TYPE_SEM,      &sem_ops);
+	mono_w32handle_register_ops (MONO_W32TYPE_NAMEDSEM, &namedsem_ops);
 
-	mono_w32handle_register_capabilities (MONO_W32HANDLE_SEM,
+	mono_w32handle_register_capabilities (MONO_W32TYPE_SEM,
 		(MonoW32HandleCapability)(MONO_W32HANDLE_CAP_WAIT | MONO_W32HANDLE_CAP_SIGNAL));
-	mono_w32handle_register_capabilities (MONO_W32HANDLE_NAMEDSEM,
+	mono_w32handle_register_capabilities (MONO_W32TYPE_NAMEDSEM,
 		(MonoW32HandleCapability)(MONO_W32HANDLE_CAP_WAIT | MONO_W32HANDLE_CAP_SIGNAL));
 }
 
 static gpointer
-sem_handle_create (MonoW32HandleSemaphore *sem_handle, MonoW32HandleType type, gint32 initial, gint32 max)
+sem_handle_create (MonoW32HandleSemaphore *sem_handle, MonoW32Type type, gint32 initial, gint32 max)
 {
 	gpointer handle;
 
@@ -193,8 +193,8 @@ sem_create (gint32 initial, gint32 max)
 {
 	MonoW32HandleSemaphore sem_handle;
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: creating %s handle, initial %d max %d",
-		__func__, mono_w32handle_get_typename (MONO_W32HANDLE_SEM), initial, max);
-	return sem_handle_create (&sem_handle, MONO_W32HANDLE_SEM, initial, max);
+		__func__, mono_w32handle_get_typename (MONO_W32TYPE_SEM), initial, max);
+	return sem_handle_create (&sem_handle, MONO_W32TYPE_SEM, initial, max);
 }
 
 static gpointer
@@ -204,7 +204,7 @@ namedsem_create (gint32 initial, gint32 max, const gunichar2 *name)
 	gchar *utf8_name;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: creating %s handle, initial %d max %d name \"%s\"",
-		    __func__, mono_w32handle_get_typename (MONO_W32HANDLE_NAMEDSEM), initial, max, (const char*)name);
+		    __func__, mono_w32handle_get_typename (MONO_W32TYPE_NAMEDSEM), initial, max, (const char*)name);
 
 	/* w32 seems to guarantee that opening named objects can't race each other */
 	mono_w32handle_namespace_lock ();
@@ -214,7 +214,7 @@ namedsem_create (gint32 initial, gint32 max, const gunichar2 *name)
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Creating named sem name [%s] initial %d max %d", __func__, utf8_name, initial, max);
 
-	handle = mono_w32handle_namespace_search_handle (MONO_W32HANDLE_NAMEDSEM, utf8_name);
+	handle = mono_w32handle_namespace_search_handle (MONO_W32TYPE_NAMEDSEM, utf8_name);
 	if (handle == INVALID_HANDLE_VALUE) {
 		/* The name has already been used for a different object. */
 		handle = NULL;
@@ -232,7 +232,7 @@ namedsem_create (gint32 initial, gint32 max, const gunichar2 *name)
 		memcpy (&namedsem_handle.sharedns.name [0], utf8_name, len);
 		namedsem_handle.sharedns.name [len] = '\0';
 
-		handle = sem_handle_create ((MonoW32HandleSemaphore*) &namedsem_handle, MONO_W32HANDLE_NAMEDSEM, initial, max);
+		handle = sem_handle_create ((MonoW32HandleSemaphore*) &namedsem_handle, MONO_W32TYPE_NAMEDSEM, initial, max);
 	}
 
 	g_free (utf8_name);
@@ -280,7 +280,7 @@ ves_icall_System_Threading_Semaphore_CreateSemaphore_internal (gint32 initialCou
 MonoBoolean
 ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (gpointer handle, gint32 releaseCount, gint32 *prevcount)
 {
-	MonoW32HandleType type;
+	MonoW32Type type;
 	MonoW32HandleSemaphore *sem_handle;
 	MonoBoolean ret;
 
@@ -290,8 +290,8 @@ ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (gpointer handle,
 	}
 
 	switch (type = mono_w32handle_get_type (handle)) {
-	case MONO_W32HANDLE_SEM:
-	case MONO_W32HANDLE_NAMEDSEM:
+	case MONO_W32TYPE_SEM:
+	case MONO_W32TYPE_NAMEDSEM:
 		break;
 	default:
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
@@ -350,7 +350,7 @@ ves_icall_System_Threading_Semaphore_OpenSemaphore_internal (MonoString *name, g
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Opening named sem [%s]", __func__, utf8_name);
 
-	handle = mono_w32handle_namespace_search_handle (MONO_W32HANDLE_NAMEDSEM, utf8_name);
+	handle = mono_w32handle_namespace_search_handle (MONO_W32TYPE_NAMEDSEM, utf8_name);
 	if (handle == INVALID_HANDLE_VALUE) {
 		/* The name has already been used for a different object. */
 		*error = ERROR_INVALID_HANDLE;
