@@ -68,15 +68,15 @@ static gboolean sem_handle_own (gpointer handle, MonoW32Handle *handle_data, gbo
 	return TRUE;
 }
 
-static void sema_details (gpointer data)
+static void sema_details (gpointer handle, MonoW32Handle *handle_data)
 {
-	MonoW32HandleSemaphore *sem = (MonoW32HandleSemaphore *)data;
+	MonoW32HandleSemaphore *sem = (MonoW32HandleSemaphore *)handle_data->specific;
 	g_print ("val: %5u, max: %5d", sem->val, sem->max);
 }
 
-static void namedsema_details (gpointer data)
+static void namedsema_details (gpointer handle, MonoW32Handle *handle_data)
 {
-	MonoW32HandleNamedSemaphore *namedsem = (MonoW32HandleNamedSemaphore *)data;
+	MonoW32HandleNamedSemaphore *namedsem = (MonoW32HandleNamedSemaphore *)handle_data->specific;
 	g_print ("val: %5u, max: %5d, name: \"%s\"", namedsem->s.val, namedsem->s.max, namedsem->sharedns.name);
 }
 

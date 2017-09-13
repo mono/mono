@@ -89,7 +89,7 @@ typedef struct
 	void (*prewait)(gpointer handle, MonoW32Handle *handle_data);
 
 	/* Called when dumping the handles */
-	void (*details)(gpointer data);
+	void (*details)(gpointer handle, MonoW32Handle *handle_data);
 
 	/* Called to get the name of the handle type */
 	const gchar* (*typename) (void);

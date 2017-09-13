@@ -670,12 +670,10 @@ static void (*_wapi_handle_ops_get_close_func (MonoW32Type type))(gpointer, gpoi
 }
 
 static void
-mono_w32handle_ops_details (MonoW32Type type, gpointer data)
+mono_w32handle_ops_details (gpointer handle, MonoW32Handle *handle_data)
 {
-	if (handle_ops[type] != NULL &&
-	    handle_ops[type]->details != NULL) {
-		handle_ops[type]->details (data);
-	}
+	if (handle_ops [handle_data->type] && handle_ops [handle_data->type]->details != NULL)
+		handle_ops [handle_data->type]->details (handle, handle_data);
 }
 
 static const gchar*
@@ -1022,7 +1020,7 @@ dump_callback (gpointer handle, gpointer handle_specific, gpointer user_data)
 
 	g_print ("%p [%7s] signalled: %5s ref: %3d ",
 		handle, mono_w32handle_ops_typename (handle_data->type), handle_data->signalled ? "true" : "false", handle_data->ref - 1 /* foreach increase ref by 1 */);
-	mono_w32handle_ops_details (handle_data->type, handle_data->specific);
+	mono_w32handle_ops_details (handle, handle_data);
 	g_print ("\n");
 
 	return FALSE;

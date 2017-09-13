@@ -166,9 +166,9 @@ static void mutex_handle_prewait (gpointer handle, MonoW32Handle *handle_data)
 		__func__, mono_w32handle_get_typename (handle_data->type), handle, mutex_handle->recursion != 0 ? "true" : "false");
 }
 
-static void mutex_details (gpointer data)
+static void mutex_details (gpointer handle, MonoW32Handle *handle_data)
 {
-	MonoW32HandleMutex *mut = (MonoW32HandleMutex *)data;
+	MonoW32HandleMutex *mut = (MonoW32HandleMutex *)handle_data->specific;
 	
 #ifdef PTHREAD_POINTER_ID
 	g_print ("own: %5p, count: %5u", mut->tid, mut->recursion);
@@ -177,9 +177,9 @@ static void mutex_details (gpointer data)
 #endif
 }
 
-static void namedmutex_details (gpointer data)
+static void namedmutex_details (gpointer handle, MonoW32Handle *handle_data)
 {
-	MonoW32HandleNamedMutex *namedmut = (MonoW32HandleNamedMutex *)data;
+	MonoW32HandleNamedMutex *namedmut = (MonoW32HandleNamedMutex *)handle_data->specific;
 	
 #ifdef PTHREAD_POINTER_ID
 	g_print ("own: %5p, count: %5u, name: \"%s\"",

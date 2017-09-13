@@ -75,16 +75,16 @@ static gboolean event_handle_own (gpointer handle, MonoW32Handle *handle_data, g
 	return TRUE;
 }
 
-static void event_details (gpointer data)
+static void event_details (gpointer handle, MonoW32Handle *handle_data)
 {
-	MonoW32HandleEvent *event = (MonoW32HandleEvent *)data;
+	MonoW32HandleEvent *event = (MonoW32HandleEvent *)handle_data->specific;
 	g_print ("manual: %s, set_count: %d",
 		event->manual ? "TRUE" : "FALSE", event->set_count);
 }
 
-static void namedevent_details (gpointer data)
+static void namedevent_details (gpointer handle, MonoW32Handle *handle_data)
 {
-	MonoW32HandleNamedEvent *namedevent = (MonoW32HandleNamedEvent *)data;
+	MonoW32HandleNamedEvent *namedevent = (MonoW32HandleNamedEvent *)handle_data->specific;
 	g_print ("manual: %s, set_count: %d, name: \"%s\"",
 		namedevent->e.manual ? "TRUE" : "FALSE", namedevent->e.set_count, namedevent->sharedns.name);
 }

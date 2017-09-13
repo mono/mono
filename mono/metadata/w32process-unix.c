@@ -566,9 +566,9 @@ process_is_alive (pid_t pid)
 }
 
 static void
-process_details (gpointer data)
+process_details (gpointer handle, MonoW32Handle *handle_data)
 {
-	MonoW32HandleProcess *process_handle = (MonoW32HandleProcess *) data;
+	MonoW32HandleProcess *process_handle = (MonoW32HandleProcess *) handle_data->specific;
 	g_print ("pid: %d, exited: %s, exitstatus: %d",
 		process_handle->pid, process_handle->exited ? "true" : "false", process_handle->exitstatus);
 }
