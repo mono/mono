@@ -152,16 +152,9 @@ mono_w32handle_issignalled (MonoW32Handle *handle_data)
 }
 
 static void
-mono_w32handle_set_in_use (gpointer handle, gboolean in_use)
+mono_w32handle_set_in_use (MonoW32Handle *handle_data, gboolean in_use)
 {
-	MonoW32Handle *handle_data;
-
-	if (!mono_w32handle_lookup_and_ref (handle, &handle_data))
-		g_error ("%s: unknown handle %p", __func__, handle);
-
 	handle_data->in_use = in_use;
-
-	mono_w32handle_unref (handle);
 }
 
 static void
@@ -1070,7 +1063,7 @@ mono_w32handle_wait_one (gpointer handle, guint32 timeout, gboolean alertable)
 	if (timeout != MONO_INFINITE_WAIT)
 		start = mono_msec_ticks ();
 
-	mono_w32handle_set_in_use (handle, TRUE);
+	mono_w32handle_set_in_use (handle_data, TRUE);
 
 	for (;;) {
 		gint waited;
@@ -1111,7 +1104,7 @@ mono_w32handle_wait_one (gpointer handle, guint32 timeout, gboolean alertable)
 	}
 
 done:
-	mono_w32handle_set_in_use (handle, FALSE);
+	mono_w32handle_set_in_use (handle_data, FALSE);
 
 	mono_w32handle_unlock_handle (handle);
 
