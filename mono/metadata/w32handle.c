@@ -146,18 +146,9 @@ mono_w32handle_set_signal_state (gpointer handle, gboolean state, gboolean broad
 }
 
 gboolean
-mono_w32handle_issignalled (gpointer handle)
+mono_w32handle_issignalled (MonoW32Handle *handle_data)
 {
-	MonoW32Handle *handle_data;
-	gboolean ret;
-
-	if (!mono_w32handle_lookup_and_ref (handle, &handle_data))
-		return(FALSE);
-
-	ret = handle_data->signalled;
-
-	mono_w32handle_unref (handle);
-	return ret;
+	return handle_data->signalled;
 }
 
 static void
@@ -1015,7 +1006,7 @@ void mono_w32handle_dump (void)
 static gboolean
 own_if_signalled (gpointer handle, MonoW32Handle *handle_data, gboolean *abandoned)
 {
-	if (!mono_w32handle_issignalled (handle))
+	if (!mono_w32handle_issignalled (handle_data))
 		return FALSE;
 
 	*abandoned = FALSE;
@@ -1215,7 +1206,7 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 
 		for (i = 0; i < nhandles; i++) {
 			if ((mono_w32handle_test_capabilities (handles [i], MONO_W32HANDLE_CAP_OWN) && mono_w32handle_ops_isowned (handles [i]))
-				 || mono_w32handle_issignalled (handles [i]))
+				 || mono_w32handle_issignalled (handles_data [i]))
 			{
 				count ++;
 
@@ -1253,7 +1244,7 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 			mono_w32handle_ops_prewait (handles[i]);
 
 			if (mono_w32handle_test_capabilities (handles [i], MONO_W32HANDLE_CAP_SPECIAL_WAIT)
-				 && !mono_w32handle_issignalled (handles [i]))
+				 && !mono_w32handle_issignalled (handles_data [i]))
 			{
 				mono_w32handle_ops_specialwait (handles [i], 0, alertable ? &alerted : NULL);
 			}
@@ -1264,7 +1255,7 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 		if (waitall) {
 			signalled = TRUE;
 			for (i = 0; i < nhandles; ++i) {
-				if (!mono_w32handle_issignalled (handles [i])) {
+				if (!mono_w32handle_issignalled (handles_data [i])) {
 					signalled = FALSE;
 					break;
 				}
@@ -1272,7 +1263,7 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 		} else {
 			signalled = FALSE;
 			for (i = 0; i < nhandles; ++i) {
-				if (mono_w32handle_issignalled (handles [i])) {
+				if (mono_w32handle_issignalled (handles_data [i])) {
 					signalled = TRUE;
 					break;
 				}

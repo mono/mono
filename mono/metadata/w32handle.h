@@ -151,7 +151,7 @@ void
 mono_w32handle_set_signal_state (gpointer handle, gboolean state, gboolean broadcast);
 
 gboolean
-mono_w32handle_issignalled (gpointer handle);
+mono_w32handle_issignalled (MonoW32Handle *handle_data);
 
 void
 mono_w32handle_lock_handle (gpointer handle);

@@ -345,7 +345,7 @@ ves_icall_System_Threading_Events_ResetEvent_internal (gpointer handle)
 
 	mono_w32handle_lock_handle (handle);
 
-	if (!mono_w32handle_issignalled (handle)) {
+	if (!mono_w32handle_issignalled (handle_data)) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: no need to reset %s handle %p",
 			__func__, mono_w32handle_get_typename (handle_data->type), handle);
 	} else {

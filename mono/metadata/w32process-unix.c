@@ -936,7 +936,7 @@ get_process_foreach_callback (gpointer handle, MonoW32Handle *handle_data, gpoin
 	 * unsignalled. */
 	if (foreach_data->pid != pid)
 		return FALSE;
-	if (mono_w32handle_issignalled (handle))
+	if (mono_w32handle_issignalled (handle_data))
 		return FALSE;
 
 	foreach_data->handle = mono_w32handle_duplicate (handle);
@@ -2390,7 +2390,10 @@ ves_icall_Microsoft_Win32_NativeMethods_GetExitCodeProcess (gpointer handle, gin
 	 * Fixes bug 325463. */
 	mono_w32handle_wait_one (handle, 0, TRUE);
 
-	*exitcode = mono_w32handle_issignalled (handle) ? process_handle->exitstatus : STILL_ACTIVE;
+	*exitcode = mono_w32handle_issignalled (handle_data) ? process_handle->exitstatus : STILL_ACTIVE;
+
+	mono_w32handle_unref (handle);
+
 	return TRUE;
 }
 
@@ -2712,7 +2715,7 @@ ves_icall_Microsoft_Win32_NativeMethods_GetProcessTimes (gpointer handle, gint64
 
 	/* A process handle is only signalled if the process has
 	 * exited, otherwise exit_processtime isn't set */
-	if (mono_w32handle_issignalled (handle))
+	if (mono_w32handle_issignalled (handle_data))
 		ticks_to_processtime (process_handle->exit_time, exit_processtime);
 
 #ifdef HAVE_GETRUSAGE
