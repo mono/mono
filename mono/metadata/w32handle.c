@@ -177,9 +177,6 @@ mono_w32handle_unlock_signal_mutex (void)
 	mono_os_mutex_unlock (&global_signal_mutex);
 }
 
-static void
-mono_w32handle_ref (gpointer handle);
-
 void
 mono_w32handle_lock_handle (MonoW32Handle *handle_data)
 {
@@ -492,18 +489,6 @@ mono_w32handle_unref_core (gpointer handle, MonoW32Handle *handle_data)
 		__func__, mono_w32handle_ops_typename (type), handle, old, new, new == 0 ? "true" : "false");
 
 	return new == 0;
-}
-
-static void
-mono_w32handle_ref (gpointer handle)
-{
-	MonoW32Handle *handle_data;
-
-	if (!mono_w32handle_lookup_data (handle, &handle_data))
-		g_error ("%s: failed to ref handle %p, unknown handle", __func__, handle);
-
-	if (!mono_w32handle_ref_core (handle, handle_data))
-		g_error ("%s: failed to ref handle %p", __func__, handle);
 }
 
 static void (*_wapi_handle_ops_get_close_func (MonoW32Type type))(gpointer, gpointer);
