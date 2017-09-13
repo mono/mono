@@ -599,25 +599,12 @@ mono_w32handle_ops_own (gpointer handle, MonoW32Handle *handle_data, gboolean *a
 }
 
 static gboolean
-mono_w32handle_ops_isowned (gpointer handle)
+mono_w32handle_ops_isowned (gpointer handle, MonoW32Handle *handle_data)
 {
-	MonoW32Handle *handle_data;
-	MonoW32Type type;
-	gboolean ret;
+	if (handle_ops [handle_data->type] && handle_ops [handle_data->type]->is_owned)
+		return handle_ops [handle_data->type]->is_owned (handle, handle_data);
 
-	if (!mono_w32handle_lookup_and_ref (handle, &handle_data))
-		return FALSE;
-
-	type = handle_data->type;
-
-	if (handle_ops[type] != NULL && handle_ops[type]->is_owned != NULL)
-		ret = handle_ops[type]->is_owned (handle, handle_data);
-	else
-		ret = FALSE;
-
-	mono_w32handle_unref (handle);
-
-	return ret;
+	return FALSE;
 }
 
 static MonoW32HandleWaitRet
@@ -885,7 +872,7 @@ own_if_signalled (gpointer handle, MonoW32Handle *handle_data, gboolean *abandon
 static gboolean
 own_if_owned( gpointer handle, MonoW32Handle *handle_data, gboolean *abandoned)
 {
-	if (!mono_w32handle_ops_isowned (handle))
+	if (!mono_w32handle_ops_isowned (handle, handle_data))
 		return FALSE;
 
 	*abandoned = FALSE;
@@ -1073,7 +1060,7 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 		mono_w32handle_lock_handles (handles_data, nhandles);
 
 		for (i = 0; i < nhandles; i++) {
-			if ((mono_w32handle_test_capabilities (handles_data [i], MONO_W32HANDLE_CAP_OWN) && mono_w32handle_ops_isowned (handles [i]))
+			if ((mono_w32handle_test_capabilities (handles_data [i], MONO_W32HANDLE_CAP_OWN) && mono_w32handle_ops_isowned (handles [i], handles_data [i]))
 				 || mono_w32handle_issignalled (handles_data [i]))
 			{
 				count ++;
