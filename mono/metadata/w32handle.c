@@ -748,7 +748,7 @@ mono_w32handle_ops_isowned (gpointer handle)
 	type = handle_data->type;
 
 	if (handle_ops[type] != NULL && handle_ops[type]->is_owned != NULL)
-		ret = handle_ops[type]->is_owned (handle);
+		ret = handle_ops[type]->is_owned (handle, handle_data);
 	else
 		ret = FALSE;
 

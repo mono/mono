@@ -73,7 +73,7 @@ typedef struct
 	 * handle in question is "ownable" (ie mutexes), to see if the current
 	 * thread already owns this handle
 	 */
-	gboolean (*is_owned)(gpointer handle);
+	gboolean (*is_owned)(gpointer handle, MonoW32Handle *handle_data);
 
 	/* Called by mono_w32handle_wait_one and mono_w32handle_wait_multiple,
 	 * if the handle in question needs a special wait function
