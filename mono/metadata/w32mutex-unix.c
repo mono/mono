@@ -150,7 +150,7 @@ mutex_handle_is_owned (gpointer handle, MonoW32Handle *handle_data)
 	}
 }
 
-static void mutex_handle_prewait (gpointer handle, MonoW32Type type)
+static void mutex_handle_prewait (gpointer handle, MonoW32Handle *handle_data)
 {
 	/* If the mutex is not currently owned, do nothing and let the
 	 * usual wait carry on.  If it is owned, check that the owner
@@ -158,40 +158,12 @@ static void mutex_handle_prewait (gpointer handle, MonoW32Type type)
 	 * and assume that process exited abnormally and failed to
 	 * clean up.
 	 */
-	MonoW32Handle *handle_data;
 	MonoW32HandleMutex *mutex_handle;
-
-	if (!mono_w32handle_lookup_and_ref (handle, &handle_data)) {
-		g_warning ("%s: unkown handle %p", __func__, handle);
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return;
-	}
-
-	if (handle_data->type != type) {
-		g_warning ("%s: unknown mutex handle %p", __func__, handle);
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		mono_w32handle_unref (handle);
-		return;
-	}
 
 	mutex_handle = (MonoW32HandleMutex*) handle_data->specific;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: pre-waiting %s handle %p, owned? %s",
-		__func__, mono_w32handle_get_typename (type), handle, mutex_handle->recursion != 0 ? "true" : "false");
-
-	mono_w32handle_unref (handle);
-}
-
-/* The shared state is not locked when prewait methods are called */
-static void mutex_prewait (gpointer handle)
-{
-	mutex_handle_prewait (handle, MONO_W32TYPE_MUTEX);
-}
-
-/* The shared state is not locked when prewait methods are called */
-static void namedmutex_prewait (gpointer handle)
-{
-	mutex_handle_prewait (handle, MONO_W32TYPE_NAMEDMUTEX);
+		__func__, mono_w32handle_get_typename (handle_data->type), handle, mutex_handle->recursion != 0 ? "true" : "false");
 }
 
 static void mutex_details (gpointer data)
@@ -247,7 +219,7 @@ mono_w32mutex_init (void)
 		mutex_handle_own,	/* own */
 		mutex_handle_is_owned,	/* is_owned */
 		NULL,			/* special_wait */
-		mutex_prewait,			/* prewait */
+		mutex_handle_prewait,			/* prewait */
 		mutex_details,	/* details */
 		mutex_typename,	/* typename */
 		mutex_typesize,	/* typesize */
@@ -259,7 +231,7 @@ mono_w32mutex_init (void)
 		mutex_handle_own,	/* own */
 		mutex_handle_is_owned,	/* is_owned */
 		NULL,			/* special_wait */
-		namedmutex_prewait,	/* prewait */
+		mutex_handle_prewait,	/* prewait */
 		namedmutex_details,	/* details */
 		namedmutex_typename,	/* typename */
 		namedmutex_typesize,	/* typesize */

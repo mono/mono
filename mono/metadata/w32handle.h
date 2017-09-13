@@ -86,7 +86,7 @@ typedef struct
 	 * if the handle in question needs some preprocessing before the
 	 * signal wait.
 	 */
-	void (*prewait)(gpointer handle);
+	void (*prewait)(gpointer handle, MonoW32Handle *handle_data);
 
 	/* Called when dumping the handles */
 	void (*details)(gpointer data);

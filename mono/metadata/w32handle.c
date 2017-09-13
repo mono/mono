@@ -792,7 +792,7 @@ mono_w32handle_ops_prewait (gpointer handle)
 	type = handle_data->type;
 
 	if (handle_ops[type] != NULL && handle_ops[type]->prewait != NULL)
-		handle_ops[type]->prewait (handle);
+		handle_ops[type]->prewait (handle, handle_data);
 
 	mono_w32handle_unref (handle);
 }
