@@ -101,19 +101,14 @@ mono_w32handle_get_typename (MonoW32Type type)
 }
 
 void
-mono_w32handle_set_signal_state (gpointer handle, gboolean state, gboolean broadcast)
+mono_w32handle_set_signal_state (MonoW32Handle *handle_data, gboolean state, gboolean broadcast)
 {
-	MonoW32Handle *handle_data;
-
-	if (!mono_w32handle_lookup_and_ref (handle, &handle_data))
-		return;
-
 #ifdef DEBUG
 	g_message ("%s: setting state of %p to %s (broadcast %s)", __func__,
 		   handle, state?"TRUE":"FALSE", broadcast?"TRUE":"FALSE");
 #endif
 
-	if (state == TRUE) {
+	if (state) {
 		/* Tell everyone blocking on a single handle */
 
 		/* The condition the global signal cond is waiting on is the signalling of
@@ -124,13 +119,12 @@ mono_w32handle_set_signal_state (gpointer handle, gboolean state, gboolean broad
 		/* This function _must_ be called with
 		 * handle->signal_mutex locked
 		 */
-		handle_data->signalled=state;
+		handle_data->signalled = TRUE;
 
-		if (broadcast == TRUE) {
+		if (broadcast)
 			mono_os_cond_broadcast (&handle_data->signal_cond);
-		} else {
+		else
 			mono_os_cond_signal (&handle_data->signal_cond);
-		}
 
 		/* Tell everyone blocking on multiple handles that something
 		 * was signalled
@@ -139,10 +133,8 @@ mono_w32handle_set_signal_state (gpointer handle, gboolean state, gboolean broad
 
 		mono_os_mutex_unlock (&global_signal_mutex);
 	} else {
-		handle_data->signalled=state;
+		handle_data->signalled = FALSE;
 	}
-
-	mono_w32handle_unref (handle);
 }
 
 gboolean

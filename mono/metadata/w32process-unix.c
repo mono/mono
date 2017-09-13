@@ -623,7 +623,7 @@ process_wait (gpointer handle, MonoW32Handle *handle_data, guint32 timeout, gboo
 			/* assume the process has exited */
 			process_handle->exited = TRUE;
 			process_handle->exitstatus = -1;
-			mono_w32handle_set_signal_state (handle, TRUE, TRUE);
+			mono_w32handle_set_signal_state (handle_data, TRUE, TRUE);
 
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): non-child process is not alive anymore (2)", __func__, handle, timeout);
 			return MONO_W32HANDLE_WAIT_RET_SUCCESS_0;
@@ -692,7 +692,7 @@ process_wait (gpointer handle, MonoW32Handle *handle_data, guint32 timeout, gboo
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): Setting pid %d signalled, exit status %d",
 		   __func__, handle, timeout, process_handle->pid, process_handle->exitstatus);
 
-	mono_w32handle_set_signal_state (handle, TRUE, TRUE);
+	mono_w32handle_set_signal_state (handle_data, TRUE, TRUE);
 
 	return MONO_W32HANDLE_WAIT_RET_SUCCESS_0;
 }

@@ -47,9 +47,9 @@ static void event_handle_signal (gpointer handle, MonoW32Handle *handle_data)
 
 	if (!event_handle->manual) {
 		event_handle->set_count = 1;
-		mono_w32handle_set_signal_state (handle, TRUE, FALSE);
+		mono_w32handle_set_signal_state (handle_data, TRUE, FALSE);
 	} else {
-		mono_w32handle_set_signal_state (handle, TRUE, TRUE);
+		mono_w32handle_set_signal_state (handle_data, TRUE, TRUE);
 	}
 }
 
@@ -69,7 +69,7 @@ static gboolean event_handle_own (gpointer handle, MonoW32Handle *handle_data, g
 		event_handle->set_count --;
 
 		if (event_handle->set_count == 0)
-			mono_w32handle_set_signal_state (handle, FALSE, FALSE);
+			mono_w32handle_set_signal_state (handle_data, FALSE, FALSE);
 	}
 
 	return TRUE;
@@ -201,7 +201,7 @@ static gpointer event_handle_create (MonoW32HandleEvent *event_handle, MonoW32Ty
 	mono_w32handle_lock_handle (handle_data);
 
 	if (initial)
-		mono_w32handle_set_signal_state (handle, TRUE, FALSE);
+		mono_w32handle_set_signal_state (handle_data, TRUE, FALSE);
 
 	mono_w32handle_unlock_handle (handle_data);
 
@@ -315,9 +315,9 @@ ves_icall_System_Threading_Events_SetEvent_internal (gpointer handle)
 
 	if (!event_handle->manual) {
 		event_handle->set_count = 1;
-		mono_w32handle_set_signal_state (handle, TRUE, FALSE);
+		mono_w32handle_set_signal_state (handle_data, TRUE, FALSE);
 	} else {
-		mono_w32handle_set_signal_state (handle, TRUE, TRUE);
+		mono_w32handle_set_signal_state (handle_data, TRUE, TRUE);
 	}
 
 	mono_w32handle_unlock_handle (handle_data);
@@ -361,7 +361,7 @@ ves_icall_System_Threading_Events_ResetEvent_internal (gpointer handle)
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: obtained write lock on %s handle %p",
 			__func__, mono_w32handle_get_typename (handle_data->type), handle);
 
-		mono_w32handle_set_signal_state (handle, FALSE, FALSE);
+		mono_w32handle_set_signal_state (handle_data, FALSE, FALSE);
 	}
 
 	event_handle->set_count = 0;

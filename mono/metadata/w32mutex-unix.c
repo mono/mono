@@ -92,7 +92,7 @@ mutex_handle_signal (gpointer handle, MonoW32Handle *handle_data)
 				__func__, mono_w32handle_get_typename (handle_data->type), handle, (gpointer) mutex_handle->tid, mutex_handle->recursion);
 
 			mutex_handle->tid = 0;
-			mono_w32handle_set_signal_state (handle, TRUE, FALSE);
+			mono_w32handle_set_signal_state (handle_data, TRUE, FALSE);
 		}
 	}
 }
@@ -124,7 +124,7 @@ mutex_handle_own (gpointer handle, MonoW32Handle *handle_data, gboolean *abandon
 		*abandoned = TRUE;
 	}
 
-	mono_w32handle_set_signal_state (handle, FALSE, FALSE);
+	mono_w32handle_set_signal_state (handle_data, FALSE, FALSE);
 
 	return TRUE;
 }
@@ -275,7 +275,7 @@ static gpointer mutex_handle_create (MonoW32HandleMutex *mutex_handle, MonoW32Ty
 	if (owned)
 		mutex_handle_own (handle, handle_data, &abandoned);
 	else
-		mono_w32handle_set_signal_state (handle, TRUE, FALSE);
+		mono_w32handle_set_signal_state (handle_data, TRUE, FALSE);
 
 	mono_w32handle_unlock_handle (handle_data);
 
@@ -414,7 +414,7 @@ ves_icall_System_Threading_Mutex_ReleaseMutex_internal (gpointer handle)
 				__func__, mono_w32handle_get_typename (handle_data->type), handle, (gpointer) mutex_handle->tid, mutex_handle->recursion);
 
 			mutex_handle->tid = 0;
-			mono_w32handle_set_signal_state (handle, TRUE, FALSE);
+			mono_w32handle_set_signal_state (handle_data, TRUE, FALSE);
 		}
 	}
 
@@ -512,7 +512,7 @@ mono_w32mutex_abandon (void)
 		mutex_handle->tid = 0;
 		mutex_handle->abandoned = TRUE;
 
-		mono_w32handle_set_signal_state (handle, TRUE, FALSE);
+		mono_w32handle_set_signal_state (handle_data, TRUE, FALSE);
 
 		thread_disown_mutex (internal, handle);
 

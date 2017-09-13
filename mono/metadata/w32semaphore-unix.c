@@ -45,7 +45,7 @@ static void sem_handle_signal (gpointer handle, MonoW32Handle *handle_data)
 			__func__, mono_w32handle_get_typename (handle_data->type), handle, sem_handle->val, 1, sem_handle->max);
 
 		sem_handle->val += 1;
-		mono_w32handle_set_signal_state (handle, TRUE, TRUE);
+		mono_w32handle_set_signal_state (handle_data, TRUE, TRUE);
 	}
 }
 
@@ -63,7 +63,7 @@ static gboolean sem_handle_own (gpointer handle, MonoW32Handle *handle_data, gbo
 	sem_handle->val--;
 
 	if (sem_handle->val == 0)
-		mono_w32handle_set_signal_state (handle, FALSE, FALSE);
+		mono_w32handle_set_signal_state (handle_data, FALSE, FALSE);
 
 	return TRUE;
 }
@@ -162,7 +162,7 @@ sem_handle_create (MonoW32HandleSemaphore *sem_handle, MonoW32Type type, gint32 
 	mono_w32handle_lock_handle (handle_data);
 
 	if (initial != 0)
-		mono_w32handle_set_signal_state (handle, TRUE, FALSE);
+		mono_w32handle_set_signal_state (handle_data, TRUE, FALSE);
 
 	mono_w32handle_unlock_handle (handle_data);
 
@@ -306,7 +306,7 @@ ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (gpointer handle,
 			__func__, mono_w32handle_get_typename (handle_data->type), handle, sem_handle->val, releaseCount, sem_handle->max);
 
 		sem_handle->val += releaseCount;
-		mono_w32handle_set_signal_state (handle, TRUE, TRUE);
+		mono_w32handle_set_signal_state (handle_data, TRUE, TRUE);
 
 		ret = TRUE;
 	}

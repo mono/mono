@@ -148,7 +148,7 @@ gboolean
 mono_w32handle_test_capabilities (gpointer handle, MonoW32HandleCapability caps);
 
 void
-mono_w32handle_set_signal_state (gpointer handle, gboolean state, gboolean broadcast);
+mono_w32handle_set_signal_state (MonoW32Handle *handle_data, gboolean state, gboolean broadcast);
 
 gboolean
 mono_w32handle_issignalled (MonoW32Handle *handle_data);
