@@ -270,14 +270,14 @@ static gpointer mutex_handle_create (MonoW32HandleMutex *mutex_handle, MonoW32Ty
 	if (handle_data->type != type)
 		g_error ("%s: unknown mutex handle %p", __func__, handle);
 
-	mono_w32handle_lock_handle (handle_data);
+	mono_w32handle_lock (handle_data);
 
 	if (owned)
 		mutex_handle_own (handle, handle_data, &abandoned);
 	else
 		mono_w32handle_set_signal_state (handle_data, TRUE, FALSE);
 
-	mono_w32handle_unlock_handle (handle_data);
+	mono_w32handle_unlock (handle_data);
 
 	/* Balance mono_w32handle_lookup_and_ref */
 	mono_w32handle_unref (handle);
@@ -389,7 +389,7 @@ ves_icall_System_Threading_Mutex_ReleaseMutex_internal (gpointer handle)
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: releasing %s handle %p, tid: %p recursion: %d",
 		__func__, mono_w32handle_get_typename (handle_data->type), handle, (gpointer) mutex_handle->tid, mutex_handle->recursion);
 
-	mono_w32handle_lock_handle (handle_data);
+	mono_w32handle_lock (handle_data);
 
 	tid = pthread_self ();
 
@@ -418,7 +418,7 @@ ves_icall_System_Threading_Mutex_ReleaseMutex_internal (gpointer handle)
 		}
 	}
 
-	mono_w32handle_unlock_handle (handle_data);
+	mono_w32handle_unlock (handle_data);
 	mono_w32handle_unref (handle);
 
 	return ret;
@@ -506,7 +506,7 @@ mono_w32mutex_abandon (void)
 			g_error ("%s: trying to release mutex %p acquired by thread %p from thread %p",
 				__func__, handle, (gpointer) mutex_handle->tid, (gpointer) tid);
 
-		mono_w32handle_lock_handle (handle_data);
+		mono_w32handle_lock (handle_data);
 
 		mutex_handle->recursion = 0;
 		mutex_handle->tid = 0;
@@ -519,7 +519,7 @@ mono_w32mutex_abandon (void)
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: abandoned %s handle %p",
 			__func__, mono_w32handle_get_typename (handle_data->type), handle);
 
-		mono_w32handle_unlock_handle (handle_data);
+		mono_w32handle_unlock (handle_data);
 		mono_w32handle_unref (handle);
 	}
 

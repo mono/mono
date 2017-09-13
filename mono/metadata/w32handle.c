@@ -155,19 +155,19 @@ mono_w32handle_unlock_signal_mutex (void)
 }
 
 void
-mono_w32handle_lock_handle (MonoW32Handle *handle_data)
+mono_w32handle_lock (MonoW32Handle *handle_data)
 {
 	mono_os_mutex_lock (&handle_data->signal_mutex);
 }
 
 gboolean
-mono_w32handle_trylock_handle (MonoW32Handle *handle_data)
+mono_w32handle_trylock (MonoW32Handle *handle_data)
 {
 	return mono_os_mutex_trylock (&handle_data->signal_mutex) == 0;
 }
 
 void
-mono_w32handle_unlock_handle (MonoW32Handle *handle_data)
+mono_w32handle_unlock (MonoW32Handle *handle_data)
 {
 	mono_os_mutex_unlock (&handle_data->signal_mutex);
 }
@@ -633,11 +633,11 @@ mono_w32handle_lock_handles (MonoW32Handle **handles_data, gsize numhandles)
 	/* Lock all the handles, with backoff */
 again:
 	for (i = 0; i < numhandles; i++) {
-		if (!mono_w32handle_trylock_handle (handles_data [i])) {
+		if (!mono_w32handle_trylock (handles_data [i])) {
 			/* Bummer */
 
 			for (j = i - 1; j >= 0; j--)
-				mono_w32handle_unlock_handle (handles_data [j]);
+				mono_w32handle_unlock (handles_data [j]);
 
 			iter += 10;
 			if (iter == 1000)
@@ -668,8 +668,8 @@ mono_w32handle_unlock_handles (MonoW32Handle **handles_data, gsize numhandles)
 {
 	gint i;
 
-	for (i = numhandles; i >= 0; i--)
-		mono_w32handle_unlock_handle (handles_data [i]);
+	for (i = numhandles - 1; i >= 0; i--)
+		mono_w32handle_unlock (handles_data [i]);
 }
 
 static int
@@ -874,7 +874,7 @@ mono_w32handle_wait_one (gpointer handle, guint32 timeout, gboolean alertable)
 		return MONO_W32HANDLE_WAIT_RET_FAILED;
 	}
 
-	mono_w32handle_lock_handle (handle_data);
+	mono_w32handle_lock (handle_data);
 
 	if (mono_w32handle_test_capabilities (handle_data, MONO_W32HANDLE_CAP_OWN)) {
 		if (own_if_owned (handle, handle_data, &abandoned)) {
@@ -932,7 +932,7 @@ mono_w32handle_wait_one (gpointer handle, guint32 timeout, gboolean alertable)
 done:
 	mono_w32handle_set_in_use (handle_data, FALSE);
 
-	mono_w32handle_unlock_handle (handle_data);
+	mono_w32handle_unlock (handle_data);
 
 	mono_w32handle_unref (handle);
 
@@ -980,7 +980,7 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p can't be waited for",
 				   __func__, handles [i]);
 
-			for (i = nhandles; i >= 0; --i)
+			for (i = nhandles - 1; i >= 0; --i)
 				mono_w32handle_unref (handles [i]);
 
 			return MONO_W32HANDLE_WAIT_RET_FAILED;
@@ -995,7 +995,7 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p is duplicated",
 				__func__, handles_sorted [i]);
 
-			for (i = nhandles; i >= 0; --i)
+			for (i = nhandles - 1; i >= 0; --i)
 				mono_w32handle_unref (handles [i]);
 
 			return MONO_W32HANDLE_WAIT_RET_FAILED;
@@ -1124,7 +1124,7 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 	}
 
 done:
-	for (i = nhandles; i >= 0; i--) {
+	for (i = nhandles - 1; i >= 0; i--) {
 		/* Unref everything we reffed above */
 		mono_w32handle_unref (handles [i]);
 	}
@@ -1176,7 +1176,7 @@ mono_w32handle_signal_and_wait (gpointer signal_handle, gpointer wait_handle, gu
 
 	mono_w32handle_ops_signal (signal_handle, signal_handle_data);
 
-	mono_w32handle_unlock_handle (signal_handle_data);
+	mono_w32handle_unlock (signal_handle_data);
 
 	if (mono_w32handle_test_capabilities (wait_handle_data, MONO_W32HANDLE_CAP_OWN)) {
 		if (own_if_owned (wait_handle, wait_handle_data, &abandoned)) {
@@ -1230,7 +1230,7 @@ mono_w32handle_signal_and_wait (gpointer signal_handle, gpointer wait_handle, gu
 	}
 
 done:
-	mono_w32handle_unlock_handle (wait_handle_data);
+	mono_w32handle_unlock (wait_handle_data);
 
 	mono_w32handle_unref (wait_handle);
 	mono_w32handle_unref (signal_handle);
