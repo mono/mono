@@ -76,28 +76,13 @@ mono_w32handle_lookup_data (gpointer handle, MonoW32Handle **handle_data)
 	return TRUE;
 }
 
-static gboolean
-mono_w32handle_ref_core (gpointer handle, MonoW32Handle *handle_data);
-
-static gboolean
-mono_w32handle_lookup_and_ref_data (gpointer handle, MonoW32Handle **handle_data)
-{
-	if (!mono_w32handle_lookup_data (handle, handle_data))
-		return FALSE;
-
-	if (!mono_w32handle_ref_core (handle, *handle_data))
-		return FALSE;
-
-	return TRUE;
-}
-
 MonoW32Type
 mono_w32handle_get_type (gpointer handle)
 {
 	MonoW32Handle *handle_data;
 	MonoW32Type ret;
 
-	if (!mono_w32handle_lookup_and_ref_data (handle, &handle_data))
+	if (!mono_w32handle_lookup_and_ref (handle, &handle_data))
 		return MONO_W32TYPE_UNUSED;	/* An impossible type */
 
 	ret = handle_data->type;
@@ -120,7 +105,7 @@ mono_w32handle_set_signal_state (gpointer handle, gboolean state, gboolean broad
 {
 	MonoW32Handle *handle_data;
 
-	if (!mono_w32handle_lookup_and_ref_data (handle, &handle_data))
+	if (!mono_w32handle_lookup_and_ref (handle, &handle_data))
 		return;
 
 #ifdef DEBUG
@@ -166,7 +151,7 @@ mono_w32handle_issignalled (gpointer handle)
 	MonoW32Handle *handle_data;
 	gboolean ret;
 
-	if (!mono_w32handle_lookup_and_ref_data (handle, &handle_data))
+	if (!mono_w32handle_lookup_and_ref (handle, &handle_data))
 		return(FALSE);
 
 	ret = handle_data->signalled;
@@ -180,7 +165,7 @@ mono_w32handle_set_in_use (gpointer handle, gboolean in_use)
 {
 	MonoW32Handle *handle_data;
 
-	if (!mono_w32handle_lookup_and_ref_data (handle, &handle_data))
+	if (!mono_w32handle_lookup_and_ref (handle, &handle_data))
 		g_error ("%s: unknown handle %p", __func__, handle);
 
 	handle_data->in_use = in_use;
@@ -216,7 +201,7 @@ mono_w32handle_lock_handle (gpointer handle)
 {
 	MonoW32Handle *handle_data;
 
-	if (!mono_w32handle_lookup_and_ref_data (handle, &handle_data))
+	if (!mono_w32handle_lookup_and_ref (handle, &handle_data))
 		g_error ("%s: failed to lookup handle %p", __func__, handle);
 
 	mono_w32handle_ref (handle);
@@ -225,7 +210,7 @@ mono_w32handle_lock_handle (gpointer handle)
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: lock handle %p", __func__, handle);
 
-	/* to balance the mono_w32handle_lookup_and_ref_data */
+	/* to balance the mono_w32handle_lookup_and_ref */
 	mono_w32handle_unref (handle);
 }
 
@@ -237,7 +222,7 @@ mono_w32handle_trylock_handle (gpointer handle)
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: trylock handle %p", __func__, handle);
 
-	if (!mono_w32handle_lookup_and_ref_data (handle, &handle_data))
+	if (!mono_w32handle_lookup_and_ref (handle, &handle_data))
 		g_error ("%s: failed to lookup handle %p", __func__, handle);
 
 	mono_w32handle_ref (handle);
@@ -248,7 +233,7 @@ mono_w32handle_trylock_handle (gpointer handle)
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: trylock handle %p, locked: %s", __func__, handle, locked ? "true" : "false");
 
-	/* to balance the mono_w32handle_lookup_and_ref_data */
+	/* to balance the mono_w32handle_lookup_and_ref */
 	mono_w32handle_unref (handle);
 
 	return locked;
@@ -259,7 +244,7 @@ mono_w32handle_unlock_handle (gpointer handle)
 {
 	MonoW32Handle *handle_data;
 
-	if (!mono_w32handle_lookup_and_ref_data (handle, &handle_data))
+	if (!mono_w32handle_lookup_and_ref (handle, &handle_data))
 		g_error ("%s: failed to lookup handle %p", __func__, handle);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: unlock handle %p", __func__, handle);
@@ -268,7 +253,7 @@ mono_w32handle_unlock_handle (gpointer handle)
 
 	mono_w32handle_unref (handle);
 
-	/* to balance the mono_w32handle_lookup_and_ref_data */
+	/* to balance the mono_w32handle_lookup_and_ref */
 	mono_w32handle_unref (handle);
 }
 
@@ -408,6 +393,9 @@ mono_w32handle_new (MonoW32Type type, gpointer handle_specific)
 }
 
 static gboolean
+mono_w32handle_ref_core (gpointer handle, MonoW32Handle *handle_data);
+
+static gboolean
 mono_w32handle_unref_core (gpointer handle, MonoW32Handle *handle_data);
 
 static void
@@ -448,29 +436,15 @@ mono_w32handle_close (gpointer handle)
 }
 
 gboolean
-mono_w32handle_lookup_and_ref (gpointer handle, MonoW32Type type, gpointer *handle_specific)
+mono_w32handle_lookup_and_ref (gpointer handle, MonoW32Handle **handle_data)
 {
-	MonoW32Handle *handle_data;
+	if (!mono_w32handle_lookup_data (handle, handle_data))
+		return FALSE;
 
-	g_assert (handle_specific);
+	if (!mono_w32handle_ref_core (handle, *handle_data))
+		return FALSE;
 
-	if (!mono_w32handle_lookup_and_ref_data (handle, &handle_data)) {
-		return(FALSE);
-	}
-
-	if (handle_data->type != type) {
-		gboolean destroy;
-
-		destroy = mono_w32handle_unref_core (handle, handle_data);
-		if (destroy)
-			w32handle_destroy (handle);
-
-		return(FALSE);
-	}
-
-	*handle_specific = handle_data->specific;
-
-	return(TRUE);
+	return TRUE;
 }
 
 void
@@ -670,7 +644,7 @@ gboolean mono_w32handle_test_capabilities (gpointer handle,
 	MonoW32Type type;
 	gboolean ret;
 
-	if (!mono_w32handle_lookup_and_ref_data (handle, &handle_data))
+	if (!mono_w32handle_lookup_and_ref (handle, &handle_data))
 		return(FALSE);
 
 	type = handle_data->type;
@@ -726,7 +700,7 @@ mono_w32handle_ops_signal (gpointer handle)
 	MonoW32Handle *handle_data;
 	MonoW32Type type;
 
-	if (!mono_w32handle_lookup_and_ref_data (handle, &handle_data))
+	if (!mono_w32handle_lookup_and_ref (handle, &handle_data))
 		return;
 
 	type = handle_data->type;
@@ -745,7 +719,7 @@ mono_w32handle_ops_own (gpointer handle, gboolean *abandoned)
 	MonoW32Type type;
 	gboolean ret;
 
-	if (!mono_w32handle_lookup_and_ref_data (handle, &handle_data))
+	if (!mono_w32handle_lookup_and_ref (handle, &handle_data))
 		return(FALSE);
 
 	type = handle_data->type;
@@ -768,7 +742,7 @@ mono_w32handle_ops_isowned (gpointer handle)
 	MonoW32Type type;
 	gboolean ret;
 
-	if (!mono_w32handle_lookup_and_ref_data (handle, &handle_data))
+	if (!mono_w32handle_lookup_and_ref (handle, &handle_data))
 		return FALSE;
 
 	type = handle_data->type;
@@ -790,7 +764,7 @@ mono_w32handle_ops_specialwait (gpointer handle, guint32 timeout, gboolean *aler
 	MonoW32Type type;
 	MonoW32HandleWaitRet ret;
 
-	if (!mono_w32handle_lookup_and_ref_data (handle, &handle_data))
+	if (!mono_w32handle_lookup_and_ref (handle, &handle_data))
 		return MONO_W32HANDLE_WAIT_RET_FAILED;
 
 	type = handle_data->type;
@@ -812,7 +786,7 @@ mono_w32handle_ops_prewait (gpointer handle)
 	MonoW32Handle *handle_data;
 	MonoW32Type type;
 
-	if (!mono_w32handle_lookup_and_ref_data (handle, &handle_data))
+	if (!mono_w32handle_lookup_and_ref (handle, &handle_data))
 		return;
 
 	type = handle_data->type;
@@ -1005,7 +979,7 @@ mono_w32handle_timedwait_signal_handle (gpointer handle, guint32 timeout, gboole
 	gpointer handle_duplicate;
 	int res;
 
-	if (!mono_w32handle_lookup_and_ref_data (handle, &handle_data))
+	if (!mono_w32handle_lookup_and_ref (handle, &handle_data))
 		g_error ("cannot wait on unknown handle %p", handle);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: waiting for %p (type %s)", __func__, handle,

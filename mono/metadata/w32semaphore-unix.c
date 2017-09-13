@@ -47,15 +47,23 @@ static void sem_handle_signal (gpointer handle, MonoW32Type type, MonoW32HandleS
 
 static gboolean sem_handle_own (gpointer handle, MonoW32Type type, gboolean *abandoned)
 {
+	MonoW32Handle *handle_data;
 	MonoW32HandleSemaphore *sem_handle;
 
 	*abandoned = FALSE;
 
-	if (!mono_w32handle_lookup_and_ref (handle, type, (gpointer *)&sem_handle)) {
-		g_warning ("%s: error looking up %s handle %p",
-			__func__, mono_w32handle_get_typename (type), handle);
+	if (!mono_w32handle_lookup_and_ref (handle, &handle_data)) {
+		g_warning ("%s: unkown handle %p", __func__, handle);
 		return FALSE;
 	}
+
+	if (handle_data->type != type) {
+		g_warning ("%s: unknown sem handle %p", __func__, mono_w32handle_get_typename (type), handle);
+		mono_w32handle_unref (handle);
+		return FALSE;
+	}
+
+	sem_handle = (MonoW32HandleSemaphore*) handle_data->specific;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: owning %s handle %p",
 		__func__, mono_w32handle_get_typename (type), handle);
@@ -280,31 +288,27 @@ ves_icall_System_Threading_Semaphore_CreateSemaphore_internal (gint32 initialCou
 MonoBoolean
 ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (gpointer handle, gint32 releaseCount, gint32 *prevcount)
 {
-	MonoW32Type type;
+	MonoW32Handle *handle_data;
 	MonoW32HandleSemaphore *sem_handle;
 	MonoBoolean ret;
 
-	if (!handle) {
+	if (!mono_w32handle_lookup_and_ref (handle, &handle_data)) {
+		g_warning ("%s: unkown handle %p", __func__, handle);
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
 		return FALSE;
 	}
 
-	switch (type = mono_w32handle_get_type (handle)) {
-	case MONO_W32TYPE_SEM:
-	case MONO_W32TYPE_NAMEDSEM:
-		break;
-	default:
+	if (handle_data->type != MONO_W32TYPE_SEM && handle_data->type != MONO_W32TYPE_NAMEDSEM) {
+		g_warning ("%s: unknown sem handle %p", __func__, handle);
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
+		mono_w32handle_unref (handle);
 		return FALSE;
 	}
 
-	if (!mono_w32handle_lookup_and_ref (handle, type, (gpointer *)&sem_handle)) {
-		g_warning ("%s: error looking up sem handle %p", __func__, handle);
-		return FALSE;
-	}
+	sem_handle = (MonoW32HandleSemaphore*) handle_data->specific;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: releasing %s handle %p",
-		__func__, mono_w32handle_get_typename (type), handle);
+		__func__, mono_w32handle_get_typename (handle_data->type), handle);
 
 	mono_w32handle_lock_handle (handle);
 
@@ -316,12 +320,12 @@ ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (gpointer handle,
 	/* No idea why max is signed, but thats the spec :-( */
 	if (sem_handle->val + releaseCount > (guint32)sem_handle->max) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: %s handle %p val %d count %d max %d, max value would be exceeded",
-			__func__, mono_w32handle_get_typename (type), handle, sem_handle->val, releaseCount, sem_handle->max);
+			__func__, mono_w32handle_get_typename (handle_data->type), handle, sem_handle->val, releaseCount, sem_handle->max);
 
 		ret = FALSE;
 	} else {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: %s handle %p val %d count %d max %d",
-			__func__, mono_w32handle_get_typename (type), handle, sem_handle->val, releaseCount, sem_handle->max);
+			__func__, mono_w32handle_get_typename (handle_data->type), handle, sem_handle->val, releaseCount, sem_handle->max);
 
 		sem_handle->val += releaseCount;
 		mono_w32handle_set_signal_state (handle, TRUE, TRUE);

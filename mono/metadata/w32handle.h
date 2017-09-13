@@ -130,7 +130,7 @@ const gchar*
 mono_w32handle_get_typename (MonoW32Type type);
 
 gboolean
-mono_w32handle_lookup_and_ref (gpointer handle, MonoW32Type type, gpointer *handle_specific);
+mono_w32handle_lookup_and_ref (gpointer handle, MonoW32Handle **handle_data);
 
 void
 mono_w32handle_unref (gpointer handle);

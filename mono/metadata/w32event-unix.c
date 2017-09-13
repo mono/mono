@@ -51,15 +51,25 @@ static void event_handle_signal (gpointer handle, MonoW32Type type, MonoW32Handl
 
 static gboolean event_handle_own (gpointer handle, MonoW32Type type, gboolean *abandoned)
 {
+	MonoW32Handle *handle_data;
 	MonoW32HandleEvent *event_handle;
 
 	*abandoned = FALSE;
 
-	if (!mono_w32handle_lookup_and_ref (handle, type, (gpointer *)&event_handle)) {
-		g_warning ("%s: error looking up %s handle %p",
-			__func__, mono_w32handle_get_typename (type), handle);
+	if (!mono_w32handle_lookup_and_ref (handle, &handle_data)) {
+		g_warning ("%s: unkown handle %p", __func__, handle);
+		mono_w32error_set_last (ERROR_INVALID_HANDLE);
 		return FALSE;
 	}
+
+	if (handle_data->type != type) {
+		g_warning ("%s: unknown event handle %p", __func__, handle);
+		mono_w32error_set_last (ERROR_INVALID_HANDLE);
+		mono_w32handle_unref (handle);
+		return FALSE;
+	}
+
+	event_handle = (MonoW32HandleEvent*) handle_data->specific;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: owning %s handle %p",
 		__func__, mono_w32handle_get_typename (type), handle);
@@ -303,31 +313,26 @@ ves_icall_System_Threading_Events_CreateEvent_internal (MonoBoolean manual, Mono
 gboolean
 ves_icall_System_Threading_Events_SetEvent_internal (gpointer handle)
 {
-	MonoW32Type type;
+	MonoW32Handle *handle_data;
 	MonoW32HandleEvent *event_handle;
 
-	if (handle == NULL) {
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return(FALSE);
-	}
-
-	switch (type = mono_w32handle_get_type (handle)) {
-	case MONO_W32TYPE_EVENT:
-	case MONO_W32TYPE_NAMEDEVENT:
-		break;
-	default:
+	if (!mono_w32handle_lookup_and_ref (handle, &handle_data)) {
+		g_warning ("%s: unkown handle %p", __func__, handle);
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
 		return FALSE;
 	}
 
-	if (!mono_w32handle_lookup_and_ref (handle, type, (gpointer *)&event_handle)) {
-		g_warning ("%s: error looking up %s handle %p",
-			__func__, mono_w32handle_get_typename (type), handle);
+	if (handle_data->type != MONO_W32TYPE_EVENT && handle_data->type != MONO_W32TYPE_NAMEDEVENT) {
+		g_warning ("%s: unkown event handle %p", __func__, handle);
+		mono_w32error_set_last (ERROR_INVALID_HANDLE);
+		mono_w32handle_unref (handle);
 		return FALSE;
 	}
+
+	event_handle = (MonoW32HandleEvent*) handle_data->specific;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: setting %s handle %p",
-		__func__, mono_w32handle_get_typename (type), handle);
+		__func__, mono_w32handle_get_typename (handle_data->type), handle);
 
 	mono_w32handle_lock_handle (handle);
 
@@ -347,42 +352,37 @@ ves_icall_System_Threading_Events_SetEvent_internal (gpointer handle)
 gboolean
 ves_icall_System_Threading_Events_ResetEvent_internal (gpointer handle)
 {
-	MonoW32Type type;
+	MonoW32Handle *handle_data;
 	MonoW32HandleEvent *event_handle;
 
 	mono_w32error_set_last (ERROR_SUCCESS);
 
-	if (handle == NULL) {
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return(FALSE);
-	}
-
-	switch (type = mono_w32handle_get_type (handle)) {
-	case MONO_W32TYPE_EVENT:
-	case MONO_W32TYPE_NAMEDEVENT:
-		break;
-	default:
+	if (!mono_w32handle_lookup_and_ref (handle, &handle_data)) {
+		g_warning ("%s: unkown handle %p", __func__, handle);
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
 		return FALSE;
 	}
 
-	if (!mono_w32handle_lookup_and_ref (handle, type, (gpointer *)&event_handle)) {
-		g_warning ("%s: error looking up %s handle %p",
-			__func__, mono_w32handle_get_typename (type), handle);
+	if (handle_data->type != MONO_W32TYPE_EVENT && handle_data->type != MONO_W32TYPE_NAMEDEVENT) {
+		g_warning ("%s: unkown event handle %p", __func__, handle);
+		mono_w32error_set_last (ERROR_INVALID_HANDLE);
+		mono_w32handle_unref (handle);
 		return FALSE;
 	}
+
+	event_handle = (MonoW32HandleEvent*) handle_data->specific;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: resetting %s handle %p",
-		__func__, mono_w32handle_get_typename (type), handle);
+		__func__, mono_w32handle_get_typename (handle_data->type), handle);
 
 	mono_w32handle_lock_handle (handle);
 
 	if (!mono_w32handle_issignalled (handle)) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: no need to reset %s handle %p",
-			__func__, mono_w32handle_get_typename (type), handle);
+			__func__, mono_w32handle_get_typename (handle_data->type), handle);
 	} else {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: obtained write lock on %s handle %p",
-			__func__, mono_w32handle_get_typename (type), handle);
+			__func__, mono_w32handle_get_typename (handle_data->type), handle);
 
 		mono_w32handle_set_signal_state (handle, FALSE, FALSE);
 	}
