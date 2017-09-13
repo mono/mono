@@ -939,7 +939,7 @@ get_process_foreach_callback (gpointer handle, MonoW32Handle *handle_data, gpoin
 	if (mono_w32handle_issignalled (handle_data))
 		return FALSE;
 
-	foreach_data->handle = mono_w32handle_duplicate (handle);
+	foreach_data->handle = mono_w32handle_duplicate (handle, handle_data);
 	return TRUE;
 }
 
@@ -1253,6 +1253,7 @@ mono_w32process_module_get_name (gpointer process, gpointer module, gunichar2 *b
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Can't get procname %p", __func__, process);
 			/* bugger */
 			g_free (procname_ext);
+			mono_w32handle_unref (process);
 			return 0;
 		}
 
@@ -1275,10 +1276,12 @@ mono_w32process_module_get_name (gpointer process, gpointer module, gunichar2 *b
 		g_free (procname);
 		g_free (procname_ext);
 
+		mono_w32handle_unref (process);
 		return len;
 	}
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Can't find procname_ext %p", __func__, process);
+	mono_w32handle_unref (process);
 	return 0;
 }
 
@@ -2010,6 +2013,7 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 		break;
 	}
 	default: /* Parent */ {
+		MonoW32Handle *handle_data;
 		MonoW32HandleProcess process_handle;
 
 		memset (&process_handle, 0, sizeof (process_handle));
@@ -2038,9 +2042,15 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 			break;
 		}
 
+		if (!mono_w32handle_lookup_and_ref (handle, &handle_data))
+			g_error ("%s: unknown handle %p", __func__, handle);
+
+		if (handle_data->type != MONO_W32TYPE_PROCESS)
+			g_error ("%s: unknown process handle %p", __func__, handle);
+
 		/* Keep the process handle artificially alive until the process
 		 * exits so that the information in the handle isn't lost. */
-		process->handle = mono_w32handle_duplicate (handle);
+		process->handle = mono_w32handle_duplicate (handle, handle_data);
 
 		mono_os_mutex_lock (&processes_mutex);
 		process->next = processes;
@@ -2056,6 +2066,8 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 			process_info->thread_handle = INVALID_HANDLE_VALUE;
 			process_info->tid = 0;
 		}
+
+		mono_w32handle_unref (handle);
 
 		break;
 	}

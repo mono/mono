@@ -36,7 +36,7 @@ gpointer
 mono_w32mutex_open (const gchar* utf8_name, gint32 right G_GNUC_UNUSED, gint32 *error);
 
 static void
-thread_own_mutex (MonoInternalThread *internal, gpointer handle)
+thread_own_mutex (MonoInternalThread *internal, gpointer handle, MonoW32Handle *handle_data)
 {
 	/* if we are not on the current thread, there is a
 	 * race condition when allocating internal->owned_mutexes */
@@ -45,7 +45,7 @@ thread_own_mutex (MonoInternalThread *internal, gpointer handle)
 	if (!internal->owned_mutexes)
 		internal->owned_mutexes = g_ptr_array_new ();
 
-	g_ptr_array_add (internal->owned_mutexes, mono_w32handle_duplicate (handle));
+	g_ptr_array_add (internal->owned_mutexes, mono_w32handle_duplicate (handle, handle_data));
 }
 
 static void
@@ -116,7 +116,7 @@ mutex_handle_own (gpointer handle, MonoW32Handle *handle_data, gboolean *abandon
 		mutex_handle->tid = pthread_self ();
 		mutex_handle->recursion = 1;
 
-		thread_own_mutex (mono_thread_internal_current (), handle);
+		thread_own_mutex (mono_thread_internal_current (), handle, handle_data);
 	}
 
 	if (mutex_handle->abandoned) {

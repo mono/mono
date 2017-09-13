@@ -317,17 +317,10 @@ static void
 w32handle_destroy (gpointer handle);
 
 gpointer
-mono_w32handle_duplicate (gpointer handle)
+mono_w32handle_duplicate (gpointer handle, MonoW32Handle *handle_data)
 {
-	MonoW32Handle *handle_data;
-
-	if (handle == INVALID_HANDLE_VALUE)
-		return INVALID_HANDLE_VALUE;
-	if (!mono_w32handle_lookup_data (handle, &handle_data))
-		return INVALID_HANDLE_VALUE;
-
 	if (!mono_w32handle_ref_core (handle, handle_data))
-		g_error ("%s: failed to ref handle %p", __func__, handle);
+		g_error ("%s: unknown handle %p", __func__, handle);
 
 	return handle;
 }
@@ -754,14 +747,14 @@ mono_w32handle_timedwait_signal (guint32 timeout, gboolean poll, gboolean *alert
 }
 
 static void
-signal_handle_and_unref (gpointer handle)
+signal_handle_and_unref (gpointer handle_duplicate)
 {
 	MonoW32Handle *handle_data;
 	mono_cond_t *cond;
 	mono_mutex_t *mutex;
 
-	if (!mono_w32handle_lookup_data (handle, &handle_data))
-		g_error ("cannot signal unknown handle %p", handle);
+	if (!mono_w32handle_lookup_and_ref (handle_duplicate, &handle_data))
+		g_error ("%s: unknown handle %p", __func__, handle_duplicate);
 
 	/* If we reach here, then interrupt token is set to the flag value, which
 	 * means that the target thread is either
@@ -775,7 +768,9 @@ signal_handle_and_unref (gpointer handle)
 	mono_os_cond_broadcast (cond);
 	mono_os_mutex_unlock (mutex);
 
-	mono_w32handle_close (handle);
+	mono_w32handle_unref (handle_duplicate);
+
+	mono_w32handle_close (handle_duplicate);
 }
 
 static int
@@ -791,7 +786,7 @@ mono_w32handle_timedwait_signal_handle (gpointer handle, MonoW32Handle *handle_d
 		*alerted = FALSE;
 
 	if (alerted) {
-		mono_thread_info_install_interrupt (signal_handle_and_unref, handle_duplicate = mono_w32handle_duplicate (handle), alerted);
+		mono_thread_info_install_interrupt (signal_handle_and_unref, handle_duplicate = mono_w32handle_duplicate (handle, handle_data), alerted);
 		if (*alerted) {
 			mono_w32handle_close (handle_duplicate);
 			return 0;
@@ -1148,8 +1143,9 @@ mono_w32handle_signal_and_wait (gpointer signal_handle, gpointer wait_handle, gu
 
 	alerted = FALSE;
 
-	if (!mono_w32handle_lookup_and_ref (signal_handle, &signal_handle_data))
+	if (!mono_w32handle_lookup_and_ref (signal_handle, &signal_handle_data)) {
 		return MONO_W32HANDLE_WAIT_RET_FAILED;
+	}
 	if (!mono_w32handle_lookup_and_ref (wait_handle, &wait_handle_data)) {
 		mono_w32handle_unref (signal_handle);
 		return MONO_W32HANDLE_WAIT_RET_FAILED;
