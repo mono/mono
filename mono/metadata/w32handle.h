@@ -123,9 +123,6 @@ mono_w32handle_duplicate (gpointer handle);
 gboolean
 mono_w32handle_close (gpointer handle);
 
-MonoW32Type
-mono_w32handle_get_type (gpointer handle);
-
 const gchar*
 mono_w32handle_get_typename (MonoW32Type type);
 

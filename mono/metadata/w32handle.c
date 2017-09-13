@@ -76,21 +76,6 @@ mono_w32handle_lookup_data (gpointer handle, MonoW32Handle **handle_data)
 	return TRUE;
 }
 
-MonoW32Type
-mono_w32handle_get_type (gpointer handle)
-{
-	MonoW32Handle *handle_data;
-	MonoW32Type ret;
-
-	if (!mono_w32handle_lookup_and_ref (handle, &handle_data))
-		return MONO_W32TYPE_UNUSED;	/* An impossible type */
-
-	ret = handle_data->type;
-
-	mono_w32handle_unref (handle);
-	return ret;
-}
-
 static const gchar*
 mono_w32handle_ops_typename (MonoW32Type type);
 
@@ -852,7 +837,7 @@ mono_w32handle_timedwait_signal_handle (gpointer handle, guint32 timeout, gboole
 		g_error ("cannot wait on unknown handle %p", handle);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: waiting for %p (type %s)", __func__, handle,
-		   mono_w32handle_ops_typename (mono_w32handle_get_type (handle)));
+		   mono_w32handle_ops_typename (handle_data->type));
 
 	if (alerted)
 		*alerted = FALSE;
@@ -1079,7 +1064,7 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 
 	poll = FALSE;
 	for (i = 0; i < nhandles; ++i) {
-		if (mono_w32handle_get_type (handles [i]) == MONO_W32TYPE_PROCESS) {
+		if (handles_data [i]->type == MONO_W32TYPE_PROCESS) {
 			/* Can't wait for a process handle + another handle without polling */
 			poll = TRUE;
 		}
