@@ -71,8 +71,6 @@ namespace Mono.Security.Interface
 
 		Task AuthenticateAsServerAsync (X509Certificate serverCertificate, bool clientCertificateRequired, SSA.SslProtocols enabledSslProtocols, bool checkCertificateRevocation);
 
-		void Flush ();
-
 		int Read (byte[] buffer, int offset, int count);
 
 		void Write (byte[] buffer);
