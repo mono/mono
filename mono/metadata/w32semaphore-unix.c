@@ -45,35 +45,21 @@ static void sem_handle_signal (gpointer handle, MonoW32Type type, MonoW32HandleS
 	}
 }
 
-static gboolean sem_handle_own (gpointer handle, MonoW32Type type, gboolean *abandoned)
+static gboolean sem_handle_own (gpointer handle, MonoW32Handle *handle_data, gboolean *abandoned)
 {
-	MonoW32Handle *handle_data;
 	MonoW32HandleSemaphore *sem_handle;
 
 	*abandoned = FALSE;
 
-	if (!mono_w32handle_lookup_and_ref (handle, &handle_data)) {
-		g_warning ("%s: unkown handle %p", __func__, handle);
-		return FALSE;
-	}
-
-	if (handle_data->type != type) {
-		g_warning ("%s: unknown sem handle %p", __func__, mono_w32handle_get_typename (type), handle);
-		mono_w32handle_unref (handle);
-		return FALSE;
-	}
-
 	sem_handle = (MonoW32HandleSemaphore*) handle_data->specific;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: owning %s handle %p",
-		__func__, mono_w32handle_get_typename (type), handle);
+		__func__, mono_w32handle_get_typename (handle_data->type), handle);
 
 	sem_handle->val--;
 
 	if (sem_handle->val == 0)
 		mono_w32handle_set_signal_state (handle, FALSE, FALSE);
-
-	mono_w32handle_unref (handle);
 
 	return TRUE;
 }
@@ -83,20 +69,9 @@ static void sema_signal(gpointer handle, gpointer handle_specific)
 	sem_handle_signal (handle, MONO_W32TYPE_SEM, (MonoW32HandleSemaphore*) handle_specific);
 }
 
-static gboolean sema_own (gpointer handle, gboolean *abandoned)
-{
-	return sem_handle_own (handle, MONO_W32TYPE_SEM, abandoned);
-}
-
 static void namedsema_signal (gpointer handle, gpointer handle_specific)
 {
 	sem_handle_signal (handle, MONO_W32TYPE_NAMEDSEM, (MonoW32HandleSemaphore*) handle_specific);
-}
-
-/* NB, always called with the shared handle lock held */
-static gboolean namedsema_own (gpointer handle, gboolean *abandoned)
-{
-	return sem_handle_own (handle, MONO_W32TYPE_NAMEDSEM, abandoned);
 }
 
 static void sema_details (gpointer data)
@@ -137,7 +112,7 @@ mono_w32semaphore_init (void)
 	static MonoW32HandleOps sem_ops = {
 		NULL,			/* close */
 		sema_signal,		/* signal */
-		sema_own,		/* own */
+		sem_handle_own,		/* own */
 		NULL,			/* is_owned */
 		NULL,			/* special_wait */
 		NULL,			/* prewait */
@@ -149,7 +124,7 @@ mono_w32semaphore_init (void)
 	static MonoW32HandleOps namedsem_ops = {
 		NULL,			/* close */
 		namedsema_signal,	/* signal */
-		namedsema_own,		/* own */
+		sem_handle_own,		/* own */
 		NULL,			/* is_owned */
 		NULL,			/* special_wait */
 		NULL,			/* prewait */

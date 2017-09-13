@@ -49,30 +49,16 @@ static void event_handle_signal (gpointer handle, MonoW32Type type, MonoW32Handl
 	}
 }
 
-static gboolean event_handle_own (gpointer handle, MonoW32Type type, gboolean *abandoned)
+static gboolean event_handle_own (gpointer handle, MonoW32Handle *handle_data, gboolean *abandoned)
 {
-	MonoW32Handle *handle_data;
 	MonoW32HandleEvent *event_handle;
 
 	*abandoned = FALSE;
 
-	if (!mono_w32handle_lookup_and_ref (handle, &handle_data)) {
-		g_warning ("%s: unkown handle %p", __func__, handle);
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return FALSE;
-	}
-
-	if (handle_data->type != type) {
-		g_warning ("%s: unknown event handle %p", __func__, handle);
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		mono_w32handle_unref (handle);
-		return FALSE;
-	}
-
 	event_handle = (MonoW32HandleEvent*) handle_data->specific;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: owning %s handle %p",
-		__func__, mono_w32handle_get_typename (type), handle);
+		__func__, mono_w32handle_get_typename (handle_data->type), handle);
 
 	if (!event_handle->manual) {
 		g_assert (event_handle->set_count > 0);
@@ -82,7 +68,6 @@ static gboolean event_handle_own (gpointer handle, MonoW32Type type, gboolean *a
 			mono_w32handle_set_signal_state (handle, FALSE, FALSE);
 	}
 
-	mono_w32handle_unref (handle);
 	return TRUE;
 }
 
@@ -91,20 +76,9 @@ static void event_signal(gpointer handle, gpointer handle_specific)
 	event_handle_signal (handle, MONO_W32TYPE_EVENT, (MonoW32HandleEvent*) handle_specific);
 }
 
-static gboolean event_own (gpointer handle, gboolean *abandoned)
-{
-	return event_handle_own (handle, MONO_W32TYPE_EVENT, abandoned);
-}
-
 static void namedevent_signal (gpointer handle, gpointer handle_specific)
 {
 	event_handle_signal (handle, MONO_W32TYPE_NAMEDEVENT, (MonoW32HandleEvent*) handle_specific);
-}
-
-/* NB, always called with the shared handle lock held */
-static gboolean namedevent_own (gpointer handle, gboolean *abandoned)
-{
-	return event_handle_own (handle, MONO_W32TYPE_NAMEDEVENT, abandoned);
 }
 
 static void event_details (gpointer data)
@@ -147,7 +121,7 @@ mono_w32event_init (void)
 	static MonoW32HandleOps event_ops = {
 		NULL,			/* close */
 		event_signal,		/* signal */
-		event_own,		/* own */
+		event_handle_own,		/* own */
 		NULL,			/* is_owned */
 		NULL,			/* special_wait */
 		NULL,			/* prewait */
@@ -159,7 +133,7 @@ mono_w32event_init (void)
 	static MonoW32HandleOps namedevent_ops = {
 		NULL,			/* close */
 		namedevent_signal,	/* signal */
-		namedevent_own,		/* own */
+		event_handle_own,		/* own */
 		NULL,			/* is_owned */
 		NULL,			/* special_wait */
 		NULL,			/* prewait */

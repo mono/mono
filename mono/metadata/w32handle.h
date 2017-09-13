@@ -67,7 +67,7 @@ typedef struct
 	 * If TRUE, *abandoned contains a status code such as
 	 * WAIT_OBJECT_0 or WAIT_ABANDONED_0.
 	 */
-	gboolean (*own_handle)(gpointer handle, gboolean *abandoned);
+	gboolean (*own_handle)(gpointer handle, MonoW32Handle *handle_data, gboolean *abandoned);
 
 	/* Called by mono_w32handle_wait_one and mono_w32handle_wait_multiple, if the
 	 * handle in question is "ownable" (ie mutexes), to see if the current

@@ -725,7 +725,7 @@ mono_w32handle_ops_own (gpointer handle, gboolean *abandoned)
 	type = handle_data->type;
 
 	if (handle_ops[type] != NULL && handle_ops[type]->own_handle != NULL) {
-		ret = handle_ops [type]->own_handle (handle, abandoned);
+		ret = handle_ops [type]->own_handle (handle, handle_data, abandoned);
 	} else {
 		ret = FALSE;
 	}
