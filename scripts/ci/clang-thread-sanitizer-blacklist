@@ -35,6 +35,7 @@ fun:mono_class_set_method_count
 
 # class-inlines.h #
 
+fun:mono_class_has_static_metadata
 fun:mono_class_is_ginst
 fun:mono_class_is_gtd
 
@@ -119,6 +120,7 @@ fun:ves_icall_RuntimeTypeHandle_HasInstantiation
 fun:ves_icall_RuntimeTypeHandle_IsArray
 fun:ves_icall_RuntimeTypeHandle_IsGenericVariable
 fun:ves_icall_RuntimeType_GetConstructors_native
+fun:ves_icall_System_Array_ClearInternal
 fun:ves_icall_System_Array_FastCopy
 fun:ves_icall_System_Reflection_MonoMethodInfo_get_parameter_info
 
@@ -175,6 +177,7 @@ fun:typedef_locator
 fun:mon_new
 fun:mono_monitor_ensure_owned
 fun:mono_monitor_enter_v4_fast
+fun:mono_monitor_exit
 fun:mono_monitor_exit_inflated
 fun:mono_monitor_inflate
 fun:mono_monitor_try_enter_inflated
@@ -394,6 +397,7 @@ fun:mini_get_basic_type_from_generic
 fun:mini_is_gsharedvt_type
 fun:mini_type_get_underlying_type
 fun:mono_class_fill_runtime_generic_context
+fun:mono_class_get_method_generic
 fun:mono_generic_context_check_used
 fun:mono_method_check_context_used
 fun:mono_method_fill_runtime_generic_context
@@ -418,6 +422,7 @@ fun:mono_resolve_patch_target
 # mini-trampolines.c #
 
 fun:common_call_trampoline
+fun:is_generic_method_definition
 fun:mini_add_method_trampoline
 fun:mini_resolve_imt_method
 fun:mono_create_delegate_trampoline_info
@@ -497,6 +502,7 @@ fun:add_stage_entry
 # sgen-gc.c #
 
 fun:mono_gc_wbarrier_generic_store
+fun:pin_objects_from_nursery_pin_queue
 fun:sgen_conservatively_pin_objects_from
 
 # sgen-gc.h #
@@ -522,10 +528,17 @@ fun:sweep_block
 fun:sweep_block_for_size
 fun:unlink_slot_from_free_list_uncontested
 
+# sgen-minor-copy-object.h #
+
+fun:simple_nursery_serial_copy_object_from_obj
+
 # sgen-nursery-allocator.c #
 
+fun:fragment_list_reverse
+fun:par_alloc_from_fragment
 fun:sgen_fragment_allocator_add
 fun:sgen_fragment_allocator_alloc
+fun:sgen_fragment_allocator_par_alloc
 fun:sgen_fragment_allocator_par_range_alloc
 fun:sgen_fragment_allocator_release
 
