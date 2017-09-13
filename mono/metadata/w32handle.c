@@ -583,21 +583,10 @@ mono_w32handle_ops_typesize (MonoW32Type type)
 }
 
 static void
-mono_w32handle_ops_signal (gpointer handle)
+mono_w32handle_ops_signal (gpointer handle, MonoW32Handle *handle_data)
 {
-	MonoW32Handle *handle_data;
-	MonoW32Type type;
-
-	if (!mono_w32handle_lookup_and_ref (handle, &handle_data))
-		return;
-
-	type = handle_data->type;
-
-	if (handle_ops[type] != NULL && handle_ops[type]->signal != NULL) {
-		handle_ops[type]->signal (handle, handle_data);
-	}
-
-	mono_w32handle_unref (handle);
+	if (handle_ops [handle_data->type] && handle_ops [handle_data->type]->signal)
+		handle_ops [handle_data->type]->signal (handle, handle_data);
 }
 
 static gboolean
@@ -1233,7 +1222,7 @@ mono_w32handle_signal_and_wait (gpointer signal_handle, gpointer wait_handle, gu
 
 	mono_w32handle_lock_handles (handles_data, 2);
 
-	mono_w32handle_ops_signal (signal_handle);
+	mono_w32handle_ops_signal (signal_handle, signal_handle_data);
 
 	mono_w32handle_unlock_handle (signal_handle_data);
 
