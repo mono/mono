@@ -397,7 +397,7 @@ namespace Mono.Profiler.Log {
 					for (var i = 0; i < list.Length; i++) {
 						list [i] = new HeapRootsEvent.HeapRoot {
 							ObjectPointer = ReadObject (),
-							Attributes = (LogHeapRootAttributes) Reader.ReadByte (),
+							Attributes = (LogHeapRootAttributes) Reader.ReadULeb128 (),
 							ExtraInfo = (long) Reader.ReadULeb128 (),
 						};
 					}
