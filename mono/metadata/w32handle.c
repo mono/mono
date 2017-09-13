@@ -86,15 +86,34 @@ mono_w32handle_lookup_data (gpointer handle, MonoW32HandleBase **handle_data)
 	return TRUE;
 }
 
+static gboolean
+mono_w32handle_ref_core (gpointer handle, MonoW32HandleBase *handle_data);
+
+static gboolean
+mono_w32handle_lookup_and_ref_data (gpointer handle, MonoW32HandleBase **handle_data)
+{
+	if (!mono_w32handle_lookup_data (handle, handle_data))
+		return FALSE;
+
+	if (!mono_w32handle_ref_core (handle, *handle_data))
+		return FALSE;
+
+	return TRUE;
+}
+
 MonoW32HandleType
 mono_w32handle_get_type (gpointer handle)
 {
 	MonoW32HandleBase *handle_data;
+	MonoW32HandleType ret;
 
-	if (!mono_w32handle_lookup_data (handle, &handle_data))
+	if (!mono_w32handle_lookup_and_ref_data (handle, &handle_data))
 		return MONO_W32HANDLE_UNUSED;	/* An impossible type */
 
-	return handle_data->type;
+	ret = handle_data->type;
+
+	mono_w32handle_unref (handle);
+	return ret;
 }
 
 static const gchar*
@@ -111,9 +130,8 @@ mono_w32handle_set_signal_state (gpointer handle, gboolean state, gboolean broad
 {
 	MonoW32HandleBase *handle_data;
 
-	if (!mono_w32handle_lookup_data (handle, &handle_data)) {
+	if (!mono_w32handle_lookup_and_ref_data (handle, &handle_data))
 		return;
-	}
 
 #ifdef DEBUG
 	g_message ("%s: setting state of %p to %s (broadcast %s)", __func__,
@@ -148,18 +166,23 @@ mono_w32handle_set_signal_state (gpointer handle, gboolean state, gboolean broad
 	} else {
 		handle_data->signalled=state;
 	}
+
+	mono_w32handle_unref (handle);
 }
 
 gboolean
 mono_w32handle_issignalled (gpointer handle)
 {
 	MonoW32HandleBase *handle_data;
+	gboolean ret;
 
-	if (!mono_w32handle_lookup_data (handle, &handle_data)) {
+	if (!mono_w32handle_lookup_and_ref_data (handle, &handle_data))
 		return(FALSE);
-	}
 
-	return handle_data->signalled;
+	ret = handle_data->signalled;
+
+	mono_w32handle_unref (handle);
+	return ret;
 }
 
 static void
@@ -167,10 +190,12 @@ mono_w32handle_set_in_use (gpointer handle, gboolean in_use)
 {
 	MonoW32HandleBase *handle_data;
 
-	if (!mono_w32handle_lookup_data (handle, &handle_data))
-		g_assert_not_reached ();
+	if (!mono_w32handle_lookup_and_ref_data (handle, &handle_data))
+		g_error ("%s: unknown handle %p", __func__, handle);
 
 	handle_data->in_use = in_use;
+
+	mono_w32handle_unref (handle);
 }
 
 static void
@@ -201,7 +226,7 @@ mono_w32handle_lock_handle (gpointer handle)
 {
 	MonoW32HandleBase *handle_data;
 
-	if (!mono_w32handle_lookup_data (handle, &handle_data))
+	if (!mono_w32handle_lookup_and_ref_data (handle, &handle_data))
 		g_error ("%s: failed to lookup handle %p", __func__, handle);
 
 	mono_w32handle_ref (handle);
@@ -209,6 +234,9 @@ mono_w32handle_lock_handle (gpointer handle)
 	mono_os_mutex_lock (&handle_data->signal_mutex);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: lock handle %p", __func__, handle);
+
+	/* to balance the mono_w32handle_lookup_and_ref_data */
+	mono_w32handle_unref (handle);
 }
 
 gboolean
@@ -219,7 +247,7 @@ mono_w32handle_trylock_handle (gpointer handle)
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: trylock handle %p", __func__, handle);
 
-	if (!mono_w32handle_lookup_data (handle, &handle_data))
+	if (!mono_w32handle_lookup_and_ref_data (handle, &handle_data))
 		g_error ("%s: failed to lookup handle %p", __func__, handle);
 
 	mono_w32handle_ref (handle);
@@ -230,6 +258,9 @@ mono_w32handle_trylock_handle (gpointer handle)
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: trylock handle %p, locked: %s", __func__, handle, locked ? "true" : "false");
 
+	/* to balance the mono_w32handle_lookup_and_ref_data */
+	mono_w32handle_unref (handle);
+
 	return locked;
 }
 
@@ -238,13 +269,16 @@ mono_w32handle_unlock_handle (gpointer handle)
 {
 	MonoW32HandleBase *handle_data;
 
-	if (!mono_w32handle_lookup_data (handle, &handle_data))
+	if (!mono_w32handle_lookup_and_ref_data (handle, &handle_data))
 		g_error ("%s: failed to lookup handle %p", __func__, handle);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: unlock handle %p", __func__, handle);
 
 	mono_os_mutex_unlock (&handle_data->signal_mutex);
 
+	mono_w32handle_unref (handle);
+
+	/* to balance the mono_w32handle_lookup_and_ref_data */
 	mono_w32handle_unref (handle);
 }
 
@@ -384,9 +418,6 @@ mono_w32handle_new (MonoW32HandleType type, gpointer handle_specific)
 }
 
 static gboolean
-mono_w32handle_ref_core (gpointer handle, MonoW32HandleBase *handle_data);
-
-static gboolean
 mono_w32handle_unref_core (gpointer handle, MonoW32HandleBase *handle_data);
 
 static void
@@ -398,7 +429,7 @@ mono_w32handle_duplicate (gpointer handle)
 	MonoW32HandleBase *handle_data;
 
 	if (handle == INVALID_HANDLE_VALUE)
-		return handle;
+		return INVALID_HANDLE_VALUE;
 	if (!mono_w32handle_lookup_data (handle, &handle_data))
 		return INVALID_HANDLE_VALUE;
 
@@ -433,12 +464,9 @@ mono_w32handle_lookup_and_ref (gpointer handle, MonoW32HandleType type, gpointer
 
 	g_assert (handle_specific);
 
-	if (!mono_w32handle_lookup_data (handle, &handle_data)) {
+	if (!mono_w32handle_lookup_and_ref_data (handle, &handle_data)) {
 		return(FALSE);
 	}
-
-	if (!mono_w32handle_ref_core (handle, handle_data))
-		return FALSE;
 
 	if (handle_data->type != type) {
 		gboolean destroy;
@@ -650,17 +678,21 @@ gboolean mono_w32handle_test_capabilities (gpointer handle,
 {
 	MonoW32HandleBase *handle_data;
 	MonoW32HandleType type;
+	gboolean ret;
 
-	if (!mono_w32handle_lookup_data (handle, &handle_data)) {
+	if (!mono_w32handle_lookup_and_ref_data (handle, &handle_data))
 		return(FALSE);
-	}
 
 	type = handle_data->type;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: testing 0x%x against 0x%x (%d)", __func__,
 		   handle_caps[type], caps, handle_caps[type] & caps);
 
-	return((handle_caps[type] & caps) != 0);
+	ret = (handle_caps[type] & caps) != 0;
+
+	mono_w32handle_unref (handle);
+
+	return ret;
 }
 
 static void (*_wapi_handle_ops_get_close_func (MonoW32HandleType type))(gpointer, gpointer)
@@ -704,15 +736,16 @@ mono_w32handle_ops_signal (gpointer handle)
 	MonoW32HandleBase *handle_data;
 	MonoW32HandleType type;
 
-	if (!mono_w32handle_lookup_data (handle, &handle_data)) {
+	if (!mono_w32handle_lookup_and_ref_data (handle, &handle_data))
 		return;
-	}
 
 	type = handle_data->type;
 
 	if (handle_ops[type] != NULL && handle_ops[type]->signal != NULL) {
 		handle_ops[type]->signal (handle, handle_data->specific);
 	}
+
+	mono_w32handle_unref (handle);
 }
 
 static gboolean
@@ -720,18 +753,22 @@ mono_w32handle_ops_own (gpointer handle, gboolean *abandoned)
 {
 	MonoW32HandleBase *handle_data;
 	MonoW32HandleType type;
+	gboolean ret;
 
-	if (!mono_w32handle_lookup_data (handle, &handle_data)) {
+	if (!mono_w32handle_lookup_and_ref_data (handle, &handle_data))
 		return(FALSE);
-	}
 
 	type = handle_data->type;
 
 	if (handle_ops[type] != NULL && handle_ops[type]->own_handle != NULL) {
-		return(handle_ops[type]->own_handle (handle, abandoned));
+		ret = handle_ops [type]->own_handle (handle, abandoned);
 	} else {
-		return(FALSE);
+		ret = FALSE;
 	}
+
+	mono_w32handle_unref (handle);
+
+	return ret;
 }
 
 static gboolean
@@ -739,18 +776,21 @@ mono_w32handle_ops_isowned (gpointer handle)
 {
 	MonoW32HandleBase *handle_data;
 	MonoW32HandleType type;
+	gboolean ret;
 
-	if (!mono_w32handle_lookup_data (handle, &handle_data)) {
-		return(FALSE);
-	}
+	if (!mono_w32handle_lookup_and_ref_data (handle, &handle_data))
+		return FALSE;
 
 	type = handle_data->type;
 
-	if (handle_ops[type] != NULL && handle_ops[type]->is_owned != NULL) {
-		return(handle_ops[type]->is_owned (handle));
-	} else {
-		return(FALSE);
-	}
+	if (handle_ops[type] != NULL && handle_ops[type]->is_owned != NULL)
+		ret = handle_ops[type]->is_owned (handle);
+	else
+		ret = FALSE;
+
+	mono_w32handle_unref (handle);
+
+	return ret;
 }
 
 static MonoW32HandleWaitRet
@@ -758,19 +798,22 @@ mono_w32handle_ops_specialwait (gpointer handle, guint32 timeout, gboolean *aler
 {
 	MonoW32HandleBase *handle_data;
 	MonoW32HandleType type;
+	MonoW32HandleWaitRet ret;
 
-	if (!mono_w32handle_lookup_data (handle, &handle_data)) {
+	if (!mono_w32handle_lookup_and_ref_data (handle, &handle_data))
 		return MONO_W32HANDLE_WAIT_RET_FAILED;
-	}
 
 	type = handle_data->type;
 
-	if (handle_ops[type] != NULL &&
-	    handle_ops[type]->special_wait != NULL) {
-		return(handle_ops[type]->special_wait (handle, timeout, alerted));
+	if (handle_ops[type] != NULL && handle_ops[type]->special_wait != NULL) {
+		ret = handle_ops[type]->special_wait (handle, timeout, alerted);
 	} else {
-		return MONO_W32HANDLE_WAIT_RET_FAILED;
+		ret = MONO_W32HANDLE_WAIT_RET_FAILED;
 	}
+
+	mono_w32handle_unref (handle);
+
+	return ret;
 }
 
 static void
@@ -779,16 +822,15 @@ mono_w32handle_ops_prewait (gpointer handle)
 	MonoW32HandleBase *handle_data;
 	MonoW32HandleType type;
 
-	if (!mono_w32handle_lookup_data (handle, &handle_data)) {
+	if (!mono_w32handle_lookup_and_ref_data (handle, &handle_data))
 		return;
-	}
 
 	type = handle_data->type;
 
-	if (handle_ops[type] != NULL &&
-	    handle_ops[type]->prewait != NULL) {
+	if (handle_ops[type] != NULL && handle_ops[type]->prewait != NULL)
 		handle_ops[type]->prewait (handle);
-	}
+
+	mono_w32handle_unref (handle);
 }
 
 static void
@@ -973,7 +1015,7 @@ mono_w32handle_timedwait_signal_handle (gpointer handle, guint32 timeout, gboole
 	gpointer handle_duplicate;
 	int res;
 
-	if (!mono_w32handle_lookup_data (handle, &handle_data))
+	if (!mono_w32handle_lookup_and_ref_data (handle, &handle_data))
 		g_error ("cannot wait on unknown handle %p", handle);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: waiting for %p (type %s)", __func__, handle,
@@ -986,6 +1028,7 @@ mono_w32handle_timedwait_signal_handle (gpointer handle, guint32 timeout, gboole
 		mono_thread_info_install_interrupt (signal_handle_and_unref, handle_duplicate = mono_w32handle_duplicate (handle), alerted);
 		if (*alerted) {
 			mono_w32handle_close (handle_duplicate);
+			mono_w32handle_unref (handle);
 			return 0;
 		}
 	}
@@ -999,6 +1042,8 @@ mono_w32handle_timedwait_signal_handle (gpointer handle, guint32 timeout, gboole
 			mono_w32handle_close (handle_duplicate);
 		}
 	}
+
+	mono_w32handle_unref (handle);
 
 	return res;
 }
