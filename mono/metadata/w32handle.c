@@ -623,7 +623,7 @@ spin (guint32 ms)
 }
 
 static void
-mono_w32handle_lock_handles (MonoW32Handle **handles_data, gsize numhandles)
+mono_w32handle_lock_handles (MonoW32Handle **handles_data, gsize nhandles)
 {
 	gint i, j, iter = 0;
 #ifndef HOST_WIN32
@@ -632,7 +632,7 @@ mono_w32handle_lock_handles (MonoW32Handle **handles_data, gsize numhandles)
 
 	/* Lock all the handles, with backoff */
 again:
-	for (i = 0; i < numhandles; i++) {
+	for (i = 0; i < nhandles; i++) {
 		if (!mono_w32handle_trylock (handles_data [i])) {
 			/* Bummer */
 
@@ -664,11 +664,11 @@ again:
 }
 
 static void
-mono_w32handle_unlock_handles (MonoW32Handle **handles_data, gsize numhandles)
+mono_w32handle_unlock_handles (MonoW32Handle **handles_data, gsize nhandles)
 {
 	gint i;
 
-	for (i = numhandles - 1; i >= 0; i--)
+	for (i = nhandles - 1; i >= 0; i--)
 		mono_w32handle_unlock (handles_data [i]);
 }
 
