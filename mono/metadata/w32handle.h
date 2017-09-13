@@ -144,9 +144,6 @@ mono_w32handle_dump (void);
 void
 mono_w32handle_register_capabilities (MonoW32Type type, MonoW32HandleCapability caps);
 
-gboolean
-mono_w32handle_test_capabilities (gpointer handle, MonoW32HandleCapability caps);
-
 void
 mono_w32handle_set_signal_state (MonoW32Handle *handle_data, gboolean state, gboolean broadcast);
 

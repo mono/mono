@@ -549,32 +549,19 @@ mono_w32handle_register_ops (MonoW32Type type, MonoW32HandleOps *ops)
 	handle_ops [type] = ops;
 }
 
-void mono_w32handle_register_capabilities (MonoW32Type type,
-					 MonoW32HandleCapability caps)
+void
+mono_w32handle_register_capabilities (MonoW32Type type, MonoW32HandleCapability caps)
 {
 	handle_caps[type] = caps;
 }
 
-gboolean mono_w32handle_test_capabilities (gpointer handle,
-					 MonoW32HandleCapability caps)
+static gboolean
+mono_w32handle_test_capabilities (MonoW32Handle *handle_data, MonoW32HandleCapability caps)
 {
-	MonoW32Handle *handle_data;
-	MonoW32Type type;
-	gboolean ret;
-
-	if (!mono_w32handle_lookup_and_ref (handle, &handle_data))
-		return(FALSE);
-
-	type = handle_data->type;
-
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: testing 0x%x against 0x%x (%d)", __func__,
-		   handle_caps[type], caps, handle_caps[type] & caps);
+		   handle_caps[handle_data->type], caps, handle_caps[handle_data->type] & caps);
 
-	ret = (handle_caps[type] & caps) != 0;
-
-	mono_w32handle_unref (handle);
-
-	return ret;
+	return (handle_caps [handle_data->type] & caps) != 0;
 }
 
 static void (*_wapi_handle_ops_get_close_func (MonoW32Type type))(gpointer, gpointer)
@@ -946,7 +933,7 @@ mono_w32handle_wait_one (gpointer handle, guint32 timeout, gboolean alertable)
 	if (!mono_w32handle_lookup_and_ref (handle, &handle_data))
 		return MONO_W32HANDLE_WAIT_RET_FAILED;
 
-	if (mono_w32handle_test_capabilities (handle, MONO_W32HANDLE_CAP_SPECIAL_WAIT)) {
+	if (mono_w32handle_test_capabilities (handle_data, MONO_W32HANDLE_CAP_SPECIAL_WAIT)) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p has special wait",
 			__func__, handle);
 
@@ -954,7 +941,7 @@ mono_w32handle_wait_one (gpointer handle, guint32 timeout, gboolean alertable)
 		return mono_w32handle_ops_specialwait (handle, timeout, alertable ? &alerted : NULL);
 	}
 
-	if (!mono_w32handle_test_capabilities (handle, MONO_W32HANDLE_CAP_WAIT)) {
+	if (!mono_w32handle_test_capabilities (handle_data, MONO_W32HANDLE_CAP_WAIT)) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p can't be waited for",
 			__func__, handle);
 
@@ -964,7 +951,7 @@ mono_w32handle_wait_one (gpointer handle, guint32 timeout, gboolean alertable)
 
 	mono_w32handle_lock_handle (handle_data);
 
-	if (mono_w32handle_test_capabilities (handle, MONO_W32HANDLE_CAP_OWN)) {
+	if (mono_w32handle_test_capabilities (handle_data, MONO_W32HANDLE_CAP_OWN)) {
 		if (own_if_owned (handle, handle_data, &abandoned)) {
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p already owned",
 				__func__, handle);
@@ -1062,8 +1049,8 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 	}
 
 	for (i = 0; i < nhandles; ++i) {
-		if (!mono_w32handle_test_capabilities (handles[i], MONO_W32HANDLE_CAP_WAIT)
-			 && !mono_w32handle_test_capabilities (handles[i], MONO_W32HANDLE_CAP_SPECIAL_WAIT))
+		if (!mono_w32handle_test_capabilities (handles_data[i], MONO_W32HANDLE_CAP_WAIT)
+			 && !mono_w32handle_test_capabilities (handles_data[i], MONO_W32HANDLE_CAP_SPECIAL_WAIT))
 		{
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p can't be waited for",
 				   __func__, handles [i]);
@@ -1112,7 +1099,7 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 		mono_w32handle_lock_handles (handles_data, nhandles);
 
 		for (i = 0; i < nhandles; i++) {
-			if ((mono_w32handle_test_capabilities (handles [i], MONO_W32HANDLE_CAP_OWN) && mono_w32handle_ops_isowned (handles [i]))
+			if ((mono_w32handle_test_capabilities (handles_data [i], MONO_W32HANDLE_CAP_OWN) && mono_w32handle_ops_isowned (handles [i]))
 				 || mono_w32handle_issignalled (handles_data [i]))
 			{
 				count ++;
@@ -1150,7 +1137,7 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 		for (i = 0; i < nhandles; i++) {
 			mono_w32handle_ops_prewait (handles[i]);
 
-			if (mono_w32handle_test_capabilities (handles [i], MONO_W32HANDLE_CAP_SPECIAL_WAIT)
+			if (mono_w32handle_test_capabilities (handles_data [i], MONO_W32HANDLE_CAP_SPECIAL_WAIT)
 				 && !mono_w32handle_issignalled (handles_data [i]))
 			{
 				mono_w32handle_ops_specialwait (handles [i], 0, alertable ? &alerted : NULL);
@@ -1238,18 +1225,18 @@ mono_w32handle_signal_and_wait (gpointer signal_handle, gpointer wait_handle, gu
 		return MONO_W32HANDLE_WAIT_RET_FAILED;
 	}
 
-	if (!mono_w32handle_test_capabilities (signal_handle, MONO_W32HANDLE_CAP_SIGNAL)) {
+	if (!mono_w32handle_test_capabilities (signal_handle_data, MONO_W32HANDLE_CAP_SIGNAL)) {
 		mono_w32handle_unref (wait_handle);
 		mono_w32handle_unref (signal_handle);
 		return MONO_W32HANDLE_WAIT_RET_FAILED;
 	}
-	if (!mono_w32handle_test_capabilities (wait_handle, MONO_W32HANDLE_CAP_WAIT)) {
+	if (!mono_w32handle_test_capabilities (wait_handle_data, MONO_W32HANDLE_CAP_WAIT)) {
 		mono_w32handle_unref (wait_handle);
 		mono_w32handle_unref (signal_handle);
 		return MONO_W32HANDLE_WAIT_RET_FAILED;
 	}
 
-	if (mono_w32handle_test_capabilities (wait_handle, MONO_W32HANDLE_CAP_SPECIAL_WAIT)) {
+	if (mono_w32handle_test_capabilities (wait_handle_data, MONO_W32HANDLE_CAP_SPECIAL_WAIT)) {
 		g_warning ("%s: handle %p has special wait, implement me!!", __func__, wait_handle);
 		mono_w32handle_unref (wait_handle);
 		mono_w32handle_unref (signal_handle);
@@ -1265,7 +1252,7 @@ mono_w32handle_signal_and_wait (gpointer signal_handle, gpointer wait_handle, gu
 
 	mono_w32handle_unlock_handle (signal_handle_data);
 
-	if (mono_w32handle_test_capabilities (wait_handle, MONO_W32HANDLE_CAP_OWN)) {
+	if (mono_w32handle_test_capabilities (wait_handle_data, MONO_W32HANDLE_CAP_OWN)) {
 		if (own_if_owned (wait_handle, wait_handle_data, &abandoned)) {
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p already owned",
 				__func__, wait_handle);
