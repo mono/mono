@@ -1,6 +1,0 @@
-#!/bin/sh
-. $(dirname $0)/mono-env
-
-US=$MONO_PATH/us.exe
-
-exec $MONO $MONO_OPTIONS --runtime=v2.0.50727 $US "$@"

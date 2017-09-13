@@ -1,6 +1,0 @@
-#!/bin/sh
-. $(dirname $0)/mono-env
-
-BOOC=$(dirname $0)/booc.exe
-
-exec $MONO $MONO_OPTIONS $BOOC "$@"
