@@ -41,7 +41,7 @@ sub Booc45
 {
 	my $commandLine = shift;
 	
-	system("$monoprefix45/booc -debug- $commandLine") eq 0 or die("booc failed to execute: $monoprefix45/booc -debug- $commandLine\n");
+	system("$monoprefix/bin/mono $monoprefix45/booc.exe -debug- $commandLine") eq 0 or die("booc failed to execute: $monoprefix/bin/booc -debug- $commandLine\n");
 }
 
 sub BuildUnityScriptFor45
