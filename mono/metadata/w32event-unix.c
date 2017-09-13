@@ -178,6 +178,7 @@ mono_w32event_reset (gpointer handle)
 
 static gpointer event_handle_create (MonoW32HandleEvent *event_handle, MonoW32Type type, gboolean manual, gboolean initial)
 {
+	MonoW32Handle *handle_data;
 	gpointer handle;
 
 	event_handle->manual = manual;
@@ -191,15 +192,23 @@ static gpointer event_handle_create (MonoW32HandleEvent *event_handle, MonoW32Ty
 		return NULL;
 	}
 
-	mono_w32handle_lock_handle (handle);
+	if (!mono_w32handle_lookup_and_ref (handle, &handle_data))
+		g_error ("%s: unkown handle %p", __func__, handle);
+
+	if (handle_data->type != type)
+		g_error ("%s: unknown event handle %p", __func__, handle);
+
+	mono_w32handle_lock_handle (handle_data);
 
 	if (initial)
 		mono_w32handle_set_signal_state (handle, TRUE, FALSE);
 
-	mono_w32handle_unlock_handle (handle);
+	mono_w32handle_unlock_handle (handle_data);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: created %s handle %p",
 		__func__, mono_w32handle_get_typename (type), handle);
+
+	mono_w32handle_unref (handle);
 
 	return handle;
 }
@@ -302,7 +311,7 @@ ves_icall_System_Threading_Events_SetEvent_internal (gpointer handle)
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: setting %s handle %p",
 		__func__, mono_w32handle_get_typename (handle_data->type), handle);
 
-	mono_w32handle_lock_handle (handle);
+	mono_w32handle_lock_handle (handle_data);
 
 	if (!event_handle->manual) {
 		event_handle->set_count = 1;
@@ -311,7 +320,7 @@ ves_icall_System_Threading_Events_SetEvent_internal (gpointer handle)
 		mono_w32handle_set_signal_state (handle, TRUE, TRUE);
 	}
 
-	mono_w32handle_unlock_handle (handle);
+	mono_w32handle_unlock_handle (handle_data);
 
 	mono_w32handle_unref (handle);
 	return TRUE;
@@ -343,7 +352,7 @@ ves_icall_System_Threading_Events_ResetEvent_internal (gpointer handle)
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: resetting %s handle %p",
 		__func__, mono_w32handle_get_typename (handle_data->type), handle);
 
-	mono_w32handle_lock_handle (handle);
+	mono_w32handle_lock_handle (handle_data);
 
 	if (!mono_w32handle_issignalled (handle_data)) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: no need to reset %s handle %p",
@@ -357,7 +366,7 @@ ves_icall_System_Threading_Events_ResetEvent_internal (gpointer handle)
 
 	event_handle->set_count = 0;
 
-	mono_w32handle_unlock_handle (handle);
+	mono_w32handle_unlock_handle (handle_data);
 
 	mono_w32handle_unref (handle);
 	return TRUE;
