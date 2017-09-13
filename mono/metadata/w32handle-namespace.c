@@ -60,31 +60,29 @@ typedef struct {
 } NamespaceSearchHandleData;
 
 static gboolean
-mono_w32handle_namespace_search_handle_callback (gpointer handle, gpointer data, gpointer user_data)
+mono_w32handle_namespace_search_handle_callback (gpointer handle, MonoW32Handle *handle_data, gpointer user_data)
 {
 	NamespaceSearchHandleData *search_data;
-	MonoW32Type type;
 	MonoW32HandleNamespace *sharedns;
 
-	type = mono_w32handle_get_type (handle);
-	if (!has_namespace (type))
+	if (!has_namespace (handle_data->type))
 		return FALSE;
 
 	search_data = (NamespaceSearchHandleData*) user_data;
 
-	switch (type) {
-	case MONO_W32TYPE_NAMEDMUTEX: sharedns = mono_w32mutex_get_namespace ((MonoW32HandleNamedMutex*) data); break;
-	case MONO_W32TYPE_NAMEDSEM:   sharedns = mono_w32semaphore_get_namespace ((MonoW32HandleNamedSemaphore*) data); break;
-	case MONO_W32TYPE_NAMEDEVENT: sharedns = mono_w32event_get_namespace ((MonoW32HandleNamedEvent*) data); break;
+	switch (handle_data->type) {
+	case MONO_W32TYPE_NAMEDMUTEX: sharedns = mono_w32mutex_get_namespace ((MonoW32HandleNamedMutex*) handle_data->specific); break;
+	case MONO_W32TYPE_NAMEDSEM:   sharedns = mono_w32semaphore_get_namespace ((MonoW32HandleNamedSemaphore*) handle_data->specific); break;
+	case MONO_W32TYPE_NAMEDEVENT: sharedns = mono_w32event_get_namespace ((MonoW32HandleNamedEvent*) handle_data->specific); break;
 	default:
 		g_assert_not_reached ();
 	}
 
 	if (strcmp (sharedns->name, search_data->name) == 0) {
-		if (type != search_data->type) {
+		if (handle_data->type != search_data->type) {
 			/* Its the wrong type, so fail now */
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: handle %p matches name but is wrong type: %s",
-				__func__, handle, mono_w32handle_get_typename (type));
+				__func__, handle, mono_w32handle_get_typename (handle_data->type));
 			search_data->ret = INVALID_HANDLE_VALUE;
 		} else {
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: handle %p matches name and type",

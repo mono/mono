@@ -912,24 +912,24 @@ typedef struct {
 } GetProcessForeachData;
 
 static gboolean
-get_process_foreach_callback (gpointer handle, gpointer handle_specific, gpointer user_data)
+get_process_foreach_callback (gpointer handle, MonoW32Handle *handle_data, gpointer user_data)
 {
 	GetProcessForeachData *foreach_data;
 	MonoW32HandleProcess *process_handle;
 	pid_t pid;
 
-	foreach_data = (GetProcessForeachData*) user_data;
-
-	if (mono_w32handle_get_type (handle) != MONO_W32TYPE_PROCESS)
+	if (handle_data->type != MONO_W32TYPE_PROCESS)
 		return FALSE;
 
-	process_handle = (MonoW32HandleProcess*) handle_specific;
+	process_handle = (MonoW32HandleProcess*) handle_data->specific;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: looking at process %d", __func__, process_handle->pid);
 
 	pid = process_handle->pid;
 	if (pid == 0)
 		return FALSE;
+
+	foreach_data = (GetProcessForeachData*) user_data;
 
 	/* It's possible to have more than one process handle with the
 	 * same pid, but only the one running process can be

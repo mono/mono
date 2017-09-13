@@ -448,7 +448,7 @@ mono_w32handle_lookup_and_ref (gpointer handle, MonoW32Handle **handle_data)
 }
 
 void
-mono_w32handle_foreach (gboolean (*on_each)(gpointer handle, gpointer data, gpointer user_data), gpointer user_data)
+mono_w32handle_foreach (gboolean (*on_each)(gpointer handle, MonoW32Handle *handle_data, gpointer user_data), gpointer user_data)
 {
 	GPtrArray *handles_to_destroy;
 	guint32 i, k;
@@ -478,7 +478,7 @@ mono_w32handle_foreach (gboolean (*on_each)(gpointer handle, gpointer data, gpoi
 				continue;
 			}
 
-			finished = on_each (handle, handle_data->specific, user_data);
+			finished = on_each (handle, handle_data, user_data);
 
 			/* we might have to destroy the handle here, as
 			 * it could have been unrefed in another thread */
@@ -1011,13 +1011,8 @@ mono_w32handle_timedwait_signal_handle (gpointer handle, guint32 timeout, gboole
 }
 
 static gboolean
-dump_callback (gpointer handle, gpointer handle_specific, gpointer user_data)
+dump_callback (gpointer handle, MonoW32Handle *handle_data, gpointer user_data)
 {
-	MonoW32Handle *handle_data;
-
-	if (!mono_w32handle_lookup_data (handle, &handle_data))
-		g_error ("cannot dump unknown handle %p", handle);
-
 	g_print ("%p [%7s] signalled: %5s ref: %3d ",
 		handle, mono_w32handle_ops_typename (handle_data->type), handle_data->signalled ? "true" : "false", handle_data->ref - 1 /* foreach increase ref by 1 */);
 	mono_w32handle_ops_details (handle, handle_data);

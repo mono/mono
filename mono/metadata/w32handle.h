@@ -136,7 +136,7 @@ void
 mono_w32handle_unref (gpointer handle);
 
 void
-mono_w32handle_foreach (gboolean (*on_each)(gpointer handle, gpointer data, gpointer user_data), gpointer user_data);
+mono_w32handle_foreach (gboolean (*on_each)(gpointer handle, MonoW32Handle *handle_data, gpointer user_data), gpointer user_data);
 
 void
 mono_w32handle_dump (void);
