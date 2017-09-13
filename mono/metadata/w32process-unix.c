@@ -586,9 +586,8 @@ process_typesize (void)
 }
 
 static MonoW32HandleWaitRet
-process_wait (gpointer handle, guint32 timeout, gboolean *alerted)
+process_wait (gpointer handle, MonoW32Handle *handle_data, guint32 timeout, gboolean *alerted)
 {
-	MonoW32Handle *handle_data;
 	MonoW32HandleProcess *process_handle;
 	pid_t pid G_GNUC_UNUSED, ret;
 	int status;
@@ -600,25 +599,11 @@ process_wait (gpointer handle, guint32 timeout, gboolean *alerted)
 	if (alerted)
 		*alerted = FALSE;
 
-	if (!mono_w32handle_lookup_and_ref (handle, &handle_data)) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: unknown handle %p", __func__, handle);
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return MONO_W32HANDLE_WAIT_RET_FAILED;
-	}
-
-	if (handle_data->type != MONO_W32TYPE_PROCESS) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: unknown process handle %p", __func__, handle);
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		mono_w32handle_unref (handle);
-		return FALSE;
-	}
-
 	process_handle = (MonoW32HandleProcess*) handle_data->specific;
 
 	if (process_handle->exited) {
 		/* We've already done this one */
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): Process already exited", __func__, handle, timeout);
-		mono_w32handle_unref (handle);
 		return MONO_W32HANDLE_WAIT_RET_SUCCESS_0;
 	}
 
@@ -626,7 +611,6 @@ process_wait (gpointer handle, guint32 timeout, gboolean *alerted)
 
 	if (pid == mono_process_current_pid ()) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): waiting on current process", __func__, handle, timeout);
-		mono_w32handle_unref (handle);
 		return MONO_W32HANDLE_WAIT_RET_TIMEOUT;
 	}
 
@@ -642,12 +626,10 @@ process_wait (gpointer handle, guint32 timeout, gboolean *alerted)
 			mono_w32handle_set_signal_state (handle, TRUE, TRUE);
 
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): non-child process is not alive anymore (2)", __func__, handle, timeout);
-			mono_w32handle_unref (handle);
 			return MONO_W32HANDLE_WAIT_RET_SUCCESS_0;
 		}
 
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): non-child process wait failed, error : %s (%d))", __func__, handle, timeout, g_strerror (errno), errno);
-		mono_w32handle_unref (handle);
 		return MONO_W32HANDLE_WAIT_RET_FAILED;
 	}
 
@@ -678,21 +660,18 @@ process_wait (gpointer handle, guint32 timeout, gboolean *alerted)
 
 		if (ret == MONO_SEM_TIMEDWAIT_RET_TIMEDOUT) {
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): wait timeout (timeout = 0)", __func__, handle, timeout);
-			mono_w32handle_unref (handle);
 			return MONO_W32HANDLE_WAIT_RET_TIMEOUT;
 		}
 
 		now = mono_msec_ticks ();
 		if (now - start >= timeout) {
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): wait timeout", __func__, handle, timeout);
-			mono_w32handle_unref (handle);
 			return MONO_W32HANDLE_WAIT_RET_TIMEOUT;
 		}
 
 		if (alerted && ret == MONO_SEM_TIMEDWAIT_RET_ALERTED) {
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): wait alerted", __func__, handle, timeout);
 			*alerted = TRUE;
-			mono_w32handle_unref (handle);
 			return MONO_W32HANDLE_WAIT_RET_ALERTED;
 		}
 	}
@@ -714,8 +693,6 @@ process_wait (gpointer handle, guint32 timeout, gboolean *alerted)
 		   __func__, handle, timeout, process_handle->pid, process_handle->exitstatus);
 
 	mono_w32handle_set_signal_state (handle, TRUE, TRUE);
-
-	mono_w32handle_unref (handle);
 
 	return MONO_W32HANDLE_WAIT_RET_SUCCESS_0;
 }

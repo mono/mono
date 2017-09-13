@@ -80,7 +80,7 @@ typedef struct
 	 * instead of using the normal handle signal mechanism.
 	 * Returns the mono_w32handle_wait_one return code.
 	 */
-	MonoW32HandleWaitRet (*special_wait)(gpointer handle, guint32 timeout, gboolean *alerted);
+	MonoW32HandleWaitRet (*special_wait)(gpointer handle, MonoW32Handle *handle_data, guint32 timeout, gboolean *alerted);
 
 	/* Called by mono_w32handle_wait_one and mono_w32handle_wait_multiple,
 	 * if the handle in question needs some preprocessing before the
