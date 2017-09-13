@@ -608,26 +608,12 @@ mono_w32handle_ops_isowned (gpointer handle, MonoW32Handle *handle_data)
 }
 
 static MonoW32HandleWaitRet
-mono_w32handle_ops_specialwait (gpointer handle, guint32 timeout, gboolean *alerted)
+mono_w32handle_ops_specialwait (gpointer handle, MonoW32Handle *handle_data, guint32 timeout, gboolean *alerted)
 {
-	MonoW32Handle *handle_data;
-	MonoW32Type type;
-	MonoW32HandleWaitRet ret;
+	if (handle_ops [handle_data->type] && handle_ops [handle_data->type]->special_wait)
+		return handle_ops [handle_data->type]->special_wait (handle, handle_data, timeout, alerted);
 
-	if (!mono_w32handle_lookup_and_ref (handle, &handle_data))
-		return MONO_W32HANDLE_WAIT_RET_FAILED;
-
-	type = handle_data->type;
-
-	if (handle_ops[type] != NULL && handle_ops[type]->special_wait != NULL) {
-		ret = handle_ops[type]->special_wait (handle, handle_data, timeout, alerted);
-	} else {
-		ret = MONO_W32HANDLE_WAIT_RET_FAILED;
-	}
-
-	mono_w32handle_unref (handle);
-
-	return ret;
+	return MONO_W32HANDLE_WAIT_RET_FAILED;
 }
 
 static void
@@ -899,7 +885,7 @@ mono_w32handle_wait_one (gpointer handle, guint32 timeout, gboolean alertable)
 			__func__, handle);
 
 		mono_w32handle_unref (handle);
-		return mono_w32handle_ops_specialwait (handle, timeout, alertable ? &alerted : NULL);
+		return mono_w32handle_ops_specialwait (handle, handle_data, timeout, alertable ? &alerted : NULL);
 	}
 
 	if (!mono_w32handle_test_capabilities (handle_data, MONO_W32HANDLE_CAP_WAIT)) {
@@ -1101,7 +1087,7 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 			if (mono_w32handle_test_capabilities (handles_data [i], MONO_W32HANDLE_CAP_SPECIAL_WAIT)
 				 && !mono_w32handle_issignalled (handles_data [i]))
 			{
-				mono_w32handle_ops_specialwait (handles [i], 0, alertable ? &alerted : NULL);
+				mono_w32handle_ops_specialwait (handles [i], handles_data [i], 0, alertable ? &alerted : NULL);
 			}
 		}
 
