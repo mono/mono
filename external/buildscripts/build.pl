@@ -1460,6 +1460,7 @@ if ($artifact)
 
 		print(">>> Cleaning $distdir/lib\n");
 		system("rm -rf $distdir/lib");
+		system("mkdir -p $distdir/lib");
 
 		print(">>> Creating normal profile artifacts...\n");
 		system("cp -R $addtoresultsdistdir/. $distdir/") eq 0 or die ("Failed copying $addtoresultsdistdir to $distdir\n");
