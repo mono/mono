@@ -52,6 +52,7 @@
 #include "mono/utils/mono-hwcap.h"
 #include "mono/utils/mono-logger-internals.h"
 #include "mono/metadata/w32handle.h"
+#include "mono/metadata/callspec.h"
 
 #include "mini.h"
 #include "jit.h"
