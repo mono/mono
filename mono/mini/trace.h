@@ -24,7 +24,7 @@ typedef struct {
 	void *data, *data2;
 } MonoTraceOperation;
 
-struct MonoTraceSpec {
+struct MonoCallSpec {
 	int len;
 	gboolean enabled;
 	MonoTraceOperation *ops;

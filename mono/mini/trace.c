@@ -33,14 +33,14 @@
 #  define fprintf(__ignore, ...) g_log ("mono-gc", G_LOG_LEVEL_MESSAGE, __VA_ARGS__)
 #endif
 
-static MonoTraceSpec trace_spec;
+static MonoCallSpec trace_spec;
 
 static MonoAssembly *prog_assembly;
 
 static volatile gint32 output_lock = 0;
 
 gboolean
-mono_callspec_eval_exception (MonoClass *klass, MonoTraceSpec *spec)
+mono_callspec_eval_exception (MonoClass *klass, MonoCallSpec *spec)
 {
 	int include = 0;
 	int i;
@@ -78,7 +78,7 @@ gboolean mono_trace_eval_exception (MonoClass *klass)
 	return mono_callspec_eval_exception (klass, &trace_spec);
 }
 
-gboolean mono_callspec_eval (MonoMethod *method, const MonoTraceSpec *spec)
+gboolean mono_callspec_eval (MonoMethod *method, const MonoCallSpec *spec)
 {
 	int include = 0;
 	int i;
@@ -243,7 +243,7 @@ static int get_token (char **in, char **extra)
 	return TOKEN_ERROR;
 }
 
-static int get_spec (char **in, MonoTraceSpec *spec)
+static int get_spec (char **in, MonoCallSpec *spec)
 {
 	int n = spec->len;
 	char *extra = NULL;
@@ -319,7 +319,7 @@ out:
 	return token;
 }
 
-gboolean mono_callspec_parse (const char *options, MonoTraceSpec *spec)
+gboolean mono_callspec_parse (const char *options, MonoCallSpec *spec)
 {
 	char *p = (char*)options;
 	int size = 1;
@@ -350,7 +350,7 @@ gboolean mono_callspec_parse (const char *options, MonoTraceSpec *spec)
 	return TRUE;
 }
 
-void mono_callspec_cleanup (MonoTraceSpec *spec)
+void mono_callspec_cleanup (MonoCallSpec *spec)
 {
 	if (spec->ops != NULL) {
 		g_free (spec->ops);
@@ -358,7 +358,7 @@ void mono_callspec_cleanup (MonoTraceSpec *spec)
 	memset (spec, 0, sizeof (*spec));
 }
 
-MonoTraceSpec *mono_trace_set_options (const char *options)
+MonoCallSpec *mono_trace_set_options (const char *options)
 {
 	if (!mono_callspec_parse (options, &trace_spec))
 		return NULL;

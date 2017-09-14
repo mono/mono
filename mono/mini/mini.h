@@ -537,9 +537,9 @@ typedef struct MonoMethodVar MonoMethodVar;
 typedef struct MonoBasicBlock MonoBasicBlock;
 typedef struct MonoLMF MonoLMF;
 typedef struct MonoSpillInfo MonoSpillInfo;
-typedef struct MonoTraceSpec MonoTraceSpec;
+typedef struct MonoCallSpec MonoCallSpec;
 
-extern MonoTraceSpec *mono_jit_trace_calls;
+extern MonoCallSpec *mono_jit_trace_calls;
 extern gboolean mono_break_on_exc;
 extern int mono_exc_esp_offset;
 extern gboolean mono_compile_aot;
@@ -2993,14 +2993,14 @@ MONO_API gboolean mono_breakpoint_clean_code (guint8 *method_start, guint8 *code
 
 /* Tracing */
 MONO_PROFILER_API gboolean mono_callspec_parse		(const char *options,
-							 MonoTraceSpec *spec);
-MONO_PROFILER_API void     mono_callspec_cleanup	(MonoTraceSpec *spec);
+							 MonoCallSpec *spec);
+MONO_PROFILER_API void     mono_callspec_cleanup	(MonoCallSpec *spec);
 MONO_PROFILER_API gboolean mono_callspec_eval_exception	(MonoClass *klass,
-							 MonoTraceSpec *spec);
+							 MonoCallSpec *spec);
 MONO_PROFILER_API gboolean mono_callspec_eval		(MonoMethod *method,
-							 const MonoTraceSpec *spec);
+							 const MonoCallSpec *spec);
 
-MonoTraceSpec *mono_trace_set_options           (const char *options);
+MonoCallSpec *mono_trace_set_options           (const char *options);
 void           mono_trace_set_assembly          (MonoAssembly *assembly);
 gboolean       mono_trace_eval                  (MonoMethod *method);
 
