@@ -1,0 +1,47 @@
+From 066a39a0ccd98222a0e372a443e59e28182def50 Mon Sep 17 00:00:00 2001
+From: nosami <jasonimison@gmail.com>
+Date: Thu, 14 Sep 2017 18:54:49 +0100
+Subject: [PATCH] Install Microsoft.FSharp.NetSdk.props and targets into Mono
+
+So that F# .NET Core 2.0 templates can be built with VS for Mac and
+Mono msbuild. Re: https://bugzilla.xamarin.com/show_bug.cgi?id=57771
+
+Searching the .NET Core sdk files we see:
+
+/Sdks/Microsoft.NET.Sdk/build/Microsoft.NET.Sdk.FSharp.props:
+
+```
+<FSharpPropsShim Condition = " '$(FSharpPropsShim)' == '' and Exists('$(MSBuildToolsPath)\FSharp\Microsoft.FSharp.NetSdk.props') ">$(MSBuildToolsPath)\FSharp\Microsoft.FSharp.NetSdk.props</FSharpPropsShim>
+
+<FSharpPropsShim Condition = " '$(FSharpPropsShim)' == '' and Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\FSharp\Microsoft.FSharp.NetSdk.props') ">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\FSharp\Microsoft.FSharp.NetSdk.props</FSharpPropsShim>
+
+<Import Condition=" '$(UseBundledFSharpTargets)' == 'true' and
+  Exists('$(FSharpPropsShim)') " Project="$(FSharpPropsShim)" />
+```
+---
+ mono/config.make.in | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/mono/config.make.in b/mono/config.make.in
+index 6249aca46..573717208 100644
+--- a/mono/config.make.in
++++ b/mono/config.make.in
+@@ -194,6 +194,18 @@ install-sdk-lib:
+ 	    $(INSTALL_LIB) $(tmpdir)Microsoft.Portable.FSharp.Targets $(DESTDIR)$(monodir)/xbuild/Microsoft/VisualStudio/v12.0/FSharp/; \
+ 	    $(INSTALL_LIB) $(tmpdir)Microsoft.Portable.FSharp.Targets $(DESTDIR)$(monodir)/xbuild/Microsoft/VisualStudio/v14.0/FSharp/; \
+ 	    $(INSTALL_LIB) $(tmpdir)Microsoft.Portable.FSharp.Targets $(DESTDIR)$(monodir)/xbuild/Microsoft/VisualStudio/v15.0/FSharp/; \
++	    \
++	    $(INSTALL_LIB) $(outdir)Microsoft.FSharp.NetSdk.props $(DESTDIR)$(monodir)/xbuild/Microsoft/VisualStudio/v/FSharp/; \
++	    $(INSTALL_LIB) $(outdir)Microsoft.FSharp.NetSdk.props $(DESTDIR)$(monodir)/xbuild/Microsoft/VisualStudio/v11.0/FSharp/; \
++	    $(INSTALL_LIB) $(outdir)Microsoft.FSharp.NetSdk.props $(DESTDIR)$(monodir)/xbuild/Microsoft/VisualStudio/v12.0/FSharp/; \
++	    $(INSTALL_LIB) $(outdir)Microsoft.FSharp.NetSdk.props $(DESTDIR)$(monodir)/xbuild/Microsoft/VisualStudio/v14.0/FSharp/; \
++	    $(INSTALL_LIB) $(outdir)Microsoft.FSharp.NetSdk.props $(DESTDIR)$(monodir)/xbuild/Microsoft/VisualStudio/v15.0/FSharp/; \
++	    \
++	    $(INSTALL_LIB) $(outdir)Microsoft.FSharp.NetSdk.targets $(DESTDIR)$(monodir)/xbuild/Microsoft/VisualStudio/v/FSharp/; \
++	    $(INSTALL_LIB) $(outdir)Microsoft.FSharp.NetSdk.targets $(DESTDIR)$(monodir)/xbuild/Microsoft/VisualStudio/v11.0/FSharp/; \
++	    $(INSTALL_LIB) $(outdir)Microsoft.FSharp.NetSdk.targets $(DESTDIR)$(monodir)/xbuild/Microsoft/VisualStudio/v12.0/FSharp/; \
++	    $(INSTALL_LIB) $(outdir)Microsoft.FSharp.NetSdk.targets $(DESTDIR)$(monodir)/xbuild/Microsoft/VisualStudio/v14.0/FSharp/; \
++	    $(INSTALL_LIB) $(outdir)Microsoft.FSharp.NetSdk.targets $(DESTDIR)$(monodir)/xbuild/Microsoft/VisualStudio/v15.0/FSharp/; \
+ 	fi
+ 	@if test x-$(outsuffix) = x-net40; then \
+ 	    if test -e $(outdir)$(NAME).dll; then \
