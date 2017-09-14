@@ -24,6 +24,16 @@ namespace MonoTests.System
 			Assert.AreEqual (0, utc.GetAdjustmentRules ().Length);
 		}
 
+		[Test] // Bug-44255
+		public void SystemTimeZoneSerializationTests ()
+		{
+            foreach (var tmz in TimeZoneInfo.GetSystemTimeZones())
+            {
+                var tmzClone = TimeZoneInfo.FromSerializedString(tmz.ToSerializedString());
+				Assert.AreEqual(tmz, tmzClone);
+            }
+		}
+
 		[Test]
 		public void SerializeCustomUtcZoneWithOddNaming ()
 		{

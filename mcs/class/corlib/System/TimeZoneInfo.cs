@@ -1404,7 +1404,8 @@ namespace System
 				}
 				tz = CreateCustomTimeZone (id, baseUtcOffset, id, standardDisplayName);
 			} else {
-				tz = CreateCustomTimeZone (id, baseUtcOffset, id, standardDisplayName, daylightDisplayName, ValidateRules (adjustmentRules).ToArray ());
+				var rules = adjustmentRules.Count == 0 ? null : ValidateRules (adjustmentRules).ToArray ();
+				tz = CreateCustomTimeZone (id, baseUtcOffset, id, standardDisplayName, daylightDisplayName, rules);
 			}
 
 			if (storeTransition && transitions.Count > 0) {
