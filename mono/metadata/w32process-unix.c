@@ -912,7 +912,7 @@ typedef struct {
 } GetProcessForeachData;
 
 static gboolean
-get_process_foreach_callback (gpointer handle, MonoW32Handle *handle_data, gpointer user_data)
+get_process_foreach_callback (MonoW32Handle *handle_data, gpointer user_data)
 {
 	GetProcessForeachData *foreach_data;
 	MonoW32HandleProcess *process_handle;

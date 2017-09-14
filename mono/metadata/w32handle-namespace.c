@@ -60,7 +60,7 @@ typedef struct {
 } NamespaceSearchHandleData;
 
 static gboolean
-mono_w32handle_namespace_search_handle_callback (gpointer handle, MonoW32Handle *handle_data, gpointer user_data)
+mono_w32handle_namespace_search_handle_callback (MonoW32Handle *handle_data, gpointer user_data)
 {
 	NamespaceSearchHandleData *search_data;
 	MonoW32HandleNamespace *sharedns;
@@ -82,11 +82,11 @@ mono_w32handle_namespace_search_handle_callback (gpointer handle, MonoW32Handle 
 		if (handle_data->type != search_data->type) {
 			/* Its the wrong type, so fail now */
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: handle %p matches name but is wrong type: %s",
-				__func__, handle, mono_w32handle_get_typename (handle_data->type));
+				__func__, handle_data, mono_w32handle_get_typename (handle_data->type));
 			search_data->ret = INVALID_HANDLE_VALUE;
 		} else {
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: handle %p matches name and type",
-				__func__, handle);
+				__func__, handle_data);
 
 			/* we do not want the handle to be destroyed before we return it  */
 			search_data->ret = mono_w32handle_duplicate (handle_data);
