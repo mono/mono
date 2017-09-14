@@ -45,6 +45,8 @@ namespace MonoTests.Mono.Data.Tds
     public void CheckNullException() 
     {
 
+    TcpListener Listener = null;
+
 	//set up dummy sql listener, if there is a real sql server on this
 	//machine at that port, in theory this part will fail, but that's ok
 	//becuase something will be listening on the port and that's all we
@@ -53,7 +55,7 @@ namespace MonoTests.Mono.Data.Tds
 	try{
 		IPAddress hostIP =Dns.GetHostEntry("localhost").AddressList[0];
         IPEndPoint ep = new IPEndPoint(hostIP, 1433);
-        TcpListener Listener = new TcpListener (ep);
+        Listener = new TcpListener (ep);
         Listener.Start ();
 	} catch (Exception){
 		//ignore
