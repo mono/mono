@@ -58,21 +58,16 @@ static gboolean shutting_down = FALSE;
 static gboolean
 mono_w32handle_lookup_data (gpointer handle, MonoW32Handle **handle_data)
 {
-	gsize index, offset;
-
 	g_assert (handle_data);
 
-	index = SLOT_INDEX ((gsize) handle);
-	if (index >= SLOT_MAX)
-		return FALSE;
-	if (!private_handles [index])
+	if (handle == INVALID_HANDLE_VALUE)
 		return FALSE;
 
-	offset = SLOT_OFFSET ((gsize) handle);
-	if (private_handles [index][offset].type == MONO_W32TYPE_UNUSED)
+	*handle_data = (MonoW32Handle*) handle;
+
+	if ((*handle_data)->type == MONO_W32TYPE_UNUSED)
 		return FALSE;
 
-	*handle_data = &private_handles [index][offset];
 	return TRUE;
 }
 
@@ -214,8 +209,8 @@ mono_w32handle_ops_typesize (MonoW32Type type);
  * success and 0 on failure.  This is only called from
  * mono_w32handle_new, and scan_mutex must be held.
  */
-static guint32 mono_w32handle_new_internal (MonoW32Type type,
-					  gpointer handle_specific)
+static MonoW32Handle*
+mono_w32handle_new_internal (MonoW32Type type, gpointer handle_specific)
 {
 	guint32 i, k, count;
 	static guint32 last = 0;
@@ -239,24 +234,24 @@ again:
 	for(i = SLOT_INDEX (count); i < private_handles_size; i++) {
 		if (private_handles [i]) {
 			for (k = SLOT_OFFSET (count); k < HANDLE_PER_SLOT; k++) {
-				MonoW32Handle *handle = &private_handles [i][k];
+				MonoW32Handle *handle_data = &private_handles [i][k];
 
-				if(handle->type == MONO_W32TYPE_UNUSED) {
+				if (handle_data->type == MONO_W32TYPE_UNUSED) {
 					last = count + 1;
 
-					g_assert (handle->ref == 0);
+					g_assert (handle_data->ref == 0);
 
-					handle->type = type;
-					handle->signalled = FALSE;
-					handle->ref = 1;
+					handle_data->type = type;
+					handle_data->signalled = FALSE;
+					handle_data->ref = 1;
 
-					mono_os_cond_init (&handle->signal_cond);
-					mono_os_mutex_init (&handle->signal_mutex);
+					mono_os_cond_init (&handle_data->signal_cond);
+					mono_os_mutex_init (&handle_data->signal_mutex);
 
 					if (handle_specific)
-						handle->specific = g_memdup (handle_specific, mono_w32handle_ops_typesize (type));
+						handle_data->specific = g_memdup (handle_specific, mono_w32handle_ops_typesize (type));
 
-					return (count);
+					return handle_data;
 				}
 				count++;
 			}
@@ -272,20 +267,19 @@ again:
 
 	/* Will need to expand the array.  The caller will sort it out */
 
-	return G_MAXUINT32;
+	return GINT_TO_POINTER (-1);
 }
 
 gpointer
 mono_w32handle_new (MonoW32Type type, gpointer handle_specific)
 {
-	guint32 handle_idx;
-	gpointer handle;
+	MonoW32Handle *handle_data;
 
 	g_assert (!shutting_down);
 
 	mono_os_mutex_lock (&scan_mutex);
 
-	while ((handle_idx = mono_w32handle_new_internal (type, handle_specific)) == G_MAXUINT32) {
+	while ((handle_data = mono_w32handle_new_internal (type, handle_specific)) == GINT_TO_POINTER (-1)) {
 		/* Try and expand the array, and have another go */
 		if (private_handles_size >= SLOT_MAX) {
 			mono_os_mutex_unlock (&scan_mutex);
@@ -300,11 +294,9 @@ mono_w32handle_new (MonoW32Type type, gpointer handle_specific)
 
 	mono_os_mutex_unlock (&scan_mutex);
 
-	handle = GUINT_TO_POINTER (handle_idx);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: create %s handle %p", __func__, mono_w32handle_ops_typename (type), handle_data);
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: create %s handle %p", __func__, mono_w32handle_ops_typename (type), handle);
-
-	return(handle);
+	return (gpointer) handle_data;
 }
 
 static gboolean
@@ -369,28 +361,25 @@ mono_w32handle_foreach (gboolean (*on_each)(gpointer handle, MonoW32Handle *hand
 		if (!private_handles [i])
 			continue;
 		for (k = SLOT_OFFSET (0); k < HANDLE_PER_SLOT; k++) {
-			MonoW32Handle *handle_data = NULL;
-			gpointer handle;
+			MonoW32Handle *handle_data;
 			gboolean destroy, finished;
 
 			handle_data = &private_handles [i][k];
 			if (handle_data->type == MONO_W32TYPE_UNUSED)
 				continue;
 
-			handle = GUINT_TO_POINTER (i * HANDLE_PER_SLOT + k);
-
-			if (!mono_w32handle_ref_core (handle, handle_data)) {
+			if (!mono_w32handle_ref_core ((gpointer) handle_data, handle_data)) {
 				/* we are racing with mono_w32handle_unref:
 				 *  the handle ref has been decremented, but it
 				 *  hasn't yet been destroyed. */
 				continue;
 			}
 
-			finished = on_each (handle, handle_data, user_data);
+			finished = on_each ((gpointer) handle_data, handle_data, user_data);
 
 			/* we might have to destroy the handle here, as
 			 * it could have been unrefed in another thread */
-			destroy = mono_w32handle_unref_core (handle, handle_data);
+			destroy = mono_w32handle_unref_core ((gpointer) handle_data, handle_data);
 			if (destroy) {
 				/* we do not destroy it while holding the scan_mutex
 				 * lock, because w32handle_destroy also needs to take
@@ -398,7 +387,7 @@ mono_w32handle_foreach (gboolean (*on_each)(gpointer handle, MonoW32Handle *hand
 				 * to a deadlock */
 				if (!handles_to_destroy)
 					handles_to_destroy = g_ptr_array_sized_new (4);
-				g_ptr_array_add (handles_to_destroy, handle);
+				g_ptr_array_add (handles_to_destroy, (gpointer) handle_data);
 			}
 
 			if (finished)
