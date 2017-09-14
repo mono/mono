@@ -280,7 +280,7 @@ static gpointer mutex_handle_create (MonoW32HandleMutex *mutex_handle, MonoW32Ty
 	mono_w32handle_unlock (handle_data);
 
 	/* Balance mono_w32handle_lookup_and_ref */
-	mono_w32handle_unref (handle);
+	mono_w32handle_unref (handle_data);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: created %s handle %p",
 		__func__, mono_w32handle_get_typename (type), handle);
@@ -380,7 +380,7 @@ ves_icall_System_Threading_Mutex_ReleaseMutex_internal (gpointer handle)
 	if (handle_data->type != MONO_W32TYPE_MUTEX && handle_data->type != MONO_W32TYPE_NAMEDMUTEX) {
 		g_warning ("%s: unknown mutex handle %p", __func__, handle);
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		mono_w32handle_unref (handle);
+		mono_w32handle_unref (handle_data);
 		return FALSE;
 	}
 
@@ -419,7 +419,7 @@ ves_icall_System_Threading_Mutex_ReleaseMutex_internal (gpointer handle)
 	}
 
 	mono_w32handle_unlock (handle_data);
-	mono_w32handle_unref (handle);
+	mono_w32handle_unref (handle_data);
 
 	return ret;
 }
@@ -520,7 +520,7 @@ mono_w32mutex_abandon (void)
 			__func__, mono_w32handle_get_typename (handle_data->type), handle);
 
 		mono_w32handle_unlock (handle_data);
-		mono_w32handle_unref (handle);
+		mono_w32handle_unref (handle_data);
 	}
 
 	g_ptr_array_free (internal->owned_mutexes, TRUE);

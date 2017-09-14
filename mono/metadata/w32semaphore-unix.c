@@ -169,7 +169,7 @@ sem_handle_create (MonoW32HandleSemaphore *sem_handle, MonoW32Type type, gint32 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: created %s handle %p",
 		__func__, mono_w32handle_get_typename (type), handle);
 
-	mono_w32handle_unref (handle);
+	mono_w32handle_unref (handle_data);
 
 	return handle;
 }
@@ -279,7 +279,7 @@ ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (gpointer handle,
 	if (handle_data->type != MONO_W32TYPE_SEM && handle_data->type != MONO_W32TYPE_NAMEDSEM) {
 		g_warning ("%s: unknown sem handle %p", __func__, handle);
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		mono_w32handle_unref (handle);
+		mono_w32handle_unref (handle_data);
 		return FALSE;
 	}
 
@@ -312,7 +312,7 @@ ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (gpointer handle,
 	}
 
 	mono_w32handle_unlock (handle_data);
-	mono_w32handle_unref (handle);
+	mono_w32handle_unref (handle_data);
 
 	return ret;
 }

@@ -493,13 +493,9 @@ w32handle_destroy (MonoW32Handle *handle_data)
 
 /* The handle must not be locked on entry to this function */
 void
-mono_w32handle_unref (gpointer handle)
+mono_w32handle_unref (MonoW32Handle *handle_data)
 {
-	MonoW32Handle *handle_data;
 	gboolean destroy;
-
-	if (!mono_w32handle_lookup_data (handle, &handle_data))
-		g_error ("%s: failed to unref handle %p, unknown handle", __func__, handle);
 
 	destroy = mono_w32handle_unref_core (handle_data);
 	if (destroy)
@@ -753,7 +749,7 @@ signal_handle_and_unref (gpointer handle_duplicate)
 	mono_os_cond_broadcast (cond);
 	mono_os_mutex_unlock (mutex);
 
-	mono_w32handle_unref (handle_duplicate);
+	mono_w32handle_unref (handle_data);
 
 	mono_w32handle_close (handle_duplicate);
 }
@@ -847,7 +843,7 @@ mono_w32handle_wait_one (gpointer handle, guint32 timeout, gboolean alertable)
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p has special wait",
 			__func__, handle);
 
-		mono_w32handle_unref (handle);
+		mono_w32handle_unref (handle_data);
 		return mono_w32handle_ops_specialwait (handle, handle_data, timeout, alertable ? &alerted : NULL);
 	}
 
@@ -855,7 +851,7 @@ mono_w32handle_wait_one (gpointer handle, guint32 timeout, gboolean alertable)
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p can't be waited for",
 			__func__, handle);
 
-		mono_w32handle_unref (handle);
+		mono_w32handle_unref (handle_data);
 		return MONO_W32HANDLE_WAIT_RET_FAILED;
 	}
 
@@ -919,7 +915,7 @@ done:
 
 	mono_w32handle_unlock (handle_data);
 
-	mono_w32handle_unref (handle);
+	mono_w32handle_unref (handle_data);
 
 	return ret;
 }
@@ -953,7 +949,7 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 	for (i = 0; i < nhandles; ++i) {
 		if (!mono_w32handle_lookup_and_ref (handles [i], &handles_data [i])) {
 			for (; i >= 0; --i)
-				mono_w32handle_unref (handles [i]);
+				mono_w32handle_unref (handles_data [i]);
 			return MONO_W32HANDLE_WAIT_RET_FAILED;
 		}
 	}
@@ -966,7 +962,7 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 				   __func__, handles [i]);
 
 			for (i = nhandles - 1; i >= 0; --i)
-				mono_w32handle_unref (handles [i]);
+				mono_w32handle_unref (handles_data [i]);
 
 			return MONO_W32HANDLE_WAIT_RET_FAILED;
 		}
@@ -981,7 +977,7 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 				__func__, handles_sorted [i]);
 
 			for (i = nhandles - 1; i >= 0; --i)
-				mono_w32handle_unref (handles [i]);
+				mono_w32handle_unref (handles_data [i]);
 
 			return MONO_W32HANDLE_WAIT_RET_FAILED;
 		}
@@ -1111,7 +1107,7 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 done:
 	for (i = nhandles - 1; i >= 0; i--) {
 		/* Unref everything we reffed above */
-		mono_w32handle_unref (handles [i]);
+		mono_w32handle_unref (handles_data [i]);
 	}
 
 	return ret;
@@ -1132,25 +1128,25 @@ mono_w32handle_signal_and_wait (gpointer signal_handle, gpointer wait_handle, gu
 		return MONO_W32HANDLE_WAIT_RET_FAILED;
 	}
 	if (!mono_w32handle_lookup_and_ref (wait_handle, &wait_handle_data)) {
-		mono_w32handle_unref (signal_handle);
+		mono_w32handle_unref (signal_handle_data);
 		return MONO_W32HANDLE_WAIT_RET_FAILED;
 	}
 
 	if (!mono_w32handle_test_capabilities (signal_handle_data, MONO_W32HANDLE_CAP_SIGNAL)) {
-		mono_w32handle_unref (wait_handle);
-		mono_w32handle_unref (signal_handle);
+		mono_w32handle_unref (wait_handle_data);
+		mono_w32handle_unref (signal_handle_data);
 		return MONO_W32HANDLE_WAIT_RET_FAILED;
 	}
 	if (!mono_w32handle_test_capabilities (wait_handle_data, MONO_W32HANDLE_CAP_WAIT)) {
-		mono_w32handle_unref (wait_handle);
-		mono_w32handle_unref (signal_handle);
+		mono_w32handle_unref (wait_handle_data);
+		mono_w32handle_unref (signal_handle_data);
 		return MONO_W32HANDLE_WAIT_RET_FAILED;
 	}
 
 	if (mono_w32handle_test_capabilities (wait_handle_data, MONO_W32HANDLE_CAP_SPECIAL_WAIT)) {
 		g_warning ("%s: handle %p has special wait, implement me!!", __func__, wait_handle);
-		mono_w32handle_unref (wait_handle);
-		mono_w32handle_unref (signal_handle);
+		mono_w32handle_unref (wait_handle_data);
+		mono_w32handle_unref (signal_handle_data);
 		return MONO_W32HANDLE_WAIT_RET_FAILED;
 	}
 
@@ -1217,8 +1213,8 @@ mono_w32handle_signal_and_wait (gpointer signal_handle, gpointer wait_handle, gu
 done:
 	mono_w32handle_unlock (wait_handle_data);
 
-	mono_w32handle_unref (wait_handle);
-	mono_w32handle_unref (signal_handle);
+	mono_w32handle_unref (wait_handle_data);
+	mono_w32handle_unref (signal_handle_data);
 
 	return ret;
 }

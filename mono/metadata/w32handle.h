@@ -130,7 +130,7 @@ gboolean
 mono_w32handle_lookup_and_ref (gpointer handle, MonoW32Handle **handle_data);
 
 void
-mono_w32handle_unref (gpointer handle);
+mono_w32handle_unref (MonoW32Handle *handle_data);
 
 void
 mono_w32handle_foreach (gboolean (*on_each)(gpointer handle, MonoW32Handle *handle_data, gpointer user_data), gpointer user_data);
