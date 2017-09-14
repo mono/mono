@@ -2140,7 +2140,7 @@ mono_main (int argc, char* argv[])
 		return 2;
 	}
 
-	mono_trace_set_assembly (assembly);
+	mono_callspec_set_assembly (assembly);
 
 	if (mono_compile_aot || action == DO_EXEC) {
 		const char *error;

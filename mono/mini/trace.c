@@ -367,7 +367,7 @@ MonoCallSpec *mono_trace_set_options (const char *options)
 }
 
 void
-mono_trace_set_assembly (MonoAssembly *assembly)
+mono_callspec_set_assembly (MonoAssembly *assembly)
 {
 	prog_assembly = assembly;
 }

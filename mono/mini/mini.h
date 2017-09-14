@@ -2999,9 +2999,9 @@ MONO_PROFILER_API gboolean mono_callspec_eval_exception	(MonoClass *klass,
 							 MonoCallSpec *spec);
 MONO_PROFILER_API gboolean mono_callspec_eval		(MonoMethod *method,
 							 const MonoCallSpec *spec);
+void			   mono_callspec_set_assembly	(MonoAssembly *assembly);
 
 MonoCallSpec *mono_trace_set_options           (const char *options);
-void           mono_trace_set_assembly          (MonoAssembly *assembly);
 gboolean       mono_trace_eval                  (MonoMethod *method);
 
 extern void
