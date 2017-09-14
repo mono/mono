@@ -897,7 +897,10 @@ mono_profiler_shutdown (void)
 			prof->shutdown_callback (prof->profiler);
 	}
 
-	mono_profiler_set_events ((MonoProfileFlags)0);
+	/* Clear all events */
+	for (prof = prof_list; prof; prof = prof->next)
+		prof->events = (MonoProfileFlags)0;
+	mono_profiler_events = (MonoProfileFlags)0;
 }
 
 /**
