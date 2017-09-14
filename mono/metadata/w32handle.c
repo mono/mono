@@ -598,12 +598,6 @@ mono_w32handle_ops_prewait (gpointer handle, MonoW32Handle *handle_data)
 }
 
 static void
-spin (guint32 ms)
-{
-
-}
-
-static void
 mono_w32handle_lock_handles (MonoW32Handle **handles_data, gsize nhandles)
 {
 	gint i, j, iter = 0;
