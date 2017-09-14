@@ -27,29 +27,29 @@ struct MonoW32HandleNamedSemaphore {
 	MonoW32HandleNamespace sharedns;
 };
 
-static void sem_handle_signal (gpointer handle, MonoW32Handle *handle_data)
+static void sem_handle_signal (MonoW32Handle *handle_data)
 {
 	MonoW32HandleSemaphore *sem_handle;
 
 	sem_handle = (MonoW32HandleSemaphore*) handle_data->specific;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: signalling %s handle %p",
-		__func__, mono_w32handle_get_typename (handle_data->type), handle);
+		__func__, mono_w32handle_get_typename (handle_data->type), handle_data);
 
 	/* No idea why max is signed, but thats the spec :-( */
 	if (sem_handle->val + 1 > (guint32)sem_handle->max) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: %s handle %p val %d count %d max %d, max value would be exceeded",
-			__func__, mono_w32handle_get_typename (handle_data->type), handle, sem_handle->val, 1, sem_handle->max);
+			__func__, mono_w32handle_get_typename (handle_data->type), handle_data, sem_handle->val, 1, sem_handle->max);
 	} else {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: %s handle %p val %d count %d max %d",
-			__func__, mono_w32handle_get_typename (handle_data->type), handle, sem_handle->val, 1, sem_handle->max);
+			__func__, mono_w32handle_get_typename (handle_data->type), handle_data, sem_handle->val, 1, sem_handle->max);
 
 		sem_handle->val += 1;
 		mono_w32handle_set_signal_state (handle_data, TRUE, TRUE);
 	}
 }
 
-static gboolean sem_handle_own (gpointer handle, MonoW32Handle *handle_data, gboolean *abandoned)
+static gboolean sem_handle_own (MonoW32Handle *handle_data, gboolean *abandoned)
 {
 	MonoW32HandleSemaphore *sem_handle;
 
@@ -58,7 +58,7 @@ static gboolean sem_handle_own (gpointer handle, MonoW32Handle *handle_data, gbo
 	sem_handle = (MonoW32HandleSemaphore*) handle_data->specific;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: owning %s handle %p",
-		__func__, mono_w32handle_get_typename (handle_data->type), handle);
+		__func__, mono_w32handle_get_typename (handle_data->type), handle_data);
 
 	sem_handle->val--;
 
@@ -68,13 +68,13 @@ static gboolean sem_handle_own (gpointer handle, MonoW32Handle *handle_data, gbo
 	return TRUE;
 }
 
-static void sema_details (gpointer handle, MonoW32Handle *handle_data)
+static void sema_details (MonoW32Handle *handle_data)
 {
 	MonoW32HandleSemaphore *sem = (MonoW32HandleSemaphore *)handle_data->specific;
 	g_print ("val: %5u, max: %5d", sem->val, sem->max);
 }
 
-static void namedsema_details (gpointer handle, MonoW32Handle *handle_data)
+static void namedsema_details (MonoW32Handle *handle_data)
 {
 	MonoW32HandleNamedSemaphore *namedsem = (MonoW32HandleNamedSemaphore *)handle_data->specific;
 	g_print ("val: %5u, max: %5d, name: \"%s\"", namedsem->s.val, namedsem->s.max, namedsem->sharedns.name);

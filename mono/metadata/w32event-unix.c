@@ -36,14 +36,14 @@ struct MonoW32HandleNamedEvent {
 	MonoW32HandleNamespace sharedns;
 };
 
-static void event_handle_signal (gpointer handle, MonoW32Handle *handle_data)
+static void event_handle_signal (MonoW32Handle *handle_data)
 {
 	MonoW32HandleEvent *event_handle;
 
 	event_handle = (MonoW32HandleEvent*) handle_data->specific;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: signalling %s handle %p",
-		__func__, mono_w32handle_get_typename (handle_data->type), handle);
+		__func__, mono_w32handle_get_typename (handle_data->type), handle_data);
 
 	if (!event_handle->manual) {
 		event_handle->set_count = 1;
@@ -53,7 +53,7 @@ static void event_handle_signal (gpointer handle, MonoW32Handle *handle_data)
 	}
 }
 
-static gboolean event_handle_own (gpointer handle, MonoW32Handle *handle_data, gboolean *abandoned)
+static gboolean event_handle_own (MonoW32Handle *handle_data, gboolean *abandoned)
 {
 	MonoW32HandleEvent *event_handle;
 
@@ -62,7 +62,7 @@ static gboolean event_handle_own (gpointer handle, MonoW32Handle *handle_data, g
 	event_handle = (MonoW32HandleEvent*) handle_data->specific;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: owning %s handle %p",
-		__func__, mono_w32handle_get_typename (handle_data->type), handle);
+		__func__, mono_w32handle_get_typename (handle_data->type), handle_data);
 
 	if (!event_handle->manual) {
 		g_assert (event_handle->set_count > 0);
@@ -75,14 +75,14 @@ static gboolean event_handle_own (gpointer handle, MonoW32Handle *handle_data, g
 	return TRUE;
 }
 
-static void event_details (gpointer handle, MonoW32Handle *handle_data)
+static void event_details (MonoW32Handle *handle_data)
 {
 	MonoW32HandleEvent *event = (MonoW32HandleEvent *)handle_data->specific;
 	g_print ("manual: %s, set_count: %d",
 		event->manual ? "TRUE" : "FALSE", event->set_count);
 }
 
-static void namedevent_details (gpointer handle, MonoW32Handle *handle_data)
+static void namedevent_details (MonoW32Handle *handle_data)
 {
 	MonoW32HandleNamedEvent *namedevent = (MonoW32HandleNamedEvent *)handle_data->specific;
 	g_print ("manual: %s, set_count: %d, name: \"%s\"",

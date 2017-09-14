@@ -566,7 +566,7 @@ process_is_alive (pid_t pid)
 }
 
 static void
-process_details (gpointer handle, MonoW32Handle *handle_data)
+process_details (MonoW32Handle *handle_data)
 {
 	MonoW32HandleProcess *process_handle = (MonoW32HandleProcess *) handle_data->specific;
 	g_print ("pid: %d, exited: %s, exitstatus: %d",
@@ -586,7 +586,7 @@ process_typesize (void)
 }
 
 static MonoW32HandleWaitRet
-process_wait (gpointer handle, MonoW32Handle *handle_data, guint32 timeout, gboolean *alerted)
+process_wait (MonoW32Handle *handle_data, guint32 timeout, gboolean *alerted)
 {
 	MonoW32HandleProcess *process_handle;
 	pid_t pid G_GNUC_UNUSED, ret;
@@ -594,7 +594,7 @@ process_wait (gpointer handle, MonoW32Handle *handle_data, guint32 timeout, gboo
 	gint64 start, now;
 	Process *process;
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT ")", __func__, handle, timeout);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT ")", __func__, handle_data, timeout);
 
 	if (alerted)
 		*alerted = FALSE;
@@ -603,21 +603,21 @@ process_wait (gpointer handle, MonoW32Handle *handle_data, guint32 timeout, gboo
 
 	if (process_handle->exited) {
 		/* We've already done this one */
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): Process already exited", __func__, handle, timeout);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): Process already exited", __func__, handle_data, timeout);
 		return MONO_W32HANDLE_WAIT_RET_SUCCESS_0;
 	}
 
 	pid = process_handle->pid;
 
 	if (pid == mono_process_current_pid ()) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): waiting on current process", __func__, handle, timeout);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): waiting on current process", __func__, handle_data, timeout);
 		return MONO_W32HANDLE_WAIT_RET_TIMEOUT;
 	}
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): PID: %d", __func__, handle, timeout, pid);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): PID: %d", __func__, handle_data, timeout, pid);
 
 	if (!process_handle->child) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): waiting on non-child process", __func__, handle, timeout);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): waiting on non-child process", __func__, handle_data, timeout);
 
 		if (!process_is_alive (pid)) {
 			/* assume the process has exited */
@@ -625,11 +625,11 @@ process_wait (gpointer handle, MonoW32Handle *handle_data, guint32 timeout, gboo
 			process_handle->exitstatus = -1;
 			mono_w32handle_set_signal_state (handle_data, TRUE, TRUE);
 
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): non-child process is not alive anymore (2)", __func__, handle, timeout);
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): non-child process is not alive anymore (2)", __func__, handle_data, timeout);
 			return MONO_W32HANDLE_WAIT_RET_SUCCESS_0;
 		}
 
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): non-child process wait failed, error : %s (%d))", __func__, handle, timeout, g_strerror (errno), errno);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): non-child process wait failed, error : %s (%d))", __func__, handle_data, timeout, g_strerror (errno), errno);
 		return MONO_W32HANDLE_WAIT_RET_FAILED;
 	}
 
@@ -644,11 +644,11 @@ process_wait (gpointer handle, MonoW32Handle *handle_data, guint32 timeout, gboo
 	while (1) {
 		if (timeout != MONO_INFINITE_WAIT) {
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): waiting on semaphore for %" G_GINT64_FORMAT " ms...",
-				__func__, handle, timeout, timeout - (now - start));
+				__func__, handle_data, timeout, timeout - (now - start));
 			ret = mono_os_sem_timedwait (&process->exit_sem, (timeout - (now - start)), alerted ? MONO_SEM_FLAGS_ALERTABLE : MONO_SEM_FLAGS_NONE);
 		} else {
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): waiting on semaphore forever...",
-				__func__, handle, timeout);
+				__func__, handle_data, timeout);
 			ret = mono_os_sem_wait (&process->exit_sem, alerted ? MONO_SEM_FLAGS_ALERTABLE : MONO_SEM_FLAGS_NONE);
 		}
 
@@ -659,25 +659,25 @@ process_wait (gpointer handle, MonoW32Handle *handle_data, guint32 timeout, gboo
 		}
 
 		if (ret == MONO_SEM_TIMEDWAIT_RET_TIMEDOUT) {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): wait timeout (timeout = 0)", __func__, handle, timeout);
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): wait timeout (timeout = 0)", __func__, handle_data, timeout);
 			return MONO_W32HANDLE_WAIT_RET_TIMEOUT;
 		}
 
 		now = mono_msec_ticks ();
 		if (now - start >= timeout) {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): wait timeout", __func__, handle, timeout);
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): wait timeout", __func__, handle_data, timeout);
 			return MONO_W32HANDLE_WAIT_RET_TIMEOUT;
 		}
 
 		if (alerted && ret == MONO_SEM_TIMEDWAIT_RET_ALERTED) {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): wait alerted", __func__, handle, timeout);
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): wait alerted", __func__, handle_data, timeout);
 			*alerted = TRUE;
 			return MONO_W32HANDLE_WAIT_RET_ALERTED;
 		}
 	}
 
 	/* Process must have exited */
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): Waited successfully", __func__, handle, timeout);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): Waited successfully", __func__, handle_data, timeout);
 
 	status = process->status;
 	if (WIFSIGNALED (status))
@@ -690,7 +690,7 @@ process_wait (gpointer handle, MonoW32Handle *handle_data, guint32 timeout, gboo
 	process_handle->exited = TRUE;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s (%p, %" G_GUINT32_FORMAT "): Setting pid %d signalled, exit status %d",
-		   __func__, handle, timeout, process_handle->pid, process_handle->exitstatus);
+		   __func__, handle_data, timeout, process_handle->pid, process_handle->exitstatus);
 
 	mono_w32handle_set_signal_state (handle_data, TRUE, TRUE);
 

@@ -59,7 +59,7 @@ typedef struct
 	void (*close)(gpointer handle, gpointer data);
 
 	/* mono_w32handle_signal_and_wait */
-	void (*signal)(gpointer signal, MonoW32Handle *handle_data);
+	void (*signal)(MonoW32Handle *handle_data);
 
 	/* Called by mono_w32handle_wait_one and mono_w32handle_wait_multiple,
 	 * with the handle locked (shared handles aren't locked.)
@@ -67,29 +67,29 @@ typedef struct
 	 * If TRUE, *abandoned contains a status code such as
 	 * WAIT_OBJECT_0 or WAIT_ABANDONED_0.
 	 */
-	gboolean (*own_handle)(gpointer handle, MonoW32Handle *handle_data, gboolean *abandoned);
+	gboolean (*own_handle)(MonoW32Handle *handle_data, gboolean *abandoned);
 
 	/* Called by mono_w32handle_wait_one and mono_w32handle_wait_multiple, if the
 	 * handle in question is "ownable" (ie mutexes), to see if the current
 	 * thread already owns this handle
 	 */
-	gboolean (*is_owned)(gpointer handle, MonoW32Handle *handle_data);
+	gboolean (*is_owned)(MonoW32Handle *handle_data);
 
 	/* Called by mono_w32handle_wait_one and mono_w32handle_wait_multiple,
 	 * if the handle in question needs a special wait function
 	 * instead of using the normal handle signal mechanism.
 	 * Returns the mono_w32handle_wait_one return code.
 	 */
-	MonoW32HandleWaitRet (*special_wait)(gpointer handle, MonoW32Handle *handle_data, guint32 timeout, gboolean *alerted);
+	MonoW32HandleWaitRet (*special_wait)(MonoW32Handle *handle_data, guint32 timeout, gboolean *alerted);
 
 	/* Called by mono_w32handle_wait_one and mono_w32handle_wait_multiple,
 	 * if the handle in question needs some preprocessing before the
 	 * signal wait.
 	 */
-	void (*prewait)(gpointer handle, MonoW32Handle *handle_data);
+	void (*prewait)(MonoW32Handle *handle_data);
 
 	/* Called when dumping the handles */
-	void (*details)(gpointer handle, MonoW32Handle *handle_data);
+	void (*details)(MonoW32Handle *handle_data);
 
 	/* Called to get the name of the handle type */
 	const gchar* (*typename) (void);
