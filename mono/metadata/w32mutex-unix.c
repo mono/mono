@@ -45,7 +45,7 @@ thread_own_mutex (MonoInternalThread *internal, gpointer handle, MonoW32Handle *
 	if (!internal->owned_mutexes)
 		internal->owned_mutexes = g_ptr_array_new ();
 
-	g_ptr_array_add (internal->owned_mutexes, mono_w32handle_duplicate (handle, handle_data));
+	g_ptr_array_add (internal->owned_mutexes, mono_w32handle_duplicate (handle_data));
 }
 
 static void

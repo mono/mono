@@ -89,7 +89,7 @@ mono_w32handle_namespace_search_handle_callback (gpointer handle, MonoW32Handle 
 				__func__, handle);
 
 			/* we do not want the handle to be destroyed before we return it  */
-			search_data->ret = mono_w32handle_duplicate (handle, handle_data);
+			search_data->ret = mono_w32handle_duplicate (handle_data);
 		}
 
 		return TRUE;

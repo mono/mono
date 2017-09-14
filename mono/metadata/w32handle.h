@@ -118,7 +118,7 @@ gpointer
 mono_w32handle_new (MonoW32Type type, gpointer handle_specific);
 
 gpointer
-mono_w32handle_duplicate (gpointer handle, MonoW32Handle *handle_data);
+mono_w32handle_duplicate (MonoW32Handle *handle_data);
 
 gboolean
 mono_w32handle_close (gpointer handle);

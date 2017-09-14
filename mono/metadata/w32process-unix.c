@@ -939,7 +939,7 @@ get_process_foreach_callback (gpointer handle, MonoW32Handle *handle_data, gpoin
 	if (mono_w32handle_issignalled (handle_data))
 		return FALSE;
 
-	foreach_data->handle = mono_w32handle_duplicate (handle, handle_data);
+	foreach_data->handle = mono_w32handle_duplicate (handle_data);
 	return TRUE;
 }
 
@@ -2050,7 +2050,7 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 
 		/* Keep the process handle artificially alive until the process
 		 * exits so that the information in the handle isn't lost. */
-		process->handle = mono_w32handle_duplicate (handle, handle_data);
+		process->handle = mono_w32handle_duplicate (handle_data);
 
 		mono_os_mutex_lock (&processes_mutex);
 		process->next = processes;

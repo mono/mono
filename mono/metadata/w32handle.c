@@ -309,12 +309,12 @@ static void
 w32handle_destroy (gpointer handle);
 
 gpointer
-mono_w32handle_duplicate (gpointer handle, MonoW32Handle *handle_data)
+mono_w32handle_duplicate (MonoW32Handle *handle_data)
 {
 	if (!mono_w32handle_ref_core (handle_data))
-		g_error ("%s: unknown handle %p", __func__, handle);
+		g_error ("%s: unknown handle %p", __func__, handle_data);
 
-	return handle;
+	return (gpointer) handle_data;
 }
 
 gboolean
@@ -775,7 +775,7 @@ mono_w32handle_timedwait_signal_handle (MonoW32Handle *handle_data, guint32 time
 		*alerted = FALSE;
 
 	if (alerted) {
-		mono_thread_info_install_interrupt (signal_handle_and_unref, handle_duplicate = mono_w32handle_duplicate ((gpointer) handle_data, handle_data), alerted);
+		mono_thread_info_install_interrupt (signal_handle_and_unref, handle_duplicate = mono_w32handle_duplicate (handle_data), alerted);
 		if (*alerted) {
 			mono_w32handle_close (handle_duplicate);
 			return 0;

@@ -738,7 +738,7 @@ ves_icall_System_IO_MonoIO_DuplicateHandle (HANDLE source_process_handle, HANDLE
 		return FALSE;
 	}
 
-	*target_handle = mono_w32handle_duplicate (source_handle, source_handle_data);
+	*target_handle = mono_w32handle_duplicate (source_handle_data);
 
 	mono_w32handle_unref (source_handle);
 #else
