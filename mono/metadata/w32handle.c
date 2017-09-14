@@ -798,24 +798,24 @@ void mono_w32handle_dump (void)
 }
 
 static gboolean
-own_if_signalled (gpointer handle, MonoW32Handle *handle_data, gboolean *abandoned)
+own_if_signalled (MonoW32Handle *handle_data, gboolean *abandoned)
 {
 	if (!mono_w32handle_issignalled (handle_data))
 		return FALSE;
 
 	*abandoned = FALSE;
-	mono_w32handle_ops_own (handle, handle_data, abandoned);
+	mono_w32handle_ops_own (handle_data, handle_data, abandoned);
 	return TRUE;
 }
 
 static gboolean
-own_if_owned( gpointer handle, MonoW32Handle *handle_data, gboolean *abandoned)
+own_if_owned (MonoW32Handle *handle_data, gboolean *abandoned)
 {
-	if (!mono_w32handle_ops_isowned (handle, handle_data))
+	if (!mono_w32handle_ops_isowned (handle_data, handle_data))
 		return FALSE;
 
 	*abandoned = FALSE;
-	mono_w32handle_ops_own (handle, handle_data, abandoned);
+	mono_w32handle_ops_own (handle_data, handle_data, abandoned);
 	return TRUE;
 }
 
@@ -852,7 +852,7 @@ mono_w32handle_wait_one (gpointer handle, guint32 timeout, gboolean alertable)
 	mono_w32handle_lock (handle_data);
 
 	if (mono_w32handle_test_capabilities (handle_data, MONO_W32HANDLE_CAP_OWN)) {
-		if (own_if_owned (handle, handle_data, &abandoned)) {
+		if (own_if_owned (handle_data, &abandoned)) {
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p already owned",
 				__func__, handle);
 
@@ -869,7 +869,7 @@ mono_w32handle_wait_one (gpointer handle, guint32 timeout, gboolean alertable)
 	for (;;) {
 		gint waited;
 
-		if (own_if_signalled (handle, handle_data, &abandoned)) {
+		if (own_if_signalled (handle_data, &abandoned)) {
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p signalled",
 				__func__, handle);
 
@@ -1013,7 +1013,7 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 
 		if (signalled) {
 			for (i = 0; i < nhandles; i++) {
-				if (own_if_signalled (handles [i], handles_data [i], &abandoned [i]) && !waitall) {
+				if (own_if_signalled (handles_data [i], &abandoned [i]) && !waitall) {
 					/* if we are calling WaitHandle.WaitAny, .NET only owns the first one; it matters for Mutex which
 					 * throw AbandonedMutexException in case we owned it but didn't release it */
 					break;
@@ -1154,7 +1154,7 @@ mono_w32handle_signal_and_wait (gpointer signal_handle, gpointer wait_handle, gu
 	mono_w32handle_unlock (signal_handle_data);
 
 	if (mono_w32handle_test_capabilities (wait_handle_data, MONO_W32HANDLE_CAP_OWN)) {
-		if (own_if_owned (wait_handle, wait_handle_data, &abandoned)) {
+		if (own_if_owned (wait_handle_data, &abandoned)) {
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p already owned",
 				__func__, wait_handle);
 
@@ -1169,7 +1169,7 @@ mono_w32handle_signal_and_wait (gpointer signal_handle, gpointer wait_handle, gu
 	for (;;) {
 		gint waited;
 
-		if (own_if_signalled (wait_handle, wait_handle_data, &abandoned)) {
+		if (own_if_signalled (wait_handle_data, &abandoned)) {
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p signalled",
 				__func__, wait_handle);
 
