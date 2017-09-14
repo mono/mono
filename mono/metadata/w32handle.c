@@ -18,7 +18,6 @@
 
 #include "utils/atomic.h"
 #include "utils/mono-logger-internals.h"
-#include "utils/mono-os-mutex.h"
 #include "utils/mono-proclib.h"
 #include "utils/mono-threads.h"
 #include "utils/mono-time.h"
@@ -48,10 +47,10 @@ static guint32 private_handles_size = 0;
  * Threads which wait for multiple handles wait on this one handle, and when a handle
  * is signalled, this handle is signalled too.
  */
-static mono_mutex_t global_signal_mutex;
-static mono_cond_t global_signal_cond;
+static MonoCoopMutex global_signal_mutex;
+static MonoCoopCond global_signal_cond;
 
-static mono_mutex_t scan_mutex;
+static MonoCoopMutex scan_mutex;
 
 static gboolean shutting_down = FALSE;
 
@@ -94,7 +93,7 @@ mono_w32handle_set_signal_state (MonoW32Handle *handle_data, gboolean state, gbo
 		/* The condition the global signal cond is waiting on is the signalling of
 		 * _any_ handle. So lock it before setting the signalled state.
 		 */
-		mono_os_mutex_lock (&global_signal_mutex);
+		mono_coop_mutex_lock (&global_signal_mutex);
 
 		/* This function _must_ be called with
 		 * handle->signal_mutex locked
@@ -102,16 +101,16 @@ mono_w32handle_set_signal_state (MonoW32Handle *handle_data, gboolean state, gbo
 		handle_data->signalled = TRUE;
 
 		if (broadcast)
-			mono_os_cond_broadcast (&handle_data->signal_cond);
+			mono_coop_cond_broadcast (&handle_data->signal_cond);
 		else
-			mono_os_cond_signal (&handle_data->signal_cond);
+			mono_coop_cond_signal (&handle_data->signal_cond);
 
 		/* Tell everyone blocking on multiple handles that something
 		 * was signalled
 		 */
-		mono_os_cond_broadcast (&global_signal_cond);
+		mono_coop_cond_broadcast (&global_signal_cond);
 
-		mono_os_mutex_unlock (&global_signal_mutex);
+		mono_coop_mutex_unlock (&global_signal_mutex);
 	} else {
 		handle_data->signalled = FALSE;
 	}
@@ -136,7 +135,7 @@ mono_w32handle_lock_signal_mutex (void)
 	g_message ("%s: lock global signal mutex", __func__);
 #endif
 
-	mono_os_mutex_lock (&global_signal_mutex);
+	mono_coop_mutex_lock (&global_signal_mutex);
 }
 
 static void
@@ -146,25 +145,25 @@ mono_w32handle_unlock_signal_mutex (void)
 	g_message ("%s: unlock global signal mutex", __func__);
 #endif
 
-	mono_os_mutex_unlock (&global_signal_mutex);
+	mono_coop_mutex_unlock (&global_signal_mutex);
 }
 
 void
 mono_w32handle_lock (MonoW32Handle *handle_data)
 {
-	mono_os_mutex_lock (&handle_data->signal_mutex);
+	mono_coop_mutex_lock (&handle_data->signal_mutex);
 }
 
 gboolean
 mono_w32handle_trylock (MonoW32Handle *handle_data)
 {
-	return mono_os_mutex_trylock (&handle_data->signal_mutex) == 0;
+	return mono_coop_mutex_trylock (&handle_data->signal_mutex) == 0;
 }
 
 void
 mono_w32handle_unlock (MonoW32Handle *handle_data)
 {
-	mono_os_mutex_unlock (&handle_data->signal_mutex);
+	mono_coop_mutex_unlock (&handle_data->signal_mutex);
 }
 
 void
@@ -178,10 +177,10 @@ mono_w32handle_init (void)
 	g_assert ((sizeof (handle_ops) / sizeof (handle_ops[0]))
 		  == MONO_W32TYPE_COUNT);
 
-	mono_os_mutex_init (&scan_mutex);
+	mono_coop_mutex_init (&scan_mutex);
 
-	mono_os_cond_init (&global_signal_cond);
-	mono_os_mutex_init (&global_signal_mutex);
+	mono_coop_cond_init (&global_signal_cond);
+	mono_coop_mutex_init (&global_signal_mutex);
 
 	initialized = TRUE;
 }
@@ -245,8 +244,8 @@ again:
 					handle_data->signalled = FALSE;
 					handle_data->ref = 1;
 
-					mono_os_cond_init (&handle_data->signal_cond);
-					mono_os_mutex_init (&handle_data->signal_mutex);
+					mono_coop_cond_init (&handle_data->signal_cond);
+					mono_coop_mutex_init (&handle_data->signal_mutex);
 
 					if (handle_specific)
 						handle_data->specific = g_memdup (handle_specific, mono_w32handle_ops_typesize (type));
@@ -277,12 +276,12 @@ mono_w32handle_new (MonoW32Type type, gpointer handle_specific)
 
 	g_assert (!shutting_down);
 
-	mono_os_mutex_lock (&scan_mutex);
+	mono_coop_mutex_lock (&scan_mutex);
 
 	while ((handle_data = mono_w32handle_new_internal (type, handle_specific)) == GINT_TO_POINTER (-1)) {
 		/* Try and expand the array, and have another go */
 		if (private_handles_size >= SLOT_MAX) {
-			mono_os_mutex_unlock (&scan_mutex);
+			mono_coop_mutex_unlock (&scan_mutex);
 
 			/* We ran out of slots */
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: failed to create %s handle", __func__, mono_w32handle_ops_typename (type));
@@ -292,7 +291,7 @@ mono_w32handle_new (MonoW32Type type, gpointer handle_specific)
 		private_handles [private_handles_size ++] = g_new0 (MonoW32Handle, HANDLE_PER_SLOT);
 	}
 
-	mono_os_mutex_unlock (&scan_mutex);
+	mono_coop_mutex_unlock (&scan_mutex);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: create %s handle %p", __func__, mono_w32handle_ops_typename (type), handle_data);
 
@@ -355,7 +354,7 @@ mono_w32handle_foreach (gboolean (*on_each)(MonoW32Handle *handle_data, gpointer
 
 	handles_to_destroy = NULL;
 
-	mono_os_mutex_lock (&scan_mutex);
+	mono_coop_mutex_lock (&scan_mutex);
 
 	for (i = SLOT_INDEX (0); i < private_handles_size; i++) {
 		if (!private_handles [i])
@@ -396,7 +395,7 @@ mono_w32handle_foreach (gboolean (*on_each)(MonoW32Handle *handle_data, gpointer
 	}
 
 done:
-	mono_os_mutex_unlock (&scan_mutex);
+	mono_coop_mutex_unlock (&scan_mutex);
 
 	if (handles_to_destroy) {
 		for (i = 0; i < handles_to_destroy->len; ++i)
@@ -470,16 +469,16 @@ w32handle_destroy (MonoW32Handle *handle_data)
 	type = handle_data->type;
 	handle_specific = handle_data->specific;
 
-	mono_os_mutex_lock (&scan_mutex);
+	mono_coop_mutex_lock (&scan_mutex);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: destroy %s handle %p", __func__, mono_w32handle_ops_typename (type), handle_data);
 
-	mono_os_mutex_destroy (&handle_data->signal_mutex);
-	mono_os_cond_destroy (&handle_data->signal_cond);
+	mono_coop_mutex_destroy (&handle_data->signal_mutex);
+	mono_coop_cond_destroy (&handle_data->signal_cond);
 
 	memset (handle_data, 0, sizeof (MonoW32Handle));
 
-	mono_os_mutex_unlock (&scan_mutex);
+	mono_coop_mutex_unlock (&scan_mutex);
 
 	close_func = _wapi_handle_ops_get_close_func (type);
 	if (close_func != NULL) {
@@ -648,12 +647,12 @@ mono_w32handle_unlock_handles (MonoW32Handle **handles_data, gsize nhandles)
 }
 
 static int
-mono_w32handle_timedwait_signal_naked (mono_cond_t *cond, mono_mutex_t *mutex, guint32 timeout, gboolean poll, gboolean *alerted)
+mono_w32handle_timedwait_signal_naked (MonoCoopCond *cond, MonoCoopMutex *mutex, guint32 timeout, gboolean poll, gboolean *alerted)
 {
 	int res;
 
 	if (!poll) {
-		res = mono_os_cond_timedwait (cond, mutex, timeout);
+		res = mono_coop_cond_timedwait (cond, mutex, timeout);
 	} else {
 		/* This is needed when waiting for process handles */
 		if (!alerted) {
@@ -664,13 +663,13 @@ mono_w32handle_timedwait_signal_naked (mono_cond_t *cond, mono_mutex_t *mutex, g
 			 *
 			 * http://pubs.opengroup.org/onlinepubs/007908775/xsh/pthread_cond_wait.html
 			 */
-			res = mono_os_cond_timedwait (cond, mutex, timeout);
+			res = mono_coop_cond_timedwait (cond, mutex, timeout);
 		} else {
 			if (timeout < 100) {
 				/* Real timeout is less than 100ms time */
-				res = mono_os_cond_timedwait (cond, mutex, timeout);
+				res = mono_coop_cond_timedwait (cond, mutex, timeout);
 			} else {
-				res = mono_os_cond_timedwait (cond, mutex, 100);
+				res = mono_coop_cond_timedwait (cond, mutex, 100);
 
 				/* Mask the fake timeout, this will cause
 				 * another poll if the cond was not really signaled
@@ -692,9 +691,9 @@ signal_global (gpointer unused)
 	 * - before the first CAS in timedwait, which means it won't enter the wait.
 	 * - it is after the first CAS, so it is already waiting, or it will enter
 	 *    the wait, and it will be interrupted by the broadcast. */
-	mono_os_mutex_lock (&global_signal_mutex);
-	mono_os_cond_broadcast (&global_signal_cond);
-	mono_os_mutex_unlock (&global_signal_mutex);
+	mono_coop_mutex_lock (&global_signal_mutex);
+	mono_coop_cond_broadcast (&global_signal_cond);
+	mono_coop_mutex_unlock (&global_signal_mutex);
 }
 
 static int
@@ -725,8 +724,8 @@ static void
 signal_handle_and_unref (gpointer handle_duplicate)
 {
 	MonoW32Handle *handle_data;
-	mono_cond_t *cond;
-	mono_mutex_t *mutex;
+	MonoCoopCond *cond;
+	MonoCoopMutex *mutex;
 
 	if (!mono_w32handle_lookup_and_ref (handle_duplicate, &handle_data))
 		g_error ("%s: unknown handle %p", __func__, handle_duplicate);
@@ -739,9 +738,9 @@ signal_handle_and_unref (gpointer handle_duplicate)
 	cond = &handle_data->signal_cond;
 	mutex = &handle_data->signal_mutex;
 
-	mono_os_mutex_lock (mutex);
-	mono_os_cond_broadcast (cond);
-	mono_os_mutex_unlock (mutex);
+	mono_coop_mutex_lock (mutex);
+	mono_coop_cond_broadcast (cond);
+	mono_coop_mutex_unlock (mutex);
 
 	mono_w32handle_unref (handle_data);
 

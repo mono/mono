@@ -12,7 +12,7 @@
 #include <windows.h>
 #endif
 
-#include "mono/utils/mono-os-mutex.h"
+#include "mono/utils/mono-coop-mutex.h"
 
 #ifndef INVALID_HANDLE_VALUE
 #define INVALID_HANDLE_VALUE (gpointer)-1
@@ -41,8 +41,8 @@ typedef struct {
 	guint ref;
 	gboolean signalled;
 	gboolean in_use;
-	mono_mutex_t signal_mutex;
-	mono_cond_t signal_cond;
+	MonoCoopMutex signal_mutex;
+	MonoCoopCond signal_cond;
 	gpointer specific;
 } MonoW32Handle;
 
