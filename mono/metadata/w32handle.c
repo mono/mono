@@ -300,10 +300,10 @@ mono_w32handle_new (MonoW32Type type, gpointer handle_specific)
 }
 
 static gboolean
-mono_w32handle_ref_core (gpointer handle, MonoW32Handle *handle_data);
+mono_w32handle_ref_core (MonoW32Handle *handle_data);
 
 static gboolean
-mono_w32handle_unref_core (gpointer handle, MonoW32Handle *handle_data);
+mono_w32handle_unref_core (MonoW32Handle *handle_data);
 
 static void
 w32handle_destroy (gpointer handle);
@@ -311,7 +311,7 @@ w32handle_destroy (gpointer handle);
 gpointer
 mono_w32handle_duplicate (gpointer handle, MonoW32Handle *handle_data)
 {
-	if (!mono_w32handle_ref_core (handle, handle_data))
+	if (!mono_w32handle_ref_core (handle_data))
 		g_error ("%s: unknown handle %p", __func__, handle);
 
 	return handle;
@@ -328,7 +328,7 @@ mono_w32handle_close (gpointer handle)
 	if (!mono_w32handle_lookup_data (handle, &handle_data))
 		return FALSE;
 
-	destroy = mono_w32handle_unref_core (handle, handle_data);
+	destroy = mono_w32handle_unref_core (handle_data);
 	if (destroy)
 		w32handle_destroy (handle);
 
@@ -341,7 +341,7 @@ mono_w32handle_lookup_and_ref (gpointer handle, MonoW32Handle **handle_data)
 	if (!mono_w32handle_lookup_data (handle, handle_data))
 		return FALSE;
 
-	if (!mono_w32handle_ref_core (handle, *handle_data))
+	if (!mono_w32handle_ref_core (*handle_data))
 		return FALSE;
 
 	return TRUE;
@@ -368,7 +368,7 @@ mono_w32handle_foreach (gboolean (*on_each)(gpointer handle, MonoW32Handle *hand
 			if (handle_data->type == MONO_W32TYPE_UNUSED)
 				continue;
 
-			if (!mono_w32handle_ref_core ((gpointer) handle_data, handle_data)) {
+			if (!mono_w32handle_ref_core (handle_data)) {
 				/* we are racing with mono_w32handle_unref:
 				 *  the handle ref has been decremented, but it
 				 *  hasn't yet been destroyed. */
@@ -379,7 +379,7 @@ mono_w32handle_foreach (gboolean (*on_each)(gpointer handle, MonoW32Handle *hand
 
 			/* we might have to destroy the handle here, as
 			 * it could have been unrefed in another thread */
-			destroy = mono_w32handle_unref_core ((gpointer) handle_data, handle_data);
+			destroy = mono_w32handle_unref_core (handle_data);
 			if (destroy) {
 				/* we do not destroy it while holding the scan_mutex
 				 * lock, because w32handle_destroy also needs to take
@@ -407,7 +407,7 @@ done:
 }
 
 static gboolean
-mono_w32handle_ref_core (gpointer handle, MonoW32Handle *handle_data)
+mono_w32handle_ref_core (MonoW32Handle *handle_data)
 {
 	guint old, new;
 
@@ -420,13 +420,13 @@ mono_w32handle_ref_core (gpointer handle, MonoW32Handle *handle_data)
 	} while (mono_atomic_cas_i32 ((gint32*) &handle_data->ref, (gint32)new, (gint32)old) != (gint32)old);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: ref %s handle %p, ref: %d -> %d",
-		__func__, mono_w32handle_ops_typename (handle_data->type), handle, old, new);
+		__func__, mono_w32handle_ops_typename (handle_data->type), handle_data, old, new);
 
 	return TRUE;
 }
 
 static gboolean
-mono_w32handle_unref_core (gpointer handle, MonoW32Handle *handle_data)
+mono_w32handle_unref_core (MonoW32Handle *handle_data)
 {
 	MonoW32Type type;
 	guint old, new;
@@ -436,7 +436,7 @@ mono_w32handle_unref_core (gpointer handle, MonoW32Handle *handle_data)
 	do {
 		old = handle_data->ref;
 		if (!(old >= 1))
-			g_error ("%s: handle %p has ref %d, it should be >= 1", __func__, handle, old);
+			g_error ("%s: handle %p has ref %d, it should be >= 1", __func__, handle_data, old);
 
 		new = old - 1;
 	} while (mono_atomic_cas_i32 ((gint32*) &handle_data->ref, (gint32)new, (gint32)old) != (gint32)old);
@@ -445,7 +445,7 @@ mono_w32handle_unref_core (gpointer handle, MonoW32Handle *handle_data)
 	 * another thread is unref'ing this handle at the same time */
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: unref %s handle %p, ref: %d -> %d destroy: %s",
-		__func__, mono_w32handle_ops_typename (type), handle, old, new, new == 0 ? "true" : "false");
+		__func__, mono_w32handle_ops_typename (type), handle_data, old, new, new == 0 ? "true" : "false");
 
 	return new == 0;
 }
@@ -505,7 +505,7 @@ mono_w32handle_unref (gpointer handle)
 	if (!mono_w32handle_lookup_data (handle, &handle_data))
 		g_error ("%s: failed to unref handle %p, unknown handle", __func__, handle);
 
-	destroy = mono_w32handle_unref_core (handle, handle_data);
+	destroy = mono_w32handle_unref_core (handle_data);
 	if (destroy)
 		w32handle_destroy (handle);
 }
