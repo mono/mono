@@ -306,7 +306,7 @@ static gboolean
 mono_w32handle_unref_core (MonoW32Handle *handle_data);
 
 static void
-w32handle_destroy (gpointer handle);
+w32handle_destroy (MonoW32Handle *handle_data);
 
 gpointer
 mono_w32handle_duplicate (MonoW32Handle *handle_data)
@@ -330,7 +330,7 @@ mono_w32handle_close (gpointer handle)
 
 	destroy = mono_w32handle_unref_core (handle_data);
 	if (destroy)
-		w32handle_destroy (handle);
+		w32handle_destroy (handle_data);
 
 	return TRUE;
 }
@@ -400,7 +400,7 @@ done:
 
 	if (handles_to_destroy) {
 		for (i = 0; i < handles_to_destroy->len; ++i)
-			w32handle_destroy (handles_to_destroy->pdata [i]);
+			w32handle_destroy ((MonoW32Handle*) handles_to_destroy->pdata [i]);
 
 		g_ptr_array_free (handles_to_destroy, TRUE);
 	}
@@ -453,7 +453,7 @@ mono_w32handle_unref_core (MonoW32Handle *handle_data)
 static void (*_wapi_handle_ops_get_close_func (MonoW32Type type))(gpointer, gpointer);
 
 static void
-w32handle_destroy (gpointer handle)
+w32handle_destroy (MonoW32Handle *handle_data)
 {
 	/* Need to copy the handle info, reset the slot in the
 	 * array, and _only then_ call the close function to
@@ -461,13 +461,9 @@ w32handle_destroy (gpointer handle)
 	 * closed, and another file being opened getting the
 	 * same fd racing the memset())
 	 */
-	MonoW32Handle *handle_data;
 	MonoW32Type type;
 	gpointer handle_specific;
 	void (*close_func)(gpointer, gpointer);
-
-	if (!mono_w32handle_lookup_data (handle, &handle_data))
-		g_error ("%s: unknown handle %p", __func__, handle);
 
 	g_assert (!handle_data->in_use);
 
@@ -476,7 +472,7 @@ w32handle_destroy (gpointer handle)
 
 	mono_os_mutex_lock (&scan_mutex);
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: destroy %s handle %p", __func__, mono_w32handle_ops_typename (type), handle);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: destroy %s handle %p", __func__, mono_w32handle_ops_typename (type), handle_data);
 
 	mono_os_mutex_destroy (&handle_data->signal_mutex);
 	mono_os_cond_destroy (&handle_data->signal_cond);
@@ -487,7 +483,7 @@ w32handle_destroy (gpointer handle)
 
 	close_func = _wapi_handle_ops_get_close_func (type);
 	if (close_func != NULL) {
-		close_func (handle, handle_specific);
+		close_func (handle_data, handle_specific);
 	}
 
 	memset (handle_specific, 0, mono_w32handle_ops_typesize (type));
@@ -507,7 +503,7 @@ mono_w32handle_unref (gpointer handle)
 
 	destroy = mono_w32handle_unref_core (handle_data);
 	if (destroy)
-		w32handle_destroy (handle);
+		w32handle_destroy (handle_data);
 }
 
 void
