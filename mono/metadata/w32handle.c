@@ -834,16 +834,14 @@ mono_w32handle_wait_one (gpointer handle, guint32 timeout, gboolean alertable)
 		return MONO_W32HANDLE_WAIT_RET_FAILED;
 
 	if (mono_w32handle_test_capabilities (handle_data, MONO_W32HANDLE_CAP_SPECIAL_WAIT)) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p has special wait",
-			__func__, handle);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p has special wait", __func__, handle_data);
 
 		mono_w32handle_unref (handle_data);
-		return mono_w32handle_ops_specialwait (handle, handle_data, timeout, alertable ? &alerted : NULL);
+		return mono_w32handle_ops_specialwait (handle_data, handle_data, timeout, alertable ? &alerted : NULL);
 	}
 
 	if (!mono_w32handle_test_capabilities (handle_data, MONO_W32HANDLE_CAP_WAIT)) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p can't be waited for",
-			__func__, handle);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p can't be waited for", __func__, handle_data);
 
 		mono_w32handle_unref (handle_data);
 		return MONO_W32HANDLE_WAIT_RET_FAILED;
@@ -853,8 +851,7 @@ mono_w32handle_wait_one (gpointer handle, guint32 timeout, gboolean alertable)
 
 	if (mono_w32handle_test_capabilities (handle_data, MONO_W32HANDLE_CAP_OWN)) {
 		if (own_if_owned (handle_data, &abandoned)) {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p already owned",
-				__func__, handle);
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p already owned", __func__, handle_data);
 
 			ret = abandoned ? MONO_W32HANDLE_WAIT_RET_ABANDONED_0 : MONO_W32HANDLE_WAIT_RET_SUCCESS_0;
 			goto done;
@@ -870,14 +867,13 @@ mono_w32handle_wait_one (gpointer handle, guint32 timeout, gboolean alertable)
 		gint waited;
 
 		if (own_if_signalled (handle_data, &abandoned)) {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p signalled",
-				__func__, handle);
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p signalled", __func__, handle_data);
 
 			ret = abandoned ? MONO_W32HANDLE_WAIT_RET_ABANDONED_0 : MONO_W32HANDLE_WAIT_RET_SUCCESS_0;
 			goto done;
 		}
 
-		mono_w32handle_ops_prewait (handle, handle_data);
+		mono_w32handle_ops_prewait (handle_data, handle_data);
 
 		if (timeout == MONO_INFINITE_WAIT) {
 			waited = mono_w32handle_timedwait_signal_handle (handle_data, MONO_INFINITE_WAIT, FALSE, alertable ? &alerted : NULL);
@@ -921,8 +917,7 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 	gboolean alerted, poll;
 	gint i;
 	gint64 start;
-	MonoW32Handle *handles_data [MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS];
-	gpointer handles_sorted [MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS];
+	MonoW32Handle *handles_data [MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS], *handles_data_sorted [MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS];
 	gboolean abandoned [MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS] = {0};
 
 	if (nhandles == 0)
@@ -952,8 +947,7 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 		if (!mono_w32handle_test_capabilities (handles_data[i], MONO_W32HANDLE_CAP_WAIT)
 			 && !mono_w32handle_test_capabilities (handles_data[i], MONO_W32HANDLE_CAP_SPECIAL_WAIT))
 		{
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p can't be waited for",
-				   __func__, handles [i]);
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p can't be waited for", __func__, handles_data [i]);
 
 			for (i = nhandles - 1; i >= 0; --i)
 				mono_w32handle_unref (handles_data [i]);
@@ -961,14 +955,13 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 			return MONO_W32HANDLE_WAIT_RET_FAILED;
 		}
 
-		handles_sorted [i] = handles [i];
+		handles_data_sorted [i] = handles_data [i];
 	}
 
-	qsort (handles_sorted, nhandles, sizeof (gpointer), g_direct_equal);
+	qsort (handles_data_sorted, nhandles, sizeof (gpointer), g_direct_equal);
 	for (i = 1; i < nhandles; ++i) {
-		if (handles_sorted [i - 1] == handles_sorted [i]) {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p is duplicated",
-				__func__, handles_sorted [i]);
+		if (handles_data_sorted [i - 1] == handles_data_sorted [i]) {
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p is duplicated", __func__, handles_data_sorted [i]);
 
 			for (i = nhandles - 1; i >= 0; --i)
 				mono_w32handle_unref (handles_data [i]);
@@ -1138,7 +1131,7 @@ mono_w32handle_signal_and_wait (gpointer signal_handle, gpointer wait_handle, gu
 	}
 
 	if (mono_w32handle_test_capabilities (wait_handle_data, MONO_W32HANDLE_CAP_SPECIAL_WAIT)) {
-		g_warning ("%s: handle %p has special wait, implement me!!", __func__, wait_handle);
+		g_warning ("%s: handle %p has special wait, implement me!!", __func__, wait_handle_data);
 		mono_w32handle_unref (wait_handle_data);
 		mono_w32handle_unref (signal_handle_data);
 		return MONO_W32HANDLE_WAIT_RET_FAILED;
@@ -1149,14 +1142,13 @@ mono_w32handle_signal_and_wait (gpointer signal_handle, gpointer wait_handle, gu
 
 	mono_w32handle_lock_handles (handles_data, 2);
 
-	mono_w32handle_ops_signal (signal_handle, signal_handle_data);
+	mono_w32handle_ops_signal (signal_handle_data, signal_handle_data);
 
 	mono_w32handle_unlock (signal_handle_data);
 
 	if (mono_w32handle_test_capabilities (wait_handle_data, MONO_W32HANDLE_CAP_OWN)) {
 		if (own_if_owned (wait_handle_data, &abandoned)) {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p already owned",
-				__func__, wait_handle);
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p already owned", __func__, wait_handle_data);
 
 			ret = abandoned ? MONO_W32HANDLE_WAIT_RET_ABANDONED_0 : MONO_W32HANDLE_WAIT_RET_SUCCESS_0;
 			goto done;
@@ -1170,14 +1162,13 @@ mono_w32handle_signal_and_wait (gpointer signal_handle, gpointer wait_handle, gu
 		gint waited;
 
 		if (own_if_signalled (wait_handle_data, &abandoned)) {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p signalled",
-				__func__, wait_handle);
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_W32HANDLE, "%s: handle %p signalled", __func__, wait_handle_data);
 
 			ret = abandoned ? MONO_W32HANDLE_WAIT_RET_ABANDONED_0 : MONO_W32HANDLE_WAIT_RET_SUCCESS_0;
 			goto done;
 		}
 
-		mono_w32handle_ops_prewait (wait_handle, wait_handle_data);
+		mono_w32handle_ops_prewait (wait_handle_data, wait_handle_data);
 
 		if (timeout == MONO_INFINITE_WAIT) {
 			waited = mono_w32handle_timedwait_signal_handle (wait_handle_data, MONO_INFINITE_WAIT, FALSE, alertable ? &alerted : NULL);
