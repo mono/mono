@@ -112,6 +112,16 @@ public class TestJit {
 		return 0;
 	}
 
+	public static int test_conv_float ()
+	{
+		double x = -1073741826.0;
+		int y = (int)(uint) x;
+
+		if (y != -1073741826) return 1;
+
+		return 0;
+	}
+
 	public static int Main() {
 		int num = 0;
 
@@ -133,6 +143,10 @@ public class TestJit {
 		num++;
 
 		if (test_shift () != 0)
+			return num;
+		num++;
+
+		if (test_conv_float () != 0)
 			return num;
 		num++;
 		
