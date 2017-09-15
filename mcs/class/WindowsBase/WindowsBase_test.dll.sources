@@ -25,6 +25,7 @@ System.Windows/DependencyObjectTypeTest.cs
 System.Windows/DependencyPropertyTest.cs
 System.Windows/Int32RectTest.cs
 System.Windows/Int32RectConverterTest.cs
+System.Windows/Int32RectValueSerializerTest.cs
 System.Windows/PointTest.cs
 System.Windows/PointConverterTest.cs
 System.Windows/PropertyMetadataTest.cs
