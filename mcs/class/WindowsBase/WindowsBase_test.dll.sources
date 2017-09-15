@@ -30,6 +30,7 @@ System.Windows/PointConverterTest.cs
 System.Windows/PropertyMetadataTest.cs
 System.Windows/RectTest.cs
 System.Windows/RectConverterTest.cs
+System.Windows/RectValueSerializerTest.cs
 System.Windows/SizeTest.cs
 System.Windows/SizeConverterTest.cs
 System.Windows/SizeValueSerializerTest.cs
