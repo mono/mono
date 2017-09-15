@@ -492,7 +492,8 @@ TEST_CS_SRC_DIST=	\
 
 TEST_CS_SRC_GEN = \
 	runtime-invoke.gen.cs \
-	imt_big_iface_test.cs
+	imt_big_iface_test.cs \
+	recursive-struct-arrays.cs
 
 if AMD64
 TEST_CS_SRC = $(BASE_TEST_CS_SRC) $(TEST_CS_SRC_GEN) async-exc-compilation.cs finally_guard.cs finally_block_ending_in_dead_bb.cs

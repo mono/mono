@@ -1515,6 +1515,7 @@ mono_class_set_type_load_failure_causedby_class (MonoClass *klass, const MonoCla
  * Sets the following fields in @klass:
  *  - all the fields initialized by mono_class_init_sizes ()
  *  - element_class/cast_class (for enums)
+ *  - sizes:element_size (for arrays)
  *  - field->type/offset for all fields
  *  - fields_inited
  *
@@ -1770,6 +1771,7 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 	MonoClassField *field;
 	gboolean blittable;
 	int instance_size = base_instance_size;
+	int element_size = -1;
 	int class_size, min_align;
 	int *field_offsets;
 	gboolean *fields_has_references;
@@ -2116,6 +2118,9 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 	else if (klass->byval_arg.type == MONO_TYPE_PTR)
 		instance_size = sizeof (MonoObject) + sizeof (gpointer);
 
+	if (klass->byval_arg.type == MONO_TYPE_SZARRAY || klass->byval_arg.type == MONO_TYPE_ARRAY)
+		element_size = mono_class_array_element_size (klass->element_class);
+
 	/* Publish the data */
 	mono_loader_lock ();
 	if (klass->instance_size && !klass->image->dynamic) {
@@ -2145,6 +2150,9 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 		if (!(field->type->attrs & FIELD_ATTRIBUTE_STATIC))
 			klass->fields [i].offset = field_offsets [i];
 	}
+
+	if (klass->byval_arg.type == MONO_TYPE_SZARRAY || klass->byval_arg.type == MONO_TYPE_ARRAY)
+		klass->sizes.element_size = element_size;
 
 	mono_memory_barrier ();
 	klass->size_inited = 1;
@@ -4841,7 +4849,7 @@ mono_class_init (MonoClass *klass)
 	GSList *init_list = (GSList *)mono_native_tls_get_value (init_pending_tls_id);
 	if (g_slist_find (init_list, klass)) {
 		mono_class_set_type_load_failure (klass, "Recursive type definition detected");
-		goto leave;
+		goto leave_no_init_pending;
 	}
 	init_list = g_slist_prepend (init_list, klass);
 	mono_native_tls_set_value (init_pending_tls_id, init_list);
@@ -5040,10 +5048,12 @@ mono_class_init (MonoClass *klass)
 
 	goto leave;
 
- leave:
+leave:
+	init_list = mono_native_tls_get_value (init_pending_tls_id);
 	init_list = g_slist_remove (init_list, klass);
 	mono_native_tls_set_value (init_pending_tls_id, init_list);
 
+leave_no_init_pending:
 	if (locked)
 		mono_loader_unlock ();
 
@@ -6553,7 +6563,7 @@ mono_bounded_array_class_get (MonoClass *eclass, guint32 rank, gboolean bounded)
 		/* element_size -1 is ok as this is not an instantitable type*/
 		klass->sizes.element_size = -1;
 	} else
-		klass->sizes.element_size = mono_class_array_element_size (eclass);
+		klass->sizes.element_size = -1;
 
 	mono_class_setup_supertypes (klass);
 
@@ -8576,11 +8586,16 @@ handle_enum:
  * @ac: pointer to a #MonoArrayClass
  *
  * Returns: The size of single array element.
+ *
+ * LOCKING: Acquires the loader lock.
  */
 gint32
 mono_array_element_size (MonoClass *ac)
 {
 	g_assert (ac->rank);
+	if (G_UNLIKELY (!ac->size_inited)) {
+		mono_class_setup_fields (ac);
+	}
 	return ac->sizes.element_size;
 }
 
