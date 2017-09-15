@@ -38,6 +38,7 @@ System.Windows/SizeConverterTest.cs
 System.Windows/SizeValueSerializerTest.cs
 System.Windows/VectorTest.cs
 System.Windows/VectorConverterTest.cs
+System.Windows/VectorValueSerializerTest.cs
 System.Windows.Markup/ConstructorArgumentAttributeTest.cs
 System.Windows.Markup/ContentPropertyAttributeTest.cs
 System.Windows.Markup/ContentWrapperAttributeTest.cs
