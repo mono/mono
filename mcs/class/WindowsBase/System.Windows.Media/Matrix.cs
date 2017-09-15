@@ -186,22 +186,24 @@ namespace System.Windows.Media {
 			}
 			else
 			{
-				var parts = source.Split (',');
-				if (parts.Length != 6)
-					throw new FormatException (string.Format ("Invalid Matrix format: {0}", source));
+				var tokenizer = new NumericListTokenizer (source, CultureInfo.InvariantCulture);
 				double m11;
 				double m12;
 				double m21;
 				double m22;
 				double offsetX;
 				double offsetY;
-				if (double.TryParse (parts[0], NumberStyles.Float, CultureInfo.InvariantCulture, out m11)
-				    && double.TryParse (parts[1], NumberStyles.Float, CultureInfo.InvariantCulture, out m12)
-				    && double.TryParse (parts[2], NumberStyles.Float, CultureInfo.InvariantCulture, out m21)
-				    && double.TryParse (parts[3], NumberStyles.Float, CultureInfo.InvariantCulture, out m22)
-				    && double.TryParse (parts[4], NumberStyles.Float, CultureInfo.InvariantCulture, out offsetX)
-				    && double.TryParse (parts[5], NumberStyles.Float, CultureInfo.InvariantCulture, out offsetY))
+				if (double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out m11)
+				    && double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out m12)
+				    && double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out m21)
+				    && double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out m22)
+				    && double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out offsetX)
+				    && double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out offsetY))
 				{
+					if (!tokenizer.HasNoMoreTokens ())
+					{
+						throw new InvalidOperationException ("Invalid Matrix format: " + source);
+					}
 					value = new Matrix (m11, m12, m21, m22, offsetX, offsetY);
 				}
 				else
@@ -336,12 +338,6 @@ namespace System.Windows.Media {
 			Prepend (m);
 		}
 
-		string IFormattable.ToString (string format,
-					      IFormatProvider provider)
-		{
-			return ToString (provider);
-		}
-
 		public override string ToString ()
 		{
 			return ToString (null);
@@ -349,9 +345,33 @@ namespace System.Windows.Media {
 
 		public string ToString (IFormatProvider provider)
 		{
-			return IsIdentity
-				? "Identity"
-				: string.Concat (_m11, ",", _m12, ",", _m21, ",", _m22, ",", _offsetX, ",", _offsetY);
+			return ToString (null, provider);
+		}
+
+		string IFormattable.ToString (string format,
+			IFormatProvider provider)
+		{
+			return ToString (provider);
+		}
+
+		private string ToString (string format, IFormatProvider provider)
+		{
+			if (IsIdentity)
+				return "Identity";
+
+			if (provider == null)
+				provider = CultureInfo.CurrentCulture;
+
+			if (format == null)
+				format = string.Empty;
+
+			var separator = NumericListTokenizer.GetSeparator (provider);
+
+			var matrixFormat = string.Format (
+				"{{0:{0}}}{1}{{1:{0}}}{1}{{2:{0}}}{1}{{3:{0}}}{1}{{4:{0}}}{1}{{5:{0}}}",
+				format, separator);
+			return string.Format (provider, matrixFormat,
+				_m11, _m12, _m21, _m22, _offsetX, _offsetY);
 		}
 
 		public Point Transform (Point point)
