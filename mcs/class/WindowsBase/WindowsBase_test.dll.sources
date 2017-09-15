@@ -28,6 +28,7 @@ System.Windows/Int32RectConverterTest.cs
 System.Windows/Int32RectValueSerializerTest.cs
 System.Windows/PointTest.cs
 System.Windows/PointConverterTest.cs
+System.Windows/PointValueSerializerTest.cs
 System.Windows/PropertyMetadataTest.cs
 System.Windows/RectTest.cs
 System.Windows/RectConverterTest.cs
