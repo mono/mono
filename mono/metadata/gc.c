@@ -91,6 +91,8 @@ static void reference_queue_proccess_all (void);
 static void mono_reference_queue_cleanup (void);
 static void reference_queue_clear_for_domain (MonoDomain *domain);
 
+void mono_runtime_flush_appdomain_processexit_queue (void);
+
 
 static MonoThreadInfoWaitRet
 guarded_wait (MonoThreadHandle *thread_handle, guint32 timeout, gboolean alertable)
@@ -872,6 +874,8 @@ finalizer_thread (gpointer unused)
 		mono_console_handle_async_ops ();
 
 		mono_attach_maybe_start ();
+
+		mono_runtime_flush_appdomain_processexit_queue ();
 
 		finalize_domain_objects ();
 

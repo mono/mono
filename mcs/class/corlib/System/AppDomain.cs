@@ -1668,5 +1668,59 @@ namespace System {
 		public TimeSpan MonitoringTotalProcessorTime {
 			get { throw new NotImplementedException (); }
 		}
+
+		static volatile int ProcessExitEventsQueued = 0;
+		static volatile int ProcessExitEventsInvoked = 0;
+
+		static readonly System.Collections.Queue InvokeProcessExitQueue = 
+			new System.Collections.Queue();
+		static GCHandle SignalPin;
+		static readonly ManualResetEventSlim ProcessExitEventsInvokedSignal =
+			new ManualResetEventSlim(false);
+
+		const int ProcessExitEventTimeoutMs = 3000;
+
+		static void WaitForProcessExitEventQueueToDrain ()
+		{
+			SignalPin = GCHandle.Alloc(ProcessExitEventsInvokedSignal);
+
+			var waitResult = ProcessExitEventsInvokedSignal.Wait(ProcessExitEventTimeoutMs);
+
+			if (!waitResult)
+				throw new Exception("Timed out while waiting for ProcessExit events");
+			else if (ProcessExitEventsInvoked < ProcessExitEventsQueued)
+				throw new Exception("Wait ended before all ProcessExit events had been invoked");
+
+			SignalPin.Free();
+		}
+
+		static void InvokeQueuedProcessExitEvents () 
+		{
+			Monitor.Enter(InvokeProcessExitQueue);
+
+			while (InvokeProcessExitQueue.Count > 0) {
+				var appDomain = (AppDomain)InvokeProcessExitQueue.Dequeue();
+				Monitor.Exit(InvokeProcessExitQueue);
+
+				if (appDomain.ProcessExit != null)
+					appDomain.ProcessExit(appDomain, EventArgs.Empty);
+
+				Interlocked.Increment(ref ProcessExitEventsInvoked);
+
+				Monitor.Enter(InvokeProcessExitQueue);
+			}
+
+			if (ProcessExitEventsQueued <= ProcessExitEventsInvoked)
+				ProcessExitEventsInvokedSignal.Set();
+
+			Monitor.Exit(InvokeProcessExitQueue);
+		}
+
+		private void QueueProcessExitEvent () 
+		{
+			Interlocked.Increment(ref ProcessExitEventsQueued);
+			lock (InvokeProcessExitQueue)
+				InvokeProcessExitQueue.Enqueue(this);
+		}
 	}
 }
