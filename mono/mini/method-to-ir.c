@@ -11382,6 +11382,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (sp [-1]->type != STACK_OBJ)
 				UNVERIFIED;
 
+			if (seq_points && !sym_seq_points && mono_debug_enabled ())
+				emit_seq_point (cfg, method, ip, FALSE, TRUE);
+
 			MONO_INST_NEW (cfg, ins, OP_THROW);
 			--sp;
 			ins->sreg1 = sp [0]->dreg;

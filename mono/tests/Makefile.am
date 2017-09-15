@@ -15,6 +15,7 @@ check-local:
 	$(MAKE) test-appdomain-unload || ok=false; \
 	$(MAKE) test-process-stress || ok=false; \
 	$(MAKE) test-pedump || ok=false; \
+	$(MAKE) test-il-offsets || ok=false; \
 	$(MAKE) test-internalsvisibleto || ok=false; \
 	$(MAKE) rm-empty-logs || ok=false; \
 	$(MAKE) runtest-gac-loading || ok=false; \
@@ -1795,6 +1796,13 @@ bug-324535.exe bug-324535-il.dll: $(srcdir)/bug-324535.cs $(srcdir)/bug-324535-i
 	$(ILASM) /dll /output:bug-324535-il.dll $(srcdir)/bug-324535-il.il
 	$(MCS) -r:bug-324535-il.dll -out:bug-324535.exe $(srcdir)/bug-324535.cs
 
+EXTRA_DIST += bug-43095-il.il bug-43095.cs
+
+bug-43095.exe$(PLATFORM_AOT_SUFFIX): bug-43095-il.dll$(PLATFORM_AOT_SUFFIX)
+bug-43095.exe bug-43095-il.dll: $(srcdir)/bug-43095.cs $(srcdir)/bug-43095-il.il
+	$(ILASM) /dll /output:bug-43095-il.dll $(srcdir)/bug-43095-il.il
+	$(MCS) -r:bug-43095-il.dll -out:bug-43095.exe $(srcdir)/bug-43095.cs
+
 EXTRA_DIST += custom-modifiers.2.cs custom-modifiers-lib.il
 
 custom-modifiers.2.exe$(PLATFORM_AOT_SUFFIX): custom-modifiers-lib.dll$(PLATFORM_AOT_SUFFIX)
@@ -1970,6 +1978,9 @@ test-console-output: console-output.exe
 
 test-pedump: test-runner.exe
 	$(with_mono_path) $(mono_build_root)/tools/pedump/pedump --verify error test-runner.exe
+
+test-il-offsets: bug-43095.exe test-runner.exe
+	$(RUNTIME) --debug $<
 
 .PHONY: test-gac-loading test-eglib-remap
 
