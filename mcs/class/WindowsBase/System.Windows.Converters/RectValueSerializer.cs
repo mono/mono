@@ -42,7 +42,7 @@ namespace System.Windows.Converters {
 		public override object ConvertFromString (string value, IValueSerializerContext context)
 		{
 			if (value == null)
-				throw new ArgumentNullException ("value");
+				throw new NotSupportedException ("value != null");
 			return Rect.Parse (value);
 		}
 

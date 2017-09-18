@@ -50,7 +50,7 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
+		[ExpectedException (typeof (NotSupportedException))]
 		public void ConvertFromStringShouldThrowExceptionWhenStringIsNull ()
 		{
 			var serializer = new Int32RectValueSerializer ();
