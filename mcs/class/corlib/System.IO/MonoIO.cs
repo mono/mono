@@ -187,9 +187,20 @@ namespace System.IO
 						    out MonoIOError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool CopyFile (string path, string dest,
-						    bool overwrite,
-						    out MonoIOError error);
+		private unsafe extern static bool CopyFile (char* path, char* dest,
+							    bool overwrite,
+							    out MonoIOError error);
+
+		public static bool CopyFile (string path, string dest,
+					     bool overwrite,
+					     out MonoIOError error)
+		{
+			unsafe {
+				fixed (char* pathChars = path, destChars = dest) {
+					return CopyFile (pathChars, destChars, overwrite, out error);
+				}
+			}
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static bool DeleteFile (string path,
