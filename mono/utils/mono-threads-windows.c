@@ -223,7 +223,7 @@ mono_native_thread_join (MonoNativeThreadId tid)
 {
 	HANDLE handle;
 
-	if (!(handle = OpenThread (THREAD_ALL_ACCESS, TRUE, tid)))
+	if (!(handle = OpenThread (SYNCHRONIZE, TRUE, tid)))
 		return FALSE;
 
 	DWORD res = WaitForSingleObject (handle, INFINITE);

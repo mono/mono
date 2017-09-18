@@ -1115,7 +1115,7 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, MonoObject *sta
 	else
 		stack_set_size = 0;
 
-	if (!mono_thread_platform_create_thread (start_wrapper, start_info, &stack_set_size, &tid)) {
+	if (!mono_thread_platform_create_thread ((MonoThreadStart)start_wrapper, start_info, &stack_set_size, &tid)) {
 		/* The thread couldn't be created, so set an exception */
 		mono_threads_lock ();
 		mono_g_hash_table_remove (threads_starting_up, thread);
@@ -3006,7 +3006,7 @@ thread_detach (MonoThreadInfo *info)
 static void
 thread_detach_with_lock (MonoThreadInfo *info)
 {
-	return mono_gc_thread_detach_with_lock (info);
+	mono_gc_thread_detach_with_lock (info);
 }
 
 static gboolean
@@ -5003,6 +5003,68 @@ mono_thread_is_foreign (MonoThread *thread)
 	return info->runtime_thread == FALSE;
 }
 
+#ifndef HOST_WIN32
+static void
+threads_native_thread_join_lock (gpointer key, gpointer value)
+{
+	pthread_t thread = (pthread_t)key;
+	if (thread != pthread_self ()) {
+		MONO_ENTER_GC_SAFE;
+		/* This shouldn't block */
+		mono_threads_join_lock ();
+		mono_native_thread_join (thread);
+		mono_threads_join_unlock ();
+		MONO_EXIT_GC_SAFE;
+	}
+}
+inline static void
+threads_native_thread_join_nolock (gpointer key, gpointer value)
+{
+	pthread_t thread = (pthread_t)key;
+	MONO_ENTER_GC_SAFE;
+	mono_native_thread_join (thread);
+	MONO_EXIT_GC_SAFE;
+}
+
+inline static void
+threads_add_joinable_thread_nolock (gpointer key)
+{
+	g_hash_table_insert (joinable_threads, key, key);
+}
+#else
+static void
+threads_native_thread_join_lock (gpointer key, gpointer value)
+{
+	MonoNativeThreadId thread_id = (MonoNativeThreadId)(guint64)key;
+	HANDLE thread_handle = (HANDLE)value;
+	if (thread_id != GetCurrentThreadId () && thread_handle != NULL && thread_handle != INVALID_HANDLE_VALUE) {
+		MONO_ENTER_GC_SAFE;
+		/* This shouldn't block */
+		mono_threads_join_lock ();
+		WaitForSingleObject (thread_handle, INFINITE);
+		mono_threads_join_unlock ();
+		MONO_EXIT_GC_SAFE;
+		CloseHandle (thread_handle);
+	}
+}
+
+inline static void
+threads_native_thread_join_nolock (gpointer key, gpointer value)
+{
+	HANDLE thread_handle = (HANDLE)value;
+	MONO_ENTER_GC_SAFE;
+	WaitForSingleObject (thread_handle, INFINITE);
+	MONO_EXIT_GC_SAFE;
+	CloseHandle (thread_handle);
+}
+
+inline static void
+threads_add_joinable_thread_nolock (gpointer key)
+{
+	g_hash_table_insert (joinable_threads, key, (gpointer)OpenThread (SYNCHRONIZE, TRUE, (MonoNativeThreadId)(guint64)key));
+}
+#endif
+
 /*
  * mono_add_joinable_thread:
  *
@@ -5012,7 +5074,6 @@ mono_thread_is_foreign (MonoThread *thread)
 void
 mono_threads_add_joinable_thread (gpointer tid)
 {
-#ifndef HOST_WIN32
 	/*
 	 * We cannot detach from threads because it causes problems like
 	 * 2fd16f60/r114307. So we collect them and join them when
@@ -5021,12 +5082,13 @@ mono_threads_add_joinable_thread (gpointer tid)
 	joinable_threads_lock ();
 	if (!joinable_threads)
 		joinable_threads = g_hash_table_new (NULL, NULL);
-	g_hash_table_insert (joinable_threads, tid, tid);
-	UnlockedIncrement (&joinable_thread_count);
+	if (!g_hash_table_lookup (joinable_threads, tid)) {
+		threads_add_joinable_thread_nolock (tid);
+		UnlockedIncrement (&joinable_thread_count);
+	}
 	joinable_threads_unlock ();
 
 	mono_gc_finalize_notify ();
-#endif
 }
 
 /*
@@ -5038,11 +5100,9 @@ mono_threads_add_joinable_thread (gpointer tid)
 void
 mono_threads_join_threads (void)
 {
-#ifndef HOST_WIN32
 	GHashTableIter iter;
 	gpointer key;
-	gpointer tid;
-	pthread_t thread;
+	gpointer value;
 	gboolean found;
 
 	/* Fastpath */
@@ -5054,27 +5114,17 @@ mono_threads_join_threads (void)
 		found = FALSE;
 		if (g_hash_table_size (joinable_threads)) {
 			g_hash_table_iter_init (&iter, joinable_threads);
-			g_hash_table_iter_next (&iter, &key, (void**)&tid);
-			thread = (pthread_t)tid;
+			g_hash_table_iter_next (&iter, &key, (void**)&value);
 			g_hash_table_remove (joinable_threads, key);
 			UnlockedDecrement (&joinable_thread_count);
 			found = TRUE;
 		}
 		joinable_threads_unlock ();
-		if (found) {
-			if (thread != pthread_self ()) {
-				MONO_ENTER_GC_SAFE;
-				/* This shouldn't block */
-				mono_threads_join_lock ();
-				mono_native_thread_join (thread);
-				mono_threads_join_unlock ();
-				MONO_EXIT_GC_SAFE;
-			}
-		} else {
+		if (found)
+			threads_native_thread_join_lock (key, value);
+		else
 			break;
-		}
 	}
-#endif
 }
 
 /*
@@ -5086,26 +5136,25 @@ mono_threads_join_threads (void)
 void
 mono_thread_join (gpointer tid)
 {
-#ifndef HOST_WIN32
-	pthread_t thread;
 	gboolean found = FALSE;
+	gpointer value;
 
 	joinable_threads_lock ();
 	if (!joinable_threads)
 		joinable_threads = g_hash_table_new (NULL, NULL);
-	if (g_hash_table_lookup (joinable_threads, tid)) {
+
+	value = g_hash_table_lookup (joinable_threads, tid);
+	if (value) {
 		g_hash_table_remove (joinable_threads, tid);
 		UnlockedDecrement (&joinable_thread_count);
 		found = TRUE;
 	}
 	joinable_threads_unlock ();
+
 	if (!found)
 		return;
-	thread = (pthread_t)tid;
-	MONO_ENTER_GC_SAFE;
-	mono_native_thread_join (thread);
-	MONO_EXIT_GC_SAFE;
-#endif
+
+	threads_native_thread_join_nolock (tid, value);
 }
 
 void
