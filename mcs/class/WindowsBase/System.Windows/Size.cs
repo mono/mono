@@ -78,46 +78,50 @@ namespace System.Windows {
 			Size value;
 			if (source.Trim () == "Empty")
 			{
-				value = Empty;
+				return Empty;
 			}
-			else
+			var tokenizer = new NumericListTokenizer (source, CultureInfo.InvariantCulture);
+			double width;
+			double height;
+			if (!double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out width) ||
+			    !double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out height))
 			{
-				var parts = source.Split (',');
-				if (parts.Length != 2)
-					throw new FormatException (string.Format ("Invalid Size format: {0}", source));
-				double width;
-				double height;
-				if (double.TryParse (parts[0], NumberStyles.Float, CultureInfo.InvariantCulture, out width)
-					&& double.TryParse (parts[1], NumberStyles.Float, CultureInfo.InvariantCulture, out height))
-				{
-					value = new Size (width, height);
-				}
-				else
-				{
-					throw new FormatException (string.Format ("Invalid Size format: {0}", source));
-				}
+				throw new FormatException (string.Format ("Invalid Size format: {0}", source));
 			}
-			return value;
+			if (!tokenizer.HasNoMoreTokens ())
+			{
+				throw new InvalidOperationException ("Invalid Size format: " + source);
+			}
+			return new Size(width, height);
 		}
 
 		public override string ToString ()
 		{
-			return ConvertToString (null);
+			return ConvertToString (null, null);
 		}
 
 		public string ToString (IFormatProvider provider)
 		{
-			return ConvertToString (provider);
+			return ConvertToString (null, provider);
 		}
 
 		string IFormattable.ToString (string format, IFormatProvider provider)
 		{
-			return ConvertToString (provider);
+			return ConvertToString (format, provider);
 		}
 
-		private string ConvertToString (IFormatProvider provider)
+		private string ConvertToString (string format, IFormatProvider provider)
 		{
-			return IsEmpty ? "Empty" : string.Concat (_width, ",", _height);
+			if (IsEmpty)
+				return "Empty";
+
+			if (provider == null)
+				provider = CultureInfo.CurrentCulture;
+			if (format == null)
+				format = string.Empty;
+			var separator = NumericListTokenizer.GetSeparator (provider);
+			var vectorFormat  = string.Format ("{{0:{0}}}{1}{{1:{0}}}", format, separator);
+			return string.Format (provider, vectorFormat, _width, _height);
 		}
 
 		public bool IsEmpty {

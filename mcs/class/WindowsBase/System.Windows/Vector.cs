@@ -23,8 +23,8 @@
 //	Chris Toshok (toshok@novell.com)
 //
 
-using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Windows.Converters;
 using System.Windows.Markup;
 using System.Windows.Media;
@@ -57,12 +57,10 @@ namespace System.Windows {
 
 		public override int GetHashCode ()
 		{
-			throw new NotImplementedException ();
-		}
-
-		string IFormattable.ToString (string format, IFormatProvider provider)
-		{
-			return string.Format (provider, "{0:" + format + "},{1:" + format + "}", _x, _y);
+			unchecked
+			{
+				return (_x.GetHashCode () * 397) ^ _y.GetHashCode ();
+			}
 		}
 
 		public static bool Equals (Vector vector1, Vector vector2)
@@ -150,17 +148,47 @@ namespace System.Windows {
 
 		public static Vector Parse (string source)
 		{
-			throw new NotImplementedException ();
+			if (source == null)
+				throw new ArgumentNullException ("source");
+			var tokenizer = new NumericListTokenizer (source, CultureInfo.InvariantCulture);
+			double x;
+			double y;
+			if (!double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out x) ||
+			    !double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out y))
+			{
+				throw new FormatException (string.Format ("Invalid Vector format: {0}", source));
+			}
+			if (!tokenizer.HasNoMoreTokens ())
+			{
+				throw new InvalidOperationException("Invalid Vector format: " + source);
+			}
+			return new Vector(x, y);
 		}
 
 		public override string ToString ()
 		{
-			return String.Format ("{0},{1}", _x, _y);
+			return ToString(null);
 		}
 
 		public string ToString (IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return ToString (null, provider);
+		}
+
+		string IFormattable.ToString (string format, IFormatProvider provider)
+		{
+			return ToString (format, provider);
+		}
+
+		private string ToString(string format,IFormatProvider formatProvider)
+		{
+			if (formatProvider == null)
+				formatProvider = CultureInfo.CurrentCulture;
+			if (format == null)
+				format = string.Empty;
+			var separator = NumericListTokenizer.GetSeparator (formatProvider);
+			var vectorFormat  = string.Format ("{{0:{0}}}{1}{{1:{0}}}", format, separator);
+			return string.Format (formatProvider, vectorFormat, _x, _y);
 		}
 
 		public double Length {

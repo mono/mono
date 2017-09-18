@@ -54,7 +54,6 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ConvertFrom ()
 		{
 			Int32RectConverter r = new Int32RectConverter ();
@@ -79,7 +78,6 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ConvertFrom_negative ()
 		{
 			Int32RectConverter r = new Int32RectConverter ();

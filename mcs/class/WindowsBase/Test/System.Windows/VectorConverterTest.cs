@@ -52,7 +52,6 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ConvertFrom ()
 		{
 			VectorConverter r = new VectorConverter ();
@@ -77,7 +76,6 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ConvertTo ()
 		{
 			VectorConverter r = new VectorConverter ();

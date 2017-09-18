@@ -142,7 +142,6 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Parse ()
 		{
 			Int32Rect r = Int32Rect.Parse ("1, 2, 3, 4");
@@ -150,7 +149,6 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ParseNegative ()
 		{
 			Int32Rect.Parse ("1, 2, -3, -4");
