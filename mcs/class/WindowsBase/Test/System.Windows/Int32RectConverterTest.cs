@@ -24,6 +24,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Media;
 using NUnit.Framework;
@@ -88,14 +89,13 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ConvertTo ()
 		{
 			Int32RectConverter r = new Int32RectConverter ();
 
 			Int32Rect rect = new Int32Rect (0, 0, 1, 2);
 
-			object o = r.ConvertTo (rect, typeof (string));
+			object o = r.ConvertTo (null, CultureInfo.InvariantCulture, rect, typeof (string));
 			
 			Assert.AreEqual (typeof (string), o.GetType());
 			Assert.AreEqual ("0,0,1,2", (string)o);
