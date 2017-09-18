@@ -799,6 +799,8 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 		removed = FALSE;
 	} else {
 		mono_g_hash_table_remove (threads, (gpointer)thread->tid);
+		if (shutting_down)
+			mono_threads_add_joinable_thread ((gpointer)thread->tid);
 		removed = TRUE;
 	}
 
