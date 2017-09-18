@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using System;
+using System.Globalization;
 using System.Windows.Media;
 
 namespace MonoTests.System.Windows.Media {
@@ -56,7 +57,7 @@ namespace MonoTests.System.Windows.Media {
 		{
 			var conv = new MatrixConverter ();
 			var matrix = new Matrix (1, 2, 3, 4, 5, 6);
-			object obj = conv.ConvertTo (matrix, typeof (string));
+			object obj = conv.ConvertTo (null, CultureInfo.InvariantCulture, matrix, typeof (string));
 			Assert.AreEqual (typeof (string), obj.GetType ());
 			Assert.AreEqual ("1,2,3,4,5,6", (string)obj);
 		}

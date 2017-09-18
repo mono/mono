@@ -24,6 +24,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Media;
 using NUnit.Framework;
@@ -86,7 +87,7 @@ namespace MonoTests.System.Windows {
 
 			Size rect = new Size (1, 2);
 
-			object o = r.ConvertTo (rect, typeof (string));
+			object o = r.ConvertTo (null, CultureInfo.InvariantCulture, rect, typeof (string));
 			
 			Assert.AreEqual (typeof (string), o.GetType());
 			Assert.AreEqual ("1,2", (string)o);
