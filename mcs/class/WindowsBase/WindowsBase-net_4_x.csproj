@@ -226,6 +226,7 @@
     <Compile Include="System.Windows\IWeakEventListener.cs" />
     <Compile Include="System.Windows\LocalValueEntry.cs" />
     <Compile Include="System.Windows\LocalValueEnumerator.cs" />
+    <Compile Include="System.Windows\NumericListTokenizer.cs" />
     <Compile Include="System.Windows\Point.cs" />
     <Compile Include="System.Windows\PointConverter.cs" />
     <Compile Include="System.Windows\PropertyChangedCallback.cs" />
