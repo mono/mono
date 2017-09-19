@@ -13,7 +13,7 @@ LIB_REFS += System.Web
 endif
 
 TEST_MCS_FLAGS = -nowarn:618
-TEST_LIB_REFS = System System.Xml
+TEST_LIB_REFS = System System.Xml System.Core
 
 TEST_MONO_PATH = .
 
