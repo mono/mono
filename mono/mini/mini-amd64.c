@@ -2456,6 +2456,12 @@ mono_arch_dyn_call_free (MonoDynCallInfo *info)
 	g_free (ainfo);
 }
 
+int
+mono_arch_dyn_call_get_buf_size (MonoDynCallInfo *info)
+{
+	return sizeof (DynCallArgs);
+}
+
 #define PTR_TO_GREG(ptr) (mgreg_t)(ptr)
 #define GREG_TO_PTR(greg) (gpointer)(greg)
 
@@ -2474,7 +2480,7 @@ mono_arch_dyn_call_free (MonoDynCallInfo *info)
  * libffi.
  */
 void
-mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, guint8 *buf, int buf_len)
+mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, guint8 *buf)
 {
 	ArchDynCallInfo *dinfo = (ArchDynCallInfo*)info;
 	DynCallArgs *p = (DynCallArgs*)buf;
@@ -2490,8 +2496,6 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 		mono_memory_barrier ();
 		param_reg_to_index_inited = 1;
 	}
-
-	g_assert (buf_len >= sizeof (DynCallArgs));
 
 	p->res = 0;
 	p->ret = ret;

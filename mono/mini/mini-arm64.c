@@ -1473,6 +1473,12 @@ mono_arch_dyn_call_free (MonoDynCallInfo *info)
 	g_free (ainfo);
 }
 
+int
+mono_arch_dyn_call_get_buf_size (MonoDynCallInfo *info)
+{
+	return sizeof (DynCallArgs);
+}
+
 static double
 bitcast_r4_to_r8 (float f)
 {
@@ -1490,7 +1496,7 @@ bitcast_r8_to_r4 (double f)
 }
 
 void
-mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, guint8 *buf, int buf_len)
+mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, guint8 *buf)
 {
 	ArchDynCallInfo *dinfo = (ArchDynCallInfo*)info;
 	DynCallArgs *p = (DynCallArgs*)buf;
@@ -1498,8 +1504,6 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 	MonoMethodSignature *sig = dinfo->sig;
 	CallInfo *cinfo = dinfo->cinfo;
 	int buffer_offset = 0;
-
-	g_assert (buf_len >= sizeof (DynCallArgs));
 
 	p->res = 0;
 	p->ret = ret;
