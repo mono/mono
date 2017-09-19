@@ -6562,18 +6562,19 @@ namespace Mono.CSharp
 				return;
 			}
 
+			bool dereference = IsRef && !(source is ReferenceExpression);
 			New n_source = source as New;
 			if (n_source != null && n_source.CanEmitOptimizedLocalTarget (ec)) {
 				if (!n_source.Emit (ec, this)) {
 					if (leave_copy) {
 						EmitLoad (ec);
-						if (IsRef)
+						if (dereference)
 							ec.EmitLoadFromPtr (type);
 					}
 					return;
 				}
 			} else {
-				if (IsRef)
+				if (dereference)
 					EmitLoad (ec);
 
 				source.Emit (ec);
@@ -6581,13 +6582,13 @@ namespace Mono.CSharp
 
 			if (leave_copy) {
 				ec.Emit (OpCodes.Dup);
-				if (IsRef) {
+				if (dereference) {
 					temp = new LocalTemporary (Type);
 					temp.Store (ec);
 				}
 			}
 
-			if (IsRef)
+			if (dereference)
 				ec.EmitStoreFromPtr (type);
 			else
 				Variable.EmitAssign (ec);
@@ -6671,7 +6672,7 @@ namespace Mono.CSharp
 		}
 
 		public override bool IsRef {
-			get { return false; }
+			get { return local_info.IsByRef; }
 		}
 
 		public override string Name {
@@ -6712,7 +6713,11 @@ namespace Mono.CSharp
 					AnonymousMethodExpression.Error_AddressOfCapturedVar (ec, this, loc);
 				} else if (local_info.IsFixed) {
 					ec.Report.Error (1764, loc,
-						"Cannot use fixed local `{0}' inside an anonymous method, lambda expression or query expression",
+						"Cannot use fixed variable `{0}' inside an anonymous method, lambda expression or query expression",
+						GetSignatureForError ());
+				} else if (local_info.IsByRef) {
+					ec.Report.Error (8175, loc,
+						"Cannot use by-reference variable `{0}' inside an anonymous method, lambda expression, or query expression",
 						GetSignatureForError ());
 				}
 
@@ -7134,7 +7139,7 @@ namespace Mono.CSharp
 		protected override Expression DoResolve (ResolveContext rc)
 		{
 			ResolveConditionalAccessReceiver (rc);
-			return DoResolveInvocation (rc);
+			return DoResolveInvocation (rc, null);
 		}
 
 		public override Expression DoResolveLValue (ResolveContext rc, Expression right_side)
@@ -7161,10 +7166,21 @@ namespace Mono.CSharp
 				return res.Resolve (rc);
 			}
 
+			if (right_side != null) {
+				if (eclass != ExprClass.Unresolved)
+					return this;
+
+				var res = DoResolveInvocation (rc, right_side);
+				if (res == null)
+					return null;
+
+				return res;
+			}
+
 			return base.DoResolveLValue (rc, right_side);
 		}
 
-		Expression DoResolveInvocation (ResolveContext ec)
+		Expression DoResolveInvocation (ResolveContext ec, Expression rhs)
 		{
 			Expression member_expr;
 			var atn = expr as ATypeNameExpression;
@@ -7260,6 +7276,17 @@ namespace Mono.CSharp
 			IsSpecialMethodInvocation (ec, method, loc);
 			
 			eclass = ExprClass.Value;
+
+			if (type.Kind == MemberKind.ByRef) {
+				if (rhs == null && arguments?.ContainsEmitWithAwait () == true) {
+					ec.Report.Error (8178, loc, "`await' cannot be used in an expression containing a call to `{0}' because it returns by reference",
+						GetSignatureForError ());
+				}
+
+				if (rhs != EmptyExpression.OutAccess)
+					return ByRefDereference.Create (this).Resolve (ec);
+			}
+
 			return this;
 		}
 
@@ -11591,6 +11618,39 @@ namespace Mono.CSharp
 		}
 	}
 
+	class ReferenceTypeExpr : TypeExpr
+	{
+		FullNamedExpression element;
+
+		public ReferenceTypeExpr (FullNamedExpression element, Location loc)
+		{
+			this.element = element;
+			this.loc = loc;
+		}
+
+		public override TypeSpec ResolveAsType (IMemberContext mc, bool allowUnboundTypeArguments = false)
+		{
+			type = element.ResolveAsType (mc);
+			if (type == null)
+				return null;
+
+			eclass = ExprClass.Type;
+			type = ReferenceContainer.MakeType (mc.Module, type);
+
+			return type;
+		}
+
+		public override string GetSignatureForError ()
+		{
+			return "ref " + element.GetSignatureForError ();
+		}
+
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
+	}
+
 	class FixedBufferPtr : Expression
 	{
 		readonly Expression array;
@@ -12916,6 +12976,148 @@ namespace Mono.CSharp
 		public override Reachability MarkReachable (Reachability rc)
 		{
 			return Reachability.CreateUnreachable ();
+		}
+	}
+
+	class ReferenceExpression : CompositeExpression
+	{
+		public ReferenceExpression (Expression expr, Location loc)
+			: base (expr)
+		{
+			this.loc = loc;
+		}
+
+		static bool CanBeByRef (Expression expr)
+		{
+			if (expr is IAssignMethod)
+				return true;
+
+			var invocation = expr as Invocation;
+			if (invocation?.Type.Kind == MemberKind.ByRef)
+				return true;
+
+			return false;
+		}
+
+		public override Expression CreateExpressionTree (ResolveContext rc)
+		{
+			throw new NotSupportedException ("ET");
+		}
+
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			var res = expr.DoResolveLValue (rc, EmptyExpression.OutAccess);
+			if (res == null || !CanBeByRef (res)) {
+				if (res?.Type != InternalType.ErrorType)
+					rc.Report.Error (8156, expr.Location, "An expression cannot be used in this context because it may not be returned by reference");
+				return ErrorExpression.Instance;
+			}
+
+			type = res.Type;
+			var type_container = type as ReferenceContainer;
+			if (type_container != null)
+				type = type_container.Element;
+
+			expr = res;
+			eclass = ExprClass.Value;
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			var ml = expr as IMemoryLocation;
+			if (ml != null)
+				ml.AddressOf (ec, AddressOp.LoadStore);
+			else
+				expr.Emit (ec);
+		}
+
+		public override void Error_ValueCannotBeConverted (ResolveContext rc, TypeSpec target, bool expl)
+		{
+			rc.Report.Error (8173, loc, "The expression must be of type `{0}' because it is being assigned by reference", target.GetSignatureForError ());
+		}
+	}
+
+	class ByRefDereference : CompositeExpression, IMemoryLocation, IAssignMethod
+	{
+		bool prepared;
+		LocalTemporary temporary;
+
+		private ByRefDereference (Expression expr)
+			: base (expr)
+		{
+		}
+
+		public static Expression Create (Expression expr)
+		{
+			var rc = expr.Type as ReferenceContainer;
+			if (rc == null)
+				return expr;
+
+			return new ByRefDereference (expr) {
+				type = rc.Element
+			};
+		}
+
+		public void AddressOf (EmitContext ec, AddressOp mode)
+		{
+			expr.Emit (ec);
+		}
+
+		public void Emit (EmitContext ec, bool leave_copy)
+		{
+			Emit (ec);
+			if (leave_copy) {
+				ec.Emit (OpCodes.Dup);
+				temporary = new LocalTemporary (type);
+				temporary.Store (ec);
+			}
+		}
+
+		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool isCompound)
+		{
+			prepared = isCompound;
+
+			expr.Emit (ec);
+
+			if (isCompound)
+				ec.Emit (OpCodes.Dup);
+			
+			source.Emit (ec);
+			if (leave_copy) {
+				throw new NotImplementedException ("leave_copy");
+			}
+			
+			ec.EmitStoreFromPtr (type);
+			
+			if (temporary != null) {
+				temporary.Emit (ec);
+				temporary.Release (ec);
+			}
+		}
+
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			eclass = ExprClass.Variable;
+			return this;
+		}
+
+		public override Expression DoResolveLValue (ResolveContext rc, Expression right_side)
+		{
+			return DoResolve (rc);
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			if (!prepared)
+				base.Emit(ec);
+			
+			ec.EmitLoadFromPtr (type);
+		}
+
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 }

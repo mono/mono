@@ -879,6 +879,11 @@ namespace Mono.CSharp
 					return false;
 				}
 
+				if (MemberType.Kind == MemberKind.ByRef) {
+					Report.Error (8145, Location, "Auto-implemented properties cannot return by reference");
+					return false;
+				}
+
 				if (Compiler.Settings.Version < LanguageVersion.V_3 && Initializer == null)
 					Report.FeatureIsNotAvailable (Compiler, Location, "auto-implemented properties");
 
