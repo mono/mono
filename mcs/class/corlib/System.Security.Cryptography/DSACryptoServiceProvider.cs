@@ -114,6 +114,7 @@ namespace System.Security.Cryptography {
 				persisted = true;
 				this.FromXmlString (store.KeyValue);
 			}
+			privateKeyExportable = (parameters.Flags & CspProviderFlags.UseNonExportableKey) == 0;
 		}
 
 		~DSACryptoServiceProvider ()
