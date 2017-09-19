@@ -1669,58 +1669,68 @@ namespace System {
 			get { throw new NotImplementedException (); }
 		}
 
-		static volatile int ProcessExitEventsQueued = 0;
-		static volatile int ProcessExitEventsInvoked = 0;
+		static readonly System.Collections.Queue invoke_process_exit_queue = 
+			new System.Collections.Queue ();
+		static volatile int process_exit_queue_ready = 0;
 
-		static readonly System.Collections.Queue InvokeProcessExitQueue = 
-			new System.Collections.Queue();
-		static GCHandle SignalPin;
-		static readonly ManualResetEventSlim ProcessExitEventsInvokedSignal =
-			new ManualResetEventSlim(false);
+		static GCHandle process_exit_signal_pin;
+		static readonly ManualResetEventSlim process_exit_events_invoked_signal =
+			new ManualResetEventSlim (false);
 
+		// The AppDomain.ProcessExit event documentation specifies that there is a configurable
+		//  time limit for the execution of all process exit event handlers combined.
 		const int ProcessExitEventTimeoutMs = 3000;
 
+		// The runtime invokes this method by name at shutdown.
 		static void WaitForProcessExitEventQueueToDrain ()
 		{
-			SignalPin = GCHandle.Alloc(ProcessExitEventsInvokedSignal);
-
-			var waitResult = ProcessExitEventsInvokedSignal.Wait(ProcessExitEventTimeoutMs);
+			var waitResult = process_exit_events_invoked_signal.Wait (ProcessExitEventTimeoutMs);
 
 			if (!waitResult)
-				throw new Exception("Timed out while waiting for ProcessExit events");
-			else if (ProcessExitEventsInvoked < ProcessExitEventsQueued)
-				throw new Exception("Wait ended before all ProcessExit events had been invoked");
+				throw new Exception ("Timed out while waiting for ProcessExit events");
 
-			SignalPin.Free();
+			process_exit_signal_pin.Free ();
 		}
 
+		// The runtime invokes this method by name on the finalizer thread.
 		static void InvokeQueuedProcessExitEvents () 
 		{
-			Monitor.Enter(InvokeProcessExitQueue);
+			if (process_exit_queue_ready != 1)
+				return;
 
-			while (InvokeProcessExitQueue.Count > 0) {
-				var appDomain = (AppDomain)InvokeProcessExitQueue.Dequeue();
-				Monitor.Exit(InvokeProcessExitQueue);
+			Monitor.Enter (invoke_process_exit_queue);
+
+			while (invoke_process_exit_queue.Count > 0) {
+				var appDomain = (AppDomain)invoke_process_exit_queue.Dequeue ();
+				Monitor.Exit (invoke_process_exit_queue);
 
 				if (appDomain.ProcessExit != null)
-					appDomain.ProcessExit(appDomain, EventArgs.Empty);
+					appDomain.ProcessExit (appDomain, EventArgs.Empty);
 
-				Interlocked.Increment(ref ProcessExitEventsInvoked);
-
-				Monitor.Enter(InvokeProcessExitQueue);
+				Monitor.Enter (invoke_process_exit_queue);
 			}
 
-			if (ProcessExitEventsQueued <= ProcessExitEventsInvoked)
-				ProcessExitEventsInvokedSignal.Set();
+			process_exit_events_invoked_signal.Set ();
 
-			Monitor.Exit(InvokeProcessExitQueue);
+			Monitor.Exit (invoke_process_exit_queue);
 		}
 
-		private void QueueProcessExitEvent () 
+		// The runtime invokes this method by name at shutdown.
+		void QueueProcessExitEvent () 
 		{
-			Interlocked.Increment(ref ProcessExitEventsQueued);
-			lock (InvokeProcessExitQueue)
-				InvokeProcessExitQueue.Enqueue(this);
+			lock (invoke_process_exit_queue)
+				invoke_process_exit_queue.Enqueue (this);
+		}
+
+		// The runtime invokes this method by name at shutdown.
+		static void SetProcessExitEventQueueReady () 
+		{
+			// System.Threading.MemoryBarrier ();
+			lock (invoke_process_exit_queue) {
+				// Without this the signal can get collected by the GC during the wait operation.
+				process_exit_signal_pin = GCHandle.Alloc (process_exit_events_invoked_signal);
+				process_exit_queue_ready = 1;
+			}
 		}
 	}
 }

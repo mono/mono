@@ -78,26 +78,6 @@ fire_process_exit_event (MonoDomain *domain, gpointer user_data)
 
 	if (exc)
 		mono_print_unhandled_exception (exc);
-
-	/*
-	MonoError error;
-	MonoClassField *field;
-	gpointer pa [2];
-	MonoObject *delegate, *exc;
-
-	field = mono_class_get_field_from_name (mono_defaults.appdomain_class, "ProcessExit");
-	g_assert (field);
-
-	delegate = *(MonoObject **)(((char *)domain->domain) + field->offset);
-	if (delegate == NULL)
-		return;
-
-	pa [0] = domain;
-	pa [1] = NULL;
-	mono_runtime_delegate_try_invoke (delegate, pa, &exc, &error);
-	mono_error_cleanup (&error);
-	/*
-	*/
 }
 
 static void
@@ -106,21 +86,31 @@ mono_runtime_fire_process_exit_event (void)
 #ifndef MONO_CROSS_COMPILE
 	mono_domain_foreach (fire_process_exit_event, NULL);
 
+	MonoMethod * method = mono_class_get_method_from_name_flags (
+		mono_defaults.appdomain_class, "SetProcessExitEventQueueReady", 
+		0, METHOD_ATTRIBUTE_PRIVATE | METHOD_ATTRIBUTE_STATIC
+	);
+	MonoError error;
+	MonoObject * exc = NULL;
+
+	if (method) {
+		// This operation can't fail
+		mono_runtime_try_invoke (method, NULL, NULL, &exc, &error);
+		exc = NULL;
+	}
+
 	mono_gc_finalize_notify ();
 
-	MonoMethod * method = mono_class_get_method_from_name_flags (
+	method = mono_class_get_method_from_name_flags (
 		mono_defaults.appdomain_class, "WaitForProcessExitEventQueueToDrain", 
 		0, METHOD_ATTRIBUTE_PRIVATE | METHOD_ATTRIBUTE_STATIC
 	);
 
-	// FIXME: The assert causes a crash during make... maybe because mscorlib is old?
+	// If mscorlib is outdated this method doesn't exist, and requiring it
+	//  will cause builds to fail before they can update mscorlib.
 	if (!method)
 		return;
 
-	g_assert (method);
-
-	MonoError error;
-	MonoObject * exc = NULL;
 	mono_runtime_try_invoke (method, NULL, NULL, &exc, &error);
 
 	if (!mono_error_ok (&error)) {
@@ -142,11 +132,10 @@ void mono_runtime_flush_appdomain_processexit_queue (void)
 		0, METHOD_ATTRIBUTE_PRIVATE | METHOD_ATTRIBUTE_STATIC
 	);
 
-	// FIXME: The assert causes a crash during make... maybe because mscorlib is old?
+	// If mscorlib is outdated this method doesn't exist, and requiring it
+	//  will cause builds to fail before they can update mscorlib.
 	if (!method)
 		return;
-
-	g_assert (method);
 
 	MonoError error;
 	MonoObject * exc = NULL;
