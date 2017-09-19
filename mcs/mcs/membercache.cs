@@ -35,6 +35,7 @@ namespace Mono.CSharp {
 		Enum		= 1 << 14,
 		Interface	= 1 << 15,
 		TypeParameter = 1 << 16,
+		ByRef		= 1 << 17,
 
 		ArrayType = 1 << 19,
 		PointerType = 1 << 20,

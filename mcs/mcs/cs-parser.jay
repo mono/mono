@@ -1161,7 +1161,7 @@ constant_initializer_expr
 field_declaration
 	: opt_attributes
 	  opt_modifiers
-	  member_type IDENTIFIER
+	  ref_member_type IDENTIFIER
 	  {
 	  	lexer.parsing_generic_declaration = false;
 
@@ -1364,10 +1364,29 @@ method_declaration
 	  }
 	;
 
+ref_member_type
+	: member_type
+	  {
+	  	$$ = $1;
+	  }
+	| REF
+	  {
+		lexer.parsing_generic_declaration = true;
+	  }
+	  type
+	  {
+		if (lang_version < LanguageVersion.V_7) {
+			FeatureIsNotAvailable (GetLocation ($1), "byref locals and returns");
+		}
+
+		$$ = new ReferenceTypeExpr ((FullNamedExpression) $3, GetLocation ($1));
+	  }
+	;
+
 method_header
 	: opt_attributes
 	  opt_modifiers
-	  member_type
+	  ref_member_type
 	  method_declaration_name OPEN_PARENS
 	  {
 		valid_param_mod = ParameterModifierType.All;
@@ -1452,7 +1471,7 @@ method_header
 	  }
 	| opt_attributes
 	  opt_modifiers
-	  member_type
+	  ref_member_type
 	  modifiers method_declaration_name OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  {
 		MemberName name = (MemberName) $5;
@@ -1473,7 +1492,7 @@ method_header
 	  }
 	| opt_attributes
 	  opt_modifiers
-	  member_type
+	  ref_member_type
 	  method_declaration_name error
 	  {
 		Error_SyntaxError (yyToken);
@@ -1534,7 +1553,7 @@ expression_block
 		++lexer.parsing_block;
 		start_block (GetLocation ($1));
 	 }
-	 expression SEMICOLON
+	 lambda_arrow_expression SEMICOLON
 	 {
 		lexer.parsing_block = 0;
 		current_block.AddStatement (new ContextualReturn ((Expression) $3));
@@ -1838,7 +1857,7 @@ arglist_modifier
 property_declaration
 	: opt_attributes
 	  opt_modifiers
-	  member_type
+	  ref_member_type
 	  member_declaration_name
 	  {
 		lexer.parsing_generic_declaration = false;
@@ -1865,6 +1884,16 @@ property_declaration
 
 		if (doc_support)
 			current_property.DocComment = ConsumeStoredComment ();
+
+		if ($3 is ReferenceTypeExpr) {
+			if (current_property.Get == null) {
+				report.Error (8146, GetLocation ($4), "`{0}': property and indexer which return by reference must have a get accessor", current_property.GetSignatureForError ());
+			}
+
+			if (current_property.Set != null) {
+				report.Error (8147, GetLocation ($4), "`{0}': property and indexer which return by reference cannot have set accessors", current_property.GetSignatureForError ());
+			}
+		}
 	  }
 	  CLOSE_BRACE
 	  {
@@ -1877,7 +1906,7 @@ property_declaration
 	  }
 	| opt_attributes
 	  opt_modifiers
-	  member_type
+	  ref_member_type
 	  member_declaration_name
 	  {
 		lexer.parsing_generic_declaration = false;
@@ -1939,7 +1968,7 @@ property_initializer
 
 indexer_declaration
 	: opt_attributes opt_modifiers
-	  member_type indexer_declaration_name OPEN_BRACKET
+	  ref_member_type indexer_declaration_name OPEN_BRACKET
 	  {
 	  	valid_param_mod = ParameterModifierType.Params | ParameterModifierType.DefaultValue;
 	  }
@@ -1979,6 +2008,16 @@ indexer_declaration
 	  
 		if (doc_support)
 			current_property.DocComment = ConsumeStoredComment ();
+
+		if ($3 is ReferenceTypeExpr) {
+			if (current_property.Get == null) {
+				report.Error (8146, GetLocation ($4), "`{0}': property and indexer which return by reference must have a get accessor", current_property.GetSignatureForError ());
+			}
+
+			if (current_property.Set != null) {
+				report.Error (8147, GetLocation ($4), "`{0}': property and indexer which return by reference cannot have set accessors", current_property.GetSignatureForError ());
+			}
+		}
 			
 		current_property = null;		
 	  }
@@ -2938,7 +2977,7 @@ delegate_declaration
 	: opt_attributes
 	  opt_modifiers
 	  DELEGATE
-	  member_type type_declaration_name
+	  ref_member_type type_declaration_name
 	  OPEN_PARENS
 	  {
 		valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out | ParameterModifierType.Params | ParameterModifierType.DefaultValue;
@@ -5109,7 +5148,7 @@ lambda_expression_body
 	: {
 		start_block (Location.Null);
 	  }
-	  expression	// All expressions must handle error or current block won't be restored and breaking ast completely
+	  lambda_arrow_expression	// All expressions must handle error or current block won't be restored and breaking ast completely
 	  {
 		Block b = end_block (Location.Null);
 		b.IsCompilerGenerated = true;
@@ -5127,6 +5166,11 @@ lambda_expression_body
 		Error_SyntaxError (yyToken);
 		$$ = null;
 	  }
+	;
+
+lambda_arrow_expression
+	: expression
+	| reference_expression
 	;
 
 expression_or_error
@@ -5939,6 +5983,28 @@ block_variable_declaration
 		current_variable = null;
 		lbag.AddLocation ($$, GetLocation ($1), GetLocation ($7));
 	  }
+	| REF variable_type identifier_inside_body
+	  {
+		if (lang_version < LanguageVersion.V_7) {
+			FeatureIsNotAvailable (GetLocation ($1), "byref locals and returns");
+		}
+
+		var lt = (LocatedToken) $3;
+		var li = new LocalVariable (current_block, lt.Value, LocalVariable.Flags.ByRef, lt.Location);
+		current_block.AddLocalName (li);
+		current_variable = new BlockVariable ((FullNamedExpression) $2, li);
+	  }
+	  opt_local_variable_initializer opt_variable_declarators SEMICOLON
+	  {
+		$$ = current_variable;
+		current_variable = null;
+		if ($5 != null) {
+			lbag.AddLocation ($$, PopLocation (), GetLocation ($7));
+		} else {
+			report.Error (8174, GetLocation ($3), "A declaration of a by-reference variable must have an initializer");
+			lbag.AddLocation ($$, GetLocation ($7));
+		}
+	  }
 	;
 
 opt_local_variable_initializer
@@ -6046,6 +6112,18 @@ block_variable_initializer
 	  {
 		report.Error (1575, GetLocation ($1), "A stackalloc expression requires [] after type");
 		$$ = new StackAlloc ((Expression) $2, null, GetLocation ($1));		
+	  }
+	| reference_expression
+	;
+
+reference_expression
+	: REF expression
+	  {
+		if (lang_version < LanguageVersion.V_7) {
+			FeatureIsNotAvailable (GetLocation ($1), "byref locals and returns");
+		}
+
+		$$ = new ReferenceExpression ((Expression) $2, GetLocation ($1));
 	  }
 	;
 
@@ -6518,6 +6596,11 @@ goto_statement
 
 return_statement
 	: RETURN opt_expression SEMICOLON
+	  {
+		$$ = new Return ((Expression) $2, GetLocation ($1));
+		lbag.AddStatement ($$, GetLocation ($3));
+	  }
+	| RETURN reference_expression SEMICOLON
 	  {
 		$$ = new Return ((Expression) $2, GetLocation ($1));
 		lbag.AddStatement ($$, GetLocation ($3));

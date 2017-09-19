@@ -3527,7 +3527,10 @@ namespace Mono.CSharp
 			var base_member_type = ((IInterfaceMemberSpec)base_member).MemberType;
 			if (!TypeSpecComparer.Override.IsEqual (MemberType, base_member_type)) {
 				Report.SymbolRelatedToPreviousError (base_member);
-				if (this is PropertyBasedMember) {
+				if (((base_member_type.Kind ^ MemberType.Kind) & MemberKind.ByRef) != 0) {
+					Report.Error (8148, Location, "`{0}': must {2}return by reference to match overridden member `{1}'",
+					              GetSignatureForError (), base_member.GetSignatureForError (), base_member_type.Kind == MemberKind.ByRef ? "" : "not ");
+				} else if (this is PropertyBasedMember) {
 					Report.Error (1715, Location, "`{0}': type must be `{1}' to match overridden member `{2}'",
 						GetSignatureForError (), base_member_type.GetSignatureForError (), base_member.GetSignatureForError ());
 				} else {
