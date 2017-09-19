@@ -174,9 +174,13 @@ namespace Mono.Profiler.Log {
 		PostStartWorld = 9,
 		PostStartWorldUnlocked = 11,
 		// Following are v13 and older only
+		[Obsolete ("This event is no longer produced.")]
 		MarkBegin = 1,
+		[Obsolete ("This event is no longer produced.")]
 		MarkEnd = 2,
+		[Obsolete ("This event is no longer produced.")]
 		ReclaimBegin = 3,
+		[Obsolete ("This event is no longer produced.")]
 		ReclaimEnd = 4
 	}
 
