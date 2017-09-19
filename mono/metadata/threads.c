@@ -62,6 +62,9 @@
 
 #if defined(HOST_WIN32)
 #include <objbase.h>
+
+extern gboolean
+mono_native_thread_join_handle (HANDLE thread_handle, gboolean close_handle);
 #endif
 
 #if defined(HOST_ANDROID) && !defined(TARGET_ARM64) && !defined(TARGET_AMD64)
@@ -759,6 +762,16 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 	thread->current_appcontext = NULL;
 
 	/*
+	* Prevent race condition between execution of this method and runtime shutdown.
+	* Adding runtime thread to the joinable threads list will make sure runtime shutdown
+	* won't complete until added runtime thread have exited. Owner of threads attached to the
+	* runtime but not identified as runtime threads needs to make sure thread detach calls won't
+	* race with runtime shutdown.
+	*/
+	if (((MonoThreadInfo*)(thread->thread_info))->runtime_thread)
+		mono_threads_add_joinable_thread (GUINT_TO_POINTER (thread->tid));
+
+	/*
 	 * thread->synch_cs can be NULL if this was called after
 	 * ves_icall_System_Threading_InternalThread_Thread_free_internal.
 	 * This can happen only during shutdown.
@@ -799,8 +812,6 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 		removed = FALSE;
 	} else {
 		mono_g_hash_table_remove (threads, (gpointer)thread->tid);
-		if (shutting_down)
-			mono_threads_add_joinable_thread ((gpointer)thread->tid);
 		removed = TRUE;
 	}
 
@@ -5043,10 +5054,9 @@ threads_native_thread_join_lock (gpointer key, gpointer value)
 		MONO_ENTER_GC_SAFE;
 		/* This shouldn't block */
 		mono_threads_join_lock ();
-		WaitForSingleObject (thread_handle, INFINITE);
+		mono_native_thread_join_handle (thread_handle, TRUE);
 		mono_threads_join_unlock ();
 		MONO_EXIT_GC_SAFE;
-		CloseHandle (thread_handle);
 	}
 }
 
@@ -5055,9 +5065,8 @@ threads_native_thread_join_nolock (gpointer key, gpointer value)
 {
 	HANDLE thread_handle = (HANDLE)value;
 	MONO_ENTER_GC_SAFE;
-	WaitForSingleObject (thread_handle, INFINITE);
+	mono_native_thread_join_handle (thread_handle, TRUE);
 	MONO_EXIT_GC_SAFE;
-	CloseHandle (thread_handle);
 }
 
 inline static void
@@ -5084,7 +5093,10 @@ mono_threads_add_joinable_thread (gpointer tid)
 	joinable_threads_lock ();
 	if (!joinable_threads)
 		joinable_threads = g_hash_table_new (NULL, NULL);
-	if (!g_hash_table_lookup (joinable_threads, tid)) {
+
+	gpointer orig_key;
+	gpointer value;
+	if (!g_hash_table_lookup_extended (joinable_threads, tid, &orig_key, &value)) {
 		threads_add_joinable_thread_nolock (tid);
 		UnlockedIncrement (&joinable_thread_count);
 	}
@@ -5139,14 +5151,14 @@ void
 mono_thread_join (gpointer tid)
 {
 	gboolean found = FALSE;
+	gpointer orig_key;
 	gpointer value;
 
 	joinable_threads_lock ();
 	if (!joinable_threads)
 		joinable_threads = g_hash_table_new (NULL, NULL);
 
-	value = g_hash_table_lookup (joinable_threads, tid);
-	if (value) {
+	if (g_hash_table_lookup_extended (joinable_threads, tid, &orig_key, &value)) {
 		g_hash_table_remove (joinable_threads, tid);
 		UnlockedDecrement (&joinable_thread_count);
 		found = TRUE;
