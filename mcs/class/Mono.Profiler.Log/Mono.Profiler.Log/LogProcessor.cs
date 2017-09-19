@@ -230,13 +230,13 @@ namespace Mono.Profiler.Log {
 					if (load) {
 						ev = new AssemblyLoadEvent {
 							AssemblyPointer = ReadPointer (),
-							ImagePointer = ReadPointer (),
+							ImagePointer = StreamHeader.FormatVersion >= 14 ? ReadPointer () : 0,
 							Name = Reader.ReadCString (),
 						};
 					} else if (unload) {
 						ev = new AssemblyUnloadEvent {
 							AssemblyPointer = ReadPointer (),
-							ImagePointer = ReadPointer (),
+							ImagePointer = StreamHeader.FormatVersion >= 14 ? ReadPointer () : 0,
 							Name = Reader.ReadCString (),
 						};
 					} else
@@ -336,7 +336,7 @@ namespace Mono.Profiler.Log {
 						Type = (LogExceptionClause) Reader.ReadByte (),
 						Index = (long) Reader.ReadULeb128 (),
 						MethodPointer = ReadMethod (),
-						ObjectPointer = ReadObject (),
+						ObjectPointer = StreamHeader.FormatVersion >= 14 ? ReadObject () : 0,
 					};
 					break;
 				default:
@@ -344,11 +344,20 @@ namespace Mono.Profiler.Log {
 				}
 				break;
 			case LogEventType.Monitor:
+				if (StreamHeader.FormatVersion < 14) {
+					if (extType.HasFlag (LogEventType.MonitorBacktrace)) {
+						extType = LogEventType.MonitorBacktrace;
+					} else {
+						extType = LogEventType.MonitorNoBacktrace;
+					}
+				}
 				switch (extType) {
 				case LogEventType.MonitorNoBacktrace:
 				case LogEventType.MonitorBacktrace:
 					ev = new MonitorEvent {
-						Event = (LogMonitorEvent) Reader.ReadByte (),
+						Event = StreamHeader.FormatVersion >= 14 ?
+						                    (LogMonitorEvent) Reader.ReadByte () :
+						                    (LogMonitorEvent) ((((byte) type & 0xf0) >> 4) & 0x3),
 						ObjectPointer = ReadObject (),
 						Backtrace = ReadBacktrace (extType == LogEventType.MonitorBacktrace),
 					};
@@ -397,7 +406,7 @@ namespace Mono.Profiler.Log {
 					for (var i = 0; i < list.Length; i++) {
 						list [i] = new HeapRootsEvent.HeapRoot {
 							ObjectPointer = ReadObject (),
-							Attributes = (LogHeapRootAttributes) Reader.ReadULeb128 (),
+							Attributes = StreamHeader.FormatVersion == 13 ? (LogHeapRootAttributes) Reader.ReadByte () : (LogHeapRootAttributes) Reader.ReadULeb128 (),
 							ExtraInfo = (long) Reader.ReadULeb128 (),
 						};
 					}
@@ -414,10 +423,14 @@ namespace Mono.Profiler.Log {
 			case LogEventType.Sample:
 				switch (extType) {
 				case LogEventType.SampleHit:
+					if (StreamHeader.FormatVersion < 14) {
+						// Read SampleType (always set to .Cycles) for versions < 14
+						Reader.ReadByte ();
+					}
 					ev = new SampleHitEvent {
 						ThreadId = ReadPointer (),
 						UnmanagedBacktrace = ReadBacktrace (true, false),
-						ManagedBacktrace = ReadBacktrace (true),
+						ManagedBacktrace = ReadBacktrace (true).Reverse ().ToArray (),
 					};
 					break;
 				case LogEventType.SampleUnmanagedSymbol:
@@ -429,7 +442,7 @@ namespace Mono.Profiler.Log {
 					break;
 				case LogEventType.SampleUnmanagedBinary:
 					ev = new UnmanagedBinaryEvent {
-						SegmentPointer = ReadPointer (),
+						SegmentPointer = StreamHeader.FormatVersion >= 14 ? ReadPointer () : Reader.ReadSLeb128 (),
 						SegmentOffset = (long) Reader.ReadULeb128 (),
 						SegmentSize = (long) Reader.ReadULeb128 (),
 						FileName = Reader.ReadCString (),
