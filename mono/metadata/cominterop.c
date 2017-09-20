@@ -378,30 +378,33 @@ cominterop_get_method_interface (MonoMethod* method)
 		}
 	}
 
-	if (!ic) 
-		g_assert (ic);
-	g_assert (MONO_CLASS_IS_INTERFACE (ic));
-
 	return ic;
 }
 
 /**
  * cominterop_get_com_slot_for_method:
  * @method: a method
+ * @error: set on error
  *
  * Returns: the method's slot in the COM interface vtable
  */
 static int
-cominterop_get_com_slot_for_method (MonoMethod* method)
+cominterop_get_com_slot_for_method (MonoMethod* method, MonoError* error)
 {
 	guint32 slot = method->slot;
  	MonoClass *ic = method->klass;
+
+	error_init (error);
 
 	/* if method is on a class, we need to look up interface method exists on */
 	if (!MONO_CLASS_IS_INTERFACE(ic)) {
 		int offset = 0;
 		int i = 0;
 		ic = cominterop_get_method_interface (method);
+		if (!ic || !MONO_CLASS_IS_INTERFACE (ic)) {
+			mono_error_set_invalid_operation (error, "Method '%s' in ComImport class '%s' must implement an interface method.", method->name, method->klass->name);
+			return -1;
+		}
 		offset = mono_class_interface_offset (method->klass, ic);
 		g_assert(offset >= 0);
 		int mcount = mono_class_get_method_count (ic);
@@ -643,11 +646,20 @@ void
 mono_mb_emit_cominterop_get_function_pointer (MonoMethodBuilder *mb, MonoMethod *method)
 {
 #ifndef DISABLE_JIT
+	int slot;
+	MonoError error;
 	// get function pointer from 1st arg, the COM interface pointer
 	mono_mb_emit_ldarg (mb, 0);
-	mono_mb_emit_icon (mb, cominterop_get_com_slot_for_method (method));
-	mono_mb_emit_icall (mb, cominterop_get_function_pointer);
-	/* Leaves the function pointer on top of the stack */
+	slot = cominterop_get_com_slot_for_method (method, &error);
+	if (is_ok (&error)) {
+		mono_mb_emit_icon (mb, slot);
+		mono_mb_emit_icall (mb, cominterop_get_function_pointer);
+		/* Leaves the function pointer on top of the stack */
+	}
+	else {
+		mono_mb_emit_exception_for_error (mb, &error);
+	}
+	mono_error_cleanup (&error);
 #endif
 }
 
@@ -1706,7 +1718,10 @@ guint32
 ves_icall_System_Runtime_InteropServices_Marshal_GetComSlotForMethodInfoInternal (MonoReflectionMethod *m)
 {
 #ifndef DISABLE_COM
-	return cominterop_get_com_slot_for_method (m->method);
+	MonoError error;
+	int slot = cominterop_get_com_slot_for_method (m->method, &error);
+	mono_error_assert_ok (&error);
+	return slot;
 #else
 	g_assert_not_reached ();
 #endif
