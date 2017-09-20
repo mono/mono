@@ -474,7 +474,7 @@ namespace Mono.Profiler.Log {
 
 						list [i] = new CounterDescriptionsEvent.CounterDescription {
 							Section = section,
-							SectionName = section == LogCounterSection.User ? _reader.ReadCString () : string.Empty,
+							SectionName = section == LogCounterSection.User ? _reader.ReadCString () : null,
 							CounterName = _reader.ReadCString (),
 							Type = (LogCounterType) _reader.ReadByte (),
 							Unit = (LogCounterUnit) _reader.ReadByte (),
@@ -548,7 +548,7 @@ namespace Mono.Profiler.Log {
 						Type = helperType,
 						BufferPointer = ReadPointer (),
 						BufferSize = (long) _reader.ReadULeb128 (),
-						Name = helperType == LogJitHelper.SpecificTrampoline ? _reader.ReadCString () : string.Empty,
+						Name = helperType == LogJitHelper.SpecificTrampoline ? _reader.ReadCString () : null,
 					};
 					break;
 				}
