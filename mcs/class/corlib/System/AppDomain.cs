@@ -1669,9 +1669,9 @@ namespace System {
 			get { throw new NotImplementedException (); }
 		}
 
-		static readonly System.Collections.Queue invoke_process_exit_queue = 
-			new System.Collections.Queue ();
-		static volatile int process_exit_queue_ready = 0;
+		static readonly List<AppDomain> invoke_process_exit_queue = 
+			new List<AppDomain> ();
+		static bool process_exit_queue_ready;
 
 		static GCHandle process_exit_signal_pin;
 		static readonly ManualResetEventSlim process_exit_events_invoked_signal =
@@ -1687,7 +1687,7 @@ namespace System {
 			var waitResult = process_exit_events_invoked_signal.Wait (ProcessExitEventTimeoutMs);
 
 			if (!waitResult)
-				throw new Exception ("Timed out while waiting for ProcessExit events");
+				throw new TimeoutException ("Timed out while waiting for ProcessExit events");
 
 			process_exit_signal_pin.Free ();
 		}
@@ -1695,13 +1695,15 @@ namespace System {
 		// The runtime invokes this method by name on the finalizer thread.
 		static void InvokeQueuedProcessExitEvents () 
 		{
-			if (process_exit_queue_ready != 1)
+			if (!process_exit_queue_ready)
 				return;
 
 			Monitor.Enter (invoke_process_exit_queue);
 
 			while (invoke_process_exit_queue.Count > 0) {
-				var appDomain = (AppDomain)invoke_process_exit_queue.Dequeue ();
+				var appDomain = invoke_process_exit_queue[0];
+				invoke_process_exit_queue.RemoveAt (0);
+
 				Monitor.Exit (invoke_process_exit_queue);
 
 				if (appDomain.ProcessExit != null)
@@ -1719,7 +1721,7 @@ namespace System {
 		void QueueProcessExitEvent () 
 		{
 			lock (invoke_process_exit_queue)
-				invoke_process_exit_queue.Enqueue (this);
+				invoke_process_exit_queue.Add (this);
 		}
 
 		// The runtime invokes this method by name at shutdown.
@@ -1729,7 +1731,7 @@ namespace System {
 			lock (invoke_process_exit_queue) {
 				// Without this the signal can get collected by the GC during the wait operation.
 				process_exit_signal_pin = GCHandle.Alloc (process_exit_events_invoked_signal);
-				process_exit_queue_ready = 1;
+				process_exit_queue_ready = true;
 			}
 		}
 	}

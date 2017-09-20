@@ -59,10 +59,6 @@ fire_process_exit_event (MonoDomain *domain, gpointer user_data)
 		0, METHOD_ATTRIBUTE_PRIVATE
 	);
 
-	// FIXME: The assert causes a crash during make... maybe because mscorlib is old?
-	if (!method)
-		return;
-
 	g_assert (method);
 
 	MonoError error;
@@ -93,11 +89,11 @@ mono_runtime_fire_process_exit_event (void)
 	MonoError error;
 	MonoObject * exc = NULL;
 
-	if (method) {
-		// This operation can't fail
-		mono_runtime_try_invoke (method, NULL, NULL, &exc, &error);
-		exc = NULL;
-	}
+	g_assert(method);
+
+	// This operation can't fail
+	mono_runtime_try_invoke (method, NULL, NULL, &exc, &error);
+	exc = NULL;
 
 	mono_gc_finalize_notify ();
 
@@ -106,10 +102,7 @@ mono_runtime_fire_process_exit_event (void)
 		0, METHOD_ATTRIBUTE_PRIVATE | METHOD_ATTRIBUTE_STATIC
 	);
 
-	// If mscorlib is outdated this method doesn't exist, and requiring it
-	//  will cause builds to fail before they can update mscorlib.
-	if (!method)
-		return;
+	g_assert(method);
 
 	mono_runtime_try_invoke (method, NULL, NULL, &exc, &error);
 
@@ -132,10 +125,7 @@ void mono_runtime_flush_appdomain_processexit_queue (void)
 		0, METHOD_ATTRIBUTE_PRIVATE | METHOD_ATTRIBUTE_STATIC
 	);
 
-	// If mscorlib is outdated this method doesn't exist, and requiring it
-	//  will cause builds to fail before they can update mscorlib.
-	if (!method)
-		return;
+	g_assert(method);
 
 	MonoError error;
 	MonoObject * exc = NULL;
