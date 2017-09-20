@@ -38,12 +38,6 @@ prof_ldflags = -Wl,-undefined -Wl,suppress -Wl,-flat_namespace
 endif
 endif
 
-if TARGET_OSX
-libmono_dep =
-else
-libmono_dep = $(monodir)/mono/mini/$(LIBMONO_LA)
-endif
-
 if HOST_ANDROID
 prof_ldflags = -avoid-version
 endif
@@ -66,19 +60,25 @@ monodir=$(top_builddir)
 # functionality, so create a separate static version of the library.
 
 libmono_profiler_aot_la_SOURCES = aot.c
-libmono_profiler_aot_la_LIBADD =  $(libmono_dep) $(GLIB_LIBS) $(LIBICONV)
+if !STATIC_MONO
+libmono_profiler_aot_la_LIBADD =  $(libmono_dep) $(GLIB_LIBS) $(LIBICONV) $(LLVMMONOF)
+endif
 libmono_profiler_aot_la_LDFLAGS = $(prof_ldflags)
 libmono_profiler_aot_static_la_SOURCES = aot.c
 libmono_profiler_aot_static_la_LDFLAGS = -static
 
 libmono_profiler_iomap_la_SOURCES = iomap.c
-libmono_profiler_iomap_la_LIBADD = $(libmono_dep) $(GLIB_LIBS) $(LIBICONV)
+if !STATIC_MONO
+libmono_profiler_iomap_la_LIBADD = $(libmono_dep) $(GLIB_LIBS) $(LIBICONV) $(LLVMMONOF)
+endif
 libmono_profiler_iomap_la_LDFLAGS = $(prof_ldflags)
 libmono_profiler_iomap_static_la_SOURCES = iomap.c
 libmono_profiler_iomap_static_la_LDFLAGS = -static
 
 libmono_profiler_log_la_SOURCES = log.c log-args.c
-libmono_profiler_log_la_LIBADD = $(libmono_dep) $(GLIB_LIBS) $(Z_LIBS)
+if !STATIC_MONO
+libmono_profiler_log_la_LIBADD = $(libmono_dep) $(GLIB_LIBS) $(Z_LIBS) $(LLVMMONOF)
+endif
 libmono_profiler_log_la_LDFLAGS = $(prof_ldflags)
 libmono_profiler_log_static_la_SOURCES = log.c log-args.c
 libmono_profiler_log_static_la_LDFLAGS = -static
@@ -86,7 +86,10 @@ libmono_profiler_log_static_la_LDFLAGS = -static
 if HAVE_VTUNE
 libmono_profiler_vtune_la_SOURCES = vtune.c
 libmono_profiler_vtune_la_CFLAGS = $(VTUNE_CFLAGS)
-libmono_profiler_vtune_la_LIBADD = $(VTUNE_LIBS) $(LIBMONO) $(GLIB_LIBS) $(LIBICONV)
+libmono_profiler_vtune_la_LIBADD = $(VTUNE_LIBS)
+if !STATIC_MONO
+libmono_profiler_vtune_la_LIBADD += $(LIBMONO) $(GLIB_LIBS) $(LIBICONV) $(LLVMMONOF)
+endif
 libmono_profiler_vtune_la_LDFLAGS = $(prof_ldflags)
 libmono_profiler_vtune_static_la_SOURCES = vtune.c
 libmono_profiler_vtune_static_la_LDFLAGS = -static
