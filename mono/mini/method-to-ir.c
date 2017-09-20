@@ -11838,7 +11838,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					cfg->dyn_call_var->flags |= MONO_INST_VOLATILE;
 				}
 
-				/* Has to use a call inst since it local regalloc expects it */
+				/* Has to use a call inst since local regalloc expects it */
 				MONO_INST_NEW_CALL (cfg, call, OP_DYN_CALL);
 				ins = (MonoInst*)call;
 				sp -= 2;
