@@ -6382,8 +6382,10 @@ get_basic_blocks (MonoCompile *cfg, MonoMethodHeader* header, guint real_offset,
 				bblock = cfg->cil_offset_to_bb [(bb_start) - start];
 				bb_start --;
 			}
+#if 0
 			if (bblock)
 				bblock->out_of_line = 1;
+#endif
 		}
 	}
 	return 0;
@@ -8466,10 +8468,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			//g_assert (!virtual_ || fsig->hasthis);
 
 			sp -= n;
-
+#if 0
 			if (cmethod && cmethod->klass->image == mono_defaults.corlib && !strcmp (cmethod->klass->name, "ThrowHelper"))
 				cfg->cbb->out_of_line = TRUE;
-
+#endif
 			/*
 			 * We have the `constrained.' prefix opcode.
 			 */
@@ -11382,11 +11384,16 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (sp [-1]->type != STACK_OBJ)
 				UNVERIFIED;
 
+			if (seq_points && !sym_seq_points && mono_debug_enabled ())
+				emit_seq_point (cfg, method, ip, FALSE, TRUE);
+
 			MONO_INST_NEW (cfg, ins, OP_THROW);
 			--sp;
 			ins->sreg1 = sp [0]->dreg;
 			ip++;
+#if 0
 			cfg->cbb->out_of_line = TRUE;
+#endif
 			MONO_ADD_INS (cfg->cbb, ins);
 			MONO_INST_NEW (cfg, ins, OP_NOT_REACHED);
 			MONO_ADD_INS (cfg->cbb, ins);
