@@ -11,8 +11,6 @@ if [[ $CI_TAGS == *'collect-coverage'* ]]; then
     # Collect coverage for further use by lcov and similar tools.
     # Coverage must be collected with -O0 and debug information.
     export CFLAGS="-ggdb3 --coverage -O0"
-    # Collect coverage on all optimizations
-    export MONO_ENV_OPTIONS="$MONO_ENV_OPTIONS -O=all"
 elif [[ ${CI_TAGS} == *'clang-sanitizer'* ]]; then
 	export CC="clang"
 	export CXX="clang++"
@@ -107,6 +105,8 @@ ${TESTCMD} --label=make --timeout=${make_timeout} --fatal make ${make_parallelis
 
 if [[ ${CI_TAGS} == *'checked-coop'* ]]; then export MONO_CHECK_MODE=gc,thread; fi
 if [[ ${CI_TAGS} == *'checked-all'* ]]; then export MONO_CHECK_MODE=all; fi
+
+export MONO_ENV_OPTIONS="$MONO_ENV_OPTIONS $MONO_TEST_FLAGS"
 
 if [[ ${CI_TAGS} == *'acceptance-tests'* ]];
     then
