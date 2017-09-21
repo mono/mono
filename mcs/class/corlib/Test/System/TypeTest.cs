@@ -3619,6 +3619,38 @@ namespace MonoTests.System
 			public int field;
 		}
 
+		[Test]
+		public void IsAssignableFromGenericArgumentsWithConstraints ()
+		{
+			// Regression test for #58809
+
+			// Generic Parameters of a gtd should have their
+			// constraints respected even when those constraints
+			// are other generic parameters themselves.
+
+			var ps = typeof (GenericWithParamConstraints<,,>).GetGenericArguments ();
+
+			var a = ps[0];
+			var b = ps[1];
+			var c = ps[2];
+
+			// Foo<C>
+			var fooOfC = typeof (Foo<>).MakeGenericType (c);
+
+			// constraint B : Foo <C>
+			Assert.IsTrue (fooOfC.IsAssignableFrom (b), "#1");
+
+			// constraint A : B
+			Assert.IsTrue (b.IsAssignableFrom (a), "#2");
+
+			// A : Foo<C> since A : B and B : Foo<C>
+			Assert.IsTrue (fooOfC.IsAssignableFrom (a), "#3");
+		}
+
+		class GenericWithParamConstraints<A, B, C> where B : Foo<C> where A : B
+		{
+		}
+
 		[Test] // Bug #612780
 		public void CannotMakeDerivedTypesFromTypedByRef ()
 		{
