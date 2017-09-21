@@ -28,10 +28,14 @@ namespace MonoTests.System
 		[Test] // Bug-44255
 		public void SystemTimeZoneSerializationTests ()
 		{
-			foreach (var tmz in TimeZoneInfo.GetSystemTimeZones())
+			foreach (var tmz in TimeZoneInfo.GetSystemTimeZones ())
 			{
-				var tmzClone = TimeZoneInfo.FromSerializedString(tmz.ToSerializedString());
-				Assert.AreEqual(tmz, tmzClone);
+				var tmzClone = TimeZoneInfo.FromSerializedString (tmz.ToSerializedString ());
+				Assert.AreEqual (tmz, tmzClone);
+				Assert.AreEqual (tmz.DisplayName, tmzClone.DisplayName);
+				Assert.AreEqual (tmz.StandardName, tmzClone.StandardName);
+				Assert.AreEqual (tmz.SupportsDaylightSavingTime, tmzClone.SupportsDaylightSavingTime);
+				Assert.AreEqual (tmz.DaylightName, tmzClone.DaylightName);
 			}
 		}
 

@@ -1412,8 +1412,8 @@ namespace System
 
 			if (storeTransition && transitions.Count > 0) {
 				tz.transitions = transitions;
-				tz.supportsDaylightSavingTime = true;
 			}
+			tz.supportsDaylightSavingTime = adjustmentRules.Count > 0;
 
 			return tz;
 		}
