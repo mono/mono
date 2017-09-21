@@ -1,4 +1,0 @@
-export MONO_PATH=$(dirname $0)
-MONO_PREFIX=$MONO_PATH/../../..
-MONO=$MONO_PREFIX/bin/mono
-

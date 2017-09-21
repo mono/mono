@@ -1430,8 +1430,10 @@ if ($buildUsAndBoo)
 	system(@commandPrefix, ("perl", "$buildscriptsdir/build_us_and_boo.pl", "--monoprefix=$monoprefix")) eq 0 or die ("Failed building Unity Script and Boo\n");
 
 	print(">>> Copying Unity Script and Boo *.Lang.dll's from 4.5 profile to unityjit profile...\n");
-	system("cp $monoprefix/lib/mono/4.5/Boo.Lang.dll $monoprefix/lib/mono/unityjit/.") eq 0 or die("Failed copying Boo.Lang.dll\n");
-	system("cp $monoprefix/lib/mono/4.5/UnityScript.Lang.dll $monoprefix/lib/mono/unityjit/.") eq 0 or die("Failed copying Boo.Lang.dll\n");
+	system("cp $monoprefix/lib/mono/4.5/Boo*.dll $monoprefix/lib/mono/unityjit/.") eq 0 or die("Failed copying Boo*.dll\n");
+	system("cp $monoprefix/lib/mono/4.5/UnityScript*.dll $monoprefix/lib/mono/unityjit/.") eq 0 or die("Failed copying UnityScript*.dll\n");
+	system("cp $monoprefix/lib/mono/4.5/booc.exe $monoprefix/lib/mono/unityjit/.") eq 0 or die("Failed copying booc.exe\n");
+	system("cp $monoprefix/lib/mono/4.5/us.exe $monoprefix/lib/mono/unityjit/.") eq 0 or die("Failed copying us.exe\n");
 }
 else
 {
@@ -1458,6 +1460,7 @@ if ($artifact)
 
 		print(">>> Cleaning $distdir/lib\n");
 		system("rm -rf $distdir/lib");
+		system("mkdir -p $distdir/lib");
 
 		print(">>> Creating normal profile artifacts...\n");
 		system("cp -R $addtoresultsdistdir/. $distdir/") eq 0 or die ("Failed copying $addtoresultsdistdir to $distdir\n");

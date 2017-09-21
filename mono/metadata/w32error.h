@@ -72,6 +72,7 @@
 #define WSAEHOSTDOWN               10064
 #define WSAEHOSTUNREACH            10065
 #define WSASYSCALLFAILURE          10107
+#define WSAENXIO                   100001
 
 #endif
 
