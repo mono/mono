@@ -1243,7 +1243,7 @@ namespace System
 				}
 				prev = current;
 			}
-			return adjustmentRules.ToArray();
+			return adjustmentRules.ToArray ();
 		}
 
 #if LIBC || MONOTOUCH

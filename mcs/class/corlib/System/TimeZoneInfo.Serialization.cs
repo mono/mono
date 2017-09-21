@@ -45,7 +45,7 @@ namespace System
 			List<TimeZoneInfo.AdjustmentRule> rules = null;
 			while (input [0] != ';') {
 				if (rules == null)
-					rules = new List<TimeZoneInfo.AdjustmentRule>();
+					rules = new List<TimeZoneInfo.AdjustmentRule> ();
 				rules.Add (DeserializeAdjustmentRule (ref input));
 			}
 			var offsetSpan = TimeSpan.FromMinutes (offset);
