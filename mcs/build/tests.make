@@ -197,7 +197,7 @@ ifdef HAVE_CS_XTESTS
 XTEST_HARNESS_PATH = $(topdir)/../external/xunit-binaries
 XTEST_HARNESS = $(XTEST_HARNESS_PATH)/xunit.console.exe
 XTEST_HARNESS_FLAGS := -noappdomain -noshadow -parallel none -nunit TestResult-$(PROFILE)-xunit.xml
-XTEST_TRAIT := -notrait category=failing -notrait category=nonnetcoreapptests -notrait Benchmark=true -notrait category=outerloop
+XTEST_TRAIT := -notrait category=failing -notrait category=nonnetfxtests -notrait Benchmark=true -notrait category=outerloop
 
 ifdef FIXTURE
 XTEST_HARNESS_FLAGS += -class $(FIXTURE)

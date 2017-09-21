@@ -27,6 +27,7 @@ TEST_RESOURCES = \
 	Test/System/test-uri-props-manual.txt \
 	Test/System/test-uri-relative-props.txt
 
+XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks Facades/System.Runtime.InteropServices.RuntimeInformation
 LIB_MCS_FLAGS = -d:CONFIGURATION_2_0 $(REFERENCE_SOURCES_FLAGS) -unsafe $(RESOURCE_FILES:%=-resource:%) -nowarn:436
 
 ifndef NO_MONO_SECURITY
@@ -117,6 +118,7 @@ LIB_MCS_FLAGS += -d:CONFIGURATION_DEP
 endif
 
 endif
+
 
 EXTRA_DISTFILES = \
 	common.sources					\
