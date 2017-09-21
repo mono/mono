@@ -5,7 +5,7 @@
 ../../../external/corefx/src/Common/tests/System/Collections/IEnumerable.NonGeneric.Tests.cs
 ../../../external/corefx/src/Common/tests/System/Collections/IList.NonGeneric.Tests.cs
 ../../../external/corefx/src/Common/tests/System/Collections/TestBase.NonGeneric.cs
-../../../external/corefx/src/Common/tests/system/runtime/serialization/formatters/binaryformatterhelpers.cs
+../../../external/corefx/src/Common/tests/System/Runtime/Serialization/Formatters/BinaryFormatterHelpers.cs
 
 ../../../external/corefx/src/System.CodeDom/tests/CodeCollections/*.cs
 ../../../external/corefx/src/System.CodeDom/tests/CodeExpressions/*.cs
