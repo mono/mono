@@ -119,7 +119,6 @@ endif
 
 endif
 
-
 EXTRA_DISTFILES = \
 	common.sources					\
 	common_networking.sources		\
