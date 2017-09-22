@@ -77,6 +77,7 @@
 #include "llvm-runtime.h"
 #include "mini-llvm.h"
 #include "lldb.h"
+#include "pmip_my_callstack.h"
 
 MonoTraceSpec *mono_jit_trace_calls;
 MonoMethodDesc *mono_inject_async_exc_method;
@@ -3890,6 +3891,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	if (!cfg->compile_aot) {
 		mono_save_xdebug_info (cfg);
 		mono_lldb_save_method_info (cfg);
+		mono_pmip_my_callstack_save_method_info (cfg);
 	}
 
 	if (cfg->verbose_level >= 2) {

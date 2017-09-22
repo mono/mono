@@ -540,7 +540,9 @@ common_sources = \
 	llvm-runtime.h	\
 	type-checking.c \
 	lldb.h			\
-	lldb.c
+	lldb.c			\
+	pmip_my_callstack.h	\
+	pmip_my_callstack.c
 
 test_sources = 			\
 	basic-calls.cs 		\
