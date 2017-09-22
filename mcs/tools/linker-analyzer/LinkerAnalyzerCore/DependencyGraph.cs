@@ -114,5 +114,28 @@ namespace LinkerAnalyzer.Core
 		{
 			return vertices [index];
 		}
+
+		IEnumerable<(VertexData vertex, int distance)> AddDependencies (VertexData vertex, HashSet<int> reachedVertices, int depth)
+		{
+			reachedVertices.Add (vertex.index);
+			yield return (vertex, depth);
+
+			if (vertex.parentIndexes == null)
+				yield break;
+
+			foreach (var pi in vertex.parentIndexes) {
+				var parent = Vertex (pi);
+				if (reachedVertices.Contains (parent.index))
+					continue;
+
+				foreach (var d in AddDependencies (parent, reachedVertices, depth + 1))
+					yield return d;
+			}
+		}
+
+		public List<(VertexData vertex, int distance)> GetAllDependencies (VertexData vertex)
+		{
+			return new List<(VertexData vertex, int distance)> (AddDependencies (vertex, new HashSet<int> (), 0));
+		}
 	}
 }
