@@ -36,7 +36,7 @@ pmip_pretty(MonoMethod* method)
 	return formattedPMIP;
 }
 
-#if !defined(DISABLE_JIT)
+#if !defined(DISABLE_JIT) && defined(HOST_WIN32)
 
 static gboolean enabled;
 static mono_mutex_t mutex;
