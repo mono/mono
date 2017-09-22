@@ -81,6 +81,7 @@
 #include "mini-llvm.h"
 #include "debugger-agent.h"
 #include "lldb.h"
+#include "pmip_my_callstack.h"
 
 #ifdef MONO_ARCH_LLVM_SUPPORTED
 #ifdef ENABLE_LLVM
@@ -578,6 +579,7 @@ mono_tramp_info_register (MonoTrampInfo *info, MonoDomain *domain)
 
 	mono_save_trampoline_xdebug_info (info);
 	mono_lldb_save_trampoline_info (info);
+	mono_pmip_my_callstack_save_trampoline_info (info);
 
 #ifdef MONO_ARCH_HAVE_UNWIND_TABLE
 	mono_arch_unwindinfo_install_tramp_unwind_info (info->unwind_ops, info->code, info->code_size);
@@ -3698,6 +3700,10 @@ mini_init (const char *filename, const char *runtime_version)
 
 	if (mini_get_debug_options ()->lldb || g_hasenv ("MONO_LLDB")) {
 		mono_lldb_init ("");
+		mono_dont_free_domains = TRUE;
+	}
+	if (g_hasenv ("MONO_PMIP")) {
+		mono_pmip_my_callstack_init ("");
 		mono_dont_free_domains = TRUE;
 	}
 

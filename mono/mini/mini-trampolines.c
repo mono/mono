@@ -19,6 +19,7 @@
 
 #include "mini.h"
 #include "lldb.h"
+#include "pmip_my_callstack.h"
 
 /*
  * Address of the trampoline code.  This is used by the debugger to check
@@ -1445,6 +1446,7 @@ mono_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_type, M
 	else
 		code = mono_arch_create_specific_trampoline (arg1, tramp_type, domain, &len);
 	mono_lldb_save_specific_trampoline_info (arg1, tramp_type, domain, code, len);
+	mono_pmip_my_callstack_save_specific_trampoline_info (arg1, tramp_type, domain, code, len);
 	if (code_len)
 		*code_len = len;
 	return code;
