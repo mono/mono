@@ -108,7 +108,7 @@ mono_pmip_my_callstack_save_specific_trampoline_info (gpointer arg1, MonoTrampol
 void
 mono_pmip_my_callstack_init (const char *options)
 {
-	g_error ("pmip support is only available with the jit enabled");
+	g_error ("Only Available On Windows With Jit Enabled");
 }
 
 void
