@@ -223,6 +223,7 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
+		[Ignore ("https://bugzilla.xamarin.com/show_bug.cgi?id=59335")]
 		public void EqualEnumerators ()
 		{
 			// https://bugzilla.xamarin.com/show_bug.cgi?id=59335
