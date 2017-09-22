@@ -49,8 +49,12 @@ gboolean mono_trace_eval (MonoMethod *method)
 
 MonoCallSpec *mono_trace_set_options (const char *options)
 {
-	if (!mono_callspec_parse (options, &trace_spec))
+	char *errstr;
+	if (!mono_callspec_parse (options, &trace_spec, &errstr)) {
+		fprintf (stderr, "%s\n", errstr);
+		g_free (errstr);
 		return NULL;
+	}
 
 	return &trace_spec;
 }

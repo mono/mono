@@ -158,7 +158,7 @@ enum Token {
 	TOKEN_ERROR
 };
 
-static int get_token (char **in, char **extra)
+static int get_token (char **in, char **extra, char **errstr)
 {
 	char *p = *in;
 	while (p[0] == '+')
@@ -218,22 +218,22 @@ static int get_token (char **in, char **extra)
 		return TOKEN_SEPARATOR;
 	}
 
-	fprintf (stderr, "Syntax error at or around '%s'\n", p);
+	*errstr = g_strdup_printf ("Syntax error at or around '%s'", p);
 	return TOKEN_ERROR;
 }
 
-static int get_spec (char **in, MonoCallSpec *spec)
+static int get_spec (char **in, MonoCallSpec *spec, char **errstr)
 {
 	int n = spec->len;
 	char *extra = NULL;
 
-	int token = get_token (in, &extra);
+	int token = get_token (in, &extra, errstr);
 	gboolean exclude = FALSE;
 	if (token == TOKEN_EXCLUDE) {
 		exclude = TRUE;
-		token = get_token (in, &extra);
+		token = get_token (in, &extra, errstr);
 		if (token == TOKEN_EXCLUDE || token == TOKEN_DISABLED) {
-			fprintf (stderr, "Expecting an expression");
+			*errstr = g_strdup_printf ("Expecting an expression");
 			token = TOKEN_ERROR;
 			goto out;
 		}
@@ -250,7 +250,8 @@ static int get_spec (char **in, MonoCallSpec *spec)
 	if (token == TOKEN_METHOD) {
 		MonoMethodDesc *desc = mono_method_desc_new (extra, TRUE);
 		if (desc == NULL) {
-			fprintf (stderr, "Invalid method name: %s\n", extra);
+			*errstr =
+			    g_strdup_printf ("Invalid method name: %s", extra);
 			token = TOKEN_ERROR;
 			goto out;
 		}
@@ -281,8 +282,8 @@ static int get_spec (char **in, MonoCallSpec *spec)
 		spec->ops[n].op = MONO_TRACEOP_ASSEMBLY;
 		spec->ops[n].data = g_strdup (extra);
 	} else {
-		fprintf (stderr,
-			 "Syntax error in trace option specification\n");
+		*errstr =
+		    g_strdup_printf ("Syntax error in method specification");
 		token = TOKEN_ERROR;
 		goto out;
 	}
@@ -299,13 +300,15 @@ out:
 	return token;
 }
 
-gboolean mono_callspec_parse (const char *options, MonoCallSpec *spec)
+gboolean
+mono_callspec_parse (const char *options, MonoCallSpec *spec, char **errstr)
 {
 	char *p = (char *)options;
 	int size = 1;
 	int token;
 
 	memset (spec, 0, sizeof (*spec));
+	*errstr = NULL;
 
 	spec->enabled = TRUE;
 	if (*p == 0) {
@@ -323,7 +326,7 @@ gboolean mono_callspec_parse (const char *options, MonoCallSpec *spec)
 
 	p = (char *)options;
 
-	while ((token = (get_spec (&p, spec))) != TOKEN_END) {
+	while ((token = (get_spec (&p, spec, errstr))) != TOKEN_END) {
 		if (token == TOKEN_ERROR)
 			return FALSE;
 	}

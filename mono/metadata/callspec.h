@@ -33,7 +33,8 @@ typedef struct {
 G_BEGIN_DECLS
 
 MONO_PROFILER_API gboolean mono_callspec_parse		(const char *options,
-							 MonoCallSpec *spec);
+							 MonoCallSpec *spec,
+							 char **errstr);
 MONO_PROFILER_API void     mono_callspec_cleanup	(MonoCallSpec *spec);
 MONO_PROFILER_API gboolean mono_callspec_eval_exception	(MonoClass *klass,
 							 MonoCallSpec *spec);

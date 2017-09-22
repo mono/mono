@@ -113,9 +113,12 @@ parse_arg (const char *arg, ProfilerConfig *config)
 		size_t speclen = strlen (val);
 		if (speclen > 0 && spec[speclen - 1] == '\"')
 			spec[speclen - 1] = '\0';
-		if (!mono_callspec_parse (spec, &config->callspec)) {
+		char *errstr;
+		if (!mono_callspec_parse (spec, &config->callspec, &errstr)) {
 			mono_profiler_printf_err (
-			    "Could not parse callspec: '%s'", spec);
+			    "Could not parse callspec: '%s': %s", spec,
+			    errstr);
+			g_free (errstr);
 			mono_callspec_cleanup (&config->callspec);
 		}
 		g_free (spec);
