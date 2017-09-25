@@ -54,22 +54,26 @@ mono_runtime_is_shutting_down (void)
 static void
 fire_process_exit_event (MonoDomain *domain, gpointer user_data)
 {
+	MonoMethod * method = mono_class_get_method_from_name_flags (
+		mono_defaults.appdomain_class, "QueueProcessExitEvent", 
+		0, METHOD_ATTRIBUTE_PRIVATE
+	);
+
+	g_assert (method);
+
 	MonoError error;
-	MonoClassField *field;
-	gpointer pa [2];
-	MonoObject *delegate, *exc;
+	MonoObject * exc = NULL;
+	mono_runtime_try_invoke (method, domain->domain, NULL, &exc, &error);
 
-	field = mono_class_get_field_from_name (mono_defaults.appdomain_class, "ProcessExit");
-	g_assert (field);
+	if (!mono_error_ok (&error)) {
+		if (exc)
+			mono_error_cleanup (&error);
+		else
+			exc = (MonoObject*)mono_error_convert_to_exception (&error);
+	}
 
-	delegate = *(MonoObject **)(((char *)domain->domain) + field->offset);
-	if (delegate == NULL)
-		return;
-
-	pa [0] = domain;
-	pa [1] = NULL;
-	mono_runtime_delegate_try_invoke (delegate, pa, &exc, &error);
-	mono_error_cleanup (&error);
+	if (exc)
+		mono_print_unhandled_exception (exc);
 }
 
 static void
@@ -77,7 +81,65 @@ mono_runtime_fire_process_exit_event (void)
 {
 #ifndef MONO_CROSS_COMPILE
 	mono_domain_foreach (fire_process_exit_event, NULL);
+
+	MonoMethod * method = mono_class_get_method_from_name_flags (
+		mono_defaults.appdomain_class, "SetProcessExitEventQueueReady", 
+		0, METHOD_ATTRIBUTE_PRIVATE | METHOD_ATTRIBUTE_STATIC
+	);
+	MonoError error;
+	MonoObject * exc = NULL;
+
+	g_assert(method);
+
+	// This operation can't fail
+	mono_runtime_try_invoke (method, NULL, NULL, &exc, &error);
+	exc = NULL;
+
+	mono_gc_finalize_notify ();
+
+	method = mono_class_get_method_from_name_flags (
+		mono_defaults.appdomain_class, "WaitForProcessExitEventQueueToDrain", 
+		0, METHOD_ATTRIBUTE_PRIVATE | METHOD_ATTRIBUTE_STATIC
+	);
+
+	g_assert(method);
+
+	mono_runtime_try_invoke (method, NULL, NULL, &exc, &error);
+
+	if (!mono_error_ok (&error)) {
+		if (exc)
+			mono_error_cleanup (&error);
+		else
+			exc = (MonoObject*)mono_error_convert_to_exception (&error);
+	}
+
+	if (exc)
+		mono_print_unhandled_exception (exc);
 #endif
+}
+
+void mono_runtime_flush_appdomain_processexit_queue (void)
+{
+	MonoMethod * method = mono_class_get_method_from_name_flags (
+		mono_defaults.appdomain_class, "InvokeQueuedProcessExitEvents",
+		0, METHOD_ATTRIBUTE_PRIVATE | METHOD_ATTRIBUTE_STATIC
+	);
+
+	g_assert(method);
+
+	MonoError error;
+	MonoObject * exc = NULL;
+	mono_runtime_try_invoke (method, NULL, NULL, &exc, &error);
+
+	if (!mono_error_ok (&error)) {
+		if (exc)
+			mono_error_cleanup (&error);
+		else
+			exc = (MonoObject*)mono_error_convert_to_exception (&error);
+	}
+
+	if (exc)
+		mono_print_unhandled_exception (exc);
 }
 
 /**

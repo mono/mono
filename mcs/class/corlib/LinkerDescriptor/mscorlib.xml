@@ -17,6 +17,12 @@
 			<method name="InternalSetContext" />
 			<!-- System.Runtime.Remoting/RemotingServices.cs: GetDomainProxy(AppDomain domain) -->
 			<method name="GetMarshalledDomainObjRef" feature="remoting" />
+			<!-- runtime.c: mono_runtime_fire_process_exit_event -->
+			<method name="QueueProcessExitEvent" />
+			<method name="SetProcessExitEventQueueReady" />			
+			<method name="WaitForProcessExitEventQueueToDrain" />
+			<!-- runtime.c: mono_runtime_flush_appdomain_processexit_queue -->
+			<method name="InvokeQueuedProcessExitEvents" />
 		</type>
 
 		<!-- appdomain.c: mono_runtime_init -->
