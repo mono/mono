@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 . $(dirname $0)/mono-env
 
 $MONO --debug $MONO_PREFIX/lib/mono/4.0/nunit-console.exe "$@"
