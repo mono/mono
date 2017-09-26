@@ -514,7 +514,7 @@ handle_signal_exception (gpointer obj)
 /*
  * This is the function called from the signal handler
  */
-gboolean
+void
 mono_arch_handle_exception (void *ctx, gpointer obj)
 {
 #if defined(MONO_CROSS_COMPILE)
@@ -540,20 +540,16 @@ mono_arch_handle_exception (void *ctx, gpointer obj)
 	UCONTEXT_GREGS (sigctx)[mips_sp] = sp;
 
 	UCONTEXT_REG_PC (sigctx) = (gsize)handle_signal_exception;
-
-	return TRUE;
 #else
 	MonoContext mctx;
-	gboolean result;
 
 	mono_sigctx_to_monoctx (ctx, &mctx);
 
-	result = mono_handle_exception (&mctx, obj);
+	mono_handle_exception (&mctx, obj);
 	/* restore the context so that returning from the signal handler will invoke
 	 * the catch clause 
 	 */
 	mono_monoctx_to_sigctx (&mctx, ctx);
-	return result;
 #endif
 }
 

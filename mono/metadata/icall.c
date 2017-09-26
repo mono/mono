@@ -1017,33 +1017,24 @@ ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_SufficientExecutionStac
 #elif defined(TARGET_ANDROID) || defined(__linux__)
 	// No need for now
 #else
-	guint8 *stack_addr;
-	guint8 *current;
-	size_t stack_size;
-	int min_size;
-	MonoInternalThread *thread;
+	guint8 *stack_start;
+	guint8 *stack_current;
+	gsize stack_size;
+	MonoThreadInfo *info;
 
-	mono_thread_info_get_stack_bounds (&stack_addr, &stack_size);
-	/* if we have no info we are optimistic and assume there is enough room */
-	if (!stack_addr)
+	info = mono_thread_info_current ();
+	stack_start = info->stack_start_limit;
+	stack_size = info->stack_end - info->stack_start_limit;
+
+	stack_current = (guint8 *)&stack_start;
+
+	/* Some platforms support dynamic stack resizing */
+	if (stack_current < stack_start)
 		return TRUE;
 
-	thread = mono_thread_internal_current ();
-	// .net seems to check that at least 50% of stack is available
-	min_size = thread->stack_size / 2;
-
-	// TODO: It's not always set
-	if (!min_size)
-		return TRUE;
-
-	current = (guint8 *)&stack_addr;
-	if (current > stack_addr) {
-		if ((current - stack_addr) < min_size)
-			return FALSE;
-	} else {
-		if (current - (stack_addr - stack_size) < min_size)
-			return FALSE;
-	}
+	/* .net seems to check that at least 50% of stack is available */
+	if (stack_current < stack_start + stack_size / 2)
+		return FALSE;
 #endif
 	return TRUE;
 }

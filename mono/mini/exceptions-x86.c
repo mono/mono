@@ -1002,7 +1002,7 @@ mono_arch_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), g
 	ctx->eip = (mgreg_t)signal_exception_trampoline;
 }
 
-gboolean
+void
 mono_arch_handle_exception (void *sigctx, gpointer obj)
 {
 #if defined(MONO_ARCH_USE_SIGACTION)
@@ -1022,8 +1022,6 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 	mctx = jit_tls->ex_ctx;
 	mono_setup_async_callback (&mctx, handle_signal_exception, obj);
 	mono_monoctx_to_sigctx (&mctx, sigctx);
-
-	return TRUE;
 #elif defined (TARGET_WIN32)
 	MonoContext mctx;
 	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
@@ -1034,8 +1032,6 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 	mctx = jit_tls->ex_ctx;
 	mono_setup_async_callback (&mctx, handle_signal_exception, obj);
 	mono_monoctx_to_sigctx (&mctx, sigctx);
-
-	return TRUE;
 #else
 	MonoContext mctx;
 
@@ -1044,8 +1040,6 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 	mono_handle_exception (&mctx, obj);
 
 	mono_monoctx_to_sigctx (&mctx, sigctx);
-
-	return TRUE;
 #endif
 }
 

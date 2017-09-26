@@ -554,7 +554,7 @@ handle_signal_exception (gpointer obj)
 /*                                                                  */
 /*------------------------------------------------------------------*/
 
-gboolean
+void
 mono_arch_handle_exception (void *sigctx, gpointer obj)
 {
 	MonoContext mctx;
@@ -572,8 +572,6 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 	mctx = jit_tls->ex_ctx;
 	mono_arch_setup_async_callback (&mctx, handle_signal_exception, obj);
 	mono_monoctx_to_sigctx (&mctx, sigctx);
-
-	return TRUE;
 }
 
 /*========================= End of Function ========================*/

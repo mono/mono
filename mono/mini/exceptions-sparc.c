@@ -390,7 +390,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 #ifdef __linux__
 
-gboolean
+void
 mono_arch_handle_exception (void *sigctx, gpointer obj)
 {
        MonoContext mctx;
@@ -422,8 +422,6 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 
        window = (gpointer*)(((guint8*)mctx.sp) + MONO_SPARC_STACK_BIAS);
        window [sparc_fp - 16] = mctx.fp;
-
-       return TRUE;
 }
 
 gpointer
@@ -443,7 +441,7 @@ mono_arch_ip_from_context (void *sigctx)
 
 #else /* !__linux__ */
 
-gboolean
+void
 mono_arch_handle_exception (void *sigctx, gpointer obj)
 {
 	MonoContext mctx;
@@ -470,8 +468,6 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 	ctx->uc_mcontext.gregs [REG_SP] = mctx.sp;
 	window = (gpointer*)(((guint8*)mctx.sp) + MONO_SPARC_STACK_BIAS);
 	window [sparc_fp - 16] = mctx.fp;
-
-	return TRUE;
 }
 
 gpointer

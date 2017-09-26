@@ -754,7 +754,7 @@ setup_ucontext_return (void *uc, gpointer func)
 #endif
 }
 
-gboolean
+void
 mono_arch_handle_exception (void *ctx, gpointer obj)
 {
 #if defined(MONO_ARCH_USE_SIGACTION) && defined(UCONTEXT_REG_Rn)
@@ -783,20 +783,16 @@ mono_arch_handle_exception (void *ctx, gpointer obj)
 	sp = (mgreg_t)(sp - frame_size);
 	UCONTEXT_REG_Rn(uc, 1) = (mgreg_t)sp;
 	setup_ucontext_return (uc, handle_signal_exception);
-
-	return TRUE;
 #else
 	MonoContext mctx;
-	gboolean result;
 
 	mono_sigctx_to_monoctx (ctx, &mctx);
 
-	result = mono_handle_exception (&mctx, obj);
+	mono_handle_exception (&mctx, obj);
 	/* restore the context so that returning from the signal handler will invoke
 	 * the catch clause 
 	 */
 	mono_monoctx_to_sigctx (&mctx, ctx);
-	return result;
 #endif
 }
 

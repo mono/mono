@@ -771,7 +771,7 @@ mono_arch_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), g
  * \param ctx saved processor state
  * \param obj the exception object
  */
-gboolean
+void
 mono_arch_handle_exception (void *sigctx, gpointer obj)
 {
 #if defined(MONO_ARCH_USE_SIGACTION)
@@ -790,8 +790,6 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 	mctx = jit_tls->ex_ctx;
 	mono_arch_setup_async_callback (&mctx, handle_signal_exception, obj);
 	mono_monoctx_to_sigctx (&mctx, sigctx);
-
-	return TRUE;
 #else
 	MonoContext mctx;
 
@@ -800,8 +798,6 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 	mono_handle_exception (&mctx, obj);
 
 	mono_monoctx_to_sigctx (&mctx, sigctx);
-
-	return TRUE;
 #endif
 }
 
