@@ -41,6 +41,13 @@ namespace MonoTests.Mono.Unix {
 #endif
 
 		[Test]
+		public void BXC10074 ()
+		{
+			var result = UnixMarshal.StringToHeap (null, Encoding.ASCII);
+			Assert.AreEqual (IntPtr.Zero, result, "This used to crash due to a NullReferenceException");
+		}
+
+		[Test]
 		public void TestStringToHeap ()
 		{
 			object[] data = {
