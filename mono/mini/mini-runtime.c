@@ -76,6 +76,7 @@
 #include <ctype.h>
 #include "trace.h"
 #include "version.h"
+#include "aot-compiler.h"
 
 #include "jit-icalls.h"
 
@@ -2079,7 +2080,15 @@ lookup_start:
 
 		mono_class_init (method->klass);
 
-		if ((code = mono_aot_get_method_checked (domain, method, error))) {
+		code = mono_aot_get_method_checked (domain, method, error);
+
+		if (!code && mono_method_is_generic_sharable (method, FALSE)) {
+			MonoMethod *shared = mini_get_shared_method (method);
+			mono_class_init (shared->klass);
+			code = mono_aot_get_method_checked (domain, shared, error);
+		}
+
+		if (code) {
 			MonoVTable *vtable;
 
 			if (mono_gc_is_critical_method (method)) {
