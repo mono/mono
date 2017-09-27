@@ -1,6 +1,7 @@
 tmpinst = _tmpinst
 
 noinst_SCRIPTS = mono-wrapper monodis-wrapper
+noinst_DATA = mono-uninstalled.pc
 
 etctmp = etc
 symlinks = etc/mono/1.0/machine.config etc/mono/2.0/machine.config etc/mono/2.0/web.config etc/mono/browscap.ini etc/mono/2.0/Browsers/Compat.browser
@@ -104,7 +105,7 @@ clean-local:
 
 endif BUILD_MCS
 
-TEST_SUPPORT_FILES = $(tmpinst)/bin/mono $(tmpinst)/bin/ilasm $(tmpinst)/bin/csc $(tmpinst)/bin/mcs $(tmpinst)/bin/al
+TEST_SUPPORT_FILES = $(tmpinst)/bin/mono $(tmpinst)/bin/ilasm $(tmpinst)/bin/csc $(tmpinst)/bin/mcs $(tmpinst)/bin/al $(tmpinst)/lib/pkgconfig/mono-2.pc
 
 mcs-do-test-profiles:
 	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(test_profiles)' test-profiles
@@ -177,7 +178,7 @@ check-local: mcs-compileall mcs-do-test-profiles
 # Compile all mcs tests
 test: mcs-do-test-profiles
 
-CLEANFILES = etc/mono/config
+CLEANFILES = etc/mono/config $(tmpinst)/lib/pkgconfig/mono-2.pc
 
 # depend on $(symlinks) to ensure 'etc/mono' directory exists
 etc/mono/config: ../data/config Makefile $(symlinks)
@@ -218,6 +219,10 @@ $(tmpinst)/bin/al: $(tmpinst)/bin/mono Makefile
 	r=`pwd`; m=`cd $(mcs_topdir) && pwd`; \
 	echo 'exec "'"$$r/$(tmpinst)/bin/mono"'" "'"$$m/class/lib/$(net_profile)/al.exe"'" "$$@"' >> $@ ; \
 	chmod +x $@
+
+$(tmpinst)/lib/pkgconfig/mono-2.pc: mono-uninstalled.pc
+	$(mkinstalldirs) $(tmpinst)/lib/pkgconfig
+	cp $< $@
 
 test-support-files: $(TEST_SUPPORT_FILES)
 	@:
