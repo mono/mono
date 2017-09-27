@@ -1009,6 +1009,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			else
 			{
 				string zlib = (compress ? "-lz" : "");
+				string objc = (style == "osx" ? "-framework CoreFoundation -lobjc" : "");
 				string debugging = "-g";
 				string cc = GetEnv("CC", "cc");
 				string cmd = null;
@@ -1022,16 +1023,16 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 						smonolib = "`pkg-config --variable=libdir mono-2`/libmono-2.0.a ";
 					else
 						smonolib = "-Wl,-Bstatic -lmono-2.0 -Wl,-Bdynamic ";
-					cmd = String.Format("{4} -o '{2}' -Wall `pkg-config --cflags mono-2` {0} {3} " +
+					cmd = String.Format("{4} -o '{2}' -Wall {5} `pkg-config --cflags mono-2` {0} {3} " +
 						"`pkg-config --libs-only-L mono-2` " + smonolib +
 						"`pkg-config --libs-only-l mono-2 | sed -e \"s/\\-lmono-2.0 //\"` {1}",
-						temp_c, temp_o, output, zlib, cc);
+						temp_c, temp_o, output, zlib, cc, objc);
 				}
 				else
 				{
 
-					cmd = String.Format("{4} " + debugging + " -o '{2}' -Wall {0} `pkg-config --cflags --libs mono-2` {3} {1}",
-						temp_c, temp_o, output, zlib, cc);
+					cmd = String.Format("{4} " + debugging + " -o '{2}' -Wall {5} {0} `pkg-config --cflags --libs mono-2` {3} {1}",
+						temp_c, temp_o, output, zlib, cc, objc);
 				}
 				Execute (cmd);
 			}
