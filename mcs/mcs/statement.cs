@@ -1499,6 +1499,7 @@ namespace Mono.CSharp {
 		string name;
 		bool defined;
 		bool referenced;
+		bool reportedNotReferenced;
 		Label label;
 		Block block;
 		
@@ -1549,7 +1550,8 @@ namespace Mono.CSharp {
 
 		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
 		{
-			if (!referenced) {
+			if (!referenced && !reportedNotReferenced) {
+				reportedNotReferenced = true;
 				fc.Report.Warning (164, 2, loc, "This label has not been referenced");
 			}
 
