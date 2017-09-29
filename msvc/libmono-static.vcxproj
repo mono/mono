@@ -67,6 +67,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\mono\mini\mini.h" />
+    <ClInclude Include="..\mono\mini\pmip_my_callstack.h" />
     <ClInclude Include="..\mono\mini\seq-points.h" />
     <ClInclude Include="..\mono\mini\version.h" />
     <ClInclude Include="..\mono\mini\optflags-def.h" />
@@ -74,6 +75,7 @@
     <ClCompile Include="..\mono\mini\cfgdump.c" />
     <ClInclude Include="..\mono\mini\jit-icalls.h " />
     <ClCompile Include="..\mono\mini\jit-icalls.c " />
+    <ClCompile Include="..\mono\mini\pmip_my_callstack.c" />
     <ClCompile Include="..\mono\mini\seq-points.c" />
     <ClCompile Include="..\mono\mini\trace.c" />
     <ClInclude Include="..\mono\mini\trace.h" />
