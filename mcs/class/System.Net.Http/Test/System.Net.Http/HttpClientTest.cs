@@ -308,6 +308,18 @@ namespace MonoTests.System.Net.Http
 				Assert.Fail ("#2");
 			} catch (ArgumentOutOfRangeException) {
 			}
+
+			try {
+				client.Timeout = TimeSpan.Zero;
+				Assert.Fail ("#3");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			try {
+				client.Timeout = new TimeSpan(int.MaxValue + 1L);
+				Assert.Fail ("#3");
+			} catch (ArgumentOutOfRangeException) {
+			}
 		}
 
 		[Test]
