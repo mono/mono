@@ -169,7 +169,16 @@ namespace System.IO
 		// directory methods
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool CreateDirectory (string path, out MonoIOError error);
+		private unsafe extern static bool CreateDirectory (char* path, out MonoIOError error);
+
+		public static bool CreateDirectory (string path, out MonoIOError error)
+		{
+			unsafe {
+				fixed (char* pathChars = path) {
+					return CreateDirectory (pathChars, out error);
+				}
+			}
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static bool RemoveDirectory (string path, out MonoIOError error);
