@@ -333,9 +333,20 @@ namespace System.IO
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool GetFileStat (string path,
-						       out MonoIOStat stat,
-						       out MonoIOError error);
+		private unsafe extern static bool GetFileStat (char* path,
+							       out MonoIOStat stat,
+							       out MonoIOError error);
+
+		public static bool GetFileStat (string path,
+						out MonoIOStat stat,
+						out MonoIOError error)
+		{
+			unsafe {
+				fixed (char* pathChars = path) {
+					return GetFileStat (pathChars, out stat, out error);
+				}
+			}
+		}
 
 		// handle methods
 
