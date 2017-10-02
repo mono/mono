@@ -2917,4 +2917,16 @@ END:
 																			   valuetype [mscorlib]System.Decimal)
 		IL_0028:  ret
 	}
+
+  .method public hidebysig static int32 test_104_conv_u_and_string() cil managed
+  {
+    .maxstack  8
+	ldstr "hello"
+	conv.u
+	call int32 [mscorlib]System.Runtime.CompilerServices.RuntimeHelpers::get_OffsetToStringData()
+	add
+	ldind.u2
+	ret
+  }
+
 }
