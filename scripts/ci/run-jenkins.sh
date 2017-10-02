@@ -10,23 +10,25 @@ make_timeout=300m
 if [[ $CI_TAGS == *'collect-coverage'* ]]; then
     # Collect coverage for further use by lcov and similar tools.
     # Coverage must be collected with -O0 and debug information.
-    export CFLAGS="-ggdb3 --coverage -O0"
-    # Collect coverage on all optimizations
-    export MONO_ENV_OPTIONS="$MONO_ENV_OPTIONS -O=all"
-elif [[ ${CI_TAGS} == *'clang-sanitizer'* ]]; then
+    export CFLAGS="$CFLAGS -ggdb3 --coverage -O0"
+fi
+
+if [[ ${CI_TAGS} == *'clang-sanitizer'* ]]; then
 	export CC="clang"
 	export CXX="clang++"
-	export CFLAGS="-g -O1 -fsanitize=thread -fsanitize-blacklist=${MONO_REPO_ROOT}/scripts/ci/clang-thread-sanitizer-blacklist -mllvm -tsan-instrument-atomics=false"
+	export CFLAGS="$CFLAGS -g -O1 -fsanitize=thread -fsanitize-blacklist=${MONO_REPO_ROOT}/scripts/ci/clang-thread-sanitizer-blacklist -mllvm -tsan-instrument-atomics=false"
 	export LDFLAGS="-fsanitize=thread"
 	# TSAN_OPTIONS are used by programs that were compiled with Clang's ThreadSanitizer
 	# see https://github.com/google/sanitizers/wiki/ThreadSanitizerFlags for more details
 	export TSAN_OPTIONS="history_size=7:exitcode=0:force_seq_cst_atomics=1"
 	make_timeout=30m
-elif [[ ${label} == w* ]]; then
+fi
+
+if [[ ${label} == w* ]]; then
     # Passing -ggdb3 on Cygwin breaks linking against libmonosgen-x.y.dll
-    export CFLAGS="-g -O2"
+    export CFLAGS="$CFLAGS -g -O2"
 else
-    export CFLAGS="-ggdb3 -O2"
+    export CFLAGS="$CFLAGS -ggdb3 -O2"
 fi
 
 if [[ $CI_TAGS == *'retry-flaky-tests'* ]]; then
@@ -107,6 +109,8 @@ ${TESTCMD} --label=make --timeout=${make_timeout} --fatal make ${make_parallelis
 
 if [[ ${CI_TAGS} == *'checked-coop'* ]]; then export MONO_CHECK_MODE=gc,thread; fi
 if [[ ${CI_TAGS} == *'checked-all'* ]]; then export MONO_CHECK_MODE=all; fi
+
+export MONO_ENV_OPTIONS="$MONO_ENV_OPTIONS $MONO_TEST_ENV_OPTIONS"
 
 if [[ ${CI_TAGS} == *'acceptance-tests'* ]];
     then
