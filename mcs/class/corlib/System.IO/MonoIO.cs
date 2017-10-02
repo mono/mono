@@ -212,8 +212,18 @@ namespace System.IO
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool DeleteFile (string path,
-						      out MonoIOError error);
+		private unsafe extern static bool DeleteFile (char* path,
+							      out MonoIOError error);
+
+		public static bool DeleteFile (string path,
+					       out MonoIOError error)
+		{
+			unsafe {
+				fixed (char* pathChars = path) {
+					return DeleteFile (pathChars, out error);
+				}
+			}
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static bool ReplaceFile (string sourceFileName, 
