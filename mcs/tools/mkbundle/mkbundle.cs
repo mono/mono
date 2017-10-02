@@ -932,15 +932,6 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 
 			if (style == "windows") {
 				ToolchainProgram compiler = GetCCompiler ();
-				if (compiler != null && compiler.ParentSDK != null) {
-					if (compiler.IsVSToolChain && VisualStudioSDKHelper.GetInstance ().IsVisualStudio12 (compiler.ParentSDK) && static_link)
-						Console.WriteLine (	@"Warning: Static linking the Mono runtime on Windows using VC " +
-									@"12.0, won't support static Mono runtime library distributed in Mono SDK since it has " +
-									@"been build using different C-runtime version. If build results in " +
-									@"link errors related to C-runtime functions, please rebuild mono runtime distribution " +
-									@"using targeted VC compiler and linker and rerun using MONOPREFIX.");
-				}
-
 				bool staticLinkCRuntime = GetEnv ("VCCRT", "MD") != "MD";
 				if (!nomain || custom_main != null) {
 					string cl_cmd = GetCompileAndLinkCommand (compiler, temp_c, temp_o, custom_main, static_link, staticLinkCRuntime, output);
@@ -1445,7 +1436,6 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			this.Name = name;
 			this.Version = Version.Parse (version);
 			this.InstallationFolder = installationFolder;
-			this.IsSubVersion = false;
 			this.AdditionalSDKs = new List<InstalledSDKInfo> ();
 		}
 
@@ -1491,8 +1481,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 	}
 
 	class SDKHelper {
-
-		protected Microsoft.Win32.RegistryKey GetToolchainRegistrySubKey (string subKey)
+		static protected Microsoft.Win32.RegistryKey GetToolchainRegistrySubKey (string subKey)
 		{
 			Microsoft.Win32.RegistryKey key = null;
 
@@ -1511,7 +1500,6 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 	}
 
 	class WindowsSDKHelper : SDKHelper {
-
 		List<InstalledSDKInfo> installedWindowsSDKs;
 		List<InstalledSDKInfo> installedCRuntimeSDKs;
 		InstalledSDKInfo installedWindowsSDK;
@@ -1576,8 +1564,8 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 					//Search for installed SDK versions.
 					if (Directory.Exists (winKitIncludeDir)) {
 						var winKitIncludeDirInfo = new DirectoryInfo (winKitIncludeDir);
-						var versions = winKitIncludeDirInfo.GetDirectories (
-							"*.*", SearchOption.TopDirectoryOnly).OrderByDescending (p => p.Name, new StringVersionComparer ());
+						var versions = winKitIncludeDirInfo.GetDirectories ("*.*", SearchOption.TopDirectoryOnly)
+							.OrderByDescending (p => p.Name, new StringVersionComparer ());
 
 						foreach (var version in versions) {
 							string versionedWindowsSDKHeaderPath = Path.Combine (version.FullName, "um", "windows.h");
@@ -1768,11 +1756,12 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 				if (winSDK.IsSubVersion) {
 					winSDKLibDir = Path.Combine (winSDKLibDir, winSDK.Version.ToString ());
 				} else {
-					// Older WinSDK's header folders are not versioned, but installed libraries are, use latest availalble version for now.
+					// Older WinSDK's header folders are not versioned, but installed libraries are, use latest available version for now.
 					var winSDKLibDirInfo = new DirectoryInfo (winSDKLibDir);
-					var versions = winSDKLibDirInfo.GetDirectories ("*.*", SearchOption.TopDirectoryOnly).OrderByDescending (p => p.Name, new StringVersionComparer ());
-					if (versions != null && versions.First () != null)
-						winSDKLibDir = versions.First ().FullName;
+					var version = winSDKLibDirInfo.GetDirectories ("*.*", SearchOption.TopDirectoryOnly)
+						.OrderByDescending (p => p.Name, new StringVersionComparer ()).FirstOrDefault ();
+					if (version != null)
+						winSDKLibDir = version.FullName;
 				}
 
 				//Enumerat lib sub folders.
@@ -1811,7 +1800,6 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 	}
 
 	class VisualStudioSDKHelper : SDKHelper {
-
 		List<InstalledSDKInfo> installedVisualStudioSDKs;
 		InstalledSDKInfo installedVisualStudioSDK;
 
@@ -1858,7 +1846,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		{
 			string folderPath = "";
 			if (vcSDK != null && vcSDK.ParentSDK != null) {
-				if (IsVisualStudio12 (vcSDK.ParentSDK) || IsVisualStudio14 (vcSDK.ParentSDK)) {
+				if (IsVisualStudio14 (vcSDK.ParentSDK)) {
 					folderPath = Path.Combine (vcSDK.InstallationFolder, subPath);
 				} else if (IsVisualStudio15 (vcSDK.ParentSDK)) {
 					string msvcVersionPath = Path.Combine (vcSDK.InstallationFolder, "Tools", "MSVC");
@@ -1866,7 +1854,8 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 					// Add latest found version of MSVC toolchain.
 					if (Directory.Exists (msvcVersionPath)) {
 						var msvcVersionDirInfo = new DirectoryInfo (msvcVersionPath);
-						var versions = msvcVersionDirInfo.GetDirectories ("*.*", SearchOption.TopDirectoryOnly).OrderByDescending (p => p.Name, new StringVersionComparer ());
+						var versions = msvcVersionDirInfo.GetDirectories ("*.*", SearchOption.TopDirectoryOnly)
+							.OrderByDescending (p => p.Name, new StringVersionComparer ());
 
 						foreach (var version in versions) {
 							msvcVersionPath = Path.Combine (version.FullName, subPath);
@@ -1887,7 +1876,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			string subPath = "";
 
 			if (vcSDK != null && vcSDK.ParentSDK != null) {
-				if (IsVisualStudio12 (vcSDK.ParentSDK) || IsVisualStudio14 (vcSDK.ParentSDK))
+				if (IsVisualStudio14 (vcSDK.ParentSDK))
 					subPath = Target64BitApplication () ? @"lib\amd64" : "lib";
 				else if (IsVisualStudio15 (vcSDK.ParentSDK))
 					subPath = Target64BitApplication () ? @"lib\x64" : @"lib\x86";
@@ -1949,11 +1938,6 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			return visualStudioVCSDK;
 		}
 
-		public bool IsVisualStudio12 (InstalledSDKInfo vsSDK)
-		{
-			return vsSDK.Version.Major == 12 || vsSDK.Version.Major == 2013;
-		}
-
 		public bool IsVisualStudio14 (InstalledSDKInfo vsSDK)
 		{
 			return vsSDK.Version.Major == 14 || vsSDK.Version.Major == 2015;
@@ -1996,17 +1980,15 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 	}
 
 	class VCToolchainProgram {
-
 		protected ToolchainProgram toolchain;
 		public virtual bool IsVersion (InstalledSDKInfo vcSDK) { return false; }
 		public virtual ToolchainProgram FindVCToolchainProgram (InstalledSDKInfo vcSDK) { return null; }
 	}
 
-	class VC12ToolchainProgram : VCToolchainProgram {
-
+	class VC14ToolchainProgram : VCToolchainProgram {
 		public override bool IsVersion (InstalledSDKInfo vcSDK)
 		{
-			return VisualStudioSDKHelper.GetInstance ().IsVisualStudio12 (vcSDK);
+			return VisualStudioSDKHelper.GetInstance ().IsVisualStudio14 (vcSDK);
 		}
 
 		protected ToolchainProgram FindVCToolchainProgram (string tool, InstalledSDKInfo vcSDK)
@@ -2058,17 +2040,10 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		}
 	}
 
-	class VC12Compiler : VC12ToolchainProgram {
+	class VC14Compiler : VC14ToolchainProgram {
 		public override ToolchainProgram FindVCToolchainProgram (InstalledSDKInfo vcSDK)
 		{
 			return FindVCToolchainProgram ("cl.exe", vcSDK);
-		}
-	}
-
-	class VC14Compiler : VC12Compiler {
-		public override bool IsVersion (InstalledSDKInfo vcSDK)
-		{
-			return VisualStudioSDKHelper.GetInstance ().IsVisualStudio14 (vcSDK);
 		}
 	}
 
@@ -2079,17 +2054,10 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		}
 	}
 
-	class VC12Librarian : VC12ToolchainProgram {
+	class VC14Librarian : VC14ToolchainProgram {
 		public override ToolchainProgram FindVCToolchainProgram (InstalledSDKInfo vcSDK)
 		{
 			return FindVCToolchainProgram ("lib.exe", vcSDK);
-		}
-	}
-
-	class VC14Librarian : VC12Compiler {
-		public override bool IsVersion (InstalledSDKInfo vcSDK)
-		{
-			return VisualStudioSDKHelper.GetInstance ().IsVisualStudio14 (vcSDK);
 		}
 	}
 
@@ -2156,11 +2124,9 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 
 		public VisualStudioSDKToolchainHelper ()
 		{
-			vcCompilers.Add (new VC12Compiler ());
 			vcCompilers.Add (new VC14Compiler ());
 			vcCompilers.Add (new VC15Compiler ());
 
-			vcLibrarians.Add (new VC12Librarian ());
 			vcLibrarians.Add (new VC14Librarian ());
 			vcLibrarians.Add (new VC15Librarian ());
 
@@ -2176,18 +2142,16 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 
 		ToolchainProgram GetVCToolChainProgram (List<VCToolchainProgram> programs)
 		{
-			ToolchainProgram program = null;
 			var vcSDK = VisualStudioSDKHelper.GetInstance ().GetInstalledVisualStudioVCSDK ();
 			if (vcSDK?.ParentSDK != null) {
 				foreach (var item in programs) {
 					if (item.IsVersion (vcSDK.ParentSDK)) {
-						program = item.FindVCToolchainProgram (vcSDK);
-						break;
+						return item.FindVCToolchainProgram (vcSDK);
 					}
 				}
 			}
 
-			return program;
+			return null;
 		}
 
 		public ToolchainProgram GetVCCompiler ()
@@ -2292,30 +2256,18 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		linkerArgs.Add ("user32.lib");
 		linkerArgs.Add ("advapi32.lib");
 
-		if (program != null && program.ParentSDK != null && VisualStudioSDKHelper.GetInstance ().IsVisualStudio12 (program.ParentSDK)) {
-			if (staticLinkCRuntime) {
-				// Static release c-runtime support.
-				linkerArgs.Add ("libcmt.lib");
-				linkerArgs.Add ("oldnames.lib");
-			} else {
-				// Dynamic release c-runtime support.
-				linkerArgs.Add ("msvcrt.lib");
-				linkerArgs.Add ("oldnames.lib");
-			}
+		if (staticLinkCRuntime) {
+			// Static release c-runtime support.
+			linkerArgs.Add ("libucrt.lib");
+			linkerArgs.Add ("libvcruntime.lib");
+			linkerArgs.Add ("libcmt.lib");
+			linkerArgs.Add ("oldnames.lib");
 		} else {
-			if (staticLinkCRuntime) {
-				// Static release c-runtime support.
-				linkerArgs.Add ("libucrt.lib");
-				linkerArgs.Add ("libvcruntime.lib");
-				linkerArgs.Add ("libcmt.lib");
-				linkerArgs.Add ("oldnames.lib");
-			} else {
-				// Dynamic release c-runtime support.
-				linkerArgs.Add ("ucrt.lib");
-				linkerArgs.Add ("vcruntime.lib");
-				linkerArgs.Add ("msvcrt.lib");
-				linkerArgs.Add ("oldnames.lib");
-			}
+			// Dynamic release c-runtime support.
+			linkerArgs.Add ("ucrt.lib");
+			linkerArgs.Add ("vcruntime.lib");
+			linkerArgs.Add ("msvcrt.lib");
+			linkerArgs.Add ("oldnames.lib");
 		}
 
 		return;
@@ -2545,10 +2497,12 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			return new ToolchainProgram ("AS", assembler);
 
 		var vcClangAssembler = VisualStudioSDKToolchainHelper.GetInstance ().GetVCClangCompiler ();
-		if (vcClangAssembler == null)
+		if (vcClangAssembler == null) {
 			// Fallback to GNU assembler if clang for VS was not installed.
 			// Why? because mkbundle generates GNU assembler not compilable by VS tools like ml.
+			Console.WriteLine (@"Warning: Couldn't find installed Visual Studio SDK, fallback to as.exe and default environment.");
 			return new ToolchainProgram ("AS", "as.exe");
+		}
 
 		return vcClangAssembler;
 	}
@@ -2561,9 +2515,11 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			return new ToolchainProgram ("CC", compiler);
 
 		var vcCompiler = VisualStudioSDKToolchainHelper.GetInstance ().GetVCCompiler ();
-		if (vcCompiler == null)
+		if (vcCompiler == null) {
 			// Fallback to cl.exe if VC compiler was not installed.
+			Console.WriteLine (@"Warning: Couldn't find installed Visual Studio SDK, fallback to cl.exe and default environment.");
 			return new ToolchainProgram ("cl.exe", "cl.exe");
+		}
 
 		return vcCompiler;
 	}
@@ -2571,9 +2527,11 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 	static ToolchainProgram GetLibrarian ()
 	{
 		ToolchainProgram vcLibrarian = VisualStudioSDKToolchainHelper.GetInstance ().GetVCLibrarian ();
-		if (vcLibrarian == null)
+		if (vcLibrarian == null) {
 			// Fallback to lib.exe if VS was not installed.
+			Console.WriteLine (@"Warning: Couldn't find installed Visual Studio SDK, fallback to lib.exe and default environment.");
 			return new ToolchainProgram ("lib.exe", "lib.exe");
+		}
 
 		return vcLibrarian;
 	}
@@ -2593,7 +2551,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		// Add linker arguments.
 		AddLinkerArguments (compiler, staticLinkMono, staticLinkCRuntime, customMain, outputFile, compilerArgs);
 
-		return String.Format ("{0} {1}", compiler.QuoteArg (compiler.Path), String.Join (" ", compilerArgs.ToArray ()));
+		return String.Format ("{0} {1}", compiler.QuoteArg (compiler.Path), String.Join (" ", compilerArgs));
 	}
 
 	static string GetLibrarianCompilerCommand (ToolchainProgram compiler, string sourceFile, bool staticLinkMono, bool staticLinkCRuntime, out string objectFile)
@@ -2607,7 +2565,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		else
 			AddGCCLibrarianCompilerArguments (compiler, sourceFile, staticLinkMono, staticLinkCRuntime, compilerArgs, out objectFile);
 
-		return String.Format ("{0} {1}", compiler.QuoteArg (compiler.Path), String.Join (" ", compilerArgs.ToArray ()));
+		return String.Format ("{0} {1}", compiler.QuoteArg (compiler.Path), String.Join (" ", compilerArgs));
 	}
 
 	static string GetLibrarianLinkerCommand (ToolchainProgram librarian, string [] objectFiles, bool staticLinkMono, bool staticLinkCRuntime, string outputFile)
@@ -2619,7 +2577,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		else
 			AddGCCLibrarianLinkerArguments (librarian, objectFiles, staticLinkMono, staticLinkCRuntime, outputFile, librarianArgs);
 
-		return String.Format ("{0} {1}", librarian.QuoteArg (librarian.Path), String.Join (" ", librarianArgs.ToArray ()));
+		return String.Format ("{0} {1}", librarian.QuoteArg (librarian.Path), String.Join (" ", librarianArgs));
 	}
 #endregion
 }
