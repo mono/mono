@@ -3693,6 +3693,20 @@ public class ArrayTest
 		Assert.AreEqual (3, c.Counter);		
 	}
 
+	[Test]
+	public void EnumeratorsEquality ()
+	{
+		int [] normalBase = new int [0];
+		IEnumerable<int> specialBase = new int [0];
+
+		var firstSpecial = specialBase.GetEnumerator ();
+		var secondSpecial = specialBase.GetEnumerator ();
+		var firstNormal = normalBase.GetEnumerator ();
+		var secondNormal = normalBase.GetEnumerator ();
+
+		Assert.IsFalse (object.ReferenceEquals (firstNormal, secondNormal));
+		Assert.IsTrue (object.ReferenceEquals (firstSpecial, secondSpecial));
+	}
 
 	[Test]
 	public void JaggedArrayCtor ()
