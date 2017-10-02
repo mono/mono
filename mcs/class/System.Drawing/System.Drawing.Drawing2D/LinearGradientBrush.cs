@@ -67,6 +67,14 @@ namespace System.Drawing.Drawing2D {
 
 		public LinearGradientBrush (Rectangle rect, Color color1, Color color2, LinearGradientMode linearGradientMode)
 		{
+			if (linearGradientMode < LinearGradientMode.Horizontal || linearGradientMode > LinearGradientMode.BackwardDiagonal) {
+				throw new InvalidEnumArgumentException (nameof (linearGradientMode), unchecked ((int)linearGradientMode), typeof (LinearGradientMode));
+			}
+
+			if (rect.Width == 0 || rect.Height == 0) {
+				throw new ArgumentException( string.Format ("Rectangle '{0}' cannot have a width or height equal to 0.", rect.ToString ()));
+			}
+
 			IntPtr nativeObject;
 			Status status = GDIPlus.GdipCreateLineBrushFromRectI (ref rect, color1.ToArgb (), color2.ToArgb (), linearGradientMode, WrapMode.Tile, out nativeObject);
 			GDIPlus.CheckStatus (status);
@@ -81,6 +89,14 @@ namespace System.Drawing.Drawing2D {
 
 		public LinearGradientBrush (RectangleF rect, Color color1, Color color2, LinearGradientMode linearGradientMode)
 		{
+			if (linearGradientMode < LinearGradientMode.Horizontal || linearGradientMode > LinearGradientMode.BackwardDiagonal) {
+				throw new InvalidEnumArgumentException (nameof (linearGradientMode), unchecked ((int)linearGradientMode), typeof (LinearGradientMode));
+			}
+
+			if (rect.Width == 0.0 || rect.Height == 0.0) {
+				throw new ArgumentException (string.Format ("Rectangle '{0}' cannot have a width or height equal to 0.", rect.ToString ()));
+			}
+
 			IntPtr nativeObject;
 			Status status = GDIPlus.GdipCreateLineBrushFromRect (ref rect, color1.ToArgb (), color2.ToArgb (), linearGradientMode, WrapMode.Tile, out nativeObject);
 			GDIPlus.CheckStatus (status);
@@ -95,6 +111,10 @@ namespace System.Drawing.Drawing2D {
 
 		public LinearGradientBrush (Rectangle rect, Color color1, Color color2, float angle, bool isAngleScaleable)
 		{
+			if (rect.Width == 0 || rect.Height == 0) {
+				throw new ArgumentException (string.Format ("Rectangle '{0}' cannot have a width or height equal to 0.", rect.ToString ()));
+			}
+
 			IntPtr nativeObject;
 			Status status = GDIPlus.GdipCreateLineBrushFromRectWithAngleI (ref rect, color1.ToArgb (), color2.ToArgb (), angle, isAngleScaleable, WrapMode.Tile, out nativeObject);
 			GDIPlus.CheckStatus (status);
@@ -105,6 +125,10 @@ namespace System.Drawing.Drawing2D {
 
 		public LinearGradientBrush (RectangleF rect, Color color1, Color color2, float angle, bool isAngleScaleable)
 		{
+			if (rect.Width == 0 || rect.Height == 0) {
+				throw new ArgumentException (string.Format ("Rectangle '{0}' cannot have a width or height equal to 0.", rect.ToString ()));
+			}
+
 			IntPtr nativeObject;
 			Status status = GDIPlus.GdipCreateLineBrushFromRectWithAngle (ref rect, color1.ToArgb (), color2.ToArgb (), angle, isAngleScaleable, WrapMode.Tile, out nativeObject);
 			GDIPlus.CheckStatus (status);
