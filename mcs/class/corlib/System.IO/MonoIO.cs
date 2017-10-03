@@ -288,7 +288,16 @@ namespace System.IO
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool SetFileAttributes (string path, FileAttributes attrs, out MonoIOError error);
+		private extern static bool SetFileAttributes (char* path, FileAttributes attrs, out MonoIOError error);
+
+		public static bool SetFileAttributes (string path, FileAttributes attrs, out MonoIOError error)
+		{
+			unsafe {
+				fixed (char* pathChars = path) {
+					return SetFileAttributes (pathChars, attrs, out error);
+				}
+			}
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static MonoFileType GetFileType (IntPtr handle, out MonoIOError error);
