@@ -196,7 +196,16 @@ namespace System.IO
 		public extern static string GetCurrentDirectory (out MonoIOError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool SetCurrentDirectory (string path, out MonoIOError error);
+		private unsafe extern static bool SetCurrentDirectory (char* path, out MonoIOError error);
+
+		public static bool SetCurrentDirectory (string path, out MonoIOError error)
+		{
+			unsafe {
+				fixed (char* pathChars = path) {
+					return SetCurrentDirectory (pathChars, out error);
+				}
+			}
+		}
 
 		// file methods
 
