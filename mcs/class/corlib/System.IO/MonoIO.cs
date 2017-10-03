@@ -319,7 +319,16 @@ namespace System.IO
 		//
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static IntPtr FindFirstFile (string path_with_pattern, out string fileName, out int fileAttr, out int error);
+		private unsafe extern static IntPtr FindFirstFile (char* pathWithPattern, out string fileName, out int fileAttr, out int error);
+
+		public static IntPtr FindFirstFile (string pathWithPattern, out string fileName, out int fileAttr, out int error)
+		{
+			unsafe {
+				fixed (char* pathWithPatternChars = pathWithPattern) {
+					return FindFirstFile (pathWithPatternChars, out fileName, out fileAttr, out error);
+				}
+			}
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static bool FindNextFile (IntPtr hnd, out string fileName, out int fileAttr, out int error);
