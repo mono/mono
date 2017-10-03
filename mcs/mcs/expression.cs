@@ -9005,7 +9005,7 @@ namespace Mono.CSharp
 			if (eclass == ExprClass.Unresolved)
 				ResolveBase (ec);
 
-			if (type.IsClass){
+			if (type.IsClass || type.IsReadOnly) {
 				if (right_side == EmptyExpression.UnaryAddress)
 					ec.Report.Error (459, loc, "Cannot take the address of `this' because it is read-only");
 				else if (right_side == EmptyExpression.OutAccess)

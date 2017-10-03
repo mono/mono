@@ -959,7 +959,8 @@ namespace Mono.CSharp
 					}
 				}
 
-				if (kind == MemberKind.Class) {
+				switch (kind) {
+				case MemberKind.Class:
 					if ((ma & TypeAttributes.Sealed) != 0) {
 						if ((ma & TypeAttributes.Abstract) != 0)
 							mod |= Modifiers.STATIC;
@@ -968,6 +969,13 @@ namespace Mono.CSharp
 					} else if ((ma & TypeAttributes.Abstract) != 0) {
 						mod |= Modifiers.ABSTRACT;
 					}
+					break;
+				case MemberKind.Struct:
+					if (HasAttribute (CustomAttributeData.GetCustomAttributes (type), "IsReadOnlyAttribute", CompilerServicesNamespace)) {
+						mod |= Modifiers.READONLY;
+					}
+
+					break;
 				}
 			}
 
