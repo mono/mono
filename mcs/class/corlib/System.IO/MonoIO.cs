@@ -361,12 +361,26 @@ namespace System.IO
 		// handle methods
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static IntPtr Open (string filename,
-						  FileMode mode,
-						  FileAccess access,
-						  FileShare share,
-						  FileOptions options,
-						  out MonoIOError error);
+		private unsafe extern static IntPtr Open (char* filename,
+							  FileMode mode,
+							  FileAccess access,
+							  FileShare share,
+							  FileOptions options,
+							  out MonoIOError error);
+
+		public static IntPtr Open (string filename,
+					   FileMode mode,
+					   FileAccess access,
+					   FileShare share,
+					   FileOptions options,
+					   out MonoIOError error)
+		{
+			unsafe {
+				fixed (char* filenameChars = filename) {
+					return Open (filenameChars, mode, access, share, options, out error);
+				}
+			}
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static bool Close (IntPtr handle,
