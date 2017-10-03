@@ -181,7 +181,16 @@ namespace System.IO
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool RemoveDirectory (string path, out MonoIOError error);
+		private unsafe extern static bool RemoveDirectory (char* path, out MonoIOError error);
+
+		public static bool RemoveDirectory (string path, out MonoIOError error)
+		{
+			unsafe {
+				fixed (char* pathChars = path) {
+					return RemoveDirectory (pathChars, out error);
+				}
+			}
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static string GetCurrentDirectory (out MonoIOError error);
