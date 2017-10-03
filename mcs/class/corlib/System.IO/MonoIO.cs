@@ -245,11 +245,26 @@ namespace System.IO
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool ReplaceFile (string sourceFileName, 
-						       string destinationFileName, 
-						       string destinationBackupFileName, 
-						       bool ignoreMetadataErrors,
-						       out MonoIOError error);
+		private unsafe extern static bool ReplaceFile (char* sourceFileName,
+							       char* destinationFileName,
+							       char* destinationBackupFileName,
+							       bool ignoreMetadataErrors,
+							       out MonoIOError error);
+
+		public static bool ReplaceFile (string sourceFileName,
+						string destinationFileName,
+						string destinationBackupFileName,
+						bool ignoreMetadataErrors,
+						out MonoIOError error)
+		{
+			unsafe {
+				fixed (char* sourceFileNameChars = sourceFileName,
+				       destinationFileNameChars = destinationFileName,
+				       destinationBackupFileNameChars = destinationBackupFileName) {
+					return ReplaceFile (sourceFileNameChars, destinationFileNameChars, destinationBackupFileNameChars, ignoreMetadataErrors, out error);
+				}
+			}
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private unsafe extern static FileAttributes GetFileAttributes (char* path, out MonoIOError error);
