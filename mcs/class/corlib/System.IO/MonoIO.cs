@@ -192,8 +192,18 @@ namespace System.IO
 		// file methods
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool MoveFile (string path, string dest,
-						    out MonoIOError error);
+		private unsafe extern static bool MoveFile (char* path, char* dest,
+							    out MonoIOError error);
+
+		public static bool MoveFile (string path, string dest,
+					     out MonoIOError error)
+		{
+			unsafe {
+				fixed (char* pathChars = path, destChars = dest) {
+					return MoveFile (pathChars, destChars, out error);
+				}
+			}
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private unsafe extern static bool CopyFile (char* path, char* dest,
