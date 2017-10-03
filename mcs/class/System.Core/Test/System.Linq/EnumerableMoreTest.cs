@@ -223,6 +223,27 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
+		[Ignore ("https://bugzilla.xamarin.com/show_bug.cgi?id=59335")]
+		public void EqualEnumerators ()
+		{
+			// https://bugzilla.xamarin.com/show_bug.cgi?id=59335
+			//
+			// On .NET, multiple enumerators made from an EmptyEnumerable
+			// are equal. Object.ReferenceEquals is true for both instances returned.
+			// When made from an empty array or other empty collection,
+			// they are not equal. 
+			var specialBase = Enumerable.Empty<int> ();
+			var normalBase = Array.Empty<int> ();
+			var firstSpecial = specialBase.GetEnumerator ();
+			var secondSpecial = specialBase.GetEnumerator ();
+			var firstNormal = normalBase.GetEnumerator ();
+			var secondNormal = normalBase.GetEnumerator ();
+
+			Assert.IsTrue (!object.ReferenceEquals (firstNormal, secondNormal));
+			Assert.IsTrue (object.ReferenceEquals (firstSpecial, secondSpecial));
+		}
+
+		[Test]
 		public void FirstArgumentNullTest ()
 		{
 			string [] data = { "2", "1", "5", "3", "4" };
