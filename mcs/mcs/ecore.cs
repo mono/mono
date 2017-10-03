@@ -7394,6 +7394,11 @@ namespace Mono.CSharp {
 				if (ResolveAutopropertyAssignment (rc, right_side))
 					return this;
 
+				if (best_candidate.MemberType.Kind == MemberKind.ByRef) {
+					getter = CandidateToBaseOverride (rc, best_candidate.Get);
+					return ByRefDereference.Create(this).Resolve(rc);
+				}
+
 				rc.Report.Error (200, loc, "Property or indexer `{0}' cannot be assigned to (it is read-only)",
 					GetSignatureForError ());
 				return null;
