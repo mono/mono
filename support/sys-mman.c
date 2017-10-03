@@ -31,6 +31,7 @@
 #include <sys/mman.h>
 #include <errno.h>
 
+#include "mono/utils/mono-compiler.h"
 #include "map.h"
 #include "mph.h"
 

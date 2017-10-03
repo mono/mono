@@ -12,6 +12,7 @@
 #include <sys/types.h>
 #include <errno.h>
 
+#include "mono/utils/mono-compiler.h"
 #include "map.h"
 #include "mph.h"
 

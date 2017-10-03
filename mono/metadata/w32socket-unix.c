@@ -54,6 +54,7 @@
 #include "w32handle.h"
 #include "utils/mono-logger-internals.h"
 #include "utils/mono-poll.h"
+#include "utils/mono-compiler.h"
 
 typedef struct {
 	int domain;
