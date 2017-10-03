@@ -700,6 +700,16 @@ namespace Mono.CSharp
 			return true;
 		}
 
+		protected override void DoMemberTypeIndependentChecks ()
+		{
+			if ((Parent.PartialContainer.ModFlags & Modifiers.READONLY) != 0 && (ModFlags & (Modifiers.READONLY | Modifiers.STATIC)) == 0) {
+				Report.Error (8340, Location, "`{0}': Instance fields in readonly structs must be readonly",
+					GetSignatureForError ());
+			}
+
+			base.DoMemberTypeIndependentChecks ();
+		}
+
 		protected override void DoMemberTypeDependentChecks ()
 		{
 			if ((ModFlags & Modifiers.BACKING_FIELD) != 0)

@@ -3022,7 +3022,8 @@ namespace Mono.CSharp
 			Modifiers.PROTECTED |
 			Modifiers.INTERNAL  |
 			Modifiers.UNSAFE    |
-			Modifiers.PRIVATE;
+			Modifiers.PRIVATE   |
+			Modifiers.READONLY;
 
 		public Struct (TypeContainer parent, MemberName name, Modifiers mod, Attributes attrs)
 			: base (parent, name, attrs, MemberKind.Struct)
@@ -3135,6 +3136,9 @@ namespace Mono.CSharp
 
 		public override void Emit ()
 		{
+			if ((ModFlags & Modifiers.READONLY) != 0)
+				Module.PredefinedAttributes.IsReadOnly.EmitAttribute (TypeBuilder);
+
 			CheckStructCycles ();
 
 			base.Emit ();

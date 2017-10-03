@@ -237,6 +237,8 @@ namespace Mono.CSharp
 			}
 		}
 
+		public bool IsReadOnly => (modifiers & Modifiers.READONLY) != 0;
+
 		//
 		// Returns true for instances of any System.ValueTuple<......> type
 		//
