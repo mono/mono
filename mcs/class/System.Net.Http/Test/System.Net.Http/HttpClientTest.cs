@@ -316,7 +316,7 @@ namespace MonoTests.System.Net.Http
 			}
 
 			try {
-				client.Timeout = new TimeSpan(int.MaxValue + 1L);
+				client.Timeout = TimeSpan.FromMilliseconds (int.MaxValue + 1L);
 				Assert.Fail ("#3");
 			} catch (ArgumentOutOfRangeException) {
 			}
