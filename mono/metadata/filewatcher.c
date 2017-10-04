@@ -23,6 +23,10 @@
 #include <sys/time.h>
 #endif
 
+#if defined(__APPLE__)
+#include <CoreFoundation/CFRunLoop.h>
+#endif
+
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/exception.h>
 #include <mono/metadata/filewatcher.h>
@@ -208,6 +212,31 @@ ves_icall_System_IO_InotifyWatcher_RemoveWatch (int fd, gint32 watch_descriptor)
 	return inotify_rm_watch (fd, watch_descriptor);
 }
 #endif
+
+static void
+interrupt_runloop (gpointer data)
+{
+	g_assert (data);
+	CFRunLoopStop(data);
+}
+
+void
+ves_icall_CoreFX_Interop_RunLoop_CFRunLoopRun (void)
+{
+	gpointer runloop_ref = CFRunLoopGetCurrent();
+	gboolean interrupted;
+	mono_thread_info_install_interrupt (interrupt_runloop, runloop_ref, &interrupted);
+
+	if (interrupted)
+		return;
+
+	MONO_ENTER_GC_SAFE;
+	CFRunLoopRun();
+	MONO_EXIT_GC_SAFE;
+
+	mono_thread_info_uninstall_interrupt (&interrupted);
+}
+
 
 #if HAVE_KQUEUE
 

@@ -32,6 +32,7 @@ int ves_icall_System_IO_InotifyWatcher_GetInotifyInstance (void);
 int ves_icall_System_IO_InotifyWatcher_AddWatch (int fd, MonoString *directory, gint32 mask);
 int ves_icall_System_IO_InotifyWatcher_RemoveWatch (int fd, gint32 watch_descriptor);
 
+void ves_icall_CoreFX_Interop_RunLoop_CFRunLoopRun (void);
 int ves_icall_System_IO_KqueueMonitor_kevent_notimeout (int *kq, gpointer changelist, int nchanges, gpointer eventlist, int nevents);
 
 G_END_DECLS
