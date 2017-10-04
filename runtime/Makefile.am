@@ -33,7 +33,7 @@ net_profile = net_4_x
 endif
 
 if INSTALL_MONODROID
-build_profiles += monodroid
+build_profiles += monodroid monodroid_tools
 endif
 
 if INSTALL_MONOTOUCH
