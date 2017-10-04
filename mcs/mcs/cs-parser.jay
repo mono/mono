@@ -4614,7 +4614,7 @@ additive_expression
 			var lt = (LocatedToken) $4;
 			var lv = new LocalVariable (current_block, lt.Value, lt.Location);
 			is_expr.Variable = lv;
-			current_block.AddLocalName (lv);
+			current_block.AddLocalName (lv.Name, lv, true);
 		}
 
 		$$ = is_expr;
