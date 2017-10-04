@@ -1,2 +1,1 @@
 #include monodroid_Mono.Posix_test.dll.new-exclude.sources
-Mono.Unix.Android/TestHelper.cs
