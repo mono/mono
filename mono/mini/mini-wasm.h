@@ -46,5 +46,20 @@ typedef struct {
 #define MONO_ARCH_VTABLE_REG WASM_REG_0
 #define MONO_ARCH_IMT_REG WASM_REG_0
 #define MONO_ARCH_RGCTX_REG WASM_REG_0
+#define MONO_ARCH_USE_FPSTACK FALSE
+#define MONO_ARCH_HAVE_PATCH_CODE_NEW TRUE
 
+
+//bucket of defines to make mini-codegen.c happy. They are not used since we don't use the regalloc
+//FIXME take the non-regalloc bits from there and simply not compile it
+#define MONO_ARCH_CALLEE_REGS 0
+#define MONO_ARCH_CALLEE_FREGS 0
+#define MONO_ARCH_CALLEE_SAVED_FREGS 1
+#define MONO_ARCH_CALLEE_SAVED_REGS 1
+
+#define MONO_ARCH_INST_IS_REGPAIR(desc) (desc == 'l' || desc == 'L')
+#define MONO_ARCH_INST_FIXED_REG(desc) 0
+
+#define MONO_ARCH_INST_REGPAIR_REG2(desc,hreg1) 0
+#define MONO_ARCH_INST_SREG2_MASK(ins) 0
 #endif /* __MONO_MINI_WASM_H__ */  

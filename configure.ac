@@ -3411,15 +3411,21 @@ fi
 
 if test "x$enable_wasm_host" = "xyes"; then
 HOST=WASM
+host=WASM
 fi
 
 if test "x$enable_wasm_target" = "xyes"; then
-
 TARGET=WASM
 arch_target=wasm
 BTLS_SUPPORTED=no
 with_tls=pthread
 target_mach=no
+enable_mcs_build=no
+target=WASM
+
+if test "x$enable_wasm_host" != "x$enable_wasm_target"; then
+   AC_DEFINE(MONO_CROSS_COMPILE,1,[The runtime is compiled for cross-compiling mode])
+fi
 
 fi
 

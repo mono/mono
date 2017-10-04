@@ -1,5 +1,5 @@
 #include "mini.h"
-
+#include "cpu-wasm.h"
 
 gpointer
 mono_arch_get_this_arg_from_call (mgreg_t *regs, guint8 *code)
@@ -122,7 +122,36 @@ mono_arch_init_lmf_ext (MonoLMFExt *ext, gpointer prev_lmf)
 	ext->lmf.previous_lmf = (gsize)(gpointer)(((gssize)ext->lmf.previous_lmf) | 2);
 }
 
+#if defined (HOST_WASM)
 
+
+/*
+The following functions don't belong here, but are due to laziness.
+*/
+
+//w32file-wasm.c
+gboolean
+mono_w32file_get_volume_information (const gunichar2 *path, gunichar2 *volumename, gint volumesize, gint *outserial, gint *maxcomp, gint *fsflags, gunichar2 *fsbuffer, gint fsbuffersize)
+{
+	g_error ("mono_w32file_get_volume_information");
+}
+
+
+//misc runtime funcs
+gboolean
+MONO_SIG_HANDLER_SIGNATURE (mono_chain_signal)
+{
+	g_error ("mono_chain_signal");
+	
+	return FALSE;
+}
+
+gboolean
+mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoThreadInfo *info)
+{
+	g_error ("WASM systems don't support mono_thread_state_init_from_handle");
+	return FALSE;
+}
 
 void
 mono_runtime_setup_stat_profiler (void)
@@ -138,14 +167,6 @@ mono_runtime_shutdown_stat_profiler (void)
 }
 
 
-gboolean
-MONO_SIG_HANDLER_SIGNATURE (mono_chain_signal)
-{
-	g_error ("mono_chain_signal");
-	
-	return FALSE;
-}
-
 void
 mono_runtime_install_handlers (void)
 {
@@ -155,29 +176,6 @@ void
 mono_runtime_cleanup_handlers (void)
 {
 }
-
-gboolean
-mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoThreadInfo *info)
-{
-	g_error ("WASM systems don't support mono_thread_state_init_from_handle");
-	return FALSE;
-}
-
-
-/*
-The following functions don't belong here, but are due to laziness.
-*/
-
-//w32file-wasm.c
-gboolean
-mono_w32file_get_volume_information (const gunichar2 *path, gunichar2 *volumename, gint volumesize, gint *outserial, gint *maxcomp, gint *fsflags, gunichar2 *fsbuffer, gint fsbuffersize)
-{
-	g_error ("mono_w32file_get_volume_information");
-}
-
-
-//llvm builtin's that we should not have used in the first place
-
 
 //libc / libpthread missing bits from musl or shit we didn't detect :facepalm:
 int pthread_getschedparam (pthread_t thread, int *policy, struct sched_param *param)
@@ -251,3 +249,208 @@ sem_timedwait (sem_t *sem, const struct timespec *abs_timeout)
 	return 0;
 	
 }
+#endif
+
+gboolean
+mono_arch_have_fast_tls (void)
+{
+	//We got the fastest TLS on earth, it's called no threads
+	return TRUE;
+}
+
+#ifndef DISABLE_JIT
+
+gboolean 
+mono_arch_is_inst_imm (gint64 imm)
+{
+	//Encoding is not our problem!
+	return TRUE;
+}
+
+/*
+ * Return whether @opcode is suppported on the current target.
+ */
+gboolean
+mono_arch_opcode_supported (int opcode)
+{
+	//XXX we got no armv7 nonsense to deal with
+	return TRUE;
+}
+
+/*
+ * mono_arch_lowering_pass:
+ *
+ *  Converts complex opcodes into simpler ones so that each IR instruction
+ * corresponds to one machine instruction.
+ */
+void
+mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
+{
+	//XXX right now we got nothing to decompose
+}
+
+void
+mono_arch_allocate_vars (MonoCompile *cfg)
+{
+	g_error ("convert func args into BP loads");
+}
+
+void
+mono_arch_create_vars (MonoCompile *cfg)
+{
+	if (cfg->method->save_lmf)
+		cfg->create_lmf_var = TRUE;
+
+	if (cfg->method->save_lmf) {
+		cfg->lmf_ir = TRUE;
+	}
+
+	//XXX what else?
+}
+
+void
+mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
+{
+	g_error ("Emit calls");
+}
+
+void
+mono_arch_emit_epilog (MonoCompile *cfg)
+{
+	g_error ("mono_arch_emit_epilog");
+	//XXX do we do anything here?
+}
+
+guint8 *
+mono_arch_emit_prolog (MonoCompile *cfg)
+{
+	g_error ("mono_arch_emit_prolog");
+	//XXX shall we do something here?
+}
+
+void*
+mono_arch_instrument_epilog_full (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments, gboolean preserve_argument_registers)
+{
+	g_error ("mono_arch_instrument_epilog_full");
+	//XXX rather not
+}
+
+void
+mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
+{
+	g_error ("mono_arch_output_basic_block");
+	//The big code gen switch
+}
+
+void
+mono_arch_patch_code_new (MonoCompile *cfg, MonoDomain *domain, guint8 *code, MonoJumpInfo *ji, gpointer target)
+{
+	g_error ("mono_arch_patch_code_new");
+	//figure out patching
+}
+
+/* Return the name of a register */
+const char*
+mono_arch_regname (int reg)
+{
+	return "WASM HAS NO REGISTERS!";
+}
+
+/* Return the name of a float register */
+
+const char*
+mono_arch_fregname (int reg)
+{
+	return "WASM HAS NO FP REGS!";
+}
+
+/*
+ * mono_arch_peephole_pass_1:
+ *
+ *   Perform peephole opts which should/can be performed before local regalloc
+ */
+void
+mono_arch_peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
+{
+}
+
+/*
+ * mono_arch_peephole_pass_2:
+ *
+ *   Perform peephole opts that is not ?mono_arch_peephole_pass_1?
+ */
+
+void
+mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
+{
+}
+
+
+/*
+ * mono_arch_regalloc_cost:
+ *
+ *  Return the cost, in number of memory references, of the action of 
+ * allocating the variable VMV into a register during global register
+ * allocation.
+ */
+guint32
+mono_arch_regalloc_cost (MonoCompile *cfg, MonoMethodVar *vmv)
+{
+	return 0;
+	//it's regalloc, for real
+}
+
+
+void
+mono_arch_emit_exceptions (MonoCompile *cfg)
+{
+	g_error ("mono_arch_emit_exceptions");
+	//XXX what is this?
+}
+
+MonoInst*
+mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
+{
+	//This is for arch intrinsics!
+	return NULL;
+}
+
+void
+mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
+{
+	g_error ("mono_arch_emit_outarg_vt");
+	//XXX what is this?
+}
+
+
+void
+mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
+{
+	//XXX no clue on this puppy
+	g_error ("mono_arch_emit_setret");
+}
+
+void
+mono_arch_flush_icache (guint8 *code, gint size)
+{
+	// LOLWUT?
+}
+
+GList *
+mono_arch_get_allocatable_int_vars (MonoCompile *cfg)
+{
+	g_error ("mono_arch_get_allocatable_int_vars");
+	//XXX there's no regalloc in wasmlandia
+	return NULL;
+}
+
+GList *
+mono_arch_get_global_int_regs (MonoCompile *cfg)
+{
+	g_error ("mono_arch_get_global_int_regs");
+	//XXX how cute, trying to regalloc
+	return NULL;	
+}
+
+#endif
+

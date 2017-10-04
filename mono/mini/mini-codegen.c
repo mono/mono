@@ -24,7 +24,7 @@
 #include "trace.h"
 #include "mini-arch.h"
 
-#ifndef DISABLE_JIT
+#if !defined (DISABLE_JIT)
 
 #ifndef MONO_MAX_XREGS
 
