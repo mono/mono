@@ -264,6 +264,9 @@ mono_profiler_coverage_alloc (MonoMethod *method, guint32 entries)
 	if (!mono_profiler_state.code_coverage)
 		return FALSE;
 
+	if (method->wrapper_type)
+		return FALSE;
+
 	gboolean cover = FALSE;
 
 	for (MonoProfilerHandle handle = mono_profiler_state.profilers; handle; handle = handle->next) {
