@@ -4,13 +4,18 @@
 gpointer
 mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_type, MonoDomain *domain, guint32 *code_len)
 {
+#if defined (HOST_WASM)
 	g_error ("mono_arch_create_specific_trampoline");
+#else
+	return &mono_arch_create_specific_trampoline;
+#endif
 }
 
 guchar*
 mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInfo **info, gboolean aot)
 {
-	g_error ("mono_arch_create_generic_trampoline");
+	// g_error ("mono_arch_create_generic_trampoline");
+	return malloc (1);
 }
 
 gpointer
@@ -50,5 +55,12 @@ gpointer
 mono_arch_get_static_rgctx_trampoline (gpointer arg, gpointer addr)
 {
 	g_error ("mono_arch_get_static_rgctx_trampoline");
+	return NULL;
+}
+
+guint8*
+mono_arch_get_call_target (guint8 *code)
+{
+	g_error ("mono_arch_get_call_target");
 	return NULL;
 }

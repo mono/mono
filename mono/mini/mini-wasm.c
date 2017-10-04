@@ -364,6 +364,26 @@ mono_arch_fregname (int reg)
 	return "WASM HAS NO FP REGS!";
 }
 
+/* WTF this do? */
+guint32
+mono_arch_get_patch_offset (guint8 *code)
+{
+	g_error ("mono_arch_get_patch_offset");
+	return 1;
+}
+
+/*
+ * mono_arch_get_plt_info_offset:
+ *
+ *   Return the PLT info offset belonging to the plt entry PLT_ENTRY.
+ */
+guint32
+mono_arch_get_plt_info_offset (guint8 *plt_entry, mgreg_t *regs, guint8 *code)
+{
+	g_error ("mono_arch_get_plt_info_offset");
+	return 0;
+}
+
 /*
  * mono_arch_peephole_pass_1:
  *
@@ -452,5 +472,11 @@ mono_arch_get_global_int_regs (MonoCompile *cfg)
 	return NULL;	
 }
 
+
+void
+mono_wasm_code_gen (MonoCompile *cfg)
+{
+	
+}
 #endif
 

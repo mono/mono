@@ -199,6 +199,7 @@ void
 mono_exceptions_init (void)
 {
 	MonoRuntimeExceptionHandlingCallbacks cbs;
+#if !defined (TARGET_WASM)
 	if (mono_aot_only) {
 		restore_context_func = mono_aot_get_trampoline ("restore_context");
 		call_filter_func = mono_aot_get_trampoline ("call_filter");
@@ -222,6 +223,9 @@ mono_exceptions_init (void)
 		restore_stack_protection_tramp = mono_create_specific_trampoline (restore_stack_protection, MONO_TRAMPOLINE_RESTORE_STACK_PROT, mono_domain_get (), NULL);
 	}
 #endif
+#endif
+
+	memset (&cbs, 0, sizeof (cbs));
 
 #ifdef MONO_ARCH_HAVE_EXCEPTIONS_INIT
 	mono_arch_exceptions_init ();
@@ -235,6 +239,7 @@ mono_exceptions_init (void)
 
 	cbs.mono_walk_stack_with_state = mono_walk_stack_with_state;
 
+#if !defined (TARGET_WASM)
 	if (mono_llvm_only) {
 		cbs.mono_raise_exception = mono_llvm_raise_exception;
 		cbs.mono_reraise_exception = mono_llvm_reraise_exception;
@@ -242,6 +247,8 @@ mono_exceptions_init (void)
 		cbs.mono_raise_exception = (void (*)(MonoException *))mono_get_throw_exception ();
 		cbs.mono_reraise_exception = (void (*)(MonoException *))mono_get_rethrow_exception ();
 	}
+#endif
+
 	cbs.mono_raise_exception_with_ctx = mono_raise_exception_with_ctx;
 	cbs.mono_exception_walk_trace = mono_exception_walk_trace;
 	cbs.mono_install_handler_block_guard = mono_install_handler_block_guard;

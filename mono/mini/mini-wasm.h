@@ -48,7 +48,8 @@ typedef struct {
 #define MONO_ARCH_RGCTX_REG WASM_REG_0
 #define MONO_ARCH_USE_FPSTACK FALSE
 #define MONO_ARCH_HAVE_PATCH_CODE_NEW TRUE
-
+#define MONO_ARCH_AOT_SUPPORTED 1
+#define MONO_ARCH_HAVE_FULL_AOT_TRAMPOLINES 1
 
 //bucket of defines to make mini-codegen.c happy. They are not used since we don't use the regalloc
 //FIXME take the non-regalloc bits from there and simply not compile it
