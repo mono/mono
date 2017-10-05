@@ -7,6 +7,7 @@ LIBRARY = System.Configuration.dll
 
 LOCAL_MCS_FLAGS = 
 LIB_REFS = secxml/System bare/System.Xml System.Security
+KEYFILE = ../msfinal.pub
 LIB_MCS_FLAGS = -nowarn:618
 TEST_MCS_FLAGS =
 TEST_LIB_REFS = System.Xml System

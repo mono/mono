@@ -9,9 +9,10 @@ endif
 
 LIBRARY = System.Security.dll
 LIB_REFS = secxml/System bare/System.Xml $(MONO_SECURITY)
-LIB_MCS_FLAGS = -nowarn:618 \
-	-d:SECURITY_DEP \
-	-nowarn:414
+KEYFILE = ../msfinal.pub
+LIB_MCS_FLAGS = \
+	-nowarn:414,618 \
+	-d:SECURITY_DEP,SYSTEM_SECURITY_DLL
 
 LOCAL_MCS_FLAGS =
 

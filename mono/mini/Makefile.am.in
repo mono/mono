@@ -87,7 +87,7 @@ monobinldflags=$(export_ldflags) $(extra_runtime_ldflags)
 if HOST_WIN32
 libmonoldflags=-no-undefined -avoid-version -Wl,--kill-at $(monoldflags)
 else
-if PLATFORM_ANDROID
+if HOST_ANDROID
 libmonoldflags= -avoid-version $(monoldflags)
 else
 libmonoldflags=$(monoldflags) -version-info 1:0:0
@@ -168,7 +168,7 @@ if LOADED_LLVM
 lib_LTLIBRARIES += libmono-llvm.la
 libmono_llvm_la_SOURCES = mini-llvm.c mini-llvm-cpp.cpp llvm-jit.cpp
 libmono_llvm_la_LIBADD = $(GLIB_LIBS) $(LLVM_LIBS) $(LLVM_LDFLAGS)
-if PLATFORM_DARWIN
+if HOST_DARWIN
 libmono_llvm_la_LDFLAGS=-Wl,-undefined -Wl,suppress -Wl,-flat_namespace
 else
 libmono_llvm_la_LIBADD += $(top_builddir)/mono/mini/libmonoboehm-$(API_VER).la $(boehm_libs)
@@ -311,6 +311,12 @@ genmdesc_LDADD = \
 	$(monodir)/mono/utils/libmonoutils.la -lm	\
 	$(GLIB_LIBS)					\
 	$(LIBICONV)
+
+wasm_sources = \
+	mini-wasm.c		\
+	mini-wasm.h		\
+	exceptions-wasm.c	\
+	tramp-wasm.c
 
 x86_sources = \
 	mini-x86.c		\
@@ -456,6 +462,7 @@ common_sources = \
 	aot-compiler.h		\
 	aot-compiler.c		\
 	aot-runtime.c		\
+	aot-runtime-wasm.c	\
 	graph.c			\
 	mini-codegen.c		\
 	mini-exceptions.c	\
@@ -488,12 +495,14 @@ common_sources = \
 	type-checking.c \
 	lldb.h			\
 	lldb.c	\
-	memory-access.c
+	memory-access.c	\
+	mini-profiler.c
 
 test_sources = 			\
 	basic-calls.cs 		\
 	basic-long.cs 		\
 	bench.cs 		\
+	builtin-types.cs 	\
 	objects.cs 		\
 	arrays.cs		\
 	basic-float.cs		\
@@ -519,6 +528,7 @@ regtests_UNIVERSAL = \
 	basic-float.exe \
 	basic-long.exe \
 	basic-calls.exe \
+	builtin-types.exe \
 	objects.exe \
 	arrays.exe \
 	basic-math.exe \
@@ -533,10 +543,16 @@ regtests_UNIVERSAL = \
 regtests_DISABLED = 
 
 if FULL_AOT_TESTS
-regtests_DISABLED += 
+regtests_DISABLED += builtin-types.exe
 endif
 
 regtests = $(filter-out $(regtests_DISABLED),$(regtests_UNIVERSAL))
+
+if WASM
+arch_sources = $(wasm_sources)
+arch_built=cpu-wasm.h
+arch_define=__wasm__
+endif
 
 if X86
 arch_sources = $(x86_sources)
@@ -606,12 +622,12 @@ os_sources = $(windows_sources)
 monobin_platform_ldflags=
 endif
 
-if PLATFORM_SIGPOSIX
+if HOST_SIGPOSIX
 os_sources = $(posix_sources)
 monobin_platform_ldflags=
 endif
 
-if PLATFORM_DARWIN
+if HOST_DARWIN
 os_sources = $(darwin_sources) $(posix_sources)
 #monobin_platform_ldflags=-sectcreate __TEXT __info_plist $(top_srcdir)/mono/mini/Info.plist -framework CoreFoundation -framework Foundation
 monobin_platform_ldflags=-framework CoreFoundation -framework Foundation
@@ -651,6 +667,9 @@ basic-simd.exe: basic-simd.cs TestDriver.dll
 basic-vectors.exe: basic-vectors.cs TestDriver.dll
 	$(MCS) -out:$@ $(CSFLAGS) $< -r:TestDriver.dll -r:$(CLASS)/System.Numerics.dll -r:$(CLASS)/System.Numerics.Vectors.dll
 
+builtin-types.exe: builtin-types.cs TestDriver.dll
+	$(MCS) -out:$@ $(CSFLAGS) -define:ARCH_$(shell echo $$((8 * $(SIZEOF_VOID_P)))) $< -r:TestDriver.dll
+
 nacl.exe: nacl.cs TestDriver.dll
 	$(MCS) -out:$@ $(CSFLAGS) $< -r:TestDriver.dll -r:$(CLASS)/Mono.Simd.dll
 
@@ -681,11 +700,19 @@ GENMDESC_OPTS=
 # build dependency for the poor windows users
 # $(arch_define) is the preprocessor symbol that enables all the opcodes
 # for the specific platform in mini-ops.h
+
 if CROSS_COMPILING
 GENMDESC_PRG=perl $(srcdir)/genmdesc.pl $(arch_define) $(srcdir) $(GENMDESC_OPTS)
-else !CROSS_COMPILING
+else
+if WASM
+GENMDESC_PRG=perl $(srcdir)/genmdesc.pl $(arch_define) $(srcdir) $(GENMDESC_OPTS)
+else
 GENMDESC_PRG=./genmdesc $(GENMDESC_OPTS)
+endif
 endif !CROSS_COMPILING
+
+cpu-wasm.h: cpu-wasm.md genmdesc$(EXEEXT)
+	$(GENMDESC_PRG) cpu-wasm.h wasm_desc $(srcdir)/cpu-wasm.md
 
 cpu-x86.h: cpu-x86.md genmdesc$(EXEEXT)
 	$(GENMDESC_PRG) cpu-x86.h x86_desc $(srcdir)/cpu-x86.md
@@ -876,6 +903,7 @@ EXTRA_DIST = TestDriver.cs \
 	TestHelpers.cs \
 	genmdesc.pl				\
 	$(test_sources) 			\
+	$(wasm_sources) cpu-wasm.md 		\
 	$(x86_sources) cpu-x86.md 		\
 	$(amd64_sources) cpu-amd64.md 		\
 	$(ppc_sources) cpu-ppc.md cpu-ppc64.md 	\

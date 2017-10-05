@@ -8,6 +8,7 @@ endif
 
 LIBRARY = System.IdentityModel.dll
 LIB_REFS = System System.Xml System.Security $(MONO_SECURITY) System.Runtime.Serialization
+KEYFILE = ../ecma.pub
 LIB_MCS_FLAGS = \
 		/d:NET_3_0	\
 	        $(OTHER_LIB_MCS_FLAGS)

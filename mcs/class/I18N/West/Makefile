@@ -4,6 +4,7 @@ include ../../../build/rules.make
 
 LIBRARY = I18N.West.dll
 LIB_REFS = I18N
+KEYFILE = ../../mono.pub
 LOCAL_MCS_FLAGS = /unsafe
 #NO_TEST = yes
 

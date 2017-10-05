@@ -27,6 +27,7 @@ extern gboolean mono_align_small_structs;
 typedef struct _MonoMethodWrapper MonoMethodWrapper;
 typedef struct _MonoMethodInflated MonoMethodInflated;
 typedef struct _MonoMethodPInvoke MonoMethodPInvoke;
+typedef struct _MonoDynamicMethod MonoDynamicMethod;
 
 /* Properties that applies to a group of structs should better use a higher number
  * to avoid colision with type specific properties.
@@ -37,8 +38,10 @@ typedef struct _MonoMethodPInvoke MonoMethodPInvoke;
 
 #ifdef ENABLE_ICALL_EXPORT
 #pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#define ICALL_DECL_EXPORT MONO_API
 #define ICALL_EXPORT MONO_API
 #else
+#define ICALL_DECL_EXPORT
 #define ICALL_EXPORT static
 #endif
 
@@ -98,12 +101,17 @@ struct _MonoMethodWrapper {
 	void *method_data;
 };
 
+struct _MonoDynamicMethod {
+	MonoMethodWrapper method;
+	MonoAssembly *assembly;
+};
+
 struct _MonoMethodPInvoke {
 	MonoMethod method;
 	gpointer addr;
 	/* add marshal info */
 	guint16 piflags;  /* pinvoke flags */
-	guint16 implmap_idx;  /* index into IMPLMAP */
+	guint32 implmap_idx;  /* index into IMPLMAP */
 };
 
 /* 
@@ -492,7 +500,7 @@ struct MonoVTable {
  */
 struct _MonoGenericInst {
 #ifndef MONO_SMALL_CONFIG
-	guint id;			/* unique ID for debugging */
+	gint32 id;			/* unique ID for debugging */
 #endif
 	guint type_argc    : 22;	/* number of type arguments */
 	guint is_open      :  1;	/* if this is an open type */
@@ -754,39 +762,31 @@ typedef struct {
 #define MONO_SIZEOF_REMOTE_CLASS (sizeof (MonoRemoteClass) - MONO_ZERO_LEN_ARRAY * SIZEOF_VOID_P)
 
 typedef struct {
-	guint64 new_object_count;
-	size_t initialized_class_count;
-	size_t generic_vtable_count;
-	size_t used_class_count;
-	size_t method_count;
-	size_t class_vtable_size;
-	size_t class_static_data_size;
-	size_t generic_instance_count;
-	size_t generic_class_count;
-	size_t inflated_method_count;
-	size_t inflated_method_count_2;
-	size_t inflated_type_count;
-	size_t generics_metadata_size;
-	size_t delegate_creations;
-	size_t imt_tables_size;
-	size_t imt_number_of_tables;
-	size_t imt_number_of_methods;
-	size_t imt_used_slots;
-	size_t imt_slots_with_collisions;
-	size_t imt_max_collisions_in_slot;
-	size_t imt_method_count_when_max_collisions;
-	size_t imt_trampolines_size;
-	size_t jit_info_table_insert_count;
-	size_t jit_info_table_remove_count;
-	size_t jit_info_table_lookup_count;
-	size_t generics_sharable_methods;
-	size_t generics_unsharable_methods;
-	size_t generics_shared_methods;
-	size_t gsharedvt_methods;
-	size_t minor_gc_count;
-	size_t major_gc_count;
-	size_t minor_gc_time_usecs;
-	size_t major_gc_time_usecs;
+	gint32 initialized_class_count;
+	gint32 generic_vtable_count;
+	gint32 used_class_count;
+	gint32 method_count;
+	gint32 class_vtable_size;
+	gint32 class_static_data_size;
+	gint32 generic_class_count;
+	gint32 inflated_method_count;
+	gint32 inflated_type_count;
+	gint32 delegate_creations;
+	gint32 imt_tables_size;
+	gint32 imt_number_of_tables;
+	gint32 imt_number_of_methods;
+	gint32 imt_used_slots;
+	gint32 imt_slots_with_collisions;
+	gint32 imt_max_collisions_in_slot;
+	gint32 imt_method_count_when_max_collisions;
+	gint32 imt_trampolines_size;
+	gint32 jit_info_table_insert_count;
+	gint32 jit_info_table_remove_count;
+	gint32 jit_info_table_lookup_count;
+	gint32 generics_sharable_methods;
+	gint32 generics_unsharable_methods;
+	gint32 generics_shared_methods;
+	gint32 gsharedvt_methods;
 	gboolean enabled;
 } MonoStats;
 
@@ -798,78 +798,78 @@ typedef struct {
  */
 typedef struct {
 	/* JIT category */
-	guint32 jit_methods;
-	guint32 jit_bytes;
-	guint32 jit_time;
-	guint32 jit_failures;
+	gint32 jit_methods;
+	gint32 jit_bytes;
+	gint32 jit_time;
+	gint32 jit_failures;
 	/* Exceptions category */
-	guint32 exceptions_thrown;
-	guint32 exceptions_filters;
-	guint32 exceptions_finallys;
-	guint32 exceptions_depth;
-	guint32 aspnet_requests_queued;
-	guint32 aspnet_requests;
+	gint32 exceptions_thrown;
+	gint32 exceptions_filters;
+	gint32 exceptions_finallys;
+	gint32 exceptions_depth;
+	gint32 aspnet_requests_queued;
+	gint32 aspnet_requests;
 	/* Memory category */
-	guint32 gc_collections0;
-	guint32 gc_collections1;
-	guint32 gc_collections2;
-	guint32 gc_promotions0;
-	guint32 gc_promotions1;
-	guint32 gc_promotion_finalizers;
-	guint32 gc_gen0size;
-	guint32 gc_gen1size;
-	guint32 gc_gen2size;
-	guint32 gc_lossize;
-	guint32 gc_fin_survivors;
-	guint32 gc_num_handles;
-	guint32 gc_allocated;
-	guint32 gc_induced;
-	guint32 gc_time;
-	guint32 gc_total_bytes;
-	guint32 gc_committed_bytes;
-	guint32 gc_reserved_bytes;
-	guint32 gc_num_pinned;
-	guint32 gc_sync_blocks;
+	gint32 gc_collections0;
+	gint32 gc_collections1;
+	gint32 gc_collections2;
+	gint32 gc_promotions0;
+	gint32 gc_promotions1;
+	gint32 gc_promotion_finalizers;
+	gint64 gc_gen0size;
+	gint64 gc_gen1size;
+	gint64 gc_gen2size;
+	gint32 gc_lossize;
+	gint32 gc_fin_survivors;
+	gint32 gc_num_handles;
+	gint32 gc_allocated;
+	gint32 gc_induced;
+	gint32 gc_time;
+	gint64 gc_total_bytes;
+	gint64 gc_committed_bytes;
+	gint64 gc_reserved_bytes;
+	gint32 gc_num_pinned;
+	gint32 gc_sync_blocks;
 	/* Remoting category */
-	guint32 remoting_calls;
-	guint32 remoting_channels;
-	guint32 remoting_proxies;
-	guint32 remoting_classes;
-	guint32 remoting_objects;
-	guint32 remoting_contexts;
+	gint32 remoting_calls;
+	gint32 remoting_channels;
+	gint32 remoting_proxies;
+	gint32 remoting_classes;
+	gint32 remoting_objects;
+	gint32 remoting_contexts;
 	/* Loader category */
-	guint32 loader_classes;
-	guint32 loader_total_classes;
-	guint32 loader_appdomains;
-	guint32 loader_total_appdomains;
-	guint32 loader_assemblies;
-	guint32 loader_total_assemblies;
-	guint32 loader_failures;
-	guint32 loader_bytes;
-	guint32 loader_appdomains_uloaded;
+	gint32 loader_classes;
+	gint32 loader_total_classes;
+	gint32 loader_appdomains;
+	gint32 loader_total_appdomains;
+	gint32 loader_assemblies;
+	gint32 loader_total_assemblies;
+	gint32 loader_failures;
+	gint32 loader_bytes;
+	gint32 loader_appdomains_uloaded;
 	/* Threads and Locks category  */
-	guint32 thread_contentions;
-	guint32 thread_queue_len;
-	guint32 thread_queue_max;
-	guint32 thread_num_logical;
-	guint32 thread_num_physical;
-	guint32 thread_cur_recognized;
-	guint32 thread_num_recognized;
+	gint32 thread_contentions;
+	gint32 thread_queue_len;
+	gint32 thread_queue_max;
+	gint32 thread_num_logical;
+	gint32 thread_num_physical;
+	gint32 thread_cur_recognized;
+	gint32 thread_num_recognized;
 	/* Interop category */
-	guint32 interop_num_ccw;
-	guint32 interop_num_stubs;
-	guint32 interop_num_marshals;
+	gint32 interop_num_ccw;
+	gint32 interop_num_stubs;
+	gint32 interop_num_marshals;
 	/* Security category */
-	guint32 security_num_checks;
-	guint32 security_num_link_checks;
-	guint32 security_time;
-	guint32 security_depth;
-	guint32 unused;
+	gint32 security_num_checks;
+	gint32 security_num_link_checks;
+	gint32 security_time;
+	gint32 security_depth;
+	gint32 unused;
 	/* Threadpool */
-	guint64 threadpool_workitems;
-	guint64 threadpool_ioworkitems;
-	guint threadpool_threads;
-	guint threadpool_iothreads;
+	gint64 threadpool_workitems;
+	gint64 threadpool_ioworkitems;
+	gint32 threadpool_threads;
+	gint32 threadpool_iothreads;
 } MonoPerfCounters;
 
 extern MonoPerfCounters *mono_perfcounters;
@@ -1175,6 +1175,8 @@ GENERATE_GET_CLASS_WITH_CACHE_DECL (com_object)
 GENERATE_GET_CLASS_WITH_CACHE_DECL (variant)
 
 #endif
+
+GENERATE_GET_CLASS_WITH_CACHE_DECL (appdomain_unloaded_exception)
 
 extern MonoDefaults mono_defaults;
 

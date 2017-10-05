@@ -234,15 +234,15 @@ namespace Mono.CSharp
 		public static bool CheckOverrideName (TypeSpec type, TypeSpec baseType)
 		{
 			var btype_ntuple = baseType as NamedTupleSpec;
-			var mtype_ntupe = type as NamedTupleSpec;
-			if (btype_ntuple == null && mtype_ntupe == null)
+			var mtype_ntuple = type as NamedTupleSpec;
+			if (btype_ntuple == null && mtype_ntuple == null)
 				return true;
 
-			if (btype_ntuple != null || mtype_ntupe != null)
+			if (btype_ntuple == null || mtype_ntuple == null)
 				return false;
 
 			var b_elements = btype_ntuple.elements;
-			var m_elements = mtype_ntupe.elements;
+			var m_elements = mtype_ntuple.elements;
 			for (int i = 0; i < b_elements.Count; ++i) {
 				if (b_elements [i] != m_elements [i])
 					return false;

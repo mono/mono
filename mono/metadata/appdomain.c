@@ -1174,7 +1174,13 @@ mono_try_assembly_resolve_handle (MonoDomain *domain, MonoStringHandle fname, Mo
 	params [0] = MONO_HANDLE_RAW (fname);
 	params[1] = requesting ? MONO_HANDLE_RAW (requesting_handle) : NULL;
 	params [2] = &isrefonly;
-	MonoReflectionAssemblyHandle result = MONO_HANDLE_NEW (MonoReflectionAssembly, mono_runtime_invoke_checked (method, domain->domain, params, error));
+	MonoObject *exc = NULL;
+	MonoReflectionAssemblyHandle result = MONO_HANDLE_NEW (MonoReflectionAssembly, mono_runtime_try_invoke (method, domain->domain, params, &exc, error));
+	if (!is_ok (error) || exc != NULL) {
+		if (is_ok (error))
+			mono_error_set_exception_instance (error, (MonoException*)exc);
+		goto leave;
+	}
 	ret = !MONO_HANDLE_IS_NULL (result) ? MONO_HANDLE_GETVAL (result, assembly) : NULL;
 
 	if (ret && !refonly && ret->ref_only) {
@@ -2587,7 +2593,6 @@ unload_thread_main (void *arg)
 
 	mono_loader_lock (); //FIXME why do we need the loader lock here?
 	mono_domain_lock (domain);
-#ifdef HAVE_SGEN_GC
 	/*
 	 * We need to make sure that we don't have any remsets
 	 * pointing into static data of the to-be-freed domain because
@@ -2600,7 +2605,6 @@ unload_thread_main (void *arg)
 	for (i = 0; i < domain->class_vtable_array->len; ++i)
 		zero_static_data ((MonoVTable *)g_ptr_array_index (domain->class_vtable_array, i));
 	mono_gc_collect (0);
-#endif
 	for (i = 0; i < domain->class_vtable_array->len; ++i)
 		clear_cached_vtable ((MonoVTable *)g_ptr_array_index (domain->class_vtable_array, i));
 	deregister_reflection_info_roots (domain);

@@ -21,6 +21,7 @@
 #include <mono/metadata/debug-helpers.h>
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/mono-hwcap.h>
+#include <mono/utils/unlocked.h>
 
 #include <mono/arch/mips/mips-codegen.h>
 
@@ -5561,12 +5562,6 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 	return NULL;
 }
 
-gboolean
-mono_arch_print_tree (MonoInst *tree, int arity)
-{
-	return 0;
-}
-
 mgreg_t
 mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 {
@@ -5715,7 +5710,7 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 	}
 
 	if (!fail_tramp)
-		mono_stats.imt_trampolines_size += code - start;
+		UnlockedAdd (&mono_stats.imt_trampolines_size, code - start);
 	g_assert (code - start <= size);
 	mono_arch_flush_icache (start, size);
 

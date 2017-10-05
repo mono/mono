@@ -13,7 +13,8 @@ endif
 
 if HOST_WIN32
 win32_sources = \
-	os-event-win32.c
+	os-event-win32.c \
+	mono-os-wait-win32.c
 
 platform_sources = $(win32_sources)
 else
@@ -39,6 +40,7 @@ monoutils_sources = \
 	mono-dl-windows.c	\
 	mono-dl-darwin.c	\
 	mono-dl-posix.c		\
+	mono-dl-wasm.c	\
 	mono-dl.h		\
 	mono-dl-windows-internals.h	\
 	mono-log-windows.c	\
@@ -60,6 +62,7 @@ monoutils_sources = \
 	mono-mmap-windows-internals.h	\
 	mono-os-mutex.h		\
 	mono-os-mutex.c		\
+	mono-os-wait.h \
 	mono-coop-mutex.h		\
 	mono-once.h		\
 	mono-lazy-init.h		\
@@ -136,6 +139,7 @@ monoutils_sources = \
 	mono-threads-openbsd.c	\
 	mono-threads-android.c	\
 	mono-threads-haiku.c	\
+	mono-threads-wasm.c	\
 	mono-threads.h	\
 	mono-threads-debug.h	\
 	mono-threads-api.h	\
@@ -175,7 +179,8 @@ monoutils_sources = \
 	checked-build.h \
 	os-event.h \
 	refcount.h	\
-	w32api.h
+	w32api.h	\
+	unlocked.h
 
 arch_sources = 
 
@@ -243,6 +248,10 @@ endif
 
 if S390X
 arch_sources += mono-hwcap-s390x.c
+endif
+
+if HOST_WASM
+arch_sources += mono-hwcap-wasm.c
 endif
 
 else

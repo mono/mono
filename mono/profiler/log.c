@@ -1142,7 +1142,7 @@ sync_point_mark (MonoProfilerSyncPointType type)
 
 	ENTER_LOG (&sync_points_ctr, logbuffer,
 		EVENT_SIZE /* event */ +
-		LEB128_SIZE /* type */
+		BYTE_SIZE /* type */
 	);
 
 	emit_event (logbuffer, TYPE_META | TYPE_SYNC_POINT);
@@ -1792,7 +1792,7 @@ class_loaded (MonoProfiler *prof, MonoClass *klass)
 }
 
 static void
-method_enter (MonoProfiler *prof, MonoMethod *method)
+method_enter (MonoProfiler *prof, MonoMethod *method, MonoProfilerCallContext *ctx)
 {
 	if (get_thread ()->call_depth++ <= log_config.max_call_depth) {
 		ENTER_LOG (&method_entries_ctr, logbuffer,
@@ -1808,7 +1808,7 @@ method_enter (MonoProfiler *prof, MonoMethod *method)
 }
 
 static void
-method_leave (MonoProfiler *prof, MonoMethod *method)
+method_leave (MonoProfiler *prof, MonoMethod *method, MonoProfilerCallContext *ctx)
 {
 	if (--get_thread ()->call_depth <= log_config.max_call_depth) {
 		ENTER_LOG (&method_exits_ctr, logbuffer,
@@ -1821,6 +1821,12 @@ method_leave (MonoProfiler *prof, MonoMethod *method)
 
 		EXIT_LOG;
 	}
+}
+
+static void
+tail_call (MonoProfiler *prof, MonoMethod *method, MonoMethod *target)
+{
+	method_leave (prof, method, NULL);
 }
 
 static void
@@ -1842,7 +1848,14 @@ method_exc_leave (MonoProfiler *prof, MonoMethod *method, MonoObject *exc)
 static MonoProfilerCallInstrumentationFlags
 method_filter (MonoProfiler *prof, MonoMethod *method)
 {
-	return MONO_PROFILER_CALL_INSTRUMENTATION_PROLOGUE | MONO_PROFILER_CALL_INSTRUMENTATION_EPILOGUE;
+	if (log_config.callspec.len > 0 &&
+	    !mono_callspec_eval (method, &log_config.callspec))
+		return MONO_PROFILER_CALL_INSTRUMENTATION_NONE;
+
+	return MONO_PROFILER_CALL_INSTRUMENTATION_ENTER |
+	       MONO_PROFILER_CALL_INSTRUMENTATION_LEAVE |
+	       MONO_PROFILER_CALL_INSTRUMENTATION_TAIL_CALL |
+	       MONO_PROFILER_CALL_INSTRUMENTATION_EXCEPTION_LEAVE;
 }
 
 static void
@@ -1928,7 +1941,8 @@ clause_exc (MonoProfiler *prof, MonoMethod *method, uint32_t clause_num, MonoExc
 		EVENT_SIZE /* event */ +
 		BYTE_SIZE /* clause type */ +
 		LEB128_SIZE /* clause num */ +
-		LEB128_SIZE /* method */
+		LEB128_SIZE /* method */ +
+		LEB128_SIZE /* exc */
 	);
 
 	emit_event (logbuffer, TYPE_EXCEPTION | TYPE_CLAUSE);
@@ -2291,7 +2305,7 @@ dump_ubin (const char *filename, uintptr_t load_addr, uint64_t offset, uintptr_t
 		LEB128_SIZE /* load address */ +
 		LEB128_SIZE /* offset */ +
 		LEB128_SIZE /* size */ +
-		nlen /* file name */
+		len /* file name */
 	);
 
 	emit_event (logbuffer, TYPE_SAMPLE | TYPE_SAMPLE_UBIN);
@@ -2694,6 +2708,12 @@ counters_sample (uint64_t timestamp)
 	;
 
 	for (agent = log_profiler.counters; agent; agent = agent->next) {
+		/*
+		 * FIXME: This calculation is incorrect for string counters since
+		 * mono_counter_get_size () just returns 0 in that case. We should
+		 * address this if we ever actually add any string counters to Mono.
+		 */
+
 		size +=
 			LEB128_SIZE /* index */ +
 			BYTE_SIZE /* type */ +
@@ -4279,12 +4299,12 @@ proflog_icall_SetMonitorEvents (MonoBoolean value)
 	mono_coop_mutex_lock (&log_profiler.api_mutex);
 
 	if (value) {
-		ENABLE (PROFLOG_EXCEPTION_EVENTS);
+		ENABLE (PROFLOG_MONITOR_EVENTS);
 		mono_profiler_set_monitor_contention_callback (log_profiler.handle, monitor_contention);
 		mono_profiler_set_monitor_acquired_callback (log_profiler.handle, monitor_acquired);
 		mono_profiler_set_monitor_failed_callback (log_profiler.handle, monitor_failed);
 	} else {
-		DISABLE (PROFLOG_EXCEPTION_EVENTS);
+		DISABLE (PROFLOG_MONITOR_EVENTS);
 		mono_profiler_set_monitor_contention_callback (log_profiler.handle, NULL);
 		mono_profiler_set_monitor_acquired_callback (log_profiler.handle, NULL);
 		mono_profiler_set_monitor_failed_callback (log_profiler.handle, NULL);
@@ -4658,28 +4678,11 @@ create_profiler (const char *args, const char *filename, GPtrArray *filters)
 	log_profiler.startup_time = current_time ();
 }
 
-/*
- * declaration to silence the compiler: this is the entry point that
- * mono will load from the shared library and call.
- */
-extern void
-mono_profiler_init (const char *desc);
-
-extern void
+MONO_API void
 mono_profiler_init_log (const char *desc);
 
-/*
- * this is the entry point that will be used when the profiler
- * is embedded inside the main executable.
- */
 void
 mono_profiler_init_log (const char *desc)
-{
-	mono_profiler_init (desc);
-}
-
-void
-mono_profiler_init (const char *desc)
 {
 	GPtrArray *filters = NULL;
 
@@ -4702,7 +4705,7 @@ mono_profiler_init (const char *desc)
 
 	mono_lls_init (&log_profiler.profiler_thread_list, NULL);
 
-	MonoProfilerHandle handle = log_profiler.handle = mono_profiler_install (&log_profiler);
+	MonoProfilerHandle handle = log_profiler.handle = mono_profiler_create (&log_profiler);
 
 	/*
 	 * Required callbacks. These are either necessary for the profiler itself
@@ -4787,11 +4790,14 @@ mono_profiler_init (const char *desc)
 		mono_profiler_set_call_instrumentation_filter_callback (handle, method_filter);
 		mono_profiler_set_method_enter_callback (handle, method_enter);
 		mono_profiler_set_method_leave_callback (handle, method_leave);
+		mono_profiler_set_method_tail_call_callback (handle, tail_call);
 		mono_profiler_set_method_exception_leave_callback (handle, method_exc_leave);
 	}
 
-	if (log_config.collect_coverage)
+	if (log_config.collect_coverage) {
+		mono_profiler_enable_coverage ();
 		mono_profiler_set_coverage_filter_callback (handle, coverage_filter);
+	}
 
 	mono_profiler_enable_allocations ();
 	mono_profiler_enable_sampling (handle);

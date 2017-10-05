@@ -175,6 +175,7 @@ System.Reflection.Emit/ParameterBuilderTest.cs
 System.Reflection.Emit/PropertyBuilderTest.cs
 System.Reflection.Emit/SignatureHelperTest.cs
 System.Reflection.Emit/TypeBuilderTest.cs
+System.Reflection.Emit/SaveTest.cs
 System.Reflection/ModuleTest.cs
 System.Reflection/StrongNameKeyPairTest.cs
 System/ResolveEventArgsTest.cs
@@ -204,6 +205,7 @@ System.Runtime.Remoting.Channels/ChannelServicesTest.cs
 System.Runtime.Remoting.Contexts/SynchronizationAttributeTest.cs
 System.Runtime.Remoting.Messaging/CallContextTest.cs
 System.Runtime.Remoting.Metadata.W3cXsd2001/SoapHexBinaryTest.cs
+System.Runtime.Remoting.Proxies/RealProxyTest.cs
 System.Runtime.Serialization/FormatterServicesTests.cs
 System.Runtime.Serialization/ObjectIDGeneratorTests.cs
 System.Runtime.Serialization/SerializationBinderTest.cs

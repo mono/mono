@@ -64,13 +64,11 @@ corefx/SR.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/EXPRExtensions.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/ExprFactory.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/EXPRFLAG.cs
-../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/FileRecord.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/FundamentalTypes.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/GlobalSymbolContext.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/GroupToArgsBinder.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/GroupToArgsBinderResult.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/ImplicitConversion.cs
-../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/InputFile.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/LangCompiler.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/MemberLookup.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/MemberLookupResults.cs
@@ -141,10 +139,8 @@ corefx/SR.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Tree/Return.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Tree/Statement.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Tree/Temporary.cs
-../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Tree/TypeArguments.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Tree/TypeOf.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Tree/UnaryOperator.cs
-../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Tree/UnboundAnonymousFunction.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Tree/UserDefinedConversion.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Tree/UserDefinedLogicalOperator.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Tree/Visitors/ExpressionTreeRewriter.cs

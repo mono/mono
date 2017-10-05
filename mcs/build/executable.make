@@ -42,8 +42,20 @@ executable_CLEAN_FILES += $(build_lib) $(build_lib).so $(build_lib).mdb $(build_
 
 makefrag = $(depsdir)/$(PROFILE)_$(base_prog).makefrag
 
+ifdef TARGET_NET_REFERENCE
+# System.*.dll references come from the TARGET_NET_REFERENCE dir, others from the profile dir
+LIB_REFS_MONO = $(call _FILTER_OUT,System,$(LIB_REFS))
+LIB_REFS_SYSTEM = $(filter-out $(LIB_REFS_MONO),$(LIB_REFS))
+
+MCS_REFERENCES = $(patsubst %,-r:$(topdir)/../external/binary-reference-assemblies/$(TARGET_NET_REFERENCE)/%.dll,$(LIB_REFS_SYSTEM))
+MCS_REFERENCES += $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/%.dll,$(LIB_REFS_MONO))
+else
 MCS_REFERENCES = $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/%.dll,$(LIB_REFS))
-MCS_REFERENCES += $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/%.exe,$(EXE_REFS))
+endif
+
+ifdef KEYFILE
+LIB_MCS_FLAGS += /keyfile:$(KEYFILE)
+endif
 
 ifndef NO_BUILD
 all-local: $(the_lib) $(PROGRAM_config)

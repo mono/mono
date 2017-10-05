@@ -184,6 +184,7 @@
 ../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/Internal/Commands/CommandStage.cs
 ../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/Internal/Commands/DelegatingTestCommand.cs
 ../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/Internal/Commands/ExpectedExceptionCommand.cs
+../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/Internal/Commands/FlakyTestRetriesCommand.cs
 ../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/Internal/Commands/ICommandDecorator.cs
 ../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/Internal/Commands/MaxTimeCommand.cs
 ../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/Internal/Commands/OneTimeSetUpCommand.cs

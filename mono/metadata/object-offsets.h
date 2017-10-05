@@ -141,6 +141,9 @@ DECL_OFFSET(MonoTypedRef, value)
 DECL_OFFSET(MonoThreadsSync, status)
 DECL_OFFSET(MonoThreadsSync, nest)
 
+DECL_OFFSET(MonoProfilerCallContext, method)
+DECL_OFFSET(MonoProfilerCallContext, return_value)
+
 #ifdef HAVE_SGEN_GC
 DECL_OFFSET(SgenClientThreadInfo, in_critical_region)
 DECL_OFFSET(SgenThreadInfo, tlab_next)
@@ -158,7 +161,6 @@ DECL_OFFSET(MonoMethodRuntimeGenericContext, class_vtable)
 DECL_OFFSET(MonoJitTlsData, lmf)
 DECL_OFFSET(MonoJitTlsData, class_cast_from)
 DECL_OFFSET(MonoJitTlsData, class_cast_to)
-DECL_OFFSET(MonoJitTlsData, handler_block_return_address)
 DECL_OFFSET(MonoJitTlsData, restore_stack_prot)
 
 DECL_OFFSET(MonoGSharedVtMethodRuntimeInfo, locals_size)
@@ -176,7 +178,16 @@ DECL_OFFSET(MonoDelegateTrampInfo, method_ptr)
 // Architecture-specific offsets
 // -----------------------------
 
-#if defined(TARGET_X86)
+#if defined(TARGET_WASM)
+DECL_OFFSET(MonoContext, wasm_ip)
+DECL_OFFSET(MonoContext, wasm_bp)
+DECL_OFFSET(MonoContext, wasm_sp)
+DECL_OFFSET(MonoContext, llvm_exc_reg)
+
+DECL_OFFSET(MonoLMF, method)
+DECL_OFFSET(MonoLMF, lmf_addr)
+
+#elif defined(TARGET_X86)
 DECL_OFFSET(MonoContext, eax)
 DECL_OFFSET(MonoContext, ebx)
 DECL_OFFSET(MonoContext, ecx)
@@ -221,6 +232,7 @@ DECL_OFFSET(MonoLMF, pc)
 DECL_OFFSET(MonoLMF, gregs)
 DECL_OFFSET(DynCallArgs, regs)
 DECL_OFFSET(DynCallArgs, fpregs)
+DECL_OFFSET(DynCallArgs, n_stackargs)
 DECL_OFFSET(DynCallArgs, n_fpargs)
 DECL_OFFSET(DynCallArgs, n_fpret)
 #endif

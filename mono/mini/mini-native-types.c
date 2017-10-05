@@ -126,9 +126,6 @@ static const MagicTypeInfo type_info[] = {
 	{ 2, STACK_R8, STACK_R8, STACK_R8, OP_FCONV_TO_R8, OP_FCONV_TO_R4, OP_FMOVE, 0, 0, OP_PT_STORE_FP_MEMBASE_REG, 0 },
 };
 
-static inline gboolean mono_class_is_magic_int (MonoClass *klass);
-static inline gboolean mono_class_is_magic_float (MonoClass *klass);
-
 
 static inline gboolean
 type_size (MonoCompile *cfg, MonoType *type)
@@ -352,10 +349,15 @@ mono_class_is_magic_assembly (MonoClass *klass)
 		return TRUE;
 	if (!strcmp ("Xamarin.WatchOS", klass->image->assembly_name))
 		return TRUE;
+	/* regression test suite */
+	if (!strcmp ("builtin-types", klass->image->assembly_name))
+		return TRUE;
+	if (!strcmp ("mini_tests", klass->image->assembly_name))
+		return TRUE;
 	return FALSE;
 }
 
-static inline gboolean
+gboolean
 mono_class_is_magic_int (MonoClass *klass)
 {
 	static MonoClass *magic_nint_class;
@@ -388,7 +390,7 @@ mono_class_is_magic_int (MonoClass *klass)
 	return FALSE;
 }
 
-static inline gboolean
+gboolean
 mono_class_is_magic_float (MonoClass *klass)
 {
 	static MonoClass *magic_nfloat_class;

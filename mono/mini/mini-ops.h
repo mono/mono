@@ -1219,6 +1219,14 @@ MINI_OP(OP_S390_IADD_OVF,       "s390_int_add_ovf", IREG, IREG, IREG)
 MINI_OP(OP_S390_IADD_OVF_UN,    "s390_int_add_ovf_un", IREG, IREG, IREG)
 MINI_OP(OP_S390_ISUB_OVF,       "s390_int_sub_ovf", IREG, IREG, IREG)
 MINI_OP(OP_S390_ISUB_OVF_UN,    "s390_int_sub_ovf_un", IREG, IREG, IREG)
+MINI_OP(OP_S390_CRJ,            "s390_crj", IREG, IREG, IREG)
+MINI_OP(OP_S390_CLRJ,           "s390_crj_un", IREG, IREG, IREG)
+MINI_OP(OP_S390_CGRJ,           "s390_cgrj", LREG, LREG, IREG)
+MINI_OP(OP_S390_CLGRJ,          "s390_cgrj_un", LREG, LREG, IREG)
+MINI_OP(OP_S390_CIJ,            "s390_cij", IREG, NONE, NONE)
+MINI_OP(OP_S390_CLIJ,           "s390_cij_un", IREG, IREG, NONE)
+MINI_OP(OP_S390_CGIJ,           "s390_cgij", LREG, NONE, NONE)
+MINI_OP(OP_S390_CLGIJ,          "s390_cgij_un", LREG, NONE, NONE)
 #endif
 
 #if defined(__mips__)
@@ -1305,3 +1313,10 @@ MINI_OP(OP_GET_SP, "get_sp", IREG, NONE, NONE)
 MINI_OP(OP_SET_SP, "set_sp", NONE, IREG, NONE)
 
 MINI_OP(OP_GET_LAST_ERROR, "get_last_error", IREG, NONE, NONE)
+
+/*
+ * Fill out a MonoContext contained in a MonoProfilerCallContext. This only
+ * stores the stack pointer, frame pointer, and callee-saved registers. This
+ * should be enough to locate arguments and variables.
+ */
+MINI_OP(OP_FILL_PROF_CALL_CTX, "fill_prof_call_ctx", NONE, IREG, NONE)

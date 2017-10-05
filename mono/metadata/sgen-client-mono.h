@@ -288,7 +288,6 @@ sgen_client_binary_protocol_collection_requested (int generation, size_t request
 	MONO_GC_REQUESTED (generation, requested_size, force);
 }
 
-
 static void G_GNUC_UNUSED
 sgen_client_binary_protocol_collection_end (int minor_gc_count, int generation, long long num_objects_scanned, long long num_unique_objects_scanned)
 {
@@ -678,13 +677,21 @@ sgen_client_root_registered (char *start, size_t size, int source, void *key, co
 	MONO_PROFILER_RAISE (gc_root_register, ((const mono_byte*)start, size, source, key, msg));
 }
 
-
 static void G_GNUC_UNUSED
 sgen_client_root_deregistered (char *start)
 {
 	MONO_PROFILER_RAISE (gc_root_unregister, ((const mono_byte*)start));
 }
 
+static void G_GNUC_UNUSED
+sgen_client_binary_protocol_worker_finish_stats (int worker_index, int generation, gboolean forced, long long major_scan, long long los_scan, long long work_time)
+{
+}
+
+static void G_GNUC_UNUSED
+sgen_client_binary_protocol_collection_end_stats (long long major_scan, long long los_scan, long long finish_stack)
+{
+}
 
 #define TLAB_ACCESS_INIT	SgenThreadInfo *__thread_info__ = (SgenThreadInfo*)mono_tls_get_sgen_thread_info ()
 #define IN_CRITICAL_REGION (__thread_info__->client_info.in_critical_region)

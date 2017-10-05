@@ -37,6 +37,7 @@
 #include <mono/utils/mono-tls.h>
 #include <mono/utils/mono-hwcap.h>
 #include <mono/utils/mono-threads.h>
+#include <mono/utils/unlocked.h>
 
 #include "trace.h"
 #include "ir-emit.h"
@@ -1168,7 +1169,6 @@ mono_arch_init (void)
 	mono_aot_register_jit_icall ("mono_amd64_throw_corlib_exception", mono_amd64_throw_corlib_exception);
 	mono_aot_register_jit_icall ("mono_amd64_resume_unwind", mono_amd64_resume_unwind);
 	mono_aot_register_jit_icall ("mono_amd64_get_original_ip", mono_amd64_get_original_ip);
-	mono_aot_register_jit_icall ("mono_amd64_handler_block_trampoline_helper", mono_amd64_handler_block_trampoline_helper);
 
 #if defined(MONO_ARCH_GSHAREDVT_SUPPORTED)
 	mono_aot_register_jit_icall ("mono_amd64_start_gsharedvt_call", mono_amd64_start_gsharedvt_call);
@@ -2374,6 +2374,7 @@ mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
 typedef struct {
 	MonoMethodSignature *sig;
 	CallInfo *cinfo;
+	int nstack_args;
 } ArchDynCallInfo;
 
 static gboolean
@@ -2400,10 +2401,7 @@ dyn_call_supported (MonoMethodSignature *sig, CallInfo *cinfo)
 		case ArgInFloatSSEReg:
 		case ArgInDoubleSSEReg:
 		case ArgValuetypeInReg:
-			break;
 		case ArgOnStack:
-			if (!(ainfo->offset + (ainfo->arg_size / 8) <= DYN_CALL_STACK_ARGS))
-				return FALSE;
 			break;
 		default:
 			return FALSE;
@@ -2426,6 +2424,7 @@ mono_arch_dyn_call_prepare (MonoMethodSignature *sig)
 {
 	ArchDynCallInfo *info;
 	CallInfo *cinfo;
+	int i;
 
 	cinfo = get_call_info (NULL, sig);
 
@@ -2438,6 +2437,21 @@ mono_arch_dyn_call_prepare (MonoMethodSignature *sig)
 	// FIXME: Preprocess the info to speed up get_dyn_call_args ().
 	info->sig = sig;
 	info->cinfo = cinfo;
+	info->nstack_args = 0;
+
+	for (i = 0; i < cinfo->nargs; ++i) {
+		ArgInfo *ainfo = &cinfo->args [i];
+		switch (ainfo->storage) {
+		case ArgOnStack:
+			info->nstack_args = MAX (info->nstack_args, ainfo->offset + (ainfo->arg_size / 8));
+			break;
+		default:
+			break;
+		}
+	}
+	/* Align to 16 bytes */
+	if (info->nstack_args & 1)
+		info->nstack_args ++;
 	
 	return (MonoDynCallInfo*)info;
 }
@@ -2454,6 +2468,15 @@ mono_arch_dyn_call_free (MonoDynCallInfo *info)
 
 	g_free (ainfo->cinfo);
 	g_free (ainfo);
+}
+
+int
+mono_arch_dyn_call_get_buf_size (MonoDynCallInfo *info)
+{
+	ArchDynCallInfo *ainfo = (ArchDynCallInfo*)info;
+
+	/* Extend the 'regs' field dynamically */
+	return sizeof (DynCallArgs) + (ainfo->nstack_args * sizeof (mgreg_t));
 }
 
 #define PTR_TO_GREG(ptr) (mgreg_t)(ptr)
@@ -2474,7 +2497,7 @@ mono_arch_dyn_call_free (MonoDynCallInfo *info)
  * libffi.
  */
 void
-mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, guint8 *buf, int buf_len)
+mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, guint8 *buf)
 {
 	ArchDynCallInfo *dinfo = (ArchDynCallInfo*)info;
 	DynCallArgs *p = (DynCallArgs*)buf;
@@ -2491,10 +2514,9 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 		param_reg_to_index_inited = 1;
 	}
 
-	g_assert (buf_len >= sizeof (DynCallArgs));
-
 	p->res = 0;
 	p->ret = ret;
+	p->nstack_args = dinfo->nstack_args;
 
 	arg_index = 0;
 	greg = 0;
@@ -2870,6 +2892,11 @@ emit_call_body (MonoCompile *cfg, guint8 *code, MonoJumpInfoType patch_type, gco
 			amd64_call_code (code, 0);
 		}
 		else {
+			if (!no_patch && ((guint32)(code + 2 - cfg->native_code) % 8) != 0) {
+				guint32 pad_size = 8 - ((guint32)(code + 2 - cfg->native_code) % 8);
+				amd64_padding (code, pad_size);
+				g_assert ((guint64)(code + 2 - cfg->native_code) % 8 == 0);
+			}
 			mono_add_patch_info (cfg, code - cfg->native_code, patch_type, data);
 			amd64_set_reg_template (code, GP_SCRATCH_REG);
 			amd64_call_reg (code, GP_SCRATCH_REG);
@@ -3645,7 +3672,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 #define EXTRA_CODE_SPACE (16)
 
-		if (G_UNLIKELY (offset > (cfg->code_size - max_len - EXTRA_CODE_SPACE))) {
+		if (G_UNLIKELY ((offset + max_len + EXTRA_CODE_SPACE) > cfg->code_size)) {
 			cfg->code_size *= 2;
 			cfg->native_code = (unsigned char *)mono_realloc_native_code(cfg);
 			code = cfg->native_code + offset;
@@ -4482,6 +4509,17 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			g_assert (!cfg->method->save_lmf);
 
+			/* the size of the tailcall op depends on signature, let's check for enough
+			 * space in the code buffer here again */
+			max_len += AMD64_NREG * 4 + call->stack_usage * 15 + EXTRA_CODE_SPACE;
+
+			if (G_UNLIKELY (offset + max_len > cfg->code_size)) {
+				cfg->code_size *= 2;
+				cfg->native_code = (unsigned char *) mono_realloc_native_code(cfg);
+				code = cfg->native_code + offset;
+				cfg->stat_code_reallocs++;
+			}
+
 			/* Restore callee saved registers */
 			save_area_offset = cfg->arch.reg_save_area_offset;
 			for (i = 0; i < AMD64_NREG; ++i)
@@ -4512,7 +4550,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 #endif
 			}
 
-			offset = code - cfg->native_code;
 			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_METHOD_JUMP, call->method);
 			if (cfg->compile_aot)
 				amd64_mov_reg_membase (code, AMD64_R11, AMD64_RIP, 0, 8);
@@ -4634,9 +4671,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			code = emit_move_return_value (cfg, ins, code);
 			break;
 		case OP_DYN_CALL: {
-			int i;
+			int i, limit_reg, index_reg, src_reg, dst_reg;
 			MonoInst *var = cfg->dyn_call_var;
 			guint8 *label;
+			guint8 *buf [16];
 
 			g_assert (var->opcode == OP_REGOFFSET);
 
@@ -4657,15 +4695,38 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				amd64_sse_movsd_reg_membase (code, i, AMD64_R11, MONO_STRUCT_OFFSET (DynCallArgs, fregs) + (i * sizeof (double)));
 			amd64_patch (label, code);
 
+			/* Allocate param area */
+			/* This doesn't need to be freed since OP_DYN_CALL is never called in a loop */
+			amd64_mov_reg_membase (code, AMD64_RAX, AMD64_R11, MONO_STRUCT_OFFSET (DynCallArgs, nstack_args), 8);
+			amd64_shift_reg_imm (code, X86_SHL, AMD64_RAX, 3);
+			amd64_alu_reg_reg (code, X86_SUB, AMD64_RSP, AMD64_RAX);
 			/* Set stack args */
-			for (i = 0; i < DYN_CALL_STACK_ARGS; ++i) {
-				amd64_mov_reg_membase (code, AMD64_RAX, AMD64_R11, MONO_STRUCT_OFFSET (DynCallArgs, regs) + ((PARAM_REGS + i) * sizeof(mgreg_t)), sizeof(mgreg_t));
-				amd64_mov_membase_reg (code, AMD64_RSP, i * sizeof (mgreg_t), AMD64_RAX, sizeof (mgreg_t));
-			}
+			/* rax/rcx/rdx/r8/r9 is scratch */
+			limit_reg = AMD64_RAX;
+			index_reg = AMD64_RCX;
+			src_reg = AMD64_R8;
+			dst_reg = AMD64_R9;
+			amd64_mov_reg_membase (code, limit_reg, AMD64_R11, MONO_STRUCT_OFFSET (DynCallArgs, nstack_args), 8);
+			amd64_mov_reg_imm (code, index_reg, 0);
+			amd64_lea_membase (code, src_reg, AMD64_R11, MONO_STRUCT_OFFSET (DynCallArgs, regs) + ((PARAM_REGS) * sizeof(mgreg_t)));
+			amd64_mov_reg_reg (code, dst_reg, AMD64_RSP, 8);
+			buf [0] = code;
+			x86_jump8 (code, 0);
+			buf [1] = code;
+			amd64_mov_reg_membase (code, AMD64_RDX, src_reg, 0, 8);
+			amd64_mov_membase_reg (code, dst_reg, 0, AMD64_RDX, 8);
+			amd64_alu_reg_imm (code, X86_ADD, index_reg, 1);
+			amd64_alu_reg_imm (code, X86_ADD, src_reg, 8);
+			amd64_alu_reg_imm (code, X86_ADD, dst_reg, 8);
+			amd64_patch (buf [0], code);
+			amd64_alu_reg_reg (code, X86_CMP, index_reg, limit_reg);
+			buf [2] = code;
+			x86_branch8 (code, X86_CC_LT, 0, FALSE);
+			amd64_patch (buf [2], buf [1]);
 
 			/* Set argument registers */
 			for (i = 0; i < PARAM_REGS; ++i)
-				amd64_mov_reg_membase (code, param_regs [i], AMD64_R11, i * sizeof(mgreg_t), sizeof(mgreg_t));
+				amd64_mov_reg_membase (code, param_regs [i], AMD64_R11, MONO_STRUCT_OFFSET (DynCallArgs, regs) + (i * sizeof(mgreg_t)), sizeof(mgreg_t));
 			
 			/* Make the call */
 			amd64_call_reg (code, AMD64_R10);
@@ -6420,6 +6481,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_GET_LAST_ERROR:
 			emit_get_last_error(code, ins->dreg);
 			break;
+		case OP_FILL_PROF_CALL_CTX:
+			for (int i = 0; i < AMD64_NREG; i++)
+				if (AMD64_IS_CALLEE_SAVED_REG (i) || i == AMD64_RSP)
+					amd64_mov_membase_reg (code, ins->sreg1, MONO_STRUCT_OFFSET (MonoContext, gregs) + i * sizeof (mgreg_t), i, sizeof (mgreg_t));
+			break;
 		default:
 			g_warning ("unknown opcode %s in %s()\n", mono_inst_name (ins->opcode), __FUNCTION__);
 			g_assert_not_reached ();
@@ -8007,7 +8073,7 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 	}
 
 	if (!fail_tramp)
-		mono_stats.imt_trampolines_size += code - start;
+		UnlockedAdd (&mono_stats.imt_trampolines_size, code - start);
 	g_assert (code - start <= size);
 	g_assert_checked (mono_arch_unwindinfo_validate_size (unwind_ops, MONO_TRAMPOLINE_UNWINDINFO_SIZE(0)));
 
@@ -8114,12 +8180,6 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 }
 #endif
 
-gboolean
-mono_arch_print_tree (MonoInst *tree, int arity)
-{
-	return 0;
-}
-
 mgreg_t
 mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 {
@@ -8130,25 +8190,6 @@ void
 mono_arch_context_set_int_reg (MonoContext *ctx, int reg, mgreg_t val)
 {
 	ctx->gregs [reg] = val;
-}
-
-gpointer
-mono_arch_install_handler_block_guard (MonoJitInfo *ji, MonoJitExceptionInfo *clause, MonoContext *ctx, gpointer new_value)
-{
-	gpointer *sp, old_value;
-	char *bp;
-
-	/*Load the spvar*/
-	bp = (char *)MONO_CONTEXT_GET_BP (ctx);
-	sp = (gpointer *)*(gpointer*)(bp + clause->exvar_offset);
-
-	old_value = *sp;
-	if (old_value < ji->code_start || (char*)old_value > ((char*)ji->code_start + ji->code_size))
-		return old_value;
-
-	*sp = new_value;
-
-	return old_value;
 }
 
 /*

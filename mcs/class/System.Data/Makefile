@@ -5,6 +5,7 @@ include ../../build/rules.make
 LIBRARY = System.Data.dll
 
 LIB_REFS = System System.Xml System.Core System.Numerics
+KEYFILE = ../ecma.pub
 LIB_MCS_FLAGS = \
 	-nowarn:219,414,649 \
 	-d:COREFX	\

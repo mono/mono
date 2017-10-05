@@ -158,7 +158,7 @@ namespace Mono.Net.Security
 			RunSynchronously = sync;
 		}
 
-		[SD.Conditional ("MARTIN_DEBUG")]
+		[SD.Conditional ("MONO_TLS_DEBUG")]
 		protected void Debug (string message, params object[] args)
 		{
 			Parent.Debug ("{0}({1}:{2}): {3}", Name, Parent.ID, ID, string.Format (message, args));
@@ -226,6 +226,7 @@ namespace Mono.Net.Security
 
 				if (Interlocked.Exchange (ref WriteRequested, 0) != 0) {
 					// Flush the write queue.
+					Debug ("ProcessOperation - flushing write queue");
 					await Parent.InnerWrite (RunSynchronously, cancellationToken);
 				}
 

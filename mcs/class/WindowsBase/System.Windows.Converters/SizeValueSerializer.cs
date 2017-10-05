@@ -24,6 +24,8 @@
 //
 
 using System;
+using System.Diagnostics;
+using System.Globalization;
 using System.Windows.Markup;
 
 namespace System.Windows.Converters {
@@ -32,22 +34,26 @@ namespace System.Windows.Converters {
 	{
 		public override bool CanConvertFromString (string value, IValueSerializerContext context)
 		{
-			throw new NotImplementedException ();
+			return true;
 		}
 
 		public override bool CanConvertToString (object value, IValueSerializerContext context)
 		{
-			throw new NotImplementedException ();
+			return value is Size;
 		}
 
 		public override object ConvertFromString (string value, IValueSerializerContext context)
 		{
-			throw new NotImplementedException ();
+			if (value == null)
+				throw new NotSupportedException ("value != null");
+			return Size.Parse (value);
 		}
 
 		public override string ConvertToString (object value, IValueSerializerContext context)
 		{
-			throw new NotImplementedException ();
+			if (value is Size size)
+				return size.ToString (CultureInfo.InvariantCulture);
+			return base.ConvertToString (value, context);
 		}
 	}
 

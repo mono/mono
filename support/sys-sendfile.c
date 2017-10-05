@@ -12,6 +12,7 @@
 #include <sys/types.h>
 #include <errno.h>
 
+#include "mono/utils/mono-compiler.h"
 #include "map.h"
 #include "mph.h"
 
@@ -31,7 +32,7 @@ Mono_Posix_Syscall_sendfile (int out_fd, int in_fd, mph_off_t *offset, mph_size_
 
 	_offset = *offset;
 
-#if defined(PLATFORM_MACOSX) || defined(PLATFORM_BSD)
+#if defined(HOST_DARWIN) || defined(HOST_BSD)
 	/* The BSD version has 6 arguments */
 	g_assert_not_reached ();
 #else

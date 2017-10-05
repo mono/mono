@@ -296,6 +296,14 @@ namespace MonoTests.System
 		{
 		}
 
+		private void GenericMethod2<A, B, C, D> ()
+			where C : Duper
+			where A : B, IFace
+			where B : C
+			where D : Baz<object>
+		{
+		}
+
 		public class Nested
 		{
 
@@ -369,6 +377,54 @@ namespace MonoTests.System
 			// Tests for parameters with generic constraints
 			mi = typeof (TypeTest).GetMethod ("GenericMethod", BindingFlags.Instance|BindingFlags.NonPublic);
 			Assert.IsTrue (typeof (IFace).IsAssignableFrom (mi.GetParameters ()[1].ParameterType));
+
+			// Transitivity of IsAssignableFrom for type parameters
+			mi = typeof (TypeTest).GetMethod ("GenericMethod2", BindingFlags.Instance|BindingFlags.NonPublic);
+			var gparams = mi.GetGenericArguments ();
+			// B : Duper since B : C and C : Duper
+			Assert.IsTrue (typeof (Duper).IsAssignableFrom (gparams[1]), "#36");
+			// A : Duper since A : B and B : Duper
+			Assert.IsTrue (typeof (Duper).IsAssignableFrom (gparams[0]), "#37a");
+			// A : IFace since A : IFace
+			Assert.IsTrue (typeof (IFace).IsAssignableFrom (gparams[0]), "#37b");
+			// B : Super since B : Duper and Duper : Super
+			Assert.IsTrue (typeof (Super).IsAssignableFrom (gparams[1]), "#38");
+			// A : Super since A : B and B : Super
+			Assert.IsTrue (typeof (Super).IsAssignableFrom (gparams[0]), "#39");
+			// D : IBar<object> since D : Baz<object> and Baz<object> : IBar<object>
+			Assert.IsTrue (typeof (IBar<object>).IsAssignableFrom (gparams [3]), "#40");
+			// A not assignable from B since A : B
+			Assert.IsFalse (gparams[0].IsAssignableFrom (gparams [1]), "#41");
+			Assert.IsFalse (gparams[0].IsAssignableFrom (gparams [2]), "#42");
+
+			// A is not assignable from Array and Delegate and vice versa
+			Assert.IsFalse (gparams[0].IsAssignableFrom (typeof (Array)), "#43");
+			Assert.IsFalse (gparams[0].IsAssignableFrom (typeof (Delegate)), "#44");
+			Assert.IsFalse (typeof (Array).IsAssignableFrom (gparams[0]), "#45");
+			Assert.IsFalse (typeof (Delegate).IsAssignableFrom (gparams[0]), "#46");
+
+		}
+
+		[Test]
+		public void GenericParameterBaseType ()
+		{
+			var mi = typeof (TypeTest).GetMethod ("GenericMethod2", BindingFlags.Instance|BindingFlags.NonPublic);
+			var gparams = mi.GetGenericArguments ();
+
+			// From the .NET documentation: BaseType property of a
+			// gparam is "object" if its only constraints are other
+			// gparams or interfaces, otherwise if it has a class
+			// constraint that class is the BaseType.
+
+			// A : B where B is a gparam, and A : IFace which is an
+			// interface, so A.BaseType is object
+			Assert.AreEqual (typeof (object), gparams[0].BaseType, "#1");
+			// B : C where C is a gparam, so B.BaseType is object
+			Assert.AreEqual (typeof (object), gparams[1].BaseType, "#2");
+			// C : Duper where Duper is a class, so A.BaseType is Duper
+			Assert.AreEqual (typeof (Duper), gparams[2].BaseType, "#3");
+			// D : Baz<object>
+			Assert.AreEqual (typeof (Baz<object>), gparams[3].BaseType, "#4");
 		}
 
 		[Test]
@@ -3617,6 +3673,38 @@ namespace MonoTests.System
 
 		public struct Size4b {
 			public int field;
+		}
+
+		[Test]
+		public void IsAssignableFromGenericArgumentsWithConstraints ()
+		{
+			// Regression test for #58809
+
+			// Generic Parameters of a gtd should have their
+			// constraints respected even when those constraints
+			// are other generic parameters themselves.
+
+			var ps = typeof (GenericWithParamConstraints<,,>).GetGenericArguments ();
+
+			var a = ps[0];
+			var b = ps[1];
+			var c = ps[2];
+
+			// Foo<C>
+			var fooOfC = typeof (Foo<>).MakeGenericType (c);
+
+			// constraint B : Foo <C>
+			Assert.IsTrue (fooOfC.IsAssignableFrom (b), "#1");
+
+			// constraint A : B
+			Assert.IsTrue (b.IsAssignableFrom (a), "#2");
+
+			// A : Foo<C> since A : B and B : Foo<C>
+			Assert.IsTrue (fooOfC.IsAssignableFrom (a), "#3");
+		}
+
+		class GenericWithParamConstraints<A, B, C> where B : Foo<C> where A : B
+		{
 		}
 
 		[Test] // Bug #612780

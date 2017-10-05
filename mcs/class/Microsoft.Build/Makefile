@@ -8,6 +8,7 @@ include $(XBUILD_DIR)/xbuild.make
 LIBRARY = Microsoft.Build.dll
 
 LIB_REFS = $(PARENT_PROFILE)System $(PARENT_PROFILE)System.Core $(PARENT_PROFILE)System.Xml Microsoft.Build.Engine Microsoft.Build.Framework
+KEYFILE = ../msfinal.pub
 LIB_MCS_FLAGS = \
 	/d:MICROSOFT_BUILD_DLL
 

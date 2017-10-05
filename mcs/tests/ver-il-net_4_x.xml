@@ -52775,6 +52775,39 @@
       </method>
     </type>
   </test>
+  <test name="test-947.cs">
+    <type name="B">
+      <method name="Int64 get_Prop()" attrs="2182">
+        <size>10</size>
+      </method>
+      <method name="Int32 IA.get_Prop()" attrs="2529">
+        <size>9</size>
+      </method>
+      <method name="Int64 get_Item(Int32)" attrs="2182">
+        <size>10</size>
+      </method>
+      <method name="Int32 IA.get_Item(Int32)" attrs="2529">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6276">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="System.String get_Prop()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="System.String get_Item(Int32)" attrs="2182">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-95.cs">
     <type name="X">
       <method name="Int32 Main()" attrs="150">
@@ -68478,6 +68511,22 @@
       </method>
     </type>
   </test>
+  <test name="test-decl-expr-05.cs">
+    <type name="X">
+      <method name="Void Test(System.String)" attrs="129">
+        <size>29</size>
+      </method>
+      <method name="Boolean Call(System.String ByRef)" attrs="145">
+        <size>17</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-dictinit-01.cs">
     <type name="Program">
       <method name="Int32 Main()" attrs="145">
@@ -68780,6 +68829,22 @@
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-expression-bodied-04.cs">
+    <type name="VV">
+      <method name="Void Finalize()" attrs="196">
+        <size>19</size>
+      </method>
+      <method name="Void Test()" attrs="129">
+        <size>2</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6273">
+        <size>13</size>
       </method>
     </type>
   </test>
@@ -72278,6 +72343,117 @@
       </method>
     </type>
   </test>
+  <test name="test-pattern-08.cs">
+    <type name="Expr">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="System.Collections.Generic.IEnumerable`1[System.Int32] Test(Expr)" attrs="150">
+        <size>30</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="X+&lt;Test&gt;c__Iterator0">
+      <method name="Boolean MoveNext()" attrs="486">
+        <size>184</size>
+      </method>
+      <method name="Int32 System.Collections.Generic.IEnumerator&lt;int&gt;.get_Current()" attrs="2529">
+        <size>14</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()" attrs="2529">
+        <size>19</size>
+      </method>
+      <method name="Void Dispose()" attrs="486">
+        <size>15</size>
+      </method>
+      <method name="Void Reset()" attrs="486">
+        <size>6</size>
+      </method>
+      <method name="System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
+        <size>14</size>
+      </method>
+      <method name="System.Collections.Generic.IEnumerator`1[System.Int32] System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()" attrs="481">
+        <size>40</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-pattern-09.cs">
+    <type name="Expr">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="System.Collections.Generic.IEnumerable`1[System.Int32] Test(Expr)" attrs="150">
+        <size>30</size>
+      </method>
+      <method name="System.Collections.Generic.IEnumerable`1[System.String] Test2(System.Nullable`1[System.Int32])" attrs="150">
+        <size>30</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>21</size>
+      </method>
+    </type>
+    <type name="X+&lt;Test&gt;c__Iterator0">
+      <method name="Boolean MoveNext()" attrs="486">
+        <size>124</size>
+      </method>
+      <method name="Int32 System.Collections.Generic.IEnumerator&lt;int&gt;.get_Current()" attrs="2529">
+        <size>14</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()" attrs="2529">
+        <size>19</size>
+      </method>
+      <method name="Void Dispose()" attrs="486">
+        <size>15</size>
+      </method>
+      <method name="Void Reset()" attrs="486">
+        <size>6</size>
+      </method>
+      <method name="System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
+        <size>14</size>
+      </method>
+      <method name="System.Collections.Generic.IEnumerator`1[System.Int32] System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()" attrs="481">
+        <size>40</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+&lt;Test2&gt;c__Iterator1">
+      <method name="Boolean MoveNext()" attrs="486">
+        <size>161</size>
+      </method>
+      <method name="System.String System.Collections.Generic.IEnumerator&lt;string&gt;.get_Current()" attrs="2529">
+        <size>14</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()" attrs="2529">
+        <size>14</size>
+      </method>
+      <method name="Void Dispose()" attrs="486">
+        <size>15</size>
+      </method>
+      <method name="Void Reset()" attrs="486">
+        <size>6</size>
+      </method>
+      <method name="System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
+        <size>14</size>
+      </method>
+      <method name="System.Collections.Generic.IEnumerator`1[System.String] System.Collections.Generic.IEnumerable&lt;string&gt;.GetEnumerator()" attrs="481">
+        <size>40</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-pragma-unrecognized.cs">
     <type name="C">
       <method name="Void Main()" attrs="150">
@@ -72485,6 +72661,153 @@
         <size>14</size>
       </method>
       <method name="Int32 &lt;&gt;m__1(Int32)" attrs="131">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-readonly-01.cs">
+    <type name="S">
+      <method name="Void add_e(System.Action)" attrs="2193">
+        <size>40</size>
+      </method>
+      <method name="Void remove_e(System.Action)" attrs="2193">
+        <size>40</size>
+      </method>
+      <method name="Int32 get_Prop()" attrs="2193">
+        <size>13</size>
+      </method>
+      <method name="Void set_Prop(Int32)" attrs="2193">
+        <size>7</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-ref-01.cs">
+    <type name="X">
+      <method name="Void Main()" attrs="150">
+        <size>20</size>
+      </method>
+      <method name="Int32&amp; TestMethod()" attrs="129">
+        <size>15</size>
+      </method>
+      <method name="Int32&amp; get_TestProperty()" attrs="2177">
+        <size>15</size>
+      </method>
+      <method name="Int32&amp; get_Item(Int64)" attrs="2177">
+        <size>15</size>
+      </method>
+      <method name="Int32*&amp; Foo()" attrs="129">
+        <size>15</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-ref-02.cs">
+    <type name="X">
+      <method name="Void Main()" attrs="145">
+        <size>14</size>
+      </method>
+      <method name="Void Run()" attrs="129">
+        <size>27</size>
+      </method>
+      <method name="Int32 Test(Int32 ByRef)" attrs="145">
+        <size>11</size>
+      </method>
+      <method name="Int32&amp; get_Item(Int32)" attrs="2177">
+        <size>15</size>
+      </method>
+      <method name="Int32&amp; get_Prop()" attrs="2177">
+        <size>15</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-ref-03.cs">
+    <type name="X">
+      <method name="Void Main()" attrs="145">
+        <size>47</size>
+      </method>
+      <method name="Int32&amp; Wrap(Int32)" attrs="129">
+        <size>15</size>
+      </method>
+      <method name="Int32&amp; get_Prop()" attrs="2177">
+        <size>15</size>
+      </method>
+      <method name="Int32&amp; get_Item(System.String)" attrs="2177">
+        <size>15</size>
+      </method>
+      <method name="Void Foo(Int32 ByRef)" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-ref-04.cs">
+    <type name="X">
+      <method name="Int32 Main()" attrs="150">
+        <size>93</size>
+      </method>
+      <method name="Boolean Test1()" attrs="129">
+        <size>30</size>
+      </method>
+      <method name="Void Test2()" attrs="129">
+        <size>22</size>
+      </method>
+      <method name="Int32&amp; Test3()" attrs="129">
+        <size>19</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-ref-05.cs">
+    <type name="X">
+      <method name="Int32 Main()" attrs="150">
+        <size>108</size>
+      </method>
+      <method name="Int32&amp; Test()" attrs="145">
+        <size>14</size>
+      </method>
+      <method name="Void Test[T](T ByRef, Int32 ByRef)" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Test2[T](T ByRef)" attrs="145">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="G`1[U]">
+      <method name="T&amp; Test[T](T ByRef)" attrs="150">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-ref-06.cs">
+    <type name="X">
+      <method name="Int32 Main()" attrs="150">
+        <size>71</size>
+      </method>
+      <method name="Int32&amp; get_Item(Int32)" attrs="2177">
+        <size>14</size>
+      </method>
+      <method name="Int32&amp; get_Prop()" attrs="2177">
         <size>14</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
@@ -72933,6 +73256,27 @@
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
         <size>1338</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-tuple-06.cs">
+    <type name="Base">
+      <method name="System.ValueTuple`2[System.Int32,System.Int64] Foo()" attrs="454">
+        <size>17</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="System.ValueTuple`2[System.Int32,System.Int64] Foo()" attrs="198">
+        <size>17</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>

@@ -128,6 +128,7 @@ TESTS_CS_SRC=		\
 	assemblyresolve_event3.cs	\
 	assemblyresolve_event4.cs	\
 	assemblyresolve_event5.cs	\
+	assemblyresolve_event6.cs	\
 	checked.cs		\
 	char-isnumber.cs	\
 	field-layout.cs		\
@@ -245,6 +246,7 @@ TESTS_CS_SRC=		\
 	delegate11.cs		\
 	delegate12.cs		\
 	delegate13.cs		\
+	delegate14.cs		\
 	largeexp.cs		\
 	largeexp2.cs		\
 	marshalbyref1.cs	\
@@ -303,6 +305,7 @@ TESTS_CS_SRC=		\
 	delegate-async-exit.cs	\
 	delegate-delegate-exit.cs	\
 	delegate-exit.cs	\
+	delegate-disposed-hashcode.cs	\
 	finalizer-abort.cs	\
 	finalizer-exception.cs	\
 	finalizer-exit.cs	\
@@ -466,6 +469,7 @@ TESTS_CS_SRC=		\
 	appdomain-unload-callback.cs	\
 	appdomain-unload-doesnot-raise-pending-events.cs	\
 	appdomain-unload-asmload.cs	\
+	appdomain-unload-exception.cs	\
 	unload-appdomain-on-shutdown.cs	\
 	bug-47295.cs	\
 	loader.cs	\
@@ -512,7 +516,11 @@ TESTS_CS_SRC=		\
 	bug-46661.cs	\
 	w32message.cs \
 	runtime-invoke.gen.cs \
-	imt_big_iface_test.cs
+	imt_big_iface_test.cs \
+	bug-58782-plain-throw.cs \
+	bug-58782-capture-and-throw.cs \
+	recursive-struct-arrays.cs \
+	bug-59281.cs
 
 if AMD64
 TESTS_CS_SRC += async-exc-compilation.cs finally_guard.cs finally_block_ending_in_dead_bb.cs
@@ -648,9 +656,15 @@ TESTS_GSHARED_SRC = \
 	bug-1147.cs	\
 	generic-type-builder.2.cs
 
+PLATFORM_DISABLED_TESTS=
+
+if HOST_WIN32
+PLATFORM_DISABLED_TESTS += bug-58782-plain-throw.exe bug-58782-capture-and-throw.exe
+endif
+
 if AMD64
 # #651684
-PLATFORM_DISABLED_TESTS = finally_guard.exe
+PLATFORM_DISABLED_TESTS += finally_guard.exe
 
 if HOST_WIN32
 PLATFORM_DISABLED_TESTS += w32message.exe
@@ -661,7 +675,7 @@ endif
 if X86
 
 if HOST_WIN32
-PLATFORM_DISABLED_TESTS=async-exc-compilation.exe finally_guard.exe finally_block_ending_in_dead_bb.exe \
+PLATFORM_DISABLED_TESTS += async-exc-compilation.exe finally_guard.exe finally_block_ending_in_dead_bb.exe \
 	bug-18026.exe monitor.exe threadpool-exceptions5.exe process-unref-race.exe w32message.exe \
 	unhandled-exception-1.exe unhandled-exception-2.exe unhandled-exception-3.exe unhandled-exception-4.exe \
 	unhandled-exception-5.exe unhandled-exception-6.exe unhandled-exception-7.exe unhandled-exception-8.exe
@@ -671,12 +685,12 @@ endif
 
 if POWERPC
 # bug #71274
-PLATFORM_DISABLED_TESTS=finalizer-abort.exe finalizer-exception.exe finalizer-exit.exe
+PLATFORM_DISABLED_TESTS += finalizer-abort.exe finalizer-exception.exe finalizer-exit.exe
 endif
 
 if POWERPC64
 # FIXME: These tests hang/fail for unknown reasons
-PLATFORM_DISABLED_TESTS=monitor.exe threadpool-exceptions5.exe appdomain-thread-abort.exe appdomain-unload.exe \
+PLATFORM_DISABLED_TESTS += monitor.exe threadpool-exceptions5.exe appdomain-thread-abort.exe appdomain-unload.exe \
 	pinvoke2.exe pinvoke3.exe pinvoke11.exe threadpool-exceptions7.exe winx64structs.exe bug-10127.exe pinvoke_ppcc.exe \
 	pinvoke_ppcs.exe pinvoke_ppci.exe pinvoke_ppcf.exe pinvoke_ppcd.exe abort-cctor.exe load-exceptions.exe \
 	sgen-domain-unload-2.exe sgen-weakref-stress.exe sgen-cementing-stress.exe sgen-new-threads-dont-join-stw.exe \
@@ -684,7 +698,7 @@ PLATFORM_DISABLED_TESTS=monitor.exe threadpool-exceptions5.exe appdomain-thread-
 endif
 
 if ARM
-PLATFORM_DISABLED_TESTS=filter-stack.exe
+PLATFORM_DISABLED_TESTS += filter-stack.exe
 INTERP_DISABLED_TESTS_PLATFORM=finalizer-exception.exe main-returns-abort-resetabort.exe block_guard_restore_aligment_on_exit.exe \
 	delegate-exit.exe delegate-exit.exe delegate-delegate-exit.exe delegate-async-exit.exe delegate3.exe delegate1.exe
 endif
@@ -695,11 +709,11 @@ endif
 
 if MIPS
 # monitor.exe is racy
-PLATFORM_DISABLED_TESTS=filter-stack.exe monitor.exe
+PLATFORM_DISABLED_TESTS += filter-stack.exe monitor.exe
 endif
 
 if S390X
-PLATFORM_DISABLED_TESTS=dynamic-method-resurrection.exe
+PLATFORM_DISABLED_TESTS += dynamic-method-resurrection.exe
 #PLATFORM_DISABLED_TESTS=dynamic-method-resurrection.exe exception17.exe
 
 PLATFORM_DISABLED_TESTS += \
@@ -758,7 +772,9 @@ PROFILE_DISABLED_TESTS += \
 	marshal8.exe \
 	pinvoke-2.2.exe \
 	pinvoke3.exe \
-	thunks.exe
+	thunks.exe \
+	bug-58782-plain-throw.exe \
+	bug-58782-capture-and-throw.exe
 
 # Tests which load assemblies which are not
 # in the testing_aot_full profile
@@ -788,6 +804,7 @@ PROFILE_DISABLED_TESTS += \
 	appdomain-unload-doesnot-raise-pending-events.exe	\
 	unload-appdomain-on-shutdown.exe	\
 	assemblyresolve_event2.2.exe	\
+	assemblyresolve_event6.exe	\
 	bug-544446.exe	\
 	bug-36848.exe	\
 	generic-marshalbyref.2.exe	\
@@ -894,6 +911,7 @@ CI_PR_DISABLED_TESTS = \
 
 # appdomain-threadpool-unload.exe creates 100 appdomains, takes too long with llvm
 LLVM_DISABLED_TESTS = \
+	finally_block_ending_in_dead_bb.exe \
 	appdomain-threadpool-unload.exe
 
 LLVM = $(filter --llvm, $(MONO_ENV_OPTIONS))
@@ -943,6 +961,7 @@ INTERP_DISABLED_TESTS = \
 	array_load_exception.exe \
 	assembly_append_ordering.exe \
 	assemblyresolve_event4.exe \
+	assemblyresolve_event6.exe \
 	async-exc-compilation.exe \
 	async-with-cb-throws.exe \
 	async_read.exe \
@@ -958,6 +977,8 @@ INTERP_DISABLED_TESTS = \
 	bug-46661.exe \
 	bug-47295.exe \
 	bug-48015.exe \
+	bug-58782-plain-throw.exe \
+	bug-58782-capture-and-throw.exe \
 	bug-544446.exe \
 	bug-685908.exe \
 	bug-80307.exe \
@@ -1138,10 +1159,10 @@ tests: compile-tests
 #
 # Test that no symbols are missed in eglib-remap.h
 #
-if PLATFORM_LINUX
+if HOST_LINUX
 test-platform: test-eglib-remap
 else
-if PLATFORM_DARWIN
+if HOST_DARWIN
 test-platform: test-eglib-remap
 endif
 endif
@@ -1692,7 +1713,8 @@ test-unhandled-exception: unhandled-exception-test-runner.2.exe
 
 safehandle.2.exe winx64structs.exe thunks.exe pinvoke3.exe pinvoke2.exe pinvoke-2.2.exe pinvoke17.exe pinvoke13.exe \
 	pinvoke11.exe pinvoke_ppcs.exe pinvoke_ppci.exe pinvoke_ppcf.exe pinvoke_ppcd.exe pinvoke_ppcc.exe pinvoke.exe \
-	marshalbool.exe marshal9.exe marshal5.exe marshal.exe handleref.exe cominterop.exe bug-Xamarin-5278.exe: libtest.la
+	marshalbool.exe marshal9.exe marshal5.exe marshal.exe handleref.exe cominterop.exe bug-Xamarin-5278.exe \
+	bug-58782-plain-throw.exe bug-58782-capture-and-throw.exe: libtest.la
 
 event-get.2.exe$(PLATFORM_AOT_SUFFIX): event-il.exe$(PLATFORM_AOT_SUFFIX)
 event-get.2.exe: event-il.exe
@@ -1703,9 +1725,9 @@ module-cctor-loader.2.exe: module-cctor.exe
 reference-loader.exe$(PLATFORM_AOT_SUFFIX): TestingReferenceAssembly.dll$(PLATFORM_AOT_SUFFIX) TestingReferenceReferenceAssembly.dll$(PLATFORM_AOT_SUFFIX)
 reference-loader.exe: TestingReferenceAssembly.dll TestingReferenceReferenceAssembly.dll
 
-assemblyresolve_asm.dll$(PLATFORM_AOT_SUFFIX): assemblyresolve_deps/Test.dll$(PLATFORM_AOT_SUFFIX)
+assemblyresolve_asm.dll$(PLATFORM_AOT_SUFFIX): assemblyresolve_asm.dll assemblyresolve_deps/Test.dll$(PLATFORM_AOT_SUFFIX)
 	MONO_PATH="assemblyresolve_deps:$(CLASS)" $(top_builddir)/runtime/mono-wrapper $(AOT_BUILD_FLAGS) assemblyresolve_asm.dll
-assemblyresolve_deps/Test.dll$(PLATFORM_AOT_SUFFIX): assemblyresolve_deps/TestBase.dll$(PLATFORM_AOT_SUFFIX)
+assemblyresolve_deps/Test.dll$(PLATFORM_AOT_SUFFIX): assemblyresolve_deps/Test.dll assemblyresolve_deps/TestBase.dll$(PLATFORM_AOT_SUFFIX)
 
 EXTRA_DIST += assemblyresolve_TestBase.cs assemblyresolve_Test.cs assemblyresolve_asm.cs 
 assemblyresolve_deps:
@@ -1729,6 +1751,9 @@ assemblyresolve_deps/assemblyresolve_event5_label.dll: assemblyresolve_event5_la
 assemblyresolve_event5_helper.dll: assemblyresolve_event5_helper.cs assemblyresolve_deps/assemblyresolve_event5_label.dll
 	$(MCS) -target:library -out:assemblyresolve_event5_helper.dll -r:assemblyresolve_deps/assemblyresolve_event5_label.dll $(srcdir)/assemblyresolve_event5_helper.cs
 assemblyresolve_event5.exe: assemblyresolve_event5_helper.dll
+
+assemblyresolve_event6.exe$(PLATFORM_AOT_SUFFIX): assemblyresolve_asm.dll$(PLATFORM_AOT_SUFFIX) assemblyresolve_deps/Test.dll$(PLATFORM_AOT_SUFFIX) assemblyresolve_deps/TestBase.dll$(PLATFORM_AOT_SUFFIX)
+assemblyresolve_event6.exe: assemblyresolve_asm.dll assemblyresolve_deps/Test.dll assemblyresolve_deps/TestBase.dll
 
 # We use 'test-support-files' to handle an ordering issue between the 'mono/' and 'runtime/' directories
 bug-80307.exe: $(srcdir)/bug-80307.cs
@@ -1884,7 +1909,8 @@ test-process-exit:
 
 # tests that expect a 1 exit code
 TESTS_UNHANDLED_EXCEPTION_1_SRC =	\
-	unhandled-exception-1.cs
+	unhandled-exception-1.cs	\
+	unhandled-exception-9.cs
 
 # tests that expect a 255 exit code
 TESTS_UNHANDLED_EXCEPTION_255_SRC =	\

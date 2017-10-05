@@ -15,7 +15,7 @@
 #include <unistd.h>
 #endif
 
-#if defined(_POSIX_VERSION)
+#if defined(_POSIX_VERSION) && !defined (HOST_WASM)
 
 #include "mono/utils/mono-dl.h"
 #include "mono/utils/mono-embed.h"
@@ -61,7 +61,7 @@ mono_dl_get_system_dir (void)
 void *
 mono_dl_open_file (const char *file, int flags)
 {
-#ifdef PLATFORM_ANDROID
+#ifdef HOST_ANDROID
 	/* Bionic doesn't support NULL filenames */
 	if (!file)
 		return NULL;

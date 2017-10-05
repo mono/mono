@@ -11,8 +11,8 @@ LIBRARY = System.Runtime.InteropServices.RuntimeInformation.dll
 
 RESX_RESOURCE_STRING = ../../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/Resources/Strings.resx
 
-KEY_FILE = ../../msfinal.pub
-SIGN_FLAGS = /delaysign /keyfile:$(KEY_FILE) /nowarn:1616,1699,436
+KEYFILE = ../../msfinal.pub
+SIGN_FLAGS = /delaysign /nowarn:1616,1699,436
 LIB_REFS = System
 LIB_MCS_FLAGS = $(SIGN_FLAGS) /unsafe
 

@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 #AC_PREREQ([2.62])
 
-AC_INIT(mono, [5.5.0],
+AC_INIT(mono, [5.9.0],
         [http://bugzilla.xamarin.com/enter_bug.cgi?classification=Mono])
 
 AC_CONFIG_SRCDIR([README.md])
@@ -40,8 +40,8 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # This can be reset to 0 when Mono's version number is bumped
 # since it's part of the corlib version (the prefix '1' in the full
 # version number is to ensure the number isn't treated as octal in C)
-MONO_CORLIB_COUNTER=2
-MONO_CORLIB_VERSION=`printf "1%02d%02d%02d%03d" $MONO_VERSION_MAJOR $MONO_VERSION_MINOR $MONO_VERSION_BUILD $MONO_CORLIB_COUNTER`
+MONO_CORLIB_COUNTER=0
+MONO_CORLIB_VERSION=`printf "1%02d%02d%02d%03d" $MONO_VERSION_MAJOR $MONO_VERSION_MINOR 0 $MONO_CORLIB_COUNTER`
 
 AC_DEFINE_UNQUOTED(MONO_CORLIB_VERSION,$MONO_CORLIB_VERSION,[Version of the corlib-runtime interface])
 AC_SUBST(MONO_CORLIB_VERSION)
@@ -67,8 +67,6 @@ libgc_configure_args=
 # libgc should inherit the original CFLAGS/CPPFLAGS passed to configure, i.e. -O0
 CPPFLAGS_FOR_LIBGC=$CPPFLAGS
 CFLAGS_FOR_LIBGC=$CFLAGS
-CPPFLAGS_FOR_EGLIB=$CPPFLAGS
-CFLAGS_FOR_EGLIB=$CFLAGS
 CPPFLAGS_FOR_BTLS=$CPPFLAGS
 CFLAGS_FOR_BTLS=$CFLAGS
 
@@ -98,8 +96,15 @@ need_link_unlink=no
 #Set to extra linker flags to be passed to the runtime binaries (mono /mono-sgen)
 extra_runtime_ldflags=""
 
+
+# Hack for WASM
+# Current autotools (v1.15) doesn't have a triplet we can use for wasm so the kludge we do is to
+# work around it by using a feature flag instead
+AC_ARG_ENABLE(wasm,[  --enable-wasm	Hack to set the current runtime to target wasm], enable_wasm=$enableval)
+
 # Thread configuration inspired by sleepycat's db
 AC_MSG_CHECKING([host platform characteristics])
+
 libgc_threads=no
 has_dtrace=no
 parallel_mark=yes
@@ -109,10 +114,20 @@ host_win32=no
 target_win32=no
 platform_android=no
 host_darwin=no
+
+
+if test "x$enable_wasm" = "xyes"; then
+CFLAGS="$CFLAGS -D_REENTRANT -D_GNU_SOURCE -DNO_UNALIGNED_ACCESS -s WASM=1"
+CPPFLAGS="$CPPFLAGS -D_REENTRANT -DUSE_MMAP -D_GNU_SOURCE -DNO_UNALIGNED_ACCESS -s WASM=1"
+libdl="-ldl"
+libgc_threads=pthreads
+
+else
+
 case "$host" in
 	*-mingw*|*-*-cygwin*)
 		AC_DEFINE(DISABLE_PORTABILITY,1,[Disable the io-portability layer])
-		AC_DEFINE(PLATFORM_NO_SYMLINKS,1,[This platform does not support symlinks])
+		AC_DEFINE(HOST_NO_SYMLINKS,1,[This platform does not support symlinks])
 		host_win32=yes
 		mono_cv_clang=no
 		if test "x$cross_compiling" = "xno"; then
@@ -143,7 +158,7 @@ case "$host" in
 		CPPFLAGS="$CPPFLAGS -D_REENTRANT -DGC_NETBSD_THREADS -D_GNU_SOURCE"
 		libmono_cflags="-D_REENTRANT"
 		LDFLAGS="$LDFLAGS -pthread"
-		CPPFLAGS="$CPPFLAGS -DPLATFORM_BSD"
+		CPPFLAGS="$CPPFLAGS -DHOST_BSD"
 		libmono_ldflags="-pthread"
 		need_link_unlink=yes
 		libdl="-ldl"
@@ -178,7 +193,7 @@ case "$host" in
 			LDFLAGS="$LDFLAGS $PTHREAD_LIBS -L/usr/local/lib"
 			libmono_ldflags="$PTHREAD_LIBS"
 		fi
-		CPPFLAGS="$CPPFLAGS -DPLATFORM_BSD"
+		CPPFLAGS="$CPPFLAGS -DHOST_BSD"
 		need_link_unlink=yes
 		AC_DEFINE(PTHREAD_POINTER_ID, 1, [pthread is a pointer])
 		libdl=
@@ -188,7 +203,7 @@ case "$host" in
 		with_sgen_default_concurrent=yes
 		;;
 	*-*-*openbsd*)
-		CPPFLAGS="$CPPFLAGS -D_THREAD_SAFE -DGC_OPENBSD_THREADS -DPLATFORM_BSD -D_REENTRANT -DUSE_MMAP"
+		CPPFLAGS="$CPPFLAGS -D_THREAD_SAFE -DGC_OPENBSD_THREADS -DHOST_BSD -D_REENTRANT -DUSE_MMAP"
 		if test "x$disable_munmap" != "xyes"; then
 		CPPFLAGS="$CPPFLAGS -DUSE_MUNMAP"
 		fi
@@ -204,7 +219,7 @@ case "$host" in
 		;;
 	*-*-linux-android*)
 		platform_android=yes
-		AC_DEFINE(PLATFORM_ANDROID,1,[Targeting the Android platform])
+		AC_DEFINE(HOST_ANDROID,1,[Targeting the Android platform])
 		AC_DEFINE(TARGET_ANDROID,1,[Targeting the Android platform])
 
 		CPPFLAGS="$CPPFLAGS -DGC_LINUX_THREADS -D_GNU_SOURCE -D_REENTRANT -DUSE_MMAP"
@@ -286,7 +301,7 @@ case "$host" in
 		use_sigposix=yes
 		;;
 	*-*-solaris*)
-		CPPFLAGS="$CPPFLAGS -DGC_SOLARIS_THREADS -DGC_SOLARIS_PTHREADS -D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS -DUSE_MMAP -DUSE_MUNMAP -DPLATFORM_SOLARIS"
+		CPPFLAGS="$CPPFLAGS -DGC_SOLARIS_THREADS -DGC_SOLARIS_PTHREADS -D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS -DUSE_MMAP -DUSE_MUNMAP -DHOST_SOLARIS"
 		need_link_unlink=yes
 		libmono_cflags="-D_REENTRANT"
 		libgc_threads=pthreads
@@ -298,7 +313,7 @@ case "$host" in
 		parallel_mark="Disabled_Currently_Hangs_On_MacOSX"
 		host_darwin=yes
 		target_mach=yes
-		CPPFLAGS="$CPPFLAGS -D_THREAD_SAFE -DGC_MACOSX_THREADS -DPLATFORM_MACOSX -DUSE_MMAP -DUSE_MUNMAP"
+		CPPFLAGS="$CPPFLAGS -D_THREAD_SAFE -DGC_MACOSX_THREADS -DUSE_MMAP -DUSE_MUNMAP"
 		libmono_cflags="-D_THREAD_SAFE"
 		need_link_unlink=yes
 		AC_DEFINE(PTHREAD_POINTER_ID)
@@ -323,8 +338,6 @@ case "$host" in
 				CCASFLAGS="$CCASFLAGS $BROKEN_DARWIN_FLAGS"
 				CPPFLAGS_FOR_LIBGC="$CPPFLAGS_FOR_LIBGC $BROKEN_DARWIN_CPPFLAGS"
 				CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC $BROKEN_DARWIN_FLAGS"
-				CPPFLAGS_FOR_EGLIB="$CPPFLAGS_FOR_EGLIB $BROKEN_DARWIN_CPPFLAGS"
-				CFLAGS_FOR_EGLIB="$CFLAGS_FOR_EGLIB $BROKEN_DARWIN_FLAGS"
 				with_sgen_default_concurrent=yes
 				;;
 			x*64-*-darwin*)
@@ -354,6 +367,10 @@ case "$host" in
 		libdl="-ldl"
 		;;
 esac
+
+# WASM hack
+fi
+
 AC_MSG_RESULT(ok)
 
 if test x$need_link_unlink = xyes; then
@@ -368,6 +385,10 @@ if test x$target_win32 = xyes; then
    AC_DEFINE(TARGET_WIN32, 1, [Target Platform is Win32])
 fi
 
+if test x$host_darwin = xyes; then
+   AC_DEFINE(HOST_DARWIN, 1, [Host Platform is Darwin])
+fi
+
 # Defined for all targets/platforms using classic Windows API support.
 AC_DEFINE(HAVE_CLASSIC_WINAPI_SUPPORT, 1, [Use classic Windows API support])
 AC_DEFINE(HAVE_UWP_WINAPI_SUPPORT, 0, [Don't use UWP Windows API support])
@@ -375,16 +396,16 @@ AC_DEFINE(HAVE_UWP_WINAPI_SUPPORT, 0, [Don't use UWP Windows API support])
 AC_SUBST(extra_runtime_ldflags)
 AM_CONDITIONAL(HOST_WIN32, test x$host_win32 = xyes)
 AM_CONDITIONAL(TARGET_WIN32, test x$target_win32 = xyes)
-AM_CONDITIONAL(PLATFORM_LINUX, echo x$target_os | grep -q linux)
-AM_CONDITIONAL(PLATFORM_DARWIN, test x$host_darwin = xyes)
-AM_CONDITIONAL(PLATFORM_SIGPOSIX, test x$use_sigposix = xyes)
-AM_CONDITIONAL(PLATFORM_ANDROID, test x$platform_android = xyes)
+AM_CONDITIONAL(HOST_LINUX, echo x$target_os | grep -q linux)
+AM_CONDITIONAL(HOST_DARWIN, test x$host_darwin = xyes)
+AM_CONDITIONAL(HOST_SIGPOSIX, test x$use_sigposix = xyes)
+AM_CONDITIONAL(HOST_ANDROID, test x$platform_android = xyes)
 
-if test -z "$PLATFORM_DARWIN_TRUE"; then :
+if test -z "$HOST_DARWIN_TRUE"; then :
 PLATFORM_AOT_SUFFIX=.dylib
 fi
 
-if test -z "$PLATFORM_LINUX_TRUE"; then :
+if test -z "$HOST_LINUX_TRUE"; then :
 PLATFORM_AOT_SUFFIX=.so
 fi
 
@@ -533,8 +554,86 @@ AC_CHECK_FUNCS(_finite, , AC_MSG_CHECKING(for _finite in math.h)
 # for Linux statfs support
 AC_CHECK_HEADERS(linux/magic.h)
 
+# For Android NDK unified headers
+if test x$platform_android = xyes; then
+	AC_CHECK_HEADERS(machine/endian.h sys/endian.h)
+	AC_CHECK_HEADERS(android/legacy_signal_inlines.h, [have_android_signal_inlines=yes], [have_android_signal_inlines=no])
+
+	# Make sure SIGRT{MIN,MAX} work - they will fail to work with unified headers if building for
+	# API level < 21 *and* android/legacy_signal_inlines.h doesn't declare (and define) the required
+	# libc APIs to obtain values for SIGRT{MIN,MAX}. We perform the check only if android/legacy_signal_inlines.h
+	# is found because in other cases the macros will either work (for NDK < 14) or fail if the legacy header
+	# doesn't contain the required definitions (NDK 14)
+	if test x$have_android_signal_inlines = xyes; then
+		AC_MSG_CHECKING([Whether Android SIGRTMIN/SGRTMAX macros are valid])
+		AC_COMPILE_IFELSE([
+			AC_LANG_PROGRAM([#include <android/legacy_signal_inlines.h>],[
+				int i;
+				for (i = SIGRTMIN + 1; i < SIGRTMAX; ++i) {
+				}
+			])],[
+				AC_MSG_RESULT(yes)
+				android_sigrtminmax_work=yes
+			],[
+				AC_MSG_RESULT(no)
+				android_sigrtminmax_work=no
+			]
+		)
+
+		if test x$android_sigrtminmax_work = xno; then
+			AC_MSG_ERROR([Android SIGRTMIN/SIGRTMAX macros don't work in this NDK])
+		fi
+	fi
+
+	# Attempt to detect whether we're using Android NDK unified headers
+	AC_CHECK_HEADERS(android/api-level.h, [have_android_api_level=yes], [have_android_api_level=no])
+	AC_CHECK_HEADERS(android/versioning.h, [have_android_versioning=yes], [have_android_versioning=no])
+
+	android_unified_headers=no
+	if test x$have_android_api_level = xyes; then
+		if test x$have_android_versioning = xyes; then
+			AC_MSG_CHECKING([whether using Android NDK unified headers])
+
+			# Both macros are defined only in the NDK unified headers
+			AC_COMPILE_IFELSE([
+				AC_LANG_PROGRAM([
+					#include <android/api-level.h>
+					#include <android/versioning.h>
+				],[
+					#if __ANDROID_API_O__ == 26 && defined(__INTRODUCED_IN)
+						return 0
+					#else
+						#error __ANDROID_API_O__ != 26 or the __INTRODUCED_IN macro not defined
+					#endif
+				])],[
+					AC_MSG_RESULT(yes)
+					android_unified_headers=yes
+				],[
+					AC_MSG_RESULT(no)
+					android_unified_headers=no
+				]
+			)
+		fi
+	fi
+
+	if test x$android_unified_headers = xyes; then
+		AC_DEFINE(ANDROID_UNIFIED_HEADERS, 1, [Whether Android NDK unified headers are used])
+	fi
+fi # Android
+
 # not 64 bit clean in cross-compile
-AC_CHECK_SIZEOF(void *, 4)
+if test "x$enable_wasm" = "xyes"; then
+AC_DEFINE(SIZEOF_VOID_P,4)
+AC_DEFINE(SIZEOF_LONG,4)
+ac_cv_sizeof_void_p="4"
+ac_cv_sizeof_long="4"
+else
+AC_CHECK_SIZEOF(void *)
+AC_CHECK_SIZEOF(long)
+fi
+
+AC_CHECK_SIZEOF(int)
+AC_CHECK_SIZEOF(long long)
 
 AC_CACHE_CHECK([for clang],
 	mono_cv_clang,[
@@ -571,7 +670,6 @@ if test x"$GCC" = xyes; then
 		if test x"$disable_visibility_hidden" = xno; then
 		   # Don't export any symbols by default
 		   SHARED_CFLAGS="-fvisibility=hidden"
-		   CFLAGS_FOR_EGLIB="$CFLAGS_FOR_EGLIB -fvisibility=hidden"
 		   CXXFLAGS="$CXXFLAGS -fvisibility=hidden"
 		fi
 
@@ -691,6 +789,9 @@ AC_ARG_WITH(crosspkgdir, [  --with-crosspkgdir=/path/to/pkg-config/dir      Chan
 	fi
 )
 
+AC_CHECK_PROG(ninja, ninja, yes, no)
+AM_CONDITIONAL(NINJA, test x$ninja != xno)
+
 AC_ARG_ENABLE(werror, [  --enable-werror Pass -Werror to the C compiler], werror_flag=$enableval, werror_flag=no)
 if test x$werror_flag = xyes; then
 	WERROR_CFLAGS="-Werror"
@@ -698,11 +799,8 @@ fi
 AC_SUBST([WERROR_CFLAGS])
 AC_SUBST([SHARED_CFLAGS])
 
-ac_configure_args="$ac_configure_args \"CPPFLAGS_FOR_EGLIB=$EGLIB_CPPFLAGS\" \"CFLAGS_FOR_EGLIB=$CFLAGS_FOR_EGLIB\""
-AC_CONFIG_SUBDIRS(eglib)
-
-GLIB_CFLAGS='-I$(top_srcdir)/eglib/src -I$(top_builddir)/eglib/src'
-GLIB_LIBS='-L$(top_builddir)/eglib/src -leglib -lm'
+GLIB_CFLAGS='-I$(top_srcdir)/mono/eglib -I$(top_builddir)/mono/eglib'
+GLIB_LIBS='$(top_builddir)/mono/eglib/libeglib.la -lm'
   
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
@@ -791,7 +889,10 @@ if test $csc_compiler = default; then
    if test $endian = big; then
       csc_compiler=mcs
    elif test $endian = little; then
-      csc_compiler=roslyn
+      case "$host" in
+        powerpc*) csc_compiler=mcs ;;
+        *) csc_compiler=roslyn ;;
+      esac
    else
       csc_compiler=mcs
    fi
@@ -816,7 +917,7 @@ AC_ARG_WITH(orbis,               [  --with-orbis=yes,no                 If you w
 AC_ARG_WITH(unreal,              [  --with-unreal=yes,no                If you want to build the Unreal assemblies (defaults to no)], [], [with_unreal=default])
 
 
-AC_ARG_WITH(runtime_preset, [  --with-runtime_preset=net_4_x,all,aot,hybridaot,fullaot,bitcode   Which default profile to build (defaults to net_4_x)],  [], [with_runtime_preset=net_4_x])
+AC_ARG_WITH(runtime_preset, [  --with-runtime_preset=net_4_x,all,aot,hybridaot,fullaot,bitcode,unreal   Which default profile to build (defaults to net_4_x)],  [], [with_runtime_preset=net_4_x])
 
 dnl
 dnl Profile defaults
@@ -928,11 +1029,11 @@ elif test x$with_runtime_preset = xorbis; then
 elif test x$with_runtime_preset = xunreal; then
    DISABLE_MCS_DOCS_default=yes
    with_unreal_default=yes
-   TEST_PROFILE=ounreal
+   TEST_PROFILE=unreal
 
    mono_feature_disable_com='yes'
    mono_feature_disable_remoting='yes'
-   mono_feature_disable_appdomains='yes'
+   mono_feature_disable_appdomains='no'
 
    AOT_BUILD_FLAGS="--runtime=mobile --aot=hybrid,$INVARIANT_AOT_OPTIONS"
    AOT_RUN_FLAGS="--runtime=mobile --hybrid-aot"
@@ -1478,6 +1579,8 @@ if test x$host_win32 = xno; then
 		AC_CHECK_FUNCS(getpwnam_r)
 		AC_CHECK_FUNCS(getpwuid_r)
 	fi
+
+	AC_FUNC_STRERROR_R()
 
 	dnl ****************************************************************
 	dnl *** Check for sched_setaffinity from glibc versions before   ***
@@ -3036,6 +3139,19 @@ jit_wanted=true
 boehm_supported=true
 BTLS_SUPPORTED=no
 BTLS_PLATFORM=
+
+if test "x$enable_wasm" = "xyes"; then
+TARGET=WASM
+HOST=WASM
+arch_target=wasm
+AC_DEFINE(TARGET_WASM, 1, [Target wasm])
+AC_DEFINE(HOST_WASM, 1, [Host wasm])
+BTLS_SUPPORTED=no
+with_tls=pthread
+target_mach=no
+
+else
+
 case "$host" in
 	mips*)
 		TARGET=MIPS;
@@ -3438,6 +3554,8 @@ SPARC64)
 	;;
 esac
 
+#WASM hack
+fi
 
 
 dnl *************
@@ -3517,6 +3635,7 @@ if test "x$target_mach" = "xyes"; then
           CPPFLAGS_FOR_LIBGC="$CPPFLAGS_FOR_LIBGC -DTARGET_IOS"
           CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -DTARGET_IOS"
           BTLS_SUPPORTED=no
+		  target_ios=yes
        ])
 	fi
    AC_DEFINE(TARGET_MACH,1,[The JIT/AOT targets Apple platforms])
@@ -3531,6 +3650,8 @@ elif test "x$sizeof_register" = "x8"; then
 else
    AC_DEFINE(SIZEOF_REGISTER,SIZEOF_VOID_P,[size of machine integer registers])
 fi
+
+AC_SUBST(SIZEOF_VOID_P,[$ac_cv_sizeof_void_p])
 
 if test "x$target_byte_order" = "xG_BIG_ENDIAN"; then
    AC_DEFINE(TARGET_BYTE_ORDER,G_BIG_ENDIAN,[byte order of target])
@@ -3639,8 +3760,177 @@ case "$host" in
 	;;
 esac
 
-
 AC_SUBST(libsuffix)
+
+######################################
+# EGLIB CHECKS
+######################################
+
+GNUC_PRETTY=
+GNUC_UNUSED=
+BREAKPOINT="G_STMT_START { raise (SIGTRAP); } G_STMT_END"
+if test x$GCC = xyes; then
+   GNUC_UNUSED='__attribute__((__unused__))'
+   GNUC_NORETURN='__attribute__((__noreturn__))'
+   case $host_cpu in
+     i*86|x86_64) BREAKPOINT="G_STMT_START { __asm__ (\"int \$03\"); } G_STMT_END" ;;
+   esac
+fi
+AC_SUBST(GNUC_PRETTY)
+AC_SUBST(GNUC_UNUSED)
+AC_SUBST(GNUC_NORETURN)
+AC_SUBST(BREAKPOINT)
+
+AC_C_BIGENDIAN([ORDER=G_BIG_ENDIAN],[ORDER=G_LITTLE_ENDIAN])
+
+case $host in
+*-*-msdos* | *-*-go32* | *-*-mingw32* | *-*-cygwin* | *-*-windows*)
+    PATHSEP='\\'
+    SEARCHSEP=';'
+    OS="WIN32"
+    PIDTYPE='void *'
+    ;;
+*)
+    PATHSEP='/'
+    SEARCHSEP=':'
+    OS="UNIX"
+    PIDTYPE='int'
+    ;;
+esac
+
+case $host in
+	*-*-solaris*)
+	CFLAGS="$CFLAGS -D_POSIX_PTHREAD_SEMANTICS"
+	;;
+esac
+
+case $target in
+arm*-darwin*|aarch64*-*)
+    CFLAGS="$CFLAGS -U_FORTIFY_SOURCE"
+    ;;
+i*86-*-darwin*)
+    ORDER=G_LITTLE_ENDIAN
+    ;;
+*-*-haiku*)
+    LDFLAGS="$LDFLAGS -ltextencoding"
+    ;;
+*-*-openbsd*)
+    CFLAGS="$CFLAGS -pthread"
+    LDFLAGS="$LDFLAGS -pthread"
+    ;;
+esac
+
+AC_SUBST(ORDER)
+AC_SUBST(CFLAGS)
+AC_SUBST(PATHSEP)
+AC_SUBST(SEARCHSEP)
+AC_SUBST(OS)
+AC_SUBST(PIDTYPE)
+
+# Defined for all targets/platforms using classic Windows API support.
+AC_DEFINE(HAVE_CLASSIC_WINAPI_SUPPORT, 1, [Use classic Windows API support])
+AC_DEFINE(HAVE_UWP_WINAPI_SUPPORT, 0, [Don't use UWP Windows API support])
+
+AC_CHECK_FUNCS(strlcpy stpcpy strtok_r rewinddir vasprintf strerror_r)
+AC_CHECK_FUNCS(getrlimit)
+AC_CHECK_FUNCS(fork execv execve)
+
+AC_ARG_WITH([overridable-allocators], [  --with-overridable-allocators	allow g_*alloc/g_free to call custom allocators set via g_mem_set_vtable])
+
+if test x$with_overridable_allocators = xyes; then
+	AC_DEFINE(ENABLE_OVERRIDABLE_ALLOCATORS,1,[Overridable allocator support enabled])
+  AC_MSG_NOTICE([Overridable allocator support enabled])
+else
+  AC_MSG_NOTICE([Overridable allocator support disabled])
+fi
+
+#
+# Mono currently supports 10.6, but strndup is not available prior to 10.7; avoiding
+# the detection of strndup on OS X so Mono built on 10.7+ still runs on 10.6. This can be
+# removed once support for 10.6 is dropped.
+#
+# iOS detection of strndup and getpwuid_r is faulty for some reason so let's simply avoid it
+#
+if test x$target_osx = xyes; then
+AC_CHECK_FUNCS(getpwuid_r)
+elif test x$target_ios = xno; then
+AC_CHECK_FUNCS(strndup getpwuid_r)
+fi
+
+AM_CONDITIONAL(NEED_VASPRINTF, test x$ac_cv_func_vasprintf = xno || test x$with_overridable_allocators = xyes)
+AM_ICONV()
+AC_SEARCH_LIBS(sqrtf, m)
+
+# nanosleep may not be part of libc, also search it in other libraries
+AC_SEARCH_LIBS(nanosleep, rt)
+
+AC_SEARCH_LIBS(dlopen, dl)
+old_ldflags="${LDFLAGS}"
+LDFLAGS="${LDFLAGS} -Wl,-export-dynamic"
+AC_TRY_LINK(, [int i;], found_export_dynamic=yes, found_export_dynamic=no)
+if test $found_export_dynamic = no; then
+	LDFLAGS="${old_ldflags}"
+fi
+
+AC_MSG_CHECKING(for varargs macros)
+AC_TRY_COMPILE([],[
+int foo (int i, int j);
+#define bar(...) foo (1, __VA_ARGS__)
+void main () {
+	 bar (2);
+}
+],have_iso_varargs=yes,have_iso_varargs=no)
+AC_MSG_RESULT($have_iso_varargs)
+G_HAVE_ISO_VARARGS=0
+if test "x$have_iso_varargs" = "xyes"; then
+   G_HAVE_ISO_VARARGS=1
+fi
+AC_SUBST(G_HAVE_ISO_VARARGS)
+
+AC_CHECK_HEADERS(getopt.h sys/select.h sys/time.h sys/wait.h pwd.h iconv.h localcharset.h sys/types.h sys/resource.h)
+AC_CHECK_LIB([iconv], [locale_charset],[],[AC_CHECK_LIB([charset], [locale_charset],[LIBS+="-liconv -lcharset"])])
+AC_CHECK_HEADER(alloca.h, [HAVE_ALLOCA_H=1], [HAVE_ALLOCA_H=0])
+AC_SUBST(HAVE_ALLOCA_H)
+
+if test $ac_cv_sizeof_void_p = $ac_cv_sizeof_int; then
+   GPOINTER_TO_INT="((gint) (ptr))"
+   GPOINTER_TO_UINT="((guint) (ptr))"
+   GINT_TO_POINTER="((gpointer) (v))"
+   GUINT_TO_POINTER="((gpointer) (v))"
+   GSIZE="int"
+   GSIZE_FORMAT='"u"'
+elif test $ac_cv_sizeof_void_p = $ac_cv_sizeof_long; then
+   GPOINTER_TO_INT="((gint)(long) (ptr))"
+   GPOINTER_TO_UINT="((guint)(long) (ptr))"
+   GINT_TO_POINTER="((gpointer)(glong) (v))"
+   GUINT_TO_POINTER="((gpointer)(gulong) (v))"
+   GSIZE="long"
+   GSIZE_FORMAT='"lu"'
+elif test $ac_cv_sizeof_void_p = $ac_cv_sizeof_long_long; then
+   GPOINTER_TO_INT="((gint)(long long) (ptr))"
+   GPOINTER_TO_UINT="((guint)(unsigned long long) (ptr))"
+   GINT_TO_POINTER="((gpointer)(long long) (v))"
+   GUINT_TO_POINTER="((gpointer)(unsigned long long) (v))"
+   GSIZE="long long"
+   GSIZE_FORMAT='"I64u"'
+else
+   AC_MSG_ERROR([unsupported pointer size])
+fi
+
+AC_SUBST(GPOINTER_TO_INT)
+AC_SUBST(GPOINTER_TO_UINT)
+AC_SUBST(GINT_TO_POINTER)
+AC_SUBST(GUINT_TO_POINTER)
+AC_SUBST(GSIZE)
+AC_SUBST(GSIZE_FORMAT)
+AC_SUBST(G_GUINT64_FORMAT)
+AC_SUBST(G_GINT64_FORMAT)
+AC_SUBST(G_GUINT32_FORMAT)
+AC_SUBST(G_GINT32_FORMAT)
+
+#
+# END OF EGLIB CHECKS
+#
 
 AC_ARG_WITH([libgdiplus],
 	[  --with-libgdiplus=installed|sibling|<path>	Override the libgdiplus used for System.Drawing tests (defaults to installed)],
@@ -4127,10 +4417,13 @@ AM_CONDITIONAL(POWERPC64, test x$TARGET = xPOWERPC64)
 AM_CONDITIONAL(ARM, test x$TARGET = xARM)
 AM_CONDITIONAL(ARM64, test x$TARGET = xARM64)
 AM_CONDITIONAL(S390X, test x$TARGET = xS390X)
+AM_CONDITIONAL(WASM, test x$TARGET = xWASM)
 AM_CONDITIONAL(HOST_X86, test x$HOST = xX86)
 AM_CONDITIONAL(HOST_AMD64, test x$HOST = xAMD64)
 AM_CONDITIONAL(HOST_ARM, test x$HOST = xARM)
 AM_CONDITIONAL(HOST_ARM64, test x$HOST = xARM64)
+AM_CONDITIONAL(HOST_WASM, test x$HOST = xWASM)
+
 AM_CONDITIONAL(CROSS_COMPILE, test "x$host" != "x$target")
 
 AC_SUBST(LIBC)
@@ -4156,7 +4449,7 @@ AC_SUBST(mono_build_root)
 mono_runtime=mono/mini/mono
 AC_SUBST(mono_runtime)
 
-CSC_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.3.0/tools/csc.exe
+CSC_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.3.2/tools/csc.exe
 
 if test $csc_compiler = mcs; then
   CSC=$mcs_topdir/class/lib/build/mcs.exe
@@ -4373,6 +4666,8 @@ mono/unit-tests/Makefile
 mono/benchmark/Makefile
 mono/mini/Makefile
 mono/profiler/Makefile
+mono/eglib/Makefile
+mono/eglib/eglib-config.h
 m4/Makefile
 ikvm-native/Makefile
 scripts/Makefile

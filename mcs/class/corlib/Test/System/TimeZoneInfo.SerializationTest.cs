@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using NUnit.Framework;
 
 namespace MonoTests.System
@@ -22,6 +23,20 @@ namespace MonoTests.System
 			Assert.AreEqual ("UTC", utc.StandardName);
 			Assert.IsFalse (utc.SupportsDaylightSavingTime);
 			Assert.AreEqual (0, utc.GetAdjustmentRules ().Length);
+		}
+
+		[Test] // Bug-44255
+		public void SystemTimeZoneSerializationTests ()
+		{
+			foreach (var tmz in TimeZoneInfo.GetSystemTimeZones ())
+			{
+				var tmzClone = TimeZoneInfo.FromSerializedString (tmz.ToSerializedString ());
+				Assert.AreEqual (tmz, tmzClone);
+				Assert.AreEqual (tmz.DisplayName, tmzClone.DisplayName);
+				Assert.AreEqual (tmz.StandardName, tmzClone.StandardName);
+				Assert.AreEqual (tmz.SupportsDaylightSavingTime, tmzClone.SupportsDaylightSavingTime);
+				Assert.AreEqual (tmz.DaylightName, tmzClone.DaylightName);
+			}
 		}
 
 		[Test]

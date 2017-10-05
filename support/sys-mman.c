@@ -13,7 +13,7 @@
 #define _XOPEN_SOURCE 600
 #endif
 
-#ifdef PLATFORM_MACOSX
+#ifdef HOST_DARWIN
 /* For mincore () */
 #define _DARWIN_C_SOURCE
 #endif
@@ -31,6 +31,7 @@
 #include <sys/mman.h>
 #include <errno.h>
 
+#include "mono/utils/mono-compiler.h"
 #include "map.h"
 #include "mph.h"
 

@@ -109,7 +109,9 @@ and reduce the number of casts drastically.
 /* If this is defined, use the signals backed on Mach. Debug only as signals can't be made usable on OSX. */
 // #define USE_SIGNALS_ON_MACH
 
-#if defined (_POSIX_VERSION)
+#ifdef HOST_WASM
+#define USE_WASM_BACKEND
+#elif defined (_POSIX_VERSION)
 #if defined (__MACH__) && !defined (USE_SIGNALS_ON_MACH)
 #define USE_MACH_BACKEND
 #else
@@ -228,6 +230,13 @@ typedef struct {
 	 * handled a sampling signal before sending another one.
 	 */
 	gint32 profiler_signal_ack;
+
+	gint32 thread_pending_native_join;
+
+#ifdef USE_WINDOWS_BACKEND
+	gint32 thread_wait_info;
+#endif
+
 } MonoThreadInfo;
 
 typedef struct {
@@ -610,6 +619,7 @@ gboolean mono_thread_info_is_live (THREAD_INFO_TYPE *info);
 int mono_thread_info_suspend_count (THREAD_INFO_TYPE *info);
 int mono_thread_info_current_state (THREAD_INFO_TYPE *info);
 const char* mono_thread_state_name (int state);
+gboolean mono_thread_is_gc_unsafe_mode (void);
 
 gboolean mono_thread_info_in_critical_location (THREAD_INFO_TYPE *info);
 gboolean mono_thread_info_begin_suspend (THREAD_INFO_TYPE *info);

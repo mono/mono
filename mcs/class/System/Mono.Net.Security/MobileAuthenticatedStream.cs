@@ -384,10 +384,10 @@ namespace Mono.Net.Security
 		static int nextId;
 		internal readonly int ID = ++nextId;
 
-		[SD.Conditional ("MARTIN_DEBUG")]
+		[SD.Conditional ("MONO_TLS_DEBUG")]
 		protected internal void Debug (string message, params object[] args)
 		{
-			Console.Error.WriteLine ("MobileAuthenticatedStream({0}): {1}", ID, string.Format (message, args));
+			MonoTlsProviderFactory.Debug ("MobileAuthenticatedStream({0}): {1}", ID, string.Format (message, args));
 		}
 
 #region Called back from native code via SslConnection
@@ -612,11 +612,16 @@ namespace Mono.Net.Security
 				 * SSLHandshake() will return repeatedly with 'SslStatus.WouldBlock', we then need
 				 * to take care of I/O and call it again.
 				*/
+				var newStatus = AsyncOperationStatus.Continue;
 				if (xobileTlsContext.ProcessHandshake ()) {
 					xobileTlsContext.FinishHandshake ();
-					return AsyncOperationStatus.Complete;
+					newStatus = AsyncOperationStatus.Complete;
 				}
-				return AsyncOperationStatus.Continue;
+
+				if (lastException != null)
+					lastException.Throw ();
+
+				return newStatus;
 			}
 		}
 
@@ -624,8 +629,10 @@ namespace Mono.Net.Security
 		{
 			lock (ioLock) {
 				// This operates on the internal buffer and will never block.
-				var ret = xobileTlsContext.Read (userBuffer.Buffer, userBuffer.Offset, userBuffer.Size, out bool wantMore);
-				return (ret, wantMore);
+				var ret = xobileTlsContext.Read (userBuffer.Buffer, userBuffer.Offset, userBuffer.Size);
+				if (lastException != null)
+					lastException.Throw ();
+				return ret;
 			}
 		}
 
@@ -633,8 +640,10 @@ namespace Mono.Net.Security
 		{
 			lock (ioLock) {
 				// This operates on the internal buffer and will never block.
-				var ret = xobileTlsContext.Write (userBuffer.Buffer, userBuffer.Offset, userBuffer.Size, out bool wantMore);
-				return (ret, wantMore);
+				var ret = xobileTlsContext.Write (userBuffer.Buffer, userBuffer.Offset, userBuffer.Size);
+				if (lastException != null)
+					lastException.Throw ();
+				return ret;
 			}
 		}
 
@@ -698,7 +707,7 @@ namespace Mono.Net.Security
 
 		public override void Flush ()
 		{
-			// Write() automatically flushes the underlying stream.
+			InnerStream.Flush ();
 		}
 
 		public SslProtocols SslProtocol {

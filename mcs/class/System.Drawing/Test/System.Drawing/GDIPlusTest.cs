@@ -864,14 +864,6 @@ namespace MonoTests.System.Drawing {
 					Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipSetImagePalette (IntPtr.Zero, palette), "GdipSetImagePalette(null,palette)");
 					Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipSetImagePalette (bitmap, IntPtr.Zero), "GdipSetImagePalette(bitmap,null)");
 					Assert.AreEqual (Status.Ok, GDIPlus.GdipSetImagePalette (bitmap, palette), "GdipSetImagePalette");
-
-					// change palette to 0 entries
-					int flags = Marshal.ReadInt32 (palette);
-					Marshal.WriteInt64 (palette, flags << 32);
-					Assert.AreEqual (Status.Ok, GDIPlus.GdipSetImagePalette (bitmap, palette), "GdipSetImagePalette/Empty");
-
-					Assert.AreEqual (Status.Ok, GDIPlus.GdipGetImagePaletteSize (bitmap, out size), "GdipGetImagePaletteSize/Empty");
-					Assert.AreEqual (8, size, "size");
 				}
 				finally {
 					Marshal.FreeHGlobal (palette);

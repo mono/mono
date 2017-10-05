@@ -18,13 +18,30 @@
 # Have to rename to handle differences between assembly/directory names
 DEP_LIBS=$(patsubst System.Xml,System.XML,$(LIB_REFS))
 
-_FILTER_OUT = $(foreach x,$(2),$(if $(findstring $(1),$(x)),,$(x)))
-
 LIB_REFS_FULL = $(call _FILTER_OUT,=, $(LIB_REFS))
 LIB_REFS_ALIAS = $(filter-out $(LIB_REFS_FULL),$(LIB_REFS))
 
+ifdef TARGET_NET_REFERENCE
+# System.*.dll references come from the TARGET_NET_REFERENCE dir, others from the profile dir
+LIB_REFS_MONO_FULL = $(call _FILTER_OUT,System,$(LIB_REFS_FULL))
+LIB_REFS_MONO_ALIAS = $(call _FILTER_OUT,System,$(LIB_REFS_ALIAS))
+
+LIB_REFS_SYSTEM_FULL = $(filter-out $(LIB_REFS_MONO_FULL),$(LIB_REFS_FULL))
+LIB_REFS_SYSTEM_ALIAS = $(filter-out $(LIB_REFS_MONO_ALIAS),$(LIB_REFS_ALIAS))
+
+LIB_MCS_FLAGS += $(patsubst %,-r:$(topdir)/../external/binary-reference-assemblies/$(TARGET_NET_REFERENCE)/%.dll,$(LIB_REFS_SYSTEM_FULL))
+LIB_MCS_FLAGS += $(patsubst %,-r:%.dll, $(subst =,=$(topdir)/../external/binary-reference-assemblies/$(TARGET_NET_REFERENCE)/,$(LIB_REFS_SYSTEM_ALIAS)))
+
+LIB_MCS_FLAGS += $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/%.dll,$(LIB_REFS_MONO_FULL))
+LIB_MCS_FLAGS += $(patsubst %,-r:%.dll, $(subst =,=$(topdir)/class/lib/$(PROFILE_DIRECTORY)/,$(LIB_REFS_MONO_ALIAS)))
+else
 LIB_MCS_FLAGS += $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/%.dll,$(LIB_REFS_FULL))
 LIB_MCS_FLAGS += $(patsubst %,-r:%.dll, $(subst =,=$(topdir)/class/lib/$(PROFILE_DIRECTORY)/,$(LIB_REFS_ALIAS)))
+endif
+
+ifdef KEYFILE
+KEYFILE_MCS_FLAGS += /keyfile:$(KEYFILE)
+endif
 
 ifndef LIBRARY_NAME
 LIBRARY_NAME = $(LIBRARY)
@@ -104,7 +121,7 @@ csproj-library:
 	case "$(thisdir)" in *"Facades"*) config_file=Facades_$$config_file;; *"legacy"*) config_file=legacy_$$config_file;; esac; \
 	echo $(thisdir):$$config_file >> $(topdir)/../msvc/scripts/order; \
 	(echo $(is_boot); \
-	echo $(USE_MCS_FLAGS) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS); \
+	echo $(USE_MCS_FLAGS) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) $(KEYFILE_MCS_FLAGS); \
 	echo $(LIBRARY_NAME); \
 	echo $(BUILT_SOURCES_cmdline); \
 	echo $(build_lib); \
@@ -308,7 +325,7 @@ endif
 ifndef NO_BUILD
 
 $(build_lib): $(response) $(sn) $(BUILT_SOURCES) $(build_libdir)/.stamp $(GEN_RESOURCE_DEPS)
-	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) $(GEN_RESOURCE_FLAGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
+	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) $(KEYFILE_MCS_FLAGS) $(GEN_RESOURCE_FLAGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
 ifdef RESOURCE_STRINGS_FILES
 	$(Q) $(STRING_REPLACER) $(RESOURCE_STRINGS_FILES) $@
 endif

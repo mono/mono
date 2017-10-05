@@ -25,12 +25,14 @@ lib_LTLIBRARIES = \
 	libmono-profiler-iomap-static.la \
 	libmono-profiler-log.la \
 	libmono-profiler-log-static.la \
+	libmono-profiler-coverage.la \
+	libmono-profiler-coverage-static.la \
 	$(vtune_libs)
 
 suppressiondir = $(datadir)/mono-$(API_VER)/mono/profiler
 suppression_DATA = mono-profiler-log.suppression
 
-if PLATFORM_DARWIN
+if HOST_DARWIN
 if BITCODE
 prof_ldflags = -no-undefined
 else
@@ -44,7 +46,7 @@ else
 libmono_dep = $(monodir)/mono/mini/$(LIBMONO_LA)
 endif
 
-if PLATFORM_ANDROID
+if HOST_ANDROID
 prof_ldflags = -avoid-version
 endif
 
@@ -82,6 +84,12 @@ libmono_profiler_log_la_LIBADD = $(libmono_dep) $(GLIB_LIBS) $(Z_LIBS)
 libmono_profiler_log_la_LDFLAGS = $(prof_ldflags)
 libmono_profiler_log_static_la_SOURCES = log.c log-args.c
 libmono_profiler_log_static_la_LDFLAGS = -static
+
+libmono_profiler_coverage_la_SOURCES = coverage.c
+libmono_profiler_coverage_la_LIBADD = $(libmono_dep) $(GLIB_LIBS) $(Z_LIBS)
+libmono_profiler_coverage_la_LDFLAGS = $(prof_ldflags)
+libmono_profiler_coverage_static_la_SOURCES = coverage.c
+libmono_profiler_coverage_static_la_LDFLAGS = -static
 
 if HAVE_VTUNE
 libmono_profiler_vtune_la_SOURCES = vtune.c

@@ -3005,6 +3005,7 @@ decode_exception_debug_info (MonoAotModule *amodule, MonoDomain *domain,
 				g_slist_free (nesting [i]);
 			g_free (nesting);
 		}
+		jinfo->from_llvm = 1;
 	} else {
 		len = mono_jit_info_size (flags, num_clauses, num_holes);
 		jinfo = (MonoJitInfo *)alloc0_jit_info_data (domain, len, async);
@@ -3956,9 +3957,10 @@ load_method (MonoDomain *domain, MonoAotModule *amodule, MonoImage *image, MonoM
 		return code;
 
 	if (mono_last_aot_method != -1) {
-		if (mono_jit_stats.methods_aot >= mono_last_aot_method)
-				return NULL;
-		else if (mono_jit_stats.methods_aot == mono_last_aot_method - 1) {
+		gint32 methods_aot = InterlockedRead (&mono_jit_stats.methods_aot);
+		if (methods_aot >= mono_last_aot_method)
+			return NULL;
+		else if (methods_aot == mono_last_aot_method - 1) {
 			if (!method) {
 				method = mono_get_method_checked (image, token, NULL, NULL, error);
 				if (!method)
@@ -4633,24 +4635,6 @@ mono_aot_get_method_checked (MonoDomain *domain, MonoMethod *method, MonoError *
 	return code;
 }
 
-/*
- * mono_aot_get_method:
- *
- *   Return a pointer to the AOTed native code for METHOD if it can be found,
- * NULL otherwise.
- * On platforms with function pointers, this doesn't return a function pointer.
- */
-gpointer
-mono_aot_get_method (MonoDomain *domain, MonoMethod *method)
-{
-	MonoError error;
-
-	gpointer res = mono_aot_get_method_checked (domain, method, &error);
-	/* This is external only, so its ok to raise here */
-	mono_error_raise_exception (&error); /* OK to throw, external only without a good alternative */
-	return res;
-}
-
 /**
  * Same as mono_aot_get_method, but we try to avoid loading any metadata from the
  * method.
@@ -5160,6 +5144,8 @@ no_trampolines (void)
 	g_assert_not_reached ();
 }
 
+
+#ifndef TARGET_WASM
 /*
  * Return the trampoline identified by NAME from the mscorlib AOT file.
  * On ppc64, this returns a function descriptor.
@@ -5176,6 +5162,8 @@ mono_aot_get_trampoline_full (const char *name, MonoTrampInfo **out_tinfo)
 
 	return mono_create_ftnptr_malloc ((guint8 *)load_function_full (amodule, name, out_tinfo));
 }
+#endif
+
 
 gpointer
 mono_aot_get_trampoline (const char *name)
@@ -5817,7 +5805,7 @@ mono_aot_is_pagefault (void *ptr)
 void
 mono_aot_handle_pagefault (void *ptr)
 {
-#ifndef PLATFORM_WIN32
+#ifndef HOST_WIN32
 	guint8* start = (guint8*)ROUND_DOWN (((gssize)ptr), mono_pagesize ());
 	int res;
 

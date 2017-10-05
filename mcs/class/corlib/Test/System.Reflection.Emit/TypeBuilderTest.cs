@@ -570,6 +570,40 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		public void TestEnumWithLateUnderlyingField ()
+		{
+			TypeBuilder enumToCreate = module.DefineType (genTypeName (), TypeAttributes.Public, typeof (Enum));
+			enumToCreate.DefineField ("value__", typeof (Int32),
+				FieldAttributes.Public | FieldAttributes.SpecialName | FieldAttributes.RTSpecialName);
+
+			TypeBuilder enumToCreate2 = module.DefineType (genTypeName (), TypeAttributes.Public, typeof (Enum));
+
+			TypeBuilder ivTypeBld = module.DefineType (genTypeName (), TypeAttributes.Public);
+
+			ConstructorBuilder ivCtor = ivTypeBld.DefineConstructor (MethodAttributes.Public, CallingConventions.Standard, Type.EmptyTypes);
+
+			ILGenerator ctorIL = ivCtor.GetILGenerator ();
+
+			ctorIL.Emit (OpCodes.Ldtoken, typeof (Object));
+			ctorIL.Emit (OpCodes.Pop);
+			ctorIL.Emit (OpCodes.Ldtoken, enumToCreate);
+			ctorIL.Emit (OpCodes.Pop);
+			ctorIL.Emit (OpCodes.Ldtoken, enumToCreate2);
+			ctorIL.Emit (OpCodes.Pop);
+			ctorIL.Emit (OpCodes.Ret);
+
+			var ivType = ivTypeBld.CreateType ();
+
+			enumToCreate2.DefineField ("value__", typeof (Int32), FieldAttributes.Public | FieldAttributes.SpecialName | FieldAttributes.RTSpecialName);
+
+			FieldBuilder fb = enumToCreate2.DefineField ("A", enumToCreate, FieldAttributes.Public | FieldAttributes.Static | FieldAttributes.Literal);
+			fb.SetConstant (0);
+
+			enumToCreate.CreateType ();
+			enumToCreate2.CreateType ();
+		}
+
+		[Test]
 		public void TestIsAbstract ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
@@ -11374,5 +11408,39 @@ namespace MonoTests.System.Reflection.Emit
 
 			assembly.Save (ASSEMBLY_NAME + ".dll");
 		}
+
+		[Test]
+		public void TwoAssembliesMidFlightTest () {
+			// Check that one AssemblyBuilder can refer to a TypeBuilder from another AssemblyBuilder.
+			// Regression test for https://bugzilla.xamarin.com/show_bug.cgi?id=58421
+			var name2 = "MonoTests.System.Reflection.Emit.TypeBuilderTest2";
+			var assemblyName2 = new AssemblyName (name2);
+			var assembly2 =
+				Thread.GetDomain ().DefineDynamicAssembly (
+					assemblyName2, AssemblyBuilderAccess.RunAndSave, tempDir);
+
+			var module2 = assembly2.DefineDynamicModule (name2, name2 + ".dll");
+
+			var tb = module.DefineType ("Foo", TypeAttributes.Public);
+			var tb2 = module2.DefineType ("Foo2", TypeAttributes.Public);
+
+			var cb = tb.DefineConstructor (MethodAttributes.Public, CallingConventions.Standard,
+						       Type.EmptyTypes);
+
+			var ilg = cb.GetILGenerator ();
+
+			ilg.Emit (OpCodes.Ldtoken, tb2); // N.B. type from the other AssemblyBuilder
+			ilg.Emit (OpCodes.Pop);
+			ilg.Emit (OpCodes.Ret);
+
+			var t = tb.CreateType ();
+			tb2.CreateType ();
+
+			var ci = t.GetConstructor (Type.EmptyTypes);
+			var x = ci.Invoke (null);
+			assembly.Save (ASSEMBLY_NAME + ".dll");
+			assembly2.Save (name2 + ".dll");
+		}
+
 	}
 }

@@ -31,9 +31,10 @@
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/bsearch.h>
 #include <mono/utils/atomic.h>
+#include <mono/utils/unlocked.h>
 #include <mono/utils/mono-counters.h>
 
-static int img_set_cache_hit, img_set_cache_miss, img_set_count;
+static gint32 img_set_cache_hit, img_set_cache_miss, img_set_count;
 
 
 /* Auxiliary structure used for caching inflated signatures */
@@ -836,21 +837,11 @@ mono_metadata_compute_size (MonoImage *meta, int tableindex, guint32 *result_bit
 			break;
 
 			/*
-			 * CustomAttributeType: TypeDef, TypeRef, MethodDef, 
-			 * MemberRef and String.  
+			 * CustomAttributeType: MethodDef, MemberRef.
 			 */
 		case MONO_MT_CAT_IDX:
-			/* String is a heap, if it is wide, we know the size */
-			/* See above, nope. 
-			if (meta->idx_string_wide){
-				field_size = 4;
-				break;
-			}*/
-			
-			n = MAX (get_nrows (meta, MONO_TABLE_TYPEREF),
-				 get_nrows (meta, MONO_TABLE_TYPEDEF));
-			n = MAX (n, get_nrows (meta, MONO_TABLE_METHOD));
-			n = MAX (n, get_nrows (meta, MONO_TABLE_MEMBERREF));
+			n = MAX (get_nrows (meta, MONO_TABLE_METHOD),
+					 get_nrows (meta, MONO_TABLE_MEMBERREF));
 
 			/* 3 bits to encode */
 			field_size = rtsize (meta, n, 16-3);
@@ -1190,7 +1181,7 @@ mono_metadata_decode_row_col (const MonoTableInfo *t, int idx, guint col)
  * \param ptr pointer to a blob object
  * \param rptr the new position of the pointer
  *
- * This decodes a compressed size as described by 23.1.4 (a blob or user string object)
+ * This decodes a compressed size as described by 24.2.4 (#US and #Blob a blob or user string object)
  *
  * \returns the size of the blob object
  */
@@ -1532,7 +1523,7 @@ builtin_types[] = {
 #define NBUILTIN_TYPES() (sizeof (builtin_types) / sizeof (builtin_types [0]))
 
 static GHashTable *type_cache = NULL;
-static int next_generic_inst_id = 0;
+static gint32 next_generic_inst_id = 0;
 
 /* Protected by image_sets_mutex */
 static MonoImageSet *mscorlib_image_set;
@@ -1650,6 +1641,16 @@ void
 mono_metadata_init (void)
 {
 	int i;
+
+	/* We guard against double initialization due to how pedump in verification mode works.
+	Until runtime initialization is properly factored to work with what it needs we need workarounds like this.
+	FIXME: https://bugzilla.xamarin.com/show_bug.cgi?id=58793
+	*/
+	static gboolean inited;
+
+	if (inited)
+		return;
+	inited = TRUE;
 
 	type_cache = g_hash_table_new (mono_type_hash, mono_type_equal);
 
@@ -2478,10 +2479,10 @@ img_set_cache_get (MonoImage **images, int nimages)
 	int index = hash_code % HASH_TABLE_SIZE;
 	MonoImageSet *img = img_set_cache [index];
 	if (!img || !compare_img_set (img, images, nimages)) {
-		++img_set_cache_miss;
+		UnlockedIncrement (&img_set_cache_miss);
 		return NULL;
 	}
-	++img_set_cache_hit;
+	UnlockedIncrement (&img_set_cache_hit);
 	return img;
 }
 
@@ -2566,7 +2567,7 @@ get_image_set (MonoImage **images, int nimages)
 		l = l->next;
 	}
 
-	// If we iterated all the way through l without breaking, the imageset does not already exist and we shuold create it
+	// If we iterated all the way through l without breaking, the imageset does not already exist and we should create it
 	if (!l) {
 		set = g_new0 (MonoImageSet, 1);
 		set->nimages = nimages;
@@ -2583,7 +2584,7 @@ get_image_set (MonoImage **images, int nimages)
 			set->images [i]->image_sets = g_slist_prepend (set->images [i]->image_sets, set);
 
 		g_ptr_array_add (image_sets, set);
-		++img_set_count;
+		UnlockedIncrement (&img_set_count); /* locked by image_sets_lock () */
 	}
 
 	/* Cache the set. If there was a cache collision, the previously cached value will be replaced. */
@@ -3170,7 +3171,7 @@ mono_metadata_get_canonical_generic_inst (MonoGenericInst *candidate)
 		int size = MONO_SIZEOF_GENERIC_INST + type_argc * sizeof (MonoType *);
 		ginst = (MonoGenericInst *)mono_image_set_alloc0 (set, size);
 #ifndef MONO_SMALL_CONFIG
-		ginst->id = ++next_generic_inst_id;
+		ginst->id = InterlockedIncrement (&next_generic_inst_id);
 #endif
 		ginst->is_open = is_open;
 		ginst->type_argc = type_argc;

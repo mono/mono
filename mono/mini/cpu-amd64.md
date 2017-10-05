@@ -99,8 +99,8 @@ long_min_un: dest:i src1:i src2:i len:16 clob:1
 long_max: dest:i src1:i src2:i len:16 clob:1
 long_max_un: dest:i src1:i src2:i len:16 clob:1
 
-throw: src1:i len:18
-rethrow: src1:i len:18
+throw: src1:i len:24
+rethrow: src1:i len:24
 start_handler: len:16
 endfinally: len:9
 endfilter: src1:a len:9
@@ -792,3 +792,5 @@ gc_param_slot_liveness_def: len:0
 
 generic_class_init: src1:A len:32 clob:c
 get_last_error: dest:i len:32
+
+fill_prof_call_ctx: src1:i len:128

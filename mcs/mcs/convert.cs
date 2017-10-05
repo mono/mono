@@ -736,8 +736,6 @@ namespace Mono.CSharp {
 			var tupleLiteralElements = (source as TupleLiteral)?.Elements;
 
 			for (int i = 0; i < targetType.Arity; ++i) {
-				var elementType = srcTypeArgument [i];
-
 				if (tupleLiteralElements != null) {
 					if (!ImplicitStandardConversionExists (tupleLiteralElements[i].Expr, targetTypeArgument [i])) {
 						return false;
@@ -1503,6 +1501,11 @@ namespace Mono.CSharp {
 
 				if (expr is TupleLiteral && TupleLiteral.ContainsNoTypeElement (expr_type))
 					return null;
+			}
+
+			if (expr is ReferenceExpression) {
+				// Only identify conversion is allowed
+				return null;
 			}
 
 			e = ImplicitNumericConversion (expr, expr_type, target_type);

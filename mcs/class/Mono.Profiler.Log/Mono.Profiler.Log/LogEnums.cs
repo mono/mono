@@ -17,7 +17,6 @@ namespace Mono.Profiler.Log {
 		Heap = 6,
 		Sample = 7,
 		Runtime = 8,
-		Coverage = 9,
 		Meta = 10,
 
 		AllocationNoBacktrace = 0 << 4,
@@ -65,11 +64,6 @@ namespace Mono.Profiler.Log {
 		SampleCounters = 4 << 4,
 
 		RuntimeJitHelper = 1 << 4,
-
-		CoverageAssembly = 0 << 4,
-		CoverageMethod = 1 << 4,
-		CoverageStatement = 2 << 4,
-		CoverageClass = 3 << 4,
 
 		MetaSynchronizationPoint = 0 << 4,
 	}
@@ -181,6 +175,15 @@ namespace Mono.Profiler.Log {
 		PreStartWorld = 8,
 		PostStartWorld = 9,
 		PostStartWorldUnlocked = 11,
+		// Following are v13 and older only
+		[Obsolete ("This event is no longer produced.")]
+		MarkBegin = 1,
+		[Obsolete ("This event is no longer produced.")]
+		MarkEnd = 2,
+		[Obsolete ("This event is no longer produced.")]
+		ReclaimBegin = 3,
+		[Obsolete ("This event is no longer produced.")]
+		ReclaimEnd = 4
 	}
 
 	// mono/metadata/mono-gc.h : MonoGCHandleType

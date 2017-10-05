@@ -544,7 +544,7 @@ process_is_alive (pid_t pid)
 {
 #if defined(HOST_WATCHOS)
 	return TRUE; // TODO: Rewrite using sysctl
-#elif defined(PLATFORM_MACOSX) || defined(__OpenBSD__) || defined(__FreeBSD__)
+#elif defined(HOST_DARWIN) || defined(__OpenBSD__) || defined(__FreeBSD__)
 	if (pid == 0)
 		return FALSE;
 	if (kill (pid, 0) == 0)
@@ -1945,7 +1945,7 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 		dup2 (err_fd, 2);
 
 		/* Close all file descriptors */
-		for (i = mono_w32handle_fd_reserve - 1; i > 2; i--)
+		for (i = eg_getdtablesize() - 1; i > 2; i--)
 			close (i);
 
 #ifdef DEBUG_ENABLED
@@ -2105,7 +2105,7 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStar
 			goto done;
 		}
 
-#ifdef PLATFORM_MACOSX
+#ifdef HOST_DARWIN
 		handler = g_strdup ("/usr/bin/open");
 #else
 		/*
@@ -2580,8 +2580,8 @@ ves_icall_Microsoft_Win32_NativeMethods_GetProcessTimes (gpointer handle, gint64
 			&start_ticks, &user_ticks, &kernel_ticks);
 
 		ticks_to_processtime (start_ticks, creation_processtime);
-		ticks_to_processtime (user_ticks, kernel_processtime);
-		ticks_to_processtime (kernel_ticks, user_processtime);
+		ticks_to_processtime (kernel_ticks, kernel_processtime);
+		ticks_to_processtime (user_ticks, user_processtime);
 		return TRUE;
 	}
 

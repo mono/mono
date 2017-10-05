@@ -1014,7 +1014,7 @@ ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_SufficientExecutionStac
 {
 #if defined(TARGET_WIN32) || defined(HOST_WIN32)
 	// It does not work on win32
-#elif defined(TARGET_ANDROID)
+#elif defined(TARGET_ANDROID) || defined(__linux__)
 	// No need for now
 #else
 	guint8 *stack_addr;
@@ -1256,7 +1256,13 @@ ves_icall_System_Object_GetType (MonoObjectHandle obj, MonoError *error)
 	if (mono_class_is_transparent_proxy (klass)) {
 		MonoTransparentProxyHandle proxy_obj = MONO_HANDLE_CAST (MonoTransparentProxy, obj);
 		MonoRemoteClass *remote_class = MONO_HANDLE_GETVAL (proxy_obj, remote_class);
-		MonoType *proxy_type = &remote_class->proxy_class->byval_arg;
+		/* If it's a transparent proxy for an interface, return the
+		 * interface type, not the unhelpful proxy_class class (which
+		 * is just MarshalByRefObject). */
+		MonoType *proxy_type =
+			mono_remote_class_is_interface_proxy (remote_class) ?
+			&remote_class->interfaces[0]->byval_arg :
+			&remote_class->proxy_class->byval_arg;
 		return mono_type_get_object_handle (domain, proxy_type, error);
 	} else
 #endif

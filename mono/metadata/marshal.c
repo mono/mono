@@ -375,8 +375,8 @@ mono_marshal_init (void)
 		register_icall (mono_marshal_free_asany, "mono_marshal_free_asany", "void object ptr int32 int32", FALSE);
 		register_icall (ves_icall_marshal_alloc, "ves_icall_marshal_alloc", "ptr ptr", FALSE);
 		register_icall (mono_marshal_free, "mono_marshal_free", "void ptr", FALSE);
-		register_icall (mono_marshal_set_last_error, "mono_marshal_set_last_error", "void", FALSE);
-		register_icall (mono_marshal_set_last_error_windows, "mono_marshal_set_last_error_windows", "void int32", FALSE);
+		register_icall (mono_marshal_set_last_error, "mono_marshal_set_last_error", "void", TRUE);
+		register_icall (mono_marshal_set_last_error_windows, "mono_marshal_set_last_error_windows", "void int32", TRUE);
 		register_icall (mono_string_utf8_to_builder, "mono_string_utf8_to_builder", "void ptr ptr", FALSE);
 		register_icall (mono_string_utf8_to_builder2, "mono_string_utf8_to_builder2", "object ptr", FALSE);
 		register_icall (mono_string_utf16_to_builder, "mono_string_utf16_to_builder", "void ptr ptr", FALSE);
@@ -799,12 +799,13 @@ mono_array_to_lparray (MonoArray *array)
 
 	int i = 0;
 	MonoClass *klass;
+	MonoError error;
 #endif
 
 	if (!array)
 		return NULL;
 #ifndef DISABLE_COM
-
+	error_init (&error);
 	klass = array->obj.vtable->klass;
 
 	switch (klass->element_class->byval_arg.type) {
@@ -813,9 +814,12 @@ mono_array_to_lparray (MonoArray *array)
 		break;
 	case MONO_TYPE_CLASS:
 		nativeArraySize = array->max_length;
-		nativeArray = (void **)malloc(sizeof(gpointer) * nativeArraySize);
-		for(i = 0; i < nativeArraySize; ++i) 	
-			nativeArray[i] = ves_icall_System_Runtime_InteropServices_Marshal_GetIUnknownForObjectInternal(((MonoObject **)array->vector)[i]);
+		nativeArray = (void **)g_malloc (sizeof(gpointer) * nativeArraySize);
+		for(i = 0; i < nativeArraySize; ++i) {
+			nativeArray[i] = mono_cominterop_get_com_interface (((MonoObject **)array->vector)[i], klass->element_class, &error);
+			if (mono_error_set_pending_exception (&error))
+				break;
+		}
 		return nativeArray;
 	case MONO_TYPE_U1:
 	case MONO_TYPE_BOOLEAN:
@@ -853,7 +857,6 @@ mono_free_lparray (MonoArray *array, gpointer* nativeArray)
 {
 #ifndef DISABLE_COM
 	MonoClass *klass;
-	int i = 0;
 
 	if (!array)
 		return;
@@ -862,11 +865,8 @@ mono_free_lparray (MonoArray *array, gpointer* nativeArray)
 		return;
 	klass = array->obj.vtable->klass;
 
-	if (klass->element_class->byval_arg.type == MONO_TYPE_CLASS) {
-		for(i = 0; i < array->max_length; ++i)
-			mono_marshal_free_ccw (mono_array_get (array, MonoObject*, i));
+	if (klass->element_class->byval_arg.type == MONO_TYPE_CLASS)
 		g_free (nativeArray);
-	}
 #endif
 }
 
@@ -7658,6 +7658,9 @@ mono_marshal_emit_native_wrapper (MonoImage *image, MonoMethodBuilder *mb, MonoM
 	int i, argnum, *tmp_locals;
 	int type, param_shift = 0;
 	int coop_gc_stack_dummy, coop_gc_var;
+#ifndef DISABLE_COM
+	int coop_cominterop_fnptr;
+#endif
 
 	memset (&m, 0, sizeof (m));
 	m.mb = mb;
@@ -7700,6 +7703,11 @@ mono_marshal_emit_native_wrapper (MonoImage *image, MonoMethodBuilder *mb, MonoM
 		coop_gc_stack_dummy = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
 		/* local 5, the local to be used when calling the suspend funcs */
 		coop_gc_var = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
+#ifndef DISABLE_COM
+		if (!func_param && MONO_CLASS_IS_IMPORT (mb->method->klass)) {
+			coop_cominterop_fnptr = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
+		}
+#endif
 	}
 
 	/*
@@ -7745,6 +7753,13 @@ mono_marshal_emit_native_wrapper (MonoImage *image, MonoMethodBuilder *mb, MonoM
 			mono_mb_emit_byte (mb, CEE_POP); // Result not needed yet
 		}
 
+#ifndef DISABLE_COM
+		if (!func_param && MONO_CLASS_IS_IMPORT (mb->method->klass)) {
+			mono_mb_emit_cominterop_get_function_pointer (mb, &piinfo->method);
+			mono_mb_emit_stloc (mb, coop_cominterop_fnptr);
+		}
+#endif
+
 		mono_mb_emit_ldloc_addr (mb, coop_gc_stack_dummy);
 		mono_mb_emit_icall (mb, mono_threads_enter_gc_safe_region_unbalanced);
 		mono_mb_emit_stloc (mb, coop_gc_var);
@@ -7767,7 +7782,12 @@ mono_marshal_emit_native_wrapper (MonoImage *image, MonoMethodBuilder *mb, MonoM
 		mono_mb_emit_calli (mb, csig);
 	} else if (MONO_CLASS_IS_IMPORT (mb->method->klass)) {
 #ifndef DISABLE_COM
-		mono_mb_emit_cominterop_call (mb, csig, &piinfo->method);
+		if (!mono_threads_is_blocking_transition_enabled ()) {
+			mono_mb_emit_cominterop_call (mb, csig, &piinfo->method);
+		} else {
+			mono_mb_emit_ldloc (mb, coop_cominterop_fnptr);
+			mono_mb_emit_cominterop_call_function_pointer (mb, csig);
+		}
 #else
 		g_assert_not_reached ();
 #endif
@@ -10936,6 +10956,9 @@ mono_marshal_string_to_utf16_copy (MonoString *s)
 void
 mono_marshal_set_last_error (void)
 {
+	/* This icall is called just after a P/Invoke call before the P/Invoke
+	 * wrapper transitions the runtime back to running mode. */
+	MONO_REQ_GC_SAFE_MODE;
 #ifdef WIN32
 	mono_native_tls_set_value (last_error_tls_id, GINT_TO_POINTER (GetLastError ()));
 #else
@@ -10947,6 +10970,9 @@ static void
 mono_marshal_set_last_error_windows (int error)
 {
 #ifdef WIN32
+	/* This icall is called just after a P/Invoke call before the P/Invoke
+	 * wrapper transitions the runtime back to running mode. */
+	MONO_REQ_GC_SAFE_MODE;
 	mono_native_tls_set_value (last_error_tls_id, GINT_TO_POINTER (error));
 #endif
 }
@@ -11590,7 +11616,6 @@ mono_marshal_load_type_info (MonoClass* klass)
 
 	layout = mono_class_get_flags (klass) & TYPE_ATTRIBUTE_LAYOUT_MASK;
 
-	/* The mempool is protected by the loader lock */
 	info = (MonoMarshalType *)mono_image_alloc0 (klass->image, MONO_SIZEOF_MARSHAL_TYPE + sizeof (MonoMarshalField) * count);
 	info->num_fields = count;
 	
@@ -11677,8 +11702,11 @@ mono_marshal_load_type_info (MonoClass* klass)
 	info->min_align = min_align;
 
 	/* Update the class's blittable info, if the layouts don't match */
-	if (info->native_size != mono_class_value_size (klass, NULL))
+	if (info->native_size != mono_class_value_size (klass, NULL)) {
+		mono_loader_lock ();
 		klass->blittable = FALSE;
+		mono_loader_unlock ();
+	}
 
 	/* If this is an array type, ensure that we have element info */
 	if (klass->rank && !mono_marshal_is_loading_type_info (klass->element_class)) {
@@ -12364,7 +12392,7 @@ ftnptr_eh_callback_default (guint32 gchandle)
 
 	mono_gchandle_free (gchandle);
 
-	mono_raise_exception (exc);
+	mono_reraise_exception (exc);
 }
 
 /*

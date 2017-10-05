@@ -43,26 +43,36 @@ using System.Security.Cryptography.X509Certificates;
 namespace System.Security.Cryptography.Xml {
 
 	public class SignedXml {
+		public const string XmlDsigNamespaceUrl = "http://www.w3.org/2000/09/xmldsig#";
+		public const string XmlDsigMinimalCanonicalizationUrl = "http://www.w3.org/2000/09/xmldsig#minimal";
+		public const string XmlDsigCanonicalizationUrl = XmlDsigC14NTransformUrl;
+		public const string XmlDsigCanonicalizationWithCommentsUrl = XmlDsigC14NWithCommentsTransformUrl;
 
-		public const string XmlDsigCanonicalizationUrl			= "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
-		public const string XmlDsigCanonicalizationWithCommentsUrl	= XmlDsigCanonicalizationUrl + "#WithComments";
-		public const string XmlDsigDSAUrl				= XmlDsigNamespaceUrl + "dsa-sha1";
-		public const string XmlDsigHMACSHA1Url				= XmlDsigNamespaceUrl + "hmac-sha1";
-		public const string XmlDsigMinimalCanonicalizationUrl		= XmlDsigNamespaceUrl + "minimal";
-		public const string XmlDsigNamespaceUrl				= "http://www.w3.org/2000/09/xmldsig#";
-		public const string XmlDsigRSASHA1Url				= XmlDsigNamespaceUrl + "rsa-sha1";
-		public const string XmlDsigSHA1Url				= XmlDsigNamespaceUrl + "sha1";
+		public const string XmlDsigSHA1Url = "http://www.w3.org/2000/09/xmldsig#sha1";
+		public const string XmlDsigDSAUrl = "http://www.w3.org/2000/09/xmldsig#dsa-sha1";
+		public const string XmlDsigRSASHA1Url = "http://www.w3.org/2000/09/xmldsig#rsa-sha1";
+		public const string XmlDsigHMACSHA1Url = "http://www.w3.org/2000/09/xmldsig#hmac-sha1";
 
-		public const string XmlDecryptionTransformUrl			= "http://www.w3.org/2002/07/decrypt#XML";
-		public const string XmlDsigBase64TransformUrl			= XmlDsigNamespaceUrl + "base64";
-		public const string XmlDsigC14NTransformUrl			= XmlDsigCanonicalizationUrl;
-		public const string XmlDsigC14NWithCommentsTransformUrl		= XmlDsigCanonicalizationWithCommentsUrl;
-		public const string XmlDsigEnvelopedSignatureTransformUrl	= XmlDsigNamespaceUrl + "enveloped-signature";
-		public const string XmlDsigExcC14NTransformUrl			= "http://www.w3.org/2001/10/xml-exc-c14n#";
-		public const string XmlDsigExcC14NWithCommentsTransformUrl	= XmlDsigExcC14NTransformUrl + "WithComments";
-		public const string XmlDsigXPathTransformUrl			= "http://www.w3.org/TR/1999/REC-xpath-19991116";
-		public const string XmlDsigXsltTransformUrl			= "http://www.w3.org/TR/1999/REC-xslt-19991116";
-		public const string XmlLicenseTransformUrl			= "urn:mpeg:mpeg21:2003:01-REL-R-NS:licenseTransform";
+		public const string XmlDsigSHA256Url = "http://www.w3.org/2001/04/xmlenc#sha256";
+		public const string XmlDsigRSASHA256Url = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
+
+		// Yes, SHA384 is in the xmldsig-more namespace even though all the other SHA variants are in xmlenc. That's the standard.
+		public const string XmlDsigSHA384Url = "http://www.w3.org/2001/04/xmldsig-more#sha384";
+		public const string XmlDsigRSASHA384Url = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha384";
+
+		public const string XmlDsigSHA512Url = "http://www.w3.org/2001/04/xmlenc#sha512";
+		public const string XmlDsigRSASHA512Url = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha512";
+
+		public const string XmlDsigC14NTransformUrl = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
+		public const string XmlDsigC14NWithCommentsTransformUrl = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments";
+		public const string XmlDsigExcC14NTransformUrl = "http://www.w3.org/2001/10/xml-exc-c14n#";
+		public const string XmlDsigExcC14NWithCommentsTransformUrl = "http://www.w3.org/2001/10/xml-exc-c14n#WithComments";
+		public const string XmlDsigBase64TransformUrl = "http://www.w3.org/2000/09/xmldsig#base64";
+		public const string XmlDsigXPathTransformUrl = "http://www.w3.org/TR/1999/REC-xpath-19991116";
+		public const string XmlDsigXsltTransformUrl = "http://www.w3.org/TR/1999/REC-xslt-19991116";
+		public const string XmlDsigEnvelopedSignatureTransformUrl = "http://www.w3.org/2000/09/xmldsig#enveloped-signature";
+		public const string XmlDecryptionTransformUrl = "http://www.w3.org/2002/07/decrypt#XML";
+		public const string XmlLicenseTransformUrl = "urn:mpeg:mpeg21:2003:01-REL-R-NS:licenseTransform";
 
 		private EncryptedXml encryptedXml;
 
@@ -74,7 +84,9 @@ namespace System.Security.Cryptography.Xml {
 		private XmlElement signatureElement;
 		private Hashtable hashes;
 		// FIXME: enable it after CAS implementation
-		private XmlResolver xmlResolver = new XmlUrlResolver ();
+		internal XmlResolver _xmlResolver = new XmlUrlResolver ();
+		private bool _bResolverSet = true;
+		internal XmlElement _context;
 		private ArrayList manifests;
 		private IEnumerator _x509Enumerator;
 
@@ -85,6 +97,7 @@ namespace System.Security.Cryptography.Xml {
 			m_signature = new Signature ();
 			m_signature.SignedInfo = new SignedInfo ();
 			hashes = new Hashtable (2); // 98% SHA1 for now
+			_context = null;
 		}
 
 		public SignedXml (XmlDocument document) : this ()
@@ -92,6 +105,7 @@ namespace System.Security.Cryptography.Xml {
 			if (document == null)
 				throw new ArgumentNullException ("document");
 			envdoc = document;
+			_context = document.DocumentElement;
 		}
 
 		public SignedXml (XmlElement elem) : this ()
@@ -99,6 +113,7 @@ namespace System.Security.Cryptography.Xml {
 			if (elem == null)
 				throw new ArgumentNullException ("elem");
 			envdoc = new XmlDocument ();
+			_context = elem;
 			envdoc.LoadXml (elem.OuterXml);
 		}
 
@@ -146,6 +161,22 @@ namespace System.Security.Cryptography.Xml {
 		public string SigningKeyName {
 			get { return m_strSigningKeyName; }
 			set { m_strSigningKeyName = value; }
+		}
+
+		public XmlResolver Resolver
+		{
+			// This property only has a setter. The rationale for this is that we don't have a good value
+			// to return when it has not been explicitely set, as we are using XmlSecureResolver by default
+			set
+			{
+				_xmlResolver = value;
+				_bResolverSet = true;
+			}
+		}
+
+		internal bool ResolverSet
+		{
+			get { return _bResolverSet; }
 		}
 
 		public void AddObject (DataObject dataObject) 
@@ -221,9 +252,9 @@ namespace System.Security.Cryptography.Xml {
 					FixupNamespaceNodes (xel, doc.DocumentElement, false);
 				}
 			}
-			else if (xmlResolver != null) {
+			else if (_xmlResolver != null) {
 				// TODO: need testing
-				Stream s = (Stream) xmlResolver.GetEntity (new Uri (r.Uri), null, typeof (Stream));
+				Stream s = (Stream) _xmlResolver.GetEntity (new Uri (r.Uri), null, typeof (Stream));
 				doc.Load (s);
 			}
 
@@ -281,12 +312,12 @@ namespace System.Security.Cryptography.Xml {
 				else if (r.Uri [0] == '#') {
 					objectName = r.Uri.Substring (1);
 				}
-				else if (xmlResolver != null) {
+				else if (_xmlResolver != null) {
 					// TODO: test but doc says that Resolver = null -> no access
 					try {
 						// no way to know if valid without throwing an exception
 						Uri uri = new Uri (r.Uri);
-						s = (Stream) xmlResolver.GetEntity (uri, null, typeof (Stream));
+						s = (Stream) _xmlResolver.GetEntity (uri, null, typeof (Stream));
 					}
 					catch {
 						// may still be a local file (and maybe not xml)
@@ -763,6 +794,11 @@ namespace System.Security.Cryptography.Xml {
 
 			signatureElement = value;
 			m_signature.LoadXml (value);
+
+			if (_context == null) {
+				_context = value;
+			}
+
 			// Need to give the EncryptedXml object to the 
 			// XmlDecryptionTransform to give it a fighting 
 			// chance at decrypting the document.
@@ -772,11 +808,6 @@ namespace System.Security.Cryptography.Xml {
 						((XmlDecryptionTransform) t).EncryptedXml = EncryptedXml;
 				}
 			}
-		}
-
-		[ComVisible (false)]
-		public XmlResolver Resolver {
-			set { xmlResolver = value; }
 		}
 	}
 }

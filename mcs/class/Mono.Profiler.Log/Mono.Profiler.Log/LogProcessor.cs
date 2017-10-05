@@ -12,7 +12,7 @@ namespace Mono.Profiler.Log {
 
 	public sealed class LogProcessor {
 
-		public LogReader Reader { get; }
+		public LogStream Stream { get; }
 
 		public LogEventVisitor ImmediateVisitor { get; }
 
@@ -20,18 +20,20 @@ namespace Mono.Profiler.Log {
 
 		public LogStreamHeader StreamHeader { get; private set; }
 
+		LogReader _reader;
+
 		LogBufferHeader _bufferHeader;
 
 		ulong _time;
 
 		bool _used;
 
-		public LogProcessor (LogReader reader, LogEventVisitor immediateVisitor, LogEventVisitor sortedVisitor)
+		public LogProcessor (LogStream stream, LogEventVisitor immediateVisitor, LogEventVisitor sortedVisitor)
 		{
-			if (reader == null)
-				throw new ArgumentNullException (nameof (reader));
+			if (stream == null)
+				throw new ArgumentNullException (nameof (stream));
 
-			Reader = reader;
+			Stream = stream;
 			ImmediateVisitor = immediateVisitor;
 			SortedVisitor = sortedVisitor;
 		}
@@ -66,29 +68,44 @@ namespace Mono.Profiler.Log {
 				throw new InvalidOperationException ("This log processor cannot be reused.");
 
 			_used = true;
-			StreamHeader = new LogStreamHeader (Reader);
+			_reader = new LogReader (Stream, true);
+
+			StreamHeader = new LogStreamHeader (_reader);
 
 			var events = new List<LogEvent> (Environment.ProcessorCount * 1000);
 
-			while (!Reader.BaseStream.EndOfStream) {
+			while (!Stream.EndOfStream) {
 				token.ThrowIfCancellationRequested ();
 
-				_bufferHeader = new LogBufferHeader (StreamHeader, Reader);
+				_bufferHeader = new LogBufferHeader (StreamHeader, _reader);
 
-				// Use the manual position tracking in LogReader so we're
-				// compatible with non-seekable streams.
-				var goal = Reader.Position + _bufferHeader.Length;
+				// Read the entire buffer into a MemoryStream ahead of time to
+				// reduce the amount of I/O system calls we do. This should be
+				// fine since the profiler tries to keep buffers small and
+				// flushes them every second at minimum. This also has the
+				// advantage that we can use the Position and Length properties
+				// even if the stream we read the buffer from is actually
+				// non-seekable.
+				var stream = new MemoryStream (_reader.ReadBytes (_bufferHeader.Length), false);
 
-				while (Reader.Position < goal) {
-					token.ThrowIfCancellationRequested ();
+				using (var reader = new LogReader (stream, false)) {
+					var oldReader = _reader;
 
-					var ev = ReadEvent ();
+					_reader = reader;
 
-					ProcessEvent (ImmediateVisitor, ev);
-					events.Add (ev);
+					while (stream.Position < stream.Length) {
+						token.ThrowIfCancellationRequested ();
 
-					if (ev is SynchronizationPointEvent)
-						ProcessEvents (events, token);
+						var ev = ReadEvent ();
+
+						ProcessEvent (ImmediateVisitor, ev);
+						events.Add (ev);
+
+						if (ev is SynchronizationPointEvent)
+							ProcessEvents (events, token);
+					}
+
+					_reader = oldReader;
 				}
 			}
 
@@ -97,78 +114,91 @@ namespace Mono.Profiler.Log {
 
 		LogEvent ReadEvent ()
 		{
-			var type = Reader.ReadByte ();
+			var type = _reader.ReadByte ();
 			var basicType = (LogEventType) (type & 0xf);
 			var extType = (LogEventType) (type & 0xf0);
 
 			_time = ReadTime ();
+			LogEvent ev = null;
 
 			switch (basicType) {
 			case LogEventType.Allocation:
 				switch (extType) {
 				case LogEventType.AllocationBacktrace:
 				case LogEventType.AllocationNoBacktrace:
-					return new AllocationEvent {
+					ev = new AllocationEvent {
 						ClassPointer = ReadPointer (),
 						ObjectPointer = ReadObject (),
-						ObjectSize = (long) Reader.ReadULeb128 (),
+						ObjectSize = (long) _reader.ReadULeb128 (),
 						Backtrace = ReadBacktrace (extType == LogEventType.AllocationBacktrace),
 					};
+					break;
 				default:
 					throw new LogException ($"Invalid extended event type ({extType}).");
 				}
+				break;
 			case LogEventType.GC:
 				switch (extType) {
 				case LogEventType.GCEvent:
-					return new GCEvent {
-						Type = (LogGCEvent) Reader.ReadByte (),
-						Generation = Reader.ReadByte (),
+					ev = new GCEvent {
+						Type = (LogGCEvent) _reader.ReadByte (),
+						Generation = _reader.ReadByte (),
 					};
+					break;
 				case LogEventType.GCResize:
-					return new GCResizeEvent {
-						NewSize = (long) Reader.ReadULeb128 (),
+					ev = new GCResizeEvent {
+						NewSize = (long) _reader.ReadULeb128 (),
 					};
+					break;
 				case LogEventType.GCMove: {
-					var list = new long [(int) Reader.ReadULeb128 ()];
+					var list = new long [(int) _reader.ReadULeb128 ()];
 
 					for (var i = 0; i < list.Length; i++)
 						list [i] = ReadObject ();
 
-					return new GCMoveEvent {
+					ev = new GCMoveEvent {
 						OldObjectPointers = list.Where ((_, i) => i % 2 == 0).ToArray (),
 						NewObjectPointers = list.Where ((_, i) => i % 2 != 0).ToArray (),
 					};
+					break;
 				}
 				case LogEventType.GCHandleCreationNoBacktrace:
 				case LogEventType.GCHandleCreationBacktrace:
-					return new GCHandleCreationEvent {
-						Type = (LogGCHandleType) Reader.ReadULeb128 (),
-						Handle = (long) Reader.ReadULeb128 (),
+					ev = new GCHandleCreationEvent {
+						Type = (LogGCHandleType) _reader.ReadULeb128 (),
+						Handle = (long) _reader.ReadULeb128 (),
 						ObjectPointer = ReadObject (),
 						Backtrace = ReadBacktrace (extType == LogEventType.GCHandleCreationBacktrace),
 					};
+					break;
 				case LogEventType.GCHandleDeletionNoBacktrace:
 				case LogEventType.GCHandleDeletionBacktrace:
-					return new GCHandleDeletionEvent {
-						Type = (LogGCHandleType) Reader.ReadULeb128 (),
-						Handle = (long) Reader.ReadULeb128 (),
+					ev = new GCHandleDeletionEvent {
+						Type = (LogGCHandleType) _reader.ReadULeb128 (),
+						Handle = (long) _reader.ReadULeb128 (),
 						Backtrace = ReadBacktrace (extType == LogEventType.GCHandleDeletionBacktrace),
 					};
+					break;
 				case LogEventType.GCFinalizeBegin:
-					return new GCFinalizeBeginEvent ();
+					ev = new GCFinalizeBeginEvent ();
+					break;
 				case LogEventType.GCFinalizeEnd:
-					return new GCFinalizeEndEvent ();
+					ev = new GCFinalizeEndEvent ();
+					break;
 				case LogEventType.GCFinalizeObjectBegin:
-					return new GCFinalizeObjectBeginEvent {
+					ev = new GCFinalizeObjectBeginEvent {
 						ObjectPointer = ReadObject (),
 					};
+					break;
 				case LogEventType.GCFinalizeObjectEnd:
-					return new GCFinalizeObjectEndEvent {
+					ev = new GCFinalizeObjectEndEvent {
 						ObjectPointer = ReadObject (),
 					};
+					break;
 				default:
 					throw new LogException ($"Invalid extended event type ({extType}).");
 				}
+				break;
 			case LogEventType.Metadata: {
 				var load = false;
 				var unload = false;
@@ -186,176 +216,206 @@ namespace Mono.Profiler.Log {
 					throw new LogException ($"Invalid extended event type ({extType}).");
 				}
 
-				var metadataType = (LogMetadataType) Reader.ReadByte ();
+				var metadataType = (LogMetadataType) _reader.ReadByte ();
 
 				switch (metadataType) {
 				case LogMetadataType.Class:
 					if (load) {
-						return new ClassLoadEvent {
+						ev = new ClassLoadEvent {
 							ClassPointer = ReadPointer (),
 							ImagePointer = ReadPointer (),
-							Name = Reader.ReadCString (),
+							Name = _reader.ReadCString (),
 						};
 					} else
 						throw new LogException ("Invalid class metadata event.");
+					break;
 				case LogMetadataType.Image:
 					if (load) {
-						return new ImageLoadEvent {
+						ev = new ImageLoadEvent {
 							ImagePointer = ReadPointer (),
-							Name = Reader.ReadCString (),
+							Name = _reader.ReadCString (),
 						};
 					} else if (unload) {
-						return new ImageUnloadEvent {
+						ev = new ImageUnloadEvent {
 							ImagePointer = ReadPointer (),
-							Name = Reader.ReadCString (),
+							Name = _reader.ReadCString (),
 						};
 					} else
 						throw new LogException ("Invalid image metadata event.");
+					break;
 				case LogMetadataType.Assembly:
 					if (load) {
-						return new AssemblyLoadEvent {
+						ev = new AssemblyLoadEvent {
 							AssemblyPointer = ReadPointer (),
-							ImagePointer = ReadPointer (),
-							Name = Reader.ReadCString (),
+							ImagePointer = StreamHeader.FormatVersion >= 14 ? ReadPointer () : 0,
+							Name = _reader.ReadCString (),
 						};
 					} else if (unload) {
-						return new AssemblyUnloadEvent {
+						ev = new AssemblyUnloadEvent {
 							AssemblyPointer = ReadPointer (),
-							ImagePointer = ReadPointer (),
-							Name = Reader.ReadCString (),
+							ImagePointer = StreamHeader.FormatVersion >= 14 ? ReadPointer () : 0,
+							Name = _reader.ReadCString (),
 						};
 					} else
 						throw new LogException ("Invalid assembly metadata event.");
+					break;
 				case LogMetadataType.AppDomain:
 					if (load) {
-						return new AppDomainLoadEvent {
+						ev = new AppDomainLoadEvent {
 							AppDomainId = ReadPointer (),
 						};
 					} else if (unload) {
-						return new AppDomainUnloadEvent {
+						ev = new AppDomainUnloadEvent {
 							AppDomainId = ReadPointer (),
 						};
 					} else {
-						return new AppDomainNameEvent {
+						ev = new AppDomainNameEvent {
 							AppDomainId = ReadPointer (),
-							Name = Reader.ReadCString (),
+							Name = _reader.ReadCString (),
 						};
 					}
+					break;
 				case LogMetadataType.Thread:
 					if (load) {
-						return new ThreadStartEvent {
+						ev = new ThreadStartEvent {
 							ThreadId = ReadPointer (),
 						};
 					} else if (unload) {
-						return new ThreadEndEvent {
+						ev = new ThreadEndEvent {
 							ThreadId = ReadPointer (),
 						};
 					} else {
-						return new ThreadNameEvent {
+						ev = new ThreadNameEvent {
 							ThreadId = ReadPointer (),
-							Name = Reader.ReadCString (),
+							Name = _reader.ReadCString (),
 						};
 					}
+					break;
 				case LogMetadataType.Context:
 					if (load) {
-						return new ContextLoadEvent {
+						ev = new ContextLoadEvent {
 							ContextId = ReadPointer (),
 							AppDomainId = ReadPointer (),
 						};
 					} else if (unload) {
-						return new ContextUnloadEvent {
+						ev = new ContextUnloadEvent {
 							ContextId = ReadPointer (),
 							AppDomainId = ReadPointer (),
 						};
 					} else
 						throw new LogException ("Invalid context metadata event.");
+					break;
 				default:
 					throw new LogException ($"Invalid metadata type ({metadataType}).");
 				}
+				break;
 			}
 			case LogEventType.Method:
 				switch (extType) {
 				case LogEventType.MethodLeave:
-					return new LeaveEvent {
+					ev = new LeaveEvent {
 						MethodPointer = ReadMethod (),
 					};
+					break;
 				case LogEventType.MethodEnter:
-					return new EnterEvent {
+					ev = new EnterEvent {
 						MethodPointer = ReadMethod (),
 					};
+					break;
 				case LogEventType.MethodLeaveExceptional:
-					return new ExceptionalLeaveEvent {
+					ev = new ExceptionalLeaveEvent {
 						MethodPointer = ReadMethod (),
 					};
+					break;
 				case LogEventType.MethodJit:
-					return new JitEvent {
+					ev = new JitEvent {
 						MethodPointer = ReadMethod (),
 						CodePointer = ReadPointer (),
-						CodeSize = (long) Reader.ReadULeb128 (),
-						Name = Reader.ReadCString (),
+						CodeSize = (long) _reader.ReadULeb128 (),
+						Name = _reader.ReadCString (),
 					};
+					break;
 				default:
 					throw new LogException ($"Invalid extended event type ({extType}).");
 				}
+				break;
 			case LogEventType.Exception:
 				switch (extType) {
 				case LogEventType.ExceptionThrowNoBacktrace:
 				case LogEventType.ExceptionThrowBacktrace:
-					return new ThrowEvent {
+					ev = new ThrowEvent {
 						ObjectPointer = ReadObject (),
 						Backtrace = ReadBacktrace (extType == LogEventType.ExceptionThrowBacktrace),
 					};
+					break;
 				case LogEventType.ExceptionClause:
-					return new ExceptionClauseEvent {
-						Type = (LogExceptionClause) Reader.ReadByte (),
-						Index = (long) Reader.ReadULeb128 (),
+					ev = new ExceptionClauseEvent {
+						Type = (LogExceptionClause) _reader.ReadByte (),
+						Index = (long) _reader.ReadULeb128 (),
 						MethodPointer = ReadMethod (),
-						ObjectPointer = ReadObject (),
+						ObjectPointer = StreamHeader.FormatVersion >= 14 ? ReadObject () : 0,
 					};
+					break;
 				default:
 					throw new LogException ($"Invalid extended event type ({extType}).");
 				}
+				break;
 			case LogEventType.Monitor:
+				if (StreamHeader.FormatVersion < 14) {
+					if (extType.HasFlag (LogEventType.MonitorBacktrace)) {
+						extType = LogEventType.MonitorBacktrace;
+					} else {
+						extType = LogEventType.MonitorNoBacktrace;
+					}
+				}
 				switch (extType) {
 				case LogEventType.MonitorNoBacktrace:
 				case LogEventType.MonitorBacktrace:
-					return new MonitorEvent {
-						Event = (LogMonitorEvent) Reader.ReadByte (),
+					ev = new MonitorEvent {
+						Event = StreamHeader.FormatVersion >= 14 ?
+						                    (LogMonitorEvent) _reader.ReadByte () :
+						                    (LogMonitorEvent) ((((byte) type & 0xf0) >> 4) & 0x3),
 						ObjectPointer = ReadObject (),
 						Backtrace = ReadBacktrace (extType == LogEventType.MonitorBacktrace),
 					};
+					break;
 				default:
 					throw new LogException ($"Invalid extended event type ({extType}).");
 				}
+				break;
 			case LogEventType.Heap:
 				switch (extType) {
 				case LogEventType.HeapBegin:
-					return new HeapBeginEvent ();
+					ev = new HeapBeginEvent ();
+					break;
 				case LogEventType.HeapEnd:
-					return new HeapEndEvent ();
+					ev = new HeapEndEvent ();
+					break;
 				case LogEventType.HeapObject: {
-					var ev = new HeapObjectEvent {
+					HeapObjectEvent hoe = new HeapObjectEvent {
 						ObjectPointer = ReadObject (),
 						ClassPointer = ReadPointer (),
-						ObjectSize = (long) Reader.ReadULeb128 (),
+						ObjectSize = (long) _reader.ReadULeb128 (),
 					};
 
-					var list = new HeapObjectEvent.HeapObjectReference [(int) Reader.ReadULeb128 ()];
+					var list = new HeapObjectEvent.HeapObjectReference [(int) _reader.ReadULeb128 ()];
 
 					for (var i = 0; i < list.Length; i++) {
 						list [i] = new HeapObjectEvent.HeapObjectReference {
-							Offset = (long) Reader.ReadULeb128 (),
+							Offset = (long) _reader.ReadULeb128 (),
 							ObjectPointer = ReadObject (),
 						};
 					}
 
-					ev.References = list;
+					hoe.References = list;
+					ev = hoe;
 
-					return ev;
+					break;
 				}
+
 				case LogEventType.HeapRoots: {
-					var ev = new HeapRootsEvent ();
-					var list = new HeapRootsEvent.HeapRoot [(int) Reader.ReadULeb128 ()];
+					var hre = new HeapRootsEvent ();
+					var list = new HeapRootsEvent.HeapRoot [(int) _reader.ReadULeb128 ()];
 
 					for (var i = 0; i < list.Length; i++) {
 						list [i] = new HeapRootsEvent.HeapRoot {
@@ -364,104 +424,114 @@ namespace Mono.Profiler.Log {
 						};
 					}
 
-					ev.Roots = list;
+					hre.Roots = list;
+					ev = hre;
 
-					return ev;
+					break;
 				}
 				case LogEventType.HeapRootRegister: {
-					var ev = new HeapRootRegisterEvent () {
+					ev = new HeapRootRegisterEvent () {
 						Start = ReadPointer (),
-						Size = (long)Reader.ReadULeb128 (),
-						Kind = (LogHeapRootSource)Reader.ReadByte (),
+						Size = (long) _reader.ReadULeb128 (),
+						Kind = (LogHeapRootSource) _reader.ReadByte (),
 						Key = ReadPointer (),
-						Message = Reader.ReadCString ()
+						Message = _reader.ReadCString ()
 					};
 
-					return ev;
+					break;
 				}
 				case LogEventType.HeapRootUnregister: {
-					var ev = new HeapRootUnregisterEvent () {
+					ev = new HeapRootUnregisterEvent () {
 						Start = ReadPointer ()
 					};
 
-					return ev;
+					break;
 				}
 				default:
 					throw new LogException ($"Invalid extended event type ({extType}).");
 				}
+				break;
 			case LogEventType.Sample:
 				switch (extType) {
 				case LogEventType.SampleHit:
-					return new SampleHitEvent {
+					if (StreamHeader.FormatVersion < 14) {
+						// Read SampleType (always set to .Cycles) for versions < 14
+						_reader.ReadByte ();
+					}
+					ev = new SampleHitEvent {
 						ThreadId = ReadPointer (),
 						UnmanagedBacktrace = ReadBacktrace (true, false),
-						ManagedBacktrace = ReadBacktrace (true),
+						ManagedBacktrace = ReadBacktrace (true).Reverse ().ToArray (),
 					};
+					break;
 				case LogEventType.SampleUnmanagedSymbol:
-					return new UnmanagedSymbolEvent {
+					ev = new UnmanagedSymbolEvent {
 						CodePointer = ReadPointer (),
-						CodeSize = (long) Reader.ReadULeb128 (),
-						Name = Reader.ReadCString (),
+						CodeSize = (long) _reader.ReadULeb128 (),
+						Name = _reader.ReadCString (),
 					};
+					break;
 				case LogEventType.SampleUnmanagedBinary:
-					return new UnmanagedBinaryEvent {
-						SegmentPointer = ReadPointer (),
-						SegmentOffset = (long) Reader.ReadULeb128 (),
-						SegmentSize = (long) Reader.ReadULeb128 (),
-						FileName = Reader.ReadCString (),
+					ev = new UnmanagedBinaryEvent {
+						SegmentPointer = StreamHeader.FormatVersion >= 14 ? ReadPointer () : _reader.ReadSLeb128 (),
+						SegmentOffset = (long) _reader.ReadULeb128 (),
+						SegmentSize = (long) _reader.ReadULeb128 (),
+						FileName = _reader.ReadCString (),
 					};
+					break;
 				case LogEventType.SampleCounterDescriptions: {
-					var ev = new CounterDescriptionsEvent ();
-					var list = new CounterDescriptionsEvent.CounterDescription [(int) Reader.ReadULeb128 ()];
+					var cde = new CounterDescriptionsEvent ();
+					var list = new CounterDescriptionsEvent.CounterDescription [(int) _reader.ReadULeb128 ()];
 
 					for (var i = 0; i < list.Length; i++) {
-						var section = (LogCounterSection) Reader.ReadULeb128 ();
+						var section = (LogCounterSection) _reader.ReadULeb128 ();
 
 						list [i] = new CounterDescriptionsEvent.CounterDescription {
 							Section = section,
-							SectionName = section == LogCounterSection.User ? Reader.ReadCString () : string.Empty,
-							CounterName = Reader.ReadCString (),
-							Type = (LogCounterType) Reader.ReadByte (),
-							Unit = (LogCounterUnit) Reader.ReadByte (),
-							Variance = (LogCounterVariance) Reader.ReadByte (),
-							Index = (long) Reader.ReadULeb128 (),
+							SectionName = section == LogCounterSection.User ? _reader.ReadCString () : null,
+							CounterName = _reader.ReadCString (),
+							Type = (LogCounterType) _reader.ReadByte (),
+							Unit = (LogCounterUnit) _reader.ReadByte (),
+							Variance = (LogCounterVariance) _reader.ReadByte (),
+							Index = (long) _reader.ReadULeb128 (),
 						};
 					}
 
-					ev.Descriptions = list;
+					cde.Descriptions = list;
+					ev = cde;
 
-					return ev;
+					break;
 				}
 				case LogEventType.SampleCounters: {
-					var ev = new CounterSamplesEvent ();
+					var cse = new CounterSamplesEvent ();
 					var list = new List<CounterSamplesEvent.CounterSample> ();
 
 					while (true) {
-						var index = (long) Reader.ReadULeb128 ();
+						var index = (long) _reader.ReadULeb128 ();
 
 						if (index == 0)
 							break;
 
-						var counterType = (LogCounterType) Reader.ReadByte ();
+						var counterType = (LogCounterType) _reader.ReadByte ();
 
 						object value = null;
 
 						switch (counterType) {
 						case LogCounterType.String:
-							value = Reader.ReadByte () == 1 ? Reader.ReadCString () : null;
+							value = _reader.ReadByte () == 1 ? _reader.ReadCString () : null;
 							break;
 						case LogCounterType.Int32:
 						case LogCounterType.Word:
 						case LogCounterType.Int64:
 						case LogCounterType.Interval:
-							value = Reader.ReadSLeb128 ();
+							value = _reader.ReadSLeb128 ();
 							break;
 						case LogCounterType.UInt32:
 						case LogCounterType.UInt64:
-							value = Reader.ReadULeb128 ();
+							value = _reader.ReadULeb128 ();
 							break;
 						case LogCounterType.Double:
-							value = Reader.ReadDouble ();
+							value = _reader.ReadDouble ();
 							break;
 						default:
 							throw new LogException ($"Invalid counter type ({counterType}).");
@@ -474,103 +544,73 @@ namespace Mono.Profiler.Log {
 						});
 					}
 
-					ev.Samples = list;
+					cse.Samples = list;
+					ev = cse;
 
-					return ev;
+					break;
 				}
 				default:
 					throw new LogException ($"Invalid extended event type ({extType}).");
 				}
+				break;
 			case LogEventType.Runtime:
 				switch (extType) {
 				case LogEventType.RuntimeJitHelper: {
-					var helperType = (LogJitHelper) Reader.ReadByte ();
+					var helperType = (LogJitHelper) _reader.ReadByte ();
 
-					return new JitHelperEvent {
+					ev = new JitHelperEvent {
 						Type = helperType,
 						BufferPointer = ReadPointer (),
-						BufferSize = (long) Reader.ReadULeb128 (),
-						Name = helperType == LogJitHelper.SpecificTrampoline ? Reader.ReadCString () : string.Empty,
+						BufferSize = (long) _reader.ReadULeb128 (),
+						Name = helperType == LogJitHelper.SpecificTrampoline ? _reader.ReadCString () : null,
 					};
+					break;
 				}
 				default:
 					throw new LogException ($"Invalid extended event type ({extType}).");
 				}
-			case LogEventType.Coverage:
-				switch (extType) {
-				case LogEventType.CoverageAssembly:
-					return new AssemblyCoverageEvent {
-						AssemblyName = Reader.ReadCString (),
-						Guid = Guid.Parse (Reader.ReadCString ()),
-						FileName = Reader.ReadCString (),
-						NumberOfMethods = (long) Reader.ReadULeb128 (),
-						FullyCovered = (long) Reader.ReadULeb128 (),
-						PartiallyCovered = (long) Reader.ReadULeb128 (),
-					};
-				case LogEventType.CoverageMethod:
-					return new MethodCoverageEvent {
-						AssemblyName = Reader.ReadCString (),
-						ClassName = Reader.ReadCString (),
-						MethodName = Reader.ReadCString (),
-						MethodSignature = Reader.ReadCString (),
-						FileName = Reader.ReadCString (),
-						MetadataToken = Reader.ReadULeb128 (),
-						MethodId = (long) Reader.ReadULeb128 (),
-						NumberOfStatements = (long) Reader.ReadULeb128 (),
-					};
-				case LogEventType.CoverageStatement:
-					return new StatementCoverageEvent {
-						MethodId = (long) Reader.ReadULeb128 (),
-						RelativeILOffset = (long) Reader.ReadULeb128 (),
-						Counter = Reader.ReadULeb128 (),
-						Line = (long) Reader.ReadULeb128 (),
-						Column = (long) Reader.ReadULeb128 (),
-					};
-				case LogEventType.CoverageClass:
-					return new ClassCoverageEvent {
-						AssemblyName = Reader.ReadCString (),
-						ClassName = Reader.ReadCString (),
-						NumberOfMethods = (long) Reader.ReadULeb128 (),
-						FullyCovered = (long) Reader.ReadULeb128 (),
-						PartiallyCovered = (long) Reader.ReadULeb128 (),
-					};
-				default:
-					throw new LogException ($"Invalid extended event type ({extType}).");
-				}
+				break;
 			case LogEventType.Meta:
 				switch (extType) {
 				case LogEventType.MetaSynchronizationPoint:
-					return new SynchronizationPointEvent {
-						Type = (LogSynchronizationPoint) Reader.ReadByte (),
+					ev = new SynchronizationPointEvent {
+						Type = (LogSynchronizationPoint) _reader.ReadByte (),
 					};
+					break;
 				default:
 					throw new LogException ($"Invalid extended event type ({extType}).");
 				}
+				break;
 			default:
 				throw new LogException ($"Invalid basic event type ({basicType}).");
 			}
+
+			ev.Timestamp = _time;
+			ev.Buffer = _bufferHeader;
+
+			return ev;
 		}
 
 		long ReadPointer ()
 		{
-			var ptr = Reader.ReadSLeb128 () + _bufferHeader.PointerBase;
+			var ptr = _reader.ReadSLeb128 () + _bufferHeader.PointerBase;
 
 			return StreamHeader.PointerSize == sizeof (long) ? ptr : ptr & 0xffffffffL;
 		}
 
 		long ReadObject ()
 		{
-			return (Reader.ReadSLeb128 () + _bufferHeader.ObjectBase) << 3;
+			return (_reader.ReadSLeb128 () + _bufferHeader.ObjectBase) << 3;
 		}
 
 		long ReadMethod ()
 		{
-			return _bufferHeader.CurrentMethod += Reader.ReadSLeb128 ();
+			return _bufferHeader.CurrentMethod += _reader.ReadSLeb128 ();
 		}
 
 		ulong ReadTime ()
 		{
-			return _bufferHeader.CurrentTime += Reader.ReadULeb128 ();
+			return _bufferHeader.CurrentTime += _reader.ReadULeb128 ();
 		}
 
 		IReadOnlyList<long> ReadBacktrace (bool actuallyRead, bool managed = true)
@@ -578,7 +618,7 @@ namespace Mono.Profiler.Log {
 			if (!actuallyRead)
 				return Array.Empty<long> ();
 
-			var list = new long [(int) Reader.ReadULeb128 ()];
+			var list = new long [(int) _reader.ReadULeb128 ()];
 
 			for (var i = 0; i < list.Length; i++)
 				list [i] = managed ? ReadMethod () : ReadPointer ();

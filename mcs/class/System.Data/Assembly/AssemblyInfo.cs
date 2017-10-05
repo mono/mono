@@ -58,7 +58,6 @@ using System.Runtime.InteropServices;
 [assembly: AllowPartiallyTrustedCallers]
 
 [assembly: AssemblyDelaySign (true)]
-	[assembly: AssemblyKeyFile("../ecma.pub")]
 
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 [assembly: InternalsVisibleTo ("System.Data.DataSetExtensions, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull)]

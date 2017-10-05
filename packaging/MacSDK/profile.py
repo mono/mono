@@ -100,7 +100,7 @@ class MonoReleaseProfile(DarwinProfile):
         self.env.set('PANGO_SYSCONFDIR', '%{staged_prefix}/etc')
         self.env.set('PANGO_LIBDIR', '%{staged_prefix}/lib')
         # self.env.set ('MONO_PATH', '%{staged_prefix}/lib/mono/4.0')
-        self.debug_info = ['gtk+', 'cairo',
+        self.debug_info = ['gtk+', 'cairo', 'glib',
                            'pango', 'mono', 'llvm', 'libgdiplus']
         self.cache_host = None
 

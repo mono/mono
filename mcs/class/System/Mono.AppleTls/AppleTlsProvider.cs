@@ -65,6 +65,10 @@ namespace Mono.AppleTls
 			get { return true; }
 		}
 
+		internal override bool SupportsCleanShutdown {
+			get { return false; }
+		}
+
 		public override SslProtocols SupportedProtocols {
 			get { return SslProtocols.Tls12 | SslProtocols.Tls11 | SslProtocols.Tls; }
 		}

@@ -146,6 +146,9 @@ instruction pointer.
 This is equivalent to the value \[lq]100\[rq].
 A value of zero for \f[I]FREQ\f[] effectively disables sampling.
 .IP \[bu] 2
+\f[I]heapshot-on-shutdown\f[]: collect heap shot data when the runtime
+shuts down.
+.IP \[bu] 2
 \f[I]maxframes=NUM\f[]: when a stack trace needs to be performed,
 collect \f[I]NUM\f[] frames at the most.
 The default is 32.
@@ -180,16 +183,15 @@ with the current process id and \f[I]%t\f[] with the current date
 and time, then do according to \f[I]OUTSPEC\f[]:
 .RS 2
 .IP \[bu] 2
-if \f[I]OUTSPEC\f[] begins with a \f[I]|\f[] character, execute the
-rest as a program and feed the data to its standard input
+If \f[I]OUTSPEC\f[] begins with a \f[I]|\f[] character, execute the
+rest as a program and feed the data to its standard input.
 .IP \[bu] 2
-if \f[I]OUTSPEC\f[] begins with a \f[I]-\f[] character, use the
-rest of OUTSPEC as the filename, but force overwrite any existing
-file by that name
+If \f[I]OUTSPEC\f[] begins with a \f[I]#\f[] character, parse the
+rest as a file descriptor number, and feed the data to this file
+descriptor.
 .IP \[bu] 2
 otherwise write the data the the named file: note that is a file by
-that name already exists, a warning is issued and profiling is
-disabled.
+that name already exists, it is truncated.
 .RE
 .IP \[bu] 2
 \f[I]report\f[]: the profiling data is sent to mprof-report, which
@@ -211,13 +213,6 @@ The following commands are available:
 .IP \[bu] 2
 \f[I]nocounters\f[]: disables sampling of runtime and performance
 counters, which is normally done every 1 second.
-.IP \[bu] 2
-\f[I]coverage\f[]: collect code coverage data. This implies enabling
-the \f[I]calls\f[] option.
-.IP \[bu] 2
-\f[I]onlycoverage\f[]: can only be used with \f[I]coverage\f[]. This
-disables most other events so that the profiler mostly only collects
-coverage data.
 .RE
 .SS Analyzing the profile data
 .PP
@@ -340,8 +335,6 @@ version
 .IP \[bu] 2
 \f[I]counters\f[]: counters samples
 .IP \[bu] 2
-\f[I]coverage\f[]: code coverage data
-.IP \[bu] 2
 \f[I]stats\f[]: event statistics
 .PP
 It is possible to limit some of the data displayed to a timeframe
@@ -413,13 +406,6 @@ By default mprof-report will print the summary data to the console.
 To print it to a file, instead, use the option:
 .PP
 \f[B]--out=FILENAME\f[]
-.SS Processing code coverage data
-.PP
-If you ran the profiler with the \f[I]coverage\f[] option, you can
-process the collected coverage data into an XML file by running
-mprof-report like this:
-.PP
-\f[B]mprof-report --coverage-out=coverage.xml output.mlpd\f[]
 .SS Dealing with profiler slowness
 .PP
 If the profiler needs to collect lots of data, the execution of the

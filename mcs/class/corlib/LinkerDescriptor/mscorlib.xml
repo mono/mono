@@ -504,10 +504,8 @@
 		</type>
 
 		<!-- appdomain.c: ves_icall_System_AppDomain_GetAssemblies -->
-		<type fullname="System.Reflection.Assembly" preserve="fields">
-			<method name="MonoDebugger_GetMethodToken" feature="sre" />
-			<method name="GetNamespaces" feature="sre" />
-		</type>
+		<type fullname="System.Reflection.Assembly" preserve="fields"/>
+
 		<type fullname="System.Reflection.AssemblyName" preserve="fields" />
 		<type fullname="System.Reflection.ConstructorInfo" preserve="fields" />
 

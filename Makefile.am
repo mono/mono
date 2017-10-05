@@ -2,7 +2,7 @@ ACLOCAL_AMFLAGS = -I m4
 
 AM_CFLAGS = $(WERROR_CFLAGS)
 
-MONOTOUCH_SUBDIRS = $(libgc_dir) eglib/src mono
+MONOTOUCH_SUBDIRS = $(libgc_dir) mono
 
 # Some tools might not build when cross-compiling
 if CROSS_COMPILING
@@ -11,9 +11,9 @@ else
 tools_dir = tools
 endif
 
-SUBDIRS = po $(libgc_dir) eglib mono $(ikvm_native_dir) support data runtime scripts man samples $(tools_dir) msvc $(docs_dir) acceptance-tests llvm
+SUBDIRS = po $(libgc_dir) mono $(ikvm_native_dir) support data runtime scripts man samples $(tools_dir) msvc $(docs_dir) acceptance-tests llvm
 # Keep in sync with SUBDIRS
-DIST_SUBDIRS = m4 po $(libgc_dir) eglib mono ikvm-native support data runtime scripts man samples tools msvc docs acceptance-tests llvm
+DIST_SUBDIRS = m4 po $(libgc_dir) mono ikvm-native support data runtime scripts man samples tools msvc docs acceptance-tests llvm
 
 all: update_submodules
 
@@ -109,23 +109,6 @@ monotouch-do-clean:
 
 endif
 
-win32getdeps:
-	wget http://www.go-mono.com/archive/pkgconfig-0.11-20020310.zip
-	wget http://www.go-mono.com/archive/glib-2.0.4-20020703.zip 
-	wget http://www.go-mono.com/archive/glib-dev-2.0.4-20020703.zip 
-	wget http://www.go-mono.com/archive/libiconv-1.7.zip 
-	wget http://www.go-mono.com/archive/libiconv-dev-1.7.zip 
-	wget http://www.go-mono.com/archive/libintl-0.10.40-20020101.zip
-	unzip -n -d / pkgconfig-0.11-20020310.zip
-	unzip -n -d / glib-2.0.4-20020703.zip
-	unzip -n -d / glib-dev-2.0.4-20020703.zip
-	unzip -n -d / libiconv-1.7.zip
-	unzip -n -d / libiconv-dev-1.7.zip
-	unzip -n -d / libintl-0.10.40-20020101.zip
-
-win32setup:
-	makensis /DMILESTONE=$(VERSION) /DSOURCE_INSTALL_DIR=$(SOURCE_INSTALL_DIR) /DBUILDNUM=$(BUILDNUM) monowiz.win32.nsi
-
 update-csproj:
 	-rm msvc/scripts/order 
 	-rm msvc/scripts/order.xml
@@ -162,4 +145,7 @@ update-llvm-version:
 update-solution-files:
 	make update-csproj
 	make package-inputs
-	(cd msvc/scripts; make genproj.exe; mono genproj.exe)
+	(cd msvc/scripts; make genproj.exe; mono genproj.exe $(GENPROJ_ARGS))
+
+update-solution-files-with-tests:
+	make "GENPROJ_ARGS=2012 true true" update-solution-files

@@ -48,5 +48,3 @@ using System.Resources;
 */
 
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile("../msfinal.pub")]
-

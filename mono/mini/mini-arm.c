@@ -22,6 +22,7 @@
 #include <mono/utils/mono-hwcap.h>
 #include <mono/utils/mono-memory-model.h>
 #include <mono/utils/mono-threads-coop.h>
+#include <mono/utils/unlocked.h>
 
 #include "mini-arm.h"
 #include "cpu-arm.h"
@@ -335,7 +336,7 @@ mono_arm_patchable_bl (guint8 *code, int cond)
 	return code;
 }
 
-#if defined(__ARM_EABI__) && defined(__linux__) && !defined(PLATFORM_ANDROID) && !defined(MONO_CROSS_COMPILE)
+#if defined(__ARM_EABI__) && defined(__linux__) && !defined(HOST_ANDROID) && !defined(MONO_CROSS_COMPILE)
 #define HAVE_AEABI_READ_TP 1
 #endif
 
@@ -799,7 +800,6 @@ mono_arch_init (void)
 	mono_aot_register_jit_icall ("mono_arm_start_gsharedvt_call", mono_arm_start_gsharedvt_call);
 #endif
 	mono_aot_register_jit_icall ("mono_arm_unaligned_stack", mono_arm_unaligned_stack);
-	mono_aot_register_jit_icall ("mono_arm_handler_block_trampoline_helper", mono_arm_handler_block_trampoline_helper);
 #if defined(__ARM_EABI__)
 	eabi_supported = TRUE;
 #endif
@@ -2753,15 +2753,19 @@ mono_arch_dyn_call_free (MonoDynCallInfo *info)
 	g_free (ainfo);
 }
 
+int
+mono_arch_dyn_call_get_buf_size (MonoDynCallInfo *info)
+{
+	return sizeof (DynCallArgs);
+}
+
 void
-mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, guint8 *buf, int buf_len)
+mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, guint8 *buf)
 {
 	ArchDynCallInfo *dinfo = (ArchDynCallInfo*)info;
 	DynCallArgs *p = (DynCallArgs*)buf;
 	int arg_index, greg, i, j, pindex;
 	MonoMethodSignature *sig = dinfo->sig;
-
-	g_assert (buf_len >= sizeof (DynCallArgs));
 
 	p->res = 0;
 	p->ret = ret;
@@ -5891,7 +5895,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			arm_patch (buf [0], code);
 			break;
 		}
-
+		case OP_FILL_PROF_CALL_CTX:
+			for (int i = 0; i < ARMREG_MAX; i++)
+				if ((MONO_ARCH_CALLEE_SAVED_REGS & (1 << i)) || i == ARMREG_SP || i == ARMREG_FP)
+					ARM_STR_IMM (code, i, ins->sreg1, MONO_STRUCT_OFFSET (MonoContext, regs) + i * sizeof (mgreg_t));
+			break;
 		default:
 			g_warning ("unknown opcode %s in %s()\n", mono_inst_name (ins->opcode), __FUNCTION__);
 			g_assert_not_reached ();
@@ -6749,12 +6757,6 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 	return NULL;
 }
 
-gboolean
-mono_arch_print_tree (MonoInst *tree, int arity)
-{
-	return 0;
-}
-
 #ifndef DISABLE_JIT
 
 #endif
@@ -7049,7 +7051,7 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 
 	mono_arch_flush_icache ((guint8*)start, size);
 	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_IMT_TRAMPOLINE, NULL));
-	mono_stats.imt_trampolines_size += code - start;
+	UnlockedAdd (&mono_stats.imt_trampolines_size, code - start);
 
 	g_assert (DISTANCE (start, code) <= size);
 
@@ -7080,26 +7082,6 @@ GSList *
 mono_arch_get_trampolines (gboolean aot)
 {
 	return mono_arm_get_exception_trampolines (aot);
-}
-
-gpointer
-mono_arch_install_handler_block_guard (MonoJitInfo *ji, MonoJitExceptionInfo *clause, MonoContext *ctx, gpointer new_value)
-{
-	gpointer *lr_loc;
-	char *old_value;
-	char *bp;
-
-	/*Load the spvar*/
-	bp = MONO_CONTEXT_GET_BP (ctx);
-	lr_loc = (gpointer*)(bp + clause->exvar_offset);
-
-	old_value = *lr_loc;
-	if ((char*)old_value < (char*)ji->code_start || (char*)old_value > ((char*)ji->code_start + ji->code_size))
-		return old_value;
-
-	*lr_loc = new_value;
-
-	return old_value;
 }
 
 #if defined(MONO_ARCH_SOFT_DEBUG_SUPPORTED)

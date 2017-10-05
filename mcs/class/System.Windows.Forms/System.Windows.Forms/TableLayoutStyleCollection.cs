@@ -38,9 +38,6 @@ namespace System.Windows.Forms {
 		
 		internal TableLayoutStyleCollection (TableLayoutPanel table)
 		{
-			if (table == null)
-				throw new ArgumentNullException("table");
-			
 			this.table = table;
 		}
 		
@@ -54,7 +51,8 @@ namespace System.Windows.Forms {
 			foreach (TableLayoutStyle style in al)
 				style.Owner = null;
 			al.Clear ();
-			table.PerformLayout ();
+			if (table != null)
+				table.PerformLayout ();
 		}
 		
 		public int Count {
@@ -65,7 +63,8 @@ namespace System.Windows.Forms {
 		{
 			((TableLayoutStyle)al[index]).Owner = null;
 			al.RemoveAt (index);
-			table.PerformLayout ();
+			if (table != null)
+				table.PerformLayout ();
 		}
 		
 #region IList methods
@@ -103,14 +102,16 @@ namespace System.Windows.Forms {
 				throw new ArgumentException ("Style is already owned");
 			((TableLayoutStyle)style).Owner = table;
 			al.Insert (index, (TableLayoutStyle) style);
-			table.PerformLayout ();
+			if (table != null)
+				table.PerformLayout ();
 		}
 
 		void IList.Remove (object style)
 		{
 			((TableLayoutStyle)style).Owner = null;
 			al.Remove ((TableLayoutStyle) style);
-			table.PerformLayout ();
+			if (table != null)
+				table.PerformLayout ();
 		}
 
 		bool IList.IsFixedSize {
@@ -134,7 +135,8 @@ namespace System.Windows.Forms {
 					throw new ArgumentException ("Style is already owned");
 				((TableLayoutStyle)value).Owner = table;
 				al [index] = value;
-				table.PerformLayout ();
+				if (table != null)
+					table.PerformLayout ();
 			}
 		}
 #endregion

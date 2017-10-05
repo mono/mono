@@ -22,7 +22,7 @@
 
 #include <errno.h>
 
-#if defined(PLATFORM_ANDROID) && !defined(TARGET_ARM64) && !defined(TARGET_AMD64)
+#if defined(HOST_ANDROID) && !defined(TARGET_ARM64) && !defined(TARGET_AMD64)
 #define USE_TKILL_ON_ANDROID 1
 #endif
 
@@ -30,7 +30,7 @@
 extern int tkill (pid_t tid, int signal);
 #endif
 
-#if defined(_POSIX_VERSION)
+#if defined(_POSIX_VERSION) && !defined (TARGET_WASM)
 
 #include <pthread.h>
 
@@ -206,7 +206,7 @@ mono_native_thread_set_name (MonoNativeThreadId tid, const char *name)
 	} else {
 		char n [63];
 
-		memcpy (n, name, sizeof (n) - 1);
+		strncpy (n, name, sizeof (n) - 1);
 		n [sizeof (n) - 1] = '\0';
 		pthread_setname_np (n);
 	}
@@ -216,7 +216,7 @@ mono_native_thread_set_name (MonoNativeThreadId tid, const char *name)
 	} else {
 		char n [PTHREAD_MAX_NAMELEN_NP];
 
-		memcpy (n, name, sizeof (n) - 1);
+		strncpy (n, name, sizeof (n) - 1);
 		n [sizeof (n) - 1] = '\0';
 		pthread_setname_np (tid, "%s", (void*)n);
 	}
@@ -226,7 +226,7 @@ mono_native_thread_set_name (MonoNativeThreadId tid, const char *name)
 	} else {
 		char n [16];
 
-		memcpy (n, name, sizeof (n) - 1);
+		strncpy (n, name, sizeof (n) - 1);
 		n [sizeof (n) - 1] = '\0';
 		pthread_setname_np (tid, n);
 	}
@@ -295,7 +295,7 @@ mono_threads_suspend_abort_syscall (MonoThreadInfo *info)
 void
 mono_threads_suspend_register (MonoThreadInfo *info)
 {
-#if defined (PLATFORM_ANDROID)
+#if defined (HOST_ANDROID)
 	info->native_handle = gettid ();
 #endif
 }

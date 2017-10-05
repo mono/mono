@@ -3,6 +3,7 @@
 
 #include <glib.h>
 #include <mono/metadata/profiler.h>
+#include <mono/metadata/callspec.h>
 
 #define BUF_ID 0x4D504C01
 #define LOG_HEADER_ID 0x4D505A01
@@ -73,6 +74,7 @@
                class unload events no longer exist (they were never emitted)
                removed type field from TYPE_SAMPLE_HIT
                removed MONO_GC_EVENT_{MARK,RECLAIM}_{START,END}
+               reverted the root_type field back to uleb128
                GC Roots events now have a different, and saner, format.
                added gc root register/unregister events to be used to source gc root information
  */
@@ -549,6 +551,9 @@ typedef struct {
 
 	// Sample mode. Only used at startup.
 	MonoProfilerSampleMode sampling_mode;
+
+	// Callspec config - which methods are to be instrumented
+	MonoCallSpec callspec;
 } ProfilerConfig;
 
 void proflog_parse_args (ProfilerConfig *config, const char *desc);

@@ -374,7 +374,7 @@ namespace Xamarin.ApiDiff {
 						change.Append (paramSourceType);
 					}
 					change.Append (" ");
-					if (paramSourceName != paramTargetName) {
+					if (!State.IgnoreParameterNameChanges && paramSourceName != paramTargetName) {
 						change.AppendModified (paramSourceName, paramTargetName, true);
 					} else {
 						change.Append (paramSourceName);
@@ -404,12 +404,6 @@ namespace Xamarin.ApiDiff {
 			}
 
 			change.Append (")");
-
-			// Ignore any parameter name changes if requested.
-			if (State.IgnoreParameterNameChanges && !change.Breaking) {
-				change.AnyChange = false;
-				change.HasIgnoredChanges = true;
-			}
 		}
 
 		void RenderVTable (MethodAttributes source, MethodAttributes target, ApiChange change)

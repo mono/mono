@@ -360,7 +360,7 @@ long_conv_to_ovf_i4_2: dest:i src1:i src2:i len:36
 vcall2: len:40 clob:c
 vcall2_reg: src1:i len:40 clob:c
 vcall2_membase: src1:b len:40 clob:c
-dyn_call: src1:i src2:i len:192 clob:c
+dyn_call: src1:i src2:i len:216 clob:c
 
 # This is different from the original JIT opcodes
 float_beq: len:32
@@ -480,3 +480,5 @@ atomic_store_r8: dest:b src1:f len:24
 
 generic_class_init: src1:a len:44 clob:c
 gc_safe_point: src1:i len:12 clob:c
+
+fill_prof_call_ctx: src1:i len:128

@@ -112,19 +112,19 @@ match_option (const char* p, const char *opt, char **rval)
 }
 
 void
-mono_profiler_init (const char *desc);
+mono_profiler_init_aot (const char *desc);
 
 /**
- * mono_profiler_init:
+ * mono_profiler_init_aot:
  * the entry point
  */
 void
-mono_profiler_init (const char *desc)
+mono_profiler_init_aot (const char *desc)
 {
 	MonoProfiler *prof;
 	const char *p;
 	const char *opt;
-	char *outfile_name;
+	char *outfile_name = NULL;
 
 	p = desc;
 	if (strncmp (p, "aot", 3))
@@ -167,7 +167,7 @@ mono_profiler_init (const char *desc)
 
 	mono_os_mutex_init (&mutex);
 
-	MonoProfilerHandle handle = mono_profiler_install (prof);
+	MonoProfilerHandle handle = mono_profiler_create (prof);
 	mono_profiler_set_runtime_shutdown_end_callback (handle, prof_shutdown);
 	mono_profiler_set_jit_done_callback (handle, prof_jit_leave);
 }

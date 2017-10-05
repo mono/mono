@@ -49,9 +49,15 @@ namespace MonoTests.System.Globalization
 
 			c = CultureInfo.InvariantCulture;
 			Assert.AreEqual (2, c.NumberFormat.CurrencyDecimalDigits, "#3");
+		}
 
+		[Test]
+		public void AllCulturesCanParseNegativeNumber ()
+		{
+			foreach (var c in CultureInfo.GetCultures (CultureTypes.AllCultures))
+			{
+				int.Parse ("-1", c);
+			}
 		}
 	}
 }
-
-

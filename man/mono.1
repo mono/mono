@@ -908,52 +908,11 @@ your profiler.
 For a sample of how to write your own custom profiler look in the
 Mono source tree for in the samples/profiler.c.
 .SH CODE COVERAGE
-Mono ships with a code coverage module.  This module is activated by
-using the Mono --profile=cov option.  The format is:
-\fB--profile=cov[:assembly-name[/namespace]] test-suite.exe\fR
-.PP
-By default code coverage will default to all the assemblies loaded,
-you can limit this by specifying the assembly name, for example to
-perform code coverage in the routines of your program use, for example
-the following command line limits the code coverage to routines in the
-"demo" assembly:
-.nf
-
-	mono --profile=cov:demo demo.exe
-
-.fi
-.PP
-Notice that the 
-.I assembly-name
-does not include the extension.
-.PP
-You can further restrict the code coverage output by specifying a
-namespace:
-.nf
-
-	mono --profile=cov:demo/My.Utilities demo.exe
-
-.fi
-.PP
-Which will only perform code coverage in the given assembly and
-namespace.  
-.PP
-Typical output looks like this:
-.nf
-
-	Not covered: Class:.ctor ()
-	Not covered: Class:A ()
-	Not covered: Driver:.ctor ()
-	Not covered: Driver:method ()
-	Partial coverage: Driver:Main ()
-		offset 0x000a
-
-.fi
-.PP
-The offsets displayed are IL offsets.
-.PP
-A more powerful coverage tool is available in the module `monocov'.
-See the monocov(1) man page for details.
+Mono ships with a code coverage module in the \f[I]coverage\f[] profiler.
+To enable it, pass \fB--profile=coverage\fR to your mono invocation. It
+will by default output a coverage.xml in the current directory. Use
+\fBmono --profile=coverage:help sample.exe\fR for more information on the
+different options.
 .SH AOT PROFILING
 You can improve startup performance by using the AOT profiler.
 .PP
@@ -2049,7 +2008,7 @@ http://www.mono-project.com/community/help/mailing-lists/
 http://www.mono-project.com
 .SH SEE ALSO
 .PP
-certmgr(1), cert-sync(1), csharp(1), gacutil(1), mcs(1), mdb(1), monocov(1), monodis(1),
+certmgr(1), cert-sync(1), csharp(1), gacutil(1), mcs(1), mdb(1), monodis(1),
 mono-config(5), mprof-report(1), pdb2mdb(1), xsp(1), mod_mono(8).
 .PP
 For more information on AOT:

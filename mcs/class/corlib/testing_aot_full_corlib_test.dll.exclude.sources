@@ -30,15 +30,16 @@ System.Reflection.Emit/ParameterBuilderTest.cs
 System.Reflection.Emit/PropertyBuilderTest.cs
 System.Reflection.Emit/SignatureHelperTest.cs
 System.Reflection.Emit/TypeBuilderTest.cs
+System.Reflection.Emit/SaveTest.cs
 System.Runtime.Remoting/ContextTest.cs
 System.Runtime.Remoting/RemotingConfigurationTest.cs
-System.Runtime.Remoting/RemotingServicesTest.cs
 System.Runtime.Remoting/SoapServicesTest.cs
 System.Runtime.Remoting/SynchronizationAttributeTest.cs
 System.Runtime.Remoting.Channels/ChannelServicesTest.cs
 System.Runtime.Remoting.Contexts/SynchronizationAttributeTest.cs
 System.Runtime.Remoting.Messaging/CallContextTest.cs
 System.Runtime.Remoting.Metadata.W3cXsd2001/SoapHexBinaryTest.cs
+System.Runtime.Remoting.Proxies/RealProxyTest.cs
 System.Security.AccessControl/AuthorizationRuleTest.cs
 System.Security.AccessControl/CommonAceTest.cs
 System.Security.AccessControl/CommonAclTest.cs

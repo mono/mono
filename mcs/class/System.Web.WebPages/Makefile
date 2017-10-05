@@ -11,10 +11,10 @@ RESOURCE_DEFS = \
 
 LIB_REFS = Microsoft.CSharp Microsoft.Web.Infrastructure System System.ComponentModel.DataAnnotations System.Configuration System.Core System.Data.Linq System.Web System.Web.WebPages.Deployment System.Web.Razor System.Xml System.Xml.Linq
 
+KEYFILE=../winfx.pub
 LIB_MCS_FLAGS = \
-		/warn:1 \
-		/keyfile:../winfx.pub \
-		/delaysign \
+			/warn:1 \
+			/delaysign \
 	        /d:ASPNETWEBPAGES 
 
 EXTRA_DISTFILES = $(RESX_DIST)

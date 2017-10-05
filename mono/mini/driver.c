@@ -52,6 +52,7 @@
 #include "mono/utils/mono-hwcap.h"
 #include "mono/utils/mono-logger-internals.h"
 #include "mono/metadata/w32handle.h"
+#include "mono/metadata/callspec.h"
 
 #include "mini.h"
 #include "jit.h"
@@ -512,6 +513,11 @@ mini_regression (MonoImage *image, int verbose, int *total_run)
 		}
 	} else {
 		for (opt = 0; opt < G_N_ELEMENTS (opt_sets); ++opt) {
+			/* builtin-types.cs needs OPT_INTRINS enabled */
+			if (!strcmp ("builtin-types", image->assembly_name))
+				if (!(opt_sets [opt] & MONO_OPT_INTRINS))
+					continue;
+
 			mini_regression_step (image, verbose, total_run, &total,
 					opt_sets [opt] & ~exclude,
 					timer, domain);
@@ -1415,8 +1421,8 @@ mono_jit_parse_options (int argc, char * argv[])
 			opt->break_on_exc = TRUE;
 		} else if (strcmp (argv [i], "--stats") == 0) {
 			mono_counters_enable (-1);
-			mono_stats.enabled = TRUE;
-			mono_jit_stats.enabled = TRUE;
+			InterlockedWriteBool (&mono_stats.enabled, TRUE);
+			InterlockedWriteBool (&mono_jit_stats.enabled, TRUE);
 		} else if (strcmp (argv [i], "--break") == 0) {
 			if (i+1 >= argc){
 				fprintf (stderr, "Missing method name in --break command line option\n");
@@ -1449,7 +1455,7 @@ mono_jit_parse_options (int argc, char * argv[])
 		 * Need to call this before mini_init () so we can trace methods 
 		 * compiled there too.
 		 */
-		mono_jit_trace_calls = mono_trace_parse_options (trace_options);
+		mono_jit_trace_calls = mono_trace_set_options (trace_options);
 		if (mono_jit_trace_calls == NULL)
 			exit (1);
 	}
@@ -1584,9 +1590,7 @@ mono_main (int argc, char* argv[])
 	guint32 opt, action = DO_EXEC, recompilation_times = 1;
 	MonoGraphOptions mono_graph_options = (MonoGraphOptions)0;
 	int mini_verbose = 0;
-	gboolean enable_profile = FALSE;
 	char *trace_options = NULL;
-	char *profile_options = NULL;
 	char *aot_options = NULL;
 	char *forced_version = NULL;
 	GPtrArray *agents = NULL;
@@ -1764,8 +1768,8 @@ mono_main (int argc, char* argv[])
 			mono_print_vtable = TRUE;
 		} else if (strcmp (argv [i], "--stats") == 0) {
 			mono_counters_enable (-1);
-			mono_stats.enabled = TRUE;
-			mono_jit_stats.enabled = TRUE;
+			InterlockedWriteBool (&mono_stats.enabled, TRUE);
+			InterlockedWriteBool (&mono_jit_stats.enabled, TRUE);
 #ifndef DISABLE_AOT
 		} else if (strcmp (argv [i], "--aot") == 0) {
 			error_if_aot_unsupported ();
@@ -1797,11 +1801,9 @@ mono_main (int argc, char* argv[])
 		} else if (strcmp (argv [i], "--jitmap") == 0) {
 			mono_enable_jit_map ();
 		} else if (strcmp (argv [i], "--profile") == 0) {
-			enable_profile = TRUE;
-			profile_options = NULL;
+			mini_add_profiler_argument (NULL);
 		} else if (strncmp (argv [i], "--profile=", 10) == 0) {
-			enable_profile = TRUE;
-			profile_options = argv [i] + 10;
+			mini_add_profiler_argument (argv [i] + 10);
 		} else if (strncmp (argv [i], "--agent=", 8) == 0) {
 			if (agents == NULL)
 				agents = g_ptr_array_new ();
@@ -2011,10 +2013,6 @@ mono_main (int argc, char* argv[])
 	/* Set rootdir before loading config */
 	mono_set_rootdir ();
 
-	if (enable_profile) {
-		mini_profiler_enable_with_options (profile_options);
-	}
-
 	mono_attach_parse_options (attach_options);
 
 	if (trace_options != NULL){
@@ -2022,7 +2020,7 @@ mono_main (int argc, char* argv[])
 		 * Need to call this before mini_init () so we can trace methods 
 		 * compiled there too.
 		 */
-		mono_jit_trace_calls = mono_trace_parse_options (trace_options);
+		mono_jit_trace_calls = mono_trace_set_options (trace_options);
 		if (mono_jit_trace_calls == NULL)
 			exit (1);
 	}
@@ -2143,8 +2141,7 @@ mono_main (int argc, char* argv[])
 		return 2;
 	}
 
-	if (trace_options != NULL)
-		mono_trace_set_assembly (assembly);
+	mono_callspec_set_assembly (assembly);
 
 	if (mono_compile_aot || action == DO_EXEC) {
 		const char *error;
@@ -2379,6 +2376,17 @@ mono_jit_set_aot_mode (MonoAotMode mode)
 		mono_aot_only = TRUE;
 		mono_use_interpreter = TRUE;
 	}
+	if (mono_aot_mode == MONO_AOT_MODE_INTERP_LLVMONLY) {
+		mono_aot_only = TRUE;
+		mono_use_interpreter = TRUE;
+		mono_llvm_only = TRUE;
+	}
+}
+
+mono_bool
+mono_jit_aot_compiling (void)
+{
+	return mono_compile_aot;
 }
 
 /**
@@ -2392,7 +2400,7 @@ mono_jit_set_aot_mode (MonoAotMode mode)
 gboolean
 mono_jit_set_trace_options (const char* options)
 {
-	MonoTraceSpec *trace_opt = mono_trace_parse_options (options);
+	MonoCallSpec *trace_opt = mono_trace_set_options (options);
 	if (trace_opt == NULL)
 		return FALSE;
 	mono_jit_trace_calls = trace_opt;

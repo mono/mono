@@ -89,16 +89,15 @@ typedef struct {
 #define PARAM_REGS 8
 #define FP_PARAM_REGS 8
 
-#define DYN_CALL_STACK_ARGS 6
-
 typedef struct {
-	/* The +1 is for r8 */
-	mgreg_t regs [PARAM_REGS + 1 + DYN_CALL_STACK_ARGS];
 	mgreg_t res, res2;
 	guint8 *ret;
 	double fpregs [FP_PARAM_REGS];
-	int n_fpargs, n_fpret;
+	int n_fpargs, n_fpret, n_stackargs;
 	guint8 buffer [256];
+	/* This should come last as the structure is dynamically extended */
+	/* The +1 is for r8 */
+	mgreg_t regs [PARAM_REGS + 1];
 } DynCallArgs;
 
 typedef struct {
@@ -141,7 +140,7 @@ typedef struct {
 #define MONO_ARCH_HAVE_EXCEPTIONS_INIT 1
 #define MONO_ARCH_HAVE_GET_TRAMPOLINES 1
 #define MONO_ARCH_DYN_CALL_SUPPORTED 1
-#define MONO_ARCH_DYN_CALL_PARAM_AREA (DYN_CALL_STACK_ARGS * 8)
+#define MONO_ARCH_DYN_CALL_PARAM_AREA 0
 #define MONO_ARCH_SOFT_DEBUG_SUPPORTED 1
 #define MONO_ARCH_GSHAREDVT_SUPPORTED 1
 #define MONO_ARCH_HAVE_SETUP_RESUME_FROM_SIGNAL_HANDLER_CTX 1
@@ -154,11 +153,7 @@ typedef struct {
 #define MONO_ARCH_HAVE_OP_GENERIC_CLASS_INIT 1
 #define MONO_ARCH_HAVE_OPCODE_NEEDS_EMULATION 1
 #define MONO_ARCH_HAVE_DECOMPOSE_LONG_OPTS 1
-#define MONO_ARCH_HAVE_HANDLER_BLOCK_GUARD 1
 #define MONO_ARCH_HAVE_INIT_LMF_EXT 1
-#ifndef TARGET_IOS
-#define MONO_ARCH_HAVE_HANDLER_BLOCK_GUARD_AOT 1
-#endif
 
 #ifdef TARGET_IOS
 
@@ -259,8 +254,6 @@ void mono_arm_gsharedvt_init (void);
 GSList* mono_arm_get_exception_trampolines (gboolean aot);
 
 void mono_arm_resume_unwind (gpointer arg, mgreg_t pc, mgreg_t *int_regs, gdouble *fp_regs, gboolean corlib, gboolean rethrow);
-
-gpointer mono_arm_handler_block_trampoline_helper (gpointer *ptr);
 
 CallInfo* mono_arch_get_call_info (MonoMemPool *mp, MonoMethodSignature *sig);
 

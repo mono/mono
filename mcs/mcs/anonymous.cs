@@ -839,6 +839,11 @@ namespace Mono.CSharp {
 		{
 			GetFieldExpression (ec).EmitAssign (ec, source, leave_copy, false);
 		}
+
+		public void EmitAssignFromStack (EmitContext ec)
+		{
+			GetFieldExpression (ec).EmitAssignFromStack (ec);
+		}
 	}
 
 	public class HoistedParameter : HoistedVariable

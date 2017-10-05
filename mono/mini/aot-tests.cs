@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -25,6 +26,7 @@ class Tests
 
 	public delegate void ArrayDelegate (int[,] arr);
 
+	[Category ("!WASM")] //Requires a working threadpool
 	static int test_0_array_delegate_full_aot () {
 		ArrayDelegate d = delegate (int[,] arr) {
 		};
@@ -259,6 +261,7 @@ class Tests
 
 	[Category ("DYNCALL")]
 	[Category ("!FULLAOT-AMD64")]
+	[Category ("!INTERPRETER")] //known bug in the interpreter
 	public static int test_0_dyncall_nullable () {
 		int? v;
 
@@ -409,6 +412,7 @@ class Tests
 
 	[Category ("DYNCALL")]
 	[Category ("!FULLAOT-AMD64")]
+	[Category ("!INTERPRETER")] //known bug in the interpreter
 	public static int test_0_large_nullable_invoke () {
 		var s = new LargeStruct () { a = 1, b = 2, c = 3, d = 4 };
 
@@ -483,6 +487,18 @@ class Tests
 		IEnumerable<string[]> iface = arr;
 		var m = typeof(IEnumerable<string[]>).GetMethod ("GetEnumerator");
 		m.Invoke (arr, null);
+		return 0;
+	}
+
+	public static int test_0_fault_clauses () {
+		object [] data = { 1, 2, 3 };
+		int [] expected = { 1, 2, 3 };
+
+		try {
+			Action d = delegate () { data.Cast<IEnumerable> ().GetEnumerator ().MoveNext (); };
+			d ();
+		} catch (Exception ex) {
+		}
 		return 0;
 	}
 }
