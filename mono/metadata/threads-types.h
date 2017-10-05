@@ -122,7 +122,7 @@ gint32 ves_icall_System_Threading_WaitHandle_Wait_internal(gpointer *handles, gi
 gint32 ves_icall_System_Threading_WaitHandle_SignalAndWait_Internal (gpointer toSignal, gpointer toWait, gint32 ms, MonoError *error);
 
 MonoArray* ves_icall_System_Threading_Thread_ByteArrayToRootDomain (MonoArray *arr);
-MonoArray* ves_icall_System_Threading_Thread_ByteArrayToCurrentDomain (MonoArray *arr);
+MonoArrayHandle ves_icall_System_Threading_Thread_ByteArrayToCurrentDomain (MonoArrayHandle arr, MonoError *error);
 
 gint32 ves_icall_System_Threading_Interlocked_Increment_Int(gint32 *location);
 gint64 ves_icall_System_Threading_Interlocked_Increment_Long(gint64 *location);

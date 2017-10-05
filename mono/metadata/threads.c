@@ -1720,6 +1720,32 @@ byte_array_to_domain (MonoArray *arr, MonoDomain *domain, MonoError *error)
 	return copy;
 }
 
+/* If the array is already in the requested domain, we just return it,
+   otherwise we return a copy in that domain. */
+static MonoArrayHandle
+byte_array_to_domain_handle (MonoArrayHandle arr, MonoDomain *domain, MonoError *error)
+{
+	MonoArrayHandle copy = MONO_HANDLE_NEW (MonoArray, NULL);
+
+	error_init (error);
+	if (!arr)
+		return NULL;
+
+	if (mono_object_domain (arr) == domain)
+		return arr;
+
+	MONO_HANDLE_ASSIGN (copy, mono_array_new_handle (domain, mono_defaults.byte_class, mono_array_handle_length (arr), error));
+	guint32 copy_handle = 0;
+	guint8 *const copy_bytes = MONO_ARRAY_HANDLE_PIN (copy, guint8, 0, &copy_handle);
+	guint32 arr_handle = 0;
+	/* FIXME: This could be pinned externally with 'fixed' if the size were passed as another parameter. */
+	const guint8 *const arr_bytes = MONO_ARRAY_HANDLE_PIN (arr, guint8, 0, &arr_handle);
+	memmove (copy_bytes, arr_bytes, mono_array_handle_length (arr));
+	mono_gchandle_free (arr_handle);
+	mono_gchandle_free (copy_handle);
+	return copy;
+}
+
 MonoArray*
 ves_icall_System_Threading_Thread_ByteArrayToRootDomain (MonoArray *arr)
 {
@@ -1729,13 +1755,10 @@ ves_icall_System_Threading_Thread_ByteArrayToRootDomain (MonoArray *arr)
 	return result;
 }
 
-MonoArray*
-ves_icall_System_Threading_Thread_ByteArrayToCurrentDomain (MonoArray *arr)
+MonoArrayHandle
+ves_icall_System_Threading_Thread_ByteArrayToCurrentDomain (MonoArrayHandle arr, MonoError *error)
 {
-	MonoError error;
-	MonoArray *result = byte_array_to_domain (arr, mono_domain_get (), &error);
-	mono_error_set_pending_exception (&error);
-	return result;
+	return byte_array_to_domain_handle (arr, mono_domain_get (), error);
 }
 
 /**
