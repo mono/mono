@@ -330,16 +330,20 @@ namespace System.Net {
 							if (current != null) {
 								cookies.Add (current);
 							}
-							current = new Cookie ();
-							int idx = str.IndexOf ('=');
-							if (idx > 0) {
-								current.Name = str.Substring (0, idx).Trim ();
-								current.Value =  str.Substring (idx + 1).Trim ();
-							} else {
-								current.Name = str.Trim ();
-								current.Value = String.Empty;
+							try {
+								current = new Cookie ();
+								int idx = str.IndexOf ('=');
+								if (idx > 0) {
+									current.Name = str.Substring (0, idx).Trim ();
+									current.Value =  str.Substring (idx + 1).Trim ();
+								} else {
+									current.Name = str.Trim ();
+									current.Value = String.Empty;
+								}
+								current.Version = version;
+							} catch (CookieException) {
+								current = null;
 							}
-							current.Version = version;
 						}
 					}
 					if (current != null) {

@@ -303,7 +303,12 @@ namespace Mono.CSharp {
 				return;
 
 			string from_type = type.GetSignatureForError ();
+			if (type.Kind == MemberKind.ByRef)
+				from_type = "ref " + from_type;
 			string to_type = target.GetSignatureForError ();
+			if (target.Kind == MemberKind.ByRef)
+				to_type = "ref " + to_type;
+
 			if (from_type == to_type) {
 				from_type = type.GetSignatureForErrorIncludingAssemblyName ();
 				to_type = target.GetSignatureForErrorIncludingAssemblyName ();
@@ -559,18 +564,18 @@ namespace Mono.CSharp {
 		public Expression ResolveLValue (ResolveContext ec, Expression right_side)
 		{
 			int errors = ec.Report.Errors;
-			bool out_access = right_side == EmptyExpression.OutAccess;
+			//bool out_access = right_side == EmptyExpression.OutAccess;
 
 			Expression e = DoResolveLValue (ec, right_side);
 
-			if (e != null && out_access && !(e is IMemoryLocation)) {
+			//if (e != null && out_access && !(e is IMemoryLocation)) {
 				// FIXME: There's no problem with correctness, the 'Expr = null' handles that.
 				//        Enabling this 'throw' will "only" result in deleting useless code elsewhere,
 
 				//throw new InternalErrorException ("ResolveLValue didn't return an IMemoryLocation: " +
 				//				  e.GetType () + " " + e.GetSignatureForError ());
-				e = null;
-			}
+			//	e = null;
+			//}
 
 			if (e == null) {
 				if (errors == ec.Report.Errors) {
@@ -5417,6 +5422,11 @@ namespace Mono.CSharp {
 					if (arg_type == InternalType.VarOutType)
 						return 0;
 
+					var ref_arg_type = arg_type as ReferenceContainer;
+					if (ref_arg_type != null) {
+						arg_type = ref_arg_type.Element;
+					}
+
 					//
 					// Do full equality check after quick path
 					//
@@ -5982,13 +5992,13 @@ namespace Mono.CSharp {
 			int arg_count = args == null ? 0 : args.Count;
 
 			for (; a_idx < arg_count; a_idx++, ++a_pos) {
-				a = args[a_idx];
+				a = args [a_idx];
 				if (a == null)
 					continue;
 
 				if (p_mod != Parameter.Modifier.PARAMS) {
 					p_mod = cpd.FixedParameters [a_idx].ModFlags;
-					pt = ptypes[a_idx];
+					pt = ptypes [a_idx];
 					has_unsafe_arg |= pt.IsPointer;
 
 					if (p_mod == Parameter.Modifier.PARAMS) {
@@ -6016,6 +6026,14 @@ namespace Mono.CSharp {
 						//
 						((DeclarationExpression)a.Expr).Variable.Type = pt;
 						continue;
+					}
+
+					var ref_arg_type = arg_type as ReferenceContainer;
+					if (ref_arg_type != null) {
+						if (ref_arg_type.Element != pt)
+							break;
+
+						return true;
 					}
 
 					if (!TypeSpecComparer.IsEqual (arg_type, pt))
@@ -6525,12 +6543,12 @@ namespace Mono.CSharp {
 						GetSignatureForError ());
 				}
 
-				return null;
+				return ErrorExpression.Instance;
 			}
 
 			if (right_side == EmptyExpression.LValueMemberAccess) {
 				// Already reported as CS1648/CS1650
-				return null;
+				return ErrorExpression.Instance;
 			}
 
 			if (right_side == EmptyExpression.LValueMemberOutAccess) {
@@ -6541,7 +6559,7 @@ namespace Mono.CSharp {
 					rc.Report.Error (1649, loc, "Members of readonly field `{0}' cannot be passed ref or out (except in a constructor)",
 						GetSignatureForError ());
 				}
-				return null;
+				return ErrorExpression.Instance;
 			}
 
 			if (IsStatic) {
@@ -6552,7 +6570,7 @@ namespace Mono.CSharp {
 					GetSignatureForError ());
 			}
 
-			return null;
+			return ErrorExpression.Instance;
 		}
 
 		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
@@ -7341,6 +7359,15 @@ namespace Mono.CSharp {
 				Error_NullPropagatingLValue (rc);
 
 			if (right_side == EmptyExpression.OutAccess) {
+				if (best_candidate?.MemberType.Kind == MemberKind.ByRef) {
+					if (Arguments?.ContainsEmitWithAwait () == true) {
+						rc.Report.Error (8178, loc, "`await' cannot be used in an expression containing a call to `{0}' because it returns by reference",
+							GetSignatureForError ());
+					}
+
+					return this;
+				}
+
 				// TODO: best_candidate can be null at this point
 				INamedBlockVariable variable = null;
 				if (best_candidate != null && rc.CurrentBlock.ParametersBlock.TopBlock.GetLocalName (best_candidate.Name, rc.CurrentBlock, ref variable) && variable is Linq.RangeVariable) {
@@ -7366,6 +7393,11 @@ namespace Mono.CSharp {
 			if (!best_candidate.HasSet) {
 				if (ResolveAutopropertyAssignment (rc, right_side))
 					return this;
+
+				if (best_candidate.MemberType.Kind == MemberKind.ByRef) {
+					getter = CandidateToBaseOverride (rc, best_candidate.Get);
+					return ByRefDereference.Create(this).Resolve(rc);
+				}
 
 				rc.Report.Error (200, loc, "Property or indexer `{0}' cannot be assigned to (it is read-only)",
 					GetSignatureForError ());

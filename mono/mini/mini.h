@@ -48,13 +48,16 @@
 #include "mono/metadata/marshal.h"
 #include "mono/metadata/security-manager.h"
 #include "mono/metadata/exception.h"
+#include "mono/metadata/callspec.h"
 
 /*
  * The mini code should not have any compile time dependencies on the GC being used, so the same object file from mini/
  * can be linked into both mono and mono-sgen.
  */
+#if !defined(MONO_DLL_EXPORT) || !defined(_MSC_VER)
 #if defined(HAVE_BOEHM_GC) || defined(HAVE_SGEN_GC)
 #error "The code in mini/ should not depend on these defines."
+#endif
 #endif
 
 #ifndef __GNUC__
@@ -537,9 +540,8 @@ typedef struct MonoMethodVar MonoMethodVar;
 typedef struct MonoBasicBlock MonoBasicBlock;
 typedef struct MonoLMF MonoLMF;
 typedef struct MonoSpillInfo MonoSpillInfo;
-typedef struct MonoTraceSpec MonoTraceSpec;
 
-extern MonoTraceSpec *mono_jit_trace_calls;
+extern MonoCallSpec *mono_jit_trace_calls;
 extern gboolean mono_break_on_exc;
 extern int mono_exc_esp_offset;
 extern gboolean mono_compile_aot;
@@ -552,7 +554,7 @@ extern MonoMethodDesc *mono_break_at_bb_method;
 extern int mono_break_at_bb_bb_num;
 extern gboolean mono_verify_all;
 extern gboolean mono_do_x86_stack_align;
-extern const char *mono_build_date;
+extern MONO_API const char *mono_build_date;
 extern gboolean mono_do_signal_chaining;
 extern gboolean mono_do_crash_chaining;
 extern MONO_API gboolean mono_use_llvm;
@@ -1217,6 +1219,10 @@ typedef struct {
 	int active_jit_methods;
 
 	gpointer interp_context;
+
+#if defined(TARGET_WIN32)
+	MonoContext stack_restore_ctx;
+#endif
 } MonoJitTlsData;
 
 /*
@@ -1963,49 +1969,49 @@ typedef struct {
 	gint32 loads_eliminated;
 	gint32 stores_eliminated;
 	gint32 optimized_divisions;
-	int methods_with_llvm;
-	int methods_without_llvm;
+	gint32 methods_with_llvm;
+	gint32 methods_without_llvm;
 	char *max_ratio_method;
 	char *biggest_method;
-	double jit_method_to_ir;
-	double jit_liveness_handle_exception_clauses;
-	double jit_handle_out_of_line_bblock;
-	double jit_decompose_long_opts;
-	double jit_decompose_typechecks;
-	double jit_local_cprop;
-	double jit_local_emulate_ops;
-	double jit_optimize_branches;
-	double jit_handle_global_vregs;
-	double jit_local_deadce;
-	double jit_local_alias_analysis;
-	double jit_if_conversion;
-	double jit_bb_ordering;
-	double jit_compile_dominator_info;
-	double jit_compute_natural_loops;
-	double jit_insert_safepoints;
-	double jit_ssa_compute;
-	double jit_ssa_cprop;
-	double jit_ssa_deadce;
-	double jit_perform_abc_removal;
-	double jit_ssa_remove;
-	double jit_local_cprop2;
-	double jit_handle_global_vregs2;
-	double jit_local_deadce2;
-	double jit_optimize_branches2;
-	double jit_decompose_vtype_opts;
-	double jit_decompose_array_access_opts;
-	double jit_liveness_handle_exception_clauses2;
-	double jit_analyze_liveness;
-	double jit_linear_scan;
-	double jit_arch_allocate_vars;
-	double jit_spill_global_vars;
-	double jit_local_cprop3;
-	double jit_local_deadce3;
-	double jit_codegen;
-	double jit_create_jit_info;
-	double jit_gc_create_gc_map;
-	double jit_save_seq_point_info;
-	double jit_time;
+	gdouble jit_method_to_ir;
+	gdouble jit_liveness_handle_exception_clauses;
+	gdouble jit_handle_out_of_line_bblock;
+	gdouble jit_decompose_long_opts;
+	gdouble jit_decompose_typechecks;
+	gdouble jit_local_cprop;
+	gdouble jit_local_emulate_ops;
+	gdouble jit_optimize_branches;
+	gdouble jit_handle_global_vregs;
+	gdouble jit_local_deadce;
+	gdouble jit_local_alias_analysis;
+	gdouble jit_if_conversion;
+	gdouble jit_bb_ordering;
+	gdouble jit_compile_dominator_info;
+	gdouble jit_compute_natural_loops;
+	gdouble jit_insert_safepoints;
+	gdouble jit_ssa_compute;
+	gdouble jit_ssa_cprop;
+	gdouble jit_ssa_deadce;
+	gdouble jit_perform_abc_removal;
+	gdouble jit_ssa_remove;
+	gdouble jit_local_cprop2;
+	gdouble jit_handle_global_vregs2;
+	gdouble jit_local_deadce2;
+	gdouble jit_optimize_branches2;
+	gdouble jit_decompose_vtype_opts;
+	gdouble jit_decompose_array_access_opts;
+	gdouble jit_liveness_handle_exception_clauses2;
+	gdouble jit_analyze_liveness;
+	gdouble jit_linear_scan;
+	gdouble jit_arch_allocate_vars;
+	gdouble jit_spill_global_vars;
+	gdouble jit_local_cprop3;
+	gdouble jit_local_deadce3;
+	gdouble jit_codegen;
+	gdouble jit_create_jit_info;
+	gdouble jit_gc_create_gc_map;
+	gdouble jit_save_seq_point_info;
+	gdouble jit_time;
 	gboolean enabled;
 } MonoJitStats;
 
@@ -2779,7 +2785,8 @@ void      mono_arch_emit_outarg_vt              (MonoCompile *cfg, MonoInst *ins
 void      mono_arch_emit_setret                 (MonoCompile *cfg, MonoMethod *method, MonoInst *val);
 MonoDynCallInfo *mono_arch_dyn_call_prepare     (MonoMethodSignature *sig);
 void      mono_arch_dyn_call_free               (MonoDynCallInfo *info);
-void      mono_arch_start_dyn_call              (MonoDynCallInfo *info, gpointer **args, guint8 *ret, guint8 *buf, int buf_len);
+int       mono_arch_dyn_call_get_buf_size       (MonoDynCallInfo *info);
+void      mono_arch_start_dyn_call              (MonoDynCallInfo *info, gpointer **args, guint8 *ret, guint8 *buf);
 void      mono_arch_finish_dyn_call             (MonoDynCallInfo *info, guint8 *buf);
 MonoInst *mono_arch_emit_inst_for_method        (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args);
 void      mono_arch_decompose_opts              (MonoCompile *cfg, MonoInst *ins);
@@ -2987,8 +2994,7 @@ MONO_API void      mono_debugger_run_finally             (MonoContext *start_ctx
 MONO_API gboolean mono_breakpoint_clean_code (guint8 *method_start, guint8 *code, int offset, guint8 *buf, int size);
 
 /* Tracing */
-MonoTraceSpec *mono_trace_parse_options         (const char *options);
-void           mono_trace_set_assembly          (MonoAssembly *assembly);
+MonoCallSpec *mono_trace_set_options           (const char *options);
 gboolean       mono_trace_eval                  (MonoMethod *method);
 
 extern void
@@ -3128,7 +3134,7 @@ void mono_cfg_set_exception_invalid_program (MonoCompile *cfg, char *msg);
 	}
 
 GTimer *mono_time_track_start (void);
-void mono_time_track_end (double *time, GTimer *timer);
+void mono_time_track_end (gdouble *time, GTimer *timer);
 
 void mono_update_jit_stats (MonoCompile *cfg);
 
@@ -3265,5 +3271,32 @@ gboolean MONO_SIG_HANDLER_SIGNATURE (mono_chain_signal);
  * Coop support for trampolines
  */
 void mono_interruption_checkpoint_from_trampoline (void);
+
+
+#if defined (HOST_WASM)
+
+#define MONO_RETURN_ADDRESS_N(N) NULL
+#define MONO_RETURN_ADDRESS() MONO_RETURN_ADDRESS_N(0)
+
+
+#elif defined (__GNUC__)
+
+#define MONO_RETURN_ADDRESS_N(N) (__builtin_extract_return_addr (__builtin_return_address (N)))
+#define MONO_RETURN_ADDRESS() MONO_RETURN_ADDRESS_N(0)
+
+#elif defined(_MSC_VER)
+
+#include <intrin.h>
+#pragma intrinsic(_ReturnAddress)
+
+#define MONO_RETURN_ADDRESS() _ReturnAddress()
+#define MONO_RETURN_ADDRESS_N(N) NULL
+
+#else
+
+#error "Missing return address intrinsics implementation"
+
+#endif
+
 
 #endif /* __MONO_MINI_H__ */

@@ -230,6 +230,13 @@ typedef struct {
 	 * handled a sampling signal before sending another one.
 	 */
 	gint32 profiler_signal_ack;
+
+	gint32 thread_pending_native_join;
+
+#ifdef USE_WINDOWS_BACKEND
+	gint32 thread_wait_info;
+#endif
+
 } MonoThreadInfo;
 
 typedef struct {

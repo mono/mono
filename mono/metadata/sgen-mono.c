@@ -398,6 +398,7 @@ get_array_fill_vtable (void)
 		klass.rank = 1;
 		klass.instance_size = MONO_SIZEOF_MONO_ARRAY;
 		klass.sizes.element_size = 1;
+		klass.size_inited = 1;
 		klass.name = "array_filler_type";
 
 		vtable->klass = &klass;
@@ -2260,8 +2261,7 @@ sgen_client_thread_detach_with_lock (SgenThreadInfo *p)
 
 	tid = mono_thread_info_get_tid (p);
 
-	if (p->client_info.info.runtime_thread)
-		mono_threads_add_joinable_thread ((gpointer)tid);
+	mono_threads_add_joinable_runtime_thread (&p->client_info.info);
 
 	if (mono_gc_get_gc_callbacks ()->thread_detach_func) {
 		mono_gc_get_gc_callbacks ()->thread_detach_func (p->client_info.runtime_data);
@@ -2361,6 +2361,10 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 {
 	scan_area_arg_start = start_nursery;
 	scan_area_arg_end = end_nursery;
+#ifdef HOST_WASM
+	//Under WASM we don't scan thread stacks and we can't trust the values we find there either.
+	return;
+#endif
 
 	FOREACH_THREAD (info) {
 		int skip_reason = 0;
@@ -2803,7 +2807,7 @@ void
 sgen_client_gchandle_created (int handle_type, GCObject *obj, guint32 handle)
 {
 #ifndef DISABLE_PERFCOUNTERS
-	mono_perfcounters->gc_num_handles++;
+	InterlockedIncrement (&mono_perfcounters->gc_num_handles);
 #endif
 
 	MONO_PROFILER_RAISE (gc_handle_created, (handle, handle_type, obj));
@@ -2813,7 +2817,7 @@ void
 sgen_client_gchandle_destroyed (int handle_type, guint32 handle)
 {
 #ifndef DISABLE_PERFCOUNTERS
-	mono_perfcounters->gc_num_handles--;
+	InterlockedDecrement (&mono_perfcounters->gc_num_handles);
 #endif
 
 	MONO_PROFILER_RAISE (gc_handle_deleted, (handle, handle_type));

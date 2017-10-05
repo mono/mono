@@ -795,6 +795,10 @@ static InterpMethodArguments* build_args_from_sig (MonoMethodSignature *sig, Int
 	int i8_align = mono_arm_i8_align ();
 #endif
 
+#ifdef TARGET_WASM
+	margs->sig = sig;
+#endif
+
 	if (sig->hasthis)
 		margs->ilen++;
 
@@ -3437,6 +3441,9 @@ ves_exec_method_with_context (InterpFrame *frame, ThreadContext *context, unsign
 		MINT_IN_CASE(MINT_CONV_U4_R8)
 			/* needed on arm64 */
 			if (isinf (sp [-1].data.f))
+				sp [-1].data.i = 0;
+			/* needed by wasm */
+			else if (isnan (sp [-1].data.f))
 				sp [-1].data.i = 0;
 			else
 				sp [-1].data.i = (guint32)sp [-1].data.f;

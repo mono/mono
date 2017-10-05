@@ -657,7 +657,7 @@ namespace System
 			else
 				ParseRegTzi(adjustmentRules, 1, 9999, reg_tzi);
 
-			return CreateCustomTimeZone (id, baseUtcOffset, display_name, standard_name, daylight_name, ValidateRules (adjustmentRules).ToArray ());
+			return CreateCustomTimeZone (id, baseUtcOffset, display_name, standard_name, daylight_name, ValidateRules (adjustmentRules));
 		}
 
 		private static void ParseRegTzi (List<AdjustmentRule> adjustmentRules, int start_year, int end_year, byte [] buffer)
@@ -1264,8 +1264,11 @@ namespace System
 			return new DateTime (year, transition.Month, day) + transition.TimeOfDay.TimeOfDay;
 		}
 
-		static List<AdjustmentRule> ValidateRules (List<AdjustmentRule> adjustmentRules)
+		static AdjustmentRule[] ValidateRules (List<AdjustmentRule> adjustmentRules)
 		{
+			if (adjustmentRules == null || adjustmentRules.Count == 0)
+				return null;
+
 			AdjustmentRule prev = null;
 			foreach (AdjustmentRule current in adjustmentRules.ToArray ()) {
 				if (prev != null && prev.DateEnd > current.DateStart) {
@@ -1273,7 +1276,7 @@ namespace System
 				}
 				prev = current;
 			}
-			return adjustmentRules;
+			return adjustmentRules.ToArray ();
 		}
 
 #if LIBC || MONOTOUCH
@@ -1437,13 +1440,13 @@ namespace System
 				}
 				tz = CreateCustomTimeZone (id, baseUtcOffset, id, standardDisplayName);
 			} else {
-				tz = CreateCustomTimeZone (id, baseUtcOffset, id, standardDisplayName, daylightDisplayName, ValidateRules (adjustmentRules).ToArray ());
+				tz = CreateCustomTimeZone (id, baseUtcOffset, id, standardDisplayName, daylightDisplayName, ValidateRules (adjustmentRules));
 			}
 
 			if (storeTransition && transitions.Count > 0) {
 				tz.transitions = transitions;
-				tz.supportsDaylightSavingTime = true;
 			}
+			tz.supportsDaylightSavingTime = adjustmentRules.Count > 0;
 
 			return tz;
 		}

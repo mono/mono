@@ -237,6 +237,8 @@ namespace Mono.CSharp
 			}
 		}
 
+		public bool IsReadOnly => (modifiers & Modifiers.READONLY) != 0;
+
 		//
 		// Returns true for instances of any System.ValueTuple<......> type
 		//
@@ -1991,10 +1993,11 @@ namespace Mono.CSharp
 		}
 	}
 
+	[System.Diagnostics.DebuggerDisplay("{DisplayDebugInfo()}")]
 	class ReferenceContainer : ElementTypeSpec
 	{
 		ReferenceContainer (TypeSpec element)
-			: base (MemberKind.Class, element, null)	// TODO: Kind.Class is most likely wrong
+			: base (MemberKind.ByRef, element, null)
 		{
 		}
 
@@ -2002,6 +2005,11 @@ namespace Mono.CSharp
 			get {
 				return null;
 			}
+		}
+
+		string DisplayDebugInfo()
+		{
+			return "ref " + GetSignatureForError();
 		}
 
 		public override MetaType GetMetaInfo ()
@@ -2013,8 +2021,16 @@ namespace Mono.CSharp
 			return info;
 		}
 
+		public override string GetSignatureForError ()
+		{
+			return Element.GetSignatureForError ();
+		}
+
 		public static ReferenceContainer MakeType (ModuleContainer module, TypeSpec element)
 		{
+			if (element.Kind == MemberKind.ByRef)
+				throw new ArgumentException ();
+
 			ReferenceContainer pc;
 			if (!module.ReferenceTypesCache.TryGetValue (element, out pc)) {
 				pc = new ReferenceContainer (element);

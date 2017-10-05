@@ -128,6 +128,7 @@ TESTS_CS_SRC=		\
 	assemblyresolve_event3.cs	\
 	assemblyresolve_event4.cs	\
 	assemblyresolve_event5.cs	\
+	assemblyresolve_event6.cs	\
 	checked.cs		\
 	char-isnumber.cs	\
 	field-layout.cs		\
@@ -304,6 +305,7 @@ TESTS_CS_SRC=		\
 	delegate-async-exit.cs	\
 	delegate-delegate-exit.cs	\
 	delegate-exit.cs	\
+	delegate-disposed-hashcode.cs	\
 	finalizer-abort.cs	\
 	finalizer-exception.cs	\
 	finalizer-exit.cs	\
@@ -467,6 +469,7 @@ TESTS_CS_SRC=		\
 	appdomain-unload-callback.cs	\
 	appdomain-unload-doesnot-raise-pending-events.cs	\
 	appdomain-unload-asmload.cs	\
+	appdomain-unload-exception.cs	\
 	unload-appdomain-on-shutdown.cs	\
 	bug-47295.cs	\
 	loader.cs	\
@@ -515,7 +518,9 @@ TESTS_CS_SRC=		\
 	runtime-invoke.gen.cs \
 	imt_big_iface_test.cs \
 	bug-58782-plain-throw.cs \
-	bug-58782-capture-and-throw.cs
+	bug-58782-capture-and-throw.cs \
+	recursive-struct-arrays.cs \
+	bug-59281.cs
 
 if AMD64
 TESTS_CS_SRC += async-exc-compilation.cs finally_guard.cs finally_block_ending_in_dead_bb.cs
@@ -799,6 +804,7 @@ PROFILE_DISABLED_TESTS += \
 	appdomain-unload-doesnot-raise-pending-events.exe	\
 	unload-appdomain-on-shutdown.exe	\
 	assemblyresolve_event2.2.exe	\
+	assemblyresolve_event6.exe	\
 	bug-544446.exe	\
 	bug-36848.exe	\
 	generic-marshalbyref.2.exe	\
@@ -955,6 +961,7 @@ INTERP_DISABLED_TESTS = \
 	array_load_exception.exe \
 	assembly_append_ordering.exe \
 	assemblyresolve_event4.exe \
+	assemblyresolve_event6.exe \
 	async-exc-compilation.exe \
 	async-with-cb-throws.exe \
 	async_read.exe \
@@ -1718,9 +1725,9 @@ module-cctor-loader.2.exe: module-cctor.exe
 reference-loader.exe$(PLATFORM_AOT_SUFFIX): TestingReferenceAssembly.dll$(PLATFORM_AOT_SUFFIX) TestingReferenceReferenceAssembly.dll$(PLATFORM_AOT_SUFFIX)
 reference-loader.exe: TestingReferenceAssembly.dll TestingReferenceReferenceAssembly.dll
 
-assemblyresolve_asm.dll$(PLATFORM_AOT_SUFFIX): assemblyresolve_deps/Test.dll$(PLATFORM_AOT_SUFFIX)
+assemblyresolve_asm.dll$(PLATFORM_AOT_SUFFIX): assemblyresolve_asm.dll assemblyresolve_deps/Test.dll$(PLATFORM_AOT_SUFFIX)
 	MONO_PATH="assemblyresolve_deps:$(CLASS)" $(top_builddir)/runtime/mono-wrapper $(AOT_BUILD_FLAGS) assemblyresolve_asm.dll
-assemblyresolve_deps/Test.dll$(PLATFORM_AOT_SUFFIX): assemblyresolve_deps/TestBase.dll$(PLATFORM_AOT_SUFFIX)
+assemblyresolve_deps/Test.dll$(PLATFORM_AOT_SUFFIX): assemblyresolve_deps/Test.dll assemblyresolve_deps/TestBase.dll$(PLATFORM_AOT_SUFFIX)
 
 EXTRA_DIST += assemblyresolve_TestBase.cs assemblyresolve_Test.cs assemblyresolve_asm.cs 
 assemblyresolve_deps:
@@ -1744,6 +1751,9 @@ assemblyresolve_deps/assemblyresolve_event5_label.dll: assemblyresolve_event5_la
 assemblyresolve_event5_helper.dll: assemblyresolve_event5_helper.cs assemblyresolve_deps/assemblyresolve_event5_label.dll
 	$(MCS) -target:library -out:assemblyresolve_event5_helper.dll -r:assemblyresolve_deps/assemblyresolve_event5_label.dll $(srcdir)/assemblyresolve_event5_helper.cs
 assemblyresolve_event5.exe: assemblyresolve_event5_helper.dll
+
+assemblyresolve_event6.exe$(PLATFORM_AOT_SUFFIX): assemblyresolve_asm.dll$(PLATFORM_AOT_SUFFIX) assemblyresolve_deps/Test.dll$(PLATFORM_AOT_SUFFIX) assemblyresolve_deps/TestBase.dll$(PLATFORM_AOT_SUFFIX)
+assemblyresolve_event6.exe: assemblyresolve_asm.dll assemblyresolve_deps/Test.dll assemblyresolve_deps/TestBase.dll
 
 # We use 'test-support-files' to handle an ordering issue between the 'mono/' and 'runtime/' directories
 bug-80307.exe: $(srcdir)/bug-80307.cs
@@ -1899,7 +1909,8 @@ test-process-exit:
 
 # tests that expect a 1 exit code
 TESTS_UNHANDLED_EXCEPTION_1_SRC =	\
-	unhandled-exception-1.cs
+	unhandled-exception-1.cs	\
+	unhandled-exception-9.cs
 
 # tests that expect a 255 exit code
 TESTS_UNHANDLED_EXCEPTION_255_SRC =	\

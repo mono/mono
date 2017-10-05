@@ -1155,7 +1155,11 @@ no_intrinsic:
 			return;
 		} else {
 			/* mheader might not exist if this is a delegate invoc, etc */
-			if (mheader && *mheader->code == CEE_RET && called_inited) {
+			gboolean has_vt_arg = FALSE;
+			for (i = 0; i < csignature->param_count; i++)
+				has_vt_arg |= !mini_type_is_reference (csignature->params [i]);
+
+			if (mheader && *mheader->code == CEE_RET && called_inited && !has_vt_arg) {
 				if (td->verbose_level)
 					g_print ("Inline (empty) call of %s.%s\n", target_method->klass->name, target_method->name);
 				for (i = 0; i < csignature->param_count; i++) {
@@ -1576,7 +1580,7 @@ save_seq_points (TransformData *td)
 	}
 
 	info = mono_seq_point_info_new (array->len, TRUE, array->data, TRUE, &seq_info_size);
-	mono_jit_stats.allocated_seq_points_size += seq_info_size;
+	InterlockedAdd (&mono_jit_stats.allocated_seq_points_size, seq_info_size);
 
 	g_byte_array_free (array, TRUE);
 
@@ -2499,6 +2503,7 @@ generate (MonoMethod *method, InterpMethod *rtm, unsigned char *is_bb_start, Mon
 #endif
 				break;
 			case STACK_TYPE_MP:
+			case STACK_TYPE_O:
 				break;
 			default:
 				g_assert_not_reached ();
@@ -4258,6 +4263,7 @@ mono_interp_transform_init (void)
 MonoException *
 mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context)
 {
+	MonoError error;
 	int i, align, size, offset;
 	MonoMethod *method = imethod->method;
 	MonoImage *image = method->klass->image;
@@ -4275,9 +4281,11 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context)
 	MonoDomain *domain = imethod->domain;
 
 	// g_printerr ("TRANSFORM(0x%016lx): begin %s::%s\n", mono_thread_current (), method->klass->name, method->name);
-	method_class_vt = mono_class_vtable (domain, imethod->method->klass);
+	method_class_vt = mono_class_vtable_full (domain, imethod->method->klass, &error);
+	if (!is_ok (&error))
+		return mono_error_convert_to_exception (&error);
+
 	if (!method_class_vt->initialized) {
-		MonoError error;
 		jmp_buf env;
 		InterpFrame *last_env_frame = context->env_frame;
 		jmp_buf *old_env = context->current_env;
@@ -4415,12 +4423,10 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context)
 			break;
 		case MonoInlineMethod:
 			if (method->wrapper_type == MONO_WRAPPER_NONE && *ip != CEE_CALLI) {
-				m = mono_get_method_full (image, read32 (ip + 1), NULL, generic_context);
-				if (m == NULL) {
+				m = mono_get_method_checked (image, read32 (ip + 1), NULL, generic_context, &error);
+				if (!is_ok (&error)) {
 					g_free (is_bb_start);
-					g_error ("FIXME: where to get method and class string?"); 
-					return NULL;
-					// return mono_get_exception_missing_method ();
+					return mono_error_convert_to_exception (&error);
 				}
 				mono_class_init (m->klass);
 				if (!mono_class_is_interface (m->klass))

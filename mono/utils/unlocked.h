@@ -20,6 +20,8 @@
 
 #if MONO_HAS_CLANG_THREAD_SANITIZER
 #define MONO_UNLOCKED_ATTRS MONO_NO_SANITIZE_THREAD MONO_NEVER_INLINE static
+#elif defined(_MSC_VER)
+#define MONO_UNLOCKED_ATTRS MONO_ALWAYS_INLINE static
 #else
 #define MONO_UNLOCKED_ATTRS MONO_ALWAYS_INLINE static inline
 #endif
@@ -32,6 +34,27 @@ UnlockedIncrement (gint32 *val)
 }
 
 MONO_UNLOCKED_ATTRS
+gint64
+UnlockedIncrement64 (gint64 *val)
+{
+	return ++*val;
+}
+
+MONO_UNLOCKED_ATTRS
+gint64
+UnlockedDecrement64 (gint64 *val)
+{
+	return --*val;
+}
+
+MONO_UNLOCKED_ATTRS
+gint32
+UnlockedDecrement (gint32 *val)
+{
+	return --*val;
+}
+
+MONO_UNLOCKED_ATTRS
 gint32
 UnlockedAdd (gint32 *dest, gint32 add)
 {
@@ -41,6 +64,13 @@ UnlockedAdd (gint32 *dest, gint32 add)
 MONO_UNLOCKED_ATTRS
 gint64
 UnlockedAdd64 (gint64 *dest, gint64 add)
+{
+	return *dest += add;
+}
+
+MONO_UNLOCKED_ATTRS
+gdouble
+UnlockedAddDouble (gdouble *dest, gdouble add)
 {
 	return *dest += add;
 }
@@ -60,6 +90,20 @@ UnlockedWrite (gint32 *dest, gint32 val)
 }
 
 MONO_UNLOCKED_ATTRS
+void
+UnlockedWrite64 (gint64 *dest, gint64 val)
+{
+	*dest = val;
+}
+
+MONO_UNLOCKED_ATTRS
+void
+UnlockedWriteBool (gboolean *dest, gboolean val)
+{
+	*dest = val;
+}
+
+MONO_UNLOCKED_ATTRS
 gint32
 UnlockedRead (gint32 *src)
 {
@@ -69,6 +113,20 @@ UnlockedRead (gint32 *src)
 MONO_UNLOCKED_ATTRS
 gint64
 UnlockedRead64 (gint64 *src)
+{
+	return *src;
+}
+
+MONO_UNLOCKED_ATTRS
+gboolean
+UnlockedReadBool (gboolean *src)
+{
+	return *src;
+}
+
+MONO_UNLOCKED_ATTRS
+gpointer
+UnlockedReadPointer (volatile gpointer *src)
 {
 	return *src;
 }

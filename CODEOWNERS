@@ -1,29 +1,43 @@
 # Mono Code Owners File
 #
-# GitHub uses this file to determine who to ping for reviews on pull requests.
-# If you're the primary maintainer of an area of Mono and you don't mind
-# reviewing pull requests, please add yourself to this file. You may want to
-# avoid adding entries for commonly changed or automatically generated files
-# (e.g. stuff in external/, or various generated *.csproj files) so as not to
-# get spammed with emails.
+# GitHub uses this file to determine who to assign for reviews
+# on pull requests. Please keep this file alphabetically sorted.
 #
-# Note that if two patterns match a file, the later pattern takes precedence.
-#
-# Please keep this file alphabetically sorted.
-#
-# Reference:
+# References:
 #
 # https://github.com/blog/2392-introducing-code-owners
 # https://help.github.com/articles/about-codeowners
 
+
+# These owners will be the default owners for everything in the repo.
+* @luhenry @marek-safar
+
+# Order is important. The last matching pattern has the most precedence.
+
 /acceptance-tests @akoeplinger
 /acceptance-tests/profiler-stress* @alexrp
+
+/data @marek-safar @akoeplinger
+/data/gdb @vargaz
+/data/lldb @lewurm @vargaz
 
 /docs @luhenry @marek-safar
 /docs/sources/mono-api-profiler.html @alexrp
 
+/external @marek-safar @luhenry
+/external/binary-reference-assemblies @marek-safar @akoeplinger
+/external/bockbuild @akoeplinger @alexischr
+/external/boringssl @baulig
+/external/nuget-buildtasks @radical @akoeplinger
+
+/libgc @BrzVlad @vargaz
+
+/llvm @vargaz
+
 /man @marek-safar @miguel
 /man/mprof-report.1 @alexrp
+
+/mcs @marek-safar
 
 /mcs/build @marek-safar @akoeplinger
 
@@ -39,12 +53,19 @@
 /mcs/class/System/Mono.Btls @baulig
 /mcs/class/System/Mono.Net.Security @baulig
 /mcs/class/System/Mono.Security.Interface @baulig
-/mcs/class/System.Data @egorbo
+/mcs/class/System.Data* @egorbo
 
 /mcs/errors @marek-safar
+/mcs/ilasm @marek-safar
+/mcs/jay @marek-safar
 /mcs/mcs @marek-safar
 /mcs/tests @marek-safar
+/mcs/tools @marek-safar @akoeplinger
 
+/mono @luhenry
+
+/mono/btls @baulig
+/mono/dis @lambdageek @vargaz
 /mono/eglib @kumpera @vargaz @luhenry
 
 /mono/metadata @vargaz @kumpera
@@ -55,6 +76,7 @@
 /mono/metadata/threads* @luhenry @kumpera
 /mono/metadata/threadpool* @luhenry
 /mono/metadata/w32* @luhenry
+/mono/metadata/*-win* @lateralusX @luhenry
 
 /mono/mini @vargaz @kumpera
 /mono/mini/*cfgdump* @lewurm
@@ -63,6 +85,7 @@
 /mono/mini/*type-check* @lewurm
 /mono/mini/interp/* @lewurm
 /mono/mini/*profiler* @alexrp
+/mono/mini/debugger-agent.c @DavidKarlas
 
 /mono/profiler @alexrp @kumpera
 
@@ -73,19 +96,26 @@
 /mono/utils/mono-hwcap* @alexrp
 /mono/utils/mono-mem* @alexrp
 /mono/utils/mono-threads* @luhenry @kumpera
+/mono/utils/*-win* @lateralusX @kumpera
 
+/msvc @lateralusX
 /msvc/*profiler* @alexrp
 /msvc/scripts @akoeplinger
 
 /packaging/ @alexischr @akoeplinger
 /packaging/MacSDK/msbuild.py @radical @akoeplinger
 
+/runtime @akoeplinger @marek-safar
+
+/samples @luhenry
 /samples/profiler @alexrp
 /samples/size @alexrp
 
 /scripts @akoeplinger
 /scripts/ci @akoeplinger
 /scripts/ci/run-test-profiler-stress-tests.sh @alexrp
+
+/support @luhenry @vargaz
 
 /tools @kumpera
 /tools/checker @tritao

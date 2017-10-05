@@ -1077,6 +1077,7 @@ type_from_op (MonoCompile *cfg, MonoInst *ins, MonoInst *src1, MonoInst *src2)
 			break;
 		case STACK_PTR:
 		case STACK_MP:
+		case STACK_OBJ:
 #if SIZEOF_VOID_P == 8
 			ins->opcode = OP_LCONV_TO_U;
 #else
@@ -6146,9 +6147,7 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 	prev_args = cfg->args;
 	prev_arg_types = cfg->arg_types;
 	prev_inlined_method = cfg->inlined_method;
-	cfg->inlined_method = cmethod;
-	cfg->ret_var_set = FALSE;
-	cfg->inline_depth ++;
+	prev_ret_var_set = cfg->ret_var_set;
 	prev_real_offset = cfg->real_offset;
 	prev_cbb_hash = cfg->cbb_hash;
 	prev_cil_offset_to_bb = cfg->cil_offset_to_bb;
@@ -6158,8 +6157,11 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 	prev_cbb = cfg->cbb;
 	prev_current_method = cfg->current_method;
 	prev_generic_context = cfg->generic_context;
-	prev_ret_var_set = cfg->ret_var_set;
 	prev_disable_inline = cfg->disable_inline;
+
+	cfg->inlined_method = cmethod;
+	cfg->ret_var_set = FALSE;
+	cfg->inline_depth ++;
 
 	if (ip && *ip == CEE_CALLVIRT && !(cmethod->flags & METHOD_ATTRIBUTE_STATIC))
 		virtual_ = TRUE;
@@ -7296,7 +7298,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		seq_points = FALSE;
 	}
 
-	if (cfg->gen_sdb_seq_points && cfg->method == method) {
+	if (cfg->method == method)
+		cfg->coverage_info = mono_profiler_coverage_alloc (cfg->method, header->code_size);
+
+	if ((cfg->gen_sdb_seq_points && cfg->method == method) || cfg->coverage_info) {
 		minfo = mono_debug_lookup_method (method);
 		if (minfo) {
 			MonoSymSeqPoint *sps;
@@ -7391,9 +7396,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 	cfg->dont_inline = g_list_prepend (cfg->dont_inline, method);
 	if (cfg->method == method) {
-
-		cfg->coverage_info = mono_profiler_coverage_alloc (cfg->method, header->code_size);
-
 		/* ENTRY BLOCK */
 		NEW_BBLOCK (cfg, start_bblock);
 		cfg->bb_entry = start_bblock;
@@ -7784,32 +7786,32 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			if (sym_seq_points)
 				mono_bitset_set_fast (seq_point_set_locs, ip - header->code);
+
+			if ((cfg->method == method) && cfg->coverage_info) {
+				guint32 cil_offset = ip - header->code;
+				gpointer counter = &cfg->coverage_info->data [cil_offset].count;
+				cfg->coverage_info->data [cil_offset].cil_code = ip;
+
+				if (mono_arch_opcode_supported (OP_ATOMIC_ADD_I4)) {
+					MonoInst *one_ins, *load_ins;
+
+					EMIT_NEW_PCONST (cfg, load_ins, counter);
+					EMIT_NEW_ICONST (cfg, one_ins, 1);
+					MONO_INST_NEW (cfg, ins, OP_ATOMIC_ADD_I4);
+					ins->dreg = mono_alloc_ireg (cfg);
+					ins->inst_basereg = load_ins->dreg;
+					ins->inst_offset = 0;
+					ins->sreg2 = one_ins->dreg;
+					ins->type = STACK_I4;
+					MONO_ADD_INS (cfg->cbb, ins);
+				} else {
+					EMIT_NEW_PCONST (cfg, ins, counter);
+					MONO_EMIT_NEW_STORE_MEMBASE_IMM (cfg, OP_STORE_MEMBASE_IMM, ins->dreg, 0, 1);
+				}
+			}
 		}
 
 		cfg->cbb->real_offset = cfg->real_offset;
-
-		if ((cfg->method == method) && cfg->coverage_info) {
-			guint32 cil_offset = ip - header->code;
-			gpointer counter = &cfg->coverage_info->data [cil_offset].count;
-			cfg->coverage_info->data [cil_offset].cil_code = ip;
-
-			if (mono_arch_opcode_supported (OP_ATOMIC_ADD_I4)) {
-				MonoInst *one_ins, *load_ins;
-
-				EMIT_NEW_PCONST (cfg, load_ins, counter);
-				EMIT_NEW_ICONST (cfg, one_ins, 1);
-				MONO_INST_NEW (cfg, ins, OP_ATOMIC_ADD_I4);
-				ins->dreg = mono_alloc_ireg (cfg);
-				ins->inst_basereg = load_ins->dreg;
-				ins->inst_offset = 0;
-				ins->sreg2 = one_ins->dreg;
-				ins->type = STACK_I4;
-				MONO_ADD_INS (cfg->cbb, ins);
-			} else {
-				EMIT_NEW_PCONST (cfg, ins, counter);
-				MONO_EMIT_NEW_STORE_MEMBASE_IMM (cfg, OP_STORE_MEMBASE_IMM, ins->dreg, 0, 1);
-			}
-		}
 
 		if (cfg->verbose_level > 3)
 			printf ("converting (in B%d: stack: %d) %s", cfg->cbb->block_num, (int)(sp - stack_start), mono_disasm_code_one (NULL, method, ip, NULL));
@@ -11868,7 +11870,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					cfg->dyn_call_var->flags |= MONO_INST_VOLATILE;
 				}
 
-				/* Has to use a call inst since it local regalloc expects it */
+				/* Has to use a call inst since local regalloc expects it */
 				MONO_INST_NEW_CALL (cfg, call, OP_DYN_CALL);
 				ins = (MonoInst*)call;
 				sp -= 2;
@@ -11877,6 +11879,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				MONO_ADD_INS (cfg->cbb, ins);
 
 				cfg->param_area = MAX (cfg->param_area, cfg->backend->dyn_call_param_area);
+				/* OP_DYN_CALL might need to allocate a dynamically sized param area */
+				cfg->flags |= MONO_CFG_HAS_ALLOCA;
 
 				ip += 2;
 				inline_costs += 10 * num_calls++;

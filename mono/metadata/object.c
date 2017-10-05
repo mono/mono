@@ -2579,7 +2579,7 @@ mono_remote_class (MonoDomain *domain, MonoStringHandle class_name, MonoClass *p
 	rc->xdomain_vtable = NULL;
 	rc->proxy_class_name = name;
 #ifndef DISABLE_PERFCOUNTERS
-	mono_perfcounters->loader_bytes += mono_string_length (MONO_HANDLE_RAW (class_name)) + 1;
+	InterlockedAdd (&mono_perfcounters->loader_bytes, mono_string_length (MONO_HANDLE_RAW (class_name)) + 1);
 #endif
 
 	g_hash_table_insert (domain->proxy_vtable_hash, key, rc);
@@ -4607,7 +4607,14 @@ mono_unhandled_exception_checked (MonoObjectHandle exc, MonoError *error)
 	MonoObjectHandle current_appdomain_delegate = MONO_HANDLE_NEW (MonoObject, NULL);
 
 	MonoClass *klass = mono_handle_class (exc);
-	if (mono_class_has_parent (klass, mono_defaults.threadabortexception_class))
+	/*
+	 * AppDomainUnloadedException don't behave like unhandled exceptions unless thrown from 
+	 * a thread started in unmanaged world.
+	 * https://msdn.microsoft.com/en-us/library/system.appdomainunloadedexception(v=vs.110).aspx#Anchor_6
+	 */
+	if (klass == mono_defaults.threadabortexception_class ||
+			(klass == mono_class_get_appdomain_unloaded_exception_class () &&
+			mono_thread_info_current ()->runtime_thread))
 		return;
 
 	field = mono_class_get_field_from_name (mono_defaults.appdomain_class, "UnhandledException");
@@ -5299,8 +5306,9 @@ mono_object_new_checked (MonoDomain *domain, MonoClass *klass, MonoError *error)
 
 	MonoVTable *vtable;
 
-	vtable = mono_class_vtable (domain, klass);
-	g_assert (vtable); /* FIXME don't swallow the error */
+	vtable = mono_class_vtable_full (domain, klass, error);
+	if (!is_ok (error))
+		return NULL;
 
 	MonoObject *o = mono_object_new_specific_checked (vtable, error);
 	return o;
@@ -7444,6 +7452,9 @@ mono_wait_handle_get_handle (MonoWaitHandle *handle)
 static MonoObject*
 mono_runtime_capture_context (MonoDomain *domain, MonoError *error)
 {
+#ifdef HOST_WASM
+	return mono_runtime_invoke_checked (mono_get_context_capture_method (), NULL, NULL, error);
+#else
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	RuntimeInvokeFunction runtime_invoke;
@@ -7465,6 +7476,7 @@ mono_runtime_capture_context (MonoDomain *domain, MonoError *error)
 	runtime_invoke = (RuntimeInvokeFunction)domain->capture_context_runtime_invoke;
 
 	return runtime_invoke (NULL, NULL, NULL, domain->capture_context_method);
+#endif
 }
 /**
  * mono_async_result_new:

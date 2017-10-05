@@ -2670,7 +2670,7 @@ thread_interrupt (DebuggerTlsData *tls, MonoThreadInfo *info, MonoJitInfo *ji)
 				}
 
 				copy_unwind_state_from_frame_data (&tls->async_state, &data, jit_tls);
-				copy_unwind_state_from_frame_data (&tls->context, &data, jit_tls);
+				/* Don't set tls->context, it could race with the thread processing a breakpoint etc. */
 			} else {
 				tls->async_state.valid = FALSE;
 			}
@@ -7691,7 +7691,7 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 
 		tls->abort_requested = TRUE;
 
-		mono_thread_internal_abort (THREAD_TO_INTERNAL (thread));
+		mono_thread_internal_abort (THREAD_TO_INTERNAL (thread), FALSE);
 		mono_loader_unlock ();
 		break;
 	}

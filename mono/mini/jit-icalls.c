@@ -23,6 +23,7 @@
 #include <mono/metadata/exception-internals.h>
 #include <mono/metadata/threads-types.h>
 #include <mono/metadata/reflection-internals.h>
+#include <mono/utils/unlocked.h>
 
 #ifdef ENABLE_LLVM
 #include "mini-llvm-cpp.h"
@@ -1097,7 +1098,7 @@ mono_helper_compile_generic_method (MonoObject *obj, MonoMethod *method, gpointe
 	gpointer addr;
 	MonoGenericContext *context = mono_method_get_context (method);
 
-	mono_jit_stats.generic_virtual_invocations++;
+	UnlockedIncrement (&mono_jit_stats.generic_virtual_invocations);
 
 	if (obj == NULL) {
 		mono_set_pending_exception (mono_get_exception_null_reference ());
@@ -1327,11 +1328,14 @@ constrained_gsharedvt_call_setup (gpointer mp, MonoMethod *cmethod, MonoClass *k
 {
 	MonoMethod *m;
 	int vt_slot, iface_offset;
+	gboolean is_iface = FALSE;
 
 	error_init (error);
 
 	if (mono_class_is_interface (klass)) {
 		MonoObject *this_obj;
+
+		is_iface = TRUE;
 
 		/* Have to use the receiver's type instead of klass, the receiver is a ref type */
 		this_obj = *(MonoObject**)mp;
@@ -1358,21 +1362,33 @@ constrained_gsharedvt_call_setup (gpointer mp, MonoMethod *cmethod, MonoClass *k
 			m = mono_class_inflate_generic_method (m, mono_method_get_context (cmethod));
 	}
 
-	if (klass->valuetype && (m->klass == mono_defaults.object_class || m->klass == mono_defaults.enum_class->parent || m->klass == mono_defaults.enum_class))
+	if (klass->valuetype && (m->klass == mono_defaults.object_class || m->klass == mono_defaults.enum_class->parent || m->klass == mono_defaults.enum_class)) {
 		/*
 		 * Calling a non-vtype method with a vtype receiver, has to box.
 		 */
 		*this_arg = mono_value_box_checked (mono_domain_get (), klass, mp, error);
-	else if (klass->valuetype)
-		/*
-		 * Calling a vtype method with a vtype receiver
-		 */
-		*this_arg = mp;
-	else
+	} else if (klass->valuetype) {
+		if (is_iface) {
+			/*
+			 * The original type is an interface, so the receiver is a ref,
+			   the called method is a vtype method, need to unbox.
+			*/
+			MonoObject *this_obj = *(MonoObject**)mp;
+
+			*this_arg = mono_object_unbox (this_obj);
+		} else {
+			/*
+			 * Calling a vtype method with a vtype receiver
+			 */
+			*this_arg = mp;
+		}
+	} else {
 		/*
 		 * Calling a non-vtype method
 		 */
 		*this_arg = *(gpointer*)mp;
+	}
+
 	return m;
 }
 

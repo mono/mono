@@ -9,6 +9,7 @@
 #include <dirent.h>
 #include <string.h>
 #include <glib.h>
+#include "mph.h" /* Don't remove or move after map.h! Works around issues with Android SDK unified headers */
 #include "map.h"
 
 int wifexited (int status)

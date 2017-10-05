@@ -890,7 +890,9 @@ mono_thread_abort (MonoObject *obj)
 	g_free (jit_tls);*/
 
 	if ((mono_runtime_unhandled_exception_policy_get () == MONO_UNHANDLED_POLICY_LEGACY) ||
-			(obj->vtable->klass == mono_defaults.threadabortexception_class)) {
+			(obj->vtable->klass == mono_defaults.threadabortexception_class) ||
+			((obj->vtable->klass) == mono_class_get_appdomain_unloaded_exception_class () &&
+			mono_thread_info_current ()->runtime_thread)) {
 		mono_thread_exit ();
 	} else {
 		mono_invoke_unhandled_exception_hook (obj);
@@ -2049,7 +2051,7 @@ lookup_start:
 		if (! ((domain != target_domain) && !info->domain_neutral)) {
 			MonoVTable *vtable;
 
-			mono_jit_stats.methods_lookups++;
+			InterlockedIncrement (&mono_jit_stats.methods_lookups);
 			vtable = mono_class_vtable_full (domain, method->klass, error);
 			if (!is_ok (error))
 				return NULL;
@@ -2294,7 +2296,7 @@ mono_jit_find_compiled_method_with_jit_info (MonoDomain *domain, MonoMethod *met
 	if (info) {
 		/* We can't use a domain specific method in another domain */
 		if (! ((domain != target_domain) && !info->domain_neutral)) {
-			mono_jit_stats.methods_lookups++;
+			InterlockedIncrement (&mono_jit_stats.methods_lookups);
 			if (ji)
 				*ji = info;
 			return info->code_start;
@@ -2429,8 +2431,11 @@ create_runtime_invoke_info (MonoDomain *domain, MonoMethod *method, gpointer com
 		if (mono_class_is_contextbound (method->klass) || !info->compiled_method)
 			supported = FALSE;
 
-		if (supported)
+		if (supported) {
 			info->dyn_call_info = mono_arch_dyn_call_prepare (sig);
+			if (debug_options.dyn_runtime_invoke)
+				g_assert (info->dyn_call_info);
+		}
 	}
 #endif
 
@@ -2732,8 +2737,8 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 		MonoMethodSignature *sig = mono_method_signature (method);
 		gpointer *args;
 		static RuntimeInvokeDynamicFunction dyn_runtime_invoke;
-		int i, pindex;
-		guint8 buf [512];
+		int i, pindex, buf_size;
+		guint8 *buf;
 		guint8 retval [256];
 
 		if (!dyn_runtime_invoke) {
@@ -2762,7 +2767,11 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 
 		//printf ("M: %s\n", mono_method_full_name (method, TRUE));
 
-		mono_arch_start_dyn_call (info->dyn_call_info, (gpointer**)args, retval, buf, sizeof (buf));
+		buf_size = mono_arch_dyn_call_get_buf_size (info->dyn_call_info);
+		buf = g_alloca (buf_size);
+		g_assert (buf);
+
+		mono_arch_start_dyn_call (info->dyn_call_info, (gpointer**)args, retval, buf);
 
 		dyn_runtime_invoke (buf, exc, info->compiled_method);
 		mono_arch_finish_dyn_call (info->dyn_call_info, buf);
@@ -3302,12 +3311,13 @@ mini_get_delegate_arg (MonoMethod *method, gpointer method_ptr)
 void
 mini_init_delegate (MonoDelegate *del)
 {
-	if (mono_llvm_only)
-		del->extra_arg = mini_get_delegate_arg (del->method, del->method_ptr);
 #ifdef ENABLE_INTERPRETER
 	if (mono_use_interpreter)
 		mono_interp_init_delegate (del);
+	else
 #endif
+	if (mono_llvm_only)
+		del->extra_arg = mini_get_delegate_arg (del->method, del->method_ptr);
 }
 
 char*
@@ -4309,7 +4319,7 @@ register_icalls (void)
 MonoJitStats mono_jit_stats = {0};
 
 /**
- * Counters of mono_stats can be read without locking here.
+ * Counters of mono_stats and mono_jit_stats can be read without locking here.
  * MONO_NO_SANITIZE_THREAD tells Clang's ThreadSanitizer to hide all reports of these (known) races.
  */
 MONO_NO_SANITIZE_THREAD
@@ -4318,9 +4328,9 @@ print_jit_stats (void)
 {
 	if (mono_jit_stats.enabled) {
 		g_print ("Mono Jit statistics\n");
-		g_print ("Max code size ratio:    %.2f (%s)\n", mono_jit_stats.max_code_size_ratio/100.0,
+		g_print ("Max code size ratio:    %.2f (%s)\n", mono_jit_stats.max_code_size_ratio / 100.0,
 				 mono_jit_stats.max_ratio_method);
-		g_print ("Biggest method:         %ld (%s)\n", mono_jit_stats.biggest_method_size,
+		g_print ("Biggest method:         %" G_GINT32_FORMAT " (%s)\n", mono_jit_stats.biggest_method_size,
 				 mono_jit_stats.biggest_method);
 
 		g_print ("Delegates created:      %" G_GINT32_FORMAT "\n", mono_stats.delegate_creations);
