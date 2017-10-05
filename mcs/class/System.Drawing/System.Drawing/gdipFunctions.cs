@@ -47,6 +47,13 @@ namespace System.Drawing
 	/// GDI+ API Functions
 	/// </summary>
 	internal static class GDIPlus {
+
+#if NETSTANDARD1_6
+		public const UnmanagedType GdiPlusCustomMarshaler = UnmanagedType.Interface;
+#else
+		public const UnmanagedType GdiPlusCustomMarshaler = UnmanagedType.CustomMarshaler;
+#endif
+
 		public const int FACESIZE = 32;
 		public const int LANG_NEUTRAL = 0;
 		public static IntPtr Display = IntPtr.Zero;
@@ -987,22 +994,22 @@ namespace System.Drawing
 		internal static extern Status GdipBitmapSetPixel (IntPtr bmp, int x, int y, int argb);
 
 		// Image functions
-		[DllImport(GdiPlus, CharSet=CharSet.Auto)]
+		[DllImport(GdiPlus, CharSet=CharSet.Unicode)]
 		internal static extern Status GdipLoadImageFromFile ( [MarshalAs(UnmanagedType.LPWStr)] string filename, out IntPtr image );
 
 #if !TEST
 		// Stream functions for Win32 (original Win32 ones)
 		[DllImport(GdiPlus, ExactSpelling=true, CharSet=CharSet.Unicode)]
-		internal static extern Status GdipLoadImageFromStream([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream stream, out IntPtr image);
+		internal static extern Status GdipLoadImageFromStream([MarshalAs(GdiPlusCustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream stream, out IntPtr image);
 
 		[DllImport(GdiPlus, ExactSpelling=true, CharSet=CharSet.Unicode)]
-		internal static extern Status GdipSaveImageToStream(HandleRef image, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream stream, [In()] ref Guid clsidEncoder, HandleRef encoderParams);
+		internal static extern Status GdipSaveImageToStream(HandleRef image, [MarshalAs(GdiPlusCustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream stream, [In()] ref Guid clsidEncoder, HandleRef encoderParams);
 #endif
 
 		[DllImport(GdiPlus)]
 		internal static extern Status GdipCloneImage(IntPtr image, out IntPtr imageclone);
 
-		[DllImport(GdiPlus, CharSet=CharSet.Auto)]
+		[DllImport(GdiPlus, CharSet=CharSet.Unicode)]
 		internal static extern Status GdipLoadImageFromFileICM ( [MarshalAs(UnmanagedType.LPWStr)] string filename, out IntPtr image );
 
 		[DllImport(GdiPlus)]
@@ -1167,10 +1174,10 @@ namespace System.Drawing
 		[DllImport(GdiPlus)]
 		internal static extern Status GdipCreateHBITMAPFromBitmap (IntPtr bmp, out IntPtr HandleBmp, int clrbackground);
 
-		[DllImport(GdiPlus, CharSet=CharSet.Auto)]
+		[DllImport(GdiPlus, CharSet=CharSet.Unicode)]
 		internal static extern Status GdipCreateBitmapFromFile ([MarshalAs (UnmanagedType.LPWStr)] string filename, out IntPtr bitmap);
 
-		[DllImport(GdiPlus, CharSet=CharSet.Auto)]
+		[DllImport(GdiPlus, CharSet= CharSet.Unicode)]
 		internal static extern Status GdipCreateBitmapFromFileICM ([MarshalAs (UnmanagedType.LPWStr)] string filename, out IntPtr bitmap);
 
 		[DllImport(GdiPlus)]
@@ -1415,7 +1422,7 @@ namespace System.Drawing
 		internal static extern Status GdipSetImageAttributesOutputChannel (IntPtr imageattr,
 			ColorAdjustType type, bool enableFlag, 	ColorChannelFlag channelFlags);
 
-		[DllImport (GdiPlus, CharSet=CharSet.Auto)]
+		[DllImport (GdiPlus, CharSet=CharSet.Unicode)]
 		internal static extern Status GdipSetImageAttributesOutputChannelColorProfile (IntPtr imageattr,
 			ColorAdjustType type, bool enableFlag, [MarshalAs (UnmanagedType.LPWStr)] string profileName);
 
@@ -1449,7 +1456,7 @@ namespace System.Drawing
 
 		[DllImport(GdiPlus)]
 		internal static extern Status GdipCreateFontFromDC(IntPtr hdc, out IntPtr font);
-		[DllImport(GdiPlus, SetLastError=true, CharSet=CharSet.Auto)]
+		[DllImport(GdiPlus, SetLastError=true, CharSet=CharSet.Unicode)]
 		internal static extern Status GdipCreateFontFromLogfont(IntPtr hdc, ref LOGFONT lf, out IntPtr ptr);
 
 		// These are our private functions, they exists in our own libgdiplus library, this way we
@@ -1458,7 +1465,7 @@ namespace System.Drawing
 		internal static extern Status GdipCreateFontFromHfont(IntPtr hdc, out IntPtr font, ref LOGFONT lf);
 
 		// This is win32/gdi, not gdiplus, but it's easier to keep in here, also see above comment
-		[DllImport("gdi32.dll", CallingConvention=CallingConvention.StdCall, CharSet = CharSet.Auto)]
+		[DllImport("gdi32.dll", CallingConvention=CallingConvention.StdCall, CharSet = CharSet.Unicode)]
 		internal static extern IntPtr CreateFontIndirect (ref LOGFONT logfont);
 		[DllImport("user32.dll", EntryPoint="GetDC", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
 		internal static extern IntPtr GetDC(IntPtr hwnd);
@@ -1539,7 +1546,7 @@ namespace System.Drawing
 		[DllImport (GdiPlus)]
 		internal static extern Status GdipDeletePrivateFontCollection (ref IntPtr collection);
 
-		[DllImport (GdiPlus, CharSet=CharSet.Auto)]
+		[DllImport (GdiPlus, CharSet=CharSet.Unicode)]
 		internal static extern Status GdipPrivateAddFontFile (IntPtr collection,
 				[MarshalAs (UnmanagedType.LPWStr)] string fileName );
 
@@ -1547,7 +1554,7 @@ namespace System.Drawing
 		internal static extern Status GdipPrivateAddMemoryFont (IntPtr collection, IntPtr mem, int length);
 
 		//FontFamily
-		[DllImport (GdiPlus, CharSet=CharSet.Auto)]
+		[DllImport (GdiPlus, CharSet=CharSet.Unicode)]
 		internal static extern Status GdipCreateFontFamilyFromName (
 			[MarshalAs(UnmanagedType.LPWStr)] string fName, IntPtr collection, out IntPtr fontFamily);
 
@@ -1637,13 +1644,13 @@ namespace System.Drawing
 		internal static extern Status GdipGetStringFormatTabStops(IntPtr format, int count, out float firstTabOffset, [In, Out] float [] tabStops);
 
 		// metafile
-		[DllImport (GdiPlus, CharSet = CharSet.Auto)]
+		[DllImport (GdiPlus, CharSet = CharSet.Unicode)]
 		internal static extern Status GdipCreateMetafileFromFile ([MarshalAs (UnmanagedType.LPWStr)] string filename, out IntPtr metafile);
 		[DllImport (GdiPlus)]
 		internal static extern Status GdipCreateMetafileFromEmf (IntPtr hEmf, bool deleteEmf, out IntPtr metafile);
 		[DllImport (GdiPlus)]
 		internal static extern Status GdipCreateMetafileFromWmf (IntPtr hWmf, bool deleteWmf, WmfPlaceableFileHeader wmfPlaceableFileHeader, out IntPtr metafile);
-		[DllImport (GdiPlus, CharSet = CharSet.Auto)]
+		[DllImport (GdiPlus, CharSet = CharSet.Unicode)]
 		internal static extern Status GdipGetMetafileHeaderFromFile ([MarshalAs (UnmanagedType.LPWStr)] string filename, IntPtr header);
 		[DllImport (GdiPlus)]
 		internal static extern Status GdipGetMetafileHeaderFromMetafile (IntPtr metafile, IntPtr header);
@@ -1674,15 +1681,15 @@ namespace System.Drawing
 			ref Rectangle frameRect, MetafileFrameUnit frameUnit, [MarshalAs (UnmanagedType.LPWStr)] string description, out IntPtr metafile);
 #if !TEST
 		[DllImport(GdiPlus, ExactSpelling=true, CharSet=CharSet.Unicode)]
-		internal static extern Status GdipCreateMetafileFromStream([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream stream, out IntPtr metafile);
+		internal static extern Status GdipCreateMetafileFromStream([MarshalAs(GdiPlusCustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream stream, out IntPtr metafile);
 		[DllImport(GdiPlus, ExactSpelling=true, CharSet=CharSet.Unicode)]
-		internal static extern Status GdipGetMetafileHeaderFromStream([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream stream, IntPtr header);
+		internal static extern Status GdipGetMetafileHeaderFromStream([MarshalAs(GdiPlusCustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream stream, IntPtr header);
 
 		[DllImport (GdiPlus)]
-		internal static extern Status GdipRecordMetafileStream ([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream stream, IntPtr hdc,
+		internal static extern Status GdipRecordMetafileStream ([MarshalAs(GdiPlusCustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream stream, IntPtr hdc,
 			EmfType type, ref RectangleF frameRect, MetafileFrameUnit frameUnit, [MarshalAs (UnmanagedType.LPWStr)] string description, out IntPtr metafile);
 		[DllImport (GdiPlus)]
-		internal static extern Status GdipRecordMetafileStreamI ([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream stream, IntPtr hdc,
+		internal static extern Status GdipRecordMetafileStreamI ([MarshalAs(GdiPlusCustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream stream, IntPtr hdc,
 			EmfType type, ref Rectangle frameRect, MetafileFrameUnit frameUnit, [MarshalAs (UnmanagedType.LPWStr)] string description, out IntPtr metafile);
 #endif
 		//ImageCodecInfo functions

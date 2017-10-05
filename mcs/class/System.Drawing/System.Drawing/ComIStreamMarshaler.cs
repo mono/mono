@@ -58,7 +58,7 @@ namespace System.Drawing
 		private delegate int WriteDelegate(IntPtr @this, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] byte[] pv, int cb, IntPtr pcbWritten);
 		private delegate int SeekDelegate(IntPtr @this, long dlibMove, int dwOrigin, IntPtr plibNewPosition);
 		private delegate int SetSizeDelegate(IntPtr @this, long libNewSize);
-		private delegate int CopyToDelegate(IntPtr @this, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream pstm, long cb, IntPtr pcbRead, IntPtr pcbWritten);
+		private delegate int CopyToDelegate(IntPtr @this, [MarshalAs(GDIPlus.GdiPlusCustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream pstm, long cb, IntPtr pcbRead, IntPtr pcbWritten);
 		private delegate int CommitDelegate(IntPtr @this, int grfCommitFlags);
 		private delegate int RevertDelegate(IntPtr @this);
 		private delegate int LockRegionDelegate(IntPtr @this, long libOffset, long cb, int dwLockType);
