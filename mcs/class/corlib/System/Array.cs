@@ -207,7 +207,7 @@ namespace System
 			// we just decr the size, so, 0 - 1 == FINISHED
 			const int FINISHED = -1;
 			
-			Array array;
+			readonly Array array;
 			int idx;
 
 			internal InternalEnumerator (Array array)
@@ -218,7 +218,6 @@ namespace System
 
 			public void Dispose ()
 			{
-				idx = NOT_STARTED;
 			}
 
 			public bool MoveNext ()

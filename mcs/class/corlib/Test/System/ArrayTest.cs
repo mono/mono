@@ -3385,6 +3385,30 @@ public class ArrayTest
 		}
 	}
 
+	[Test]
+	public void IEnumerator_Dispose ()
+	{
+		IEnumerable<int> e = new int[] { 1 };
+		var en = e.GetEnumerator ();
+		Assert.IsTrue (en.MoveNext (), "#1");
+		Assert.IsFalse (en.MoveNext (), "#2");
+		en.Dispose ();
+		Assert.IsFalse (en.MoveNext (), "#3");
+	}
+
+	[Test]
+	public void IEnumerator_ZeroSize ()
+	{
+		IEnumerable<int> e = Array.Empty<int> ();
+		var en = e.GetEnumerator ();
+		Assert.IsFalse (en.MoveNext (), "#1");
+
+		e = Array.Empty<int> ();
+		en = e.GetEnumerator ();
+		Assert.IsFalse (en.MoveNext (), "#2");
+	}
+
+	[Test]
 	public void ICollection_IsReadOnly() {
 		ICollection<string> arr = new string [10];
 
