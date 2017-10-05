@@ -161,7 +161,7 @@ void ves_icall_System_Threading_Thread_ResetAbort (MonoThread *this_obj);
 MonoObject* ves_icall_System_Threading_Thread_GetAbortExceptionState (MonoThread *thread);
 void ves_icall_System_Threading_Thread_Suspend (MonoThread *this_obj);
 void ves_icall_System_Threading_Thread_Resume (MonoThread *thread);
-void ves_icall_System_Threading_Thread_ClrState (MonoInternalThread *thread, guint32 state);
+void ves_icall_System_Threading_Thread_ClrState (MonoInternalThreadHandle thread, guint32 state, MonoError *error);
 void ves_icall_System_Threading_Thread_SetState (MonoInternalThread *thread, guint32 state);
 guint32 ves_icall_System_Threading_Thread_GetState (MonoInternalThread *thread);
 
@@ -229,6 +229,7 @@ gboolean mono_thread_current_check_pending_interrupt (void);
 
 void mono_thread_set_state (MonoInternalThread *thread, MonoThreadState state);
 void mono_thread_clr_state (MonoInternalThread *thread, MonoThreadState state);
+void mono_thread_clr_state_handle (MonoInternalThreadHandle thread, MonoThreadState state);
 gboolean mono_thread_test_state (MonoInternalThread *thread, MonoThreadState test);
 gboolean mono_thread_test_and_set_state (MonoInternalThread *thread, MonoThreadState test, MonoThreadState set);
 

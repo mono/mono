@@ -2222,9 +2222,9 @@ ves_icall_System_Threading_Thread_MemoryBarrier (void)
 }
 
 void
-ves_icall_System_Threading_Thread_ClrState (MonoInternalThread* this_obj, guint32 state)
+ves_icall_System_Threading_Thread_ClrState (MonoInternalThreadHandle this_obj, guint32 state, MonoError *error)
 {
-	mono_thread_clr_state (this_obj, (MonoThreadState)state);
+	mono_thread_clr_state_handle (this_obj, (MonoThreadState)state);
 
 	if (state & ThreadState_Background) {
 		/* If the thread changes the background mode, the main thread has to
@@ -4820,6 +4820,14 @@ mono_thread_clr_state (MonoInternalThread *thread, MonoThreadState state)
 	LOCK_THREAD (thread);
 	thread->state &= ~state;
 	UNLOCK_THREAD (thread);
+}
+
+void
+mono_thread_clr_state_handle (MonoInternalThreadHandle thread, MonoThreadState state)
+{
+	LOCK_THREAD_HANDLE (thread);
+	MONO_INTERNAL_THREAD_HANDLE_STATE_REMOVE (thread, state);
+	UNLOCK_THREAD_HANDLE (thread);
 }
 
 gboolean
