@@ -1746,13 +1746,10 @@ byte_array_to_domain_handle (MonoArrayHandle arr, MonoDomain *domain, MonoError 
 	return copy;
 }
 
-MonoArray*
-ves_icall_System_Threading_Thread_ByteArrayToRootDomain (MonoArray *arr)
+MonoArrayHandle
+ves_icall_System_Threading_Thread_ByteArrayToRootDomain (MonoArrayHandle arr, MonoError *error)
 {
-	MonoError error;
-	MonoArray *result = byte_array_to_domain (arr, mono_get_root_domain (), &error);
-	mono_error_set_pending_exception (&error);
-	return result;
+	return byte_array_to_domain_handle (arr, mono_get_root_domain (), error);
 }
 
 MonoArrayHandle
