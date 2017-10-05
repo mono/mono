@@ -421,7 +421,7 @@ aot_printerrf (MonoAotCompile *acfg, const gchar *format, ...)
 }
 
 static void
-report_loader_error (MonoAotCompile *acfg, MonoError *error, const char *format, ...)
+report_loader_error (MonoAotCompile *acfg, MonoError *error, gboolean fatal, const char *format, ...)
 {
 	FILE *output;
 	va_list args;
@@ -439,7 +439,7 @@ report_loader_error (MonoAotCompile *acfg, MonoError *error, const char *format,
 	va_end (args);
 	mono_error_cleanup (error);
 
-	if (acfg->is_full_aot) {
+	if (acfg->is_full_aot && fatal) {
 		fprintf (output, "FullAOT cannot continue if there are loader errors.\n");
 		exit (1);
 	}
@@ -3832,7 +3832,7 @@ add_wrappers (MonoAotCompile *acfg)
 		gboolean skip = FALSE;
 
 		method = mono_get_method_checked (acfg->image, token, NULL, NULL, &error);
-		report_loader_error (acfg, &error, "Failed to load method token 0x%x due to %s\n", i, mono_error_get_message (&error));
+		report_loader_error (acfg, &error, TRUE, "Failed to load method token 0x%x due to %s\n", i, mono_error_get_message (&error));
 
 		if ((method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) ||
 			(method->iflags & METHOD_IMPL_ATTRIBUTE_RUNTIME) ||
@@ -4181,7 +4181,7 @@ add_wrappers (MonoAotCompile *acfg)
 		MonoError error;
 		token = MONO_TOKEN_METHOD_DEF | (i + 1);
 		method = mono_get_method_checked (acfg->image, token, NULL, NULL, &error);
-		report_loader_error (acfg, &error, "Failed to load method token 0x%x due to %s\n", i, mono_error_get_message (&error));
+		report_loader_error (acfg, &error, TRUE, "Failed to load method token 0x%x due to %s\n", i, mono_error_get_message (&error));
 
 		if (method->iflags & METHOD_IMPL_ATTRIBUTE_SYNCHRONIZED) {
 			if (method->is_generic) {
@@ -4214,7 +4214,7 @@ add_wrappers (MonoAotCompile *acfg)
 		guint32 token = MONO_TOKEN_METHOD_DEF | (i + 1);
 
 		method = mono_get_method_checked (acfg->image, token, NULL, NULL, &error);
-		report_loader_error (acfg, &error, "Failed to load method token 0x%x due to %s\n", i, mono_error_get_message (&error));
+		report_loader_error (acfg, &error, TRUE, "Failed to load method token 0x%x due to %s\n", i, mono_error_get_message (&error));
 
 		if ((method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) ||
 			(method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL)) {
@@ -4238,7 +4238,7 @@ add_wrappers (MonoAotCompile *acfg)
 		int j;
 
 		method = mono_get_method_checked (acfg->image, token, NULL, NULL, &error);
-		report_loader_error (acfg, &error, "Failed to load method token 0x%x due to %s\n", i, mono_error_get_message (&error));
+		report_loader_error (acfg, &error, TRUE, "Failed to load method token 0x%x due to %s\n", i, mono_error_get_message (&error));
 
 		/* 
 		 * Only generate native-to-managed wrappers for methods which have an
@@ -4248,7 +4248,7 @@ add_wrappers (MonoAotCompile *acfg)
 		cattr = mono_custom_attrs_from_method_checked (method, &error);
 		if (!is_ok (&error)) {
 			char *name = mono_method_get_full_name (method);
-			report_loader_error (acfg, &error, "Failed to load custom attributes from method %s due to %s\n", name, mono_error_get_message (&error));
+			report_loader_error (acfg, &error, TRUE, "Failed to load custom attributes from method %s due to %s\n", name, mono_error_get_message (&error));
 			g_free (name);
 		}
 
@@ -7642,7 +7642,7 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 	if (cfg->exception_type != MONO_EXCEPTION_NONE) {
 		/* Some instances cannot be JITted due to constraints etc. */
 		if (!method->is_inflated)
-			report_loader_error (acfg, &cfg->error, "Unable to compile method '%s' due to: '%s'.\n", mono_method_get_full_name (method), mono_error_get_message (&cfg->error));
+			report_loader_error (acfg, &cfg->error, FALSE, "Unable to compile method '%s' due to: '%s'.\n", mono_method_get_full_name (method), mono_error_get_message (&cfg->error));
 		/* Let the exception happen at runtime */
 		return;
 	}
@@ -10271,7 +10271,7 @@ collect_methods (MonoAotCompile *acfg)
 			continue;
 
 		method = mono_get_method_checked (acfg->image, token, NULL, NULL, &error);
-		report_loader_error (acfg, &error, "Failed to load method token 0x%x due to %s\n", i, mono_error_get_message (&error));
+		report_loader_error (acfg, &error, TRUE, "Failed to load method token 0x%x due to %s\n", i, mono_error_get_message (&error));
 
 		if (method->is_generic || mono_class_is_gtd (method->klass)) {
 			MonoMethod *gshared;
