@@ -1676,8 +1676,6 @@ namespace Mono.CSharp
 
 		void EmitLoad (EmitContext ec)
 		{
-			Label no_value_label = new Label ();
-
 			if (expr_unwrap != null) {
 				expr_unwrap.EmitCheck (ec);
 
@@ -1685,44 +1683,76 @@ namespace Mono.CSharp
 					return;
 
 				ec.Emit (OpCodes.Dup);
-				no_value_label = ec.DefineLabel ();
+				var no_value_label = ec.DefineLabel ();
 				ec.Emit (OpCodes.Brfalse_S, no_value_label);
 
 				if (Variable.HoistedVariant != null)
 					ec.EmitThis ();
 
 				expr_unwrap.Emit (ec);
-			} else {
-				if (Variable?.HoistedVariant != null)
-					ec.EmitThis ();
-
-				expr.Emit (ec);
-
-				// Only to make verifier happy
-				if (probe_type_expr.IsGenericParameter && TypeSpec.IsValueType (expr.Type))
-					ec.Emit (OpCodes.Box, expr.Type);
-
-				ec.Emit (OpCodes.Isinst, probe_type_expr);
-			}
-
-			if (Variable != null) {
-				bool value_on_stack;
-				if (probe_type_expr.IsGenericParameter || probe_type_expr.IsNullableType) {
-					ec.Emit (OpCodes.Dup);
-					ec.Emit (OpCodes.Unbox_Any, probe_type_expr);
-					value_on_stack = true;
-				} else {
-					value_on_stack = false;
-				}
 
 				if (Variable.HoistedVariant != null) {
 					Variable.HoistedVariant.EmitAssignFromStack (ec);
+				} else {
+					//
+					// It's ok to have variable builder created out of order. It simplifies emit
+					// of statements like while (condition) { }
+					//
+					if (!Variable.Created)
+						Variable.CreateBuilder (ec);
 
-					if (expr_unwrap != null) {
-						ec.MarkLabel (no_value_label);
-					} else if (!value_on_stack) {
-						Variable.HoistedVariant.Emit (ec);
+					Variable.EmitAssign (ec);
+				}
+
+				ec.MarkLabel (no_value_label);
+				return;
+			}
+
+			expr.Emit (ec);
+
+			bool vtype_variable = Variable != null && (probe_type_expr.IsGenericParameter || TypeSpec.IsValueType (ProbeType.Type));
+			LocalBuilder expr_copy = null;
+
+			if (vtype_variable && !ExpressionAnalyzer.IsInexpensiveLoad (expr)) {
+				expr_copy = ec.GetTemporaryLocal (expr.Type);
+				ec.Emit (OpCodes.Stloc, expr_copy);
+				ec.Emit (OpCodes.Ldloc, expr_copy);
+			} else if (probe_type_expr.IsGenericParameter && TypeSpec.IsValueType (expr.Type)) {
+				//
+				// Only to make verifier happy
+				//
+				ec.Emit (OpCodes.Box, expr.Type);
+			}
+
+			ec.Emit (OpCodes.Isinst, probe_type_expr);
+
+			if (Variable != null) {
+				ec.Emit (OpCodes.Dup);
+
+				var nonmatching_label = ec.DefineLabel ();
+				ec.Emit (OpCodes.Brfalse_S, nonmatching_label);
+
+				if (vtype_variable) {
+					if (expr_copy != null) {
+						ec.Emit (OpCodes.Ldloc, expr_copy);
+						ec.FreeTemporaryLocal (expr_copy, expr.Type);
+					} else {
+						expr.Emit (ec);
 					}
+
+					ec.Emit (OpCodes.Unbox_Any, probe_type_expr);
+				} else {
+					// Already on the stack
+				}
+
+				if (Variable.HoistedVariant != null) {
+					var temp = new LocalTemporary (ProbeType.Type);
+					temp.Store (ec);
+					Variable.HoistedVariant.EmitAssign (ec, temp, false, false);
+					temp.Release (ec);
+
+					if (!vtype_variable)
+						Variable.HoistedVariant.Emit (ec);
 				} else {
 					//
 					// It's ok to have variable builder created out of order. It simplifies emit
@@ -1733,12 +1763,11 @@ namespace Mono.CSharp
 
 					Variable.EmitAssign (ec);
 
-					if (expr_unwrap != null) {
-						ec.MarkLabel (no_value_label);
-					} else if (!value_on_stack) {
+					if (!vtype_variable)
 						Variable.Emit (ec);
-					}
 				}
+
+				ec.MarkLabel (nonmatching_label);
 			}
 		}
 
