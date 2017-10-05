@@ -10,6 +10,7 @@
 #include <mono/metadata/profiler-private.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/metadata/null-gc-handles.h>
+#include <mono/utils/atomic.h>
 
 
 #ifdef HAVE_NULL_GC

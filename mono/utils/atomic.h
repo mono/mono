@@ -24,7 +24,27 @@ F/MonoDroid( 1568): shared runtime initialization error: Cannot load library: re
 Apple targets have historically being problematic, xcode 4.6 would miscompile the intrinsic.
 */
 
+#define TO_INTERLOCKED_INT8_ARGP(ptr) ((volatile gint8 *)(ptr))
+#define TO_INTERLOCKED_INT8_ARG(arg) ((gint8)(arg))
+
+#define TO_INTERLOCKED_INT16_ARGP(ptr) ((volatile gint16 *)(ptr))
+#define TO_INTERLOCKED_INT16_ARG(arg) ((gint16)(arg))
+
+#define TO_INTERLOCKED_INT32_ARGP(ptr) ((volatile gint32 *)(ptr))
+#define TO_INTERLOCKED_INT32_ARG(arg) ((gint32)(arg))
+
+#define TO_INTERLOCKED_INT64_ARGP(ptr) ((volatile gint64 *)(ptr))
+#define TO_INTERLOCKED_INT64_ARG(arg) ((gint64)(arg))
+
+#define TO_INTERLOCKED_POINTER_ARGP(ptr) ((volatile gpointer *)(ptr))
+#define TO_INTERLOCKED_POINTER_ARG(arg) ((gpointer)(arg))
+
 /* On Windows, we always use the functions provided by the Windows API. */
+/* NOTE, there are some variations in Win32 interlocked signatures compared to the once defined in atomic.h */
+/* This cause a lot of build warnings when using MSVC with warning level 4. Redefined the interlocked methods */
+/* to use same signature on Windows as on other platforms to reduce warnings. The redefined version will also make */
+/* sure we use compiler intrinsic for interlocked methods. */
+
 #if defined(__WIN32__) || defined(_WIN32)
 
 #ifndef WIN32_LEAN_AND_MEAN
@@ -32,17 +52,166 @@ Apple targets have historically being problematic, xcode 4.6 would miscompile th
 #endif
 #include <windows.h>
 
+//gint32 InterlockedExchangeAdd (volatile gint32 *dest, gint32 add);
+static inline gint32 mono_win32_interlocked_exchange_add (volatile gint32 *dest, gint32 add)
+{
+	return _InterlockedExchangeAdd ((LONG volatile *)dest, (LONG)add);
+}
+
+#undef InterlockedExchangeAdd
+#define InterlockedExchangeAdd mono_win32_interlocked_exchange_add
+
+//gint64 InterlockedExchangeAdd64 (volatile gint64 *dest, gint64 add);
+static inline gint64 mono_win32_interlocked_exchange_add64 (volatile gint64 *dest, gint64 add)
+{
+	return _InterlockedExchangeAdd64 ((LONG64 volatile *)dest, (LONG64)add);
+}
+
+#undef InterlockedExchangeAdd64
+#define InterlockedExchangeAdd64 mono_win32_interlocked_exchange_add64
+
+//gint32 InterlockedCompareExchange (volatile gint32 *dest, gint32 exch, gint32 comp);
+static inline gint32 mono_win32_interlocked_compare_exchange (volatile gint32 *dest, gint32 exch, gint32 comp)
+{
+	return _InterlockedCompareExchange ((LONG volatile *)dest, (LONG)exch, (LONG)comp);
+}
+
+#undef InterlockedCompareExchange
+#define InterlockedCompareExchange mono_win32_interlocked_compare_exchange
+
+//gint64 InterlockedCompareExchange64 (volatile gint64 *dest, gint64 exch, gint64 comp);
+static inline gint64 mono_win32_interlocked_compare_exchange64 (volatile gint64 *dest, gint64 exch, gint64 comp)
+{
+	return _InterlockedCompareExchange64 ((LONG64 volatile *)dest, (LONG64)exch, (LONG64)comp);
+}
+
+#undef InterlockedCompareExchange64
+#define InterlockedCompareExchange64 mono_win32_interlocked_compare_exchange64
+
 /* mingw is missing InterlockedCompareExchange64 () from winbase.h */
 #if HAVE_DECL_INTERLOCKEDCOMPAREEXCHANGE64==0
-static inline gint64 InterlockedCompareExchange64(volatile gint64 *dest, gint64 exch, gint64 comp)
+static inline gint64 InterlockedCompareExchange64 (volatile gint64 *dest, gint64 exch, gint64 comp)
 {
 	return __sync_val_compare_and_swap (dest, comp, exch);
 }
 #endif
 
+//gpointer InterlockedCompareExchangePointer (volatile gpointer *dest, gpointer exch, gpointer comp);
+static inline gpointer mono_win32_interlocked_compare_exchange_pointer (volatile gpointer *dest, gpointer exch, gpointer comp)
+{
+	return _InterlockedCompareExchangePointer ((PVOID volatile *)dest, (PVOID)exch, (PVOID)comp);
+}
+
+#undef InterlockedCompareExchangePointer
+#define InterlockedCompareExchangePointer mono_win32_interlocked_compare_exchange_pointer
+
+//gint32 InterlockedAdd (volatile gint32 *dest, gint32 add);
+static inline gint32 mono_win32_interlocked_add (volatile gint32 *dest, gint32 add)
+{
+	return _InterlockedAdd ((LONG volatile *)dest, (LONG)add);
+}
+
+#undef InterlockedAdd
+#define InterlockedAdd mono_win32_interlocked_add
+
+/* mingw is missing InterlockedAdd () from winbase.h */
+#if HAVE_DECL_INTERLOCKEDADD==0
+static inline gint32 InterlockedAdd (volatile gint32 *dest, gint32 add)
+{
+	return __sync_add_and_fetch (dest, add);
+}
+#endif
+
+//gint64 InterlockedAdd64 (volatile gint64 *dest, gint64 add);
+static inline gint64 mono_win32_interlocked_add64 (volatile gint64 *dest, gint64 add)
+{
+	return _InterlockedAdd64 ((LONG64 volatile *)dest, (LONG64)add);
+}
+
+#undef InterlockedAdd64
+#define InterlockedAdd64 mono_win32_interlocked_add64
+
+/* mingw is missing InterlockedAdd64 () from winbase.h */
+#if HAVE_DECL_INTERLOCKEDADD64==0
+static inline gint64 InterlockedAdd64 (volatile gint64 *dest, gint64 add)
+{
+	return __sync_add_and_fetch (dest, add);
+}
+#endif
+
+//gint32 InterlockedIncrement (volatile gint32 *dest);
+static inline gint32 mono_win32_interlocked_increment (volatile gint32 *dest)
+{
+	return _InterlockedIncrement ((LONG volatile *)dest);
+}
+
+#undef InterlockedIncrement
+#define InterlockedIncrement mono_win32_interlocked_increment
+
+//gint64 InterlockedIncrement64 (volatile gint64 *dest);
+static inline gint64 mono_win32_interlocked_increment64 (volatile gint64 *dest)
+{
+	return _InterlockedIncrement64 ((LONG64 volatile *)dest);
+}
+
+#undef InterlockedIncrement64
+#define InterlockedIncrement64 mono_win32_interlocked_increment64
+
+/* mingw is missing InterlockedIncrement64 () from winbase.h */
+#if HAVE_DECL_INTERLOCKEDINCREMENT64==0
+static inline gint64 InterlockedIncrement64 (volatile gint64 *dest)
+{
+	return __sync_add_and_fetch (dest, 1);
+}
+#endif
+
+//gint32 InterlockedDecrement (volatile gint32 *dest);
+static inline gint32 mono_win32_interlocked_decrement (volatile gint32 *dest)
+{
+	return _InterlockedDecrement ((LONG volatile *)dest);
+}
+
+#undef InterlockedDecrement
+#define InterlockedDecrement mono_win32_interlocked_decrement
+
+//gint64 InterlockedDecrement64 (volatile gint64 *dest);
+static inline gint64 mono_win32_interlocked_decrement64 (volatile gint64 *dest)
+{
+	return _InterlockedDecrement64 ((LONG64 volatile *)dest);
+}
+
+#undef InterlockedDecrement64
+#define InterlockedDecrement64 mono_win32_interlocked_decrement64
+
+/* mingw is missing InterlockedDecrement64 () from winbase.h */
+#if HAVE_DECL_INTERLOCKEDDECREMENT64==0
+static inline gint64 InterlockedDecrement64 (volatile gint64 *dest)
+{
+	return __sync_sub_and_fetch (dest, 1);
+}
+#endif
+
+//gint32 InterlockedExchange (volatile gint32 *dest, gint32 exch);
+static inline gint32 mono_win32_interlocked_exchange (volatile gint32 *dest, gint32 exch)
+{
+	return _InterlockedExchange ((LONG volatile *)dest, (LONG)exch);
+}
+
+#undef InterlockedExchange
+#define InterlockedExchange mono_win32_interlocked_exchange
+
+//gint64 InterlockedExchange64 (volatile gint64 *dest, gint64 exch);
+static inline gint64 mono_win32_interlocked_exchange64 (volatile gint64 *dest, gint64 exch)
+{
+	return _InterlockedExchange64 ((LONG64 volatile *)dest, (LONG64)exch);
+}
+
+#undef InterlockedExchange64
+#define InterlockedExchange64 mono_win32_interlocked_exchange64
+
 /* mingw is missing InterlockedExchange64 () from winbase.h */
 #if HAVE_DECL_INTERLOCKEDEXCHANGE64==0
-static inline gint64 InterlockedExchange64(volatile gint64 *val, gint64 new_val)
+static inline gint64 InterlockedExchange64 (volatile gint64 *val, gint64 new_val)
 {
 	gint64 old_val;
 	do {
@@ -52,72 +221,14 @@ static inline gint64 InterlockedExchange64(volatile gint64 *val, gint64 new_val)
 }
 #endif
 
-/* mingw is missing InterlockedIncrement64 () from winbase.h */
-#if HAVE_DECL_INTERLOCKEDINCREMENT64==0
-static inline gint64 InterlockedIncrement64(volatile gint64 *val)
+//gpointer InterlockedExchangePointer (volatile gpointer *dest, gpointer exch);
+static inline gpointer mono_win32_interlocked_exchange_pointer (volatile gpointer *dest, gpointer exch)
 {
-	return __sync_add_and_fetch (val, 1);
+	return _InterlockedExchangePointer ((PVOID volatile *)dest, exch);
 }
-#endif
 
-/* mingw is missing InterlockedDecrement64 () from winbase.h */
-#if HAVE_DECL_INTERLOCKEDDECREMENT64==0
-static inline gint64 InterlockedDecrement64(volatile gint64 *val)
-{
-	return __sync_sub_and_fetch (val, 1);
-}
-#endif
-
-/* mingw is missing InterlockedAdd () from winbase.h */
-#if HAVE_DECL_INTERLOCKEDADD==0
-static inline gint32 InterlockedAdd(volatile gint32 *dest, gint32 add)
-{
-	return __sync_add_and_fetch (dest, add);
-}
-#endif
-
-/* mingw is missing InterlockedAdd64 () from winbase.h */
-#if HAVE_DECL_INTERLOCKEDADD64==0
-static inline gint64 InterlockedAdd64(volatile gint64 *dest, gint64 add)
-{
-	return __sync_add_and_fetch (dest, add);
-}
-#endif
-
-#if defined(_MSC_VER) && !defined(InterlockedAdd)
-/* MSVC before 2013 only defines InterlockedAdd* for the Itanium architecture */
-static inline gint32 InterlockedAdd(volatile gint32 *dest, gint32 add)
-{
-	return InterlockedExchangeAdd (dest, add) + add;
-}
-#endif
-
-#if defined(_MSC_VER) && !defined(InterlockedAdd64)
-#if defined(InterlockedExchangeAdd64)
-/* This may be defined only on amd64 */
-static inline gint64 InterlockedAdd64(volatile gint64 *dest, gint64 add)
-{
-	return InterlockedExchangeAdd64 (dest, add) + add;
-}
-#else
-static inline gint64 InterlockedAdd64(volatile gint64 *dest, gint64 add)
-{
-	gint64 prev_value;
-
-	do {
-		prev_value = *dest;
-	} while (prev_value != InterlockedCompareExchange64(dest, prev_value + add, prev_value));
-
-	return prev_value + add;
-}
-#endif
-#endif
-
-#ifdef HOST_WIN32
-#define TO_INTERLOCKED_ARGP(ptr) ((volatile LONG*)(ptr))
-#else
-#define TO_INTERLOCKED_ARGP(ptr) (ptr)
-#endif
+#undef InterlockedExchangePointer
+#define InterlockedExchangePointer mono_win32_interlocked_exchange_pointer
 
 /* And now for some dirty hacks... The Windows API doesn't
  * provide any useful primitives for this (other than getting
@@ -125,7 +236,7 @@ static inline gint64 InterlockedAdd64(volatile gint64 *dest, gint64 add)
 
 static inline gint32 InterlockedRead(volatile gint32 *src)
 {
-	return InterlockedCompareExchange (TO_INTERLOCKED_ARGP (src), 0, 0);
+	return InterlockedCompareExchange (src, 0, 0);
 }
 
 static inline gint64 InterlockedRead64(volatile gint64 *src)
@@ -140,7 +251,7 @@ static inline gpointer InterlockedReadPointer(volatile gpointer *src)
 
 static inline void InterlockedWrite(volatile gint32 *dst, gint32 val)
 {
-	InterlockedExchange (TO_INTERLOCKED_ARGP (dst), val);
+	InterlockedExchange (dst, val);
 }
 
 static inline void InterlockedWrite64(volatile gint64 *dst, gint64 val)

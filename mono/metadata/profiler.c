@@ -9,6 +9,7 @@
 #include <mono/metadata/mono-config-dirs.h>
 #include <mono/metadata/mono-debug.h>
 #include <mono/metadata/profiler-private.h>
+#include <mono/utils/atomic.h>
 #include <mono/utils/mono-dl.h>
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/mono-logger-internals.h>

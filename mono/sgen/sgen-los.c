@@ -738,9 +738,9 @@ sgen_los_pin_object_par (GCObject *data)
 	if (old_size & 1)
 		return FALSE;
 #if SIZEOF_VOID_P == 4
-	old_size = InterlockedCompareExchange ((volatile gint32*)&obj->size, old_size | 1, old_size);
+	old_size = InterlockedCompareExchange (TO_INTERLOCKED_INT32_ARGP (&obj->size), old_size | 1, old_size);
 #else
-	old_size = InterlockedCompareExchange64 ((volatile gint64*)&obj->size, old_size | 1, old_size);
+	old_size = InterlockedCompareExchange64 (TO_INTERLOCKED_INT64_ARGP (&obj->size), old_size | 1, old_size);
 #endif
 	if (old_size & 1)
 		return FALSE;

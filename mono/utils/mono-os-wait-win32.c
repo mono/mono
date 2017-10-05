@@ -8,6 +8,7 @@
 * Licensed under the MIT license. See LICENSE file in the project root for full license information.
 */
 
+#include <mono/utils/atomic.h>
 #include <mono/utils/mono-os-wait.h>
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-threads-debug.h>

@@ -167,7 +167,7 @@ lock_free_mempool_chunk_new (LockFreeMempool *mp, int len)
 	/* Add to list of chunks lock-free */
 	while (TRUE) {
 		prev = mp->chunks;
-		if (InterlockedCompareExchangePointer ((volatile gpointer*)&mp->chunks, chunk, prev) == prev)
+		if (InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (&mp->chunks), chunk, prev) == prev)
 			break;
 	}
 	chunk->prev = prev;

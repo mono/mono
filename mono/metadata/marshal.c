@@ -9255,7 +9255,7 @@ mono_marshal_get_castclass_with_cache (void)
 	res = mono_mb_create (mb, sig, 8, info);
 	STORE_STORE_FENCE;
 
-	if (InterlockedCompareExchangePointer ((volatile gpointer *)&cached, res, NULL)) {
+	if (InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (&cached), res, NULL)) {
 		mono_free_method (res);
 		mono_metadata_free_method_signature (sig);
 	}
@@ -9339,7 +9339,7 @@ mono_marshal_get_isinst_with_cache (void)
 	res = mono_mb_create (mb, sig, 8, info);
 	STORE_STORE_FENCE;
 
-	if (InterlockedCompareExchangePointer ((volatile gpointer *)&cached, res, NULL)) {
+	if (InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (&cached), res, NULL)) {
 		mono_free_method (res);
 		mono_metadata_free_method_signature (sig);
 	}

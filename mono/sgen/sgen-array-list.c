@@ -46,12 +46,12 @@ sgen_array_list_grow (SgenArrayList *array, guint32 old_capacity)
 	 * the new bucket pointer.
 	 */
 	mono_memory_write_barrier ();
-	if (InterlockedCompareExchangePointer ((volatile gpointer *)&array->entries [new_bucket], entries, NULL) == NULL) {
+	if (InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (&array->entries [new_bucket]), entries, NULL) == NULL) {
 		/*
 		 * It must not be the case that we succeeded in setting the bucket
 		 * pointer, while someone else succeeded in changing the capacity.
 		 */
-		if (InterlockedCompareExchange ((volatile gint32 *)&array->capacity, new_capacity, old_capacity) != old_capacity)
+		if (InterlockedCompareExchange (TO_INTERLOCKED_INT32_ARGP (&array->capacity), TO_INTERLOCKED_INT32_ARG (new_capacity), TO_INTERLOCKED_INT32_ARG (old_capacity)) != TO_INTERLOCKED_INT32_ARG (old_capacity))
 			g_assert_not_reached ();
 		array->slot_hint = old_capacity;
 		return;
@@ -109,7 +109,7 @@ sgen_array_list_update_next_slot (SgenArrayList *array, guint32 new_index)
 			old_next_slot = array->next_slot;
 			if (new_index < old_next_slot)
 				break;
-		} while (InterlockedCompareExchange ((volatile gint32 *)&array->next_slot, new_index + 1, old_next_slot) != old_next_slot);
+		} while (InterlockedCompareExchange (TO_INTERLOCKED_INT32_ARGP (&array->next_slot), TO_INTERLOCKED_INT32_ARG (new_index + 1), TO_INTERLOCKED_INT32_ARG (old_next_slot)) != TO_INTERLOCKED_INT32_ARG (old_next_slot));
 	}
 }
 

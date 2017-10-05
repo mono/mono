@@ -100,7 +100,7 @@ extern MonoCoopMutex sgen_interruption_mutex;
 		size_t __old_x;                                            \
 		do {                                                    \
 			__old_x = (x);                                  \
-		} while (InterlockedCompareExchangePointer ((void**)&(x), (void*)(__old_x + (i)), (void*)__old_x) != (void*)__old_x); \
+		} while (InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (&(x)), TO_INTERLOCKED_POINTER_ARG (__old_x + (i)), TO_INTERLOCKED_POINTER_ARG (__old_x)) != TO_INTERLOCKED_POINTER_ARG (__old_x)); \
 	} while (0)
 
 #ifdef HEAVY_STATISTICS
@@ -260,7 +260,7 @@ sgen_get_nursery_end (void)
 		if (final_fw_addr)						\
 			break;							\
 		new_vtable_word = SGEN_POINTER_TAG_FORWARDED ((fw_addr));	\
-		old_vtable_word = InterlockedCompareExchangePointer ((gpointer*)obj, new_vtable_word, old_vtable_word); \
+		old_vtable_word = InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (obj), new_vtable_word, old_vtable_word); \
 		final_fw_addr = SGEN_VTABLE_IS_FORWARDED (old_vtable_word);	\
 		if (!final_fw_addr)						\
 			final_fw_addr = (fw_addr);				\

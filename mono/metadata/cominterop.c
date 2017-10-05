@@ -2425,7 +2425,7 @@ cominterop_ccw_addref (MonoCCWInterface* ccwe)
 	MonoCCW* ccw = ccwe->ccw;
 	g_assert (ccw);
 	g_assert (ccw->gc_handle);
-	ref_count = InterlockedIncrement ((gint32*)&ccw->ref_count);
+	ref_count = InterlockedIncrement (TO_INTERLOCKED_INT32_ARGP (&ccw->ref_count));
 	if (ref_count == 1) {
 		guint32 oldhandle = ccw->gc_handle;
 		g_assert (oldhandle);
@@ -2443,7 +2443,7 @@ cominterop_ccw_release (MonoCCWInterface* ccwe)
 	MonoCCW* ccw = ccwe->ccw;
 	g_assert (ccw);
 	g_assert (ccw->ref_count > 0);
-	ref_count = InterlockedDecrement ((gint32*)&ccw->ref_count);
+	ref_count = InterlockedDecrement (TO_INTERLOCKED_INT32_ARGP (&ccw->ref_count));
 	if (ref_count == 0) {
 		/* allow gc of object */
 		guint32 oldhandle = ccw->gc_handle;

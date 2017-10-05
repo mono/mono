@@ -261,7 +261,7 @@ mono_threads_begin_abort_protected_block (void)
 		g_assert (new_val < (1 << ABORT_PROT_BLOCK_BITS));
 
 		new_state = old_state + (1 << ABORT_PROT_BLOCK_SHIFT);
-	} while (InterlockedCompareExchangePointer ((volatile gpointer)&thread->thread_state, (gpointer)new_state, (gpointer)old_state) != (gpointer)old_state);
+	} while (InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (&thread->thread_state), TO_INTERLOCKED_POINTER_ARG (new_state), TO_INTERLOCKED_POINTER_ARG (old_state)) != TO_INTERLOCKED_POINTER_ARG (old_state));
 
 	/* Defer async request since we won't be able to process until exiting the block */
 	if (new_val == 1 && (new_state & INTERRUPT_ASYNC_REQUESTED_BIT)) {
@@ -303,7 +303,7 @@ mono_threads_end_abort_protected_block (void)
 		g_assert (new_val < (1 << ABORT_PROT_BLOCK_BITS));
 
 		new_state = old_state - (1 << ABORT_PROT_BLOCK_SHIFT);
-	} while (InterlockedCompareExchangePointer ((volatile gpointer)&thread->thread_state, (gpointer)new_state, (gpointer)old_state) != (gpointer)old_state);
+	} while (InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (&thread->thread_state), TO_INTERLOCKED_POINTER_ARG (new_state), TO_INTERLOCKED_POINTER_ARG (old_state)) != TO_INTERLOCKED_POINTER_ARG (old_state));
 
 	if (new_val == 0 && (new_state & INTERRUPT_ASYNC_REQUESTED_BIT)) {
 		InterlockedIncrement (&thread_interruption_requested);
@@ -343,7 +343,7 @@ mono_thread_clear_interruption_requested (MonoInternalThread *thread)
 			new_state = old_state & ~INTERRUPT_SYNC_REQUESTED_BIT;
 		else
 			new_state = old_state & ~INTERRUPT_ASYNC_REQUESTED_BIT;
-	} while (InterlockedCompareExchangePointer ((volatile gpointer)&thread->thread_state, (gpointer)new_state, (gpointer)old_state) != (gpointer)old_state);
+	} while (InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (&thread->thread_state), TO_INTERLOCKED_POINTER_ARG (new_state), TO_INTERLOCKED_POINTER_ARG (old_state)) != TO_INTERLOCKED_POINTER_ARG (old_state));
 
 	InterlockedDecrement (&thread_interruption_requested);
 	THREADS_INTERRUPT_DEBUG ("[%d] clear interruption old_state %ld new_state %ld, tir %d\n", thread->small_id, old_state, new_state, thread_interruption_requested);
@@ -371,7 +371,7 @@ mono_thread_set_interruption_requested (MonoInternalThread *thread)
 			new_state = old_state | INTERRUPT_SYNC_REQUESTED_BIT;
 		else
 			new_state = old_state | INTERRUPT_ASYNC_REQUESTED_BIT;
-	} while (InterlockedCompareExchangePointer ((volatile gpointer)&thread->thread_state, (gpointer)new_state, (gpointer)old_state) != (gpointer)old_state);
+	} while (InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (&thread->thread_state), TO_INTERLOCKED_POINTER_ARG (new_state), TO_INTERLOCKED_POINTER_ARG (old_state)) != TO_INTERLOCKED_POINTER_ARG (old_state));
 
 	if (sync || !(new_state & ABORT_PROT_BLOCK_MASK)) {
 		InterlockedIncrement (&thread_interruption_requested);
@@ -401,7 +401,7 @@ static void ensure_synch_cs_set (MonoInternalThread *thread)
 	synch_cs = g_new0 (MonoCoopMutex, 1);
 	mono_coop_mutex_init_recursive (synch_cs);
 
-	if (InterlockedCompareExchangePointer ((gpointer *)&thread->synch_cs,
+	if (InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (&thread->synch_cs),
 					       synch_cs, NULL) != NULL) {
 		/* Another thread must have installed this CS */
 		mono_coop_mutex_destroy (synch_cs);
@@ -1363,7 +1363,7 @@ ves_icall_System_Threading_Thread_ConstructInternalThread (MonoThread *this_obj)
 
 	internal->state = ThreadState_Unstarted;
 
-	InterlockedCompareExchangePointer ((volatile gpointer *)&this_obj->internal_thread, internal, NULL);
+	InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (&this_obj->internal_thread), internal, NULL);
 }
 
 MonoThread *
@@ -2023,7 +2023,7 @@ gint32 ves_icall_System_Threading_Interlocked_Exchange_Int (gint32 *location, gi
 MonoObject * ves_icall_System_Threading_Interlocked_Exchange_Object (MonoObject **location, MonoObject *value)
 {
 	MonoObject *res;
-	res = (MonoObject *) InterlockedExchangePointer((gpointer *) location, value);
+	res = (MonoObject *) InterlockedExchangePointer(TO_INTERLOCKED_POINTER_ARGP (location), value);
 	mono_gc_wbarrier_generic_nostore (location);
 	return res;
 }
@@ -2038,7 +2038,7 @@ gfloat ves_icall_System_Threading_Interlocked_Exchange_Single (gfloat *location,
 	IntFloatUnion val, ret;
 
 	val.fval = value;
-	ret.ival = InterlockedExchange((gint32 *) location, val.ival);
+	ret.ival = InterlockedExchange(TO_INTERLOCKED_INT32_ARGP (location), val.ival);
 
 	return ret.fval;
 }
@@ -2065,7 +2065,7 @@ ves_icall_System_Threading_Interlocked_Exchange_Double (gdouble *location, gdoub
 	LongDoubleUnion val, ret;
 
 	val.fval = value;
-	ret.ival = (gint64)InterlockedExchange64((gint64 *) location, val.ival);
+	ret.ival = (gint64)InterlockedExchange64(TO_INTERLOCKED_INT64_ARGP (location), val.ival);
 
 	return ret.fval;
 }
@@ -2085,7 +2085,7 @@ gint32 ves_icall_System_Threading_Interlocked_CompareExchange_Int_Success(gint32
 MonoObject * ves_icall_System_Threading_Interlocked_CompareExchange_Object (MonoObject **location, MonoObject *value, MonoObject *comparand)
 {
 	MonoObject *res;
-	res = (MonoObject *) InterlockedCompareExchangePointer((gpointer *) location, value, comparand);
+	res = (MonoObject *) InterlockedCompareExchangePointer(TO_INTERLOCKED_POINTER_ARGP (location), value, comparand);
 	mono_gc_wbarrier_generic_nostore (location);
 	return res;
 }
@@ -2101,7 +2101,7 @@ gfloat ves_icall_System_Threading_Interlocked_CompareExchange_Single (gfloat *lo
 
 	val.fval = value;
 	cmp.fval = comparand;
-	ret.ival = InterlockedCompareExchange((gint32 *) location, val.ival, cmp.ival);
+	ret.ival = InterlockedCompareExchange(TO_INTERLOCKED_INT32_ARGP (location), val.ival, cmp.ival);
 
 	return ret.fval;
 }
@@ -2114,7 +2114,7 @@ ves_icall_System_Threading_Interlocked_CompareExchange_Double (gdouble *location
 
 	val.fval = value;
 	comp.fval = comparand;
-	ret.ival = (gint64)InterlockedCompareExchangePointer((gpointer *) location, (gpointer)val.ival, (gpointer)comp.ival);
+	ret.ival = (gint64)InterlockedCompareExchangePointer(TO_INTERLOCKED_POINTER_ARGP (location), (gpointer)val.ival, (gpointer)comp.ival);
 
 	return ret.fval;
 #else
@@ -2151,7 +2151,7 @@ MonoObject*
 ves_icall_System_Threading_Interlocked_CompareExchange_T (MonoObject **location, MonoObject *value, MonoObject *comparand)
 {
 	MonoObject *res;
-	res = (MonoObject *)InterlockedCompareExchangePointer ((volatile gpointer *)location, value, comparand);
+	res = (MonoObject *)InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (location), value, comparand);
 	mono_gc_wbarrier_generic_nostore (location);
 	return res;
 }
@@ -2161,7 +2161,7 @@ ves_icall_System_Threading_Interlocked_Exchange_T (MonoObject **location, MonoOb
 {
 	MonoObject *res;
 	MONO_CHECK_NULL (location, NULL);
-	res = (MonoObject *)InterlockedExchangePointer ((volatile gpointer *)location, value);
+	res = (MonoObject *)InterlockedExchangePointer (TO_INTERLOCKED_POINTER_ARGP (location), value);
 	mono_gc_wbarrier_generic_nostore (location);
 	return res;
 }

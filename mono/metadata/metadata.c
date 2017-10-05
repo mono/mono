@@ -3411,7 +3411,7 @@ get_anonymous_container_for_image (MonoImage *image, gboolean is_mvar)
 
 		// If another thread already made a container, use that and leak this new one.
 		// (Technically it would currently be safe to just assign instead of CASing.)
-		MonoGenericContainer *exchange = (MonoGenericContainer *)InterlockedCompareExchangePointer ((volatile gpointer *)container_pointer, result, NULL);
+		MonoGenericContainer *exchange = (MonoGenericContainer *)InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (container_pointer), result, NULL);
 		if (exchange)
 			result = exchange;
 	}

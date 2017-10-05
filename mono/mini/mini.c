@@ -48,6 +48,7 @@
 #include <mono/metadata/attach.h>
 #include <mono/metadata/runtime.h>
 #include <mono/metadata/attrdefs.h>
+#include <mono/utils/atomic.h>
 #include <mono/utils/mono-math.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-counters.h>
@@ -3887,14 +3888,14 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 		if (code_size_ratio > InterlockedRead (&mono_jit_stats.biggest_method_size)) {
 			InterlockedWrite (&mono_jit_stats.biggest_method_size, code_size_ratio);
 			char *biggest_method = g_strdup_printf ("%s::%s)", method->klass->name, method->name);
-			biggest_method = InterlockedExchangePointer ((gpointer*)&mono_jit_stats.biggest_method, biggest_method);
+			biggest_method = InterlockedExchangePointer (TO_INTERLOCKED_POINTER_ARGP (&mono_jit_stats.biggest_method), biggest_method);
 			g_free (biggest_method);
 		}
 		code_size_ratio = (code_size_ratio * 100) / header->code_size;
 		if (code_size_ratio > InterlockedRead (&mono_jit_stats.max_code_size_ratio)) {
 			InterlockedWrite (&mono_jit_stats.max_code_size_ratio, code_size_ratio);
 			char *max_ratio_method = g_strdup_printf ("%s::%s)", method->klass->name, method->name);
-			max_ratio_method = InterlockedExchangePointer ((gpointer*)&mono_jit_stats.max_ratio_method, max_ratio_method);
+			max_ratio_method = InterlockedExchangePointer (TO_INTERLOCKED_POINTER_ARGP (&mono_jit_stats.max_ratio_method), max_ratio_method);
 			g_free (max_ratio_method);
 		}
 	}

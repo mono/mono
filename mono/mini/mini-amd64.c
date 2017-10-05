@@ -31,6 +31,7 @@
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/mono-debug.h>
 #include <mono/metadata/gc-internals.h>
+#include <mono/utils/atomic.h>
 #include <mono/utils/mono-math.h>
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/mono-memory-model.h>
@@ -1417,7 +1418,7 @@ mono_arch_get_iregs_clobbered_by_call (MonoCallInst *call)
 		regs = g_list_prepend (regs, (gpointer)AMD64_RCX);
 		regs = g_list_prepend (regs, (gpointer)AMD64_RAX);
 
-		InterlockedCompareExchangePointer ((gpointer*)&r, regs, NULL);
+		InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (&r), regs, NULL);
 	}
 
 	return r;
@@ -1435,7 +1436,7 @@ mono_arch_get_fregs_clobbered_by_call (MonoCallInst *call)
 		for (i = 0; i < AMD64_XMM_NREG; ++i)
 			regs = g_list_prepend (regs, GINT_TO_POINTER (MONO_MAX_IREGS + i));
 
-		InterlockedCompareExchangePointer ((gpointer*)&r, regs, NULL);
+		InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (&r), regs, NULL);
 	}
 
 	return r;

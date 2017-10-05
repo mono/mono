@@ -322,7 +322,7 @@ try_again:
 			prev = &cur->next;
 		} else {
 			next = (SgenFragment *)unmask (next);
-			if (InterlockedCompareExchangePointer ((volatile gpointer*)prev, next, cur) != cur)
+			if (InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (prev), next, cur) != cur)
 				goto try_again;
 			/*we must make sure that the next from cur->next happens after*/
 			mono_memory_write_barrier ();
@@ -341,7 +341,7 @@ claim_remaining_size (SgenFragment *frag, char *alloc_end)
 		return FALSE;
 
 	/* Try to alloc all the remaining space. */
-	return InterlockedCompareExchangePointer ((volatile gpointer*)&frag->fragment_next, frag->fragment_end, alloc_end) == alloc_end;
+	return InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (&frag->fragment_next), frag->fragment_end, alloc_end) == alloc_end;
 }
 
 static void*
@@ -356,7 +356,7 @@ par_alloc_from_fragment (SgenFragmentAllocator *allocator, SgenFragment *frag, s
 	/* p = frag->fragment_next must happen before */
 	mono_memory_barrier ();
 
-	if (InterlockedCompareExchangePointer ((volatile gpointer*)&frag->fragment_next, end, p) != p)
+	if (InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (&frag->fragment_next), end, p) != p)
 		return NULL;
 
 	if (frag->fragment_end - end < SGEN_MAX_NURSERY_WASTE) {
@@ -390,7 +390,7 @@ par_alloc_from_fragment (SgenFragmentAllocator *allocator, SgenFragment *frag, s
 				mono_memory_write_barrier ();
 
 				/*Fail if the next node is removed concurrently and its CAS wins */
-				if (InterlockedCompareExchangePointer ((volatile gpointer*)&frag->next, mask (next, 1), next) != next) {
+				if (InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (&frag->next), mask (next, 1), next) != next) {
 					continue;
 				}
 			}
@@ -399,7 +399,7 @@ par_alloc_from_fragment (SgenFragmentAllocator *allocator, SgenFragment *frag, s
 			mono_memory_write_barrier ();
 
 			/* Fail if the previous node was deleted and its CAS wins */
-			if (InterlockedCompareExchangePointer ((volatile gpointer*)prev_ptr, unmask (next), frag) != frag) {
+			if (InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (prev_ptr), unmask (next), frag) != frag) {
 				prev_ptr = find_previous_pointer_fragment (allocator, frag);
 				continue;
 			}

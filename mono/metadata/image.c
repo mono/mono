@@ -99,7 +99,7 @@ assign_assembly_parent_for_netmodule (MonoImage *image, MonoImage *assemblyImage
 			mono_error_set_bad_image (error, assemblyImage, "Attempted to load module %s which has already been loaded by assembly %s. This is not supported in Mono.", image->name, assemblyOld->image->name);
 			return FALSE;
 		}
-		gpointer result = InterlockedExchangePointer((gpointer *)&image->assembly, assembly);
+		gpointer result = InterlockedExchangePointer(TO_INTERLOCKED_POINTER_ARGP (&image->assembly), assembly);
 		if (result == assembly)
 			return TRUE;
 	}
@@ -2738,7 +2738,7 @@ mono_image_strdup (MonoImage *image, const char *s)
 	char *res;
 
 #ifndef DISABLE_PERFCOUNTERS
-	InterlockedAdd (&mono_perfcounters->loader_bytes, strlen (s));
+	InterlockedAdd (&mono_perfcounters->loader_bytes, TO_INTERLOCKED_INT32_ARG (strlen (s)));
 #endif
 	mono_image_lock (image);
 	res = mono_mempool_strdup (image->mempool, s);
@@ -2755,7 +2755,7 @@ mono_image_strdup_vprintf (MonoImage *image, const char *format, va_list args)
 	buf = mono_mempool_strdup_vprintf (image->mempool, format, args);
 	mono_image_unlock (image);
 #ifndef DISABLE_PERFCOUNTERS
-	InterlockedAdd (&mono_perfcounters->loader_bytes, strlen (buf));
+	InterlockedAdd (&mono_perfcounters->loader_bytes, TO_INTERLOCKED_INT32_ARG (strlen (buf)));
 #endif
 	return buf;
 }

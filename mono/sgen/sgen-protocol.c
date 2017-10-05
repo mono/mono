@@ -328,7 +328,7 @@ binary_protocol_get_buffer (int length)
 	new_buffer->next = buffer;
 	new_buffer->index = 0;
 
-	if (InterlockedCompareExchangePointer ((void**)&binary_protocol_buffers, new_buffer, buffer) != buffer) {
+	if (InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (&binary_protocol_buffers), new_buffer, buffer) != buffer) {
 		sgen_free_os_memory (new_buffer, sizeof (BinaryProtocolBuffer), SGEN_ALLOC_INTERNAL, MONO_MEM_ACCOUNT_SGEN_BINARY_PROTOCOL);
 		goto retry;
 	}

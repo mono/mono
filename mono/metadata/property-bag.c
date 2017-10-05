@@ -51,7 +51,7 @@ retry:
 		cur = *prev;
 		if (!cur || cur->tag > tag) {
 			item->next = cur;
-			if (InterlockedCompareExchangePointer ((void*)prev, item, cur) == cur)
+			if (InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (prev), item, cur) == cur)
 				return item;
 			goto retry;
 		} else if (cur->tag == tag) {

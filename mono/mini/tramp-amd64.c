@@ -24,6 +24,7 @@
 #include <mono/metadata/gc-internals.h>
 #include <mono/arch/amd64/amd64-codegen.h>
 
+#include <mono/utils/atomic.h>
 #include <mono/utils/memcheck.h>
 
 #include "mini.h"
@@ -145,7 +146,7 @@ mono_arch_patch_callsite (guint8 *method_start, guint8 *orig_code, guint8 *addr)
 		if (code [-5] != 0xe8) {
 			if (can_write) {
 				g_assert ((guint64)(orig_code - 11) % 8 == 0);
-				InterlockedExchangePointer ((gpointer*)(orig_code - 11), addr);
+				InterlockedExchangePointer (TO_INTERLOCKED_POINTER_ARGP (orig_code - 11), addr);
 				VALGRIND_DISCARD_TRANSLATIONS (orig_code - 11, sizeof (gpointer));
 			}
 		} else {
@@ -166,7 +167,7 @@ mono_arch_patch_callsite (guint8 *method_start, guint8 *orig_code, guint8 *addr)
 				MONO_PROFILER_RAISE (jit_code_buffer, (thunk_start, thunk_code - thunk_start, MONO_PROFILER_CODE_BUFFER_HELPER, NULL));
 			}
 			if (can_write) {
-				InterlockedExchange ((gint32*)(orig_code - 4), ((gint64)addr - (gint64)orig_code));
+				InterlockedExchange (TO_INTERLOCKED_INT32_ARGP (orig_code - 4), TO_INTERLOCKED_INT32_ARG ((gint64)addr - (gint64)orig_code));
 				VALGRIND_DISCARD_TRANSLATIONS (orig_code - 5, 4);
 			}
 		}

@@ -28,7 +28,7 @@ guint64 stat_gray_queue_dequeue_slow_path;
 #ifdef SGEN_CHECK_GRAY_OBJECT_SECTIONS
 #define STATE_TRANSITION(s,o,n)	do {					\
 		int __old = (o);					\
-		if (InterlockedCompareExchange ((volatile int*)&(s)->state, (n), __old) != __old) \
+		if (InterlockedCompareExchange (TO_INTERLOCKED_INT32_ARGP (&(s)->state), (n), __old) != __old) \
 			g_assert_not_reached ();			\
 	} while (0)
 #define STATE_SET(s,v)		(s)->state = (v)

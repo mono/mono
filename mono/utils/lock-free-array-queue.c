@@ -68,7 +68,7 @@ mono_lock_free_array_nth (MonoLockFreeArray *arr, int index)
 	if (!arr->chunk_list) {
 		chunk = alloc_chunk (arr);
 		mono_memory_write_barrier ();
-		if (InterlockedCompareExchangePointer ((volatile gpointer *)&arr->chunk_list, chunk, NULL) != NULL)
+		if (InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (&arr->chunk_list), chunk, NULL) != NULL)
 			free_chunk (chunk, arr->account_type);
 	}
 
@@ -80,7 +80,7 @@ mono_lock_free_array_nth (MonoLockFreeArray *arr, int index)
 		if (!next) {
 			next = alloc_chunk (arr);
 			mono_memory_write_barrier ();
-			if (InterlockedCompareExchangePointer ((volatile gpointer *) &chunk->next, next, NULL) != NULL) {
+			if (InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (&chunk->next), next, NULL) != NULL) {
 				free_chunk (next, arr->account_type);
 				next = chunk->next;
 				g_assert (next);

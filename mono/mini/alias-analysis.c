@@ -15,6 +15,7 @@
 #include "ir-emit.h"
 #include "glib.h"
 #include <mono/utils/mono-compiler.h>
+#include <mono/utils/atomic.h>
 
 #ifndef DISABLE_JIT
 

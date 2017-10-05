@@ -1089,7 +1089,7 @@ ref_list_remove_element (RefQueueEntry **prev, RefQueueEntry *element)
 		/* Guard if head is changed concurrently. */
 		while (*prev != element)
 			prev = &(*prev)->next;
-	} while (prev && InterlockedCompareExchangePointer ((volatile gpointer *)prev, element->next, element) != element);
+	} while (prev && InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (prev), element->next, element) != element);
 }
 
 static void
@@ -1100,7 +1100,7 @@ ref_list_push (RefQueueEntry **head, RefQueueEntry *value)
 		current = *head;
 		value->next = current;
 		STORE_STORE_FENCE; /*Must make sure the previous store is visible before the CAS. */
-	} while (InterlockedCompareExchangePointer ((volatile gpointer *)head, value, current) != current);
+	} while (InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (head), value, current) != current);
 }
 
 static void

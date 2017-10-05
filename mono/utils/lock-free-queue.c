@@ -156,11 +156,11 @@ mono_lock_free_queue_enqueue (MonoLockFreeQueue *q, MonoLockFreeQueueNode *node)
 				 * might append to a node that isn't
 				 * in the queue anymore here.
 				 */
-				if (InterlockedCompareExchangePointer ((gpointer volatile*)&tail->next, node, END_MARKER) == END_MARKER)
+				if (InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (&tail->next), node, END_MARKER) == END_MARKER)
 					break;
 			} else {
 				/* Try to advance tail */
-				InterlockedCompareExchangePointer ((gpointer volatile*)&q->tail, next, tail);
+				InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (&q->tail), next, tail);
 			}
 		}
 
@@ -169,7 +169,7 @@ mono_lock_free_queue_enqueue (MonoLockFreeQueue *q, MonoLockFreeQueueNode *node)
 	}
 
 	/* Try to advance tail */
-	InterlockedCompareExchangePointer ((gpointer volatile*)&q->tail, node, tail);
+	InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (&q->tail), node, tail);
 
 	mono_memory_write_barrier ();
 	mono_hazard_pointer_clear (hp, 0);
@@ -275,11 +275,11 @@ mono_lock_free_queue_dequeue (MonoLockFreeQueue *q)
 				}
 
 				/* Try to advance tail */
-				InterlockedCompareExchangePointer ((gpointer volatile*)&q->tail, next, tail);
+				InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (&q->tail), next, tail);
 			} else {
 				g_assert (next != END_MARKER);
 				/* Try to dequeue head */
-				if (InterlockedCompareExchangePointer ((gpointer volatile*)&q->head, next, head) == head)
+				if (InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (&q->head), next, head) == head)
 					break;
 			}
 		}

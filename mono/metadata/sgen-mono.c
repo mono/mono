@@ -26,6 +26,7 @@
 #include "metadata/sgen-bridge-internals.h"
 #include "metadata/gc-internals.h"
 #include "metadata/handle.h"
+#include "utils/atomic.h"
 #include "utils/mono-memory-model.h"
 #include "utils/mono-logger-internals.h"
 #include "utils/mono-threads-coop.h"

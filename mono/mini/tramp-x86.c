@@ -20,6 +20,7 @@
 #include <mono/metadata/gc-internals.h>
 #include <mono/arch/x86/x86-codegen.h>
 
+#include <mono/utils/atomic.h>
 #include <mono/utils/memcheck.h>
 
 #include "mini.h"
@@ -108,7 +109,7 @@ mono_arch_patch_callsite (guint8 *method_start, guint8 *orig_code, guint8 *addr)
 	orig_code -= 6;
 	if (code [1] == 0xe8) {
 		if (can_write) {
-			InterlockedExchange ((gint32*)(orig_code + 2), (guint)addr - ((guint)orig_code + 1) - 5);
+			InterlockedExchange (TO_INTERLOCKED_INT32_ARGP (orig_code + 2), (guint)addr - ((guint)orig_code + 1) - 5);
 
 			/* Tell valgrind to recompile the patched code */
 			VALGRIND_DISCARD_TRANSLATIONS (orig_code + 2, 4);
@@ -116,7 +117,7 @@ mono_arch_patch_callsite (guint8 *method_start, guint8 *orig_code, guint8 *addr)
 	} else if (code [1] == 0xe9) {
 		/* A PLT entry: jmp <DISP> */
 		if (can_write)
-			InterlockedExchange ((gint32*)(orig_code + 2), (guint)addr - ((guint)orig_code + 1) - 5);
+			InterlockedExchange (TO_INTERLOCKED_INT32_ARGP (orig_code + 2), (guint)addr - ((guint)orig_code + 1) - 5);
 	} else {
 		printf ("Invalid trampoline sequence: %x %x %x %x %x %x %x\n", code [0], code [1], code [2], code [3],
 				code [4], code [5], code [6]);

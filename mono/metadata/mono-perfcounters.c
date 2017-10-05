@@ -1158,7 +1158,7 @@ predef_writable_update (ImplVtable *vtable, MonoBoolean do_incr, gint64 value)
 			if (value == -1)
 				return InterlockedDecrement (ptr);
 
-			return InterlockedAdd(ptr, value);
+			return InterlockedAdd(ptr, TO_INTERLOCKED_INT32_ARG (value));
 		}
 		/* this can be non-atomic */
 		*ptr = value;

@@ -11,6 +11,7 @@
 #ifndef __MONO_SPLIT_ORDERED_LIST_H__
 #define __MONO_SPLIT_ORDERED_LIST_H__
 
+#include <mono/utils/atomic.h>
 #include <mono/utils/hazard-pointer.h>
 #include <mono/utils/mono-membar.h>
 
@@ -148,7 +149,7 @@ mono_lls_filter_accept_all (gpointer elem)
 					mono_hazard_pointer_set (hp__, 2, cur__); \
 				} else { \
 					next__ = (MonoLinkedListSetNode *) mono_lls_pointer_unmask (next__); \
-					if (InterlockedCompareExchangePointer ((volatile gpointer *) prev__, next__, cur__) == cur__) { \
+					if (InterlockedCompareExchangePointer (TO_INTERLOCKED_POINTER_ARGP (prev__), next__, cur__) == cur__) { \
 						mono_memory_write_barrier (); \
 						mono_hazard_pointer_clear (hp__, 1); \
 						if (list__->free_node_func) { \
