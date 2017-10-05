@@ -14,6 +14,7 @@
 #include <glib.h>
 #include <stdio.h>
 
+#include "mono/utils/ward.h"
 #include "mono/utils/mono-compiler.h"
 #include "mono/utils/parse.h"
 #include "mono/utils/memfuncs.h"
