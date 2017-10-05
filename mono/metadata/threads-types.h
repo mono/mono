@@ -70,6 +70,32 @@ typedef enum {
 	MONO_THREAD_CREATE_FLAGS_SMALL_STACK  = 0x8,
 } MonoThreadCreateFlags;
 
+/* It's safe to access System.Threading.InternalThread from native code via a
+ * raw pointer because all instances should be pinned.  But for uniformity of
+ * icall wrapping, let's declare a MonoInternalThreadHandle anyway.
+ */
+TYPED_HANDLE_DECL (MonoInternalThread);
+
+#define MONO_INTERNAL_THREAD_HANDLE_FLAGS_ADD(THREAD, FLAGS) do { \
+		MonoInternalThreadHandle __handle = (THREAD); \
+		MONO_HANDLE_SETVAL (__handle, flags, gsize, MONO_HANDLE_GETVAL (__handle, flags) | (FLAGS)); \
+	} while (0)
+
+#define MONO_INTERNAL_THREAD_HANDLE_FLAGS_REMOVE(THREAD, FLAGS) do { \
+		MonoInternalThreadHandle __handle = (THREAD); \
+		MONO_HANDLE_SETVAL (__handle, flags, gsize, MONO_HANDLE_GETVAL (__handle, flags) & ~(FLAGS)); \
+	} while (0)
+
+#define MONO_INTERNAL_THREAD_HANDLE_STATE_ADD(THREAD, FLAGS) do { \
+		MonoInternalThreadHandle __handle = (THREAD); \
+		MONO_HANDLE_SETVAL (__handle, state, gsize, MONO_HANDLE_GETVAL (__handle, state) | (FLAGS)); \
+	} while (0)
+
+#define MONO_INTERNAL_THREAD_HANDLE_STATE_REMOVE(THREAD, FLAGS) do { \
+		MonoInternalThreadHandle __handle = (THREAD); \
+		MONO_HANDLE_SETVAL (__handle, state, gsize, MONO_HANDLE_GETVAL (__handle, state) & ~(FLAGS)); \
+	} while (0)
+
 MonoInternalThread*
 mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, MonoThreadCreateFlags flags, MonoError *error);
 
@@ -130,7 +156,7 @@ gint64 ves_icall_System_Threading_Interlocked_Increment_Long(gint64 *location);
 gint32 ves_icall_System_Threading_Interlocked_Decrement_Int(gint32 *location);
 gint64 ves_icall_System_Threading_Interlocked_Decrement_Long(gint64 * location);
 
-void ves_icall_System_Threading_Thread_Abort (MonoInternalThread *thread, MonoObject *state);
+void ves_icall_System_Threading_Thread_Abort (MonoInternalThreadHandle thread, MonoObjectHandle state, MonoError *error);
 void ves_icall_System_Threading_Thread_ResetAbort (MonoThread *this_obj);
 MonoObject* ves_icall_System_Threading_Thread_GetAbortExceptionState (MonoThread *thread);
 void ves_icall_System_Threading_Thread_Suspend (MonoThread *this_obj);

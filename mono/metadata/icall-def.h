@@ -927,7 +927,7 @@ ICALL(SEMA_2, "OpenSemaphore_internal(string,System.Security.AccessControl.Semap
 ICALL(SEMA_3, "ReleaseSemaphore_internal(intptr,int,int&)", ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal)
 
 ICALL_TYPE(THREAD, "System.Threading.Thread", THREAD_1)
-ICALL(THREAD_1, "Abort_internal(System.Threading.InternalThread,object)", ves_icall_System_Threading_Thread_Abort)
+HANDLES(ICALL(THREAD_1, "Abort_internal(System.Threading.InternalThread,object)", ves_icall_System_Threading_Thread_Abort))
 ICALL(THREAD_1a, "ByteArrayToCurrentDomain(byte[])", ves_icall_System_Threading_Thread_ByteArrayToCurrentDomain)
 ICALL(THREAD_1b, "ByteArrayToRootDomain(byte[])", ves_icall_System_Threading_Thread_ByteArrayToRootDomain)
 ICALL(THREAD_2, "ClrState(System.Threading.InternalThread,System.Threading.ThreadState)", ves_icall_System_Threading_Thread_ClrState)

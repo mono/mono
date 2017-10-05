@@ -94,8 +94,10 @@ extern int tkill (pid_t tid, int signal);
 
 #define SPIN_UNLOCK(i) i = 0
 
-#define LOCK_THREAD(thread) lock_thread((thread))
-#define UNLOCK_THREAD(thread) unlock_thread((thread))
+#define LOCK_THREAD(thread) lock_thread ((thread))
+#define UNLOCK_THREAD(thread) unlock_thread ((thread))
+#define LOCK_THREAD_HANDLE(thread) lock_thread (MONO_HANDLE_RAW (thread))
+#define UNLOCK_THREAD_HANDLE(thread) unlock_thread (MONO_HANDLE_RAW (thread))
 
 typedef union {
 	gint32 ival;
@@ -180,7 +182,9 @@ static void mono_free_static_data (gpointer* static_data);
 static void mono_init_static_data_info (StaticDataInfo *static_data);
 static guint32 mono_alloc_static_data_slot (StaticDataInfo *static_data, guint32 size, guint32 align);
 static gboolean mono_thread_resume (MonoInternalThread* thread);
+static gboolean mono_thread_resume_handle (MonoInternalThreadHandle thread);
 static void async_abort_internal (MonoInternalThread *thread, gboolean install_async_abort);
+static void async_abort_internal_handle (MonoInternalThreadHandle thread, gboolean install_async_abort);
 static void self_abort_internal (MonoError *error);
 static void async_suspend_internal (MonoInternalThread *thread, gboolean interrupt);
 static void self_suspend_internal (void);
@@ -388,6 +392,13 @@ thread_get_tid (MonoInternalThread *thread)
 {
 	/* We store the tid as a guint64 to keep the object layout constant between platforms */
 	return MONO_UINT_TO_NATIVE_THREAD_ID (thread->tid);
+}
+
+static inline MonoNativeThreadId
+thread_get_tid_handle (MonoInternalThreadHandle thread)
+{
+	/* We store the tid as a guint64 to keep the object layout constant between platforms */
+	return MONO_UINT_TO_NATIVE_THREAD_ID (MONO_HANDLE_GETVAL (thread, tid));
 }
 
 static void ensure_synch_cs_set (MonoInternalThread *thread)
@@ -2340,18 +2351,60 @@ request_thread_abort (MonoInternalThread *thread, MonoObject *state, gboolean ap
 	return TRUE;
 }
 
-void
-ves_icall_System_Threading_Thread_Abort (MonoInternalThread *thread, MonoObject *state)
+static gboolean
+request_thread_abort_handle (MonoInternalThreadHandle thread, MonoObjectHandle state, gboolean appdomain_unload)
 {
-	if (!request_thread_abort (thread, state, FALSE))
+	LOCK_THREAD_HANDLE (thread);
+	
+	if (MONO_HANDLE_GETVAL (thread, state) & (ThreadState_AbortRequested | ThreadState_Stopped))
+	{
+		UNLOCK_THREAD_HANDLE (thread);
+		return FALSE;
+	}
+
+	if ((MONO_HANDLE_GETVAL (thread, state) & ThreadState_Unstarted) != 0) {
+		MONO_INTERNAL_THREAD_HANDLE_STATE_ADD (thread, ThreadState_Aborted);
+		UNLOCK_THREAD_HANDLE (thread);
+		return FALSE;
+	}
+
+	MONO_INTERNAL_THREAD_HANDLE_STATE_ADD (thread, ThreadState_AbortRequested);
+	if (appdomain_unload)
+		MONO_INTERNAL_THREAD_HANDLE_FLAGS_ADD (thread, MONO_THREAD_FLAG_APPDOMAIN_ABORT);
+	else
+		MONO_INTERNAL_THREAD_HANDLE_FLAGS_REMOVE (thread, MONO_THREAD_FLAG_APPDOMAIN_ABORT);
+
+	if (MONO_HANDLE_GETVAL (thread, abort_state_handle))
+		mono_gchandle_free (MONO_HANDLE_GETVAL (thread, abort_state_handle));
+	if (state) {
+		MONO_HANDLE_SETVAL (thread, abort_state_handle, guint32, mono_gchandle_from_handle (state, FALSE));
+		g_assert (MONO_HANDLE_GETVAL (thread, abort_state_handle));
+	} else {
+		MONO_HANDLE_SETVAL (thread, abort_state_handle, guint32, 0);
+	}
+	MONO_HANDLE_SETVAL (thread, abort_exc, MonoException *, NULL);
+
+	THREAD_DEBUG (g_message ("%s: (%"G_GSIZE_FORMAT") Abort requested for %p (%"G_GSIZE_FORMAT")", __func__, mono_native_thread_id_get (), thread, (gsize)thread->tid));
+
+	/* During shutdown, we can't wait for other threads */
+	if (!shutting_down)
+		/* Make sure the thread is awake */
+		mono_thread_resume_handle (thread);
+
+	UNLOCK_THREAD_HANDLE (thread);
+	return TRUE;
+}
+
+void
+ves_icall_System_Threading_Thread_Abort (MonoInternalThreadHandle thread, MonoObjectHandle state, MonoError *error)
+{
+	if (!request_thread_abort_handle (thread, state, FALSE))
 		return;
 
-	if (thread == mono_thread_internal_current ()) {
-		MonoError error;
-		self_abort_internal (&error);
-		mono_error_set_pending_exception (&error);
+	if (MONO_HANDLE_RAW (thread) == mono_thread_internal_current ()) {
+		self_abort_internal (error);
 	} else {
-		async_abort_internal (thread, TRUE);
+		async_abort_internal_handle (thread, TRUE);
 	}
 }
 
@@ -2509,8 +2562,8 @@ mono_thread_resume (MonoInternalThread *thread)
 	}
 
 	if ((thread->state & ThreadState_Suspended) == 0 ||
-		(thread->state & ThreadState_Unstarted) != 0 || 
-		(thread->state & ThreadState_Aborted) != 0 || 
+		(thread->state & ThreadState_Unstarted) != 0 ||
+		(thread->state & ThreadState_Aborted) != 0 ||
 		(thread->state & ThreadState_Stopped) != 0)
 	{
 		// MOSTLY_ASYNC_SAFE_PRINTF ("RESUME (2) thread %p\n", thread_get_tid (thread));
@@ -2532,6 +2585,47 @@ mono_thread_resume (MonoInternalThread *thread)
 	}
 
 	thread->state &= ~ThreadState_Suspended;
+
+	return TRUE;
+}
+
+/* LOCKING: LOCK_THREAD(thread) must be held */
+static gboolean
+mono_thread_resume_handle (MonoInternalThreadHandle thread)
+{
+	const gsize state = MONO_HANDLE_GETVAL (thread, state);
+
+	if ((state & ThreadState_SuspendRequested) != 0) {
+		// MOSTLY_ASYNC_SAFE_PRINTF ("RESUME (1) thread %p\n", thread_get_tid (thread));
+		MONO_INTERNAL_THREAD_HANDLE_STATE_REMOVE (thread, ThreadState_SuspendRequested);
+		mono_os_event_set (MONO_HANDLE_GETVAL (thread, suspended));
+		return TRUE;
+	}
+
+	if ((state & ThreadState_Suspended) == 0 ||
+		(state & ThreadState_Unstarted) != 0 ||
+		(state & ThreadState_Aborted) != 0 ||
+		(state & ThreadState_Stopped) != 0)
+	{
+		// MOSTLY_ASYNC_SAFE_PRINTF ("RESUME (2) thread %p\n", thread_get_tid (thread));
+		return FALSE;
+	}
+
+	// MOSTLY_ASYNC_SAFE_PRINTF ("RESUME (3) thread %p\n", thread_get_tid (thread));
+
+	mono_os_event_set (MONO_HANDLE_GETVAL (thread, suspended));
+
+	if (!MONO_HANDLE_GETVAL (thread, self_suspended)) {
+		UNLOCK_THREAD_HANDLE (thread);
+
+		/* Awake the thread */
+		if (!mono_thread_info_resume (thread_get_tid_handle (thread)))
+			return FALSE;
+
+		LOCK_THREAD_HANDLE (thread);
+	}
+
+	MONO_INTERNAL_THREAD_HANDLE_STATE_REMOVE (thread, ThreadState_Suspended);
 
 	return TRUE;
 }
@@ -4860,6 +4954,24 @@ async_abort_internal (MonoInternalThread *thread, gboolean install_async_abort)
 	data.interrupt_token = NULL;
 
 	mono_thread_info_safe_suspend_and_run (thread_get_tid (thread), TRUE, async_abort_critical, &data);
+	if (data.interrupt_token)
+		mono_thread_info_finish_interrupt (data.interrupt_token);
+	/*FIXME we need to wait for interruption to complete -- figure out how much into interruption we should wait for here*/
+}
+
+static void
+async_abort_internal_handle (MonoInternalThreadHandle thread, gboolean install_async_abort)
+{
+	AbortThreadData data;
+
+	g_assert (MONO_HANDLE_RAW (thread) != mono_thread_internal_current ());
+
+	/* FIXME: Should AbortThreadData.thread be a MonoInternalThreadHandle? */
+	data.thread = MONO_HANDLE_RAW (thread);
+	data.install_async_abort = install_async_abort;
+	data.interrupt_token = NULL;
+
+	mono_thread_info_safe_suspend_and_run (thread_get_tid_handle (thread), TRUE, async_abort_critical, &data);
 	if (data.interrupt_token)
 		mono_thread_info_finish_interrupt (data.interrupt_token);
 	/*FIXME we need to wait for interruption to complete -- figure out how much into interruption we should wait for here*/
