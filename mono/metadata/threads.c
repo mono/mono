@@ -1703,27 +1703,8 @@ ves_icall_System_Threading_Thread_SetPriority (MonoThread *this_obj, int priorit
 
 /* If the array is already in the requested domain, we just return it,
    otherwise we return a copy in that domain. */
-static MonoArray*
-byte_array_to_domain (MonoArray *arr, MonoDomain *domain, MonoError *error)
-{
-	MonoArray *copy;
-
-	error_init (error);
-	if (!arr)
-		return NULL;
-
-	if (mono_object_domain (arr) == domain)
-		return arr;
-
-	copy = mono_array_new_checked (domain, mono_defaults.byte_class, arr->max_length, error);
-	memmove (mono_array_addr (copy, guint8, 0), mono_array_addr (arr, guint8, 0), arr->max_length);
-	return copy;
-}
-
-/* If the array is already in the requested domain, we just return it,
-   otherwise we return a copy in that domain. */
 static MonoArrayHandle
-byte_array_to_domain_handle (MonoArrayHandle arr, MonoDomain *domain, MonoError *error)
+byte_array_to_domain (MonoArrayHandle arr, MonoDomain *domain, MonoError *error)
 {
 	MonoArrayHandle copy = MONO_HANDLE_NEW (MonoArray, NULL);
 
@@ -1749,13 +1730,13 @@ byte_array_to_domain_handle (MonoArrayHandle arr, MonoDomain *domain, MonoError 
 MonoArrayHandle
 ves_icall_System_Threading_Thread_ByteArrayToRootDomain (MonoArrayHandle arr, MonoError *error)
 {
-	return byte_array_to_domain_handle (arr, mono_get_root_domain (), error);
+	return byte_array_to_domain (arr, mono_get_root_domain (), error);
 }
 
 MonoArrayHandle
 ves_icall_System_Threading_Thread_ByteArrayToCurrentDomain (MonoArrayHandle arr, MonoError *error)
 {
-	return byte_array_to_domain_handle (arr, mono_domain_get (), error);
+	return byte_array_to_domain (arr, mono_domain_get (), error);
 }
 
 /**
