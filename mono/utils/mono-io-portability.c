@@ -13,6 +13,10 @@
 
 #include <dirent.h>
 
+#ifdef IL2CPP_MONO_DEBUGGER
+#include "il2cpp-compat-metadata.h"
+#endif
+
 int mono_io_portability_helpers = PORTABILITY_UNKNOWN;
 
 static inline gchar *mono_portability_find_file_internal (GString **report, const gchar *pathname, gboolean last_exists);

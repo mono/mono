@@ -9,6 +9,11 @@ mono_debugger_agent_parse_options (char *options);
 void
 mono_debugger_agent_init (void);
 
+#ifdef IL2CPP_MONO_DEBUGGER
+void
+mono_debugger_run_debugger_thread_func(void* arg);
+#endif // IL2CPP_MONO_DEBUGGER
+
 void
 mono_debugger_agent_breakpoint_hit (void *sigctx);
 
@@ -16,7 +21,11 @@ void
 mono_debugger_agent_single_step_event (void *sigctx);
 
 void
+#ifndef IL2CPP_MONO_DEBUGGER
 debugger_agent_single_step_from_context (MonoContext *ctx);
+#else
+debugger_agent_single_step_from_context (MonoContext *ctx, uint64_t sequencePointId);
+#endif
 
 void
 debugger_agent_breakpoint_from_context (MonoContext *ctx);
