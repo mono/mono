@@ -88,8 +88,8 @@ static size_t alloc_limit;
 void
 account_mem (MonoMemAccountType type, ssize_t size)
 {
-	InterlockedAddP (&allocation_count [type], size);
-	InterlockedAddP (&total_allocation_count, size);
+	mono_atomic_add_size_t (&allocation_count [type], size);
+	mono_atomic_add_size_t (&total_allocation_count, size);
 }
 
 void

@@ -214,33 +214,33 @@ static inline void InterlockedWrite16(volatile gint16 *dst, gint16 val)
 #define gcc_sync_fetch_and_add(a, b) __sync_fetch_and_add (a, b)
 #endif
 
-static inline gint32 InterlockedCompareExchange(volatile gint32 *dest,
+static inline gint32 mono_atomic_cas_i32(volatile gint32 *dest,
 						gint32 exch, gint32 comp)
 {
 	return gcc_sync_val_compare_and_swap (dest, comp, exch);
 }
 
-static inline gpointer InterlockedCompareExchangePointer(volatile gpointer *dest, gpointer exch, gpointer comp)
+static inline gpointer mono_atomic_cas_ptr(volatile gpointer *dest, gpointer exch, gpointer comp)
 {
 	return gcc_sync_val_compare_and_swap (dest, comp, exch);
 }
 
-static inline gint32 InterlockedAdd(volatile gint32 *dest, gint32 add)
+static inline gint32 mono_atomic_add_i32(volatile gint32 *dest, gint32 add)
 {
 	return gcc_sync_add_and_fetch (dest, add);
 }
 
-static inline gint32 InterlockedIncrement(volatile gint32 *val)
+static inline gint32 mono_atomic_inc_i32(volatile gint32 *val)
 {
 	return gcc_sync_add_and_fetch (val, 1);
 }
 
-static inline gint32 InterlockedDecrement(volatile gint32 *val)
+static inline gint32 mono_atomic_dec_i32(volatile gint32 *val)
 {
 	return gcc_sync_sub_and_fetch (val, 1);
 }
 
-static inline gint32 InterlockedExchange(volatile gint32 *val, gint32 new_val)
+static inline gint32 mono_atomic_xchg_i32(volatile gint32 *val, gint32 new_val)
 {
 	gint32 old_val;
 	do {
@@ -249,7 +249,7 @@ static inline gint32 InterlockedExchange(volatile gint32 *val, gint32 new_val)
 	return old_val;
 }
 
-static inline gpointer InterlockedExchangePointer(volatile gpointer *val,
+static inline gpointer mono_atomic_xchg_ptr(volatile gpointer *val,
 						  gpointer new_val)
 {
 	gpointer old_val;
@@ -259,29 +259,29 @@ static inline gpointer InterlockedExchangePointer(volatile gpointer *val,
 	return old_val;
 }
 
-static inline gint32 InterlockedExchangeAdd(volatile gint32 *val, gint32 add)
+static inline gint32 mono_atomic_xchg_i32Add(volatile gint32 *val, gint32 add)
 {
 	return gcc_sync_fetch_and_add (val, add);
 }
 
-static inline gint8 InterlockedRead8(volatile gint8 *src)
+static inline gint8 mono_atomic_load_i8(volatile gint8 *src)
 {
 	/* Kind of a hack, but GCC doesn't give us anything better, and it's
 	 * certainly not as bad as using a CAS loop. */
 	return gcc_sync_fetch_and_add (src, 0);
 }
 
-static inline gint16 InterlockedRead16(volatile gint16 *src)
+static inline gint16 mono_atomic_load_i16(volatile gint16 *src)
 {
 	return gcc_sync_fetch_and_add (src, 0);
 }
 
-static inline gint32 InterlockedRead(volatile gint32 *src)
+static inline gint32 mono_atomic_load_i32(volatile gint32 *src)
 {
 	return gcc_sync_fetch_and_add (src, 0);
 }
 
-static inline void InterlockedWrite8(volatile gint8 *dst, gint8 val)
+static inline void mono_atomic_store_i8(volatile gint8 *dst, gint8 val)
 {
 	/* Nothing useful from GCC at all, so fall back to CAS. */
 	gint8 old_val;
@@ -290,7 +290,7 @@ static inline void InterlockedWrite8(volatile gint8 *dst, gint8 val)
 	} while (gcc_sync_val_compare_and_swap (dst, old_val, val) != old_val);
 }
 
-static inline void InterlockedWrite16(volatile gint16 *dst, gint16 val)
+static inline void mono_atomic_store_i16(volatile gint16 *dst, gint16 val)
 {
 	gint16 old_val;
 	do {
@@ -298,7 +298,7 @@ static inline void InterlockedWrite16(volatile gint16 *dst, gint16 val)
 	} while (gcc_sync_val_compare_and_swap (dst, old_val, val) != old_val);
 }
 
-static inline void InterlockedWrite(volatile gint32 *dst, gint32 val)
+static inline void mono_atomic_store_i32(volatile gint32 *dst, gint32 val)
 {
 	/* Nothing useful from GCC at all, so fall back to CAS. */
 	gint32 old_val;
@@ -313,32 +313,32 @@ static inline void InterlockedWrite(volatile gint32 *dst, gint32 val)
 
 #if !defined (BROKEN_64BIT_ATOMICS_INTRINSIC)
 
-static inline gint64 InterlockedCompareExchange64(volatile gint64 *dest, gint64 exch, gint64 comp)
+static inline gint64 mono_atomic_cas_i64(volatile gint64 *dest, gint64 exch, gint64 comp)
 {
 	return gcc_sync_val_compare_and_swap (dest, comp, exch);
 }
 
-static inline gint64 InterlockedAdd64(volatile gint64 *dest, gint64 add)
+static inline gint64 mono_atomic_add_i64(volatile gint64 *dest, gint64 add)
 {
 	return gcc_sync_add_and_fetch (dest, add);
 }
 
-static inline gint64 InterlockedIncrement64(volatile gint64 *val)
+static inline gint64 mono_atomic_inc_i64(volatile gint64 *val)
 {
 	return gcc_sync_add_and_fetch (val, 1);
 }
 
-static inline gint64 InterlockedDecrement64(volatile gint64 *val)
+static inline gint64 mono_atomic_dec_i64(volatile gint64 *val)
 {
 	return gcc_sync_sub_and_fetch (val, 1);
 }
 
-static inline gint64 InterlockedExchangeAdd64(volatile gint64 *val, gint64 add)
+static inline gint64 mono_atomic_xchg_i32Add64(volatile gint64 *val, gint64 add)
 {
 	return gcc_sync_fetch_and_add (val, add);
 }
 
-static inline gint64 InterlockedRead64(volatile gint64 *src)
+static inline gint64 mono_atomic_load_i64(volatile gint64 *src)
 {
 	/* Kind of a hack, but GCC doesn't give us anything better. */
 	return gcc_sync_fetch_and_add (src, 0);
@@ -347,130 +347,130 @@ static inline gint64 InterlockedRead64(volatile gint64 *src)
 #else
 
 /* Implement 64-bit cmpxchg by hand or emulate it. */
-extern gint64 InterlockedCompareExchange64(volatile gint64 *dest, gint64 exch, gint64 comp);
+extern gint64 mono_atomic_cas_i64(volatile gint64 *dest, gint64 exch, gint64 comp);
 
 /* Implement all other 64-bit atomics in terms of a specialized CAS
  * in this case, since chances are that the other 64-bit atomic
  * intrinsics are broken too.
  */
 
-static inline gint64 InterlockedExchangeAdd64(volatile gint64 *dest, gint64 add)
+static inline gint64 mono_atomic_xchg_i32Add64(volatile gint64 *dest, gint64 add)
 {
 	gint64 old_val;
 	do {
 		old_val = *dest;
-	} while (InterlockedCompareExchange64 (dest, old_val + add, old_val) != old_val);
+	} while (mono_atomic_cas_i64 (dest, old_val + add, old_val) != old_val);
 	return old_val;
 }
 
-static inline gint64 InterlockedIncrement64(volatile gint64 *val)
+static inline gint64 mono_atomic_inc_i64(volatile gint64 *val)
 {
 	gint64 get, set;
 	do {
 		get = *val;
 		set = get + 1;
-	} while (InterlockedCompareExchange64 (val, set, get) != get);
+	} while (mono_atomic_cas_i64 (val, set, get) != get);
 	return set;
 }
 
-static inline gint64 InterlockedDecrement64(volatile gint64 *val)
+static inline gint64 mono_atomic_dec_i64(volatile gint64 *val)
 {
 	gint64 get, set;
 	do {
 		get = *val;
 		set = get - 1;
-	} while (InterlockedCompareExchange64 (val, set, get) != get);
+	} while (mono_atomic_cas_i64 (val, set, get) != get);
 	return set;
 }
 
-static inline gint64 InterlockedAdd64(volatile gint64 *dest, gint64 add)
+static inline gint64 mono_atomic_add_i64(volatile gint64 *dest, gint64 add)
 {
 	gint64 get, set;
 	do {
 		get = *dest;
 		set = get + add;
-	} while (InterlockedCompareExchange64 (dest, set, get) != get);
+	} while (mono_atomic_cas_i64 (dest, set, get) != get);
 	return set;
 }
 
-static inline gint64 InterlockedRead64(volatile gint64 *src)
+static inline gint64 mono_atomic_load_i64(volatile gint64 *src)
 {
-	return InterlockedCompareExchange64 (src, 0, 0);
+	return mono_atomic_cas_i64 (src, 0, 0);
 }
 
 #endif
 
-static inline gpointer InterlockedReadPointer(volatile gpointer *src)
+static inline gpointer mono_atomic_load_ptr(volatile gpointer *src)
 {
-	return InterlockedCompareExchangePointer (src, NULL, NULL);
+	return mono_atomic_cas_ptr (src, NULL, NULL);
 }
 
-static inline void InterlockedWritePointer(volatile gpointer *dst, gpointer val)
+static inline void mono_atomic_store_ptr(volatile gpointer *dst, gpointer val)
 {
-	InterlockedExchangePointer (dst, val);
+	mono_atomic_xchg_ptr (dst, val);
 }
 
 /* We always implement this in terms of a 64-bit cmpxchg since
  * GCC doesn't have an intrisic to model it anyway. */
-static inline gint64 InterlockedExchange64(volatile gint64 *val, gint64 new_val)
+static inline gint64 mono_atomic_xchg_i64(volatile gint64 *val, gint64 new_val)
 {
 	gint64 old_val;
 	do {
 		old_val = *val;
-	} while (InterlockedCompareExchange64 (val, new_val, old_val) != old_val);
+	} while (mono_atomic_cas_i64 (val, new_val, old_val) != old_val);
 	return old_val;
 }
 
-static inline void InterlockedWrite64(volatile gint64 *dst, gint64 val)
+static inline void mono_atomic_store_i64(volatile gint64 *dst, gint64 val)
 {
 	/* Nothing useful from GCC at all, so fall back to CAS. */
-	InterlockedExchange64 (dst, val);
+	mono_atomic_xchg_i64 (dst, val);
 }
 
 #else
 
 #define WAPI_NO_ATOMIC_ASM
 
-extern gint32 InterlockedCompareExchange(volatile gint32 *dest, gint32 exch, gint32 comp);
-extern gint64 InterlockedCompareExchange64(volatile gint64 *dest, gint64 exch, gint64 comp);
-extern gpointer InterlockedCompareExchangePointer(volatile gpointer *dest, gpointer exch, gpointer comp);
-extern gint32 InterlockedAdd(volatile gint32 *dest, gint32 add);
-extern gint64 InterlockedAdd64(volatile gint64 *dest, gint64 add);
-extern gint32 InterlockedIncrement(volatile gint32 *dest);
-extern gint64 InterlockedIncrement64(volatile gint64 *dest);
-extern gint32 InterlockedDecrement(volatile gint32 *dest);
-extern gint64 InterlockedDecrement64(volatile gint64 *dest);
-extern gint32 InterlockedExchange(volatile gint32 *dest, gint32 exch);
-extern gint64 InterlockedExchange64(volatile gint64 *dest, gint64 exch);
-extern gpointer InterlockedExchangePointer(volatile gpointer *dest, gpointer exch);
-extern gint32 InterlockedExchangeAdd(volatile gint32 *dest, gint32 add);
-extern gint64 InterlockedExchangeAdd64(volatile gint64 *dest, gint64 add);
-extern gint8 InterlockedRead8(volatile gint8 *src);
-extern gint16 InterlockedRead16(volatile gint16 *src);
-extern gint32 InterlockedRead(volatile gint32 *src);
-extern gint64 InterlockedRead64(volatile gint64 *src);
-extern gpointer InterlockedReadPointer(volatile gpointer *src);
-extern void InterlockedWrite8(volatile gint8 *dst, gint8 val);
-extern void InterlockedWrite16(volatile gint16 *dst, gint16 val);
-extern void InterlockedWrite(volatile gint32 *dst, gint32 val);
-extern void InterlockedWrite64(volatile gint64 *dst, gint64 val);
-extern void InterlockedWritePointer(volatile gpointer *dst, gpointer val);
+extern gint32 mono_atomic_cas_i32(volatile gint32 *dest, gint32 exch, gint32 comp);
+extern gint64 mono_atomic_cas_i64(volatile gint64 *dest, gint64 exch, gint64 comp);
+extern gpointer mono_atomic_cas_ptr(volatile gpointer *dest, gpointer exch, gpointer comp);
+extern gint32 mono_atomic_add_i32(volatile gint32 *dest, gint32 add);
+extern gint64 mono_atomic_add_i64(volatile gint64 *dest, gint64 add);
+extern gint32 mono_atomic_inc_i32(volatile gint32 *dest);
+extern gint64 mono_atomic_inc_i64(volatile gint64 *dest);
+extern gint32 mono_atomic_dec_i32(volatile gint32 *dest);
+extern gint64 mono_atomic_dec_i64(volatile gint64 *dest);
+extern gint32 mono_atomic_xchg_i32(volatile gint32 *dest, gint32 exch);
+extern gint64 mono_atomic_xchg_i64(volatile gint64 *dest, gint64 exch);
+extern gpointer mono_atomic_xchg_ptr(volatile gpointer *dest, gpointer exch);
+extern gint32 mono_atomic_xchg_i32Add(volatile gint32 *dest, gint32 add);
+extern gint64 mono_atomic_xchg_i32Add64(volatile gint64 *dest, gint64 add);
+extern gint8 mono_atomic_load_i8(volatile gint8 *src);
+extern gint16 mono_atomic_load_i16(volatile gint16 *src);
+extern gint32 mono_atomic_load_i32(volatile gint32 *src);
+extern gint64 mono_atomic_load_i64(volatile gint64 *src);
+extern gpointer mono_atomic_load_ptr(volatile gpointer *src);
+extern void mono_atomic_store_i8(volatile gint8 *dst, gint8 val);
+extern void mono_atomic_store_i16(volatile gint16 *dst, gint16 val);
+extern void mono_atomic_store_i32(volatile gint32 *dst, gint32 val);
+extern void mono_atomic_store_i64(volatile gint64 *dst, gint64 val);
+extern void mono_atomic_store_ptr(volatile gpointer *dst, gpointer val);
 
 #endif
 
 #if SIZEOF_VOID_P == 4
-#define InterlockedAddP(p,add) InterlockedAdd ((volatile gint32*)p, (gint32)add)
+#define mono_atomic_add_size_t(p,add) mono_atomic_add_i32 ((volatile gint32*)p, (gint32)add)
 #else
-#define InterlockedAddP(p,add) InterlockedAdd64 ((volatile gint64*)p, (gint64)add)
+#define mono_atomic_add_size_t(p,add) mono_atomic_add_i64 ((volatile gint64*)p, (gint64)add)
 #endif
 
 /* The following functions cannot be found on any platform, and thus they can be declared without further existence checks */
 
 static inline void
-InterlockedWriteBool (volatile gboolean *dest, gboolean val)
+mono_atomic_store_bool (volatile gboolean *dest, gboolean val)
 {
 	/* both, gboolean and gint32, are int32_t; the purpose of these casts is to make things explicit */
-	InterlockedWrite ((volatile gint32 *)dest, (gint32)val);
+	mono_atomic_store_i32 ((volatile gint32 *)dest, (gint32)val);
 }
 
 #endif /* _WAPI_ATOMIC_H_ */
