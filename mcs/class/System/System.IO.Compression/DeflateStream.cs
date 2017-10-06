@@ -130,6 +130,11 @@ namespace System.IO.Compression
 			}
 		}
 
+		internal int ReadCore (Span<byte> destination)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public override int Read (byte[] array, int offset, int count)
 		{
 			if (disposed)
@@ -158,6 +163,11 @@ namespace System.IO.Compression
 				IntPtr ptr = new IntPtr (b + offset);
 				native.WriteZStream (ptr, count);
 			}
+		}
+
+		internal void WriteCore (ReadOnlySpan<byte> source)
+		{
+			throw new NotImplementedException ();
 		}
 
 		public override void Write (byte[] array, int offset, int count)

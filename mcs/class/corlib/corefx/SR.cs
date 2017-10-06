@@ -30,6 +30,7 @@ partial class SR
 	public const string Arg_DuplicateWaitObjectException = "Duplicate objects in argument.";
 	public const string Arg_EnumAndObjectMustBeSameType = "Object must be the same type as the enum. The type passed in was '{0}'; the enum type was '{1}'.";
 	public const string Arg_EntryPointNotFoundException = "Entry point was not found.";
+	public const string Arg_EntryPointNotFoundExceptionParameterized = "Unable to find an entry point named '{0}' in DLL '{1}'.";
 	public const string Arg_EnumIllegalVal = "Illegal enum value: {0}.";
 	public const string Arg_ExecutionEngineException = "Internal error in the runtime.";
 	public const string Arg_ExternalException = "External component has thrown an exception.";
@@ -338,6 +339,7 @@ partial class SR
 	public const string InvalidOperation_IComparerFailed = "Failed to compare two elements in the array.";
 	public const string InvalidOperation_NoValue = "Nullable object must have a value.";
 	public const string InvalidOperation_NullArray = "The underlying array is null.";
+	public const string InvalidOperation_Overlapped_Pack = "Cannot pack a packed Overlapped again.";
 	public const string InvalidOperation_ReadOnly = "Instance is read-only.";
 	public const string InvalidOperation_ThreadWrongThreadStart = "The thread was created with a ThreadStart delegate that does not accept a parameter.";
 	public const string InvalidOperation_UnknownEnumType = "Unknown enum type.";
@@ -599,6 +601,7 @@ partial class SR
 	public const string Argument_NotEnoughBytesToRead = "There are not enough bytes remaining in the accessor to read at this position.";
 	public const string Argument_NotEnoughBytesToWrite = "There are not enough bytes remaining in the accessor to write at this position.";
 	public const string Argument_OffsetAndCapacityOutOfBounds = "Offset and capacity were greater than the size of the view.";
+	public const string ArgumentOutOfRange_UnmanagedMemStreamLength = "UnmanagedMemoryStream length must be non-negative and less than 2^63 - 1 - baseAddress.";
 	public const string Argument_UnmanagedMemAccessorWrapAround = "The UnmanagedMemoryAccessor capacity and offset would wrap around the high end of the address space.";
 	public const string ArgumentOutOfRange_StreamLength = "Stream length must be non-negative and less than 2^31 - 1 - origin.";
 	public const string ArgumentOutOfRange_UnmanagedMemStreamWrapAround = "The UnmanagedMemoryStream capacity would wrap around the high end of the address space.";
@@ -760,6 +763,20 @@ partial class SR
 	public const string EventSource_EventSourceGuidInUse = "An instance of EventSource with Guid {0} already exists.";
 	public const string EventSource_ListenerWriteFailure = "An error occurred when writing to a listener.";
 	public const string EventSource_NoManifest = "A manifest could not be generated for this EventSource because it contains one or more ill-formed event methods.";
+	public const string Argument_StreamNotWritable = "Stream was not writable.";
+	public const string Arg_SurrogatesNotAllowedAsSingleChar = "Unicode surrogate characters must be written out as pairs together in the same call, not individually. Consider passing in a character array instead.";
+	public const string CustomAttributeFormat_InvalidFieldFail = "'{0}' field specified was not found.";
+	public const string CustomAttributeFormat_InvalidPropertyFail = "'{0}' property specified was not found.";
+	public const string NotSupported_CannotCallEqualsOnSpan = "Equals() on Span and ReadOnlySpan is not supported. Use operator== instead.";
+	public const string NotSupported_CannotCallGetHashCodeOnSpan = "GetHashCode() on Span and ReadOnlySpan is not supported.";
+	public const string Argument_DestinationTooShort = "Destination is too short.";
+	public const string Argument_InvalidTypeWithPointersNotSupported = "Cannot use type '{0}'. Only value types without pointers or references are supported.";
+	public const string ArrayTypeMismatch_ConstrainedCopy = "Array.ConstrainedCopy will only work on array types that are provably compatible, without any form of boxing, unboxing, widening, or casting of each array element.  Change the array types (i.e., copy a Derived[] to a Base[]), or use a mitigation strategy in the CER for Array.Copy's less powerful reliability contract, such as cloning the array or throwing away the potentially corrupt destination array.";
+	public const string Arg_DllNotFoundException = "Dll was not found.";
+	public const string Arg_DllNotFoundExceptionParameterized = "Unable to load DLL '{0}': The specified module could not be found.";
+	public const string WrongSizeArrayInNStruct = "Type could not be marshaled because the length of an embedded array instance does not match the declared length in the layout.";
+	public const string Arg_InteropMarshalUnmappableChar = "Cannot marshal: Encountered unmappable character.";
+	public const string Arg_MarshalDirectiveException = "Marshaling directives are invalid.";
 	public const string BlockingCollection_Add_ConcurrentCompleteAdd = "CompleteAdding may not be used concurrently with additions to the collection.";
 	public const string BlockingCollection_Add_Failed = "The underlying collection didn't accept the item.";
 	public const string BlockingCollection_CantAddAnyWhenCompleted = "At least one of the specified collections is marked as complete with regards to additions.";
@@ -801,4 +818,7 @@ partial class SR
 	public const string PartitionerStatic_CanNotCallGetEnumeratorAfterSourceHasBeenDisposed = "Can not call GetEnumerator on partitions after the source enumerable is disposed";
 	public const string PartitionerStatic_CurrentCalledBeforeMoveNext = "MoveNext must be called at least once before calling Current.";
 	public const string ConcurrentBag_Enumerator_EnumerationNotStartedOrAlreadyFinished = "Enumeration has either not started or has already finished.";
+	public const string ArrayTypeMustBeExactMatch = "The array type must be exactly {0}.";
+	public const string CannotCallEqualsOnSpan = "Equals() on Span and ReadOnlySpan is not supported. Use operator== instead.";
+	public const string CannotCallGetHashCodeOnSpan = "GetHashCode() on Span and ReadOnlySpan is not supported.";
 }

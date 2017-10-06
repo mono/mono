@@ -20,7 +20,11 @@ basic_SUBDIRS := \
 	System.Xml.Linq \
 	Mono.Cecil \
 	$(MCS_MODE_dirs) \
-	../tools/cil-stringreplacer
+	Mono.CompilerServices.SymbolWriter	\
+	PEAPI \
+	../tools/cil-stringreplacer \
+	../ilasm \
+	corlib/il
 
 build_SUBDIRS :=  \
 	corlib \
