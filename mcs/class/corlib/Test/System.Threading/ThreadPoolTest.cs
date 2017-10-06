@@ -158,20 +158,20 @@ namespace MonoTests.System.Threading
 		}
 		
 		[Test]
-		public void SetMaxPossibleThreads()
+		public void SetMaxPossibleThreads ()
 		{
 			var maxPossibleThreads = 0x7fff;
 			int maxWt, macCpt;
-			
-			ThreadPool.SetMaxThreads(maxPossibleThreads, maxPossibleThreads);
-			ThreadPool.GetMaxThreads(out maxWt, out macCpt);
-			Assert.AreEqual(maxPossibleThreads, maxWt);
-			Assert.AreEqual(maxPossibleThreads, macCpt);
 
-			ThreadPool.SetMaxThreads(maxPossibleThreads + 1, maxPossibleThreads + 1);
-			ThreadPool.GetMaxThreads(out maxWt, out macCpt);
-			Assert.AreEqual(maxPossibleThreads, maxWt);
-			Assert.AreEqual(maxPossibleThreads, macCpt);
+			ThreadPool.SetMaxThreads (maxPossibleThreads, maxPossibleThreads);
+			ThreadPool.GetMaxThreads (out maxWt, out macCpt);
+			Assert.AreEqual (maxPossibleThreads, maxWt);
+			Assert.AreEqual (maxPossibleThreads, macCpt);
+
+			ThreadPool.SetMaxThreads (maxPossibleThreads + 1, maxPossibleThreads + 1);
+			ThreadPool.GetMaxThreads (out maxWt, out macCpt);
+			Assert.AreEqual (maxPossibleThreads, maxWt);
+			Assert.AreEqual (maxPossibleThreads, macCpt);
 		}
 
 		[Test]
