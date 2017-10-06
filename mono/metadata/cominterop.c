@@ -381,6 +381,12 @@ cominterop_get_method_interface (MonoMethod* method)
 	return ic;
 }
 
+static void
+mono_cominterop_get_interface_missing_error (MonoError* error, MonoMethod* method)
+{
+	mono_error_set_invalid_operation (error, "Method '%s' in ComImport class '%s' must implement an interface method.", method->name, method->klass->name);
+}
+
 /**
  * cominterop_get_com_slot_for_method:
  * @method: a method
@@ -402,7 +408,7 @@ cominterop_get_com_slot_for_method (MonoMethod* method, MonoError* error)
 		int i = 0;
 		ic = cominterop_get_method_interface (method);
 		if (!ic || !MONO_CLASS_IS_INTERFACE (ic)) {
-			mono_error_set_invalid_operation (error, "Method '%s' in ComImport class '%s' must implement an interface method.", method->name, method->klass->name);
+			mono_cominterop_get_interface_missing_error (error, method);
 			return -1;
 		}
 		offset = mono_class_interface_offset (method->klass, ic);
@@ -1006,6 +1012,18 @@ mono_cominterop_get_native_wrapper (MonoMethod *method)
 			mono_mb_emit_ldarg (mb, 0);
 			mono_mb_emit_managed_call (mb, ctor, NULL);
 			mono_mb_emit_byte (mb, CEE_RET);
+		}
+		else if (method->flags & METHOD_ATTRIBUTE_STATIC) {
+			/*
+			 * The method's class must implement an interface.
+			 * However, no interfaces are allowed to have static methods.
+			 * Thus, calling it should invariably lead to an exception.
+			 */
+			MonoError error;
+			error_init (&error);
+			mono_cominterop_get_interface_missing_error (&error, method);
+			mono_mb_emit_exception_for_error (mb, &error);
+			mono_error_cleanup (&error);
 		}
 		else {
 			static MonoMethod * ThrowExceptionForHR = NULL;
