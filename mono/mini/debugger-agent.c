@@ -6898,7 +6898,7 @@ static void buffer_add_value_full(Buffer *buf, MonoType *t, void *addr, MonoDoma
 				}
 				else if (il2cpp_class_get_rank(klass))
 				{
-					buffer_add_byte(buf, il2cpp_class_get_type(klass));
+					buffer_add_byte(buf, il2cpp_type_get_type(il2cpp_class_get_type(klass)));
 				}
 				else if (il2cpp_type_get_type(il2cpp_class_get_type(klass)) == MONO_TYPE_GENERICINST)
 				{
@@ -7010,7 +7010,7 @@ buffer_add_value (Buffer *buf, MonoType *t, void *addr, MonoDomain *domain)
 static gboolean
 obj_is_of_type (MonoObject *obj, MonoType *t)
 {
-	MonoClass *klass = obj->vtable->klass;
+	MonoClass *klass = VM_OBJECT_GET_CLASS(obj);
 	if (!mono_class_is_assignable_from (mono_class_from_mono_type (t), klass)) {
 		if (mono_class_is_transparent_proxy (klass)) {
 			klass = ((MonoTransparentProxy *)obj)->remote_class->proxy_class;
@@ -10626,14 +10626,14 @@ array_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 
 	switch (command) {
 	case CMD_ARRAY_REF_GET_LENGTH:
-		buffer_add_int (buf, arr->obj.vtable->klass->rank);
-		if (!arr->bounds) {
-			buffer_add_int (buf, arr->max_length);
+		buffer_add_int (buf, VM_ARRAY_GET_RANK(arr));
+		if (VM_ARRAY_BOUNDS_NULL(arr)) {
+			buffer_add_int (buf, VM_ARRAY_GET_LENGTH(arr));
 			buffer_add_int (buf, 0);
 		} else {
-			for (i = 0; i < arr->obj.vtable->klass->rank; ++i) {
-				buffer_add_int (buf, arr->bounds [i].length);
-				buffer_add_int (buf, arr->bounds [i].lower_bound);
+			for (i = 0; i < VM_ARRAY_GET_RANK(arr); ++i) {
+				buffer_add_int (buf, VM_ARRAY_BOUND_LENGTH(arr, i));
+				buffer_add_int (buf, VM_ARRAY_BOUND_LOWER_BOUND(arr, i));
 			}
 		}
 		break;
@@ -10645,10 +10645,10 @@ array_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		// Reordered to avoid integer overflow
 		g_assert (!(index > arr->max_length - len));
 
-		esize = mono_array_element_size (arr->obj.vtable->klass);
+		esize = mono_array_element_size (VM_OBJECT_GET_CLASS(arr));
 		for (i = index; i < index + len; ++i) {
-			elem = (gpointer*)((char*)arr->vector + (i * esize));
-			buffer_add_value (buf, &arr->obj.vtable->klass->element_class->byval_arg, elem, arr->obj.vtable->domain);
+			elem = VM_ARRAY_GET_ELEMENT(arr, esize, i);
+			buffer_add_value (buf, VM_CLASS_GET_TYPE(VM_CLASS_GET_ELEMENT_CLASS(VM_OBJECT_GET_CLASS(arr))), elem, VM_OBJECT_GET_DOMAIN(arr));
 		}
 		break;
 	case CMD_ARRAY_REF_SET_VALUES:
@@ -10659,11 +10659,11 @@ array_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		// Reordered to avoid integer overflow
 		g_assert (!(index > arr->max_length - len));
 
-		esize = mono_array_element_size (arr->obj.vtable->klass);
+		esize = mono_array_element_size (VM_OBJECT_GET_CLASS(arr));
 		for (i = index; i < index + len; ++i) {
-			elem = (gpointer*)((char*)arr->vector + (i * esize));
+			elem = VM_ARRAY_GET_ELEMENT(arr, esize, i);
 
-			decode_value (&arr->obj.vtable->klass->element_class->byval_arg, arr->obj.vtable->domain, (guint8 *)elem, p, &p, end);
+			decode_value (VM_CLASS_GET_TYPE(VM_CLASS_GET_ELEMENT_CLASS(VM_OBJECT_GET_CLASS(arr))), VM_OBJECT_GET_DOMAIN(arr), (guint8 *)elem, p, &p, end);
 		}
 		break;
 	default:

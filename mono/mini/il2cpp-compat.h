@@ -23,15 +23,23 @@
 #define VM_ASSEMBLY_GET_IMAGE(assembly) il2cpp_mono_assembly_get_image(assembly)
 #define VM_CLASS_GET_TYPE(klass) il2cpp_class_get_type(klass)
 #define VM_CLASS_GET_THIS_ARG(klass) il2cpp_class_this_arg(klass)
+#define VM_CLASS_GET_ELEMENT_CLASS(klass) il2cpp_class_get_element_class(klass)
 #define VM_METHOD_GET_WRAPPER_TYPE(method) FALSE
 #define VM_METHOD_GET_DECLARING_TYPE(method) il2cpp_method_get_declaring_type(method)
 #define VM_FIELD_GET_NAME(field) il2cpp_mono_field_get_name(field)
 #define VM_TYPE_GET_ATTRS(type) il2cpp_mono_type_get_attrs(type)
 #define VM_OBJECT_GET_DOMAIN(object) il2cpp_mono_domain_get()
+#define VM_OBJECT_GET_CLASS(object) il2cpp_object_get_class(object)
 #define VM_GENERIC_CLASS_GET_INST(klass) il2cpp_generic_class_get_inst(klass)
 #define VM_GENERIC_INST_TYPE_ARGC(inst) il2cpp_generic_inst_type_argc(inst)
 #define VM_GENERIC_INST_TYPE_ARG(inst, i) il2cpp_generic_inst_type_arg(inst, i)
 #define VM_DEFAULTS_OBJECT_CLASS il2cpp_defaults_object_class()
+#define VM_ARRAY_GET_RANK(arr) il2cpp_array_rank(arr)
+#define VM_ARRAY_GET_LENGTH(arr) il2cpp_array_length(arr)
+#define VM_ARRAY_GET_ELEMENT(arr, esize, i) il2cpp_array_get_element(arr, esize, i)
+#define VM_ARRAY_BOUNDS_NULL(arr) il2cpp_array_bounds_null(arr)
+#define VM_ARRAY_BOUND_LENGTH(arr, i) il2cpp_array_bound_length(arr, i)
+#define VM_ARRAY_BOUND_LOWER_BOUND(arr, i) il2cpp_array_bound_lower_bound(arr, i)
 #else
 #define VM_THREAD_GET(thread) thread->internal_thread
 #define VM_THREAD_SET_STATE_BACKGROUND(thread) thread->internal_thread->state |= ThreadState_Background
@@ -51,11 +59,19 @@
 #define VM_METHOD_GET_DECLARING_TYPE(method) (method)->klass
 #define VM_FIELD_GET_NAME(field) field->name
 #define VM_TYPE_GET_ATTRS(type) type->attrs
-#define VM_OBJECT_GET_DOMAIN(object) object->vtable->domain
+#define VM_OBJECT_GET_DOMAIN(object) ((MonoObject*)object)->vtable->domain
+#define VM_OBJECT_GET_CLASS(object) ((MonoObject*)object)-vtable->klass
 #define VM_GENERIC_CLASS_GET_INST(klass) (klass)->context.class_inst
 #define VM_GENERIC_INST_TYPE_ARGC(inst) (inst)->type_argc
 #define VM_GENERIC_INST_TYPE_ARG(inst, i) (inst)->type_argv[i]
 #define VM_DEFAULTS_OBJECT_CLASS mono_defaults.object_class
+#define VM_ARRAY_GET_RANK(arr) (arr)->obj.vtable->klass->rank
+#define VM_ARRAY_GET_LENGTH(arr) (arr)->max_length
+#define VM_CLASS_GET_ELEMENT_CLASS(klass) (klass)->element_class
+#define VM_ARRAY_GET_ELEMENT(arr, esize, i) (gpointer*)((char*)(arr)->vector + (i * esize))
+#define VM_ARRAY_BOUNDS_NULL(arr) !arr->bounds
+#define VM_ARRAY_BOUND_LENGTH(arr, i) arr->bounds[i].length
+#define VM_ARRAY_BOUND_LOWER_BOUND(arr, i) arr->bounds[i].lower_bound
 #endif
 
 #if defined(RUNTIME_IL2CPP)
@@ -511,7 +527,12 @@ Il2CppMonoGenericInst* il2cpp_generic_class_get_inst(Il2CppMonoGenericClass *mon
 guint il2cpp_generic_inst_type_argc(Il2CppMonoGenericInst *monoInst);
 Il2CppMonoType* il2cpp_generic_inst_type_arg(Il2CppMonoGenericInst *monoInst, int i);
 Il2CppMonoType* il2cpp_class_this_arg(Il2CppMonoClass *monoClass);
-Il2CppClass* il2cpp_class_get_nested_types_accepts_generic(Il2CppClass *klass, void* *iter);
+Il2CppMonoClass* il2cpp_class_get_nested_types_accepts_generic(Il2CppMonoClass *monoClass, void* *iter);
 Il2CppMonoClass* il2cpp_defaults_object_class();
+guint8 il2cpp_array_rank(Il2CppMonoArray *monoArr);
+gpointer il2cpp_array_get_element(Il2CppMonoArray *monoArr, int esize, int i);
+gboolean il2cpp_array_bounds_null(Il2CppMonoArray *monoArr);
+mono_array_size_t il2cpp_array_bound_length(Il2CppMonoArray *monoArr, int i);
+mono_array_lower_bound_t il2cpp_array_bound_lower_bound(Il2CppMonoArray *monoArr, int i);
 
 #endif // RUNTIME_IL2CPP

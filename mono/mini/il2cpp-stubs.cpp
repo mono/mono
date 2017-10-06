@@ -4,6 +4,7 @@
 #include <il2cpp-class-internals.h>
 #include "gc/GCHandle.h"
 #include "gc/GarbageCollector.h"
+#include "gc/WriteBarrier.h"
 #include "vm/Assembly.h"
 #include "vm/AssemblyName.h"
 #include "vm/Class.h"
@@ -158,10 +159,10 @@ Il2CppMonoClassField* il2cpp_mono_class_get_field_from_name (Il2CppMonoClass *kl
 	return NULL;
 }
 
-int32_t il2cpp_mono_array_element_size (Il2CppMonoClass *ac)
+int32_t il2cpp_mono_array_element_size (Il2CppMonoClass *monoClass)
 {
-	IL2CPP_ASSERT(0 && "This method is not yet implemented");
-	return 0;
+	Il2CppClass *klass = (Il2CppClass*)monoClass;
+	return klass->element_size;
 }
 
 int32_t il2cpp_mono_class_instance_size (Il2CppMonoClass *klass)
@@ -177,8 +178,7 @@ int32_t il2cpp_mono_class_value_size (Il2CppMonoClass *klass, uint32_t *align)
 
 gboolean il2cpp_mono_class_is_assignable_from (Il2CppMonoClass *klass, Il2CppMonoClass *oklass)
 {
-	IL2CPP_ASSERT(0 && "This method is not yet implemented");
-	return 0;
+	return il2cpp::vm::Class::IsAssignableFrom((Il2CppClass*)klass, (Il2CppClass*)oklass);
 }
 
 Il2CppMonoClass* il2cpp_mono_class_from_mono_type (Il2CppMonoType *type)
@@ -317,7 +317,7 @@ void il2cpp_mono_gchandle_free (uint32_t gchandle)
 
 void il2cpp_mono_gc_wbarrier_generic_store (void* ptr, Il2CppMonoObject* value)
 {
-	IL2CPP_ASSERT(0 && "This method is not yet implemented");
+	il2cpp::gc::WriteBarrier::GenericStore(ptr, (Il2CppObject*)value);
 }
 
 int il2cpp_mono_reflection_parse_type (char *name, MonoTypeNameParse *info)
@@ -1287,17 +1287,53 @@ Il2CppMonoType* il2cpp_class_this_arg(Il2CppMonoClass *monoClass)
 	return (Il2CppMonoType*)klass->this_arg;
 }
 
-Il2CppClass* il2cpp_class_get_nested_types_accepts_generic(Il2CppClass *klass, void* *iter)
+Il2CppMonoClass* il2cpp_class_get_nested_types_accepts_generic(Il2CppMonoClass *monoClass, void* *iter)
 {
+	Il2CppClass *klass = (Il2CppClass*)monoClass;
 	if (klass->generic_class)
 		return NULL;
 
-	return il2cpp::vm::Class::GetNestedTypes(klass, iter);
+	return (Il2CppMonoClass*)il2cpp::vm::Class::GetNestedTypes(klass, iter);
 }
 
 Il2CppMonoClass* il2cpp_defaults_object_class()
 {
 	return (Il2CppMonoClass*)il2cpp_defaults.object_class;
+}
+
+guint8 il2cpp_array_rank(Il2CppMonoArray *monoArr)
+{
+	Il2CppArray *arr = (Il2CppArray*)monoArr;
+	return arr->klass->rank;
+}
+
+Il2CppMonoClass* il2cpp_array_class(Il2CppMonoArray *monoArr)
+{
+	Il2CppArray *arr = (Il2CppArray*)monoArr;
+	return (Il2CppMonoClass*)arr->klass;
+}
+
+gpointer il2cpp_array_get_element(Il2CppMonoArray *monoArr, int esize, int i)
+{
+	return ((uint8_t*)monoArr) + sizeof(Il2CppArray) + (i * esize);
+}
+
+gboolean il2cpp_array_bounds_null(Il2CppMonoArray *monoArr)
+{
+	Il2CppArray *arr = (Il2CppArray*)monoArr;
+	return arr->bounds == NULL;
+}
+
+mono_array_size_t il2cpp_array_bound_length(Il2CppMonoArray *monoArr, int i)
+{
+	Il2CppArray *arr = (Il2CppArray*)monoArr;
+	return arr->bounds[i].length;
+}
+
+mono_array_lower_bound_t il2cpp_array_bound_lower_bound(Il2CppMonoArray *monoArr, int i)
+{
+	Il2CppArray *arr = (Il2CppArray*)monoArr;
+	return arr->bounds[i].lower_bound;
 }
 
 }
