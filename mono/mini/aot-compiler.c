@@ -66,6 +66,14 @@
 #include "mini-gc.h"
 #include "mini-llvm.h"
 
+#ifdef TARGET_WASM
+void mono_wasm_create_module (void);
+void mono_wasm_emit_aot_data (const char *symbol, guint8 *data, int data_len);
+void mono_wasm_emit_aot_file_info (MonoAotFileInfo *info, gboolean has_jitted_code);
+void mono_wasm_emit_module (void);
+
+#endif
+
 #if !defined(DISABLE_AOT) && !defined(DISABLE_JIT)
 
 // Use MSVC toolchain, Clang for MSVC using MSVC codegen and linker, when compiling for AMD64
@@ -373,40 +381,6 @@ static G_GNUC_UNUSED const char*
 get_patch_name (int info)
 {
 	return patch_types [info];
-}
-
-#endif
-
-
-#ifdef TARGET_WASM
-static void
-mono_wasm_emit_method_addresses (MonoAotCompile *acfg)
-{
-	printf ("mono_wasm_emit_method_addresses\n");
-}
-
-static void
-mono_wasm_create_module (MonoAotCompile *acfg)
-{
-	printf ("mono_wasm_create_module\n");
-}
-
-void
-mono_wasm_emit_aot_data (MonoAotCompile *acfg, const char *symbol, guint8 *data, int data_len)
-{
-	printf ("emit '%s' with %d bytes\n", symbol, data_len);
-}
-
-static void
-mono_wasm_emit_plt (MonoAotCompile *acfg)
-{
-	printf ("mono_wasm_emit_plt\n");
-}
-
-static void
-mono_wasm_emit_aot_file_info (MonoAotCompile *acfg, MonoAotFileInfo *info, gboolean has_jitted_code)
-{
-	printf ("mono_wasm_emit_aot_file_info\n");
 }
 
 #endif
@@ -762,7 +736,7 @@ emit_string_symbol (MonoAotCompile *acfg, const char *name, const char *value)
 		return;
 	}
 	if (acfg->wasm) {
-		mono_wasm_emit_aot_data (acfg, name, (guint8*)value, strlen (value) + 1);
+		mono_wasm_emit_aot_data (name, (guint8*)value, strlen (value) + 1);
 		return;
 	}
 
@@ -2749,7 +2723,7 @@ emit_aot_data (MonoAotCompile *acfg, MonoAotFileTable table, const char *symbol,
 	} else if (acfg->llvm) {
 		mono_llvm_emit_aot_data (symbol, data, size);
 	} else if (acfg->wasm) {
-		mono_wasm_emit_aot_data (acfg, symbol, data, size);
+		mono_wasm_emit_aot_data (symbol, data, size);
 	} else {
 		emit_section_change (acfg, RODATA_SECT, 0);
 		emit_alignment (acfg, 8);
@@ -6517,16 +6491,10 @@ emit_plt (MonoAotCompile *acfg)
 {
 	int i;
 
-	if (acfg->aot_opts.llvm_only) {
+	if (acfg->aot_opts.llvm_only || acfg->wasm) {
 		g_assert (acfg->plt_offset == 1);
 		return;
-	}
-
-	if (acfg->wasm) {
-		mono_wasm_emit_plt (acfg);
-		return;
-	}
-	
+	}	
 	emit_line (acfg);
 
 	emit_section_change (acfg, ".text", 0);
@@ -7618,8 +7586,10 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 	if (acfg->aot_opts.metadata_only)
 		return;
 
-	if (strcmp (method->name, "Main"))
+	if (strcmp (method->name, "Main") && strstr (method->name, "test_") != method->name) {
+		printf ("tried to compile %s\n", method->name);
 		return;
+	}
 
 	mono_acfg_lock (acfg);
 	index = get_method_index (acfg, method);
@@ -8957,9 +8927,6 @@ emit_code (MonoAotCompile *acfg)
 	 * To work around linker issues, we emit a table of branches, and disassemble them at runtime.
 	 * This is PIE code, and the linker can update it if needed.
 	 */
-#ifdef TARGET_WASM
-	mono_wasm_emit_method_addresses (acfg);
-#else
 	sprintf (symbol, "method_addresses");
 	emit_section_change (acfg, ".text", 1);
 	emit_alignment_code (acfg, 8);
@@ -8985,7 +8952,6 @@ emit_code (MonoAotCompile *acfg)
 	sprintf (symbol, "method_addresses_end");
 	emit_label (acfg, symbol);
 	emit_line (acfg);
-#endif
 
 	/* Emit a sorted table mapping methods to the index of their unbox trampolines */
 	sprintf (symbol, "unbox_trampolines");
@@ -10179,7 +10145,7 @@ emit_file_info (MonoAotCompile *acfg)
 	if (acfg->llvm)
 		mono_llvm_emit_aot_file_info (info, acfg->has_jitted_code);
 	else if (acfg->wasm)
-		mono_wasm_emit_aot_file_info (acfg, info, acfg->has_jitted_code);
+		mono_wasm_emit_aot_file_info (info, acfg->has_jitted_code);
 	else
 		emit_aot_file_info (acfg, info);
 }
@@ -11687,6 +11653,11 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 	}
 #endif
 
+#ifdef TARGET_WASM
+	if (acfg->wasm)
+		mono_wasm_create_module ();
+#endif
+
 	if (mono_aot_mode_is_interp (&acfg->aot_opts)) {
 		MonoMethod *wrapper;
 		MonoMethodSignature *sig;
@@ -11745,9 +11716,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 	}
 #endif
 
-#ifdef TARGET_WASM
-	mono_wasm_create_module (acfg);
-#else
+#ifndef TARGET_WASM
 	if (acfg->aot_opts.asm_only && !acfg->aot_opts.llvm_only) {
 		if (acfg->aot_opts.outfile)
 			acfg->tmpfname = g_strdup_printf ("%s", acfg->aot_opts.outfile);
@@ -11887,6 +11856,10 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 	}
 #endif
 
+#ifdef TARGET_WASM
+	if (acfg->wasm)
+		mono_wasm_emit_module ();
+#endif
 	TV_GETTIME (btv);
 
 	acfg->stats.gen_time = TV_ELAPSED (atv, btv);

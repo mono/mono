@@ -775,6 +775,9 @@ struct MonoBasicBlock {
 
 	/* The current symbolic register number, used in local register allocation. */
 	guint32 max_vreg;
+
+	/* Backend specific data */
+	void *backend_data, *backend_branch_data;
 };
 
 /* BBlock flags */

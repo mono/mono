@@ -63,4 +63,6 @@ typedef struct {
 
 #define MONO_ARCH_INST_REGPAIR_REG2(desc,hreg1) 0
 #define MONO_ARCH_INST_SREG2_MASK(ins) 0
+
+
 #endif /* __MONO_MINI_WASM_H__ */  
