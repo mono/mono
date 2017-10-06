@@ -3932,10 +3932,10 @@ process_profiler_event (EventKind event, gpointer arg)
 	events = create_event_list (event, NULL, NULL, ei_arg, &suspend_policy);
 	mono_loader_unlock ();
 
-#ifdef IL2CPP_MONO_DEBUGGER
-	process_event (event, arg, 0, NULL, events, suspend_policy, 0);
-#else
+#ifndef IL2CPP_MONO_DEBUGGER
 	process_event (event, arg, 0, NULL, events, suspend_policy);
+#else
+	process_event (event, arg, 0, NULL, events, suspend_policy, 0);
 #endif
 }
 
@@ -5225,11 +5225,23 @@ process_breakpoint_inner (DebuggerTlsData *tls, gboolean from_signal)
 	 * resume.
 	 */
 	if (ss_events)
+#ifndef IL2CPP_MONO_DEBUGGER
+		process_event (EVENT_KIND_STEP, method, 0, ctx, ss_events, suspend_policy);
+#else
 		process_event (EVENT_KIND_STEP, method, 0, ctx, ss_events, suspend_policy, 0);
+#endif
 	if (bp_events)
+#ifndef IL2CPP_MONO_DEBUGGER
+		process_event (kind, method, 0, ctx, bp_events, suspend_policy);
+#else
 		process_event (kind, method, 0, ctx, bp_events, suspend_policy, 0);
+#endif
 	if (enter_leave_events)
+#ifndef IL2CPP_MONO_DEBUGGER
+		process_event (kind, method, 0, ctx, enter_leave_events, suspend_policy);
+#else
 		process_event (kind, method, 0, ctx, enter_leave_events, suspend_policy, 0);
+#endif
 }
 
 /* Process a breakpoint/single step event after resuming from a signal handler */
@@ -5334,7 +5346,11 @@ mono_debugger_agent_user_break (void)
 		events = create_event_list (EVENT_KIND_USER_BREAK, NULL, NULL, NULL, &suspend_policy);
 		mono_loader_unlock ();
 
-		process_event (EVENT_KIND_USER_BREAK, NULL, 0, &ctx, events, suspend_policy, 0);
+#ifndef IL2CPP_MONO_DEBUGGER
+	process_event (EVENT_KIND_USER_BREAK, NULL, 0, &ctx, events, suspend_policy);
+#else
+	process_event (EVENT_KIND_USER_BREAK, NULL, 0, &ctx, events, suspend_policy, 0);
+#endif
 	} else if (debug_options.native_debugger_break) {
 		G_BREAKPOINT ();
 	}
@@ -6355,8 +6371,11 @@ mono_debugger_agent_debug_log (int level, MonoString *category, MonoString *mess
 		ei.message = mono_string_to_utf8_checked (message, &error);
 		mono_error_cleanup  (&error);
 	}
-
+#ifndef IL2CPP_MONO_DEBUGGER
+	process_event (EVENT_KIND_USER_LOG, &ei, 0, NULL, events, suspend_policy);
+#else
 	process_event (EVENT_KIND_USER_LOG, &ei, 0, NULL, events, suspend_policy, 0);
+#endif
 
 	g_free (ei.category);
 	g_free (ei.message);
@@ -6387,7 +6406,11 @@ mono_debugger_agent_unhandled_exception (MonoException *exc)
 	events = create_event_list (EVENT_KIND_EXCEPTION, NULL, NULL, &ei, &suspend_policy);
 	mono_loader_unlock ();
 
+#ifndef IL2CPP_MONO_DEBUGGER
 	process_event (EVENT_KIND_EXCEPTION, &ei, 0, NULL, events, suspend_policy);
+#else
+	process_event (EVENT_KIND_EXCEPTION, &ei, 0, NULL, events, suspend_policy, 0);
+#endif
 }
 #endif
 
@@ -6426,7 +6449,11 @@ mono_debugger_agent_handle_exception (MonoException *exc, MonoContext *throw_ctx
 			 */
 			events = g_slist_append (NULL, GUINT_TO_POINTER (0xffffff));
 			ei.exc = (MonoObject*)exc;
+#ifndef IL2CPP_MONO_DEBUGGER
+			process_event (EVENT_KIND_EXCEPTION, &ei, 0, throw_ctx, events, SUSPEND_POLICY_ALL);
+#else
 			process_event (EVENT_KIND_EXCEPTION, &ei, 0, throw_ctx, events, SUSPEND_POLICY_ALL, 0);
+#endif
 			return;
 		}
 	} else if (agent_config.onthrow && !inited) {
@@ -6451,7 +6478,11 @@ mono_debugger_agent_handle_exception (MonoException *exc, MonoContext *throw_ctx
 			 */
 			events = g_slist_append (NULL, GUINT_TO_POINTER (0xffffff));
 			ei.exc = (MonoObject*)exc;
+#ifndef IL2CPP_MONO_DEBUGGER
+			process_event (EVENT_KIND_EXCEPTION, &ei, 0, throw_ctx, events, SUSPEND_POLICY_ALL);
+#else
 			process_event (EVENT_KIND_EXCEPTION, &ei, 0, throw_ctx, events, SUSPEND_POLICY_ALL, 0);
+#endif
 			return;
 		}
 	}
@@ -6505,7 +6536,11 @@ mono_debugger_agent_handle_exception (MonoException *exc, MonoContext *throw_ctx
 		tls->catch_state.valid = TRUE;
 	}
 
+#ifndef IL2CPP_MONO_DEBUGGER
+	process_event (EVENT_KIND_EXCEPTION, &ei, 0, throw_ctx, events, suspend_policy);
+#else
 	process_event (EVENT_KIND_EXCEPTION, &ei, 0, throw_ctx, events, suspend_policy, 0);
+#endif
 
 	if (tls)
 		tls->catch_state.valid = FALSE;
