@@ -482,8 +482,8 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 			*lmf = (gpointer)(((gsize)(*lmf)->previous_lmf) & ~3);
 		}
 
-		/* we substract 1, so that the IP points into the call instruction */
-		new_ctx->pc--;
+		/* we substract one instruction, so that the IP points into the call instruction */
+		new_ctx->pc -= 4;
 
 		return TRUE;
 	} else if (*lmf) {
@@ -521,8 +521,8 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		new_ctx->regs [ARMREG_SP] = (*lmf)->gregs [MONO_ARCH_LMF_REG_SP];
 		new_ctx->pc = (*lmf)->pc;
 
-		/* we substract 1, so that the IP points into the call instruction */
-		new_ctx->pc--;
+		/* we substract one instruction, so that the IP points into the call instruction */
+		new_ctx->pc -= 4;
 
 		*lmf = (gpointer)(((gsize)(*lmf)->previous_lmf) & ~3);
 
