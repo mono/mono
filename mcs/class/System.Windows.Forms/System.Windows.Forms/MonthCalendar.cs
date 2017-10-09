@@ -1601,7 +1601,7 @@ namespace System.Windows.Forms {
 			}
 				
 			// Only set if we re actually getting a different range (avoid an extra DateChanged event)
-			if (range != null && range.Start != selection_range.Start || range.End != selection_range.End)
+			if (range != null && (range.Start != selection_range.Start || range.End != selection_range.End))
 				SelectionRange = range;
 		}
 
