@@ -543,7 +543,8 @@ init_thread (gboolean add_to_lls)
 	 */
 	if (add_to_lls) {
 		MonoThreadHazardPointers *hp = mono_hazard_pointer_get ();
-		g_assert (mono_lls_insert (&log_profiler.profiler_thread_list, hp, &thread->node) && "Why can't we insert the thread in the LLS?");
+		if (!mono_lls_insert (&log_profiler.profiler_thread_list, hp, &thread->node))
+			g_error ("%s: failed to insert thread %p in log_profiler.profiler_thread_list, found = %s", __func__, (gpointer) thread->node.key, mono_lls_find (&log_profiler.profiler_thread_list, hp, thread->node.key) ? "true" : "false");
 		clear_hazard_pointers (hp);
 	}
 
