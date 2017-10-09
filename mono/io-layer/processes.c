@@ -1706,7 +1706,10 @@ gpointer OpenProcess (guint32 req_access G_GNUC_UNUSED, gboolean inherit G_GNUC_
 				      GUINT_TO_POINTER (pid), NULL, TRUE);
 	if (handle == 0) {
 #if defined(__OpenBSD__) || defined(PLATFORM_MACOSX)
-		if ((kill(pid, 0) == 0) || (errno == EPERM)) {
+		/* pid == 0 and pid == -1 have special meaning for kill()
+		 * so they should not be treated as valid process ids 
+		 */
+		if (pid > 0 && ((kill(pid, 0) == 0) || (errno == EPERM))) {
 #else
 		gchar *dir = g_strdup_printf ("/proc/%d", pid);
 		if (!access (dir, F_OK)) {
