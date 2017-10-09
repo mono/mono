@@ -36,7 +36,7 @@ mono_debugger_agent_unhandled_exception (MonoException *exc);
 
 void
 mono_debugger_agent_handle_exception (MonoException *exc, MonoContext *throw_ctx,
-									  MonoContext *catch_ctx);
+									  MonoContext *catch_ctx, StackFrameInfo *catch_frame);
 
 void
 mono_debugger_agent_begin_exception_filter (MonoException *exc, MonoContext *ctx, MonoContext *orig_ctx);
