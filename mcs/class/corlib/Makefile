@@ -225,7 +225,9 @@ EXTRA_DISTFILES += \
 	$(vtsdir)/VersionTolerantSerializationTestLib/5.0/Address.cs \
 	$(vtsdir)/VersionTolerantSerializationTestLib/6.0/Address.cs \
 	$(vtsdir)/BinarySerializationOverVersions.cs \
-	System.Runtime.CompilerServices/Unsafe.il
+	System.Runtime.CompilerServices/Unsafe.il \
+	il/il.make \
+	il/Makefile
 
 #
 # Android TimeZoneInfo testing....
