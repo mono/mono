@@ -1450,6 +1450,23 @@ guint32 GetCurrentProcessId (void)
 	return id;
 }
 
+gint32 safe_kill(gint32 pid, gint32 signo)
+{
+#if defined(PLATFORM_MACOSX)
+	/* pid == 0 and pid == -1 have special meaning for kill()
+	 * so they should not be treated as valid process ids. 
+	 * Also it's causing OS crash on 10.13. 
+	 */
+	if (pid <= 0)
+	{
+		errno = ESRCH;
+		return -1;
+	}
+#endif
+
+	return kill(pid, signo);
+}
+
 /* Returns the process id as a convenience to the functions that call this */
 static pid_t signal_process_if_gone (gpointer handle)
 {
@@ -1478,7 +1495,7 @@ static pid_t signal_process_if_gone (gpointer handle)
 	g_message ("%s: looking at process %d", __func__, process_handle->id);
 #endif
 
-	if (kill (process_handle->id, 0) == -1 &&
+	if (safe_kill (process_handle->id, 0) == -1 &&
 	    (errno == ESRCH ||
 	     errno == EPERM)) {
 		/* The process is dead, (EPERM tells us a new process
@@ -1706,10 +1723,7 @@ gpointer OpenProcess (guint32 req_access G_GNUC_UNUSED, gboolean inherit G_GNUC_
 				      GUINT_TO_POINTER (pid), NULL, TRUE);
 	if (handle == 0) {
 #if defined(__OpenBSD__) || defined(PLATFORM_MACOSX)
-		/* pid == 0 and pid == -1 have special meaning for kill()
-		 * so they should not be treated as valid process ids 
-		 */
-		if (pid > 0 && ((kill(pid, 0) == 0) || (errno == EPERM))) {
+		if ((safe_kill(pid, 0) == 0) || (errno == EPERM)) {
 #else
 		gchar *dir = g_strdup_printf ("/proc/%d", pid);
 		if (!access (dir, F_OK)) {
@@ -2736,7 +2750,7 @@ TerminateProcess (gpointer process, gint32 exitCode)
 	}
 
 	signo = (exitCode == -1) ? SIGKILL : SIGTERM;
-	ret = kill (pid, signo);
+	ret = safe_kill (pid, signo);
 	if (ret == -1) {
 		switch (errno) {
 		case EINVAL:
