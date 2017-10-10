@@ -4647,7 +4647,6 @@ set_breakpoint (MonoMethod *method, long il_offset, EventRequest *req, MonoError
 			BreakpointInstance* inst = g_new0(BreakpointInstance, 1);
 			inst->il_offset = bp->il_offset;// it.seq_point.il_offset;
 			inst->native_offset = 0;// it.seq_point.native_offset;
-			inst->ip = (guint8*)inst;// (guint8*)ji->code_start + it.seq_point.native_offset;
 			inst->domain = mono_domain_get();
 			inst->seq_point = seqPoint;
 
@@ -4742,7 +4741,6 @@ static MonoBreakpoint* set_breakpoint_fast(Il2CppSequencePointC *sp, EventReques
 	BreakpointInstance* inst = g_new0(BreakpointInstance, 1);
 	inst->il_offset = bp->il_offset;// it.seq_point.il_offset;
 	inst->native_offset = 0;// it.seq_point.native_offset;
-	inst->ip = (guint8*)inst;// (guint8*)ji->code_start + it.seq_point.native_offset;
 	inst->domain = mono_domain_get();
 	inst->seq_point = sp;
 
