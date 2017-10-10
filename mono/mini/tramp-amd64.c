@@ -417,10 +417,10 @@ mono_arch_create_trampoline_code_full (MonoTrampolineType tramp_type, guint32 *c
 			g_assert (r11_save_code == after_r11_save_code);
 		}
 	}
-	offset += 8 * 8;
+	offset += 8 * 16;
 	saved_fpregs_offset = - offset;
 	for (i = 0; i < 8; ++i)
-		amd64_movsd_membase_reg (code, AMD64_RBP, saved_fpregs_offset + (i * 8), i);
+		amd64_movdqu_membase_reg (code, AMD64_RBP, saved_fpregs_offset + (i * 16), i);
 
 	if (tramp_type != MONO_TRAMPOLINE_GENERIC_CLASS_INIT &&
 			tramp_type != MONO_TRAMPOLINE_MONITOR_ENTER &&
@@ -573,7 +573,7 @@ mono_arch_create_trampoline_code_full (MonoTrampolineType tramp_type, guint32 *c
 			amd64_mov_reg_membase (code, i, AMD64_RBP, saved_regs_offset + (i * 8), 8);
 
 	for (i = 0; i < 8; ++i)
-		amd64_movsd_reg_membase (code, i, AMD64_RBP, saved_fpregs_offset + (i * 8));
+		amd64_movdqu_reg_membase (code, i, AMD64_RBP, saved_fpregs_offset + (i * 16));
 
 	/* Restore stack */
 	amd64_leave (code);
