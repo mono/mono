@@ -60,7 +60,7 @@
 #define VM_FIELD_GET_NAME(field) field->name
 #define VM_TYPE_GET_ATTRS(type) type->attrs
 #define VM_OBJECT_GET_DOMAIN(object) ((MonoObject*)object)->vtable->domain
-#define VM_OBJECT_GET_CLASS(object) ((MonoObject*)object)-vtable->klass
+#define VM_OBJECT_GET_CLASS(object) ((MonoObject*)object)->vtable->klass
 #define VM_GENERIC_CLASS_GET_INST(klass) (klass)->context.class_inst
 #define VM_GENERIC_INST_TYPE_ARGC(inst) (inst)->type_argc
 #define VM_GENERIC_INST_TYPE_ARG(inst, i) (inst)->type_argv[i]
