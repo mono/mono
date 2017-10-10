@@ -4733,11 +4733,6 @@ static MonoBreakpoint* set_breakpoint_fast(Il2CppSequencePointC *sp, EventReques
 
 	mono_loader_lock();
 
-	//     for (i = 0; i < s_seq_points_count; ++i)
-	//     {
-	//         if (bp_matches_method(bp, *(s_seq_points[i]->method)))
-	//         {
-
 	BreakpointInstance* inst = g_new0(BreakpointInstance, 1);
 	inst->il_offset = bp->il_offset;// it.seq_point.il_offset;
 	inst->native_offset = 0;// it.seq_point.native_offset;
@@ -4749,8 +4744,6 @@ static MonoBreakpoint* set_breakpoint_fast(Il2CppSequencePointC *sp, EventReques
 	mono_loader_lock();
 	g_ptr_array_add(bp->children, inst);
 	mono_loader_unlock();
-	//         }
-	//     }
 
 	g_ptr_array_add(breakpoints, bp);
 	mono_loader_unlock();
