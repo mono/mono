@@ -3309,7 +3309,6 @@ compute_frame_info (MonoInternalThread *thread, DebuggerTlsData *tls)
 		for (int frame_index = tls->il2cpp_context.frameCount - 1; frame_index >= 0; --frame_index)
 		{
 			Il2CppSequencePointC* seq_point = tls->il2cpp_context.sequencePoints[frame_index];
-			Il2CppSequencePointExecutionContextC* exe_ctx = tls->il2cpp_context.executionContexts[frame_index];
 			StackFrame* frame = g_new0(StackFrame, 1);
 			frame->method = *seq_point->method;
 			frame->actual_method = *seq_point->method;
