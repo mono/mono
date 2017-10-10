@@ -7831,7 +7831,8 @@ mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, 
 #ifndef DISABLE_COM
 		return mono_cominterop_get_native_wrapper (method);
 #else
-		g_assert_not_reached ();
+		//In the case COM is disabled, returning the method will trigger a MissingMethodException
+		return method;
 #endif
 	}
 

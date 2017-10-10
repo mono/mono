@@ -253,6 +253,7 @@ if ($build)
 	push @configureparams, "--disable-btls";  #this removes the dependency on cmake to build btls for now
 	push @configureparams, "--with-mcs-docs=no";
 	push @configureparams, "--prefix=$monoprefix";
+	push @configureparams, "--mono_feature_disable_com=yes";
 
 	if(!($disableMcs))
 	{
