@@ -43,7 +43,11 @@ endif
 if TARGET_OSX
 libmono_dep =
 else
+if HOST_LINUX
+libmono_dep =
+else
 libmono_dep = $(monodir)/mono/mini/$(LIBMONO_LA)
+endif
 endif
 
 if HOST_ANDROID
