@@ -3391,70 +3391,42 @@ big_up (gconstpointer datablock, guint32 size)
 }
 #endif
 
-guint32
-mono_w32process_get_fileversion_info_size (gunichar2 *filename, guint32 *handle)
-{
-	gpointer file_map;
-	gpointer versioninfo;
-	void *map_handle;
-	gint32 map_size;
-	guint32 size;
-
-	/* This value is unused, but set to zero */
-	*handle = 0;
-
-	file_map = map_pe_file (filename, &map_size, &map_handle);
-	if (file_map == NULL) {
-		return(0);
-	}
-
-	versioninfo = find_pe_file_resources (file_map, map_size, RT_VERSION, 0, &size);
-	if (versioninfo == NULL) {
-		/* Didn't find the resource, so set the return value
-		 * to 0
-		 */
-		size = 0;
-	}
-
-	unmap_pe_file (file_map, map_handle);
-
-	return(size);
-}
-
 gboolean
-mono_w32process_get_fileversion_info (gunichar2 *filename, guint32 handle G_GNUC_UNUSED, guint32 len, gpointer data)
+mono_w32process_get_fileversion_info (gunichar2 *filename, gpointer *data)
 {
 	gpointer file_map;
 	gpointer versioninfo;
 	void *map_handle;
 	gint32 map_size;
-	guint32 size;
 	gboolean ret = FALSE;
+	gsize datasize;
+
+	g_assert (data);
+	*data = NULL;
 
 	file_map = map_pe_file (filename, &map_size, &map_handle);
-	if (file_map == NULL) {
-		return(FALSE);
+	if (!file_map)
+		return FALSE;
+
+	versioninfo = find_pe_file_resources (file_map, map_size, RT_VERSION, 0, &datasize);
+	if (!versioninfo) {
+		unmap_pe_file (file_map, map_handle);
+		return FALSE;
 	}
 
-	versioninfo = find_pe_file_resources (file_map, map_size, RT_VERSION,
-					      0, &size);
-	if (versioninfo != NULL) {
-		/* This could probably process the data so that
-		 * mono_w32process_ver_query_value() doesn't have to follow the data
-		 * blocks every time.  But hey, these functions aren't
-		 * likely to appear in many profiles.
-		 */
-		memcpy (data, versioninfo, len < size?len:size);
-		ret = TRUE;
+	*data = g_malloc0 (datasize);
+
+	/* This could probably process the data so that mono_w32process_ver_query_value() doesn't have to follow the
+	 * data blocks every time. But hey, these functions aren't likely to appear in many profiles. */
+	memcpy (*data, versioninfo, datasize);
 
 #if G_BYTE_ORDER == G_BIG_ENDIAN
-		big_up (data, size);
+	big_up (*data, size);
 #endif
-	}
 
 	unmap_pe_file (file_map, map_handle);
 
-	return(ret);
+	return TRUE;
 }
 
 gboolean
