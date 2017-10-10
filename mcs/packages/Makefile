@@ -38,7 +38,7 @@ ROSLYN_FILES_TO_LINK_FOR_MSBUILD = \
 	VBCSCompiler.exe				\
 	VBCSCompiler.exe.config
 
-DISTFILES = $(ROSLYN_FILES_FOR_MONO) $(ROSLYN_FILES_TO_COPY_FOR_MSBUILD)
+DISTFILES = $(ROSLYN_FILES_FOR_MONO) $(ROSLYN_FILES_TO_COPY_FOR_MSBUILD) csi-test.csx
 
 ifeq ($(PROFILE), $(DEFAULT_PROFILE))
 
@@ -52,6 +52,13 @@ install-local:
 	$(INSTALL_LIB) $(ROSLYN_FILES_TO_COPY_FOR_MSBUILD) $(MSBUILD_ROSLYN_DIR)
 
 	(cd $(MSBUILD_ROSLYN_DIR); for asm in $(ROSLYN_FILES_TO_LINK_FOR_MSBUILD); do ln -fs ../../../../$(FRAMEWORK_VERSION)/$$asm . ; done)
+
+run-test-local: test-csi
+
+test-csi:
+	MONO_PATH="$(topdir)/class/lib/$(PROFILE)" $(RUNTIME) $(ROSLYN_CSC_DIR)/csi.exe csi-test.csx > csi-test-output.txt
+	cat csi-test-output.txt && grep -q "hello world" csi-test-output.txt
+	rm csi-test-output.txt
 
 endif
 
