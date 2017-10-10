@@ -213,13 +213,14 @@ typedef struct {
 
 #endif
 
+#if !defined(__APPLE__)
+#include <emmintrin.h>
+typedef __m128d MonoContextSimdReg;
+#endif
+
 typedef struct {
 	mgreg_t gregs [AMD64_NREG];
-#ifdef __APPLE__
 	MonoContextSimdReg fregs [AMD64_XMM_NREG];
-#else
-	double fregs [AMD64_XMM_NREG];
-#endif
 } MonoContext;
 
 #define MONO_CONTEXT_SET_IP(ctx,ip) do { (ctx)->gregs [AMD64_RIP] = (mgreg_t)(ip); } while (0);
