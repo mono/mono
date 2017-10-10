@@ -3792,7 +3792,7 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 		case EVENT_KIND_METHOD_ENTRY:
 		case EVENT_KIND_METHOD_EXIT:
 			buffer_add_methodid (&buf, domain, (MonoMethod *)arg);
-#ifdef IL2CPP_MONO_DEBUGGER
+#if defined(IL2CPP_MONO_DEBUGGER) && defined(IL2CPP_DEBUGGER_TESTS)
 			buffer_add_long (&buf, il2cpp_seqpoint_id);
 #endif
 			break;
@@ -3817,7 +3817,7 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 		case EVENT_KIND_STEP:
 			buffer_add_methodid (&buf, domain, (MonoMethod *)arg);
 			buffer_add_long (&buf, il_offset);
-#ifdef IL2CPP_MONO_DEBUGGER
+#if defined(IL2CPP_MONO_DEBUGGER) && defined(IL2CPP_DEBUGGER_TESTS)
 			buffer_add_long (&buf, il2cpp_seqpoint_id);
 #endif
 			break;
