@@ -224,6 +224,24 @@ namespace Mono.CSharp
 			}
 		}
 
+		public void CloseContainerEarlyForReflectionEmit ()
+		{
+			if (containers != null) {
+				foreach (TypeContainer tc in containers) {
+					//
+					// SRE requires due to internal checks that any field of enum type is
+					// baked. We close all enum types before closing any other types to
+					// workaround this limitation
+					//
+					if (tc.Kind == MemberKind.Enum) {
+						tc.CloseContainer ();
+					} else {
+						tc.CloseContainerEarlyForReflectionEmit ();
+					}
+				}
+			}
+		}
+
 		public virtual void CreateMetadataName (StringBuilder sb)
 		{
 			if (Parent != null && Parent.MemberName != null)
