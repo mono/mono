@@ -261,7 +261,7 @@ mono_threads_begin_abort_protected_block (void)
 		g_assert (new_val < (1 << ABORT_PROT_BLOCK_BITS));
 
 		new_state = old_state + (1 << ABORT_PROT_BLOCK_SHIFT);
-	} while (mono_atomic_cas_ptr ((volatile gpointer)&thread->thread_state, (gpointer)new_state, (gpointer)old_state) != (gpointer)old_state);
+	} while (mono_atomic_cas_ptr ((volatile gpointer *)&thread->thread_state, (gpointer)new_state, (gpointer)old_state) != (gpointer)old_state);
 
 	/* Defer async request since we won't be able to process until exiting the block */
 	if (new_val == 1 && (new_state & INTERRUPT_ASYNC_REQUESTED_BIT)) {
@@ -303,7 +303,7 @@ mono_threads_end_abort_protected_block (void)
 		g_assert (new_val < (1 << ABORT_PROT_BLOCK_BITS));
 
 		new_state = old_state - (1 << ABORT_PROT_BLOCK_SHIFT);
-	} while (mono_atomic_cas_ptr ((volatile gpointer)&thread->thread_state, (gpointer)new_state, (gpointer)old_state) != (gpointer)old_state);
+	} while (mono_atomic_cas_ptr ((volatile gpointer *)&thread->thread_state, (gpointer)new_state, (gpointer)old_state) != (gpointer)old_state);
 
 	if (new_val == 0 && (new_state & INTERRUPT_ASYNC_REQUESTED_BIT)) {
 		mono_atomic_inc_i32 (&thread_interruption_requested);
@@ -343,7 +343,7 @@ mono_thread_clear_interruption_requested (MonoInternalThread *thread)
 			new_state = old_state & ~INTERRUPT_SYNC_REQUESTED_BIT;
 		else
 			new_state = old_state & ~INTERRUPT_ASYNC_REQUESTED_BIT;
-	} while (mono_atomic_cas_ptr ((volatile gpointer)&thread->thread_state, (gpointer)new_state, (gpointer)old_state) != (gpointer)old_state);
+	} while (mono_atomic_cas_ptr ((volatile gpointer *)&thread->thread_state, (gpointer)new_state, (gpointer)old_state) != (gpointer)old_state);
 
 	mono_atomic_dec_i32 (&thread_interruption_requested);
 	THREADS_INTERRUPT_DEBUG ("[%d] clear interruption old_state %ld new_state %ld, tir %d\n", thread->small_id, old_state, new_state, thread_interruption_requested);
@@ -371,7 +371,7 @@ mono_thread_set_interruption_requested (MonoInternalThread *thread)
 			new_state = old_state | INTERRUPT_SYNC_REQUESTED_BIT;
 		else
 			new_state = old_state | INTERRUPT_ASYNC_REQUESTED_BIT;
-	} while (mono_atomic_cas_ptr ((volatile gpointer)&thread->thread_state, (gpointer)new_state, (gpointer)old_state) != (gpointer)old_state);
+	} while (mono_atomic_cas_ptr ((volatile gpointer *)&thread->thread_state, (gpointer)new_state, (gpointer)old_state) != (gpointer)old_state);
 
 	if (sync || !(new_state & ABORT_PROT_BLOCK_MASK)) {
 		mono_atomic_inc_i32 (&thread_interruption_requested);

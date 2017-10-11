@@ -1158,7 +1158,7 @@ predef_writable_update (ImplVtable *vtable, MonoBoolean do_incr, gint64 value)
 			if (value == -1)
 				return mono_atomic_dec_i32 (ptr);
 
-			return mono_atomic_add_i32(ptr, value);
+			return mono_atomic_add_i32 (ptr, (gint32)value);
 		}
 		/* this can be non-atomic */
 		*ptr = value;

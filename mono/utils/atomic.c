@@ -264,7 +264,7 @@ gpointer mono_atomic_xchg_ptr(volatile gpointer *dest, gpointer exch)
 	return(ret);
 }
 
-gint32 mono_atomic_xchg_i32Add(volatile gint32 *dest, gint32 add)
+gint32 mono_atomic_xchg_add_i32(volatile gint32 *dest, gint32 add)
 {
 	gint32 ret;
 	int thr_ret;
@@ -285,7 +285,7 @@ gint32 mono_atomic_xchg_i32Add(volatile gint32 *dest, gint32 add)
 	return(ret);
 }
 
-gint64 mono_atomic_xchg_i32Add64(volatile gint64 *dest, gint64 add)
+gint64 mono_atomic_xchg_add_i64(volatile gint64 *dest, gint64 add)
 {
 	gint64 ret;
 	int thr_ret;

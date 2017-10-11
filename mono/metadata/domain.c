@@ -197,7 +197,7 @@ lock_free_mempool_alloc0 (LockFreeMempool *mp, guint size)
 	}
 
 	/* The code below is lock-free, 'chunk' is shared state */
-	oldpos = mono_atomic_xchg_i32Add (&chunk->pos, size);
+	oldpos = mono_atomic_xchg_add_i32 (&chunk->pos, size);
 	if (oldpos + size > chunk->size) {
 		chunk = lock_free_mempool_chunk_new (mp, size);
 		g_assert (chunk->pos + size <= chunk->size);

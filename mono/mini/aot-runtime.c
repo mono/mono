@@ -2858,7 +2858,7 @@ alloc0_jit_info_data (MonoDomain *domain, int size, gboolean async_context)
 
 	if (async_context) {
 		res = mono_domain_alloc0_lock_free (domain, size);
-		mono_atomic_xchg_i32Add (&async_jit_info_size, size);
+		mono_atomic_xchg_add_i32 (&async_jit_info_size, size);
 	} else {
 		res = mono_domain_alloc0 (domain, size);
 	}
