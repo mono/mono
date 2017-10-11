@@ -10868,7 +10868,7 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		buffer_add_domainid (buf, VM_OBJECT_GET_DOMAIN(obj));
 		break;
 	case CMD_OBJECT_REF_GET_INFO:
-		buffer_add_typeid (buf, VM_OBJECT_GET_DOMAIN(obj), mono_object_get_class(obj));
+		buffer_add_typeid (buf, VM_OBJECT_GET_DOMAIN(obj), mono_class_from_mono_type(VM_OBJECT_GET_TYPE(obj)));
 		buffer_add_domainid (buf, VM_OBJECT_GET_DOMAIN(obj));
 		break;
 	default:

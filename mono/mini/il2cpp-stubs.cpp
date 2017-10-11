@@ -1336,6 +1336,11 @@ mono_array_lower_bound_t il2cpp_array_bound_lower_bound(Il2CppMonoArray *monoArr
 	return arr->bounds[i].lower_bound;
 }
 
+Il2CppMonoType* il2cpp_mono_object_get_type(Il2CppMonoObject* object)
+{
+    return (Il2CppMonoType*)(((Il2CppObject*)object)->klass->byval_arg);
+}
+
 }
 
 #endif // RUNTIME_IL2CPP
