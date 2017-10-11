@@ -209,9 +209,12 @@ namespace System
 #if WIN_PLATFORM
 			if (TimeZoneKey != null) {
 				foreach (string id in TimeZoneKey.GetSubKeyNames ()) {
-					try {
-						systemTimeZones.Add (FindSystemTimeZoneById (id));
-					} catch {}
+					using (RegistryKey subkey = TimeZoneKey.OpenSubKey (id))
+					{
+						if (subkey == null || subkey.GetValue ("TZI") == null)
+							continue;
+					}
+					systemTimeZones.Add (FindSystemTimeZoneById (id));
 				}
 
 				return;
