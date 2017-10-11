@@ -1020,9 +1020,9 @@ namespace MonoTests.System.Threading
 		[Test] // bug #60031
 		public void StoppedThreadsThrowThreadStateException ()
 		{
-			var t = new Thread(() => { });
-			t.Start();
-			t.Join();
+			var t = new Thread (() => { });
+			t.Start ();
+			t.Join ();
 
 			Assert.Throws<ThreadStateException> (() => { var isb = t.IsBackground; }, "IsBackground getter");
 			Assert.Throws<ThreadStateException> (() => { var isb = t.ApartmentState; }, "ApartmentState getter");
