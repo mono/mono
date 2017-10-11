@@ -8809,8 +8809,8 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 
 	switch (command) {
 	case CMD_ASSEMBLY_GET_LOCATION: {
-		buffer_add_string (buf, mono_image_get_filename (ass->image));
-		break;			
+		buffer_add_string (buf, mono_image_get_filename (VM_ASSEMBLY_GET_IMAGE(ass)));
+		break;
 	}
 	case CMD_ASSEMBLY_GET_ENTRY_POINT: {
 		guint32 token;
@@ -8841,7 +8841,7 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		break;			
 	}
 	case CMD_ASSEMBLY_GET_MANIFEST_MODULE: {
-		buffer_add_moduleid (buf, domain, ass->image);
+		buffer_add_moduleid (buf, domain, VM_ASSEMBLY_GET_IMAGE(ass));
 		break;
 	}
 	case CMD_ASSEMBLY_GET_OBJECT: {
@@ -8872,7 +8872,7 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		} else {
 			if (info.assembly.name)
 				NOT_IMPLEMENTED;
-			t = mono_reflection_get_type_checked (ass->image, ass->image, &info, ignorecase, &type_resolve, &error);
+			t = mono_reflection_get_type_checked (VM_ASSEMBLY_GET_IMAGE(ass), VM_ASSEMBLY_GET_IMAGE(ass), &info, ignorecase, &type_resolve, &error);
 			if (!is_ok (&error)) {
 				mono_error_cleanup (&error); /* FIXME don't swallow the error */
 				mono_reflection_free_type_info (&info);
@@ -8894,11 +8894,11 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 
 		name = g_strdup_printf (
 		  "%s, Version=%d.%d.%d.%d, Culture=%s, PublicKeyToken=%s%s",
-		  mass->aname.name,
-		  mass->aname.major, mass->aname.minor, mass->aname.build, mass->aname.revision,
-		  mass->aname.culture && *mass->aname.culture? mass->aname.culture: "neutral",
-		  mass->aname.public_key_token [0] ? (char *)mass->aname.public_key_token : "null",
-		  (mass->aname.flags & ASSEMBLYREF_RETARGETABLE_FLAG) ? ", Retargetable=Yes" : "");
+		  VM_ASSEMBLY_NAME_GET_NAME(mass),
+		  VM_ASSEMBLY_NAME_GET_MAJOR(mass), VM_ASSEMBLY_NAME_GET_MINOR(mass), VM_ASSEMBLY_NAME_GET_BUILD(mass), VM_ASSEMBLY_NAME_GET_REVISION(mass),
+		  VM_ASSEMBLY_NAME_GET_CULTURE(mass) && *VM_ASSEMBLY_NAME_GET_CULTURE(mass) ? VM_ASSEMBLY_NAME_GET_CULTURE(mass) : "neutral",
+		  VM_ASSEMBLY_NAME_GET_PUBLIC_KEY_TOKEN(mass, 0) ? VM_ASSEMBLY_NAME_GET_PUBLIC_KEY_TOKEN_STRING(mass) : "null",
+		  (VM_ASSEMBLY_NAME_GET_FLAGS(mass) & ASSEMBLYREF_RETARGETABLE_FLAG) ? ", Retargetable=Yes" : "");
 
 		buffer_add_string (buf, name);
 		g_free (name);
@@ -8922,14 +8922,14 @@ module_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		MonoImage *image = decode_moduleid (p, &p, end, &domain, &err);
 		char *basename;
 
-		basename = g_path_get_basename (image->name);
+		basename = g_path_get_basename (VM_IMAGE_GET_NAME(image));
 		buffer_add_string (buf, basename); // name
-		buffer_add_string (buf, image->module_name); // scopename
-		buffer_add_string (buf, image->name); // fqname
+		buffer_add_string (buf, VM_IMAGE_GET_MODULE_NAME(image)); // scopename
+		buffer_add_string (buf, VM_IMAGE_GET_NAME(image)); // fqname
 		buffer_add_string (buf, mono_image_get_guid (image)); // guid
-		buffer_add_assemblyid (buf, domain, image->assembly); // assembly
+		buffer_add_assemblyid (buf, domain, VM_IMAGE_GET_ASSEMBLY(image)); // assembly
 		g_free (basename);
-		break;			
+		break;
 	}
 	default:
 		return ERR_NOT_IMPLEMENTED;
@@ -10617,8 +10617,8 @@ array_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 	switch (command) {
 	case CMD_ARRAY_REF_GET_LENGTH:
 		buffer_add_int (buf, VM_ARRAY_GET_RANK(arr));
-		if (VM_ARRAY_BOUNDS_NULL(arr)) {
-			buffer_add_int (buf, VM_ARRAY_GET_LENGTH(arr));
+		if (!arr->bounds) {
+			buffer_add_int (buf, arr->max_length);
 			buffer_add_int (buf, 0);
 		} else {
 			for (i = 0; i < VM_ARRAY_GET_RANK(arr); ++i) {
@@ -10637,7 +10637,7 @@ array_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 
 		esize = mono_array_element_size (VM_OBJECT_GET_CLASS(arr));
 		for (i = index; i < index + len; ++i) {
-			elem = VM_ARRAY_GET_ELEMENT(arr, esize, i);
+			elem = (gpointer*)((char*)arr->vector + (i * esize));
 			buffer_add_value (buf, VM_CLASS_GET_TYPE(VM_CLASS_GET_ELEMENT_CLASS(VM_OBJECT_GET_CLASS(arr))), elem, VM_OBJECT_GET_DOMAIN(arr));
 		}
 		break;
@@ -10651,8 +10651,7 @@ array_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 
 		esize = mono_array_element_size (VM_OBJECT_GET_CLASS(arr));
 		for (i = index; i < index + len; ++i) {
-			elem = VM_ARRAY_GET_ELEMENT(arr, esize, i);
-
+			elem = (gpointer*)((char*)arr->vector + (i * esize));
 			decode_value (VM_CLASS_GET_TYPE(VM_CLASS_GET_ELEMENT_CLASS(VM_OBJECT_GET_CLASS(arr))), VM_OBJECT_GET_DOMAIN(arr), (guint8 *)elem, p, &p, end);
 		}
 		break;
@@ -10747,7 +10746,7 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 	MonoClass *obj_type;
 	gboolean remote_obj = FALSE;
 
-	obj_type = obj->vtable->klass;
+	obj_type = VM_OBJECT_GET_CLASS(obj);
 	if (mono_class_is_transparent_proxy (obj_type)) {
 		obj_type = ((MonoTransparentProxy *)obj)->remote_class->proxy_class;
 		remote_obj = TRUE;
@@ -10770,8 +10769,8 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 
 			/* Check that the field belongs to the object */
 			found = FALSE;
-			for (k = obj_type; k; k = k->parent) {
-				if (k == f->parent) {
+			for (k = obj_type; k; k = VM_CLASS_GET_PARENT(k)) {
+				if (k == VM_FIELD_GET_PARENT(f)) {
 					found = TRUE;
 					break;
 				}
@@ -10779,22 +10778,22 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 			if (!found)
 				return ERR_INVALID_FIELDID;
 
-			if (f->type->attrs & FIELD_ATTRIBUTE_STATIC) {
+			if (VM_TYPE_GET_ATTRS(VM_FIELD_GET_TYPE(f))  & FIELD_ATTRIBUTE_STATIC) {
 				guint8 *val;
 				MonoVTable *vtable;
 
 				if (mono_class_field_is_special_static (f))
 					return ERR_INVALID_FIELDID;
 
-				g_assert (f->type->attrs & FIELD_ATTRIBUTE_STATIC);
-				vtable = mono_class_vtable (VM_OBJECT_GET_DOMAIN(obj), f->parent);
-				val = (guint8 *)g_malloc (mono_class_instance_size (mono_class_from_mono_type (f->type)));
+				g_assert (VM_TYPE_GET_ATTRS(VM_FIELD_GET_TYPE(f)) & FIELD_ATTRIBUTE_STATIC);
+				vtable = mono_class_vtable (VM_OBJECT_GET_DOMAIN(obj), VM_FIELD_GET_PARENT(f));
+				val = (guint8 *)g_malloc (mono_class_instance_size (mono_class_from_mono_type (VM_FIELD_GET_TYPE(f))));
 				mono_field_static_get_value_checked (vtable, f, val, &error);
 				if (!is_ok (&error)) {
 					mono_error_cleanup (&error); /* FIXME report the error */
 					return ERR_INVALID_OBJECT;
 				}
-				buffer_add_value (buf, f->type, val, VM_OBJECT_GET_DOMAIN(obj));
+				buffer_add_value (buf, VM_FIELD_GET_TYPE(f), val, VM_OBJECT_GET_DOMAIN(obj));
 				g_free (val);
 			} else {
 				guint8 *field_value = NULL;
@@ -10810,10 +10809,11 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 #else
 					g_assert_not_reached ();
 #endif
-				} else
-					field_value = (guint8*)obj + f->offset;
+				}
+				else
+					field_value = VM_FIELD_GET_ADDRESS(obj, f);
 
-				buffer_add_value (buf, f->type, field_value, VM_OBJECT_GET_DOMAIN(obj));
+				buffer_add_value (buf, VM_FIELD_GET_TYPE(f), field_value, VM_OBJECT_GET_DOMAIN(obj));
 			}
 		}
 		break;

@@ -42,6 +42,7 @@ typedef struct _Il2CppMonoMethodInflated Il2CppMonoMethodInflated;
 typedef struct _Il2CppMonoException Il2CppMonoException;
 typedef struct _Il2CppCattrNamedArg Il2CppCattrNamedArg;
 typedef struct _Il2CppMonoExceptionClause Il2CppMonoExceptionClause;
+typedef struct _Il2CppMonoTypeNameParse Il2CppMonoTypeNameParse;
 
 struct _Il2CppMonoString { void *dummy; };
 struct _Il2CppMonoArrayType { void *dummy; };
@@ -79,6 +80,7 @@ struct _Il2CppCattrNamedArg
 struct _Il2CppMonoObject
 {
 	Il2CppMonoVTable *vtable;
+	void *synchronization;
 };
 
 struct _Il2CppMonoException
@@ -318,6 +320,12 @@ struct _Il2CppMonoClass
 	Il2CppMonoClass *element_class;
 	Il2CppMonoMethod **vtable;
 	Il2CppMonoType this_arg;
+};
+
+struct _Il2CppMonoTypeNameParse
+{
+	Il2CppMonoAssemblyNameReplacement assembly;
+	void *il2cppTypeNameParseInfo;
 };
 
 typedef enum

@@ -21,12 +21,25 @@
 #define VM_ASSEMBLY_FREE_NAME(name) g_free(name)
 #define VM_ASSEMBLY_IS_DYNAMIC(assembly) FALSE
 #define VM_ASSEMBLY_GET_IMAGE(assembly) il2cpp_mono_assembly_get_image(assembly)
+#define VM_ASSEMBLY_NAME_GET_NAME(assembly) il2cpp_assembly_name_name(assembly)
+#define VM_ASSEMBLY_NAME_GET_MAJOR(assembly) il2cpp_assembly_name_major(assembly)
+#define VM_ASSEMBLY_NAME_GET_MINOR(assembly) il2cpp_assembly_name_minor(assembly)
+#define VM_ASSEMBLY_NAME_GET_BUILD(assembly) il2cpp_assembly_name_build(assembly)
+#define VM_ASSEMBLY_NAME_GET_REVISION(assembly) il2cpp_assembly_name_revision(assembly)
+#define VM_ASSEMBLY_NAME_GET_CULTURE(assembly) il2cpp_assembly_name_culture(assembly)
+#define VM_ASSEMBLY_NAME_GET_PUBLIC_KEY_TOKEN(assembly, i) il2cpp_assembly_name_public_key_token(assembly, i)
+#define VM_ASSEMBLY_NAME_GET_PUBLIC_KEY_TOKEN_STRING(assembly) il2cpp_assembly_name_public_key_token_string(assembly)
+#define VM_ASSEMBLY_NAME_GET_FLAGS(assembly) il2cpp_assembly_name_flags(assembly)
 #define VM_CLASS_GET_TYPE(klass) il2cpp_class_get_type(klass)
 #define VM_CLASS_GET_THIS_ARG(klass) il2cpp_class_this_arg(klass)
 #define VM_CLASS_GET_ELEMENT_CLASS(klass) il2cpp_class_get_element_class(klass)
+#define VM_CLASS_GET_PARENT(klass) il2cpp_class_get_parent(klass)
 #define VM_METHOD_GET_WRAPPER_TYPE(method) FALSE
 #define VM_METHOD_GET_DECLARING_TYPE(method) il2cpp_method_get_declaring_type(method)
 #define VM_FIELD_GET_NAME(field) il2cpp_mono_field_get_name(field)
+#define VM_FIELD_GET_PARENT(field) il2cpp_field_get_parent(field)
+#define VM_FIELD_GET_TYPE(field) il2cpp_field_get_type(field)
+#define VM_FIELD_GET_ADDRESS(obj, field) il2cpp_field_get_address(obj, field)
 #define VM_TYPE_GET_ATTRS(type) il2cpp_mono_type_get_attrs(type)
 #define VM_OBJECT_GET_DOMAIN(object) il2cpp_mono_domain_get()
 #define VM_OBJECT_GET_CLASS(object) il2cpp_object_get_class(object)
@@ -36,11 +49,11 @@
 #define VM_GENERIC_INST_TYPE_ARG(inst, i) il2cpp_generic_inst_type_arg(inst, i)
 #define VM_DEFAULTS_OBJECT_CLASS il2cpp_defaults_object_class()
 #define VM_ARRAY_GET_RANK(arr) il2cpp_array_rank(arr)
-#define VM_ARRAY_GET_LENGTH(arr) il2cpp_array_length(arr)
-#define VM_ARRAY_GET_ELEMENT(arr, esize, i) il2cpp_array_get_element(arr, esize, i)
-#define VM_ARRAY_BOUNDS_NULL(arr) il2cpp_array_bounds_null(arr)
 #define VM_ARRAY_BOUND_LENGTH(arr, i) il2cpp_array_bound_length(arr, i)
 #define VM_ARRAY_BOUND_LOWER_BOUND(arr, i) il2cpp_array_bound_lower_bound(arr, i)
+#define VM_IMAGE_GET_NAME(image) il2cpp_image_name(image)
+#define VM_IMAGE_GET_MODULE_NAME(image) il2cpp_image_name(image)
+#define VM_IMAGE_GET_ASSEMBLY(image) il2cpp_image_assembly(image)
 #else
 #define VM_THREAD_GET(thread) thread->internal_thread
 #define VM_THREAD_SET_STATE_BACKGROUND(thread) thread->internal_thread->state |= ThreadState_Background
@@ -54,11 +67,24 @@
 #define VM_ASSEMBLY_FREE_NAME(name)
 #define VM_ASSEMBLY_IS_DYNAMIC(assembly) assembly->image->dynamic
 #define VM_ASSEMBLY_GET_IMAGE(assembly) assembly->image
+#define VM_ASSEMBLY_NAME_GET_NAME(assembly) (assembly)->aname.name
+#define VM_ASSEMBLY_NAME_GET_MAJOR(assembly) (assembly)->aname.major
+#define VM_ASSEMBLY_NAME_GET_MINOR(assembly) (assembly)->aname.minor
+#define VM_ASSEMBLY_NAME_GET_BUILD(assembly) (assembly)->aname.build
+#define VM_ASSEMBLY_NAME_GET_REVISION(assembly) (assembly)->aname.revision
+#define VM_ASSEMBLY_NAME_GET_CULTURE(assembly) (assembly)->aname.culture
+#define VM_ASSEMBLY_NAME_GET_PUBLIC_KEY_TOKEN(assembly, i) (assembly)->aname.public_key_token[i]
+#define VM_ASSEMBLY_NAME_GET_PUBLIC_KEY_TOKEN_STRING(assembly) (char*)(assembly)->aname.public_key_token
+#define VM_ASSEMBLY_NAME_GET_FLAGS(assembly) (assembly)->aname.flags
 #define VM_CLASS_GET_TYPE(klass) &(klass)->byval_arg
 #define VM_CLASS_GET_THIS_ARG(klass) &(klass)->this_arg
+#define VM_CLASS_GET_PARENT(klass) (klass)->parent
 #define VM_METHOD_GET_WRAPPER_TYPE(method) method->wrapper_type
 #define VM_METHOD_GET_DECLARING_TYPE(method) (method)->klass
 #define VM_FIELD_GET_NAME(field) field->name
+#define VM_FIELD_GET_PARENT(field) (field)->parent
+#define VM_FIELD_GET_TYPE(field) (field)->type
+#define VM_FIELD_GET_ADDRESS(obj, field) (guint8*)(obj) + (f)->offset
 #define VM_TYPE_GET_ATTRS(type) type->attrs
 #define VM_OBJECT_GET_DOMAIN(object) ((MonoObject*)object)->vtable->domain
 #define VM_OBJECT_GET_CLASS(object) ((MonoObject*)object)->vtable->klass
@@ -68,12 +94,12 @@
 #define VM_GENERIC_INST_TYPE_ARG(inst, i) (inst)->type_argv[i]
 #define VM_DEFAULTS_OBJECT_CLASS mono_defaults.object_class
 #define VM_ARRAY_GET_RANK(arr) (arr)->obj.vtable->klass->rank
-#define VM_ARRAY_GET_LENGTH(arr) (arr)->max_length
 #define VM_CLASS_GET_ELEMENT_CLASS(klass) (klass)->element_class
-#define VM_ARRAY_GET_ELEMENT(arr, esize, i) (gpointer*)((char*)(arr)->vector + (i * esize))
-#define VM_ARRAY_BOUNDS_NULL(arr) !arr->bounds
 #define VM_ARRAY_BOUND_LENGTH(arr, i) arr->bounds[i].length
 #define VM_ARRAY_BOUND_LOWER_BOUND(arr, i) arr->bounds[i].lower_bound
+#define VM_IMAGE_GET_NAME(image) (image)->name
+#define VM_IMAGE_GET_MODULE_NAME(image) (image)->module_name
+#define VM_IMAGE_GET_ASSEMBLY(image)  (image)->assembly
 #endif
 
 #if defined(RUNTIME_IL2CPP)
@@ -117,6 +143,7 @@
 #define CattrNamedArg Il2CppCattrNamedArg
 #define MonoExceptionClause Il2CppMonoExceptionClause
 #define debug_options il2cpp_mono_debug_options
+#define MonoTypeNameParse Il2CppMonoTypeNameParse
 
 #define mono_image_get_entry_point il2cpp_mono_image_get_entry_point
 #define mono_image_get_filename il2cpp_mono_image_get_filename
@@ -376,8 +403,8 @@ uint32_t il2cpp_mono_gchandle_new_weakref (Il2CppMonoObject *obj, mono_bool trac
 Il2CppMonoObject*  il2cpp_mono_gchandle_get_target (uint32_t gchandle);
 void il2cpp_mono_gchandle_free (uint32_t gchandle);
 void il2cpp_mono_gc_wbarrier_generic_store (void* ptr, Il2CppMonoObject* value);
-int il2cpp_mono_reflection_parse_type (char *name, MonoTypeNameParse *info);
-void il2cpp_mono_reflection_free_type_info (MonoTypeNameParse *info);
+int il2cpp_mono_reflection_parse_type (char *name, Il2CppMonoTypeNameParse *info);
+void il2cpp_mono_reflection_free_type_info (Il2CppMonoTypeNameParse *info);
 mono_bool il2cpp_mono_custom_attrs_has_attr (Il2CppMonoCustomAttrInfo *ainfo, Il2CppMonoClass *attr_klass);
 void il2cpp_mono_custom_attrs_free (Il2CppMonoCustomAttrInfo *ainfo);
 Il2CppMonoDomain* il2cpp_mono_get_root_domain (void);
@@ -465,7 +492,7 @@ void il2cpp_mono_threadpool_resume();
 Il2CppMonoImage* il2cpp_mono_assembly_get_image(Il2CppMonoAssembly* assembly);
 gboolean il2cpp_mono_runtime_try_shutdown();
 gboolean il2cpp_mono_verifier_is_method_valid_generic_instantiation(Il2CppMonoMethod* method);
-Il2CppMonoType* il2cpp_mono_reflection_get_type_checked(Il2CppMonoImage* rootimage, Il2CppMonoImage* image, MonoTypeNameParse* info, gboolean ignorecase, gboolean* type_resolve, MonoError* error);
+Il2CppMonoType* il2cpp_mono_reflection_get_type_checked(Il2CppMonoImage* rootimage, Il2CppMonoImage* image, Il2CppMonoTypeNameParse* info, gboolean ignorecase, gboolean* type_resolve, MonoError* error);
 Il2CppMonoCustomAttrInfo* il2cpp_mono_custom_attrs_from_method_checked(Il2CppMonoMethod* method, MonoError* error);
 Il2CppMonoCustomAttrInfo* il2cpp_mono_custom_attrs_from_class_checked(Il2CppMonoClass* klass, MonoError* error);
 Il2CppMonoCustomAttrInfo* il2cpp_mono_custom_attrs_from_property_checked(Il2CppMonoClass* klass, Il2CppMonoProperty* property, MonoError* error);
@@ -532,10 +559,20 @@ Il2CppMonoType* il2cpp_class_this_arg(Il2CppMonoClass *monoClass);
 Il2CppMonoClass* il2cpp_class_get_nested_types_accepts_generic(Il2CppMonoClass *monoClass, void* *iter);
 Il2CppMonoClass* il2cpp_defaults_object_class();
 guint8 il2cpp_array_rank(Il2CppMonoArray *monoArr);
-gpointer il2cpp_array_get_element(Il2CppMonoArray *monoArr, int esize, int i);
-gboolean il2cpp_array_bounds_null(Il2CppMonoArray *monoArr);
 mono_array_size_t il2cpp_array_bound_length(Il2CppMonoArray *monoArr, int i);
 mono_array_lower_bound_t il2cpp_array_bound_lower_bound(Il2CppMonoArray *monoArr, int i);
+const char* il2cpp_assembly_name_name(Il2CppMonoAssembly *monoAssembly);
+uint16_t il2cpp_assembly_name_major(Il2CppMonoAssembly *monoAssembly);
+uint16_t il2cpp_assembly_name_minor(Il2CppMonoAssembly *monoAssembly);
+uint16_t il2cpp_assembly_name_build(Il2CppMonoAssembly *monoAssembly);
+uint16_t il2cpp_assembly_name_revision(Il2CppMonoAssembly *monoAssembly);
+const char* il2cpp_assembly_name_culture(Il2CppMonoAssembly *monoAssembly);
+mono_byte il2cpp_assembly_name_public_key_token(Il2CppMonoAssembly *monoAssembly, int i);
+const char* il2cpp_assembly_name_public_key_token_string(Il2CppMonoAssembly *monoAssembly);
+uint32_t il2cpp_assembly_name_flags(Il2CppMonoAssembly *monoAssembly);
+const char* il2cpp_image_name(Il2CppMonoImage *monoImage);
+Il2CppMonoAssembly* il2cpp_image_assembly(Il2CppMonoImage *monoImage);
+guint8* il2cpp_field_get_address(Il2CppMonoObject *obj, Il2CppMonoClassField *monoField);
 Il2CppMonoType* il2cpp_mono_object_get_type(Il2CppMonoObject* object);
 
 #endif // RUNTIME_IL2CPP
