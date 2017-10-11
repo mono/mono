@@ -3773,7 +3773,7 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 			thread = NULL;
 		} else {
 			if (!thread)
-				thread = mono_thread_current ();
+				thread = is_debugger_thread () ? mono_thread_get_main () : mono_thread_current ();
 
 			if (event == EVENT_KIND_VM_START && arg != NULL)
 				thread = (MonoThread *)arg;
@@ -9241,7 +9241,7 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 			return ERR_LOADER_ERROR;
 		}
 
-		err = buffer_add_cattrs (buf, domain, mono_class_get_image, attr_klass, cinfo);
+		err = buffer_add_cattrs (buf, domain, mono_class_get_image(klass), attr_klass, cinfo);
 		if (err != ERR_NONE)
 			return err;
 		break;
