@@ -147,9 +147,8 @@ mono_arm_throw_exception (MonoObject *exc, mgreg_t pc, mgreg_t sp, mgreg_t *int_
 	gboolean rethrow = sp & 1;
 
 	sp &= ~1; /* clear the optional rethrow bit */
-	pc &= ~1; /* clear the thumb bit */
 	/* adjust eip so that it point into the call instruction */
-	pc -= 4;
+	pc -= (pc & 1) ? 2 : 4;
 
 	/*printf ("stack in throw: %p\n", esp);*/
 	MONO_CONTEXT_SET_BP (&ctx, int_regs [ARMREG_FP - 4]);
@@ -175,9 +174,6 @@ void
 mono_arm_throw_exception_by_token (guint32 ex_token_index, mgreg_t pc, mgreg_t sp, mgreg_t *int_regs, gdouble *fp_regs)
 {
 	guint32 ex_token = MONO_TOKEN_TYPE_DEF | ex_token_index;
-	/* Clear thumb bit */
-	pc &= ~1;
-
 	mono_arm_throw_exception ((MonoObject*)mono_exception_from_token (mono_defaults.corlib, ex_token), pc, sp, int_regs, fp_regs);
 }
 
@@ -186,9 +182,8 @@ mono_arm_resume_unwind (guint32 dummy1, mgreg_t pc, mgreg_t sp, mgreg_t *int_reg
 {
 	MonoContext ctx;
 
-	pc &= ~1; /* clear the optional rethrow bit */
 	/* adjust eip so that it point into the call instruction */
-	pc -= 4;
+	pc -= (pc & 1) ? 2 : 4;
 
 	MONO_CONTEXT_SET_BP (&ctx, int_regs [ARMREG_FP - 4]);
 	MONO_CONTEXT_SET_SP (&ctx, sp);
@@ -454,12 +449,8 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		for (i = 0; i < 8; ++i)
 			new_ctx->fregs [8 + i] = *(double*)&(regs [MONO_MAX_IREGS + i]);
 #endif
-
-		/* Clear thumb bit */
-		new_ctx->pc &= ~1;
-
-		/* we substract 1, so that the IP points into the call instruction */
-		new_ctx->pc--;
+		/* we substract one instruction, so that the IP points into the call instruction */
+		new_ctx->pc -= (new_ctx->pc & 1) ? 2 : 4;
 
 		return TRUE;
 	} else if (*lmf) {
@@ -509,11 +500,8 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		new_ctx->regs [ARMREG_SP] = (*lmf)->sp;
 		new_ctx->regs [ARMREG_FP] = (*lmf)->fp;
 
-		/* Clear thumb bit */
-		new_ctx->pc &= ~1;
-
-		/* we substract 1, so that the IP points into the call instruction */
-		new_ctx->pc--;
+		/* we substract one instruction, so that the IP points into the call instruction */
+		new_ctx->pc -= (new_ctx->pc & 1) ? 2 : 4;
 
 		*lmf = (gpointer)(((gsize)(*lmf)->previous_lmf) & ~3);
 
