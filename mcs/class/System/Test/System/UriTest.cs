@@ -2071,5 +2071,16 @@ namespace MonoTests.System
 			var uri = new Uri ("https://_foo/bar.html");
 			Assert.AreEqual ("https", uri.Scheme);
 		}
+
+		[Test]
+		public void ImplicitUnixFileWithUnicodeGetAbsoluleUri ()
+		{
+			if (isWin32)
+				Assert.Ignore ();
+
+			string escFilePath = "/Users/Текст.txt";
+			string escUrl = new Uri (escFilePath, UriKind.Absolute).AbsoluteUri;
+			Assert.AreEqual ("file:///Users/%D0%A2%D0%B5%D0%BA%D1%81%D1%82.txt", escUrl);
+		}
 	}
 }
