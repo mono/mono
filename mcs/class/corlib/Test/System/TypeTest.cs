@@ -2732,6 +2732,41 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void GetType1_TypeName_Empty_nothrow ()
+		{
+			var t = Type.GetType ("");
+			Assert.IsNull (t);
+		}
+
+		[Test]
+		[ExpectedException (typeof (TypeLoadException))]
+		public void GetType2_TypeName_Empty ()
+		{
+			Type.GetType ("", true);
+		}
+
+		[Test]
+		public void GetType2_TypeName_Empty_nothrow ()
+		{
+			var t = Type.GetType ("", false);
+			Assert.IsNull (t);
+		}
+
+		[Test]
+		[ExpectedException (typeof (TypeLoadException))]
+		public void GetType3_TypeName_Empty ()
+		{
+			Type.GetType ("", true, false);
+		}
+
+		[Test]
+		public void GetType3_TypeName_Empty_nothrow ()
+		{
+			var t = Type.GetType ("", false, false);
+			Assert.IsNull (t);
+		}
+
+		[Test]
 		public void GetTypeArray_Args_Null ()
 		{
 			try {
@@ -4235,6 +4270,7 @@ namespace MonoTests.System
 		[Test]
 		public void NewGetTypeErrors () {
 			MustANE (null);
+			MustTLE ("");
 			MustAE ("!@#$%^&*");
 			MustAE (string.Format ("{0}[{1}&]", typeof (Foo<>).FullName, typeof (MyRealEnum).FullName));
 			MustAE (string.Format ("{0}[{1}*]", typeof (Foo<>).FullName, typeof (MyRealEnum).FullName));
