@@ -1192,7 +1192,7 @@ void il2cpp_mono_profiler_iomap (char *report, const char *pathname, const char 
 
 void il2cpp_set_thread_state_background(Il2CppMonoThread* thread)
 {
-	il2cpp::vm::Thread::SetState((Il2CppThread*)thread, il2cpp::vm::ThreadState::kThreadStateBackground);
+	il2cpp::vm::Thread::SetState((Il2CppThread*)thread, il2cpp::vm::kThreadStateBackground);
 }
 
 void* il2cpp_domain_get_agent_info(Il2CppMonoAppDomain* domain)
