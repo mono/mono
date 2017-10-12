@@ -309,8 +309,8 @@ recompute_aliased_variables (MonoCompile *cfg, int *restored_vars)
 	}
 	*restored_vars = adds;
 
-	mono_atomic_add_i32 (&mono_jit_stats.alias_found, kills);
-	mono_atomic_add_i32 (&mono_jit_stats.alias_removed, kills - adds);
+	mono_atomic_fetch_add_i32 (&mono_jit_stats.alias_found, kills);
+	mono_atomic_fetch_add_i32 (&mono_jit_stats.alias_removed, kills - adds);
 	if (kills > adds) {
 		if (cfg->verbose_level > 2) {
 			printf ("Method: %s\n", mono_method_full_name (cfg->method, 1));

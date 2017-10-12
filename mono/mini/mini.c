@@ -3879,11 +3879,11 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	/* collect statistics */
 #ifndef DISABLE_PERFCOUNTERS
 	mono_atomic_inc_i32 (&mono_perfcounters->jit_methods);
-	mono_atomic_add_i32 (&mono_perfcounters->jit_bytes, header->code_size);
+	mono_atomic_fetch_add_i32 (&mono_perfcounters->jit_bytes, header->code_size);
 #endif
 	gint32 code_size_ratio = cfg->code_len;
-	mono_atomic_add_i32 (&mono_jit_stats.allocated_code_size, code_size_ratio);
-	mono_atomic_add_i32 (&mono_jit_stats.native_code_size, code_size_ratio);
+	mono_atomic_fetch_add_i32 (&mono_jit_stats.allocated_code_size, code_size_ratio);
+	mono_atomic_fetch_add_i32 (&mono_jit_stats.native_code_size, code_size_ratio);
 	/* FIXME: use an explicit function to read booleans */
 	if ((gboolean)mono_atomic_load_i32 ((gint32*)&mono_jit_stats.enabled)) {
 		if (code_size_ratio > mono_atomic_load_i32 (&mono_jit_stats.biggest_method_size)) {

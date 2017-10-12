@@ -2158,7 +2158,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 					}
 					mono_set_lmf (lmf);
 #ifndef DISABLE_PERFCOUNTERS
-					mono_atomic_add_i32 (&mono_perfcounters->exceptions_depth, frame_count);
+					mono_atomic_fetch_add_i32 (&mono_perfcounters->exceptions_depth, frame_count);
 #endif
 					if (obj == (MonoObject *)domain->stack_overflow_ex)
 						jit_tls->handling_stack_ovf = FALSE;

@@ -105,14 +105,14 @@ mono_atomic_xchg_ptr (volatile gpointer *dest, gpointer exch)
 
 
 static inline gint32
-mono_atomic_xchg_add_i32 (volatile gint32 *dest, gint32 add)
+mono_atomic_fetch_add_i32 (volatile gint32 *dest, gint32 add)
 {
 	return InterlockedExchangeAdd ((LONG volatile *)dest, (LONG)add);
 }
 
 
 static inline gint64
-mono_atomic_xchg_add_i64 (volatile gint64 *dest, gint64 add)
+mono_atomic_fetch_add_i64 (volatile gint64 *dest, gint64 add)
 {
 	return InterlockedExchangeAdd64 ((LONG64 volatile *)dest, (LONG)add);
 }
@@ -156,7 +156,12 @@ mono_atomic_store_i8 (volatile gint8 *dst, gint8 val)
 static inline void
 mono_atomic_store_i16 (volatile gint16 *dst, gint16 val)
 {
+#if (_MSC_VER >= 1600)
 	InterlockedExchange16 ((SHORT volatile *)dst, (SHORT)val);
+#else
+	*dst = val;
+	mono_memory_barrier ();
+#endif
 }
 
 static inline void
@@ -258,7 +263,7 @@ static inline gpointer mono_atomic_xchg_ptr(volatile gpointer *val,
 	return old_val;
 }
 
-static inline gint32 mono_atomic_xchg_add_i32(volatile gint32 *val, gint32 add)
+static inline gint32 mono_atomic_fetch_add_i32(volatile gint32 *val, gint32 add)
 {
 	return gcc_sync_fetch_and_add (val, add);
 }
@@ -332,7 +337,7 @@ static inline gint64 mono_atomic_dec_i64(volatile gint64 *val)
 	return gcc_sync_sub_and_fetch (val, 1);
 }
 
-static inline gint64 mono_atomic_xchg_add_i64(volatile gint64 *val, gint64 add)
+static inline gint64 mono_atomic_fetch_add_i64(volatile gint64 *val, gint64 add)
 {
 	return gcc_sync_fetch_and_add (val, add);
 }
@@ -345,7 +350,7 @@ static inline gint64 mono_atomic_load_i64(volatile gint64 *src)
 
 #else
 
-/* Implement 64-bit cmpxchg by hand or emulate it. */
+/* Implement 64-bit cas by hand or emulate it. */
 extern gint64 mono_atomic_cas_i64(volatile gint64 *dest, gint64 exch, gint64 comp);
 
 /* Implement all other 64-bit atomics in terms of a specialized CAS
@@ -353,7 +358,7 @@ extern gint64 mono_atomic_cas_i64(volatile gint64 *dest, gint64 exch, gint64 com
  * intrinsics are broken too.
  */
 
-static inline gint64 mono_atomic_xchg_add_i64(volatile gint64 *dest, gint64 add)
+static inline gint64 mono_atomic_fetch_add_i64(volatile gint64 *dest, gint64 add)
 {
 	gint64 old_val;
 	do {
@@ -409,7 +414,7 @@ static inline void mono_atomic_store_ptr(volatile gpointer *dst, gpointer val)
 	mono_atomic_xchg_ptr (dst, val);
 }
 
-/* We always implement this in terms of a 64-bit cmpxchg since
+/* We always implement this in terms of a 64-bit cas since
  * GCC doesn't have an intrisic to model it anyway. */
 static inline gint64 mono_atomic_xchg_i64(volatile gint64 *val, gint64 new_val)
 {
@@ -442,8 +447,8 @@ extern gint64 mono_atomic_dec_i64(volatile gint64 *dest);
 extern gint32 mono_atomic_xchg_i32(volatile gint32 *dest, gint32 exch);
 extern gint64 mono_atomic_xchg_i64(volatile gint64 *dest, gint64 exch);
 extern gpointer mono_atomic_xchg_ptr(volatile gpointer *dest, gpointer exch);
-extern gint32 mono_atomic_xchg_add_i32(volatile gint32 *dest, gint32 add);
-extern gint64 mono_atomic_xchg_add_i64(volatile gint64 *dest, gint64 add);
+extern gint32 mono_atomic_fetch_add_i32(volatile gint32 *dest, gint32 add);
+extern gint64 mono_atomic_fetch_add_i64(volatile gint64 *dest, gint64 add);
 extern gint8 mono_atomic_load_i8(volatile gint8 *src);
 extern gint16 mono_atomic_load_i16(volatile gint16 *src);
 extern gint32 mono_atomic_load_i32(volatile gint32 *src);
@@ -458,9 +463,9 @@ extern void mono_atomic_store_ptr(volatile gpointer *dst, gpointer val);
 #endif
 
 #if SIZEOF_VOID_P == 4
-#define mono_atomic_add_size_t(p,add) mono_atomic_add_i32 ((volatile gint32*)p, (gint32)add)
+#define mono_atomic_fetch_add_word(p,add) mono_atomic_fetch_add_i32 ((volatile gint32*)p, (gint32)add)
 #else
-#define mono_atomic_add_size_t(p,add) mono_atomic_add_i64 ((volatile gint64*)p, (gint64)add)
+#define mono_atomic_fetch_add_word(p,add) mono_atomic_fetch_add_i64 ((volatile gint64*)p, (gint64)add)
 #endif
 
 /* The following functions cannot be found on any platform, and thus they can be declared without further existence checks */

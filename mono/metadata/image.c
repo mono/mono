@@ -2173,7 +2173,7 @@ mono_image_close_finish (MonoImage *image)
 
 #ifndef DISABLE_PERFCOUNTERS
 	/* FIXME: use an explicit subtraction method as soon as it's available */
-	mono_atomic_add_i32 (&mono_perfcounters->loader_bytes, -1 * mono_mempool_get_allocated (image->mempool));
+	mono_atomic_fetch_add_i32 (&mono_perfcounters->loader_bytes, -1 * mono_mempool_get_allocated (image->mempool));
 #endif
 
 	if (!image_is_dynamic (image)) {
@@ -2708,7 +2708,7 @@ mono_image_alloc (MonoImage *image, guint size)
 	gpointer res;
 
 #ifndef DISABLE_PERFCOUNTERS
-	mono_atomic_add_i32 (&mono_perfcounters->loader_bytes, size);
+	mono_atomic_fetch_add_i32 (&mono_perfcounters->loader_bytes, size);
 #endif
 	mono_image_lock (image);
 	res = mono_mempool_alloc (image->mempool, size);
@@ -2723,7 +2723,7 @@ mono_image_alloc0 (MonoImage *image, guint size)
 	gpointer res;
 
 #ifndef DISABLE_PERFCOUNTERS
-	mono_atomic_add_i32 (&mono_perfcounters->loader_bytes, size);
+	mono_atomic_fetch_add_i32 (&mono_perfcounters->loader_bytes, size);
 #endif
 	mono_image_lock (image);
 	res = mono_mempool_alloc0 (image->mempool, size);
@@ -2738,7 +2738,7 @@ mono_image_strdup (MonoImage *image, const char *s)
 	char *res;
 
 #ifndef DISABLE_PERFCOUNTERS
-	mono_atomic_add_i32 (&mono_perfcounters->loader_bytes, (gint32)strlen (s));
+	mono_atomic_fetch_add_i32 (&mono_perfcounters->loader_bytes, (gint32)strlen (s));
 #endif
 	mono_image_lock (image);
 	res = mono_mempool_strdup (image->mempool, s);
@@ -2755,7 +2755,7 @@ mono_image_strdup_vprintf (MonoImage *image, const char *format, va_list args)
 	buf = mono_mempool_strdup_vprintf (image->mempool, format, args);
 	mono_image_unlock (image);
 #ifndef DISABLE_PERFCOUNTERS
-	mono_atomic_add_i32 (&mono_perfcounters->loader_bytes, (gint32)strlen (buf));
+	mono_atomic_fetch_add_i32 (&mono_perfcounters->loader_bytes, (gint32)strlen (buf));
 #endif
 	return buf;
 }

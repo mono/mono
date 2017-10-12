@@ -368,7 +368,7 @@ alloc_template (MonoClass *klass)
 	gint32 size = sizeof (MonoRuntimeGenericContextTemplate);
 
 	mono_atomic_inc_i32 (&rgctx_template_num_allocated);
-	mono_atomic_add_i32(&rgctx_template_bytes_allocated, size);
+	mono_atomic_fetch_add_i32 (&rgctx_template_bytes_allocated, size);
 
 	return (MonoRuntimeGenericContextTemplate *)mono_image_alloc0 (klass->image, size);
 }
@@ -380,7 +380,7 @@ alloc_oti (MonoImage *image)
 	gint32 size = sizeof (MonoRuntimeGenericContextInfoTemplate);
 
 	mono_atomic_inc_i32 (&rgctx_oti_num_allocated);
-	mono_atomic_add_i32 (&rgctx_oti_bytes_allocated, size);
+	mono_atomic_fetch_add_i32 (&rgctx_oti_bytes_allocated, size);
 
 	return (MonoRuntimeGenericContextInfoTemplate *)mono_image_alloc0 (image, size);
 }
