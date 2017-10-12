@@ -73374,6 +73374,19 @@
       </method>
     </type>
   </test>
+  <test name="test-tuple-07.cs">
+    <type name="ParserTest">
+      <method name="System.Collections.Generic.IEnumerable`1[System.ValueTuple`2[System.Object,System.Int32]] Test()" attrs="129">
+        <size>10</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-var-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
