@@ -105,7 +105,7 @@ namespace MonoTests.System.Text
 			byte[] bytes = latin1_encoding.GetBytes(testchars);
 			Assert.AreEqual ('T', (char) bytes [0], "#1");
 			Assert.AreEqual ('e', (char) bytes [1], "#2");
-			Assert.AreEqual ('?', (char) bytes [2], "#3");
+			Assert.AreEqual ('A', (char) bytes [2], "#3");
 			Assert.AreEqual ('t', (char) bytes [3], "#4");
 		}
 
