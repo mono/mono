@@ -116,7 +116,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void TestGlobalMethods ()
 		{
 			AssemblyBuilder builder = genAssembly ();
@@ -806,5 +805,64 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.AreEqual ("t1&", module.GetType ("t1&").FullName);
 			Assert.AreEqual ("t1[]&", module.GetType ("t1[]&").FullName);
 		}
+
+		[AttributeUsage(AttributeTargets.All)]
+		public class MyAttribute : Attribute {
+			String s;
+			public MyAttribute (String s) 
+			{
+				this.s = s;
+			}
+		}
+
+		[Test]
+		public void GetMethodsBeforeInstantiation ()
+		{
+			AssemblyBuilder assm = AssemblyBuilder.DefineDynamicAssembly (new AssemblyName ("Name"), AssemblyBuilderAccess.Run);
+			ModuleBuilder module = assm.DefineDynamicModule ("Module");
+			FieldBuilder fieldBuilder = module.DefineInitializedData ("GlobalField", new byte[4], FieldAttributes.Public);
+
+			MethodBuilder method = module.DefinePInvokeMethod ("printf", "libc.so",
+															  MethodAttributes.PinvokeImpl | MethodAttributes.Static | MethodAttributes.Public,
+															  CallingConventions.Standard, typeof (void), new Type [] { typeof (string) }, CallingConvention.Winapi,
+															  CharSet.Auto);
+			method.SetImplementationFlags (MethodImplAttributes.PreserveSig |
+										   method.GetMethodImplementationFlags ());
+
+			module.CreateGlobalFunctions ();
+
+			Assert.AreEqual (module.GetMethods (BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance).Length, 1);
+		}
+
+		[Test]
+		public void GetFieldsBeforeInstantiation ()
+		{
+			AssemblyBuilder assm = AssemblyBuilder.DefineDynamicAssembly (new AssemblyName ("Name"), AssemblyBuilderAccess.Run);
+			ModuleBuilder module = assm.DefineDynamicModule ("Module");
+			FieldBuilder fieldBuilder = module.DefineInitializedData ("GlobalField", new byte[4], FieldAttributes.Public);
+			module.CreateGlobalFunctions ();
+
+			var fieldG = module.GetField (fieldBuilder.Name);
+			Assert.IsNotNull (fieldG);
+			Assert.AreEqual (module.GetFields (BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance).Length, 1);
+		}
+
+		[Test]
+		public void GetCustomAttributesBeforeInstantiation ()
+		{
+			AssemblyBuilder assm = AssemblyBuilder.DefineDynamicAssembly (new AssemblyName ("Name"), AssemblyBuilderAccess.Run);
+			ModuleBuilder module = assm.DefineDynamicModule ("Module");
+			FieldBuilder fieldBuilder = module.DefineInitializedData ("GlobalField", new byte[4], FieldAttributes.Public);
+			module.CreateGlobalFunctions ();
+
+			ConstructorInfo ctor = typeof(MyAttribute).GetConstructor (new Type [] {typeof(String)});
+			ctor.GetHashCode ();
+			CustomAttributeBuilder cab = new CustomAttributeBuilder (ctor, new object [] {"hi"});
+			module.SetCustomAttribute (cab);
+
+			Assert.AreEqual (module.GetCustomAttributes (false).Length, 1);
+			Assert.AreEqual (module.GetCustomAttributes (false)[0].GetType (), typeof (MyAttribute));
+		}
+
 	}
 }
