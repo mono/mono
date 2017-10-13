@@ -271,10 +271,13 @@ namespace Mono.CSharp {
 
 			fc.BranchDefiniteAssignment (fc.DefiniteAssignmentOnTrue);
 			var labels = fc.CopyLabelStack ();
+			var assigmentBefore = new DefiniteAssignmentBitSet(fc.DefiniteAssignment);
 
 			var res = TrueStatement.FlowAnalysis (fc);
 
-			fc.SetLabelStack (labels);
+			// If walking through new labels didn't change the assignment we don't need to flush the labels.
+			if (!DefiniteAssignmentBitSet.IsEqual(fc.DefiniteAssignment, assigmentBefore))
+				fc.SetLabelStack (labels);
 
 			if (FalseStatement == null) {
 
@@ -294,7 +297,11 @@ namespace Mono.CSharp {
 				fc.DefiniteAssignment = da_false;
 
 				res = FalseStatement.FlowAnalysis (fc);
-				fc.SetLabelStack (labels);
+
+				// If walking through new labels didn't change the assignment we don't need to flush the labels.
+				if (!DefiniteAssignmentBitSet.IsEqual(fc.DefiniteAssignment, assigmentBefore))
+					fc.SetLabelStack (labels);
+
 				return res;
 			}
 
@@ -304,7 +311,9 @@ namespace Mono.CSharp {
 
 			res &= FalseStatement.FlowAnalysis (fc);
 
-			fc.SetLabelStack (labels);
+			// If walking through new labels didn't change the assignment we don't need to flush the labels.
+			if (!DefiniteAssignmentBitSet.IsEqual(fc.DefiniteAssignment, assigmentBefore))
+				fc.SetLabelStack (labels);
 
 			if (!TrueStatement.IsUnreachable) {
 				if (false_returns || FalseStatement.IsUnreachable)
@@ -1490,6 +1499,7 @@ namespace Mono.CSharp {
 		string name;
 		bool defined;
 		bool referenced;
+		bool reportedNotReferenced;
 		Label label;
 		Block block;
 		
@@ -1540,7 +1550,8 @@ namespace Mono.CSharp {
 
 		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
 		{
-			if (!referenced) {
+			if (!referenced && !reportedNotReferenced) {
+				reportedNotReferenced = true;
 				fc.Report.Warning (164, 2, loc, "This label has not been referenced");
 			}
 
