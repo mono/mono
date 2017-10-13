@@ -826,7 +826,6 @@ System.Security.Principal/WindowsImpersonationContext.cs
 System.Security.Principal/WindowsPrincipal.cs
 System.Text/EncodingHelper.cs
 System.Text/NormalizationForm.cs
-System.Text/Latin1Encoding.cs
 System.Threading/CompressedStack.cs
 System.Threading/HostExecutionContext.cs
 System.Threading/HostExecutionContextManager.cs
@@ -1484,7 +1483,9 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/text/encoderreplacementfallback.cs
 ../referencesource/mscorlib/system/text/encoding.cs
 ../referencesource/mscorlib/system/text/encodinginfo.cs
+../referencesource/mscorlib/system/text/encodingnls.cs
 ../referencesource/mscorlib/system/text/encodingprovider.cs
+../referencesource/mscorlib/system/text/latin1encoding.cs
 ../referencesource/mscorlib/system/text/mlangcodepageencoding.cs
 ../referencesource/mscorlib/system/text/surrogateencoder.cs
 ../referencesource/mscorlib/system/text/unicodeencoding.cs
