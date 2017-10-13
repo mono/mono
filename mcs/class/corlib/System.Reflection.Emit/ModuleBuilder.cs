@@ -1169,12 +1169,23 @@ namespace System.Reflection.Emit {
 
 		public override object[] GetCustomAttributes (bool inherit)
 		{
-			return base.GetCustomAttributes (inherit);
+			return GetCustomAttributes (null, inherit);
 		}
 
 		public override object[] GetCustomAttributes (Type attributeType, bool inherit)
 		{
-			return base.GetCustomAttributes (attributeType, inherit);
+			if (cattrs == null || cattrs.Length == 0)
+				return new object [] {};
+
+			List<object> results = new List<object> ();
+			for (int i=0; i < cattrs.Length; i++) {
+				Type t = cattrs [i].Ctor.GetType ();
+
+				if (attributeType == null || attributeType.IsAssignableFrom (t))
+					results.Add (cattrs [i].Invoke ());
+			}
+
+			return results.ToArray ();
 		}
 
 		public override FieldInfo GetField (string name, BindingFlags bindingAttr)
