@@ -3849,6 +3849,11 @@ mono_backtrace (int limit)
 #define __alignof__(type) G_STRUCT_OFFSET(struct { char c; type x; }, x)
 #endif
 
+/* __alignof__ returns the preferred alignment of values not the actual alignment used by
+    the compiler so is wrong e.g. for iOS where doubles are aligned on a 4 byte boundary
+    but __alignof__ returns 8. Using G_STRUCT_OFFSET works better */
+#define ALIGNMENT_OF(type) G_STRUCT_OFFSET(struct { char c; type x; }, x)
+
 /*
  * mono_type_size:
  * @t: the type to return the size of
@@ -3893,17 +3898,17 @@ mono_type_size (MonoType *t, int *align)
 		return 4;
 	case MONO_TYPE_I8:
 	case MONO_TYPE_U8:
-#if defined(PLATFORM_IPHONE) || defined(PLATFORM_IPHONE_XCOMP)
+#if defined(PLATFORM_IPHONE_XCOMP)
 		*align = 4;
 #else
-		*align = __alignof__(gint64);
+        *align = ALIGNMENT_OF(gint64);
 #endif
 		return 8;		
 	case MONO_TYPE_R8:
-#if defined(PLATFORM_IPHONE) || defined(PLATFORM_IPHONE_XCOMP)
+#if defined(PLATFORM_IPHONE_XCOMP)
 		*align = 4;
 #else
-		*align = __alignof__(double);
+        *align = ALIGNMENT_OF(double);
 #endif
 		return 8;		
 	case MONO_TYPE_I:
