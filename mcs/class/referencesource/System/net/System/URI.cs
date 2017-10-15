@@ -1069,18 +1069,18 @@ namespace System {
         private string GetLocalPath(){
             EnsureParseRemaining();
 
+#if MONO
             // https://bugzilla.xamarin.com/show_bug.cgi?id=58400
-            bool isFileUrlWithHost = (
+            bool isFileUrlWithHost =
                 (m_Info.Offset.Host != m_Info.Offset.Path) && 
                 // only file URLs
                 IsFile && 
                 // Paths that got reinterpreted as files would be treated
                 //  as if they have a host, like "/a/b" which maps to "file:///a/b/",
                 //  or "C:\a\b\" which maps to "file:///c:/a/b"
-                OriginalString.StartsWith("file://") &&
+                OriginalString.StartsWith("file://", StringComparison.Ordinal) &&
                 // file://localhost/x/y needs to produce /x/y
-                !IsLoopback
-            );
+                !IsLoopback;
 
             // Manually check for "hosts" that are just forward slashes.
             if (isFileUrlWithHost) {
@@ -1098,7 +1098,6 @@ namespace System {
             // despite the path not being UNC originally
             bool treatAsUncPath = IsUncPath || isFileUrlWithHost;
 
-#if MONO
             //
             // I think this is wrong but it keeps LocalPath fully backward compatible
             //
@@ -1113,6 +1112,8 @@ namespace System {
                 isFileUrlWithHost
             )
 #else
+            bool treatAsUncPath = IsUncPath;
+
             //Other cases will get a Unix-style path
             if (IsUncOrDosPath)
 #endif
@@ -1123,8 +1124,12 @@ namespace System {
                 // Do we have a valid local path right in m_string?
                 if (
                     NotAny(Flags.HostNotCanonical|Flags.PathNotCanonical|Flags.ShouldBeCompressed) && 
+#if MONO
                     // This branch drops the host name so we can't use it
                     !isFileUrlWithHost
+#else
+                    true
+#endif
                 ) {
 
                     start = IsUncPath? m_Info.Offset.Host-2 :m_Info.Offset.Path;
