@@ -7,7 +7,7 @@
 void mono_wasm_create_module (void);
 void mono_wasm_emit_aot_data (const char *symbol, guint8 *data, int data_len);
 void mono_wasm_emit_aot_file_info (MonoAotFileInfo *info, gboolean has_jitted_code);
-void mono_wasm_emit_module (void);
+void mono_wasm_emit_module (const char *filename);
 void mono_wasm_code_gen (MonoCompile *cfg);
 
 
@@ -521,6 +521,33 @@ mono_type_to_wasm_type (MonoType *type)
 	}
 }
 
+static gboolean
+op_is_op_imm (int op)
+{
+	if (op >= OP_IADD_IMM && op <= OP_ISHR_UN_IMM)
+		return TRUE;
+	if (op >= OP_ADD_IMM && op <= OP_SHR_UN_IMM)
+		return TRUE;
+	if (op >= OP_STORE_MEMBASE_IMM && op <= OP_STOREI8_MEMBASE_IMM)
+		return TRUE;
+	if (op >= OP_LADD_IMM && op <= OP_LREM_UN_IMM)
+		return TRUE;
+	switch (op) {
+	case OP_COMPARE_IMM:
+	case OP_ICOMPARE_IMM:
+	case OP_LCOMPARE_IMM:
+	case OP_LOCALLOC_IMM:
+	case OP_STORE_MEM_IMM:
+	case OP_IADC_IMM:
+	case OP_ISBB_IMM:
+	case OP_ADC_IMM:
+	case OP_SBB_IMM:
+	case OP_ADDCC_IMM:
+	case OP_SUBCC_IMM:
+		return TRUE;
+	}
+	return FALSE;
+}
 
 static void
 cg_init (WasmCodeGen *cg)
@@ -549,12 +576,76 @@ get_ivar (WasmCodeGen *cg, int vreg)
 	return get_var (cg, vreg, &mono_defaults.int32_class->byval_arg);
 }
 
+static BinaryenExpressionRef
+get_iloc (WasmCodeGen *cg, int vreg)
+{
+	return BinaryenGetLocal (aot_module, get_ivar (cg, vreg), BinaryenInt32 ());
+}
+
 static BinaryenIndex
 add_wasm_var (WasmCodeGen *cg, BinaryenType type)
 {
 	int var_idx = cg->vars->len;
 	g_ptr_array_add (cg->vars, GINT_TO_POINTER (type));
 	return var_idx;
+}
+
+static BinaryenExpressionRef
+emit_conv_u (WasmCodeGen *cg, MonoInst *ins, int width)
+{
+	int mask = (1 << width * 8) - 1;
+
+	//conv_u1 is (v & 0xFF)
+	BinaryenExpressionRef val = BinaryenBinary (
+		aot_module,
+		BinaryenAndInt32 (),
+		get_iloc (cg, ins->sreg1),
+		BinaryenConst (aot_module, BinaryenLiteralInt32 (mask)));
+
+	return BinaryenSetLocal (aot_module, get_ivar (cg, ins->dreg), val);
+}
+
+static BinaryenExpressionRef
+emit_conv_i (WasmCodeGen *cg, MonoInst *ins, int width)
+{
+	int shift = 32 - (width * 8);
+
+	//conv_i1 is ((v << 24) >>> 24)
+	BinaryenExpressionRef left_shift = BinaryenBinary (
+		aot_module,
+		BinaryenShlInt32 (),
+		get_iloc (cg, ins->sreg1),
+		BinaryenConst (aot_module, BinaryenLiteralInt32 (shift)));
+
+	BinaryenExpressionRef right_shift = BinaryenBinary (
+		aot_module,
+		BinaryenShrSInt32 (),
+		left_shift,
+		BinaryenConst (aot_module, BinaryenLiteralInt32 (shift)));
+
+	return BinaryenSetLocal (aot_module, get_ivar (cg, ins->dreg), right_shift);
+}
+
+static BinaryenExpressionRef
+emit_unary_op (WasmCodeGen *cg, MonoInst *ins, BinaryenOp op)
+{
+	BinaryenExpressionRef val = BinaryenUnary (
+		aot_module,
+		op,
+		get_iloc (cg, ins->sreg1));
+
+	return BinaryenSetLocal (aot_module, get_ivar (cg, ins->dreg), val);
+}
+
+static BinaryenExpressionRef
+emit_binary_op (WasmCodeGen *cg, MonoInst *ins, BinaryenOp op)
+{
+	BinaryenExpressionRef val = BinaryenBinary (
+		aot_module,
+		op,
+		get_iloc (cg, ins->sreg1),
+		op_is_op_imm (ins->opcode) ? BinaryenConst (aot_module, BinaryenLiteralInt32 (ins->inst_c0)) : get_iloc (cg, ins->sreg2));
+	return BinaryenSetLocal (aot_module, get_ivar (cg, ins->dreg), val);
 }
 
 void
@@ -593,54 +684,112 @@ mono_wasm_code_gen (MonoCompile *cfg)
 		GPtrArray *body = g_ptr_array_new ();
 		MonoInst *ins;
 		BinaryenExpressionRef active_branch = NULL;
+
 		for (ins = bb->code; ins; ins = ins->next) {
 			switch (ins->opcode) {
-			case OP_IADD: {
-				BinaryenIndex sreg1 = get_ivar (&cg, ins->sreg1);
-				BinaryenIndex sreg2 = get_ivar (&cg, ins->sreg2);
-				BinaryenIndex dreg = get_ivar (&cg, ins->dreg);
-				BinaryenExpressionRef val = BinaryenBinary (
-					aot_module,
-					BinaryenAddInt32 (),
-					BinaryenGetLocal (aot_module, sreg1, BinaryenInt32 ()),
-					BinaryenGetLocal (aot_module, sreg2, BinaryenInt32 ()));
-				BinaryenExpressionRef store = BinaryenSetLocal (aot_module, dreg, val);
-				g_ptr_array_add (body, store);
+			case OP_IADD_IMM:
+			case OP_IADD:
+				g_ptr_array_add (body, emit_binary_op (&cg, ins, BinaryenAddInt32 ()));
 				break;
-			}
-			case OP_ICONST: {
-				BinaryenIndex dreg = get_ivar (&cg, ins->dreg);
-				BinaryenExpressionRef store = BinaryenSetLocal (aot_module, dreg, BinaryenConst (aot_module, BinaryenLiteralInt32 (ins->inst_c0)));
-				g_ptr_array_add (body, store);
-				break;
-			}
 
-			case OP_ICONV_TO_U1: {
-				BinaryenIndex sreg1 = get_ivar (&cg, ins->sreg1);
-				BinaryenIndex dreg = get_ivar (&cg, ins->dreg);
-
-				//conv_u1 is (v & 0xFF)
-				BinaryenExpressionRef val = BinaryenBinary (
-					aot_module,
-					BinaryenAndInt32 (),
-					BinaryenGetLocal (aot_module, sreg1, BinaryenInt32 ()),
-					BinaryenConst (aot_module, BinaryenLiteralInt32 (0xFF)));
-				BinaryenExpressionRef store = BinaryenSetLocal (aot_module, dreg, val);
-				g_ptr_array_add (body, store);
+			case OP_ISUB:
+			case OP_ISUB_IMM:
+				g_ptr_array_add (body, emit_binary_op (&cg, ins, BinaryenSubInt32 ()));
 				break;
-			}
-			case OP_ICOMPARE_IMM: {
-				BinaryenExpressionRef left = BinaryenGetLocal (aot_module, get_ivar (&cg, ins->sreg1), BinaryenInt32 ());
-				BinaryenExpressionRef right = BinaryenConst (aot_module, BinaryenLiteralInt32 (ins->inst_c0));
-				BinaryenExpressionRef cmp;
+
+			case OP_ISHL:
+			case OP_ISHL_IMM:
+			case OP_SHL_IMM:
+				g_ptr_array_add (body, emit_binary_op (&cg, ins, BinaryenShlInt32 ()));
+				break;
+
+			case OP_ISHR:
+			case OP_ISHR_IMM:
+				g_ptr_array_add (body, emit_binary_op (&cg, ins, BinaryenShrSInt32 ()));
+				break;
+
+			case OP_INEG:
+				g_ptr_array_add (body, emit_unary_op (&cg, ins, BinaryenEqZInt32 ()));
+				break;
+
+			case OP_IOR:
+			case OP_IOR_IMM:
+				g_ptr_array_add (body, emit_binary_op (&cg, ins, BinaryenOrInt32 ()));
+				break;
+
+			case OP_IAND:
+			case OP_IAND_IMM:
+			case OP_AND_IMM:
+				g_ptr_array_add (body, emit_binary_op (&cg, ins, BinaryenAndInt32 ()));
+				break;
+
+			case OP_ISHR_UN:
+			case OP_ISHR_UN_IMM:
+				g_ptr_array_add (body, emit_binary_op (&cg, ins, BinaryenShrUInt32 ()));
+				break;
+
+			case OP_ICONST:
+				g_ptr_array_add (body,  BinaryenSetLocal (aot_module, get_ivar (&cg, ins->dreg), BinaryenConst (aot_module, BinaryenLiteralInt32 (ins->inst_c0))));
+				break;
+
+			case OP_ICONV_TO_U1:
+				g_ptr_array_add (body, emit_conv_u (&cg, ins, 1));
+				break;
+			case OP_ICONV_TO_U2:
+				g_ptr_array_add (body, emit_conv_u (&cg, ins, 2));
+				break;
+			case OP_ICONV_TO_I1:
+				g_ptr_array_add (body, emit_conv_i (&cg, ins, 1));
+				break;
+			case OP_ICONV_TO_I2:
+				g_ptr_array_add (body, emit_conv_i (&cg, ins, 2));
+				break;
+
+				case OP_ICOMPARE:
+				case OP_ICOMPARE_IMM: {
+				BinaryenExpressionRef left = get_iloc (&cg, ins->sreg1);
+				BinaryenExpressionRef right = ins->opcode == OP_ICOMPARE ? get_iloc (&cg, ins->sreg2) : BinaryenConst (aot_module, BinaryenLiteralInt32 (ins->inst_c0));
+				BinaryenExpressionRef cmp = NULL;
 				g_assert (ins->next);
 				switch (ins->next->opcode) {
 				case OP_IBEQ:
 					cmp = BinaryenBinary (aot_module, BinaryenEqInt32 (), left, right);
 					break;
+				case OP_IBNE_UN:
+					cmp = BinaryenBinary (aot_module, BinaryenNeInt32 (), left, right);
+					break;
+				case OP_IBLE:
+					cmp = BinaryenBinary (aot_module, BinaryenLeSInt32 (), left, right);
+					break;
+				case OP_IBLT:
+					cmp = BinaryenBinary (aot_module, BinaryenLtSInt32 (), left, right);
+					break;
+				case OP_IBGE:
+					cmp = BinaryenBinary (aot_module, BinaryenGeSInt32 (), left, right);
+					break;
+				case OP_IBGT:
+					cmp = BinaryenBinary (aot_module, BinaryenGtSInt32 (), left, right);
+					break;
+				case OP_ICEQ:
+					//don't set cmp as this is a value
+					g_ptr_array_add (body,  BinaryenSetLocal (aot_module, get_ivar (&cg, ins->next->dreg), BinaryenBinary (aot_module, BinaryenEqInt32 (), left, right)));
+					break;
+				case OP_ICGT:
+					//don't set cmp as this is a value
+					g_ptr_array_add (body,  BinaryenSetLocal (aot_module, get_ivar (&cg, ins->next->dreg), BinaryenBinary (aot_module, BinaryenGtSInt32 (), left, right)));
+					break;
+				case OP_ICGT_UN:
+					//don't set cmp as this is a value
+					g_ptr_array_add (body,  BinaryenSetLocal (aot_module, get_ivar (&cg, ins->next->dreg), BinaryenBinary (aot_module, BinaryenGtUInt32 (), left, right)));
+					break;
+				case OP_ICLT_UN:
+					//don't set cmp as this is a value
+					g_ptr_array_add (body,  BinaryenSetLocal (aot_module, get_ivar (&cg, ins->next->dreg), BinaryenBinary (aot_module, BinaryenLtUInt32 (), left, right)));
+					break;
+
 				default:
-					printf ("wasm backend can't translate branch ");
-					mono_print_ins (ins);
+					printf ("wasm backend can't translate branch: ");
+					mono_print_ins (ins->next);
 					g_assert_not_reached ();
 				}
 				g_assert (!active_branch);
@@ -648,13 +797,14 @@ mono_wasm_code_gen (MonoCompile *cfg)
 				ins = ins->next;
 				break;
 			}
+
 			case OP_BR: {
 				//we ignore branches, they will be inserted by the relooper step
 				break;
 			}
+
 			case OP_MOVE: {
-				BinaryenExpressionRef val = BinaryenGetLocal (aot_module, get_ivar (&cg, ins->sreg1), BinaryenInt32 ());
-				BinaryenExpressionRef store = BinaryenSetLocal (aot_module, get_ivar (&cg, ins->dreg), val);
+				BinaryenExpressionRef store = BinaryenSetLocal (aot_module, get_ivar (&cg, ins->dreg), get_iloc (&cg, ins->sreg1));
 				g_ptr_array_add (body, store);
 				break;
 			}
@@ -687,8 +837,8 @@ mono_wasm_code_gen (MonoCompile *cfg)
 			RelooperAddBranch ((RelooperBlockRef)bb->backend_data, (RelooperBlockRef)bb->out_bb [0]->backend_data, NULL, NULL);
 		} else if (bb->out_count == 2) {
 			printf ("connecting BB_%d to BB_%d and BB_%d\n", bb->block_num, bb->out_bb [0]->block_num, bb->out_bb [1]->block_num);
-			RelooperAddBranch ((RelooperBlockRef)bb->backend_data, (RelooperBlockRef)bb->out_bb [0]->backend_data, NULL, NULL);
-			RelooperAddBranch ((RelooperBlockRef)bb->backend_data, (RelooperBlockRef)bb->out_bb [1]->backend_data, bb->backend_branch_data, NULL);
+			RelooperAddBranch ((RelooperBlockRef)bb->backend_data, (RelooperBlockRef)bb->out_bb [0]->backend_data, bb->backend_branch_data, NULL);
+			RelooperAddBranch ((RelooperBlockRef)bb->backend_data, (RelooperBlockRef)bb->out_bb [1]->backend_data, NULL, NULL);
 		} else {
 			g_error ("Cannot handle branching factor of %d\n", bb->out_count);
 		}
@@ -727,7 +877,7 @@ mono_wasm_emit_aot_file_info (MonoAotFileInfo *info, gboolean has_jitted_code)
 }
 
 void
-mono_wasm_emit_module (void)
+mono_wasm_emit_module (const char *filename)
 {
 	BinaryenSetFunctionTable (aot_module, (BinaryenFunctionRef*)all_funcs->pdata, all_funcs->len);
 
@@ -736,6 +886,8 @@ mono_wasm_emit_module (void)
 	printf ("------OPTIMIZE-------\n");
 	BinaryenModuleOptimize(aot_module);
 	BinaryenModulePrint (aot_module);
+	BinaryenModuleWriteFile (aot_module, filename);
+
 }
 
 #endif
