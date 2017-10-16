@@ -144,8 +144,6 @@ public class CP1147 : ByteEncoding
 		while (charCount > 0)
 		{
 			ch = (int)(chars[charIndex]);
-			charIndex++;
-			charCount--;
 			if(ch >= 4) switch(ch)
 			{
 				case 0x000B:
@@ -534,6 +532,8 @@ public class CP1147 : ByteEncoding
 				case 0xFF5E: ch = 0xBD; break;
 				default:
 					HandleFallback (ref buffer, chars, ref charIndex, ref charCount, bytes, ref byteIndex, ref byteCount);
+					charIndex++;
+					charCount--;
 					continue;
 			}
 			//Write encoded byte to buffer, if buffer is defined and fallback was not used
@@ -541,6 +541,8 @@ public class CP1147 : ByteEncoding
 				bytes[byteIndex] = (byte)ch;
 			byteIndex++;
 			byteCount--;
+			charIndex++;
+			charCount--;
 		}
 		return byteIndex;
 	}

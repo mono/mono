@@ -144,8 +144,6 @@ public class CP437 : ByteEncoding
 		while (charCount > 0)
 		{
 			ch = (int)(chars[charIndex]);
-			charIndex++;
-			charCount--;
 			if(ch >= 128) switch(ch)
 			{
 				case 0x00A0: ch = 0xFF; break;
@@ -758,6 +756,8 @@ public class CP437 : ByteEncoding
 					break;
 				default:
 					HandleFallback (ref buffer, chars, ref charIndex, ref charCount, bytes, ref byteIndex, ref byteCount);
+					charIndex++;
+					charCount--;
 					continue;
 			}
 			//Write encoded byte to buffer, if buffer is defined and fallback was not used
@@ -765,6 +765,8 @@ public class CP437 : ByteEncoding
 				bytes[byteIndex] = (byte)ch;
 			byteIndex++;
 			byteCount--;
+			charIndex++;
+			charCount--;
 		}
 		return byteIndex;
 	}
