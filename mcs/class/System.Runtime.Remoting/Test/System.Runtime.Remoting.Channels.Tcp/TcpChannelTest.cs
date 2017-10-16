@@ -35,6 +35,8 @@ using System.Runtime.Remoting.Channels.Tcp;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.Remoting
 {
 	[TestFixture]
@@ -50,9 +52,10 @@ namespace MonoTests.Remoting
 
 			MarshalObject marshal = new MarshalObject ();
 
+			var port = NetworkHelpers.FindFreePort ();
 			IDictionary props = new Hashtable ();
 			props ["name"] = "marshal channel";
-			props ["port"] = 1236;
+			props ["port"] = port;
 			props ["bindTo"] = IPAddress.Loopback.ToString ();
 			chn = new TcpChannel (props, null, null);
 
@@ -62,11 +65,11 @@ namespace MonoTests.Remoting
 			urls = chn.GetUrlsForUri (SERVICE_URI);
 			Assert.IsNotNull (urls, "#A2");
 			Assert.AreEqual (1, urls.Length, "#A3");
-			Assert.AreEqual ("tcp://" + IPAddress.Loopback.ToString () + ":1236/" + SERVICE_URI, urls [0], "#A6");
+			Assert.AreEqual ($"tcp://{IPAddress.Loopback.ToString ()}:{port}/{SERVICE_URI}", urls [0], "#A6");
 			ds = chn.ChannelData as ChannelDataStore;
 			Assert.IsNotNull (ds, "#A4");
 			Assert.AreEqual (1, ds.ChannelUris.Length, "#A5");
-			Assert.AreEqual ("tcp://" + IPAddress.Loopback.ToString () + ":1236", ds.ChannelUris [0], "#A6");
+			Assert.AreEqual ($"tcp://{IPAddress.Loopback.ToString ()}:{port}", ds.ChannelUris [0], "#A6");
 
 			ChannelServices.UnregisterChannel (chn);
 			

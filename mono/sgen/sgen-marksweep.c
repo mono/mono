@@ -189,10 +189,15 @@ enum {
 	SWEEP_STATE_COMPACTING
 };
 
+typedef enum {
+	SGEN_SWEEP_SERIAL = FALSE,
+	SGEN_SWEEP_CONCURRENT = TRUE,
+} SgenSweepMode;
+
 static volatile int sweep_state = SWEEP_STATE_SWEPT;
 
 static gboolean concurrent_mark;
-static gboolean concurrent_sweep = TRUE;
+static gboolean concurrent_sweep = DEFAULT_SWEEP_MODE;
 
 int sweep_pool_context = -1;
 
@@ -2162,7 +2167,7 @@ major_free_swept_blocks (size_t section_reserve)
 {
 	SGEN_ASSERT (0, sweep_state == SWEEP_STATE_SWEPT, "Sweeping must have finished before freeing blocks");
 
-#if defined(HOST_WIN32) || defined(HOST_ORBIS)
+#if defined(HOST_WIN32) || defined(HOST_ORBIS) || defined (HOST_WASM)
 		/*
 		 * sgen_free_os_memory () asserts in mono_vfree () because windows doesn't like freeing the middle of
 		 * a VirtualAlloc ()-ed block.

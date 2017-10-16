@@ -237,9 +237,10 @@ static AMD64_XMM_Reg_No float_return_regs [] = { AMD64_XMM0 };
 #define PARAM_REGS 6
 #define FLOAT_PARAM_REGS 8
 
-static AMD64_Reg_No param_regs [] = { AMD64_RDI, AMD64_RSI, AMD64_RDX, AMD64_RCX, AMD64_R8, AMD64_R9 };
+static const AMD64_Reg_No param_regs [] = {AMD64_RDI, AMD64_RSI, AMD64_RDX,
+					   AMD64_RCX, AMD64_R8,  AMD64_R9};
 
-static AMD64_Reg_No return_regs [] = { AMD64_RAX, AMD64_RDX };
+static const AMD64_Reg_No return_regs [] = {AMD64_RAX, AMD64_RDX};
 #endif
 
 typedef struct {
@@ -269,15 +270,15 @@ typedef struct {
 	gpointer bp_addrs [MONO_ZERO_LEN_ARRAY];
 } SeqPointInfo;
 
-#define DYN_CALL_STACK_ARGS 6
-
 typedef struct {
-	mgreg_t regs [PARAM_REGS + DYN_CALL_STACK_ARGS];
 	mgreg_t res;
 	guint8 *ret;
 	double fregs [8];
 	mgreg_t has_fp;
+	mgreg_t nstack_args;
 	guint8 buffer [256];
+	/* This should come last as the structure is dynamically extended */
+	mgreg_t regs [PARAM_REGS];
 } DynCallArgs;
 
 typedef enum {
@@ -428,7 +429,7 @@ typedef struct {
 
 #define MONO_ARCH_GSHARED_SUPPORTED 1
 #define MONO_ARCH_DYN_CALL_SUPPORTED 1
-#define MONO_ARCH_DYN_CALL_PARAM_AREA (DYN_CALL_STACK_ARGS * 8)
+#define MONO_ARCH_DYN_CALL_PARAM_AREA 0
 
 #define MONO_ARCH_LLVM_SUPPORTED 1
 #define MONO_ARCH_HAVE_CARD_TABLE_WBARRIER 1
@@ -566,6 +567,12 @@ mono_arch_unwindinfo_get_size (guchar code_count)
 
 guchar
 mono_arch_unwindinfo_get_code_count (GSList *unwind_ops);
+
+PUNWIND_INFO
+mono_arch_unwindinfo_alloc_unwind_info (GSList *unwind_ops);
+
+void
+mono_arch_unwindinfo_free_unwind_info (PUNWIND_INFO unwind_info);
 
 guint
 mono_arch_unwindinfo_init_method_unwind_info (gpointer cfg);

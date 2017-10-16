@@ -2670,7 +2670,7 @@ thread_interrupt (DebuggerTlsData *tls, MonoThreadInfo *info, MonoJitInfo *ji)
 				}
 
 				copy_unwind_state_from_frame_data (&tls->async_state, &data, jit_tls);
-				copy_unwind_state_from_frame_data (&tls->context, &data, jit_tls);
+				/* Don't set tls->context, it could race with the thread processing a breakpoint etc. */
 			} else {
 				tls->async_state.valid = FALSE;
 			}
@@ -3662,13 +3662,10 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 			return;
 
 		if (agent_config.defer) {
-			/* Make sure the thread id is always set when doing deferred debugging */
 			if (is_debugger_thread ()) {
 				/* Don't suspend on events from the debugger thread */
 				suspend_policy = SUSPEND_POLICY_NONE;
-				thread = mono_thread_get_main ();
 			}
-			else thread = mono_thread_current ();
 		} else {
 			if (is_debugger_thread () && event != EVENT_KIND_VM_DEATH)
 				// FIXME: Send these with a NULL thread, don't suspend the current thread
@@ -3691,7 +3688,7 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 			thread = NULL;
 		} else {
 			if (!thread)
-				thread = mono_thread_current ();
+				thread = is_debugger_thread () ? mono_thread_get_main () : mono_thread_current ();
 
 			if (event == EVENT_KIND_VM_START && arg != NULL)
 				thread = (MonoThread *)arg;
@@ -4749,25 +4746,17 @@ breakpoint_matches_assembly (MonoBreakpoint *bp, MonoAssembly *assembly)
 	return bp->method && bp->method->klass->image->assembly == assembly;
 }
 
-static MonoObject*
-get_this (StackFrame *frame)
+static gpointer
+get_this_addr (StackFrame *frame)
 {
 	//Logic inspiered by "add_var" method and took out path that happens in async method for getting this
 	MonoDebugVarInfo *var = frame->jit->this_var;
 	if ((var->index & MONO_DEBUG_VAR_ADDRESS_MODE_FLAGS) != MONO_DEBUG_VAR_ADDRESS_MODE_REGOFFSET)
 		return NULL;
 
-	guint8 * addr = (guint8 *)mono_arch_context_get_int_reg (&frame->ctx, var->index & ~MONO_DEBUG_VAR_ADDRESS_MODE_FLAGS);
+	guint8 *addr = (guint8 *)mono_arch_context_get_int_reg (&frame->ctx, var->index & ~MONO_DEBUG_VAR_ADDRESS_MODE_FLAGS);
 	addr += (gint32)var->offset;
-	return *(MonoObject**)addr;
-}
-
-//This ID is used to figure out if breakpoint hit on resumeOffset belongs to us or not
-//since thread probably changed...
-static int
-get_this_async_id (StackFrame *frame)
-{
-	return get_objid (get_this (frame));
+	return addr;
 }
 
 static MonoMethod*
@@ -4782,25 +4771,100 @@ get_set_notification_method (MonoClass* async_builder_class)
 	return set_notification_method;
 }
 
+static MonoMethod*
+get_object_id_for_debugger_method (MonoClass* async_builder_class)
+{
+	MonoError error;
+	GPtrArray *array = mono_class_get_methods_by_name (async_builder_class, "get_ObjectIdForDebugger", 0x24, FALSE, FALSE, &error);
+	mono_error_assert_ok (&error);
+	g_assert (array->len == 1);
+	MonoMethod *method = (MonoMethod *)g_ptr_array_index (array, 0);
+	g_ptr_array_free (array, TRUE);
+	return method;
+}
+
+/* Return the address of the AsyncMethodBuilder struct belonging to the state machine method pointed to by FRAME */
+static gpointer
+get_async_method_builder (StackFrame *frame)
+{
+	MonoObject *this_obj;
+	MonoClassField *builder_field;
+	gpointer builder;
+	guint8 *this_addr;
+
+	builder_field = mono_class_get_field_from_name (frame->method->klass, "<>t__builder");
+	g_assert (builder_field);
+
+	this_addr = get_this_addr (frame);
+	if (!this_addr)
+		return NULL;
+
+	if (frame->method->klass->valuetype) {
+		guint8 *vtaddr = *(guint8**)this_addr;
+		builder = (char*)vtaddr + builder_field->offset - sizeof (MonoObject);
+	} else {
+		this_obj = *(MonoObject**)this_addr;
+		builder = (char*)this_obj + builder_field->offset;
+	}
+
+	return builder;
+}
+
+//This ID is used to figure out if breakpoint hit on resumeOffset belongs to us or not
+//since thread probably changed...
+static int
+get_this_async_id (StackFrame *frame)
+{
+	MonoClassField *builder_field;
+	gpointer builder;
+	MonoMethod *method;
+	MonoObject *ex;
+	MonoError error;
+	MonoObject *obj;
+	gboolean old_disable_breakpoints = FALSE;
+	DebuggerTlsData *tls;
+
+	/*
+	 * FRAME points to a method in a state machine class/struct.
+	 * Call the ObjectIdForDebugger method of the associated method builder type.
+	 */
+	builder = get_async_method_builder (frame);
+	if (!builder)
+		return 0;
+
+	builder_field = mono_class_get_field_from_name (frame->method->klass, "<>t__builder");
+	g_assert (builder_field);
+
+	tls = (DebuggerTlsData *)mono_native_tls_get_value (debugger_tls_id);
+	if (tls) {
+		old_disable_breakpoints = tls->disable_breakpoints;
+		tls->disable_breakpoints = TRUE;
+	}
+
+	method = get_object_id_for_debugger_method (mono_class_from_mono_type (builder_field->type));
+	obj = mono_runtime_try_invoke (method, builder, NULL, &ex, &error);
+	mono_error_assert_ok (&error);
+
+	if (tls)
+		tls->disable_breakpoints = old_disable_breakpoints;
+
+	return get_objid (obj);
+}
+
 static void
 set_set_notification_for_wait_completion_flag (StackFrame *frame)
 {
-	MonoObject* obj = get_this (frame);
-	g_assert (obj);
-	MonoClassField *builder_field = mono_class_get_field_from_name (obj->vtable->klass, "<>t__builder");
+	MonoClassField *builder_field = mono_class_get_field_from_name (frame->method->klass, "<>t__builder");
 	g_assert (builder_field);
-	MonoObject* builder;
-	MonoError error;
-	builder = mono_field_get_value_object_checked (frame->domain, builder_field, obj, &error);
-	mono_error_assert_ok (&error);
+	gpointer builder = get_async_method_builder (frame);
 	g_assert (builder);
 
 	void* args [1];
 	gboolean arg = TRUE;
+	MonoError error;
 	args [0] = &arg;
-	mono_runtime_invoke_checked (get_set_notification_method (builder->vtable->klass), mono_object_unbox (builder), args, &error);
+	mono_runtime_invoke_checked (get_set_notification_method (mono_class_from_mono_type (builder_field->type)), builder, args, &error);
 	mono_error_assert_ok (&error);
-	mono_field_set_value (obj, builder_field, mono_object_unbox (builder));
 }
 
 static MonoMethod* notify_debugger_of_wait_completion_method_cache = NULL;
@@ -6982,7 +7046,7 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 	MonoMethodSignature *sig;
 	guint8 **arg_buf;
 	void **args;
-	MonoObject *this_arg, *res, *exc;
+	MonoObject *this_arg, *res, *exc = NULL;
 	MonoDomain *domain;
 	guint8 *this_buf;
 #ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED
@@ -7154,7 +7218,7 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 
 	mono_stopwatch_start (&watch);
 	res = mono_runtime_try_invoke (m, m->klass->valuetype ? (gpointer) this_buf : (gpointer) this_arg, args, &exc, &error);
-	if (exc == NULL && !mono_error_ok (&error)) {
+	if (!mono_error_ok (&error) && exc == NULL) {
 		exc = (MonoObject*) mono_error_convert_to_exception (&error);
 	} else {
 		mono_error_cleanup (&error); /* FIXME report error */
@@ -7627,7 +7691,7 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 
 		tls->abort_requested = TRUE;
 
-		mono_thread_internal_abort (THREAD_TO_INTERNAL (thread));
+		mono_thread_internal_abort (THREAD_TO_INTERNAL (thread), FALSE);
 		mono_loader_unlock ();
 		break;
 	}
@@ -7735,6 +7799,7 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 		break;
 	}
 	case CMD_VM_GET_TYPES: {
+		MonoError error;
 		GHashTableIter iter;
 		MonoDomain *domain;
 		int i;
@@ -7746,7 +7811,8 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 		name = decode_string (p, &p, end);
 		ignore_case = decode_byte (p, &p, end);
 
-		if (!mono_reflection_parse_type (name, &info)) {
+		if (!mono_reflection_parse_type_checked (name, &info, &error)) {
+			mono_error_cleanup (&error);
 			g_free (name);
 			mono_reflection_free_type_info (&info);
 			return ERR_INVALID_ARGUMENT;
@@ -7768,11 +7834,10 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 				ass = (MonoAssembly *)tmp->data;
 
 				if (ass->image) {
-					MonoError error;
-					type_resolve = TRUE;
+					MonoError probe_type_error;
 					/* FIXME really okay to call while holding locks? */
-					t = mono_reflection_get_type_checked (ass->image, ass->image, &info, ignore_case, &type_resolve, &error);
-					mono_error_cleanup (&error); 
+					t = mono_reflection_get_type_checked (ass->image, ass->image, &info, ignore_case, &type_resolve, &probe_type_error);
+					mono_error_cleanup (&probe_type_error); 
 					if (t) {
 						g_ptr_array_add (res_classes, mono_type_get_class (t));
 						g_ptr_array_add (res_domains, domain);
@@ -8224,7 +8289,8 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		res = mono_domain_set (domain, FALSE);
 		g_assert (res);
 
-		if (!mono_reflection_parse_type (s, &info)) {
+		if (!mono_reflection_parse_type_checked (s, &info, &error)) {
+			mono_error_cleanup (&error);
 			t = NULL;
 		} else {
 			if (info.assembly.name)

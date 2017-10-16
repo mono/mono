@@ -3957,9 +3957,10 @@ load_method (MonoDomain *domain, MonoAotModule *amodule, MonoImage *image, MonoM
 		return code;
 
 	if (mono_last_aot_method != -1) {
-		if (mono_jit_stats.methods_aot >= mono_last_aot_method)
-				return NULL;
-		else if (mono_jit_stats.methods_aot == mono_last_aot_method - 1) {
+		gint32 methods_aot = InterlockedRead (&mono_jit_stats.methods_aot);
+		if (methods_aot >= mono_last_aot_method)
+			return NULL;
+		else if (methods_aot == mono_last_aot_method - 1) {
 			if (!method) {
 				method = mono_get_method_checked (image, token, NULL, NULL, error);
 				if (!method)
@@ -5143,6 +5144,8 @@ no_trampolines (void)
 	g_assert_not_reached ();
 }
 
+
+#ifndef TARGET_WASM
 /*
  * Return the trampoline identified by NAME from the mscorlib AOT file.
  * On ppc64, this returns a function descriptor.
@@ -5159,6 +5162,8 @@ mono_aot_get_trampoline_full (const char *name, MonoTrampInfo **out_tinfo)
 
 	return mono_create_ftnptr_malloc ((guint8 *)load_function_full (amodule, name, out_tinfo));
 }
+#endif
+
 
 gpointer
 mono_aot_get_trampoline (const char *name)

@@ -32,6 +32,7 @@
 #include <mono/utils/mono-time.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/w32api.h>
+#include <mono/utils/mono-os-wait.h>
 
 /*
  * Pull the list of opcodes
@@ -373,7 +374,7 @@ mon_finalize (MonoThreadsSync *mon)
 	mon->data = monitor_freelist;
 	monitor_freelist = mon;
 #ifndef DISABLE_PERFCOUNTERS
-	mono_perfcounters->gc_sync_blocks--;
+	InterlockedDecrement (&mono_perfcounters->gc_sync_blocks);
 #endif
 }
 
@@ -445,7 +446,7 @@ mon_new (gsize id)
 	new_->data = NULL;
 	
 #ifndef DISABLE_PERFCOUNTERS
-	mono_perfcounters->gc_sync_blocks++;
+	InterlockedIncrement (&mono_perfcounters->gc_sync_blocks);
 #endif
 	return new_;
 }
@@ -792,7 +793,7 @@ retry:
 
 	/* The object must be locked by someone else... */
 #ifndef DISABLE_PERFCOUNTERS
-	mono_perfcounters->thread_contentions++;
+	InterlockedIncrement (&mono_perfcounters->thread_contentions);
 #endif
 
 	/* If ms is 0 we don't block, but just fail straight away */
@@ -874,8 +875,8 @@ retry_contended:
 	waitms = ms;
 	
 #ifndef DISABLE_PERFCOUNTERS
-	mono_perfcounters->thread_queue_len++;
-	mono_perfcounters->thread_queue_max++;
+	InterlockedIncrement (&mono_perfcounters->thread_queue_len);
+	InterlockedIncrement (&mono_perfcounters->thread_queue_max);
 #endif
 	thread = mono_thread_internal_current ();
 
@@ -909,7 +910,7 @@ retry_contended:
 
 done_waiting:
 #ifndef DISABLE_PERFCOUNTERS
-	mono_perfcounters->thread_queue_len--;
+	InterlockedDecrement (&mono_perfcounters->thread_queue_len);
 #endif
 
 	if (wait_ret == MONO_SEM_TIMEDWAIT_RET_ALERTED && !allow_interruption) {
@@ -1387,7 +1388,7 @@ ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *obj, guint32 ms)
 	 */
 	MONO_ENTER_GC_SAFE;
 #ifdef HOST_WIN32
-	ret = mono_w32handle_convert_wait_ret (WaitForSingleObjectEx (event, ms, TRUE), 1);
+	ret = mono_w32handle_convert_wait_ret (mono_win32_wait_for_single_object_ex (event, ms, TRUE), 1);
 #else
 	ret = mono_w32handle_wait_one (event, ms, TRUE);
 #endif /* HOST_WIN32 */
@@ -1416,7 +1417,7 @@ ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *obj, guint32 ms)
 		 */
 		MONO_ENTER_GC_SAFE;
 #ifdef HOST_WIN32
-		ret = mono_w32handle_convert_wait_ret (WaitForSingleObjectEx (event, 0, FALSE), 1);
+		ret = mono_w32handle_convert_wait_ret (mono_win32_wait_for_single_object_ex (event, 0, FALSE), 1);
 #else
 		ret = mono_w32handle_wait_one (event, 0, FALSE);
 #endif /* HOST_WIN32 */

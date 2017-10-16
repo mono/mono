@@ -22,7 +22,7 @@ ifndef NO_TEST
 test_nunit_lib = nunitlite.dll
 xunit_core := xunit.core xunit.abstractions xunit.assert Xunit.NetCore.Extensions
 xunit_deps := System.Runtime
-xunit_src  := $(patsubst %,$(topdir)/../external/xunit-binaries/%,BenchmarkAttribute.cs BenchmarkDiscover.cs)
+xunit_src  := $(patsubst %,$(topdir)/../external/xunit-binaries/%,BenchmarkAttribute.cs BenchmarkDiscover.cs) $(topdir)/../mcs/class/test-helpers/PlatformDetection.cs
 xunit_class_deps := 
 
 xunit_libs_ref = $(patsubst %,-r:$(topdir)/../external/xunit-binaries/%.dll,$(xunit_core))
@@ -212,9 +212,9 @@ run-xunit-test: run-xunit-test-local
 xunit-test-local: $(xunit_test_lib)
 run-xunit-test-local: run-xunit-test-lib
 
-# ln -s is a HACK for xunit runner to require xunit.execution.desktop.dll file in local folder on .net only
+# cp -rf is a HACK for xunit runner to require xunit.execution.desktop.dll file in local folder on .net only
 run-xunit-test-lib: xunit-test-local
-	@ln -fs $(XTEST_HARNESS_PATH)/xunit.execution.desktop.dll xunit.execution.desktop.dll
+	@cp -rf $(XTEST_HARNESS_PATH)/xunit.execution.desktop.dll xunit.execution.desktop.dll
 	ok=:; \
 	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(AOT_RUN_FLAGS) $(XTEST_HARNESS) $(xunit_test_lib) $(XTEST_HARNESS_FLAGS) $(XTEST_TRAIT) || ok=false; \
 	$$ok

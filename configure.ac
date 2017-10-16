@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 #AC_PREREQ([2.62])
 
-AC_INIT(mono, [5.7.0],
+AC_INIT(mono, [5.9.0],
         [http://bugzilla.xamarin.com/enter_bug.cgi?classification=Mono])
 
 AC_CONFIG_SRCDIR([README.md])
@@ -41,7 +41,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # since it's part of the corlib version (the prefix '1' in the full
 # version number is to ensure the number isn't treated as octal in C)
 MONO_CORLIB_COUNTER=0
-MONO_CORLIB_VERSION=`printf "1%02d%02d%02d%03d" $MONO_VERSION_MAJOR $MONO_VERSION_MINOR $MONO_VERSION_BUILD $MONO_CORLIB_COUNTER`
+MONO_CORLIB_VERSION=`printf "1%02d%02d%02d%03d" $MONO_VERSION_MAJOR $MONO_VERSION_MINOR 0 $MONO_CORLIB_COUNTER`
 
 AC_DEFINE_UNQUOTED(MONO_CORLIB_VERSION,$MONO_CORLIB_VERSION,[Version of the corlib-runtime interface])
 AC_SUBST(MONO_CORLIB_VERSION)
@@ -96,8 +96,15 @@ need_link_unlink=no
 #Set to extra linker flags to be passed to the runtime binaries (mono /mono-sgen)
 extra_runtime_ldflags=""
 
+
+# Hack for WASM
+# Current autotools (v1.15) doesn't have a triplet we can use for wasm so the kludge we do is to
+# work around it by using a feature flag instead
+AC_ARG_ENABLE(wasm,[  --enable-wasm	Hack to set the current runtime to target wasm], enable_wasm=$enableval)
+
 # Thread configuration inspired by sleepycat's db
 AC_MSG_CHECKING([host platform characteristics])
+
 libgc_threads=no
 has_dtrace=no
 parallel_mark=yes
@@ -106,7 +113,18 @@ ikvm_native=yes
 host_win32=no
 target_win32=no
 platform_android=no
+platform_ios=no
 host_darwin=no
+
+
+if test "x$enable_wasm" = "xyes"; then
+CFLAGS="$CFLAGS -D_REENTRANT -D_GNU_SOURCE -DNO_UNALIGNED_ACCESS -s WASM=1"
+CPPFLAGS="$CPPFLAGS -D_REENTRANT -DUSE_MMAP -D_GNU_SOURCE -DNO_UNALIGNED_ACCESS -s WASM=1"
+libdl="-ldl"
+libgc_threads=pthreads
+
+else
+
 case "$host" in
 	*-mingw*|*-*-cygwin*)
 		AC_DEFINE(DISABLE_PORTABILITY,1,[Disable the io-portability layer])
@@ -327,8 +345,12 @@ case "$host" in
 				with_sgen_default_concurrent=yes
 				;;
 			arm*-darwin*)
+				platform_ios=yes
 				has_dtrace=no
-				;;			
+				;;
+			aarch64*-darwin*)
+				platform_ios=yes
+				;;
 		esac
 		;;
 	*-*-haiku*)
@@ -350,6 +372,10 @@ case "$host" in
 		libdl="-ldl"
 		;;
 esac
+
+# WASM hack
+fi
+
 AC_MSG_RESULT(ok)
 
 if test x$need_link_unlink = xyes; then
@@ -379,6 +405,7 @@ AM_CONDITIONAL(HOST_LINUX, echo x$target_os | grep -q linux)
 AM_CONDITIONAL(HOST_DARWIN, test x$host_darwin = xyes)
 AM_CONDITIONAL(HOST_SIGPOSIX, test x$use_sigposix = xyes)
 AM_CONDITIONAL(HOST_ANDROID, test x$platform_android = xyes)
+AM_CONDITIONAL(HOST_IOS, test x$platform_ios = xyes)
 
 if test -z "$HOST_DARWIN_TRUE"; then :
 PLATFORM_AOT_SUFFIX=.dylib
@@ -533,8 +560,86 @@ AC_CHECK_FUNCS(_finite, , AC_MSG_CHECKING(for _finite in math.h)
 # for Linux statfs support
 AC_CHECK_HEADERS(linux/magic.h)
 
+# For Android NDK unified headers
+if test x$platform_android = xyes; then
+	AC_CHECK_HEADERS(machine/endian.h sys/endian.h)
+	AC_CHECK_HEADERS(android/legacy_signal_inlines.h, [have_android_signal_inlines=yes], [have_android_signal_inlines=no])
+
+	# Make sure SIGRT{MIN,MAX} work - they will fail to work with unified headers if building for
+	# API level < 21 *and* android/legacy_signal_inlines.h doesn't declare (and define) the required
+	# libc APIs to obtain values for SIGRT{MIN,MAX}. We perform the check only if android/legacy_signal_inlines.h
+	# is found because in other cases the macros will either work (for NDK < 14) or fail if the legacy header
+	# doesn't contain the required definitions (NDK 14)
+	if test x$have_android_signal_inlines = xyes; then
+		AC_MSG_CHECKING([Whether Android SIGRTMIN/SGRTMAX macros are valid])
+		AC_COMPILE_IFELSE([
+			AC_LANG_PROGRAM([#include <android/legacy_signal_inlines.h>],[
+				int i;
+				for (i = SIGRTMIN + 1; i < SIGRTMAX; ++i) {
+				}
+			])],[
+				AC_MSG_RESULT(yes)
+				android_sigrtminmax_work=yes
+			],[
+				AC_MSG_RESULT(no)
+				android_sigrtminmax_work=no
+			]
+		)
+
+		if test x$android_sigrtminmax_work = xno; then
+			AC_MSG_ERROR([Android SIGRTMIN/SIGRTMAX macros don't work in this NDK])
+		fi
+	fi
+
+	# Attempt to detect whether we're using Android NDK unified headers
+	AC_CHECK_HEADERS(android/api-level.h, [have_android_api_level=yes], [have_android_api_level=no])
+	AC_CHECK_HEADERS(android/versioning.h, [have_android_versioning=yes], [have_android_versioning=no])
+
+	android_unified_headers=no
+	if test x$have_android_api_level = xyes; then
+		if test x$have_android_versioning = xyes; then
+			AC_MSG_CHECKING([whether using Android NDK unified headers])
+
+			# Both macros are defined only in the NDK unified headers
+			AC_COMPILE_IFELSE([
+				AC_LANG_PROGRAM([
+					#include <android/api-level.h>
+					#include <android/versioning.h>
+				],[
+					#if __ANDROID_API_O__ == 26 && defined(__INTRODUCED_IN)
+						return 0
+					#else
+						#error __ANDROID_API_O__ != 26 or the __INTRODUCED_IN macro not defined
+					#endif
+				])],[
+					AC_MSG_RESULT(yes)
+					android_unified_headers=yes
+				],[
+					AC_MSG_RESULT(no)
+					android_unified_headers=no
+				]
+			)
+		fi
+	fi
+
+	if test x$android_unified_headers = xyes; then
+		AC_DEFINE(ANDROID_UNIFIED_HEADERS, 1, [Whether Android NDK unified headers are used])
+	fi
+fi # Android
+
 # not 64 bit clean in cross-compile
-AC_CHECK_SIZEOF(void *, 4)
+if test "x$enable_wasm" = "xyes"; then
+AC_DEFINE(SIZEOF_VOID_P,4)
+AC_DEFINE(SIZEOF_LONG,4)
+ac_cv_sizeof_void_p="4"
+ac_cv_sizeof_long="4"
+else
+AC_CHECK_SIZEOF(void *)
+AC_CHECK_SIZEOF(long)
+fi
+
+AC_CHECK_SIZEOF(int)
+AC_CHECK_SIZEOF(long long)
 
 AC_CACHE_CHECK([for clang],
 	mono_cv_clang,[
@@ -1480,6 +1585,8 @@ if test x$host_win32 = xno; then
 		AC_CHECK_FUNCS(getpwnam_r)
 		AC_CHECK_FUNCS(getpwuid_r)
 	fi
+
+	AC_FUNC_STRERROR_R()
 
 	dnl ****************************************************************
 	dnl *** Check for sched_setaffinity from glibc versions before   ***
@@ -3038,6 +3145,19 @@ jit_wanted=true
 boehm_supported=true
 BTLS_SUPPORTED=no
 BTLS_PLATFORM=
+
+if test "x$enable_wasm" = "xyes"; then
+TARGET=WASM
+HOST=WASM
+arch_target=wasm
+AC_DEFINE(TARGET_WASM, 1, [Target wasm])
+AC_DEFINE(HOST_WASM, 1, [Host wasm])
+BTLS_SUPPORTED=no
+with_tls=pthread
+target_mach=no
+
+else
+
 case "$host" in
 	mips*)
 		TARGET=MIPS;
@@ -3440,6 +3560,8 @@ SPARC64)
 	;;
 esac
 
+#WASM hack
+fi
 
 
 dnl *************
@@ -3715,10 +3837,6 @@ AC_SUBST(PIDTYPE)
 AC_DEFINE(HAVE_CLASSIC_WINAPI_SUPPORT, 1, [Use classic Windows API support])
 AC_DEFINE(HAVE_UWP_WINAPI_SUPPORT, 0, [Don't use UWP Windows API support])
 
-AC_CHECK_SIZEOF(int)
-AC_CHECK_SIZEOF(void *)
-AC_CHECK_SIZEOF(long)
-AC_CHECK_SIZEOF(long long)
 AC_CHECK_FUNCS(strlcpy stpcpy strtok_r rewinddir vasprintf strerror_r)
 AC_CHECK_FUNCS(getrlimit)
 AC_CHECK_FUNCS(fork execv execve)
@@ -4305,10 +4423,13 @@ AM_CONDITIONAL(POWERPC64, test x$TARGET = xPOWERPC64)
 AM_CONDITIONAL(ARM, test x$TARGET = xARM)
 AM_CONDITIONAL(ARM64, test x$TARGET = xARM64)
 AM_CONDITIONAL(S390X, test x$TARGET = xS390X)
+AM_CONDITIONAL(WASM, test x$TARGET = xWASM)
 AM_CONDITIONAL(HOST_X86, test x$HOST = xX86)
 AM_CONDITIONAL(HOST_AMD64, test x$HOST = xAMD64)
 AM_CONDITIONAL(HOST_ARM, test x$HOST = xARM)
 AM_CONDITIONAL(HOST_ARM64, test x$HOST = xARM64)
+AM_CONDITIONAL(HOST_WASM, test x$HOST = xWASM)
+
 AM_CONDITIONAL(CROSS_COMPILE, test "x$host" != "x$target")
 
 AC_SUBST(LIBC)
@@ -4334,7 +4455,7 @@ AC_SUBST(mono_build_root)
 mono_runtime=mono/mini/mono
 AC_SUBST(mono_runtime)
 
-CSC_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.3.1/tools/csc.exe
+CSC_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.3.2/tools/csc.exe
 
 if test $csc_compiler = mcs; then
   CSC=$mcs_topdir/class/lib/build/mcs.exe

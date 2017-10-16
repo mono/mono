@@ -75,6 +75,10 @@ namespace Mono.Btls
 			get { return true; }
 		}
 
+		internal override bool SupportsCleanShutdown {
+			get { return true; }
+		}
+
 		public override SslProtocols SupportedProtocols {
 			get { return SslProtocols.Tls12 | SslProtocols.Tls11 | SslProtocols.Tls; }
 		}

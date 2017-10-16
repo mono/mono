@@ -60,6 +60,7 @@
 #include <mono/utils/dtrace.h>
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-threads-coop.h>
+#include <mono/utils/unlocked.h>
 
 #include "mini.h"
 #include "seq-points.h"
@@ -78,7 +79,7 @@
 #include "mini-llvm.h"
 #include "lldb.h"
 
-MonoTraceSpec *mono_jit_trace_calls;
+MonoCallSpec *mono_jit_trace_calls;
 MonoMethodDesc *mono_inject_async_exc_method;
 int mono_inject_async_exc_pos;
 MonoMethodDesc *mono_break_at_bb_method;
@@ -1380,9 +1381,8 @@ mono_allocate_stack_slots2 (MonoCompile *cfg, gboolean backward, guint32 *stack_
 				printf ("LAST: %s\n", mono_method_full_name (cfg->method, TRUE));
 			if (count > atoi (g_getenv ("COUNT3")))
 				slot = 0xffffff;
-			else {
+			else
 				mono_print_ins (inst);
-				}
 		}
 #endif
 
@@ -1614,20 +1614,19 @@ mono_allocate_stack_slots (MonoCompile *cfg, gboolean backward, guint32 *stack_s
 			}
 		}
 
+#if 0
 		{
 			static int count = 0;
 			count ++;
 
-			/*
 			if (count == atoi (g_getenv ("COUNT")))
 				printf ("LAST: %s\n", mono_method_full_name (cfg->method, TRUE));
 			if (count > atoi (g_getenv ("COUNT")))
 				slot = 0xffffff;
-			else {
+			else
 				mono_print_ins (inst);
-				}
-			*/
 		}
+#endif
 
 		if (inst->flags & MONO_INST_LMF) {
 			/*
@@ -2269,7 +2268,8 @@ mono_codegen (MonoCompile *cfg)
 	/* fixme: align to MONO_ARCH_CODE_ALIGNMENT */
 
 #ifdef MONO_ARCH_HAVE_UNWIND_TABLE
-	unwindlen = mono_arch_unwindinfo_init_method_unwind_info (cfg);
+	if (!cfg->compile_aot)
+		unwindlen = mono_arch_unwindinfo_init_method_unwind_info (cfg);
 #endif
 
 	if (cfg->method->dynamic) {
@@ -2387,7 +2387,8 @@ mono_codegen (MonoCompile *cfg)
 	mono_debug_close_method (cfg);
 
 #ifdef MONO_ARCH_HAVE_UNWIND_TABLE
-	mono_arch_unwindinfo_install_method_unwind_info (&cfg->arch.unwindinfo, cfg->native_code, cfg->code_len);
+	if (!cfg->compile_aot)
+		mono_arch_unwindinfo_install_method_unwind_info (&cfg->arch.unwindinfo, cfg->native_code, cfg->code_len);
 #endif
 }
 
@@ -3071,7 +3072,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	MonoMethodSignature *sig;
 	MonoError err;
 	MonoCompile *cfg;
-	int i, code_size_ratio;
+	int i;
 	gboolean try_generic_shared, try_llvm = FALSE;
 	MonoMethod *method_to_compile, *method_to_register;
 	gboolean method_is_gshared = FALSE;
@@ -3125,9 +3126,9 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 
 	if (opts & MONO_OPT_GSHARED) {
 		if (try_generic_shared)
-			mono_stats.generics_sharable_methods++;
+			InterlockedIncrement (&mono_stats.generics_sharable_methods);
 		else if (mono_method_is_generic_impl (method))
-			mono_stats.generics_unsharable_methods++;
+			InterlockedIncrement (&mono_stats.generics_unsharable_methods);
 	}
 
 #ifdef ENABLE_LLVM
@@ -3877,23 +3878,28 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 
 	/* collect statistics */
 #ifndef DISABLE_PERFCOUNTERS
-	mono_perfcounters->jit_methods++;
-	mono_perfcounters->jit_bytes += header->code_size;
+	InterlockedIncrement (&mono_perfcounters->jit_methods);
+	InterlockedAdd (&mono_perfcounters->jit_bytes, header->code_size);
 #endif
-	mono_jit_stats.allocated_code_size += cfg->code_len;
-	code_size_ratio = cfg->code_len;
-	if (code_size_ratio > mono_jit_stats.biggest_method_size && mono_jit_stats.enabled) {
-		mono_jit_stats.biggest_method_size = code_size_ratio;
-		g_free (mono_jit_stats.biggest_method);
-		mono_jit_stats.biggest_method = g_strdup_printf ("%s::%s)", method->klass->name, method->name);
+	gint32 code_size_ratio = cfg->code_len;
+	InterlockedAdd (&mono_jit_stats.allocated_code_size, code_size_ratio);
+	InterlockedAdd (&mono_jit_stats.native_code_size, code_size_ratio);
+	/* FIXME: use an explicit function to read booleans */
+	if ((gboolean)InterlockedRead ((gint32*)&mono_jit_stats.enabled)) {
+		if (code_size_ratio > InterlockedRead (&mono_jit_stats.biggest_method_size)) {
+			InterlockedWrite (&mono_jit_stats.biggest_method_size, code_size_ratio);
+			char *biggest_method = g_strdup_printf ("%s::%s)", method->klass->name, method->name);
+			biggest_method = InterlockedExchangePointer ((gpointer*)&mono_jit_stats.biggest_method, biggest_method);
+			g_free (biggest_method);
+		}
+		code_size_ratio = (code_size_ratio * 100) / header->code_size;
+		if (code_size_ratio > InterlockedRead (&mono_jit_stats.max_code_size_ratio)) {
+			InterlockedWrite (&mono_jit_stats.max_code_size_ratio, code_size_ratio);
+			char *max_ratio_method = g_strdup_printf ("%s::%s)", method->klass->name, method->name);
+			max_ratio_method = InterlockedExchangePointer ((gpointer*)&mono_jit_stats.max_ratio_method, max_ratio_method);
+			g_free (max_ratio_method);
+		}
 	}
-	code_size_ratio = (code_size_ratio * 100) / header->code_size;
-	if (code_size_ratio > mono_jit_stats.max_code_size_ratio && mono_jit_stats.enabled) {
-		mono_jit_stats.max_code_size_ratio = code_size_ratio;
-		g_free (mono_jit_stats.max_ratio_method);
-		mono_jit_stats.max_ratio_method = g_strdup_printf ("%s::%s)", method->klass->name, method->name);
-	}
-	mono_jit_stats.native_code_size += cfg->code_len;
 
 	if (MONO_METHOD_COMPILE_END_ENABLED ())
 		MONO_PROBE_METHOD_COMPILE_END (method, TRUE);
@@ -3996,14 +4002,26 @@ GTimer *mono_time_track_start ()
 	return g_timer_new ();
 }
 
-void mono_time_track_end (double *time, GTimer *timer)
+/*
+ * mono_time_track_end:
+ *
+ *   Uses UnlockedAddDouble () to update \param time.
+ */
+void mono_time_track_end (gdouble *time, GTimer *timer)
 {
 	g_timer_stop (timer);
-	*time += g_timer_elapsed (timer, NULL);
+	UnlockedAddDouble (time, g_timer_elapsed (timer, NULL));
 	g_timer_destroy (timer);
 }
 
-void mono_update_jit_stats (MonoCompile *cfg)
+/*
+ * mono_update_jit_stats:
+ *
+ *   Only call this function in locked environments to avoid data races.
+ */
+MONO_NO_SANITIZE_THREAD
+void
+mono_update_jit_stats (MonoCompile *cfg)
 {
 	mono_jit_stats.allocate_var += cfg->stat_allocate_var;
 	mono_jit_stats.locals_stack_size += cfg->stat_locals_stack_size;
@@ -4154,9 +4172,9 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 
 	jit_timer = mono_time_track_start ();
 	cfg = mini_method_compile (method, opt, target_domain, JIT_FLAG_RUN_CCTORS, 0, -1);
-	double jit_time = 0.0;
+	gdouble jit_time = 0.0;
 	mono_time_track_end (&jit_time, jit_timer);
-	mono_jit_stats.jit_time += jit_time;
+	UnlockedAddDouble (&mono_jit_stats.jit_time, jit_time);
 
 	prof_method = cfg->method;
 
@@ -4236,9 +4254,9 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 		code = cfg->native_code;
 
 		if (cfg->gshared && mono_method_is_generic_sharable (method, FALSE))
-			mono_stats.generics_shared_methods++;
+			InterlockedIncrement (&mono_stats.generics_shared_methods);
 		if (cfg->gsharedvt)
-			mono_stats.gsharedvt_methods++;
+			InterlockedIncrement (&mono_stats.gsharedvt_methods);
 	}
 
 	jinfo = cfg->jit_info;

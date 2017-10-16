@@ -62,6 +62,13 @@
     <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\Partitioner.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\PartitionerStatic.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\CollectionExtensions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Pinnable.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\ReadOnlySpan.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Span.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\SpanDebugView.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\SpanHelpers.Clear.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\SpanHelpers.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\ThrowHelper.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\X509ContentType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\X509KeyStorageFlags.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
@@ -857,6 +864,7 @@
     <Compile Include="corert\Interop.MemAllocFree.cs" />
     <Compile Include="corert\RelocatedTypeAttribute.cs" />
     <Compile Include="corert\RuntimeThread.cs" />
+    <Compile Include="corert\Stream.cs" />
     <Compile Include="corert\ThreadPoolBoundHandle.cs" />
     <Compile Include="Microsoft.Win32\IRegistryApi.cs" />
     <Compile Include="Microsoft.Win32\Registry.cs" />
@@ -1092,6 +1100,7 @@
     <Compile Include="System.Resources\Win32Resources.cs" />
     <Compile Include="System.Runtime.CompilerServices\ConditionalWeakTable.cs" />
     <Compile Include="System.Runtime.CompilerServices\RuntimeHelpers.cs" />
+    <Compile Include="System.Runtime.CompilerServices\Unsafe.cs" />
     <Compile Include="System.Runtime.Hosting\ActivationArguments.cs" />
     <Compile Include="System.Runtime.Hosting\ApplicationActivator.cs" />
     <Compile Include="System.Runtime.InteropServices.WindowsRuntime\DesignerNamespaceResolveEventArgs.cs" />

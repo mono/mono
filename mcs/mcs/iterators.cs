@@ -1187,11 +1187,15 @@ namespace Mono.CSharp
 				return;
 
 			if (!CheckType (ret, parent, out iterator_type, out is_enumerable)) {
-				parent.Compiler.Report.Error (1624, method.Location,
-					      "The body of `{0}' cannot be an iterator block " +
-					      "because `{1}' is not an iterator interface type",
-					      method.GetSignatureForError (),
-					      ret.GetSignatureForError ());
+				if (ret.Kind == MemberKind.ByRef) {
+					parent.Compiler.Report.Error (8154, method.Location,
+							  "The body of `{0}' cannot be an iterator block because the method returns by reference",
+							  method.GetSignatureForError ());
+				} else {
+					parent.Compiler.Report.Error (1624, method.Location,
+							  "The body of `{0}' cannot be an iterator block because `{1}' is not an iterator interface type",
+							  method.GetSignatureForError (), ret.GetSignatureForError ());
+				}
 				return;
 			}
 

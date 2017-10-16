@@ -2709,8 +2709,10 @@ namespace MonoTests.System.IO
 			File.Delete (path2);
 
 			try {
-				symlink (path1, path2);
-				symlink (path2, path1);
+				if (symlink (path1, path2) != 0)
+					Assert.Fail ("symlink #1 failed with errno={0}", Marshal.GetLastWin32Error ());
+				if (symlink (path2, path1) != 0)
+					Assert.Fail ("symlink #2 failed with errno={0}", Marshal.GetLastWin32Error ());
 
 				Assert.IsTrue (File.Exists (path1), "File.Exists must return true for path1 symlink loop");
 				Assert.IsTrue (File.Exists (path2), "File.Exists must return true for path2 symlink loop");

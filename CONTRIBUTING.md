@@ -34,6 +34,11 @@ CLA
 
 Contributions are now taken under the [.NET Foundation CLA](https://cla2.dotnetfoundation.org/).
 
+Code Review
+=======
+We are requiring code reviews before merging a pull request.
+GitHub won't let you merge a PR until someone from the Mono team approves it.
+
 Testing
 =======
 

@@ -81,6 +81,7 @@ parse_arg (const char *arg, ProfilerConfig *config)
 	} else if (match_option (arg, "calls", NULL)) {
 		config->enter_leave = TRUE;
 	} else if (match_option (arg, "coverage", NULL)) {
+		g_warning ("the log profiler support for code coverage is obsolete, use the \"coverage\" profiler");
 		config->collect_coverage = TRUE;
 	} else if (match_option (arg, "zip", NULL)) {
 		config->use_zip = TRUE;
@@ -103,6 +104,24 @@ parse_arg (const char *arg, ProfilerConfig *config)
 	} else if (match_option (arg, "calldepth", &val)) {
 		char *end;
 		config->max_call_depth = strtoul (val, &end, 10);
+	} else if (match_option (arg, "callspec", &val)) {
+		if (!val)
+			val = "";
+		if (val[0] == '\"')
+			++val;
+		char *spec = g_strdup (val);
+		size_t speclen = strlen (val);
+		if (speclen > 0 && spec[speclen - 1] == '\"')
+			spec[speclen - 1] = '\0';
+		char *errstr;
+		if (!mono_callspec_parse (spec, &config->callspec, &errstr)) {
+			mono_profiler_printf_err (
+			    "Could not parse callspec: '%s': %s", spec,
+			    errstr);
+			g_free (errstr);
+			mono_callspec_cleanup (&config->callspec);
+		}
+		g_free (spec);
 	} else if (match_option (arg, "covfilter-file", &val)) {
 		if (config->cov_filter_files == NULL)
 			config->cov_filter_files = g_ptr_array_new ();
@@ -262,7 +281,7 @@ usage (void)
 		mono_profiler_printf ("\t                         %s", event_list [i].event_name);
 
 	mono_profiler_printf ("\t[no]alloc            enable/disable recording allocation info");
-	mono_profiler_printf ("\t[no]legacy           enable/disable pre mono 5.4 default profiler events");
+	mono_profiler_printf ("\t[no]legacy           enable/disable pre Mono 5.6 default profiler events");
 	mono_profiler_printf ("\tsample[-real][=FREQ] enable/disable statistical sampling of threads");
 	mono_profiler_printf ("\t                     FREQ in Hz, 100 by default");
 	mono_profiler_printf ("\t                     the -real variant uses wall clock time instead of process time");

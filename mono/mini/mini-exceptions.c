@@ -89,10 +89,6 @@
 #define MONO_ARCH_CONTEXT_DEF
 #endif
 
-#ifndef MONO_ARCH_STACK_GROWS_UP
-#define MONO_ARCH_STACK_GROWS_UP 0
-#endif
-
 /*
  * Raw frame information is stored in MonoException.trace_ips as an IntPtr[].
  * This structure represents one entry.
@@ -149,18 +145,6 @@ mono_thread_get_managed_sp (void)
 	return addr;
 }
 
-static inline int
-mini_abort_threshold_offset (gpointer threshold, gpointer sp)
-{
-	intptr_t stack_threshold = (intptr_t) threshold;
-	intptr_t stack_pointer = (intptr_t) sp;
-
-	const int direction = MONO_ARCH_STACK_GROWS_UP ? -1 : 1;
-	intptr_t magnitude = stack_pointer - stack_threshold;
-
-	return direction * magnitude;
-}
-
 static inline void
 mini_clear_abort_threshold (void)
 {
@@ -176,7 +160,7 @@ mini_set_abort_threshold (MonoContext *ctx)
 	// Only move it up, to avoid thrown/caught
 	// exceptions lower in the stack from triggering
 	// a rethrow
-	gboolean above_threshold = mini_abort_threshold_offset (jit_tls->abort_exc_stack_threshold, sp) >= 0;
+	gboolean above_threshold = (gsize) sp >= (gsize) jit_tls->abort_exc_stack_threshold;
 	if (!jit_tls->abort_exc_stack_threshold || above_threshold) {
 		jit_tls->abort_exc_stack_threshold = sp;
 	}
@@ -194,7 +178,7 @@ mini_above_abort_threshold (void)
 	if (!sp)
 		return TRUE;
 
-	gboolean above_threshold = mini_abort_threshold_offset (jit_tls->abort_exc_stack_threshold, sp) >= 0;
+	gboolean above_threshold = (gsize) sp >= (gsize) jit_tls->abort_exc_stack_threshold;
 
 	if (above_threshold)
 		jit_tls->abort_exc_stack_threshold = sp;
@@ -1431,6 +1415,11 @@ wrap_non_exception_throws (MonoMethod *m)
 	int i;
 	gboolean val = FALSE;
 
+	if (m->wrapper_type == MONO_WRAPPER_DYNAMIC_METHOD) {
+		MonoDynamicMethod *dm = (MonoDynamicMethod *)m;
+		if (dm->assembly)
+			ass = dm->assembly;
+	}
 	g_assert (ass);
 	if (ass->wrap_non_exception_throws_inited)
 		return ass->wrap_non_exception_throws;
@@ -1685,10 +1674,7 @@ mono_handle_exception_internal_first_pass (MonoContext *ctx, MonoObject *obj, gi
 			dynamic_methods = g_slist_prepend (dynamic_methods, method);
 
 		if (stack_overflow) {
-			if (MONO_ARCH_STACK_GROWS_UP)
-				free_stack = (guint8*)(MONO_CONTEXT_GET_SP (&initial_ctx)) - (guint8*)(MONO_CONTEXT_GET_SP (ctx));
-			else
-				free_stack = (guint8*)(MONO_CONTEXT_GET_SP (ctx)) - (guint8*)(MONO_CONTEXT_GET_SP (&initial_ctx));
+			free_stack = (guint8*)(MONO_CONTEXT_GET_SP (ctx)) - (guint8*)(MONO_CONTEXT_GET_SP (&initial_ctx));
 		} else {
 			free_stack = 0xffffff;
 		}
@@ -1719,7 +1705,7 @@ mono_handle_exception_internal_first_pass (MonoContext *ctx, MonoObject *obj, gi
 
 				if (ei->flags == MONO_EXCEPTION_CLAUSE_FILTER) {
 #ifndef DISABLE_PERFCOUNTERS
-					mono_perfcounters->exceptions_filters++;
+					InterlockedIncrement (&mono_perfcounters->exceptions_filters);
 #endif
 
 #ifndef MONO_CROSS_COMPILE
@@ -2044,10 +2030,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 		//printf ("M: %s %d.\n", mono_method_full_name (method, TRUE), frame_count);
 
 		if (stack_overflow) {
-			if (MONO_ARCH_STACK_GROWS_UP)
-				free_stack = (guint8*)(MONO_CONTEXT_GET_SP (&initial_ctx)) - (guint8*)(MONO_CONTEXT_GET_SP (ctx));
-			else
-				free_stack = (guint8*)(MONO_CONTEXT_GET_SP (ctx)) - (guint8*)(MONO_CONTEXT_GET_SP (&initial_ctx));
+			free_stack = (guint8*)(MONO_CONTEXT_GET_SP (ctx)) - (guint8*)(MONO_CONTEXT_GET_SP (&initial_ctx));
 		} else {
 			free_stack = 0xffffff;
 		}
@@ -2175,7 +2158,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 					}
 					mono_set_lmf (lmf);
 #ifndef DISABLE_PERFCOUNTERS
-					mono_perfcounters->exceptions_depth += frame_count;
+					InterlockedAdd (&mono_perfcounters->exceptions_depth, frame_count);
 #endif
 					if (obj == (MonoObject *)domain->stack_overflow_ex)
 						jit_tls->handling_stack_ovf = FALSE;
@@ -2197,7 +2180,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 					MONO_PROFILER_RAISE (exception_clause, (method, i, ei->flags, ex_obj));
 					jit_tls->orig_ex_ctx_set = FALSE;
 #ifndef DISABLE_PERFCOUNTERS
-					mono_perfcounters->exceptions_finallys++;
+					InterlockedIncrement (&mono_perfcounters->exceptions_finallys);
 #endif
 				}
 				if (ei->flags == MONO_EXCEPTION_CLAUSE_FAULT || ei->flags == MONO_EXCEPTION_CLAUSE_FINALLY) {
@@ -2299,7 +2282,7 @@ mono_handle_exception (MonoContext *ctx, MonoObject *obj)
 	MONO_REQ_GC_UNSAFE_MODE;
 
 #ifndef DISABLE_PERFCOUNTERS
-	mono_perfcounters->exceptions_thrown++;
+	InterlockedIncrement (&mono_perfcounters->exceptions_thrown);
 #endif
 
 	return mono_handle_exception_internal (ctx, obj, FALSE, NULL);
@@ -3285,7 +3268,7 @@ mono_llvm_load_exception (void)
 
 	if (mono_ex->trace_ips) {
 		GList *trace_ips = NULL;
-		gpointer ip = __builtin_return_address (0);
+		gpointer ip = MONO_RETURN_ADDRESS ();
 
 		size_t upper = mono_array_length (mono_ex->trace_ips);
 

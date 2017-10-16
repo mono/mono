@@ -502,20 +502,17 @@ namespace MonoTests.System.Reflection
 		public void GetReferencedAssemblies ()
 		{
 			Assembly corlib_test = Assembly.GetExecutingAssembly ();
-			AssemblyName[] names = corlib_test.GetReferencedAssemblies ();
-			foreach (AssemblyName an in names) {
-				Assert.IsNull (an.CodeBase, "CodeBase");
-				Assert.IsNotNull (an.CultureInfo, "CultureInfo");
-				Assert.IsNull (an.EscapedCodeBase, "EscapedCodeBase");
-				Assert.AreEqual (AssemblyNameFlags.None, an.Flags, "Flags");
-				Assert.IsNotNull (an.FullName, "FullName");
-				Assert.AreEqual (AssemblyHashAlgorithm.SHA1, an.HashAlgorithm, "HashAlgorithm");
-				Assert.IsNull (an.KeyPair, "KeyPair");
-				Assert.IsNotNull (an.Name, "Name");
-				Assert.IsNotNull (an.Version, "Version");
-				Assert.AreEqual (AssemblyVersionCompatibility.SameMachine, 
-					an.VersionCompatibility, "VersionCompatibility");
-			}
+			AssemblyName an = corlib_test.GetReferencedAssemblies ().First (l => l.Name == "mscorlib");
+			Assert.IsNull (an.CodeBase, "CodeBase");
+			Assert.IsNotNull (an.CultureInfo, "CultureInfo");
+			Assert.IsNull (an.EscapedCodeBase, "EscapedCodeBase");
+			Assert.AreEqual (AssemblyNameFlags.None, an.Flags, "Flags");
+			Assert.IsNotNull (an.FullName, "FullName");
+			Assert.AreEqual (AssemblyHashAlgorithm.SHA1, an.HashAlgorithm, "HashAlgorithm");
+			Assert.IsNull (an.KeyPair, "KeyPair");
+			Assert.IsNotNull (an.Name, "Name");
+			Assert.IsNotNull (an.Version, "Version");
+			Assert.AreEqual (AssemblyVersionCompatibility.SameMachine, an.VersionCompatibility, "VersionCompatibility");
 		}
 
 #if !MONOTOUCH && !FULL_AOT_RUNTIME // Reflection.Emit is not supported.

@@ -21,8 +21,8 @@
 #include <limits.h>
 #include <string.h>     /* for swab(3) on Mac OS X */
 
+#include "mph.h" /* Don't remove or move after map.h! Works around issues with Android SDK unified headers */
 #include "map.h"
-#include "mph.h"
 
 G_BEGIN_DECLS
 

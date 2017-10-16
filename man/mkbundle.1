@@ -177,7 +177,9 @@ same as for the compiler -lib: or -L flags.
 Embeds the dynamic library file pointed to by `PATH' and optionally
 give it the name `LIB' into the bundled executable.   This is used to
 ship native library dependencies that are unpacked at startup and
-loaded from the runtime.
+loaded from the runtime. Multiple libraries should be specified in
+dependency order, where later ones on the command line depend on
+earlier ones.
 .TP
 .I "--lists-targets"
 Lists all of the available local cross compilation targets available

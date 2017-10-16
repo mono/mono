@@ -293,15 +293,15 @@ namespace System.Net.Security
 		}
 
 		public override bool CanRead {
-			get { return Impl.CanRead; }
+			get { return impl != null && impl.CanRead; }
 		}
 
 		public override bool CanTimeout {
-			get { return Impl.CanTimeout; }
+			get { return InnerStream.CanTimeout; }
 		}
 
 		public override bool CanWrite {
-			get { return Impl.CanWrite; }
+			get { return impl != null && impl.CanWrite; }
 		}
 
 		public override int ReadTimeout {
@@ -337,7 +337,7 @@ namespace System.Net.Security
 
 		public override void Flush ()
 		{
-			Impl.Flush ();
+			InnerStream.Flush ();
 		}
 
 		void CheckDisposed ()

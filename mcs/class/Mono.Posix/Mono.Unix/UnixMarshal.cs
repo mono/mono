@@ -309,6 +309,9 @@ namespace Mono.Unix {
 
 		public static IntPtr StringToHeap (string s, Encoding encoding)
 		{
+			if (s == null)
+				return IntPtr.Zero;
+
 			return StringToHeap (s, 0, s.Length, encoding);
 		}
 

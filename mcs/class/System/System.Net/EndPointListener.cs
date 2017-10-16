@@ -112,7 +112,13 @@ namespace System.Net {
 				accepted.Close ();
 				return;
 			}
-			HttpConnection conn = new HttpConnection (accepted, epl, epl.secure, epl.cert);
+			HttpConnection conn;
+			try {
+				conn = new HttpConnection (accepted, epl, epl.secure, epl.cert);
+			} catch {
+				accepted.Close ();
+				return;
+			}
 			lock (epl.unregistered) {
 				epl.unregistered [conn] = conn;
 			}

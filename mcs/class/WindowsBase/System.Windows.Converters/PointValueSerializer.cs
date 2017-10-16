@@ -23,7 +23,7 @@
 //	Chris Toshok (toshok@ximian.com)
 //
 
-using System;
+using System.Globalization;
 using System.Windows.Markup;
 
 namespace System.Windows.Converters {
@@ -32,22 +32,26 @@ namespace System.Windows.Converters {
 	{
 		public override bool CanConvertFromString (string value, IValueSerializerContext context)
 		{
-			throw new NotImplementedException ();
+			return true;
 		}
 
 		public override bool CanConvertToString (object value, IValueSerializerContext context)
 		{
-			throw new NotImplementedException ();
+			return value is Point;
 		}
 
 		public override object ConvertFromString (string value, IValueSerializerContext context)
 		{
-			throw new NotImplementedException ();
+			if (value == null)
+				throw new NotSupportedException ("value != null");
+			return Point.Parse (value);
 		}
 
 		public override string ConvertToString (object value, IValueSerializerContext context)
 		{
-			throw new NotImplementedException ();
+			if (value is Point point)
+				return point.ToString (CultureInfo.InvariantCulture);
+			return base.ConvertToString (value, context);
 		}
 	}
 

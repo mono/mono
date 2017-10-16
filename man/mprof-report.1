@@ -213,9 +213,6 @@ The following commands are available:
 .IP \[bu] 2
 \f[I]nocounters\f[]: disables sampling of runtime and performance
 counters, which is normally done every 1 second.
-.IP \[bu] 2
-\f[I]coverage\f[]: collect code coverage data. This implies enabling
-the \f[I]calls\f[] option.
 .RE
 .SS Analyzing the profile data
 .PP
@@ -338,8 +335,6 @@ version
 .IP \[bu] 2
 \f[I]counters\f[]: counters samples
 .IP \[bu] 2
-\f[I]coverage\f[]: code coverage data
-.IP \[bu] 2
 \f[I]stats\f[]: event statistics
 .PP
 It is possible to limit some of the data displayed to a timeframe
@@ -411,13 +406,6 @@ By default mprof-report will print the summary data to the console.
 To print it to a file, instead, use the option:
 .PP
 \f[B]--out=FILENAME\f[]
-.SS Processing code coverage data
-.PP
-If you ran the profiler with the \f[I]coverage\f[] option, you can
-process the collected coverage data into an XML file by running
-mprof-report like this:
-.PP
-\f[B]mprof-report --coverage-out=coverage.xml output.mlpd\f[]
 .SS Dealing with profiler slowness
 .PP
 If the profiler needs to collect lots of data, the execution of the

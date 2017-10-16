@@ -178,7 +178,16 @@ DECL_OFFSET(MonoDelegateTrampInfo, method_ptr)
 // Architecture-specific offsets
 // -----------------------------
 
-#if defined(TARGET_X86)
+#if defined(TARGET_WASM)
+DECL_OFFSET(MonoContext, wasm_ip)
+DECL_OFFSET(MonoContext, wasm_bp)
+DECL_OFFSET(MonoContext, wasm_sp)
+DECL_OFFSET(MonoContext, llvm_exc_reg)
+
+DECL_OFFSET(MonoLMF, method)
+DECL_OFFSET(MonoLMF, lmf_addr)
+
+#elif defined(TARGET_X86)
 DECL_OFFSET(MonoContext, eax)
 DECL_OFFSET(MonoContext, ebx)
 DECL_OFFSET(MonoContext, ecx)
@@ -223,6 +232,7 @@ DECL_OFFSET(MonoLMF, pc)
 DECL_OFFSET(MonoLMF, gregs)
 DECL_OFFSET(DynCallArgs, regs)
 DECL_OFFSET(DynCallArgs, fpregs)
+DECL_OFFSET(DynCallArgs, n_stackargs)
 DECL_OFFSET(DynCallArgs, n_fpargs)
 DECL_OFFSET(DynCallArgs, n_fpret)
 #endif
