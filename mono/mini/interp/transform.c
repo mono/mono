@@ -2749,13 +2749,17 @@ generate (MonoMethod *method, InterpMethod *rtm, unsigned char *is_bb_start, Mon
 				klass = mono_class_get_full (image, token, generic_context);
 
 			if (mono_class_is_nullable (klass)) {
-				g_error ("cee_unbox: implement Nullable");
+				MonoMethod *target_method = mono_class_get_method_from_name (klass, "Unbox", 1);
+				/* td->ip is incremented by interp_transform_call */
+				interp_transform_call (td, method, target_method, domain, generic_context, is_bb_start, body_start_offset, NULL, FALSE, error);
+
+				return_if_nok (error);
+			} else {
+				ADD_CODE (td, MINT_UNBOX);
+				ADD_CODE (td, get_data_item_index (td, klass));
+				SET_SIMPLE_TYPE (td->sp - 1, STACK_TYPE_MP);
+				td->ip += 5;
 			}
-			
-			ADD_CODE(td, MINT_UNBOX);
-			ADD_CODE(td, get_data_item_index (td, klass));
-			SET_SIMPLE_TYPE(td->sp - 1, STACK_TYPE_MP);
-			td->ip += 5;
 			break;
 		case CEE_UNBOX_ANY:
 			CHECK_STACK (td, 1);
