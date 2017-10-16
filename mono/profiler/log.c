@@ -1207,8 +1207,8 @@ gc_roots (MonoProfiler *prof, uint64_t num, const mono_byte *const *addresses, c
 		EVENT_SIZE /* event */ +
 		LEB128_SIZE /* num */ +
 		num * (
-			LEB128_SIZE /* address */ +
-			LEB128_SIZE /* object */
+			LEB128_SIZE /* object */ +
+			LEB128_SIZE /* address */
 		)
 	);
 
@@ -1216,8 +1216,8 @@ gc_roots (MonoProfiler *prof, uint64_t num, const mono_byte *const *addresses, c
 	emit_value (logbuffer, num);
 
 	for (int i = 0; i < num; ++i) {
+		emit_obj (logbuffer, objects [i]);
 		emit_ptr (logbuffer, addresses [i]);
-		emit_obj (logbuffer, (void*)objects [i]);
 	}
 
 	EXIT_LOG;

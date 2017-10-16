@@ -252,10 +252,16 @@ namespace Mono.Profiler.Log {
 
 		public struct HeapRoot {
 
-			public long AddressPointer { get; internal set; }
-
 			public long ObjectPointer { get; internal set; }
+
+			public LogHeapRootAttributes Attributes { get; internal set; }
+
+			public long ExtraInfo { get; internal set; }
+
+			public long AddressPointer { get; internal set; }
 		}
+
+		public long MaxGenerationCollectionCount { get; internal set; }
 
 		public IReadOnlyList<HeapRoot> Roots { get; internal set; }
 

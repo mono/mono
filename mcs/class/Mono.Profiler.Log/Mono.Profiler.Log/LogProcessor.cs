@@ -392,40 +392,37 @@ namespace Mono.Profiler.Log {
 					ev = new HeapEndEvent ();
 					break;
 				case LogEventType.HeapObject: {
-					HeapObjectEvent hoe = new HeapObjectEvent {
+					ev = new HeapObjectEvent {
 						ObjectPointer = ReadObject (),
 						ClassPointer = ReadPointer (),
 						ObjectSize = (long) _reader.ReadULeb128 (),
+						References = new HeapObjectEvent.HeapObjectReference [(int) _reader.ReadULeb128 ()],
 					};
 
-					var list = new HeapObjectEvent.HeapObjectReference [(int) _reader.ReadULeb128 ()];
-
-					for (var i = 0; i < list.Length; i++) {
-						list [i] = new HeapObjectEvent.HeapObjectReference {
+					for (var i = 0; i < ev.References.Length; i++) {
+						ev.References [i] = new HeapObjectEvent.HeapObjectReference {
 							Offset = (long) _reader.ReadULeb128 (),
 							ObjectPointer = ReadObject (),
 						};
 					}
 
-					hoe.References = list;
-					ev = hoe;
-
 					break;
 				}
 
 				case LogEventType.HeapRoots: {
-					var hre = new HeapRootsEvent ();
-					var list = new HeapRootsEvent.HeapRoot [(int) _reader.ReadULeb128 ()];
+					ev = new HeapRootsEvent () {
+						Roots = new HeapRootsEvent.HeapRoot [(int) _reader.ReadULeb128 ()],
+						MaxGenerationCollectionCount = StreamHeader.FormatVersion < 15 ? (long) _reader.ReadULeb128 () : -1,
+					};
 
-					for (var i = 0; i < list.Length; i++) {
-						list [i] = new HeapRootsEvent.HeapRoot {
-							AddressPointer = ReadPointer (),
-							ObjectPointer = ReadObject ()
+					for (var i = 0; i < ev.Roots.Length; i++) {
+						ev.Roots [i] = new HeapRootsEvent.HeapRoot {
+							ObjectPointer = ReadObject (),
+							Attributes = StreamHeader.FormatVersion < 13 ? (LogHeapRootAttributes) _reader.ReadULeb128 () : StreamHeader.FormatVersion < 15 ? (LogHeapRootAttributes) _reader.ReadByte () : (LogHeapRootAttributes) -1,
+							ExtraInfo = StreamHeader.FormatVersion < 15 ? (long) _reader.ReadULeb128 () : 0,
+							AddressPointer = StreamHeader.FormatVersion < 15 ? -1 : ReadPointer (),
 						};
 					}
-
-					hre.Roots = list;
-					ev = hre;
 
 					break;
 				}

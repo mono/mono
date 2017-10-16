@@ -76,7 +76,7 @@
 #define HASH_SIZE 9371
 #define SMALL_HASH_SIZE 31
 
-/* Version < 14 root type enum */
+/* Version < 15 root type enum */
 typedef enum {
 	/* Upper 2 bytes. */
 	MONO_PROFILER_GC_ROOT_PINNING = 1 << 8,
@@ -2708,7 +2708,7 @@ decode_buffer (ProfContext *ctx)
 					fprintf (outfile, "traced object %p, size %llu (%s), refs: %zd\n", (void*)OBJ_ADDR (objdiff), (unsigned long long) size, cd->name, num);
 			} else if (subtype == TYPE_HEAP_ROOT) {
 				uintptr_t num;
-				if (ctx->data_version > 13) {
+				if (ctx->data_version > 14) {
 					int i;
 					uint64_t tdiff = decode_uleb128 (p + 1, &p);
 					LOG_TIME (time_base, tdiff);

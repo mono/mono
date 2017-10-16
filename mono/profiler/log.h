@@ -9,7 +9,7 @@
 #define LOG_HEADER_ID 0x4D505A01
 #define LOG_VERSION_MAJOR 2
 #define LOG_VERSION_MINOR 0
-#define LOG_DATA_VERSION 14
+#define LOG_DATA_VERSION 15
 
 /*
  * Changes in major/minor versions:
@@ -75,7 +75,7 @@
                removed type field from TYPE_SAMPLE_HIT
                removed MONO_GC_EVENT_{MARK,RECLAIM}_{START,END}
                reverted the root_type field back to uleb128
-               GC Roots events now have a different, and saner, format.
+ * version 15: GC Roots events now have a different, and saner, format.
                added gc root register/unregister events to be used to source gc root information
  */
 
