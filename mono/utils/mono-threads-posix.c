@@ -21,6 +21,10 @@
 
 #include <errno.h>
 
+#ifdef IL2CPP_MONO_DEBUGGER
+#include "il2cpp-compat-metadata.h"
+#endif
+
 #if defined(_POSIX_VERSION) || defined(__native_client__)
 
 #include <pthread.h>

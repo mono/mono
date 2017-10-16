@@ -214,7 +214,7 @@ mono_code_manager_new_dynamic (void)
 	return cman;
 }
 
-
+#ifndef IL2CPP_MONO_DEBUGGER
 static void
 free_chunklist (CodeChunk *chunk)
 {
@@ -259,6 +259,7 @@ mono_code_manager_destroy (MonoCodeManager *cman)
 	free_chunklist (cman->current);
 	g_free (cman);
 }
+#endif
 
 /**
  * mono_code_manager_invalidate:
@@ -332,6 +333,7 @@ mono_code_manager_foreach (MonoCodeManager *cman, MonoCodeManagerFunc func, void
 #define BIND_ROOM 4
 #endif
 
+#ifndef IL2CPP_MONO_DEBUGGER
 static CodeChunk*
 new_codechunk (CodeChunk *last, int dynamic, int size)
 {
@@ -522,6 +524,7 @@ mono_code_manager_reserve (MonoCodeManager *cman, int size)
 {
 	return mono_code_manager_reserve_align (cman, size, MIN_ALIGN);
 }
+#endif
 
 /**
  * mono_code_manager_commit:
