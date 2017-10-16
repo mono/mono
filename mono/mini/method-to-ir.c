@@ -9450,6 +9450,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				use_op_switch = TRUE;
 #endif
 
+#ifdef TARGET_WASM
+			use_op_switch = TRUE;
+#endif
+
 			if (COMPILE_LLVM (cfg))
 				use_op_switch = TRUE;
 
