@@ -27,6 +27,7 @@ corefx/SqlConnectionStringBuilder.cs
 corefx/SqlParameterCollection.cs
 corefx/TdsEnums.cs
 corefx/SR.cs
+corefx/SqlDependencyUtils.cs
 ../referencesource/System.Data/System/Data/Sql/SqlDataSourceEnumerator.cs
 ../referencesource/System.Data/System/Data/CodeGen/StrongTypingException.cs
 ../referencesource/System.Data/System/Data/OleDb/PropertyAttributes.cs
@@ -367,6 +368,7 @@ corefx/SR.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlClientMetaDataCollectionNames.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/ApplicationIntent.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/LocalDBAPI.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/LocalDBAPI.Common.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/ParameterPeekAheadValue.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/RowsCopiedEventArgs.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/RowsCopiedEventHandler.cs
@@ -432,8 +434,8 @@ corefx/SR.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlNotificationInfo.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlNotificationEventArgs.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlDependencyListener.cs
-#../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlDependencyUtils.cs
-corefx/Temp.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlDependencyUtils.cs
+#../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlDependencyUtils.AppDomain.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlDependency.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/OnChangedEventHandler.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlTypes/SqlTypeWorkarounds.cs
@@ -446,7 +448,6 @@ corefx/Temp.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SNI/SNILoadHandle.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SNI/SNIMarsConnection.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SNI/SNIMarsHandle.cs
-../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SNI/SNIMarsManager.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SNI/SNIMarsQueuedPacket.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SNI/SNINpHandle.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SNI/SNIPacket.cs

@@ -7,10 +7,8 @@
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/TdsParserStateObjectNative.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/TdsParserStateObjectFactory.Managed.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/TdsParser.Windows.cs
-../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/LocalDBAPI.Windows.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SNI/LocalDB.Windows.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/LocalDBAPI.Windows.cs
-../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/LocalDBAPI.Common.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/DbConnectionPoolIdentity.Windows.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.LoadLibraryEx.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.FreeLibrary.cs

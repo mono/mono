@@ -32,7 +32,7 @@ TXT_RESOURCE_STRINGS = ../referencesource/System.Data/system.data.txt
 RESX_RESOURCE_STRING = \
 	../../../external/corefx/src/System.Data.Common/src/Resources/Strings.resx	\
 	../../../external/corefx/src/System.Data.SqlClient/src/Resources/Strings.resx	\
-	../../../external/corefx/src/System.Data.Odbc/src/Resources/Strings.resx	
+	../../../external/corefx/src/System.Data.Odbc/src/Resources/Strings.resx
 
 TEST_LIB_REFS = System.Core Mono.Data.Sqlite
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:618,169,612,219,168
