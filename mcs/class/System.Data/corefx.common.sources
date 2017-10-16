@@ -368,7 +368,6 @@ corefx/SqlDependencyUtils.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlClientMetaDataCollectionNames.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/ApplicationIntent.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/LocalDBAPI.cs
-../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/LocalDBAPI.Common.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/ParameterPeekAheadValue.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/RowsCopiedEventArgs.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/RowsCopiedEventHandler.cs
