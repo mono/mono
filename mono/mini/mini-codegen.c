@@ -462,6 +462,10 @@ mono_print_ins_index_strbuf (int i, MonoInst *ins)
 			g_string_append_printf (sbuf, " R%d", ins->sreg3);
 
 		switch (ins->opcode) {
+		case OP_ICONST:
+			g_string_append_printf (sbuf, " [%d]", (int)ins->inst_c0);
+			break;
+
 		case OP_LBNE_UN:
 		case OP_LBEQ:
 		case OP_LBLT:
