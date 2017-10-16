@@ -103,13 +103,11 @@ mono_atomic_xchg_ptr (volatile gpointer *dest, gpointer exch)
 	return InterlockedExchangePointer ((PVOID volatile *)dest, (PVOID)exch);
 }
 
-
 static inline gint32
 mono_atomic_fetch_add_i32 (volatile gint32 *dest, gint32 add)
 {
 	return InterlockedExchangeAdd ((LONG volatile *)dest, (LONG)add);
 }
-
 
 static inline gint64
 mono_atomic_fetch_add_i64 (volatile gint64 *dest, gint64 add)
@@ -120,37 +118,60 @@ mono_atomic_fetch_add_i64 (volatile gint64 *dest, gint64 add)
 static inline gint8
 mono_atomic_load_i8 (volatile gint8 *src)
 {
-	return *src;
+	gint8 loaded_value = *src;
+	_ReadWriteBarrier ();
+
+	return loaded_value;
 }
 
 static inline gint16
 mono_atomic_load_i16 (volatile gint16 *src)
 {
-	return *src;
+	gint16 loaded_value = *src;
+	_ReadWriteBarrier ();
+
+	return loaded_value;
 }
 
 static inline gint32 mono_atomic_load_i32 (volatile gint32 *src)
 {
-	return InterlockedCompareExchange ((LONG volatile *)src, 0, 0);
+	gint32 loaded_value = *src;
+	_ReadWriteBarrier ();
+
+	return loaded_value;
 }
 
 static inline gint64
 mono_atomic_load_i64 (volatile gint64 *src)
 {
+#if defined(TARGET_AMD64)
+	gint64 loaded_value = *src;
+	_ReadWriteBarrier ();
+
+	return loaded_value;
+#else
 	return InterlockedCompareExchange64 ((LONG64 volatile *)src, 0, 0);
+#endif
 }
 
 static inline gpointer
 mono_atomic_load_ptr (volatile gpointer *src)
 {
-	return InterlockedCompareExchangePointer ((PVOID volatile *)src, NULL, NULL);
+	gpointer loaded_value = *src;
+	_ReadWriteBarrier ();
+
+	return loaded_value;
 }
 
 static inline void
 mono_atomic_store_i8 (volatile gint8 *dst, gint8 val)
 {
+#if (_MSC_VER >= 1600)
+	InterlockedExchange8 ((CHAR volatile *)dst, (CHAR)val);
+#else
 	*dst = val;
 	mono_memory_barrier ();
+#endif
 }
 
 static inline void
