@@ -70,7 +70,7 @@
 void mono_wasm_create_module (void);
 void mono_wasm_emit_aot_data (const char *symbol, guint8 *data, int data_len);
 void mono_wasm_emit_aot_file_info (MonoAotFileInfo *info, gboolean has_jitted_code);
-void mono_wasm_emit_module (void);
+void mono_wasm_emit_module (const char *filename);
 
 #endif
 
@@ -11857,8 +11857,15 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 #endif
 
 #ifdef TARGET_WASM
-	if (acfg->wasm)
-		mono_wasm_emit_module ();
+	if (acfg->wasm) {
+		char *outfile_name;
+		if (acfg->aot_opts.outfile)
+			outfile_name = g_strdup_printf ("%s", acfg->aot_opts.outfile);
+		else
+			outfile_name = g_strdup_printf ("%s.%s", acfg->image->name, "wasm");
+
+		mono_wasm_emit_module (outfile_name);
+	}
 #endif
 	TV_GETTIME (btv);
 
