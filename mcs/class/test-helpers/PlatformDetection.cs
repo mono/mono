@@ -3,5 +3,6 @@ namespace System
 	static partial class PlatformDetection
 	{
 		public static readonly bool IsNetNative = false;
+		public static readonly bool IsFullFramework = true;
 	}
 }

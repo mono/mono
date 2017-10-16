@@ -19,10 +19,10 @@
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/DataSet1.Designer.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/DataSetAssertion.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/DataSetInferXmlSchemaTest.cs
-../../../external/corefx/src/System.Data.Common/tests/System/Data/DataSetReadXmlSchemaTest.cs
+#../../../external/corefx/src/System.Data.Common/tests/System/Data/DataSetReadXmlSchemaTest.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/DataSetReadXmlTest.cs
-../../../external/corefx/src/System.Data.Common/tests/System/Data/DataSetTest.cs
-../../../external/corefx/src/System.Data.Common/tests/System/Data/DataSetTest2.cs
+#../../../external/corefx/src/System.Data.Common/tests/System/Data/DataSetTest.cs
+#../../../external/corefx/src/System.Data.Common/tests/System/Data/DataSetTest2.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/DataSetTypedDataSetTest.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/DataTableCollectionTest.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/DataTableCollectionTest2.cs
@@ -30,7 +30,7 @@
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/DataTableReaderTest.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/DataTableReadWriteXmlTest.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/DataTableReadXmlSchemaTest.cs
-../../../external/corefx/src/System.Data.Common/tests/System/Data/DataTableTest.cs
+#../../../external/corefx/src/System.Data.Common/tests/System/Data/DataTableTest.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/DataTableTest2.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/DataTableTest3.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/DataTableTest4.cs
@@ -40,7 +40,7 @@
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/DataViewTest2.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/DataViewTest_IBindingList.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/DataViewTest_IBindingListView.cs
-../../../external/corefx/src/System.Data.Common/tests/System/Data/DBConcurrencyExceptionTest.cs
+#../../../external/corefx/src/System.Data.Common/tests/System/Data/DBConcurrencyExceptionTest.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/DeletedRowInaccessibleExceptionTest.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/DuplicateNameExceptionTest.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/EvaluateExceptionTest.cs
@@ -61,7 +61,7 @@
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/XmlDataLoaderTest.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/XmlDataReaderTest.cs
 
-../../../external/corefx/src/System.Data.Common/tests/System/Data/SqlTypes/*.cs
+#../../../external/corefx/src/System.Data.Common/tests/System/Data/SqlTypes/*.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/Common/DataAdapterTest.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/Common/DataColumnMappingCollectionTest.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/Common/DataTableMappingCollectionTest.cs
@@ -74,15 +74,12 @@
 
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/Common/DbDataAdapterTest.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/Common/DbDataReaderMock.cs
-../../../external/corefx/src/System.Data.Common/tests/System/Data/Common/DbConnectionTests.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/Common/DbExceptionTests.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/Common/DbTransactionTest.cs
 ../../../external/corefx/src/Common/tests/System/Runtime/Serialization/Formatters/BinaryFormatterHelpers.cs
 ../../../external/corefx/src/Common/tests/System/Diagnostics/Tracing/TestEventListener.cs
 ../../../external/corefx/src/System.Data.Common/tests/DataProvider.cs
 ../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/AssertExtensions.cs
-corefx/PlatformDetection.cs
-
 
 # TDS:
 ../../../external/corefx/src/System.Data.SqlClient/tests/Tools/TDS/TDS/AllHeaders/*.cs
