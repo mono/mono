@@ -851,6 +851,7 @@ mono_wasm_code_gen (MonoCompile *cfg)
 	//TODO we must cannonicalize this (or use binaryen's support fo rthat)
 	BinaryenFunctionTypeRef func_sig = BinaryenAddFunctionType (aot_module, NULL, mono_type_to_wasm_type (sig->ret), params, sig->param_count + sig->hasthis);
 	BinaryenFunctionRef func = BinaryenAddFunction (aot_module, method->name, func_sig, (BinaryenType *)cg.vars->pdata, cg.vars->len, func_body);
+	BinaryenExportRef export = BinaryenAddExport(aot_module, method->name, method->name);
 	g_ptr_array_add (all_funcs, func);
 }
 
