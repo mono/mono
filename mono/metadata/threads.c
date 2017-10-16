@@ -1490,7 +1490,8 @@ ves_icall_System_Threading_Thread_Sleep_internal(gint32 ms)
 		if (alerted) {
 			MonoException* exc = mono_thread_execute_interruption ();
 			if (exc) {
-				mono_raise_exception (exc);
+				mono_set_pending_exception (exc);
+				return;
 			} else {
 				// FIXME: !MONO_INFINITE_WAIT
 				if (ms != MONO_INFINITE_WAIT)
@@ -4615,7 +4616,7 @@ mono_thread_interruption_checkpoint_request (gboolean bypass_abort_protection)
 		return NULL;
 	if (!mono_thread_get_interruption_requested (thread))
 		return NULL;
-	if (!bypass_abort_protection && is_running_protected_wrapper ())
+	if (!bypass_abort_protection && !mono_thread_current ()->pending_exception && is_running_protected_wrapper ())
 		return NULL;
 
 	return mono_thread_execute_interruption ();

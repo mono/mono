@@ -978,6 +978,15 @@ namespace MonoTests.System
 		#endif
 
 			[Test]
+			public void FindIsraelStandardTime ()
+			{
+				if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+					Assert.Ignore ("Only applies to Windows.");
+
+				TimeZoneInfo.FindSystemTimeZoneById ("Israel Standard Time");
+			}
+
+			[Test]
 			public void SubminuteDSTOffsets ()
 			{
 				if (Environment.OSVersion.Platform != PlatformID.Unix)

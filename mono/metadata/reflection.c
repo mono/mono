@@ -1546,12 +1546,7 @@ _mono_reflection_parse_type (char *name, char **endptr, gboolean is_recursed,
 
 	start = p = w = name;
 
-	//FIXME could we just zero the whole struct? memset (&info, 0, sizeof (MonoTypeNameParse))
-	memset (&info->assembly, 0, sizeof (MonoAssemblyName));
-	info->name = info->name_space = NULL;
-	info->nested = NULL;
-	info->modifiers = NULL;
-	info->type_arguments = NULL;
+	memset (info, 0, sizeof (MonoTypeNameParse));
 
 	/* last_point separates the namespace from the name */
 	last_point = NULL;
@@ -1826,11 +1821,36 @@ mono_identifier_unescape_info (MonoTypeNameParse *info)
 int
 mono_reflection_parse_type (char *name, MonoTypeNameParse *info)
 {
+	MonoError error;
+	gboolean result = mono_reflection_parse_type_checked (name, info, &error);
+	mono_error_cleanup (&error);
+	return result ? 1 : 0;
+}
+
+/**
+ * mono_reflection_parse_type_checked:
+ * \param name the string to parse
+ * \param info the parsed name components
+ * \param error set on error
+ * 
+ * Parse the given \p name and write the results to \p info, setting \p error
+ * on error.  The string \p name is modified in place and \p info points into
+ * its memory and into allocated memory.
+ *
+ * \returns TRUE if parsing succeeded, otherwise returns FALSE and sets \p error.
+ *
+ */
+gboolean
+mono_reflection_parse_type_checked (char *name, MonoTypeNameParse *info, MonoError *error)
+{
+	error_init (error);
 	int ok = _mono_reflection_parse_type (name, NULL, FALSE, info);
 	if (ok) {
 		mono_identifier_unescape_info (info);
+	} else {
+		mono_error_set_argument (error, "typeName", "failed parse: %s", name);
 	}
-	return ok;
+	return (ok != 0);
 }
 
 static MonoType*
@@ -2240,15 +2260,13 @@ mono_reflection_type_from_name_checked (char *name, MonoImage *image, MonoError 
 	tmp = g_strdup (name);
 	
 	/*g_print ("requested type %s\n", str);*/
-	if (mono_reflection_parse_type (tmp, &info)) {
-		type = _mono_reflection_get_type_from_info (&info, image, FALSE, error);
-		if (!is_ok (error)) {
-			g_free (tmp);
-			mono_reflection_free_type_info (&info);
-			return NULL;
-		}
+	MonoError parse_error;
+	if (!mono_reflection_parse_type_checked (tmp, &info, &parse_error)) {
+		mono_error_cleanup (&parse_error);
+		goto leave;
 	}
-
+	type = _mono_reflection_get_type_from_info (&info, image, FALSE, error);
+leave:
 	g_free (tmp);
 	mono_reflection_free_type_info (&info);
 	return type;

@@ -131,5 +131,17 @@ namespace MonoTests.EvaluatorTest
 		{
 			Evaluator.Run ("public class TestClass { private TestEnum _te; public string Get() { return _te.ToString(); } } public enum TestEnum { First, Second }");
 		}
+
+		[Test]
+		public void EnumTypeWithOrderDependency ()
+		{
+			Evaluator.Run ("public class TestClass { public enum TestEnum { Val1, Val2, Val3 } public TestEnum test; public TestClass() { test = TestEnum.Val3; } }");
+			object res = Evaluator.Evaluate ("new TestClass()");
+
+			var fields = res.GetType ().GetFields ();
+			foreach (var field in fields) {
+				Console.WriteLine ($"{field.Name} = {field.MemberType}");
+			}
+		}
 	}
 }

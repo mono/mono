@@ -1942,7 +1942,7 @@ do_jit_call (stackval *sp, unsigned char *vt_sp, ThreadContext *context, InterpF
 		}
 		break;
 	default:
-		printf ("%s\n", mono_type_full_name (rtype));
+		g_print ("%s\n", mono_type_full_name (rtype));
 		g_assert_not_reached ();
 		break;
 	}
@@ -3498,7 +3498,7 @@ ves_exec_method_with_context (InterpFrame *frame, ThreadContext *context, unsign
 			g_assert (c->valuetype);
 			/* if this assertion fails, we need to add a write barrier */
 			g_assert (!MONO_TYPE_IS_REFERENCE (&c->byval_arg));
-			if (c->byval_arg.type == MONO_TYPE_VALUETYPE)
+			if (mint_type (&c->byval_arg) == MINT_TYPE_VT)
 				stackval_from_data (&c->byval_arg, &sp [-2], sp [-1].data.p, FALSE);
 			else
 				stackval_from_data (&c->byval_arg, sp [-2].data.p, sp [-1].data.p, FALSE);
@@ -3511,7 +3511,7 @@ ves_exec_method_with_context (InterpFrame *frame, ThreadContext *context, unsign
 			c = rtm->data_items[* (guint16 *)(ip + 1)];
 			ip += 2;
 			p = sp [-1].data.p;
-			if (c->byval_arg.type == MONO_TYPE_VALUETYPE && !c->enumtype) {
+			if (mint_type (&c->byval_arg) == MINT_TYPE_VT && !c->enumtype) {
 				int size = mono_class_value_size (c, NULL);
 				sp [-1].data.p = vt_sp;
 				vt_sp += (size + 7) & ~7;
@@ -3726,11 +3726,15 @@ array_constructed:
 			o = sp [-1].data.p;
 			if (!o)
 				THROW_EX (mono_get_exception_null_reference (), ip);
-			i32 = READ32(ip + 2);
+
+			MonoClassField *field = rtm->data_items[* (guint16 *)(ip + 2)];
+			MonoClass *klass = mono_class_from_mono_type (field->type);
+			i32 = mono_class_value_size (klass, NULL);
+
 			sp [-1].data.p = vt_sp;
-			memcpy(sp [-1].data.p, (char *)o + * (guint16 *)(ip + 1), i32);
+			memcpy (sp [-1].data.p, (char *)o + * (guint16 *)(ip + 1), i32);
 			vt_sp += (i32 + 7) & ~7;
-			ip += 4;
+			ip += 3;
 			MINT_IN_BREAK;
 
 		MINT_IN_CASE(MINT_LDRMFLD) {
@@ -3765,9 +3769,12 @@ array_constructed:
 			o = sp [-1].data.p;
 			if (!o)
 				THROW_EX (mono_get_exception_null_reference (), ip);
+
 			field = rtm->data_items[* (guint16 *)(ip + 1)];
-			i32 = READ32(ip + 2);
-			ip += 4;
+			MonoClass *klass = mono_class_from_mono_type (field->type);
+			i32 = mono_class_value_size (klass, NULL);
+	
+			ip += 2;
 #ifndef DISABLE_REMOTING
 			if (mono_object_is_transparent_proxy (o)) {
 				MonoClass *klass = ((MonoTransparentProxy*)o)->remote_class->proxy_class;
@@ -3810,17 +3817,23 @@ array_constructed:
 			ip += 2;
 			MINT_IN_BREAK;
 
-		MINT_IN_CASE(MINT_STFLD_VT)
+		MINT_IN_CASE(MINT_STFLD_VT) {
 			o = sp [-2].data.p;
 			if (!o)
 				THROW_EX (mono_get_exception_null_reference (), ip);
-			i32 = READ32(ip + 2);
 			sp -= 2;
-			memcpy((char *)o + * (guint16 *)(ip + 1), sp [1].data.p, i32);
-			vt_sp -= (i32 + 7) & ~7;
-			ip += 4;
-			MINT_IN_BREAK;
 
+			MonoClassField *field = rtm->data_items[* (guint16 *)(ip + 2)];
+			MonoClass *klass = mono_class_from_mono_type (field->type);
+			i32 = mono_class_value_size (klass, NULL);
+
+			guint16 offset = * (guint16 *)(ip + 1);
+			mono_value_copy ((char *) o + offset, sp [1].data.p, klass);
+
+			vt_sp -= (i32 + 7) & ~7;
+			ip += 3;
+			MINT_IN_BREAK;
+		}
 		MINT_IN_CASE(MINT_STRMFLD) {
 			MonoClassField *field;
 
@@ -3850,8 +3863,9 @@ array_constructed:
 			if (!o)
 				THROW_EX (mono_get_exception_null_reference (), ip);
 			field = rtm->data_items[* (guint16 *)(ip + 1)];
-			i32 = READ32(ip + 2);
-			ip += 4;
+			MonoClass *klass = mono_class_from_mono_type (field->type);
+			i32 = mono_class_value_size (klass, NULL);
+			ip += 2;
 
 #ifndef DISABLE_REMOTING
 			if (mono_object_is_transparent_proxy (o)) {
@@ -3860,7 +3874,7 @@ array_constructed:
 				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
 			} else
 #endif
-				memcpy((char*)o + field->offset, sp [-1].data.p, i32);
+				mono_value_copy ((char *) o + field->offset, sp [-1].data.p, klass);
 
 			sp -= 2;
 			vt_sp -= (i32 + 7) & ~7;
@@ -3904,12 +3918,13 @@ array_constructed:
 		MINT_IN_CASE(MINT_STSFLD_VT) {
 			MonoClassField *field = rtm->data_items [* (guint16 *)(ip + 1)];
 			gpointer addr = mono_class_static_field_address (rtm->domain, field);
-			int size = READ32 (ip + 2);
-			ip += 4;
+			MonoClass *klass = mono_class_from_mono_type (field->type);
+			i32 = mono_class_value_size (klass, NULL);
+			ip += 2;
 
 			--sp;
 			stackval_to_data (field->type, sp, addr, FALSE);
-			vt_sp -= (size + 7) & ~7;
+			vt_sp -= (i32 + 7) & ~7;
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_STOBJ_VT) {
@@ -3978,13 +3993,16 @@ array_constructed:
 		MINT_IN_CASE(MINT_BOX) {
 			c = rtm->data_items [* (guint16 *)(ip + 1)];
 			guint16 offset = * (guint16 *)(ip + 2);
+			gboolean pop_vt_sp = !(offset & BOX_NOT_CLEAR_VT_SP);
+			offset &= ~BOX_NOT_CLEAR_VT_SP;
 
-			if (c->byval_arg.type == MONO_TYPE_VALUETYPE && !c->enumtype && !(mono_class_is_magic_int (c) || mono_class_is_magic_float (c))) {
+			if (mint_type (&c->byval_arg) == MINT_TYPE_VT && !c->enumtype && !(mono_class_is_magic_int (c) || mono_class_is_magic_float (c))) {
 				int size = mono_class_value_size (c, NULL);
 				sp [-1 - offset].data.p = mono_value_box_checked (rtm->domain, c, sp [-1 - offset].data.p, &error);
 				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
 				size = (size + 7) & ~7;
-				vt_sp -= size;
+				if (pop_vt_sp)
+					vt_sp -= size;
 			} else {
 				stackval_to_data (&c->byval_arg, &sp [-1 - offset], (char *) &sp [-1 - offset], FALSE);
 				sp [-1 - offset].data.p = mono_value_box_checked (rtm->domain, c, &sp [-1 - offset], &error);
@@ -4521,7 +4539,7 @@ array_constructed:
 			goto exit_frame;
 		MINT_IN_CASE(MINT_MONO_TLS) {
 			MonoTlsKey key = *(gint32 *)(ip + 1);
-			sp->data.p = ((gpointer (*)()) mono_tls_get_tls_getter (key, FALSE)) ();
+			sp->data.p = ((gpointer (*)(void)) mono_tls_get_tls_getter (key, FALSE)) ();
 			sp++;
 			ip += 3;
 			MINT_IN_BREAK;
@@ -4535,8 +4553,8 @@ array_constructed:
 			++ip;
 
 			context->original_domain = NULL;
-			MonoDomain *tls_domain = (MonoDomain *) ((gpointer (*)()) mono_tls_get_tls_getter (TLS_KEY_DOMAIN, FALSE)) ();
-			gpointer tls_jit = ((gpointer (*)()) mono_tls_get_tls_getter (TLS_KEY_DOMAIN, FALSE)) ();
+			MonoDomain *tls_domain = (MonoDomain *) ((gpointer (*)(void)) mono_tls_get_tls_getter (TLS_KEY_DOMAIN, FALSE)) ();
+			gpointer tls_jit = ((gpointer (*)(void)) mono_tls_get_tls_getter (TLS_KEY_DOMAIN, FALSE)) ();
 
 			if (tls_domain != rtm->domain || !tls_jit)
 				context->original_domain = mono_jit_thread_attach (rtm->domain);
@@ -5190,8 +5208,20 @@ die_on_ex:
 			++sp;
 			goto main_loop;
 		}
-		goto exit_frame;
+		goto check_lmf;
 	}
+
+check_lmf:
+	{
+		/* make sure we don't miss to pop a LMF */
+		MonoLMF *lmf= mono_get_lmf ();
+		if (lmf && (gsize) lmf->previous_lmf & 2) {
+			MonoLMFExt *ext = (MonoLMFExt *) lmf;
+			if (ext->interp_exit && ext->interp_exit_data == frame->parent)
+				interp_pop_lmf (ext);
+		}
+	}
+
 exit_frame:
 
 	if (!frame->ex && MONO_PROFILER_ENABLED (method_leave) &&
