@@ -1398,6 +1398,7 @@ typedef struct MonoJumpInfoToken {
 typedef struct MonoJumpInfoBBTable {
 	MonoBasicBlock **table;
 	int table_size;
+	MonoBasicBlock *default_bblock;
 } MonoJumpInfoBBTable;
 
 typedef struct MonoJumpInfoRgctxEntry MonoJumpInfoRgctxEntry;

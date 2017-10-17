@@ -4,6 +4,11 @@
 
 #include "binaryen-c.h"
 
+typedef struct {
+	gboolean is_switch;
+	gpointer data;
+} WasmBranchData;
+
 void mono_wasm_create_module (void);
 void mono_wasm_emit_aot_data (const char *symbol, guint8 *data, int data_len);
 void mono_wasm_emit_aot_file_info (MonoAotFileInfo *info, gboolean has_jitted_code);
@@ -689,6 +694,8 @@ mono_wasm_code_gen (MonoCompile *cfg)
 		GPtrArray *body = g_ptr_array_new ();
 		MonoInst *ins;
 		BinaryenExpressionRef active_branch = NULL;
+		BinaryenExpressionRef switch_cond = NULL;
+		MonoJumpInfoBBTable *switch_table = NULL;
 
 		for (ins = bb->code; ins; ins = ins->next) {
 			switch (ins->opcode) {
@@ -822,6 +829,11 @@ mono_wasm_code_gen (MonoCompile *cfg)
 				break;
 			}
 
+			case OP_SWITCH: {
+				switch_cond = get_iloc (&cg, ins->sreg1);
+				switch_table = ins->inst_p0;
+				break;
+			}
 			default:
 				printf ("wasm backend can't translate: ");
 				mono_print_ins (ins);
@@ -832,14 +844,27 @@ mono_wasm_code_gen (MonoCompile *cfg)
 		if (!bb->next_bb && ret_var_idx != -1)
 			g_ptr_array_add (body, BinaryenReturn (aot_module, BinaryenGetLocal (aot_module, ret_var_idx, mono_type_to_wasm_type (sig->ret))));
 
-		//FIXME should the type be the ret type in case of the leaf block?		
 		BinaryenExpressionRef block = BinaryenBlock (aot_module, g_strdup_printf ("BB_%d", bb->block_num), (BinaryenExpressionRef*) body->pdata, body->len, BinaryenNone ());
-		//how do we connect fallthrough blocks?
-		RelooperBlockRef ref = RelooperAddBlock (relooper, block);
-		bb->backend_data = ref;
-		bb->backend_branch_data = active_branch;
+
+		RelooperBlockRef this_block = NULL;
+		WasmBranchData *branch_data = NULL;
+		if (switch_cond) {
+			this_block = RelooperAddBlockWithSwitch (relooper, block, switch_cond);
+			branch_data = mono_mempool_alloc (cfg->mempool, sizeof (WasmBranchData));
+			branch_data->is_switch = TRUE;
+			branch_data->data = switch_table;
+		} else {
+			this_block = RelooperAddBlock (relooper, block);
+			if (active_branch) {
+				branch_data = mono_mempool_alloc (cfg->mempool, sizeof (WasmBranchData));
+				branch_data->is_switch = FALSE;
+				branch_data->data = active_branch;
+			}
+		}
+		bb->backend_data = this_block;
+		bb->backend_branch_data = branch_data;
 		if (bb == cfg->bb_entry)
-			entry_block = ref;
+			entry_block = this_block;
 	}
 
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
@@ -849,11 +874,32 @@ mono_wasm_code_gen (MonoCompile *cfg)
 			if (cfg->verbose_level > 2)
 				printf ("connecting BB_%d to BB_%d\n", bb->block_num, bb->out_bb [0]->block_num);
 			RelooperAddBranch ((RelooperBlockRef)bb->backend_data, (RelooperBlockRef)bb->out_bb [0]->backend_data, NULL, NULL);
-		} else if (bb->out_count == 2) {
-			if (cfg->verbose_level > 2)
-				printf ("connecting BB_%d to BB_%d and BB_%d\n", bb->block_num, bb->out_bb [0]->block_num, bb->out_bb [1]->block_num);
-			RelooperAddBranch ((RelooperBlockRef)bb->backend_data, (RelooperBlockRef)bb->out_bb [0]->backend_data, bb->backend_branch_data, NULL);
-			RelooperAddBranch ((RelooperBlockRef)bb->backend_data, (RelooperBlockRef)bb->out_bb [1]->backend_data, NULL, NULL);
+		} else if (bb->out_count > 1) {
+			int i;
+			if (cfg->verbose_level > 2) {
+				printf ("connecting BB_%d to ", bb->block_num);
+				for (i = 0; i < bb->out_count; ++i)
+					printf ("BB_%d ", bb->out_bb [i]->block_num);
+				printf ("\n");
+			}
+			WasmBranchData *bd = bb->backend_branch_data;
+			if (bd->is_switch) {
+				if (cfg->verbose_level > 1) printf ("emiting switch\n");
+
+				MonoJumpInfoBBTable *table = bd->data;
+				for (i = 0; i < table->table_size; ++i) {
+					BinaryenIndex idx = { i };
+					if (cfg->verbose_level > 1) printf ("\t[%d] -> BB_%d\n", i, table->table [i]->block_num);
+
+					BinaryenExpressionRef cond_exp = BinaryenDrop (aot_module, BinaryenConst (aot_module, BinaryenLiteralInt32 (i)));
+					RelooperAddBranchForSwitch ((RelooperBlockRef)bb->backend_data, (RelooperBlockRef)table->table [i]->backend_data, &idx, 1, cond_exp);
+				}
+				printf ("\t[default] -> BB_%d\n", table->default_bblock->block_num);
+				RelooperAddBranchForSwitch ((RelooperBlockRef)bb->backend_data, (RelooperBlockRef)table->default_bblock->backend_data, NULL, 0, NULL);
+			} else {
+				RelooperAddBranch ((RelooperBlockRef)bb->backend_data, (RelooperBlockRef)bb->out_bb [0]->backend_data, bd->data, NULL);
+				RelooperAddBranch ((RelooperBlockRef)bb->backend_data, (RelooperBlockRef)bb->out_bb [1]->backend_data, NULL, NULL);	
+			}
 		} else {
 			g_error ("Cannot handle branching factor of %d\n", bb->out_count);
 		}

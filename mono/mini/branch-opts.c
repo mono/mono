@@ -1425,8 +1425,7 @@ mono_optimize_branches (MonoCompile *cfg)
 						if (cfg->verbose_level > 2)
 							printf ("REWRITE BRANCH 10\n");
 						if (bb->last_ins->prev && is_compare_op (bb->last_ins->prev))
-							MONO_DELETE_INS (bb, bb->last_ins->prev);
-
+							NULLIFY_INS (bb->last_ins->prev);
 
 						if (!bb->extended)
 							mono_unlink_bblock (cfg, bb, untaken_branch_target);

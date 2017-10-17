@@ -9441,6 +9441,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			table = (MonoJumpInfoBBTable *)mono_mempool_alloc (cfg->mempool, sizeof (MonoJumpInfoBBTable));
 			table->table = targets;
 			table->table_size = n;
+#ifdef TARGET_WASM
+			table->default_bblock = default_bblock;
+			link_bblock (cfg, cfg->cbb, default_bblock);
+#endif
 
 			use_op_switch = FALSE;
 #ifdef TARGET_ARM
