@@ -48,8 +48,8 @@ namespace MonoTests.System.Data.Connected
 		private static ConnectionManager instance;
 		private ConnectionHolder<SqlConnection> sql;
 
-		private const string OdbcEnvVar = "SYSTEM_DATA_ODBC_V2";
-		private const string SqlEnvVar = "SYSTEM_DATA_MSSQL_V2";
+		private const string OdbcEnvVar = "SYSTEM_DATA_ODBC_V3";
+		private const string SqlEnvVar = "SYSTEM_DATA_MSSQL_V3";
 
 		private ConnectionManager ()
 		{
