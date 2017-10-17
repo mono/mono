@@ -466,6 +466,43 @@ public class HashAlgorithmTest {
 		hash.TransformFinalBlock (input, 0, input.Length);
 		Assert.IsNotNull (hash.Hash);
 	}
+
+	[Test]
+	public void Hash_NoExternalChanges ()
+	{
+		byte[] input = new byte [512];
+		for (int i=0;i<input.Length;i++)
+			input[i] = (byte)(i % 0xFF);
+		hash.TransformFinalBlock (input, 0, input.Length);
+
+		byte[] brokenHash = hash.Hash;
+		Array.Clear(brokenHash, 0, brokenHash.Length);
+
+		//If the byte array is returned as a ref, both instance will be cleared.
+		Assert.AreNotEqual(hash.Hash, brokenHash, "ExternalChanges");
+	}
+
+	[Test]
+	[ExpectedException (typeof (ObjectDisposedException))]
+	public void Hash_DisposedException ()
+	{
+		hash.Dispose();
+		//Should fail since the hash object is disposed.
+		Assert.IsNull(hash.Hash);
+	}
+
+	[Test]
+	[ExpectedException (typeof (CryptographicUnexpectedOperationException))]
+	public void Hash_StateExeception ()
+	{
+		hash.Initialize ();
+		byte[] input = new byte [8];
+		byte[] output = new byte [8];
+		hash.TransformBlock (input, 0, input.Length, output, 0);
+
+		//Should fail with CryptographicUnexpectedOperationException as TransformFinalBlock was not called.
+		Assert.IsNull(hash.Hash);
+	}
 }
 
 }
