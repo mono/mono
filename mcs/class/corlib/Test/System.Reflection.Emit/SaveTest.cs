@@ -83,10 +83,10 @@ public class SaveTest
 	protected void TearDown ()
 	{
 		try {
+			// This throws an exception under MS.NET, since the directory contains loaded
+			// assemblies.
 			Directory.Delete (tempDir, true);
-		} catch (DirectoryNotFoundException) {
-		} catch (IOException) {
-			// Can happen on Windows if assemblies from this dir are still used
+		} catch (Exception) {
 		}
 	}
 
