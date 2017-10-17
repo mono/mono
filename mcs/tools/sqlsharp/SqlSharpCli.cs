@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.Common;
+using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.IO;
 using System.Reflection;
@@ -689,11 +690,9 @@ namespace Mono.Data.SqlSharp {
 			}
 			else {
 				switch(provider) {
-#if OLEDB
 				case "OLEDB":
-					adapter = (DbDataAdapter) new System.Data.OleDb.OleDbDataAdapter ();
+					adapter = (DbDataAdapter) new OleDbDataAdapter ();
 					break;
-#endif
 				case "SQLCLIENT":
 					adapter = (DbDataAdapter) new SqlDataAdapter ();
 					break;
@@ -846,11 +845,9 @@ namespace Mono.Data.SqlSharp {
 					conn = factory.CreateConnection();
 				else {
 					switch (provider) {
-#if OLEDB
 					case "OLEDB":
-						conn = new System.Data.OleDb.OleDbConnection ();
+						conn = new OleDbConnection ();
 						break;
-#endif
 					case "SQLCLIENT":
 						conn = new SqlConnection ();
 						break;
@@ -1906,4 +1903,3 @@ namespace Mono.Data.SqlSharp {
 		}
 	}
 }
-

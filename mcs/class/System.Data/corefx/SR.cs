@@ -694,7 +694,7 @@ partial class SR
 	public const string SNI_ERROR_56 = "Unable to load the SQLUserInstance.dll from the location specified in the registry. Verify that the Local Database Runtime feature of SQL Server Express is properly installed.";
 	public const string SNI_ERROR_57 = "Invalid SQLUserInstance.dll found at the location specified in the registry. Verify that the Local Database Runtime feature of SQL Server Express is properly installed.";
 	public const string Snix_Connect = "A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections.";
-	public const string Snix_PreLoginBeforeSuccessfullWrite = "The client was unable to establish a connection because of an error during connection initialization process before login. Possible causes include the following:  the client tried to connect to an unsupported version of SQL Server; the server was too busy to accept new connections; or there was a resource limitation (insufficient memory or maximum allowed connections) on the server.";
+	public const string Snix_PreLoginBeforeSuccessfulWrite = "The client was unable to establish a connection because of an error during connection initialization process before login. Possible causes include the following:  the client tried to connect to an unsupported version of SQL Server; the server was too busy to accept new connections; or there was a resource limitation (insufficient memory or maximum allowed connections) on the server.";
 	public const string Snix_PreLogin = "A connection was successfully established with the server, but then an error occurred during the pre-login handshake.";
 	public const string Snix_LoginSspi = "A connection was successfully established with the server, but then an error occurred when obtaining the security/SSPI context information for integrated security login.";
 	public const string Snix_Login = "A connection was successfully established with the server, but then an error occurred during the login process.";
@@ -777,9 +777,9 @@ partial class SR
 	public const string MDF_MissingDataSourceInformationColumn = "One of the required DataSourceInformation tables columns is missing.";
 	public const string MDF_AmbigousCollectionName = "The collection name '{0}' matches at least two collections with the same name but with different case, but does not match any of them exactly.";
 	public const string MDF_UnableToBuildCollection = "Unable to build schema collection '{0}';";
-	public const string AmbientTransactionsNotSupported = "Enlisting in Ambient transactions is not supported.";
 	public const string ADP_CollectionIsParent = "The {0} with is already contained by this {1}.";
 	public const string ADP_InvalidDataDirectory = "The DataDirectory substitute is not a string.";
+	public const string ADP_QuotePrefixNotSet = "{0} requires an open connection when the quote prefix has not been set.";
 	public const string MDF_InvalidRestrictionValue = "'{2}' is not a valid value for the '{1}' restriction of the '{0}' schema collection.";
 	public const string MDF_UndefinedPopulationMechanism = "The population mechanism '{0}' is not defined.";
 	public const string ODBC_ODBCCommandText = "OdbcCommandBuilder.DeriveParameters failed because the OdbcCommand.CommandText property value is an invalid multipart name";

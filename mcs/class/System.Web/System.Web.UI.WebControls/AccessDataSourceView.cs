@@ -33,9 +33,7 @@ using System.Collections.Specialized;
 using System.Text;
 using System.Data;
 using System.ComponentModel;
-#if OLEDB
 using System.Data.OleDb;
-#endif
 using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls
@@ -43,7 +41,6 @@ namespace System.Web.UI.WebControls
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class AccessDataSourceView : SqlDataSourceView
 	{
-#if OLEDB
 		OleDbConnection oleConnection;
 		OleDbCommand oleCommand;
 		AccessDataSource dataSource;
@@ -58,7 +55,6 @@ namespace System.Web.UI.WebControls
 		protected internal override IEnumerable ExecuteSelect (
 						DataSourceSelectArguments arguments)
 		{
-			return null;
 			oleCommand = new OleDbCommand (this.SelectCommand, oleConnection);
 			SqlDataSourceSelectingEventArgs cmdEventArgs = new SqlDataSourceSelectingEventArgs (oleCommand, arguments);
 			OnSelecting (cmdEventArgs);
@@ -80,21 +76,8 @@ namespace System.Web.UI.WebControls
 			OnSelected (statusEventArgs);
 			if (exception !=null)
 				throw exception;
-			return enums;
-		}
-#else
-		public AccessDataSourceView (AccessDataSource owner, string name, HttpContext context)
-			: base (owner, name, context)
-		{
-			throw new NotSupportedException("OLEDB is not supported.");
-		}
-
-		[MonoTODO ("Handle arguments")]
-		protected internal override IEnumerable ExecuteSelect (
-						DataSourceSelectArguments arguments)
-		{
-			throw new NotSupportedException("OLEDB is not supported.");
-		}
-#endif
+			return enums;			
+		}						
 	}	
 }
+
