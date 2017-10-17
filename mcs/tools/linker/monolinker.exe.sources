@@ -8,6 +8,8 @@
 ../../../external/linker/linker/Mono.Linker/AssemblyAction.cs
 ../../../external/linker/linker/Mono.Linker/Driver.cs
 ../../../external/linker/linker/Mono.Linker/I18nAssemblies.cs
+../../../external/linker/linker/Mono.Linker/ILogger.cs
+../../../external/linker/linker/Mono.Linker/ConsoleLogger.cs
 ../../../external/linker/linker/Mono.Linker/MethodAction.cs
 ../../../external/linker/linker/Mono.Linker/XApiReader.cs
 ../../../external/linker/linker/Mono.Linker/IXApiVisitor.cs

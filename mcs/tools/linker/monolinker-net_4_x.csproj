@@ -55,6 +55,7 @@
     <Compile Include="..\..\..\external\linker\linker\Mono.Linker.Steps\BaseStep.cs" />
     <Compile Include="..\..\..\external\linker\linker\Mono.Linker.Steps\BlacklistStep.cs" />
     <Compile Include="..\..\..\external\linker\linker\Mono.Linker.Steps\CleanStep.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Mono.Linker.Steps\ConsoleLogger.cs" />
     <Compile Include="..\..\..\external\linker\linker\Mono.Linker.Steps\IStep.cs" />
     <Compile Include="..\..\..\external\linker\linker\Mono.Linker.Steps\LoadI18nAssemblies.cs" />
     <Compile Include="..\..\..\external\linker\linker\Mono.Linker.Steps\LoadReferencesStep.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="..\..\..\external\linker\linker\Mono.Linker\AssemblyResolver.cs" />
     <Compile Include="..\..\..\external\linker\linker\Mono.Linker\Driver.cs" />
     <Compile Include="..\..\..\external\linker\linker\Mono.Linker\I18nAssemblies.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Mono.Linker\ILogger.cs" />
     <Compile Include="..\..\..\external\linker\linker\Mono.Linker\IXApiVisitor.cs" />
     <Compile Include="..\..\..\external\linker\linker\Mono.Linker\LinkContext.cs" />
     <Compile Include="..\..\..\external\linker\linker\Mono.Linker\LoadException.cs" />
