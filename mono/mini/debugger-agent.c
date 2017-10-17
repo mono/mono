@@ -4989,8 +4989,9 @@ ss_update (SingleStepReq *req, MonoJitInfo *ji, SeqPoint *sp, DebuggerTlsData *t
 	return hit;
 }
 
+#if IL2CPP_MONO_DEBUGGER
 /*
-* ss_update:
+* ss_update_il2cpp:
 *
 * Return FALSE if single stepping needs to continue.
 */
@@ -5057,7 +5058,7 @@ ss_update_il2cpp(SingleStepReq *req, DebuggerTlsData *tls, MonoContext *ctx, Il2
 
 	return hit;
 }
-
+#endif
 
 static gboolean
 breakpoint_matches_assembly (MonoBreakpoint *bp, MonoAssembly *assembly)
