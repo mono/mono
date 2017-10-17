@@ -355,8 +355,8 @@ typedef struct
 	const Il2CppMonoMethod** method;
 	const char* const sourceFile;
 	const uint8_t sourceFileHash[16];
-	const uint32_t lineStart, lineEnd;
-	const uint32_t columnStart, columnEnd;
+	const int32_t lineStart, lineEnd;
+	const int32_t columnStart, columnEnd;
 	const int32_t ilOffset;
 	const SequencePointKindC kind;
 	uint8_t isActive;

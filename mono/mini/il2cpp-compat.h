@@ -34,6 +34,7 @@
 #define VM_CLASS_GET_THIS_ARG(klass) il2cpp_class_this_arg(klass)
 #define VM_CLASS_GET_ELEMENT_CLASS(klass) il2cpp_class_get_element_class(klass)
 #define VM_CLASS_GET_PARENT(klass) il2cpp_class_get_parent(klass)
+#define VM_CLASS_GET_IMAGE(klass) il2cpp_class_get_image(klass)
 #define VM_METHOD_GET_WRAPPER_TYPE(method) FALSE
 #define VM_METHOD_GET_DECLARING_TYPE(method) il2cpp_method_get_declaring_type(method)
 #define VM_FIELD_GET_NAME(field) il2cpp_mono_field_get_name(field)
@@ -48,6 +49,8 @@
 #define VM_GENERIC_INST_TYPE_ARGC(inst) il2cpp_generic_inst_type_argc(inst)
 #define VM_GENERIC_INST_TYPE_ARG(inst, i) il2cpp_generic_inst_type_arg(inst, i)
 #define VM_DEFAULTS_OBJECT_CLASS il2cpp_defaults_object_class()
+#define VM_DEFAULTS_EXCEPTION_CLASS il2cpp_defaults_exception_class()
+#define VM_DEFAULTS_CORLIB_IMAGE il2cpp_defaults_corlib_image()
 #define VM_ARRAY_GET_RANK(arr) il2cpp_array_rank(arr)
 #define VM_ARRAY_BOUND_LENGTH(arr, i) il2cpp_array_bound_length(arr, i)
 #define VM_ARRAY_BOUND_LOWER_BOUND(arr, i) il2cpp_array_bound_lower_bound(arr, i)
@@ -79,6 +82,7 @@
 #define VM_CLASS_GET_TYPE(klass) &(klass)->byval_arg
 #define VM_CLASS_GET_THIS_ARG(klass) &(klass)->this_arg
 #define VM_CLASS_GET_PARENT(klass) (klass)->parent
+#define VM_CLASS_GET_IMAGE(klass) (klass)->image
 #define VM_METHOD_GET_WRAPPER_TYPE(method) method->wrapper_type
 #define VM_METHOD_GET_DECLARING_TYPE(method) (method)->klass
 #define VM_FIELD_GET_NAME(field) field->name
@@ -93,6 +97,8 @@
 #define VM_GENERIC_INST_TYPE_ARGC(inst) (inst)->type_argc
 #define VM_GENERIC_INST_TYPE_ARG(inst, i) (inst)->type_argv[i]
 #define VM_DEFAULTS_OBJECT_CLASS mono_defaults.object_class
+#define VM_DEFAULTS_EXCEPTION_CLASS mono_defaults.exception_class
+#define VM_DEFAULTS_CORLIB_IMAGE mono_defaults.corlib
 #define VM_ARRAY_GET_RANK(arr) (arr)->obj.vtable->klass->rank
 #define VM_CLASS_GET_ELEMENT_CLASS(klass) (klass)->element_class
 #define VM_ARRAY_BOUND_LENGTH(arr, i) arr->bounds[i].length
@@ -574,5 +580,7 @@ const char* il2cpp_image_name(Il2CppMonoImage *monoImage);
 Il2CppMonoAssembly* il2cpp_image_assembly(Il2CppMonoImage *monoImage);
 guint8* il2cpp_field_get_address(Il2CppMonoObject *obj, Il2CppMonoClassField *monoField);
 Il2CppMonoType* il2cpp_mono_object_get_type(Il2CppMonoObject* object);
+Il2CppMonoClass* il2cpp_defaults_exception_class();
+Il2CppMonoImage* il2cpp_defaults_corlib_image();
 
 #endif // RUNTIME_IL2CPP

@@ -224,8 +224,7 @@ const char* il2cpp_mono_field_get_name (Il2CppMonoClassField *field)
 
 Il2CppMonoMethod* il2cpp_mono_class_get_method_from_name (Il2CppMonoClass *klass, const char *name, int param_count)
 {
-	IL2CPP_ASSERT(0 && "This method is not yet implemented");
-	return NULL;
+	return (Il2CppMonoMethod*)il2cpp::vm::Class::GetMethodFromName((Il2CppClass*)klass, name, param_count);
 }
 
 mono_unichar2* il2cpp_mono_string_chars (Il2CppMonoString *monoStr)
@@ -650,8 +649,7 @@ Il2CppMonoClass* il2cpp_mono_class_load_from_name(Il2CppMonoImage* image, const 
 
 Il2CppMonoClass* il2cpp_mono_class_try_load_from_name(Il2CppMonoImage* image, const char* name_space, const char* name)
 {
-	IL2CPP_ASSERT(0 && "This method is not yet implemented");
-	return NULL;
+	return (Il2CppMonoClass*)il2cpp::vm::Image::ClassFromName((Il2CppImage*)image, name_space, name);
 }
 
 Il2CppMonoGenericClass* il2cpp_mono_class_get_generic_class(Il2CppMonoClass* monoClass)
@@ -738,8 +736,8 @@ Il2CppMonoObject* il2cpp_mono_field_get_value_object_checked(Il2CppMonoDomain* d
 
 Il2CppMonoObject* il2cpp_mono_object_new_checked(Il2CppMonoDomain* domain, Il2CppMonoClass* klass, MonoError* error)
 {
-	IL2CPP_ASSERT(0 && "This method is not yet implemented");
-	return NULL;
+	mono_error_init(error);
+	return (Il2CppMonoObject*)il2cpp::vm::Object::New((Il2CppClass*)klass);
 }
 
 Il2CppMonoString* il2cpp_mono_ldstr_checked(Il2CppMonoDomain* domain, Il2CppMonoImage* image, guint32 idx, MonoError* error)
@@ -750,8 +748,8 @@ Il2CppMonoString* il2cpp_mono_ldstr_checked(Il2CppMonoDomain* domain, Il2CppMono
 
 Il2CppMonoObject* il2cpp_mono_runtime_try_invoke(Il2CppMonoMethod* method, void* obj, void** params, Il2CppMonoObject** exc, MonoError* error)
 {
-	IL2CPP_ASSERT(0 && "This method is not yet implemented");
-	return NULL;
+	mono_error_init(error);
+	return (Il2CppMonoObject*)il2cpp::vm::Runtime::Invoke((MethodInfo*)method, obj, params, (Il2CppException**)exc);
 }
 
 Il2CppMonoObject* il2cpp_mono_runtime_invoke_checked(Il2CppMonoMethod* method, void* obj, void** params, MonoError* error)
@@ -1403,6 +1401,16 @@ guint8* il2cpp_field_get_address(Il2CppMonoObject *obj, Il2CppMonoClassField *mo
 Il2CppMonoType* il2cpp_mono_object_get_type(Il2CppMonoObject* object)
 {
     return (Il2CppMonoType*)(((Il2CppObject*)object)->klass->byval_arg);
+}
+
+Il2CppMonoClass* il2cpp_defaults_exception_class()
+{
+	return (Il2CppMonoClass*)il2cpp_defaults.exception_class;
+}
+
+Il2CppMonoImage* il2cpp_defaults_corlib_image()
+{
+	return (Il2CppMonoImage*)il2cpp_defaults.corlib;
 }
 
 }
