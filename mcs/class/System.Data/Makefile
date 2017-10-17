@@ -4,7 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = System.Data.dll
 
-LIB_REFS = System System.Xml System.Core System.Numerics
+LIB_REFS = System System.Xml System.Core System.Numerics System.Transactions
 KEYFILE = ../ecma.pub
 LIB_MCS_FLAGS = \
 	-nowarn:219,414,649,619 \
@@ -15,17 +15,10 @@ LIB_MCS_FLAGS = \
 	-resource:../../../external/corefx/src/System.Data.SqlClient/src/Resources/System.Data.SqlClient.SqlMetaData.xml	\
 	-unsafe
 
-ifdef NO_MONO_SECURITY
-MONO_DATA_TDS=
-else
-MONO_DATA_TDS=Mono.Data.Tds
-endif
-
 ifdef MOBILE_PROFILE
-LIB_REFS += $(MONO_DATA_TDS) System.Transactions
 LIB_MCS_FLAGS += -d:NO_CODEDOM -d:NO_OLEDB -d:NO_ODBC -d:NO_CONFIGURATION
 else
-LIB_REFS += System.EnterpriseServices $(MONO_DATA_TDS) System.Configuration System.Transactions
+LIB_REFS += System.EnterpriseServices System.Configuration
 endif
 
 TXT_RESOURCE_STRINGS = ../referencesource/System.Data/system.data.txt
@@ -54,19 +47,5 @@ EXTRA_DISTFILES = \
 	Test/ProviderTests/sql/*.sql	\
 	SqliteTest.db	\
 	corefx.common.sources
-
-gen_OleDbConnection.cs: ../referencesource/System.Data/System/Data/ProviderBase/DbConnectionHelper.cs
-	sed -e s/NAMESPACE/System.Data.OleDb/g $< |\
-	sed -e s/CONNECTIONFACTORYOBJECTNAME/OleDbConnectionFactory.SingletonInstance/g |\
-	sed -e s/CONNECTIONOBJECTNAME/OleDbConnection/g >$@
-gen_OleDbParameter.cs: ../referencesource/System.Data/System/Data/ProviderBase/DbParameterHelper.cs
-	sed -e s/RESNAMESPACE/System.Data/g $< |\
-	sed -e s/NAMESPACE/System.Data.OleDb/g |\
-	sed -e s/PARAMETEROBJECTNAME/OleDbParameter/g >$@
-gen_OleDbParameterCollection.cs: ../referencesource/System.Data/System/Data/ProviderBase/DbParameterCollectionHelper.cs
-	sed -e s/RESNAMESPACE/System.Data/g $< |\
-	sed -e s/NAMESPACE/System.Data.OleDb/g |\
-	sed -e s/PARAMETERCOLLECTIONOBJECTNAME/OleDbParameterCollection/g |\
-	sed -e s/PARAMETEROBJECTNAME/OleDbParameter/g >$@
 
 include ../../build/library.make
