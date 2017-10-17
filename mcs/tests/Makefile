@@ -56,6 +56,7 @@ endif
 LOCAL_RUNTIME_FLAGS = --verify-all
 COMPILER = $(topdir)/class/lib/$(PROFILE)/mcs.exe
 TESTER = MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(LOCAL_RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe
+TESTER_INTERP = MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(RUNTIME_FLAGS) --interpreter $(LOCAL_RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe
 
 TEST_ILS := $(wildcard *-lib.il)
 
@@ -70,10 +71,15 @@ qcheck2:
 gen-mt-tests:
 	$(TESTER) -mode:nunit -files:'v2' -compiler:$(COMPILER) -issues:known-issues-mt -compiler-options:"-lib:$(topdir)/class/lib/monotouch projects/MonoTouch/ivt.cs"
 
+check-interp: compile-all setup build-compiler-lib
+	$(TESTER_INTERP) -mode:pos -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:known-issues-interp-$(PROFILE) -log:$(PROFILE).log -il:ver-il-$(PROFILE).xml $(DEFINES) $(TOPTIONS)
+
 test-local:
 	@:
 
-run-test-local: $(TEST_ILS:.il=.dll) setup qcheck
+compile-all: $(TEST_ILS:.il=.dll)
+
+run-test-local: compile-all setup qcheck
 
 check: run-test-local
 
