@@ -72,8 +72,6 @@ ifndef HAVE_CS_TESTS
 HAVE_CS_TESTS := $(wildcard $(test_sourcefile))
 endif
 
-HAVE_SOURCE_EXCLUDES := $(wildcard $(test_sourcefile_excludes))
-
 HAVE_CS_XTESTS := $(wildcard $(xtest_sourcefile))
 
 endif # !NO_TEST
@@ -173,7 +171,7 @@ test_response_preprocessed = $(test_response)_preprocessed
 
 # This handles .excludes/.sources pairs, as well as resolving the
 # includes that occur in .sources files
-$(test_response_preprocessed): $(test_sourcefile)
+$(test_response_preprocessed): $(test_sourcefile) $(wildcard $(test_sourcefile_excludes))
 	$(SHELL) $(topdir)/build/gensources.sh $@ '$(test_sourcefile)' '$(test_sourcefile_excludes)'
 
 $(test_response): $(test_response_preprocessed)
@@ -227,7 +225,7 @@ xtest_response_preprocessed = $(xtest_response)_preprocessed
 
 # This handles .excludes/.sources pairs, as well as resolving the
 # includes that occur in .sources files
-$(xtest_response): $(xtest_sourcefile)
+$(xtest_response): $(xtest_sourcefile) $(wildcard $(xtest_sourcefile_excludes))
 	$(SHELL) $(topdir)/build/gensources.sh $@ '$(xtest_sourcefile)' '$(xtest_sourcefile_excludes)'
 
 $(xtest_makefrag): $(xtest_response)
