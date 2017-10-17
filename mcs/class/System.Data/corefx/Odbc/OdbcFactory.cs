@@ -10,9 +10,9 @@ using System.Security.Permissions;
 
 namespace System.Data.Odbc
 {
-    partial class OdbcFactory
-    {        
-        public override CodeAccessPermission CreatePermission(PermissionState state) =>
-            new OdbcPermission(state);
-    }
+	partial class OdbcFactory
+	{
+		public override CodeAccessPermission CreatePermission(PermissionState state) =>
+			new OdbcPermission(state);
+	}
 }

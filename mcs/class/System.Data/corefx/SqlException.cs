@@ -7,11 +7,11 @@ using System.Text;
 
 namespace System.Data.SqlClient
 {
-    partial class SqlException
-    {
-        private const string DEF_MESSAGE = "SQL Exception has occured.";
+	partial class SqlException
+	{
+		private const string DEF_MESSAGE = "SQL Exception has occured.";
 
-        public override string Message {
+		public override string Message {
 			get {
 				if (Errors.Count == 0)
 					return base.Message;
@@ -28,5 +28,5 @@ namespace System.Data.SqlClient
 				return result.ToString ();
 			}
 		}
-    }
+	}
 }

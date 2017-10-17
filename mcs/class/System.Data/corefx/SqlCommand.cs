@@ -9,35 +9,35 @@ using System.Data.Common;
 
 namespace System.Data.SqlClient
 {
-    partial class SqlCommand
-    {
-        [MonoTODO]
-        public bool NotificationAutoEnlist
-        {
-            get => Notification != null;
-            set => throw new NotImplementedException();
-        }
+	partial class SqlCommand : IDbCommand, ICloneable, IDisposable
+	{
+		[MonoTODO]
+		public bool NotificationAutoEnlist
+		{
+			get => Notification != null;
+			set => throw new NotImplementedException();
+		}
 
-        [System.Security.Permissions.HostProtectionAttribute(ExternalThreading=true)]
-        public IAsyncResult BeginExecuteNonQuery() => BeginExecuteNonQuery(null, null);
+		[System.Security.Permissions.HostProtectionAttribute(ExternalThreading=true)]
+		public IAsyncResult BeginExecuteNonQuery() => BeginExecuteNonQuery(null, null);
 
-        [System.Security.Permissions.HostProtectionAttribute(ExternalThreading=true)]
-        public IAsyncResult BeginExecuteXmlReader() => BeginExecuteXmlReader(null, null);
+		[System.Security.Permissions.HostProtectionAttribute(ExternalThreading=true)]
+		public IAsyncResult BeginExecuteXmlReader() => BeginExecuteXmlReader(null, null);
 
-        [System.Security.Permissions.HostProtectionAttribute(ExternalThreading=true)]
-        public IAsyncResult BeginExecuteReader() =>
-            BeginExecuteReader(CommandBehavior.Default, null, null);
+		[System.Security.Permissions.HostProtectionAttribute(ExternalThreading=true)]
+		public IAsyncResult BeginExecuteReader() =>
+			BeginExecuteReader(CommandBehavior.Default, null, null);
 
-        [System.Security.Permissions.HostProtectionAttribute(ExternalThreading=true)]
-        public IAsyncResult BeginExecuteReader(AsyncCallback callback, object stateObject) =>
-            BeginExecuteReader(CommandBehavior.Default, callback, stateObject);
+		[System.Security.Permissions.HostProtectionAttribute(ExternalThreading=true)]
+		public IAsyncResult BeginExecuteReader(AsyncCallback callback, object stateObject) =>
+			BeginExecuteReader(CommandBehavior.Default, callback, stateObject);
 
-        [System.Security.Permissions.HostProtectionAttribute(ExternalThreading=true)]
-        public IAsyncResult BeginExecuteReader(AsyncCallback callback, object stateObject, CommandBehavior behavior) =>
-            BeginExecuteReader(behavior, callback, stateObject);
+		[System.Security.Permissions.HostProtectionAttribute(ExternalThreading=true)]
+		public IAsyncResult BeginExecuteReader(AsyncCallback callback, object stateObject, CommandBehavior behavior) =>
+			BeginExecuteReader(behavior, callback, stateObject);
 
-        [System.Security.Permissions.HostProtectionAttribute(ExternalThreading=true)]
-        public IAsyncResult BeginExecuteReader(CommandBehavior behavior) =>
-            BeginExecuteReader(behavior, null, null);
-    }
+		[System.Security.Permissions.HostProtectionAttribute(ExternalThreading=true)]
+		public IAsyncResult BeginExecuteReader(CommandBehavior behavior) =>
+			BeginExecuteReader(behavior, null, null);
+	}
 }
