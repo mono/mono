@@ -79,16 +79,14 @@ HAVE_CS_XTESTS := $(wildcard $(xtest_sourcefile))
 endif # !NO_TEST
 
 ifndef NO_TEST
-$(test_nunit_dep): $(topdir)/build/deps/nunit-$(PROFILE).stamp
-	@if test -f $@; then :; else rm -f $<; $(MAKE) $<; fi
+NUNITLITE_PROFILE=$(if $(PARENT_PROFILE_NAME),$(PARENT_PROFILE_NAME),$(PROFILE))
+$(test_nunit_dep): $(topdir)/build/deps/nunitlite-$(NUNITLITE_PROFILE).stamp
 
-$(topdir)/build/deps/nunit-$(PROFILE).stamp:
-ifndef PARENT_PROFILE
-	cd ${topdir}/tools/nunit-lite && $(MAKE)
-endif
+$(topdir)/build/deps/nunitlite-$(NUNITLITE_PROFILE).stamp:
+	cd ${topdir}/tools/nunit-lite && $(MAKE) PROFILE=$(NUNITLITE_PROFILE)
 	echo "stamp" >$@
 
-tests_CLEAN_FILES += $(topdir)/build/deps/nunit-$(PROFILE).stamp
+tests_CLEAN_FILES += $(topdir)/build/deps/nunitlite-$(NUNITLITE_PROFILE).stamp
 
 endif
 
@@ -122,15 +120,15 @@ LABELS_ARG = -labels
 endif
 
 ifdef ALWAYS_AOT
-test-local-aot-compile: $(topdir)/build/deps/nunit-$(PROFILE).stamp
+test-local-aot-compile: $(topdir)/build/deps/nunitlite-$(NUNITLITE_PROFILE).stamp
 	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" MONO_REGISTRY_PATH="$(HOME)/.mono/registry" MONO_TESTS_IN_PROGRESS="yes" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(AOT_BUILD_FLAGS) $(test_assemblies)
 
 else
-test-local-aot-compile: $(topdir)/build/deps/nunit-$(PROFILE).stamp
+test-local-aot-compile: $(topdir)/build/deps/nunitlite-$(NUNITLITE_PROFILE).stamp
 
 endif # ALWAYS_AOT
 
-NUNITLITE_CONFIG_FILE=$(topdir)/class/lib/$(PROFILE)/$(PARENT_PROFILE)nunit-lite-console.exe.config
+NUNITLITE_CONFIG_FILE=$(topdir)/class/lib/$(NUNITLITE_PROFILE)/nunit-lite-console.exe.config
 
 patch-nunitlite-appconfig:
 	cp -f $(topdir)/tools/nunit-lite/nunit-lite-console/nunit-lite-console.exe.config.tmpl $(NUNITLITE_CONFIG_FILE)
