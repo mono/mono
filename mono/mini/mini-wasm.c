@@ -501,6 +501,7 @@ static GPtrArray *all_funcs;
 typedef struct {
 	GHashTable *vreg_to_wasm;
 	GPtrArray *vars;
+	int verbose_level;
 } WasmCodeGen;
 
 static BinaryenType
@@ -550,10 +551,11 @@ op_is_op_imm (int op)
 }
 
 static void
-cg_init (WasmCodeGen *cg)
+cg_init (WasmCodeGen *cg, MonoCompile *cfg)
 {
 	cg->vreg_to_wasm = g_hash_table_new (g_direct_hash, g_direct_equal);
 	cg->vars = g_ptr_array_new ();
+	cg->verbose_level = cfg->verbose_level;
 }
 
 static BinaryenIndex
@@ -564,7 +566,8 @@ get_var (WasmCodeGen *cg, int vreg, MonoType *type)
 		return GPOINTER_TO_INT (res) - 1;
 
 	int var_idx = cg->vars->len;
-	printf ("VREG %d -> LOCAL %d\n", vreg, var_idx);
+	if (cg->verbose_level > 2)
+		printf ("VREG %d -> LOCAL %d\n", vreg, var_idx);
 	g_hash_table_insert (cg->vreg_to_wasm, GINT_TO_POINTER (vreg), GINT_TO_POINTER (var_idx + 1));
 	g_ptr_array_add (cg->vars, GINT_TO_POINTER (mono_type_to_wasm_type (type)));
 	return var_idx;
@@ -644,15 +647,17 @@ emit_binary_op (WasmCodeGen *cg, MonoInst *ins, BinaryenOp op)
 		aot_module,
 		op,
 		get_iloc (cg, ins->sreg1),
-		op_is_op_imm (ins->opcode) ? BinaryenConst (aot_module, BinaryenLiteralInt32 (ins->inst_c0)) : get_iloc (cg, ins->sreg2));
+		op_is_op_imm (ins->opcode) ? BinaryenConst (aot_module, BinaryenLiteralInt32 (ins->inst_imm)) : get_iloc (cg, ins->sreg2));
 	return BinaryenSetLocal (aot_module, get_ivar (cg, ins->dreg), val);
 }
 
 void
 mono_wasm_code_gen (MonoCompile *cfg)
 {
-	printf ("CODE GEN %s\n", cfg->method->name);
-	mono_print_code (cfg, "WASM-CODEGEN");
+	if (cfg->verbose_level > 2) {
+		printf ("CODE GEN %s\n", cfg->method->name);
+		mono_print_code (cfg, "WASM-CODEGEN");
+	}
 
 	int i, ret_var_idx = -1;
 	MonoMethod *method = cfg->method;
@@ -660,7 +665,7 @@ mono_wasm_code_gen (MonoCompile *cfg)
 	BinaryenType *params = g_new (BinaryenType, sig->param_count + sig->hasthis);
 
 	WasmCodeGen cg;
-	cg_init (&cg);
+	cg_init (&cg, cfg);
 	
 	if (sig->hasthis) {
 		get_var (&cg, cfg->args [0]->dreg, &method->klass->this_arg);
@@ -708,10 +713,18 @@ mono_wasm_code_gen (MonoCompile *cfg)
 				g_ptr_array_add (body, emit_binary_op (&cg, ins, BinaryenShrSInt32 ()));
 				break;
 
-			case OP_INEG:
-				g_ptr_array_add (body, emit_unary_op (&cg, ins, BinaryenEqZInt32 ()));
-				break;
+			case OP_INEG: {
+				//emit 0 - $val
+				BinaryenExpressionRef val = BinaryenBinary (
+					aot_module,
+					BinaryenSubInt32 (),
+					BinaryenConst (aot_module, BinaryenLiteralInt32 (0)),
+					get_iloc (&cg, ins->sreg1));
 
+				BinaryenExpressionRef store = BinaryenSetLocal (aot_module, get_ivar (&cg, ins->dreg), val);
+				g_ptr_array_add (body, store);
+				break;
+			}
 			case OP_IOR:
 			case OP_IOR_IMM:
 				g_ptr_array_add (body, emit_binary_op (&cg, ins, BinaryenOrInt32 ()));
@@ -748,7 +761,7 @@ mono_wasm_code_gen (MonoCompile *cfg)
 				case OP_ICOMPARE:
 				case OP_ICOMPARE_IMM: {
 				BinaryenExpressionRef left = get_iloc (&cg, ins->sreg1);
-				BinaryenExpressionRef right = ins->opcode == OP_ICOMPARE ? get_iloc (&cg, ins->sreg2) : BinaryenConst (aot_module, BinaryenLiteralInt32 (ins->inst_c0));
+				BinaryenExpressionRef right = ins->opcode == OP_ICOMPARE ? get_iloc (&cg, ins->sreg2) : BinaryenConst (aot_module, BinaryenLiteralInt32 (ins->inst_imm));
 				BinaryenExpressionRef cmp = NULL;
 				g_assert (ins->next);
 				switch (ins->next->opcode) {
@@ -833,10 +846,12 @@ mono_wasm_code_gen (MonoCompile *cfg)
 		if (!bb->out_count)
 			continue;
 		if (bb->out_count == 1) {
-			printf ("connecting BB_%d to BB_%d\n", bb->block_num, bb->out_bb [0]->block_num);
+			if (cfg->verbose_level > 2)
+				printf ("connecting BB_%d to BB_%d\n", bb->block_num, bb->out_bb [0]->block_num);
 			RelooperAddBranch ((RelooperBlockRef)bb->backend_data, (RelooperBlockRef)bb->out_bb [0]->backend_data, NULL, NULL);
 		} else if (bb->out_count == 2) {
-			printf ("connecting BB_%d to BB_%d and BB_%d\n", bb->block_num, bb->out_bb [0]->block_num, bb->out_bb [1]->block_num);
+			if (cfg->verbose_level > 2)
+				printf ("connecting BB_%d to BB_%d and BB_%d\n", bb->block_num, bb->out_bb [0]->block_num, bb->out_bb [1]->block_num);
 			RelooperAddBranch ((RelooperBlockRef)bb->backend_data, (RelooperBlockRef)bb->out_bb [0]->backend_data, bb->backend_branch_data, NULL);
 			RelooperAddBranch ((RelooperBlockRef)bb->backend_data, (RelooperBlockRef)bb->out_bb [1]->backend_data, NULL, NULL);
 		} else {
@@ -844,15 +859,18 @@ mono_wasm_code_gen (MonoCompile *cfg)
 		}
 	}
 
-
-
 	BinaryenExpressionRef func_body = RelooperRenderAndDispose (relooper, entry_block, add_wasm_var (&cg, BinaryenInt32 ()), aot_module);
 
 	//TODO we must cannonicalize this (or use binaryen's support fo rthat)
 	BinaryenFunctionTypeRef func_sig = BinaryenAddFunctionType (aot_module, NULL, mono_type_to_wasm_type (sig->ret), params, sig->param_count + sig->hasthis);
 	BinaryenFunctionRef func = BinaryenAddFunction (aot_module, method->name, func_sig, (BinaryenType *)cg.vars->pdata, cg.vars->len, func_body);
-	BinaryenExportRef export = BinaryenAddExport(aot_module, method->name, method->name);
+	BinaryenAddExport(aot_module, method->name, method->name);
 	g_ptr_array_add (all_funcs, func);
+
+	if (cfg->verbose_level > 2) {
+		printf ("RAW WASM OUTPUT:\n");
+		BinaryenExpressionPrint (func_body);
+	}
 }
 
 void
@@ -882,7 +900,7 @@ mono_wasm_emit_module (const char *filename)
 {
 	BinaryenSetFunctionTable (aot_module, (BinaryenFunctionRef*)all_funcs->pdata, all_funcs->len);
 
-	BinaryenModulePrint (aot_module);
+	// BinaryenModulePrint (aot_module);
 
 	printf ("------OPTIMIZE-------\n");
 	BinaryenModuleOptimize(aot_module);
