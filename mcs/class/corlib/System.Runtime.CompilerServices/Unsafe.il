@@ -210,12 +210,17 @@
   .method public hidebysig static !!T& AsRef<T>(void* source) cil managed aggressiveinlining
   {
 
-        .locals (int32&)
         .maxstack 1
         ldarg.0
-        // Roundtrip via a local to avoid type mismatch on return that the JIT inliner chokes on.
-        stloc.0
-        ldloc.0
+        ret
+  }
+
+  .method public hidebysig static !!T& AsRef<T>(!!T& source) cil managed aggressiveinlining
+  {
+        .param [1]
+        .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
+        .maxstack 1
+        ldarg.0
         ret
   }
 

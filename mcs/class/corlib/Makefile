@@ -94,13 +94,13 @@ LIB_MCS_FLAGS += -d:MONO_FEATURE_APPLE_X509
 endif
 
 WARNING_ABOUT_DISABLED_WARNING=1635
-LOCAL_MCS_FLAGS = -unsafe -nostdlib -nowarn:612,618,3001,3003,$(WARNING_ABOUT_DISABLED_WARNING) -d:INSIDE_CORLIB,MONO_CULTURE_DATA -d:LIBC $(REFERENCE_SOURCES_FLAGS)
+LOCAL_MCS_FLAGS = -unsafe -nostdlib -nowarn:612,618,3001,3002,3003,$(WARNING_ABOUT_DISABLED_WARNING) -d:INSIDE_CORLIB,MONO_CULTURE_DATA -d:LIBC $(REFERENCE_SOURCES_FLAGS)
 DEFAULT_REFERENCES =
 
 TEST_LIB_REFS = System.Core System
 
-XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks Facades/System.Runtime.InteropServices.RuntimeInformation
-XTEST_LIB_FLAGS = -d:netcoreapp
+XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks Facades/System.Runtime.InteropServices.RuntimeInformation System.Numerics.Vectors System.Runtime.CompilerServices.Unsafe
+XTEST_LIB_FLAGS = -d:netcoreapp -publicsign -keyfile:../mono.snk
 
 ifndef AOT_FRIENDLY_PROFILE
 ifneq ($(PROFILE),testing_aot_hybrid)

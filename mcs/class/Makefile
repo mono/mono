@@ -86,7 +86,8 @@ mobile_common_dirs := \
 	Mono.CSharp	\
 	Microsoft.CSharp \
 	System.Reflection.Context	\
-	System.Net.Http.WinHttpHandler
+	System.Net.Http.WinHttpHandler \
+	System.Runtime.CompilerServices.Unsafe
 
 testing_aot_full_dirs := \
 	$(mobile_common_dirs)	\
@@ -195,6 +196,7 @@ xammac_4_5_dirs := \
 	System.Net.Http.WebRequest \
 	System.Reflection.Context	\
 	System.Net.Http.WinHttpHandler	\
+	System.Runtime.CompilerServices.Unsafe \
 	$(pcl_facade_dirs)
 
 net_4_x_dirs := \
@@ -336,6 +338,7 @@ net_4_x_parallel_dirs := \
 	System.Reflection.Context \
 	Mono.Profiler.Log	\
 	Mono.Runtime.Tests	\
+	System.Runtime.CompilerServices.Unsafe \
 	legacy/Mono.Cecil \
 	$(pcl_facade_dirs)
 
