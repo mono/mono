@@ -71,8 +71,11 @@ qcheck2:
 gen-mt-tests:
 	$(TESTER) -mode:nunit -files:'v2' -compiler:$(COMPILER) -issues:known-issues-mt -compiler-options:"-lib:$(topdir)/class/lib/monotouch projects/MonoTouch/ivt.cs"
 
+
+TESTERVERBOSE=$(if $(V),-verbose,)
+
 check-interp: compile-all setup build-compiler-lib
-	$(TESTER_INTERP) -mode:pos -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:known-issues-interp-$(PROFILE) -log:$(PROFILE).log -il:ver-il-$(PROFILE).xml $(DEFINES) $(TOPTIONS)
+	$(TESTER_INTERP) -mode:pos -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:known-issues-interp-$(PROFILE) -log:$(PROFILE).log -il:ver-il-$(PROFILE).xml $(DEFINES) $(TOPTIONS) $(TESTERVERBOSE)
 
 test-local:
 	@:
