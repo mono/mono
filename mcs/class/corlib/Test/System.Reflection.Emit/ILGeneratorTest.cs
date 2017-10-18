@@ -524,11 +524,13 @@ namespace MonoTests.System.Reflection.Emit
 			
 		}
 
-		public class Base {
+		public class Base<T> {
 			public int x;
+
+			public void M () { }
 		}
 
-		public class Derived : Base {
+		public class Derived : Base<string> {
 		}
 
 		[Test]
@@ -540,7 +542,7 @@ namespace MonoTests.System.Reflection.Emit
 			//
 			// Regression test for bugzilla #59364
 
-			var f1 = typeof (Base).GetField ("x");
+			var f1 = typeof (Base<string>).GetField ("x");
 			var f2 = typeof (Derived).GetField ("x");
 
 			var value_getter = typeof (RuntimeFieldHandle).GetProperty("Value").GetMethod;
@@ -570,6 +572,43 @@ namespace MonoTests.System.Reflection.Emit
 			var s = m.Invoke (x, null);
 
 			Assert.AreEqual ("1", s);
+		}
+
+		[Test]
+		public void MethodSpecTokenSame () {
+			DefineBasicMethod ();
+			// Get the same method from a base generic instance and
+			// a type derived from it so that the
+			// MemberInfo:DeclaredType differs but the tokens are
+			// the same.
+			//
+			// Regression test for bugzilla #60233
+
+			var m1 = typeof (Base<string>).GetMethod ("M");
+			var m2 = typeof (Derived).GetMethod ("M");
+
+			var il = il_gen;
+
+			var loc = il.DeclareLocal (typeof (Derived));
+
+			il.Emit (OpCodes.Newobj, typeof (Derived).GetConstructor(new Type[]{}));
+			il.Emit (OpCodes.Stloc, loc);
+			il.Emit (OpCodes.Ldloc, loc);
+			il.Emit (OpCodes.Call, m1);
+			il.Emit (OpCodes.Ldloc, loc);
+			il.Emit (OpCodes.Call, m2);
+			il.Emit (OpCodes.Ldstr, "1");
+			il.Emit (OpCodes.Ret);
+
+			var baked = tb.CreateType ();
+
+			var x = Activator.CreateInstance (baked);
+			var m = baked.GetMethod ("F");
+
+			var s = m.Invoke (x, null);
+
+			Assert.AreEqual ("1", s);
+
 		}
 
 	}
