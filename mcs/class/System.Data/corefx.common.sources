@@ -468,11 +468,6 @@ corefx/SqlDependencyUtils.cs
 ../../../external/corefx/src/Common/src/System/Net/Logging/DebugThreadTracking.cs
 ../../../external/corefx/src/Common/src/System/Net/InternalException.cs
 ../../../external/corefx/src/Common/src/System/Net/NegotiationInfoClass.cs
-
-#
-# System.Data.Odbc:
-#
-#../../../external/corefx/src/System.Data.Odbc/src/Common/System/Data/Common/AdapterUtil.Odbc.cs
 ../../../external/corefx/src/System.Data.Odbc/src/Common/System/Data/Common/DBConnectionString.cs
 ../../../external/corefx/src/System.Data.Odbc/src/Common/System/Data/Common/NameValuePermission.cs
 ../../../external/corefx/src/System.Data.Odbc/src/Common/System/Data/Common/SafeNativeMethods.cs
