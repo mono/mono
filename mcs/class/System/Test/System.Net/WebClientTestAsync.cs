@@ -79,6 +79,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (AggregateException))] // Something catches the PlatformNotSupportedException and re-throws an AggregateException
+#endif
 		public void DownloadFileTaskAsync ()
 		{
 			WebClient wc = new WebClient ();
