@@ -1,4 +1,0 @@
-#include corefx.common.sources
-#include corefx.unix.sources
-
-../../../external/corefx/src/System.Data.Odbc/src/Common/System/Data/Common/ExternDll.Osx.cs
