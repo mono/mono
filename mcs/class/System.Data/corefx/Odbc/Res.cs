@@ -4,11 +4,6 @@
 
 using System;
 
-internal static partial class SR 
-{
-	public static string GetResourceString(string resourceKey, string defaultString) => defaultString;
-}
-
 // needed for ../referencesource/System.Data/System/Data/CodeGen/datacache.cs
 internal static partial class Res
 {
@@ -21,10 +16,10 @@ internal static partial class Res
 	internal const string CodeGen_NoCtor0 = "Column '{0}': Type '{1}' does not have parameterless constructor";
 	internal const string CodeGen_NoCtor1 = "Column '{0}': Type '{1}' does not have constructor with string argument";
 
-	internal const string SQLUDT_MaxByteSizeValue = "SQLUDT_MaxByteSizeValue";
-	internal const string SqlUdt_InvalidUdtMessage = "SqlUdt_InvalidUdtMessage";
-	internal const string Sql_NullCommandText = "Sql_NullCommandText";
-	internal const string Sql_MismatchedMetaDataDirectionArrayLengths = "Sql_MismatchedMetaDataDirectionArrayLengths";
+	internal const string SQLUDT_MaxByteSizeValue = "range: 0-8000";
+	internal const string SqlUdt_InvalidUdtMessage = "'{0}' is an invalid user defined type, reason: {1}.";
+	internal const string Sql_NullCommandText = "Command parameter must have a non null and non empty command text.";
+	internal const string Sql_MismatchedMetaDataDirectionArrayLengths = "MetaData parameter array must have length equivalent to ParameterDirection array argument.";
 	
 	public const string ADP_InvalidXMLBadVersion = "Invalid Xml; can only parse elements of version one.";
 	public const string ADP_NotAPermissionElement = "Given security element is not a permission element.";
@@ -42,4 +37,9 @@ internal static partial class Res
 	public const string ConfigRequiredAttributeMissing = "Required attribute '{0}' not found.";
 	public const string ConfigRequiredAttributeEmpty = "Required attribute '{0}' cannot be empty.";
 	public const string ADP_QuotePrefixNotSet = "{0} requires open connection when the quote prefix has not been set.";
+}
+
+internal static partial class SR 
+{
+	public static string GetResourceString(string resourceKey, string defaultString) => defaultString;
 }
