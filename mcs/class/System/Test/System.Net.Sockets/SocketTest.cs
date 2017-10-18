@@ -1737,6 +1737,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginConnectAddressPortNull ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1779,7 +1782,11 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof(ObjectDisposedException))]
+#endif
 		public void BeginConnectAddressPortClosed ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1909,6 +1916,9 @@ namespace MonoTests.System.Net.Sockets
 
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginConnectMultipleNull ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1958,7 +1968,11 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof(ObjectDisposedException))]
+#endif
 		public void BeginConnectMultipleClosed ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -2246,6 +2260,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ConnectAddressPortNull ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -2287,7 +2304,11 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof(ObjectDisposedException))]
+#endif
 		public void ConnectAddressPortClosed ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -2395,6 +2416,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ConnectMultipleNull ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -2442,7 +2466,11 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof(ObjectDisposedException))]
+#endif
 		public void ConnectMultipleClosed ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -3721,6 +3749,9 @@ namespace MonoTests.System.Net.Sockets
 		// Test case for https://bugzilla.novell.com/show_bug.cgi?id=443346
 		// See also https://bugzilla.xamarin.com/show_bug.cgi?id=52157
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ConnectedProperty ()
 		{
 			var port = NetworkHelpers.FindFreePort ();
