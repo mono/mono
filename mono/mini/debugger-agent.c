@@ -5502,6 +5502,8 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 		resume_vm ();
 		break;
 	case CMD_VM_DISPOSE:
+		suspend_vm ();
+		wait_for_suspend ();
 		/* Clear all event requests */
 		mono_loader_lock ();
 		while (event_requests->len > 0) {
