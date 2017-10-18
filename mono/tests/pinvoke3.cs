@@ -1268,4 +1268,28 @@ public class Tests {
 
 		return mono_test_marshal_icall_delegate ((IcallDelegate)Delegate.CreateDelegate (typeof (IcallDelegate), m));
 	}
+
+	/*
+	 * Exception handling
+	 */
+	public delegate int EHDelegate ();
+
+	[DllImport ("libtest", EntryPoint="mono_test_marshal_eh_delegate")]
+	public static extern int mono_test_marshal_eh_delegate (EHDelegate d);
+
+	public static int eh () {
+		throw new Exception ();
+
+		return 0;
+	}
+
+	public static int test_0_marshal_eh () {
+		try {
+			return mono_test_marshal_eh_delegate (new EHDelegate (eh));
+		} catch (Exception ex) {
+			if (!ex.StackTrace.ToString ().Contains ("Tests.eh"))
+				return 1;
+		}
+		return 0;
+	}
 }

@@ -7537,3 +7537,14 @@ mono_test_native_to_managed_exception_rethrow (NativeToManagedExceptionRethrowFu
 	pthread_join (t, NULL);
 }
 #endif
+
+typedef void (*EHCallback) (void);
+
+LIBTEST_API int
+mono_test_marshal_eh_delegate (EHCallback cb)
+{
+#ifndef WIN32
+	cb ();
+#endif
+	return 0;
+}
