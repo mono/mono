@@ -72,8 +72,6 @@ ifndef HAVE_CS_TESTS
 HAVE_CS_TESTS := $(wildcard $(test_sourcefile))
 endif
 
-HAVE_SOURCE_EXCLUDES := $(wildcard $(test_sourcefile_excludes))
-
 HAVE_CS_XTESTS := $(wildcard $(xtest_sourcefile))
 
 endif # !NO_TEST
@@ -92,13 +90,9 @@ tests_CLEAN_FILES += $(topdir)/build/deps/nunit-$(PROFILE).stamp
 
 endif
 
-test_assemblies :=
-
 ifdef HAVE_CS_TESTS
-test_assemblies += $(test_lib)
-endif
+test_assemblies = $(test_lib)
 
-ifdef test_assemblies
 check: run-test
 test-local: $(test_assemblies)
 run-test-local: run-test-lib
@@ -130,6 +124,10 @@ test-local-aot-compile: $(topdir)/build/deps/nunit-$(PROFILE).stamp
 
 endif # ALWAYS_AOT
 
+ifdef COVERAGE
+TEST_COVERAGE_FLAGS = -O=-aot --profile=coverage:output=$(topdir)/class/lib/$(PROFILE_DIRECTORY)/coverage_nunit_$(ASSEMBLY).xml
+endif
+
 NUNITLITE_CONFIG_FILE=$(topdir)/class/lib/$(PROFILE)/$(PARENT_PROFILE)nunit-lite-console.exe.config
 
 patch-nunitlite-appconfig:
@@ -144,7 +142,7 @@ endif
 ## FIXME: i18n problem in the 'sed' command below
 run-test-lib: test-local test-local-aot-compile patch-nunitlite-appconfig
 	ok=:; \
-	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" MONO_REGISTRY_PATH="$(HOME)/.mono/registry" MONO_TESTS_IN_PROGRESS="yes" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(AOT_RUN_FLAGS) $(TEST_HARNESS) $(test_assemblies) $(NOSHADOW_FLAG) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) $(TEST_HARNESS_EXCLUDES) $(LABELS_ARG) -format:nunit2 -result:TestResult-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG)|| ok=false; \
+	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" MONO_REGISTRY_PATH="$(HOME)/.mono/registry" MONO_TESTS_IN_PROGRESS="yes" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(TEST_COVERAGE_FLAGS) $(AOT_RUN_FLAGS) $(TEST_HARNESS) $(test_assemblies) $(NOSHADOW_FLAG) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) $(TEST_HARNESS_EXCLUDES) $(LABELS_ARG) -format:nunit2 -result:TestResult-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG)|| ok=false; \
 	if [ ! -f "TestResult-$(PROFILE).xml" ]; then echo "<?xml version='1.0' encoding='utf-8'?><test-results failures='1' total='1' not-run='0' name='bcl-tests' date='$$(date +%F)' time='$$(date +%T)'><test-suite name='$(strip $(test_assemblies))' success='False' time='0'><results><test-case name='crash' executed='True' success='False' time='0'><failure><message>The test runner didn't produce a test result XML, probably due to a crash of the runtime. Check the log for more details.</message><stack-trace></stack-trace></failure></test-case></results></test-suite></test-results>" > TestResult-$(PROFILE).xml; fi; \
 	$$ok
 
@@ -156,7 +154,7 @@ run-test-ondotnet-lib: test-local
 	$$ok
 
 
-endif # test_assemblies
+endif
 
 TEST_FILES =
 
@@ -173,7 +171,7 @@ test_response_preprocessed = $(test_response)_preprocessed
 
 # This handles .excludes/.sources pairs, as well as resolving the
 # includes that occur in .sources files
-$(test_response_preprocessed): $(test_sourcefile)
+$(test_response_preprocessed): $(test_sourcefile) $(wildcard $(test_sourcefile_excludes))
 	$(SHELL) $(topdir)/build/gensources.sh $@ '$(test_sourcefile)' '$(test_sourcefile_excludes)'
 
 $(test_response): $(test_response_preprocessed)
@@ -207,6 +205,10 @@ ifdef TESTNAME
 XTEST_HARNESS_FLAGS += -method $(TESTNAME)
 endif
 
+ifdef COVERAGE
+XTEST_COVERAGE_FLAGS = -O=-aot --profile=coverage:output=$(topdir)/class/lib/$(PROFILE_DIRECTORY)/coverage_xunit_$(ASSEMBLY).xml
+endif
+
 check: run-xunit-test-local
 run-xunit-test: run-xunit-test-local
 xunit-test-local: $(xunit_test_lib)
@@ -216,7 +218,7 @@ run-xunit-test-local: run-xunit-test-lib
 run-xunit-test-lib: xunit-test-local
 	@cp -rf $(XTEST_HARNESS_PATH)/xunit.execution.desktop.dll xunit.execution.desktop.dll
 	ok=:; \
-	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(AOT_RUN_FLAGS) $(XTEST_HARNESS) $(xunit_test_lib) $(XTEST_HARNESS_FLAGS) $(XTEST_TRAIT) || ok=false; \
+	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(XTEST_COVERAGE_FLAGS) $(AOT_RUN_FLAGS) $(XTEST_HARNESS) $(xunit_test_lib) $(XTEST_HARNESS_FLAGS) $(XTEST_TRAIT) || ok=false; \
 	$$ok
 	@rm -f xunit.execution.desktop.dll
 
@@ -227,7 +229,7 @@ xtest_response_preprocessed = $(xtest_response)_preprocessed
 
 # This handles .excludes/.sources pairs, as well as resolving the
 # includes that occur in .sources files
-$(xtest_response): $(xtest_sourcefile)
+$(xtest_response): $(xtest_sourcefile) $(wildcard $(xtest_sourcefile_excludes))
 	$(SHELL) $(topdir)/build/gensources.sh $@ '$(xtest_sourcefile)' '$(xtest_sourcefile_excludes)'
 
 $(xtest_makefrag): $(xtest_response)
