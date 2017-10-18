@@ -644,7 +644,7 @@ namespace MonoTests.System.Web.Routing
 		{
 			var c = new RouteCollection ();
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				c.Ignore (null);
 			}, "#A1");
 
@@ -666,7 +666,7 @@ namespace MonoTests.System.Web.Routing
 		{
 			var c = new RouteCollection ();
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				c.Ignore (null, new { allaspx = @".*\.aspx(/.*)?" });
 			}, "#A1");
 
@@ -686,7 +686,7 @@ namespace MonoTests.System.Web.Routing
 			c = new RouteCollection ();
 			c.Ignore ("{*allaspx}", "something invalid");
 
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				rd = c.GetRouteData (hc);
 			}, "#A2");
 		}
@@ -706,7 +706,7 @@ namespace MonoTests.System.Web.Routing
 			Assert.AreEqual (typeof (PageRouteHandler), rd.RouteHandler.GetType (), "#A1-3");
 
 			c = new RouteCollection ();
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				c.MapPageRoute ("RouteName", null, "~/some-url");
 			}, "#A2");
 
@@ -718,7 +718,7 @@ namespace MonoTests.System.Web.Routing
 
 			c = new RouteCollection ();
 			// thrown by PageRouteHandler's constructor
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				c.MapPageRoute ("RouteName", "~/some-url", null);
 			}, "#A3");
 		}
@@ -739,7 +739,7 @@ namespace MonoTests.System.Web.Routing
 			Assert.IsTrue (((PageRouteHandler) rd.RouteHandler).CheckPhysicalUrlAccess, "#A1-4");
 
 			c = new RouteCollection ();
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				c.MapPageRoute ("RouteName", null, "~/some-url", true);
 			}, "#A2");
 
@@ -751,7 +751,7 @@ namespace MonoTests.System.Web.Routing
 
 			c = new RouteCollection ();
 			// thrown by PageRouteHandler's constructor
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				c.MapPageRoute ("RouteName", "~/some-url", null, true);
 			}, "#A3");
 
@@ -781,7 +781,7 @@ namespace MonoTests.System.Web.Routing
 			Assert.IsTrue (((PageRouteHandler) rd.RouteHandler).CheckPhysicalUrlAccess, "#A1-4");
 
 			c = new RouteCollection ();
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				c.MapPageRoute ("RouteName", null, "~/some-url", true, defaults);
 			}, "#A2");
 
@@ -793,7 +793,7 @@ namespace MonoTests.System.Web.Routing
 
 			c = new RouteCollection ();
 			// thrown by PageRouteHandler's constructor
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				c.MapPageRoute ("RouteName", "~/some-url", null, true, defaults);
 			}, "#A3");
 
@@ -832,7 +832,7 @@ namespace MonoTests.System.Web.Routing
 			Assert.IsTrue (((PageRouteHandler) rd.RouteHandler).CheckPhysicalUrlAccess, "#A1-4");
 
 			c = new RouteCollection ();
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				c.MapPageRoute ("RouteName", null, "~/some-url", true, defaults, constraints);
 			}, "#A2");
 
@@ -844,7 +844,7 @@ namespace MonoTests.System.Web.Routing
 
 			c = new RouteCollection ();
 			// thrown by PageRouteHandler's constructor
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				c.MapPageRoute ("RouteName", "~/some-url", null, true, defaults, constraints);
 			}, "#A3");
 
@@ -884,7 +884,7 @@ namespace MonoTests.System.Web.Routing
 			Assert.IsTrue (((PageRouteHandler) rd.RouteHandler).CheckPhysicalUrlAccess, "#A1-4");
 
 			c = new RouteCollection ();
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				c.MapPageRoute ("RouteName", null, "~/some-url", true, defaults, constraints, dataTokens);
 			}, "#A2");
 
@@ -896,7 +896,7 @@ namespace MonoTests.System.Web.Routing
 
 			c = new RouteCollection ();
 			// thrown by PageRouteHandler's constructor
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				c.MapPageRoute ("RouteName", "~/some-url", null, true, defaults, constraints, dataTokens);
 			}, "#A3");
 

@@ -38,7 +38,6 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using NUnit.Framework;
-using MonoTests.Common;
 
 namespace MonoTests.System.Web.UI.WebControls {
 
@@ -327,11 +326,11 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			TestDataList dl = new TestDataList ();
 
-			AssertExtensions.Throws<ArgumentOutOfRangeException> (() => {
+			Assert.Throws<ArgumentOutOfRangeException> (() => {
 				dl.RepeatLayout = RepeatLayout.OrderedList;
 			}, "#A1");
 
-			AssertExtensions.Throws<ArgumentOutOfRangeException> (() => {
+			Assert.Throws<ArgumentOutOfRangeException> (() => {
 				dl.RepeatLayout = RepeatLayout.UnorderedList;
 			}, "#A2");
 		}

@@ -50,28 +50,28 @@ namespace MonoTests.System.Runtime.Caching
 				relPath
 			};
 
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				monitor = new HostFileChangeMonitor (paths);
 			}, "#A1");
 
 			paths.Clear ();
 			paths.Add (null);
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				monitor = new HostFileChangeMonitor (paths);
 			}, "#A2");
 
 			paths.Clear ();
 			paths.Add (String.Empty);
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				monitor = new HostFileChangeMonitor (paths);
 			}, "#A3");
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				monitor = new HostFileChangeMonitor (null);
 			}, "#A4");
 
 			paths.Clear ();
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				monitor = new HostFileChangeMonitor (paths);
 			}, "#A5");
 		}
@@ -109,7 +109,7 @@ namespace MonoTests.System.Runtime.Caching
 			// at System.Runtime.Caching.HostFileChangeMonitor.InitDisposableMembers()
 			// at System.Runtime.Caching.HostFileChangeMonitor..ctor(IList`1 filePaths)
 			// at MonoTests.System.Runtime.Caching.HostFileChangeMonitorTest.Constructor_MissingFiles() in c:\users\grendel\documents\visual studio 2010\Projects\System.Runtime.Caching.Test\System.Runtime.Caching.Test\System.Runtime.Caching\HostFileChangeMonitorTest.cs:line 68
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				monitor = new HostFileChangeMonitor (paths);
 			}, "#A1");
 
