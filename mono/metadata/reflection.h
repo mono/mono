@@ -104,6 +104,7 @@ MONO_API MonoCustomAttrInfo* mono_custom_attrs_from_param    (MonoMethod *method
 MONO_API mono_bool           mono_custom_attrs_has_attr      (MonoCustomAttrInfo *ainfo, MonoClass *attr_klass);
 MONO_RT_EXTERNAL_ONLY
 MONO_API MonoObject*         mono_custom_attrs_get_attr      (MonoCustomAttrInfo *ainfo, MonoClass *attr_klass);
+MONO_API MonoClass*          mono_custom_attrs_get_attrs     (MonoCustomAttrInfo *ainfo, void **iterator);
 MONO_API void                mono_custom_attrs_free          (MonoCustomAttrInfo *ainfo);
 
 
