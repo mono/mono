@@ -780,7 +780,7 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.IsTrue (query.GetType () == typeof (Table<Foo>), "#A2");
 
 			var foo = new Foo (true);
-			Assert.Throws<Exception> (() => t.GetQuery (foo), "#B1");
+			Assert.Throws<InvalidCastException> (() => t.GetQuery (foo), "#B1");
 		}
 
 		[Test]
