@@ -159,7 +159,7 @@ endif
 TEST_FILES =
 
 ifdef HAVE_CS_TESTS
-TEST_FILES += `sed -e '/^$$/d' -e 's,^../,,' -et -e 's,^,Test/,' $(test_sourcefile)`
+TEST_FILES += `sed -e '/^$$/d' -e 's,^../,,' -e '/^\#.*$$/d' -et -e 's,^,Test/,' $(test_sourcefile)`
 endif
 
 ifdef HAVE_CS_TESTS
