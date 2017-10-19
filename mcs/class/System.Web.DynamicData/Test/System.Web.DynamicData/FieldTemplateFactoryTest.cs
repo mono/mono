@@ -135,11 +135,11 @@ namespace MonoTests.System.Web.DynamicData
 			MetaColumn mc = t.GetColumn ("Column1");
 
 			var ftf = new FieldTemplateFactory ();
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				ftf.BuildVirtualPath (null, mc, DataBoundControlMode.ReadOnly);
 			}, "#A1");
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				ftf.BuildVirtualPath (String.Empty, mc, DataBoundControlMode.ReadOnly);
 			}, "#A2");
 
@@ -179,7 +179,7 @@ namespace MonoTests.System.Web.DynamicData
 			var ftf = new FieldTemplateFactory ();
 
 			// And here we go again...
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				ftf.CreateFieldTemplate (null, DataBoundControlMode.ReadOnly, "Integer.ascx");
 			}, "#A1");
 
@@ -187,17 +187,17 @@ namespace MonoTests.System.Web.DynamicData
 			// Not going to emulate those on Mono. There are limits...
 
 			// ...and again
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				ftf.CreateFieldTemplate (mc, DataBoundControlMode.ReadOnly, null);
 			}, "#A2");
 
 			// ...and again
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				ftf.CreateFieldTemplate (mc, DataBoundControlMode.ReadOnly, String.Empty);
 			}, "#A3");
 
 			// ...and again
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				ftf.CreateFieldTemplate (mc, DataBoundControlMode.ReadOnly, "NoSuchTemplate");
 			}, "#A4");
 #endif
@@ -254,7 +254,7 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "MyCustomUIHintTemplate_Text.ascx", ftuc.AppRelativeVirtualPath, "#E2-2");
 
 			mc = t.GetColumn ("FavoriteColor");
-			AssertExtensions.Throws<HttpException> (() => {
+			Assert.Throws<HttpException> (() => {
 				template = ftf.CreateFieldTemplate (mc, DataBoundControlMode.ReadOnly, "PlainControlTemplate");
 			}, "#F1");
 
@@ -280,23 +280,23 @@ namespace MonoTests.System.Web.DynamicData
 			var ftf = new FieldTemplateFactory ();
 
 			// And here we go again...
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				ftf.GetFieldTemplateVirtualPath (null, DataBoundControlMode.ReadOnly, "Integer.ascx");
 			}, "#A1");
 
 #if TARGET_DOTNET
 			// ...and again
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null);
 			}, "#A2");
 
 			// ...and again
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, String.Empty);
 			}, "#A3");
 
 			// ...and again
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "NoSuchTemplate");
 			}, "#A4");
 #endif
@@ -601,7 +601,7 @@ namespace MonoTests.System.Web.DynamicData
 			ftf.Initialize (m);
 
 			// Ugh...
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				ftf.GetFieldTemplateVirtualPath (null, DataBoundControlMode.ReadOnly, "Integer.ascx");
 			}, "#A1");
 
@@ -634,11 +634,11 @@ namespace MonoTests.System.Web.DynamicData
 
 			// Custom type
 			//   It appears that DataTypeAttribute's custom type name is passed to BuildVirtualPath
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				string path = ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null);
 			}, "#A1");
 			
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				string path = ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "NoSuchTemplate");
 			}, "#A1-1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Boolean.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean"), "#A1-2");
@@ -649,11 +649,11 @@ namespace MonoTests.System.Web.DynamicData
 			AssertHelper.Greater (mc.UIHint.Length, 0, "#A2-1");
 
 			// Proves that UIHint on the column is not used, just the uiHint argument
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				string path = ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null);
 			}, "#A2-2");
 
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				string path = ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "NoSuchTemplate");
 			}, "#A2-3");
 			
@@ -913,7 +913,7 @@ namespace MonoTests.System.Web.DynamicData
 			var ftf = new FieldTemplateFactory ();
 			ftf.Initialize (m);
 
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				ftf.PreprocessMode (null, DataBoundControlMode.ReadOnly);
 			}, "#A1");
 
@@ -1007,7 +1007,7 @@ namespace MonoTests.System.Web.DynamicData
 
 			ftf.TemplateFolderVirtualPath = String.Empty;
 			// Thrown from some internal method - no checks _again_
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				string path = ftf.TemplateFolderVirtualPath;
 			}, "#A8");
 
@@ -1041,7 +1041,7 @@ namespace MonoTests.System.Web.DynamicData
 			ftf.Initialize (m);
 			ftf.TemplateFolderVirtualPath = String.Empty;
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				string path = ftf.TemplateFolderVirtualPath;
 			}, "#G1");
 		}
