@@ -701,28 +701,27 @@ namespace MonoTests.System
         [Test]
         public static void Test_LocalPath_Bug58400()
         {
-            var uriAndExpected = new global::System.Collections.Generic.Dictionary<string, string> 
+            var uriAndExpected = new [] 
             {
-                {"file://host/directory/filename", @"\\host\directory\filename"},
-                {"file://host/directory/", @"\\host\directory\"},
-                {"file://host/filename", @"\\host\filename"},
-                {"file://host/", @"\\host\"},
-                {"file://host", @"\\host"},
-                {"file:///directory/filename", "/directory/filename"},
-                {"file:///directory/", "/directory/"},
-                {"file:///filename", "/filename"},
-                {"file:///", "/"},
+                ("file://host/directory/filename", @"\\host\directory\filename"),
+                ("file://host/directory/", @"\\host\directory\"),
+                ("file://host/filename", @"\\host\filename"),
+                ("file://host/", @"\\host\"),
+                ("file://host", @"\\host"),
+                ("file:///directory/filename", "/directory/filename"),
+                ("file:///directory/", "/directory/"),
+                ("file:///filename", "/filename"),
+                ("file:///", "/"),
                 // This is an invalid URI, technically
-                {"file://", "/"},
-	            {"file://////hello/world", @"\\hello\world"},
-            	{"file://hello/////world", @"\\hello\\\\\world"},
+                ("file://", "/"),
+	            ("file://////hello/world", @"\\hello\world"),
+            	("file://hello/////world", @"\\hello\\\\\world"),
             };
 
-            var pairs = global::System.Linq.Enumerable.OrderBy(uriAndExpected, kvp => kvp.Key);
-            foreach (var pair in pairs) 
+            foreach (var tup in uriAndExpected) 
             {
-                var originalUri = pair.Key;
-                var expectedLocalPath = pair.Value;
+                var originalUri = tup.Item1;
+                var expectedLocalPath = tup.Item2;
                 var uri = new Uri (originalUri);
                 var localPath = uri.LocalPath;
 

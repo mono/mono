@@ -1123,12 +1123,10 @@ namespace System {
 
                 // Do we have a valid local path right in m_string?
                 if (
-                    NotAny(Flags.HostNotCanonical|Flags.PathNotCanonical|Flags.ShouldBeCompressed) && 
+                    NotAny(Flags.HostNotCanonical|Flags.PathNotCanonical|Flags.ShouldBeCompressed)
 #if MONO
                     // This branch drops the host name so we can't use it
-                    !isFileUrlWithHost
-#else
-                    true
+                    && !isFileUrlWithHost
 #endif
                 ) {
 
