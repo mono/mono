@@ -57,6 +57,7 @@ corefx/SqlDependencyUtils.cs
 #
 #../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbDataReaderExtensions.Facade.cs
 #../../../external/corefx/src/System.Data.SqlClient/src/System.Data.SqlClient.TypeForwards.cs
+#../../../external/corefx/src/System.Data.Common/src/System.Data.Common.TypeForwards.cs
 #../../../external/corefx/src/System.Data.SqlClient/src/System/Data/DataException.cs
 #../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/TdsParser.RegisterEncoding.cs
 #../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbConnectionStringCommon.cs
@@ -69,7 +70,6 @@ corefx/SqlDependencyUtils.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbConnectionOptions.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbColumn.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/IDbColumnSchemaGenerator.cs
-../../../external/corefx/src/System.Data.Common/src/System.Data.Common.TypeForwards.cs
 ../../../external/corefx/src/System.Data.Common/src/System/HResults.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Xml/TreeIterator.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Xml/XmlBoundElement.cs
