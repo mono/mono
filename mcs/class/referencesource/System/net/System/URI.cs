@@ -3969,13 +3969,6 @@ namespace System {
                 if (hasUnicode && iriParsing && hostNotUnicodeNormalized){
                     flags |= Flags.HostUnicodeNormalized;// no host
 
-#if MONO
-                    // I am not certain this is the best fix but for Unix implicit paths with
-                    // unicode characters the host must be valid (null or non-empty) as
-                    // CreateUriInfo assumes. This should happen only for paths like /foo/path-with-unicode
-                    if (newHost.Length == 0 && (flags & Flags.BasicHostType) != 0)
-                        newHost = null;
-#endif
                 }
 
                  return idx;
