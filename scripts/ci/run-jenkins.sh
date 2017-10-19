@@ -80,8 +80,10 @@ if [ -x "/usr/bin/dpkg-architecture" ];
 	mkdir -p ~/.config/.mono/
 	wget -qO- https://download.mono-project.com/test/new-certs.tgz| tar zx -C ~/.config/.mono/
 fi
-
-${TESTCMD} --label=configure --timeout=60m --fatal ./autogen.sh $EXTRA_CONF_FLAGS
+if [[ ${CI_TAGS} != *'mac-sdk'* ]]; # Mac SDK builds Mono itself
+	then
+	${TESTCMD} --label=configure --timeout=60m --fatal ./autogen.sh $EXTRA_CONF_FLAGS
+fi
 if [[ ${label} == 'w32' ]];
     then
 	# only build boehm on w32 (only windows platform supporting boehm).
@@ -105,7 +107,10 @@ if [[ ${CI_TAGS} == *'monolite'* ]]; then make get-monolite-latest; fi
 make_parallelism=-j4
 if [[ ${label} == 'debian-8-ppc64el' ]]; then make_parallelism=-j1; fi
 
-${TESTCMD} --label=make --timeout=${make_timeout} --fatal make ${make_parallelism} -w V=1
+if [[ ${CI_TAGS} != *'mac-sdk'* ]]; # Mac SDK builds Mono itself
+	then
+	${TESTCMD} --label=make --timeout=${make_timeout} --fatal make ${make_parallelism} -w V=1
+fi
 
 if [[ ${CI_TAGS} == *'checked-coop'* ]]; then export MONO_CHECK_MODE=gc,thread; fi
 if [[ ${CI_TAGS} == *'checked-all'* ]]; then export MONO_CHECK_MODE=all; fi
@@ -127,6 +132,9 @@ elif [[ ${CI_TAGS} == *'interpreter'* ]];
 elif [[ ${CI_TAGS} == *'mcs-compiler'* ]];
     then
     $(dirname "${BASH_SOURCE[0]}")/run-test-mcs.sh
+elif [[ ${CI_TAGS} == *'mac-sdk'* ]];
+    then
+    $(dirname "${BASH_SOURCE[0]}")/run-test-mac-sdk.sh
 elif [[ ${CI_TAGS} == *'no-tests'* ]];
     then
 	exit 0
