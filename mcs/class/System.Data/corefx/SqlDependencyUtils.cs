@@ -2,10 +2,13 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-namespace System.Data.Common
+namespace System.Data.SqlClient
 {
-	partial class DbConnection
+	partial class SqlDependencyPerAppDomainDispatcher
 	{
-		internal DbProviderFactory ProviderFactory => DbProviderFactory;
+		private void SubscribeToAppDomainUnload()
+		{
+			//override corefx behavior with no-op.
+		}
 	}
 }

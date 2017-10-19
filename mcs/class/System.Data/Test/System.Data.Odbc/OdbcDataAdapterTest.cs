@@ -31,9 +31,8 @@
 using System;
 using System.Data;
 using System.Data.Odbc;
-using System.Data.OleDb;
-
 using NUnit.Framework;
+using SqlCommand = System.Data.SqlClient.SqlCommand;
 
 namespace MonoTests.System.Data.Odbc
 {
@@ -307,7 +306,7 @@ namespace MonoTests.System.Data.Odbc
 			Assert.IsNull (da.DeleteCommand, "#A3");
 
 			try {
-				da.DeleteCommand = new OleDbCommand ();
+				da.DeleteCommand = new SqlCommand ();
 				Assert.Fail ("#B1");
 			} catch (InvalidCastException ex) {
 				Assert.AreEqual (typeof (InvalidCastException), ex.GetType (), "#B2");
@@ -364,7 +363,7 @@ namespace MonoTests.System.Data.Odbc
 			Assert.IsNull (da.InsertCommand, "#A3");
 
 			try {
-				da.InsertCommand = new OleDbCommand ();
+				da.InsertCommand = new SqlCommand ();
 				Assert.Fail ("#B1");
 			} catch (InvalidCastException ex) {
 				Assert.AreEqual (typeof (InvalidCastException), ex.GetType (), "#B2");
@@ -403,7 +402,7 @@ namespace MonoTests.System.Data.Odbc
 			Assert.IsNull (da.SelectCommand, "#A3");
 
 			try {
-				da.SelectCommand = new OleDbCommand ();
+				da.SelectCommand = new SqlCommand ();
 				Assert.Fail ("#B1");
 			} catch (InvalidCastException ex) {
 				Assert.AreEqual (typeof (InvalidCastException), ex.GetType (), "#B2");
@@ -480,7 +479,7 @@ namespace MonoTests.System.Data.Odbc
 			Assert.IsNull (da.UpdateCommand, "#A3");
 
 			try {
-				da.UpdateCommand = new OleDbCommand ();
+				da.UpdateCommand = new SqlCommand ();
 				Assert.Fail ("#B1");
 			} catch (InvalidCastException ex) {
 				Assert.AreEqual (typeof (InvalidCastException), ex.GetType (), "#B2");
