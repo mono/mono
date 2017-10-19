@@ -1,5 +1,5 @@
 //
-// SHA512Test.cs - NUnit Test Cases for SHA512
+// SHA256TestBase.cs - NUnit Test Cases for SHA256
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -20,16 +20,17 @@ namespace MonoTests.System.Security.Cryptography {
 // a.	FIPS PUB 180-2: Secure Hash Standard
 //	http://csrc.nist.gov/publications/fips/fips180-2/fip180-2.txt
 
-// SHA512 is a abstract class - so most of the test included here wont be tested
+// SHA256 is a abstract class - so most of the test included here wont be tested
 // on the abstract class but should be tested in ALL its descendants.
 
-[TestFixture]
-public class SHA512Test : HashAlgorithmTest {
+// we can't make this a [TestFixture] since the class is shared with System.Core
+// and causes issues in XA where these are in the same process.
+public abstract class SHA256TestBase : HashAlgorithmTestBase {
 
 	[SetUp]
 	public override void SetUp () 
 	{
-		hash = SHA512.Create ();
+		hash = SHA256.Create ();
 	}
 
 	// the hash algorithm only exists as a managed implementation
@@ -40,19 +41,15 @@ public class SHA512Test : HashAlgorithmTest {
 	// test vectors from NIST FIPS 186-2
 
 	private string input1 = "abc";
-	private string input2 = "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu";
+	private string input2 = "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq";
 
-	public void FIPS186_Test1 (SHA512 hash) 
+	public void FIPS186_Test1 (SHA256 hash) 
 	{
 		string className = hash.ToString ();
-		byte[] result = { 0xdd, 0xaf, 0x35, 0xa1, 0x93, 0x61, 0x7a, 0xba,
-				  0xcc, 0x41, 0x73, 0x49, 0xae, 0x20, 0x41, 0x31, 
-				  0x12, 0xe6, 0xfa, 0x4e, 0x89, 0xa9, 0x7e, 0xa2, 
-				  0x0a, 0x9e, 0xee, 0xe6, 0x4b, 0x55, 0xd3, 0x9a, 
-				  0x21, 0x92, 0x99, 0x2a, 0x27, 0x4f, 0xc1, 0xa8,
-				  0x36, 0xba, 0x3c, 0x23, 0xa3, 0xfe, 0xeb, 0xbd, 
-				  0x45, 0x4d, 0x44, 0x23, 0x64, 0x3c, 0xe8, 0x0e, 
-				  0x2a, 0x9a, 0xc9, 0x4f, 0xa5, 0x4c, 0xa4, 0x9f };
+		byte[] result = { 0xba, 0x78, 0x16, 0xbf, 0x8f, 0x01, 0xcf, 0xea, 
+				  0x41, 0x41, 0x40, 0xde, 0x5d, 0xae, 0x22, 0x23, 
+				  0xb0, 0x03, 0x61, 0xa3, 0x96, 0x17, 0x7a, 0x9c, 
+				  0xb4, 0x10, 0xff, 0x61, 0xf2, 0x00, 0x15, 0xad };
 		byte[] input = Encoding.Default.GetBytes (input1);
 
 		string testName = className + " 1";
@@ -63,17 +60,13 @@ public class SHA512Test : HashAlgorithmTest {
 		FIPS186_e (testName, hash, input, result);
 	}
 
-	public void FIPS186_Test2 (SHA512 hash) 
+	public void FIPS186_Test2 (SHA256 hash) 
 	{
 		string className = hash.ToString ();
-		byte[] result = { 0x8e, 0x95, 0x9b, 0x75, 0xda, 0xe3, 0x13, 0xda, 
-				  0x8c, 0xf4, 0xf7, 0x28, 0x14, 0xfc, 0x14, 0x3f, 
-				  0x8f, 0x77, 0x79, 0xc6, 0xeb, 0x9f, 0x7f, 0xa1, 
-				  0x72, 0x99, 0xae, 0xad, 0xb6, 0x88, 0x90, 0x18, 
-				  0x50, 0x1d, 0x28, 0x9e, 0x49, 0x00, 0xf7, 0xe4, 
-				  0x33, 0x1b, 0x99, 0xde, 0xc4, 0xb5, 0x43, 0x3a, 
-				  0xc7, 0xd3, 0x29, 0xee, 0xb6, 0xdd, 0x26, 0x54, 
-				  0x5e, 0x96, 0xe5, 0x5b, 0x87, 0x4b, 0xe9, 0x09 };
+		byte[] result = { 0x24, 0x8d, 0x6a, 0x61, 0xd2, 0x06, 0x38, 0xb8, 
+				  0xe5, 0xc0, 0x26, 0x93, 0x0c, 0x3e, 0x60, 0x39, 
+				  0xa3, 0x3c, 0xe4, 0x59, 0x64, 0xff, 0x21, 0x67, 
+				  0xf6, 0xec, 0xed, 0xd4, 0x19, 0xdb, 0x06, 0xc1 };
 		byte[] input = Encoding.Default.GetBytes (input2);
 
 		string testName = className + " 2";
@@ -84,17 +77,13 @@ public class SHA512Test : HashAlgorithmTest {
 		FIPS186_e (testName, hash, input, result);
 	}
 
-	public void FIPS186_Test3 (SHA512 hash) 
+	public void FIPS186_Test3 (SHA256 hash) 
 	{
 		string className = hash.ToString ();
-		byte[] result = { 0xe7, 0x18, 0x48, 0x3d, 0x0c, 0xe7, 0x69, 0x64, 
-				  0x4e, 0x2e, 0x42, 0xc7, 0xbc, 0x15, 0xb4, 0x63, 
-				  0x8e, 0x1f, 0x98, 0xb1, 0x3b, 0x20, 0x44, 0x28,
-				  0x56, 0x32, 0xa8, 0x03, 0xaf, 0xa9, 0x73, 0xeb,
-                                  0xde, 0x0f, 0xf2, 0x44, 0x87, 0x7e, 0xa6, 0x0a, 
-				  0x4c, 0xb0, 0x43, 0x2c, 0xe5, 0x77, 0xc3, 0x1b, 
-				  0xeb, 0x00, 0x9c, 0x5c, 0x2c, 0x49, 0xaa, 0x2e, 
-				  0x4e, 0xad, 0xb2, 0x17, 0xad, 0x8c, 0xc0, 0x9b };
+		byte[] result = { 0xcd, 0xc7, 0x6e, 0x5c, 0x99, 0x14, 0xfb, 0x92, 
+				  0x81, 0xa1, 0xc7, 0xe2, 0x84, 0xd7, 0x3e, 0x67, 
+				  0xf1, 0x80, 0x9a, 0x48, 0xa4, 0x97, 0x20, 0x0e, 
+				  0x04, 0x6d, 0x39, 0xcc, 0xc7, 0x11, 0x2c, 0xd0 };
 		byte[] input = new byte [1000000];
 		for (int i = 0; i < 1000000; i++)
 			input[i] = 0x61; // a
@@ -107,7 +96,7 @@ public class SHA512Test : HashAlgorithmTest {
 		FIPS186_e (testName, hash, input, result);
 	}
 
-	public void FIPS186_a (string testName, SHA512 hash, byte[] input, byte[] result) 
+	public void FIPS186_a (string testName, SHA256 hash, byte[] input, byte[] result) 
 	{
 		byte[] output = hash.ComputeHash (input); 
 		Assert.AreEqual (result, output, testName + ".a.1");
@@ -116,7 +105,7 @@ public class SHA512Test : HashAlgorithmTest {
 		hash.Initialize ();
 	}
 
-	public void FIPS186_b (string testName, SHA512 hash, byte[] input, byte[] result) 
+	public void FIPS186_b (string testName, SHA256 hash, byte[] input, byte[] result) 
 	{
 		byte[] output = hash.ComputeHash (input, 0, input.Length); 
 		Assert.AreEqual (result, output, testName + ".b.1");
@@ -125,7 +114,7 @@ public class SHA512Test : HashAlgorithmTest {
 		hash.Initialize ();
 	}
 
-	public void FIPS186_c (string testName, SHA512 hash, byte[] input, byte[] result) 
+	public void FIPS186_c (string testName, SHA256 hash, byte[] input, byte[] result) 
 	{
 		MemoryStream ms = new MemoryStream (input);
 		byte[] output = hash.ComputeHash (ms); 
@@ -135,7 +124,7 @@ public class SHA512Test : HashAlgorithmTest {
 		hash.Initialize ();
 	}
 
-	public void FIPS186_d (string testName, SHA512 hash, byte[] input, byte[] result) 
+	public void FIPS186_d (string testName, SHA256 hash, byte[] input, byte[] result) 
 	{
 		byte[] output = hash.TransformFinalBlock (input, 0, input.Length);
 		// LAMESPEC or FIXME: TransformFinalBlock doesn't return HashValue !
@@ -146,7 +135,7 @@ public class SHA512Test : HashAlgorithmTest {
 		hash.Initialize ();
 	}
 
-	public void FIPS186_e (string testName, SHA512 hash, byte[] input, byte[] result) 
+	public void FIPS186_e (string testName, SHA256 hash, byte[] input, byte[] result) 
 	{
 		byte[] copy = new byte [input.Length];
 		for (int i=0; i < input.Length - 1; i++)
@@ -166,17 +155,17 @@ public class SHA512Test : HashAlgorithmTest {
 		// Note: These tests will only be valid without a "machine.config" file
 		// or a "machine.config" file that do not modify the default algorithm
 		// configuration.
-		const string defaultSHA512 = "System.Security.Cryptography.SHA512Managed";
+		const string defaultSHA256 = "System.Security.Cryptography.SHA256Managed";
 
 		// try to build the default implementation
-		SHA512 hash = SHA512.Create ();
-		Assert.AreEqual (hash.ToString (), defaultSHA512, "SHA512.Create()");
+		SHA256 hash = SHA256.Create ();
+		Assert.AreEqual (hash.ToString (), defaultSHA256, "SHA256.Create()");
 
-		// try to build, in every way, a SHA512 implementation
-		hash = SHA512.Create ("SHA512");
-		Assert.AreEqual (hash.ToString (), defaultSHA512, "SHA512.Create('SHA512')");
-		hash = SHA512.Create ("SHA-512");
-		Assert.AreEqual (hash.ToString (), defaultSHA512, "SHA512.Create('SHA-512')");
+		// try to build, in every way, a SHA256 implementation
+		hash = SHA256.Create ("SHA256");
+		Assert.AreEqual (hash.ToString (), defaultSHA256, "SHA256.Create('SHA256')");
+		hash = SHA256.Create ("SHA-256");
+		Assert.AreEqual (hash.ToString (), defaultSHA256, "SHA256.Create('SHA-256')");
 	}
 
 	[Test]
@@ -184,15 +173,15 @@ public class SHA512Test : HashAlgorithmTest {
 	public void CreateIncorrect () 
 	{
 		// try to build an incorrect hash algorithms
-		hash = SHA512.Create ("MD5");
+		hash = SHA256.Create ("MD5");
 	}
 
 	[Test]
 	public void CreateInvalid () 
 	{
 		// try to build invalid implementation
-		hash = SHA512.Create ("InvalidHash");
-		Assert.IsNull (hash, "SHA512.Create('InvalidHash')");
+		hash = SHA256.Create ("InvalidHash");
+		Assert.IsNull (hash, "SHA256.Create('InvalidHash')");
 	}
 
 	[Test]
@@ -200,15 +189,15 @@ public class SHA512Test : HashAlgorithmTest {
 	public override void CreateNull () 
 	{
 		// try to build null implementation
-		hash = SHA512.Create (null);
+		hash = SHA256.Create (null);
 	}
 
-	// none of those values changes for any implementation of defaultSHA512
+	// none of those values changes for any implementation of defaultSHA256
 	[Test]
 	public virtual void StaticInfo () 
 	{
 		string className = hash.ToString ();
-		Assert.AreEqual (512, hash.HashSize, className + ".HashSize");
+		Assert.AreEqual (256, hash.HashSize, className + ".HashSize");
 		Assert.AreEqual (1, hash.InputBlockSize, className + ".InputBlockSize");
 		Assert.AreEqual (1, hash.OutputBlockSize, className + ".OutputBlockSize");
 	}

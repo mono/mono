@@ -1,5 +1,5 @@
 //
-// HashAlgorithmTest.cs - NUnit Test Cases for HashAlgorithm
+// HashAlgorithmTestBase.cs - NUnit Test Cases for HashAlgorithm
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -38,8 +38,9 @@ namespace MonoTests.System.Security.Cryptography {
 // HashAlgorithm is a abstract class - so most of it's functionality wont
 // be tested here (but will be in its descendants).
 
-[TestFixture]
-public class HashAlgorithmTest {
+// we can't make this a [TestFixture] since the class is shared with System.Core
+// and causes issues in XA where these are in the same process.
+public abstract class HashAlgorithmTestBase {
 
 	protected HashAlgorithm hash;
 

@@ -1,5 +1,5 @@
 //
-// SHA1Test.cs - NUnit Test Cases for SHA1
+// SHA1TestBase.cs - NUnit Test Cases for SHA1
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -24,8 +24,9 @@ namespace MonoTests.System.Security.Cryptography
 // SHA1 is a abstract class - so most of the test included here wont be tested
 // on the abstract class but should be tested in ALL its descendants.
 
-[TestFixture]
-public class SHA1Test : HashAlgorithmTest {
+// we can't make this a [TestFixture] since the class is shared with System.Core
+// and causes issues in XA where these are in the same process.
+public abstract class SHA1TestBase : HashAlgorithmTestBase {
 
 	[SetUp]
 	public override void SetUp () 
