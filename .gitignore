@@ -44,6 +44,7 @@ Ankh.NoLoad
 # Tooling
 _ReSharper*/
 *.resharper
+.idea/*
 [Tt]est[Rr]esult*
 *.orig
 *.rej
@@ -88,6 +89,11 @@ stamp-h.in
 *.swp
 *.o
 .deps
+*.csprojResolveAssemblyReference.cache
+*.csproj.FileListAbsolute.txt
+*.csproj.GenerateResource.[Cc]ache
+*.csproj.CoreCompileInputs.cache
+*.csproj.CopyComplete
 
 # Libtool
 libtool.m4
