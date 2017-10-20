@@ -28,6 +28,7 @@ PROFILE_MCS_FLAGS = \
 	$(PLATFORM_DEBUG_FLAGS) \
 	$(MONOTOUCH_MCS_FLAGS)
 
+API_BIN_PROFILE = monotouch
 FRAMEWORK_VERSION = 2.1
 
 # This is utility build only
