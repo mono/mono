@@ -152,6 +152,8 @@ typedef struct {
 	gpointer interp_exit_data;
 } MonoLMFExt;
 
+typedef void (*MonoFtnPtrEHCallback) (guint32 gchandle);
+
 /* main function */
 MONO_API int         mono_main                      (int argc, char* argv[]);
 MONO_API void        mono_set_defaults              (int verbose_level, guint32 opts);
@@ -169,6 +171,9 @@ MonoDomain* mini_init                      (const char *filename, const char *ru
 void        mini_cleanup                   (MonoDomain *domain);
 MONO_API MonoDebugOptions *mini_get_debug_options   (void);
 MONO_API gboolean    mini_parse_debug_option (const char *option);
+
+MONO_API void
+mono_install_ftnptr_eh_callback (MonoFtnPtrEHCallback callback);
 
 void      mini_jit_init                    (void);
 void      mini_jit_cleanup                 (void);

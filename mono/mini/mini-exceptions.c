@@ -114,6 +114,8 @@ static gpointer throw_corlib_exception_func;
 static gpointer try_more_restore_tramp = NULL;
 static gpointer restore_stack_protection_tramp = NULL;
 
+static MonoFtnPtrEHCallback ftnptr_eh_callback;
+
 static void try_more_restore (void);
 static void restore_stack_protection (void);
 static void mono_walk_stack_full (MonoJitStackWalk func, MonoContext *start_ctx, MonoDomain *domain, MonoJitTlsData *jit_tls, MonoLMF *lmf, MonoUnwindOptions unwind_options, gpointer user_data);
@@ -1744,6 +1746,15 @@ handle_exception_first_pass (MonoContext *ctx, MonoObject *obj, gint32 *out_filt
 		} else {
 			free_stack = 0xffffff;
 		}
+
+		if (method->wrapper_type == MONO_WRAPPER_NATIVE_TO_MANAGED && ftnptr_eh_callback) {
+			guint32 handle = mono_gchandle_new (obj, FALSE);
+			gpointer stackptr;
+
+			mono_threads_enter_gc_safe_region_unbalanced (&stackptr);
+			ftnptr_eh_callback (handle);
+		}
+				
 				
 		for (i = clause_index_start; i < ji->num_clauses; i++) {
 			MonoJitExceptionInfo *ei = &ji->clauses [i];
@@ -3243,6 +3254,21 @@ mono_jinfo_get_epilog_size (MonoJitInfo *ji)
 	g_assert (info);
 
 	return info->epilog_size;
+}
+
+/*
+ * mono_install_ftnptr_eh_callback:
+ *
+ *   Install a callback that should be called when there is a managed exception
+ *   in a native-to-managed wrapper. This is mainly used by iOS to convert a
+ *   managed exception to a native exception, to properly unwind the native
+ *   stack; this native exception will then be converted back to a managed
+ *   exception in their managed-to-native wrapper.
+ */
+void
+mono_install_ftnptr_eh_callback (MonoFtnPtrEHCallback callback)
+{
+	ftnptr_eh_callback = callback;
 }
 
 /*
