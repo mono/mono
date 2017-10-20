@@ -1,0 +1,18 @@
+# build artifacts
+.stamp-*
+*.mk.generated
+*.config.cache
+android-arm/
+android-arm64/
+android-x86/
+android-x86_64/
+ios-target32/
+ios-target64/
+ios-cross32/
+ios-cross64/
+ios-sim32/
+ios-sim64/
+bcl/
+
+# android toolchain
+toolchains/
