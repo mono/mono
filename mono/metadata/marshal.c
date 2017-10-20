@@ -84,9 +84,7 @@ static gboolean use_aot_wrappers;
 
 static int class_marshal_info_count;
 
-static void ftnptr_eh_callback_default (guint32 gchandle);
-
-static MonoFtnPtrEHCallback ftnptr_eh_callback = ftnptr_eh_callback_default;
+static MonoFtnPtrEHCallback ftnptr_eh_callback;
 
 static void
 delegate_hash_table_add (MonoDelegateHandle d);
@@ -226,6 +224,9 @@ mono_icall_handle_new (gpointer rawobj);
 
 static MonoObjectHandle
 mono_icall_handle_new_interior (gpointer rawobj);
+
+static gint32
+mono_marshal_has_ftnptr_eh_callback (void);
 
 /* Lazy class loading functions */
 static GENERATE_GET_CLASS_WITH_CACHE (string_builder, "System.Text", "StringBuilder");
@@ -393,11 +394,12 @@ mono_marshal_init (void)
 		register_icall (mono_gchandle_get_target, "mono_gchandle_get_target", "object int32", TRUE);
 		register_icall (mono_gchandle_new, "mono_gchandle_new", "uint32 object bool", TRUE);
 		register_icall (mono_marshal_isinst_with_cache, "mono_marshal_isinst_with_cache", "object object ptr ptr", FALSE);
+		register_icall (mono_marshal_has_ftnptr_eh_callback, "mono_marshal_has_ftnptr_eh_callback", "int32", TRUE);
 		register_icall (mono_marshal_ftnptr_eh_callback, "mono_marshal_ftnptr_eh_callback", "void uint32", TRUE);
 		register_icall (mono_threads_enter_gc_safe_region_unbalanced, "mono_threads_enter_gc_safe_region_unbalanced", "ptr ptr", TRUE);
 		register_icall (mono_threads_exit_gc_safe_region_unbalanced, "mono_threads_exit_gc_safe_region_unbalanced", "void ptr ptr", TRUE);
 		register_icall (mono_threads_attach_coop, "mono_threads_attach_coop", "ptr ptr ptr", TRUE);
-		register_icall (mono_threads_detach_coop, "mono_threads_detach_coop", "void ptr ptr", TRUE);
+		register_icall (mono_threads_detach_coop, "mono_threads_detach_coop", "void ptr ptr int", TRUE);
 		register_icall (mono_icall_start, "mono_icall_start", "ptr ptr ptr", TRUE);
 		register_icall (mono_icall_end, "mono_icall_end", "void ptr ptr ptr", TRUE);
 		register_icall (mono_icall_handle_new, "mono_icall_handle_new", "ptr ptr", TRUE);
@@ -8524,8 +8526,8 @@ mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *i
 #else
 	MonoMethodSignature *sig, *csig;
 	MonoExceptionClause *clauses, *clause_finally, *clause_catch;
-	int i, *tmp_locals, ex_local, e_local, attach_cookie_local, attach_dummy_local;
-	int leave_try_pos, leave_catch_pos, ex_m1_pos;
+	int i, *tmp_locals, ex_local, e_local, enter_blocking_local, attach_cookie_local, attach_dummy_local;
+	int leave_try_pos, leave_catch_pos, ex_m1_pos, rethrow_pos;
 	gboolean closed = FALSE;
 
 	sig = m->sig;
@@ -8558,6 +8560,7 @@ mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *i
 
 	ex_local = mono_mb_add_local (mb, &mono_defaults.uint32_class->byval_arg);
 	e_local = mono_mb_add_local (mb, &mono_defaults.exception_class->byval_arg);
+	enter_blocking_local = mono_mb_add_local (mb, &mono_defaults.int32_class->byval_arg);
 
 	attach_cookie_local = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
 	attach_dummy_local = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
@@ -8607,6 +8610,8 @@ mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *i
 		mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
 		mono_mb_emit_byte (mb, CEE_MONO_JIT_ATTACH);
 	} else {
+		mono_mb_emit_icon (mb, 1);
+		mono_mb_emit_stloc (mb, enter_blocking_local);
 		/* mono_threads_attach_coop (); */
 		mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
 		mono_mb_emit_byte (mb, CEE_MONO_LDDOMAIN);
@@ -8770,6 +8775,21 @@ mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *i
 
 	mono_mb_emit_stloc (mb, e_local);
 
+	/* if (!mono_marshal_has_ftnptr_eh_callback ()) { */
+	mono_mb_emit_icall (mb, mono_marshal_has_ftnptr_eh_callback);
+	rethrow_pos = mono_mb_emit_branch (mb, CEE_BRTRUE);
+
+	mono_mb_emit_icon (mb, 0);
+	mono_mb_emit_stloc (mb, enter_blocking_local);
+
+	/* rethrow e; */
+	mono_mb_emit_ldloc (mb, e_local);
+	mono_mb_emit_byte (mb, CEE_PREFIX1);
+	mono_mb_emit_byte (mb, CEE_RETHROW);
+
+	/* } [endif] */
+	mono_mb_patch_branch (mb, rethrow_pos);
+
 	/* ex = mono_gchandle_new (e, false); */
 	mono_mb_emit_ldloc (mb, e_local);
 	mono_mb_emit_icon (mb, 0);
@@ -8792,6 +8812,7 @@ mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *i
 		/* mono_threads_detach_coop (); */
 		mono_mb_emit_ldloc (mb, attach_cookie_local);
 		mono_mb_emit_ldloc_addr (mb, attach_dummy_local);
+		mono_mb_emit_ldloc (mb, enter_blocking_local);
 		mono_mb_emit_icall (mb, mono_threads_detach_coop);
 	}
 
@@ -12366,26 +12387,17 @@ mono_marshal_free_dynamic_wrappers (MonoMethod *method)
 		mono_marshal_unlock ();
 }
 
+static gint32
+mono_marshal_has_ftnptr_eh_callback (void)
+{
+	return ftnptr_eh_callback != NULL;
+}
+
 static void
 mono_marshal_ftnptr_eh_callback (guint32 gchandle)
 {
 	g_assert (ftnptr_eh_callback);
 	ftnptr_eh_callback (gchandle);
-}
-
-static void
-ftnptr_eh_callback_default (guint32 gchandle)
-{
-	MonoException *exc;
-	gpointer stackdata;
-
-	mono_threads_enter_gc_unsafe_region_unbalanced (&stackdata);
-
-	exc = (MonoException*) mono_gchandle_get_target (gchandle);
-
-	mono_gchandle_free (gchandle);
-
-	mono_reraise_exception (exc);
 }
 
 /*

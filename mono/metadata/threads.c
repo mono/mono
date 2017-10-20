@@ -5258,9 +5258,10 @@ mono_threads_attach_coop (MonoDomain *domain, gpointer *dummy)
  *  - @dummy:
  *    - blocking mode: contains gc unsafe transition cookie
  *    - non-blocking mode: contains random data
+ *  - @enter_blocking: whenever to enter blocking mode again
  */
 void
-mono_threads_detach_coop (gpointer cookie, gpointer *dummy)
+mono_threads_detach_coop (gpointer cookie, gpointer *dummy, int enter_blocking)
 {
 	MonoDomain *domain, *orig;
 
@@ -5269,7 +5270,7 @@ mono_threads_detach_coop (gpointer cookie, gpointer *dummy)
 	domain = mono_domain_get ();
 	g_assert (domain);
 
-	if (mono_threads_is_blocking_transition_enabled ()) {
+	if (mono_threads_is_blocking_transition_enabled () && enter_blocking) {
 		/* it won't do anything if cookie is NULL
 		 * thread state RUNNING -> (RUNNING|BLOCKING) */
 		mono_threads_exit_gc_unsafe_region (*dummy, dummy);
