@@ -14,6 +14,7 @@
 #include "vm/Method.h"
 #include "vm/Object.h"
 #include "vm/Profiler.h"
+#include "vm/Reflection.h"
 #include "vm/Runtime.h"
 #include "vm/String.h"
 #include "vm/Thread.h"
@@ -866,8 +867,7 @@ Il2CppMonoCustomAttrInfo* il2cpp_mono_custom_attrs_from_field_checked(Il2CppMono
 
 Il2CppMonoReflectionAssemblyHandle il2cpp_mono_assembly_get_object_handle(Il2CppMonoDomain* domain, Il2CppMonoAssembly* assembly, MonoError* error)
 {
-	IL2CPP_ASSERT(0 && "This method is not yet implemented");
-	return 0;
+	return (Il2CppMonoReflectionAssemblyHandle)il2cpp::vm::Reflection::GetAssemblyObject((const Il2CppAssembly *)assembly);
 }
 
 Il2CppMonoReflectionType* il2cpp_mono_type_get_object_checked(Il2CppMonoDomain* domain, Il2CppMonoType* type, MonoError* error)

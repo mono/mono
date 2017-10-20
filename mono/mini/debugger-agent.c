@@ -8782,6 +8782,14 @@ domain_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 static ErrorCode
 get_assembly_object_command (MonoDomain *domain, MonoAssembly *ass, Buffer *buf, MonoError *error)
 {
+#ifdef IL2CPP_MONO_DEBUGGER
+	MonoReflectionAssemblyHandle o = il2cpp_mono_assembly_get_object_handle(domain, ass, error);
+	if (o == NULL) {
+		return ERR_INVALID_OBJECT;
+	}
+	buffer_add_objid(buf, (MonoObject*)o);
+	return ERR_NONE;
+#else
 	HANDLE_FUNCTION_ENTER();
 	ErrorCode err = ERR_NONE;
 	mono_error_init (error);
@@ -8793,6 +8801,7 @@ get_assembly_object_command (MonoDomain *domain, MonoAssembly *ass, Buffer *buf,
 	buffer_add_objid (buf, MONO_HANDLE_RAW (MONO_HANDLE_CAST (MonoObject, o)));
 leave:
 	HANDLE_FUNCTION_RETURN_VAL (err);
+#endif
 }
 
 
