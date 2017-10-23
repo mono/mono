@@ -5000,7 +5000,7 @@ ss_update_il2cpp(SingleStepReq *req, DebuggerTlsData *tls, MonoContext *ctx, Il2
 {
 	gboolean hit = TRUE;
 
-	if (req->async_stepout_method == *sequencePoint->method)
+	if (il2cpp_mono_methods_match(req->async_stepout_method, *sequencePoint->method))
 	{
 		DEBUG_PRINTF(1, "[%p] Breakpoint hit during async step-out at %s hit, continuing stepping out.\n", (gpointer)(gsize)mono_native_thread_id_get(), mono_method_get_name(*sequencePoint->method));
 		return FALSE;

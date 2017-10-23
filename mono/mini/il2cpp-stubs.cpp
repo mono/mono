@@ -222,11 +222,6 @@ const char* il2cpp_mono_field_get_name (Il2CppMonoClassField *field)
 	return il2cpp::vm::Field::GetName((FieldInfo*)field);
 }
 
-Il2CppMonoMethod* il2cpp_mono_class_get_method_from_name (Il2CppMonoClass *klass, const char *name, int param_count)
-{
-	return (Il2CppMonoMethod*)il2cpp::vm::Class::GetMethodFromName((Il2CppClass*)klass, name, param_count);
-}
-
 mono_unichar2* il2cpp_mono_string_chars (Il2CppMonoString *monoStr)
 {
 	Il2CppString *str = (Il2CppString*)monoStr;
@@ -645,11 +640,6 @@ Il2CppMonoClass* il2cpp_mono_class_load_from_name(Il2CppMonoImage* image, const 
 {
 	IL2CPP_ASSERT(0 && "This method is not yet implemented");
 	return NULL;
-}
-
-Il2CppMonoClass* il2cpp_mono_class_try_load_from_name(Il2CppMonoImage* image, const char* name_space, const char* name)
-{
-	return (Il2CppMonoClass*)il2cpp::vm::Image::ClassFromName((Il2CppImage*)image, name_space, name);
 }
 
 Il2CppMonoGenericClass* il2cpp_mono_class_get_generic_class(Il2CppMonoClass* monoClass)
