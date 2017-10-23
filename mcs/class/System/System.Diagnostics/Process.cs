@@ -72,6 +72,8 @@ namespace System.Diagnostics
 
 		string process_name;
 
+		static ProcessModule current_main_module;
+
 		/* Private constructor called from other methods */
 		private Process (SafeProcessHandle handle, int id) {
 			SetProcessHandle (handle);
@@ -98,7 +100,14 @@ namespace System.Diagnostics
 		[MonitoringDescription ("The main module of the process.")]
 		public ProcessModule MainModule {
 			get {
-				return(this.Modules[0]);
+				/* Optimize Process.GetCurrentProcess ().MainModule */
+				if (processId == NativeMethods.GetCurrentProcessId ()) {
+					if (current_main_module == null)
+						current_main_module = this.Modules [0];
+					return current_main_module;
+				} else {
+					return this.Modules [0];
+				}
 			}
 		}
 
