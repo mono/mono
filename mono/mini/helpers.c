@@ -135,6 +135,11 @@ mono_blockset_print (MonoCompile *cfg, MonoBitSet *set, const char *name, guint 
 void
 mono_disassemble_code (MonoCompile *cfg, guint8 *code, int size, char *id)
 {
+#if HOST_WIN32
+	/* Wine Mono: We can't really access objdump, so just break if there's a debugger. */
+	if (IsDebuggerPresent())
+		DebugBreak();
+#else
 #ifndef DISABLE_LOGGING
 	GHashTable *offset_to_bb_hash = NULL;
 	int i, cindex, bb_num;
@@ -301,6 +306,7 @@ mono_disassemble_code (MonoCompile *cfg, guint8 *code, int size, char *id)
 #endif
 	g_free (o_file);
 	g_free (as_file);
+#endif
 #endif
 }
 
