@@ -257,11 +257,13 @@ namespace System.Runtime.Remoting
 
 		public static object Unmarshal (ObjRef objectRef)
 		{
-			return Unmarshal (objectRef, true);
+			return Unmarshal (objectRef, false);
 		}
 
 		public static object Unmarshal (ObjRef objectRef, bool fRefine)
 		{
+			if (objectRef.HasProxyAttribute)
+				fRefine = true;
 			Type classToProxy = fRefine ? objectRef.ServerType : typeof (MarshalByRefObject);
 			if (classToProxy == null) classToProxy = typeof (MarshalByRefObject);
 

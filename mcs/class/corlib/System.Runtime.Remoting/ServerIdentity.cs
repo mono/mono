@@ -95,6 +95,9 @@ namespace System.Runtime.Remoting
 			_objRef = new ObjRef ();
 			_objRef.TypeInfo = new TypeInfo(requestedType);
 			_objRef.URI = _objectUri;
+			if (Attribute.IsDefined (requestedType, typeof(ProxyAttribute), true)) {
+				_objRef.SetHasProxyAttribute ();
+			}
 
 			if (_envoySink != null && !(_envoySink is EnvoyTerminatorSink))
 				_objRef.EnvoyInfo = new EnvoyInfo (_envoySink);
