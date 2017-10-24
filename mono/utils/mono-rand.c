@@ -35,16 +35,51 @@
 #include <sys/types.h>
 #include <sys/un.h>
 
-#if defined(__linux__) && defined(__GLIBC__)
-# include <linux/version.h>
-# if (LINUX_VERSION_CODE >= 0x31100) \
-     && (__GLIBC__ > 2 || __GLIBC__ == 2 && __GLIBC_MINOR__ >= 25)
-#  include <sys/random.h>
-#  ifndef HAVE_GETRANDOM
-#   define HAVE_GETRANDOM 1
-#  endif
-# endif
-#endif
+#ifdef HAVE_GETRANDOM
+#include <sys/random.h>
+
+gboolean
+mono_rand_open (void)
+{
+	return TRUE;
+}
+
+gpointer
+mono_rand_init (guchar *seed, gint seed_size)
+{
+	return "getrandom"; // NULL will be interpreted as failure; return arbitrary nonzero pointer
+}
+
+gboolean
+mono_rand_try_get_bytes (gpointer *handle, guchar *buffer, gint buffer_size, MonoError *error)
+{
+	gint count = 0;
+	gint err;
+
+	error_init (error);
+
+	/* Read until the buffer is filled. This may block if random pool isn't initialized. */
+	do {
+		err = getrandom (buffer + count, buffer_size - count, 0);
+		if (err < 0) {
+			if (errno == EINTR)
+				continue;
+			g_warning("Entropy error! Error in getrandom (%s).", strerror (errno));
+			/* exception will be thrown in managed code */
+			mono_error_set_execution_engine (error, "Entropy error! Error in getrandom (%s).", strerror (errno));
+			return FALSE;
+		}
+		count += err;
+	} while (count < buffer_size);
+	return TRUE;
+}
+
+void
+mono_rand_close (gpointer provider)
+{
+}
+
+#else /* Not HAVE_GETRANDOM */
 
 #ifndef NAME_DEV_URANDOM
 #define NAME_DEV_URANDOM "/dev/urandom"
@@ -183,11 +218,7 @@ mono_rand_try_get_bytes (gpointer *handle, guchar *buffer, gint buffer_size, Mon
 		gint err;
 
 		do {
-#ifdef HAVE_GETRANDOM
-			err = getrandom (buffer + count, buffer_size - count, 0);
-#else
 			err = read (file, buffer + count, buffer_size - count);
-#endif
 			if (err < 0) {
 				if (errno == EINTR)
 					continue;
@@ -207,6 +238,7 @@ mono_rand_close (gpointer provider)
 {
 }
 
+#endif /* Not HAVE_GETRANDOM */
 #else
 
 #include <stdlib.h>
