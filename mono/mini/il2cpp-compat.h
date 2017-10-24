@@ -34,6 +34,7 @@
 #define VM_CLASS_GET_THIS_ARG(klass) il2cpp_class_this_arg(klass)
 #define VM_CLASS_GET_ELEMENT_CLASS(klass) il2cpp_class_get_element_class(klass)
 #define VM_CLASS_GET_PARENT(klass) il2cpp_class_get_parent(klass)
+#define VM_CLASS_GET_IMAGE(klass) il2cpp_class_get_image(klass)
 #define VM_METHOD_GET_WRAPPER_TYPE(method) FALSE
 #define VM_METHOD_GET_DECLARING_TYPE(method) il2cpp_method_get_declaring_type(method)
 #define VM_FIELD_GET_NAME(field) il2cpp_mono_field_get_name(field)
@@ -48,6 +49,8 @@
 #define VM_GENERIC_INST_TYPE_ARGC(inst) il2cpp_generic_inst_type_argc(inst)
 #define VM_GENERIC_INST_TYPE_ARG(inst, i) il2cpp_generic_inst_type_arg(inst, i)
 #define VM_DEFAULTS_OBJECT_CLASS il2cpp_defaults_object_class()
+#define VM_DEFAULTS_EXCEPTION_CLASS il2cpp_defaults_exception_class()
+#define VM_DEFAULTS_CORLIB_IMAGE il2cpp_defaults_corlib_image()
 #define VM_ARRAY_GET_RANK(arr) il2cpp_array_rank(arr)
 #define VM_ARRAY_BOUND_LENGTH(arr, i) il2cpp_array_bound_length(arr, i)
 #define VM_ARRAY_BOUND_LOWER_BOUND(arr, i) il2cpp_array_bound_lower_bound(arr, i)
@@ -79,6 +82,7 @@
 #define VM_CLASS_GET_TYPE(klass) &(klass)->byval_arg
 #define VM_CLASS_GET_THIS_ARG(klass) &(klass)->this_arg
 #define VM_CLASS_GET_PARENT(klass) (klass)->parent
+#define VM_CLASS_GET_IMAGE(klass) (klass)->image
 #define VM_METHOD_GET_WRAPPER_TYPE(method) method->wrapper_type
 #define VM_METHOD_GET_DECLARING_TYPE(method) (method)->klass
 #define VM_FIELD_GET_NAME(field) field->name
@@ -93,6 +97,8 @@
 #define VM_GENERIC_INST_TYPE_ARGC(inst) (inst)->type_argc
 #define VM_GENERIC_INST_TYPE_ARG(inst, i) (inst)->type_argv[i]
 #define VM_DEFAULTS_OBJECT_CLASS mono_defaults.object_class
+#define VM_DEFAULTS_EXCEPTION_CLASS mono_defaults.exception_class
+#define VM_DEFAULTS_CORLIB_IMAGE mono_defaults.corlib
 #define VM_ARRAY_GET_RANK(arr) (arr)->obj.vtable->klass->rank
 #define VM_CLASS_GET_ELEMENT_CLASS(klass) (klass)->element_class
 #define VM_ARRAY_BOUND_LENGTH(arr, i) arr->bounds[i].length
@@ -173,7 +179,7 @@
 #define mono_class_get_properties il2cpp_mono_class_get_properties
 #define mono_class_get_nested_types il2cpp_class_get_nested_types_accepts_generic
 #define mono_field_get_name il2cpp_mono_field_get_name
-#define mono_class_get_method_from_name il2cpp_mono_class_get_method_from_name
+#define mono_class_get_method_from_name il2cpp_class_get_method_from_name
 #define mono_string_chars il2cpp_mono_string_chars
 #define mono_class_is_abstract il2cpp_mono_class_is_abstract
 #define mono_string_length il2cpp_mono_string_length
@@ -249,7 +255,7 @@
 #define mono_ldtoken_checked il2cpp_mono_ldtoken_checked
 #define mono_class_from_generic_parameter_internal il2cpp_mono_class_from_generic_parameter_internal
 #define mono_class_load_from_name il2cpp_mono_class_load_from_name
-#define mono_class_try_load_from_name il2cpp_mono_class_try_load_from_name
+#define mono_class_try_load_from_name il2cpp_class_from_name
 #define mono_class_get_generic_class il2cpp_mono_class_get_generic_class
 #define mono_thread_internal_current il2cpp_mono_thread_internal_current
 #define mono_thread_internal_abort il2cpp_mono_thread_internal_abort
@@ -386,7 +392,6 @@ Il2CppMonoClassField* il2cpp_mono_class_get_fields (Il2CppMonoClass* klass, gpoi
 Il2CppMonoMethod* il2cpp_mono_class_get_methods (Il2CppMonoClass* klass, gpointer *iter);
 Il2CppMonoProperty* il2cpp_mono_class_get_properties (Il2CppMonoClass* klass, gpointer *iter);
 const char* il2cpp_mono_field_get_name (Il2CppMonoClassField *field);
-Il2CppMonoMethod* il2cpp_mono_class_get_method_from_name (Il2CppMonoClass *klass, const char *name, int param_count);
 mono_unichar2* il2cpp_mono_string_chars (Il2CppMonoString *s);
 gboolean il2cpp_mono_class_is_abstract (Il2CppMonoClass *klass);
 int il2cpp_mono_string_length (Il2CppMonoString *s);
@@ -462,7 +467,6 @@ GPtrArray* il2cpp_mono_class_get_methods_by_name(Il2CppMonoClass* klass, const c
 gpointer il2cpp_mono_ldtoken_checked(Il2CppMonoImage* image, guint32 token, Il2CppMonoClass** handle_class, Il2CppMonoGenericContext* context, MonoError* error);
 Il2CppMonoClass* il2cpp_mono_class_from_generic_parameter_internal(Il2CppMonoGenericParam* param);
 Il2CppMonoClass* il2cpp_mono_class_load_from_name(Il2CppMonoImage* image, const char* name_space, const char* name);
-Il2CppMonoClass* il2cpp_mono_class_try_load_from_name(Il2CppMonoImage* image, const char* name_space, const char* name);
 Il2CppMonoGenericClass* il2cpp_mono_class_get_generic_class(Il2CppMonoClass* klass);
 Il2CppMonoInternalThread* il2cpp_mono_thread_internal_current();
 void il2cpp_mono_thread_internal_abort(Il2CppMonoInternalThread* thread);
@@ -574,5 +578,7 @@ const char* il2cpp_image_name(Il2CppMonoImage *monoImage);
 Il2CppMonoAssembly* il2cpp_image_assembly(Il2CppMonoImage *monoImage);
 guint8* il2cpp_field_get_address(Il2CppMonoObject *obj, Il2CppMonoClassField *monoField);
 Il2CppMonoType* il2cpp_mono_object_get_type(Il2CppMonoObject* object);
+Il2CppMonoClass* il2cpp_defaults_exception_class();
+Il2CppMonoImage* il2cpp_defaults_corlib_image();
 
 #endif // RUNTIME_IL2CPP

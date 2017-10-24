@@ -180,7 +180,6 @@ typedef struct {
 
 #ifdef IL2CPP_MONO_DEBUGGER
 	Il2CppThreadUnwindState il2cpp_context;
-	gboolean il2cpp_global_breakpoint_active;
 #endif
 
 	/* This is computed on demand when it is requested using the wire protocol */
@@ -3554,9 +3553,9 @@ create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, DebuggerEv
 					if (mod->data.thread != mono_thread_internal_current ())
 						filtered = TRUE;
 				} else if (mod->kind == MOD_KIND_EXCEPTION_ONLY && ei) {
-					if (mod->data.exc_class && mod->subclasses && !mono_class_is_assignable_from (mod->data.exc_class, ei->exc->vtable->klass))
+					if (mod->data.exc_class && mod->subclasses && !mono_class_is_assignable_from (mod->data.exc_class, VM_OBJECT_GET_CLASS(ei->exc)))
 						filtered = TRUE;
-					if (mod->data.exc_class && !mod->subclasses && mod->data.exc_class != ei->exc->vtable->klass)
+					if (mod->data.exc_class && !mod->subclasses && mod->data.exc_class !=  VM_OBJECT_GET_CLASS(ei->exc))
 						filtered = TRUE;
 					if (ei->caught && !mod->caught)
 						filtered = TRUE;
@@ -3831,6 +3830,9 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 		case EVENT_KIND_EXCEPTION: {
 			DebuggerEventInfo *ei = (DebuggerEventInfo *)arg;
 			buffer_add_objid (&buf, ei->exc);
+#if defined(IL2CPP_MONO_DEBUGGER) && defined(IL2CPP_DEBUGGER_TESTS)
+			buffer_add_long(&buf, il2cpp_seqpoint_id);
+#endif
 			/*
 			 * We are not yet suspending, so get_objref () will not keep this object alive. So we need to do it
 			 * later after the suspension. (#12494).
@@ -4987,6 +4989,77 @@ ss_update (SingleStepReq *req, MonoJitInfo *ji, SeqPoint *sp, DebuggerTlsData *t
 	return hit;
 }
 
+#if IL2CPP_MONO_DEBUGGER
+/*
+* ss_update_il2cpp:
+*
+* Return FALSE if single stepping needs to continue.
+*/
+static gboolean
+ss_update_il2cpp(SingleStepReq *req, DebuggerTlsData *tls, MonoContext *ctx, Il2CppSequencePointC *sequencePoint)
+{
+	gboolean hit = TRUE;
+
+	if (il2cpp_mono_methods_match(req->async_stepout_method, *sequencePoint->method))
+	{
+		DEBUG_PRINTF(1, "[%p] Breakpoint hit during async step-out at %s hit, continuing stepping out.\n", (gpointer)(gsize)mono_native_thread_id_get(), mono_method_get_name(*sequencePoint->method));
+		return FALSE;
+	}
+
+	if ((req->depth == STEP_DEPTH_OVER || req->depth == STEP_DEPTH_OUT) && hit && !req->async_stepout_method)
+	{
+		gboolean is_step_out = req->depth == STEP_DEPTH_OUT;
+
+		// Because functions can call themselves recursively, we need to make sure we're stopping at the right stack depth.
+		// In case of step out, the target is the frame *enclosing* the one where the request was made.
+		int target_frames = req->nframes + (is_step_out ? -1 : 0);
+		if (req->nframes > 0 && tls->il2cpp_context.frameCount > 0 && tls->il2cpp_context.frameCount > target_frames)
+		{
+			/* Hit the breakpoint in a recursive call, don't halt */
+			DEBUG_PRINTF(1, "[%p] Breakpoint at lower frame while stepping %s, continuing single stepping.\n", (gpointer)(gsize)mono_native_thread_id_get(), is_step_out ? "out" : "over");
+			return FALSE;
+		}
+	}
+
+	if (req->depth == STEP_DEPTH_INTO && req->size == STEP_SIZE_MIN && ss_req->start_method)
+	{
+		if (ss_req->start_method == *sequencePoint->method && req->nframes && tls->il2cpp_context.frameCount == req->nframes)
+		{//Check also frame count(could be recursion)
+			DEBUG_PRINTF(1, "[%p] Seq point at nonempty stack %x while stepping in, continuing single stepping.\n", (gpointer)(gsize)mono_native_thread_id_get(), sequencePoint->ilOffset);
+			return FALSE;
+		}
+	}
+
+	if (req->size != STEP_SIZE_LINE)
+		return TRUE;
+
+	/* Have to check whenever a different source line was reached */
+
+	if (sequencePoint->lineEnd < 0)
+	{
+		DEBUG_PRINTF(1, "[%p] No line number info for il offset %x, continuing single stepping.\n", (gpointer)(gsize)mono_native_thread_id_get(), sequencePoint->ilOffset);
+		ss_req->last_method = *sequencePoint->method;
+		hit = FALSE;
+	}
+	else if (sequencePoint->lineEnd >= 0 && *sequencePoint->method == ss_req->last_method && sequencePoint->lineEnd == ss_req->last_line)
+	{
+		if (tls->il2cpp_context.frameCount == req->nframes)
+		{ // If the frame has changed we're clearly not on the same source line.
+			DEBUG_PRINTF(1, "[%p] Same source line (%d), continuing single stepping.\n", (gpointer)(gsize)mono_native_thread_id_get(), sequencePoint->lineEnd);
+			hit = FALSE;
+		}
+	}
+
+	if (sequencePoint->lineEnd >= 0)
+	{
+		ss_req->last_method = *sequencePoint->method;
+		ss_req->last_line = sequencePoint->lineEnd;
+	}
+
+	return hit;
+}
+#endif
+
 static gboolean
 breakpoint_matches_assembly (MonoBreakpoint *bp, MonoAssembly *assembly)
 {
@@ -5489,6 +5562,27 @@ process_single_step_inner (DebuggerTlsData *tls, gboolean from_signal, uint64_t 
 	process_event (EVENT_KIND_STEP, jinfo_get_method (ji), il_offset, ctx, events, suspend_policy);
 #else
 	Il2CppSequencePointC* sequence_pt = tls->il2cpp_context.sequencePoints[tls->il2cpp_context.frameCount - 1];
+
+	/*
+	* This could be in ss_update method, but mono_find_next_seq_point_for_native_offset is pretty expensive method,
+	* hence we prefer this check here.
+	*/
+	if (ss_req->user_assemblies)
+	{
+		gboolean found = FALSE;
+		for (int k = 0; ss_req->user_assemblies[k]; k++)
+		{
+			if (ss_req->user_assemblies[k] ==  VM_IMAGE_GET_ASSEMBLY(VM_CLASS_GET_IMAGE(VM_METHOD_GET_DECLARING_TYPE(*sequence_pt->method))))
+			{
+				found = TRUE;
+				break;
+			}
+		}
+
+		if (!found)
+			return;
+	}
+
 	process_event(EVENT_KIND_STEP, *(sequence_pt->method), sequence_pt->ilOffset, NULL, events, suspend_policy, sequencePointId);
 #endif
 }
@@ -6055,12 +6149,12 @@ ss_start_il2cpp(SingleStepReq *ss_req, DebuggerTlsData *tls)
 	// Recreating this on each pass is a little wasteful but at least keeps behavior linear.
 	int ss_req_bp_count = g_slist_length(ss_req->bps);
 	GHashTable *ss_req_bp_cache = NULL;
+	gboolean enable_global = FALSE;
 
 	/* Stop the previous operation */
 	ss_stop(ss_req);
 
 	DEBUG_PRINTF(0, "Step depth: %d\n", ss_req->depth);
-	g_assert(ss_req->depth != STEP_DEPTH_INTO);
 
 	if (ss_req->depth == STEP_DEPTH_OVER)
 	{
@@ -6087,39 +6181,30 @@ ss_start_il2cpp(SingleStepReq *ss_req, DebuggerTlsData *tls)
 
 	if (ss_req_bp_cache)
 		g_hash_table_destroy(ss_req_bp_cache);
-}
 
-static ErrorCode
-ss_create_il2cpp(MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilter filter, EventRequest *req)
-{
-	DebuggerTlsData *tls;
 
-	mono_loader_lock();
-	tls = (DebuggerTlsData *)mono_g_hash_table_lookup(thread_to_tls, thread);
-	mono_loader_unlock();
-	g_assert(tls);
-
-	ss_req = g_new0(SingleStepReq, 1);
-	ss_req->req = req;
-	ss_req->thread = thread;
-	ss_req->size = size;
-	ss_req->depth = depth;
-	ss_req->filter = filter;
-	ss_req->nframes = tls->il2cpp_context.frameCount;
-
-	if (tls->il2cpp_context.frameCount > 0)
+	if (ss_req->depth == STEP_DEPTH_INTO)
 	{
-		Il2CppSequencePointC* seq_point = tls->il2cpp_context.sequencePoints[tls->il2cpp_context.frameCount - 1];
-		ss_req->last_method = *seq_point->method;
-		ss_req->last_line = seq_point->lineEnd;
+		/* Enable global stepping so we stop at method entry too */
+		enable_global = TRUE;
 	}
 
-	req->info = ss_req;
-
-
-	ss_start_il2cpp(ss_req, tls);
-
-	return ERR_NONE;
+	if (enable_global)
+	{
+		DEBUG_PRINTF(1, "[dbg] Turning on global single stepping.\n");
+		ss_req->global = TRUE;
+		start_single_stepping();
+	}
+	else if (!ss_req->bps)
+	{
+		DEBUG_PRINTF(1, "[dbg] Turning on global single stepping.\n");
+		ss_req->global = TRUE;
+		start_single_stepping();
+	}
+	else
+	{
+		ss_req->global = FALSE;
+	}
 }
 
 #endif // IL2CPP_MONO_DEBUGGER
@@ -6165,8 +6250,6 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilte
 	ss_req->filter = filter;
 	req->info = ss_req;
 
-#ifndef IL2CPP_MONO_DEBUGGER
-
 	for (int i = 0; i < req->nmodifiers; i++) {
 		if (req->modifiers[i].kind == MOD_KIND_ASSEMBLY_ONLY) {
 			ss_req->user_assemblies = req->modifiers[i].data.assemblies;
@@ -6178,6 +6261,20 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilte
 	tls = (DebuggerTlsData *)mono_g_hash_table_lookup (thread_to_tls, thread);
 	mono_loader_unlock ();
 	g_assert (tls);
+
+#if IL2CPP_MONO_DEBUGGER
+	ss_req->nframes = tls->il2cpp_context.frameCount;
+
+	if (tls->il2cpp_context.frameCount > 0)
+	{
+		Il2CppSequencePointC* seq_point = tls->il2cpp_context.sequencePoints[tls->il2cpp_context.frameCount - 1];
+		ss_req->start_method = *seq_point->method;
+		ss_req->last_method = *seq_point->method;
+		ss_req->last_line = seq_point->lineEnd;
+	}
+
+	ss_start_il2cpp(ss_req, tls);
+#else
 	if (!tls->context.valid) {
 		DEBUG_PRINTF (1, "Received a single step request on a thread with no managed frames.");
 		return ERR_INVALID_ARGUMENT;
@@ -6277,25 +6374,6 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilte
 
 	if (frames)
 		free_frames (frames, nframes);
-#else
-	tls = (DebuggerTlsData *)mono_g_hash_table_lookup(thread_to_tls, thread);
-	mono_loader_unlock();
-	g_assert(tls);
-
-	switch (depth)
-	{
-	case STEP_DEPTH_INTO:
-		tls->il2cpp_global_breakpoint_active = TRUE;
-		break;
-	case STEP_DEPTH_OVER:
-		ss_create_il2cpp(thread, size, depth, filter, req);
-		break;
-	case STEP_DEPTH_OUT:
-		ss_create_il2cpp(thread, size, depth, filter, req);
-		break;
-	default:
-		NOT_IMPLEMENTED;
-	}
 #endif
 
 	return ERR_NONE;
@@ -6401,6 +6479,72 @@ mono_debugger_agent_unhandled_exception (MonoException *exc)
 #else
 	process_event (EVENT_KIND_EXCEPTION, &ei, 0, NULL, events, suspend_policy, 0);
 #endif
+}
+#endif
+
+#if IL2CPP_MONO_DEBUGGER
+void
+unity_debugger_agent_handle_exception(MonoException *exc, Il2CppSequencePointC *sequencePoint)
+{
+	int i, j, suspend_policy;
+	GSList *events;
+	DebuggerEventInfo ei;
+	DebuggerTlsData *tls = NULL;
+
+	if (thread_to_tls != NULL)
+	{
+		MonoInternalThread *thread = mono_thread_internal_current();
+
+		mono_loader_lock();
+		tls = (DebuggerTlsData *)mono_g_hash_table_lookup(thread_to_tls, thread);
+		mono_loader_unlock();
+
+		if (tls && tls->abort_requested)
+			return;
+		if (tls && tls->disable_breakpoints)
+			return;
+	}
+
+	memset(&ei, 0, sizeof(DebuggerEventInfo));
+
+	ei.exc = (MonoObject*)exc;
+	ei.caught = TRUE;
+
+	mono_loader_lock();
+
+	/* Treat exceptions which are caught in non-user code as unhandled */
+	for (i = 0; i < event_requests->len; ++i)
+	{
+		EventRequest *req = (EventRequest *)g_ptr_array_index(event_requests, i);
+		if (req->event_kind != EVENT_KIND_EXCEPTION)
+			continue;
+
+		for (j = 0; j < req->nmodifiers; ++j)
+		{
+			Modifier *mod = &req->modifiers[j];
+
+			if (mod->kind == MOD_KIND_ASSEMBLY_ONLY && sequencePoint)
+			{
+				int k;
+				gboolean found = FALSE;
+				MonoAssembly **assemblies = mod->data.assemblies;
+
+				if (assemblies)
+				{
+					for (k = 0; assemblies[k]; ++k)
+						if (assemblies[k] ==   VM_IMAGE_GET_ASSEMBLY(VM_CLASS_GET_IMAGE(VM_METHOD_GET_DECLARING_TYPE(*sequencePoint->method))))
+							found = TRUE;
+				}
+				if (!found)
+					ei.caught = FALSE;
+			}
+		}
+	}
+
+	events = create_event_list(EVENT_KIND_EXCEPTION, NULL, NULL, &ei, &suspend_policy);
+	mono_loader_unlock();
+
+	process_event(EVENT_KIND_EXCEPTION, &ei, 0, NULL, events, suspend_policy, sequencePoint ? sequencePoint->id : 0);
 }
 #endif
 
@@ -8119,7 +8263,7 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 		wait_for_suspend ();
 
 #ifdef TRY_MANAGED_SYSTEM_ENVIRONMENT_EXIT
-		env_class = mono_class_try_load_from_name (mono_defaults.corlib, "System", "Environment");
+		env_class = mono_class_try_load_from_name (VM_DEFAULTS_CORLIB_IMAGE, "System", "Environment");
 		if (env_class)
 			exit_method = mono_class_get_method_from_name (env_class, "Exit", 1);
 #endif
@@ -8521,7 +8665,7 @@ event_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 				if (exc_class) {
 					req->modifiers [i].data.exc_class = exc_class;
 
-					if (!mono_class_is_assignable_from (mono_defaults.exception_class, exc_class)) {
+					if (!mono_class_is_assignable_from (VM_DEFAULTS_EXCEPTION_CLASS, exc_class)) {
 						g_free (req);
 						return ERR_INVALID_ARGUMENT;
 					}
@@ -11439,8 +11583,14 @@ unity_process_breakpoint_inner(DebuggerTlsData *tls, gboolean from_signal, Il2Cp
 	g_assert(ss_reqs_orig->len <= 1);
 	if (ss_reqs_orig->len == 1)
 	{
-		g_ptr_array_add(ss_reqs, g_ptr_array_index(ss_reqs_orig, 0));
-		ss_start_il2cpp(ss_req, tls);
+		EventRequest *req = (EventRequest *)g_ptr_array_index(ss_reqs_orig, 0);
+		SingleStepReq *ss_req = (SingleStepReq *)req->info;
+		gboolean hit = ss_update_il2cpp(ss_req, tls, ctx, sequencePoint);
+		if (hit)
+		{
+			g_ptr_array_add(ss_reqs, req);
+			ss_start_il2cpp(ss_req, tls);
+		}
 	}
 
 	if (ss_reqs->len > 0)
@@ -11485,18 +11635,12 @@ unity_debugger_agent_breakpoint(Il2CppSequencePointC* sequencePoint)
 	unity_process_breakpoint_inner(tls, FALSE, sequencePoint);
 }
 
-gboolean unity_debugger_agent_is_global_breakpoint_active(Il2CppMonoThread* thread)
+gboolean unity_debugger_agent_is_global_breakpoint_active()
 {
-	DebuggerTlsData* tls = (DebuggerTlsData *)mono_g_hash_table_lookup(thread_to_tls, thread);
-	g_assert(tls);
-	return tls->il2cpp_global_breakpoint_active;
-}
-
-void unity_debugger_agent_set_global_breakpoint_disabled(Il2CppMonoThread* thread)
-{
-	DebuggerTlsData* tls = (DebuggerTlsData *)mono_g_hash_table_lookup(thread_to_tls, thread);
-	g_assert(tls);
-	tls->il2cpp_global_breakpoint_active = FALSE;
+	if (!ss_req)
+		return FALSE;
+	else
+		return ss_req->global;
 }
 
 #endif // IL2CPP_MONO_DEBUGGER
