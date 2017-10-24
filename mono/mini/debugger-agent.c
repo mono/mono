@@ -818,6 +818,7 @@ static void ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint *sp, M
 					  StackFrame **frames, int nframes);
 #ifdef IL2CPP_MONO_DEBUGGER
 static void ss_start_il2cpp(SingleStepReq *ss_req, DebuggerTlsData *tls);
+static void GetSequencePointsAndSourceFilesUniqueSequencePoints(MonoMethod* method, GPtrArray** sequencePoints, GPtrArray** uniqueFileSequencePoints, GArray** uniqueFileSequencePointIndices);
 #endif
 static ErrorCode ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilter filter, EventRequest *req);
 static void ss_destroy (SingleStepReq *req);
@@ -3503,6 +3504,26 @@ init_jit_info_dbg_attrs (MonoJitInfo *ji)
 	ji->dbg_attrs_inited = TRUE;
 }
 
+static gboolean find_source_file_in_hash_table(const char* needle, GHashTable* haystack)
+{
+	gboolean found = FALSE;
+	char *s = strdup_tolower(needle);
+	if (g_hash_table_lookup(haystack, s)) {
+		found = TRUE;
+	} else {
+		char *s2 = dbg_path_get_basename(needle);
+		char *s3 = strdup_tolower(s2);
+
+		if (g_hash_table_lookup(haystack, s3))
+			found = TRUE;
+		g_free(s2);
+		g_free(s3);
+	}
+	g_free(s);
+
+	return found;
+}
+
 /*
  * EVENT HANDLING
  */
@@ -3583,32 +3604,39 @@ create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, DebuggerEv
 					GPtrArray *source_file_list;
 
 					while ((method = mono_class_get_methods (ei->klass, &iter))) {
+#ifdef IL2CPP_MONO_DEBUGGER
+						GPtrArray* sequencePoints;
+						GPtrArray* uniqueFileSequencePoints;
+						GArray* uniqueFileSequencePointIndices;
+						GetSequencePointsAndSourceFilesUniqueSequencePoints(method, &sequencePoints, &uniqueFileSequencePoints, &uniqueFileSequencePointIndices);
+
+						for (i = 0; i < uniqueFileSequencePoints->len; ++i) {
+							Il2CppSequencePointC* seqPoint = (Il2CppSequencePointC*)g_ptr_array_index(uniqueFileSequencePoints, i);
+							if (strlen(seqPoint->sourceFile) != 0)
+							{
+								found = find_source_file_in_hash_table(seqPoint->sourceFile, mod->data.source_files);
+								if (found)
+									break;
+							}
+						}
+
+						g_ptr_array_free(sequencePoints, TRUE);
+						g_ptr_array_free(uniqueFileSequencePoints, TRUE);
+						g_array_free(uniqueFileSequencePointIndices, TRUE);
+#else
 						MonoDebugMethodInfo *minfo = mono_debug_lookup_method (method);
 
 						if (minfo) {
 							mono_debug_get_seq_points (minfo, &source_file, &source_file_list, NULL, NULL, NULL);
 							for (i = 0; i < source_file_list->len; ++i) {
 								sinfo = (MonoDebugSourceInfo *)g_ptr_array_index (source_file_list, i);
-								/*
-								 * Do a case-insesitive match by converting the file name to
-								 * lowercase.
-								 */
-								s = strdup_tolower (sinfo->source_file);
-								if (g_hash_table_lookup (mod->data.source_files, s))
-									found = TRUE;
-								else {
-									char *s2 = dbg_path_get_basename (sinfo->source_file);
-									char *s3 = strdup_tolower (s2);
-
-									if (g_hash_table_lookup (mod->data.source_files, s3))
-										found = TRUE;
-									g_free (s2);
-									g_free (s3);
-								}
-								g_free (s);
+								found = find_source_file_in_hash_table(sinfo->source_file, mod->data.source_files);
+								if (found)
+									break;
 							}
 							g_ptr_array_free (source_file_list, TRUE);
 						}
+#endif
 					}
 					if (!found)
 						filtered = TRUE;
@@ -4216,6 +4244,9 @@ send_type_load (MonoClass *klass)
 static void
 send_types_for_domain (MonoDomain *domain, void *user_data)
 {
+#ifdef IL2CPP_MONO_DEBUGGER
+	il2cpp_send_types_for_domain(domain, emit_type_load);
+#else
 	MonoDomain* old_domain;
 	AgentDomainInfo *info = NULL;
 
@@ -4231,6 +4262,7 @@ send_types_for_domain (MonoDomain *domain, void *user_data)
 	mono_loader_unlock ();
 
 	mono_domain_set (old_domain, TRUE);
+#endif // IL2CPP_MONO_DEBUGGER
 }
 
 static void
@@ -4645,7 +4677,6 @@ set_breakpoint (MonoMethod *method, long il_offset, EventRequest *req, MonoError
 	{
 		if (bp_matches_method(bp, *(seqPoint->method)) && seqPoint->ilOffset == bp->il_offset)
 		{
-
 			BreakpointInstance* inst = g_new0(BreakpointInstance, 1);
 			inst->il_offset = bp->il_offset;// it.seq_point.il_offset;
 			inst->native_offset = 0;// it.seq_point.native_offset;
@@ -8147,6 +8178,28 @@ get_source_files_for_type (MonoClass *klass)
 	files = g_ptr_array_new ();
 
 	while ((method = mono_class_get_methods (klass, &iter))) {
+#ifdef IL2CPP_MONO_DEBUGGER
+		GPtrArray* sequencePoints;
+		GPtrArray* uniqueFileSequencePoints;
+		GArray* uniqueFileSequencePointIndices;
+		GetSequencePointsAndSourceFilesUniqueSequencePoints(method, &sequencePoints, &uniqueFileSequencePoints, &uniqueFileSequencePointIndices);
+
+		for (j = 0; j < uniqueFileSequencePoints->len; ++j) {
+			Il2CppSequencePointC* seqPoint = (Il2CppSequencePointC*)g_ptr_array_index(uniqueFileSequencePoints, j);
+			if (strlen(seqPoint->sourceFile) != 0)
+			{
+				for (i = 0; i < files->len; ++i)
+					if (strcmp(g_ptr_array_index(files, i), seqPoint->sourceFile) == 0)
+						break;
+				if (i == files->len)
+					g_ptr_array_add(files, g_strdup(seqPoint->sourceFile));
+			}
+		}
+
+		g_ptr_array_free(sequencePoints, TRUE);
+		g_ptr_array_free(uniqueFileSequencePoints, TRUE);
+		g_array_free(uniqueFileSequencePointIndices, TRUE);
+#else
 		MonoDebugMethodInfo *minfo = mono_debug_lookup_method (method);
 		GPtrArray *source_file_list;
 
@@ -8162,6 +8215,7 @@ get_source_files_for_type (MonoClass *klass)
 			}
 			g_ptr_array_free (source_file_list, TRUE);
 		}
+#endif
 	}
 
 	return files;
@@ -9044,14 +9098,17 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 	case CMD_ASSEMBLY_GET_NAME: {
 		gchar *name;
 		MonoAssembly *mass = ass;
-
+#ifdef IL2CPP_MONO_DEBUGGER
+		name = VM_ASSEMBLY_GET_NAME(mass);
+#else
 		name = g_strdup_printf (
 		  "%s, Version=%d.%d.%d.%d, Culture=%s, PublicKeyToken=%s%s",
-		  VM_ASSEMBLY_NAME_GET_NAME(mass),
-		  VM_ASSEMBLY_NAME_GET_MAJOR(mass), VM_ASSEMBLY_NAME_GET_MINOR(mass), VM_ASSEMBLY_NAME_GET_BUILD(mass), VM_ASSEMBLY_NAME_GET_REVISION(mass),
-		  VM_ASSEMBLY_NAME_GET_CULTURE(mass) && *VM_ASSEMBLY_NAME_GET_CULTURE(mass) ? VM_ASSEMBLY_NAME_GET_CULTURE(mass) : "neutral",
-		  VM_ASSEMBLY_NAME_GET_PUBLIC_KEY_TOKEN(mass, 0) ? VM_ASSEMBLY_NAME_GET_PUBLIC_KEY_TOKEN_STRING(mass) : "null",
-		  (VM_ASSEMBLY_NAME_GET_FLAGS(mass) & ASSEMBLYREF_RETARGETABLE_FLAG) ? ", Retargetable=Yes" : "");
+		  mass->aname.name,
+		  mass->aname.major, mass->aname.minor, mass->aname.build, mass->aname.revision,
+		  mass->aname.culture && *mass->aname.culture ? mass->aname.culture : "neutral",
+		  mass->aname.public_key_token[0] ? (char *)mass->aname.public_key_token : "null",
+		  (mass->aname.flags & ASSEMBLYREF_RETARGETABLE_FLAG) ? ", Retargetable=Yes" : "");
+#endif
 
 		buffer_add_string (buf, name);
 		g_free (name);
@@ -9744,7 +9801,7 @@ static void GetSequencePointsAndSourceFilesUniqueSequencePoints(MonoMethod* meth
 
 	void *seqPointIter = NULL;
 	Il2CppSequencePointC *seqPoint;
-	while (seqPoint = il2cpp_get_sequence_points(&seqPointIter))
+	while (seqPoint = il2cpp_get_method_sequence_points(method, &seqPointIter))
 	{
 		if (il2cpp_mono_methods_match(*seqPoint->method, method))
 			g_ptr_array_add(*sequencePoints, seqPoint);
@@ -9776,7 +9833,7 @@ static const Il2CppMethodExecutionContextInfoC* GetExecutionContextInfo(MonoMeth
 {
 	void *seqPointIter = NULL;
 	Il2CppSequencePointC *seqPoint;
-	while (seqPoint = il2cpp_get_sequence_points(&seqPointIter))
+	while (seqPoint = il2cpp_get_method_sequence_points(method, &seqPointIter))
 	{
 		if (*seqPoint->method == method)
 		{
@@ -10062,20 +10119,25 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 		break;
 	}
 	case CMD_METHOD_GET_INFO:
-		buffer_add_int (buf, method->flags);
-		buffer_add_int (buf, method->iflags);
-		buffer_add_int (buf, method->token);
+		int32_t iflags;
+		buffer_add_int (buf, mono_method_get_flags(method, &iflags));
+		buffer_add_int (buf, iflags);
+		buffer_add_int (buf, mono_method_get_token(method));
+		gboolean is_generic = FALSE;
+		gboolean is_inflated = FALSE;
 		if (CHECK_PROTOCOL_VERSION (2, 12)) {
 			guint8 attrs = 0;
-			if (method->is_generic)
+			is_generic = mono_method_is_generic(method);
+			is_inflated = mono_method_is_inflated(method);
+			if (is_generic)
 				attrs |= (1 << 0);
 			if (mono_method_signature (method)->generic_param_count)
 				attrs |= (1 << 1);
 			buffer_add_byte (buf, attrs);
-			if (method->is_generic || method->is_inflated) {
+			if (is_generic || is_inflated) {
 				MonoMethod *result;
 
-				if (method->is_generic) {
+				if (is_generic) {
 					result = method;
 				} else {
 					MonoMethodInflated *imethod = (MonoMethodInflated *)method;
@@ -10100,7 +10162,7 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 				if (mono_method_signature (method)->generic_param_count) {
 					int count, i;
 
-					if (method->is_inflated) {
+					if (is_inflated) {
 						MonoGenericInst *inst = mono_method_get_context (method)->method_inst;
 						if (inst) {
 							count = inst->type_argc;
@@ -10111,7 +10173,7 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 						} else {
 							buffer_add_int (buf, 0);
 						}
-					} else if (method->is_generic) {
+					} else if (is_generic) {
 						MonoGenericContainer *container = mono_method_get_generic_container (method);
 
 						count = mono_method_signature (method)->generic_param_count;
