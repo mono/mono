@@ -9364,7 +9364,7 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 				MonoGenericContainer *container = mono_class_get_generic_container (klass);
 				MonoClass *pklass;
 
-				count = container->type_argc;
+				count = VM_GENERIC_CONTAINER_GET_TYPE_ARGC(container);
 				buffer_add_int (buf, count);
 				for (i = 0; i < count; i++) {
 					pklass = mono_class_from_generic_parameter_internal (mono_generic_container_get_param (container, i));

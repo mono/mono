@@ -10,6 +10,7 @@
 #include "vm/Class.h"
 #include "vm/Domain.h"
 #include "vm/Field.h"
+#include "vm/GenericContainer.h"
 #include "vm/Image.h"
 #include "vm/Method.h"
 #include "vm/Object.h"
@@ -609,8 +610,7 @@ gboolean il2cpp_mono_class_is_nullable(Il2CppMonoClass* klass)
 
 Il2CppMonoGenericContainer* il2cpp_mono_class_get_generic_container(Il2CppMonoClass* klass)
 {
-	IL2CPP_ASSERT(0 && "This method is not yet implemented");
-	return NULL;
+    return (Il2CppMonoGenericContainer*)il2cpp::vm::Class::GetGenericContainer((Il2CppClass*)klass);
 }
 
 void il2cpp_mono_class_setup_interfaces(Il2CppMonoClass* klass, MonoError* error)
@@ -632,8 +632,7 @@ gpointer il2cpp_mono_ldtoken_checked(Il2CppMonoImage* image, guint32 token, Il2C
 
 Il2CppMonoClass* il2cpp_mono_class_from_generic_parameter_internal(Il2CppMonoGenericParam* param)
 {
-	IL2CPP_ASSERT(0 && "This method is not yet implemented");
-	return NULL;
+	return (Il2CppMonoClass*)il2cpp::vm::Class::FromGenericParameter((Il2CppGenericParameter*)param);
 }
 
 Il2CppMonoClass* il2cpp_mono_class_load_from_name(Il2CppMonoImage* image, const char* name_space, const char* name)
@@ -1089,8 +1088,7 @@ gboolean il2cpp_mono_class_has_parent (Il2CppMonoClass *klass, Il2CppMonoClass *
 
 Il2CppMonoGenericParam* il2cpp_mono_generic_container_get_param (Il2CppMonoGenericContainer *gc, int i)
 {
-	IL2CPP_ASSERT(0 && "This method is not yet implemented");
-	return NULL;
+	return (Il2CppMonoGenericParam*)il2cpp::vm::GenericContainer::GetGenericParameter((Il2CppGenericContainer*)gc, i);
 }
 
 gboolean il2cpp_mono_find_seq_point (Il2CppMonoDomain *domain, Il2CppMonoMethod *method, gint32 il_offset, MonoSeqPointInfo **info, SeqPoint *seq_point)
@@ -1360,6 +1358,11 @@ Il2CppMonoClass* il2cpp_defaults_exception_class()
 Il2CppMonoImage* il2cpp_defaults_corlib_image()
 {
 	return (Il2CppMonoImage*)il2cpp_defaults.corlib;
+}
+
+int il2cpp_generic_container_get_type_argc(Il2CppMonoGenericClass* container)
+{
+	return ((Il2CppGenericContainer*)container)->type_argc;
 }
 
 }

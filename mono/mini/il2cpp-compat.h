@@ -39,6 +39,7 @@
 #define VM_OBJECT_GET_CLASS(object) il2cpp_object_get_class(object)
 #define VM_OBJECT_GET_TYPE(object) il2cpp_mono_object_get_type(object)
 #define VM_GENERIC_CLASS_GET_INST(klass) il2cpp_generic_class_get_inst(klass)
+#define VM_GENERIC_CONTAINER_GET_TYPE_ARGC(container) il2cpp_generic_container_get_type_argc(container)
 #define VM_GENERIC_INST_TYPE_ARGC(inst) il2cpp_generic_inst_type_argc(inst)
 #define VM_GENERIC_INST_TYPE_ARG(inst, i) il2cpp_generic_inst_type_arg(inst, i)
 #define VM_DEFAULTS_OBJECT_CLASS il2cpp_defaults_object_class()
@@ -79,6 +80,7 @@
 #define VM_OBJECT_GET_DOMAIN(object) ((MonoObject*)object)->vtable->domain
 #define VM_OBJECT_GET_CLASS(object) ((MonoObject*)object)->vtable->klass
 #define VM_OBJECT_GET_TYPE(object) ((MonoReflectionType*)object->vtable->type)->type
+#define VM_GENERIC_CONTAINER_GET_TYPE_ARGC(container) container->type_argc
 #define VM_GENERIC_CLASS_GET_INST(klass) (klass)->context.class_inst
 #define VM_GENERIC_INST_TYPE_ARGC(inst) (inst)->type_argc
 #define VM_GENERIC_INST_TYPE_ARG(inst, i) (inst)->type_argv[i]
@@ -562,5 +564,6 @@ guint8* il2cpp_field_get_address(Il2CppMonoObject *obj, Il2CppMonoClassField *mo
 Il2CppMonoType* il2cpp_mono_object_get_type(Il2CppMonoObject* object);
 Il2CppMonoClass* il2cpp_defaults_exception_class();
 Il2CppMonoImage* il2cpp_defaults_corlib_image();
+int il2cpp_generic_container_get_type_argc(Il2CppMonoGenericClass* container);
 
 #endif // RUNTIME_IL2CPP
