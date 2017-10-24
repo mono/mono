@@ -2883,8 +2883,36 @@ if test "x$host_win32" = "xyes"; then
     AC_DEFINE(HAVE_CRYPT_RNG)
 fi
 
+AC_MSG_CHECKING(for getrandom)
+AC_CACHE_VAL(ac_cv_have_getrandom, [
+AC_RUN_IFELSE([AC_LANG_SOURCE([[
+#include <sys/random.h>
+
+int main() {
+    char buffer[1];
+    const size_t buflen = sizeof(buffer);
+    const int flags = 0;
+    if (getrandom(buffer, buflen, flags) == buflen) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
+]])],
+[ac_cv_have_getrandom=yes],
+[ac_cv_have_getrandom=no],
+[ac_cv_have_getrandom=no])])
+AC_MSG_RESULT($ac_cv_have_getrandom)
+if test "x$ac_cv_have_getrandom" = "xyes"
+then
+  AC_DEFINE(HAVE_GETRANDOM, 1,
+  [Define if getrandom() returns the number of bytes that were copied to the buffer.])
+  AC_DEFINE(HAVE_CRYPT_RNG, 1, [Have getrandom])
+fi
+
 if test "x$ac_cv_have_dev_random" = "xno" \
-    && test "x$host_win32" = "xno"; then
+    && test "x$host_win32" = "xno" \
+    && test "x$ac_cv_have_getrandom" = "xno"; then
     AC_MSG_WARN([[
 ***
 *** A system-provided entropy source was not found on this system.
