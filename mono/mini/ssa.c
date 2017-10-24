@@ -638,14 +638,24 @@ mono_ssa_remove (MonoCompile *cfg)
 
 				if (var) {
 					MonoMethodVar *vmv = MONO_VARINFO (cfg, var->inst_c0);
-					
-					/* 
-					 * The third condition avoids coalescing with variables eliminated
-					 * during deadce.
+
+					/*
+					 * Check that the variable is a renamed SSA variable.
+					 * For renamed SSA variables reg designates the original variable's index.
 					 */
-					if ((vmv->reg != -1) && (vmv->idx != vmv->reg) && (MONO_VARINFO (cfg, vmv->reg)->reg != -1)) {
-						printf ("COALESCE: R%d -> R%d\n", ins->dreg, cfg->varinfo [vmv->reg]->dreg);
-						ins->dreg = cfg->varinfo [vmv->reg]->dreg; 
+					if ((vmv->reg != -1) && (vmv->idx != vmv->reg))	{
+						MonoInst *def = MONO_VARINFO (cfg, vmv->reg)->def;
+						/*
+						 * The following condition avoids coalescing with variables
+						 * eliminated during deadce.
+						 */
+						if (def && def->opcode != OP_NOP) {
+							if (cfg->verbose_level >= 4) {
+								printf ("Coalescing dreg: R%d -> R%d in ", ins->dreg, cfg->varinfo [vmv->reg]->dreg);
+								mono_print_ins (ins);
+							}
+							ins->dreg = cfg->varinfo [vmv->reg]->dreg;
+						}
 					}
 				}
 			}
@@ -657,9 +667,15 @@ mono_ssa_remove (MonoCompile *cfg)
 				if (var) {
 					MonoMethodVar *vmv = MONO_VARINFO (cfg, var->inst_c0);
 
-					if ((vmv->reg != -1) && (vmv->idx != vmv->reg) && (MONO_VARINFO (cfg, vmv->reg)->reg != -1)) {
-						printf ("COALESCE: R%d -> R%d\n", sregs [i], cfg->varinfo [vmv->reg]->dreg);
-						sregs [i] = cfg->varinfo [vmv->reg]->dreg;
+					if ((vmv->reg != -1) && (vmv->idx != vmv->reg)) {
+						MonoInst *def = MONO_VARINFO (cfg, vmv->reg)->def;
+						if (def && def->opcode != OP_NOP) {
+							if (cfg->verbose_level >= 4) {
+								printf ("Coalescing sreg: R%d -> R%d in ", sregs [i], cfg->varinfo [vmv->reg]->dreg);
+								mono_print_ins (ins);
+							}
+							sregs [i] = cfg->varinfo [vmv->reg]->dreg;
+						}
 					}
 				}
 			}
