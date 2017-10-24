@@ -25,19 +25,6 @@ ROSLYN_FILES_TO_COPY_FOR_MSBUILD = \
 	$(ROSLYN_CSC_DIR)/Microsoft.CSharp.Core.targets 	 \
 	$(ROSLYN_CSC_DIR)/Microsoft.VisualBasic.Core.targets
 
-ROSLYN_FILES_TO_LINK_FOR_MSBUILD = \
-	csi.exe						\
-	csi.exe.config					\
-	csi.rsp						\
-	Microsoft.CodeAnalysis.dll			\
-	Microsoft.CodeAnalysis.CSharp.dll		\
-	Microsoft.CodeAnalysis.CSharp.Scripting.dll 	\
-	Microsoft.CodeAnalysis.Scripting.dll 		\
-	System.Collections.Immutable.dll		\
-	System.Reflection.Metadata.dll			\
-	VBCSCompiler.exe				\
-	VBCSCompiler.exe.config
-
 DISTFILES = $(ROSLYN_FILES_FOR_MONO) $(ROSLYN_FILES_TO_COPY_FOR_MSBUILD)
 
 ifeq ($(PROFILE), $(DEFAULT_PROFILE))
@@ -51,7 +38,7 @@ install-local:
 	$(MKINSTALLDIRS) $(MSBUILD_ROSLYN_DIR)
 	$(INSTALL_LIB) $(ROSLYN_FILES_TO_COPY_FOR_MSBUILD) $(MSBUILD_ROSLYN_DIR)
 
-	(cd $(MSBUILD_ROSLYN_DIR); for asm in $(ROSLYN_FILES_TO_LINK_FOR_MSBUILD); do ln -fs ../../../../$(FRAMEWORK_VERSION)/$$asm . ; done)
+	(cd $(MSBUILD_ROSLYN_DIR); for asm in $(ROSLYN_FILES_FOR_MONO); do ln -fs ../../../../$(FRAMEWORK_VERSION)/$$(basename $$asm) . ; done)
 
 endif
 
