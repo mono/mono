@@ -28,6 +28,8 @@
 #define VM_CLASS_GET_IMAGE(klass) il2cpp_class_get_image(klass)
 #define VM_METHOD_GET_WRAPPER_TYPE(method) FALSE
 #define VM_METHOD_GET_DECLARING_TYPE(method) il2cpp_method_get_declaring_type(method)
+#define VM_METHOD_IS_GENERIC(method) il2cpp_method_is_generic(method)
+#define VM_METHOD_IS_INFLATED(method) il2cpp_method_is_inflated(method)
 #define VM_FIELD_GET_NAME(field) il2cpp_mono_field_get_name(field)
 #define VM_FIELD_GET_PARENT(field) il2cpp_field_get_parent(field)
 #define VM_FIELD_GET_TYPE(field) il2cpp_field_get_type(field)
@@ -67,6 +69,8 @@
 #define VM_CLASS_GET_IMAGE(klass) (klass)->image
 #define VM_METHOD_GET_WRAPPER_TYPE(method) method->wrapper_type
 #define VM_METHOD_GET_DECLARING_TYPE(method) (method)->klass
+#define VM_METHOD_IS_GENERIC(method) method->is_generic
+#define VM_METHOD_IS_INFLATED(method) method->is_inflated
 #define VM_FIELD_GET_NAME(field) field->name
 #define VM_FIELD_GET_PARENT(field) (field)->parent
 #define VM_FIELD_GET_TYPE(field) (field)->type

@@ -10118,8 +10118,8 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 #endif // !IL2CPP_MONO_DEBUGGER
 		break;
 	}
-	case CMD_METHOD_GET_INFO:
-		int32_t iflags;
+	case CMD_METHOD_GET_INFO: {
+		int iflags;
 		buffer_add_int (buf, mono_method_get_flags(method, &iflags));
 		buffer_add_int (buf, iflags);
 		buffer_add_int (buf, mono_method_get_token(method));
@@ -10127,8 +10127,8 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 		gboolean is_inflated = FALSE;
 		if (CHECK_PROTOCOL_VERSION (2, 12)) {
 			guint8 attrs = 0;
-			is_generic = mono_method_is_generic(method);
-			is_inflated = mono_method_is_inflated(method);
+			is_generic = VM_METHOD_IS_GENERIC(method);
+			is_inflated = VM_METHOD_IS_INFLATED(method);
 			if (is_generic)
 				attrs |= (1 << 0);
 			if (mono_method_signature (method)->generic_param_count)
@@ -10192,6 +10192,7 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 			}
 		}
 		break;
+	}
 	case CMD_METHOD_GET_BODY: {
 		MonoError error;
 		int i;
