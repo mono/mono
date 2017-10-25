@@ -36,18 +36,22 @@ namespace MonoTests.System.Runtime.CompilerServices
     [TestFixture]
     public class RuntimeFeatureTest
     {
-        readonly string[] KnownFeatureNames = new [] {
-            "PortablePdb"
+        readonly (string, bool)[] ExpectedFeatures = new [] {
+            ("PortablePdb", true)
         };
 
         [Test]
         public void NoNewFeaturesAdded ()
         {
             var t = typeof (RuntimeFeature);
-            var featureNames = from field in t.GetFields()
-                where field.FieldType == typeof(string)
-                select field.Name;
-            Assert.AreEqual (KnownFeatureNames, featureNames.ToArray ());
+            var features = from field in t.GetFields()
+                where field.FieldType == typeof (string)
+                let value = field.GetValue (null)
+                select (
+                    field.Name,
+                    RuntimeFeature.IsSupported ((string)value)
+                );
+            Assert.AreEqual (ExpectedFeatures, features.ToArray ());
         }
     }
 }
