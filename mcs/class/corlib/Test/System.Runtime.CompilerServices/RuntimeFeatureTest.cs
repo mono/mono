@@ -43,11 +43,11 @@ namespace MonoTests.System.Runtime.CompilerServices
         [Test]
         public void NoNewFeaturesAdded ()
         {
-            var t = typeof (global::System.Runtime.CompilerServices.RuntimeFeature);
+            var t = typeof (RuntimeFeature);
             var featureNames = from field in t.GetFields()
                 where field.FieldType == typeof(string)
                 select field.Name;
-            Assert.AreEqual (featureNames.ToArray (), KnownFeatureNames);
+            Assert.AreEqual (KnownFeatureNames, featureNames.ToArray ());
         }
     }
 }
