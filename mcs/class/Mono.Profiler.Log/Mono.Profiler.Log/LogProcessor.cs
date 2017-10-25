@@ -392,15 +392,16 @@ namespace Mono.Profiler.Log {
 					ev = new HeapEndEvent ();
 					break;
 				case LogEventType.HeapObject: {
+					var refs = Array.Empty <HeapObjectEvent.HeapObjectReference> ();
 					ev = new HeapObjectEvent {
 						ObjectPointer = ReadObject (),
 						ClassPointer = ReadPointer (),
 						ObjectSize = (long) _reader.ReadULeb128 (),
-						References = new HeapObjectEvent.HeapObjectReference [(int) _reader.ReadULeb128 ()],
+						References = refs = new HeapObjectEvent.HeapObjectReference [(int) _reader.ReadULeb128 ()],
 					};
 
-					for (var i = 0; i < ev.References.Length; i++) {
-						ev.References [i] = new HeapObjectEvent.HeapObjectReference {
+					for (var i = 0; i < refs.Length; i++) {
+						refs [i] = new HeapObjectEvent.HeapObjectReference {
 							Offset = (long) _reader.ReadULeb128 (),
 							ObjectPointer = ReadObject (),
 						};
@@ -410,18 +411,35 @@ namespace Mono.Profiler.Log {
 				}
 
 				case LogEventType.HeapRoots: {
+					var roots = Array.Empty<HeapRootsEvent.HeapRoot> ();
 					ev = new HeapRootsEvent () {
-						Roots = new HeapRootsEvent.HeapRoot [(int) _reader.ReadULeb128 ()],
+						Roots = roots = new HeapRootsEvent.HeapRoot [(int) _reader.ReadULeb128 ()],
 						MaxGenerationCollectionCount = StreamHeader.FormatVersion < 15 ? (long) _reader.ReadULeb128 () : -1,
 					};
 
-					for (var i = 0; i < ev.Roots.Length; i++) {
-						ev.Roots [i] = new HeapRootsEvent.HeapRoot {
-							ObjectPointer = ReadObject (),
-							Attributes = StreamHeader.FormatVersion < 13 ? (LogHeapRootAttributes) _reader.ReadULeb128 () : StreamHeader.FormatVersion < 15 ? (LogHeapRootAttributes) _reader.ReadByte () : (LogHeapRootAttributes) -1,
-							ExtraInfo = StreamHeader.FormatVersion < 15 ? (long) _reader.ReadULeb128 () : 0,
-							AddressPointer = StreamHeader.FormatVersion < 15 ? -1 : ReadPointer (),
-						};
+					for (var i = 0; i < roots.Length; i++) {
+						if (StreamHeader.FormatVersion < 13) {
+							roots [i] = new HeapRootsEvent.HeapRoot {
+								ObjectPointer = ReadObject (),
+								Attributes = (LogHeapRootAttributes) _reader.ReadULeb128 (),
+								ExtraInfo = (long) _reader.ReadULeb128 (),
+								AddressPointer = -1,
+							};
+						} else if (StreamHeader.FormatVersion < 15) {
+							roots [i] = new HeapRootsEvent.HeapRoot {
+								ObjectPointer = ReadObject (),
+								Attributes = (LogHeapRootAttributes) _reader.ReadByte (),
+								ExtraInfo = (long) _reader.ReadULeb128 (),
+								AddressPointer = -1,
+							};
+						} else {
+							roots [i] = new HeapRootsEvent.HeapRoot {
+								ObjectPointer = ReadObject (),
+								Attributes = (LogHeapRootAttributes) 0,
+								ExtraInfo = 0,
+								AddressPointer = ReadPointer (),
+							};
+						}
 					}
 
 					break;
