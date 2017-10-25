@@ -72906,6 +72906,24 @@
       </method>
     </type>
   </test>
+  <test name="test-ref-07.cs">
+    <type name="Test">
+      <method name="Void Main()" attrs="150">
+        <size>18</size>
+      </method>
+      <method name="Test Method()" attrs="129">
+        <size>18</size>
+      </method>
+    </type>
+    <type name="P">
+      <method name="Test get_Span()" attrs="3526">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor()" attrs="6276">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-ref-08.cs">
     <type name="ClassLibrary1.C">
       <method name="Void MM()" attrs="129">

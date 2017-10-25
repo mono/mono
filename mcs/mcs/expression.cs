@@ -6744,10 +6744,14 @@ namespace Mono.CSharp
 					ec.Report.Error (1764, loc,
 						"Cannot use fixed variable `{0}' inside an anonymous method, lambda expression or query expression",
 						GetSignatureForError ());
-				} else if (local_info.IsByRef) {
-					ec.Report.Error (8175, loc,
-						"Cannot use by-reference variable `{0}' inside an anonymous method, lambda expression, or query expression",
-						GetSignatureForError ());
+				} else if (local_info.IsByRef || local_info.Type.IsByRefLike) {
+					if (ec.CurrentAnonymousMethod is StateMachineInitializer) {
+						// It's reported later as 4012/4013
+					} else {
+						ec.Report.Error (8175, loc,
+							"Cannot use by-reference variable `{0}' inside an anonymous method, lambda expression, or query expression",
+							GetSignatureForError ());
+					}
 				}
 
 				if (ec.IsVariableCapturingRequired) {
@@ -11607,7 +11611,7 @@ namespace Mono.CSharp
 			}
 
 			if (single_spec != null && single_spec.Dimension > 0) {
-				if (type.IsSpecialRuntimeType) {
+				if (type.IsSpecialRuntimeType || type.IsByRefLike) {
 					ec.Module.Compiler.Report.Error (611, loc, "Array elements cannot be of type `{0}'", type.GetSignatureForError ());
 				} else if (type.IsStatic) {
 					ec.Module.Compiler.Report.SymbolRelatedToPreviousError (type);

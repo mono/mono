@@ -2292,7 +2292,7 @@ namespace Mono.CSharp {
 					ok = false;
 				}
 
-				if (te.IsPointer || te.IsSpecialRuntimeType) {
+				if (te.IsPointer || te.IsSpecialRuntimeType || te.IsByRefLike) {
 					ec.Module.Compiler.Report.Error (306, args[i].Location,
 						"The type `{0}' may not be used as a type argument",
 						te.GetSignatureForError ());
@@ -3102,7 +3102,7 @@ namespace Mono.CSharp {
 			//
 			// Some types cannot be used as type arguments
 			//
-			if ((bound.Type.Kind == MemberKind.Void && !voidAllowed) || bound.Type.IsPointer || bound.Type.IsSpecialRuntimeType ||
+			if ((bound.Type.Kind == MemberKind.Void && !voidAllowed) || bound.Type.IsPointer || bound.Type.IsSpecialRuntimeType || bound.Type.IsByRefLike ||
 			    bound.Type == InternalType.MethodGroup || bound.Type == InternalType.AnonymousMethod || bound.Type == InternalType.VarOutType ||
 			    bound.Type == InternalType.ThrowExpr)
 				return;
