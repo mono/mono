@@ -225,6 +225,8 @@ namespace Mono.CSharp
 			}
 		}
 
+		public bool IsByRefLike => (modifiers & Modifiers.REF) != 0;
+
 		//
 		// Returns true for instances of System.Threading.Tasks.Task<T>
 		//

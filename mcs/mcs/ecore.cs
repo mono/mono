@@ -4177,6 +4177,13 @@ namespace Mono.CSharp {
 						}
 
 						InstanceExpression.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup | ResolveFlags.Type);
+
+						var expr_type = InstanceExpression.Type;
+						if ((expr_type.IsByRefLike || expr_type.IsSpecialRuntimeType) && best_candidate.DeclaringType != expr_type) {
+							// CSC: Should be better error message
+							ec.Report.Error (29, InstanceExpression.Location, "Cannot implicitly convert type `{0}' to `{1}'",
+								InstanceExpression.Type.GetSignatureForError (), best_candidate.DeclaringType.GetSignatureForError ());
+						}
 					}
 				}
 

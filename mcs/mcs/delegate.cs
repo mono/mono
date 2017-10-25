@@ -188,8 +188,8 @@ namespace Mono.CSharp {
 
 			CheckProtectedModifier ();
 
-			if (Compiler.Settings.StdLib && ret_type.IsSpecialRuntimeType) {
-				Method.Error1599 (Location, ret_type, Report);
+			if (ret_type.IsSpecialRuntimeType && Compiler.Settings.StdLib) {
+				Method.Error_ReturnTypeCantBeRefAny (Location, ret_type, Report);
 				return false;
 			}
 
@@ -603,8 +603,14 @@ namespace Mono.CSharp {
 			}
 
 			var expr = method_group.InstanceExpression;
-			if (expr != null && (expr.Type.IsGenericParameter || !TypeSpec.IsReferenceType (expr.Type)))
+			if (expr != null && (expr.Type.IsGenericParameter || !TypeSpec.IsReferenceType (expr.Type))) {
+				if (expr.Type.IsByRefLike || expr.Type.IsSpecialRuntimeType) {
+					// CSC: Should be better error code
+					Error_ConversionFailed (ec, delegate_method, null);
+				}
+
 				method_group.InstanceExpression = new BoxedCast (expr, ec.BuiltinTypes.Object);
+			}
 
 			eclass = ExprClass.Value;
 			return this;

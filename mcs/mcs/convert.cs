@@ -392,6 +392,9 @@ namespace Mono.CSharp {
 				if (!TypeSpec.IsValueType (expr_type))
 					return null;
 
+				if (expr_type.IsByRefLike)
+					return null;
+
 				return expr == null ? EmptyExpression.Null : new BoxedCast (expr, target_type);
 
 			case BuiltinTypeSpec.Type.Enum:
@@ -1967,7 +1970,7 @@ namespace Mono.CSharp {
 			// From object or dynamic to any reference type or value type (unboxing)
 			//
 			if (source_type.BuiltinType == BuiltinTypeSpec.Type.Object || source_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
-				if (target_type.IsPointer)
+				if (target_type.IsPointer || target_type.IsByRefLike)
 					return null;
 
 				return
