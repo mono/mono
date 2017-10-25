@@ -254,9 +254,9 @@ mono_rand_try_get_bytes (gpointer *handle, guchar *buffer, gint buffer_size, Mon
 
 #if defined(HAVE_GETRANDOM) || defined(HAVE_GETENTROPY)
 #ifdef HAVE_GETRANDOM
-	res = mono_getrandom(buffer, size, 0, error);
+	res = mono_getrandom(buffer, buffer_size, 0, error);
 #else
-	res = mono_getentropy(buffer, size, error);
+	res = mono_getentropy(buffer, buffer_size, error);
 #endif
 	if (res < 0) {
 		return FALSE;
