@@ -26,7 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !__IOS__
+#if !FULL_AOT_RUNTIME
 using System;
 using NUnit.Framework;
 using Mono.CSharp;
