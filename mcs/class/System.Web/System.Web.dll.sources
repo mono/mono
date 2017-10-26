@@ -689,7 +689,7 @@ System.Web.UI/PageTheme.cs
 System.Web.UI/PageThemeBuilder.cs
 System.Web.UI/PageThemeFileParser.cs
 System.Web.UI/PageThemeParser.cs
-System.Web.UI/Pair.cs
+../referencesource/System.Web/UI/Pair.cs
 System.Web.UI/ParseChildrenAttribute.cs
 System.Web.UI/PartialCachingAttribute.cs
 System.Web.UI/PartialCachingControl.cs
