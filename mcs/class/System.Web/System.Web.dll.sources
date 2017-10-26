@@ -638,7 +638,7 @@ System.Web.UI/IgnoreUnknownContentAttribute.cs
 ../referencesource/System.Web/UI/IHierarchicalDataSource.cs
 ../referencesource/System.Web/UI/IHierarchicalEnumerable.cs
 ../referencesource/System.Web/UI/IHierarchyData.cs
-System.Web.UI/ImageClickEventArgs.cs
+../referencesource/System.Web/UI/ImageClickEventArgs.cs
 ../referencesource/System.Web/UI/ImageClickEventHandler.cs
 System.Web.UI/IndexedString.cs
 ../referencesource/System.Web/UI/INamingContainer.cs
