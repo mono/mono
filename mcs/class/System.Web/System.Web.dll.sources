@@ -979,7 +979,7 @@ System.Web.UI.WebControls/Login.cs
 ../referencesource/System.Web/UI/WebControls/LoginFailureAction.cs
 System.Web.UI.WebControls/LoginName.cs
 System.Web.UI.WebControls/LoginStatus.cs
-System.Web.UI.WebControls/LoginTextLayout.cs
+../referencesource/System.Web/UI/WebControls/Logintextlayout.cs
 System.Web.UI.WebControls/LoginView.cs
 ../referencesource/System.Web/UI/WebControls/LogoutAction.cs
 System.Web.UI.WebControls/MailDefinition.cs
