@@ -261,6 +261,7 @@ typedef struct MonoAotCompile {
 	GPtrArray *image_table;
 	GPtrArray *globals;
 	GPtrArray *method_order;
+	GHashTable *dedup_stats;
 	GHashTable *dedup_cache;
 	gboolean dedup_cache_changed;
 	GHashTable *export_names;
@@ -3722,6 +3723,42 @@ add_method (MonoAotCompile *acfg, MonoMethod *method)
 }
 
 static void
+mono_dedup_cache_method (MonoAotCompile *acfg, MonoMethod *method)
+{
+	g_assert (acfg->dedup_stats);
+
+	char *name = mono_aot_get_mangled_method_name (method);
+	g_assert (name);
+
+	// For stats
+	char *stats_name = g_strdup (name);
+
+	g_assert (acfg->dedup_cache);
+
+	if (!g_hash_table_lookup (acfg->dedup_cache, name)) {
+		// This AOTCompile owns this method
+		// We do this to decide whether to write it to disk
+		// during a dedup run (first phase, where we skip).
+		//
+		// If never changed, then maybe can avoid a recompile
+		// of the cache.
+		//
+		// Files not read in during last phase.
+		acfg->dedup_cache_changed = TRUE;
+
+		// owns name
+		g_hash_table_insert (acfg->dedup_cache, name, method);
+	} else {
+		// owns name
+		g_free (name);
+	}
+
+	guint count = GPOINTER_TO_UINT (g_hash_table_lookup (acfg->dedup_stats, stats_name));
+	count++;
+	g_hash_table_insert (acfg->dedup_stats, stats_name, GUINT_TO_POINTER (count));
+}
+
+static void
 add_extra_method_with_depth (MonoAotCompile *acfg, MonoMethod *method, int depth)
 {
 	if (mono_method_is_generic_sharable_full (method, TRUE, TRUE, FALSE))
@@ -3730,9 +3767,11 @@ add_extra_method_with_depth (MonoAotCompile *acfg, MonoMethod *method, int depth
 		/* Use the gsharedvt version */
 		method = mini_get_shared_method_full (method, TRUE, TRUE);
 
-	if (method->is_inflated && acfg->aot_opts.dedup_include) {
-		g_hash_table_insert (acfg->dedup_cache, mono_aot_get_mangled_method_name (method), method);
-		return;
+	if ((acfg->aot_opts.dedup || acfg->aot_opts.dedup_include) && mono_aot_can_dedup (method)) {
+		mono_dedup_cache_method (acfg, method);
+
+		if (!acfg->dedup_emit_mode)
+			return;
 	}
 
 	if (acfg->aot_opts.log_generics)
@@ -8723,6 +8762,9 @@ append_mangled_method (GString *s, MonoMethod *method)
 char*
 mono_aot_get_mangled_method_name (MonoMethod *method)
 {
+	// FIXME: use static cache (mempool?)
+	// We call this a *lot*
+
 	GString *s = g_string_new ("aot_");
 	if (!append_mangled_method (s, method)) {
 		g_string_free (s, TRUE);
@@ -9029,24 +9071,38 @@ emit_code (MonoAotCompile *acfg)
 
 		// cfg->skip is vital for LLVM to work, can't just continue in this loop
 		if (dedupable && strcmp (method->name, "wbarrier_conc") && dedup_collect) {
-			char *name = mono_aot_get_mangled_method_name (method);
-			g_assert (name);
-			g_assert (acfg->dedup_cache);
-			if (!g_hash_table_lookup (acfg->dedup_cache, name)) {
-				// This AOTCompile owns this method
-				acfg->dedup_cache_changed = TRUE;
-				g_hash_table_insert (acfg->dedup_cache, name, method);
-			} else {
-				g_free (name);
-			}
+			mono_dedup_cache_method (acfg, method);
+
 			// Don't compile inflated methods if we're in first phase of
 			// dedup
-			cfg->skip = TRUE;
+			//
+			// In second phase, we emit methods that
+			// are dedupable. We also emit later methods
+			// which are referenced by them and added later. 
+			// For this reason, when in the dedup_include mode,
+			// we never set skip.
+			if (acfg->aot_opts.dedup)
+				cfg->skip = TRUE;
 		}
-		
-		if (acfg->dedup_emit_mode)
-			cfg->skip = !dedupable;
-			
+
+		// Don't compile anything in this mode
+		if (acfg->aot_opts.dedup_include && !acfg->dedup_emit_mode)
+			cfg->skip = TRUE;
+
+		// Compile everything in this mode
+		if (acfg->aot_opts.dedup_include && acfg->dedup_emit_mode)
+			cfg->skip = FALSE;
+
+		/*if (dedup_collect) {*/
+			/*char *name = mono_aot_get_mangled_method_name (method);*/
+
+			/*if (ignore_cfg (cfg))*/
+				/*aot_printf (acfg, "Dedup Skipping %s\n", acfg->image->name, name);*/
+			/*else*/
+				/*aot_printf (acfg, "Dedup Keeping %s\n", acfg->image->name, name);*/
+
+			/*g_free (name);*/
+		/*}*/
 
 		if (ignore_cfg (cfg))
 			continue;
@@ -12006,6 +12062,58 @@ add_preinit_got_slots (MonoAotCompile *acfg)
 	acfg->nshared_got_entries = acfg->got_offset;
 }
 
+static void
+mono_dedup_log_stats (MonoAotCompile *acfg)
+{
+	GHashTableIter iter;
+	g_assert (acfg->dedup_stats);
+
+	// If dedup_emit_mode, acfg is the dummy dedup module that consolidates
+	// deduped modules
+	g_hash_table_iter_init (&iter, acfg->method_to_cfg);
+	MonoCompile *dcfg = NULL;
+	MonoMethod *method = NULL;
+
+	size_t wrappers_size_saved = 0;
+	size_t inflated_size_saved = 0;
+	size_t copied_singles = 0;
+
+	while (g_hash_table_iter_next (&iter, (gpointer *) &method, (gpointer *)&dcfg)) {
+		gchar *dedup_name = mono_aot_get_mangled_method_name (method);
+		guint count = GPOINTER_TO_UINT(g_hash_table_lookup (acfg->dedup_stats, dedup_name));
+
+		if (count == 0)
+			continue;
+
+		if (acfg->dedup_emit_mode) {
+			// Size *saved* is the size due to things not emitted.
+			if (count < 2) {
+				// Just moved, didn't save space / dedup
+				copied_singles += dcfg->code_len;
+			} else if (method->wrapper_type != MONO_WRAPPER_NONE) {
+				wrappers_size_saved += dcfg->code_len * (count - 1);
+			} else {
+				inflated_size_saved += dcfg->code_len * (count - 1);
+			}
+		}
+	  if (acfg->aot_opts.dedup) {
+			if (method->wrapper_type != MONO_WRAPPER_NONE) {
+				wrappers_size_saved += dcfg->code_len * count;
+			} else {
+				inflated_size_saved += dcfg->code_len * count;
+			}
+		}
+	}
+
+	aot_printf (acfg, "Dedup Pass: Size Saved From Deduped Wrappers:\t%zu bytes\n", wrappers_size_saved);
+	aot_printf (acfg, "Dedup Pass: Size Saved From Inflated Methods:\t%zu bytes\n", inflated_size_saved);
+	if (acfg->dedup_emit_mode)
+		aot_printf (acfg, "Dedup Pass: Size of Moved But Not Deduped (only 1 copy) Methods:\t%zu bytes\n", copied_singles);
+
+	g_hash_table_destroy (acfg->dedup_stats);
+	acfg->dedup_stats = NULL;
+}
+
 // Flush the cache to tell future calls what to skip
 static void
 mono_flush_method_cache (MonoAotCompile *acfg)
@@ -12052,12 +12160,15 @@ mono_read_method_cache (MonoAotCompile *acfg)
 	// Only do once, when dedup_cache is null
 	if (acfg->dedup_cache)
 		goto early_exit;
+
+	if (acfg->aot_opts.dedup_include || acfg->aot_opts.dedup)
+		g_assert (acfg->dedup_stats);
 	
 	// only in skip mode
 	if (!acfg->aot_opts.dedup)
 		goto early_exit;
 
-	acfg->dedup_cache = g_hash_table_new (g_str_hash, g_str_equal);
+	g_assert (acfg->dedup_cache);
 
 	FILE *cache = fopen (filename, "r");
 	if (!cache)
@@ -12107,6 +12218,7 @@ early_exit:
 
 typedef struct {
 	GHashTable *cache;
+	GHashTable *stats;
 	gboolean emit_inflated_methods;
 	MonoAssembly *inflated_assembly;
 } MonoAotState;
@@ -12117,6 +12229,7 @@ alloc_aot_state (void)
 	MonoAotState *state = g_malloc (sizeof (MonoAotState));
 	// FIXME: Should this own the memory?
 	state->cache = g_hash_table_new (g_str_hash, g_str_equal);
+	state->stats = g_hash_table_new (g_str_hash, g_str_equal);
 	// Start in "collect mode"
 	state->emit_inflated_methods = FALSE;
 	state->inflated_assembly = NULL;
@@ -12140,8 +12253,9 @@ mono_add_deferred_extra_methods (MonoAotCompile *acfg, MonoAotState *astate)
 	acfg->dedup_emit_mode = TRUE;
 
 	g_hash_table_iter_init (&iter, astate->cache);
-	while (g_hash_table_iter_next (&iter, (gpointer *) &name, (gpointer *) &method))
+	while (g_hash_table_iter_next (&iter, (gpointer *) &name, (gpointer *) &method)) {
 		add_method_full (acfg, method, TRUE, 0);
+	}
 	return;
 }
 
@@ -12151,20 +12265,22 @@ mono_setup_dedup_state (MonoAotCompile *acfg, MonoAotState **global_aot_state, M
 	if (!acfg->aot_opts.dedup_include && !acfg->aot_opts.dedup)
 		return;
 
-	// fills out acfg->dedup_cache
-	if (acfg->aot_opts.dedup)
-		mono_read_method_cache (acfg);
-	
 	if (global_aot_state && *global_aot_state && acfg->aot_opts.dedup_include) {
 	// Thread the state through when making the inflate pass
 		*astate = *global_aot_state;
-		acfg->dedup_cache = (*astate)->cache;
 	}
 
 	if (!*astate) {
 		*astate = alloc_aot_state ();
 		*global_aot_state = *astate;
 	}
+
+	acfg->dedup_cache = (*astate)->cache;
+	acfg->dedup_stats = (*astate)->stats;
+
+	// fills out acfg->dedup_cache
+	if (acfg->aot_opts.dedup)
+		mono_read_method_cache (acfg);
 
 	if (!(*astate)->inflated_assembly && acfg->aot_opts.dedup_include) {
 		gchar **asm_path = g_strsplit (ass->image->name, G_DIR_SEPARATOR_S, 0);
@@ -12603,6 +12719,8 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 	emit_code (acfg);
 	if (acfg->aot_opts.dedup)
 		mono_flush_method_cache (acfg);
+	if (acfg->aot_opts.dedup || acfg->dedup_emit_mode)
+		mono_dedup_log_stats (acfg);
 
 	emit_info (acfg);
 
