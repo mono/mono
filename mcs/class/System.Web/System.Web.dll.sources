@@ -1005,7 +1005,7 @@ System.Web.UI.WebControls/ObjectDataSource.cs
 ../referencesource/System.Web/UI/WebControls/ObjectDataSourceDisposingEventArgs.cs
 ../referencesource/System.Web/UI/WebControls/ObjectDataSourceDisposingEventHandler.cs
 ../referencesource/System.Web/UI/WebControls/ObjectDataSourceEventArgs.cs
-System.Web.UI.WebControls/ObjectDataSourceEventHandler.cs
+../referencesource/System.Web/UI/WebControls/ObjectDataSourceObjectEventHandler.cs
 ../referencesource/System.Web/UI/WebControls/ObjectDataSourceFilteringEventArgs.cs
 ../referencesource/System.Web/UI/WebControls/ObjectDataSourceFilteringEventHandler.cs
 ../referencesource/System.Web/UI/WebControls/ObjectDataSourceMethodEventArgs.cs
