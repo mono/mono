@@ -1118,7 +1118,7 @@ System.Web.UI.WebControls/TreeNode.cs
 ../referencesource/System.Web/UI/WebControls/TreeNodeSelectAction.cs
 System.Web.UI.WebControls/TreeNodeStyleCollection.cs
 System.Web.UI.WebControls/TreeNodeStyle.cs
-System.Web.UI.WebControls/TreeNodeTypes.cs
+../referencesource/System.Web/UI/WebControls/TreeNodeType.cs
 System.Web.UI.WebControls/TreeView.cs
 ../referencesource/System.Web/UI/WebControls/TreeViewImageSet.cs
 System.Web.UI.WebControls/UnitConverter.cs
