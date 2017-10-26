@@ -391,11 +391,13 @@ typedef gboolean (*Il2CppMonoJitStackWalk) (Il2CppMonoStackFrameInfo *frame, Mon
 typedef void (*Il2CppMonoDomainFunc) (Il2CppMonoDomain *domain, void* user_data);
 
 typedef void (*emit_assembly_load_callback)(void*, void*);
+typedef void(*emit_type_load_callback)(void*, void*, void*);
 
 void il2cpp_set_thread_state_background(Il2CppMonoThread* thread);
 void* il2cpp_domain_get_agent_info(Il2CppMonoAppDomain* domain);
 void il2cpp_domain_set_agent_info(Il2CppMonoAppDomain* domain, void* agentInfo);
 void il2cpp_send_assemblies_for_domain (Il2CppMonoAppDomain *domain, void *user_data, emit_assembly_load_callback callback);
+void il2cpp_send_types_for_domain(Il2CppMonoAppDomain *domain, emit_type_load_callback callback);
 void il2cpp_start_debugger_thread();
 uintptr_t il2cpp_get_thread_id(Il2CppMonoThread* thread);
 void* il2cpp_gc_alloc_fixed(size_t size);

@@ -10,6 +10,7 @@
 #include "vm/Class.h"
 #include "vm/Domain.h"
 #include "vm/Field.h"
+#include "vm/GenericContainer.h"
 #include "vm/Image.h"
 #include "vm/Method.h"
 #include "vm/Object.h"
@@ -385,7 +386,6 @@ Il2CppMonoMethod* il2cpp_mono_jit_info_get_method(MonoJitInfo* ji)
 
 MonoDebugMethodInfo* il2cpp_mono_debug_lookup_method(Il2CppMonoMethod* method)
 {
-	IL2CPP_ASSERT(0 && "This method is not yet implemented");
 	return NULL;
 }
 
@@ -610,8 +610,7 @@ gboolean il2cpp_mono_class_is_nullable(Il2CppMonoClass* klass)
 
 Il2CppMonoGenericContainer* il2cpp_mono_class_get_generic_container(Il2CppMonoClass* klass)
 {
-	IL2CPP_ASSERT(0 && "This method is not yet implemented");
-	return NULL;
+    return (Il2CppMonoGenericContainer*)il2cpp::vm::Class::GetGenericContainer((Il2CppClass*)klass);
 }
 
 void il2cpp_mono_class_setup_interfaces(Il2CppMonoClass* klass, MonoError* error)
@@ -633,8 +632,7 @@ gpointer il2cpp_mono_ldtoken_checked(Il2CppMonoImage* image, guint32 token, Il2C
 
 Il2CppMonoClass* il2cpp_mono_class_from_generic_parameter_internal(Il2CppMonoGenericParam* param)
 {
-	IL2CPP_ASSERT(0 && "This method is not yet implemented");
-	return NULL;
+	return (Il2CppMonoClass*)il2cpp::vm::Class::FromGenericParameter((Il2CppGenericParameter*)param);
 }
 
 Il2CppMonoClass* il2cpp_mono_class_load_from_name(Il2CppMonoImage* image, const char* name_space, const char* name)
@@ -666,7 +664,6 @@ void il2cpp_mono_thread_internal_reset_abort(Il2CppMonoInternalThread* thread)
 
 gunichar2* il2cpp_mono_thread_get_name(Il2CppMonoInternalThread* this_obj, guint32* name_len)
 {
-	IL2CPP_ASSERT(0 && "This method is not yet implemented");
 	return NULL;
 }
 
@@ -860,8 +857,7 @@ Il2CppMonoReflectionAssemblyHandle il2cpp_mono_assembly_get_object_handle(Il2Cpp
 
 Il2CppMonoReflectionType* il2cpp_mono_type_get_object_checked(Il2CppMonoDomain* domain, Il2CppMonoType* type, MonoError* error)
 {
-	IL2CPP_ASSERT(0 && "This method is not yet implemented");
-	return NULL;
+	return (Il2CppMonoReflectionType*)il2cpp::vm::Reflection::GetTypeObject((const Il2CppType*)type);
 }
 
 void il2cpp_mono_network_init()
@@ -1092,8 +1088,7 @@ gboolean il2cpp_mono_class_has_parent (Il2CppMonoClass *klass, Il2CppMonoClass *
 
 Il2CppMonoGenericParam* il2cpp_mono_generic_container_get_param (Il2CppMonoGenericContainer *gc, int i)
 {
-	IL2CPP_ASSERT(0 && "This method is not yet implemented");
-	return NULL;
+	return (Il2CppMonoGenericParam*)il2cpp::vm::GenericContainer::GetGenericParameter((Il2CppGenericContainer*)gc, i);
 }
 
 gboolean il2cpp_mono_find_seq_point (Il2CppMonoDomain *domain, Il2CppMonoMethod *method, gint32 il_offset, MonoSeqPointInfo **info, SeqPoint *seq_point)
@@ -1196,9 +1191,20 @@ void il2cpp_domain_set_agent_info(Il2CppMonoAppDomain* domain, void* agentInfo)
 void il2cpp_send_assemblies_for_domain (Il2CppMonoAppDomain *domain, void *user_data, emit_assembly_load_callback callback)
 {
 	il2cpp::vm::AssemblyVector* assemblies = il2cpp::vm::Assembly::GetAllAssemblies();
-	for (il2cpp::vm::AssemblyVector::iterator it = assemblies->begin(); it != assemblies->end(); it++)
+	for (il2cpp::vm::AssemblyVector::iterator assembly = assemblies->begin(); assembly != assemblies->end(); ++assembly)
+		callback((void*)*assembly, NULL);
+}
+
+void il2cpp_send_types_for_domain(Il2CppMonoAppDomain *domain, emit_type_load_callback callback)
+{
+	il2cpp::vm::AssemblyVector* assemblies = il2cpp::vm::Assembly::GetAllAssemblies();
+	for (il2cpp::vm::AssemblyVector::iterator assembly = assemblies->begin(); assembly != assemblies->end(); ++assembly)
 	{
-		callback((void*)*it, NULL);
+		Il2CppImage* image = il2cpp::vm::Assembly::GetImage(*assembly);
+		il2cpp::vm::TypeVector types;
+		il2cpp::vm::Image::GetTypes(image, true, &types);
+		for (il2cpp::vm::TypeVector::iterator type = types.begin(); type != types.end(); ++type)
+			callback(NULL, (void*)*type, NULL);
 	}
 }
 
@@ -1241,6 +1247,11 @@ int il2cpp_mono_type_get_attrs(Il2CppMonoType* type)
 Il2CppSequencePointC* il2cpp_get_sequence_points(void* *iter)
 {
 	return (Il2CppSequencePointC*)il2cpp::utils::Debugger::GetSequencePoints(iter);
+}
+
+Il2CppSequencePointC* il2cpp_get_method_sequence_points(Il2CppMonoMethod* method, void* *iter)
+{
+    return (Il2CppSequencePointC*)il2cpp::utils::Debugger::GetSequencePoints((const MethodInfo*)method, iter);
 }
 
 gboolean il2cpp_mono_methods_match(Il2CppMonoMethod* left, Il2CppMonoMethod* right)
@@ -1316,60 +1327,6 @@ mono_array_lower_bound_t il2cpp_array_bound_lower_bound(Il2CppMonoArray *monoArr
 	return arr->bounds[i].lower_bound;
 }
 
-const char* il2cpp_assembly_name_name(Il2CppMonoAssembly *monoAssembly)
-{
-	Il2CppAssembly *assembly = (Il2CppAssembly*)monoAssembly;
-	return il2cpp::vm::MetadataCache::GetStringFromIndex(assembly->aname.nameIndex);
-}
-
-uint16_t il2cpp_assembly_name_major(Il2CppMonoAssembly *monoAssembly)
-{
-	Il2CppAssembly *assembly = (Il2CppAssembly*)monoAssembly;
-	return assembly->aname.major;
-}
-
-uint16_t il2cpp_assembly_name_minor(Il2CppMonoAssembly *monoAssembly)
-{
-	Il2CppAssembly *assembly = (Il2CppAssembly*)monoAssembly;
-	return assembly->aname.minor;
-}
-
-uint16_t il2cpp_assembly_name_build(Il2CppMonoAssembly *monoAssembly)
-{
-	Il2CppAssembly *assembly = (Il2CppAssembly*)monoAssembly;
-	return assembly->aname.build;
-}
-
-uint16_t il2cpp_assembly_name_revision(Il2CppMonoAssembly *monoAssembly)
-{
-	Il2CppAssembly *assembly = (Il2CppAssembly*)monoAssembly;
-	return assembly->aname.revision;
-}
-
-const char* il2cpp_assembly_name_culture(Il2CppMonoAssembly *monoAssembly)
-{
-	Il2CppAssembly *assembly = (Il2CppAssembly*)monoAssembly;
-	return il2cpp::vm::MetadataCache::GetStringFromIndex(assembly->aname.cultureIndex);
-}
-
-mono_byte il2cpp_assembly_name_public_key_token(Il2CppMonoAssembly *monoAssembly, int i)
-{
-	Il2CppAssembly *assembly = (Il2CppAssembly*)monoAssembly;
-	return assembly->aname.publicKeyToken[i];
-}
-
-const char* il2cpp_assembly_name_public_key_token_string(Il2CppMonoAssembly *monoAssembly)
-{
-	Il2CppAssembly *assembly = (Il2CppAssembly*)monoAssembly;
-	return il2cpp::vm::MetadataCache::GetStringFromIndex(assembly->aname.publicKeyIndex);
-}
-
-uint32_t il2cpp_assembly_name_flags(Il2CppMonoAssembly *monoAssembly)
-{
-	Il2CppAssembly *assembly = (Il2CppAssembly*)monoAssembly;
-	return assembly->aname.flags;
-}
-
 const char* il2cpp_image_name(Il2CppMonoImage *monoImage)
 {
 	Il2CppImage *image = (Il2CppImage*)monoImage;
@@ -1401,6 +1358,11 @@ Il2CppMonoClass* il2cpp_defaults_exception_class()
 Il2CppMonoImage* il2cpp_defaults_corlib_image()
 {
 	return (Il2CppMonoImage*)il2cpp_defaults.corlib;
+}
+
+int il2cpp_generic_container_get_type_argc(Il2CppMonoGenericClass* container)
+{
+	return ((Il2CppGenericContainer*)container)->type_argc;
 }
 
 }
