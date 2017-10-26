@@ -78,7 +78,7 @@ mono_getrandom (guchar *buffer, gint buffer_size, gint flags, MonoError *error)
 			g_warning("Entropy error! Error in getrandom (%s).", strerror (errno));
 			/* exception will be thrown in managed code */
 			mono_error_set_execution_engine (error, "Entropy error! Error in getrandom (%s).", strerror (errno));
-			return -1
+			return -1;
 		}
 		count += err;
 	} while (count < buffer_size);
@@ -124,7 +124,7 @@ mono_getentropy (guchar *buffer, gint buffer_size, MonoError *error)
 			g_warning("Entropy error! Error in getentropy (%s).", strerror (errno));
 			/* exception will be thrown in managed code */
 			mono_error_set_execution_engine (error, "Entropy error! Error in getentropy (%s).", strerror (errno));
-			return -1
+			return -1;
 		}
 		count += len;
 		buffer_size -= len;
