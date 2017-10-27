@@ -2339,16 +2339,16 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			return monoLibrary;
 
 		if (program.IsVSToolChain) {
-			if (!monoLibrary.EndsWith (".lib"))
+			if (!monoLibrary.EndsWith (".lib", StringComparison.OrdinalIgnoreCase))
 				monoLibrary = monoLibrary + ".lib";
 		} else {
-			if (!monoLibrary.StartsWith ("lib"))
+			if (!monoLibrary.StartsWith ("lib", StringComparison.OrdinalIgnoreCase))
 				monoLibrary = "lib" + monoLibrary;
 			if (staticLinkMono) {
-				if (!monoLibrary.EndsWith (".dll.a"))
+				if (!monoLibrary.EndsWith (".dll.a", StringComparison.OrdinalIgnoreCase))
 					monoLibrary = monoLibrary + ".dll.a";
 			} else {
-				if (!monoLibrary.EndsWith (".a"))
+				if (!monoLibrary.EndsWith (".a", StringComparison.OrdinalIgnoreCase))
 					monoLibrary = monoLibrary + ".a";
 			}
 		}
@@ -2364,7 +2364,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		string monoLibrary = GetMonoLibraryName (program, staticLinkMono, staticLinkCRuntime);
 
 		if (!Path.IsPathRooted (monoLibrary)) {
-			if (!monoLibrary.EndsWith (libExtension))
+			if (!monoLibrary.EndsWith (libExtension, StringComparison.OrdinalIgnoreCase))
 				monoLibrary = monoLibrary + libExtension;
 
 			linkerArguments.Add (libPrefix + monoLibrary);
