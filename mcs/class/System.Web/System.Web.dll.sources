@@ -568,7 +568,7 @@ System.Web.UI/DataSourceViewSelectCallback.cs
 System.Web.UI/DesignerDataBoundLiteralControl.cs
 System.Web.UI/DesignTimeParseData.cs
 System.Web.UI/DesignTimeTemplateParser.cs
-System.Web.UI/EmptyControlCollection.cs
+../referencesource/System.Web/UI/EmptyControlCollection.cs
 System.Web.UI/EventEntry.cs
 System.Web.UI/ExpressionBindingCollection.cs
 System.Web.UI/ExpressionBinding.cs
