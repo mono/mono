@@ -533,7 +533,7 @@ System.Web.UI/CodeBuilder.cs
 System.Web.UI/CodeConstructType.cs
 System.Web.UI/CodeRenderBuilder.cs
 System.Web.UI/CollectionBuilder.cs
-System.Web.UI/CompilationMode.cs
+../referencesource/System.Web/UI/PagesConfiguration.cs
 System.Web.UI/CompiledBindableTemplateBuilder.cs
 System.Web.UI/CompiledTemplateBuilder.cs
 System.Web.UI/ComplexPropertyEntry.cs
@@ -638,9 +638,9 @@ System.Web.UI/IgnoreUnknownContentAttribute.cs
 ../referencesource/System.Web/UI/IHierarchicalDataSource.cs
 ../referencesource/System.Web/UI/IHierarchicalEnumerable.cs
 ../referencesource/System.Web/UI/IHierarchyData.cs
-System.Web.UI/ImageClickEventArgs.cs
+../referencesource/System.Web/UI/ImageClickEventArgs.cs
 ../referencesource/System.Web/UI/ImageClickEventHandler.cs
-System.Web.UI/IndexedString.cs
+../referencesource/System.Web/UI/IndexedString.cs
 ../referencesource/System.Web/UI/INamingContainer.cs
 ../referencesource/System.Web/UI/INonBindingContainer.cs
 ../referencesource/System.Web/UI/INavigateUIData.cs
@@ -1005,7 +1005,7 @@ System.Web.UI.WebControls/ObjectDataSource.cs
 ../referencesource/System.Web/UI/WebControls/ObjectDataSourceDisposingEventArgs.cs
 ../referencesource/System.Web/UI/WebControls/ObjectDataSourceDisposingEventHandler.cs
 ../referencesource/System.Web/UI/WebControls/ObjectDataSourceEventArgs.cs
-System.Web.UI.WebControls/ObjectDataSourceEventHandler.cs
+../referencesource/System.Web/UI/WebControls/ObjectDataSourceObjectEventHandler.cs
 ../referencesource/System.Web/UI/WebControls/ObjectDataSourceFilteringEventArgs.cs
 ../referencesource/System.Web/UI/WebControls/ObjectDataSourceFilteringEventHandler.cs
 ../referencesource/System.Web/UI/WebControls/ObjectDataSourceMethodEventArgs.cs
@@ -1050,7 +1050,7 @@ System.Web.UI.WebControls/RepeatInfo.cs
 System.Web.UI.WebControls/RequiredFieldValidator.cs
 System.Web.UI.WebControls/RoleGroup.cs
 System.Web.UI.WebControls/RoleGroupCollection.cs
-System.Web.UI.WebControls/ScrollBars.cs
+../referencesource/System.Web/UI/WebControls/Scrollbars.cs
 System.Web.UI.WebControls/SelectedDatesCollection.cs
 System.Web.UI.WebControls/SendMailErrorEventArgs.cs
 ../referencesource/System.Web/UI/WebControls/SendMailErrorEventHandler.cs
@@ -1092,7 +1092,7 @@ System.Web.UI.WebControls/TableCell.cs
 System.Web.UI.WebControls/Table.cs
 System.Web.UI.WebControls/TableFooterRow.cs
 System.Web.UI.WebControls/TableHeaderCell.cs
-System.Web.UI.WebControls/TableHeaderRow.cs
+../referencesource/System.Web/UI/WebControls/TableHeaderRow.cs
 ../referencesource/System.Web/UI/WebControls/TableHeaderScope.cs
 System.Web.UI.WebControls/TableItemStyle.cs
 System.Web.UI.WebControls/TableRowCollection.cs
@@ -1185,7 +1185,7 @@ System.Web.UI.WebControls/WizardStepBase.cs
 System.Web.UI.WebControls/WizardStepCollection.cs
 System.Web.UI.WebControls/WizardStepControlBuilder.cs
 System.Web.UI.WebControls/WizardStep.cs
-System.Web.UI.WebControls/WizardStepType.cs
+../referencesource/System.Web/UI/WebControls/WizardStepType.cs
 System.Web.UI.WebControls/XmlBuilder.cs
 System.Web.UI.WebControls/Xml.cs
 System.Web.UI.WebControls/XmlDataSource.cs
