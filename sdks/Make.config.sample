@@ -6,3 +6,6 @@
 
 #Disables building iOS
 #DISABLE_IOS = 1
+
+#Disables building the BCL
+#DISABLE_BCL = 1
