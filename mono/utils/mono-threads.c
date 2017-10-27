@@ -828,6 +828,7 @@ mono_thread_info_begin_resume (MonoThreadInfo *info)
 FIXME fix cardtable WB to be out of line and check with the runtime if the target is not the
 WB trampoline. Another option is to encode wb ranges in MonoJitInfo, but that is somewhat hard.
 */
+#ifndef IL2CPP_MONO_DEBUGGER
 static gboolean
 is_thread_in_critical_region (MonoThreadInfo *info)
 {
@@ -878,6 +879,7 @@ mono_thread_info_in_critical_location (MonoThreadInfo *info)
 {
 	return is_thread_in_critical_region (info);
 }
+#endif
 
 /*
 The return value is only valid until a matching mono_thread_info_resume is called
@@ -924,6 +926,7 @@ suspend_sync (MonoNativeThreadId tid, gboolean interrupt_kernel)
 	return info;
 }
 
+#ifndef IL2CPP_MONO_DEBUGGER
 static MonoThreadInfo*
 suspend_sync_nolock (MonoNativeThreadId id, gboolean interrupt_kernel)
 {
@@ -995,6 +998,8 @@ done:
 	mono_threads_end_global_suspend ();
 	mono_thread_info_suspend_unlock ();
 }
+#endif
+
 
 /**
 Inject an assynchronous call into the target thread. The target thread must be suspended and

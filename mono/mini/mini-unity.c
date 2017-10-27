@@ -22,8 +22,11 @@ void mono_unity_set_unhandled_exception_handler(void* handler)
 
 #endif // WIN32
 
+extern gboolean unity_shutting_down;
+
 MONO_API void
 mono_unity_jit_cleanup (MonoDomain *domain)
 {
+	unity_shutting_down = TRUE;
 	mono_jit_cleanup (domain);
 }

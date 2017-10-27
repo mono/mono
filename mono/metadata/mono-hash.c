@@ -34,6 +34,10 @@
 #include <mono/utils/checked-build.h>
 #include <mono/utils/mono-threads-coop.h>
 
+#ifdef IL2CPP_MONO_DEBUGGER
+#include "il2cpp-compat-metadata.h"
+#endif
+
 #ifdef HAVE_BOEHM_GC
 #define mg_new0(type,n)  ((type *) GC_MALLOC(sizeof(type) * (n)))
 #define mg_new(type,n)   ((type *) GC_MALLOC(sizeof(type) * (n)))

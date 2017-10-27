@@ -192,6 +192,7 @@ mono_custom_attrs_from_method
 mono_custom_attrs_from_param
 mono_custom_attrs_from_property
 mono_custom_attrs_get_attr
+mono_custom_attrs_get_attrs
 mono_custom_attrs_has_attr
 mono_debug_add_delegate_trampoline
 mono_debug_add_method

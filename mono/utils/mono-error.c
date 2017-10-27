@@ -56,6 +56,7 @@ mono_error_prepare (MonoErrorInternal *error)
 	error->exn.klass = NULL;
 }
 
+#ifndef IL2CPP_MONO_DEBUGGER
 static MonoClass*
 get_class (MonoErrorInternal *error)
 {
@@ -88,6 +89,7 @@ get_assembly_name (MonoErrorInternal *error)
 		return klass->image->name;
 	return "<unknown assembly>";
 }
+#endif
 
 void
 mono_error_init_flags (MonoError *oerror, unsigned short flags)
@@ -112,6 +114,7 @@ mono_error_init (MonoError *error)
 	mono_error_init_flags (error, 0);
 }
 
+#ifndef IL2CPP_MONO_DEBUGGER
 void
 mono_error_cleanup (MonoError *oerror)
 {
@@ -154,6 +157,7 @@ mono_error_cleanup (MonoError *oerror)
 	error->exn.klass = NULL;
 
 }
+#endif
 
 gboolean
 mono_error_ok (MonoError *error)
@@ -161,6 +165,7 @@ mono_error_ok (MonoError *error)
 	return error->error_code == MONO_ERROR_NONE;
 }
 
+#ifndef IL2CPP_MONO_DEBUGGER
 void
 mono_error_assert_ok_pos (MonoError *error, const char* filename, int lineno)
 {
@@ -169,6 +174,7 @@ mono_error_assert_ok_pos (MonoError *error, const char* filename, int lineno)
 
 	g_error ("%s:%d: %s\n", filename, lineno, mono_error_get_message (error));
 }
+#endif
 
 unsigned short
 mono_error_get_error_code (MonoError *error)
@@ -178,6 +184,7 @@ mono_error_get_error_code (MonoError *error)
 
 /*Return a pointer to the internal error message, might be NULL.
 Caller should not release it.*/
+#ifndef IL2CPP_MONO_DEBUGGER
 const char*
 mono_error_get_message (MonoError *oerror)
 {
@@ -195,6 +202,7 @@ mono_error_get_message (MonoError *oerror)
 
 	return error->full_message_with_fields ? error->full_message_with_fields : error->full_message;
 }
+#endif
 
 /*
  * Inform that this error has heap allocated strings.
@@ -372,6 +380,7 @@ mono_error_set_bad_image_name (MonoError *oerror, const char *assembly_name, con
 	set_error_message ();
 }
 
+#ifndef IL2CPP_MONO_DEBUGGER
 void
 mono_error_set_bad_image (MonoError *oerror, MonoImage *image, const char *msg_format, ...)
 {
@@ -382,6 +391,7 @@ mono_error_set_bad_image (MonoError *oerror, MonoImage *image, const char *msg_f
 	error->assembly_name = image ? mono_image_get_name (image) : "<no_image>";
 	set_error_message ();
 }
+#endif
 
 void
 mono_error_set_generic_errorv (MonoError *oerror, const char *name_space, const char *name, const char *msg_format, va_list args)
@@ -484,6 +494,7 @@ mono_error_set_invalid_program (MonoError *oerror, const char *msg_format, ...)
 	set_error_message ();
 }
 
+#ifndef IL2CPP_MONO_DEBUGGER
 void
 mono_error_set_exception_instance (MonoError *oerror, MonoException *exc)
 {
@@ -503,6 +514,7 @@ mono_error_set_exception_handle (MonoError *oerror, MonoExceptionHandle exc)
 	error->error_code = MONO_ERROR_EXCEPTION_INSTANCE;
 	error->exn.instance_handle = mono_gchandle_from_handle (MONO_HANDLE_CAST(MonoObject, exc), FALSE);
 }
+#endif
 
 void
 mono_error_set_out_of_memory (MonoError *oerror, const char *msg_format, ...)
@@ -539,6 +551,7 @@ mono_error_set_argument_null (MonoError *oerror, const char *argument, const cha
 	set_error_message ();
 }
 
+#ifndef IL2CPP_MONO_DEBUGGER
 void
 mono_error_set_not_verifiable (MonoError *oerror, MonoMethod *method, const char *msg_format, ...)
 {
@@ -553,8 +566,9 @@ mono_error_set_not_verifiable (MonoError *oerror, MonoMethod *method, const char
 
 	set_error_message ();
 }
+#endif
 
-
+#ifndef IL2CPP_MONO_DEBUGGER
 static MonoString*
 get_type_name_as_mono_string (MonoErrorInternal *error, MonoDomain *domain, MonoError *error_out)
 {
@@ -577,6 +591,7 @@ get_type_name_as_mono_string (MonoErrorInternal *error, MonoDomain *domain, Mono
 		mono_error_set_out_of_memory (error_out, "Could not allocate type name");
 	return res;
 }
+#endif
 
 static void
 set_message_on_exception (MonoException *exception, MonoErrorInternal *error, MonoError *error_out)
@@ -589,6 +604,8 @@ set_message_on_exception (MonoException *exception, MonoErrorInternal *error, Mo
 }
 
 /*Can fail with out-of-memory*/
+
+#ifndef IL2CPP_MONO_DEBUGGER
 MonoException*
 mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 {
@@ -789,6 +806,7 @@ mono_error_convert_to_exception (MonoError *target_error)
 	mono_error_cleanup (target_error);
 	return ex;
 }
+#endif
 
 void
 mono_error_move (MonoError *dest, MonoError *src)
@@ -808,6 +826,7 @@ mono_error_move (MonoError *dest, MonoError *src)
  *
  * Returns the boxed error, or NULL if the mempool could not allocate.
  */
+#ifndef IL2CPP_MONO_DEBUGGER
 MonoErrorBoxed*
 mono_error_box (const MonoError *ierror, MonoImage *image)
 {
@@ -843,7 +862,7 @@ mono_error_box (const MonoError *ierror, MonoImage *image)
 	
 	return box;
 }
-
+#endif
 
 /**
  * mono_error_set_from_boxed:

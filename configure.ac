@@ -852,6 +852,7 @@ with_unityaot_default=no
 
 with_bitcode_default=no
 with_cooperative_gc_default=no
+mono_feature_disable_com=yes
 
 INVARIANT_AOT_OPTIONS=nimt-trampolines=2000,ntrampolines=8000,nrgctx-fetch-trampolines=256,ngsharedvt-trampolines=4000
 
