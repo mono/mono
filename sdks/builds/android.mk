@@ -26,7 +26,9 @@ _android_$(1)_RANLIB=$$(TOP)/sdks/builds/toolchains/android-$(1)/bin/$(3)-ranlib
 _android_$(1)_STRIP=$$(TOP)/sdks/builds/toolchains/android-$(1)/bin/$(3)-strip
 
 _android_$(1)_AC_VARS= \
-	mono_cv_uscore=yes
+	mono_cv_uscore=yes \
+	ac_cv_func_sched_getaffinity=no \
+	ac_cv_func_sched_setaffinity=no
 
 _android_$(1)_CFLAGS= \
 	-fno-omit-frame-pointer -Wl,-z,now -Wl,-z,relro -Wl,-z,noexecstack -fstack-protector $(if $(filter $(IS_RELEASE),true),-O2,-O0 -ggdb3) \
