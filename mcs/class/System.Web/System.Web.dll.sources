@@ -1092,7 +1092,7 @@ System.Web.UI.WebControls/TableCell.cs
 System.Web.UI.WebControls/Table.cs
 System.Web.UI.WebControls/TableFooterRow.cs
 System.Web.UI.WebControls/TableHeaderCell.cs
-System.Web.UI.WebControls/TableHeaderRow.cs
+../referencesource/System.Web/UI/WebControls/TableHeaderRow.cs
 ../referencesource/System.Web/UI/WebControls/TableHeaderScope.cs
 System.Web.UI.WebControls/TableItemStyle.cs
 System.Web.UI.WebControls/TableRowCollection.cs
