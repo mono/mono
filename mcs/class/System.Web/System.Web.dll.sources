@@ -1090,7 +1090,7 @@ System.Web.UI.WebControls/TableCellCollection.cs
 System.Web.UI.WebControls/TableCellControlBuilder.cs
 System.Web.UI.WebControls/TableCell.cs
 System.Web.UI.WebControls/Table.cs
-System.Web.UI.WebControls/TableFooterRow.cs
+../referencesource/System.Web/UI/WebControls/TableFooterRow.cs
 System.Web.UI.WebControls/TableHeaderCell.cs
 ../referencesource/System.Web/UI/WebControls/TableHeaderRow.cs
 ../referencesource/System.Web/UI/WebControls/TableHeaderScope.cs
