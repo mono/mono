@@ -1050,7 +1050,7 @@ System.Web.UI.WebControls/RepeatInfo.cs
 System.Web.UI.WebControls/RequiredFieldValidator.cs
 System.Web.UI.WebControls/RoleGroup.cs
 System.Web.UI.WebControls/RoleGroupCollection.cs
-System.Web.UI.WebControls/ScrollBars.cs
+../referencesource/System.Web/UI/WebControls/Scrollbars.cs
 System.Web.UI.WebControls/SelectedDatesCollection.cs
 System.Web.UI.WebControls/SendMailErrorEventArgs.cs
 ../referencesource/System.Web/UI/WebControls/SendMailErrorEventHandler.cs
