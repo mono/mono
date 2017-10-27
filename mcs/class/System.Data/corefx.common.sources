@@ -8,10 +8,9 @@ Assembly/AssemblyInfo.cs
 #
 # corefx doesn't fully cover our API yet, these files fill the gaps:
 #
-ReferenceSources/ThisAssembly.cs
+corefx/ThisAssembly.cs
 System.Data.SqlClient/SqlCredential.cs
 System.Data.SqlClient/SQLDebugging.cs
-ReferenceSources/PoolBlockingPeriod.cs
 corefx/Odbc/AdapterUtil.cs
 corefx/Odbc/Res.cs
 corefx/DbConnection.cs
