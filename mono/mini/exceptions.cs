@@ -1664,7 +1664,7 @@ class Tests
 			val = d / q;
 		} catch (DivideByZeroException) {
 			/* wrong exception */
-		} catch (OverflowException) {
+		} catch (ArithmeticException) {
 			failed = false;
 		}
 		if (failed)
@@ -1677,7 +1677,7 @@ class Tests
 			val = d % q;
 		} catch (DivideByZeroException) {
 			/* wrong exception */
-		} catch (OverflowException) {
+		} catch (ArithmeticException) {
 			failed = false;
 		}
 		if (failed)
