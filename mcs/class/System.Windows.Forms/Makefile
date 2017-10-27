@@ -14,7 +14,8 @@ LIB_MCS_FLAGS += /define:GENERATING_RESOURCES
 endif
 
 RESX_RESOURCES = \
-	resources/keyboards.resources
+	resources/keyboards.resources \
+        resources/System.Windows.Forms.resources
 
 CLEAN_FILES += $(RESX_RESOURCES)
 
