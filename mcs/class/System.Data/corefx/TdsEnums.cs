@@ -30,4 +30,11 @@ namespace System.Data.SqlClient
 		ResultSetOnly,
 		Disabled,
 	}
+
+	public enum PoolBlockingPeriod
+	{
+		Auto,
+		AlwaysBlock,
+		NeverBlock
+	}
 }
