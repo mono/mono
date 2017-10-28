@@ -1683,6 +1683,19 @@ class Tests
 		if (failed)
 			return 4;
 
+		try {
+			failed = true;
+			q = -1L;
+			d = Int64.MinValue;
+			val = d % q;
+		} catch (DivideByZeroException) {
+			/* wrong exception */
+		} catch (OverflowException) {
+			failed = false;
+		}
+		if (failed)
+			return 5;
+
 		return 0;
 	}
 
