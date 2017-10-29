@@ -666,6 +666,20 @@ unwinder_unwind_frame (Unwinder *unwinder,
 	if (unwinder->in_interp) {
 		gpointer new_sp;
 		memcpy (new_ctx, ctx, sizeof (MonoContext));
+
+		/* Process debugger invokes */
+		/* The DEBUGGER_INVOKE should be returned before the first interpreter frame for the invoke */
+		if ((gpointer)MONO_CONTEXT_GET_SP (ctx) > (gpointer)(*lmf)) {
+			if (((guint64)(*lmf)->previous_lmf) & 2) {
+				MonoLMFExt *ext = (MonoLMFExt*)(*lmf);
+				if (ext->debugger_invoke) {
+					*lmf = (MonoLMF *)(((guint64)(*lmf)->previous_lmf) & ~7);
+					frame->type = FRAME_TYPE_DEBUGGER_INVOKE;
+					return TRUE;
+				}
+			}
+		}
+
 		unwinder->in_interp = mono_interp_frame_iter_next (&unwinder->interp_iter, frame, &new_sp);
 		if (frame->type == FRAME_TYPE_INTERP)
 			/* This is needed so code which uses ctx->sp for frame ordering would work */
