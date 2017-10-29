@@ -109,7 +109,8 @@ static gboolean ss_enabled;
 
 static char* dump_frame (InterpFrame *inv);
 static MonoArray *get_trace_ips (MonoDomain *domain, InterpFrame *top);
-static void ves_exec_method_with_context (InterpFrame *frame, ThreadContext *context, unsigned short *start_with_ip, MonoException *filter_exception, int exit_at_finally);
+static void interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *start_with_ip, MonoException *filter_exception, int exit_at_finally);
+static void interp_exec_method (InterpFrame *frame, ThreadContext *context);
 
 typedef void (*ICallMethod) (InterpFrame *frame);
 
@@ -1395,7 +1396,7 @@ mono_interp_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoOb
 	if (exc)
 		frame.invoke_trap = 1;
 
-	ves_exec_method_with_context (&frame, context, NULL, NULL, -1);
+	interp_exec_method (&frame, context);
 
 	if (context == &context_struct)
 		set_context (NULL);
@@ -1539,7 +1540,7 @@ interp_entry (InterpEntryData *data)
 		break;
 	}
 
-	ves_exec_method_with_context (&frame, context, NULL, NULL, -1);
+	interp_exec_method (&frame, context);
 	if (context == &context_struct)
 		set_context (NULL);
 	else
@@ -2189,7 +2190,7 @@ static int opcode_counts[512];
  * If EXIT_AT_FINALLY is not -1, exit after exiting the finally clause with that index.
  */
 static void 
-ves_exec_method_with_context (InterpFrame *frame, ThreadContext *context, unsigned short *start_with_ip, MonoException *filter_exception, int exit_at_finally)
+interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *start_with_ip, MonoException *filter_exception, int exit_at_finally)
 {
 	InterpFrame child_frame;
 	GSList *finally_ips = NULL;
@@ -2446,7 +2447,7 @@ ves_exec_method_with_context (InterpFrame *frame, ThreadContext *context, unsign
 				}
 			}
 
-			ves_exec_method_with_context (&child_frame, context, NULL, NULL, -1);
+			interp_exec_method (&child_frame, context);
 
 			context->current_frame = frame;
 
@@ -2538,7 +2539,7 @@ ves_exec_method_with_context (InterpFrame *frame, ThreadContext *context, unsign
 				--sp;
 			child_frame.stack_args = sp;
 
-			ves_exec_method_with_context (&child_frame, context, NULL, NULL, -1);
+			interp_exec_method (&child_frame, context);
 
 			context->current_frame = frame;
 
@@ -2580,7 +2581,7 @@ ves_exec_method_with_context (InterpFrame *frame, ThreadContext *context, unsign
 			}
 			child_frame.stack_args = sp;
 
-			ves_exec_method_with_context (&child_frame, context, NULL, NULL, -1);
+			interp_exec_method (&child_frame, context);
 
 			context->current_frame = frame;
 
@@ -2653,7 +2654,7 @@ ves_exec_method_with_context (InterpFrame *frame, ThreadContext *context, unsign
 				sp [0].data.p = unboxed;
 			}
 
-			ves_exec_method_with_context (&child_frame, context, NULL, NULL, -1);
+			interp_exec_method (&child_frame, context);
 
 			context->current_frame = frame;
 
@@ -2707,7 +2708,7 @@ ves_exec_method_with_context (InterpFrame *frame, ThreadContext *context, unsign
 				sp [0].data.p = unboxed;
 			}
 
-			ves_exec_method_with_context (&child_frame, context, NULL, NULL, -1);
+			interp_exec_method (&child_frame, context);
 
 			context->current_frame = frame;
 
@@ -3525,7 +3526,7 @@ ves_exec_method_with_context (InterpFrame *frame, ThreadContext *context, unsign
 
 			g_assert (csig->call_convention == MONO_CALL_DEFAULT);
 
-			ves_exec_method_with_context (&child_frame, context, NULL, NULL, -1);
+			interp_exec_method (&child_frame, context);
 
 			context->current_frame = frame;
 
@@ -4992,7 +4993,7 @@ array_constructed:
 					stackval retval;
 					memcpy (&dup_frame, inv, sizeof (InterpFrame));
 					dup_frame.retval = &retval;
-					ves_exec_method_with_context (&dup_frame, context, inv->imethod->code + clause->data.filter_offset, frame->ex, -1);
+					interp_exec_method_full (&dup_frame, context, inv->imethod->code + clause->data.filter_offset, frame->ex, -1);
 					if (dup_frame.retval->data.i) {
 #if DEBUG_INTERP
 						if (tracing)
@@ -5190,6 +5191,12 @@ exit_frame:
 		MONO_PROFILER_RAISE (method_exception_leave, (frame->imethod->method, &frame->ex->object));
 
 	DEBUG_LEAVE ();
+}
+
+static void
+interp_exec_method (InterpFrame *frame, ThreadContext *context)
+{
+	interp_exec_method_full (frame, context, NULL, NULL, -1);
 }
 
 void
@@ -5416,7 +5423,7 @@ mono_interp_run_finally (StackFrameInfo *frame, int clause_index, gpointer handl
 	InterpFrame *iframe = frame->interp_frame;
 	ThreadContext *context = mono_native_tls_get_value (thread_context_id);
 
-	ves_exec_method_with_context (iframe, context, handler_ip, NULL, clause_index);
+	interp_exec_method_full (iframe, context, handler_ip, NULL, clause_index);
 }
 
 /*
@@ -5431,9 +5438,8 @@ mono_interp_run_filter (StackFrameInfo *frame, MonoException *ex, int clause_ind
 	InterpFrame *iframe = frame->interp_frame;
 	ThreadContext *context = mono_native_tls_get_value (thread_context_id);
 
-	ves_exec_method_with_context (iframe, context, handler_ip, NULL, clause_index);
 	gconstpointer ip = iframe->ip;
-	ves_exec_method_with_context (iframe, context, handler_ip, ex, clause_index);
+	interp_exec_method_full (iframe, context, handler_ip, ex, clause_index);
 	iframe->ip = ip;
 	/* ENDFILTER stores the result into iframe->retval */
 	return iframe->retval->data.i ? TRUE : FALSE;
