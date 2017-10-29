@@ -1252,7 +1252,7 @@ get_trace_ips (MonoDomain *domain, InterpFrame *top)
 		if (inv->imethod != NULL)
 			++i;
 
-	res = mono_array_new_checked (domain, mono_defaults.int_class, 2 * i, &error);
+	res = mono_array_new_checked (domain, mono_defaults.int_class, 3 * i, &error);
 	mono_error_cleanup (&error); /* FIXME: don't swallow the error */
 
 	for (i = 0, inv = top; inv; inv = inv->parent)
@@ -1260,6 +1260,8 @@ get_trace_ips (MonoDomain *domain, InterpFrame *top)
 			mono_array_set (res, gpointer, i, inv->imethod);
 			++i;
 			mono_array_set (res, gpointer, i, (gpointer)inv->ip);
+			++i;
+			mono_array_set (res, gpointer, i, NULL);
 			++i;
 		}
 
@@ -4410,7 +4412,6 @@ array_constructed:
 			frame->ip = ip;
 
 			if (frame->ex_handler != NULL && MONO_OFFSET_IN_HANDLER(frame->ex_handler, frame->ip - rtm->code)) {
-				MonoException *exc = frame->ex;
 				frame->ex_handler = NULL;
 				frame->ex = NULL;
 				if (frame->imethod->method->wrapper_type != MONO_WRAPPER_RUNTIME_INVOKE) {
@@ -5385,7 +5386,7 @@ mono_interp_regression_list (int verbose, int count, char *images [])
  *   Set the state the interpeter will continue to execute from after execution returns to the interpreter.
  */
 void
-mono_interp_set_resume_state (MonoJitTlsData *jit_tls, MonoException *ex, MonoInterpFrameHandle interp_frame, gpointer handler_ip)
+mono_interp_set_resume_state (MonoJitTlsData *jit_tls, MonoException *ex, MonoJitExceptionInfo *ei, MonoInterpFrameHandle interp_frame, gpointer handler_ip)
 {
 	ThreadContext *context;
 
@@ -5397,6 +5398,9 @@ mono_interp_set_resume_state (MonoJitTlsData *jit_tls, MonoException *ex, MonoIn
 	context->handler_frame = interp_frame;
 	/* This is on the stack, so it doesn't need a wbarrier */
 	context->handler_frame->ex = ex;
+	/* Ditto */
+	if (ei)
+		*(MonoException**)(context->handler_frame->locals + ei->exvar_offset) = ex;
 	context->handler_ip = handler_ip;
 }
 
@@ -5409,10 +5413,30 @@ mono_interp_set_resume_state (MonoJitTlsData *jit_tls, MonoException *ex, MonoIn
 void
 mono_interp_run_finally (StackFrameInfo *frame, int clause_index, gpointer handler_ip)
 {
-       InterpFrame *iframe = frame->interp_frame;
-       ThreadContext *context = mono_native_tls_get_value (thread_context_id);
+	InterpFrame *iframe = frame->interp_frame;
+	ThreadContext *context = mono_native_tls_get_value (thread_context_id);
 
-       ves_exec_method_with_context (iframe, context, handler_ip, NULL, clause_index);
+	ves_exec_method_with_context (iframe, context, handler_ip, NULL, clause_index);
+}
+
+/*
+ * mono_interp_run_filter:
+ *
+ *   Run the filter clause identified by CLAUSE_INDEX in the intepreter frame given by
+ * frame->interp_frame.
+ */
+gboolean
+mono_interp_run_filter (StackFrameInfo *frame, MonoException *ex, int clause_index, gpointer handler_ip)
+{
+	InterpFrame *iframe = frame->interp_frame;
+	ThreadContext *context = mono_native_tls_get_value (thread_context_id);
+
+	ves_exec_method_with_context (iframe, context, handler_ip, NULL, clause_index);
+	gconstpointer ip = iframe->ip;
+	ves_exec_method_with_context (iframe, context, handler_ip, ex, clause_index);
+	iframe->ip = ip;
+	/* ENDFILTER stores the result into iframe->retval */
+	return iframe->retval->data.i ? TRUE : FALSE;
 }
 
 typedef struct {
@@ -5440,7 +5464,7 @@ mono_interp_frame_iter_next (MonoInterpStackIter *iter, StackFrameInfo *frame)
 
 	memset (frame, 0, sizeof (StackFrameInfo));
 	/* pinvoke frames doesn't have imethod set */
-	while (iframe && !(iframe->imethod && iframe->imethod->code))
+	while (iframe && !(iframe->imethod && iframe->imethod->code && iframe->imethod->jinfo))
 		iframe = iframe->parent;
 	if (!iframe)
 		return FALSE;
