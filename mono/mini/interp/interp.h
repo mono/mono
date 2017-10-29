@@ -78,7 +78,7 @@ void
 mono_interp_frame_iter_init (MonoInterpStackIter *iter, gpointer interp_exit_data);
 
 gboolean
-mono_interp_frame_iter_next (MonoInterpStackIter *iter, StackFrameInfo *frame);
+mono_interp_frame_iter_next (MonoInterpStackIter *iter, StackFrameInfo *frame, gpointer *new_sp);
 
 MonoJitInfo*
 mono_interp_find_jit_info (MonoDomain *domain, MonoMethod *method);

@@ -5462,13 +5462,20 @@ mono_interp_frame_iter_init (MonoInterpStackIter *iter, gpointer interp_exit_dat
 	stack_iter->current = (InterpFrame*)interp_exit_data;
 }
 
+/*
+ * mono_interp_frame_iter_next:
+ *
+ *   Fill out FRAME with date for the next interpreter frame. Set NEW_SP to an sp value
+ * corresponding to the parent frame of the current frame.
+ */
 gboolean
-mono_interp_frame_iter_next (MonoInterpStackIter *iter, StackFrameInfo *frame)
+mono_interp_frame_iter_next (MonoInterpStackIter *iter, StackFrameInfo *frame, gpointer *new_sp)
 {
 	StackIter *stack_iter = (StackIter*)iter;
 	InterpFrame *iframe = stack_iter->current;
 
 	memset (frame, 0, sizeof (StackFrameInfo));
+	*new_sp = NULL;
 	/* pinvoke frames doesn't have imethod set */
 	while (iframe && !(iframe->imethod && iframe->imethod->code && iframe->imethod->jinfo))
 		iframe = iframe->parent;
@@ -5484,6 +5491,8 @@ mono_interp_frame_iter_next (MonoInterpStackIter *iter, StackFrameInfo *frame)
 	/* This is the offset in the interpreter IR */
 	frame->native_offset = (guint8*)iframe->ip - (guint8*)iframe->imethod->code;
 	frame->ji = iframe->imethod->jinfo;
+	if (iframe->parent)
+		*new_sp = iframe->parent;
 
 	stack_iter->current = iframe->parent;
 
