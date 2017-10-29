@@ -109,7 +109,7 @@ static gboolean ss_enabled;
 
 static char* dump_frame (InterpFrame *inv);
 static MonoArray *get_trace_ips (MonoDomain *domain, InterpFrame *top);
-static void interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *start_with_ip, MonoException *filter_exception, int exit_at_finally);
+static void interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *start_with_ip, MonoException *filter_exception, int exit_at_finally, InterpFrame *base_frame);
 static void interp_exec_method (InterpFrame *frame, ThreadContext *context);
 
 typedef void (*ICallMethod) (InterpFrame *frame);
@@ -2188,9 +2188,10 @@ static int opcode_counts[512];
 
 /*
  * If EXIT_AT_FINALLY is not -1, exit after exiting the finally clause with that index.
+ * If BASE_FRAME is not NULL, copy arguments/locals from BASE_FRAME.
  */
 static void 
-interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *start_with_ip, MonoException *filter_exception, int exit_at_finally)
+interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *start_with_ip, MonoException *filter_exception, int exit_at_finally, InterpFrame *base_frame)
 {
 	InterpFrame child_frame;
 	GSList *finally_ips = NULL;
@@ -2242,13 +2243,17 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 	}
 
 	rtm = frame->imethod;
-	if (!start_with_ip ) {
+	if (!start_with_ip) {
 		frame->args = alloca (rtm->alloca_size);
 		memset (frame->args, 0, rtm->alloca_size);
 
 		ip = rtm->code;
 	} else {
 		ip = start_with_ip;
+		if (base_frame) {
+			frame->args = alloca (rtm->alloca_size);
+			memcpy (frame->args, base_frame->args, rtm->alloca_size);
+		}
 	}
 	sp = frame->stack = (stackval *) ((char *) frame->args + rtm->args_size);
 	vt_sp = (unsigned char *) sp + rtm->stack_size;
@@ -4993,7 +4998,7 @@ array_constructed:
 					stackval retval;
 					memcpy (&dup_frame, inv, sizeof (InterpFrame));
 					dup_frame.retval = &retval;
-					interp_exec_method_full (&dup_frame, context, inv->imethod->code + clause->data.filter_offset, frame->ex, -1);
+					interp_exec_method_full (&dup_frame, context, inv->imethod->code + clause->data.filter_offset, frame->ex, -1, NULL);
 					if (dup_frame.retval->data.i) {
 #if DEBUG_INTERP
 						if (tracing)
@@ -5161,6 +5166,9 @@ check_lmf:
 
 exit_frame:
 
+	if (base_frame)
+		memcpy (base_frame->args, frame->args, rtm->alloca_size);
+
 	if (!frame->ex && MONO_PROFILER_ENABLED (method_leave) &&
 	    frame->imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_LEAVE) {
 		MonoProfilerCallContext *prof_ctx = NULL;
@@ -5196,7 +5204,7 @@ exit_frame:
 static void
 interp_exec_method (InterpFrame *frame, ThreadContext *context)
 {
-	interp_exec_method_full (frame, context, NULL, NULL, -1);
+	interp_exec_method_full (frame, context, NULL, NULL, -1, NULL);
 }
 
 void
@@ -5423,7 +5431,7 @@ mono_interp_run_finally (StackFrameInfo *frame, int clause_index, gpointer handl
 	InterpFrame *iframe = frame->interp_frame;
 	ThreadContext *context = mono_native_tls_get_value (thread_context_id);
 
-	interp_exec_method_full (iframe, context, handler_ip, NULL, clause_index);
+	interp_exec_method_full (iframe, context, handler_ip, NULL, clause_index, NULL);
 }
 
 /*
@@ -5437,12 +5445,21 @@ mono_interp_run_filter (StackFrameInfo *frame, MonoException *ex, int clause_ind
 {
 	InterpFrame *iframe = frame->interp_frame;
 	ThreadContext *context = mono_native_tls_get_value (thread_context_id);
+	InterpFrame child_frame;
+	stackval retval;
 
-	gconstpointer ip = iframe->ip;
-	interp_exec_method_full (iframe, context, handler_ip, ex, clause_index);
-	iframe->ip = ip;
-	/* ENDFILTER stores the result into iframe->retval */
-	return iframe->retval->data.i ? TRUE : FALSE;
+	/*
+	 * Have to run the clause in a new frame which is a copy of IFRAME, since
+	 * during debugging, there are two copies of the frame on the stack.
+	 */
+	memset (&child_frame, 0, sizeof (InterpFrame));
+	child_frame.imethod = iframe->imethod;
+	child_frame.retval = &retval;
+	child_frame.parent = iframe;
+
+	interp_exec_method_full (&child_frame, context, handler_ip, ex, clause_index, iframe);
+	/* ENDFILTER stores the result into child_frame->retval */
+	return child_frame.retval->data.i ? TRUE : FALSE;
 }
 
 typedef struct {
