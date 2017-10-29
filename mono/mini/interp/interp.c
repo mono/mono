@@ -109,7 +109,7 @@ static gboolean ss_enabled;
 
 static char* dump_frame (InterpFrame *inv);
 static MonoArray *get_trace_ips (MonoDomain *domain, InterpFrame *top);
-static void ves_exec_method_with_context (InterpFrame *frame, ThreadContext *context, unsigned short *start_with_ip, MonoException *filter_exception, int exit_at_finally);
+static void interp_exec_method (InterpFrame *frame, ThreadContext *context);
 
 typedef void (*ICallMethod) (InterpFrame *frame);
 
@@ -609,6 +609,8 @@ interp_throw (MonoException *ex, InterpFrame *frame, gconstpointer ip, gboolean 
 
 	MonoContext ctx;
 	memset (&ctx, 0, sizeof (MonoContext));
+	/* This is needed so code which uses ctx->sp for frame ordering would work */
+	MONO_CONTEXT_SET_SP (&ctx, &ext);
 
 	/*
 	 * Since ctx.ip is 0, this will start unwinding from the LMF.
@@ -1430,7 +1432,7 @@ mono_interp_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoOb
 	if (exc)
 		frame.invoke_trap = 1;
 
-	ves_exec_method_with_context (&frame, context, NULL, NULL, -1);
+	interp_exec_method (&frame, context);
 
 	if (context == &context_struct)
 		set_context (NULL);
@@ -1574,7 +1576,7 @@ interp_entry (InterpEntryData *data)
 		break;
 	}
 
-	ves_exec_method_with_context (&frame, context, NULL, NULL, -1);
+	interp_exec_method (&frame, context);
 	if (context == &context_struct)
 		set_context (NULL);
 	else
@@ -2222,9 +2224,10 @@ static int opcode_counts[512];
 
 /*
  * If EXIT_AT_FINALLY is not -1, exit after exiting the finally clause with that index.
+ * If BASE_FRAME is not NULL, copy arguments/locals from BASE_FRAME.
  */
 static void 
-ves_exec_method_with_context (InterpFrame *frame, ThreadContext *context, unsigned short *start_with_ip, MonoException *filter_exception, int exit_at_finally)
+interp_exec_method_full (InterpFrame *frame, ThreadContext *context, unsigned short *start_with_ip, MonoException *filter_exception, int exit_at_finally, InterpFrame *base_frame)
 {
 	InterpFrame child_frame;
 	GSList *finally_ips = NULL;
@@ -2276,13 +2279,17 @@ ves_exec_method_with_context (InterpFrame *frame, ThreadContext *context, unsign
 	}
 
 	rtm = frame->imethod;
-	if (!start_with_ip ) {
+	if (!start_with_ip) {
 		frame->args = alloca (rtm->alloca_size);
 		memset (frame->args, 0, rtm->alloca_size);
 
 		ip = rtm->code;
 	} else {
 		ip = start_with_ip;
+		if (base_frame) {
+			frame->args = alloca (rtm->alloca_size);
+			memcpy (frame->args, base_frame->args, rtm->alloca_size);
+		}
 	}
 	sp = frame->stack = (stackval *) ((char *) frame->args + rtm->args_size);
 	vt_sp = (unsigned char *) sp + rtm->stack_size;
@@ -2481,7 +2488,7 @@ ves_exec_method_with_context (InterpFrame *frame, ThreadContext *context, unsign
 				}
 			}
 
-			ves_exec_method_with_context (&child_frame, context, NULL, NULL, -1);
+			interp_exec_method (&child_frame, context);
 
 			context->current_frame = frame;
 
@@ -2555,7 +2562,7 @@ ves_exec_method_with_context (InterpFrame *frame, ThreadContext *context, unsign
 				--sp;
 			child_frame.stack_args = sp;
 
-			ves_exec_method_with_context (&child_frame, context, NULL, NULL, -1);
+			interp_exec_method (&child_frame, context);
 
 			context->current_frame = frame;
 
@@ -2590,7 +2597,7 @@ ves_exec_method_with_context (InterpFrame *frame, ThreadContext *context, unsign
 			}
 			child_frame.stack_args = sp;
 
-			ves_exec_method_with_context (&child_frame, context, NULL, NULL, -1);
+			interp_exec_method (&child_frame, context);
 
 			context->current_frame = frame;
 
@@ -2656,7 +2663,7 @@ ves_exec_method_with_context (InterpFrame *frame, ThreadContext *context, unsign
 				sp [0].data.p = unboxed;
 			}
 
-			ves_exec_method_with_context (&child_frame, context, NULL, NULL, -1);
+			interp_exec_method (&child_frame, context);
 
 			context->current_frame = frame;
 
@@ -2699,7 +2706,7 @@ ves_exec_method_with_context (InterpFrame *frame, ThreadContext *context, unsign
 				sp [0].data.p = unboxed;
 			}
 
-			ves_exec_method_with_context (&child_frame, context, NULL, NULL, -1);
+			interp_exec_method (&child_frame, context);
 
 			context->current_frame = frame;
 
@@ -3506,7 +3513,7 @@ ves_exec_method_with_context (InterpFrame *frame, ThreadContext *context, unsign
 
 			g_assert (csig->call_convention == MONO_CALL_DEFAULT);
 
-			ves_exec_method_with_context (&child_frame, context, NULL, NULL, -1);
+			interp_exec_method (&child_frame, context);
 
 			context->current_frame = frame;
 
@@ -4386,7 +4393,6 @@ array_constructed:
 			frame->ip = ip;
 
 			if (frame->ex_handler != NULL && MONO_OFFSET_IN_HANDLER(frame->ex_handler, frame->ip - rtm->code)) {
-				MonoException *exc = frame->ex;
 				frame->ex_handler = NULL;
 				frame->ex = NULL;
 				if (frame->imethod->method->wrapper_type != MONO_WRAPPER_RUNTIME_INVOKE) {
@@ -5041,6 +5047,9 @@ check_lmf:
 
 exit_frame:
 
+	if (base_frame)
+		memcpy (base_frame->args, frame->args, rtm->alloca_size);
+
 	if (!frame->ex && MONO_PROFILER_ENABLED (method_leave) &&
 	    frame->imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_LEAVE) {
 		MonoProfilerCallContext *prof_ctx = NULL;
@@ -5071,6 +5080,12 @@ exit_frame:
 		MONO_PROFILER_RAISE (method_exception_leave, (frame->imethod->method, &frame->ex->object));
 
 	DEBUG_LEAVE ();
+}
+
+static void
+interp_exec_method (InterpFrame *frame, ThreadContext *context)
+{
+	interp_exec_method_full (frame, context, NULL, NULL, -1, NULL);
 }
 
 void
@@ -5297,7 +5312,7 @@ mono_interp_run_finally (StackFrameInfo *frame, int clause_index, gpointer handl
 	InterpFrame *iframe = frame->interp_frame;
 	ThreadContext *context = mono_native_tls_get_value (thread_context_id);
 
-	ves_exec_method_with_context (iframe, context, handler_ip, NULL, clause_index);
+	interp_exec_method_full (iframe, context, handler_ip, NULL, clause_index, NULL);
 }
 
 /*
@@ -5311,12 +5326,21 @@ mono_interp_run_filter (StackFrameInfo *frame, MonoException *ex, int clause_ind
 {
 	InterpFrame *iframe = frame->interp_frame;
 	ThreadContext *context = mono_native_tls_get_value (thread_context_id);
+	InterpFrame child_frame;
+	stackval retval;
 
-	gconstpointer ip = iframe->ip;
-	ves_exec_method_with_context (iframe, context, handler_ip, ex, clause_index);
-	iframe->ip = ip;
-	/* ENDFILTER stores the result into iframe->retval */
-	return iframe->retval->data.i ? TRUE : FALSE;
+	/*
+	 * Have to run the clause in a new frame which is a copy of IFRAME, since
+	 * during debugging, there are two copies of the frame on the stack.
+	 */
+	memset (&child_frame, 0, sizeof (InterpFrame));
+	child_frame.imethod = iframe->imethod;
+	child_frame.retval = &retval;
+	child_frame.parent = iframe;
+
+	interp_exec_method_full (&child_frame, context, handler_ip, ex, clause_index, iframe);
+	/* ENDFILTER stores the result into child_frame->retval */
+	return child_frame.retval->data.i ? TRUE : FALSE;
 }
 
 typedef struct {
@@ -5336,13 +5360,20 @@ mono_interp_frame_iter_init (MonoInterpStackIter *iter, gpointer interp_exit_dat
 	stack_iter->current = (InterpFrame*)interp_exit_data;
 }
 
+/*
+ * mono_interp_frame_iter_next:
+ *
+ *   Fill out FRAME with date for the next interpreter frame. Set NEW_SP to an sp value
+ * corresponding to the parent frame of the current frame.
+ */
 gboolean
-mono_interp_frame_iter_next (MonoInterpStackIter *iter, StackFrameInfo *frame)
+mono_interp_frame_iter_next (MonoInterpStackIter *iter, StackFrameInfo *frame, gpointer *new_sp)
 {
 	StackIter *stack_iter = (StackIter*)iter;
 	InterpFrame *iframe = stack_iter->current;
 
 	memset (frame, 0, sizeof (StackFrameInfo));
+	*new_sp = NULL;
 	/* pinvoke frames doesn't have imethod set */
 	while (iframe && !(iframe->imethod && iframe->imethod->code && iframe->imethod->jinfo))
 		iframe = iframe->parent;
@@ -5358,6 +5389,8 @@ mono_interp_frame_iter_next (MonoInterpStackIter *iter, StackFrameInfo *frame)
 	/* This is the offset in the interpreter IR */
 	frame->native_offset = (guint8*)iframe->ip - (guint8*)iframe->imethod->code;
 	frame->ji = iframe->imethod->jinfo;
+	if (iframe->parent)
+		*new_sp = iframe->parent;
 
 	stack_iter->current = iframe->parent;
 
