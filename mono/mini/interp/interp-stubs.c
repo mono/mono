@@ -70,7 +70,7 @@ mono_interp_stop_single_stepping (void)
 }
 
 void
-mono_interp_set_resume_state (MonoJitTlsData *jit_tls, MonoException *ex, MonoInterpFrameHandle interp_frame, gpointer handler_ip)
+mono_interp_set_resume_state (MonoJitTlsData *jit_tls, MonoException *ex, MonoJitExceptionInfo *ei, MonoInterpFrameHandle interp_frame, gpointer handler_ip)
 {
 	g_assert_not_reached ();
 }
@@ -81,6 +81,13 @@ mono_interp_run_finally (StackFrameInfo *frame, int clause_index, gpointer handl
 	g_assert_not_reached ();
 }
 
+gboolean
+mono_interp_run_filter (StackFrameInfo *frame, MonoException *ex, int clause_index, gpointer handler_ip)
+{
+	g_assert_not_reached ();
+	return FALSE;
+}
+
 void
 mono_interp_frame_iter_init (MonoInterpStackIter *iter, gpointer interp_exit_data)
 {
@@ -88,7 +95,7 @@ mono_interp_frame_iter_init (MonoInterpStackIter *iter, gpointer interp_exit_dat
 }
 
 gboolean
-mono_interp_frame_iter_next (MonoInterpStackIter *iter, StackFrameInfo *frame)
+mono_interp_frame_iter_next (MonoInterpStackIter *iter, StackFrameInfo *frame, gpointer *new_sp)
 {
 	g_assert_not_reached ();
 	return FALSE;
