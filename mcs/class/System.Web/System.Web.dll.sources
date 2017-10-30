@@ -444,7 +444,7 @@ System.Web.Security/AnonymousIdentificationEventHandler.cs
 System.Web.Security/AnonymousIdentificationModule.cs
 System.Web.Security/CookieProtection.cs
 System.Web.Security/DefaultAuthenticationEventArgs.cs
-System.Web.Security/DefaultAuthenticationEventHandler.cs
+../referencesource/System.Web/Security/GenericAuthenticationEventHandler.cs
 System.Web.Security/DefaultAuthenticationModule.cs
 System.Web.Security/FileAuthorizationModule.cs
 System.Web.Security/FormsAuthentication.cs
