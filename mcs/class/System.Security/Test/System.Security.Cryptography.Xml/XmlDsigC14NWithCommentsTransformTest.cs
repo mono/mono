@@ -8,6 +8,7 @@
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
+#if !MOBILE
 
 using System;
 using System.IO;
@@ -407,3 +408,4 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		    	    "<e1 xmlns=\"http://www.ietf.org\" xmlns:w3c=\"http://www.w3.org\"><e3 xmlns=\"\" id=\"E3\" xml:space=\"preserve\"></e3></e1>";   
 	}
 }
+#endif
