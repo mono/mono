@@ -6595,12 +6595,24 @@ ves_icall_System_Environment_GetCommandLineArgs (void)
 }
 
 #ifndef HOST_WIN32
-static MonoArray *
+static gboolean
+handle_environment_variable_array_set (MonoDomain *domain, gchar* entry, int idx, MonoArrayHandle dest, MonoError *error)
+{
+	HANDLE_FUNCTION_ENTER ();
+	error_init (error);
+	MonoStringHandle value = mono_string_new_handle (domain, entry, error);
+	goto_if_nok (error, leave);
+	MONO_HANDLE_ARRAY_SETREF (dest, idx, value);
+leave:
+	HANDLE_FUNCTION_RETURN_VAL (is_ok (error));
+}
+
+static MonoArrayHandle
 mono_icall_get_environment_variable_names (MonoError *error)
 {
-	MonoArray *names;
+	HANDLE_FUNCTION_ENTER ();
+	MonoArrayHandle names;
 	MonoDomain *domain;
-	MonoString *str;
 	gchar **e, **parts;
 	int n;
 
@@ -6610,36 +6622,36 @@ mono_icall_get_environment_variable_names (MonoError *error)
 		++ n;
 
 	domain = mono_domain_get ();
-	names = mono_array_new_checked (domain, mono_defaults.string_class, n, error);
-	return_val_if_nok (error, NULL);
+	names = mono_array_new_handle (domain, mono_defaults.string_class, n, error);
+	if (!is_ok (error)) {
+		names = MONO_HANDLE_CAST (MonoArray, NULL_HANDLE);
+		goto leave;
+	}
 
 	n = 0;
 	for (e = environ; *e != 0; ++ e) {
 		parts = g_strsplit (*e, "=", 2);
 		if (*parts != 0) {
-			str = mono_string_new_checked (domain, *parts, error);
-			if (!is_ok (error)) {
+			if (!handle_environment_variable_array_set (domain, *parts, n, names, error)) {
 				g_strfreev (parts);
-				return NULL;
+				goto leave;
 			}
-			mono_array_setref (names, n, str);
 		}
 
 		g_strfreev (parts);
 
 		++ n;
 	}
-
-	return names;
+leave:
+	HANDLE_FUNCTION_RETURN_REF (MonoArray, names);
 }
 #endif /* !HOST_WIN32 */
 
-ICALL_EXPORT MonoArray *
-ves_icall_System_Environment_GetEnvironmentVariableNames (void)
+ICALL_EXPORT MonoArrayHandle
+ves_icall_System_Environment_GetEnvironmentVariableNames (MonoError *error)
 {
-	MonoError error;
-	MonoArray *result = mono_icall_get_environment_variable_names (&error);
-	mono_error_set_pending_exception (&error);
+	error_init (error);
+	MonoArrayHandle result = mono_icall_get_environment_variable_names (error);
 	return result;
 }
 
