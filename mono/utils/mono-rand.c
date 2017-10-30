@@ -75,7 +75,7 @@ mono_getrandom (guchar *buffer, gint buffer_size, gint flags, MonoError *error)
 				getrandom_works = 0;
 				return 0;
 			}
-			g_warning("Entropy error! Error in getrandom (%s).", strerror (errno));
+			g_warning ("Entropy error! Error in getrandom (%s).", strerror (errno));
 			/* exception will be thrown in managed code */
 			mono_error_set_execution_engine (error, "Entropy error! Error in getrandom (%s).", strerror (errno));
 			return -1;
@@ -121,7 +121,7 @@ mono_getentropy (guchar *buffer, gint buffer_size, MonoError *error)
 				getentropy_works = 0;
 				return 0;
 			}
-			g_warning("Entropy error! Error in getentropy (%s).", strerror (errno));
+			g_warning ("Entropy error! Error in getentropy (%s).", strerror (errno));
 			/* exception will be thrown in managed code */
 			mono_error_set_execution_engine (error, "Entropy error! Error in getentropy (%s).", strerror (errno));
 			return -1;
@@ -254,16 +254,16 @@ mono_rand_try_get_bytes (gpointer *handle, guchar *buffer, gint buffer_size, Mon
 
 #if defined(HAVE_GETRANDOM) || defined(HAVE_GETENTROPY)
 #ifdef HAVE_GETRANDOM
-	res = mono_getrandom(buffer, buffer_size, 0, error);
+	res = mono_getrandom (buffer, buffer_size, 0, error);
 #else
-	res = mono_getentropy(buffer, buffer_size, error);
+	res = mono_getentropy (buffer, buffer_size, error);
 #endif
-	if (res < 0) {
+	if (res < 0)
 		return FALSE;
-	}
-	if (res == 1) {
+
+	if (res == 1)
 		return TRUE;
-	}
+
 	/* getrandom() or getentropy() function is not available: failed with
 	   ENOSYS or EPERM. Fall back on reading from /dev/urandom. */
 #endif
