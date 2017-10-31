@@ -144,6 +144,11 @@ unreal_dirs := \
 	System.Drawing			\
 	$(pcl_facade_dirs)
 
+wasm_dirs := \
+	$(mobile_common_dirs)	\
+	System.Drawing			\
+	$(pcl_facade_dirs)
+
 xammac_4_5_dirs := \
 	corlib	\
 	Mono.Security \
@@ -369,6 +374,7 @@ xbuild_14_SUBDIRS := $(xbuild_4_0_dirs) Microsoft.NuGet.Build.Tasks
 winaot_SUBDIRS := $(winaot_dirs)
 orbis_SUBDIRS := $(orbis_dirs)
 unreal_SUBDIRS := $(unreal_dirs)
+wasm_SUBDIRS := $(wasm_dirs)
 
 include ../build/rules.make
 

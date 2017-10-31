@@ -234,14 +234,15 @@ typedef struct {
 
 #define PARAM_REGS 4
 #define FP_PARAM_REGS 8
-#define DYN_CALL_STACK_ARGS 10
 
 typedef struct {
-	mgreg_t regs [PARAM_REGS + FP_PARAM_REGS];
 	double fpregs [FP_PARAM_REGS];
 	mgreg_t res, res2;
 	guint8 *ret;
 	guint32 has_fpregs;
+	guint32 n_stackargs;
+	/* This should come last as the structure is dynamically extended */
+	mgreg_t regs [PARAM_REGS];
 } DynCallArgs;
 
 void arm_patch (guchar *code, const guchar *target);
@@ -327,7 +328,7 @@ typedef struct MonoCompileArch {
 
 #define MONO_ARCH_GSHARED_SUPPORTED 1
 #define MONO_ARCH_DYN_CALL_SUPPORTED 1
-#define MONO_ARCH_DYN_CALL_PARAM_AREA (DYN_CALL_STACK_ARGS * sizeof (mgreg_t))
+#define MONO_ARCH_DYN_CALL_PARAM_AREA 0
 
 #if !(defined(TARGET_ANDROID) && defined(MONO_CROSS_COMPILE))
 #define MONO_ARCH_SOFT_DEBUG_SUPPORTED 1
@@ -350,7 +351,6 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_HAVE_SDB_TRAMPOLINES 1
 #define MONO_ARCH_HAVE_PATCH_CODE_NEW 1
 #define MONO_ARCH_HAVE_OP_GENERIC_CLASS_INIT 1
-#define MONO_ARCH_HAVE_INIT_LMF_EXT 1
 
 #if defined(TARGET_WATCHOS) || (defined(__linux__) && !defined(TARGET_ANDROID))
 #define MONO_ARCH_DISABLE_HW_TRAPS 1

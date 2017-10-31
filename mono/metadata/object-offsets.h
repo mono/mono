@@ -212,7 +212,6 @@ DECL_OFFSET(MonoContext, fregs)
 
 DECL_OFFSET(MonoLMF, rsp)
 DECL_OFFSET(MonoLMF, rbp)
-DECL_OFFSET(MonoLMF, rip)
 
 DECL_OFFSET(DynCallArgs, res)
 
@@ -226,6 +225,8 @@ DECL_OFFSET(MonoLMF, iregs)
 DECL_OFFSET(MonoLMF, fregs)
 DECL_OFFSET(DynCallArgs, fpregs)
 DECL_OFFSET(DynCallArgs, has_fpregs)
+DECL_OFFSET(DynCallArgs, regs)
+DECL_OFFSET(DynCallArgs, n_stackargs)
 DECL_OFFSET(SeqPointInfo, ss_tramp_addr)
 #elif defined(TARGET_ARM64)
 DECL_OFFSET(MonoLMF, pc)

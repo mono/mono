@@ -185,6 +185,7 @@ System.Resources/ResourceWriterTest.cs
 System.Runtime.CompilerServices/ConditionalWeakTableTest.cs
 System.Runtime.CompilerServices/InternalsVisibleToAttributeTest.cs
 System.Runtime.CompilerServices/MethodImplAttributeTest.cs
+System.Runtime.CompilerServices/RuntimeFeatureTest.cs
 System.Runtime.CompilerServices/RuntimeHelpersTest.cs
 System.Runtime.CompilerServices/RuntimeWrappedExceptionTest.cs
 System.Runtime.CompilerServices/AsyncTaskMethodBuilderTest.cs

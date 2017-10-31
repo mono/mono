@@ -846,6 +846,7 @@ fi
 AM_CONDITIONAL(STATIC_MONO, test x$with_static_mono != xno)
 AM_CONDITIONAL(SHARED_MONO, test x$with_shared_mono != xno)
 AC_ARG_ENABLE(mcs-build, [  --disable-mcs-build disable the build of the mcs directory], try_mcs_build=$enableval, enable_mcs_build=yes)
+AC_ARG_ENABLE(support-build, [  --disable-support-build disable the build of the support directory], try_support_build=$enableval, enable_support_build=yes)
 
 AC_ARG_WITH(xen_opt,   [  --with-xen_opt=yes,no          Enable Xen-specific behaviour (defaults to yes)],[],[with_xen_opt=yes])
 if test "x$with_xen_opt" = "xyes" -a "x$mono_cv_clang" = "xno"; then
@@ -921,6 +922,7 @@ AC_ARG_WITH(testing_aot_full,    [  --with-testing_aot_full=yes,no      If you w
 AC_ARG_WITH(winaot,              [  --with-winaot=yes,no                If you want to build the Windows friendly AOT assemblies (defaults to no)], [], [with_winaot=default])
 AC_ARG_WITH(orbis,               [  --with-orbis=yes,no                 If you want to build the Orbis assemblies (defaults to no)], [], [with_orbis=default])
 AC_ARG_WITH(unreal,              [  --with-unreal=yes,no                If you want to build the Unreal assemblies (defaults to no)], [], [with_unreal=default])
+AC_ARG_WITH(wasm,                [  --with-wasm=yes,no                  If you want to build the WebAssembly (defaults to no)], [], [with_wasm=default])
 
 
 AC_ARG_WITH(runtime_preset, [  --with-runtime_preset=net_4_x,all,aot,hybridaot,fullaot,bitcode,unreal   Which default profile to build (defaults to net_4_x)],  [], [with_runtime_preset=net_4_x])
@@ -942,6 +944,7 @@ with_testing_aot_full_default=no
 with_winaot_default=no
 with_orbis_default=no
 with_unreal_default=no
+with_wasm_default=no
 
 with_bitcode_default=no
 with_cooperative_gc_default=no
@@ -962,6 +965,7 @@ elif test x$with_runtime_preset = xall; then
    with_winaot_default=yes
    with_orbis_default=yes
    with_unreal_default=yes
+   with_wasm_default=yes
 elif test x$with_runtime_preset = xfullaot; then
    DISABLE_MCS_DOCS_default=yes
    with_testing_aot_full_default=yes
@@ -1043,15 +1047,21 @@ elif test x$with_runtime_preset = xunreal; then
 
    AOT_BUILD_FLAGS="--runtime=mobile --aot=hybrid,$INVARIANT_AOT_OPTIONS"
    AOT_RUN_FLAGS="--runtime=mobile --hybrid-aot"
+elif test x$with_runtime_preset = xwasm; then
+   DISABLE_MCS_DOCS_default=yes
+   with_wasm_default=yes
+   TEST_PROFILE=wasm
+
+   mono_feature_disable_com='yes'
+   mono_feature_disable_remoting='yes'
+   mono_feature_disable_reflection_emit_save='yes'
+   mono_feature_disable_reflection_emit='yes'
+   mono_feature_disable_appdomains='yes'
+
+   AOT_BUILD_FLAGS="--runtime=mobile --aot=full,$INVARIANT_AOT_OPTIONS"
+   AOT_RUN_FLAGS="--runtime=mobile --full-aot"
 else
    with_profile4_x_default=yes
-fi
-
-if test "x$AOT_BUILD_FLAGS" != "x"; then :
-   AC_SUBST(AOT_BUILD_FLAGS)
-   AC_SUBST(AOT_RUN_FLAGS)
-   # For llvmonlycheck + fullaotcheck
-   AC_SUBST(INVARIANT_AOT_OPTIONS)
 fi
 
 AC_SUBST(TEST_PROFILE)
@@ -1092,6 +1102,9 @@ fi
 if test "x$with_unreal" = "xdefault"; then
    with_unreal=$with_unreal_default
 fi
+if test "x$with_wasm" = "xdefault"; then
+   with_wasm=$with_wasm_default
+fi
 
 
 AM_CONDITIONAL(INSTALL_4_x, [test "x$with_profile4_x" = "xyes"])
@@ -1106,7 +1119,8 @@ AM_CONDITIONAL(INSTALL_TESTING_AOT_FULL, [test "x$with_testing_aot_full" != "xno
 AM_CONDITIONAL(INSTALL_WINAOT, [test "x$with_winaot" != "xno"])
 AM_CONDITIONAL(INSTALL_ORBIS, [test "x$with_orbis" != "xno"])
 AM_CONDITIONAL(INSTALL_UNREAL, [test "x$with_unreal" != "xno"])
-AM_CONDITIONAL(FULL_AOT_TESTS, [test "x$TEST_PROFILE" = "xtesting_aot_full"] || [test "x$TEST_PROFILE" = "xwinaot"] || [test "x$TEST_PROFILE" = "xorbis"])
+AM_CONDITIONAL(INSTALL_WASM, [test "x$with_wasm" != "xno"])
+AM_CONDITIONAL(FULL_AOT_TESTS, [test "x$TEST_PROFILE" = "xtesting_aot_full"] || [test "x$TEST_PROFILE" = "xwinaot"] || [test "x$TEST_PROFILE" = "xorbis"] || [test "x$TEST_PROFILE" = "xwasm"])
 AM_CONDITIONAL(HYBRID_AOT_TESTS, [test "x$TEST_PROFILE" = "xtesting_aot_hybrid"] || [test "x$TEST_PROFILE" = "xunreal"])
 
 default_profile=net_4_x
@@ -1133,6 +1147,9 @@ if test -z "$INSTALL_ORBIS_TRUE"; then :
 fi
 if test -z "$INSTALL_UNREAL_TRUE"; then :
    default_profile=unreal
+fi
+if test -z "$INSTALL_WASM_TRUE"; then :
+   default_profile=wasm
 fi
 if test -z "$INSTALL_4_x_TRUE"; then :
    default_profile=net_4_x
@@ -2626,6 +2643,12 @@ if test x$host_win32 = xno; then
 	 #endif
 	])
 	AC_CHECK_HEADERS([termios.h])
+
+	dnl *********************************
+	dnl *** Checks for random         ***
+	dnl *********************************
+	AC_CHECK_HEADERS(sys/random.h)
+	AC_CHECK_FUNCS(getrandom getentropy)
 else
 	dnl *********************************
 	dnl *** Checks for Windows compilation ***
@@ -3011,6 +3034,11 @@ if test "x$enable_llvm" = "xyes"; then
       fi
    fi
 
+   if test x$with_runtime_preset != xbitcode; then
+      AOT_BUILD_FLAGS="$AOT_BUILD_FLAGS,llvm"
+      AOT_RUN_FLAGS="$AOT_RUN_FLAGS --llvm"
+   fi
+
    llvm_codegen="x86codegen"
    case "$target" in
    arm*)
@@ -3126,6 +3154,13 @@ if test "x$enable_llvm_runtime" = "xyes"; then
    AC_DEFINE(ENABLE_LLVM_RUNTIME, 1, [Runtime support code for llvm enabled])
 fi
 AM_CONDITIONAL(ENABLE_LLVM_RUNTIME, [test x$enable_llvm_runtime = xyes])
+
+if test "x$AOT_BUILD_FLAGS" != "x"; then :
+   AC_SUBST(AOT_BUILD_FLAGS)
+   AC_SUBST(AOT_RUN_FLAGS)
+   # For llvmonlycheck + fullaotcheck
+   AC_SUBST(INVARIANT_AOT_OPTIONS)
+fi
 
 TARGET="unknown"
 ACCESS_UNALIGNED="yes"
@@ -3351,6 +3386,7 @@ HOST=$TARGET
 if test "x$host" != "x$target"; then
    AC_DEFINE(MONO_CROSS_COMPILE,1,[The runtime is compiled for cross-compiling mode])
    enable_mcs_build=no
+   enable_support_build=no
    BTLS_SUPPORTED=no
    case "$target" in
    arm*-darwin*)
@@ -4408,6 +4444,7 @@ AC_SUBST(docs_dir)
 
 ## Maybe should also disable if mcsdir is invalid.  Let's punt the issue for now.
 AM_CONDITIONAL(BUILD_MCS, [test x$cross_compiling = xno && test x$enable_mcs_build != xno])
+AM_CONDITIONAL(BUILD_SUPPORT, [test x$enable_support_build != xno])
 
 libmono_ldflags="$libmono_ldflags $LIBS"
 
@@ -4880,6 +4917,7 @@ echo "
 	Windows AOT:     $with_winaot
 	Orbis:           $with_orbis
 	Unreal:          $with_unreal
+	WebAssembly:     $with_wasm
 	Test profiles:   AOT Full ($with_testing_aot_full), AOT Hybrid ($with_testing_aot_hybrid)
 	JNI support:     $jdk_headers_found
 	libgdiplus:      $libgdiplus_msg
