@@ -4363,8 +4363,11 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Mon
 		}
 	}
 
-	if (!header)
-		header = mono_method_get_header (method);
+	if (!header) {
+		header = mono_method_get_header_checked (method, &error);
+		if (!is_ok (&error))
+			return mono_error_convert_to_exception (&error);
+	}
 
 	g_assert ((signature->param_count + signature->hasthis) < 1000);
 	g_assert (header->max_stack < 10000);
