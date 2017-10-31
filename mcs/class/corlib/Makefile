@@ -203,7 +203,7 @@ TEST_MONO_PATH=$(PWD)/../lib/$(PROFILE)
 
 run-test-vts: test-vts
 	@echo Running vts tests...
-	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(TEST_HARNESS) $(NOSHADOW_FLAG) \
+	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(TEST_HARNESS) $(NOSHADOW_FLAG) \
 		$(vtsdir)/$(PROFILE)_TestLib/BinarySerializationOverVersions.exe
 
 ifdef NO_TEST
