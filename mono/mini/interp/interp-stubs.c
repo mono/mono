@@ -95,7 +95,7 @@ mono_interp_frame_iter_init (MonoInterpStackIter *iter, gpointer interp_exit_dat
 }
 
 gboolean
-mono_interp_frame_iter_next (MonoInterpStackIter *iter, StackFrameInfo *frame, gpointer *new_sp)
+mono_interp_frame_iter_next (MonoInterpStackIter *iter, StackFrameInfo *frame)
 {
 	g_assert_not_reached ();
 	return FALSE;

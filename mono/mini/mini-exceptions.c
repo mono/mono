@@ -664,7 +664,7 @@ unwinder_unwind_frame (Unwinder *unwinder,
 					   StackFrameInfo *frame)
 {
 	if (unwinder->in_interp) {
-		gpointer new_sp;
+		gpointer parent;
 		memcpy (new_ctx, ctx, sizeof (MonoContext));
 
 		/* Process debugger invokes */
@@ -680,10 +680,12 @@ unwinder_unwind_frame (Unwinder *unwinder,
 			}
 		}
 
-		unwinder->in_interp = mono_interp_frame_iter_next (&unwinder->interp_iter, frame, &new_sp);
-		if (frame->type == FRAME_TYPE_INTERP)
+		unwinder->in_interp = mono_interp_frame_iter_next (&unwinder->interp_iter, frame);
+		if (frame->type == FRAME_TYPE_INTERP) {
+			parent = mono_interp_frame_get_parent (frame->interp_frame);
 			/* This is needed so code which uses ctx->sp for frame ordering would work */
-			MONO_CONTEXT_SET_SP (new_ctx, new_sp);
+			MONO_CONTEXT_SET_SP (new_ctx, parent);
+		}
 		if (!unwinder->in_interp)
 			return unwinder_unwind_frame (unwinder, domain, jit_tls, prev_ji, ctx, new_ctx, trace, lmf, save_locations, frame);
 		return TRUE;
