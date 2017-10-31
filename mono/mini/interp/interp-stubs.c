@@ -59,6 +59,13 @@ mono_interp_frame_get_this (MonoInterpFrameHandle frame)
 	return NULL;
 }
 
+MonoInterpFrameHandle
+mono_interp_frame_get_parent (MonoInterpFrameHandle frame)
+{
+	g_assert_not_reached ();
+	return NULL;
+}
+
 void
 mono_interp_start_single_stepping (void)
 {
