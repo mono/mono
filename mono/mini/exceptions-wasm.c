@@ -32,3 +32,30 @@ mono_arch_get_throw_corlib_exception (MonoTrampInfo **info, gboolean aot)
 	g_error ("mono_arch_get_throw_corlib_exception");
 	return NULL;
 }
+
+gpointer
+mono_arch_get_throw_exception (MonoTrampInfo **info, gboolean aot)
+{
+	g_error ("mono_arch_get_throw_exception");
+	return NULL;
+}
+
+gpointer 
+mono_arch_get_rethrow_exception (MonoTrampInfo **info, gboolean aot)
+{
+	g_error ("mono_arch_get_rethrow_exception");
+	return NULL;
+}
+
+gboolean
+mono_arch_handle_exception (void *sigctx, gpointer obj)
+{
+	g_error ("mono_arch_handle_exception");
+	return FALSE;
+}
+
+gpointer
+mono_arch_ip_from_context (void *sigctx)
+{
+	g_error ("mono_arch_ip_from_context");
+}

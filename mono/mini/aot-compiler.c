@@ -66,6 +66,14 @@
 #include "mini-gc.h"
 #include "mini-llvm.h"
 
+#ifdef TARGET_WASM
+void mono_wasm_create_module (void);
+void mono_wasm_emit_aot_data (const char *symbol, guint8 *data, int data_len);
+void mono_wasm_emit_aot_file_info (MonoAotFileInfo *info, gboolean has_jitted_code);
+void mono_wasm_emit_module (const char *filename);
+
+#endif
+
 #if !defined(DISABLE_AOT) && !defined(DISABLE_JIT)
 
 // Use MSVC toolchain, Clang for MSVC using MSVC codegen and linker, when compiling for AMD64
@@ -312,6 +320,7 @@ typedef struct MonoAotCompile {
 	int align_pad_value;
 	guint32 label_generator;
 	gboolean llvm;
+	gboolean wasm;
 	gboolean has_jitted_code;
 	gboolean is_full_aot;
 	MonoAotFileFlags flags;
@@ -742,6 +751,10 @@ emit_string_symbol (MonoAotCompile *acfg, const char *name, const char *value)
 {
 	if (acfg->llvm) {
 		mono_llvm_emit_aot_data (name, (guint8*)value, strlen (value) + 1);
+		return;
+	}
+	if (acfg->wasm) {
+		mono_wasm_emit_aot_data (name, (guint8*)value, strlen (value) + 1);
 		return;
 	}
 
@@ -2767,6 +2780,8 @@ emit_aot_data (MonoAotCompile *acfg, MonoAotFileTable table, const char *symbol,
 		fwrite (align_buf, align, 1, acfg->data_outfile);
 	} else if (acfg->llvm) {
 		mono_llvm_emit_aot_data (symbol, data, size);
+	} else if (acfg->wasm) {
+		mono_wasm_emit_aot_data (symbol, data, size);
 	} else {
 		emit_section_change (acfg, RODATA_SECT, 0);
 		emit_alignment (acfg, 8);
@@ -5744,7 +5759,9 @@ emit_method_code (MonoAotCompile *acfg, MonoCompile *cfg)
 
 	acfg->cfgs [method_index]->got_offset = acfg->got_offset;
 
+#ifndef TARGET_WASM
 	emit_and_reloc_code (acfg, method, code, cfg->code_len, cfg->patch_info, FALSE, mono_debug_find_method (cfg->jit_info->d.method, mono_domain_get ()));
+#endif
 
 	emit_line (acfg);
 
@@ -6535,11 +6552,10 @@ emit_plt (MonoAotCompile *acfg)
 {
 	int i;
 
-	if (acfg->aot_opts.llvm_only) {
+	if (acfg->aot_opts.llvm_only || acfg->wasm) {
 		g_assert (acfg->plt_offset == 1);
 		return;
-	}
-
+	}	
 	emit_line (acfg);
 
 	emit_section_change (acfg, ".text", 0);
@@ -7649,6 +7665,11 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 
 	if (acfg->aot_opts.metadata_only)
 		return;
+
+	if (strcmp (method->name, "Main") && strstr (method->name, "test_") != method->name) {
+		printf ("tried to compile %s\n", method->name);
+		return;
+	}
 
 	mono_acfg_lock (acfg);
 	index = get_method_index (acfg, method);
@@ -8879,7 +8900,7 @@ emit_code (MonoAotCompile *acfg)
 	gboolean saved_unbox_info = FALSE;
 	char symbol [MAX_SYMBOL_SIZE];
 
-	if (acfg->aot_opts.llvm_only)
+	if (acfg->aot_opts.llvm_only || acfg->wasm)
 		return;
 
 #if defined(TARGET_POWERPC64)
@@ -8986,7 +9007,6 @@ emit_code (MonoAotCompile *acfg)
 	 * To work around linker issues, we emit a table of branches, and disassemble them at runtime.
 	 * This is PIE code, and the linker can update it if needed.
 	 */
-	
 	sprintf (symbol, "method_addresses");
 	emit_section_change (acfg, ".text", 1);
 	emit_alignment_code (acfg, 8);
@@ -9771,7 +9791,7 @@ emit_got (MonoAotCompile *acfg)
 {
 	char symbol [MAX_SYMBOL_SIZE];
 
-	if (acfg->aot_opts.llvm_only)
+	if (acfg->aot_opts.llvm_only || acfg->wasm)
 		return;
 
 	/* Don't make GOT global so accesses to it don't need relocations */
@@ -9864,10 +9884,11 @@ emit_globals (MonoAotCompile *acfg)
 	if (!acfg->aot_opts.static_link)
 		return;
 
-	if (acfg->aot_opts.llvm_only) {
+	if (acfg->aot_opts.llvm_only || acfg->wasm) {
 		g_assert (acfg->globals->len == 0);
 		return;
 	}
+
 
 	/* 
 	 * When static linking, we emit a table containing our globals.
@@ -9971,7 +9992,7 @@ emit_mem_end (MonoAotCompile *acfg)
 {
 	char symbol [128];
 
-	if (acfg->aot_opts.llvm_only)
+	if (acfg->aot_opts.llvm_only || acfg->wasm)
 		return;
 
 	sprintf (symbol, "mem_end");
@@ -10203,6 +10224,8 @@ emit_file_info (MonoAotCompile *acfg)
 
 	if (acfg->llvm)
 		mono_llvm_emit_aot_file_info (info, acfg->has_jitted_code);
+	else if (acfg->wasm)
+		mono_wasm_emit_aot_file_info (info, acfg->has_jitted_code);
 	else
 		emit_aot_file_info (acfg, info);
 }
@@ -11590,7 +11613,8 @@ acfg_free (MonoAotCompile *acfg)
 {
 	int i;
 
-	mono_img_writer_destroy (acfg->w);
+	if (acfg->w)
+		mono_img_writer_destroy (acfg->w);
 	for (i = 0; i < acfg->nmethods; ++i)
 		if (acfg->cfgs [i])
 			mono_destroy_compile (acfg->cfgs [i]);
@@ -11898,7 +11922,9 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 #ifdef MONOTOUCH
 	acfg->aot_opts.use_trampolines_page = TRUE;
 #endif
-
+#ifdef TARGET_WASM
+	acfg->wasm = TRUE;
+#endif
 	mono_aot_parse_options (aot_options, &acfg->aot_opts);
 
 	if (acfg->aot_opts.logfile) {
@@ -12111,6 +12137,11 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 	}
 #endif
 
+#ifdef TARGET_WASM
+	if (acfg->wasm)
+		mono_wasm_create_module ();
+#endif
+
 	if (mono_aot_mode_is_interp (&acfg->aot_opts)) {
 		MonoMethod *wrapper;
 		MonoMethodSignature *sig;
@@ -12169,6 +12200,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 	}
 #endif
 
+#ifndef TARGET_WASM
 	if (acfg->aot_opts.asm_only && !acfg->aot_opts.llvm_only) {
 		if (acfg->aot_opts.outfile)
 			acfg->tmpfname = g_strdup_printf ("%s", acfg->aot_opts.outfile);
@@ -12185,6 +12217,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 			acfg->fp = fopen (acfg->tmpfname, "w+");
 		}
 	}
+
 	if (acfg->fp == 0 && !acfg->aot_opts.llvm_only) {
 		aot_printerrf (acfg, "Unable to open file '%s': %s\n", acfg->tmpfname, strerror (errno));
 		return 1;
@@ -12194,7 +12227,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 
 	tmp_outfile_name = NULL;
 	outfile_name = NULL;
-
+#endif
 	/* Compute symbols for methods */
 	for (i = 0; i < acfg->nmethods; ++i) {
 		if (acfg->cfgs [i]) {
@@ -12248,9 +12281,11 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 	if (acfg->llvm)
 		emit_got_info (acfg, TRUE);
 
+#ifndef TARGET_WASM
 	emit_exception_info (acfg);
 
 	emit_unwind_info (acfg);
+#endif
 
 	emit_class_info (acfg);
 
@@ -12308,6 +12343,17 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 	}
 #endif
 
+#ifdef TARGET_WASM
+	if (acfg->wasm) {
+		char *outfile_name;
+		if (acfg->aot_opts.outfile)
+			outfile_name = g_strdup_printf ("%s", acfg->aot_opts.outfile);
+		else
+			outfile_name = g_strdup_printf ("%s.%s", acfg->image->name, "wasm");
+
+		mono_wasm_emit_module (outfile_name);
+	}
+#endif
 	TV_GETTIME (btv);
 
 	acfg->stats.gen_time = TV_ELAPSED (atv, btv);

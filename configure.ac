@@ -100,7 +100,8 @@ extra_runtime_ldflags=""
 # Hack for WASM
 # Current autotools (v1.15) doesn't have a triplet we can use for wasm so the kludge we do is to
 # work around it by using a feature flag instead
-AC_ARG_ENABLE(wasm,[  --enable-wasm	Hack to set the current runtime to target wasm], enable_wasm=$enableval)
+AC_ARG_ENABLE(wasm_host,[  --enable-wasm-host	Hack to set the current runtime to wasm host], enable_wasm_host=$enableval)
+AC_ARG_ENABLE(wasm_target,[  --enable-wasm-target	Hack to set the current runtime to wasm target], enable_wasm_target=$enableval)
 
 # Thread configuration inspired by sleepycat's db
 AC_MSG_CHECKING([host platform characteristics])
@@ -117,7 +118,7 @@ platform_ios=no
 host_darwin=no
 
 
-if test "x$enable_wasm" = "xyes"; then
+if test "x$enable_wasm_host" = "xyes"; then
 CFLAGS="$CFLAGS -D_REENTRANT -D_GNU_SOURCE -DNO_UNALIGNED_ACCESS -s WASM=1"
 CPPFLAGS="$CPPFLAGS -D_REENTRANT -DUSE_MMAP -D_GNU_SOURCE -DNO_UNALIGNED_ACCESS -s WASM=1"
 libdl="-ldl"
@@ -628,7 +629,7 @@ if test x$platform_android = xyes; then
 fi # Android
 
 # not 64 bit clean in cross-compile
-if test "x$enable_wasm" = "xyes"; then
+if test "x$enable_wasm_target" = "xyes"; then
 AC_DEFINE(SIZEOF_VOID_P,4)
 AC_DEFINE(SIZEOF_LONG,4)
 ac_cv_sizeof_void_p="4"
@@ -3181,18 +3182,6 @@ boehm_supported=true
 BTLS_SUPPORTED=no
 BTLS_PLATFORM=
 
-if test "x$enable_wasm" = "xyes"; then
-TARGET=WASM
-HOST=WASM
-arch_target=wasm
-AC_DEFINE(TARGET_WASM, 1, [Target wasm])
-AC_DEFINE(HOST_WASM, 1, [Host wasm])
-BTLS_SUPPORTED=no
-with_tls=pthread
-target_mach=no
-
-else
-
 case "$host" in
 	mips*)
 		TARGET=MIPS;
@@ -3528,6 +3517,30 @@ if test "x$host" != "x$target"; then
 	esac
 fi
 
+
+if test "x$enable_wasm_host" = "xyes"; then
+HOST=WASM
+host=WASM
+fi
+
+if test "x$enable_wasm_target" = "xyes"; then
+TARGET=WASM
+arch_target=wasm
+BTLS_SUPPORTED=no
+with_tls=pthread
+target_mach=no
+enable_mcs_build=no
+target=WASM
+
+if test "x$enable_wasm_host" != "x$enable_wasm_target"; then
+   AC_DEFINE(MONO_CROSS_COMPILE,1,[The runtime is compiled for cross-compiling mode])
+fi
+
+fi
+
+# AC_DEFINE(TARGET_WASM, 1, [Target wasm])
+# AC_DEFINE(HOST_WASM, 1, [Host wasm])
+
 case "$TARGET" in
 X86)
 	AC_DEFINE(TARGET_X86, 1, [...])
@@ -3559,6 +3572,9 @@ SPARC)
 	;;
 SPARC64)
 	AC_DEFINE(TARGET_SPARC64, 1, [...])
+	;;
+WASM)
+	AC_DEFINE(TARGET_WASM, 1, [...])
 	;;
 esac
 
@@ -3594,10 +3610,11 @@ SPARC)
 SPARC64)
 	AC_DEFINE(HOST_SPARC64, 1, [...])
 	;;
+WASM)
+	AC_DEFINE(HOST_WASM, 1, [...])
+	;;
 esac
 
-#WASM hack
-fi
 
 
 dnl *************

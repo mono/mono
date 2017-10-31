@@ -81,8 +81,8 @@ endif
 # hack for automake to have the same source file in a library and a bin
 genmdesc_CFLAGS = $(AM_CFLAGS)
 
-monoldflags=$(export_ldflags)
-monobinldflags=$(export_ldflags) $(extra_runtime_ldflags)
+monoldflags=$(export_ldflags) -lbinaryen -L.
+monobinldflags=$(export_ldflags) $(extra_runtime_ldflags) -lbinaryen -L.
 
 if HOST_WIN32
 libmonoldflags=-no-undefined -avoid-version -Wl,--kill-at $(monoldflags)

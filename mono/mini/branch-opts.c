@@ -87,6 +87,8 @@ mono_branch_optimize_exception_target (MonoCompile *cfg, MonoBasicBlock *bb, con
 						 * arch dependent code (opcode ignored)
 						 */
 						MONO_INST_NEW (cfg, jump, OP_BR);
+						if (cfg->verbose_level > 2)
+							printf ("REWRITE BRANCH 11\n");
 
 						/* Allocate memory for our branch target */
 						jump->inst_i1 = (MonoInst *)mono_mempool_alloc0 (cfg->mempool, sizeof (MonoInst));
@@ -451,6 +453,8 @@ mono_if_conversion (MonoCompile *cfg)
 			branch->opcode = OP_BR;
 			branch->inst_target_bb = true_bb->out_bb [0];
 			mono_link_bblock (cfg, bb, branch->inst_target_bb);
+			if (cfg->verbose_level > 2)
+				printf ("REWRITE BRANCH\n");
 
 			/* Reorder bblocks */
 			mono_unlink_bblock (cfg, bb, true_bb);
@@ -595,6 +599,8 @@ mono_if_conversion (MonoCompile *cfg)
 			branch->opcode = OP_BR;
 			branch->inst_target_bb = next_bb;
 			mono_link_bblock (cfg, bb, branch->inst_target_bb);
+			if (cfg->verbose_level > 2)
+				printf ("REWRITE BRANCH 2\n");
 
 			/* Nullify the branch at the end of code_bb */
 			if (code_bb->code) {
@@ -621,6 +627,8 @@ mono_if_conversion (MonoCompile *cfg)
 					MONO_INST_NEW (cfg, ins1, OP_BR);
 					ins1->inst_target_bb = bb->out_bb [0];
 					MONO_ADD_INS (bb, ins1);
+					if (cfg->verbose_level > 2)
+						printf ("REWRITE BRANCH 3\n");
 				}
 				goto restart;
 			}
@@ -710,7 +718,9 @@ mono_if_conversion (MonoCompile *cfg)
 		mono_unlink_bblock (cfg, bb, branch1->inst_true_bb);
 		mono_unlink_bblock (cfg, bb, branch1->inst_false_bb);
 		branch1->inst_target_bb = next_bb;
-		mono_link_bblock (cfg, bb, next_bb);		
+		mono_link_bblock (cfg, bb, next_bb);
+		if (cfg->verbose_level > 2)
+			printf ("REWRITE BRANCH 4\n");
 
 		/* Rewrite the second branch */
 		branch2->opcode = br_to_br_un (branch2->opcode);
@@ -945,6 +955,8 @@ remove_block_if_useless (MonoCompile *cfg, MonoBasicBlock *bb, MonoBasicBlock *p
 					MONO_ADD_INS (previous_bb, jump);
 					jump->cil_code = previous_bb->cil_code;
 					jump->inst_target_bb = target_bb;
+					if (cfg->verbose_level > 2)
+						printf ("REWRITE BRANCH 5\n");
 					break;
 				}
 			}
@@ -1049,6 +1061,8 @@ mono_merge_basic_blocks (MonoCompile *cfg, MonoBasicBlock *bb, MonoBasicBlock *b
 		MONO_INST_NEW (cfg, inst, OP_BR);
 		inst->inst_target_bb = bb->out_bb [0];
 		MONO_ADD_INS (bb, inst);
+		if (cfg->verbose_level > 2)
+			printf ("REWRITE BRANCH 6\n");
 	}
 }
 
@@ -1080,6 +1094,8 @@ move_basic_block_to_end (MonoCompile *cfg, MonoBasicBlock *bb)
 		MONO_ADD_INS (bb, ins);
 		mono_link_bblock (cfg, bb, next);
 		ins->inst_target_bb = next;
+		if (cfg->verbose_level > 2)
+			printf ("REWRITE BRANCH 7\n");
 	}		
 }
 
@@ -1154,6 +1170,8 @@ mono_remove_critical_edges (MonoCompile *cfg)
 									MONO_ADD_INS (previous_bb, jump);
 									jump->cil_code = previous_bb->cil_code;
 									jump->inst_target_bb = bb;
+									if (cfg->verbose_level > 2)
+										printf ("REWRITE BRANCH 8\n");
 									break;
 								}
 							}
@@ -1170,6 +1188,8 @@ mono_remove_critical_edges (MonoCompile *cfg)
 							MONO_ADD_INS (new_bb_after_entry, jump);
 							jump->cil_code = bb->cil_code;
 							jump->inst_target_bb = bb;
+							if (cfg->verbose_level > 2)
+								printf ("REWRITE BRANCH 9\n");
 
 							mono_unlink_bblock (cfg, previous_bb, bb);
 							mono_link_bblock (cfg, new_bb_after_entry, bb);
@@ -1229,6 +1249,23 @@ mono_remove_critical_edges (MonoCompile *cfg)
 			printf ("\n");
 		}
 	}
+}
+
+static gboolean
+is_compare_op (MonoInst *ins)
+{
+	switch (ins->opcode) {
+	case OP_COMPARE:
+	case OP_COMPARE_IMM:
+	case OP_ICOMPARE:
+	case OP_ICOMPARE_IMM:
+	case OP_FCOMPARE:
+	case OP_LCOMPARE:
+	case OP_LCOMPARE_IMM:
+	case OP_RCOMPARE:
+		return TRUE;
+	}
+	return FALSE;
 }
 
 /*
@@ -1385,6 +1422,11 @@ mono_optimize_branches (MonoCompile *cfg)
 						 */
 						bb->last_ins->opcode = OP_BR;
 						bb->last_ins->inst_target_bb = taken_branch_target;
+						if (cfg->verbose_level > 2)
+							printf ("REWRITE BRANCH 10\n");
+						if (bb->last_ins->prev && is_compare_op (bb->last_ins->prev))
+							NULLIFY_INS (bb->last_ins->prev);
+
 						if (!bb->extended)
 							mono_unlink_bblock (cfg, bb, untaken_branch_target);
 						changed = TRUE;

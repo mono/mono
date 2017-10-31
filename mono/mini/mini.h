@@ -777,6 +777,9 @@ struct MonoBasicBlock {
 
 	/* The current symbolic register number, used in local register allocation. */
 	guint32 max_vreg;
+
+	/* Backend specific data */
+	void *backend_data, *backend_branch_data;
 };
 
 /* BBlock flags */
@@ -1397,6 +1400,7 @@ typedef struct MonoJumpInfoToken {
 typedef struct MonoJumpInfoBBTable {
 	MonoBasicBlock **table;
 	int table_size;
+	MonoBasicBlock *default_bblock;
 } MonoJumpInfoBBTable;
 
 typedef struct MonoJumpInfoRgctxEntry MonoJumpInfoRgctxEntry;

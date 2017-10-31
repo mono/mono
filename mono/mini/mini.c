@@ -99,6 +99,8 @@ MonoBackend *current_backend;
 
 #ifndef DISABLE_JIT
 
+void mono_wasm_code_gen (MonoCompile *cfg);
+
 gpointer
 mono_realloc_native_code (MonoCompile *cfg)
 {
@@ -3175,6 +3177,12 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 		cfg->gen_seq_points = FALSE;
 		cfg->gen_sdb_seq_points = FALSE;
 	}
+
+#ifdef TARGET_WASM
+	cfg->gen_seq_points = FALSE;
+	cfg->gen_sdb_seq_points = FALSE;
+#endif
+
 	/* coop requires loop detection to happen */
 	if (mono_threads_is_coop_enabled ())
 		cfg->opt |= MONO_OPT_LOOP;
@@ -3699,6 +3707,9 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 		mono_cfg_dump_ir (cfg, "decompose_array_access_opts");
 	}
 
+#if defined (TARGET_WASM)
+	mono_wasm_code_gen (cfg);
+#else
 	if (cfg->got_var) {
 #ifndef MONO_ARCH_GOT_REG
 		GList *regs;
@@ -3860,6 +3871,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 		mono_disassemble_code (cfg, cfg->native_code, cfg->code_len, id + 3);
 		g_free (id);
 	}
+#endif
 
 	if (!cfg->compile_aot && !(flags & JIT_FLAG_DISCARD_RESULTS)) {
 		mono_domain_lock (cfg->domain);

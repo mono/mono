@@ -13,7 +13,7 @@
 #include <ucontext.h>
 #endif
 
-#if (defined(__i386__) && !defined(MONO_CROSS_COMPILE)) || (defined(TARGET_X86))
+#if defined(HOST_X86)
 
 #include <mono/utils/mono-context.h>
 
