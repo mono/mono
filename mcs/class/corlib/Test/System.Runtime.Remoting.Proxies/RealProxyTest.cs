@@ -28,6 +28,7 @@ namespace MonoTests.System.Runtime.Remoting.Proxies {
 		}
 
 		[Test]
+		[Category ("InterpreterNotWorking")]
 		public void InterfaceProxyGetTypeOkay ()
 		{
 			// Regression test for #17325

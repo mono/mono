@@ -146,6 +146,7 @@ namespace MonoTests.System.Runtime.Remoting
 		bool otResult;
 
 		[Test]
+		[Category ("InterpreterNotWorking")]
 		public void TestSynchronization ()
 		{
 			Thread tr = new Thread (new ThreadStart (FirstSyncThread));
@@ -169,6 +170,7 @@ namespace MonoTests.System.Runtime.Remoting
 		}
 
 		[Test]
+		[Category ("InterpreterNotWorking")]
 		public void TestSupported ()
 		{
 			SincroRequiresNew ob = new SincroRequiresNew ();
@@ -181,6 +183,7 @@ namespace MonoTests.System.Runtime.Remoting
 		}
 
 		[Test]
+		[Category ("InterpreterNotWorking")]
 		public void TestRequired ()
 		{
 			SincroRequiresNew ob = new SincroRequiresNew ();
@@ -193,6 +196,7 @@ namespace MonoTests.System.Runtime.Remoting
 		}
 
 		[Test]
+		[Category ("InterpreterNotWorking")]
 		public void TestRequiresNew ()
 		{
 			SincroRequiresNew ob = new SincroRequiresNew ();
@@ -205,6 +209,7 @@ namespace MonoTests.System.Runtime.Remoting
 		}
 
 		[Test]
+		[Category ("InterpreterNotWorking")]
 		public void TestNotSupported ()
 		{
 			SincroRequiresNew ob = new SincroRequiresNew ();
@@ -217,6 +222,7 @@ namespace MonoTests.System.Runtime.Remoting
 		}
 
 		[Test]
+		[Category ("InterpreterNotWorking")]
 		public void TestLocked1 ()
 		{
 			sincob.Lock (false);
@@ -231,6 +237,7 @@ namespace MonoTests.System.Runtime.Remoting
 		}
 
 		[Test]
+		[Category ("InterpreterNotWorking")]
 		public void TestLocked2 ()
 		{
 			Thread tr = new Thread (new ThreadStart (FirstNotSyncThread));
@@ -254,6 +261,7 @@ namespace MonoTests.System.Runtime.Remoting
 		}
 
 		[Test]
+		[Category ("InterpreterNotWorking")]
 		public void TestLocked3 ()
 		{
 			Thread tr = new Thread (new ThreadStart (Lock1Thread));
@@ -273,6 +281,7 @@ namespace MonoTests.System.Runtime.Remoting
 		}
 
 		[Test]
+		[Category ("InterpreterNotWorking")]
 		public void TestReentry ()
 		{
 			Thread tr = new Thread (new ThreadStart (FirstReentryThread));
@@ -296,6 +305,7 @@ namespace MonoTests.System.Runtime.Remoting
 		}
 
 		[Test]
+		[Category ("InterpreterNotWorking")]
 		public void TestNoReentry ()
 		{
 			Thread tr = new Thread (new ThreadStart (FirstNoReentryThread));
@@ -319,6 +329,7 @@ namespace MonoTests.System.Runtime.Remoting
 		}
 
 		[Test]
+		[Category ("InterpreterNotWorking")]
 		public void TestCallback ()
 		{
 			Thread tr = new Thread (new ThreadStart (CallbackThread));
@@ -333,6 +344,7 @@ namespace MonoTests.System.Runtime.Remoting
 		}
 
 		[Test]
+		[Category ("InterpreterNotWorking")]
 		public void TestSynchronizationReleasedOnMultipleAcquire ()
 		{
 
@@ -355,6 +367,7 @@ namespace MonoTests.System.Runtime.Remoting
 		[Test]
 		[Category("NotDotNet")]
 		[Category ("MobileNotWorking")]
+		[Category ("InterpreterNotWorking")]
 		public void TestMonitorWait ()
 		{
 			Thread tr = new Thread (new ThreadStart (DoMonitorPulse));
