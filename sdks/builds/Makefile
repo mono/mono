@@ -13,6 +13,9 @@ $(TOP)/configure: $(TOP)/configure.ac $(TOP)/autogen.sh
 	cd $(TOP) && PATH=$(EXTRA_PATH):$$PATH NOCONFIGURE=1 ./autogen.sh
 
 TARGETS=
+#Targets with custom build rules should append themselves here and we won't generate a generic target
+CUSTOM_BUILD_TARGETS=
+
 
 ## BCL targets
 ifndef DISABLE_BCL
@@ -29,6 +32,10 @@ ifndef DISABLE_IOS
 include ios.mk
 endif
 
+## WASM targets
+ifndef DISABLE_WASM
+include wasm.mk
+endif
 
 ## Generic targets
 .PHONY: $(foreach target,$(TARGETS),toolchain-$(target))
@@ -38,7 +45,7 @@ $(foreach target,$(TARGETS),toolchain-$(target)): toolchain-%: .stamp-%-toolchai
 $(foreach target,$(TARGETS),configure-$(target)): configure-%: .stamp-%-configure
 
 .PHONY: $(foreach target,$(TARGETS),build-$(target))
-$(foreach target,$(TARGETS),build-$(target)): build-%: .stamp-%-configure
+$(filter-out $(CUSTOM_BUILD_TARGETS), $(foreach target,$(TARGETS),build-$(target))): build-%: .stamp-%-configure
 	$(MAKE) -C $*
 
 .PHONY: $(foreach target,$(TARGETS),setup-$(target))
