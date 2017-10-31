@@ -137,6 +137,16 @@
 #../../../external/corefx/src/System.Text.Encoding/tests/Encoder/EncoderSpanTests.netcoreapp.cs
 ../../../external/corefx/src/System.Text.Encoding/tests/EncoderFallbackException/*.cs
 ../../../external/corefx/src/System.Text.Encoding/tests/Encoding/*.cs
+../../../external/corefx/src/System.Text.Encoding/tests/Fallback/*.cs
+../../../external/corefx/src/System.Text.Encoding/tests/Latin1Encoding/*.cs
+../../../external/corefx/src/System.Text.Encoding/tests/UnicodeEncoding/*.cs
+../../../external/corefx/src/System.Text.Encoding/tests/UTF7Encoding/*.cs
+../../../external/corefx/src/System.Text.Encoding/tests/UTF8Encoding/*.cs
+../../../external/corefx/src/System.Text.Encoding/tests/UTF32Encoding/*.cs
+../../../external/corefx/src/System.Text.Encoding/tests/EncodingTestHelpers.cs
+../../../external/corefx/src/System.Text.Encoding/tests/NegativeEncodingTests.cs
+
+../../../external/corefx/src/System.ValueTuple/tests/*.cs
 
 
 
