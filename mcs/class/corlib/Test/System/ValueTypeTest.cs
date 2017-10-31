@@ -52,6 +52,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("InterpreterNotWorking")]
 		public void TestEquals_Nullable ()
 		{
 			NullableStruct f1 = new NullableStruct { f = 5 };

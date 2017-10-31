@@ -3189,6 +3189,7 @@ namespace MonoTests.Microsoft.Win32
 
 		// Bug Xamarin 3632
 		[Test]
+		[Category ("InterpreterNotWorking")]
 		public void TypeCastTests ()
 		{
 			string subKeyName = Guid.NewGuid ().ToString ();
