@@ -148,57 +148,19 @@
 
 ../../../external/corefx/src/System.ValueTuple/tests/*.cs
 
-
-
 ../../../external/corefx/src/Common/tests/System/Diagnostics/Tracing/TestEventListener.cs
 ../../../external/corefx/src/Common/tests/System/Threading/ThreadTestHelpers.cs
 ../../../external/corefx/src/Common/tests/System/Threading/ThreadPoolHelpers.cs
 
 # System.Threading.Tasks
 ../../../external/corefx/src/System.Threading.Tasks/tests/System.Runtime.CompilerServices/*.cs
-../../../external/corefx/src/System.Threading.Tasks/tests/Task/RunContinuationsAsynchronouslyTests.cs
-../../../external/corefx/src/System.Threading.Tasks/tests/Task/TaskAPMTest.cs
-../../../external/corefx/src/System.Threading.Tasks/tests/Task/TaskCancelWaitTest.cs
-../../../external/corefx/src/System.Threading.Tasks/tests/Task/TaskCancelWaitTests.cs
-../../../external/corefx/src/System.Threading.Tasks/tests/Task/TaskContinueWhenAllTests.cs
-../../../external/corefx/src/System.Threading.Tasks/tests/Task/TaskContinueWhenAnyTests.cs
-../../../external/corefx/src/System.Threading.Tasks/tests/Task/TaskContinueWithAllAnyTests.cs
-../../../external/corefx/src/System.Threading.Tasks/tests/Task/TaskContinueWithTests.cs
-../../../external/corefx/src/System.Threading.Tasks/tests/Task/TaskContinueWith_ContFuncAndActionTests.cs
-../../../external/corefx/src/System.Threading.Tasks/tests/Task/TaskContinueWith_ContFuncAndActionWithArgsTests.cs
-../../../external/corefx/src/System.Threading.Tasks/tests/Task/TaskCreateTest.cs
-../../../external/corefx/src/System.Threading.Tasks/tests/Task/TaskDisposeTests.cs
-../../../external/corefx/src/System.Threading.Tasks/tests/Task/TaskFromAsyncTest.cs
-../../../external/corefx/src/System.Threading.Tasks/tests/Task/TaskFromAsyncTest2.cs
-../../../external/corefx/src/System.Threading.Tasks/tests/Task/TaskFromAsyncWork.cs
-../../../external/corefx/src/System.Threading.Tasks/tests/Task/TaskPropertiesTests.cs
-../../../external/corefx/src/System.Threading.Tasks/tests/Task/TaskRtTests.cs
-../../../external/corefx/src/System.Threading.Tasks/tests/Task/TaskRtTests_Core.cs
-../../../external/corefx/src/System.Threading.Tasks/tests/Task/TaskRunSyncTests.cs
-../../../external/corefx/src/System.Threading.Tasks/tests/Task/TaskStatusTest.cs
-#../../../external/corefx/src/System.Threading.Tasks/tests/Task/TaskStatusTest.netcoreapp.cs
-../../../external/corefx/src/System.Threading.Tasks/tests/Task/TaskWaitAllAnyTest.cs
-../../../external/corefx/src/System.Threading.Tasks/tests/Task/TPLTestException.cs
+../../../external/corefx/src/System.Threading.Tasks/tests/Task/*.cs:TaskStatusTest.netcoreapp.cs
 ../../../external/corefx/src/System.Threading.Tasks/tests/TaskFactory/*.cs
 ../../../external/corefx/src/System.Threading.Tasks/tests/TaskScheduler/*.cs
 ../../../external/corefx/src/System.Threading.Tasks/tests/*.cs
 
 # System.Threading.Tasks.Parallel
-../../../external/corefx/src/System.Threading.Tasks.Parallel/tests/BreakTests.cs
-../../../external/corefx/src/System.Threading.Tasks.Parallel/tests/EtwTests.cs
-../../../external/corefx/src/System.Threading.Tasks.Parallel/tests/ParallelFor.cs
-../../../external/corefx/src/System.Threading.Tasks.Parallel/tests/ParallelForBoundary.cs
-../../../external/corefx/src/System.Threading.Tasks.Parallel/tests/ParallelForeachPartitioner.cs
-../../../external/corefx/src/System.Threading.Tasks.Parallel/tests/ParallelForTest.cs
-../../../external/corefx/src/System.Threading.Tasks.Parallel/tests/ParallelForTests.cs
-../../../external/corefx/src/System.Threading.Tasks.Parallel/tests/ParallelInvokeTest.cs
-../../../external/corefx/src/System.Threading.Tasks.Parallel/tests/ParallelLoopResultTests.cs
-../../../external/corefx/src/System.Threading.Tasks.Parallel/tests/ParallelStateTest.cs
-../../../external/corefx/src/System.Threading.Tasks.Parallel/tests/RangePartitioner1Chunk.cs
-../../../external/corefx/src/System.Threading.Tasks.Parallel/tests/RangePartitionerTests.cs
-../../../external/corefx/src/System.Threading.Tasks.Parallel/tests/RangePartitionerThreadSafetyTests.cs
-../../../external/corefx/src/System.Threading.Tasks.Parallel/tests/RespectParentCancellationTest.cs
-#../../../external/corefx/src/System.Threading.Tasks.Parallel/tests/XunitAssemblyAttributes.cs
+../../../external/corefx/src/System.Threading.Tasks.Parallel/tests/*.cs:XunitAssemblyAttributes.cs
 
 # System.Threading.ThreadPool
 ../../../external/corefx/src/System.Threading.ThreadPool/tests/ThreadPoolTests.cs
@@ -210,52 +172,7 @@
 ../../../external/corefx/src/System.Threading.Thread/tests/*.cs
 
 # System.Threading
-../../../external/corefx/src/System.Threading/tests/AsyncLocalTests.cs
-../../../external/corefx/src/System.Threading/tests/AutoResetEventTests.cs
-../../../external/corefx/src/System.Threading/tests/BarrierCancellationTests.cs
-../../../external/corefx/src/System.Threading/tests/BarrierTests.cs
-../../../external/corefx/src/System.Threading/tests/CountdownEventCancellationTests.cs
-../../../external/corefx/src/System.Threading/tests/CountdownEventTests.cs
-../../../external/corefx/src/System.Threading/tests/EtwTests.cs
-#../../../external/corefx/src/System.Threading/tests/EventWaitHandleTests.cs
-../../../external/corefx/src/System.Threading/tests/ExecutionContextTests.cs
-../../../external/corefx/src/System.Threading/tests/HostExecutionContextManagerTests.cs
-../../../external/corefx/src/System.Threading/tests/HostExecutionContextTests.cs
-../../../external/corefx/src/System.Threading/tests/InterlockedTests.cs
-#../../../external/corefx/src/System.Threading/tests/InterlockedTests.netcoreapp.cs
-../../../external/corefx/src/System.Threading/tests/ManualResetEventSlimCancellationTests.cs
-../../../external/corefx/src/System.Threading/tests/ManualResetEventSlimTests.cs
-../../../external/corefx/src/System.Threading/tests/ManualResetEventTests.cs
-../../../external/corefx/src/System.Threading/tests/MonitorTests.cs
-#../../../external/corefx/src/System.Threading/tests/MutexTests.cs
-../../../external/corefx/src/System.Threading/tests/ReaderWriterLockSlimTests.cs
-../../../external/corefx/src/System.Threading/tests/ReaderWriterLockTests.cs
-../../../external/corefx/src/System.Threading/tests/SemaphoreSlimCancellationTests.cs
-../../../external/corefx/src/System.Threading/tests/SemaphoreSlimTests.cs
-#../../../external/corefx/src/System.Threading/tests/SemaphoreTests.cs
-../../../external/corefx/src/System.Threading/tests/SpinLockTests.cs
-../../../external/corefx/src/System.Threading/tests/SpinWaitTests.cs
-../../../external/corefx/src/System.Threading/tests/SynchronizationContextTests.cs
-../../../external/corefx/src/System.Threading/tests/ThreadLocalTests.cs
+../../../external/corefx/src/System.Threading/tests/*.cs:MutexTests.cs,SemaphoreTests.cs,InterlockedTests.netcoreapp.cs,EventWaitHandleTests.cs,XunitAssemblyAttributes.cs
 
 # System.Text.RegularExpressions
-../../../external/corefx/src/System.Text.RegularExpressions/tests/CaptureCollectionTests.cs
-#../../../external/corefx/src/System.Text.RegularExpressions/tests/CaptureCollectionTests.netcoreapp.cs
-../../../external/corefx/src/System.Text.RegularExpressions/tests/GroupCollectionTests.cs
-#../../../external/corefx/src/System.Text.RegularExpressions/tests/GroupCollectionTests.netcoreapp.cs
-../../../external/corefx/src/System.Text.RegularExpressions/tests/MatchCollectionTests.cs
-#../../../external/corefx/src/System.Text.RegularExpressions/tests/MatchCollectionTests.netcoreapp.cs
-../../../external/corefx/src/System.Text.RegularExpressions/tests/PrecompiledRegexScenarioTest.cs
-../../../external/corefx/src/System.Text.RegularExpressions/tests/Regex.Ctor.Tests.cs
-../../../external/corefx/src/System.Text.RegularExpressions/tests/Regex.EscapeUnescape.Tests.cs
-../../../external/corefx/src/System.Text.RegularExpressions/tests/Regex.GetGroupNames.Tests.cs
-#../../../external/corefx/src/System.Text.RegularExpressions/tests/Regex.Groups.Tests.cs
-#../../../external/corefx/src/System.Text.RegularExpressions/tests/Regex.Match.Tests.cs
-../../../external/corefx/src/System.Text.RegularExpressions/tests/Regex.MultipleMatches.Tests.cs
-../../../external/corefx/src/System.Text.RegularExpressions/tests/Regex.Replace.Tests.cs
-#../../../external/corefx/src/System.Text.RegularExpressions/tests/Regex.Serialization.cs
-../../../external/corefx/src/System.Text.RegularExpressions/tests/Regex.Split.Tests.cs
-../../../external/corefx/src/System.Text.RegularExpressions/tests/Regex.Tests.Common.cs
-../../../external/corefx/src/System.Text.RegularExpressions/tests/Regex.UnicodeChar.Tests.cs
-../../../external/corefx/src/System.Text.RegularExpressions/tests/RegexGroupNameTests.cs
-../../../external/corefx/src/Common/tests/System/Diagnostics/DebuggerAttributes.cs
+../../../external/corefx/src/System.Text.RegularExpressions/tests/*.cs:CaptureCollectionTests.netcoreapp.cs,GroupCollectionTests.netcoreapp.cs,MatchCollectionTests.netcoreapp.cs,Regex.Groups.Tests.cs,Regex.Match.Tests.cs,Regex.Serialization.cs
