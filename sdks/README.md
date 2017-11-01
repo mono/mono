@@ -37,13 +37,16 @@ aarch64: Google Pixel
 x86_32: Acer Iconia A1-830
 
 
-
 ## iOS
 
 Everything
 
+## BCL
+
+- Build depends on building a runtime, fix the build system to support using system mono/csc
+- Build will generate all profiles instead of those we care.
+
 ## General
 
 Write the iOS driver.
-
 

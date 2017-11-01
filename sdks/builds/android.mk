@@ -81,6 +81,8 @@ _android_$(1)_CONFIGURE_FLAGS= \
 	$$(NDK_DIR)/build/tools/make-standalone-toolchain.sh  --platform=$(2) --arch=$(1) --install-dir=$$(TOP)/sdks/builds/toolchains/android-$(1) --toolchain=$(4)
 	touch $$@
 
+android-toolchain:: .stamp-android-$(1)-toolchain
+
 .stamp-android-$(1)-configure: $$(TOP)/configure .stamp-android-$(1)-toolchain
 	mkdir -p $$(TOP)/sdks/builds/android-$(1)
 	cd $$(TOP)/sdks/builds/android-$(1) && $$(TOP)/configure $$(_android_$(1)_AC_VARS) $$(_android_$(1)_CONFIGURE_ENVIRONMENT) $$(_android_$(1)_CONFIGURE_FLAGS)
@@ -103,7 +105,7 @@ endef
 android_arm_CFLAGS=-D__POSIX_VISIBLE=201002 -DSK_RELEASE -DNDEBUG -UDEBUG -fpic -mtune=cortex-a8 -march=armv7-a -mfpu=vfp -mfloat-abi=softfp
 android_arm_CXXFLAGS=-D__POSIX_VISIBLE=201002 -DSK_RELEASE -DNDEBUG -UDEBUG -fpic
 android_arm_LDFLAGS=-Wl,--fix-cortex-a8
-$(eval $(call AndroidTemplate,arm,android-9,arm-linux-androideabi,arm-linux-androideabi-clang,armv5-linux-androideabi,ARM))
+$(eval $(call AndroidTemplate,arm,android-14,arm-linux-androideabi,arm-linux-androideabi-clang,armv5-linux-androideabi,ARM))
 
 ## Android arm64
 android_arm64_CFLAGS=-D__POSIX_VISIBLE=201002 -DSK_RELEASE -DNDEBUG -UDEBUG -fpic -DL_cuserid=9 -DANDROID64
@@ -111,7 +113,7 @@ android_arm64_CXXFLAGS=-D__POSIX_VISIBLE=201002 -DSK_RELEASE -DNDEBUG -UDEBUG -f
 $(eval $(call AndroidTemplate,arm64,android-21,aarch64-linux-android,aarch64-linux-android-clang,aarch64-linux-android,ARM64))
 
 ## Android x86
-$(eval $(call AndroidTemplate,x86,android-9,i686-linux-android,x86-clang,i686-linux-android,X86))
+$(eval $(call AndroidTemplate,x86,android-14,i686-linux-android,x86-clang,i686-linux-android,X86))
 
 ## Android x86_64
 android_x86_64_CFLAGS=-DL_cuserid=9

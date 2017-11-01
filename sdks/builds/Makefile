@@ -3,19 +3,32 @@ include $(TOP)/sdks/paths.mk
 
 IS_RELEASE?=true
 
+#brew's libtool is not compatible with some of the deps needed (I.E. V8) so in those systems we need to explicit add to the path
+#this is due mono not being compatible with xcode's libtool, which is what's on path by default
+ifeq (, $(shell which glibtoolize))
+EXTRA_PATH=$(wildcard /usr/local/Cellar/libtool/*/bin/)
+endif
+
 $(TOP)/configure: $(TOP)/configure.ac $(TOP)/autogen.sh
-	cd $(TOP) && NOCONFIGURE=1 ./autogen.sh
+	cd $(TOP) && PATH=$(EXTRA_PATH):$$PATH NOCONFIGURE=1 ./autogen.sh
 
 TARGETS=
 
 ## BCL targets
+ifndef DISABLE_BCL
 include bcl.mk
+endif
 
 ## Android targets
+ifndef DISABLE_ANDROID
 include android.mk
+endif
 
 ## iOS targets
+ifndef DISABLE_IOS
 include ios.mk
+endif
+
 
 ## Generic targets
 .PHONY: $(foreach target,$(TARGETS),toolchain-$(target))

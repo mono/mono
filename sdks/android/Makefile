@@ -8,16 +8,19 @@ NDK_BUILD = $(NDK_DIR)/ndk-build
 PACKAGE   = org.mono.android.AndroidTestRunner
 ACTIVITY  = org.mono.android.AndroidRunner
 
+PROJECT_SETUP_FILES = project.properties local.properties
+
+
 .PHONY: all
 all: setup stage-sdk
 	$(MAKE) -C managed all
 	$(NDK_BUILD)
 	$(ANT) debug
 
-local.properties:
+$(PROJECT_SETUP_FILES): build.xml AndroidManifest.xml
 	$(ANDROID) update project -p . -t "android-14"
 
-setup: local.properties
+setup: $(PROJECT_SETUP_FILES)
 
 jni/armeabi-v7a jni/arm64-v8a jni/x86 jni/x86_64 assets:
 	mkdir -p $@
@@ -42,9 +45,11 @@ assets/mconfig: machine.config assets
 stage-sdk: $(foreach lib,$(MONO_LIBS),jni/armeabi-v7a/$(lib)) $(foreach lib,$(MONO_LIBS),jni/arm64-v8a/$(lib)) \
 	$(foreach lib,$(MONO_LIBS),jni/x86/$(lib)) $(foreach lib,$(MONO_LIBS),jni/x86_64/$(lib)) assets/mconfig
 
+#This is hilarious, but we can't clean unless we got the 2 property files around
 .PHONY: clean
-clean:
+clean: $(PROJECT_SETUP_FILES)
 	$(ANT) clean
+	rm $(PROJECT_SETUP_FILES)
 
 .PHONY: deploy
 deploy: all

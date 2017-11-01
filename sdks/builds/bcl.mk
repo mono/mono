@@ -4,7 +4,7 @@
 
 .stamp-bcl-configure: $(TOP)/configure
 	mkdir -p $(TOP)/sdks/builds/bcl
-	cd $(TOP)/sdks/builds/bcl && $(TOP)/configure --with-monodroid=yes --with-monotouch=yes --with-profile4_x=no --with-mcs-docs=no --disable-btls --disable-nls --disable-boehm
+	cd $(TOP)/sdks/builds/bcl && $(TOP)/configure --with-monodroid=yes --with-monotouch=yes --with-profile4_x=no --with-wasm=yes --with-mcs-docs=no --disable-btls --disable-nls --disable-boehm
 	touch $@
 
 $(TOP)/sdks/out/bcl/monodroid $(TOP)/sdks/out/bcl/monotouch:
