@@ -4854,6 +4854,27 @@ namespace MonoTests.System
 			{
 			}
 		}
+
+		// https://bugzilla.xamarin.com/show_bug.cgi?id=57938
+		[Test]
+		public void NullFullNameForSpecificGenericTypes()
+		{
+			var ft = typeof(Bug59738Class<>).GetFields()[0].FieldType;
+
+			Assert.AreEqual(
+				"Bug59738Interface`1", ft.Name
+			);
+			Assert.AreEqual(
+				null, ft.FullName
+			);
+		}
+
+		interface Bug59738Interface<T> {
+		}
+
+		class Bug59738Class<U> {
+			public Bug59738Interface<U> Iface;
+		}
 	}
 
 	class UserType : Type
