@@ -79,7 +79,7 @@ namespace MonoTests.System {
 				false, "#2");
 			Assert.AreEqual (
 				attr.Inherited,
-				false, "#3");
+				true, "#3");
 		}
 
 		[Test]
@@ -113,7 +113,7 @@ namespace MonoTests.System {
 			var a = new AttributeUsageAttribute (AttributeTargets.Method);
 			Assert.AreEqual (AttributeTargets.Method, a.ValidOn);
 			Assert.False (a.AllowMultiple);
-			Assert.False (a.Inherited);
+			Assert.True (a.Inherited);
 		}
 
 		[Test]
@@ -121,10 +121,10 @@ namespace MonoTests.System {
 		{
 			var a = new AttributeUsageAttribute (AttributeTargets.Method | AttributeTargets.Class);
 			a.AllowMultiple = true;
-			a.Inherited = true;
+			a.Inherited = false;
 			Assert.AreEqual (AttributeTargets.Method | AttributeTargets.Class, a.ValidOn);
 			Assert.True (a.AllowMultiple);
-			Assert.True (a.Inherited);
+			Assert.False (a.Inherited);
 		}
 	}
 }
