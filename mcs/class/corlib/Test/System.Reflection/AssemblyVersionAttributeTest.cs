@@ -1,5 +1,5 @@
 //
-// MethodImplAttributeTest.cs
+// AssemblyVersionAttributeTest.cs
 //
 // Authors:
 //  Alexander Köplinger (alkpli@microsoft.com)
@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -30,23 +30,22 @@ using System;
 using System.Threading;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Runtime.CompilerServices;
 using NUnit.Framework;
 
-namespace MonoTests.System.Runtime.CompilerServices {
+namespace MonoTests.System.Reflection {
 
 	/// <summary>
-	/// Summary description for MethodImplAttributeTest.
+	/// Summary description for AssemblyVersionAttributeTest.
 	/// </summary>
 	[TestFixture]
-	public class MethodImplAttributeTest
+	public class AssemblyVersionAttributeTest
 	{
 #if !MOBILE
 		private AssemblyBuilder dynAssembly;
 		AssemblyName dynAsmName = new AssemblyName ();
-		MethodImplAttribute attr;
+		AssemblyVersionAttribute attr;
 		
-		public MethodImplAttributeTest ()
+		public AssemblyVersionAttributeTest ()
 		{
 			//create a dynamic assembly with the required attribute
 			//and check for the validity
@@ -58,23 +57,23 @@ namespace MonoTests.System.Runtime.CompilerServices {
 				);
 
 			// Set the required Attribute of the assembly.
-			Type attribute = typeof (MethodImplAttribute);
+			Type attribute = typeof (AssemblyVersionAttribute);
 			ConstructorInfo ctrInfo = attribute.GetConstructor (
-				new Type [] { typeof (MethodImplOptions) }
+				new Type [] { typeof (string) }
 				);
 			CustomAttributeBuilder attrBuilder =
-				new CustomAttributeBuilder (ctrInfo, new object [1] { MethodImplOptions.InternalCall });
+				new CustomAttributeBuilder (ctrInfo, new object [1] { "1.2.3.4" });
 			dynAssembly.SetCustomAttribute (attrBuilder);
 			object [] attributes = dynAssembly.GetCustomAttributes (true);
-			attr = attributes [0] as MethodImplAttribute;
+			attr = attributes [0] as AssemblyVersionAttribute;
 		}
 
 		[Test]
-		public void MethodImplTest ()
+		public void VersionTest ()
 		{
 			Assert.AreEqual (
-				attr.Value,
-				MethodImplOptions.InternalCall, "#1");
+				attr.Version,
+				"1.2.3.4", "#1");
 		}
 
 		[Test]
@@ -82,7 +81,7 @@ namespace MonoTests.System.Runtime.CompilerServices {
 		{
 			Assert.AreEqual (
 				attr.TypeId,
-				typeof (MethodImplAttribute), "#1"
+				typeof (AssemblyVersionAttribute), "#1"
 				);
 		}
 
@@ -98,29 +97,15 @@ namespace MonoTests.System.Runtime.CompilerServices {
 		public void MatchTestForFalse ()
 		{
 			Assert.AreEqual (
-				attr.Match (new MethodImplAttribute (MethodImplOptions.NoInlining)),
+				attr.Match (new AssemblyVersionAttribute ("2.0.0.0")),
 				false, "#1");
 		}
 #endif
 		[Test]
 		public void CtorTest ()
 		{
-			var a = new MethodImplAttribute (MethodImplOptions.InternalCall);
-			Assert.AreEqual (MethodImplOptions.InternalCall, a.Value);
-
-			a = new MethodImplAttribute ((short)1);
-			Assert.AreEqual ((MethodImplOptions)1, a.Value);
-
-			a = new MethodImplAttribute ();
-			Assert.AreEqual ((MethodImplOptions)0, a.Value);
-		}
-
-		[Test]
-		public void FieldsTest ()
-		{
-			var a = new MethodImplAttribute (MethodImplOptions.NoInlining);
-
-			Assert.AreEqual (MethodCodeType.IL, a.MethodCodeType);
+			var a = new AssemblyVersionAttribute ("some text");
+			Assert.AreEqual ("some text", a.Version);
 		}
 	}
 }

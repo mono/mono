@@ -1,5 +1,5 @@
 //
-// MethodImplAttributeTest.cs
+// AssemblyFlagsAttributeTest.cs
 //
 // Authors:
 //  Alexander Köplinger (alkpli@microsoft.com)
@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -30,23 +30,22 @@ using System;
 using System.Threading;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Runtime.CompilerServices;
 using NUnit.Framework;
 
-namespace MonoTests.System.Runtime.CompilerServices {
+namespace MonoTests.System.Reflection {
 
 	/// <summary>
-	/// Summary description for MethodImplAttributeTest.
+	/// Summary description for AssemblyFlagsAttributeTest.
 	/// </summary>
 	[TestFixture]
-	public class MethodImplAttributeTest
+	public class AssemblyFlagsAttributeTest
 	{
 #if !MOBILE
 		private AssemblyBuilder dynAssembly;
 		AssemblyName dynAsmName = new AssemblyName ();
-		MethodImplAttribute attr;
+		AssemblyFlagsAttribute attr;
 		
-		public MethodImplAttributeTest ()
+		public AssemblyFlagsAttributeTest ()
 		{
 			//create a dynamic assembly with the required attribute
 			//and check for the validity
@@ -58,23 +57,23 @@ namespace MonoTests.System.Runtime.CompilerServices {
 				);
 
 			// Set the required Attribute of the assembly.
-			Type attribute = typeof (MethodImplAttribute);
+			Type attribute = typeof (AssemblyFlagsAttribute);
 			ConstructorInfo ctrInfo = attribute.GetConstructor (
-				new Type [] { typeof (MethodImplOptions) }
+				new Type [] { typeof (AssemblyNameFlags) }
 				);
 			CustomAttributeBuilder attrBuilder =
-				new CustomAttributeBuilder (ctrInfo, new object [1] { MethodImplOptions.InternalCall });
+				new CustomAttributeBuilder (ctrInfo, new object [1] { AssemblyNameFlags.PublicKey | AssemblyNameFlags.Retargetable });
 			dynAssembly.SetCustomAttribute (attrBuilder);
 			object [] attributes = dynAssembly.GetCustomAttributes (true);
-			attr = attributes [0] as MethodImplAttribute;
+			attr = attributes [0] as AssemblyFlagsAttribute;
 		}
 
 		[Test]
-		public void MethodImplTest ()
+		public void AssemblyFlagsTest ()
 		{
 			Assert.AreEqual (
-				attr.Value,
-				MethodImplOptions.InternalCall, "#1");
+				attr.AssemblyFlags,
+				(int)(AssemblyNameFlags.PublicKey | AssemblyNameFlags.Retargetable), "#1");
 		}
 
 		[Test]
@@ -82,7 +81,7 @@ namespace MonoTests.System.Runtime.CompilerServices {
 		{
 			Assert.AreEqual (
 				attr.TypeId,
-				typeof (MethodImplAttribute), "#1"
+				typeof (AssemblyFlagsAttribute), "#1"
 				);
 		}
 
@@ -98,29 +97,21 @@ namespace MonoTests.System.Runtime.CompilerServices {
 		public void MatchTestForFalse ()
 		{
 			Assert.AreEqual (
-				attr.Match (new MethodImplAttribute (MethodImplOptions.NoInlining)),
+				attr.Match (new AssemblyFlagsAttribute (AssemblyNameFlags.None)),
 				false, "#1");
 		}
 #endif
 		[Test]
 		public void CtorTest ()
 		{
-			var a = new MethodImplAttribute (MethodImplOptions.InternalCall);
-			Assert.AreEqual (MethodImplOptions.InternalCall, a.Value);
+			var a = new AssemblyFlagsAttribute (AssemblyNameFlags.PublicKey);
+			Assert.AreEqual ((int)AssemblyNameFlags.PublicKey, a.AssemblyFlags);
 
-			a = new MethodImplAttribute ((short)1);
-			Assert.AreEqual ((MethodImplOptions)1, a.Value);
+			a = new AssemblyFlagsAttribute ((int)AssemblyNameFlags.PublicKey);
+			Assert.AreEqual ((int)AssemblyNameFlags.PublicKey, a.AssemblyFlags);
 
-			a = new MethodImplAttribute ();
-			Assert.AreEqual ((MethodImplOptions)0, a.Value);
-		}
-
-		[Test]
-		public void FieldsTest ()
-		{
-			var a = new MethodImplAttribute (MethodImplOptions.NoInlining);
-
-			Assert.AreEqual (MethodCodeType.IL, a.MethodCodeType);
+			a = new AssemblyFlagsAttribute ((uint)AssemblyNameFlags.PublicKey);
+			Assert.AreEqual ((uint)AssemblyNameFlags.PublicKey, a.Flags);
 		}
 	}
 }
