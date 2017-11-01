@@ -7,7 +7,7 @@ extfile=$4
 extexcfile=$5
 
 process_includes_1() {
-    sed -e '/^[ \t]*$/d' -e '/^[ \t]*#/d' $1 > $2
+    sed -e '/^[ \t]*$/d' -e '/^[ \t]*#/d' -e '/*/d' $1 > $2
     if cmp -s $1 $2; then
 	false
     else
@@ -16,6 +16,10 @@ process_includes_1() {
 	    cat $inc >> $2
 	    echo $outfile: $inc >> $outfile.makefrag
 	    echo $inc: >> $outfile.makefrag
+	done
+    sed -n '/*/p' $1 |
+	while read wildc; do
+        ls $wildc >> $2
 	done
     fi
 }
