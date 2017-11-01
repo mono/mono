@@ -81,7 +81,7 @@ _android_$(1)_CONFIGURE_FLAGS= \
 	$$(NDK_DIR)/build/tools/make-standalone-toolchain.sh  --platform=$(2) --arch=$(1) --install-dir=$$(TOP)/sdks/builds/toolchains/android-$(1) --toolchain=$(4)
 	touch $$@
 
-android-toolchain:: .stamp-android-$(1)-toolchain
+android-toolchain: .stamp-android-$(1)-toolchain
 
 .stamp-android-$(1)-configure: $$(TOP)/configure .stamp-android-$(1)-toolchain
 	mkdir -p $$(TOP)/sdks/builds/android-$(1)
