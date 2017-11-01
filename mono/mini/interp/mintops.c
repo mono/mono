@@ -6,6 +6,8 @@
  *   Bernie Solomon (bernard@ugsolutions.com)
  *
  */
+#include "config.h"
+#ifndef DISABLE_INTERPRETER
 #include <glib.h>
 #include <stdio.h>
 #include "mintops.h"
@@ -118,4 +120,5 @@ mono_interp_dis_mintop(const guint16 *base, const guint16 *ip)
 
 	return ip + len;
 }
+#endif
 

@@ -1920,17 +1920,25 @@ mono_main (int argc, char* argv[])
 		} else if (strcmp (argv [i], "--nollvm") == 0){
 			mono_use_llvm = FALSE;
 		} else if ((strcmp (argv [i], "--interpreter") == 0) || !strcmp (argv [i], "--interp")) {
-#ifdef ENABLE_INTERPRETER
+#ifndef DISABLE_INTERPRETER
 			mono_use_interpreter = TRUE;
 #else
 			fprintf (stderr, "Mono Warning: --interpreter not enabled in this runtime.\n");
 #endif
+#if !defined(TARGET_AMD64) && !defined(TARGET_ARM) && !defined(TARGET_ARM64)
+			fprintf (stderr, "Mono Error: --interpreter not supported on this architecture.\n");
+			return 1;
+#endif
 		} else if (strncmp (argv [i], "--interp=", 9) == 0) {
-#ifdef ENABLE_INTERPRETER
+#ifndef DISABLE_INTERPRETER
 			mono_use_interpreter = TRUE;
 			mono_interp_parse_options (argv [i] + 9);
 #else
 			fprintf (stderr, "Mono Warning: --interp= not enabled in this runtime.\n");
+#endif
+#if !defined(TARGET_AMD64) && !defined(TARGET_ARM) && !defined(TARGET_ARM64)
+			fprintf (stderr, "Mono Error: --interpreter not supported on this architecture.\n");
+			return 1;
 #endif
 		} else if (strncmp (argv [i], "--assembly-loader=", strlen("--assembly-loader=")) == 0) {
 			gchar *arg = argv [i] + strlen ("--assembly-loader=");
@@ -2074,7 +2082,7 @@ mono_main (int argc, char* argv[])
 	case DO_SINGLE_METHOD_REGRESSION:
 		mono_do_single_method_regression = TRUE;
 	case DO_REGRESSION:
-#ifdef ENABLE_INTERPRETER
+#ifndef DISABLE_INTERPRETER
 		if (mono_use_interpreter) {
 			if (mono_interp_regression_list (2, argc -i, argv + i)) {
 				g_print ("Regression ERRORS!\n");
