@@ -17,9 +17,33 @@ process_includes_1() {
 	    echo $outfile: $inc >> $outfile.makefrag
 	    echo $inc: >> $outfile.makefrag
 	done
+
+    # expand wildcards
     sed -n '/*/p' $1 |
 	while read wildc; do
-        ls $wildc >> $2
+        # ignore comments
+        if [[ $wildc = \#* ]] ; then
+            continue
+        fi
+        # quick syntax to exclude files:
+        # ../../../MyDir/*.cs:FileToExclude1.cs,FileToExclude2.cs
+        wc=`echo $wildc | cut -d \: -f 1` # ../../../MyDir/*.cs
+        qexc=`echo $wildc | cut -d \: -f 2` # FileToExclude1.cs,FileToExclude2.cs
+
+        if [ "$wc" == "$qexc" ]; then
+            # no quick excludes - just expand the wildcard
+            ls $wildc >> $2
+        else
+            wcdir=`echo $wildc | cut -d \* -f 1` # ../../../MyDir/
+            # Enumerate files from 'FileToExclude1.cs,FileToExclude2.cs'
+            # and save to $outfile.exc
+            IFS=',' read -r -a array <<< "$qexc"
+            for element in "${array[@]}"
+            do
+                echo "$wcdir$element" >> $outfile.exc
+            done
+            ls $wc >> $2
+        fi
 	done
     fi
 }
