@@ -5,7 +5,6 @@
 // (C) 2004 Ximian, Inc. http://www.ximian.com
 //
 
-#if !MOBILE
 using System;
 using System.Threading;
 using System.Reflection;
@@ -20,6 +19,7 @@ namespace MonoTests.System.Reflection {
 	[TestFixture]
 	public class AssemblyCopyrightAttributeTest
 	{
+#if !MOBILE
 		private AssemblyBuilder dynAssembly;
 		AssemblyName dynAsmName = new AssemblyName ();
 		AssemblyCopyrightAttribute attr;
@@ -79,7 +79,14 @@ namespace MonoTests.System.Reflection {
 				attr.Match (new AssemblyCopyrightAttribute ("imian")),
 				false, "#1");
 		}
+#endif
+
+		[Test]
+		public void CtorTest ()
+		{
+			var a = new AssemblyCopyrightAttribute ("abcd");
+			Assert.AreEqual ("abcd", a.Copyright);
+		}
 	}
 }
 
-#endif

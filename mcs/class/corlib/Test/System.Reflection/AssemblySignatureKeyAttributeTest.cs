@@ -1,5 +1,5 @@
 //
-// MethodImplAttributeTest.cs
+// AssemblySignatureKeyAttributeTest.cs
 //
 // Authors:
 //  Alexander Köplinger (alkpli@microsoft.com)
@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -30,23 +30,22 @@ using System;
 using System.Threading;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Runtime.CompilerServices;
 using NUnit.Framework;
 
-namespace MonoTests.System.Runtime.CompilerServices {
+namespace MonoTests.System.Reflection {
 
 	/// <summary>
-	/// Summary description for MethodImplAttributeTest.
+	/// Summary description for AssemblySignatureKeyAttributeTest.
 	/// </summary>
 	[TestFixture]
-	public class MethodImplAttributeTest
+	public class AssemblySignatureKeyAttributeTest
 	{
 #if !MOBILE
 		private AssemblyBuilder dynAssembly;
 		AssemblyName dynAsmName = new AssemblyName ();
-		MethodImplAttribute attr;
+		AssemblySignatureKeyAttribute attr;
 		
-		public MethodImplAttributeTest ()
+		public AssemblySignatureKeyAttributeTest ()
 		{
 			//create a dynamic assembly with the required attribute
 			//and check for the validity
@@ -58,23 +57,26 @@ namespace MonoTests.System.Runtime.CompilerServices {
 				);
 
 			// Set the required Attribute of the assembly.
-			Type attribute = typeof (MethodImplAttribute);
+			Type attribute = typeof (AssemblySignatureKeyAttribute);
 			ConstructorInfo ctrInfo = attribute.GetConstructor (
-				new Type [] { typeof (MethodImplOptions) }
+				new Type [] { typeof (string), typeof (string) }
 				);
 			CustomAttributeBuilder attrBuilder =
-				new CustomAttributeBuilder (ctrInfo, new object [1] { MethodImplOptions.InternalCall });
+				new CustomAttributeBuilder (ctrInfo, new object [2] { "PublicKey", "CounterSignature" });
 			dynAssembly.SetCustomAttribute (attrBuilder);
 			object [] attributes = dynAssembly.GetCustomAttributes (true);
-			attr = attributes [0] as MethodImplAttribute;
+			attr = attributes [0] as AssemblySignatureKeyAttribute;
 		}
 
 		[Test]
-		public void MethodImplTest ()
+		public void SignatureKeyTest ()
 		{
 			Assert.AreEqual (
-				attr.Value,
-				MethodImplOptions.InternalCall, "#1");
+				attr.PublicKey,
+				"PublicKey", "#1");
+			Assert.AreEqual (
+				attr.Countersignature,
+				"CounterSignature", "#2");
 		}
 
 		[Test]
@@ -82,7 +84,7 @@ namespace MonoTests.System.Runtime.CompilerServices {
 		{
 			Assert.AreEqual (
 				attr.TypeId,
-				typeof (MethodImplAttribute), "#1"
+				typeof (AssemblySignatureKeyAttribute), "#1"
 				);
 		}
 
@@ -98,29 +100,16 @@ namespace MonoTests.System.Runtime.CompilerServices {
 		public void MatchTestForFalse ()
 		{
 			Assert.AreEqual (
-				attr.Match (new MethodImplAttribute (MethodImplOptions.NoInlining)),
+				attr.Match (new AssemblySignatureKeyAttribute ("OtherPublicKey", "OtherCounterSignature")),
 				false, "#1");
 		}
 #endif
 		[Test]
 		public void CtorTest ()
 		{
-			var a = new MethodImplAttribute (MethodImplOptions.InternalCall);
-			Assert.AreEqual (MethodImplOptions.InternalCall, a.Value);
-
-			a = new MethodImplAttribute ((short)1);
-			Assert.AreEqual ((MethodImplOptions)1, a.Value);
-
-			a = new MethodImplAttribute ();
-			Assert.AreEqual ((MethodImplOptions)0, a.Value);
-		}
-
-		[Test]
-		public void FieldsTest ()
-		{
-			var a = new MethodImplAttribute (MethodImplOptions.NoInlining);
-
-			Assert.AreEqual (MethodCodeType.IL, a.MethodCodeType);
+			var a = new AssemblySignatureKeyAttribute ("some text", "some other text");
+			Assert.AreEqual ("some text", a.PublicKey);
+			Assert.AreEqual ("some other text", a.Countersignature);
 		}
 	}
 }
