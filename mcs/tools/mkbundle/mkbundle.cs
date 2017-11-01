@@ -931,8 +931,8 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 				Console.WriteLine("Compiling:");
 
 			if (style == "windows") {
-				ToolchainProgram compiler = GetCCompiler ();
 				bool staticLinkCRuntime = GetEnv ("VCCRT", "MD") != "MD";
+				ToolchainProgram compiler = GetCCompiler (static_link, staticLinkCRuntime);
 				if (!nomain || custom_main != null) {
 					string cl_cmd = GetCompileAndLinkCommand (compiler, temp_c, temp_o, custom_main, static_link, staticLinkCRuntime, output);
 					Execute (cl_cmd);
@@ -2024,13 +2024,19 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 				string toolPath = "";
 				if (!string.IsNullOrEmpty (vcSDK?.InstallationFolder)) {
 					string toolsVersionFilePath = Path.Combine (vcSDK.InstallationFolder, "Auxiliary", "Build", "Microsoft.VCToolsVersion.default.txt");
-					string toolsVersion = File.ReadAllLines (toolsVersionFilePath).ElementAt (0).Trim ();
-					string toolsVersionPath = Path.Combine (vcSDK.InstallationFolder, "Tools", "MSVC", toolsVersion);
+					if (File.Exists (toolsVersionFilePath)) {
+						var lines = File.ReadAllLines (toolsVersionFilePath);
+						if (lines.Length > 0) {
+							string toolsVersionPath = Path.Combine (vcSDK.InstallationFolder, "Tools", "MSVC", lines [0].Trim ());
+							if (Target64BitApplication ())
+								toolPath = Path.Combine (toolsVersionPath, "bin", "HostX64", "x64", tool);
+							else
+								toolPath = Path.Combine (toolsVersionPath, "bin", "HostX86", "x86", tool);
 
-					if (Target64BitApplication ())
-						toolPath = Path.Combine (toolsVersionPath, "bin", "HostX64", "x64", tool);
-					else
-						toolPath = Path.Combine (toolsVersionPath, "bin", "HostX86", "x86", tool);
+							if (!File.Exists (toolPath))
+								toolPath = "";
+						}
+					}
 				}
 
 				toolchain = new ToolchainProgram (tool, toolPath, vcSDK);
@@ -2104,10 +2110,17 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 				string clangPath = "";
 				if (!string.IsNullOrEmpty (vcSDK?.InstallationFolder)) {
 					string clangVersionFilePath = Path.Combine (vcSDK.InstallationFolder, "Auxiliary", "Build", "Microsoft.ClangC2Version.default.txt");
-					string clangVersion = File.ReadAllLines (clangVersionFilePath).ElementAt (0).Trim ();
-					string clangVersionPath = Path.Combine (vcSDK.InstallationFolder, "Tools", "ClangC2", clangVersion);
+					if (File.Exists (clangVersionFilePath)) {
+						var lines = File.ReadAllLines (clangVersionFilePath);
+						if (lines.Length > 0) {
+							string clangVersionPath = Path.Combine (vcSDK.InstallationFolder, "Tools", "ClangC2", lines [0].Trim ());
 
-					clangPath = Path.Combine (clangVersionPath, "bin", Target64BitApplication () ? "HostX64" : "HostX86", "clang.exe");
+							clangPath = Path.Combine (clangVersionPath, "bin", Target64BitApplication () ? "HostX64" : "HostX86", "clang.exe");
+
+							if (!File.Exists (clangPath))
+								clangPath = "";
+						}
+					}
 				}
 
 				toolchain = new ToolchainProgram ("clang.exe", clangPath, vcSDK);
@@ -2275,6 +2288,17 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 
 	static void AddGCCSystemLibraries (ToolchainProgram program, bool staticLinkMono, bool staticLinkCRuntime, List<string> linkerArgs)
 	{
+		if (staticLinkMono) {
+			linkerArgs.Add ("-lws2_32");
+			linkerArgs.Add ("-lmswsock");
+			linkerArgs.Add ("-lpsapi");
+			linkerArgs.Add ("-loleaut32");
+			linkerArgs.Add ("-lole32");
+			linkerArgs.Add ("-lwinmm");
+			linkerArgs.Add ("-ladvapi32");
+			linkerArgs.Add ("-lversion");
+		}
+
 		if (MakeBundle.compress)
 			linkerArgs.Add ("-lz");
 
@@ -2291,27 +2315,56 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		return;
 	}
 
+	static string GetMonoLibraryName (ToolchainProgram program, bool staticLinkMono, bool staticLinkCRuntime)
+	{
+		bool vsToolChain = program.IsVSToolChain;
+		string monoLibrary = GetEnv ("LIBMONO", "");
+
+		if (monoLibrary.Length == 0) {
+			if (staticLinkMono)
+				monoLibrary = vsToolChain ? "libmono-static-sgen" : "monosgen-2.0";
+			else
+				monoLibrary = vsToolChain ? "mono-2.0-sgen" : "monosgen-2.0";
+		}
+
+		return monoLibrary;
+	}
+
+	static string GetMonoLibraryPath (ToolchainProgram program, bool staticLinkMono, bool staticLinkCRuntime)
+	{
+		string monoLibraryDir = Path.Combine (GetMonoDir (), "lib");
+		string monoLibrary = GetMonoLibraryName (program, staticLinkMono, staticLinkCRuntime);
+
+		if (Path.IsPathRooted (monoLibrary))
+			return monoLibrary;
+
+		if (program.IsVSToolChain) {
+			if (!monoLibrary.EndsWith (".lib", StringComparison.OrdinalIgnoreCase))
+				monoLibrary = monoLibrary + ".lib";
+		} else {
+			if (!monoLibrary.StartsWith ("lib", StringComparison.OrdinalIgnoreCase))
+				monoLibrary = "lib" + monoLibrary;
+			if (staticLinkMono) {
+				if (!monoLibrary.EndsWith (".dll.a", StringComparison.OrdinalIgnoreCase))
+					monoLibrary = monoLibrary + ".dll.a";
+			} else {
+				if (!monoLibrary.EndsWith (".a", StringComparison.OrdinalIgnoreCase))
+					monoLibrary = monoLibrary + ".a";
+			}
+		}
+
+		return Path.Combine (monoLibraryDir, monoLibrary);
+	}
+
 	static void AddMonoLibraries (ToolchainProgram program, bool staticLinkMono, bool staticLinkCRuntime, List<string> linkerArguments)
 	{
 		bool vsToolChain = program.IsVSToolChain;
 		string libPrefix = !vsToolChain ? "-l" : "";
 		string libExtension = vsToolChain ? ".lib" : "";
-		string monoLibrary = GetEnv ("LIBMONO", "");
-
-		if (monoLibrary.Length == 0) {
-			if (staticLinkMono) {
-				if (program.IsGCCToolChain) {
-					Console.WriteLine (	@"Warning: Static linking using default Visual Studio build libmono-static-sgen" +
-								@"might cause link errors when using GCC toolchain.");
-				}
-				monoLibrary = "libmono-static-sgen";
-			} else {
-				monoLibrary = "mono-2.0-sgen";
-			}
-		}
+		string monoLibrary = GetMonoLibraryName (program, staticLinkMono, staticLinkCRuntime);
 
 		if (!Path.IsPathRooted (monoLibrary)) {
-			if (!monoLibrary.EndsWith (libExtension))
+			if (!monoLibrary.EndsWith (libExtension, StringComparison.OrdinalIgnoreCase))
 				monoLibrary = monoLibrary + libExtension;
 
 			linkerArguments.Add (libPrefix + monoLibrary);
@@ -2497,37 +2550,49 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			return new ToolchainProgram ("AS", assembler);
 
 		var vcClangAssembler = VisualStudioSDKToolchainHelper.GetInstance ().GetVCClangCompiler ();
-		if (vcClangAssembler == null) {
+		if (vcClangAssembler == null || vcClangAssembler.Path.Length == 0) {
 			// Fallback to GNU assembler if clang for VS was not installed.
 			// Why? because mkbundle generates GNU assembler not compilable by VS tools like ml.
-			Console.WriteLine (@"Warning: Couldn't find installed Visual Studio SDK, fallback to as.exe and default environment.");
-			return new ToolchainProgram ("AS", "as.exe");
+			Console.WriteLine (@"Warning: Couldn't find installed Visual Studio SDK (Clang with Microsoft CodeGen), fallback to mingw as.exe and default environment.");
+			string asCompiler = Target64BitApplication () ? "x86_64-w64-mingw32-as.exe" : "i686-w64-mingw32-as.exe";
+			return new ToolchainProgram (asCompiler, asCompiler);
 		}
 
 		return vcClangAssembler;
 	}
 
-	static ToolchainProgram GetCCompiler ()
+	static ToolchainProgram GetCCompiler (bool staticLinkMono, bool staticLinkCRuntime)
 	{
+		ToolchainProgram program = null;
+
 		// First check if env is set (old behavior) and use that.
 		string compiler = GetEnv ("CC", "");
-		if (compiler.Length != 0)
-			return new ToolchainProgram ("CC", compiler);
-
-		var vcCompiler = VisualStudioSDKToolchainHelper.GetInstance ().GetVCCompiler ();
-		if (vcCompiler == null) {
-			// Fallback to cl.exe if VC compiler was not installed.
-			Console.WriteLine (@"Warning: Couldn't find installed Visual Studio SDK, fallback to cl.exe and default environment.");
-			return new ToolchainProgram ("cl.exe", "cl.exe");
+		if (compiler.Length != 0) {
+			program = new ToolchainProgram ("CC", compiler);
+		} else {
+			program = VisualStudioSDKToolchainHelper.GetInstance ().GetVCCompiler ();
+			if (program == null || program.Path.Length == 0) {
+				// Fallback to cl.exe if VC compiler was not installed.
+				Console.WriteLine (@"Warning: Couldn't find installed Visual Studio SDK, fallback to cl.exe and default environment.");
+				program = new ToolchainProgram ("cl.exe", "cl.exe");
+			}
 		}
 
-		return vcCompiler;
+		// Check if we have needed Mono library for targeted toolchain.
+		string monoLibraryPath = GetMonoLibraryPath (program, staticLinkMono, staticLinkCRuntime);
+		if (!File.Exists (monoLibraryPath) && program.IsVSToolChain) {
+			Console.WriteLine (@"Warning: Couldn't find installed matching Mono library: {0}, fallback to mingw gcc.exe and default environment.", monoLibraryPath);
+			string gccCompiler = Target64BitApplication () ? "x86_64-w64-mingw32-gcc.exe" : "i686-w64-mingw32-gcc.exe";
+			program = new ToolchainProgram (gccCompiler, gccCompiler);
+		}
+
+		return program;
 	}
 
 	static ToolchainProgram GetLibrarian ()
 	{
 		ToolchainProgram vcLibrarian = VisualStudioSDKToolchainHelper.GetInstance ().GetVCLibrarian ();
-		if (vcLibrarian == null) {
+		if (vcLibrarian == null || vcLibrarian.Path.Length == 0) {
 			// Fallback to lib.exe if VS was not installed.
 			Console.WriteLine (@"Warning: Couldn't find installed Visual Studio SDK, fallback to lib.exe and default environment.");
 			return new ToolchainProgram ("lib.exe", "lib.exe");

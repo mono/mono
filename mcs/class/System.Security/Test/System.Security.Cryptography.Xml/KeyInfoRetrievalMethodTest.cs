@@ -7,6 +7,7 @@
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
+#if !MOBILE
 
 using System;
 using System.Security.Cryptography;
@@ -82,3 +83,4 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 	}
 }
+#endif

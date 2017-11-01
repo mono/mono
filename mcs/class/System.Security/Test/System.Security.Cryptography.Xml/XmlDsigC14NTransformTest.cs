@@ -9,6 +9,7 @@
 // (C) 2003 Aleksey Sanin (aleksey@aleksey.com)
 // (C) 2004 Novell (http://www.novell.com)
 //
+#if !MOBILE
 
 using System;
 using System.IO;
@@ -530,3 +531,4 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 	}    
 }
+#endif

@@ -18,6 +18,7 @@
 //	This file is simply replaced C14N->ExcC14N, and then replaced expected
 //	output XML. So, they are *not* from c14n specification.
 //
+#if !MOBILE
 
 
 using System;
@@ -594,4 +595,5 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 	}    
 }
+#endif
 

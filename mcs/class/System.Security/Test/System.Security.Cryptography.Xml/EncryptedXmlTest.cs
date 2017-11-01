@@ -6,7 +6,7 @@
 //
 // Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
-
+#if !MOBILE
 
 using System;
 using System.Collections;
@@ -295,3 +295,4 @@ namespace MonoTests.System.Security.Cryptography.Xml
 		}
 	}
 }
+#endif
