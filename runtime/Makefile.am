@@ -72,6 +72,10 @@ if INSTALL_UNREAL
 build_profiles += unreal
 endif
 
+if INSTALL_WASM
+build_profiles += wasm
+endif
+
 test_profiles = $(filter-out binary_reference_assemblies monodroid_tools,$(build_profiles))
 
 if BUILD_MCS
