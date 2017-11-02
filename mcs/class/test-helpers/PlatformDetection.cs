@@ -7,6 +7,6 @@ namespace System
 		public static readonly bool IsWinRT = false;
 		public static readonly bool IsFullFramework = true;
 		public static readonly bool IsWindowsNanoServer = false;
-		public static readonly bool IsNonZeroLowerBoundArraySupported = true;
+		public static bool IsNonZeroLowerBoundArraySupported => true;
 	}
 }
