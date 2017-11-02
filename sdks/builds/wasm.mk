@@ -27,7 +27,7 @@ WASM_INTERP_CONFIGURE_FLAGS = \
 #configure step
 .stamp-wasm-interp-configure: $(TOP)/configure .stamp-wasm-interp-toolchain
 	mkdir -p $(TOP)/sdks/builds/wasm-interp
-	cd $(TOP)/sdks/builds/wasm-interp && source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_set_env.sh && CFLAGS="-Os -g" emconfigure $(TOP)/configure $(WASM_INTERP_CONFIGURE_FLAGS)
+	cd $(TOP)/sdks/builds/wasm-interp && source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && CFLAGS="-Os -g" emconfigure $(TOP)/configure $(WASM_INTERP_CONFIGURE_FLAGS)
 	@touch $@
 
 package-wasm-interp:
