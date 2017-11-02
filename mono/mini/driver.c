@@ -1568,6 +1568,27 @@ apply_root_domain_configuration_file_bindings (MonoDomain *domain, char *root_do
 
 }
 
+static int
+mono_enable_interp (const char *opts)
+{
+#ifndef DISABLE_INTERPRETER
+	mono_use_interpreter = TRUE;
+	if (opts)
+		mono_interp_parse_options (opts);
+#else
+	g_printerr ("Mono Warning: --interpreter not enabled in this runtime.\n");
+#endif
+#ifdef MONO_CROSS_COMPILE
+	g_printerr ("Mono Error: --interpreter on cross-compile runtimes not supported\n");
+	return 1;
+#endif
+#if !defined(TARGET_AMD64) && !defined(TARGET_ARM) && !defined(TARGET_ARM64)
+	g_printerr ("Mono Error: --interpreter not supported on this architecture.\n");
+	return 1;
+#endif
+	return 0;
+}
+
 /**
  * mono_main:
  * \param argc number of arguments in the argv array
@@ -1920,26 +1941,11 @@ mono_main (int argc, char* argv[])
 		} else if (strcmp (argv [i], "--nollvm") == 0){
 			mono_use_llvm = FALSE;
 		} else if ((strcmp (argv [i], "--interpreter") == 0) || !strcmp (argv [i], "--interp")) {
-#ifndef DISABLE_INTERPRETER
-			mono_use_interpreter = TRUE;
-#else
-			fprintf (stderr, "Mono Warning: --interpreter not enabled in this runtime.\n");
-#endif
-#if !defined(TARGET_AMD64) && !defined(TARGET_ARM) && !defined(TARGET_ARM64)
-			fprintf (stderr, "Mono Error: --interpreter not supported on this architecture.\n");
-			return 1;
-#endif
+			if (mono_enable_interp (NULL))
+				return 1;
 		} else if (strncmp (argv [i], "--interp=", 9) == 0) {
-#ifndef DISABLE_INTERPRETER
-			mono_use_interpreter = TRUE;
-			mono_interp_parse_options (argv [i] + 9);
-#else
-			fprintf (stderr, "Mono Warning: --interp= not enabled in this runtime.\n");
-#endif
-#if !defined(TARGET_AMD64) && !defined(TARGET_ARM) && !defined(TARGET_ARM64)
-			fprintf (stderr, "Mono Error: --interpreter not supported on this architecture.\n");
-			return 1;
-#endif
+			if (mono_enable_interp (argv [i] + 9))
+				return 1;
 		} else if (strncmp (argv [i], "--assembly-loader=", strlen("--assembly-loader=")) == 0) {
 			gchar *arg = argv [i] + strlen ("--assembly-loader=");
 			if (strcmp (arg, "strict") == 0)
