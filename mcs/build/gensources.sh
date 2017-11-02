@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/usr/bin/env bash
 
 outfile=$1
 incfile=$2

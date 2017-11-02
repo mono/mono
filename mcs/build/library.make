@@ -289,7 +289,7 @@ PROFILE_excludes = $(firstword $(if $(PROFILE_PLATFORM),$(wildcard $(PROFILE_PLA
 # We don't include it in the dependencies since it isn't always created
 sourcefile = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).sources
 $(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(topdir)/build/gensources.sh $(depsdir)/.stamp
-	$(SHELL) $(topdir)/build/gensources.sh $@ '$(PROFILE_sources)' '$(PROFILE_excludes)'
+	$(topdir)/build/gensources.sh $@ '$(PROFILE_sources)' '$(PROFILE_excludes)'
 
 library_CLEAN_FILES += $(sourcefile)
 
