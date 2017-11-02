@@ -402,6 +402,11 @@ llvm_sources = \
 endif
 endif
 
+if DISABLE_INTERPRETER
+interp_sources =	\
+	interp/interp.h	\
+	interp/interp-stubs.c
+else
 interp_sources =	\
 	interp/hacks.h		\
 	interp/interp.h	\
@@ -411,6 +416,7 @@ interp_sources =	\
 	interp/mintops.def	\
 	interp/mintops.c	\
 	interp/transform.c
+endif
 
 if ENABLE_LLVM
 llvm_runtime_sources = \

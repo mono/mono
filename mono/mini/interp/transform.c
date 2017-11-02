@@ -7,9 +7,6 @@
  * Copyright (c) 2004.
  */
 
-#include "config.h"
-#undef MONO_INSIDE_RUNTIME /* HACK: remove me */
-#ifndef DISABLE_INTERPRETER
 #include <string.h>
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/debug-helpers.h>
@@ -4543,5 +4540,4 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Mon
 
 	return NULL;
 }
-#endif
 
