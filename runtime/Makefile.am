@@ -56,6 +56,14 @@ if INSTALL_TESTING_AOT_FULL
 build_profiles += testing_aot_full
 endif
 
+if INSTALL_UNITYJIT
+build_profiles += unityjit
+endif
+
+if INSTALL_UNITYAOT
+build_profiles += unityaot
+endif
+
 if INSTALL_WINAOT
 build_profiles += winaot
 endif

@@ -23,13 +23,15 @@ LIB_MCS_FLAGS = $(SIGN_FLAGS) $(EXTRA_LIB_MCS_FLAGS)
 ifeq ($(PROFILE),xammac_net_4_5)
 LIB_REFS += System.Web.Services
 else ifeq (2.1, $(FRAMEWORK_VERSION))
+ifneq ($(PROFILE),unityaot)
 LIB_REFS += System.Web.Services
+endif
 else
 LIB_REFS += System.Web
 endif
 
 # profiles which build a System.Drawing.dll in the repo
-REPO_DRAWING_DEP := $(filter net_4_x orbis winaot unreal wasm, $(PROFILE))
+REPO_DRAWING_DEP := $(filter net_4_x orbis winaot unityaot unityjit unreal wasm, $(PROFILE))
 
 ifdef REPO_DRAWING_DEP
 LIB_REFS += System.Drawing

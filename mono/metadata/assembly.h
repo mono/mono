@@ -114,6 +114,7 @@ MONO_API void	      mono_register_machine_config (const char *config_xml);
 MONO_API void          mono_set_rootdir (void);
 MONO_API void          mono_set_dirs (const char *assembly_dir, const char *config_dir);
 MONO_API void          mono_set_assemblies_path (const char* path);
+MONO_API void          mono_set_assemblies_path_null_separated(const char* path);
 MONO_END_DECLS
 
 #endif

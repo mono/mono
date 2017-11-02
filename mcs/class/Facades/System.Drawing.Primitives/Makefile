@@ -23,7 +23,7 @@ EMBEDDED_DRAWING_DEP := $(filter xammac_net_4_5 testing_aot_full testing_aot_hyb
 ifndef EMBEDDED_DRAWING_DEP
 
 # profiles which build a System.Drawing.dll in the repo
-REPO_DRAWING_DEP := $(filter net_4_x orbis winaot unreal wasm, $(PROFILE))
+REPO_DRAWING_DEP := $(filter net_4_x orbis winaot unityaot unityjit unreal wasm, $(PROFILE))
 
 ifdef REPO_DRAWING_DEP
 LIB_REFS += System.Drawing

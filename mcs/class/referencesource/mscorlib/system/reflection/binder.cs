@@ -52,7 +52,7 @@ namespace System.Reflection {
 
         public abstract void ReorderArgumentArray(ref Object[] args, Object state);
 
-#if !FEATURE_COMINTEROP
+#if !FEATURE_COMINTEROP && !UNITY
         // CanChangeType
         // This method checks whether the value can be converted into the property type.
         public virtual bool CanChangeType(Object value,Type type,CultureInfo culture)

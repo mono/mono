@@ -28,6 +28,7 @@ namespace Mono.Util
 {
 	[Conditional("MONOTOUCH")]
 	[Conditional("FULL_AOT_RUNTIME")]
+	[Conditional("UNITY")]
 	[AttributeUsage (AttributeTargets.Method)]
 	sealed class MonoPInvokeCallbackAttribute : Attribute
 	{

@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EmbeddedSamples", "EmbeddedSamples", "{5FE09AA5-C3C9-45EA-A323-36A11B653CEC}"
 EndProject
@@ -194,6 +194,11 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmini", "libmini.vcxproj", "{88D2EB79-592D-45F8-B849-AE021C1D983A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmono-dynamic", "libmono-dynamic.vcxproj", "{675F4175-FFB1-480D-AD36-F397578844D4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CF169633-14AF-4DB8-BEF9-26A6C8FE4C90} = {CF169633-14AF-4DB8-BEF9-26A6C8FE4C90}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libgcbdwgc", "libgcbdwgc.vcxproj", "{CF169633-14AF-4DB8-BEF9-26A6C8FE4C90}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -411,6 +416,14 @@ Global
 		{675F4175-FFB1-480D-AD36-F397578844D4}.Release|Win32.Build.0 = Release|Win32
 		{675F4175-FFB1-480D-AD36-F397578844D4}.Release|x64.ActiveCfg = Release|x64
 		{675F4175-FFB1-480D-AD36-F397578844D4}.Release|x64.Build.0 = Release|x64
+		{CF169633-14AF-4DB8-BEF9-26A6C8FE4C90}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CF169633-14AF-4DB8-BEF9-26A6C8FE4C90}.Debug|Win32.Build.0 = Debug|Win32
+		{CF169633-14AF-4DB8-BEF9-26A6C8FE4C90}.Debug|x64.ActiveCfg = Debug|x64
+		{CF169633-14AF-4DB8-BEF9-26A6C8FE4C90}.Debug|x64.Build.0 = Debug|x64
+		{CF169633-14AF-4DB8-BEF9-26A6C8FE4C90}.Release|Win32.ActiveCfg = Release|Win32
+		{CF169633-14AF-4DB8-BEF9-26A6C8FE4C90}.Release|Win32.Build.0 = Release|Win32
+		{CF169633-14AF-4DB8-BEF9-26A6C8FE4C90}.Release|x64.ActiveCfg = Release|x64
+		{CF169633-14AF-4DB8-BEF9-26A6C8FE4C90}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -449,8 +462,10 @@ Global
 		{DC50997D-8A0D-4EB6-849B-9D7FBC39CE53} = {DE3617B4-17A8-4E5F-A00F-BA43D956881F}
 		{88D2EB79-592D-45F8-B849-AE021C1D983A} = {0EBA83B7-0EB4-4C83-A900-77300A97E8B1}
 		{675F4175-FFB1-480D-AD36-F397578844D4} = {DE3617B4-17A8-4E5F-A00F-BA43D956881F}
+		{CF169633-14AF-4DB8-BEF9-26A6C8FE4C90} = {21DF4C80-0EC9-4BFE-8552-2D47FCEF419A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E4974D6A-1C06-4A4A-BE57-FAE790743A90}
 		AMDCaProjectFile = C:\Users\Owner\Development\monogit\mono\msvc\CodeAnalyst\mono.caw
 		AMDCaPersistentStartup = mono
 		AMDCaPersistentConfig = Debug|Win32

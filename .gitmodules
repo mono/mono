@@ -58,3 +58,6 @@
 [submodule "external/api-snapshot"]
 	path = external/api-snapshot
 	url = git://github.com/mono/api-snapshot.git
+[submodule "external/bdwgc"]
+	path = external/bdwgc
+	url = git://github.com/Unity-Technologies/bdwgc.git

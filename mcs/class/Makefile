@@ -339,6 +339,26 @@ net_4_x_parallel_dirs := \
 	legacy/Mono.Cecil \
 	$(pcl_facade_dirs)
 
+unityjit_dirs := \
+	$(net_4_x_dirs) \
+	System.ComponentModel.Composition.4.5 \
+	I18N \
+	$(pcl_facade_dirs)
+
+unityaot_dirs := \
+	$(filter-out \
+		Mono.CSharp \
+		System.Data.Services.Client \
+		System.Net.Http.WinHttpHandler \
+		System.ServiceModel.Web \
+		System.ServiceModel \
+		System.Web.Services \
+		System.Reflection.Context \
+		System.Windows \
+		System.Xml.Serialization, $(mobile_common_dirs))	\
+	System.Drawing			\
+	$(pcl_facade_dirs)
+
 xbuild_2_0_dirs := \
 	Microsoft.Build.Framework	\
 	Microsoft.Build.Utilities	\
@@ -373,13 +393,15 @@ net_4_x_PARALLEL_SUBDIRS := $(net_4_x_parallel_dirs)
 xbuild_12_SUBDIRS := $(xbuild_4_0_dirs)
 xbuild_14_SUBDIRS := $(xbuild_4_0_dirs) Microsoft.NuGet.Build.Tasks
 winaot_SUBDIRS := $(winaot_dirs)
+unityjit_SUBDIRS := $(unityjit_dirs)
+unityaot_SUBDIRS := $(unityaot_dirs)
 orbis_SUBDIRS := $(orbis_dirs)
 unreal_SUBDIRS := $(unreal_dirs)
 wasm_SUBDIRS := $(wasm_dirs)
 
 include ../build/rules.make
 
-SUBDIRS = $(testing_aot_full_dirs) $(testing_aot_hybrid_dirs) $(monotouch_dirs) $(monodroid_dirs) $(monodroid_tools_dirs) $(xammac_dirs) $(net_4_x_dirs) $(net_4_x_parallel_dirs) $(xammac_net_4_5_SUBDIRS) $(unreal_dirs)
+SUBDIRS = $(testing_aot_full_dirs) $(testing_aot_hybrid_dirs) $(monotouch_dirs) $(monodroid_dirs) $(monodroid_tools_dirs) $(xammac_dirs) $(net_4_x_dirs) $(net_4_x_parallel_dirs) $(xammac_net_4_5_SUBDIRS) $(unityjit_dirs) $(unityaot_dirs) $(unreal_dirs)
 
 DIST_ONLY_SUBDIRS = dlr aot-compiler reference-assemblies $(xbuild_4_0_dirs) Microsoft.NuGet.Build.Tasks
 

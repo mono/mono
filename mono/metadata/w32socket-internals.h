@@ -63,6 +63,9 @@ mono_w32socket_cleanup (void);
 SOCKET
 mono_w32socket_accept (SOCKET s, struct sockaddr *addr, socklen_t *addrlen, gboolean blocking);
 
+SOCKET
+mono_w32socket_accept_internal (SOCKET s, struct sockaddr *addr, socklen_t *addrlen, gboolean blocking);
+
 int
 mono_w32socket_connect (SOCKET s, const struct sockaddr *name, int namelen, gboolean blocking);
 

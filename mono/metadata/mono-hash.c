@@ -32,6 +32,7 @@
 #include <glib.h>
 #include "mono-hash.h"
 #include "metadata/gc-internals.h"
+#include "metadata/il2cpp-compat-metadata.h"
 #include <mono/utils/checked-build.h>
 #include <mono/utils/mono-threads-coop.h>
 #include <mono/utils/unlocked.h>

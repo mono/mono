@@ -18,11 +18,20 @@ libgc_libs=$(monodir)/libgc/libmonogc.la
 libgc_static_libs=$(monodir)/libgc/libmonogc-static.la
 endif
 
+libbdwgc_libs=$(monodir)/external/bdwgc/libgc.la
+libbdwgc_static_libs=$(monodir)/external/bdwgc/libgc-static.la
+
 boehm_libs=	\
 	$(monodir)/mono/metadata/libmonoruntime.la	\
 	$(monodir)/mono/utils/libmonoutils.la \
 	$(GLIB_LIBS) $(LIBICONV) \
 	$(libgc_libs)
+
+bdwgc_libs=	\
+	$(monodir)/mono/metadata/libmonoruntimebdwgc.la	\
+	$(monodir)/mono/utils/libmonoutils.la \
+	$(GLIB_LIBS) $(LIBICONV) \
+	$(libbdwgc_libs)
 
 sgen_libs = \
 	$(monodir)/mono/metadata/libmonoruntimesgen.la	\
@@ -35,6 +44,12 @@ boehm_static_libs=	\
 	$(monodir)/mono/utils/libmonoutils.la \
 	$(GLIB_LIBS) $(LIBICONV) \
 	$(libgc_static_libs)
+
+bdwgc_static_libs=	\
+	$(monodir)/mono/metadata/libmonoruntimebdwgc-static.la	\
+	$(monodir)/mono/utils/libmonoutils.la \
+	$(GLIB_LIBS) $(LIBICONV) \
+	$(libbdwgc_static_libs)
 
 sgen_static_libs = \
 	$(monodir)/mono/metadata/libmonoruntimesgen-static.la	\
@@ -105,13 +120,26 @@ boehm_libraries = libmonoboehm-2.0.la
 boehm_static_libraries = libmini-static.la $(boehm_static_libs)
 boehm_binaries  = mono-boehm
 endif
+ 
+if SUPPORT_BDWGC
+bdwgc_libraries = libmonobdwgc-2.0.la
+bdwgc_static_libraries = libmini-static.la $(bdwgc_static_libs)
+bdwgc_binaries  = mono-bdwgc
+endif
 
 if SUPPORT_SGEN
 mono_bin_suffix = sgen
 libmono_suffix = sgen
-else
+endif
+
+if SUPPORT_BOEHM
 mono_bin_suffix = boehm
 libmono_suffix = boehm
+endif
+
+if SUPPORT_BDWGC
+mono_bin_suffix = bdwgc
+libmono_suffix = bdwgc
 endif
 
 if DISABLE_EXECUTABLES
@@ -130,9 +158,9 @@ endif
 if DISABLE_EXECUTABLES
 else
 if HOST_WIN32
-bin_PROGRAMS = $(boehm_binaries) $(sgen_binaries) monow
+bin_PROGRAMS = $(boehm_binaries) $(bdwgc_binaries) $(sgen_binaries) monow
 else
-bin_PROGRAMS = $(boehm_binaries) $(sgen_binaries)
+bin_PROGRAMS = $(boehm_binaries) $(bdwgc_binaries) $(sgen_binaries)
 endif
 endif
 
@@ -143,10 +171,10 @@ noinst_PROGRAMS = genmdesc mono
 endif
 
 if DISABLE_EXECUTABLES
-shared_libraries = $(boehm_libraries) $(sgen_libraries)
+shared_libraries = $(boehm_libraries) $(bdwgc_libraries) $(sgen_libraries)
 else
 if SHARED_MONO
-shared_libraries = $(boehm_libraries) $(sgen_libraries)
+shared_libraries = $(boehm_libraries) $(bdwgc_libraries) $(sgen_libraries)
 endif
 endif
 
@@ -182,6 +210,11 @@ mono_CFLAGS = $(AM_CFLAGS)
 
 mono_boehm_CFLAGS = $(AM_CFLAGS)
 
+mono_bdwgc_SOURCES = \
+	main.c
+
+mono_bdwgc_CFLAGS = $(AM_CFLAGS)
+
 AM_CPPFLAGS = $(LIBGC_CPPFLAGS)
 
 mono_sgen_SOURCES = \
@@ -202,6 +235,16 @@ buildver-boehm.h: libmini-static.la $(monodir)/mono/metadata/libmonoruntime-stat
 endif
 	@echo "const char *build_date = \"`date`\";" > buildver-boehm.h
 mono_boehm-main.$(OBJEXT): buildver-boehm.h
+endif
+
+if SUPPORT_BDWGC
+if DISABLE_EXECUTABLES
+buildver-boehm.h: libmini-static.la $(monodir)/mono/metadata/libmonoruntimebdwgc.la
+else
+buildver-boehm.h: libmini-static.la $(monodir)/mono/metadata/libmonoruntimebdwgc-static.la
+endif
+	@echo "const char *build_date = \"`date`\";" > buildver-boehm.h
+mono_bdwgc-main.$(OBJEXT): buildver-boehm.h
 endif
 
 if DISABLE_EXECUTABLES
@@ -230,9 +273,11 @@ if STATIC_MONO
 # This leads to higher performance, especially with TLS
 MONO_LIB=$(boehm_static_libraries)
 MONO_SGEN_LIB=$(sgen_static_libraries)
+MONO_BDWGC_LIB=$(bdwgc_static_libraries)
 else 
 MONO_LIB=libmonoboehm-2.0.la
 MONO_SGEN_LIB=libmonosgen-2.0.la
+MONO_BDWGC_LIB=libmonobdwgc-2.0.la
 endif
 
 if LOADED_LLVM
@@ -250,6 +295,17 @@ mono_boehm_LDADD = \
 	$(MONO_DTRACE_OBJECT)
 
 mono_boehm_LDFLAGS = \
+	$(static_flags) -export-dynamic $(monobinldflags) $(monobin_platform_ldflags)
+
+mono_bdwgc_LDADD = \
+	$(MONO_BDWGC_LIB)		\
+	$(GLIB_LIBS)		\
+	$(LLVMMONOF)		\
+	$(LIBICONV)		\
+	-lm			\
+	$(MONO_DTRACE_OBJECT)
+
+mono_bdwgc_LDFLAGS = \
 	$(static_flags) -export-dynamic $(monobinldflags) $(monobin_platform_ldflags)
 
 mono_sgen_LDADD = \
@@ -292,7 +348,13 @@ if SUPPORT_BOEHM
 monow_LDADD = $(mono_boehm_LDADD)
 monow_LDFLAGS = $(mono_boehm_LDFLAGS) -mwindows
 monow_SOURCES = $(mono_boehm_SOURCES)
-else
+endif
+if SUPPORT_BDWGC
+monow_LDADD = $(mono_bdwgc_LDADD)
+monow_LDFLAGS = $(mono_bdwgc_LDFLAGS) -mwindows
+monow_SOURCES = $(mono_bdwgc_SOURCES)
+endif
+if SUPPORT_SGEN
 monow_LDADD = $(mono_sgen_LDADD)
 monow_LDFLAGS = $(mono_sgen_LDFLAGS) -mwindows
 monow_SOURCES = $(mono_sgen_SOURCES)
@@ -311,6 +373,9 @@ genmdesc_LDADD = \
 	$(monodir)/mono/utils/libmonoutils.la -lm	\
 	$(GLIB_LIBS)					\
 	$(LIBICONV)
+
+unity_sources = \
+	mini-unity.c
 
 wasm_sources = \
 	mini-wasm.c		\
@@ -496,8 +561,10 @@ common_sources = \
 	type-checking.c \
 	lldb.h			\
 	lldb.c	\
+	pmip_my_callstack.h	\
+	pmip_my_callstack.c \
 	memory-access.c	\
-	mini-profiler.c
+	mini-profiler.c 
 
 test_sources = 			\
 	basic-calls.cs 		\
@@ -638,13 +705,18 @@ os_sources = $(darwin_sources) $(posix_sources)
 monobin_platform_ldflags=-framework CoreFoundation -framework Foundation
 endif
 
-libmini_la_SOURCES = $(common_sources) $(llvm_sources) $(llvm_runtime_sources) $(interp_sources) $(arch_sources) $(os_sources)
+libmini_la_SOURCES = $(common_sources) $(llvm_sources) $(llvm_runtime_sources) $(interp_sources) $(arch_sources) $(os_sources) $(unity_sources)
 libmini_la_CFLAGS = $(mono_CFLAGS)
 
 libmonoboehm_2_0_la_SOURCES =
 libmonoboehm_2_0_la_CFLAGS = $(mono_boehm_CFLAGS)
 libmonoboehm_2_0_la_LIBADD = libmini.la $(boehm_libs) $(LIBMONO_DTRACE_OBJECT) $(LLVMMONOF)
 libmonoboehm_2_0_la_LDFLAGS = $(libmonoldflags) $(monobin_platform_ldflags)
+
+libmonobdwgc_2_0_la_SOURCES =
+libmonobdwgc_2_0_la_CFLAGS = $(mono_bdwgc_CFLAGS)
+libmonobdwgc_2_0_la_LIBADD = libmini.la $(bdwgc_libs) $(LIBMONO_DTRACE_OBJECT) $(LLVMMONOF)
+libmonobdwgc_2_0_la_LDFLAGS = $(libmonoldflags) $(monobin_platform_ldflags)
 
 libmonosgen_2_0_la_SOURCES =
 libmonosgen_2_0_la_CFLAGS = $(mono_sgen_CFLAGS)

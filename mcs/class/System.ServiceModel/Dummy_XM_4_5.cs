@@ -126,7 +126,11 @@ namespace System.ServiceModel.Dispatcher
 
 namespace System.ServiceModel.Channels
 {
+#if UNITY
+	static class UrlUtility {
+#else
 	public static class UrlUtility {
+#endif
 		public static string UrlEncode (string s, Encoding e)
 		{
 			return System.Runtime.UrlUtility.UrlEncode (s, e);

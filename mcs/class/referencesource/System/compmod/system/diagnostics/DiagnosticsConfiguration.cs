@@ -168,8 +168,10 @@ namespace System.Diagnostics {
         }
         
         private static SystemDiagnosticsSection GetConfigSection() {
-            SystemDiagnosticsSection configSection = (SystemDiagnosticsSection) PrivilegedConfigurationManager.GetSection("system.diagnostics");
-            return configSection;
+            object o = PrivilegedConfigurationManager.GetSection("system.diagnostics");
+            if (o is SystemDiagnosticsSection)
+                return (SystemDiagnosticsSection)o;
+            return null;
         }
 
         internal static bool IsInitializing() {

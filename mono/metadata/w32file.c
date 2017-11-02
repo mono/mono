@@ -34,6 +34,7 @@
 #include <mono/metadata/exception.h>
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/marshal.h>
+#include <mono/metadata/unity-utils.h>
 #include <mono/utils/strenc.h>
 #include <utils/mono-io-portability.h>
 #include <mono/metadata/w32handle.h>
@@ -190,6 +191,7 @@ MonoBoolean
 ves_icall_System_IO_MonoIO_CreateDirectory (const gunichar2 *path, gint32 *error)
 {
 	gboolean ret;
+	path = mono_unity_get_remapped_path(path);
 	
 	*error=ERROR_SUCCESS;
 	
@@ -205,6 +207,7 @@ MonoBoolean
 ves_icall_System_IO_MonoIO_RemoveDirectory (const gunichar2 *path, gint32 *error)
 {
 	gboolean ret;
+	path = mono_unity_get_remapped_path(path);
 	
 	*error=ERROR_SUCCESS;
 	
@@ -221,6 +224,7 @@ ves_icall_System_IO_MonoIO_FindFirstFile (const gunichar2 *path_with_pattern, Mo
 {
 	HANDLE hnd;
 	WIN32_FIND_DATA data;
+	path_with_pattern = mono_unity_get_remapped_path(path_with_pattern);
 
 	hnd = mono_w32file_find_first (path_with_pattern, &data);
 
@@ -315,6 +319,7 @@ ves_icall_System_IO_MonoIO_SetCurrentDirectory (const gunichar2 *path,
 						gint32 *error)
 {
 	gboolean ret;
+	path = mono_unity_get_remapped_path(path);
 	
 	*error=ERROR_SUCCESS;
 	
@@ -329,6 +334,12 @@ ves_icall_System_IO_MonoIO_SetCurrentDirectory (const gunichar2 *path,
 MonoBoolean
 ves_icall_System_IO_MonoIO_MoveFile (const gunichar2 *path, const gunichar2 *dest, gint32 *error)
 {
+	// TODO_UNITY
+	gboolean ret;
+	
+	path = mono_unity_get_remapped_path(path);
+	dest = mono_unity_get_remapped_path(dest);
+
 	*error=ERROR_SUCCESS;
 	return mono_w32file_move (path, dest, error);
 }
@@ -339,6 +350,9 @@ ves_icall_System_IO_MonoIO_ReplaceFile (const gunichar2 *source_file_name, const
 					gint32 *error)
 {
 	guint32 replace_flags = REPLACEFILE_WRITE_THROUGH;
+	source_file_name = mono_unity_get_remapped_path(source_file_name);
+	destination_file_name = mono_unity_get_remapped_path(destination_file_name);
+	destination_backup_file_name = mono_unity_get_remapped_path(destination_backup_file_name);
 
 	*error = ERROR_SUCCESS;
 	if (ignore_metadata_errors)
@@ -353,6 +367,8 @@ MonoBoolean
 ves_icall_System_IO_MonoIO_CopyFile (const gunichar2 *path, const gunichar2 *dest,
 				     MonoBoolean overwrite, gint32 *error)
 {
+	path = mono_unity_get_remapped_path(path);
+	dest = mono_unity_get_remapped_path(dest);
 	*error=ERROR_SUCCESS;
 	return mono_w32file_copy (path, dest, overwrite, error);
 }
@@ -361,6 +377,7 @@ MonoBoolean
 ves_icall_System_IO_MonoIO_DeleteFile (const gunichar2 *path, gint32 *error)
 {
 	gboolean ret;
+	path = mono_unity_get_remapped_path(path);
 	
 	*error=ERROR_SUCCESS;
 	
@@ -376,6 +393,7 @@ gint32
 ves_icall_System_IO_MonoIO_GetFileAttributes (const gunichar2 *path, gint32 *error)
 {
 	gint32 ret;
+	path = mono_unity_get_remapped_path(path);
 	*error=ERROR_SUCCESS;
 	
 	ret = mono_w32file_get_attributes (path);
@@ -430,6 +448,7 @@ MonoBoolean
 ves_icall_System_IO_MonoIO_GetFileStat (const gunichar2 *path, MonoIOStat *stat, gint32 *error)
 {
 	gboolean result;
+	path = mono_unity_get_remapped_path(path);
 
 	*error=ERROR_SUCCESS;
 	
@@ -450,6 +469,7 @@ ves_icall_System_IO_MonoIO_Open (const gunichar2 *filename, gint32 mode,
 {
 	HANDLE ret;
 	int attributes, attrs;
+	filename = mono_unity_get_remapped_path(filename);
 
 	*error=ERROR_SUCCESS;
 

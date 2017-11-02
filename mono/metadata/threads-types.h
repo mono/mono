@@ -209,7 +209,7 @@ gboolean mono_thread_test_and_set_state (MonoInternalThread *thread, MonoThreadS
 void mono_thread_init_apartment_state (void);
 void mono_thread_cleanup_apartment_state (void);
 
-void mono_threads_set_shutting_down (void);
+UNITY_MONO_API void mono_threads_set_shutting_down (void);
 
 gunichar2* mono_thread_get_name (MonoInternalThread *this_obj, guint32 *name_len);
 
@@ -218,11 +218,11 @@ void mono_thread_self_abort (void);
 
 void mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, gboolean permanent, gboolean reset, MonoError *error);
 
-void mono_thread_suspend_all_other_threads (void);
+UNITY_MONO_API void mono_thread_suspend_all_other_threads (void);
 gboolean mono_threads_abort_appdomain_threads (MonoDomain *domain, int timeout);
 
-void mono_thread_push_appdomain_ref (MonoDomain *domain);
-void mono_thread_pop_appdomain_ref (void);
+UNITY_MONO_API void mono_thread_push_appdomain_ref (MonoDomain *domain);
+UNITY_MONO_API void mono_thread_pop_appdomain_ref (void);
 gboolean mono_thread_has_appdomain_ref (MonoThread *thread, MonoDomain *domain);
 
 MonoException* mono_thread_request_interruption (mono_bool running_managed);

@@ -67,6 +67,8 @@ typedef unsigned __int64	uint64_t;
 	#define MONO_API
 #endif
 
+#define UNITY_MONO_API MONO_API
+
 typedef int32_t		mono_bool;
 typedef uint8_t		mono_byte;
 typedef uint16_t	mono_unichar2;

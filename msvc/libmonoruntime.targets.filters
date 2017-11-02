@@ -3,6 +3,7 @@
   <Import Project="$(MSBuildThisFileDirectory)libmonoruntime-common.targets.filters" />
   <Import Project="$(MSBuildThisFileDirectory)libmonoruntime-win32.targets.filters" />
   <Import Project="$(MSBuildThisFileDirectory)libmonoruntime-posix.targets.filters" />
+  <Import Project="$(MSBuildThisFileDirectory)libmonoruntime-unity.targets.filters" />
   <ItemGroup Condition="'$(MonoRuntimeFilterSubFolder)'!=''">
     <Filter Include="Header Files$(MonoRuntimeFilterSubFolder)">
       <UniqueIdentifier>{992766FD-0584-4B49-A4F7-B59947CD8488}</UniqueIdentifier>

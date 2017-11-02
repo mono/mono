@@ -41,6 +41,7 @@
 #include <mono/metadata/verify-internals.h>
 #include <mono/metadata/verify.h>
 #include <mono/metadata/image-internals.h>
+#include <mono/metadata/unity-utils.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #ifdef HAVE_UNISTD_H
@@ -1360,6 +1361,8 @@ do_mono_image_open (const char *fname, MonoImageOpenStatus *status,
 	MonoImage *image;
 	MonoFileMap *filed;
 
+	gboolean remapped = mono_unity_file_remap_path(&fname);
+
 	if ((filed = mono_file_map_open (fname)) == NULL){
 		if (IS_PORTABILITY_SET) {
 			gchar *ffname = mono_portability_find_file (fname, TRUE);
@@ -1372,6 +1375,8 @@ do_mono_image_open (const char *fname, MonoImageOpenStatus *status,
 		if (filed == NULL) {
 			if (status)
 				*status = MONO_IMAGE_ERROR_ERRNO;
+			if (remapped)
+				g_free((void*)fname);
 			return NULL;
 		}
 	}
@@ -1391,6 +1396,8 @@ do_mono_image_open (const char *fname, MonoImageOpenStatus *status,
 		g_free (image);
 		if (status)
 			*status = MONO_IMAGE_IMAGE_INVALID;
+		if (remapped)
+			g_free((void*)fname);
 		return NULL;
 	}
 	iinfo = g_new0 (MonoCLIImageInfo, 1);
@@ -1404,6 +1411,8 @@ do_mono_image_open (const char *fname, MonoImageOpenStatus *status,
 	image->core_clr_platform_code = mono_security_core_clr_determine_platform_image (image);
 
 	mono_file_map_close (filed);
+	if (remapped)
+		g_free((void*)fname);
 	return do_mono_image_load (image, status, care_about_cli, care_about_pecoff);
 }
 

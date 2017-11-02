@@ -57,7 +57,7 @@ MonoMethod* mono_get_context_capture_method (void);
 MonoSecurityManager* mono_security_manager_get_methods (void);
 
 /* Security mode */
-void mono_security_set_mode (MonoSecurityMode mode);
+UNITY_MONO_API void mono_security_set_mode (MonoSecurityMode mode);
 MonoSecurityMode mono_security_get_mode (void);
 
 /* internal calls */

@@ -1,0 +1,14 @@
+MONOBINDIR=bin
+
+os=$(uname -a)
+variant=$(uname -m)
+
+case "$os" in
+    *GNU/Linux* )
+		if [ "$variant" = "x86_64" ]; then
+			MONOBINDIR=bin-linux64
+		else
+			MONOBINDIR=bin-linux32
+		fi
+    ;;
+esac

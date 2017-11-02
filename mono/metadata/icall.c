@@ -85,6 +85,7 @@
 #include <mono/metadata/w32mutex.h>
 #include <mono/metadata/w32semaphore.h>
 #include <mono/metadata/w32event.h>
+#include <mono/metadata/unity-utils.h>
 #include <mono/utils/monobitset.h>
 #include <mono/utils/mono-time.h>
 #include <mono/utils/mono-proclib.h>
@@ -7048,6 +7049,12 @@ ves_icall_System_Runtime_Activation_ActivationServices_EnableProxyActivation (Mo
 {
 	error_init (error);
 	g_assert_not_reached ();
+}
+
+ICALL_EXPORT MonoBoolean
+ves_icall_IsTransparentProxy (MonoObject *proxy)
+{
+	return 0;
 }
 
 #endif

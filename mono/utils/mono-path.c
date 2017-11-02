@@ -113,7 +113,7 @@ static gchar *
 resolve_symlink (const char *path)
 {
 	char *p, *concat, *dir;
-	char buffer [PATH_MAX+1];
+	char buffer [/*PATH_MAX+1*/ 257];
 	int n, iterations = 0;
 
 	p = g_strdup (path);

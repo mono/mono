@@ -2247,6 +2247,11 @@ sgen_client_thread_attach (SgenThreadInfo* info)
 }
 
 void
+mono_gc_thread_detach (SgenThreadInfo *info)
+{
+}
+
+void
 mono_gc_thread_detach_with_lock (SgenThreadInfo *info)
 {
 	return sgen_thread_detach_with_lock (info);

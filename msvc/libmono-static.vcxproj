@@ -201,6 +201,9 @@
     <ProjectReference Condition="'$(MONO_TARGET_GC)'=='boehm'" Include="libgc.vcxproj">
       <Project>{eb56000b-c80b-4e8b-908d-d84d31b517d3}</Project>
     </ProjectReference>
+    <ProjectReference Condition="'$(MONO_TARGET_GC)'=='bdwgc'" Include="libgcbdwgc.vcxproj">
+      <Project>{CF169633-14AF-4DB8-BEF9-26A6C8FE4C90}</Project>
+    </ProjectReference>
     <ProjectReference Condition="'$(MONO_TARGET_GC)'=='sgen'" Include="libgcmonosgen.vcxproj">
       <Project>{c36612bd-22d3-4b95-85e2-7fdc4fc5d740}</Project>
     </ProjectReference>

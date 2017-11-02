@@ -80,6 +80,12 @@ monotouch_tv_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
 winaot_SUBDIRS = $(common_DEPS_SUBDIRS) $(netstandard_drawing_SUBDIRS) $(mobile_only_DEPS_SUBDIRS)
 winaot_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 
+unityjit_SUBDIRS = $(common_DEPS_SUBDIRS) $(netstandard_drawing_SUBDIRS)
+unityjit_PARALLEL_SUBDIRS = $(common_SUBDIRS)
+
+unityaot_SUBDIRS = $(filter-out System.ServiceModel.Primitives,$(common_DEPS_SUBDIRS)) $(netstandard_drawing_SUBDIRS) $(mobile_only_DEPS_SUBDIRS)
+unityaot_PARALLEL_SUBDIRS = $(filter-out System.ServiceModel.Http System.ServiceModel.Security System.ServiceModel.Duplex System.ServiceModel.NetTcp ,$(common_SUBDIRS)) $(mobile_only_SUBDIRS)
+
 orbis_SUBDIRS = $(common_DEPS_SUBDIRS) $(netstandard_drawing_SUBDIRS) $(mobile_only_DEPS_SUBDIRS)
 orbis_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 

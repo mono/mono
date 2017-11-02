@@ -1,0 +1,7 @@
+. $(dirname $0)/monobin-env
+
+export MONO_PREFIX=$(dirname $0)/..
+MONO=$MONO_PREFIX/$MONOBINDIR/mono
+# remove //.. pattern as it causes problem on OSX High Sierra
+MONO=${MONO/\/\/\./\/\.}
+export LD_LIBRARY_PATH=$MONO_PREFIX/lib

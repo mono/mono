@@ -2466,6 +2466,12 @@ ves_icall_System_Net_Sockets_Socket_IOControl_internal (gsize sock, gint32 code,
 	return (gint)output_bytes;
 }
 
+MonoBoolean
+ves_icall_System_Net_Sockets_Socket_IsProtocolSupported_internal (gint32 networkInterface)
+{
+	return TRUE;
+}
+
 static gboolean
 addrinfo_add_string (MonoDomain *domain, const char *s, MonoArrayHandle arr, int index, MonoError *error)
 {

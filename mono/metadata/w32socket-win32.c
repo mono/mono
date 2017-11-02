@@ -136,7 +136,6 @@ static gboolean alertable_socket_wait (SOCKET sock, int event_bit)
 
 SOCKET mono_w32socket_accept (SOCKET s, struct sockaddr *addr, socklen_t *addrlen, gboolean blocking)
 {
-	MonoInternalThread *curthread = mono_thread_internal_current ();
 	SOCKET newsock = INVALID_SOCKET;
 	MONO_ENTER_GC_SAFE;
 	ALERTABLE_SOCKET_CALL (FD_ACCEPT_BIT, blocking, TRUE, newsock, accept, s, addr, addrlen);

@@ -230,7 +230,7 @@ namespace System.Diagnostics {
             get {
                 EnsureState(State.Exited);
 #if MONO
-                if (exitCode == -1)
+                if (exitCode == -1 && !Environment.IsRunningOnWindows)
                     throw new InvalidOperationException ("Cannot get the exit code from a non-child process on Unix");
 #endif
                 return exitCode;

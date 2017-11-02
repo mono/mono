@@ -127,7 +127,9 @@ typedef void (*MonoProfilerCoverageCallback) (MonoProfiler *prof, const MonoProf
  *
  * This function is not async safe.
  */
+#ifndef RUNTIME_IL2CPP
 MONO_API mono_bool mono_profiler_get_coverage_data (MonoProfilerHandle handle, MonoMethod *method, MonoProfilerCoverageCallback cb);
+#endif
 
 typedef enum {
 	/*

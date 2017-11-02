@@ -13,3 +13,4 @@ mono.VC.db
 /package/
 /build/
 /dist/
+/.vs/

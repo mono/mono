@@ -1,0 +1,5 @@
+#!/bin/bash
+. $(dirname $0)/mono-env
+
+$MONO $MONO_PATH/monolinker.exe "$@"
+

@@ -148,6 +148,18 @@ automake --add-missing --gnu -Wno-portability -Wno-obsolete $am_opt ||
 echo "Running autoconf ..."
 autoconf || { echo "**Error**: autoconf failed."; exit 1; }
 
+# if test -d $srcdir/external/bdwgc/libatomic_ops; then
+#   echo Running external/bdwgc/libatomic_ops/autogen.sh ...
+#   (cd $srcdir/external/bdwgc/libatomic_ops ; ./autogen.sh)
+#   echo Done running external/bdwgc/libatomic_ops/autogen.sh ...
+# fi
+
+if test -d $srcdir/external/bdwgc; then
+  echo Running external/bdwgc/autogen.sh ...
+  (cd $srcdir/external/bdwgc ; ./autogen.sh)
+  echo Done running external/bdwgc/autogen.sh ...
+fi
+
 if test -d $srcdir/libgc; then
   echo Running libgc/autogen.sh ...
   (cd $srcdir/libgc ; NOCONFIGURE=1 ./autogen.sh "$@")

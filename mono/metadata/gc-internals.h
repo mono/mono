@@ -125,7 +125,7 @@ void* mono_gc_alloc_fixed            (size_t size, MonoGCDescriptor descr, MonoG
 void  mono_gc_free_fixed             (void* addr);
 
 /* make sure the gchandle was allocated for an object in domain */
-gboolean mono_gchandle_is_in_domain (guint32 gchandle, MonoDomain *domain);
+UNITY_MONO_API gboolean mono_gchandle_is_in_domain (guint32 gchandle, MonoDomain *domain);
 void     mono_gchandle_free_domain  (MonoDomain *domain);
 
 typedef void (*FinalizerThreadCallback) (gpointer user_data);
@@ -354,6 +354,7 @@ gboolean mono_gc_is_critical_method (MonoMethod *method);
 
 gpointer mono_gc_thread_attach (THREAD_INFO_TYPE *info);
 
+void mono_gc_thread_detach (THREAD_INFO_TYPE *info);
 void mono_gc_thread_detach_with_lock (THREAD_INFO_TYPE *info);
 
 gboolean mono_gc_thread_in_critical_region (THREAD_INFO_TYPE *info);

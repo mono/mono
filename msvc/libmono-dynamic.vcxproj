@@ -113,7 +113,7 @@
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <Link>
-      <AdditionalDependencies Condition="'$(MONO_TARGET_GC)'=='boehm'">$(GC_LIB);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(MONO_TARGET_GC)'!='sgen'">$(GC_LIB);%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
@@ -152,7 +152,7 @@
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <Link>
-      <AdditionalDependencies Condition="'$(MONO_TARGET_GC)'=='boehm'">$(GC_LIB);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(MONO_TARGET_GC)'!='sgen'">$(GC_LIB);%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
@@ -183,7 +183,7 @@
     </ResourceCompile>
     <ProjectReference />
     <Link>
-      <AdditionalDependencies Condition="'$(MONO_TARGET_GC)'=='boehm'">$(GC_LIB);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(MONO_TARGET_GC)'!='sgen'">$(GC_LIB);%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
@@ -222,7 +222,7 @@
     </ResourceCompile>
     <ProjectReference />
     <Link>
-      <AdditionalDependencies Condition="'$(MONO_TARGET_GC)'=='boehm'">$(GC_LIB);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(MONO_TARGET_GC)'!='sgen'">$(GC_LIB);%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>

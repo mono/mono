@@ -1692,17 +1692,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_GetCCW (MonoObject* object, Mon
 #endif
 }
 
-
-MonoBoolean
-ves_icall_System_Runtime_InteropServices_Marshal_IsComObject (MonoObject* object)
-{
-#ifndef DISABLE_COM
-	return (MonoBoolean)cominterop_object_is_rcw (object);
-#else
-	g_assert_not_reached ();
-#endif
-}
-
 gint32
 ves_icall_System_Runtime_InteropServices_Marshal_ReleaseComObjectInternal (MonoObject* object)
 {
@@ -3687,6 +3676,16 @@ ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (gpointe
 }
 
 #endif /* DISABLE_COM */
+
+MonoBoolean
+ves_icall_System_Runtime_InteropServices_Marshal_IsComObject (MonoObject* object)
+{
+#ifndef DISABLE_COM
+	return (MonoBoolean)cominterop_object_is_rcw (object);
+#else
+	return FALSE;
+#endif
+}
 
 MonoString *
 ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringBSTR (gpointer ptr)

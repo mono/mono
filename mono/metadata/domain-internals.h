@@ -577,7 +577,7 @@ mono_runtime_get_no_exec (void);
 void
 mono_domain_parse_assembly_bindings (MonoDomain *domain, int amajor, int aminor, gchar *domain_config_file_name);
 
-gboolean
+UNITY_MONO_API gboolean
 mono_assembly_name_parse (const char *name, MonoAssemblyName *aname);
 
 MonoImage *mono_assembly_open_from_bundle (const char *filename,

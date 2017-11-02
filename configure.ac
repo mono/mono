@@ -927,6 +927,8 @@ AC_ARG_WITH(xammac,              [  --with-xammac=yes,no                If you w
 AC_ARG_WITH(testing_aot_hybrid,  [  --with-testing_aot_hybrid=yes,no    If you want to build the testing_aot_hybrid assemblies (defaults to no)],   [], [with_testing_aot_hybrid=default])
 AC_ARG_WITH(testing_aot_full,    [  --with-testing_aot_full=yes,no      If you want to build the testing_aot_full assemblies (defaults to no)],     [], [with_testing_aot_full=default])
 AC_ARG_WITH(winaot,              [  --with-winaot=yes,no                If you want to build the Windows friendly AOT assemblies (defaults to no)], [], [with_winaot=default])
+AC_ARG_WITH(unityjit,            [  --with-unityjit=yes,no              If you want to build the Unity JIT friendly assemblies (defaults to no)],   [], [with_unityjit=default])
+AC_ARG_WITH(unityaot,            [  --with-unityaot=yes,no              If you want to build the Unity AOT friendly assemblies (defaults to no)],   [], [with_unityaot=default])
 AC_ARG_WITH(orbis,               [  --with-orbis=yes,no                 If you want to build the Orbis assemblies (defaults to no)], [], [with_orbis=default])
 AC_ARG_WITH(unreal,              [  --with-unreal=yes,no                If you want to build the Unreal assemblies (defaults to no)], [], [with_unreal=default])
 AC_ARG_WITH(wasm,                [  --with-wasm=yes,no                  If you want to build the WebAssembly (defaults to no)], [], [with_wasm=default])
@@ -949,12 +951,15 @@ with_xammac_default=no
 with_testing_aot_hybrid_default=no
 with_testing_aot_full_default=no
 with_winaot_default=no
+with_unityjit_default=no
+with_unityaot_default=no
 with_orbis_default=no
 with_unreal_default=no
 with_wasm_default=no
 
 with_bitcode_default=no
 with_cooperative_gc_default=no
+mono_feature_disable_com=yes
 
 INVARIANT_AOT_OPTIONS=nimt-trampolines=2000,ntrampolines=9000,nrgctx-fetch-trampolines=256,ngsharedvt-trampolines=4000
 
@@ -972,6 +977,8 @@ elif test x$with_runtime_preset = xall; then
    with_monotouch_tv_default=yes
    with_xammac_default=yes
    with_winaot_default=yes
+   with_unityjit_default=yes
+   with_unityaot_default=yes
    with_orbis_default=yes
    with_unreal_default=yes
    with_wasm_default=yes
@@ -1034,6 +1041,25 @@ elif test x$with_runtime_preset = xwinaot; then
    AOT_BUILD_FLAGS="--runtime=mobile --aot=full,$INVARIANT_AOT_OPTIONS"
    AOT_RUN_FLAGS="--runtime=mobile --full-aot"
    AOT_MODE="llvmonly"
+elif test x$with_runtime_preset = xunityjit; then
+   DISABLE_MCS_DOCS_default=yes
+   with_unityjit_default=yes
+   TEST_PROFILE=unityjit
+
+   mono_feature_disable_remoting='yes'
+elif test x$with_runtime_preset = xunityaot; then
+   DISABLE_MCS_DOCS_default=yes
+   with_unityaot_default=yes
+   TEST_PROFILE=unityaot
+
+   #mono_feature_disable_com='yes'
+   mono_feature_disable_remoting='yes'
+   mono_feature_disable_reflection_emit_save='yes'
+   mono_feature_disable_reflection_emit='yes'
+   mono_feature_disable_appdomains='yes'
+
+   AOT_BUILD_FLAGS="--aot=full,$INVARIANT_AOT_OPTIONS"
+   AOT_RUN_FLAGS="--full-aot"
 elif test x$with_runtime_preset = xorbis; then
    DISABLE_MCS_DOCS_default=yes
    with_orbis_default=yes
@@ -1115,6 +1141,12 @@ fi
 if test "x$with_winaot" = "xdefault"; then
    with_winaot=$with_winaot_default
 fi
+if test "x$with_unityjit = "xdefault"; then
+   with_unityjit=$with_unityjit_default
+fi
+if test "x$with_unityaot = "xdefault"; then
+   with_unityaot=$with_unityaot_default
+fi
 if test "x$with_orbis" = "xdefault"; then
    with_orbis=$with_orbis_default
 fi
@@ -1136,6 +1168,8 @@ AM_CONDITIONAL(INSTALL_XAMMAC, [test "x$with_xammac" != "xno"])
 AM_CONDITIONAL(INSTALL_TESTING_AOT_HYBRID, [test "x$with_testing_aot_hybrid" != "xno"])
 AM_CONDITIONAL(INSTALL_TESTING_AOT_FULL, [test "x$with_testing_aot_full" != "xno"])
 AM_CONDITIONAL(INSTALL_WINAOT, [test "x$with_winaot" != "xno"])
+AM_CONDITIONAL(INSTALL_UNITYJIT, [test "x$with_unityjit" != "xno"])
+AM_CONDITIONAL(INSTALL_UNITYAOT, [test "x$with_unityaot" != "xno"])
 AM_CONDITIONAL(INSTALL_ORBIS, [test "x$with_orbis" != "xno"])
 AM_CONDITIONAL(INSTALL_UNREAL, [test "x$with_unreal" != "xno"])
 AM_CONDITIONAL(INSTALL_WASM, [test "x$with_wasm" != "xno"])
@@ -1160,6 +1194,12 @@ if test -z "$INSTALL_TESTING_AOT_FULL_TRUE"; then :
 fi
 if test -z "$INSTALL_WINAOT_TRUE"; then :
    default_profile=winaot
+fi
+if test -z "$INSTALL_UNITYJIT_TRUE"; then :
+   default_profile=unityjit
+fi
+if test -z "$INSTALL_UNITYAOT_TRUE"; then :
+   default_profile=unityaot
 fi
 if test -z "$INSTALL_ORBIS_TRUE"; then :
    default_profile=orbis
@@ -1429,6 +1469,20 @@ AC_COMPILE_IFELSE([
    AC_MSG_RESULT(no)
 ])
 
+dnl BDWGC GC configuration
+dnl
+
+AC_ARG_ENABLE(bdwgc, [  --disable-bdwgc            Disable the Bdwgc GC.], upport_bdwgc=$enableval,support_bdwgc=${support_bdwgc:-yes})
+AM_CONDITIONAL(SUPPORT_BDWGC, test x$support_bdwgc = xyes)
+bdwgc_dir=external/bdwgc
+BDWGC_DEFINES='-DHAVE_BOEHM_GC -DHAVE_BDWGC_GC'
+LIBGCBDWGC_CPPFLAGS='-I$(top_srcdir)/external/bdwgc/include -I$(top_srcdir)/external/bdwgc/libatomic_ops/src'
+AC_SUBST(bdwgc_dir)
+AC_SUBST(BDWGC_DEFINES)
+AC_SUBST(LIBGCBDWGC_CPPFLAGS)
+
+dnl
+
 dnl
 dnl Boehm GC configuration
 dnl
@@ -1505,7 +1559,10 @@ if test "x$support_boehm" = "xyes"; then
 	AC_SUBST(LIBGC_STATIC_LIBS)
 	AC_SUBST(libgc_dir)
 	AC_SUBST(BOEHM_DEFINES)
-
+else
+	if test "x$support_bdwgc" = "xyes"; then
+		AC_DEFINE_UNQUOTED(DEFAULT_GC_NAME, "External BDWGC (with typed GC)", [GC description])
+	fi
 fi
 AM_CONDITIONAL(SUPPORT_NULLGC, test "x$libgc" = "xnone")
 
@@ -4250,6 +4307,11 @@ case "x$libgc" in
 		if test "x$support_boehm" = "xyes"; then
 			AC_CONFIG_SUBDIRS(libgc)
 		fi
+		if test "x$support_bdwgc" = "xyes"; then
+			AC_CONFIG_SUBDIRS([external/bdwgc/libatomic_ops])
+			ac_configure_args="$ac_configure_args --enable-thread-local-alloc=no --enable-parallel-mark=no --enable-verify-defines=yes --enable-gc-threads=yes --with-libatomic-ops=no --enable-no-threads-discovery=yes --enable-single-obj-compilation=yes --enable-gcj-support=yes --enable-threads=$libgc_threads --enable-munmap=yes --enable-mmap=yes --enable-ignore-dynamic-loading=yes --enable-dont-register-main-static-data=yes"
+			AC_CONFIG_SUBDIRS([external/bdwgc])
+		fi
 		;;
 esac
 
@@ -4925,6 +4987,8 @@ echo "
 	Xamarin.TVOS:    $with_monotouch_tv
 	Xamarin.Mac:     $with_xammac
 	Windows AOT:     $with_winaot
+	Unity JIT:       $with_unityjit
+	Unity AOT:       $with_unityaot
 	Orbis:           $with_orbis
 	Unreal:          $with_unreal
 	WebAssembly:     $with_wasm

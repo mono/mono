@@ -3,4 +3,5 @@
   <Import Project="$(MSBuildThisFileDirectory)libmonoruntime-common.targets" />
   <Import Project="$(MSBuildThisFileDirectory)libmonoruntime-win32.targets" />
   <Import Project="$(MSBuildThisFileDirectory)libmonoruntime-posix.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)libmonoruntime-unity.targets" />
 </Project>
