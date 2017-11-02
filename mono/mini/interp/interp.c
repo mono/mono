@@ -3515,6 +3515,12 @@ ves_exec_method_with_context (InterpFrame *frame, ThreadContext *context, unsign
 					if (*mono_thread_interruption_request_flag ())
 						mono_thread_interruption_checkpoint ();
 					sp->data.p = o;
+#ifndef DISABLE_REMOTING
+					if (mono_object_is_transparent_proxy (o)) {
+						child_frame.imethod = mono_interp_get_imethod (rtm->domain, mono_marshal_get_remoting_invoke_with_check (child_frame.imethod->method), &error);
+						mono_error_assert_ok (&error);
+					}
+#endif
 				} else {
 					sp->data.p = NULL;
 					child_frame.retval = &retval;
