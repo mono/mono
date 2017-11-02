@@ -43,22 +43,22 @@ MINI_TEST_DEPS= $(patsubst %,-r:%,$(BCL_OUTPUT_ASM) $(DEPS_FILES))
 
 .stamp-depot-tools:
 	git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git depot_tools
-	@touch $@
+	touch $@
 
 .stamp-v8: .stamp-depot-tools
 	PATH=$(TOP)/sdks/wasm/depot_tools:$$PATH fetch v8
 	cd v8 && tools/dev/v8gen.py x64.release
 	cd v8 && $(TOP)/sdks/wasm/depot_tools/ninja -C out.gn/x64.release
-	@touch $@
+	touch $@
 
 .PHONY: toolchain
 toolchain: .stamp-v8
 
 driver.o: driver.c
-	@$(EMCC) -g -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 driver.c -c -o driver.o
+	$(EMCC) -g -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 driver.c -c -o driver.o
 
 mono.js: driver.o library_mono.js $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a
-	@$(EMCC) -g4 -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 --js-library library_mono.js driver.o $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a -o mono.js
+	$(EMCC) -g4 -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 --js-library library_mono.js driver.o $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a -o mono.js
 
 build-native: mono.js
 
@@ -84,7 +84,7 @@ build: build-native build-managed
 
 
 run: toolchain build
-	@$(D8) --expose_wasm test.js
+	$(D8) --expose_wasm test.js
 
 clean:
 	

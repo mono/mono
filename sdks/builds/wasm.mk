@@ -18,17 +18,18 @@ WASM_INTERP_CONFIGURE_FLAGS = \
 
 #toolchain code
 .stamp-wasm-toolchain:
-	@./setup-emsdk.sh $(TOP)/sdks/builds/toolchains/emsdk
-	@touch $@
+	git clone https://github.com/juj/emsdk.git $(TOP)/sdks/builds/toolchains/emsdk
+	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk install latest && ./emsdk activate --embedded latest
+	touch $@
 
 .stamp-wasm-interp-toolchain: .stamp-wasm-toolchain
-	@touch $@
+	touch $@
 
 #configure step
 .stamp-wasm-interp-configure: $(TOP)/configure .stamp-wasm-interp-toolchain
 	mkdir -p $(TOP)/sdks/builds/wasm-interp
 	cd $(TOP)/sdks/builds/wasm-interp && source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && CFLAGS="-Os -g" emconfigure $(TOP)/configure $(WASM_INTERP_CONFIGURE_FLAGS)
-	@touch $@
+	touch $@
 
 package-wasm-interp:
 	$(MAKE) -C $(TOP)/sdks/builds/wasm-interp/mono install
