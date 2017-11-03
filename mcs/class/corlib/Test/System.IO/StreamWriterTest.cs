@@ -95,16 +95,20 @@ namespace MonoTests.System.IO
 			}
 		}
 
-	static string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
-	private string _codeFileName = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
-	private string _thisCodeFileName = TempFolder + Path.DirectorySeparatorChar + "StreamWriterTest.temp";
+	private string _tmpFolder;
+	private string _codeFileName;
+	private string _thisCodeFileName;
 
 	[SetUp]
 	public void SetUp ()
 	{
-		if (Directory.Exists (TempFolder))
-			Directory.Delete (TempFolder, true);
-		Directory.CreateDirectory (TempFolder);
+		_tmpFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
+		_codeFileName = _tmpFolder + Path.DirectorySeparatorChar + "AFile.txt";
+		_thisCodeFileName = _tmpFolder + Path.DirectorySeparatorChar + "StreamWriterTest.temp";
+
+		if (Directory.Exists (_tmpFolder))
+			Directory.Delete (_tmpFolder, true);
+		Directory.CreateDirectory (_tmpFolder);
 
 		if (!File.Exists (_thisCodeFileName)) 
 			File.Create (_thisCodeFileName).Close ();
@@ -113,8 +117,8 @@ namespace MonoTests.System.IO
 	[TearDown]
 	public void TearDown ()
 	{
-		if (Directory.Exists (TempFolder))
-			Directory.Delete (TempFolder, true);
+		if (Directory.Exists (_tmpFolder))
+			Directory.Delete (_tmpFolder, true);
 	}
 
 	[Test] // .ctor (Stream)
@@ -182,7 +186,7 @@ namespace MonoTests.System.IO
 	[Test] // .ctor (String)
 	public void Constructor2_Path_DirectoryNotFound ()
 	{
-		Directory.Delete (TempFolder, true);
+		Directory.Delete (_tmpFolder, true);
 
 		try {
 			new StreamWriter (_codeFileName);
@@ -192,7 +196,7 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (typeof (DirectoryNotFoundException), ex.GetType (), "#2");
 			Assert.IsNull (ex.InnerException, "#3");
 			Assert.IsNotNull (ex.Message, "#4");
-			Assert.IsTrue (ex.Message.IndexOf (TempFolder) != -1, "#5");
+			Assert.IsTrue (ex.Message.IndexOf (_tmpFolder) != -1, "#5");
 		}
 	}
 
@@ -328,7 +332,7 @@ namespace MonoTests.System.IO
 	[Test] // .ctor (String, Boolean)
 	public void Constructor4_Path_DirectoryNotFound ()
 	{
-		Directory.Delete (TempFolder, true);
+		Directory.Delete (_tmpFolder, true);
 
 		try {
 			new StreamWriter (_codeFileName, false);
@@ -338,7 +342,7 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (typeof (DirectoryNotFoundException), ex.GetType (), "#A2");
 			Assert.IsNull (ex.InnerException, "#A3");
 			Assert.IsNotNull (ex.Message, "#A4");
-			Assert.IsTrue (ex.Message.IndexOf (TempFolder) != -1, "#A5");
+			Assert.IsTrue (ex.Message.IndexOf (_tmpFolder) != -1, "#A5");
 		}
 
 		try {
@@ -349,7 +353,7 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (typeof (DirectoryNotFoundException), ex.GetType (), "#B2");
 			Assert.IsNull (ex.InnerException, "#B3");
 			Assert.IsNotNull (ex.Message, "#B4");
-			Assert.IsTrue (ex.Message.IndexOf (TempFolder) != -1, "#B5");
+			Assert.IsTrue (ex.Message.IndexOf (_tmpFolder) != -1, "#B5");
 		}
 	}
 
@@ -579,7 +583,7 @@ namespace MonoTests.System.IO
 	[Test] // .ctor (String, Boolean, Encoding)
 	public void Constructor6_Path_DirectoryNotFound ()
 	{
-		Directory.Delete (TempFolder, true);
+		Directory.Delete (_tmpFolder, true);
 
 		try {
 			new StreamWriter (_codeFileName, false, Encoding.UTF8);
@@ -589,7 +593,7 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (typeof (DirectoryNotFoundException), ex.GetType (), "#A2");
 			Assert.IsNull (ex.InnerException, "#A3");
 			Assert.IsNotNull (ex.Message, "#A4");
-			Assert.IsTrue (ex.Message.IndexOf (TempFolder) != -1, "#A5");
+			Assert.IsTrue (ex.Message.IndexOf (_tmpFolder) != -1, "#A5");
 		}
 
 		try {
@@ -600,7 +604,7 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (typeof (DirectoryNotFoundException), ex.GetType (), "#B2");
 			Assert.IsNull (ex.InnerException, "#B3");
 			Assert.IsNotNull (ex.Message, "#B4");
-			Assert.IsTrue (ex.Message.IndexOf (TempFolder) != -1, "#B5");
+			Assert.IsTrue (ex.Message.IndexOf (_tmpFolder) != -1, "#B5");
 		}
 	}
 
@@ -759,7 +763,7 @@ namespace MonoTests.System.IO
 	[Test] // .ctor (String, Boolean, Encoding, Int32)
 	public void Constructor7_Path_DirectoryNotFound ()
 	{
-		Directory.Delete (TempFolder, true);
+		Directory.Delete (_tmpFolder, true);
 
 		try {
 			new StreamWriter (_codeFileName, false, Encoding.UTF8, 10);
@@ -769,7 +773,7 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (typeof (DirectoryNotFoundException), ex.GetType (), "#A2");
 			Assert.IsNull (ex.InnerException, "#A3");
 			Assert.IsNotNull (ex.Message, "#A4");
-			Assert.IsTrue (ex.Message.IndexOf (TempFolder) != -1, "#A5");
+			Assert.IsTrue (ex.Message.IndexOf (_tmpFolder) != -1, "#A5");
 		}
 
 		try {
@@ -780,7 +784,7 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (typeof (DirectoryNotFoundException), ex.GetType (), "#B2");
 			Assert.IsNull (ex.InnerException, "#B3");
 			Assert.IsNotNull (ex.Message, "#B4");
-			Assert.IsTrue (ex.Message.IndexOf (TempFolder) != -1, "#B5");
+			Assert.IsTrue (ex.Message.IndexOf (_tmpFolder) != -1, "#B5");
 		}
 	}
 
