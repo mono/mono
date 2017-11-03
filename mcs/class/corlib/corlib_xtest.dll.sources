@@ -163,7 +163,7 @@
 ../../../external/corefx/src/System.Threading.Tasks.Parallel/tests/*.cs:XunitAssemblyAttributes.cs,EtwTests.cs
 
 # System.Threading.Timer
-../../../external/corefx/src/System.Threading.Timer/tests/*.cs
+../../../external/corefx/src/System.Threading.Timer/tests/*.cs:TimerFiringTests.cs,TimerChangeTests.cs
 
 # System.Threading.Thread
 ../../../external/corefx/src/System.Threading.Thread/tests/*.cs:CompressedStackTests.cs,ThreadTests.cs,ExceptionTests.cs
