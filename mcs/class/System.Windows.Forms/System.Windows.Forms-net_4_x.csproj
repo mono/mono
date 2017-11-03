@@ -1203,5 +1203,8 @@
       <LogicalName>errorProvider.ico</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="resources/System.Windows.Forms.resx"/>
+  </ItemGroup>
 </Project>
 
