@@ -30,6 +30,11 @@ TEST_RESOURCES = \
 XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks Facades/System.Runtime.InteropServices.RuntimeInformation
 LIB_MCS_FLAGS = -d:CONFIGURATION_2_0 $(REFERENCE_SOURCES_FLAGS) -unsafe $(RESOURCE_FILES:%=-resource:%) -nowarn:436
 
+###
+### FIXME: this is for testing only!
+###
+LIB_MCS_FLAGS += -d:MARTIN_WEB_DEBUG
+
 ifndef NO_MONO_SECURITY
 MONO_SECURITY=Mono.Security
 MONO_SECURITY_REF=MonoSecurity=Mono.Security
