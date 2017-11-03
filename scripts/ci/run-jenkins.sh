@@ -7,12 +7,6 @@ export TEST_HARNESS_VERBOSE=1
 
 make_timeout=300m
 
-if [[ $CI_TAGS == *'collect-coverage'* ]]; then
-    # Collect coverage for further use by lcov and similar tools.
-    # Coverage must be collected with -O0 and debug information.
-    export CFLAGS="$CFLAGS -ggdb3 --coverage -O0"
-fi
-
 if [[ ${CI_TAGS} == *'clang-sanitizer'* ]]; then
 	export CC="clang"
 	export CXX="clang++"
@@ -29,6 +23,12 @@ if [[ ${label} == w* ]]; then
     export CFLAGS="$CFLAGS -g -O2"
 else
     export CFLAGS="$CFLAGS -ggdb3 -O2"
+fi
+
+if [[ $CI_TAGS == *'collect-coverage'* ]]; then
+    # Collect coverage for further use by lcov and similar tools.
+    # Coverage must be collected with -O0 and debug information.
+    export CFLAGS="$CFLAGS -ggdb3 --coverage -O0"
 fi
 
 if [[ $CI_TAGS == *'retry-flaky-tests'* ]]; then
