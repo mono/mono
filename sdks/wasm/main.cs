@@ -10,11 +10,11 @@ using NUnit.Framework.Api;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
-
-public class MyRunner : TextUI, ITestListener
-{
-	public String failed_tests = "";
-}
+//
+// public class MyRunner : TextUI, ITestListener
+// {
+// 	public String failed_tests = "";
+// }
 
 namespace WebAssembly {
 	public sealed class Runtime {
@@ -44,35 +44,15 @@ public class Driver {
 
 	static int run_count;
 	public static string Send (string key, string val) {
-		if (key == "say") {
-			if (val == "hello") {
-				return "OK:" + WebAssembly.Runtime.InvokeJS ("1 + 2");
-			} else if (val == "js-exception") {
-				try {
-					return "OK:" + WebAssembly.Runtime.InvokeJS ("throw 1");
-				} catch (WebAssembly.JSException e) {
-					Console.WriteLine (e.Message);
-					return "EH:" + e.Message;
-				}
-			} else if (val == "sharp-exception") {
-				throw new Exception ("error!");
-			}
+		if (key == "start-test") {
+			StartTest (val);
+			return "SUCCESS";
+		}
+		if (key == "pump-test") {
+			return PumpTest () ? "IN-PROGRESS" : "DONE" ;
 		}
 
-		if (key != "run")
-			return "INVALID-ARG";
-		if (val == "gc") { 
-			Console.WriteLine ("running {0} step", run_count);
-			for (int i = 0; i < 1000 * 2; ++i) {
-				var x = new object [1000];
-			}
-			++run_count;
-			return run_count >= 10 ? "DONE" :  "IN PROGRESS";
-		}
-		StartTest (val);
-		return "SUCCESS";
-
-		return "FAIL";
+		return "INVALID-KEY";
 	}
 
 	public class TestSuite {
@@ -86,8 +66,26 @@ public class Driver {
 		new TestSuite () { Name = "system", File = "monodroid_System_test.dll" },
 	};
 
+	static IncrementalTestRunner testRunner;
+
+	public static bool PumpTest () {
+		if (testRunner == null)
+			return false;
+		try {
+			bool res = testRunner.Step ();
+			if (!res)
+				testRunner = null;
+			return res;
+		} catch (Exception e) {
+			Console.WriteLine (e);
+			return true;
+		}
+	}
+
 	public static void StartTest (string name) {
 		var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+		if (testRunner != null)
+			throw new Exception ("Test in progress");
 
 		string extra_disable = "";
 
@@ -106,16 +104,15 @@ public class Driver {
 				test_name = args [i];
 		}
 
-		var arg_list = new List<string> ();
-		arg_list.Add ("-labels");
-		if (test_name != null)
-			arg_list.Add ("-test=" + test_name);
+		testRunner = new IncrementalTestRunner ();
+		// testRunner.PrintLabels ();
+		// if (test_name != null)
+		// 	testRunner.RunTest (test_name);
 
-		arg_list.Add ("-exclude=WASM,NotWorking,ValueAdd,CAS,InetAccess");
-		arg_list.Add (baseDir + "/" + testsuite_name);
+		testRunner.Exclude ("WASM,NotWorking,ValueAdd,CAS,InetAccess");
+		testRunner.Add (Assembly.LoadFrom (baseDir + "/" + testsuite_name));
 
-		var runner = new MyRunner ();
-		runner.Execute (arg_list.ToArray ());
+		testRunner.Start (1);
 	}
 
 }

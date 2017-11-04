@@ -1,4 +1,4 @@
-TOP=$(realpath $(CURDIR)/../..)
+ TOP=$(realpath $(CURDIR)/../..)
 include $(TOP)/sdks/paths.mk
 
 EMCC=source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && emcc
@@ -33,6 +33,9 @@ MINI_TEST_FILES= \
 	mixed.cs	\
 	gc-test.cs
 
+APP_SOURCES = \
+	main.cs	\
+	incrementalrunner.cs
 
 BCL_INPUT_ASM = $(patsubst %,$(WASM_BCL_DIR)/%,$(BCL_ASSEMBLIES))
 BCL_OUTPUT_ASM = $(patsubst %,$(MANAGED_DEPLOY_DIR)/%,$(BCL_ASSEMBLIES))
@@ -63,20 +66,20 @@ mono.js: driver.o library_mono.js $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.
 build-native: mono.js
 
 #FIXME some Make magic here would be appreciated
-.stamp-copy-bcl: $(TOP)/sdks/wasm/managed $(BCL_INPUT_ASM)
+.stamp-copy-bcl: $(BCL_INPUT_ASM)
 	mkdir -p managed/
 	cp $(BCL_INPUT_ASM) managed/
 	touch $@
 
-managed/main.exe: main.cs .stamp-copy-bcl managed/nunitlite.dll
-	mcs /nostdlib /unsafe main.cs -r:managed/nunitlite.dll $(MINI_TEST_DEPS) -out:managed/main.exe
+managed/main.exe: .stamp-copy-bcl managed/nunitlite.dll $(APP_SOURCES)
+	mcs /nostdlib /unsafe $(APP_SOURCES) -r:managed/nunitlite.dll $(MINI_TEST_DEPS) -out:managed/main.exe
 
 managed/mini_tests.dll: $(MINI_TEST_SOURCES) mini-test-runner.cs .stamp-copy-bcl managed/nunitlite.dll
 	mcs /nostdlib /unsafe -target:library -out:managed/mini_tests.dll -define:__MOBILE__,ARCH_32 $(MINI_TEST_DEPS) $(MINI_TEST_SOURCES) mini-test-runner.cs 
 
 managed/nunitlite.dll: $(TOP)/mcs/class/lib/wasm/nunitlite.dll
 	cd $(TOP)/mcs/tools/nunit-lite && make PROFILE=wasm
-	cp  $< $@
+	cp $< $@
 
 build-managed: .stamp-copy-bcl managed/nunitlite.dll managed/mini_tests.dll managed/main.exe
 

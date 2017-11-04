@@ -91,10 +91,14 @@ function conv_string (mono_obj) {
 	return res;
 }
 
-function cs_eval (str) {
-	return conv_string (call_method (send_message, null, [mono_string ("eval"), mono_string (str)]))
+function mono_send_msg (key, val) {
+	try {
+		return conv_string (call_method (send_message, null, [mono_string (key), mono_string (val)]));
+	} catch (e) {
+		print ("BAD SEND MSG: " + e.msg);
+		return null;
+	}
 }
-
 load_runtime ("managed");
 var main_module = assembly_load ("main")
 if (!main_module)
@@ -110,31 +114,10 @@ if (!send_message)
 
 print ("-----LOADED ----");
 
-var res = call_method (send_message, null, [mono_string ("run"), mono_string ("mini")])
-if (res)
-	print ("TEST RUN: " + conv_string (res))
+var res = mono_send_msg ("start-test", "mini")
+print ("-----STARTED ---- " + res);
 
-do {
-	res = conv_string (call_method (send_message, null, [mono_string ("run"), mono_string ("gc")]))
+while (mono_send_msg ("pump-test", "") != "DONE") {
 	Module.pump_message ();
-} while (res == "IN PROGRESS");
-print ("DONE")
-
-
-var res = call_method (send_message, null, [mono_string ("say"), mono_string ("hello")])
-res = conv_string (res);
-if (res != "OK:3")
-	throw 4;
-
-var res = call_method (send_message, null, [mono_string ("say"), mono_string ("js-exception")])
-res = conv_string (res);
-if (res != "EH:1")
-	throw 5;
-
-try {
-	call_method (send_message, null, [mono_string ("say"), mono_string ("sharp-exception")])
-	print ("no exception??");
-	throw 6;
-} catch (e) {
 }
 
