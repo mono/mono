@@ -1351,6 +1351,11 @@ static const char info[] =
 	"softdebug "
 #endif
 		"\n"
+#ifndef DISABLE_INTERPRETER
+	"\tInterpreter:   yes\n"
+#else
+	"\tInterpreter:   no\n"
+#endif
 #ifdef MONO_ARCH_LLVM_SUPPORTED
 #ifdef ENABLE_LLVM
 	"\tLLVM:          yes(" LLVM_VERSION ")\n"
