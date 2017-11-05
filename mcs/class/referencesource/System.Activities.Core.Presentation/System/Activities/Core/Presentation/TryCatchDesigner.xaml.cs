@@ -17,6 +17,8 @@ namespace System.Activities.Core.Presentation
     using System.IO;
     using System.Runtime;
     using System.Windows;
+    using System.Windows.Automation;
+    using System.Windows.Automation.Peers;
     using System.Windows.Input;
     using System.Windows.Threading;
     using System.Windows.Controls;
@@ -454,12 +456,36 @@ namespace System.Activities.Core.Presentation
             }
         }
 
+        void OnTryAddActivityKeyDown(object sender, KeyEventArgs e)
+        {
+            if (!LocalAppContextSwitches.UseLegacyAccessibilityFeatures)
+            {
+                if (sender == e.OriginalSource && (e.Key == Key.Space || e.Key == Key.Enter))
+                {
+                    ExpandTryView();
+                    e.Handled = true;
+                }
+            }
+        }
+
         void OnFinallyViewKeyDown(object sender, KeyEventArgs e)
         {
             if (sender == e.OriginalSource && (e.Key == Key.Space || e.Key == Key.Enter))
             {
                 ExpandFinallyView();
                 e.Handled = true;
+            }
+        }
+
+        void OnFinallyAddActivityKeyDown(object sender, KeyEventArgs e)
+        {
+            if (!LocalAppContextSwitches.UseLegacyAccessibilityFeatures)
+            {
+                if (sender == e.OriginalSource && (e.Key == Key.Space || e.Key == Key.Enter))
+                {
+                    ExpandFinallyView();
+                    e.Handled = true;
+                }
             }
         }
 
@@ -600,6 +626,31 @@ namespace System.Activities.Core.Presentation
             }
 
             return true;
+        }
+    }
+
+    internal class TextBlockWrapper : TextBlock
+    {
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            if (!LocalAppContextSwitches.UseLegacyAccessibilityFeatures)
+            {
+                return new TextBlockWrapperAutomationPeer(this);
+            }
+            return base.OnCreateAutomationPeer();
+        }
+    }
+
+    internal class TextBlockWrapperAutomationPeer : TextBlockAutomationPeer
+    {
+        public TextBlockWrapperAutomationPeer(TextBlockWrapper owner)
+            : base(owner)
+        {
+        }
+
+        protected override AutomationControlType GetAutomationControlTypeCore()
+        {
+            return AutomationControlType.Button;
         }
     }
 }

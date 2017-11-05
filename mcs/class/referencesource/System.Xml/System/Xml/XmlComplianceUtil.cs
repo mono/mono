@@ -28,7 +28,7 @@ namespace System.Xml {
             while ( xmlCharType.IsWhiteSpace( value[startPos] ) ) {
                 startPos++;
                 if ( startPos == len ) {
-                    return " ";
+                    return (System.Xml.XmlConfiguration.XmlReaderSection.CollapseWhiteSpaceIntoEmptyString)?"":" ";
                 }
             }
 
