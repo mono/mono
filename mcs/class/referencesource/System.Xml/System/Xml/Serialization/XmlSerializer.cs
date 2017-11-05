@@ -793,6 +793,9 @@ namespace System.Xml.Serialization {
                 else if (primitiveType == typeof(Guid)) {
                     writer.Write_guid(o);
                 }
+                else if (primitiveType == typeof(TimeSpan)) {
+                    writer.Write_TimeSpan(o);
+                }
                 else {
                     throw new InvalidOperationException(Res.GetString(Res.XmlUnxpectedType, primitiveType.FullName));
                 }
@@ -853,17 +856,20 @@ namespace System.Xml.Serialization {
 
             default:
                 if (primitiveType == typeof(XmlQualifiedName)) {
-                    o = reader.Read_QName();
-                }
+                        o = reader.Read_QName();
+                    }
                 else if (primitiveType == typeof(byte[])) {
-                    o = reader.Read_base64Binary();
-                }
+                        o = reader.Read_base64Binary();
+                    }
                 else if (primitiveType == typeof(Guid)) {
-                    o = reader.Read_guid();
-                }
+                        o = reader.Read_guid();
+                    }
+                else if (primitiveType == typeof(TimeSpan) && LocalAppContextSwitches.EnableTimeSpanSerialization) {
+                        o = reader.Read_TimeSpan();
+                    }
                 else {
-                    throw new InvalidOperationException(Res.GetString(Res.XmlUnxpectedType, primitiveType.FullName));
-                }
+                        throw new InvalidOperationException(Res.GetString(Res.XmlUnxpectedType, primitiveType.FullName));
+                    }
                 break;
             }
             return o;

@@ -914,6 +914,10 @@ internal class SqlDependencyProcessDispatcher : MarshalByRefObject { // MBR sinc
                     finally {
                         _stopped = true;
                         _con.Dispose(); // Close and dispose connection.
+                        //dispose windows identity
+                        if (_windowsIdentity != null) {
+                            _windowsIdentity.Dispose();
+                        }
                     }
                 }
             }
