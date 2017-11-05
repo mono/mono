@@ -4873,7 +4873,7 @@ namespace MonoTests.System
 				(
 					typeof(Bug59738Class<int>),
 					"Bug59738Class`1", 
-					"MonoTests.System.TypeTest+Bug59738Class`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]", 
+					$"MonoTests.System.TypeTest+Bug59738Class`1[[System.Int32, {typeof (int).Assembly.FullName}]]",
 					"MonoTests.System.TypeTest+Bug59738Class`1[System.Int32]"
 				)
 			};
