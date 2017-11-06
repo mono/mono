@@ -10,7 +10,13 @@
 CODEPAGE = 65001
 
 RUNTIME_FLAGS =
+
+ifdef TEST_WITH_INTERPRETER
+TEST_RUNTIME_FLAGS = --interpreter
+else
 TEST_RUNTIME_FLAGS =
+endif
+
 TEST_HARNESS = $(topdir)/class/lib/$(PROFILE_DIRECTORY)/$(PARENT_PROFILE)nunit-lite-console.exe
 PLATFORM_DEBUG_FLAGS = /debug:portable
 # Workaround for https://bugzilla.xamarin.com/show_bug.cgi?id=59967
