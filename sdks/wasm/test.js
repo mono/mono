@@ -59,10 +59,6 @@ var invoke_method = Module.cwrap ('mono_wasm_invoke_method', 'number', ['number'
 var mono_string_get_utf8 = Module.cwrap ('mono_wasm_string_get_utf8', 'number', ['number'])
 var mono_string = Module.cwrap ('mono_wasm_string_from_js', 'number', ['string'])
 
-function SharpException (msg) {
-	this.msg = msg;
-}
-
 function call_method (method, this_arg, args) {
 	var stack = Module.Runtime.stackSave ();
 	var args_mem = Runtime.stackAlloc (args.length);
@@ -71,12 +67,12 @@ function call_method (method, this_arg, args) {
 		Module.setValue (args_mem + i * 4, args [i], "i32");
 	Module.setValue (eh_throw, 0, "i32");
 
-	var res = invoke_method (send_message, this_arg, args_mem, eh_throw);
+	var res = invoke_method (method, this_arg, args_mem, eh_throw);
 
 	if (Module.getValue (eh_throw, "i32") != 0) {
 		Module.Runtime.stackRestore(stack);
 		var msg = conv_string (res);
-		throw new SharpException (msg); //the convention is that invoke_method ToString () any outgoing exception
+		throw new Error (msg); //the convention is that invoke_method ToString () any outgoing exception
 	}
 
 	Module.Runtime.stackRestore(stack);
@@ -119,7 +115,7 @@ if (res)
 	print ("TEST RUN: " + conv_string (res))
 
 do {
-	call_method (send_message, null, [mono_string ("run"), mono_string ("gc")])
+	res = conv_string (call_method (send_message, null, [mono_string ("run"), mono_string ("gc")]))
 	Module.pump_message ();
 } while (res == "IN PROGRESS");
 print ("DONE")

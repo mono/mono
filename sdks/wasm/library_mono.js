@@ -6,14 +6,14 @@ var MonoSupportLib = {
 		pump_message: function () {
 			while (MONO.pump_count > 0) {
 				--MONO.pump_count;
-				Module.cwrap ("mono_gc_pump_callback") ();
+				Module.ccall ("mono_gc_pump_callback");
 			}
 		}
 	},
 
 	request_gc_cycle: function () {
 		++MONO.pump_count;
-		if (Module.ENVIRONMENT_IS_WEB) {
+		if (ENVIRONMENT_IS_WEB) {
 			window.setTimeout (MONO.pump_message, 0);
 		}
 	},
