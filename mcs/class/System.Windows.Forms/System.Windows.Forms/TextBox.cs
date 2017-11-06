@@ -450,6 +450,7 @@ namespace System.Windows.Forms {
 						document.PasswordChar = PasswordChar.ToString ();
 					else
 						document.PasswordChar = string.Empty;
+					this.CalculateDocument();
 					Invalidate ();
 				}
 			}
@@ -504,6 +505,7 @@ namespace System.Windows.Forms {
 						document.PasswordChar = string.Empty;
 					}
 					this.CalculateDocument();
+					Invalidate();
 				}
 			}
 		}
