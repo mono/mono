@@ -38,17 +38,20 @@ namespace MonoTests.Mono.Data.Sqlite
 	[TestFixture]
 	public class SqliteTests
 	{
+		string _dataFolder;
 		string _databasePath;
 
 		[SetUp]
 		public void Setup ()
 		{
-			var dataFolder = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.Personal), "SqlTest");
+			_dataFolder = Path.GetTempFileName ();
+			if (File.Exists (_dataFolder))
+				File.Delete (_dataFolder);
 
-			_databasePath = Path.Combine (dataFolder, "database.db");
+			_databasePath = Path.Combine (_dataFolder, "database.db");
 
-			if (!Directory.Exists (dataFolder)) {
-				Directory.CreateDirectory (dataFolder);
+			if (!Directory.Exists (_dataFolder)) {
+				Directory.CreateDirectory (_dataFolder);
 			}
 
 			File.Delete (_databasePath);
@@ -57,10 +60,8 @@ namespace MonoTests.Mono.Data.Sqlite
 		[TearDown]
 		public void TearDown ()
 		{
-			try {
-				File.Delete (_databasePath);
-			} catch {
-			}
+			if (Directory.Exists (_dataFolder))
+				Directory.Delete (_dataFolder, true);
 		}
 
 		[Test]
