@@ -851,6 +851,7 @@ namespace MonoTests.System
 		delegate object Boxer ();
 
 		[Test]
+		[Category ("InterpreterNotWorking")]
 		public void BoxingCovariance ()
 		{
 			var boxer = (Boxer) Delegate.CreateDelegate (
@@ -912,6 +913,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("InterpreterNotWorking")]
 		public void NullFirstArgumentOnStaticMethod ()
 		{
 			CallTarget call = (CallTarget) Delegate.CreateDelegate (
@@ -1025,6 +1027,7 @@ namespace MonoTests.System
 #if MONOTOUCH || FULL_AOT_RUNTIME
 		[Category ("NotWorking")] // #10539
 #endif
+		[Category ("InterpreterNotWorking")]
 		public void ClosedOverNullReferenceStaticMethod ()
 		{
 			var del = (Func<long?,long?>) Delegate.CreateDelegate (
