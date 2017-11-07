@@ -102,7 +102,10 @@ namespace MonoTests.System.IO
 	[SetUp]
 	public void SetUp ()
 	{
-		_tmpFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
+		_tmpFolder = Path.GetTempFileName ();
+		if (File.Exists (_tmpFolder))
+			File.Delete (_tmpFolder);
+
 		_codeFileName = _tmpFolder + Path.DirectorySeparatorChar + "AFile.txt";
 		_thisCodeFileName = _tmpFolder + Path.DirectorySeparatorChar + "StreamWriterTest.temp";
 
