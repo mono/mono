@@ -25,12 +25,14 @@ namespace MonoTests.System.IO
 	public class FileTest
 	{
 		CultureInfo old_culture;
-		string tmpFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
+		string tmpFolder;
 
 		[SetUp]
 		public void SetUp ()
 		{
-			tmpFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
+			tmpFolder = Path.GetTempFileName ();
+			if (File.Exists (tmpFolder))
+				File.Delete (tmpFolder);
 			DeleteDirectory (tmpFolder);
 			Directory.CreateDirectory (tmpFolder);
 			old_culture = Thread.CurrentThread.CurrentCulture;
