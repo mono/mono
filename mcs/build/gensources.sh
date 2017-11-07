@@ -33,11 +33,12 @@ process_includes_1() {
             wcdir=`echo $wildc | cut -d \* -f 1` # ../../../MyDir/
             # Enumerate files from 'FileToExclude1.cs,FileToExclude2.cs'
             # and save to $outfile.exc
-
-            for i in ${qexc//,/ }
-            do
+            oldIFS=$IFS
+            IFS=,
+            for i in $qexc; do
                 echo "$wcdir$i" >> $outfile.exc
             done
+            IFS=$oldIFS
             ls $wc >> $2
         fi
 	done
