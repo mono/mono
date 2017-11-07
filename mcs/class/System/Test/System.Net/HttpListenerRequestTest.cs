@@ -171,6 +171,9 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+#if MONOTOUCH
+		[Ignore ("Randomly produces ObjectDisposedExceptions, in particular on device. See bug #39780.")]
+#endif
 		public void HttpBasicAuthScheme ()
 		{
 			var port = NetworkHelpers.FindFreePort ();			
@@ -290,6 +293,9 @@ namespace MonoTests.System.Net
 		[Test]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
+#if MONOTOUCH
+		[Ignore ("On device sometimes hangs in the call to listener.GetContext (). See bug #60542.")]
 #endif
 		public void HttpRequestIgnoreBadCookies ()
 		{
