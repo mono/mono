@@ -208,6 +208,8 @@ set_resume_state (ThreadContext *context, InterpFrame *frame)
 /* Set the current execution state to the resume state in context */
 #define SET_RESUME_STATE(context) do { \
 		ip = (context)->handler_ip;						\
+		/* spec says stack should be empty at endfinally so it should be at the start too */ \
+		sp = frame->stack; \
 		if (frame->ex) { \
 		sp->data.p = frame->ex;											\
 		++sp;															\
