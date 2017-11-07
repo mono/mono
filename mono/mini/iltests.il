@@ -3023,4 +3023,83 @@ L_3:
 		ldc.i4.0
 		ret
     }
+
+	.method public static bool llvm_regress_59436 () {
+		// Code size	   41 (0x29)
+		.maxstack  3
+		.locals init (float64 V_0,
+					  float64 V_1,
+					  valuetype [mscorlib]System.Decimal V_2)
+		IL_0000:  ldc.r8	 1
+		IL_0009:  stloc.0
+		IL_000a:  ldc.r8	 2
+		IL_0013:  stloc.1
+		IL_0014:  ldloc.0
+		IL_0015:  newobj	 instance void [mscorlib]System.Decimal::.ctor(float64)
+		IL_001a:  ldloca.s   V_2
+		IL_001c:  ldloc.1
+		IL_001d:  call	   instance void [mscorlib]System.Decimal::.ctor(float64)
+		IL_0022:  ldloc.2
+		IL_0023:  call	   bool [mscorlib]System.Decimal::op_LessThanOrEqual(valuetype [mscorlib]System.Decimal,
+																			   valuetype [mscorlib]System.Decimal)
+		IL_0028:  ret
+	}
+
+  .method private hidebysig static void  fail_inline() cil managed
+  {
+    // Code size       9 (0x9)
+    .maxstack  8
+    IL_0000:  ldc.i4.s   16
+    IL_0002:  conv.u
+    IL_0003:  ldc.i4.1
+    IL_0004:  mul.ovf.un
+    IL_0005:  localloc
+    IL_0007:  pop
+    IL_0008:  ret
+  }
+
+  .method private hidebysig static int32
+          always_inline(int32 op) cil managed aggressiveinlining
+  {
+    // Code size       24 (0x18)
+    .maxstack  8
+    IL_0000:  ldarg.0
+    IL_0001:  brfalse.s  IL_0009
+
+    IL_0003:  ldarg.0
+    IL_0004:  ldc.i4.2
+    IL_0005:  beq.s      IL_000b
+
+    IL_0007:  br.s       IL_000d
+
+    IL_0009:  ldc.i4.0
+    IL_000a:  ret
+
+    IL_000b:  ldc.i4.3
+    IL_000c:  ret
+
+    IL_000d:  call       void Tests::fail_inline()
+    IL_0012:  newobj     instance void [mscorlib]System.Exception::.ctor()
+    IL_0017:  throw
+  }
+
+  .method public hidebysig static int32 test_3_regress_59608() cil managed
+  {
+    .maxstack  8
+    IL_0000:  ldc.i4.2
+    IL_0001:  call       int32 Tests::always_inline(int32)
+    IL_000c:  ret
+  }
+
+  .method public hidebysig static int32 test_104_conv_u_and_string() cil managed
+  {
+    .maxstack  8
+	ldstr "hello"
+	conv.u
+	call int32 [mscorlib]System.Runtime.CompilerServices.RuntimeHelpers::get_OffsetToStringData()
+	add
+	ldind.u2
+	ret
+  }
+
 }

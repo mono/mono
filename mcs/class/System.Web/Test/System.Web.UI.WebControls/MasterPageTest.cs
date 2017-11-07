@@ -42,7 +42,6 @@ using System.Collections;
 using MonoTests.SystemWeb.Framework;
 using MonoTests.stand_alone.WebHarness;
 using System.Threading;
-using MonoTests.Common;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -219,17 +218,17 @@ namespace MonoTests.System.Web.UI.WebControls
 			var mp = new MasterPage ();
 			ITemplate template = new MyTemplate ();
 
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				mp.InstantiateInContentPlaceHolder (null, template);
 			}, "#A1-1");
 
 			Control container = new Control ();
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				mp.InstantiateInContentPlaceHolder (container, null);
 			}, "#A1-2");
 #if DOTNET
 			// TODO: why does it throw? Unchecked 'as' type cast?
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				mp.InstantiateInContentPlaceHolder (container, template);
 			}, "#B1-1");
 #endif
@@ -257,12 +256,12 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			ITemplate template = new MyTemplate ();
 
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				mp.InstantiateInContentPlaceHolder (null, template);
 			}, "#A1-1");
 
 			Control container = new Control ();
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				mp.InstantiateInContentPlaceHolder (container, null);
 			}, "#A1-2");
 

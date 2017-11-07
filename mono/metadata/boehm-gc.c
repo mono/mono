@@ -278,7 +278,7 @@ void
 mono_gc_collect (int generation)
 {
 #ifndef DISABLE_PERFCOUNTERS
-	mono_perfcounters->gc_induced++;
+	mono_atomic_inc_i32 (&mono_perfcounters->gc_induced);
 #endif
 	GC_gcollect ();
 }
@@ -404,6 +404,7 @@ mono_gc_thread_detach_with_lock (MonoThreadInfo *p)
 		mono_threads_add_joinable_thread ((gpointer)tid);
 
 	mono_handle_stack_free (p->handle_stack);
+	p->handle_stack = NULL;
 }
 
 gboolean
@@ -457,9 +458,9 @@ on_gc_notification (GC_EventType event)
 		MONO_GC_BEGIN (1);
 #ifndef DISABLE_PERFCOUNTERS
 		if (mono_perfcounters)
-			mono_perfcounters->gc_collections0++;
+			mono_atomic_inc_i32 (&mono_perfcounters->gc_collections0);
 #endif
-		InterlockedIncrement (&gc_stats.major_gc_count);
+		mono_atomic_inc_i32 (&gc_stats.major_gc_count);
 		gc_start_time = mono_100ns_ticks ();
 		break;
 
@@ -477,10 +478,11 @@ on_gc_notification (GC_EventType event)
 		if (mono_perfcounters) {
 			guint64 heap_size = GC_get_heap_size ();
 			guint64 used_size = heap_size - GC_get_free_bytes ();
-			mono_perfcounters->gc_total_bytes = used_size;
-			mono_perfcounters->gc_committed_bytes = heap_size;
-			mono_perfcounters->gc_reserved_bytes = heap_size;
-			mono_perfcounters->gc_gen0size = heap_size;
+			/* FIXME: change these to mono_atomic_store_i64 () */
+			UnlockedWrite64 (&mono_perfcounters->gc_total_bytes, used_size);
+			UnlockedWrite64 (&mono_perfcounters->gc_committed_bytes, heap_size);
+			UnlockedWrite64 (&mono_perfcounters->gc_reserved_bytes, heap_size);
+			UnlockedWrite64 (&mono_perfcounters->gc_gen0size, heap_size);
 		}
 #endif
 		UnlockedAdd64 (&gc_stats.major_gc_time, mono_100ns_ticks () - gc_start_time);
@@ -522,9 +524,10 @@ on_gc_heap_resize (size_t new_size)
 	guint64 heap_size = GC_get_heap_size ();
 #ifndef DISABLE_PERFCOUNTERS
 	if (mono_perfcounters) {
-		mono_perfcounters->gc_committed_bytes = heap_size;
-		mono_perfcounters->gc_reserved_bytes = heap_size;
-		mono_perfcounters->gc_gen0size = heap_size;
+		/* FIXME: change these to mono_atomic_store_i64 () */
+		UnlockedWrite64 (&mono_perfcounters->gc_committed_bytes, heap_size);
+		UnlockedWrite64 (&mono_perfcounters->gc_reserved_bytes, heap_size);
+		UnlockedWrite64 (&mono_perfcounters->gc_gen0size, heap_size);
 	}
 #endif
 
@@ -583,9 +586,32 @@ push_root (gpointer key, gpointer value, gpointer user_data)
 }
 
 static void
+push_handle_stack (HandleStack* stack)
+{
+	HandleChunk *cur = stack->bottom;
+	HandleChunk *last = stack->top;
+
+	if (!cur)
+		return;
+
+	while (cur) {
+		if (cur->size > 0)
+			GC_push_all (cur->elems, (char*)(cur->elems + cur->size) + 1);
+		if (cur == last)
+			break;
+		cur = cur->next;
+	}
+}
+
+static void
 mono_push_other_roots (void)
 {
 	g_hash_table_foreach (roots, push_root, NULL);
+	FOREACH_THREAD (info) {
+		HandleStack* stack = (HandleStack*)info->handle_stack;
+		if (stack)
+			push_handle_stack (stack);
+	} FOREACH_THREAD_END
 	if (default_push_other_roots)
 		default_push_other_roots ();
 }
@@ -859,7 +885,7 @@ mono_gc_wbarrier_generic_store (gpointer ptr, MonoObject* value)
 void
 mono_gc_wbarrier_generic_store_atomic (gpointer ptr, MonoObject *value)
 {
-	InterlockedWritePointer ((volatile gpointer *)ptr, value);
+	mono_atomic_store_ptr ((volatile gpointer *)ptr, value);
 }
 
 void
@@ -1736,7 +1762,7 @@ alloc_handle (HandleData *handles, MonoObject *obj, gboolean track)
 	}
 
 #ifndef DISABLE_PERFCOUNTERS
-	mono_perfcounters->gc_num_handles++;
+	mono_atomic_inc_i32 (&mono_perfcounters->gc_num_handles);
 #endif
 	unlock_handles (handles);
 	res = MONO_GC_HANDLE (slot, handles->type);
@@ -1934,7 +1960,7 @@ mono_gchandle_free (guint32 gchandle)
 		/* print a warning? */
 	}
 #ifndef DISABLE_PERFCOUNTERS
-	mono_perfcounters->gc_num_handles--;
+	mono_atomic_dec_i32 (&mono_perfcounters->gc_num_handles);
 #endif
 	/*g_print ("freed entry %d of type %d\n", slot, handles->type);*/
 	unlock_handles (handles);

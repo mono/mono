@@ -337,13 +337,6 @@ nursery_canaries_enabled (void)
 
 #define safe_object_get_size	sgen_safe_object_get_size
 
-#if defined(HAVE_CONC_GC_AS_DEFAULT)
-/* Use concurrent major on deskstop platforms */
-#define DEFAULT_MAJOR SGEN_MAJOR_CONCURRENT
-#else
-#define DEFAULT_MAJOR SGEN_MAJOR_SERIAL
-#endif
-
 typedef enum {
 	SGEN_MAJOR_DEFAULT,
 	SGEN_MAJOR_SERIAL,
@@ -799,6 +792,7 @@ sgen_sort_addresses (void **array, size_t size)
  * to the area between start_nursery and end_nursery for later consideration.
  * Typically used for thread stacks.
  */
+MONO_NO_SANITIZE_ADDRESS
 void
 sgen_conservatively_pin_objects_from (void **start, void **end, void *start_nursery, void *end_nursery, int pin_type)
 {
@@ -1703,7 +1697,7 @@ collect_nursery (const char *reason, gboolean is_overflow, SgenGrayQueue *unpin_
 	TV_GETTIME (last_minor_collection_start_tv);
 	atv = last_minor_collection_start_tv;
 
-	binary_protocol_collection_begin (InterlockedRead (&gc_stats.minor_gc_count), GENERATION_NURSERY);
+	binary_protocol_collection_begin (mono_atomic_load_i32 (&gc_stats.minor_gc_count), GENERATION_NURSERY);
 
 	object_ops_nopar = sgen_concurrent_collection_in_progress ()
 				? &sgen_minor_collector.serial_ops_with_concurrent_major
@@ -1731,7 +1725,7 @@ collect_nursery (const char *reason, gboolean is_overflow, SgenGrayQueue *unpin_
 	degraded_mode = 0;
 	objects_pinned = 0;
 
-	SGEN_LOG (1, "Start nursery collection %" G_GINT32_FORMAT " %p-%p, size: %d", InterlockedRead (&gc_stats.minor_gc_count), nursery_section->data, nursery_section->end_data, (int)(nursery_section->end_data - nursery_section->data));
+	SGEN_LOG (1, "Start nursery collection %" G_GINT32_FORMAT " %p-%p, size: %d", mono_atomic_load_i32 (&gc_stats.minor_gc_count), nursery_section->data, nursery_section->end_data, (int)(nursery_section->end_data - nursery_section->data));
 
 	/* world must be stopped already */
 	TV_GETTIME (btv);
@@ -1746,7 +1740,7 @@ collect_nursery (const char *reason, gboolean is_overflow, SgenGrayQueue *unpin_
 	init_gray_queue (&gc_thread_gray_queue);
 	ctx = CONTEXT_FROM_OBJECT_OPERATIONS (object_ops_nopar, &gc_thread_gray_queue);
 
-	InterlockedIncrement (&gc_stats.minor_gc_count);
+	mono_atomic_inc_i32 (&gc_stats.minor_gc_count);
 
 	sgen_process_fin_stage_entries ();
 
@@ -1865,7 +1859,7 @@ collect_nursery (const char *reason, gboolean is_overflow, SgenGrayQueue *unpin_
 	TV_GETTIME (last_minor_collection_end_tv);
 	UnlockedAdd64 (&gc_stats.minor_gc_time, TV_ELAPSED (last_minor_collection_start_tv, last_minor_collection_end_tv));
 
-	sgen_debug_dump_heap ("minor", InterlockedRead (&gc_stats.minor_gc_count) - 1, NULL);
+	sgen_debug_dump_heap ("minor", mono_atomic_load_i32 (&gc_stats.minor_gc_count) - 1, NULL);
 
 	/* prepare the pin queue for the next collection */
 	sgen_finish_pinning ();
@@ -1898,7 +1892,7 @@ collect_nursery (const char *reason, gboolean is_overflow, SgenGrayQueue *unpin_
 			time_minor_scan_los - los_scan_start,
 			time_minor_finish_gray_stack - finish_gray_start);
 
-	binary_protocol_collection_end (InterlockedRead (&gc_stats.minor_gc_count) - 1, GENERATION_NURSERY, 0, 0);
+	binary_protocol_collection_end (mono_atomic_load_i32 (&gc_stats.minor_gc_count) - 1, GENERATION_NURSERY, 0, 0);
 
 	if (check_nursery_objects_pinned && !sgen_minor_collector.is_split)
 		sgen_check_nursery_objects_pinned (unpin_queue != NULL);
@@ -2149,7 +2143,7 @@ major_start_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason,
 {
 	SgenObjectOperations *object_ops_nopar, *object_ops_par = NULL;
 
-	binary_protocol_collection_begin (InterlockedRead (&gc_stats.major_gc_count), GENERATION_OLD);
+	binary_protocol_collection_begin (mono_atomic_load_i32 (&gc_stats.major_gc_count), GENERATION_OLD);
 
 	current_collection_generation = GENERATION_OLD;
 
@@ -2180,8 +2174,8 @@ major_start_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason,
 	check_scan_starts ();
 
 	degraded_mode = 0;
-	SGEN_LOG (1, "Start major collection %" G_GINT32_FORMAT, InterlockedRead (&gc_stats.major_gc_count));
-	InterlockedIncrement (&gc_stats.major_gc_count);
+	SGEN_LOG (1, "Start major collection %" G_GINT32_FORMAT, mono_atomic_load_i32 (&gc_stats.major_gc_count));
+	mono_atomic_inc_i32 (&gc_stats.major_gc_count);
 
 	if (major_collector.start_major_collection)
 		major_collector.start_major_collection ();
@@ -2297,7 +2291,7 @@ major_finish_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason
 	TV_GETTIME (atv);
 	time_major_sweep += TV_ELAPSED (btv, atv);
 
-	sgen_debug_dump_heap ("major", InterlockedRead (&gc_stats.major_gc_count) - 1, reason);
+	sgen_debug_dump_heap ("major", mono_atomic_load_i32 (&gc_stats.major_gc_count) - 1, reason);
 
 	if (sgen_have_pending_finalizers ()) {
 		SGEN_LOG (4, "Finalizer-thread wakeup");
@@ -2329,7 +2323,7 @@ major_finish_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason
                         time_major_scan_mod_union_los - los_scan_start,
                         time_major_finish_gray_stack - finish_gray_start);
 
-	binary_protocol_collection_end (InterlockedRead (&gc_stats.major_gc_count) - 1, GENERATION_OLD, counts.num_scanned_objects, counts.num_unique_scanned_objects);
+	binary_protocol_collection_end (mono_atomic_load_i32 (&gc_stats.major_gc_count) - 1, GENERATION_OLD, counts.num_scanned_objects, counts.num_unique_scanned_objects);
 }
 
 static gboolean
@@ -2509,8 +2503,8 @@ sgen_ensure_free_space (size_t size, int generation)
 /*
  * LOCKING: Assumes the GC lock is held.
  */
-void
-sgen_perform_collection (size_t requested_size, int generation_to_collect, const char *reason, gboolean wait_to_finish, gboolean stw)
+static void
+sgen_perform_collection_inner (size_t requested_size, int generation_to_collect, const char *reason, gboolean wait_to_finish, gboolean stw)
 {
 	TV_DECLARE (gc_total_start);
 	TV_DECLARE (gc_total_end);
@@ -2589,6 +2583,52 @@ sgen_perform_collection (size_t requested_size, int generation_to_collect, const
 		sgen_restart_world (oldest_generation_collected);
 }
 
+#ifdef HOST_WASM
+
+typedef struct {
+	size_t requested_size;
+	int generation_to_collect;
+	const char *reason;
+} SgenGcRequest;
+
+static SgenGcRequest gc_request;
+static gboolean pending_request;
+
+extern void request_gc_cycle (void);
+
+#include <emscripten.h>
+
+EMSCRIPTEN_KEEPALIVE void
+mono_gc_pump_callback (void)
+{
+	if (!pending_request)
+		return;
+	pending_request = FALSE;
+	sgen_perform_collection_inner (gc_request.requested_size, gc_request.generation_to_collect, gc_request.reason, TRUE, TRUE);	
+}
+#endif
+
+void
+sgen_perform_collection (size_t requested_size, int generation_to_collect, const char *reason, gboolean wait_to_finish, gboolean stw)
+{
+#ifdef HOST_WASM
+	g_assert (stw); //can't handle non-stw mode (IE, domain unload)
+	//we ignore wait_to_finish
+	if (!pending_request || gc_request.generation_to_collect <= generation_to_collect) { //no active request or request was for a smaller part of the heap
+		gc_request.requested_size = requested_size;
+		gc_request.generation_to_collect = generation_to_collect;
+		gc_request.reason = reason;
+		if (!pending_request) {
+			request_gc_cycle ();
+			pending_request = TRUE;
+		}
+	}
+
+	degraded_mode = 1; //enable degraded mode so allocation can continue
+#else
+	sgen_perform_collection_inner (requested_size, generation_to_collect, reason, wait_to_finish, stw);
+#endif
+}
 /*
  * ######################################################################
  * ########  Memory allocation from the OS
@@ -3022,7 +3062,7 @@ mono_gc_wbarrier_generic_store_atomic (gpointer ptr, GCObject *value)
 
 	SGEN_LOG (8, "Wbarrier atomic store at %p to %p (%s)", ptr, value, value ? sgen_client_vtable_get_name (SGEN_LOAD_VTABLE (value)) : "null");
 
-	InterlockedWritePointer ((volatile gpointer *)ptr, value);
+	mono_atomic_store_ptr ((volatile gpointer *)ptr, value);
 
 	if (ptr_in_nursery (value) || concurrent_collection_in_progress)
 		mono_gc_wbarrier_generic_nostore (ptr);
@@ -3049,13 +3089,16 @@ sgen_gc_collect (int generation)
 	if (generation > 1)
 		generation = 1;
 	sgen_perform_collection (0, generation, "user request", TRUE, TRUE);
+	/* Make sure we don't exceed heap size allowance by promoting */
+	if (generation == GENERATION_NURSERY && sgen_need_major_collection (0))
+		sgen_perform_collection (0, GENERATION_OLD, "Minor allowance", FALSE, TRUE);
 	UNLOCK_GC;
 }
 
 int
 sgen_gc_collection_count (int generation)
 {
-	return InterlockedRead (generation == GENERATION_NURSERY ? &gc_stats.minor_gc_count : &gc_stats.major_gc_count);
+	return mono_atomic_load_i32 (generation == GENERATION_NURSERY ? &gc_stats.minor_gc_count : &gc_stats.major_gc_count);
 }
 
 size_t
@@ -3269,7 +3312,7 @@ sgen_gc_init (void)
 	gboolean cement_enabled = TRUE;
 
 	do {
-		result = InterlockedCompareExchange (&gc_initialized, -1, 0);
+		result = mono_atomic_cas_i32 (&gc_initialized, -1, 0);
 		switch (result) {
 		case 1:
 			/* already inited */

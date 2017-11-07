@@ -1543,6 +1543,9 @@ namespace Mono.CSharp {
 					if (ec is PointerContainer)
 						return PointerContainer.MakeType (context.Module, et);
 
+					if (ec is ReferenceContainer)
+						return ReferenceContainer.MakeType (context.Module, et);
+					
 					throw new NotImplementedException ();
 				}
 

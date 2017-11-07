@@ -177,16 +177,13 @@ struct sigcontext {
 
 struct MonoLMF {
 	/* 
-	 * If the lowest bit is set, then this LMF has the rip field set. Otherwise,
-	 * the rip field is not set, and the rsp field points to the stack location where
-	 * the caller ip is saved.
+	 * The rsp field points to the stack location where the caller ip is saved.
 	 * If the second lowest bit is set, then this is a MonoLMFExt structure, and
 	 * the other fields are not valid.
 	 * If the third lowest bit is set, then this is a MonoLMFTramp structure, and
 	 * the 'rbp' field is not valid.
 	 */
 	gpointer    previous_lmf;
-	guint64     rip;
 	guint64     rbp;
 	guint64     rsp;
 };
@@ -270,15 +267,15 @@ typedef struct {
 	gpointer bp_addrs [MONO_ZERO_LEN_ARRAY];
 } SeqPointInfo;
 
-#define DYN_CALL_STACK_ARGS 6
-
 typedef struct {
-	mgreg_t regs [PARAM_REGS + DYN_CALL_STACK_ARGS];
 	mgreg_t res;
 	guint8 *ret;
 	double fregs [8];
 	mgreg_t has_fp;
+	mgreg_t nstack_args;
 	guint8 buffer [256];
+	/* This should come last as the structure is dynamically extended */
+	mgreg_t regs [PARAM_REGS];
 } DynCallArgs;
 
 typedef enum {
@@ -429,7 +426,7 @@ typedef struct {
 
 #define MONO_ARCH_GSHARED_SUPPORTED 1
 #define MONO_ARCH_DYN_CALL_SUPPORTED 1
-#define MONO_ARCH_DYN_CALL_PARAM_AREA (DYN_CALL_STACK_ARGS * 8)
+#define MONO_ARCH_DYN_CALL_PARAM_AREA 0
 
 #define MONO_ARCH_LLVM_SUPPORTED 1
 #define MONO_ARCH_HAVE_CARD_TABLE_WBARRIER 1
@@ -445,7 +442,6 @@ typedef struct {
 #define MONO_ARCH_HAVE_PATCH_CODE_NEW 1
 #define MONO_ARCH_HAVE_OP_GENERIC_CLASS_INIT 1
 #define MONO_ARCH_HAVE_GENERAL_RGCTX_LAZY_FETCH_TRAMPOLINE 1
-#define MONO_ARCH_HAVE_INIT_LMF_EXT 1
 
 #if defined(TARGET_OSX) || defined(__linux__)
 #define MONO_ARCH_HAVE_UNWIND_BACKTRACE 1
@@ -492,9 +488,6 @@ mono_amd64_resume_unwind (guint64 dummy1, guint64 dummy2, guint64 dummy3, guint6
 
 gpointer
 mono_amd64_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpointer *callee, gpointer mrgctx_reg);
-
-guint64
-mono_amd64_get_original_ip (void);
 
 GSList*
 mono_amd64_get_exception_trampolines (gboolean aot);
@@ -567,6 +560,12 @@ mono_arch_unwindinfo_get_size (guchar code_count)
 
 guchar
 mono_arch_unwindinfo_get_code_count (GSList *unwind_ops);
+
+PUNWIND_INFO
+mono_arch_unwindinfo_alloc_unwind_info (GSList *unwind_ops);
+
+void
+mono_arch_unwindinfo_free_unwind_info (PUNWIND_INFO unwind_info);
 
 guint
 mono_arch_unwindinfo_init_method_unwind_info (gpointer cfg);

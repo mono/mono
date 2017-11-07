@@ -9,6 +9,7 @@
 #include <mono/metadata/mono-config-dirs.h>
 #include <mono/metadata/mono-debug.h>
 #include <mono/metadata/profiler-private.h>
+#include <mono/metadata/debug-internals.h>
 #include <mono/utils/mono-dl.h>
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/mono-logger-internals.h>
@@ -160,13 +161,13 @@ mono_profiler_create (MonoProfiler *prof)
 void
 mono_profiler_set_cleanup_callback (MonoProfilerHandle handle, MonoProfilerCleanupCallback cb)
 {
-	InterlockedWritePointer (&handle->cleanup_callback, (gpointer) cb);
+	mono_atomic_store_ptr (&handle->cleanup_callback, (gpointer) cb);
 }
 
 void
 mono_profiler_set_coverage_filter_callback (MonoProfilerHandle handle, MonoProfilerCoverageFilterCallback cb)
 {
-	InterlockedWritePointer (&handle->coverage_filter, (gpointer) cb);
+	mono_atomic_store_ptr (&handle->coverage_filter, (gpointer) cb);
 }
 
 mono_bool
@@ -202,14 +203,14 @@ mono_profiler_get_coverage_data (MonoProfilerHandle handle, MonoMethod *method, 
 	if (!mono_profiler_state.code_coverage)
 		return FALSE;
 
+	if ((method->flags & METHOD_ATTRIBUTE_ABSTRACT) || (method->iflags & METHOD_IMPL_ATTRIBUTE_RUNTIME) || (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) || (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL))
+		return FALSE;
+
 	coverage_lock ();
 
 	MonoProfilerCoverageInfo *info = g_hash_table_lookup (mono_profiler_state.coverage_hash, method);
 
 	coverage_unlock ();
-
-	if (!info)
-		return FALSE;
 
 	MonoError error;
 	MonoMethodHeader *header = mono_method_get_header_checked (method, &error);
@@ -220,6 +221,48 @@ mono_profiler_get_coverage_data (MonoProfilerHandle handle, MonoMethod *method, 
 	const unsigned char *start = mono_method_header_get_code (header, &size, NULL);
 	const unsigned char *end = start + size;
 	MonoDebugMethodInfo *minfo = mono_debug_lookup_method (method);
+
+	if (!info) {
+		char *source_file;
+		int i, n_il_offsets;
+		int *source_files;
+		GPtrArray *source_file_list;
+		MonoSymSeqPoint *sym_seq_points;
+
+		if (!minfo)
+			return TRUE;
+
+		/* Return 0 counts for all locations */
+
+		mono_debug_get_seq_points (minfo, &source_file, &source_file_list, &source_files, &sym_seq_points, &n_il_offsets);
+		for (i = 0; i < n_il_offsets; ++i) {
+			MonoSymSeqPoint *sp = &sym_seq_points [i];
+			const char *srcfile = "";
+
+			if (source_files [i] != -1) {
+				MonoDebugSourceInfo *sinfo = (MonoDebugSourceInfo *)g_ptr_array_index (source_file_list, source_files [i]);
+				srcfile = sinfo->source_file;
+			}
+
+			MonoProfilerCoverageData data = {
+				.method = method,
+				.il_offset = sp->il_offset,
+				.counter = 0,
+				.file_name = srcfile,
+				.line = sp->line,
+				.column = 0,
+			};
+
+			cb (handle->prof, &data);
+		}
+
+		g_free (source_files);
+		g_free (sym_seq_points);
+		g_ptr_array_free (source_file_list, TRUE);
+
+		mono_metadata_free_mh (header);
+		return TRUE;
+	}
 
 	for (guint32 i = 0; i < info->entries; i++) {
 		guchar *cil_code = info->data [i].cil_code;
@@ -262,6 +305,9 @@ MonoProfilerCoverageInfo *
 mono_profiler_coverage_alloc (MonoMethod *method, guint32 entries)
 {
 	if (!mono_profiler_state.code_coverage)
+		return FALSE;
+
+	if (method->wrapper_type)
 		return FALSE;
 
 	gboolean cover = FALSE;
@@ -362,7 +408,7 @@ mono_profiler_enable_allocations (void)
 void
 mono_profiler_set_call_instrumentation_filter_callback (MonoProfilerHandle handle, MonoProfilerCallInstrumentationFilterCallback cb)
 {
-	InterlockedWritePointer (&handle->call_instrumentation_filter, (gpointer) cb);
+	mono_atomic_store_ptr (&handle->call_instrumentation_filter, (gpointer) cb);
 }
 
 mono_bool
@@ -524,8 +570,8 @@ update_callback (volatile gpointer *location, gpointer new_, volatile gint32 *co
 	gpointer old;
 
 	do {
-		old = InterlockedReadPointer (location);
-	} while (InterlockedCompareExchangePointer (location, new_, old) != old);
+		old = mono_atomic_load_ptr (location);
+	} while (mono_atomic_cas_ptr (location, new_, old) != old);
 
 	/*
 	 * At this point, we could have installed a NULL callback while the counter
@@ -537,10 +583,10 @@ update_callback (volatile gpointer *location, gpointer new_, volatile gint32 *co
 	 */
 
 	if (old)
-		InterlockedDecrement (counter);
+		mono_atomic_dec_i32 (counter);
 
 	if (new_)
-		InterlockedIncrement (counter);
+		mono_atomic_inc_i32 (counter);
 }
 
 #define _MONO_PROFILER_EVENT(name, type) \

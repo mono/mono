@@ -7,26 +7,28 @@ export TEST_HARNESS_VERBOSE=1
 
 make_timeout=300m
 
-if [[ $CI_TAGS == *'collect-coverage'* ]]; then
-    # Collect coverage for further use by lcov and similar tools.
-    # Coverage must be collected with -O0 and debug information.
-    export CFLAGS="-ggdb3 --coverage -O0"
-    # Collect coverage on all optimizations
-    export MONO_ENV_OPTIONS="$MONO_ENV_OPTIONS -O=all"
-elif [[ ${CI_TAGS} == *'clang-sanitizer'* ]]; then
+if [[ ${CI_TAGS} == *'clang-sanitizer'* ]]; then
 	export CC="clang"
 	export CXX="clang++"
-	export CFLAGS="-g -O1 -fsanitize=thread -fsanitize-blacklist=${MONO_REPO_ROOT}/scripts/ci/clang-thread-sanitizer-blacklist -mllvm -tsan-instrument-atomics=false"
+	export CFLAGS="$CFLAGS -g -O1 -fsanitize=thread -fsanitize-blacklist=${MONO_REPO_ROOT}/scripts/ci/clang-thread-sanitizer-blacklist -mllvm -tsan-instrument-atomics=false"
 	export LDFLAGS="-fsanitize=thread"
 	# TSAN_OPTIONS are used by programs that were compiled with Clang's ThreadSanitizer
 	# see https://github.com/google/sanitizers/wiki/ThreadSanitizerFlags for more details
 	export TSAN_OPTIONS="history_size=7:exitcode=0:force_seq_cst_atomics=1"
 	make_timeout=30m
-elif [[ ${label} == w* ]]; then
+fi
+
+if [[ ${label} == w* ]]; then
     # Passing -ggdb3 on Cygwin breaks linking against libmonosgen-x.y.dll
-    export CFLAGS="-g -O2"
+    export CFLAGS="$CFLAGS -g -O2"
 else
-    export CFLAGS="-ggdb3 -O2"
+    export CFLAGS="$CFLAGS -ggdb3 -O2"
+fi
+
+if [[ $CI_TAGS == *'collect-coverage'* ]]; then
+    # Collect coverage for further use by lcov and similar tools.
+    # Coverage must be collected with -O0 and debug information.
+    export CFLAGS="$CFLAGS -ggdb3 --coverage -O0"
 fi
 
 if [[ $CI_TAGS == *'retry-flaky-tests'* ]]; then
@@ -78,8 +80,10 @@ if [ -x "/usr/bin/dpkg-architecture" ];
 	mkdir -p ~/.config/.mono/
 	wget -qO- https://download.mono-project.com/test/new-certs.tgz| tar zx -C ~/.config/.mono/
 fi
-
-${TESTCMD} --label=configure --timeout=60m --fatal ./autogen.sh $EXTRA_CONF_FLAGS
+if [[ ${CI_TAGS} != *'mac-sdk'* ]]; # Mac SDK builds Mono itself
+	then
+	${TESTCMD} --label=configure --timeout=60m --fatal ./autogen.sh $EXTRA_CONF_FLAGS
+fi
 if [[ ${label} == 'w32' ]];
     then
 	# only build boehm on w32 (only windows platform supporting boehm).
@@ -103,10 +107,15 @@ if [[ ${CI_TAGS} == *'monolite'* ]]; then make get-monolite-latest; fi
 make_parallelism=-j4
 if [[ ${label} == 'debian-8-ppc64el' ]]; then make_parallelism=-j1; fi
 
-${TESTCMD} --label=make --timeout=${make_timeout} --fatal make ${make_parallelism} -w V=1
+if [[ ${CI_TAGS} != *'mac-sdk'* ]]; # Mac SDK builds Mono itself
+	then
+	${TESTCMD} --label=make --timeout=${make_timeout} --fatal make ${make_parallelism} -w V=1
+fi
 
 if [[ ${CI_TAGS} == *'checked-coop'* ]]; then export MONO_CHECK_MODE=gc,thread; fi
 if [[ ${CI_TAGS} == *'checked-all'* ]]; then export MONO_CHECK_MODE=all; fi
+
+export MONO_ENV_OPTIONS="$MONO_ENV_OPTIONS $MONO_TEST_ENV_OPTIONS"
 
 if [[ ${CI_TAGS} == *'acceptance-tests'* ]];
     then
@@ -123,6 +132,9 @@ elif [[ ${CI_TAGS} == *'interpreter'* ]];
 elif [[ ${CI_TAGS} == *'mcs-compiler'* ]];
     then
     $(dirname "${BASH_SOURCE[0]}")/run-test-mcs.sh
+elif [[ ${CI_TAGS} == *'mac-sdk'* ]];
+    then
+    $(dirname "${BASH_SOURCE[0]}")/run-test-mac-sdk.sh
 elif [[ ${CI_TAGS} == *'no-tests'* ]];
     then
 	exit 0

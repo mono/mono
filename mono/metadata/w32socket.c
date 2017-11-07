@@ -208,7 +208,7 @@ mono_w32socket_close (SOCKET sock)
 {
 	gboolean ret;
 	MONO_ENTER_GC_SAFE;
-	ret = CloseHandle (sock);
+	ret = closesocket (sock);
 	MONO_EXIT_GC_SAFE;
 	return ret;
 }
@@ -2354,8 +2354,40 @@ ves_icall_System_Net_Sockets_Socket_SetSocketOption_internal (gsize sock, gint32
 		}
 	}
 
-	if (ret == SOCKET_ERROR)
+	if (ret == SOCKET_ERROR) {
 		*werror = mono_w32socket_get_last_error ();
+
+#ifdef HAVE_IP_MTU_DISCOVER
+		if (system_name == IP_MTU_DISCOVER) {
+			switch (system_level) {
+			case IP_PMTUDISC_DONT:
+			case IP_PMTUDISC_WANT:
+			case IP_PMTUDISC_DO:
+#ifdef IP_PMTUDISC_PROBE
+			case IP_PMTUDISC_PROBE:
+#endif
+#ifdef IP_PMTUDISC_INTERFACE
+			case IP_PMTUDISC_INTERFACE:
+#endif
+#ifdef IP_PMTUDISC_OMIT
+			case IP_PMTUDISC_OMIT:
+#endif
+				/*
+				 * This happens if HAVE_IP_MTU_DISCOVER is set but the OS
+				 * doesn't actually understand it. The only OS that this is
+				 * known to happen on currently is Windows Subsystem for Linux
+				 * (newer versions have been fixed to recognize it). Just
+				 * pretend everything is fine.
+				 */
+				ret = 0;
+				*werror = 0;
+				break;
+			default:
+				break;
+			}
+		}
+#endif
+	}
 }
 
 void
@@ -2440,8 +2472,7 @@ addrinfo_add_string (MonoDomain *domain, const char *s, MonoArrayHandle arr, int
 	HANDLE_FUNCTION_ENTER ();
 	error_init (error);
 	MonoStringHandle str = mono_string_new_handle (domain, s, error);
-	if (!is_ok (error))
-		goto leave;
+	goto_if_nok (error, leave);
 	MONO_HANDLE_ARRAY_SETREF (arr, index, str);
 leave:
 	HANDLE_FUNCTION_RETURN_VAL (is_ok (error));
@@ -2464,8 +2495,7 @@ addrinfo_add_local_ips (MonoDomain *domain, MonoArrayHandleOut h_addr_list, Mono
 	if (nlocal_in || nlocal_in6) {
 		char addr [INET6_ADDRSTRLEN];
 		MONO_HANDLE_ASSIGN (h_addr_list,  mono_array_new_handle (domain, mono_get_string_class (), nlocal_in + nlocal_in6, error));
-		if (!is_ok (error))
-			goto leave;
+		goto_if_nok (error, leave);
 			
 		if (nlocal_in) {
 			int i;
@@ -2512,12 +2542,10 @@ addrinfo_to_IPHostEntry_handles (MonoAddressInfo *info, MonoStringHandleOut h_na
 
 	error_init (error);
 	MONO_HANDLE_ASSIGN (h_aliases, mono_array_new_handle (domain, mono_get_string_class (), 0, error));
-	if (!is_ok (error))
-		goto leave;
+	goto_if_nok (error, leave);
 	if (add_local_ips) {
 		int addr_index = addrinfo_add_local_ips (domain, h_addr_list, error);
-		if (!is_ok (error))
-			goto leave;
+		goto_if_nok (error, leave);
 		if (addr_index > 0)
 			goto leave;
 	}
@@ -2531,8 +2559,7 @@ addrinfo_to_IPHostEntry_handles (MonoAddressInfo *info, MonoStringHandleOut h_na
 
 	int addr_index = 0;
 	MONO_HANDLE_ASSIGN (h_addr_list, mono_array_new_handle (domain, mono_get_string_class (), count, error));
-	if (!is_ok (error))
-		goto leave;
+	goto_if_nok (error, leave);
 
 	gboolean name_assigned = FALSE;
 	for (ai = info->entries; ai != NULL; ai = ai->next) {
@@ -2555,8 +2582,7 @@ addrinfo_to_IPHostEntry_handles (MonoAddressInfo *info, MonoStringHandleOut h_na
 			name_assigned = TRUE;
 			const char *name = ai->canonical_name != NULL ? ai->canonical_name : buffer;
 			MONO_HANDLE_ASSIGN (h_name, mono_string_new_handle (domain, name, error));
-			if (!is_ok (error))
-				goto leave;
+			goto_if_nok (error, leave);
 		}
 
 		addr_index++;

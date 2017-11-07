@@ -26,6 +26,7 @@ class Tests
 
 	public delegate void ArrayDelegate (int[,] arr);
 
+	[Category ("!WASM")] //Requires a working threadpool
 	static int test_0_array_delegate_full_aot () {
 		ArrayDelegate d = delegate (int[,] arr) {
 		};

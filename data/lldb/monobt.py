@@ -13,7 +13,7 @@ def print_frames(thread, num_frames, current_thread):
         function_name = frame.GetFunctionName()
         if function_name == "ves_exec_method_with_context":
             try:
-                s = 'frame->runtime_method->method'
+                s = 'frame->imethod->method'
                 klassname = frame.EvaluateExpression('(char*) ' + s + '->klass->name').summary[1:-1]
                 methodname = frame.EvaluateExpression('(char*) ' + s + '->name').summary[1:-1]
 

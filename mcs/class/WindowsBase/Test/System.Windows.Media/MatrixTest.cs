@@ -24,6 +24,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Media;
 using NUnit.Framework;
@@ -347,7 +348,7 @@ namespace MonoTests.System.Windows.Media {
 		public void ToStringTest ()
 		{
 			Matrix m = new Matrix (1, 2, 3, 4, 5, 6);
-			Assert.AreEqual ("1,2,3,4,5,6", m.ToString());
+			Assert.AreEqual ("1,2,3,4,5,6", m.ToString(CultureInfo.InvariantCulture));
 			m = Matrix.Identity;
 			Assert.AreEqual ("Identity", m.ToString());
 		}

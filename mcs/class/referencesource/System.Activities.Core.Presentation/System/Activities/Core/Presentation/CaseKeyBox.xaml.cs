@@ -7,6 +7,7 @@ namespace System.Activities.Core.Presentation
     using System;
     using System.Activities.Presentation;
     using System.Windows;
+    using System.Windows.Automation;
     using System.Windows.Controls;
     using System.Windows.Data;
     using System.Windows.Input;
@@ -25,7 +26,13 @@ namespace System.Activities.Core.Presentation
 
         public static readonly DependencyProperty ValueTypeProperty =
             DependencyProperty.Register("ValueType", typeof(Type), typeof(CaseKeyBox), new PropertyMetadata(OnValueTypeChanged));
-        
+
+        public static readonly DependencyProperty EditorAutomationNameProperty =
+            DependencyProperty.Register("EditorAutomationName", typeof(string), typeof(CaseKeyBox));
+
+        public static readonly DependencyProperty ComboBoxAutomationNameProperty =
+            DependencyProperty.Register("ComboBoxAutomationName", typeof(string), typeof(CaseKeyBox));
+
         public static RoutedEvent ValueCommittedEvent =
             EventManager.RegisterRoutedEvent("ValueCommitted", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(CaseKeyBox));
 
@@ -174,6 +181,18 @@ namespace System.Activities.Core.Presentation
             set { SetValue(ValueTypeProperty, value); }
         }
 
+        public string ComboBoxAutomationName
+        {
+            get { return (string)GetValue(ComboBoxAutomationNameProperty); }
+            set { SetValue(ComboBoxAutomationNameProperty, value); }
+        }
+
+        public string EditorAutomationName
+        {
+            get { return (string)GetValue(EditorAutomationNameProperty); }
+            set { SetValue(EditorAutomationNameProperty, value); }
+        }
+
         public void RegainFocus()
         {
             if (this.visibleBox != null)
@@ -249,10 +268,39 @@ namespace System.Activities.Core.Presentation
         {
             UIElement box = (UIElement)sender;
             ComboBox comboBox = box as ComboBox;
-            if (comboBox != null && comboBox.IsVisible)
+            if (comboBox != null)
             {
-                ComboBoxHelper.SynchronizeComboBoxSelection(comboBox, this.ViewModel.Text);
+                if (!LocalAppContextSwitches.UseLegacyAccessibilityFeatures)
+                {
+                    if (!string.IsNullOrEmpty(ComboBoxAutomationName))
+                    {
+                        comboBox.SetValue(AutomationProperties.NameProperty, ComboBoxAutomationName);
+                    }
+                    if (comboBox.IsEditable && comboBox.Template != null)
+                    {
+                        var comboBoxTextBox = comboBox.Template.FindName("PART_EditableTextBox", comboBox) as TextBox;
+                        if (comboBoxTextBox != null && !string.IsNullOrEmpty(EditorAutomationName))
+                        {
+                            comboBoxTextBox.SetValue(AutomationProperties.NameProperty, EditorAutomationName);
+                        }
+                    }
+                }
+
+                if (comboBox.IsVisible)
+                {
+                    ComboBoxHelper.SynchronizeComboBoxSelection(comboBox, this.ViewModel.Text);
+                }
             }
+
+            if (!LocalAppContextSwitches.UseLegacyAccessibilityFeatures)
+            {
+                TextBox textBox = box as TextBox;
+                if (textBox != null && !string.IsNullOrEmpty(EditorAutomationName))
+                {
+                    textBox.SetValue(AutomationProperties.NameProperty, EditorAutomationName);
+                }
+            }
+
             if (box.IsVisible)
             {
                 box.Focus();

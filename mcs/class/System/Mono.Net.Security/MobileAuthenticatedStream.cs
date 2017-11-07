@@ -707,7 +707,7 @@ namespace Mono.Net.Security
 
 		public override void Flush ()
 		{
-			// Write() automatically flushes the underlying stream.
+			InnerStream.Flush ();
 		}
 
 		public SslProtocols SslProtocol {

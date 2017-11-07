@@ -136,7 +136,7 @@ namespace System
 
                     if (Win32Native.RegOpenKeyEx(hklm, REG_KEY_APPCONTEXT, 0, Win32Native.KEY_READ, out hkey) == 0)
                     {
-                        int size = 6; // "false".Length+1
+                        int size = 6 * sizeof(char); // "false".Length+1 * sizeof (char) as the API expects byte count and not char count.
                         int type = 0;
                         System.Text.StringBuilder keyBuffer = new System.Text.StringBuilder((int)size);
                         if (Win32Native.RegQueryValueEx(hkey, switchName, null, ref type, keyBuffer, ref size) == 0)

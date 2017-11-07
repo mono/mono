@@ -1403,6 +1403,16 @@ public class RSACryptoServiceProviderTest {
 		rsa = new RSACryptoServiceProvider (minKeySize);
 		rsa.ImportCspBlob (blob);
 	}
+
+	[Test] //bug 38054
+	public void NonExportableKeysAreNonExportable ()
+	{
+		var cspParams = new CspParameters();
+		cspParams.KeyContainerName = "TestRSAKey";
+		cspParams.Flags = CspProviderFlags.UseNonExportableKey;
+		var rsa = new RSACryptoServiceProvider(cspParams);
+		Assert.Throws<CryptographicException>(() => rsa.ExportParameters(true));
+	}
 }
 
 }

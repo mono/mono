@@ -21,17 +21,23 @@ endif
 endif
 
 ifeq ($(PROFILE),build)
-CSC_RUNTIME_FLAGS=--profile=aot:output=$(topdir)/class/lib/$(PROFILE)/csc.$(LIBRARY).aotprofile
+CSC_RUNTIME_FLAGS=--profile=aot:output=$(topdir)/class/lib/$(PROFILE_DIRECTORY)/csc.$(LIBRARY).aotprofile
 endif
-
-RESOURCE_STRINGS = ../referencesource/mscorlib/mscorlib.txt
 
 RESX_RESOURCE_STRING = \
 	../../../external/corert/src/System.Private.CoreLib/src/Resources/Strings.resx \
-	../../../external/corefx/src/System.Collections.Concurrent/src/Resources/Strings.resx
+	../../../external/corefx/src/System.Collections.Concurrent/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Memory/src/Resources/Strings.resx
 
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
+
+ifneq ($(PROFILE),basic)
+RESOURCE_STRINGS = ../referencesource/mscorlib/mscorlib.txt
+include il/il.make
+
+MODULE_DEPS = $(IL_REPLACE)
+endif
 
 RESOURCE_FILES = \
 	resources/charinfo.nlp \
@@ -44,7 +50,7 @@ RESOURCE_FILES = \
 	resources/collation.cjkKOlv2.bin \
 	LinkerDescriptor/mscorlib.xml
 
-REFERENCE_SOURCES_FLAGS = -d:FEATURE_PAL,GENERICS_WORK,FEATURE_LIST_PREDICATES,FEATURE_SERIALIZATION,FEATURE_ASCII,FEATURE_LATIN1,FEATURE_UTF7,FEATURE_UTF32,MONO_HYBRID_ENCODING_SUPPORT,FEATURE_ASYNC_IO,NEW_EXPERIMENTAL_ASYNC_IO,FEATURE_UTF32,FEATURE_EXCEPTIONDISPATCHINFO,FEATURE_CORRUPTING_EXCEPTIONS,FEATURE_EXCEPTION_NOTIFICATIONS,FEATURE_STRONGNAME_MIGRATION,FEATURE_USE_LCID,FEATURE_FUSION,FEATURE_CRYPTO,FEATURE_X509_SECURESTRINGS,FEATURE_SYNCHRONIZATIONCONTEXT,FEATURE_SYNCHRONIZATIONCONTEXT_WAIT,HAS_CORLIB_CONTRACTS
+REFERENCE_SOURCES_FLAGS = -d:FEATURE_PAL,GENERICS_WORK,FEATURE_LIST_PREDICATES,FEATURE_SERIALIZATION,FEATURE_ENCODINGNLS,FEATURE_ASCII,FEATURE_LATIN1,FEATURE_UTF7,FEATURE_UTF32,MONO_HYBRID_ENCODING_SUPPORT,FEATURE_ASYNC_IO,NEW_EXPERIMENTAL_ASYNC_IO,FEATURE_UTF32,FEATURE_EXCEPTIONDISPATCHINFO,FEATURE_CORRUPTING_EXCEPTIONS,FEATURE_EXCEPTION_NOTIFICATIONS,FEATURE_STRONGNAME_MIGRATION,FEATURE_USE_LCID,FEATURE_FUSION,FEATURE_CRYPTO,FEATURE_X509_SECURESTRINGS,FEATURE_SYNCHRONIZATIONCONTEXT,FEATURE_SYNCHRONIZATIONCONTEXT_WAIT,HAS_CORLIB_CONTRACTS
 
 ifndef MOBILE_PROFILE
 REFERENCE_SOURCES_FLAGS += -d:FEATURE_MACL
@@ -92,6 +98,7 @@ DEFAULT_REFERENCES =
 TEST_LIB_REFS = System.Core System
 
 XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks Facades/System.Runtime.InteropServices.RuntimeInformation
+XTEST_LIB_FLAGS = -d:netcoreapp
 
 ifndef AOT_FRIENDLY_PROFILE
 ifneq ($(PROFILE),testing_aot_hybrid)
@@ -146,7 +153,7 @@ TEST_RESX_RESOURCES_SATELITE = \
 	Test/resources/Resources.es-ES.resources \
 	Test/resources/Resources.nn-NO.resources \
 
-CLEAN_FILES += $(TEST_RESX_RESOURCES)
+CLEAN_FILES += $(TEST_RESX_RESOURCES) $(IL_REPLACE)
 
 include $(topdir)/build/library.make
 
@@ -196,7 +203,7 @@ TEST_MONO_PATH=$(PWD)/../lib/$(PROFILE)
 
 run-test-vts: test-vts
 	@echo Running vts tests...
-	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(TEST_HARNESS) $(NOSHADOW_FLAG) \
+	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(TEST_HARNESS) $(NOSHADOW_FLAG) \
 		$(vtsdir)/$(PROFILE)_TestLib/BinarySerializationOverVersions.exe
 
 ifdef NO_TEST
@@ -218,7 +225,10 @@ EXTRA_DISTFILES += \
 	$(vtsdir)/VersionTolerantSerializationTestLib/4.0/Address.cs \
 	$(vtsdir)/VersionTolerantSerializationTestLib/5.0/Address.cs \
 	$(vtsdir)/VersionTolerantSerializationTestLib/6.0/Address.cs \
-	$(vtsdir)/BinarySerializationOverVersions.cs
+	$(vtsdir)/BinarySerializationOverVersions.cs \
+	System.Runtime.CompilerServices/Unsafe.il \
+	il/il.make \
+	il/Makefile
 
 #
 # Android TimeZoneInfo testing....

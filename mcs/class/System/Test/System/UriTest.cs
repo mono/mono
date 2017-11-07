@@ -502,20 +502,14 @@ namespace MonoTests.System
 
 			uri = new Uri ("file:////////cygwin/tmp/hello.txt");
 			Assert.AreEqual ("file://cygwin/tmp/hello.txt", uri.ToString (), "#3a");
-			if (isWin32)
-				Assert.AreEqual ("\\\\cygwin\\tmp\\hello.txt", uri.LocalPath, "#3b win32");
-			else
-				Assert.AreEqual ("/tmp/hello.txt", uri.LocalPath, "#3b *nix");
+			Assert.AreEqual ("\\\\cygwin\\tmp\\hello.txt", uri.LocalPath, "#3b win32");
 			Assert.AreEqual ("file", uri.Scheme, "#3c");
 			Assert.AreEqual ("cygwin", uri.Host, "#3d");
 			Assert.AreEqual ("/tmp/hello.txt", uri.AbsolutePath, "#3e");
 
 			uri = new Uri ("file://mymachine/cygwin/tmp/hello.txt");
 			Assert.AreEqual ("file://mymachine/cygwin/tmp/hello.txt", uri.ToString (), "#4a");
-			if (isWin32)
-				Assert.AreEqual ("\\\\mymachine\\cygwin\\tmp\\hello.txt", uri.LocalPath, "#4b win32");
-			else
-				Assert.AreEqual ("/cygwin/tmp/hello.txt", uri.LocalPath, "#4b *nix");
+			Assert.AreEqual ("\\\\mymachine\\cygwin\\tmp\\hello.txt", uri.LocalPath, "#4b win32");
 			Assert.AreEqual ("file", uri.Scheme, "#4c");
 			Assert.AreEqual ("mymachine", uri.Host, "#4d");
 			Assert.AreEqual ("/cygwin/tmp/hello.txt", uri.AbsolutePath, "#4e");
@@ -537,10 +531,7 @@ namespace MonoTests.System
 			Assert.AreEqual ("/", uri.AbsolutePath, "#6e");
 			Assert.AreEqual ("/", uri.PathAndQuery, "#6f");
 			Assert.AreEqual ("file://one_file.txt/", uri.GetLeftPart (UriPartial.Path), "#6g");
-			if (isWin32)
-				Assert.AreEqual ("\\\\one_file.txt", uri.LocalPath, "#6b");
-			else
-				Assert.AreEqual ("/", uri.LocalPath, "#6b");
+			Assert.AreEqual ("\\\\one_file.txt", uri.LocalPath, "#6b");
 			Assert.AreEqual ("file", uri.Scheme, "#6c");
 			Assert.AreEqual ("one_file.txt", uri.Host, "#6d");
 
@@ -551,10 +542,7 @@ namespace MonoTests.System
 			Assert.AreEqual ("/", uri.AbsolutePath, "#7e");
 			Assert.AreEqual ("/", uri.PathAndQuery, "#7f");
 			Assert.AreEqual ("file://one_file.txt/", uri.GetLeftPart (UriPartial.Path), "#7g");
-			if (isWin32)
-				Assert.AreEqual ("\\\\one_file.txt\\", uri.LocalPath, "#7b");
-			else
-				Assert.AreEqual ("/", uri.LocalPath, "#7b");
+			Assert.AreEqual ("\\\\one_file.txt\\", uri.LocalPath, "#7b");
 			Assert.AreEqual ("file", uri.Scheme, "#7c");
 			Assert.AreEqual ("one_file.txt", uri.Host, "#7d");
 		}
@@ -2070,6 +2058,17 @@ namespace MonoTests.System
 		{
 			var uri = new Uri ("https://_foo/bar.html");
 			Assert.AreEqual ("https", uri.Scheme);
+		}
+
+		[Test]
+		public void ImplicitUnixFileWithUnicodeGetAbsoluleUri ()
+		{
+			if (isWin32)
+				Assert.Ignore ();
+
+			string escFilePath = "/Users/Текст.txt";
+			string escUrl = new Uri (escFilePath, UriKind.Absolute).AbsoluteUri;
+			Assert.AreEqual ("file:///Users/%D0%A2%D0%B5%D0%BA%D1%81%D1%82.txt", escUrl);
 		}
 	}
 }

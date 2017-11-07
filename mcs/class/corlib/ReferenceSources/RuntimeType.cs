@@ -783,6 +783,10 @@ namespace System
 
 		public override string FullName {
 			get {
+				// https://bugzilla.xamarin.com/show_bug.cgi?id=57938
+				if (IsGenericType && ContainsGenericParameters && !IsGenericTypeDefinition)
+					return null;
+
 				string fullName;
 				// This doesn't need locking
 				if (type_info == null)

@@ -74,6 +74,10 @@ static gint32 signatures_size;
 MonoNativeTlsKey loader_lock_nest_id;
 
 static void dllmap_cleanup (void);
+static void cached_module_cleanup(void);
+
+/* Class lazy loading functions */
+GENERATE_GET_CLASS_WITH_CACHE (appdomain_unloaded_exception, "System", "AppDomainUnloadedException")
 
 static void
 global_loader_data_lock (void)
@@ -117,6 +121,7 @@ void
 mono_loader_cleanup (void)
 {
 	dllmap_cleanup ();
+	cached_module_cleanup ();
 
 	mono_native_tls_free (loader_lock_nest_id);
 
@@ -163,7 +168,7 @@ cache_memberref_sig (MonoImage *image, guint32 sig_idx, gpointer sig)
 	else {
 		g_hash_table_insert (image->memberref_signatures, GUINT_TO_POINTER (sig_idx), sig);
 		/* An approximation based on glib 2.18 */
-		InterlockedAdd (&memberref_sig_cache_size, sizeof (gpointer) * 4);
+		mono_atomic_fetch_add_i32 (&memberref_sig_cache_size, sizeof (gpointer) * 4);
 	}
 	mono_image_unlock (image);
 
@@ -312,9 +317,17 @@ mono_field_from_token_checked (MonoImage *image, guint32 token, MonoClass **retk
 		mono_class_init (k);
 		if (retklass)
 			*retklass = k;
-		field = mono_class_get_field (k, token);
-		if (!field) {
-			mono_error_set_bad_image (error, image, "Could not resolve field token 0x%08x", token);
+		if (mono_class_has_failure (k)) {
+			MonoError causedby_error;
+			error_init (&causedby_error);
+			mono_error_set_for_class_failure (&causedby_error, k);
+			mono_error_set_bad_image (error, image, "Could not resolve field token 0x%08x, due to: %s", token, mono_error_get_message (&causedby_error));
+			mono_error_cleanup (&causedby_error);
+		} else {
+			field = mono_class_get_field (k, token);
+			if (!field) {
+				mono_error_set_bad_image (error, image, "Could not resolve field token 0x%08x", token);
+			}
 		}
 	}
 
@@ -611,8 +624,7 @@ inflate_generic_header (MonoMethodHeader *header, MonoGenericContext *context, M
 
 	for (int i = 0; i < header->num_locals; ++i) {
 		res->locals [i] = mono_class_inflate_generic_type_checked (header->locals [i], context, error);
-		if (!is_ok (error))
-			goto fail;
+		goto_if_nok (error, fail);
 	}
 	if (res->num_clauses) {
 		for (int i = 0; i < header->num_clauses; ++i) {
@@ -620,8 +632,7 @@ inflate_generic_header (MonoMethodHeader *header, MonoGenericContext *context, M
 			if (clause->flags != MONO_EXCEPTION_CLAUSE_NONE)
 				continue;
 			clause->data.catch_class = mono_class_inflate_generic_class_checked (clause->data.catch_class, context, error);
-			if (!is_ok (error))
-				goto fail;
+			goto_if_nok (error, fail);
 		}
 	}
 	return res;
@@ -724,7 +735,7 @@ mono_method_get_signature_checked (MonoMethod *method, MonoImage *image, guint32
 		if (cached != sig)
 			mono_metadata_free_inflated_signature (sig);
 		else
-			InterlockedAdd (&inflated_signatures_size, mono_metadata_signature_size (cached));
+			mono_atomic_fetch_add_i32 (&inflated_signatures_size, mono_metadata_signature_size (cached));
 		sig = cached;
 	}
 
@@ -1135,6 +1146,23 @@ mono_loader_register_module (const char *name, MonoDl *module)
 	if (!global_module_map)
 		global_module_map = g_hash_table_new (g_str_hash, g_str_equal);
 	g_hash_table_insert (global_module_map, g_strdup (name), module);
+}
+
+static void
+remove_cached_module(gpointer key, gpointer value, gpointer user_data)
+{
+	mono_dl_close((MonoDl*)value);
+}
+
+static void
+cached_module_cleanup(void)
+{
+	if (global_module_map != NULL) {
+		g_hash_table_foreach(global_module_map, remove_cached_module, NULL);
+
+		g_hash_table_destroy(global_module_map);
+		global_module_map = NULL;
+	}
 }
 
 static MonoDl *internal_module;
@@ -1654,10 +1682,10 @@ mono_get_method_from_token (MonoImage *image, guint32 token, MonoClass *klass,
 		result = (MonoMethod *)mono_image_alloc0 (image, sizeof (MonoMethodPInvoke));
 	} else {
 		result = (MonoMethod *)mono_image_alloc0 (image, sizeof (MonoMethod));
-		InterlockedAdd (&methods_size, sizeof (MonoMethod));
+		mono_atomic_fetch_add_i32 (&methods_size, sizeof (MonoMethod));
 	}
 
-	InterlockedIncrement (&mono_stats.method_count);
+	mono_atomic_inc_i32 (&mono_stats.method_count);
 
 	result->slot = -1;
 	result->klass = klass;
@@ -2393,7 +2421,7 @@ mono_method_signature_checked (MonoMethod *m, MonoError *error)
 		if (!mono_error_ok (error))
 			return NULL;
 
-		InterlockedAdd (&inflated_signatures_size, mono_metadata_signature_size (signature));
+		mono_atomic_fetch_add_i32 (&inflated_signatures_size, mono_metadata_signature_size (signature));
 
 		mono_image_lock (img);
 
@@ -2450,7 +2478,7 @@ mono_method_signature_checked (MonoMethod *m, MonoError *error)
 			mono_image_unlock (img);
 		}
 
-		InterlockedAdd (&signatures_size, mono_metadata_signature_size (signature));
+		mono_atomic_fetch_add_i32 (&signatures_size, mono_metadata_signature_size (signature));
 	}
 
 	/* Verify metadata consistency */

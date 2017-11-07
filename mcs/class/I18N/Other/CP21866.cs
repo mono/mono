@@ -97,12 +97,11 @@ public class CP21866 : ByteEncoding
 			return GetBytesImpl(chars, count, null, 0);
 		}
 		else
-		
 		{
 			return count;
 		}
 	}
-	
+
 	// Get the number of bytes needed to encode a character buffer.
 	public override int GetByteCount (String s)
 	{
@@ -123,7 +122,7 @@ public class CP21866 : ByteEncoding
 			return s.Length;
 		}
 	}
-	
+
 	//ToBytes is just an alias for GetBytesImpl, but doesn't return byte count
 	protected unsafe override void ToBytes(char* chars, int charCount,
 	                                byte* bytes, int byteCount)
@@ -133,7 +132,7 @@ public class CP21866 : ByteEncoding
 			throw new ArgumentNullException("bytes");
 		GetBytesImpl(chars, charCount, bytes, byteCount);
 	}
-	
+
 	public unsafe override int GetBytesImpl (char* chars, int charCount,
 	                                         byte* bytes, int byteCount)
 	{
@@ -144,8 +143,6 @@ public class CP21866 : ByteEncoding
 		while (charCount > 0)
 		{
 			ch = (int)(chars[charIndex]);
-			charIndex++;
-			charCount--;
 			if(ch >= 128) switch(ch)
 			{
 				case 0x00A0: ch = 0x9A; break;
@@ -301,6 +298,8 @@ public class CP21866 : ByteEncoding
 					else
 					{
 						HandleFallback (ref buffer, chars, ref charIndex, ref charCount, bytes, ref byteIndex, ref byteCount);
+						charIndex++;
+						charCount--;
 						continue;
 					}
 				}
@@ -311,183 +310,11 @@ public class CP21866 : ByteEncoding
 				bytes[byteIndex] = (byte)ch;
 			byteIndex++;
 			byteCount--;
+			charIndex++;
+			charCount--;
 		}
 		return byteIndex;
 	}
-
-	/*
-	protected override void ToBytes(String s, int charIndex, int charCount,
-	                                byte[] bytes, int byteIndex)
-	{
-		int ch;
-		while(charCount > 0)
-		{
-			ch = (int)(s[charIndex++]);
-			if(ch >= 128) switch(ch)
-			{
-				case 0x00A0: ch = 0x9A; break;
-				case 0x00A9: ch = 0xBF; break;
-				case 0x00B0: ch = 0x9C; break;
-				case 0x00B2: ch = 0x9D; break;
-				case 0x00B7: ch = 0x9E; break;
-				case 0x00F7: ch = 0x9F; break;
-				case 0x0401: ch = 0xB3; break;
-				case 0x0404: ch = 0xB4; break;
-				case 0x0406: ch = 0xB6; break;
-				case 0x0407: ch = 0xB7; break;
-				case 0x0410: ch = 0xE1; break;
-				case 0x0411: ch = 0xE2; break;
-				case 0x0412: ch = 0xF7; break;
-				case 0x0413: ch = 0xE7; break;
-				case 0x0414: ch = 0xE4; break;
-				case 0x0415: ch = 0xE5; break;
-				case 0x0416: ch = 0xF6; break;
-				case 0x0417: ch = 0xFA; break;
-				case 0x0418:
-				case 0x0419:
-				case 0x041A:
-				case 0x041B:
-				case 0x041C:
-				case 0x041D:
-				case 0x041E:
-				case 0x041F:
-					ch -= 0x032F;
-					break;
-				case 0x0420:
-				case 0x0421:
-				case 0x0422:
-				case 0x0423:
-					ch -= 0x032E;
-					break;
-				case 0x0424: ch = 0xE6; break;
-				case 0x0425: ch = 0xE8; break;
-				case 0x0426: ch = 0xE3; break;
-				case 0x0427: ch = 0xFE; break;
-				case 0x0428: ch = 0xFB; break;
-				case 0x0429: ch = 0xFD; break;
-				case 0x042A: ch = 0xFF; break;
-				case 0x042B: ch = 0xF9; break;
-				case 0x042C: ch = 0xF8; break;
-				case 0x042D: ch = 0xFC; break;
-				case 0x042E: ch = 0xE0; break;
-				case 0x042F: ch = 0xF1; break;
-				case 0x0430: ch = 0xC1; break;
-				case 0x0431: ch = 0xC2; break;
-				case 0x0432: ch = 0xD7; break;
-				case 0x0433: ch = 0xC7; break;
-				case 0x0434: ch = 0xC4; break;
-				case 0x0435: ch = 0xC5; break;
-				case 0x0436: ch = 0xD6; break;
-				case 0x0437: ch = 0xDA; break;
-				case 0x0438:
-				case 0x0439:
-				case 0x043A:
-				case 0x043B:
-				case 0x043C:
-				case 0x043D:
-				case 0x043E:
-				case 0x043F:
-					ch -= 0x036F;
-					break;
-				case 0x0440:
-				case 0x0441:
-				case 0x0442:
-				case 0x0443:
-					ch -= 0x036E;
-					break;
-				case 0x0444: ch = 0xC6; break;
-				case 0x0445: ch = 0xC8; break;
-				case 0x0446: ch = 0xC3; break;
-				case 0x0447: ch = 0xDE; break;
-				case 0x0448: ch = 0xDB; break;
-				case 0x0449: ch = 0xDD; break;
-				case 0x044A: ch = 0xDF; break;
-				case 0x044B: ch = 0xD9; break;
-				case 0x044C: ch = 0xD8; break;
-				case 0x044D: ch = 0xDC; break;
-				case 0x044E: ch = 0xC0; break;
-				case 0x044F: ch = 0xD1; break;
-				case 0x0451: ch = 0xA3; break;
-				case 0x0454: ch = 0xA4; break;
-				case 0x0456: ch = 0xA6; break;
-				case 0x0457: ch = 0xA7; break;
-				case 0x0490: ch = 0xBD; break;
-				case 0x0491: ch = 0xAD; break;
-				case 0x2219: ch = 0x95; break;
-				case 0x221A: ch = 0x96; break;
-				case 0x2248: ch = 0x97; break;
-				case 0x2264: ch = 0x98; break;
-				case 0x2265: ch = 0x99; break;
-				case 0x2320: ch = 0x93; break;
-				case 0x2321: ch = 0x9B; break;
-				case 0x2500: ch = 0x80; break;
-				case 0x2502: ch = 0x81; break;
-				case 0x250C: ch = 0x82; break;
-				case 0x2510: ch = 0x83; break;
-				case 0x2514: ch = 0x84; break;
-				case 0x2518: ch = 0x85; break;
-				case 0x251C: ch = 0x86; break;
-				case 0x2524: ch = 0x87; break;
-				case 0x252C: ch = 0x88; break;
-				case 0x2534: ch = 0x89; break;
-				case 0x253C: ch = 0x8A; break;
-				case 0x2550: ch = 0xA0; break;
-				case 0x2551: ch = 0xA1; break;
-				case 0x2552: ch = 0xA2; break;
-				case 0x2554: ch = 0xA5; break;
-				case 0x2557:
-				case 0x2558:
-				case 0x2559:
-				case 0x255A:
-				case 0x255B:
-					ch -= 0x24AF;
-					break;
-				case 0x255D:
-				case 0x255E:
-				case 0x255F:
-				case 0x2560:
-				case 0x2561:
-					ch -= 0x24AF;
-					break;
-				case 0x2563: ch = 0xB5; break;
-				case 0x2566:
-				case 0x2567:
-				case 0x2568:
-				case 0x2569:
-				case 0x256A:
-					ch -= 0x24AE;
-					break;
-				case 0x256C: ch = 0xBE; break;
-				case 0x2580: ch = 0x8B; break;
-				case 0x2584: ch = 0x8C; break;
-				case 0x2588: ch = 0x8D; break;
-				case 0x258C: ch = 0x8E; break;
-				case 0x2590:
-				case 0x2591:
-				case 0x2592:
-				case 0x2593:
-					ch -= 0x2501;
-					break;
-				case 0x25A0: ch = 0x94; break;
-				default:
-				{
-					if(ch >= 0xFF01 && ch <= 0xFF5E)
-					{
-						ch -= 0xFEE0;
-					}
-					else
-					{
-						ch = 0x3F;
-					}
-				}
-				break;
-			}
-			bytes[byteIndex++] = (byte)ch;
-			--charCount;
-		}
-	}
-	*/
-
 }; // class CP21866
 
 [Serializable]

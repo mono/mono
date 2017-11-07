@@ -1755,6 +1755,9 @@ namespace Mono.CSharp {
 		// New in .NET 4.7
 		public readonly PredefinedTupleElementNamesAttribute TupleElementNames;
 
+		// New in .NET 4.7.1
+		public readonly PredefinedAttribute IsReadOnly;
+
 		//
 		// Optional types which are used as types and for member lookup
 		//
@@ -1835,6 +1838,7 @@ namespace Mono.CSharp {
 			CallerFilePathAttribute = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "CallerFilePathAttribute");
 
 			TupleElementNames = new PredefinedTupleElementNamesAttribute (module, "System.Runtime.CompilerServices", "TupleElementNamesAttribute");
+			IsReadOnly = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "IsReadOnlyAttribute");
 
 			// TODO: Should define only attributes which are used for comparison
 			const System.Reflection.BindingFlags all_fields = System.Reflection.BindingFlags.Public |

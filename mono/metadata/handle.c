@@ -20,6 +20,10 @@
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-lazy-init.h>
 #include <mono/utils/mono-threads.h>
+#ifdef HAVE_BACKTRACE_SYMBOLS
+#include <execinfo.h>
+#endif
+
 /* TODO (missing pieces)
 
 Add counters for:
@@ -69,37 +73,6 @@ Combine: MonoDefaults, GENERATE_GET_CLASS_WITH_CACHE, TYPED_HANDLE_DECL and frie
  * points to a valid value.
  */
 
-#if defined(HAVE_BOEHM_GC) || defined(HAVE_NULL_GC)
-static HandleStack*
-new_handle_stack (void)
-{
-	return (HandleStack *)mono_gc_alloc_fixed (sizeof (HandleStack), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_HANDLE, "Thread Handle Stack");
-}
-
-static void
-free_handle_stack (HandleStack *stack)
-{
-	mono_gc_free_fixed (stack);
-}
-
-static HandleChunk*
-new_handle_chunk (void)
-{
-#if defined(HAVE_BOEHM_GC)
-	return (HandleChunk *)GC_MALLOC (sizeof (HandleChunk));
-#elif defined(HAVE_NULL_GC)
-	return (HandleChunk *)g_malloc (sizeof (HandleChunk));
-#endif
-}
-
-static void
-free_handle_chunk (HandleChunk *chunk)
-{
-#if defined(HAVE_NULL_GC)
-	g_free (chunk);
-#endif
-}
-#else
 static HandleStack*
 new_handle_stack (void)
 {
@@ -123,7 +96,6 @@ free_handle_chunk (HandleChunk *chunk)
 {
 	g_free (chunk);
 }
-#endif
 
 const MonoObjectHandle mono_null_value_handle = NULL;
 
@@ -167,7 +139,14 @@ chunk_element_to_chunk_idx (HandleStack *stack, HandleChunkElem *elem, int *out_
 }
 
 #ifdef MONO_HANDLE_TRACK_OWNER
-#define SET_OWNER(chunk,idx) do { (chunk)->elems[(idx)].owner = owner; } while (0)
+#ifdef HAVE_BACKTRACE_SYMBOLS
+#define SET_BACKTRACE(btaddrs) do {					\
+	backtrace(btaddrs, 7);						\
+	} while (0)
+#else
+#define SET_BACKTRACE(btaddrs) 0
+#endif
+#define SET_OWNER(chunk,idx) do { (chunk)->elems[(idx)].owner = owner; SET_BACKTRACE (&((chunk)->elems[(idx)].backtrace_ips[0])); } while (0)
 #else
 #define SET_OWNER(chunk,idx) do { } while (0)
 #endif
@@ -237,12 +216,12 @@ retry:
 		 * between 1 and 2, the object is still live)
 		 */
 		*objslot = NULL;
+		SET_OWNER (top,idx);
+		SET_SP (handles, top, idx);
 		mono_memory_write_barrier ();
 		top->size++;
 		mono_memory_write_barrier ();
 		*objslot = obj;
-		SET_OWNER (top,idx);
-		SET_SP (handles, top, idx);
 		return objslot;
 	}
 	if (G_LIKELY (top->next)) {
@@ -384,18 +363,13 @@ check_handle_stack_monotonic (HandleStack *stack)
 	while (cur) {
 		for (int i = 0;i < cur->size; ++i) {
 			HandleChunkElem *elem = chunk_element (cur, i);
-			if (prev && elem->alloc_sp < prev->alloc_sp) {
+			if (prev && elem->alloc_sp > prev->alloc_sp) {
 				monotonic = FALSE;
-				g_warning ("Handle %p (object %p) (allocated from \"%s\") is was allocated deeper in the call stack than its successor (allocated from \"%s\").", prev, prev->o,
 #ifdef MONO_HANDLE_TRACK_OWNER
-					   prev->owner,
-					   elem->owner
+				g_warning ("Handle %p (object %p) (allocated from \"%s\") was allocated deeper in the call stack than its successor Handle %p (object %p) (allocated from \"%s\").", prev, prev->o, prev->owner, elem, elem->o, elem->owner);
 #else
-					   "unknown owner",
-					   "unknown owner"
+				g_warning ("Handle %p (object %p) was allocated deeper in the call stack than its successor Handle %p (object %p).", prev, prev->o, elem, elem->o);
 #endif
-					);
-				
 			}
 			prev = elem;
 		}

@@ -1024,6 +1024,7 @@ namespace MonoTests.System.Reflection.Emit
 	    }
 
 		[Test]//bug #626441
+		[Category ("InterpreterNotWorking")]
 		public void CanCallVarargMethods ()
 		{
 			var tb = module.DefineType ("foo");

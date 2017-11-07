@@ -560,6 +560,10 @@ public class DebuggerTests
 
 	[Test]
 	public void ClassLocalReflection () {
+		vm.Detach ();
+
+		Start (new string [] { "dtest-app.exe", "local-reflect" });
+
 		MethodMirror m = entry_point.DeclaringType.Assembly.GetType ("LocalReflectClass").GetMethod ("RunMe");
 
 		Assert.IsNotNull (m);
@@ -2384,73 +2388,52 @@ public class DebuggerTests
 	}
 
 	[Test]
-	// Broken by mcs+runtime changes (#5438)
-	[Category("NotWorking")]
 	public void LineNumbers () {
 		Event e = run_until ("line_numbers");
 
-		step_req = create_step (e);
-		step_req.Depth = StepDepth.Into;
-		step_req.Enable ();
+		create_step (e);
+		e = step_into ();
 
 		Location l;
-		
-		vm.Resume ();
 
-		e = GetNextEvent ();
-		Assert.IsTrue (e is StepEvent);
+		e = step_once ();
 
 		l = e.Thread.GetFrames ()[0].Location;
 
-		Assert.IsTrue (l.SourceFile.IndexOf ("dtest-app.cs") != -1);
+		Assert.AreEqual ("dtest-app.cs", Path.GetFileName (l.SourceFile));
 		Assert.AreEqual ("ln1", l.Method.Name);
-
-		// Check hash
-		using (FileStream fs = new FileStream (l.SourceFile, FileMode.Open, FileAccess.Read)) {
-			MD5 md5 = MD5.Create ();
-			var hash = md5.ComputeHash (fs);
-
-			for (int i = 0; i < 16; ++i)
-				Assert.AreEqual (hash [i], l.SourceFileHash [i]);
-		}
 		
 		int line_base = l.LineNumber;
 
-		vm.Resume ();
-		e = GetNextEvent ();
-		Assert.IsTrue (e is StepEvent);
+		e = step_once ();
+		e = step_once ();
 		l = e.Thread.GetFrames ()[0].Location;
 		Assert.AreEqual ("ln2", l.Method.Name);
-		Assert.AreEqual (line_base + 6, l.LineNumber);
+		Assert.AreEqual (line_base + 7, l.LineNumber);
 
-		vm.Resume ();
-		e = GetNextEvent ();
-		Assert.IsTrue (e is StepEvent);
+		e = step_once ();
+		e = step_once ();
 		l = e.Thread.GetFrames ()[0].Location;
 		Assert.AreEqual ("ln1", l.Method.Name);
-		Assert.AreEqual (line_base + 1, l.LineNumber);
+		Assert.AreEqual (line_base + 2, l.LineNumber);
 
-		vm.Resume ();
-		e = GetNextEvent ();
-		Assert.IsTrue (e is StepEvent);
+		e = step_once ();
+		e = step_once ();
 		l = e.Thread.GetFrames ()[0].Location;
 		Assert.AreEqual ("ln3", l.Method.Name);
 		Assert.AreEqual (line_base + 11, l.LineNumber);
 
-		vm.Resume ();
-		e = GetNextEvent ();
-		Assert.IsTrue (e is StepEvent);
+		e = step_once ();
+		e = step_once ();
 		l = e.Thread.GetFrames ()[0].Location;
 		Assert.AreEqual ("ln3", l.Method.Name);
 		Assert.IsTrue (l.SourceFile.EndsWith ("FOO"));
 		Assert.AreEqual (55, l.LineNumber);
 
-		vm.Resume ();
-		e = GetNextEvent ();
-		Assert.IsTrue (e is StepEvent);
+		e = step_once ();
 		l = e.Thread.GetFrames ()[0].Location;
 		Assert.AreEqual ("ln1", l.Method.Name);
-		Assert.AreEqual (line_base + 2, l.LineNumber);
+		Assert.AreEqual (line_base + 3, l.LineNumber);
 
 		// GetSourceFiles ()
 		string[] sources = l.Method.DeclaringType.GetSourceFiles ();
@@ -4363,6 +4346,19 @@ public class DebuggerTests
 
 		vm.Exit (0);
 		vm = null;
+	}
+
+	[Test]
+	[Category("NotWorking")]
+	public void Hash ()
+	{
+		Event e = run_until ("Main");
+
+		Location l = e.Thread.GetFrames ()[0].Location;
+
+		using (FileStream fs = new FileStream (l.SourceFile, FileMode.Open, FileAccess.Read)) {
+			Assert.AreEqual (MD5.Create ().ComputeHash (fs), l.SourceFileHash);
+		}
 	}
 
 }

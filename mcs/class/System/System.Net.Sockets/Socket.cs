@@ -1930,7 +1930,7 @@ namespace System.Net.Sockets
 				sockares.Size -= total;
 
 				if (sockares.socket.CleanedUp) {
-					sockares.Complete (total);
+					sockares.Complete (sent_so_far);
 					return;
 				}
 
@@ -1942,7 +1942,7 @@ namespace System.Net.Sockets
 				sockares.Total = sent_so_far;
 			}
 
-			sockares.Complete (total);
+			sockares.Complete (sent_so_far);
 		}
 
 		[CLSCompliant (false)]

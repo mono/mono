@@ -1005,8 +1005,7 @@ get_call_info (MonoMethodSignature *sig)
 	fr = PPC_FIRST_FPARG_REG;
 	gr = PPC_FIRST_ARG_REG;
 
-	/* FIXME: handle returning a struct */
-	if (MONO_TYPE_ISSTRUCT (sig->ret)) {
+	if (mini_type_is_vtype (sig->ret)) {
 		cinfo->vtype_retaddr = TRUE;
 	}
 
@@ -4126,6 +4125,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ppc_mtctr (code, ins->sreg1);
 			ppc_bcctr (code, PPC_BR_ALWAYS, 0);
 			break;
+		case OP_ICNEQ:
+			ppc_li (code, ins->dreg, 0);
+			ppc_bc (code, PPC_BR_TRUE, PPC_BR_EQ, 2);
+			ppc_li (code, ins->dreg, 1);
+			break;
 		case OP_CEQ:
 		case OP_ICEQ:
 		CASE_PPC64 (OP_LCEQ)
@@ -4143,6 +4147,12 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ppc_bc (code, PPC_BR_TRUE, PPC_BR_LT, 2);
 			ppc_li (code, ins->dreg, 0);
 			break;
+		case OP_ICGE:
+		case OP_ICGE_UN:
+			ppc_li (code, ins->dreg, 1);
+			ppc_bc (code, PPC_BR_FALSE, PPC_BR_LT, 2);
+			ppc_li (code, ins->dreg, 0);
+			break;
 		case OP_CGT:
 		case OP_CGT_UN:
 		case OP_ICGT:
@@ -4151,6 +4161,12 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		CASE_PPC64 (OP_LCGT_UN)
 			ppc_li (code, ins->dreg, 1);
 			ppc_bc (code, PPC_BR_TRUE, PPC_BR_GT, 2);
+			ppc_li (code, ins->dreg, 0);
+			break;
+		case OP_ICLE:
+		case OP_ICLE_UN:
+			ppc_li (code, ins->dreg, 1);
+			ppc_bc (code, PPC_BR_FALSE, PPC_BR_GT, 2);
 			ppc_li (code, ins->dreg, 0);
 			break;
 		case OP_COND_EXC_EQ:
@@ -4355,15 +4371,17 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ppc_fcmpu (code, 0, ins->sreg1, ins->sreg2);
 			break;
 		case OP_FCEQ:
+		case OP_FCNEQ:
 			ppc_fcmpo (code, 0, ins->sreg1, ins->sreg2);
-			ppc_li (code, ins->dreg, 0);
-			ppc_bc (code, PPC_BR_FALSE, PPC_BR_EQ, 2);
 			ppc_li (code, ins->dreg, 1);
+			ppc_bc (code, ins->opcode == OP_FCEQ ? PPC_BR_TRUE : PPC_BR_FALSE, PPC_BR_EQ, 2);
+			ppc_li (code, ins->dreg, 0);
 			break;
 		case OP_FCLT:
+		case OP_FCGE:
 			ppc_fcmpo (code, 0, ins->sreg1, ins->sreg2);
 			ppc_li (code, ins->dreg, 1);
-			ppc_bc (code, PPC_BR_TRUE, PPC_BR_LT, 2);
+			ppc_bc (code, ins->opcode == OP_FCLT ? PPC_BR_TRUE : PPC_BR_FALSE, PPC_BR_LT, 2);
 			ppc_li (code, ins->dreg, 0);
 			break;
 		case OP_FCLT_UN:
@@ -4374,9 +4392,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ppc_li (code, ins->dreg, 0);
 			break;
 		case OP_FCGT:
+		case OP_FCLE:
 			ppc_fcmpo (code, 0, ins->sreg1, ins->sreg2);
 			ppc_li (code, ins->dreg, 1);
-			ppc_bc (code, PPC_BR_TRUE, PPC_BR_GT, 2);
+			ppc_bc (code, ins->opcode == OP_FCGT ? PPC_BR_TRUE : PPC_BR_FALSE, PPC_BR_GT, 2);
 			ppc_li (code, ins->dreg, 0);
 			break;
 		case OP_FCGT_UN:
@@ -5983,15 +6002,6 @@ mono_arch_get_seq_point_info (MonoDomain *domain, guint8 *code)
 {
 	NOT_IMPLEMENTED;
 	return NULL;
-}
-
-void
-mono_arch_init_lmf_ext (MonoLMFExt *ext, gpointer prev_lmf)
-{
-	ext->lmf.previous_lmf = prev_lmf;
-	/* Mark that this is a MonoLMFExt */
-	ext->lmf.previous_lmf = (gpointer)(((gssize)ext->lmf.previous_lmf) | 2);
-	ext->lmf.ebp = (gssize)ext;
 }
 
 #endif

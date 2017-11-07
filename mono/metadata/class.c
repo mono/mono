@@ -1513,6 +1513,7 @@ mono_class_set_type_load_failure_causedby_class (MonoClass *klass, const MonoCla
  * Sets the following fields in \p klass:
  *  - all the fields initialized by mono_class_init_sizes ()
  *  - element_class/cast_class (for enums)
+ *  - sizes:element_size (for arrays)
  *  - field->type/offset for all fields
  *  - fields_inited
  *
@@ -1772,6 +1773,7 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 	MonoClassField *field;
 	gboolean blittable;
 	int instance_size = base_instance_size;
+	int element_size = -1;
 	int class_size, min_align;
 	int *field_offsets;
 	gboolean *fields_has_references;
@@ -2101,6 +2103,9 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 	else if (klass->byval_arg.type == MONO_TYPE_PTR)
 		instance_size = sizeof (MonoObject) + sizeof (gpointer);
 
+	if (klass->byval_arg.type == MONO_TYPE_SZARRAY || klass->byval_arg.type == MONO_TYPE_ARRAY)
+		element_size = mono_class_array_element_size (klass->element_class);
+
 	/* Publish the data */
 	mono_loader_lock ();
 	if (klass->instance_size && !klass->image->dynamic) {
@@ -2130,6 +2135,9 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 		if (!(field->type->attrs & FIELD_ATTRIBUTE_STATIC))
 			klass->fields [i].offset = field_offsets [i];
 	}
+
+	if (klass->byval_arg.type == MONO_TYPE_SZARRAY || klass->byval_arg.type == MONO_TYPE_ARRAY)
+		klass->sizes.element_size = element_size;
 
 	mono_memory_barrier ();
 	klass->size_inited = 1;
@@ -2187,8 +2195,12 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 	}
 
 	/*valuetypes can't be neither bigger than 1Mb or empty. */
-	if (klass->valuetype && (klass->instance_size <= 0 || klass->instance_size > (0x100000 + sizeof (MonoObject))))
-		mono_class_set_type_load_failure (klass, "Value type instance size (%d) cannot be zero, negative, or bigger than 1Mb", klass->instance_size);
+	if (klass->valuetype && (klass->instance_size <= 0 || klass->instance_size > (0x100000 + sizeof (MonoObject)))) {
+		/* Special case compiler generated types */
+		/* Hard to check for [CompilerGenerated] here */
+		if (!strstr (klass->name, "StaticArrayInitTypeSize") && !strstr (klass->name, "$ArrayType"))
+			mono_class_set_type_load_failure (klass, "Value type instance size (%d) cannot be zero, negative, or bigger than 1Mb", klass->instance_size);
+	}
 
 	/* Publish the data */
 	mono_loader_lock ();
@@ -2918,6 +2930,10 @@ collect_implemented_interfaces_aux (MonoClass *klass, GPtrArray **res, GHashTabl
 			*ifaces = g_hash_table_new (NULL, NULL);
 		if (g_hash_table_lookup (*ifaces, ic))
 			continue;
+		/* A gparam is not an implemented interface for the purposes of
+		 * mono_class_get_implemented_interfaces */
+		if (mono_class_is_gparam (ic))
+			continue;
 		g_ptr_array_add (*res, ic);
 		g_hash_table_insert (*ifaces, ic, ic);
 		mono_class_init (ic);
@@ -3308,7 +3324,9 @@ setup_interface_offsets (MonoClass *klass, int cur_slot, gboolean overwrite)
 		for (i = 0; i < k->interface_count; i++) {
 			ic = k->interfaces [i];
 
-			mono_class_init (ic);
+			/* A gparam does not have any interface_id set. */
+			if (! mono_class_is_gparam (ic))
+				mono_class_init (ic);
 
 			if (max_iid < ic->interface_id)
 				max_iid = ic->interface_id;
@@ -4880,7 +4898,7 @@ mono_class_init (MonoClass *klass)
 	GSList *init_list = (GSList *)mono_native_tls_get_value (init_pending_tls_id);
 	if (g_slist_find (init_list, klass)) {
 		mono_class_set_type_load_failure (klass, "Recursive type definition detected");
-		goto leave;
+		goto leave_no_init_pending;
 	}
 	init_list = g_slist_prepend (init_list, klass);
 	mono_native_tls_set_value (init_pending_tls_id, init_list);
@@ -4941,12 +4959,19 @@ mono_class_init (MonoClass *klass)
 		ghcimpl = cached_info.ghcimpl;
 		has_cctor = cached_info.has_cctor;
 	} else if (klass->rank == 1 && klass->byval_arg.type == MONO_TYPE_SZARRAY) {
-		/* SZARRAY can have 2 vtable layouts, with and without the stelemref method.
+		/* SZARRAY can have 3 vtable layouts, with and without the stelemref method and enum element type
 		 * The first slot if for array with.
 		 */
-		static int szarray_vtable_size[2] = { 0 };
+		static int szarray_vtable_size[3] = { 0 };
 
-		int slot = MONO_TYPE_IS_REFERENCE (&klass->element_class->byval_arg) ? 0 : 1;
+		int slot;
+
+		if (MONO_TYPE_IS_REFERENCE (&klass->element_class->byval_arg))
+			slot = 0;
+		else if (klass->element_class->enumtype)
+			slot = 1;
+		else
+			slot = 2;
 
 		/* SZARRAY case */
 		if (!szarray_vtable_size [slot]) {
@@ -5079,10 +5104,12 @@ mono_class_init (MonoClass *klass)
 
 	goto leave;
 
- leave:
+leave:
+	init_list = mono_native_tls_get_value (init_pending_tls_id);
 	init_list = g_slist_remove (init_list, klass);
 	mono_native_tls_set_value (init_pending_tls_id, init_list);
 
+leave_no_init_pending:
 	if (locked)
 		mono_loader_unlock ();
 
@@ -6596,7 +6623,7 @@ mono_bounded_array_class_get (MonoClass *eclass, guint32 rank, gboolean bounded)
 		/* element_size -1 is ok as this is not an instantitable type*/
 		klass->sizes.element_size = -1;
 	} else
-		klass->sizes.element_size = mono_class_array_element_size (eclass);
+		klass->sizes.element_size = -1;
 
 	mono_class_setup_supertypes (klass);
 
@@ -8210,21 +8237,30 @@ mono_class_is_assignable_from (MonoClass *klass, MonoClass *oklass)
 		return mono_gparam_is_assignable_from (klass, oklass);
 	}
 
-	if (MONO_CLASS_IS_INTERFACE (klass)) {
-		if ((oklass->byval_arg.type == MONO_TYPE_VAR) || (oklass->byval_arg.type == MONO_TYPE_MVAR)) {
-			MonoGenericParam *gparam = oklass->byval_arg.data.generic_param;
-			MonoClass **constraints = mono_generic_container_get_param_info (gparam->owner, gparam->num)->constraints;
-			int i;
+	/* This can happen if oklass is a tyvar that has a constraint which is another tyvar which in turn
+	 * has a constraint which is a class type:
+	 *
+	 *  class Foo { }
+	 *  class G<T1, T2> where T1 : T2 where T2 : Foo { }
+	 *
+	 * In this case, Foo is assignable from T1.
+	 */
+	if ((oklass->byval_arg.type == MONO_TYPE_VAR) || (oklass->byval_arg.type == MONO_TYPE_MVAR)) {
+		MonoGenericParam *gparam = oklass->byval_arg.data.generic_param;
+		MonoClass **constraints = mono_generic_container_get_param_info (gparam->owner, gparam->num)->constraints;
+		int i;
 
-			if (constraints) {
-				for (i = 0; constraints [i]; ++i) {
-					if (mono_class_is_assignable_from (klass, constraints [i]))
-						return TRUE;
-				}
+		if (constraints) {
+			for (i = 0; constraints [i]; ++i) {
+				if (mono_class_is_assignable_from (klass, constraints [i]))
+					return TRUE;
 			}
-
-			return FALSE;
 		}
+
+		return mono_class_has_parent (oklass, klass);
+	}
+
+	if (MONO_CLASS_IS_INTERFACE (klass)) {
 
 		/* interface_offsets might not be set for dynamic classes */
 		if (mono_class_get_ref_info_handle (oklass) && !oklass->interface_bitmap) {
@@ -8634,11 +8670,16 @@ handle_enum:
  * \param ac pointer to a \c MonoArrayClass
  *
  * \returns The size of single array element.
+ *
+ * LOCKING: Acquires the loader lock.
  */
 gint32
 mono_array_element_size (MonoClass *ac)
 {
 	g_assert (ac->rank);
+	if (G_UNLIKELY (!ac->size_inited)) {
+		mono_class_setup_fields (ac);
+	}
 	return ac->sizes.element_size;
 }
 
@@ -10510,8 +10551,8 @@ mono_class_setup_interfaces (MonoClass *klass, MonoError *error)
 	if (klass->rank == 1 && klass->byval_arg.type != MONO_TYPE_ARRAY) {
 		MonoType *args [1];
 
-		/* generic IList, ICollection, IEnumerable */
-		interface_count = 2;
+		/* IList and IReadOnlyList -> 2x if enum*/
+		interface_count = klass->element_class->enumtype ? 4 : 2;
 		interfaces = (MonoClass **)mono_image_alloc0 (klass->image, sizeof (MonoClass*) * interface_count);
 
 		args [0] = &klass->element_class->byval_arg;
@@ -10519,6 +10560,13 @@ mono_class_setup_interfaces (MonoClass *klass, MonoError *error)
 			mono_defaults.generic_ilist_class, 1, args, FALSE);
 		interfaces [1] = mono_class_bind_generic_parameters (
 			   mono_defaults.generic_ireadonlylist_class, 1, args, FALSE);
+		if (klass->element_class->enumtype) {
+			args [0] = mono_class_enum_basetype (klass->element_class);
+			interfaces [2] = mono_class_bind_generic_parameters (
+				mono_defaults.generic_ilist_class, 1, args, FALSE);
+			interfaces [3] = mono_class_bind_generic_parameters (
+				   mono_defaults.generic_ireadonlylist_class, 1, args, FALSE);
+		}
 	} else if (mono_class_is_ginst (klass)) {
 		MonoClass *gklass = mono_class_get_generic_class (klass)->container_class;
 

@@ -147,15 +147,21 @@ namespace System.Windows {
 
 		public static Point Parse (string source)
 		{
-			string[] points = source.Split(',');
-
-			if (points.Length<2)
-				throw new InvalidOperationException ("source does not contain two numbers");
-			if (points.Length > 2)
-				throw new InvalidOperationException ("source contains too many delimiters");
-
-			CultureInfo ci = CultureInfo.InvariantCulture;
-			return new Point (Convert.ToDouble(points[0],ci), Convert.ToDouble(points[1],ci));	
+			if (source == null)
+				throw new ArgumentNullException ("source");
+			var tokenizer = new NumericListTokenizer (source, CultureInfo.InvariantCulture);
+			double x;
+			double y;
+			if (!double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out x) ||
+			    !double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out y))
+			{
+				throw new FormatException (string.Format ("Invalid Point format: {0}", source));
+			}
+			if (!tokenizer.HasNoMoreTokens ())
+			{
+				throw new InvalidOperationException ("Invalid Point format: " + source);
+			}
+			return new Point(x, y);
 		}
 
 		public override string ToString ()
@@ -170,18 +176,13 @@ namespace System.Windows {
 
 		private string ToString(string format,IFormatProvider formatProvider)
 		{
-			CultureInfo ci = (CultureInfo)formatProvider;
-
-			if (ci == null)
-				ci = CultureInfo.CurrentCulture;
-			string seperator = ci.NumberFormat.NumberDecimalSeparator;
-			if (seperator.Equals(","))
-				seperator = ";";
-			else
-				seperator = ",";
-			object[] ob = { this._x, seperator, this._y };
-
-			return string.Format(formatProvider, "{0:" + format + "}{1}{2:" + format + "}", ob);
+			if (formatProvider == null)
+				formatProvider = CultureInfo.CurrentCulture;
+			if (format == null)
+				format = string.Empty;
+			var separator = NumericListTokenizer.GetSeparator (formatProvider);
+			var pointFormat  = string.Format ("{{0:{0}}}{1}{{1:{0}}}", format, separator);
+			return string.Format (formatProvider, pointFormat, _x, _y);
 		}
 
 		string IFormattable.ToString (string format, IFormatProvider formatProvider)

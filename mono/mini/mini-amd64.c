@@ -1168,7 +1168,6 @@ mono_arch_init (void)
 	mono_aot_register_jit_icall ("mono_amd64_throw_exception", mono_amd64_throw_exception);
 	mono_aot_register_jit_icall ("mono_amd64_throw_corlib_exception", mono_amd64_throw_corlib_exception);
 	mono_aot_register_jit_icall ("mono_amd64_resume_unwind", mono_amd64_resume_unwind);
-	mono_aot_register_jit_icall ("mono_amd64_get_original_ip", mono_amd64_get_original_ip);
 
 #if defined(MONO_ARCH_GSHAREDVT_SUPPORTED)
 	mono_aot_register_jit_icall ("mono_amd64_start_gsharedvt_call", mono_amd64_start_gsharedvt_call);
@@ -1417,7 +1416,7 @@ mono_arch_get_iregs_clobbered_by_call (MonoCallInst *call)
 		regs = g_list_prepend (regs, (gpointer)AMD64_RCX);
 		regs = g_list_prepend (regs, (gpointer)AMD64_RAX);
 
-		InterlockedCompareExchangePointer ((gpointer*)&r, regs, NULL);
+		mono_atomic_cas_ptr ((gpointer*)&r, regs, NULL);
 	}
 
 	return r;
@@ -1435,7 +1434,7 @@ mono_arch_get_fregs_clobbered_by_call (MonoCallInst *call)
 		for (i = 0; i < AMD64_XMM_NREG; ++i)
 			regs = g_list_prepend (regs, GINT_TO_POINTER (MONO_MAX_IREGS + i));
 
-		InterlockedCompareExchangePointer ((gpointer*)&r, regs, NULL);
+		mono_atomic_cas_ptr ((gpointer*)&r, regs, NULL);
 	}
 
 	return r;
@@ -2374,6 +2373,7 @@ mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
 typedef struct {
 	MonoMethodSignature *sig;
 	CallInfo *cinfo;
+	int nstack_args;
 } ArchDynCallInfo;
 
 static gboolean
@@ -2400,10 +2400,7 @@ dyn_call_supported (MonoMethodSignature *sig, CallInfo *cinfo)
 		case ArgInFloatSSEReg:
 		case ArgInDoubleSSEReg:
 		case ArgValuetypeInReg:
-			break;
 		case ArgOnStack:
-			if (!(ainfo->offset + (ainfo->arg_size / 8) <= DYN_CALL_STACK_ARGS))
-				return FALSE;
 			break;
 		default:
 			return FALSE;
@@ -2426,6 +2423,7 @@ mono_arch_dyn_call_prepare (MonoMethodSignature *sig)
 {
 	ArchDynCallInfo *info;
 	CallInfo *cinfo;
+	int i;
 
 	cinfo = get_call_info (NULL, sig);
 
@@ -2438,6 +2436,21 @@ mono_arch_dyn_call_prepare (MonoMethodSignature *sig)
 	// FIXME: Preprocess the info to speed up get_dyn_call_args ().
 	info->sig = sig;
 	info->cinfo = cinfo;
+	info->nstack_args = 0;
+
+	for (i = 0; i < cinfo->nargs; ++i) {
+		ArgInfo *ainfo = &cinfo->args [i];
+		switch (ainfo->storage) {
+		case ArgOnStack:
+			info->nstack_args = MAX (info->nstack_args, ainfo->offset + (ainfo->arg_size / 8));
+			break;
+		default:
+			break;
+		}
+	}
+	/* Align to 16 bytes */
+	if (info->nstack_args & 1)
+		info->nstack_args ++;
 	
 	return (MonoDynCallInfo*)info;
 }
@@ -2454,6 +2467,15 @@ mono_arch_dyn_call_free (MonoDynCallInfo *info)
 
 	g_free (ainfo->cinfo);
 	g_free (ainfo);
+}
+
+int
+mono_arch_dyn_call_get_buf_size (MonoDynCallInfo *info)
+{
+	ArchDynCallInfo *ainfo = (ArchDynCallInfo*)info;
+
+	/* Extend the 'regs' field dynamically */
+	return sizeof (DynCallArgs) + (ainfo->nstack_args * sizeof (mgreg_t));
 }
 
 #define PTR_TO_GREG(ptr) (mgreg_t)(ptr)
@@ -2474,7 +2496,7 @@ mono_arch_dyn_call_free (MonoDynCallInfo *info)
  * libffi.
  */
 void
-mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, guint8 *buf, int buf_len)
+mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, guint8 *buf)
 {
 	ArchDynCallInfo *dinfo = (ArchDynCallInfo*)info;
 	DynCallArgs *p = (DynCallArgs*)buf;
@@ -2491,10 +2513,9 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 		param_reg_to_index_inited = 1;
 	}
 
-	g_assert (buf_len >= sizeof (DynCallArgs));
-
 	p->res = 0;
 	p->ret = ret;
+	p->nstack_args = dinfo->nstack_args;
 
 	arg_index = 0;
 	greg = 0;
@@ -3565,7 +3586,6 @@ emit_setup_lmf (MonoCompile *cfg, guint8 *code, gint32 lmf_offset, int cfa_offse
 
 	/* These can't contain refs */
 	mini_gc_set_slot_type_from_fp (cfg, lmf_offset + MONO_STRUCT_OFFSET (MonoLMF, previous_lmf), SLOT_NOREF);
-	mini_gc_set_slot_type_from_fp (cfg, lmf_offset + MONO_STRUCT_OFFSET (MonoLMF, rip), SLOT_NOREF);
 	mini_gc_set_slot_type_from_fp (cfg, lmf_offset + MONO_STRUCT_OFFSET (MonoLMF, rsp), SLOT_NOREF);
 	/* These are handled automatically by the stack marking code */
 	mini_gc_set_slot_type_from_fp (cfg, lmf_offset + MONO_STRUCT_OFFSET (MonoLMF, rbp), SLOT_NOREF);
@@ -4649,9 +4669,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			code = emit_move_return_value (cfg, ins, code);
 			break;
 		case OP_DYN_CALL: {
-			int i;
+			int i, limit_reg, index_reg, src_reg, dst_reg;
 			MonoInst *var = cfg->dyn_call_var;
 			guint8 *label;
+			guint8 *buf [16];
 
 			g_assert (var->opcode == OP_REGOFFSET);
 
@@ -4672,15 +4693,38 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				amd64_sse_movsd_reg_membase (code, i, AMD64_R11, MONO_STRUCT_OFFSET (DynCallArgs, fregs) + (i * sizeof (double)));
 			amd64_patch (label, code);
 
+			/* Allocate param area */
+			/* This doesn't need to be freed since OP_DYN_CALL is never called in a loop */
+			amd64_mov_reg_membase (code, AMD64_RAX, AMD64_R11, MONO_STRUCT_OFFSET (DynCallArgs, nstack_args), 8);
+			amd64_shift_reg_imm (code, X86_SHL, AMD64_RAX, 3);
+			amd64_alu_reg_reg (code, X86_SUB, AMD64_RSP, AMD64_RAX);
 			/* Set stack args */
-			for (i = 0; i < DYN_CALL_STACK_ARGS; ++i) {
-				amd64_mov_reg_membase (code, AMD64_RAX, AMD64_R11, MONO_STRUCT_OFFSET (DynCallArgs, regs) + ((PARAM_REGS + i) * sizeof(mgreg_t)), sizeof(mgreg_t));
-				amd64_mov_membase_reg (code, AMD64_RSP, i * sizeof (mgreg_t), AMD64_RAX, sizeof (mgreg_t));
-			}
+			/* rax/rcx/rdx/r8/r9 is scratch */
+			limit_reg = AMD64_RAX;
+			index_reg = AMD64_RCX;
+			src_reg = AMD64_R8;
+			dst_reg = AMD64_R9;
+			amd64_mov_reg_membase (code, limit_reg, AMD64_R11, MONO_STRUCT_OFFSET (DynCallArgs, nstack_args), 8);
+			amd64_mov_reg_imm (code, index_reg, 0);
+			amd64_lea_membase (code, src_reg, AMD64_R11, MONO_STRUCT_OFFSET (DynCallArgs, regs) + ((PARAM_REGS) * sizeof(mgreg_t)));
+			amd64_mov_reg_reg (code, dst_reg, AMD64_RSP, 8);
+			buf [0] = code;
+			x86_jump8 (code, 0);
+			buf [1] = code;
+			amd64_mov_reg_membase (code, AMD64_RDX, src_reg, 0, 8);
+			amd64_mov_membase_reg (code, dst_reg, 0, AMD64_RDX, 8);
+			amd64_alu_reg_imm (code, X86_ADD, index_reg, 1);
+			amd64_alu_reg_imm (code, X86_ADD, src_reg, 8);
+			amd64_alu_reg_imm (code, X86_ADD, dst_reg, 8);
+			amd64_patch (buf [0], code);
+			amd64_alu_reg_reg (code, X86_CMP, index_reg, limit_reg);
+			buf [2] = code;
+			x86_branch8 (code, X86_CC_LT, 0, FALSE);
+			amd64_patch (buf [2], buf [1]);
 
 			/* Set argument registers */
 			for (i = 0; i < PARAM_REGS; ++i)
-				amd64_mov_reg_membase (code, param_regs [i], AMD64_R11, i * sizeof(mgreg_t), sizeof(mgreg_t));
+				amd64_mov_reg_membase (code, param_regs [i], AMD64_R11, MONO_STRUCT_OFFSET (DynCallArgs, regs) + (i * sizeof(mgreg_t)), sizeof(mgreg_t));
 			
 			/* Make the call */
 			amd64_call_reg (code, AMD64_R10);
@@ -6466,10 +6510,10 @@ mono_arch_register_lowlevel_calls (void)
 #if defined(TARGET_WIN32) || defined(HOST_WIN32)
 #if _MSC_VER
 	extern void __chkstk (void);
-	mono_register_jit_icall_full (__chkstk, "mono_chkstk_win64", NULL, TRUE, FALSE, "__chkstk");
+	mono_register_jit_icall_full (__chkstk, "mono_chkstk_win64", NULL, TRUE, "__chkstk");
 #else
 	extern void ___chkstk_ms (void);
-	mono_register_jit_icall_full (___chkstk_ms, "mono_chkstk_win64", NULL, TRUE, FALSE, "___chkstk_ms");
+	mono_register_jit_icall_full (___chkstk_ms, "mono_chkstk_win64", NULL, TRUE, "___chkstk_ms");
 #endif
 #endif
 }
@@ -8323,15 +8367,6 @@ mono_arch_get_seq_point_info (MonoDomain *domain, guint8 *code)
 	}
 
 	return info;
-}
-
-void
-mono_arch_init_lmf_ext (MonoLMFExt *ext, gpointer prev_lmf)
-{
-	ext->lmf.previous_lmf = prev_lmf;
-	/* Mark that this is a MonoLMFExt */
-	ext->lmf.previous_lmf = (gpointer)(((gssize)ext->lmf.previous_lmf) | 2);
-	ext->lmf.rsp = (gssize)ext;
 }
 
 #endif

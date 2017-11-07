@@ -66,6 +66,7 @@ namespace MonoTests.System.Runtime.ExceptionServices
 		}
 
 		[Test]
+		[Category ("InterpreterNotWorking")]
 		public void Throw ()
 		{
 			Exception orig = null;
@@ -92,6 +93,7 @@ namespace MonoTests.System.Runtime.ExceptionServices
 		}
 
 		[Test]
+		[Category ("InterpreterNotWorking")]
 		public void ThrowWithEmptyFrames ()
 		{
 			var edi = ExceptionDispatchInfo.Capture (new OperationCanceledException ());
@@ -106,6 +108,7 @@ namespace MonoTests.System.Runtime.ExceptionServices
 		}
 
 		[Test]
+		[Category ("InterpreterNotWorking")]
 		public void LastThrowWins ()
 		{
 			Exception e;
@@ -137,6 +140,7 @@ namespace MonoTests.System.Runtime.ExceptionServices
 		}
 
 		[Test]
+		[Category ("InterpreterNotWorking")]
 		public void ThrowMultipleCaptures ()
 		{
 			Exception e;
@@ -165,6 +169,7 @@ namespace MonoTests.System.Runtime.ExceptionServices
 		}
 
 		[Test]
+		[Category ("InterpreterNotWorking")]
 		public void StackTraceUserCopy ()
 		{
 			try {

@@ -1239,7 +1239,7 @@ namespace System.Runtime.InteropServices
 
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static IntPtr BufferToBSTR (Array ptr, int slen);
+		extern static IntPtr BufferToBSTR (Array ptr, int slen);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr UnsafeAddrOfPinnedArrayElement (Array arr, int index);

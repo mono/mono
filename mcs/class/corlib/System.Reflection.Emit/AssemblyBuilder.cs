@@ -257,6 +257,9 @@ namespace System.Reflection.Emit
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void basic_init (AssemblyBuilder ab);
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern void UpdateNativeCustomAttributes (AssemblyBuilder ab);
+
 		/* Keep this in sync with codegen.cs in mcs */
 		private const AssemblyBuilderAccess COMPILER_ACCESS = (AssemblyBuilderAccess) 0x800;
 
@@ -949,6 +952,12 @@ namespace System.Reflection.Emit
 				cattrs = new CustomAttributeBuilder [1];
 				cattrs [0] = customBuilder;
 			}
+
+			/*
+			Only update the native list of custom attributes if we're adding one that is known to change dynamic execution behavior.
+			*/
+			if (customBuilder.Ctor != null && customBuilder.Ctor.DeclaringType == typeof (System.Runtime.CompilerServices.RuntimeCompatibilityAttribute))
+				UpdateNativeCustomAttributes (this);
 		}
 
 		[ComVisible (true)]

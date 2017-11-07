@@ -68,7 +68,10 @@ namespace System
 
 		internal IEnumerator<T> InternalArray__IEnumerable_GetEnumerator<T> ()
 		{
-			return new InternalEnumerator<T> (this);
+			if (Length == 0)
+				return EmptyInternalEnumerator<T>.Value;
+			else
+				return new InternalEnumerator<T> (this);
 		}
 
 		internal void InternalArray__ICollection_Clear ()
@@ -207,7 +210,7 @@ namespace System
 			// we just decr the size, so, 0 - 1 == FINISHED
 			const int FINISHED = -1;
 			
-			Array array;
+			readonly Array array;
 			int idx;
 
 			internal InternalEnumerator (Array array)
@@ -218,7 +221,6 @@ namespace System
 
 			public void Dispose ()
 			{
-				idx = NOT_STARTED;
 			}
 
 			public bool MoveNext ()
@@ -269,6 +271,38 @@ namespace System
 			[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 			get {
 				return this.GetRank ();
+			}
+		}
+
+		internal class EmptyInternalEnumerator<T> : IEnumerator<T>
+		{
+			public static readonly EmptyInternalEnumerator<T> Value = new EmptyInternalEnumerator<T> ();
+
+			public void Dispose ()
+			{
+				return;
+			}
+
+			public bool MoveNext ()
+			{
+				return false;
+			}
+
+			public T Current {
+				get {
+					throw new InvalidOperationException ("Enumeration has not started. Call MoveNext");
+				}
+			}
+
+			object IEnumerator.Current {
+				get {
+					return Current;
+				}
+			}
+
+			void IEnumerator.Reset ()
+			{
+				return;
 			}
 		}
 

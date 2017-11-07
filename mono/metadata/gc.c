@@ -44,6 +44,8 @@
 #include <mono/utils/mono-coop-semaphore.h>
 #include <mono/utils/hazard-pointer.h>
 #include <mono/utils/w32api.h>
+#include <mono/utils/unlocked.h>
+#include <mono/utils/mono-os-wait.h>
 
 #ifndef HOST_WIN32
 #include <pthread.h>
@@ -295,8 +297,7 @@ mono_gc_run_finalize (void *obj, void *data)
 	runtime_invoke = (RuntimeInvokeFunction)domain->finalize_runtime_invoke;
 
 	mono_runtime_class_init_full (o->vtable, &error);
-	if (!is_ok (&error))
-		goto unhandled_error;
+	goto_if_nok (&error, unhandled_error);
 
 	if (G_UNLIKELY (MONO_GC_FINALIZE_INVOKE_ENABLED ())) {
 		MONO_GC_FINALIZE_INVOKE ((unsigned long)o, mono_object_get_size (o),
@@ -322,19 +323,6 @@ unhandled_error:
 		mono_thread_internal_unhandled_exception (exc);
 
 	mono_domain_set_internal (caller_domain);
-}
-
-gpointer
-mono_gc_out_of_memory (size_t size)
-{
-	/* 
-	 * we could allocate at program startup some memory that we could release 
-	 * back to the system at this point if we're really low on memory (ie, size is
-	 * lower than the memory we set apart)
-	 */
-	mono_raise_exception (mono_domain_get ()->out_of_memory_ex);
-
-	return NULL;
 }
 
 /*
@@ -507,7 +495,7 @@ mono_domain_finalize (MonoDomain *domain, guint32 timeout)
 		if (found) {
 			/* We have to decrement it wherever we
 			 * remove it from domains_to_finalize */
-			if (InterlockedDecrement (&req->ref) != 1)
+			if (mono_atomic_dec_i32 (&req->ref) != 1)
 				g_error ("%s: req->ref should be 1, as we are the first one to decrement it", __func__);
 		}
 
@@ -515,7 +503,7 @@ mono_domain_finalize (MonoDomain *domain, guint32 timeout)
 	}
 
 done:
-	if (InterlockedDecrement (&req->ref) == 0) {
+	if (mono_atomic_dec_i32 (&req->ref) == 0) {
 		mono_coop_sem_destroy (&req->done);
 		g_free (req);
 	}
@@ -597,7 +585,7 @@ ves_icall_System_GC_WaitForPendingFinalizers (void)
 	mono_gc_finalize_notify ();
 	/* g_print ("Waiting for pending finalizers....\n"); */
 	MONO_ENTER_GC_SAFE;
-	WaitForSingleObjectEx (pending_done_event, INFINITE, TRUE);
+	mono_win32_wait_for_single_object_ex (pending_done_event, INFINITE, TRUE);
 	MONO_EXIT_GC_SAFE;
 	/* g_print ("Done pending....\n"); */
 #else
@@ -745,7 +733,7 @@ hazard_free_queue_is_too_big (size_t size)
 	if (size < HAZARD_QUEUE_OVERFLOW_SIZE)
 		return;
 
-	if (finalizer_thread_pulsed || InterlockedCompareExchange (&finalizer_thread_pulsed, TRUE, FALSE))
+	if (finalizer_thread_pulsed || mono_atomic_cas_i32 (&finalizer_thread_pulsed, TRUE, FALSE))
 		return;
 
 	mono_gc_finalize_notify ();
@@ -780,7 +768,7 @@ finalize_domain_objects (void)
 	DomainFinalizationReq *req = NULL;
 	MonoDomain *domain;
 
-	if (domains_to_finalize) {
+	if (UnlockedReadPointer ((gpointer)&domains_to_finalize)) {
 		mono_finalizer_lock ();
 		if (domains_to_finalize) {
 			req = (DomainFinalizationReq *)domains_to_finalize->data;
@@ -829,7 +817,7 @@ finalize_domain_objects (void)
 	/* printf ("DONE.\n"); */
 	mono_coop_sem_post (&req->done);
 
-	if (InterlockedDecrement (&req->ref) == 0) {
+	if (mono_atomic_dec_i32 (&req->ref) == 0) {
 		/* mono_domain_finalize already returned, and
 		 * doesn't hold a reference to req anymore. */
 		mono_coop_sem_destroy (&req->done);
@@ -995,7 +983,7 @@ mono_gc_cleanup (void)
 					ret = guarded_wait (gc_thread->handle, MONO_INFINITE_WAIT, FALSE);
 					g_assert (ret == MONO_THREAD_INFO_WAIT_RET_SUCCESS_0);
 
-					mono_thread_join (GUINT_TO_POINTER (gc_thread->tid));
+					mono_threads_add_joinable_thread ((gpointer)(MONO_UINT_TO_NATIVE_THREAD_ID (gc_thread->tid)));
 					break;
 				}
 
@@ -1008,7 +996,7 @@ mono_gc_cleanup (void)
 					mono_gc_suspend_finalizers ();
 
 					/* Try to abort the thread, in the hope that it is running managed code */
-					mono_thread_internal_abort (gc_thread);
+					mono_thread_internal_abort (gc_thread, FALSE);
 
 					/* Wait for it to stop */
 					ret = guarded_wait (gc_thread->handle, 100, FALSE);
@@ -1020,7 +1008,7 @@ mono_gc_cleanup (void)
 
 					g_assert (ret == MONO_THREAD_INFO_WAIT_RET_SUCCESS_0);
 
-					mono_thread_join (GUINT_TO_POINTER (gc_thread->tid));
+					mono_threads_add_joinable_thread ((gpointer)(MONO_UINT_TO_NATIVE_THREAD_ID (gc_thread->tid)));
 					break;
 				}
 
@@ -1087,7 +1075,7 @@ ref_list_remove_element (RefQueueEntry **prev, RefQueueEntry *element)
 		/* Guard if head is changed concurrently. */
 		while (*prev != element)
 			prev = &(*prev)->next;
-	} while (prev && InterlockedCompareExchangePointer ((volatile gpointer *)prev, element->next, element) != element);
+	} while (prev && mono_atomic_cas_ptr ((volatile gpointer *)prev, element->next, element) != element);
 }
 
 static void
@@ -1098,7 +1086,7 @@ ref_list_push (RefQueueEntry **head, RefQueueEntry *value)
 		current = *head;
 		value->next = current;
 		STORE_STORE_FENCE; /*Must make sure the previous store is visible before the CAS. */
-	} while (InterlockedCompareExchangePointer ((volatile gpointer *)head, value, current) != current);
+	} while (mono_atomic_cas_ptr ((volatile gpointer *)head, value, current) != current);
 }
 
 static void

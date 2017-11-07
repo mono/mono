@@ -20,7 +20,11 @@ basic_SUBDIRS := \
 	System.Xml.Linq \
 	Mono.Cecil \
 	$(MCS_MODE_dirs) \
-	../tools/cil-stringreplacer
+	Mono.CompilerServices.SymbolWriter	\
+	PEAPI \
+	../tools/cil-stringreplacer \
+	../ilasm \
+	corlib/il
 
 build_SUBDIRS :=  \
 	corlib \
@@ -106,6 +110,11 @@ monodroid_dirs := \
 	Mono.Posix	\
 	$(pcl_facade_dirs)
 
+monodroid_tools_dirs := \
+	Mono.Cecil	\
+	ICSharpCode.SharpZipLib	\
+	monodoc
+
 monotouch_dirs := \
 	$(mobile_common_dirs)	\
 	Mono.Simd			\
@@ -131,6 +140,11 @@ winaot_dirs := \
 	$(pcl_facade_dirs)
 
 unreal_dirs := \
+	$(mobile_common_dirs)	\
+	System.Drawing			\
+	$(pcl_facade_dirs)
+
+wasm_dirs := \
 	$(mobile_common_dirs)	\
 	System.Drawing			\
 	$(pcl_facade_dirs)
@@ -341,6 +355,7 @@ orbis_dirs := \
 	$(pcl_facade_dirs)
 
 monodroid_SUBDIRS := $(monodroid_dirs)
+monodroid_tools_SUBDIRS := $(monodroid_tools_dirs)
 monotouch_SUBDIRS := $(monotouch_dirs)
 monotouch_watch_SUBDIRS := $(monotouch_watch_dirs)
 monotouch_tv_SUBDIRS    := $(monotouch_tv_dirs)
@@ -359,10 +374,11 @@ xbuild_14_SUBDIRS := $(xbuild_4_0_dirs) Microsoft.NuGet.Build.Tasks
 winaot_SUBDIRS := $(winaot_dirs)
 orbis_SUBDIRS := $(orbis_dirs)
 unreal_SUBDIRS := $(unreal_dirs)
+wasm_SUBDIRS := $(wasm_dirs)
 
 include ../build/rules.make
 
-SUBDIRS = $(testing_aot_full_dirs) $(testing_aot_hybrid_dirs) $(monotouch_dirs) $(monodroid_dirs) $(xammac_dirs) $(net_4_x_dirs) $(net_4_x_parallel_dirs) $(xammac_net_4_5_SUBDIRS) $(unreal_dirs)
+SUBDIRS = $(testing_aot_full_dirs) $(testing_aot_hybrid_dirs) $(monotouch_dirs) $(monodroid_dirs) $(monodroid_tools_dirs) $(xammac_dirs) $(net_4_x_dirs) $(net_4_x_parallel_dirs) $(xammac_net_4_5_SUBDIRS) $(unreal_dirs)
 
 DIST_ONLY_SUBDIRS = dlr aot-compiler reference-assemblies $(xbuild_4_0_dirs) Microsoft.NuGet.Build.Tasks
 

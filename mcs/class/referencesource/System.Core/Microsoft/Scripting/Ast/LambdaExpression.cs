@@ -145,6 +145,16 @@ namespace System.Linq.Expressions {
         }
 
         /// <summary>
+        /// Produces a delegate that represents the lambda expression.
+        /// </summary>
+        /// <param name="preferInterpretation">A <see cref="bool"/> that indicates if the expression should be compiled to an interpreted form, if available.</param>
+        /// <returns>A delegate containing the compiled version of the lambda.</returns>
+        public Delegate Compile(bool preferInterpretation)
+        {
+            return Compile();
+        }
+
+        /// <summary>
         /// Compiles the lambda into a method definition.
         /// </summary>
         /// <param name="method">A <see cref="MethodBuilder"/> which will be used to hold the lambda's IL.</param>
@@ -207,6 +217,11 @@ namespace System.Linq.Expressions {
 
         public new TDelegate Compile(bool preferInterpretation) {
             // TODO: add logic for preferInterpretation
+            return Compile();
+        }
+
+        public new TDelegate Compile(bool preferInterpretation)
+        {
             return Compile();
         }
 

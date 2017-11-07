@@ -1503,6 +1503,11 @@ namespace Mono.CSharp {
 					return null;
 			}
 
+			if (expr is ReferenceExpression) {
+				// Only identify conversion is allowed
+				return null;
+			}
+
 			e = ImplicitNumericConversion (expr, expr_type, target_type);
 			if (e != null)
 				return e;

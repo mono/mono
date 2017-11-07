@@ -908,8 +908,11 @@ your profiler.
 For a sample of how to write your own custom profiler look in the
 Mono source tree for in the samples/profiler.c.
 .SH CODE COVERAGE
-Mono ships with a code coverage module in the \f[I]log\f[] profiler.
-Check the `coverage' option on the mprof-report(1) page for more details.
+Mono ships with a code coverage module in the \f[I]coverage\f[] profiler.
+To enable it, pass \fB--profile=coverage\fR to your mono invocation. It
+will by default output a coverage.xml in the current directory. Use
+\fBmono --profile=coverage:help sample.exe\fR for more information on the
+different options.
 .SH AOT PROFILING
 You can improve startup performance by using the AOT profiler.
 .PP

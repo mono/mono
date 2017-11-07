@@ -334,7 +334,8 @@ set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStop
 		newtio.c_cflag |= CSTOPB;
 		break;
 	case OnePointFive: /* OnePointFive */
-		/* XXX unhandled */
+		/* 8250 UART handles stop bit flag as 1.5 stop bits for 5 data bits */
+		newtio.c_cflag |= CSTOPB;
 		break;
 	}
 

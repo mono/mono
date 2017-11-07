@@ -4,26 +4,27 @@
 ..
 .TH mcs 1 "6 January 2001"
 .SH NAME 
-mcs \- Mono C# Compiler
+mcs \- Turbo C# Compiler
 .SH SYNOPSIS
 .B mcs 
 [option] [source-files]
 .SH DESCRIPTION
-mcs is the Mono C# compiler, an implementation of the ECMA-334
-language specification.  You can pass one or more options to drive the
-compiler, and a set of source files.  Extra options or arguments can
-be provided in a response file.  Response files are referenced by
-prepending the @ symbol to the response file name.
+mcs is the Turbo C# compiler (also known as the Mono C# compiler), it
+is an implementation of the ECMA-334 language specification.  You can
+pass one or more options to drive the compiler, and a set of source
+files.  Extra options or arguments can be provided in a response file.
+Response files are referenced by prepending the @ symbol to the
+response file name.
 .PP
 The 
 .I mcs
 compiler is used to compile against the latest Mono Base Class Library
 version and fully implements C# 1.0, 2.0, 3.0, 4.0, 5.0 and 6.0
-specifications.
+specifications with partial support for C# 7.0.
 .PP
 See the section on packages for more information.
 .PP
-The Mono C# compiler accepts the same command line options that the
+The Turbo C# compiler accepts the same command line options that the
 Microsoft C# compiler does.  Those options can start with a slash or a
 dash (/checked is the same as -checked).  Additionally some GNU-like
 options are supported, those begin with "--".  All MCS-specific flags
@@ -37,13 +38,13 @@ for partial compilation.  To achieve the benefits of partial
 compilation, you should compile programs into their own assemblies,
 and later reference them with the "-r" flag.
 .PP
-The Mono C# compiler generates images (.exe files) that contain CIL
+The Turbo C# compiler generates images (.exe files) that contain CIL
 byte code that can be executed by any system that implements a Common
 Language Infrastructure virtual machine such as the Microsoft .NET
 runtime engine on Windows or the Mono runtime engine on Unix systems.
 Executables are not bound to a specific CPU or operating system.
 .PP
-The Mono C# compiler by default only references three assemblies:
+The Turbo C# compiler by default only references three assemblies:
 mscorlib.dll, System.dll and System.Xml.dll.   If you want to
 reference extra libraries you must manually specify them using the
 -pkg: command line option or the -r: command line option.
@@ -53,7 +54,7 @@ use the -pkg:dotnet command line option.
 .SH OPTIONS
 .TP
 .I \-\-about
-Displays information about the Mono C# compiler
+Displays information about the Turbo C# compiler
 .TP
 .I \-\-addmodule:MODULE1[,MODULE2]
 Includes the specified modules in the resulting assembly.  Modules are

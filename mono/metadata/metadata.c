@@ -31,9 +31,10 @@
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/bsearch.h>
 #include <mono/utils/atomic.h>
+#include <mono/utils/unlocked.h>
 #include <mono/utils/mono-counters.h>
 
-static int img_set_cache_hit, img_set_cache_miss, img_set_count;
+static gint32 img_set_cache_hit, img_set_cache_miss, img_set_count;
 
 
 /* Auxiliary structure used for caching inflated signatures */
@@ -2478,10 +2479,10 @@ img_set_cache_get (MonoImage **images, int nimages)
 	int index = hash_code % HASH_TABLE_SIZE;
 	MonoImageSet *img = img_set_cache [index];
 	if (!img || !compare_img_set (img, images, nimages)) {
-		++img_set_cache_miss;
+		UnlockedIncrement (&img_set_cache_miss);
 		return NULL;
 	}
-	++img_set_cache_hit;
+	UnlockedIncrement (&img_set_cache_hit);
 	return img;
 }
 
@@ -2566,7 +2567,7 @@ get_image_set (MonoImage **images, int nimages)
 		l = l->next;
 	}
 
-	// If we iterated all the way through l without breaking, the imageset does not already exist and we shuold create it
+	// If we iterated all the way through l without breaking, the imageset does not already exist and we should create it
 	if (!l) {
 		set = g_new0 (MonoImageSet, 1);
 		set->nimages = nimages;
@@ -2583,7 +2584,7 @@ get_image_set (MonoImage **images, int nimages)
 			set->images [i]->image_sets = g_slist_prepend (set->images [i]->image_sets, set);
 
 		g_ptr_array_add (image_sets, set);
-		++img_set_count;
+		UnlockedIncrement (&img_set_count); /* locked by image_sets_lock () */
 	}
 
 	/* Cache the set. If there was a cache collision, the previously cached value will be replaced. */
@@ -3170,7 +3171,7 @@ mono_metadata_get_canonical_generic_inst (MonoGenericInst *candidate)
 		int size = MONO_SIZEOF_GENERIC_INST + type_argc * sizeof (MonoType *);
 		ginst = (MonoGenericInst *)mono_image_set_alloc0 (set, size);
 #ifndef MONO_SMALL_CONFIG
-		ginst->id = InterlockedIncrement (&next_generic_inst_id);
+		ginst->id = mono_atomic_inc_i32 (&next_generic_inst_id);
 #endif
 		ginst->is_open = is_open;
 		ginst->type_argc = type_argc;
@@ -3410,7 +3411,7 @@ get_anonymous_container_for_image (MonoImage *image, gboolean is_mvar)
 
 		// If another thread already made a container, use that and leak this new one.
 		// (Technically it would currently be safe to just assign instead of CASing.)
-		MonoGenericContainer *exchange = (MonoGenericContainer *)InterlockedCompareExchangePointer ((volatile gpointer *)container_pointer, result, NULL);
+		MonoGenericContainer *exchange = (MonoGenericContainer *)mono_atomic_cas_ptr ((volatile gpointer *)container_pointer, result, NULL);
 		if (exchange)
 			result = exchange;
 	}
@@ -3996,8 +3997,7 @@ mono_metadata_parse_mh_full (MonoImage *m, MonoGenericContainer *container, cons
 	}
 	if (fat_flags & METHOD_HEADER_MORE_SECTS) {
 		clauses = parse_section_data (m, &num_clauses, (const unsigned char*)ptr, error);
-		if (!is_ok (error))
-			goto fail;
+		goto_if_nok (error, fail);
 	}
 	if (local_var_sig_tok) {
 		const char *locals_ptr;
@@ -4013,8 +4013,7 @@ mono_metadata_parse_mh_full (MonoImage *m, MonoGenericContainer *container, cons
 		mh->num_locals = len;
 		for (i = 0; i < len; ++i) {
 			mh->locals [i] = mono_metadata_parse_type_internal (m, container, 0, TRUE, locals_ptr, &locals_ptr, error);
-			if (!is_ok (error))
-				goto fail;
+			goto_if_nok (error, fail);
 		}
 	} else {
 		mh = (MonoMethodHeader *)g_malloc0 (MONO_SIZEOF_METHOD_HEADER + num_clauses * sizeof (MonoExceptionClause));
