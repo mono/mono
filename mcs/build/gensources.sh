@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#! /bin/sh
 
 outfile=$1
 incfile=$2
@@ -19,18 +19,14 @@ process_includes_1() {
 	done
 
     # expand wildcards
-    sed -n '/*/p' $1 |
+    sed -n '/*/p' $1 | grep -v '#' |
 	while read wildc; do
-        # ignore comments
-        if [[ $wildc = \#* ]] ; then
-            continue
-        fi
         # quick syntax to exclude files:
         # ../../../MyDir/*.cs:FileToExclude1.cs,FileToExclude2.cs
         wc=`echo $wildc | cut -d \: -f 1` # ../../../MyDir/*.cs
         qexc=`echo $wildc | cut -d \: -f 2` # FileToExclude1.cs,FileToExclude2.cs
 
-        if [ "$wc" == "$qexc" ]; then
+        if test "$wc" = "$qexc"; then
             # no quick excludes - just expand the wildcard
             ls $wildc >> $2
         else
