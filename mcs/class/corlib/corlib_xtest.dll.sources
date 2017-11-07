@@ -147,3 +147,29 @@
 ../../../external/corefx/src/System.Text.Encoding/tests/NegativeEncodingTests.cs
 
 ../../../external/corefx/src/System.ValueTuple/tests/*.cs
+
+../../../external/corefx/src/Common/tests/System/Diagnostics/Tracing/TestEventListener.cs
+../../../external/corefx/src/Common/tests/System/Threading/ThreadTestHelpers.cs
+../../../external/corefx/src/Common/tests/System/Threading/ThreadPoolHelpers.cs
+
+# System.Threading.Tasks
+../../../external/corefx/src/System.Threading.Tasks/tests/System.Runtime.CompilerServices/*.cs
+../../../external/corefx/src/System.Threading.Tasks/tests/Task/*.cs:TaskStatusTest.netcoreapp.cs,EtwTests.cs,TaskCancelWaitTests.cs
+../../../external/corefx/src/System.Threading.Tasks/tests/TaskFactory/*.cs
+../../../external/corefx/src/System.Threading.Tasks/tests/TaskScheduler/*.cs
+../../../external/corefx/src/System.Threading.Tasks/tests/*.cs:UnwrapTests.cs
+
+# System.Threading.Tasks.Parallel
+../../../external/corefx/src/System.Threading.Tasks.Parallel/tests/*.cs:XunitAssemblyAttributes.cs,EtwTests.cs
+
+# System.Threading.Timer
+../../../external/corefx/src/System.Threading.Timer/tests/*.cs:TimerFiringTests.cs,TimerChangeTests.cs
+
+# System.Threading.Thread
+../../../external/corefx/src/System.Threading.Thread/tests/*.cs:CompressedStackTests.cs,ThreadTests.cs,ExceptionTests.cs
+
+# System.Threading
+../../../external/corefx/src/System.Threading/tests/*.cs:MutexTests.cs,SemaphoreTests.cs,InterlockedTests.netcoreapp.cs,EventWaitHandleTests.cs,XunitAssemblyAttributes.cs,ReaderWriterLockTests.cs,SynchronizationContextTests.cs,ExecutionContextTests.cs,HostExecutionContextManagerTests.cs,EtwTests.cs
+
+# System.Text.RegularExpressions
+../../../external/corefx/src/System.Text.RegularExpressions/tests/*.cs:CaptureCollectionTests.netcoreapp.cs,GroupCollectionTests.netcoreapp.cs,MatchCollectionTests.netcoreapp.cs,Regex.Groups.Tests.cs,Regex.Match.Tests.cs,Regex.Serialization.cs,MatchCollectionTests.cs
