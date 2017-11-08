@@ -69,6 +69,13 @@ namespace MonoTests.Mono.Data.Sqlite
 			}
 		}
 		
+		[TearDown]
+ 		public void TearDown ()
+ 		{
+ 			if (File.Exists (_uri))
+ 				File.Delete (_uri);
+ 		}
+
 		[Test]	
 		public void Select()
 		{
