@@ -33,12 +33,12 @@ using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyTitle ("System.Xml.XPath.XmlDocument.dll")]
-[assembly: AssemblyDescription ("System.Xml.XPath.XmlDocument.dll")]
-[assembly: AssemblyDefaultAlias ("System.Xml.XPath.XmlDocument.dll")]
-[assembly: AssemblyCompany ("Xamarin, Inc.")]
+[assembly: AssemblyTitle ("System.Xml.XPath.XmlDocument")]
+[assembly: AssemblyDescription ("System.Xml.XPath.XmlDocument")]
+[assembly: AssemblyDefaultAlias ("System.Xml.XPath.XmlDocument")]
+[assembly: AssemblyCompany ("Mono development team")]
 [assembly: AssemblyProduct ("Mono Common Language Infrastructure")]
-[assembly: AssemblyCopyright ("Copyright (c) 2016 Xamarin Inc. (http://www.xamarin.com)")]
+[assembly: AssemblyCopyright ("(c) Various Mono authors")]
 [assembly: AssemblyVersion ("4.0.2.0")]
 [assembly: AssemblyInformationalVersion ("4.0.0.0")]
 [assembly: AssemblyFileVersion ("4.0.0.0")]

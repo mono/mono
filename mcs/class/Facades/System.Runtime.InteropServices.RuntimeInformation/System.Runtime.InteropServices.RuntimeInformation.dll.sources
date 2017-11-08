@@ -1,4 +1,4 @@
-Assembly/AssemblyInfo.cs
+AssemblyInfo.cs
 System.Runtime.InteropServices/RuntimeInformation.cs
 
 corefx/SR.cs

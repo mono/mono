@@ -444,6 +444,11 @@ will switch to '/bin/mono64' iff '/bin/mono' is a 32-bit build).
 \fB--help\fR, \fB-h\fR
 Displays usage instructions.
 .TP
+\fB--interpreter\fR
+The Mono runtime will use its interpreter to execute a given assembly.
+The interpreter is usually slower than the JIT, but it can be useful on
+platforms where code generation at runtime is not allowed.
+.TP
 \fB--hybrid-aot\fR
 This flag allows the Mono runtime to run assemblies
 that have been stripped of IL, for example using mono-cil-strip. For this to
