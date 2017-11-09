@@ -10,12 +10,6 @@ using NUnit.Framework.Api;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
-//
-// public class MyRunner : TextUI, ITestListener
-// {
-// 	public String failed_tests = "";
-// }
-
 namespace WebAssembly {
 	public sealed class Runtime {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -62,8 +56,8 @@ public class Driver {
 
 	static TestSuite[] suites = new TestSuite [] {
 		new TestSuite () { Name = "mini", File = "managed/mini_tests.dll" },
-		new TestSuite () { Name = "corlib", File = "monodroid_corlib_test.dll" },
-		new TestSuite () { Name = "system", File = "monodroid_System_test.dll" },
+		new TestSuite () { Name = "corlib", File = "managed/wasm_corlib_test.dll" },
+		new TestSuite () { Name = "system", File = "managed/wasm_System_test.dll" },
 	};
 
 	static IncrementalTestRunner testRunner;
@@ -112,7 +106,7 @@ public class Driver {
 		testRunner.Exclude ("WASM,NotWorking,ValueAdd,CAS,InetAccess");
 		testRunner.Add (Assembly.LoadFrom (baseDir + "/" + testsuite_name));
 
-		testRunner.Start (1);
+		testRunner.Start (10);
 	}
 
 }
