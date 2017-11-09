@@ -32,6 +32,7 @@
 
 using System;
 using System.IO;
+using System.Threading;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Messaging;
 
@@ -47,6 +48,8 @@ namespace System.IO.Compression
 		bool leaveOpen;
 		bool disposed;
 		DeflateStreamNative native;
+		object disposeLock = new Object ();
+		CountdownEvent active_users = new CountdownEvent (1);
 
 		public DeflateStream (Stream stream, CompressionMode mode) :
 			this (stream, mode, false, false)
@@ -103,31 +106,47 @@ namespace System.IO.Compression
 
 		protected override void Dispose (bool disposing)
 		{
-			native.Dispose (disposing);
+			lock (disposeLock)
+			{
+				// Wait for all ongoing read/write operations to finish.
+				active_users.Signal ();
+				active_users.Wait ();
 
-			if (disposing && !disposed) {
-				disposed = true;
+				native.Dispose (disposing);
 
-				if (!leaveOpen) {
-					Stream st = base_stream;
-					if (st != null)
-						st.Close ();
-					base_stream = null;
+				if (disposing && !disposed)
+				{
+					disposed = true;
+
+					if (!leaveOpen)
+					{
+						Stream st = base_stream;
+						if (st != null)
+							st.Close ();
+						base_stream = null;
+					}
 				}
-			}
 
-			base.Dispose (disposing);
+				base.Dispose (disposing);
+			}
 		}
 
 		unsafe int ReadInternal (byte[] array, int offset, int count)
 		{
-			if (count == 0)
-				return 0;
+			int nread;
 
-			fixed (byte *b = array) {
-				IntPtr ptr = new IntPtr (b + offset);
-				return native.ReadZStream (ptr, count);
-			}
+			if (count == 0)
+				nread = 0;
+			else
+				fixed (byte* b = array)
+				{
+					IntPtr ptr = new IntPtr (b + offset);
+					nread = native.ReadZStream (ptr, count);
+				}
+
+			active_users.Signal ();
+
+			return nread;
 		}
 
 		internal int ReadCore (Span<byte> destination)
@@ -137,6 +156,8 @@ namespace System.IO.Compression
 
 		public override int Read (byte[] array, int offset, int count)
 		{
+			lock (disposeLock)
+				active_users.AddCount ();
 			if (disposed)
 				throw new ObjectDisposedException (GetType ().FullName);
 			if (array == null)
@@ -163,6 +184,8 @@ namespace System.IO.Compression
 				IntPtr ptr = new IntPtr (b + offset);
 				native.WriteZStream (ptr, count);
 			}
+
+			active_users.Signal ();
 		}
 
 		internal void WriteCore (ReadOnlySpan<byte> source)
@@ -172,6 +195,9 @@ namespace System.IO.Compression
 
 		public override void Write (byte[] array, int offset, int count)
 		{
+			lock (disposeLock)
+				active_users.AddCount ();
+
 			if (disposed)
 				throw new ObjectDisposedException (GetType ().FullName);
 
@@ -195,17 +221,25 @@ namespace System.IO.Compression
 
 		public override void Flush ()
 		{
+			lock (disposeLock)
+				active_users.AddCount ();
+
 			if (disposed)
 				throw new ObjectDisposedException (GetType ().FullName);
 
 			if (CanWrite) {
 				native.Flush ();
 			}
+
+			active_users.Signal ();
 		}
 
 		public override IAsyncResult BeginRead (byte [] array, int offset, int count,
 							AsyncCallback asyncCallback, object asyncState)
 		{
+			lock (disposeLock)
+				active_users.AddCount ();
+
 			if (disposed)
 				throw new ObjectDisposedException (GetType ().FullName);
 
@@ -231,6 +265,9 @@ namespace System.IO.Compression
 		public override IAsyncResult BeginWrite (byte [] array, int offset, int count,
 							AsyncCallback asyncCallback, object asyncState)
 		{
+			lock (disposeLock)
+				active_users.AddCount ();
+
 			if (disposed)
 				throw new ObjectDisposedException (GetType ().FullName);
 
