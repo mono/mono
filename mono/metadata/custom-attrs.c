@@ -2169,8 +2169,10 @@ init_weak_fields_inner (MonoImage *image, GHashTable *indexes)
 	if (image == mono_get_corlib ()) {
 		/* Typedef */
 		klass = mono_class_from_name_checked (image, "System", "WeakAttribute", &error);
-		if (!is_ok (&error))
+		if (!is_ok (&error)) {
+			mono_error_cleanup (&error);
 			return;
+		}
 		if (!klass)
 			return;
 		first_method_idx = mono_class_get_first_method_idx (klass);
@@ -2197,6 +2199,23 @@ init_weak_fields_inner (MonoImage *image, GHashTable *indexes)
 		/* Memberref pointing to a typeref */
 		tdef = &image->tables [MONO_TABLE_MEMBERREF];
 
+		/* Check whenever the assembly references the WeakAttribute type */
+		gboolean found = FALSE;
+		tdef = &image->tables [MONO_TABLE_TYPEREF];
+		for (int i = 0; i < tdef->rows; ++i) {
+			guint32 string_offset = mono_metadata_decode_row_col (tdef, i, MONO_TYPEREF_NAME);
+			const char *name = mono_metadata_string_heap (image, string_offset);
+			if (!strcmp (name, "WeakAttribute")) {
+				found = TRUE;
+				break;
+			}
+		}
+
+		if (!found)
+			return;
+
+		/* Find the memberref pointing to a typeref */
+		tdef = &image->tables [MONO_TABLE_MEMBERREF];
 		for (int i = 0; i < tdef->rows; ++i) {
 			guint32 cols [MONO_MEMBERREF_SIZE];
 			const char *sig;
@@ -2219,10 +2238,19 @@ init_weak_fields_inner (MonoImage *image, GHashTable *indexes)
 				const char *nspace = mono_metadata_string_heap (image, cols [MONO_TYPEREF_NAMESPACE]);
 
 				if (!strcmp (nspace, "System") && !strcmp (name, "WeakAttribute")) {
-					MonoClass *c = mono_class_from_typeref (image, MONO_TOKEN_TYPE_REF | nindex);
-					g_assert (!strcmp (c->name, "WeakAttribute"));
+					MonoClass *klass = mono_class_from_typeref (image, MONO_TOKEN_TYPE_REF | nindex);
+					g_assert (!strcmp (klass->name, "WeakAttribute"));
 					/* Allow a testing dll as well since some profiles don't have WeakAttribute */
-					if (c && (c->image == mono_get_corlib () || strstr (c->image->name, "Mono.Runtime.Testing"))) {
+					if (klass && (klass->image == mono_get_corlib () || strstr (klass->image->name, "Mono.Runtime.Testing"))) {
+						/* Sanity check that it only has 1 ctor */
+						gpointer iter = NULL;
+						int count = 0;
+						MonoMethod *method;
+						while ((method = mono_class_get_methods (klass, &iter))) {
+							if (!strcmp (method->name, ".ctor"))
+								count ++;
+						}
+						count ++;
 						memberref_index = i;
 						break;
 					}
