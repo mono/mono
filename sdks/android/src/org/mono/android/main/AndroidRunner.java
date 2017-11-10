@@ -91,11 +91,11 @@ public class AndroidRunner extends Instrumentation
 
 	native void runTests (String filesDir, String cacheDir, String dataDir, String assemblyDir);
 
-	void WriteLineToInstrumentation (String line)
+	static void WriteLineToInstrumentation (String line)
 	{
 		Bundle b = new Bundle();
 		b.putString(Instrumentation.REPORT_KEY_STREAMRESULT, line + "\n");
-		sendStatus(0, b);
+		AndroidRunner.inst.sendStatus(0, b);
 	}
 
 	static {

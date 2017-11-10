@@ -11,12 +11,9 @@ using NUnitLite.Runner;
 public class Driver
 {
 	static TextUI Runner;
-	static IntPtr AndroidRunner;
 
-	public static void RunTests (IntPtr androidRunner)
+	public static void RunTests ()
 	{
-		AndroidRunner = androidRunner;
-
 		Console.SetOut (TextWriter.Synchronized (new AndroidIntrumentationWriter (Console.Out)));
 		Console.SetError (TextWriter.Synchronized (new AndroidIntrumentationWriter (Console.Error)));
 
@@ -74,7 +71,7 @@ public class Driver
 			{
 				fixed (byte *chars = Encoding.UTF8.GetBytes (l + '\0'))
 				{
-					WriteLineToInstrumentation (AndroidRunner, chars);
+					WriteLineToInstrumentation (chars);
 				}
 			}
 
@@ -82,6 +79,6 @@ public class Driver
 		}
 
 		[DllImport ("__Internal", EntryPoint = "AndroidIntrumentationWriter_WriteLineToInstrumentation", CharSet = CharSet.Unicode)]
-		static unsafe extern void WriteLineToInstrumentation (IntPtr androidRunner, byte *chars);
+		static unsafe extern void WriteLineToInstrumentation (byte *chars);
 	}
 }
