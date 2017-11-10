@@ -103,7 +103,9 @@ install-web-targets:
 NUGET_BUILDTASKS_REPO_DIR=$(topdir)/../external/nuget-buildtasks
 
 install-nuget-targets:
-	$(MKINSTALLDIRS) $(DESTDIR)$(NUGET_BUILDTASKS_TARGETS_DIR) $(DESTDIR)$(MSBUILD_EXTENSIONS_15_DIR)
+	$(MKINSTALLDIRS) $(DESTDIR)$(NUGET_BUILDTASKS_TARGETS_DIR)
+	$(MKINSTALLDIRS) $(DESTDIR)$(MSBUILD_EXTENSIONS_15_DIR)/Imports/Microsoft.Common.props/ImportBefore
+	$(MKINSTALLDIRS) $(DESTDIR)$(MSBUILD_EXTENSIONS_15_DIR)/Microsoft.Common.targets/ImportAfter
 	$(INSTALL_DATA) $(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/Microsoft.NuGet.targets $(DESTDIR)$(NUGET_BUILDTASKS_TARGETS_DIR)
 	$(INSTALL_DATA) $(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/Microsoft.NuGet.props $(DESTDIR)$(NUGET_BUILDTASKS_TARGETS_DIR)
 	$(INSTALL_DATA) $(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/ImportBeforeAfter/Microsoft.NuGet.ImportBefore.props $(DESTDIR)$(MSBUILD_EXTENSIONS_15_DIR)/Imports/Microsoft.Common.props/ImportBefore
