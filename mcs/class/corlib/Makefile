@@ -101,7 +101,7 @@ endif
 
 # System.IO/DirectoryInfoTest.cs needs Mono.Posix
 TEST_MCS_FLAGS += -debug -nowarn:168,219,618,672 -unsafe \
-				 -define:MONO_DATACONVERTER_STATIC_METHODS $(TEST_RESX_RESOURCES:%=-resource:%)
+				 -define:MONO_DATACONVERTER_STATIC_METHODS $(TEST_RESX_RESOURCES:%=-resource:%) -resource:LinkerDescriptor/mscorlib_test.xml,$(test_lib:.dll=.xml)
 
 
 CC_PROFILE := $(filter monotouch% xammac, $(PROFILE))
@@ -137,7 +137,8 @@ EXTRA_DISTFILES = \
 	Test/resources/Fergie.GED		\
 	Test/resources/culture-*.cs		\
 	$(RESOURCE_FILES) \
-	$(TEST_RESOURCES:.resources=.resx)
+	$(TEST_RESOURCES:.resources=.resx) \
+	LinkerDescriptor/mscorlib_test.xml
 
 TEST_RESX_RESOURCES = \
 	Test/resources/Resources.resources
