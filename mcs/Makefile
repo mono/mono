@@ -6,9 +6,9 @@ SUBDIRS := build jay mcs class nunit24 ilasm tools tests errors docs packages
 
 basic_SUBDIRS := build jay class
 build_SUBDIRS := build class class/aot-compiler tools ilasm
-monodroid_SUBDIRS := build class
+monodroid_SUBDIRS := build class tools
 monodroid_tools_SUBDIRS := build class tools
-monotouch_SUBDIRS := build class
+monotouch_SUBDIRS := build class tools
 monotouch_watch_SUBDIRS := build class
 monotouch_tv_SUBDIRS := build class
 monotouch_runtime_SUBDIRS := build class

@@ -51,6 +51,8 @@ net_4_5_dirs := \
 
 build_SUBDIRS = resgen gacutil security culevel cil-stringreplacer commoncryptogenerator resx2sr linker
 monodroid_tools_SUBDIRS = cil-strip mkbundle mdoc mono-symbolicate
+monodroid_SUBDIRS = nunit-lite
+monotouch_SUBDIRS = nunit-lite
 net_4_5_SUBDIRS = gacutil
 net_4_x_SUBDIRS = gacutil
 net_4_5_PARALLEL_SUBDIRS = $(net_4_5_dirs)
