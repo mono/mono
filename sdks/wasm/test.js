@@ -35,7 +35,7 @@ var Module = {
 	},
 };
 
-var assemblies = [ "mscorlib.dll", "System.dll", "System.Core.dll", "main.exe", "nunitlite.dll", "mini_tests.dll"];
+var assemblies = [ "mscorlib.dll", "System.dll", "System.Core.dll", "main.exe", "nunitlite.dll", "mini_tests.dll", "wasm_corlib_test.dll"];
 
 load ("mono.js");
 Module.finish_loading ();
@@ -95,7 +95,7 @@ function mono_send_msg (key, val) {
 	try {
 		return conv_string (call_method (send_message, null, [mono_string (key), mono_string (val)]));
 	} catch (e) {
-		print ("BAD SEND MSG: " + e.msg);
+		print ("BAD SEND MSG: " + e);
 		return null;
 	}
 }
@@ -114,10 +114,20 @@ if (!send_message)
 
 print ("-----LOADED ----");
 
-var res = mono_send_msg ("start-test", "mini")
+// var res = mono_send_msg ("start-test", "mini")
+// print ("-----STARTED ---- " + res);
+//
+// while (mono_send_msg ("pump-test", "") != "DONE") {
+// 	Module.pump_message ();
+// }
+//
+
+var res = mono_send_msg ("start-test", "corlib")
 print ("-----STARTED ---- " + res);
 
-while (mono_send_msg ("pump-test", "") != "DONE") {
-	Module.pump_message ();
+if (res == "SUCCESS") {
+	while (mono_send_msg ("pump-test", "") != "DONE") {
+		Module.pump_message ();
+		print ("|");
+	}
 }
-
