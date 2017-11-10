@@ -94,7 +94,6 @@ class TestAction : AbstractAction {
 	}
 
 	public void PerformWork () {
-		Console.WriteLine ("TestAction::PerformWork " + test.Name);
 		SetupContext ();
         try
         {
@@ -162,7 +161,6 @@ class TestSuiteAction : AbstractAction {
 	}
 
 	public void PerformWork () {
-		Console.WriteLine ("TestSuiteAction:PerformWork " + testSuite.Name);
 		SetupContext ();
 
 		children = new List <ITest> ();
@@ -219,10 +217,7 @@ class TestSuiteAction : AbstractAction {
 
 	private void PerformOneTimeTearDown ()
 	{
-		Console.WriteLine ("PerformOneTimeTearDown");
-        IncrementalTestRunner.setCurrentContext.Invoke (null, new object[] { this.context });
-		
-		// TestExecutionContext.SetCurrentContext(Context);
+		IncrementalTestRunner.setCurrentContext.Invoke (null, new object[] { this.context });
 		testSuite.GetOneTimeTearDownCommand ().Execute(this.context);
 	}
 
@@ -279,7 +274,11 @@ public class IncrementalTestRunner {
 	public void Exclude (string categories) {
 		var excludeFilter = new NotFilter (new SimpleCategoryExpression(categories).Filter);
 		filter = And (filter, excludeFilter);
-		
+	}
+
+	public void RunOnly (string testName) {
+		var nameFilter = new SimpleNameFilter (testName);
+		filter = And (filter, nameFilter);
 	}
 
 	internal Queue<Action> actions = new Queue<Action> ();
