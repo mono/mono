@@ -105,6 +105,7 @@ public class Driver {
 
 		testRunner.Exclude ("WASM,NotWorking,ValueAdd,CAS,InetAccess");
 		testRunner.Add (Assembly.LoadFrom (baseDir + "/" + testsuite_name));
+		// testRunner.RunOnly ("MonoTests.System.Threading.AutoResetEventTest.MultipleSet");
 
 		testRunner.Start (10);
 	}
