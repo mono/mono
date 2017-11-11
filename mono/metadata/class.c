@@ -1750,26 +1750,6 @@ type_has_references (MonoClass *klass, MonoType *ftype)
 	return FALSE;
 }
 
-#define BITMAP_EL_SIZE (sizeof (gsize) * 8)
-
-/*
- * is_weak_field:
- *
- *   Return whenever the FIELD table entry with the 1-based index FIELD_IDX has
- * a [Weak] attribute.
- */
-static gboolean
-is_weak_field (MonoImage *image, guint32 field_idx)
-{
-	if (image->dynamic)
-		return FALSE;
-
-	mono_assembly_init_weak_fields (image);
-
-	/* The hash is not mutated, no need to lock */
-	return g_hash_table_lookup (image->weak_field_indexes, GINT_TO_POINTER (field_idx)) != NULL;
-}
-
 /*
  * mono_class_layout_fields:
  * @class: a class
@@ -2228,10 +2208,9 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 	// Weak field support
 	//
 	// FIXME:
+	// - generic instances
 	// - Disallow on structs/static fields/nonref fields
 	gboolean has_weak_fields = FALSE;
-	gsize *weak_bitmap = NULL;
-	int weak_bitmap_nbits = 0;
 
 	if (mono_class_has_static_metadata (klass)) {
 		for (MonoClass *p = klass; p != NULL; p = p->parent) {
@@ -2240,29 +2219,12 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 
 			while ((field = mono_class_get_fields (p, &iter))) {
 				guint32 field_idx = first_field_idx + (field - p->fields);
-				if (MONO_TYPE_IS_REFERENCE (field->type)) {
-					if (is_weak_field (p->image, field_idx + 1)) {
-						if (!weak_bitmap)
-							weak_bitmap = g_malloc0 (klass->instance_size / sizeof (gsize));
-						has_weak_fields = TRUE;
-						int pos = field->offset / sizeof (gpointer);
-						if (pos + 1 > weak_bitmap_nbits)
-							weak_bitmap_nbits = pos + 1;
-						weak_bitmap [pos / BITMAP_EL_SIZE] |= ((gsize)1) << (pos % BITMAP_EL_SIZE);
-						mono_trace_message (MONO_TRACE_TYPE, "Field %s:%s at offset %x is weak.", field->parent->name, field->name, field->offset);
-					}
+				if (MONO_TYPE_IS_REFERENCE (field->type) && mono_assembly_is_weak_field (p->image, field_idx + 1)) {
+					has_weak_fields = TRUE;
+					mono_trace_message (MONO_TRACE_TYPE, "Field %s:%s at offset %x is weak.", field->parent->name, field->name, field->offset);
 				}
 			}
 		}
-	}
-
-	if (has_weak_fields) {
-		gsize *new_bitmap = (gsize *)mono_class_alloc0 (klass, klass->instance_size / sizeof (gsize));
-		memcpy (new_bitmap, weak_bitmap, klass->instance_size / sizeof (gsize));
-		g_free (weak_bitmap);
-		weak_bitmap = new_bitmap;
-	} else {
-		g_free (weak_bitmap);
 	}
 
 	/* Publish the data */
@@ -2270,17 +2232,13 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 	if (!klass->rank)
 		klass->sizes.class_size = class_size;
 	klass->has_static_refs = has_static_refs;
+	klass->has_weak_fields = has_weak_fields;
 	for (i = 0; i < top; ++i) {
 		field = &klass->fields [i];
 
 		if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
 			field->offset = field_offsets [i];
 	}
-
-	klass->has_weak_fields = has_weak_fields;
-	if (has_weak_fields)
-		mono_class_set_weak_bitmap (klass, weak_bitmap_nbits, weak_bitmap);
-
 	mono_memory_barrier ();
 	klass->fields_inited = 1;
 	mono_loader_unlock ();

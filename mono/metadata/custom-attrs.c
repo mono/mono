@@ -2291,13 +2291,18 @@ mono_assembly_init_weak_fields (MonoImage *image)
 	if (image->weak_fields_inited)
 		return;
 
-	GHashTable *indexes = g_hash_table_new (NULL, NULL);
+	GHashTable *indexes;
 
-	/*
-	 * To avoid lookups for every field, we scan the customattr table for entries whose
-	 * parent is a field and whose type is WeakAttribute.
-	 */
-	init_weak_fields_inner (image, indexes);
+	indexes = mono_get_runtime_callbacks ()->get_weak_field_indexes (image);
+	if (!indexes) {
+		indexes = g_hash_table_new (NULL, NULL);
+
+		/*
+		 * To avoid lookups for every field, we scan the customattr table for entries whose
+		 * parent is a field and whose type is WeakAttribute.
+		 */
+		init_weak_fields_inner (image, indexes);
+	}
 
 	mono_image_lock (image);
 	if (!image->weak_fields_inited) {
@@ -2308,4 +2313,22 @@ mono_assembly_init_weak_fields (MonoImage *image)
 		g_hash_table_destroy (indexes);
 	}
 	mono_image_unlock (image);
+}
+
+/*
+ * mono_assembly_is_weak_field:
+ *
+ *   Return whenever the FIELD table entry with the 1-based index FIELD_IDX has
+ * a [Weak] attribute.
+ */
+gboolean
+mono_assembly_is_weak_field (MonoImage *image, guint32 field_idx)
+{
+	if (image->dynamic)
+		return FALSE;
+
+	mono_assembly_init_weak_fields (image);
+
+	/* The hash is not mutated, no need to lock */
+	return g_hash_table_lookup (image->weak_field_indexes, GINT_TO_POINTER (field_idx)) != NULL;
 }

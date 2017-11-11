@@ -16,6 +16,9 @@ typedef gboolean (*MonoAssemblyMetadataCustomAttrIterFunc) (MonoImage *image, gu
 void
 mono_assembly_metadata_foreach_custom_attr (MonoAssembly *assembly, MonoAssemblyMetadataCustomAttrIterFunc func, gpointer user_data);
 
+gboolean
+mono_assembly_is_weak_field (MonoImage *image, guint32 field_idx);
+
 void
 mono_assembly_init_weak_fields (MonoImage *image);
 

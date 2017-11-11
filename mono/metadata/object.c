@@ -40,6 +40,7 @@
 #include <mono/metadata/verify-internals.h>
 #include <mono/metadata/reflection-internals.h>
 #include <mono/metadata/w32event.h>
+#include <mono/metadata/custom-attrs-internals.h>
 #include <mono/utils/strenc.h>
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/mono-error-internals.h>
@@ -1002,6 +1003,8 @@ ves_icall_string_alloc (int length)
 	return str;
 }
 
+#define BITMAP_EL_SIZE (sizeof (gsize) * 8)
+
 /* LOCKING: Acquires the loader lock */
 /*
  * Sets the following fields in KLASS:
@@ -1023,9 +1026,6 @@ mono_class_compute_gc_descriptor (MonoClass *klass)
 
 	if (klass->gc_descr_inited)
 		return;
-
-	gsize *weak_bitmap = NULL;
-	int weak_bitmap_nbits = 0;
 
 	bitmap = default_bitmap;
 	if (klass == mono_defaults.string_class) {
@@ -1056,7 +1056,27 @@ mono_class_compute_gc_descriptor (MonoClass *klass)
 		/*printf ("new descriptor: %p 0x%x for %s.%s\n", class->gc_descr, bitmap [0], class->name_space, class->name);*/
 
 		if (klass->has_weak_fields) {
-			weak_bitmap = mono_class_get_weak_bitmap (klass, &weak_bitmap_nbits);
+			gsize *weak_bitmap = NULL;
+			int weak_bitmap_nbits = 0;
+
+			weak_bitmap = (gsize *)mono_class_alloc0 (klass, klass->instance_size / sizeof (gsize));
+			if (mono_class_has_static_metadata (klass)) {
+				for (MonoClass *p = klass; p != NULL; p = p->parent) {
+					gpointer iter = NULL;
+					guint32 first_field_idx = mono_class_get_first_field_idx (p);
+					MonoClassField *field;
+
+					while ((field = mono_class_get_fields (p, &iter))) {
+						guint32 field_idx = first_field_idx + (field - p->fields);
+						if (MONO_TYPE_IS_REFERENCE (field->type) && mono_assembly_is_weak_field (p->image, field_idx + 1)) {
+							int pos = field->offset / sizeof (gpointer);
+							if (pos + 1 > weak_bitmap_nbits)
+								weak_bitmap_nbits = pos + 1;
+							weak_bitmap [pos / BITMAP_EL_SIZE] |= ((gsize)1) << (pos % BITMAP_EL_SIZE);
+						}
+					}
+				}
+			}
 
 			for (int pos = 0; pos < weak_bitmap_nbits; ++pos) {
 				if (weak_bitmap [pos / BITMAP_EL_SIZE] & ((gsize)1) << (pos % BITMAP_EL_SIZE)) {
@@ -1064,6 +1084,10 @@ mono_class_compute_gc_descriptor (MonoClass *klass)
 					bitmap [pos / BITMAP_EL_SIZE] &= ~((gsize)1) << (pos % BITMAP_EL_SIZE);
 				}
 			}
+
+			mono_loader_lock ();
+			mono_class_set_weak_bitmap (klass, weak_bitmap_nbits, weak_bitmap);
+			mono_loader_unlock ();
 		}
 
 		gc_descr = mono_gc_make_descr_for_object (bitmap, max_set + 1, klass->instance_size);
