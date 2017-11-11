@@ -3869,6 +3869,7 @@ mini_init (const char *filename, const char *runtime_version)
 	if (mono_use_interpreter)
 		callbacks.interp_get_remoting_invoke = mono_interp_get_remoting_invoke;
 #endif
+	callbacks.get_weak_field_indexes = mono_aot_get_weak_field_indexes;
 
 	mono_install_callbacks (&callbacks);
 

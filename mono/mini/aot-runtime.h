@@ -11,7 +11,7 @@
 #include "mini.h"
 
 /* Version number of the AOT file format */
-#define MONO_AOT_FILE_VERSION 141
+#define MONO_AOT_FILE_VERSION 142
 
 #define MONO_AOT_TRAMP_PAGE_SIZE 16384
 
@@ -234,6 +234,7 @@ void     mono_aot_init_llvm_method          (gpointer aot_module, guint32 method
 void     mono_aot_init_gshared_method_this  (gpointer aot_module, guint32 method_index, MonoObject *this_ins);
 void     mono_aot_init_gshared_method_mrgctx  (gpointer aot_module, guint32 method_index, MonoMethodRuntimeGenericContext *rgctx);
 void     mono_aot_init_gshared_method_vtable  (gpointer aot_module, guint32 method_index, MonoVTable *vtable);
+GHashTable *mono_aot_get_weak_field_indexes (MonoImage *image);
 
 /* This is an exported function */
 MONO_API void     mono_aot_register_module           (gpointer *aot_info);

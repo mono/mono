@@ -1667,6 +1667,7 @@ init_sizes_with_info (MonoClass *klass, MonoCachedClassInfo *cached_info)
 		klass->has_references = cached_info->has_references;
 		klass->has_static_refs = cached_info->has_static_refs;
 		klass->no_special_static_fields = cached_info->no_special_static_fields;
+		klass->has_weak_fields = cached_info->has_weak_fields;
 		mono_loader_unlock ();
 	}
 	else {
