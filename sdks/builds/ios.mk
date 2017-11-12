@@ -1,3 +1,13 @@
+#
+# Targets:
+# - build-ios-<target>
+#    Build <target>
+# - package-ios-<target>
+#    Install target into ../out/<target>
+# - clean-ios-<target>
+#    Clean target
+# Where <target> is: target32, target64, sim32, sim64, cross32, cross64
+#
 
 PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 
@@ -42,6 +52,9 @@ _ios_$(1)_AC_VARS= \
 	ac_cv_header_curses_h=no \
 	ac_cv_header_localcharset_h=no \
 	ac_cv_header_sys_user_h=no \
+	ac_cv_func_getentropy=no \
+	ac_cv_func_futimens=no \
+	ac_cv_func_utimensat=no \
 	mono_cv_sizeof_sunpath=104 \
 	mono_cv_uscore=yes \
 	$(ios_$(1)_AC_VARS)
@@ -158,6 +171,9 @@ _ios_$(1)_AC_VARS= \
 	ac_cv_func_fstatat=no \
 	ac_cv_func_readlinkat=no \
 	ac_cv_func_system=no \
+	ac_cv_func_getentropy=no \
+	ac_cv_func_futimens=no \
+	ac_cv_func_utimensat=no \
 	mono_cv_uscore=yes \
 	$(ios_$(1)_AC_VARS)
 
