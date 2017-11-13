@@ -328,14 +328,13 @@ Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring
 		_exit (1);
 	}
 
-	run_tests_method = mono_class_get_method_from_name (driver_class, "RunTests", 1);
+	run_tests_method = mono_class_get_method_from_name (driver_class, "RunTests", 0);
 	if (!run_tests_method) {
 		_log ("Unknown \"RunTests\" method");
 		_exit (1);
 	}
 
-	params [0] = (void*) thiz;
-	mono_runtime_invoke (run_tests_method, NULL, params, NULL);
+	mono_runtime_invoke (run_tests_method, NULL, NULL, NULL);
 }
 
 static int
@@ -560,7 +559,7 @@ _monodroid_get_dns_servers (void **dns_servers_array)
 }
 
 MONO_API void
-AndroidIntrumentationWriter_WriteLineToInstrumentation (jobject android_runner, char *chars)
+AndroidIntrumentationWriter_WriteLineToInstrumentation (char *chars)
 {
 	JNIEnv *env;
 	jclass AndroidRunner_klass;
@@ -570,11 +569,11 @@ AndroidIntrumentationWriter_WriteLineToInstrumentation (jobject android_runner, 
 	(*jvm)->GetEnv (jvm, (void**)&env, JNI_VERSION_1_6);
 
 	AndroidRunner_klass = (*env)->FindClass (env, "org/mono/android/AndroidRunner");
-	AndroidRunner_WriteLineToInstrumentation_method = (*env)->GetMethodID (env, AndroidRunner_klass, "WriteLineToInstrumentation", "(Ljava/lang/String;)V");
+	AndroidRunner_WriteLineToInstrumentation_method = (*env)->GetStaticMethodID (env, AndroidRunner_klass, "WriteLineToInstrumentation", "(Ljava/lang/String;)V");
 
 	j_chars = (*env)->NewStringUTF(env, chars);
 
-	(*env)->CallVoidMethod (env, android_runner, AndroidRunner_WriteLineToInstrumentation_method, j_chars);
+	(*env)->CallStaticVoidMethod (env, AndroidRunner_klass, AndroidRunner_WriteLineToInstrumentation_method, j_chars);
 }
 
 JNIEXPORT jint JNICALL
