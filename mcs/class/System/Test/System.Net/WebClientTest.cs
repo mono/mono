@@ -46,6 +46,7 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (WebException))] // Something catches the PlatformNotSupportedException and re-throws an WebException
 #endif
+		[Category ("InetAccess")]
 		public void DownloadTwice ()
 		{
 			WebClient wc = new WebClient();
