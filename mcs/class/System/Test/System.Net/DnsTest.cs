@@ -19,6 +19,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Net
 {
 	[TestFixture]
+	[Category ("InetAccess")]
 	public class DnsTest
 	{
 		private String site1Name = "google-public-dns-a.google.com",

@@ -82,6 +82,7 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (AggregateException))] // Something catches the PlatformNotSupportedException and re-throws an AggregateException
 #endif
+		[Category("InetAccess")]
 		public void DownloadFileTaskAsync ()
 		{
 			WebClient wc = new WebClient ();
@@ -96,6 +97,7 @@ namespace MonoTests.System.Net
 
 		[Test]
 		[Category ("NotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
+		[Category("InetAccess")]
 		public void Cancellation ()
 		{
 			WebClient wc = new WebClient ();
@@ -123,6 +125,7 @@ namespace MonoTests.System.Net
 
 		[Test]
 		[Category ("NotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
+		[Category("InetAccess")]
 		public void DownloadMultiple ()
 		{
 			WebClient wc = new WebClient ();
@@ -140,6 +143,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+		[Category ("InetAccess")]
 		[Category ("NotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
 		public void DownloadMultiple2 ()
 		{
@@ -152,6 +156,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+		[Category ("InetAccess")]
 		[Category ("NotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
 		public void DownloadMultiple3 ()
 		{

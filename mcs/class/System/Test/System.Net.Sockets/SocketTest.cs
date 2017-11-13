@@ -86,6 +86,7 @@ namespace MonoTests.System.Net.Sockets
 
 		[Test]
 		[Category ("NotWorking")]
+		[Category ("InetAccess")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif

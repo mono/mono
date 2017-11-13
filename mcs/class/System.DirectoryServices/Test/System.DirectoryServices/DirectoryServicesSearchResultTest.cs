@@ -13,6 +13,7 @@ using System.DirectoryServices;
 namespace MonoTests.System.DirectoryServices 
 {
 	[TestFixture]
+	[Category ("InetAccess")]
 	public class DirectoryServicesSearchResultTest
 	{
 		#region Fields

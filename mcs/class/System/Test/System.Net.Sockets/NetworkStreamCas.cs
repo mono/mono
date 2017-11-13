@@ -97,6 +97,7 @@ namespace MonoCasTests.System.Net.Sockets {
 
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Read = "USERNAME")]
+		[Category ("InetAccess")]
 		public void AsyncRead ()
 		{
 			message = "AsyncRead";
@@ -135,6 +136,7 @@ namespace MonoCasTests.System.Net.Sockets {
 
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Read = "USERNAME")]
+		[Category ("InetAccess")]
 		public void AsyncWrite ()
 		{
 			message = "AsyncWrite";

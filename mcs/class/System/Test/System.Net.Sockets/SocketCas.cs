@@ -78,6 +78,7 @@ namespace MonoCasTests.System.Net.Sockets {
 
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Read = "USERNAME")]
+		[Category ("InetAccess")]
 		public void AsyncAccept ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 16279);
@@ -117,6 +118,7 @@ namespace MonoCasTests.System.Net.Sockets {
 
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Read = "USERNAME")]
+		[Category ("InetAccess")]
 		public void AsyncConnect ()
 		{
 			message = "AsyncConnect";
@@ -150,6 +152,7 @@ namespace MonoCasTests.System.Net.Sockets {
 
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Read = "USERNAME")]
+		[Category ("InetAccess")]
 		public void AsyncReceive ()
 		{
 			message = "AsyncReceive";
@@ -188,6 +191,7 @@ namespace MonoCasTests.System.Net.Sockets {
 
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Read = "USERNAME")]
+		[Category ("InetAccess")]
 		public void AsyncReceiveFrom ()
 		{
 			message = "AsyncReceiveFrom";
@@ -226,6 +230,7 @@ namespace MonoCasTests.System.Net.Sockets {
 
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Read = "USERNAME")]
+		[Category ("InetAccess")]
 		public void AsyncSend ()
 		{
 			message = "AsyncSend";
@@ -260,6 +265,7 @@ namespace MonoCasTests.System.Net.Sockets {
 
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Read = "USERNAME")]
+		[Category ("InetAccess")]
 		public void AsyncSendTo ()
 		{
 			message = "AsyncSendTo";
