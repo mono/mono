@@ -939,12 +939,14 @@ LLVM = $(filter --llvm, $(MONO_ENV_OPTIONS))
 # reverted.
 # bug-Xamarin-5278.exe got broken by 5d26590e79da139a284459299aee95c25f4cd835
 # appdomain-thread-abort.exe: https://bugzilla.xamarin.com/show_bug.cgi?id=47054
+# appdomain-marshalbyref-assemblyload.exe: https://bugzilla.xamarin.com/show_bug.cgi?id=49308
 KNOWN_FAILING_TESTS = \
 	delegate-async-exception.exe	\
 	bug-348522.2.exe	\
 	bug-459094.exe \
 	delegate-invoke.exe \
-	bug-Xamarin-5278.exe
+	bug-Xamarin-5278.exe \
+	appdomain-marshalbyref-assemblyload.exe
 
 DISABLED_TESTS = \
 	$(KNOWN_FAILING_TESTS) \
