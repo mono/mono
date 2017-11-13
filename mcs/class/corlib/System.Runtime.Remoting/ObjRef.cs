@@ -58,6 +58,8 @@ namespace System.Runtime.Remoting {
 		static int MarshalledObjectRef = 1;
 		static int WellKnowObjectRef = 2;
 		
+		static int ProxyAttribute = 8;
+
 		public ObjRef ()
 		{
 			// no idea why this needs to be public
@@ -115,6 +117,9 @@ namespace System.Runtime.Remoting {
 
 			uri = RemotingServices.GetObjectUri (o);
 			typeInfo = new TypeInfo (requestedType);
+
+			if (Attribute.IsDefined (requestedType, typeof(ProxyAttribute), true))
+				SetHasProxyAttribute ();
 
 			if (!requestedType.IsInstanceOfType (o))
 				throw new RemotingException ("The server object type cannot be cast to the requested type " + requestedType.FullName);
@@ -187,6 +192,16 @@ namespace System.Runtime.Remoting {
 		internal bool IsReferenceToWellKnow
 		{
 			get { return (flags & WellKnowObjectRef) > 0; }
+		}
+
+		internal bool HasProxyAttribute
+		{
+			get { return (flags & ProxyAttribute) > 0; }
+		}
+
+		internal void SetHasProxyAttribute()
+		{
+			flags |= ProxyAttribute;
 		}
 
 		public virtual IChannelInfo ChannelInfo {
