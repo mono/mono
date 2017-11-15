@@ -15,6 +15,8 @@
 			<method name="DoDomainUnload" />
 			<!-- marshal.c: mono_remoting_marshal_init -->
 			<method name="InternalSetContext" />
+			<!-- runtime.c: fire_process_exit_event -->
+			<method name="RunProcessExit" />
 			<!-- System.Runtime.Remoting/RemotingServices.cs: GetDomainProxy(AppDomain domain) -->
 			<method name="GetMarshalledDomainObjRef" feature="remoting" />
 		</type>
