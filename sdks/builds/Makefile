@@ -13,9 +13,6 @@ $(TOP)/configure: $(TOP)/configure.ac $(TOP)/autogen.sh
 	cd $(TOP) && PATH=$(EXTRA_PATH):$$PATH NOCONFIGURE=1 ./autogen.sh
 
 TARGETS=
-#Targets with custom build rules should append themselves here and we won't generate a generic target
-CUSTOM_BUILD_TARGETS=
-
 
 ## BCL targets
 ifndef DISABLE_BCL
@@ -39,17 +36,17 @@ endif
 
 ## Generic targets
 .PHONY: $(foreach target,$(TARGETS),toolchain-$(target))
-$(foreach target,$(TARGETS),toolchain-$(target)): toolchain-%: .stamp-%-toolchain
+toolchain-%: .stamp-%-toolchain
 
 .PHONY: $(foreach target,$(TARGETS),configure-$(target))
-$(foreach target,$(TARGETS),configure-$(target)): configure-%: .stamp-%-configure
+configure-%: .stamp-%-configure
 
 .PHONY: $(foreach target,$(TARGETS),build-$(target))
-$(filter-out $(CUSTOM_BUILD_TARGETS), $(foreach target,$(TARGETS),build-$(target))): build-%: .stamp-%-configure
+build-%: .stamp-%-configure
 	$(MAKE) -C $*
 
 .PHONY: $(foreach target,$(TARGETS),setup-$(target))
-$(foreach target,$(TARGETS),setup-$(target)): setup-%:
+setup-%:
 	mkdir -p $(TOP)/sdks/out/$*
 
 .PHONY: $(foreach target,$(TARGETS),package-$(target))
