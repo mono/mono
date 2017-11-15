@@ -14,7 +14,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using NUnit.Framework;
-
+using System.Reflection;
 using ValidationFlags = System.Xml.Schema.XmlSchemaValidationFlags;
 using AssertType = NUnit.Framework.Assert;
 
@@ -449,7 +449,9 @@ namespace MonoTests.System.Xml
 		{
 			// Make sure LegacyXmlSettings are always disabled on Mono
 			// https://bugzilla.xamarin.com/show_bug.cgi?id=60621
-			Assert.IsFalse (XmlReaderSettings.EnableLegacyXmlSettings);
+			var enableLegacyXmlSettingsMethod = typeof(XmlReaderSettings).GetMethod ("EnableLegacyXmlSettings", 
+				BindingFlags.NonPublic | BindingFlags.Static);
+			Assert.IsFalse ((bool) enableLegacyXmlSettingsMethod.Invoke (null, null));
 		}
 	}
 }
