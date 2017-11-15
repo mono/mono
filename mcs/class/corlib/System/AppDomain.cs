@@ -1459,6 +1459,29 @@ namespace System {
 
 		public event EventHandler<FirstChanceExceptionEventArgs> FirstChanceException;
 
+		static void FireProcessExit (object state)
+		{
+			try {
+				CurrentDomain.ProcessExit (CurrentDomain, null);
+			} finally {
+				lock (state) {
+					Monitor.Pulse (state);
+				}
+			}
+		}
+
+		//XXX This is called by the runtime shutdown process, see runtime.c
+		static bool RunProcessExit ()
+		{
+			object obj = new object ();
+			lock (obj) {
+				ThreadPool.UnsafeQueueUserWorkItem (FireProcessExit, obj);
+				if (!Monitor.Wait (obj, 3000))
+					return false;
+				return true;
+			}
+		}
+
 		[MonoTODO]
 		public bool IsHomogenous {
 			get { return true; }
