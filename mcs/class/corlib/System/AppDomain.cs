@@ -1397,6 +1397,9 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern void DoUnhandledException (Exception e);
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void NonFatalUnhandledException (Exception e);
+
 		internal void DoUnhandledException (UnhandledExceptionEventArgs args) {
 			if (UnhandledException != null)
 				UnhandledException (this, args);
@@ -1462,7 +1465,11 @@ namespace System {
 		static void FireProcessExit (object state)
 		{
 			try {
-				CurrentDomain.ProcessExit (CurrentDomain, null);
+				var procExit = CurrentDomain.ProcessExit;
+				if (procExit != null)
+					procExit (CurrentDomain, null);
+			} catch (Exception e) {
+				NonFatalUnhandledException (e);
 			} finally {
 				lock (state) {
 					Monitor.Pulse (state);
