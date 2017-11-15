@@ -10,6 +10,7 @@
 X11_MODE=%X11_MODE%
 MWF_MODE=%MWF_MODE%
 COCOASHARP_MODE=%COCOASHARP_MODE%
+MONO_ARGS=%MONO_ARGS%
 
 PWD=`pwd`
 # Fetch the path relative to the launch point where this shell script exists.
@@ -44,13 +45,13 @@ if [ "$X11_MODE" -eq "1" ]; then
 # elif: Keep compatibility with previous code
 elif [ -f "$mono4_path" ]; then
         DIR=$(cd "$(dirname "$0")"; pwd)
-        "$mono4_path" $DIR/../Resources/"$ASSEMBLY"
+        "$mono4_path" $MONO_ARGS $DIR/../Resources/"$ASSEMBLY"
 elif [ -f "$mono5_path" ]; then
         DIR=$(cd "$(dirname "$0")"; pwd)
-        "$mono5_path" $DIR/../Resources/"$ASSEMBLY"
+        "$mono5_path" $MONO_ARGS $DIR/../Resources/"$ASSEMBLY"
 else
 	if [ ! -d "./bin" ]; then mkdir bin ; fi
 	if [ -f "./bin/$APP_NAME" ]; then rm -f "./bin/$APP_NAME" ; fi
 	ln -s `which mono` "./bin/$APP_NAME" 
-	"./bin/$APP_NAME" "$ASSEMBLY"
+	"./bin/$APP_NAME" $MONO_ARGS "$ASSEMBLY"
 fi
