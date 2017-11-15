@@ -40,8 +40,11 @@ class MakeBundle {
 	static string output = "a.out";
 	static string object_out = null;
 	static List<string> link_paths = new List<string> ();
+	static List<string> aot_paths = new List<string> ();
+	static List<string> aot_names = new List<string> ();
 	static Dictionary<string,string> libraries = new Dictionary<string,string> ();
 	static bool autodeps = false;
+	static string in_tree = null;
 	static bool keeptemp = false;
 	static bool compile_only = false;
 	static bool static_link = false;
@@ -62,7 +65,27 @@ class MakeBundle {
 	static string fetch_target = null;
 	static bool custom_mode = true;
 	static string embedded_options = null;
-	static string runtime = null;
+
+	static string runtime_bin = null;
+
+	static string runtime {
+		get {
+			if (runtime_bin == null && IsUnix)
+				runtime_bin = Process.GetCurrentProcess().MainModule.FileName;
+			return runtime_bin;
+		}
+
+		set { runtime_bin = value; }
+	}
+	
+	static bool aot_compile = false;
+	static string aot_args = "static";
+	static DirectoryInfo aot_temp_dir = null;
+	static string aot_mode = "";
+	static string aot_runtime = null;
+	static string aot_dedup_assembly = null;
+	static string cil_strip_path = null;
+	static string managed_linker_path = null;
 	static string sdk_path = null;
 	static string lib_path = null;
 	static Dictionary<string,string> environment = new Dictionary<string,string>();
@@ -351,6 +374,78 @@ class MakeBundle {
 			case "--bundled-header":
 				bundled_header = true;
 				break;
+			case "--in-tree":
+				if (i+1 == top) {
+					Console.WriteLine ("Usage: --in-tree <path/to/headers> ");
+					return 1;
+				}
+				in_tree = args [++i];
+				break;
+			case "--managed-linker":
+				if (i+1 == top) {
+					Console.WriteLine ("Usage: --managed-linker <path/to/exe> ");
+					return 1;
+				}
+				managed_linker_path = args [++i];
+				break;
+			case "--cil-strip":
+				if (i+1 == top) {
+					Console.WriteLine ("Usage: --cil-strip <path/to/exe> ");
+					return 1;
+				}
+				cil_strip_path = args [++i];
+				break;
+			case "--aot-runtime":
+				if (i+1 == top) {
+					Console.WriteLine ("Usage: --aot-runtime <path/to/runtime> ");
+					return 1;
+				}
+				aot_runtime = args [++i];
+				aot_compile = true;
+				static_link = true;
+				break;
+			case "--aot-dedup":
+				if (i+1 == top) {
+					Console.WriteLine ("Usage: --aot-dedup <container_dll> ");
+					return 1;
+				}
+				var rel_path = args [++i];
+				var asm = LoadAssembly (rel_path);
+				if (asm != null)
+					aot_dedup_assembly = new Uri(asm.CodeBase).LocalPath;
+
+				sources.Add (rel_path);
+				aot_compile = true;
+				static_link = true;
+				break;
+			case "--aot-mode":
+				if (i+1 == top) {
+					Console.WriteLine ("Need string of aot mode (full, llvmonly). Omit for normal AOT.");
+					return 1;
+				}
+
+				aot_mode = args [++i];
+				if (aot_mode != "full" && aot_mode != "llvmonly") {
+					Console.WriteLine ("Need string of aot mode (full, llvmonly). Omit for normal AOT.");
+					return 1;
+				}
+
+				aot_compile = true;
+				static_link = true;
+				break;
+			case "--aot-args":
+				if (i+1 == top) {
+					Console.WriteLine ("AOT arguments are passed as a comma-delimited list");
+					return 1;
+				}
+				if (args [i + 1].Contains ("outfile")) {
+					Console.WriteLine ("Per-aot-output arguments (ex: outfile, llvm-outfile) cannot be given");
+					return 1;
+				}
+				aot_args = String.Format("static,{0}", args [++i]);
+				aot_compile = true;
+				static_link = true;
+				break;
 			default:
 				sources.Add (args [i]);
 				break;
@@ -411,6 +506,12 @@ class MakeBundle {
 		foreach (string file in assemblies)
 			if (!QueueAssembly (files, file))
 				return 1;
+
+		PreprocessAssemblies (assemblies, files);
+
+		if (aot_compile)
+			AotCompile (files);
+
 		if (custom_mode)
 			GenerateBundles (files);
 		else 
@@ -543,7 +644,6 @@ class MakeBundle {
 					Console.WriteLine ("At {0:x} with input {1}", package.Position, fileStream.Length);
 				fileStream.CopyTo (package);
 				package.Position = package.Position + (align - (package.Position % align));
-
 				return (int) ret;
 			}
 		}
@@ -552,7 +652,6 @@ class MakeBundle {
 		{
 			var p = package.Position;
 			var size = AddFile (fname);
-			
 			locations [entry] = Tuple.Create(p, size);
 		}
 
@@ -638,12 +737,8 @@ class MakeBundle {
 	static bool GeneratePackage (List<string> files)
 	{
 		if (runtime == null){
-			if (IsUnix)
-				runtime = Process.GetCurrentProcess().MainModule.FileName;
-			else {
-				Error ("You must specify at least one runtime with --runtime or --cross");
-				Environment.Exit (1);
-			}
+			Error ("You must specify at least one runtime with --runtime or --cross");
+			Environment.Exit (1);
 		}
 		if (!File.Exists (runtime)){
 			Error ($"The specified runtime at {runtime} does not exist");
@@ -729,6 +824,11 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			} else {
 				tc.WriteLine ("#include <mono/metadata/mono-config.h>");
 				tc.WriteLine ("#include <mono/metadata/assembly.h>\n");
+
+				if (in_tree != null)
+					tc.WriteLine ("#include <mono/mini/jit.h>\n");
+				else
+					tc.WriteLine ("#include <mono/jit/jit.h>\n");
 			}
 
 			if (compress) {
@@ -869,6 +969,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			}
 			ts.Close ();
 
+			// Managed assemblies baked in
 			if (compress)
 				tc.WriteLine ("\nstatic const CompressedAssembly *compressed [] = {");
 			else
@@ -878,6 +979,37 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 				tc.WriteLine ("\t&{0},", c);
 			}
 			tc.WriteLine ("\tNULL\n};\n");
+
+
+			// AOT baked in plus loader
+			foreach (string asm in aot_names){
+				tc.WriteLine ("\textern const void *mono_aot_module_{0}_info;", asm);
+			}
+
+			tc.WriteLine ("\nstatic void install_aot_modules (void) {\n");
+			foreach (string asm in aot_names){
+				tc.WriteLine ("\tmono_aot_register_module (mono_aot_module_{0}_info);\n", asm);
+			}
+
+			string enum_aot_mode;
+			switch (aot_mode) {
+			case "full": 
+				enum_aot_mode = "MONO_AOT_MODE_FULL";
+				break;
+			case "llvmonly": 
+				enum_aot_mode = "MONO_AOT_MODE_LLVMONLY";
+				break;
+			case "": 
+				enum_aot_mode = "MONO_AOT_MODE_NORMAL";
+				break;
+			default:
+				throw new Exception ("Unsupported AOT mode");
+			}
+			tc.WriteLine ("\tmono_jit_set_aot_mode ({0});", enum_aot_mode);
+
+			tc.WriteLine ("\n}\n");
+
+
 			tc.WriteLine ("static char *image_name = \"{0}\";", prog);
 
 			if (ctor_func != null) {
@@ -963,15 +1095,28 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 					debugging = "-ggdb";
 				if (static_link)
 				{
+					string platform_libs;
 					string smonolib;
-					if (style == "osx")
+
+					if (style == "osx") {
 						smonolib = "`pkg-config --variable=libdir mono-2`/libmono-2.0.a ";
-					else
+						platform_libs = "-liconv -framework Foundation ";
+					} else {
 						smonolib = "-Wl,-Bstatic -lmono-2.0 -Wl,-Bdynamic ";
-					cmd = String.Format("{4} -o '{2}' -Wall {5} `pkg-config --cflags mono-2` {0} {3} " +
-						"`pkg-config --libs-only-L mono-2` " + smonolib +
-						"`pkg-config --libs-only-l mono-2 | sed -e \"s/\\-lmono-2.0 //\"` {1}",
-						temp_c, temp_o, output, zlib, cc, objc);
+						platform_libs = "";
+					}
+
+					string in_tree_include = "";
+					
+					if (in_tree != null) {
+						smonolib = String.Format ("{0}/mono/mini/.libs/libmonosgen-2.0.a", in_tree);
+						in_tree_include = String.Format (" -I{0} ", in_tree);
+					}
+
+					cmd = String.Format("{4} -o '{2}' -Wall {7} `pkg-config --cflags mono-2` {9} {0} {3} " +
+						"`pkg-config --libs-only-L mono-2` {5} {6} {8} " +
+						"`pkg-config --libs-only-l mono-2 | sed -e \"s/\\-lmono-2.0 //\"` {1} -g ",
+						temp_c, temp_o, output, zlib, cc, smonolib, String.Join (" ", aot_paths), objc, platform_libs, in_tree_include);
 				}
 				else
 				{
@@ -994,6 +1139,8 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 				if (!compile_only){
 					File.Delete (temp_c);
 				}
+				if (aot_temp_dir != null)
+					aot_temp_dir.Delete (true);
 				File.Delete (temp_s);
 			}
 		}
@@ -1280,6 +1427,137 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			return ((p == 4) || (p == 128) || (p == 6));
 		}
 	}
+
+
+	static string EncodeAotSymbol (string symbol)
+	{
+		var sb = new StringBuilder ();
+		/* This mimics what the aot-compiler does */
+		foreach (var b in System.Text.Encoding.UTF8.GetBytes (symbol)) {
+			char c = (char) b;
+			if ((c >= '0' && c <= '9') ||
+				(c >= 'a' && c <= 'z') ||
+				(c >= 'A' && c <= 'Z')) {
+				sb.Append (c);
+				continue;
+			}
+			sb.Append ('_');
+		}
+		return sb.ToString ();
+	}
+
+	static void AotCompile (List<string> files)
+	{
+		if (aot_runtime == null)
+			aot_runtime = runtime;
+
+		if (aot_runtime == null) {
+			Error ("You must specify at least one aot runtime with --runtime or --cross or --aot_runtime when AOT compiling");
+			Environment.Exit (1);
+		}
+
+		var aot_mode_string = "";
+		if (aot_mode != null)
+			aot_mode_string = "," + aot_mode;
+
+		var dedup_mode_string = "";
+		StringBuilder all_assemblies = null;
+		if (aot_dedup_assembly != null) {
+			dedup_mode_string = ",dedup-skip";
+			all_assemblies = new StringBuilder("");
+		}
+
+		Console.WriteLine ("Aoting files:");
+
+		for (int i=0; i < files.Count; i++) {
+			var file_name = files [i];
+			string path = LocateFile (new Uri (file_name).LocalPath);
+			string outPath = String.Format ("{0}.aot_out", path);
+			aot_paths.Add (outPath);
+			var name = System.Reflection.Assembly.LoadFrom(path).GetName().Name;
+			aot_names.Add (EncodeAotSymbol (name));
+
+			if (aot_dedup_assembly != null) {
+				all_assemblies.Append (path);
+				all_assemblies.Append (" ");
+				Execute (String.Format ("MONO_PATH={0} {1} --aot={2},outfile={3}{4}{5} {6}",
+					Path.GetDirectoryName (path), aot_runtime, aot_args, outPath, aot_mode_string, dedup_mode_string, path));
+			} else {
+				Execute (String.Format ("MONO_PATH={0} {1} --aot={2},outfile={3}{4} {5}",
+					Path.GetDirectoryName (path), aot_runtime, aot_args, outPath, aot_mode_string, path));
+			}
+		}
+		if (aot_dedup_assembly != null) {
+			var filePath = new Uri (aot_dedup_assembly).LocalPath;
+			string path = LocateFile (filePath);
+			dedup_mode_string = String.Format (",dedup-include={0}", Path.GetFileName(filePath));
+			string outPath = String.Format ("{0}.aot_out", path);
+			Execute (String.Format ("MONO_PATH={7} {0} --aot={1},outfile={2}{3}{4} {5} {6}",
+				aot_runtime, aot_args, outPath, aot_mode_string, dedup_mode_string, path, all_assemblies.ToString (), Path.GetDirectoryName (path)));
+		}
+
+		if ((aot_mode == "full" || aot_mode == "llvmonly") && cil_strip_path != null) {
+			for (int i=0; i < files.Count; i++) {
+				var in_name = new Uri (files [i]).LocalPath;
+				var cmd = String.Format ("{0} {1} {2}", aot_runtime, cil_strip_path, in_name);
+				Execute (cmd);
+			}
+		}
+	}
+
+	static void LinkManaged (List <string> files, string outDir)
+	{
+		if (managed_linker_path == null)
+			return;
+
+		var paths = new StringBuilder ("");
+		foreach (var file in files) {
+			paths.Append (" -a  ");
+			paths.Append (new Uri (file).LocalPath);
+		}
+
+		var cmd = String.Format ("{0} {1} -b true -out {2} {3} -c link -p copy ", runtime, managed_linker_path, outDir, paths.ToString ());
+		Execute (cmd);
+	}
+
+	static void PreprocessAssemblies (List <string> chosenFiles, List <string> files)
+	{
+		if (aot_mode == "" || (cil_strip_path == null && managed_linker_path == null))
+			return;
+
+		var temp_dir_name = Path.Combine(Directory.GetCurrentDirectory(), "temp_assemblies");
+		aot_temp_dir = new DirectoryInfo (temp_dir_name);
+		if (aot_temp_dir.Exists) {
+			Console.WriteLine ("Removing previous build cache at {0}", temp_dir_name);
+			aot_temp_dir.Delete (true);
+		}
+		aot_temp_dir.Create ();
+
+		//if (managed_linker_path != null) {
+			//LinkManaged (chosenFiles, temp_dir);
+
+			//// Replace list with new list of files
+			//files.Clear ();
+			//Console.WriteLine ("Iterating {0}", temp_dir);
+			//aot_temp_dir = new DirectoryInfo (temp_dir);
+			//foreach (var file in aot_temp_dir.GetFiles ()) {
+				//files.Append (String.Format ("file:///{0}", file));
+				//Console.WriteLine (String.Format ("file:///{0}", file));
+			//}
+			//return;
+		//}
+
+		// Fix file references
+		for (int i=0; i < files.Count; i++) {
+			var in_name = new Uri (files [i]).LocalPath;
+			var out_name = Path.Combine (temp_dir_name, Path.GetFileName (in_name));
+			File.Copy (in_name, out_name);
+			files [i] = out_name;
+			if (in_name == aot_dedup_assembly)
+				aot_dedup_assembly = out_name;
+		}
+	}
+
 
 	static void Execute (string cmdLine)
 	{
