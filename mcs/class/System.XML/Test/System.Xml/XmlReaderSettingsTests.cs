@@ -449,7 +449,7 @@ namespace MonoTests.System.Xml
 		{
 			// Make sure LegacyXmlSettings are always disabled on Mono
 			// https://bugzilla.xamarin.com/show_bug.cgi?id=60621
-			Assert.IsFalse(XmlReaderSettings.EnableLegacyXmlSettings);
+			Assert.IsFalse (XmlReaderSettings.EnableLegacyXmlSettings);
 		}
 	}
 }
