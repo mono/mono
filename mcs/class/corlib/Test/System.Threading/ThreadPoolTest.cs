@@ -224,31 +224,30 @@ namespace MonoTests.System.Threading
 			asyncLocal.Value = 1;
 			int var_0, var_1, var_2, var_3;
 			var_0 = var_1 = var_2 = var_3 = 99;
-			int total = 0;
+			var cw = new CountdownEvent (4);
 
 			var evt = new AutoResetEvent (false);
 			ThreadPool.QueueUserWorkItem(state => {
 				var_0 = asyncLocal.Value;
-				Interlocked.Increment (ref total);
+				cw.Signal ();
 			}, null);
 
 			ThreadPool.UnsafeQueueUserWorkItem(state => {
 				var_1 = asyncLocal.Value;
-				Interlocked.Increment (ref total);
+				cw.Signal ();
 			}, null);
 
 			ThreadPool.RegisterWaitForSingleObject (evt, (state, to) => {
 				var_2 = asyncLocal.Value;
-				Interlocked.Increment (ref total);
+				cw.Signal ();
 			}, null, 1, false);
 
 			ThreadPool.UnsafeRegisterWaitForSingleObject (evt, (state, to) => {
 				var_3 = asyncLocal.Value;
-				Interlocked.Increment (ref total);
+				cw.Signal ();
 			}, null, 1, false);
 
-			while (total < 4)
-				Thread.Yield ();
+			Assert.IsTrue (cw.Wait (1000), "cw_wait");
 
 			Assert.AreEqual (1, var_0, "var_0");
 			Assert.AreEqual (0, var_1, "var_1");
