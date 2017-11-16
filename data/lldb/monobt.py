@@ -11,7 +11,7 @@ def print_frames(thread, num_frames, current_thread):
         pc = str(frame.addr)
         var = frame
         function_name = frame.GetFunctionName()
-        if function_name == "ves_exec_method_with_context":
+        if function_name == "interp_exec_method_full":
             try:
                 s = 'frame->imethod->method'
                 klassname = frame.EvaluateExpression('(char*) ' + s + '->klass->name').summary[1:-1]
