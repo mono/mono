@@ -88,9 +88,9 @@ mono_class_is_public (MonoClass *klass)
 }
 
 static inline gboolean
-mono_class_has_static_metadata (MonoClass *klass)
+mono_class_has_metadata (MonoClass *klass)
 {
-	return klass->type_token && !klass->image->dynamic && !mono_class_is_ginst (klass);
+	return klass->type_token && !mono_class_is_ginst (klass);
 }
 
 #endif

@@ -1453,7 +1453,7 @@ mono_class_setup_basic_field_info (MonoClass *klass)
 	/*
 	 * Fetch all the field information.
 	 */
-	int first_field_idx = mono_class_has_static_metadata (klass) ? mono_class_get_first_field_idx (klass) : 0;
+	int first_field_idx = mono_class_has_metadata (klass) ? mono_class_get_first_field_idx (klass) : 0;
 	for (i = 0; i < top; i++) {
 		field = &fields [i];
 		field->parent = klass;
@@ -1587,7 +1587,7 @@ mono_class_setup_fields (MonoClass *klass)
 	/*
 	 * Fetch all the field information.
 	 */
-	int first_field_idx = mono_class_has_static_metadata (klass) ? mono_class_get_first_field_idx (klass) : 0;
+	int first_field_idx = mono_class_has_metadata (klass) ? mono_class_get_first_field_idx (klass) : 0;
 	for (i = 0; i < top; i++) {
 		int idx = first_field_idx + i;
 		field = &klass->fields [i];
@@ -1907,7 +1907,7 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 	 */
 	field_offsets = g_new0 (int, top);
 	fields_has_references = g_new0 (gboolean, top);
-	int first_field_idx = mono_class_has_static_metadata (klass) ? mono_class_get_first_field_idx (klass) : 0;
+	int first_field_idx = mono_class_has_metadata (klass) ? mono_class_get_first_field_idx (klass) : 0;
 	switch (layout) {
 	case TYPE_ATTRIBUTE_AUTO_LAYOUT:
 	case TYPE_ATTRIBUTE_SEQUENTIAL_LAYOUT:
@@ -2382,7 +2382,7 @@ mono_class_setup_methods (MonoClass *klass)
 		for (i = 0; i < klass->interface_count; i++)
 			setup_generic_array_ifaces (klass, klass->interfaces [i], methods, first_generic + i * count_generic, cache);
 		g_hash_table_destroy (cache);
-	} else if (mono_class_has_static_metadata (klass)) {
+	} else if (mono_class_has_metadata (klass)) {
 		MonoError error;
 		int first_idx = mono_class_get_first_method_idx (klass);
 
@@ -3113,7 +3113,7 @@ count_virtual_methods (MonoClass *klass)
 	guint32 flags;
 	klass = mono_class_get_generic_type_definition (klass); /*We can find this information by looking at the GTD*/
 
-	if (klass->methods || !MONO_CLASS_HAS_STATIC_METADATA (klass)) {
+	if (klass->methods || !mono_class_has_metadata (klass)) {
 		mono_class_setup_methods (klass);
 		if (mono_class_has_failure (klass))
 			return -1;
@@ -9163,7 +9163,7 @@ mono_class_get_virtual_methods (MonoClass* klass, gpointer *iter)
 	if ((gsize)(*iter) & 1)
 		static_iter = TRUE;
 	/* Use the static metadata only if klass->methods is not yet initialized */
-	if (!static_iter && !(klass->methods || !MONO_CLASS_HAS_STATIC_METADATA (klass)))
+	if (!static_iter && !(klass->methods || !mono_class_has_metadata (klass)))
 		static_iter = TRUE;
 
 	if (!static_iter) {
@@ -9835,7 +9835,7 @@ mono_class_get_method_from_name_flags (MonoClass *klass, const char *name, int p
 		return res;
 	}
 
-	if (klass->methods || !MONO_CLASS_HAS_STATIC_METADATA (klass)) {
+	if (klass->methods || !mono_class_has_metadata (klass)) {
 		mono_class_setup_methods (klass);
 		/*
 		We can't fail lookup of methods otherwise the runtime will burst in flames on all sort of places.

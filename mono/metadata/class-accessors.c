@@ -117,7 +117,7 @@ mono_class_set_generic_container (MonoClass *klass, MonoGenericContainer *contai
 guint32
 mono_class_get_first_method_idx (MonoClass *klass)
 {
-	g_assert (mono_class_has_static_metadata (klass));
+	g_assert (mono_class_has_metadata (klass));
 
 	return ((MonoClassDef*)klass)->first_method_idx;
 }
@@ -125,7 +125,7 @@ mono_class_get_first_method_idx (MonoClass *klass)
 void
 mono_class_set_first_method_idx (MonoClass *klass, guint32 idx)
 {
-	g_assert (mono_class_has_static_metadata (klass));
+	g_assert (mono_class_has_metadata (klass));
 
 	((MonoClassDef*)klass)->first_method_idx = idx;
 }
@@ -136,7 +136,7 @@ mono_class_get_first_field_idx (MonoClass *klass)
 	if (mono_class_is_ginst (klass))
 		return mono_class_get_first_field_idx (mono_class_get_generic_class (klass)->container_class);
 
-	g_assert (mono_class_has_static_metadata (klass));
+	g_assert (mono_class_has_metadata (klass));
 
 	return ((MonoClassDef*)klass)->first_field_idx;
 }
@@ -144,7 +144,7 @@ mono_class_get_first_field_idx (MonoClass *klass)
 void
 mono_class_set_first_field_idx (MonoClass *klass, guint32 idx)
 {
-	g_assert (mono_class_has_static_metadata (klass));
+	g_assert (mono_class_has_metadata (klass));
 
 	((MonoClassDef*)klass)->first_field_idx = idx;
 }

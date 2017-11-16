@@ -297,6 +297,7 @@ TESTS_CS_SRC=		\
 	bug-27420.cs		\
 	bug-46781.cs		\
 	bug-42136.cs		\
+	bug-41130.cs		\
 	bug-59286.cs		\
 	bug-70561.cs		\
 	bug-78311.cs		\
