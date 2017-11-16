@@ -335,6 +335,7 @@ net_4_x_parallel_dirs := \
 	System.Workflow.Runtime \
 	System.Reflection.Context \
 	Mono.Profiler.Log	\
+	Mono.Runtime.Tests	\
 	legacy/Mono.Cecil \
 	$(pcl_facade_dirs)
 

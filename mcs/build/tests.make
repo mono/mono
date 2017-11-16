@@ -51,7 +51,10 @@ test_sourcefile_excludes = $(test_lib).exclude.sources
 test_pdb = $(test_lib:.dll=.pdb)
 test_response = $(depsdir)/$(test_lib).response
 test_makefrag = $(depsdir)/$(test_lib).makefrag
-test_flags = -r:$(the_assembly) $(test_nunit_ref) $(TEST_MCS_FLAGS) $(TEST_LIB_MCS_FLAGS)
+test_flags = $(test_nunit_ref) $(TEST_MCS_FLAGS) $(TEST_LIB_MCS_FLAGS)
+ifndef NO_BUILD
+test_flags += -r:$(the_assembly)
+endif
 tests_CLEAN_FILES += $(ASSEMBLY:$(ASSEMBLY_EXT)=_test*.dll) $(ASSEMBLY:$(ASSEMBLY_EXT)=_test*.pdb) $(test_response) $(test_makefrag)
 
 xtest_sourcefile = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.sources)
