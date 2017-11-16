@@ -32,9 +32,7 @@ $(TOP)/sdks/builds/toolchains/emsdk:
 	cd $(TOP)/sdks/builds/wasm-interp && source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && CFLAGS="-Os -g" emconfigure $(TOP)/configure $(WASM_INTERP_CONFIGURE_FLAGS)
 	touch $@
 
-#custom build rule
-CUSTOM_BUILD_TARGETS += build-wasm-interp
-build-wasm-interp: .stamp-wasm-interp-configure
+build-custom-wasm-interp:
 	source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && make -C wasm-interp
 
 .PHONY: package-wasm-interp
