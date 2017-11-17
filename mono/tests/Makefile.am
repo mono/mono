@@ -858,6 +858,7 @@ PROFILE_DISABLED_TESTS += \
 	bug-389886-2.exe	\
 	bug-349190.2.exe	\
 	bug-389886-sre-generic-interface-instances.exe	\
+	bug-41130.exe	\
 	bug-462592.exe	\
 	bug-575941.exe	\
 	bug-389886-3.exe	\
