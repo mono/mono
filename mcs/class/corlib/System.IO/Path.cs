@@ -428,6 +428,9 @@ namespace System.IO {
 		internal static bool IsDirectorySeparator (char c) {
 			return c == DirectorySeparatorChar || c == AltDirectorySeparatorChar;
 		}
+		
+		private static string AppendDirectorySeparator (string path) =>
+			path.EndsWith (DirectorySeparatorCharAsString) ? path : path + DirectorySeparatorCharAsString;
 
 		public static string GetPathRoot (string path)
 		{
@@ -440,9 +443,22 @@ namespace System.IO {
 			if (!IsPathRooted (path))
 				return String.Empty;
 			
-			if (DirectorySeparatorChar == '/') {
-				// UNIX
-				return IsDirectorySeparator (path [0]) ? DirectorySeparatorStr : String.Empty;
+			if (DirectorySeparatorChar == '/') { // UNIX
+				string rootDrive = string.Empty;
+				// Most likely the root path will be '/' but there are cases (see https://bugzilla.xamarin.com/show_bug.cgi?id=60138)
+				// when there is no such drive in Environment.GetLogicalDrives () 
+				// return the longest logical drive in this case
+				foreach (var drive in Environment.GetLogicalDrives ()) {
+					if (drive == DirectorySeparatorCharAsString) {
+						return DirectorySeparatorCharAsString;
+					}
+
+					if (AppendDirectorySeparator (path).Contains (AppendDirectorySeparator (drive)) && 
+						rootDrive.Length < drive.Length) {
+						rootDrive = drive;
+					}
+				}
+				return rootDrive;
 			} else {
 				// Windows
 				int len = 2;
