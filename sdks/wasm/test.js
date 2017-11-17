@@ -99,10 +99,12 @@ function mono_send_msg (key, val) {
 		return null;
 	}
 }
+
 load_runtime ("managed");
 var main_module = assembly_load ("main")
 if (!main_module)
 	throw 1;
+
 
 var driver_class = find_class (main_module, "", "Driver")
 if (!driver_class)
@@ -114,20 +116,15 @@ if (!send_message)
 
 print ("-----LOADED ----");
 
-// var res = mono_send_msg ("start-test", "mini")
-// print ("-----STARTED ---- " + res);
-//
-// while (mono_send_msg ("pump-test", "") != "DONE") {
-// 	Module.pump_message ();
-// }
-//
+for (var i = 0; i < arguments.length; ++i) {
+	var res = mono_send_msg ("start-test", arguments [i])
+	print ("-----STARTED " + arguments [i] + "---- " + res);
 
-var res = mono_send_msg ("start-test", "corlib")
-print ("-----STARTED ---- " + res);
-
-if (res == "SUCCESS") {
-	while (mono_send_msg ("pump-test", "") != "DONE") {
-		Module.pump_message ();
-		print ("|");
+	if (res == "SUCCESS") {
+		while (mono_send_msg ("pump-test", arguments [i]) != "DONE") {
+			Module.pump_message ();
+			print ("|");
+		}
+		print ("\nDONE")
 	}
 }
