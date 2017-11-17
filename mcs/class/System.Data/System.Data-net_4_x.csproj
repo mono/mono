@@ -558,6 +558,8 @@
     <Compile Include="corefx\SR.cs" />
     <Compile Include="corefx\TdsEnums.cs" />
     <Compile Include="corefx\ThisAssembly.cs" />
+    <Compile Include="Microsoft.SqlServer.Server\SqlContext.cs" />
+    <Compile Include="Microsoft.SqlServer.Server\SqlPipe.cs" />
     <Compile Include="System.Data.SqlClient\SqlCredential.cs" />
     <Compile Include="System.Data.SqlClient\SQLDebugging.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
