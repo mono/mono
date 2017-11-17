@@ -398,37 +398,38 @@ null_link_if_necessary (gpointer hidden, GCHandleType handle_type, int max_gener
 static gpointer
 scan_for_weak (gpointer hidden, GCHandleType handle_type, int max_generation, gpointer user)
 {
-       GCObject *obj;
+	const gboolean is_weak = GC_HANDLE_TYPE_IS_WEAK (handle_type);
+	ScanCopyContext *ctx = (ScanCopyContext *)user;
 
-       if (!MONO_GC_HANDLE_VALID (hidden))
-		   /* This will free the handle */
-		   return NULL;
+	if (!MONO_GC_HANDLE_VALID (hidden))
+		return hidden;
 
-       obj = (GCObject *)MONO_GC_REVEAL_POINTER (hidden, MONO_GC_HANDLE_TYPE_IS_WEAK (handle_type));
-       SGEN_ASSERT (0, obj, "Why is the hidden pointer NULL?");
+	GCObject *obj = (GCObject *)MONO_GC_REVEAL_POINTER (hidden, is_weak);
 
-       if (object_older_than (obj, max_generation))
-		   return hidden;
+	/* If the object is dead we free the gc handle */
+	if (!sgen_is_object_alive (obj))
+		return NULL;
 
-       g_assert (max_generation > 0);
+	/* Relocate it */
+	ctx->ops->copy_or_mark_object (&obj, ctx->queue);
 
-       printf ("Processing obj: %s\n", sgen_client_vtable_get_name (SGEN_LOAD_VTABLE (obj)));
+	int nbits;
+	gsize *weak_bitmap = sgen_client_get_weak_bitmap (SGEN_LOAD_VTABLE (obj), &nbits);
+	for (int i = 0; i < nbits; ++i) {
+		if (weak_bitmap [i / (sizeof (gsize) * 8)] & ((gsize)1 << (i % (sizeof (gsize) * 8)))) {
+			GCObject **addr = (GCObject **)((char*)obj + (i * sizeof (gpointer)));
+			GCObject *field = *addr;
 
-	   int nbits;
-	   gsize *weak_bitmap = sgen_client_get_weak_bitmap (SGEN_LOAD_VTABLE (obj), &nbits);
-	   for (int i = 0; i < nbits; ++i) {
-		   if (weak_bitmap [i / (sizeof (gsize) * 8)] & ((gsize)1 << (i % (sizeof (gsize) * 8)))) {
-			   gpointer *addr = (gpointer*)((char*)obj + (i * sizeof (gpointer)));
-			   gpointer field = *addr;
-			   if (field) {
-				   printf ("Field: %p %d\n", field, major_collector.is_object_live (field));
-				   if (!major_collector.is_object_live (field))
-                       *addr = NULL;
-			   }
-		   }
+			/* if the object in the weak field is alive, we relocate it */
+			if (field && sgen_is_object_alive (field))
+				ctx->ops->copy_or_mark_object (addr, ctx->queue);
+			else
+				*addr = NULL;
 	   }
+	}
 
-       return hidden;
+	/* Update link if object was moved. */
+	return MONO_GC_HANDLE_OBJECT_POINTER (obj, is_weak);
 }
 
 /* LOCKING: requires that the GC lock is held */
@@ -436,8 +437,9 @@ void
 sgen_null_link_in_range (int generation, ScanCopyContext ctx, gboolean track)
 {
 	sgen_gchandle_iterate (track ? HANDLE_WEAK_TRACK : HANDLE_WEAK, generation, null_link_if_necessary, &ctx);
-	sgen_gchandle_iterate (HANDLE_WEAK_FIELDS, generation, null_link_if_necessary, &ctx);
-	if (generation > 0)
+
+	//we're always called for gen zero. !track means short ref
+	if (generation == 0 && !track)
 		sgen_gchandle_iterate (HANDLE_WEAK_FIELDS, generation, scan_for_weak, &ctx);
 }
 
