@@ -1826,63 +1826,63 @@ mono_get_method_checked (MonoImage *image, guint32 token, MonoClass *klass, Mono
 	return result;
 }
 
-static MonoMethod *
+static MonoMethod*
 get_method_constrained (MonoImage *image, MonoMethod *method, MonoClass *constrained_class, MonoGenericContext *context, MonoError *error)
 {
-	MonoMethod *result;
-	MonoClass *ic = NULL;
-	MonoGenericContext *method_context = NULL;
-	MonoMethodSignature *sig, *original_sig;
+	MonoClass *base_class = method->klass;
 
 	error_init (error);
 
-	mono_class_init (constrained_class);
-	original_sig = sig = mono_method_signature_checked (method, error);
-	if (sig == NULL) {
+	g_assert (mono_class_is_assignable_from (base_class, constrained_class));
+
+	/* If the constraining class is actually an interface, we don't learn
+	 * anything new by constraining.
+	 */
+	if (MONO_CLASS_IS_INTERFACE (constrained_class))
+		return method;
+
+	mono_class_setup_vtable (base_class);
+	if (mono_class_has_failure (base_class)) {
+		mono_error_set_for_class_failure (error, base_class);
 		return NULL;
 	}
 
-	if (method->is_inflated && sig->generic_param_count) {
-		MonoMethodInflated *imethod = (MonoMethodInflated *) method;
-		sig = mono_method_signature_checked (imethod->declaring, error); /*We assume that if the inflated method signature is valid, the declaring method is too*/
-		if (!sig)
+	int vtable_slot = 0;
+	if (!MONO_CLASS_IS_INTERFACE (base_class)) {
+		/*if the base class isn't an interface and the method isn't
+		 * virtual, there's nothing to do, we're already on the method
+		 * we want to call. */
+		if ((method->flags & METHOD_ATTRIBUTE_VIRTUAL) == 0)
+			return method;
+		/* if this isn't an interface method, get the vtable slot and
+		 * find the corresponding method in the constrained class,
+		 * which is a subclass of the base class. */
+		vtable_slot = mono_method_get_vtable_index (method);
+	} else {
+		mono_class_setup_interface_offsets (constrained_class);
+		if (mono_class_has_failure (constrained_class)) {
+			mono_error_set_for_class_failure (error, constrained_class);
 			return NULL;
-		method_context = mono_method_get_context (method);
-
-		original_sig = sig;
-		/*
-		 * We must inflate the signature with the class instantiation to work on
-		 * cases where a class inherit from a generic type and the override replaces
-		 * any type argument which a concrete type. See #325283.
-		 */
-		if (method_context->class_inst) {
-			MonoGenericContext ctx;
-			ctx.method_inst = NULL;
-			ctx.class_inst = method_context->class_inst;
-			/*Fixme, property propagate this error*/
-			sig = inflate_generic_signature_checked (method->klass->image, sig, &ctx, error);
-			if (!sig)
-				return NULL;
 		}
+			
+		/* Get the slot of the method in the interface.  Then get the
+		 * interface base in constrained_class */
+		int itf_slot = mono_method_get_vtable_index (method);
+		g_assert (itf_slot >= 0);
+		gboolean variant = FALSE;
+		int itf_base = mono_class_interface_offset_with_variance (constrained_class, base_class, &variant);
+		vtable_slot = itf_slot + itf_base;
 	}
-
-	if ((constrained_class != method->klass) && (MONO_CLASS_IS_INTERFACE (method->klass)))
-		ic = method->klass;
-
-	result = find_method (constrained_class, ic, method->name, sig, constrained_class, error);
-	if (sig != original_sig)
-		mono_metadata_free_inflated_signature (sig);
-
-	if (!result)
+	g_assert (vtable_slot >= 0);
+	mono_class_setup_vtable (constrained_class);
+	if (mono_class_has_failure (constrained_class)) {
+		mono_error_set_for_class_failure (error, constrained_class);
 		return NULL;
-
-	if (method_context) {
-		result = mono_class_inflate_generic_method_checked (result, method_context, error);
-		if (!result)
-			return NULL;
 	}
 
-	return result;
+	MonoMethod *res = mono_class_get_vtable_entry (constrained_class, vtable_slot);
+	g_assert (res != NULL);
+	return res;
 }
 
 MonoMethod *
