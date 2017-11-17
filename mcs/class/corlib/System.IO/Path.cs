@@ -444,17 +444,20 @@ namespace System.IO {
 				return String.Empty;
 			
 			if (DirectorySeparatorChar == '/') { // UNIX
-				string rootDrive = string.Empty;
 				// Most likely the root path will be '/' but there are cases (see https://bugzilla.xamarin.com/show_bug.cgi?id=60138)
 				// when there is no such drive in Environment.GetLogicalDrives () 
-				// return the longest logical drive in this case
 				foreach (var drive in Environment.GetLogicalDrives ()) {
 					if (drive == DirectorySeparatorCharAsString) {
 						return DirectorySeparatorCharAsString;
 					}
+				}
 
-					if (AppendDirectorySeparator (path).Contains (AppendDirectorySeparator (drive)) && 
-						rootDrive.Length < drive.Length) {
+				// another foreach (to make the first one faster) -
+				// return the longest logical drive the path contains
+				string rootDrive = string.Empty;
+				foreach (var drive in Environment.GetLogicalDrives()) {
+					if (AppendDirectorySeparator(path).Contains(AppendDirectorySeparator(drive)) &&
+					    rootDrive.Length < drive.Length) {
 						rootDrive = drive;
 					}
 				}
