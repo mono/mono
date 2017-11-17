@@ -1483,9 +1483,7 @@ namespace System {
 			object obj = new object ();
 			lock (obj) {
 				ThreadPool.UnsafeQueueUserWorkItem (FireProcessExit, obj);
-				if (!Monitor.Wait (obj, 3000))
-					return false;
-				return true;
+				return Monitor.Wait (obj, 3000);
 			}
 		}
 
