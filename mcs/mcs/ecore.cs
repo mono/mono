@@ -7350,6 +7350,9 @@ namespace Mono.CSharp {
 			if (!ResolveGetter (ec))
 				return null;
 
+			if (type.Kind == MemberKind.ByRef)
+				return ByRefDereference.Create (this).Resolve (ec);
+
 			return this;
 		}
 
@@ -7359,12 +7362,11 @@ namespace Mono.CSharp {
 				Error_NullPropagatingLValue (rc);
 
 			if (right_side == EmptyExpression.OutAccess) {
-				if (best_candidate?.MemberType.Kind == MemberKind.ByRef) {
-					if (Arguments?.ContainsEmitWithAwait () == true) {
-						rc.Report.Error (8178, loc, "`await' cannot be used in an expression containing a call to `{0}' because it returns by reference",
-							GetSignatureForError ());
-					}
+				if (OverloadResolve (rc, null) == null)
+					return null;
 
+				if (best_candidate?.MemberType.Kind == MemberKind.ByRef) {
+					getter = CandidateToBaseOverride (rc, best_candidate.Get);
 					return this;
 				}
 
@@ -7396,7 +7398,7 @@ namespace Mono.CSharp {
 
 				if (best_candidate.MemberType.Kind == MemberKind.ByRef) {
 					getter = CandidateToBaseOverride (rc, best_candidate.Get);
-					return ByRefDereference.Create(this).Resolve(rc);
+					return ByRefDereference.Create (this).Resolve (rc);
 				}
 
 				rc.Report.Error (200, loc, "Property or indexer `{0}' cannot be assigned to (it is read-only)",
