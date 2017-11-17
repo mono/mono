@@ -240,7 +240,7 @@ $(test_response): $(test_response_preprocessed)
 
 $(test_makefrag): $(test_response)
 #	@echo Creating $@ ...
-	@sed 's,^,$(test_lib): ,' $< >$@
+	@sed 's,^,$(test_lib_output): ,' $< >$@
 
 -include $(test_makefrag)
 
