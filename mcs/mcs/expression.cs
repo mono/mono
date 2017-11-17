@@ -7306,15 +7306,8 @@ namespace Mono.CSharp
 			
 			eclass = ExprClass.Value;
 
-			if (type.Kind == MemberKind.ByRef) {
-				if (rhs == null && arguments?.ContainsEmitWithAwait () == true) {
-					ec.Report.Error (8178, loc, "`await' cannot be used in an expression containing a call to `{0}' because it returns by reference",
-						GetSignatureForError ());
-				}
-
-				if (rhs != EmptyExpression.OutAccess)
-					return ByRefDereference.Create (this).Resolve (ec);
-			}
+			if (type.Kind == MemberKind.ByRef && rhs != EmptyExpression.OutAccess)
+				return ByRefDereference.Create (this).Resolve (ec);
 
 			return this;
 		}
@@ -13093,6 +13086,12 @@ namespace Mono.CSharp
 			expr.Emit (ec);
 		}
 
+		public override Expression CreateExpressionTree (ResolveContext rc)
+		{
+			rc.Report.Error (8153, Location, "An expression tree lambda cannot contain a call to a method, property, or indexer that returns by reference");
+			return null;
+		}
+
 		public void Emit (EmitContext ec, bool leave_copy)
 		{
 			Emit (ec);
@@ -13133,6 +13132,11 @@ namespace Mono.CSharp
 
 		public override Expression DoResolveLValue (ResolveContext rc, Expression right_side)
 		{
+			if (expr.ContainsEmitWithAwait ()) {
+				rc.Report.Error (8178, loc, "`await' cannot be used in an expression containing a call to `{0}' because it returns by reference",
+					expr.GetSignatureForError ());
+			}
+
 			return DoResolve (rc);
 		}
 

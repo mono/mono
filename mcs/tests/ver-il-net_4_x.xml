@@ -72906,6 +72906,49 @@
       </method>
     </type>
   </test>
+  <test name="test-ref-08.cs">
+    <type name="ClassLibrary1.C">
+      <method name="Void MM()" attrs="129">
+        <size>60</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>245</size>
+      </method>
+      <method name="Int32&amp; Add2(Int32 ByRef, Int32)" attrs="150">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+      <method name="Void .cctor()" attrs="6289">
+        <size>12</size>
+      </method>
+    </type>
+    <type name="ClassLibrary1.C+B">
+      <method name="Int32&amp; get_Item(Int32)" attrs="2182">
+        <size>15</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="ClassLibrary1.C+Gen`1[T]">
+      <method name="T&amp; get_Item(Int32)" attrs="2182">
+        <size>15</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="ClassLibrary1.C+BB">
+      <method name="Val&amp; get_Item(Int32)" attrs="2182">
+        <size>15</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-static-using-01.cs">
     <type name="A.B.X">
       <method name="Int32 Test()" attrs="150">
