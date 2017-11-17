@@ -1,7 +1,9 @@
 TOP=$(realpath $(CURDIR)/../..)
 include $(TOP)/sdks/paths.mk
 
-IS_RELEASE?=true
+RELEASE?=true
+
+CONFIGURATION=$(if $(filter $(RELEASE),true),release,debug)
 
 #brew's libtool is not compatible with some of the deps needed (I.E. V8) so in those systems we need to explicit add to the path
 #this is due mono not being compatible with xcode's libtool, which is what's on path by default
@@ -49,16 +51,19 @@ build-custom-%:
 $(foreach target,$(TARGETS),build-$(target)): build-%: .stamp-%-configure
 	$(MAKE) build-custom-$*
 
+.PHONY: setup-custom-%
+setup-custom-%:
+	mkdir -p $(TOP)/sdks/out/$*
+
 .PHONY: $(foreach target,$(TARGETS),setup-$(target))
 $(foreach target,$(TARGETS),setup-$(target)): setup-%:
-	mkdir -p $(TOP)/sdks/out/$*
+	$(MAKE) setup-custom-$*
 
 .PHONY: $(foreach target,$(TARGETS),package-$(target))
 $(foreach target,$(TARGETS),package-$(target)): package-%: setup-% build-%
 
 .PHONY: $(foreach target,$(TARGETS),clean-$(target))
-$(foreach target,$(TARGETS),clean-$(target)):: clean-%:
-	rm -rf $(TOP)/sdks/out/$*
+$(foreach target,$(TARGETS),clean-$(target)): clean-%:
 
 ## Global targets
 .PHONY: toolchain

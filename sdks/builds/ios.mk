@@ -2,15 +2,15 @@
 PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 
 _ios_CFLAGS= \
-	$(if $(filter $(IS_RELEASE),true),-O2,-O0 -ggdb3 -gdwarf-2) \
+	$(if $(filter $(RELEASE),true),-O2,-O0 -ggdb3 -gdwarf-2) \
 	-DMONOTOUCH=1
 
 _ios_CPPFLAGS= \
-	$(if $(filter $(IS_RELEASE),true),-O2,-O0 -ggdb3 -gdwarf-2) \
+	$(if $(filter $(RELEASE),true),-O2,-O0 -ggdb3 -gdwarf-2) \
 	-DMONOTOUCH=1
 
 _ios_CXXFLAGS= \
-	$(if $(filter $(IS_RELEASE),true),-O2,-O0 -ggdb3 -gdwarf-2) \
+	$(if $(filter $(RELEASE),true),-O2,-O0 -ggdb3 -gdwarf-2) \
 	-DMONOTOUCH=1
 
 _ios_LDFLAGS= \
@@ -125,8 +125,8 @@ package-ios-$(1):
 	$(MAKE) -C $$(TOP)/sdks/builds/ios-$(1)/mono install
 
 .PHONY: clean-ios-$(1)
-clean-ios-$(1)::
-	rm -rf .stamp-ios-$(1)-toolchain .stamp-ios-$(1)-configure $$(TOP)/sdks/builds/ios-$(1) $$(TOP)/sdks/builds/ios-$(1).config.cache
+clean-ios-$(1):
+	rm -rf .stamp-ios-$(1)-toolchain .stamp-ios-$(1)-configure $$(TOP)/sdks/builds/ios-$(1) $$(TOP)/sdks/builds/ios-$(1).config.cache $$(TOP)/sdks/out/ios-$(1)
 
 TARGETS += ios-$(1)
 
@@ -230,8 +230,8 @@ package-ios-$(1):
 	$(MAKE) -C $$(TOP)/sdks/builds/ios-$(1)/support install
 
 .PHONY: clean-ios-$(1)
-clean-ios-$(1)::
-	rm -rf .stamp-ios-$(1)-toolchain .stamp-ios-$(1)-configure $$(TOP)/sdks/builds/ios-$(1) $$(TOP)/sdks/builds/ios-$(1).config.cache
+clean-ios-$(1):
+	rm -rf .stamp-ios-$(1)-toolchain .stamp-ios-$(1)-configure $$(TOP)/sdks/builds/ios-$(1) $$(TOP)/sdks/builds/ios-$(1).config.cache $$(TOP)/sdks/out/ios-$(1)
 
 TARGETS += ios-$(1)
 
@@ -329,8 +329,8 @@ package-ios-$(1):
 	$$(MAKE) -C $$(TOP)/sdks/builds/ios-$(1)/mono install
 
 .PHONY: clean-ios-$(1)
-clean-ios-$(1)::
-	rm -rf .stamp-ios-$(1)-toolchain .stamp-ios-$(1)-configure $$(TOP)/sdks/builds/ios-$(1) $$(TOP)/sdks/builds/ios-$(1).config.cache
+clean-ios-$(1):
+	rm -rf .stamp-ios-$(1)-toolchain .stamp-ios-$(1)-configure $$(TOP)/sdks/builds/ios-$(1) $$(TOP)/sdks/builds/ios-$(1).config.cache $$(TOP)/sdks/out/ios-$(1)
 
 TARGETS += ios-$(1)
 
