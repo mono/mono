@@ -1748,6 +1748,7 @@ public class DirectoryTest
 		}
 	}
 
+#if !MOBILE
 	[Test]
 	public void ResolvePathBeforeDirectoryExists ()
 	{
@@ -1786,6 +1787,7 @@ public class DirectoryTest
 			DeleteDirectory (root);
 		}
 	}
+#endif
 
 	private void DeleteDirectory (string path)
 	{
