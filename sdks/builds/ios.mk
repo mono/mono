@@ -60,6 +60,7 @@ _ios-$(1)_AC_VARS= \
 	ac_cv_func_getentropy=no \
 	ac_cv_func_futimens=no \
 	ac_cv_func_utimensat=no \
+	ac_cv_func_shm_open_working_with_mmap=no \
 	mono_cv_sizeof_sunpath=104 \
 	mono_cv_uscore=yes \
 	$$(ios-$(1)_AC_VARS)
@@ -204,6 +205,7 @@ _ios-$(1)_AC_VARS= \
 	ac_cv_func_getentropy=no \
 	ac_cv_func_futimens=no \
 	ac_cv_func_utimensat=no \
+	ac_cv_func_shm_open_working_with_mmap=no \
 	mono_cv_uscore=yes \
 	$(ios-$(1)_AC_VARS)
 
@@ -342,6 +344,7 @@ _ios-$(1)_CC=$$(CCACHE) $$(PLATFORM_BIN)/clang
 _ios-$(1)_CXX=$$(CCACHE) $$(PLATFORM_BIN)/clang++
 
 _ios-$(1)_AC_VARS= \
+	ac_cv_func_shm_open_working_with_mmap=no \
 	$$(ios-$(1)_AC_VARS)
 
 _ios-$(1)_CFLAGS= \

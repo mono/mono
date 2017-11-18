@@ -116,7 +116,8 @@ _android-$(1)_STRIP=$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-strip
 _android-$(1)_AC_VARS= \
 	mono_cv_uscore=yes \
 	ac_cv_func_sched_getaffinity=no \
-	ac_cv_func_sched_setaffinity=no
+	ac_cv_func_sched_setaffinity=no \
+	ac_cv_func_shm_open_working_with_mmap=no
 
 _android-$(1)_CFLAGS= \
 	-fstack-protector \
