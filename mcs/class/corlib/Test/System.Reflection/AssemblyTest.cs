@@ -264,7 +264,7 @@ namespace MonoTests.System.Reflection
 		public void Corlib_test ()
 		{
 			Assembly corlib_test = Assembly.GetExecutingAssembly ();
-#if MONODROID || FULL_AOT_DESKTOP || __WATCHOS__
+#if MONODROID || FULL_AOT_DESKTOP || __WATCHOS__ || MONO_SDK
 			Assert.IsNull (corlib_test.EntryPoint, "EntryPoint");
 			Assert.IsNull (corlib_test.Evidence, "Evidence");
 #elif MOBILE

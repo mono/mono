@@ -403,6 +403,7 @@ public class TimeZoneTest {
 				// now it fails on Snow Leopard the same way (incomplete data) with iOS5 simulator (OS update ?)
 				// but it *never*ever* failed on devices
 				incomplete_data_on_simulator_only_bug = true;
+#if !MONO_SDK
 #if MONOTOUCH
 
 #if XAMCORE_2_0
@@ -412,6 +413,7 @@ public class TimeZoneTest {
 #endif
 					Assert.Ignore ("known to fail on some iOS simulator versions - see source comments");
 #endif // MONOTOUCH
+#endif // !MONO_SDK
 			}
 		}
 #endif
