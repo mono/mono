@@ -1175,11 +1175,17 @@ namespace System.Reflection.Emit {
 		public override object[] GetCustomAttributes (Type attributeType, bool inherit)
 		{
 			if (cattrs == null || cattrs.Length == 0)
-				return new object [] {};
+				return Array.Empty<object> ();
+
+			if (attributeType is TypeBuilder)
+				throw new InvalidOperationException ("First argument to GetCustomAttributes can't be a TypeBuilder");
 
 			List<object> results = new List<object> ();
 			for (int i=0; i < cattrs.Length; i++) {
 				Type t = cattrs [i].Ctor.GetType ();
+
+				if (t is TypeBuilder)
+					throw new InvalidOperationException ("Can't construct custom attribute for TypeBuilder type");
 
 				if (attributeType == null || attributeType.IsAssignableFrom (t))
 					results.Add (cattrs [i].Invoke ());
