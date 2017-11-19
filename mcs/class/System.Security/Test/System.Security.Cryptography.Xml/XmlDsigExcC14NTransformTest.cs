@@ -339,16 +339,17 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	    		Assert.AreEqual (ExcC14NSpecExample4Output, res, "Example 4 from c14n spec - Character Modifications and Character References (without comments)");
 	        }
 	    
-	        [Test]
-	        public void ExcC14NSpecExample5 ()
-	        {
-			using (StreamWriter sw = new StreamWriter ("world.txt", false, Encoding.ASCII)) {
-				sw.Write ("world");
-				sw.Close ();
+			[Test]
+			[Ignore(".NET DOM implementation does not match W3C DOM specification.")]
+			public void ExcC14NSpecExample5 ()
+			{
+				using (StreamWriter sw = new StreamWriter ("world.txt", false, Encoding.ASCII)) {
+					sw.Write ("world");
+					sw.Close ();
+				}
+				string res = ExecuteXmlDSigExcC14NTransform (ExcC14NSpecExample5Input);
+				Assert.AreEqual (ExcC14NSpecExample5Output, res, "Example 5 from c14n spec - Entity References (without comments)");
 			}
-	    	    	string res = ExecuteXmlDSigExcC14NTransform (ExcC14NSpecExample5Input);
-	    	    	Assert.AreEqual (ExcC14NSpecExample5Output, res, "Example 5 from c14n spec - Entity References (without comments)");
-	        }
     
 		[Test]
 	        public void ExcC14NSpecExample6 ()
