@@ -801,7 +801,8 @@ namespace MonoTests.System.IO
 		{
 			string current;
 			string expected;
-			if (!Windows){
+			if (!Windows) {
+				Console.WriteLine ("Available drives:\n " + string.Join("\n ", Environment.GetLogicalDrives()));
 				current = Directory.GetCurrentDirectory ();
 				expected = current [0].ToString ();
 			} else {

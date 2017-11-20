@@ -455,7 +455,7 @@ namespace System.IO {
 
 				// another foreach (to make the first one faster) -
 				// return the longest logical drive the path contains
-				string rootDrive = string.Empty;
+				string rootDrive = DirectorySeparatorCharAsString;
 				foreach (var drive in logicalDrives) {
 					if (AppendDirectorySeparator (path).Contains (AppendDirectorySeparator (drive)) &&
 						rootDrive.Length < drive.Length) {
