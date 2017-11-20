@@ -1,4 +1,5 @@
--include $(TOP)/sdks/Make.config
+-include $(TOP)/sdks/configure.inc
+-include $(TOP)/sdks/Make.config.local
 
 #Default paths
 
@@ -21,7 +22,7 @@ endif
 
 #Error if tools are not found
 
-ifndef DISABLE_ANDROID
+ifdef ENABLE_ANDROID
 ifeq ($(and $(wildcard $(SDK_DIR)/tools),$(wildcard $(SDK_DIR)/platform-tools)),)
 $(error Could not find Android SDK in $(SDK_DIR))
 endif
@@ -32,7 +33,7 @@ endif
 
 endif
 
-ifndef DISABLE_IOS
+ifdef ENABLE_IOS
 ifeq ($(wildcard $(XCODE_DIR)),)
 $(error Could not find XCode in $(XCODE_DIR))
 endif
