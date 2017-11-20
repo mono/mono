@@ -217,7 +217,7 @@ namespace System.Windows.Forms
 			popupButtonPanel.Dock = DockStyle.None;
 			popupButtonPanel.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom) | AnchorStyles.Left))));
 			popupButtonPanel.Location = new Point (6, 35);
-			popupButtonPanel.Size = new Size (87, 338);
+			popupButtonPanel.Size = new Size (89, 338);
 			popupButtonPanel.TabIndex = 9;
 			
 			// mwfFileView
@@ -1475,15 +1475,22 @@ namespace System.Windows.Forms
 				gr.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), ClientRectangle);
 				
 				// draw image
+				int i_y_padding = 4;
 				if (image != null) {
 					int i_x = (ClientSize.Width - image.Width) / 2;
-					int i_y = 4;
+					int i_y = i_y_padding;
 					gr.DrawImage (image, i_x, i_y);
 				}
 				
 				if (Text != String.Empty) {
-					if (text_rect == Rectangle.Empty)
-						text_rect = new Rectangle (0, Height - 30, Width, Height - 30); 
+					if (text_rect == Rectangle.Empty) {
+						int h_pad = 2;
+						int t_x = h_pad;
+						int t_y = i_y_padding + image.Height + 1;
+						int t_w = ClientSize.Width - t_x - h_pad - 1;
+						int t_h = ClientSize.Height - t_y - 1;
+						text_rect = new Rectangle (t_x, t_y, t_w, t_h);
+					}
 					
 					gr.DrawString (Text, Font, Brushes.White, text_rect, text_format);
 				}
@@ -1555,7 +1562,7 @@ namespace System.Windows.Forms
 			SuspendLayout ();
 			
 			BackColor = Color.FromArgb (128, 128, 128);
-			Size = new Size (85, 336);
+			Size = new Size (89, 338);
 			InternalBorderStyle = BorderStyle.Fixed3D;
 			
 			recentlyusedButton = new PopupButton ();
