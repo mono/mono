@@ -142,7 +142,7 @@ android_arm64-v8a_CXXFLAGS=-D__POSIX_VISIBLE=201002 -DSK_RELEASE -DNDEBUG -UDEBU
 $(eval $(call AndroidTargetTemplate,arm64-v8a,arm64,android-21,aarch64-linux-android,aarch64-linux-android-clang,aarch64-linux-android))
 
 ## android-x86
-$(eval $(call AndroidTargetTemplate,x86,x86,android-14,i686-linux-android,x86-clang,i686-linux-android))
+$(eval $(call AndroidTargetTemplate,x86,x86,android-9,i686-linux-android,x86-clang,i686-linux-android))
 
 ## android-x86_64
 android_x86_64_CFLAGS=-DL_cuserid=9
