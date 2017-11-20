@@ -5,8 +5,7 @@
 #  $(2): arch
 #  $(3): platform
 #  $(4): abi_name
-#  $(5): toolchain_name
-#  $(6): host_triple
+#  $(5): host_triple
 #
 # Flags:
 #  android_$(1)_CFLAGS
@@ -46,8 +45,8 @@ _android_$(1)_CXXFLAGS= \
 _android_$(1)_LDFLAGS= \
 	-z now -z relro -z noexecstack \
 	-ldl -lm -llog -lc -lgcc \
-	-Wl,-rpath-link=$$(NDK_DIR)/platforms/$(3)/arch-$(2)/usr/lib,-dynamic-linker=/system/bin/linker \
-	-L$$(NDK_DIR)/platforms/$(3)/arch-$(2)/usr/lib \
+	-Wl,-rpath-link=$$(NDK_DIR)/platforms/android-$(3)/arch-$(2)/usr/lib,-dynamic-linker=/system/bin/linker \
+	-L$$(NDK_DIR)/platforms/android-$(3)/arch-$(2)/usr/lib \
 	$$(android_$(1)_LDFLAGS)
 
 _android_$(1)_CONFIGURE_ENVIRONMENT = \
@@ -67,7 +66,7 @@ _android_$(1)_CONFIGURE_ENVIRONMENT = \
 	RANLIB="$$(_android_$(1)_RANLIB)"
 
 _android_$(1)_CONFIGURE_FLAGS= \
-	--host=$(6) \
+	--host=$(5) \
 	--cache-file=$$(TOP)/sdks/builds/android-$(1)-$$(CONFIGURATION).config.cache \
 	--prefix=$$(TOP)/sdks/out/android-$(1)-$$(CONFIGURATION) \
 	--disable-boehm \
@@ -84,7 +83,7 @@ _android_$(1)_CONFIGURE_FLAGS= \
 	--without-ikvm-native
 
 .stamp-android-$(1)-toolchain:
-	$$(NDK_DIR)/build/tools/make-standalone-toolchain.sh  --platform=$(3) --arch=$(2) --install-dir=$$(TOP)/sdks/builds/toolchains/android-$(1) --toolchain=$(5)
+	python "$$(NDK_DIR)/build/tools/make_standalone_toolchain.py" --verbose --force --api=$(3) --arch=$(2) --install-dir=$$(TOP)/sdks/builds/toolchains/android-$(1)
 	touch $$@
 
 .stamp-android-$(1)-$$(CONFIGURATION)-configure: $$(TOP)/configure .stamp-android-$(1)-toolchain
@@ -128,23 +127,23 @@ endef
 android_armeabi_CFLAGS=-D__POSIX_VISIBLE=201002 -DSK_RELEASE -DNDEBUG -UDEBUG -fpic -march=armv5te
 android_armeabi_CXXFLAGS=-D__POSIX_VISIBLE=201002 -DSK_RELEASE -DNDEBUG -UDEBUG -fpic -march=armv5te
 android_armeabi_LDFLAGS=-Wl,--fix-cortex-a8
-$(eval $(call AndroidTargetTemplate,armeabi,arm,android-9,arm-linux-androideabi,arm-linux-androideabi-clang,armv5-linux-androideabi))
+$(eval $(call AndroidTargetTemplate,armeabi,arm,9,arm-linux-androideabi,armv5-linux-androideabi))
 
 ## android-armeabi-v7a
 android_armeabi-v7a_CFLAGS=-D__POSIX_VISIBLE=201002 -DSK_RELEASE -DNDEBUG -UDEBUG -fpic -march=armv7-a -mtune=cortex-a8 -mfpu=vfp -mfloat-abi=softfp
 android_armeabi-v7a_CXXFLAGS=-D__POSIX_VISIBLE=201002 -DSK_RELEASE -DNDEBUG -UDEBUG -fpic -march=armv7-a -mtune=cortex-a8 -mfpu=vfp -mfloat-abi=softfp
 android_armeabi-v7a_LDFLAGS=-Wl,--fix-cortex-a8
-$(eval $(call AndroidTargetTemplate,armeabi-v7a,arm,android-9,arm-linux-androideabi,arm-linux-androideabi-clang,armv5-linux-androideabi))
+$(eval $(call AndroidTargetTemplate,armeabi-v7a,arm,9,arm-linux-androideabi,armv5-linux-androideabi))
 
 ## android-arm64-v8a
 android_arm64-v8a_CFLAGS=-D__POSIX_VISIBLE=201002 -DSK_RELEASE -DNDEBUG -UDEBUG -fpic -DL_cuserid=9 -DANDROID64
 android_arm64-v8a_CXXFLAGS=-D__POSIX_VISIBLE=201002 -DSK_RELEASE -DNDEBUG -UDEBUG -fpic -DL_cuserid=9 -DANDROID64
-$(eval $(call AndroidTargetTemplate,arm64-v8a,arm64,android-21,aarch64-linux-android,aarch64-linux-android-clang,aarch64-linux-android))
+$(eval $(call AndroidTargetTemplate,arm64-v8a,arm64,21,aarch64-linux-android,aarch64-linux-android))
 
 ## android-x86
-$(eval $(call AndroidTargetTemplate,x86,x86,android-9,i686-linux-android,x86-clang,i686-linux-android))
+$(eval $(call AndroidTargetTemplate,x86,x86,9,i686-linux-android,i686-linux-android))
 
 ## android-x86_64
 android_x86_64_CFLAGS=-DL_cuserid=9
 android_x86_64_CXXFLAGS=-DL_cuserid=9
-$(eval $(call AndroidTargetTemplate,x86_64,x86_64,android-21,x86_64-linux-android,x86_64-clang,x86_64-linux-android))
+$(eval $(call AndroidTargetTemplate,x86_64,x86_64,21,x86_64-linux-android,x86_64-linux-android))
