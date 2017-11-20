@@ -334,6 +334,20 @@ namespace System.Net.Http
 			return response;
 		}
 
+		static bool MethodHasBody (HttpMethod method)
+		{
+			switch (method.Method) {
+			case "HEAD":
+			case "GET":
+			case "MKCOL":
+			case "CONNECT":
+			case "TRACE":
+				return false;
+			default:
+				return true;
+			}
+		}
+
 		protected async internal override Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken)
 		{
 			if (disposed)
@@ -378,7 +392,7 @@ namespace System.Net.Http
 						using (var stream = await wrequest.GetRequestStreamAsync ().ConfigureAwait (false)) {
 							await request.Content.CopyToAsync (stream).ConfigureAwait (false);
 						}
-					} else if (HttpMethod.Post.Equals (request.Method) || HttpMethod.Put.Equals (request.Method) || HttpMethod.Delete.Equals (request.Method)) {
+					} else if (MethodHasBody (request.Method)) {
 						// Explicitly set this to make sure we're sending a "Content-Length: 0" header.
 						// This fixes the issue that's been reported on the forums:
 						// http://forums.xamarin.com/discussion/17770/length-required-error-in-http-post-since-latest-release
