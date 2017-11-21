@@ -85,7 +85,7 @@ namespace MonoTests.Microsoft.Build.Tasks
 				CheckTargetPath(
 					new string[] { "//a/b/abc.cs", "k/../k/def.cs", "/xyz.cs", "/different/xyz/foo.cs"},
 					new string[] { "a/b/abc.cs", Path.Combine (cur_dir_minus_root, "k/def.cs"), "xyz.cs", "different/xyz/foo.cs"},
-					"/", "A");
+					root, "A");
 			} else if (OS == OsType.Windows) {
 				CheckTargetPath(
 					new string[] { root + @"a\b\abc.cs", @"k\..\k\def.cs", root + @"xyz.cs", root + @"different\xyz\foo.cs"},
@@ -105,7 +105,7 @@ namespace MonoTests.Microsoft.Build.Tasks
 					new string[] { "xyz.cs", "rel/bar.resx" },
 					new string[] { Path.Combine (cur_dir_minus_root, "xyz.cs"),
 						Path.Combine (cur_dir_minus_root, "rel/bar.resx") },
-					"/", "A");
+					root, "A");
 			} else if (OS == OsType.Windows) {
 				CheckTargetPath(
 					new string[] { "xyz.cs", "rel\\bar.resx" },
