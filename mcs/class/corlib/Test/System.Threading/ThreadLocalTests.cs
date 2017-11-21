@@ -134,6 +134,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void PerThreadException ()
 		{
 			int callTime = 0;

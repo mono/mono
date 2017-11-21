@@ -101,6 +101,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void AddCountSignalStressTestCase ()
 		{
 			var evt = new CountdownEvent (5);
@@ -352,6 +353,7 @@ namespace MonoTests.System.Threading
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void WaitTestCase()
 		{
 			var evt = new CountdownEvent (5);
