@@ -47,6 +47,57 @@ namespace System.Threading
 
 		internal const int MaxWaitHandles = 64;
 
+		// We rely on the reference source implementation of WaitHandle, and it delegates to a function named
+		//  WaitOneNative to perform the actual operation of waiting on a handle.
+		// This native operation actually has to call back into managed code and invoke .Wait
+		//  on the current SynchronizationContext. As such, our implementation of this "native" method
+		//  is actually managed code, and the real native icall being used is Wait_internal.
+		// Safe access to Wait_internal is provided by the WaitMultiple and WaitSingle (previously
+		//  called WaitOneNative) methods defined further below.
+		static int WaitOneNative (SafeHandle waitableSafeHandle, uint millisecondsTimeout, bool hasThreadAffinity, bool exitContext)
+		{
+			var context = SynchronizationContext.Current;
+
+			// HACK: Documentation (and public posts by experts like Joe Duffy) suggests that
+			//  users must first call SetWaitNotificationRequired to flag that a given synchronization
+			//  context overrides .Wait. Because invoking the Wait method is somewhat expensive, we use
+			//  the notification-required flag to determine whether or not we should invoke the managed
+			//  wait method.
+			// Another option would be to check whether this context uses the default Wait implementation,
+			//  but I don't know of a cheap way to do this that handles derived types correctly.
+			if (context.IsWaitNotificationRequired()) {
+				bool release = false;
+				waitableSafeHandle.DangerousAddRef(ref release);
+				try {
+#if !DISABLE_REMOTING
+					if (exitContext)
+						SynchronizationAttribute.ExitContext ();
+#endif
+
+					return context.Wait (
+						// TODO: This alloc could potentially be optimized out for common cases. Since
+						//  waits are a common operation it might be worth it to do that.
+						new IntPtr[] { waitableSafeHandle.DangerousGetHandle () },
+						// TODO: The value of this shouldn't matter for a single element,
+						//  but it's possible code depends on it. Should test what coreclr & windows CLR do
+						false, 
+						// FIXME: Ugh, there's an implicit uint->int cast here by design...
+						(int)millisecondsTimeout
+					);
+				} finally {
+					if (release)
+						waitableSafeHandle.DangerousRelease();
+
+#if !DISABLE_REMOTING
+					if (exitContext)
+						SynchronizationAttribute.EnterContext ();
+#endif
+				}
+			} else {
+				return WaitSingle (waitableSafeHandle, millisecondsTimeout, hasThreadAffinity, exitContext);
+			}
+		}
+
 		static int WaitMultiple(WaitHandle[] waitHandles, int millisecondsTimeout, bool exitContext, bool WaitAll)
 		{
 			if (waitHandles.Length > MaxWaitHandles)
@@ -90,7 +141,7 @@ namespace System.Threading
 			}
 		}
 
-		static int WaitOneNative (SafeHandle waitableSafeHandle, uint millisecondsTimeout, bool hasThreadAffinity, bool exitContext)
+		static int WaitSingle (SafeHandle waitableSafeHandle, uint millisecondsTimeout, bool hasThreadAffinity, bool exitContext)
 		{
 			bool release = false;
 			try {
@@ -117,7 +168,7 @@ namespace System.Threading
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		unsafe static extern int Wait_internal(IntPtr* handles, int numHandles, bool waitAll, int ms);
+		internal unsafe static extern int Wait_internal(IntPtr* handles, int numHandles, bool waitAll, int ms);
 
 		static int SignalAndWaitOne (SafeWaitHandle waitHandleToSignal,SafeWaitHandle waitHandleToWaitOn, int millisecondsTimeout, bool hasThreadAffinity,  bool exitContext)
 		{
