@@ -15,22 +15,23 @@ $(TOP)/configure: $(TOP)/configure.ac $(TOP)/autogen.sh
 TARGETS=
 
 ## BCL targets
-ifndef DISABLE_BCL
+ifdef ENABLE_BCL
 include bcl.mk
 endif
 
 ## Android targets
-ifndef DISABLE_ANDROID
+ifdef ENABLE_ANDROID
 include android.mk
 endif
 
 ## iOS targets
-ifndef DISABLE_IOS
+ifdef ENABLE_IOS
 include ios.mk
+else
 endif
 
 ## WASM targets
-ifndef DISABLE_WASM
+ifdef ENABLE_WASM
 include wasm.mk
 endif
 
