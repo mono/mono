@@ -69,6 +69,8 @@
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\SpanHelpers.Clear.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\SpanHelpers.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\ThrowHelper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Runtime.InteropServices.RuntimeInformation\src\System\Runtime\InteropServices\RuntimeInformation\Architecture.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Runtime.InteropServices.RuntimeInformation\src\System\Runtime\InteropServices\RuntimeInformation\OSPlatform.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\X509ContentType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\X509KeyStorageFlags.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
@@ -1105,6 +1107,7 @@
     <Compile Include="System.Runtime.CompilerServices\Unsafe.cs" />
     <Compile Include="System.Runtime.Hosting\ActivationArguments.cs" />
     <Compile Include="System.Runtime.Hosting\ApplicationActivator.cs" />
+    <Compile Include="System.Runtime.InteropServices.RuntimeInformation\RuntimeInformation.cs" />
     <Compile Include="System.Runtime.InteropServices.WindowsRuntime\DesignerNamespaceResolveEventArgs.cs" />
     <Compile Include="System.Runtime.InteropServices.WindowsRuntime\NamespaceResolveEventArgs.cs" />
     <Compile Include="System.Runtime.InteropServices.WindowsRuntime\UnsafeNativeMethods.cs" />
