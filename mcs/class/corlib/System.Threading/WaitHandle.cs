@@ -65,9 +65,12 @@ namespace System.Threading
 			//  wait method.
 			// Another option would be to check whether this context uses the default Wait implementation,
 			//  but I don't know of a cheap way to do this that handles derived types correctly.
-			if (context.IsWaitNotificationRequired()) {
+			// If the thread does not have a synchronization context set at all, we can safely just
+			//  jump directly to invoking WaitSingle.
+			if ((context != null) && context.IsWaitNotificationRequired ()) {
 				bool release = false;
 				waitableSafeHandle.DangerousAddRef(ref release);
+
 				try {
 #if !DISABLE_REMOTING
 					if (exitContext)
@@ -92,6 +95,7 @@ namespace System.Threading
 					if (exitContext)
 						SynchronizationAttribute.EnterContext ();
 #endif
+
 				}
 			} else {
 				return WaitSingle (waitableSafeHandle, millisecondsTimeout, hasThreadAffinity, exitContext);
