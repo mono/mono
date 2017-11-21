@@ -40,12 +40,12 @@ package-wasm-interp:
 	$(MAKE) -C $(TOP)/sdks/builds/wasm-interp/mono install
 
 .PHONY: clean-wasm
-clean-wasm::
+clean-wasm:
 	rm -rf .stamp-wasm-toolchain $(TOP)/sdks/builds/toolchains/emsdk
 
 .PHONY: clean-wasm-interp
-clean-wasm-interp:: clean-wasm
-	rm -rf .stamp-wasm-interp-toolchain .stamp-wasm-interp-configure $(TOP)/sdks/builds/wasm $(TOP)/sdks/builds/wasm.config.cache
+clean-wasm-interp: clean-wasm
+	rm -rf .stamp-wasm-interp-toolchain .stamp-wasm-interp-configure $(TOP)/sdks/builds/wasm $(TOP)/sdks/builds/wasm.config.cache $(TOP)/sdks/out/wasm-interp
 
 TARGETS += wasm-interp
 
