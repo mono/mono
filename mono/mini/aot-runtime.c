@@ -65,6 +65,7 @@
 #include "version.h"
 #include "debugger-agent.h"
 #include "aot-compiler.h"
+#include "aot-runtime.h"
 #include "jit-icalls.h"
 
 #ifndef DISABLE_AOT

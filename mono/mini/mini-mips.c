@@ -29,6 +29,7 @@
 #include "cpu-mips.h"
 #include "trace.h"
 #include "ir-emit.h"
+#include "aot-runtime.h"
 
 #define SAVE_FP_REGS		0
 

@@ -29,6 +29,7 @@
 #endif
 #include "trace.h"
 #include "ir-emit.h"
+#include "aot-runtime.h"
 #ifdef __APPLE__
 #include <sys/sysctl.h>
 #endif

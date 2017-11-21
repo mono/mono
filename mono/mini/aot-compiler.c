@@ -60,6 +60,7 @@
 #include <mono/utils/w32api.h>
 
 #include "aot-compiler.h"
+#include "aot-runtime.h"
 #include "seq-points.h"
 #include "image-writer.h"
 #include "dwarfwriter.h"

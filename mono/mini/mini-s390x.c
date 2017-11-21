@@ -340,6 +340,7 @@ if (ins->inst_true_bb->native_offset) { 					\
 #include "ir-emit.h"
 #include "trace.h"
 #include "mini-gc.h"
+#include "aot-runtime.h"
 
 /*========================= End of Includes ========================*/
 

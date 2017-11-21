@@ -30,6 +30,7 @@
 #include "ir-emit.h"
 #include "debugger-agent.h"
 #include "mini-gc.h"
+#include "aot-runtime.h"
 #include "mono/arch/arm/arm-vfp-codegen.h"
 
 /* Sanity check: This makes no sense */

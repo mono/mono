@@ -20,6 +20,7 @@
 #include <mono/utils/unlocked.h>
 
 #include "mini.h"
+#include "aot-runtime.h"
 
 #define ALLOW_PARTIAL_SHARING TRUE
 //#define ALLOW_PARTIAL_SHARING FALSE

@@ -21,6 +21,7 @@
 
 #include "mini.h"
 #include "lldb.h"
+#include "aot-runtime.h"
 
 #ifndef DISABLE_INTERPRETER
 #include "interp/interp.h"

@@ -45,6 +45,7 @@
 #include "cpu-amd64.h"
 #include "debugger-agent.h"
 #include "mini-gc.h"
+#include "aot-runtime.h"
 
 #ifdef MONO_XEN_OPT
 static gboolean optimize_for_xen = TRUE;

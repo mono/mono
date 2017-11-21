@@ -19,6 +19,7 @@
 #endif
 
 #include "jit-icalls.h"
+#include "aot-runtime.h"
 #include <mono/utils/mono-error-internals.h>
 #include <mono/metadata/exception-internals.h>
 #include <mono/metadata/threads-types.h>
