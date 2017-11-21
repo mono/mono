@@ -147,8 +147,6 @@ static gpointer bp_trigger_page;
  *
  * We do not care about FPA. We will support soft float and VFP.
  */
-int mono_exc_esp_offset = 0;
-
 #define arm_is_imm12(v) ((v) > -4096 && (v) < 4096)
 #define arm_is_imm8(v) ((v) > -256 && (v) < 256)
 #define arm_is_fpimm8(v) ((v) >= -1020 && (v) <= 1020)

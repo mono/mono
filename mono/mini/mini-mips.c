@@ -64,8 +64,6 @@ enum {
 #define mono_mini_arch_unlock() mono_os_mutex_unlock (&mini_arch_mutex)
 static mono_mutex_t mini_arch_mutex;
 
-int mono_exc_esp_offset = 0;
-
 /* Whenever the host is little-endian */
 static int little_endian;
 /* Index of ms word/register */

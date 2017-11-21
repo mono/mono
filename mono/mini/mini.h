@@ -355,7 +355,6 @@ typedef struct MonoSpillInfo MonoSpillInfo;
 
 extern MonoCallSpec *mono_jit_trace_calls;
 extern gboolean mono_break_on_exc;
-extern int mono_exc_esp_offset;
 extern gboolean mono_compile_aot;
 extern gboolean mono_aot_only;
 extern gboolean mono_llvm_only;
@@ -2335,8 +2334,7 @@ gint32    mono_linterval_get_intersect_pos  (MonoLiveInterval *i1, MonoLiveInter
 void      mono_linterval_split              (MonoCompile *cfg, MonoLiveInterval *interval, MonoLiveInterval **i1, MonoLiveInterval **i2, int pos);
 void      mono_liveness_handle_exception_clauses (MonoCompile *cfg);
 
-/* Native Client functions */
-gpointer mono_realloc_native_code(MonoCompile *cfg);
+gpointer mono_realloc_native_code (MonoCompile *cfg);
 
 extern MonoDebugOptions debug_options;
 
@@ -2352,9 +2350,7 @@ void     mono_save_trampoline_xdebug_info   (MonoTrampInfo *info);
 /* This is an exported function */
 void     mono_xdebug_flush                  (void);
 
-gboolean  mono_method_blittable             (MonoMethod *method);
 gboolean  mono_method_same_domain           (MonoJitInfo *caller, MonoJitInfo *callee);
-
 void      mono_register_opcode_emulation    (int opcode, const char* name, const char *sigstr, gpointer func, gboolean no_throw);
 void      mono_draw_graph                   (MonoCompile *cfg, MonoGraphOptions draw_options);
 void      mono_add_ins_to_end               (MonoBasicBlock *bb, MonoInst *inst);
@@ -2447,7 +2443,6 @@ MonoMethod*       mini_get_memcpy_method (void);
 MonoMethod*       mini_get_memset_method (void);
 int               mini_class_check_context_used (MonoCompile *cfg, MonoClass *klass);
 
-
 CompRelation      mono_opcode_to_cond (int opcode) MONO_LLVM_INTERNAL;
 CompType          mono_opcode_to_type (int opcode, int cmp_opcode);
 CompRelation      mono_negate_cond (CompRelation cond);
@@ -2483,7 +2478,6 @@ void              mini_emit_class_check (MonoCompile *cfg, int klass_reg, MonoCl
 
 gboolean          mini_class_has_reference_variant_generic_argument (MonoCompile *cfg, MonoClass *klass, int context_used);
 
-
 MonoInst         *mono_decompose_opcode (MonoCompile *cfg, MonoInst *ins);
 void              mono_decompose_long_opts (MonoCompile *cfg);
 void              mono_decompose_vtype_opts (MonoCompile *cfg);
@@ -2494,8 +2488,6 @@ void              mono_handle_global_vregs (MonoCompile *cfg);
 void              mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts);
 void              mono_allocate_gsharedvt_vars (MonoCompile *cfg);
 void              mono_if_conversion (MonoCompile *cfg);
-
-
 
 /* Delegates */
 gpointer          mini_get_delegate_arg (MonoMethod *method, gpointer method_ptr);
@@ -2767,8 +2759,6 @@ mono_perform_abc_removal (MonoCompile *cfg);
 extern void
 mono_perform_abc_removal (MonoCompile *cfg);
 extern void
-mono_perform_ssapre (MonoCompile *cfg);
-extern void
 mono_local_cprop (MonoCompile *cfg);
 extern void
 mono_local_cprop (MonoCompile *cfg);
@@ -2845,7 +2835,6 @@ mono_method_is_generic_sharable_full (MonoMethod *method, gboolean allow_type_va
 
 gboolean
 mini_class_is_generic_sharable (MonoClass *klass);
-
 
 gboolean
 mini_generic_inst_is_sharable (MonoGenericInst *inst, gboolean allow_type_vars, gboolean allow_partial);

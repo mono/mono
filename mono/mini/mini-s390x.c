@@ -451,8 +451,6 @@ static void compare_and_branch(MonoBasicBlock *, MonoInst *, int, gboolean);
 /*                 G l o b a l   V a r i a b l e s                  */
 /*------------------------------------------------------------------*/
 
-int mono_exc_esp_offset = 0;
-
 __thread int indent_level = 0;
 __thread FILE *trFd = NULL;
 int curThreadNo = 0;
