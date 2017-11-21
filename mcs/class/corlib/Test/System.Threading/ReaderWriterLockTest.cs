@@ -60,6 +60,7 @@ namespace MonoTests.System.Threading
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestIsReaderLockHeld ()
 		{
 			rwlock = new ReaderWriterLock ();
@@ -76,6 +77,7 @@ namespace MonoTests.System.Threading
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestIsWriterLockHeld ()
 		{
 			rwlock = new ReaderWriterLock ();
@@ -157,6 +159,7 @@ namespace MonoTests.System.Threading
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestReleaseRestoreReaderLock ()
 		{
 			rwlock = new ReaderWriterLock ();
@@ -177,6 +180,7 @@ namespace MonoTests.System.Threading
 		}
 		
 		[Test]
+			[Category ("MultiThreaded")]
 		public void TestReleaseRestoreWriterLock ()
 		{
 			rwlock = new ReaderWriterLock ();
@@ -197,6 +201,7 @@ namespace MonoTests.System.Threading
 		}
 		
 		[Test]
+			[Category ("MultiThreaded")]
 		public void TestUpgradeDowngradeLock ()
 		{
 			rwlock = new ReaderWriterLock ();
@@ -244,6 +249,7 @@ namespace MonoTests.System.Threading
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestReaderMustWaitWriter ()
 		{
 			// A thread cannot get the reader lock if there are other threads
@@ -286,6 +292,7 @@ namespace MonoTests.System.Threading
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestBug_55909 ()
 		{
 			rwlock = new ReaderWriterLock ();
@@ -313,6 +320,7 @@ namespace MonoTests.System.Threading
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestBug_55909_bis ()
 		{
 			rwlock = new ReaderWriterLock ();

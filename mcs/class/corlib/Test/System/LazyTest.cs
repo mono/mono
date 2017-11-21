@@ -279,6 +279,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ConcurrentInitialization ()
 		{
 			var init = new AutoResetEvent (false);
