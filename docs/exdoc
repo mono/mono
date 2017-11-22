@@ -227,6 +227,12 @@ sub process_formatting {
     my ($content, $file_path, $current_line) = @_;
     $_ = $$content;
 
+    # General formatting
+    s{\\b +(\w+)}{<strong>$1</strong>}g;
+    s{\\a +(\w+)}{<i>$1</i>}g;
+    s{\\e +(\w+)}{<i>$1</i>}g;
+    s{\\em +(\w+)}{<i>$1</i>}g;
+
     # Constants
     s{NULL}{<code>NULL</code>}g;
     s{TRUE}{<code>TRUE</code>}g;
