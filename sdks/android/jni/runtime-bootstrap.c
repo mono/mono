@@ -62,6 +62,9 @@ typedef struct MonoImage_ MonoImage;
 typedef struct MonoObject_ MonoObject;
 typedef struct MonoThread_ MonoThread;
 
+/* Imported from `mono-logger.h` */
+typedef void (*MonoLogCallback) (const char *log_domain, const char *log_level, const char *message, int32_t fatal, void *user_data);
+
 /*
  * The "err" variable contents must be allocated using g_malloc or g_strdup
  */
@@ -93,6 +96,8 @@ typedef void (*mono_domain_set_config_fn) (MonoDomain *, const char *, const cha
 typedef int (*mono_runtime_set_main_args_fn) (int argc, char* argv[]);
 typedef MonoMethod* (*mono_class_get_methods_fn) (MonoClass* klass, void **iter);
 typedef const char* (*mono_method_get_name_fn) (MonoMethod *method);
+typedef void (*mono_trace_init_fn) (void);
+typedef void (*mono_trace_set_log_handler_fn) (MonoLogCallback callback, void *user_data);
 
 static JavaVM *jvm;
 
@@ -119,6 +124,8 @@ static mono_domain_set_config_fn mono_domain_set_config;
 static mono_runtime_set_main_args_fn mono_runtime_set_main_args;
 static mono_class_get_methods_fn mono_class_get_methods;
 static mono_method_get_name_fn mono_method_get_name;
+static mono_trace_init_fn mono_trace_init;
+static mono_trace_set_log_handler_fn mono_trace_set_log_handler;
 
 static MonoAssembly *main_assembly;
 static void *runtime_bootstrap_dso;
@@ -138,6 +145,59 @@ _log (const char *format, ...)
 	va_start (args, format);
 	__android_log_vprint (ANDROID_LOG_INFO, "MONO", format, args);
 	va_end (args);
+}
+
+static void
+_runtime_log (const char *log_domain, const char *log_level, const char *message, int32_t fatal, void *user_data)
+{
+	static jclass AndroidRunner_klass = NULL;
+	static jmethodID AndroidRunner_WriteLineToInstrumentation_method = NULL;
+	JNIEnv *env;
+	jstring j_message;
+
+	(*jvm)->GetEnv (jvm, (void**)&env, JNI_VERSION_1_6);
+
+	if (AndroidRunner_klass == NULL || AndroidRunner_WriteLineToInstrumentation_method == NULL) {
+		AndroidRunner_klass = (*env)->FindClass (env, "org/mono/android/AndroidRunner");
+		AndroidRunner_WriteLineToInstrumentation_method = (*env)->GetStaticMethodID (env, AndroidRunner_klass, "WriteLineToInstrumentation", "(Ljava/lang/String;)V");
+	}
+
+	j_message = (*env)->NewStringUTF(env, message);
+
+	(*env)->CallStaticVoidMethod (env, AndroidRunner_klass, AndroidRunner_WriteLineToInstrumentation_method, j_message);
+
+	(*env)->DeleteLocalRef (env, j_message);
+
+	/* Still print it on the logcat */
+
+	android_LogPriority android_log_level;
+	switch (*log_level) {
+	case 'e': /* error */
+		android_log_level = ANDROID_LOG_FATAL;
+		break;
+	case 'c': /* critical */
+		android_log_level = ANDROID_LOG_ERROR;
+		break;
+	case 'w': /* warning */
+		android_log_level = ANDROID_LOG_WARN;
+		break;
+	case 'm': /* message */
+		android_log_level = ANDROID_LOG_INFO;
+		break;
+	case 'i': /* info */
+		android_log_level = ANDROID_LOG_DEBUG;
+		break;
+	case 'd': /* debug */
+		android_log_level = ANDROID_LOG_VERBOSE;
+		break;
+	default:
+		android_log_level = ANDROID_LOG_UNKNOWN;
+		break;
+	}
+
+	__android_log_write (android_log_level, log_domain, message);
+	if (android_log_level == ANDROID_LOG_FATAL)
+		abort ();
 }
 
 static void
@@ -279,6 +339,8 @@ Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring
 	mono_runtime_set_main_args = dlsym (libmono, "mono_runtime_set_main_args");
 	mono_class_get_methods = dlsym (libmono, "mono_class_get_methods");
 	mono_method_get_name = dlsym (libmono, "mono_method_get_name");
+	mono_trace_init = dlsym (libmono, "mono_trace_init");
+	mono_trace_set_log_handler = dlsym (libmono, "mono_trace_set_log_handler");
 
 	//MUST HAVE envs
 	setenv ("TMPDIR", cache_dir, 1);
@@ -290,8 +352,12 @@ Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring
 	create_and_set (file_dir, "home/.config", "XDG_CONFIG_HOME");
 
 	//Debug flags
-	// setenv ("MONO_LOG_LEVEL", "debug", 1);
+	setenv ("MONO_LOG_LEVEL", "info", 1);
+	setenv ("MONO_LOG_MASK", "all", 1);
 	// setenv ("MONO_VERBOSE_METHOD", "GetCallingAssembly", 1);
+
+	mono_trace_init ();
+	mono_trace_set_log_handler (_runtime_log, NULL);
 
 	mono_set_assemblies_path (assemblies_dir);
 	mono_set_crash_chaining (1);
@@ -556,24 +622,6 @@ _monodroid_get_dns_servers (void **dns_servers_array)
 
 	*dns_servers_array = (void*)ret;
 	return count;
-}
-
-MONO_API void
-AndroidIntrumentationWriter_WriteLineToInstrumentation (char *chars)
-{
-	JNIEnv *env;
-	jclass AndroidRunner_klass;
-	jmethodID AndroidRunner_WriteLineToInstrumentation_method;
-	jstring j_chars;
-
-	(*jvm)->GetEnv (jvm, (void**)&env, JNI_VERSION_1_6);
-
-	AndroidRunner_klass = (*env)->FindClass (env, "org/mono/android/AndroidRunner");
-	AndroidRunner_WriteLineToInstrumentation_method = (*env)->GetStaticMethodID (env, AndroidRunner_klass, "WriteLineToInstrumentation", "(Ljava/lang/String;)V");
-
-	j_chars = (*env)->NewStringUTF(env, chars);
-
-	(*env)->CallStaticVoidMethod (env, AndroidRunner_klass, AndroidRunner_WriteLineToInstrumentation_method, j_chars);
 }
 
 JNIEXPORT jint JNICALL
