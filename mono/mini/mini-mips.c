@@ -30,6 +30,7 @@
 #include "trace.h"
 #include "ir-emit.h"
 #include "aot-runtime.h"
+#include "mini-runtime.h"
 
 #define SAVE_FP_REGS		0
 

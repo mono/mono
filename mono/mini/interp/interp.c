@@ -63,9 +63,10 @@
 #include "interp-internals.h"
 #include "mintops.h"
 #include "hacks.h"
-#include "aot-runtime.h"
 
 #include <mono/mini/mini.h>
+#include <mono/mini/mini-runtime.h>
+#include <mono/mini/aot-runtime.h>
 #include <mono/mini/jit-icalls.h>
 #include <mono/mini/debugger-agent.h>
 

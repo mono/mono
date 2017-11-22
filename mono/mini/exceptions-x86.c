@@ -30,6 +30,7 @@
 
 #include "mini.h"
 #include "mini-x86.h"
+#include "mini-runtime.h"
 #include "tasklets.h"
 #include "aot-runtime.h"
 

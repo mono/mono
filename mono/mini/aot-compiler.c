@@ -66,6 +66,7 @@
 #include "dwarfwriter.h"
 #include "mini-gc.h"
 #include "mini-llvm.h"
+#include "mini-runtime.h"
 
 #if !defined(DISABLE_AOT) && !defined(DISABLE_JIT)
 

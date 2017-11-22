@@ -341,6 +341,7 @@ if (ins->inst_true_bb->native_offset) { 					\
 #include "trace.h"
 #include "mini-gc.h"
 #include "aot-runtime.h"
+#include "mini-runtime.h"
 
 /*========================= End of Includes ========================*/
 

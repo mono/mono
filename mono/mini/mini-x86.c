@@ -40,6 +40,7 @@
 #include "ir-emit.h"
 #include "mini-gc.h"
 #include "aot-runtime.h"
+#include "mini-runtime.h"
 
 #ifndef TARGET_WIN32
 #ifdef MONO_XEN_OPT
