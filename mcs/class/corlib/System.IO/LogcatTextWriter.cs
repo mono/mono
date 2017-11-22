@@ -3,6 +3,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace System.IO {
@@ -12,13 +13,14 @@ namespace System.IO {
 		const string LibLog = "/system/lib/liblog.so";
 		const string LibLog64 = "/system/lib64/liblog.so";
 
+		readonly byte[] appname;
+
 		TextWriter stdout;
-		readonly string appname;
 		StringBuilder line = new StringBuilder ();
 
 		public LogcatTextWriter (string appname, TextWriter stdout)
 		{
-			this.appname = appname;
+			this.appname = Encoding.UTF8.GetBytes (appname);
 			this.stdout = stdout;
 		}
 
@@ -46,20 +48,13 @@ namespace System.IO {
 			var o = line.ToString ();
 			line.Clear ();
 
-			Log (LogLevel.Info, appname, o);
+			unsafe {
+				fixed (byte *b_appname = appname)
+				fixed (byte *b_message = Encoding.UTF8.GetBytes(o)) {
+					Log (b_appname, 1 << 5 /* G_LOG_LEVEL_MESSAGE */, b_message);
+				}
+			}
 			stdout.WriteLine (o);
-		}
-
-		enum LogLevel {
-			Unknown,
-			Default,
-			Verbose,
-			Debug,
-			Info,
-			Warn,
-			Error,
-			Fatal,
-			Silent
 		}
 
 		public static bool IsRunningOnAndroid ()
@@ -67,13 +62,8 @@ namespace System.IO {
 			return File.Exists (LibLog) || File.Exists (LibLog64);
 		}
 
-		[DllImport ("liblog")]
-		static extern void __android_log_print (LogLevel level, string appname, string format, string args, IntPtr zero);
-
-		static void Log (LogLevel level, string appname, string log)
-		{
-			__android_log_print (level, appname, "%s", log, IntPtr.Zero);
-		}
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		static unsafe extern void Log (byte *appname, int level, byte *message);
 	}
 }
 
