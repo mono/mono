@@ -448,7 +448,8 @@ region_info_entry_from_lcid (int lcid)
 static gchar*
 get_darwin_locale (void)
 {
-	static gchar *darwin_locale = NULL;
+	static gchar *cached_locale = NULL;
+	gchar *darwin_locale = NULL;
 	CFLocaleRef locale = NULL;
 	CFStringRef locale_language = NULL;
 	CFStringRef locale_country = NULL;
@@ -459,8 +460,8 @@ get_darwin_locale (void)
 	CFIndex len;
 	int i;
 
-	if (darwin_locale != NULL)
-		return g_strdup (darwin_locale);
+	if (cached_locale != NULL)
+		return g_strdup (cached_locale);
 
 	locale = CFLocaleCopyCurrent ();
 
@@ -502,7 +503,7 @@ get_darwin_locale (void)
 				if (!CFStringGetCString (locale_cfstr, darwin_locale, len, kCFStringEncodingMacRoman)) {
 					g_free (darwin_locale);
 					CFRelease (locale);
-					darwin_locale = NULL;
+					cached_locale = NULL;
 					return NULL;
 				}
 
@@ -515,7 +516,9 @@ get_darwin_locale (void)
 		CFRelease (locale);
 	}
 
-	return g_strdup (darwin_locale);
+	mono_memory_barrier ();
+	cached_locale = darwin_locale;
+	return g_strdup (cached_locale);
 }
 #endif
 
@@ -732,8 +735,7 @@ ves_icall_System_Globalization_CultureInfo_internal_get_cultures (MonoBoolean ne
 		len++;
 
 	ret = mono_array_new_checked (domain, klass, len, &error);
-	if (!is_ok (&error))
-		goto fail;
+	goto_if_nok (&error, fail);
 
 	if (len == 0)
 		return ret;
@@ -747,9 +749,9 @@ ves_icall_System_Globalization_CultureInfo_internal_get_cultures (MonoBoolean ne
 		is_neutral = ci->territory == 0;
 		if ((neutral && is_neutral) || (specific && !is_neutral)) {
 			culture = (MonoCultureInfo *) mono_object_new_checked (domain, klass, &error);
-			if (!is_ok (&error)) goto fail;
+			goto_if_nok (&error, fail);
 			mono_runtime_object_init_checked ((MonoObject *) culture, &error);
-			if (!is_ok (&error)) goto fail;
+			goto_if_nok (&error, fail);
 			if (!construct_culture (culture, ci, &error))
 				goto fail;
 			culture->use_user_override = TRUE;

@@ -31,7 +31,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 using NUnit.Framework;
-using MonoTests.Common;
 
 namespace MonoTests.System.ComponentModel.DataAnnotations
 {
@@ -94,15 +93,15 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 
 			rea = new RegularExpressionAttributePoker ("");
 
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				rea.IsValid (null);
 			}, "null does not match empty pattern");
 
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				rea.IsValid (String.Empty);
 			}, "empty string does not match empty pattern");
 
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				rea.IsValid ("string");
 			}, "'string' does not match empty pattern");
 			

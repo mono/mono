@@ -33,7 +33,6 @@ using System.Web.Caching;
 using System.Web.Util;
 
 using NUnit.Framework;
-using MonoTests.Common;
 
 namespace MonoTests.System.Web.Util
 {	
@@ -74,7 +73,7 @@ namespace MonoTests.System.Web.Util
 		{
 			Assert.IsNotNull (RequestValidator.Current, "#A1");
 			Assert.AreEqual (typeof (RequestValidator).AssemblyQualifiedName, RequestValidator.Current.GetType ().AssemblyQualifiedName, "#A2");
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				RequestValidator.Current = null;
 			}, "#A3");
 

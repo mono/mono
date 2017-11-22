@@ -22,7 +22,7 @@
 #include "mini.h"
 #include "lldb.h"
 
-#ifdef ENABLE_INTERPRETER
+#ifndef DISABLE_INTERPRETER
 #include "interp/interp.h"
 #endif
 
@@ -893,8 +893,7 @@ mono_vcall_trampoline (mgreg_t *regs, guint8 *code, int slot, guint8 *tramp)
 
 		/* Avoid loading metadata or creating a generic vtable if possible */
 		addr = mono_aot_get_method_from_vt_slot (mono_domain_get (), vt, slot, &error);
-		if (!is_ok (&error))
-			goto leave;
+		goto_if_nok (&error, leave);
 		if (addr && !vt->klass->valuetype) {
 			if (mono_domain_owns_vtable_slot (mono_domain_get (), vtable_slot))
 				*vtable_slot = addr;
@@ -1399,7 +1398,7 @@ mono_create_jump_trampoline (MonoDomain *domain, MonoMethod *method, gboolean ad
 
 	error_init (error);
 
-#ifdef ENABLE_INTERPRETER
+#ifndef DISABLE_INTERPRETER
 	if (mono_use_interpreter) {
 		gpointer ret = mono_interp_create_trampoline (domain, method, error);
 		if (!mono_error_ok (error))

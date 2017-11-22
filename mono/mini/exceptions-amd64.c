@@ -71,6 +71,7 @@ static LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
 	return EXCEPTION_CONTINUE_SEARCH;
 }
 
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 static gpointer
 get_win32_restore_stack (void)
 {
@@ -114,6 +115,14 @@ get_win32_restore_stack (void)
 
 	return start;
 }
+#else
+static gpointer
+get_win32_restore_stack (void)
+{
+	// _resetstkoflw unsupported on none desktop Windows platforms.
+	return NULL;
+}
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
 /*
  * Unhandled Exception Filter
@@ -139,7 +148,7 @@ static LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 
 	switch (er->ExceptionCode) {
 	case EXCEPTION_STACK_OVERFLOW:
-		if (!mono_aot_only) {
+		if (!mono_aot_only && restore_stack) {
 			if (mono_arch_handle_exception (ctx, domain->stack_overflow_ex)) {
 				/* need to restore stack protection once stack is unwound
 				 * restore_stack will restore stack protection and then
@@ -648,35 +657,12 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 	} else if (*lmf) {
 		guint64 rip;
 
-		if (((guint64)(*lmf)->previous_lmf) & 2) {
-			MonoLMFExt *ext = (MonoLMFExt*)(*lmf);
-
-			if (ext->debugger_invoke) {
-				/*
-				 * This LMF entry is created by the soft debug code to mark transitions to
-				 * managed code done during invokes.
-				 */
-				frame->type = FRAME_TYPE_DEBUGGER_INVOKE;
-				memcpy (new_ctx, &ext->ctx, sizeof (MonoContext));
-			} else if (ext->interp_exit) {
-				frame->type = FRAME_TYPE_INTERP_TO_MANAGED;
-				frame->interp_exit_data = ext->interp_exit_data;
-			} else {
-				g_assert_not_reached ();
-			}
-
-			*lmf = (MonoLMF *)(((guint64)(*lmf)->previous_lmf) & ~7);
-
-			return TRUE;
-		}
+		g_assert ((((guint64)(*lmf)->previous_lmf) & 2) == 0);
 
 		if (((guint64)(*lmf)->previous_lmf) & 4) {
 			MonoLMFTramp *ext = (MonoLMFTramp*)(*lmf);
 
 			rip = (guint64)MONO_CONTEXT_GET_IP (ext->ctx);
-		} else if (((guint64)(*lmf)->previous_lmf) & 1) {
-			/* This LMF has the rip field set */
-			rip = (*lmf)->rip;
 		} else if ((*lmf)->rsp == 0) {
 			/* Top LMF entry */
 			return FALSE;
@@ -904,19 +890,6 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
 	UCONTEXT_REG_RSI (sigctx) = (guint64)exc;
 	UCONTEXT_REG_RDX (sigctx) = stack_ovf;
 #endif
-}
-
-guint64
-mono_amd64_get_original_ip (void)
-{
-	MonoLMF *lmf = mono_get_lmf ();
-
-	g_assert (lmf);
-
-	/* Reset the change to previous_lmf */
-	lmf->previous_lmf = (gpointer)((guint64)lmf->previous_lmf & ~1);
-
-	return lmf->rip;
 }
 
 #ifndef DISABLE_JIT

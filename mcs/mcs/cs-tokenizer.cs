@@ -812,10 +812,12 @@ namespace Mono.CSharp
 				PushPosition ();
 
 				next_token = token ();
-				bool ok = (next_token == Token.CLASS) ||
-					(next_token == Token.STRUCT) ||
-					(next_token == Token.INTERFACE) ||
-					(next_token == Token.VOID);
+				bool ok =
+					next_token == Token.CLASS ||
+					next_token == Token.STRUCT ||
+					next_token == Token.INTERFACE ||
+					next_token == Token.VOID ||
+					next_token == Token.REF_STRUCT;
 
 				PopPosition ();
 
@@ -903,6 +905,12 @@ namespace Mono.CSharp
 					break;
 				}
 
+				break;
+			case Token.REF:
+				if (peek_token () == Token.STRUCT) {
+					token ();
+					res = Token.REF_STRUCT;
+				}
 				break;
 			}
 

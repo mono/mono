@@ -63,6 +63,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+		[Category("InetAccess")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -134,6 +135,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+		[Category("InetAccess")]
 		[Category ("NotWorking")] // Disabled until a server that meets requirements is found
 		public void Cookies1 ()
 		{

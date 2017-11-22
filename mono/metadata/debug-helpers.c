@@ -8,6 +8,7 @@
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
+#include <config.h>
 #include <string.h>
 #include "mono/metadata/tokentype.h"
 #include "mono/metadata/opcodes.h"
@@ -286,6 +287,49 @@ mono_signature_full_name (MonoMethodSignature *sig)
 	return result;
 }
 
+/*
+ * Returns a string ready to be consumed by managed code when formating a string to include class + method name.
+ * IE, say you have void Foo:Bar(int). It will return "void {0}(int)".
+ * The reason for this is that managed exception constructors for missing members require a both class and member names to be provided independently of the signature.
+ */
+char*
+mono_signature_get_managed_fmt_string (MonoMethodSignature *sig)
+{
+	int i;
+	char *result;
+	GString *res;
+
+	if (!sig)
+		return g_strdup ("<invalid signature>");
+
+	res = g_string_new ("");
+
+	mono_type_get_desc (res, sig->ret, TRUE);
+
+	g_string_append (res, " {0}");
+
+	if (sig->generic_param_count) {
+		g_string_append_c (res, '<');
+		for (i = 0; i < sig->generic_param_count; ++i) {
+			if (i > 0)
+				g_string_append (res, ",");
+			g_string_append_printf (res, "!%d", i);
+		}
+		g_string_append_c (res, '>');
+	}
+
+	g_string_append_c (res, '(');
+	for (i = 0; i < sig->param_count; ++i) {
+		if (i > 0)
+			g_string_append_c (res, ',');
+		mono_type_get_desc (res, sig->params [i], TRUE);
+	}
+	g_string_append_c (res, ')');
+	result = res->str;
+	g_string_free (res, FALSE);
+	return result;
+}
+
 void
 mono_ginst_get_desc (GString *str, MonoGenericInst *ginst)
 {
@@ -490,6 +534,7 @@ static gboolean
 match_class (MonoMethodDesc *desc, int pos, MonoClass *klass)
 {
 	const char *p;
+	gboolean is_terminal = TRUE;
 
 	if (desc->klass_glob && !strcmp (desc->klass, "*"))
 		return TRUE;
@@ -497,9 +542,14 @@ match_class (MonoMethodDesc *desc, int pos, MonoClass *klass)
 	if (desc->klass_glob && g_pattern_match_simple (desc->klass, klass->name))
 		return TRUE;
 #endif
+	if (desc->klass[pos] == '/')
+		is_terminal = FALSE;
+
 	p = my_strrchr (desc->klass, '/', &pos);
 	if (!p) {
-		if (strncmp (desc->klass, klass->name, pos))
+		if (is_terminal && strcmp (desc->klass, klass->name))
+			return FALSE;
+		if (!is_terminal && strncmp (desc->klass, klass->name, pos))
 			return FALSE;
 		if (desc->name_space && strcmp (desc->name_space, klass->name_space))
 			return FALSE;
@@ -512,6 +562,15 @@ match_class (MonoMethodDesc *desc, int pos, MonoClass *klass)
 		return FALSE;
 
 	return match_class (desc, pos, klass->nested_in);
+}
+
+/**
+ * mono_method_desc_is_full:
+ */
+gboolean
+mono_method_desc_is_full (MonoMethodDesc *desc)
+{
+	return desc->klass && desc->klass[0] != '\0';
 }
 
 /**

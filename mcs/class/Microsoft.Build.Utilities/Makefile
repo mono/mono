@@ -30,4 +30,4 @@ CLEAN_FILES += $(TEST_RESX_RESOURCES)
 $(TEST_RESX_RESOURCES): %.resources: %.resx
 	$(RESGEN) $< || cp $@.prebuilt $@
 
-$(test_lib): $(TEST_RESX_RESOURCES)
+$(test_lib_output): $(TEST_RESX_RESOURCES) $(test_lib_dir)

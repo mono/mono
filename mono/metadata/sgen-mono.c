@@ -2958,7 +2958,7 @@ void
 sgen_client_gchandle_created (int handle_type, GCObject *obj, guint32 handle)
 {
 #ifndef DISABLE_PERFCOUNTERS
-	InterlockedIncrement (&mono_perfcounters->gc_num_handles);
+	mono_atomic_inc_i32 (&mono_perfcounters->gc_num_handles);
 #endif
 
 	MONO_PROFILER_RAISE (gc_handle_created, (handle, handle_type, obj));
@@ -2968,7 +2968,7 @@ void
 sgen_client_gchandle_destroyed (int handle_type, guint32 handle)
 {
 #ifndef DISABLE_PERFCOUNTERS
-	InterlockedDecrement (&mono_perfcounters->gc_num_handles);
+	mono_atomic_dec_i32 (&mono_perfcounters->gc_num_handles);
 #endif
 
 	MONO_PROFILER_RAISE (gc_handle_deleted, (handle, handle_type));
@@ -3037,14 +3037,14 @@ sgen_client_degraded_allocation (void)
 	static gint32 last_major_gc_warned = -1;
 	static gint32 num_degraded = 0;
 
-	gint32 major_gc_count = InterlockedRead (&gc_stats.major_gc_count);
-	if (InterlockedRead (&last_major_gc_warned) < major_gc_count) {
-		gint32 num = InterlockedIncrement (&num_degraded);
+	gint32 major_gc_count = mono_atomic_load_i32 (&gc_stats.major_gc_count);
+	if (mono_atomic_load_i32 (&last_major_gc_warned) < major_gc_count) {
+		gint32 num = mono_atomic_inc_i32 (&num_degraded);
 		if (num == 1 || num == 3)
 			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "Warning: Degraded allocation.  Consider increasing nursery-size if the warning persists.");
 		else if (num == 10)
 			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "Warning: Repeated degraded allocation.  Consider increasing nursery-size.");
-		InterlockedWrite (&last_major_gc_warned, major_gc_count);
+		mono_atomic_store_i32 (&last_major_gc_warned, major_gc_count);
 	}
 }
 
@@ -3246,10 +3246,11 @@ mono_gc_is_null (void)
 	return FALSE;
 }
 
-static gboolean pseudo_roots_registered;
 void
 sgen_client_binary_protocol_collection_begin (int minor_gc_count, int generation)
 {
+	static gboolean pseudo_roots_registered;
+
 	MONO_GC_BEGIN (generation);
 
 	MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_START, generation));
@@ -3262,9 +3263,18 @@ sgen_client_binary_protocol_collection_begin (int minor_gc_count, int generation
 
 #ifndef DISABLE_PERFCOUNTERS
 	if (generation == GENERATION_NURSERY)
-		mono_perfcounters->gc_collections0++;
+		mono_atomic_inc_i32 (&mono_perfcounters->gc_collections0);
 	else
-		mono_perfcounters->gc_collections1++;
+		mono_atomic_inc_i32 (&mono_perfcounters->gc_collections1);
 #endif
 }
+
+void
+sgen_client_binary_protocol_collection_end (int minor_gc_count, int generation, long long num_objects_scanned, long long num_unique_objects_scanned)
+{
+	MONO_GC_END (generation);
+
+	MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_END, generation));
+}
+
 #endif

@@ -177,16 +177,13 @@ struct sigcontext {
 
 struct MonoLMF {
 	/* 
-	 * If the lowest bit is set, then this LMF has the rip field set. Otherwise,
-	 * the rip field is not set, and the rsp field points to the stack location where
-	 * the caller ip is saved.
+	 * The rsp field points to the stack location where the caller ip is saved.
 	 * If the second lowest bit is set, then this is a MonoLMFExt structure, and
 	 * the other fields are not valid.
 	 * If the third lowest bit is set, then this is a MonoLMFTramp structure, and
 	 * the 'rbp' field is not valid.
 	 */
 	gpointer    previous_lmf;
-	guint64     rip;
 	guint64     rbp;
 	guint64     rsp;
 };
@@ -445,7 +442,6 @@ typedef struct {
 #define MONO_ARCH_HAVE_PATCH_CODE_NEW 1
 #define MONO_ARCH_HAVE_OP_GENERIC_CLASS_INIT 1
 #define MONO_ARCH_HAVE_GENERAL_RGCTX_LAZY_FETCH_TRAMPOLINE 1
-#define MONO_ARCH_HAVE_INIT_LMF_EXT 1
 
 #if defined(TARGET_OSX) || defined(__linux__)
 #define MONO_ARCH_HAVE_UNWIND_BACKTRACE 1
@@ -492,9 +488,6 @@ mono_amd64_resume_unwind (guint64 dummy1, guint64 dummy2, guint64 dummy3, guint6
 
 gpointer
 mono_amd64_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpointer *callee, gpointer mrgctx_reg);
-
-guint64
-mono_amd64_get_original_ip (void);
 
 GSList*
 mono_amd64_get_exception_trampolines (gboolean aot);

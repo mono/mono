@@ -49,6 +49,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Security.Permissions;
 using System.Security.Principal;
 using System.Security.Cryptography;
+using System.Threading;
 using System.Threading.Tasks;
 
 using MNS = Mono.Net.Security;
@@ -333,6 +334,11 @@ namespace System.Net.Security
 		public override long Seek (long offset, SeekOrigin origin)
 		{
 			throw new NotSupportedException (SR.GetString (SR.net_noseek));
+		}
+
+		public override Task FlushAsync (CancellationToken cancellationToken)
+		{
+			return InnerStream.FlushAsync (cancellationToken);
 		}
 
 		public override void Flush ()

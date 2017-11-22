@@ -6,13 +6,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 
 namespace System.Runtime.Caching {
     internal class MemoryCacheEntry: MemoryCacheKey {
-        const byte EntryStateMask = 0x1f;
 
         private Object _value;
         private DateTime _utcCreated;
+        private int _state;
         // expiration
         private DateTime _utcAbsExp;
         private TimeSpan _slidingExp;
@@ -69,8 +70,8 @@ namespace System.Runtime.Caching {
         }
 
         internal EntryState State {
-            get { return (EntryState)(_bits & EntryStateMask); }
-            set { _bits = (byte)(((uint)_bits & ~(uint)EntryStateMask) | (uint)value); }
+            get { return (EntryState)_state; }
+            set { _state = (int)value; }
         }
 
         internal byte UsageBucket {
@@ -167,6 +168,10 @@ namespace System.Runtime.Caching {
                     monitor.NotifyOnChanged(new OnChangedCallback(this.OnDependencyChanged));
                 }
             }
+        }
+
+        internal bool CompareExchangeState(EntryState value, EntryState comparand) {
+            return (Interlocked.CompareExchange(ref _state, (int)value, (int)comparand) == (int)comparand);
         }
 
         // Associates this entry with an update sentinel. If this entry has a sliding expiration, we need to

@@ -93,6 +93,9 @@
 /* Disable advanced SSA JIT optimizations */
 /* #undef DISABLE_SSA */
 
+/* Disable interpreter */
+/* #undef DISABLE_INTERPRETER */
+
 /* Enable DTrace probes */
 /* #undef ENABLE_DTRACE */
 

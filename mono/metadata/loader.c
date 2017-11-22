@@ -168,7 +168,7 @@ cache_memberref_sig (MonoImage *image, guint32 sig_idx, gpointer sig)
 	else {
 		g_hash_table_insert (image->memberref_signatures, GUINT_TO_POINTER (sig_idx), sig);
 		/* An approximation based on glib 2.18 */
-		InterlockedAdd (&memberref_sig_cache_size, sizeof (gpointer) * 4);
+		mono_atomic_fetch_add_i32 (&memberref_sig_cache_size, sizeof (gpointer) * 4);
 	}
 	mono_image_unlock (image);
 
@@ -523,9 +523,8 @@ find_method (MonoClass *in_class, MonoClass *ic, const char* name, MonoMethodSig
 
 	//we did not find the method
 	if (!result && mono_error_ok (error)) {
-		char *desc = mono_signature_get_desc (sig, FALSE);
-		mono_error_set_method_load (error, initial_class, name, "Could not find method with signature %s", desc);
-		g_free (desc);
+		char *desc = mono_signature_get_managed_fmt_string (sig);
+		mono_error_set_method_load (error, initial_class, g_strdup (name), desc, "");
 	}
 		
  out:
@@ -624,8 +623,7 @@ inflate_generic_header (MonoMethodHeader *header, MonoGenericContext *context, M
 
 	for (int i = 0; i < header->num_locals; ++i) {
 		res->locals [i] = mono_class_inflate_generic_type_checked (header->locals [i], context, error);
-		if (!is_ok (error))
-			goto fail;
+		goto_if_nok (error, fail);
 	}
 	if (res->num_clauses) {
 		for (int i = 0; i < header->num_clauses; ++i) {
@@ -633,8 +631,7 @@ inflate_generic_header (MonoMethodHeader *header, MonoGenericContext *context, M
 			if (clause->flags != MONO_EXCEPTION_CLAUSE_NONE)
 				continue;
 			clause->data.catch_class = mono_class_inflate_generic_class_checked (clause->data.catch_class, context, error);
-			if (!is_ok (error))
-				goto fail;
+			goto_if_nok (error, fail);
 		}
 	}
 	return res;
@@ -737,7 +734,7 @@ mono_method_get_signature_checked (MonoMethod *method, MonoImage *image, guint32
 		if (cached != sig)
 			mono_metadata_free_inflated_signature (sig);
 		else
-			InterlockedAdd (&inflated_signatures_size, mono_metadata_signature_size (cached));
+			mono_atomic_fetch_add_i32 (&inflated_signatures_size, mono_metadata_signature_size (cached));
 		sig = cached;
 	}
 
@@ -844,7 +841,7 @@ method_from_memberref (MonoImage *image, guint32 idx, MonoGenericContext *typesp
 	sig_idx = cols [MONO_MEMBERREF_SIGNATURE];
 
 	if (!mono_verifier_verify_memberref_method_signature (image, sig_idx, NULL)) {
-		mono_error_set_method_load (error, klass, mname, "Verifier rejected method signature");
+		mono_error_set_method_load (error, klass, g_strdup (mname), NULL, "Verifier rejected method signature");
 		goto fail;
 	}
 
@@ -887,17 +884,10 @@ method_from_memberref (MonoImage *image, guint32 idx, MonoGenericContext *typesp
 	}
 
 	if (!method && mono_error_ok (error)) {
-		char *msig = mono_signature_get_desc (sig, FALSE);
-		GString *s = g_string_new (mname);
-		if (sig->generic_param_count)
-			g_string_append_printf (s, "<[%d]>", sig->generic_param_count);
-		g_string_append_printf (s, "(%s)", msig);
-		g_free (msig);
-		msig = g_string_free (s, FALSE);
 
-		mono_error_set_method_load (error, klass, mname, "Could not find method %s", msig);
+		char *desc = mono_signature_get_managed_fmt_string (sig);
 
-		g_free (msig);
+		mono_error_set_method_load (error, klass, g_strdup (mname), desc, "Failed to load due to unknown reasons");
 	}
 
 	return method;
@@ -1684,10 +1674,10 @@ mono_get_method_from_token (MonoImage *image, guint32 token, MonoClass *klass,
 		result = (MonoMethod *)mono_image_alloc0 (image, sizeof (MonoMethodPInvoke));
 	} else {
 		result = (MonoMethod *)mono_image_alloc0 (image, sizeof (MonoMethod));
-		InterlockedAdd (&methods_size, sizeof (MonoMethod));
+		mono_atomic_fetch_add_i32 (&methods_size, sizeof (MonoMethod));
 	}
 
-	InterlockedIncrement (&mono_stats.method_count);
+	mono_atomic_inc_i32 (&mono_stats.method_count);
 
 	result->slot = -1;
 	result->klass = klass;
@@ -1826,63 +1816,71 @@ mono_get_method_checked (MonoImage *image, guint32 token, MonoClass *klass, Mono
 	return result;
 }
 
-static MonoMethod *
+static MonoMethod*
 get_method_constrained (MonoImage *image, MonoMethod *method, MonoClass *constrained_class, MonoGenericContext *context, MonoError *error)
 {
-	MonoMethod *result;
-	MonoClass *ic = NULL;
-	MonoGenericContext *method_context = NULL;
-	MonoMethodSignature *sig, *original_sig;
+	MonoClass *base_class = method->klass;
 
 	error_init (error);
 
-	mono_class_init (constrained_class);
-	original_sig = sig = mono_method_signature_checked (method, error);
-	if (sig == NULL) {
+	if (!mono_class_is_assignable_from (base_class, constrained_class)) {
+		char *base_class_name = mono_type_get_full_name (base_class);
+		char *constrained_class_name = mono_type_get_full_name (constrained_class);
+		mono_error_set_invalid_operation (error, "constrained call: %s is not assignable from %s", base_class_name, constrained_class_name);
+		g_free (base_class_name);
+		g_free (constrained_class_name);
 		return NULL;
 	}
 
-	if (method->is_inflated && sig->generic_param_count) {
-		MonoMethodInflated *imethod = (MonoMethodInflated *) method;
-		sig = mono_method_signature_checked (imethod->declaring, error); /*We assume that if the inflated method signature is valid, the declaring method is too*/
-		if (!sig)
-			return NULL;
-		method_context = mono_method_get_context (method);
+	/* If the constraining class is actually an interface, we don't learn
+	 * anything new by constraining.
+	 */
+	if (MONO_CLASS_IS_INTERFACE (constrained_class))
+		return method;
 
-		original_sig = sig;
-		/*
-		 * We must inflate the signature with the class instantiation to work on
-		 * cases where a class inherit from a generic type and the override replaces
-		 * any type argument which a concrete type. See #325283.
-		 */
-		if (method_context->class_inst) {
-			MonoGenericContext ctx;
-			ctx.method_inst = NULL;
-			ctx.class_inst = method_context->class_inst;
-			/*Fixme, property propagate this error*/
-			sig = inflate_generic_signature_checked (method->klass->image, sig, &ctx, error);
-			if (!sig)
-				return NULL;
+	mono_class_setup_vtable (base_class);
+	if (mono_class_has_failure (base_class)) {
+		mono_error_set_for_class_failure (error, base_class);
+		return NULL;
+	}
+
+	int vtable_slot = 0;
+	if (!MONO_CLASS_IS_INTERFACE (base_class)) {
+		/*if the base class isn't an interface and the method isn't
+		 * virtual, there's nothing to do, we're already on the method
+		 * we want to call. */
+		if ((method->flags & METHOD_ATTRIBUTE_VIRTUAL) == 0)
+			return method;
+		/* if this isn't an interface method, get the vtable slot and
+		 * find the corresponding method in the constrained class,
+		 * which is a subclass of the base class. */
+		vtable_slot = mono_method_get_vtable_index (method);
+
+		mono_class_setup_vtable (constrained_class);
+		if (mono_class_has_failure (constrained_class)) {
+			mono_error_set_for_class_failure (error, constrained_class);
+			return NULL;
 		}
-	}
-
-	if ((constrained_class != method->klass) && (MONO_CLASS_IS_INTERFACE (method->klass)))
-		ic = method->klass;
-
-	result = find_method (constrained_class, ic, method->name, sig, constrained_class, error);
-	if (sig != original_sig)
-		mono_metadata_free_inflated_signature (sig);
-
-	if (!result)
-		return NULL;
-
-	if (method_context) {
-		result = mono_class_inflate_generic_method_checked (result, method_context, error);
-		if (!result)
+	} else {
+		mono_class_setup_vtable (constrained_class);
+		if (mono_class_has_failure (constrained_class)) {
+			mono_error_set_for_class_failure (error, constrained_class);
 			return NULL;
+		}
+			
+		/* Get the slot of the method in the interface.  Then get the
+		 * interface base in constrained_class */
+		int itf_slot = mono_method_get_vtable_index (method);
+		g_assert (itf_slot >= 0);
+		gboolean variant = FALSE;
+		int itf_base = mono_class_interface_offset_with_variance (constrained_class, base_class, &variant);
+		vtable_slot = itf_slot + itf_base;
 	}
+	g_assert (vtable_slot >= 0);
 
-	return result;
+	MonoMethod *res = mono_class_get_vtable_entry (constrained_class, vtable_slot);
+	g_assert (res != NULL);
+	return res;
 }
 
 MonoMethod *
@@ -2423,7 +2421,7 @@ mono_method_signature_checked (MonoMethod *m, MonoError *error)
 		if (!mono_error_ok (error))
 			return NULL;
 
-		InterlockedAdd (&inflated_signatures_size, mono_metadata_signature_size (signature));
+		mono_atomic_fetch_add_i32 (&inflated_signatures_size, mono_metadata_signature_size (signature));
 
 		mono_image_lock (img);
 
@@ -2480,21 +2478,21 @@ mono_method_signature_checked (MonoMethod *m, MonoError *error)
 			mono_image_unlock (img);
 		}
 
-		InterlockedAdd (&signatures_size, mono_metadata_signature_size (signature));
+		mono_atomic_fetch_add_i32 (&signatures_size, mono_metadata_signature_size (signature));
 	}
 
 	/* Verify metadata consistency */
 	if (signature->generic_param_count) {
 		if (!container || !container->is_method) {
-			mono_error_set_method_load (error, m->klass, m->name, "Signature claims method has generic parameters, but generic_params table says it doesn't for method 0x%08x from image %s", idx, img->name);
+			mono_error_set_method_load (error, m->klass, g_strdup (m->name), mono_signature_get_managed_fmt_string (signature), "Signature claims method has generic parameters, but generic_params table says it doesn't for method 0x%08x from image %s", idx, img->name);
 			return NULL;
 		}
 		if (container->type_argc != signature->generic_param_count) {
-			mono_error_set_method_load (error, m->klass, m->name, "Inconsistent generic parameter count.  Signature says %d, generic_params table says %d for method 0x%08x from image %s", signature->generic_param_count, container->type_argc, idx, img->name);
+			mono_error_set_method_load (error, m->klass, g_strdup (m->name), mono_signature_get_managed_fmt_string (signature), "Inconsistent generic parameter count.  Signature says %d, generic_params table says %d for method 0x%08x from image %s", signature->generic_param_count, container->type_argc, idx, img->name);
 			return NULL;
 		}
 	} else if (container && container->is_method && container->type_argc) {
-		mono_error_set_method_load (error, m->klass, m->name, "generic_params table claims method has generic parameters, but signature says it doesn't for method 0x%08x from image %s", idx, img->name);
+		mono_error_set_method_load (error, m->klass, g_strdup (m->name), mono_signature_get_managed_fmt_string (signature), "generic_params table claims method has generic parameters, but signature says it doesn't for method 0x%08x from image %s", idx, img->name);
 		return NULL;
 	}
 	if (m->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) {
@@ -2530,8 +2528,9 @@ mono_method_signature_checked (MonoMethod *m, MonoError *error)
 			break;
 		case PINVOKE_ATTRIBUTE_CALL_CONV_GENERIC:
 		case PINVOKE_ATTRIBUTE_CALL_CONV_GENERICINST:
-		default:
-			mono_error_set_method_load (error, m->klass, m->name, "unsupported calling convention : 0x%04x for method 0x%08x from image %s", piinfo->piflags, idx, img->name);
+		default: {
+			mono_error_set_method_load (error, m->klass, g_strdup (m->name), mono_signature_get_managed_fmt_string (signature), "unsupported calling convention : 0x%04x for method 0x%08x from image %s", piinfo->piflags, idx, img->name);
+		}
 			return NULL;
 		}
 		signature->call_convention = conv;

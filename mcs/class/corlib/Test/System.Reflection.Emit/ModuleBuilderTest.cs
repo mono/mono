@@ -298,6 +298,59 @@ namespace MonoTests.System.Reflection.Emit
 			// (they do not provide an implementation of ToString).
 		}
 
+		[Test]
+		public void GetArrayMethodMultipleCallsTest ()
+		{
+			AssemblyBuilder ab = genAssembly ();
+			ModuleBuilder modb = ab.DefineDynamicModule ("foo.dll", "foo.dll");
+
+			TypeBuilder tb = modb.DefineType ("TestType");
+			var int2D = typeof (int[,]);
+			var mb = tb.DefineMethod ("TestMeth", MethodAttributes.Static | MethodAttributes.Public,
+						  typeof(int), new Type[] { int2D });
+			var ilg = mb.GetILGenerator ();
+
+			// static int TestMeth(int[,] a)
+			// {
+			//   int x;
+			//   x = a.Get(0,0);
+			//   return a.Get(0,1) + x;
+			// }
+			//
+
+			var x = ilg.DeclareLocal (typeof (int));
+
+			ilg.Emit (OpCodes.Ldarg_0);
+			ilg.Emit (OpCodes.Ldc_I4_0);
+			ilg.Emit (OpCodes.Ldc_I4_0);
+			var arrmi = modb.GetArrayMethod (int2D, "Get",
+							 CallingConventions.Standard | CallingConventions.HasThis,
+							 typeof(int),
+							 new Type[] { typeof(int), typeof(int) });
+			ilg.Emit (OpCodes.Call, arrmi);
+			ilg.Emit (OpCodes.Stloc, x);
+			var arrmi2 = modb.GetArrayMethod (int2D, "Get",
+							  CallingConventions.Standard | CallingConventions.HasThis,
+							  typeof(int),
+							  new Type[] { typeof(int), typeof(int) });
+			ilg.Emit (OpCodes.Ldarg_0);
+			ilg.Emit (OpCodes.Ldc_I4_0);
+			ilg.Emit (OpCodes.Ldc_I4_1);
+			ilg.Emit (OpCodes.Call, arrmi2);
+			ilg.Emit (OpCodes.Ldloc, x);
+			ilg.Emit (OpCodes.Add);
+			ilg.Emit (OpCodes.Ret);
+			Assert.AreNotSame (arrmi, arrmi2); // fresh MonoArrayMethods each time
+	    
+			var t = tb.CreateType ();
+			Assert.IsNotNull (t);
+			var a = new int[,] { { 5, 7 }, { 11, 19 } };
+			var mi = t.GetMethod ("TestMeth");
+			Assert.IsNotNull (t);
+			var o = mi.Invoke (null, new object[] { a });
+			Assert.AreEqual (12, (int)o);
+		}
+
 		private static void AssertArrayEqualsSorted (Array o1, Array o2)
 		{
 			Array s1 = (Array) o1.Clone ();

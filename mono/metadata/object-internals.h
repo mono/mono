@@ -629,6 +629,7 @@ typedef struct {
 	void     (*free_method) (MonoDomain *domain, MonoMethod *method);
 	gpointer (*create_remoting_trampoline) (MonoDomain *domain, MonoMethod *method, MonoRemotingTarget target, MonoError *error);
 	gpointer (*create_delegate_trampoline) (MonoDomain *domain, MonoClass *klass);
+	gpointer (*interp_get_remoting_invoke) (gpointer imethod, MonoError *error);
 } MonoRuntimeCallbacks;
 
 typedef gboolean (*MonoInternalStackWalk) (MonoStackFrameInfo *frame, MonoContext *ctx, gpointer data);
@@ -699,6 +700,12 @@ mono_install_eh_callbacks (MonoRuntimeExceptionHandlingCallbacks *cbs);
 
 MonoRuntimeExceptionHandlingCallbacks *
 mono_get_eh_callbacks (void);
+
+void
+mono_raise_exception_deprecated (MonoException *ex);
+
+void
+mono_reraise_exception_deprecated (MonoException *ex);
 
 void
 mono_raise_exception_with_context (MonoException *ex, MonoContext *ctx);
@@ -1798,7 +1805,7 @@ void
 mono_copy_value (MonoType *type, void *dest, void *value, int deref_pointer);
 
 void
-mono_error_raise_exception (MonoError *target_error);
+mono_error_raise_exception_deprecated (MonoError *target_error);
 
 gboolean
 mono_error_set_pending_exception (MonoError *error);
@@ -1882,8 +1889,8 @@ MonoObject*
 mono_runtime_delegate_invoke_checked (MonoObject *delegate, void **params,
 				      MonoError *error);
 
-MonoArray*
-mono_runtime_get_main_args_checked (MonoError *error);
+MonoArrayHandle
+mono_runtime_get_main_args_handle (MonoError *error);
 
 int
 mono_runtime_run_main_checked (MonoMethod *method, int argc, char* argv[],

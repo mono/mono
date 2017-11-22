@@ -343,7 +343,8 @@ public class Tests : TestsBase, ITest2
 		gc_suspend ();
 		set_ip ();
 		step_filters ();
-		local_reflect ();
+		if (args.Length > 0 && args [0] == "local-reflect")
+			local_reflect ();
 		if (args.Length > 0 && args [0] == "domain-test")
 			/* This takes a lot of time, so execute it conditionally */
 			domains ();

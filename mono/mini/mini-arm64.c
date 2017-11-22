@@ -3443,8 +3443,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			arm_cset (code, ARMCOND_EQ, ARMREG_IP0);
 			arm_andx (code, ARMREG_IP0, ARMREG_IP0, ARMREG_IP1);
 			arm_cmpx_imm (code, ARMREG_IP0, 1);
-			/* 64 bit uses ArithmeticException */
-			code = emit_cond_exc (cfg, code, OP_COND_EXC_IEQ, "ArithmeticException");
+			/* 64 bit uses OverflowException */
+			code = emit_cond_exc (cfg, code, OP_COND_EXC_IEQ, "OverflowException");
 			if (ins->opcode == OP_LREM) {
 				arm_sdivx (code, ARMREG_LR, sreg1, sreg2);
 				arm_msubx (code, dreg, ARMREG_LR, sreg2, sreg1);
@@ -5206,15 +5206,6 @@ mono_arch_get_seq_point_info (MonoDomain *domain, guint8 *code)
 	}
 
 	return info;
-}
-
-void
-mono_arch_init_lmf_ext (MonoLMFExt *ext, gpointer prev_lmf)
-{
-	ext->lmf.previous_lmf = prev_lmf;
-	/* Mark that this is a MonoLMFExt */
-	ext->lmf.previous_lmf = (gpointer)(((gssize)ext->lmf.previous_lmf) | 2);
-	ext->lmf.gregs [MONO_ARCH_LMF_REG_SP] = (gssize)ext;
 }
 
 #endif /* MONO_ARCH_SOFT_DEBUG_SUPPORTED */

@@ -106,11 +106,6 @@ namespace Mono.CSharp
 
 		public virtual Expression CreateExpressionTree (ResolveContext rc)
 		{
-			if (Type.Kind == MemberKind.ByRef) {
-				rc.Report.Error (8153, Expr.Location, "An expression tree lambda cannot contain a call to a method, property, or indexer that returns by reference");
-				return null;
-			}
-
 			if (ArgType == AType.Default)
 				rc.Report.Error (854, Expr.Location, "An expression tree cannot contain an invocation which uses optional parameter");
 

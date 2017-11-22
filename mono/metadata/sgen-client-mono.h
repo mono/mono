@@ -288,13 +288,11 @@ sgen_client_binary_protocol_collection_requested (int generation, size_t request
 	MONO_GC_REQUESTED (generation, requested_size, force);
 }
 
-static void G_GNUC_UNUSED
-sgen_client_binary_protocol_collection_end (int minor_gc_count, int generation, long long num_objects_scanned, long long num_unique_objects_scanned)
-{
-	MONO_GC_END (generation);
+void
+sgen_client_binary_protocol_collection_begin (int minor_gc_count, int generation);
 
-	MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_END, generation));
-}
+void
+sgen_client_binary_protocol_collection_end (int minor_gc_count, int generation, long long num_objects_scanned, long long num_unique_objects_scanned);
 
 static void G_GNUC_UNUSED
 sgen_client_binary_protocol_concurrent_start (void)

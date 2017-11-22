@@ -49,6 +49,9 @@ JITTEST_PROG_RUN = MONO_CFG_DIR=$(mono_build_root)/runtime/etc $(LIBTOOL) --mode
 
 
 RUNTIME_ARGS=--config tests-config --optimize=all --debug
+TEST_RUNTIME_ARGS ?= $(RUNTIME_ARGS)
+TEST_AOT_BUILD_FLAGS ?= $(AOT_BUILD_FLAGS)
+TEST_AOT_RUN_FLAGS ?= $(AOT_RUN_FLAGS)
 
 CLASS=$(mcs_topdir)/class/lib/$(DEFAULT_PROFILE)
 
@@ -83,11 +86,11 @@ ILASM = $(TOOLS_RUNTIME) $(mcs_topdir)/class/lib/build/ilasm.exe
 TEST_RUNNER = ./test-runner.exe --runtime $(top_builddir)/runtime/mono-wrapper --mono-path "$(CLASS)"
 
 if FULL_AOT_TESTS
-TEST_RUNNER += --runtime-args "$(AOT_RUN_FLAGS)"
+TEST_RUNNER += --runtime-args "$(TEST_AOT_RUN_FLAGS)"
 endif
 
 if HYBRID_AOT_TESTS
-TEST_RUNNER += --runtime-args "$(AOT_RUN_FLAGS)"
+TEST_RUNNER += --runtime-args "$(TEST_AOT_RUN_FLAGS)"
 endif
 
 if HOST_WIN32
@@ -219,6 +222,7 @@ TESTS_CS_SRC=		\
 	iface3.cs		\
 	iface4.cs		\
 	iface-large.cs		\
+	iface-contravariant1.cs \
 	virtual-method.cs	\
 	intptrcast.cs		\
 	indexer.cs		\
@@ -247,6 +251,7 @@ TESTS_CS_SRC=		\
 	delegate12.cs		\
 	delegate13.cs		\
 	delegate14.cs		\
+	delegate15.cs		\
 	largeexp.cs		\
 	largeexp2.cs		\
 	marshalbyref1.cs	\
@@ -471,6 +476,7 @@ TESTS_CS_SRC=		\
 	appdomain-unload-asmload.cs	\
 	appdomain-unload-exception.cs	\
 	unload-appdomain-on-shutdown.cs	\
+	appdomain-marshalbyref-assemblyload.cs \
 	bug-47295.cs	\
 	loader.cs	\
 	pinvoke2.cs	\
@@ -701,12 +707,21 @@ endif
 
 if ARM
 PLATFORM_DISABLED_TESTS += filter-stack.exe
-INTERP_DISABLED_TESTS_PLATFORM=finalizer-exception.exe main-returns-abort-resetabort.exe block_guard_restore_aligment_on_exit.exe \
-	delegate-exit.exe delegate-exit.exe delegate-delegate-exit.exe delegate-async-exit.exe delegate3.exe delegate1.exe
+INTERP_PLATFORM_DISABLED_TESTS= \
+	assemblyresolve_event6.exe \
+	delegate-async-exit.exe \
+	delegate-delegate-exit.exe \
+	delegate-exit.exe \
+	delegate1.exe \
+	delegate3.exe \
+	finalizer-exception.exe \
+	monitor-abort.exe
 endif
 
 if ARM64
-INTERP_DISABLED_TESTS_PLATFORM=finalizer-exception.exe main-returns-abort-resetabort.exe block_guard_restore_aligment_on_exit.exe
+INTERP_PLATFORM_DISABLED_TESTS= \
+	assemblyresolve_event6.exe \
+	finalizer-exception.exe
 endif
 
 if MIPS
@@ -805,6 +820,7 @@ PROFILE_DISABLED_TESTS += \
 	appdomain-unload-callback.exe	\
 	appdomain-unload-doesnot-raise-pending-events.exe	\
 	unload-appdomain-on-shutdown.exe	\
+	appdomain-marshalbyref-assemblyload.exe \
 	assemblyresolve_event2.2.exe	\
 	assemblyresolve_event6.exe	\
 	bug-544446.exe	\
@@ -924,12 +940,14 @@ LLVM = $(filter --llvm, $(MONO_ENV_OPTIONS))
 # reverted.
 # bug-Xamarin-5278.exe got broken by 5d26590e79da139a284459299aee95c25f4cd835
 # appdomain-thread-abort.exe: https://bugzilla.xamarin.com/show_bug.cgi?id=47054
+# appdomain-marshalbyref-assemblyload.exe: https://bugzilla.xamarin.com/show_bug.cgi?id=49308
 KNOWN_FAILING_TESTS = \
 	delegate-async-exception.exe	\
 	bug-348522.2.exe	\
 	bug-459094.exe \
 	delegate-invoke.exe \
-	bug-Xamarin-5278.exe
+	bug-Xamarin-5278.exe \
+	appdomain-marshalbyref-assemblyload.exe
 
 DISABLED_TESTS = \
 	$(KNOWN_FAILING_TESTS) \
@@ -939,59 +957,35 @@ DISABLED_TESTS = \
 	$(PROFILE_DISABLED_TESTS) \
 	$(if $(AOT),$(AOT_DISABLED_TESTS)) \
 	$(if $(CI),$(CI_DISABLED_TESTS)) \
-	$(if $(CI_PR),$CI_PR_DISABLED_TESTS) \
+	$(if $(CI_PR),$(CI_PR_DISABLED_TESTS)) \
 	$(if $(LLVM),$(LLVM_DISABLED_TESTS))
 
+# bug-48015.exe: be careful when re-enabling, it happens that it returns with
+#                exit code 0, but doesn't actually execute the test.
+# block_guard_restore_aligment_on_exit.exe: flaky (10% of the time it hangs and thus times out)
 INTERP_DISABLED_TESTS = \
-	$(CI_PR_DISABLED_TESTS) \
-	$(CI_DISABLED_TESTS) \
 	$(KNOWN_FAILING_TESTS) \
-	$(INTERP_DISABLED_TESTS_PLATFORM) \
+	$(INTERP_PLATFORM_DISABLED_TESTS) \
+	$(COOP_DISABLED_TESTS) \
+	$(if $(CI),$(CI_DISABLED_TESTS)) \
+	$(if $(CI_PR),$(CI_PR_DISABLED_TESTS)) \
 	abort-cctor.exe \
-	appdomain-async-invoke.exe \
-	appdomain-exit.exe \
-	appdomain-serialize-exception.exe \
-	appdomain-unload-asmload.exe \
-	appdomain-unload-callback.exe \
-	appdomain-unload-doesnot-raise-pending-events.exe \
 	appdomain-unload.exe \
-	appdomain.exe \
-	appdomain1.exe \
-	appdomain2.exe \
 	array_load_exception.exe \
-	assembly_append_ordering.exe \
-	assemblyresolve_event4.exe \
-	assemblyresolve_event6.exe \
 	async-exc-compilation.exe \
 	async-with-cb-throws.exe \
-	async_read.exe \
-	bug-18026.exe \
-	bug-2907.exe \
-	bug-323114.exe \
-	bug-327438.2.exe \
+	block_guard_restore_aligment_on_exit.exe \
 	bug-335131.2.exe \
 	bug-415577.exe \
 	bug-45841-fpstack-exceptions.exe \
-	bug-461867.exe \
-	bug-461941.exe \
-	bug-46661.exe \
-	bug-47295.exe \
 	bug-48015.exe \
-	bug-58782-plain-throw.exe \
 	bug-58782-capture-and-throw.exe \
-	bug-544446.exe \
-	bug-685908.exe \
-	bug-80307.exe \
-	bug-80392.2.exe \
+	bug-58782-plain-throw.exe \
 	bug-81673.exe \
-	bug-82022.exe \
 	bug445361.exe \
-	call_missing_class.exe \
-	call_missing_method.exe \
 	calliGenericTest.exe \
 	cominterop.exe \
 	context-static.exe \
-	cross-domain.exe \
 	delegate-with-null-target.exe \
 	delegate9.exe \
 	dynamic-method-stack-traces.exe \
@@ -999,30 +993,12 @@ INTERP_DISABLED_TESTS = \
 	exception18.exe \
 	field-access.exe \
 	finally_block_ending_in_dead_bb.exe \
-	generic-array-exc.2.exe \
-	generic-marshalbyref.2.exe \
-	generic-mkrefany.2.exe \
-	generic-refanyval.2.exe \
-	generic-stack-traces2.2.exe \
-	generic-type-load-exception.2.exe \
-	generic-unloading.2.exe \
-	generics-invoke-byref.2.exe \
-	generics-sharing.2.exe \
 	handleref.exe \
-	invalid-token.exe \
 	invalid_generic_instantiation.exe \
-	ldfld_missing_class.exe \
-	ldfld_missing_field.exe \
 	ldftn-access.exe \
-	main-returns-background-change.exe \
-	marshal-valuetypes.exe \
 	marshal.exe \
-	marshal2.exe \
 	marshal8.exe \
-	marshal9.exe \
-	marshalbool.exe \
 	method-access.exe \
-	monitor.exe \
 	nullable_boxing.2.exe \
 	pinvoke-2.2.exe \
 	pinvoke-utf8.exe \
@@ -1035,38 +1011,19 @@ INTERP_DISABLED_TESTS = \
 	pinvoke_ppcf.exe \
 	pinvoke_ppci.exe \
 	pinvoke_ppcs.exe \
-	process-unref-race.exe \
-	reload-at-bb-end.exe \
-	remoting1.exe \
-	remoting2.exe \
-	remoting3.exe \
-	remoting4.exe \
-	remoting5.exe \
 	safehandle.2.exe \
 	stackframes-async.2.exe \
 	static-constructor.exe \
-	test-inline-call-stack.exe \
 	test-type-ctor.exe \
 	thread6.exe \
-	threadpool-exceptions1.exe \
 	threadpool-exceptions2.exe \
-	threadpool-exceptions3.exe \
 	threadpool-exceptions4.exe \
 	threadpool-exceptions5.exe \
-	threadpool-exceptions6.exe \
-	threadpool-exceptions7.exe \
-	threadpool.exe \
-	threadpool1.exe \
 	thunks.exe \
-	transparentproxy.exe \
 	typeload-unaligned.exe \
-	unload-appdomain-on-shutdown.exe \
 	vararg.exe \
 	vararg2.exe \
-	vt-sync-method.exe \
-	winx64structs.exe \
-	xdomain-threads.exe \
-	appdomain-thread-abort.exe
+	winx64structs.exe
 
 TESTS_CS=$(filter-out $(DISABLED_TESTS),$(TESTS_CS_SRC:.cs=.exe))
 TESTS_IL=$(filter-out $(DISABLED_TESTS),$(TESTS_IL_SRC:.il=.exe))
@@ -1134,10 +1091,10 @@ TestingReferenceReferenceAssembly.dll: TestingReferenceReferenceAssembly.cs Test
 	$(MCS) -r:TestingReferenceAssembly.dll -target:library -out:$@ $<
 
 %.exe$(PLATFORM_AOT_SUFFIX): %.exe 
-	$(RUNTIME) $(AOT_BUILD_FLAGS) $<
+	$(RUNTIME) $(TEST_AOT_BUILD_FLAGS) $<
 
 %.dll$(PLATFORM_AOT_SUFFIX): %.dll 
-	$(RUNTIME) $(AOT_BUILD_FLAGS) $<
+	$(RUNTIME) $(TEST_AOT_BUILD_FLAGS) $<
 
 # mkbundle works on ppc, but the pkg-config POC doesn't when run with make test
 if POWERPC
@@ -1199,8 +1156,8 @@ runtest: compile-tests
 	for i in $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH); do echo $${i} >> testlist; sort testlist > testlist.sorted; done; \
 	for i in `cat testlist.sorted`; do \
 		rm -f $${i}.so; \
-		$(with_mono_path) $(JITTEST_PROG_RUN) --aot --debug $${i} > $${i}.aotlog 2>&1 || exit 1; \
-		if $(srcdir)/test-driver '$(with_mono_path) $(JITTEST_PROG_RUN)' $$i "$(DISABLED_TESTS)" "$${dump_action}" $(RUNTIME_ARGS); \
+		$(with_mono_path) $(JITTEST_PROG_RUN) --aot $(TEST_AOT_BUILD_FLAGS) --debug $${i} > $${i}.aotlog 2>&1 || exit 1; \
+		if $(srcdir)/test-driver '$(with_mono_path) $(JITTEST_PROG_RUN)' $$i "$(DISABLED_TESTS)" "$${dump_action}" $(TEST_RUNTIME_ARGS) $(TEST_AOT_RUN_FLAGS) ; \
 		then \
 			passed=`expr $${passed} + 1`; \
 		else \
@@ -1224,7 +1181,7 @@ runtest: compile-tests
 	fi
 
 runtest-managed: test-runner.exe compile-tests
-	$(TOOLS_RUNTIME) --debug $(TEST_RUNNER) -j a --testsuite-name "runtime" --timeout 300 --disabled "$(DISABLED_TESTS)" $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH)
+	$(TOOLS_RUNTIME) --debug $(TEST_RUNNER) -j a --testsuite-name "runtime" --timeout 300 --disabled "$(DISABLED_TESTS)" --runtime-args "$(TEST_RUNTIME_FLAGS)" $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH)
 
 runtest-managed-serial: test-runner.exe compile-tests
 	$(TOOLS_RUNTIME) --debug $(TEST_RUNNER) -j 1 --testsuite-name "runtime" --disabled "$(DISABLED_TESTS)" $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH)
@@ -1236,7 +1193,7 @@ testaot:
 	@$(MAKE) AOT=1 runtest
 
 testtrace:
-	@$(MAKE) RUNTIME_ARGS="$${RUNTIME_ARGS} --trace" runtest
+	@$(MAKE) TEST_RUNTIME_ARGS="$${TEST_RUNTIME_ARGS} --trace" runtest
 
 testinterp: test-runner.exe compile-tests
 	$(TOOLS_RUNTIME) --debug $(TEST_RUNNER) -j a --runtime-args "--interpreter" --testsuite-name "runtime-interp" --timeout 300 --disabled "$(INTERP_DISABLED_TESTS)" $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH)
@@ -1256,7 +1213,7 @@ stresstest: compile-tests
 	passed=0; \
 	failed_tests="";\
 	for i in $(TESTS_STRESS); do	\
-		if $(srcdir)/stress-runner.pl $$i ../mini/mono $(RUNTIME_ARGS); \
+		if $(srcdir)/stress-runner.pl $$i ../mini/mono $(TEST_RUNTIME_ARGS); \
 		then \
 			passed=`expr $${passed} + 1`; \
 		else \
@@ -1727,7 +1684,7 @@ reference-loader.exe$(PLATFORM_AOT_SUFFIX): TestingReferenceAssembly.dll$(PLATFO
 reference-loader.exe: TestingReferenceAssembly.dll TestingReferenceReferenceAssembly.dll
 
 assemblyresolve_asm.dll$(PLATFORM_AOT_SUFFIX): assemblyresolve_asm.dll assemblyresolve_deps/Test.dll$(PLATFORM_AOT_SUFFIX)
-	MONO_PATH="assemblyresolve_deps:$(CLASS)" $(top_builddir)/runtime/mono-wrapper $(AOT_BUILD_FLAGS) assemblyresolve_asm.dll
+	MONO_PATH="assemblyresolve_deps:$(CLASS)" $(top_builddir)/runtime/mono-wrapper $(TEST_AOT_BUILD_FLAGS) assemblyresolve_asm.dll
 assemblyresolve_deps/Test.dll$(PLATFORM_AOT_SUFFIX): assemblyresolve_deps/Test.dll assemblyresolve_deps/TestBase.dll$(PLATFORM_AOT_SUFFIX)
 
 EXTRA_DIST += assemblyresolve_TestBase.cs assemblyresolve_Test.cs assemblyresolve_asm.cs 
@@ -1857,6 +1814,23 @@ generic-delegate2.2.exe: $(srcdir)/generic-delegate2.2.cs generic-delegate2-lib.
 
 bug-3903.exe: bug-3903.cs
 	$(MCS_NO_LIB)  $(srcdir)/bug-3903.cs -nostdlib -r:$(srcdir)/../../external/binary-reference-assemblies/v2.0/mscorlib.dll -r:$(srcdir)/../../external/binary-reference-assemblies/v2.0/System.Core.dll -out:$@
+
+EXTRA_DIST += appdomain-marshalbyref-assemblyload-MidAssembly.cs appdomain-marshalbyref-assemblyload-LeafAssembly.cs
+
+LeafAssembly.dll: appdomain-marshalbyref-assemblyload-LeafAssembly.cs
+	mkdir -p appdomain-marshalbyref-assemblyload1
+	$(MCS) -target:library -out:$@ $<
+
+appdomain-marshalbyref-assemblyload2/LeafAssembly.dll: appdomain-marshalbyref-assemblyload-LeafAssembly.cs
+	mkdir -p appdomain-marshalbyref-assemblyload2
+	$(MCS) -target:library -out:$@ $< -define:UNDEFINE_OTHER_METHOD
+
+MidAssembly.dll: appdomain-marshalbyref-assemblyload-MidAssembly.cs LeafAssembly.dll
+	mkdir -p appdomain-marshalbyref-assemblyload1
+	$(MCS) -target:library -out:$@ $< -r:LeafAssembly.dll
+
+appdomain-marshalbyref-assemblyload.exe: appdomain-marshalbyref-assemblyload.cs MidAssembly.dll LeafAssembly.dll appdomain-marshalbyref-assemblyload2/LeafAssembly.dll
+	$(MCS) -out:$@ $< -r:MidAssembly.dll -r:LeafAssembly.dll
 
 gshared:
 	$(MAKE) test-generic-sharing
@@ -2095,4 +2069,4 @@ internalsvisibleto-correctcase-2-sign2048.dll internalsvisibleto-wrongcase-2-sig
 	$(Q) $(MCS_NO_UNSAFE) -out:internalsvisibleto-compilertest-sign2048.exe -warn:0 -r:internalsvisibleto-correctcase-2-sign2048.dll -r:internalsvisibleto-wrongcase-2-sign2048.dll -d:SIGN2048 internalsvisibleto-compilertest.cs
 
 
-CLEANFILES = $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH) $(TESTS_STRESS) $(TESTSAOT_CS) $(TESTSAOT_IL) $(TESTSAOT_BENCH) $(TESTSAOT_STRESS) *.dll *.stdout *.aotlog *.exe stest.dat
+CLEANFILES = $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH) $(TESTS_STRESS) $(TESTSAOT_CS) $(TESTSAOT_IL) $(TESTSAOT_BENCH) $(TESTSAOT_STRESS) *.dll *.stdout *.aotlog *.exe stest.dat LeafAssembly.dll MidAssembly.dll appdomain-marshalbyref-assemblyload2/*.dll 

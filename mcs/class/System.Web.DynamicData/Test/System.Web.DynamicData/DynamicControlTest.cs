@@ -362,7 +362,7 @@ namespace MonoTests.System.Web.DynamicData
 			//   at System.Web.DynamicData.DynamicControl.ResolveColumn()
 			//   at System.Web.DynamicData.DynamicControl.OnInit(EventArgs e)
 
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				var c = lc.FindChild<DynamicControl> ("FirstName");
 			}, "#A1");
 		}
@@ -389,7 +389,7 @@ namespace MonoTests.System.Web.DynamicData
 			//   at System.Web.DynamicData.DynamicControl.ResolveColumn()
 			//   at System.Web.DynamicData.DynamicControl.OnInit(EventArgs e)
 
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				var dc = lc.FindChild<DynamicControl> ("FirstName");
 			}, "#A1");
 		}
@@ -641,7 +641,7 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.AreEqual ("value", dc.GetAttribute ("MyAttribute"), "#B1");
 
 			// Nice...
-			AssertExtensions.Throws<KeyNotFoundException> (() => {
+			Assert.Throws<KeyNotFoundException> (() => {
 				dc.GetAttribute ("NoSuchAttribute");
 			}, "#C1");
 		}

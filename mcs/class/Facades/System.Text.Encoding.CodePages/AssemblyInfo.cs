@@ -24,12 +24,12 @@ using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyTitle ("System.Text.Encoding.CodePages.dll")]
-[assembly: AssemblyDescription ("System.Text.Encoding.CodePages.dll")]
-[assembly: AssemblyDefaultAlias ("System.Text.Encoding.CodePages.dll")]
-[assembly: AssemblyCompany ("Xamarin, Inc.")]
+[assembly: AssemblyTitle ("System.Text.Encoding.CodePages")]
+[assembly: AssemblyDescription ("System.Text.Encoding.CodePages")]
+[assembly: AssemblyDefaultAlias ("System.Text.Encoding.CodePages")]
+[assembly: AssemblyCompany ("Mono development team")]
 [assembly: AssemblyProduct ("Mono Common Language Infrastructure")]
-[assembly: AssemblyCopyright ("Copyright (c) 2016 Xamarin Inc. (http://www.xamarin.com)")]
+[assembly: AssemblyCopyright ("(c) Various Mono authors")]
 [assembly: AssemblyVersion ("4.1.0.0")]
 [assembly: AssemblyInformationalVersion ("4.0.0.0")]
 [assembly: AssemblyFileVersion ("4.0.0.0")]

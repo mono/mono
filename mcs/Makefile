@@ -6,9 +6,9 @@ SUBDIRS := build jay mcs class nunit24 ilasm tools tests errors docs packages
 
 basic_SUBDIRS := build jay class
 build_SUBDIRS := build class class/aot-compiler tools ilasm
-monodroid_SUBDIRS := build class
+monodroid_SUBDIRS := build class tools
 monodroid_tools_SUBDIRS := build class tools
-monotouch_SUBDIRS := build class
+monotouch_SUBDIRS := build class tools
 monotouch_watch_SUBDIRS := build class
 monotouch_tv_SUBDIRS := build class
 monotouch_runtime_SUBDIRS := build class
@@ -25,6 +25,7 @@ xbuild_14_SUBDIRS := build class tools/xbuild
 winaot_SUBDIRS := build class
 orbis_SUBDIRS := build class
 unreal_SUBDIRS := build class
+wasm_SUBDIRS := build class
 
 include build/rules.make
 
@@ -81,6 +82,7 @@ $(_boot_:%=profile-do--testing_aot_full--%):          profile-do--testing_aot_fu
 $(_boot_:%=profile-do--winaot--%):              profile-do--winaot--%:              profile-do--build--%
 $(_boot_:%=profile-do--orbis--%):              profile-do--orbis--%:              profile-do--build--%
 $(_boot_:%=profile-do--unreal--%):              profile-do--unreal--%:              profile-do--build--%
+$(_boot_:%=profile-do--wasm--%):              profile-do--wasm--%:              profile-do--build--%
 $(_boot_:%=profile-do--build--%):             profile-do--build--%:             profile-do--basic--%
 
 testcorlib:

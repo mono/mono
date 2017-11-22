@@ -1058,6 +1058,9 @@
     <EmbeddedResource Include="resources/keyboards.resources.prebuilt">
       <LogicalName>keyboards.resources</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="resources/System.Windows.Forms.resources.prebuilt">
+      <LogicalName>System.Windows.Forms.resources</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/16_computer.png">
       <LogicalName>16_computer.png</LogicalName>
     </EmbeddedResource>

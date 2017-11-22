@@ -34,7 +34,6 @@ using NUnit.Framework;
 
 using MonoTests.SystemWeb.Framework;
 using MonoTests.stand_alone.WebHarness;
-using MonoTests.Common;
 
 namespace MonoTests.System.Web.Util
 {
@@ -83,7 +82,7 @@ namespace MonoTests.System.Web.Util
 			var encoder = new HttpEncoderPoker ();
 			var sw = new StringWriter ();
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				encoder.CallHtmlAttributeEncode ("string", null);
 			}, "#A1");
 
@@ -117,7 +116,7 @@ namespace MonoTests.System.Web.Util
 			var encoder = new HttpEncoderPoker ();
 			StringWriter sw;
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				encoder.CallHtmlDecode ("string", null);
 			}, "#A1");
 
@@ -152,7 +151,7 @@ namespace MonoTests.System.Web.Util
 			var encoder = new HttpEncoderPoker ();
 			StringWriter sw;
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				encoder.CallHtmlEncode ("string", null);
 			}, "#A1");
 
@@ -177,23 +176,23 @@ namespace MonoTests.System.Web.Util
 			var encoder = new HttpEncoderPoker ();
 			byte [] bytes = new byte [10];
 
-			AssertExtensions.Throws<ArgumentOutOfRangeException> (() => {
+			Assert.Throws<ArgumentOutOfRangeException> (() => {
 				encoder.CallUrlEncode (bytes, -1, 1);
 			}, "#A1-1");
 
-			AssertExtensions.Throws<ArgumentOutOfRangeException> (() => {
+			Assert.Throws<ArgumentOutOfRangeException> (() => {
 				encoder.CallUrlEncode (bytes, 11, 1);
 			}, "#A1-2");
 
-			AssertExtensions.Throws<ArgumentOutOfRangeException> (() => {
+			Assert.Throws<ArgumentOutOfRangeException> (() => {
 				encoder.CallUrlEncode (bytes, 0, -1);
 			}, "#A1-3");
 
-			AssertExtensions.Throws<ArgumentOutOfRangeException> (() => {
+			Assert.Throws<ArgumentOutOfRangeException> (() => {
 				encoder.CallUrlEncode (bytes, 01, 11);
 			}, "#A1-4");
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				encoder.CallUrlEncode (null, 0, 1);
 			}, "#A1-5");
 

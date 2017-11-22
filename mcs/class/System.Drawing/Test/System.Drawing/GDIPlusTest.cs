@@ -1593,7 +1593,7 @@ namespace MonoTests.System.Drawing {
 			float width, height;
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetImageDimension (image, out width, out height), "GdipGetImageDimension");
 			Assert.AreEqual (12976.6328f, width, 0.001f, "GdipGetImageDimension/Width");
-			Assert.AreEqual (17297.9863f, height, 0.001f, "GdipGetImageDimension/Height");
+			Assert.AreEqual (17297.9863f, height, 0.02f, "GdipGetImageDimension/Height");
 
 			ImageType type;
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetImageType (image, out type), "GdipGetImageType");

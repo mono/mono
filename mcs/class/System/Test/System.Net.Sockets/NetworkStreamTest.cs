@@ -16,6 +16,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Net.Sockets
 {
 	[TestFixture]
+	[Category ("InetAccess")]
 	public class NetworkStreamTest
 	{
 	        [Test]

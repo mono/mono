@@ -851,6 +851,7 @@ namespace MonoTests.System
 		delegate object Boxer ();
 
 		[Test]
+		[Category ("InterpreterNotWorking")]
 		public void BoxingCovariance ()
 		{
 			var boxer = (Boxer) Delegate.CreateDelegate (
@@ -912,6 +913,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("InterpreterNotWorking")]
 		public void NullFirstArgumentOnStaticMethod ()
 		{
 			CallTarget call = (CallTarget) Delegate.CreateDelegate (
@@ -925,6 +927,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("InterpreterNotWorking")]
 #if MONOTOUCH || FULL_AOT_RUNTIME
 		[Category ("NotWorking")] // #10539
 #endif
@@ -1024,6 +1027,7 @@ namespace MonoTests.System
 #if MONOTOUCH || FULL_AOT_RUNTIME
 		[Category ("NotWorking")] // #10539
 #endif
+		[Category ("InterpreterNotWorking")]
 		public void ClosedOverNullReferenceStaticMethod ()
 		{
 			var del = (Func<long?,long?>) Delegate.CreateDelegate (
@@ -1101,6 +1105,7 @@ namespace MonoTests.System
 		event Action bar_handler;
 
 		[Test]
+		[Category ("InterpreterNotWorking")]
 		[ExpectedException (typeof (ArgumentException))] // #635349, #605936
 		public void NewDelegateClosedOverNullReferenceInstanceMethod ()
 		{
@@ -1144,6 +1149,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("InterpreterNotWorking")]
 		public void DynamicInvokeOpenInstanceDelegate ()
 		{
 			var d1 = Delegate.CreateDelegate (typeof (Func<DelegateTest, int>), typeof(DelegateTest).GetMethod ("DynamicInvokeOpenInstanceDelegate_CB"));
@@ -1281,6 +1287,7 @@ namespace MonoTests.System
 		}
 #if !MONOTOUCH && !FULL_AOT_RUNTIME
 		[Test]
+		[Category ("InterpreterNotWorking")]
 		public void CreateDelegateWithLdFtnAndAbstractMethod ()
 		{
 			AssemblyName assemblyName = new AssemblyName ();

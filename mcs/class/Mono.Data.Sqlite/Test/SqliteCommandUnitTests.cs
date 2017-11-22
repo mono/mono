@@ -16,9 +16,9 @@ namespace MonoTests.Mono.Data.Sqlite
 	[TestFixture]
 	public class SqliteCommandUnitTests
 	{
-		readonly static string _uri = Path.Combine (Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SqliteTest.db");
-		readonly static string _connectionString = "URI=file://" + _uri + ", version=3";
-		static SqliteConnection _conn = new SqliteConnection (_connectionString);
+		string _uri;
+		string _connectionString;
+		SqliteConnection _conn;
 		readonly static string stringvalue = "my keyboard is better than yours : äöüß";
 
 		public SqliteCommandUnitTests()
@@ -28,6 +28,10 @@ namespace MonoTests.Mono.Data.Sqlite
 		[SetUp]
 		public void Create()
 		{
+			_uri = Path.GetTempFileName ();
+		  	_connectionString = "URI=file://" + _uri + ", version=3";
+			_conn = new SqliteConnection (_connectionString);
+
 			try
 			{
 				if(File.Exists(_uri))
@@ -65,6 +69,13 @@ namespace MonoTests.Mono.Data.Sqlite
 			}
 		}
 		
+		[TearDown]
+ 		public void TearDown ()
+ 		{
+ 			if (File.Exists (_uri))
+ 				File.Delete (_uri);
+ 		}
+
 		[Test]	
 		public void Select()
 		{

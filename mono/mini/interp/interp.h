@@ -54,6 +54,9 @@ void
 mono_interp_init_delegate (MonoDelegate *del);
 
 gpointer
+mono_interp_get_remoting_invoke (gpointer imethod, MonoError *error);
+
+gpointer
 mono_interp_create_trampoline (MonoDomain *domain, MonoMethod *method, MonoError *error);
 
 void
@@ -63,10 +66,13 @@ void
 interp_walk_stack_with_ctx (MonoInternalStackWalk func, MonoContext *ctx, MonoUnwindOptions options, void *user_data);
 
 void
-mono_interp_set_resume_state (MonoJitTlsData *jit_tls, MonoException *ex, MonoInterpFrameHandle interp_frame, gpointer handler_ip);
+mono_interp_set_resume_state (MonoJitTlsData *jit_tls, MonoException *ex, MonoJitExceptionInfo *ei, MonoInterpFrameHandle interp_frame, gpointer handler_ip);
 
-void
+gboolean
 mono_interp_run_finally (StackFrameInfo *frame, int clause_index, gpointer handler_ip);
+
+gboolean
+mono_interp_run_filter (StackFrameInfo *frame, MonoException *ex, int clause_index, gpointer handler_ip);
 
 void
 mono_interp_frame_iter_init (MonoInterpStackIter *iter, gpointer interp_exit_data);
@@ -97,6 +103,9 @@ mono_interp_frame_get_local (MonoInterpFrameHandle frame, int pos);
 
 gpointer
 mono_interp_frame_get_this (MonoInterpFrameHandle frame);
+
+MonoInterpFrameHandle
+mono_interp_frame_get_parent (MonoInterpFrameHandle frame);
 
 void
 mono_interp_start_single_stepping (void);

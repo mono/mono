@@ -187,6 +187,7 @@ typedef enum {
 	MONO_AOT_FILE_FLAG_LLVM_ONLY = 16,
 	MONO_AOT_FILE_FLAG_SAFEPOINTS = 32,
 	MONO_AOT_FILE_FLAG_SEPARATE_DATA = 64,
+	MONO_AOT_FILE_FLAG_EAGER_LOAD = 128,
 } MonoAotFileFlags;
 
 typedef enum {
@@ -1924,6 +1925,9 @@ typedef struct {
 	int stat_code_reallocs;
 
 	MonoProfilerCallInstrumentationFlags prof_flags;
+
+	/* For deduplication */
+	gboolean skip;
 } MonoCompile;
 
 #define MONO_CFG_PROFILE(cfg, flag) \
@@ -2553,6 +2557,7 @@ gpointer mono_aot_get_imt_trampoline        (MonoVTable *vtable, MonoDomain *dom
 gpointer mono_aot_get_gsharedvt_arg_trampoline(gpointer arg, gpointer addr);
 guint8*  mono_aot_get_unwind_info           (MonoJitInfo *ji, guint32 *unwind_info_len);
 guint32  mono_aot_method_hash               (MonoMethod *method);
+gboolean mono_aot_can_dedup                 (MonoMethod *method);
 MonoMethod* mono_aot_get_array_helper_from_wrapper (MonoMethod *method);
 void     mono_aot_set_make_unreadable       (gboolean unreadable);
 gboolean mono_aot_is_pagefault              (void *ptr);
@@ -2830,10 +2835,6 @@ void     mono_arch_skip_single_step             (MonoContext *ctx);
 gpointer mono_arch_get_seq_point_info           (MonoDomain *domain, guint8 *code);
 #endif
 
-#ifdef MONO_ARCH_HAVE_INIT_LMF_EXT
-void     mono_arch_init_lmf_ext                 (MonoLMFExt *ext, gpointer prev_lmf);
-#endif
-
 gboolean
 mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls, 
 						MonoJitInfo *ji, MonoContext *ctx, 
@@ -2892,7 +2893,7 @@ void
 mono_arch_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), gpointer user_data);
 
 gboolean
-mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoThreadInfo *info);
+mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoThreadInfo *info, /*optional*/ void *sigctx);
 
 
 /* Exception handling */
@@ -3266,12 +3267,6 @@ gboolean MONO_SIG_HANDLER_SIGNATURE (mono_chain_signal);
 #else
 #define ARCH_VARARG_ICALLS 0
 #endif
-
-/*
- * Coop support for trampolines
- */
-void mono_interruption_checkpoint_from_trampoline (void);
-
 
 #if defined (HOST_WASM)
 

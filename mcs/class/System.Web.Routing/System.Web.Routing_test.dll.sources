@@ -1,4 +1,3 @@
-System.Web.Routing/AssertExtensions.cs
 System.Web.Routing/FakeHttpWorkerRequest.cs
 System.Web.Routing/HttpMethodConstraintTest.cs
 System.Web.Routing/KnownResponseHeader.cs

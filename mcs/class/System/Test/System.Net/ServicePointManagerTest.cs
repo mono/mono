@@ -48,6 +48,7 @@ public class ServicePointManagerTest
 
         [Test, ExpectedException (typeof (InvalidOperationException))]
 		[Category ("NotWorking")]
+		[Category ("InetAccess")]
         public void MaxServicePointManagers ()
         {
 		Assert.AreEqual (0, ServicePointManager.MaxServicePoints, "#1");
@@ -85,7 +86,8 @@ public class ServicePointManagerTest
 		//WriteServicePoint (sp);
 	}
 	
-        [Test]
+	[Test]
+	[Category ("InetAccess")]
 #if FEATURE_NO_BSD_SOCKETS
 	[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
