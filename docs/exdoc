@@ -157,7 +157,6 @@ sub process_function {
             if (defined($deprecated)) {
                 process_formatting(\$deprecated, $file_path, $.);
             }
-            $body =~ s/\n/ /g;
 
             if (exists($docs->{body}->{$name})) {
                 my $origin = $docs->{origin}->{$name};
