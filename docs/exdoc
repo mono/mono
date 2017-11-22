@@ -124,6 +124,7 @@ sub process_function {
     my $body = '';
     my $returns = '';
     my $prototype = '';
+    my $codeblock = 'false';
 
     while (<$file>) {
 
@@ -180,8 +181,16 @@ sub process_function {
         chomp;
         s/^ +\*//;
 
-        # Replace blank lines with paragraph breaks.
-        $_ = '<p>' if /^\s*$/;
+        if (/\s*\\code$/) {
+            $codeblock = 'true';
+        } elsif (/\s*\\endcode$/) {
+            $codeblock = 'false';
+        }
+
+        # Replace blank lines with paragraph breaks if we're not in a code block.
+        if (/^\s*$/) {
+            $_ = '<p>' if $codeblock eq 'false';
+        }
 
         if ($section == $PARAMETER_SECTION) {
             if (/\s*\\param +(\w+)(.*)/) {
@@ -249,6 +258,8 @@ sub process_formatting {
     warn "$file_path:$current_line: Old-style monodoc notation '`code`' used\n"
         if s{\`((?!api:)[:.\w\*]+)\`}{<code>$1</code>}g && $WARNINGS;
     s{\\c +(\S+(?<![.,:;]))}{<code>$1</code>}g;
+    s{\\code}{<pre><code class="mapi-codeblock">}g;
+    s{\\endcode}{</code></pre>}g;
 
     $$content = $_;
 }
