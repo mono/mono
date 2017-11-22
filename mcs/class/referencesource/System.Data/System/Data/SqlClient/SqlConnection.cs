@@ -1097,6 +1097,10 @@ namespace System.Data.SqlClient
                 }
                 finally {
                     SqlStatistics.StopTimer(statistics);
+                    //dispose windows identity once connection is closed.
+                    if (_lastIdentity != null) {
+                        _lastIdentity.Dispose();
+                    }
                 }
             }
             finally {
@@ -1495,14 +1499,16 @@ namespace System.Data.SqlClient
             }
 
            if (_impersonateIdentity != null) {
-                if (_impersonateIdentity.User == DbConnectionPoolIdentity.GetCurrentWindowsIdentity().User) {
-                    return TryOpenInner(retry);
-                }
-                else {
-                    using (WindowsImpersonationContext context = _impersonateIdentity.Impersonate()) {
-                        return TryOpenInner(retry);
-                    }                    
-                }
+               using (WindowsIdentity identity = DbConnectionPoolIdentity.GetCurrentWindowsIdentity()) {
+                   if (_impersonateIdentity.User == identity.User) {
+                       return TryOpenInner(retry);
+                   }
+                   else {
+                       using (WindowsImpersonationContext context = _impersonateIdentity.Impersonate()) {
+                           return TryOpenInner(retry);
+                       }
+                   }
+               }
             }
             else {
                 if (this.UsesIntegratedSecurity(connectionOptions) || this.UsesActiveDirectoryIntegrated(connectionOptions)) {

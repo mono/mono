@@ -358,6 +358,25 @@ namespace System.Globalization {
             this.m_isInherited = (this.GetType() != typeof(System.Globalization.CultureInfo));
         }
 
+        private CultureInfo(CultureData cultureData)
+        {
+            Contract.Assert(cultureData != null);
+            m_cultureData = cultureData;
+            m_name = cultureData.CultureName;
+            m_isInherited = false;
+        }
+
+        private static CultureInfo CreateCultureInfoNoThrow(string name, bool useUserOverride)
+        {
+            Contract.Assert(name != null);
+            CultureData cultureData = CultureData.GetCultureData(name, useUserOverride);
+            if (cultureData == null)
+            {
+                return null;
+            }
+
+            return new CultureInfo(cultureData);
+        }
 
 #if  FEATURE_USE_LCID         
         public CultureInfo(int culture) : this(culture, true) {
@@ -958,29 +977,29 @@ namespace System.Globalization {
             get
             {
                 Contract.Ensures(Contract.Result<CultureInfo>() != null);
+                CultureInfo culture = null;
 
                 if (null == m_parent)
                 {
-                    try
-                    {
-                        string parentName = this.m_cultureData.SPARENT;
+                    string parentName = this.m_cultureData.SPARENT;
 
-                        if (String.IsNullOrEmpty(parentName))
-                        {
-                            m_parent = InvariantCulture;
-                        }
-                        else
-                        {
-                            m_parent = new CultureInfo(parentName, this.m_cultureData.UseUserOverride);
-                        }
-                    }
-                    catch (ArgumentException)
+                    if (String.IsNullOrEmpty(parentName))
                     {
-                        // For whatever reason our IPARENT or SPARENT wasn't correct, so use invariant
-                        // We can't allow ourselves to fail.  In case of custom cultures the parent of the
-                        // current custom culture isn't installed.
-                        m_parent =  InvariantCulture;
+                        culture = InvariantCulture;
                     }
+                    else
+                    {
+                        culture = CreateCultureInfoNoThrow(parentName, m_cultureData.UseUserOverride);
+                        if (culture == null)
+                        {
+                            // For whatever reason our IPARENT or SPARENT wasn't correct, so use invariant
+                            // We can't allow ourselves to fail.  In case of custom cultures the parent of the
+                            // current custom culture isn't installed.
+                            culture =  InvariantCulture;
+                        }
+                    }
+
+                    Interlocked.CompareExchange<CultureInfo>(ref m_parent, culture, null);
                 }
                 return m_parent;
             }

@@ -115,16 +115,6 @@ mono_arch_get_argument_info (MonoMethodSignature *csig, int param_count, MonoJit
 }
 
 void
-mono_arch_init_lmf_ext (MonoLMFExt *ext, gpointer prev_lmf)
-{
-	ext->lmf.previous_lmf = (gsize)prev_lmf;
-	/* Mark that this is a MonoLMFExt */
-	ext->lmf.previous_lmf = (gsize)(gpointer)(((gssize)ext->lmf.previous_lmf) | 2);
-}
-
-
-
-void
 mono_runtime_setup_stat_profiler (void)
 {
 	g_error ("mono_runtime_setup_stat_profiler");
@@ -157,7 +147,7 @@ mono_runtime_cleanup_handlers (void)
 }
 
 gboolean
-mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoThreadInfo *info)
+mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoThreadInfo *info, void *sigctx)
 {
 	g_error ("WASM systems don't support mono_thread_state_init_from_handle");
 	return FALSE;
@@ -185,6 +175,13 @@ int pthread_getschedparam (pthread_t thread, int *policy, struct sched_param *pa
 	g_error ("pthread_getschedparam");
 	return 0;
 }
+
+int
+pthread_setschedparam(pthread_t thread, int policy, const struct sched_param *param)
+{
+	return 0;
+}
+
 
 int
 pthread_attr_getstacksize (const pthread_attr_t *restrict attr, size_t *restrict stacksize)

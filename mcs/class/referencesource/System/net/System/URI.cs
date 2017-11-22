@@ -1070,11 +1070,50 @@ namespace System {
             EnsureParseRemaining();
 
 #if MONO
+            // https://bugzilla.xamarin.com/show_bug.cgi?id=58400
+            bool isFileUrlWithHost =
+                (m_Info.Offset.Host != m_Info.Offset.Path) && 
+                // only file URLs
+                IsFile && 
+                // Paths that got reinterpreted as files would be treated
+                //  as if they have a host, like "/a/b" which maps to "file:///a/b/",
+                //  or "C:\a\b\" which maps to "file:///c:/a/b"
+                OriginalString.StartsWith("file://", StringComparison.Ordinal) &&
+                // file://localhost/x/y needs to produce /x/y
+                !IsLoopback;
+
+            // Manually check for "hosts" that are just forward slashes.
+            if (isFileUrlWithHost) {
+                isFileUrlWithHost = false;
+
+                for (int i = m_Info.Offset.Host; i < m_Info.Offset.Path; i++) {
+                    if (OriginalString[i] != '/') {
+                        isFileUrlWithHost = true;
+                        break;
+                    }
+                }
+            }
+
+            // We need to force generation of a UNC-style path instead of a unix one,
+            // despite the path not being UNC originally
+            bool treatAsUncPath = IsUncPath || isFileUrlWithHost;
+
             //
             // I think this is wrong but it keeps LocalPath fully backward compatible
             //
-            if (IsUncOrDosPath && (IsWindowsFileSystem || !IsUncPath))
+            if (
+                (IsUncOrDosPath && 
+                    (
+                        IsWindowsFileSystem || 
+                        !IsUncPath
+                    )
+                ) ||
+                // If a path has a host name force it into this branch so the UNC code runs
+                isFileUrlWithHost
+            )
 #else
+            bool treatAsUncPath = IsUncPath;
+
             //Other cases will get a Unix-style path
             if (IsUncOrDosPath)
 #endif
@@ -1083,7 +1122,13 @@ namespace System {
                 int start;
 
                 // Do we have a valid local path right in m_string?
-                if (NotAny(Flags.HostNotCanonical|Flags.PathNotCanonical|Flags.ShouldBeCompressed)) {
+                if (
+                    NotAny(Flags.HostNotCanonical|Flags.PathNotCanonical|Flags.ShouldBeCompressed)
+#if MONO
+                    // This branch drops the host name so we can't use it
+                    && !isFileUrlWithHost
+#endif
+                ) {
 
                     start = IsUncPath? m_Info.Offset.Host-2 :m_Info.Offset.Path;
 
@@ -1121,7 +1166,7 @@ namespace System {
                 string host = m_Info.Host;
                 result = new char [host.Length + 3 + m_Info.Offset.Fragment - m_Info.Offset.Path ];
 
-                if (IsUncPath)
+                if (treatAsUncPath)
                 {
                     result[0] = '\\';
                     result[1] = '\\';
@@ -3969,13 +4014,6 @@ namespace System {
                 if (hasUnicode && iriParsing && hostNotUnicodeNormalized){
                     flags |= Flags.HostUnicodeNormalized;// no host
 
-#if MONO
-                    // I am not certain this is the best fix but for Unix implicit paths with
-                    // unicode characters the host must be valid (null or non-empty) as
-                    // CreateUriInfo assumes. This should happen only for paths like /foo/path-with-unicode
-                    if (newHost.Length == 0 && (flags & Flags.BasicHostType) != 0)
-                        newHost = null;
-#endif
                 }
 
                  return idx;

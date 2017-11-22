@@ -128,7 +128,7 @@ namespace MonoTests.System.Web.DynamicData
 		{
 			FieldFormattingOptions fld = null;
 
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				fld.ConvertEditedValue (null);
 			}, "#A1");
 

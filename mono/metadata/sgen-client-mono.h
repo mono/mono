@@ -289,6 +289,21 @@ sgen_client_binary_protocol_collection_requested (int generation, size_t request
 }
 
 static void G_GNUC_UNUSED
+sgen_client_binary_protocol_collection_begin (int minor_gc_count, int generation)
+{
+	MONO_GC_BEGIN (generation);
+
+	MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_START, generation));
+
+#ifndef DISABLE_PERFCOUNTERS
+	if (generation == GENERATION_NURSERY)
+		mono_atomic_inc_i32 (&mono_perfcounters->gc_collections0);
+	else
+		mono_atomic_inc_i32 (&mono_perfcounters->gc_collections1);
+#endif
+}
+
+static void G_GNUC_UNUSED
 sgen_client_binary_protocol_collection_end (int minor_gc_count, int generation, long long num_objects_scanned, long long num_unique_objects_scanned)
 {
 	MONO_GC_END (generation);

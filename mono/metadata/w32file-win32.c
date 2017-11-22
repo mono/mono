@@ -388,7 +388,7 @@ mono_w32file_get_volume_information (const gunichar2 *path, gunichar2 *volumenam
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 
 gboolean
-mono_w32file_move (gunichar2 *path, gunichar2 *dest, gint32 *error)
+mono_w32file_move (const gunichar2 *path, const gunichar2 *dest, gint32 *error)
 {
 	gboolean result;
 
@@ -404,7 +404,7 @@ mono_w32file_move (gunichar2 *path, gunichar2 *dest, gint32 *error)
 }
 
 gboolean
-mono_w32file_replace (gunichar2 *destinationFileName, gunichar2 *sourceFileName, gunichar2 *destinationBackupFileName, guint32 flags, gint32 *error)
+mono_w32file_replace (const gunichar2 *destinationFileName, const gunichar2 *sourceFileName, const gunichar2 *destinationBackupFileName, guint32 flags, gint32 *error)
 {
 	gboolean result;
 
@@ -420,7 +420,7 @@ mono_w32file_replace (gunichar2 *destinationFileName, gunichar2 *sourceFileName,
 }
 
 gboolean
-mono_w32file_copy (gunichar2 *path, gunichar2 *dest, gboolean overwrite, gint32 *error)
+mono_w32file_copy (const gunichar2 *path, const gunichar2 *dest, gboolean overwrite, gint32 *error)
 {
 	gboolean result;
 

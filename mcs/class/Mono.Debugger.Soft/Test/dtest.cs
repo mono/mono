@@ -560,6 +560,10 @@ public class DebuggerTests
 
 	[Test]
 	public void ClassLocalReflection () {
+		vm.Detach ();
+
+		Start (new string [] { "dtest-app.exe", "local-reflect" });
+
 		MethodMirror m = entry_point.DeclaringType.Assembly.GetType ("LocalReflectClass").GetMethod ("RunMe");
 
 		Assert.IsNotNull (m);

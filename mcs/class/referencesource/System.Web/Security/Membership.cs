@@ -399,6 +399,13 @@ namespace System.Web.Security {
                     MembershipSection settings = appConfig.Membership;
                     generalSettingsInitialized = InitializeSettings(initializeGeneralSettings, appConfig, settings);
                     defaultProviderInitialized = InitializeDefaultProvider(initializeDefaultProvider, settings);
+
+                    // VSO #265267 log warning in event log when using clear password and encrypted password in Membership provider
+                    // VSO #433626 In order to minimize the behavior change, we are going to read the password format from the config settings only instead of getting from the provider class
+                    // Also allow user to opt-out this feature.
+                    if (AppSettings.LogMembershipPasswordFormatWarning) {
+                        CheckedPasswordFormat(settings);
+                    }
                 } catch (Exception e) {
                     s_InitializeException = e;
                     throw;
@@ -412,23 +419,23 @@ namespace System.Web.Security {
                 if (defaultProviderInitialized) {
                     s_InitializedDefaultProvider = true;
                 }
-                // VSO #265267 log warning in event log when using clear password and encrypted password in Membership provider
-                // VSO #366114 Move this to only after the initialization has fully completed.
-                if (s_Initialized && s_InitializedDefaultProvider) {
-                     CheckedPasswordFormat(s_Providers);
-                 }
             }
         }
 
         // VSO #265267 we want to log a warning in the event log, whenever detect using clear password or encrypted password formats settings in Membership provider
-        private static void CheckedPasswordFormat(MembershipProviderCollection providers) {
+        // VSO #433626 In order to minimize the behavior change, we are going to read the password format from the config settings only instead of getting from the provider class
+        private static void CheckedPasswordFormat(MembershipSection settings) {
             //VSO #294931 Since this is an optional feature, we want to prevent any corner cases that were not able to return the password format. In those cases, we will just do nothing and not log any warnings.
             try {
-
-                foreach (MembershipProvider p in providers) {
-                    if (p != null && (p.PasswordFormat == MembershipPasswordFormat.Clear || p.PasswordFormat == MembershipPasswordFormat.Encrypted)) {
-                        string providerName = p.Name ?? string.Empty;
-                        WebBaseEvent.RaiseRuntimeError(new ConfigurationErrorsException(SR.GetString(SR.MembershipPasswordFormat_Obsoleted, providerName, p.PasswordFormat)), typeof(MembershipProvider));
+                if (settings != null && settings.Providers != null) {
+                    foreach (ProviderSettings ps in settings.Providers) {
+                        if (ps != null && ps.Parameters != null) {
+                            string passwordFormat = ps.Parameters["passwordFormat"];
+                            if (StringUtil.EqualsIgnoreCase(passwordFormat, "Clear") || StringUtil.EqualsIgnoreCase(passwordFormat, "Encrypted")) {
+                                string providerName = ps.Name ?? string.Empty;
+                                WebBaseEvent.RaiseRuntimeError(new ConfigurationErrorsException(SR.GetString(SR.MembershipPasswordFormat_Obsoleted, providerName, passwordFormat)), typeof(MembershipProvider));
+                            }
+                        }
                     }
                 }
             }

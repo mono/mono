@@ -433,7 +433,7 @@ namespace Microsoft.Win32 {
             internal byte Reserved = 0; 
         }
 
-        [StructLayout(LayoutKind.Sequential)]
+            [StructLayout(LayoutKind.Sequential)]
             internal struct SYSTEM_INFO {  
             internal int dwOemId;    // This is a union of a DWORD and a struct containing 2 WORDs.
             internal int dwPageSize;  
@@ -2741,7 +2741,6 @@ namespace Microsoft.Win32 {
         [ResourceExposure(ResourceScope.None)]
         internal static extern int CreateAssemblyEnum(out IAssemblyEnum ppEnum, IApplicationContext pAppCtx, IAssemblyName pName, uint dwFlags, IntPtr pvReserved);
 #endif // FEATURE_FUSION
-
 #if FEATURE_CORECLR
         [DllImport(KERNEL32, CharSet=CharSet.Unicode)]
         [SuppressUnmanagedCodeSecurityAttribute()]
@@ -2769,5 +2768,35 @@ namespace Microsoft.Win32 {
         [DllImport(KERNEL32, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal extern static bool QueryUnbiasedInterruptTime(out ulong UnbiasedTime);
+
+// This is needed by the RuntimeInformation feature
+        [DllImport(NTDLL)]
+        internal static extern int RtlGetVersion(out RTL_OSVERSIONINFOEX lpVersionInformation);
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct RTL_OSVERSIONINFOEX
+        {
+            internal uint dwOSVersionInfoSize;
+            internal uint dwMajorVersion;
+            internal uint dwMinorVersion;
+            internal uint dwBuildNumber;
+            internal uint dwPlatformId;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+            internal string szCSDVersion;
+        }
+
+        [DllImport(KERNEL32)]
+        internal extern static void GetNativeSystemInfo(out SYSTEM_INFO lpSystemInfo);
+
+        internal enum ProcessorArchitecture : ushort
+        {
+            Processor_Architecture_INTEL = 0,
+            Processor_Architecture_ARM = 5,
+            Processor_Architecture_IA64 = 6,
+            Processor_Architecture_AMD64 = 9,
+            Processor_Architecture_ARM64 = 12,
+            Processor_Architecture_UNKNOWN = 0xFFFF
+        }
+// end RuntimeInformation
     }
 }

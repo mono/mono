@@ -1,7 +1,2 @@
-Assembly/AssemblyInfo.cs
-System.Runtime.InteropServices/RuntimeInformation.cs
-
-corefx/SR.cs
-
-../../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/System/Runtime/InteropServices/RuntimeInformation/OSPlatform.cs
-../../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/System/Runtime/InteropServices/RuntimeInformation/Architecture.cs
+AssemblyInfo.cs
+TypeForwarders.cs

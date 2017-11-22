@@ -86,7 +86,7 @@ extern int tkill (pid_t tid, int signal);
 /*#define LIBGC_DEBUG(a) do { a; } while (0)*/
 #define LIBGC_DEBUG(a)
 
-#define SPIN_TRYLOCK(i) (InterlockedCompareExchange (&(i), 1, 0) == 0)
+#define SPIN_TRYLOCK(i) (mono_atomic_cas_i32 (&(i), 1, 0) == 0)
 #define SPIN_LOCK(i) do { \
 				if (SPIN_TRYLOCK (i)) \
 					break; \
@@ -219,7 +219,7 @@ mono_threads_unlock (void)
 static guint32
 get_next_managed_thread_id (void)
 {
-	return InterlockedIncrement (&managed_thread_id_counter);
+	return mono_atomic_inc_i32 (&managed_thread_id_counter);
 }
 
 /*
@@ -261,11 +261,11 @@ mono_threads_begin_abort_protected_block (void)
 		g_assert (new_val < (1 << ABORT_PROT_BLOCK_BITS));
 
 		new_state = old_state + (1 << ABORT_PROT_BLOCK_SHIFT);
-	} while (InterlockedCompareExchangePointer ((volatile gpointer)&thread->thread_state, (gpointer)new_state, (gpointer)old_state) != (gpointer)old_state);
+	} while (mono_atomic_cas_ptr ((volatile gpointer *)&thread->thread_state, (gpointer)new_state, (gpointer)old_state) != (gpointer)old_state);
 
 	/* Defer async request since we won't be able to process until exiting the block */
 	if (new_val == 1 && (new_state & INTERRUPT_ASYNC_REQUESTED_BIT)) {
-		InterlockedDecrement (&thread_interruption_requested);
+		mono_atomic_dec_i32 (&thread_interruption_requested);
 		THREADS_INTERRUPT_DEBUG ("[%d] begin abort protected block old_state %ld new_state %ld, defer tir %d\n", thread->small_id, old_state, new_state, thread_interruption_requested);
 		if (thread_interruption_requested < 0)
 			g_warning ("bad thread_interruption_requested state");
@@ -303,10 +303,10 @@ mono_threads_end_abort_protected_block (void)
 		g_assert (new_val < (1 << ABORT_PROT_BLOCK_BITS));
 
 		new_state = old_state - (1 << ABORT_PROT_BLOCK_SHIFT);
-	} while (InterlockedCompareExchangePointer ((volatile gpointer)&thread->thread_state, (gpointer)new_state, (gpointer)old_state) != (gpointer)old_state);
+	} while (mono_atomic_cas_ptr ((volatile gpointer *)&thread->thread_state, (gpointer)new_state, (gpointer)old_state) != (gpointer)old_state);
 
 	if (new_val == 0 && (new_state & INTERRUPT_ASYNC_REQUESTED_BIT)) {
-		InterlockedIncrement (&thread_interruption_requested);
+		mono_atomic_inc_i32 (&thread_interruption_requested);
 		THREADS_INTERRUPT_DEBUG ("[%d] end abort protected block old_state %ld new_state %ld, restore tir %d\n", thread->small_id, old_state, new_state, thread_interruption_requested);
 	} else {
 		THREADS_INTERRUPT_DEBUG ("[%d] end abort protected block old_state %ld new_state %ld, tir %d\n", thread->small_id, old_state, new_state, thread_interruption_requested);
@@ -343,9 +343,9 @@ mono_thread_clear_interruption_requested (MonoInternalThread *thread)
 			new_state = old_state & ~INTERRUPT_SYNC_REQUESTED_BIT;
 		else
 			new_state = old_state & ~INTERRUPT_ASYNC_REQUESTED_BIT;
-	} while (InterlockedCompareExchangePointer ((volatile gpointer)&thread->thread_state, (gpointer)new_state, (gpointer)old_state) != (gpointer)old_state);
+	} while (mono_atomic_cas_ptr ((volatile gpointer *)&thread->thread_state, (gpointer)new_state, (gpointer)old_state) != (gpointer)old_state);
 
-	InterlockedDecrement (&thread_interruption_requested);
+	mono_atomic_dec_i32 (&thread_interruption_requested);
 	THREADS_INTERRUPT_DEBUG ("[%d] clear interruption old_state %ld new_state %ld, tir %d\n", thread->small_id, old_state, new_state, thread_interruption_requested);
 	if (thread_interruption_requested < 0)
 		g_warning ("bad thread_interruption_requested state");
@@ -371,10 +371,10 @@ mono_thread_set_interruption_requested (MonoInternalThread *thread)
 			new_state = old_state | INTERRUPT_SYNC_REQUESTED_BIT;
 		else
 			new_state = old_state | INTERRUPT_ASYNC_REQUESTED_BIT;
-	} while (InterlockedCompareExchangePointer ((volatile gpointer)&thread->thread_state, (gpointer)new_state, (gpointer)old_state) != (gpointer)old_state);
+	} while (mono_atomic_cas_ptr ((volatile gpointer *)&thread->thread_state, (gpointer)new_state, (gpointer)old_state) != (gpointer)old_state);
 
 	if (sync || !(new_state & ABORT_PROT_BLOCK_MASK)) {
-		InterlockedIncrement (&thread_interruption_requested);
+		mono_atomic_inc_i32 (&thread_interruption_requested);
 		THREADS_INTERRUPT_DEBUG ("[%d] set interruption on [%d] old_state %ld new_state %ld, tir %d\n", mono_thread_internal_current ()->small_id, thread->small_id, old_state, new_state, thread_interruption_requested);
 	} else {
 		THREADS_INTERRUPT_DEBUG ("[%d] set interruption on [%d] old_state %ld new_state %ld, tir deferred %d\n", mono_thread_internal_current ()->small_id, thread->small_id, old_state, new_state, thread_interruption_requested);
@@ -401,7 +401,7 @@ static void ensure_synch_cs_set (MonoInternalThread *thread)
 	synch_cs = g_new0 (MonoCoopMutex, 1);
 	mono_coop_mutex_init_recursive (synch_cs);
 
-	if (InterlockedCompareExchangePointer ((gpointer *)&thread->synch_cs,
+	if (mono_atomic_cas_ptr ((gpointer *)&thread->synch_cs,
 					       synch_cs, NULL) != NULL) {
 		/* Another thread must have installed this CS */
 		mono_coop_mutex_destroy (synch_cs);
@@ -768,7 +768,9 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 	* runtime but not identified as runtime threads needs to make sure thread detach calls won't
 	* race with runtime shutdown.
 	*/
+#ifdef HOST_WIN32
 	mono_threads_add_joinable_runtime_thread (thread->thread_info);
+#endif
 
 	/*
 	 * thread->synch_cs can be NULL if this was called after
@@ -946,7 +948,7 @@ static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack
 
 		mono_coop_sem_post (&start_info->registered);
 
-		if (InterlockedDecrement (&start_info->ref) == 0) {
+		if (mono_atomic_dec_i32 (&start_info->ref) == 0) {
 			mono_coop_sem_destroy (&start_info->registered);
 			g_free (start_info);
 		}
@@ -981,7 +983,7 @@ static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack
 	/* Let the thread that called Start() know we're ready */
 	mono_coop_sem_post (&start_info->registered);
 
-	if (InterlockedDecrement (&start_info->ref) == 0) {
+	if (mono_atomic_dec_i32 (&start_info->ref) == 0) {
 		mono_coop_sem_destroy (&start_info->registered);
 		g_free (start_info);
 	}
@@ -1150,7 +1152,7 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, MonoObject *sta
 		mono_threads_unlock ();
 		mono_error_set_execution_engine (error, "Couldn't create thread. Error 0x%x", mono_w32error_get_last());
 		/* ref is not going to be decremented in start_wrapper_internal */
-		InterlockedDecrement (&start_info->ref);
+		mono_atomic_dec_i32 (&start_info->ref);
 		ret = FALSE;
 		goto done;
 	}
@@ -1173,7 +1175,7 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, MonoObject *sta
 	ret = !start_info->failed;
 
 done:
-	if (InterlockedDecrement (&start_info->ref) == 0) {
+	if (mono_atomic_dec_i32 (&start_info->ref) == 0) {
 		mono_coop_sem_destroy (&start_info->registered);
 		g_free (start_info);
 	}
@@ -1379,7 +1381,7 @@ ves_icall_System_Threading_Thread_ConstructInternalThread (MonoThread *this_obj)
 
 	internal->state = ThreadState_Unstarted;
 
-	InterlockedCompareExchangePointer ((volatile gpointer *)&this_obj->internal_thread, internal, NULL);
+	mono_atomic_cas_ptr ((volatile gpointer *)&this_obj->internal_thread, internal, NULL);
 }
 
 MonoThread *
@@ -1994,7 +1996,7 @@ ves_icall_System_Threading_WaitHandle_SignalAndWait_Internal (gpointer toSignal,
 
 gint32 ves_icall_System_Threading_Interlocked_Increment_Int (gint32 *location)
 {
-	return InterlockedIncrement (location);
+	return mono_atomic_inc_i32 (location);
 }
 
 gint64 ves_icall_System_Threading_Interlocked_Increment_Long (gint64 *location)
@@ -2009,12 +2011,12 @@ gint64 ves_icall_System_Threading_Interlocked_Increment_Long (gint64 *location)
 		return ret;
 	}
 #endif
-	return InterlockedIncrement64 (location);
+	return mono_atomic_inc_i64 (location);
 }
 
 gint32 ves_icall_System_Threading_Interlocked_Decrement_Int (gint32 *location)
 {
-	return InterlockedDecrement(location);
+	return mono_atomic_dec_i32(location);
 }
 
 gint64 ves_icall_System_Threading_Interlocked_Decrement_Long (gint64 * location)
@@ -2029,25 +2031,25 @@ gint64 ves_icall_System_Threading_Interlocked_Decrement_Long (gint64 * location)
 		return ret;
 	}
 #endif
-	return InterlockedDecrement64 (location);
+	return mono_atomic_dec_i64 (location);
 }
 
 gint32 ves_icall_System_Threading_Interlocked_Exchange_Int (gint32 *location, gint32 value)
 {
-	return InterlockedExchange(location, value);
+	return mono_atomic_xchg_i32(location, value);
 }
 
 MonoObject * ves_icall_System_Threading_Interlocked_Exchange_Object (MonoObject **location, MonoObject *value)
 {
 	MonoObject *res;
-	res = (MonoObject *) InterlockedExchangePointer((gpointer *) location, value);
+	res = (MonoObject *) mono_atomic_xchg_ptr((gpointer *) location, value);
 	mono_gc_wbarrier_generic_nostore (location);
 	return res;
 }
 
 gpointer ves_icall_System_Threading_Interlocked_Exchange_IntPtr (gpointer *location, gpointer value)
 {
-	return InterlockedExchangePointer(location, value);
+	return mono_atomic_xchg_ptr(location, value);
 }
 
 gfloat ves_icall_System_Threading_Interlocked_Exchange_Single (gfloat *location, gfloat value)
@@ -2055,7 +2057,7 @@ gfloat ves_icall_System_Threading_Interlocked_Exchange_Single (gfloat *location,
 	IntFloatUnion val, ret;
 
 	val.fval = value;
-	ret.ival = InterlockedExchange((gint32 *) location, val.ival);
+	ret.ival = mono_atomic_xchg_i32((gint32 *) location, val.ival);
 
 	return ret.fval;
 }
@@ -2073,7 +2075,7 @@ ves_icall_System_Threading_Interlocked_Exchange_Long (gint64 *location, gint64 v
 		return ret;
 	}
 #endif
-	return InterlockedExchange64 (location, value);
+	return mono_atomic_xchg_i64 (location, value);
 }
 
 gdouble 
@@ -2082,19 +2084,19 @@ ves_icall_System_Threading_Interlocked_Exchange_Double (gdouble *location, gdoub
 	LongDoubleUnion val, ret;
 
 	val.fval = value;
-	ret.ival = (gint64)InterlockedExchange64((gint64 *) location, val.ival);
+	ret.ival = (gint64)mono_atomic_xchg_i64((gint64 *) location, val.ival);
 
 	return ret.fval;
 }
 
 gint32 ves_icall_System_Threading_Interlocked_CompareExchange_Int(gint32 *location, gint32 value, gint32 comparand)
 {
-	return InterlockedCompareExchange(location, value, comparand);
+	return mono_atomic_cas_i32(location, value, comparand);
 }
 
 gint32 ves_icall_System_Threading_Interlocked_CompareExchange_Int_Success(gint32 *location, gint32 value, gint32 comparand, MonoBoolean *success)
 {
-	gint32 r = InterlockedCompareExchange(location, value, comparand);
+	gint32 r = mono_atomic_cas_i32(location, value, comparand);
 	*success = r == comparand;
 	return r;
 }
@@ -2102,14 +2104,14 @@ gint32 ves_icall_System_Threading_Interlocked_CompareExchange_Int_Success(gint32
 MonoObject * ves_icall_System_Threading_Interlocked_CompareExchange_Object (MonoObject **location, MonoObject *value, MonoObject *comparand)
 {
 	MonoObject *res;
-	res = (MonoObject *) InterlockedCompareExchangePointer((gpointer *) location, value, comparand);
+	res = (MonoObject *) mono_atomic_cas_ptr((gpointer *) location, value, comparand);
 	mono_gc_wbarrier_generic_nostore (location);
 	return res;
 }
 
 gpointer ves_icall_System_Threading_Interlocked_CompareExchange_IntPtr(gpointer *location, gpointer value, gpointer comparand)
 {
-	return InterlockedCompareExchangePointer(location, value, comparand);
+	return mono_atomic_cas_ptr(location, value, comparand);
 }
 
 gfloat ves_icall_System_Threading_Interlocked_CompareExchange_Single (gfloat *location, gfloat value, gfloat comparand)
@@ -2118,7 +2120,7 @@ gfloat ves_icall_System_Threading_Interlocked_CompareExchange_Single (gfloat *lo
 
 	val.fval = value;
 	cmp.fval = comparand;
-	ret.ival = InterlockedCompareExchange((gint32 *) location, val.ival, cmp.ival);
+	ret.ival = mono_atomic_cas_i32((gint32 *) location, val.ival, cmp.ival);
 
 	return ret.fval;
 }
@@ -2131,7 +2133,7 @@ ves_icall_System_Threading_Interlocked_CompareExchange_Double (gdouble *location
 
 	val.fval = value;
 	comp.fval = comparand;
-	ret.ival = (gint64)InterlockedCompareExchangePointer((gpointer *) location, (gpointer)val.ival, (gpointer)comp.ival);
+	ret.ival = (gint64)mono_atomic_cas_ptr((gpointer *) location, (gpointer)val.ival, (gpointer)comp.ival);
 
 	return ret.fval;
 #else
@@ -2161,14 +2163,14 @@ ves_icall_System_Threading_Interlocked_CompareExchange_Long (gint64 *location, g
 		return old;
 	}
 #endif
-	return InterlockedCompareExchange64 (location, value, comparand);
+	return mono_atomic_cas_i64 (location, value, comparand);
 }
 
 MonoObject*
 ves_icall_System_Threading_Interlocked_CompareExchange_T (MonoObject **location, MonoObject *value, MonoObject *comparand)
 {
 	MonoObject *res;
-	res = (MonoObject *)InterlockedCompareExchangePointer ((volatile gpointer *)location, value, comparand);
+	res = (MonoObject *)mono_atomic_cas_ptr ((volatile gpointer *)location, value, comparand);
 	mono_gc_wbarrier_generic_nostore (location);
 	return res;
 }
@@ -2178,7 +2180,7 @@ ves_icall_System_Threading_Interlocked_Exchange_T (MonoObject **location, MonoOb
 {
 	MonoObject *res;
 	MONO_CHECK_NULL (location, NULL);
-	res = (MonoObject *)InterlockedExchangePointer ((volatile gpointer *)location, value);
+	res = (MonoObject *)mono_atomic_xchg_ptr ((volatile gpointer *)location, value);
 	mono_gc_wbarrier_generic_nostore (location);
 	return res;
 }
@@ -2186,7 +2188,7 @@ ves_icall_System_Threading_Interlocked_Exchange_T (MonoObject **location, MonoOb
 gint32 
 ves_icall_System_Threading_Interlocked_Add_Int (gint32 *location, gint32 value)
 {
-	return InterlockedAdd (location, value);
+	return mono_atomic_add_i32 (location, value);
 }
 
 gint64 
@@ -2202,7 +2204,7 @@ ves_icall_System_Threading_Interlocked_Add_Long (gint64 *location, gint64 value)
 		return ret;
 	}
 #endif
-	return InterlockedAdd64 (location, value);
+	return mono_atomic_add_i64 (location, value);
 }
 
 gint64 
@@ -2217,7 +2219,7 @@ ves_icall_System_Threading_Interlocked_Read_Long (gint64 *location)
 		return ret;
 	}
 #endif
-	return InterlockedRead64 (location);
+	return mono_atomic_load_i64 (location);
 }
 
 void
@@ -2617,7 +2619,7 @@ mono_thread_stop (MonoThread *thread)
 		This function is part of the embeding API and has no way to return the exception
 		to be thrown. So what we do is keep the old behavior and raise the exception.
 		*/
-		mono_error_raise_exception (&error); /* OK to throw, see note */
+		mono_error_raise_exception_deprecated (&error); /* OK to throw, see note */
 	} else {
 		async_abort_internal (internal, TRUE);
 	}
@@ -2690,19 +2692,19 @@ ves_icall_System_Threading_Thread_VolatileReadFloat (void *ptr)
 gint8
 ves_icall_System_Threading_Volatile_Read1 (void *ptr)
 {
-	return InterlockedRead8 ((volatile gint8 *)ptr);
+	return mono_atomic_load_i8 ((volatile gint8 *)ptr);
 }
 
 gint16
 ves_icall_System_Threading_Volatile_Read2 (void *ptr)
 {
-	return InterlockedRead16 ((volatile gint16 *)ptr);
+	return mono_atomic_load_i16 ((volatile gint16 *)ptr);
 }
 
 gint32
 ves_icall_System_Threading_Volatile_Read4 (void *ptr)
 {
-	return InterlockedRead ((volatile gint32 *)ptr);
+	return mono_atomic_load_i32 ((volatile gint32 *)ptr);
 }
 
 gint64
@@ -2717,13 +2719,13 @@ ves_icall_System_Threading_Volatile_Read8 (void *ptr)
 		return val;
 	}
 #endif
-	return InterlockedRead64 ((volatile gint64 *)ptr);
+	return mono_atomic_load_i64 ((volatile gint64 *)ptr);
 }
 
 void *
 ves_icall_System_Threading_Volatile_ReadIntPtr (void *ptr)
 {
-	return InterlockedReadPointer ((volatile gpointer *)ptr);
+	return mono_atomic_load_ptr ((volatile gpointer *)ptr);
 }
 
 double
@@ -2741,7 +2743,7 @@ ves_icall_System_Threading_Volatile_ReadDouble (void *ptr)
 	}
 #endif
 
-	u.ival = InterlockedRead64 ((volatile gint64 *)ptr);
+	u.ival = mono_atomic_load_i64 ((volatile gint64 *)ptr);
 
 	return u.fval;
 }
@@ -2751,7 +2753,7 @@ ves_icall_System_Threading_Volatile_ReadFloat (void *ptr)
 {
 	IntFloatUnion u;
 
-	u.ival = InterlockedRead ((volatile gint32 *)ptr);
+	u.ival = mono_atomic_load_i32 ((volatile gint32 *)ptr);
 
 	return u.fval;
 }
@@ -2759,7 +2761,7 @@ ves_icall_System_Threading_Volatile_ReadFloat (void *ptr)
 MonoObject*
 ves_icall_System_Threading_Volatile_Read_T (void *ptr)
 {
-	return (MonoObject *)InterlockedReadPointer ((volatile gpointer *)ptr);
+	return (MonoObject *)mono_atomic_load_ptr ((volatile gpointer *)ptr);
 }
 
 void
@@ -2821,19 +2823,19 @@ ves_icall_System_Threading_Thread_VolatileWriteFloat (void *ptr, float value)
 void
 ves_icall_System_Threading_Volatile_Write1 (void *ptr, gint8 value)
 {
-	InterlockedWrite8 ((volatile gint8 *)ptr, value);
+	mono_atomic_store_i8 ((volatile gint8 *)ptr, value);
 }
 
 void
 ves_icall_System_Threading_Volatile_Write2 (void *ptr, gint16 value)
 {
-	InterlockedWrite16 ((volatile gint16 *)ptr, value);
+	mono_atomic_store_i16 ((volatile gint16 *)ptr, value);
 }
 
 void
 ves_icall_System_Threading_Volatile_Write4 (void *ptr, gint32 value)
 {
-	InterlockedWrite ((volatile gint32 *)ptr, value);
+	mono_atomic_store_i32 ((volatile gint32 *)ptr, value);
 }
 
 void
@@ -2848,13 +2850,13 @@ ves_icall_System_Threading_Volatile_Write8 (void *ptr, gint64 value)
 	}
 #endif
 
-	InterlockedWrite64 ((volatile gint64 *)ptr, value);
+	mono_atomic_store_i64 ((volatile gint64 *)ptr, value);
 }
 
 void
 ves_icall_System_Threading_Volatile_WriteIntPtr (void *ptr, void *value)
 {
-	InterlockedWritePointer ((volatile gpointer *)ptr, value);
+	mono_atomic_store_ptr ((volatile gpointer *)ptr, value);
 }
 
 void
@@ -2873,7 +2875,7 @@ ves_icall_System_Threading_Volatile_WriteDouble (void *ptr, double value)
 
 	u.fval = value;
 
-	InterlockedWrite64 ((volatile gint64 *)ptr, u.ival);
+	mono_atomic_store_i64 ((volatile gint64 *)ptr, u.ival);
 }
 
 void
@@ -2883,7 +2885,7 @@ ves_icall_System_Threading_Volatile_WriteFloat (void *ptr, float value)
 
 	u.fval = value;
 
-	InterlockedWrite ((volatile gint32 *)ptr, u.ival);
+	mono_atomic_store_i32 ((volatile gint32 *)ptr, u.ival);
 }
 
 void
@@ -3234,31 +3236,30 @@ static void build_wait_tids (gpointer key, gpointer value, gpointer user)
 	}
 }
 
-static gboolean
-remove_and_abort_threads (gpointer key, gpointer value, gpointer user)
+static void
+abort_threads (gpointer key, gpointer value, gpointer user)
 {
 	struct wait_data *wait=(struct wait_data *)user;
 	MonoNativeThreadId self = mono_native_thread_id_get ();
 	MonoInternalThread *thread = (MonoInternalThread *)value;
 
 	if (wait->num >= MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS)
-		return FALSE;
+		return;
 
 	if (mono_native_thread_id_equals (thread_get_tid (thread), self))
-		return FALSE;
+		return;
 	if (mono_gc_is_finalizer_internal_thread (thread))
-		return FALSE;
+		return;
 
-	if ((thread->state & ThreadState_Background) && !(thread->flags & MONO_THREAD_FLAG_DONT_MANAGE)) {
-		wait->handles[wait->num] = mono_threads_open_thread_handle (thread->handle);
-		wait->threads[wait->num] = thread;
-		wait->num++;
+	if ((thread->flags & MONO_THREAD_FLAG_DONT_MANAGE))
+		return;
 
-		THREAD_DEBUG (g_print ("%s: Aborting id: %"G_GSIZE_FORMAT"\n", __func__, (gsize)thread->tid));
-		mono_thread_internal_abort (thread, FALSE);
-	}
+	wait->handles[wait->num] = mono_threads_open_thread_handle (thread->handle);
+	wait->threads[wait->num] = thread;
+	wait->num++;
 
-	return TRUE;
+	THREAD_DEBUG (g_print ("%s: Aborting id: %"G_GSIZE_FORMAT"\n", __func__, (gsize)thread->tid));
+	mono_thread_internal_abort (thread, FALSE);
 }
 
 /** 
@@ -3367,7 +3368,7 @@ mono_thread_manage (void)
 		wait->num = 0;
 		/*We must zero all InternalThread pointers to avoid making the GC unhappy.*/
 		memset (wait->threads, 0, MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS * SIZEOF_VOID_P);
-		mono_g_hash_table_foreach_remove (threads, remove_and_abort_threads, wait);
+		mono_g_hash_table_foreach (threads, abort_threads, wait);
 
 		mono_threads_unlock ();
 
@@ -3708,11 +3709,9 @@ mono_threads_get_thread_dump (MonoArray **out_threads, MonoArray **out_stack_fra
 	ud.max_frames = 256;
 
 	*out_threads = mono_array_new_checked (domain, mono_defaults.thread_class, nthreads, error);
-	if (!is_ok (error))
-		goto leave;
+	goto_if_nok (error, leave);
 	*out_stack_frames = mono_array_new_checked (domain, mono_defaults.array_class, nthreads, error);
-	if (!is_ok (error))
-		goto leave;
+	goto_if_nok (error, leave);
 
 	for (tindex = 0; tindex < nthreads; ++tindex) {
 		MonoInternalThread *thread = thread_array [tindex];
@@ -3732,16 +3731,14 @@ mono_threads_get_thread_dump (MonoArray **out_threads, MonoArray **out_stack_fra
 		mono_array_setref_fast (*out_threads, tindex, mono_thread_current_for_thread (thread));
 
 		thread_frames = mono_array_new_checked (domain, mono_defaults.stack_frame_class, ud.nframes, error);
-		if (!is_ok (error))
-			goto leave;
+		goto_if_nok (error, leave);
 		mono_array_setref_fast (*out_stack_frames, tindex, thread_frames);
 
 		for (i = 0; i < ud.nframes; ++i) {
 			MonoStackFrameInfo *frame = &ud.frames [i];
 			MonoMethod *method = NULL;
 			MonoStackFrame *sf = (MonoStackFrame *)mono_object_new_checked (domain, mono_defaults.stack_frame_class, error);
-			if (!is_ok (error))
-				goto leave;
+			goto_if_nok (error, leave);
 
 			sf->native_offset = frame->native_offset;
 
@@ -3752,8 +3749,7 @@ mono_threads_get_thread_dump (MonoArray **out_threads, MonoArray **out_stack_fra
 				sf->method_address = (gsize) frame->ji->code_start;
 
 				MonoReflectionMethod *rm = mono_method_get_object_checked (domain, method, NULL, error);
-				if (!is_ok (error))
-					goto leave;
+				goto_if_nok (error, leave);
 				MONO_OBJECT_SETREF (sf, method, rm);
 
 				location = mono_debug_lookup_source_location (method, frame->native_offset, domain);
@@ -3762,8 +3758,7 @@ mono_threads_get_thread_dump (MonoArray **out_threads, MonoArray **out_stack_fra
 
 					if (location && location->source_file) {
 						MonoString *filename = mono_string_new_checked (domain, location->source_file, error);
-						if (!is_ok (error))
-							goto leave;
+						goto_if_nok (error, leave);
 						MONO_OBJECT_SETREF (sf, filename, filename);
 						sf->line = location->row;
 						sf->column = location->column;
@@ -4781,7 +4776,6 @@ self_interrupt_thread (void *_unused)
 
 	info = mono_thread_info_current ();
 
-	/* We must use _with_context since we didn't trampoline into the runtime */
 	mono_raise_exception_with_context (exc, &info->thread_saved_state [ASYNC_SUSPEND_STATE_INDEX].ctx); /* FIXME using thread_saved_state [ASYNC_SUSPEND_STATE_INDEX] can race with another suspend coming in. */
 }
 
@@ -5096,7 +5090,7 @@ mono_threads_add_joinable_runtime_thread (gpointer thread_info)
 	MonoThreadInfo *mono_thread_info = (MonoThreadInfo*)thread_info;
 
 	if (mono_thread_info->runtime_thread) {
-		if (InterlockedCompareExchange (&mono_thread_info->thread_pending_native_join, TRUE, FALSE) == FALSE)
+		if (mono_atomic_cas_i32 (&mono_thread_info->thread_pending_native_join, TRUE, FALSE) == FALSE)
 			mono_threads_add_joinable_thread ((gpointer)(MONO_UINT_TO_NATIVE_THREAD_ID (mono_thread_info_get_tid (mono_thread_info))));
 	}
 }

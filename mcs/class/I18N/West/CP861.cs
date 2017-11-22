@@ -97,12 +97,11 @@ public class CP861 : ByteEncoding
 			return GetBytesImpl(chars, count, null, 0);
 		}
 		else
-		
 		{
 			return count;
 		}
 	}
-	
+
 	// Get the number of bytes needed to encode a character buffer.
 	public override int GetByteCount (String s)
 	{
@@ -123,7 +122,7 @@ public class CP861 : ByteEncoding
 			return s.Length;
 		}
 	}
-	
+
 	//ToBytes is just an alias for GetBytesImpl, but doesn't return byte count
 	protected unsafe override void ToBytes(char* chars, int charCount,
 	                                byte* bytes, int byteCount)
@@ -133,7 +132,7 @@ public class CP861 : ByteEncoding
 			throw new ArgumentNullException("bytes");
 		GetBytesImpl(chars, charCount, bytes, byteCount);
 	}
-	
+
 	public unsafe override int GetBytesImpl (char* chars, int charCount,
 	                                         byte* bytes, int byteCount)
 	{
@@ -144,8 +143,6 @@ public class CP861 : ByteEncoding
 		while (charCount > 0)
 		{
 			ch = (int)(chars[charIndex]);
-			charIndex++;
-			charCount--;
 			if(ch >= 26) switch(ch)
 			{
 				case 0x001B:
@@ -427,6 +424,8 @@ public class CP861 : ByteEncoding
 					else
 					{
 						HandleFallback (ref buffer, chars, ref charIndex, ref charCount, bytes, ref byteIndex, ref byteCount);
+						charIndex++;
+						charCount--;
 						continue;
 					}
 				}
@@ -437,309 +436,11 @@ public class CP861 : ByteEncoding
 				bytes[byteIndex] = (byte)ch;
 			byteIndex++;
 			byteCount--;
+			charIndex++;
+			charCount--;
 		}
 		return byteIndex;
 	}
-
-	/*
-	protected override void ToBytes(String s, int charIndex, int charCount,
-	                                byte[] bytes, int byteIndex)
-	{
-		int ch;
-		while(charCount > 0)
-		{
-			ch = (int)(s[charIndex++]);
-			if(ch >= 26) switch(ch)
-			{
-				case 0x001B:
-				case 0x001D:
-				case 0x001E:
-				case 0x001F:
-				case 0x0020:
-				case 0x0021:
-				case 0x0022:
-				case 0x0023:
-				case 0x0024:
-				case 0x0025:
-				case 0x0026:
-				case 0x0027:
-				case 0x0028:
-				case 0x0029:
-				case 0x002A:
-				case 0x002B:
-				case 0x002C:
-				case 0x002D:
-				case 0x002E:
-				case 0x002F:
-				case 0x0030:
-				case 0x0031:
-				case 0x0032:
-				case 0x0033:
-				case 0x0034:
-				case 0x0035:
-				case 0x0036:
-				case 0x0037:
-				case 0x0038:
-				case 0x0039:
-				case 0x003A:
-				case 0x003B:
-				case 0x003C:
-				case 0x003D:
-				case 0x003E:
-				case 0x003F:
-				case 0x0040:
-				case 0x0041:
-				case 0x0042:
-				case 0x0043:
-				case 0x0044:
-				case 0x0045:
-				case 0x0046:
-				case 0x0047:
-				case 0x0048:
-				case 0x0049:
-				case 0x004A:
-				case 0x004B:
-				case 0x004C:
-				case 0x004D:
-				case 0x004E:
-				case 0x004F:
-				case 0x0050:
-				case 0x0051:
-				case 0x0052:
-				case 0x0053:
-				case 0x0054:
-				case 0x0055:
-				case 0x0056:
-				case 0x0057:
-				case 0x0058:
-				case 0x0059:
-				case 0x005A:
-				case 0x005B:
-				case 0x005C:
-				case 0x005D:
-				case 0x005E:
-				case 0x005F:
-				case 0x0060:
-				case 0x0061:
-				case 0x0062:
-				case 0x0063:
-				case 0x0064:
-				case 0x0065:
-				case 0x0066:
-				case 0x0067:
-				case 0x0068:
-				case 0x0069:
-				case 0x006A:
-				case 0x006B:
-				case 0x006C:
-				case 0x006D:
-				case 0x006E:
-				case 0x006F:
-				case 0x0070:
-				case 0x0071:
-				case 0x0072:
-				case 0x0073:
-				case 0x0074:
-				case 0x0075:
-				case 0x0076:
-				case 0x0077:
-				case 0x0078:
-				case 0x0079:
-				case 0x007A:
-				case 0x007B:
-				case 0x007C:
-				case 0x007D:
-				case 0x007E:
-					break;
-				case 0x001A: ch = 0x7F; break;
-				case 0x001C: ch = 0x1A; break;
-				case 0x007F: ch = 0x1C; break;
-				case 0x00A0: ch = 0xFF; break;
-				case 0x00A1: ch = 0xAD; break;
-				case 0x00A3: ch = 0x9C; break;
-				case 0x00A7: ch = 0x15; break;
-				case 0x00AB: ch = 0xAE; break;
-				case 0x00AC: ch = 0xAA; break;
-				case 0x00B0: ch = 0xF8; break;
-				case 0x00B1: ch = 0xF1; break;
-				case 0x00B2: ch = 0xFD; break;
-				case 0x00B6: ch = 0x14; break;
-				case 0x00B7: ch = 0xFA; break;
-				case 0x00BB: ch = 0xAF; break;
-				case 0x00BC: ch = 0xAC; break;
-				case 0x00BD: ch = 0xAB; break;
-				case 0x00BF: ch = 0xA8; break;
-				case 0x00C1: ch = 0xA4; break;
-				case 0x00C4: ch = 0x8E; break;
-				case 0x00C5: ch = 0x8F; break;
-				case 0x00C6: ch = 0x92; break;
-				case 0x00C7: ch = 0x80; break;
-				case 0x00C9: ch = 0x90; break;
-				case 0x00CD: ch = 0xA5; break;
-				case 0x00D0: ch = 0x8B; break;
-				case 0x00D3: ch = 0xA6; break;
-				case 0x00D6: ch = 0x99; break;
-				case 0x00D8: ch = 0x9D; break;
-				case 0x00DA: ch = 0xA7; break;
-				case 0x00DC: ch = 0x9A; break;
-				case 0x00DD: ch = 0x97; break;
-				case 0x00DE: ch = 0x8D; break;
-				case 0x00DF: ch = 0xE1; break;
-				case 0x00E0: ch = 0x85; break;
-				case 0x00E1: ch = 0xA0; break;
-				case 0x00E2: ch = 0x83; break;
-				case 0x00E4: ch = 0x84; break;
-				case 0x00E5: ch = 0x86; break;
-				case 0x00E6: ch = 0x91; break;
-				case 0x00E7: ch = 0x87; break;
-				case 0x00E8: ch = 0x8A; break;
-				case 0x00E9: ch = 0x82; break;
-				case 0x00EA: ch = 0x88; break;
-				case 0x00EB: ch = 0x89; break;
-				case 0x00ED: ch = 0xA1; break;
-				case 0x00F0: ch = 0x8C; break;
-				case 0x00F3: ch = 0xA2; break;
-				case 0x00F4: ch = 0x93; break;
-				case 0x00F6: ch = 0x94; break;
-				case 0x00F7: ch = 0xF6; break;
-				case 0x00F8: ch = 0x9B; break;
-				case 0x00FA: ch = 0xA3; break;
-				case 0x00FB: ch = 0x96; break;
-				case 0x00FC: ch = 0x81; break;
-				case 0x00FD: ch = 0x98; break;
-				case 0x00FE: ch = 0x95; break;
-				case 0x0192: ch = 0x9F; break;
-				case 0x0393: ch = 0xE2; break;
-				case 0x0398: ch = 0xE9; break;
-				case 0x03A3: ch = 0xE4; break;
-				case 0x03A6: ch = 0xE8; break;
-				case 0x03A9: ch = 0xEA; break;
-				case 0x03B1: ch = 0xE0; break;
-				case 0x03B4: ch = 0xEB; break;
-				case 0x03B5: ch = 0xEE; break;
-				case 0x03BC: ch = 0xE6; break;
-				case 0x03C0: ch = 0xE3; break;
-				case 0x03C3: ch = 0xE5; break;
-				case 0x03C4: ch = 0xE7; break;
-				case 0x03C6: ch = 0xED; break;
-				case 0x2022: ch = 0x07; break;
-				case 0x203C: ch = 0x13; break;
-				case 0x207F: ch = 0xFC; break;
-				case 0x20A7: ch = 0x9E; break;
-				case 0x2190: ch = 0x1B; break;
-				case 0x2191: ch = 0x18; break;
-				case 0x2192: ch = 0x1A; break;
-				case 0x2193: ch = 0x19; break;
-				case 0x2194: ch = 0x1D; break;
-				case 0x2195: ch = 0x12; break;
-				case 0x21A8: ch = 0x17; break;
-				case 0x2219: ch = 0xF9; break;
-				case 0x221A: ch = 0xFB; break;
-				case 0x221E: ch = 0xEC; break;
-				case 0x221F: ch = 0x1C; break;
-				case 0x2229: ch = 0xEF; break;
-				case 0x2248: ch = 0xF7; break;
-				case 0x2261: ch = 0xF0; break;
-				case 0x2264: ch = 0xF3; break;
-				case 0x2265: ch = 0xF2; break;
-				case 0x2302: ch = 0x7F; break;
-				case 0x2310: ch = 0xA9; break;
-				case 0x2320: ch = 0xF4; break;
-				case 0x2321: ch = 0xF5; break;
-				case 0x2500: ch = 0xC4; break;
-				case 0x2502: ch = 0xB3; break;
-				case 0x250C: ch = 0xDA; break;
-				case 0x2510: ch = 0xBF; break;
-				case 0x2514: ch = 0xC0; break;
-				case 0x2518: ch = 0xD9; break;
-				case 0x251C: ch = 0xC3; break;
-				case 0x2524: ch = 0xB4; break;
-				case 0x252C: ch = 0xC2; break;
-				case 0x2534: ch = 0xC1; break;
-				case 0x253C: ch = 0xC5; break;
-				case 0x2550: ch = 0xCD; break;
-				case 0x2551: ch = 0xBA; break;
-				case 0x2552: ch = 0xD5; break;
-				case 0x2553: ch = 0xD6; break;
-				case 0x2554: ch = 0xC9; break;
-				case 0x2555: ch = 0xB8; break;
-				case 0x2556: ch = 0xB7; break;
-				case 0x2557: ch = 0xBB; break;
-				case 0x2558: ch = 0xD4; break;
-				case 0x2559: ch = 0xD3; break;
-				case 0x255A: ch = 0xC8; break;
-				case 0x255B: ch = 0xBE; break;
-				case 0x255C: ch = 0xBD; break;
-				case 0x255D: ch = 0xBC; break;
-				case 0x255E: ch = 0xC6; break;
-				case 0x255F: ch = 0xC7; break;
-				case 0x2560: ch = 0xCC; break;
-				case 0x2561: ch = 0xB5; break;
-				case 0x2562: ch = 0xB6; break;
-				case 0x2563: ch = 0xB9; break;
-				case 0x2564: ch = 0xD1; break;
-				case 0x2565: ch = 0xD2; break;
-				case 0x2566: ch = 0xCB; break;
-				case 0x2567: ch = 0xCF; break;
-				case 0x2568: ch = 0xD0; break;
-				case 0x2569: ch = 0xCA; break;
-				case 0x256A: ch = 0xD8; break;
-				case 0x256B: ch = 0xD7; break;
-				case 0x256C: ch = 0xCE; break;
-				case 0x2580: ch = 0xDF; break;
-				case 0x2584: ch = 0xDC; break;
-				case 0x2588: ch = 0xDB; break;
-				case 0x258C: ch = 0xDD; break;
-				case 0x2590: ch = 0xDE; break;
-				case 0x2591: ch = 0xB0; break;
-				case 0x2592: ch = 0xB1; break;
-				case 0x2593: ch = 0xB2; break;
-				case 0x25A0: ch = 0xFE; break;
-				case 0x25AC: ch = 0x16; break;
-				case 0x25B2: ch = 0x1E; break;
-				case 0x25BA: ch = 0x10; break;
-				case 0x25BC: ch = 0x1F; break;
-				case 0x25C4: ch = 0x11; break;
-				case 0x25CB: ch = 0x09; break;
-				case 0x25D8: ch = 0x08; break;
-				case 0x25D9: ch = 0x0A; break;
-				case 0x263A: ch = 0x01; break;
-				case 0x263B: ch = 0x02; break;
-				case 0x263C: ch = 0x0F; break;
-				case 0x2640: ch = 0x0C; break;
-				case 0x2642: ch = 0x0B; break;
-				case 0x2660: ch = 0x06; break;
-				case 0x2663: ch = 0x05; break;
-				case 0x2665: ch = 0x03; break;
-				case 0x2666: ch = 0x04; break;
-				case 0x266A: ch = 0x0D; break;
-				case 0x266B: ch = 0x0E; break;
-				case 0xFFE8: ch = 0xB3; break;
-				case 0xFFE9: ch = 0x1B; break;
-				case 0xFFEA: ch = 0x18; break;
-				case 0xFFEB: ch = 0x1A; break;
-				case 0xFFEC: ch = 0x19; break;
-				case 0xFFED: ch = 0xFE; break;
-				case 0xFFEE: ch = 0x09; break;
-				default:
-				{
-					if(ch >= 0xFF01 && ch <= 0xFF5E)
-					{
-						ch -= 0xFEE0;
-					}
-					else
-					{
-						ch = 0x3F;
-					}
-				}
-				break;
-			}
-			bytes[byteIndex++] = (byte)ch;
-			--charCount;
-		}
-	}
-	*/
-
 }; // class CP861
 
 [Serializable]

@@ -1,0 +1,11 @@
+#This is a sample file of all options that can be used by a Make.config file.
+
+
+#Disables building Android
+#DISABLE_ANDROID = 1
+
+#Disables building iOS
+#DISABLE_IOS = 1
+
+#Disables building the BCL
+#DISABLE_BCL = 1

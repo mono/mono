@@ -38,11 +38,11 @@ namespace System.ServiceModel.Channels
                         throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentException(SR.GetString(SR.MessageHeaderIsNull0)));
                 }
             }
-            else
+            else if (!LocalAppContextSwitches.DisableAddressHeaderCollectionValidation)
             {
                 foreach (AddressHeader addressHeader in addressHeaders)
                 {
-                    if (addressHeaders == null)
+                    if (addressHeader == null)
                         throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentException(SR.GetString(SR.MessageHeaderIsNull0)));
                 }
             }

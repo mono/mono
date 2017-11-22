@@ -40,7 +40,7 @@ namespace System.ServiceModel.Configuration
             private set { base[ConfigurationStrings.ExtendedProtectionPolicy] = value; }
         }
 
-        [ConfigurationProperty(ConfigurationStrings.SslProtocols, DefaultValue = TransportDefaults.SslProtocols)]
+        [ConfigurationProperty(ConfigurationStrings.SslProtocols, DefaultValue = TransportDefaults.OldDefaultSslProtocols)]
         [ServiceModelEnumValidator(typeof(SslProtocolsHelper))]
         public SslProtocols SslProtocols
         {

@@ -326,6 +326,7 @@ opt_sets [] = {
        MONO_OPT_BRANCH | MONO_OPT_PEEPHOLE | MONO_OPT_LINEARS | MONO_OPT_COPYPROP | MONO_OPT_CONSPROP | MONO_OPT_DEADCE | MONO_OPT_LOOP | MONO_OPT_INLINE | MONO_OPT_INTRINS | MONO_OPT_EXCEPTION | MONO_OPT_ABCREM,
        MONO_OPT_BRANCH | MONO_OPT_PEEPHOLE | MONO_OPT_LINEARS | MONO_OPT_COPYPROP | MONO_OPT_CONSPROP | MONO_OPT_DEADCE | MONO_OPT_LOOP | MONO_OPT_INLINE | MONO_OPT_INTRINS | MONO_OPT_ABCREM,
        MONO_OPT_BRANCH | MONO_OPT_PEEPHOLE | MONO_OPT_LINEARS | MONO_OPT_COPYPROP | MONO_OPT_CONSPROP | MONO_OPT_DEADCE | MONO_OPT_LOOP | MONO_OPT_INLINE | MONO_OPT_INTRINS | MONO_OPT_ABCREM | MONO_OPT_SHARED,
+       MONO_OPT_BRANCH | MONO_OPT_PEEPHOLE | MONO_OPT_COPYPROP | MONO_OPT_CONSPROP | MONO_OPT_DEADCE | MONO_OPT_LOOP | MONO_OPT_INLINE | MONO_OPT_INTRINS | MONO_OPT_EXCEPTION | MONO_OPT_CMOV,
        DEFAULT_OPTIMIZATIONS, 
 };
 
@@ -513,8 +514,8 @@ mini_regression (MonoImage *image, int verbose, int *total_run)
 		}
 	} else {
 		for (opt = 0; opt < G_N_ELEMENTS (opt_sets); ++opt) {
-			/* builtin-types.cs needs OPT_INTRINS enabled */
-			if (!strcmp ("builtin-types", image->assembly_name))
+			/* builtin-types.cs & aot-tests.cs need OPT_INTRINS enabled */
+			if (!strcmp ("builtin-types", image->assembly_name) || !strcmp ("aot-tests", image->assembly_name))
 				if (!(opt_sets [opt] & MONO_OPT_INTRINS))
 					continue;
 
@@ -1060,6 +1061,7 @@ static void main_thread_handler (gpointer user_data)
 
 	if (mono_compile_aot) {
 		int i, res;
+		gpointer *aot_state = NULL;
 
 		/* Treat the other arguments as assemblies to compile too */
 		for (i = 0; i < main_args->argc; ++i) {
@@ -1079,9 +1081,16 @@ static void main_thread_handler (gpointer user_data)
 					exit (1);
 				}
 			}
-			res = mono_compile_assembly (assembly, main_args->opts, main_args->aot_options);
+			res = mono_compile_assembly (assembly, main_args->opts, main_args->aot_options, &aot_state);
 			if (res != 0) {
 				fprintf (stderr, "AOT of image %s failed.\n", main_args->argv [i]);
+				exit (1);
+			}
+		}
+		if (aot_state) {
+			res = mono_compile_deferred_assemblies (main_args->opts, main_args->aot_options, &aot_state);
+			if (res != 0) {
+				fprintf (stderr, "AOT of mode-specific deferred assemblies failed.\n");
 				exit (1);
 			}
 		}
@@ -1350,6 +1359,11 @@ static const char info[] =
 	"softdebug "
 #endif
 		"\n"
+#ifndef DISABLE_INTERPRETER
+	"\tInterpreter:   yes\n"
+#else
+	"\tInterpreter:   no\n"
+#endif
 #ifdef MONO_ARCH_LLVM_SUPPORTED
 #ifdef ENABLE_LLVM
 	"\tLLVM:          yes(" LLVM_VERSION ")\n"
@@ -1421,8 +1435,8 @@ mono_jit_parse_options (int argc, char * argv[])
 			opt->break_on_exc = TRUE;
 		} else if (strcmp (argv [i], "--stats") == 0) {
 			mono_counters_enable (-1);
-			InterlockedWriteBool (&mono_stats.enabled, TRUE);
-			InterlockedWriteBool (&mono_jit_stats.enabled, TRUE);
+			mono_atomic_store_bool (&mono_stats.enabled, TRUE);
+			mono_atomic_store_bool (&mono_jit_stats.enabled, TRUE);
 		} else if (strcmp (argv [i], "--break") == 0) {
 			if (i+1 >= argc){
 				fprintf (stderr, "Missing method name in --break command line option\n");
@@ -1565,6 +1579,28 @@ apply_root_domain_configuration_file_bindings (MonoDomain *domain, char *root_do
 
 	mono_domain_parse_assembly_bindings (domain, 0, 0, root_domain_configuration_file);
 
+}
+
+static void
+mono_enable_interp (const char *opts)
+{
+#ifndef DISABLE_INTERPRETER
+	mono_use_interpreter = TRUE;
+	if (opts)
+		mono_interp_parse_options (opts);
+#endif
+
+#ifdef DISABLE_INTERPRETER
+	g_warning ("Mono IL interpreter support is missing\n");
+#endif
+
+#ifdef MONO_CROSS_COMPILE
+	g_error ("--interpreter on cross-compile runtimes not supported\n");
+#endif
+
+#if !defined(TARGET_AMD64) && !defined(TARGET_ARM) && !defined(TARGET_ARM64)
+	g_error ("--interpreter not supported on this architecture.\n");
+#endif
 }
 
 /**
@@ -1768,8 +1804,8 @@ mono_main (int argc, char* argv[])
 			mono_print_vtable = TRUE;
 		} else if (strcmp (argv [i], "--stats") == 0) {
 			mono_counters_enable (-1);
-			InterlockedWriteBool (&mono_stats.enabled, TRUE);
-			InterlockedWriteBool (&mono_jit_stats.enabled, TRUE);
+			mono_atomic_store_bool (&mono_stats.enabled, TRUE);
+			mono_atomic_store_bool (&mono_jit_stats.enabled, TRUE);
 #ifndef DISABLE_AOT
 		} else if (strcmp (argv [i], "--aot") == 0) {
 			error_if_aot_unsupported ();
@@ -1919,18 +1955,9 @@ mono_main (int argc, char* argv[])
 		} else if (strcmp (argv [i], "--nollvm") == 0){
 			mono_use_llvm = FALSE;
 		} else if ((strcmp (argv [i], "--interpreter") == 0) || !strcmp (argv [i], "--interp")) {
-#ifdef ENABLE_INTERPRETER
-			mono_use_interpreter = TRUE;
-#else
-			fprintf (stderr, "Mono Warning: --interpreter not enabled in this runtime.\n");
-#endif
+			mono_enable_interp (NULL);
 		} else if (strncmp (argv [i], "--interp=", 9) == 0) {
-#ifdef ENABLE_INTERPRETER
-			mono_use_interpreter = TRUE;
-			mono_interp_parse_options (argv [i] + 9);
-#else
-			fprintf (stderr, "Mono Warning: --interp= not enabled in this runtime.\n");
-#endif
+			mono_enable_interp (argv [i] + 9);
 		} else if (strncmp (argv [i], "--assembly-loader=", strlen("--assembly-loader=")) == 0) {
 			gchar *arg = argv [i] + strlen ("--assembly-loader=");
 			if (strcmp (arg, "strict") == 0)
@@ -2073,7 +2100,7 @@ mono_main (int argc, char* argv[])
 	case DO_SINGLE_METHOD_REGRESSION:
 		mono_do_single_method_regression = TRUE;
 	case DO_REGRESSION:
-#ifdef ENABLE_INTERPRETER
+#ifndef DISABLE_INTERPRETER
 		if (mono_use_interpreter) {
 			if (mono_interp_regression_list (2, argc -i, argv + i)) {
 				g_print ("Regression ERRORS!\n");

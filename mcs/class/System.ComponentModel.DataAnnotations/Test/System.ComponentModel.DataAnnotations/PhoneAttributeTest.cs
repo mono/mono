@@ -32,7 +32,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 using NUnit.Framework;
-using MonoTests.Common;
 
 namespace MonoTests.System.ComponentModel.DataAnnotations
 {

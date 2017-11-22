@@ -7,7 +7,8 @@ PROGRAM = monolinker.exe
 LIB_REFS = System System.Core System.Xml Mono.Cecil
 
 TEST_CASES = \
-	mscorlib/test-array.cs
+	mscorlib/test-array.cs \
+	mscorlib/test-remoting.cs
 
 ifndef AOT_FRIENDLY_PROFILE
 TEST_CASES += \

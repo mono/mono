@@ -188,6 +188,18 @@ as precompiled binaries on the Mono distribution server.
 .I "--local-targets"
 Lists all of the available local cross compilation targets.
 .TP
+.I "--cil-strip PATH"
+Provides a CIL stripper that mkbundle will use if able to.
+The intended use is to help reduce file size on AOT.
+.TP
+.I "--in-tree path/to/mono/source/root"
+Provides mkbundle with a mono source repository from which to pull the necessary headers for compilation.
+This allows mkbundle to run out of the project's source tree, useful for working with multiple runtimes and for
+testing without installing.
+.TP
+.I "--managed-linker PATH"
+Provides mkbundle access to a managed linker to preprocess the assemblies.
+.TP
 .I "--machine-config FILE"
 Uses the given FILE as the machine.config file for the generated
 application.   
@@ -308,6 +320,25 @@ causes it to statically link instead.
 Compresses the assemblies before embedding. This results in smaller
 executable files, but increases startup time and requires zlib to be
 installed on the target system.
+
+.SH AOT Options
+These options support an mkbundle using AOT compilation with static linking. A native compiler
+toolchain is required.
+.TP
+.I "--aot-runtime PATH"
+Provide the path to the mono runtime to use for AOTing assemblies.
+.TP
+.I "--aot-dedup"
+(Experimental) Deduplicate AOT'ed methods based on a unique mangling of method names.
+.TP
+.I "--aot-mode MODE"
+MODE can be either "full" or "llvmonly" at this time.
+Currently, mkbundle supports three AOT modes. The default mode (this option unset)
+will AOT methods but will fall back on runtime codegen where it is much faster or offers
+a more full compatibility profile. The "full" setting will generate the necessary stubs to
+not require runtime code generation. The "llvmonly" setting does the same, but forces all codegen
+to go through the llvm backend.
+
 .SH WINDOWS
 If you are using the old embedding on Windows systems, it it necessary
 to have Unix-like toolchain to be installed for \fImkbundle\fP to

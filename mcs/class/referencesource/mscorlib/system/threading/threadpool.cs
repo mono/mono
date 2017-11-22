@@ -1507,7 +1507,10 @@ namespace System.Threading
                 throw new NotSupportedException ("Timeout is too big. Maximum is Int32.MaxValue");
 
             RegisteredWaitHandle waiter = new RegisteredWaitHandle (waitObject, callBack, state, new TimeSpan (0, 0, 0, 0, (int) millisecondsTimeOutInterval), executeOnlyOnce);
-            QueueUserWorkItem (new WaitCallback (waiter.Wait), null);
+            if (compressStack)
+                QueueUserWorkItem (new WaitCallback (waiter.Wait), null);
+            else
+                UnsafeQueueUserWorkItem (new WaitCallback (waiter.Wait), null);
 
             return waiter;
 #endif

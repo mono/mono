@@ -39,5 +39,16 @@ namespace System
                 return LocalAppContext.GetCachedSwitchValue(@"Switch.System.Xml.IgnoreKindInUtcTimeSerialization", ref _ignoreKindInUtcTimeSerialization);
             }
         }
+
+        private static int _enableTimeSpanSerialization;
+
+        public static bool EnableTimeSpanSerialization
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return LocalAppContext.GetCachedSwitchValue(@"Switch.System.Xml.EnableTimeSpanSerialization", ref _enableTimeSpanSerialization);
+            }
+        }
     }
 }

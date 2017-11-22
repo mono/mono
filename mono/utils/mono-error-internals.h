@@ -32,8 +32,9 @@ typedef struct {
 	const char *full_message;
 	const char *full_message_with_fields;
 	const char *first_argument;
+	const char *member_signature;
 
-	void *padding [3];
+	void *padding [2];
 } MonoErrorInternal;
 
 /* Invariant: the error strings are allocated in the mempool of the given image */
@@ -51,6 +52,8 @@ struct _MonoErrorBoxed {
 
 #define return_if_nok(error) do { if (!is_ok ((error))) return; } while (0)
 #define return_val_if_nok(error,val) do { if (!is_ok ((error))) return (val); } while (0)
+
+#define goto_if_nok(error,label) do { if (!is_ok ((error))) goto label; } while (0)
 
 /* Only use this in icalls */
 #define return_val_and_set_pending_if_nok(error,value)	\
@@ -85,7 +88,7 @@ void
 mono_error_set_type_load_name (MonoError *error, const char *type_name, const char *assembly_name, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(4,5);
 
 void
-mono_error_set_method_load (MonoError *error, MonoClass *klass, const char *method_name, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(4,5);
+mono_error_set_method_load (MonoError *oerror, MonoClass *klass, const char *method_name, const char *signature, const char *msg_format, ...);
 
 void
 mono_error_set_field_load (MonoError *error, MonoClass *klass, const char *field_name, const char *msg_format, ...)  MONO_ATTR_FORMAT_PRINTF(4,5);
@@ -140,9 +143,6 @@ mono_error_prepare_exception (MonoError *error, MonoError *error_out);
 
 MonoException*
 mono_error_convert_to_exception (MonoError *error);
-
-void
-mono_error_raise_exception (MonoError *error);
 
 void
 mono_error_move (MonoError *dest, MonoError *src);

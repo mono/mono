@@ -53,12 +53,12 @@ namespace System.Configuration {
         }
 
         // parentConfig contains the config that we'd merge with.
-        override protected object CreateSection(bool inputIsTrusted, FactoryRecord factoryRecord, SectionRecord sectionRecord, object parentConfig, ConfigXmlReader reader) {
+        override protected object CreateSection(bool inputIsTrusted, FactoryRecord factoryRecord, SectionRecord sectionRecord, SectionInput sectionInput, object parentConfig, ConfigXmlReader reader) {
             // Get the factory used to create a section.
             RuntimeConfigurationFactory factory = (RuntimeConfigurationFactory) factoryRecord.Factory;
 
             // Use the factory to create a section.
-            object config = factory.CreateSection(inputIsTrusted, this, factoryRecord, sectionRecord, parentConfig, reader);
+            object config = factory.CreateSection(inputIsTrusted, this, factoryRecord, sectionRecord, sectionInput, parentConfig, reader);
 
             return config;
         }
@@ -215,7 +215,7 @@ namespace System.Configuration {
 
             private object CreateSectionImpl(
                     RuntimeConfigurationRecord configRecord, FactoryRecord factoryRecord, SectionRecord sectionRecord, 
-                    object parentConfig, ConfigXmlReader reader) {
+                    SectionInput sectionInput, object parentConfig, ConfigXmlReader reader) {
 
                 object config;
 
@@ -231,6 +231,10 @@ namespace System.Configuration {
 
                     if (reader != null) {
                         configSection.DeserializeSection(reader);
+                    }
+
+                    if (configRecord != null && sectionInput != null && sectionInput.ConfigBuilder != null) {
+                        configSection = configRecord.CallHostProcessConfigurationSection(configSection, sectionInput.ConfigBuilder);
                     }
 
                     // throw if there are any cached errors
@@ -270,15 +274,15 @@ namespace System.Configuration {
             [PermissionSet(SecurityAction.Assert, Unrestricted=true)]
             private object CreateSectionWithFullTrust(
                     RuntimeConfigurationRecord configRecord, FactoryRecord factoryRecord, SectionRecord sectionRecord, 
-                    object parentConfig, ConfigXmlReader reader) {
+                    SectionInput sectionInput, object parentConfig, ConfigXmlReader reader) {
 
-                return CreateSectionImpl(configRecord, factoryRecord, sectionRecord, parentConfig, reader);
+                        return CreateSectionImpl(configRecord, factoryRecord, sectionRecord, sectionInput, parentConfig, reader);
             }
 
             [SuppressMessage("Microsoft.Security", "CA2107:ReviewDenyAndPermitOnlyUsage", Justification = "This PermitOnly is meant to protect unassuming handlers from malicious callers by undoing any asserts we have put on the stack.")]
             private object CreateSectionWithRestrictedPermissions(
-                    RuntimeConfigurationRecord configRecord, FactoryRecord factoryRecord, SectionRecord sectionRecord, 
-                    object parentConfig, ConfigXmlReader reader) {
+                    RuntimeConfigurationRecord configRecord, FactoryRecord factoryRecord, SectionRecord sectionRecord,
+                    SectionInput sectionInput, object parentConfig, ConfigXmlReader reader) {
 
                 // run configuration section handlers as if user code was on the stack
                 bool revertPermitOnly = false;
@@ -289,7 +293,7 @@ namespace System.Configuration {
                         revertPermitOnly = true;
                     }
 
-                    return CreateSectionImpl(configRecord, factoryRecord, sectionRecord, parentConfig, reader);
+                    return CreateSectionImpl(configRecord, factoryRecord, sectionRecord, sectionInput, parentConfig, reader);
                 }
                 finally {
                     if (revertPermitOnly) {
@@ -299,13 +303,13 @@ namespace System.Configuration {
             }
 
             internal object CreateSection(bool inputIsTrusted, RuntimeConfigurationRecord configRecord, 
-                    FactoryRecord factoryRecord, SectionRecord sectionRecord, object parentConfig, ConfigXmlReader reader) {
+                    FactoryRecord factoryRecord, SectionRecord sectionRecord, SectionInput sectionInput, object parentConfig, ConfigXmlReader reader) {
 
                 if (inputIsTrusted) {
-                    return CreateSectionWithFullTrust(configRecord, factoryRecord, sectionRecord, parentConfig, reader);
+                    return CreateSectionWithFullTrust(configRecord, factoryRecord, sectionRecord, sectionInput, parentConfig, reader);
                 }
                 else {
-                    return CreateSectionWithRestrictedPermissions(configRecord, factoryRecord, sectionRecord, parentConfig, reader);
+                    return CreateSectionWithRestrictedPermissions(configRecord, factoryRecord, sectionRecord, sectionInput, parentConfig, reader);
                 }
             }
         }

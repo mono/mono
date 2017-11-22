@@ -4854,6 +4854,47 @@ namespace MonoTests.System
 			{
 			}
 		}
+
+		// https://bugzilla.xamarin.com/show_bug.cgi?id=57938
+		[Test]
+		public void NullFullNameForSpecificGenericTypes()
+		{
+			var expected = new [] {
+				(
+					typeof(Bug59738Class<>).GetFields()[0].FieldType,
+					"Bug59738Interface`1", (string)null, 
+					"MonoTests.System.TypeTest+Bug59738Interface`1[U]"
+				),
+				(
+					typeof(Bug59738Derived<>).BaseType,
+					"Bug59738Class`1", (string)null, 
+					"MonoTests.System.TypeTest+Bug59738Class`1[U]"
+				),
+				(
+					typeof(Bug59738Class<int>),
+					"Bug59738Class`1", 
+					$"MonoTests.System.TypeTest+Bug59738Class`1[[System.Int32, {typeof (int).Assembly.FullName}]]",
+					"MonoTests.System.TypeTest+Bug59738Class`1[System.Int32]"
+				)
+			};
+
+			for (var i = 0; i < expected.Length; i++) {
+				var (t, name, fullname, tostring) = expected[i];
+				Assert.AreEqual(name, t.Name, $"{i}.Name");
+				Assert.AreEqual(fullname, t.FullName, $"{i}.FullName");
+				Assert.AreEqual(tostring, t.ToString(), $"{i}.ToString()");
+			}
+		}
+
+		interface Bug59738Interface<T> {
+		}
+
+		class Bug59738Class<U> {
+			public Bug59738Interface<U> Iface;
+		}
+
+		class Bug59738Derived<U> : Bug59738Class<U> {
+		}
 	}
 
 	class UserType : Type

@@ -141,7 +141,7 @@ namespace System.Configuration {
         //
         // Create the ConfigurationSection.
         //
-        override protected object CreateSection(bool inputIsTrusted, FactoryRecord factoryRecord, SectionRecord sectionRecord, object parentConfig, ConfigXmlReader reader) {
+        override protected object CreateSection(bool inputIsTrusted, FactoryRecord factoryRecord, SectionRecord sectionRecord, SectionInput sectionInput, object parentConfig, ConfigXmlReader reader) {
             // Create an instance of the ConfigurationSection
             ConstructorInfo ctor = (ConstructorInfo) factoryRecord.Factory;
             ConfigurationSection configSection = (ConfigurationSection) TypeUtil.InvokeCtorWithReflectionPermission(ctor);
@@ -155,6 +155,10 @@ namespace System.Configuration {
             configSection.Reset(parentConfigSection);
             if (reader != null) {
                 configSection.DeserializeSection(reader);
+            }
+
+            if (sectionInput != null && sectionInput.ConfigBuilder != null) {
+                configSection = CallHostProcessConfigurationSection(configSection, sectionInput.ConfigBuilder);
             }
 
             // Clear the modified bit.
@@ -208,7 +212,7 @@ namespace System.Configuration {
                 throw new ConfigurationErrorsException(SR.GetString(SR.Config_unrecognized_configuration_section, configKey));
             }
 
-            object result = CallCreateSection(false, factoryRecord, sectionRecord, parentResult, null, null, -1);
+            object result = CallCreateSection(false, factoryRecord, sectionRecord, null, parentResult, null);
             return result;
         }
 
@@ -1647,20 +1651,24 @@ namespace System.Configuration {
         private bool AreSectionAttributesModified(SectionRecord sectionRecord, ConfigurationSection configSection) {
             string configSource;
             string protectionProviderName;
+            string configBuilderName;
 
             if (sectionRecord.HasFileInput) {
                 SectionXmlInfo sectionXmlInfo = sectionRecord.FileInput.SectionXmlInfo;
                 configSource = sectionXmlInfo.ConfigSource;
                 protectionProviderName = sectionXmlInfo.ProtectionProviderName;
+                configBuilderName = sectionXmlInfo.ConfigBuilderName;
             }
             else {
                 configSource = null;
                 protectionProviderName = null;
+                configBuilderName = null;
             }
 
             return
                    !StringUtil.EqualsNE(configSource, configSection.SectionInformation.ConfigSource)
                 || !StringUtil.EqualsNE(protectionProviderName, configSection.SectionInformation.ProtectionProviderName)
+                || !StringUtil.EqualsNE(configBuilderName, configSection.SectionInformation.ConfigBuilderName)
                 || AreLocationAttributesModified(sectionRecord, configSection);
         }
 
@@ -1979,6 +1987,7 @@ namespace System.Configuration {
                                         sectionRecord.ConfigKey, definitionConfigPath, _configPath, _locationSubPath,
                                         ConfigStreamInfo.StreamName, 0, ConfigStreamInfo.StreamVersion, null,
                                         configSource, configSourceStreamName, configSourceStreamVersion,
+                                        configSection.SectionInformation.ConfigBuilderName,
                                         configSection.SectionInformation.ProtectionProviderName,
                                         configSection.SectionInformation.OverrideModeSetting,
                                         !configSection.SectionInformation.InheritInChildApplications);
@@ -1997,6 +2006,7 @@ namespace System.Configuration {
                                 sectionXmlInfo.ConfigSource = configSource;
                                 sectionXmlInfo.ConfigSourceStreamName = configSourceStreamName;
                                 sectionXmlInfo.ConfigSourceStreamVersion = configSourceStreamVersion;
+                                sectionXmlInfo.ConfigBuilderName = configSection.SectionInformation.ConfigBuilderName;
                                 sectionXmlInfo.ProtectionProviderName = configSection.SectionInformation.ProtectionProviderName;
                                 sectionXmlInfo.OverrideModeSetting = configSection.SectionInformation.OverrideModeSetting;
                                 sectionXmlInfo.SkipInChildApps = !configSection.SectionInformation.InheritInChildApplications;

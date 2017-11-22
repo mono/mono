@@ -67,6 +67,7 @@ namespace MonoTests.System.Security.Cryptography {
 			ProtectUnprotect (notMuchEntropy, DataProtectionScope.LocalMachine);
 		}
 
+#if !MOBILE // System.PlatformNotSupportedException: Operation is not supported on this platform.
 		[Test] // https://bugzilla.xamarin.com/show_bug.cgi?id=38933
 		public void ProtectCurrentUserMultiThread ()
 		{
@@ -91,6 +92,7 @@ namespace MonoTests.System.Security.Cryptography {
 			foreach (var t in tasks) t.Start ();
 			Task.WaitAll (tasks.ToArray ());
 		}
+#endif
 
 		[Test]
 		public void DataProtectionScope_All ()

@@ -2,9 +2,9 @@
 // MethodImplAttributeTest.cs
 //
 // Authors:
-//	Marek Safar  <marek.safar@gmail.com>
+//  Alexander Köplinger (alkpli@microsoft.com)
 //
-// Copyright (c) 2017 Microsoft Corporation.
+// (c) 2017 Microsoft
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,27 +26,102 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
-using NUnit.Framework;
+using System;
+using System.Threading;
+using System.Reflection;
+using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+using NUnit.Framework;
 
-namespace MonoTests.System.Runtime.CompilerServices
-{
+namespace MonoTests.System.Runtime.CompilerServices {
+
+	/// <summary>
+	/// Summary description for MethodImplAttributeTest.
+	/// </summary>
 	[TestFixture]
 	public class MethodImplAttributeTest
 	{
-		[Test]
-		public void Ctor_Short ()
+#if !MOBILE
+		private AssemblyBuilder dynAssembly;
+		AssemblyName dynAsmName = new AssemblyName ();
+		MethodImplAttribute attr;
+		
+		public MethodImplAttributeTest ()
 		{
-			var res = new MethodImplAttribute (1);
-			Assert.AreEqual ((MethodImplOptions) 1, res.Value);
+			//create a dynamic assembly with the required attribute
+			//and check for the validity
+
+			dynAsmName.Name = "TestAssembly";
+
+			dynAssembly = Thread.GetDomain ().DefineDynamicAssembly (
+				dynAsmName,AssemblyBuilderAccess.Run
+				);
+
+			// Set the required Attribute of the assembly.
+			Type attribute = typeof (MethodImplAttribute);
+			ConstructorInfo ctrInfo = attribute.GetConstructor (
+				new Type [] { typeof (MethodImplOptions) }
+				);
+			CustomAttributeBuilder attrBuilder =
+				new CustomAttributeBuilder (ctrInfo, new object [1] { MethodImplOptions.InternalCall });
+			dynAssembly.SetCustomAttribute (attrBuilder);
+			object [] attributes = dynAssembly.GetCustomAttributes (true);
+			attr = attributes [0] as MethodImplAttribute;
 		}
 
 		[Test]
-		public void Ctor_Enum ()
+		public void MethodImplTest ()
 		{
-			var res = new MethodImplAttribute (MethodImplOptions.InternalCall);
-			Assert.AreEqual (MethodImplOptions.InternalCall, res.Value);			
+			Assert.AreEqual (
+				attr.Value,
+				MethodImplOptions.InternalCall, "#1");
+		}
+
+		[Test]
+		public void TypeIdTest ()
+		{
+			Assert.AreEqual (
+				attr.TypeId,
+				typeof (MethodImplAttribute), "#1"
+				);
+		}
+
+		[Test]
+		public void MatchTestForTrue ()
+		{
+			Assert.AreEqual (
+				attr.Match (attr),
+				true, "#1");
+		}
+
+		[Test]
+		public void MatchTestForFalse ()
+		{
+			Assert.AreEqual (
+				attr.Match (new MethodImplAttribute (MethodImplOptions.NoInlining)),
+				false, "#1");
+		}
+#endif
+		[Test]
+		public void CtorTest ()
+		{
+			var a = new MethodImplAttribute (MethodImplOptions.InternalCall);
+			Assert.AreEqual (MethodImplOptions.InternalCall, a.Value);
+
+			a = new MethodImplAttribute ((short)1);
+			Assert.AreEqual ((MethodImplOptions)1, a.Value);
+
+			a = new MethodImplAttribute ();
+			Assert.AreEqual ((MethodImplOptions)0, a.Value);
+		}
+
+		[Test]
+		public void FieldsTest ()
+		{
+			var a = new MethodImplAttribute (MethodImplOptions.NoInlining);
+
+			Assert.AreEqual (MethodCodeType.IL, a.MethodCodeType);
 		}
 	}
 }
+

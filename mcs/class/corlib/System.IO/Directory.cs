@@ -195,11 +195,18 @@ namespace System.IO
 			// on Moonlight this does not throw but returns false
 			if (!SecurityManager.CheckElevatedPermissions ())
 				return false;
-				
+
+			string full_path;
+			try {
+				full_path = Path.GetFullPath (path);
+			} catch {
+				return false;
+			}
+
 			MonoIOError error;
 			bool exists;
-			
-			exists = MonoIO.ExistsDirectory (path, out error);
+
+			exists = MonoIO.ExistsDirectory (full_path, out error);
 			/* This should not throw exceptions */
 			return exists;
 		}

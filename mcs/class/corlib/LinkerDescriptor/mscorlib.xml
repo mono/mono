@@ -250,6 +250,8 @@
 			<method signature="System.Void .ctor(System.String)" />
 			<!-- exception.c (mono_get_exception_type_load) mono_exception_from_name_two_strings -->
 			<method signature="System.Void .ctor(System.String,System.String)" />
+			<!-- exception.c  mono_exception_from_name_four_strings -->
+			<method signature="System.Void .ctor(System.String,System.String,System.String,System.String)" />
 		</type>
 		
 		<!-- threadpool.c: mono_thread_pool_init (assert) -->
@@ -744,6 +746,11 @@
 
 		<!-- domain.c: mono_defaults.transparent_proxy_class / removed with DISABLE_REMOTING -->
 		<type fullname="System.Runtime.Remoting.Proxies.TransparentProxy" feature="remoting" />
+
+		<!-- object.c: mono_object_new_specific_checked -->
+		<type fullname="System.Runtime.Remoting.Activation.ActivationServices" >
+			<method name="CreateProxyForType"/>
+		</type>
 
 		<!-- exception.c (mono_get_exception_serialization) -->
 		<type fullname="System.Runtime.Serialization.SerializationException">

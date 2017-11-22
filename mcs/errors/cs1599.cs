@@ -1,4 +1,4 @@
-// CS1599: Method or delegate cannot return type `System.TypedReference'
+// CS1599: The return type of `System.TypedReference' is not allowed
 // Line: 8
 
 using System;
