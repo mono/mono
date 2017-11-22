@@ -210,7 +210,7 @@ sub process_function {
                 $returns = "\t$_\n";
                 $section = $RETURN_SECTION;
             } else {
-                $body .= "\n\t$_";
+                $body .= "\n$_";
             }
         } elsif ($section == $RETURN_SECTION) {
             $returns .= "\n\t$_";
