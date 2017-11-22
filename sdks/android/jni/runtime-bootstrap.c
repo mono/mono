@@ -138,14 +138,6 @@ static void* my_dlopen (const char *name, int flags, char **err, void *user_data
 
 
 //stuff
-static void
-_log (const char *format, ...)
-{
-	va_list args;
-	va_start (args, format);
-	__android_log_vprint (ANDROID_LOG_INFO, "MONO", format, args);
-	va_end (args);
-}
 
 static void
 _runtime_log (const char *log_domain, const char *log_level, const char *message, int32_t fatal, void *user_data)
@@ -154,6 +146,9 @@ _runtime_log (const char *log_domain, const char *log_level, const char *message
 	static jmethodID AndroidRunner_WriteLineToInstrumentation_method = NULL;
 	JNIEnv *env;
 	jstring j_message;
+
+	if (jvm == NULL)
+		__android_log_assert ("", "mono-sdks", "%s: jvm is NULL", __func__);
 
 	(*jvm)->GetEnv (jvm, (void**)&env, JNI_VERSION_1_6);
 
@@ -198,6 +193,27 @@ _runtime_log (const char *log_domain, const char *log_level, const char *message
 	__android_log_write (android_log_level, log_domain, message);
 	if (android_log_level == ANDROID_LOG_FATAL)
 		abort ();
+}
+
+static void
+_log (const char *format, ...)
+{
+	va_list args;
+	char *buf;
+	int nbuf;
+
+	errno = 0;
+
+	va_start (args, format);
+	nbuf = vasprintf (&buf, format, args);
+	va_end (args);
+
+	if (buf == NULL || nbuf == -1)
+		__android_log_assert ("", "mono-sdks", "%s: vasprintf failed, error: \"%s\" (%d), nbuf = %d, buf = \"%s\"", __func__, strerror(errno), errno, nbuf, buf ? buf : "(null)");
+
+	_runtime_log ("mono-sdks", "debug", buf, 0, NULL);
+
+	free (buf);
 }
 
 static void
@@ -303,10 +319,10 @@ Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring
 	strncpy_str (env, data_dir, j_data_dir, sizeof(data_dir));
 	strncpy_str (env, assemblies_dir, j_assembly_dir, sizeof(assemblies_dir));
 
-	_log ("-- file dir %s\n", file_dir);
-	_log ("-- cache dir %s\n", cache_dir);
-	_log ("-- data dir %s\n", data_dir);
-	_log ("-- assembly dir %s\n", assemblies_dir);
+	_log ("-- file dir %s", file_dir);
+	_log ("-- cache dir %s", cache_dir);
+	_log ("-- data dir %s", data_dir);
+	_log ("-- assembly dir %s", assemblies_dir);
 	prctl (PR_SET_DUMPABLE, 1);
 
 	snprintf (buff, sizeof(buff), "%s/libmonosgen-2.0.so", data_dir);
