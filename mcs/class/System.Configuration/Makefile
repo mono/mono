@@ -12,6 +12,7 @@ LIB_MCS_FLAGS = -nowarn:618
 TEST_MCS_FLAGS =
 TEST_LIB_REFS = System.Xml System
 TEST_NUNITLITE_APP_CONFIG_GLOBAL=Test/test-config-file
+LIBRARY_WARN_AS_ERROR = yes
 
 include ../../build/library.make
 

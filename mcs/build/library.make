@@ -67,6 +67,14 @@ IL_REPLACE_FILES += $(IL_REPLACE:%=--ilreplace:%)
 endif
 endif
 
+ifdef ENFORCE_LIBRARY_WARN_AS_ERROR
+ifeq ($(LIBRARY_WARN_AS_ERROR),yes)
+ifndef MCS_MODE
+LIB_MCS_FLAGS += -warnaserror
+endif
+endif
+endif
+
 #
 # The bare directory contains the plain versions of System and System.Xml
 #

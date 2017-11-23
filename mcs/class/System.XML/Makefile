@@ -26,6 +26,8 @@ endif
 TEST_LIB_REFS = System.Data System.Core
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169
 
+LIBRARY_WARN_AS_ERROR = yes
+
 ifneq (bare/,$(intermediate))
 LIB_REFS += secxml/System 
 ifndef MOBILE_PROFILE
