@@ -928,6 +928,11 @@
     <Compile Include="ReferenceSources\SR2.cs" />
     <Compile Include="ReferenceSources\SRCategoryAttribute.cs" />
     <Compile Include="ReferenceSources\Win32Exception.cs" />
+    <Compile Include="System.CodeDom.Compiler\CodeDomConfigurationHandler.cs" />
+    <Compile Include="System.CodeDom.Compiler\Compiler.cs" />
+    <Compile Include="System.CodeDom.Compiler\CompilerCollection.cs" />
+    <Compile Include="System.CodeDom.Compiler\CompilerProviderOption.cs" />
+    <Compile Include="System.CodeDom.Compiler\CompilerProviderOptionsCollection.cs" />
     <Compile Include="System.CodeDom.Compiler\Executor.cs" />
     <Compile Include="System.Configuration\ApplicationScopedSettingAttribute.cs" />
     <Compile Include="System.Configuration\ApplicationSettingsBase.cs" />
