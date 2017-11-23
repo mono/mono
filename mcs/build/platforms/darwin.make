@@ -25,6 +25,8 @@ PLATFORM_CHANGE_SEPARATOR_CMD = cat
 hidden_prefix = .
 hidden_suffix = 
 
+PLATFORM_APPLETLS = 1
+
 platform-check:
 	@:
 # I tried this but apparently Make's version strings aren't that
