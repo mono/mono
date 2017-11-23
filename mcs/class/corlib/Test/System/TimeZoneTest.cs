@@ -314,6 +314,7 @@ public class TimeZoneTest {
 
 		[Test]
 		[Category ("InterpreterNotWorking")]
+		[Ignore ("https://bugzilla.xamarin.com/show_bug.cgi?id=60828")]
 		public void GetUtcOffsetAtDSTBoundary ()
 		{
 			/*
