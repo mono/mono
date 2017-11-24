@@ -247,7 +247,7 @@ namespace MonoTests.System.Threading
 				cw.Signal ();
 			}, null, 1, false);
 
-			Assert.IsTrue (cw.Wait (1000), "cw_wait");
+			Assert.IsTrue (cw.Wait (10000), "cw_wait");
 
 			Assert.AreEqual (1, var_0, "var_0");
 			Assert.AreEqual (0, var_1, "var_1");
