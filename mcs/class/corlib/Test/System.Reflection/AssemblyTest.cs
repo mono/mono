@@ -264,14 +264,9 @@ namespace MonoTests.System.Reflection
 		public void Corlib_test ()
 		{
 			Assembly corlib_test = Assembly.GetExecutingAssembly ();
-#if MONODROID || FULL_AOT_DESKTOP || __WATCHOS__
-			Assert.IsNull (corlib_test.EntryPoint, "EntryPoint");
-			Assert.IsNull (corlib_test.Evidence, "Evidence");
-#elif MOBILE
-			Assert.IsNotNull (corlib_test.EntryPoint, "EntryPoint");
+#if MONODROID || FULL_AOT_DESKTOP || __WATCHOS__ || MOBILE
 			Assert.IsNull (corlib_test.Evidence, "Evidence");
 #else
-			Assert.IsNull (corlib_test.EntryPoint, "EntryPoint");
 			Assert.IsNotNull (corlib_test.Evidence, "Evidence");
 #endif
 			Assert.IsFalse (corlib_test.GlobalAssemblyCache, "GlobalAssemblyCache");
