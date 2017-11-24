@@ -240,14 +240,14 @@ namespace MonoTests.System.Threading
 			ThreadPool.RegisterWaitForSingleObject (evt, (state, to) => {
 				var_2 = asyncLocal.Value;
 				cw.Signal ();
-			}, null, 1, false);
+			}, null, millisecondsTimeOutInterval: 1, executeOnlyOnce: true);
 
 			ThreadPool.UnsafeRegisterWaitForSingleObject (evt, (state, to) => {
 				var_3 = asyncLocal.Value;
 				cw.Signal ();
-			}, null, 1, false);
+			}, null, millisecondsTimeOutInterval: 1, executeOnlyOnce: true);
 
-			Assert.IsTrue (cw.Wait (1000), "cw_wait");
+			Assert.IsTrue (cw.Wait (2000), "cw_wait");
 
 			Assert.AreEqual (1, var_0, "var_0");
 			Assert.AreEqual (0, var_1, "var_1");
