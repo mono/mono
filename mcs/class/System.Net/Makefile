@@ -5,6 +5,7 @@ include ../../build/rules.make
 LIBRARY = System.Net.dll
 LIB_REFS = System System.Core System.Xml
 LIB_MCS_FLAGS =  -unsafe
+LIBRARY_WARN_AS_ERROR = yes
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:NET_3_5 -nowarn:1720

@@ -14,4 +14,6 @@ endif
 TEST_LIB_REFS = System System.Core
 TEST_MCS_FLAGS =
 
+LIBRARY_WARN_AS_ERROR = yes
+
 include ../../build/library.make
