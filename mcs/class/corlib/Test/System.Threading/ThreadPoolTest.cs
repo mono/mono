@@ -253,7 +253,7 @@ namespace MonoTests.System.Threading
 			Assert.AreEqual (0, var_1, "var_1");
 			Assert.AreEqual (1, var_2, "var_2");
 			Assert.AreEqual (0, var_3, "var_3");
- 		}
- 
+		}
+
 	}
 }
