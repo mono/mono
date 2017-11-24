@@ -472,6 +472,8 @@ namespace System {
         sourceBytesToCopy,
 #if MONO
         start,
+        pointer,
+        ownedMemory
 #endif
     }
 

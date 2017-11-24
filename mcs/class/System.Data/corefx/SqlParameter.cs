@@ -11,22 +11,6 @@ namespace System.Data.SqlClient
 {
 	partial class SqlParameter
 	{
-		public SqlParameter(string parameterName, SqlDbType dbType, int size, ParameterDirection direction, bool isNullable, byte precision, byte scale, string sourceColumn, DataRowVersion sourceVersion, object value)
-		{
-			if (parameterName == null)
-				parameterName = string.Empty;
-
-			_isNull = isNullable;
-			Value = value;
-			Scale = scale;
-			Size = size;
-			Precision = precision;
-			SqlDbType = dbType;
-			Direction = direction;
-			SourceColumn = sourceColumn;
-			SourceVersion = sourceVersion;
-		}
-
 		[MonoTODO]
 		public string UdtTypeName
 		{
