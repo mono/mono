@@ -392,44 +392,73 @@ namespace Mono.Profiler.Log {
 					ev = new HeapEndEvent ();
 					break;
 				case LogEventType.HeapObject: {
-					HeapObjectEvent hoe = new HeapObjectEvent {
+					var refs = Array.Empty <HeapObjectEvent.HeapObjectReference> ();
+					ev = new HeapObjectEvent {
 						ObjectPointer = ReadObject (),
 						ClassPointer = ReadPointer (),
 						ObjectSize = (long) _reader.ReadULeb128 (),
+						References = refs = new HeapObjectEvent.HeapObjectReference [(int) _reader.ReadULeb128 ()],
 					};
 
-					var list = new HeapObjectEvent.HeapObjectReference [(int) _reader.ReadULeb128 ()];
-
-					for (var i = 0; i < list.Length; i++) {
-						list [i] = new HeapObjectEvent.HeapObjectReference {
+					for (var i = 0; i < refs.Length; i++) {
+						refs [i] = new HeapObjectEvent.HeapObjectReference {
 							Offset = (long) _reader.ReadULeb128 (),
 							ObjectPointer = ReadObject (),
 						};
 					}
 
-					hoe.References = list;
-					ev = hoe;
-
 					break;
 				}
 
 				case LogEventType.HeapRoots: {
-					// TODO: This entire event makes no sense.
-					var hre = new HeapRootsEvent ();
-					var list = new HeapRootsEvent.HeapRoot [(int) _reader.ReadULeb128 ()];
+					var roots = Array.Empty<HeapRootsEvent.HeapRoot> ();
+					ev = new HeapRootsEvent () {
+						Roots = roots = new HeapRootsEvent.HeapRoot [(int) _reader.ReadULeb128 ()],
+						MaxGenerationCollectionCount = StreamHeader.FormatVersion < 15 ? (long) _reader.ReadULeb128 () : -1,
+					};
 
-					hre.MaxGenerationCollectionCount = (long) _reader.ReadULeb128 ();
-
-					for (var i = 0; i < list.Length; i++) {
-						list [i] = new HeapRootsEvent.HeapRoot {
-							ObjectPointer = ReadObject (),
-							Attributes = StreamHeader.FormatVersion == 13 ? (LogHeapRootAttributes) _reader.ReadByte () : (LogHeapRootAttributes) _reader.ReadULeb128 (),
-							ExtraInfo = (long) _reader.ReadULeb128 (),
-						};
+					for (var i = 0; i < roots.Length; i++) {
+						if (StreamHeader.FormatVersion < 13) {
+							roots [i] = new HeapRootsEvent.HeapRoot {
+								ObjectPointer = ReadObject (),
+								Attributes = (LogHeapRootAttributes) _reader.ReadULeb128 (),
+								ExtraInfo = (long) _reader.ReadULeb128 (),
+								AddressPointer = -1,
+							};
+						} else if (StreamHeader.FormatVersion < 15) {
+							roots [i] = new HeapRootsEvent.HeapRoot {
+								ObjectPointer = ReadObject (),
+								Attributes = (LogHeapRootAttributes) _reader.ReadByte (),
+								ExtraInfo = (long) _reader.ReadULeb128 (),
+								AddressPointer = -1,
+							};
+						} else {
+							roots [i] = new HeapRootsEvent.HeapRoot {
+								ObjectPointer = ReadObject (),
+								Attributes = (LogHeapRootAttributes) 0,
+								ExtraInfo = 0,
+								AddressPointer = ReadPointer (),
+							};
+						}
 					}
 
-					hre.Roots = list;
-					ev = hre;
+					break;
+				}
+				case LogEventType.HeapRootRegister: {
+					ev = new HeapRootRegisterEvent () {
+						Start = ReadPointer (),
+						Size = (long) _reader.ReadULeb128 (),
+						Kind = (LogHeapRootSource) _reader.ReadByte (),
+						Key = ReadPointer (),
+						Message = _reader.ReadCString ()
+					};
+
+					break;
+				}
+				case LogEventType.HeapRootUnregister: {
+					ev = new HeapRootUnregisterEvent () {
+						Start = ReadPointer ()
+					};
 
 					break;
 				}
@@ -586,7 +615,7 @@ namespace Mono.Profiler.Log {
 
 		long ReadObject ()
 		{
-			return _reader.ReadSLeb128 () + _bufferHeader.ObjectBase << 3;
+			return (_reader.ReadSLeb128 () + _bufferHeader.ObjectBase) << 3;
 		}
 
 		long ReadMethod ()

@@ -3899,7 +3899,7 @@ thread_startup (MonoProfiler *prof, uintptr_t tid)
 	g_assert (!tls);
 	// FIXME: Free this somewhere
 	tls = g_new0 (DebuggerTlsData, 1);
-	MONO_GC_REGISTER_ROOT_SINGLE (tls->thread, MONO_ROOT_SOURCE_DEBUGGER, "debugger thread reference");
+	MONO_GC_REGISTER_ROOT_SINGLE (tls->thread, MONO_ROOT_SOURCE_DEBUGGER, NULL, "debugger thread reference");
 	tls->thread = thread;
 	mono_native_tls_set_value (debugger_tls_id, tls);
 

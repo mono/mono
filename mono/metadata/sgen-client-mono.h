@@ -289,21 +289,6 @@ sgen_client_binary_protocol_collection_requested (int generation, size_t request
 }
 
 static void G_GNUC_UNUSED
-sgen_client_binary_protocol_collection_begin (int minor_gc_count, int generation)
-{
-	MONO_GC_BEGIN (generation);
-
-	MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_START, generation));
-
-#ifndef DISABLE_PERFCOUNTERS
-	if (generation == GENERATION_NURSERY)
-		mono_atomic_inc_i32 (&mono_perfcounters->gc_collections0);
-	else
-		mono_atomic_inc_i32 (&mono_perfcounters->gc_collections1);
-#endif
-}
-
-static void G_GNUC_UNUSED
 sgen_client_binary_protocol_collection_end (int minor_gc_count, int generation, long long num_objects_scanned, long long num_unique_objects_scanned)
 {
 	MONO_GC_END (generation);
@@ -684,6 +669,18 @@ sgen_client_binary_protocol_header (long long check, int version, int ptr_size, 
 static void G_GNUC_UNUSED
 sgen_client_binary_protocol_pin_stats (int objects_pinned_in_nursery, size_t bytes_pinned_in_nursery, int objects_pinned_in_major, size_t bytes_pinned_in_major)
 {
+}
+
+static void G_GNUC_UNUSED
+sgen_client_root_registered (char *start, size_t size, int source, void *key, const char *msg)
+{
+	MONO_PROFILER_RAISE (gc_root_register, ((const mono_byte*)start, size, source, key, msg));
+}
+
+static void G_GNUC_UNUSED
+sgen_client_root_deregistered (char *start)
+{
+	MONO_PROFILER_RAISE (gc_root_unregister, ((const mono_byte*)start));
 }
 
 static void G_GNUC_UNUSED

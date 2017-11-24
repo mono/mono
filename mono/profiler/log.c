@@ -543,7 +543,8 @@ init_thread (gboolean add_to_lls)
 	 */
 	if (add_to_lls) {
 		MonoThreadHazardPointers *hp = mono_hazard_pointer_get ();
-		g_assert (mono_lls_insert (&log_profiler.profiler_thread_list, hp, &thread->node) && "Why can't we insert the thread in the LLS?");
+		if (!mono_lls_insert (&log_profiler.profiler_thread_list, hp, &thread->node))
+			g_error ("%s: failed to insert thread %p in log_profiler.profiler_thread_list, found = %s", __func__, (gpointer) thread->node.key, mono_lls_find (&log_profiler.profiler_thread_list, hp, thread->node.key) ? "true" : "false");
 		clear_hazard_pointers (hp);
 	}
 
@@ -1200,32 +1201,64 @@ gc_reference (MonoObject *obj, MonoClass *klass, uintptr_t size, uintptr_t num, 
 }
 
 static void
-gc_roots (MonoProfiler *prof, MonoObject *const *objects, const MonoProfilerGCRootType *root_types, const uintptr_t *extra_info, uint64_t num)
+gc_roots (MonoProfiler *prof, uint64_t num, const mono_byte *const *addresses, const MonoObject* const *objects)
 {
 	ENTER_LOG (&heap_roots_ctr, logbuffer,
 		EVENT_SIZE /* event */ +
 		LEB128_SIZE /* num */ +
-		LEB128_SIZE /* collections */ +
 		num * (
 			LEB128_SIZE /* object */ +
-			LEB128_SIZE /* root type */ +
-			LEB128_SIZE /* extra info */
+			LEB128_SIZE /* address */
 		)
 	);
 
 	emit_event (logbuffer, TYPE_HEAP_ROOT | TYPE_HEAP);
 	emit_value (logbuffer, num);
-	emit_value (logbuffer, mono_gc_collection_count (mono_gc_max_generation ()));
 
 	for (int i = 0; i < num; ++i) {
 		emit_obj (logbuffer, objects [i]);
-		emit_value (logbuffer, root_types [i]);
-		emit_value (logbuffer, extra_info [i]);
+		emit_ptr (logbuffer, addresses [i]);
 	}
 
 	EXIT_LOG;
 }
 
+static void
+gc_root_register (MonoProfiler *prof, const mono_byte *start, size_t size, MonoGCRootSource kind, const void *key, const char *msg)
+{
+	int msg_len = msg ? strlen (msg) + 1 : 0;
+	ENTER_LOG (&heap_roots_ctr, logbuffer,
+		EVENT_SIZE /* event */ +
+		LEB128_SIZE /* start */ +
+		LEB128_SIZE /* size */ +
+		BYTE_SIZE /* kind */ +
+		LEB128_SIZE /* key */ +
+		msg_len /*msg */
+	);
+
+	emit_event (logbuffer, TYPE_HEAP_ROOT_REGISTER | TYPE_HEAP);
+	emit_ptr (logbuffer, start);
+	emit_uvalue (logbuffer, size);
+	emit_byte (logbuffer, kind);
+	emit_ptr (logbuffer, key);
+	emit_string (logbuffer, msg, msg_len);
+
+	EXIT_LOG;
+}
+
+static void
+gc_root_deregister (MonoProfiler *prof, const mono_byte *start)
+{
+	ENTER_LOG (&heap_roots_ctr, logbuffer,
+		EVENT_SIZE /* event */ +
+		LEB128_SIZE /* start */
+	);
+
+	emit_event (logbuffer, TYPE_HEAP_ROOT_UNREGISTER | TYPE_HEAP);
+	emit_ptr (logbuffer, start);
+
+	EXIT_LOG;
+}
 
 static void
 trigger_on_demand_heapshot (void)
@@ -4728,8 +4761,11 @@ mono_profiler_init_log (const char *desc)
 	if (ENABLED (PROFLOG_GC_MOVE_EVENTS))
 		mono_profiler_set_gc_moves_callback (handle, gc_moves);
 
-	if (ENABLED (PROFLOG_GC_ROOT_EVENTS))
+	if (ENABLED (PROFLOG_GC_ROOT_EVENTS)) {
 		mono_profiler_set_gc_roots_callback (handle, gc_roots);
+		mono_profiler_set_gc_root_register_callback (handle, gc_root_register);
+		mono_profiler_set_gc_root_unregister_callback (handle, gc_root_deregister);
+	}
 
 	if (ENABLED (PROFLOG_GC_HANDLE_EVENTS)) {
 		mono_profiler_set_gc_handle_created_callback (handle, gc_handle_created);

@@ -292,6 +292,24 @@ mono_ptrarray_hash (gpointer *s)
 	return hash;	
 }
 
+//g_malloc on sgen and mono_gc_alloc_fixed on boehm
+static void*
+gc_alloc_fixed_non_heap (size_t size)
+{
+	if (mono_gc_is_moving ())
+		return g_malloc0 (size);
+	else
+		return mono_gc_alloc_fixed (appdomain_list_size * sizeof (void*), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_DOMAIN, NULL, "Misc AppDomain Memory");
+}
+
+static void
+gc_free_fixed_no_heap (void *ptr)
+{
+	if (mono_gc_is_moving ())
+		return g_free (ptr);
+	else
+		return mono_gc_free_fixed (ptr);
+}
 /*
  * Allocate an id for domain and set domain->domain_id.
  * LOCKING: must be called while holding appdomains_mutex.
@@ -306,7 +324,8 @@ domain_id_alloc (MonoDomain *domain)
 	int id = -1, i;
 	if (!appdomains_list) {
 		appdomain_list_size = 2;
-		appdomains_list = (MonoDomain **)mono_gc_alloc_fixed (appdomain_list_size * sizeof (void*), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_DOMAIN, "domains list");
+		appdomains_list = (MonoDomain **)gc_alloc_fixed_non_heap (appdomain_list_size * sizeof (void*));
+
 	}
 	for (i = appdomain_next; i < appdomain_list_size; ++i) {
 		if (!appdomains_list [i]) {
@@ -328,9 +347,9 @@ domain_id_alloc (MonoDomain *domain)
 		if (new_size >= (1 << 16))
 			g_assert_not_reached ();
 		id = appdomain_list_size;
-		new_list = (MonoDomain **)mono_gc_alloc_fixed (new_size * sizeof (void*), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_DOMAIN, "domains list");
+		new_list = (MonoDomain **)gc_alloc_fixed_non_heap (new_size * sizeof (void*));
 		memcpy (new_list, appdomains_list, appdomain_list_size * sizeof (void*));
-		mono_gc_free_fixed (appdomains_list);
+		gc_free_fixed_no_heap (appdomains_list);
 		appdomains_list = new_list;
 		appdomain_list_size = new_size;
 	}
@@ -387,10 +406,9 @@ mono_domain_create (void)
 	mono_appdomains_unlock ();
 
 	if (!mono_gc_is_moving ()) {
-		domain = (MonoDomain *)mono_gc_alloc_fixed (sizeof (MonoDomain), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_DOMAIN, "domain object");
+		domain = (MonoDomain *)mono_gc_alloc_fixed (sizeof (MonoDomain), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_DOMAIN, NULL, "domain object");
 	} else {
-		domain = (MonoDomain *)mono_gc_alloc_fixed (sizeof (MonoDomain), domain_gc_desc, MONO_ROOT_SOURCE_DOMAIN, "domain object");
-		mono_gc_register_root ((char*)&(domain->MONO_DOMAIN_FIRST_GC_TRACKED), G_STRUCT_OFFSET (MonoDomain, MONO_DOMAIN_LAST_GC_TRACKED) - G_STRUCT_OFFSET (MonoDomain, MONO_DOMAIN_FIRST_GC_TRACKED), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_DOMAIN, "misc domain fields");
+		domain = (MonoDomain *)mono_gc_alloc_fixed (sizeof (MonoDomain), domain_gc_desc, MONO_ROOT_SOURCE_DOMAIN, NULL, "domain object");
 	}
 	domain->shadow_serial = shadow_serial;
 	domain->domain = NULL;
@@ -952,7 +970,7 @@ mono_domain_foreach (MonoDomainFunc func, gpointer user_data)
 	 */
 	mono_appdomains_lock ();
 	size = appdomain_list_size;
-	copy = (MonoDomain **)mono_gc_alloc_fixed (appdomain_list_size * sizeof (void*), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_DOMAIN, "temporary domains list");
+	copy = (MonoDomain **)gc_alloc_fixed_non_heap (appdomain_list_size * sizeof (void*));
 	memcpy (copy, appdomains_list, appdomain_list_size * sizeof (void*));
 	mono_appdomains_unlock ();
 
@@ -961,7 +979,7 @@ mono_domain_foreach (MonoDomainFunc func, gpointer user_data)
 			func (copy [i], user_data);
 	}
 
-	mono_gc_free_fixed (copy);
+	gc_free_fixed_no_heap (copy);
 }
 
 /* FIXME: maybe we should integrate this with mono_assembly_open? */
