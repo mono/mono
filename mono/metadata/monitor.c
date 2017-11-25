@@ -737,7 +737,7 @@ mono_monitor_exit (MonoObject *obj)
 		 * need to set it when the lock is reacquired
 		 */
 		mono_memory_release_barrier(); // synchronize with the 'acquire' in InterlockedCompareExchangePointer
-		InterlockedExchange (&mon->owner, 0);
+		InterlockedExchangePointer ((gpointer*)&mon->owner, 0);
 
 		/* Do the wakeup stuff.  It's possible that the last
 		 * blocking thread gave up waiting just before we
