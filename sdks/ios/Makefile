@@ -6,17 +6,17 @@ BCL_DIR = ../../mcs/class/lib/monotouch
 # Build % from assemblies %_ASSEMBLIES
 # The end result is in bin/ios-sim/test-%.app
 build-ios-sim-%:
-	make -C test-runner/
+	make -C runtime/
 	rm -rf tmp.app
 	mkdir -p tmp.app
-	cp test-runner/test-runner tmp.app/test-$*
-	cp test-runner/Info.plist.in tmp.app/1
+	cp runtime/test-runner tmp.app/test-$*
+	cp runtime/Info.plist.in tmp.app/1
 	sed -e "s/BUNDLE_IDENTIFIER/com.xamarin.mono.ios.test-$*/g" < tmp.app/1 > tmp.app/2
 	sed -e "s/BUNDLE_EXECUTABLE/test-$*/g" < tmp.app/2 > tmp.app/3
 	sed -e "s/BUNDLE_NAME/test-$*/g" < tmp.app/3 > tmp.app/Info.plist
 	rm -f tmp.app/{1,2,3}
 	plutil -convert binary1 tmp.app/Info.plist
-	cp -r test-runner/Base.lproj tmp.app
+	cp -r runtime/Base.lproj tmp.app
 	cp -r $(BCL_DIR)/{mscorlib.dll,System.dll,System.Xml.dll,System.Core.dll,I18N.dll,I18N.West.dll,Mono.Simd.dll,System.Numerics.dll,System.Numerics.Vectors.dll,nunitlite.dll,nunit-lite-console.exe} $($*_ASSEMBLIES) $($*_EXTRA_FILES) tmp.app
 	/usr/bin/codesign --force --sign - --timestamp=none tmp.app
 	mkdir -p bin/ios-sim
@@ -38,7 +38,7 @@ run-ios-sim-%:
 	xcrun simctl launch --console booted com.xamarin.mono.ios.test-$* $(ARGS) $($*_ARGS)
 
 clean:
-	$(MAKE) -C test-runner clean
+	$(MAKE) -C runtime clean
 	$(RM) -rf bin
 
 start-sim:
