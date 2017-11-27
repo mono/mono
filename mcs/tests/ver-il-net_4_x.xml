@@ -72967,6 +72967,19 @@
       </method>
     </type>
   </test>
+  <test name="test-ref-09.cs">
+    <type name="Program">
+      <method name="rigidbody&amp; get_property_returning_struct_by_ref()" attrs="2193">
+        <size>13</size>
+      </method>
+      <method name="Void Main()" attrs="145">
+        <size>17</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-static-using-01.cs">
     <type name="A.B.X">
       <method name="Int32 Test()" attrs="150">
