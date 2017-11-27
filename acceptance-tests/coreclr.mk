@@ -32,7 +32,7 @@ coreclr-runtest-coremanglib: coreclr-validate test-runner.exe $(CORECLR_COREMANG
 check-coreclr: coreclr-compile-tests coreclr-runtest-basic coreclr-runtest-coremanglib
 
 coreclr-gcstress: coreclr-validate GCStressTests.exe $(CORECLR_STRESSTESTSI_CS)
-	BVT_ROOT=$(realpath $(CORECLR_PATH)/tests/src/GC/Stress/Tests) $(RUNTIME) GCStressTests.exe $(CORECLR_PATH)/tests/src/GC/Stress/testmix_gc.config; if [ $$? -ne 100 ]; then exit 1; fi
+	BVT_ROOT=$(realpath $(CORECLR_PATH)/tests/src/GC/Stress/Tests) $(RUNTIME) GCStressTests.exe $(CORECLR_PATH)/tests/src/GC/Stress/$(if $(CI_PR),testmix_gc_pr.config,testmix_gc.config); if [ $$? -ne 100 ]; then exit 1; fi
 
 # Output a variable in $(2) to the file $(1), separated by newline characters
 # we need to do it in groups of 100 entries to make sure we don't exceed shell char limits
