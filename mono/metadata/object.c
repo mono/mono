@@ -1457,6 +1457,8 @@ build_imt_slots (MonoClass *klass, MonoVTable *vt, MonoDomain *domain, gpointer*
 				imt_builder [i] = entries;
 			}
 
+			gpointer new_value = NULL;
+
 			if (has_generic_virtual || has_variant_iface) {
 				/*
 				 * There might be collisions later when the the trampoline is expanded.
@@ -1467,10 +1469,14 @@ build_imt_slots (MonoClass *klass, MonoVTable *vt, MonoDomain *domain, gpointer*
 				 * The IMT trampoline might be called with an instance of one of the 
 				 * generic virtual methods, so has to fallback to the IMT trampoline.
 				 */
-				imt [i] = initialize_imt_slot (vt, domain, imt_builder [i], callbacks.get_imt_trampoline (vt, i));
+				new_value = initialize_imt_slot (vt, domain, imt_builder [i], callbacks.get_imt_trampoline (vt, i));
 			} else {
-				imt [i] = initialize_imt_slot (vt, domain, imt_builder [i], NULL);
+				new_value = initialize_imt_slot (vt, domain, imt_builder [i], NULL);
 			}
+
+			if (!vt->klass->has_failure)
+				imt [i] = new_value;
+
 #if DEBUG_IMT
 			printf ("initialize_imt_slot[%d]: %p methods %d\n", i, imt [i], imt_builder [i]->children + 1);
 #endif

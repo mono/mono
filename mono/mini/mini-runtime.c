@@ -2836,7 +2836,12 @@ mini_llvmonly_initial_imt_tramp (gpointer *arg, MonoMethod *imt_method)
 	gpointer *ftndesc;
 	IMTTrampFunc func;
 
+	// Can set pending exceptions when initializing the imt slot
 	mono_vtable_build_imt_slot (info->vtable, info->slot);
+
+	MonoException* setup_exc = mono_thread_interruption_checkpoint ();
+	if (setup_exc)
+		mono_raise_exception (setup_exc);
 
 	imt = (gpointer*)info->vtable;
 	imt -= MONO_IMT_SIZE;
@@ -2845,9 +2850,15 @@ mini_llvmonly_initial_imt_tramp (gpointer *arg, MonoMethod *imt_method)
 	ftndesc = imt [info->slot];
 	func = ftndesc [0];
 
+	if (info->vtable->klass->has_failure) {
+		MonoException *exc = mono_class_get_exception_for_failure (info->vtable->klass);
+		mono_raise_exception (exc);
+	}
+
 	if (func == (IMTTrampFunc)mini_llvmonly_initial_imt_tramp)
 		/* Happens when the imt slot contains only a generic virtual method */
 		return NULL;
+
 	return func ((gpointer *)ftndesc [1], imt_method);
 }
 

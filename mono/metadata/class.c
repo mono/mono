@@ -9991,6 +9991,25 @@ mono_class_has_failure (const MonoClass *klass)
 	return klass->has_failure != 0;
 }
 
+/**
+ * mono_class_set_failure_from_mono_error
+ * @klass: class in which the failure was detected
+ * @error: The MonoError holding the failure
+ *
+ * Collect detected failure informaion in the class for later processing.
+ * The error is stored as a MonoErrorBoxed as with mono_error_set_type_load_class ()
+ * Note that only the first failure is kept.
+ *
+ * Returns FALSE if a failure was already set on the class, or TRUE otherwise.
+ *
+ * LOCKING: Acquires the loader lock.
+ */
+gboolean
+mono_class_set_failure_from_mono_error (MonoClass *klass, MonoError *error)
+{
+	return mono_class_set_failure (klass, mono_error_box (error, klass->image));
+}
+
 
 /**
  * mono_class_set_type_load_failure:

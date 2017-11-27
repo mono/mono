@@ -1614,6 +1614,8 @@ resolve_vcall (MonoVTable *vt, int slot, MonoMethod *imt_method, gpointer *out_a
 		return mono_create_ftnptr (mono_domain_get (), addr);
 
 	m = mono_class_get_vtable_entry (vt->klass, slot);
+	if (!m)
+		return NULL;
 
 	if (is_generic_method_definition (m)) {
 		MonoGenericContext context = { NULL, NULL };
@@ -1651,7 +1653,11 @@ resolve_vcall (MonoVTable *vt, int slot, MonoMethod *imt_method, gpointer *out_a
 
 	// FIXME: This can throw exceptions
 	addr = compiled_method = mono_compile_method_checked (m, error);
-	mono_error_assert_ok (error);
+	if (!is_ok (error)) {
+		mono_class_set_failure_from_mono_error (m->klass, error);
+		return NULL;
+	}
+
 	g_assert (addr);
 
 	addr = mini_add_method_wrappers_llvmonly (m, addr, gsharedvt, need_unbox_tramp, out_arg);

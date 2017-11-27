@@ -4346,10 +4346,17 @@ init_method (MonoAotModule *amodule, guint32 method_index, MonoMethod *method, M
 		jinfo = mono_aot_find_jit_info (domain, amodule->assembly->image, code);
 
 	gboolean inited_ok = TRUE;
+	MonoVTable *vt = NULL;
+
+
 	if (init_class)
-		inited_ok = mono_runtime_class_init_full (mono_class_vtable (domain, init_class), error);
+		vt = mono_class_vtable (domain, init_class);
 	else if (from_plt && klass_to_run_ctor && !mono_class_is_gtd (klass_to_run_ctor))
-		inited_ok = mono_runtime_class_init_full (mono_class_vtable (domain, klass_to_run_ctor), error);
+		vt = mono_class_vtable (domain, klass_to_run_ctor);
+
+	if (vt)
+		inited_ok = mono_runtime_class_init_full (vt, error);
+
 	if (!inited_ok)
 		return FALSE;
 
