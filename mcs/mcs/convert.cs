@@ -1481,6 +1481,10 @@ namespace Mono.CSharp {
 				return target_type.Kind == MemberKind.InternalCompilerType ? null : EmptyCast.Create (expr, target_type);
 			}
 
+			if (expr_type == InternalType.DefaultType) {
+				return new DefaultValueExpression (new TypeExpression (target_type, expr.Location), expr.Location).Resolve (ec);
+			}
+
 			if (target_type.IsNullableType)
 				return ImplicitNulableConversion (ec, expr, target_type);
 
