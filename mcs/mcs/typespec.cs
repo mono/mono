@@ -1472,6 +1472,7 @@ namespace Mono.CSharp
 		public static readonly InternalType ErrorType = new InternalType ("<error>");
 		public static readonly InternalType VarOutType = new InternalType ("var out");
 		public static readonly InternalType ThrowExpr = new InternalType ("throw expression");
+		public static readonly InternalType DefaultType = new InternalType ("default");
 
 		readonly string name;
 
@@ -1616,7 +1617,7 @@ namespace Mono.CSharp
 
 		public static bool HasNoType (TypeSpec type)
 		{
-			return type == AnonymousMethod || type == MethodGroup || type == NullLiteral || type == ThrowExpr;
+			return type == AnonymousMethod || type == MethodGroup || type == NullLiteral || type == ThrowExpr || type == DefaultType;
 		}
 	}
 

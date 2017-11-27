@@ -3110,6 +3110,9 @@ namespace Mono.CSharp {
 			if (bound.Type.IsTupleType && TupleLiteral.ContainsNoTypeElement (bound.Type))
 				return;
 
+			if (bound.Type == InternalType.DefaultType)
+				return;
+
 			var a = bounds [index];
 			if (a == null) {
 				a = new List<BoundInfo> (2);
