@@ -190,12 +190,13 @@ mono_error_get_message (MonoError *oerror)
 	if (error->full_message_with_fields)
 		return error->full_message_with_fields;
 
-	error->full_message_with_fields = g_strdup_printf ("%s assembly:%s type:%s member:%s signature:%s",
+	error->full_message_with_fields = g_strdup_printf ("%s assembly:%s type:%s member:%s%s%s",
 		error->full_message,
 		get_assembly_name (error),
 		get_type_name (error),
-		error->member_signature,
-		error->member_name ? error->member_name : "<none>");
+		error->member_name ? error->member_name : "<none>",
+		error->member_signature ? " signature:" : "",
+		error->member_signature);
 
 	return error->full_message_with_fields ? error->full_message_with_fields : error->full_message;
 }
