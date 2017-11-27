@@ -4177,8 +4177,7 @@ mono_class_setup_vtable_general (MonoClass *klass, MonoMethod **overrides, int o
 		for (i = 0; i < gklass->vtable_size; ++i)
 			if (gklass->vtable [i]) {
 				MonoMethod *inflated = mono_class_inflate_generic_method_full_checked (gklass->vtable [i], klass, mono_class_get_context (klass), &error);
-				if (!is_ok (&error))
-					goto fail;
+				goto_if_nok (&error, fail);
 				tmp [i] = inflated;
 				tmp [i]->slot = gklass->vtable [i]->slot;
 			}
@@ -4258,8 +4257,7 @@ mono_class_setup_vtable_general (MonoClass *klass, MonoMethod **overrides, int o
 		MonoMethod **iface_overrides;
 		int iface_onum;
 		mono_class_get_overrides_full (ic->image, ic->type_token, &iface_overrides, &iface_onum, mono_class_get_context (ic), &error);
-		if (!is_ok (&error))
-			goto fail;
+		goto_if_nok (&error, fail);
 		for (int i = 0; i < iface_onum; i++) {
 			MonoMethod *decl = iface_overrides [i*2];
 			MonoMethod *override = iface_overrides [i*2 + 1];
