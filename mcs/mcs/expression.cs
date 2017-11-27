@@ -9905,7 +9905,7 @@ namespace Mono.CSharp
 		public static bool IsValidDotExpression (TypeSpec type)
 		{
 			const MemberKind dot_kinds = MemberKind.Class | MemberKind.Struct | MemberKind.Delegate | MemberKind.Enum |
-				MemberKind.Interface | MemberKind.TypeParameter | MemberKind.ArrayType;
+				MemberKind.Interface | MemberKind.TypeParameter | MemberKind.ArrayType  | MemberKind.ByRef;
 
 			return (type.Kind & dot_kinds) != 0 || type.BuiltinType == BuiltinTypeSpec.Type.Dynamic;
 		}
