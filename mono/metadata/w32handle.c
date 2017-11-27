@@ -54,22 +54,6 @@ static MonoCoopMutex scan_mutex;
 
 static gboolean shutting_down = FALSE;
 
-static gboolean
-mono_w32handle_lookup_data (gpointer handle, MonoW32Handle **handle_data)
-{
-	g_assert (handle_data);
-
-	if (handle == INVALID_HANDLE_VALUE)
-		return FALSE;
-
-	*handle_data = (MonoW32Handle*) handle;
-
-	if ((*handle_data)->type == MONO_W32TYPE_UNUSED)
-		return FALSE;
-
-	return TRUE;
-}
-
 static const gchar*
 mono_w32handle_ops_typename (MonoW32Type type);
 
@@ -324,7 +308,10 @@ mono_w32handle_close (gpointer handle)
 
 	if (handle == INVALID_HANDLE_VALUE)
 		return FALSE;
-	if (!mono_w32handle_lookup_data (handle, &handle_data))
+
+	handle_data = (MonoW32Handle*) handle;
+
+	if (handle_data->type == MONO_W32TYPE_UNUSED)
 		return FALSE;
 
 	destroy = mono_w32handle_unref_core (handle_data);
@@ -337,11 +324,20 @@ mono_w32handle_close (gpointer handle)
 gboolean
 mono_w32handle_lookup_and_ref (gpointer handle, MonoW32Handle **handle_data)
 {
-	if (!mono_w32handle_lookup_data (handle, handle_data))
+	g_assert (handle_data);
+
+	if (handle == INVALID_HANDLE_VALUE)
 		return FALSE;
+
+	*handle_data = (MonoW32Handle*) handle;
 
 	if (!mono_w32handle_ref_core (*handle_data))
 		return FALSE;
+
+	if ((*handle_data)->type == MONO_W32TYPE_UNUSED) {
+		mono_w32handle_unref_core (*handle_data);
+		return FALSE;
+	}
 
 	return TRUE;
 }
