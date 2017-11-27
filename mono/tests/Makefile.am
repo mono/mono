@@ -298,6 +298,7 @@ TESTS_CS_SRC=		\
 	bug-27420.cs		\
 	bug-46781.cs		\
 	bug-42136.cs		\
+	bug-41130.cs		\
 	bug-59286.cs		\
 	bug-70561.cs		\
 	bug-78311.cs		\
@@ -859,6 +860,7 @@ PROFILE_DISABLED_TESTS += \
 	bug-389886-2.exe	\
 	bug-349190.2.exe	\
 	bug-389886-sre-generic-interface-instances.exe	\
+	bug-41130.exe	\
 	bug-462592.exe	\
 	bug-575941.exe	\
 	bug-389886-3.exe	\
