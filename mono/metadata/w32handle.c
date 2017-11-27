@@ -39,7 +39,7 @@ static MonoW32HandleOps *handle_ops [MONO_W32TYPE_COUNT];
 #define SLOT_INDEX(x)	(x / HANDLE_PER_SLOT)
 #define SLOT_OFFSET(x)	(x % HANDLE_PER_SLOT)
 
-static MonoW32Handle *private_handles [SLOT_MAX];
+static MonoW32Handle **private_handles;
 static guint32 private_handles_size = 0;
 
 /*
@@ -158,13 +158,12 @@ mono_w32handle_init (void)
 	if (initialized)
 		return;
 
-	g_assert ((sizeof (handle_ops) / sizeof (handle_ops[0]))
-		  == MONO_W32TYPE_COUNT);
-
 	mono_coop_mutex_init (&scan_mutex);
 
 	mono_coop_cond_init (&global_signal_cond);
 	mono_coop_mutex_init (&global_signal_mutex);
+
+	private_handles = g_new0 (MonoW32Handle*, SLOT_MAX);
 
 	initialized = TRUE;
 }
@@ -179,6 +178,8 @@ mono_w32handle_cleanup (void)
 
 	for (i = 0; i < SLOT_MAX; ++i)
 		g_free (private_handles [i]);
+
+	g_free (private_handles);
 }
 
 static gsize
