@@ -975,6 +975,10 @@ namespace Mono.CSharp
 						mod |= Modifiers.READONLY;
 					}
 
+					if (HasAttribute (CustomAttributeData.GetCustomAttributes (type), "IsByRefLikeAttribute", CompilerServicesNamespace)) {
+						mod |= Modifiers.REF;
+					}
+
 					break;
 				}
 			}

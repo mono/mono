@@ -336,6 +336,7 @@ namespace Mono.CSharp
 %token DEFAULT_COLON
 %token OPEN_BRACKET_EXPR
 %token OPEN_PARENS_DECONSTRUCT
+%token REF_STRUCT
 
 // Make the parser go into eval mode parsing (statements and compilation units).
 %token EVAL_STATEMENT_PARSER
@@ -1015,17 +1016,34 @@ primary_constructor_body
 	  }
 	;
 
+struct_keyword
+	: STRUCT
+	  {
+		$$ = null;
+	  }
+	| REF_STRUCT
+	  {
+		if (lang_version < LanguageVersion.V_7_2) {
+			FeatureIsNotAvailable (GetLocation ($1), "ref structs");
+		}
+
+		$$ = this;
+	  }
+	;
+
 struct_declaration
 	: opt_attributes
 	  opt_modifiers
 	  opt_partial
-	  STRUCT
+	  struct_keyword
 	  type_declaration_name
 	  {
 		var mods = (Modifiers) $2;
 		if ((mods & Modifiers.READONLY) != 0 && lang_version < LanguageVersion.V_7_2) {
 			FeatureIsNotAvailable (GetLocation ($4), "readonly structs");
 		}
+		if ($4 != null)
+			mods |= Modifiers.REF;
 
 		lexer.ConstraintsParsing = true;
 		valid_param_mod = ParameterModifierType.PrimaryConstructor;
@@ -1071,7 +1089,7 @@ struct_declaration
 		}
 		$$ = pop_current_class ();
 	  }
-	| opt_attributes opt_modifiers opt_partial STRUCT error
+	| opt_attributes opt_modifiers opt_partial struct_keyword error
 	  {
 		Error_SyntaxError (yyToken);
 	  }
@@ -8334,6 +8352,7 @@ static string GetTokenName (int token)
 	case Token.STATIC:
 		return "static";
 	case Token.STRUCT:
+	case Token.REF_STRUCT:
 		return "struct";
 	case Token.SWITCH:
 		return "switch";

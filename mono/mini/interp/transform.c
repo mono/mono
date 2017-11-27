@@ -1611,7 +1611,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 	td->new_code = (unsigned short *)g_malloc(td->max_code_size * sizeof(gushort));
 	td->new_code_end = td->new_code + td->max_code_size;
 	td->mempool = mono_mempool_new ();
-	td->in_offsets = g_malloc0(header->code_size * sizeof(int));
+	td->in_offsets = g_malloc0((header->code_size + 1) * sizeof(int));
 	td->stack_state = g_malloc0(header->code_size * sizeof(StackInfo *));
 	td->stack_height = g_malloc(header->code_size * sizeof(int));
 	td->vt_stack_size = g_malloc(header->code_size * sizeof(int));
@@ -1757,9 +1757,8 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 		emit_seq_point (td, METHOD_ENTRY_IL_OFFSET, cbb, FALSE);
 	}
 
+	int in_offset;
 	while (td->ip < end) {
-		int in_offset;
-
 		g_assert (td->sp >= td->stack);
 		g_assert (td->vt_sp < 0x10000000);
 		in_offset = td->ip - header->code;
@@ -4149,6 +4148,9 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			
 		td->last_ip = td->in_start;
 	}
+	in_offset = td->ip - header->code;
+	g_assert (td->ip == end);
+	td->in_offsets [in_offset] = td->new_ip - td->new_code;
 
 	/* Handle relocations */
 	for (int i = 0; i < td->relocs->len; ++i) {
@@ -4271,7 +4273,7 @@ mono_interp_transform_init (void)
 }
 
 MonoException *
-mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, MonoDelegate *del)
+mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, InterpFrame *frame)
 {
 	MonoError error;
 	int i, align, size, offset;
@@ -4344,6 +4346,7 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Mon
 					nm = mono_marshal_get_icall_wrapper (mi->sig, wrapper_name, mi->func, TRUE);
 					g_free (wrapper_name);
 				} else if (*name == 'I' && (strcmp (name, "Invoke") == 0)) {
+					MonoDelegate *del = frame->stack_args [0].data.p;
 					nm = mono_marshal_get_delegate_invoke (method, del);
 				} else if (*name == 'B' && (strcmp (name, "BeginInvoke") == 0)) {
 					nm = mono_marshal_get_delegate_begin_invoke (method);

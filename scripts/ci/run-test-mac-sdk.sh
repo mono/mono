@@ -6,7 +6,7 @@ ${TESTCMD} --label=bockbuild --timeout=180m ${MONO_REPO_ROOT}/scripts/mac-sdk-pa
 export PATH=${MONO_REPO_ROOT}/external/bockbuild/stage/bin:$PATH
 
 # Bundled MSBuild
-cd ${MONO_REPO_ROOT}/external/bockbuild/builds/msbuild-15.4/
+cd ${MONO_REPO_ROOT}/external/bockbuild/builds/msbuild-15/
 ${TESTCMD} --label="msbuild-tests" --timeout=180m ./cibuild.sh --scope Test --host Mono --target Mono
 
 # Bundled LLVM

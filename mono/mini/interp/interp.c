@@ -16,6 +16,7 @@
 #define __USE_ISOC99
 #endif
 #include "config.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -208,6 +209,9 @@ set_resume_state (ThreadContext *context, InterpFrame *frame)
 /* Set the current execution state to the resume state in context */
 #define SET_RESUME_STATE(context) do { \
 		ip = (context)->handler_ip;						\
+		/* spec says stack should be empty at endfinally so it should be at the start too */ \
+		sp = frame->stack; \
+		vt_sp = (unsigned char *) sp + rtm->stack_size; \
 		if (frame->ex) { \
 		sp->data.p = frame->ex;											\
 		++sp;															\
@@ -1965,7 +1969,7 @@ do_transform_method (InterpFrame *frame, ThreadContext *context)
 	/* Use the parent frame as the current frame is not complete yet */
 	interp_push_lmf (&ext, frame->parent);
 
-	frame->ex = mono_interp_transform_method (frame->imethod, context, (MonoDelegate *) frame->stack_args [0].data.p);
+	frame->ex = mono_interp_transform_method (frame->imethod, context, frame);
 
 	interp_pop_lmf (&ext);
 }
@@ -5027,6 +5031,7 @@ array_constructed:
 			ip = finally_ips->data;
 			finally_ips = g_slist_remove (finally_ips, ip);
 			sp = frame->stack; /* spec says stack should be empty at endfinally so it should be at the start too */
+			vt_sp = (unsigned char *) sp + rtm->stack_size;
 			goto main_loop;
 		}
 
@@ -5067,6 +5072,7 @@ array_constructed:
 			ip = finally_ips->data;
 			finally_ips = g_slist_remove (finally_ips, ip);
 			sp = frame->stack; /* spec says stack should be empty at endfinally so it should be at the start too */
+			vt_sp = (unsigned char *) sp + rtm->stack_size;
 			goto main_loop;
 		}
 	}

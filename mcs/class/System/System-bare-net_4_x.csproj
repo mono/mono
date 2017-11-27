@@ -9,6 +9,7 @@
     <ProjectGuid>{483DB7F6-9145-4AE2-B9B2-2B5EE6FDEFB4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,436</NoWarn>
+    <LangVersion>latest</LangVersion>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Windows_NT'">win32</HostPlatform>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">darwin</HostPlatform>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix'">linux</HostPlatform>
@@ -928,6 +929,11 @@
     <Compile Include="ReferenceSources\SR2.cs" />
     <Compile Include="ReferenceSources\SRCategoryAttribute.cs" />
     <Compile Include="ReferenceSources\Win32Exception.cs" />
+    <Compile Include="System.CodeDom.Compiler\CodeDomConfigurationHandler.cs" />
+    <Compile Include="System.CodeDom.Compiler\Compiler.cs" />
+    <Compile Include="System.CodeDom.Compiler\CompilerCollection.cs" />
+    <Compile Include="System.CodeDom.Compiler\CompilerProviderOption.cs" />
+    <Compile Include="System.CodeDom.Compiler\CompilerProviderOptionsCollection.cs" />
     <Compile Include="System.CodeDom.Compiler\Executor.cs" />
     <Compile Include="System.Configuration\ApplicationScopedSettingAttribute.cs" />
     <Compile Include="System.Configuration\ApplicationSettingsBase.cs" />
@@ -1345,6 +1351,11 @@
       <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
       <Name>corlib-net_4_x</Name>
     </ProjectReference>
+    <Reference Include="./../../../external/api-snapshot/profiles/net_4_x/System.Net.Http.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/api-snapshot/profiles/net_4_x/System.Net.Http.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

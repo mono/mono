@@ -701,6 +701,10 @@ namespace Mono.CSharp {
 			if (MemberType.IsStatic) {
 				Error_StaticReturnType ();
 			}
+
+			if (MemberType.IsSpecialRuntimeType && Compiler.Settings.StdLib) {
+				Error_ReturnTypeCantBeRefAny (Location, ReturnType, Report);
+			}
 		}
 
 		public override void Emit ()
@@ -762,6 +766,11 @@ namespace Mono.CSharp {
 			Report.Error (577, Location,
 				"Conditional not valid on `{0}' because it is a constructor, destructor, operator or explicit interface implementation",
 				GetSignatureForError ());
+		}
+
+		public static void Error_ReturnTypeCantBeRefAny (Location loc, TypeSpec t, Report Report)
+		{
+			Report.Error (1599, loc, "The return type of `{0}' is not allowed", t.GetSignatureForError ());
 		}
 
 		public bool IsPartialDefinition {
@@ -1231,11 +1240,6 @@ namespace Mono.CSharp {
 					"Introducing `Finalize' method can interfere with destructor invocation. Did you intend to declare a destructor?");
 			}
 
-			if (Compiler.Settings.StdLib && ReturnType.IsSpecialRuntimeType) {
-				Error1599 (Location, ReturnType, Report);
-				return false;
-			}
-
 			if (CurrentTypeParameters == null) {
 				if (base_method != null && !IsExplicitImpl) {
 					if (parameters.Count == 1 && ParameterTypes[0].BuiltinType == BuiltinTypeSpec.Type.Object && MemberName.Name == "Equals")
@@ -1394,11 +1398,6 @@ namespace Mono.CSharp {
 				return false;
 
 			return base.EnableOverloadChecks (overload);
-		}
-
-		public static void Error1599 (Location loc, TypeSpec t, Report Report)
-		{
-			Report.Error (1599, loc, "Method or delegate cannot return type `{0}'", t.GetSignatureForError ());
 		}
 
 		protected override bool ResolveMemberType ()

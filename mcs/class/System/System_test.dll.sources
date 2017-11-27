@@ -278,6 +278,7 @@ System.Net.Security/SslStreamTest.cs
 System.Runtime.Versioning/FrameworkNameTest.cs
 System.Security.AccessControl/SemaphoreSecurityTest.cs
 System.Security.Cryptography/AsnEncodedDataTest.cs
+System.Security.Cryptography/CryptoConfigTest.cs
 System.Security.Cryptography/OidCollectionTest.cs
 System.Security.Cryptography/OidEnumeratorTest.cs
 System.Security.Cryptography/OidTest.cs

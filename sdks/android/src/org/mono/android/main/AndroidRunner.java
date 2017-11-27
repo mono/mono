@@ -1,14 +1,14 @@
 package org.mono.android;
 
-import android.content.pm.ApplicationInfo;
+import android.app.Instrumentation;
+
 import android.content.Context;
-import android.app.Activity;
-import android.os.Bundle;
-import android.os.Handler;
+import android.content.pm.ApplicationInfo;
 import android.content.res.AssetManager;
+
+import android.os.Bundle;
+
 import android.util.Log;
-import android.widget.*;
-import android.view.*;
 
 import java.io.File;
 import java.io.InputStream;
@@ -18,65 +18,51 @@ import java.io.IOException;
 
 import org.mono.android.AndroidTestRunner.R;
 
-public class AndroidRunner extends Activity
+public class AndroidRunner extends Instrumentation
 {
-	Handler the_handler;
+	static AndroidRunner inst;
 
-	public void updateTheButton () {
-		// Log.w ("MONO", "CHECKING STATUS!");
-		String s = send ("status", "tests");
-		final TextView tv = (TextView)findViewById (R.id.text);
-		if (!s.equals ("NO RUN"))
-			tv.setText (s);
-		if (s.equals ("IN-PROGRESS"))
-			the_handler.postDelayed(
-				new Runnable () {
-					public void run () {
-						updateTheButton ();
-					}
-				},
-				1000);
-	}
+	@Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate (savedInstanceState);
 
-	static String mkstr (CharSequence cq) {
-		StringBuilder sb = new StringBuilder ();
-		sb.append (cq);
-		return sb.toString();
+		start ();
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+	public void onStart ()
+	{
+		super.onStart ();
 
-		LayoutInflater inflater = (LayoutInflater)this.getSystemService (Context.LAYOUT_INFLATER_SERVICE);
-		View view = inflater.inflate (R.layout.main, null, false);
+		AndroidRunner.inst = this;
 
-		setContentView (view);
-		Button b = (Button)findViewById (R.id.button);
-		final TextView tv = (TextView)findViewById (R.id.text);
-		final TextView ed = (EditText)findViewById (R.id.input);
-		the_handler = new Handler (this.getMainLooper());
+		Context context = getContext ();
 
-		b.setOnClickListener(
-			new View.OnClickListener () {
-				public void onClick(View v) {
-					String input_str = mkstr (ed.getText ());
-					tv.setText (send ("start", input_str));
-					updateTheButton ();
-				}
-			});
-		setupRuntime (this);
-	}
+		String filesDir    = context.getFilesDir ().getAbsolutePath ();
+		String cacheDir    = context.getCacheDir ().getAbsolutePath ();
+		String dataDir     = context.getApplicationInfo ().nativeLibraryDir;
+		String assemblyDir = filesDir + "/" + "assemblies";
 
-	void copy (InputStream in, OutputStream out) throws IOException {
-		byte[] buff = new byte [1024];
-		int len = in.read (buff);
-		while (len != -1) {
-			out.write (buff, 0, len);
-			len = in.read (buff);
-		}
-		in.close ();
-		out.close ();
+		//XXX copy stuff
+		Log.w ("MONO", "DOING THE COPYING!2");
+
+		AssetManager am = context.getAssets ();
+
+		new File (assemblyDir).mkdir ();
+		copyAssetDir (am, "asm", assemblyDir);
+
+		new File (filesDir + "/mono").mkdir ();
+		new File (filesDir + "/mono/2.1").mkdir ();
+		copyAssetDir (am, "mconfig", filesDir + "/mono/2.1");
+
+		runTests (filesDir, cacheDir, dataDir, assemblyDir);
+
+		runOnMainSync (new Runnable () {
+			public void run() {
+				finish (0, null);
+			}
+		});
 	}
 
 	void copyAssetDir (AssetManager am, String path, String outpath) {
@@ -94,41 +80,23 @@ public class AndroidRunner extends Activity
 		}
 	}
 
-	public void setupRuntime (Context context) {
-		String filesDir     = context.getFilesDir ().getAbsolutePath ();
-		String cacheDir     = context.getCacheDir ().getAbsolutePath ();
-		String dataDir      = getNativeLibraryPath (context);
-
-		String assemblyDir = filesDir + "/" + "assemblies";
-
-		//XXX copy stuff
-		Log.w ("MONO", "DOING THE COPYING!2");
-
-		AssetManager am = context.getAssets ();
-		new File (assemblyDir).mkdir ();
-		copyAssetDir (am, "asm", assemblyDir);
-
-		new File (filesDir + "/mono").mkdir ();
-		new File (filesDir + "/mono/2.1").mkdir ();
-		copyAssetDir (am, "mconfig", filesDir + "/mono/2.1");
-
-		init (filesDir, cacheDir, dataDir, assemblyDir);
-		execMain ();
+	void copy (InputStream in, OutputStream out) throws IOException {
+		byte[] buff = new byte [1024];
+		for (int len = in.read (buff); len != -1; len = in.read (buff)) {
+			out.write (buff, 0, len);
+		}
+		in.close ();
+		out.close ();
 	}
 
-	static String getNativeLibraryPath (Context context) {
-		return getNativeLibraryPath (context.getApplicationInfo ());
-	}
+	native void runTests (String filesDir, String cacheDir, String dataDir, String assemblyDir);
 
-	static String getNativeLibraryPath (ApplicationInfo ainfo) {
-		if (android.os.Build.VERSION.SDK_INT >= 9)
-			return ainfo.nativeLibraryDir;
-		return ainfo.dataDir + "/lib";
+	static void WriteLineToInstrumentation (String line)
+	{
+		Bundle b = new Bundle();
+		b.putString(Instrumentation.REPORT_KEY_STREAMRESULT, line + "\n");
+		AndroidRunner.inst.sendStatus(0, b);
 	}
-
-	native void init(String path0, String path1, String path2, String path3);
-	native int execMain ();
-	native String send (String key, String value);
 
 	static {
 		System.loadLibrary("runtime-bootstrap");

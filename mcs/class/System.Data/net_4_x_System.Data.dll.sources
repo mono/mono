@@ -7,6 +7,9 @@ Assembly/AssemblyInfo.cs
 ../../build/common/AssemblyRef.cs
 ../../build/common/SR.cs
 
+Microsoft.SqlServer.Server/SqlContext.cs
+Microsoft.SqlServer.Server/SqlPipe.cs
+
 System.Data.SqlClient/SQLDebugging.cs
 ../referencesource/System.Data/System/Data/CodeGen/datacache.cs
 ../referencesource/System.Data/Misc/PrivilegedConfigurationManager.cs

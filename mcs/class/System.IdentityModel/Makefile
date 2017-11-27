@@ -31,6 +31,10 @@ endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
+ifdef MOBILE_PROFILE
+NO_TEST = yes
+endif
+
 EXTRA_DISTFILES = \
 	Test/Resources/test.cer \
 	Test/Resources/test_neg_serial.cer \

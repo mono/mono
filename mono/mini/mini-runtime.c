@@ -76,6 +76,7 @@
 #include <ctype.h>
 #include "trace.h"
 #include "version.h"
+#include "aot-compiler.h"
 
 #include "jit-icalls.h"
 
@@ -91,7 +92,7 @@
 #endif
 #endif
 
-#ifdef ENABLE_INTERPRETER
+#ifndef DISABLE_INTERPRETER
 #include "interp/interp.h"
 #endif
 
@@ -1996,7 +1997,7 @@ mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt, gboolean jit_
 		return NULL;
 	}
 
-#ifdef ENABLE_INTERPRETER
+#ifndef DISABLE_INTERPRETER
 	if (mono_use_interpreter && !jit_only) {
 		code = mono_interp_create_method_pointer (method, error);
 		if (code)
@@ -2631,7 +2632,7 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 	MonoJitInfo *ji = NULL;
 	gboolean callee_gsharedvt = FALSE;
 
-#ifdef ENABLE_INTERPRETER
+#ifndef DISABLE_INTERPRETER
 	if (mono_use_interpreter)
 		return mono_interp_runtime_invoke (method, obj, params, exc, error);
 #endif
@@ -3321,7 +3322,7 @@ mini_get_delegate_arg (MonoMethod *method, gpointer method_ptr)
 void
 mini_init_delegate (MonoDelegate *del)
 {
-#ifdef ENABLE_INTERPRETER
+#ifndef DISABLE_INTERPRETER
 	if (mono_use_interpreter)
 		mono_interp_init_delegate (del);
 	else
@@ -3805,7 +3806,7 @@ mini_init (const char *filename, const char *runtime_version)
 	}
 #endif
 
-#ifdef ENABLE_INTERPRETER
+#ifndef DISABLE_INTERPRETER
 	mono_interp_init ();
 #endif
 
@@ -3862,7 +3863,7 @@ mini_init (const char *filename, const char *runtime_version)
 	callbacks.create_remoting_trampoline = mono_jit_create_remoting_trampoline;
 #endif
 #endif
-#if defined (ENABLE_INTERPRETER) && !defined (DISABLE_REMOTING)
+#if !defined (DISABLE_INTERPRETER) && !defined (DISABLE_REMOTING)
 	if (mono_use_interpreter)
 		callbacks.interp_get_remoting_invoke = mono_interp_get_remoting_invoke;
 #endif

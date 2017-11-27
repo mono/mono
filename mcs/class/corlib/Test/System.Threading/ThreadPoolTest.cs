@@ -216,5 +216,44 @@ namespace MonoTests.System.Threading
 
 			mre.WaitOne ();
 		}
+
+		[Test]
+		public void AsyncLocalCapture ()
+		{
+			var asyncLocal = new AsyncLocal<int>();
+			asyncLocal.Value = 1;
+			int var_0, var_1, var_2, var_3;
+			var_0 = var_1 = var_2 = var_3 = 99;
+			var cw = new CountdownEvent (4);
+
+			var evt = new AutoResetEvent (false);
+			ThreadPool.QueueUserWorkItem(state => {
+				var_0 = asyncLocal.Value;
+				cw.Signal ();
+			}, null);
+
+			ThreadPool.UnsafeQueueUserWorkItem(state => {
+				var_1 = asyncLocal.Value;
+				cw.Signal ();
+			}, null);
+
+			ThreadPool.RegisterWaitForSingleObject (evt, (state, to) => {
+				var_2 = asyncLocal.Value;
+				cw.Signal ();
+			}, null, millisecondsTimeOutInterval: 1, executeOnlyOnce: true);
+
+			ThreadPool.UnsafeRegisterWaitForSingleObject (evt, (state, to) => {
+				var_3 = asyncLocal.Value;
+				cw.Signal ();
+			}, null, millisecondsTimeOutInterval: 1, executeOnlyOnce: true);
+
+			Assert.IsTrue (cw.Wait (2000), "cw_wait");
+
+			Assert.AreEqual (1, var_0, "var_0");
+			Assert.AreEqual (0, var_1, "var_1");
+			Assert.AreEqual (1, var_2, "var_2");
+			Assert.AreEqual (0, var_3, "var_3");
+		}
+
 	}
 }

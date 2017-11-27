@@ -9,12 +9,12 @@ LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)/Facades
 
 LIBRARY = System.Runtime.InteropServices.RuntimeInformation.dll
 
-RESX_RESOURCE_STRING = ../../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/Resources/Strings.resx
-
 KEYFILE = ../../msfinal.pub
-SIGN_FLAGS = /delaysign /nowarn:1616,1699,436
-LIB_REFS = System
-LIB_MCS_FLAGS = $(SIGN_FLAGS) /unsafe
+SIGN_FLAGS = /delaysign /nowarn:1616,1699
+LIB_REFS =
+LIB_MCS_FLAGS = $(SIGN_FLAGS)
+
+PLATFORM_DEBUG_FLAGS =
 
 NO_TEST = yes
 

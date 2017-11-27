@@ -8,7 +8,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{EC439BB8-FFED-4A32-A05D-2FA3A70CAD64}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <NoWarn>1699,219,414,649</NoWarn>
+    <NoWarn>1699,219,414,649,619</NoWarn>
+    <LangVersion>latest</LangVersion>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Windows_NT'">win32</HostPlatform>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">darwin</HostPlatform>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix'">linux</HostPlatform>
@@ -31,7 +32,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <NoWarn>1699,219,414,649</NoWarn>
+    <NoWarn>1699,219,414,649,619</NoWarn>
     <Optimize>false</Optimize>
     <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;COREFX;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -39,7 +40,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <NoWarn>1699,219,414,649</NoWarn>
+    <NoWarn>1699,219,414,649,619</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;COREFX;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -53,10 +54,37 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.NetSecurityNative.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\GssSafeHandles.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Data\Common\AdapterUtil.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Data\Common\BasicFieldNameLookup.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Data\Common\DbConnectionOptions.Common.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Data\Common\DbConnectionPoolKey.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Data\Common\FieldNameLookup.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Data\Common\MultipartIdentifier.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Data\Common\NameValuePair.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Data\Common\SQLResource.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsPal.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\DebugCriticalHandleMinusOneIsInvalid.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\DebugSafeHandle.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\InternalException.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Logging\DebugThreadTracking.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Logging\NetEventSource.Common.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\NegotiationInfoClass.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SecurityBuffer.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SecurityBufferType.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteNegoContext.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeCredentials.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeNegoCredentials.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\SecurityStatusPal.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\NotImplemented.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Threading\Tasks\TaskToApm.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\AcceptRejectRule.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\AggregateType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\BaseCollection.cs" />
@@ -65,6 +93,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\CommandBehavior.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\CommandType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\AdapterSwitches.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\AdapterUtil.Common.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\BigIntegerStorage.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\BooleanStorage.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\ByteStorage.cs" />
@@ -83,7 +112,9 @@
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\DbCommand.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\DBCommandBuilder.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\DbConnection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\DbConnectionOptions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\DbConnectionStringBuilder.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\DbConnectionStringBuilderDescriptor.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\DbDataAdapter.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\DbDataReader.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\DbDataReaderExtensions.cs" />
@@ -103,7 +134,6 @@
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\DbTransaction.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\DecimalStorage.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\DoubleStorage.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\FieldNameLookup.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\Groupbybehavior.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\IDbColumnSchemaGenerator.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Data\Common\identifiercase.cs" />
@@ -296,139 +326,204 @@
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Xml\XmlDataDocument.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Xml\XmlDataImplementation.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Xml\XPathNodePointer.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\Common\System\Data\Common\DBConnectionString.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\Common\System\Data\Common\ExternDll.Linux.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\Common\System\Data\Common\NameValuePermission.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\Common\System\Data\Common\SafeNativeMethods.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\Common\System\Data\Common\UnsafeNativeMethods.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\Common\System\Data\ProviderBase\DbBuffer.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\Common\System\HResults.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\Properties\SecurityTransparent.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\DbDataRecord.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\Odbc32.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcCommand.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcCommandBuilder.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcConnection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcConnectionFactory.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcConnectionHandle.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcConnectionHelper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcConnectionPoolProviderInfo.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcConnectionString.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcConnectionStringbuilder.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcDataAdapter.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcDataReader.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcEnvironment.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcEnvironmentHandle.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcError.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcErrorCollection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcException.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcFactory.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcHandle.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcInfoMessageEvent.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcMetaDataCollectionNames.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcMetaDataColumnNames.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcMetaDataFactory.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcParameter.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcParameterCollection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcParameterCollectionHelper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcParameterHelper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcReferenceCollection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcRowUpdatingEvent.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcStatementHandle.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcTransaction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcType.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcUtils.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\Interop\SNINativeMethodWrapper.Common.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\Interop\SNINativeMethodWrapper.Unix.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\Microsoft\SqlServer\Server\ExtendedClrTypeCode.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\Microsoft\SqlServer\Server\ITypedGetters.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\Microsoft\SqlServer\Server\ITypedGettersV3.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\Microsoft\SqlServer\Server\ITypedSetters.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\Microsoft\SqlServer\Server\ITypedSettersV3.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\Microsoft\SqlServer\Server\MemoryRecordBuffer.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\Microsoft\SqlServer\Server\MetadataUtilsSmi.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\Microsoft\SqlServer\Server\SmiEventSink.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\Microsoft\SqlServer\Server\SmiEventSink_Default.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\Microsoft\SqlServer\Server\SmiGettersStream.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\Microsoft\SqlServer\Server\SmiMetaData.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\Microsoft\SqlServer\Server\SmiMetaDataProperty.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\Microsoft\SqlServer\Server\SmiRecordBuffer.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\Microsoft\SqlServer\Server\SmiSettersStream.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\Microsoft\SqlServer\Server\SmiTypedGetterSetter.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\Microsoft\SqlServer\Server\SmiXetterAccessMap.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\Microsoft\SqlServer\Server\SmiXetterTypeCode.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\Microsoft\SqlServer\Server\SqlDataRecord.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\Microsoft\SqlServer\Server\SqlRecordBuffer.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\Microsoft\SqlServer\Server\ValueUtilsSmi.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\Common\ActivityCorrelator.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\Common\AdapterUtil.SqlClient.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\Common\DbConnectionOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\Common\DbConnectionStringCommon.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\OperationAbortedException.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\ProviderBase\DbConnectionClosed.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\ProviderBase\DbConnectionFactory.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\ProviderBase\DbConnectionInternal.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\ProviderBase\DbConnectionPool.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\ProviderBase\DbConnectionPoolGroup.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\ProviderBase\DbConnectionPoolGroupProviderInfo.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\ProviderBase\DbConnectionPoolIdentity.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\ProviderBase\DbConnectionPoolIdentity.Unix.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\ProviderBase\DbConnectionPoolOptions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\ProviderBase\DbConnectionPoolProviderInfo.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\ProviderBase\DbMetaDataFactory.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\ProviderBase\DbReferenceCollection.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\ProviderBase\TimeoutTimer.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\Sql\SqlMetaData.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\Sql\SqlNotificationRequest.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\ApplicationIntent.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\LocalDBAPI.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\LocalDBAPI.Unix.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\OnChangedEventHandler.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\ParameterPeekAheadValue.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\RowsCopiedEventArgs.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\RowsCopiedEventHandler.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SNI\LocalDB.Unix.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SNI\SNICommon.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SNI\SNIError.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SNI\SNIHandle.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SNI\SNILoadHandle.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SNI\SNIMarsConnection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SNI\SNIMarsHandle.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SNI\SNIMarsQueuedPacket.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SNI\SNINpHandle.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SNI\SNIPacket.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SNI\SNIProxy.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SNI\SNITcpHandle.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SNI\SslOverTdsStream.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SNI\SspiClientContextStatus.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SNI\SSRP.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SortOrder.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlBuffer.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlBulkCopy.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlBulkCopyColumnMapping.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlBulkCopyColumnMappingCollection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlBulkCopyOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlCachedBuffer.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlClientDiagnosticListenerExtensions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlClientFactory.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlClientMetaDataCollectionNames.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlCommand.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlCommandBuilder.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlCommandSet.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlConnection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlConnectionFactory.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlConnectionHelper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlConnectionPoolGroupProviderInfo.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlConnectionPoolKey.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlConnectionPoolProviderInfo.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlConnectionString.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlConnectionStringBuilder.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlConnectionTimeoutErrorInternal.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlDataAdapter.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlDataReader.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlDbColumn.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlDelegatedTransaction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlDependency.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlDependencyListener.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlDependencyUtils.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlEnums.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlError.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlErrorCollection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlException.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlInfoMessageEvent.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlInfoMessageEventHandler.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlInternalConnection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlInternalConnectionTds.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\sqlinternaltransaction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\sqlmetadatafactory.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlNotificationEventArgs.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlNotificationInfo.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlNotificationSource.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlNotificationType.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlParameter.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlParameterCollection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlParameterCollectionHelper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlParameterHelper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlReferenceCollection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlRowUpdatedEvent.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlRowUpdatedEventHandler.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlRowUpdatingEvent.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlRowUpdatingEventHandler.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlSequentialStream.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlSequentialTextReader.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlStatistics.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlStream.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlTransaction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlUtil.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\TdsEnums.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\TdsParameterSetter.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\TdsParser.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\TdsParser.Unix.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\TdsParserHelperClasses.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\TdsParserSessionPool.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\TdsParserStateObject.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\TdsParserStateObjectFactory.Managed.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\TdsParserStateObjectManaged.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\TdsParserStaticMethods.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\TdsRecordBufferSetter.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\TdsValueSetter.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlTypes\SqlTypeWorkarounds.cs" />
     <Compile Include="..\..\build\common\AssemblyRef.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="..\..\build\common\SR.cs" />
-    <Compile Include="..\referencesource\System.Data\bid\inc\cs\bidPrivateBase.cs" />
     <Compile Include="..\referencesource\System.Data\Microsoft\SqlServer\Server\SqlTriggerContext.cs" />
-    <Compile Include="..\referencesource\System.Data\Misc\ExternDll.cs" />
     <Compile Include="..\referencesource\System.Data\Misc\PrivilegedConfigurationManager.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\CodeGen\datacache.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\CodeGen\StrongTypingException.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Common\AdapterUtil.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Common\DbConnectionOptions.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Common\DBConnectionString.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Common\DbConnectionStringCommon.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\Common\DBDataPermission.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\Common\DBDataPermissionAttribute.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\Common\DbProviderConfigurationHandler.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\Common\DbProviderFactories.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\Common\DbProviderFactoriesConfigurationHandler.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Common\GreenMethods.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\Common\HandlerBase.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Common\NameValuePermission.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Common\NativeMethods.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Common\SafeNativeMethods.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Common\SQLTypes\SqlXmlStorage.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Common\System.Data_BID.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Common\UnsafeNativeMethods.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\DataSet.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Odbc\DbDataRecord.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Odbc\Odbc32.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Odbc\OdbcCommand.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Odbc\OdbcCommandBuilder.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Odbc\OdbcConnection.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Odbc\OdbcConnectionFactory.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Odbc\OdbcConnectionHandle.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\Odbc\OdbcConnectionOpen.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Odbc\OdbcConnectionPoolProviderInfo.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Odbc\OdbcConnectionString.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Odbc\OdbcConnectionStringbuilder.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Odbc\OdbcDataAdapter.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Odbc\OdbcDataReader.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Odbc\OdbcEnvironment.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Odbc\OdbcEnvironmentHandle.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Odbc\OdbcError.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Odbc\OdbcErrorCollection.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Odbc\OdbcException.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Odbc\OdbcFactory.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Odbc\OdbcHandle.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Odbc\OdbcInfoMessageEvent.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Odbc\odbcmetadatacollectionnames.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Odbc\odbcmetadatacolumnnames.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Odbc\odbcmetadatafactory.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Odbc\OdbcParameter.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Odbc\OdbcParameterCollection.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\Odbc\OdbcPermission.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Odbc\OdbcReferenceCollection.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Odbc\OdbcRowUpdatingEvent.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Odbc\OdbcStatementHandle.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Odbc\OdbcTransaction.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Odbc\OdbcType.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Odbc\OdbcUtils.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\ColumnBinding.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\DBBindings.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\DBPropSet.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OLEDB_Enum.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OLEDB_Util.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbCommand.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbCommandBuilder.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbConnection.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbConnectionFactory.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbConnectionInternal.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbConnectionPoolGroupProviderInfo.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\oledbconnectionstring.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OledbConnectionStringbuilder.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbDataAdapter.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbDataReader.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbEnumerator.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbError.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbErrorCollection.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbException.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbFactory.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbHResult.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbInfoMessageEvent.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbInfoMessageEventHandler.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbLiteral.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\oledbmetadatacollectionnames.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\oledbmetadatacolumnnames.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbMetaDataFactory.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbParameter.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbParameterCollection.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbPermission.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbPropertySetGuid.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbPropertyStatus.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbReferenceCollection.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbRowUpdatedEvent.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbRowUpdatedEventHandler.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbRowUpdatingEvent.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbRowUpdatingEventHandler.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbSchemaGuid.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbStruct.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbTransaction.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbType.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\OleDbWrapper.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\OleDb\PropertyAttributes.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\PropertyIDSet.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\PropertyInfoSet.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\RowBinding.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\OleDb\SafeHandles.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\ProviderBase\DbBuffer.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\ProviderBase\DbConnectionClosed.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\ProviderBase\DbConnectionFactory.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\ProviderBase\DbConnectionInternal.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\ProviderBase\DbConnectionPool.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\ProviderBase\DbConnectionPoolAuthenticationContext.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\ProviderBase\DbConnectionPoolAuthenticationContextKey.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\ProviderBase\DbConnectionPoolCounters.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\ProviderBase\DbConnectionPoolGroup.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\ProviderBase\DbConnectionPoolIdentity.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\ProviderBase\DbConnectionPoolOptions.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\ProviderBase\DbMetaDataFactory.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\ProviderBase\WrappedIUnknown.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\Sql\IBinarySerialize.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\Sql\invalidudtexception.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\Sql\SqlDataSourceEnumerator.cs" />
@@ -436,87 +531,38 @@
     <Compile Include="..\referencesource\System.Data\System\Data\Sql\SqlFunctionAttribute.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\Sql\SqlGenericUtil.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\Sql\SqlMethodAttribute.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\Sql\SqlNotificationRequest.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\Sql\SqlProcedureAttribute.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\Sql\SqlTriggerAttribute.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\Sql\SqlUserDefinedAggregateAttribute.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\Sql\SqlUserDefinedTypeAttribute.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\Sql\TriggerAction.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\SqlClient\LocalDBAPI.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\SqlClient\SqlClientEncryptionType.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\SqlClient\SqlClientPermission.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\SqlClient\SqlConnectionString.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\SqlClient\SqlConnectionStringBuilder.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\SqlClient\SqlUtil.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\SqlClient\TdsEnums.cs" />
-    <Compile Include="..\referencesource\System.Data\System\Data\SqlClient\TdsParserStaticMethods.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\SQLTypes\SqlTypesSchemaImporter.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
-    <Compile Include="corefx\DataView.cs" />
-    <Compile Include="corefx\DBCommandBuilder.cs" />
     <Compile Include="corefx\DbConnection.cs" />
-    <Compile Include="corefx\FieldNameLookup.cs" />
-    <Compile Include="corefx\Index.cs" />
+    <Compile Include="corefx\DbConnectionOptions.cs" />
+    <Compile Include="corefx\DiagnosticListener.cs" />
+    <Compile Include="corefx\Odbc\AdapterUtil.cs" />
+    <Compile Include="corefx\Odbc\DbConnectionStringCommon.cs" />
+    <Compile Include="corefx\Odbc\OdbcFactory.cs" />
+    <Compile Include="corefx\Odbc\Res.cs" />
+    <Compile Include="corefx\OleDbStubs.cs" />
+    <Compile Include="corefx\SqlClientFactory.cs" />
+    <Compile Include="corefx\SqlCommand.cs" />
+    <Compile Include="corefx\SqlConnection.cs" />
+    <Compile Include="corefx\SqlConnectionStringBuilder.cs" />
+    <Compile Include="corefx\SqlDependencyUtils.cs" />
+    <Compile Include="corefx\SqlException.cs" />
+    <Compile Include="corefx\SqlMetaData.cs" />
+    <Compile Include="corefx\SqlParameter.cs" />
+    <Compile Include="corefx\SqlParameterCollection.cs" />
     <Compile Include="corefx\SR.cs" />
-    <Compile Include="Microsoft.SqlServer.Server\SqlDataRecord.cs" />
-    <Compile Include="Microsoft.SqlServer.Server\SqlMetaData.cs" />
-    <Compile Include="ReferenceSources\NativeOledbWrapper.cs" />
-    <Compile Include="ReferenceSources\PoolBlockingPeriod.cs" />
-    <Compile Include="ReferenceSources\Res.cs" />
-    <Compile Include="ReferenceSources\Res.missing.cs" />
-    <Compile Include="ReferenceSources\ResCategoryAttribute.cs" />
-    <Compile Include="ReferenceSources\ResDescriptionAttribute.cs" />
-    <Compile Include="ReferenceSources\SqlInternalConnectionTds.cs" />
-    <Compile Include="ReferenceSources\ThisAssembly.cs" />
-    <Compile Include="ReferenceSources\Win32NativeMethods.cs" />
-    <Compile Include="System.Data.Common\DbConnectionStringBuilderHelper.cs" />
-    <Compile Include="System.Data.Common\DbTypes.cs" />
-    <Compile Include="System.Data.Common\ExceptionHelper.cs" />
-    <Compile Include="System.Data.SqlClient\NetworkLibraryConverter.cs" />
-    <Compile Include="System.Data.SqlClient\OnChangeEventHandler.cs" />
-    <Compile Include="System.Data.SqlClient\SortOrder.cs" />
-    <Compile Include="System.Data.SqlClient\SqlAsyncResult.cs" />
-    <Compile Include="System.Data.SqlClient\SqlAsyncState.cs" />
-    <Compile Include="System.Data.SqlClient\SqlBulkCopy.cs" />
-    <Compile Include="System.Data.SqlClient\SqlBulkCopyColumnMapping.cs" />
-    <Compile Include="System.Data.SqlClient\SqlBulkCopyColumnMappingCollection.cs" />
-    <Compile Include="System.Data.SqlClient\SqlBulkCopyOptions.cs" />
-    <Compile Include="System.Data.SqlClient\SqlClientFactory.cs" />
-    <Compile Include="System.Data.SqlClient\SqlClientMetaDataCollectionNames.cs" />
-    <Compile Include="System.Data.SqlClient\SqlCommand.cs" />
-    <Compile Include="System.Data.SqlClient\SqlCommandBuilder.cs" />
-    <Compile Include="System.Data.SqlClient\SqlConnection.cs" />
+    <Compile Include="corefx\TdsEnums.cs" />
+    <Compile Include="corefx\ThisAssembly.cs" />
+    <Compile Include="Microsoft.SqlServer.Server\SqlContext.cs" />
+    <Compile Include="Microsoft.SqlServer.Server\SqlPipe.cs" />
     <Compile Include="System.Data.SqlClient\SqlCredential.cs" />
-    <Compile Include="System.Data.SqlClient\SqlDataAdapter.cs" />
-    <Compile Include="System.Data.SqlClient\SqlDataReader.cs" />
-    <Compile Include="System.Data.SqlClient\SqlDataSourceConverter.cs" />
-    <Compile Include="System.Data.SqlClient\SQLDebugging.cs" />
-    <Compile Include="System.Data.SqlClient\SqlDecimalExtensions.cs" />
-    <Compile Include="System.Data.SqlClient\SqlDependency.cs" />
-    <Compile Include="System.Data.SqlClient\SqlException.cs" />
-    <Compile Include="System.Data.SqlClient\SqlInfoMessageEventHandler.cs" />
-    <Compile Include="System.Data.SqlClient\SqlInitialCatalogConverter.cs" />
-    <Compile Include="System.Data.SqlClient\SqlNotificationEventArgs.cs" />
-    <Compile Include="System.Data.SqlClient\SqlNotificationInfo.cs" />
-    <Compile Include="System.Data.SqlClient\SqlNotificationSource.cs" />
-    <Compile Include="System.Data.SqlClient\SqlNotificationType.cs" />
-    <Compile Include="System.Data.SqlClient\SqlParameter.cs" />
-    <Compile Include="System.Data.SqlClient\SqlParameterCollection.cs" />
-    <Compile Include="System.Data.SqlClient\SqlParameterConverter.cs" />
-    <Compile Include="System.Data.SqlClient\SqlRowsCopiedEventArgs.cs" />
-    <Compile Include="System.Data.SqlClient\SqlRowsCopiedEventHandler.cs" />
-    <Compile Include="System.Data.SqlClient\SqlRowUpdatedEventArgs.cs" />
-    <Compile Include="System.Data.SqlClient\SqlRowUpdatedEventHandler.cs" />
-    <Compile Include="System.Data.SqlClient\SqlRowUpdatingEventArgs.cs" />
-    <Compile Include="System.Data.SqlClient\SqlRowUpdatingEventHandler.cs" />
-    <Compile Include="System.Data.SqlClient\SqlTransaction.cs" />
-    <Compile Include="System.Data.SqlClient\SqlXmlTextReader.cs" />
-    <Compile Include="gen_OdbcConnection.cs" />
-    <Compile Include="gen_OdbcParameter.cs" />
-    <Compile Include="gen_OdbcParameterCollection.cs" />
-    <Compile Include="gen_OleDbConnection.cs" />
-    <Compile Include="gen_OleDbParameter.cs" />
-    <Compile Include="gen_OleDbParameterCollection.cs" />  </ItemGroup>
+    <Compile Include="System.Data.SqlClient\SQLDebugging.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -559,25 +605,26 @@
       <Project>{BD2FFDDC-BD89-4041-82F5-A696C941C7BE}</Project>
       <Name>System.Numerics-net_4_x</Name>
     </ProjectReference>
+    <ProjectReference Include="../System.Transactions/System.Transactions-net_4_x.csproj">
+      <Project>{3821C69F-220D-4231-992C-0FE05311A005}</Project>
+      <Name>System.Transactions-net_4_x</Name>
+    </ProjectReference>
     <ProjectReference Include="../System.EnterpriseServices/System.EnterpriseServices-net_4_x.csproj">
       <Project>{61E3D008-E273-4E12-860A-8ADA031098C2}</Project>
       <Name>System.EnterpriseServices-net_4_x</Name>
-    </ProjectReference>
-    <ProjectReference Include="../Mono.Data.Tds/Mono.Data.Tds-net_4_x.csproj">
-      <Project>{39F59AE4-1381-4275-B14E-16D786F40B93}</Project>
-      <Name>Mono.Data.Tds-net_4_x</Name>
     </ProjectReference>
     <ProjectReference Include="../System.Configuration/System.Configuration-net_4_x.csproj">
       <Project>{D5CDC09C-F19A-4811-A6C8-70F51CBFB644}</Project>
       <Name>System.Configuration-net_4_x</Name>
     </ProjectReference>
-    <ProjectReference Include="../System.Transactions/System.Transactions-net_4_x.csproj">
-      <Project>{3821C69F-220D-4231-992C-0FE05311A005}</Project>
-      <Name>System.Transactions-net_4_x</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="../../../external/corefx/src/System.Data.SqlClient/src/Resources/System.Data.SqlClient.SqlMetaData.xml">
+      <LogicalName>System.Data.SqlClient.SqlMetaData.xml</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>
 

@@ -956,7 +956,9 @@ with_wasm_default=no
 with_bitcode_default=no
 with_cooperative_gc_default=no
 
-INVARIANT_AOT_OPTIONS=nimt-trampolines=2000,ntrampolines=8000,nrgctx-fetch-trampolines=256,ngsharedvt-trampolines=4000
+INVARIANT_AOT_OPTIONS=nimt-trampolines=2000,ntrampolines=9000,nrgctx-fetch-trampolines=256,ngsharedvt-trampolines=4000
+
+AOT_BUILD_ATTRS=$INVARIANT_AOT_OPTIONS
 
 if test x$cross_compiling = xyes -o x$enable_mcs_build = xno; then
    DISABLE_MCS_DOCS_default=yes
@@ -985,8 +987,8 @@ elif test x$with_runtime_preset = xfullaot; then
    mono_feature_disable_appdomains='yes'
 
    AOT_BUILD_FLAGS="--runtime=mobile -O=gsharedvt --aot=full,$INVARIANT_AOT_OPTIONS"
-
    AOT_RUN_FLAGS="--runtime=mobile --full-aot"
+   AOT_MODE="full"
 elif test x$with_runtime_preset = xbitcode; then
    DISABLE_MCS_DOCS_default=yes
    with_testing_aot_full_default=yes
@@ -1003,6 +1005,7 @@ elif test x$with_runtime_preset = xbitcode; then
 
    AOT_BUILD_FLAGS="--runtime=mobile --aot=llvmonly,$INVARIANT_AOT_OPTIONS"
    AOT_RUN_FLAGS="--runtime=mobile --llvmonly"
+   AOT_MODE="llvmonly"
 elif test x$with_runtime_preset = xhybridaot; then
    DISABLE_MCS_DOCS_default=yes
    with_testing_aot_hybrid_default=yes
@@ -1030,6 +1033,7 @@ elif test x$with_runtime_preset = xwinaot; then
 
    AOT_BUILD_FLAGS="--runtime=mobile --aot=full,$INVARIANT_AOT_OPTIONS"
    AOT_RUN_FLAGS="--runtime=mobile --full-aot"
+   AOT_MODE="llvmonly"
 elif test x$with_runtime_preset = xorbis; then
    DISABLE_MCS_DOCS_default=yes
    with_orbis_default=yes
@@ -1043,6 +1047,7 @@ elif test x$with_runtime_preset = xorbis; then
 
    AOT_BUILD_FLAGS="--runtime=mobile --aot=full,$INVARIANT_AOT_OPTIONS"
    AOT_RUN_FLAGS="--runtime=mobile --full-aot"
+   AOT_MODE="full"
 elif test x$with_runtime_preset = xunreal; then
    DISABLE_MCS_DOCS_default=yes
    with_unreal_default=yes
@@ -1195,7 +1200,7 @@ fi
 
 AC_ARG_ENABLE(minimal, [  --enable-minimal=LIST      drop support for LIST subsystems.
      LIST is a comma-separated list from: aot, profiler, decimal, pinvoke, debug, appdomains, verifier, 
-     reflection_emit, reflection_emit_save, large_code, logging, com, ssa, generics, attach, jit, simd, soft_debug, perfcounters, normalization, desktop_loader, shared_perfcounters, remoting,
+     reflection_emit, reflection_emit_save, large_code, logging, com, ssa, generics, attach, jit, interpreter, simd, soft_debug, perfcounters, normalization, desktop_loader, shared_perfcounters, remoting,
 	 security, lldb, mdb, sgen_remset, sgen_marksweep_par, sgen_marksweep_fixed, sgen_marksweep_fixed_par, sgen_copying.],
 [
 	for feature in `echo "$enable_minimal" | sed -e "s/,/ /g"`; do
@@ -1291,11 +1296,18 @@ if test "x$mono_feature_disable_verifier" = "xyes"; then
 fi
 
 if test "x$mono_feature_disable_jit" = "xyes"; then
-	AC_DEFINE(DISABLE_JIT, 1, [Disable the JIT, only full-aot mode will be supported by the runtime.])
-	AC_MSG_NOTICE([Disabled the JIT engine, only full AOT will be supported])
+	AC_DEFINE(DISABLE_JIT, 1, [Disable the JIT, only full-aot mode or interpreter will be supported by the runtime.])
+	AC_MSG_NOTICE([Disabled the JIT engine, only full AOT or interpreter will be supported])
 fi
 
 AM_CONDITIONAL(DISABLE_JIT, test x$mono_feature_disable_jit = xyes)
+
+if test "x$mono_feature_disable_interpreter" = "xyes"; then
+	AC_DEFINE(DISABLE_INTERPRETER, 1, [Disable the interpreter.])
+	AC_MSG_NOTICE([Disabled the interpreter])
+fi
+
+AM_CONDITIONAL(DISABLE_INTERPRETER, test x$mono_feature_disable_interpreter = xyes)
 
 if test "x$mono_feature_disable_simd" = "xyes"; then
 	AC_DEFINE(DISABLE_SIMD, 1, [Disable SIMD intrinsics related optimizations.])
@@ -3713,14 +3725,6 @@ if test "x$have_deprecated" = "xyes"; then
    AC_DEFINE(HAVE_DEPRECATED, 1, [Support for the deprecated attribute])
 fi
 
-AC_ARG_ENABLE(interpreter, [  --enable-interpreter       Enable Interpreter], enable_interpreter=$enableval, enable_interpreter=no)
-
-if test "x$enable_interpreter" = "xyes"; then
-	AC_DEFINE(ENABLE_INTERPRETER, 1, [Enable Interpreter])
-fi
-
-AM_CONDITIONAL(ENABLE_INTERPRETER, [test x$enable_interpreter = xyes])
-
 dnl 
 dnl Simple Generational checks (sgen)
 dnl
@@ -4872,6 +4876,11 @@ fi
     if test "x$AOT_BUILD_FLAGS" != "x" ; then
       echo "AOT_RUN_FLAGS=$AOT_RUN_FLAGS" >> $srcdir/$mcsdir/build/config.make
       echo "AOT_BUILD_FLAGS=$AOT_BUILD_FLAGS" >> $srcdir/$mcsdir/build/config.make
+      echo "AOT_BUILD_ATTRS=$AOT_BUILD_ATTRS" >> $srcdir/$mcsdir/build/config.make
+    fi
+
+    if test "x$AOT_MODE" != "x" ; then
+      echo "AOT_MODE=$AOT_MODE" >> $srcdir/$mcsdir/build/config.make
     fi
 
     if test "x$enable_btls" = "xyes"; then
@@ -4907,7 +4916,6 @@ echo "
 	BigArrays:     $enable_big_arrays
 	DTrace:        $enable_dtrace
 	LLVM Back End: $enable_llvm (dynamically loaded: $enable_loadedllvm)
-	Interpreter:   $enable_interpreter
 
    Libraries:
 	.NET 4.x:        $with_profile4_x

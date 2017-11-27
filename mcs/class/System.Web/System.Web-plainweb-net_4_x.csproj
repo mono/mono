@@ -9,6 +9,7 @@
     <ProjectGuid>{DE51B021-D51C-4F26-99EE-B0729D97631E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,612,618,436,618</NoWarn>
+    <LangVersion>latest</LangVersion>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Windows_NT'">win32</HostPlatform>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">darwin</HostPlatform>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix'">linux</HostPlatform>
@@ -210,6 +211,7 @@
     <Compile Include="..\referencesource\System.Web\Security\Cryptography\ICryptoService.cs" />
     <Compile Include="..\referencesource\System.Web\Security\FormsAuthenticationEventArgs.cs" />
     <Compile Include="..\referencesource\System.Web\Security\FormsAuthenticationEventHandler.cs" />
+    <Compile Include="..\referencesource\System.Web\Security\GenericAuthenticationEventHandler.cs" />
     <Compile Include="..\referencesource\System.Web\Security\PassportAuthenticationEventArgs.cs" />
     <Compile Include="..\referencesource\System.Web\Security\PassportAuthenticationEventHandler.cs" />
     <Compile Include="..\referencesource\System.Web\Security\RoleManagerEventArgs.cs" />
@@ -229,7 +231,10 @@
     <Compile Include="..\referencesource\System.Web\UI\DataKeyPropertyAttribute.cs" />
     <Compile Include="..\referencesource\System.Web\UI\DataSourceCacheExpiry.cs" />
     <Compile Include="..\referencesource\System.Web\UI\DataSourceCapabilities.cs" />
+    <Compile Include="..\referencesource\System.Web\UI\DataSourceControlBuilder.cs" />
     <Compile Include="..\referencesource\System.Web\UI\DataSourceOperation.cs" />
+    <Compile Include="..\referencesource\System.Web\UI\EmptyControlCollection.cs" />
+    <Compile Include="..\referencesource\System.Web\UI\EventEntry.cs" />
     <Compile Include="..\referencesource\System.Web\UI\FileLevelControlBuilderAttribute.cs" />
     <Compile Include="..\referencesource\System.Web\UI\FilterableAttribute.cs" />
     <Compile Include="..\referencesource\System.Web\UI\HtmlTextWriterAttribute.cs" />
@@ -253,9 +258,11 @@
     <Compile Include="..\referencesource\System.Web\UI\IHierarchicalDataSource.cs" />
     <Compile Include="..\referencesource\System.Web\UI\IHierarchicalEnumerable.cs" />
     <Compile Include="..\referencesource\System.Web\UI\IHierarchyData.cs" />
+    <Compile Include="..\referencesource\System.Web\UI\ImageClickEventArgs.cs" />
     <Compile Include="..\referencesource\System.Web\UI\ImageClickEventHandler.cs" />
     <Compile Include="..\referencesource\System.Web\UI\INamingContainer.cs" />
     <Compile Include="..\referencesource\System.Web\UI\INavigateUIData.cs" />
+    <Compile Include="..\referencesource\System.Web\UI\IndexedString.cs" />
     <Compile Include="..\referencesource\System.Web\UI\INonBindingContainer.cs" />
     <Compile Include="..\referencesource\System.Web\UI\IParserAccessor.cs" />
     <Compile Include="..\referencesource\System.Web\UI\IPostBackDataHandler.cs" />
@@ -274,6 +281,8 @@
     <Compile Include="..\referencesource\System.Web\UI\IUserControlTypeResolutionService.cs" />
     <Compile Include="..\referencesource\System.Web\UI\IValidator.cs" />
     <Compile Include="..\referencesource\System.Web\UI\NonVisualControlAttribute.cs" />
+    <Compile Include="..\referencesource\System.Web\UI\PagesConfiguration.cs" />
+    <Compile Include="..\referencesource\System.Web\UI\Pair.cs" />
     <Compile Include="..\referencesource\System.Web\UI\PersistChildrenAttribute.cs" />
     <Compile Include="..\referencesource\System.Web\UI\PersistenceMode.cs" />
     <Compile Include="..\referencesource\System.Web\UI\SupportsEventValidationAttribute.cs" />
@@ -395,6 +404,7 @@
     <Compile Include="..\referencesource\System.Web\UI\WebControls\LoginCancelEventArgs.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\LoginCancelEventHandler.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\LoginFailureAction.cs" />
+    <Compile Include="..\referencesource\System.Web\UI\WebControls\Logintextlayout.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\LogoutAction.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\MailMessageEventArgs.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\MailMessageEventHandler.cs" />
@@ -411,6 +421,7 @@
     <Compile Include="..\referencesource\System.Web\UI\WebControls\ObjectDataSourceFilteringEventHandler.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\ObjectDataSourceMethodEventArgs.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\ObjectDataSourceMethodEventHandler.cs" />
+    <Compile Include="..\referencesource\System.Web\UI\WebControls\ObjectDataSourceObjectEventHandler.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\ObjectDataSourceSelectingEventArgs.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\ObjectDataSourceSelectingEventHandler.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\ObjectDataSourceStatusEventArgs.cs" />
@@ -426,7 +437,9 @@
     <Compile Include="..\referencesource\System.Web\UI\WebControls\RepeaterItemEventArgs.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\RepeaterItemEventHandler.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\RepeatLayout.cs" />
+    <Compile Include="..\referencesource\System.Web\UI\WebControls\Scrollbars.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\SendMailErrorEventHandler.cs" />
+    <Compile Include="..\referencesource\System.Web\UI\WebControls\ServerValidateEventArgs.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\ServerValidateEventHandler.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\SiteMapNodeItemEventArgs.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\SiteMapNodeItemEventHandler.cs" />
@@ -443,6 +456,8 @@
     <Compile Include="..\referencesource\System.Web\UI\WebControls\SqlDataSourceStatusEventArgs.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\SqlDataSourceStatusEventHandler.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\TableCaptionAlign.cs" />
+    <Compile Include="..\referencesource\System.Web\UI\WebControls\TableFooterRow.cs" />
+    <Compile Include="..\referencesource\System.Web\UI\WebControls\TableHeaderRow.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\TableHeaderScope.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\TableRowSection.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\TextAlign.cs" />
@@ -451,6 +466,7 @@
     <Compile Include="..\referencesource\System.Web\UI\WebControls\TreeNodeEventArgs.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\TreeNodeEventHandler.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\TreeNodeSelectAction.cs" />
+    <Compile Include="..\referencesource\System.Web\UI\WebControls\TreeNodeType.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\TreeViewImageSet.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\UnitType.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\ValidationCompareOperator.cs" />
@@ -461,6 +477,8 @@
     <Compile Include="..\referencesource\System.Web\UI\WebControls\WebColorConverter.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\WizardSideBarListControlItem.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebControls\WizardSideBarListControlItemEventArgs.cs" />
+    <Compile Include="..\referencesource\System.Web\UI\WebControls\WizardStep.cs" />
+    <Compile Include="..\referencesource\System.Web\UI\WebControls\WizardStepType.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebParts\FieldCallback.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebParts\ITrackingPersonalizable.cs" />
     <Compile Include="..\referencesource\System.Web\UI\WebParts\ITransformerConfigurationControl.cs" />
@@ -860,7 +878,6 @@
     <Compile Include="System.Web.Security\AspNetDBSchemaChecker.cs" />
     <Compile Include="System.Web.Security\CookieProtection.cs" />
     <Compile Include="System.Web.Security\DefaultAuthenticationEventArgs.cs" />
-    <Compile Include="System.Web.Security\DefaultAuthenticationEventHandler.cs" />
     <Compile Include="System.Web.Security\DefaultAuthenticationModule.cs" />
     <Compile Include="System.Web.Security\FileAuthorizationModule.cs" />
     <Compile Include="System.Web.Security\FormsAuthentication.cs" />
@@ -1099,7 +1116,6 @@
     <Compile Include="System.Web.UI.WebControls\Login.cs" />
     <Compile Include="System.Web.UI.WebControls\LoginName.cs" />
     <Compile Include="System.Web.UI.WebControls\LoginStatus.cs" />
-    <Compile Include="System.Web.UI.WebControls\LoginTextLayout.cs" />
     <Compile Include="System.Web.UI.WebControls\LoginView.cs" />
     <Compile Include="System.Web.UI.WebControls\MailDefinition.cs" />
     <Compile Include="System.Web.UI.WebControls\Menu.cs" />
@@ -1116,7 +1132,6 @@
     <Compile Include="System.Web.UI.WebControls\MultiViewControlBuilder.cs" />
     <Compile Include="System.Web.UI.WebControls\NamedCssStyleCollection.cs" />
     <Compile Include="System.Web.UI.WebControls\ObjectDataSource.cs" />
-    <Compile Include="System.Web.UI.WebControls\ObjectDataSourceEventHandler.cs" />
     <Compile Include="System.Web.UI.WebControls\ObjectDataSourceView.cs" />
     <Compile Include="System.Web.UI.WebControls\PagedDataSource.cs" />
     <Compile Include="System.Web.UI.WebControls\PagerSettings.cs" />
@@ -1143,10 +1158,8 @@
     <Compile Include="System.Web.UI.WebControls\RoleGroup.cs" />
     <Compile Include="System.Web.UI.WebControls\RoleGroupCollection.cs" />
     <Compile Include="System.Web.UI.WebControls\RouteParameter.cs" />
-    <Compile Include="System.Web.UI.WebControls\ScrollBars.cs" />
     <Compile Include="System.Web.UI.WebControls\SelectedDatesCollection.cs" />
     <Compile Include="System.Web.UI.WebControls\SendMailErrorEventArgs.cs" />
-    <Compile Include="System.Web.UI.WebControls\ServerValidateEventArgs.cs" />
     <Compile Include="System.Web.UI.WebControls\SessionParameter.cs" />
     <Compile Include="System.Web.UI.WebControls\SiteMapDataSource.cs" />
     <Compile Include="System.Web.UI.WebControls\SiteMapDataSourceView.cs" />
@@ -1167,9 +1180,7 @@
     <Compile Include="System.Web.UI.WebControls\TableCell.cs" />
     <Compile Include="System.Web.UI.WebControls\TableCellCollection.cs" />
     <Compile Include="System.Web.UI.WebControls\TableCellControlBuilder.cs" />
-    <Compile Include="System.Web.UI.WebControls\TableFooterRow.cs" />
     <Compile Include="System.Web.UI.WebControls\TableHeaderCell.cs" />
-    <Compile Include="System.Web.UI.WebControls\TableHeaderRow.cs" />
     <Compile Include="System.Web.UI.WebControls\TableItemStyle.cs" />
     <Compile Include="System.Web.UI.WebControls\TableRow.cs" />
     <Compile Include="System.Web.UI.WebControls\TableRowCollection.cs" />
@@ -1187,7 +1198,6 @@
     <Compile Include="System.Web.UI.WebControls\TreeNodeCollection.cs" />
     <Compile Include="System.Web.UI.WebControls\TreeNodeStyle.cs" />
     <Compile Include="System.Web.UI.WebControls\TreeNodeStyleCollection.cs" />
-    <Compile Include="System.Web.UI.WebControls\TreeNodeTypes.cs" />
     <Compile Include="System.Web.UI.WebControls\TreeView.cs" />
     <Compile Include="System.Web.UI.WebControls\Unit.cs" />
     <Compile Include="System.Web.UI.WebControls\UnitConverter.cs" />
@@ -1202,11 +1212,9 @@
     <Compile Include="System.Web.UI.WebControls\WizardLayoutNavigationContainer.cs" />
     <Compile Include="System.Web.UI.WebControls\WizardNavigationEventArgs.cs" />
     <Compile Include="System.Web.UI.WebControls\WizardNavigationEventHandler.cs" />
-    <Compile Include="System.Web.UI.WebControls\WizardStep.cs" />
     <Compile Include="System.Web.UI.WebControls\WizardStepBase.cs" />
     <Compile Include="System.Web.UI.WebControls\WizardStepCollection.cs" />
     <Compile Include="System.Web.UI.WebControls\WizardStepControlBuilder.cs" />
-    <Compile Include="System.Web.UI.WebControls\WizardStepType.cs" />
     <Compile Include="System.Web.UI.WebControls\Xml.cs" />
     <Compile Include="System.Web.UI.WebControls\XmlBuilder.cs" />
     <Compile Include="System.Web.UI.WebControls\XmlDataSource.cs" />
@@ -1231,7 +1239,6 @@
     <Compile Include="System.Web.UI\CodeConstructType.cs" />
     <Compile Include="System.Web.UI\CodeRenderBuilder.cs" />
     <Compile Include="System.Web.UI\CollectionBuilder.cs" />
-    <Compile Include="System.Web.UI\CompilationMode.cs" />
     <Compile Include="System.Web.UI\CompiledBindableTemplateBuilder.cs" />
     <Compile Include="System.Web.UI\CompiledTemplateBuilder.cs" />
     <Compile Include="System.Web.UI\ComplexPropertyEntry.cs" />
@@ -1250,7 +1257,6 @@
     <Compile Include="System.Web.UI\DataBoundLiteralControl.cs" />
     <Compile Include="System.Web.UI\DataSourceCacheDurationConverter.cs" />
     <Compile Include="System.Web.UI\DataSourceControl.cs" />
-    <Compile Include="System.Web.UI\DataSourceControlBuilder.cs" />
     <Compile Include="System.Web.UI\DataSourceSelectArguments.cs" />
     <Compile Include="System.Web.UI\DataSourceView.cs" />
     <Compile Include="System.Web.UI\DataSourceViewOperationCallback.cs" />
@@ -1258,8 +1264,6 @@
     <Compile Include="System.Web.UI\DesignerDataBoundLiteralControl.cs" />
     <Compile Include="System.Web.UI\DesignTimeParseData.cs" />
     <Compile Include="System.Web.UI\DesignTimeTemplateParser.cs" />
-    <Compile Include="System.Web.UI\EmptyControlCollection.cs" />
-    <Compile Include="System.Web.UI\EventEntry.cs" />
     <Compile Include="System.Web.UI\ExpressionBinding.cs" />
     <Compile Include="System.Web.UI\ExpressionBindingCollection.cs" />
     <Compile Include="System.Web.UI\ExtractTemplateValuesMethod.cs" />
@@ -1273,8 +1277,6 @@
     <Compile Include="System.Web.UI\HtmlControlPersistableAttribute.cs" />
     <Compile Include="System.Web.UI\HtmlTextWriter.cs" />
     <Compile Include="System.Web.UI\IgnoreUnknownContentAttribute.cs" />
-    <Compile Include="System.Web.UI\ImageClickEventArgs.cs" />
-    <Compile Include="System.Web.UI\IndexedString.cs" />
     <Compile Include="System.Web.UI\IScriptManager.cs" />
     <Compile Include="System.Web.UI\ITagNameToTypeMapper.cs" />
     <Compile Include="System.Web.UI\ListSourceHelper.cs" />
@@ -1303,7 +1305,6 @@
     <Compile Include="System.Web.UI\PageThemeBuilder.cs" />
     <Compile Include="System.Web.UI\PageThemeFileParser.cs" />
     <Compile Include="System.Web.UI\PageThemeParser.cs" />
-    <Compile Include="System.Web.UI\Pair.cs" />
     <Compile Include="System.Web.UI\ParseChildrenAttribute.cs" />
     <Compile Include="System.Web.UI\PartialCachingAttribute.cs" />
     <Compile Include="System.Web.UI\PartialCachingControl.cs" />

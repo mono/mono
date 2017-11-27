@@ -2,16 +2,18 @@
 .stamp-*
 *.mk.generated
 *.config.cache
-android-arm/
-android-arm64/
-android-x86/
-android-x86_64/
+android-armeabi-*/
+android-armeabi-v7a-*/
+android-arm64-v8a-*/
+android-x86-*/
+android-x86_64-*/
 ios-target32/
 ios-target64/
 ios-cross32/
 ios-cross64/
 ios-sim32/
 ios-sim64/
+wasm-interp/
 bcl/
 
 # android toolchain

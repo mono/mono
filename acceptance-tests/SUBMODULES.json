@@ -1,10 +1,10 @@
 [
   {
     "name": "roslyn", 
-    "url": "git://github.com/dotnet/roslyn.git", 
-    "rev": "322bd5b2bbf07df6a67de35cbcb2365484412f70", 
-    "remote-branch": "origin/master", 
-    "branch": "master", 
+    "url": "git://github.com/mono/roslyn.git",
+    "rev": "1d9895045041925490038c5df0d8f947d8dcbd7f",
+    "remote-branch": "origin/mono-testing",
+    "branch": "mono-testing",
     "directory": "roslyn"
   }, 
   {

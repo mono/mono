@@ -19,6 +19,7 @@ namespace MonoTests.System.Web.Services.Discovery {
 
 		[Test] // Covers #36116
 		[Category ("NotWorking")]
+		[Category ("InetAccess")]
 		public void ReadWriteTest ()
 		{
 			string directory = Path.Combine (Path.GetTempPath (), Path.GetRandomFileName ());

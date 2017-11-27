@@ -821,4 +821,8 @@ partial class SR
 	public const string ArrayTypeMustBeExactMatch = "The array type must be exactly {0}.";
 	public const string CannotCallEqualsOnSpan = "Equals() on Span and ReadOnlySpan is not supported. Use operator== instead.";
 	public const string CannotCallGetHashCodeOnSpan = "GetHashCode() on Span and ReadOnlySpan is not supported.";
+	public const string Argument_EmptyValue = "Value cannot be empty.";
+	public const string PlatformNotSupported_RuntimeInformation = "RuntimeInformation is not supported for Portable Class Libraries.";
+	public const string MemoryDisposed = "Memory<T> has been disposed.";
+	public const string OutstandingReferences = "Release all references before disposing this instance.";
 }

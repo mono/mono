@@ -264,14 +264,9 @@ namespace MonoTests.System.Reflection
 		public void Corlib_test ()
 		{
 			Assembly corlib_test = Assembly.GetExecutingAssembly ();
-#if MONODROID || FULL_AOT_DESKTOP || __WATCHOS__
-			Assert.IsNull (corlib_test.EntryPoint, "EntryPoint");
-			Assert.IsNull (corlib_test.Evidence, "Evidence");
-#elif MOBILE
-			Assert.IsNotNull (corlib_test.EntryPoint, "EntryPoint");
+#if MOBILE
 			Assert.IsNull (corlib_test.Evidence, "Evidence");
 #else
-			Assert.IsNull (corlib_test.EntryPoint, "EntryPoint");
 			Assert.IsNotNull (corlib_test.Evidence, "Evidence");
 #endif
 			Assert.IsFalse (corlib_test.GlobalAssemblyCache, "GlobalAssemblyCache");
@@ -322,6 +317,7 @@ namespace MonoTests.System.Reflection
 
 		[Test]
 		[Category ("AndroidNotWorking")] // Assemblies in Xamarin.Android cannot be accessed as FileStream
+		[Category ("StaticLinkedAotNotWorking")] // Can't find .dll files when bundled in .exe
 		public void GetFiles_False ()
 		{
 			Assembly corlib = typeof (int).Assembly;
@@ -335,6 +331,7 @@ namespace MonoTests.System.Reflection
 
 		[Test]
 		[Category ("AndroidNotWorking")] // Assemblies in Xamarin.Android cannot be accessed as FileStream
+		[Category ("StaticLinkedAotNotWorking")] // Can't find .dll files when bundled in .exe
 		public void GetFiles_True ()
 		{
 			Assembly corlib = typeof (int).Assembly;

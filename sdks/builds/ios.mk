@@ -1,16 +1,26 @@
+#
+# Targets:
+# - build-ios-<target>
+#    Build <target>
+# - package-ios-<target>
+#    Install target into ../out/<target>
+# - clean-ios-<target>
+#    Clean target
+# Where <target> is: target32, target64, sim32, sim64, cross32, cross64
+#
 
 PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 
 _ios_CFLAGS= \
-	$(if $(filter $(IS_RELEASE),true),-O2,-O0 -ggdb3 -gdwarf-2) \
+	$(if $(filter $(RELEASE),true),-O2,-O0 -ggdb3 -gdwarf-2) \
 	-DMONOTOUCH=1
 
 _ios_CPPFLAGS= \
-	$(if $(filter $(IS_RELEASE),true),-O2,-O0 -ggdb3 -gdwarf-2) \
+	$(if $(filter $(RELEASE),true),-O2,-O0 -ggdb3 -gdwarf-2) \
 	-DMONOTOUCH=1
 
 _ios_CXXFLAGS= \
-	$(if $(filter $(IS_RELEASE),true),-O2,-O0 -ggdb3 -gdwarf-2) \
+	$(if $(filter $(RELEASE),true),-O2,-O0 -ggdb3 -gdwarf-2) \
 	-DMONOTOUCH=1
 
 _ios_LDFLAGS= \
@@ -42,6 +52,9 @@ _ios_$(1)_AC_VARS= \
 	ac_cv_header_curses_h=no \
 	ac_cv_header_localcharset_h=no \
 	ac_cv_header_sys_user_h=no \
+	ac_cv_func_getentropy=no \
+	ac_cv_func_futimens=no \
+	ac_cv_func_utimensat=no \
 	mono_cv_sizeof_sunpath=104 \
 	mono_cv_uscore=yes \
 	$(ios_$(1)_AC_VARS)
@@ -125,8 +138,8 @@ package-ios-$(1):
 	$(MAKE) -C $$(TOP)/sdks/builds/ios-$(1)/mono install
 
 .PHONY: clean-ios-$(1)
-clean-ios-$(1)::
-	rm -rf .stamp-ios-$(1)-toolchain .stamp-ios-$(1)-configure $$(TOP)/sdks/builds/ios-$(1) $$(TOP)/sdks/builds/ios-$(1).config.cache
+clean-ios-$(1):
+	rm -rf .stamp-ios-$(1)-toolchain .stamp-ios-$(1)-configure $$(TOP)/sdks/builds/ios-$(1) $$(TOP)/sdks/builds/ios-$(1).config.cache $$(TOP)/sdks/out/ios-$(1)
 
 TARGETS += ios-$(1)
 
@@ -158,6 +171,9 @@ _ios_$(1)_AC_VARS= \
 	ac_cv_func_fstatat=no \
 	ac_cv_func_readlinkat=no \
 	ac_cv_func_system=no \
+	ac_cv_func_getentropy=no \
+	ac_cv_func_futimens=no \
+	ac_cv_func_utimensat=no \
 	mono_cv_uscore=yes \
 	$(ios_$(1)_AC_VARS)
 
@@ -230,8 +246,8 @@ package-ios-$(1):
 	$(MAKE) -C $$(TOP)/sdks/builds/ios-$(1)/support install
 
 .PHONY: clean-ios-$(1)
-clean-ios-$(1)::
-	rm -rf .stamp-ios-$(1)-toolchain .stamp-ios-$(1)-configure $$(TOP)/sdks/builds/ios-$(1) $$(TOP)/sdks/builds/ios-$(1).config.cache
+clean-ios-$(1):
+	rm -rf .stamp-ios-$(1)-toolchain .stamp-ios-$(1)-configure $$(TOP)/sdks/builds/ios-$(1) $$(TOP)/sdks/builds/ios-$(1).config.cache $$(TOP)/sdks/out/ios-$(1)
 
 TARGETS += ios-$(1)
 
@@ -329,8 +345,8 @@ package-ios-$(1):
 	$$(MAKE) -C $$(TOP)/sdks/builds/ios-$(1)/mono install
 
 .PHONY: clean-ios-$(1)
-clean-ios-$(1)::
-	rm -rf .stamp-ios-$(1)-toolchain .stamp-ios-$(1)-configure $$(TOP)/sdks/builds/ios-$(1) $$(TOP)/sdks/builds/ios-$(1).config.cache
+clean-ios-$(1):
+	rm -rf .stamp-ios-$(1)-toolchain .stamp-ios-$(1)-configure $$(TOP)/sdks/builds/ios-$(1) $$(TOP)/sdks/builds/ios-$(1).config.cache $$(TOP)/sdks/out/ios-$(1)
 
 TARGETS += ios-$(1)
 

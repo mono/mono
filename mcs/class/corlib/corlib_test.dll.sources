@@ -54,6 +54,7 @@ System.Collections.ObjectModel/CollectionTest.cs
 System.Collections.ObjectModel/KeyedCollectionTest.cs
 System.Collections.ObjectModel/ReadOnlyCollectionTest.cs
 System/ConsoleTest.cs
+System/ConsoleKeyInfoTest.cs
 System/ConvertTest.cs
 System/DateTimeOffsetTest.cs
 System/DateTimeOffsetTestCoreFx.cs
@@ -204,6 +205,8 @@ System.Runtime.CompilerServices/AsyncTaskMethodBuilderTest.cs
 System.Runtime.CompilerServices/AsyncVoidMethodBuilderTest.cs
 System.Runtime.CompilerServices/TaskAwaiterTest.cs
 System.Runtime.CompilerServices/TaskAwaiterTest_T.cs
+System.Runtime.CompilerServices/TypeForwardedFromAttributeTest.cs
+System.Runtime.CompilerServices/TypeForwardedToAttributeTest.cs
 System.Runtime.CompilerServices/YieldAwaitableTest.cs
 System.Runtime.ExceptionServices/ExceptionDispatchInfoTest.cs
 System.Runtime.InteropServices/DllImportAttributeTest.cs
@@ -213,6 +216,7 @@ System.Runtime.InteropServices/MarshalAsAttributeTest.cs
 System.Runtime.InteropServices/MarshalTest.cs
 System.Runtime.InteropServices/RuntimeEnvironmentTest.cs
 System.Runtime.InteropServices/SafeHandleTest.cs
+System.Runtime.InteropServices/StructLayoutAttributeTest.cs
 System.Runtime.Remoting/ContextTest.cs
 System.Runtime.Remoting/SoapServicesTest.cs
 System.Runtime.Remoting/SynchronizationAttributeTest.cs

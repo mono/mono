@@ -34,6 +34,8 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Messaging;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace System.IO.Compression
 {
@@ -130,6 +132,11 @@ namespace System.IO.Compression
 			}
 		}
 
+		internal ValueTask<int> ReadAsyncMemory (Memory<byte> destination, CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException ();
+		}
+
 		internal int ReadCore (Span<byte> destination)
 		{
 			throw new NotImplementedException ();
@@ -163,6 +170,11 @@ namespace System.IO.Compression
 				IntPtr ptr = new IntPtr (b + offset);
 				native.WriteZStream (ptr, count);
 			}
+		}
+
+		internal Task WriteAsyncMemory (ReadOnlyMemory<byte> source, CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException ();
 		}
 
 		internal void WriteCore (ReadOnlySpan<byte> source)
@@ -332,7 +344,7 @@ namespace System.IO.Compression
 		UnmanagedReadOrWrite feeder; // This will be passed to unmanaged code and used there
 
 		Stream base_stream;
-		IntPtr z_stream;
+		SafeDeflateStreamHandle z_stream;
 		GCHandle data;
 		bool disposed;
 		byte [] io_buffer;
@@ -347,7 +359,7 @@ namespace System.IO.Compression
 			dsn.data = GCHandle.Alloc (dsn);
 			dsn.feeder = mode == CompressionMode.Compress ? new UnmanagedReadOrWrite (UnmanagedWrite) : new UnmanagedReadOrWrite (UnmanagedRead);
 			dsn.z_stream = CreateZStream (mode, gzip, dsn.feeder, GCHandle.ToIntPtr (dsn.data));
-			if (dsn.z_stream == IntPtr.Zero) {
+			if (dsn.z_stream.IsInvalid) {
 				dsn.Dispose (true);
 				return null;
 			}
@@ -369,10 +381,7 @@ namespace System.IO.Compression
 			
 				io_buffer = null;
 			
-				IntPtr zz = z_stream;
-				z_stream = IntPtr.Zero;
-				if (zz != IntPtr.Zero)
-					CloseZStream (zz); // This will Flush() the remaining output if any
+				z_stream.Dispose();
 			}
 
 			if (data.IsAllocated) {
@@ -498,21 +507,21 @@ namespace System.IO.Compression
 
 #if !ORBIS
 		[DllImport (LIBNAME, CallingConvention=CallingConvention.Cdecl)]
-		static extern IntPtr CreateZStream (CompressionMode compress, bool gzip, UnmanagedReadOrWrite feeder, IntPtr data);
+		static extern SafeDeflateStreamHandle CreateZStream (CompressionMode compress, bool gzip, UnmanagedReadOrWrite feeder, IntPtr data);
 
 		[DllImport (LIBNAME, CallingConvention=CallingConvention.Cdecl)]
 		static extern int CloseZStream (IntPtr stream);
 
 		[DllImport (LIBNAME, CallingConvention=CallingConvention.Cdecl)]
-		static extern int Flush (IntPtr stream);
+		static extern int Flush (SafeDeflateStreamHandle stream);
 
 		[DllImport (LIBNAME, CallingConvention=CallingConvention.Cdecl)]
-		static extern int ReadZStream (IntPtr stream, IntPtr buffer, int length);
+		static extern int ReadZStream (SafeDeflateStreamHandle stream, IntPtr buffer, int length);
 
 		[DllImport (LIBNAME, CallingConvention=CallingConvention.Cdecl)]
-		static extern int WriteZStream (IntPtr stream, IntPtr buffer, int length);
+		static extern int WriteZStream (SafeDeflateStreamHandle stream, IntPtr buffer, int length);
 #else
-		static IntPtr CreateZStream (CompressionMode compress, bool gzip, UnmanagedReadOrWrite feeder, IntPtr data)
+		static SafeDeflateStreamHandle CreateZStream (CompressionMode compress, bool gzip, UnmanagedReadOrWrite feeder, IntPtr data)
 		{
 			throw new PlatformNotSupportedException ();
 		}
@@ -522,22 +531,39 @@ namespace System.IO.Compression
 			throw new PlatformNotSupportedException ();
 		}
 
-		static int Flush (IntPtr stream)
+		static int Flush (SafeDeflateStreamHandle stream)
 		{
 			throw new PlatformNotSupportedException ();
 		}
 
-		static int ReadZStream (IntPtr stream, IntPtr buffer, int length)
+		static int ReadZStream (SafeDeflateStreamHandle stream, IntPtr buffer, int length)
 		{
 			throw new PlatformNotSupportedException ();
 		}
 
-		static int WriteZStream (IntPtr stream, IntPtr buffer, int length)
+		static int WriteZStream (SafeDeflateStreamHandle stream, IntPtr buffer, int length)
 		{
 			throw new PlatformNotSupportedException ();
 		}
 #endif
 
+		sealed class SafeDeflateStreamHandle : SafeHandle
+		{
+			public override bool IsInvalid
+			{
+				get { return handle == IntPtr.Zero; }
+			}
+
+			private SafeDeflateStreamHandle() : base(IntPtr.Zero, true)
+			{
+			}
+
+			override protected bool ReleaseHandle()
+			{
+				DeflateStreamNative.CloseZStream(handle);
+				return true;
+			}
+		}
 	}
 }
 
