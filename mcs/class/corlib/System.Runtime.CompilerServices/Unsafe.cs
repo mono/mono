@@ -39,7 +39,12 @@ namespace System.Runtime.CompilerServices
 		{
 			throw new NotImplementedException ();
 		}
-		
+
+		public unsafe static void* Add<T> (void* source, int elementOffset)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public static ref T AddByteOffset<T> (ref T source, System.IntPtr byteOffset)
 		{
 			throw new NotImplementedException ();

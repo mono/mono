@@ -90,14 +90,14 @@ BCL_LIBS= \
 	Mono.Data.Tds.dll \
 	Mono.Security.dll
 
-BCL_REFERENCES=$(patsubst %,-r:$(TOP)/sdks/out-$(CONFIGURATION)/bcl/monodroid/%,$(BCL_LIBS))
+BCL_REFERENCES=$(patsubst %,-r:$(TOP)/sdks/out/bcl/monodroid/%,$(BCL_LIBS))
 
 NUNIT_LIBS= \
 	nunitlite.dll
 
-NUNIT_REFERENCES=$(patsubst %,-r:$(TOP)/sdks/out-$(CONFIGURATION)/bcl/monodroid/%,$(NUNIT_LIBS))
+NUNIT_REFERENCES=$(patsubst %,-r:$(TOP)/sdks/out/bcl/monodroid/%,$(NUNIT_LIBS))
 
-$(APK_DIR) $(APK_DIR)/jni $(APK_DIR)/jni/armeabi-v7a $(APK_DIR)/jni/arm64-v8a $(APK_DIR)/jni/x86 $(APK_DIR)/jni/x86_64 $(APK_DIR)/assets $(APK_DIR)/assets/asm:
+$(APK_DIR) $(APK_DIR)/jni $(APK_DIR)/jni/armeabi $(APK_DIR)/jni/armeabi-v7a $(APK_DIR)/jni/arm64-v8a $(APK_DIR)/jni/x86 $(APK_DIR)/jni/x86_64 $(APK_DIR)/assets $(APK_DIR)/assets/asm:
 	mkdir -p $@
 
 $(APK_DIR)/AndroidManifest.xml: $(APK_DIR)/%: % | $(APK_DIR)
@@ -117,19 +117,19 @@ MONO_LIBS= \
 	libmonosgen-2.0.so \
 	libMonoPosixHelper.so
 
-$(patsubst %,$(APK_DIR)/jni/armeabi/%,$(MONO_LIBS)): $(APK_DIR)/jni/armeabi/%: $(TOP)/sdks/out-$(CONFIGURATION)/android-targetarmv5/lib/% | $(APK_DIR)/jni/armeabi
+$(patsubst %,$(APK_DIR)/jni/armeabi/%,$(MONO_LIBS)): $(APK_DIR)/jni/armeabi/%: $(TOP)/sdks/out/android-armeabi-$(CONFIGURATION)/lib/% | $(APK_DIR)/jni/armeabi
 	cp $< $@
 
-$(patsubst %,$(APK_DIR)/jni/armeabi-v7a/%,$(MONO_LIBS)): $(APK_DIR)/jni/armeabi-v7a/%: $(TOP)/sdks/out-$(CONFIGURATION)/android-targetarmv7/lib/% | $(APK_DIR)/jni/armeabi-v7a
+$(patsubst %,$(APK_DIR)/jni/armeabi-v7a/%,$(MONO_LIBS)): $(APK_DIR)/jni/armeabi-v7a/%: $(TOP)/sdks/out/android-armeabi-v7a-$(CONFIGURATION)/lib/% | $(APK_DIR)/jni/armeabi-v7a
 	cp $< $@
 
-$(patsubst %,$(APK_DIR)/jni/arm64-v8a/%,$(MONO_LIBS)): $(APK_DIR)/jni/arm64-v8a/%: $(TOP)/sdks/out-$(CONFIGURATION)/android-targetarm64/lib/% | $(APK_DIR)/jni/arm64-v8a
+$(patsubst %,$(APK_DIR)/jni/arm64-v8a/%,$(MONO_LIBS)): $(APK_DIR)/jni/arm64-v8a/%: $(TOP)/sdks/out/android-arm64-v8a-$(CONFIGURATION)/lib/% | $(APK_DIR)/jni/arm64-v8a
 	cp $< $@
 
-$(patsubst %,$(APK_DIR)/jni/x86/%,$(MONO_LIBS)): $(APK_DIR)/jni/x86/%: $(TOP)/sdks/out-$(CONFIGURATION)/android-targetx86/lib/% | $(APK_DIR)/jni/x86
+$(patsubst %,$(APK_DIR)/jni/x86/%,$(MONO_LIBS)): $(APK_DIR)/jni/x86/%: $(TOP)/sdks/out/android-x86-$(CONFIGURATION)/lib/% | $(APK_DIR)/jni/x86
 	cp $< $@
 
-$(patsubst %,$(APK_DIR)/jni/x86_64/%,$(MONO_LIBS)): $(APK_DIR)/jni/x86_64/%: $(TOP)/sdks/out-$(CONFIGURATION)/android-targetx86_64/lib/% | $(APK_DIR)/jni/x86_64
+$(patsubst %,$(APK_DIR)/jni/x86_64/%,$(MONO_LIBS)): $(APK_DIR)/jni/x86_64/%: $(TOP)/sdks/out/android-x86_64-$(CONFIGURATION)/lib/% | $(APK_DIR)/jni/x86_64
 	cp $< $@
 
 $(APK_DIR)/assets/mconfig: machine.config | $(APK_DIR)/assets
@@ -141,7 +141,7 @@ $(APK_DIR)/assets/asm/main.exe: managed/main.cs | $(APK_DIR)/assets/asm
 $(APK_DIR)/assets/asm/Mono.Android.dll: managed/fake-monodroid.cs | $(APK_DIR)/assets/asm
 	mcs /nostdlib -target:library -out:$@ $(BCL_REFERENCES) $<
 
-$(patsubst %,$(APK_DIR)/assets/asm/%,$(BCL_LIBS)) $(patsubst %,$(APK_DIR)/assets/asm/%,$(NUNIT_LIBS)): $(APK_DIR)/assets/asm/%: $(TOP)/sdks/out-$(CONFIGURATION)/bcl/monodroid/% | $(APK_DIR)/assets/asm
+$(patsubst %,$(APK_DIR)/assets/asm/%,$(BCL_LIBS)) $(patsubst %,$(APK_DIR)/assets/asm/%,$(NUNIT_LIBS)): $(APK_DIR)/assets/asm/%: $(TOP)/sdks/out/bcl/monodroid/% | $(APK_DIR)/assets/asm
 	cp $< $@
 
 .PHONY: package
@@ -204,11 +204,11 @@ $(APK_DIR)/assets/asm/monodroid_mini_test.dll: $(MINI_TEST_SOURCES)
 # $(1): assembly name (corlib, System, etc.)
 define TestAssemblyTemplate
 
-.PHONY: $$(TOP)/mcs/class/$(1)/monodroid_$(1)_test.dll
-$$(TOP)/mcs/class/$(1)/monodroid_$(1)_test.dll:
+.PHONY: $$(TOP)/mcs/class/lib/monodroid/tests/monodroid_$(1)_test.dll
+$$(TOP)/mcs/class/lib/monodroid/tests/monodroid_$(1)_test.dll:
 	$$(MAKE) PROFILE='monodroid' -C $$(TOP)/mcs/class/$(1) build-test-lib
 
-$(APK_DIR)/assets/asm/monodroid_$(1)_test.dll: $$(TOP)/mcs/class/$(1)/monodroid_$(1)_test.dll
+$(APK_DIR)/assets/asm/monodroid_$(1)_test.dll: $$(TOP)/mcs/class/lib/monodroid/tests/monodroid_$(1)_test.dll
 	cp $$< $$@
 
 endef

@@ -310,7 +310,7 @@ public class SignatureDescriptionTest {
 	public void RSASignatureDescription ()
 	{
 // TODO: this would be cleaner with NUnit TestCase'es but they're NUnit 2.5+ :(
-#if FULL_AOT_RUNTIME || MONOTOUCH || MONODROID
+#if FULL_AOT_RUNTIME || MONOTOUCH || MONODROID || XAMMAC || XAMMAC_4_5
 		RSASignatureDescriptionCore ("http://www.w3.org/2000/09/xmldsig#rsa-sha1", "System.Security.Cryptography.SHA1Cng", "System.Security.Cryptography.SHA1CryptoServiceProvider");
 		RSASignatureDescriptionCore ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256", "System.Security.Cryptography.SHA256Cng", "System.Security.Cryptography.SHA256Managed");
 		RSASignatureDescriptionCore ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha384", "System.Security.Cryptography.SHA384Cng", "System.Security.Cryptography.SHA384Managed");

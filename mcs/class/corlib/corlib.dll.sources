@@ -1679,16 +1679,23 @@ corefx/SR.cs
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/Partitioner.cs
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/PartitionerStatic.cs
 
+../../../external/corefx/src/System.Memory/src/System/Memory.cs
+../../../external/corefx/src/System.Memory/src/System/MemoryDebugView.cs
 ../../../external/corefx/src/System.Memory/src/System/Pinnable.cs
+../../../external/corefx/src/System.Memory/src/System/ReadOnlyMemory.cs
 ../../../external/corefx/src/System.Memory/src/System/ReadOnlySpan.cs
 ../../../external/corefx/src/System.Memory/src/System/Span.cs
 ../../../external/corefx/src/System.Memory/src/System/SpanDebugView.cs
 ../../../external/corefx/src/System.Memory/src/System/SpanHelpers.cs
 ../../../external/corefx/src/System.Memory/src/System/SpanHelpers.Clear.cs
 ../../../external/corefx/src/System.Memory/src/System/ThrowHelper.cs
+../../../external/corefx/src/System.Memory/src/System/Buffers/*.cs
 
 ../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/System/Runtime/InteropServices/RuntimeInformation/OSPlatform.cs
 ../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/System/Runtime/InteropServices/RuntimeInformation/Architecture.cs
+
+../../../external/corefx/src/System.Threading.Tasks.Extensions/src/System/Threading/Tasks/ValueTask.cs
+../../../external/corefx/src/System.Threading.Tasks.Extensions/src/System/Runtime/CompilerServices/*.cs
 
 System.Security.Cryptography.X509Certificates/X509CertificateImplApple.cs
 System.Security.Cryptography.X509Certificates/X509Helper.Apple.cs

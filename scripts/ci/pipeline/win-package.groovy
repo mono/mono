@@ -1,10 +1,11 @@
+def monoBranch = env.BRANCH_NAME
+def isReleaseJob = (monoBranch ==~ /201\d-\d\d/) // check if we're on a 2017-xx branch, i.e. release
 def jobName = "build-package-win-mono"
 def macJobName = "build-package-osx-mono"
-def isReleaseJob = (BRANCH_NAME ==~ /201\d-\d\d/) // check if we're on a 2017-xx branch, i.e. release
 def commitHash = null
 
 node ("w64") {
-    ws ("workspace/${jobName}/${BRANCH_NAME}") {
+    ws ("workspace/${jobName}/${monoBranch}") {
         timestamps {
             stage('Checkout') {
                 // clone and checkout repo
@@ -17,7 +18,7 @@ node ("w64") {
             stage('Download Mac .pkg from Azure') {
                 step([
                     $class: 'AzureStorageBuilder',
-                    downloadType: [value: 'project', containerName: '', projectName: "${macJobName}/${BRANCH_NAME}",
+                    downloadType: [value: 'project', containerName: '', projectName: "${macJobName}/${monoBranch}",
                                 buildSelector: [$class: 'TriggeredBuildSelector', upstreamFilterStrategy: 'UseGlobalSetting', allowUpstreamDependencies: false, fallbackToLastSuccessful: false]],
                     includeFilesPattern: '**/*.pkg',
                     excludeFilesPattern: '',
@@ -71,9 +72,9 @@ node ("w64") {
                     storageCredentialId: 'fbd29020e8166fbede5518e038544343',
                     uploadArtifactsOnlyIfSuccessful: true,
                     uploadZips: false,
-                    virtualPath: "${BRANCH_NAME}/${BUILD_NUMBER}/"
+                    virtualPath: "${monoBranch}/${env.BUILD_NUMBER}/"
                 ])
-                currentBuild.description = "<hr/><h2>DOWNLOAD: <a href=\"https://xamjenkinsartifact.azureedge.net/${jobName}/${BRANCH_NAME}/${BUILD_NUMBER}/MonoForWindows-x86.msi\">MonoForWindows-x86.msi</a> -- <a href=\"https://xamjenkinsartifact.azureedge.net/${jobName}/${BRANCH_NAME}/${BUILD_NUMBER}/MonoForWindows-x64.msi\">MonoForWindows-x64.msi</a></h2><hr/>"
+                currentBuild.description = "<hr/><h2>DOWNLOAD: <a href=\"https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/MonoForWindows-x86.msi\">MonoForWindows-x86.msi</a> -- <a href=\"https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/MonoForWindows-x64.msi\">MonoForWindows-x64.msi</a></h2><hr/>"
             }
         }
     }

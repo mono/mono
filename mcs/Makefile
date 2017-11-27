@@ -159,7 +159,7 @@ $(MONO_API_SNAPSHOT_PROFILE_PATH)%.cs: $(topdir)class/lib/$(PROFILE)/%.dll $(GEN
 mono-api-current: $(MONO_API_ASSEMBLIES_CS)
 
 mono-api-current-clean:
-	$(Q) rm -rf "$(MONO_API_SNAPSHOT_PROFILE_PATH)"
+	$(Q) find "$(MONO_API_SNAPSHOT_PROFILE_PATH)" -name "*.cs" -type f -delete
 
 mono-api-diff:
 	@echo "Regenerating API snapshot..."

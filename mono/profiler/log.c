@@ -1216,7 +1216,7 @@ gc_roots (MonoProfiler *prof, uint64_t num, const mono_byte *const *addresses, c
 	emit_value (logbuffer, num);
 
 	for (int i = 0; i < num; ++i) {
-		emit_obj (logbuffer, objects [i]);
+		emit_obj (logbuffer, (gpointer) objects [i]);
 		emit_ptr (logbuffer, addresses [i]);
 	}
 
@@ -4388,10 +4388,15 @@ proflog_icall_SetGCRootEvents (MonoBoolean value)
 {
 	mono_coop_mutex_lock (&log_profiler.api_mutex);
 
-	if (value)
+	if (value) {
 		ENABLE (PROFLOG_GC_ROOT_EVENTS);
-	else
+		mono_profiler_set_gc_root_register_callback (log_profiler.handle, gc_root_register);
+		mono_profiler_set_gc_root_unregister_callback (log_profiler.handle, gc_root_deregister);
+	} else {
 		DISABLE (PROFLOG_GC_ROOT_EVENTS);
+		mono_profiler_set_gc_root_register_callback (log_profiler.handle, NULL);
+		mono_profiler_set_gc_root_unregister_callback (log_profiler.handle, NULL);
+	}
 
 	mono_coop_mutex_unlock (&log_profiler.api_mutex);
 }
@@ -4762,7 +4767,6 @@ mono_profiler_init_log (const char *desc)
 		mono_profiler_set_gc_moves_callback (handle, gc_moves);
 
 	if (ENABLED (PROFLOG_GC_ROOT_EVENTS)) {
-		mono_profiler_set_gc_roots_callback (handle, gc_roots);
 		mono_profiler_set_gc_root_register_callback (handle, gc_root_register);
 		mono_profiler_set_gc_root_unregister_callback (handle, gc_root_deregister);
 	}
