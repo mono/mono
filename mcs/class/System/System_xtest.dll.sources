@@ -15,4 +15,4 @@
 ../../../external/corefx/src/System.CodeDom/tests/Other/*.cs
 ../../../external/corefx/src/System.CodeDom/tests/Microsoft/CSharp/*.cs
 ../../../external/corefx/src/System.CodeDom/tests/Microsoft/VisualBasic/*.cs
-../../../external/corefx/src/System.CodeDom/tests/*.cs
+../../../external/corefx/src/System.CodeDom/tests/*.cs:CodeGenerationTests.cs,CSharpCodeGenerationTests.cs,VBCodeGenerationTests.cs
