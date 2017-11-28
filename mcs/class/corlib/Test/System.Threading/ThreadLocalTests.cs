@@ -52,6 +52,7 @@ namespace MonoTests.System.Threading
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ThreadedTest ()
 		{
 			AssertThreadLocal ();

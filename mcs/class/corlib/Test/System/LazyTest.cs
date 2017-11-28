@@ -111,6 +111,7 @@ namespace MonoTests.System
 		static int counter;
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void EnsureSingleThreadSafeExecution ()
 		{
 			counter = 42;
