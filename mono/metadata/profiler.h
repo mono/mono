@@ -41,17 +41,8 @@ typedef struct {
 typedef mono_bool (*MonoProfilerCoverageFilterCallback) (MonoProfiler *prof, MonoMethod *method);
 typedef void (*MonoProfilerCoverageCallback) (MonoProfiler *prof, const MonoProfilerCoverageData *data);
 
-/*
- * Retrieves all coverage data for the specified method and invokes the given
- * callback for each entry. Source location information will only be filled out
- * if the given method has debug info available. Returns TRUE if the given
- * method was instrumented for code coverage; otherwise, FALSE.
- *
- * Please note that the structure passed to the callback is only valid for the
- * duration of the callback.
- *
- * This function is not async safe.
- */
+MONO_API mono_bool mono_profiler_enable_coverage (void);
+MONO_API void mono_profiler_set_coverage_filter_callback (MonoProfilerHandle handle, MonoProfilerCoverageFilterCallback cb);
 #ifndef RUNTIME_IL2CPP
 MONO_API mono_bool mono_profiler_get_coverage_data (MonoProfilerHandle handle, MonoMethod *method, MonoProfilerCoverageCallback cb);
 #endif
