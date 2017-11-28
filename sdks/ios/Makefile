@@ -33,9 +33,11 @@ clean-ios-sim-%:
 
 # Run % on the simulator with args $(ARGS) %_ARGS
 # 'launch' doesn't propagate the error code
+# With ios11, --console doesn't work any more, it makes the app deadlock
 run-ios-sim-%:
 	xcrun simctl terminate booted com.xamarin.mono.ios.test-$*
-	xcrun simctl launch --console booted com.xamarin.mono.ios.test-$* $(ARGS) $($*_ARGS)
+	xcrun simctl launch booted com.xamarin.mono.ios.test-$* $(ARGS) $($*_ARGS)
+	log stream --level debug --predicate 'senderImagePath contains "$*"' --style compact
 
 clean:
 	$(MAKE) -C runtime clean
