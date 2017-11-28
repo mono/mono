@@ -1263,6 +1263,22 @@ mono_lookup_pinvoke_call (MonoMethod *method, const char **exc_class, const char
 		}
 	}
 
+	if (mono_get_find_plugin_callback ())
+	{
+		const char* unity_new_scope = mono_get_find_plugin_callback () (new_scope);
+		if (unity_new_scope == NULL)
+		{
+			if (exc_class)
+			{
+				*exc_class = "DllNotFoundException";
+				*exc_arg = new_scope;
+			}
+			return NULL;
+		}
+
+		new_scope = unity_new_scope;
+	}
+
 	/*
 	 * Try loading the module using a variety of names
 	 */
