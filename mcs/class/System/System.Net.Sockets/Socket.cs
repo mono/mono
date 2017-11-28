@@ -91,10 +91,8 @@ namespace System.Net.Sockets
 		int m_IntCleanedUp;
 		internal bool connect_in_progress;
 
-#if MONO_WEB_DEBUG
 		static int nextId;
 		internal readonly int ID = ++nextId;
-#endif
 
 		#region Constructors
 
