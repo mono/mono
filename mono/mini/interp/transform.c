@@ -4190,6 +4190,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 		while (p < td->new_ip) {
 			char *ins = mono_interp_dis_mintop (td->new_code, p);
 			g_print ("%s\n", ins);
+			g_free (ins);
 			p = mono_interp_dis_mintop_len (p);
 		}
 	}
