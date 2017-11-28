@@ -100,6 +100,7 @@
 #include "lldb.h"
 #include "mini-runtime.h"
 #include "interp/interp.h"
+#include "mixed_callstack_plugin.h"
 
 #ifdef MONO_ARCH_LLVM_SUPPORTED
 #ifdef ENABLE_LLVM
@@ -550,6 +551,7 @@ mono_tramp_info_register_internal (MonoTrampInfo *info, MonoDomain *domain, gboo
 
 	mono_save_trampoline_xdebug_info (info);
 	mono_lldb_save_trampoline_info (info);
+	mixed_callstack_plugin_save_trampoline_info (info);
 
 #ifdef MONO_ARCH_HAVE_UNWIND_TABLE
 	if (!aot)

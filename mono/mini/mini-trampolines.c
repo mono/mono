@@ -23,6 +23,7 @@
 #include "lldb.h"
 #include "aot-runtime.h"
 #include "mini-runtime.h"
+#include "mixed_callstack_plugin.h"
 
 #include "interp/interp.h"
 
@@ -1336,6 +1337,7 @@ mono_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_type, M
 	else
 		code = mono_arch_create_specific_trampoline (arg1, tramp_type, mem_manager, &len);
 	mono_lldb_save_specific_trampoline_info (arg1, tramp_type, domain, code, len);
+	mixed_callstack_plugin_save_specific_trampoline_info (arg1, tramp_type, domain, code, len);
 	if (code_len)
 		*code_len = len;
 	return code;

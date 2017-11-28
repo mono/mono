@@ -528,6 +528,8 @@ common_sources = \
 	calls.c			\
 	lldb.h			\
 	lldb.c	\
+	mixed_callstack_plugin.h	\
+	mixed_callstack_plugin.c	\
 	memory-access.c	\
 	intrinsics.c \
 	mini-profiler.c	\
