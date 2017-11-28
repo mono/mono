@@ -16,6 +16,10 @@ CONFIGURATION=$(if $(filter $(RELEASE),true),release,debug)
 
 APK_DIR=apk
 
+BCL_RUNNER_EXE = $(APK_DIR)/assets/asm/main.exe
+DEBUGGER_RUNNER_EXE = $(APK_DIR)/assets/asm/dtest-app.exe
+
+
 BCL_CHECKS= \
 	corlib \
 	System \
@@ -167,7 +171,6 @@ package: $(patsubst %,$(APK_DIR)/jni/arm64-v8a/%,$(MONO_LIBS))
 package: $(patsubst %,$(APK_DIR)/jni/x86/%,$(MONO_LIBS))
 package: $(patsubst %,$(APK_DIR)/jni/x86_64/%,$(MONO_LIBS))
 package: $(APK_DIR)/assets/mconfig
-package: $(APK_DIR)/assets/asm/main.exe
 package: $(APK_DIR)/assets/asm/Mono.Android.dll
 package: $(patsubst %,$(APK_DIR)/assets/asm/%,$(BCL_LIBS))
 package: $(patsubst %,$(APK_DIR)/assets/asm/%,$(NUNIT_LIBS))
@@ -176,10 +179,37 @@ ifneq ($(MONO_WAIT_LLDB),)
 package: $(APK_DIR)/lldb-mono-0.1/xa-lldb
 endif
 
+package-bcl: package
+	rm -rf $(APK_DIR)/bin/AndroidActivity-debug.apk
+	rm -rf $(DEBUGGER_RUNNER_EXE)
+	$(MAKE) $(BCL_RUNNER_EXE)
+
+package-debugger: package
+	rm -rf $(BCL_RUNNER_EXE)
+	rm -rf $(APK_DIR)/bin/AndroidActivity-debug.apk
+	rm -rf $(APK_DIR)/assets/asm/testassembly.txt
+	$(MAKE) $(DEBUGGER_RUNNER_EXE)
+
+.PHONY: $(TOP)/mcs/class/Mono.Debugger.Soft/dtest-app.exe
+$(TOP)/mcs/class/Mono.Debugger.Soft/dtest-app.exe:
+	$(MAKE) PROFILE='monodroid' -C $(TOP)/mcs/class/Mono.Debugger.Soft dtest-app.exe
+
+$(APK_DIR)/assets/asm/dtest-app.exe: $(TOP)/mcs/class/Mono.Debugger.Soft/dtest-app.exe
+	cp $< $@
+
+make-debugger-test: package-debugger
+	cd $(APK_DIR) && RUN_WITH_MANAGED_DEBUGGER=1 MONO_DEBUGGER_TESTS=1 $(NDK_BUILD)
+	cd $(APK_DIR) && $(ANT) debug
+
+run-debugger-test: make-debugger-test
+	cd $(APK_DIR) && $(ADB) uninstall $(PACKAGE) || true
+	cd $(APK_DIR) && $(ADB) install bin/AndroidActivity-debug.apk
+	cd $(APK_DIR) && $(ADB) shell am instrument -w $(PACKAGE)/$(RUNNER)
+
 .PHONY: build-%
-build-%: package
+build-%: package-bcl
 	printf "monodroid_$*_test.dll" > $(APK_DIR)/assets/asm/testassembly.txt
-	cd $(APK_DIR) && $(NDK_BUILD)
+	cd $(APK_DIR) && MONO_BCL_TESTS=1 $(NDK_BUILD)
 	cd $(APK_DIR) && $(ANT) debug
 
 .PHONY: check-%
