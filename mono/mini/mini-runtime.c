@@ -84,6 +84,7 @@
 #include "mini-llvm.h"
 #include "debugger-agent.h"
 #include "lldb.h"
+#include "mixed_callstack_plugin.h"
 
 #ifdef MONO_ARCH_LLVM_SUPPORTED
 #ifdef ENABLE_LLVM
@@ -498,6 +499,7 @@ mono_tramp_info_register_internal (MonoTrampInfo *info, MonoDomain *domain, gboo
 
 	mono_save_trampoline_xdebug_info (info);
 	mono_lldb_save_trampoline_info (info);
+	mixed_callstack_plugin_save_trampoline_info (info);
 
 #ifdef MONO_ARCH_HAVE_UNWIND_TABLE
 	if (!aot)
@@ -3906,6 +3908,9 @@ mini_init (const char *filename, const char *runtime_version)
 	if (mini_get_debug_options ()->lldb || g_hasenv ("MONO_LLDB")) {
 		mono_lldb_init ("");
 		mono_dont_free_domains = TRUE;
+	}
+	if (g_hasenv ("UNITY_MIXED_CALLSTACK")) {
+		mixed_callstack_plugin_init ("");
 	}
 
 #ifdef XDEBUG_ENABLED
