@@ -139,11 +139,11 @@ namespace Mono.Profiler.Log {
 		WeakReference = 2 << 8,
 		Interior = 4 << 8,
 
-		Stack = 0,
-		Finalizer = 1,
-		Handle = 2,
-		Other = 3,
-		Miscellaneous = 4,
+		Stack = 1 << 0,
+		Finalizer = 1 << 1,
+		Handle = 1 << 2,
+		Other = 1 << 3,
+		Miscellaneous = 1 << 4,
 
 		TypeMask = 0xff,
 	}

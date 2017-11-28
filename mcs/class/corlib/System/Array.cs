@@ -354,7 +354,7 @@ namespace System
 					"Index has to be between upper and lower bound of the array."));
 
 			if (GetType ().GetElementType ().IsPointer)
-				throw new NotSupportedException ("Type is not supported");
+				throw new NotSupportedException ("Type is not supported.");
 
 			return GetValueImpl (index - lb);
 		}
@@ -382,7 +382,7 @@ namespace System
 					"Index has to be >= lower bound and <= upper bound of the array."));
 
 			if (GetType ().GetElementType ().IsPointer)
-				throw new NotSupportedException ("Type is not supported");
+				throw new NotSupportedException ("Type is not supported.");
 
 			SetValueImpl (value, index - lb);
 		}
@@ -735,7 +735,7 @@ namespace System
 				get {
 					if (_index < 0) throw new InvalidOperationException (SR.InvalidOperation_EnumNotStarted);
 					if (_index >= _endIndex) throw new InvalidOperationException (SR.InvalidOperation_EnumEnded);
-					if (_index == 0 && _array.GetType ().GetElementType ().IsPointer) throw new NotSupportedException ("Type is not supported");
+					if (_index == 0 && _array.GetType ().GetElementType ().IsPointer) throw new NotSupportedException ("Type is not supported.");
 					return _array.GetValueImpl(_index);
 				}
 			}
