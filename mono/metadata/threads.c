@@ -749,9 +749,7 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 
 	THREAD_DEBUG (g_message ("%s: mono_thread_detach for %p (%"G_GSIZE_FORMAT")", __func__, thread, (gsize)thread->tid));
 
-	/* Can happen when we attach the profiler helper thread in order to heapshot. */
-	if (!mono_thread_info_lookup (MONO_UINT_TO_NATIVE_THREAD_ID (thread->tid))->tools_thread)
-		MONO_PROFILER_RAISE (thread_stopping, (thread->tid));
+	MONO_PROFILER_RAISE (thread_stopping, (thread->tid));
 
 #ifndef HOST_WIN32
 	mono_w32mutex_abandon ();
@@ -849,11 +847,8 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 
 	mono_release_type_locks (thread);
 
-	/* Can happen when we attach the profiler helper thread in order to heapshot. */
-	if (!mono_thread_info_lookup (MONO_UINT_TO_NATIVE_THREAD_ID (thread->tid))->tools_thread) {
-		MONO_PROFILER_RAISE (thread_stopped, (thread->tid));
-		MONO_PROFILER_RAISE (gc_root_unregister, (((MonoThreadInfo*)thread->thread_info)->stack_start_limit));
-	}
+	MONO_PROFILER_RAISE (thread_stopped, (thread->tid));
+	MONO_PROFILER_RAISE (gc_root_unregister, (((MonoThreadInfo*)thread->thread_info)->stack_start_limit));
 
 	mono_hazard_pointer_clear (mono_hazard_pointer_get (), 1);
 
@@ -893,9 +888,7 @@ done:
 
 	mono_thread_info_unset_internal_thread_gchandle ((MonoThreadInfo*) thread->thread_info);
 
-	/* Can happen when we attach the profiler helper thread in order to heapshot. */
-	if (!mono_thread_info_lookup (MONO_UINT_TO_NATIVE_THREAD_ID (thread->tid))->tools_thread)
-		MONO_PROFILER_RAISE (thread_exited, (thread->tid));
+	MONO_PROFILER_RAISE (thread_exited, (thread->tid));
 
 	/* Don't need to close the handle to this thread, even though we took a
 	 * reference in mono_thread_attach (), because the GC will do it
@@ -1300,9 +1293,7 @@ mono_thread_attach_full (MonoDomain *domain, gboolean force_attach)
 	if (mono_thread_attach_cb)
 		mono_thread_attach_cb (MONO_NATIVE_THREAD_ID_TO_UINT (tid), info->stack_end);
 
-	/* Can happen when we attach the profiler helper thread in order to heapshot. */
-	if (!mono_thread_info_current ()->tools_thread)
-		fire_attach_profiler_events (tid);
+	fire_attach_profiler_events (tid);
 
 	return thread;
 }
