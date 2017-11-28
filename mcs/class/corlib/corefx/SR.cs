@@ -818,11 +818,15 @@ partial class SR
 	public const string PartitionerStatic_CanNotCallGetEnumeratorAfterSourceHasBeenDisposed = "Can not call GetEnumerator on partitions after the source enumerable is disposed";
 	public const string PartitionerStatic_CurrentCalledBeforeMoveNext = "MoveNext must be called at least once before calling Current.";
 	public const string ConcurrentBag_Enumerator_EnumerationNotStartedOrAlreadyFinished = "Enumeration has either not started or has already finished.";
+	public const string Arg_KeyNotFoundWithKey = "The given key '{0}' was not present in the dictionary.";
 	public const string ArrayTypeMustBeExactMatch = "The array type must be exactly {0}.";
 	public const string CannotCallEqualsOnSpan = "Equals() on Span and ReadOnlySpan is not supported. Use operator== instead.";
 	public const string CannotCallGetHashCodeOnSpan = "GetHashCode() on Span and ReadOnlySpan is not supported.";
-	public const string Argument_EmptyValue = "Value cannot be empty.";
-	public const string PlatformNotSupported_RuntimeInformation = "RuntimeInformation is not supported for Portable Class Libraries.";
 	public const string MemoryDisposed = "Memory<T> has been disposed.";
 	public const string OutstandingReferences = "Release all references before disposing this instance.";
+	public const string Argument_GWithPrecisionNotSupported = "The 'G' format combined with a precision is not supported.";
+	public const string Argument_CannotParsePrecision = "Characters following the format symbol must be a number of {0} or less.";
+	public const string Argument_PrecisionTooLarge = "Precision cannot be larger than {0}.";
+	public const string Argument_EmptyValue = "Value cannot be empty.";
+	public const string PlatformNotSupported_RuntimeInformation = "RuntimeInformation is not supported for Portable Class Libraries.";
 }

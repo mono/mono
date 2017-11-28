@@ -870,7 +870,6 @@ corefx/SR.cs
 
 ../../../external/corefx/src/Common/src/System/Net/Logging/NetEventSource.Common.cs
 
-../../../external/corefx/src/Common/src/System/Net/WebSockets/ManagedWebSocket.cs
 ../../../external/corefx/src/Common/src/System/Net/WebSockets/WebSocketValidate.cs
 
 ../../../external/corefx/src/System.Runtime/src/System/Collections/Generic/ISet.cs
@@ -905,6 +904,8 @@ corefx/SR.cs
 
 ../../../external/corefx/src/System.Net.ServicePoint/src/System/Net/SecurityProtocolType.cs
 
+../../../external/corefx/src/System.Net.WebSockets/src/System/Net/WebSockets/ManagedWebSocket.cs
+../../../external/corefx/src/System.Net.WebSockets/src/System/Net/WebSockets/ValueWebSocketReceiveResult.cs
 ../../../external/corefx/src/System.Net.WebSockets/src/System/Net/WebSockets/WebSocket.cs
 ../../../external/corefx/src/System.Net.WebSockets/src/System/Net/WebSockets/WebSocketCloseStatus.cs
 ../../../external/corefx/src/System.Net.WebSockets/src/System/Net/WebSockets/WebSocketContext.cs

@@ -4,8 +4,9 @@
 
 partial class SR
 {
-	public const string ArrayInitializedStateNotEqual = "Object is not a array with the same initialization state as the array to compare it to.";
-	public const string ArrayLengthsNotEqual = "Object is not a array with the same number of elements as the array to compare it to.";
+	public const string Arg_KeyNotFoundWithKey = "The given key '{0}' was not present in the dictionary.";
+	public const string ArrayInitializedStateNotEqual = "Object is not an array with the same initialization state as the array to compare it to.";
+	public const string ArrayLengthsNotEqual = "Object is not an array with the same number of elements as the array to compare it to.";
 	public const string CannotFindOldValue = "Cannot find the old value";
 	public const string CapacityMustBeGreaterThanOrEqualToCount = "Capacity was less than the current Count of elements.";
 	public const string CapacityMustEqualCountOnMove = "MoveToImmutable can only be performed when Count equals Capacity.";

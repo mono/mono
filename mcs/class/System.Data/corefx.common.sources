@@ -19,8 +19,6 @@ corefx/DiagnosticListener.cs
 corefx/SqlClientFactory.cs
 corefx/SqlCommand.cs
 corefx/SqlException.cs
-corefx/SqlMetaData.cs
-corefx/SqlParameter.cs
 corefx/SqlConnection.cs
 corefx/SqlConnectionStringBuilder.cs
 corefx/SqlParameterCollection.cs
@@ -361,8 +359,10 @@ corefx/SqlDependencyUtils.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/DbReferenceCollection.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/DbMetaDataFactory.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/TimeoutTimer.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Sql/SqlNorm.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Sql/SqlMetaData.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Sql/SqlNotificationRequest.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Sql/SqlSer.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlDelegatedTransaction.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlClientMetaDataCollectionNames.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/ApplicationIntent.cs
@@ -456,6 +456,7 @@ corefx/SqlDependencyUtils.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SNI/SspiClientContextStatus.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SNI/SSRP.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/TdsParserStateObjectManaged.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlUdtInfo.cs
 
 ../../../external/corefx/src/Common/src/System/Net/ContextFlagsPal.cs
 ../../../external/corefx/src/Common/src/System/Net/SecurityStatusPal.cs

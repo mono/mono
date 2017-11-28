@@ -1,3 +1,5 @@
+../../build/common/SR.cs
+
 ../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/AssertExtensions.cs
 
 # System.Linq.Queryable
