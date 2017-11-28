@@ -80,13 +80,13 @@ namespace System.Net
 			idleSince = DateTime.UtcNow;
 		}
 
-		[Conditional ("MARTIN_WEB_DEBUG")]
+		[Conditional ("MONO_WEB_DEBUG")]
 		void Debug (string message, params object[] args)
 		{
 			WebConnection.Debug ($"SPS({ID}): {string.Format (message, args)}");
 		}
 
-		[Conditional ("MARTIN_WEB_DEBUG")]
+		[Conditional ("MONO_WEB_DEBUG")]
 		void Debug (string message)
 		{
 			WebConnection.Debug ($"SPS({ID}): {message}");

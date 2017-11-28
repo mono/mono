@@ -75,31 +75,31 @@ namespace System.Net
 			ServicePoint = sPoint;
 		}
 
-#if MARTIN_WEB_DEBUG
+#if MONO_WEB_DEBUG
 		internal static bool EnableWebDebug {
 			get; set;
 		}
 
 		static WebConnection ()
 		{
-			if (Environment.GetEnvironmentVariable ("MARTIN_WEB_DEBUG") != null)
+			if (Environment.GetEnvironmentVariable ("MONO_WEB_DEBUG") != null)
 				EnableWebDebug = true;
 		}
 #endif
 
-		[Conditional ("MARTIN_WEB_DEBUG")]
+		[Conditional ("MONO_WEB_DEBUG")]
 		internal static void Debug (string message, params object[] args)
 		{
-#if MARTIN_WEB_DEBUG
+#if MONO_WEB_DEBUG
 			if (EnableWebDebug)
 				Console.Error.WriteLine (string.Format (message, args));
 #endif
 		}
 
-		[Conditional ("MARTIN_WEB_DEBUG")]
+		[Conditional ("MONO_WEB_DEBUG")]
 		internal static void Debug (string message)
 		{
-#if MARTIN_WEB_DEBUG
+#if MONO_WEB_DEBUG
 			if (EnableWebDebug)
 				Console.Error.WriteLine (message);
 #endif
