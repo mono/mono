@@ -79,6 +79,16 @@ if [ -x "/usr/bin/dpkg-architecture" ];
 	mkdir -p ~/.config/.mono/
 	wget -qO- https://download.mono-project.com/test/new-certs.tgz| tar zx -C ~/.config/.mono/
 fi
+
+if [[ ${CI_TAGS} == 'product-sdks' ]];
+   then
+	   ${TESTCMD} --label=runtimes --timeout=60m --fatal make -j4 -C sdks/builds package-ios-sim64
+	   ${TESTCMD} --label=bcl --timeout=60m --fatal make -j4 -C sdks/builds package-bcl
+	   ${TESTCMD} --label=build-tests --timeout=60m --fatal make -C sdks/ios compile-tests
+	   ${TESTCMD} --label=run-tests --timeout=60m --fatal make -C sdks/ios run-tests
+	   exit 0
+fi
+
 if [[ ${CI_TAGS} != *'mac-sdk'* ]]; # Mac SDK builds Mono itself
 	then
 	${TESTCMD} --label=configure --timeout=60m --fatal ./autogen.sh $EXTRA_CONF_FLAGS

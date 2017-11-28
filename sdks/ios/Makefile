@@ -3,6 +3,12 @@ all: harness.exe
 
 BCL_DIR = ../../mcs/class/lib/monotouch
 
+TEST_SUITES = \
+	Mono.Runtime.Tests \
+	corlib \
+	System.Core \
+	System.Data
+
 SIM_NAME = xamarin.ios-sdk.sim
 
 harness.exe: harness/harness.cs harness/Options.cs
@@ -45,6 +51,13 @@ run-ios-sim-%: harness.exe
 clean:
 	$(MAKE) -C runtime clean
 	$(RM) -rf bin harness.exe *.log
+
+# Compile all the test assemblies
+compile-tests:
+	for suite in $(TEST_SUITES); do make -C ../../mcs/class/$$suite PROFILE=monotouch test || break; done
+
+run-tests:
+	for suite in $(TEST_SUITES); do make build-ios-sim-$$suite || break; make run-ios-sim-$$suite || break; done
 
 # Developer targets, ignore
 # 'launch' doesn't propagate the error code
