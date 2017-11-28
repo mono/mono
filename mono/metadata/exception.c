@@ -1119,67 +1119,73 @@ mono_invoke_unhandled_exception_hook (MonoObject *exc)
 	g_assert_not_reached ();
 }
 
-
-static MonoException *
-create_exception_four_strings (MonoClass *klass, MonoString *a1, MonoString *a2, MonoString *a3, MonoString *a4, MonoError *error)
+/*
+ * Returns a string ready to be consumed by managed code when formating a string to include class + method name.
+ * IE, say you have void Foo:Bar(int). It will return "void {0}(int)".
+ * The reason for this is that managed exception constructors for missing members require a both class and member names to be provided independently of the signature.
+ */
+char *
+mono_exception_create_missing_method_message (MonoClass *klass, const char *method_name, MonoMethodSignature *sig, const char *reason, ...)
 {
-	MonoDomain *domain = mono_domain_get ();
-	MonoMethod *method = NULL;
-	MonoObject *o;
-	int count = 4;
-	gpointer args [4];
-	gpointer iter;
-	MonoMethod *m;
+	int i;
+	char *result;
+	GString *res;
 
-	o = mono_object_new_checked (domain, klass, error);
-	mono_error_assert_ok (error);
+	res = g_string_new ("Method not found: ");
 
-	iter = NULL;
-	while ((m = mono_class_get_methods (klass, &iter))) {
-		MonoMethodSignature *sig;
+	if (sig) {
+		mono_type_get_desc (res, sig->ret, TRUE);
 
-		if (strcmp (".ctor", mono_method_get_name (m)))
-			continue;
-		sig = mono_method_signature (m);
-		if (sig->param_count != count)
-			continue;
-
-		int i;
-		gboolean good = TRUE;
-		for (i = 0; i < count; ++i) {
-			if (sig->params [i]->type != MONO_TYPE_STRING) {
-				good = FALSE;
-				break;
-			}
-		}
-		if (good) {
-			method = m;
-			break;
-		}
+		g_string_append_c (res, ' ');
 	}
 
-	g_assert (method);
+	if (klass) {
+		if (klass->name_space) {
+			g_string_append (res, klass->name_space);
+			g_string_append_c (res, '.');
+		}
+		g_string_append (res, klass->name);
+	}
+	else {
+		g_string_append (res, "<unknown type>");
+	}
 
-	args [0] = a1;
-	args [1] = a2;
-	args [2] = a3;
-	args [3] = a4;
+	g_string_append_c (res, '.');
 
-	mono_runtime_invoke_checked (method, o, args, error);
-	return_val_if_nok (error, NULL);
+	if (method_name)
+		g_string_append (res, method_name);
+	else
+		g_string_append (res, "<unknown method>");
 
-	return (MonoException *) o;
-}
+	if (sig) {
+		if (sig->generic_param_count) {
+			g_string_append_c (res, '<');
+			for (i = 0; i < sig->generic_param_count; ++i) {
+				if (i > 0)
+					g_string_append (res, ",");
+				g_string_append_printf (res, "!%d", i);
+			}
+			g_string_append_c (res, '>');
+		}
 
-MonoException *
-mono_exception_from_name_four_strings_checked (MonoImage *image, const char *name_space,
-					      const char *name, MonoString *a1, MonoString *a2, MonoString *a3, MonoString *a4,
-					      MonoError *error)
-{
-	MonoClass *klass;
+		g_string_append_c (res, '(');
+		for (i = 0; i < sig->param_count; ++i) {
+			if (i > 0)
+				g_string_append_c (res, ',');
+			mono_type_get_desc (res, sig->params [i], TRUE);
+		}
+		g_string_append_c (res, ')');
+	}
 
-	error_init (error);
-	klass = mono_class_load_from_name (image, name_space, name);
+	if (reason && *reason) {
+		va_list args;
+		va_start (args, reason);
 
-	return create_exception_four_strings (klass, a1, a2, a3, a4, error);
+		g_string_append (res, " Due to: ");
+		g_string_append_vprintf (res, reason, args);
+		va_end (args);
+	}
+	result = res->str;
+	g_string_free (res, FALSE);
+	return result;
 }
