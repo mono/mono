@@ -196,6 +196,9 @@ public class Harness
 				break;
 		}
 
+		log_process.Kill ();
+		log_process.WaitForExit ();
+
 		if (result_line != null && result_line.Contains ("Errors: 0"))
 			Environment.Exit (0);
 		else
