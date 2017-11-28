@@ -1202,6 +1202,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestApartmentState ()
 		{
 			Thread t1 = new Thread (new ThreadStart (Start));
@@ -1281,6 +1282,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestTrySetApartmentStateRunning ()
 		{
 			Thread t1 = new Thread (new ThreadStart (Start));

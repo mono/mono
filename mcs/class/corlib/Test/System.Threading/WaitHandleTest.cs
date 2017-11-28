@@ -531,6 +531,7 @@ namespace MonoTests.System.Threading {
 
 		[Test]
 		[ExpectedException (typeof (AbandonedMutexException))]
+		[Category ("MultiThreaded")]
 		public void WaitAllWithOneAbandonedMutex ()
 		{
 			using (var m1 = new Mutex (false)) {
@@ -577,6 +578,7 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void WaitAnyWithTimeoutAndSpuriousWake ()
 		{
 			/* This is to test that WaitEvent.WaitAny is not going to wait largely

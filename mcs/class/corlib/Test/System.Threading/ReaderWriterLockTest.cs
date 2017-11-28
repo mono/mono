@@ -94,6 +94,7 @@ namespace MonoTests.System.Threading
 		}
 				
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestAcquireLocks ()
 		{
 			rwlock = new ReaderWriterLock ();
