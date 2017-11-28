@@ -202,6 +202,7 @@ mono_ios_runtime_init (void)
 	managed_argc = managed_aindex;
 
 	res = mono_jit_exec (mono_domain_get (), assembly, managed_argc, managed_argv);
+	NSLog (@"Exit code: %d.", res);
 	exit (res);
 }
 

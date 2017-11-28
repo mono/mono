@@ -1,11 +1,16 @@
 
-all:
+all: harness.exe
 
 BCL_DIR = ../../mcs/class/lib/monotouch
 
+SIM_NAME = xamarin.ios-sdk.sim
+
+harness.exe: harness/harness.cs harness/Options.cs
+	csc /out:$@ $^
+
 # Build % from assemblies %_ASSEMBLIES
 # The end result is in bin/ios-sim/test-%.app
-build-ios-sim-%:
+build-ios-sim-%: $($*_ASSEMBLIES)
 	make -C runtime/
 	rm -rf tmp.app
 	mkdir -p tmp.app
@@ -25,29 +30,38 @@ build-ios-sim-%:
 
 # Install % on the simulator
 install-ios-sim-%:
-	xcrun simctl install booted bin/ios-sim/test-$*.app
+	xcrun simctl install $(SIM_NAME) bin/ios-sim/test-$*.app
 
 # Clean %
 clean-ios-sim-%:
 	$(RM) -rf bin/ios-sim/test-$*.app
 
-# Run % on the simulator with args $(ARGS) %_ARGS
-# 'launch' doesn't propagate the error code
-# With ios11, --console doesn't work any more, it makes the app deadlock
-run-ios-sim-%:
-	xcrun simctl terminate booted com.xamarin.mono.ios.test-$*
-	xcrun simctl launch booted com.xamarin.mono.ios.test-$* $(ARGS) $($*_ARGS)
-	log stream --level debug --predicate 'senderImagePath contains "$*"' --style compact
+# Install and run % on the simulator with args $(ARGS) %_ARGS
+run-ios-sim-%: harness.exe
+	mono harness.exe --start-sim
+	xcrun simctl install $(SIM_NAME) bin/ios-sim/test-$*.app
+	mono harness.exe --run-sim --logfile ios-sim-$*.log --bundle-id com.xamarin.mono.ios.test-$* --bundle-dir bin/ios-sim/test-$*.app $(ARGS) $($*_ARGS)
 
 clean:
 	$(MAKE) -C runtime clean
-	$(RM) -rf bin
+	$(RM) -rf bin harness.exe *.log
+
+# Developer targets, ignore
+# 'launch' doesn't propagate the error code
+# With ios11, --console doesn't work any more, it makes the app deadlock
+run-ios-sim-direct-%:
+	xcrun simctl terminate $(SIM_NAME) com.xamarin.mono.ios.test-$*
+	xcrun simctl launch $(SIM_NAME) com.xamarin.mono.ios.test-$* $(ARGS) $($*_ARGS)
+	log stream --level debug --predicate 'senderImagePath contains "$*"' --style compact
+
+create-sim:
+	xcrun simctl create $(SIM_NAME) 'iPhone 8 Plus' com.apple.CoreSimulator.SimRuntime.iOS-11-1
 
 start-sim:
-	xcrun simctl boot 94619BF8-ED9C-4A14-BA8C-6A22140ABA2C
+	xcrun simctl boot $(SIM_NAME)
 
 stop-sim:
-	xcrun simctl shutdown booted
+	xcrun simctl shutdown $(SIM_NAME)
 
 NUNIT = nunit-lite-console.exe -exclude:MobileNotWorking,NotOnMac,NotWorking,ValueAdd,CAS,InetAccess,NotWorkingLinqInterpreter -labels
 TESTDIR = $(BCL_DIR)/tests
