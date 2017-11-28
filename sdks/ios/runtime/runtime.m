@@ -135,6 +135,7 @@ unhandled_exception_handler (MonoObject *exc, void *user_data)
 	free (type_name);
 
 	NSLog (@"%@", msg);
+	NSLog (@"Exit code: %d.", 1);
 	exit (1);
 }
 
@@ -202,6 +203,7 @@ mono_ios_runtime_init (void)
 	managed_argc = managed_aindex;
 
 	res = mono_jit_exec (mono_domain_get (), assembly, managed_argc, managed_argv);
+	// Print this so apps parsing logs can detect when we exited
 	NSLog (@"Exit code: %d.", res);
 	exit (res);
 }
