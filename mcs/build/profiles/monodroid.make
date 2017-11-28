@@ -27,6 +27,7 @@ PROFILE_MCS_FLAGS = \
 	$(DEFAULT_REFERENCES) \
 	$(PLATFORM_DEBUG_FLAGS)
 
+API_BIN_PROFILE = monodroid
 FRAMEWORK_VERSION = 2.1
 
 # the tuner takes care of the install

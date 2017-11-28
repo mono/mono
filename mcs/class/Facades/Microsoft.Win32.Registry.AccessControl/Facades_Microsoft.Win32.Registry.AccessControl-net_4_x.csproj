@@ -9,6 +9,7 @@
     <ProjectGuid>{7B15C4D7-8C02-408E-9EFB-5E9E9FB4410D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,1616,1699</NoWarn>
+    <LangVersion>latest</LangVersion>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Windows_NT'">win32</HostPlatform>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">darwin</HostPlatform>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix'">linux</HostPlatform>

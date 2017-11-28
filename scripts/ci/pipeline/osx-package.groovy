@@ -1,11 +1,13 @@
-def jobName = "build-package-osx-mono"
+def isPr = (env.ghprbPullId && !env.ghprbPullId.empty ? true : false)
+def monoBranch = (isPr ? "pr" : env.BRANCH_NAME)
+def isReleaseJob = (!isPr && monoBranch ==~ /201\d-\d\d/) // check if we're on a 2017-xx branch, i.e. release
+def jobName = (isPr ? "build-package-osx-mono-pullrequest" : "build-package-osx-mono")
 def windowsJobName = "build-package-win-mono"
-def isReleaseJob = (BRANCH_NAME ==~ /201\d-\d\d/) // check if we're on a 2017-xx branch, i.e. release
 def packageFileName = null
 def commitHash = null
 
 node ("osx-amd64") {
-    ws ("workspace/${jobName}/${BRANCH_NAME}") {
+    ws ("workspace/${jobName}/${monoBranch}") {
         timestamps {
             stage('Checkout') {
                 // clone and checkout repo
@@ -19,8 +21,6 @@ node ("osx-amd64") {
                 currentBuild.displayName = "${commitHash.substring(0,7)}"
             }
             stage('Build') {
-                // show which xcode will be used to build
-                sh 'xcodebuild -version'
 
                 // install openssl for .net core (remove once msbuild uses a 2.x version which doesn't rely on openssl)
                 sh 'brew update && brew install openssl'
@@ -37,7 +37,7 @@ node ("osx-amd64") {
 
                 // build the .pkg
                 timeout (time: 420, unit: 'MINUTES') {
-                    withEnv (["MONO_BRANCH=${BRANCH_NAME}"]) {
+                    withEnv (["MONO_BRANCH=${isPr ? '' : monoBranch}"]) {
                         sshagent (credentials: ['mono-extensions-ssh']) {
                             sh "external/bockbuild/bb MacSDKRelease --arch darwin-universal --verbose --package ${isReleaseJob ? '--release' : ''}"
                         }
@@ -64,9 +64,9 @@ node ("osx-amd64") {
                     storageCredentialId: 'fbd29020e8166fbede5518e038544343',
                     uploadArtifactsOnlyIfSuccessful: true,
                     uploadZips: false,
-                    virtualPath: "${BRANCH_NAME}/${BUILD_NUMBER}/"
+                    virtualPath: "${monoBranch}/${env.BUILD_NUMBER}/"
                 ])
-                currentBuild.description = "<hr/><h2>DOWNLOAD: <a href=\"https://xamjenkinsartifact.azureedge.net/${jobName}/${BRANCH_NAME}/${BUILD_NUMBER}/${packageFileName}\">${packageFileName}</a></h2><hr/>"
+                currentBuild.description = "<hr/><h2>DOWNLOAD: <a href=\"https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${packageFileName}\">${packageFileName}</a></h2><hr/>"
             }
         }
     }
@@ -85,5 +85,7 @@ else {
     echo "Not a release job, skipping signing."
 }
 
-// trigger the Windows build
-build(job: "${windowsJobName}/${BRANCH_NAME}", wait: false)
+if (!isPr) {
+    // trigger the Windows build
+    build(job: "${windowsJobName}/${monoBranch}", wait: false)
+}

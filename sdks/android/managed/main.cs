@@ -14,9 +14,6 @@ public class Driver
 
 	public static void RunTests ()
 	{
-		Console.SetOut (TextWriter.Synchronized (new AndroidIntrumentationWriter (Console.Out)));
-		Console.SetError (TextWriter.Synchronized (new AndroidIntrumentationWriter (Console.Error)));
-
 		string assembly = File.ReadAllText ($"{AppDomain.CurrentDomain.BaseDirectory}/testassembly.txt");
 
 		Console.WriteLine ($"Testing assembly \"{assembly}\"");
@@ -39,46 +36,5 @@ public class Driver
 	public static void Main ()
 	{
 		Environment.Exit (1);
-	}
-
-	class AndroidIntrumentationWriter : TextWriter
-	{
-		readonly StringBuilder Line = new StringBuilder ();
-
-		readonly TextWriter Inner;
-
-		public override Encoding Encoding => Inner.Encoding;
-
-		public AndroidIntrumentationWriter (TextWriter inner)
-		{
-			Inner = inner;
-		}
-
-		public override void Write(char value)
-		{
-			if (value == '\n')
-				WriteLine ();
-			else
-				Line.Append (value);
-		}
-
-		public override void WriteLine ()
-		{
-			var l = Line.ToString ();
-			Line.Clear ();
-
-			unsafe
-			{
-				fixed (byte *chars = Encoding.UTF8.GetBytes (l + '\0'))
-				{
-					WriteLineToInstrumentation (chars);
-				}
-			}
-
-			Inner.WriteLine (l);
-		}
-
-		[DllImport ("__Internal", EntryPoint = "AndroidIntrumentationWriter_WriteLineToInstrumentation", CharSet = CharSet.Unicode)]
-		static unsafe extern void WriteLineToInstrumentation (byte *chars);
 	}
 }

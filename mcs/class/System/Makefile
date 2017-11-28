@@ -95,6 +95,9 @@ endif
 
 TXT_RESOURCE_STRINGS = ../referencesource/System/System.txt
 
+
+API_BIN_REFS := System.Net.Http
+
 #
 # Flags used to build the secxml version of System.
 #

@@ -8,5 +8,6 @@ namespace System
 		public static readonly bool IsFullFramework = true;
 		public static readonly bool IsWindowsNanoServer = false;
 		public static bool IsNonZeroLowerBoundArraySupported => true;
+		public static bool IsUap => false;
 	}
 }

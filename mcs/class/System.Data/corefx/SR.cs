@@ -804,4 +804,6 @@ partial class SR
 	public const string Odbc_ExceptionMessage = "{0} [{1}] {2}";
 	public const string Odbc_ConnectionClosed = "The connection is closed.";
 	public const string Odbc_OpenConnectionNoOwner = "An internal connection does not have an owner.";
+	public const string Odbc_PlatformNotSupported = "System.Data.ODBC is not supported on this platform.";
+	public const string Odbc_UnixOdbcNotFound = "Dependency unixODBC with minimum version 2.3.1 is required.";
 }

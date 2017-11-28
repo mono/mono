@@ -2001,6 +2001,7 @@ namespace Mono.CSharp
 		ReferenceContainer (TypeSpec element)
 			: base (MemberKind.ByRef, element, null)
 		{
+			cache = null;
 		}
 
 		public override IList<TypeSpec> Interfaces {
@@ -2040,6 +2041,11 @@ namespace Mono.CSharp
 			}
 
 			return pc;
+		}
+
+		protected override void InitializeMemberCache(bool onlyTypes)
+		{
+			cache = Element.MemberCache;
 		}
 	}
 
