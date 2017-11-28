@@ -87,7 +87,7 @@ ${TESTCMD} --label=System.Net.Http --timeout=5m make -w -C mcs/class/System.Net.
 ${TESTCMD} --label=System.Json --timeout=5m make -w -C mcs/class/System.Json run-test
 ${TESTCMD} --label=System.Threading.Tasks.Dataflow --timeout=5m make -w -C mcs/class/System.Threading.Tasks.Dataflow run-test
 # Due to https://bugzilla.xamarin.com/show_bug.cgi?id=60865
-if [[ ${label} == *i386 ]] || [[ ${label} == w32 ]]; then ${TESTCMD} --label=System.Runtime.CompilerServices.Unsafe-xunit --skip; else ${TESTCMD} --label=System.Runtime.CompilerServices.Unsafe-xunit --timeout=5m make -w -C mcs/class/System.Runtime.CompilerServices.Unsafe run-xunit-test; fi
+if [[ ${label} == *i386 ]] || [[ ${label} == w32 ]] || [[ ${label} == *armel ]] || [[ ${label} == *armhf ]]; then ${TESTCMD} --label=System.Runtime.CompilerServices.Unsafe-xunit --skip; else ${TESTCMD} --label=System.Runtime.CompilerServices.Unsafe-xunit --timeout=5m make -w -C mcs/class/System.Runtime.CompilerServices.Unsafe run-xunit-test; fi
 ${TESTCMD} --label=Mono.Debugger.Soft --timeout=5m make -w -C mcs/class/Mono.Debugger.Soft run-test
 ${TESTCMD} --label=Microsoft.CSharp-xunit --timeout=5m make -w -C mcs/class/Microsoft.CSharp run-xunit-test
 ${TESTCMD} --label=Microsoft.Build --timeout=5m make -w -C mcs/class/Microsoft.Build run-test
