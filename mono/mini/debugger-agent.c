@@ -4924,6 +4924,8 @@ clear_breakpoints_for_domain (MonoDomain *domain)
 			if (inst->domain == domain) {
 #ifndef IL2CPP_MONO_DEBUGGER
 				remove_breakpoint (inst);
+#else
+				inst->seq_point->isActive = FALSE;
 #endif
 
 				g_free (inst);
@@ -11048,7 +11050,7 @@ frame_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		void *var;
 #endif
 
-		t = &frame->actual_method->klass->byval_arg;
+		t = VM_CLASS_GET_TYPE(VM_METHOD_GET_DECLARING_TYPE(frame->actual_method));
 		/* Checked by the sender */
 		g_assert (MONO_TYPE_ISSTRUCT (t));
 
@@ -11071,7 +11073,7 @@ frame_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		}
 #else
 		GetVariable (tls, frame, kMethodVariableKindC_This, 0, &t, &var);
-		il2cpp_set_var (val_buf, var, t);
+		il2cpp_set_var(val_buf, var, VM_CLASS_GET_THIS_ARG(VM_METHOD_GET_DECLARING_TYPE(frame->actual_method)));
 #endif
 		break;
 	}
@@ -11884,7 +11886,7 @@ unity_process_breakpoint_inner(DebuggerTlsData *tls, gboolean from_signal, Il2Cp
 
 		for (j = 0; j < bp->children->len; ++j) {
 			inst = (BreakpointInstance *)g_ptr_array_index(bp->children, j);
-			if (inst->il_offset == bp->il_offset) {
+			if (inst->il_offset == sequencePoint->ilOffset) {
 				if (bp->req->event_kind == EVENT_KIND_STEP) {
 					for (int j = 0; j < bp->children->len; ++j)
 					{
