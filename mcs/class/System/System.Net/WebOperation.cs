@@ -277,9 +277,6 @@ namespace System.Net
 				SetCanceled ();
 			} catch (Exception e) {
 				SetError (e);
-			} finally {
-				// cts.Dispose ();
-				// cts = null;
 			}
 		}
 
