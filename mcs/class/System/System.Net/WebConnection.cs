@@ -180,14 +180,21 @@ namespace System.Net
 			throw GetException (WebExceptionStatus.ConnectFailure, null);
 		}
 
+#if MONO_WEB_DEBUG
 		static int nextID, nextRequestID;
-		public readonly int id = ++nextID;
-
+		readonly int id = ++nextID;
 		public int ID => disposed != 0 ? -id : id;
+#else
+		internal readonly int ID;
+#endif
 
 		async Task<bool> CreateStream (WebOperation operation, bool reused, CancellationToken cancellationToken)
 		{
+#if MONO_WEB_DEBUG
 			var requestID = ++nextRequestID;
+#else
+			var requestID = 0;
+#endif
 
 			try {
 				var stream = new NetworkStream (socket, false);

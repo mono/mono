@@ -46,12 +46,10 @@ namespace System.Net
 		int completeRequestWritten;
 		int chunkTrailerWritten;
 
-		internal string ME {
-			get;
-		}
+		internal readonly string ME;
 
 		public WebRequestStream (WebConnection connection, WebOperation operation,
-		                         Stream stream, WebConnectionTunnel tunnel)
+					 Stream stream, WebConnectionTunnel tunnel)
 			: base (connection, operation, stream)
 		{
 			allowBuffering = operation.Request.InternalAllowBuffering;
@@ -63,7 +61,9 @@ namespace System.Net
 			if (tunnel?.ProxyVersion != null && tunnel?.ProxyVersion != HttpVersion.Version11)
 				KeepAlive = false;
 
+#if MONO_WEB_DEBUG
 			ME = $"WRQ(Cnc={Connection.ID}, Op={Operation.ID})";
+#endif
 		}
 
 		public bool KeepAlive {

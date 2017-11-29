@@ -153,7 +153,7 @@ namespace System.Net
 						return;
 					}
 
-					operationArray = new (ConnectionGroup, WebOperation)[operations.Count];
+					operationArray = new(ConnectionGroup, WebOperation)[operations.Count];
 					operations.CopyTo (operationArray, 0);
 					idleArray = new(ConnectionGroup, WebConnection, Task)[idleConnections.Count];
 					idleConnections.CopyTo (idleArray, 0);
@@ -177,7 +177,7 @@ namespace System.Net
 
 					int idx = -1;
 					for (int i = 0; i < operationArray.Length; i++) {
-						if (ret == taskList[i+1]) {
+						if (ret == taskList[i + 1]) {
 							idx = i;
 							break;
 						}
@@ -197,7 +197,7 @@ namespace System.Net
 					}
 
 					for (int i = 0; i < idleArray.Length; i++) {
-						if (ret == taskList[i+1+operationArray.Length]) {
+						if (ret == taskList[i + 1 + operationArray.Length]) {
 							idx = i;
 							break;
 						}
@@ -257,7 +257,12 @@ namespace System.Net
 
 		bool OperationCompleted (ConnectionGroup group, WebOperation operation, Task<(bool, WebOperation)> task)
 		{
+#if MONO_WEB_DEBUG
 			var me = $"{nameof (OperationCompleted)}(group={group.ID}, Op={operation.ID}, Cnc={operation.Connection.ID})";
+#else
+			string me = null;
+#endif
+
 			var (ok, next) = task.Status == TaskStatus.RanToCompletion ? task.Result : (false, null);
 			Debug ($"{me}: {task.Status} {ok} {next?.ID}");
 
@@ -299,8 +304,7 @@ namespace System.Net
 
 		void CloseIdleConnection (ConnectionGroup group, WebConnection connection)
 		{
-			var me = $"{nameof (CloseIdleConnection)}(group={group.ID}, Cnc={connection.ID})";
-			Debug ($"{me} closing idle connection.");
+			Debug ($"{nameof (CloseIdleConnection)}(group={group.ID}, Cnc={connection.ID}) closing idle connection.");
 
 			group.RemoveConnection (connection);
 			RemoveIdleConnection (connection);
@@ -308,7 +312,11 @@ namespace System.Net
 
 		bool SchedulerIteration (ConnectionGroup group)
 		{
+#if MONO_WEB_DEBUG
 			var me = $"{nameof (SchedulerIteration)}(group={group.ID})";
+#else
+			string me = null;
+#endif
 			Debug ($"{me}");
 
 			// First, let's clean up.

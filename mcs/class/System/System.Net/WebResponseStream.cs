@@ -75,16 +75,17 @@ namespace System.Net
 			private set;
 		}
 
-		internal string ME {
-			get;
-		}
+		internal readonly string ME;
 
 		public WebResponseStream (WebRequestStream request)
 			: base (request.Connection, request.Operation, request.InnerStream)
 		{
 			RequestStream = request;
-			ME = $"WRP(Cnc={Connection.ID}, Op={Operation.ID})";
 			request.InnerStream.ReadTimeout = ReadTimeout;
+
+#if MONO_WEB_DEBUG
+			ME = $"WRP(Cnc={Connection.ID}, Op={Operation.ID})";
+#endif
 		}
 
 		public override long Length {

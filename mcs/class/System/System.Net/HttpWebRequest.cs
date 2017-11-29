@@ -198,8 +198,12 @@ namespace System.Net
 			ResetAuthorization ();
 		}
 
+#if MONO_WEB_DEBUG
 		static int nextId;
 		internal readonly int ID = ++nextId;
+#else
+		internal readonly int ID;
+#endif
 
 		void ResetAuthorization ()
 		{

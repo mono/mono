@@ -57,8 +57,12 @@ namespace System.Net
 			get;
 		}
 
+#if MONO_WEB_DEBUG
 		static int nextID;
-		public readonly int ID = ++nextID;
+		internal readonly int ID = ++nextID;
+#else
+		internal readonly int ID;
+#endif
 
 		public WebOperation (HttpWebRequest request, BufferOffsetSize writeBuffer, bool isNtlmChallenge, CancellationToken cancellationToken)
 		{
