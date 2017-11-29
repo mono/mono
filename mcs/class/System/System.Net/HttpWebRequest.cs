@@ -97,7 +97,6 @@ namespace System.Net
 		WebRequestStream writeStream;
 		HttpWebResponse webResponse;
 		TaskCompletionSource<HttpWebResponse> responseTask;
-		int nestedRequestStream;
 		WebOperation currentOperation;
 		int aborted;
 		bool gotRequestStream;
@@ -887,26 +886,15 @@ namespace System.Net
 					throw new InvalidOperationException ("The operation cannot be performed once the request has been submitted.");
 
 				operation = currentOperation;
-				if (operation?.WriteStream != null)
-					return operation.WriteStream;
-
-				if (Interlocked.CompareExchange (ref nestedRequestStream, 1, 0) != 0)
-					throw new InvalidOperationException ("Cannot re-call start of asynchronous " +
-								"method while a previous call is still in progress.");
-
-				initialMethod = method;
-
 				if (operation == null) {
+					initialMethod = method;
+
 					gotRequestStream = true;
 					operation = SendRequest (false, null, cancellationToken);
 				}
 			}
 
-			try {
-				return await operation.GetRequestStream ().ConfigureAwait (false);
-			} finally {
-				nestedRequestStream = 0;
-			}
+			return await operation.GetRequestStream ().ConfigureAwait (false);
 		}
 
 		public override IAsyncResult BeginGetRequestStream (AsyncCallback callback, object state)
