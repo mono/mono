@@ -54,10 +54,10 @@ clean:
 
 # Compile all the test assemblies
 compile-tests:
-	for suite in $(TEST_SUITES); do make -C ../../mcs/class/$$suite PROFILE=monotouch test || break; done
+	for suite in $(TEST_SUITES); do make -C ../../mcs/class/$$suite PROFILE=monotouch test || exit 1; done
 
 run-tests:
-	for suite in $(TEST_SUITES); do make build-ios-sim-$$suite || break; make run-ios-sim-$$suite || break; done
+	for suite in $(TEST_SUITES); do make build-ios-sim-$$suite || exit 1; make run-ios-sim-$$suite || exit 1; done
 
 # Developer targets, ignore
 # 'launch' doesn't propagate the error code
