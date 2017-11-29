@@ -68,7 +68,7 @@ run-ios-sim-direct-%:
 	log stream --level debug --predicate 'senderImagePath contains "$*"' --style compact
 
 create-sim:
-	xcrun simctl create $(SIM_NAME) 'iPhone 8 Plus' com.apple.CoreSimulator.SimRuntime.iOS-11-1
+	xcrun simctl create $(SIM_NAME) 'iPhone 7' com.apple.CoreSimulator.SimRuntime.iOS-11-1
 
 start-sim:
 	xcrun simctl boot $(SIM_NAME)

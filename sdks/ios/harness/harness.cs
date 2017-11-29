@@ -81,8 +81,35 @@ public class Harness
 
 		bool need_start = false;
 		if (state_line == "") {
+			// Get the runtime type
+			args = "simctl list runtimes";
+			Console.WriteLine ("Running: " + "xcrun " + args);
+			start_info = new ProcessStartInfo ("xcrun", args);
+			start_info.RedirectStandardOutput = true;
+			start_info.UseShellExecute = false;
+			process = Process.Start (start_info);
+			stream = process.StandardOutput;
+			string ios_line = null;
+			while (true) {
+				line = stream.ReadLine ();
+				if (line == null)
+					break;
+				if (line.Contains ("com.apple.CoreSimulator.SimRuntime.iOS")) {
+					ios_line = line;
+					break;
+				}
+			}
+			process.WaitForExit ();
+			if (process.ExitCode != 0)
+				Environment.Exit (1);
+			if (ios_line == null) {
+				Console.WriteLine ("Unable to parse process output.");
+				Environment.Exit (1);
+			}
+			string runtime = line.Substring (line.IndexOf ("com.apple.CoreSimulator.SimRuntime.iOS"));
+
 			// Create the simulator
-			args = "simctl create " + SIM_NAME + " 'iPhone 8 Plus' com.apple.CoreSimulator.SimRuntime.iOS-11-1";
+			args = "simctl create " + SIM_NAME + " 'iPhone 7' " + runtime;
 			Console.WriteLine ("Running: " + "xcrun " + args);
 			process = Process.Start ("xcrun", args);
 			process.WaitForExit ();
