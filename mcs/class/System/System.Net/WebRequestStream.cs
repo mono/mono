@@ -376,7 +376,7 @@ namespace System.Net
 				try {
 					await WriteChunkTrailer_inner (cts.Token).ConfigureAwait (false);
 				} catch {
-					;
+					// Intentionally eating exceptions.
 				} finally {
 					pendingWrite = null;
 				}
