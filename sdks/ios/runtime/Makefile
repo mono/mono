@@ -6,14 +6,14 @@ SDK_DIR = ../../out/ios-sim64
 CFLAGS = \
 	-std=gnu11 \
 	-fobjc-arc \
-	-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator11.1.sdk \
-	-mios-simulator-version-min=11.1 \
+	-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk \
+	-mios-simulator-version-min=10.1 \
 	-g \
 	-I$(SDK_DIR)/include/mono-2.0
 
 LDFLAGS = \
-	-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator11.1.sdk \
-	-mios-simulator-version-min=11.1 \
+	-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk \
+	-mios-simulator-version-min=10.1 \
 	 -framework Foundation \
 	 -framework UIKit \
 	$(SDK_DIR)/lib/libmonosgen-2.0.a \

@@ -4,6 +4,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <os/log.h>
 #include <mono/utils/mono-publib.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/mono-debug.h>
@@ -50,7 +51,7 @@ load_assembly (const char *name, const char *culture)
 	char path [1024];
 	int res;
 
-	NSLog (@"assembly_preload_hook: %s %s %s\n", name, culture, bundle);
+	os_log_info (OS_LOG_DEFAULT, "assembly_preload_hook: %s %s %s\n", name, culture, bundle);
 	if (culture && strcmp (culture, ""))
 		res = snprintf (path, sizeof (path) - 1, "%s/%s/%s", bundle, culture, name);
 	else
@@ -134,8 +135,8 @@ unhandled_exception_handler (MonoObject *exc, void *user_data)
 	free (message);
 	free (type_name);
 
-	NSLog (@"%@", msg);
-	NSLog (@"Exit code: %d.", 1);
+	os_log_info (OS_LOG_DEFAULT, "%@", msg);
+	os_log_info (OS_LOG_DEFAULT, "Exit code: %d.", 1);
 	exit (1);
 }
 
@@ -164,7 +165,7 @@ mono_ios_runtime_init (void)
 			*eq = '\0';
 			char *name = strdup (p);
 			char *val = strdup (eq + 1);
-			NSLog (@"%s=%s.", name, val);
+			os_log_info (OS_LOG_DEFAULT, "%s=%s.", name, val);
 			setenv (name, val, TRUE);
 		}
 		aindex ++;
@@ -187,7 +188,7 @@ mono_ios_runtime_init (void)
 	MonoAssembly *assembly = load_assembly (executable, NULL);
 	assert (assembly);
 
-	NSLog (@"Executable: %s", executable);
+	os_log_info (OS_LOG_DEFAULT, "Executable: %s", executable);
 	int managed_argc = nargs - aindex;
 	char *managed_argv [128];
 	assert (managed_argc < 128 - 2);
@@ -195,7 +196,7 @@ mono_ios_runtime_init (void)
 	managed_argv [managed_aindex ++] = "test-runner";
 	for (int i = 0; i < managed_argc; ++i) {
 		managed_argv [managed_aindex] = args [aindex];
-		NSLog (@"Arg: %s", managed_argv [managed_aindex]);
+		os_log_info (OS_LOG_DEFAULT, "Arg: %s", managed_argv [managed_aindex]);
 		managed_aindex ++;
 		aindex ++;
 	}
@@ -204,7 +205,7 @@ mono_ios_runtime_init (void)
 
 	res = mono_jit_exec (mono_domain_get (), assembly, managed_argc, managed_argv);
 	// Print this so apps parsing logs can detect when we exited
-	NSLog (@"Exit code: %d.", res);
+	os_log_info (OS_LOG_DEFAULT, "Exit code: %d.", res);
 	exit (res);
 }
 
@@ -275,6 +276,6 @@ xamarin_log (const unsigned short *unicodeMessage)
 		fwrite ("\n", 1, 1, stdout);
 	fflush (stdout);
 #else
-	NSLog (@"%@", msg);
+	os_log_info (OS_LOG_DEFAULT, "%@", msg);
 #endif
 }
