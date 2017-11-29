@@ -966,7 +966,7 @@ mono_image_get_generic_param_info (MonoReflectionGenericParam *gparam, guint32 o
 	entry = g_new0 (GenericParamTableEntry, 1);
 	entry->owner = owner;
 	/* FIXME: track where gen_params should be freed and remove the GC root as well */
-	MONO_GC_REGISTER_ROOT_IF_MOVING (entry->gparam, MONO_ROOT_SOURCE_REFLECTION, "reflection generic parameter");
+	MONO_GC_REGISTER_ROOT_IF_MOVING (entry->gparam, MONO_ROOT_SOURCE_REFLECTION, NULL, "reflection generic parameter");
 	entry->gparam = gparam;
 	
 	g_ptr_array_add (assembly->gen_params, entry);

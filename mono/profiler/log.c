@@ -166,6 +166,12 @@ typedef struct {
 	int small_id;
 } MonoProfilerThread;
 
+// Default value in `profiler_tls` for new threads.
+#define MONO_PROFILER_THREAD_ZERO ((MonoProfilerThread *) NULL)
+
+// This is written to `profiler_tls` to indicate that a thread has stopped.
+#define MONO_PROFILER_THREAD_DEAD ((MonoProfilerThread *) -1)
+
 // Do not use these TLS macros directly unless you know what you're doing.
 
 #ifdef HOST_WIN32
@@ -234,19 +240,19 @@ process_id (void)
 #define ENTER_LOG(COUNTER, BUFFER, SIZE) \
 	do { \
 		MonoProfilerThread *thread__ = get_thread (); \
-		if (thread__->attached) \
-			buffer_lock (); \
 		g_assert (!thread__->busy && "Why are we trying to write a new event while already writing one?"); \
 		thread__->busy = TRUE; \
 		mono_atomic_inc_i32 ((COUNTER)); \
+		if (thread__->attached) \
+			buffer_lock (); \
 		LogBuffer *BUFFER = ensure_logbuf_unsafe (thread__, (SIZE))
 
 #define EXIT_LOG_EXPLICIT(SEND) \
-		thread__->busy = FALSE; \
 		if ((SEND)) \
 			send_log_unsafe (TRUE); \
 		if (thread__->attached) \
 			buffer_unlock (); \
+		thread__->busy = FALSE; \
 	} while (0)
 
 // Pass these to EXIT_LOG_EXPLICIT () for easier reading.
@@ -512,6 +518,8 @@ init_thread (gboolean add_to_lls)
 {
 	MonoProfilerThread *thread = PROF_TLS_GET ();
 
+	g_assert (thread != MONO_PROFILER_THREAD_DEAD && "Why are we trying to resurrect a stopped thread?");
+
 	/*
 	 * Sometimes we may try to initialize a thread twice. One example is the
 	 * main thread: We initialize it when setting up the profiler, but we will
@@ -523,14 +531,14 @@ init_thread (gboolean add_to_lls)
 	 * These cases are harmless anyhow. Just return if we've already done the
 	 * initialization work.
 	 */
-	if (thread)
+	if (thread != MONO_PROFILER_THREAD_ZERO)
 		return thread;
 
 	thread = g_malloc (sizeof (MonoProfilerThread));
 	thread->node.key = thread_id ();
 	thread->attached = add_to_lls;
 	thread->call_depth = 0;
-	thread->busy = 0;
+	thread->busy = FALSE;
 	thread->ended = FALSE;
 
 	init_buffer_state (thread);
@@ -543,7 +551,8 @@ init_thread (gboolean add_to_lls)
 	 */
 	if (add_to_lls) {
 		MonoThreadHazardPointers *hp = mono_hazard_pointer_get ();
-		g_assert (mono_lls_insert (&log_profiler.profiler_thread_list, hp, &thread->node) && "Why can't we insert the thread in the LLS?");
+		if (!mono_lls_insert (&log_profiler.profiler_thread_list, hp, &thread->node))
+			g_error ("%s: failed to insert thread %p in log_profiler.profiler_thread_list, found = %s", __func__, (gpointer) thread->node.key, mono_lls_find (&log_profiler.profiler_thread_list, hp, thread->node.key) ? "true" : "false");
 		clear_hazard_pointers (hp);
 	}
 
@@ -559,7 +568,7 @@ deinit_thread (MonoProfilerThread *thread)
 	g_assert (!thread->attached && "Why are we manually freeing an attached thread?");
 
 	g_free (thread);
-	PROF_TLS_SET (NULL);
+	PROF_TLS_SET (MONO_PROFILER_THREAD_DEAD);
 }
 
 static MonoProfilerThread *
@@ -1200,32 +1209,64 @@ gc_reference (MonoObject *obj, MonoClass *klass, uintptr_t size, uintptr_t num, 
 }
 
 static void
-gc_roots (MonoProfiler *prof, MonoObject *const *objects, const MonoProfilerGCRootType *root_types, const uintptr_t *extra_info, uint64_t num)
+gc_roots (MonoProfiler *prof, uint64_t num, const mono_byte *const *addresses, const MonoObject* const *objects)
 {
 	ENTER_LOG (&heap_roots_ctr, logbuffer,
 		EVENT_SIZE /* event */ +
 		LEB128_SIZE /* num */ +
-		LEB128_SIZE /* collections */ +
 		num * (
 			LEB128_SIZE /* object */ +
-			LEB128_SIZE /* root type */ +
-			LEB128_SIZE /* extra info */
+			LEB128_SIZE /* address */
 		)
 	);
 
 	emit_event (logbuffer, TYPE_HEAP_ROOT | TYPE_HEAP);
 	emit_value (logbuffer, num);
-	emit_value (logbuffer, mono_gc_collection_count (mono_gc_max_generation ()));
 
 	for (int i = 0; i < num; ++i) {
-		emit_obj (logbuffer, objects [i]);
-		emit_value (logbuffer, root_types [i]);
-		emit_value (logbuffer, extra_info [i]);
+		emit_obj (logbuffer, (gpointer) objects [i]);
+		emit_ptr (logbuffer, addresses [i]);
 	}
 
 	EXIT_LOG;
 }
 
+static void
+gc_root_register (MonoProfiler *prof, const mono_byte *start, size_t size, MonoGCRootSource kind, const void *key, const char *msg)
+{
+	int msg_len = msg ? strlen (msg) + 1 : 0;
+	ENTER_LOG (&heap_roots_ctr, logbuffer,
+		EVENT_SIZE /* event */ +
+		LEB128_SIZE /* start */ +
+		LEB128_SIZE /* size */ +
+		BYTE_SIZE /* kind */ +
+		LEB128_SIZE /* key */ +
+		msg_len /*msg */
+	);
+
+	emit_event (logbuffer, TYPE_HEAP_ROOT_REGISTER | TYPE_HEAP);
+	emit_ptr (logbuffer, start);
+	emit_uvalue (logbuffer, size);
+	emit_byte (logbuffer, kind);
+	emit_ptr (logbuffer, key);
+	emit_string (logbuffer, msg, msg_len);
+
+	EXIT_LOG;
+}
+
+static void
+gc_root_deregister (MonoProfiler *prof, const mono_byte *start)
+{
+	ENTER_LOG (&heap_roots_ctr, logbuffer,
+		EVENT_SIZE /* event */ +
+		LEB128_SIZE /* start */
+	);
+
+	emit_event (logbuffer, TYPE_HEAP_ROOT_UNREGISTER | TYPE_HEAP);
+	emit_ptr (logbuffer, start);
+
+	EXIT_LOG;
+}
 
 static void
 trigger_on_demand_heapshot (void)
@@ -2008,7 +2049,7 @@ thread_end (MonoProfiler *prof, uintptr_t tid)
 	thread->ended = TRUE;
 	remove_thread (thread);
 
-	PROF_TLS_SET (NULL);
+	PROF_TLS_SET (MONO_PROFILER_THREAD_DEAD);
 }
 
 static void
@@ -4356,10 +4397,15 @@ proflog_icall_SetGCRootEvents (MonoBoolean value)
 {
 	mono_coop_mutex_lock (&log_profiler.api_mutex);
 
-	if (value)
+	if (value) {
 		ENABLE (PROFLOG_GC_ROOT_EVENTS);
-	else
+		mono_profiler_set_gc_root_register_callback (log_profiler.handle, gc_root_register);
+		mono_profiler_set_gc_root_unregister_callback (log_profiler.handle, gc_root_deregister);
+	} else {
 		DISABLE (PROFLOG_GC_ROOT_EVENTS);
+		mono_profiler_set_gc_root_register_callback (log_profiler.handle, NULL);
+		mono_profiler_set_gc_root_unregister_callback (log_profiler.handle, NULL);
+	}
 
 	mono_coop_mutex_unlock (&log_profiler.api_mutex);
 }
@@ -4689,7 +4735,7 @@ mono_profiler_init_log (const char *desc)
 	mono_profiler_set_gc_event_callback (handle, gc_event);
 
 	mono_profiler_set_thread_started_callback (handle, thread_start);
-	mono_profiler_set_thread_stopped_callback (handle, thread_end);
+	mono_profiler_set_thread_exited_callback (handle, thread_end);
 	mono_profiler_set_thread_name_callback (handle, thread_name);
 
 	mono_profiler_set_domain_loaded_callback (handle, domain_loaded);
@@ -4728,6 +4774,11 @@ mono_profiler_init_log (const char *desc)
 
 	if (ENABLED (PROFLOG_GC_MOVE_EVENTS))
 		mono_profiler_set_gc_moves_callback (handle, gc_moves);
+
+	if (ENABLED (PROFLOG_GC_ROOT_EVENTS)) {
+		mono_profiler_set_gc_root_register_callback (handle, gc_root_register);
+		mono_profiler_set_gc_root_unregister_callback (handle, gc_root_deregister);
+	}
 
 	if (ENABLED (PROFLOG_GC_HANDLE_EVENTS)) {
 		mono_profiler_set_gc_handle_created_callback (handle, gc_handle_created);

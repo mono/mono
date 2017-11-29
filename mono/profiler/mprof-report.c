@@ -76,6 +76,23 @@
 #define HASH_SIZE 9371
 #define SMALL_HASH_SIZE 31
 
+/* Version < 15 root type enum */
+typedef enum {
+	/* Upper 2 bytes. */
+	MONO_PROFILER_GC_ROOT_PINNING = 1 << 8,
+	MONO_PROFILER_GC_ROOT_WEAKREF = 2 << 8,
+	MONO_PROFILER_GC_ROOT_INTERIOR = 4 << 8,
+
+	/* Lower 2 bytes (flags). */
+	MONO_PROFILER_GC_ROOT_STACK = 1 << 0,
+	MONO_PROFILER_GC_ROOT_FINALIZER = 1 << 1,
+	MONO_PROFILER_GC_ROOT_HANDLE = 1 << 2,
+	MONO_PROFILER_GC_ROOT_OTHER = 1 << 3,
+	MONO_PROFILER_GC_ROOT_MISC = 1 << 4,
+
+	MONO_PROFILER_GC_ROOT_TYPEMASK = 0xff,
+} MonoProfilerGCRootType;
+
 static int debug = 0;
 static int collect_traces = 0;
 static int show_traces = 0;
@@ -2691,29 +2708,68 @@ decode_buffer (ProfContext *ctx)
 					fprintf (outfile, "traced object %p, size %llu (%s), refs: %zd\n", (void*)OBJ_ADDR (objdiff), (unsigned long long) size, cd->name, num);
 			} else if (subtype == TYPE_HEAP_ROOT) {
 				uintptr_t num;
-				if (ctx->data_version > 12) {
+				if (ctx->data_version > 14) {
+					int i;
 					uint64_t tdiff = decode_uleb128 (p + 1, &p);
 					LOG_TIME (time_base, tdiff);
 					time_base += tdiff;
 					num = decode_uleb128 (p, &p);
-				} else
-					num = decode_uleb128 (p + 1, &p);
-				uintptr_t gc_num G_GNUC_UNUSED = decode_uleb128 (p, &p);
-				int i;
-				for (i = 0; i < num; ++i) {
-					intptr_t objdiff = decode_sleb128 (p, &p);
-					int root_type;
-					if (ctx->data_version == 13)
-						root_type = *p++;
-					else
-						root_type = decode_uleb128 (p, &p);
-					/* we just discard the extra info for now */
-					uintptr_t extra_info = decode_uleb128 (p, &p);
-					if (debug)
-						fprintf (outfile, "object %p is a %s root\n", (void*)OBJ_ADDR (objdiff), get_root_name (root_type));
-					if (collect_traces)
-						thread_add_root (thread, OBJ_ADDR (objdiff), root_type, extra_info);
+					for (i = 0; i < num; ++i) {
+						intptr_t ptrdiff = decode_sleb128 (p, &p);
+						intptr_t objdiff = decode_sleb128 (p, &p);
+
+						if (debug)
+							fprintf (outfile, "object %p at address %zx\n", (void*)OBJ_ADDR (objdiff), ptr_base + ptrdiff);
+						if (collect_traces)
+							thread_add_root (thread, OBJ_ADDR (objdiff), MONO_PROFILER_GC_ROOT_MISC, 0);
+					}
+				} else {
+					if (ctx->data_version > 12) {
+						uint64_t tdiff = decode_uleb128 (p + 1, &p);
+						LOG_TIME (time_base, tdiff);
+						time_base += tdiff;
+						num = decode_uleb128 (p, &p);
+					} else
+						num = decode_uleb128 (p + 1, &p);
+					uintptr_t gc_num G_GNUC_UNUSED = decode_uleb128 (p, &p);
+					int i;
+					for (i = 0; i < num; ++i) {
+						intptr_t objdiff = decode_sleb128 (p, &p);
+						int root_type;
+						if (ctx->data_version > 12)
+							root_type = *p++;
+						else
+							root_type = decode_uleb128 (p, &p);
+						/* we just discard the extra info for now */
+						uintptr_t extra_info = decode_uleb128 (p, &p);
+						if (debug)
+							fprintf (outfile, "object %p is a %s root\n", (void*)OBJ_ADDR (objdiff), get_root_name (root_type));
+						if (collect_traces)
+							thread_add_root (thread, OBJ_ADDR (objdiff), root_type, extra_info);
+					}
 				}
+			} else if (subtype == TYPE_HEAP_ROOT_REGISTER) {
+				uint64_t tdiff = decode_uleb128 (p + 1, &p);
+				LOG_TIME (time_base, tdiff);
+				time_base += tdiff;
+
+				uint64_t ptrdiff = decode_uleb128 (p, &p);
+				uint64_t size = decode_uleb128 (p, &p);
+				int type = *p++;
+				uint64_t keydiff = decode_uleb128 (p, &p);
+				char *desc = (char*)p;
+				while (*p++);
+
+				if (debug)
+					fprintf (outfile, "root register address %llx size %lld type %d key %llx description %s\n", ptr_base + ptrdiff, size, type, ptr_base + keydiff, desc);
+			} else if (subtype == TYPE_HEAP_ROOT_UNREGISTER) {
+				uint64_t tdiff = decode_uleb128 (p + 1, &p);
+				LOG_TIME (time_base, tdiff);
+				time_base += tdiff;
+				uint64_t ptrdiff = decode_uleb128 (p, &p);
+
+				if (debug)
+					fprintf (outfile, "root %llx was unregisted\n", ptr_base + ptrdiff);
 			} else if (subtype == TYPE_HEAP_END) {
 				uint64_t tdiff = decode_uleb128 (p + 1, &p);
 				LOG_TIME (time_base, tdiff);

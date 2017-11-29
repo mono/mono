@@ -11,7 +11,9 @@
 MONO_BEGIN_DECLS
 
 typedef int (*MonoGCReferences) (MonoObject *obj, MonoClass *klass, uintptr_t size, uintptr_t num, MonoObject **refs, uintptr_t *offsets, void *data);
-
+/*
+ * This enum is used by the profiler API when reporting root registration.
+ */
 typedef enum {
 	// Roots external to Mono.  Embedders may only use this value.
 	MONO_ROOT_SOURCE_EXTERNAL = 0,

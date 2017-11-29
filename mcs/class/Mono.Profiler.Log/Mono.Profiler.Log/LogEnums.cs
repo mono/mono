@@ -54,6 +54,8 @@ namespace Mono.Profiler.Log {
 		HeapEnd = 1 << 4,
 		HeapObject = 2 << 4,
 		HeapRoots = 3 << 4,
+		HeapRootRegister = 4 << 4,
+		HeapRootUnregister = 5 << 4,
 
 		SampleHit = 0 << 4,
 		SampleUnmanagedSymbol = 1 << 4,
@@ -213,5 +215,24 @@ namespace Mono.Profiler.Log {
 		OnDemand = 2,
 		Milliseconds = 3,
 		Collections = 4,
+	}
+
+	// mono/metadata/mono-gc.h : MonoGCRootSource
+	public enum LogHeapRootSource {
+		External = 0,
+		Stack = 1,
+		FinalizerQueue = 2,
+		StaticVariable = 3,
+		ThreadLocalVariable = 4,
+		ContextLocalVariable = 5,
+		GCHandle = 6,
+		JIT = 7,
+		Threading = 8,
+		AppDomain = 9,
+		Reflection = 10,
+		Marshal = 11,
+		ThreadPool = 12,
+		Debugger = 13,
+		RuntimeHandle = 14,
 	}
 }
