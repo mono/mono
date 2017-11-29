@@ -183,11 +183,12 @@ namespace System.Net
 
 		internal void RegisterRequest (ServicePoint servicePoint, WebConnection connection)
 		{
+			if (servicePoint == null)
+				throw new ArgumentNullException (nameof (servicePoint));
+			if (connection == null)
+				throw new ArgumentNullException (nameof (connection));
+
 			lock (this) {
-				if (servicePoint == null)
-					throw new ArgumentNullException (nameof (servicePoint));
-				if (connection == null)
-					throw new ArgumentNullException (nameof (connection));
 				if (Interlocked.CompareExchange (ref requestSent, 1, 0) != 0)
 					throw new InvalidOperationException ("Invalid nested call.");
 				ServicePoint = servicePoint;

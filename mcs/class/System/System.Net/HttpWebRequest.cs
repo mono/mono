@@ -860,11 +860,6 @@ namespace System.Net
 			}
 		}
 
-		Task<Stream> MyGetRequestStreamAsync ()
-		{
-			return RunWithTimeout (MyGetRequestStreamAsync);
-		}
-
 		async Task<Stream> MyGetRequestStreamAsync (Task timeoutTask, CancellationToken cancellationToken)
 		{
 			if (Aborted)
@@ -888,7 +883,7 @@ namespace System.Net
 					throw new InvalidOperationException ("The operation cannot be performed once the request has been submitted.");
 
 				operation = currentOperation;
-				if (operation != null && operation.WriteStream != null)
+				if (operation?.WriteStream != null)
 					return operation.WriteStream;
 
 				if (Interlocked.CompareExchange (ref nestedRequestStream, 1, 0) != 0)
@@ -915,7 +910,7 @@ namespace System.Net
 			if (Aborted)
 				throw CreateRequestAbortedException ();
 
-			return TaskToApm.Begin (MyGetRequestStreamAsync (), callback, state);
+			return TaskToApm.Begin (RunWithTimeout (MyGetRequestStreamAsync), callback, state);
 		}
 
 		public override Stream EndGetRequestStream (IAsyncResult asyncResult)
