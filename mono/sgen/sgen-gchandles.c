@@ -101,10 +101,10 @@ bucket_alloc_callback (gpointer *bucket, guint32 new_bucket_size, gboolean alloc
 
 static HandleData gc_handles [] = {
 	{ SGEN_ARRAY_LIST_INIT (NULL, is_slot_set, try_occupy_slot, -1), (HANDLE_WEAK) },
-	{ SGEN_ARRAY_LIST_INIT (NULL, is_slot_set, try_occupy_slot, -1), (HANDLE_WEAK_FIELDS) },
 	{ SGEN_ARRAY_LIST_INIT (NULL, is_slot_set, try_occupy_slot, -1), (HANDLE_WEAK_TRACK) },
 	{ SGEN_ARRAY_LIST_INIT (NULL, is_slot_set, try_occupy_slot, -1), (HANDLE_NORMAL) },
-	{ SGEN_ARRAY_LIST_INIT (bucket_alloc_callback, is_slot_set, try_occupy_slot, -1), (HANDLE_PINNED) }
+	{ SGEN_ARRAY_LIST_INIT (bucket_alloc_callback, is_slot_set, try_occupy_slot, -1), (HANDLE_PINNED) },
+	{ SGEN_ARRAY_LIST_INIT (NULL, is_slot_set, try_occupy_slot, -1), (HANDLE_WEAK_FIELDS) },
 };
 
 static HandleData *
