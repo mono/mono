@@ -158,6 +158,7 @@ EXTRA_DIST =			\
 	update_submodules.sh	\
 	mcs.in				\
 	csc.in				\
+	vbc.in				\
 	dmcs.in				\
 	csi.in			\
 	mono-package-runtime	\
