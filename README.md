@@ -308,16 +308,6 @@ should be used.
 
  * Or you can specify a path to a libgdiplus.
 
-* `--disable-shared-memory`
-
-  * Use this option to disable the use of shared memory in
-Mono (this is equivalent to setting the MONO_DISABLE_SHM
-environment variable, although this removes the feature
-completely).
-
-  * Disabling the shared memory support will disable certain
-features like cross-process named mutexes.
-
 * `--enable-minimal=LIST`
 
   * Use this feature to specify optional runtime
