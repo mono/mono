@@ -122,6 +122,10 @@ public class Harness
 
 		StartSim ();
 
+		ProcessStartInfo start_info;
+		StreamReader stream;
+		string bundle_executable;
+
 		// Install the app
 		// We do this all the time since its cheap
 		string exe = "xcrun";
@@ -131,6 +135,17 @@ public class Harness
 		process.WaitForExit ();
 		if (process.ExitCode != 0)
 			Environment.Exit (1);
+
+		// Obtain the bundle name of the app
+		exe = "plutil";
+		args = "-convert json -o temp.json " + bundle_dir + "/Info.plist";
+		Console.WriteLine ("Running: " + exe + " " + args);
+		process = Process.Start (exe, args);
+		process.WaitForExit ();
+		if (process.ExitCode != 0)
+			Environment.Exit (1);
+		JsonObject value = JsonValue.Parse (File.ReadAllText ("temp.json")) as JsonObject;
+		bundle_executable = value ["CFBundleExecutable"];
 
 		//
 		// Instead of returning test results using an extra socket connection,
@@ -145,9 +160,9 @@ public class Harness
 		// not possible to parse it in streaming mode.
 		// We start this before the app to prevent races
 		var app_name = bundle_id.Substring (bundle_id.LastIndexOf ('.') + 1);
-		var logger_args = "stream --level debug --predicate 'senderImagePath contains \"" + app_name + "\"' --style syslog";
+		var logger_args = "stream --level debug --predicate 'senderImagePath contains \"" + bundle_executable + "\"' --style syslog";
 		Console.WriteLine ("Running: " + "log " + logger_args);
-		var start_info = new ProcessStartInfo ("log", logger_args);
+		start_info = new ProcessStartInfo ("log", logger_args);
 		start_info.RedirectStandardOutput = true;
 		start_info.RedirectStandardError = true;
 		start_info.UseShellExecute = false;
@@ -184,7 +199,7 @@ public class Harness
 		//
 		TextWriter w = new StreamWriter (logfile_name);
 		string result_line = null;
-		var stream = log_process.StandardOutput;
+		stream = log_process.StandardOutput;
 		while (true) {
 			string line = stream.ReadLine ();
 			if (line == null)
