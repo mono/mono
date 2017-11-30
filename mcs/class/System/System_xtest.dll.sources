@@ -50,3 +50,9 @@
 
 # System.Net.WebSockets
 ../../../external/corefx/src/System.Net.WebSockets/tests/*.cs
+
+# System.Net.WebProxy
+#../../../external/corefx/src/System.Net.WebProxy/tests/*.cs
+
+# System.Net.ServicePoint
+#../../../external/corefx/src/System.Net.ServicePoint/tests/*.cs
