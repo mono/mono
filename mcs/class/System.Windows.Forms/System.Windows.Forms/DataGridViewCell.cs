@@ -432,6 +432,32 @@ namespace System.Windows.Forms {
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public virtual DataGridViewAdvancedBorderStyle AdjustCellBorderStyle (DataGridViewAdvancedBorderStyle dataGridViewAdvancedBorderStyleInput,	DataGridViewAdvancedBorderStyle dataGridViewAdvancedBorderStylePlaceholder, bool singleVerticalBorderAdded, bool singleHorizontalBorderAdded, bool isFirstDisplayedColumn, bool isFirstDisplayedRow) {
+			if (dataGridViewAdvancedBorderStyleInput.All == DataGridViewAdvancedCellBorderStyle.Single) {
+
+				dataGridViewAdvancedBorderStylePlaceholder.Left = (isFirstDisplayedColumn && singleVerticalBorderAdded) ? DataGridViewAdvancedCellBorderStyle.Single : DataGridViewAdvancedCellBorderStyle.None;
+				dataGridViewAdvancedBorderStylePlaceholder.Right = DataGridViewAdvancedCellBorderStyle.Single;
+				dataGridViewAdvancedBorderStylePlaceholder.Top = (isFirstDisplayedRow && singleHorizontalBorderAdded)? DataGridViewAdvancedCellBorderStyle.Single : DataGridViewAdvancedCellBorderStyle.None;
+				dataGridViewAdvancedBorderStylePlaceholder.Bottom = DataGridViewAdvancedCellBorderStyle.Single;
+				return dataGridViewAdvancedBorderStylePlaceholder;
+			}
+
+			if ((dataGridViewAdvancedBorderStyleInput.All == DataGridViewAdvancedCellBorderStyle.NotSet) && (DataGridView != null) && (DataGridView.AdvancedCellBorderStyle == dataGridViewAdvancedBorderStyleInput)) {
+				if (DataGridView.CellBorderStyle == DataGridViewCellBorderStyle.SingleVertical) {
+					dataGridViewAdvancedBorderStylePlaceholder.Left = (isFirstDisplayedColumn && singleVerticalBorderAdded) ? DataGridViewAdvancedCellBorderStyle.Single : DataGridViewAdvancedCellBorderStyle.None;
+					dataGridViewAdvancedBorderStylePlaceholder.Right = DataGridViewAdvancedCellBorderStyle.Single;
+					dataGridViewAdvancedBorderStylePlaceholder.Top = DataGridViewAdvancedCellBorderStyle.None;
+					dataGridViewAdvancedBorderStylePlaceholder.Bottom = DataGridViewAdvancedCellBorderStyle.None;
+					return dataGridViewAdvancedBorderStylePlaceholder;
+				}
+				if (DataGridView.CellBorderStyle == DataGridViewCellBorderStyle.SingleHorizontal) {
+					dataGridViewAdvancedBorderStylePlaceholder.Left = DataGridViewAdvancedCellBorderStyle.None;
+					dataGridViewAdvancedBorderStylePlaceholder.Right = DataGridViewAdvancedCellBorderStyle.None;
+					dataGridViewAdvancedBorderStylePlaceholder.Top = (isFirstDisplayedRow && singleHorizontalBorderAdded)? DataGridViewAdvancedCellBorderStyle.Single : DataGridViewAdvancedCellBorderStyle.None;
+					dataGridViewAdvancedBorderStylePlaceholder.Bottom = DataGridViewAdvancedCellBorderStyle.Single;
+					return dataGridViewAdvancedBorderStylePlaceholder;
+				}
+			}
+
 			return dataGridViewAdvancedBorderStyleInput;
 		}
 

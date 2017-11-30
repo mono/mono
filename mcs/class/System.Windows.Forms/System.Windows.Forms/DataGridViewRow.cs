@@ -557,6 +557,9 @@ namespace System.Windows.Forms
 				bounds.X += DataGridView.RowHeadersWidth;
 				bounds.Width -= DataGridView.RowHeadersWidth;
 			}
+
+			bool singleVerticalBorderAdded = !DataGridView.RowHeadersVisible;
+			bool singleHorizontalBorderAdded = !DataGridView.ColumnHeadersVisible;
 			
 			for (int i = DataGridView.first_col_index; i < sortedColumns.Count; i++) {
 				DataGridViewColumn col = sortedColumns[i];
@@ -593,7 +596,7 @@ namespace System.Windows.Forms
 				}
 
 				DataGridViewAdvancedBorderStyle intermediateBorderStyle = (DataGridViewAdvancedBorderStyle)((ICloneable)DataGridView.AdvancedCellBorderStyle).Clone ();
-				DataGridViewAdvancedBorderStyle borderStyle = cell.AdjustCellBorderStyle (DataGridView.AdvancedCellBorderStyle, intermediateBorderStyle, true, true, cell.ColumnIndex == 0, cell.RowIndex == 0);
+				DataGridViewAdvancedBorderStyle borderStyle = cell.AdjustCellBorderStyle (DataGridView.AdvancedCellBorderStyle, intermediateBorderStyle, singleVerticalBorderAdded, singleHorizontalBorderAdded, cell.ColumnIndex == 0, cell.RowIndex == 0);
 				DataGridView.OnCellFormattingInternal (new DataGridViewCellFormattingEventArgs (cell.ColumnIndex, cell.RowIndex, value, cell.FormattedValueType, style));
 
 
