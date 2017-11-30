@@ -145,7 +145,7 @@ public class Harness
 		// not possible to parse it in streaming mode.
 		// We start this before the app to prevent races
 		var app_name = bundle_id.Substring (bundle_id.LastIndexOf ('.') + 1);
-		var logger_args = "stream --level debug --predicate 'senderImagePath contains \"" + app_name + "\"' --style compact";
+		var logger_args = "stream --level debug --predicate 'senderImagePath contains \"" + app_name + "\"' --style syslog";
 		Console.WriteLine ("Running: " + "log " + logger_args);
 		var start_info = new ProcessStartInfo ("log", logger_args);
 		start_info.RedirectStandardOutput = true;
