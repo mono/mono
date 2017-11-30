@@ -41,3 +41,12 @@
 ../../../external/corefx/src/Common/src/System/Net/InternalException.cs
 ../../../external/corefx/src/System.Net.Security/src/System/Net/Security/TlsAlertMessage.cs
 ../../../external/corefx/src/System.Net.Security/src/System/Net/Security/TlsAlertType.cs
+
+# System.Net.Ping
+../../../external/corefx/src/Common/src/System/Net/NetworkInformation/UnixCommandLinePing.cs
+../../../external/corefx/src/Common/tests/System/Net/Capability.RawSocketPermissions.cs
+../../../external/corefx/src/Common/src/System/Net/RawSocketPermissions.cs
+#../../../external/corefx/src/System.Net.Ping/tests/FunctionalTests/*.cs
+
+# System.Net.WebSockets
+../../../external/corefx/src/System.Net.WebSockets/tests/*.cs
