@@ -367,7 +367,7 @@ namespace System.Net
 				try {
 					if (contentLength > 0 && readBuffer.Size >= contentLength) {
 						if (!IsNtlmAuth ())
-							await ReadAllAsync (cancellationToken).ConfigureAwait (false);
+							await ReadAllAsync (false, cancellationToken).ConfigureAwait (false);
 					}
 				} catch (Exception e) {
 					throw GetReadException (WebExceptionStatus.ReceiveFailure, e, me);
@@ -399,9 +399,10 @@ namespace System.Net
 			}
 		}
 
-		internal async Task ReadAllAsync (CancellationToken cancellationToken)
+		internal async Task ReadAllAsync (bool resending, CancellationToken cancellationToken)
 		{
-			WebConnection.Debug ($"{ME} READ ALL ASYNC: {read_eof} {totalRead} {contentLength} {nextReadCalled}");
+			WebConnection.Debug ($"{ME} READ ALL ASYNC: resending={resending} eof={read_eof} total={totalRead} " +
+			                     "length={contentLength} nextReadCalled={nextReadCalled}");
 			if (read_eof || totalRead >= contentLength || nextReadCalled) {
 				if (!nextReadCalled) {
 					nextReadCalled = true;
@@ -437,6 +438,24 @@ namespace System.Net
 
 				byte[] b = null;
 				int new_size;
+
+				if (contentLength == Int64.MaxValue && !ChunkedRead) {
+					WebConnection.Debug ($"{ME} READ ALL ASYNC - NEITHER LENGTH NOR CHUNKED");
+					/*
+					 * This is a violation of the HTTP Spec - the server neither send a
+					 * "Content-Length:" nor a "Transfer-Encoding: chunked" header.
+					 *
+					 * When we're redirecting or resending for NTLM, then we can simply close
+					 * the connection here.
+					 *
+					 * However, if it's the final reply, then we need to try our best to read it.
+					 */
+					if (resending) {
+						Close ();
+						return;
+					}
+					KeepAlive = false;
+				}
 
 				if (contentLength == Int64.MaxValue) {
 					MemoryStream ms = new MemoryStream ();

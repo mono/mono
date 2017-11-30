@@ -838,7 +838,7 @@ namespace System.Net
 		WebOperation SendRequest (bool redirecting, BufferOffsetSize writeBuffer, CancellationToken cancellationToken)
 		{
 			lock (locker) {
-				WebConnection.Debug ($"HWR SEND REQUEST: Req={ID} {requestSent} {redirecting}");
+				WebConnection.Debug ($"HWR SEND REQUEST: Req={ID} requestSent={requestSent} redirecting={redirecting}");
 
 				WebOperation operation;
 				if (!redirecting) {
@@ -1038,7 +1038,7 @@ namespace System.Net
 
 				try {
 					if (mustReadAll)
-						await stream.ReadAllAsync (cancellationToken).ConfigureAwait (false);
+						await stream.ReadAllAsync (redirect || ntlm != null, cancellationToken).ConfigureAwait (false);
 					operation.CompleteResponseRead (true);
 					response.Close ();
 				} catch (Exception e) {
@@ -1086,7 +1086,7 @@ namespace System.Net
 
 			if (throwMe != null) {
 				if (mustReadAll)
-					await stream.ReadAllAsync (cancellationToken).ConfigureAwait (false);
+					await stream.ReadAllAsync (false, cancellationToken).ConfigureAwait (false);
 				throw throwMe;
 			}
 
