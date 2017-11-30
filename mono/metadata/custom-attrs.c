@@ -2291,9 +2291,10 @@ mono_assembly_init_weak_fields (MonoImage *image)
 	if (image->weak_fields_inited)
 		return;
 
-	GHashTable *indexes;
+	GHashTable *indexes = NULL;
 
-	indexes = mono_get_runtime_callbacks ()->get_weak_field_indexes (image);
+	if (mono_get_runtime_callbacks ()->get_weak_field_indexes)
+		indexes = mono_get_runtime_callbacks ()->get_weak_field_indexes (image);
 	if (!indexes) {
 		indexes = g_hash_table_new (NULL, NULL);
 
