@@ -9,5 +9,10 @@ namespace System
 		public static bool IsFullFramework => true;
 		public static bool IsNonZeroLowerBoundArraySupported => true;
 		public static bool IsUap => false;
+
+		//TODO: check?
+		public static bool IsNotWindowsSubsystemForLinux => true;
+		public static bool IsWindowsSubsystemForLinux => false;
+		public static bool IsFedora => false;
 	}
 }

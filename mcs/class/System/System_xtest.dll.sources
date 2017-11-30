@@ -56,3 +56,24 @@
 
 # System.Net.ServicePoint
 #../../../external/corefx/src/System.Net.ServicePoint/tests/*.cs
+
+# System.Net.Sockets
+../../../external/corefx/src/Common/tests/System/Diagnostics/Tracing/TestEventListener.cs
+../../../external/corefx/src/Common/src/System/Net/Logging/NetEventSource.Common.cs
+../../../external/corefx/src/Common/tests/System/Net/Capability.Sockets.cs
+../../../external/corefx/src/Common/tests/System/Net/EventSourceTestLogging.cs
+../../../external/corefx/src/Common/tests/System/Net/TestLogging.cs
+../../../external/corefx/src/Common/tests/System/Net/VerboseTestLogging.cs
+../../../external/corefx/src/Common/src/System/Threading/Tasks/TaskToApm.cs
+../../../external/corefx/src/Common/tests/System/ShouldNotBeInvokedException.cs
+../../../external/corefx/src/Common/tests/System/Net/Configuration.cs
+../../../external/corefx/src/Common/tests/System/Net/Configuration.Sockets.cs
+../../../external/corefx/src/Common/tests/System/Net/Sockets/Fletcher32.cs
+../../../external/corefx/src/Common/tests/System/Net/Sockets/SocketImplementationType.cs
+../../../external/corefx/src/Common/tests/System/Net/Sockets/SocketTestExtensions.cs
+../../../external/corefx/src/Common/tests/System/Net/Sockets/SocketTestServer.cs
+../../../external/corefx/src/Common/tests/System/Net/Sockets/SocketTestServerAPM.cs
+../../../external/corefx/src/Common/tests/System/Net/Sockets/SocketTestServerAsync.cs
+../../../external/corefx/src/Common/tests/System/Net/Sockets/TestSettings.cs
+#../../../external/corefx/src/System.Net.Sockets/tests/FunctionalTests/*.cs:NetworkStreamTest.netcoreapp.cs,SocketTestHelper.netcoreapp.cs,SendReceive.netcoreapp.cs,SocketAsyncEventArgsTest.cs,LoggingTest.cs,SendReceive.cs
+
