@@ -23,5 +23,21 @@
 ../../../external/corefx/src/Common/tests/System/Net/Configuration.cs
 ../../../external/corefx/src/Common/tests/System/Net/Configuration.Http.cs
 ../../../external/corefx/src/Common/tests/System/Net/Configuration.Certificates.cs
-../../../external/corefx/src/System.Net.Requests/tests/*.cs:FtpWebRequestTest.cs,GlobalProxySelectionTest.cs,HttpWebRequestTest.cs,RequestStreamTest.cs,WebRequestTest.cs,LoggingTest.cs,AuthenticationManagerTest.cs,HttpWebResponseTest.cs
-# tests listed after ":" compile but currently fail on mono
+#../../../external/corefx/src/System.Net.Requests/tests/*.cs
+
+# System.Net.WebHeaderCollection
+#../../../external/corefx/src/System.Net.WebHeaderCollection/tests/*.cs
+#../../../external/corefx/src/System.Net.NameResolution/tests/FunctionalTests/*.cs
+
+# System.Net.WebClient
+#../../../external/corefx/src/System.Net.WebClient/tests/*.cs
+
+# System.Net.Security
+../../../external/corefx/src/Common/tests/System/Net/SslProtocolSupport.cs
+#../../../external/corefx/src/System.Net.Security/tests/UnitTests/*.cs:TlsAlertsMatchWindowsInterop.cs
+#../../../external/corefx/src/System.Net.Security/tests/UnitTests/System/Security/Authentication/ExtendedProtection/*.cs
+../../../external/corefx/src/System.Net.Security/tests/UnitTests/Fakes/*.cs:FakeSslState.cs,FakeLazyAsyncResult.cs
+../../../external/corefx/src/Common/src/System/Net/Logging/NetEventSource.Common.cs
+../../../external/corefx/src/Common/src/System/Net/InternalException.cs
+../../../external/corefx/src/System.Net.Security/src/System/Net/Security/TlsAlertMessage.cs
+../../../external/corefx/src/System.Net.Security/src/System/Net/Security/TlsAlertType.cs
