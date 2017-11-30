@@ -512,6 +512,8 @@ namespace System.Windows.Forms {
 							border.All = DataGridViewAdvancedCellBorderStyle.Single;
 							break;
 						case DataGridViewCellBorderStyle.Raised:
+							border.All = DataGridViewAdvancedCellBorderStyle.Outset;
+							break;
 						case DataGridViewCellBorderStyle.RaisedVertical:
 							border.Bottom = DataGridViewAdvancedCellBorderStyle.None;
 							border.Top = DataGridViewAdvancedCellBorderStyle.None;
@@ -537,6 +539,9 @@ namespace System.Windows.Forms {
 							border.Right = DataGridViewAdvancedCellBorderStyle.Inset;
 							break;
 						case DataGridViewCellBorderStyle.SingleHorizontal:
+							border.All = DataGridViewAdvancedCellBorderStyle.None;
+							border.Bottom = DataGridViewAdvancedCellBorderStyle.Single;
+							break;
 						case DataGridViewCellBorderStyle.SunkenHorizontal:
 							border.Bottom = DataGridViewAdvancedCellBorderStyle.Inset;
 							border.Top = DataGridViewAdvancedCellBorderStyle.Inset;
