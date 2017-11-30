@@ -6,6 +6,7 @@
 ../../../external/corefx/src/Common/tests/System/Collections/TestBase.NonGeneric.cs
 ../../../external/corefx/src/Common/tests/System/Runtime/Serialization/Formatters/BinaryFormatterHelpers.cs
 
+# System.CodeDom
 ../../../external/corefx/src/System.CodeDom/tests/CodeCollections/*.cs
 ../../../external/corefx/src/System.CodeDom/tests/CodeExpressions/*.cs
 ../../../external/corefx/src/System.CodeDom/tests/CodeObjects/*.cs
@@ -16,3 +17,10 @@
 ../../../external/corefx/src/System.CodeDom/tests/Microsoft/CSharp/*.cs
 ../../../external/corefx/src/System.CodeDom/tests/Microsoft/VisualBasic/*.cs
 ../../../external/corefx/src/System.CodeDom/tests/*.cs:CodeGenerationTests.cs,CSharpCodeGenerationTests.cs,VBCodeGenerationTests.cs
+
+# System.Net.Requests
+../../../external/corefx/src/Common/tests/System/Net/Http/LoopbackServer.cs
+../../../external/corefx/src/Common/tests/System/Net/Configuration.cs
+../../../external/corefx/src/Common/tests/System/Net/Configuration.Http.cs
+../../../external/corefx/src/Common/tests/System/Net/Configuration.Certificates.cs
+../../../external/corefx/src/System.Net.Requests/tests/*.cs
