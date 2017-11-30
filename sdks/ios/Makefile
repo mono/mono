@@ -12,7 +12,7 @@ TEST_SUITES = \
 SIM_NAME = xamarin.ios-sdk.sim
 
 harness.exe: harness/harness.cs harness/Options.cs
-	csc /out:$@ $^
+	csc /out:$@ -r:System.Json.dll $^
 
 # Build % from assemblies %_ASSEMBLIES
 # The end result is in bin/ios-sim/test-%.app

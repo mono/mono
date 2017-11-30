@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Json;
 using System.Threading;
 using System.Diagnostics;
 using Mono.Options;
@@ -57,56 +58,42 @@ public class Harness
 
 	void StartSim () {
 		// Check whenever our simulator instance exists
-		var args = "simctl list devices";
-		Console.WriteLine ("Running: " + "xcrun " + args);
-		var start_info = new ProcessStartInfo ("xcrun", args);
-		start_info.RedirectStandardOutput = true;
-		start_info.UseShellExecute = false;
-		var process = Process.Start (start_info);
-		var stream = process.StandardOutput;
-		string line = "";
 		string state_line = "";
-		while (true) {
-			line = stream.ReadLine ();
-			if (line == null)
-				break;
-			if (line.Contains (SIM_NAME)) {
-				state_line = line;
-				break;
-			}
-		}
-		process.WaitForExit ();
-		if (process.ExitCode != 0)
-			Environment.Exit (1);
-
-		bool need_start = false;
-		if (state_line == "") {
-			// Get the runtime type
-			args = "simctl list runtimes";
+		{
+			var args = "simctl list devices";
 			Console.WriteLine ("Running: " + "xcrun " + args);
-			start_info = new ProcessStartInfo ("xcrun", args);
+			var start_info = new ProcessStartInfo ("xcrun", args);
 			start_info.RedirectStandardOutput = true;
 			start_info.UseShellExecute = false;
-			process = Process.Start (start_info);
-			stream = process.StandardOutput;
-			string ios_line = null;
+			var process = Process.Start (start_info);
+			var stream = process.StandardOutput;
+			string line = "";
 			while (true) {
 				line = stream.ReadLine ();
 				if (line == null)
 					break;
-				if (line.Contains ("com.apple.CoreSimulator.SimRuntime.iOS")) {
-					ios_line = line;
+				if (line.Contains (SIM_NAME)) {
+					state_line = line;
 					break;
 				}
 			}
 			process.WaitForExit ();
 			if (process.ExitCode != 0)
 				Environment.Exit (1);
-			if (ios_line == null) {
-				Console.WriteLine ("Unable to parse process output.");
-				Environment.Exit (1);
-			}
-			string runtime = line.Substring (line.IndexOf ("com.apple.CoreSimulator.SimRuntime.iOS"));
+		}
+
+		bool need_start = false;
+		if (state_line == "") {
+			// Get the runtime type
+			var args = "simctl list -j runtimes";
+			Console.WriteLine ("Running: " + "xcrun " + args);
+			var start_info = new ProcessStartInfo ("xcrun", args);
+			start_info.RedirectStandardOutput = true;
+			start_info.UseShellExecute = false;
+			var process = Process.Start (start_info);
+			var stream = process.StandardOutput;
+			JsonObject value = JsonValue.Parse (stream.ReadToEnd ()) as JsonObject;
+			string runtime = value ["runtimes"][0]["identifier"];
 
 			// Create the simulator
 			args = "simctl create " + SIM_NAME + " 'iPhone 7' " + runtime;
@@ -121,9 +108,9 @@ public class Harness
 		}
 
 		if (need_start) {
-			args = "simctl boot " + SIM_NAME;
+			var args = "simctl boot " + SIM_NAME;
 			Console.WriteLine ("Running: " + "xcrun " + args);
-			process = Process.Start ("xcrun", args);
+			var process = Process.Start ("xcrun", args);
 			process.WaitForExit ();
 			if (process.ExitCode != 0)
 				Environment.Exit (1);
