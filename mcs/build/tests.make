@@ -22,7 +22,8 @@ ifndef NO_TEST
 test_nunit_lib = nunitlite.dll
 xunit_core := xunit.core xunit.abstractions xunit.assert Xunit.NetCore.Extensions
 xunit_deps := System.Runtime
-xunit_src  := $(patsubst %,$(topdir)/../external/xunit-binaries/%,BenchmarkAttribute.cs BenchmarkDiscover.cs) $(topdir)/../mcs/class/test-helpers/PlatformDetection.cs
+xunit_src  := $(patsubst %,$(topdir)/../external/xunit-binaries/%,BenchmarkAttribute.cs BenchmarkDiscover.cs) $(topdir)/../mcs/class/test-helpers/PlatformDetection.cs $(topdir)/../mcs/class/test-helpers/AdminHelper.cs $(topdir)/../mcs/class/test-helpers/RemoteExecutorTestBase.Mono.cs $(topdir)/../external/corefx/src/CoreFx.Private.TestUtilities/src/System/IO/FileCleanupTestBase.cs $(topdir)/../external/corefx/src/CoreFx.Private.TestUtilities/src/System/Diagnostics/RemoteExecutorTestBase.Process.cs $(topdir)/../external/corefx/src/CoreFx.Private.TestUtilities/src/System/Diagnostics/RemoteExecutorTestBase.cs $(topdir)/../external/corefx/src/Common/src/System/PasteArguments.cs
+
 xunit_class_deps := 
 
 xunit_libs_ref = $(patsubst %,-r:$(topdir)/../external/xunit-binaries/%.dll,$(xunit_core))
@@ -64,7 +65,7 @@ xunit_test_lib = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xunit-test.dll)
 
 xtest_response = $(depsdir)/$(xunit_test_lib).response
 xtest_makefrag = $(depsdir)/$(xunit_test_lib).makefrag
-xtest_flags = -r:$(the_assembly) $(xunit_libs_ref) $(XTEST_MCS_FLAGS) $(XTEST_LIB_MCS_FLAGS)
+xtest_flags = -r:$(the_assembly) $(xunit_libs_ref) $(XTEST_MCS_FLAGS) $(XTEST_LIB_MCS_FLAGS) /unsafe
 
 ifeq ($(wildcard $(xtest_sourcefile)),)
 xtest_sourcefile = $(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.sources)
@@ -275,12 +276,16 @@ xunit-test-local: $(xunit_test_lib)
 run-xunit-test-local: run-xunit-test-lib
 
 # cp -rf is a HACK for xunit runner to require xunit.execution.desktop.dll file in local folder on .net only
-run-xunit-test-lib: xunit-test-local
+run-xunit-test-lib: xunit-test-local RemoteExecutorConsoleApp.exe
 	@cp -rf $(XTEST_HARNESS_PATH)/xunit.execution.desktop.dll xunit.execution.desktop.dll
 	ok=:; \
 	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(XTEST_COVERAGE_FLAGS) $(AOT_RUN_FLAGS) $(XTEST_HARNESS) $(xunit_test_lib) $(XTEST_HARNESS_FLAGS) $(XTEST_TRAIT) || ok=false; \
 	$$ok
 	@rm -f xunit.execution.desktop.dll
+
+# Some xunit tests want to be executed in a separate process (see RemoteExecutorTestBase)
+RemoteExecutorConsoleApp.exe: $(topdir)/../mcs/class/test-helpers/RemoteExecutorConsoleApp.cs
+	$(TEST_COMPILE) $(topdir)/../mcs/class/test-helpers/RemoteExecutorConsoleApp.cs -r:$(xunit_test_lib) $(xtest_flags)
 
 $(xunit_test_lib): $(the_assembly) $(xtest_response) $(xunit_libs_dep) $(xunit_src)
 	$(TEST_COMPILE) $(LIBRARY_FLAGS) $(XTEST_LIB_FLAGS) -target:library -out:$@ $(xtest_flags) @$(xtest_response) $(xunit_src)
