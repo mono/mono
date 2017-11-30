@@ -194,11 +194,9 @@ public class Harness
 			// 2017-11-28 14:45:16.203 Df test-corlib[5018:20c89] ***** MonoTests.System.UInt16Test.ToString_Defaults
 			// except if the output contains newlines.
 			if (line.Contains (app_name + "[")) {
-				int pos = line.IndexOf (' ');
-				pos = line.IndexOf (' ', pos + 1);
-				pos = line.IndexOf (' ', pos + 1);
-				pos = line.IndexOf (' ', pos + 1);
-				line = line.Substring (pos + 1);
+				int pos = line.IndexOf (app_name + "[");
+				pos = line.IndexOf (':', pos + 1);
+				line = line.Substring (pos + 2);
 			}
 
 			Console.WriteLine (line);
