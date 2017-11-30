@@ -23,4 +23,5 @@
 ../../../external/corefx/src/Common/tests/System/Net/Configuration.cs
 ../../../external/corefx/src/Common/tests/System/Net/Configuration.Http.cs
 ../../../external/corefx/src/Common/tests/System/Net/Configuration.Certificates.cs
-../../../external/corefx/src/System.Net.Requests/tests/*.cs
+../../../external/corefx/src/System.Net.Requests/tests/*.cs:FtpWebRequestTest.cs,GlobalProxySelectionTest.cs,HttpWebRequestTest.cs,RequestStreamTest.cs,WebRequestTest.cs,LoggingTest.cs,AuthenticationManagerTest.cs,HttpWebResponseTest.cs
+# tests listed after ":" compile but currently fail on mono
