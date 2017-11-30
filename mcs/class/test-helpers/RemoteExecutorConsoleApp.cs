@@ -13,7 +13,6 @@ class Program
 			return -1;
 		}
 		
-		try {
 		string assemblyName = args[0];
 		string typeName = args[1];
 		string methodName = args[2];
@@ -37,7 +36,7 @@ class Program
 		else if (method.ReturnType == typeof (Task<int>))
 		{
 			var task = (Task<int>)method.Invoke (instance, methodArgs);
-			task.Wait();
+			task.Wait(); //use C# 7.1 async Main?
 			result = task.Result;
 		}
 		else
@@ -46,11 +45,5 @@ class Program
 		}
 
 		return result;
-		}
-		catch (Exception exc)
-		{
-			System.IO.File.WriteAllText("F://bbbbbbbbb.txt", exc.ToString());
-			return -1;
-		}
 	}
 }
