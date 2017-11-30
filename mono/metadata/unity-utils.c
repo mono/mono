@@ -142,6 +142,26 @@ mono_unity_g_free(void *ptr)
 	g_free (ptr);
 }
 
+
+MONO_API MonoClass*
+mono_custom_attrs_get_attrs (MonoCustomAttrInfo *ainfo, gpointer *iter)
+{
+	int index = -1;
+	if (!iter)
+		return NULL;
+	if (!*iter)
+	{
+		*iter = 1;
+		return ainfo->attrs[0].ctor->klass;
+	}
+
+	index = GPOINTER_TO_INT (*iter);
+	if (index >= ainfo->num_attrs)
+		return NULL;
+	*iter = GINT_TO_POINTER (index + 1);
+	return ainfo->attrs[index].ctor->klass;
+}
+
 MONO_API gboolean
 mono_class_is_inflated (MonoClass *klass)
 {

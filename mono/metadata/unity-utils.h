@@ -163,7 +163,8 @@ MONO_API MonoClass* mono_unity_class_get(MonoImage* image, guint32 type_token);
 MONO_API gpointer mono_unity_alloc(gsize size);
 MONO_API void mono_unity_g_free (void *ptr);
 
-// hack, FIXME jon
+MONO_API MonoClass* mono_custom_attrs_get_attrs (MonoCustomAttrInfo *ainfo, gpointer *iter);
+
 typedef size_t (*RemapPathFunction)(const char* path, char* buffer, size_t buffer_len);
 MONO_API void mono_unity_register_path_remapper (RemapPathFunction func);
 gboolean 
