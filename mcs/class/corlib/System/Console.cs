@@ -36,6 +36,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Permissions;
 using System.Text;
+using System.Threading;
 
 namespace System
 {
@@ -751,16 +752,12 @@ namespace System
 			}
 		}
 
-		delegate void InternalCancelHandler ();
-		
-#pragma warning disable 414
-		//
-		// Used by console-io.c
-		//
-		static readonly InternalCancelHandler cancel_handler = new InternalCancelHandler (DoConsoleCancelEvent);
-#pragma warning restore 414		
+		static void DoConsoleCancelEventInBackground ()
+		{
+			ThreadPool.UnsafeQueueUserWorkItem (_ => DoConsoleCancelEvent(), null);
+		}
 
-		internal static void DoConsoleCancelEvent ()
+		static void DoConsoleCancelEvent ()
 		{
 			bool exit = true;
 			if (cancel_event != null) {

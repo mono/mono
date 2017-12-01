@@ -464,6 +464,11 @@
 			<method name=".ctor" />
 		</type>
 
+		<!-- console-unix.c: do_console_cancel_event -->
+		<type fullname="System.Console">
+			<method name="DoConsoleCancelEventInBackground" />
+		</type>
+
 		<!-- icalls - but (at least parts of them) are used thru interfaces at runtime and cannot be linked out -->
 		<type fullname="System.Globalization.DateTimeFormatInfo" preserve="fields" />
 		<type fullname="System.Globalization.CompareInfo" preserve="fields" />
