@@ -16,6 +16,7 @@
  */
 #include <config.h>
 #include <fcntl.h>
+#include <dirent.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/mono-config.h>
 #include <mono/utils/mono-mmap.h>
@@ -186,6 +187,48 @@ save_library (int fd, uint64_t offset, uint64_t size, const char *destfname)
 }
 
 static gboolean
+search_directories(const char *envPath, const char *program, char **new_program)
+{
+	char *path = NULL;
+
+#ifdef HOST_WIN32
+	const char *path_separators = ";";
+	const char directory_separator_char = '\'';
+#else
+	const char *path_separators = ":";
+	const char directory_separator_char = '/';
+#endif
+
+	path = strtok (envPath, path_separators);
+	while (path != NULL){
+		DIR *dir = NULL;
+		struct dirent *ent = NULL;
+		if (strlen (path) != 0)
+			dir = opendir (path);
+		if (dir != NULL){
+			while ((ent = readdir (dir)) != NULL){
+				if (!strcmp (ent->d_name, program)){
+					*new_program = (char *) malloc (strlen(path)+strlen(program)+2);
+					strcpy (*new_program, path);
+					if (path [strlen(path)-1] != directory_separator_char){
+						size_t len = strlen (*new_program);
+						(*new_program) [len] = directory_separator_char;
+						(*new_program) [len+1] = '\0';
+					}
+					strcat (*new_program, program);
+					return TRUE;
+				}
+			}
+			closedir (dir);
+		}
+		path = strtok (NULL, path_separators);
+	}
+
+	*new_program = NULL;
+	return FALSE;
+}
+
+static gboolean
 probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 {
 	MonoBundledAssembly last = { NULL, 0, 0 };
@@ -204,8 +247,20 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 	int j;
 
 	int fd = open (program, O_RDONLY);
-	if (fd == -1)
-		return FALSE;
+	if (fd == -1){
+		// Also search through the PATH in case the program was run from a different directory
+		char* envPath = getenv ("PATH"); // Notice on Windows the variable names are not case-sensitive so this will work on Unix as well as Windows
+		if (envPath != NULL){
+			char *new_program = NULL;
+			if (search_directories (envPath, program, &new_program)){
+				fd = open (new_program, O_RDONLY);
+				free (new_program);
+				new_program = NULL;
+			}
+		}
+		if (fd == -1)
+			return FALSE;
+	}
 	if ((sigstart = lseek (fd, -24, SEEK_END)) == -1)
 		goto doclose;
 	if (read (fd, sigbuffer, sizeof (sigbuffer)) == -1)
