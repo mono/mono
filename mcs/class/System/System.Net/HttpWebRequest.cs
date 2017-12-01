@@ -1143,7 +1143,7 @@ namespace System.Net
 			}
 			if (Aborted || e is OperationCanceledException || e is ObjectDisposedException)
 				return CreateRequestAbortedException ();
-			return new WebException (e.Message, e, WebExceptionStatus.ProtocolError, null);
+			return new WebException (e.Message, e, WebExceptionStatus.UnknownError, null);
 		}
 
 		internal static WebException CreateRequestAbortedException ()
@@ -1315,16 +1315,15 @@ namespace System.Net
 			uriString = response.Headers["Location"];
 
 			if (uriString == null)
-				throw new WebException ("No Location header found for " + (int)code,
-							WebExceptionStatus.ProtocolError);
+				throw new WebException ($"No Location header found for {(int)code}", null,
+				                        WebExceptionStatus.ProtocolError, response);
 
 			Uri prev = actualUri;
 			try {
 				actualUri = new Uri (actualUri, uriString);
 			} catch (Exception) {
-				throw new WebException (String.Format ("Invalid URL ({0}) for {1}",
-									uriString, (int)code),
-									WebExceptionStatus.ProtocolError);
+				throw new WebException ($"Invalid URL ({uriString}) for {(int)code}",
+				                        null, WebExceptionStatus.ProtocolError, response);
 			}
 
 			hostChanged = (actualUri.Scheme != prev.Scheme || Host != prev.Authority);
@@ -1582,7 +1581,6 @@ namespace System.Net
 			WebException throwMe = null;
 
 			bool mustReadAll = false;
-			WebExceptionStatus protoError = WebExceptionStatus.ProtocolError;
 			HttpStatusCode code = 0;
 			Task<BufferOffsetSize> rewriteHandler = null;
 
@@ -1614,15 +1612,15 @@ namespace System.Net
 			if ((int)code >= 400) {
 				string err = String.Format ("The remote server returned an error: ({0}) {1}.",
 				                            (int)code, response.StatusDescription);
-				throwMe = new WebException (err, null, protoError, response);
+				throwMe = new WebException (err, null, WebExceptionStatus.ProtocolError, response);
 				mustReadAll = true;
 			} else if ((int)code == 304 && allowAutoRedirect) {
 				string err = String.Format ("The remote server returned an error: ({0}) {1}.",
 				                            (int)code, response.StatusDescription);
-				throwMe = new WebException (err, null, protoError, response);
+				throwMe = new WebException (err, null, WebExceptionStatus.ProtocolError, response);
 			} else if ((int)code >= 300 && allowAutoRedirect && redirects >= maxAutoRedirect) {
 				throwMe = new WebException ("Max. redirections exceeded.", null,
-				                            protoError, response);
+				                            WebExceptionStatus.ProtocolError, response);
 				mustReadAll = true;
 			}
 
