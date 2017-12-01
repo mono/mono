@@ -972,8 +972,8 @@ Il2CppMonoImage* il2cpp_mono_assembly_get_image(Il2CppMonoAssembly* assembly)
 
 gboolean il2cpp_mono_runtime_try_shutdown()
 {
-	IL2CPP_ASSERT(0 && "This method is not yet implemented");
-	return 0;
+	il2cpp::vm::Runtime::Shutdown();
+	return TRUE;
 }
 
 gboolean il2cpp_mono_verifier_is_method_valid_generic_instantiation(Il2CppMonoMethod* method)

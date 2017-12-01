@@ -4729,7 +4729,7 @@ set_breakpoint (MonoMethod *method, long il_offset, EventRequest *req, MonoError
 			inst->domain = mono_domain_get();
 			inst->seq_point = seqPoint;
 
-			seqPoint->isActive = TRUE;
+			seqPoint->isActive++;
 
 			mono_loader_lock();
 			g_ptr_array_add(bp->children, inst);
@@ -4818,7 +4818,7 @@ static MonoBreakpoint* set_breakpoint_fast(Il2CppSequencePointC *sp, EventReques
 	inst->domain = mono_domain_get();
 	inst->seq_point = sp;
 
-	sp->isActive = TRUE;
+	sp->isActive++;
 
 	mono_loader_lock();
 	g_ptr_array_add(bp->children, inst);
@@ -4854,7 +4854,7 @@ clear_breakpoint (MonoBreakpoint *bp)
 #ifndef IL2CPP_MONO_DEBUGGER
 		remove_breakpoint(inst);
 #else
-		inst->seq_point->isActive = FALSE;
+		inst->seq_point->isActive--;
 #endif
 
 		g_free (inst);
@@ -4925,7 +4925,7 @@ clear_breakpoints_for_domain (MonoDomain *domain)
 #ifndef IL2CPP_MONO_DEBUGGER
 				remove_breakpoint (inst);
 #else
-				inst->seq_point->isActive = FALSE;
+				inst->seq_point->isActive--;
 #endif
 
 				g_free (inst);
@@ -5095,15 +5095,6 @@ ss_update_il2cpp(SingleStepReq *req, DebuggerTlsData *tls, MonoContext *ctx, Il2
 		{
 			/* Hit the breakpoint in a recursive call, don't halt */
 			DEBUG_PRINTF(1, "[%p] Breakpoint at lower frame while stepping %s, continuing single stepping.\n", (gpointer)(gsize)mono_native_thread_id_get(), is_step_out ? "out" : "over");
-			return FALSE;
-		}
-	}
-
-	if (req->depth == STEP_DEPTH_INTO && req->size == STEP_SIZE_MIN && ss_req->start_method)
-	{
-		if (ss_req->start_method == sequencePoint->method && req->nframes && tls->il2cpp_context.frameCount == req->nframes)
-		{//Check also frame count(could be recursion)
-			DEBUG_PRINTF(1, "[%p] Seq point at nonempty stack %x while stepping in, continuing single stepping.\n", (gpointer)(gsize)mono_native_thread_id_get(), sequencePoint->ilOffset);
 			return FALSE;
 		}
 	}
@@ -5770,6 +5761,9 @@ process_single_step_inner (DebuggerTlsData *tls, gboolean from_signal, uint64_t 
 		if (!found)
 			return;
 	}
+
+	if(!ss_update_il2cpp(ss_req,tls,ctx,sequence_pt))
+		return;
 
 	process_event(EVENT_KIND_STEP, sequence_pt->method, sequence_pt->ilOffset, NULL, events, suspend_policy, sequencePointId);
 #endif
@@ -9993,6 +9987,9 @@ static void GetSequencePointsAndSourceFilesUniqueSequencePoints(MonoMethod* meth
 	Il2CppSequencePointC *seqPoint;
 	while (seqPoint = il2cpp_get_method_sequence_points(method, &seqPointIter))
 	{
+		if(seqPoint->ilOffset == METHOD_ENTRY_IL_OFFSET || seqPoint->ilOffset == METHOD_EXIT_IL_OFFSET)
+			continue;
+
 		if (il2cpp_mono_methods_match(seqPoint->method, method))
 			g_ptr_array_add(*sequencePoints, seqPoint);
 	}
@@ -11989,6 +11986,30 @@ gboolean unity_debugger_agent_is_global_breakpoint_active()
 		return FALSE;
 	else
 		return ss_req->global;
+}
+
+gboolean unity_sequence_point_active(Il2CppSequencePointC *seqPoint)
+{
+	gboolean global = unity_debugger_agent_is_global_breakpoint_active();
+
+	if ((seqPoint->ilOffset != METHOD_ENTRY_IL_OFFSET) && (seqPoint->ilOffset != METHOD_EXIT_IL_OFFSET))
+		return seqPoint->isActive || global;
+
+	int i = 0;
+	while (i < event_requests->len)
+	{
+		EventRequest *req = (EventRequest *)g_ptr_array_index (event_requests, i);
+
+		if ((req->event_kind == EVENT_KIND_METHOD_ENTRY && seqPoint->ilOffset == METHOD_ENTRY_IL_OFFSET) ||
+		    (req->event_kind == EVENT_KIND_METHOD_EXIT && seqPoint->ilOffset == METHOD_EXIT_IL_OFFSET))
+		{
+			return seqPoint->isActive || global;
+		}
+
+		++i;
+	}
+
+	return FALSE;
 }
 
 #endif // IL2CPP_MONO_DEBUGGER
