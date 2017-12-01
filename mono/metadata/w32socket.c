@@ -2341,12 +2341,18 @@ ves_icall_System_Net_Sockets_Socket_SetSocketOption_internal (gsize sock, gint32
 			break;
 		case SocketOptionName_DontFragment:
 #ifdef HAVE_IP_MTU_DISCOVER
+#ifdef SUPPORTS_IP_PMTUDISC_DO
 			/* Fiddle with the value slightly if we're
 			 * turning DF on
 			 */
 			if (int_val == 1)
 				int_val = IP_PMTUDISC_DO;
 			/* Fall through */
+#else
+			/* WSL (Ubuntu Bash on Windows) does not support this. */
+			ret = 0;
+			break;
+#endif
 #endif
 			
 		default:

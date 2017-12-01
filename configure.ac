@@ -1886,9 +1886,11 @@ if test x$host_win32 = xno; then
 		int level = IP_MTU_DISCOVER;
 	], [
 		# Yes, we have it...
+		have_mtu_discover=yes
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_IP_MTU_DISCOVER, 1, [Have IP_MTU_DISCOVER])
 	], [
+		have_mtu_discover=no
 		AC_MSG_RESULT(no)
 	])
 
@@ -1900,9 +1902,11 @@ if test x$host_win32 = xno; then
 		int level = IP_PMTUDISC_DO;
 	], [
 		# Yes, we have it...
+		have_pmtudisc_do=yes
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_IP_PMTUDISC_DO, 1, [Have IP_PMTUDISC_DO])
 	], [
+		have_pmtudisc_do=no
 		AC_MSG_RESULT(no)
 	])
 
@@ -1933,6 +1937,30 @@ if test x$host_win32 = xno; then
 			AC_MSG_RESULT(no)
 		])
 	])
+
+	dnl **********************************
+	dnl Check whether IP_PMTUDISC_DO works
+	dnl **********************************
+
+	if test "x$have_mtu_discover" = "xyes" -a "x$have_pmtudisc_do" = "xyes"; then
+		AC_MSG_CHECKING(whether IP_PMTUDISC_DO works)
+
+		AC_RUN_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>
+						#include <sys/socket.h>
+						#include <netinet/in.h>]], [[
+						int sock, val, ret;
+						sock = socket (AF_INET, SOCK_STREAM, IPPROTO_TCP);
+						val = IP_PMTUDISC_DO;
+						return setsockopt (sock, IPPROTO_IP, IP_MTU_DISCOVER, &val, sizeof (val));
+		]])], [
+			AC_MSG_RESULT([yes])
+			AC_DEFINE(SUPPORTS_IP_PMTUDISC_DO, 1, [IP_PMTUDISC_DO is supported.])
+		], [
+			AC_MSG_RESULT([no])
+		], [
+			AC_MSG_RESULT([cross-compiling])
+		])
+	fi
 	
 	dnl **********************************
 	dnl *** Check for getaddrinfo ***
