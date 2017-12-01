@@ -1,3 +1,53 @@
+Unity
+============================
+This is Unity Technologies fork of the open source mono project.
+
+### Versions
+Each Unity release contains two versions of Mono. One older version (Mono) is embedded into the Editor and Players. Another newer version (MonoBleedingEdge) is used to run tools and tests.
+
+In newer Unity versions (2017.1+) this MonoBleedingEdge version can be used in the Editor and Players via enabling an Experimental player setting.
+
+### Branch Naming Convention
+Branches for released Unity versions are of the form unity-\<version\>\[-mbe\][-staging\]. The '-staging' suffix is used as a branch for PRs to target with potential changes. The '-mbe' suffix indicates the branch is for the MonoBleedingEdge version of Mono mentioned above.
+
+### Branches
+
+#### Trunk
+* [unity-staging (PR to this branch for Mono)](https://github.com/Unity-Technologies/mono/tree/unity-staging)
+* [unity-trunk](https://github.com/Unity-Technologies/mono/tree/unity-trunk)
+* [unity-master-staging (PR to this branch for MonoBleedingEdge)](https://github.com/Unity-Technologies/mono/tree/unity-master-staging)
+* [unity-master](https://github.com/Unity-Technologies/mono/tree/unity-master)
+
+#### 2017.3
+* [unity-2017.3-staging](https://github.com/Unity-Technologies/mono/tree/unity-2017.3-staging)
+* [unity-2017.3](https://github.com/Unity-Technologies/mono/tree/unity-2017.3)
+* [unity-2017.3-mbe-staging](https://github.com/Unity-Technologies/mono/tree/unity-2017.3-mbe-staging)
+* [unity-2017.3-mbe](https://github.com/Unity-Technologies/mono/tree/unity-2017.3-mbe)
+
+#### 2017.2
+* [unity-2017.2-staging](https://github.com/Unity-Technologies/mono/tree/unity-2017.2-staging)
+* [unity-2017.2](https://github.com/Unity-Technologies/mono/tree/unity-2017.2)
+* [unity-2017.2-mbe-staging](https://github.com/Unity-Technologies/mono/tree/unity-2017.2-mbe-staging)
+* [unity-2017.2-mbe](https://github.com/Unity-Technologies/mono/tree/unity-2017.2-mbe)
+
+#### 2017.1
+* [unity-2017.1-staging](https://github.com/Unity-Technologies/mono/tree/unity-2017.1-staging)
+* [unity-2017.1](https://github.com/Unity-Technologies/mono/tree/unity-2017.1)
+* [unity-2017.1-mbe-staging](https://github.com/Unity-Technologies/mono/tree/unity-2017.1-mbe-staging)
+* [unity-2017.1-mbe](https://github.com/Unity-Technologies/mono/tree/unity-2017.1-mbe)
+
+#### 5.6
+* [unity-5.6-staging](https://github.com/Unity-Technologies/mono/tree/unity-5.6-staging)
+* [unity-5.6](https://github.com/Unity-Technologies/mono/tree/unity-5.6)
+* [unity-5.6-mbe-staging](https://github.com/Unity-Technologies/mono/tree/unity-5.6-mbe-staging)
+* [unity-5.6-mbe](https://github.com/Unity-Technologies/mono/tree/unity-5.6-mbe)
+
+
+
+
+Mono
+============================
+
 Mono is a software platform designed to allow developers to easily
 create cross platform applications.  It is an open source
 implementation of Microsoft's .NET Framework based on the ECMA
