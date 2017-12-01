@@ -148,7 +148,9 @@ typedef struct MonoAotFileInfo
 	gpointer unbox_trampolines_end;
 	/* Points to a table of unbox trampoline addresses/offsets */
 	gpointer unbox_trampoline_addresses;
-#define	MONO_AOT_FILE_INFO_LAST_SYMBOL unbox_trampoline_addresses
+	/* Points to an array of weak field indexes */
+	gpointer weak_field_indexes;
+#define MONO_AOT_FILE_INFO_LAST_SYMBOL weak_field_indexes
 
 	/* Scalars */
 	/* The index of the first GOT slot used by the PLT */
