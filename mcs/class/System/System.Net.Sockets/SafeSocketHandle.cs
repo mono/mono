@@ -24,7 +24,7 @@ namespace System.Net.Sockets {
 
 		const int SOCKET_CLOSED = 10004;
 
-		const int ABORT_RETRIES = 10;
+		const int ABORT_RETRIES = 70;
 		static bool THROW_ON_ABORT_RETRIES = Environment.GetEnvironmentVariable("MONO_TESTS_IN_PROGRESS") == "yes";
 
 		public SafeSocketHandle (IntPtr preexistingHandle, bool ownsHandle) : base (ownsHandle)
@@ -42,6 +42,7 @@ namespace System.Net.Sockets {
 
 		protected override bool ReleaseHandle ()
 		{
+			var sw = Stopwatch.StartNew();
 			int error = 0;
 
 			Socket.Blocking_internal (handle, false, out error);
@@ -50,6 +51,8 @@ namespace System.Net.Sockets {
 			Socket.Shutdown_internal (handle, SocketShutdown.Both, out error);
 #endif
 
+			Socket.Close_internal (handle, out error);
+
 			if (blocking_threads != null) {
 				lock (blocking_threads) {
 					int abort_attempts = 0;
@@ -57,7 +60,8 @@ namespace System.Net.Sockets {
 						if (abort_attempts++ >= ABORT_RETRIES) {
 							if (THROW_ON_ABORT_RETRIES) {
 								StringBuilder sb = new StringBuilder ();
-								sb.AppendLine ("Could not abort registered blocking threads before closing socket.");
+								sb.AppendFormat ("Could not abort registered blocking threads before closing socket after {0}ms.", sw.ElapsedMilliseconds);
+								sb.AppendLine ();
 								foreach (var thread in blocking_threads) {
 									sb.AppendLine ("Thread StackTrace:");
 									sb.AppendLine (threads_stacktraces[thread].ToString ());
@@ -93,7 +97,9 @@ namespace System.Net.Sockets {
 				}
 			}
 
-			Socket.Close_internal (handle, out error);
+			sw.Stop();
+			if (sw.ElapsedMilliseconds > 200)
+				Console.Error.WriteLine ("Canceling blocking socket operations took {0}ms", sw.ElapsedMilliseconds);
 
 			return error == 0;
 		}
