@@ -950,8 +950,10 @@ If set, the log mask is changed to the set value. Possible values are
 "asm" (assembly loader), "type", "dll" (native library loader), "gc"
 (garbage collector), "cfg" (config file loader), "aot" (precompiler),
 "security" (e.g. Moonlight CoreCLR support), "threadpool" (thread pool generic), 
-"io-threadpool" (thread pool I/O), "io-layer" (I/O layer - sockets, handles, shared memory etc) 
-and "all". 
+"io-selector" (async socket operations), "io-layer" (I/O layer - processes, files, 
+sockets, events, semaphores, mutexes and handles), "io-layer-process", 
+"io-layer-file", "io-layer-socket", "io-layer-event", "io-layer-semaphore", 
+"io-layer-mutex", "io-layer-handle" and "all". 
 The default value is "all". Changing the mask value allows you to display only 
 messages for a certain component. You can use multiple masks by comma 
 separating them. For example to see config file messages and assembly loader
