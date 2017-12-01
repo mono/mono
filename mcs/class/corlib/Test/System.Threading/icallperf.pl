@@ -10,13 +10,13 @@
 # to do the same atomic increment, but would save transition to/from native.
 # We could do it thread local and occasionally sweep.
 #
-# base is baseline
-# opt is optimized
+# optbase is optimized baseline
+# opt is optimized local changes
 
 sub run
 {
 	my $cmd = shift;
-	open(my $pipe, "-|", $cmd);
+	open(my $pipe, "-|", $cmd) || die("unable to run $cmd");
 	while (my $line = <$pipe>)
 	{
 		if ($line =~ / items in (\d+)/)
@@ -72,10 +72,22 @@ sub report
 	print("\n");
 }
 
-my $optcmd = "/inst/monoopt/bin/mono /dev2/monoopt/mcs/class/corlib/Test/System.Threading/icallperf.exe";
-my $optbasecmd = "/inst/monooptbase/bin/mono /dev2/monoopt/mcs/class/corlib/Test/System.Threading/icallperf.exe";
+for (@ARGV)
+{
+	if (/^-?help/i || /^-?h/i || /^-?\?/ || /^-?usage/)
+	{
+		print("usage: perl $0 private_command baseline_command iterations\n");
+		print(" e.g. perl $0"
+			  . " /inst/monoopt/bin/mono /dev2/monoopt/mcs/class/corlib/Test/System.Threading/icallperf.exe"
+		      . " /inst/monooptbase/bin/mono /dev2/monoopt/mcs/class/corlib/Test/System.Threading/icallperf.exe"
+		      . " 20\n");
+		exit(0);
+	}
+}
 
-my $n = 20;
+my $optcmd = shift || "/inst/monoopt/bin/mono /dev2/monoopt/mcs/class/corlib/Test/System.Threading/icallperf.exe";
+my $optbasecmd = shift || "/inst/monooptbase/bin/mono /dev2/monoopt/mcs/class/corlib/Test/System.Threading/icallperf.exe";
+my $n = shift || 20;
 
 my $optdata = runloop($optcmd, $n);
 my $optbasedata = runloop($optbasecmd, $n);
