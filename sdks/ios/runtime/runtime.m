@@ -6,6 +6,7 @@
 #import <Foundation/Foundation.h>
 #import <os/log.h>
 #include <mono/utils/mono-publib.h>
+#include <mono/utils/mono-logger.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/mono-debug.h>
 #include <mono/metadata/exception.h>
@@ -141,6 +142,16 @@ unhandled_exception_handler (MonoObject *exc, void *user_data)
 }
 
 void
+log_callback (const char *log_domain, const char *log_level, const char *message, mono_bool fatal, void *user_data)
+{
+	os_log_info (OS_LOG_DEFAULT, "(%s %s) %s", log_domain, log_level, message);
+	if (fatal) {
+		os_log_info (OS_LOG_DEFAULT, "Exit code: %d.", 1);
+		exit (1);
+	}
+}
+
+void
 mono_ios_runtime_init (void)
 {
 	int res;
@@ -180,6 +191,7 @@ mono_ios_runtime_init (void)
 	mono_debug_init (MONO_DEBUG_FORMAT_MONO);
 	mono_install_assembly_preload_hook (assembly_preload_hook, NULL);
 	mono_install_unhandled_exception_hook (unhandled_exception_handler, NULL);
+	mono_trace_set_log_handler (log_callback, NULL);
 	mono_set_signal_chaining (TRUE);
 	mono_set_crash_chaining (TRUE);
 
