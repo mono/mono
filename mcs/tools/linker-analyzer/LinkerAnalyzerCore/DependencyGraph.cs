@@ -39,14 +39,14 @@ namespace LinkerAnalyzer.Core
 		{
 			Console.WriteLine ("Loading dependency tree from: {0}", filename);
 
-			using (var fileStream = File.OpenRead (filename))
-			using (var zipStream = new GZipStream (fileStream, CompressionMode.Decompress)) {
-				try {
+			try {
+				using (var fileStream = File.OpenRead (filename))
+				using (var zipStream = new GZipStream (fileStream, CompressionMode.Decompress)) {
 					Load (zipStream);
-				} catch (Exception) {
-					Console.WriteLine ("Unable to open and read the dependecies.");
-					Environment.Exit (1);
 				}
+			} catch (Exception) {
+				Console.WriteLine ("Unable to open and read the dependecies.");
+				Environment.Exit (1);
 			}
 		}
 
