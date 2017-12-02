@@ -1,5 +1,15 @@
 all: test-runner
 
+UNREFERENCED_SYMBOLS =                                                  \
+        _xamarin_log                                                            \
+        _xamarin_timezone_get_data                                      \
+        _xamarin_timezone_get_names                                     \
+        _CloseZStream                                                           \
+        _CreateZStream                                                          \
+        _Flush                                                                          \
+        _ReadZStream                                                            \
+        _WriteZStream
+
 CC = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang
 ARCH = x86_64
 SDK_DIR = ../../out/ios-sim64
@@ -16,8 +26,10 @@ LDFLAGS = \
 	-mios-simulator-version-min=10.1 \
 	 -framework Foundation \
 	 -framework UIKit \
+	$(foreach u,$(UNREFERENCED_SYMBOLS),-u $u)  \
 	$(SDK_DIR)/lib/libmonosgen-2.0.a \
-	-liconv
+	$(SDK_DIR)/lib/libMonoPosixHelper.a \
+	-liconv -lz
 
 %.o: %.m
 	$(ENV) $(CC) -arch $(ARCH) $(CFLAGS) -c -o $@ $^
