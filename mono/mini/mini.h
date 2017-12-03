@@ -117,7 +117,7 @@
 #endif
 
 /* Version number of the AOT file format */
-#define MONO_AOT_FILE_VERSION 141
+#define MONO_AOT_FILE_VERSION 142
 
 //TODO: This is x86/amd64 specific.
 #define mono_simd_shuffle_mask(a,b,c,d) ((a) | ((b) << 2) | ((c) << 4) | ((d) << 6))
@@ -263,7 +263,9 @@ typedef struct MonoAotFileInfo
 	gpointer unbox_trampolines_end;
 	/* Points to a table of unbox trampoline addresses/offsets */
 	gpointer unbox_trampoline_addresses;
-#define	MONO_AOT_FILE_INFO_LAST_SYMBOL unbox_trampoline_addresses
+    /* Points to an array of weak field indexes */
+    gpointer weak_field_indexes;
+#define MONO_AOT_FILE_INFO_LAST_SYMBOL weak_field_indexes
 
 	/* Scalars */
 	/* The index of the first GOT slot used by the PLT */
@@ -2565,6 +2567,7 @@ void     mono_aot_init_llvm_method          (gpointer aot_module, guint32 method
 void     mono_aot_init_gshared_method_this  (gpointer aot_module, guint32 method_index, MonoObject *this_ins);
 void     mono_aot_init_gshared_method_mrgctx  (gpointer aot_module, guint32 method_index, MonoMethodRuntimeGenericContext *rgctx);
 void     mono_aot_init_gshared_method_vtable  (gpointer aot_module, guint32 method_index, MonoVTable *vtable);
+GHashTable *mono_aot_get_weak_field_indexes (MonoImage *image);
 
 /* This is an exported function */
 MONO_API void     mono_aot_register_module           (gpointer *aot_info);
