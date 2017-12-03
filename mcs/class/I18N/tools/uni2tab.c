@@ -23,12 +23,15 @@
  */
 
 /*
-
-Usage: uni2tab
-
-Required files from ftp.unicode.org: Unihan.txt, CP932.TXT
-
-*/
+ *
+ * Usage: uni2tab
+ *
+ * Required files from ftp.unicode.org: Unihan.txt, CP932.TXT
+ *
+ * Unihan.txt and CP932.TXT can be found at:
+ * ftp://www.unicode.org/Public/5.0.0/ucd/Unihan.txt
+ * ftp://ftp.unicode.org/Public/MAPPINGS/VENDORS/MICSFT/WINDOWS/CP932.TXT
+ */
 
 #include <stdio.h>
 #include <string.h>
