@@ -33,10 +33,9 @@
 
 /*
 
-	Well, there looks no jis.table source. Thus, it seems like it is 
-	generated from text files from Unicode Home Page such like
-	ftp://ftp.unicode.org/Public/MAPPINGS/OBSOLETE/EASTASIA/JIS/JIS0208.TXT
-	However, it is non-normative and in Japan it is contains many problem.
+	jis.table is generated from uni2tab.c, which requires CP932.TXT and
+	Unihan.txt as input files. However, it is non-normative and in Japan it is
+	contains many problem.
 
 	FIXME:  Some characters such as 0xFF0B (wide "plus") are missing in
 		that table.
