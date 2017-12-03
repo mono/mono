@@ -148,7 +148,7 @@ public class CryptoConfigTest {
 		CreateFromName ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256", "System.Security.Cryptography.RSAPKCS1SHA256SignatureDescription");
 		CreateFromName ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha384", "System.Security.Cryptography.RSAPKCS1SHA384SignatureDescription");
 		CreateFromName ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha512", "System.Security.Cryptography.RSAPKCS1SHA512SignatureDescription");
-		CreateFromName ("http://www.w3.org/2000/09/xmldsig#hmac-sha1", null);
+		CreateFromName ("http://www.w3.org/2000/09/xmldsig#hmac-sha1", "System.Security.Cryptography.HMACSHA1");
 		// URL used in DigestMethod element 
 		CreateFromName ("http://www.w3.org/2000/09/xmldsig#sha1", "System.Security.Cryptography.SHA1CryptoServiceProvider");
 		// URL used in Canonicalization or Transform elements 

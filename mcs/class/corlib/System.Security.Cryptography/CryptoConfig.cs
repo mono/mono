@@ -204,6 +204,7 @@ public partial class CryptoConfig {
 	private const string urlSHA256 = "http://www.w3.org/2001/04/xmlenc#sha256";
 	private const string urlSHA384 = "http://www.w3.org/2001/04/xmldsig-more#sha384";
 	private const string urlSHA512 = "http://www.w3.org/2001/04/xmlenc#sha512";
+	private const string urlHMACSHA1 = "http://www.w3.org/2000/09/xmldsig#hmac-sha1";
 	private const string urlHMACSHA256 = "http://www.w3.org/2001/04/xmldsig-more#hmac-sha256";
 	private const string urlHMACSHA384 = "http://www.w3.org/2001/04/xmldsig-more#hmac-sha384";
 	private const string urlHMACSHA512 = "http://www.w3.org/2001/04/xmldsig-more#hmac-sha512";
@@ -384,6 +385,7 @@ public partial class CryptoConfig {
 		algorithms.Add (urlSHA256, defaultSHA256);
 		algorithms.Add (urlSHA384, defaultSHA384);
 		algorithms.Add (urlSHA512, defaultSHA512);
+		algorithms.Add (urlHMACSHA1, defaultHMAC);
 		algorithms.Add (urlHMACSHA256, defaultHMACSHA256);
 		algorithms.Add (urlHMACSHA384, defaultHMACSHA384);
 		algorithms.Add (urlHMACSHA512, defaultHMACSHA512);
