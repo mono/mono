@@ -1555,7 +1555,7 @@ const char* il2cpp_image_name(Il2CppMonoImage *monoImage)
 Il2CppMonoAssembly* il2cpp_image_assembly(Il2CppMonoImage *monoImage)
 {
 	Il2CppImage *image = (Il2CppImage*)monoImage;
-	return (Il2CppMonoAssembly*)il2cpp::vm::MetadataCache::GetAssemblyFromIndex(image->assemblyIndex);
+	return (Il2CppMonoAssembly*)image->assembly;
 }
 
 guint8* il2cpp_field_get_address(Il2CppMonoObject *obj, Il2CppMonoClassField *monoField)

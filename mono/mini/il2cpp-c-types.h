@@ -1,10 +1,14 @@
 #ifndef __IL2CPP_MONO_DEBUGGER_OPAQUE_TYPES_H__
 #define __IL2CPP_MONO_DEBUGGER_OPAQUE_TYPES_H__
 
+#if defined(RUNTIME_IL2CPP)
+#include "il2cpp-class-internals.h"
+#endif // RUNTIME_IL2CPP
+
 #define IL2CPP_MONO_PUBLIC_KEY_TOKEN_LENGTH	17
 
-typedef struct _Il2CppMonoType Il2CppMonoType;
-typedef struct _Il2CppMonoClass Il2CppMonoClass;
+typedef struct Il2CppType Il2CppMonoType;
+typedef struct Il2CppClass Il2CppMonoClass;
 typedef struct _Il2CppMonoAssemblyName Il2CppMonoAssemblyNameReplacement;
 typedef struct _Il2CppMonoAssembly Il2CppMonoAssembly;
 typedef struct _Il2CppMonoDomain Il2CppMonoDomain;
@@ -327,39 +331,6 @@ struct _Il2CppMonoGenericClass
 {
 	Il2CppMonoGenericContext context;
 	Il2CppMonoClass *container_class;
-};
-
-struct _Il2CppMonoType
-{
-	union {
-		Il2CppMonoClass *klass;
-		Il2CppMonoType *type;
-		Il2CppMonoArrayType *array;
-		Il2CppMonoMethodSignature *method;
-		Il2CppMonoGenericParam *generic_param;
-		Il2CppMonoGenericClass *generic_class;
-	} data;
-	unsigned int attrs    : 16;
-	MonoTypeEnum type     : 8;
-	unsigned int byref    : 1;
-};
-
-struct _Il2CppMonoClass
-{
-	const char *name;
-	Il2CppMonoType byval_arg;
-	Il2CppMonoImage *image;
-	guint valuetype       : 1;
-	guint enumtype        : 1;
-	guint16 interface_count;
-	Il2CppMonoClass **interfaces;
-	const char *name_space;
-	Il2CppMonoClass *parent;
-	guint8 rank;
-	guint32 type_token;
-	Il2CppMonoClass *element_class;
-	Il2CppMonoMethod **vtable;
-	Il2CppMonoType this_arg;
 };
 
 struct _Il2CppMonoTypeNameParse
