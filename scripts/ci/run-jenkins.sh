@@ -83,7 +83,8 @@ fi
 if [[ ${CI_TAGS} == 'product-sdks' ]];
    then
 	   echo "DISABLE_ANDROID=1" > sdks/Make.config
-	   ${TESTCMD} --label=runtimes --timeout=60m --fatal make -j4 -C sdks/builds package-ios-sim64
+	   ${TESTCMD} --label=runtimes --timeout=60m --fatal make -j4 -C sdks/builds package-ios-sim64 package-ios-target64
+	   ${TESTCMD} --label=cross --timeout=60m --fatal make -j4 -C sdks/builds package-ios-cross64
 	   ${TESTCMD} --label=bcl --timeout=60m --fatal make -j4 -C sdks/builds package-bcl
 	   ${TESTCMD} --label=build-tests --timeout=60m --fatal make -C sdks/ios compile-tests
 	   ${TESTCMD} --label=run-tests --timeout=60m --fatal make -C sdks/ios run-tests
