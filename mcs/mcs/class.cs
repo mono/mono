@@ -2189,7 +2189,7 @@ namespace Mono.CSharp
 
 		public override void Emit ()
 		{
-			if (Interfaces != null) {
+			if (Interfaces != null && (ModFlags & Modifiers.PRIVATE) == 0) {
 				foreach (var iface in Interfaces) {
 					if (iface.HasNamedTupleElement) {
 						throw new NotImplementedException ("named tuples for .interfaceimpl");
