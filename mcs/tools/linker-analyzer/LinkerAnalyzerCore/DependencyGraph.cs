@@ -115,10 +115,10 @@ namespace LinkerAnalyzer.Core
 			return vertices [index];
 		}
 
-		IEnumerable<(VertexData vertex, int distance)> AddDependencies (VertexData vertex, HashSet<int> reachedVertices, int depth)
+		IEnumerable<Tuple<VertexData, int>> AddDependencies (VertexData vertex, HashSet<int> reachedVertices, int depth)
 		{
 			reachedVertices.Add (vertex.index);
-			yield return (vertex, depth);
+			yield return new Tuple<VertexData, int> (vertex, depth);
 
 			if (vertex.parentIndexes == null)
 				yield break;
@@ -133,9 +133,9 @@ namespace LinkerAnalyzer.Core
 			}
 		}
 
-		public List<(VertexData vertex, int distance)> GetAllDependencies (VertexData vertex)
+		public List<Tuple<VertexData, int>> GetAllDependencies (VertexData vertex)
 		{
-			return new List<(VertexData vertex, int distance)> (AddDependencies (vertex, new HashSet<int> (), 0));
+			return new List<Tuple<VertexData, int>> (AddDependencies (vertex, new HashSet<int> (), 0));
 		}
 	}
 }

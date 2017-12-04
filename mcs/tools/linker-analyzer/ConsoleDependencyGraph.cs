@@ -49,12 +49,12 @@ namespace LinkerAnalyzer
 
 			foreach (var d in flatDeps) {
 				if (first) {
-					Console.WriteLine ($"Distance | {d.vertex.value} [total deps: {flatDeps.Count}]");
+					Console.WriteLine ($"Distance | {d.Item1.value} [total deps: {flatDeps.Count}]");
 					Line ();
 					first = false;
 					continue;
 				}
-				Console.WriteLine ($"{string.Format ("{0,8}", d.distance)} | {d.vertex.value}");
+				Console.WriteLine ($"{string.Format ("{0,8}", d.Item2)} | {d.Item1.value}");
 			}
 		}
 
