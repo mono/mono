@@ -401,7 +401,7 @@ static mword roots_size = 0; /* amount of memory in the root set */
  * FIXME: Tune this.
  * FIXME: Make this self-tuning for each thread.
  */
-guint32 tlab_size = (1024 * 4);
+guint32 tlab_size = (1024 * 32);
 
 #define MAX_SMALL_OBJ_SIZE	SGEN_MAX_SMALL_OBJ_SIZE
 
