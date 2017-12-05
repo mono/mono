@@ -284,6 +284,7 @@
 #define mono_thread_current il2cpp_mono_thread_current
 #define mono_thread_get_main il2cpp_mono_thread_get_main
 #define mono_thread_attach il2cpp_mono_thread_attach
+#define mono_thread_detach il2cpp_mono_thread_detach
 #define mono_domain_lock il2cpp_mono_domain_lock
 #define mono_domain_unlock il2cpp_mono_domain_unlock
 #define mono_jit_info_table_find_internal il2cpp_mono_jit_info_table_find_internal
@@ -656,7 +657,7 @@ il2cpp_internal_thread_get_threadpool_thread(Il2CppMonoInternalThread* thread);
 Il2CppMonoMethod* il2cpp_method_get_generic_definition(Il2CppMonoMethodInflated *imethod);
 Il2CppMonoGenericInst* il2cpp_method_get_generic_class_inst(Il2CppMonoMethodInflated *imethod);
 Il2CppMonoClass* il2cpp_generic_class_get_container_class(Il2CppMonoGenericClass *gclass);
-
+void il2cpp_mono_thread_detach(Il2CppMonoThread* thread);
 Il2CppMonoClass* il2cpp_mono_get_string_class (void);
 
 #endif // RUNTIME_IL2CPP

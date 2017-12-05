@@ -11654,7 +11654,7 @@ debugger_thread (void *arg)
 	DEBUG_PRINTF (1, "[dbg] Agent thread started, pid=%p\n", (gpointer) (gsize) mono_native_thread_id_get ());
     debugger_thread_id = mono_native_thread_id_get ();
 #ifdef IL2CPP_MONO_DEBUGGER
-    mono_thread_attach (il2cpp_mono_get_root_domain ());
+	MonoThread *thread = mono_thread_attach (il2cpp_mono_get_root_domain ());
 #endif
 
 	MonoInternalThread *internal = mono_thread_internal_current ();
@@ -11834,6 +11834,10 @@ debugger_thread (void *arg)
 		DEBUG_PRINTF (2, "[dbg] Detached - restarting clean debugger thread.\n");
 		start_debugger_thread ();
 	}
+
+#ifdef IL2CPP_MONO_DEBUGGER
+	mono_thread_detach (thread);
+#endif
 
 	return 0;
 }
