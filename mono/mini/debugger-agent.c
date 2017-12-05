@@ -761,7 +761,9 @@ static void invalidate_each_thread (gpointer key, gpointer value, gpointer user_
 
 static void assembly_load (MonoProfiler *prof, MonoAssembly *assembly);
 
+#ifndef IL2CPP_MONO_DEBUGGER
 static void assembly_unload (MonoProfiler *prof, MonoAssembly *assembly);
+#endif
 
 static void emit_assembly_load (gpointer assembly, gpointer user_data);
 
@@ -1033,7 +1035,9 @@ mono_debugger_agent_init (void)
 	mono_profiler_set_thread_started_callback (prof, thread_startup);
 	mono_profiler_set_thread_stopped_callback (prof, thread_end);
 	mono_profiler_set_assembly_loaded_callback (prof, assembly_load);
+	#ifndef IL2CPP_MONO_DEBUGGER
 	mono_profiler_set_assembly_unloading_callback (prof, assembly_unload);
+	#endif
 	mono_profiler_set_jit_done_callback (prof, jit_done);
 	mono_profiler_set_jit_failed_callback (prof, jit_failed);
 
@@ -2428,11 +2432,13 @@ decode_ptr_id (guint8 *buf, guint8 **endbuf, guint8 *limit, IdType type, MonoDom
 	res = (Id *)g_ptr_array_index (ids [type], GPOINTER_TO_INT (id - 1));
 	dbg_unlock ();
 
+#ifndef IL2CPP_MONO_DEBUGGER
 	if (res->domain == NULL || res->domain->state == MONO_APPDOMAIN_UNLOADED) {
 		DEBUG_PRINTF (1, "ERR_UNLOADED, id=%d, type=%d.\n", id, type);
 		*err = ERR_UNLOADED;
 		return NULL;
 	}
+#endif
 
 	if (domain)
 		*domain = res->domain;
@@ -4230,6 +4236,7 @@ assembly_load (MonoProfiler *prof, MonoAssembly *assembly)
 	dbg_unlock ();
 }
 
+#ifndef IL2CPP_MONO_DEBUGGER
 static void
 assembly_unload (MonoProfiler *prof, MonoAssembly *assembly)
 {
@@ -4241,6 +4248,7 @@ assembly_unload (MonoProfiler *prof, MonoAssembly *assembly)
 	clear_event_requests_for_assembly (assembly);
 	clear_types_for_assembly (assembly);
 }
+#endif
 
 static void
 send_type_load (MonoClass *klass)
@@ -7937,6 +7945,7 @@ type_comes_from_assembly (gpointer klass, gpointer also_klass, gpointer assembly
  *
  *   Clears types from loaded_classes for a given assembly
  */
+#ifndef IL2CPP_MONO_DEBUGGER
 static void
 clear_types_for_assembly (MonoAssembly *assembly)
 {
@@ -7953,6 +7962,7 @@ clear_types_for_assembly (MonoAssembly *assembly)
 	g_hash_table_foreach_remove (info->loaded_classes, type_comes_from_assembly, assembly);
 	mono_loader_unlock ();
 }
+#endif
 
 static void
 add_thread (gpointer key, gpointer value, gpointer user_data)
