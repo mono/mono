@@ -1718,6 +1718,7 @@
     <Compile Include="System\ValueType.cs" />
     <Compile Include="System\Variant.cs" />
     <Compile Include="System\Void.cs" />
+    <Compile Include="System\WeakAttribute.cs" />
     <Compile Include="System\WeakReference.cs" />
     <Compile Include="System\WeakReference_T.cs" />
     <Compile Include="System\WindowsConsoleDriver.cs" />  </ItemGroup>
