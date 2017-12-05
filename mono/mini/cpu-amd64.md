@@ -366,7 +366,7 @@ cos: dest:f src1:f len:32
 abs: dest:f src1:f clob:1 len:32
 tan: dest:f src1:f len:59
 atan: dest:f src1:f len:9
-sqrt: dest:f src1:f len:32
+sqrt: dest:x src1:x len:32
 sext_i1: dest:i src1:i len:4
 sext_i2: dest:i src1:i len:4
 sext_i4: dest:i src1:i len:8

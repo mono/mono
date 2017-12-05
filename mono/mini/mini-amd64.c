@@ -5232,7 +5232,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;		
 		}
 		case OP_SQRT:
-			EMIT_SSE2_FPFUNC (code, fsqrt, ins->dreg, ins->sreg1);
+			amd64_sse_sqrtsd_reg_reg (code, ins->dreg, ins->sreg1);
 			break;
 
 		case OP_RADD:
@@ -8122,11 +8122,15 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 	int opcode = 0;
 
 	if (cmethod->klass == mono_defaults.math_class) {
+#if 0
+		/* Mono can emit Sin and Cos directly as fsin and fcos, but modern libc implementations should be faster. */
 		if (strcmp (cmethod->name, "Sin") == 0) {
 			opcode = OP_SIN;
 		} else if (strcmp (cmethod->name, "Cos") == 0) {
 			opcode = OP_COS;
-		} else if (strcmp (cmethod->name, "Sqrt") == 0) {
+                } else
+#endif
+		if (strcmp (cmethod->name, "Sqrt") == 0) {
 			opcode = OP_SQRT;
 		} else if (strcmp (cmethod->name, "Abs") == 0 && fsig->params [0]->type == MONO_TYPE_R8) {
 			opcode = OP_ABS;
