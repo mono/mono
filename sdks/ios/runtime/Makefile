@@ -1,4 +1,4 @@
-all: test-runner
+all: test-runner libmonoios.a
 
 UNREFERENCED_SYMBOLS =                                                  \
         _xamarin_log                                                            \
@@ -11,31 +11,62 @@ UNREFERENCED_SYMBOLS =                                                  \
         _WriteZStream
 
 CC = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang
-ARCH = x86_64
-SDK_DIR = ../../out/ios-sim64
-CFLAGS = \
+SIM_SYSROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk
+SIM_ARCH = x86_64
+SIM_SDK_DIR = ../../out/ios-sim64
+SIM_CFLAGS = \
 	-std=gnu11 \
 	-fobjc-arc \
-	-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk \
+	-isysroot $(SIM_SYSROOT) \
 	-mios-simulator-version-min=10.1 \
 	-g \
-	-I$(SDK_DIR)/include/mono-2.0
+	-I$(SIM_SDK_DIR)/include/mono-2.0
 
-LDFLAGS = \
-	-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk \
+SIM_LDFLAGS = \
+	-isysroot $(SIM_SYSROOT) \
 	-mios-simulator-version-min=10.1 \
 	 -framework Foundation \
 	 -framework UIKit \
 	$(foreach u,$(UNREFERENCED_SYMBOLS),-u $u)  \
-	$(SDK_DIR)/lib/libmonosgen-2.0.a \
-	$(SDK_DIR)/lib/libMonoPosixHelper.a \
+	$(SIM_SDK_DIR)/lib/libmonosgen-2.0.a \
+	$(SIM_SDK_DIR)/lib/libMonoPosixHelper.a \
 	-liconv -lz
 
-%.o: %.m
-	$(ENV) $(CC) -arch $(ARCH) $(CFLAGS) -c -o $@ $^
+sim-%.o: %.m
+	$(ENV) $(CC) -arch $(SIM_ARCH) $(SIM_CFLAGS) -c -o $@ $^
 
-test-runner: main.o runtime.o AppDelegate.o ViewController.o
-	$(ENV) $(CC) -arch $(ARCH) $(LDFLAGS) -o $@ $^
+test-runner: sim-main.o sim-runtime.o sim-AppDelegate.o sim-ViewController.o
+	$(ENV) $(CC) -arch $(SIM_ARCH) $(SIM_LDFLAGS) -o $@ $^
+
+DEV_ARCH = arm64
+DEV_SDK_DIR = ../../out/ios-target64
+DEV_SYSROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/
+DEV_CFLAGS = \
+	-isysroot $(DEV_SYSROOT) \
+	-std=gnu11 \
+	-fobjc-arc \
+	-mios-simulator-version-min=10.1 \
+	-g \
+	-fPIC \
+	-DDEVICE=1 \
+	-I$(DEV_SDK_DIR)/include/mono-2.0
+
+DEV_LDFLAGS = \
+	-isysroot $(DEV_SYSROOT) \
+	-mios-simulator-version-min=10.1 \
+	 -framework Foundation \
+	 -framework UIKit \
+	-Wl,-pie \
+	$(foreach u,$(UNREFERENCED_SYMBOLS),-u $u)  \
+	$(DEV_SDK_DIR)/lib/libmonosgen-2.0.a \
+	$(DEV_SDK_DIR)/lib/libMonoPosixHelper.a \
+	-liconv -lz
+
+dev-%.o: %.m
+	$(ENV) $(CC) -arch $(DEV_ARCH) $(DEV_CFLAGS) -c -o $@ $^
+
+libmonoios.a: dev-main.o dev-runtime.o dev-AppDelegate.o dev-ViewController.o
+	libtool -static -o $@ $^
 
 clean:
 	$(RM) -rf test-runner *.o

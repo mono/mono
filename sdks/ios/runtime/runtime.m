@@ -11,14 +11,21 @@
 #include <mono/metadata/mono-debug.h>
 #include <mono/metadata/exception.h>
 #include <mono/jit/jit.h>
+#include <mono/jit/jit.h>
 
 #include <sys/stat.h>
+#include <sys/mman.h>
 
 //
 // Based on runtime/ in xamarin-macios
 //
 
 #define PRINT(...) do { printf (__VA_ARGS__); } while (0);
+
+/* These are not in public headers */
+typedef unsigned char* (*MonoLoadAotDataFunc)          (MonoAssembly *assembly, int size, void *user_data, void **out_handle);
+typedef void  (*MonoFreeAotDataFunc)          (MonoAssembly *assembly, int size, void *user_data, void *handle);
+void mono_install_load_aot_data_hook (MonoLoadAotDataFunc load_func, MonoFreeAotDataFunc free_func, void *user_data);
 
 bool
 file_exists (const char *path)
@@ -45,6 +52,50 @@ get_bundle_path (void)
 	return bundle_path;
 }
 
+static unsigned char *
+load_aot_data (MonoAssembly *assembly, int size, void *user_data, void **out_handle)
+{
+	*out_handle = NULL;
+
+	char path [1024];
+	int res;
+
+	MonoAssemblyName *assembly_name = mono_assembly_get_name (assembly);
+	const char *aname = mono_assembly_name_get_name (assembly_name);
+	const char *bundle = get_bundle_path ();
+
+	// LOG (PRODUCT ": Looking for aot data for assembly '%s'.", name);
+	res = snprintf (path, sizeof (path) - 1, "%s/%s.aotdata", bundle, aname);
+	assert (res > 0);
+
+	int fd = open (path, O_RDONLY);
+	if (fd < 0) {
+		//LOG (PRODUCT ": Could not load the aot data for %s from %s: %s\n", aname, path, strerror (errno));
+		return NULL;
+	}
+
+	void *ptr = mmap (NULL, size, PROT_READ, MAP_FILE | MAP_PRIVATE, fd, 0);
+	if (ptr == MAP_FAILED) {
+		//LOG (PRODUCT ": Could not map the aot file for %s: %s\n", aname, strerror (errno));
+		close (fd);
+		return NULL;
+	}
+
+	close (fd);
+
+	//LOG (PRODUCT ": Loaded aot data for %s.\n", name);
+
+	*out_handle = ptr;
+
+	return (unsigned char *) ptr;
+}
+
+static void
+free_aot_data (MonoAssembly *assembly, int size, void *user_data, void *handle)
+{
+	munmap (handle, size);
+}
+
 static MonoAssembly*
 load_assembly (const char *name, const char *culture)
 {
@@ -52,7 +103,7 @@ load_assembly (const char *name, const char *culture)
 	char path [1024];
 	int res;
 
-	os_log_info (OS_LOG_DEFAULT, "assembly_preload_hook: %s %s %s\n", name, culture, bundle);
+	os_log_info (OS_LOG_DEFAULT, "assembly_preload_hook: %{public}s %{public}s %{public}s\n", name, culture, bundle);
 	if (culture && strcmp (culture, ""))
 		res = snprintf (path, sizeof (path) - 1, "%s/%s/%s", bundle, culture, name);
 	else
@@ -145,24 +196,62 @@ void
 log_callback (const char *log_domain, const char *log_level, const char *message, mono_bool fatal, void *user_data)
 {
 	os_log_info (OS_LOG_DEFAULT, "(%s %s) %s", log_domain, log_level, message);
+	NSLog (@"(%s %s) %s", log_domain, log_level, message);
 	if (fatal) {
 		os_log_info (OS_LOG_DEFAULT, "Exit code: %d.", 1);
 		exit (1);
 	}
 }
 
+/* Implemented by generated code */
+void mono_ios_register_modules (void);
+
 void
 mono_ios_runtime_init (void)
 {
-	int res;
+	NSBundle *main_bundle = [NSBundle mainBundle];
+	NSString *path;
+	char *result;
+	int res, nargs, config_nargs;
+	char *executable;
+	char **args, **config_args = NULL;
 
 	id args_array = [[NSProcessInfo processInfo] arguments];
-	int nargs = [args_array count];
-	char **args;
+	nargs = [args_array count];
 
-	args = malloc (nargs * sizeof (char*));
-	for (int i = 0; i < nargs; ++i)
-		args [i] = strdup ([((NSString*)[args_array objectAtIndex: i]) UTF8String]);
+	//
+	// Read executable name etc. from an embedded config file if its exists
+	//
+	path = [[NSString alloc] initWithFormat: @"%@/config.json", [main_bundle bundlePath]];
+	NSData *data = [NSData dataWithContentsOfFile: path];
+	if (data) {
+		NSError *error = nil;
+		id json = [NSJSONSerialization
+				   JSONObjectWithData:data
+				   options:0
+				   error:&error];
+		assert (!error);
+		assert ([json isKindOfClass:[NSDictionary class]]);
+		NSDictionary *dict = (NSDictionary*)json;
+		id val = dict [@"exe"];
+		assert (val);
+		executable = strdup ([((NSString*)val) UTF8String]);
+		config_nargs = 2;
+		config_args = malloc (nargs * sizeof (char*));
+		config_args [0] = strdup ([((NSString*)[args_array objectAtIndex: 0]) UTF8String]);
+		config_args [1] = executable;
+	}
+
+	if (nargs == 1) {
+		/* Use the args from the config file */
+		nargs = config_nargs;
+		args = config_args;
+	} else {
+		/* Use the real command line args */
+		args = malloc (nargs * sizeof (char*));
+		for (int i = 0; i < nargs; ++i)
+			args [i] = strdup ([((NSString*)[args_array objectAtIndex: i]) UTF8String]);
+	}
 
 	int aindex = 1;
 	while (aindex < nargs) {
@@ -181,26 +270,37 @@ mono_ios_runtime_init (void)
 		}
 		aindex ++;
 	}
-	assert (aindex < nargs);
-    char *executable = args [aindex];
+	if (aindex == nargs) {
+		os_log_info (OS_LOG_DEFAULT, "Executable argument missing.");
+		exit (1);
+	}
+    executable = args [aindex];
 	aindex ++;
 
 	const char *bundle = get_bundle_path ();
 	chdir (bundle);
 
+#ifdef DEVICE
+	mono_ios_register_modules ();
+	mono_jit_set_aot_mode (MONO_AOT_MODE_FULL);
+#endif
+
 	mono_debug_init (MONO_DEBUG_FORMAT_MONO);
 	mono_install_assembly_preload_hook (assembly_preload_hook, NULL);
+	mono_install_load_aot_data_hook (load_aot_data, free_aot_data, NULL);
 	mono_install_unhandled_exception_hook (unhandled_exception_handler, NULL);
 	mono_trace_set_log_handler (log_callback, NULL);
 	mono_set_signal_chaining (TRUE);
 	mono_set_crash_chaining (TRUE);
+
+	//setenv ("MONO_LOG_LEVEL", "debug", TRUE);
 
 	mono_jit_init_version ("Mono.ios", "mobile");
 
 	MonoAssembly *assembly = load_assembly (executable, NULL);
 	assert (assembly);
 
-	os_log_info (OS_LOG_DEFAULT, "Executable: %s", executable);
+	os_log_info (OS_LOG_DEFAULT, "Executable: %{public}s", executable);
 	int managed_argc = nargs - aindex;
 	char *managed_argv [128];
 	assert (managed_argc < 128 - 2);
@@ -288,6 +388,7 @@ xamarin_log (const unsigned short *unicodeMessage)
 		fwrite ("\n", 1, 1, stdout);
 	fflush (stdout);
 #else
-	os_log_info (OS_LOG_DEFAULT, "%@", msg);
+	os_log_info (OS_LOG_DEFAULT, "%{public}@", msg);
+	//NSLog (@"%@", msg);
 #endif
 }
