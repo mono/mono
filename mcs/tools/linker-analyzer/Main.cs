@@ -28,6 +28,7 @@ namespace LinkerAnalyzer
 			bool showTypes = false;
 			bool reduceToTree = false;
 			bool verbose = false;
+			bool flatDeps = false;
 
 			var optionsParser = new OptionSet () {
 				{ "a|alldeps", "show all dependencies", v => { showAllDeps = v != null; } },
@@ -39,6 +40,7 @@ namespace LinkerAnalyzer
 				{ "types", "show all types dependencies.", v => showTypes = v != null },
 				{ "t|typedeps=", "show type dependencies. The VALUE can be regular expression", v => { showTypeDeps = v != null; typeName = v; } },
 				//{ "u|spaceusage", "show space analysis.", v => showSpaceUsage = v != null },
+				{ "f|flat", "show all dependencies per vertex and their distance", v => flatDeps = v != null },
 				{ "v|verbose", "be more verbose. Enables stat and roots options.", v => verbose = v != null },
 			};
 
@@ -56,7 +58,7 @@ namespace LinkerAnalyzer
 
 			string dependencyFile = args [args.Length - 1];
 
-			ConsoleDependencyGraph deps = new ConsoleDependencyGraph () { Tree = reduceToTree };
+			ConsoleDependencyGraph deps = new ConsoleDependencyGraph () { Tree = reduceToTree, FlatDeps = flatDeps };
 			deps.Load (dependencyFile);
 
 			if (showSpaceUsage) {
