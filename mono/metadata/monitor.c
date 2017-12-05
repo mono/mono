@@ -566,7 +566,7 @@ mono_object_hash (MonoObject* obj)
 {
 #ifdef HAVE_MOVING_COLLECTOR
 	LockWord lw;
-	unsigned int hash;
+	guint32 hash;
 	if (!obj)
 		return 0;
 	lw.sync = obj->synchronisation;
@@ -587,7 +587,10 @@ mono_object_hash (MonoObject* obj)
 	 * another thread computes the hash at the same time, because it'll end up
 	 * with the same value.
 	 */
-	hash = (GPOINTER_TO_UINT (obj) >> MONO_OBJECT_ALIGNMENT_SHIFT) * 2654435761u;
+	hash = GPOINTER_TO_UINT (obj) >> MONO_OBJECT_ALIGNMENT_SHIFT;
+	hash = ((hash >> 16) ^ hash) * 0x45d9f3b;
+	hash = ((hash >> 16) ^ hash) * 0x45d9f3b;
+	hash = (hash >> 16) ^ hash;
 #if SIZEOF_VOID_P == 4
 	/* clear the top bits as they can be discarded */
 	hash &= ~(LOCK_WORD_STATUS_MASK << (32 - LOCK_WORD_STATUS_BITS));
@@ -625,10 +628,14 @@ mono_object_hash (MonoObject* obj)
 	return hash;
 #else
 /*
- * Wang's address-based hash function:
- *   http://www.concentric.net/~Ttwang/tech/addrhash.htm
+ * Thomas Mueller's uniform hash:
+ * http://stackoverflow.com/a/12996028
  */
-	return (GPOINTER_TO_UINT (obj) >> MONO_OBJECT_ALIGNMENT_SHIFT) * 2654435761u;
+	hash = GPOINTER_TO_UINT (obj) >> MONO_OBJECT_ALIGNMENT_SHIFT;
+	hash = ((hash >> 16) ^ hash) * 0x45d9f3b;
+	hash = ((hash >> 16) ^ hash) * 0x45d9f3b;
+	hash = (hash >> 16) ^ hash;
+	return hash;
 #endif
 }
 
