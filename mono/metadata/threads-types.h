@@ -70,6 +70,32 @@ typedef enum {
 	MONO_THREAD_CREATE_FLAGS_SMALL_STACK  = 0x8,
 } MonoThreadCreateFlags;
 
+/* It's safe to access System.Threading.InternalThread from native code via a
+ * raw pointer because all instances should be pinned.  But for uniformity of
+ * icall wrapping, let's declare a MonoInternalThreadHandle anyway.
+ */
+TYPED_HANDLE_DECL (MonoInternalThread);
+
+#define MONO_INTERNAL_THREAD_HANDLE_FLAGS_ADD(THREAD, FLAGS) do { \
+		MonoInternalThreadHandle __handle = (THREAD); \
+		MONO_HANDLE_SETVAL (__handle, flags, gsize, MONO_HANDLE_GETVAL (__handle, flags) | (FLAGS)); \
+	} while (0)
+
+#define MONO_INTERNAL_THREAD_HANDLE_FLAGS_REMOVE(THREAD, FLAGS) do { \
+		MonoInternalThreadHandle __handle = (THREAD); \
+		MONO_HANDLE_SETVAL (__handle, flags, gsize, MONO_HANDLE_GETVAL (__handle, flags) & ~(FLAGS)); \
+	} while (0)
+
+#define MONO_INTERNAL_THREAD_HANDLE_STATE_ADD(THREAD, FLAGS) do { \
+		MonoInternalThreadHandle __handle = (THREAD); \
+		MONO_HANDLE_SETVAL (__handle, state, gsize, MONO_HANDLE_GETVAL (__handle, state) | (FLAGS)); \
+	} while (0)
+
+#define MONO_INTERNAL_THREAD_HANDLE_STATE_REMOVE(THREAD, FLAGS) do { \
+		MonoInternalThreadHandle __handle = (THREAD); \
+		MONO_HANDLE_SETVAL (__handle, state, gsize, MONO_HANDLE_GETVAL (__handle, state) & ~(FLAGS)); \
+	} while (0)
+
 MonoInternalThread*
 mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, MonoThreadCreateFlags flags, MonoError *error);
 
@@ -95,8 +121,8 @@ MonoThread *ves_icall_System_Threading_Thread_GetCurrentThread (void);
 gint32 ves_icall_System_Threading_WaitHandle_Wait_internal(gpointer *handles, gint32 numhandles, MonoBoolean waitall, gint32 ms, MonoError *error);
 gint32 ves_icall_System_Threading_WaitHandle_SignalAndWait_Internal (gpointer toSignal, gpointer toWait, gint32 ms, MonoError *error);
 
-MonoArray* ves_icall_System_Threading_Thread_ByteArrayToRootDomain (MonoArray *arr);
-MonoArray* ves_icall_System_Threading_Thread_ByteArrayToCurrentDomain (MonoArray *arr);
+MonoArrayHandle ves_icall_System_Threading_Thread_ByteArrayToRootDomain (MonoArrayHandle arr, MonoError *error);
+MonoArrayHandle ves_icall_System_Threading_Thread_ByteArrayToCurrentDomain (MonoArrayHandle arr, MonoError *error);
 
 gint32 ves_icall_System_Threading_Interlocked_Increment_Int(gint32 *location);
 gint64 ves_icall_System_Threading_Interlocked_Increment_Long(gint64 *location);
@@ -130,12 +156,12 @@ gint64 ves_icall_System_Threading_Interlocked_Increment_Long(gint64 *location);
 gint32 ves_icall_System_Threading_Interlocked_Decrement_Int(gint32 *location);
 gint64 ves_icall_System_Threading_Interlocked_Decrement_Long(gint64 * location);
 
-void ves_icall_System_Threading_Thread_Abort (MonoInternalThread *thread, MonoObject *state);
+void ves_icall_System_Threading_Thread_Abort (MonoInternalThreadHandle thread, MonoObjectHandle state, MonoError *error);
 void ves_icall_System_Threading_Thread_ResetAbort (MonoThread *this_obj);
 MonoObject* ves_icall_System_Threading_Thread_GetAbortExceptionState (MonoThread *thread);
 void ves_icall_System_Threading_Thread_Suspend (MonoThread *this_obj);
 void ves_icall_System_Threading_Thread_Resume (MonoThread *thread);
-void ves_icall_System_Threading_Thread_ClrState (MonoInternalThread *thread, guint32 state);
+void ves_icall_System_Threading_Thread_ClrState (MonoInternalThreadHandle thread, guint32 state, MonoError *error);
 void ves_icall_System_Threading_Thread_SetState (MonoInternalThread *thread, guint32 state);
 guint32 ves_icall_System_Threading_Thread_GetState (MonoInternalThread *thread);
 
@@ -203,6 +229,7 @@ gboolean mono_thread_current_check_pending_interrupt (void);
 
 void mono_thread_set_state (MonoInternalThread *thread, MonoThreadState state);
 void mono_thread_clr_state (MonoInternalThread *thread, MonoThreadState state);
+void mono_thread_clr_state_handle (MonoInternalThreadHandle thread, MonoThreadState state);
 gboolean mono_thread_test_state (MonoInternalThread *thread, MonoThreadState test);
 gboolean mono_thread_test_and_set_state (MonoInternalThread *thread, MonoThreadState test, MonoThreadState set);
 
