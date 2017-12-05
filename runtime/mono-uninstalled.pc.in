@@ -1,0 +1,8 @@
+libdir=@mono_build_root@/mono/mini/.libs
+includedir=@abs_top_srcdir@
+
+Name: Mono
+Description: Mono Runtime
+Version: @VERSION@
+Libs: -L${libdir} @export_ldflags@ -lmono-@API_VER@ @libmono_ldflags@
+Cflags: -I${includedir} @libmono_cflags@

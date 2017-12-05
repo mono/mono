@@ -4686,7 +4686,6 @@ AC_CONFIG_COMMANDS([nolock-libtool], [sed -e 's/lock_old_archive_extraction=yes/
 
 AC_OUTPUT([
 Makefile
-mono-uninstalled.pc
 acceptance-tests/Makefile
 llvm/Makefile
 scripts/mono-find-provides
@@ -4758,6 +4757,7 @@ tools/sgen/Makefile
 tools/monograph/Makefile
 tools/pedump/Makefile
 runtime/Makefile
+runtime/mono-uninstalled.pc
 msvc/Makefile
 po/Makefile
 ])

@@ -34,7 +34,6 @@ EXTRA_DIST= \
 	LICENSE 		\
 	autogen.sh 		\
 	mkinstalldirs 		\
-	mono-uninstalled.pc.in 	\
 	winconfig.h 		\
 	code_of_conduct.md 	\
 	external		\
@@ -52,8 +51,6 @@ dist-hook:
 	rm -f `find $(top_distdir)/external -path '*\.dll' -not -path '*/binary-reference-assemblies/*' -not -path '*/roslyn-binaries/*'`
 
 pkgconfigdir = $(libdir)/pkgconfig
-noinst_DATA = mono-uninstalled.pc
-DISTCLEANFILES= mono-uninstalled.pc
 
 # building with monolite
 .PHONY: get-monolite-latest 

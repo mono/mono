@@ -8,7 +8,9 @@ check-local:
 	$(MAKE) test-multi-netmodule || ok=false; \
 	$(MAKE) test-cattr-type-load || ok=false; \
 	$(MAKE) test-reflection-load-with-context || ok=false; \
-	$(MAKE) test-platform || ok=false; \
+	$(MAKE) test-iomap-regression || ok=false; \
+	$(MAKE) test-eglib-remap || ok=false; \
+	$(MAKE) test-bundle || ok=false; \
 	$(MAKE) test-console-output || ok=false; \
 	$(MAKE) test-env-options || ok=false; \
 	$(MAKE) test-unhandled-exception-2 || ok=false; \
@@ -61,7 +63,7 @@ RUNTIME = $(with_mono_path) $(top_builddir)/runtime/mono-wrapper
 TOOLS_RUNTIME = MONO_PATH=$(mcs_topdir)/class/lib/build $(top_builddir)/runtime/mono-wrapper --aot-path=$(mcs_topdir)/class/lib/build
 
 MKBUNDLE = \
-	PKG_CONFIG_PATH=$(top_builddir):$(PKG_CONFIG_PATH) \
+	PKG_CONFIG_PATH=$(top_builddir)/runtime/_tmpinst/lib/pkgconfig:$(PKG_CONFIG_PATH) \
 	$(RUNTIME) $(CLASS)/mkbundle.exe
 
 if FULL_AOT_TESTS
@@ -1104,34 +1106,12 @@ TestingReferenceReferenceAssembly.dll: TestingReferenceReferenceAssembly.cs Test
 %.dll$(PLATFORM_AOT_SUFFIX): %.dll 
 	$(RUNTIME) $(TEST_AOT_BUILD_FLAGS) $<
 
-# mkbundle works on ppc, but the pkg-config POC doesn't when run with make test
-if POWERPC
-test-platform:
-else
-# Can't use mkbundle on win32 since there is no static build there
-# Can't run test-unhandled-exception on Windows because of all the debug popups...
-if HOST_WIN32
-test-platform:
-else
-# mkbundle uses the installed mono-2.pc so it won't work if there is no system mono
-#test-platform:	testbundle test-iomap-regression
-test-platform:	test-iomap-regression
-endif
-endif
-
 # Target to precompile the test executables
 tests: compile-tests
 
 #
 # Test that no symbols are missed in eglib-remap.h
 #
-if HOST_LINUX
-test-platform: test-eglib-remap
-else
-if HOST_DARWIN
-test-platform: test-eglib-remap
-endif
-endif
 # The following regexp describes all symbols that start with "g_" but are not part of eglibc.
 # The optional underscore prepending symbol names may or may not appear depending on the
 # system and the state of the leading-underscore compiler flag.
@@ -1234,11 +1214,17 @@ stresstest: compile-tests
 	if [ $${failed} != 0 ]; then echo -e "\nFailed tests:\n"; \
 	  for i in $${failed_tests}; do echo $${i}; done; exit 1; fi
 
-testbundle: console.exe
+# Can't use mkbundle on win32 since there is no static build there
+# Can't use mkbundle on fullaot since it's not built there
+test-bundle: console.exe
+if !HOST_WIN32
+if !FULL_AOT_TESTS
 	@echo "Testing mkbundle..."
-	@$(MKBUNDLE) --static console.exe > mkbundle.stdout
+	@$(MKBUNDLE) -v --i18n none --static console.exe > mkbundle.stdout
 	@$(with_mono_path) MONO_CFG_DIR=$(mono_cfg_dir) ./a.out >> mkbundle.stdout
-	@- rm -rf a.out
+	@- rm -rf a.out*
+endif
+endif
 
 EXTRA_DIST += load-missing.il t-missing.cs load-exceptions.cs
 
