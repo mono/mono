@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{D7789C48-C33A-4FE5-BD42-4DBAB2850796}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{6C50BF24-90AB-4654-B295-16A1C717643C}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <LangVersion>latest</LangVersion>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Windows_NT'">win32</HostPlatform>
@@ -23,7 +23,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>
     </RootNamespace>
-    <AssemblyName>linkeranalyzer</AssemblyName>
+    <AssemblyName>System.Runtime.CompilerServices.Unsafe</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
 
@@ -53,10 +53,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\..\class\Mono.Options\Mono.Options\Options.cs" />
-    <Compile Include="ConsoleDependencyGraph.cs" />
-    <Compile Include="LinkerAnalyzerCore\DependencyGraph.cs" />
-    <Compile Include="Main.cs" />  </ItemGroup>
+  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -79,21 +76,9 @@
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../../class/corlib/corlib-net_4_x.csproj">
+    <ProjectReference Include="../corlib/corlib-net_4_x.csproj">
       <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
       <Name>corlib-net_4_x</Name>
-    </ProjectReference>
-    <ProjectReference Include="../../class/System/System-net_4_x.csproj">
-      <Project>{2762E921-91A8-4C87-91E9-BA628013F753}</Project>
-      <Name>System-net_4_x</Name>
-    </ProjectReference>
-    <ProjectReference Include="../../class/System.XML/System.Xml-net_4_x.csproj">
-      <Project>{87FD2F0F-5222-4AE6-BD63-2D4975E11E5B}</Project>
-      <Name>System.Xml-net_4_x</Name>
-    </ProjectReference>
-    <ProjectReference Include="../../class/System.Core/System.Core-net_4_x.csproj">
-      <Project>{359142A1-D80F-401E-AA64-7167C9317649}</Project>
-      <Name>System.Core-net_4_x</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
