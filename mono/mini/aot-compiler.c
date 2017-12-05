@@ -3223,6 +3223,8 @@ encode_method_ref (MonoAotCompile *acfg, MonoMethod *method, guint8 *buf, guint8
 				encode_method_ref (acfg, info->d.synchronized_inner.method, p, &p);
 			else if (info->subtype == WRAPPER_SUBTYPE_ARRAY_ACCESSOR)
 				encode_method_ref (acfg, info->d.array_accessor.method, p, &p);
+			else if (info->subtype == WRAPPER_SUBTYPE_INTERP_IN)
+				encode_signature (acfg, info->d.interp_in.sig, p, &p);
 			else if (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG)
 				encode_signature (acfg, info->d.gsharedvt.sig, p, &p);
 			else if (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_OUT_SIG)
@@ -8257,6 +8259,9 @@ append_mangled_wrapper_subtype (GString *s, WrapperSubtype subtype)
 	case WRAPPER_SUBTYPE_DELEGATE_INVOKE_BOUND:
 		label = "del_inv_bound";
 		break;
+	case WRAPPER_SUBTYPE_INTERP_IN:
+		label = "interp_in";
+		break;
 	case WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG:
 		label = "gsharedvt_in_sig";
 		break;
@@ -8388,6 +8393,8 @@ append_mangled_wrapper (GString *s, MonoMethod *method)
 			success = success && append_mangled_method (s, info->d.synchronized_inner.method);
 		else if (info->subtype == WRAPPER_SUBTYPE_ARRAY_ACCESSOR)
 			success = success && append_mangled_method (s, info->d.array_accessor.method);
+		else if (info->subtype == WRAPPER_SUBTYPE_INTERP_IN)
+			append_mangled_signature (s, info->d.interp_in.sig);
 		else if (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG)
 			append_mangled_signature (s, info->d.gsharedvt.sig);
 		else if (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_OUT_SIG)
@@ -11389,6 +11396,35 @@ add_preinit_got_slots (MonoAotCompile *acfg)
 	acfg->nshared_got_entries = acfg->got_offset;
 }
 
+static const char* interp_in_static_sigs[] = {
+	"bool ptr int32 ptr&",
+	"bool ptr ptr&",
+	"int32 int32 ptr&",
+	"int32 int32 ptr ptr&",
+	"int32 ptr int32 ptr",
+	"int32 ptr int32 ptr&",
+	"int32 ptr ptr&",
+	"object object ptr ptr ptr",
+	"ptr int32 ptr&",
+	"ptr ptr int32 ptr ptr ptr&",
+	"ptr ptr int32 ptr ptr&",
+	"ptr ptr int32 ptr&",
+	"ptr ptr ptr int32 ptr&",
+	"ptr ptr ptr ptr& ptr&",
+	"ptr ptr ptr ptr&",
+	"ptr ptr ptr&",
+	"ptr ptr uint32 ptr&",
+	"ptr uint32 ptr&",
+	"void object ptr ptr ptr",
+	"void ptr ptr int32 ptr ptr& ptr ptr&",
+	"void ptr ptr int32 ptr ptr&",
+	"void ptr ptr ptr&",
+	"void ptr ptr&",
+	"void ptr",
+	"void int32 ptr&",
+	"void uint32 ptr&",
+};
+
 int
 mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 {
@@ -11629,23 +11665,11 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 #endif
 
 	if (mono_aot_mode_is_interp (&acfg->aot_opts)) {
-		MonoMethod *wrapper;
-		MonoMethodSignature *sig;
-
-		/* object object:interp_in_static (object,intptr,intptr,intptr) */
-		sig = mono_create_icall_signature ("object object ptr ptr ptr");
-		wrapper = mini_get_interp_in_wrapper (sig);
-		add_method (acfg, wrapper);
-
-		/* int object:interp_in_static (intptr,int,intptr) */
-		sig = mono_create_icall_signature ("int32 ptr int32 ptr");
-		wrapper = mini_get_interp_in_wrapper (sig);
-		add_method (acfg, wrapper);
-
-		/* void object:interp_in_static (object,intptr,intptr,intptr) */
-		sig = mono_create_icall_signature ("void object ptr ptr ptr");
-		wrapper = mini_get_interp_in_wrapper (sig);
-		add_method (acfg, wrapper);
+		for (i = 0; i < sizeof (interp_in_static_sigs) / sizeof (const char *); i++) {
+			MonoMethodSignature *sig = mono_create_icall_signature (interp_in_static_sigs [i]);
+			MonoMethod *wrapper = mini_get_interp_in_wrapper (sig);
+			add_method (acfg, wrapper);
+		}
 	}
 
 	TV_GETTIME (atv);
