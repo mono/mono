@@ -525,6 +525,18 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
+		public void Remove_Certificate_OK ()
+		{
+			X509Store xs = new X509Store ("ReadWriteStore");
+			xs.Open (OpenFlags.ReadWrite);
+			xs.Add (cert1);
+			xs.Add (cert2);
+			int countBeforeRemove = xs.Certificates.Count;
+			xs.Remove (cert1);
+			Assert.AreEqual (countBeforeRemove - 1, xs.Certificates.Count);
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void RemoveRange_Null ()
 		{
@@ -579,6 +591,17 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
+		public void RemoveRange_Certificate_OK ()
+		{
+			X509Store xs = new X509Store ("ReadWriteStore");
+			xs.Open (OpenFlags.ReadWrite);
+			xs.AddRange (coll);
+			int countBeforeRemove = xs.Certificates.Count;
+			xs.RemoveRange (coll);
+			Assert.AreEqual (countBeforeRemove - coll.Count, xs.Certificates.Count);
+		}
+
+		[Test]
 		public void Collection_Add ()
 		{
 			X509Store xs = new X509Store ("ReadWriteStore");
@@ -586,6 +609,28 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			Assert.AreEqual (0, xs.Certificates.Count, "Not Open");
 			xs.Close ();
 			Assert.AreEqual (0, xs.Certificates.Count, "Close");
+		}
+
+		[Test]
+		public void CertificatesNewCollection ()
+		{
+			X509Store xs = new X509Store ("ReadWriteStore");
+			xs.Open (OpenFlags.ReadWrite);
+			xs.Add (cert1);
+			var coll1 = xs.Certificates;
+			var coll2 = xs.Certificates;
+			Assert.AreEqual (1, coll1.Count);
+			Assert.AreEqual (1, coll2.Count);
+
+			xs.Close ();
+			Assert.AreEqual (1, coll1.Count);
+			Assert.AreEqual (1, coll2.Count);
+			Assert.AreNotSame (coll1[0], coll2[0]);
+
+			coll1.Clear ();
+			Assert.AreEqual (0, coll1.Count);
+			Assert.AreEqual (1, coll2.Count);
+
 		}
 	}
 }

@@ -109,7 +109,7 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		// properties
 
-		public X509Certificate2Collection Certificates {
+		private X509Certificate2Collection CertList {
 			get {
 				if (list == null)
 					list = new X509Certificate2Collection ();
@@ -117,6 +117,17 @@ namespace System.Security.Cryptography.X509Certificates {
 					list.Clear ();
 
 				return list;
+			}
+		}
+
+		public X509Certificate2Collection Certificates {
+			get {
+				X509Certificate2Collection certificates = this.CertList;
+				X509Certificate2Collection collection = new X509Certificate2Collection ();
+				for (int i = 0; i < certificates.Count; i++)
+					collection.Add (new X509Certificate2 (certificates [i].RawData));
+
+				return collection;
 			}
 		} 
 
@@ -170,7 +181,7 @@ namespace System.Security.Cryptography.X509Certificates {
 					store.Import (new MX.X509Certificate (certificate.RawData));
 				}
 				finally {
-					Certificates.Add (certificate);
+					CertList.Add (certificate);
 				}
 			}
 		}
@@ -195,7 +206,7 @@ namespace System.Security.Cryptography.X509Certificates {
 						store.Import (new MX.X509Certificate (certificate.RawData));
 					}
 					finally {
-						Certificates.Add (certificate);
+						CertList.Add (certificate);
 					}
 				}
 			}
@@ -238,7 +249,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			foreach (MX.X509Certificate x in store.Certificates) {
 				var cert2 = new X509Certificate2 (x.RawData);
 				cert2.PrivateKey = x.RSA;
-				Certificates.Add (cert2);
+				CertList.Add (cert2);
 			}
 		}
 
@@ -259,7 +270,7 @@ namespace System.Security.Cryptography.X509Certificates {
 				store.Remove (new MX.X509Certificate (certificate.RawData));
 			}
 			finally {
-				Certificates.Remove (certificate);
+				CertList.Remove (certificate);
 			}
 		}
 
@@ -291,7 +302,7 @@ namespace System.Security.Cryptography.X509Certificates {
 					store.Remove (new MX.X509Certificate (certificate.RawData));
 			}
 			finally {
-				Certificates.RemoveRange (certificates);
+				CertList.RemoveRange (certificates);
 			}
 		}
 
