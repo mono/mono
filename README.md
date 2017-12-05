@@ -174,8 +174,7 @@ section.
 Reporting bugs
 ==============
 
-To submit bug reports, please use [Xamarin's
-Bugzilla](https://bugzilla.xamarin.com/)
+To submit bug reports, please [open an issue on the mono GitHub repo](https://github.com/mono/mono/issues/new).
 
 Please use the search facility to ensure the same bug hasn't already
 been submitted and follow our
