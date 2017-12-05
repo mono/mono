@@ -490,6 +490,11 @@ Il2CppMonoThread* il2cpp_mono_thread_attach(Il2CppMonoDomain* domain)
 	return (Il2CppMonoThread*)il2cpp::vm::Thread::Attach((Il2CppDomain*)domain);
 }
 
+void il2cpp_mono_thread_detach(Il2CppMonoThread* thread)
+{
+	il2cpp::vm::Thread::Detach((Il2CppThread*)thread);
+}
+
 Il2CppMonoInternalThread* il2cpp_mono_thread_get_internal(Il2CppMonoThread* thread)
 {
 	return (Il2CppMonoInternalThread*)(((Il2CppThread*)thread)->internal_thread);
