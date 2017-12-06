@@ -1559,20 +1559,19 @@ namespace System.Net
 				return (null, new WebException (
 					"The request requires buffering data to succeed.", null, WebExceptionStatus.ProtocolError, response));
 
-			//
-			// Buffering is not allowed but we have alternative way to get same content (we
-			// need to resent it due to NTLM Authentication).
-			//
-			return (HandleResendContentFactory (), null);
-
-			async Task<BufferOffsetSize> HandleResendContentFactory ()
-			{
+			Func<Task<BufferOffsetSize>> handleResendContentFactory = async () => {
 				using (var ms = new MemoryStream ()) {
 					await ResendContentFactory (ms).ConfigureAwait (false);
 					var buffer = ms.ToArray ();
 					return new BufferOffsetSize (buffer, 0, buffer.Length, false);
 				}
-			}
+			};
+
+			//
+			// Buffering is not allowed but we have alternative way to get same content (we
+			// need to resent it due to NTLM Authentication).
+			//
+			return (handleResendContentFactory (), null);
 		}
 
 		// Returns true if redirected

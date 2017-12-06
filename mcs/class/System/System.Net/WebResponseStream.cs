@@ -147,7 +147,10 @@ namespace System.Net
 				// FIXME: NetworkStream.ReadAsync() does not support cancellation.
 				(oldBytes, nbytes) = await HttpWebRequest.RunWithTimeout (
 					ct => ProcessRead (buffer, offset, size, ct),
-					ReadTimeout, () => Abort ()).ConfigureAwait (false);
+					ReadTimeout, () => {
+						Operation.Abort ();
+						InnerStream.Dispose ();
+					}).ConfigureAwait (false);
 			} catch (Exception e) {
 				throwMe = GetReadException (WebExceptionStatus.ReceiveFailure, e, "ReadAsync");
 			}
@@ -181,12 +184,6 @@ namespace System.Net
 			}
 
 			return oldBytes + nbytes;
-
-			void Abort ()
-			{
-				Operation.Abort ();
-				InnerStream.Dispose ();
-			}
 		}
 
 		async Task<(int, int)> ProcessRead (byte[] buffer, int offset, int size, CancellationToken cancellationToken)
