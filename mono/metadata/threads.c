@@ -655,6 +655,7 @@ mono_thread_attach_internal (MonoThread *thread, gboolean force_attach, gboolean
 	MonoThreadInfo *info;
 	MonoInternalThread *internal;
 	MonoDomain *domain, *root_domain;
+	guint32 gchandle;
 
 	g_assert (thread);
 
@@ -688,19 +689,19 @@ mono_thread_attach_internal (MonoThread *thread, gboolean force_attach, gboolean
 	mono_thread_push_appdomain_ref (domain);
 	if (!mono_domain_set (domain, force_domain)) {
 		mono_thread_pop_appdomain_ref ();
-		return FALSE;
+		goto fail;
 	}
 
 	mono_threads_lock ();
 
-	if (threads_starting_up)
-		mono_g_hash_table_remove (threads_starting_up, thread);
-
 	if (shutting_down && !force_attach) {
 		mono_threads_unlock ();
 		mono_thread_pop_appdomain_ref ();
-		return FALSE;
+		goto fail;
 	}
+
+	if (threads_starting_up)
+		mono_g_hash_table_remove (threads_starting_up, thread);
 
 	if (!threads) {
 		threads = mono_g_hash_table_new_type (NULL, NULL, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_THREADING, NULL, "Thread Table");
@@ -736,12 +737,30 @@ mono_thread_attach_internal (MonoThread *thread, gboolean force_attach, gboolean
 	THREAD_DEBUG (g_message ("%s: Attached thread ID %"G_GSIZE_FORMAT" (handle %p)", __func__, internal->tid, internal->handle));
 
 	return TRUE;
+
+fail:
+	mono_threads_lock ();
+	if (threads_starting_up)
+		mono_g_hash_table_remove (threads_starting_up, thread);
+	mono_threads_unlock ();
+
+	if (!mono_thread_info_try_get_internal_thread_gchandle (info, &gchandle))
+		g_error ("%s: failed to get gchandle, info %p", __func__, info);
+
+	mono_gchandle_free (gchandle);
+
+	mono_thread_info_unset_internal_thread_gchandle (info);
+
+	SET_CURRENT_OBJECT(NULL);
+
+	return FALSE;
 }
 
 static void
 mono_thread_detach_internal (MonoInternalThread *thread)
 {
 	MonoThreadInfo *info;
+	MonoInternalThread *value;
 	gboolean removed;
 	guint32 gchandle;
 
@@ -807,20 +826,19 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 
 	mono_threads_lock ();
 
-	if (!threads) {
-		removed = FALSE;
-	} else if (mono_g_hash_table_lookup (threads, (gpointer)thread->tid) != thread) {
-		/* We have to check whether the thread object for the
-		 * tid is still the same in the table because the
-		 * thread might have been destroyed and the tid reused
-		 * in the meantime, in which case the tid would be in
-		 * the table, but with another thread object.
-		 */
-		removed = FALSE;
-	} else {
-		mono_g_hash_table_remove (threads, (gpointer)thread->tid);
-		removed = TRUE;
+	g_assert (threads);
+
+	if (!mono_g_hash_table_lookup_extended (threads, (gpointer)thread->tid, NULL, (gpointer*) &value)) {
+		g_error ("%s: thread %p (tid: %p) should not have been removed yet from threads", __func__, thread, thread->tid);
+	} else if (thread != value) {
+		/* We have to check whether the thread object for the tid is still the same in the table because the
+		 * thread might have been destroyed and the tid reused in the meantime, in which case the tid would be in
+		 * the table, but with another thread object. */
+		g_error ("%s: thread %p (tid: %p) do not match with value %p (tid: %p)", __func__, thread, thread->tid, value, value->tid);
 	}
+
+	removed = mono_g_hash_table_remove (threads, (gpointer)thread->tid);
+	g_assert (removed);
 
 	mono_threads_unlock ();
 
@@ -837,17 +855,6 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 	 * thread calling Join() still has a reference to the first
 	 * thread's object.
 	 */
-
-	/* if the thread is not in the hash it has been removed already */
-	if (!removed) {
-		mono_domain_unset ();
-		mono_memory_barrier ();
-
-		if (mono_thread_cleanup_fn)
-			mono_thread_cleanup_fn (thread_get_tid (thread));
-
-		goto done;
-	}
 
 	mono_release_type_locks (thread);
 
@@ -885,7 +892,9 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 		thread->thread_pinning_ref = NULL;
 	}
 
-done:
+	/* There is no more any guarantee that `thread` is alive */
+	mono_memory_barrier ();
+
 	SET_CURRENT_OBJECT (NULL);
 	mono_domain_unset ();
 
