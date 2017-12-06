@@ -10026,7 +10026,7 @@ static void GetSequencePointsAndSourceFilesUniqueSequencePoints(MonoMethod* meth
 	}
 }
 
-static const Il2CppMethodExecutionContextInfoC* GetExecutionContextInfo(MonoMethod* method, uint32_t* count)
+static void GetExecutionContextAndHeaderInfo(MonoMethod* method, uint32_t* executionContextInfoCount, const Il2CppMethodExecutionContextInfoC **executionContextInfo, const Il2CppMethodHeaderInfoC **headerInfo)
 {
 	void *seqPointIter = NULL;
 	Il2CppSequencePointC *seqPoint;
@@ -10034,13 +10034,16 @@ static const Il2CppMethodExecutionContextInfoC* GetExecutionContextInfo(MonoMeth
 	{
 		if (il2cpp_mono_methods_match(seqPoint->method, method))
 		{
-			*count = seqPoint->executionContextInfoCount;
-			return seqPoint->executionContextInfos;
+			*executionContextInfoCount = seqPoint->executionContextInfoCount;
+			*executionContextInfo = seqPoint->executionContextInfos;
+			*headerInfo = seqPoint->header;
+			return;
 		}
 	}
 
 	g_assert(FALSE); // shouldn't be ever reached
 }
+
 #endif // IL2CPP_MONO_DEBUGGER
 
 static ErrorCode
@@ -10281,10 +10284,25 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 		g_free (locals_map);
 #else
 		uint32_t executionInfoCount, localVariableCount = 0, i;
-		const Il2CppMethodExecutionContextInfoC* executionContextInfo = GetExecutionContextInfo(method, &executionInfoCount);
+		const Il2CppMethodExecutionContextInfoC* executionContextInfo;
+		const Il2CppMethodHeaderInfoC* headerInfo;
+
+		GetExecutionContextAndHeaderInfo(method, &executionInfoCount, &executionContextInfo, &headerInfo);
 
 		if (CHECK_PROTOCOL_VERSION(2, 43)) {
-			buffer_add_int(buf, 0);
+			if (headerInfo)
+			{
+				buffer_add_int(buf, headerInfo->numScopes);
+				for (i = 0; i < headerInfo->numScopes; ++i)
+				{
+					buffer_add_int(buf, headerInfo->scopes[i].startOffset);
+					buffer_add_int(buf, headerInfo->scopes[i].endOffset);
+				}
+			}
+			else
+			{
+				buffer_add_int(buf, 0);
+			}
 		}
 
 		for (i = 0; i < executionInfoCount; i++)
@@ -10307,10 +10325,12 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 				buffer_add_string(buf, executionContextInfo[i].name);
 		}
 
-		for (i = 0; i < localVariableCount; i++)
+		for (i = 0; i < executionInfoCount; i++)
 		{
-			buffer_add_int(buf, 0);
-			buffer_add_int(buf, 0);
+			if (executionContextInfo[i].variableKind == kMethodVariableKindC_LocalVariable) {
+				buffer_add_int(buf, executionContextInfo[i].start);
+				buffer_add_int(buf, executionContextInfo[i].end);
+			}
 		}
 #endif // !IL2CPP_MONO_DEBUGGER
 		break;

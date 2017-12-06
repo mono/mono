@@ -217,12 +217,28 @@ typedef struct
 	const Il2CppMonoType* const* const type;
 	const char* const name;
 	const MethodVariableKindC variableKind;
+	const int start;
+	const int end;
 } Il2CppMethodExecutionContextInfoC;
+
+typedef struct
+{
+	int startOffset;
+	int endOffset;
+} Il2CppMethodScopeC;
+
+typedef struct
+{
+	int codeSize;
+	int numScopes;
+	Il2CppMethodScopeC *scopes;
+} Il2CppMethodHeaderInfoC;
 
 typedef struct
 {
 	const Il2CppMethodExecutionContextInfoC* const executionContextInfos;
 	const uint32_t executionContextInfoCount;
+	const Il2CppMethodHeaderInfoC *header;
 	const Il2CppMonoMethod* method;
 	const char* const sourceFile;
 	const uint8_t sourceFileHash[16];
