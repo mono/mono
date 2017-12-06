@@ -242,9 +242,6 @@ namespace System.Net
 		{
 			WebConnection.Debug ($"{ME} INNER READ ASYNC");
 
-			if (Connection.ID < 0)
-				throw new NotImplementedException ("DISPOSED!");
-
 			Operation.ThrowIfDisposed (cancellationToken);
 
 			int nbytes = 0;
