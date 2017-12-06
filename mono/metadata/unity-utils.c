@@ -1129,8 +1129,6 @@ mono_unity_alloc(gsize size)
 MONO_API void
 mono_unity_thread_fast_attach (MonoDomain *domain)
 {
-	g_assert_not_reached ();
-#if 1
 	MonoInternalThread *thread;
 
 	g_assert (domain);
@@ -1143,14 +1141,11 @@ mono_unity_thread_fast_attach (MonoDomain *domain)
 	g_assert (mono_domain_set (domain, FALSE));
 
 	//mono_profiler_thread_fast_attach (thread->tid);
-#endif
 }
 
 MONO_API void
 mono_unity_thread_fast_detach ()
 {
-	g_assert_not_reached ();
-#if 1
 	MonoInternalThread *thread;
 	MonoDomain *current_domain;
 
@@ -1168,7 +1163,6 @@ mono_unity_thread_fast_detach ()
 	// the thread to stay alive and keep running while the domain can be unloaded
 	g_assert (mono_domain_set (mono_get_root_domain (), FALSE));
 	mono_thread_pop_appdomain_ref ();
-#endif
 }
 
 // hack, FIXME jon
