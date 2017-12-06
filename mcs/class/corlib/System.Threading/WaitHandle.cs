@@ -52,54 +52,49 @@ namespace System.Threading
 		// This native operation actually has to call back into managed code and invoke .Wait
 		//  on the current SynchronizationContext. As such, our implementation of this "native" method
 		//  is actually managed code, and the real native icall being used is Wait_internal.
-		// Safe access to Wait_internal is provided by the WaitMultiple and WaitSingle (previously
-		//  called WaitOneNative) methods defined further below.
 		static int WaitOneNative (SafeHandle waitableSafeHandle, uint millisecondsTimeout, bool hasThreadAffinity, bool exitContext)
 		{
+			bool release = false;
 			var context = SynchronizationContext.Current;
+			try {
+				waitableSafeHandle.DangerousAddRef (ref release);
 
-			// HACK: Documentation (and public posts by experts like Joe Duffy) suggests that
-			//  users must first call SetWaitNotificationRequired to flag that a given synchronization
-			//  context overrides .Wait. Because invoking the Wait method is somewhat expensive, we use
-			//  the notification-required flag to determine whether or not we should invoke the managed
-			//  wait method.
-			// Another option would be to check whether this context uses the default Wait implementation,
-			//  but I don't know of a cheap way to do this that handles derived types correctly.
-			// If the thread does not have a synchronization context set at all, we can safely just
-			//  jump directly to invoking WaitSingle.
-			if ((context != null) && context.IsWaitNotificationRequired ()) {
-				bool release = false;
-				waitableSafeHandle.DangerousAddRef(ref release);
-
-				try {
 #if !DISABLE_REMOTING
-					if (exitContext)
-						SynchronizationAttribute.ExitContext ();
+				if (exitContext)
+					SynchronizationAttribute.ExitContext ();
 #endif
 
+				// HACK: Documentation (and public posts by experts like Joe Duffy) suggests that
+				//  users must first call SetWaitNotificationRequired to flag that a given synchronization
+				//  context overrides .Wait. Because invoking the Wait method is somewhat expensive, we use
+				//  the notification-required flag to determine whether or not we should invoke the managed
+				//  wait method.
+				// Another option would be to check whether this context uses the default Wait implementation,
+				//  but I don't know of a cheap way to do this that handles derived types correctly.
+				// If the thread does not have a synchronization context set at all, we can safely just
+				//  jump directly to invoking Wait_internal.
+				if ((context != null) && context.IsWaitNotificationRequired ()) {
 					return context.Wait (
-						// TODO: This alloc could potentially be optimized out for common cases. Since
-						//  waits are a common operation it might be worth it to do that.
 						new IntPtr[] { waitableSafeHandle.DangerousGetHandle () },
-						// TODO: The value of this shouldn't matter for a single element,
-						//  but it's possible code depends on it. Should test what coreclr & windows CLR do
 						false, 
-						// FIXME: Ugh, there's an implicit uint->int cast here by design...
 						(int)millisecondsTimeout
 					);
-				} finally {
-					if (release)
-						waitableSafeHandle.DangerousRelease();
+				} else {
+					unsafe {
+						IntPtr handle = waitableSafeHandle.DangerousGetHandle ();
+						return Wait_internal (&handle, 1, false, (int)millisecondsTimeout);
+					}
+				}
+			} finally {
+				if (release)
+					waitableSafeHandle.DangerousRelease ();
 
 #if !DISABLE_REMOTING
-					if (exitContext)
-						SynchronizationAttribute.EnterContext ();
+				if (exitContext)
+					SynchronizationAttribute.EnterContext ();
 #endif
-
-				}
-			} else {
-				return WaitSingle (waitableSafeHandle, millisecondsTimeout, hasThreadAffinity, exitContext);
 			}
+
 		}
 
 		static int WaitMultiple(WaitHandle[] waitHandles, int millisecondsTimeout, bool exitContext, bool WaitAll)
@@ -108,6 +103,7 @@ namespace System.Threading
 				return WAIT_FAILED;
 
 			int release_last = -1;
+			var context = SynchronizationContext.Current;
 
 			try {
 #if !DISABLE_REMOTING
@@ -125,44 +121,30 @@ namespace System.Threading
 					}
 				}
 
-				unsafe {
-					IntPtr* handles = stackalloc IntPtr[waitHandles.Length];
-
+				if ((context != null) && context.IsWaitNotificationRequired ()) {
+					IntPtr[] handles = new IntPtr[waitHandles.Length];
 					for (int i = 0; i < waitHandles.Length; ++i)
 						handles[i] = waitHandles[i].SafeWaitHandle.DangerousGetHandle ();
 
-					return Wait_internal(handles, waitHandles.Length, WaitAll, millisecondsTimeout);
+					return context.Wait (
+						handles,
+						false, 
+						(int)millisecondsTimeout
+					);
+				} else {
+					unsafe {
+						IntPtr* handles = stackalloc IntPtr[waitHandles.Length];
+
+						for (int i = 0; i < waitHandles.Length; ++i)
+							handles[i] = waitHandles[i].SafeWaitHandle.DangerousGetHandle ();
+
+						return Wait_internal (handles, waitHandles.Length, WaitAll, millisecondsTimeout);
+					}
 				}
 			} finally {
 				for (int i = release_last; i >= 0; --i) {
 					waitHandles [i].SafeWaitHandle.DangerousRelease ();
 				}
-
-#if !DISABLE_REMOTING
-				if (exitContext)
-					SynchronizationAttribute.EnterContext ();
-#endif
-			}
-		}
-
-		static int WaitSingle (SafeHandle waitableSafeHandle, uint millisecondsTimeout, bool hasThreadAffinity, bool exitContext)
-		{
-			bool release = false;
-			try {
-#if !DISABLE_REMOTING
-				if (exitContext)
-					SynchronizationAttribute.ExitContext ();
-#endif
-
-				waitableSafeHandle.DangerousAddRef (ref release);
-
-				unsafe {
-					IntPtr handle = waitableSafeHandle.DangerousGetHandle();
-					return Wait_internal(&handle, 1, false, (int)millisecondsTimeout);
-				}
-			} finally {
-				if (release)
-					waitableSafeHandle.DangerousRelease ();
 
 #if !DISABLE_REMOTING
 				if (exitContext)
