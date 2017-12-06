@@ -15,31 +15,31 @@ typedef struct _Il2CppMonoAssembly Il2CppMonoAssembly;
 typedef struct _Il2CppMonoDomain Il2CppMonoDomain;
 typedef struct Il2CppImage Il2CppMonoImage;
 typedef struct _Il2CppMonoMethodSignature Il2CppMonoMethodSignature;
-typedef struct _Il2CppMonoMethod Il2CppMonoMethod;
-typedef struct _Il2CppMonoClassField Il2CppMonoClassField;
+typedef struct MethodInfo Il2CppMonoMethod;
+typedef struct FieldInfo Il2CppMonoClassField;
 typedef struct Il2CppArrayType Il2CppMonoArrayType;
 typedef struct Il2CppGenericParam Il2CppMonoGenericParam;
-typedef struct _Il2CppMonoGenericInst Il2CppMonoGenericInst;
-typedef struct _Il2CppMonoGenericContext Il2CppMonoGenericContext;
-typedef struct _Il2CppMonoGenericClass Il2CppMonoGenericClass;
+typedef struct Il2CppGenericInst Il2CppMonoGenericInst;
+typedef struct Il2CppGenericContext Il2CppMonoGenericContext;
+typedef struct Il2CppGenericClass Il2CppMonoGenericClass;
 typedef struct _Il2CppMonoMethodHeader Il2CppMonoMethodHeader;
 typedef struct _Il2CppMonoVTable Il2CppMonoVTable;
-typedef struct _Il2CppMonoProperty Il2CppMonoProperty;
+typedef struct Il2CppPropertyInfo Il2CppMonoProperty;
 typedef struct Il2CppString Il2CppMonoString;
 typedef struct _Il2CppMonoAppDomain Il2CppMonoAppDomain;
 typedef struct _Il2CppMonoMarshalByRefObject Il2CppMonoMarshalByRefObject;
 typedef struct _Il2CppMonoObject Il2CppMonoObject;
-typedef struct _Il2CppMonoArray Il2CppMonoArray;
+typedef struct Il2CppArraySize Il2CppMonoArray;
 typedef struct _Il2CppMonoCustomAttrInfo Il2CppMonoCustomAttrInfo;
-typedef struct _Il2CppMonoThread Il2CppMonoThread;
+typedef struct Il2CppThread Il2CppMonoThread;
 typedef struct Il2CppGHashTable Il2CppMonoGHashTable;
 typedef struct Il2CppGenericContainer Il2CppMonoGenericContainer;
 typedef struct Il2CppReflectionAssembly Il2CppMonoReflectionAssembly;
-typedef struct _Il2CppMonoReflectionType Il2CppMonoReflectionType;
+typedef struct Il2CppReflectionType Il2CppMonoReflectionType;
 typedef struct Il2CppProfiler Il2CppMonoProfiler;
 typedef struct _Il2CppMonoJitTlsData Il2CppMonoJitTlsData;
 typedef struct _Il2CppMonoRuntimeExceptionHandlingCallbacks Il2CppMonoRuntimeExceptionHandlingCallbacks;
-typedef struct _Il2CppMonoInternalThread Il2CppMonoInternalThread;
+typedef struct Il2CppInternalThread Il2CppMonoInternalThread;
 typedef struct _Il2CppMonoCustomAttrEntry Il2CppMonoCustomAttrEntry;
 typedef struct _Il2CppMonoStackFrameInfo Il2CppMonoStackFrameInfo;
 typedef struct Il2CppDefaults Il2CppMonoDefaults;
@@ -83,11 +83,6 @@ struct _Il2CppMonoException
 	Il2CppMonoObject object;
 };
 
-struct _Il2CppMonoGenericContext {
-	Il2CppMonoGenericInst *class_inst;
-	Il2CppMonoGenericInst *method_inst;
-};
-
 struct _Il2CppMonoMethodInflated
 {
 	Il2CppMonoMethod *declaring;
@@ -126,74 +121,11 @@ struct _Il2CppMonoCustomAttrInfo
 	Il2CppMonoCustomAttrEntry attrs [MONO_ZERO_LEN_ARRAY];
 };
 
-struct _Il2CppMonoReflectionType
-{
-	Il2CppMonoType *type;
-};
-
-struct _Il2CppMonoInternalThread
-{
-	Il2CppMonoObject obj;
-	int lock_thread_id;
-	void* handle;
-	void* native_handle;
-	Il2CppMonoArray* cached_culture_info;
-	uint16_t* name;
-	int name_len;
-	uint32_t state;
-	Il2CppMonoObject* abort_exc;
-	int abort_state_handle;
-	uint64_t tid;
-	intptr_t debugger_thread;
-	void** static_data;
-	void* runtime_thread_info;
-	Il2CppMonoObject* current_appcontext;
-	Il2CppMonoObject* root_domain_thread;
-	Il2CppMonoArray* _serialized_principal;
-	int _serialized_principal_version;
-	void* appdomain_refs;
-	int32_t interruption_requested;
-	void* synch_cs;
-	uint8_t threadpool_thread;
-	uint8_t thread_interrupt_requested;
-	int stack_size;
-	uint8_t apartment_state;
-	int critical_region_level;
-	int managed_id;
-	uint32_t small_id;
-	void* manage_callback;
-	void* interrupt_on_stop;
-	void* flags;
-	void* thread_pinning_ref;
-	void* abort_protected_block_count;
-	int32_t priority;
-	void* owned_mutexes;
-	void * suspended;
-	int32_t self_suspended;
-	size_t thread_state;
-	size_t unused2;
-	void* last;
-};
-
-struct _Il2CppMonoThread
-{
-	Il2CppMonoInternalThread *internal_thread;
-};
-
 typedef gboolean (*Il2CppMonoInternalStackWalk) (Il2CppMonoStackFrameInfo *frame, MonoContext *ctx, gpointer data);
 
 struct _Il2CppMonoRuntimeExceptionHandlingCallbacks
 {
 	void (*il2cpp_mono_walk_stack_with_state) (Il2CppMonoInternalStackWalk func, MonoThreadUnwindState *state, MonoUnwindOptions options, void *user_data);
-};
-
-
-struct _Il2CppMonoArray
-{
-	Il2CppMonoObject obj;
-	MonoArrayBounds *bounds;
-	mono_array_size_t max_length;
-	double vector [MONO_ZERO_LEN_ARRAY];
 };
 
 struct _Il2CppMonoMarshalByRefObject
@@ -218,14 +150,6 @@ struct _Il2CppMonoVTable
 	guint8 initialized;
 	gpointer type;
 	guint init_failed     : 1;
-};
-
-struct _Il2CppMonoProperty
-{
-	const char *name;
-	Il2CppMonoMethod *get;
-	Il2CppMonoMethod *set;
-	guint32 attrs;
 };
 
 struct _Il2CppMonoAppDomain
@@ -267,40 +191,6 @@ struct _Il2CppMonoMethodSignature
 	unsigned int  call_convention     : 6;
 	unsigned int  hasthis             : 1;
 	Il2CppMonoType **params;
-};
-
-struct _Il2CppMonoMethod
-{
-	Il2CppMonoClass *klass;
-	const char *name;
-	guint16 flags;
-	guint16 iflags;
-	guint32 token;
-	unsigned int wrapper_type:5;
-	unsigned int is_inflated:1;
-	unsigned int is_generic:1;
-};
-
-struct _Il2CppMonoClassField
-{
-	Il2CppMonoType *type;
-	int offset;
-	const char *name;
-	Il2CppMonoClass *parent;
-};
-
-struct _Il2CppMonoGenericInst
-{
-	guint type_argc    : 22;
-	guint is_open      :  1;
-	Il2CppMonoType *type_argv [MONO_ZERO_LEN_ARRAY];
-};
-
-
-struct _Il2CppMonoGenericClass
-{
-	Il2CppMonoGenericContext context;
-	Il2CppMonoClass *container_class;
 };
 
 struct _Il2CppMonoTypeNameParse

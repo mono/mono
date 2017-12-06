@@ -1035,9 +1035,9 @@ mono_debugger_agent_init (void)
 	mono_profiler_set_thread_started_callback (prof, thread_startup);
 	mono_profiler_set_thread_stopped_callback (prof, thread_end);
 	mono_profiler_set_assembly_loaded_callback (prof, assembly_load);
-	#ifndef IL2CPP_MONO_DEBUGGER
+#ifndef IL2CPP_MONO_DEBUGGER
 	mono_profiler_set_assembly_unloading_callback (prof, assembly_unload);
-	#endif
+#endif
 	mono_profiler_set_jit_done_callback (prof, jit_done);
 	mono_profiler_set_jit_failed_callback (prof, jit_failed);
 

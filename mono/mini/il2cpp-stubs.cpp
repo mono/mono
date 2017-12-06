@@ -905,7 +905,7 @@ Il2CppMonoObject* il2cpp_mono_runtime_try_invoke(Il2CppMonoMethod* method, void*
 {
 	error_init(error);
 
-	if (((MethodInfo*)method)->declaring_type->valuetype)
+	if (((MethodInfo*)method)->klass->valuetype)
 		obj = static_cast<Il2CppObject*>(obj) - 1;
 
 	return (Il2CppMonoObject*)il2cpp::vm::Runtime::Invoke((MethodInfo*)method, obj, params, (Il2CppException**)exc);
@@ -1423,7 +1423,7 @@ gboolean il2cpp_mono_methods_match(Il2CppMonoMethod* left, Il2CppMonoMethod* rig
 	if (leftMethod->is_inflated && !leftMethod->is_generic && leftMethod->genericMethod->methodDefinition == rightMethod)
 		return TRUE;
     if (leftMethod->is_generic && rightMethod->is_inflated && rightMethod->methodPointer &&
-        leftMethod->declaring_type == rightMethod->declaring_type &&
+        leftMethod->klass == rightMethod->klass &&
         strcmp(leftMethod->name, rightMethod->name) == 0)
     {
         if (leftMethod->parameters_count != rightMethod->parameters_count)
@@ -1592,7 +1592,7 @@ uint32_t il2cpp_method_get_flags_no_iflags(const Il2CppMonoMethod * method)
 bool il2cpp_method_is_string_ctor(const Il2CppMonoMethod * method)
 {
 	MethodInfo* methodInfo = (MethodInfo*)method;
-	return methodInfo->declaring_type == il2cpp_defaults.string_class && !strcmp (methodInfo->name, ".ctor");
+	return methodInfo->klass == il2cpp_defaults.string_class && !strcmp (methodInfo->name, ".ctor");
 }
 
 Il2CppMonoClass* il2cpp_defaults_void_class()
