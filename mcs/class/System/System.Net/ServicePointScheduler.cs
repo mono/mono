@@ -140,8 +140,8 @@ namespace System.Net
 				Debug ($"MAIN LOOP");
 
 				// Gather list of currently running operations.
-				(ConnectionGroup group, WebOperation operation)[] operationArray;
-				(ConnectionGroup group, WebConnection connection, Task task)[] idleArray;
+				ValueTuple<ConnectionGroup, WebOperation>[] operationArray;
+				ValueTuple<ConnectionGroup, WebConnection, Task>[] idleArray;
 				var taskList = new List<Task> ();
 				lock (ServicePoint) {
 					Cleanup ();
@@ -153,16 +153,16 @@ namespace System.Net
 						return;
 					}
 
-					operationArray = new(ConnectionGroup, WebOperation)[operations.Count];
+					operationArray = new ValueTuple<ConnectionGroup, WebOperation>[operations.Count];
 					operations.CopyTo (operationArray, 0);
-					idleArray = new(ConnectionGroup, WebConnection, Task)[idleConnections.Count];
+					idleArray = new ValueTuple<ConnectionGroup, WebConnection, Task>[idleConnections.Count];
 					idleConnections.CopyTo (idleArray, 0);
 
 					taskList.Add (schedulerEvent.WaitAsync (maxIdleTime));
 					foreach (var item in operationArray)
-						taskList.Add (item.operation.WaitForCompletion (true));
+						taskList.Add (item.Item2.WaitForCompletion (true));
 					foreach (var item in idleArray)
-						taskList.Add (item.task);
+						taskList.Add (item.Item3);
 				}
 
 				Debug ($"MAIN LOOP #1: operations={operationArray.Length} idle={idleArray.Length}");
@@ -185,11 +185,11 @@ namespace System.Net
 
 					if (idx >= 0) {
 						var item = operationArray[idx];
-						Debug ($"MAIN LOOP #2: {idx} group={item.group.ID} Op={item.operation.ID}");
+						Debug ($"MAIN LOOP #2: {idx} group={item.Item1.ID} Op={item.Item2.ID}");
 						operations.Remove (item);
 
-						var opTask = (Task<(bool, WebOperation)>)ret;
-						var runLoop = OperationCompleted (item.group, item.operation, opTask);
+						var opTask = (Task<ValueTuple<bool, WebOperation>>)ret;
+						var runLoop = OperationCompleted (item.Item1, item.Item2, opTask);
 						Debug ($"MAIN LOOP #2 DONE: {idx} {runLoop}");
 						if (runLoop)
 							RunSchedulerIteration ();
@@ -205,9 +205,9 @@ namespace System.Net
 
 					if (idx >= 0) {
 						var item = idleArray[idx];
-						Debug ($"MAIN LOOP #3: {idx} group={item.group.ID} Cnc={item.connection.ID}");
+						Debug ($"MAIN LOOP #3: {idx} group={item.Item1.ID} Cnc={item.Item2.ID}");
 						idleConnections.Remove (item);
-						CloseIdleConnection (item.group, item.connection);
+						CloseIdleConnection (item.Item1, item.Item2);
 					}
 				}
 			}
