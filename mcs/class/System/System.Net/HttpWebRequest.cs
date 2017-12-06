@@ -935,13 +935,18 @@ namespace System.Net
 		internal static async Task<T> RunWithTimeout<T> (Func<CancellationToken, Task<T>> func, int timeout, Action abort)
 		{
 			using (var cts = new CancellationTokenSource ()) {
-				cts.CancelAfter (timeout);
-				cts.Token.Register (() => abort ());
 				var timeoutTask = Task.Delay (timeout);
 				var workerTask = func (cts.Token);
 				var ret = await Task.WhenAny (workerTask, timeoutTask).ConfigureAwait (false);
-				if (ret == timeoutTask)
+				if (ret == timeoutTask) {
+					try {
+						cts.Cancel ();
+						abort ();
+					} catch {
+						// Ignore; we report the timeout.
+					}
 					throw new WebException (SR.net_timeout, WebExceptionStatus.Timeout);
+				}
 				return workerTask.Result;
 			}
 		}
