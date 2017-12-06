@@ -1702,7 +1702,7 @@ namespace System.Net
 				code = webResponse.StatusCode;
 				if ((!auth_state.IsCompleted && code == HttpStatusCode.Unauthorized && credentials != null) ||
 					(ProxyQuery && !proxy_auth_state.IsCompleted && code == HttpStatusCode.ProxyAuthenticationRequired)) {
-					if (!usedPreAuth && CheckAuthorization (webResponse, code)) {
+					if (CheckAuthorization (webResponse, code)) {
 						// Keep the written body, so it can be rewritten in the retry
 						if (MethodWithBuffer) {
 							if (AllowWriteStreamBuffering) {
