@@ -67,42 +67,6 @@ namespace System.Net
 			}
 		}
 
-		struct OperationArrayEntry
-		{
-			public readonly ConnectionGroup Group;
-			public readonly WebOperation Operation;
-
-			public OperationArrayEntry (ConnectionGroup group, WebOperation operation)
-			{
-				Group = group;
-				Operation = operation;
-			}
-
-			public static implicit operator OperationArrayEntry ((ConnectionGroup group, WebOperation operation) arg)
-			{
-				return new OperationArrayEntry (arg.group, arg.operation);
-			}
-
-			public static implicit operator (ConnectionGroup group, WebOperation operation) (OperationArrayEntry arg)
-			{
-				return (arg.Group, arg.Operation);
-			}
-		}
-
-		struct IdleArrayEntry
-		{
-			public readonly ConnectionGroup Group;
-			public readonly WebConnection Connection;
-			public readonly Task Task;
-
-			public IdleArrayEntry (ConnectionGroup group, WebConnection connection, Task task)
-			{
-				Group = group;
-				Connection = connection;
-				Task = task;
-			}
-		}
-
 		public ServicePointScheduler (ServicePoint servicePoint, int connectionLimit, int maxIdleTime)
 		{
 			ServicePoint = servicePoint;
@@ -111,8 +75,8 @@ namespace System.Net
 
 			schedulerEvent = new AsyncManualResetEvent (false);
 			defaultGroup = new ConnectionGroup (this, string.Empty);
-			operations = new LinkedList<OperationArrayEntry> ();
-			idleConnections = new LinkedList<IdleArrayEntry> ();
+			operations = new LinkedList<(ConnectionGroup, WebOperation)> ();
+			idleConnections = new LinkedList<(ConnectionGroup, WebConnection, Task)> ();
 			idleSince = DateTime.UtcNow;
 		}
 
@@ -133,8 +97,8 @@ namespace System.Net
 		AsyncManualResetEvent schedulerEvent;
 		ConnectionGroup defaultGroup;
 		Dictionary<string, ConnectionGroup> groups;
-		LinkedList<OperationArrayEntry> operations;
-		LinkedList<IdleArrayEntry> idleConnections;
+		LinkedList<(ConnectionGroup, WebOperation)> operations;
+		LinkedList<(ConnectionGroup, WebConnection, Task)> idleConnections;
 		int currentConnections;
 		int connectionLimit;
 		DateTime idleSince;
@@ -176,8 +140,8 @@ namespace System.Net
 				Debug ($"MAIN LOOP");
 
 				// Gather list of currently running operations.
-				OperationArrayEntry[] operationArray;
-				IdleArrayEntry[] idleArray;
+				(ConnectionGroup group, WebOperation operation)[] operationArray;
+				(ConnectionGroup group, WebConnection connection, Task task)[] idleArray;
 				var taskList = new List<Task> ();
 				lock (ServicePoint) {
 					Cleanup ();
@@ -189,16 +153,16 @@ namespace System.Net
 						return;
 					}
 
-					operationArray = new OperationArrayEntry[operations.Count];
+					operationArray = new(ConnectionGroup, WebOperation)[operations.Count];
 					operations.CopyTo (operationArray, 0);
-					idleArray = new IdleArrayEntry[idleConnections.Count];
+					idleArray = new(ConnectionGroup, WebConnection, Task)[idleConnections.Count];
 					idleConnections.CopyTo (idleArray, 0);
 
 					taskList.Add (schedulerEvent.WaitAsync (maxIdleTime));
 					foreach (var item in operationArray)
-						taskList.Add (item.Operation.WaitForCompletion (true));
+						taskList.Add (item.operation.WaitForCompletion (true));
 					foreach (var item in idleArray)
-						taskList.Add (item.Task);
+						taskList.Add (item.task);
 				}
 
 				Debug ($"MAIN LOOP #1: operations={operationArray.Length} idle={idleArray.Length}");
@@ -221,11 +185,11 @@ namespace System.Net
 
 					if (idx >= 0) {
 						var item = operationArray[idx];
-						Debug ($"MAIN LOOP #2: {idx} group={item.Group.ID} Op={item.Operation.ID}");
+						Debug ($"MAIN LOOP #2: {idx} group={item.group.ID} Op={item.operation.ID}");
 						operations.Remove (item);
 
-						var opTask = (Task<WebOperationResult>)ret;
-						var runLoop = OperationCompleted (item.Group, item.Operation, opTask);
+						var opTask = (Task<(bool, WebOperation)>)ret;
+						var runLoop = OperationCompleted (item.group, item.operation, opTask);
 						Debug ($"MAIN LOOP #2 DONE: {idx} {runLoop}");
 						if (runLoop)
 							RunSchedulerIteration ();
@@ -241,9 +205,9 @@ namespace System.Net
 
 					if (idx >= 0) {
 						var item = idleArray[idx];
-						Debug ($"MAIN LOOP #3: {idx} group={item.Group.ID} Cnc={item.Connection.ID}");
+						Debug ($"MAIN LOOP #3: {idx} group={item.group.ID} Cnc={item.connection.ID}");
 						idleConnections.Remove (item);
-						CloseIdleConnection (item.Group, item.Connection);
+						CloseIdleConnection (item.group, item.connection);
 					}
 				}
 			}
@@ -291,7 +255,7 @@ namespace System.Net
 			} while (repeat);
 		}
 
-		bool OperationCompleted (ConnectionGroup group, WebOperation operation, Task<WebOperationResult> task)
+		bool OperationCompleted (ConnectionGroup group, WebOperation operation, Task<(bool, WebOperation)> task)
 		{
 #if MONO_WEB_DEBUG
 			var me = $"{nameof (OperationCompleted)}(group={group.ID}, Op={operation.ID}, Cnc={operation.Connection.ID})";
@@ -299,8 +263,7 @@ namespace System.Net
 			string me = null;
 #endif
 
-			var result = task.Status == TaskStatus.RanToCompletion ? task.Result : (false, null);
-			var (ok, next) = (result.KeepAlive, result.Next);
+			var (ok, next) = task.Status == TaskStatus.RanToCompletion ? task.Result : (false, null);
 			Debug ($"{me}: {task.Status} {ok} {next?.ID}");
 
 			if (!ok || !operation.Connection.Continue (next)) {
@@ -315,7 +278,7 @@ namespace System.Net
 			if (next == null) {
 				if (ok) {
 					var idleTask = Task.Delay (MaxIdleTime);
-					idleConnections.AddLast (new IdleArrayEntry (group, operation.Connection, idleTask));
+					idleConnections.AddLast ((group, operation.Connection, idleTask));
 					Debug ($"{me} keeping connection open for {MaxIdleTime} milliseconds.");
 				} else {
 					Debug ($"{me}: closed connection and done.");
@@ -387,7 +350,7 @@ namespace System.Net
 				var node = iter;
 				iter = iter.Next;
 
-				if (node.Value.Operation == operation)
+				if (node.Value.Item2 == operation)
 					operations.Remove (node);
 			}
 		}
@@ -399,7 +362,7 @@ namespace System.Net
 				var node = iter;
 				iter = iter.Next;
 
-				if (node.Value.Connection == connection)
+				if (node.Value.Item2 == connection)
 					idleConnections.Remove (node);
 			}
 		}

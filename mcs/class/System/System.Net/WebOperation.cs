@@ -33,28 +33,6 @@ using System.Diagnostics;
 
 namespace System.Net
 {
-	struct WebOperationResult
-	{
-		public readonly bool KeepAlive;
-		public readonly WebOperation Next;
-
-		public WebOperationResult (bool keepAlive, WebOperation next)
-		{
-			KeepAlive = keepAlive;
-			Next = next;
-		}
-
-		public static implicit operator WebOperationResult ((bool keepAlive, WebOperation next) arg)
-		{
-			return new WebOperationResult (arg.keepAlive, arg.next);
-		}
-
-		public static implicit operator (bool keepAlive, WebOperation next) (WebOperationResult arg)
-		{
-			return (arg.KeepAlive, arg.Next);
-		}
-	}
-
 	class WebOperation
 	{
 		public HttpWebRequest Request {
@@ -259,7 +237,7 @@ namespace System.Net
 			return responseTask.Task;
 		}
 
-		internal async Task<WebOperationResult> WaitForCompletion (bool ignoreErrors)
+		internal async Task<(bool, WebOperation)> WaitForCompletion (bool ignoreErrors)
 		{
 			try {
 				return await finishedTask.Task.ConfigureAwait (false);
