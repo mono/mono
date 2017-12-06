@@ -83,6 +83,7 @@ scripts_4_0 = \
 	csharp$(SCRIPT_SUFFIX)			\
 	httpcfg$(SCRIPT_SUFFIX)			\
 	lc$(SCRIPT_SUFFIX)			\
+	linkeranalyzer$(SCRIPT_SUFFIX)		\
 	mconfig$(SCRIPT_SUFFIX)			\
 	mod$(SCRIPT_SUFFIX)			\
 	monolinker$(SCRIPT_SUFFIX)		\
