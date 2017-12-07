@@ -884,7 +884,8 @@ done:
 	SET_CURRENT_OBJECT (NULL);
 	mono_domain_unset ();
 
-	mono_thread_info_unset_internal_thread_gchandle ((MonoThreadInfo*) thread->thread_info);
+	if ((MonoThreadInfo*) thread->thread_info)
+		mono_thread_info_unset_internal_thread_gchandle ((MonoThreadInfo*) thread->thread_info);
 
 	MONO_PROFILER_RAISE (thread_exited, (thread->tid));
 
