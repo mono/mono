@@ -8,38 +8,40 @@
 
 #define IL2CPP_MONO_PUBLIC_KEY_TOKEN_LENGTH	17
 
-typedef struct Il2CppType Il2CppMonoType;
-typedef struct Il2CppClass Il2CppMonoClass;
+//Converted to il2cpp types
+#define MonoType Il2CppType
+#define MonoClass Il2CppClass
+#define MonoImage Il2CppImage
+#define MonoMethod MethodInfo
+#define MonoClassField FieldInfo
+#define MonoArrayType Il2CppArrayType
+#define MonoGenericParam Il2CppGenericParameter
+#define MonoGenericInst Il2CppGenericInst
+#define MonoGenericContext Il2CppGenericContext
+#define MonoGenericClass Il2CppGenericClass
+#define MonoGenericContainer Il2CppGenericContainer
+#define MonoProperty PropertyInfo
+#define MonoString Il2CppString
+#define MonoArray Il2CppArraySize
+#define MonoThread Il2CppThread
+#define MonoInternalThread Il2CppInternalThread
+#define MonoReflectionType Il2CppReflectionType
+#define MonoProfiler Il2CppProfiler
+
+//still stubs everywhere
 typedef struct _Il2CppMonoAssemblyName Il2CppMonoAssemblyNameReplacement;
 typedef struct _Il2CppMonoAssembly Il2CppMonoAssembly;
 typedef struct _Il2CppMonoDomain Il2CppMonoDomain;
-typedef struct Il2CppImage Il2CppMonoImage;
 typedef struct _Il2CppMonoMethodSignature Il2CppMonoMethodSignature;
-typedef struct MethodInfo Il2CppMonoMethod;
-typedef struct FieldInfo Il2CppMonoClassField;
-typedef struct Il2CppArrayType Il2CppMonoArrayType;
-typedef struct Il2CppGenericParam Il2CppMonoGenericParam;
-typedef struct Il2CppGenericInst Il2CppMonoGenericInst;
-typedef struct Il2CppGenericContext Il2CppMonoGenericContext;
-typedef struct Il2CppGenericClass Il2CppMonoGenericClass;
 typedef struct _Il2CppMonoMethodHeader Il2CppMonoMethodHeader;
 typedef struct _Il2CppMonoVTable Il2CppMonoVTable;
-typedef struct Il2CppPropertyInfo Il2CppMonoProperty;
-typedef struct Il2CppString Il2CppMonoString;
 typedef struct _Il2CppMonoAppDomain Il2CppMonoAppDomain;
 typedef struct _Il2CppMonoMarshalByRefObject Il2CppMonoMarshalByRefObject;
 typedef struct _Il2CppMonoObject Il2CppMonoObject;
-typedef struct Il2CppArraySize Il2CppMonoArray;
 typedef struct _Il2CppMonoCustomAttrInfo Il2CppMonoCustomAttrInfo;
-typedef struct Il2CppThread Il2CppMonoThread;
-typedef struct Il2CppGHashTable Il2CppMonoGHashTable;
-typedef struct Il2CppGenericContainer Il2CppMonoGenericContainer;
 typedef struct Il2CppReflectionAssembly Il2CppMonoReflectionAssembly;
-typedef struct Il2CppReflectionType Il2CppMonoReflectionType;
-typedef struct Il2CppProfiler Il2CppMonoProfiler;
 typedef struct _Il2CppMonoJitTlsData Il2CppMonoJitTlsData;
 typedef struct _Il2CppMonoRuntimeExceptionHandlingCallbacks Il2CppMonoRuntimeExceptionHandlingCallbacks;
-typedef struct Il2CppInternalThread Il2CppMonoInternalThread;
 typedef struct _Il2CppMonoCustomAttrEntry Il2CppMonoCustomAttrEntry;
 typedef struct _Il2CppMonoStackFrameInfo Il2CppMonoStackFrameInfo;
 typedef struct Il2CppDefaults Il2CppMonoDefaults;
@@ -61,15 +63,15 @@ struct _Il2CppMonoExceptionClause
 	uint32_t handler_len;
 	union {
 		uint32_t filter_offset;
-		Il2CppMonoClass *catch_class;
+		MonoClass *catch_class;
 	} data;
 };
 
 struct _Il2CppCattrNamedArg
 {
-	Il2CppMonoType *type;
-	Il2CppMonoClassField *field;
-	Il2CppMonoProperty *prop;
+	MonoType *type;
+	MonoClassField *field;
+	MonoProperty *prop;
 };
 
 struct _Il2CppMonoObject
@@ -85,16 +87,16 @@ struct _Il2CppMonoException
 
 struct _Il2CppMonoMethodInflated
 {
-	Il2CppMonoMethod *declaring;
-	Il2CppMonoGenericContext context;
+	MonoMethod *declaring;
+	MonoGenericContext context;
 };
 
 struct _Il2CppMonoStackFrameInfo
 {
 	MonoStackFrameType type;
 	MonoJitInfo *ji;
-	Il2CppMonoMethod *method;
-	Il2CppMonoMethod *actual_method;
+	MonoMethod *method;
+	MonoMethod *actual_method;
 	Il2CppMonoDomain *domain;
 	gboolean managed;
 	gboolean async_context;
@@ -110,7 +112,7 @@ struct _Il2CppMonoStackFrameInfo
 
 struct _Il2CppMonoCustomAttrEntry
 {
-	Il2CppMonoMethod *ctor;
+	MonoMethod *ctor;
 	uint32_t data_size;
 	const mono_byte* data;
 };
@@ -140,12 +142,12 @@ struct _Il2CppMonoMethodHeader
 	guint16 num_locals;
 	Il2CppMonoExceptionClause *clauses;
 	unsigned int num_clauses : 15;
-	Il2CppMonoType *locals [MONO_ZERO_LEN_ARRAY];
+	MonoType *locals [MONO_ZERO_LEN_ARRAY];
 };
 
 struct _Il2CppMonoVTable
 {
-	Il2CppMonoClass *klass;
+	MonoClass *klass;
 	Il2CppMonoDomain *domain;
 	guint8 initialized;
 	gpointer type;
@@ -169,7 +171,7 @@ struct _Il2CppMonoAssemblyName
 struct _Il2CppMonoAssembly
 {
 	Il2CppMonoAssemblyNameReplacement aname;
-	Il2CppMonoImage *image;
+	MonoImage *image;
 };
 
 struct _Il2CppMonoDomain
@@ -185,12 +187,12 @@ struct _Il2CppMonoDomain
 
 struct _Il2CppMonoMethodSignature
 {
-	Il2CppMonoType *ret;
+	MonoType *ret;
 	guint16 param_count;
 	unsigned int generic_param_count : 16;
 	unsigned int  call_convention     : 6;
 	unsigned int  hasthis             : 1;
-	Il2CppMonoType **params;
+	MonoType **params;
 };
 
 struct _Il2CppMonoTypeNameParse
@@ -214,7 +216,7 @@ typedef enum
 
 typedef struct
 {
-	const Il2CppMonoType* const* const type;
+	const MonoType* const* const type;
 	const char* const name;
 	const MethodVariableKindC variableKind;
 	const int start;
@@ -239,7 +241,7 @@ typedef struct
 	const Il2CppMethodExecutionContextInfoC* const executionContextInfos;
 	const uint32_t executionContextInfoCount;
 	const Il2CppMethodHeaderInfoC *header;
-	const Il2CppMonoMethod* method;
+	const MonoMethod* method;
 	const char* const sourceFile;
 	const uint8_t sourceFileHash[16];
 	const int32_t lineStart, lineEnd;
@@ -267,28 +269,26 @@ TYPED_HANDLE_DECL (Il2CppMonoReflectionAssembly);
 Il2CppMonoDefaults il2cpp_mono_defaults;
 MonoDebugOptions il2cpp_mono_debug_options;
 
-typedef void (*Il2CppMonoProfileFunc) (Il2CppMonoProfiler *prof);
-typedef void (*Il2CppMonoProfileAppDomainFunc) (Il2CppMonoProfiler *prof, Il2CppMonoDomain *domain);
-typedef void (*Il2CppMonoProfileAppDomainResult) (Il2CppMonoProfiler *prof, Il2CppMonoDomain *domain, int result);
-typedef void (*Il2CppMonoProfileAssemblyFunc) (Il2CppMonoProfiler *prof, Il2CppMonoAssembly *assembly);
-typedef void (*Il2CppMonoProfileJitResult) (Il2CppMonoProfiler *prof, Il2CppMonoMethod *method, MonoJitInfo* jinfo, int result);
-typedef void (*Il2CppMonoProfileAssemblyResult) (Il2CppMonoProfiler *prof, Il2CppMonoAssembly *assembly, int result);
-typedef void (*Il2CppMonoProfileThreadFunc) (Il2CppMonoProfiler *prof, uintptr_t tid);
+typedef void (*Il2CppMonoProfileFunc) (MonoProfiler *prof);
+typedef void (*Il2CppMonoProfileAppDomainFunc) (MonoProfiler *prof, Il2CppMonoDomain *domain);
+typedef void (*Il2CppMonoProfileAppDomainResult) (MonoProfiler *prof, Il2CppMonoDomain *domain, int result);
+typedef void (*Il2CppMonoProfileAssemblyFunc) (MonoProfiler *prof, Il2CppMonoAssembly *assembly);
+typedef void (*Il2CppMonoProfileJitResult) (MonoProfiler *prof, MonoMethod *method, MonoJitInfo* jinfo, int result);
+typedef void (*Il2CppMonoProfileAssemblyResult) (MonoProfiler *prof, Il2CppMonoAssembly *assembly, int result);
+typedef void (*Il2CppMonoProfileThreadFunc) (MonoProfiler *prof, uintptr_t tid);
 typedef gboolean (*Il2CppMonoJitStackWalk) (Il2CppMonoStackFrameInfo *frame, MonoContext *ctx, gpointer data);
 typedef void (*Il2CppMonoDomainFunc) (Il2CppMonoDomain *domain, void* user_data);
 
 typedef void (*emit_assembly_load_callback)(void*, void*);
 typedef void(*emit_type_load_callback)(void*, void*, void*);
 
-void il2cpp_set_thread_state_background(Il2CppMonoThread* thread);
+void il2cpp_set_thread_state_background(MonoThread* thread);
 void* il2cpp_domain_get_agent_info(Il2CppMonoAppDomain* domain);
 void il2cpp_domain_set_agent_info(Il2CppMonoAppDomain* domain, void* agentInfo);
 void il2cpp_start_debugger_thread();
-uintptr_t il2cpp_internal_thread_get_thread_id(Il2CppMonoInternalThread* thread);
 void* il2cpp_gc_alloc_fixed(size_t size);
 void il2cpp_gc_free_fixed(void* address);
 char* il2cpp_assembly_get_name(Il2CppMonoAssembly* assembly);
 const char* il2cpp_domain_get_name(Il2CppMonoDomain* domain);
-int il2cpp_mono_type_get_attrs(Il2CppMonoType* type);
 
 #endif
