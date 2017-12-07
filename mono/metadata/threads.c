@@ -1284,8 +1284,11 @@ mono_thread_create_checked (MonoDomain *domain, gpointer func, gpointer arg, Mon
 	return (NULL != mono_thread_create_internal (domain, func, arg, MONO_THREAD_CREATE_FLAGS_NONE, error));
 }
 
-static MonoThread *
-mono_thread_attach_full (MonoDomain *domain, gboolean force_attach)
+/**
+ * mono_thread_attach:
+ */
+MonoThread *
+mono_thread_attach (MonoDomain *domain)
 {
 	MonoInternalThread *internal;
 	MonoThread *thread;
@@ -1308,7 +1311,7 @@ mono_thread_attach_full (MonoDomain *domain, gboolean force_attach)
 
 	thread = create_thread_object (domain, internal);
 
-	if (!mono_thread_attach_internal (thread, force_attach, TRUE)) {
+	if (!mono_thread_attach_internal (thread, FALSE, TRUE)) {
 		/* Mono is shutting down, so just wait for the end */
 		for (;;)
 			mono_thread_info_sleep (10000, NULL);
@@ -1322,15 +1325,6 @@ mono_thread_attach_full (MonoDomain *domain, gboolean force_attach)
 	fire_attach_profiler_events (tid);
 
 	return thread;
-}
-
-/**
- * mono_thread_attach:
- */
-MonoThread *
-mono_thread_attach (MonoDomain *domain)
-{
-	return mono_thread_attach_full (domain, FALSE);
 }
 
 /**
@@ -5273,7 +5267,7 @@ mono_threads_attach_coop (MonoDomain *domain, gpointer *dummy)
 		external = !(info = mono_thread_info_current_unchecked ()) || !mono_thread_info_is_live (info);
 
 	if (!mono_thread_internal_current ()) {
-		mono_thread_attach_full (domain, FALSE);
+		mono_thread_attach (domain);
 
 		// #678164
 		mono_thread_set_state (mono_thread_internal_current (), ThreadState_Background);
