@@ -22,6 +22,8 @@
 
 #define PRINT(...) do { printf (__VA_ARGS__); } while (0);
 
+static os_log_t stdout_log;
+
 /* These are not in public headers */
 typedef unsigned char* (*MonoLoadAotDataFunc)          (MonoAssembly *assembly, int size, void *user_data, void **out_handle);
 typedef void  (*MonoFreeAotDataFunc)          (MonoAssembly *assembly, int size, void *user_data, void *handle);
@@ -216,6 +218,8 @@ mono_ios_runtime_init (void)
 	char *executable;
 	char **args, **config_args = NULL;
 
+	stdout_log = os_log_create ("com.xamarin", "stdout");
+
 	id args_array = [[NSProcessInfo processInfo] arguments];
 	nargs = [args_array count];
 
@@ -388,7 +392,7 @@ xamarin_log (const unsigned short *unicodeMessage)
 		fwrite ("\n", 1, 1, stdout);
 	fflush (stdout);
 #else
-	os_log_info (OS_LOG_DEFAULT, "%{public}@", msg);
+	os_log (stdout_log, "%{public}@", msg);
 	//NSLog (@"%@", msg);
 #endif
 }
