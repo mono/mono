@@ -5154,12 +5154,13 @@ namespace System.Windows.Forms {
 			} else if (Columns.Count == 0) {
 				MoveCurrentCell (-1, -1, true, false, false, true);
 				hover_cell = null;
-			} else if (currentCell != null && currentCell.RowIndex == e.RowIndex) {
-				int nextRowIndex = e.RowIndex;
-				if (nextRowIndex >= RowsLeft)
-					nextRowIndex = RowsLeft - 1;
-				MoveCurrentCell (currentCell != null ? currentCell.ColumnIndex : 0, nextRowIndex, 
-						 true, false, false, true);
+			} else {
+				if (currentCell != null && currentCell.RowIndex >= e.RowIndex && currentCell.RowIndex < e.RowIndex + e.RowCount) {
+					int nextRowIndex = e.RowIndex + e.RowCount;
+					if (nextRowIndex >= Rows.Count)
+						nextRowIndex = e.RowIndex - 1;
+					MoveCurrentCell (currentCell.ColumnIndex, nextRowIndex, true, false, false, true);
+				}
 				if (hover_cell != null && hover_cell.RowIndex >= e.RowIndex)
 					hover_cell = null;
 			}
