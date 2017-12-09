@@ -1,5 +1,5 @@
 
-all: harness.exe
+all: harness.exe appbuilder.exe
 
 BCL_DIR = ../../mcs/class/lib/monotouch
 
@@ -14,25 +14,36 @@ SIM_NAME = xamarin.ios-sdk.sim
 harness.exe: harness/harness.cs harness/Options.cs
 	csc /out:$@ -r:System.Json.dll $^
 
+appbuilder.exe: appbuilder/appbuilder.cs Options.cs
+	csc /out:$@ $^
+
 # Build % from assemblies %_ASSEMBLIES
 # The end result is in bin/ios-sim/test-%.app
-build-ios-sim-%: $($*_ASSEMBLIES)
-	make -C runtime/
-	rm -rf tmp.app
-	mkdir -p tmp.app
-	cp runtime/test-runner tmp.app/test-$*
-	cp runtime/Info.plist.in tmp.app/1
-	sed -e "s/BUNDLE_IDENTIFIER/com.xamarin.mono.ios.test-$*/g" < tmp.app/1 > tmp.app/2
-	sed -e "s/BUNDLE_EXECUTABLE/test-$*/g" < tmp.app/2 > tmp.app/3
-	sed -e "s/BUNDLE_NAME/test-$*/g" < tmp.app/3 > tmp.app/Info.plist
-	rm -f tmp.app/{1,2,3}
-	plutil -convert binary1 tmp.app/Info.plist
-	cp -r runtime/Base.lproj tmp.app
-	cp -r $(BCL_DIR)/{mscorlib.dll,System.dll,System.Xml.dll,System.Core.dll,I18N.dll,I18N.West.dll,Mono.Simd.dll,System.Numerics.dll,System.Numerics.Vectors.dll,nunitlite.dll,nunit-lite-console.exe} $($*_ASSEMBLIES) $($*_EXTRA_FILES) tmp.app
-	/usr/bin/codesign --force --sign - --timestamp=none tmp.app
-	mkdir -p bin/ios-sim
-	rm -rf bin/ios-sim/test-$*.app
-	mv tmp.app bin/ios-sim/test-$*.app
+
+TEST_ASSEMBLIES = $(BCL_DIR)/mscorlib.dll \
+	$(BCL_DIR)/System.dll \
+	$(BCL_DIR)/System.Xml.dll \
+	$(BCL_DIR)/System.Core.dll \
+	$(BCL_DIR)/I18N.dll \
+	$(BCL_DIR)/I18N.West.dll \
+	$(BCL_DIR)/Mono.Simd.dll \
+	$(BCL_DIR)/Mono.Security.dll \
+	$(BCL_DIR)/System.Numerics.dll \
+	$(BCL_DIR)/System.Numerics.Vectors.dll \
+	$(BCL_DIR)/nunitlite.dll \
+	$(BCL_DIR)/nunit-lite-console.exe
+
+build-ios-sim-%: appbuilder.exe $($*_ASSEMBLIES)
+	mono appbuilder.exe --target ios-sim64 --mono-sdkdir $(PWD)/../out --appdir $(PWD)/bin/ios-sim/test-$*.app --runtimedir $(PWD)/runtime --builddir obj/ios-sim/test-$*.app --bundle-executable test-$* --bundle-identifier com.xamarin.mono.ios.test-$* --bundle-name test-$* $(patsubst %,-r %,$(TEST_ASSEMBLIES) $($*_ASSEMBLIES))
+	mkdir -p $(PWD)/bin/ios-sim/test-$*.app
+	if test "x$($_EXTRA_FILES)" != "x"; then cp -r $($*_EXTRA_FILES) $(PWD)/bin/ios-sim/test-$*.app/; fi
+	ninja -C obj/ios-sim/test-$*.app -v
+
+build-ios-dev-%: appbuilder.exe $($*_ASSEMBLIES)
+	mono appbuilder.exe --target ios-dev64 --mono-sdkdir $(PWD)/../out --appdir $(PWD)/bin/ios-dev/test-$*.app --runtimedir $(PWD)/runtime --builddir obj/ios-dev/test-$*.app --bundle-executable test-$* --bundle-identifier com.xamarin.mono.ios.test-$* --bundle-name test-$* --exe nunit-lite-console.exe $(patsubst %,-r %,$(TEST_ASSEMBLIES) $($*_ASSEMBLIES))
+	mkdir -p $(PWD)/bin/ios-dev/test-$*.app
+	if test "x$($_EXTRA_FILES)" != "x"; then cp -r $($*_EXTRA_FILES) $(PWD)/bin/ios-dev/test-$*.app/; fi
+	ninja -C obj/ios-dev/test-$*.app -v
 
 # Install % on the simulator
 install-ios-sim-%:
@@ -40,7 +51,7 @@ install-ios-sim-%:
 
 # Clean %
 clean-ios-sim-%:
-	$(RM) -rf bin/ios-sim/test-$*.app
+	$(RM) -rf obj/ios-sim/test-$*.app bin/ios-sim/test-$*.app
 
 # Install and run % on the simulator with args $(ARGS) %_ARGS
 run-ios-sim-%: harness.exe
@@ -50,7 +61,7 @@ run-ios-sim-%: harness.exe
 
 clean:
 	$(MAKE) -C runtime clean
-	$(RM) -rf bin harness.exe *.log
+	$(RM) -rf bin obj *.exe *.log
 
 # Compile all the test assemblies
 compile-tests:
@@ -58,6 +69,9 @@ compile-tests:
 
 run-tests:
 	for suite in $(TEST_SUITES); do make build-ios-sim-$$suite || exit 1; make run-ios-sim-$$suite || exit 1; done
+
+build-ios-dev-all:
+	for suite in $(TEST_SUITES); do make build-ios-dev-$$suite || exit 1; done
 
 # Developer targets, ignore
 # 'launch' doesn't propagate the error code
@@ -87,7 +101,7 @@ corlib_EXTRA_FILES = ../../mcs/class/corlib/{es-ES,nn-NO}
 corlib_ARGS = $(NUNIT) monotouch_corlib_test.dll
 System.Core_ASSEMBLIES = $(TESTDIR)/monotouch_System.Core_test.dll
 System.Core_ARGS = $(NUNIT) monotouch_System.Core_test.dll
-System_ASSEMBLIES = $(TESTDIR)/monotouch_System_test.dll
+System_ASSEMBLIES = $(TESTDIR)/monotouch_System_test.dll $(BCL_DIR)/Mono.Security.dll
 System_ARGS = $(NUNIT) monotouch_System_test.dll
 System.Data_ASSEMBLIES = $(BCL_DIR)/System.Data.dll $(BCL_DIR)/System.Transactions.dll $(TESTDIR)/monotouch_System.Data_test.dll
 System.Data_EXTRA_FILES = ../../mcs/class/System.Data/Test
