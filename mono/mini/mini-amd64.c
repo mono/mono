@@ -1380,67 +1380,6 @@ mono_arch_get_global_int_regs (MonoCompile *cfg)
 
 	return regs;
 }
- 
-GList*
-mono_arch_get_global_fp_regs (MonoCompile *cfg)
-{
-	GList *regs = NULL;
-	int i;
-
-	/* All XMM registers */
-	for (i = 0; i < 16; ++i)
-		regs = g_list_prepend (regs, GINT_TO_POINTER (i));
-
-	return regs;
-}
-
-GList*
-mono_arch_get_iregs_clobbered_by_call (MonoCallInst *call)
-{
-	static GList *r = NULL;
-
-	if (r == NULL) {
-		GList *regs = NULL;
-
-		regs = g_list_prepend (regs, (gpointer)AMD64_RBP);
-		regs = g_list_prepend (regs, (gpointer)AMD64_RBX);
-		regs = g_list_prepend (regs, (gpointer)AMD64_R12);
-		regs = g_list_prepend (regs, (gpointer)AMD64_R13);
-		regs = g_list_prepend (regs, (gpointer)AMD64_R14);
-		regs = g_list_prepend (regs, (gpointer)AMD64_R15);
-
-		regs = g_list_prepend (regs, (gpointer)AMD64_R10);
-		regs = g_list_prepend (regs, (gpointer)AMD64_R9);
-		regs = g_list_prepend (regs, (gpointer)AMD64_R8);
-		regs = g_list_prepend (regs, (gpointer)AMD64_RDI);
-		regs = g_list_prepend (regs, (gpointer)AMD64_RSI);
-		regs = g_list_prepend (regs, (gpointer)AMD64_RDX);
-		regs = g_list_prepend (regs, (gpointer)AMD64_RCX);
-		regs = g_list_prepend (regs, (gpointer)AMD64_RAX);
-
-		mono_atomic_cas_ptr ((gpointer*)&r, regs, NULL);
-	}
-
-	return r;
-}
-
-GList*
-mono_arch_get_fregs_clobbered_by_call (MonoCallInst *call)
-{
-	int i;
-	static GList *r = NULL;
-
-	if (r == NULL) {
-		GList *regs = NULL;
-
-		for (i = 0; i < AMD64_XMM_NREG; ++i)
-			regs = g_list_prepend (regs, GINT_TO_POINTER (MONO_MAX_IREGS + i));
-
-		mono_atomic_cas_ptr ((gpointer*)&r, regs, NULL);
-	}
-
-	return r;
-}
 
 /*
  * mono_arch_regalloc_cost:
