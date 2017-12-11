@@ -7077,6 +7077,21 @@ is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmetho
 }
 
 /*
+ * is_adressable_valuetype_load
+ *
+ *    Returns true if a previous load can be done without doing an extra copy, given the new instruction ip and the type of the object being loaded ldtype
+ */
+static gboolean
+is_adressable_valuetype_load (MonoCompile* cfg, guint8* ip, MonoType* ldtype)
+{
+	/* Avoid loading a struct just to load one of its fields */
+	gboolean is_load_instruction = (*ip == CEE_LDFLD);
+	gboolean is_in_previous_bb = ip_in_bb(cfg, cfg->cbb, ip);
+	gboolean is_struct = MONO_TYPE_ISSTRUCT(ldtype);
+	return is_load_instruction && is_in_previous_bb && is_struct;
+}
+
+/*
  * handle_ctor_call:
  *
  *   Handle calls made to ctors from NEWOBJ opcodes.
@@ -7851,7 +7866,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_STACK_OVF (1);
 			n = (*ip)-CEE_LDARG_0;
 			CHECK_ARG (n);
-			EMIT_NEW_ARGLOAD (cfg, ins, n);
+			if (is_adressable_valuetype_load (cfg, ip + 1, cfg->arg_types[n])) {
+				EMIT_NEW_ARGLOADA (cfg, ins, n);
+			} else {
+				EMIT_NEW_ARGLOAD (cfg, ins, n);
+			}
 			ip++;
 			*sp++ = ins;
 			break;
@@ -7862,7 +7881,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_STACK_OVF (1);
 			n = (*ip)-CEE_LDLOC_0;
 			CHECK_LOCAL (n);
-			EMIT_NEW_LOCLOAD (cfg, ins, n);
+			if (is_adressable_valuetype_load (cfg, ip + 1, header->locals[n])) {
+				EMIT_NEW_LOCLOADA (cfg, ins, n);
+			} else {
+				EMIT_NEW_LOCLOAD (cfg, ins, n);
+			}
 			ip++;
 			*sp++ = ins;
 			break;
@@ -7886,7 +7909,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_STACK_OVF (1);
 			n = ip [1];
 			CHECK_ARG (n);
-			EMIT_NEW_ARGLOAD (cfg, ins, n);
+			if (is_adressable_valuetype_load (cfg, ip + 2, cfg->arg_types[n])) {
+				EMIT_NEW_ARGLOADA (cfg, ins, n);
+			} else {
+				EMIT_NEW_ARGLOAD (cfg, ins, n);
+			}
 			*sp++ = ins;
 			ip += 2;
 			break;
@@ -7916,8 +7943,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_STACK_OVF (1);
 			n = ip [1];
 			CHECK_LOCAL (n);
-			if ((ip [2] == CEE_LDFLD) && ip_in_bb (cfg, cfg->cbb, ip + 2) && MONO_TYPE_ISSTRUCT (header->locals [n])) {
-				/* Avoid loading a struct just to load one of its fields */
+			if (is_adressable_valuetype_load (cfg, ip + 2, header->locals[n])) {
 				EMIT_NEW_LOCLOADA (cfg, ins, n);
 			} else {
 				EMIT_NEW_LOCLOAD (cfg, ins, n);
@@ -12428,7 +12454,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				CHECK_OPSIZE (4);
 				n = read16 (ip + 2);
 				CHECK_ARG (n);
-				EMIT_NEW_ARGLOAD (cfg, ins, n);
+				if (is_adressable_valuetype_load (cfg, ip + 4, cfg->arg_types[n])) {
+					EMIT_NEW_ARGLOADA (cfg, ins, n);
+				} else {
+					EMIT_NEW_ARGLOAD (cfg, ins, n);
+				}
 				*sp++ = ins;
 				ip += 4;
 				break;
@@ -12458,8 +12488,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				CHECK_OPSIZE (4);
 				n = read16 (ip + 2);
 				CHECK_LOCAL (n);
-				if ((ip [4] == CEE_LDFLD) && ip_in_bb (cfg, cfg->cbb, ip + 4) && MONO_TYPE_ISSTRUCT (header->locals [n])) {
-					/* Avoid loading a struct just to load one of its fields */
+				if (is_adressable_valuetype_load (cfg, ip + 4, header->locals[n])) {
 					EMIT_NEW_LOCLOADA (cfg, ins, n);
 				} else {
 					EMIT_NEW_LOCLOAD (cfg, ins, n);
