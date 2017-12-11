@@ -108,7 +108,7 @@ run-test-local: run-test-lib
 run-test-ondotnet-local: run-test-ondotnet-lib
 
 ifdef TEST_WITH_INTERPRETER
-TEST_HARNESS_EXCLUDES = -exclude=$(PLATFORM_TEST_HARNESS_EXCLUDES)$(PROFILE_TEST_HARNESS_EXCLUDES)NotWorking,InterpreterNotWorking,CAS
+TEST_HARNESS_EXCLUDES = -exclude=$(PLATFORM_TEST_HARNESS_EXCLUDES)$(PROFILE_TEST_HARNESS_EXCLUDES)NotWorking,NotWorkingRuntimeInterpreter,CAS
 else
 TEST_HARNESS_EXCLUDES = -exclude=$(PLATFORM_TEST_HARNESS_EXCLUDES)$(PROFILE_TEST_HARNESS_EXCLUDES)NotWorking,CAS
 endif

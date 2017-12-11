@@ -307,7 +307,7 @@ namespace MonoTests.System.Threading
 
 		[Test]
 		[Category ("NotDotNet")] // it hangs.
-		[Category ("InterpreterNotWorking")] /* crashes on linux/arm64 */
+		[Category ("NotWorkingRuntimeInterpreter")] /* crashes on linux/arm64 */
 		public void TestStart()
 		{
 		{
@@ -450,7 +450,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
-		[Category ("InterpreterNotWorking")]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void TestUndivisibleByPageSizeMaxStackSize ()
 		{
 			const int undivisible_stacksize = 1048573;

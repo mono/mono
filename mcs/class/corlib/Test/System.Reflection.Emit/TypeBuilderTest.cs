@@ -1212,7 +1212,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("InterpreterNotWorking")]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void DefineDefaultConstructor_Parent_DefaultCtorInaccessible ()
 		{
 			TypeBuilder tb;
