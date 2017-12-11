@@ -1,5 +1,5 @@
 
-all: harness.exe appbuilder.exe
+all: harness.exe appbuilder.exe test-runner.exe
 
 BCL_DIR = ../../mcs/class/lib/monotouch
 
@@ -17,6 +17,9 @@ harness.exe: harness/harness.cs harness/Options.cs
 appbuilder.exe: appbuilder/appbuilder.cs Options.cs
 	csc /out:$@ $^
 
+test-runner.exe: test-runner/runner.cs
+	csc /out:$@ -r:$(BCL_DIR)/nunitlite.dll test-runner/runner.cs
+
 # Build % from assemblies %_ASSEMBLIES
 # The end result is in bin/ios-sim/test-%.app
 
@@ -31,16 +34,16 @@ TEST_ASSEMBLIES = $(BCL_DIR)/mscorlib.dll \
 	$(BCL_DIR)/System.Numerics.dll \
 	$(BCL_DIR)/System.Numerics.Vectors.dll \
 	$(BCL_DIR)/nunitlite.dll \
-	$(BCL_DIR)/nunit-lite-console.exe
+	test-runner.exe
 
 build-ios-sim-%: appbuilder.exe $($*_ASSEMBLIES)
 	mono appbuilder.exe --target ios-sim64 --mono-sdkdir $(PWD)/../out --appdir $(PWD)/bin/ios-sim/test-$*.app --runtimedir $(PWD)/runtime --builddir obj/ios-sim/test-$*.app --bundle-executable test-$* --bundle-identifier com.xamarin.mono.ios.test-$* --bundle-name test-$* $(patsubst %,-r %,$(TEST_ASSEMBLIES) $($*_ASSEMBLIES))
 	mkdir -p $(PWD)/bin/ios-sim/test-$*.app
-	if test "x$($_EXTRA_FILES)" != "x"; then cp -r $($*_EXTRA_FILES) $(PWD)/bin/ios-sim/test-$*.app/; fi
+	if test "x$($*_EXTRA_FILES)" != "x"; then cp -r $($*_EXTRA_FILES) $(PWD)/bin/ios-sim/test-$*.app/; fi
 	ninja -C obj/ios-sim/test-$*.app -v
 
 build-ios-dev-%: appbuilder.exe $($*_ASSEMBLIES)
-	mono appbuilder.exe --target ios-dev64 --mono-sdkdir $(PWD)/../out --appdir $(PWD)/bin/ios-dev/test-$*.app --runtimedir $(PWD)/runtime --builddir obj/ios-dev/test-$*.app --bundle-executable test-$* --bundle-identifier com.xamarin.mono.ios.test-$* --bundle-name test-$* --exe nunit-lite-console.exe $(patsubst %,-r %,$(TEST_ASSEMBLIES) $($*_ASSEMBLIES))
+	mono appbuilder.exe --target ios-dev64 --mono-sdkdir $(PWD)/../out --appdir $(PWD)/bin/ios-dev/test-$*.app --runtimedir $(PWD)/runtime --builddir obj/ios-dev/test-$*.app --bundle-executable test-$* --bundle-identifier com.xamarin.mono.ios.test-$* --bundle-name test-$* --exe test-runner.exe $(patsubst %,-r %,$(TEST_ASSEMBLIES) $($*_ASSEMBLIES))
 	mkdir -p $(PWD)/bin/ios-dev/test-$*.app
 	if test "x$($_EXTRA_FILES)" != "x"; then cp -r $($*_EXTRA_FILES) $(PWD)/bin/ios-dev/test-$*.app/; fi
 	ninja -C obj/ios-dev/test-$*.app -v
@@ -90,7 +93,7 @@ start-sim:
 stop-sim:
 	xcrun simctl shutdown $(SIM_NAME)
 
-NUNIT = nunit-lite-console.exe -exclude:MobileNotWorking,NotOnMac,NotWorking,ValueAdd,CAS,InetAccess,NotWorkingLinqInterpreter -labels
+NUNIT = test-runner.exe -exclude:MobileNotWorking,NotOnMac,NotWorking,ValueAdd,CAS,InetAccess,NotWorkingLinqInterpreter -labels
 TESTDIR = $(BCL_DIR)/tests
 
 # Options for each test
