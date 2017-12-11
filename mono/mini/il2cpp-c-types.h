@@ -27,10 +27,10 @@
 #define MonoInternalThread Il2CppInternalThread
 #define MonoReflectionType Il2CppReflectionType
 #define MonoProfiler Il2CppProfiler
+#define MonoAssembly Il2CppAssembly
 
 //still stubs everywhere
 typedef struct _Il2CppMonoAssemblyName Il2CppMonoAssemblyNameReplacement;
-typedef struct _Il2CppMonoAssembly Il2CppMonoAssembly;
 typedef struct _Il2CppMonoDomain Il2CppMonoDomain;
 typedef struct _Il2CppMonoMethodSignature Il2CppMonoMethodSignature;
 typedef struct _Il2CppMonoMethodHeader Il2CppMonoMethodHeader;
@@ -168,12 +168,6 @@ struct _Il2CppMonoAssemblyName
 	uint16_t major, minor, build, revision;
 };
 
-struct _Il2CppMonoAssembly
-{
-	Il2CppMonoAssemblyNameReplacement aname;
-	MonoImage *image;
-};
-
 struct _Il2CppMonoDomain
 {
 	gpointer runtime_info;
@@ -181,7 +175,7 @@ struct _Il2CppMonoDomain
 	char *friendly_name;
 	mono_mutex_t assemblies_lock;
 	GSList *domain_assemblies;
-	Il2CppMonoAssembly *entry_assembly;
+	MonoAssembly *entry_assembly;
 	Il2CppMonoAppDomain *domain;
 };
 
@@ -272,9 +266,9 @@ MonoDebugOptions il2cpp_mono_debug_options;
 typedef void (*Il2CppMonoProfileFunc) (MonoProfiler *prof);
 typedef void (*Il2CppMonoProfileAppDomainFunc) (MonoProfiler *prof, Il2CppMonoDomain *domain);
 typedef void (*Il2CppMonoProfileAppDomainResult) (MonoProfiler *prof, Il2CppMonoDomain *domain, int result);
-typedef void (*Il2CppMonoProfileAssemblyFunc) (MonoProfiler *prof, Il2CppMonoAssembly *assembly);
+typedef void (*Il2CppMonoProfileAssemblyFunc) (MonoProfiler *prof, MonoAssembly *assembly);
 typedef void (*Il2CppMonoProfileJitResult) (MonoProfiler *prof, MonoMethod *method, MonoJitInfo* jinfo, int result);
-typedef void (*Il2CppMonoProfileAssemblyResult) (MonoProfiler *prof, Il2CppMonoAssembly *assembly, int result);
+typedef void (*Il2CppMonoProfileAssemblyResult) (MonoProfiler *prof, MonoAssembly *assembly, int result);
 typedef void (*Il2CppMonoProfileThreadFunc) (MonoProfiler *prof, uintptr_t tid);
 typedef gboolean (*Il2CppMonoJitStackWalk) (Il2CppMonoStackFrameInfo *frame, MonoContext *ctx, gpointer data);
 typedef void (*Il2CppMonoDomainFunc) (Il2CppMonoDomain *domain, void* user_data);
@@ -288,7 +282,6 @@ void il2cpp_domain_set_agent_info(Il2CppMonoAppDomain* domain, void* agentInfo);
 void il2cpp_start_debugger_thread();
 void* il2cpp_gc_alloc_fixed(size_t size);
 void il2cpp_gc_free_fixed(void* address);
-char* il2cpp_assembly_get_name(Il2CppMonoAssembly* assembly);
 const char* il2cpp_domain_get_name(Il2CppMonoDomain* domain);
 
 #endif

@@ -2553,9 +2553,7 @@ buffer_add_assemblyid (Buffer *buf, MonoDomain *domain, MonoAssembly *assembly)
 
 	id = buffer_add_ptr_id (buf, domain, ID_ASSEMBLY, assembly);
 	if (G_UNLIKELY (log_level >= 2) && assembly) {
-		char* name = VM_ASSEMBLY_GET_NAME(assembly);
-		DEBUG_PRINTF (2, "[dbg]   send assembly [%s][%s][%d]\n", name, VM_DOMAIN_GET_NAME(domain), id);
-		VM_ASSEMBLY_FREE_NAME(name);
+		DEBUG_PRINTF (2, "[dbg]   send assembly [%s][%s][%d]\n", assembly->aname.name, VM_DOMAIN_GET_NAME(domain), id);
 	}
 }
 
@@ -8783,11 +8781,11 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 			void *iter = NULL;
 			while (ass = mono_domain_get_assemblies_iter (domain, &iter))
 			{
-				if (VM_ASSEMBLY_GET_IMAGE (ass))
+				if (ass->image)
 				{
 					MonoError probe_type_error;
 					/* FIXME really okay to call while holding locks? */
-					t = mono_reflection_get_type_checked (VM_ASSEMBLY_GET_IMAGE (ass), VM_ASSEMBLY_GET_IMAGE (ass), &info, ignore_case, &type_resolve, &probe_type_error);
+					t = mono_reflection_get_type_checked (ass->image, ass->image, &info, ignore_case, &type_resolve, &probe_type_error);
 					mono_error_cleanup (&probe_type_error); 
 					if (t) {
 						g_ptr_array_add (res_classes, mono_type_get_class (t));
@@ -9199,29 +9197,29 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 
 	switch (command) {
 	case CMD_ASSEMBLY_GET_LOCATION: {
-		buffer_add_string (buf, mono_image_get_filename (VM_ASSEMBLY_GET_IMAGE(ass)));
+		buffer_add_string (buf, mono_image_get_filename (ass->image));
 		break;
 	}
 	case CMD_ASSEMBLY_GET_ENTRY_POINT: {
 		guint32 token;
 		MonoMethod *m;
 
-		if (VM_ASSEMBLY_IS_DYNAMIC(ass)) {
+		if (ass->image->dynamic) {
 			buffer_add_id (buf, 0);
 		} else {
 #ifdef IL2CPP_MONO_DEBUGGER
-			m = il2cpp_mono_image_get_entry_point(VM_ASSEMBLY_GET_IMAGE(ass));
+			m = il2cpp_mono_image_get_entry_point(ass->image);
 			if (m == NULL)
 				buffer_add_id (buf, 0);
 			else
 				buffer_add_methodid (buf, domain, m);
 #else
-			token = mono_image_get_entry_point (VM_ASSEMBLY_GET_IMAGE(ass));
+			token = mono_image_get_entry_point (ass->image);
 			if (token == 0) {
 				buffer_add_id (buf, 0);
 			} else {
 				MonoError error;
-				m = mono_get_method_checked (VM_ASSEMBLY_GET_IMAGE(ass), token, NULL, NULL, &error);
+				m = mono_get_method_checked (ass->image, token, NULL, NULL, &error);
 				if (!m)
 					mono_error_cleanup (&error); /* FIXME don't swallow the error */
 				buffer_add_methodid (buf, domain, m);
@@ -9231,7 +9229,7 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		break;			
 	}
 	case CMD_ASSEMBLY_GET_MANIFEST_MODULE: {
-		buffer_add_moduleid (buf, domain, VM_ASSEMBLY_GET_IMAGE(ass));
+		buffer_add_moduleid (buf, domain, ass->image);
 		break;
 	}
 	case CMD_ASSEMBLY_GET_OBJECT: {
@@ -9263,7 +9261,7 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		} else {
 			if (info.assembly.name)
 				NOT_IMPLEMENTED;
-			t = mono_reflection_get_type_checked (VM_ASSEMBLY_GET_IMAGE(ass), VM_ASSEMBLY_GET_IMAGE(ass), &info, ignorecase, &type_resolve, &error);
+			t = mono_reflection_get_type_checked (ass->image, ass->image, &info, ignorecase, &type_resolve, &error);
 			if (!is_ok (&error)) {
 				mono_error_cleanup (&error); /* FIXME don't swallow the error */
 				mono_reflection_free_type_info (&info);
@@ -9282,9 +9280,6 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 	case CMD_ASSEMBLY_GET_NAME: {
 		gchar *name;
 		MonoAssembly *mass = ass;
-#ifdef IL2CPP_MONO_DEBUGGER
-		name = VM_ASSEMBLY_GET_NAME(mass);
-#else
 		name = g_strdup_printf (
 		  "%s, Version=%d.%d.%d.%d, Culture=%s, PublicKeyToken=%s%s",
 		  mass->aname.name,
@@ -9292,7 +9287,6 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		  mass->aname.culture && *mass->aname.culture ? mass->aname.culture : "neutral",
 		  mass->aname.public_key_token[0] ? (char *)mass->aname.public_key_token : "null",
 		  (mass->aname.flags & ASSEMBLYREF_RETARGETABLE_FLAG) ? ", Retargetable=Yes" : "");
-#endif
 
 		buffer_add_string (buf, name);
 		g_free (name);

@@ -965,7 +965,7 @@ void il2cpp_mono_threadpool_resume()
 #endif // NET_4_0
 }
 
-MonoImage* il2cpp_mono_assembly_get_image(Il2CppMonoAssembly* assembly)
+MonoImage* il2cpp_mono_assembly_get_image(MonoAssembly* assembly)
 {
 	return (MonoImage*)il2cpp::vm::Assembly::GetImage((Il2CppAssembly*)assembly);
 }
@@ -1022,7 +1022,7 @@ Il2CppMonoCustomAttrInfo* il2cpp_mono_custom_attrs_from_field_checked(MonoClass*
 	return NULL;
 }
 
-Il2CppMonoReflectionAssemblyHandle il2cpp_mono_assembly_get_object_handle(Il2CppMonoDomain* domain, Il2CppMonoAssembly* assembly, MonoError* error)
+Il2CppMonoReflectionAssemblyHandle il2cpp_mono_assembly_get_object_handle(Il2CppMonoDomain* domain, MonoAssembly* assembly, MonoError* error)
 {
 	return (Il2CppMonoReflectionAssemblyHandle)il2cpp::vm::Reflection::GetAssemblyObject((const Il2CppAssembly *)assembly);
 }
@@ -1310,7 +1310,7 @@ void il2cpp_domain_set_agent_info(Il2CppMonoAppDomain* domain, void* agentInfo)
 	((Il2CppDomain*)domain)->agent_info = agentInfo;
 }
 
-Il2CppMonoAssembly* il2cpp_domain_get_assemblies_iter(Il2CppMonoAppDomain *domain, void* *iter)
+MonoAssembly* il2cpp_domain_get_assemblies_iter(Il2CppMonoAppDomain *domain, void* *iter)
 {
 	if (!iter)
 		return NULL;
@@ -1322,14 +1322,14 @@ Il2CppMonoAssembly* il2cpp_domain_get_assemblies_iter(Il2CppMonoAppDomain *domai
 		il2cpp::vm::AssemblyVector::iterator *pIter = new il2cpp::vm::AssemblyVector::iterator();
 		*pIter = assemblies->begin();
 		*iter = pIter;
-		return (Il2CppMonoAssembly*)**pIter;
+		return (MonoAssembly*)**pIter;
 	}
 
 	il2cpp::vm::AssemblyVector::iterator *pIter = (il2cpp::vm::AssemblyVector::iterator*)*iter;
 	(*pIter)++;
 	if (*pIter != assemblies->end())
 	{
-		return (Il2CppMonoAssembly*)(**pIter);
+		return (MonoAssembly*)(**pIter);
 	}
 	else
 	{
@@ -1353,12 +1353,6 @@ void* il2cpp_gc_alloc_fixed(size_t size)
 void il2cpp_gc_free_fixed(void* address)
 {
 	il2cpp::gc::GarbageCollector::FreeFixed(address);
-}
-
-char* il2cpp_assembly_get_name(Il2CppMonoAssembly* assembly)
-{
-	std::string name = il2cpp::vm::AssemblyName::AssemblyNameToString(((Il2CppAssembly*)assembly)->aname);
-	return g_strdup(name.c_str());
 }
 
 const char* il2cpp_domain_get_name(Il2CppMonoDomain* domain)
@@ -1429,60 +1423,6 @@ guint8 il2cpp_array_rank(MonoArray *monoArr)
 {
 	Il2CppArray *arr = (Il2CppArray*)monoArr;
 	return arr->klass->rank;
-}
-
-const char* il2cpp_assembly_name_name(Il2CppMonoAssembly *monoAssembly)
-{
-	Il2CppAssembly *assembly = (Il2CppAssembly*)monoAssembly;
-	return il2cpp::vm::MetadataCache::GetStringFromIndex(assembly->aname.nameIndex);
-}
-
-uint16_t il2cpp_assembly_name_major(Il2CppMonoAssembly *monoAssembly)
-{
-	Il2CppAssembly *assembly = (Il2CppAssembly*)monoAssembly;
-	return assembly->aname.major;
-}
-
-uint16_t il2cpp_assembly_name_minor(Il2CppMonoAssembly *monoAssembly)
-{
-	Il2CppAssembly *assembly = (Il2CppAssembly*)monoAssembly;
-	return assembly->aname.minor;
-}
-
-uint16_t il2cpp_assembly_name_build(Il2CppMonoAssembly *monoAssembly)
-{
-	Il2CppAssembly *assembly = (Il2CppAssembly*)monoAssembly;
-	return assembly->aname.build;
-}
-
-uint16_t il2cpp_assembly_name_revision(Il2CppMonoAssembly *monoAssembly)
-{
-	Il2CppAssembly *assembly = (Il2CppAssembly*)monoAssembly;
-	return assembly->aname.revision;
-}
-
-const char* il2cpp_assembly_name_culture(Il2CppMonoAssembly *monoAssembly)
-{
-	Il2CppAssembly *assembly = (Il2CppAssembly*)monoAssembly;
-	return il2cpp::vm::MetadataCache::GetStringFromIndex(assembly->aname.cultureIndex);
-}
-
-mono_byte il2cpp_assembly_name_public_key_token(Il2CppMonoAssembly *monoAssembly, int i)
-{
-	Il2CppAssembly *assembly = (Il2CppAssembly*)monoAssembly;
-	return assembly->aname.publicKeyToken[i];
-}
-
-const char* il2cpp_assembly_name_public_key_token_string(Il2CppMonoAssembly *monoAssembly)
-{
-	Il2CppAssembly *assembly = (Il2CppAssembly*)monoAssembly;
-	return il2cpp::vm::MetadataCache::GetStringFromIndex(assembly->aname.publicKeyIndex);
-}
-
-uint32_t il2cpp_assembly_name_flags(Il2CppMonoAssembly *monoAssembly)
-{
-	Il2CppAssembly *assembly = (Il2CppAssembly*)monoAssembly;
-	return assembly->aname.flags;
 }
 
 const char* il2cpp_image_name(MonoImage *monoImage)
