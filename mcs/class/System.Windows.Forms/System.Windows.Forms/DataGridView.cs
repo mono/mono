@@ -5142,12 +5142,6 @@ namespace System.Windows.Forms {
 			if (RowsLeft < 0)
 				RowsLeft = 0;
 
-			if (first_row_index > RowsLeft - 1)
-				first_row_index = RowsLeft - 1;
-
-			if (first_row_index < 0)
-				first_row_index = 0;
-
 			if (RowsLeft == 0) {
 				MoveCurrentCell (-1, -1, true, false, false, true);
 				hover_cell = null;
@@ -5164,6 +5158,12 @@ namespace System.Windows.Forms {
 				if (hover_cell != null && hover_cell.RowIndex >= e.RowIndex)
 					hover_cell = null;
 			}
+
+			if (first_row_index > RowsLeft - 1)
+				first_row_index = RowsLeft - 1;
+
+			if (first_row_index < 0)
+				first_row_index = 0;
 		}
 
 		internal void OnRowsPostRemovedInternal (DataGridViewRowsRemovedEventArgs e)
