@@ -363,7 +363,12 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	}
 	for (i = 0; i < AMD64_XMM_NREG; ++i)
 		if (AMD64_IS_ARGUMENT_XREG (i))
+#if defined(__APPLE__) || (defined(__linux__) && defined(__GLIBC__)) || defined(HOST_WIN32)
 			amd64_movdqu_membase_reg (code, AMD64_RBP, saved_fpregs_offset + (i * sizeof(MonoContextSimdReg)), i);
+#else
+			/* FIXME: Is this the appropriate type on platforms without SimdReg? */
+			amd64_movdqu_membase_reg (code, AMD64_RBP, saved_fpregs_offset + (i * sizeof(mgreg_t)), i);
+#endif
 
 	/* Check that the stack is aligned */
 	amd64_mov_reg_reg (code, AMD64_R11, AMD64_RSP, sizeof (mgreg_t));
@@ -540,7 +545,11 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 			amd64_mov_reg_membase (code, i, AMD64_RBP, saved_regs_offset + (i * sizeof(mgreg_t)), sizeof(mgreg_t));
 	for (i = 0; i < AMD64_XMM_NREG; ++i)
 		if (AMD64_IS_ARGUMENT_XREG (i))
+#if defined(__APPLE__) || (defined(__linux__) && defined(__GLIBC__)) || defined(HOST_WIN32)
 			amd64_movdqu_reg_membase (code, i, AMD64_RBP, saved_fpregs_offset + (i * sizeof(MonoContextSimdReg)));
+#else
+			amd64_movdqu_reg_membase (code, i, AMD64_RBP, saved_fpregs_offset + (i * sizeof(mgreg_t)));
+#endif
 
 	/* Restore stack */
 #if TARGET_WIN32
