@@ -81,7 +81,7 @@ mono_bool il2cpp_mono_type_is_reference (MonoType *type)
 	return il2cpp::vm::Type::IsReference((Il2CppType*)type);
 }
 
-void il2cpp_mono_metadata_free_mh (Il2CppMonoMethodHeader *mh)
+void il2cpp_mono_metadata_free_mh (MonoMethodHeader *mh)
 {
 	IL2CPP_ASSERT(0 && "This method is not yet implemented");
 }
@@ -160,7 +160,7 @@ mono_bool il2cpp_mono_type_generic_inst_is_valuetype (MonoType *monoType)
 	return (typeDef->bitfield >> (kBitIsValueType - 1)) & 0x1;
 }
 
-Il2CppMonoMethodHeader* il2cpp_mono_method_get_header_checked (MonoMethod *method, MonoError *error)
+MonoMethodHeader* il2cpp_mono_method_get_header_checked (MonoMethod *method, MonoError *error)
 {
 	return NULL;
 }
@@ -171,7 +171,7 @@ gboolean il2cpp_mono_class_init (MonoClass *klass)
 	return 0;
 }
 
-Il2CppMonoVTable* il2cpp_mono_class_vtable (Il2CppMonoDomain *domain, MonoClass *klass)
+Il2CppMonoVTable* il2cpp_mono_class_vtable (MonoDomain *domain, MonoClass *klass)
 {
 	return (Il2CppMonoVTable*)((Il2CppClass*)klass)->vtable;
 }
@@ -267,13 +267,13 @@ uintptr_t il2cpp_mono_array_length (MonoArray *array)
 	return 0;
 }
 
-MonoString* il2cpp_mono_string_new (Il2CppMonoDomain *domain, const char *text)
+MonoString* il2cpp_mono_string_new (MonoDomain *domain, const char *text)
 {
 	return (MonoString*)il2cpp::vm::String::New(text);
 }
 
 
-MonoString* il2cpp_mono_string_new_checked (Il2CppMonoDomain *domain, const char *text, MonoError *merror)
+MonoString* il2cpp_mono_string_new_checked (MonoDomain *domain, const char *text, MonoError *merror)
 {
 	error_init(merror);
 	return il2cpp_mono_string_new (domain, text);
@@ -356,9 +356,9 @@ void il2cpp_mono_custom_attrs_free (Il2CppMonoCustomAttrInfo *ainfo)
 	IL2CPP_ASSERT(0 && "This method is not yet implemented");
 }
 
-Il2CppMonoDomain* il2cpp_mono_get_root_domain (void)
+MonoDomain* il2cpp_mono_get_root_domain (void)
 {
-	return (Il2CppMonoDomain*)il2cpp::vm::Domain::GetCurrent();
+	return (MonoDomain*)il2cpp::vm::Domain::GetCurrent();
 }
 
 void il2cpp_mono_runtime_quit (void)
@@ -371,12 +371,12 @@ gboolean il2cpp_mono_runtime_is_shutting_down (void)
 	return il2cpp::vm::Runtime::IsShuttingDown() ? TRUE : FALSE;
 }
 
-Il2CppMonoDomain* il2cpp_mono_domain_get (void)
+MonoDomain* il2cpp_mono_domain_get (void)
 {
 	return il2cpp_mono_get_root_domain();
 }
 
-gboolean il2cpp_mono_domain_set (Il2CppMonoDomain *domain, gboolean force)
+gboolean il2cpp_mono_domain_set (MonoDomain *domain, gboolean force)
 {
 	IL2CPP_ASSERT(domain == il2cpp_mono_get_root_domain());
 	return TRUE;
@@ -387,7 +387,7 @@ void il2cpp_mono_domain_foreach(MonoDomainFunc func, gpointer user_data)
 	func((MonoDomain*)il2cpp_mono_get_root_domain(), user_data);
 }
 
-MonoJitInfo* il2cpp_mono_jit_info_table_find(Il2CppMonoDomain* domain, char* addr)
+MonoJitInfo* il2cpp_mono_jit_info_table_find(MonoDomain* domain, char* addr)
 {
 	IL2CPP_ASSERT(0 && "This method is not yet implemented");
 	return NULL;
@@ -404,7 +404,7 @@ MonoDebugMethodInfo* il2cpp_mono_debug_lookup_method(MonoMethod* method)
 	return NULL;
 }
 
-MonoDebugMethodJitInfo* il2cpp_mono_debug_find_method(MonoMethod* method, Il2CppMonoDomain* domain)
+MonoDebugMethodJitInfo* il2cpp_mono_debug_find_method(MonoMethod* method, MonoDomain* domain)
 {
 	IL2CPP_ASSERT(0 && "This method is not yet implemented");
 	return NULL;
@@ -433,7 +433,7 @@ MonoDebugSourceLocation* il2cpp_mono_debug_method_lookup_location(MonoDebugMetho
 	return NULL;
 }
 
-gint32 il2cpp_mono_debug_il_offset_from_address(MonoMethod* method, Il2CppMonoDomain* domain, guint32 native_offset)
+gint32 il2cpp_mono_debug_il_offset_from_address(MonoMethod* method, MonoDomain* domain, guint32 native_offset)
 {
 	IL2CPP_ASSERT(0 && "This method is not yet implemented");
 	return 0;
@@ -485,7 +485,7 @@ MonoThread* il2cpp_mono_thread_get_main()
 	return (MonoThread*)il2cpp::vm::Thread::Main();
 }
 
-MonoThread* il2cpp_mono_thread_attach(Il2CppMonoDomain* domain)
+MonoThread* il2cpp_mono_thread_attach(MonoDomain* domain)
 {
 	return (MonoThread*)il2cpp::vm::Thread::Attach((Il2CppDomain*)domain);
 }
@@ -495,15 +495,15 @@ void il2cpp_mono_thread_detach(MonoThread* thread)
 	il2cpp::vm::Thread::Detach((Il2CppThread*)thread);
 }
 
-void il2cpp_mono_domain_lock(Il2CppMonoDomain* domain)
+void il2cpp_mono_domain_lock(MonoDomain* domain)
 {
 }
 
-void il2cpp_mono_domain_unlock(Il2CppMonoDomain* domain)
+void il2cpp_mono_domain_unlock(MonoDomain* domain)
 {
 }
 
-MonoJitInfo* il2cpp_mono_jit_info_table_find_internal(Il2CppMonoDomain* domain, char* addr, gboolean try_aot, gboolean allow_trampolines)
+MonoJitInfo* il2cpp_mono_jit_info_table_find_internal(MonoDomain* domain, char* addr, gboolean try_aot, gboolean allow_trampolines)
 {
 	IL2CPP_ASSERT(0 && "This method is not yet implemented");
 	return NULL;
@@ -860,7 +860,7 @@ void il2cpp_mono_nullable_init(guint8* buf, Il2CppMonoObject* value, MonoClass* 
 	il2cpp::vm::Object::NullableInit(buf, (Il2CppObject*)value, (Il2CppClass*)klass);
 }
 
-Il2CppMonoObject* il2cpp_mono_value_box_checked(Il2CppMonoDomain* domain, MonoClass* klass, gpointer value, MonoError* error)
+Il2CppMonoObject* il2cpp_mono_value_box_checked(MonoDomain* domain, MonoClass* klass, gpointer value, MonoError* error)
 {
 	error_init(error);
 	return (Il2CppMonoObject*)il2cpp::vm::Object::Box((Il2CppClass*)klass, value);
@@ -878,19 +878,19 @@ void il2cpp_mono_field_static_get_value_for_thread(MonoInternalThread* thread, I
 	il2cpp::vm::Field::StaticGetValueForThread((FieldInfo*)field, value, (Il2CppInternalThread*)thread);
 }
 
-Il2CppMonoObject* il2cpp_mono_field_get_value_object_checked(Il2CppMonoDomain* domain, MonoClassField* field, Il2CppMonoObject* obj, MonoError* error)
+Il2CppMonoObject* il2cpp_mono_field_get_value_object_checked(MonoDomain* domain, MonoClassField* field, Il2CppMonoObject* obj, MonoError* error)
 {
 	IL2CPP_ASSERT(0 && "This method is not yet implemented");
 	return NULL;
 }
 
-Il2CppMonoObject* il2cpp_mono_object_new_checked(Il2CppMonoDomain* domain, MonoClass* klass, MonoError* error)
+Il2CppMonoObject* il2cpp_mono_object_new_checked(MonoDomain* domain, MonoClass* klass, MonoError* error)
 {
 	error_init(error);
 	return (Il2CppMonoObject*)il2cpp::vm::Object::New((Il2CppClass*)klass);
 }
 
-MonoString* il2cpp_mono_ldstr_checked(Il2CppMonoDomain* domain, MonoImage* image, guint32 idx, MonoError* error)
+MonoString* il2cpp_mono_ldstr_checked(MonoDomain* domain, MonoImage* image, guint32 idx, MonoError* error)
 {
 	IL2CPP_ASSERT(0 && "This method is not yet implemented");
 	return NULL;
@@ -1022,12 +1022,12 @@ Il2CppMonoCustomAttrInfo* il2cpp_mono_custom_attrs_from_field_checked(MonoClass*
 	return NULL;
 }
 
-Il2CppMonoReflectionAssemblyHandle il2cpp_mono_assembly_get_object_handle(Il2CppMonoDomain* domain, MonoAssembly* assembly, MonoError* error)
+MonoReflectionAssemblyHandle il2cpp_mono_assembly_get_object_handle(MonoDomain* domain, MonoAssembly* assembly, MonoError* error)
 {
-	return (Il2CppMonoReflectionAssemblyHandle)il2cpp::vm::Reflection::GetAssemblyObject((const Il2CppAssembly *)assembly);
+	return (MonoReflectionAssemblyHandle)il2cpp::vm::Reflection::GetAssemblyObject((const Il2CppAssembly *)assembly);
 }
 
-MonoReflectionType* il2cpp_mono_type_get_object_checked(Il2CppMonoDomain* domain, MonoType* type, MonoError* error)
+MonoReflectionType* il2cpp_mono_type_get_object_checked(MonoDomain* domain, MonoType* type, MonoError* error)
 {
 	error_init(error);
 	return (MonoReflectionType*)il2cpp::vm::Reflection::GetTypeObject((const Il2CppType*)type);
@@ -1060,7 +1060,7 @@ MonoDebugOptions* il2cpp_mini_get_debug_options()
 	return NULL;
 }
 
-gpointer il2cpp_mono_jit_find_compiled_method_with_jit_info(Il2CppMonoDomain* domain, MonoMethod* method, MonoJitInfo** ji)
+gpointer il2cpp_mono_jit_find_compiled_method_with_jit_info(MonoDomain* domain, MonoMethod* method, MonoJitInfo** ji)
 {
 	IL2CPP_ASSERT(0 && "This method is not yet implemented");
 	return 0;
@@ -1077,7 +1077,7 @@ void il2cpp_mono_set_lmf(MonoLMF* lmf)
 	IL2CPP_ASSERT(0 && "This method is not yet implemented");
 }
 
-gpointer il2cpp_mono_aot_get_method_checked(Il2CppMonoDomain* domain, MonoMethod* method, MonoError* error)
+gpointer il2cpp_mono_aot_get_method_checked(MonoDomain* domain, MonoMethod* method, MonoError* error)
 {
 	IL2CPP_ASSERT(0 && "This method is not yet implemented");
 	return 0;
@@ -1156,7 +1156,7 @@ gboolean il2cpp_mono_thread_state_init_from_monoctx(MonoThreadUnwindState* ctx, 
 	return 0;
 }
 
-MonoJitInfo* il2cpp_mini_jit_info_table_find(Il2CppMonoDomain* domain, char* addr, Il2CppMonoDomain** out_domain)
+MonoJitInfo* il2cpp_mini_jit_info_table_find(MonoDomain* domain, char* addr, MonoDomain** out_domain)
 {
 	IL2CPP_ASSERT(0 && "This method is not yet implemented");
 	return NULL;
@@ -1167,7 +1167,7 @@ void il2cpp_mono_restore_context(MonoContext* ctx)
 	IL2CPP_ASSERT(0 && "This method is not yet implemented");
 }
 
-gboolean il2cpp_mono_find_jit_info_ext(Il2CppMonoDomain* domain, MonoJitTlsData* jit_tls, MonoJitInfo* prev_ji, MonoContext* ctx, MonoContext* new_ctx, char** trace, MonoLMF** lmf, mgreg_t** save_locations, StackFrameInfo* frame)
+gboolean il2cpp_mono_find_jit_info_ext(MonoDomain* domain, MonoJitTlsData* jit_tls, MonoJitInfo* prev_ji, MonoContext* ctx, MonoContext* new_ctx, char** trace, MonoLMF** lmf, mgreg_t** save_locations, StackFrameInfo* frame)
 {
 	IL2CPP_ASSERT(0 && "This method is not yet implemented");
 	return 0;
@@ -1191,7 +1191,7 @@ MonoMethod* il2cpp_jinfo_get_method (MonoJitInfo *ji)
 	return NULL;
 }
 
-gboolean il2cpp_mono_find_prev_seq_point_for_native_offset (Il2CppMonoDomain *domain, MonoMethod *method, gint32 native_offset, MonoSeqPointInfo **info, SeqPoint* seq_point)
+gboolean il2cpp_mono_find_prev_seq_point_for_native_offset (MonoDomain *domain, MonoMethod *method, gint32 native_offset, MonoSeqPointInfo **info, SeqPoint* seq_point)
 {
 	IL2CPP_ASSERT(0 && "This method is not yet implemented");
 	return 0;
@@ -1212,7 +1212,7 @@ void* il2cpp_mono_w32socket_accept_internal (void* s, struct sockaddr *addr, voi
 	return 0;
 }
 
-gboolean il2cpp_mono_find_next_seq_point_for_native_offset (Il2CppMonoDomain *domain, MonoMethod *method, gint32 native_offset, MonoSeqPointInfo **info, SeqPoint* seq_point)
+gboolean il2cpp_mono_find_next_seq_point_for_native_offset (MonoDomain *domain, MonoMethod *method, gint32 native_offset, MonoSeqPointInfo **info, SeqPoint* seq_point)
 {
 	IL2CPP_ASSERT(0 && "This method is not yet implemented");
 	return 0;
@@ -1229,7 +1229,7 @@ MonoGenericParam* il2cpp_mono_generic_container_get_param (MonoGenericContainer 
 	return (MonoGenericParam*)il2cpp::vm::GenericContainer::GetGenericParameter((Il2CppGenericContainer*)gc, i);
 }
 
-gboolean il2cpp_mono_find_seq_point (Il2CppMonoDomain *domain, MonoMethod *method, gint32 il_offset, MonoSeqPointInfo **info, SeqPoint *seq_point)
+gboolean il2cpp_mono_find_seq_point (MonoDomain *domain, MonoMethod *method, gint32 il_offset, MonoSeqPointInfo **info, SeqPoint *seq_point)
 {
 	IL2CPP_ASSERT(0 && "This method is not yet implemented");
 	return 0;
@@ -1251,7 +1251,7 @@ void il2cpp_mono_seq_point_init_next (MonoSeqPointInfo* info, SeqPoint sp, SeqPo
 	IL2CPP_ASSERT(0 && "This method is not yet implemented");
 }
 
-MonoSeqPointInfo* il2cpp_mono_get_seq_points (Il2CppMonoDomain *domain, MonoMethod *method)
+MonoSeqPointInfo* il2cpp_mono_get_seq_points (MonoDomain *domain, MonoMethod *method)
 {
 	IL2CPP_ASSERT(0 && "This method is not yet implemented");
 	return NULL;
@@ -1300,17 +1300,17 @@ void* il2cpp_mono_gc_invoke_with_gc_lock (Il2CppMonoGCLockedCallbackFunc func, v
 
 // These functions expose the IL2CPP VM C++ API to C
 
-void* il2cpp_domain_get_agent_info(Il2CppMonoAppDomain* domain)
+void* il2cpp_domain_get_agent_info(MonoAppDomain* domain)
 {
 	return ((Il2CppDomain*)domain)->agent_info;
 }
 
-void il2cpp_domain_set_agent_info(Il2CppMonoAppDomain* domain, void* agentInfo)
+void il2cpp_domain_set_agent_info(MonoAppDomain* domain, void* agentInfo)
 {
 	((Il2CppDomain*)domain)->agent_info = agentInfo;
 }
 
-MonoAssembly* il2cpp_domain_get_assemblies_iter(Il2CppMonoAppDomain *domain, void* *iter)
+MonoAssembly* il2cpp_domain_get_assemblies_iter(MonoAppDomain *domain, void* *iter)
 {
 	if (!iter)
 		return NULL;
@@ -1355,22 +1355,22 @@ void il2cpp_gc_free_fixed(void* address)
 	il2cpp::gc::GarbageCollector::FreeFixed(address);
 }
 
-const char* il2cpp_domain_get_name(Il2CppMonoDomain* domain)
+const char* il2cpp_domain_get_name(MonoDomain* domain)
 {
 	return ((Il2CppDomain*)domain)->friendly_name;
 }
 
-Il2CppSequencePointC* il2cpp_get_sequence_points(void* *iter)
+Il2CppSequencePoint* il2cpp_get_sequence_points(void* *iter)
 {
-	return (Il2CppSequencePointC*)il2cpp::utils::Debugger::GetSequencePoints(iter);
+	return (Il2CppSequencePoint*)il2cpp::utils::Debugger::GetSequencePoints(iter);
 }
 
-Il2CppSequencePointC* il2cpp_get_method_sequence_points(MonoMethod* method, void* *iter)
+Il2CppSequencePoint* il2cpp_get_method_sequence_points(MonoMethod* method, void* *iter)
 {
 	if (!method)
-		return (Il2CppSequencePointC*)il2cpp::utils::Debugger::GetSequencePoints(iter);
+		return (Il2CppSequencePoint*)il2cpp::utils::Debugger::GetSequencePoints(iter);
 	else
-		return (Il2CppSequencePointC*)il2cpp::utils::Debugger::GetSequencePoints((const MethodInfo*)method, iter);
+		return (Il2CppSequencePoint*)il2cpp::utils::Debugger::GetSequencePoints((const MethodInfo*)method, iter);
 }
 
 gboolean il2cpp_mono_methods_match(MonoMethod* left, MonoMethod* right)
