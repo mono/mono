@@ -4104,7 +4104,6 @@ thread_startup (MonoProfiler *prof, uintptr_t tid)
 	}
 #ifdef IL2CPP_MONO_DEBUGGER
 	tls = il2cpp_gc_alloc_fixed(sizeof(DebuggerTlsData));
-	tls->exception = NULL;
 #else
 	tls = g_new0 (DebuggerTlsData, 1);
 	MONO_GC_REGISTER_ROOT_SINGLE (tls->thread, MONO_ROOT_SOURCE_DEBUGGER, "debugger thread reference");
