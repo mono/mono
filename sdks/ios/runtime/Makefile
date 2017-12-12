@@ -1,4 +1,4 @@
-all: test-runner libmonoios.a
+all: runtime libmonoios.a
 
 UNREFERENCED_SYMBOLS =                                                  \
         _xamarin_log                                                            \
@@ -35,7 +35,7 @@ SIM_LDFLAGS = \
 sim-%.o: %.m
 	$(ENV) $(CC) -arch $(SIM_ARCH) $(SIM_CFLAGS) -c -o $@ $^
 
-test-runner: sim-main.o sim-runtime.o sim-AppDelegate.o sim-ViewController.o
+runtime: sim-main.o sim-runtime.o sim-AppDelegate.o sim-ViewController.o
 	$(ENV) $(CC) -arch $(SIM_ARCH) $(SIM_LDFLAGS) -o $@ $^
 
 DEV_ARCH = arm64
