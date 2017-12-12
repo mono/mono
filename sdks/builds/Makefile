@@ -14,6 +14,19 @@ endif
 $(TOP)/configure: $(TOP)/configure.ac $(TOP)/autogen.sh
 	cd $(TOP) && PATH=$(EXTRA_PATH):$$PATH NOCONFIGURE=1 ./autogen.sh
 
+## LLVM
+
+LLVM_REV=a9cfb50e5af3d632f8c1c9620ca52d0118523b53
+
+# Download a prebuilt llvm
+# Shared between ios and android
+.stamp-llvm-$(LLVM_REV):
+	./download-llvm.sh $@ $(LLVM_REV)
+
+clean-llvm:
+	$(RM) -r ../out/llvm64
+	$(RM) .stamp-llvm-*
+
 TARGETS=
 
 ## BCL targets
