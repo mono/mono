@@ -248,6 +248,9 @@ typedef struct {
 	InvokeData *invoke;
 
 	StackFrameInfo catch_frame;
+#ifdef IL2CPP_MONO_DEBUGGER
+	MonoException *exception;
+#endif
 	gboolean has_catch_frame;
 
 	/*
@@ -806,7 +809,8 @@ static void suspend_init (void);
 static void ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint *sp, MonoSeqPointInfo *info, MonoContext *ctx, DebuggerTlsData *tls, gboolean step_to_catch,
 					  StackFrame **frames, int nframes);
 #ifdef IL2CPP_MONO_DEBUGGER
-static void ss_start_il2cpp(SingleStepReq *ss_req, DebuggerTlsData *tls);
+static Il2CppSequencePoint* il2cpp_find_catch_sequence_point(DebuggerTlsData *tls);
+static void ss_start_il2cpp(SingleStepReq *ss_req, DebuggerTlsData *tls, Il2CppSequencePoint *catchFrameSp);
 static void GetSequencePointsAndSourceFilesUniqueSequencePoints(MonoMethod* method, GPtrArray** sequencePoints, GPtrArray** uniqueFileSequencePoints, GArray** uniqueFileSequencePointIndices);
 #endif
 static ErrorCode ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilter filter, EventRequest *req);
@@ -4100,6 +4104,7 @@ thread_startup (MonoProfiler *prof, uintptr_t tid)
 	}
 #ifdef IL2CPP_MONO_DEBUGGER
 	tls = il2cpp_gc_alloc_fixed(sizeof(DebuggerTlsData));
+	tls->exception = NULL;
 #else
 	tls = g_new0 (DebuggerTlsData, 1);
 	MONO_GC_REGISTER_ROOT_SINGLE (tls->thread, MONO_ROOT_SOURCE_DEBUGGER, "debugger thread reference");
@@ -6339,7 +6344,7 @@ ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint* sp, MonoSeqPointI
 #ifdef IL2CPP_MONO_DEBUGGER
 
 static void
-ss_start_il2cpp(SingleStepReq *ss_req, DebuggerTlsData *tls)
+ss_start_il2cpp(SingleStepReq *ss_req, DebuggerTlsData *tls, Il2CppSequencePoint *catchFrameSp)
 {
 	// When 8 or more entries are in bps, we build a hash table to serve as a set of breakpoints.
 	// Recreating this on each pass is a little wasteful but at least keeps behavior linear.
@@ -6352,38 +6357,41 @@ ss_start_il2cpp(SingleStepReq *ss_req, DebuggerTlsData *tls)
 
 	DEBUG_PRINTF(0, "Step depth: %d\n", ss_req->depth);
 
-	if (ss_req->depth == STEP_DEPTH_OVER)
-	{
-		MonoMethod* currentMethod = tls->il2cpp_context.sequencePoints[tls->il2cpp_context.frameCount - 1]->method;
-
-		void *seqPointIter = NULL;
-		Il2CppSequencePoint *seqPoint;
-		while(seqPoint = il2cpp_get_method_sequence_points(currentMethod, &seqPointIter))
+	if (catchFrameSp) {
+		ss_bp_add_one_il2cpp (ss_req, &ss_req_bp_count, &ss_req_bp_cache, catchFrameSp);
+	} else {
+		if (ss_req->depth == STEP_DEPTH_OVER)
 		{
+			MonoMethod* currentMethod = tls->il2cpp_context.sequencePoints[tls->il2cpp_context.frameCount - 1]->method;
+
+			void *seqPointIter = NULL;
+			Il2CppSequencePoint *seqPoint;
+			while(seqPoint = il2cpp_get_method_sequence_points(currentMethod, &seqPointIter))
+			{
 			if (seqPoint->kind != kSequencePointKind_Normal)
-				continue;
+					continue;
 
-			if (il2cpp_mono_methods_match(seqPoint->method, currentMethod))
-				ss_bp_add_one_il2cpp(ss_req, &ss_req_bp_count, &ss_req_bp_cache, seqPoint);
+				if (il2cpp_mono_methods_match(seqPoint->method, currentMethod))
+					ss_bp_add_one_il2cpp(ss_req, &ss_req_bp_count, &ss_req_bp_cache, seqPoint);
+			}
 		}
-	}
 
-	if (tls->il2cpp_context.frameCount > 1)
-	{
+		if (tls->il2cpp_context.frameCount > 1)
+		{
 		Il2CppSequencePoint* sequencePointForStepOut = tls->il2cpp_context.sequencePoints[tls->il2cpp_context.frameCount - 2];
 		g_assert(sequencePointForStepOut->kind == kSequencePointKind_StepOut);
-		ss_bp_add_one_il2cpp(ss_req, &ss_req_bp_count, &ss_req_bp_cache, sequencePointForStepOut);
+			ss_bp_add_one_il2cpp(ss_req, &ss_req_bp_count, &ss_req_bp_cache, sequencePointForStepOut);
+		}
+
+		if (ss_req->depth == STEP_DEPTH_INTO)
+		{
+			/* Enable global stepping so we stop at method entry too */
+			enable_global = TRUE;
+		}
 	}
 
 	if (ss_req_bp_cache)
 		g_hash_table_destroy(ss_req_bp_cache);
-
-
-	if (ss_req->depth == STEP_DEPTH_INTO)
-	{
-		/* Enable global stepping so we stop at method entry too */
-		enable_global = TRUE;
-	}
 
 	if (enable_global)
 	{
@@ -6460,6 +6468,7 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilte
 
 #ifdef IL2CPP_MONO_DEBUGGER
 	ss_req->nframes = tls->il2cpp_context.frameCount;
+	Il2CppSequencePoint *catchFrameSp = NULL;
 
 	if (tls->il2cpp_context.frameCount > 0)
 	{
@@ -6467,9 +6476,12 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilte
 		ss_req->start_method = seq_point->method;
 		ss_req->last_method = seq_point->method;
 		ss_req->last_line = seq_point->lineEnd;
+
+		if (tls->exception)
+			catchFrameSp = il2cpp_find_catch_sequence_point(tls);
 	}
 
-	ss_start_il2cpp(ss_req, tls);
+	ss_start_il2cpp(ss_req, tls, catchFrameSp);
 #else
 	if (!tls->context.valid) {
 		DEBUG_PRINTF (1, "Received a single step request on a thread with no managed frames.");
@@ -6670,6 +6682,63 @@ mono_debugger_agent_unhandled_exception (MonoException *exc)
 #endif
 
 #ifdef IL2CPP_MONO_DEBUGGER
+
+static Il2CppSequencePoint* il2cpp_find_catch_sequence_point_in_method(Il2CppSequencePoint* callSp, MonoException *exc)
+{
+	uint8_t tryDepth = callSp->tryDepth;
+	MonoMethod *method = callSp->method;
+	int32_t ilOffset = callSp->ilOffset;
+	Il2CppSequencePoint *sp;
+
+	void *seqPointIter = NULL;
+	while (sp = il2cpp_get_method_sequence_points(method, &seqPointIter))
+	{
+		if (sp->tryDepth == tryDepth && sp->ilOffset > ilOffset && sp->catchType != NULL && mono_class_is_assignable_from(sp->catchType, VM_OBJECT_GET_CLASS(exc)))
+			return sp;
+	}
+
+	return NULL;
+}
+
+static Il2CppSequencePoint* il2cpp_find_catch_sequence_point(DebuggerTlsData *tls)
+{
+	int frameIndex = tls->il2cpp_context.frameCount - 1;
+	while (frameIndex >= 0)
+	{
+		Il2CppSequencePoint* sp = il2cpp_find_catch_sequence_point_in_method(tls->il2cpp_context.sequencePoints[frameIndex], tls->exception);
+		if (sp)
+			return sp;
+
+		--frameIndex;
+	}
+
+	return NULL;
+}
+
+static Il2CppSequencePoint* il2cpp_find_catch_sequence_point_from_exeption(DebuggerTlsData *tls, MonoException *exc, Il2CppSequencePoint *firstSp)
+{
+	Il2CppSequencePoint* sp;
+
+	if (firstSp)
+	{
+		sp = il2cpp_find_catch_sequence_point_in_method(firstSp, exc);
+		if (sp)
+			return sp;
+	}
+
+	int frameIndex = tls->il2cpp_context.frameCount - 1;
+	while (frameIndex >= 0)
+	{
+		sp = il2cpp_find_catch_sequence_point_in_method(tls->il2cpp_context.sequencePoints[frameIndex], exc);
+		if (sp)
+			return sp;
+
+		--frameIndex;
+	}
+
+	return NULL;
+}
+
 void
 unity_debugger_agent_handle_exception(MonoException *exc, Il2CppSequencePoint *sequencePoint)
 {
@@ -6695,7 +6764,15 @@ unity_debugger_agent_handle_exception(MonoException *exc, Il2CppSequencePoint *s
 	memset(&ei, 0, sizeof(DebuggerEventInfo));
 
 	ei.exc = (MonoObject*)exc;
-	ei.caught = TRUE;
+	ei.caught = FALSE;
+	Il2CppSequencePoint *catchSp = NULL;
+
+	if (tls)
+	{
+		catchSp = il2cpp_find_catch_sequence_point_from_exeption(tls, exc, sequencePoint);
+		if (catchSp)
+			ei.caught = TRUE;
+	}
 
 	mono_loader_lock();
 
@@ -6731,7 +6808,25 @@ unity_debugger_agent_handle_exception(MonoException *exc, Il2CppSequencePoint *s
 	events = create_event_list(EVENT_KIND_EXCEPTION, NULL, NULL, &ei, &suspend_policy);
 	mono_loader_unlock();
 
+	if (tls && ei.caught)
+	{
+		if (!ss_req || !ss_req->bps) {
+			tls->exception = exc;
+		} else if (ss_req->bps && catchSp) {
+			int ss_req_bp_count = g_slist_length(ss_req->bps);
+			GHashTable *ss_req_bp_cache = NULL;
+
+			ss_bp_add_one_il2cpp(ss_req, &ss_req_bp_count, &ss_req_bp_cache, catchSp);
+
+			if (ss_req_bp_cache)
+				g_hash_table_destroy(ss_req_bp_cache);
+		}
+	}
+
 	process_event(EVENT_KIND_EXCEPTION, &ei, 0, NULL, events, suspend_policy, sequencePoint ? sequencePoint->id : 0);
+
+	if (tls)
+		tls->exception = NULL;
 }
 #endif
 
@@ -11977,7 +12072,11 @@ unity_process_breakpoint_inner(DebuggerTlsData *tls, gboolean from_signal, Il2Cp
 		if (hit)
 		{
 			g_ptr_array_add(ss_reqs, req);
-			ss_start_il2cpp(ss_req, tls);
+			Il2CppSequencePoint *catchFrameSp = NULL;
+			if (tls->exception)
+				catchFrameSp = il2cpp_find_catch_sequence_point(tls);
+
+			ss_start_il2cpp(ss_req, tls, catchFrameSp);
 		}
 	}
 
