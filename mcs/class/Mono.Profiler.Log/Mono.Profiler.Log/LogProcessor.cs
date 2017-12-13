@@ -575,6 +575,9 @@ namespace Mono.Profiler.Log {
 				case LogEventType.RuntimeJitHelper: {
 					var helperType = (LogJitHelper) _reader.ReadByte ();
 
+					if (StreamHeader.FormatVersion < 14)
+						helperType--;
+
 					ev = new JitHelperEvent {
 						Type = helperType,
 						BufferPointer = ReadPointer (),
