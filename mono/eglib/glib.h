@@ -721,9 +721,44 @@ GUnicodeBreakType   g_unichar_break_type (gunichar c);
 #define  eg_unreachable()
 #endif
 
+/* Old version. Preserved for testing and history. */
+
 #define  g_assert(x)     G_STMT_START { if (G_UNLIKELY (!(x))) g_assertion_message ("* Assertion at %s:%d, condition `%s' not met\n", __FILE__, __LINE__, #x);  } G_STMT_END
-#define  g_assertf(x, format, ...) G_STMT_START { if (G_UNLIKELY(!(x))) g_assertion_message ("* Assertion at %s:%d, condition `%s' not met, " format "\n",  __FILE__, __LINE__, #x, __VA_ARGS__); } G_STMT_END
+
+#if !defined(EGLIB_TEST_OLD_ASSERT)
+
+#undef g_assert
+
+/* g_assert is a boolean expression; the precise value is not preserved, just true or false. */
+#define g_assert(x) \
+	(G_LIKELY(x) ? 1 : (g_assertion_message ( \
+	"* Assertion at %s:%d, condition `%s' not met\n", __FILE__, __LINE__, #x), 0))
+
+#endif
+
 #define  g_assert_not_reached() G_STMT_START { g_assertion_message ("* Assertion: should not be reached at %s:%d\n", __FILE__, __LINE__); eg_unreachable(); } G_STMT_END
+
+/* f is format -- like printf and scanf
+Where you might have said:
+	if (!(expr))
+		g_error("%s invalid bar:%d", __func__, bar)
+
+You can say:
+	g_assertf(expr, "bar:%d", bar);
+
+The usual assertion text of file/line/expr/newline are builtin, and __func__.
+
+g_assertf is a boolean expression -- the precise value is not preserved, just true or false.
+
+Other than expr, the parameters are not evaluated unless expr is false.
+
+format must be a string literal, in order to be concatenated.
+If this is too restrictive, g_error remains.
+*/
+#define  g_assertf(x, format, ...) \
+	(G_LIKELY(x) ? 1 : (g_assertion_message ( \
+	"* Assertion at %s:%d, condition `%s' not met, function:%hs, " format "\n", \
+	__FILE__, __LINE__, #x, __func__, __VA_ARGS__), 0))
 
 /*
  * Unicode conversion

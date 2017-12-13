@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# Todo libtool, autoconf, automake.
+# The most immediate reason why not, is negative testing.
+
+# Echo commands and stop on any error.
+set -xe
+
+# This should fail to compile.
+# If it succeeds, then this test fails.
+gcc -DEGLIB_TEST_OLD_ASSERT -I.. assert_is_expr.c >/dev/null 2>&1 && exit 1
+# We should get here.
+
+# This should compile.
+gcc -I.. assert_is_expr.c
+
+# This test is executable.
+gcc -I.. assertf.c -L../.libs -leglib
