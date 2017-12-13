@@ -2220,13 +2220,14 @@ mono_reflection_type_from_name_checked (char *name, MonoImage *image, MonoError 
 	MonoTypeNameParse info;
 	char *tmp;
 
+	error_init (error);
+
 	/* Make a copy since parse_type modifies its argument */
 	tmp = g_strdup (name);
 	
 	/*g_print ("requested type %s\n", str);*/
 	MonoError parse_error;
 	if (!mono_reflection_parse_type_checked (tmp, &info, &parse_error)) {
-		error_init (error);
 		mono_error_cleanup (&parse_error);
 		goto leave;
 	}
