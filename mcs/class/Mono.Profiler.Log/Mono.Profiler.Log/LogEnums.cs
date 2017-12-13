@@ -168,6 +168,7 @@ namespace Mono.Profiler.Log {
 		ThreadPool = 12,
 		Debugger = 13,
 		Handle = 14,
+		Ephemeron = 15,
 	}
 
 	// mono/profiler/log.h : MonoProfilerMonitorEvent
