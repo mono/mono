@@ -99,7 +99,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
-		[Category ("InterpreterNotWorking")] /* crashes on linux/armv7 */
+		[Category ("NotWorkingRuntimeInterpreter")] /* crashes on linux/armv7 */
 		public void TestCompareExchange_Flt ()
 		{
 			flt = flt_1;

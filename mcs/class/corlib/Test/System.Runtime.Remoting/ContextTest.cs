@@ -40,7 +40,7 @@ namespace MonoTests.System.Runtime.Remoting
 		LocalDataStoreSlot slot;
 		
 		[Test]
-		[Category ("InterpreterNotWorking")]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void TestDoCallback ()
 		{
 			otherCtx = cbo.GetContext ();
@@ -55,7 +55,7 @@ namespace MonoTests.System.Runtime.Remoting
 		}
 		
 		[Test]
-		[Category ("InterpreterNotWorking")]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void TestDatastore ()
 		{
 			otherCtx = cbo.GetContext ();

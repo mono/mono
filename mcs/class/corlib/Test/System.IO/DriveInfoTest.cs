@@ -65,7 +65,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category ("InterpreterNotWorking")]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void GetDrivesValidInfo ()
 		{
 			var drives = DriveInfo.GetDrives ();
