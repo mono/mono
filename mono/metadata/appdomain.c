@@ -708,22 +708,26 @@ mono_domain_has_type_resolve (MonoDomain *domain)
  * mono_domain_try_type_resolve:
  * \param domain application domain in which to resolve the type
  * \param name the name of the type to resolve or NULL.
- * \param tb A \c System.Reflection.Emit.TypeBuilder, used if name is NULL.
+ * \param typebuilder A \c System.Reflection.Emit.TypeBuilder, used if name is NULL.
  *
  * This routine invokes the internal \c System.AppDomain.DoTypeResolve and returns
- * the assembly that matches name, or ((TypeBuilder)tb).FullName.
+ * the assembly that matches name, or ((TypeBuilder)typebuilder).FullName.
  *
  * \returns A \c MonoReflectionAssembly or NULL if not found
  */
 MonoReflectionAssembly *
-mono_domain_try_type_resolve (MonoDomain *domain, char *name, MonoObject *tb)
+mono_domain_try_type_resolve (MonoDomain *domain, char *name, MonoObject *typebuilder)
 {
-	MonoError error;
 	g_assert (domain);
-	g_assert (name || tb);
+	g_assert (name || typebuilder);
+
+	MonoError error;
+	error_init (&error);
+
 	MonoReflectionAssembly * const ret = name
 		? mono_domain_try_type_resolve_name (domain, name, &error)
-		: mono_domain_try_type_resolve_builder (domain, (MonoReflectionTypeBuilder *)tb, &error);
+		: mono_domain_try_type_resolve_typebuilder (domain, (MonoReflectionTypeBuilder *)typebuilder, &error);
+
 	mono_error_cleanup (&error);
 	return ret;
 }
@@ -734,17 +738,19 @@ mono_domain_try_type_resolve (MonoDomain *domain, char *name, MonoObject *tb)
  * This routine returns System.AppDomain.DoTypeResolve.
  */
 static MonoMethod *
-mono_class_get_appdomain_do_type_resolve_method (void)
+mono_class_get_appdomain_do_type_resolve_method (MonoError *error)
 {
-	static MonoMethod *method = NULL;
+	static MonoMethod *method; // cache
 
 	if (method)
 		return method;
 
-	method = mono_class_get_method_from_name (mono_class_get_appdomain_class (), "DoTypeResolve", -1);
-	if (method == NULL) {
-		g_warning ("Method AppDomain.DoTypeResolve not found.\n");
-	}
+	// not cached yet, fill cache under caller's lock
+
+	method = mono_class_get_method_from_name_checked (mono_class_get_appdomain_class (), "DoTypeResolve", -1, 0, error);
+
+	if (!mono_error_ok (error))
+		g_warning ("%s %s\n", __func__, mono_error_get_message (error));
 
 	return method;
 }
@@ -771,7 +777,9 @@ mono_domain_try_type_resolve_name (MonoDomain *domain, const char *name, MonoErr
 	void *params [] = { mono_string_new_checked (mono_domain_get (), name, error) };
 	return_val_if_nok (error, NULL);
 
-	MonoMethod * const method = mono_class_get_appdomain_do_type_resolve_method ();
+	MonoMethod * const method = mono_class_get_appdomain_do_type_resolve_method (error);
+	return_val_if_nok (error, NULL);
+
 	MonoObject * const ret = mono_runtime_invoke_checked (method, domain->domain, params, error);
 	return_val_if_nok (error, NULL);
 
@@ -779,26 +787,28 @@ mono_domain_try_type_resolve_name (MonoDomain *domain, const char *name, MonoErr
 }
 
 /**
- * mono_domain_try_type_resolve_builder:
+ * mono_domain_try_type_resolve_typebuilder:
  * \param domain application domain in which to resolve the type
- * \param tb A \c System.Reflection.Emit.TypeBuilder; tb.FullName is the name of the type to resolve.
+ * \param typebuilder A \c System.Reflection.Emit.TypeBuilder; typebuilder.FullName is the name of the type to resolve.
  *
  * This routine invokes the internal \c System.AppDomain.DoTypeResolve and returns
- * the assembly that matches tb.FullName.
+ * the assembly that matches typebuilder.FullName.
  *
  * \returns A \c MonoReflectionAssembly or NULL if not found
  */
 MonoReflectionAssembly *
-mono_domain_try_type_resolve_builder (MonoDomain *domain, MonoReflectionTypeBuilder *tb, MonoError *error)
+mono_domain_try_type_resolve_typebuilder (MonoDomain *domain, MonoReflectionTypeBuilder *typebuilder, MonoError *error)
 {
 	g_assert (domain);
-	g_assert (tb);
+	g_assert (typebuilder);
 	g_assert (error);
 
 	error_init (error);
 
-	MonoMethod * const method = mono_class_get_appdomain_do_type_resolve_method ();
-	MonoObject * const ret = mono_runtime_invoke_checked (method, domain->domain, (void**)&tb, error);
+	MonoMethod * const method = mono_class_get_appdomain_do_type_resolve_method (error);
+	return_val_if_nok (error, NULL);
+
+	MonoObject * const ret = mono_runtime_invoke_checked (method, domain->domain, (void**)&typebuilder, error);
 	return_val_if_nok (error, NULL);
 
 	return (MonoReflectionAssembly *)ret;

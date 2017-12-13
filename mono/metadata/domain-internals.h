@@ -610,10 +610,10 @@ void mono_enable_debug_domain_unload (gboolean enable);
 MonoReflectionAssembly *
 mono_domain_try_type_resolve_name (MonoDomain *domain, const char *name, MonoError *error);
 
-typedef struct _MonoReflectionTypeBuilder MonoReflectionTypeBuilder;
+struct _MonoReflectionTypeBuilder;
 
 MonoReflectionAssembly *
-mono_domain_try_type_resolve_builder (MonoDomain *domain, MonoReflectionTypeBuilder *builder, MonoError *error);
+mono_domain_try_type_resolve_typebuilder (MonoDomain *domain, struct _MonoReflectionTypeBuilder *builder, MonoError *error);
 
 void
 mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoThreadAttachCB attach_cb, MonoError *error);

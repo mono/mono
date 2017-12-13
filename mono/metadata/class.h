@@ -39,6 +39,10 @@ mono_class_from_name_case  (MonoImage *image, const char* name_space, const char
 MONO_API MonoMethod *
 mono_class_get_method_from_name_flags (MonoClass *klass, const char *name, int param_count, int flags);
 
+MonoMethod *
+mono_class_get_method_from_name_checked (MonoClass *klass, const char *name,
+	int param_count, int flags, MonoError *error);
+
 MONO_API MonoClass * 
 mono_class_from_typeref    (MonoImage *image, uint32_t type_token);
 
