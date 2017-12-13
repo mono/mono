@@ -2,12 +2,12 @@ using System;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
-namespace Mono.UnityTLS
+namespace Mono.Unity
 {
     using size_t = UIntPtr;
     using UInt8 = Byte;
 
-    unsafe internal static partial class UnityTLS
+    unsafe internal static partial class UnityTls
     {
         private const string DLLNAME = "MacStandalonePlayer_TLSModule_Dynamic.dylib";
         private const CallingConvention CALLCONV = CallingConvention.Cdecl;

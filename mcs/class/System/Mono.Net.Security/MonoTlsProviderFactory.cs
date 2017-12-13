@@ -226,6 +226,10 @@ namespace Mono.Net.Security
 				providerRegistration = new Dictionary<string,Tuple<Guid,string>> ();
 				providerCache = new Dictionary<Guid,MSI.MonoTlsProvider> ();
 
+#if UNITY
+				providerRegistration.Add ("unitytls", "Mono.Unity.UnityTlsProvider");
+#else
+
 				var appleTlsEntry = new Tuple<Guid,String> (AppleTlsId, "Mono.AppleTls.AppleTlsProvider");
 
 #if ONLY_APPLETLS || MONOTOUCH || XAMMAC
@@ -242,7 +246,7 @@ namespace Mono.Net.Security
 					providerRegistration.Add ("btls", btlsEntry);
 				}
 #endif
-
+#endif
 				if (Platform.IsMacOS)
 					providerRegistration.Add ("default", appleTlsEntry);
 				else if (btlsEntry != null)

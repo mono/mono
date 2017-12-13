@@ -1,8 +1,8 @@
 using System;
 
-namespace Mono.UnityTLS
+namespace Mono.Unity
 {
-    unsafe internal static partial class UnityTLS
+    unsafe internal static partial class UnityTls
     {
         public enum unitytls_ciphersuite : UInt32
         {
