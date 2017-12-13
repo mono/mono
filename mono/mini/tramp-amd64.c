@@ -366,8 +366,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 #if defined(MONO_HAVE_SIMD_REG)
 			amd64_movdqu_membase_reg (code, AMD64_RBP, saved_fpregs_offset + (i * sizeof(MonoContextSimdReg)), i);
 #else
-			/* FIXME: Is this the appropriate type on platforms without SimdReg? */
-			amd64_movdqu_membase_reg (code, AMD64_RBP, saved_fpregs_offset + (i * sizeof(mgreg_t)), i);
+			amd64_movsd_membase_reg (code, AMD64_RBP, saved_fpregs_offset + (i * sizeof(double)), i);
 #endif
 
 	/* Check that the stack is aligned */
@@ -548,7 +547,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 #if defined(MONO_HAVE_SIMD_REG)
 			amd64_movdqu_reg_membase (code, i, AMD64_RBP, saved_fpregs_offset + (i * sizeof(MonoContextSimdReg)));
 #else
-			amd64_movdqu_reg_membase (code, i, AMD64_RBP, saved_fpregs_offset + (i * sizeof(mgreg_t)));
+			amd64_movsd_reg_membase (code, i, AMD64_RBP, saved_fpregs_offset + (i * sizeof(double)));
 #endif
 
 	/* Restore stack */
