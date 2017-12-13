@@ -48,8 +48,12 @@ build-ios-sim-%: appbuilder.exe test-runner.exe runtime/runtime $($*_ASSEMBLIES)
 	if test "x$($*_EXTRA_FILES)" != "x"; then cp -r $($*_EXTRA_FILES) $(PWD)/bin/ios-sim/test-$*.app/; fi
 	ninja -C obj/ios-sim/test-$*.app -v
 
+ifdef LLVM
+APPBUILDER_ARGS += --llvm
+endif
+
 build-ios-dev-%: appbuilder.exe test-runner.exe runtime/libmonoios.a $($*_ASSEMBLIES)
-	mono appbuilder.exe --target ios-dev64 --mono-sdkdir $(PWD)/../out --appdir $(PWD)/bin/ios-dev/test-$*.app --runtimedir $(PWD)/runtime --builddir obj/ios-dev/test-$*.app --bundle-executable test-$* --bundle-identifier com.xamarin.mono.ios.test-$* --bundle-name test-$* --exe test-runner.exe $(patsubst %,-r %,$(TEST_ASSEMBLIES) $($*_ASSEMBLIES))
+	mono appbuilder.exe $(APPBUILDER_ARGS) --target ios-dev64 --mono-sdkdir $(PWD)/../out --appdir $(PWD)/bin/ios-dev/test-$*.app --runtimedir $(PWD)/runtime --builddir obj/ios-dev/test-$*.app --bundle-executable test-$* --bundle-identifier com.xamarin.mono.ios.test-$* --bundle-name test-$* --exe test-runner.exe $(patsubst %,-r %,$(TEST_ASSEMBLIES) $($*_ASSEMBLIES))
 	mkdir -p $(PWD)/bin/ios-dev/test-$*.app
 	if test "x$($_EXTRA_FILES)" != "x"; then cp -r $($*_EXTRA_FILES) $(PWD)/bin/ios-dev/test-$*.app/; fi
 	ninja -C obj/ios-dev/test-$*.app -v
@@ -61,6 +65,9 @@ install-ios-sim-%:
 # Clean %
 clean-ios-sim-%:
 	$(RM) -rf obj/ios-sim/test-$*.app bin/ios-sim/test-$*.app
+
+clean-ios-dev-%:
+	$(RM) -rf obj/ios-dev/test-$*.app bin/ios-dev/test-$*.app
 
 # Install and run % on the simulator with args $(ARGS) %_ARGS
 run-ios-sim-%: harness.exe
@@ -80,7 +87,7 @@ run-ios-sim-all:
 	for suite in $(TEST_SUITES); do make build-ios-sim-$$suite || exit 1; make run-ios-sim-$$suite || exit 1; done
 
 build-ios-dev-all:
-	for suite in $(TEST_SUITES); do make build-ios-dev-$$suite || exit 1; done
+	for suite in $(TEST_SUITES); do make clean-ios-dev-$$suite; make build-ios-dev-$$suite || exit 1; done
 
 # Developer targets, ignore
 # 'launch' doesn't propagate the error code

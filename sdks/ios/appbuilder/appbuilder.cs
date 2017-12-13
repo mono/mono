@@ -52,6 +52,8 @@ public class AppBuilder
 		string bundle_executable = null;
 		string exe = null;
 		bool isdev = false;
+		bool isrelease = false;
+		bool isllvm = false;
 		var assemblies = new List<string> ();
 		var p = new OptionSet () {
 				{ "target=", s => target = s },
@@ -62,6 +64,7 @@ public class AppBuilder
 				{ "bundle-identifier=", s => bundle_identifier = s },
 				{ "bundle-name=", s => bundle_name = s },
 				{ "bundle-executable=", s => bundle_executable = s },
+				{ "llvm", s => isllvm = true },
 				{ "exe=", s => exe = s },
 				{ "r=", s => assemblies.Add (s) },
 			};
@@ -83,6 +86,18 @@ public class AppBuilder
 			Console.WriteLine ($"Possible values for the '--target=' argument are 'ios-dev64', 'ios-sim64', got {target}.");
 			Environment.Exit (1);
 			break;
+		}
+
+		if (isllvm)
+			isrelease = true;
+
+		string aot_args = "";
+		string cross_runtime_args = "";
+		if (!isrelease)
+			aot_args = "soft-debug";
+		if (isllvm) {
+			cross_runtime_args = "--llvm";
+			aot_args = ",llvm-path=$mono_sdkdir/llvm64/usr/bin,llvm-outfile=$llvm_outfile";
 		}
 
 		Directory.CreateDirectory (builddir);
@@ -114,7 +129,7 @@ public class AppBuilder
 		ninja.WriteLine ($"builddir = .");
 		// Rules
 		ninja.WriteLine ("rule aot");
-		ninja.WriteLine ("  command = MONO_PATH=$builddir $cross -O=gsharedvt,float32 --debug --aot=full,static,asmonly,direct-icalls,no-direct-calls,soft-debug,dwarfdebug,outfile=$outfile,data-outfile=$data_outfile $src_file");
+		ninja.WriteLine ($"  command = MONO_PATH=$builddir $cross -O=gsharedvt,float32 --debug {cross_runtime_args} --aot=mtriple=arm64-ios,full,static,asmonly,direct-icalls,no-direct-calls,dwarfdebug,{aot_args},outfile=$outfile,data-outfile=$data_outfile $src_file");
 		ninja.WriteLine ("  description = [AOT] $src_file -> $outfile");
 		ninja.WriteLine ("rule assemble");
 		ninja.WriteLine ("  command = clang -isysroot $sysroot -miphoneos-version-min=10.1 -arch arm64 -c -o $out $in");
@@ -151,18 +166,24 @@ public class AppBuilder
 
 			ninja.WriteLine ($"build $appdir/{filename}: cpifdiff $builddir/{filename}");
 			if (isdev) {
-				ninja.WriteLine ($"build $builddir/{filename}.s $builddir/{filename_noext}.aotdata: aot {filename}");
+				string outputs = $"$builddir/{filename}.s $builddir/{filename_noext}.aotdata";
+				if (isllvm)
+					outputs += $" $builddir/{filename}.llvm.s";
+				ninja.WriteLine ($"build {outputs}: aot {filename}");
 				ninja.WriteLine ($"  src_file={filename}");
 				ninja.WriteLine ($"  outfile=$builddir/{filename}.s");
 				ninja.WriteLine ($"  data_outfile=$builddir/{filename_noext}.aotdata");
-
+				if (isllvm)
+					ninja.WriteLine ($"  llvm_outfile=$builddir/{filename}.llvm.s");
 				ninja.WriteLine ($"build $builddir/{filename}.o: assemble $builddir/{filename}.s");
-
+				if (isllvm)
+					ninja.WriteLine ($"build $builddir/{filename}.llvm.o: assemble $builddir/{filename}.llvm.s");
 				ninja.WriteLine ($"build $appdir/{filename_noext}.aotdata: cp {filename_noext}.aotdata");
 			}
 
 			ofiles += " " + ($"$builddir/{filename}.o");
-
+			if (isllvm)
+				ofiles += " " + ($"$builddir/{filename}.llvm.o");
 			var aname = AssemblyName.GetAssemblyName (assembly);
 			assembly_names.Add (aname.Name);
 		}
