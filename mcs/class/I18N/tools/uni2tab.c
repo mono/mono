@@ -151,7 +151,6 @@ static unsigned long  highJis = 0x0000;
 static void processJis0208(unsigned long code, int ku, int ten)
 {
 	int offset = (ku - 1) * 94 + (ten - 1);
-
 	jisx0208ToUnicode[offset] = (unsigned short)code;
 	unicodeToJis[code] = (unsigned short)(offset + 0x0100);
 	if(code < lowJis)
@@ -320,10 +319,17 @@ static void convertSJISLine(char *buf)
 		/* This is required to decode Extra subset to Unicode!! */
 		jisx0208ToUnicode[offset] = (unsigned short)code;
 	}
-	else if(code >= 0x0081 && code < 0x4E00)
+	else if(code >= 0x0100 && code < 0x4E00)
 	{
 		/* Non-CJK characters within JIS */
 		processJis0208(code, (offset / 94) + 1, (offset % 94) + 1);
+	}
+	else if(code >= 0x00A7 && code <= 0x00F7)
+	{
+		/* Non-CJK characters within JIS for which unicodeToJis should not be
+		 * edited. In addition to this, do not track lowJis and highJis. */
+		jisx0208ToUnicode[offset] = (unsigned short)(code & 0xFF);
+		jisx0208ToUnicode[offset + 1] = (((unsigned short)(code & 0x00FF)) >> 8);
 	}
 }
 
