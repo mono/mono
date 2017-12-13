@@ -749,8 +749,8 @@ mono_class_get_appdomain_do_type_resolve_method (MonoError *error)
 
 	method = mono_class_get_method_from_name_checked (mono_class_get_appdomain_class (), "DoTypeResolve", -1, 0, error);
 
-	if (!mono_error_ok (error))
-		g_warning ("%s %s\n", __func__, mono_error_get_message (error));
+	if (method == NULL)
+		g_warning ("%s method AppDomain.DoTypeResolve not found. %s\n", __func__, mono_error_get_message (error));
 
 	return method;
 }
@@ -1205,7 +1205,7 @@ mono_try_assembly_resolve_handle (MonoDomain *domain, MonoStringHandle fname, Mo
 
 	g_assert (domain != NULL && !MONO_HANDLE_IS_NULL (fname));
 
-	method = mono_class_get_method_from_name (mono_class_get_appdomain_class (), "DoAssemblyResolve", -1);
+	method = mono_class_get_method_from_name_checked (mono_class_get_appdomain_class (), "DoAssemblyResolve", -1, 0, error);
 	g_assert (method != NULL);
 
 	isrefonly = refonly ? 1 : 0;
@@ -1319,6 +1319,8 @@ mono_domain_fire_assembly_load (MonoAssembly *assembly, gpointer user_data)
 #endif
 	klass = domain->domain->mbr.obj.vtable->klass;
 
+	error_init (&error);
+
 	mono_domain_assemblies_lock (domain);
 	add_assemblies_to_domain (domain, assembly, NULL);
 	mono_domain_assemblies_unlock (domain);
@@ -1338,7 +1340,7 @@ mono_domain_fire_assembly_load (MonoAssembly *assembly, gpointer user_data)
 	mono_error_assert_ok (&error);
 
 	if (assembly_load_method == NULL) {
-		assembly_load_method = mono_class_get_method_from_name (klass, "DoAssemblyLoad", -1);
+		assembly_load_method = mono_class_get_method_from_name_checked (klass, "DoAssemblyLoad", -1, 0, &error);
 		g_assert (assembly_load_method);
 	}
 
@@ -2728,6 +2730,8 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 	MonoInternalThread *internal;
 	MonoDomain *caller_domain = mono_domain_get ();
 
+	error_init(&error);
+
 	/* printf ("UNLOAD STARTING FOR %s (%p) IN THREAD 0x%x.\n", domain->friendly_name, domain, mono_native_thread_id_get ()); */
 
 	/* Atomically change our state to UNLOADING */
@@ -2751,7 +2755,7 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 
 	mono_domain_set (domain, FALSE);
 	/* Notify OnDomainUnload listeners */
-	method = mono_class_get_method_from_name (domain->domain->mbr.obj.vtable->klass, "DoDomainUnload", -1);	
+	method = mono_class_get_method_from_name_checked (domain->domain->mbr.obj.vtable->klass, "DoDomainUnload", -1, 0, &error);
 	g_assert (method);
 
 	mono_runtime_try_invoke (method, domain->domain, NULL, exc, &error);

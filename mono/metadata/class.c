@@ -9969,8 +9969,7 @@ mono_class_get_method_from_name_checked (MonoClass *klass, const char *name,
 			flags, error);
 
 		if (res)
-			res = mono_class_inflate_generic_method_full_checked (res, klass,
-				mono_class_get_context (klass), error);
+			res = mono_class_inflate_generic_method_full_checked (res, klass, mono_class_get_context (klass), error);
 
 		return res;
 	}
