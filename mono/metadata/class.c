@@ -9963,8 +9963,7 @@ mono_class_get_method_from_name_checked (MonoClass *klass, const char *name,
 	mono_class_init (klass);
 
 	if (mono_class_is_ginst (klass) && !klass->methods) {
-		res = mono_class_get_method_from_name_checked (
-			mono_class_get_generic_class (klass)->container_class, name, param_count, flags, error);
+		res = mono_class_get_method_from_name_checked (mono_class_get_generic_class (klass)->container_class, name, param_count, flags, error);
 
 		if (res)
 			res = mono_class_inflate_generic_method_full_checked (res, klass, mono_class_get_context (klass), error);
