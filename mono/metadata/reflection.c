@@ -2221,7 +2221,6 @@ mono_reflection_type_from_name_checked (char *name, MonoImage *image, MonoError 
 	char *tmp;
 
 	error_init (error);
-
 	/* Make a copy since parse_type modifies its argument */
 	tmp = g_strdup (name);
 	
