@@ -49,7 +49,7 @@ namespace Mono.Unity
 			Stream innerStream, bool leaveInnerStreamOpen,
 			MonoTlsSettings settings = null)
 		{
-			return null; // TODO
+			return new UnityTlsStream (innerStream, leaveInnerStreamOpen, settings, this);
 		}
 
 		internal override bool ValidateCertificate (

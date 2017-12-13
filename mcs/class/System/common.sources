@@ -261,6 +261,8 @@ Mono.AppleTls/Items.cs
 Mono.UnityTls/UnityTls.cs
 Mono.UnityTls/UnityTlsCiphersuites.cs
 Mono.UnityTls/UnityTlsProvider.cs
+Mono.UnityTls/UnityTlsStream.cs
+Mono.UnityTls/UnityTlsContext.cs
 
 Mono.Util/MonoPInvokeCallbackAttribute.cs
 
