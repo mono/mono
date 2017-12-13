@@ -50,7 +50,7 @@ net_4_5_dirs := \
 	linker-analyzer
 
 build_SUBDIRS = resgen gacutil security culevel cil-stringreplacer commoncryptogenerator resx2sr linker cil-strip
-monodroid_tools_SUBDIRS = cil-strip mkbundle mdoc mono-symbolicate
+monodroid_tools_SUBDIRS = cil-strip linker-analyzer mkbundle mdoc mono-symbolicate
 monodroid_SUBDIRS = nunit-lite
 monotouch_SUBDIRS = nunit-lite
 net_4_5_SUBDIRS = gacutil
