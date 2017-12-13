@@ -313,8 +313,6 @@ _ios_$(1)_CONFIGURE_FLAGS= \
 	--with-cross-offsets=$(2)-apple-darwin10.h \
 	--with-glib=embedded
 
-# _ios_$(1)_CONFIGURE_FLAGS += --enable-llvm --with-llvm=../llvm/usr
-
 _ios_$(1)_CONFIGURE_ENVIRONMENT= \
 	CC="$$(_ios_$(1)_CC)" \
 	CXX="$$(_ios_$(1)_CXX)" \
@@ -325,7 +323,7 @@ _ios_$(1)_CONFIGURE_ENVIRONMENT= \
 .stamp-ios-$(1)-toolchain:
 	touch $$@
 
-.stamp-ios-$(1)-configure: $$(TOP)/configure
+.stamp-ios-$(1)-configure: $$(TOP)/configure build-llvm
 	mkdir -p $$(TOP)/sdks/builds/ios-$(1)
 	cd $$(TOP)/sdks/builds/ios-$(1) && PATH="$$(PLATFORM_BIN):$$$$PATH" $$(TOP)/configure $$(_ios_$(1)_AC_VARS) $$(_ios_$(1)_CONFIGURE_ENVIRONMENT) $$(_ios_$(1)_CONFIGURE_FLAGS)
 	touch $$@
@@ -357,3 +355,6 @@ $(eval $(call iOSCrossTemplate,cross32,arm))
 $(eval $(call iOSCrossTemplate,cross64,aarch64))
 
 ios_cross32_CONFIGURE_FLAGS = --build=i386-apple-darwin10
+ios_cross64_CONFIGURE_FLAGS = --with-llvm=$(TOP)/sdks/out/llvm64/usr
+
+
