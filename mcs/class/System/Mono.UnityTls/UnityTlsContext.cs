@@ -27,7 +27,8 @@ namespace Mono.Unity
 	unsafe internal class UnityTlsContext : MobileTlsContext
 	{
 		private const int MaxIOBufferSize = 16384;
-		
+		private const bool ActivateTracing = false;
+
 		// Native UnityTls objects
 		private UnityTls.unitytls_tlsctx*   m_TlsContext = null;
 		private UnityTls.unitytls_x509list* m_ServerCerts = null;
@@ -40,6 +41,12 @@ namespace Mono.Unity
 		bool                  m_IsAuthenticated = false;
 		bool                  m_HasContext = false;
 
+		// Memory-buffer
+		byte[] m_WriteBuffer;
+		byte[] m_ReadBuffer;
+
+		GCHandle m_handle;
+
 		public UnityTlsContext (
 			MobileAuthenticatedStream parent,
 			bool serverMode, string targetHost,
@@ -47,6 +54,10 @@ namespace Mono.Unity
 			X509CertificateCollection clientCertificates, bool askForClientCert)
 			: base (parent, serverMode, targetHost, enabledProtocols, serverCertificate, clientCertificates, askForClientCert)
 		{
+			// GCHandle allows to use managed class in native code. Stricly speaking we don't need this
+			// (there is no access on the native side and live time also doesn't depend on native code), but it makes a few things cleaner and more explicit.
+			m_handle = GCHandle.Alloc(this);
+
 			UnityTls.unitytls_errorstate errorState = UnityTls.unitytls_errorstate_create();
 
 			// Map selected protocols as best as we can.
@@ -58,7 +69,7 @@ namespace Mono.Unity
 			UnityTls.unitytls_tlsctx_callbacks callbacks = new UnityTls.unitytls_tlsctx_callbacks {
 				write = WriteCallback,
 				read = ReadCallback,
-				data = null,
+				data = (void*)(IntPtr)m_handle,
 			};
 
 			if (serverMode) {
@@ -93,6 +104,12 @@ namespace Mono.Unity
 			}
 
 			Mono.Unity.Debug.CheckAndThrow (errorState, "Failed to create UnityTls context");
+
+			if (ActivateTracing) {
+				UnityTls.unitytls_tlsctx_set_trace_callback(m_TlsContext, TraceCallback, null, &errorState);
+				Mono.Unity.Debug.CheckAndThrow (errorState, "Failed to set trace callback");
+			}
+
 			m_HasContext = true;
 		}
 
@@ -191,6 +208,8 @@ namespace Mono.Unity
 					m_HasContext = false;
 				}
 
+				m_handle.Free();
+
 			} finally {
 				base.Dispose (disposing);
 			}
@@ -198,13 +217,23 @@ namespace Mono.Unity
 
 		public override void StartHandshake ()
 		{
-			// TODO
+			// TODO: Check if we started a handshake already?
+
+			// TODO, Not supported by UnityTls as of writing
+			if (IsServer && AskForClientCertificate) {
+				throw new NotImplementedException("No support for client certificate check yet.");
+			}
 		}
 
 		public override bool ProcessHandshake ()
 		{
-			// TODO
-			return false;
+			UnityTls.unitytls_errorstate errorState = UnityTls.unitytls_errorstate_create();
+			UnityTls.unitytls_x509verify_result result = UnityTls.unitytls_tlsctx_process_handshake(m_TlsContext, &errorState);
+			if (errorState.code == UnityTls.unitytls_error_code.UNITYTLS_USER_WOULD_BLOCK)
+				return false;
+			Unity.Debug.CheckAndThrow(errorState, result, "Handshake failed", AlertDescription.HandshakeFailure);
+
+			return true;
 		}
 
 		public override void FinishHandshake ()
@@ -218,16 +247,63 @@ namespace Mono.Unity
 			m_IsAuthenticated = true;
 		}
 
-		private size_t WriteCallback(void* userData, byte* data, size_t bufferLen, UnityTls.unitytls_errorstate* errorState)
+		[MonoPInvokeCallback (typeof (UnityTls.unitytls_tlsctx_callback_write))]
+		static private size_t WriteCallback(void* userData, byte* data, size_t bufferLen, UnityTls.unitytls_errorstate* errorState)
 		{
-			// TODO
-			return 0;
+			var handle = (GCHandle)(IntPtr)userData;
+			var context = (UnityTlsContext)handle.Target;
+			return context.WriteCallback(data, bufferLen, errorState);
 		}
 
-		private size_t ReadCallback(void* userData, byte* buffer, size_t bufferLen, UnityTls.unitytls_errorstate* errorState)
+		private size_t WriteCallback(byte* data, size_t bufferLen, UnityTls.unitytls_errorstate* errorState)
 		{
-			// TODO
-			return 0;
+			if (m_WriteBuffer == null || m_WriteBuffer.Length < bufferLen)
+				m_WriteBuffer = new byte[bufferLen];
+			Marshal.Copy((IntPtr)data, m_WriteBuffer, 0, bufferLen);
+
+			if (!Parent.InternalWrite (m_WriteBuffer, 0, bufferLen))
+			{
+				UnityTls.unitytls_errorstate_raise_error(errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_WRITE_FAILED);
+				return 0;
+			}
+
+			return bufferLen;
+		}
+
+		[MonoPInvokeCallback (typeof (UnityTls.unitytls_tlsctx_callback_read))]
+		static private size_t ReadCallback(void* userData, byte* buffer, size_t bufferLen, UnityTls.unitytls_errorstate* errorState)
+		{
+			var handle = (GCHandle)(IntPtr)userData;
+			var context = (UnityTlsContext)handle.Target;
+			return context.ReadCallback(buffer, bufferLen, errorState);
+		}
+		
+		private size_t ReadCallback(byte* buffer, size_t bufferLen, UnityTls.unitytls_errorstate* errorState)
+		{
+			if (m_ReadBuffer == null || m_ReadBuffer.Length < bufferLen)
+				m_ReadBuffer = new byte[bufferLen];
+
+			bool wouldBlock;
+			int numBytesRead = Parent.InternalRead (m_ReadBuffer, 0, bufferLen, out wouldBlock);
+			if (numBytesRead < 0)
+			{
+				UnityTls.unitytls_errorstate_raise_error(errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_READ_FAILED);
+				return 0;
+			}
+			if (wouldBlock)
+			{
+				UnityTls.unitytls_errorstate_raise_error(errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_WOULD_BLOCK);
+			}
+
+			Marshal.Copy(m_ReadBuffer, 0, (IntPtr)buffer, bufferLen);
+			return numBytesRead;
+		}
+
+		[MonoPInvokeCallback (typeof (UnityTls.unitytls_tlsctx_callback_trace))]
+		static private void TraceCallback(void* userData, UnityTls.unitytls_tlsctx* ctx, byte* traceMessage, size_t traceMessageLen)
+		{
+			string message = Encoding.UTF8.GetString(traceMessage, traceMessageLen);
+			System.Console.Write(message);
 		}
 	}
 }
