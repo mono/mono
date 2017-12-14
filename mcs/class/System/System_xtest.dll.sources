@@ -27,6 +27,8 @@
 
 # System.Net.WebHeaderCollection
 #../../../external/corefx/src/System.Net.WebHeaderCollection/tests/*.cs
+
+# System.Net.NameResolution
 #../../../external/corefx/src/System.Net.NameResolution/tests/FunctionalTests/*.cs
 
 # System.Net.WebClient
@@ -77,3 +79,12 @@
 ../../../external/corefx/src/Common/tests/System/Net/Sockets/TestSettings.cs
 #../../../external/corefx/src/System.Net.Sockets/tests/FunctionalTests/*.cs:NetworkStreamTest.netcoreapp.cs,SocketTestHelper.netcoreapp.cs,SendReceive.netcoreapp.cs,SocketAsyncEventArgsTest.cs,LoggingTest.cs,SendReceive.cs
 
+# System.Net.Primitives
+../../../external/corefx/src/System.Net.Primitives/tests/FunctionalTests/CookieTest/*.cs
+#../../../external/corefx/src/System.Net.Primitives/tests/FunctionalTests/*.cs:IPAddressParsingSpan.cs,IPAddressSpanTest.cs
+
+# System.Net.Http
+# Lots of stuff here need Spans
+../../../external/corefx/src/Common/src/System/Net/UriScheme.cs
+../../../external/corefx/src/Common/src/System/SerializableAttribute.cs
+../../../external/corefx/src/Common/tests/System/ShouldNotBeInvokedException.cs
