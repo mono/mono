@@ -212,6 +212,12 @@ namespace Mono.Unity
         [StructLayout (LayoutKind.Sequential)]
         public struct unitytls_tlsctx_ref { UInt64 handle; }
 
+        public enum unitytls_ciphersuite : UInt32
+        {
+            // With exception of the INVALID value, this enum represents an IANA cipher ID.
+            UNITYTLS_CIPHERSUITE_INVALID = 0xFFFFFF
+        }
+
         public enum unitytls_protocol : UInt32
         {
             UNITYTLS_PROTOCOL_TLS_1_0,
