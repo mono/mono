@@ -264,6 +264,7 @@ Mono.UnityTls/UnityTlsProvider.cs
 Mono.UnityTls/UnityTlsStream.cs
 Mono.UnityTls/UnityTlsContext.cs
 Mono.UnityTls/Debug.cs
+Mono.UnityTls/CertHelper.cs
 
 Mono.Util/MonoPInvokeCallbackAttribute.cs
 

@@ -75,17 +75,14 @@ namespace Mono.Unity
 			if (serverMode) {
 				if (serverCertificate == null)
 					throw new ArgumentNullException ("serverCertificate");
-				X509Certificate2 privateKeyCert = serverCertificate as X509Certificate2;
-				if (privateKeyCert == null || privateKeyCert.PrivateKey == null)
+				X509Certificate2 serverCertificate2 = serverCertificate as X509Certificate2;
+				if (serverCertificate2 == null || serverCertificate2.PrivateKey == null)
 					throw new ArgumentException ("serverCertificate does not have a private key", "serverCertificate");
 
 				m_ServerCerts = UnityTls.unitytls_x509list_create(&errorState);
-				byte[] certDer = serverCertificate.GetRawCertData();
-				fixed(byte* certDerPtr = certDer) {
-					UnityTls.unitytls_x509list_append_der(m_ServerCerts, certDerPtr, certDer.Length, &errorState);
-				}
+				CertHelper.AddCertificateToNativeChain(m_ServerCerts, serverCertificate, &errorState);
 
-				byte[] privateKeyDer = PKCS8.PrivateKeyInfo.Encode(privateKeyCert.PrivateKey);
+				byte[] privateKeyDer = PKCS8.PrivateKeyInfo.Encode(serverCertificate2.PrivateKey);
 				fixed(byte* privateKeyDerPtr = privateKeyDer) {
 					m_ServerPrivateKey = UnityTls.unitytls_key_parse_der(privateKeyDerPtr, privateKeyDer.Length, null, 0, &errorState);
 				}
@@ -102,6 +99,8 @@ namespace Mono.Unity
 					m_TlsContext = UnityTls.unitytls_tlsctx_create_client(protocolRange, callbacks, targetHostUtf8Ptr, targetHostUtf8.Length, &errorState);
 				}
 			}
+
+			UnityTls.unitytls_tlsctx_set_x509verify_callback (m_TlsContext, VerifyCallback, (void*)(IntPtr)m_handle, &errorState);
 
 			Mono.Unity.Debug.CheckAndThrow (errorState, "Failed to create UnityTls context");
 
@@ -231,8 +230,12 @@ namespace Mono.Unity
 			UnityTls.unitytls_x509verify_result result = UnityTls.unitytls_tlsctx_process_handshake(m_TlsContext, &errorState);
 			if (errorState.code == UnityTls.unitytls_error_code.UNITYTLS_USER_WOULD_BLOCK)
 				return false;
-			Unity.Debug.CheckAndThrow(errorState, result, "Handshake failed", AlertDescription.HandshakeFailure);
 
+			// Not done is not an error if we are server and don't ask for ClientCertificate
+			if (result == UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_NOT_DONE && IsServer && !AskForClientCertificate)
+				return true;
+
+			Unity.Debug.CheckAndThrow(errorState, result, "Handshake failed", AlertDescription.HandshakeFailure);
 			return true;
 		}
 
@@ -297,6 +300,24 @@ namespace Mono.Unity
 
 			Marshal.Copy(m_ReadBuffer, 0, (IntPtr)buffer, bufferLen);
 			return numBytesRead;
+		}
+
+		[MonoPInvokeCallback (typeof (UnityTls.unitytls_tlsctx_callback_read))]
+		static private UnityTls.unitytls_x509verify_result VerifyCallback(void* userData, UnityTls.unitytls_x509list_ref chain, UnityTls.unitytls_errorstate* errorState)
+		{
+			var handle = (GCHandle)(IntPtr)userData;
+			var context = (UnityTlsContext)handle.Target;
+			return context.VerifyCallback(chain, errorState);
+		}
+
+		private UnityTls.unitytls_x509verify_result VerifyCallback(UnityTls.unitytls_x509list_ref chain, UnityTls.unitytls_errorstate* errorState)
+		{
+			X509CertificateCollection certificates = CertHelper.NativeChainToManagedCollection(chain, errorState);
+
+			if (ValidateCertificate (certificates))
+				return UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_SUCCESS;
+			else
+				return UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_FLAG_NOT_TRUSTED;
 		}
 
 		[MonoPInvokeCallback (typeof (UnityTls.unitytls_tlsctx_callback_trace))]
