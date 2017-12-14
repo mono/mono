@@ -387,7 +387,7 @@ namespace System.Net.Http
 							}
 						}
 
-						wrequest.ResendContentFactory = content.CopyTo;
+						wrequest.ResendContentFactory = content.CopyToAsync;
 
 						using (var stream = await wrequest.GetRequestStreamAsync ().ConfigureAwait (false)) {
 							await request.Content.CopyToAsync (stream).ConfigureAwait (false);
