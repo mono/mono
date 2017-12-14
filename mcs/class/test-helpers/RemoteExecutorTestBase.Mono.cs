@@ -11,6 +11,6 @@ namespace System.Diagnostics
 	public abstract partial class RemoteExecutorTestBase : FileCleanupTestBase
 	{
 		protected static readonly string HostRunner = Process.GetCurrentProcess().MainModule.FileName;
-		static readonly string ExtraParameter = "RemoteExecutorConsoleApp.exe"; // same name as in .NET Core
+		static readonly string ExtraParameter = "RemoteExecutorConsoleApp.exe";
 	}
 }

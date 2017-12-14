@@ -276,7 +276,7 @@ xunit-test-local: $(xunit_test_lib)
 run-xunit-test-local: run-xunit-test-lib
 
 # cp -rf is a HACK for xunit runner to require xunit.execution.desktop.dll file in local folder on .net only
-run-xunit-test-lib: xunit-test-local RemoteExecutorConsoleApp.exe
+run-xunit-test-lib: RemoteExecutorConsoleApp.exe
 	@cp -rf $(XTEST_HARNESS_PATH)/xunit.execution.desktop.dll xunit.execution.desktop.dll
 	ok=:; \
 	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(XTEST_COVERAGE_FLAGS) $(AOT_RUN_FLAGS) $(XTEST_HARNESS) $(xunit_test_lib) $(XTEST_HARNESS_FLAGS) $(XTEST_TRAIT) || ok=false; \
@@ -284,7 +284,7 @@ run-xunit-test-lib: xunit-test-local RemoteExecutorConsoleApp.exe
 	@rm -f xunit.execution.desktop.dll
 
 # Some xunit tests want to be executed in a separate process (see RemoteExecutorTestBase)
-RemoteExecutorConsoleApp.exe: $(topdir)/../mcs/class/test-helpers/RemoteExecutorConsoleApp.cs
+RemoteExecutorConsoleApp.exe: $(topdir)/../mcs/class/test-helpers/RemoteExecutorConsoleApp.cs xunit-test-local
 	$(TEST_COMPILE) $(topdir)/../mcs/class/test-helpers/RemoteExecutorConsoleApp.cs -r:$(xunit_test_lib) $(xtest_flags)
 
 $(xunit_test_lib): $(the_assembly) $(xtest_response) $(xunit_libs_dep) $(xunit_src)

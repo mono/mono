@@ -1,5 +1,5 @@
 ../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/AssertExtensions.cs
-
+System/RemoteExecutorTests.cs
 ../../../external/corefx/src/Common/tests/System/Collections/ICollection.NonGeneric.Tests.cs
 ../../../external/corefx/src/Common/tests/System/Collections/IEnumerable.NonGeneric.Tests.cs
 ../../../external/corefx/src/Common/tests/System/Collections/IList.NonGeneric.Tests.cs
