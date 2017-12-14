@@ -7040,8 +7040,9 @@ mono_ldstr_utf8 (MonoImage *image, guint32 idx, MonoError *error)
 	/* g_utf16_to_utf8  may not be able to complete the convertion (e.g. NULL values were found, #335488) */
 	if (len2 > written) {
 		/* allocate the total length and copy the part of the string that has been converted */
-		char *as2 = (char *)g_malloc0 (len2);
+		char *as2 = (char *)g_malloc (len2);
 		memcpy (as2, as, written);
+		memset (as2 + written, 0, len2 - written);
 		g_free (as);
 		as = as2;
 	}
@@ -7105,8 +7106,9 @@ mono_string_to_utf8_checked (MonoString *s, MonoError *error)
 	/* g_utf16_to_utf8  may not be able to complete the convertion (e.g. NULL values were found, #335488) */
 	if (s->length > written) {
 		/* allocate the total length and copy the part of the string that has been converted */
-		char *as2 = (char *)g_malloc0 (s->length);
+		char *as2 = (char *)g_malloc (s->length);
 		memcpy (as2, as, written);
+		memset (as2 + written, 0, s->length - written);
 		g_free (as);
 		as = as2;
 	}
