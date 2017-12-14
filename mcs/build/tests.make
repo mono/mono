@@ -25,7 +25,7 @@ xunit_deps := System.Runtime
 xunit_src  := $(patsubst %,$(topdir)/../external/xunit-binaries/%,BenchmarkAttribute.cs BenchmarkDiscover.cs) $(topdir)/../mcs/class/test-helpers/PlatformDetection.cs
 
 ifeq ($(USE_XTEST_REMOTE_EXECUTOR), YES)
-XTEST_REMOTE_EXECUTOR = RemoteExecutorConsoleApp.exe
+XTEST_REMOTE_EXECUTOR = $(xunit_test_lib)_RemoteExecuter.exe
 xunit_src += $(topdir)/../mcs/class/test-helpers/AdminHelper.cs $(topdir)/../mcs/class/test-helpers/RemoteExecutorTestBase.Mono.cs $(topdir)/../external/corefx/src/CoreFx.Private.TestUtilities/src/System/IO/FileCleanupTestBase.cs $(topdir)/../external/corefx/src/CoreFx.Private.TestUtilities/src/System/Diagnostics/RemoteExecutorTestBase.Process.cs $(topdir)/../external/corefx/src/CoreFx.Private.TestUtilities/src/System/Diagnostics/RemoteExecutorTestBase.cs $(topdir)/../external/corefx/src/Common/src/System/PasteArguments.cs
 endif
 
@@ -290,7 +290,7 @@ run-xunit-test-lib: xunit-test-local $(XTEST_REMOTE_EXECUTOR)
 
 # Some xunit tests want to be executed in a separate process (see RemoteExecutorTestBase)
 $(XTEST_REMOTE_EXECUTOR): $(topdir)/../mcs/class/test-helpers/RemoteExecutorConsoleApp.cs
-	$(TEST_COMPILE) $(topdir)/../mcs/class/test-helpers/RemoteExecutorConsoleApp.cs -r:$(xunit_test_lib) $(xtest_flags) -out:$(XTEST_REMOTE_EXECUTOR) /debug-
+	$(TEST_COMPILE) $(topdir)/../mcs/class/test-helpers/RemoteExecutorConsoleApp.cs -r:$(xunit_test_lib) $(xtest_flags) /debug-
 
 $(xunit_test_lib): $(the_assembly) $(xtest_response) $(xunit_libs_dep) $(xunit_src)
 	$(TEST_COMPILE) $(LIBRARY_FLAGS) $(XTEST_LIB_FLAGS) -target:library -out:$@ $(xtest_flags) @$(xtest_response) $(xunit_src)
