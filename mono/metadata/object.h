@@ -21,7 +21,6 @@ typedef struct _MonoReflectionField MONO_RT_MANAGED_ATTR MonoReflectionField;
 typedef struct _MonoReflectionProperty MONO_RT_MANAGED_ATTR MonoReflectionProperty;
 typedef struct _MonoReflectionEvent MONO_RT_MANAGED_ATTR MonoReflectionEvent;
 typedef struct _MonoReflectionType MONO_RT_MANAGED_ATTR MonoReflectionType;
-typedef struct _MonoReflectionTypeBuilder MonoReflectionTypeBuilder;
 typedef struct _MonoDelegate MONO_RT_MANAGED_ATTR MonoDelegate;
 typedef struct _MonoException MONO_RT_MANAGED_ATTR MonoException;
 typedef struct _MonoThreadsSync MonoThreadsSync;
