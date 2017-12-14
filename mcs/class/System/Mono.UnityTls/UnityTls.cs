@@ -11,13 +11,17 @@ namespace Mono.Unity
     internal struct size_t
     {
         public size_t(uint i) {
-            value = new UIntPtr(i);
+            value = new IntPtr(i);
         }
 
         public static implicit operator size_t(int d) {
             return new size_t((uint)d);
         }
-        public UIntPtr value;
+        public static implicit operator int(size_t s) {
+            return s.value.ToInt32();
+        }
+
+        public IntPtr value;
     }
 
     unsafe internal static partial class UnityTls
@@ -169,6 +173,7 @@ namespace Mono.Unity
         // ------------------------------------
         // X.509 Certificate Verification
         // ------------------------------------
+        [Flags]
         public enum unitytls_x509verify_result : UInt32
         {
             UNITYTLS_X509VERIFY_SUCCESS            = 0x00000000,
@@ -236,6 +241,7 @@ namespace Mono.Unity
 
         public delegate size_t unitytls_tlsctx_callback_write(void* userData, UInt8* data, size_t bufferLen, unitytls_errorstate* errorState);
         public delegate size_t unitytls_tlsctx_callback_read(void* userData, UInt8* buffer, size_t bufferLen, unitytls_errorstate* errorState);
+        public delegate void   unitytls_tlsctx_callback_trace(void* userData, unitytls_tlsctx* ctx, Int8* traceMessage, size_t traceMessageLen);
         public delegate void   unitytls_tlsctx_callback_handshake(void* userData, unitytls_tlsctx* ctx, unitytls_tlsctx_handshakestate currentState, unitytls_errorstate* errorState);
         public delegate unitytls_x509verify_result unitytls_tlsctx_x509verify_callback(void* userData, unitytls_x509list_ref chain, unitytls_errorstate* errorState);
 
@@ -252,6 +258,8 @@ namespace Mono.Unity
         [DllImport (DLLNAME, CallingConvention=CALLCONV)]
         extern public static unitytls_tlsctx*               unitytls_tlsctx_create_client(unitytls_tlsctx_protocolrange supportedProtocols, unitytls_tlsctx_callbacks callbacks, Int8* cn, size_t cnLen, unitytls_errorstate* errorState);
 
+        [DllImport (DLLNAME, CallingConvention=CALLCONV)]
+        extern public static void                           unitytls_tlsctx_set_trace_callback(unitytls_tlsctx* ctx, unitytls_tlsctx_callback_trace cb, void* userData, unitytls_errorstate* errorState);
         [DllImport (DLLNAME, CallingConvention=CALLCONV)]
         extern public static void                           unitytls_tlsctx_set_x509verify_callback(unitytls_tlsctx* ctx, unitytls_tlsctx_x509verify_callback cb, void* userData, unitytls_errorstate* errorState);
         [DllImport (DLLNAME, CallingConvention=CALLCONV)]
