@@ -218,8 +218,8 @@ namespace Mono.Unity
         [StructLayout (LayoutKind.Sequential)]
         public struct unitytls_tlsctx_protocolrange
         {
-            unitytls_protocol min;
-            unitytls_protocol max;
+            public unitytls_protocol min;
+            public unitytls_protocol max;
         };
         // TODO
         //[DllImport (DLLNAME, CallingConvention=CALLCONV)]
@@ -242,9 +242,9 @@ namespace Mono.Unity
         [StructLayout (LayoutKind.Sequential)]
         public struct unitytls_tlsctx_callbacks
         {
-            unitytls_tlsctx_callback_read   read;
-            unitytls_tlsctx_callback_write  write;
-            void*                           data;
+            public unitytls_tlsctx_callback_read   read;
+            public unitytls_tlsctx_callback_write  write;
+            public void*                           data;
         };
 
         [DllImport (DLLNAME, CallingConvention=CALLCONV)]
