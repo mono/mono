@@ -87,8 +87,8 @@ if [[ ${CI_TAGS} == 'product-sdks' ]];
 	   ${TESTCMD} --label=cross --timeout=60m --fatal make -j4 -C sdks/builds package-ios-cross64
 	   ${TESTCMD} --label=bcl --timeout=60m --fatal make -j4 -C sdks/builds package-bcl
 	   ${TESTCMD} --label=build-tests --timeout=60m --fatal make -C sdks/ios compile-tests
-	   ${TESTCMD} --label=run-sim --timeout=60m --fatal make -C sdks/ios run-ios-sim-all
-	   ${TESTCMD} --label=build-ios-dev --timeout=60m --fatal make -C sdks/ios build-ios-dev-all
+	   ${TESTCMD} --label=run-sim --timeout=60m make -C sdks/ios run-ios-sim-all
+	   ${TESTCMD} --label=build-ios-dev --timeout=60m make -C sdks/ios build-ios-dev-all
 	   exit 0
 fi
 
