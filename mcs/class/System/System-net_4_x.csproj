@@ -1223,7 +1223,6 @@
     <Compile Include="System.Net\HttpWebResponse.cs" />
     <Compile Include="System.Net\ICredentialPolicy.cs" />
     <Compile Include="System.Net\IPv6Address.cs" />
-    <Compile Include="System.Net\IWebConnectionState.cs" />
     <Compile Include="System.Net\IWebProxyScript.cs" />
     <Compile Include="System.Net\ListenerAsyncResult.cs" />
     <Compile Include="System.Net\ListenerPrefix.cs" />
@@ -1237,14 +1236,15 @@
     <Compile Include="System.Net\ServicePoint.cs" />
     <Compile Include="System.Net\ServicePointManager.cs" />
     <Compile Include="System.Net\ServicePointManager.extra.cs" />
-    <Compile Include="System.Net\SimpleAsyncResult.cs" />
+    <Compile Include="System.Net\ServicePointScheduler.cs" />
     <Compile Include="System.Net\SocketPermission.cs" />
     <Compile Include="System.Net\SocketPermissionAttribute.cs" />
-    <Compile Include="System.Net\WebAsyncResult.cs" />
     <Compile Include="System.Net\WebConnection.cs" />
-    <Compile Include="System.Net\WebConnectionData.cs" />
-    <Compile Include="System.Net\WebConnectionGroup.cs" />
     <Compile Include="System.Net\WebConnectionStream.cs" />
+    <Compile Include="System.Net\WebConnectionTunnel.cs" />
+    <Compile Include="System.Net\WebOperation.cs" />
+    <Compile Include="System.Net\WebRequestStream.cs" />
+    <Compile Include="System.Net\WebResponseStream.cs" />
     <Compile Include="System.Runtime.InteropServices.ComTypes\ADVF.cs" />
     <Compile Include="System.Runtime.InteropServices.ComTypes\DATADIR.cs" />
     <Compile Include="System.Runtime.InteropServices.ComTypes\DVASPECT.cs" />
@@ -1351,9 +1351,9 @@
       <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
       <Name>corlib-net_4_x</Name>
     </ProjectReference>
-    <Reference Include="./../../../external/api-snapshot/profiles/net_4_x/System.Net.Http.dll">
+    <Reference Include="./../../../external/binary-reference-assemblies/v4.7.1/System.Net.Http.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>./../../../external/api-snapshot/profiles/net_4_x/System.Net.Http.dll</HintPath>
+      <HintPath>./../../../external/binary-reference-assemblies/v4.7.1/System.Net.Http.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <ProjectReference Include="../System.XML/System.Xml-net_4_x.csproj">
