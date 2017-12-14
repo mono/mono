@@ -7,7 +7,27 @@ TEST_SUITES = \
 	Mono.Runtime.Tests \
 	corlib \
 	System.Core \
-	System.Data
+	System.Data \
+	System.Net.Http \
+	System.Numerics \
+	System.Runtime.Serialization \
+	System.Transactions \
+	System.IO.Compression \
+	System.IO.Compression.FileSystem \
+	System.Json \
+	System.ComponentModel.DataAnnotations \
+	System.Security \
+	System.Xml.Linq \
+	System.ServiceModel.Web \
+	Mono.Data.Tds \
+	Mono.Security
+
+TEST_SUITES_NOTWORKING = \
+	System \
+	System.Web.Services \
+	System.Xml \
+	Mono.Data.Sqlite \
+	Mono.CSharp \
 
 SIM_NAME = xamarin.ios-sdk.sim
 
@@ -122,3 +142,39 @@ System_ARGS = $(NUNIT) monotouch_System_test.dll
 System.Data_ASSEMBLIES = $(BCL_DIR)/System.Data.dll $(BCL_DIR)/System.Transactions.dll $(TESTDIR)/monotouch_System.Data_test.dll
 System.Data_EXTRA_FILES = ../../mcs/class/System.Data/Test
 System.Data_ARGS = $(NUNIT) monotouch_System.Data_test.dll
+System.Net.Http_ASSEMBLIES = $(BCL_DIR)/System.Net.Http.dll $(TESTDIR)/monotouch_System.Net.Http_test.dll
+System.Net.Http_ARGS = $(NUNIT) monotouch_System.Net.Http_test.dll
+System.Numerics_ASSEMBLIES = $(BCL_DIR)/System.Numerics.dll $(TESTDIR)/monotouch_System.Numerics_test.dll
+System.Numerics_ARGS = $(NUNIT) monotouch_System.Numerics_test.dll
+System.Runtime.Serialization_ASSEMBLIES = $(BCL_DIR)/System.Runtime.Serialization.dll $(BCL_DIR)/System.ServiceModel.dll $(BCL_DIR)/System.ServiceModel.Internals.dll $(TESTDIR)/monotouch_System.Runtime.Serialization_test.dll
+System.Runtime.Serialization_ARGS = $(NUNIT) monotouch_System.Runtime.Serialization_test.dll
+System.Transactions_ASSEMBLIES = $(BCL_DIR)/System.Transactions.dll $(TESTDIR)/monotouch_System.Transactions_test.dll
+System.Transactions_ARGS = $(NUNIT) monotouch_System.Transactions_test.dll
+System.IO.Compression_ASSEMBLIES = $(BCL_DIR)/System.IO.Compression.dll $(TESTDIR)/monotouch_System.IO.Compression_test.dll
+System.IO.Compression_ARGS = $(NUNIT) monotouch_System.IO.Compression_test.dll
+System.IO.Compression_EXTRA_FILES = ../../mcs/class/System.IO.Compression/{archive.zip,test.nupkg}
+System.IO.Compression.FileSystem_ASSEMBLIES = $(BCL_DIR)/System.IO.Compression.FileSystem.dll $(BCL_DIR)/System.IO.Compression.dll $(TESTDIR)/monotouch_System.IO.Compression.FileSystem_test.dll
+System.IO.Compression.FileSystem_ARGS = $(NUNIT) monotouch_System.IO.Compression.FileSystem_test.dll
+System.IO.Compression.FileSystem_EXTRA_FILES = ../../mcs/class/System.IO.Compression.FileSystem/foo
+Mono.CSharp_ASSEMBLIES = $(BCL_DIR)/Mono.CSharp.dll $(TESTDIR)/monotouch_Mono.CSharp_test.dll
+Mono.CSharp_ARGS = $(NUNIT) monotouch_Mono.CSharp_test.dll
+System.Json_ASSEMBLIES = $(BCL_DIR)/System.Json.dll $(TESTDIR)/monotouch_System.Json_test.dll
+System.Json_ARGS = $(NUNIT) monotouch_System.Json_test.dll
+System.ComponentModel.DataAnnotations_ASSEMBLIES = $(BCL_DIR)/System.ComponentModel.DataAnnotations.dll $(TESTDIR)/monotouch_System.ComponentModel.DataAnnotations_test.dll
+System.ComponentModel.DataAnnotations_ARGS = $(NUNIT) monotouch_System.ComponentModel.DataAnnotations_test.dll
+Mono.Data.Sqlite_ASSEMBLIES = $(BCL_DIR)/Mono.Data.Sqlite.dll $(TESTDIR)/monotouch_Mono.Data.Sqlite_test.dll
+Mono.Data.Sqlite_ARGS = $(NUNIT) monotouch_Mono.Data.Sqlite_test.dll
+Mono.Data.Tds_ASSEMBLIES = $(BCL_DIR)/Mono.Data.Tds.dll $(TESTDIR)/monotouch_Mono.Data.Tds_test.dll
+Mono.Data.Tds_ARGS = $(NUNIT) monotouch_Mono.Data.Tds_test.dll
+System.Security_ASSEMBLIES = $(BCL_DIR)/System.Security.dll $(TESTDIR)/monotouch_System.Security_test.dll
+System.Security_ARGS = $(NUNIT) monotouch_System.Security_test.dll
+System.Xml_ASSEMBLIES = $(BCL_DIR)/System.Xml.dll $(TESTDIR)/monotouch_System.Xml_test.dll
+System.Xml_ARGS = $(NUNIT) monotouch_System.Xml_test.dll
+System.Xml.Linq_ASSEMBLIES = $(BCL_DIR)/System.Xml.Linq.dll $(TESTDIR)/monotouch_System.Xml.Linq_test.dll
+System.Xml.Linq_ARGS = $(NUNIT) monotouch_System.Xml.Linq_test.dll
+Mono.Security_ASSEMBLIES = $(BCL_DIR)/Mono.Security.dll $(TESTDIR)/monotouch_Mono.Security_test.dll
+Mono.Security_ARGS = $(NUNIT) monotouch_Mono.Security_test.dll
+System.ServiceModel.Web_ASSEMBLIES = $(BCL_DIR)/System.ServiceModel.Web.dll $(BCL_DIR)/System.ServiceModel.dll $(BCL_DIR)/System.ServiceModel.Internals.dll $(BCL_DIR)/System.IdentityModel.dll $(BCL_DIR)/System.Runtime.Serialization.dll $(TESTDIR)/monotouch_System.ServiceModel.Web_test.dll
+System.ServiceModel.Web_ARGS = $(NUNIT) monotouch_System.ServiceModel.Web_test.dll
+System.Web.Services_ASSEMBLIES = $(BCL_DIR)/System.Web.Services.dll $(TESTDIR)/monotouch_System.Web.Services_test.dll
+System.Web.Services_ARGS = $(NUNIT) monotouch_System.Web.Services_test.dll
