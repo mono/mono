@@ -340,6 +340,8 @@ if (ins->inst_true_bb->native_offset) { 					\
 #include "ir-emit.h"
 #include "trace.h"
 #include "mini-gc.h"
+#include "aot-runtime.h"
+#include "mini-runtime.h"
 
 /*========================= End of Includes ========================*/
 
@@ -449,8 +451,6 @@ static void compare_and_branch(MonoBasicBlock *, MonoInst *, int, gboolean);
 /*------------------------------------------------------------------*/
 /*                 G l o b a l   V a r i a b l e s                  */
 /*------------------------------------------------------------------*/
-
-int mono_exc_esp_offset = 0;
 
 __thread int indent_level = 0;
 __thread FILE *trFd = NULL;
@@ -2661,26 +2661,6 @@ mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
 
 /*------------------------------------------------------------------*/
 /*                                                                  */
-/* Name		- mono_arch_instrument_mem_needs                    */
-/*                                                                  */
-/* Function	- Allow tracing to work with this interface (with   */
-/*		  an optional argument).       			    */
-/*		                               			    */
-/*------------------------------------------------------------------*/
-
-void
-mono_arch_instrument_mem_needs (MonoMethod *method, int *stack, int *code)
-{
-	/* no stack room needed now (may be needed for FASTCALL-trace support) */
-	*stack = 0;
-	/* split prolog-epilog requirements? */
-	*code = 50; /* max bytes needed: check this number */
-}
-
-/*========================= End of Function ========================*/
-
-/*------------------------------------------------------------------*/
-/*                                                                  */
 /* Name		- mono_arch_instrument_prolog                       */
 /*                                                                  */
 /* Function	- Create an "instrumented" prolog.                  */
@@ -2734,7 +2714,7 @@ mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p,
 /*------------------------------------------------------------------*/
 
 void*
-mono_arch_instrument_epilog_full (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments, gboolean preserve_argument_registers)
+mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
 {
 	guchar 	   *code = p;
 	int   	   save_mode = SAVE_NONE,
@@ -4426,7 +4406,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			mono_add_patch_info (cfg, code-cfg->native_code, 
 					     MONO_PATCH_INFO_BB, ins->inst_target_bb);
 			s390_brasl (code, s390_r14, 0);
-			mono_cfg_add_try_hole (cfg, ins->inst_eh_block, code, bb);
+			for (GList *tmp = ins->inst_eh_blocks; tmp != bb->clause_holes; tmp = tmp->prev)
+				mono_cfg_add_try_hole (cfg, (MonoExceptionClause *)tmp->data, code, bb);
 		}
 			break;
 		case OP_LABEL: {

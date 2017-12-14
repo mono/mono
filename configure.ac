@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 #AC_PREREQ([2.62])
 
-AC_INIT(mono, [5.9.0],
+AC_INIT(mono, [5.11.0],
         [http://bugzilla.xamarin.com/enter_bug.cgi?classification=Mono])
 
 AC_CONFIG_SRCDIR([README.md])
@@ -368,8 +368,6 @@ case "$host" in
 		AC_DEFINE(PTHREAD_POINTER_ID)
 		dnl Haiku does not support static TLS with __thread
 		with_tls=pthread
-		dnl Boehm is too much work to backport Haiku support for
-		support_boehm=no
 		libgc_threads=pthreads
 		use_sigposix=yes
 		;;

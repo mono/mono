@@ -91,6 +91,10 @@
       <Project>{87FD2F0F-5222-4AE6-BD63-2D4975E11E5B}</Project>
       <Name>System.Xml-net_4_x</Name>
     </ProjectReference>
+    <ProjectReference Include="../../class/System.Core/System.Core-net_4_x.csproj">
+      <Project>{359142A1-D80F-401E-AA64-7167C9317649}</Project>
+      <Name>System.Core-net_4_x</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

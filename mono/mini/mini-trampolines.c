@@ -21,10 +21,10 @@
 
 #include "mini.h"
 #include "lldb.h"
+#include "aot-runtime.h"
+#include "mini-runtime.h"
 
-#ifndef DISABLE_INTERPRETER
 #include "interp/interp.h"
-#endif
 
 /*
  * Address of the trampoline code.  This is used by the debugger to check
@@ -1398,14 +1398,12 @@ mono_create_jump_trampoline (MonoDomain *domain, MonoMethod *method, gboolean ad
 
 	error_init (error);
 
-#ifndef DISABLE_INTERPRETER
 	if (mono_use_interpreter) {
-		gpointer ret = mono_interp_create_trampoline (domain, method, error);
+		gpointer ret = mini_get_interp_callbacks ()->create_trampoline (domain, method, error);
 		if (!mono_error_ok (error))
 			return NULL;
 		return ret;
 	}
-#endif
 
 	code = mono_jit_find_compiled_method_with_jit_info (domain, method, &ji);
 	/*

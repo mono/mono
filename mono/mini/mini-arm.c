@@ -30,6 +30,8 @@
 #include "ir-emit.h"
 #include "debugger-agent.h"
 #include "mini-gc.h"
+#include "mini-runtime.h"
+#include "aot-runtime.h"
 #include "mono/arch/arm/arm-vfp-codegen.h"
 
 /* Sanity check: This makes no sense */
@@ -146,8 +148,6 @@ static gpointer bp_trigger_page;
  *
  * We do not care about FPA. We will support soft float and VFP.
  */
-int mono_exc_esp_offset = 0;
-
 #define arm_is_imm12(v) ((v) > -4096 && (v) < 4096)
 #define arm_is_imm8(v) ((v) > -256 && (v) < 256)
 #define arm_is_fpimm8(v) ((v) >= -1020 && (v) <= 1020)
@@ -3002,7 +3002,7 @@ enum {
 };
 
 void*
-mono_arch_instrument_epilog_full (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments, gboolean preserve_argument_registers)
+mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
 {
 	guchar *code = p;
 	int save_mode = SAVE_NONE;
@@ -5294,7 +5294,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_BB, ins->inst_target_bb);
 			code = mono_arm_patchable_bl (code, ARMCOND_AL);
 			cfg->thunk_area += THUNK_SIZE;
-			mono_cfg_add_try_hole (cfg, ins->inst_eh_block, code, bb);
+			for (GList *tmp = ins->inst_eh_blocks; tmp != bb->clause_holes; tmp = tmp->prev)
+				mono_cfg_add_try_hole (cfg, (MonoExceptionClause *)tmp->data, code, bb);
 			break;
 		case OP_GET_EX_OBJ:
 			if (ins->dreg != ARMREG_R0)
