@@ -275,6 +275,7 @@ System.Net.NetworkInformation/NetworkInterfaceTest.cs
 System.Net.NetworkInformation/PhysicalAddressTest.cs
 System.Net.NetworkInformation/PingTest.cs
 System.Net.Security/SslStreamTest.cs
+System.Net.Security/SslStreamBadSslTest.cs
 System.Runtime.Versioning/FrameworkNameTest.cs
 System.Security.AccessControl/SemaphoreSecurityTest.cs
 System.Security.Cryptography/AsnEncodedDataTest.cs
