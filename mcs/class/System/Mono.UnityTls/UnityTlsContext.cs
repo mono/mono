@@ -133,6 +133,21 @@ namespace Mono.Unity
 			return UnityTls.unitytls_protocol.UNITYTLS_PROTOCOL_TLS_1_0;	// Behavior as in AppleTlsContext
 		}
 
+		static private TlsProtocols ConvertProtocolVersion(UnityTls.unitytls_protocol protocol)
+		{
+			switch (protocol)
+			{
+			case UnityTls.unitytls_protocol.UNITYTLS_PROTOCOL_TLS_1_0:
+				return TlsProtocols.Tls10;
+			case UnityTls.unitytls_protocol.UNITYTLS_PROTOCOL_TLS_1_1:
+				return TlsProtocols.Tls11;
+			case UnityTls.unitytls_protocol.UNITYTLS_PROTOCOL_TLS_1_2:
+				return TlsProtocols.Tls12;
+			case UnityTls.unitytls_protocol.UNITYTLS_PROTOCOL_INVALID:
+				return TlsProtocols.Zero;
+			}
+			return TlsProtocols.Zero;
+		}
 
 		public override bool HasContext {
 			get { return m_HasContext; }
@@ -260,11 +275,22 @@ namespace Mono.Unity
 
 		public override void FinishHandshake ()
 		{
+			// Query some data. Ignore errors on the way since failure is not crucial.
+			UnityTls.unitytls_ciphersuite cipherSuite = UnityTls.unitytls_tlsctx_get_ciphersuite(m_TlsContext, null);
+			UnityTls.unitytls_protocol protocolVersion = UnityTls.unitytls_tlsctx_get_protocol(m_TlsContext, null);
+
 			m_Connectioninfo = new MonoTlsConnectionInfo () {
-				// TODO
-				//CipherSuiteCode = ,
-				//ProtocolVersion = ,
+				CipherSuiteCode = (CipherSuiteCode)cipherSuite,
+				ProtocolVersion = ConvertProtocolVersion(protocolVersion),
 				PeerDomainName = ServerName
+
+				// TODO:
+				// The following properties can be deducted from CipherSuiteCode.
+				// It looks though like as of writing no Mono implemention fills it out and there is also no mechanism that does that automatically
+				//
+				//CipherAlgorithmType
+				//HashAlgorithmType
+				//ExchangeAlgorithmType
 			};
 			m_IsAuthenticated = true;
 		}
