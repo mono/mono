@@ -58,7 +58,7 @@ public class SslStreamTest {
 		m_clientCert = new X509Certificate2 (m_clientCertRaw, "client");
 	}
 
-	[Test]
+	[TestCase()]
 #if !UNITY
 	[Category ("MacNotWorking")] // Works but launches a prompt on 10.12 that will fail if you don't click in a few seconds
 #endif
@@ -67,10 +67,10 @@ public class SslStreamTest {
 #endif
 	public void AuthenticateClientAndServer_ClientSendsNoData ()
 	{
-		AuthenticateClientAndServer (true, true);
+		AuthenticateClientAndServer (serverAuthShouldSucceed: true, clientAuthShouldSucceed: true);
 	}
 
-	void AuthenticateClientAndServer (bool server, bool client)
+	void AuthenticateClientAndServer (bool serverAuthShouldSucceed, bool clientAuthShouldSucceed)
 	{
 		IPEndPoint endPoint = new IPEndPoint (IPAddress.Parse ("127.0.0.1"), NetworkHelpers.FindFreePort ());
 		ClientServerState state = new ClientServerState ();
@@ -79,15 +79,15 @@ public class SslStreamTest {
 		state.Listener.Start ();
 		state.ServerAuthenticated = new AutoResetEvent (false);
 		state.ClientAuthenticated = new AutoResetEvent (false);
-		state.ServerIOException = !server;
+		state.AllowServerIOException = !serverAuthShouldSucceed;
 		try {
 			Thread serverThread = new Thread (() => StartServerAndAuthenticate (state));
 			serverThread.Start ();
 			Thread clientThread = new Thread (() => StartClientAndAuthenticate (state, endPoint));
 			clientThread.Start ();
-			Assert.AreEqual (server, state.ServerAuthenticated.WaitOne (TimeSpan.FromSeconds (5)), 
+			Assert.AreEqual (serverAuthShouldSucceed, state.ServerAuthenticated.WaitOne (TimeSpan.FromSeconds (5)), 
 				"server not authenticated");
-			Assert.AreEqual (client, state.ClientAuthenticated.WaitOne (TimeSpan.FromSeconds (5)), 
+			Assert.AreEqual (clientAuthShouldSucceed, state.ClientAuthenticated.WaitOne (TimeSpan.FromSeconds (5)), 
 				"client not authenticated");
 		} finally {
 			if (state.ClientStream != null)
@@ -113,7 +113,7 @@ public class SslStreamTest {
 			state.ClientAuthenticated.Set ();
 		} catch (ObjectDisposedException) { /* this can happen when closing connection it's irrelevant for the test result*/
 		} catch (IOException) {
-			if (!state.ServerIOException)
+			if (!state.AllowServerIOException)
 				throw;
 		}
 	}
@@ -132,7 +132,7 @@ public class SslStreamTest {
 			// The authentication or decryption has failed.
 			// ---> Mono.Security.Protocol.Tls.TlsException: Insuficient Security
 			// that's fine for MismatchedCipherSuites
-			if (!state.ServerIOException)
+			if (!state.AllowServerIOException)
 				throw;
 		}
 	}
@@ -159,7 +159,7 @@ public class SslStreamTest {
 		public SslStream ClientStream { get; set; }
 		public AutoResetEvent ServerAuthenticated { get; set; }
 		public AutoResetEvent ClientAuthenticated { get; set; }
-		public bool ServerIOException { get; set; }
+		public bool AllowServerIOException { get; set; }
 	}
 }	
 }
