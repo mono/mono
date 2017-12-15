@@ -260,17 +260,22 @@ namespace Mono.Unity
 
 		private size_t WriteCallback (byte* data, size_t bufferLen, UnityTls.unitytls_errorstate* errorState)
 		{
-			if (m_WriteBuffer == null || m_WriteBuffer.Length < bufferLen)
-				m_WriteBuffer = new byte[bufferLen];
-			Marshal.Copy ((IntPtr)data, m_WriteBuffer, 0, bufferLen);
+			try {
+				if (m_WriteBuffer == null || m_WriteBuffer.Length < bufferLen)
+					m_WriteBuffer = new byte[bufferLen];
+				Marshal.Copy ((IntPtr)data, m_WriteBuffer, 0, bufferLen);
 
-			if (!Parent.InternalWrite (m_WriteBuffer, 0, bufferLen))
-			{
-				UnityTls.unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_WRITE_FAILED);
+				if (!Parent.InternalWrite (m_WriteBuffer, 0, bufferLen))
+				{
+					UnityTls.unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_WRITE_FAILED);
+					return 0;
+				}
+
+				return bufferLen;
+			} catch { // handle all exceptions since we don't want to let them go through native code.
+				UnityTls.unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_UNKNOWN_ERROR);
 				return 0;
 			}
-
-			return bufferLen;
 		}
 
 		[MonoPInvokeCallback (typeof (UnityTls.unitytls_tlsctx_callback_read))]
@@ -283,23 +288,28 @@ namespace Mono.Unity
 		
 		private size_t ReadCallback (byte* buffer, size_t bufferLen, UnityTls.unitytls_errorstate* errorState)
 		{
-			if (m_ReadBuffer == null || m_ReadBuffer.Length < bufferLen)
-				m_ReadBuffer = new byte [bufferLen];
+			try {
+				if (m_ReadBuffer == null || m_ReadBuffer.Length < bufferLen)
+					m_ReadBuffer = new byte [bufferLen];
 
-			bool wouldBlock;
-			int numBytesRead = Parent.InternalRead (m_ReadBuffer, 0, bufferLen, out wouldBlock);
-			if (numBytesRead < 0)
-			{
-				UnityTls.unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_READ_FAILED);
+				bool wouldBlock;
+				int numBytesRead = Parent.InternalRead (m_ReadBuffer, 0, bufferLen, out wouldBlock);
+				if (numBytesRead < 0)
+				{
+					UnityTls.unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_READ_FAILED);
+					return 0;
+				}
+				if (wouldBlock)
+				{
+					UnityTls.unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_WOULD_BLOCK);
+				}
+
+				Marshal.Copy (m_ReadBuffer, 0, (IntPtr)buffer, bufferLen);
+				return numBytesRead;
+			} catch { // handle all exceptions since we don't want to let them go through native code.
+				UnityTls.unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_UNKNOWN_ERROR);
 				return 0;
 			}
-			if (wouldBlock)
-			{
-				UnityTls.unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_WOULD_BLOCK);
-			}
-
-			Marshal.Copy (m_ReadBuffer, 0, (IntPtr)buffer, bufferLen);
-			return numBytesRead;
 		}
 
 		[MonoPInvokeCallback (typeof (UnityTls.unitytls_tlsctx_callback_read))]
@@ -312,12 +322,16 @@ namespace Mono.Unity
 
 		private UnityTls.unitytls_x509verify_result VerifyCallback (UnityTls.unitytls_x509list_ref chain, UnityTls.unitytls_errorstate* errorState)
 		{
-			X509CertificateCollection certificates = CertHelper.NativeChainToManagedCollection (chain, errorState);
+			try {
+				X509CertificateCollection certificates = CertHelper.NativeChainToManagedCollection (chain, errorState);
 
-			if (ValidateCertificate (certificates))
-				return UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_SUCCESS;
-			else
-				return UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_FLAG_NOT_TRUSTED;
+				if (ValidateCertificate (certificates))
+					return UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_SUCCESS;
+				else
+					return UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_FLAG_NOT_TRUSTED;
+			} catch { // handle all exceptions since we don't want to let them go through native code.
+				return UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_FATAL_ERROR;
+			}
 		}
 
 		[MonoPInvokeCallback (typeof (UnityTls.unitytls_tlsctx_callback_trace))]
