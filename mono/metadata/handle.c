@@ -465,6 +465,13 @@ mono_string_new_handle (MonoDomain *domain, const char *data, MonoError *error)
 	return MONO_HANDLE_NEW (MonoString, mono_string_new_checked (domain, data, error));
 }
 
+MonoStringHandle
+mono_string_new_handle_length (MonoDomain *domain, const char *data, int length, MonoError *error)
+{
+	return MONO_HANDLE_NEW (MonoString, mono_string_new_len_checked (domain, data, length, error));
+}
+
+
 MonoArrayHandle
 mono_array_new_handle (MonoDomain *domain, MonoClass *eclass, uintptr_t n, MonoError *error)
 {
@@ -553,4 +560,76 @@ gboolean
 mono_handle_stack_is_empty (HandleStack *stack)
 {
 	return (stack->top == stack->bottom && stack->top->size == 0);
+}
+
+MonoUnwrappedString
+mono_unwrap_string_handle (MonoStringHandle s)
+{
+	MonoUnwrappedString self = { 0 };
+	if (!MONO_HANDLE_IS_NULL(s)) {
+		self.chars = mono_string_handle_pin_chars (s, &self.privat.gchandle);
+		self.length = mono_string_handle_length (s);
+	}
+	return self;
+}
+
+MonoUnwrappedString
+mono_unwrap_string (MonoString *s)
+{
+	MonoUnwrappedString self = { 0 };
+	if (s) {
+		self.chars = mono_string_chars (s);
+		self.length = s->length;
+	}
+	return self;
+}
+
+void
+mono_unwrapped_string_cleanup (MonoUnwrappedString* self)
+{
+	mono_gchandle_free (self->privat.gchandle);
+	self->privat.gchandle = 0; // insurance against double cleanup
+}
+
+static gboolean
+mono_unwrapped_string_equal_asciiz (MonoUnwrappedString s, const char* t)
+// "z" means null terminated; favor having length available for efficiency
+{
+	return g_utf16_asciiz_equal (s.chars, t);
+}
+
+static gboolean
+mono_unwrapped_string_equal_ascii (MonoUnwrappedString s, const char* t, int tlen)
+{
+	return s.length == tlen && g_utf16_ascii_equal (s.chars, s.length, t, tlen);
+}
+
+gboolean
+mono_string_handle_equal_asciiz (MonoStringHandle s, const char* t)
+{ // "z" means null terminated; favor having length available for efficiency
+	MonoUnwrappedString u = mono_unwrap_string_handle (s);
+	gboolean const result = mono_unwrapped_string_equal_asciiz (u, t);
+	mono_unwrapped_string_cleanup (&u);
+	return result;
+}
+
+gboolean
+mono_string_handle_equal_ascii (MonoStringHandle s, const char* t, int tlen)
+{
+	MonoUnwrappedString u = mono_unwrap_string_handle (s);
+	gboolean const result = mono_unwrapped_string_equal_ascii (u, t, tlen);
+	mono_unwrapped_string_cleanup (&u);
+	return result;
+}
+
+gboolean
+mono_string_equal_asciiz (MonoString *s, const char* t)
+{ // "z" means null terminated; favor having length available for efficiency
+	return mono_unwrapped_string_equal_asciiz (mono_unwrap_string (s), t);
+}
+
+gboolean
+mono_string_equal_ascii (MonoString *s, const char* t, int tlen)
+{
+	return mono_unwrapped_string_equal_ascii (mono_unwrap_string (s), t, tlen);
 }

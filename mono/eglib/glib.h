@@ -752,6 +752,18 @@ gunichar  *g_utf16_to_ucs4 (const gunichar2 *str, glong len, glong *items_read, 
 gchar     *g_ucs4_to_utf8  (const gunichar *str, glong len, glong *items_read, glong *items_written, GError **err);
 gunichar2 *g_ucs4_to_utf16 (const gunichar *str, glong len, glong *items_read, glong *items_written, GError **err);
 
+/*
+	glong inlen = strlen (foo); // this is slow and we don't do it for you
+	glong outlen = g_utf16_to_utf8_len (foo, inlen, err);
+	// check outlen < 0 or err
+	char* outbuf = (char*)malloc(outlen + 1); // your choice of allocator
+	glong outlen2 = g_utf16_to_utf8_buf (outbuf, outlen, foo, inlen, err);
+	outbuf[outlen] = 0;
+	g_assert (!err && outlen >= 0 && outlen == outlen2)
+*/
+glong g_utf16_to_utf8_len (const gunichar2 *str, glong len, GError **gerr);
+glong g_utf16_to_utf8_buf (char *outbuf, glong outlen, const gunichar2 *str, glong len, GError **gerr);
+
 #define u8to16(str) g_utf8_to_utf16(str, (glong)strlen(str), NULL, NULL, NULL)
 
 #ifdef G_OS_WIN32

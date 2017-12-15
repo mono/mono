@@ -341,12 +341,17 @@ void mono_handle_verify (MonoRawHandle handle);
 #define MONO_HANDLE_PAYLOAD_OFFSET_(PayloadType) MONO_STRUCT_OFFSET(PayloadType, __raw)
 #define MONO_HANDLE_PAYLOAD_OFFSET(TYPE) MONO_HANDLE_PAYLOAD_OFFSET_(TYPED_HANDLE_PAYLOAD_NAME (TYPE))
 
-#define MONO_HANDLE_INIT ((void*) mono_null_value_handle)
+// unused
+//#define MONO_HANDLE_INIT ((void*) mono_null_value_handle)
 #define NULL_HANDLE mono_null_value_handle
 
 //XXX add functions to get/set raw, set field, set field to null, set array, set array to null
 #define MONO_HANDLE_RAW(HANDLE) (HANDLE_INVARIANTS (HANDLE), ((HANDLE)->__raw))
 #define MONO_HANDLE_DCL(TYPE, NAME) TYPED_HANDLE_NAME(TYPE) NAME = MONO_HANDLE_NEW (TYPE, (NAME ## _raw))
+#define MONO_HANDLE_LOCAL_VARIABLE_NOT_INITIALIZED(type, name) TYPED_HANDLE_NAME(type) name
+#define MONO_HANDLE_LOCAL_VARIABLE_INITIALIZED_NULL(type, name) \
+	MONO_HANDLE_LOCAL_VARIABLE_NOT_INITIALIZED (type, name) = MONO_HANDLE_NEW (type, NULL)
+#define MONO_HANDLE_SET_NULL(type, name) ((name) = MONO_HANDLE_NEW (type, NULL))
 
 #ifndef MONO_HANDLE_TRACK_OWNER
 #define MONO_HANDLE_NEW(TYPE, VALUE) (TYPED_HANDLE_NAME(TYPE))( mono_handle_new ((MonoObject*)(VALUE)) )
@@ -376,10 +381,10 @@ This is why we evaluate index and value before any call to MONO_HANDLE_RAW or ot
 
 #define MONO_HANDLE_SET(HANDLE, FIELD, VALUE) do {			\
 		MonoObjectHandle __val = MONO_HANDLE_CAST (MonoObject, VALUE);	\
-		do {							\
+		{							\
 			MONO_HANDLE_SUPPRESS_SCOPE(1);			\
 			MONO_OBJECT_SETREF (MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (HANDLE)), FIELD, MONO_HANDLE_RAW (__val)); \
-		} while (0);						\
+		} 							\
 	} while (0)
 
 /* N.B. RESULT is evaluated before HANDLE */
@@ -401,19 +406,19 @@ This is why we evaluate index and value before any call to MONO_HANDLE_RAW or ot
 #define MONO_HANDLE_ARRAY_SETREF(HANDLE, IDX, VALUE) do {	\
 		int __idx = (IDX);	\
    		MonoObjectHandle __val = MONO_HANDLE_CAST (MonoObject, VALUE);		\
-		do {							\
+		{							\
 			MONO_HANDLE_SUPPRESS_SCOPE(1);			\
 			mono_array_setref_fast (MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (HANDLE)), __idx, MONO_HANDLE_RAW (__val)); \
-		} while (0);						\
+		} 							\
 	} while (0)
 
 #define MONO_HANDLE_ARRAY_SETVAL(HANDLE, TYPE, IDX, VALUE) do {		\
 		int __idx = (IDX);					\
-   		TYPE __val = (VALUE);					\
-		do {							\
+		TYPE __val = (VALUE);					\
+		{							\
 			MONO_HANDLE_SUPPRESS_SCOPE(1);			\
 			mono_array_set (MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (HANDLE)), TYPE, __idx, __val); \
-		} while (0);						\
+		} 							\
 	} while (0)
 
 #define MONO_HANDLE_ARRAY_SETRAW(HANDLE, IDX, VALUE) do {	\
@@ -431,9 +436,8 @@ This is why we evaluate index and value before any call to MONO_HANDLE_RAW or ot
 		(DEST) =  __result;					\
 	} while (0)
 
-#define MONO_HANDLE_ARRAY_GETREF(DEST, HANDLE, IDX) do {		\
-		mono_handle_array_getref (MONO_HANDLE_CAST(MonoObject, (DEST)), (HANDLE), (IDX)); \
-	} while (0)
+#define MONO_HANDLE_ARRAY_GETREF(DEST, HANDLE, IDX) \
+		(mono_handle_array_getref (MONO_HANDLE_CAST(MonoObject, (DEST)), (HANDLE), (IDX)))
 
 #define MONO_HANDLE_ASSIGN(DESTH, SRCH)				\
 	mono_handle_assign (MONO_HANDLE_CAST (MonoObject, (DESTH)), MONO_HANDLE_CAST(MonoObject, (SRCH)))
@@ -497,6 +501,7 @@ mono_handle_unsafe_field_addr (MonoObjectHandle h, MonoClassField *field)
 
 //FIXME this should go somewhere else
 MonoStringHandle mono_string_new_handle (MonoDomain *domain, const char *data, MonoError *error);
+MonoStringHandle mono_string_new_handle_length (MonoDomain *domain, const char *data, int length, MonoError *error);
 MonoArrayHandle mono_array_new_handle (MonoDomain *domain, MonoClass *eclass, uintptr_t n, MonoError *error);
 MonoArrayHandle
 mono_array_new_full_handle (MonoDomain *domain, MonoClass *array_class, uintptr_t *lengths, intptr_t *lower_bounds, MonoError *error);
@@ -546,6 +551,64 @@ mono_context_get_handle (void);
 
 void
 mono_context_set_handle (MonoAppContextHandle new_context);
+
+/*
+MonoUnwrappedString is a common representation
+for both a MonoString* and a MonoStringHandle.
+
+This would be much simpler if we are using C++ -- constructor, destructor, overload, etc.
+
+Usage patterns:
+1.     MonoStringHandle s;
+       MonoUnwrappedString us = { 0 };
+       ...
+       us = mono_unwrap_string_handle (s);
+       us.length;
+       us.chars;
+       mono_unwrapped_string_cleanup (&us); // ok without mono_unwrap_string_handle
+
+2.     MonoStringHandle s;
+       MonoUnwrappedString us = mono_unwrap_string_handle (s);
+       us.length;
+       us.chars;
+       mono_unwrapped_string_cleanup (&us);
+
+3.     MonoString* s;
+       MonoUnwrappedString us = mono_unwrap_string (s);
+       us.length;
+       us.chars;
+       mono_unwrapped_string_cleanup (&us); // optional
+
+4.     MonoString* s;
+       MonoUnwrappedString us = { 0 ];
+       ...
+       us = mono_unwrap_string (s);
+       us.length;
+       us.chars;
+       mono_unwrapped_string_cleanup (&us); // optional, ok without mono_unwrap_string_handle
+*/
+typedef struct _MonoUnwrappedString {
+	const gunichar2 *chars;
+	int length; // FIXME? size_t
+	struct {
+		guint gchandle;
+	} privat; // "private" but keep it legal C++
+} MonoUnwrappedString;
+
+MonoUnwrappedString mono_unwrap_string_handle (MonoStringHandle s);
+MonoUnwrappedString mono_unwrap_string (MonoString* s);
+void mono_unwrapped_string_cleanup (MonoUnwrappedString* self);
+
+// NOTE These functions are convenient, but one should minimize unwrapping.
+// Favor calling unwrap yourself, and calling underlying eglib functions,
+// if it provides for fewer unwrappings.
+// "z" for "zero" means null terminated.
+// Comparisons with length are faster, as assuming a limited character set,
+// and all single byte characters, unequal length implies unequal strings.
+gboolean mono_string_handle_equal_asciiz (MonoStringHandle s, const char* t);
+gboolean mono_string_handle_equal_ascii (MonoStringHandle s, const char* t, int tlen);
+gboolean mono_string_equal_asciiz (MonoString* s, const char* t);
+gboolean mono_string_equal_ascii (MonoString* s, const char* t, int tlen);
 
 G_END_DECLS
 

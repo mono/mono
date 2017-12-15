@@ -159,7 +159,7 @@ mono_error_cleanup (MonoError *oerror)
 gboolean
 mono_error_ok (MonoError *error)
 {
-	return error->error_code == MONO_ERROR_NONE;
+	return is_ok(error);
 }
 
 void
