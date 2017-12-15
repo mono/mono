@@ -109,6 +109,9 @@ run-ios-sim-all:
 build-ios-dev-all:
 	for suite in $(TEST_SUITES); do make clean-ios-dev-$$suite; make build-ios-dev-$$suite || exit 1; done
 
+build-ios-dev-llvm-all:
+	for suite in $(TEST_SUITES); do make clean-ios-dev-$$suite; make build-ios-dev-$$suite LLVM=1 || exit 1; done
+
 # Developer targets, ignore
 # 'launch' doesn't propagate the error code
 # With ios11, --console doesn't work any more, it makes the app deadlock

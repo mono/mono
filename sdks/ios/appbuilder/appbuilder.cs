@@ -145,7 +145,7 @@ public class AppBuilder
 		ninja.WriteLine ("rule plutil");
 		ninja.WriteLine ("  command = cp $in $out; plutil -convert binary1 $out");
 		ninja.WriteLine ("rule codesign");
-		ninja.WriteLine ("  command = codesign -v --force --sign EFB309D105E514963C149962F8F4F07479BB4100 --entitlements $entitlements --timestamp=none $in");
+		ninja.WriteLine ("  command = codesign -v --force --sign - --entitlements $entitlements --timestamp=none $in");
 		ninja.WriteLine ("rule codesign-sim");
 		ninja.WriteLine ("  command = codesign --force --sign - --timestamp=none $in");
 		ninja.WriteLine ("rule mkdir");
