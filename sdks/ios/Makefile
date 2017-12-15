@@ -8,7 +8,6 @@ TEST_SUITES = \
 	corlib \
 	System.Core \
 	System.Data \
-	System.Net.Http \
 	System.Numerics \
 	System.Runtime.Serialization \
 	System.Transactions \
@@ -24,6 +23,7 @@ TEST_SUITES = \
 
 TEST_SUITES_NOTWORKING = \
 	System \
+	System.Net.Http \
 	System.Web.Services \
 	System.Xml \
 	Mono.Data.Sqlite \
