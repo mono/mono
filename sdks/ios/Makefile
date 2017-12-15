@@ -129,7 +129,8 @@ start-sim:
 stop-sim:
 	xcrun simctl shutdown $(SIM_NAME)
 
-NUNIT = test-runner.exe -exclude:MobileNotWorking,NotOnMac,NotWorking,ValueAdd,CAS,InetAccess,NotWorkingLinqInterpreter -labels
+# CONNSTR will be replace by the harness with the real connection string
+NUNIT = test-runner.exe CONNSTR -exclude:MobileNotWorking,NotOnMac,NotWorking,ValueAdd,CAS,InetAccess,NotWorkingLinqInterpreter -labels
 TESTDIR = $(BCL_DIR)/tests
 
 # Options for each test

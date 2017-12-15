@@ -3,6 +3,8 @@ using System.IO;
 using System.Json;
 using System.Threading;
 using System.Diagnostics;
+using System.Net;
+using System.Net.Sockets;
 using Mono.Options;
 
 public class Harness
@@ -122,10 +124,6 @@ public class Harness
 
 		StartSim ();
 
-		ProcessStartInfo start_info;
-		StreamReader stream;
-		string bundle_executable;
-
 		// Install the app
 		// We do this all the time since its cheap
 		string exe = "xcrun";
@@ -136,41 +134,20 @@ public class Harness
 		if (process.ExitCode != 0)
 			Environment.Exit (1);
 
-		// Obtain the bundle name of the app
-		exe = "plutil";
-		args = "-convert json -o temp.json " + bundle_dir + "/Info.plist";
-		Console.WriteLine ("Running: " + exe + " " + args);
-		process = Process.Start (exe, args);
-		process.WaitForExit ();
-		if (process.ExitCode != 0)
-			Environment.Exit (1);
-		JsonObject value = JsonValue.Parse (File.ReadAllText ("temp.json")) as JsonObject;
-		bundle_executable = value ["CFBundleExecutable"];
-
 		//
-		// Instead of returning test results using an extra socket connection,
-		// simply read and parse the app output through the osx log facility,
-		// since stdout from the app goes to logger. This allows us to
-		// use the stock nunit-lite test runner.
+		// Test results are returned using an socket connection.
 		//
-
-		// Start a process to read the app output through the osx log facility
-		// The json output would be easier to parse, but its emitted in multi-line mode,
-		// and the ending } is only emitted with the beginning of the next entry, so its
-		// not possible to parse it in streaming mode.
-		// We start this before the app to prevent races
-		var app_name = bundle_id.Substring (bundle_id.LastIndexOf ('.') + 1);
-		var logger_args = "stream --level debug --predicate 'senderImagePath contains \"" + bundle_executable + "\"' --style syslog";
-		Console.WriteLine ("Running: " + "log " + logger_args);
-		start_info = new ProcessStartInfo ("log", logger_args);
-		start_info.RedirectStandardOutput = true;
-		start_info.RedirectStandardError = true;
-		start_info.UseShellExecute = false;
-		var log_process = Process.Start (start_info);
+		var host = Dns.GetHostEntry (Dns.GetHostName ());
+		var server = new TcpListener (System.Net.IPAddress.Loopback, 0);
+		server.Start ();
+		int port = ((IPEndPoint)server.LocalEndpoint).Port;
 
 		string app_args = "";
 		foreach (var a in new_args)
 			app_args += a + " ";
+		if (!app_args.Contains ("CONNSTR"))
+			throw new Exception ();
+		app_args = app_args.Replace ("CONNSTR", $"tcp:localhost:{port}");
 
 		// Terminate previous app
 		exe = "xcrun";
@@ -178,10 +155,8 @@ public class Harness
 		Console.WriteLine ("Running: " + exe + " " + args);
 		process = Process.Start (exe, args);
 		process.WaitForExit ();
-		if (process.ExitCode != 0) {
-			log_process.Kill ();
+		if (process.ExitCode != 0)
 			Environment.Exit (1);
-		}
 
 		// Launch new app
 		exe = "xcrun";
@@ -189,31 +164,21 @@ public class Harness
 		Console.WriteLine ("Running: " + exe + " " + args);
 		process = Process.Start (exe, args);
 		process.WaitForExit ();
-		if (process.ExitCode != 0) {
-			log_process.Kill ();
+		if (process.ExitCode != 0)
 			Environment.Exit (1);
-		}
 
 		//
-		// Read the test results from the app output
+		// Read test results from the tcp connection
 		//
 		TextWriter w = new StreamWriter (logfile_name);
 		string result_line = null;
-		stream = log_process.StandardOutput;
+		var client = server.AcceptTcpClient ();
+		var stream = client.GetStream ();
+		var reader = new StreamReader (stream);
 		while (true) {
-			string line = stream.ReadLine ();
+			var line = reader.ReadLine ();
 			if (line == null)
 				break;
-			// Extract actual output
-			// The lines look like:
-			// 2017-11-28 14:45:16.203 Df test-corlib[5018:20c89] ***** MonoTests.System.UInt16Test.ToString_Defaults
-			// except if the output contains newlines.
-			if (line.Contains (app_name + "[")) {
-				int pos = line.IndexOf (app_name + "[");
-				pos = line.IndexOf (':', pos + 1);
-				line = line.Substring (pos + 2);
-			}
-
 			Console.WriteLine (line);
 			w.WriteLine (line);
 			if (line.Contains ("Tests run:"))
@@ -222,9 +187,6 @@ public class Harness
 			if (line.Contains ("Exit code:"))
 				break;
 		}
-
-		log_process.Kill ();
-		log_process.WaitForExit ();
 
 		if (result_line != null && result_line.Contains ("Errors: 0"))
 			Environment.Exit (0);
