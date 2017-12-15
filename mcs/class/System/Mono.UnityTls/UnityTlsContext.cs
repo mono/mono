@@ -26,7 +26,6 @@ namespace Mono.Unity
 {
 	unsafe internal class UnityTlsContext : MobileTlsContext
 	{
-		private const int MaxIOBufferSize = 16384;
 		private const bool ActivateTracing = false;
 
 		// Native UnityTls objects
@@ -167,23 +166,50 @@ namespace Mono.Unity
 		public override int Read (byte [] buffer, int offset, int count, out bool wouldBlock)
 		{
 			wouldBlock = false;
+			int numBytesRead = 0;
 
-			int bufferSize = System.Math.Min (MaxIOBufferSize, count);
-			// TODO
-			return 0;
+			UnityTls.unitytls_errorstate errorState = UnityTls.unitytls_errorstate_create ();
+			fixed (byte* bufferPtr = buffer) {
+				numBytesRead = UnityTls.unitytls_tlsctx_read (m_TlsContext, bufferPtr + offset, count, &errorState);
+			}
+
+			if (errorState.code == UnityTls.unitytls_error_code.UNITYTLS_USER_WOULD_BLOCK)
+				wouldBlock = true;
+			else
+				Mono.Unity.Debug.CheckAndThrow (errorState, "Failed to read data from TLS context");
+
+			return numBytesRead;
 		}
 
 		public override int Write (byte [] buffer, int offset, int count, out bool wouldBlock)
 		{
 			wouldBlock = false;
+			int numBytesWritten = 0;
 
-			int bufferSize = System.Math.Min (MaxIOBufferSize, count);
-			// TODO
-			return 0;
+			UnityTls.unitytls_errorstate errorState = UnityTls.unitytls_errorstate_create ();
+			fixed (byte* bufferPtr = buffer) {
+				numBytesWritten = UnityTls.unitytls_tlsctx_write (m_TlsContext, bufferPtr + offset, count, &errorState);
+			}
+
+			if (errorState.code == UnityTls.unitytls_error_code.UNITYTLS_USER_WOULD_BLOCK)
+				wouldBlock = true;
+			else
+				Mono.Unity.Debug.CheckAndThrow (errorState, "Failed to write data to TLS context");
+
+			return numBytesWritten;
 		}
 
 		public override void Close ()
 		{
+			// Destroy native UnityTls objects
+			UnityTls.unitytls_tlsctx_free (m_TlsContext);
+			m_TlsContext = null;
+			UnityTls.unitytls_x509list_free (m_ServerCerts);
+			m_ServerCerts = null;
+			UnityTls.unitytls_key_free (m_ServerPrivateKey);
+			m_ServerPrivateKey = null;
+
+			m_HasContext = false;
 		}
 
 		protected override void Dispose (bool disposing)
@@ -191,13 +217,7 @@ namespace Mono.Unity
 			try {
 				if (disposing)
 				{
-					// Destroy native UnityTls objects
-					UnityTls.unitytls_tlsctx_free (m_TlsContext);
-					m_TlsContext = null;
-					UnityTls.unitytls_x509list_free (m_ServerCerts);
-					m_ServerCerts = null;
-					UnityTls.unitytls_key_free (m_ServerPrivateKey);
-					m_ServerPrivateKey = null;
+					Close();
 
 					// reset states
 					m_LocalClientCertificate = null;
@@ -217,7 +237,6 @@ namespace Mono.Unity
 		public override void StartHandshake ()
 		{
 			// TODO: Check if we started a handshake already?
-
 			// TODO, Not supported by UnityTls as of writing
 			if (IsServer && AskForClientCertificate) {
 				throw new NotImplementedException ("No support for client certificate check yet.");
@@ -265,8 +284,7 @@ namespace Mono.Unity
 					m_WriteBuffer = new byte[bufferLen];
 				Marshal.Copy ((IntPtr)data, m_WriteBuffer, 0, bufferLen);
 
-				if (!Parent.InternalWrite (m_WriteBuffer, 0, bufferLen))
-				{
+				if (!Parent.InternalWrite (m_WriteBuffer, 0, bufferLen)) {
 					UnityTls.unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_WRITE_FAILED);
 					return 0;
 				}
@@ -294,15 +312,12 @@ namespace Mono.Unity
 
 				bool wouldBlock;
 				int numBytesRead = Parent.InternalRead (m_ReadBuffer, 0, bufferLen, out wouldBlock);
-				if (numBytesRead < 0)
-				{
+				if (numBytesRead < 0) {
 					UnityTls.unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_READ_FAILED);
 					return 0;
 				}
-				if (wouldBlock)
-				{
+				if (wouldBlock) 
 					UnityTls.unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_WOULD_BLOCK);
-				}
 
 				Marshal.Copy (m_ReadBuffer, 0, (IntPtr)buffer, bufferLen);
 				return numBytesRead;
