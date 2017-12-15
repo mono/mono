@@ -211,6 +211,7 @@ namespace Mono.Net.Security
 
 #endregion
 
+		internal static readonly Guid UnityTlsId = new Guid("06414A97-74F6-488F-877B-A6CA9BBEB82E");
 		internal static readonly Guid AppleTlsId = new Guid ("981af8af-a3a3-419a-9f01-a518e3a17c1c");
 		internal static readonly Guid BtlsId = new Guid ("432d18c9-9348-4b90-bfbf-9f2a10e1f15b");
 		internal static readonly Guid LegacyId = new Guid ("809e77d5-56cc-4da8-b9f0-45e65ba9cceb");
@@ -227,7 +228,9 @@ namespace Mono.Net.Security
 				providerCache = new Dictionary<Guid,MSI.MonoTlsProvider> ();
 
 #if UNITY
-				providerRegistration.Add ("unitytls", "Mono.Unity.UnityTlsProvider");
+				var unityTlsEntry = new Tuple<Guid,String> (UnityTlsId, "Mono.Unity.UnityTlsProvider");
+				providerRegistration.Add ("default", unityTlsEntry);
+				providerRegistration.Add ("unitytls", unityTlsEntry);
 #else
 
 				var appleTlsEntry = new Tuple<Guid,String> (AppleTlsId, "Mono.AppleTls.AppleTlsProvider");

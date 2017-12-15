@@ -4,6 +4,7 @@ extern alias MonoSecurity;
 #endif
 
 using System.IO;
+using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Authentication;
 
@@ -19,20 +20,21 @@ namespace Mono.Unity
 {
 	class UnityTlsStream : MNS.MobileAuthenticatedStream
 	{
-		public UnityTlsStream (Stream innerStream, bool leaveInnerStreamOpen,
-			MonoTlsSettings settings, MonoTlsProvider provider)
-			: base (innerStream, leaveInnerStreamOpen, settings, provider)
+		public UnityTlsStream (Stream innerStream, bool leaveInnerStreamOpen, SslStream owner,
+								MonoTlsSettings settings, MonoTlsProvider provider)
+			: base (innerStream, leaveInnerStreamOpen, owner, settings, provider)
 		{
 		}
 
 		protected override MNS.MobileTlsContext CreateContext (
-			MNS.MobileAuthenticatedStream parent, bool serverMode, string targetHost,
-			SslProtocols enabledProtocols, X509Certificate serverCertificate,
-			X509CertificateCollection clientCertificates, bool askForClientCert)
+			bool serverMode, string targetHost, SslProtocols enabledProtocols,
+			X509Certificate serverCertificate, X509CertificateCollection clientCertificates,
+			bool askForClientCert)
 		{
-			return new UnityTlsContext (parent, serverMode, targetHost,
-				enabledProtocols, serverCertificate, clientCertificates,
-				askForClientCert);
+			return new UnityTlsContext (
+				this, serverMode, targetHost,
+				enabledProtocols, serverCertificate,
+				clientCertificates, askForClientCert);
 		}
 	}
 }

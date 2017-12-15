@@ -4,30 +4,29 @@ extern alias MonoSecurity;
 #endif
 
 using System;
-using System.IO;
 using System.Text;
-using System.Security.Cryptography.X509Certificates;
+using System.IO;
+using System.Net.Security;
 using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 
+using MNS = Mono.Net.Security;
 #if MONO_SECURITY_ALIAS
 using MonoSecurity::Mono.Security.Interface;
 #else
 using Mono.Security.Interface;
 #endif
 
-using MNS = Mono.Net.Security;
-
 namespace Mono.Unity
 {
 	unsafe internal class UnityTlsProvider : MonoTlsProvider
 	{
-		static readonly Guid id = new Guid("06414A97-74F6-488F-877B-A6CA9BBEB82E");
-
-		public override Guid ID {
-			get { return id; }
-		}
 		public override string Name {
 			get { return "unitytls"; }
+		}
+
+		public override Guid ID {
+			get { return MNS.MonoTlsProviderFactory.UnityTlsId; }
 		}
 
 		public override bool SupportsSslStream {
@@ -42,6 +41,8 @@ namespace Mono.Unity
 			get { return true; }
 		}
 
+		internal override bool SupportsCleanShutdown => true;
+
 		public override SslProtocols SupportedProtocols {
 			get { return SslProtocols.Tls12 | SslProtocols.Tls11 | SslProtocols.Tls; }
 		}
@@ -50,7 +51,14 @@ namespace Mono.Unity
 			Stream innerStream, bool leaveInnerStreamOpen,
 			MonoTlsSettings settings = null)
 		{
-			return new UnityTlsStream (innerStream, leaveInnerStreamOpen, settings, this);
+			return SslStream.CreateMonoSslStream (innerStream, leaveInnerStreamOpen, this, settings);
+		}
+
+		internal override IMonoSslStream CreateSslStreamInternal (
+			SslStream sslStream, Stream innerStream, bool leaveInnerStreamOpen,
+			MonoTlsSettings settings)
+		{
+			return new UnityTlsStream (innerStream, leaveInnerStreamOpen, sslStream, settings, this);
 		}
 
 		internal override bool ValidateCertificate (

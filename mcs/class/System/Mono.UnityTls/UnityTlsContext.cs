@@ -140,9 +140,9 @@ namespace Mono.Unity
 			// NO-OP
 		}
 
-		public override int Read (byte [] buffer, int offset, int count, out bool wouldBlock)
+		public override (int ret, bool wantMore) Read (byte[] buffer, int offset, int count)
 		{
-			wouldBlock = false;
+			bool wouldBlock = false;
 			int numBytesRead = 0;
 
 			UnityTls.unitytls_errorstate errorState = UnityTls.unitytls_errorstate_create ();
@@ -155,12 +155,12 @@ namespace Mono.Unity
 			else
 				Mono.Unity.Debug.CheckAndThrow (errorState, "Failed to read data from TLS context");
 
-			return numBytesRead;
+			return (numBytesRead, wouldBlock);
 		}
 
-		public override int Write (byte [] buffer, int offset, int count, out bool wouldBlock)
+		public override (int ret, bool wantMore) Write (byte[] buffer, int offset, int count)
 		{
-			wouldBlock = false;
+			bool wouldBlock = false;
 			int numBytesWritten = 0;
 
 			UnityTls.unitytls_errorstate errorState = UnityTls.unitytls_errorstate_create ();
@@ -173,10 +173,10 @@ namespace Mono.Unity
 			else
 				Mono.Unity.Debug.CheckAndThrow (errorState, "Failed to write data to TLS context");
 
-			return numBytesWritten;
+			return (numBytesWritten, wouldBlock);
 		}
 
-		public override void Close ()
+		public override void Shutdown ()
 		{
 			// Destroy native UnityTls objects
 			UnityTls.unitytls_tlsctx_free (m_TlsContext);
@@ -194,7 +194,7 @@ namespace Mono.Unity
 			try {
 				if (disposing)
 				{
-					Close();
+					Shutdown();
 
 					// reset states
 					m_LocalClientCertificate = null;
