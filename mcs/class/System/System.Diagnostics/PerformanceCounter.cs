@@ -126,8 +126,10 @@ namespace System.Diagnostics {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern IntPtr GetImpl (string category, string counter,
-				string instance, out PerformanceCounterType ctype, out bool custom);
+		unsafe static extern IntPtr GetImpl (char* category, int category_Length,
+				char* counter, int counter_Length,
+				char* instance, int instance_Length,
+				out PerformanceCounterType ctype, out bool custom);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern bool GetSample (IntPtr impl, bool only_value, out CounterSample sample);
@@ -152,8 +154,19 @@ namespace System.Diagnostics {
 			if (impl != IntPtr.Zero)
 				Close ();
 
-			if (IsValidMachine (machineName))
-				impl = GetImpl (categoryName, counterName, instanceName, out type, out is_custom);
+			if (IsValidMachine (machineName)) {
+				unsafe {
+					fixed (char* fixed_categoryName = categoryName,
+						     fixed_counterName = counterName,
+						     fixed_instanceName = instanceName) {
+						impl = GetImpl (fixed_categoryName, categoryName.Length,
+								fixed_counterName, counterName.Length,
+								fixed_instanceName, instanceName.Length,
+								out type, out is_custom);
+					}
+				}
+			}
+
 			// system counters are always readonly
 			if (!is_custom)
 				readOnly = true;

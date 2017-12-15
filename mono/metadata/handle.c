@@ -465,6 +465,12 @@ mono_string_new_handle (MonoDomain *domain, const char *data, MonoError *error)
 	return MONO_HANDLE_NEW (MonoString, mono_string_new_checked (domain, data, error));
 }
 
+MonoStringHandle
+mono_string_new_handle_length (MonoDomain *domain, const char *data, size_t length, MonoError *error)
+{
+	return MONO_HANDLE_NEW (MonoString, mono_string_new_len_checked (domain, data, length, error));
+}
+
 MonoArrayHandle
 mono_array_new_handle (MonoDomain *domain, MonoClass *eclass, uintptr_t n, MonoError *error)
 {

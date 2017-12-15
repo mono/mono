@@ -6284,6 +6284,7 @@ mono_string_new_len_checked (MonoDomain *domain, const char *text, guint length,
 	else 
 		g_error_free (eg_error);
 
+	// FIXME avoid extra copy
 	g_free (ut);
 
 	return o;
@@ -6344,7 +6345,10 @@ mono_string_new_checked (MonoDomain *domain, const char *text, MonoError *error)
 		mono_error_set_execution_engine (error, "String conversion error: %s", eg_error->message);
 		g_error_free (eg_error);
 	}
-	
+	// FIXME avoid extra copy
+	// use g_utf8_to_utf18_buf with null buf (not yet provided)
+	// to get length, then mono_string_new_size_checked to allocate, then
+	// again g_utf8_to_utf16_buf into the gc memory
 	g_free (ut);
     
 /*FIXME g_utf8_get_char, g_utf8_next_char and g_utf8_validate are not part of eglib.*/
@@ -7056,6 +7060,7 @@ mono_ldstr_utf8 (MonoImage *image, guint32 idx, MonoError *error)
 		/* allocate the total length and copy the part of the string that has been converted */
 		char *as2 = (char *)g_malloc0 (len2);
 		memcpy (as2, as, written);
+		// FIXME avoid extra copy
 		g_free (as);
 		as = as2;
 	}
@@ -7087,14 +7092,15 @@ mono_string_to_utf8 (MonoString *s)
 
 /**
  * mono_string_to_utf8_checked:
- * \param s a \c System.String
+ * \param s a \c const gunichar2*
+ * \param length
  * \param error a \c MonoError.
- * Converts a \c MonoString to its UTF-8 representation. May fail; check 
+ * Converts UTF-16 to UTF-8. May fail; check 
  * \p error to determine whether the conversion was successful.
  * The resulting buffer should be freed with \c mono_free().
  */
 char *
-mono_string_to_utf8_checked (MonoString *s, MonoError *error)
+mono_utf16_to_utf8_checked (const gunichar2* s, size_t length, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
@@ -7107,25 +7113,39 @@ mono_string_to_utf8_checked (MonoString *s, MonoError *error)
 	if (s == NULL)
 		return NULL;
 
-	if (!s->length)
+	if (!length)
 		return g_strdup ("");
 
-	as = g_utf16_to_utf8 (mono_string_chars (s), s->length, NULL, &written, &gerror);
+	as = g_utf16_to_utf8 (s, length, NULL, &written, &gerror);
 	if (gerror) {
 		mono_error_set_argument (error, "string", "%s", gerror->message);
 		g_error_free (gerror);
 		return NULL;
 	}
 	/* g_utf16_to_utf8  may not be able to complete the conversion (e.g. NULL values were found, #335488) */
-	if (s->length > written) {
+	if (length > written) {
 		/* allocate the total length and copy the part of the string that has been converted */
-		char *as2 = (char *)g_malloc0 (s->length);
+		char *as2 = (char *)g_malloc0 (length);
 		memcpy (as2, as, written);
+		// FIXME avoid extra copy
 		g_free (as);
 		as = as2;
 	}
 
 	return as;
+}
+
+char *
+mono_string_to_utf8_checked (MonoString *s, MonoError *error)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
+
+	error_init (error);
+	
+	if (s == NULL)
+		return NULL;
+		
+	return mono_utf16_to_utf8_checked (mono_string_chars (s), s->length, error);
 }
 
 char *
@@ -7162,6 +7182,7 @@ mono_string_to_utf8_ignore (MonoString *s)
 		/* allocate the total length and copy the part of the string that has been converted */
 		char *as2 = (char *)g_malloc0 (s->length);
 		memcpy (as2, as, written);
+		// FIXME avoid extra copy
 		g_free (as);
 		as = as2;
 	}
@@ -7297,6 +7318,7 @@ mono_string_from_utf32_checked (mono_unichar4 *data, MonoError *error)
 		g_error_free (gerror);
 
 	result = mono_string_from_utf16_checked (utf16_output, error);
+	// FIXME avoid extra copy
 	g_free (utf16_output);
 	return result;
 }

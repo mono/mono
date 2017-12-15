@@ -1547,6 +1547,8 @@ mono_string_handle_to_utf8 (MonoStringHandle s, MonoError *error);
 char *
 mono_string_to_utf8_image (MonoImage *image, MonoStringHandle s, MonoError *error);
 
+char *
+mono_utf16_to_utf8_checked (const gunichar2* s, size_t length, MonoError *error);
 
 MonoArrayHandle
 mono_array_clone_in_domain (MonoDomain *domain, MonoArrayHandle array, MonoError *error);
