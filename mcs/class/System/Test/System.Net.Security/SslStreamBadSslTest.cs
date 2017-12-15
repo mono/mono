@@ -64,7 +64,11 @@ public class SslStreamBadSslTest
         [TestCase("sha1-2017.badssl.com")]
         public void FailingHostsProvider(string targetHost)
         {
-            sslStream.AuthenticateAsClient(targetHost);
+            try {
+                sslStream.AuthenticateAsClient(targetHost);
+            } catch (global::System.AggregateException e) {
+                throw e.InnerException;
+            }
         }
     }
 }
