@@ -61,8 +61,8 @@ namespace Mono.Unity
 
 			// Map selected protocols as best as we can.
 			UnityTls.unitytls_tlsctx_protocolrange protocolRange = new UnityTls.unitytls_tlsctx_protocolrange {
-				min = GetMinProtocol (enabledProtocols),
-				max = GetMaxProtocol (enabledProtocols),
+				min = UnityTlsConversions.GetMinProtocol (enabledProtocols),
+				max = UnityTlsConversions.GetMaxProtocol (enabledProtocols),
 			};
 
 			UnityTls.unitytls_tlsctx_callbacks callbacks = new UnityTls.unitytls_tlsctx_callbacks {
@@ -109,44 +109,6 @@ namespace Mono.Unity
 			}
 
 			m_HasContext = true;
-		}
-
-		static private UnityTls.unitytls_protocol GetMinProtocol (SslProtocols protocols)
-		{
-			if (protocols.HasFlag (SslProtocols.Tls))
-				return UnityTls.unitytls_protocol.UNITYTLS_PROTOCOL_TLS_1_0;
-			if (protocols.HasFlag (SslProtocols.Tls11))
-				return UnityTls.unitytls_protocol.UNITYTLS_PROTOCOL_TLS_1_1;
-			if (protocols.HasFlag (SslProtocols.Tls12))
-				return UnityTls.unitytls_protocol.UNITYTLS_PROTOCOL_TLS_1_2;
-			return UnityTls.unitytls_protocol.UNITYTLS_PROTOCOL_TLS_1_2;	// Behavior as in AppleTlsContext
-		}
-
-		static private UnityTls.unitytls_protocol GetMaxProtocol (SslProtocols protocols)
-		{
-			if (protocols.HasFlag (SslProtocols.Tls12))
-				return UnityTls.unitytls_protocol.UNITYTLS_PROTOCOL_TLS_1_2;
-			if (protocols.HasFlag (SslProtocols.Tls11))
-				return UnityTls.unitytls_protocol.UNITYTLS_PROTOCOL_TLS_1_1;
-			if (protocols.HasFlag (SslProtocols.Tls))
-				return UnityTls.unitytls_protocol.UNITYTLS_PROTOCOL_TLS_1_0;
-			return UnityTls.unitytls_protocol.UNITYTLS_PROTOCOL_TLS_1_0;	// Behavior as in AppleTlsContext
-		}
-
-		static private TlsProtocols ConvertProtocolVersion(UnityTls.unitytls_protocol protocol)
-		{
-			switch (protocol)
-			{
-			case UnityTls.unitytls_protocol.UNITYTLS_PROTOCOL_TLS_1_0:
-				return TlsProtocols.Tls10;
-			case UnityTls.unitytls_protocol.UNITYTLS_PROTOCOL_TLS_1_1:
-				return TlsProtocols.Tls11;
-			case UnityTls.unitytls_protocol.UNITYTLS_PROTOCOL_TLS_1_2:
-				return TlsProtocols.Tls12;
-			case UnityTls.unitytls_protocol.UNITYTLS_PROTOCOL_INVALID:
-				return TlsProtocols.Zero;
-			}
-			return TlsProtocols.Zero;
 		}
 
 		public override bool HasContext {
@@ -281,7 +243,7 @@ namespace Mono.Unity
 
 			m_Connectioninfo = new MonoTlsConnectionInfo () {
 				CipherSuiteCode = (CipherSuiteCode)cipherSuite,
-				ProtocolVersion = ConvertProtocolVersion(protocolVersion),
+				ProtocolVersion = UnityTlsConversions.ConvertProtocolVersion(protocolVersion),
 				PeerDomainName = ServerName
 
 				// TODO:
