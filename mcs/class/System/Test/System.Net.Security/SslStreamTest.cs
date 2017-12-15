@@ -58,7 +58,7 @@ public class SslStreamTest {
 		m_clientCert = new X509Certificate2 (m_clientCertRaw, "client");
 	}
 
-	[Test] //bug https://bugzilla.novell.com/show_bug.cgi?id=457120
+	[Test]
 #if !UNITY
 	[Category ("MacNotWorking")] // Works but launches a prompt on 10.12 that will fail if you don't click in a few seconds
 #endif
@@ -107,7 +107,7 @@ public class SslStreamTest {
 			state.Client.Connect (endPoint.Address, endPoint.Port);
 			NetworkStream s = state.Client.GetStream ();
 			state.ClientStream = new SslStream (s, false, 
-						(a1, a2, a3, a4) => true,
+						ClientRemoteCertificateValidationCallback,
 						(a1, a2, a3, a4, a5) => m_clientCert);
 			state.ClientStream.AuthenticateAsClient ("test_host");
 			state.ClientAuthenticated.Set ();
@@ -123,7 +123,7 @@ public class SslStreamTest {
 			state.ServerClient = state.Listener.AcceptTcpClient ();
 			NetworkStream s = state.ServerClient.GetStream ();
 			state.ServerStream = new SslStream (s, false, 
-						(a1, a2, a3, a4) => true, 
+						ServerRemoteCertificateValidationCallback,
 						(a1, a2, a3, a4, a5) => m_serverCert);
 			state.ServerStream.AuthenticateAsServer (m_serverCert);
 			state.ServerAuthenticated.Set ();
@@ -136,7 +136,21 @@ public class SslStreamTest {
 				throw;
 		}
 	}
-	
+
+	public bool ClientRemoteCertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+	{
+		Assert.AreEqual(m_serverCert.RawData, certificate.GetRawCertData(), "Client remote certification callback received a certificate that is not identical to the expected server cert.");
+		Assert.AreEqual(SslPolicyErrors.None, sslPolicyErrors);
+		return true;
+	}
+
+	public bool ServerRemoteCertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+	{
+		Assert.AreEqual(m_clientCert.RawData, certificate.GetRawCertData(), "Server remote certification callback received a certificate that is not identical to the expected client cert.");
+		Assert.AreEqual(SslPolicyErrors.None, sslPolicyErrors);
+		return true;
+	}
+
 	private class ClientServerState {
 		public TcpListener Listener { get; set; }
 		public TcpClient Client { get; set; }
