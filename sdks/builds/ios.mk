@@ -354,7 +354,7 @@ endef
 $(eval $(call iOSCrossTemplate,cross32,arm))
 $(eval $(call iOSCrossTemplate,cross64,aarch64))
 
-ios_cross32_CONFIGURE_FLAGS = --build=i386-apple-darwin10
-ios_cross64_CONFIGURE_FLAGS = --with-llvm=$(TOP)/sdks/out/llvm64/usr
+ios_cross32_CONFIGURE_FLAGS = --build=i386-apple-darwin10 --with-llvm=$(TOP)/sdks/out/llvm32
+ios_cross64_CONFIGURE_FLAGS = --with-llvm=$(TOP)/sdks/out/llvm64
 
 

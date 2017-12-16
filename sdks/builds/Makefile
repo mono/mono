@@ -16,7 +16,7 @@ $(TOP)/configure: $(TOP)/configure.ac $(TOP)/autogen.sh
 
 ## LLVM
 
-LLVM_REV=07582cba7ccc5aab7b6136ff837abc9df03a17fc
+LLVM_REV=3b82b3c9041eb997f627f881a67d20be37264e9c
 
 # Download a prebuilt llvm
 # Shared between ios and android
