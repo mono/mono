@@ -1395,6 +1395,23 @@ namespace MonoTests.System
 			Assert.IsTrue (d (0, 0));
 		}
 
+		[Test]
+		public void EnumBaseTypeConversion2 () {
+			Func<Enum22, int> dm = EnumArg;
+			var d = (Func<int, int>)Delegate.CreateDelegate (typeof (Func<int, int>), dm.Method);
+			Assert.AreEqual (1, d (1));
+		}
+
+		public enum Enum22 {
+			none,
+			one,
+			two
+		}
+
+		public static int EnumArg (Enum22 e) {
+			return (int)e;
+		}
+
 #if !MONOTOUCH && !FULL_AOT_RUNTIME
 		public static void DynInvokeWithClosedFirstArg (object a, object b)
 		{
