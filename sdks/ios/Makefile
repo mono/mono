@@ -3,7 +3,7 @@ all: harness.exe appbuilder.exe test-runner.exe
 
 BCL_DIR = ../../mcs/class/lib/monotouch
 XCODE_ROOT=$(shell xcode-select -p)
-SYSROOT=/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk
+SYSROOT=$(XCODE_ROOT)/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk
 
 TEST_SUITES = \
 	Mono.Runtime.Tests \
