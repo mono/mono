@@ -51,6 +51,7 @@ public class AppBuilder
 		string bundle_name = null;
 		string bundle_executable = null;
 		string sysroot = null;
+		string aotdir = null;
 		string exe = null;
 		bool isdev = false;
 		bool isrelease = false;
@@ -63,6 +64,7 @@ public class AppBuilder
 				{ "runtimedir=", s => runtimedir = s },
 				{ "mono-sdkdir=", s => mono_sdkdir = s },
 				{ "sysroot=", s => sysroot = s },
+				{ "aot-cachedir=", s => aotdir = s },
 				{ "bundle-identifier=", s => bundle_identifier = s },
 				{ "bundle-name=", s => bundle_name = s },
 				{ "bundle-executable=", s => bundle_executable = s },
@@ -100,7 +102,7 @@ public class AppBuilder
 			aot_args = "soft-debug";
 		if (isllvm) {
 			cross_runtime_args = "--llvm";
-			aot_args = ",llvm-path=$mono_sdkdir/llvm64/usr/bin,llvm-outfile=$llvm_outfile";
+			aot_args = ",llvm-path=$mono_sdkdir/llvm64/bin,llvm-outfile=$llvm_outfile";
 		}
 
 		Directory.CreateDirectory (builddir);
@@ -130,12 +132,21 @@ public class AppBuilder
 		ninja.WriteLine ($"sysroot = {sysroot}");
 		ninja.WriteLine ("cross = $mono_sdkdir/ios-cross64/bin/aarch64-darwin-mono-sgen");
 		ninja.WriteLine ($"builddir = .");
+		if (aotdir != null)
+			ninja.WriteLine ($"aotdir = {aotdir}");
 		// Rules
 		ninja.WriteLine ("rule aot");
-		ninja.WriteLine ($"  command = MONO_PATH=$builddir $cross -O=gsharedvt,float32 --debug {cross_runtime_args} --aot=mtriple=arm64-ios,full,static,asmonly,direct-icalls,no-direct-calls,dwarfdebug,{aot_args},outfile=$outfile,data-outfile=$data_outfile $src_file");
+		ninja.WriteLine ($"  command = MONO_PATH=$mono_path $cross -O=gsharedvt,float32 --debug {cross_runtime_args} --aot=mtriple=arm64-ios,full,static,asmonly,direct-icalls,no-direct-calls,dwarfdebug,{aot_args},outfile=$outfile,data-outfile=$data_outfile $src_file");
+		ninja.WriteLine ("  description = [AOT] $src_file -> $outfile");
+		// ninja remakes files it hadn't seen before even if the timestamp is newer, so have to add a test ourselves
+		ninja.WriteLine ("rule aot-cached");
+		ninja.WriteLine ($"  command = if ! test -f $outfile; then MONO_PATH=$mono_path $cross -O=gsharedvt,float32 --debug {cross_runtime_args} --aot=mtriple=arm64-ios,full,static,asmonly,direct-icalls,no-direct-calls,dwarfdebug,{aot_args},outfile=$outfile,data-outfile=$data_outfile $src_file; fi");
 		ninja.WriteLine ("  description = [AOT] $src_file -> $outfile");
 		ninja.WriteLine ("rule assemble");
 		ninja.WriteLine ("  command = clang -isysroot $sysroot -miphoneos-version-min=10.1 -arch arm64 -c -o $out $in");
+		ninja.WriteLine ("  description = [ASM] $in -> $out");
+		ninja.WriteLine ("rule assemble-cached");
+		ninja.WriteLine ("  command = if ! test -f $out; then clang -isysroot $sysroot -miphoneos-version-min=10.1 -arch arm64 -c -o $out $in; fi");
 		ninja.WriteLine ("  description = [ASM] $in -> $out");
 		ninja.WriteLine ("rule cp");
 		ninja.WriteLine ("  command = cp $in $out");
@@ -166,27 +177,46 @@ public class AppBuilder
 			var filename_noext = Path.GetFileNameWithoutExtension (filename);
 
 			File.Copy (assembly, Path.Combine (builddir, filename), true);
+			if (aotdir != null && !File.Exists (Path.Combine (aotdir, filename)))
+				/* Don't overwrite to avoid changing the timestamp */
+				File.Copy (assembly, Path.Combine (aotdir, filename), false);
 
 			ninja.WriteLine ($"build $appdir/{filename}: cpifdiff $builddir/{filename}");
 			if (isdev) {
-				string outputs = $"$builddir/{filename}.s $builddir/{filename_noext}.aotdata";
+				string destdir = null;
+				string srcfile = null;
+				string assemble_rule = null;
+				if (aotdir != null) {
+					destdir = "$aotdir";
+					srcfile = Path.Combine (aotdir, filename);
+					assemble_rule = "assemble-cached";
+				} else {
+					destdir = "$builddir";
+					srcfile = $"{filename}";
+					assemble_rule = "assemble";
+				}
+				string outputs = $"{destdir}/{filename}.s {destdir}/{filename_noext}.aotdata";
 				if (isllvm)
-					outputs += $" $builddir/{filename}.llvm.s";
-				ninja.WriteLine ($"build {outputs}: aot {filename}");
-				ninja.WriteLine ($"  src_file={filename}");
-				ninja.WriteLine ($"  outfile=$builddir/{filename}.s");
-				ninja.WriteLine ($"  data_outfile=$builddir/{filename_noext}.aotdata");
+					outputs += $" {destdir}/{filename}.llvm.s";
+				if (aotdir != null)
+					ninja.WriteLine ($"build {outputs}: aot-cached {srcfile}");
+				else
+					ninja.WriteLine ($"build {outputs}: aot {srcfile}");
+				ninja.WriteLine ($"  src_file={srcfile}");
+				ninja.WriteLine ($"  outfile={destdir}/{filename}.s");
+				ninja.WriteLine ($"  data_outfile={destdir}/{filename_noext}.aotdata");
+				ninja.WriteLine ($"  mono_path={destdir}");
 				if (isllvm)
-					ninja.WriteLine ($"  llvm_outfile=$builddir/{filename}.llvm.s");
-				ninja.WriteLine ($"build $builddir/{filename}.o: assemble $builddir/{filename}.s");
+					ninja.WriteLine ($"  llvm_outfile={destdir}/{filename}.llvm.s");
+				ninja.WriteLine ($"build {destdir}/{filename}.o: {assemble_rule} {destdir}/{filename}.s");
 				if (isllvm)
-					ninja.WriteLine ($"build $builddir/{filename}.llvm.o: assemble $builddir/{filename}.llvm.s");
-				ninja.WriteLine ($"build $appdir/{filename_noext}.aotdata: cp {filename_noext}.aotdata");
-			}
+					ninja.WriteLine ($"build {destdir}/{filename}.llvm.o: {assemble_rule} {destdir}/{filename}.llvm.s");
+				ninja.WriteLine ($"build $appdir/{filename_noext}.aotdata: cp {destdir}/{filename_noext}.aotdata");
 
-			ofiles += " " + ($"$builddir/{filename}.o");
-			if (isllvm)
-				ofiles += " " + ($"$builddir/{filename}.llvm.o");
+				ofiles += " " + ($"{destdir}/{filename}.o");
+				if (isllvm)
+					ofiles += " " + ($"{destdir}/{filename}.llvm.o");
+			}
 			var aname = AssemblyName.GetAssemblyName (assembly);
 			assembly_names.Add (aname.Name);
 		}

@@ -76,7 +76,18 @@ ifdef LLVM
 APPBUILDER_ARGS += --llvm
 endif
 
+#
+# This enables caching of aot outputs between different apps.
+# Changes to the assemblies/runtimes etc. are not detected, so this should only
+# be used when compiling multiple apps with the same assemblies, i.e. the -all
+# targets.
+#
+ifdef ENABLE_AOT_CACHE
+APPBUILDER_ARGS += --aot-cachedir $(PWD)/aot-cache
+endif
+
 build-ios-dev-%: appbuilder.exe test-runner.exe runtime/libmonoios.a $($*_ASSEMBLIES)
+	mkdir -p $(PWD)/aot-cache
 	mono appbuilder.exe $(APPBUILDER_ARGS) --target ios-dev64 --mono-sdkdir $(PWD)/../out --appdir $(PWD)/bin/ios-dev/test-$*.app --runtimedir $(PWD)/runtime --builddir obj/ios-dev/test-$*.app --sysroot $(SYSROOT) --bundle-executable test-$* --bundle-identifier com.xamarin.mono.ios.test-$* --bundle-name test-$* --exe test-runner.exe $(patsubst %,-r %,$(TEST_ASSEMBLIES) $($*_ASSEMBLIES))
 	mkdir -p $(PWD)/bin/ios-dev/test-$*.app
 	if test "x$($_EXTRA_FILES)" != "x"; then cp -r $($*_EXTRA_FILES) $(PWD)/bin/ios-dev/test-$*.app/; fi
@@ -101,7 +112,7 @@ run-ios-sim-%: harness.exe
 
 clean:
 	$(MAKE) -C runtime clean
-	$(RM) -rf bin obj *.exe *.log
+	$(RM) -rf bin obj *.exe *.log aot-cache
 
 # Compile all the test assemblies
 compile-tests:
@@ -111,10 +122,12 @@ run-ios-sim-all:
 	for suite in $(TEST_SUITES); do make build-ios-sim-$$suite || exit 1; make run-ios-sim-$$suite || exit 1; done
 
 build-ios-dev-all:
-	for suite in $(TEST_SUITES); do make clean-ios-dev-$$suite; make build-ios-dev-$$suite || exit 1; done
+	rm -rf aot-cache
+	for suite in $(TEST_SUITES); do make clean-ios-dev-$$suite; make build-ios-dev-$$suite ENABLE_AOT_CACHE=1 || exit 1; done
 
 build-ios-dev-llvm-all:
-	for suite in $(TEST_SUITES); do make clean-ios-dev-$$suite; make build-ios-dev-$$suite LLVM=1 || exit 1; done
+	rm -rf aot-cache
+	for suite in $(TEST_SUITES); do echo "*** $$suite ***"; make clean-ios-dev-$$suite; make build-ios-dev-$$suite LLVM=1 ENABLE_AOT_CACHE=1 || exit 1; done
 
 # Developer targets, ignore
 # 'launch' doesn't propagate the error code
