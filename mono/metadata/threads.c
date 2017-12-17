@@ -742,10 +742,15 @@ mono_thread_attach_internal (MonoThread *thread, gboolean force_attach, gboolean
 static void
 mono_thread_detach_internal (MonoInternalThread *thread)
 {
+	MonoThreadInfo *info;
 	gboolean removed;
+	guint32 gchandle;
 
 	g_assert (thread != NULL);
 	SET_CURRENT_OBJECT (thread);
+
+	info = (MonoThreadInfo*) thread->thread_info;
+	g_assert (info);
 
 	THREAD_DEBUG (g_message ("%s: mono_thread_detach for %p (%"G_GSIZE_FORMAT")", __func__, thread, (gsize)thread->tid));
 
@@ -768,7 +773,7 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 	* runtime but not identified as runtime threads needs to make sure thread detach calls won't
 	* race with runtime shutdown.
 	*/
-	mono_threads_add_joinable_runtime_thread (thread->thread_info);
+	mono_threads_add_joinable_runtime_thread (info);
 
 	/*
 	 * thread->synch_cs can be NULL if this was called after
@@ -844,7 +849,7 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 	mono_release_type_locks (thread);
 
 	/* Can happen when we attach the profiler helper thread in order to heapshot. */
-	if (!mono_thread_info_lookup (MONO_UINT_TO_NATIVE_THREAD_ID (thread->tid))->tools_thread)
+	if (!info->tools_thread)
 		MONO_PROFILER_RAISE (thread_stopped, (thread->tid));
 
 	mono_hazard_pointer_clear (mono_hazard_pointer_get (), 1);
@@ -883,7 +888,12 @@ done:
 	SET_CURRENT_OBJECT (NULL);
 	mono_domain_unset ();
 
-	mono_thread_info_unset_internal_thread_gchandle ((MonoThreadInfo*) thread->thread_info);
+	if (!mono_thread_info_try_get_internal_thread_gchandle (info, &gchandle))
+		g_error ("%s: failed to get gchandle, info = %p", __func__, info);
+
+	mono_gchandle_free (gchandle);
+
+	mono_thread_info_unset_internal_thread_gchandle (info);
 
 	/* Don't need to close the handle to this thread, even though we took a
 	 * reference in mono_thread_attach (), because the GC will do it
