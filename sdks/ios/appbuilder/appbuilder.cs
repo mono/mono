@@ -50,6 +50,7 @@ public class AppBuilder
 		string bundle_identifier = null;
 		string bundle_name = null;
 		string bundle_executable = null;
+		string sysroot = null;
 		string exe = null;
 		bool isdev = false;
 		bool isrelease = false;
@@ -61,6 +62,7 @@ public class AppBuilder
 				{ "builddir=", s => builddir = s },
 				{ "runtimedir=", s => runtimedir = s },
 				{ "mono-sdkdir=", s => mono_sdkdir = s },
+				{ "sysroot=", s => sysroot = s },
 				{ "bundle-identifier=", s => bundle_identifier = s },
 				{ "bundle-name=", s => bundle_name = s },
 				{ "bundle-executable=", s => bundle_executable = s },
@@ -75,6 +77,7 @@ public class AppBuilder
 		check_mandatory (runtimedir, "--runtimedir");
 		check_mandatory (appdir, "--appdir");
 		check_mandatory (mono_sdkdir, "--mono-sdkdir");
+		check_mandatory (sysroot, "--sysroot");
 
 		switch (target) {
 		case "ios-dev64":
@@ -124,7 +127,7 @@ public class AppBuilder
 		ninja.WriteLine ($"mono_sdkdir = {mono_sdkdir}");
 		ninja.WriteLine ($"monoios_dir = {runtimedir}");
 		ninja.WriteLine ($"appdir = {appdir}");
-		ninja.WriteLine ("sysroot = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk");
+		ninja.WriteLine ($"sysroot = {sysroot}");
 		ninja.WriteLine ("cross = $mono_sdkdir/ios-cross64/bin/aarch64-darwin-mono-sgen");
 		ninja.WriteLine ($"builddir = .");
 		// Rules

@@ -1,5 +1,7 @@
 all: runtime libmonoios.a
 
+XCODE_ROOT=$(shell xcode-select -p)
+
 UNREFERENCED_SYMBOLS =                                                  \
         _xamarin_log                                                            \
         _xamarin_timezone_get_data                                      \
@@ -10,8 +12,8 @@ UNREFERENCED_SYMBOLS =                                                  \
         _ReadZStream                                                            \
         _WriteZStream
 
-CC = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang
-SIM_SYSROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk
+CC = $(XCODE_ROOT)/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang
+SIM_SYSROOT = $(XCODE_ROOT)/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk
 SIM_ARCH = x86_64
 SIM_SDK_DIR = ../../out/ios-sim64
 SIM_CFLAGS = \
@@ -69,4 +71,4 @@ libmonoios.a: dev-main.o dev-runtime.o dev-AppDelegate.o dev-ViewController.o
 	libtool -static -o $@ $^
 
 clean:
-	$(RM) -rf test-runner *.o
+	$(RM) -rf runtime *.o *.a
