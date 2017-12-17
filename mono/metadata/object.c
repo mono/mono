@@ -7058,16 +7058,7 @@ mono_ldstr_utf8 (MonoImage *image, guint32 idx, MonoError *error)
 char *
 mono_string_to_utf8 (MonoString *s)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
-
-	MonoError error;
-	char *result = mono_string_to_utf8_checked (s, &error);
-	
-	if (!is_ok (&error)) {
-		mono_error_cleanup (&error);
-		return NULL;
-	}
-	return result;
+	return mono_string_to_utf8_checked (s, NULL);
 }
 
 /**
@@ -7303,8 +7294,6 @@ mono_string_from_utf32_checked (mono_unichar4 *data, MonoError *error)
 static char *
 mono_string_to_utf8_internal (MonoMemPool *mp, MonoImage *image, MonoString *s, MonoError *error)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
-
 	char *r;
 	char *mp_s;
 	int len;
