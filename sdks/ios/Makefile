@@ -31,10 +31,12 @@ TEST_SUITES_NOTWORKING = \
 
 SIM_NAME = xamarin.ios-sdk.sim
 
-harness.exe: harness/harness.cs harness/Options.cs
+OPTIONS_CS = ../../mcs/class/Mono.Options//Mono.Options/Options.cs
+
+harness.exe: harness/harness.cs $(OPTIONS_CS)
 	csc /out:$@ -r:System.Json.dll $^
 
-appbuilder.exe: appbuilder/appbuilder.cs appbuilder/Options.cs
+appbuilder.exe: appbuilder/appbuilder.cs $(OPTIONS_CS)
 	csc /out:$@ $^
 
 test-runner.exe: test-runner/runner.cs
