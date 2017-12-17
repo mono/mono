@@ -764,6 +764,8 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 	gboolean removed;
 	guint32 gchandle;
 
+	g_assert (mono_thread_internal_is_current (thread));
+
 	g_assert (thread != NULL);
 	SET_CURRENT_OBJECT (thread);
 
@@ -775,7 +777,7 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 	MONO_PROFILER_RAISE (thread_stopping, (thread->tid));
 
 #ifndef HOST_WIN32
-	mono_w32mutex_abandon ();
+	mono_w32mutex_abandon (thread);
 #endif
 
 	if (thread->abort_state_handle) {
@@ -869,8 +871,7 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 	mono_domain_unset ();
 	mono_memory_barrier ();
 
-	if (thread == mono_thread_internal_current ())
-		mono_thread_pop_appdomain_ref ();
+	mono_thread_pop_appdomain_ref ();
 
 	mono_free_static_data (thread->static_data);
 	thread->static_data = NULL;
@@ -3110,7 +3111,7 @@ mono_thread_cleanup (void)
 	 * thread exits, but if it's not running in a subthread it
 	 * won't exit in time.
 	 */
-	mono_w32mutex_abandon ();
+	mono_w32mutex_abandon (mono_thread_internal_current ());
 #endif
 
 #if 0
