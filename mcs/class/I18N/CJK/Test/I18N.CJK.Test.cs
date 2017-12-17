@@ -161,6 +161,15 @@ namespace MonoTests.I18N.CJK
 			AssertDecode ("Test/texts/japanese-utf8.txt", "Test/texts/japanese-932.txt", 932);
 		}
 
+		[Test]
+		public void Bug28321 ()
+		{
+			var expected = "\u00D7\u00B4\u00B1\u00F7\u00B6\u00B0\u00A8\u00A7";
+			var text = Manager.GetEncoding ("shift_jis").GetString (Convert.FromBase64String ("gX6BTIF9gYCB94GLgU6BmA=="));
+
+			Assert.AreEqual (expected, text);
+		}
+
 		// EUC-JP
 
 		[Test]
