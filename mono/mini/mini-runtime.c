@@ -3997,6 +3997,8 @@ mini_parse_debug_option (const char *option)
 		mini_debug_options.llvm_disable_inlining = TRUE;
 	else if (!strcmp (option, "llvm-disable-implicit-null-checks"))
 		mini_debug_options.llvm_disable_implicit_null_checks = TRUE;
+	else if (!strcmp (option, "unity-mixed-callstack"))
+		mini_debug_options.unity_mixed_callstack = TRUE;
 	else if (!strcmp (option, "explicit-null-checks"))
 		mini_debug_options.explicit_null_checks = TRUE;
 	else if (!strcmp (option, "gen-seq-points"))
@@ -4486,6 +4488,10 @@ mini_init (const char *filename, const char *runtime_version)
 	if (mini_debug_options.lldb || g_hasenv ("MONO_LLDB")) {
 		mono_lldb_init ("");
 		mono_dont_free_domains = TRUE;
+	}
+
+	if (mini_get_debug_options()->unity_mixed_callstack || g_hasenv ("UNITY_MIXED_CALLSTACK")) {
+		mixed_callstack_plugin_init ("");
 	}
 
 #ifdef XDEBUG_ENABLED
