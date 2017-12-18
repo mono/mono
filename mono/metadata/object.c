@@ -2585,7 +2585,6 @@ mono_remote_class (MonoDomain *domain, MonoStringHandle class_name, MonoClass *p
 	gpointer* key, *mp_key;
 	char *name;
 	
-	g_assert (error);
 	error_init (error);
 
 	key = create_remote_class_key (NULL, proxy_class);
@@ -6319,7 +6318,6 @@ mono_string_new_checked (MonoDomain *domain, const char *text, MonoError *error)
 	glong items_written;
 	int len;
 
-	g_assert (error);
 	error_init (error);
 	
 	len = strlen (text);
