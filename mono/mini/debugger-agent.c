@@ -2879,13 +2879,14 @@ notify_thread (gpointer key, gpointer value, gpointer user_data)
 	}
 }
 
-#ifndef IL2CPP_MONO_DEBUGGER
 static void
 process_suspend (DebuggerTlsData *tls, MonoContext *ctx)
 {
+#ifndef IL2CPP_MONO_DEBUGGER
 	guint8 *ip = (guint8 *)MONO_CONTEXT_GET_IP (ctx);
 	MonoJitInfo *ji;
 	MonoMethod *method;
+#endif
 
 	if (mono_loader_lock_is_owned_by_self ()) {
 		/*
@@ -2915,18 +2916,19 @@ process_suspend (DebuggerTlsData *tls, MonoContext *ctx)
 		return;
 	}
 
+#ifndef IL2CPP_MONO_DEBUGGER
 	ji = get_top_method_ji (ip, NULL, NULL);
 	g_assert (ji);
 	/* Can't suspend in these methods */
 	method = jinfo_get_method (ji);
 	if (method->klass == mono_defaults.string_class && (!strcmp (mono_method_get_name(method), "memset") || strstr (mono_method_get_name(method), "memcpy")))
 		return;
+#endif
 
 	save_thread_context (ctx);
 
 	suspend_current ();
 }
-#endif
 
 /*
  * suspend_vm:
@@ -3622,6 +3624,9 @@ create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, DebuggerEv
 {
 	int i, j;
 	GSList *events = NULL;
+#if IL2CPP_MONO_DEBUGGER
+    Il2CppSequencePoint *sp = (Il2CppSequencePoint*)ji;
+#endif
 
 	*suspend_policy = SUSPEND_POLICY_NONE;
 
@@ -3668,8 +3673,15 @@ create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, DebuggerEv
 
 					if (assemblies) {
 						for (k = 0; assemblies [k]; ++k)
+#ifdef IL2CPP_MONO_DEBUGGER
+						{
+							if (assemblies[k] == sp->method->klass->image->assembly)
+								found = TRUE;
+						}
+#else
 							if (assemblies [k] == jinfo_get_method (ji)->klass->image->assembly)
 								found = TRUE;
+#endif
 					}
 					if (!found)
 						filtered = TRUE;
@@ -3722,6 +3734,14 @@ create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, DebuggerEv
 						filtered = TRUE;
 					g_free (s);
 				} else if (mod->kind == MOD_KIND_STEP) {
+#ifdef IL2CPP_MONO_DEBUGGER
+					Il2CppSequencePoint *sp = (Il2CppSequencePoint*)ji;
+					if ((mod->data.filter & STEP_FILTER_STATIC_CTOR) && sp &&
+						(sp->method->flags & METHOD_ATTRIBUTE_SPECIAL_NAME) &&
+						!strcmp (sp->method->name, ".cctor") &&
+						(sp->method != ((SingleStepReq*)req->info)->start_method))
+						filtered = TRUE;
+#else
 					if ((mod->data.filter & STEP_FILTER_STATIC_CTOR) && ji &&
 						(jinfo_get_method (ji)->flags & METHOD_ATTRIBUTE_SPECIAL_NAME) &&
 						!strcmp (jinfo_get_method (ji)->name, ".cctor") &&
@@ -3742,6 +3762,7 @@ create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, DebuggerEv
 						if (ji->dbg_non_user_code)
 							filtered = TRUE;
 					}
+#endif
 				}
 			}
 
@@ -5649,6 +5670,7 @@ process_single_step_inner (DebuggerTlsData *tls, gboolean from_signal, uint64_t 
 #else
 		NOT_IMPLEMENTED;
 #endif
+#endif
 
 	if (suspend_count > 0) {
 		/* Fastpath during invokes, see in process_suspend () */
@@ -5664,6 +5686,8 @@ process_single_step_inner (DebuggerTlsData *tls, gboolean from_signal, uint64_t 
 
 	if (mono_thread_internal_current () != ss_req->thread)
 		return;
+
+#ifndef IL2CPP_MONO_DEBUGGER
 
 	ip = (guint8 *)MONO_CONTEXT_GET_IP (ctx);
 
@@ -5740,7 +5764,7 @@ process_single_step_inner (DebuggerTlsData *tls, gboolean from_signal, uint64_t 
 #ifndef IL2CPP_MONO_DEBUGGER
 	events = create_event_list (EVENT_KIND_STEP, reqs, ji, NULL, &suspend_policy);
 #else
-	events = create_event_list(EVENT_KIND_STEP, reqs, NULL, NULL, &suspend_policy);
+	events = create_event_list(EVENT_KIND_STEP, reqs, il2cpp_get_sequence_point(sequencePointId), NULL, &suspend_policy);
 #endif
 
 	g_ptr_array_free (reqs, TRUE);
@@ -5889,34 +5913,34 @@ debugger_agent_breakpoint_from_context (MonoContext *ctx)
 static void
 start_single_stepping (void)
 {
-#ifndef IL2CPP_MONO_DEBUGGER
 #ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED
 	int val = mono_atomic_inc_i32 (&ss_count);
 
 	if (val == 1) {
 		mono_arch_start_single_stepping ();
+#ifndef IL2CPP_MONO_DEBUGGER
 		mono_interp_start_single_stepping ();
+#endif
 	}
 #else
 	g_assert_not_reached ();
-#endif
 #endif
 }
 
 static void
 stop_single_stepping (void)
 {
-#ifndef IL2CPP_MONO_DEBUGGER
 #ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED
 	int val = mono_atomic_dec_i32 (&ss_count);
 
 	if (val == 0) {
 		mono_arch_stop_single_stepping ();
+#ifndef IL2CPP_MONO_DEBUGGER
 		mono_interp_stop_single_stepping ();
+#endif
 	}
 #else
 	g_assert_not_reached ();
-#endif
 #endif
 }
 
@@ -12080,11 +12104,11 @@ unity_process_breakpoint_inner(DebuggerTlsData *tls, gboolean from_signal, Il2Cp
 	}
 
 	if (ss_reqs->len > 0)
-		ss_events = create_event_list(EVENT_KIND_STEP, ss_reqs, ji, NULL, &suspend_policy);
+		ss_events = create_event_list(EVENT_KIND_STEP, ss_reqs, sequencePoint, NULL, &suspend_policy);
 	if (bp_reqs->len > 0)
-		bp_events = create_event_list(EVENT_KIND_BREAKPOINT, bp_reqs, ji, NULL, &suspend_policy);
+		bp_events = create_event_list(EVENT_KIND_BREAKPOINT, bp_reqs, sequencePoint, NULL, &suspend_policy);
 	if (kind != EVENT_KIND_BREAKPOINT)
-		enter_leave_events = create_event_list(kind, NULL, ji, NULL, &suspend_policy);
+		enter_leave_events = create_event_list(kind, NULL, sequencePoint, NULL, &suspend_policy);
 
 	mono_loader_unlock();
 
@@ -12129,12 +12153,17 @@ gboolean unity_debugger_agent_is_global_breakpoint_active()
 		return ss_req->global;
 }
 
+int32_t unity_debugger_agent_is_single_stepping ()
+{
+    return ss_count;
+}
+
 gboolean unity_sequence_point_active(Il2CppSequencePoint *seqPoint)
 {
 	gboolean global = unity_debugger_agent_is_global_breakpoint_active();
 
 	if ((seqPoint->ilOffset != METHOD_ENTRY_IL_OFFSET) && (seqPoint->ilOffset != METHOD_EXIT_IL_OFFSET))
-		return seqPoint->isActive || global;
+		return seqPoint->isActive || global || unity_debugger_agent_is_single_stepping ();
 
 	int i = 0;
 	while (i < event_requests->len)
@@ -12144,7 +12173,7 @@ gboolean unity_sequence_point_active(Il2CppSequencePoint *seqPoint)
 		if ((req->event_kind == EVENT_KIND_METHOD_ENTRY && seqPoint->ilOffset == METHOD_ENTRY_IL_OFFSET) ||
 		    (req->event_kind == EVENT_KIND_METHOD_EXIT && seqPoint->ilOffset == METHOD_EXIT_IL_OFFSET))
 		{
-			return seqPoint->isActive || global;
+			return seqPoint->isActive || global || unity_debugger_agent_is_single_stepping ();
 		}
 
 		++i;
