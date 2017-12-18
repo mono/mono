@@ -3440,6 +3440,8 @@ mini_parse_debug_option (const char *option)
 		debug_options.gdb = TRUE;
 	else if (!strcmp (option, "lldb"))
 		debug_options.lldb = TRUE;
+	else if (!strcmp (option, "unity-mixed-callstack"))
+		debug_options.unity_mixed_callstack = TRUE;
 	else if (!strcmp (option, "explicit-null-checks"))
 		debug_options.explicit_null_checks = TRUE;
 	else if (!strcmp (option, "gen-seq-points"))
@@ -3909,7 +3911,7 @@ mini_init (const char *filename, const char *runtime_version)
 		mono_lldb_init ("");
 		mono_dont_free_domains = TRUE;
 	}
-	if (g_hasenv ("UNITY_MIXED_CALLSTACK")) {
+	if (mini_get_debug_options()->unity_mixed_callstack || g_hasenv ("UNITY_MIXED_CALLSTACK")) {
 		mixed_callstack_plugin_init ("");
 	}
 
