@@ -19,6 +19,7 @@ namespace MonoTests.System.Reflection.Emit
 	[TestFixture]
 	public class ILGeneratorTest
 	{
+		ModuleBuilder modulebuilder;
 		TypeBuilder tb;
 		ILGenerator il_gen;
 
@@ -38,8 +39,8 @@ namespace MonoTests.System.Reflection.Emit
 			AssemblyBuilder assembly = Thread.GetDomain ().DefineDynamicAssembly (
 				assemblyName, AssemblyBuilderAccess.Run);
 
-			ModuleBuilder module = assembly.DefineDynamicModule ("module1");
-			tb = module.DefineType ("T", TypeAttributes.Public);
+			modulebuilder = assembly.DefineDynamicModule ("module1");
+			tb = modulebuilder.DefineType ("T", TypeAttributes.Public);
 		}
 
 		[Test]
@@ -610,6 +611,5 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.AreEqual ("1", s);
 
 		}
-
 	}
 }
