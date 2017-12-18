@@ -82,8 +82,8 @@ scripts_4_0 = \
 	crlupdate$(SCRIPT_SUFFIX)		\
 	csharp$(SCRIPT_SUFFIX)			\
 	httpcfg$(SCRIPT_SUFFIX)			\
+	illinkanalyzer$(SCRIPT_SUFFIX)		\
 	lc$(SCRIPT_SUFFIX)			\
-	linkeranalyzer$(SCRIPT_SUFFIX)		\
 	mconfig$(SCRIPT_SUFFIX)			\
 	mod$(SCRIPT_SUFFIX)			\
 	monolinker$(SCRIPT_SUFFIX)		\
