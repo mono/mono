@@ -123,6 +123,22 @@ public class DebuggerTests
 		}
 
 		load_req.Disable ();
+
+		if (args.Length == 2) {
+			var this_type = entry_point.DeclaringType;
+			var str = vm.RootDomain.CreateString (args [1]);
+			var slot = this_type.GetField ("arg");
+
+			if (slot == null)
+				throw new Exception ("Missing slot");
+
+			if (str == null)
+				throw new Exception ("Bug in createstring");
+
+			this_type.SetValue (slot, str);
+		} else if (args.Length > 2) {
+			throw new Exception (String.Format ("Fixme {0}", args [2]));
+		}
 	}
 
 	BreakpointEvent run_until (string name) {

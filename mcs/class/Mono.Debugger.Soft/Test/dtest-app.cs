@@ -266,6 +266,8 @@ public class Tests : TestsBase, ITest2
 	public static bool is_attached = Debugger.IsAttached;
 	public NestedStruct nested_struct;
 
+	static string arg;
+
 #pragma warning restore 0414
 
 	public class NestedClass {
@@ -299,6 +301,9 @@ public class Tests : TestsBase, ITest2
 	}
 
 	public static int Main (String[] args) {
+		if (args.Length == 0)
+			args = new String [] { Tests.arg };
+
 		tls_i = 42;
 
 		if (args.Length > 0 && args [0] == "suspend-test")
