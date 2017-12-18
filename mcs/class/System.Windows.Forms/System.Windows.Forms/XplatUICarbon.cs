@@ -2085,10 +2085,10 @@ namespace System.Windows.Forms {
 		internal override bool Text(IntPtr handle, string text) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
 			if (WindowMapping [hwnd.Handle] != null) {
-				SetWindowTitleWithCFString ((IntPtr)(WindowMapping [hwnd.Handle]), __CFStringMakeConstantString (text));
+				SetWindowTitleWithCFString ((IntPtr)(WindowMapping [hwnd.Handle]), CFStringCreateWithCString (IntPtr.Zero, text, Carbon.CFStringEncoding.kCFStringEncodingUTF8));
 			}
-			SetControlTitleWithCFString (hwnd.whole_window, __CFStringMakeConstantString (text));
-			SetControlTitleWithCFString (hwnd.client_window, __CFStringMakeConstantString (text));
+			SetControlTitleWithCFString (hwnd.whole_window, CFStringCreateWithCString (IntPtr.Zero, text, Carbon.CFStringEncoding.kCFStringEncodingUTF8));
+			SetControlTitleWithCFString (hwnd.client_window, CFStringCreateWithCString (IntPtr.Zero, text, Carbon.CFStringEncoding.kCFStringEncodingUTF8));
 			return true;
 		}
 		
@@ -2382,7 +2382,9 @@ namespace System.Windows.Forms {
 		extern static int SetWindowTitleWithCFString (IntPtr hWnd, IntPtr titleCFStr);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal extern static IntPtr __CFStringMakeConstantString (string cString);
-		
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		extern static IntPtr CFStringCreateWithCString (IntPtr allocator, string cString, Carbon.CFStringEncoding encoding);
+
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal extern static int CFRelease (IntPtr wHnd);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
