@@ -28,11 +28,11 @@ namespace Mono.Unity
 			size_t numCerts = UnityTls.unitytls_x509list_get_size (nativeCertificateChain, errorState);
 			for (int i = 0; i < numCerts; ++i) {
 				UnityTls.unitytls_x509_ref cert = UnityTls.unitytls_x509list_get_x509 (nativeCertificateChain, i, errorState);
-				size_t certBufferSize = UnityTls.unitytls_x509_export_pem (cert, null, 0, errorState);
+				size_t certBufferSize = UnityTls.unitytls_x509_export_der (cert, null, 0, errorState);
 				var certBuffer = new byte[certBufferSize];	// Need to reallocate every time since X509Certificate constructor takes no length but only a byte array.
 				
 				fixed(byte* certBufferPtr = certBuffer) {
-					UnityTls.unitytls_x509_export_pem (cert, certBufferPtr, certBufferSize, errorState);
+					UnityTls.unitytls_x509_export_der (cert, certBufferPtr, certBufferSize, errorState);
 				}
 				
 				certificates.Add (new X509Certificate (certBuffer));
