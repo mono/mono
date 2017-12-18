@@ -299,12 +299,14 @@ namespace Mono.Unity
 
 				bool wouldBlock;
 				int numBytesRead = Parent.InternalRead (m_ReadBuffer, 0, bufferLen, out wouldBlock);
+				if (wouldBlock) {
+					UnityTls.unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_WOULD_BLOCK);
+					return 0;
+				}
 				if (numBytesRead < 0) {
 					UnityTls.unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_READ_FAILED);
 					return 0;
 				}
-				if (wouldBlock) 
-					UnityTls.unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_WOULD_BLOCK);
 
 				Marshal.Copy (m_ReadBuffer, 0, (IntPtr)buffer, bufferLen);
 				return numBytesRead;
