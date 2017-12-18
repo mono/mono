@@ -257,7 +257,7 @@ namespace Mono.Unity
 			m_IsAuthenticated = true;
 		}
 
-		[MonoPInvokeCallback (typeof (UnityTls.unitytls_tlsctx_callback_write))]
+		[MonoPInvokeCallback (typeof (UnityTls.unitytls_tlsctx_write_callback))]
 		static private size_t WriteCallback (void* userData, byte* data, size_t bufferLen, UnityTls.unitytls_errorstate* errorState)
 		{
 			var handle = (GCHandle)(IntPtr)userData;
@@ -284,7 +284,7 @@ namespace Mono.Unity
 			}
 		}
 
-		[MonoPInvokeCallback (typeof (UnityTls.unitytls_tlsctx_callback_read))]
+		[MonoPInvokeCallback (typeof (UnityTls.unitytls_tlsctx_read_callback))]
 		static private size_t ReadCallback (void* userData, byte* buffer, size_t bufferLen, UnityTls.unitytls_errorstate* errorState)
 		{
 			var handle = (GCHandle)(IntPtr)userData;
@@ -315,7 +315,7 @@ namespace Mono.Unity
 			}
 		}
 
-		[MonoPInvokeCallback (typeof (UnityTls.unitytls_tlsctx_callback_read))]
+		[MonoPInvokeCallback (typeof (UnityTls.unitytls_tlsctx_read_callback))]
 		static private UnityTls.unitytls_x509verify_result VerifyCallback (void* userData, UnityTls.unitytls_x509list_ref chain, UnityTls.unitytls_errorstate* errorState)
 		{
 			var handle = (GCHandle)(IntPtr)userData;
@@ -337,7 +337,7 @@ namespace Mono.Unity
 			}
 		}
 
-		[MonoPInvokeCallback (typeof (UnityTls.unitytls_tlsctx_callback_trace))]
+		[MonoPInvokeCallback (typeof (UnityTls.unitytls_tlsctx_trace_callback))]
 		static private void TraceCallback (void* userData, UnityTls.unitytls_tlsctx* ctx, byte* traceMessage, size_t traceMessageLen)
 		{
 			string message = Encoding.UTF8.GetString (traceMessage, traceMessageLen);

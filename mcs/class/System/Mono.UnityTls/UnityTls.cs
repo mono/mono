@@ -150,7 +150,7 @@ namespace Mono.Unity
         public struct unitytls_x509list_ref { UInt64 handle; }
 
         [DllImport (DLLNAME, CallingConvention=CALLCONV)]
-        extern public static unitytls_x509list_ref    unitytls_x509list_get_ref(unitytls_x509list* list, unitytls_errorstate* errorState);
+        extern public static unitytls_x509list_ref          unitytls_x509list_get_ref(unitytls_x509list* list, unitytls_errorstate* errorState);
         [DllImport (DLLNAME, CallingConvention=CALLCONV)]
         extern public static unitytls_x509list*             unitytls_x509list_parse_pem(Int8* buffer, size_t bufferLen, unitytls_errorstate* errorState);
         [DllImport (DLLNAME, CallingConvention=CALLCONV)]
@@ -245,17 +245,17 @@ namespace Mono.Unity
             UNITYTLS_HANDSHAKESTATE_PEER_X509_CERT_REQUEST,  // A certificate is requested.
         }
 
-        public delegate size_t unitytls_tlsctx_callback_write(void* userData, UInt8* data, size_t bufferLen, unitytls_errorstate* errorState);
-        public delegate size_t unitytls_tlsctx_callback_read(void* userData, UInt8* buffer, size_t bufferLen, unitytls_errorstate* errorState);
-        public delegate void   unitytls_tlsctx_callback_trace(void* userData, unitytls_tlsctx* ctx, Int8* traceMessage, size_t traceMessageLen);
-        public delegate void   unitytls_tlsctx_callback_handshake(void* userData, unitytls_tlsctx* ctx, unitytls_tlsctx_handshakestate currentState, unitytls_errorstate* errorState);
+        public delegate size_t unitytls_tlsctx_write_callback(void* userData, UInt8* data, size_t bufferLen, unitytls_errorstate* errorState);
+        public delegate size_t unitytls_tlsctx_read_callback(void* userData, UInt8* buffer, size_t bufferLen, unitytls_errorstate* errorState);
+        public delegate void   unitytls_tlsctx_trace_callback(void* userData, unitytls_tlsctx* ctx, Int8* traceMessage, size_t traceMessageLen);
+        public delegate void   unitytls_tlsctx_handshake_callback(void* userData, unitytls_tlsctx* ctx, unitytls_tlsctx_handshakestate currentState, unitytls_errorstate* errorState);
         public delegate unitytls_x509verify_result unitytls_tlsctx_x509verify_callback(void* userData, unitytls_x509list_ref chain, unitytls_errorstate* errorState);
 
         [StructLayout (LayoutKind.Sequential)]
         public struct unitytls_tlsctx_callbacks
         {
-            public unitytls_tlsctx_callback_read   read;
-            public unitytls_tlsctx_callback_write  write;
+            public unitytls_tlsctx_read_callback   read;
+            public unitytls_tlsctx_write_callback  write;
             public void*                           data;
         };
 
@@ -265,11 +265,11 @@ namespace Mono.Unity
         extern public static unitytls_tlsctx*               unitytls_tlsctx_create_client(unitytls_tlsctx_protocolrange supportedProtocols, unitytls_tlsctx_callbacks callbacks, Int8* cn, size_t cnLen, unitytls_errorstate* errorState);
 
         [DllImport (DLLNAME, CallingConvention=CALLCONV)]
-        extern public static void                           unitytls_tlsctx_set_trace_callback(unitytls_tlsctx* ctx, unitytls_tlsctx_callback_trace cb, void* userData, unitytls_errorstate* errorState);
+        extern public static void                           unitytls_tlsctx_set_trace_callback(unitytls_tlsctx* ctx, unitytls_tlsctx_trace_callback cb, void* userData, unitytls_errorstate* errorState);
         [DllImport (DLLNAME, CallingConvention=CALLCONV)]
         extern public static void                           unitytls_tlsctx_set_x509verify_callback(unitytls_tlsctx* ctx, unitytls_tlsctx_x509verify_callback cb, void* userData, unitytls_errorstate* errorState);
         [DllImport (DLLNAME, CallingConvention=CALLCONV)]
-        extern public static void                           unitytls_tlsctx_set_handshake_callback(unitytls_tlsctx* ctx, unitytls_tlsctx_callback_handshake cb, void* userData, unitytls_errorstate* errorState);
+        extern public static void                           unitytls_tlsctx_set_handshake_callback(unitytls_tlsctx* ctx, unitytls_tlsctx_handshake_callback cb, void* userData, unitytls_errorstate* errorState);
         [DllImport (DLLNAME, CallingConvention=CALLCONV)]
         extern public static void                           unitytls_tlsctx_set_supported_ciphersuites(unitytls_tlsctx* ctx, unitytls_ciphersuite* supportedCiphersuites, size_t supportedCiphersuitesLen, unitytls_errorstate* errorState);
 
