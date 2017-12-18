@@ -228,9 +228,10 @@ namespace Mono.Unity
 
 			// Not done is not an error if we are server and don't ask for ClientCertificate
 			if (result == UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_NOT_DONE && IsServer && !AskForClientCertificate)
-				return true;
+				Unity.Debug.CheckAndThrow (errorState, "Handshake failed", AlertDescription.HandshakeFailure);
+			else
+				Unity.Debug.CheckAndThrow (errorState, result, "Handshake failed", AlertDescription.HandshakeFailure);
 
-			Unity.Debug.CheckAndThrow (errorState, result, "Handshake failed", AlertDescription.HandshakeFailure);
 			return true;
 		}
 
