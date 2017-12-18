@@ -53,8 +53,7 @@ namespace Mono.Unity
 			X509CertificateCollection clientCertificates, bool askForClientCert)
 			: base (parent, serverMode, targetHost, enabledProtocols, serverCertificate, clientCertificates, askForClientCert)
 		{
-			// GCHandle allows to use managed class in native code. Stricly speaking we don't need this
-			// (there is no access on the native side and live time also doesn't depend on native code), but it makes a few things cleaner and more explicit.
+			// Need GCHandle to get a consistent pointer to this instance
 			m_handle = GCHandle.Alloc (this);
 
 			UnityTls.unitytls_errorstate errorState = UnityTls.unitytls_errorstate_create ();
@@ -216,7 +215,7 @@ namespace Mono.Unity
 			// TODO: Check if we started a handshake already?
 			// TODO, Not supported by UnityTls as of writing
 			if (IsServer && AskForClientCertificate) {
-				throw new NotImplementedException ("No support for client certificate check yet.");
+				throw new NotImplementedException ("No support for server-sided client certificate check yet.");
 			}
 		}
 
