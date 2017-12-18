@@ -53,7 +53,9 @@ namespace Mono.Unity
 
 		public static AlertDescription VerifyResultToAlertDescription (UnityTls.unitytls_x509verify_result verifyResult, AlertDescription defaultAlert = AlertDescription.InternalError)
 		{
-			if (verifyResult.HasFlag (UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_FLAG_EXPIRED))
+			if (verifyResult == UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_FATAL_ERROR)
+				return AlertDescription.CertificateUnknown;
+			else if (verifyResult.HasFlag (UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_FLAG_EXPIRED))
 				return AlertDescription.CertificateExpired;
 			else if (verifyResult.HasFlag (UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_FLAG_REVOKED))
 				return AlertDescription.CertificateRevoked;
