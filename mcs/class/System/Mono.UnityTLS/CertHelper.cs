@@ -18,16 +18,6 @@ namespace Mono.Unity
 			fixed(byte* certDerPtr = certDer) {
 				UnityTls.unitytls_x509list_append_der (nativeCertificateChain, certDerPtr, certDer.Length, errorState);
 			}
-
-			var certificateImpl2 = certificate.Impl as X509Certificate2Impl;
-			if (certificateImpl2 != null) {
-				var intermediates = certificateImpl2.IntermediateCertificates;
-				if (intermediates != null && intermediates.Count > 0) {
-					for (int i=0; i<intermediates.Count; ++i) {
-						AddCertificateToNativeChain (nativeCertificateChain, new X509Certificate (intermediates[i]), errorState);
-					}
-				}
-			}
 		}
 
 		public static X509CertificateCollection NativeChainToManagedCollection (UnityTls.unitytls_x509list_ref nativeCertificateChain, UnityTls.unitytls_errorstate* errorState)
