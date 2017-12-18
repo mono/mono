@@ -50,7 +50,7 @@ namespace LinkerAnalyzer
 			}
 
 			if (showUsage) {
-				Console.WriteLine ("Usage:\n\n\tlinkeranalyzer [Options] <linker-dependency-file.xml.gz>\n\nOptions:\n");
+				Console.WriteLine ("Usage:\n\n\tillinkanalyzer [Options] <linker-dependency-file.xml.gz>\n\nOptions:\n");
 				optionsParser.WriteOptionDescriptions (Console.Out);
 				Console.WriteLine ();
 				return;

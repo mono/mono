@@ -31,7 +31,7 @@ How to use the analyzer
 Let say you would like to know, why a type, Android.App.Activity for
 example, was marked by the linker. So run the analyzer like this:
 
-```mono linkeranalyzer.exe -t Android.App.Activity linker-dependencies.xml.gz```
+```illinkanalyzer -t Android.App.Activity linker-dependencies.xml.gz```
 
 Output:
 
@@ -69,7 +69,7 @@ linker step.
 Now we might want to see the `MainActivity` dependencies. That could
 be done by the following analyzer run:
 
-```mono linkeranalyzer.exe -r TypeDef:XA.App.MainActivity linker-dependencies.xml.gz```
+```illinkanalyzer -r TypeDef:XA.App.MainActivity linker-dependencies.xml.gz```
 
 Output:
 
@@ -105,7 +105,7 @@ Command line help
 ```
 Usage:
 
-	linkeranalyzer [Options] <linker-dependency-file.xml.gz>
+	illinkanalyzer [Options] <linker-dependency-file.xml.gz>
 
 Options:
 

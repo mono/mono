@@ -23,7 +23,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>
     </RootNamespace>
-    <AssemblyName>linkeranalyzer</AssemblyName>
+    <AssemblyName>illinkanalyzer</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
 
