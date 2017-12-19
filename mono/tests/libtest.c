@@ -1356,7 +1356,10 @@ mono_test_return_empty_struct (int a)
 
 	memset (&s, 0, sizeof (s));
 
+#if !(defined(__i386__) && defined(__clang__))
+	/* https://bugzilla.xamarin.com/show_bug.cgi?id=58901 */
 	g_assert (a == 42);
+#endif
 
 	return s;
 }
@@ -3581,6 +3584,28 @@ mono_test_marshal_ccw_itest (MonoComObject *pUnk)
 	return 0;
 }
 
+// Xamarin-47560
+LIBTEST_API int STDCALL
+mono_test_marshal_array_ccw_itest (int count, MonoComObject ** ppUnk)
+{
+	int hr = 0;
+
+	if (!ppUnk)
+		return 1;
+
+	if (count < 1)
+		return 2;
+
+	if (!ppUnk[0])
+		return 3;
+
+	hr = ppUnk[0]->vtbl->SByteIn (ppUnk[0], -100);
+	if (hr != 0)
+		return 4;
+
+	return 0;
+}
+
 /*
  * mono_method_get_unmanaged_thunk tests
  */
@@ -5468,6 +5493,38 @@ mono_test_marshal_thread_attach (SimpleDelegate del)
 	pthread_t t;
 
 	res = pthread_create (&t, NULL, (gpointer (*)(gpointer))call_managed, del);
+	g_assert (res == 0);
+	pthread_join (t, NULL);
+
+	return call_managed_res;
+#endif
+}
+
+typedef struct {
+	char arr [4 * 1024];
+} LargeStruct;
+
+typedef int (STDCALL *LargeStructDelegate) (LargeStruct *s);
+
+static void
+call_managed_large_vt (gpointer arg)
+{
+	LargeStructDelegate del = (LargeStructDelegate)arg;
+	LargeStruct s;
+
+	call_managed_res = del (&s);
+}
+
+LIBTEST_API int STDCALL
+mono_test_marshal_thread_attach_large_vt (SimpleDelegate del)
+{
+#ifdef WIN32
+	return 43;
+#else
+	int res;
+	pthread_t t;
+
+	res = pthread_create (&t, NULL, (gpointer (*)(gpointer))call_managed_large_vt, del);
 	g_assert (res == 0);
 	pthread_join (t, NULL);
 
@@ -7460,3 +7517,23 @@ mono_test_marshal_pointer_array (int *arr[])
 	}
 	return 0;
 }
+
+#ifndef WIN32
+
+typedef void (*NativeToManagedExceptionRethrowFunc) (void);
+
+void *mono_test_native_to_managed_exception_rethrow_thread (void *arg)
+{
+	NativeToManagedExceptionRethrowFunc func = (NativeToManagedExceptionRethrowFunc) arg;
+	func ();
+	return NULL;
+}
+
+LIBTEST_API void STDCALL
+mono_test_native_to_managed_exception_rethrow (NativeToManagedExceptionRethrowFunc func)
+{
+	pthread_t t;
+	pthread_create (&t, NULL, mono_test_native_to_managed_exception_rethrow_thread, func);
+	pthread_join (t, NULL);
+}
+#endif

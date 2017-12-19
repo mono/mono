@@ -24,6 +24,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Media;
 using NUnit.Framework;
@@ -52,7 +53,6 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ConvertFrom ()
 		{
 			PointConverter r = new PointConverter ();
@@ -77,14 +77,13 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ConvertTo ()
 		{
 			PointConverter r = new PointConverter ();
 
 			Point rect = new Point (1, 2);
 
-			object o = r.ConvertTo (rect, typeof (string));
+			object o = r.ConvertTo (null, CultureInfo.InvariantCulture, rect, typeof (string));
 			
 			Assert.AreEqual (typeof (string), o.GetType());
 			Assert.AreEqual ("1,2", (string)o);

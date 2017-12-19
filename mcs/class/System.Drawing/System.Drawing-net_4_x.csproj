@@ -9,6 +9,7 @@
     <ProjectGuid>{584A5E46-2958-4CB2-8DF9-188B420D0BB0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
+    <LangVersion>latest</LangVersion>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Windows_NT'">win32</HostPlatform>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">darwin</HostPlatform>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix'">linux</HostPlatform>
@@ -25,8 +26,9 @@
     <AssemblyName>System.Drawing</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>../msfinal.pub</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -52,6 +54,8 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Drawing\ColorTable.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Drawing\ColorUtil.netcoreapp21.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\AssemblyRef.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\misc\HandleCollector.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\BitmapSuffixInSameAssemblyAttribute.cs" />
@@ -85,6 +89,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\CompositingQuality.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\CoordinateSpace.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\CustomLineCap.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\CustomLineCap.Unix.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\CustomLineCapType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\DashStyle.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Drawing2D\FillMode.cs" />
@@ -148,7 +153,6 @@
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Internal\GPPOINTF.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Internal\GPRECT.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Internal\GPRECTF.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Internal\ISystemEventTracker.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\NativeMethods.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\Duplex.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\InvalidPrinterException.cs" />

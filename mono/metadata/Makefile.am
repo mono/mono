@@ -59,9 +59,16 @@ unix_sources = \
 platform_sources = $(unix_sources)
 endif
 
-if PLATFORM_ANDROID
+if HOST_ANDROID
 platform_sources += ../../support/libm/complex.c
 endif
+
+if HOST_WASM
+platform_sources += threadpool-worker-wasm.c
+else
+platform_sources += threadpool-worker-default.c
+endif
+
 
 #
 # libtool is not capable of creating static/shared versions of the same
@@ -196,7 +203,9 @@ common_sources = \
 	debug-internals.h	\
 	mono-endian.c		\
 	mono-endian.h		\
+	mono-hash.c		\
 	mono-hash.h		\
+	mono-conc-hash.c		\
 	mono-conc-hash.h		\
 	mono-mlist.c		\
 	mono-mlist.h		\
@@ -223,7 +232,6 @@ common_sources = \
 	w32process.h		\
 	w32process-internals.h		\
 	profiler.c		\
-	profiler-events.h	\
 	profiler-private.h	\
 	rand.h			\
 	rand.c			\
@@ -245,7 +253,6 @@ common_sources = \
 	threads-types.h		\
 	threadpool.c	\
 	threadpool.h	\
-	threadpool-worker-default.c	\
 	threadpool-worker.h	\
 	threadpool-io.c	\
 	threadpool-io.h	\
@@ -282,15 +289,17 @@ common_sources = \
 	sre.c	\
 	sre-encode.c	\
 	sre-save.c	\
-	custom-attrs.c
+	custom-attrs.c	\
+	fdhandle.h	\
+	fdhandle.c	\
+	callspec.h	\
+	callspec.c
 
 # These source files have compile time dependencies on GC code
 gc_dependent_sources = \
 	gc-stats.c	\
 	gc.c		\
-	monitor.c	\
-	mono-hash.c	\
-	mono-conc-hash.c
+	monitor.c
 
 boehm_sources = \
 	boehm-gc.c
@@ -349,6 +358,7 @@ libmonoruntimeinclude_HEADERS = \
 	object.h		\
 	opcodes.h		\
 	profiler.h		\
+	profiler-events.h	\
 	reflection.h		\
 	row-indexes.h		\
 	tokentype.h		\

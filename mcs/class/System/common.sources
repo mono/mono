@@ -59,10 +59,8 @@ System.Net/ListenerPrefix.cs
 System.Net/MonoHttpDate.cs
 System.Net/NetConfig.cs
 System.Net/RequestStream.cs
-System.Net/SimpleAsyncResult.cs
 System.Net/SocketPermissionAttribute.cs
 System.Net/SocketPermission.cs
-System.Net/WebAsyncResult.cs
 
 System.Net.Mail/AlternateView.cs
 System.Net.Mail/AlternateViewCollection.cs
@@ -216,6 +214,7 @@ Mono.Btls/MonoBtlsProvider.cs
 Mono.Btls/MonoBtlsSsl.cs
 Mono.Btls/MonoBtlsSslCtx.cs
 Mono.Btls/MonoBtlsSslError.cs
+Mono.Btls/MonoBtlsSslRenegotiateMode.cs
 Mono.Btls/MonoBtlsStream.cs
 Mono.Btls/MonoBtlsUtils.cs
 Mono.Btls/MonoBtlsX509.cs

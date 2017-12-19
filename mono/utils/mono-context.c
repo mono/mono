@@ -61,15 +61,17 @@ mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 	mctx->esi = UCONTEXT_REG_ESI (ctx);
 	mctx->edi = UCONTEXT_REG_EDI (ctx);
 	mctx->eip = UCONTEXT_REG_EIP (ctx);
-#ifdef UCONTEXT_REG_XMM
-	mctx->fregs [0] = UCONTEXT_REG_XMM0 (ctx);
-	mctx->fregs [1] = UCONTEXT_REG_XMM1 (ctx);
-	mctx->fregs [2] = UCONTEXT_REG_XMM2 (ctx);
-	mctx->fregs [3] = UCONTEXT_REG_XMM3 (ctx);
-	mctx->fregs [4] = UCONTEXT_REG_XMM4 (ctx);
-	mctx->fregs [5] = UCONTEXT_REG_XMM5 (ctx);
-	mctx->fregs [6] = UCONTEXT_REG_XMM6 (ctx);
-	mctx->fregs [7] = UCONTEXT_REG_XMM7 (ctx);
+#ifdef UCONTEXT_HAS_XMM
+	if (UCONTEXT_HAS_XMM (ctx)) {
+		mctx->fregs [0] = UCONTEXT_REG_XMM0 (ctx);
+		mctx->fregs [1] = UCONTEXT_REG_XMM1 (ctx);
+		mctx->fregs [2] = UCONTEXT_REG_XMM2 (ctx);
+		mctx->fregs [3] = UCONTEXT_REG_XMM3 (ctx);
+		mctx->fregs [4] = UCONTEXT_REG_XMM4 (ctx);
+		mctx->fregs [5] = UCONTEXT_REG_XMM5 (ctx);
+		mctx->fregs [6] = UCONTEXT_REG_XMM6 (ctx);
+		mctx->fregs [7] = UCONTEXT_REG_XMM7 (ctx);
+	}
 #endif
 #elif defined(HOST_WIN32)
 	CONTEXT *context = (CONTEXT*)sigctx;
@@ -117,15 +119,17 @@ mono_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
 	UCONTEXT_REG_ESI (ctx) = mctx->esi;
 	UCONTEXT_REG_EDI (ctx) = mctx->edi;
 	UCONTEXT_REG_EIP (ctx) = mctx->eip;
-#ifdef UCONTEXT_REG_XMM
-	UCONTEXT_REG_XMM0 (ctx) = mctx->fregs [0];
-	UCONTEXT_REG_XMM1 (ctx) = mctx->fregs [1];
-	UCONTEXT_REG_XMM2 (ctx) = mctx->fregs [2];
-	UCONTEXT_REG_XMM3 (ctx) = mctx->fregs [3];
-	UCONTEXT_REG_XMM4 (ctx) = mctx->fregs [4];
-	UCONTEXT_REG_XMM5 (ctx) = mctx->fregs [5];
-	UCONTEXT_REG_XMM6 (ctx) = mctx->fregs [6];
-	UCONTEXT_REG_XMM7 (ctx) = mctx->fregs [7];
+#ifdef UCONTEXT_HAS_XMM
+	if (UCONTEXT_HAS_XMM (ctx)) {
+		UCONTEXT_REG_XMM0 (ctx) = mctx->fregs [0];
+		UCONTEXT_REG_XMM1 (ctx) = mctx->fregs [1];
+		UCONTEXT_REG_XMM2 (ctx) = mctx->fregs [2];
+		UCONTEXT_REG_XMM3 (ctx) = mctx->fregs [3];
+		UCONTEXT_REG_XMM4 (ctx) = mctx->fregs [4];
+		UCONTEXT_REG_XMM5 (ctx) = mctx->fregs [5];
+		UCONTEXT_REG_XMM6 (ctx) = mctx->fregs [6];
+		UCONTEXT_REG_XMM7 (ctx) = mctx->fregs [7];
+	}
 #endif
 #elif defined(HOST_WIN32)
 	CONTEXT *context = (CONTEXT*)sigctx;
@@ -188,23 +192,25 @@ mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 	mctx->gregs [AMD64_R15] = UCONTEXT_REG_R15 (ctx);
 	mctx->gregs [AMD64_RIP] = UCONTEXT_REG_RIP (ctx);
 
-#ifdef UCONTEXT_REG_XMM
-	mctx->fregs [0] = UCONTEXT_REG_XMM0 (ctx);
-	mctx->fregs [1] = UCONTEXT_REG_XMM1 (ctx);
-	mctx->fregs [2] = UCONTEXT_REG_XMM2 (ctx);
-	mctx->fregs [3] = UCONTEXT_REG_XMM3 (ctx);
-	mctx->fregs [4] = UCONTEXT_REG_XMM4 (ctx);
-	mctx->fregs [5] = UCONTEXT_REG_XMM5 (ctx);
-	mctx->fregs [6] = UCONTEXT_REG_XMM6 (ctx);
-	mctx->fregs [7] = UCONTEXT_REG_XMM7 (ctx);
-	mctx->fregs [8] = UCONTEXT_REG_XMM8 (ctx);
-	mctx->fregs [9] = UCONTEXT_REG_XMM9 (ctx);
-	mctx->fregs [10] = UCONTEXT_REG_XMM10 (ctx);
-	mctx->fregs [11] = UCONTEXT_REG_XMM11 (ctx);
-	mctx->fregs [12] = UCONTEXT_REG_XMM12 (ctx);
-	mctx->fregs [13] = UCONTEXT_REG_XMM13 (ctx);
-	mctx->fregs [14] = UCONTEXT_REG_XMM14 (ctx);
-	mctx->fregs [15] = UCONTEXT_REG_XMM15 (ctx);
+#ifdef UCONTEXT_HAS_XMM
+	if (UCONTEXT_HAS_XMM (ctx)) {
+		mctx->fregs [0] = UCONTEXT_REG_XMM0 (ctx);
+		mctx->fregs [1] = UCONTEXT_REG_XMM1 (ctx);
+		mctx->fregs [2] = UCONTEXT_REG_XMM2 (ctx);
+		mctx->fregs [3] = UCONTEXT_REG_XMM3 (ctx);
+		mctx->fregs [4] = UCONTEXT_REG_XMM4 (ctx);
+		mctx->fregs [5] = UCONTEXT_REG_XMM5 (ctx);
+		mctx->fregs [6] = UCONTEXT_REG_XMM6 (ctx);
+		mctx->fregs [7] = UCONTEXT_REG_XMM7 (ctx);
+		mctx->fregs [8] = UCONTEXT_REG_XMM8 (ctx);
+		mctx->fregs [9] = UCONTEXT_REG_XMM9 (ctx);
+		mctx->fregs [10] = UCONTEXT_REG_XMM10 (ctx);
+		mctx->fregs [11] = UCONTEXT_REG_XMM11 (ctx);
+		mctx->fregs [12] = UCONTEXT_REG_XMM12 (ctx);
+		mctx->fregs [13] = UCONTEXT_REG_XMM13 (ctx);
+		mctx->fregs [14] = UCONTEXT_REG_XMM14 (ctx);
+		mctx->fregs [15] = UCONTEXT_REG_XMM15 (ctx);
+	}
 #endif
 
 #elif defined(HOST_WIN32)
@@ -227,6 +233,27 @@ mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 	mctx->gregs [AMD64_R13] = context->R13;
 	mctx->gregs [AMD64_R14] = context->R14;
 	mctx->gregs [AMD64_R15] = context->R15;
+#elif defined(__HAIKU__)
+	// Haiku uses sigcontext because there's no ucontext
+	struct sigcontext *ctx = (struct sigcontext *)sigctx;
+
+	mctx->gregs [AMD64_RIP] = ctx->regs.rip;
+	mctx->gregs [AMD64_RAX] = ctx->regs.rax;
+	mctx->gregs [AMD64_RCX] = ctx->regs.rcx;
+	mctx->gregs [AMD64_RDX] = ctx->regs.rdx;
+	mctx->gregs [AMD64_RBX] = ctx->regs.rbx;
+	mctx->gregs [AMD64_RSP] = ctx->regs.rsp;
+	mctx->gregs [AMD64_RBP] = ctx->regs.rbp;
+	mctx->gregs [AMD64_RSI] = ctx->regs.rsi;
+	mctx->gregs [AMD64_RDI] = ctx->regs.rdi;
+	mctx->gregs [AMD64_R8] = ctx->regs.r8;
+	mctx->gregs [AMD64_R9] = ctx->regs.r9;
+	mctx->gregs [AMD64_R10] = ctx->regs.r10;
+	mctx->gregs [AMD64_R11] = ctx->regs.r11;
+	mctx->gregs [AMD64_R12] = ctx->regs.r12;
+	mctx->gregs [AMD64_R13] = ctx->regs.r13;
+	mctx->gregs [AMD64_R14] = ctx->regs.r14;
+	mctx->gregs [AMD64_R15] = ctx->regs.r15;
 #else
 	g_assert_not_reached ();
 #endif
@@ -258,23 +285,25 @@ mono_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
 	UCONTEXT_REG_R15 (ctx) = mctx->gregs [AMD64_R15];
 	UCONTEXT_REG_RIP (ctx) = mctx->gregs [AMD64_RIP];
 
-#ifdef UCONTEXT_REG_XMM
-	UCONTEXT_REG_XMM0 (ctx) = mctx->fregs [0];
-	UCONTEXT_REG_XMM1 (ctx) = mctx->fregs [1];
-	UCONTEXT_REG_XMM2 (ctx) = mctx->fregs [2];
-	UCONTEXT_REG_XMM3 (ctx) = mctx->fregs [3];
-	UCONTEXT_REG_XMM4 (ctx) = mctx->fregs [4];
-	UCONTEXT_REG_XMM5 (ctx) = mctx->fregs [5];
-	UCONTEXT_REG_XMM6 (ctx) = mctx->fregs [6];
-	UCONTEXT_REG_XMM7 (ctx) = mctx->fregs [7];
-	UCONTEXT_REG_XMM8 (ctx) = mctx->fregs [8];
-	UCONTEXT_REG_XMM9 (ctx) = mctx->fregs [9];
-	UCONTEXT_REG_XMM10 (ctx) = mctx->fregs [10];
-	UCONTEXT_REG_XMM11 (ctx) = mctx->fregs [11];
-	UCONTEXT_REG_XMM12 (ctx) = mctx->fregs [12];
-	UCONTEXT_REG_XMM13 (ctx) = mctx->fregs [13];
-	UCONTEXT_REG_XMM14 (ctx) = mctx->fregs [14];
-	UCONTEXT_REG_XMM15 (ctx) = mctx->fregs [15];
+#ifdef UCONTEXT_HAS_XMM
+	if (UCONTEXT_HAS_XMM (ctx)) {
+		UCONTEXT_REG_XMM0 (ctx) = mctx->fregs [0];
+		UCONTEXT_REG_XMM1 (ctx) = mctx->fregs [1];
+		UCONTEXT_REG_XMM2 (ctx) = mctx->fregs [2];
+		UCONTEXT_REG_XMM3 (ctx) = mctx->fregs [3];
+		UCONTEXT_REG_XMM4 (ctx) = mctx->fregs [4];
+		UCONTEXT_REG_XMM5 (ctx) = mctx->fregs [5];
+		UCONTEXT_REG_XMM6 (ctx) = mctx->fregs [6];
+		UCONTEXT_REG_XMM7 (ctx) = mctx->fregs [7];
+		UCONTEXT_REG_XMM8 (ctx) = mctx->fregs [8];
+		UCONTEXT_REG_XMM9 (ctx) = mctx->fregs [9];
+		UCONTEXT_REG_XMM10 (ctx) = mctx->fregs [10];
+		UCONTEXT_REG_XMM11 (ctx) = mctx->fregs [11];
+		UCONTEXT_REG_XMM12 (ctx) = mctx->fregs [12];
+		UCONTEXT_REG_XMM13 (ctx) = mctx->fregs [13];
+		UCONTEXT_REG_XMM14 (ctx) = mctx->fregs [14];
+		UCONTEXT_REG_XMM15 (ctx) = mctx->fregs [15];
+	}
 #endif
 
 #elif defined(HOST_WIN32)
@@ -297,6 +326,27 @@ mono_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
 	context->R13 = mctx->gregs [AMD64_R13];
 	context->R14 = mctx->gregs [AMD64_R14];
 	context->R15 = mctx->gregs [AMD64_R15];
+#elif defined(__HAIKU__)
+	// Haiku uses sigcontext because there's no ucontext
+	struct sigcontext *ctx = (struct sigcontext *)sigctx;
+
+	ctx->regs.rip = mctx->gregs [AMD64_RIP];
+	ctx->regs.rax = mctx->gregs [AMD64_RAX];
+	ctx->regs.rcx = mctx->gregs [AMD64_RCX];
+	ctx->regs.rdx = mctx->gregs [AMD64_RDX];
+	ctx->regs.rbx = mctx->gregs [AMD64_RBX];
+	ctx->regs.rsp = mctx->gregs [AMD64_RSP];
+	ctx->regs.rbp = mctx->gregs [AMD64_RBP];
+	ctx->regs.rsi = mctx->gregs [AMD64_RSI];
+	ctx->regs.rdi = mctx->gregs [AMD64_RDI];
+	ctx->regs.r8 = mctx->gregs [AMD64_R8];
+	ctx->regs.r9 = mctx->gregs [AMD64_R9];
+	ctx->regs.r10 = mctx->gregs [AMD64_R10];
+	ctx->regs.r11 = mctx->gregs [AMD64_R11];
+	ctx->regs.r12 = mctx->gregs [AMD64_R12];
+	ctx->regs.r13 = mctx->gregs [AMD64_R13];
+	ctx->regs.r14 = mctx->gregs [AMD64_R14];
+	ctx->regs.r15 = mctx->gregs [AMD64_R15];
 #else
 	g_assert_not_reached ();
 #endif
@@ -401,8 +451,7 @@ mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 
 	g_assert (fpctx->head.magic == FPSIMD_MAGIC);
 	for (i = 0; i < 32; ++i)
-		/* Only store the bottom 8 bytes for now */
-		*(guint64*)&(mctx->fregs [i]) = fpctx->vregs [i];
+		mctx->fregs [i] = fpctx->vregs [i];
 #endif
 	/* FIXME: apple */
 #endif

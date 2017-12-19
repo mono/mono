@@ -225,6 +225,8 @@ namespace Mono.CSharp
 			}
 		}
 
+		public bool IsByRefLike => (modifiers & Modifiers.REF) != 0;
+
 		//
 		// Returns true for instances of System.Threading.Tasks.Task<T>
 		//
@@ -236,6 +238,8 @@ namespace Mono.CSharp
 				state = value ? state | StateFlags.GenericTask : state & ~StateFlags.GenericTask;
 			}
 		}
+
+		public bool IsReadOnly => (modifiers & Modifiers.READONLY) != 0;
 
 		//
 		// Returns true for instances of any System.ValueTuple<......> type
@@ -1468,6 +1472,7 @@ namespace Mono.CSharp
 		public static readonly InternalType ErrorType = new InternalType ("<error>");
 		public static readonly InternalType VarOutType = new InternalType ("var out");
 		public static readonly InternalType ThrowExpr = new InternalType ("throw expression");
+		public static readonly InternalType DefaultType = new InternalType ("default");
 
 		readonly string name;
 
@@ -1612,7 +1617,7 @@ namespace Mono.CSharp
 
 		public static bool HasNoType (TypeSpec type)
 		{
-			return type == AnonymousMethod || type == MethodGroup || type == NullLiteral || type == ThrowExpr;
+			return type == AnonymousMethod || type == MethodGroup || type == NullLiteral || type == ThrowExpr || type == DefaultType;
 		}
 	}
 
@@ -1991,17 +1996,24 @@ namespace Mono.CSharp
 		}
 	}
 
+	[System.Diagnostics.DebuggerDisplay("{DisplayDebugInfo()}")]
 	class ReferenceContainer : ElementTypeSpec
 	{
 		ReferenceContainer (TypeSpec element)
-			: base (MemberKind.Class, element, null)	// TODO: Kind.Class is most likely wrong
+			: base (MemberKind.ByRef, element, null)
 		{
+			cache = null;
 		}
 
 		public override IList<TypeSpec> Interfaces {
 			get {
 				return null;
 			}
+		}
+
+		string DisplayDebugInfo()
+		{
+			return "ref " + GetSignatureForError();
 		}
 
 		public override MetaType GetMetaInfo ()
@@ -2013,8 +2025,16 @@ namespace Mono.CSharp
 			return info;
 		}
 
+		public override string GetSignatureForError ()
+		{
+			return Element.GetSignatureForError ();
+		}
+
 		public static ReferenceContainer MakeType (ModuleContainer module, TypeSpec element)
 		{
+			if (element.Kind == MemberKind.ByRef)
+				throw new ArgumentException ();
+
 			ReferenceContainer pc;
 			if (!module.ReferenceTypesCache.TryGetValue (element, out pc)) {
 				pc = new ReferenceContainer (element);
@@ -2022,6 +2042,11 @@ namespace Mono.CSharp
 			}
 
 			return pc;
+		}
+
+		protected override void InitializeMemberCache(bool onlyTypes)
+		{
+			cache = Element.MemberCache;
 		}
 	}
 

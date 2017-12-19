@@ -51,7 +51,7 @@ namespace System {
     using System.Diagnostics.Contracts;
 
     [Pure]
-    internal static class ThrowHelper {    
+    internal static partial class ThrowHelper {
         internal static void ThrowArgumentOutOfRangeException() {        
             ThrowArgumentOutOfRangeException(ExceptionArgument.index, ExceptionResource.ArgumentOutOfRange_Index);            
         }
@@ -76,6 +76,7 @@ namespace System {
             throw new ArgumentException(Environment.GetResourceString(GetResourceName(resource)), GetArgumentName(argument));
         }
 
+#if !MONO
         internal static void ThrowArgumentNullException(ExceptionArgument argument) {
             throw new ArgumentNullException(GetArgumentName(argument));
         }
@@ -83,6 +84,7 @@ namespace System {
         internal static void ThrowArgumentOutOfRangeException(ExceptionArgument argument) {
             throw new ArgumentOutOfRangeException(GetArgumentName(argument));
         }
+#endif
 
         internal static void ThrowArgumentOutOfRangeException(ExceptionArgument argument, ExceptionResource resource) {
                 
@@ -468,6 +470,12 @@ namespace System {
         options,
         view,
         sourceBytesToCopy,
+#if MONO
+        start,
+        pointer,
+        ownedMemory,
+        text,
+#endif
     }
 
     //

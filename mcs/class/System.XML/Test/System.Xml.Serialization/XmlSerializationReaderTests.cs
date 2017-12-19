@@ -81,7 +81,7 @@ namespace MonoTests.System.XmlSerialization
 			try {
 				ToEnum ("One", values, "Some.Type.Name");
 				Assert.Fail ("#C1");
-			} catch (InvalidCastException ex) {
+			} catch (InvalidCastException) {
 			}
 
 			values.Clear ();
@@ -90,7 +90,7 @@ namespace MonoTests.System.XmlSerialization
 			try {
 				ToEnum ("One", values, "Some.Type.Name");
 				Assert.Fail ("#D1");
-			} catch (InvalidCastException ex) {
+			} catch (InvalidCastException) {
 			}
 
 			values.Clear ();

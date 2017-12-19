@@ -53,6 +53,7 @@ namespace Mono.CSharp
 		DEBUGGER_HIDDEN			= 0x400000,
 		DEBUGGER_STEP_THROUGH	= 0x800000,
 		AutoProperty			= 0x1000000,
+		REF                     = 0x2000000,
 
 		AccessibilityMask = PUBLIC | PROTECTED | INTERNAL | PRIVATE,
 		AllowedExplicitImplFlags = UNSAFE | EXTERN,

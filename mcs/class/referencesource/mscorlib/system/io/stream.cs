@@ -40,7 +40,7 @@ namespace System.IO {
     [ContractClass(typeof(StreamContract))]
 #endif
 #if FEATURE_REMOTING || MONO
-    public abstract class Stream : MarshalByRefObject, IDisposable {
+    public abstract partial class Stream : MarshalByRefObject, IDisposable {
 #else // FEATURE_REMOTING
     public abstract class Stream : IDisposable {
 #endif // FEATURE_REMOTING
@@ -195,6 +195,9 @@ namespace System.IO {
             InternalCopyTo(destination, _DefaultCopyBufferSize);
         }
 
+#if MONO
+        virtual
+#endif
         public void CopyTo(Stream destination, int bufferSize)
         {
             if (destination == null)

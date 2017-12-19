@@ -84,17 +84,6 @@ class MonoMasterPackage(Package):
             "LocalMachine")
         ensure_dir(registry_dir)
 
-        # Add ImportBefore files from xbuild 14.0 toolsVersion directory to msbuild's
-        # 15.0 directory
-        xbuild_dir = os.path.join(self.staged_prefix, 'lib/mono/xbuild')
-        new_xbuild_tv_dir = os.path.join(xbuild_dir, '15.0')
-        os.makedirs(new_xbuild_tv_dir)
-
-        self.sh('cp -R %s/14.0/Imports %s' % (xbuild_dir, new_xbuild_tv_dir))
-
-        for dep in glob.glob("%s/Microsoft/NuGet/*" % xbuild_dir):
-            self.sh('ln -s %s %s' % (dep, xbuild_dir))
-
     def deploy(self):
         if bockbuild.cmd_options.arch == 'darwin-universal':
             os.symlink('mono-sgen64', '%s/bin/mono64' % self.staged_profile)

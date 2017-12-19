@@ -174,8 +174,7 @@ section.
 Reporting bugs
 ==============
 
-To submit bug reports, please use [Xamarin's
-Bugzilla](https://bugzilla.xamarin.com/)
+To submit bug reports, please [open an issue on the mono GitHub repo](https://github.com/mono/mono/issues/new).
 
 Please use the search facility to ensure the same bug hasn't already
 been submitted and follow our
@@ -307,16 +306,6 @@ that resides as a sibling of this directory (mono)
 should be used.
 
  * Or you can specify a path to a libgdiplus.
-
-* `--disable-shared-memory`
-
-  * Use this option to disable the use of shared memory in
-Mono (this is equivalent to setting the MONO_DISABLE_SHM
-environment variable, although this removes the feature
-completely).
-
-  * Disabling the shared memory support will disable certain
-features like cross-process named mutexes.
 
 * `--enable-minimal=LIST`
 
@@ -482,6 +471,16 @@ http://code.google.com/p/nativeclient/
 
   * Currently this is used with Mono's AOT engine as
 Native Client does not support JIT engines yet.
+
+* `--enable-wasm`
+
+  * Use this option to configure mono to run on WebAssembly. It will
+    set both host and target to the WebAssembly triplet. This overrides
+    the values passed to `--host` or `--target` and ignored what config.sub guesses.
+
+    This is a workaround to enable usage of old automake versions that don't
+    recognize the wasm triplet.
+
 
 Working With Submodules
 =======================

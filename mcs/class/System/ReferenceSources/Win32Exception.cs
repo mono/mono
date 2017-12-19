@@ -46,6 +46,7 @@ namespace System.ComponentModel
 			case 32: /* ERROR_SHARING_VIOLATION */ return "Sharing violation";
 			case 33: /* ERROR_LOCK_VIOLATION */ return "Lock violation";
 			case 50: /* ERROR_NOT_SUPPORTED */ return "Operation not supported";
+			case 55: /* ERROR_DEV_NOT_EXIST */ return "Device does not exist";
 			case 87: /* ERROR_INVALID_PARAMETER */ return "Invalid parameter";
 			case 120: /* ERROR_CALL_NOT_IMPLEMENTED */ return "Call not implemented";
 			case 123: /* ERROR_INVALID_NAME */ return "Invalid name";
@@ -143,7 +144,6 @@ namespace System.ComponentModel
 			case 52: /* ERROR_DUP_NAME */ return "Duplicate name";
 			case 53: /* ERROR_BAD_NETPATH */ return "Bad netpath";
 			case 54: /* ERROR_NETWORK_BUSY */ return "Network busy";
-			case 55: /* ERROR_DEV_NOT_EXIST */ return "Device does not exist";
 			case 56: /* ERROR_TOO_MANY_CMDS */ return "Too many commands";
 			case 57: /* ERROR_ADAP_HDW_ERR */ return "ADAP HDW error";
 			case 58: /* ERROR_BAD_NET_RESP */ return "Bad net response";

@@ -545,12 +545,15 @@ namespace Mono.CSharp {
 
 				if (new_implementation) {
 					MemberFilter filter;
-					if (mi.Parameters.Count > 1) {
-						var indexer_params = mi.Name [0] == 'g' ? mi.Parameters : IndexerSpec.CreateParametersFromSetter (mi, mi.Parameters.Count - 1);
-						filter = new MemberFilter (MemberCache.IndexerNameAlias, 0, MemberKind.Indexer, indexer_params, null);
+					bool getter = mi.Name [0] == 'g';
+					if (mi.Parameters.Count > (getter ? 0 : 1)) {
+						var indexer_params = getter ? mi.Parameters : IndexerSpec.CreateParametersFromSetter (mi, mi.Parameters.Count - 1);
+						var ptype = getter ? mi.ReturnType : mi.Parameters.Types [mi.Parameters.Count - 1];
+						filter = new MemberFilter (MemberCache.IndexerNameAlias, 0, MemberKind.Indexer, indexer_params, ptype);
 					} else {
 						var pname = mi.Name.Substring (4);
-						filter = MemberFilter.Property (pname, null);
+						var ptype = getter ? mi.ReturnType : mi.Parameters.Types [0];
+						filter = MemberFilter.Property (pname, ptype);
 					}
 
 					var prop = MemberCache.FindMember (container.CurrentType, filter, BindingRestriction.DeclaredOnly | BindingRestriction.InstanceOnly);
@@ -745,6 +748,11 @@ namespace Mono.CSharp {
 								Report.Error (737, container.Location,
 									"`{0}' does not implement interface member `{1}' and the best implementing candidate `{2}' is not public",
 									container.GetSignatureForError (), mi.GetSignatureForError (), candidate.GetSignatureForError ());
+							} else if (mi.ReturnType.Kind == MemberKind.ByRef) {
+								Report.Error (8152, container.Location,
+									"`{0}' does not implement interface member `{1}' and the best implementing candidate `{2}' return type `{3}' does not return by reference",
+									container.GetSignatureForError (), mi.GetSignatureForError (), candidate.GetSignatureForError (),
+									candidate.ReturnType.GetSignatureForError ());
 							} else {
 								Report.Error (738, container.Location,
 									"`{0}' does not implement interface member `{1}' and the best implementing candidate `{2}' return type `{3}' does not match interface member return type `{4}'",

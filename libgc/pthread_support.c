@@ -764,7 +764,7 @@ GC_thread GC_new_thread(pthread_t id)
     }
     if (result == 0) return(0);
     result -> id = id;
-#ifdef PLATFORM_ANDROID
+#ifdef HOST_ANDROID
     result -> kernel_id = gettid();
 #endif
     result -> next = GC_threads[hv];
@@ -1135,7 +1135,7 @@ void GC_thr_init()
 #       if defined(GC_HPUX_THREADS)
 	  GC_nprocs = pthread_num_processors_np();
 #       endif
-#	if defined(GC_OSF1_THREADS) || defined(GC_AIX_THREADS)
+#	if defined(GC_OSF1_THREADS) || defined(GC_AIX_THREADS) || defined(GC_HAIKU_THREADS)
 	  GC_nprocs = sysconf(_SC_NPROCESSORS_ONLN);
 	  if (GC_nprocs <= 0) GC_nprocs = 1;
 #	endif

@@ -51,20 +51,18 @@ namespace MonoTests.System.Windows {
 			Assert.IsFalse (p.Equals (new object()));
 		}
 
-        [Test]
-		[Category ("NotWorking")]
-        public void getHashCodeTest()
-        {
-			Point p1 = new Point(-5, -4);
-			Point p2 = new Point(5, 4);
-			Point p3 = new Point(5, 4);
+			[Test]
+			public void GetHashCodeTest()
+			{
+				Point p1 = new Point(-5, -4);
+				Point p2 = new Point(5, 4);
+				Point p3 = new Point(5, 4);
 
-			Assert.AreEqual(p2.GetHashCode(), p3.GetHashCode());
-			Assert.AreEqual(p1.GetHashCode(),p2.GetHashCode());
-        }
+				Assert.AreEqual (p2.GetHashCode (), p3.GetHashCode ());
+				Assert.AreEqual (p1.GetHashCode (),p2.GetHashCode ());
+			}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ToStringTest ()
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("en-us");
@@ -85,7 +83,6 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Parse ()
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("fr-fr");

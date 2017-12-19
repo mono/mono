@@ -14,16 +14,11 @@
 
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-threads-debug.h>
+#include <mono/utils/mono-os-wait.h>
 #include <limits.h>
-
 
 void
 mono_threads_suspend_init (void)
-{
-}
-
-static void CALLBACK
-interrupt_apc (ULONG_PTR param)
 {
 }
 
@@ -44,6 +39,19 @@ mono_threads_suspend_begin_async_suspend (MonoThreadInfo *info, gboolean interru
 		return FALSE;
 	}
 
+	/* Suspend logic assumes thread is really suspended before continuing below. Surprisingly SuspendThread */
+	/* is just an async request to the scheduler, meaning that the suspended thread can continue to run */
+	/* user mode code until scheduler gets around and process the request. This will cause a thread state race */
+	/* in mono's thread state machine implementation on Windows. By requesting a threads context after issuing a */
+	/* suspended request, this will wait until thread is suspended and thread context has been collected */
+	/* and returned. */
+	CONTEXT context;
+	context.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
+	if (!GetThreadContext (handle, &context)) {
+		CloseHandle (handle);
+		return FALSE;
+	}
+
 	/* We're in the middle of a self-suspend, resume and register */
 	if (!mono_threads_transition_finish_async_suspend (info)) {
 		mono_threads_add_to_pending_operation_set (info);
@@ -54,12 +62,11 @@ mono_threads_suspend_begin_async_suspend (MonoThreadInfo *info, gboolean interru
 		//XXX interrupt_kernel doesn't make sense in this case as the target is not in a syscall
 		return TRUE;
 	}
-	info->suspend_can_continue = mono_threads_get_runtime_callbacks ()->thread_state_init_from_handle (&info->thread_saved_state [ASYNC_SUSPEND_STATE_INDEX], info);
+	info->suspend_can_continue = mono_threads_get_runtime_callbacks ()->thread_state_init_from_handle (&info->thread_saved_state [ASYNC_SUSPEND_STATE_INDEX], info, &context);
 	THREADS_SUSPEND_DEBUG ("thread state %p -> %d\n", (void*)id, res);
 	if (info->suspend_can_continue) {
-		//FIXME do we need to QueueUserAPC on this case?
 		if (interrupt_kernel)
-			QueueUserAPC ((PAPCFUNC)interrupt_apc, handle, (ULONG_PTR)NULL);
+			mono_win32_interrupt_wait (info, handle, id);
 	} else {
 		THREADS_SUSPEND_DEBUG ("FAILSAFE RESUME/2 %p -> %d\n", (void*)info->native_handle, 0);
 	}
@@ -74,11 +81,7 @@ mono_threads_suspend_check_suspend_result (MonoThreadInfo *info)
 	return info->suspend_can_continue;
 }
 
-static void CALLBACK
-abort_apc (ULONG_PTR param)
-{
-	THREADS_INTERRUPT_DEBUG ("%06d - abort_apc () called", GetCurrentThreadId ());
-}
+
 
 void
 mono_threads_suspend_abort_syscall (MonoThreadInfo *info)
@@ -89,8 +92,7 @@ mono_threads_suspend_abort_syscall (MonoThreadInfo *info)
 	handle = OpenThread (THREAD_ALL_ACCESS, FALSE, id);
 	g_assert (handle);
 
-	THREADS_INTERRUPT_DEBUG ("%06d - Aborting syscall in thread %06d", GetCurrentThreadId (), id);
-	QueueUserAPC ((PAPCFUNC)abort_apc, handle, (ULONG_PTR)NULL);
+	mono_win32_abort_wait (info, handle, id);
 
 	CloseHandle (handle);
 }
@@ -230,18 +232,25 @@ mono_native_thread_create (MonoNativeThreadId *tid, gpointer func, gpointer arg)
 }
 
 gboolean
+mono_native_thread_join_handle (HANDLE thread_handle, gboolean close_handle)
+{
+	DWORD res = WaitForSingleObject (thread_handle, INFINITE);
+
+	if (close_handle)
+		CloseHandle (thread_handle);
+
+	return res != WAIT_FAILED;
+}
+
+gboolean
 mono_native_thread_join (MonoNativeThreadId tid)
 {
 	HANDLE handle;
 
-	if (!(handle = OpenThread (THREAD_ALL_ACCESS, TRUE, tid)))
+	if (!(handle = OpenThread (SYNCHRONIZE, TRUE, tid)))
 		return FALSE;
 
-	DWORD res = WaitForSingleObject (handle, INFINITE);
-
-	CloseHandle (handle);
-
-	return res != WAIT_FAILED;
+	return mono_native_thread_join_handle (handle, TRUE);
 }
 
 #if HAVE_DECL___READFSDWORD==0

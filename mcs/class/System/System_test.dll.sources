@@ -278,6 +278,7 @@ System.Net.Security/SslStreamTest.cs
 System.Runtime.Versioning/FrameworkNameTest.cs
 System.Security.AccessControl/SemaphoreSecurityTest.cs
 System.Security.Cryptography/AsnEncodedDataTest.cs
+System.Security.Cryptography/CryptoConfigTest.cs
 System.Security.Cryptography/OidCollectionTest.cs
 System.Security.Cryptography/OidEnumeratorTest.cs
 System.Security.Cryptography/OidTest.cs
@@ -500,6 +501,7 @@ System.Threading/SemaphoreFullExceptionCas.cs
 System.Threading/SemaphoreTest.cs
 System.Threading/BarrierTest.cs
 System.Threading/ThreadExceptionEventArgsCas.cs
+System.Threading/WaitHandleTests.cs
 System.Timers/TimersDescriptionAttributeCas.cs
 System.Timers/ElapsedEventArgsCas.cs
 System.Timers/TimerCas.cs

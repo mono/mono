@@ -5,7 +5,8 @@ LIBRARY = Mono.Debugger.Soft.dll
 LIBRARY_SNK = ../mono.snk
 
 LIB_REFS = System Mono.Cecil System.Core
-LIB_MCS_FLAGS = /unsafe -D:MONO_DATACONVERTER_STATIC_METHODS -keyfile:$(LIBRARY_SNK) /publicsign
+LIB_MCS_FLAGS = /unsafe -D:MONO_DATACONVERTER_STATIC_METHODS /publicsign
+KEYFILE = $(LIBRARY_SNK)
 
 TEST_MCS_FLAGS =
 TEST_LIB_REFS = Mono.Cecil System System.Core
@@ -25,7 +26,7 @@ dtest-app.exe: Test/dtest-app.cs $(TEST_HELPERS_SOURCES)
 	$(CSCOMPILE) -r:$(topdir)/class/lib/$(PROFILE)/System.Core.dll -r:$(topdir)/class/lib/$(PROFILE)/System.dll -out:$@ -unsafe $(PLATFORM_DEBUG_FLAGS) -optimize- Test/dtest-app.cs $(TEST_HELPERS_SOURCES)
 
 dtest-excfilter.exe: Test/dtest-excfilter.il
-	MONO_PATH=$(topdir)/class/lib/$(PROFILE) $(INTERNAL_ILASM) -out:$@ /exe /debug Test/dtest-excfilter.il
+	$(ILASM) -out:$@ /exe /debug Test/dtest-excfilter.il
 
 else
 

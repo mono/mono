@@ -10,6 +10,7 @@
  */
 
 #include "mini.h"
+#include "mini-runtime.h"
 #include "seq-points.h"
 
 static void
@@ -230,7 +231,7 @@ mono_save_seq_point_info (MonoCompile *cfg)
 		g_free (next);
 
 	cfg->seq_point_info = mono_seq_point_info_new (array->len, TRUE, array->data, has_debug_data, &seq_info_size);
-	mono_jit_stats.allocated_seq_points_size += seq_info_size;
+	mono_atomic_fetch_add_i32 (&mono_jit_stats.allocated_seq_points_size, seq_info_size);
 
 	g_byte_array_free (array, TRUE);
 

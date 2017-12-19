@@ -33,6 +33,8 @@
 #include <unistd.h>     /* for pathconf */
 #endif /* def HAVE_GETFSSTAT */
 
+#include "mono/utils/mono-compiler.h"
+
 G_BEGIN_DECLS
 
 #ifdef HAVE_SYS_STATVFS_H
@@ -129,9 +131,11 @@ Mono_Posix_Syscall_fstatvfs (gint32 fd, struct Mono_Posix_Statvfs *buf)
  * BSD-compatible definitions.
  *
  * Linux also provides these, but are deprecated in favor of (f)statvfs.
+ * Android NDK unified headers define HAVE_FSTATFS but also HAVE_SYS_STATVFS_H
+ * which makes these duplicates of the functions defined above
  */
 
-#if (defined (HAVE_STATFS) || defined (HAVE_FSTATFS)) && !defined (HAVE_STATVFS)
+#if (defined (HAVE_STATFS) || defined (HAVE_FSTATFS)) && !defined (HAVE_STATVFS) && !defined(ANDROID_UNIFIED_HEADERS)
 int
 Mono_Posix_ToStatvfs (void *_from, struct Mono_Posix_Statvfs *to)
 {
@@ -197,7 +201,7 @@ set_fnamemax (int fd, struct Mono_Posix_Statvfs *buf)
 }
 #endif /* (def HAVE_STATFS || def HAVE_FSTATFS) && !def HAVE_STATVFS */
 
-#if !defined (HAVE_STATVFS) && defined (HAVE_STATFS)
+#if !defined (HAVE_STATVFS) && defined (HAVE_STATFS) && (!defined(ANDROID_UNIFIED_HEADERS) || __ANDROID_API__ >= 19)
 gint32
 Mono_Posix_Syscall_statvfs (const char *path, struct Mono_Posix_Statvfs *buf)
 {
@@ -218,7 +222,7 @@ Mono_Posix_Syscall_statvfs (const char *path, struct Mono_Posix_Statvfs *buf)
 }
 #endif /* !def HAVE_STATVFS && def HAVE_STATFS */
 
-#if !defined (HAVE_STATVFS) && defined (HAVE_STATFS)
+#if !defined (HAVE_STATVFS) && defined (HAVE_STATFS) && (!defined(ANDROID_UNIFIED_HEADERS) || __ANDROID_API__ >= 19)
 gint32
 Mono_Posix_Syscall_fstatvfs (gint32 fd, struct Mono_Posix_Statvfs *buf)
 {

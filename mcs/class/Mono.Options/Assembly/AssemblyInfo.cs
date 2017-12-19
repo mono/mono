@@ -48,5 +48,4 @@ using System.Security.Permissions;
 )]
 
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../mono.pub")]
 

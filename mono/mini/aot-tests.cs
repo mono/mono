@@ -26,6 +26,7 @@ class Tests
 
 	public delegate void ArrayDelegate (int[,] arr);
 
+	[Category ("!WASM")] //Requires a working threadpool
 	static int test_0_array_delegate_full_aot () {
 		ArrayDelegate d = delegate (int[,] arr) {
 		};
@@ -410,6 +411,7 @@ class Tests
 
 	[Category ("DYNCALL")]
 	[Category ("!FULLAOT-AMD64")]
+	[Category ("!WASM")] //Interp fails	
 	public static int test_0_large_nullable_invoke () {
 		var s = new LargeStruct () { a = 1, b = 2, c = 3, d = 4 };
 

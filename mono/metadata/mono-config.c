@@ -42,6 +42,8 @@
 #define CONFIG_OS "hpux"
 #elif defined(__HAIKU__)
 #define CONFIG_OS "haiku"
+#elif defined (TARGET_WASM)
+#define CONFIG_OS "wasm"
 #else
 #warning Unknown operating system
 #define CONFIG_OS "unknownOS"
@@ -81,6 +83,9 @@
 #define CONFIG_WORDSIZE "64"
 #elif defined(mips) || defined(__mips) || defined(_mips)
 #define CONFIG_CPU "mips"
+#define CONFIG_WORDSIZE "32"
+#elif defined(TARGET_WASM)
+#define CONFIG_CPU "wasm"
 #define CONFIG_WORDSIZE "32"
 #else
 #error Unknown CPU
@@ -686,7 +691,7 @@ mono_set_config_dir (const char *dir)
 	/* If this environment variable is set, overrides the directory computed */
 	char *env_mono_cfg_dir = g_getenv ("MONO_CFG_DIR");
 	if (env_mono_cfg_dir == NULL && dir != NULL)
-		env_mono_cfg_dir = strdup (dir);
+		env_mono_cfg_dir = g_strdup (dir);
 
 	mono_cfg_dir = env_mono_cfg_dir;
 }

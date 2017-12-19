@@ -69,7 +69,7 @@ alloc_degraded (GCVTable vtable, size_t size, gboolean for_mature)
 	GCObject *p;
 
 	if (!for_mature) {
-		sgen_client_degraded_allocation (size);
+		sgen_client_degraded_allocation ();
 		SGEN_ATOMIC_ADD_P (degraded_mode, size);
 		sgen_ensure_free_space (size, GENERATION_OLD);
 	} else {
@@ -138,7 +138,7 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 
 	if (G_UNLIKELY (has_per_allocation_action)) {
 		static int alloc_count;
-		int current_alloc = InterlockedIncrement (&alloc_count);
+		int current_alloc = mono_atomic_inc_i32 (&alloc_count);
 
 		if (collect_before_allocs) {
 			if (((current_alloc % collect_before_allocs) == 0) && nursery_section) {
@@ -393,7 +393,7 @@ sgen_alloc_obj (GCVTable vtable, size_t size)
 
 	if (G_UNLIKELY (has_per_allocation_action)) {
 		static int alloc_count;
-		int current_alloc = InterlockedIncrement (&alloc_count);
+		int current_alloc = mono_atomic_inc_i32 (&alloc_count);
 
 		if (verify_before_allocs) {
 			if ((current_alloc % verify_before_allocs) == 0) {

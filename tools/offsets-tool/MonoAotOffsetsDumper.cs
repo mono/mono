@@ -126,7 +126,7 @@ namespace CppSharp
                 });*/
 
             foreach (var target in AndroidTargets)
-                target.Defines.AddRange (new string[] { "PLATFORM_ANDROID",
+                target.Defines.AddRange (new string[] { "HOST_ANDROID",
                     "TARGET_ANDROID", "MONO_CROSS_COMPILE", "USE_MONO_CTX"
                 });
         }
@@ -148,7 +148,7 @@ namespace CppSharp
             });
 
             foreach (var target in iOSTargets) {
-                target.Defines.AddRange (new string[] { "PLATFORM_DARWIN",
+                target.Defines.AddRange (new string[] { "HOST_DARWIN",
                     "TARGET_IOS", "TARGET_MACH", "MONO_CROSS_COMPILE", "USE_MONO_CTX",
                     "_XOPEN_SOURCE"
                 });
@@ -162,7 +162,7 @@ namespace CppSharp
             });
 
             foreach (var target in DarwinTargets) {
-                target.Defines.AddRange (new string[] { "PLATFORM_DARWIN",
+                target.Defines.AddRange (new string[] { "HOST_DARWIN",
                     "TARGET_IOS", "TARGET_MACH", "MONO_CROSS_COMPILE", "USE_MONO_CTX",
                     "_XOPEN_SOURCE"
                 });
@@ -361,11 +361,11 @@ namespace CppSharp
             var includeDirs = new[]
             {
                 targetBuild,
-                Path.Combine(targetBuild, "eglib", "src"),
+                Path.Combine(targetBuild, "mono", "eglib"),
                 MonoDir,
                 Path.Combine(MonoDir, "mono"),
                 Path.Combine(MonoDir, "mono", "mini"),
-                Path.Combine(MonoDir, "eglib", "src")
+                Path.Combine(MonoDir, "mono", "eglib")
             };
 
             foreach (var inc in includeDirs)

@@ -64,6 +64,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test]
+		[Category("NotWorking")] // https://github.com/dotnet/corefx/issues/22474
 		public void PropertiesTest ()
 		{
 			builder = new SqlConnectionStringBuilder ("SERVER=localhost;");
@@ -75,6 +76,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 		
 		[Test]
+		[Category("NotWorking")] //https://github.com/dotnet/corefx/issues/22474
 		public void ItemTest ()
 		{
 			builder = new SqlConnectionStringBuilder ("SERVER=localhost;");
@@ -102,6 +104,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 		
 		[Test, ExpectedException (typeof (ArgumentException))]
+		[Category("NotWorking")] //https://github.com/dotnet/corefx/issues/22474
 		public void InvalidKeyTest ()
 		{
 			builder = new SqlConnectionStringBuilder ("SERVER=localhost;Network=DBMSSOCN");
@@ -110,6 +113,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test]
+		[Category("NotWorking")] //https://github.com/dotnet/corefx/issues/22474
 		public void RemoveTest ()
 		{
 			builder = new SqlConnectionStringBuilder ("SERVER = localhost ;Network=DBMSSOCN");
@@ -161,6 +165,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test]
+		[Category("NotWorking")] // https://github.com/dotnet/corefx/issues/22474
 		public void ContextConnectionTest ()
 		{
 			builder = new SqlConnectionStringBuilder ();
@@ -171,6 +176,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		}
 
 		[Test]
+		[Category("NotWorking")] // https://github.com/dotnet/corefx/issues/22474
 		public void SettingContextConnectionTest ()
 		{
 			builder = new SqlConnectionStringBuilder ();

@@ -50,7 +50,7 @@
 #include <sys/stat.h>
 #endif
 
-#ifdef PLATFORM_MACOSX
+#ifdef HOST_DARWIN
 #include <mach-o/dyld.h>
 #endif
 
@@ -840,7 +840,7 @@ set_dirs (char *exe)
 void
 mono_set_rootdir (void)
 {
-#if defined(HOST_WIN32) || (defined(PLATFORM_MACOSX) && !defined(TARGET_ARM))
+#if defined(HOST_WIN32) || (defined(HOST_DARWIN) && !defined(TARGET_ARM))
 	gchar *bindir, *installdir, *root, *name, *resolvedname, *config;
 
 #ifdef HOST_WIN32
@@ -1119,7 +1119,7 @@ assemblyref_public_tok (MonoImage *image, guint32 key_index, guint32 flags)
 void
 mono_assembly_addref (MonoAssembly *assembly)
 {
-	InterlockedIncrement (&assembly->ref_count);
+	mono_atomic_inc_i32 (&assembly->ref_count);
 }
 
 /*
@@ -2043,6 +2043,8 @@ mono_assembly_load_friends (MonoAssembly* ass)
 		MonoCustomAttrEntry *attr = &attrs->attrs [i];
 		MonoAssemblyName *aname;
 		const gchar *data;
+		uint32_t data_length;
+		gchar *data_with_terminator;
 		/* Do some sanity checking */
 		if (!attr->ctor || attr->ctor->klass != mono_class_try_get_internals_visible_class ())
 			continue;
@@ -2052,14 +2054,17 @@ mono_assembly_load_friends (MonoAssembly* ass)
 		/* 0xFF means null string, see custom attr format */
 		if (data [0] != 1 || data [1] != 0 || (data [2] & 0xFF) == 0xFF)
 			continue;
-		mono_metadata_decode_value (data + 2, &data);
+		data_length = mono_metadata_decode_value (data + 2, &data);
+		data_with_terminator = (char *)g_memdup (data, data_length + 1);
+		data_with_terminator[data_length] = 0;
 		aname = g_new0 (MonoAssemblyName, 1);
 		/*g_print ("friend ass: %s\n", data);*/
-		if (mono_assembly_name_parse_full (data, aname, TRUE, NULL, NULL)) {
+		if (mono_assembly_name_parse_full (data_with_terminator, aname, TRUE, NULL, NULL)) {
 			list = g_slist_prepend (list, aname);
 		} else {
 			g_free (aname);
 		}
+		g_free (data_with_terminator);
 	}
 	mono_custom_attrs_free (attrs);
 
@@ -2372,17 +2377,18 @@ parse_public_key (const gchar *key, gchar** pubkey, gboolean *is_ecma)
 	const gchar *pkey;
 	gchar header [16], val, *arr, *endp;
 	gint i, j, offset, bitlen, keylen, pkeylen;
-	
+
+	//both pubkey and is_ecma are required arguments
+	g_assert (pubkey && is_ecma);
+
 	keylen = strlen (key) >> 1;
 	if (keylen < 1)
 		return FALSE;
 
 	/* allow the ECMA standard key */
 	if (strcmp (key, "00000000000000000400000000000000") == 0) {
-		if (pubkey) {
-			*pubkey = g_strdup (key);
-			*is_ecma = TRUE;
-		}
+		*pubkey = NULL;
+		*is_ecma = TRUE;
 		return TRUE;
 	}
 	*is_ecma = FALSE;
@@ -2427,10 +2433,6 @@ parse_public_key (const gchar *key, gchar** pubkey, gboolean *is_ecma)
 	bitlen = read32 (header + 12) >> 3;
 	if ((bitlen + 16 + 4) != pkeylen)
 		return FALSE;
-
-	/* parsing is OK and the public key itself is not requested back */
-	if (!pubkey)
-		return TRUE;
 		
 	arr = (gchar *)g_malloc (keylen + 4);
 	/* Encode the size of the blob */
@@ -2453,7 +2455,7 @@ build_assembly_name (const char *name, const char *version, const char *culture,
 	gint major, minor, build, revision;
 	gint len;
 	gint version_parts;
-	gchar *pkey, *pkeyptr, *encoded, tok [8];
+	gchar *pkeyptr, *encoded, tok [8];
 
 	memset (aname, 0, sizeof (MonoAssemblyName));
 
@@ -2502,17 +2504,16 @@ build_assembly_name (const char *name, const char *version, const char *culture,
 	}
 
 	if (key) {
-		gboolean is_ecma;
+		gboolean is_ecma = FALSE;
+		gchar *pkey = NULL;
 		if (strcmp (key, "null") == 0 || !parse_public_key (key, &pkey, &is_ecma)) {
 			mono_assembly_name_free (aname);
 			return FALSE;
 		}
 
 		if (is_ecma) {
-			if (save_public_key)
-				aname->public_key = (guint8*)pkey;
-			else
-				g_free (pkey);
+			g_assert (pkey == NULL);
+			aname->public_key = NULL;
 			g_strlcpy ((gchar*)aname->public_key_token, "b77a5c561934e089", MONO_PUBLIC_KEY_TOKEN_LENGTH);
 			return TRUE;
 		}
@@ -3795,7 +3796,7 @@ mono_assembly_close_except_image_pools (MonoAssembly *assembly)
 		return FALSE;
 
 	/* Might be 0 already */
-	if (InterlockedDecrement (&assembly->ref_count) > 0)
+	if (mono_atomic_dec_i32 (&assembly->ref_count) > 0)
 		return FALSE;
 
 	MONO_PROFILER_RAISE (assembly_unloading, (assembly));

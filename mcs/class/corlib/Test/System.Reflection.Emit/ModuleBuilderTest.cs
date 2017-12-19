@@ -116,7 +116,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void TestGlobalMethods ()
 		{
 			AssemblyBuilder builder = genAssembly ();
@@ -296,6 +295,59 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsNotNull (str);
 			// Don't compare string, since MS returns System.Reflection.Emit.SymbolMethod here 
 			// (they do not provide an implementation of ToString).
+		}
+
+		[Test]
+		public void GetArrayMethodMultipleCallsTest ()
+		{
+			AssemblyBuilder ab = genAssembly ();
+			ModuleBuilder modb = ab.DefineDynamicModule ("foo.dll", "foo.dll");
+
+			TypeBuilder tb = modb.DefineType ("TestType");
+			var int2D = typeof (int[,]);
+			var mb = tb.DefineMethod ("TestMeth", MethodAttributes.Static | MethodAttributes.Public,
+						  typeof(int), new Type[] { int2D });
+			var ilg = mb.GetILGenerator ();
+
+			// static int TestMeth(int[,] a)
+			// {
+			//   int x;
+			//   x = a.Get(0,0);
+			//   return a.Get(0,1) + x;
+			// }
+			//
+
+			var x = ilg.DeclareLocal (typeof (int));
+
+			ilg.Emit (OpCodes.Ldarg_0);
+			ilg.Emit (OpCodes.Ldc_I4_0);
+			ilg.Emit (OpCodes.Ldc_I4_0);
+			var arrmi = modb.GetArrayMethod (int2D, "Get",
+							 CallingConventions.Standard | CallingConventions.HasThis,
+							 typeof(int),
+							 new Type[] { typeof(int), typeof(int) });
+			ilg.Emit (OpCodes.Call, arrmi);
+			ilg.Emit (OpCodes.Stloc, x);
+			var arrmi2 = modb.GetArrayMethod (int2D, "Get",
+							  CallingConventions.Standard | CallingConventions.HasThis,
+							  typeof(int),
+							  new Type[] { typeof(int), typeof(int) });
+			ilg.Emit (OpCodes.Ldarg_0);
+			ilg.Emit (OpCodes.Ldc_I4_0);
+			ilg.Emit (OpCodes.Ldc_I4_1);
+			ilg.Emit (OpCodes.Call, arrmi2);
+			ilg.Emit (OpCodes.Ldloc, x);
+			ilg.Emit (OpCodes.Add);
+			ilg.Emit (OpCodes.Ret);
+			Assert.AreNotSame (arrmi, arrmi2); // fresh MonoArrayMethods each time
+	    
+			var t = tb.CreateType ();
+			Assert.IsNotNull (t);
+			var a = new int[,] { { 5, 7 }, { 11, 19 } };
+			var mi = t.GetMethod ("TestMeth");
+			Assert.IsNotNull (t);
+			var o = mi.Invoke (null, new object[] { a });
+			Assert.AreEqual (12, (int)o);
 		}
 
 		private static void AssertArrayEqualsSorted (Array o1, Array o2)
@@ -806,5 +858,209 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.AreEqual ("t1&", module.GetType ("t1&").FullName);
 			Assert.AreEqual ("t1[]&", module.GetType ("t1[]&").FullName);
 		}
+
+		[AttributeUsage(AttributeTargets.All)]
+		public class MyAttribute : Attribute {
+			public String Contents;
+			public MyAttribute (String contents) 
+			{
+				this.Contents = contents;
+			}
+		}
+
+		[Test]
+		public void GetMethodsBeforeInstantiation ()
+		{
+			AssemblyBuilder assm = AssemblyBuilder.DefineDynamicAssembly (new AssemblyName ("Name"), AssemblyBuilderAccess.Run);
+			ModuleBuilder module = assm.DefineDynamicModule ("Module");
+
+			// Added to make sure fields and methods not mixed up by getters
+			FieldBuilder fieldBuilder = module.DefineInitializedData ("GlobalField", new byte[4], FieldAttributes.Public);
+
+			MethodBuilder method = module.DefinePInvokeMethod ("printf", "libc.so",
+				MethodAttributes.PinvokeImpl | MethodAttributes.Static | MethodAttributes.Public,
+				CallingConventions.Standard, typeof (void), new Type [] { typeof (string) }, CallingConvention.Winapi,
+				CharSet.Auto);
+			method.SetImplementationFlags (MethodImplAttributes.PreserveSig |
+										   method.GetMethodImplementationFlags ());
+
+			module.CreateGlobalFunctions ();
+
+			// Make sure method is defined, but field is not
+			Assert.AreEqual (1, module.GetMethods (BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance).Length);
+		}
+
+		[Test]
+		public void GetFieldsBeforeInstantiation ()
+		{
+			AssemblyBuilder assm = AssemblyBuilder.DefineDynamicAssembly (new AssemblyName ("Name"), AssemblyBuilderAccess.Run);
+			ModuleBuilder module = assm.DefineDynamicModule ("Module");
+			FieldBuilder fieldBuilder = module.DefineInitializedData ("GlobalField", new byte[4], FieldAttributes.Public);
+			module.CreateGlobalFunctions ();
+
+			var fieldG = module.GetField (fieldBuilder.Name);
+			Assert.IsNotNull (fieldG);
+			Assert.AreEqual (1, module.GetFields (BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance).Length);
+		}
+
+		[Test]
+		public void GetCustomAttributesBeforeInstantiation ()
+		{
+			AssemblyBuilder assm = AssemblyBuilder.DefineDynamicAssembly (new AssemblyName ("Name"), AssemblyBuilderAccess.Run);
+			ModuleBuilder module = assm.DefineDynamicModule ("Module");
+			module.CreateGlobalFunctions ();
+
+			ConstructorInfo ctor = typeof(MyAttribute).GetConstructor (new Type [] {typeof(String)});
+			ctor.GetHashCode ();
+			CustomAttributeBuilder cab = new CustomAttributeBuilder (ctor, new object [] {"hi"});
+			module.SetCustomAttribute (cab);
+
+			Assert.AreEqual (1, module.GetCustomAttributes (false).Length);
+			Assert.AreEqual (typeof (MyAttribute), ((MyAttribute) module.GetCustomAttributes (false)[0]).GetType ());
+			Assert.AreEqual ("hi", ((MyAttribute) module.GetCustomAttributes (false)[0]).Contents);
+		}
+
+		[Test]
+		public void GetCustomAttributesIgnoresArg ()
+		{
+			AssemblyBuilder assm = AssemblyBuilder.DefineDynamicAssembly (new AssemblyName ("Name"), AssemblyBuilderAccess.Run);
+			ModuleBuilder module = assm.DefineDynamicModule ("Module");
+			module.CreateGlobalFunctions ();
+
+			ConstructorInfo ctor = typeof(MyAttribute).GetConstructor (new Type [] {typeof(String)});
+			ctor.GetHashCode ();
+			CustomAttributeBuilder cab = new CustomAttributeBuilder (ctor, new object [] {"hi"});
+			module.SetCustomAttribute (cab);
+
+			var first = module.GetCustomAttributes (false);
+			var second = module.GetCustomAttributes (true);
+
+			Assert.AreEqual (first.Length, second.Length);
+
+			for (int i=0; i < first.Length; i++)
+				Assert.AreEqual (first [i].GetType (), second [i].GetType ());
+
+			Assert.AreEqual ("hi", ((MyAttribute) first [0]).Contents);
+			Assert.AreEqual ("hi", ((MyAttribute) second [0]).Contents);
+		}
+
+		[Test]
+		public void GetCustomAttributesThrowsUnbakedAttributeType ()
+		{
+			AssemblyBuilder assm = AssemblyBuilder.DefineDynamicAssembly (new AssemblyName ("Name"), AssemblyBuilderAccess.Run);
+			ModuleBuilder module = assm.DefineDynamicModule ("Module");
+			TypeBuilder tb = module.DefineType ("foo");
+			module.CreateGlobalFunctions ();
+
+			ConstructorInfo ctor = typeof(MyAttribute).GetConstructor (new Type [] {typeof(String)});
+			ctor.GetHashCode ();
+			CustomAttributeBuilder cab = new CustomAttributeBuilder (ctor, new object [] {"hi"});
+			module.SetCustomAttribute (cab);
+
+			try {
+				module.GetCustomAttributes (tb, false);
+			} 
+			catch (InvalidOperationException e) {
+				// Correct behavior
+				return;
+			}
+
+			Assert.Fail ("Supposed to throw");
+		}
+
+		[Test]
+		public void GetExternalTypeBuilderCAttr ()
+		{
+			AssemblyBuilder assm = AssemblyBuilder.DefineDynamicAssembly (new AssemblyName ("Name"), AssemblyBuilderAccess.Run);
+			ModuleBuilder module = assm.DefineDynamicModule ("Module");
+
+			ModuleBuilder module_two = assm.DefineDynamicModule ("ModuleTwo");
+			TypeBuilder tb = module_two.DefineType ("foo");
+
+			ConstructorInfo ctor = tb.DefineConstructor (MethodAttributes.Public, CallingConventions.Standard, Type.EmptyTypes);
+			CustomAttributeBuilder cab = new CustomAttributeBuilder (ctor, Array.Empty<object> ());
+
+			// Set the custom attribute to have a type builder from another module
+			module.SetCustomAttribute (cab);
+
+			module.CreateGlobalFunctions ();
+
+			try {
+				module.GetCustomAttributes (false);
+			} 
+			catch (NotSupportedException e) {
+				// Correct behavior
+				return;
+			}
+			Assert.Fail ("Supposed to throw");
+		}
+
+		[Test]
+		public void GetFieldsNoGlobalType ()
+		{
+			AssemblyBuilder assm = AssemblyBuilder.DefineDynamicAssembly (new AssemblyName ("Name"), AssemblyBuilderAccess.Run);
+			ModuleBuilder module = assm.DefineDynamicModule ("Module");
+			FieldBuilder fieldBuilder = module.DefineInitializedData ("GlobalField", new byte[4], FieldAttributes.Public);
+
+			try {
+				module.GetFields (BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+			} 
+			catch (InvalidOperationException e) {
+				// Correct behavior
+				return;
+			}
+			Assert.Fail ("Supposed to throw");
+		}
+
+		[Test]
+		public void GetFieldNoGlobalType ()
+		{
+			AssemblyBuilder assm = AssemblyBuilder.DefineDynamicAssembly (new AssemblyName ("Name"), AssemblyBuilderAccess.Run);
+			ModuleBuilder module = assm.DefineDynamicModule ("Module");
+			FieldBuilder fieldBuilder = module.DefineInitializedData ("GlobalField", new byte[4], FieldAttributes.Public);
+
+			try {
+				module.GetField (fieldBuilder.Name);
+			} 
+			catch (InvalidOperationException e) {
+				// Correct behavior
+				return;
+			}
+			Assert.Fail ("Supposed to throw");
+		}
+
+		[Test]
+		public void GetMethodsNoGlobalType ()
+		{
+			AssemblyBuilder assm = AssemblyBuilder.DefineDynamicAssembly (new AssemblyName ("Name"), AssemblyBuilderAccess.Run);
+			ModuleBuilder module = assm.DefineDynamicModule ("Module");
+			FieldBuilder fieldBuilder = module.DefineInitializedData ("GlobalField", new byte[4], FieldAttributes.Public);
+
+			MethodBuilder method = module.DefinePInvokeMethod ("printf", "libc.so",
+															  MethodAttributes.PinvokeImpl | MethodAttributes.Static | MethodAttributes.Public,
+															  CallingConventions.Standard, typeof (void), new Type [] { typeof (string) }, CallingConvention.Winapi,
+															  CharSet.Auto);
+			method.SetImplementationFlags (MethodImplAttributes.PreserveSig |
+										   method.GetMethodImplementationFlags ());
+
+			try {
+				module.GetMethods (BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+			} 
+			catch (InvalidOperationException e) {
+				// Correct behavior
+				return;
+			}
+			Assert.Fail ("Supposed to throw");
+		}
+
+		[Test]
+		public void GetMetadataToken ()
+		{
+			AssemblyBuilder assm = AssemblyBuilder.DefineDynamicAssembly (new AssemblyName ("Name"), AssemblyBuilderAccess.Run);
+			ModuleBuilder module = assm.DefineDynamicModule ("Module");
+			module.CreateGlobalFunctions ();
+			Assert.AreEqual (0, module.MetadataToken);
+		}
+
 	}
 }

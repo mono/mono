@@ -55,7 +55,6 @@ using System.Runtime.InteropServices;
 [assembly: ComCompatibleVersion (1, 0, 3300, 0)]
 
 	[assembly: AssemblyDelaySign (true)]
-	[assembly: AssemblyKeyFile("../ecma.pub")]
 
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 [assembly: CLSCompliant (false)]

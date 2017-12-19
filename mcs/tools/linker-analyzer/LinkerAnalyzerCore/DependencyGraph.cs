@@ -39,14 +39,14 @@ namespace LinkerAnalyzer.Core
 		{
 			Console.WriteLine ("Loading dependency tree from: {0}", filename);
 
-			using (var fileStream = File.OpenRead (filename))
-			using (var zipStream = new GZipStream (fileStream, CompressionMode.Decompress)) {
-				try {
+			try {
+				using (var fileStream = File.OpenRead (filename))
+				using (var zipStream = new GZipStream (fileStream, CompressionMode.Decompress)) {
 					Load (zipStream);
-				} catch (Exception) {
-					Console.WriteLine ("Unable to open and read the dependecies.");
-					Environment.Exit (1);
 				}
+			} catch (Exception) {
+				Console.WriteLine ("Unable to open and read the dependecies.");
+				Environment.Exit (1);
 			}
 		}
 
@@ -113,6 +113,29 @@ namespace LinkerAnalyzer.Core
 		public VertexData Vertex (int index)
 		{
 			return vertices [index];
+		}
+
+		IEnumerable<Tuple<VertexData, int>> AddDependencies (VertexData vertex, HashSet<int> reachedVertices, int depth)
+		{
+			reachedVertices.Add (vertex.index);
+			yield return new Tuple<VertexData, int> (vertex, depth);
+
+			if (vertex.parentIndexes == null)
+				yield break;
+
+			foreach (var pi in vertex.parentIndexes) {
+				var parent = Vertex (pi);
+				if (reachedVertices.Contains (parent.index))
+					continue;
+
+				foreach (var d in AddDependencies (parent, reachedVertices, depth + 1))
+					yield return d;
+			}
+		}
+
+		public List<Tuple<VertexData, int>> GetAllDependencies (VertexData vertex)
+		{
+			return new List<Tuple<VertexData, int>> (AddDependencies (vertex, new HashSet<int> (), 0));
 		}
 	}
 }

@@ -875,7 +875,7 @@ TextWriter sw = Console.Out;
 			if (IriParsing)	{
 				Assert.AreEqual ("/dir/subdir/file", uri.AbsolutePath, "AbsolutePath");
 				Assert.AreEqual ("file://host/dir/subdir/file?this-is-not-a-query#but-this-is-a-fragment", uri.AbsoluteUri, "AbsoluteUri");
-				Assert.AreEqual (isWin32 ? "\\\\host\\dir\\subdir\\file" : "/dir/subdir/file", uri.LocalPath, "LocalPath");
+				Assert.AreEqual ("\\\\host\\dir\\subdir\\file", uri.LocalPath, "LocalPath");
 				Assert.AreEqual ("/dir/subdir/file?this-is-not-a-query", uri.PathAndQuery, "PathAndQuery");
 				Assert.AreEqual ("?this-is-not-a-query", uri.Query, "Query");
 				Assert.AreEqual ("file", uri.Segments [3], "Segments [3]");

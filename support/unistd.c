@@ -21,8 +21,8 @@
 #include <limits.h>
 #include <string.h>     /* for swab(3) on Mac OS X */
 
+#include "mph.h" /* Don't remove or move after map.h! Works around issues with Android SDK unified headers */
 #include "map.h"
-#include "mph.h"
 
 G_BEGIN_DECLS
 
@@ -230,7 +230,7 @@ Mono_Posix_Syscall_setdomainname (const char *name, mph_size_t len)
 /* Android implements truncate, but doesn't declare it.
  * Result is a warning during compilation, so skip it.
  */
-#ifndef PLATFORM_ANDROID
+#ifndef HOST_ANDROID
 gint32
 Mono_Posix_Syscall_truncate (const char *path, mph_off_t length)
 {

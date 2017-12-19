@@ -416,7 +416,7 @@ public partial class CryptoConfig {
 		unresolved_algorithms.Add (nameECDsa_2, defaultECDsa);
 		unresolved_algorithms.Add (nameECDsa_3, defaultECDsa);
 
-#if MONODROID
+#if MONODROID || XAMARIN_MODERN 
 		algorithms.Add (nameSHA1Cng, defaultSHA1);
 		algorithms.Add (nameSHA256Cng, defaultSHA256);
 		algorithms.Add (nameSHA256Provider, defaultSHA256);

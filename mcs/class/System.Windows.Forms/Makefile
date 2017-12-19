@@ -4,6 +4,7 @@ include ../../build/rules.make
 LIBRARY = System.Windows.Forms.dll
 
 LIB_REFS = System System.Xml System.Drawing Accessibility System.Data Mono.Posix Mono.WebBrowser System.Configuration System.Runtime.Serialization.Formatters.Soap
+KEYFILE = ../ecma.pub
 LIB_MCS_FLAGS = /unsafe \
 	@System.Windows.Forms.dll.resources \
 	-nowarn:618,612,809
@@ -13,7 +14,8 @@ LIB_MCS_FLAGS += /define:GENERATING_RESOURCES
 endif
 
 RESX_RESOURCES = \
-	resources/keyboards.resources
+	resources/keyboards.resources \
+        resources/System.Windows.Forms.resources
 
 CLEAN_FILES += $(RESX_RESOURCES)
 
@@ -133,4 +135,4 @@ simple-test.exe: Test/simple/Program.cs $(topdir)/class/lib/$(PROFILE)/System.Wi
 	$(CSCOMPILE) -out:$@ Test/simple/Program.cs -r:$(topdir)/class/lib/$(PROFILE)/System.Windows.Forms.dll
 
 test-simple: simple-test.exe
-	$(TEST_RUNTIME) simple-test.exe
+	$(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) simple-test.exe

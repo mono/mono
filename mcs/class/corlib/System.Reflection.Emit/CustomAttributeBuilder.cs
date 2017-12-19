@@ -46,6 +46,11 @@ namespace System.Reflection.Emit {
 	public class CustomAttributeBuilder : _CustomAttributeBuilder {
 		ConstructorInfo ctor;
 		byte[] data;
+		object [] args;
+		PropertyInfo [] namedProperties;
+		object [] propertyValues;
+		FieldInfo [] namedFields;
+		object [] fieldValues;
 
 		internal ConstructorInfo Ctor {
 			get {return ctor;}
@@ -57,10 +62,27 @@ namespace System.Reflection.Emit {
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern byte[] GetBlob(Assembly asmb, ConstructorInfo con, object[] constructorArgs, PropertyInfo[] namedProperties, object[] propertyValues, FieldInfo[] namedFields, object[] fieldValues);
-		
-		internal CustomAttributeBuilder( ConstructorInfo con, byte[] cdata) {
+
+		internal object Invoke ()
+		{
+			object result = ctor.Invoke (args);
+
+			for (int i=0; i < namedFields.Length; i++)
+				namedFields [i].SetValue (result, fieldValues [i]);
+
+			for (int i=0; i < namedProperties.Length; i++)
+				namedProperties [i].SetValue (result, propertyValues [i]);
+
+			return result;
+		}
+
+		internal CustomAttributeBuilder( ConstructorInfo con, byte[] binaryAttribute) {
+			if (con == null)
+				throw new ArgumentNullException ("con");
+			if (binaryAttribute == null)
+				throw new ArgumentNullException ("binaryAttribute");
 			ctor = con;
-			data = (byte[])cdata.Clone ();
+			data = (byte[])binaryAttribute.Clone ();
 			/* should we check that the user supplied data is correct? */
 		}
 		
@@ -136,6 +158,12 @@ namespace System.Reflection.Emit {
 				FieldInfo [] namedFields, object [] fieldValues)
 		{
 			ctor = con;
+			args = constructorArgs;
+			this.namedProperties = namedProperties;
+			this.propertyValues = propertyValues;
+			this.namedFields = namedFields;
+			this.fieldValues = fieldValues;
+
 			if (con == null)
 				throw new ArgumentNullException ("con");
 			if (constructorArgs == null)

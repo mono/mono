@@ -88,8 +88,8 @@ static size_t alloc_limit;
 void
 account_mem (MonoMemAccountType type, ssize_t size)
 {
-	InterlockedAddP (&allocation_count [type], size);
-	InterlockedAddP (&total_allocation_count, size);
+	mono_atomic_fetch_add_word (&allocation_count [type], size);
+	mono_atomic_fetch_add_word (&total_allocation_count, size);
 }
 
 void
@@ -380,13 +380,19 @@ mono_valloc_granule (void)
 void*
 mono_valloc (void *addr, size_t length, int flags, MonoMemAccountType type)
 {
-	return g_malloc (length);
+	g_assert (addr == NULL);
+	return mono_valloc_aligned (length, mono_pagesize (), flags, type);
 }
 
 void*
 mono_valloc_aligned (size_t size, size_t alignment, int flags, MonoMemAccountType type)
 {
-	g_assert_not_reached ();
+	void *res = NULL;
+	if (posix_memalign (&res, alignment, size))
+		return NULL;
+
+	memset (res, 0, size);
+	return res;
 }
 
 #define HAVE_VALLOC_ALIGNED

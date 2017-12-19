@@ -22,7 +22,7 @@ namespace System.ServiceModel.Security.Tokens
     class LogonTokenCache : TimeBoundedCache
     {
         const int lowWaterMarkFactor = 75;
-        const int saltSize = 4;
+        const int saltSize = 256;
 
         TimeSpan cachedLogonTokenLifetime;
         RNGCryptoServiceProvider random;
@@ -99,14 +99,14 @@ namespace System.ServiceModel.Security.Tokens
         public LogonToken(string userName, string password, byte[] salt, ReadOnlyCollection<IAuthorizationPolicy> authorizationPolicies)
         {
             this.userName = userName;
-            this.passwordHash = ComputeHash(password, salt);
+            this.passwordHash = ComputeHMACSHA256Hash(password, salt);
             this.salt = salt;
             this.authorizationPolicies = System.IdentityModel.SecurityUtils.CloneAuthorizationPoliciesIfNecessary(authorizationPolicies);
         }
 
         public bool PasswordEquals(string password)
         {
-            byte[] passwordHash = ComputeHash(password, this.salt);
+            byte[] passwordHash = ComputeHMACSHA256Hash(password, this.salt);
             return CryptoHelper.IsEqual(this.passwordHash, passwordHash);
         }
 
@@ -125,21 +125,11 @@ namespace System.ServiceModel.Security.Tokens
             System.IdentityModel.SecurityUtils.DisposeAuthorizationPoliciesIfNecessary(this.authorizationPolicies);
         }
 
-        static byte[] ComputeHash(string password, byte[] salt)
+        static byte[] ComputeHMACSHA256Hash(string password, byte[] key)
         {
-            if (String.IsNullOrEmpty(password))
+            using (HMACSHA256 hmac = new HMACSHA256(key))
             {
-                return salt;
-            }
-            byte[] bytes = Encoding.Unicode.GetBytes(password);
-            int saltSize = salt.Length;
-            for (int i = 0; i < bytes.Length; ++i)
-            {
-                bytes[i] ^= salt[i % saltSize];
-            }
-            using (HashAlgorithm hashAlgorithm = CryptoHelper.NewSha1HashAlgorithm())
-            {
-                return hashAlgorithm.ComputeHash(bytes);
+                return hmac.ComputeHash(Encoding.Unicode.GetBytes(password));
             }
         }
     }

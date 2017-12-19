@@ -78,13 +78,15 @@ typedef struct
 /*------------------------------------------------------*/
 /* use s390_r2-s390_r6 as parm registers                */
 /* s390_r0, s390_r1, s390_r12, s390_r13 used internally */
-/* s390_r8..s390_r11 are used for global regalloc       */
+/* s390_r8..s390_r10 are used for global regalloc       */
+/* -- except for s390_r9 which is used as IMT pointer   */
+/* s390_r11 is sometimes used as the frame pointer      */
 /* s390_r15 is the stack pointer                        */
 /*------------------------------------------------------*/
 
-#define MONO_ARCH_CALLEE_REGS (0xfc)
+#define MONO_ARCH_CALLEE_REGS (0x00fc)
 
-#define MONO_ARCH_CALLEE_SAVED_REGS 0xff80
+#define MONO_ARCH_CALLEE_SAVED_REGS 0xfd00
 
 /*----------------------------------------*/
 /* use s390_f1/s390_f3-s390_f15 as temps  */

@@ -254,7 +254,13 @@ namespace Xamarin.ApiDiff {
 		{
 			if (source.Elements ("attributes").SelectMany (a => a.Elements ("attribute")).Any (c => c.Attribute ("name")?.Value == "System.ObsoleteAttribute"))
 				return;
-			Output.Write ("<h3>Removed Type <span class='breaking' data-is-breaking>{0}.{1}</span></h3>", State.Namespace, GetTypeName (source));
+
+      string name = State.Namespace + "." + GetTypeName (source);
+
+			if (State.IgnoreRemoved.Any (re => re.IsMatch (name)))
+				return;
+
+			Output.Write ("<h3>Removed Type <span class='breaking' data-is-breaking>{0}</span></h3>", name);
 		}
 
 		public virtual string GetTypeName (XElement type)

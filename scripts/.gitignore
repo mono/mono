@@ -11,6 +11,7 @@
 /chktrust
 /cilc
 /crlupdate
+/csi
 /csharp
 /csharp2
 /disco
@@ -86,6 +87,7 @@
 /sgen1
 /signcode
 /csc
+/vbc
 /sn
 /soapsuds
 /sqlmetal

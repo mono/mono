@@ -44,6 +44,7 @@ Ankh.NoLoad
 # Tooling
 _ReSharper*/
 *.resharper
+.idea/*
 [Tt]est[Rr]esult*
 *.orig
 *.rej

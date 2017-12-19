@@ -173,7 +173,11 @@ namespace System.Threading
 #if MONO
         protected static int WaitHelper(IntPtr[] waitHandles, bool waitAll, int millisecondsTimeout)
         {
-            throw new NotImplementedException ();
+            unsafe {
+                fixed (IntPtr * pWaitHandles = waitHandles) {
+                    return System.Threading.WaitHandle.Wait_internal (pWaitHandles, waitHandles.Length, waitAll, millisecondsTimeout);
+                }
+            }
         }
 #else
         [MethodImplAttribute(MethodImplOptions.InternalCall)]

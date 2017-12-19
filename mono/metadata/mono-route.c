@@ -7,9 +7,9 @@
  *   Ben Woods (woodsb02@gmail.com)
  */
 
-#if defined(PLATFORM_MACOSX) || defined(PLATFORM_BSD)
-
 #include <config.h>
+
+#if defined(HOST_DARWIN) || defined(HOST_BSD)
 #include <sys/socket.h>
 #include <net/if.h>
 #include <net/if_dl.h>
@@ -77,8 +77,7 @@ extern MonoBoolean ves_icall_System_Net_NetworkInformation_MacOsIPInterfacePrope
 	}
 
 	*gw_addr_list = mono_array_new_checked (domain, mono_get_string_class (), num_gws, &error);
-	if (!is_ok (&error))
-		goto leave;
+	goto_if_nok (&error, leave);
 
 	for (next = buf; next < lim; next += rtm->rtm_msglen) {
 		rtm = (struct rt_msghdr *)next;
@@ -105,8 +104,7 @@ extern MonoBoolean ves_icall_System_Net_NetworkInformation_MacOsIPInterfacePrope
 			continue;
 
 		addr_string = mono_string_new_checked (domain, addr, &error);
-		if (!is_ok (&error))
-			goto leave;
+		goto_if_nok (&error, leave);
 		mono_array_setref (*gw_addr_list, gwnum, addr_string);
 		gwnum++;
 	}
@@ -134,4 +132,4 @@ in_addr_t gateway_from_rtm(struct rt_msghdr *rtm)
 	return 0;
 }
 
-#endif /* #if defined(PLATFORM_MACOSX) || defined(PLATFORM_BSD) */
+#endif /* #if defined(HOST_DARWIN) || defined(HOST_BSD) */

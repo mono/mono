@@ -35,6 +35,8 @@ namespace System.Security.Cryptography {
             throw new NotImplementedException ();
         }
 
+        public CngAlgorithm HashAlgorithm { get; set; }
+
         public CngKey Key {
             get {
                 throw new NotImplementedException ();
@@ -50,6 +52,38 @@ namespace System.Security.Cryptography {
         }
 
         public override bool VerifyHash(byte[] hash, byte[] signature) {
+            throw new NotImplementedException();
+        }
+
+        public void FromXmlString (string xml, ECKeyXmlFormat format) {
+            throw new NotImplementedException();
+        }
+
+        public byte[] SignData (byte[] data) {
+            throw new NotImplementedException();
+        }
+
+        public byte[] SignData (System.IO.Stream data) {
+            throw new NotImplementedException();
+        }
+
+        public byte[] SignData (byte[] data, int offset, int count) {
+            throw new NotImplementedException();
+        }
+
+        public string ToXmlString (ECKeyXmlFormat format) {
+            throw new NotImplementedException();
+        }
+
+        public bool VerifyData (byte[] data, byte[] signature) {
+            throw new NotImplementedException();
+        }
+
+        public bool VerifyData (System.IO.Stream data, byte[] signature) {
+            throw new NotImplementedException();
+        }
+
+        public bool VerifyData (byte[] data, int offset, int count, byte[] signature) {
             throw new NotImplementedException();
         }
 #else

@@ -124,6 +124,7 @@ sub process_function {
     my $body = '';
     my $returns = '';
     my $prototype = '';
+    my $codeblock = 'false';
 
     while (<$file>) {
 
@@ -156,7 +157,6 @@ sub process_function {
             if (defined($deprecated)) {
                 process_formatting(\$deprecated, $file_path, $.);
             }
-            $body =~ s/\n/ /g;
 
             if (exists($docs->{body}->{$name})) {
                 my $origin = $docs->{origin}->{$name};
@@ -180,8 +180,16 @@ sub process_function {
         chomp;
         s/^ +\*//;
 
-        # Replace blank lines with paragraph breaks.
-        $_ = '<p>' if /^\s*$/;
+        if (/\s*\\code$/) {
+            $codeblock = 'true';
+        } elsif (/\s*\\endcode$/) {
+            $codeblock = 'false';
+        }
+
+        # Replace blank lines with paragraph breaks if we're not in a code block.
+        if (/^\s*$/) {
+            $_ = '<p>' if $codeblock eq 'false';
+        }
 
         if ($section == $PARAMETER_SECTION) {
             if (/\s*\\param +(\w+)(.*)/) {
@@ -210,7 +218,7 @@ sub process_function {
                 $returns = "\t$_\n";
                 $section = $RETURN_SECTION;
             } else {
-                $body .= "\n\t$_";
+                $body .= "\n$_";
             }
         } elsif ($section == $RETURN_SECTION) {
             $returns .= "\n\t$_";
@@ -226,6 +234,12 @@ sub process_function {
 sub process_formatting {
     my ($content, $file_path, $current_line) = @_;
     $_ = $$content;
+
+    # General formatting
+    s{\\b +(\w+)}{<strong>$1</strong>}g;
+    s{\\a +(\w+)}{<i>$1</i>}g;
+    s{\\e +(\w+)}{<i>$1</i>}g;
+    s{\\em +(\w+)}{<i>$1</i>}g;
 
     # Constants
     s{NULL}{<code>NULL</code>}g;
@@ -243,6 +257,8 @@ sub process_formatting {
     warn "$file_path:$current_line: Old-style monodoc notation '`code`' used\n"
         if s{\`((?!api:)[:.\w\*]+)\`}{<code>$1</code>}g && $WARNINGS;
     s{\\c +(\S+(?<![.,:;]))}{<code>$1</code>}g;
+    s{\\code}{<pre><code class="mapi-codeblock">}g;
+    s{\\endcode}{</code></pre>}g;
 
     $$content = $_;
 }

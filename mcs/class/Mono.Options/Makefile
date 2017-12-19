@@ -8,6 +8,7 @@ LIBRARY_PACKAGE = none
 NO_INSTALL = yes
 
 LIB_REFS = System
+KEYFILE = ../mono.pub
 LIB_MCS_FLAGS =
 TEST_MCS_FLAGS =
 TEST_LIB_REFS = Mono.Posix System System.Core

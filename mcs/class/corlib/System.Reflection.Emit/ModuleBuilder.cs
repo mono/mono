@@ -159,8 +159,8 @@ namespace System.Reflection.Emit {
 			if (data == null)
 				throw new ArgumentNullException ("data");
 
-			FieldBuilder fb = DefineUninitializedData (name, data.Length, 
-													   attributes | FieldAttributes.HasFieldRVA);
+			var maskedAttributes = attributes & ~FieldAttributes.ReservedMask;
+			FieldBuilder fb = DefineDataImpl (name, data.Length, maskedAttributes | FieldAttributes.HasFieldRVA);
 			fb.SetRVAData (data);
 
 			return fb;
@@ -168,12 +168,19 @@ namespace System.Reflection.Emit {
 
 		public FieldBuilder DefineUninitializedData (string name, int size, FieldAttributes attributes)
 		{
+			return DefineDataImpl (name, size, attributes & ~FieldAttributes.ReservedMask);
+		}
+
+		private FieldBuilder DefineDataImpl (string name, int size, FieldAttributes attributes)
+		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
+			if (name == String.Empty)
+				throw new ArgumentException ("name cannot be empty", "name");
 			if (global_type_created != null)
 				throw new InvalidOperationException ("global fields already created");
-			if ((size <= 0) || (size > 0x3f0000))
-				throw new ArgumentException ("size", "Data size must be > 0 and < 0x3f0000");
+			if ((size <= 0) || (size >= 0x3f0000))
+				throw new ArgumentException ("Data size must be > 0 and < 0x3f0000", null as string);
 
 			CreateGlobalType ();
 
@@ -1162,32 +1169,55 @@ namespace System.Reflection.Emit {
 
 		public override object[] GetCustomAttributes (bool inherit)
 		{
-			return base.GetCustomAttributes (inherit);
+			return GetCustomAttributes (null, inherit);
 		}
 
 		public override object[] GetCustomAttributes (Type attributeType, bool inherit)
 		{
-			return base.GetCustomAttributes (attributeType, inherit);
+			if (cattrs == null || cattrs.Length == 0)
+				return Array.Empty<object> ();
+
+			if (attributeType is TypeBuilder)
+				throw new InvalidOperationException ("First argument to GetCustomAttributes can't be a TypeBuilder");
+
+			List<object> results = new List<object> ();
+			for (int i=0; i < cattrs.Length; i++) {
+				Type t = cattrs [i].Ctor.GetType ();
+
+				if (t is TypeBuilder)
+					throw new InvalidOperationException ("Can't construct custom attribute for TypeBuilder type");
+
+				if (attributeType == null || attributeType.IsAssignableFrom (t))
+					results.Add (cattrs [i].Invoke ());
+			}
+
+			return results.ToArray ();
 		}
 
 		public override FieldInfo GetField (string name, BindingFlags bindingAttr)
 		{
-			return base.GetField (name, bindingAttr);
+			if (global_type_created == null)
+				throw new InvalidOperationException ("Module-level fields cannot be retrieved until after the CreateGlobalFunctions method has been called for the module.");
+			return global_type_created.GetField (name, bindingAttr);
 		}
 
 		public override FieldInfo[] GetFields (BindingFlags bindingFlags)
 		{
-			return base.GetFields (bindingFlags);
+			if (global_type_created == null)
+				throw new InvalidOperationException ("Module-level fields cannot be retrieved until after the CreateGlobalFunctions method has been called for the module.");
+			return global_type_created.GetFields (bindingFlags);
 		}
 
 		public override MethodInfo[] GetMethods (BindingFlags bindingFlags)
 		{
-			return base.GetMethods (bindingFlags);
+			if (global_type_created == null)
+				throw new InvalidOperationException ("Module-level methods cannot be retrieved until after the CreateGlobalFunctions method has been called for the module.");
+			return global_type_created.GetMethods (bindingFlags);
 		}
 
 		public override int MetadataToken {
 			get {
-				return base.MetadataToken;
+				return get_MetadataToken (this);
 			}
 		}
 	}

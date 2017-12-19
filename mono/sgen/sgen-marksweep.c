@@ -148,7 +148,7 @@ typedef struct {
 		first = FALSE;						\
 		while (!(tmp_mark_word & (ONE_P << (b)))) {		\
 			old_mark_word = tmp_mark_word;			\
-			tmp_mark_word = InterlockedCompareExchange ((volatile gint32*)&(bl)->mark_words [w], old_mark_word | (ONE_P << (b)), old_mark_word); \
+			tmp_mark_word = mono_atomic_cas_i32 ((volatile gint32*)&(bl)->mark_words [w], old_mark_word | (ONE_P << (b)), old_mark_word); \
 			if (tmp_mark_word == old_mark_word) {		\
 				first = TRUE;				\
 				break;					\
@@ -189,10 +189,15 @@ enum {
 	SWEEP_STATE_COMPACTING
 };
 
+typedef enum {
+	SGEN_SWEEP_SERIAL = FALSE,
+	SGEN_SWEEP_CONCURRENT = TRUE,
+} SgenSweepMode;
+
 static volatile int sweep_state = SWEEP_STATE_SWEPT;
 
 static gboolean concurrent_mark;
-static gboolean concurrent_sweep = TRUE;
+static gboolean concurrent_sweep = DEFAULT_SWEEP_MODE;
 
 int sweep_pool_context = -1;
 
@@ -1220,7 +1225,7 @@ major_get_and_reset_num_major_objects_marked (void)
 #endif
 
 /* gcc 4.2.1 from xcode4 crashes on sgen_card_table_get_card_address () when this is enabled */
-#if defined(PLATFORM_MACOSX)
+#if defined(HOST_DARWIN)
 #if MONO_GNUC_VERSION <= 40300
 #undef PREFETCH_CARDS
 #endif
@@ -1405,6 +1410,7 @@ mark_pinned_objects_in_block (MSBlockInfo *block, size_t first_entry, size_t las
 			continue;
 		MS_MARK_OBJECT_AND_ENQUEUE (obj, sgen_obj_get_descriptor (obj), block, queue);
 		sgen_pin_stats_register_object (obj, GENERATION_OLD);
+		sgen_client_pinned_major_heap_object (obj);
 		last_index = index;
 	}
 
@@ -2162,7 +2168,7 @@ major_free_swept_blocks (size_t section_reserve)
 {
 	SGEN_ASSERT (0, sweep_state == SWEEP_STATE_SWEPT, "Sweeping must have finished before freeing blocks");
 
-#if defined(HOST_WIN32) || defined(HOST_ORBIS)
+#if defined(HOST_WIN32) || defined(HOST_ORBIS) || defined (HOST_WASM)
 		/*
 		 * sgen_free_os_memory () asserts in mono_vfree () because windows doesn't like freeing the middle of
 		 * a VirtualAlloc ()-ed block.

@@ -46,7 +46,6 @@ namespace System.Windows.Forms
 
 		public DataGridViewRow ()
 		{
-			cells = new DataGridViewCellCollection(this);
 			minimumHeight = 3;
 			height = -1;
 			explicit_height = -1;
@@ -64,7 +63,11 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public DataGridViewCellCollection Cells {
-			get { return cells; }
+			get {
+				if (cells == null)
+					cells = CreateCellsInstance ();
+				return cells;
+			}
 		}
 
 		[DefaultValue (null)]
@@ -356,10 +359,10 @@ namespace System.Windows.Forms
 			row.HeaderCell = (DataGridViewRowHeaderCell)HeaderCell.Clone ();
 			row.SetIndex (-1);
 			
-			row.cells = new DataGridViewCellCollection (row);
+			row.cells = null;
 			
-			foreach (DataGridViewCell cell in cells)
-				row.cells.Add (cell.Clone () as DataGridViewCell);
+			foreach (DataGridViewCell cell in Cells)
+				row.Cells.Add (cell.Clone () as DataGridViewCell);
 
 			row.SetDataGridView (null);
 
@@ -374,14 +377,13 @@ namespace System.Windows.Forms
 			if (dataGridView.Rows.Contains(this)) {
 				throw new InvalidOperationException("The row already exists in the DataGridView.");
 			}
-			DataGridViewCellCollection newCellCollection = new DataGridViewCellCollection(this);
+			Cells.Clear ();
 			foreach (DataGridViewColumn column in dataGridView.Columns) {
 				if (column.CellTemplate == null) {
 					throw new InvalidOperationException("Cell template not set in column: " + column.Index.ToString() + ".");
 				}
-				newCellCollection.Add((DataGridViewCell) column.CellTemplate.Clone());
+				Cells.Add((DataGridViewCell) column.CellTemplate.Clone());
 			}
-			cells = newCellCollection;
 		}
 
 		public void CreateCells (DataGridView dataGridView, params object[] values)
@@ -391,7 +393,7 @@ namespace System.Windows.Forms
 			}
 			CreateCells(dataGridView);
 			for (int i = 0; i < values.Length; i++) {
-				cells[i].Value = values[i];
+				Cells[i].Value = values[i];
 			}
 		}
 
@@ -482,11 +484,11 @@ namespace System.Windows.Forms
 			/////// COLUMNAS //////////
 			for (int i = 0; i < values.Length; i++) {
 				DataGridViewCell cell;
-				if (cells.Count > i) {
-					cell = cells [i];
+				if (Cells.Count > i) {
+					cell = Cells [i];
 				} else {
 					cell = new DataGridViewTextBoxCell ();
-					cells.Add (cell);
+					Cells.Add (cell);
 				}
 				cell.Value = values[i];
 			}
@@ -508,8 +510,7 @@ namespace System.Windows.Forms
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual DataGridViewCellCollection CreateCellsInstance ()
 		{
-			cells = new DataGridViewCellCollection(this);
-			return cells;
+			return new DataGridViewCellCollection(this);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -556,6 +557,9 @@ namespace System.Windows.Forms
 				bounds.X += DataGridView.RowHeadersWidth;
 				bounds.Width -= DataGridView.RowHeadersWidth;
 			}
+
+			bool singleVerticalBorderAdded = !DataGridView.RowHeadersVisible;
+			bool singleHorizontalBorderAdded = !DataGridView.ColumnHeadersVisible;
 			
 			for (int i = DataGridView.first_col_index; i < sortedColumns.Count; i++) {
 				DataGridViewColumn col = sortedColumns[i];
@@ -592,7 +596,7 @@ namespace System.Windows.Forms
 				}
 
 				DataGridViewAdvancedBorderStyle intermediateBorderStyle = (DataGridViewAdvancedBorderStyle)((ICloneable)DataGridView.AdvancedCellBorderStyle).Clone ();
-				DataGridViewAdvancedBorderStyle borderStyle = cell.AdjustCellBorderStyle (DataGridView.AdvancedCellBorderStyle, intermediateBorderStyle, true, true, cell.ColumnIndex == 0, cell.RowIndex == 0);
+				DataGridViewAdvancedBorderStyle borderStyle = cell.AdjustCellBorderStyle (DataGridView.AdvancedCellBorderStyle, intermediateBorderStyle, singleVerticalBorderAdded, singleHorizontalBorderAdded, cell.ColumnIndex == 0, cell.RowIndex == 0);
 				DataGridView.OnCellFormattingInternal (new DataGridViewCellFormattingEventArgs (cell.ColumnIndex, cell.RowIndex, value, cell.FormattedValueType, style));
 
 
@@ -614,7 +618,7 @@ namespace System.Windows.Forms
 		{
 			base.SetDataGridView(dataGridView);
 			headerCell.SetDataGridView(dataGridView);
-			foreach (DataGridViewCell cell in cells)
+			foreach (DataGridViewCell cell in Cells)
 				cell.SetDataGridView (dataGridView);
 		}
 

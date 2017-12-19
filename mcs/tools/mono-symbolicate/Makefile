@@ -35,6 +35,10 @@ CHECK_DIFF = @\
 		exit 1; \
 	fi
 
+ifdef MCS_MODE
+CHECK_DIFF = @echo "WARNING: running in mcs mode, tests are specific to roslyn and would fail. Skipping diff check."
+endif
+
 PREPARE_OUTDIR = @\
 	rm -rf $(OUT_DIR); \
 	mkdir -p $(OUT_DIR); \

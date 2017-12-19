@@ -7,6 +7,8 @@ using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Http;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.Remoting.Http
 {
 	//Test for Bug 324362 - SoapFormatter cannot deserialize the same MBR twice
@@ -67,13 +69,14 @@ namespace MonoTests.Remoting.Http
 		[Test]
 		public void Main ()
 		{
-			channel = new HttpChannel (3344);
+			var port = NetworkHelpers.FindFreePort ();
+			channel = new HttpChannel (port);
 			ChannelServices.RegisterChannel (channel);
 			RemotingConfiguration.RegisterWellKnownServiceType
 				(typeof (Bug321420),"Server.soap", WellKnownObjectMode.Singleton);
 			
 			Bug321420 s = (Bug321420) Activator.GetObject (typeof
-				(Bug321420), "http://localhost:3344/Server.soap");
+				(Bug321420), $"http://localhost:{port}/Server.soap");
 			
 			// this works: s.Method ("a", "b");
 			s.Method ("a", "a");
@@ -98,7 +101,7 @@ namespace MonoTests.Remoting.Http
 		public void Main ()
 		{
 			Foo foo = (Foo) Activator.GetObject (typeof (Foo),
-				"http://localhost:4321/Test");
+				$"http://localhost:{server.HttpPort}/Test");
 
 			Bar bar = foo.Login ();
 			if (bar != null)
@@ -142,7 +145,8 @@ namespace MonoTests.Remoting.Http
 			
 			public void Start ()
 			{
-				c = new HttpChannel (4321);
+				HttpPort = NetworkHelpers.FindFreePort ();
+				c = new HttpChannel (HttpPort);
 				ChannelServices.RegisterChannel (c);
 				
 				Type t = typeof(Foo);
@@ -155,6 +159,8 @@ namespace MonoTests.Remoting.Http
 				c.StopListening (null);
 				ChannelServices.UnregisterChannel (c);
 			}
+
+			public int HttpPort { get; private set; }
 		}
 	}
 	
@@ -172,7 +178,7 @@ namespace MonoTests.Remoting.Http
 			ChannelServices.RegisterChannel (channel);
 			MarshalByRefObject obj = (MarshalByRefObject) RemotingServices.Connect (
 				typeof (IFactorial),
-				"http://localhost:60000/MyEndPoint");
+				$"http://localhost:{server.HttpPort}/MyEndPoint");
 			IFactorial cal = (IFactorial) obj;
 			Assert.AreEqual (cal.CalculateFactorial (4), 24);
 		}
@@ -209,7 +215,8 @@ namespace MonoTests.Remoting.Http
 			
 			public void Start ()
 			{
-				c = new HttpChannel (60000);
+				HttpPort = NetworkHelpers.FindFreePort ();
+				c = new HttpChannel (HttpPort);
 				ChannelServices.RegisterChannel (c);
 				
 				Type t = typeof(Calculator);
@@ -222,6 +229,8 @@ namespace MonoTests.Remoting.Http
 				c.StopListening (null);
 				ChannelServices.UnregisterChannel (c);
 			}
+
+			public int HttpPort { get; private set; }
 		}
 		
 		public class Calculator : MarshalByRefObject, IFactorial

@@ -134,6 +134,8 @@ namespace System
 			if (!match) {
 				if (delArgType.IsEnum && Enum.GetUnderlyingType (delArgType) == argType)
 					match = true;
+				else if (argType.IsEnum && Enum.GetUnderlyingType (argType) == delArgType)
+					match = true;
 			}
 
 			return match;
@@ -499,7 +501,7 @@ namespace System
 
 			m = Method;
 
-			return (m != null ? m.GetHashCode () : GetType ().GetHashCode ()) ^ (m_target != null ? m_target.GetHashCode () : 0);
+			return (m != null ? m.GetHashCode () : GetType ().GetHashCode ()) ^ RuntimeHelpers.GetHashCode (m_target);
 		}
 
 		protected virtual MethodInfo GetMethodImpl ()

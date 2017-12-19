@@ -33,7 +33,7 @@ net_profile = net_4_x
 endif
 
 if INSTALL_MONODROID
-build_profiles += monodroid
+build_profiles += monodroid monodroid_tools
 endif
 
 if INSTALL_MONOTOUCH
@@ -72,7 +72,11 @@ if INSTALL_UNREAL
 build_profiles += unreal
 endif
 
-test_profiles = $(build_profiles)
+if INSTALL_WASM
+build_profiles += wasm
+endif
+
+test_profiles = $(filter-out binary_reference_assemblies monodroid_tools,$(build_profiles))
 
 if BUILD_MCS
 
@@ -126,7 +130,7 @@ PLATFORM_PATH_SEPARATOR = :
 endif
 
 # assemblies which are excluded from testing in mcs-compileall below
-VERIFY_TESTS_FILTER =
+VERIFY_TESTS_FILTER = System.Runtime.CompilerServices.Unsafe.dll
 
 if HOST_WIN32
 # Mono.WebBrowser.dll fails to verify on Windows
@@ -142,13 +146,10 @@ endif
 
 # Compile all assemblies with the verifier turned on. Code must be valid but not verifiable.
 # TODO it would be nice to split assemblies without unsafe code to use the verifier with verifiable mode.
-# Skip binary_reference_assemblies because they contain metadata only
 mcs-compileall: mono-wrapper etc/mono/config
 	save_MONO_PATH=$$MONO_PATH; mcs_topdir=`cd $(mcs_topdir) && $(cur_dir_cmd)`; ok=:; \
 	for profile in $(test_profiles); do \
-	  if [ "binary_reference_assemblies" = "$$profile" ]; then \
-          continue; \
-	  elif [ "xbuild_12" = "$$profile" ]; then \
+	  if [ "xbuild_12" = "$$profile" ]; then \
 		  MONO_PATH="$$mcs_topdir/class/lib/$$profile$(PLATFORM_PATH_SEPARATOR)$$mcs_topdir/class/lib/net_4_x$(PLATFORM_PATH_SEPARATOR)$$save_MONO_PATH"; \
 	  elif [ "xbuild_14" = "$$profile" ]; then \
 		  MONO_PATH="$$mcs_topdir/class/lib/$$profile$(PLATFORM_PATH_SEPARATOR)$$mcs_topdir/class/lib/net_4_x$(PLATFORM_PATH_SEPARATOR)$$save_MONO_PATH"; \

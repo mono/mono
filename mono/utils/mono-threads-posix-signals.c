@@ -18,6 +18,10 @@
 #include <errno.h>
 #include <signal.h>
 
+#ifdef HAVE_ANDROID_LEGACY_SIGNAL_INLINES_H
+#include <android/legacy_signal_inlines.h>
+#endif
+
 #include "mono-threads-debug.h"
 
 gint
@@ -62,7 +66,7 @@ signal_add_handler (int signo, void (*handler)(int, siginfo_t *, void *), int fl
 static int
 abort_signal_get (void)
 {
-#if defined(PLATFORM_ANDROID)
+#if defined(HOST_ANDROID)
 	return SIGTTIN;
 #elif defined (SIGRTMIN)
 	static int abort_signum = -1;
@@ -79,7 +83,7 @@ abort_signal_get (void)
 static int
 suspend_signal_get (void)
 {
-#if defined(PLATFORM_ANDROID)
+#if defined(HOST_ANDROID)
 	return SIGPWR;
 #elif defined (SIGRTMIN)
 	static int suspend_signum = -1;
@@ -98,7 +102,7 @@ suspend_signal_get (void)
 static int
 restart_signal_get (void)
 {
-#if defined(PLATFORM_ANDROID)
+#if defined(HOST_ANDROID)
 	return SIGXCPU;
 #elif defined (SIGRTMIN)
 	static int restart_signum = -1;
@@ -244,7 +248,7 @@ mono_threads_suspend_init_signals (void)
 	On 32bits arm Android, signals with values >=32 are not usable as their headers ship a broken sigset_t.
 	See 5005c6f3fbc1da584c6a550281689cc23f59fe6d for more details.
 	*/
-#ifdef PLATFORM_ANDROID
+#ifdef HOST_ANDROID
 	g_assert (suspend_signal_num < 32);
 	g_assert (restart_signal_num < 32);
 	g_assert (abort_signal_num < 32);

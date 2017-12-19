@@ -9,6 +9,7 @@
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
+#include <config.h>
 #include "mono/metadata/mono-mlist.h"
 #include "mono/metadata/appdomain.h"
 #include "mono/metadata/class-internals.h"
@@ -71,7 +72,7 @@ mono_mlist_alloc_checked (MonoObject *data, MonoError *error)
 		monolist_item_vtable = mono_class_vtable (mono_get_root_domain (), klass);
 		g_assert (monolist_item_vtable);
 	}
-	res = (MonoMList*)mono_object_new_fast_checked (monolist_item_vtable, error);
+	res = (MonoMList*)mono_object_new_specific_checked (monolist_item_vtable, error);
 	return_val_if_nok (error, NULL);
 	MONO_OBJECT_SETREF (res, data, data);
 	return res;

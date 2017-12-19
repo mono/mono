@@ -115,12 +115,12 @@ int Mono_Posix_FromRealTimeSignum (int offset, int *r)
 // We can still use atomic.h because that's all inline functions--
 // unless WAPI_NO_ATOMIC_ASM is defined, in which case atomic.h calls linked functions.
 #ifndef WAPI_NO_ATOMIC_ASM
-	#define mph_int_get(p)     InterlockedExchangeAdd ((p), 0)
-	#define mph_int_inc(p)     InterlockedIncrement ((p))
-	#define mph_int_dec_test(p)     (InterlockedDecrement ((p)) == 0)
-	#define mph_int_set(p,n) InterlockedExchange ((p), (n))
+	#define mph_int_get(p)     mono_atomic_fetch_add_i32 ((p), 0)
+	#define mph_int_inc(p)     mono_atomic_inc_i32 ((p))
+	#define mph_int_dec_test(p)     (mono_atomic_dec_i32 ((p)) == 0)
+	#define mph_int_set(p,n) mono_atomic_xchg_i32 ((p), (n))
 	// Pointer, original, new
-	#define mph_int_test_and_set(p,o,n) (o == InterlockedCompareExchange ((p), (n), (o)))
+	#define mph_int_test_and_set(p,o,n) (o == mono_atomic_cas_i32 ((p), (n), (o)))
 #elif GLIB_CHECK_VERSION(2,4,0)
 	#define mph_int_get(p) g_atomic_int_get ((p))
  	#define mph_int_inc(p) do {g_atomic_int_inc ((p));} while (0)
