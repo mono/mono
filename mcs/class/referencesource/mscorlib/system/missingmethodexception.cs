@@ -48,10 +48,19 @@ namespace System {
                 if (ClassName == null) {
                     return base.Message;
                 } else {
+#if MONO
+                    string res = ClassName + "." + MemberName;
+                    if (!string.IsNullOrEmpty(signature))
+                        res = string.Format (CultureInfo.InvariantCulture, signature, res);
+                    if (!string.IsNullOrEmpty(_message))
+                        res += " Due to: " + _message;
+                    return res;
+#else
                     // do any desired fixups to classname here.
                     return Environment.GetResourceString("MissingMethod_Name",
                                                                        ClassName + "." + MemberName +
                                                                        (Signature != null ? " " + FormatSignature(Signature) : ""));
+#endif
                 }
             }
         }
@@ -73,5 +82,17 @@ namespace System {
         // If ClassName != null, Message will construct on the fly using it
         // and the other variables. This allows customization of the
         // format depending on the language environment.
+#if MONO
+        // Called from the EE
+        private MissingMethodException(String className, String methodName, String signature, String message) : base (message)
+        {
+            ClassName   = className;
+            MemberName  = methodName;
+            this.signature = signature;
+        }
+
+		[NonSerialized]
+        string signature;
+#endif
     }
 }

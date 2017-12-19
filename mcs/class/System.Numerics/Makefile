@@ -9,6 +9,7 @@ LIB_MCS_FLAGS = /unsafe
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 XTEST_LIB_REFS = System Facades/System.Threading.Tasks Facades/System.Runtime.InteropServices.RuntimeInformation System.Core System.Numerics.Vectors Microsoft.CSharp
 XTEST_LIB_FLAGS = -unsafe
+LIBRARY_WARN_AS_ERROR = yes
 
 RESX_RESOURCE_STRING = \
 	../../../external/corefx/src/System.Runtime.Numerics/src/Resources/Strings.resx \

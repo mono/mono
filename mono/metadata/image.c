@@ -99,7 +99,7 @@ assign_assembly_parent_for_netmodule (MonoImage *image, MonoImage *assemblyImage
 			mono_error_set_bad_image (error, assemblyImage, "Attempted to load module %s which has already been loaded by assembly %s. This is not supported in Mono.", image->name, assemblyOld->image->name);
 			return FALSE;
 		}
-		gpointer result = InterlockedExchangePointer((gpointer *)&image->assembly, assembly);
+		gpointer result = mono_atomic_xchg_ptr((gpointer *)&image->assembly, assembly);
 		if (result == assembly)
 			return TRUE;
 	}
@@ -1162,6 +1162,7 @@ static const IgnoredAssembly ignored_assemblies [] = {
 	IGNORED_ASSEMBLY (0x8437178B, SYS_NET_HTTP, "C0E04D9C-70CF-48A6-A179-FBFD8CE69FD0", "4.3.0 net46"),
 	IGNORED_ASSEMBLY (0xFAFDA422, SYS_NET_HTTP, "817F01C3-4011-477D-890A-98232B85553D", "4.3.1 net46"),
 	IGNORED_ASSEMBLY (0x472FA630, SYS_NET_HTTP, "09D4A140-061C-4884-9B63-22067E841931", "4.3.2 net46"),
+	IGNORED_ASSEMBLY (0xDB9397A9, SYS_NET_HTTP, "56203551-6937-47C1-9246-346A733913EE", "4.3.3 net46"),
 	IGNORED_ASSEMBLY (0x46A4A1C5, SYS_RT_INTEROP_RUNTIME_INFO, "F13660F8-9D0D-419F-BA4E-315693DD26EA", "4.0.0 net45"),
 	IGNORED_ASSEMBLY (0xD07383BB, SYS_RT_INTEROP_RUNTIME_INFO, "DD91439F-3167-478E-BD2C-BF9C036A1395", "4.3.0 net45"),
 	IGNORED_ASSEMBLY (0x911D9EC3, SYS_TEXT_ENC_CODEPAGES, "C142254F-DEB5-46A7-AE43-6F10320D1D1F", "4.0.1 net46"),
@@ -1863,7 +1864,7 @@ free_array_cache_entry (gpointer key, gpointer val, gpointer user_data)
 void
 mono_image_addref (MonoImage *image)
 {
-	InterlockedIncrement (&image->ref_count);
+	mono_atomic_inc_i32 (&image->ref_count);
 }	
 
 void
@@ -1946,7 +1947,7 @@ mono_image_close_except_pools (MonoImage *image)
 	 */
 	mono_images_lock ();
 
-	if (InterlockedDecrement (&image->ref_count) > 0) {
+	if (mono_atomic_dec_i32 (&image->ref_count) > 0) {
 		mono_images_unlock ();
 		return FALSE;
 	}
@@ -2083,6 +2084,7 @@ mono_image_close_except_pools (MonoImage *image)
 	free_hash (image->pinvoke_scope_filenames);
 	free_hash (image->native_func_wrapper_cache);
 	mono_conc_hashtable_destroy (image->typespec_cache);
+	free_hash (image->weak_field_indexes);
 
 	mono_wrapper_caches_free (&image->wrapper_caches);
 
@@ -2172,7 +2174,8 @@ mono_image_close_finish (MonoImage *image)
 	mono_image_close_all (image->modules, image->module_count);
 
 #ifndef DISABLE_PERFCOUNTERS
-	mono_perfcounters->loader_bytes -= mono_mempool_get_allocated (image->mempool);
+	/* FIXME: use an explicit subtraction method as soon as it's available */
+	mono_atomic_fetch_add_i32 (&mono_perfcounters->loader_bytes, -1 * mono_mempool_get_allocated (image->mempool));
 #endif
 
 	if (!image_is_dynamic (image)) {
@@ -2707,7 +2710,7 @@ mono_image_alloc (MonoImage *image, guint size)
 	gpointer res;
 
 #ifndef DISABLE_PERFCOUNTERS
-	mono_perfcounters->loader_bytes += size;
+	mono_atomic_fetch_add_i32 (&mono_perfcounters->loader_bytes, size);
 #endif
 	mono_image_lock (image);
 	res = mono_mempool_alloc (image->mempool, size);
@@ -2722,7 +2725,7 @@ mono_image_alloc0 (MonoImage *image, guint size)
 	gpointer res;
 
 #ifndef DISABLE_PERFCOUNTERS
-	mono_perfcounters->loader_bytes += size;
+	mono_atomic_fetch_add_i32 (&mono_perfcounters->loader_bytes, size);
 #endif
 	mono_image_lock (image);
 	res = mono_mempool_alloc0 (image->mempool, size);
@@ -2737,7 +2740,7 @@ mono_image_strdup (MonoImage *image, const char *s)
 	char *res;
 
 #ifndef DISABLE_PERFCOUNTERS
-	mono_perfcounters->loader_bytes += strlen (s);
+	mono_atomic_fetch_add_i32 (&mono_perfcounters->loader_bytes, (gint32)strlen (s));
 #endif
 	mono_image_lock (image);
 	res = mono_mempool_strdup (image->mempool, s);
@@ -2754,7 +2757,7 @@ mono_image_strdup_vprintf (MonoImage *image, const char *format, va_list args)
 	buf = mono_mempool_strdup_vprintf (image->mempool, format, args);
 	mono_image_unlock (image);
 #ifndef DISABLE_PERFCOUNTERS
-	mono_perfcounters->loader_bytes += strlen (buf);
+	mono_atomic_fetch_add_i32 (&mono_perfcounters->loader_bytes, (gint32)strlen (buf));
 #endif
 	return buf;
 }

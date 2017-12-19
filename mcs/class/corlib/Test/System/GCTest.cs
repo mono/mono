@@ -56,6 +56,7 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void ReRegisterForFinalizeTest ()
 		{
 			var thread =  new Thread (Run_ReRegisterForFinalizeTest);

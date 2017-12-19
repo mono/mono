@@ -15,11 +15,26 @@ namespace MonoTests.Mono.Data.Sqlite
 	[TestFixture]
 	public class SqliteDataAdapterUnitTests
 	{
-		readonly static string _uri = "SqliteTest.db";
-		readonly static string _connectionString = "URI=file://" + _uri + ", version=3";
-		static SqliteConnection _conn = new SqliteConnection (_connectionString);
+		string _uri;
+		string _connectionString;
+		SqliteConnection _conn;
         
-		static SqliteDataAdapter PrepareDataAdapter()
+        	[SetUp]
+        	public void SetUp ()
+        	{
+			_uri = Path.GetTempFileName ();
+			_connectionString = "URI=file://" + _uri + ", version=3";
+			_conn = new SqliteConnection (_connectionString);
+        	}
+
+        	[TearDown]
+        	public void TearDown ()
+        	{
+        		if (File.Exists (_uri))
+        			File.Delete (_uri);
+        	}
+
+		SqliteDataAdapter PrepareDataAdapter()
 		{
 			SqliteCommand select  = new SqliteCommand("SELECT t, f, i, b FROM t1",_conn);
 			SqliteCommand update = new SqliteCommand("UPDATE t1 SET t = :textP, f = :floatP, i = :integerP, n=:blobP WHERE t = :textP ");

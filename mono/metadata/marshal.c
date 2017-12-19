@@ -472,8 +472,7 @@ mono_delegate_handle_to_ftnptr (MonoDelegateHandle delegate, MonoError *error)
 	if (MONO_HANDLE_GETVAL (delegate, method_is_virtual)) {
 		MonoObjectHandle delegate_target = MONO_HANDLE_NEW_GET (MonoObject, delegate, target);
 		method = mono_object_handle_get_virtual_method (delegate_target, method, error);
-		if (!is_ok (error))
-			goto leave;
+		goto_if_nok (error, leave);
 	}
 
 	if (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) {
@@ -497,12 +496,10 @@ mono_delegate_handle_to_ftnptr (MonoDelegateHandle delegate, MonoError *error)
 	}
 
 	wrapper = mono_marshal_get_managed_wrapper (method, klass, target_handle, error);
-	if (!is_ok (error))
-		goto leave;
+	goto_if_nok (error, leave);
 
 	MONO_HANDLE_SETVAL (delegate, delegate_trampoline, gpointer, mono_compile_method_checked (wrapper, error));
-	if (!is_ok (error))
-		goto leave;
+	goto_if_nok (error, leave);
 
 	// Add the delegate to the delegate hash table
 	delegate_hash_table_add (delegate);
@@ -661,8 +658,7 @@ mono_ftnptr_to_delegate_handle (MonoClass *klass, gpointer ftn, MonoError *error
 		if (use_aot_wrappers) {
 			wrapper = mono_marshal_get_native_func_wrapper_aot (klass);
 			this_obj = MONO_HANDLE_NEW (MonoObject, mono_value_box_checked (mono_domain_get (), mono_defaults.int_class, &ftn, error));
-			if (!is_ok (error))
-				goto leave;
+			goto_if_nok (error, leave);
 		} else {
 			memset (&piinfo, 0, sizeof (piinfo));
 			parse_unmanaged_function_pointer_attr (klass, &piinfo);
@@ -684,15 +680,12 @@ mono_ftnptr_to_delegate_handle (MonoClass *klass, gpointer ftn, MonoError *error
 		}
 
 		MONO_HANDLE_ASSIGN (d, MONO_HANDLE_NEW (MonoDelegate, mono_object_new_checked (mono_domain_get (), klass, error)));
-		if (!is_ok (error))
-			goto leave;
+		goto_if_nok (error, leave);
 		gpointer compiled_ptr = mono_compile_method_checked (wrapper, error);
-		if (!is_ok (error))
-			goto leave;
+		goto_if_nok (error, leave);
 
 		mono_delegate_ctor_with_method (MONO_HANDLE_CAST (MonoObject, d), this_obj, compiled_ptr, wrapper, error);
-		if (!is_ok (error))
-			goto leave;
+		goto_if_nok (error, leave);
 	}
 
 	g_assert (!MONO_HANDLE_IS_NULL (d));
@@ -711,7 +704,7 @@ mono_delegate_free_ftnptr (MonoDelegate *delegate)
 
 	delegate_hash_table_remove (delegate);
 
-	ptr = (gpointer)InterlockedExchangePointer (&delegate->delegate_trampoline, NULL);
+	ptr = (gpointer)mono_atomic_xchg_ptr (&delegate->delegate_trampoline, NULL);
 
 	if (!delegate->target) {
 		/* The wrapper method is shared between delegates -> no need to free it */
@@ -4029,7 +4022,7 @@ emit_invoke_call (MonoMethodBuilder *mb, MonoMethod *method,
 	/* to make it work with our special string constructors */
 	if (!string_dummy) {
 		MonoError error;
-		MONO_GC_REGISTER_ROOT_SINGLE (string_dummy, MONO_ROOT_SOURCE_MARSHAL, "dummy marshal string");
+		MONO_GC_REGISTER_ROOT_SINGLE (string_dummy, MONO_ROOT_SOURCE_MARSHAL, NULL, "Marshal Dummy String");
 		string_dummy = mono_string_new_checked (mono_get_root_domain (), "dummy", &error);
 		mono_error_assert_ok (&error);
 	}
@@ -6766,7 +6759,6 @@ emit_marshal_array (EmitMarshalContext *m, int argnum, MonoType *t,
 				if (need_free) {
 					mono_mb_emit_ldloc (mb, src_ptr);
 					mono_mb_emit_stloc (mb, loc);
-					mono_mb_emit_ldloc (mb, loc);
 
 					emit_struct_free (mb, eklass, loc);
 				}
@@ -9255,7 +9247,7 @@ mono_marshal_get_castclass_with_cache (void)
 	res = mono_mb_create (mb, sig, 8, info);
 	STORE_STORE_FENCE;
 
-	if (InterlockedCompareExchangePointer ((volatile gpointer *)&cached, res, NULL)) {
+	if (mono_atomic_cas_ptr ((volatile gpointer *)&cached, res, NULL)) {
 		mono_free_method (res);
 		mono_metadata_free_method_signature (sig);
 	}
@@ -9339,7 +9331,7 @@ mono_marshal_get_isinst_with_cache (void)
 	res = mono_mb_create (mb, sig, 8, info);
 	STORE_STORE_FENCE;
 
-	if (InterlockedCompareExchangePointer ((volatile gpointer *)&cached, res, NULL)) {
+	if (mono_atomic_cas_ptr ((volatile gpointer *)&cached, res, NULL)) {
 		mono_free_method (res);
 		mono_metadata_free_method_signature (sig);
 	}
@@ -9479,7 +9471,7 @@ mono_marshal_get_ptr_to_struct (MonoClass *klass)
 
 		/* initialize dst_ptr */
 		mono_mb_emit_byte (mb, CEE_LDARG_1);
-		mono_mb_emit_op (mb, CEE_UNBOX, klass);
+		mono_mb_emit_ldflda (mb, sizeof (MonoObject));
 		mono_mb_emit_stloc (mb, 1);
 
 		emit_struct_conv (mb, klass, TRUE);
@@ -12392,7 +12384,7 @@ ftnptr_eh_callback_default (guint32 gchandle)
 
 	mono_gchandle_free (gchandle);
 
-	mono_reraise_exception (exc);
+	mono_reraise_exception_deprecated (exc);
 }
 
 /*

@@ -63,6 +63,13 @@ if HOST_ANDROID
 platform_sources += ../../support/libm/complex.c
 endif
 
+if HOST_WASM
+platform_sources += threadpool-worker-wasm.c
+else
+platform_sources += threadpool-worker-default.c
+endif
+
+
 #
 # libtool is not capable of creating static/shared versions of the same
 # convenience lib, so we have to do it ourselves
@@ -196,7 +203,9 @@ common_sources = \
 	debug-internals.h	\
 	mono-endian.c		\
 	mono-endian.h		\
+	mono-hash.c		\
 	mono-hash.h		\
+	mono-conc-hash.c		\
 	mono-conc-hash.h		\
 	mono-mlist.c		\
 	mono-mlist.h		\
@@ -244,7 +253,6 @@ common_sources = \
 	threads-types.h		\
 	threadpool.c	\
 	threadpool.h	\
-	threadpool-worker-default.c	\
 	threadpool-worker.h	\
 	threadpool-io.c	\
 	threadpool-io.h	\
@@ -283,15 +291,15 @@ common_sources = \
 	sre-save.c	\
 	custom-attrs.c	\
 	fdhandle.h	\
-	fdhandle.c
+	fdhandle.c	\
+	callspec.h	\
+	callspec.c
 
 # These source files have compile time dependencies on GC code
 gc_dependent_sources = \
 	gc-stats.c	\
 	gc.c		\
-	monitor.c	\
-	mono-hash.c	\
-	mono-conc-hash.c
+	monitor.c
 
 boehm_sources = \
 	boehm-gc.c

@@ -73,7 +73,7 @@ namespace System.ServiceModel.Channels.NetTcp
 			{
 				int x = 0;
 				do {
-					value /= 0x100;
+					value /= 0x80;
 					x++;
 				} while (value != 0);
 				return x;

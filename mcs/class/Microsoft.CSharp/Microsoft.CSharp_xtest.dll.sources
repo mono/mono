@@ -1,0 +1,16 @@
+../../../external/corefx/src/Common/tests/System/Runtime/Serialization/Formatters/BinaryFormatterHelpers.cs
+../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/AssertExtensions.cs
+
+#../../../external/corefx/src/Microsoft.CSharp/tests/*.cs
+
+../../../external/corefx/src/Microsoft.CSharp/tests/ArrayHandling.cs
+../../../external/corefx/src/Microsoft.CSharp/tests/BindingErrors.cs
+../../../external/corefx/src/Microsoft.CSharp/tests/CSharpArgumentInfoTests.cs
+../../../external/corefx/src/Microsoft.CSharp/tests/EnumArithmeticTests.cs
+../../../external/corefx/src/Microsoft.CSharp/tests/IndexingTests.cs
+../../../external/corefx/src/Microsoft.CSharp/tests/IntegerBinaryOperationTests.cs
+../../../external/corefx/src/Microsoft.CSharp/tests/IntegerUnaryOperationTests.cs
+#../../../external/corefx/src/Microsoft.CSharp/tests/RuntimeBinderExceptionTests.cs
+#../../../external/corefx/src/Microsoft.CSharp/tests/RuntimeBinderInternalCompilerExceptionTests.cs
+../../../external/corefx/src/Microsoft.CSharp/tests/RuntimeBinderTests.cs
+../../../external/corefx/src/Microsoft.CSharp/tests/UserDefinedShortCircuitOperators.cs

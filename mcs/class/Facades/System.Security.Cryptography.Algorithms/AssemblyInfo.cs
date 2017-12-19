@@ -24,12 +24,12 @@ using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyTitle ("System.Security.Cryptography.Algorithms.dll")]
-[assembly: AssemblyDescription ("System.Security.Cryptography.Algorithms.dll")]
-[assembly: AssemblyDefaultAlias ("System.Security.Cryptography.Algorithms.dll")]
-[assembly: AssemblyCompany ("Xamarin, Inc.")]
+[assembly: AssemblyTitle ("System.Security.Cryptography.Algorithms")]
+[assembly: AssemblyDescription ("System.Security.Cryptography.Algorithms")]
+[assembly: AssemblyDefaultAlias ("System.Security.Cryptography.Algorithms")]
+[assembly: AssemblyCompany ("Mono development team")]
 [assembly: AssemblyProduct ("Mono Common Language Infrastructure")]
-[assembly: AssemblyCopyright ("Copyright (c) 2016 Xamarin Inc. (http://www.xamarin.com)")]
+[assembly: AssemblyCopyright ("(c) Various Mono authors")]
 [assembly: AssemblyVersion ("4.3.1.0")]
 [assembly: AssemblyInformationalVersion ("4.0.0.0")]
 [assembly: AssemblyFileVersion ("4.0.0.0")]

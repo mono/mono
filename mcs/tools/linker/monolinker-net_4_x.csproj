@@ -9,6 +9,7 @@
     <ProjectGuid>{FA920637-C202-4E75-AC0F-1A8DBD631DF1}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <NoWarn>1699</NoWarn>
+    <LangVersion>latest</LangVersion>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Windows_NT'">win32</HostPlatform>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">darwin</HostPlatform>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix'">linux</HostPlatform>
@@ -71,8 +72,10 @@
     <Compile Include="..\..\..\external\linker\linker\Mono.Linker\AssemblyAction.cs" />
     <Compile Include="..\..\..\external\linker\linker\Mono.Linker\AssemblyInfo.cs" />
     <Compile Include="..\..\..\external\linker\linker\Mono.Linker\AssemblyResolver.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Mono.Linker\ConsoleLogger.cs" />
     <Compile Include="..\..\..\external\linker\linker\Mono.Linker\Driver.cs" />
     <Compile Include="..\..\..\external\linker\linker\Mono.Linker\I18nAssemblies.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Mono.Linker\ILogger.cs" />
     <Compile Include="..\..\..\external\linker\linker\Mono.Linker\IXApiVisitor.cs" />
     <Compile Include="..\..\..\external\linker\linker\Mono.Linker\LinkContext.cs" />
     <Compile Include="..\..\..\external\linker\linker\Mono.Linker\LoadException.cs" />

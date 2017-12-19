@@ -1427,6 +1427,7 @@ class Tests
 		return 0;
 	}
 
+	[Category ("!WASM")] // reported as https://github.com/kripken/emscripten/issues/5603
 	public static int test_0_simple_double_casts () {
 
 		double d = 0xffffffff;
@@ -1663,7 +1664,7 @@ class Tests
 			val = d / q;
 		} catch (DivideByZeroException) {
 			/* wrong exception */
-		} catch (ArithmeticException) {
+		} catch (OverflowException) {
 			failed = false;
 		}
 		if (failed)
@@ -1676,7 +1677,7 @@ class Tests
 			val = d % q;
 		} catch (DivideByZeroException) {
 			/* wrong exception */
-		} catch (ArithmeticException) {
+		} catch (OverflowException) {
 			failed = false;
 		}
 		if (failed)

@@ -560,7 +560,7 @@ namespace MonoTests.System.Numerics
 					Assert.AreEqual (val, (long)a, "#a_" + val);
 					Assert.AreEqual (val, (long)b, "#b_" + val);
 					Assert.AreEqual (a, b, "#a  == #b (" + val + ")");
-				} catch (Exception e) {
+				} catch (Exception) {
 					Assert.Fail ("could not roundtrip {0}", val);
 				}
 			}
@@ -1259,13 +1259,17 @@ namespace MonoTests.System.Numerics
 			Assert.AreEqual ("0", a.ToString (), "#4");
 
 			a = new BigInteger ();
+#pragma warning disable 1718
 			Assert.AreEqual (true, a == a, "#5");
+#pragma warning restore
 
 			a = new BigInteger ();
+#pragma warning disable 1718
 			Assert.AreEqual (false, a < a, "#6");
+#pragma warning restore
 
 			a = new BigInteger ();
-			Assert.AreEqual (true, a < 10l, "#7");
+			Assert.AreEqual (true, a < 10L, "#7");
 
 			a = new BigInteger ();
 			Assert.AreEqual (true, a.IsEven, "#8");

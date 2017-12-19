@@ -230,6 +230,13 @@ typedef struct {
 	 * handled a sampling signal before sending another one.
 	 */
 	gint32 profiler_signal_ack;
+
+	gint32 thread_pending_native_join;
+
+#ifdef USE_WINDOWS_BACKEND
+	gint32 thread_wait_info;
+#endif
+
 } MonoThreadInfo;
 
 typedef struct {
@@ -255,7 +262,7 @@ typedef struct {
 typedef struct {
 	void (*setup_async_callback) (MonoContext *ctx, void (*async_cb)(void *fun), gpointer user_data);
 	gboolean (*thread_state_init_from_sigctx) (MonoThreadUnwindState *state, void *sigctx);
-	gboolean (*thread_state_init_from_handle) (MonoThreadUnwindState *tctx, MonoThreadInfo *info);
+	gboolean (*thread_state_init_from_handle) (MonoThreadUnwindState *tctx, MonoThreadInfo *info, /*optional*/ void *sigctx);
 	void (*thread_state_init) (MonoThreadUnwindState *tctx);
 } MonoThreadInfoRuntimeCallbacks;
 
@@ -641,5 +648,11 @@ mono_thread_info_wait_multiple_handle (MonoThreadHandle **thread_handles, gsize 
 
 void mono_threads_join_lock (void);
 void mono_threads_join_unlock (void);
+
+
+#ifdef HOST_WASM
+typedef void (*background_job_cb)(void);
+void mono_threads_schedule_background_job (background_job_cb cb);
+#endif
 
 #endif /* __MONO_THREADS_H__ */

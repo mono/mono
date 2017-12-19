@@ -27,6 +27,7 @@ TEST_RESOURCES = \
 	Test/System/test-uri-props-manual.txt \
 	Test/System/test-uri-relative-props.txt
 
+XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks Facades/System.Runtime.InteropServices.RuntimeInformation
 LIB_MCS_FLAGS = -d:CONFIGURATION_2_0 $(REFERENCE_SOURCES_FLAGS) -unsafe $(RESOURCE_FILES:%=-resource:%) -nowarn:436
 
 ifndef NO_MONO_SECURITY
@@ -94,6 +95,9 @@ TEST_MCS_FLAGS += -d:MONO_FEATURE_MULTIPLE_APPDOMAINS
 endif
 
 TXT_RESOURCE_STRINGS = ../referencesource/System/System.txt
+
+
+API_BIN_REFS := System.Net.Http
 
 #
 # Flags used to build the secxml version of System.
@@ -177,7 +181,7 @@ $(the_libdir_base)System.Configuration.dll:
 
 $(build_lib): $(CYCLIC_DEP_FILES)
 
-$(test_lib): $(TEST_RESOURCES)
+$(test_lib_output): $(TEST_RESOURCES) $(test_lib_dir)
 
 CLEAN_FILES = $(test_lib).config $(bare_libdir)/System.dll $(secxml_libdir)/System.dll $(bare_libdir)/System.dll.mdb $(secxml_libdir)/System.dll.mdb
 

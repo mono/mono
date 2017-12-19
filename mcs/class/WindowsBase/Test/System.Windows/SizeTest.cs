@@ -24,6 +24,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Media;
 using NUnit.Framework;
@@ -158,7 +159,7 @@ namespace MonoTests.System.Windows {
 		[Test]
 		public void ToStringTest ()
 		{
-			Assert.AreEqual ("1,2", (new Size (1, 2)).ToString ());
+			Assert.AreEqual ("1,2", (new Size (1, 2)).ToString (CultureInfo.InvariantCulture));
 		}
 
 		[Test]

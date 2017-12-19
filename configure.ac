@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 #AC_PREREQ([2.62])
 
-AC_INIT(mono, [5.7.0],
+AC_INIT(mono, [5.11.0],
         [http://bugzilla.xamarin.com/enter_bug.cgi?classification=Mono])
 
 AC_CONFIG_SRCDIR([README.md])
@@ -113,14 +113,17 @@ ikvm_native=yes
 host_win32=no
 target_win32=no
 platform_android=no
+platform_tizen=no
+platform_ios=no
 host_darwin=no
 
 
 if test "x$enable_wasm" = "xyes"; then
-CFLAGS="$CFLAGS -D_REENTRANT -D_GNU_SOURCE -DNO_UNALIGNED_ACCESS -s WASM=1 -DWASM -Os"
-CPPFLAGS="$CPPFLAGS -D_REENTRANT -DUSE_MMAP -D_GNU_SOURCE -DNO_UNALIGNED_ACCESS -s WASM=1 -DWASM -Os"
+CFLAGS="$CFLAGS -D_REENTRANT -D_GNU_SOURCE -DNO_UNALIGNED_ACCESS -s WASM=1"
+CPPFLAGS="$CPPFLAGS -D_REENTRANT -DUSE_MMAP -D_GNU_SOURCE -DNO_UNALIGNED_ACCESS -s WASM=1"
 libdl="-ldl"
 libgc_threads=pthreads
+platform_wasm=yes
 
 else
 
@@ -267,6 +270,11 @@ case "$host" in
                 	mono_cv_uscore=no
                 fi
 		case "$host" in
+		*-tizen-linux-*)
+			platform_tizen=yes
+			;;
+		esac
+		case "$host" in
 		aarch64-*)
 			support_boehm=no
 			with_gc=sgen
@@ -344,8 +352,12 @@ case "$host" in
 				with_sgen_default_concurrent=yes
 				;;
 			arm*-darwin*)
+				platform_ios=yes
 				has_dtrace=no
-				;;			
+				;;
+			aarch64*-darwin*)
+				platform_ios=yes
+				;;
 		esac
 		;;
 	*-*-haiku*)
@@ -357,8 +369,6 @@ case "$host" in
 		AC_DEFINE(PTHREAD_POINTER_ID)
 		dnl Haiku does not support static TLS with __thread
 		with_tls=pthread
-		dnl Boehm is too much work to backport Haiku support for
-		support_boehm=no
 		libgc_threads=pthreads
 		use_sigposix=yes
 		;;
@@ -400,6 +410,9 @@ AM_CONDITIONAL(HOST_LINUX, echo x$target_os | grep -q linux)
 AM_CONDITIONAL(HOST_DARWIN, test x$host_darwin = xyes)
 AM_CONDITIONAL(HOST_SIGPOSIX, test x$use_sigposix = xyes)
 AM_CONDITIONAL(HOST_ANDROID, test x$platform_android = xyes)
+AM_CONDITIONAL(HOST_TIZEN, test x$platform_tizen = xyes)
+AM_CONDITIONAL(HOST_IOS, test x$platform_ios = xyes)
+AM_CONDITIONAL(HOST_WASM, test x$platform_wasm = xyes)
 
 if test -z "$HOST_DARWIN_TRUE"; then :
 PLATFORM_AOT_SUFFIX=.dylib
@@ -554,8 +567,86 @@ AC_CHECK_FUNCS(_finite, , AC_MSG_CHECKING(for _finite in math.h)
 # for Linux statfs support
 AC_CHECK_HEADERS(linux/magic.h)
 
+# For Android NDK unified headers
+if test x$platform_android = xyes; then
+	AC_CHECK_HEADERS(machine/endian.h sys/endian.h)
+	AC_CHECK_HEADERS(android/legacy_signal_inlines.h, [have_android_signal_inlines=yes], [have_android_signal_inlines=no])
+
+	# Make sure SIGRT{MIN,MAX} work - they will fail to work with unified headers if building for
+	# API level < 21 *and* android/legacy_signal_inlines.h doesn't declare (and define) the required
+	# libc APIs to obtain values for SIGRT{MIN,MAX}. We perform the check only if android/legacy_signal_inlines.h
+	# is found because in other cases the macros will either work (for NDK < 14) or fail if the legacy header
+	# doesn't contain the required definitions (NDK 14)
+	if test x$have_android_signal_inlines = xyes; then
+		AC_MSG_CHECKING([Whether Android SIGRTMIN/SGRTMAX macros are valid])
+		AC_COMPILE_IFELSE([
+			AC_LANG_PROGRAM([#include <android/legacy_signal_inlines.h>],[
+				int i;
+				for (i = SIGRTMIN + 1; i < SIGRTMAX; ++i) {
+				}
+			])],[
+				AC_MSG_RESULT(yes)
+				android_sigrtminmax_work=yes
+			],[
+				AC_MSG_RESULT(no)
+				android_sigrtminmax_work=no
+			]
+		)
+
+		if test x$android_sigrtminmax_work = xno; then
+			AC_MSG_ERROR([Android SIGRTMIN/SIGRTMAX macros don't work in this NDK])
+		fi
+	fi
+
+	# Attempt to detect whether we're using Android NDK unified headers
+	AC_CHECK_HEADERS(android/api-level.h, [have_android_api_level=yes], [have_android_api_level=no])
+	AC_CHECK_HEADERS(android/versioning.h, [have_android_versioning=yes], [have_android_versioning=no])
+
+	android_unified_headers=no
+	if test x$have_android_api_level = xyes; then
+		if test x$have_android_versioning = xyes; then
+			AC_MSG_CHECKING([whether using Android NDK unified headers])
+
+			# Both macros are defined only in the NDK unified headers
+			AC_COMPILE_IFELSE([
+				AC_LANG_PROGRAM([
+					#include <android/api-level.h>
+					#include <android/versioning.h>
+				],[
+					#if __ANDROID_API_O__ == 26 && defined(__INTRODUCED_IN)
+						return 0
+					#else
+						#error __ANDROID_API_O__ != 26 or the __INTRODUCED_IN macro not defined
+					#endif
+				])],[
+					AC_MSG_RESULT(yes)
+					android_unified_headers=yes
+				],[
+					AC_MSG_RESULT(no)
+					android_unified_headers=no
+				]
+			)
+		fi
+	fi
+
+	if test x$android_unified_headers = xyes; then
+		AC_DEFINE(ANDROID_UNIFIED_HEADERS, 1, [Whether Android NDK unified headers are used])
+	fi
+fi # Android
+
 # not 64 bit clean in cross-compile
-AC_CHECK_SIZEOF(void *, 4)
+if test "x$enable_wasm" = "xyes"; then
+AC_DEFINE(SIZEOF_VOID_P,4)
+AC_DEFINE(SIZEOF_LONG,4)
+ac_cv_sizeof_void_p="4"
+ac_cv_sizeof_long="4"
+else
+AC_CHECK_SIZEOF(void *)
+AC_CHECK_SIZEOF(long)
+fi
+
+AC_CHECK_SIZEOF(int)
+AC_CHECK_SIZEOF(long long)
 
 AC_CACHE_CHECK([for clang],
 	mono_cv_clang,[
@@ -762,6 +853,7 @@ fi
 AM_CONDITIONAL(STATIC_MONO, test x$with_static_mono != xno)
 AM_CONDITIONAL(SHARED_MONO, test x$with_shared_mono != xno)
 AC_ARG_ENABLE(mcs-build, [  --disable-mcs-build disable the build of the mcs directory], try_mcs_build=$enableval, enable_mcs_build=yes)
+AC_ARG_ENABLE(support-build, [  --disable-support-build disable the build of the support directory], try_support_build=$enableval, enable_support_build=yes)
 
 AC_ARG_WITH(xen_opt,   [  --with-xen_opt=yes,no          Enable Xen-specific behaviour (defaults to yes)],[],[with_xen_opt=yes])
 if test "x$with_xen_opt" = "xyes" -a "x$mono_cv_clang" = "xno"; then
@@ -837,6 +929,7 @@ AC_ARG_WITH(testing_aot_full,    [  --with-testing_aot_full=yes,no      If you w
 AC_ARG_WITH(winaot,              [  --with-winaot=yes,no                If you want to build the Windows friendly AOT assemblies (defaults to no)], [], [with_winaot=default])
 AC_ARG_WITH(orbis,               [  --with-orbis=yes,no                 If you want to build the Orbis assemblies (defaults to no)], [], [with_orbis=default])
 AC_ARG_WITH(unreal,              [  --with-unreal=yes,no                If you want to build the Unreal assemblies (defaults to no)], [], [with_unreal=default])
+AC_ARG_WITH(wasm,                [  --with-wasm=yes,no                  If you want to build the WebAssembly (defaults to no)], [], [with_wasm=default])
 
 
 AC_ARG_WITH(runtime_preset, [  --with-runtime_preset=net_4_x,all,aot,hybridaot,fullaot,bitcode,unreal   Which default profile to build (defaults to net_4_x)],  [], [with_runtime_preset=net_4_x])
@@ -858,11 +951,14 @@ with_testing_aot_full_default=no
 with_winaot_default=no
 with_orbis_default=no
 with_unreal_default=no
+with_wasm_default=no
 
 with_bitcode_default=no
 with_cooperative_gc_default=no
 
-INVARIANT_AOT_OPTIONS=nimt-trampolines=2000,ntrampolines=8000,nrgctx-fetch-trampolines=256,ngsharedvt-trampolines=4000
+INVARIANT_AOT_OPTIONS=nimt-trampolines=2000,ntrampolines=9000,nrgctx-fetch-trampolines=256,ngsharedvt-trampolines=4000
+
+AOT_BUILD_ATTRS=$INVARIANT_AOT_OPTIONS
 
 if test x$cross_compiling = xyes -o x$enable_mcs_build = xno; then
    DISABLE_MCS_DOCS_default=yes
@@ -878,6 +974,7 @@ elif test x$with_runtime_preset = xall; then
    with_winaot_default=yes
    with_orbis_default=yes
    with_unreal_default=yes
+   with_wasm_default=yes
 elif test x$with_runtime_preset = xfullaot; then
    DISABLE_MCS_DOCS_default=yes
    with_testing_aot_full_default=yes
@@ -890,8 +987,8 @@ elif test x$with_runtime_preset = xfullaot; then
    mono_feature_disable_appdomains='yes'
 
    AOT_BUILD_FLAGS="--runtime=mobile -O=gsharedvt --aot=full,$INVARIANT_AOT_OPTIONS"
-
    AOT_RUN_FLAGS="--runtime=mobile --full-aot"
+   AOT_MODE="full"
 elif test x$with_runtime_preset = xbitcode; then
    DISABLE_MCS_DOCS_default=yes
    with_testing_aot_full_default=yes
@@ -908,6 +1005,7 @@ elif test x$with_runtime_preset = xbitcode; then
 
    AOT_BUILD_FLAGS="--runtime=mobile --aot=llvmonly,$INVARIANT_AOT_OPTIONS"
    AOT_RUN_FLAGS="--runtime=mobile --llvmonly"
+   AOT_MODE="llvmonly"
 elif test x$with_runtime_preset = xhybridaot; then
    DISABLE_MCS_DOCS_default=yes
    with_testing_aot_hybrid_default=yes
@@ -935,6 +1033,7 @@ elif test x$with_runtime_preset = xwinaot; then
 
    AOT_BUILD_FLAGS="--runtime=mobile --aot=full,$INVARIANT_AOT_OPTIONS"
    AOT_RUN_FLAGS="--runtime=mobile --full-aot"
+   AOT_MODE="llvmonly"
 elif test x$with_runtime_preset = xorbis; then
    DISABLE_MCS_DOCS_default=yes
    with_orbis_default=yes
@@ -948,6 +1047,7 @@ elif test x$with_runtime_preset = xorbis; then
 
    AOT_BUILD_FLAGS="--runtime=mobile --aot=full,$INVARIANT_AOT_OPTIONS"
    AOT_RUN_FLAGS="--runtime=mobile --full-aot"
+   AOT_MODE="full"
 elif test x$with_runtime_preset = xunreal; then
    DISABLE_MCS_DOCS_default=yes
    with_unreal_default=yes
@@ -959,6 +1059,19 @@ elif test x$with_runtime_preset = xunreal; then
 
    AOT_BUILD_FLAGS="--runtime=mobile --aot=hybrid,$INVARIANT_AOT_OPTIONS"
    AOT_RUN_FLAGS="--runtime=mobile --hybrid-aot"
+elif test x$with_runtime_preset = xwasm; then
+   DISABLE_MCS_DOCS_default=yes
+   with_wasm_default=yes
+   TEST_PROFILE=wasm
+
+   mono_feature_disable_com='yes'
+   mono_feature_disable_remoting='yes'
+   mono_feature_disable_reflection_emit_save='yes'
+   mono_feature_disable_reflection_emit='yes'
+   mono_feature_disable_appdomains='yes'
+
+   AOT_BUILD_FLAGS="--runtime=mobile --aot=full,$INVARIANT_AOT_OPTIONS"
+   AOT_RUN_FLAGS="--runtime=mobile --full-aot"
 else
    with_profile4_x_default=yes
 fi
@@ -1008,6 +1121,9 @@ fi
 if test "x$with_unreal" = "xdefault"; then
    with_unreal=$with_unreal_default
 fi
+if test "x$with_wasm" = "xdefault"; then
+   with_wasm=$with_wasm_default
+fi
 
 
 AM_CONDITIONAL(INSTALL_4_x, [test "x$with_profile4_x" = "xyes"])
@@ -1022,7 +1138,8 @@ AM_CONDITIONAL(INSTALL_TESTING_AOT_FULL, [test "x$with_testing_aot_full" != "xno
 AM_CONDITIONAL(INSTALL_WINAOT, [test "x$with_winaot" != "xno"])
 AM_CONDITIONAL(INSTALL_ORBIS, [test "x$with_orbis" != "xno"])
 AM_CONDITIONAL(INSTALL_UNREAL, [test "x$with_unreal" != "xno"])
-AM_CONDITIONAL(FULL_AOT_TESTS, [test "x$TEST_PROFILE" = "xtesting_aot_full"] || [test "x$TEST_PROFILE" = "xwinaot"] || [test "x$TEST_PROFILE" = "xorbis"])
+AM_CONDITIONAL(INSTALL_WASM, [test "x$with_wasm" != "xno"])
+AM_CONDITIONAL(FULL_AOT_TESTS, [test "x$TEST_PROFILE" = "xtesting_aot_full"] || [test "x$TEST_PROFILE" = "xwinaot"] || [test "x$TEST_PROFILE" = "xorbis"] || [test "x$TEST_PROFILE" = "xwasm"])
 AM_CONDITIONAL(HYBRID_AOT_TESTS, [test "x$TEST_PROFILE" = "xtesting_aot_hybrid"] || [test "x$TEST_PROFILE" = "xunreal"])
 
 default_profile=net_4_x
@@ -1049,6 +1166,9 @@ if test -z "$INSTALL_ORBIS_TRUE"; then :
 fi
 if test -z "$INSTALL_UNREAL_TRUE"; then :
    default_profile=unreal
+fi
+if test -z "$INSTALL_WASM_TRUE"; then :
+   default_profile=wasm
 fi
 if test -z "$INSTALL_4_x_TRUE"; then :
    default_profile=net_4_x
@@ -1080,7 +1200,7 @@ fi
 
 AC_ARG_ENABLE(minimal, [  --enable-minimal=LIST      drop support for LIST subsystems.
      LIST is a comma-separated list from: aot, profiler, decimal, pinvoke, debug, appdomains, verifier, 
-     reflection_emit, reflection_emit_save, large_code, logging, com, ssa, generics, attach, jit, simd, soft_debug, perfcounters, normalization, desktop_loader, shared_perfcounters, remoting,
+     reflection_emit, reflection_emit_save, large_code, logging, com, ssa, generics, attach, jit, interpreter, simd, soft_debug, perfcounters, normalization, desktop_loader, shared_perfcounters, remoting,
 	 security, lldb, mdb, sgen_remset, sgen_marksweep_par, sgen_marksweep_fixed, sgen_marksweep_fixed_par, sgen_copying.],
 [
 	for feature in `echo "$enable_minimal" | sed -e "s/,/ /g"`; do
@@ -1176,11 +1296,18 @@ if test "x$mono_feature_disable_verifier" = "xyes"; then
 fi
 
 if test "x$mono_feature_disable_jit" = "xyes"; then
-	AC_DEFINE(DISABLE_JIT, 1, [Disable the JIT, only full-aot mode will be supported by the runtime.])
-	AC_MSG_NOTICE([Disabled the JIT engine, only full AOT will be supported])
+	AC_DEFINE(DISABLE_JIT, 1, [Disable the JIT, only full-aot mode or interpreter will be supported by the runtime.])
+	AC_MSG_NOTICE([Disabled the JIT engine, only full AOT or interpreter will be supported])
 fi
 
 AM_CONDITIONAL(DISABLE_JIT, test x$mono_feature_disable_jit = xyes)
+
+if test "x$mono_feature_disable_interpreter" = "xyes"; then
+	AC_DEFINE(DISABLE_INTERPRETER, 1, [Disable the interpreter.])
+	AC_MSG_NOTICE([Disabled the interpreter])
+fi
+
+AM_CONDITIONAL(DISABLE_INTERPRETER, test x$mono_feature_disable_interpreter = xyes)
 
 if test "x$mono_feature_disable_simd" = "xyes"; then
 	AC_DEFINE(DISABLE_SIMD, 1, [Disable SIMD intrinsics related optimizations.])
@@ -2542,6 +2669,12 @@ if test x$host_win32 = xno; then
 	 #endif
 	])
 	AC_CHECK_HEADERS([termios.h])
+
+	dnl *********************************
+	dnl *** Checks for random         ***
+	dnl *********************************
+	AC_CHECK_HEADERS(sys/random.h)
+	AC_CHECK_FUNCS(getrandom getentropy)
 else
 	dnl *********************************
 	dnl *** Checks for Windows compilation ***
@@ -3067,6 +3200,7 @@ TARGET=WASM
 HOST=WASM
 arch_target=wasm
 AC_DEFINE(TARGET_WASM, 1, [Target wasm])
+AC_DEFINE(HOST_WASM, 1, [Host wasm])
 BTLS_SUPPORTED=no
 with_tls=pthread
 target_mach=no
@@ -3266,6 +3400,7 @@ HOST=$TARGET
 if test "x$host" != "x$target"; then
    AC_DEFINE(MONO_CROSS_COMPILE,1,[The runtime is compiled for cross-compiling mode])
    enable_mcs_build=no
+   enable_support_build=no
    BTLS_SUPPORTED=no
    case "$target" in
    arm*-darwin*)
@@ -3590,14 +3725,6 @@ if test "x$have_deprecated" = "xyes"; then
    AC_DEFINE(HAVE_DEPRECATED, 1, [Support for the deprecated attribute])
 fi
 
-AC_ARG_ENABLE(interpreter, [  --enable-interpreter       Enable Interpreter], enable_interpreter=$enableval, enable_interpreter=no)
-
-if test "x$enable_interpreter" = "xyes"; then
-	AC_DEFINE(ENABLE_INTERPRETER, 1, [Enable Interpreter])
-fi
-
-AM_CONDITIONAL(ENABLE_INTERPRETER, [test x$enable_interpreter = xyes])
-
 dnl 
 dnl Simple Generational checks (sgen)
 dnl
@@ -3752,10 +3879,6 @@ AC_SUBST(PIDTYPE)
 AC_DEFINE(HAVE_CLASSIC_WINAPI_SUPPORT, 1, [Use classic Windows API support])
 AC_DEFINE(HAVE_UWP_WINAPI_SUPPORT, 0, [Don't use UWP Windows API support])
 
-AC_CHECK_SIZEOF(int)
-AC_CHECK_SIZEOF(void *)
-AC_CHECK_SIZEOF(long)
-AC_CHECK_SIZEOF(long long)
 AC_CHECK_FUNCS(strlcpy stpcpy strtok_r rewinddir vasprintf strerror_r)
 AC_CHECK_FUNCS(getrlimit)
 AC_CHECK_FUNCS(fork execv execve)
@@ -4270,22 +4393,22 @@ if test "x$enable_btls" = "xyes"; then
 		btls_arch=aarch64
 		;;
 	android-armv5)
-		BTLS_CMAKE_ARGS="-DANDROID_ABI=\"armeabi\" -DANDROID_NATIVE_API_LEVEL=12"
+		BTLS_CMAKE_ARGS="-DANDROID_ABI=\"armeabi\" -DANDROID_NATIVE_API_LEVEL=14"
 		;;
 	android-armv6)
-		BTLS_CMAKE_ARGS="-DANDROID_ABI=\"armeabi\" -DANDROID_NATIVE_API_LEVEL=12"
+		BTLS_CMAKE_ARGS="-DANDROID_ABI=\"armeabi\" -DANDROID_NATIVE_API_LEVEL=14"
 		;;
 	android-armv7)
-		BTLS_CMAKE_ARGS="-DANDROID_ABI=\"armeabi-v7a\" -DANDROID_NATIVE_API_LEVEL=12"
+		BTLS_CMAKE_ARGS="-DANDROID_ABI=\"armeabi-v7a\" -DANDROID_NATIVE_API_LEVEL=14"
 		;;
 	android-v8a)
-		BTLS_CMAKE_ARGS="-DANDROID_ABI=\"arm64-v8a\" -DANDROID_NATIVE_API_LEVEL=12"
+		BTLS_CMAKE_ARGS="-DANDROID_ABI=\"arm64-v8a\" -DANDROID_NATIVE_API_LEVEL=21"
 		;;
 	android-x86)
-		BTLS_CMAKE_ARGS="-DANDROID_ABI=\"x86\" -DANDROID_NATIVE_API_LEVEL=12"
+		BTLS_CMAKE_ARGS="-DANDROID_ABI=\"x86\" -DANDROID_NATIVE_API_LEVEL=14"
 		;;
 	android-x64)
-		BTLS_CMAKE_ARGS="-DANDROID_ABI=\"x86_64\" -DANDROID_NATIVE_API_LEVEL=12"
+		BTLS_CMAKE_ARGS="-DANDROID_ABI=\"x86_64\" -DANDROID_NATIVE_API_LEVEL=21"
 		;;
 	*)
 		AC_MSG_ERROR(Invalid BTLS platform)
@@ -4327,6 +4450,7 @@ AC_SUBST(docs_dir)
 
 ## Maybe should also disable if mcsdir is invalid.  Let's punt the issue for now.
 AM_CONDITIONAL(BUILD_MCS, [test x$cross_compiling = xno && test x$enable_mcs_build != xno])
+AM_CONDITIONAL(BUILD_SUPPORT, [test x$enable_support_build != xno])
 
 libmono_ldflags="$libmono_ldflags $LIBS"
 
@@ -4342,6 +4466,7 @@ AM_CONDITIONAL(POWERPC64, test x$TARGET = xPOWERPC64)
 AM_CONDITIONAL(ARM, test x$TARGET = xARM)
 AM_CONDITIONAL(ARM64, test x$TARGET = xARM64)
 AM_CONDITIONAL(S390X, test x$TARGET = xS390X)
+AM_CONDITIONAL(WASM, test x$TARGET = xWASM)
 AM_CONDITIONAL(HOST_X86, test x$HOST = xX86)
 AM_CONDITIONAL(HOST_AMD64, test x$HOST = xAMD64)
 AM_CONDITIONAL(HOST_ARM, test x$HOST = xARM)
@@ -4373,7 +4498,7 @@ AC_SUBST(mono_build_root)
 mono_runtime=mono/mini/mono
 AC_SUBST(mono_runtime)
 
-CSC_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.3.1/tools/csc.exe
+CSC_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.6.0/tools/csc.exe
 
 if test $csc_compiler = mcs; then
   CSC=$mcs_topdir/class/lib/build/mcs.exe
@@ -4751,6 +4876,11 @@ fi
     if test "x$AOT_BUILD_FLAGS" != "x" ; then
       echo "AOT_RUN_FLAGS=$AOT_RUN_FLAGS" >> $srcdir/$mcsdir/build/config.make
       echo "AOT_BUILD_FLAGS=$AOT_BUILD_FLAGS" >> $srcdir/$mcsdir/build/config.make
+      echo "AOT_BUILD_ATTRS=$AOT_BUILD_ATTRS" >> $srcdir/$mcsdir/build/config.make
+    fi
+
+    if test "x$AOT_MODE" != "x" ; then
+      echo "AOT_MODE=$AOT_MODE" >> $srcdir/$mcsdir/build/config.make
     fi
 
     if test "x$enable_btls" = "xyes"; then
@@ -4786,7 +4916,6 @@ echo "
 	BigArrays:     $enable_big_arrays
 	DTrace:        $enable_dtrace
 	LLVM Back End: $enable_llvm (dynamically loaded: $enable_loadedllvm)
-	Interpreter:   $enable_interpreter
 
    Libraries:
 	.NET 4.x:        $with_profile4_x
@@ -4798,6 +4927,7 @@ echo "
 	Windows AOT:     $with_winaot
 	Orbis:           $with_orbis
 	Unreal:          $with_unreal
+	WebAssembly:     $with_wasm
 	Test profiles:   AOT Full ($with_testing_aot_full), AOT Hybrid ($with_testing_aot_hybrid)
 	JNI support:     $jdk_headers_found
 	libgdiplus:      $libgdiplus_msg

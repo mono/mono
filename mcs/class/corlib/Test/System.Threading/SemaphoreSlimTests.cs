@@ -65,6 +65,7 @@ namespace MonoTests.System.Threading
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void WaitStressTest()
 		{
 			int count = -1;

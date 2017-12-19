@@ -76,6 +76,15 @@ namespace System {
             return (*(int*)(&f) & 0x7FFFFFFF) > 0x7F800000;
         }
 
+#if MONO
+        [Pure]
+        [System.Runtime.Versioning.NonVersionable]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public unsafe static bool IsFinite(float f) {
+            return (*(int*)(&f) & 0x7FFFFFFF) < 0x7F800000;
+        }
+#endif
+
         // Compares this object to another object, returning an integer that
         // indicates the relationship.
         // Returns a value less than zero if this  object

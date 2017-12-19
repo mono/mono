@@ -49,6 +49,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Security.Permissions;
 using System.Security.Principal;
 using System.Security.Cryptography;
+using System.Threading;
 using System.Threading.Tasks;
 
 using MNS = Mono.Net.Security;
@@ -293,15 +294,15 @@ namespace System.Net.Security
 		}
 
 		public override bool CanRead {
-			get { return Impl.CanRead; }
+			get { return impl != null && impl.CanRead; }
 		}
 
 		public override bool CanTimeout {
-			get { return Impl.CanTimeout; }
+			get { return InnerStream.CanTimeout; }
 		}
 
 		public override bool CanWrite {
-			get { return Impl.CanWrite; }
+			get { return impl != null && impl.CanWrite; }
 		}
 
 		public override int ReadTimeout {
@@ -335,9 +336,14 @@ namespace System.Net.Security
 			throw new NotSupportedException (SR.GetString (SR.net_noseek));
 		}
 
+		public override Task FlushAsync (CancellationToken cancellationToken)
+		{
+			return InnerStream.FlushAsync (cancellationToken);
+		}
+
 		public override void Flush ()
 		{
-			Impl.Flush ();
+			InnerStream.Flush ();
 		}
 
 		void CheckDisposed ()

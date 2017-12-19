@@ -3,6 +3,7 @@
  * Copyright 2016 Microsoft
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
+#include <config.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/tabledefs.h>
 
@@ -15,7 +16,8 @@ typedef enum {
 	PROP_PROPERTY_INFO = 5, /* MonoClassPropertyInfo* */
 	PROP_EVENT_INFO = 6, /* MonoClassEventInfo* */
 	PROP_FIELD_DEF_VALUES = 7, /* MonoFieldDefaultValue* */
-	PROP_DECLSEC_FLAGS = 8 /* guint32 */
+	PROP_DECLSEC_FLAGS = 8, /* guint32 */
+	PROP_WEAK_BITMAP = 9
 }  InfrequentDataKind;
 
 /* Accessors based on class kind*/
@@ -233,16 +235,16 @@ mono_class_set_field_count (MonoClass *klass, guint32 count)
 }
 
 MonoMarshalType*
-mono_class_get_marshal_info (MonoClass *class)
+mono_class_get_marshal_info (MonoClass *klass)
 {
-	return mono_property_bag_get (&class->infrequent_data, PROP_MARSHAL_INFO);
+	return mono_property_bag_get (&klass->infrequent_data, PROP_MARSHAL_INFO);
 }
 
 void
-mono_class_set_marshal_info (MonoClass *class, MonoMarshalType *marshal_info)
+mono_class_set_marshal_info (MonoClass *klass, MonoMarshalType *marshal_info)
 {
 	marshal_info->head.tag = PROP_MARSHAL_INFO;
-	mono_property_bag_add (&class->infrequent_data, marshal_info);
+	mono_property_bag_add (&klass->infrequent_data, marshal_info);
 }
 
 typedef struct {
@@ -251,26 +253,26 @@ typedef struct {
 } Uint32Property;
 
 guint32
-mono_class_get_ref_info_handle (MonoClass *class)
+mono_class_get_ref_info_handle (MonoClass *klass)
 {
-	Uint32Property *prop = mono_property_bag_get (&class->infrequent_data, PROP_REF_INFO_HANDLE);
+	Uint32Property *prop = mono_property_bag_get (&klass->infrequent_data, PROP_REF_INFO_HANDLE);
 	return prop ? prop->value : 0;
 }
 
 guint32
-mono_class_set_ref_info_handle (MonoClass *class, guint32 value)
+mono_class_set_ref_info_handle (MonoClass *klass, guint32 value)
 {
 	if (!value) {
-		Uint32Property *prop = mono_property_bag_get (&class->infrequent_data, PROP_REF_INFO_HANDLE);
+		Uint32Property *prop = mono_property_bag_get (&klass->infrequent_data, PROP_REF_INFO_HANDLE);
 		if (prop)
 			prop->value = 0;
 		return 0;
 	}
 
-	Uint32Property *prop = mono_class_alloc (class, sizeof (Uint32Property));
+	Uint32Property *prop = mono_class_alloc (klass, sizeof (Uint32Property));
 	prop->head.tag = PROP_REF_INFO_HANDLE;
 	prop->value = value;
-	prop = mono_property_bag_add (&class->infrequent_data, prop);
+	prop = mono_property_bag_add (&klass->infrequent_data, prop);
 	return prop->value;
 }
 
@@ -358,19 +360,19 @@ mono_class_set_field_def_values (MonoClass *klass, MonoFieldDefaultValue *values
 }
 
 guint32
-mono_class_get_declsec_flags (MonoClass *class)
+mono_class_get_declsec_flags (MonoClass *klass)
 {
-	Uint32Property *prop = mono_property_bag_get (&class->infrequent_data, PROP_DECLSEC_FLAGS);
+	Uint32Property *prop = mono_property_bag_get (&klass->infrequent_data, PROP_DECLSEC_FLAGS);
 	return prop ? prop->value : 0;
 }
 
 void
-mono_class_set_declsec_flags (MonoClass *class, guint32 value)
+mono_class_set_declsec_flags (MonoClass *klass, guint32 value)
 {
-	Uint32Property *prop = mono_class_alloc (class, sizeof (Uint32Property));
+	Uint32Property *prop = mono_class_alloc (klass, sizeof (Uint32Property));
 	prop->head.tag = PROP_DECLSEC_FLAGS;
 	prop->value = value;
-	mono_property_bag_add (&class->infrequent_data, prop);
+	mono_property_bag_add (&klass->infrequent_data, prop);
 }
 
 void
@@ -388,4 +390,32 @@ mono_class_gtd_get_canonical_inst (MonoClass *klass)
 {
 	g_assert (mono_class_is_gtd (klass));
 	return &((MonoClassGtd*)klass)->canonical_inst;
+}
+
+typedef struct {
+	MonoPropertyBagItem head;
+
+	int nbits;
+	gsize *bits;
+} WeakBitmapData;
+
+void
+mono_class_set_weak_bitmap (MonoClass *klass, int nbits, gsize *bits)
+{
+	WeakBitmapData *info = mono_class_alloc (klass, sizeof (WeakBitmapData));
+	info->nbits = nbits;
+	info->bits = bits;
+
+	info->head.tag = PROP_WEAK_BITMAP;
+	mono_property_bag_add (&klass->infrequent_data, info);
+}
+
+gsize*
+mono_class_get_weak_bitmap (MonoClass *klass, int *nbits)
+{
+	WeakBitmapData *prop = mono_property_bag_get (&klass->infrequent_data, PROP_WEAK_BITMAP);
+
+	g_assert (prop);
+	*nbits = prop->nbits;
+	return prop->bits;
 }

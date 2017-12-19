@@ -11,9 +11,15 @@ else
 tools_dir = tools
 endif
 
-SUBDIRS = po $(libgc_dir) mono $(ikvm_native_dir) support data runtime scripts man samples $(tools_dir) msvc $(docs_dir) acceptance-tests llvm
+if BUILD_SUPPORT
+support_dir = support
+else
+support_dir =
+endif
+
+SUBDIRS = po $(libgc_dir) mono $(ikvm_native_dir) $(support_dir) data runtime scripts man samples $(tools_dir) msvc $(docs_dir) acceptance-tests llvm
 # Keep in sync with SUBDIRS
-DIST_SUBDIRS = m4 po $(libgc_dir) mono ikvm-native support data runtime scripts man samples tools msvc docs acceptance-tests llvm
+DIST_SUBDIRS = m4 po $(libgc_dir) mono ikvm-native $(support_dir) data runtime scripts man samples tools msvc docs acceptance-tests llvm
 
 all: update_submodules
 
@@ -145,4 +151,7 @@ update-llvm-version:
 update-solution-files:
 	make update-csproj
 	make package-inputs
-	(cd msvc/scripts; make genproj.exe; mono genproj.exe)
+	(cd msvc/scripts; make genproj.exe; mono genproj.exe $(GENPROJ_ARGS))
+
+update-solution-files-with-tests:
+	make "GENPROJ_ARGS=2012 true true" update-solution-files

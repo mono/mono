@@ -1032,7 +1032,7 @@ ves_icall_Mono_Runtime_GetNativeStackTrace (MonoExceptionHandle exc, MonoError *
 }
 
 /**
- * mono_error_raise_exception:
+ * mono_error_raise_exception_deprecated:
  * \param target_error the exception to raise
  *
  * Raises the exception of \p target_error.
@@ -1042,11 +1042,11 @@ ves_icall_Mono_Runtime_GetNativeStackTrace (MonoExceptionHandle exc, MonoError *
  * The error object \p target_error is cleaned up.
 */
 void
-mono_error_raise_exception (MonoError *target_error)
+mono_error_raise_exception_deprecated (MonoError *target_error)
 {
 	MonoException *ex = mono_error_convert_to_exception (target_error);
 	if (ex)
-		mono_raise_exception (ex);
+		mono_raise_exception_deprecated (ex);
 }
 
 /**
@@ -1117,4 +1117,69 @@ mono_invoke_unhandled_exception_hook (MonoObject *exc)
 	}
 
 	g_assert_not_reached ();
+}
+
+
+static MonoException *
+create_exception_four_strings (MonoClass *klass, MonoString *a1, MonoString *a2, MonoString *a3, MonoString *a4, MonoError *error)
+{
+	MonoDomain *domain = mono_domain_get ();
+	MonoMethod *method = NULL;
+	MonoObject *o;
+	int count = 4;
+	gpointer args [4];
+	gpointer iter;
+	MonoMethod *m;
+
+	o = mono_object_new_checked (domain, klass, error);
+	mono_error_assert_ok (error);
+
+	iter = NULL;
+	while ((m = mono_class_get_methods (klass, &iter))) {
+		MonoMethodSignature *sig;
+
+		if (strcmp (".ctor", mono_method_get_name (m)))
+			continue;
+		sig = mono_method_signature (m);
+		if (sig->param_count != count)
+			continue;
+
+		int i;
+		gboolean good = TRUE;
+		for (i = 0; i < count; ++i) {
+			if (sig->params [i]->type != MONO_TYPE_STRING) {
+				good = FALSE;
+				break;
+			}
+		}
+		if (good) {
+			method = m;
+			break;
+		}
+	}
+
+	g_assert (method);
+
+	args [0] = a1;
+	args [1] = a2;
+	args [2] = a3;
+	args [3] = a4;
+
+	mono_runtime_invoke_checked (method, o, args, error);
+	return_val_if_nok (error, NULL);
+
+	return (MonoException *) o;
+}
+
+MonoException *
+mono_exception_from_name_four_strings_checked (MonoImage *image, const char *name_space,
+					      const char *name, MonoString *a1, MonoString *a2, MonoString *a3, MonoString *a4,
+					      MonoError *error)
+{
+	MonoClass *klass;
+
+	error_init (error);
+	klass = mono_class_load_from_name (image, name_space, name);
+
+	return create_exception_four_strings (klass, a1, a2, a3, a4, error);
 }

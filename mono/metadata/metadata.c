@@ -31,9 +31,10 @@
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/bsearch.h>
 #include <mono/utils/atomic.h>
+#include <mono/utils/unlocked.h>
 #include <mono/utils/mono-counters.h>
 
-static int img_set_cache_hit, img_set_cache_miss, img_set_count;
+static gint32 img_set_cache_hit, img_set_cache_miss, img_set_count;
 
 
 /* Auxiliary structure used for caching inflated signatures */
@@ -2478,10 +2479,10 @@ img_set_cache_get (MonoImage **images, int nimages)
 	int index = hash_code % HASH_TABLE_SIZE;
 	MonoImageSet *img = img_set_cache [index];
 	if (!img || !compare_img_set (img, images, nimages)) {
-		++img_set_cache_miss;
+		UnlockedIncrement (&img_set_cache_miss);
 		return NULL;
 	}
-	++img_set_cache_hit;
+	UnlockedIncrement (&img_set_cache_hit);
 	return img;
 }
 
@@ -2566,7 +2567,7 @@ get_image_set (MonoImage **images, int nimages)
 		l = l->next;
 	}
 
-	// If we iterated all the way through l without breaking, the imageset does not already exist and we shuold create it
+	// If we iterated all the way through l without breaking, the imageset does not already exist and we should create it
 	if (!l) {
 		set = g_new0 (MonoImageSet, 1);
 		set->nimages = nimages;
@@ -2579,11 +2580,14 @@ get_image_set (MonoImage **images, int nimages)
 		set->gmethod_cache = g_hash_table_new_full (inflated_method_hash, inflated_method_equal, NULL, (GDestroyNotify)free_inflated_method);
 		set->gsignature_cache = g_hash_table_new_full (inflated_signature_hash, inflated_signature_equal, NULL, (GDestroyNotify)free_inflated_signature);
 
+		set->szarray_cache = g_hash_table_new_full (mono_aligned_addr_hash, NULL, NULL, NULL);
+		set->array_cache = g_hash_table_new_full (mono_aligned_addr_hash, NULL, NULL, NULL);
+
 		for (i = 0; i < nimages; ++i)
 			set->images [i]->image_sets = g_slist_prepend (set->images [i]->image_sets, set);
 
 		g_ptr_array_add (image_sets, set);
-		++img_set_count;
+		UnlockedIncrement (&img_set_count); /* locked by image_sets_lock () */
 	}
 
 	/* Cache the set. If there was a cache collision, the previously cached value will be replaced. */
@@ -2608,6 +2612,11 @@ delete_image_set (MonoImageSet *set)
 	g_hash_table_destroy (set->ginst_cache);
 	g_hash_table_destroy (set->gmethod_cache);
 	g_hash_table_destroy (set->gsignature_cache);
+
+	g_hash_table_destroy (set->szarray_cache);
+	g_hash_table_destroy (set->array_cache);
+	if (set->ptr_cache)
+		g_hash_table_destroy (set->ptr_cache);
 
 	mono_wrapper_caches_free (&set->wrapper_caches);
 
@@ -2905,7 +2914,18 @@ inflated_signature_in_image (gpointer key, gpointer value, gpointer data)
 	return signature_in_image (sig->sig, image) ||
 		(sig->context.class_inst && ginst_in_image (sig->context.class_inst, image)) ||
 		(sig->context.method_inst && ginst_in_image (sig->context.method_inst, image));
-}	
+}
+
+static gboolean
+class_in_image (gpointer key, gpointer value, gpointer data)
+{
+	MonoImage *image = (MonoImage *)data;
+	MonoClass *klass = (MonoClass *)key;
+
+	g_assert (type_in_image (&klass->byval_arg, image));
+
+	return TRUE;
+}
 
 static void
 check_gmethod (gpointer key, gpointer value, gpointer data)
@@ -2969,6 +2989,11 @@ mono_metadata_clean_for_image (MonoImage *image)
 		g_hash_table_foreach_steal (set->ginst_cache, steal_ginst_in_image, &ginst_data);
 		g_hash_table_foreach_remove (set->gmethod_cache, inflated_method_in_image, image);
 		g_hash_table_foreach_remove (set->gsignature_cache, inflated_signature_in_image, image);
+
+		g_hash_table_foreach_steal (set->szarray_cache, class_in_image, image);
+		g_hash_table_foreach_steal (set->array_cache, class_in_image, image);
+		if (set->ptr_cache)
+			g_hash_table_foreach_steal (set->ptr_cache, class_in_image, image);
 		mono_image_set_unlock (set);
 	}
 
@@ -3071,6 +3096,20 @@ mono_metadata_get_inflated_signature (MonoMethodSignature *sig, MonoGenericConte
 }
 
 MonoImageSet *
+mono_metadata_get_image_set_for_class (MonoClass *klass)
+{
+	MonoImageSet *set;
+	CollectData image_set_data;
+
+	collect_data_init (&image_set_data);
+	collect_type_images (&klass->byval_arg, &image_set_data);
+	set = get_image_set (image_set_data.images, image_set_data.nimages);
+	collect_data_free (&image_set_data);
+
+	return set;
+}
+
+MonoImageSet *
 mono_metadata_get_image_set_for_method (MonoMethodInflated *method)
 {
 	MonoImageSet *set;
@@ -3170,7 +3209,7 @@ mono_metadata_get_canonical_generic_inst (MonoGenericInst *candidate)
 		int size = MONO_SIZEOF_GENERIC_INST + type_argc * sizeof (MonoType *);
 		ginst = (MonoGenericInst *)mono_image_set_alloc0 (set, size);
 #ifndef MONO_SMALL_CONFIG
-		ginst->id = InterlockedIncrement (&next_generic_inst_id);
+		ginst->id = mono_atomic_inc_i32 (&next_generic_inst_id);
 #endif
 		ginst->is_open = is_open;
 		ginst->type_argc = type_argc;
@@ -3410,7 +3449,7 @@ get_anonymous_container_for_image (MonoImage *image, gboolean is_mvar)
 
 		// If another thread already made a container, use that and leak this new one.
 		// (Technically it would currently be safe to just assign instead of CASing.)
-		MonoGenericContainer *exchange = (MonoGenericContainer *)InterlockedCompareExchangePointer ((volatile gpointer *)container_pointer, result, NULL);
+		MonoGenericContainer *exchange = (MonoGenericContainer *)mono_atomic_cas_ptr ((volatile gpointer *)container_pointer, result, NULL);
 		if (exchange)
 			result = exchange;
 	}
@@ -3996,8 +4035,7 @@ mono_metadata_parse_mh_full (MonoImage *m, MonoGenericContainer *container, cons
 	}
 	if (fat_flags & METHOD_HEADER_MORE_SECTS) {
 		clauses = parse_section_data (m, &num_clauses, (const unsigned char*)ptr, error);
-		if (!is_ok (error))
-			goto fail;
+		goto_if_nok (error, fail);
 	}
 	if (local_var_sig_tok) {
 		const char *locals_ptr;
@@ -4013,8 +4051,7 @@ mono_metadata_parse_mh_full (MonoImage *m, MonoGenericContainer *container, cons
 		mh->num_locals = len;
 		for (i = 0; i < len; ++i) {
 			mh->locals [i] = mono_metadata_parse_type_internal (m, container, 0, TRUE, locals_ptr, &locals_ptr, error);
-			if (!is_ok (error))
-				goto fail;
+			goto_if_nok (error, fail);
 		}
 	} else {
 		mh = (MonoMethodHeader *)g_malloc0 (MONO_SIZEOF_METHOD_HEADER + num_clauses * sizeof (MonoExceptionClause));
@@ -6225,37 +6262,34 @@ method_from_method_def_or_ref (MonoImage *m, guint32 tok, MonoGenericContext *co
 /*
  * mono_class_get_overrides_full:
  *
- *   Return the method overrides belonging to class @type_token in @overrides, and
- * the number of overrides in @num_overrides.
+ *  Compute the method overrides belonging to class @type_token in @overrides, and the number of overrides in @num_overrides.
  *
- * Returns: TRUE on success, FALSE on failure.
  */
-gboolean
-mono_class_get_overrides_full (MonoImage *image, guint32 type_token, MonoMethod ***overrides, gint32 *num_overrides,
-			       MonoGenericContext *generic_context)
+void
+mono_class_get_overrides_full (MonoImage *image, guint32 type_token, MonoMethod ***overrides, gint32 *num_overrides, MonoGenericContext *generic_context, MonoError *error)
 {
-	MonoError error;
 	locator_t loc;
 	MonoTableInfo *tdef  = &image->tables [MONO_TABLE_METHODIMPL];
 	guint32 start, end;
 	gint32 i, num;
 	guint32 cols [MONO_METHODIMPL_SIZE];
 	MonoMethod **result;
-	gint32 ok = TRUE;
 	
+	error_init (error)
+
 	*overrides = NULL;
 	if (num_overrides)
 		*num_overrides = 0;
 
 	if (!tdef->base)
-		return TRUE;
+		return;
 
 	loc.t = tdef;
 	loc.col_idx = MONO_METHODIMPL_CLASS;
 	loc.idx = mono_metadata_token_index (type_token);
 
 	if (!mono_binary_search (&loc, tdef->base, tdef->rows, tdef->row_size, table_locator))
-		return TRUE;
+		return;
 
 	start = loc.result;
 	end = start + 1;
@@ -6279,33 +6313,32 @@ mono_class_get_overrides_full (MonoImage *image, guint32 type_token, MonoMethod 
 	for (i = 0; i < num; ++i) {
 		MonoMethod *method;
 
-		if (!mono_verifier_verify_methodimpl_row (image, start + i, &error)) {
-			mono_error_cleanup (&error); /* FIXME don't swallow the error */
-			ok = FALSE;
+		if (!mono_verifier_verify_methodimpl_row (image, start + i, error))
 			break;
-		}
 
 		mono_metadata_decode_row (tdef, start + i, cols, MONO_METHODIMPL_SIZE);
-		method = method_from_method_def_or_ref (
-			image, cols [MONO_METHODIMPL_DECLARATION], generic_context, &error);
-		if (method == NULL) {
-			mono_error_cleanup (&error); /* FIXME don't swallow the error */
-			ok = FALSE;
-		}
+		method = method_from_method_def_or_ref (image, cols [MONO_METHODIMPL_DECLARATION], generic_context, error);
+		if (!method)
+			break;
+
 		result [i * 2] = method;
-		method = method_from_method_def_or_ref (
-			image, cols [MONO_METHODIMPL_BODY], generic_context, &error);
-		if (method == NULL) {
-			mono_error_cleanup (&error); /* FIXME don't swallow the error */
-			ok = FALSE;
-		}
+		method = method_from_method_def_or_ref (image, cols [MONO_METHODIMPL_BODY], generic_context, error);
+		if (!method)
+			break;
+
 		result [i * 2 + 1] = method;
 	}
 
-	*overrides = result;
-	if (num_overrides)
-		*num_overrides = num;
-	return ok;
+	if (!is_ok (error)) {
+		g_free (result);
+		*overrides = NULL;
+		if (num_overrides)
+			*num_overrides = 0;
+	} else {
+		*overrides = result;
+		if (num_overrides)
+			*num_overrides = num;
+	}
 }
 
 /**

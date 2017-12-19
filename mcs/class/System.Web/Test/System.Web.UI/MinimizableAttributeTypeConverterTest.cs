@@ -37,8 +37,6 @@ using System.Web.UI.HtmlControls;
 using System.Reflection;
 using NUnit.Framework;
 
-using MonoTests.Common;
-
 namespace MonoTests.System.Web.UI {
 
 	[TestFixture]
@@ -101,16 +99,16 @@ namespace MonoTests.System.Web.UI {
 			Assert.AreEqual (false, tc.ConvertFrom (null, culture, "FALSE"), "A5");
 			Assert.AreEqual (true, tc.ConvertFrom (null, culture, "true"), "A6");
 			Assert.AreEqual (true, tc.ConvertFrom (null, culture, "True"), "A");
-			AssertExtensions.Throws<NotSupportedException> (() => {
+			Assert.Throws<NotSupportedException> (() => {
 				tc.ConvertFrom (null, culture, true);
 			}, "A8");
-			AssertExtensions.Throws<NotSupportedException> (() => {
+			Assert.Throws<NotSupportedException> (() => {
 				tc.ConvertFrom (null, culture, false);
 			}, "A9");
-			AssertExtensions.Throws<NotSupportedException> (() => {
+			Assert.Throws<NotSupportedException> (() => {
 				tc.ConvertFrom (null, culture, 1234);
 			}, "A10");
-			AssertExtensions.Throws<NotSupportedException> (() => {
+			Assert.Throws<NotSupportedException> (() => {
 				tc.ConvertFrom (null, culture, null);
 			}, "A11");
 		}

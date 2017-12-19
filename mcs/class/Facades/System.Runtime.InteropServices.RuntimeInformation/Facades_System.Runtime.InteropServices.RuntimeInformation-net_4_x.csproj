@@ -8,7 +8,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{71D02788-3AD8-4C43-BDEB-1A3D277496BA}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <NoWarn>1699,1616,1699,436</NoWarn>
+    <NoWarn>1699,1616,1699</NoWarn>
+    <LangVersion>latest</LangVersion>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Windows_NT'">win32</HostPlatform>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">darwin</HostPlatform>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix'">linux</HostPlatform>
@@ -18,7 +19,7 @@
     <NoStdLib>True</NoStdLib>
     
     <NoConfig>True</NoConfig>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>
     </RootNamespace>
@@ -32,7 +33,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <NoWarn>1699,1616,1699,436</NoWarn>
+    <NoWarn>1699,1616,1699</NoWarn>
     <Optimize>false</Optimize>
     <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -40,7 +41,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <NoWarn>1699,1616,1699,436</NoWarn>
+    <NoWarn>1699,1616,1699</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -54,11 +55,8 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\..\..\..\external\corefx\src\System.Runtime.InteropServices.RuntimeInformation\src\System\Runtime\InteropServices\RuntimeInformation\Architecture.cs" />
-    <Compile Include="..\..\..\..\external\corefx\src\System.Runtime.InteropServices.RuntimeInformation\src\System\Runtime\InteropServices\RuntimeInformation\OSPlatform.cs" />
-    <Compile Include="Assembly\AssemblyInfo.cs" />
-    <Compile Include="corefx\SR.cs" />
-    <Compile Include="System.Runtime.InteropServices\RuntimeInformation.cs" />  </ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="TypeForwarders.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -84,10 +82,6 @@
     <ProjectReference Include="../../corlib/corlib-net_4_x.csproj">
       <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
       <Name>corlib-net_4_x</Name>
-    </ProjectReference>
-    <ProjectReference Include="../../System/System-net_4_x.csproj">
-      <Project>{2762E921-91A8-4C87-91E9-BA628013F753}</Project>
-      <Name>System-net_4_x</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

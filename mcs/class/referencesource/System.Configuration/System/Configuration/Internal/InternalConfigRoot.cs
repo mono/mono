@@ -28,11 +28,12 @@ namespace System.Configuration.Internal {
     // taken begin with the prefix "hl", for example, "hlFindConfigRecord".
     //
     internal sealed class InternalConfigRoot : IInternalConfigRoot {
-        IInternalConfigHost         _host;                  // host, need to create records
-        ReaderWriterLock            _hierarchyLock;         // lock to protect hierarchy
+        IInternalConfigHost                 _host;                  // host, need to create records
+        IInternalConfigurationBuilderHost   _configBuilderHost;     // _configBuilderHost, need to create records
+        ReaderWriterLock                    _hierarchyLock;         // lock to protect hierarchy
         BaseConfigurationRecord     _rootConfigRecord;      // root config record, one level above machine.config.
         bool                        _isDesignTime;          // Is the hierarchy for runtime or designtime?
-        private Configuration        _CurrentConfiguration      = null;
+        private Configuration       _CurrentConfiguration      = null;
 
         public event InternalConfigEventHandler ConfigChanged;
         public event InternalConfigEventHandler ConfigRemoved;
@@ -45,6 +46,7 @@ namespace System.Configuration.Internal {
 
         void IInternalConfigRoot.Init(IInternalConfigHost host, bool isDesignTime) {
             _host = host;
+            _configBuilderHost = host as IInternalConfigurationBuilderHost;
             _isDesignTime = isDesignTime;
             _hierarchyLock = new ReaderWriterLock();
 
@@ -59,6 +61,10 @@ namespace System.Configuration.Internal {
 
         internal IInternalConfigHost Host {
             get {return _host;}
+        }
+
+        internal IInternalConfigurationBuilderHost ConfigBuilderHost {
+            get { return _configBuilderHost; }
         }
 
         internal BaseConfigurationRecord RootConfigRecord {

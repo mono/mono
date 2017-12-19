@@ -151,6 +151,7 @@ System/UIntPtr.cs
 System/ValueType.cs
 System/Variant.cs
 System/Void.cs
+System/WeakAttribute.cs
 System/WeakReference.cs
 System/WeakReference_T.cs
 System/WindowsConsoleDriver.cs
@@ -326,6 +327,7 @@ System.Runtime/GCSettings.cs
 System.Runtime/MemoryFailPoint.cs
 System.Runtime.CompilerServices/ConditionalWeakTable.cs
 System.Runtime.CompilerServices/RuntimeHelpers.cs
+System.Runtime.CompilerServices/Unsafe.cs
 System.Runtime.Hosting/ActivationArguments.cs
 System.Runtime.Hosting/ApplicationActivator.cs
 System.Runtime.InteropServices/_Activator.cs
@@ -408,6 +410,9 @@ System.Runtime.InteropServices.WindowsRuntime/DesignerNamespaceResolveEventArgs.
 System.Runtime.InteropServices.WindowsRuntime/NamespaceResolveEventArgs.cs
 System.Runtime.InteropServices.WindowsRuntime/UnsafeNativeMethods.cs
 System.Runtime.InteropServices.WindowsRuntime/WindowsRuntimeMetadata.cs
+
+System.Runtime.InteropServices.RuntimeInformation/RuntimeInformation.cs
+
 System.Runtime.Remoting/ActivatedClientTypeEntry.cs
 System.Runtime.Remoting/ActivatedServiceTypeEntry.cs
 System.Runtime.Remoting/CustomErrorsModes.cs
@@ -825,7 +830,6 @@ System.Security.Principal/WindowsImpersonationContext.cs
 System.Security.Principal/WindowsPrincipal.cs
 System.Text/EncodingHelper.cs
 System.Text/NormalizationForm.cs
-System.Text/Latin1Encoding.cs
 System.Threading/CompressedStack.cs
 System.Threading/HostExecutionContext.cs
 System.Threading/HostExecutionContextManager.cs
@@ -1483,7 +1487,9 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/text/encoderreplacementfallback.cs
 ../referencesource/mscorlib/system/text/encoding.cs
 ../referencesource/mscorlib/system/text/encodinginfo.cs
+../referencesource/mscorlib/system/text/encodingnls.cs
 ../referencesource/mscorlib/system/text/encodingprovider.cs
+../referencesource/mscorlib/system/text/latin1encoding.cs
 ../referencesource/mscorlib/system/text/mlangcodepageencoding.cs
 ../referencesource/mscorlib/system/text/surrogateencoder.cs
 ../referencesource/mscorlib/system/text/unicodeencoding.cs
@@ -1621,6 +1627,7 @@ corert/Debug.cs
 corert/EnvironmentAugments.cs
 corert/RelocatedTypeAttribute.cs
 corert/RuntimeThread.cs
+corert/Stream.cs
 corert/ThreadPoolBoundHandle.cs
 
 ../../../external/corert/src/Common/src/Interop/Unix/Interop.Libraries.cs
@@ -1672,6 +1679,29 @@ corefx/SR.cs
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/OrderablePartitioner.cs
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/Partitioner.cs
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/PartitionerStatic.cs
+
+../../../external/corefx/src/System.Memory/src/System/Memory.cs
+../../../external/corefx/src/System.Memory/src/System/MemoryDebugView.cs
+../../../external/corefx/src/System.Memory/src/System/Pinnable.cs
+../../../external/corefx/src/System.Memory/src/System/ReadOnlyMemory.cs
+../../../external/corefx/src/System.Memory/src/System/ReadOnlySpan.cs
+../../../external/corefx/src/System.Memory/src/System/Span.cs
+../../../external/corefx/src/System.Memory/src/System/SpanDebugView.cs
+../../../external/corefx/src/System.Memory/src/System/SpanExtensions.cs
+../../../external/corefx/src/System.Memory/src/System/SpanExtensions.Portable.cs
+../../../external/corefx/src/System.Memory/src/System/SpanHelpers.cs
+../../../external/corefx/src/System.Memory/src/System/SpanHelpers.Clear.cs
+../../../external/corefx/src/System.Memory/src/System/SpanHelpers.byte.cs
+../../../external/corefx/src/System.Memory/src/System/SpanHelpers.T.cs
+../../../external/corefx/src/System.Memory/src/System/ThrowHelper.cs
+../../../external/corefx/src/System.Memory/src/System/Buffers/*.cs
+../../../external/corefx/src/System.Memory/src/System/Buffers/Binary/*.cs
+
+../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/System/Runtime/InteropServices/RuntimeInformation/OSPlatform.cs
+../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/System/Runtime/InteropServices/RuntimeInformation/Architecture.cs
+
+../../../external/corefx/src/System.Threading.Tasks.Extensions/src/System/Threading/Tasks/ValueTask.cs
+../../../external/corefx/src/System.Threading.Tasks.Extensions/src/System/Runtime/CompilerServices/*.cs
 
 System.Security.Cryptography.X509Certificates/X509CertificateImplApple.cs
 System.Security.Cryptography.X509Certificates/X509Helper.Apple.cs

@@ -46,6 +46,10 @@
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-time.h>
 #include <mono/utils/refcount.h>
+#include <mono/utils/mono-os-wait.h>
+
+// consistency with coreclr https://github.com/dotnet/coreclr/blob/643b09f966e68e06d5f0930755985a01a2a2b096/src/vm/win32threadpool.h#L111
+#define MAX_POSSIBLE_THREADS 0x7fff
 
 typedef struct {
 	MonoDomain *domain;
@@ -92,14 +96,14 @@ static ThreadPool threadpool;
 				g_error ("%s: counter._.starting = %d, but should be >= 0", __func__, counter._.starting); \
 			if (!(counter._.working >= 0)) \
 				g_error ("%s: counter._.working = %d, but should be >= 0", __func__, counter._.working); \
-		} while (InterlockedCompareExchange (&threadpool.counters.as_gint32, (var).as_gint32, __old.as_gint32) != __old.as_gint32); \
+		} while (mono_atomic_cas_i32 (&threadpool.counters.as_gint32, (var).as_gint32, __old.as_gint32) != __old.as_gint32); \
 	} while (0)
 
 static inline ThreadPoolCounter
 COUNTER_READ (void)
 {
 	ThreadPoolCounter counter;
-	counter.as_gint32 = InterlockedRead (&threadpool.counters.as_gint32);
+	counter.as_gint32 = mono_atomic_load_i32 (&threadpool.counters.as_gint32);
 	return counter;
 }
 
@@ -346,7 +350,7 @@ worker_callback (void)
 
 		domains_unlock ();
 
-		MonoString *thread_name = mono_string_new_checked (mono_get_root_domain (), "Threadpool worker", &error);
+		MonoString *thread_name = mono_string_new_checked (mono_get_root_domain (), "Thread Pool Worker", &error);
 		mono_error_assert_ok (&error);
 		mono_thread_set_name_internal (thread, thread_name, FALSE, TRUE, &error);
 		mono_error_assert_ok (&error);
@@ -493,13 +497,13 @@ mono_threadpool_end_invoke (MonoAsyncResult *ares, MonoArray **out_args, MonoObj
 			MONO_OBJECT_SETREF (ares, handle, (MonoObject*) wait_handle);
 		}
 		mono_monitor_exit ((MonoObject*) ares);
-		MONO_ENTER_GC_SAFE;
 #ifdef HOST_WIN32
-		WaitForSingleObjectEx (wait_event, INFINITE, TRUE);
+		MONO_ENTER_GC_SAFE;
+		mono_win32_wait_for_single_object_ex (wait_event, INFINITE, TRUE);
+		MONO_EXIT_GC_SAFE;
 #else
 		mono_w32handle_wait_one (wait_event, MONO_INFINITE_WAIT, TRUE);
 #endif
-		MONO_EXIT_GC_SAFE;
 	}
 
 	ac = (MonoAsyncCall*) ares->object_data;
@@ -684,6 +688,9 @@ ves_icall_System_Threading_ThreadPool_SetMinThreadsNative (gint32 worker_threads
 MonoBoolean
 ves_icall_System_Threading_ThreadPool_SetMaxThreadsNative (gint32 worker_threads, gint32 completion_port_threads)
 {
+	worker_threads = MIN (worker_threads, MAX_POSSIBLE_THREADS);
+	completion_port_threads = MIN (completion_port_threads, MAX_POSSIBLE_THREADS);
+
 	gint cpu_count = mono_cpu_count ();
 
 	if (completion_port_threads < threadpool.limit_io_min || completion_port_threads < cpu_count)

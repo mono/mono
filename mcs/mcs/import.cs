@@ -959,7 +959,8 @@ namespace Mono.CSharp
 					}
 				}
 
-				if (kind == MemberKind.Class) {
+				switch (kind) {
+				case MemberKind.Class:
 					if ((ma & TypeAttributes.Sealed) != 0) {
 						if ((ma & TypeAttributes.Abstract) != 0)
 							mod |= Modifiers.STATIC;
@@ -968,6 +969,17 @@ namespace Mono.CSharp
 					} else if ((ma & TypeAttributes.Abstract) != 0) {
 						mod |= Modifiers.ABSTRACT;
 					}
+					break;
+				case MemberKind.Struct:
+					if (HasAttribute (CustomAttributeData.GetCustomAttributes (type), "IsReadOnlyAttribute", CompilerServicesNamespace)) {
+						mod |= Modifiers.READONLY;
+					}
+
+					if (HasAttribute (CustomAttributeData.GetCustomAttributes (type), "IsByRefLikeAttribute", CompilerServicesNamespace)) {
+						mod |= Modifiers.REF;
+					}
+
+					break;
 				}
 			}
 
@@ -1434,7 +1446,14 @@ namespace Mono.CSharp
 						if (args.Count == 1) {
 							bag.Obsolete = new ObsoleteAttribute ((string) args[0].Value);
 						} else if (args.Count == 2) {
-							bag.Obsolete = new ObsoleteAttribute ((string) args[0].Value, (bool) args[1].Value);
+							const string ByRefLikeMarker = "Types with embedded references are not supported in this version of your compiler.";
+
+							var msg = (string)args[0].Value;
+
+							if (msg == ByRefLikeMarker)
+								continue;
+
+							bag.Obsolete = new ObsoleteAttribute (msg, (bool) args[1].Value);
 						} else {
 							bag.Obsolete = new ObsoleteAttribute ();
 						}

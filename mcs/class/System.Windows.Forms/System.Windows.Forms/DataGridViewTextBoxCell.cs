@@ -211,17 +211,30 @@ namespace System.Windows.Forms {
 				flags |= AlignmentToFlags (cellStyle.Alignment);
 
 				Rectangle contentbounds = cellBounds;
-				
-				contentbounds.Height -= 2;
-				contentbounds.Width -= 2;
-				
-				// If we are top aligned, give ourselves some padding from the top
-				if (((int)cellStyle.Alignment & 7) > 0) {
-					contentbounds.Offset (0, 2);
-					contentbounds.Height -= 2;
+
+				//Border widths
+				Rectangle borderWidths = BorderWidths(advancedBorderStyle);
+				contentbounds.Offset(borderWidths.X, borderWidths.Y);
+				contentbounds.Width -= borderWidths.Right;
+				contentbounds.Height -= borderWidths.Bottom;
+
+				//Padding
+				if (cellStyle.Padding != Padding.Empty)
+				{
+					contentbounds.Offset(cellStyle.Padding.Left, cellStyle.Padding.Top);
+					contentbounds.Width -= cellStyle.Padding.Horizontal;
+					contentbounds.Height -= cellStyle.Padding.Vertical;
 				}
 
-				if (formattedValue != null)
+				const int textTopAdditionalPadding = 1;
+				const int textBottomAdditionalPadding = 2;
+				const int textLeftAdditionalPadding = 0;
+				const int textRightAdditionalPadding = 2;
+				contentbounds.Offset (textLeftAdditionalPadding, textTopAdditionalPadding);
+				contentbounds.Width -= textLeftAdditionalPadding + textRightAdditionalPadding;
+				contentbounds.Height -= textTopAdditionalPadding + textBottomAdditionalPadding;
+
+				if (formattedValue != null && contentbounds.Width > 0 && contentbounds.Height > 0)
 					TextRenderer.DrawText (graphics, formattedValue.ToString (), cellStyle.Font, contentbounds, color, flags);
 			}
 

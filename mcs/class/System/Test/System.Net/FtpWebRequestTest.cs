@@ -389,6 +389,9 @@ namespace MonoTests.System.Net
 #endif
 		public void DownloadFile2_v6 ()
 		{
+			if (!Socket.OSSupportsIPv6)
+				Assert.Ignore ("IPv6 not supported.");
+
 			// Some embedded FTP servers in Industrial Automation Hardware report
 			// the PWD using backslashes, but allow forward slashes for CWD.
 			DownloadFile (new ServerDownload (@"\Users\someuser", "/Users/someuser/", null, true));

@@ -97,8 +97,38 @@ namespace System.Runtime.Remoting.Messaging {
 			else
 				sig_cand = type.GetMethod (methodName, BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance, null, param_types, null);
 
+			if (sig_cand != null && generic_arg_names != null && !sig_cand.IsGenericMethodDefinition)
+				sig_cand = null;
+
 			if (sig_cand != null && generic_arg_names != null)
 				sig_cand = ((MethodInfo)sig_cand).MakeGenericMethod (GetTypes (generic_arg_names));
+
+			// We have a generic method with parameters that contain generic arguments
+			if (sig_cand == null && generic_arg_names != null) {
+				foreach (var method in type.GetMethods ()) {
+					if (method.Name != methodName)
+						continue;
+
+					if (!method.IsGenericMethodDefinition || method.GetGenericArguments().Length != generic_arg_names.Length)
+						continue;
+
+					sig_cand = ((MethodInfo)method).MakeGenericMethod (GetTypes (generic_arg_names));
+					var parameters = sig_cand.GetParameters ();
+
+					if (param_names.Length != parameters.Length)
+						continue;
+
+					for (int i=0; i < parameters.Length; i++) {
+						if (parameters [i].ParameterType.AssemblyQualifiedName != param_names [i]) {
+							sig_cand = null;
+							break;
+						}
+					}
+
+					if (sig_cand != null)
+						break;
+				}
+			}
 
 			if (sig_cand == null)
 				throw new RemotingException ($"Method '{methodName}' not found in type '{typeName}'");
@@ -113,19 +143,17 @@ namespace System.Runtime.Remoting.Messaging {
 			ctor = method.IsConstructor;
 			methodName = method.Name;
 
+			var param_types = method.GetParameters ();
+			param_names = new string [param_types.Length];
+			for (int i = 0; i < param_types.Length; ++i)
+				param_names [i] = param_types [i].ParameterType.AssemblyQualifiedName;
+
 			if (!ctor && method.IsGenericMethod) {
 				var ga = method.GetGenericArguments ();
 				generic_arg_names = new string [ga.Length];
 				for (int i = 0; i < ga.Length; ++i)
 					generic_arg_names [i] = ga [i].AssemblyQualifiedName;
-
-				method = ((MethodInfo)method).GetGenericMethodDefinition ();
 			}
-
-			var param_types = method.GetParameters ();
-			param_names = new string [param_types.Length];
-			for (int i = 0; i < param_types.Length; ++i)
-				param_names [i] = param_types [i].ParameterType.AssemblyQualifiedName;
 		}
 	}
 

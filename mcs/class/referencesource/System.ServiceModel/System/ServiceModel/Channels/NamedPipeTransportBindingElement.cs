@@ -5,12 +5,14 @@
 namespace System.ServiceModel.Channels
 {
     using System.Collections.Generic;
+    using Collections.ObjectModel;
     using System.Security.Principal;
     using System.ServiceModel.Activation;
 
     public class NamedPipeTransportBindingElement : ConnectionOrientedTransportBindingElement
     {
-        List<SecurityIdentifier> allowedUsers;
+        List<SecurityIdentifier> allowedUsers = new List<SecurityIdentifier>();
+        Collection<SecurityIdentifier> allowedUsersCollection;
         NamedPipeConnectionPoolSettings connectionPoolSettings = new NamedPipeConnectionPoolSettings();
         NamedPipeSettings settings = new NamedPipeSettings();
 
@@ -24,7 +26,6 @@ namespace System.ServiceModel.Channels
         {
             if (elementToBeCloned.allowedUsers != null)
             {
-                this.allowedUsers = new List<SecurityIdentifier>(elementToBeCloned.AllowedUsers.Count);
                 foreach (SecurityIdentifier id in elementToBeCloned.allowedUsers)
                 {
                     this.allowedUsers.Add(id);
@@ -45,6 +46,19 @@ namespace System.ServiceModel.Channels
             set
             {
                 this.allowedUsers = value;
+            }
+        }
+
+        public Collection<SecurityIdentifier> AllowedSecurityIdentifiers
+        {
+            get
+            {
+                if (this.allowedUsersCollection == null)
+                {
+                    this.allowedUsersCollection = new Collection<SecurityIdentifier>(this.allowedUsers);
+                }
+
+                return this.allowedUsersCollection;
             }
         }
 

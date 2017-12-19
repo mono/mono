@@ -3625,3 +3625,12 @@ Globalization.cp_57011 = ISCII Punjabi
 ArgumentException_ValueTupleIncorrectType=Argument must be of type {0}.
 ArgumentException_ValueTupleLastArgumentNotAValueTuple=The last element of an eight element ValueTuple must be a ValueTuple.
 
+; ThreadPoolBoundHandle 
+Argument_PreAllocatedAlreadyAllocated='preAllocated' is already in use.
+InvalidOperation_NativeOverlappedReused=NativeOverlapped cannot be reused for multiple operations.
+Argument_NativeOverlappedAlreadyFree='overlapped' has already been freed.
+Argument_AlreadyBoundOrSyncHandle='handle' has already been bound to the thread pool, or was not opened for asynchronous I/O.
+Argument_NativeOverlappedWrongBoundHandle='overlapped' was not allocated by this ThreadPoolBoundHandle instance.
+
+; RuntimeInformation
+Argument_EmptyValue=Value cannot be empty.

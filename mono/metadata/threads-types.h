@@ -189,7 +189,7 @@ void ves_icall_System_Runtime_Remoting_Contexts_Context_ReleaseContext (MonoAppC
 
 MonoInternalThread *mono_thread_internal_current (void);
 
-void mono_thread_internal_abort (MonoInternalThread *thread);
+void mono_thread_internal_abort (MonoInternalThread *thread, gboolean appdomain_unload);
 void mono_thread_internal_suspend_for_shutdown (MonoInternalThread *thread);
 
 gboolean mono_thread_internal_has_appdomain_ref (MonoInternalThread *thread, MonoDomain *domain);
@@ -242,6 +242,7 @@ gboolean
 mono_thread_create_checked (MonoDomain *domain, gpointer func, gpointer arg, MonoError *error);
 
 /* Can't include utils/mono-threads.h because of the THREAD_INFO_TYPE wizardry */
+void mono_threads_add_joinable_runtime_thread (gpointer thread_info);
 void mono_threads_add_joinable_thread (gpointer tid);
 void mono_threads_join_threads (void);
 void mono_thread_join (gpointer tid);

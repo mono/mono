@@ -283,6 +283,8 @@ namespace Mono.CSharp
 				if (arg.Type == InternalType.VarOutType) {
 					// Should be special error message about dynamic dispatch
 					rc.Report.Error (8197, arg.Expr.Location, "Cannot infer the type of implicitly-typed out variable `{0}'", ((DeclarationExpression) arg.Expr).Variable.Name);
+				} else if (arg.Type == InternalType.DefaultType) {
+					rc.Report.Error (8311, arg.Expr.Location, "Cannot use a default literal as an argument to a dynamically dispatched operation");
 				}
 			}
 

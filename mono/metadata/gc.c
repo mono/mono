@@ -44,6 +44,8 @@
 #include <mono/utils/mono-coop-semaphore.h>
 #include <mono/utils/hazard-pointer.h>
 #include <mono/utils/w32api.h>
+#include <mono/utils/unlocked.h>
+#include <mono/utils/mono-os-wait.h>
 
 #ifndef HOST_WIN32
 #include <pthread.h>
@@ -90,6 +92,7 @@ static void object_register_finalizer (MonoObject *obj, void (*callback)(void *,
 static void reference_queue_proccess_all (void);
 static void mono_reference_queue_cleanup (void);
 static void reference_queue_clear_for_domain (MonoDomain *domain);
+static void mono_runtime_do_background_work (void);
 
 
 static MonoThreadInfoWaitRet
@@ -174,7 +177,6 @@ mono_gc_run_finalize (void *obj, void *data)
 	MonoMethod* finalizer = NULL;
 	MonoDomain *caller_domain = mono_domain_get ();
 	MonoDomain *domain;
-	RuntimeInvokeFunction runtime_invoke;
 
 	// This function is called from the innards of the GC, so our best alternative for now is to do polling here
 	mono_threads_safepoint ();
@@ -285,6 +287,7 @@ mono_gc_run_finalize (void *obj, void *data)
 	if (log_finalizers)
 		g_log ("mono-gc-finalizers", G_LOG_LEVEL_MESSAGE, "<%s at %p> Compiling finalizer.", o->vtable->klass->name, o);
 
+#ifndef HOST_WASM
 	if (!domain->finalize_runtime_invoke) {
 		MonoMethod *invoke = mono_marshal_get_runtime_invoke (mono_class_get_method_from_name_flags (mono_defaults.object_class, "Finalize", 0, 0), TRUE);
 
@@ -292,11 +295,11 @@ mono_gc_run_finalize (void *obj, void *data)
 		mono_error_assert_ok (&error); /* expect this not to fail */
 	}
 
-	runtime_invoke = (RuntimeInvokeFunction)domain->finalize_runtime_invoke;
+	RuntimeInvokeFunction runtime_invoke = (RuntimeInvokeFunction)domain->finalize_runtime_invoke;
+#endif
 
 	mono_runtime_class_init_full (o->vtable, &error);
-	if (!is_ok (&error))
-		goto unhandled_error;
+	goto_if_nok (&error, unhandled_error);
 
 	if (G_UNLIKELY (MONO_GC_FINALIZE_INVOKE_ENABLED ())) {
 		MONO_GC_FINALIZE_INVOKE ((unsigned long)o, mono_object_get_size (o),
@@ -308,7 +311,12 @@ mono_gc_run_finalize (void *obj, void *data)
 
 	MONO_PROFILER_RAISE (gc_finalizing_object, (o));
 
+#ifdef HOST_WASM
+	gpointer params[] = { NULL };
+	mono_runtime_try_invoke (finalizer, o, params, &exc, &error);
+#else
 	runtime_invoke (o, NULL, &exc, NULL);
+#endif
 
 	MONO_PROFILER_RAISE (gc_finalized_object, (o));
 
@@ -322,19 +330,6 @@ unhandled_error:
 		mono_thread_internal_unhandled_exception (exc);
 
 	mono_domain_set_internal (caller_domain);
-}
-
-gpointer
-mono_gc_out_of_memory (size_t size)
-{
-	/* 
-	 * we could allocate at program startup some memory that we could release 
-	 * back to the system at this point if we're really low on memory (ie, size is
-	 * lower than the memory we set apart)
-	 */
-	mono_raise_exception (mono_domain_get ()->out_of_memory_ex);
-
-	return NULL;
 }
 
 /*
@@ -507,7 +502,7 @@ mono_domain_finalize (MonoDomain *domain, guint32 timeout)
 		if (found) {
 			/* We have to decrement it wherever we
 			 * remove it from domains_to_finalize */
-			if (InterlockedDecrement (&req->ref) != 1)
+			if (mono_atomic_dec_i32 (&req->ref) != 1)
 				g_error ("%s: req->ref should be 1, as we are the first one to decrement it", __func__);
 		}
 
@@ -515,7 +510,7 @@ mono_domain_finalize (MonoDomain *domain, guint32 timeout)
 	}
 
 done:
-	if (InterlockedDecrement (&req->ref) == 0) {
+	if (mono_atomic_dec_i32 (&req->ref) == 0) {
 		mono_coop_sem_destroy (&req->done);
 		g_free (req);
 	}
@@ -597,7 +592,7 @@ ves_icall_System_GC_WaitForPendingFinalizers (void)
 	mono_gc_finalize_notify ();
 	/* g_print ("Waiting for pending finalizers....\n"); */
 	MONO_ENTER_GC_SAFE;
-	WaitForSingleObjectEx (pending_done_event, INFINITE, TRUE);
+	mono_win32_wait_for_single_object_ex (pending_done_event, INFINITE, TRUE);
 	MONO_EXIT_GC_SAFE;
 	/* g_print ("Done pending....\n"); */
 #else
@@ -720,7 +715,11 @@ mono_gc_finalize_notify (void)
 	if (mono_gc_is_null ())
 		return;
 
+#ifdef HOST_WASM
+	mono_threads_schedule_background_job (mono_runtime_do_background_work);
+#else
 	mono_coop_sem_post (&finalizer_sem);
+#endif
 }
 
 /*
@@ -745,7 +744,7 @@ hazard_free_queue_is_too_big (size_t size)
 	if (size < HAZARD_QUEUE_OVERFLOW_SIZE)
 		return;
 
-	if (finalizer_thread_pulsed || InterlockedCompareExchange (&finalizer_thread_pulsed, TRUE, FALSE))
+	if (finalizer_thread_pulsed || mono_atomic_cas_i32 (&finalizer_thread_pulsed, TRUE, FALSE))
 		return;
 
 	mono_gc_finalize_notify ();
@@ -780,7 +779,7 @@ finalize_domain_objects (void)
 	DomainFinalizationReq *req = NULL;
 	MonoDomain *domain;
 
-	if (domains_to_finalize) {
+	if (UnlockedReadPointer ((gpointer)&domains_to_finalize)) {
 		mono_finalizer_lock ();
 		if (domains_to_finalize) {
 			req = (DomainFinalizationReq *)domains_to_finalize->data;
@@ -829,12 +828,42 @@ finalize_domain_objects (void)
 	/* printf ("DONE.\n"); */
 	mono_coop_sem_post (&req->done);
 
-	if (InterlockedDecrement (&req->ref) == 0) {
+	if (mono_atomic_dec_i32 (&req->ref) == 0) {
 		/* mono_domain_finalize already returned, and
 		 * doesn't hold a reference to req anymore. */
 		mono_coop_sem_destroy (&req->done);
 		g_free (req);
 	}
+}
+
+
+static void
+mono_runtime_do_background_work (void)
+{
+	mono_threads_perform_thread_dump ();
+
+	mono_console_handle_async_ops ();
+
+	mono_attach_maybe_start ();
+
+	finalize_domain_objects ();
+
+	MONO_PROFILER_RAISE (gc_finalizing, ());
+
+	/* If finished == TRUE, mono_gc_cleanup has been called (from mono_runtime_cleanup),
+	 * before the domain is unloaded.
+	 */
+	mono_gc_invoke_finalizers ();
+
+	MONO_PROFILER_RAISE (gc_finalized, ());
+
+	mono_threads_join_threads ();
+
+	reference_queue_proccess_all ();
+
+	mono_w32process_signal_finished ();
+
+	hazard_free_queue_pump ();
 }
 
 static gsize WINAPI
@@ -867,30 +896,7 @@ finalizer_thread (gpointer unused)
 
 		mono_gc_set_skip_thread (FALSE);
 
-		mono_threads_perform_thread_dump ();
-
-		mono_console_handle_async_ops ();
-
-		mono_attach_maybe_start ();
-
-		finalize_domain_objects ();
-
-		MONO_PROFILER_RAISE (gc_finalizing, ());
-
-		/* If finished == TRUE, mono_gc_cleanup has been called (from mono_runtime_cleanup),
-		 * before the domain is unloaded.
-		 */
-		mono_gc_invoke_finalizers ();
-
-		MONO_PROFILER_RAISE (gc_finalized, ());
-
-		mono_threads_join_threads ();
-
-		reference_queue_proccess_all ();
-
-		mono_w32process_signal_finished ();
-
-		hazard_free_queue_pump ();
+		mono_runtime_do_background_work ();
 
 		/* Avoid posting the pending done event until there are pending finalizers */
 		if (mono_coop_sem_timedwait (&finalizer_sem, 0, MONO_SEM_FLAGS_NONE) == MONO_SEM_TIMEDWAIT_RET_SUCCESS) {
@@ -995,7 +1001,7 @@ mono_gc_cleanup (void)
 					ret = guarded_wait (gc_thread->handle, MONO_INFINITE_WAIT, FALSE);
 					g_assert (ret == MONO_THREAD_INFO_WAIT_RET_SUCCESS_0);
 
-					mono_thread_join (GUINT_TO_POINTER (gc_thread->tid));
+					mono_threads_add_joinable_thread ((gpointer)(MONO_UINT_TO_NATIVE_THREAD_ID (gc_thread->tid)));
 					break;
 				}
 
@@ -1008,7 +1014,7 @@ mono_gc_cleanup (void)
 					mono_gc_suspend_finalizers ();
 
 					/* Try to abort the thread, in the hope that it is running managed code */
-					mono_thread_internal_abort (gc_thread);
+					mono_thread_internal_abort (gc_thread, FALSE);
 
 					/* Wait for it to stop */
 					ret = guarded_wait (gc_thread->handle, 100, FALSE);
@@ -1020,7 +1026,7 @@ mono_gc_cleanup (void)
 
 					g_assert (ret == MONO_THREAD_INFO_WAIT_RET_SUCCESS_0);
 
-					mono_thread_join (GUINT_TO_POINTER (gc_thread->tid));
+					mono_threads_add_joinable_thread ((gpointer)(MONO_UINT_TO_NATIVE_THREAD_ID (gc_thread->tid)));
 					break;
 				}
 
@@ -1087,7 +1093,7 @@ ref_list_remove_element (RefQueueEntry **prev, RefQueueEntry *element)
 		/* Guard if head is changed concurrently. */
 		while (*prev != element)
 			prev = &(*prev)->next;
-	} while (prev && InterlockedCompareExchangePointer ((volatile gpointer *)prev, element->next, element) != element);
+	} while (prev && mono_atomic_cas_ptr ((volatile gpointer *)prev, element->next, element) != element);
 }
 
 static void
@@ -1098,7 +1104,7 @@ ref_list_push (RefQueueEntry **head, RefQueueEntry *value)
 		current = *head;
 		value->next = current;
 		STORE_STORE_FENCE; /*Must make sure the previous store is visible before the CAS. */
-	} while (InterlockedCompareExchangePointer ((volatile gpointer *)head, value, current) != current);
+	} while (mono_atomic_cas_ptr ((volatile gpointer *)head, value, current) != current);
 }
 
 static void

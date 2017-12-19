@@ -74,6 +74,7 @@ namespace MonoTests.System.Net.NetworkInformation
 		}
 	
 		[Test]
+		[Category ("InetAccess")]
 		public void AtLeastOneGatewayAddress ()
 		{
 			int numGatewayAddresses = 0;
