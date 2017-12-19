@@ -30,8 +30,6 @@ namespace Mono.Unity
 
 		// Native UnityTls objects
 		private UnityTls.unitytls_tlsctx*   m_TlsContext = null;
-		private UnityTls.unitytls_x509list* m_ServerCerts = null;
-		private UnityTls.unitytls_key*      m_ServerPrivateKey = null;
 
 		// States and certificates
 		X509Certificate       m_LocalClientCertificate;
@@ -77,19 +75,26 @@ namespace Mono.Unity
 				if (serverCertificate2 == null || serverCertificate2.PrivateKey == null)
 					throw new ArgumentException ("serverCertificate does not have a private key", "serverCertificate");
 
-				m_ServerCerts = UnityTls.unitytls_x509list_create (&errorState);
-				CertHelper.AddCertificateToNativeChain (m_ServerCerts, serverCertificate, &errorState);
+				UnityTls.unitytls_x509list* serverCerts = null;
+				UnityTls.unitytls_key* serverPrivateKey = null;
+				try {
+					serverCerts = UnityTls.unitytls_x509list_create (&errorState);
+					CertHelper.AddCertificateToNativeChain (serverCerts, serverCertificate, &errorState);
+					UnityTls.unitytls_x509list_ref serverCertsRef = UnityTls.unitytls_x509list_get_ref (serverCerts, &errorState);
 
-				byte[] privateKeyDer = PKCS8.PrivateKeyInfo.Encode (serverCertificate2.PrivateKey);
-				fixed(byte* privateKeyDerPtr = privateKeyDer) {
-					m_ServerPrivateKey = UnityTls.unitytls_key_parse_der (privateKeyDerPtr, privateKeyDer.Length, null, 0, &errorState);
+					byte[] privateKeyDer = PKCS8.PrivateKeyInfo.Encode (serverCertificate2.PrivateKey);
+					fixed(byte* privateKeyDerPtr = privateKeyDer) {
+						serverPrivateKey = UnityTls.unitytls_key_parse_der (privateKeyDerPtr, privateKeyDer.Length, null, 0, &errorState);
+					}
+					UnityTls.unitytls_key_ref serverKeyRef = UnityTls.unitytls_key_get_ref (serverPrivateKey, &errorState);
+
+					Mono.Unity.Debug.CheckAndThrow (errorState, "Failed to parse server key/certificate");
+
+					m_TlsContext = UnityTls.unitytls_tlsctx_create_server (protocolRange, callbacks, serverCertsRef, serverKeyRef, &errorState);
+				} finally {
+					UnityTls.unitytls_x509list_free (serverCerts);
+					UnityTls.unitytls_key_free (serverPrivateKey);
 				}
-
-				Mono.Unity.Debug.CheckAndThrow (errorState, "Failed to parse server key/certificate");
-
-				UnityTls.unitytls_x509list_ref serverCertsRef = UnityTls.unitytls_x509list_get_ref (m_ServerCerts, &errorState);
-				UnityTls.unitytls_key_ref serverKeyRef = UnityTls.unitytls_key_get_ref (m_ServerPrivateKey, &errorState);
-				m_TlsContext = UnityTls.unitytls_tlsctx_create_server (protocolRange, callbacks, serverCertsRef, serverKeyRef, &errorState);
 			}
 			else {
 				byte [] targetHostUtf8 = Encoding.UTF8.GetBytes (targetHost);
@@ -180,10 +185,6 @@ namespace Mono.Unity
 			// Destroy native UnityTls objects
 			UnityTls.unitytls_tlsctx_free (m_TlsContext);
 			m_TlsContext = null;
-			UnityTls.unitytls_x509list_free (m_ServerCerts);
-			m_ServerCerts = null;
-			UnityTls.unitytls_key_free (m_ServerPrivateKey);
-			m_ServerPrivateKey = null;
 
 			m_HasContext = false;
 		}
@@ -217,6 +218,8 @@ namespace Mono.Unity
 			if (IsServer && AskForClientCertificate) {
 				throw new NotImplementedException ("No support for server-sided client certificate check yet.");
 			}
+
+			// TODO: Set ciphers from Settings.EnabledCiphers
 		}
 
 		public override bool ProcessHandshake ()
