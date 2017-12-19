@@ -72,21 +72,32 @@ namespace Mono.Unity
 			UnityTls.unitytls_x509verify_result result = UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_NOT_DONE;
 			try
 			{
-				CertHelper.AddCertificatesToNativeChain (certificatesNative, certificates, &errorState);
 
 				// Things the validator provides that we might want to make use of here:
 				//validator.Settings.CheckCertificateName				// not used by mono?
 				//validator.Settings.CheckCertificateRevocationStatus	// not used by mono?
 				//validator.Settings.CertificateValidationTime
-				//validator.Settings.TrustAnchors
 				//validator.Settings.CertificateSearchPaths				// currently only used by MonoBtlsProvider
 				//validator.Settings.SendCloseNotify					// UnityTls always sends a close notify if the underlying impl supports it. Currently only used by MonoBtlsProvider
 
-				// validate
+				CertHelper.AddCertificatesToNativeChain (certificatesNative, certificates, &errorState);
 				UnityTls.unitytls_x509list_ref certificatesNativeRef = UnityTls.unitytls_x509list_get_ref (certificatesNative, &errorState);
 				byte[] targetHostUtf8 = Encoding.UTF8.GetBytes (targetHost);
-				fixed (byte* targetHostUtf8Ptr = targetHostUtf8) {
-					result = UnityTls.unitytls_x509verify_default_ca (certificatesNativeRef, targetHostUtf8Ptr, targetHostUtf8.Length, null, null, &errorState);
+
+				if (validator.Settings.TrustAnchors != null) {
+					UnityTls.unitytls_x509list* trustCAnative = UnityTls.unitytls_x509list_create (&errorState);
+					CertHelper.AddCertificatesToNativeChain (trustCAnative, validator.Settings.TrustAnchors, &errorState);
+					UnityTls.unitytls_x509list_ref trustCAnativeRef = UnityTls.unitytls_x509list_get_ref (certificatesNative, &errorState);
+
+					fixed (byte* targetHostUtf8Ptr = targetHostUtf8) {
+						result = UnityTls.unitytls_x509verify_explicit_ca (certificatesNativeRef, trustCAnativeRef, targetHostUtf8Ptr, targetHostUtf8.Length, null, null, &errorState);
+					}
+
+					UnityTls.unitytls_x509list_free (trustCAnative);
+				} else {
+					fixed (byte* targetHostUtf8Ptr = targetHostUtf8) {
+						result = UnityTls.unitytls_x509verify_default_ca (certificatesNativeRef, targetHostUtf8Ptr, targetHostUtf8.Length, null, null, &errorState);
+					}
 				}
 			}
 			finally
