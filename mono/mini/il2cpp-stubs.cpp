@@ -1570,6 +1570,9 @@ MonoClass* il2cpp_mono_get_string_class (void)
 	return (MonoClass*)il2cpp_defaults.string_class;
 }
 
+Il2CppSequencePoint* il2cpp_get_sequence_point(size_t id)
+{
+    return il2cpp::utils::Debugger::GetSequencePoint(id);
 }
-
+}
 #endif // RUNTIME_IL2CPP
