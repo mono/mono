@@ -23,8 +23,7 @@ _ios_CXXFLAGS= \
 	$(if $(filter $(RELEASE),true),-O2,-O0 -ggdb3 -gdwarf-2) \
 	-DMONOTOUCH=1
 
-_ios_LDFLAGS= \
-	-Wl,-no_weak_imports
+_ios_LDFLAGS=
 
 ##
 # Parameters
@@ -88,6 +87,7 @@ _ios_$(1)_CXXFLAGS= \
 
 _ios_$(1)_LDFLAGS= \
 	$$(_ios_LDFLAGS) \
+	-Wl,-no_weak_imports \
 	-arch $(2) \
 	-framework CoreFoundation \
 	-lobjc -lc++ \
@@ -269,6 +269,7 @@ $(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe: $(wildcard $(TOP)/tools/offs
 #  ios_$(1)_CFLAGS
 #  ios_$(1)_CXXFLAGS
 #  ios_$(1)_LDFLAGS
+#  ios_$(1)_CONFIGURE_FLAGS
 define iOSCrossTemplate
 
 _ios_$(1)_CC=$$(CCACHE) $$(PLATFORM_BIN)/clang
@@ -296,7 +297,7 @@ _ios_$(1)_LDFLAGS= \
 	$$(ios_$(1)_LDFLAGS)
 
 _ios_$(1)_CONFIGURE_FLAGS= \
-	--build=i386-apple-darwin10 \
+	$$(ios_$(1)_CONFIGURE_FLAGS) \
 	--target=$(2)-darwin \
 	--cache-file=$$(TOP)/sdks/builds/ios-$(1).config.cache \
 	--prefix=$$(TOP)/sdks/out/ios-$(1) \
@@ -312,8 +313,6 @@ _ios_$(1)_CONFIGURE_FLAGS= \
 	--with-cross-offsets=$(2)-apple-darwin10.h \
 	--with-glib=embedded
 
-# _ios_$(1)_CONFIGURE_FLAGS += --enable-llvm --with-llvm=../llvm/usr
-
 _ios_$(1)_CONFIGURE_ENVIRONMENT= \
 	CC="$$(_ios_$(1)_CC)" \
 	CXX="$$(_ios_$(1)_CXX)" \
@@ -324,7 +323,7 @@ _ios_$(1)_CONFIGURE_ENVIRONMENT= \
 .stamp-ios-$(1)-toolchain:
 	touch $$@
 
-.stamp-ios-$(1)-configure: $$(TOP)/configure
+.stamp-ios-$(1)-configure: $$(TOP)/configure build-llvm
 	mkdir -p $$(TOP)/sdks/builds/ios-$(1)
 	cd $$(TOP)/sdks/builds/ios-$(1) && PATH="$$(PLATFORM_BIN):$$$$PATH" $$(TOP)/configure $$(_ios_$(1)_AC_VARS) $$(_ios_$(1)_CONFIGURE_ENVIRONMENT) $$(_ios_$(1)_CONFIGURE_FLAGS)
 	touch $$@
@@ -336,12 +335,12 @@ $$(TOP)/sdks/builds/ios-$(1)/$(2)-apple-darwin10.h: .stamp-ios-$(1)-configure $$
 	cd $$(TOP)/sdks/builds/ios-$(1) && \
 		MONO_PATH=$(TOP)/tools/offsets-tool/CppSharp/osx_32 \
 			mono --arch=32 --debug $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe \
-				--abi $(2)-apple-darwin10 --platform ios --out $$(TOP)/sdks/builds/ios-$(1)/ --mono $$(TOP) --targetdir $$(TOP)/sdks/builds/ios-$(1)
+				--gen-ios --abi $(2)-apple-darwin10 --out $$(TOP)/sdks/builds/ios-$(1)/ --mono $$(TOP) --targetdir $$(TOP)/sdks/builds/ios-$(1)
 
 build-ios-$(1): $$(TOP)/sdks/builds/ios-$(1)/$(2)-apple-darwin10.h
 
 .PHONY: package-ios-$(1)
-package-ios-$(1):
+package-ios-$(1): build-ios-$(1)
 	$$(MAKE) -C $$(TOP)/sdks/builds/ios-$(1)/mono install
 
 .PHONY: clean-ios-$(1)
@@ -354,3 +353,8 @@ endef
 
 $(eval $(call iOSCrossTemplate,cross32,arm))
 $(eval $(call iOSCrossTemplate,cross64,aarch64))
+
+ios_cross32_CONFIGURE_FLAGS = --build=i386-apple-darwin10 --with-llvm=$(TOP)/sdks/out/llvm32
+ios_cross64_CONFIGURE_FLAGS = --with-llvm=$(TOP)/sdks/out/llvm64
+
+

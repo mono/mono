@@ -18,11 +18,15 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-	NSLog (@"HELLO!\n");
-	mono_ios_runtime_init ();
+	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+			[self startRuntime];
+		});
     // Do any additional setup after loading the view, typically from a nib.
 }
 
+- (void)startRuntime {
+	mono_ios_runtime_init ();
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
