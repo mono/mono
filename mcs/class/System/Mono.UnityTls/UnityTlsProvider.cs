@@ -51,6 +51,11 @@ namespace Mono.Unity
 			X509CertificateCollection certificates, bool wantsChain, ref X509Chain chain,
 			ref MonoSslPolicyErrors errors, ref int status11)
 		{
+			if (certificates == null) {
+				errors |= MonoSslPolicyErrors.RemoteCertificateNotAvailable;
+				return false;
+			}
+
 			if (wantsChain)
 				chain = MNS.SystemCertificateValidator.CreateX509Chain (certificates);
 
@@ -72,7 +77,6 @@ namespace Mono.Unity
 			UnityTls.unitytls_x509verify_result result = UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_NOT_DONE;
 			try
 			{
-
 				// Things the validator provides that we might want to make use of here:
 				//validator.Settings.CheckCertificateName				// not used by mono?
 				//validator.Settings.CheckCertificateRevocationStatus	// not used by mono?
@@ -105,6 +109,7 @@ namespace Mono.Unity
 				UnityTls.unitytls_x509list_free (certificatesNative);
 			}
 
+			errors = UnityTlsConversions.VerifyResultToPolicyErrror(result);
 			return result == UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_SUCCESS && 
 					errorState.code == UnityTls.unitytls_error_code.UNITYTLS_SUCCESS;
 		}

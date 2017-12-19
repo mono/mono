@@ -85,6 +85,23 @@ namespace Mono.Unity
 
 			return defaultAlert;
 		}
+
+		public static MonoSslPolicyErrors VerifyResultToPolicyErrror (UnityTls.unitytls_x509verify_result verifyResult)
+		{
+			// First, check "non-flags"
+			if (verifyResult == UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_SUCCESS)
+				return MonoSslPolicyErrors.None;
+			else if (verifyResult == UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_FATAL_ERROR)
+				return MonoSslPolicyErrors.RemoteCertificateChainErrors;
+
+			MonoSslPolicyErrors error = MonoSslPolicyErrors.None;
+			if (verifyResult.HasFlag (UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_FLAG_CN_MISMATCH))
+				error |= MonoSslPolicyErrors.RemoteCertificateNameMismatch;
+			// Anything else translates to MonoSslPolicyErrors.RemoteCertificateChainErrors. So if it is not the only flag, add it.
+			if (verifyResult != UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_FLAG_CN_MISMATCH)
+				error |= MonoSslPolicyErrors.RemoteCertificateChainErrors;
+			return error;
+		}
 	}
 }
 #endif
