@@ -58,7 +58,7 @@ public class SslStreamTest {
 		m_clientCert = new X509Certificate2 (m_clientCertRaw, "client");
 	}
 
-	[TestCase()]
+	[Test] //bug https://bugzilla.novell.com/show_bug.cgi?id=457120
 #if !UNITY
 	[Category ("MacNotWorking")] // Works but launches a prompt on 10.12 that will fail if you don't click in a few seconds
 #endif
@@ -67,10 +67,10 @@ public class SslStreamTest {
 #endif
 	public void AuthenticateClientAndServer_ClientSendsNoData ()
 	{
-		AuthenticateClientAndServer (serverAuthShouldSucceed: true, clientAuthShouldSucceed: true);
+		AuthenticateClientAndServer (true, true);
 	}
 
-	void AuthenticateClientAndServer (bool serverAuthShouldSucceed, bool clientAuthShouldSucceed)
+	void AuthenticateClientAndServer (bool server, bool client)
 	{
 		IPEndPoint endPoint = new IPEndPoint (IPAddress.Parse ("127.0.0.1"), NetworkHelpers.FindFreePort ());
 		ClientServerState state = new ClientServerState ();
@@ -79,15 +79,15 @@ public class SslStreamTest {
 		state.Listener.Start ();
 		state.ServerAuthenticated = new AutoResetEvent (false);
 		state.ClientAuthenticated = new AutoResetEvent (false);
-		state.AllowServerIOException = !serverAuthShouldSucceed;
+		state.ServerIOException = !server;
 		try {
 			Thread serverThread = new Thread (() => StartServerAndAuthenticate (state));
 			serverThread.Start ();
 			Thread clientThread = new Thread (() => StartClientAndAuthenticate (state, endPoint));
 			clientThread.Start ();
-			Assert.AreEqual (serverAuthShouldSucceed, state.ServerAuthenticated.WaitOne (TimeSpan.FromSeconds (5)), 
+			Assert.AreEqual (server, state.ServerAuthenticated.WaitOne (TimeSpan.FromSeconds (5)), 
 				"server not authenticated");
-			Assert.AreEqual (clientAuthShouldSucceed, state.ClientAuthenticated.WaitOne (TimeSpan.FromSeconds (5)), 
+			Assert.AreEqual (client, state.ClientAuthenticated.WaitOne (TimeSpan.FromSeconds (5)), 
 				"client not authenticated");
 		} finally {
 			if (state.ClientStream != null)
@@ -107,13 +107,13 @@ public class SslStreamTest {
 			state.Client.Connect (endPoint.Address, endPoint.Port);
 			NetworkStream s = state.Client.GetStream ();
 			state.ClientStream = new SslStream (s, false, 
-						ClientRemoteCertificateValidationCallback,
+						(a1, a2, a3, a4) => true,
 						(a1, a2, a3, a4, a5) => m_clientCert);
 			state.ClientStream.AuthenticateAsClient ("test_host");
 			state.ClientAuthenticated.Set ();
 		} catch (ObjectDisposedException) { /* this can happen when closing connection it's irrelevant for the test result*/
 		} catch (IOException) {
-			if (!state.AllowServerIOException)
+			if (!state.ServerIOException)
 				throw;
 		}
 	}
@@ -123,7 +123,7 @@ public class SslStreamTest {
 			state.ServerClient = state.Listener.AcceptTcpClient ();
 			NetworkStream s = state.ServerClient.GetStream ();
 			state.ServerStream = new SslStream (s, false, 
-						ServerRemoteCertificateValidationCallback,
+						(a1, a2, a3, a4) => true, 
 						(a1, a2, a3, a4, a5) => m_serverCert);
 			state.ServerStream.AuthenticateAsServer (m_serverCert);
 			state.ServerAuthenticated.Set ();
@@ -132,25 +132,11 @@ public class SslStreamTest {
 			// The authentication or decryption has failed.
 			// ---> Mono.Security.Protocol.Tls.TlsException: Insuficient Security
 			// that's fine for MismatchedCipherSuites
-			if (!state.AllowServerIOException)
+			if (!state.ServerIOException)
 				throw;
 		}
 	}
-
-	public bool ClientRemoteCertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
-	{
-		Assert.AreEqual(m_serverCert.RawData, certificate.GetRawCertData(), "Client remote certification callback received a certificate that is not identical to the expected server cert.");
-		Assert.AreEqual(SslPolicyErrors.None, sslPolicyErrors);
-		return true;
-	}
-
-	public bool ServerRemoteCertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
-	{
-		Assert.AreEqual(m_clientCert.RawData, certificate.GetRawCertData(), "Server remote certification callback received a certificate that is not identical to the expected client cert.");
-		Assert.AreEqual(SslPolicyErrors.None, sslPolicyErrors);
-		return true;
-	}
-
+	
 	private class ClientServerState {
 		public TcpListener Listener { get; set; }
 		public TcpClient Client { get; set; }
@@ -159,8 +145,7 @@ public class SslStreamTest {
 		public SslStream ClientStream { get; set; }
 		public AutoResetEvent ServerAuthenticated { get; set; }
 		public AutoResetEvent ClientAuthenticated { get; set; }
-		public bool AllowServerIOException { get; set; }
+		public bool ServerIOException { get; set; }
 	}
 }	
 }
-
