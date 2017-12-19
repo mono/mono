@@ -97,6 +97,7 @@ public class DebuggerTests
 #if MONODROID_TEST
 			System.Diagnostics.Process.Start("/usr/bin/make", "-C ../android dirty-run-debugger-test");
 #endif
+			var ep = new IPEndPoint (IPAddress.Any, 6100);
 			Console.WriteLine ("Listening on " + ep + "...");
 			vm = VirtualMachineManager.Listen (ep);
 		}
