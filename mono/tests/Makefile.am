@@ -529,7 +529,8 @@ TESTS_CS_SRC=		\
 	recursive-struct-arrays.cs \
 	bug-59281.cs	\
 	init_array_with_lazy_type.cs \
-	weak-fields.cs
+	weak-fields.cs \
+	threads-leak.cs
 
 if AMD64
 TESTS_CS_SRC += async-exc-compilation.cs finally_guard.cs finally_block_ending_in_dead_bb.cs
@@ -971,6 +972,7 @@ DISABLED_TESTS = \
 # bug-48015.exe: be careful when re-enabling, it happens that it returns with
 #                exit code 0, but doesn't actually execute the test.
 # block_guard_restore_aligment_on_exit.exe: flaky (10% of the time it hangs and thus times out)
+# weak-fields.exe: https://bugzilla.xamarin.com/show_bug.cgi?id=60973
 INTERP_DISABLED_TESTS = \
 	$(KNOWN_FAILING_TESTS) \
 	$(INTERP_PLATFORM_DISABLED_TESTS) \
@@ -1029,6 +1031,7 @@ INTERP_DISABLED_TESTS = \
 	threadpool-exceptions5.exe \
 	thunks.exe \
 	typeload-unaligned.exe \
+	weak-fields.exe \
 	vararg.exe \
 	vararg2.exe \
 	winx64structs.exe
