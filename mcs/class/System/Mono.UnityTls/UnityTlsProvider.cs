@@ -25,27 +25,12 @@ namespace Mono.Unity
 			get { return "unitytls"; }
 		}
 
-		public override Guid ID {
-			get { return MNS.MonoTlsProviderFactory.UnityTlsId; }
-		}
-
-		public override bool SupportsSslStream {
-			get { return true; }
-		}
-
-		public override bool SupportsMonoExtensions {
-			get { return true; }
-		}
-
-		public override bool SupportsConnectionInfo {
-			get { return true; }
-		}
-
+		public override Guid ID => MNS.MonoTlsProviderFactory.UnityTlsId;
+		public override bool SupportsSslStream => true;
+		public override bool SupportsMonoExtensions => true;
+		public override bool SupportsConnectionInfo => true;
 		internal override bool SupportsCleanShutdown => true;
-
-		public override SslProtocols SupportedProtocols {
-			get { return SslProtocols.Tls12 | SslProtocols.Tls11 | SslProtocols.Tls; }
-		}
+		public override SslProtocols SupportedProtocols => SslProtocols.Tls12 | SslProtocols.Tls11 | SslProtocols.Tls;
 
 		public override IMonoSslStream CreateSslStream (
 			Stream innerStream, bool leaveInnerStreamOpen,
@@ -88,6 +73,14 @@ namespace Mono.Unity
 			try
 			{
 				CertHelper.AddCertificatesToNativeChain (certificatesNative, certificates, &errorState);
+
+				// Things the validator provides that we might want to make use of here:
+				//validator.Settings.CheckCertificateName				// not used by mono?
+				//validator.Settings.CheckCertificateRevocationStatus	// not used by mono?
+				//validator.Settings.CertificateValidationTime
+				//validator.Settings.TrustAnchors
+				//validator.Settings.CertificateSearchPaths				// currently only used by MonoBtlsProvider
+				//validator.Settings.SendCloseNotify					// UnityTls always sends a close notify if the underlying impl supports it. Currently only used by MonoBtlsProvider
 
 				// validate
 				UnityTls.unitytls_x509list_ref certificatesNativeRef = UnityTls.unitytls_x509list_get_ref (certificatesNative, &errorState);
