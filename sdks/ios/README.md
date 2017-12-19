@@ -9,6 +9,10 @@ The test harness is a C# app which automates running a test suite. It
 install the app on the simulator, runs it, and collects output into
 a log file.
 
+# The app builder
+
+This is a C# app which is used to create an ios .app bundle.
+
 # Make targets
 
 Similar to the ones in xamarin-macios/tests
@@ -28,6 +32,7 @@ Similar to the ones in xamarin-macios/tests
 * Where
 
 	* -sim-
+	* -dev-
 
 * Project
 
@@ -53,6 +58,7 @@ server from the test harness, and passing the address to the app using a command
 option. It also requires the device and the host to be on the same network.
 * Have the app listen on a port, and have the test harness connect to it using
 `libimobiledevice`, i.e. https://github.com/rsms/peertalk.
-* Use a publish-subscribe pattern by uploading test results to some cloud service.
-This only requires internet access on the device.
+* Use a publish-subscribe pattern by uploading test results to some cloud service like
+Azure EventHub. This only requires client side internet access on the device and
+the test harness.
 

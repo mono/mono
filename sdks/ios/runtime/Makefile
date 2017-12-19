@@ -42,7 +42,7 @@ runtime: sim-main.o sim-runtime.o sim-AppDelegate.o sim-ViewController.o
 
 DEV_ARCH = arm64
 DEV_SDK_DIR = ../../out/ios-target64
-DEV_SYSROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/
+DEV_SYSROOT = $(XCODE_ROOT)/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/
 DEV_CFLAGS = \
 	-isysroot $(DEV_SYSROOT) \
 	-std=gnu11 \

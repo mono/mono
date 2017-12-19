@@ -93,10 +93,6 @@ build-ios-dev-%: appbuilder.exe test-runner.exe runtime/libmonoios.a $($*_ASSEMB
 	if test "x$($_EXTRA_FILES)" != "x"; then cp -r $($*_EXTRA_FILES) $(PWD)/bin/ios-dev/test-$*.app/; fi
 	ninja -C obj/ios-dev/test-$*.app -v
 
-# Install % on the simulator
-install-ios-sim-%:
-	xcrun simctl install $(SIM_NAME) bin/ios-sim/test-$*.app
-
 # Clean %
 clean-ios-sim-%:
 	$(RM) -rf obj/ios-sim/test-$*.app bin/ios-sim/test-$*.app
@@ -132,6 +128,10 @@ build-ios-dev-llvm-all:
 # Developer targets, ignore
 # 'launch' doesn't propagate the error code
 # With ios11, --console doesn't work any more, it makes the app deadlock
+# Install % on the simulator
+install-ios-sim-%:
+	xcrun simctl install $(SIM_NAME) bin/ios-sim/test-$*.app
+
 run-ios-sim-direct-%:
 	xcrun simctl terminate $(SIM_NAME) com.xamarin.mono.ios.test-$*
 	xcrun simctl launch $(SIM_NAME) com.xamarin.mono.ios.test-$* $(ARGS) $($*_ARGS)
