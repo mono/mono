@@ -317,7 +317,7 @@ namespace Mono.Unity
 			}
 		}
 
-		[MonoPInvokeCallback (typeof (UnityTls.unitytls_tlsctx_read_callback))]
+		[MonoPInvokeCallback (typeof (UnityTls.unitytls_tlsctx_x509verify_callback))]
 		static private UnityTls.unitytls_x509verify_result VerifyCallback (void* userData, UnityTls.unitytls_x509list_ref chain, UnityTls.unitytls_errorstate* errorState)
 		{
 			var handle = (GCHandle)(IntPtr)userData;
