@@ -94,5 +94,16 @@ typedef void  (*mono_file_map_release_fn) (void *addr);
 
 MONO_API void mono_file_map_set_allocator (mono_file_map_alloc_fn alloc, mono_file_map_release_fn release);
 
+typedef MonoFileMap* (*MonoFileMapOpen)     (const char* name);
+typedef guint64      (*MonoFileMapSize)     (MonoFileMap *fmap);
+typedef int          (*MonoFileMapFd)       (MonoFileMap *fmap);
+typedef int          (*MonoFileMapClose)    (MonoFileMap *fmap);
+typedef void *       (*MonoFileMapMap)      (size_t length, int flags, int fd, guint64 offset, void **ret_handle);
+typedef int          (*MonoFileMapUnmap)    (void *addr, void *handle);
+
+#if defined(ANDROID)
+MONO_API void mono_file_map_override(MonoFileMapOpen open_func, MonoFileMapSize size_func, MonoFileMapFd fd_func, MonoFileMapClose close_func, MonoFileMapMap map_func, MonoFileMapUnmap unmap_func);
+#endif
+
 #endif /* __MONO_UTILS_MMAP_H__ */
 
