@@ -12,6 +12,7 @@
 #include "interp/interp.h"
 #include "ir-emit.h"
 #include "mini.h"
+#include "trace.h"
 
 #ifndef DISABLE_JIT
 
@@ -49,39 +50,49 @@ emit_fill_call_ctx (MonoCompile *cfg, MonoInst *method, MonoInst *ret)
 void
 mini_profiler_emit_enter (MonoCompile *cfg)
 {
-	if (!MONO_CFG_PROFILE (cfg, ENTER) || cfg->current_method != cfg->method)
+	gboolean trace = mono_jit_trace_calls != NULL && mono_trace_eval (cfg->method);
+
+	if ((!MONO_CFG_PROFILE (cfg, ENTER) || cfg->current_method != cfg->method) && !trace)
 		return;
 
 	MonoInst *iargs [2];
 
 	EMIT_NEW_METHODCONST (cfg, iargs [0], cfg->method);
 
-	if (MONO_CFG_PROFILE (cfg, ENTER_CONTEXT) && !cfg->llvm_only)
+	if ((MONO_CFG_PROFILE (cfg, ENTER_CONTEXT) && !cfg->llvm_only) || trace)
 		iargs [1] = emit_fill_call_ctx (cfg, iargs [0], NULL);
 	else
 		EMIT_NEW_PCONST (cfg, iargs [1], NULL);
 
 	/* void mono_profiler_raise_method_enter (MonoMethod *method, MonoProfilerCallContext *ctx) */
-	mono_emit_jit_icall (cfg, mono_profiler_raise_method_enter, iargs);
+	if (trace)
+		mono_emit_jit_icall (cfg, mono_trace_enter_method, iargs);
+	else
+		mono_emit_jit_icall (cfg, mono_profiler_raise_method_enter, iargs);
 }
 
 void
 mini_profiler_emit_leave (MonoCompile *cfg, MonoInst *ret)
 {
-	if (!MONO_CFG_PROFILE (cfg, LEAVE) || cfg->current_method != cfg->method)
+	gboolean trace = mono_jit_trace_calls != NULL && mono_trace_eval (cfg->method);
+
+	if ((!MONO_CFG_PROFILE (cfg, LEAVE) || cfg->current_method != cfg->method) && !trace)
 		return;
 
 	MonoInst *iargs [2];
 
 	EMIT_NEW_METHODCONST (cfg, iargs [0], cfg->method);
 
-	if (MONO_CFG_PROFILE (cfg, LEAVE_CONTEXT) && !cfg->llvm_only)
+	if ((MONO_CFG_PROFILE (cfg, ENTER_CONTEXT) && !cfg->llvm_only) || trace)
 		iargs [1] = emit_fill_call_ctx (cfg, iargs [0], ret);
 	else
 		EMIT_NEW_PCONST (cfg, iargs [1], NULL);
 
 	/* void mono_profiler_raise_method_leave (MonoMethod *method, MonoProfilerCallContext *ctx) */
-	mono_emit_jit_icall (cfg, mono_profiler_raise_method_leave, iargs);
+	if (trace)
+		mono_emit_jit_icall (cfg, mono_trace_leave_method, iargs);
+	else
+		mono_emit_jit_icall (cfg, mono_profiler_raise_method_leave, iargs);
 }
 
 void

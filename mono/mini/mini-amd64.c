@@ -6715,7 +6715,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	code = cfg->native_code = (unsigned char *)g_malloc (cfg->code_size);
 
 	if (mono_jit_trace_calls != NULL && mono_trace_eval (method))
-		trace = TRUE;
+		;//trace = TRUE;
 
 	/* Amount of stack space allocated by register saving code */
 	pos = 0;
@@ -7222,7 +7222,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 	mono_emit_unwind_op_remember_state (cfg, code);
 
 	if (mono_jit_trace_calls != NULL && mono_trace_eval (method))
-		code = (guint8 *)mono_arch_instrument_epilog (cfg, mono_trace_leave_method, code, TRUE);
+		;//code = (guint8 *)mono_arch_instrument_epilog (cfg, mono_trace_leave_method, code, TRUE);
 
 	/* the code restoring the registers must be kept in sync with OP_TAILCALL */
 	

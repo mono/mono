@@ -3305,7 +3305,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	cfg->prof_flags = mono_profiler_get_call_instrumentation_flags (cfg->method);
 
 	/* The debugger has no liveness information, so avoid sharing registers/stack slots */
-	if (debug_options.mdb_optimizations || MONO_CFG_PROFILE_CALL_CONTEXT (cfg)) {
+	if (debug_options.mdb_optimizations || MONO_CFG_PROFILE_CALL_CONTEXT (cfg) || (mono_jit_trace_calls != NULL && mono_trace_eval (method))) {
 		cfg->disable_reuse_registers = TRUE;
 		cfg->disable_reuse_stack_slots = TRUE;
 		/* 
@@ -3330,6 +3330,8 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 
 		/* This is needed for the soft debugger, which doesn't like code after the epilog */
 		cfg->disable_out_of_line_bblocks = TRUE;
+
+		cfg->has_var_info = TRUE;
 	}
 
 	if (mono_using_xdebug) {
