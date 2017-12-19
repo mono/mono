@@ -212,10 +212,27 @@ make-debugger-test: package-debugger
 	cd $(APK_DIR) && RUN_WITH_MANAGED_DEBUGGER=1 MONO_DEBUGGER_TESTS=1 $(NDK_BUILD)
 	cd $(APK_DIR) && $(ANT) debug
 
+# fixme:
+# eventual api:
+# MONO_EXE=foo.exe make run-debug-managed-droid
+# MONO_EXE=foo.exe make run-debug-unmanaged-droid
+#
+# mono.debugger tests can just run those targets in the setup function
 run-debugger-test: make-debugger-test
 	cd $(APK_DIR) && $(ADB) uninstall $(PACKAGE) || true
 	cd $(APK_DIR) && $(ADB) install bin/AndroidActivity-debug.apk
-	cd $(APK_DIR) && $(ADB) shell am instrument -w $(PACKAGE)/$(RUNNER)
+	$(ADB) reverse tcp:6100 tcp:6100
+	cd $(APK_DIR) && $(ADB) shell am instrument $(PACKAGE)/$(RUNNER)
+
+# Skip rerunning build steps / cleanup steps
+# And run unattended
+.PHONY: dirty-run-debugger-test
+dirty-run-debugger-test:
+	$(ADB) shell am instrument $(PACKAGE)/$(RUNNER)
+
+.PHONY: run-debugger-test-cleanup
+run-debugger-test-cleanup:
+	$(ADB) reverse --remove-all
 
 .PHONY: build-%
 build-%: package-bcl
