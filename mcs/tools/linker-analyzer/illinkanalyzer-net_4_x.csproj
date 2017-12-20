@@ -53,10 +53,9 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\..\class\Mono.Options\Mono.Options\Options.cs" />
-    <Compile Include="ConsoleDependencyGraph.cs" />
-    <Compile Include="LinkerAnalyzerCore\DependencyGraph.cs" />
-    <Compile Include="Main.cs" />  </ItemGroup>
+    <Compile Include="..\..\..\external\linker\analyzer\*.cs" />
+    <Compile Include="..\..\..\external\linker\analyzer\LinkerAnalyzerCore\*.cs" />
+    <Compile Include="..\..\class\Mono.Options\Mono.Options\Options.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

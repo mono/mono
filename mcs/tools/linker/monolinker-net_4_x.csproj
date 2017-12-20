@@ -53,39 +53,42 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker.Steps\BaseStep.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker.Steps\BlacklistStep.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker.Steps\CleanStep.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker.Steps\IStep.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker.Steps\LoadI18nAssemblies.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker.Steps\LoadReferencesStep.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker.Steps\MarkStep.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker.Steps\OutputStep.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker.Steps\RegenerateGuidStep.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker.Steps\ResolveFromAssemblyStep.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker.Steps\ResolveFromXApiStep.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker.Steps\ResolveFromXmlStep.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker.Steps\ResolveStep.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker.Steps\SweepStep.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker.Steps\TypeMapStep.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker\Annotations.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker\AssemblyAction.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker\AssemblyInfo.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker\AssemblyResolver.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker\ConsoleLogger.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker\Driver.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker\I18nAssemblies.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker\ILogger.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker\IXApiVisitor.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker\LinkContext.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker\LoadException.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker\MarkException.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker\MethodAction.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker\MethodReferenceExtensions.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker\Pipeline.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker\TypePreserve.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker\TypeReferenceExtensions.cs" />
-    <Compile Include="..\..\..\external\linker\linker\Mono.Linker\XApiReader.cs" />  </ItemGroup>
+    <Compile Include="..\..\..\external\linker\linker\Linker.Steps\AddBypassNGenStep.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker.Steps\BaseStep.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker.Steps\BlacklistStep.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker.Steps\CleanStep.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker.Steps\IStep.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker.Steps\LoadI18nAssemblies.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker.Steps\LoadReferencesStep.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker.Steps\MarkStep.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker.Steps\OutputStep.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker.Steps\RegenerateGuidStep.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker.Steps\ResolveFromAssemblyStep.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker.Steps\ResolveFromXApiStep.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker.Steps\ResolveFromXmlStep.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker.Steps\ResolveStep.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker.Steps\SweepStep.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker.Steps\TypeMapStep.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker\Annotations.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker\AssemblyAction.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker\AssemblyInfo.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker\AssemblyResolver.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker\ConsoleLogger.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker\Driver.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker\I18nAssemblies.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker\ILogger.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker\IXApiVisitor.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker\LinkContext.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker\LoadException.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker\MarkException.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker\MarkingHelpers.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker\MethodAction.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker\MethodReferenceExtensions.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker\Pipeline.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker\Tracer.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker\TypePreserve.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker\TypeReferenceExtensions.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker\XApiReader.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
