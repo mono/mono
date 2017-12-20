@@ -991,7 +991,6 @@ INTERP_DISABLED_TESTS = \
 	bug-48015.exe \
 	bug-58782-capture-and-throw.exe \
 	bug-58782-plain-throw.exe \
-	bug-81673.exe \
 	bug445361.exe \
 	calliGenericTest.exe \
 	cominterop.exe \
@@ -1004,7 +1003,6 @@ INTERP_DISABLED_TESTS = \
 	field-access.exe \
 	finally_block_ending_in_dead_bb.exe \
 	handleref.exe \
-	invalid_generic_instantiation.exe \
 	ldftn-access.exe \
 	marshal.exe \
 	marshal8.exe \
