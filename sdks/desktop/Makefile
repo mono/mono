@@ -11,5 +11,5 @@ $(CURDIR)/net_4_x_Mono.Debugger.Soft_test.dll: $(TOP)/mcs/class/lib/net_4_x/test
 
 .PHONY: $(TOP)/mcs/class/lib/net_4_x/tests/net_4_x_Mono.Debugger.Soft_test.dll
 $(TOP)/mcs/class/lib/net_4_x/tests/net_4_x_Mono.Debugger.Soft_test.dll:
-	$(MAKE) PROFILE='net_4_x' -C $(TOP)/mcs/class/Mono.Debugger.Soft test
+	$(MAKE) TEST_MCS_FLAGS="-d:MONODROID_TEST" PROFILE='net_4_x' -C $(TOP)/mcs/class/Mono.Debugger.Soft test
 
