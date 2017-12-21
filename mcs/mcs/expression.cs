@@ -6816,7 +6816,9 @@ namespace Mono.CSharp
 				local_info.SetIsUsed ();
 
 			if (local_info.IsReadonly && !ec.HasAny (ResolveContext.Options.FieldInitializerScope | ResolveContext.Options.UsingInitializerScope)) {
-				if (rhs == EmptyExpression.LValueMemberAccess) {
+				if (local_info.IsByRef) {
+					// OK because it cannot be reassigned
+				} else if (rhs == EmptyExpression.LValueMemberAccess) {
 					// CS1654 already reported
 				} else {
 					int code;
@@ -11676,6 +11678,13 @@ namespace Mono.CSharp
 	class ReferenceTypeExpr : TypeExpr
 	{
 		FullNamedExpression element;
+		readonly bool readOnly;
+
+		public ReferenceTypeExpr (FullNamedExpression element, bool readOnly, Location loc)
+			: this (element, loc)
+		{
+			this.readOnly = readOnly;
+		}
 
 		public ReferenceTypeExpr (FullNamedExpression element, Location loc)
 		{
@@ -11690,14 +11699,17 @@ namespace Mono.CSharp
 				return null;
 
 			eclass = ExprClass.Type;
-			type = ReferenceContainer.MakeType (mc.Module, type);
+			type = readOnly ?
+				ReadOnlyReferenceContainer.MakeType (mc.Module, type) :
+				ReferenceContainer.MakeType (mc.Module, type);
 
 			return type;
 		}
 
 		public override string GetSignatureForError ()
 		{
-			return "ref " + element.GetSignatureForError ();
+			var prefix = readOnly ? "ref " : "ref readonly ";
+			return prefix + element.GetSignatureForError ();
 		}
 
 		public override object Accept (StructuralVisitor visitor)

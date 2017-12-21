@@ -72819,6 +72819,36 @@
       </method>
     </type>
   </test>
+  <test name="test-readonly-02.cs">
+    <type name="D">
+      <method name="Int32&amp; Invoke(Int32)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="System.IAsyncResult BeginInvoke(Int32, System.AsyncCallback, System.Object)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Int32&amp; EndInvoke(System.IAsyncResult)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)" attrs="6278">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="System.Guid&amp; TestMethod()" attrs="129">
+        <size>15</size>
+      </method>
+      <method name="System.Guid&amp; get_TestProp()" attrs="2177">
+        <size>17</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-ref-01.cs">
     <type name="X">
       <method name="Void Main()" attrs="150">

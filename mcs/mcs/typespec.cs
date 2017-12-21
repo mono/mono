@@ -1999,7 +1999,7 @@ namespace Mono.CSharp
 	[System.Diagnostics.DebuggerDisplay("{DisplayDebugInfo()}")]
 	class ReferenceContainer : ElementTypeSpec
 	{
-		ReferenceContainer (TypeSpec element)
+		protected ReferenceContainer (TypeSpec element)
 			: base (MemberKind.ByRef, element, null)
 		{
 			cache = null;
@@ -2047,6 +2047,34 @@ namespace Mono.CSharp
 		protected override void InitializeMemberCache(bool onlyTypes)
 		{
 			cache = Element.MemberCache;
+		}
+	}
+
+	[System.Diagnostics.DebuggerDisplay ("{DisplayDebugInfo()}")]
+	class ReadOnlyReferenceContainer : ReferenceContainer
+	{
+		public ReadOnlyReferenceContainer (TypeSpec element)
+			: base (element)
+		{
+		}
+
+		string DisplayDebugInfo ()
+		{
+			return "ref readonly " + GetSignatureForError ();
+		}
+
+		public new static ReferenceContainer MakeType (ModuleContainer module, TypeSpec element)
+		{
+			if (element.Kind == MemberKind.ByRef)
+				throw new ArgumentException ();
+
+			ReadOnlyReferenceContainer pc;
+			if (!module.ReadonlyReferenceTypesCache.TryGetValue (element, out pc)) {
+				pc = new ReadOnlyReferenceContainer (element);
+				module.ReadonlyReferenceTypesCache.Add (element, pc);
+			}
+
+			return pc;
 		}
 	}
 
