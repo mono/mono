@@ -344,7 +344,7 @@ read_uint16_endian (unsigned char *inptr, unsigned endian)
 	return (inptr[0] << 8) | inptr[1];
 }
 
-static FORCE_INLINE (void)
+static FORCE_INLINE (int)
 decode_utf16_endian (char *inbuf, size_t inleft, gunichar *outchar, unsigned endian)
 {
 	unsigned char *inptr = (unsigned char *) inbuf;
