@@ -1403,6 +1403,18 @@ ref_member_type
 
 		$$ = new ReferenceTypeExpr ((FullNamedExpression) $3, GetLocation ($1));
 	  }
+	| REF READONLY
+	  {
+		lexer.parsing_generic_declaration = true;
+	  }
+	  type
+	  {
+		if (lang_version < LanguageVersion.V_7_2) {
+			FeatureIsNotAvailable (GetLocation ($2), "readonly references");
+		}
+
+		$$ = new ReferenceTypeExpr ((FullNamedExpression) $4, true, GetLocation ($1));
+	  }
 	;
 
 method_header
@@ -6081,6 +6093,28 @@ block_variable_declaration
 		} else {
 			report.Error (8174, GetLocation ($3), "A declaration of a by-reference variable must have an initializer");
 			lbag.AddLocation ($$, GetLocation ($7));
+		}
+	  }
+	| REF READONLY variable_type identifier_inside_body
+	  {
+		if (lang_version < LanguageVersion.V_7_2) {
+			FeatureIsNotAvailable (GetLocation ($2), "readonly references");
+		}
+
+		var lt = (LocatedToken) $4;
+		var li = new LocalVariable (current_block, lt.Value, LocalVariable.Flags.ByRef | LocalVariable.Flags.ReadonlyMask, lt.Location);
+		current_block.AddLocalName (li);
+		current_variable = new BlockVariable ((FullNamedExpression) $3, li);
+	  }
+	  opt_local_variable_initializer opt_variable_declarators SEMICOLON
+	  {
+		$$ = current_variable;
+		current_variable = null;
+		if ($6 != null) {
+			lbag.AddLocation ($$, PopLocation (), GetLocation ($8));
+		} else {
+			report.Error (8174, GetLocation ($3), "A declaration of a by-reference variable must have an initializer");
+			lbag.AddLocation ($$, GetLocation ($8));
 		}
 	  }
 	;

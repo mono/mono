@@ -338,6 +338,8 @@ namespace Mono.CSharp {
 					Module.PredefinedAttributes.Dynamic.EmitAttribute (CreateReturnBuilder ().Builder);
 				} else if (rtype.HasDynamicElement) {
 					Module.PredefinedAttributes.Dynamic.EmitAttribute (CreateReturnBuilder ().Builder, rtype, Location);
+				} else if (rtype is ReadOnlyReferenceContainer) {
+					Module.PredefinedAttributes.IsReadOnly.EmitAttribute (CreateReturnBuilder ().Builder);
 				}
 
 				if (rtype.HasNamedTupleElement) {

@@ -720,6 +720,8 @@ namespace Mono.CSharp {
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (CreateReturnBuilder ().Builder);
 			} else if (ReturnType.HasDynamicElement) {
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (CreateReturnBuilder ().Builder, ReturnType, Location);
+			} else if (ReturnType is ReadOnlyReferenceContainer) {
+				Module.PredefinedAttributes.IsReadOnly.EmitAttribute (CreateReturnBuilder ().Builder);
 			}
 
 			if (ReturnType.HasNamedTupleElement) {
@@ -2466,6 +2468,8 @@ namespace Mono.CSharp {
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (CreateReturnBuilder ().Builder);
 			} else if (ReturnType.HasDynamicElement) {
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (CreateReturnBuilder ().Builder, ReturnType, Location);
+			} else if (ReturnType is ReadOnlyReferenceContainer) {
+				Module.PredefinedAttributes.IsReadOnly.EmitAttribute (CreateReturnBuilder ().Builder);
 			}
 
 			if (ReturnType.HasNamedTupleElement) {
