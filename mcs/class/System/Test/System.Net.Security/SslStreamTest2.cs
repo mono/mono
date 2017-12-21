@@ -2,6 +2,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Text;
 using System.IO;
 using System.Net;
 using System.Net.Security;
@@ -110,7 +111,6 @@ namespace MonoTests.System.Net.Security
 			DoHandshake(clientStream, serverStream, "test");
 		}
 
-		
 		[TestCase]
 		[ExpectedException(typeof(AuthenticationException))]//typeof(TestException))]	// TODO: Can we support passing on the exception like .Net does?
 		public void HandshakeVerification_FailureClient_ByException()
@@ -119,6 +119,28 @@ namespace MonoTests.System.Net.Security
 			var clientStream = new SslStream(m_tcpClient.GetStream(), false, RemoteCertificateValidationCallback_ThrowException);
 			var serverStream = new SslStream(m_tcpServer.GetStream(), false, RemoteCertificateValidationCallback_AlwaysSucceed);
 			DoHandshake(clientStream, serverStream);
+		}
+
+		[TestCase]
+		public void ReadWriteData()
+		{
+			SetupClientServerConnection();
+			var clientStream = new SslStream(m_tcpClient.GetStream(), false, RemoteCertificateValidationCallback_AlwaysSucceed);
+			var serverStream = new SslStream(m_tcpServer.GetStream(), false, RemoteCertificateValidationCallback_AlwaysSucceed);
+			DoHandshake(clientStream, serverStream);
+
+			// Send client to server.
+			byte[] message = Encoding.UTF8.GetBytes("Hello Mono!");
+			byte[] receiveBuffer = new byte[message.Length];
+			clientStream.Write(message);
+			serverStream.Read(receiveBuffer, 0, receiveBuffer.Length);
+			Assert.AreEqual(message, receiveBuffer);
+
+			// Send server to client.
+			receiveBuffer = new byte[message.Length];
+			serverStream.Write(message);
+			clientStream.Read(receiveBuffer, 0, receiveBuffer.Length);
+			Assert.AreEqual(message, receiveBuffer);
 		}
 
 
