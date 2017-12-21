@@ -60,6 +60,7 @@ test_makefrag = $(depsdir)/$(test_lib).makefrag
 test_flags = $(test_nunit_ref) $(TEST_MCS_FLAGS) $(TEST_LIB_MCS_FLAGS)
 ifndef NO_BUILD
 test_flags += -r:$(the_assembly)
+test_assembly_dep = $(the_assembly)
 endif
 tests_CLEAN_FILES += $(ASSEMBLY:$(ASSEMBLY_EXT)=_test*.dll) $(ASSEMBLY:$(ASSEMBLY_EXT)=_test*.pdb) $(test_response) $(test_makefrag)
 
@@ -230,7 +231,7 @@ ifdef HAVE_CS_TESTS
 $(test_lib_dir):
 	mkdir -p $@
 
-$(test_lib_output): $(the_assembly) $(test_response) $(test_nunit_dep) $(test_lib_dir)
+$(test_lib_output): $(test_assembly_dep) $(test_response) $(test_nunit_dep) $(test_lib_dir)
 	$(TEST_COMPILE) $(LIBRARY_FLAGS) -target:library -out:$@ $(test_flags) $(LOCAL_TEST_COMPILER_ONDOTNET_FLAGS) @$(test_response)
 
 test_response_preprocessed = $(test_response)_preprocessed
