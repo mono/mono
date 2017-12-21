@@ -1,5 +1,6 @@
 // CS0151: A switch expression of type `S1?' cannot be converted to an integral type, bool, char, string, enum or nullable type
-// Line: 24
+// Line: 25
+// Compiler options: -langversion:5
 
 using System;
 

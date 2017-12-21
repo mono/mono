@@ -1232,6 +1232,13 @@ namespace Mono.CSharp {
 					FindApplicableUserDefinedConversionOperators (rc, operators, source_type_expr, target_type, restr, ref candidates);
 				}
 
+				if (source_type_expr == source && source_type.IsNullableType) {
+					operators = MemberCache.GetUserOperator (source_type.TypeArguments [0], Operator.OpType.Implicit, declared_only);
+					if (operators != null) {
+						FindApplicableUserDefinedConversionOperators (rc, operators, source_type_expr, target_type, restr, ref candidates);
+					}
+				}
+
 				if (!implicitOnly) {
 					operators = MemberCache.GetUserOperator (source_type, Operator.OpType.Explicit, declared_only);
 					if (operators != null) {

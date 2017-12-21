@@ -11064,7 +11064,7 @@
     </type>
     <type name="X">
       <method name="Int32 Beer(System.Nullable`1[IrishPub])" attrs="145">
-        <size>72</size>
+        <size>60</size>
       </method>
       <method name="Int32 Test(System.Nullable`1[System.Int32])" attrs="145">
         <size>62</size>
@@ -19505,7 +19505,7 @@
     </type>
     <type name="C">
       <method name="Int32 Main()" attrs="150">
-        <size>267</size>
+        <size>255</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -20141,6 +20141,21 @@
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-647.cs">
+    <type name="Program">
+      <method name="Int32 Main()" attrs="150">
+        <size>99</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program+MyStruct">
+      <method name="Int32 op_Implicit(System.Nullable`1[Program+MyStruct])" attrs="2198">
+        <size>22</size>
       </method>
     </type>
   </test>
