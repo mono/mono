@@ -235,6 +235,13 @@ namespace Mono.Unity
 			else
 				Unity.Debug.CheckAndThrow (errorState, result, "Handshake failed", AlertDescription.HandshakeFailure);
 
+			// .Net implementation gives the server a verification callback (with null cert) even if AskForClientCertificate is false.
+			// We stick to this behavior here.
+			if (IsServer && !AskForClientCertificate) {
+				if (!ValidateCertificate (null, null))
+					throw new TlsException (AlertDescription.HandshakeFailure, "Verification failure during handshake");
+			}
+
 			return true;
 		}
 
