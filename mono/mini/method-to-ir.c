@@ -138,7 +138,6 @@
 /* Determine whenever 'ins' represents a load of the 'this' argument */
 #define MONO_CHECK_THIS(ins) (mono_method_signature (cfg->method)->hasthis && ((ins)->opcode == OP_MOVE) && ((ins)->sreg1 == cfg->args [0]->dreg))
 
-static int ldind_to_load_membase (int opcode);
 static int stind_to_store_membase (int opcode);
 
 int mono_op_to_op_imm (int opcode);
@@ -12963,39 +12962,6 @@ mono_op_to_op_imm (int opcode)
 		return OP_FCALL;
 	case OP_LOCALLOC:
 		return OP_LOCALLOC_IMM;
-	}
-
-	return -1;
-}
-
-static int
-ldind_to_load_membase (int opcode)
-{
-	switch (opcode) {
-	case CEE_LDIND_I1:
-		return OP_LOADI1_MEMBASE;
-	case CEE_LDIND_U1:
-		return OP_LOADU1_MEMBASE;
-	case CEE_LDIND_I2:
-		return OP_LOADI2_MEMBASE;
-	case CEE_LDIND_U2:
-		return OP_LOADU2_MEMBASE;
-	case CEE_LDIND_I4:
-		return OP_LOADI4_MEMBASE;
-	case CEE_LDIND_U4:
-		return OP_LOADU4_MEMBASE;
-	case CEE_LDIND_I:
-		return OP_LOAD_MEMBASE;
-	case CEE_LDIND_REF:
-		return OP_LOAD_MEMBASE;
-	case CEE_LDIND_I8:
-		return OP_LOADI8_MEMBASE;
-	case CEE_LDIND_R4:
-		return OP_LOADR4_MEMBASE;
-	case CEE_LDIND_R8:
-		return OP_LOADR8_MEMBASE;
-	default:
-		g_assert_not_reached ();
 	}
 
 	return -1;
