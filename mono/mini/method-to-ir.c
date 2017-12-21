@@ -1613,25 +1613,6 @@ mono_create_fast_tls_getter (MonoCompile *cfg, MonoTlsKey key)
 }
 
 static MonoInst*
-mono_create_fast_tls_setter (MonoCompile *cfg, MonoInst* value, MonoTlsKey key)
-{
-	int tls_offset = mono_tls_get_tls_offset (key);
-
-	if (cfg->compile_aot)
-		return NULL;
-
-	if (tls_offset != -1 && mono_arch_have_fast_tls ()) {
-		MonoInst *ins;
-		MONO_INST_NEW (cfg, ins, OP_TLS_SET);
-		ins->sreg1 = value->dreg;
-		ins->inst_offset = tls_offset;
-		return ins;
-	}
-	return NULL;
-}
-
-
-static MonoInst*
 mono_create_tls_get (MonoCompile *cfg, MonoTlsKey key)
 {
 	MonoInst *fast_tls = NULL;
@@ -1656,29 +1637,6 @@ mono_create_tls_get (MonoCompile *cfg, MonoTlsKey key)
 	} else {
 		gpointer getter = mono_tls_get_tls_getter (key, FALSE);
 		return mono_emit_jit_icall (cfg, getter, NULL);
-	}
-}
-
-static MonoInst*
-mono_create_tls_set (MonoCompile *cfg, MonoInst *value, MonoTlsKey key)
-{
-	MonoInst *fast_tls = NULL;
-
-	if (!mini_get_debug_options ()->use_fallback_tls)
-		fast_tls = mono_create_fast_tls_setter (cfg, value, key);
-
-	if (fast_tls) {
-		MONO_ADD_INS (cfg->cbb, fast_tls);
-		return fast_tls;
-	}
-
-	if (cfg->compile_aot) {
-		MonoInst *addr;
-		EMIT_NEW_AOTCONST (cfg, addr, MONO_PATCH_INFO_SET_TLS_TRAMP, (void*)key);
-		return mini_emit_calli (cfg, helper_sig_set_tls_tramp, &value, addr, NULL, NULL);
-	} else {
-		gpointer setter = mono_tls_get_tls_setter (key, FALSE);
-		return mono_emit_jit_icall (cfg, setter, &value);
 	}
 }
 
