@@ -23,13 +23,17 @@ TEST_SUITES = \
 	Mono.Data.Tds \
 	Mono.Security
 
-TEST_SUITES_NOTWORKING = \
+# Compiling but has failures
+TEST_SUITES_COMPILING = \
 	System \
 	System.Net.Http \
-	System.Web.Services \
 	System.Xml \
-	Mono.Data.Sqlite \
-	Mono.CSharp \
+	Mono.CSharp
+
+# Not compiling in monotouch profile
+TEST_SUITES_NOTCOMPILING = \
+	System.Web.Services \
+	Mono.Data.Sqlite
 
 SIM_NAME = xamarin.ios-sdk.sim
 
@@ -112,7 +116,7 @@ clean:
 
 # Compile all the test assemblies
 compile-tests:
-	for suite in $(TEST_SUITES); do make -C ../../mcs/class/$$suite PROFILE=monotouch test || exit 1; done
+	for suite in $(TEST_SUITES) $(TEST_SUITES_COMPILING); do make -C ../../mcs/class/$$suite PROFILE=monotouch test || exit 1; done
 
 run-ios-sim-all:
 	for suite in $(TEST_SUITES); do make build-ios-sim-$$suite || exit 1; make run-ios-sim-$$suite || exit 1; done
