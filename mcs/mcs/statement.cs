@@ -2412,14 +2412,14 @@ namespace Mono.CSharp {
 			AddressTaken = 1 << 2,
 			CompilerGenerated = 1 << 3,
 			Constant = 1 << 4,
-			ForeachVariable = 1 << 5,
-			FixedVariable = 1 << 6,
-			UsingVariable = 1 << 7,
+			ForeachVariable = 1 << 5 | ReadonlyMask,
+			FixedVariable = 1 << 6 | ReadonlyMask,
+			UsingVariable = 1 << 7 | ReadonlyMask,
 			IsLocked = 1 << 8,
 			SymbolFileHidden = 1 << 9,
 			ByRef = 1 << 10,
 
-			ReadonlyMask = ForeachVariable | FixedVariable | UsingVariable
+			ReadonlyMask = 1 << 20
 		}
 
 		TypeSpec type;
@@ -2539,7 +2539,7 @@ namespace Mono.CSharp {
 
 		public bool IsFixed {
 			get {
-				return (flags & Flags.FixedVariable) != 0;
+				return (flags & Flags.FixedVariable) == Flags.FixedVariable;
 			}
 			set {
 				flags = value ? flags | Flags.FixedVariable : flags & ~Flags.FixedVariable;
@@ -2677,7 +2677,7 @@ namespace Mono.CSharp {
 
 		public string GetReadOnlyContext ()
 		{
-			switch (flags & Flags.ReadonlyMask) {
+			switch (flags & (Flags.ForeachVariable | Flags.FixedVariable | Flags.UsingVariable)) {
 			case Flags.FixedVariable:
 				return "fixed variable";
 			case Flags.ForeachVariable:

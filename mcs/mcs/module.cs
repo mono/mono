@@ -265,6 +265,7 @@ namespace Mono.CSharp
 		readonly Dictionary<ArrayContainer.TypeRankPair, ArrayContainer> array_types;
 		readonly Dictionary<TypeSpec, PointerContainer> pointer_types;
 		readonly Dictionary<TypeSpec, ReferenceContainer> reference_types;
+		readonly Dictionary<TypeSpec, ReadOnlyReferenceContainer> readonly_reference_types;
 		readonly Dictionary<TypeSpec, MethodSpec> attrs_cache;
 		readonly Dictionary<TypeSpec, AwaiterDefinition> awaiters;
 		readonly Dictionary<TypeSpec, TypeInfo> type_info_cache;
@@ -301,6 +302,7 @@ namespace Mono.CSharp
 			array_types = new Dictionary<ArrayContainer.TypeRankPair, ArrayContainer> ();
 			pointer_types = new Dictionary<TypeSpec, PointerContainer> ();
 			reference_types = new Dictionary<TypeSpec, ReferenceContainer> ();
+			readonly_reference_types = new Dictionary<TypeSpec, ReadOnlyReferenceContainer> ();
 			attrs_cache = new Dictionary<TypeSpec, MethodSpec> ();
 			awaiters = new Dictionary<TypeSpec, AwaiterDefinition> ();
 			type_info_cache = new Dictionary<TypeSpec, TypeInfo> ();
@@ -424,6 +426,12 @@ namespace Mono.CSharp
 		internal Dictionary<TypeSpec, ReferenceContainer> ReferenceTypesCache {
 			get {
 				return reference_types;
+			}
+		}
+
+		internal Dictionary<TypeSpec, ReadOnlyReferenceContainer> ReadonlyReferenceTypesCache {
+			get {
+				return readonly_reference_types;
 			}
 		}
 
