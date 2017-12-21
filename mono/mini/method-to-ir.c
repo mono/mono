@@ -1631,7 +1631,7 @@ mono_create_fast_tls_setter (MonoCompile *cfg, MonoInst* value, MonoTlsKey key)
 }
 
 
-MonoInst*
+static MonoInst*
 mono_create_tls_get (MonoCompile *cfg, MonoTlsKey key)
 {
 	MonoInst *fast_tls = NULL;
