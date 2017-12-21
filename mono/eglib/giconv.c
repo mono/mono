@@ -254,7 +254,7 @@ g_iconv (GIConv cd, gchar **inbytes, gsize *inbytesleft,
  * Unicode encoders and decoders
  */
 
-static uint32_t
+static FORCE_INLINE (uint32_t)
 read_uint32_endian (unsigned char *inptr, unsigned endian)
 {
 	if (endian == G_LITTLE_ENDIAN)
@@ -262,7 +262,7 @@ read_uint32_endian (unsigned char *inptr, unsigned endian)
 	return (inptr[0] << 24) | (inptr[1] << 16) | (inptr[2] << 8) | inptr[3];
 }
 
-static int
+static FORCE_INLINE (int)
 decode_utf32_endian (char *inbuf, size_t inleft, gunichar *outchar, unsigned endian)
 {
 	unsigned char *inptr = (unsigned char *) inbuf;
@@ -336,7 +336,7 @@ encode_utf32le (gunichar c, char *outbuf, size_t outleft)
 	return 4;
 }
 
-static uint16_t
+static FORCE_INLINE (uint16_t)
 read_uint16_endian (unsigned char *inptr, unsigned endian)
 {
 	if (endian == G_LITTLE_ENDIAN)
@@ -344,7 +344,7 @@ read_uint16_endian (unsigned char *inptr, unsigned endian)
 	return (inptr[0] << 8) | inptr[1];
 }
 
-static int
+static FORCE_INLINE (void)
 decode_utf16_endian (char *inbuf, size_t inleft, gunichar *outchar, unsigned endian)
 {
 	unsigned char *inptr = (unsigned char *) inbuf;
@@ -403,7 +403,7 @@ decode_utf16le (char *inbuf, size_t inleft, gunichar *outchar)
 	return decode_utf16_endian (inbuf, inleft, outchar, G_LITTLE_ENDIAN);
 }
 
-static void
+static FORCE_INLINE (void)
 write_uint16_endian (unsigned char *outptr, uint16_t c, unsigned endian)
 {
 	if (endian == G_LITTLE_ENDIAN) {
@@ -415,7 +415,7 @@ write_uint16_endian (unsigned char *outptr, uint16_t c, unsigned endian)
 	outptr[1] = c & 0xff;
 }
 
-static int
+static FORCE_INLINE (int)
 encode_utf16_endian (gunichar c, char *outbuf, size_t outleft, unsigned endian)
 {
 	unsigned char *outptr = (unsigned char *) outbuf;
