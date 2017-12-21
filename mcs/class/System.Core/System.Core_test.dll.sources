@@ -82,3 +82,4 @@ System.Runtime.CompilerServices/DynamicAttributeTest.cs
 System.Linq/ParallelEnumerableTests.cs
 System.Linq/ParallelTestHelper.cs
 System.Threading.Tasks/TaskExtensionsTests.cs
+System.Threading.Tasks/ThreadPrincipalTests.cs
