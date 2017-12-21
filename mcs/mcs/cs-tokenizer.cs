@@ -718,8 +718,11 @@ namespace Mono.CSharp
 			case Token.DEFAULT:
 				switch (peek_token ()) {
 				case Token.COLON:
-					token ();
-					res = Token.DEFAULT_COLON;
+					// Special case: foo == null ? default : 1;
+					if (current_token != Token.INTERR) {
+						token ();
+						res = Token.DEFAULT_COLON;
+					}
 					break;
 				case Token.OPEN_PARENS:
 				case Token.OPEN_PARENS_CAST:
@@ -1402,6 +1405,7 @@ namespace Mono.CSharp
 			case Token.NEW:
 			case Token.INTERPOLATED_STRING:
 			case Token.THROW:
+			case Token.DEFAULT_COLON:
 				next_token = Token.INTERR;
 				break;
 				
