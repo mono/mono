@@ -1522,6 +1522,8 @@ BOOL APIENTRY mono_gc_dllmain (HMODULE module_handle, DWORD reason, LPVOID reser
 {
 #ifdef GC_INSIDE_DLL
 	return GC_DllMain (module_handle, reason, reserved);
+#else
+	return TRUE;
 #endif
 }
 #endif
