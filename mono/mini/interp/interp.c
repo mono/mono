@@ -3653,6 +3653,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 				}
 			} else {
 				if (newobj_class != mono_defaults.string_class) {
+					MonoVTable *vtable = mono_class_vtable_checked (rtm->domain, newobj_class, &error);
+					if (!mono_error_ok (&error) || !mono_runtime_class_init_full (vtable, &error))
+						THROW_EX (mono_error_convert_to_exception (&error), ip);
 					o = mono_object_new_checked (rtm->domain, newobj_class, &error);
 					mono_error_cleanup (&error); /* FIXME: don't swallow the error */
 					EXCEPTION_CHECKPOINT;
