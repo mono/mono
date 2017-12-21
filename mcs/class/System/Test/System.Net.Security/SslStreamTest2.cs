@@ -122,6 +122,24 @@ namespace MonoTests.System.Net.Security
 		}
 
 		[TestCase]
+		public void HandshakeVerification_CorrectEncryptionProperties()
+		{
+			SetupClientServerConnection();
+			var clientStream = new SslStream(m_tcpClient.GetStream(), false, RemoteCertificateValidationCallback_AlwaysSucceed);
+			var serverStream = new SslStream(m_tcpServer.GetStream(), false, RemoteCertificateValidationCallback_AlwaysSucceed);
+			DoHandshake(clientStream, serverStream);
+
+			Assert.AreEqual(SslProtocols.Tls12, clientStream.SslProtocol);
+			Assert.AreEqual(SslProtocols.Tls12, serverStream.SslProtocol);
+
+			// Expected cipher is TLS-ECDHE-RSA-WITH-AES-256-CBC-SHA
+			//Assert.AreEqual(CipherAlgorithmType.Aes256, clientStream.CipherAlgorithm);	// Not filled out by UnityTls binding
+			//Assert.AreEqual(256, clientStream.CipherStrength);							// Not implemented by Mono.Net.Security.MobileAuthenticatedStream.
+			//Assert.AreEqual(HashAlgorithmType.Sha1, clientStream.HashAlgorithm);			// Not filled out by UnityTls binding
+			//Assert.AreEqual(ExchangeAlgorithmType.DiffieHellman, clientStream.KeyExchangeAlgorithm); // Not filled out by UnityTls binding
+		}
+
+		[TestCase]
 		public void ReadWriteData()
 		{
 			SetupClientServerConnection();
