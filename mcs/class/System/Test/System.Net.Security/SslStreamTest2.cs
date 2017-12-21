@@ -83,18 +83,32 @@ namespace MonoTests.System.Net.Security
 			DoHandshake(clientStream, serverStream);
 		}
 
-// We don't support client authentification, so we can't fail the handshake on the server side
-// Note that in contrast to .Net we don't call the verification callback (with a null certificate) if verification is disabled.
+		[TestCase]
+		[ExpectedException(typeof(AuthenticationException))]
+		public void HandshakeVerification_FailureServer_ByCallback_WithoutClientAuth()
+		{
+			SetupClientServerConnection();
+			var clientStream = new SslStream(m_tcpClient.GetStream(), false, RemoteCertificateValidationCallback_AlwaysSucceed);
+			var serverStream = new SslStream(m_tcpServer.GetStream(), false, RemoteCertificateValidationCallback_AlwaysFail);
+			DoHandshake(clientStream, serverStream);
+		}
 
-		// [TestCase]
-		// [ExpectedException(typeof(AuthenticationException))]
-		// public void HandshakeVerification_FailureServer_ByCallback()
-		// {
-		// 	SetupClientServerConnection();
-		// 	var clientStream = new SslStream(m_tcpClient.GetStream(), false, RemoteCertificateValidationCallback_AlwaysSucceed);
-		// 	var serverStream = new SslStream(m_tcpServer.GetStream(), false, RemoteCertificateValidationCallback_AlwaysFail);
-		// 	DoHandshake(clientStream, serverStream);
-		// }
+		[TestCase]
+		public void HandshakeVerification_CorrectCertificates_WithoutClientAuth()
+		{
+			SetupClientServerConnection();
+			var clientStream = new SslStream(m_tcpClient.GetStream(), false, (sender, certificate, chain, sslPolicyErrors) =>
+				{
+					Assert.AreEqual (m_serverCert.GetRawCertData(), certificate.GetRawCertData()); 
+					return true;
+				});
+			var serverStream = new SslStream(m_tcpServer.GetStream(), false,  (sender, certificate, chain, sslPolicyErrors) =>
+				{
+					Assert.IsNull (certificate); 
+					return true;
+				});
+			DoHandshake(clientStream, serverStream, "test");
+		}
 
 // TODO: Can we support passing on the exception?
 		
@@ -113,34 +127,45 @@ namespace MonoTests.System.Net.Security
 		{
 			try
 			{
-                Task.WaitAll(
-				    Task.Run(() => {
-					    try {
+				Task.WaitAll(
+					Task.Run(() => {
+						try {
 							if (clientStream != null)
-						    	clientStream.AuthenticateAsClient(expectedCN);
-					    }
-					    catch {
-						    m_tcpServer.Close();
-						    throw;
-					    }}),
-				    Task.Run(() => {
-					    try {
+								clientStream.AuthenticateAsClient(expectedCN);
+						}
+						catch (global::System.IO.IOException) {} // Failure on server side will close client connection.
+						catch {
+							m_tcpServer.Close();
+							throw;
+						}}),
+					Task.Run(() => {
+						try {
 							if (serverStream != null)
-						    	serverStream.AuthenticateAsServer(m_serverCert);
-					    }
-					    catch  {
-                            m_tcpClient.Close();
-						    throw;
-					    }})
+								serverStream.AuthenticateAsServer(m_serverCert);
+						}
+						catch (global::System.IO.IOException) {}  // Failure on client side will close server connection.
+						catch  {
+							m_tcpClient.Close();
+							throw;
+						}})
 				);
 			}
-			// We're intersted in the "first" exception.
+			// Filter for AuthentificationException
 			catch (AggregateException e)
 			{
-				if (e.InnerException is AggregateException)
-					throw e.InnerException.InnerException;
-				else
-					throw e.InnerException;
+				FilterForAuthExceptionAndRethrow(e);
+				throw e;
+			}
+		}
+
+		private void FilterForAuthExceptionAndRethrow(Exception e)
+		{
+			if (e is AuthenticationException)
+				throw e;
+			else if (e is AggregateException)
+			{
+				foreach (var inner in ((AggregateException)e).InnerExceptions)
+					FilterForAuthExceptionAndRethrow(inner);
 			}
 		}
 
