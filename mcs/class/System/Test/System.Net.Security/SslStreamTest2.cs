@@ -110,17 +110,16 @@ namespace MonoTests.System.Net.Security
 			DoHandshake(clientStream, serverStream, "test");
 		}
 
-// TODO: Can we support passing on the exception?
 		
-		// [TestCase]
-		// [ExpectedException(typeof(TestException))]
-		// public void HandshakeVerification_FailureClient_ByException()
-		// {
-		// 	SetupClientServerConnection();
-		// 	var clientStream = new SslStream(m_tcpClient.GetStream(), false, RemoteCertificateValidationCallback_ThrowException);
-		// 	var serverStream = new SslStream(m_tcpServer.GetStream(), false, RemoteCertificateValidationCallback_AlwaysSucceed);
-		// 	DoHandshake(clientStream, serverStream);
-		// }
+		[TestCase]
+		[ExpectedException(typeof(AuthenticationException))]//typeof(TestException))]	// TODO: Can we support passing on the exception like .Net does?
+		public void HandshakeVerification_FailureClient_ByException()
+		{
+			SetupClientServerConnection();
+			var clientStream = new SslStream(m_tcpClient.GetStream(), false, RemoteCertificateValidationCallback_ThrowException);
+			var serverStream = new SslStream(m_tcpServer.GetStream(), false, RemoteCertificateValidationCallback_AlwaysSucceed);
+			DoHandshake(clientStream, serverStream);
+		}
 
 
 		private void DoHandshake(SslStream clientStream, SslStream serverStream, string expectedCN = m_serverHostName)
