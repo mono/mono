@@ -693,6 +693,11 @@ namespace Mono.CSharp {
 					GetSignatureForError (), mc.GetSignatureForError (), input_variance, gtype_variance, parameters);
 		}
 
+		public TypeSpec GetAsyncMethodBuilder ()
+		{
+			return null;
+		}
+
 		public TypeSpec GetAttributeCoClass ()
 		{
 			return null;

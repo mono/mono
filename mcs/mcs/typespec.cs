@@ -1454,6 +1454,7 @@ namespace Mono.CSharp
 		int TypeParametersCount { get; }
 		TypeParameterSpec[] TypeParameters { get; }
 
+		TypeSpec GetAsyncMethodBuilder ();
 		TypeSpec GetAttributeCoClass ();
 		string GetAttributeDefaultMember ();
 		AttributeUsageAttribute GetAttributeUsage (PredefinedAttribute pa);
@@ -1587,6 +1588,11 @@ namespace Mono.CSharp
 		}
 
 		#region ITypeDefinition Members
+
+		TypeSpec ITypeDefinition.GetAsyncMethodBuilder ()
+		{
+			return null;
+		}
 
 		TypeSpec ITypeDefinition.GetAttributeCoClass ()
 		{
@@ -1774,6 +1780,11 @@ namespace Mono.CSharp
 			get {
 				throw new NotSupportedException ();
 			}
+		}
+
+		public TypeSpec GetAsyncMethodBuilder ()
+		{
+			return null;
 		}
 
 		public TypeSpec GetAttributeCoClass ()
