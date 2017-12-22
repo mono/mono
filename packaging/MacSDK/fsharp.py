@@ -8,7 +8,7 @@ class FsharpPackage(GitHubTarballPackage):
             override_properties={ 'make': 'make' })
 
         self.extra_stage_files = ['lib/mono/xbuild/Microsoft/VisualStudio/v/FSharp/Microsoft.FSharp.Targets']
-        self.sources.extend(['patches/fsharp-portable-pdb.patch', 'patches/fsharp-metadata-table-size-fix.patch', 'patches/fsharp-install-netsdk-targets.patch'])
+        self.sources.extend(['patches/fsharp-portable-pdb.patch'])
 
     def prep(self):
         Package.prep(self)
