@@ -262,7 +262,7 @@ read_uint32_endian (unsigned char *inptr, unsigned endian)
 	return (inptr[0] << 24) | (inptr[1] << 16) | (inptr[2] << 8) | inptr[3];
 }
 
-static FORCE_INLINE (int)
+static int
 decode_utf32_endian (char *inbuf, size_t inleft, gunichar *outchar, unsigned endian)
 {
 	unsigned char *inptr = (unsigned char *) inbuf;
