@@ -66896,6 +66896,117 @@
       </method>
     </type>
   </test>
+  <test name="test-async-94.cs">
+    <type name="MyTask`1[T]">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MyTask">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MyTaskMethodBuilder">
+      <method name="MyTaskMethodBuilder Create()" attrs="150">
+        <size>10</size>
+      </method>
+      <method name="MyTask get_Task()" attrs="2182">
+        <size>10</size>
+      </method>
+      <method name="Void SetException(System.Exception)" attrs="134">
+        <size>2</size>
+      </method>
+      <method name="Void SetResult()" attrs="134">
+        <size>2</size>
+      </method>
+      <method name="Void AwaitOnCompleted[TAwaiter,TStateMachine](TAwaiter ByRef, TStateMachine ByRef)" attrs="134">
+        <size>2</size>
+      </method>
+      <method name="Void AwaitUnsafeOnCompleted[TAwaiter,TStateMachine](TAwaiter ByRef, TStateMachine ByRef)" attrs="134">
+        <size>2</size>
+      </method>
+      <method name="Void Start[TStateMachine](TStateMachine ByRef)" attrs="134">
+        <size>2</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="134">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MyTaskMethodBuilder`1[T]">
+      <method name="MyTaskMethodBuilder`1[T] Create()" attrs="150">
+        <size>10</size>
+      </method>
+      <method name="MyTask`1[T] get_Task()" attrs="2182">
+        <size>10</size>
+      </method>
+      <method name="Void SetException(System.Exception)" attrs="134">
+        <size>2</size>
+      </method>
+      <method name="Void SetResult(T)" attrs="134">
+        <size>2</size>
+      </method>
+      <method name="Void AwaitOnCompleted[TAwaiter,TStateMachine](TAwaiter ByRef, TStateMachine ByRef)" attrs="134">
+        <size>2</size>
+      </method>
+      <method name="Void AwaitUnsafeOnCompleted[TAwaiter,TStateMachine](TAwaiter ByRef, TStateMachine ByRef)" attrs="134">
+        <size>2</size>
+      </method>
+      <method name="Void Start[TStateMachine](TStateMachine ByRef)" attrs="134">
+        <size>2</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="134">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="MyTask Test()" attrs="134">
+        <size>33</size>
+      </method>
+      <method name="MyTask`1[System.Int32] Test2()" attrs="134">
+        <size>33</size>
+      </method>
+      <method name="System.Threading.Tasks.ValueTask`1[System.String] Test3()" attrs="134">
+        <size>33</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>23</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+&lt;Test&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>157</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="X+&lt;Test2&gt;c__async1">
+      <method name="Void MoveNext()" attrs="486">
+        <size>165</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="X+&lt;Test3&gt;c__async2">
+      <method name="Void MoveNext()" attrs="486">
+        <size>169</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void add_Disposed(Delegate)" attrs="2182">

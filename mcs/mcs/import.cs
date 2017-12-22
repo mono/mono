@@ -1405,6 +1405,7 @@ namespace Mono.CSharp
 			public string DefaultIndexerName;
 			public bool? CLSAttributeValue;
 			public TypeSpec CoClass;
+			public TypeSpec AsyncMethodBuilder;
 
 			static bool HasMissingType (ConstructorInfo ctor)
 			{
@@ -1531,6 +1532,20 @@ namespace Mono.CSharp
 								bag = new AttributesBag ();
 
 							bag.CoClass = importer.ImportType ((MetaType) a.ConstructorArguments[0].Value);
+							continue;
+						}
+
+						if (name == "AsyncMethodBuilderAttribute") {
+							if (dt.Namespace != "System.Runtime.CompilerServices")
+								continue;
+
+							if (HasMissingType (a.Constructor))
+								continue;
+
+							if (bag == null)
+								bag = new AttributesBag ();
+
+							bag.AsyncMethodBuilder = importer.ImportType ((MetaType)a.ConstructorArguments [0].Value);
 							continue;
 						}
 					}
@@ -2140,6 +2155,14 @@ namespace Mono.CSharp
 			}
 		}
 
+		public TypeSpec GetAsyncMethodBuilder ()
+		{
+			if (cattrs == null)
+				ReadAttributes ();
+
+			return cattrs.AsyncMethodBuilder;
+		}
+
 		public TypeSpec GetAttributeCoClass ()
 		{
 			if (cattrs == null)
@@ -2455,6 +2478,11 @@ namespace Mono.CSharp
 		}
 
 		#endregion
+
+		public TypeSpec GetAsyncMethodBuilder ()
+		{
+			return null;
+		}
 
 		public TypeSpec GetAttributeCoClass ()
 		{
