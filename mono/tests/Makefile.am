@@ -1016,8 +1016,6 @@ INTERP_DISABLED_TESTS = \
 	exception18.exe \
 	field-access.exe \
 	handleref.exe \
-	ldftn-access.exe \
-	method-access.exe \
 	nullable_boxing.2.exe \
 	pinvoke2.exe \
 	pinvoke3.exe \
