@@ -1160,7 +1160,8 @@ namespace Mono.CSharp {
 				//
 				if (ec.CurrentAnonymousMethod is AsyncInitializer) {
 					var storey = (AsyncTaskStorey) ec.CurrentAnonymousMethod.Storey;
-					if (storey.ReturnType == ec.Module.PredefinedTypes.Task.TypeSpec) {
+					var s_return_type = storey.ReturnType;
+					if (s_return_type == ec.Module.PredefinedTypes.Task.TypeSpec) {
 						//
 						// Extra trick not to emit ret/leave inside awaiter body
 						//
@@ -1168,8 +1169,8 @@ namespace Mono.CSharp {
 						return true;
 					}
 
-					if (storey.ReturnType.IsGenericTask)
-						block_return_type = storey.ReturnType.TypeArguments[0];
+					if (s_return_type.IsGenericTask || (s_return_type.Arity == 1 && s_return_type.IsCustomTaskType ()))
+					    block_return_type = s_return_type.TypeArguments[0];
 				}
 
 				if (ec.CurrentIterator != null) {
@@ -1220,7 +1221,7 @@ namespace Mono.CSharp {
 							return false;
 						}
 
-						if (!async_type.IsGenericTask) {
+						if (!async_type.IsGeneric) {
 							if (this is ContextualReturn)
 								return true;
 

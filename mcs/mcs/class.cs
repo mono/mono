@@ -1120,6 +1120,18 @@ namespace Mono.CSharp
 				member.GenerateDocComment (builder);
 		}
 
+		public TypeSpec GetAsyncMethodBuilder ()
+		{
+			if (OptAttributes == null)
+				return null;
+
+			Attribute a = OptAttributes.Search (Module.PredefinedAttributes.AsyncMethodBuilder);
+			if (a == null)
+				return null;
+
+			return a.GetAsyncMethodBuilderValue ();
+		}
+
 		public TypeSpec GetAttributeCoClass ()
 		{
 			if (OptAttributes == null)
