@@ -819,6 +819,7 @@ namespace CppSharp
                 "DynCallArgs", 
                 "MonoLMFTramp",
                 "InterpMethodArguments",
+                "CallContext"
             };
 
             DumpClasses(writer, ctx, optionalTypes, optional: true);
