@@ -8814,7 +8814,7 @@ mono_ldtoken (MonoImage *image, guint32 token, MonoClass **handle_class,
 {
 	ERROR_DECL (error);
 	gpointer res = mono_ldtoken_checked (image, token, handle_class, context, &error);
-	g_assert (mono_error_ok (&error));
+	mono_error_assert_ok (&error);
 	return res;
 }
 

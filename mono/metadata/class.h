@@ -120,6 +120,7 @@ mono_class_is_subclass_of (MonoClass *klass, MonoClass *klassc,
 MONO_API mono_bool
 mono_class_is_assignable_from (MonoClass *klass, MonoClass *oklass);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API void*
 mono_ldtoken               (MonoImage *image, uint32_t token, MonoClass **retclass, MonoGenericContext *context);
 
