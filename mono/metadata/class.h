@@ -18,9 +18,11 @@ typedef struct _MonoClassField MonoClassField;
 typedef struct _MonoProperty MonoProperty;
 typedef struct _MonoEvent MonoEvent;
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoClass *
 mono_class_get             (MonoImage *image, uint32_t type_token);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoClass *
 mono_class_get_full        (MonoImage *image, uint32_t type_token, MonoGenericContext *context);
 

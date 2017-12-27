@@ -7418,7 +7418,7 @@ mono_class_get_full (MonoImage *image, guint32 type_token, MonoGenericContext *c
 	if (klass && context && mono_metadata_token_table (type_token) == MONO_TABLE_TYPESPEC)
 		klass = mono_class_inflate_generic_class_checked (klass, context, &error);
 
-	g_assert (mono_error_ok (&error)); /* FIXME deprecate this function and forbit the runtime from using it. */
+	mono_error_assert_ok (&error);
 	return klass;
 }
 
@@ -7557,7 +7557,11 @@ mono_type_get_checked (MonoImage *image, guint32 type_token, MonoGenericContext 
 MonoClass *
 mono_class_get (MonoImage *image, guint32 type_token)
 {
-	return mono_class_get_full (image, type_token, NULL);
+	MonoError error;
+	error_init (&error);
+	MonoClass *result = mono_class_get_checked (image, type_token, &error);
+	mono_error_assert_ok (&error);
+	return result;
 }
 
 /**
