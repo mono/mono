@@ -92,7 +92,6 @@ install()
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Microsoft/VisualStudio/v12.0/FSharp				${REPODIR}/../../tmp/mono/lib/mono/xbuild/Microsoft/VisualStudio/v12.0/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Microsoft/VisualStudio/v14.0/FSharp				${REPODIR}/../../tmp/mono/lib/mono/xbuild/Microsoft/VisualStudio/v14.0/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Microsoft/VisualStudio/v15.0/FSharp				${REPODIR}/../../tmp/mono/lib/mono/xbuild/Microsoft/VisualStudio/v15.0/
-	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/gac/FSharp.Core/4.4.1.0__b03f5f7f11d50a3a/FSharp*				${REPODIR}/../../tmp/mono/lib/mono/4.5/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/gac/nunit*/2.4.8.0__96d09a1eb7f44a77/*.dll*					${REPODIR}/../../tmp/mono/lib/mono/4.5/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/4.5/Microsoft.VisualBasic.dll	${REPODIR}/../../tmp/mono/lib/mono/4.5/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/4.5/Mono.Cecil.VB*			${REPODIR}/../../tmp/mono/lib/mono/4.5/
@@ -143,13 +142,9 @@ install()
 	cp xsp4.bat xsp.bat
 	chmod a+x *
 	cd ..
-	for i in lib/mono/4.5/Mono.Cecil.VB*.dll lib/mono/4.5/Microsoft.VisualBasic.dll lib/mono/*/xsp*.exe lib/mono/4.5/fastcgi-mono-server4.exe lib/mono/4.5/mod-mono-server4.exe lib/mono/4.5/mono-fpm.exe lib/mono/*/FSharp*.dll lib/mono/*/Mono.WebServer*.dll ../../repos/managed-components/mono-mac/lib/mono/gac/FSharp.Core/3.*/FSharp.Core.dll ../../repos/managed-components/mono-mac/lib/mono/gac/FSharp.Core/4.*/FSharp.Core.dll
+	for i in lib/mono/4.5/Mono.Cecil.VB*.dll lib/mono/4.5/Microsoft.VisualBasic.dll lib/mono/*/xsp*.exe lib/mono/4.5/fastcgi-mono-server4.exe lib/mono/4.5/mod-mono-server4.exe lib/mono/4.5/mono-fpm.exe lib/mono/*/Mono.WebServer*.dll
 		do bin/gacutil -i $i
 	done
-	rsync -a --copy-links lib/mono/4.5/FSharp.Core.*data lib/mono/gac/FSharp.Core/4.4.1.0__*/
-	rsync -a --copy-links lib/mono/4.5/FSharp.Core.*data lib/mono/gac/FSharp.Core/4.4.0.0__*/
-	rsync -a --copy-links lib/mono/4.5/FSharp.Core.*data lib/mono/gac/FSharp.Core/4.3.1.0__*/
-	rsync -a --copy-links lib/mono/4.5/FSharp.Core.*data lib/mono/gac/FSharp.Core/4.3.0.0__*/
 
 	# make sure we didn't miss any files with Mac paths
 	if grep -R 'Mono\.framework' . --exclude=xbuild.1 --exclude=MSBuild.dll.config --exclude=macpack.exe; then
