@@ -413,6 +413,7 @@ MONO_API MonoType      *mono_metadata_parse_field_type  (MonoImage      *m,
 		                                short            field_flags,
 						const char      *ptr,
 						const char      **rptr);
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoType      *mono_type_create_from_typespec  (MonoImage        *image, 
 					        uint32_t           type_spec);
 MONO_API void           mono_metadata_free_type         (MonoType        *type);
