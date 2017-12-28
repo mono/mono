@@ -56,6 +56,7 @@ mono_class_from_generic_parameter (MonoGenericParam *param, MonoImage *image, mo
 MONO_RT_EXTERNAL_ONLY MONO_API MonoType*
 mono_class_inflate_generic_type (MonoType *type, MonoGenericContext *context) /* MONO_DEPRECATED */;
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoMethod*
 mono_class_inflate_generic_method (MonoMethod *method, MonoGenericContext *context);
 

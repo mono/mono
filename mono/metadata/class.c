@@ -995,7 +995,12 @@ fail:
 MonoMethod *
 mono_class_inflate_generic_method (MonoMethod *method, MonoGenericContext *context)
 {
-	return mono_class_inflate_generic_method_full (method, NULL, context);
+	ERROR_DECL (error);
+	error_init (&error);
+	MonoMethod *res = mono_class_inflate_generic_method_full_checked (method, NULL, context, &error);
+	if (!is_ok (&error))
+		g_error ("Could not inflate generic method due to %s", mono_error_get_message (&error));
+	return res;
 }
 
 MonoMethod *
@@ -1005,27 +1010,12 @@ mono_class_inflate_generic_method_checked (MonoMethod *method, MonoGenericContex
 }
 
 /**
- * mono_class_inflate_generic_method_full:
- *
+ * mono_class_inflate_generic_method_full_checked:
  * Instantiate method \p method with the generic context \p context.
+ * On failure returns NULL and sets \p error.
+ *
  * BEWARE: All non-trivial fields are invalid, including klass, signature, and header.
  *         Use mono_method_signature() and mono_method_get_header() to get the correct values.
- */
-MonoMethod*
-mono_class_inflate_generic_method_full (MonoMethod *method, MonoClass *klass_hint, MonoGenericContext *context)
-{
-	ERROR_DECL (error);
-	MonoMethod *res = mono_class_inflate_generic_method_full_checked (method, klass_hint, context, &error);
-	if (!mono_error_ok (&error))
-		/*FIXME do proper error handling - on this case, kill this function. */
-		g_error ("Could not inflate generic method due to %s", mono_error_get_message (&error)); 
-
-	return res;
-}
-
-/**
- * mono_class_inflate_generic_method_full_checked:
- * Same as mono_class_inflate_generic_method_full but return failure using \p error.
  */
 MonoMethod*
 mono_class_inflate_generic_method_full_checked (MonoMethod *method, MonoClass *klass_hint, MonoGenericContext *context, MonoError *error)

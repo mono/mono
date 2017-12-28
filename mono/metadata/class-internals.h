@@ -1027,9 +1027,6 @@ void
 mono_method_set_generic_container (MonoMethod *method, MonoGenericContainer* container);
 
 MonoMethod*
-mono_class_inflate_generic_method_full (MonoMethod *method, MonoClass *klass_hint, MonoGenericContext *context);
-
-MonoMethod*
 mono_class_inflate_generic_method_full_checked (MonoMethod *method, MonoClass *klass_hint, MonoGenericContext *context, MonoError *error);
 
 MonoMethod *
