@@ -18,6 +18,7 @@
 #include <mono/metadata/seq-points-data.h>
 
 #include <mono/mini/mini.h>
+#include <mono/mini/mini-runtime.h>
 
 #include "mintops.h"
 #include "interp-internals.h"
@@ -966,7 +967,7 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 				}
 			}
 
-			g_error ("TODO: %s", tm);
+			g_error ("TODO: interp_transform_call %s:%s", target_method->klass->name, tm);
 		} else if (mono_class_is_subclass_of (target_method->klass, mono_defaults.array_class, FALSE)) {
 			if (!strcmp (tm, "get_Rank")) {
 				op = MINT_ARRAY_RANK;
@@ -3775,7 +3776,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 					}
 
 					if (func == mono_ftnptr_to_delegate) {
-						g_error ("TODO: ?");
+						g_error ("TODO: CEE_MONO_ICALL mono_ftnptr_to_delegate?");
 					}
 					ADD_CODE(td, get_data_item_index (td, func));
 					td->sp -= info->sig->param_count;
@@ -4188,8 +4189,10 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 		g_print ("Runtime method: %s %p, VT stack size: %d\n", mono_method_full_name (method, TRUE), rtm, td->max_vt_sp);
 		g_print ("Calculated stack size: %d, stated size: %d\n", td->max_stack_height, header->max_stack);
 		while (p < td->new_ip) {
-			p = mono_interp_dis_mintop(td->new_code, p);
-			g_print ("\n");
+			char *ins = mono_interp_dis_mintop (td->new_code, p);
+			g_print ("%s\n", ins);
+			g_free (ins);
+			p = mono_interp_dis_mintop_len (p);
 		}
 	}
 	g_assert (td->max_stack_height <= (header->max_stack + 1));
@@ -4384,7 +4387,7 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Int
 			MONO_PROFILER_RAISE (jit_done, (method, NULL));
 			return NULL;
 		} else if (!strcmp (method->name, "UnsafeStore")) {
-			g_error ("TODO");
+			g_error ("TODO ArrayClass::UnsafeStore");
 		}
 	}
 

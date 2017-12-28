@@ -95,7 +95,22 @@ namespace System.Runtime.CompilerServices
 			throw new NotImplementedException ();
 		}
 
+		public static T ReadUnaligned<T> (ref byte source)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public static int SizeOf<T> ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static ref T Subtract<T> (ref T source, int elementOffset)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static void WriteUnaligned<T> (ref byte destination, T value)
 		{
 			throw new NotImplementedException ();
 		}

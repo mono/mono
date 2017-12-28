@@ -19,6 +19,8 @@
 #include "mini.h"
 #include "cpu-arm64.h"
 #include "ir-emit.h"
+#include "aot-runtime.h"
+#include "mini-runtime.h"
 
 #include <mono/arch/arm64/arm64-codegen.h>
 #include <mono/utils/mono-mmap.h>
@@ -2581,7 +2583,7 @@ mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p, gboolean ena
 }
 
 void*
-mono_arch_instrument_epilog_full (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments, gboolean preserve_argument_registers)
+mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
 {
 	NOT_IMPLEMENTED;
 	return NULL;
@@ -4303,7 +4305,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			mono_add_patch_info_rel (cfg, offset, MONO_PATCH_INFO_BB, ins->inst_target_bb, MONO_R_ARM64_BL);
 			arm_bl (code, 0);
 			cfg->thunk_area += THUNK_SIZE;
-			mono_cfg_add_try_hole (cfg, ins->inst_eh_block, code, bb);
+			for (GList *tmp = ins->inst_eh_blocks; tmp != bb->clause_holes; tmp = tmp->prev)
+				mono_cfg_add_try_hole (cfg, (MonoExceptionClause *)tmp->data, code, bb);
 			break;
 		case OP_START_HANDLER: {
 			MonoInst *spvar = mono_find_spvar_for_region (cfg, bb->region);

@@ -394,7 +394,7 @@ enum {
 
 extern SgenHashTable roots_hash [ROOT_TYPE_NUM];
 
-int sgen_register_root (char *start, size_t size, SgenDescriptor descr, int root_type, int source, const char *msg)
+int sgen_register_root (char *start, size_t size, SgenDescriptor descr, int root_type, int source, void *key, const char *msg)
 	MONO_PERMIT (need (sgen_lock_gc));
 void sgen_deregister_root (char* addr)
 	MONO_PERMIT (need (sgen_lock_gc));
@@ -794,6 +794,8 @@ gboolean sgen_object_is_live (GCObject *obj);
 
 void  sgen_init_fin_weak_hash (void);
 
+void sgen_register_obj_with_weak_fields (GCObject *obj);
+
 /* FIXME: move the toggleref stuff out of here */
 void sgen_mark_togglerefs (char *start, char *end, ScanCopyContext ctx);
 void sgen_clear_togglerefs (char *start, char *end, ScanCopyContext ctx);
@@ -962,6 +964,23 @@ sgen_major_is_object_alive (GCObject *object)
 	return major_collector.is_object_live (object);
 }
 
+
+/*
+ * If the object has been forwarded it means it's still referenced from a root. 
+ * If it is pinned it's still alive as well.
+ * A LOS object is only alive if we have pinned it.
+ * Return TRUE if @obj is ready to be finalized.
+ */
+static inline gboolean
+sgen_is_object_alive (GCObject *object)
+{
+	if (sgen_ptr_in_nursery (object))
+		return sgen_nursery_is_object_alive (object);
+
+	return sgen_major_is_object_alive (object);
+}
+
+
 /*
  * This function returns true if @object is either alive or it belongs to the old gen
  * and we're currently doing a minor collection.
@@ -996,6 +1015,8 @@ void sgen_gchandle_iterate (GCHandleType handle_type, int max_generation, SgenGC
 	MONO_PERMIT (need (sgen_world_stopped));
 void sgen_gchandle_set_target (guint32 gchandle, GCObject *obj);
 void sgen_mark_normal_gc_handles (void *addr, SgenUserMarkFunc mark_func, void *gc_data)
+	MONO_PERMIT (need (sgen_world_stopped));
+void sgen_gc_handles_report_roots (SgenUserReportRootFunc mark_func, void *gc_data)
 	MONO_PERMIT (need (sgen_world_stopped));
 gpointer sgen_gchandle_get_metadata (guint32 gchandle);
 GCObject *sgen_gchandle_get_target (guint32 gchandle);

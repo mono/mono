@@ -79,6 +79,8 @@
 #include "mini-llvm.h"
 #include "lldb.h"
 #include "mixed_callstack_plugin.h"
+#include "aot-runtime.h"
+#include "mini-runtime.h"
 
 MonoCallSpec *mono_jit_trace_calls;
 MonoMethodDesc *mono_inject_async_exc_method;
@@ -3942,12 +3944,6 @@ mini_class_has_reference_variant_generic_argument (MonoCompile *cfg, MonoClass *
 			return TRUE;
 	}
 	return FALSE;
-}
-
-void*
-mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
-{
-	return mono_arch_instrument_epilog_full (cfg, func, p, enable_arguments, FALSE);
 }
 
 void

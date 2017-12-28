@@ -123,8 +123,8 @@ namespace System.IdentityModel.Tokens
 		{
 			if (algorithm == SecurityAlgorithms.HmacSha1Signature)
 				return new HMACSHA1 (key);
-			//if (algorithm == SecurityAlgorithms.HmacSha256Signature)
-			//	return new HMACSHA256 (key);
+			if (algorithm == SecurityAlgorithms.HmacSha256Signature)
+				return new HMACSHA256 (key);
 			throw new NotSupportedException ();
 		}
 
@@ -212,6 +212,7 @@ namespace System.IdentityModel.Tokens
 		{
 			switch (algorithm) {
 			case SecurityAlgorithms.HmacSha1Signature:
+			case SecurityAlgorithms.HmacSha256Signature:
 			case SecurityAlgorithms.Psha1KeyDerivation:
 			case SecurityAlgorithms.Aes128Encryption:
 			case SecurityAlgorithms.Aes128KeyWrap:

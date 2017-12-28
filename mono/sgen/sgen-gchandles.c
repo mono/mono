@@ -94,16 +94,26 @@ static void
 bucket_alloc_callback (gpointer *bucket, guint32 new_bucket_size, gboolean alloc)
 {
 	if (alloc)
-		sgen_register_root ((char *)bucket, new_bucket_size, SGEN_DESCRIPTOR_NULL, ROOT_TYPE_PINNED, MONO_ROOT_SOURCE_GC_HANDLE, "pinned gc handles");
+		sgen_register_root ((char *)bucket, new_bucket_size, SGEN_DESCRIPTOR_NULL, ROOT_TYPE_PINNED, MONO_ROOT_SOURCE_GC_HANDLE, NULL, "GC Handle Bucket (SGen, Pinned)");
 	else
 		sgen_deregister_root ((char *)bucket);
+}
+
+static void
+bucket_alloc_report_root (gpointer *bucket, guint32 new_bucket_size, gboolean alloc)
+{
+	if (alloc)
+		sgen_client_root_registered ((char *)bucket, new_bucket_size, MONO_ROOT_SOURCE_GC_HANDLE, NULL, "GC Handle Bucket (SGen, Normal)");
+	else
+		sgen_client_root_deregistered ((char *)bucket);
 }
 
 static HandleData gc_handles [] = {
 	{ SGEN_ARRAY_LIST_INIT (NULL, is_slot_set, try_occupy_slot, -1), (HANDLE_WEAK) },
 	{ SGEN_ARRAY_LIST_INIT (NULL, is_slot_set, try_occupy_slot, -1), (HANDLE_WEAK_TRACK) },
-	{ SGEN_ARRAY_LIST_INIT (NULL, is_slot_set, try_occupy_slot, -1), (HANDLE_NORMAL) },
-	{ SGEN_ARRAY_LIST_INIT (bucket_alloc_callback, is_slot_set, try_occupy_slot, -1), (HANDLE_PINNED) }
+	{ SGEN_ARRAY_LIST_INIT (bucket_alloc_report_root, is_slot_set, try_occupy_slot, -1), (HANDLE_NORMAL) },
+	{ SGEN_ARRAY_LIST_INIT (bucket_alloc_callback, is_slot_set, try_occupy_slot, -1), (HANDLE_PINNED) },
+	{ SGEN_ARRAY_LIST_INIT (NULL, is_slot_set, try_occupy_slot, -1), (HANDLE_WEAK_FIELDS) },
 };
 
 static HandleData *
@@ -132,6 +142,22 @@ sgen_mark_normal_gc_handles (void *addr, SgenUserMarkFunc mark_func, void *gc_da
 	} SGEN_ARRAY_LIST_END_FOREACH_SLOT;
 }
 
+void
+sgen_gc_handles_report_roots (SgenUserReportRootFunc report_func, void *gc_data)
+{
+	HandleData *handles = gc_handles_for_type (HANDLE_NORMAL);
+	SgenArrayList *array = &handles->entries_array;
+	volatile gpointer *slot;
+	gpointer hidden, revealed;
+
+	SGEN_ARRAY_LIST_FOREACH_SLOT (array, slot) {
+		hidden = *slot;
+		revealed = MONO_GC_REVEAL_POINTER (hidden, FALSE);
+
+		if (MONO_GC_HANDLE_IS_OBJECT_POINTER (hidden))
+			report_func ((void*)slot, revealed, gc_data);
+	} SGEN_ARRAY_LIST_END_FOREACH_SLOT;
+}
 
 static guint32
 alloc_handle (HandleData *handles, GCObject *obj, gboolean track)
@@ -394,11 +420,52 @@ null_link_if_necessary (gpointer hidden, GCHandleType handle_type, int max_gener
 	return MONO_GC_HANDLE_OBJECT_POINTER (copy, is_weak);
 }
 
+static gpointer
+scan_for_weak (gpointer hidden, GCHandleType handle_type, int max_generation, gpointer user)
+{
+	const gboolean is_weak = GC_HANDLE_TYPE_IS_WEAK (handle_type);
+	ScanCopyContext *ctx = (ScanCopyContext *)user;
+
+	if (!MONO_GC_HANDLE_VALID (hidden))
+		return hidden;
+
+	GCObject *obj = (GCObject *)MONO_GC_REVEAL_POINTER (hidden, is_weak);
+
+	/* If the object is dead we free the gc handle */
+	if (!sgen_is_object_alive (obj))
+		return NULL;
+
+	/* Relocate it */
+	ctx->ops->copy_or_mark_object (&obj, ctx->queue);
+
+	int nbits;
+	gsize *weak_bitmap = sgen_client_get_weak_bitmap (SGEN_LOAD_VTABLE (obj), &nbits);
+	for (int i = 0; i < nbits; ++i) {
+		if (weak_bitmap [i / (sizeof (gsize) * 8)] & ((gsize)1 << (i % (sizeof (gsize) * 8)))) {
+			GCObject **addr = (GCObject **)((char*)obj + (i * sizeof (gpointer)));
+			GCObject *field = *addr;
+
+			/* if the object in the weak field is alive, we relocate it */
+			if (field && sgen_is_object_alive (field))
+				ctx->ops->copy_or_mark_object (addr, ctx->queue);
+			else
+				*addr = NULL;
+	   }
+	}
+
+	/* Update link if object was moved. */
+	return MONO_GC_HANDLE_OBJECT_POINTER (obj, is_weak);
+}
+
 /* LOCKING: requires that the GC lock is held */
 void
 sgen_null_link_in_range (int generation, ScanCopyContext ctx, gboolean track)
 {
 	sgen_gchandle_iterate (track ? HANDLE_WEAK_TRACK : HANDLE_WEAK, generation, null_link_if_necessary, &ctx);
+
+	//we're always called for gen zero. !track means short ref
+	if (generation == 0 && !track)
+		sgen_gchandle_iterate (HANDLE_WEAK_FIELDS, generation, scan_for_weak, &ctx);
 }
 
 typedef struct {
@@ -433,6 +500,15 @@ sgen_null_links_if (SgenObjectPredicateFunc predicate, void *data, int generatio
 {
 	WeakLinkAlivePredicateClosure closure = { predicate, data };
 	sgen_gchandle_iterate (track ? HANDLE_WEAK_TRACK : HANDLE_WEAK, generation, null_link_if, &closure);
+}
+
+void
+sgen_register_obj_with_weak_fields (GCObject *obj)
+{
+	//
+	// We use a gc handle to be able to do some processing for these objects at every gc
+	//
+	alloc_handle (gc_handles_for_type (HANDLE_WEAK_FIELDS), obj, FALSE);
 }
 
 void

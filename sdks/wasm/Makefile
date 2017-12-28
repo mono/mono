@@ -33,13 +33,15 @@ MINI_TEST_FILES= \
 	mixed.cs	\
 	gc-test.cs
 
+APP_SOURCES = \
+	main.cs	\
+	incrementalrunner.cs
 
-BCL_INPUT_ASM = $(patsubst %,$(WASM_BCL_DIR)/%,$(BCL_ASSEMBLIES))
-BCL_OUTPUT_ASM = $(patsubst %,$(MANAGED_DEPLOY_DIR)/%,$(BCL_ASSEMBLIES))
-DEPS_FILES = $(patsubst %,$(MANAGED_DEPLOY_DIR)/%,$(DEPS_ASSEMBLIES))
+MINI_TEST_SOURCES = $(patsubst %,$(MINI_PATH)/%,$(MINI_TEST_FILES))
 
-MINI_TEST_SOURCES= $(patsubst %,$(MINI_PATH)/%,$(MINI_TEST_FILES))
-MINI_TEST_DEPS= $(patsubst %,-r:%,$(BCL_OUTPUT_ASM) $(DEPS_FILES))
+TEST_DEPS = $(patsubst %,managed/%,$(BCL_ASSEMBLIES)) managed/nunitlite.dll
+TEST_MCS_DEPS = $(patsubst %,-r:%, $(TEST_DEPS))
+
 
 .stamp-depot-tools:
 	git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git depot_tools
@@ -58,33 +60,39 @@ driver.o: driver.c
 	$(EMCC) -g -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 driver.c -c -o driver.o
 
 mono.js: driver.o library_mono.js $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a
-	$(EMCC) -g4 -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 --js-library library_mono.js driver.o $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a -o mono.js
+	$(EMCC) -g4 -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s ASSERTIONS=2 --js-library library_mono.js driver.o $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a -o mono.js
 
 build-native: mono.js
 
-#FIXME some Make magic here would be appreciated
-.stamp-copy-bcl: $(TOP)/sdks/wasm/managed $(BCL_INPUT_ASM)
-	mkdir -p managed/
-	cp $(BCL_INPUT_ASM) managed/
-	touch $@
+managed/:
+	mkdir -p $@
 
-managed/main.exe: main.cs .stamp-copy-bcl managed/nunitlite.dll
-	mcs /nostdlib /unsafe main.cs -r:managed/nunitlite.dll $(MINI_TEST_DEPS) -out:managed/main.exe
+$(patsubst %,managed/%,$(BCL_ASSEMBLIES)): managed/%: $(WASM_BCL_DIR)/% | managed/
+	cp $< $@
 
-managed/mini_tests.dll: $(MINI_TEST_SOURCES) mini-test-runner.cs .stamp-copy-bcl managed/nunitlite.dll
-	mcs /nostdlib /unsafe -target:library -out:managed/mini_tests.dll -define:__MOBILE__,ARCH_32 $(MINI_TEST_DEPS) $(MINI_TEST_SOURCES) mini-test-runner.cs 
-
-managed/nunitlite.dll: $(TOP)/mcs/class/lib/wasm/nunitlite.dll
+#FIXME change BCL sdk build to include nunitlite.dll in out/bcl/wasm/
+managed/nunitlite.dll: $(TOP)/mcs/class/lib/wasm/nunitlite.dll | managed/
 	cd $(TOP)/mcs/tools/nunit-lite && make PROFILE=wasm
-	cp  $< $@
+	cp $< $@
 
-build-managed: .stamp-copy-bcl managed/nunitlite.dll managed/mini_tests.dll managed/main.exe
+managed/main.exe: $(TEST_DEPS) $(APP_SOURCES) | managed/
+	mcs /nostdlib /unsafe -out:$@ $(TEST_MCS_DEPS) $(APP_SOURCES)
+
+$(TOP)/mcs/class/lib/wasm/tests/wasm_corlib_test.dll:
+	cd $(TOP)/mcs/class/corlib && make test-local PROFILE=wasm
+
+managed/wasm_corlib_test.dll: $(TOP)/mcs/class/lib/wasm/tests/wasm_corlib_test.dll
+	cp $< $@
+
+managed/mini_tests.dll: $(TEST_DEPS) $(MINI_TEST_SOURCES) mini-test-runner.cs | managed/
+	mcs /nostdlib /unsafe -target:library -out:$@ -define:__MOBILE__,ARCH_32 $(TEST_MCS_DEPS) $(MINI_TEST_SOURCES) mini-test-runner.cs 
+
+build-managed: managed/nunitlite.dll managed/mini_tests.dll managed/wasm_corlib_test.dll managed/main.exe
 
 build: build-native build-managed
 
-
-run: toolchain build
-	$(D8) --expose_wasm test.js
+run-%: toolchain build
+	$(D8) --expose_wasm test.js -- $*
 
 clean:
 	

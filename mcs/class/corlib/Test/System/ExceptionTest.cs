@@ -262,7 +262,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category ("InterpreterNotWorking")]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void GetObjectData ()
 		{
 			string msg = "MESSAGE";
@@ -380,7 +380,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category ("InterpreterNotWorking")]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void Source ()
 		{
 			Exception ex1 = new Exception ("MSG");

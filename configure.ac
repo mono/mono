@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 #AC_PREREQ([2.62])
 
-AC_INIT(mono, [5.9.0],
+AC_INIT(mono, [5.11.0],
         [http://bugzilla.xamarin.com/enter_bug.cgi?classification=Mono])
 
 AC_CONFIG_SRCDIR([README.md])
@@ -123,6 +123,7 @@ CFLAGS="$CFLAGS -D_REENTRANT -D_GNU_SOURCE -DNO_UNALIGNED_ACCESS -s WASM=1"
 CPPFLAGS="$CPPFLAGS -D_REENTRANT -DUSE_MMAP -D_GNU_SOURCE -DNO_UNALIGNED_ACCESS -s WASM=1"
 libdl="-ldl"
 libgc_threads=pthreads
+platform_wasm=yes
 
 else
 
@@ -368,8 +369,6 @@ case "$host" in
 		AC_DEFINE(PTHREAD_POINTER_ID)
 		dnl Haiku does not support static TLS with __thread
 		with_tls=pthread
-		dnl Boehm is too much work to backport Haiku support for
-		support_boehm=no
 		libgc_threads=pthreads
 		use_sigposix=yes
 		;;
@@ -413,6 +412,7 @@ AM_CONDITIONAL(HOST_SIGPOSIX, test x$use_sigposix = xyes)
 AM_CONDITIONAL(HOST_ANDROID, test x$platform_android = xyes)
 AM_CONDITIONAL(HOST_TIZEN, test x$platform_tizen = xyes)
 AM_CONDITIONAL(HOST_IOS, test x$platform_ios = xyes)
+AM_CONDITIONAL(HOST_WASM, test x$platform_wasm = xyes)
 
 if test -z "$HOST_DARWIN_TRUE"; then :
 PLATFORM_AOT_SUFFIX=.dylib

@@ -167,7 +167,7 @@ Enable heap snapshots. \fImode\fR, if given, can be one of:
 .TP
 \fBondemand\fR
 Only perform a heapshot when receiving a command via the command
-server.
+server or when triggered through the managed library.
 .TP
 \fInum\fR\fBgc\fR
 Perform a heapshot on every \fInum\fR collections of the major
@@ -190,11 +190,11 @@ Print detailed debugging information. Most users should not use this
 option.
 .SS Command server
 The log profiler features a simple command server that currently is
-only used to trigger heapshots when using the on-demand mode. A
-random port will be used to listen for connections unless the
-\fBport\fR option is used. To trigger a heapshot, open a TCP
-connection to the command server and send the C string
-\fB"heapshot\\n"\fR.
+only used to trigger manual heapshots (typcally when using the
+on-demand mode, but also usable with the other modes). A random port
+will be used to listen for connections unless the \fBport\fR option
+is used. To trigger a heapshot, open a TCP connection to the command
+server and send the C string \fB"heapshot\\n"\fR.
 .PP
 The command server supports multiple simultaneous connections.
 .SS Managed library
@@ -210,7 +210,7 @@ tools (e.g., \fBmprof\-report\fR(1)).
 The \fBLogProfiler\fR class allows users to reconfigure profiler
 settings at run-time. For example, certain event types can be toggled
 on or off, the mode and frequency of heapshots and sampling can be
-changed, etc.
+changed, etc. Heapshots can also be triggered manually.
 .PP
 To use this library, simply pass \fB\-r:Mono.Profiler.Log\fR when
 compiling your code.

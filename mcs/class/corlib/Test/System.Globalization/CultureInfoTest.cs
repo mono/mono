@@ -725,6 +725,7 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void DefaultThreadCurrentCultureIsIgnoredWhenCultureFlowsToThread ()
 		{
 			string us_str = null;

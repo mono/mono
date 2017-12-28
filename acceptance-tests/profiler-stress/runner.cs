@@ -60,18 +60,16 @@ namespace Mono.Profiling.Tests.Stress {
 		static readonly TimeSpan _timeout = TimeSpan.FromHours (9);
 
 		static readonly Dictionary<string, Predicate<Benchmark>> _filters = new Dictionary<string, Predicate<Benchmark>> {
-			{ "ironjs-v8", FilterArmArchitecture },
+			{ "ironjs-v8", FilterNotOnArm },
+			{ "msbiology", FilterNever },
 		};
 
-		static readonly Dictionary<string, Action<TestResult>> _processors = new Dictionary<string, Action<TestResult>> {
-			{ "msbiology", Process32BitOutOfMemory },
-		};
-
-		static string FilterInvalidXmlChars (string text) {
-			return Regex.Replace (text, @"[^\x09\x0A\x0D\x20-\uD7FF\uE000-\uFFFD\u10000-\u10FFFF]", string.Empty);
+		static bool FilterNever (Benchmark benchmark)
+		{
+			return false;
 		}
 
-		static bool FilterArmArchitecture (Benchmark benchmark)
+		static bool FilterNotOnArm (Benchmark benchmark)
 		{
 #if ARCH_arm || ARCH_arm64
 			return false;
@@ -80,21 +78,13 @@ namespace Mono.Profiling.Tests.Stress {
 #endif
 		}
 
-		static void Process32BitOutOfMemory (TestResult result)
-		{
-			if (Environment.Is64BitProcess)
-				return;
-
-			if (result.ExitCode == null || result.ExitCode == 0)
-				return;
-
-			if (result.StandardError.Contains ("OutOfMemoryException"))
-				result.ExitCode = 0;
-		}
-
 		static bool IsSupported (Benchmark benchmark)
 		{
 			return _filters.TryGetValue (benchmark.Name, out var filter) ? filter (benchmark) : true;
+		}
+
+		static string ReplaceInvalidXmlChars (string text) {
+			return Regex.Replace (text, @"[^\x09\x0A\x0D\x20-\uD7FF\uE000-\uFFFD\u10000-\u10FFFF]", string.Empty);
 		}
 
 		static int Main ()
@@ -227,9 +217,6 @@ namespace Mono.Profiling.Tests.Stress {
 					Console.WriteLine (result.StandardError);
 				}
 
-				if (_processors.TryGetValue (bench.Name, out var processor))
-					processor (result);
-
 				results.Add (result);
 			}
 
@@ -307,11 +294,11 @@ namespace Mono.Profiling.Tests.Stress {
 						writer.WriteStartElement ("failure");
 
 						writer.WriteStartElement ("message");
-						writer.WriteCData (FilterInvalidXmlChars (result.StandardOutput));
+						writer.WriteCData (ReplaceInvalidXmlChars (result.StandardOutput));
 						writer.WriteEndElement ();
 
 						writer.WriteStartElement ("stack-trace");
-						writer.WriteCData (FilterInvalidXmlChars (result.StandardError));
+						writer.WriteCData (ReplaceInvalidXmlChars (result.StandardError));
 						writer.WriteEndElement ();
 
 						writer.WriteEndElement ();

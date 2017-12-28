@@ -152,6 +152,7 @@ System/UIntPtr.cs
 System/ValueType.cs
 System/Variant.cs
 System/Void.cs
+System/WeakAttribute.cs
 System/WeakReference.cs
 System/WeakReference_T.cs
 System/WindowsConsoleDriver.cs
@@ -1687,10 +1688,15 @@ corefx/SR.cs
 ../../../external/corefx/src/System.Memory/src/System/ReadOnlySpan.cs
 ../../../external/corefx/src/System.Memory/src/System/Span.cs
 ../../../external/corefx/src/System.Memory/src/System/SpanDebugView.cs
+../../../external/corefx/src/System.Memory/src/System/SpanExtensions.cs
+../../../external/corefx/src/System.Memory/src/System/SpanExtensions.Portable.cs
 ../../../external/corefx/src/System.Memory/src/System/SpanHelpers.cs
 ../../../external/corefx/src/System.Memory/src/System/SpanHelpers.Clear.cs
+../../../external/corefx/src/System.Memory/src/System/SpanHelpers.byte.cs
+../../../external/corefx/src/System.Memory/src/System/SpanHelpers.T.cs
 ../../../external/corefx/src/System.Memory/src/System/ThrowHelper.cs
 ../../../external/corefx/src/System.Memory/src/System/Buffers/*.cs
+../../../external/corefx/src/System.Memory/src/System/Buffers/Binary/*.cs
 
 ../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/System/Runtime/InteropServices/RuntimeInformation/OSPlatform.cs
 ../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/System/Runtime/InteropServices/RuntimeInformation/Architecture.cs

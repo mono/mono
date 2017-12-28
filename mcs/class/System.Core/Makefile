@@ -25,7 +25,7 @@ LIB_MCS_FLAGS += -d:NET_3_5
 endif
 
 ifdef AOT_FRIENDLY_PROFILE
-extra_test_flags := -exclude:NotWorkingInterpreter
+extra_test_flags := -exclude:NotWorkingLinqInterpreter
 LIB_MCS_FLAGS += -d:NO_FEATURE_STATIC_DELEGATE,FEATURE_MAKE_RUN_METHODS
 else
 LIB_MCS_FLAGS += -d:FEATURE_COMPILE,FEATURE_COMPILE_TO_METHODBUILDER,FEATURE_PDB_GENERATOR
