@@ -481,6 +481,7 @@ mono_method_get_declaring_generic_method (MonoMethod *method)
 MonoMethod*
 mono_class_get_method_generic (MonoClass *klass, MonoMethod *method)
 {
+	ERROR_DECL (error);
 	MonoMethod *declaring, *m;
 	int i;
 
@@ -490,8 +491,10 @@ mono_class_get_method_generic (MonoClass *klass, MonoMethod *method)
 		declaring = method;
 
 	m = NULL;
-	if (mono_class_is_ginst (klass))
-		m = mono_class_get_inflated_method (klass, declaring);
+	if (mono_class_is_ginst (klass)) {
+		m = mono_class_get_inflated_method (klass, declaring, &error);
+		mono_error_assert_ok (&error); /* FIXME proper error handling */
+	}
 
 	if (!m) {
 		mono_class_setup_methods (klass);
@@ -510,7 +513,6 @@ mono_class_get_method_generic (MonoClass *klass, MonoMethod *method)
 	}
 
 	if (method != declaring) {
-		ERROR_DECL (error);
 		MonoGenericContext context;
 
 		context.class_inst = NULL;

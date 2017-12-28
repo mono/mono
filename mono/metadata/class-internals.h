@@ -942,7 +942,7 @@ MonoMethod*
 mono_class_get_method_by_index (MonoClass *klass, int index);
 
 MonoMethod*
-mono_class_get_inflated_method (MonoClass *klass, MonoMethod *method);
+mono_class_get_inflated_method (MonoClass *klass, MonoMethod *method, MonoError *error);
 
 MonoMethod*
 mono_class_get_vtable_entry (MonoClass *klass, int offset);

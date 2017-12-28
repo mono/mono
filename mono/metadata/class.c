@@ -2481,14 +2481,20 @@ mono_class_get_method_by_index (MonoClass *klass, int index)
 	}
 }	
 
-/*
+/**
  * mono_class_get_inflated_method:
+ * \param klass an inflated class
+ * \param method a method of \p klass's generic definition
+ * \param error set on error
  *
- *   Given an inflated class CLASS and a method METHOD which should be a method of
- * CLASS's generic definition, return the inflated method corresponding to METHOD.
+ * Given an inflated class \p klass and a method \p method which should be a
+ * method of \p klass's generic definition, return the inflated method
+ * corresponding to \p method.
+ *
+ * On failure sets \p error and returns NULL.
  */
 MonoMethod*
-mono_class_get_inflated_method (MonoClass *klass, MonoMethod *method)
+mono_class_get_inflated_method (MonoClass *klass, MonoMethod *method, MonoError *error)
 {
 	MonoClass *gklass = mono_class_get_generic_class (klass)->container_class;
 	int i, mcount;
@@ -2496,7 +2502,10 @@ mono_class_get_inflated_method (MonoClass *klass, MonoMethod *method)
 	g_assert (method->klass == gklass);
 
 	mono_class_setup_methods (gklass);
-	g_assert (!mono_class_has_failure (gklass)); /*FIXME do proper error handling*/
+	if (mono_class_has_failure (gklass)) {
+		mono_error_set_for_class_failure (error, gklass);
+		return NULL;
+	}
 
 	mcount = mono_class_get_method_count (gklass);
 	for (i = 0; i < mcount; ++i) {
@@ -2504,10 +2513,7 @@ mono_class_get_inflated_method (MonoClass *klass, MonoMethod *method)
 			if (klass->methods) {
 				return klass->methods [i];
 			} else {
-				ERROR_DECL (error);
-				MonoMethod *result = mono_class_inflate_generic_method_full_checked (gklass->methods [i], klass, mono_class_get_context (klass), &error);
-				g_assert (mono_error_ok (&error)); /* FIXME don't swallow this error */
-				return result;
+				return mono_class_inflate_generic_method_full_checked (gklass->methods [i], klass, mono_class_get_context (klass), error);
 			}
 		}
 	}
@@ -8652,8 +8658,14 @@ mono_class_get_cctor (MonoClass *klass)
 	if (!klass->has_cctor)
 		return NULL;
 
-	if (mono_class_is_ginst (klass) && !klass->methods)
-		return mono_class_get_inflated_method (klass, mono_class_get_cctor (mono_class_get_generic_class (klass)->container_class));
+	if (mono_class_is_ginst (klass) && !klass->methods) {
+		ERROR_DECL (error);
+		error_init (&error);
+		MonoMethod *result = mono_class_get_inflated_method (klass, mono_class_get_cctor (mono_class_get_generic_class (klass)->container_class), &error);
+		if (!is_ok (&error))
+			g_error ("Could not lookup inflated class cctor due to %s", mono_error_get_message (&error)); /* FIXME do proper error handling */
+		return result;
+	}
 
 	if (mono_class_get_cached_class_info (klass, &cached_info)) {
 		ERROR_DECL (error);
