@@ -1020,9 +1020,6 @@ mono_method_get_generic_container (MonoMethod *method);
 MonoGenericContext*
 mono_generic_class_get_context (MonoGenericClass *gclass);
 
-MonoClass*
-mono_generic_class_get_class (MonoGenericClass *gclass);
-
 void
 mono_method_set_generic_container (MonoMethod *method, MonoGenericContainer* container);
 
@@ -1545,6 +1542,10 @@ mono_method_has_no_body (MonoMethod *method);
 // Internal callers expected to use ERROR_DECL. External callers are not.
 MonoMethodHeader*
 mono_method_get_header_internal (MonoMethod *method, MonoError *error);
+
+MonoType*
+mono_class_find_enum_basetype (MonoClass *klass, MonoError *error);
+
 
 /*Now that everything has been defined, let's include the inline functions */
 #include <mono/metadata/class-inlines.h>
