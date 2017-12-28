@@ -64,6 +64,7 @@ MONO_RT_EXTERNAL_ONLY
 MONO_API MonoMethod *
 mono_get_inflated_method (MonoMethod *method);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoClassField*
 mono_field_from_token      (MonoImage *image, uint32_t token, MonoClass **retklass, MonoGenericContext *context);
 
