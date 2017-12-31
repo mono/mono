@@ -142,6 +142,9 @@ namespace System.Security.Cryptography.X509Certificates
 
 		internal static X509Certificate2Impl Import (X509Certificate cert, bool disableProvider = false)
 		{
+			if (cert.Impl == null)
+				return null;
+
 #if MONO_FEATURE_BTLS
 			if (!disableProvider) {
 				var provider = MonoTlsProviderFactory.GetProvider ();
