@@ -11821,6 +11821,7 @@ namespace Mono.CSharp
 		TypeSpec otype;
 		Expression texpr;
 		Expression count;
+		MethodSpec ctor;
 		
 		public StackAlloc (Expression type, Expression count, Location l)
 		{
@@ -11890,6 +11891,11 @@ namespace Mono.CSharp
 			int size = BuiltinTypeSpec.GetSize (otype);
 
 			count.Emit (ec);
+			bool count_on_stack = false;
+			if (ctor != null && !ExpressionAnalyzer.IsInexpensiveLoad (count)) {
+				ec.Emit (OpCodes.Dup);
+				count_on_stack = true;
+			}
 
 			if (size == 0)
 				ec.Emit (OpCodes.Sizeof, otype);
@@ -11898,6 +11904,19 @@ namespace Mono.CSharp
 
 			ec.Emit (OpCodes.Mul_Ovf_Un);
 			ec.Emit (OpCodes.Localloc);
+
+			if (ctor != null) {
+				if (!count_on_stack)
+					count.Emit (ec);
+				ec.Emit (OpCodes.Newobj, ctor);
+			}
+		}
+
+		public override void Error_ValueCannotBeConverted (ResolveContext rc, TypeSpec target, bool expl)
+		{
+			var etype = ((PointerContainer)type).Element;
+			rc.Report.Error (8346, loc, "Cannot convert a stackalloc expression of type `{0}' to type `{1}'",
+			                 etype.GetSignatureForError (), target.GetSignatureForError ());
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
@@ -11910,6 +11929,16 @@ namespace Mono.CSharp
 		public override object Accept (StructuralVisitor visitor)
 		{
 			return visitor.Visit (this);
+		}
+
+		public bool ResolveSpanConversion (ResolveContext rc, TypeSpec spanType)
+		{
+			ctor = MemberCache.FindMember (spanType, MemberFilter.Constructor (ParametersCompiled.CreateFullyResolved (PointerContainer.MakeType (rc.Module, rc.Module.Compiler.BuiltinTypes.Void), rc.Module.Compiler.BuiltinTypes.Int)), BindingRestriction.DeclaredOnly) as MethodSpec;
+			if (ctor == null)
+				return false;
+			
+			this.type = spanType;
+			return true;
 		}
 	}
 
