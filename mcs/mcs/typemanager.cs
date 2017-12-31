@@ -242,6 +242,7 @@ namespace Mono.CSharp
 
 		// C# 7.0
 		public readonly PredefinedType[] Tuples;
+		public readonly PredefinedType SpanGeneric;
 
 		public PredefinedTypes (ModuleContainer module)
 		{
@@ -301,6 +302,8 @@ namespace Mono.CSharp
 			FormattableString = new PredefinedType (module, MemberKind.Class, "System", "FormattableString");
 			FormattableStringFactory = new PredefinedType (module, MemberKind.Class, "System.Runtime.CompilerServices", "FormattableStringFactory");
 
+			SpanGeneric = new PredefinedType (module, MemberKind.Struct, "System", "Span", 1);
+
 			//
 			// Define types which are used for comparison. It does not matter
 			// if they don't exist as no error report is needed
@@ -348,6 +351,8 @@ namespace Mono.CSharp
 				if (pt.Define ())
 					pt.TypeSpec.IsTupleType = true;
 			}
+
+			SpanGeneric.Define ();
 		}
 	}
 
