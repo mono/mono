@@ -442,6 +442,12 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 		}
 
 		[Test]
+		public void X509Certificate2_WhenEmptyCertificateProvided_DoesNotThrow ()
+		{
+			Assert.DoesNotThrow (() => new X509Certificate2 (new X509Certificate2 ()));
+		}
+
+		[Test]
 		public void Certificate_1_Properties ()
 		{
 			DateTime expectedNotAfter = new DateTime (629937887260000000,

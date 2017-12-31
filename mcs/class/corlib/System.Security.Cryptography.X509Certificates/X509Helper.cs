@@ -136,7 +136,9 @@ namespace System.Security.Cryptography.X509Certificates
 
 		public static X509CertificateImpl InitFromCertificate (X509CertificateImpl impl)
 		{
-			ThrowIfContextInvalid (impl);
+			if (impl == null)
+				return null;
+
 			var copy = impl.Clone ();
 			if (copy != null)
 				return copy;
