@@ -216,6 +216,7 @@ case "$host" in
 		AC_DEFINE(PTHREAD_POINTER_ID)
 		libdl=
 		libgc_threads=pthreads
+		with_tls=pthread
 		with_sigaltstack=no
 		use_sigposix=yes
 		with_sgen_default_concurrent=yes
@@ -3316,6 +3317,9 @@ case "$host" in
 			BTLS_PLATFORM=i386
 			;;
 		  openbsd*|freebsd*|kfreebsd-gnu*)
+			AOT_SUPPORTED="yes"
+			BTLS_SUPPORTED=yes
+			BTLS_PLATFORM=i386
 		        ;;
 		esac
 		;;
@@ -3340,6 +3344,9 @@ case "$host" in
 			boehm_supported=false
 			;;
 		  openbsd*|freebsd*|kfreebsd-gnu*)
+			AOT_SUPPORTED="yes"
+			BTLS_SUPPORTED=yes
+			BTLS_PLATFORM=x86_64
 			;;
 		  mingw*)
 			;;
