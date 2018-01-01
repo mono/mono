@@ -6,6 +6,7 @@
 
 #if defined(__OpenBSD__)
 
+#include <mono/utils/mono-threads.h>
 #include <pthread.h>
 #include <pthread_np.h>
 
