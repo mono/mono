@@ -121,5 +121,6 @@ Options:
       --types                show all types dependencies.
   -t, --typedeps=VALUE       show type dependencies. The VALUE can be regular
                                expression
+  -f, --flat                 show all dependencies per vertex and their distance
   -v, --verbose              be more verbose. Enables stat and roots options.
 ```

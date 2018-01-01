@@ -528,8 +528,9 @@ TESTS_CS_SRC=		\
 	bug-58782-capture-and-throw.cs \
 	recursive-struct-arrays.cs \
 	bug-59281.cs	\
-	init_array_with_lazy_type.cs
-
+	init_array_with_lazy_type.cs \
+	weak-fields.cs \
+	threads-leak.cs
 
 if AMD64
 TESTS_CS_SRC += async-exc-compilation.cs finally_guard.cs finally_block_ending_in_dead_bb.cs
@@ -707,7 +708,7 @@ PLATFORM_DISABLED_TESTS += monitor.exe threadpool-exceptions5.exe appdomain-unlo
 endif
 
 if ARM
-PLATFORM_DISABLED_TESTS += filter-stack.exe
+PLATFORM_DISABLED_TESTS += filter-stack.exe weak-fields.exe
 INTERP_PLATFORM_DISABLED_TESTS= \
 	assemblyresolve_event6.exe \
 	delegate-async-exit.exe \
@@ -720,6 +721,7 @@ INTERP_PLATFORM_DISABLED_TESTS= \
 endif
 
 if ARM64
+PLATFORM_DISABLED_TESTS += weak-fields.exe
 INTERP_PLATFORM_DISABLED_TESTS= \
 	assemblyresolve_event6.exe \
 	finalizer-exception.exe
@@ -903,6 +905,10 @@ PROFILE_DISABLED_TESTS += \
 	appdomain-loader.exe \
 	assemblyresolve_event3.exe \
 	appdomain-serialize-exception.exe
+
+# https://bugzilla.xamarin.com/show_bug.cgi?id=60973
+PROFILE_DISABLED_TESTS += \
+	weak-fields.exe
 endif
 
 if HYBRID_AOT_TESTS
@@ -966,6 +972,7 @@ DISABLED_TESTS = \
 # bug-48015.exe: be careful when re-enabling, it happens that it returns with
 #                exit code 0, but doesn't actually execute the test.
 # block_guard_restore_aligment_on_exit.exe: flaky (10% of the time it hangs and thus times out)
+# weak-fields.exe: https://bugzilla.xamarin.com/show_bug.cgi?id=60973
 INTERP_DISABLED_TESTS = \
 	$(KNOWN_FAILING_TESTS) \
 	$(INTERP_PLATFORM_DISABLED_TESTS) \
@@ -1024,6 +1031,7 @@ INTERP_DISABLED_TESTS = \
 	threadpool-exceptions5.exe \
 	thunks.exe \
 	typeload-unaligned.exe \
+	weak-fields.exe \
 	vararg.exe \
 	vararg2.exe \
 	winx64structs.exe
@@ -2071,5 +2079,13 @@ internalsvisibleto-correctcase-2-sign2048.dll internalsvisibleto-wrongcase-2-sig
 	$(Q) $(MCS_NO_UNSAFE) -out:internalsvisibleto-wrongcase-2-sign2048.dll -target:library -d:WRONG_CASE -d:SIGN2048 internalsvisibleto-library.cs
 	$(Q) $(MCS_NO_UNSAFE) -out:internalsvisibleto-compilertest-sign2048.exe -warn:0 -r:internalsvisibleto-correctcase-2-sign2048.dll -r:internalsvisibleto-wrongcase-2-sign2048.dll -d:SIGN2048 internalsvisibleto-compilertest.cs
 
+EXTRA_DIST += weakattribute.cs
+
+# Contains copies of types which don't exist in the desktop profile so tests can use them
+Mono.Runtime.Testing.dll: weakattribute.cs
+	$(MCS) -target:library -out:$@ $<
+
+weak-fields.exe: weak-fields.cs Mono.Runtime.Testing.dll
+	$(MCS) -r:Mono.Runtime.Testing.dll -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -r:TestDriver.dll $(TEST_DRIVER_HARD_KILL_FEATURE) -out:$@ $<
 
 CLEANFILES = $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH) $(TESTS_STRESS) $(TESTSAOT_CS) $(TESTSAOT_IL) $(TESTSAOT_BENCH) $(TESTSAOT_STRESS) *.dll *.stdout *.aotlog *.exe stest.dat LeafAssembly.dll MidAssembly.dll appdomain-marshalbyref-assemblyload2/*.dll 

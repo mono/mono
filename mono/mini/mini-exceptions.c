@@ -75,6 +75,8 @@
 #include "seq-points.h"
 #include "llvm-runtime.h"
 #include "mini-llvm.h"
+#include "aot-runtime.h"
+#include "mini-runtime.h"
 #include "interp/interp.h"
 
 #ifdef ENABLE_LLVM
@@ -228,11 +230,9 @@ mono_exceptions_init (void)
 #ifdef MONO_ARCH_HAVE_EXCEPTIONS_INIT
 	mono_arch_exceptions_init ();
 #endif
-#ifndef DISABLE_INTERPRETER
 	if (mono_use_interpreter)
-		cbs.mono_walk_stack_with_ctx = interp_walk_stack_with_ctx;
+		cbs.mono_walk_stack_with_ctx = mini_get_interp_callbacks ()->walk_stack_with_ctx;
 	else
-#endif
 		cbs.mono_walk_stack_with_ctx = mono_runtime_walk_stack_with_ctx;
 
 	cbs.mono_walk_stack_with_state = mono_walk_stack_with_state;
@@ -318,7 +318,7 @@ mono_get_throw_exception_addr (void)
 	return &throw_exception_func;
 }
 
-static gboolean
+static gboolean 
 is_address_protected (MonoJitInfo *ji, MonoJitExceptionInfo *ei, gpointer ip)
 {
 	MonoTryBlockHoleTableJitInfo *table;
@@ -719,9 +719,9 @@ unwinder_unwind_frame (Unwinder *unwinder,
 			}
 		}
 
-		unwinder->in_interp = mono_interp_frame_iter_next (&unwinder->interp_iter, frame);
+		unwinder->in_interp = mini_get_interp_callbacks ()->frame_iter_next (&unwinder->interp_iter, frame);
 		if (frame->type == FRAME_TYPE_INTERP) {
-			parent = mono_interp_frame_get_parent (frame->interp_frame);
+			parent = mini_get_interp_callbacks ()->frame_get_parent (frame->interp_frame);
 			/* This is needed so code which uses ctx->sp for frame ordering would work */
 			MONO_CONTEXT_SET_SP (new_ctx, parent);
 		}
@@ -735,7 +735,7 @@ unwinder_unwind_frame (Unwinder *unwinder,
 			return FALSE;
 		if (frame->type == FRAME_TYPE_INTERP_TO_MANAGED) {
 			unwinder->in_interp = TRUE;
-			mono_interp_frame_iter_init (&unwinder->interp_iter, frame->interp_exit_data);
+			mini_get_interp_callbacks ()->frame_iter_init (&unwinder->interp_iter, frame->interp_exit_data);
 		}
 		return TRUE;
 	}
@@ -1803,7 +1803,7 @@ handle_exception_first_pass (MonoContext *ctx, MonoObject *obj, gint32 *out_filt
 
 					mono_debugger_agent_begin_exception_filter (mono_ex, ctx, &initial_ctx);
 					if (ji->is_interp) {
-						filtered = mono_interp_run_filter (&frame, (MonoException*)ex_obj, i, ei->data.filter);
+						filtered = mini_get_interp_callbacks ()->run_filter (&frame, (MonoException*)ex_obj, i, ei->data.filter);
 					} else {
 						filtered = call_filter (ctx, ei->data.filter);
 					}
@@ -2111,7 +2111,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 		} else {
 			free_stack = 0xffffff;
 		}
-				
+
 		for (i = clause_index_start; i < ji->num_clauses; i++) {
 			MonoJitExceptionInfo *ei = &ji->clauses [i];
 			gboolean filtered = FALSE;
@@ -2217,7 +2217,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 						 * like the call which transitioned to JITted code has succeeded, but the
 						 * return value register etc. is not set, so we have to be careful.
 						 */
-						mono_interp_set_resume_state (jit_tls, mono_ex, ei, frame.interp_frame, ei->handler_start);
+						mini_get_interp_callbacks ()->set_resume_state (jit_tls, mono_ex, ei, frame.interp_frame, ei->handler_start);
 						/* Undo the IP adjustment done by mono_arch_unwind_frame () */
 #if defined(TARGET_AMD64)
 						ctx->gregs [AMD64_RIP] ++;
@@ -2227,6 +2227,8 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 							ctx->pc |= 1;
 #elif defined(TARGET_ARM64)
 						ctx->pc ++;
+#elif defined (HOST_WASM)
+						//nada?
 #else
 						NOT_IMPLEMENTED;
 #endif
@@ -2290,7 +2292,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 					} else {
 						mini_set_abort_threshold (ctx);
 						if (in_interp) {
-							gboolean has_ex = mono_interp_run_finally (&frame, i, ei->handler_start);
+							gboolean has_ex = mini_get_interp_callbacks ()->run_finally (&frame, i, ei->handler_start);
 							if (has_ex)
 								return 0;
 						} else {

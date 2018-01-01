@@ -29,6 +29,8 @@
 #endif
 #include "trace.h"
 #include "ir-emit.h"
+#include "aot-runtime.h"
+#include "mini-runtime.h"
 #ifdef __APPLE__
 #include <sys/sysctl.h>
 #endif
@@ -67,8 +69,6 @@ enum {
 #define mono_mini_arch_lock() mono_os_mutex_lock (&mini_arch_mutex)
 #define mono_mini_arch_unlock() mono_os_mutex_unlock (&mini_arch_mutex)
 static mono_mutex_t mini_arch_mutex;
-
-int mono_exc_esp_offset = 0;
 
 /*
  * The code generated for sequence points reads from this location, which is
@@ -1455,20 +1455,6 @@ mono_arch_allocate_vars (MonoCompile *m)
 		offset += 8;
 
 	/* the MonoLMF structure is stored just below the stack pointer */
-
-#if 0
-	/* this stuff should not be needed on ppc and the new jit,
-	 * because a call on ppc to the handlers doesn't change the 
-	 * stack pointer and the jist doesn't manipulate the stack pointer
-	 * for operations involving valuetypes.
-	 */
-	/* reserve space to store the esp */
-	offset += sizeof (gpointer);
-
-	/* this is a global constant */
-	mono_exc_esp_offset = offset;
-#endif
-
 	if (MONO_TYPE_ISSTRUCT (sig->ret)) {
 		offset += sizeof(gpointer) - 1;
 		offset &= ~(sizeof(gpointer) - 1);
@@ -1904,7 +1890,7 @@ enum {
 };
 
 void*
-mono_arch_instrument_epilog_full (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments, gboolean preserve_argument_registers)
+mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
 {
 	guchar *code = p;
 	int save_mode = SAVE_NONE;
@@ -4107,7 +4093,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_CALL_HANDLER: 
 			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_BB, ins->inst_target_bb);
 			ppc_bl (code, 0);
-			mono_cfg_add_try_hole (cfg, ins->inst_eh_block, code, bb);
+			for (GList *tmp = ins->inst_eh_blocks; tmp != bb->clause_holes; tmp = tmp->prev)
+				mono_cfg_add_try_hole (cfg, (MonoExceptionClause *)tmp->data, code, bb);
 			break;
 		case OP_LABEL:
 			ins->inst_c0 = code - cfg->native_code;

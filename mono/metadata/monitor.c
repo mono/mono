@@ -1386,13 +1386,13 @@ ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *obj, guint32 ms)
 	 * is private to this thread.  Therefore even if the event was
 	 * signalled before we wait, we still succeed.
 	 */
-	MONO_ENTER_GC_SAFE;
 #ifdef HOST_WIN32
+	MONO_ENTER_GC_SAFE;
 	ret = mono_w32handle_convert_wait_ret (mono_win32_wait_for_single_object_ex (event, ms, TRUE), 1);
+	MONO_EXIT_GC_SAFE;
 #else
 	ret = mono_w32handle_wait_one (event, ms, TRUE);
 #endif /* HOST_WIN32 */
-	MONO_EXIT_GC_SAFE;
 
 	/* Reset the thread state fairly early, so we don't have to worry
 	 * about the monitor error checking
@@ -1415,13 +1415,13 @@ ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *obj, guint32 ms)
 		/* Poll the event again, just in case it was signalled
 		 * while we were trying to regain the monitor lock
 		 */
-		MONO_ENTER_GC_SAFE;
 #ifdef HOST_WIN32
+		MONO_ENTER_GC_SAFE;
 		ret = mono_w32handle_convert_wait_ret (mono_win32_wait_for_single_object_ex (event, 0, FALSE), 1);
+		MONO_EXIT_GC_SAFE;
 #else
 		ret = mono_w32handle_wait_one (event, 0, FALSE);
 #endif /* HOST_WIN32 */
-		MONO_EXIT_GC_SAFE;
 	}
 
 	/* Pulse will have popped our event from the queue if it signalled
@@ -1449,3 +1449,8 @@ ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *obj, guint32 ms)
 	return success;
 }
 
+void
+ves_icall_System_Threading_Monitor_Monitor_Enter (MonoObject *obj)
+{
+	mono_monitor_enter_internal (obj);
+}

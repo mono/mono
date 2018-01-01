@@ -984,6 +984,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void UnobservedExceptionOnFinalizerThreadTest ()
 		{
 			bool wasCalled = false;

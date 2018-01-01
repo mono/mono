@@ -472,7 +472,7 @@ mono_type_get_object_checked (MonoDomain *domain, MonoType *type, MonoError *err
 	mono_domain_lock (domain);
 	if (!domain->type_hash)
 		domain->type_hash = mono_g_hash_table_new_type ((GHashFunc)mono_metadata_type_hash, 
-				(GCompareFunc)mono_metadata_type_equal, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_DOMAIN, "domain reflection types table");
+				(GCompareFunc)mono_metadata_type_equal, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_DOMAIN, domain, "Domain Reflection Type Table");
 	if ((res = (MonoReflectionType *)mono_g_hash_table_lookup (domain->type_hash, type))) {
 		mono_domain_unlock (domain);
 		mono_loader_unlock ();
@@ -2322,7 +2322,7 @@ mono_reflection_get_token_checked (MonoObjectHandle obj, MonoError *error)
 		MonoMethod *method = MONO_HANDLE_GETVAL (MONO_HANDLE_CAST (MonoReflectionMethod, member_impl), method);
 
 		token = mono_method_get_param_token (method, MONO_HANDLE_GETVAL (p, PositionImpl));
-	} else if (strcmp (klass->name, "Module") == 0 || strcmp (klass->name, "MonoModule") == 0) {
+	} else if (strcmp (klass->name, "Module") == 0 || strcmp (klass->name, "MonoModule") == 0 || strcmp (klass->name, "ModuleBuilder") == 0) {
 		MonoReflectionModuleHandle m = MONO_HANDLE_CAST (MonoReflectionModule, obj);
 
 		token = MONO_HANDLE_GETVAL (m, token);

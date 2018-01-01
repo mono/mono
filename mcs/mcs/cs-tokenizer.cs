@@ -716,9 +716,15 @@ namespace Mono.CSharp
 					res = Token.EXTERN_ALIAS;
 				break;
 			case Token.DEFAULT:
-				if (peek_token () == Token.COLON) {
+				switch (peek_token ()) {
+				case Token.COLON:
 					token ();
 					res = Token.DEFAULT_COLON;
+					break;
+				case Token.OPEN_PARENS:
+				case Token.OPEN_PARENS_CAST:
+					res = Token.DEFAULT_VALUE;
+					break;
 				}
 				break;
 			case Token.WHEN:
@@ -1102,6 +1108,7 @@ namespace Mono.CSharp
 						case Token.UNCHECKED:
 						case Token.UNSAFE:
 						case Token.DEFAULT:
+						case Token.DEFAULT_VALUE:
 						case Token.AWAIT:
 
 						//
@@ -3517,6 +3524,7 @@ namespace Mono.CSharp
 						case Token.SWITCH:
 						case Token.USING:
 						case Token.DEFAULT:
+						case Token.DEFAULT_VALUE:
 						case Token.DELEGATE:
 						case Token.OP_GENERICS_GT:
 						case Token.REFVALUE:

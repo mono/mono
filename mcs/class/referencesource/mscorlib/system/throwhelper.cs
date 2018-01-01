@@ -473,7 +473,8 @@ namespace System {
 #if MONO
         start,
         pointer,
-        ownedMemory
+        ownedMemory,
+        text,
 #endif
     }
 

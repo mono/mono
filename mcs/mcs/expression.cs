@@ -1220,6 +1220,7 @@ namespace Mono.CSharp
 				expr = expr.ResolveLValue (ec, expr);
 			} else {
 				ec.Report.Error (1059, loc, "The operand of an increment or decrement operator must be a variable, property or indexer");
+				return null;
 			}
 
 			//
@@ -1474,6 +1475,11 @@ namespace Mono.CSharp
 			if (expr.Type == InternalType.AnonymousMethod || expr.Type == InternalType.MethodGroup) {
 				rc.Report.Error (837, loc, "The `{0}' operator cannot be applied to a lambda expression, anonymous method, or method group",
 					OperatorName);
+				return null;
+			}
+
+			if (expr.Type == InternalType.DefaultType) {
+				Error_OperatorCannotBeApplied (rc, loc, OperatorName, expr.Type);
 				return null;
 			}
 
@@ -3458,6 +3464,11 @@ namespace Mono.CSharp
 			l = left.Type.GetSignatureForError ();
 			r = right.Type.GetSignatureForError ();
 
+			if (left.Type == InternalType.DefaultType || right.Type == InternalType.DefaultType) {
+				ec.Report.Error (8310, loc, "Operator `{0}' cannot be applied to operand `default'", oper);
+				return;
+			}
+
 			ec.Report.Error (19, loc, "Operator `{0}' cannot be applied to operands of type `{1}' and `{2}'",
 				oper, l, r);
 		}
@@ -4304,8 +4315,26 @@ namespace Mono.CSharp
 				CheckOutOfRangeComparison (ec, rc, left.Type);
 			}
 
-			if (left.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic || right.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
+			var ltype = left.Type;
+			var rtype = right.Type;
+			if (ltype.BuiltinType == BuiltinTypeSpec.Type.Dynamic || rtype.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
 				return DoResolveDynamic (ec);
+
+			//
+			// Only default with == and != is explicitly allowed
+			//
+			if (((Oper & Operator.EqualityMask) != 0) && (ltype == InternalType.DefaultType || rtype == InternalType.DefaultType)) {
+				if (ltype == rtype) {
+					ec.Report.Error (8315, loc, "Operator `{0}' is ambiguous on operands `default' and `default'", OperName (Oper));
+					return null;
+				}
+
+				if (rtype == InternalType.DefaultType) {
+					right = new DefaultValueExpression (new TypeExpression (ltype, right.Location), right.Location).Resolve (ec);
+				} else {
+					left = new DefaultValueExpression (new TypeExpression (rtype, left.Location), left.Location).Resolve (ec);
+				}
+			}
 
 			return DoResolveCore (ec, left, right);
 		}
@@ -13155,6 +13184,31 @@ namespace Mono.CSharp
 		public override object Accept (StructuralVisitor visitor)
 		{
 			return visitor.Visit (this);
+		}
+	}
+
+	class DefaultLiteralExpression : Expression
+	{
+		public DefaultLiteralExpression (Location loc)
+		{
+			this.loc = loc;
+		}
+
+		public override Expression CreateExpressionTree (ResolveContext ec)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			type = InternalType.DefaultType;
+			eclass = ExprClass.Value;
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			throw new NotSupportedException ();
 		}
 	}
 }

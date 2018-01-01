@@ -1169,32 +1169,55 @@ namespace System.Reflection.Emit {
 
 		public override object[] GetCustomAttributes (bool inherit)
 		{
-			return base.GetCustomAttributes (inherit);
+			return GetCustomAttributes (null, inherit);
 		}
 
 		public override object[] GetCustomAttributes (Type attributeType, bool inherit)
 		{
-			return base.GetCustomAttributes (attributeType, inherit);
+			if (cattrs == null || cattrs.Length == 0)
+				return Array.Empty<object> ();
+
+			if (attributeType is TypeBuilder)
+				throw new InvalidOperationException ("First argument to GetCustomAttributes can't be a TypeBuilder");
+
+			List<object> results = new List<object> ();
+			for (int i=0; i < cattrs.Length; i++) {
+				Type t = cattrs [i].Ctor.GetType ();
+
+				if (t is TypeBuilder)
+					throw new InvalidOperationException ("Can't construct custom attribute for TypeBuilder type");
+
+				if (attributeType == null || attributeType.IsAssignableFrom (t))
+					results.Add (cattrs [i].Invoke ());
+			}
+
+			return results.ToArray ();
 		}
 
 		public override FieldInfo GetField (string name, BindingFlags bindingAttr)
 		{
-			return base.GetField (name, bindingAttr);
+			if (global_type_created == null)
+				throw new InvalidOperationException ("Module-level fields cannot be retrieved until after the CreateGlobalFunctions method has been called for the module.");
+			return global_type_created.GetField (name, bindingAttr);
 		}
 
 		public override FieldInfo[] GetFields (BindingFlags bindingFlags)
 		{
-			return base.GetFields (bindingFlags);
+			if (global_type_created == null)
+				throw new InvalidOperationException ("Module-level fields cannot be retrieved until after the CreateGlobalFunctions method has been called for the module.");
+			return global_type_created.GetFields (bindingFlags);
 		}
 
 		public override MethodInfo[] GetMethods (BindingFlags bindingFlags)
 		{
-			return base.GetMethods (bindingFlags);
+			if (global_type_created == null)
+				throw new InvalidOperationException ("Module-level methods cannot be retrieved until after the CreateGlobalFunctions method has been called for the module.");
+			return global_type_created.GetMethods (bindingFlags);
 		}
 
 		public override int MetadataToken {
 			get {
-				return base.MetadataToken;
+				return get_MetadataToken (this);
 			}
 		}
 	}

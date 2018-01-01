@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-${TESTCMD} --label=bockbuild --timeout=180m ${MONO_REPO_ROOT}/scripts/mac-sdk-package.sh
+${TESTCMD} --label=bockbuild --timeout=180m --fatal ${MONO_REPO_ROOT}/scripts/mac-sdk-package.sh
 
 # switch to using package Mono instead of system
 export PATH=${MONO_REPO_ROOT}/external/bockbuild/stage/bin:$PATH

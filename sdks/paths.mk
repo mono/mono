@@ -1,3 +1,5 @@
+MAKEFLAGS += --no-builtin-rules
+
 -include $(TOP)/sdks/Make.config
 
 ifndef DISABLE_ANDROID

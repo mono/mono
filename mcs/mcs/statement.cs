@@ -2368,7 +2368,12 @@ namespace Mono.CSharp {
 			if (initializer == null)
 				return null;
 
-			var c = initializer as Constant;
+			Constant c;
+			if (initializer.Type == InternalType.DefaultType)
+				c = New.Constantify (li.Type, initializer.Location);
+			else
+				c = initializer as Constant;
+
 			if (c == null) {
 				initializer.Error_ExpressionMustBeConstant (bc, initializer.Location, li.Name);
 				return null;
@@ -8191,7 +8196,9 @@ namespace Mono.CSharp {
 				}
 
 				if (iface_candidate == null) {
-					if (expr.Type != InternalType.ErrorType) {
+					if (expr.Type == InternalType.DefaultType) {
+						rc.Report.Error (8312, loc, "Use of default literal is not valid in this context");
+					} else if (expr.Type != InternalType.ErrorType) {
 						rc.Report.Error (1579, loc,
 							"foreach statement cannot operate on variables of type `{0}' because it does not contain a definition for `{1}' or is inaccessible",
 							expr.Type.GetSignatureForError (), "GetEnumerator");

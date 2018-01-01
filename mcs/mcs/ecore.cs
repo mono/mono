@@ -255,7 +255,7 @@ namespace Mono.CSharp {
 
 		public void Error_ExpressionMustBeConstant (ResolveContext rc, Location loc, string e_name)
 		{
-			rc.Report.Error (133, loc, "The expression being assigned to `{0}' must be constant", e_name);
+			rc.Report.Error (133, loc, "The expression being assigned to `{0}' must be a constant or default value", e_name);
 		}
 
 		public void Error_ConstantCanBeInitializedWithNullOnly (ResolveContext rc, TypeSpec type, Location loc, string name)

@@ -59,7 +59,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category ("InterpreterNotWorking")]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void MakeTypedReference ()
 		{
 			var o = new CClass () { a = new AStruct () { b = "5" }};

@@ -49,6 +49,7 @@
 #include <mono/metadata/mempool-internals.h>
 #include <mono/metadata/mono-endian.h>
 #include <mono/metadata/threads-types.h>
+#include <mono/metadata/custom-attrs-internals.h>
 #include <mono/utils/mono-logger-internals.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-time.h>
@@ -60,11 +61,13 @@
 #include <mono/utils/w32api.h>
 
 #include "aot-compiler.h"
+#include "aot-runtime.h"
 #include "seq-points.h"
 #include "image-writer.h"
 #include "dwarfwriter.h"
 #include "mini-gc.h"
 #include "mini-llvm.h"
+#include "mini-runtime.h"
 
 #if !defined(DISABLE_AOT) && !defined(DISABLE_JIT)
 
@@ -3303,6 +3306,8 @@ encode_method_ref (MonoAotCompile *acfg, MonoMethod *method, guint8 *buf, guint8
 				encode_method_ref (acfg, info->d.synchronized_inner.method, p, &p);
 			else if (info->subtype == WRAPPER_SUBTYPE_ARRAY_ACCESSOR)
 				encode_method_ref (acfg, info->d.array_accessor.method, p, &p);
+			else if (info->subtype == WRAPPER_SUBTYPE_INTERP_IN)
+				encode_signature (acfg, info->d.interp_in.sig, p, &p);
 			else if (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG)
 				encode_signature (acfg, info->d.gsharedvt.sig, p, &p);
 			else if (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_OUT_SIG)
@@ -6539,7 +6544,7 @@ emit_klass_info (MonoAotCompile *acfg, guint32 token)
 	} else {
 		gboolean has_nested = mono_class_get_nested_classes_property (klass) != NULL;
 		encode_value (klass->vtable_size, p, &p);
-		encode_value ((mono_class_is_gtd (klass) ? (1 << 8) : 0) | (no_special_static << 7) | (klass->has_static_refs << 6) | (klass->has_references << 5) | ((klass->blittable << 4) | (has_nested ? 1 : 0) << 3) | (klass->has_cctor << 2) | (klass->has_finalize << 1) | klass->ghcimpl, p, &p);
+		encode_value ((klass->has_weak_fields << 9) | (mono_class_is_gtd (klass) ? (1 << 8) : 0) | (no_special_static << 7) | (klass->has_static_refs << 6) | (klass->has_references << 5) | ((klass->blittable << 4) | (has_nested ? 1 : 0) << 3) | (klass->has_cctor << 2) | (klass->has_finalize << 1) | klass->ghcimpl, p, &p);
 		if (klass->has_cctor)
 			encode_method_ref (acfg, mono_class_get_cctor (klass), p, &p);
 		if (klass->has_finalize)
@@ -8435,6 +8440,9 @@ append_mangled_wrapper_subtype (GString *s, WrapperSubtype subtype)
 	case WRAPPER_SUBTYPE_DELEGATE_INVOKE_BOUND:
 		label = "del_inv_bound";
 		break;
+	case WRAPPER_SUBTYPE_INTERP_IN:
+		label = "interp_in";
+		break;
 	case WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG:
 		label = "gsharedvt_in_sig";
 		break;
@@ -8571,6 +8579,8 @@ append_mangled_wrapper (GString *s, MonoMethod *method)
 			success = success && append_mangled_method (s, info->d.synchronized_inner.method);
 		else if (info->subtype == WRAPPER_SUBTYPE_ARRAY_ACCESSOR)
 			success = success && append_mangled_method (s, info->d.array_accessor.method);
+		else if (info->subtype == WRAPPER_SUBTYPE_INTERP_IN)
+			append_mangled_signature (s, info->d.interp_in.sig);
 		else if (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG)
 			append_mangled_signature (s, info->d.gsharedvt.sig);
 		else if (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_OUT_SIG)
@@ -9880,6 +9890,32 @@ emit_image_table (MonoAotCompile *acfg)
 }
 
 static void
+emit_weak_field_indexes (MonoAotCompile *acfg)
+{
+	char symbol [128];
+	GHashTable *indexes;
+	GHashTableIter iter;
+	gpointer key, value;
+
+	/* Emit a table of weak field indexes, since computing these at runtime is expensive */
+	sprintf (symbol, "weak_field_indexes");
+	emit_section_change (acfg, ".text", 0);
+	emit_alignment_code (acfg, 8);
+	emit_info_symbol (acfg, symbol);
+
+	mono_assembly_init_weak_fields (acfg->image);
+	indexes = acfg->image->weak_field_indexes;
+	g_assert (indexes);
+
+	emit_int32 (acfg, g_hash_table_size (indexes));
+	g_hash_table_iter_init (&iter, indexes);
+	while (g_hash_table_iter_next (&iter, &key, &value)) {
+		guint32 index = GPOINTER_TO_UINT (key);
+		emit_int32 (acfg, index);
+	}
+}
+
+static void
 emit_got_info (MonoAotCompile *acfg, gboolean llvm)
 {
 	int i, first_plt_got_patch = 0, buf_size;
@@ -10277,6 +10313,7 @@ emit_aot_file_info (MonoAotCompile *acfg, MonoAotFileInfo *info)
 		symbols [sindex ++] = NULL;
 		symbols [sindex ++] = NULL;
 	}
+	symbols [sindex ++] = "weak_field_indexes";
 
 	g_assert (sindex == MONO_AOT_FILE_INFO_NUM_SYMBOLS);
 
@@ -12322,6 +12359,35 @@ mono_compile_deferred_assemblies (guint32 opts, const char *aot_options, gpointe
 	return res;
 }
 
+static const char* interp_in_static_sigs[] = {
+	"bool ptr int32 ptr&",
+	"bool ptr ptr&",
+	"int32 int32 ptr&",
+	"int32 int32 ptr ptr&",
+	"int32 ptr int32 ptr",
+	"int32 ptr int32 ptr&",
+	"int32 ptr ptr&",
+	"object object ptr ptr ptr",
+	"ptr int32 ptr&",
+	"ptr ptr int32 ptr ptr ptr&",
+	"ptr ptr int32 ptr ptr&",
+	"ptr ptr int32 ptr&",
+	"ptr ptr ptr int32 ptr&",
+	"ptr ptr ptr ptr& ptr&",
+	"ptr ptr ptr ptr&",
+	"ptr ptr ptr&",
+	"ptr ptr uint32 ptr&",
+	"ptr uint32 ptr&",
+	"void object ptr ptr ptr",
+	"void ptr ptr int32 ptr ptr& ptr ptr&",
+	"void ptr ptr int32 ptr ptr&",
+	"void ptr ptr ptr&",
+	"void ptr ptr&",
+	"void ptr",
+	"void int32 ptr&",
+	"void uint32 ptr&",
+};
+
 int
 mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options, gpointer **global_aot_state)
 {
@@ -12585,23 +12651,11 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 #endif
 
 	if (mono_aot_mode_is_interp (&acfg->aot_opts)) {
-		MonoMethod *wrapper;
-		MonoMethodSignature *sig;
-
-		/* object object:interp_in_static (object,intptr,intptr,intptr) */
-		sig = mono_create_icall_signature ("object object ptr ptr ptr");
-		wrapper = mini_get_interp_in_wrapper (sig);
-		add_method (acfg, wrapper);
-
-		/* int object:interp_in_static (intptr,int,intptr) */
-		sig = mono_create_icall_signature ("int32 ptr int32 ptr");
-		wrapper = mini_get_interp_in_wrapper (sig);
-		add_method (acfg, wrapper);
-
-		/* void object:interp_in_static (object,intptr,intptr,intptr) */
-		sig = mono_create_icall_signature ("void object ptr ptr ptr");
-		wrapper = mini_get_interp_in_wrapper (sig);
-		add_method (acfg, wrapper);
+		for (int i = 0; i < sizeof (interp_in_static_sigs) / sizeof (const char *); i++) {
+			MonoMethodSignature *sig = mono_create_icall_signature (interp_in_static_sigs [i]);
+			MonoMethod *wrapper = mini_get_interp_in_wrapper (sig);
+			add_method (acfg, wrapper);
+		}
 	}
 
 	TV_GETTIME (atv);
@@ -12737,6 +12791,8 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 	emit_plt (acfg);
 
 	emit_image_table (acfg);
+
+	emit_weak_field_indexes (acfg);
 
 	emit_got (acfg);
 
@@ -12883,6 +12939,13 @@ gboolean
 mono_aot_is_shared_got_offset (int offset)
 {
 	return FALSE;
+}
+
+int
+mono_compile_deferred_assemblies (guint32 opts, const char *aot_options, gpointer **aot_state)
+{
+	g_assert_not_reached ();
+	return 0;
 }
 
 #endif

@@ -16,6 +16,7 @@ namespace LinkerAnalyzer
 	public class ConsoleDependencyGraph : DependencyGraph
 	{
 		public bool Tree = false;
+		public bool FlatDeps;
 
 		public void ShowDependencies (string raw, List<VertexData> verticesList, string searchString)
 		{
@@ -39,8 +40,32 @@ namespace LinkerAnalyzer
 				ShowDependencies (vertex);
 		}
 
+		void ShowFlatDependencies (VertexData vertex)
+		{
+			bool first = true;
+			var flatDeps = GetAllDependencies (vertex);
+
+			Console.WriteLine ();
+
+			foreach (var d in flatDeps) {
+				if (first) {
+					Console.WriteLine ($"Distance | {d.Item1.value} [total deps: {flatDeps.Count}]");
+					Line ();
+					first = false;
+					continue;
+				}
+				Console.WriteLine ($"{string.Format ("{0,8}", d.Item2)} | {d.Item1.value}");
+			}
+		}
+
 		public void ShowDependencies (VertexData vertex)
 		{
+			if (FlatDeps) {
+				ShowFlatDependencies (vertex);
+
+				return;
+			}
+
 			Header ("{0} dependencies", vertex.value);
 			if (vertex.parentIndexes == null) {
 				Console.WriteLine ("Root dependency");
@@ -133,14 +158,19 @@ namespace LinkerAnalyzer
 			ShowDependencies ("TypeDef:" + raw, Types, raw);
 		}
 
+		static readonly string line = new string ('-', 72);
+
+		void Line ()
+		{
+			Console.Write (line);
+			Console.WriteLine ();
+		}
+
 		void Header (string header, params object[] values)
 		{
 			string formatted = string.Format (header, values);
 			Console.WriteLine ();
-			Console.Write ("--- {0} ", formatted);
-			for (int i=0; i< Math.Max (3, 64 - formatted.Length); i++)
-				Console.Write ('-');
-			Console.WriteLine ();
+			Console.WriteLine ($"--- {formatted} {new string ('-', Math.Max (3, 67 - formatted.Length))}");
 		}
 	}
 }

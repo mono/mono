@@ -47,7 +47,7 @@ start-sim:
 stop-sim:
 	xcrun simctl shutdown booted
 
-NUNIT = nunit-lite-console.exe -exclude:MobileNotWorking,NotOnMac,NotWorking,ValueAdd,CAS,InetAccess,NotWorkingInterpreter -labels
+NUNIT = nunit-lite-console.exe -exclude:MobileNotWorking,NotOnMac,NotWorking,ValueAdd,CAS,InetAccess,NotWorkingLinqInterpreter -labels
 TESTDIR = $(BCL_DIR)/tests
 
 # Options for each test

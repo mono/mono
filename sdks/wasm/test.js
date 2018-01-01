@@ -35,7 +35,7 @@ var Module = {
 	},
 };
 
-var assemblies = [ "mscorlib.dll", "System.dll", "System.Core.dll", "main.exe", "nunitlite.dll", "mini_tests.dll"];
+var assemblies = [ "mscorlib.dll", "System.dll", "System.Core.dll", "main.exe", "nunitlite.dll", "mini_tests.dll", "wasm_corlib_test.dll"];
 
 load ("mono.js");
 Module.finish_loading ();
@@ -91,14 +91,20 @@ function conv_string (mono_obj) {
 	return res;
 }
 
-function cs_eval (str) {
-	return conv_string (call_method (send_message, null, [mono_string ("eval"), mono_string (str)]))
+function mono_send_msg (key, val) {
+	try {
+		return conv_string (call_method (send_message, null, [mono_string (key), mono_string (val)]));
+	} catch (e) {
+		print ("BAD SEND MSG: " + e);
+		return null;
+	}
 }
 
 load_runtime ("managed");
 var main_module = assembly_load ("main")
 if (!main_module)
 	throw 1;
+
 
 var driver_class = find_class (main_module, "", "Driver")
 if (!driver_class)
@@ -110,31 +116,15 @@ if (!send_message)
 
 print ("-----LOADED ----");
 
-var res = call_method (send_message, null, [mono_string ("run"), mono_string ("mini")])
-if (res)
-	print ("TEST RUN: " + conv_string (res))
+for (var i = 0; i < arguments.length; ++i) {
+	var res = mono_send_msg ("start-test", arguments [i])
+	print ("-----STARTED " + arguments [i] + "---- " + res);
 
-do {
-	res = conv_string (call_method (send_message, null, [mono_string ("run"), mono_string ("gc")]))
-	Module.pump_message ();
-} while (res == "IN PROGRESS");
-print ("DONE")
-
-
-var res = call_method (send_message, null, [mono_string ("say"), mono_string ("hello")])
-res = conv_string (res);
-if (res != "OK:3")
-	throw 4;
-
-var res = call_method (send_message, null, [mono_string ("say"), mono_string ("js-exception")])
-res = conv_string (res);
-if (res != "EH:1")
-	throw 5;
-
-try {
-	call_method (send_message, null, [mono_string ("say"), mono_string ("sharp-exception")])
-	print ("no exception??");
-	throw 6;
-} catch (e) {
+	if (res == "SUCCESS") {
+		while (mono_send_msg ("pump-test", arguments [i]) != "DONE") {
+			Module.pump_message ();
+			print ("|");
+		}
+		print ("\nDONE")
+	}
 }
-
