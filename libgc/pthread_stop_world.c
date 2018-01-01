@@ -2,8 +2,7 @@
 
 #if defined(GC_PTHREADS) && !defined(GC_SOLARIS_THREADS) \
      && !defined(GC_IRIX_THREADS) && !defined(GC_WIN32_THREADS) \
-     && !defined(GC_DARWIN_THREADS) && !defined(GC_AIX_THREADS) \
-     && !defined(GC_OPENBSD_THREADS)
+     && !defined(GC_DARWIN_THREADS) && !defined(GC_AIX_THREADS)
 
 #include <signal.h>
 #include <semaphore.h>
