@@ -436,6 +436,7 @@ MONO_RT_EXTERNAL_ONLY
 MONO_API MonoMethodSignature  *mono_metadata_parse_signature (MonoImage *image, 
 						     uint32_t    token);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoMethodSignature  *mono_metadata_parse_method_signature (MonoImage            *m,
                                                             int                    def,
                                                             const char            *ptr,

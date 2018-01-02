@@ -2112,20 +2112,23 @@ mono_metadata_signature_size (MonoMethodSignature *sig)
 	return MONO_SIZEOF_METHOD_SIGNATURE + sig->param_count * sizeof (MonoType *);
 }
 
-/*
- * mono_metadata_parse_method_signature:
- * @m: metadata context
- * @generic_container: generics container
- * @def: the MethodDef index or 0 for Ref signatures.
- * @ptr: pointer to the signature metadata representation
- * @rptr: pointer updated to match the end of the decoded stream
+/**
+ * mono_metadata_parse_method_signature_full:
+ * \param m metadata context
+ * \param generic_container: generics container
+ * \param def the \c MethodDef index or 0 for \c Ref signatures.
+ * \param ptr pointer to the signature metadata representation
+ * \param rptr pointer updated to match the end of the decoded stream
+ * \param error set on error
  *
- * Decode a method signature stored at @ptr.
+ *
+ * Decode a method signature stored at \p ptr.
  * This is a Mono runtime internal function.
  *
  * LOCKING: Assumes the loader lock is held.
  *
- * Returns: a MonoMethodSignature describing the signature.
+ * \returns a \c MonoMethodSignature describing the signature.  On error sets
+ * \p error and returns \c NULL.
  */
 MonoMethodSignature *
 mono_metadata_parse_method_signature_full (MonoImage *m, MonoGenericContainer *container,
@@ -2240,7 +2243,7 @@ mono_metadata_parse_method_signature (MonoImage *m, int def, const char *ptr, co
 	ERROR_DECL (error);
 	MonoMethodSignature *ret;
 	ret = mono_metadata_parse_method_signature_full (m, NULL, def, ptr, rptr, &error);
-	g_assert (mono_error_ok (&error));
+	mono_error_assert_ok (&error);
 
 	return ret;
 }
