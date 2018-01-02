@@ -36,7 +36,8 @@ bin_SCRIPTS = \
 	mono-test-install	\
 	peverify		\
 	mcs			\
-	csc					\
+	csc			\
+	vbc			\
 	csi			\
 	mono-package-runtime	\
 	mono-heapviz		\
@@ -158,6 +159,7 @@ EXTRA_DIST =			\
 	update_submodules.sh	\
 	mcs.in				\
 	csc.in				\
+	vbc.in				\
 	dmcs.in				\
 	csi.in			\
 	mono-package-runtime	\
@@ -206,6 +208,10 @@ mcs: mcs.in Makefile
 
 csc: csc.in Makefile
 	$(REWRITE_COMMON) $(srcdir)/csc.in > $@.tmp
+	mv -f $@.tmp $@
+
+vbc: vbc.in Makefile
+	$(REWRITE_COMMON) $(srcdir)/vbc.in > $@.tmp
 	mv -f $@.tmp $@
 
 dmcs: dmcs.in Makefile

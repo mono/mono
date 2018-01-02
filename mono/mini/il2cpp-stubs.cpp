@@ -141,6 +141,7 @@ void il2cpp_mono_free_method_signatures()
 	{
 		mono_g_hash_table_foreach(method_signatures, il2cpp_mono_free_method_signature, NULL);
 		mono_g_hash_table_destroy(method_signatures);
+        method_signatures = NULL;
 	}
 }
 

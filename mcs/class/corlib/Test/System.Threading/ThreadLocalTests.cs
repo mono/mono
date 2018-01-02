@@ -52,6 +52,7 @@ namespace MonoTests.System.Threading
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ThreadedTest ()
 		{
 			AssertThreadLocal ();
@@ -134,6 +135,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void PerThreadException ()
 		{
 			int callTime = 0;

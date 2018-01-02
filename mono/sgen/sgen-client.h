@@ -107,19 +107,30 @@ void sgen_client_nursery_objects_pinned (void **definitely_pinned, int count);
 /*
  * Called at a semi-random point during minor collections.  No action is necessary.
  */
-void sgen_client_collecting_minor (SgenPointerQueue *fin_ready_queue, SgenPointerQueue *critical_fin_queue);
+void sgen_client_collecting_minor_report_roots (SgenPointerQueue *fin_ready_queue, SgenPointerQueue *critical_fin_queue);
 
 /*
  * Called at semi-random points during major collections.  No action is necessary.
  */
-void sgen_client_collecting_major_1 (void);
-void sgen_client_collecting_major_2 (void);
-void sgen_client_collecting_major_3 (SgenPointerQueue *fin_ready_queue, SgenPointerQueue *critical_fin_queue);
+void sgen_client_collecting_major_report_roots (SgenPointerQueue *fin_ready_queue, SgenPointerQueue *critical_fin_queue);
 
 /*
  * Called after a LOS object has been pinned.  No action is necessary.
  */
 void sgen_client_pinned_los_object (GCObject *obj);
+
+/*
+ * Called for each cemented obj
+ */
+void sgen_client_pinned_cemented_object (GCObject *obj);
+
+/*
+ * Called for each major heap obj pinned
+ */
+void sgen_client_pinned_major_heap_object (GCObject *obj);
+
+void sgen_client_pinning_start (void);
+void sgen_client_pinning_end (void);
 
 /*
  * Called for every degraded allocation.  No action is necessary.
@@ -224,6 +235,18 @@ gpointer sgen_client_get_provenance (void);
 void sgen_client_describe_invalid_pointer (GCObject *ptr);
 
 /*
+ * Return the weak bitmap for a class
+ */
+gsize *sgen_client_get_weak_bitmap (GCVTable vt, int *nbits);
+
+/*
+ * Scheduled @cv to be invoked later in the background.
+ *
+ * This function is idepotent WRT background execution. Meaning that calling it multiple times with the same funciton pointer before any bg execution happens will only call @cb once.
+ */
+void sgen_client_schedule_background_job (void (*cb)(void));
+
+/*
  * These client binary protocol functions are called from the respective binary protocol
  * functions.  No action is necessary.  We suggest implementing them as inline functions in
  * the client header file so that no overhead is incurred if they don't actually do
@@ -294,4 +317,5 @@ SgenThreadInfo* mono_thread_info_current (void);
  * Get the current thread's small ID.  This will be called on managed and worker threads.
  */
 int mono_thread_info_get_small_id (void);
+
 #endif

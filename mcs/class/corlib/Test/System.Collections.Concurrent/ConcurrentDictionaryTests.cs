@@ -67,6 +67,7 @@ namespace MonoTests.System.Collections.Concurrent
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void AddParallelWithoutDuplicateTest ()
 		{
 			ParallelTestHelper.Repeat (delegate {
@@ -98,6 +99,7 @@ namespace MonoTests.System.Collections.Concurrent
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void RemoveParallelTest ()
 		{
 			ParallelTestHelper.Repeat (delegate {

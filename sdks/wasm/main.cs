@@ -3,18 +3,13 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Reflection;
 using NUnitLite.Runner;
 using NUnit.Framework.Internal;
 using NUnit.Framework.Api;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
-
-
-public class MyRunner : TextUI, ITestListener
-{
-	public String failed_tests = "";
-}
 
 namespace WebAssembly {
 	public sealed class Runtime {
@@ -42,37 +37,86 @@ public class Driver {
 		Send ("run", "mini");
 	}
 
+
+	static int step_count, tp_pump_count;
+	static Task cur_task;
+
+	static void TPStart () {
+		var l = new List<Task> ();
+		for (int i = 0; i < 10; ++i) {
+			l.Add (Task.Run (() => {
+				++step_count;
+			}));
+		}
+		cur_task = Task.WhenAll (l).ContinueWith (t => {
+		});
+	}
+
+	static bool TPPump () {
+		if (tp_pump_count > 10) {
+			Console.WriteLine ("Pumped the TP test 10 times and no progress <o> giving up");
+			return false;
+		}
+		tp_pump_count++;
+		return !cur_task.IsCompleted;
+	}
+
+
+	static Action dele;
+	static IAsyncResult dele_result;
+	static void BeginSomething () {
+	}
+
+	static void DeleStart ()
+	{
+		dele = new Action (BeginSomething);
+		dele_result = dele.BeginInvoke (null, null);
+	}
+
+	static bool DelePump ()
+	{
+		if (dele_result.IsCompleted) {
+			dele.EndInvoke (dele_result);
+			return false;
+		}
+		return true;
+	}
+
+
+	static int fin_count;
+	interface IFoo {}
+	class Foo : IFoo {
+		~Foo () {
+			++fin_count;
+		}
+	}
+	static void GcStart ()
+	{
+		IFoo[] arr = new IFoo [10];
+		Volatile.Write (ref arr [1], new Foo ());
+		for (int i = 0; i < 100; ++i) {
+			var x = new Foo ();
+		}
+	}
+
+	static bool GcPump ()
+	{
+		GC.Collect ();
+		return fin_count < 100;
+	}
+
+
 	static int run_count;
 	public static string Send (string key, string val) {
-		if (key == "say") {
-			if (val == "hello") {
-				return "OK:" + WebAssembly.Runtime.InvokeJS ("1 + 2");
-			} else if (val == "js-exception") {
-				try {
-					return "OK:" + WebAssembly.Runtime.InvokeJS ("throw 1");
-				} catch (WebAssembly.JSException e) {
-					Console.WriteLine (e.Message);
-					return "EH:" + e.Message;
-				}
-			} else if (val == "sharp-exception") {
-				throw new Exception ("error!");
-			}
+		if (key == "start-test") {
+			StartTest (val);
+			return "SUCCESS";
+		}
+		if (key == "pump-test") {
+			return PumpTest (val) ? "IN-PROGRESS" : "DONE" ;
 		}
 
-		if (key != "run")
-			return "INVALID-ARG";
-		if (val == "gc") { 
-			Console.WriteLine ("running {0} step", run_count);
-			for (int i = 0; i < 1000 * 2; ++i) {
-				var x = new object [1000];
-			}
-			++run_count;
-			return run_count >= 10 ? "DONE" :  "IN PROGRESS";
-		}
-		StartTest (val);
-		return "SUCCESS";
-
-		return "FAIL";
+		return "INVALID-KEY";
 	}
 
 	public class TestSuite {
@@ -82,12 +126,50 @@ public class Driver {
 
 	static TestSuite[] suites = new TestSuite [] {
 		new TestSuite () { Name = "mini", File = "managed/mini_tests.dll" },
-		new TestSuite () { Name = "corlib", File = "monodroid_corlib_test.dll" },
-		new TestSuite () { Name = "system", File = "monodroid_System_test.dll" },
+		new TestSuite () { Name = "corlib", File = "managed/wasm_corlib_test.dll" },
+		new TestSuite () { Name = "system", File = "managed/wasm_System_test.dll" },
 	};
+
+	static IncrementalTestRunner testRunner;
+
+	public static bool PumpTest (string name) {
+		if (name == "tp")
+			return TPPump ();
+		if (name == "dele")
+			return DelePump ();
+		if (name == "gc")
+			return GcPump ();
+
+		if (testRunner == null)
+			return false;
+		try {
+			bool res = testRunner.Step ();
+			if (!res)
+				testRunner = null;
+			return res;
+		} catch (Exception e) {
+			Console.WriteLine (e);
+			return true;
+		}
+	}
 
 	public static void StartTest (string name) {
 		var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+		if (testRunner != null)
+			throw new Exception ("Test in progress");
+
+		if (name == "tp") {
+			TPStart ();
+			return;
+		}
+		if (name == "dele") {
+			DeleStart ();
+			return;
+		}
+		if (name == "gc") {
+			GcStart ();
+			return;
+		}
 
 		string extra_disable = "";
 
@@ -106,16 +188,16 @@ public class Driver {
 				test_name = args [i];
 		}
 
-		var arg_list = new List<string> ();
-		arg_list.Add ("-labels");
-		if (test_name != null)
-			arg_list.Add ("-test=" + test_name);
+		testRunner = new IncrementalTestRunner ();
+		// testRunner.PrintLabels ();
+		// if (test_name != null)
+		// 	testRunner.RunTest (test_name);
 
-		arg_list.Add ("-exclude=WASM,NotWorking,ValueAdd,CAS,InetAccess");
-		arg_list.Add (baseDir + "/" + testsuite_name);
+		testRunner.Exclude ("WASM,NotWorking,ValueAdd,CAS,InetAccess,InterpreterNotWorking,MultiThreaded");
+		testRunner.Add (Assembly.LoadFrom (baseDir + "/" + testsuite_name));
+		// testRunner.RunOnly ("MonoTests.System.Threading.AutoResetEventTest.MultipleSet");
 
-		var runner = new MyRunner ();
-		runner.Execute (arg_list.ToArray ());
+		testRunner.Start (10);
 	}
 
 }

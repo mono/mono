@@ -6,7 +6,7 @@ LIBRARY_SNK = ../mono.snk
 
 LIB_REFS = System System.Core
 KEYFILE = $(LIBRARY_SNK)
-LIB_MCS_FLAGS = /unsafe /publicsign
+LIB_MCS_FLAGS = /unsafe /publicsign /nowarn:0618
 
 LIBRARY_WARN_AS_ERROR = yes
 

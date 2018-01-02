@@ -15,6 +15,7 @@ ${TESTCMD} --label=verify --timeout=15m make -w -C runtime mcs-compileall
 ${TESTCMD} --label=profiler --timeout=30m make -w -C mono/profiler -k check
 ${TESTCMD} --label=compiler --timeout=30m make -w -C mcs/tests run-test
 ${TESTCMD} --label=compiler-errors --timeout=30m make -w -C mcs/errors run-test
+${TESTCMD} --label=System-xunit --timeout=5m make -w -C mcs/class/System run-xunit-test
 ${TESTCMD} --label=System --timeout=10m bash -c "export MONO_TLS_PROVIDER=legacy && make -w -C mcs/class/System run-test"
 if [[ ${label} == osx-* ]]; then ${TESTCMD} --label=System-btls --timeout=10m bash -c "export MONO_TLS_PROVIDER=btls && make -w -C mcs/class/System run-test"; fi
 ${TESTCMD} --label=System.XML --timeout=5m make -w -C mcs/class/System.XML run-test
@@ -85,6 +86,8 @@ ${TESTCMD} --label=System.Xaml --timeout=5m make -w -C mcs/class/System.Xaml run
 ${TESTCMD} --label=System.Net.Http --timeout=5m make -w -C mcs/class/System.Net.Http run-test
 ${TESTCMD} --label=System.Json --timeout=5m make -w -C mcs/class/System.Json run-test
 ${TESTCMD} --label=System.Threading.Tasks.Dataflow --timeout=5m make -w -C mcs/class/System.Threading.Tasks.Dataflow run-test
+# Due to https://bugzilla.xamarin.com/show_bug.cgi?id=60865
+if [[ ${label} == *i386 ]] || [[ ${label} == w32 ]] || [[ ${label} == *armel ]] || [[ ${label} == *armhf ]]; then ${TESTCMD} --label=System.Runtime.CompilerServices.Unsafe-xunit --skip; else ${TESTCMD} --label=System.Runtime.CompilerServices.Unsafe-xunit --timeout=5m make -w -C mcs/class/System.Runtime.CompilerServices.Unsafe run-xunit-test; fi
 ${TESTCMD} --label=Mono.Debugger.Soft --timeout=5m make -w -C mcs/class/Mono.Debugger.Soft run-test
 ${TESTCMD} --label=Microsoft.CSharp-xunit --timeout=5m make -w -C mcs/class/Microsoft.CSharp run-xunit-test
 ${TESTCMD} --label=Microsoft.Build --timeout=5m make -w -C mcs/class/Microsoft.Build run-test

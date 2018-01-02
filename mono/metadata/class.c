@@ -40,6 +40,7 @@
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/verify-internals.h>
 #include <mono/metadata/mono-debug.h>
+#include <mono/metadata/custom-attrs-internals.h>
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/mono-string.h>
 #include <mono/utils/mono-error-internals.h>
@@ -1667,6 +1668,7 @@ init_sizes_with_info (MonoClass *klass, MonoCachedClassInfo *cached_info)
 		klass->has_references = cached_info->has_references;
 		klass->has_static_refs = cached_info->has_static_refs;
 		klass->no_special_static_fields = cached_info->no_special_static_fields;
+		klass->has_weak_fields = cached_info->has_weak_fields;
 		mono_loader_unlock ();
 	}
 	else {
@@ -2210,18 +2212,40 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 			mono_class_set_type_load_failure (klass, "Value type instance size (%d) cannot be zero, negative, or bigger than 1Mb", klass->instance_size);
 	}
 
+	// Weak field support
+	//
+	// FIXME:
+	// - generic instances
+	// - Disallow on structs/static fields/nonref fields
+	gboolean has_weak_fields = FALSE;
+
+	if (mono_class_has_static_metadata (klass)) {
+		for (MonoClass *p = klass; p != NULL; p = p->parent) {
+			gpointer iter = NULL;
+			guint32 first_field_idx = mono_class_get_first_field_idx (p);
+
+			while ((field = mono_class_get_fields (p, &iter))) {
+				guint32 field_idx = first_field_idx + (field - p->fields);
+				if (MONO_TYPE_IS_REFERENCE (field->type) && mono_assembly_is_weak_field (p->image, field_idx + 1)) {
+					has_weak_fields = TRUE;
+					mono_trace_message (MONO_TRACE_TYPE, "Field %s:%s at offset %x is weak.", field->parent->name, field->name, field->offset);
+				}
+			}
+		}
+	}
+
 	/* Publish the data */
 	mono_loader_lock ();
 	if (!klass->rank)
 		klass->sizes.class_size = class_size;
 	klass->has_static_refs = has_static_refs;
+	klass->has_weak_fields = has_weak_fields;
 	for (i = 0; i < top; ++i) {
 		field = &klass->fields [i];
 
 		if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
 			field->offset = field_offsets [i];
 	}
-
 	mono_memory_barrier ();
 	klass->fields_inited = 1;
 	mono_loader_unlock ();
@@ -3574,11 +3598,10 @@ static void
 mono_class_setup_vtable_full (MonoClass *klass, GList *in_setup)
 {
 	MonoError error;
-	MonoMethod **overrides;
+	MonoMethod **overrides = NULL;
 	MonoGenericContext *context;
 	guint32 type_token;
 	int onum = 0;
-	gboolean ok = TRUE;
 
 	if (klass->vtable)
 		return;
@@ -3626,24 +3649,24 @@ mono_class_setup_vtable_full (MonoClass *klass, GList *in_setup)
 		 */
 		mono_reflection_get_dynamic_overrides (klass, &overrides, &onum, &error);
 		if (!is_ok (&error)) {
-			mono_loader_unlock ();
-			g_list_remove (in_setup, klass);
 			mono_class_set_type_load_failure (klass, "Could not load list of method overrides due to %s", mono_error_get_message (&error));
-			mono_error_cleanup (&error);
-			return;
+			goto done;
 		}
 	} else {
 		/* The following call fails if there are missing methods in the type */
 		/* FIXME it's probably a good idea to avoid this for generic instances. */
-		ok = mono_class_get_overrides_full (klass->image, type_token, &overrides, &onum, context);
+		mono_class_get_overrides_full (klass->image, type_token, &overrides, &onum, context, &error);
+		if (!is_ok (&error)) {
+			mono_class_set_type_load_failure (klass, "Could not load list of method overrides due to %s", mono_error_get_message (&error));
+			goto done;
+		}
 	}
 
-	if (ok)
-		mono_class_setup_vtable_general (klass, overrides, onum, in_setup);
-	else
-		mono_class_set_type_load_failure (klass, "Could not load list of method overrides");
-		
+	mono_class_setup_vtable_general (klass, overrides, onum, in_setup);
+
+done:
 	g_free (overrides);
+	mono_error_cleanup (&error);
 
 	mono_loader_unlock ();
 	g_list_remove (in_setup, klass);
@@ -4118,6 +4141,8 @@ mono_class_setup_vtable_general (MonoClass *klass, MonoMethod **overrides, int o
 	GSList *virt_methods = NULL, *l;
 	int stelemref_slot = 0;
 
+	error_init (&error);
+
 	if (klass->vtable)
 		return;
 
@@ -4184,11 +4209,7 @@ mono_class_setup_vtable_general (MonoClass *klass, MonoMethod **overrides, int o
 		for (i = 0; i < gklass->vtable_size; ++i)
 			if (gklass->vtable [i]) {
 				MonoMethod *inflated = mono_class_inflate_generic_method_full_checked (gklass->vtable [i], klass, mono_class_get_context (klass), &error);
-				if (!mono_error_ok (&error)) {
-					mono_class_set_type_load_failure (klass, "Could not inflate method due to %s", mono_error_get_message (&error));
-					mono_error_cleanup (&error);
-					return;
-				}
+				goto_if_nok (&error, fail);
 				tmp [i] = inflated;
 				tmp [i]->slot = gklass->vtable [i]->slot;
 			}
@@ -4267,20 +4288,19 @@ mono_class_setup_vtable_general (MonoClass *klass, MonoMethod **overrides, int o
 
 		MonoMethod **iface_overrides;
 		int iface_onum;
-		gboolean ok = mono_class_get_overrides_full (ic->image, ic->type_token, &iface_overrides, &iface_onum, mono_class_get_context (ic));
-		if (ok) {
-			for (int i = 0; i < iface_onum; i++) {
-				MonoMethod *decl = iface_overrides [i*2];
-				MonoMethod *override = iface_overrides [i*2 + 1];
-				if (!apply_override (klass, vtable, decl, override))
-					goto fail;
+		mono_class_get_overrides_full (ic->image, ic->type_token, &iface_overrides, &iface_onum, mono_class_get_context (ic), &error);
+		goto_if_nok (&error, fail);
+		for (int i = 0; i < iface_onum; i++) {
+			MonoMethod *decl = iface_overrides [i*2];
+			MonoMethod *override = iface_overrides [i*2 + 1];
+			if (!apply_override (klass, vtable, decl, override))
+				goto fail;
 
-				if (!override_map)
-					override_map = g_hash_table_new (mono_aligned_addr_hash, NULL);
-				g_hash_table_insert (override_map, decl, override);
-			}
-			g_free (iface_overrides);
+			if (!override_map)
+				override_map = g_hash_table_new (mono_aligned_addr_hash, NULL);
+			g_hash_table_insert (override_map, decl, override);
 		}
+		g_free (iface_overrides);
 	}
 
 	/* override interface methods */
@@ -4466,11 +4486,8 @@ mono_class_setup_vtable_general (MonoClass *klass, MonoMethod **overrides, int o
 					cmsig = mono_method_signature (cm);
 					m1sig = mono_method_signature (m1);
 
-					if (!cmsig || !m1sig) {
-						/* FIXME proper error message */
-						mono_class_set_type_load_failure (klass, "");
-						return;
-					}
+					if (!cmsig || !m1sig) /* FIXME proper error message, use signature_checked? */
+						goto fail;
 
 					if (!strcmp(cm->name, m1->name) && 
 					    mono_metadata_signature_equal (cmsig, m1sig)) {
@@ -4659,7 +4676,11 @@ mono_class_setup_vtable_general (MonoClass *klass, MonoMethod **overrides, int o
 fail:
 	{
 	char *name = mono_type_get_full_name (klass);
-	mono_class_set_type_load_failure (klass, "VTable setup of type %s failed", name);
+	if (!is_ok (&error))
+		mono_class_set_type_load_failure (klass, "VTable setup of type %s failed due to: %s", name, mono_error_get_message (&error));
+	else
+		mono_class_set_type_load_failure (klass, "VTable setup of type %s failed", name);
+	mono_error_cleanup (&error);
 	g_free (name);
 	g_free (vtable);
 	if (override_map)

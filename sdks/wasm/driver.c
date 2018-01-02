@@ -123,8 +123,8 @@ mono_wasm_invoke_js (MonoString *str, int *is_exception)
 EMSCRIPTEN_KEEPALIVE void
 mono_wasm_load_runtime (const char *managed_path)
 {
-	// monoeg_g_setenv ("MONO_LOG_LEVEL", "debug", 1);
-	// monoeg_g_setenv ("MONO_LOG_MASK", "gc", 1);
+	monoeg_g_setenv ("MONO_LOG_LEVEL", "debug", 1);
+	monoeg_g_setenv ("MONO_LOG_MASK", "gc", 1);
 	mono_jit_set_aot_mode (MONO_AOT_MODE_INTERP_LLVMONLY);
 	mono_set_assemblies_path (m_strdup (managed_path));
 	root_domain = mono_jit_init_version ("mono", "v4.0.30319");

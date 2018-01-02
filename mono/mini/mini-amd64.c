@@ -45,6 +45,8 @@
 #include "cpu-amd64.h"
 #include "debugger-agent.h"
 #include "mini-gc.h"
+#include "mini-runtime.h"
+#include "aot-runtime.h"
 
 #ifdef MONO_XEN_OPT
 static gboolean optimize_for_xen = TRUE;
@@ -1377,67 +1379,6 @@ mono_arch_get_global_int_regs (MonoCompile *cfg)
 #endif
 
 	return regs;
-}
- 
-GList*
-mono_arch_get_global_fp_regs (MonoCompile *cfg)
-{
-	GList *regs = NULL;
-	int i;
-
-	/* All XMM registers */
-	for (i = 0; i < 16; ++i)
-		regs = g_list_prepend (regs, GINT_TO_POINTER (i));
-
-	return regs;
-}
-
-GList*
-mono_arch_get_iregs_clobbered_by_call (MonoCallInst *call)
-{
-	static GList *r = NULL;
-
-	if (r == NULL) {
-		GList *regs = NULL;
-
-		regs = g_list_prepend (regs, (gpointer)AMD64_RBP);
-		regs = g_list_prepend (regs, (gpointer)AMD64_RBX);
-		regs = g_list_prepend (regs, (gpointer)AMD64_R12);
-		regs = g_list_prepend (regs, (gpointer)AMD64_R13);
-		regs = g_list_prepend (regs, (gpointer)AMD64_R14);
-		regs = g_list_prepend (regs, (gpointer)AMD64_R15);
-
-		regs = g_list_prepend (regs, (gpointer)AMD64_R10);
-		regs = g_list_prepend (regs, (gpointer)AMD64_R9);
-		regs = g_list_prepend (regs, (gpointer)AMD64_R8);
-		regs = g_list_prepend (regs, (gpointer)AMD64_RDI);
-		regs = g_list_prepend (regs, (gpointer)AMD64_RSI);
-		regs = g_list_prepend (regs, (gpointer)AMD64_RDX);
-		regs = g_list_prepend (regs, (gpointer)AMD64_RCX);
-		regs = g_list_prepend (regs, (gpointer)AMD64_RAX);
-
-		mono_atomic_cas_ptr ((gpointer*)&r, regs, NULL);
-	}
-
-	return r;
-}
-
-GList*
-mono_arch_get_fregs_clobbered_by_call (MonoCallInst *call)
-{
-	int i;
-	static GList *r = NULL;
-
-	if (r == NULL) {
-		GList *regs = NULL;
-
-		for (i = 0; i < AMD64_XMM_NREG; ++i)
-			regs = g_list_prepend (regs, GINT_TO_POINTER (MONO_MAX_IREGS + i));
-
-		mono_atomic_cas_ptr ((gpointer*)&r, regs, NULL);
-	}
-
-	return r;
 }
 
 /*
@@ -4865,7 +4806,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, 8);
 			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_BB, ins->inst_target_bb);
 			amd64_call_imm (code, 0);
-			mono_cfg_add_try_hole (cfg, ins->inst_eh_block, code, bb);
+			/*
+			 * ins->inst_eh_blocks and bb->clause_holes are part of same GList.
+			 * Holes from bb->clause_holes will be added separately for the entire
+			 * basic block. Add only the rest of them.
+			 */
+			for (GList *tmp = ins->inst_eh_blocks; tmp != bb->clause_holes; tmp = tmp->prev)
+				mono_cfg_add_try_hole (cfg, (MonoExceptionClause *)tmp->data, code, bb);
 			/* Restore stack alignment */
 			amd64_alu_reg_imm (code, X86_ADD, AMD64_RSP, 8);
 			break;
@@ -7468,13 +7415,12 @@ enum {
 };
 
 void*
-mono_arch_instrument_epilog_full (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments, gboolean preserve_argument_registers)
+mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
 {
 	guchar *code = (guchar *)p;
 	int save_mode = SAVE_NONE;
 	MonoMethod *method = cfg->method;
 	MonoType *ret_type = mini_get_underlying_type (mono_method_signature (method)->ret);
-	int i;
 	
 	switch (ret_type->type) {
 	case MONO_TYPE_VOID:
@@ -7542,19 +7488,9 @@ mono_arch_instrument_epilog_full (MonoCompile *cfg, void *func, void *p, gboolea
 	else
 		amd64_mov_reg_imm (code, AMD64_RAX, 0);
 
-	if (preserve_argument_registers) {
-		for (i = 0; i < PARAM_REGS; ++i)
-			amd64_push_reg (code, param_regs [i]);
-	}
-
 	mono_add_patch_info (cfg, code-cfg->native_code, MONO_PATCH_INFO_METHODCONST, method);
 	amd64_set_reg_template (code, AMD64_ARG_REG1);
 	code = emit_call (cfg, code, MONO_PATCH_INFO_ABS, (gpointer)func, TRUE);
-
-	if (preserve_argument_registers) {
-		for (i = PARAM_REGS - 1; i >= 0; --i)
-			amd64_pop_reg (code, param_regs [i]);
-	}
 
 	/* Restore result */
 	switch (save_mode) {

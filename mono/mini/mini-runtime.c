@@ -77,6 +77,7 @@
 #include "trace.h"
 #include "version.h"
 #include "aot-compiler.h"
+#include "aot-runtime.h"
 
 #include "jit-icalls.h"
 
@@ -85,6 +86,7 @@
 #include "debugger-agent.h"
 #include "lldb.h"
 #include "mixed_callstack_plugin.h"
+#include "mini-runtime.h"
 
 #ifdef MONO_ARCH_LLVM_SUPPORTED
 #ifdef ENABLE_LLVM
@@ -93,9 +95,7 @@
 #endif
 #endif
 
-#ifndef DISABLE_INTERPRETER
 #include "interp/interp.h"
-#endif
 
 static guint32 default_opt = 0;
 static gboolean default_opt_set = FALSE;
@@ -1999,13 +1999,11 @@ mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt, gboolean jit_
 		return NULL;
 	}
 
-#ifndef DISABLE_INTERPRETER
 	if (mono_use_interpreter && !jit_only) {
-		code = mono_interp_create_method_pointer (method, error);
+		code = mini_get_interp_callbacks ()->create_method_pointer (method, error);
 		if (code)
 			return code;
 	}
-#endif
 
 	if (mono_llvm_only)
 		/* Should be handled by the caller */
@@ -2634,10 +2632,8 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 	MonoJitInfo *ji = NULL;
 	gboolean callee_gsharedvt = FALSE;
 
-#ifndef DISABLE_INTERPRETER
 	if (mono_use_interpreter)
-		return mono_interp_runtime_invoke (method, obj, params, exc, error);
-#endif
+		return mini_get_interp_callbacks ()->runtime_invoke (method, obj, params, exc, error);
 
 	error_init (error);
 	if (exc)
@@ -3324,12 +3320,9 @@ mini_get_delegate_arg (MonoMethod *method, gpointer method_ptr)
 void
 mini_init_delegate (MonoDelegate *del)
 {
-#ifndef DISABLE_INTERPRETER
 	if (mono_use_interpreter)
-		mono_interp_init_delegate (del);
-	else
-#endif
-	if (mono_llvm_only)
+		mini_get_interp_callbacks ()->init_delegate (del);
+	else if (mono_llvm_only)
 		del->extra_arg = mini_get_delegate_arg (del->method, del->method_ptr);
 }
 
@@ -3790,6 +3783,22 @@ mini_add_profiler_argument (const char *desc)
 	g_ptr_array_add (profile_options, (gpointer) desc);
 }
 
+
+MonoInterpCallbacks interp_cbs;
+
+void
+mini_install_interp_callbacks (MonoInterpCallbacks *cbs)
+{
+	memcpy (&interp_cbs, cbs, sizeof (MonoInterpCallbacks));
+}
+
+MonoInterpCallbacks *
+mini_get_interp_callbacks (void)
+{
+	return &interp_cbs;
+}
+
+
 MonoDomain *
 mini_init (const char *filename, const char *runtime_version)
 {
@@ -3811,8 +3820,11 @@ mini_init (const char *filename, const char *runtime_version)
 #endif
 
 #ifndef DISABLE_INTERPRETER
-	mono_interp_init ();
+	if (mono_use_interpreter)
+		mono_interp_init ();
+	else
 #endif
+		mono_interp_stub_init ();
 
 	mono_os_mutex_init_recursive (&jit_mutex);
 
@@ -3867,10 +3879,11 @@ mini_init (const char *filename, const char *runtime_version)
 	callbacks.create_remoting_trampoline = mono_jit_create_remoting_trampoline;
 #endif
 #endif
-#if !defined (DISABLE_INTERPRETER) && !defined (DISABLE_REMOTING)
+#ifndef DISABLE_REMOTING
 	if (mono_use_interpreter)
-		callbacks.interp_get_remoting_invoke = mono_interp_get_remoting_invoke;
+		callbacks.interp_get_remoting_invoke = mini_get_interp_callbacks ()->get_remoting_invoke;
 #endif
+	callbacks.get_weak_field_indexes = mono_aot_get_weak_field_indexes;
 
 	mono_install_callbacks (&callbacks);
 
@@ -4317,7 +4330,7 @@ register_icalls (void)
 	register_icall (mono_throw_method_access, "mono_throw_method_access", "void ptr ptr", FALSE);
 	register_icall_no_wrapper (mono_dummy_jit_icall, "mono_dummy_jit_icall", "void");
 
-	register_icall_with_wrapper (mono_monitor_enter_internal, "mono_monitor_enter_internal", "void obj");
+	register_icall_with_wrapper (mono_monitor_enter_internal, "mono_monitor_enter_internal", "int32 obj");
 	register_icall_with_wrapper (mono_monitor_enter_v4_internal, "mono_monitor_enter_v4_internal", "void obj ptr");
 	register_icall_no_wrapper (mono_monitor_enter_fast, "mono_monitor_enter_fast", "int obj");
 	register_icall_no_wrapper (mono_monitor_enter_v4_fast, "mono_monitor_enter_v4_fast", "int obj ptr");

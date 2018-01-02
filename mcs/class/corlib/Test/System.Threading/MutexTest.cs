@@ -124,6 +124,7 @@ namespace MonoTests.System.Threading
 */
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestWaitAndSignal1()
 		{
 			Mutex Sem = new Mutex (false);
@@ -143,6 +144,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestWaitAndForget1()
 		{
 			Mutex Sem = new Mutex(false);

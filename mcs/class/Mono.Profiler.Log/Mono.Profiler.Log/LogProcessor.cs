@@ -127,7 +127,8 @@ namespace Mono.Profiler.Log {
 				case LogEventType.AllocationBacktrace:
 				case LogEventType.AllocationNoBacktrace:
 					ev = new AllocationEvent {
-						ClassPointer = ReadPointer (),
+						ClassPointer = StreamHeader.FormatVersion < 15 ? ReadPointer () : 0,
+						VTablePointer = StreamHeader.FormatVersion >= 15 ? ReadPointer () : 0,
 						ObjectPointer = ReadObject (),
 						ObjectSize = (long) _reader.ReadULeb128 (),
 						Backtrace = ReadBacktrace (extType == LogEventType.AllocationBacktrace),
@@ -305,6 +306,16 @@ namespace Mono.Profiler.Log {
 					} else
 						throw new LogException ("Invalid context metadata event.");
 					break;
+				case LogMetadataType.VTable:
+					if (load) {
+						ev = new VTableLoadEvent {
+							VTablePointer = ReadPointer (),
+							AppDomainId = ReadPointer (),
+							ClassPointer = ReadPointer (),
+						};
+					} else
+						throw new LogException ("Invalid VTable metadata event.");
+					break;
 				default:
 					throw new LogException ($"Invalid metadata type ({metadataType}).");
 				}
@@ -373,8 +384,8 @@ namespace Mono.Profiler.Log {
 				case LogEventType.MonitorBacktrace:
 					ev = new MonitorEvent {
 						Event = StreamHeader.FormatVersion >= 14 ?
-						                    (LogMonitorEvent) _reader.ReadByte () :
-						                    (LogMonitorEvent) ((((byte) type & 0xf0) >> 4) & 0x3),
+						        (LogMonitorEvent) _reader.ReadByte () :
+						        (LogMonitorEvent) ((((byte) type & 0xf0) >> 4) & 0x3),
 						ObjectPointer = ReadObject (),
 						Backtrace = ReadBacktrace (extType == LogEventType.MonitorBacktrace),
 					};
@@ -394,7 +405,8 @@ namespace Mono.Profiler.Log {
 				case LogEventType.HeapObject: {
 					HeapObjectEvent hoe = new HeapObjectEvent {
 						ObjectPointer = ReadObject (),
-						ClassPointer = ReadPointer (),
+						ClassPointer = StreamHeader.FormatVersion < 15 ? ReadPointer () : 0,
+						VTablePointer = StreamHeader.FormatVersion >= 15 ? ReadPointer () : 0,
 						ObjectSize = (long) _reader.ReadULeb128 (),
 					};
 
@@ -414,17 +426,22 @@ namespace Mono.Profiler.Log {
 				}
 
 				case LogEventType.HeapRoots: {
-					// TODO: This entire event makes no sense.
 					var hre = new HeapRootsEvent ();
 					var list = new HeapRootsEvent.HeapRoot [(int) _reader.ReadULeb128 ()];
 
-					hre.MaxGenerationCollectionCount = (long) _reader.ReadULeb128 ();
+					if (StreamHeader.FormatVersion < 15)
+						hre.MaxGenerationCollectionCount = (long) _reader.ReadULeb128 ();
 
 					for (var i = 0; i < list.Length; i++) {
 						list [i] = new HeapRootsEvent.HeapRoot {
+							AddressPointer = StreamHeader.FormatVersion >= 15 ? ReadPointer () : 0,
 							ObjectPointer = ReadObject (),
-							Attributes = StreamHeader.FormatVersion == 13 ? (LogHeapRootAttributes) _reader.ReadByte () : (LogHeapRootAttributes) _reader.ReadULeb128 (),
-							ExtraInfo = (long) _reader.ReadULeb128 (),
+							Attributes = StreamHeader.FormatVersion < 15 ?
+							             (StreamHeader.FormatVersion == 13 ?
+							              (LogHeapRootAttributes) _reader.ReadByte () :
+							              (LogHeapRootAttributes) _reader.ReadULeb128 ()) :
+							             0,
+							ExtraInfo = StreamHeader.FormatVersion < 15 ? (long) _reader.ReadULeb128 () : 0,
 						};
 					}
 
@@ -433,6 +450,20 @@ namespace Mono.Profiler.Log {
 
 					break;
 				}
+				case LogEventType.HeapRootRegister:
+					ev = new HeapRootRegisterEvent {
+						RootPointer = ReadPointer (),
+						RootSize = (long) _reader.ReadULeb128 (),
+						Source = (LogHeapRootSource) _reader.ReadByte (),
+						Key = ReadPointer (),
+						Name = _reader.ReadCString (),
+					};
+					break;
+				case LogEventType.HeapRootUnregister:
+					ev = new HeapRootUnregisterEvent {
+						RootPointer = ReadPointer (),
+					};
+					break;
 				default:
 					throw new LogException ($"Invalid extended event type ({extType}).");
 				}
@@ -476,9 +507,9 @@ namespace Mono.Profiler.Log {
 							Section = section,
 							SectionName = section == LogCounterSection.User ? _reader.ReadCString () : null,
 							CounterName = _reader.ReadCString (),
-							Type = (LogCounterType) _reader.ReadByte (),
-							Unit = (LogCounterUnit) _reader.ReadByte (),
-							Variance = (LogCounterVariance) _reader.ReadByte (),
+							Type = StreamHeader.FormatVersion < 15 ? (LogCounterType) _reader.ReadByte () : (LogCounterType) _reader.ReadULeb128 (),
+							Unit = StreamHeader.FormatVersion < 15 ? (LogCounterUnit) _reader.ReadByte () : (LogCounterUnit) _reader.ReadULeb128 (),
+							Variance = StreamHeader.FormatVersion < 15 ? (LogCounterVariance) _reader.ReadByte () : (LogCounterVariance) _reader.ReadULeb128 (),
 							Index = (long) _reader.ReadULeb128 (),
 						};
 					}
@@ -498,7 +529,7 @@ namespace Mono.Profiler.Log {
 						if (index == 0)
 							break;
 
-						var counterType = (LogCounterType) _reader.ReadByte ();
+						var counterType = StreamHeader.FormatVersion < 15 ? (LogCounterType) _reader.ReadByte () : (LogCounterType) _reader.ReadULeb128 ();
 
 						object value = null;
 
@@ -543,6 +574,9 @@ namespace Mono.Profiler.Log {
 				switch (extType) {
 				case LogEventType.RuntimeJitHelper: {
 					var helperType = (LogJitHelper) _reader.ReadByte ();
+
+					if (StreamHeader.FormatVersion < 14)
+						helperType--;
 
 					ev = new JitHelperEvent {
 						Type = helperType,

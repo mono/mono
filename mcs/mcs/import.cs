@@ -1446,7 +1446,14 @@ namespace Mono.CSharp
 						if (args.Count == 1) {
 							bag.Obsolete = new ObsoleteAttribute ((string) args[0].Value);
 						} else if (args.Count == 2) {
-							bag.Obsolete = new ObsoleteAttribute ((string) args[0].Value, (bool) args[1].Value);
+							const string ByRefLikeMarker = "Types with embedded references are not supported in this version of your compiler.";
+
+							var msg = (string)args[0].Value;
+
+							if (msg == ByRefLikeMarker)
+								continue;
+
+							bag.Obsolete = new ObsoleteAttribute (msg, (bool) args[1].Value);
 						} else {
 							bag.Obsolete = new ObsoleteAttribute ();
 						}

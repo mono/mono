@@ -186,6 +186,9 @@ ICALL(CONSOLE_3, "SetBreak", ves_icall_System_ConsoleDriver_SetBreak )
 ICALL(CONSOLE_4, "SetEcho", ves_icall_System_ConsoleDriver_SetEcho )
 ICALL(CONSOLE_5, "TtySetup", ves_icall_System_ConsoleDriver_TtySetup )
 
+ICALL_TYPE(TZONE, "System.CurrentSystemTimeZone", TZONE_1)
+ICALL(TZONE_1, "GetTimeZoneData", ves_icall_System_CurrentSystemTimeZone_GetTimeZoneData)
+
 ICALL_TYPE(DTIME, "System.DateTime", DTIME_1)
 ICALL(DTIME_1, "GetSystemTimeAsFileTime", mono_100ns_datetime)
 
@@ -908,7 +911,7 @@ ICALL_TYPE(ITHREAD, "System.Threading.InternalThread", ITHREAD_1)
 ICALL(ITHREAD_1, "Thread_free_internal", ves_icall_System_Threading_InternalThread_Thread_free_internal)
 
 ICALL_TYPE(MONIT, "System.Threading.Monitor", MONIT_8)
-ICALL(MONIT_8, "Enter", mono_monitor_enter_internal)
+ICALL(MONIT_8, "Enter", ves_icall_System_Threading_Monitor_Monitor_Enter)
 ICALL(MONIT_1, "Exit", mono_monitor_exit)
 ICALL(MONIT_2, "Monitor_pulse", ves_icall_System_Threading_Monitor_Monitor_pulse)
 ICALL(MONIT_3, "Monitor_pulse_all", ves_icall_System_Threading_Monitor_Monitor_pulse_all)

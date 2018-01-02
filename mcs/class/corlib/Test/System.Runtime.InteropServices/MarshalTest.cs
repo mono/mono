@@ -963,7 +963,7 @@ namespace MonoTests.System.Runtime.InteropServices
 		}
 
 		[Test]
-		[Category ("InterpreterNotWorking")]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void CheckPtrToStructureWithFixedArrayAndBaseClassFields()
 		{
 			const int arraySize = 6;

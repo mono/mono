@@ -226,7 +226,15 @@ namespace System.Windows.Forms {
 					contentbounds.Height -= cellStyle.Padding.Vertical;
 				}
 
-				if (formattedValue != null)
+				const int textTopAdditionalPadding = 1;
+				const int textBottomAdditionalPadding = 2;
+				const int textLeftAdditionalPadding = 0;
+				const int textRightAdditionalPadding = 2;
+				contentbounds.Offset (textLeftAdditionalPadding, textTopAdditionalPadding);
+				contentbounds.Width -= textLeftAdditionalPadding + textRightAdditionalPadding;
+				contentbounds.Height -= textTopAdditionalPadding + textBottomAdditionalPadding;
+
+				if (formattedValue != null && contentbounds.Width > 0 && contentbounds.Height > 0)
 					TextRenderer.DrawText (graphics, formattedValue.ToString (), cellStyle.Font, contentbounds, color, flags);
 			}
 

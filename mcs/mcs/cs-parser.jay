@@ -169,7 +169,8 @@ namespace Mono.CSharp
 %token CONST	
 %token CONTINUE	
 %token DECIMAL	
-%token DEFAULT	
+%token DEFAULT
+%token DEFAULT_VALUE
 %token DELEGATE	
 %token DO	
 %token DOUBLE	
@@ -3466,6 +3467,7 @@ primary_expression
 	| anonymous_method_expression
 	| undocumented_expressions
 	| interpolated_string
+	| default_literal
 	;
 
 type_name_expression
@@ -4404,13 +4406,23 @@ anonymous_method_signature
 	;
 
 default_value_expression
-	: DEFAULT open_parens_any type CLOSE_PARENS
+	: DEFAULT_VALUE open_parens_any type CLOSE_PARENS
 	  {
 		if (lang_version < LanguageVersion.ISO_2)
 			FeatureIsNotAvailable (GetLocation ($1), "default value expression");
 
 		$$ = new DefaultValueExpression ((Expression) $3, GetLocation ($1));
 		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($4));
+	  }
+	;
+
+default_literal
+	: DEFAULT
+	  {
+		if (lang_version < LanguageVersion.V_7_1)
+			FeatureIsNotAvailable (GetLocation ($1), "default literal");
+
+		$$ = new DefaultLiteralExpression (GetLocation ($1));
 	  }
 	;
 
@@ -8273,6 +8285,7 @@ static string GetTokenName (int token)
 	case Token.CONTINUE:
 		return "continue";
 	case Token.DEFAULT:
+	case Token.DEFAULT_VALUE:
 		return "default";
 	case Token.DELEGATE:
 		return "delegate";
