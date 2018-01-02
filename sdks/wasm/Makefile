@@ -78,16 +78,37 @@ managed/nunitlite.dll: $(TOP)/mcs/class/lib/wasm/nunitlite.dll | managed/
 managed/main.exe: $(TEST_DEPS) $(APP_SOURCES) | managed/
 	mcs /nostdlib /unsafe -out:$@ $(TEST_MCS_DEPS) $(APP_SOURCES)
 
-$(TOP)/mcs/class/lib/wasm/tests/wasm_corlib_test.dll:
+.PHONY: build-corlib-testsuite
+build-corlib-testsuite:
 	cd $(TOP)/mcs/class/corlib && make test-local PROFILE=wasm
 
+$(TOP)/mcs/class/lib/wasm/tests/wasm_corlib_test.dll: build-corlib-testsuite
+
 managed/wasm_corlib_test.dll: $(TOP)/mcs/class/lib/wasm/tests/wasm_corlib_test.dll
+	cp $< $@
+
+.PHONY: build-system-testsuite
+build-system-testsuite:
+	cd $(TOP)/mcs/class/System && make test-local PROFILE=wasm
+
+$(TOP)/mcs/class/lib/wasm/tests/wasm_System_test.dll: build-system-testsuite
+
+managed/wasm_System_test.dll: $(TOP)/mcs/class/lib/wasm/tests/wasm_System_test.dll
+	cp $< $@
+
+.PHONY: build-system-core-testsuite
+build-system-core-testsuite:
+	cd $(TOP)/mcs/class/System.Core && make test-local PROFILE=wasm
+
+$(TOP)/mcs/class/lib/wasm/tests/wasm_System.Core_test.dll: build-system-core-testsuite
+
+managed/wasm_System.Core_test.dll: $(TOP)/mcs/class/lib/wasm/tests/wasm_System.Core_test.dll
 	cp $< $@
 
 managed/mini_tests.dll: $(TEST_DEPS) $(MINI_TEST_SOURCES) mini-test-runner.cs | managed/
 	mcs /nostdlib /unsafe -target:library -out:$@ -define:__MOBILE__,ARCH_32 $(TEST_MCS_DEPS) $(MINI_TEST_SOURCES) mini-test-runner.cs 
 
-build-managed: managed/nunitlite.dll managed/mini_tests.dll managed/wasm_corlib_test.dll managed/main.exe
+build-managed: managed/nunitlite.dll managed/mini_tests.dll managed/main.exe managed/wasm_corlib_test.dll managed/wasm_System_test.dll managed/wasm_System.Core_test.dll
 
 build: build-native build-managed
 
