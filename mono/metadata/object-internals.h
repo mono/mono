@@ -706,7 +706,7 @@ void
 mono_reraise_exception_deprecated (MonoException *ex);
 
 void
-mono_raise_exception_with_context (MonoException *ex, MonoContext *ctx);
+mono_raise_exception_with_context (MonoExceptionHandle ex, MonoContext *ctx);
 
 void
 mono_type_initialization_init (void);
@@ -1709,8 +1709,8 @@ mono_class_compute_gc_descriptor (MonoClass *klass);
 gsize*
 mono_class_compute_bitmap (MonoClass *klass, gsize *bitmap, int size, int offset, int *max_set, gboolean static_fields);
 
-MonoObject*
-mono_object_xdomain_representation (MonoObject *obj, MonoDomain *target_domain, MonoError *error);
+MonoObjectHandle
+mono_object_xdomain_representation (MonoObjectHandle obj, MonoDomain *target_domain, MonoError *error);
 
 gboolean
 mono_class_is_reflection_method_or_constructor (MonoClass *klass);
@@ -1957,5 +1957,8 @@ ves_icall_ModuleBuilder_set_wrappers_type (MonoReflectionModuleBuilderHandle mod
 
 MonoAssembly*
 mono_try_assembly_resolve_handle (MonoDomain *domain, MonoStringHandle fname, MonoAssembly *requesting, gboolean refonly, MonoError *error);
+
+gboolean
+mono_runtime_object_init_handle (MonoObjectHandle this_obj, MonoError *error);
 
 #endif /* __MONO_OBJECT_INTERNALS_H__ */

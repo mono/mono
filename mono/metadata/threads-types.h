@@ -81,11 +81,14 @@ mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, Mo
 
 void mono_threads_install_cleanup (MonoThreadCleanupFunc func);
 
-void ves_icall_System_Threading_Thread_ConstructInternalThread (MonoThread *this_obj);
-gpointer ves_icall_System_Threading_Thread_Thread_internal(MonoThread *this_obj, MonoObject *start);
+void ves_icall_System_Threading_Thread_ConstructInternalThread (MonoThreadObjectHandle thread, MonoError *error);
+MonoBoolean
+ves_icall_System_Threading_Thread_Thread_internal (MonoThreadObjectHandle this_obj, MonoObjectHandle start, MonoError *error);
 void ves_icall_System_Threading_InternalThread_Thread_free_internal(MonoInternalThread *this_obj);
-void ves_icall_System_Threading_Thread_Sleep_internal(gint32 ms);
-gboolean ves_icall_System_Threading_Thread_Join_internal(MonoThread *this_obj, int ms);
+void
+ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error);
+gboolean
+ves_icall_System_Threading_Thread_Join_internal (MonoThreadObjectHandle this_obj, int ms, MonoError *error);
 gint32 ves_icall_System_Threading_Thread_GetDomainID (void);
 gboolean ves_icall_System_Threading_Thread_Yield (void);
 MonoStringHandle ves_icall_System_Threading_Thread_GetName_internal (MonoInternalThreadHandle this_obj, MonoError *error);
@@ -101,8 +104,8 @@ MonoThreadObjectHandle ves_icall_System_Threading_Thread_GetCurrentThread (MonoE
 gint32 ves_icall_System_Threading_WaitHandle_Wait_internal(gpointer *handles, gint32 numhandles, MonoBoolean waitall, gint32 ms, MonoError *error);
 gint32 ves_icall_System_Threading_WaitHandle_SignalAndWait_Internal (gpointer toSignal, gpointer toWait, gint32 ms, MonoError *error);
 
-MonoArray* ves_icall_System_Threading_Thread_ByteArrayToRootDomain (MonoArray *arr);
-MonoArray* ves_icall_System_Threading_Thread_ByteArrayToCurrentDomain (MonoArray *arr);
+MonoArrayHandle ves_icall_System_Threading_Thread_ByteArrayToRootDomain (MonoArrayHandle arr, MonoError *error);
+MonoArrayHandle ves_icall_System_Threading_Thread_ByteArrayToCurrentDomain (MonoArrayHandle arr, MonoError *error);
 
 gint32 ves_icall_System_Threading_Interlocked_Increment_Int(gint32 *location);
 gint64 ves_icall_System_Threading_Interlocked_Increment_Long(gint64 *location);
@@ -136,14 +139,14 @@ gint64 ves_icall_System_Threading_Interlocked_Increment_Long(gint64 *location);
 gint32 ves_icall_System_Threading_Interlocked_Decrement_Int(gint32 *location);
 gint64 ves_icall_System_Threading_Interlocked_Decrement_Long(gint64 * location);
 
-void ves_icall_System_Threading_Thread_Abort (MonoInternalThread *thread, MonoObject *state);
-void ves_icall_System_Threading_Thread_ResetAbort (MonoThread *this_obj);
-MonoObject* ves_icall_System_Threading_Thread_GetAbortExceptionState (MonoThread *thread);
-void ves_icall_System_Threading_Thread_Suspend (MonoThread *this_obj);
-void ves_icall_System_Threading_Thread_Resume (MonoThread *thread);
+void ves_icall_System_Threading_Thread_Abort (MonoInternalThreadHandle thread, MonoObjectHandle state, MonoError *error);
+void ves_icall_System_Threading_Thread_ResetAbort (MonoThreadObjectHandle this_obj, MonoError *error);
+MonoObjectHandle ves_icall_System_Threading_Thread_GetAbortExceptionState (MonoThreadObjectHandle thread, MonoError *error);
+void ves_icall_System_Threading_Thread_Suspend (MonoThreadObjectHandle thread, MonoError *error);
+void ves_icall_System_Threading_Thread_Resume (MonoThreadObjectHandle thread, MonoError *error);
 void ves_icall_System_Threading_Thread_ClrState (MonoInternalThreadHandle thread, guint32 state, MonoError *error);
-void ves_icall_System_Threading_Thread_SetState (MonoInternalThreadHandle thread_handle, guint32 state, MonoError *error);
-guint32 ves_icall_System_Threading_Thread_GetState (MonoInternalThreadHandle thread_handle, MonoError *error);
+void ves_icall_System_Threading_Thread_SetState (MonoInternalThreadHandle thread, guint32 state, MonoError *error);
+guint32 ves_icall_System_Threading_Thread_GetState (MonoInternalThreadHandle thread, MonoError *error);
 
 gint8 ves_icall_System_Threading_Thread_VolatileRead1 (void *ptr);
 gint16 ves_icall_System_Threading_Thread_VolatileRead2 (void *ptr);
@@ -182,13 +185,11 @@ void ves_icall_System_Threading_Volatile_WriteDouble (void *ptr, double);
 void ves_icall_System_Threading_Volatile_Write_T (void *ptr, MonoObject *value);
 
 void ves_icall_System_Threading_Thread_MemoryBarrier (void);
-void ves_icall_System_Threading_Thread_Interrupt_internal (MonoThread *this_obj);
+void ves_icall_System_Threading_Thread_Interrupt_internal (MonoThreadObjectHandle this_obj, MonoError *error);
 void ves_icall_System_Threading_Thread_SpinWait_nop (void);
 
 void
 mono_threads_register_app_context (MonoAppContext* ctx, MonoError *error);
-void
-mono_threads_release_app_context (MonoAppContext* ctx, MonoError *error);
 
 void ves_icall_System_Runtime_Remoting_Contexts_Context_RegisterContext (MonoAppContextHandle ctx, MonoError *error);
 void ves_icall_System_Runtime_Remoting_Contexts_Context_ReleaseContext (MonoAppContextHandle ctx, MonoError *error);
@@ -232,7 +233,6 @@ void mono_thread_push_appdomain_ref (MonoDomain *domain);
 void mono_thread_pop_appdomain_ref (void);
 gboolean mono_thread_has_appdomain_ref (MonoThread *thread, MonoDomain *domain);
 
-MonoException* mono_thread_request_interruption (mono_bool running_managed);
 gboolean mono_thread_interruption_requested (void);
 MonoException* mono_thread_interruption_checkpoint (void);
 MonoException* mono_thread_force_interruption_checkpoint_noraise (void);
@@ -242,7 +242,7 @@ uint32_t mono_alloc_special_static_data (uint32_t static_type, uint32_t size, ui
 void*    mono_get_special_static_data   (uint32_t offset);
 gpointer mono_get_special_static_data_for_thread (MonoInternalThread *thread, guint32 offset);
 
-MonoException* mono_thread_resume_interruption (gboolean exec);
+void mono_thread_resume_interruption (gboolean exec);
 void mono_threads_perform_thread_dump (void);
 
 gboolean

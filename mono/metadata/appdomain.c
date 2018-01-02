@@ -2341,7 +2341,7 @@ void
 ves_icall_System_AppDomain_DoUnhandledException (MonoExceptionHandle exc, MonoError *error)
 {
 	error_init (error);
-	mono_unhandled_exception_checked (MONO_HANDLE_CAST (MonoObject, exc), error);
+	mono_unhandled_exception_checked ((MonoObjectHandle)exc, error);
 	mono_error_assert_ok (error);
 }
 
@@ -2361,8 +2361,7 @@ ves_icall_System_AppDomain_ExecuteAssembly (MonoAppDomainHandle ad,
 
 	method = mono_get_method_checked (image, mono_image_get_entry_point (image), NULL, NULL, error);
 
-	if (!method)
-		g_error ("No entry point method found in %s due to %s", image->name, mono_error_get_message (error));
+	g_assertf (method, "No entry point method found in %s due to %s", image->name, mono_error_get_message (error));
 
 	if (MONO_HANDLE_IS_NULL (args)) {
 		MonoDomain *domain = MONO_HANDLE_GETVAL (ad, data);

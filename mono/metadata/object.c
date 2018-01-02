@@ -54,6 +54,9 @@
 #include <mono/utils/unlocked.h>
 
 static void
+mono_print_unhandled_exception_handle (MonoObjectHandle exc);
+
+static void
 get_default_field_value (MonoDomain* domain, MonoClassField *field, void *value, MonoError *error);
 
 static MonoString*
@@ -110,23 +113,42 @@ mono_runtime_object_init (MonoObject *this_obj)
  * on error and sets \p error.
  */
 gboolean
-mono_runtime_object_init_checked (MonoObject *this_obj, MonoError *error)
+mono_runtime_object_init_handle (MonoObjectHandle this_obj, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
+	HANDLE_FUNCTION_ENTER ()
+
 	MonoMethod *method = NULL;
-	MonoClass *klass = this_obj->vtable->klass;
+	MonoClass *klass = MONO_HANDLE_GETVAL (this_obj, vtable)->klass;
 
 	error_init (error);
 	method = mono_class_get_method_from_name (klass, ".ctor", 0);
 	if (!method)
 		g_error ("Could not lookup zero argument constructor for class %s", mono_type_get_full_name (klass));
 
-	if (method->klass->valuetype)
-		this_obj = (MonoObject *)mono_object_unbox (this_obj);
+	guint gchandle = 0;
+	gpointer raw;
 
-	mono_runtime_invoke_checked (method, this_obj, NULL, error);
-	return is_ok (error);
+	if (method->klass->valuetype)
+		raw = mono_object_handle_pin_unbox (this_obj, &gchandle);
+	else
+		raw = MONO_HANDLE_RAW (this_obj);
+
+	mono_runtime_invoke_checked (method, raw, NULL, error);
+
+	mono_gchandle_free (gchandle);
+
+	HANDLE_FUNCTION_RETURN_VAL (is_ok (error));
+}
+
+gboolean
+mono_runtime_object_init_checked (MonoObject *this_obj_raw, MonoError *error)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
+	HANDLE_FUNCTION_ENTER ()
+	MONO_HANDLE_DCL (MonoObject, this_obj);
+	HANDLE_FUNCTION_RETURN_VAL (mono_runtime_object_init_handle (this_obj, error));
 }
 
 /* The pseudo algorithm for type initialization from the spec
@@ -3029,6 +3051,24 @@ mono_runtime_try_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 	return do_runtime_invoke (method, obj, params, exc, error);
 }
 
+static MonoObjectHandle
+mono_runtime_try_invoke_handle (MonoMethod *method, MonoObjectHandle obj, void **params, MonoObjectHandleOut exc, MonoError* error)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
+
+	HANDLE_FUNCTION_ENTER ()
+
+	if (mono_runtime_get_no_exec ())
+		g_warning ("Invoking method '%s' when running in no-exec mode.\n", mono_method_full_name (method, TRUE));
+
+	MonoObject* exc_raw = NULL;
+	MonoObject* ret_raw = do_runtime_invoke (method, obj ? MONO_HANDLE_RAW (obj) : NULL, params, &exc_raw, error);
+
+	mono_handle_assign_raw (exc, exc_raw);
+
+	HANDLE_FUNCTION_RETURN_REF (MonoObject, MONO_HANDLE_NEW (MonoObject, ret_raw));
+}
+
 /**
  * mono_runtime_invoke_checked:
  * \param method method to invoke
@@ -4363,14 +4403,16 @@ mono_runtime_try_run_main (MonoMethod *method, int argc, char* argv[],
 }
 
 
-static MonoObject*
-serialize_object (MonoObject *obj, gboolean *failure, MonoObject **exc)
+static MonoObjectHandle
+serialize_object (MonoObjectHandle obj, gboolean *failure, MonoObjectHandleOut exc)
 {
+	HANDLE_FUNCTION_ENTER ()
+
 	static MonoMethod *serialize_method;
 
 	ERROR_DECL (error);
-	void *params [1];
-	MonoObject *array;
+	void *params [ ] = { obj ? MONO_HANDLE_RAW (obj) : NULL };
+	MonoObjectHandle array = MONO_HANDLE_NEW (MonoObject, NULL);
 
 	if (!serialize_method) {
 		MonoClass *klass = mono_class_get_remoting_services_class ();
@@ -4379,36 +4421,35 @@ serialize_object (MonoObject *obj, gboolean *failure, MonoObject **exc)
 
 	if (!serialize_method) {
 		*failure = TRUE;
-		return NULL;
+		goto exit;
 	}
 
-	g_assert (!mono_class_is_marshalbyref (mono_object_class (obj)));
+	g_assert (!mono_class_is_marshalbyref (mono_handle_class (obj)));
 
-	params [0] = obj;
-	*exc = NULL;
-
-	array = mono_runtime_try_invoke (serialize_method, NULL, params, exc, error);
-	if (*exc == NULL && !mono_error_ok (error))
-		*exc = (MonoObject*) mono_error_convert_to_exception (error); /* FIXME convert serialize_object to MonoError */
+	MONO_HANDLE_ASSIGN (array, mono_runtime_try_invoke_handle (serialize_method, NULL, params, exc, error));
+	if (MONO_HANDLE_IS_NULL (exc) && !mono_error_ok (error))
+		MONO_HANDLE_ASSIGN (exc, mono_error_convert_to_exception_handle (error)); /* FIXME convert serialize_object to MonoError */
 	else
 		mono_error_cleanup (error);
 
-	if (*exc)
-		*failure = TRUE;
+	*failure |= !MONO_HANDLE_IS_NULL(exc);
 
-	return array;
+exit:
+	HANDLE_FUNCTION_RETURN_REF (MonoObject, array)
 }
 
-static MonoObject*
-deserialize_object (MonoObject *obj, gboolean *failure, MonoObject **exc)
+static MonoObjectHandle
+deserialize_object (MonoObjectHandle obj, gboolean *failure, MonoObjectHandleOut exc)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
+
+	HANDLE_FUNCTION_ENTER ()
 
 	static MonoMethod *deserialize_method;
 
 	ERROR_DECL (error);
-	void *params [1];
-	MonoObject *result;
+	void *params [ ] = { obj ? MONO_HANDLE_RAW (obj) : NULL };
+	MonoObjectHandle result = MONO_HANDLE_NEW (MonoObject, NULL);
 
 	if (!deserialize_method) {
 		MonoClass *klass = mono_class_get_remoting_services_class ();
@@ -4416,22 +4457,21 @@ deserialize_object (MonoObject *obj, gboolean *failure, MonoObject **exc)
 	}
 	if (!deserialize_method) {
 		*failure = TRUE;
-		return NULL;
+		goto exit;
 	}
 
-	params [0] = obj;
-	*exc = NULL;
+	MONO_HANDLE_ASSIGN (exc, NULL);
 
-	result = mono_runtime_try_invoke (deserialize_method, NULL, params, exc, error);
-	if (*exc == NULL && !mono_error_ok (error))
-		*exc = (MonoObject*) mono_error_convert_to_exception (error); /* FIXME convert deserialize_object to MonoError */
+	MONO_HANDLE_ASSIGN (result, mono_runtime_try_invoke_handle (deserialize_method, NULL, params, exc, error));
+	if (MONO_HANDLE_IS_NULL (exc) && !mono_error_ok (error))
+		MONO_HANDLE_ASSIGN (exc, mono_error_convert_to_exception_handle (error)); /* FIXME convert deserialize_object to MonoError */
 	else
 		mono_error_cleanup (error);
 
-	if (*exc)
-		*failure = TRUE;
+	*failure |= !MONO_HANDLE_IS_NULL(exc);
 
-	return result;
+exit:
+	HANDLE_FUNCTION_RETURN_REF (MonoObject, result);
 }
 
 #ifndef DISABLE_REMOTING
@@ -4484,49 +4524,62 @@ make_transparent_proxy (MonoObject *obj, MonoError *error)
  * If the object cannot be represented in \p target_domain, NULL is
  * returned and \p error is set appropriately.
  */
-MonoObject*
-mono_object_xdomain_representation (MonoObject *obj, MonoDomain *target_domain, MonoError *error)
+MonoObjectHandle
+mono_object_xdomain_representation (MonoObjectHandle obj, MonoDomain *target_domain, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
+	HANDLE_FUNCTION_ENTER ()
+
 	error_init (error);
-	MonoObject *deserialized = NULL;
+	MonoObjectHandle deserialized;
 
 #ifndef DISABLE_REMOTING
-	if (mono_class_is_marshalbyref (mono_object_class (obj))) {
-		deserialized = make_transparent_proxy (obj, error);
+	if (mono_class_is_marshalbyref (mono_handle_class (obj))) {
+		deserialized = MONO_HANDLE_NEW (MonoObject, make_transparent_proxy (MONO_HANDLE_RAW (obj), error));
 	} 
 	else
 #endif
 	{
 		gboolean failure = FALSE;
-		MonoDomain *domain = mono_domain_get ();
-		MonoObject *serialized;
-		MonoObject *exc = NULL;
 
-		mono_domain_set_internal_with_options (mono_object_domain (obj), FALSE);
-		serialized = serialize_object (obj, &failure, &exc);
+		// Get current/previous domain.
+		MonoDomain *domain = mono_domain_get ();
+		MonoObjectHandle serialized = MONO_HANDLE_NEW (MonoObject, NULL);
+		MonoObjectHandle exc = MONO_HANDLE_NEW (MonoObject, NULL);
+		deserialized = MONO_HANDLE_NEW (MonoObject, NULL);
+
+		// Set to object's domain.
+		mono_domain_set_internal_with_options (MONO_HANDLE_DOMAIN (obj), FALSE);
+		serialized = serialize_object (obj, &failure, exc);
+
+		// Set to target domain.
 		mono_domain_set_internal_with_options (target_domain, FALSE);
-		if (!failure)
-			deserialized = deserialize_object (serialized, &failure, &exc);
+
+		if (failure)
+			deserialized = MONO_HANDLE_NEW (MonoObject, NULL);
+		else
+			deserialized = deserialize_object (serialized, &failure, exc);
+
+		// If previous domain not target_domain, restore.
 		if (domain != target_domain)
 			mono_domain_set_internal_with_options (domain, FALSE);
+
 		if (failure)
-			mono_error_set_exception_instance (error, (MonoException*)exc);
+			mono_error_set_exception_handle (error, (MonoExceptionHandle)exc);
 	}
 
-	return deserialized;
+	HANDLE_FUNCTION_RETURN_REF (MonoObject, deserialized);
 }
 
 /* Used in call_unhandled_exception_delegate */
 static MonoObject *
-create_unhandled_exception_eventargs (MonoObject *exc, MonoError *error)
+create_unhandled_exception_eventargs (MonoObjectHandle exc, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	error_init (error);
 	MonoClass *klass;
-	gpointer args [2];
 	MonoMethod *method = NULL;
 	MonoBoolean is_terminating = TRUE;
 	MonoObject *obj;
@@ -4534,12 +4587,12 @@ create_unhandled_exception_eventargs (MonoObject *exc, MonoError *error)
 	klass = mono_class_get_unhandled_exception_event_args_class ();
 	mono_class_init (klass);
 
-	/* UnhandledExceptionEventArgs only has 1 public ctor with 2 args */
-	method = mono_class_get_method_from_name_flags (klass, ".ctor", 2, METHOD_ATTRIBUTE_PUBLIC);
-	g_assert (method);
+	// FIXMEcoop?
+	gpointer args [ ] = { exc ? MONO_HANDLE_RAW (exc) : NULL, &is_terminating };
 
-	args [0] = exc;
-	args [1] = &is_terminating;
+	/* UnhandledExceptionEventArgs only has 1 public ctor with 2 args */
+	method = mono_class_get_method_from_name_flags (klass, ".ctor", G_N_ELEMENTS (args), METHOD_ATTRIBUTE_PUBLIC);
+	g_assert (method);
 
 	obj = mono_object_new_checked (mono_domain_get (), klass, error);
 	return_val_if_nok (error, NULL);
@@ -4552,12 +4605,11 @@ create_unhandled_exception_eventargs (MonoObject *exc, MonoError *error)
 
 /* Used in mono_unhandled_exception */
 static void
-call_unhandled_exception_delegate (MonoDomain *domain, MonoObject *delegate, MonoObject *exc) {
-	MONO_REQ_GC_UNSAFE_MODE;
+call_unhandled_exception_delegate (MonoDomain *domain, MonoObjectHandle delegate, MonoObjectHandle exc)
+{
+	MONO_REQ_GC_UNSAFE_MODE; // FIXMEcoop? move this down?
 
 	ERROR_DECL (error);
-	MonoObject *e = NULL;
-	gpointer pa [2];
 	MonoDomain *current_domain = mono_domain_get ();
 
 	if (domain != current_domain)
@@ -4565,28 +4617,28 @@ call_unhandled_exception_delegate (MonoDomain *domain, MonoObject *delegate, Mon
 
 	g_assert (domain == mono_object_domain (domain->domain));
 
-	if (mono_object_domain (exc) != domain) {
-
+	if (exc && !MONO_HANDLE_IS_NULL(exc) && MONO_HANDLE_DOMAIN (exc) != domain) {
 		exc = mono_object_xdomain_representation (exc, domain, error);
 		if (!exc) {
+			ERROR_DECL (inner_error);
 			if (!is_ok (error)) {
-				ERROR_DECL_VALUE (inner_error);
-				MonoException *serialization_exc = mono_error_convert_to_exception (error);
-				exc = mono_object_xdomain_representation ((MonoObject*)serialization_exc, domain, &inner_error);
-				mono_error_assert_ok (&inner_error);
+				MonoExceptionHandle serialization_exc = mono_error_convert_to_exception_handle (error);
+				exc = mono_object_xdomain_representation ((MonoObjectHandle)serialization_exc, domain, inner_error);
 			} else {
-				exc = (MonoObject*) mono_exception_from_name_msg (mono_get_corlib (),
+				exc = (MonoObjectHandle)mono_exception_new_by_name_msg (mono_get_corlib (),
 						"System.Runtime.Serialization", "SerializationException",
-						"Could not serialize unhandled exception.");
+						"Could not serialize unhandled exception.",
+						inner_error);
 			}
+			mono_error_assert_ok (inner_error); // FIXME?
 		}
 	}
-	g_assert (mono_object_domain (exc) == domain);
+	g_assert (exc == NULL || MONO_HANDLE_IS_NULL(exc) || MONO_HANDLE_DOMAIN (exc) == domain);
 
-	pa [0] = domain->domain;
-	pa [1] = create_unhandled_exception_eventargs (exc, error);
+	gpointer args [ ] = { domain->domain, create_unhandled_exception_eventargs (exc, error) };
 	mono_error_assert_ok (error);
-	mono_runtime_delegate_try_invoke (delegate, pa, &e, error);
+	MonoObject *e = NULL; // FIXMEcoop? this line and next
+	mono_runtime_delegate_try_invoke (delegate ? MONO_HANDLE_RAW (delegate) : NULL, args, &e, error);
 	if (!is_ok (error)) {
 		if (e == NULL)
 			e = (MonoObject*)mono_error_convert_to_exception (error);
@@ -4704,14 +4756,14 @@ mono_unhandled_exception_checked (MonoObjectHandle exc, MonoError *error)
 	}
 
 	if (MONO_HANDLE_IS_NULL (current_appdomain_delegate) && MONO_HANDLE_IS_NULL (root_appdomain_delegate)) {
-		mono_print_unhandled_exception (MONO_HANDLE_RAW (exc)); /* FIXME use handles for mono_print_unhandled_exception */
+		mono_print_unhandled_exception_handle (exc);
 	} else {
 		/* unhandled exception callbacks must not be aborted */
 		mono_threads_begin_abort_protected_block ();
 		if (!MONO_HANDLE_IS_NULL (root_appdomain_delegate))
-			call_unhandled_exception_delegate (root_domain, MONO_HANDLE_RAW (root_appdomain_delegate), MONO_HANDLE_RAW (exc)); /* FIXME use handles in call_unhandled_exception_delegate */
+			call_unhandled_exception_delegate (root_domain, root_appdomain_delegate, exc);
 		if (!MONO_HANDLE_IS_NULL (current_appdomain_delegate))
-			call_unhandled_exception_delegate (current_domain, MONO_HANDLE_RAW (current_appdomain_delegate), MONO_HANDLE_RAW (exc));
+			call_unhandled_exception_delegate (current_domain, current_appdomain_delegate, exc);
 		mono_threads_end_abort_protected_block ();
 	}
 
@@ -5364,6 +5416,14 @@ mono_object_new_checked (MonoDomain *domain, MonoClass *klass, MonoError *error)
 
 	MonoObject *o = mono_object_new_specific_checked (vtable, error);
 	return o;
+}
+
+static MonoObjectHandle
+mono_object_new_handle (MonoDomain *domain, MonoClass *klass, MonoError *error)
+{
+	// FIXMEcoop reverse these two functions - or rather, remove the other and inline it here
+	HANDLE_FUNCTION_ENTER ()
+	HANDLE_FUNCTION_RETURN_REF (MonoObject, MONO_HANDLE_NEW (MonoObject, mono_object_new_checked (domain, klass, error)));
 }
 
 /**
@@ -7421,11 +7481,11 @@ mono_reraise_exception_deprecated (MonoException *ex)
  * CTX must point to managed code.
  */
 void
-mono_raise_exception_with_context (MonoException *ex, MonoContext *ctx)
+mono_raise_exception_with_context (MonoExceptionHandle ex, MonoContext *ctx)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	eh_callbacks.mono_raise_exception_with_ctx (ex, ctx);
+	eh_callbacks.mono_raise_exception_with_ctx (MONO_HANDLE_RAW (ex), ctx);
 }
 
 /**
@@ -7616,19 +7676,16 @@ mono_message_init (MonoDomain *domain,
 
 	static MonoMethod *init_message_method = NULL;
 
+	gpointer args [ ] = { method, out_args };
+
 	if (!init_message_method) {
-		init_message_method = mono_class_get_method_from_name (mono_defaults.mono_method_message_class, "InitMessage", 2);
+		init_message_method = mono_class_get_method_from_name (mono_defaults.mono_method_message_class, "InitMessage", G_N_ELEMENTS (args));
 		g_assert (init_message_method != NULL);
 	}
 
 	error_init (error);
 	/* FIXME set domain instead? */
 	g_assert (domain == mono_domain_get ());
-	
-	gpointer args[2];
-
-	args[0] = method;
-	args[1] = out_args;
 
 	mono_runtime_invoke_checked (init_message_method, this_obj, args, error);
 	return is_ok (error);
@@ -7654,7 +7711,8 @@ mono_remoting_invoke (MonoObject *real_proxy, MonoMethodMessage *msg, MonoObject
 
 	MonoObject *o;
 	MonoMethod *im = real_proxy->vtable->domain->private_invoke_method;
-	gpointer pa [4];
+
+	gpointer args [ ] = { real_proxy, msg, exc, out_args };
 
 	g_assert (exc);
 
@@ -7663,7 +7721,7 @@ mono_remoting_invoke (MonoObject *real_proxy, MonoMethodMessage *msg, MonoObject
 	/*static MonoObject *(*invoke) (gpointer, gpointer, MonoObject **, MonoArray **) = NULL;*/
 
 	if (!im) {
-		im = mono_class_get_method_from_name (mono_defaults.real_proxy_class, "PrivateInvoke", 4);
+		im = mono_class_get_method_from_name (mono_defaults.real_proxy_class, "PrivateInvoke", G_N_ELEMENTS (args));
 		if (!im) {
 			mono_error_set_not_supported (error, "Linked away.");
 			return NULL;
@@ -7671,12 +7729,7 @@ mono_remoting_invoke (MonoObject *real_proxy, MonoMethodMessage *msg, MonoObject
 		real_proxy->vtable->domain->private_invoke_method = im;
 	}
 
-	pa [0] = real_proxy;
-	pa [1] = msg;
-	pa [2] = exc;
-	pa [3] = out_args;
-
-	o = mono_runtime_try_invoke (im, NULL, pa, exc, error);
+	o = mono_runtime_try_invoke (im, NULL, args, exc, error);
 	return_val_if_nok (error, NULL);
 
 	return o;
@@ -7919,6 +7972,12 @@ mono_print_unhandled_exception (MonoObject *exc)
 	
 	if (free_message)
 		g_free (message);
+}
+
+static void
+mono_print_unhandled_exception_handle (MonoObjectHandle exc)
+{
+	mono_print_unhandled_exception (MONO_HANDLE_RAW (exc));
 }
 
 /**
@@ -8286,8 +8345,10 @@ mono_load_remote_field_new_checked (MonoObject *this_obj, MonoClass *klass, Mono
 
 	g_assert (mono_object_is_transparent_proxy (this_obj));
 
+	gpointer args [ ] = { &klass, &field };
+
 	if (!tp_load) {
-		tp_load = mono_class_get_method_from_name (mono_defaults.transparent_proxy_class, "LoadRemoteFieldNew", -1);
+		tp_load = mono_class_get_method_from_name (mono_defaults.transparent_proxy_class, "LoadRemoteFieldNew", G_N_ELEMENTS (args));
 		if (!tp_load) {
 			mono_error_set_not_supported (error, "Linked away.");
 			return NULL;
@@ -8295,10 +8356,6 @@ mono_load_remote_field_new_checked (MonoObject *this_obj, MonoClass *klass, Mono
 	}
 	
 	/* MonoType *type = mono_class_get_type (klass); */
-
-	gpointer args[2];
-	args [0] = &klass;
-	args [1] = &field;
 
 	return mono_runtime_invoke_checked (tp_load, this_obj, args, error);
 }
@@ -8395,18 +8452,15 @@ mono_store_remote_field_new_checked (MonoObject *this_obj, MonoClass *klass, Mon
 
 	g_assert (mono_object_is_transparent_proxy (this_obj));
 
+	gpointer args[ ] = { &klass, &field, arg };
+
 	if (!tp_store) {
-		tp_store = mono_class_get_method_from_name (mono_defaults.transparent_proxy_class, "StoreRemoteField", -1);
+		tp_store = mono_class_get_method_from_name (mono_defaults.transparent_proxy_class, "StoreRemoteField", G_N_ELEMENTS (args));
 		if (!tp_store) {
 			mono_error_set_not_supported (error, "Linked away.");
 			return FALSE;
 		}
 	}
-
-	gpointer args[3];
-	args [0] = &klass;
-	args [1] = &field;
-	args [2] = arg;
 
 	mono_runtime_invoke_checked (tp_store, this_obj, args, error);
 	return is_ok (error);

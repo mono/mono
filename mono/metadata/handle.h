@@ -17,6 +17,7 @@
 #include <config.h>
 #include <glib.h>
 
+#include <mono/metadata/object-forward.h>
 #include <mono/metadata/object.h>
 #include <mono/metadata/class.h>
 #include <mono/utils/mono-error-internals.h>
@@ -208,11 +209,13 @@ Icall macros
 	CLEAR_ICALL_FRAME;			\
 	} while (0)
 
+// Return a non-pointer or non-managed pointer, e.g. gboolean.
 #define HANDLE_FUNCTION_RETURN_VAL(VAL)		\
 	CLEAR_ICALL_FRAME;			\
 	return (VAL);				\
 	} while (0)
 
+// Return a raw pointer from coop handle.
 #define HANDLE_FUNCTION_RETURN_OBJ(HANDLE)			\
 	do {							\
 		void* __result = (MONO_HANDLE_RAW (HANDLE));	\
@@ -220,6 +223,7 @@ Icall macros
 		return __result;				\
 	} while (0); } while (0);
 
+// Return a coop handle from coop handle.
 #define HANDLE_FUNCTION_RETURN_REF(TYPE, HANDLE)			\
 	do {								\
 		MonoRawHandle __result;					\
@@ -307,24 +311,8 @@ void mono_handle_verify (MonoRawHandle handle);
 #define HANDLE_OWNER_STRINGIFY(file,lineno) (const char*) (file ":" STRINGIFY(lineno))
 #endif
 
+// Critical content moved to object-forward.h, out of necessity?
 
-/*
- * TYPED_HANDLE_DECL(SomeType):
- *   Expands to a decl for handles to SomeType and to an internal payload struct.
- *
- * For example, TYPED_HANDLE_DECL(MonoObject) (see below) expands to:
- *
- * typedef struct {
- *   MonoObject *__raw;
- * } MonoObjectHandlePayload;
- *
- * typedef MonoObjectHandlePayload* MonoObjectHandle;
- * typedef MonoObjectHandlePayload* MonoObjectHandleOut;
- */
-#define TYPED_HANDLE_DECL(TYPE)						\
-	typedef struct { TYPE *__raw; } TYPED_HANDLE_PAYLOAD_NAME (TYPE) ; \
-	typedef TYPED_HANDLE_PAYLOAD_NAME (TYPE) * TYPED_HANDLE_NAME (TYPE); \
-	typedef TYPED_HANDLE_PAYLOAD_NAME (TYPE) * TYPED_OUT_HANDLE_NAME (TYPE)
 /*
  * TYPED_VALUE_HANDLE_DECL(SomeType):
  *   Expands to a decl for handles to SomeType (which is a managed valuetype (likely a struct) of some sort) and to an internal payload struct.
@@ -438,6 +426,9 @@ This is why we evaluate index and value before any call to MONO_HANDLE_RAW or ot
 #define MONO_HANDLE_ASSIGN(DESTH, SRCH)				\
 	mono_handle_assign (MONO_HANDLE_CAST (MonoObject, (DESTH)), MONO_HANDLE_CAST(MonoObject, (SRCH)))
 
+#define MONO_HANDLE_ASSIGN_RAW(dest_handle, raw)				\
+	(mono_handle_assign_raw (MONO_HANDLE_CAST (MonoObject, (dest_handle)), raw))
+
 #define MONO_HANDLE_DOMAIN(HANDLE) MONO_HANDLE_SUPPRESS (mono_object_domain (MONO_HANDLE_RAW (MONO_HANDLE_CAST (MonoObject, MONO_HANDLE_UNSUPPRESS (HANDLE)))))
 
 /* Given an object and a MonoClassField, return the value (must be non-object)
@@ -465,7 +456,7 @@ This is why we evaluate index and value before any call to MONO_HANDLE_RAW or ot
 TYPED_HANDLE_DECL (MonoString);
 TYPED_HANDLE_DECL (MonoArray);
 TYPED_HANDLE_DECL (MonoObject);
-TYPED_HANDLE_DECL (MonoException);
+//TYPED_HANDLE_DECL (MonoException);
 TYPED_HANDLE_DECL (MonoAppContext);
 
 /* Unfortunately MonoThreadHandle is already a typedef used for something unrelated.  So
@@ -480,12 +471,19 @@ TYPED_HANDLE_DECL (MonoThreadObject);
 This is the constant for a handle that points nowhere.
 Init values to it.
 */
-extern const MonoObjectHandle mono_null_value_handle;
+#define mono_null_value_handle ((MonoObjectHandle)NULL)
+
+static inline void
+mono_handle_assign_raw (MonoObjectHandleOut dest, void *src)
+{
+	if (dest)
+		MONO_HANDLE_SUPPRESS (mono_gc_wbarrier_generic_store (&dest->__raw, src));
+}
 
 static inline void
 mono_handle_assign (MonoObjectHandleOut dest, MonoObjectHandle src)
 {
-	MONO_HANDLE_SUPPRESS (mono_gc_wbarrier_generic_store (&dest->__raw, src ? MONO_HANDLE_RAW(src) : NULL));
+	MONO_HANDLE_SUPPRESS (mono_handle_assign_raw (dest, src ? MONO_HANDLE_RAW(src) : NULL));
 }
 
 /* It is unsafe to call this function directly - it does not pin the handle!  Use MONO_HANDLE_GET_FIELD_VAL(). */
