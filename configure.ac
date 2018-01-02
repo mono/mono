@@ -207,6 +207,7 @@ case "$host" in
 		;;
 	*-*-*openbsd*)
 		CPPFLAGS="$CPPFLAGS -D_THREAD_SAFE -DGC_OPENBSD_THREADS -DHOST_BSD -D_REENTRANT -DUSE_MMAP"
+		LDFLAGS="${LDFLAGS} -Wl,-zwxneeded"
 		if test "x$disable_munmap" != "xyes"; then
 		CPPFLAGS="$CPPFLAGS -DUSE_MUNMAP"
 		fi
