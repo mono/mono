@@ -6159,22 +6159,21 @@ mono_string_new_utf32_checked (MonoDomain *domain, const mono_unichar4 *text, gi
 	MonoString *s;
 	mono_unichar2 *utf16_output = NULL;
 	gint32 utf16_len = 0;
-	GError *gerror = NULL;
-	glong items_written;
 	
 	error_init (error);
-	utf16_output = g_ucs4_to_utf16 (text, len, NULL, &items_written, &gerror);
+	utf16_output = g_ucs4_to_utf16 (text, len, NULL, NULL, NULL);
 	
-	if (gerror)
-		g_error_free (gerror);
-
 	while (utf16_output [utf16_len]) utf16_len++;
 	
 	s = mono_string_new_size_checked (domain, utf16_len, error);
-	return_val_if_nok (error, NULL);
+	if (!is_ok (error)) {
+		s = NULL;
+		goto exit;
+	}
 
 	memcpy (mono_string_chars (s), utf16_output, utf16_len * 2);
 
+exit:
 	g_free (utf16_output);
 	
 	return s;
