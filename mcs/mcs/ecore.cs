@@ -4036,6 +4036,13 @@ namespace Mono.CSharp {
 			return Methods.First ().GetSignatureForError ();
 		}
 
+		static MethodSpec CandidateDevirtualization (TypeSpec type, MethodSpec method)
+		{
+			// Assumes no generics get involved
+			var filter = new MemberFilter (method.Name, method.Arity, MemberKind.Method, method.Parameters, null);
+			return MemberCache.FindMember (type, filter, BindingRestriction.InstanceOnly | BindingRestriction.OverrideOnly | BindingRestriction.DeclaredOnly) as MethodSpec;
+		}
+
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			if (best_candidate == null) {
@@ -4187,9 +4194,18 @@ namespace Mono.CSharp {
 
 						var expr_type = InstanceExpression.Type;
 						if ((expr_type.IsByRefLike || expr_type.IsSpecialRuntimeType) && best_candidate.DeclaringType != expr_type) {
-							// CSC: Should be better error message
-							ec.Report.Error (29, InstanceExpression.Location, "Cannot implicitly convert type `{0}' to `{1}'",
-								InstanceExpression.Type.GetSignatureForError (), best_candidate.DeclaringType.GetSignatureForError ());
+							MethodSpec devirt = null;
+							if ((best_candidate.Modifiers & (Modifiers.VIRTUAL | Modifiers.ABSTRACT | Modifiers.OVERRIDE)) != 0) {
+								devirt = CandidateDevirtualization (expr_type, best_candidate);
+							}
+
+							if (devirt == null) {
+								// CSC: Should be better error message
+								ec.Report.Error (29, InstanceExpression.Location, "Cannot implicitly convert type `{0}' to `{1}'",
+												 InstanceExpression.Type.GetSignatureForError (), best_candidate.DeclaringType.GetSignatureForError ());
+							} else {
+								best_candidate = devirt;
+							}
 						}
 					}
 				}
