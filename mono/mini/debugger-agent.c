@@ -4756,6 +4756,16 @@ set_breakpoint (MonoMethod *method, long il_offset, EventRequest *req, MonoError
 	{
 		if (bp_matches_method(bp, seqPoint->method) && seqPoint->ilOffset == bp->il_offset)
 		{
+            if (req->event_kind == EVENT_KIND_BREAKPOINT && seqPoint->kind == kSequencePointKind_StepOut)
+                continue;
+
+            if (req->event_kind == EVENT_KIND_STEP)
+            {
+                SingleStepReq *ssreq = (SingleStepReq*)req->info;
+                if (ssreq->depth == STEP_DEPTH_OUT && seqPoint->kind != kSequencePointKind_StepOut)
+                    continue;
+            } 
+
 			BreakpointInstance* inst = g_new0(BreakpointInstance, 1);
 			inst->il_offset = bp->il_offset;// it.seq_point.il_offset;
 			inst->native_offset = 0;// it.seq_point.native_offset;
@@ -10282,10 +10292,25 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 				buffer_add_string(buf, "");
 			}
 		}
-		buffer_add_int(buf, sequencePoints->len);
+
+        int numSeqPoints = 0;
+
+        for (i = 0; i < sequencePoints->len; ++i) {
+            Il2CppSequencePoint* sequencePoint = g_ptr_array_index(sequencePoints, i);
+            if (sequencePoint->kind == kSequencePointKind_StepOut)
+                continue;
+            else
+                ++numSeqPoints;
+        }
+
+		buffer_add_int(buf, numSeqPoints);
 		DEBUG_PRINTF(10, "Line number table for method %s:\n", mono_method_full_name(method, TRUE));
 		for (i = 0; i < sequencePoints->len; ++i) {
 			Il2CppSequencePoint* sequencePoint = g_ptr_array_index(sequencePoints, i);
+            
+            if (sequencePoint->kind == kSequencePointKind_StepOut)
+                continue;
+
 			DEBUG_PRINTF(10, "IL%x -> %s:%d %d %d %d\n", sequencePoint->ilOffset, sequencePoint->sourceFile,
 				sequencePoint->lineStart, sequencePoint->columnStart, sequencePoint->lineEnd, sequencePoint->columnEnd);
 			buffer_add_int(buf, sequencePoint->ilOffset);
@@ -12048,10 +12073,10 @@ unity_process_breakpoint_inner(DebuggerTlsData *tls, gboolean from_signal, Il2Cp
 			inst = (BreakpointInstance *)g_ptr_array_index(bp->children, j);
 			if (inst->il_offset == sequencePoint->ilOffset) {
 				if (bp->req->event_kind == EVENT_KIND_STEP) {
-					for (int j = 0; j < bp->children->len; ++j)
+					for (int k = 0; k < bp->children->len; ++k)
 					{
-						BreakpointInstance *inst = (BreakpointInstance *)g_ptr_array_index(bp->children, j);
-						if (inst->seq_point == sequencePoint)
+						BreakpointInstance *inst1 = (BreakpointInstance *)g_ptr_array_index(bp->children, k);
+						if (inst1->seq_point == sequencePoint)
 						{
 							g_ptr_array_add(ss_reqs_orig, bp->req);
 							break;
