@@ -46,6 +46,9 @@ build()
 	mv gtksharp/SourceDir/PFiles/GtkSharp/2.12/* ../gtksharp
 	rm -rf gtksharp
 	popd
+	rm -rf gtksharp/bin/MonoPosixHelper.dll
+	rm -rf gtksharp/lib/Mono.Posix
+	rm -rf gtksharp/lib/Mono.Cairo gtksharp/lib/Mono.Cairo.dll
 	popd
 }
 
