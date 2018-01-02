@@ -288,6 +288,15 @@ dist-recursive: dist-local
 	    (cd $$d && $(MAKE) distdir=$$reldir/$$d $@) || exit 1 ; \
 	done
 
+# function to dist files in groups of 100 entries to make sure we don't exceed shell char limits
+define distfilesingroups
+for f in $(wordlist 1, 100, $(1)) ; do \
+	dest=`dirname "$(distdir)/$$f"` ; \
+	$(MKINSTALLDIRS) $$dest && cp -p "$$f" $$dest || exit 1 ; \
+done
+$(if $(word 101, $(1)), $(call distfilesingroups, $(wordlist 101, $(words $(1)), $(1))))
+endef
+
 # The following target can be used like
 #
 #   dist-local: dist-default
@@ -296,17 +305,11 @@ dist-recursive: dist-local
 # Notes:
 #  1. we invert the test here to not end in an error if ChangeLog doesn't exist.
 #  2. we error out if we try to dist a nonexistant file.
-#  3. we pick up Makefile, makefile, or GNUmakefile.
+#  3. we pick up Makefile
 dist-default:
 	-mkdir -p $(distdir)
 	test '!' -f ChangeLog || cp ChangeLog $(distdir)
-	if test -f Makefile; then m=M; fi; \
-	if test -f makefile; then m=m; fi; \
-	if test -f GNUmakefile; then m=GNUm; fi; \
-	for f in $${m}akefile $(DISTFILES) ; do \
-	    dest=`dirname "$(distdir)/$$f"` ; \
-	    $(MKINSTALLDIRS) $$dest && cp -p "$$f" $$dest || exit 1 ; \
-	done
+	$(call distfilesingroups, Makefile $(DISTFILES))
 	if test -d Documentation ; then \
 		find . -name '*.xml' > .files ; \
 		tar cTf .files - | (cd $(distdir); tar xf -) ; \
