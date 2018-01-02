@@ -237,6 +237,7 @@ MONO_API uint32_t mono_metadata_typedef_from_method (MonoImage *meta, uint32_t t
 MONO_API uint32_t mono_metadata_nested_in_typedef   (MonoImage *meta, uint32_t table_index);
 MONO_API uint32_t mono_metadata_nesting_typedef     (MonoImage *meta, uint32_t table_index, uint32_t start_index);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoClass** mono_metadata_interfaces_from_typedef (MonoImage *meta, uint32_t table_index, unsigned int *count);
 
 MONO_API uint32_t     mono_metadata_events_from_typedef     (MonoImage *meta, uint32_t table_index, unsigned int *end_idx);

@@ -4484,20 +4484,20 @@ mono_metadata_typedef_from_method (MonoImage *meta, guint32 index)
 	return loc.result + 1;
 }
 
-/*
+/**
  * mono_metadata_interfaces_from_typedef_full:
- * @meta: metadata context
- * @index: typedef token
- * @interfaces: Out parameter used to store the interface array
- * @count: Out parameter used to store the number of interfaces
- * @heap_alloc_result: if TRUE the result array will be g_malloc'd
- * @context: The generic context
+ * \param meta metadata context
+ * \param index typedef token
+ * \param interfaces Out parameter used to store the interface array
+ * \param count Out parameter used to store the number of interfaces
+ * \param heap_alloc_result if TRUE the result array will be \c g_malloc'd
+ * \param context The generic context
+ * \param error set on error
  * 
- * The array of interfaces that the @index typedef token implements is returned in
- * @interfaces. The number of elements in the array is returned in @count. 
+ * The array of interfaces that the \p index typedef token implements is returned in
+ * \p interfaces. The number of elements in the array is returned in \p count.
  *
-
- * Returns: TRUE on success, FALSE on failure.
+ * \returns \c TRUE on success, \c FALSE on failure and sets \p error.
  */
 gboolean
 mono_metadata_interfaces_from_typedef_full (MonoImage *meta, guint32 index, MonoClass ***interfaces, guint *count, gboolean heap_alloc_result, MonoGenericContext *context, MonoError *error)
@@ -4587,7 +4587,7 @@ mono_metadata_interfaces_from_typedef (MonoImage *meta, guint32 index, guint *co
 	gboolean rv;
 
 	rv = mono_metadata_interfaces_from_typedef_full (meta, index, &interfaces, count, TRUE, NULL, &error);
-	g_assert (mono_error_ok (&error)); /* FIXME dont swallow the error */
+	mono_error_assert_ok (&error);
 	if (rv)
 		return interfaces;
 	else
