@@ -229,7 +229,6 @@
 #define mono_arch_stop_single_stepping il2cpp_mono_arch_stop_single_stepping
 #define mono_arch_skip_breakpoint il2cpp_mono_arch_skip_breakpoint
 #define mono_arch_skip_single_step il2cpp_mono_arch_skip_single_step
-#define mono_arch_init_lmf_ext il2cpp_mono_arch_init_lmf_ext
 #define mono_arch_context_get_int_reg il2cpp_mono_arch_context_get_int_reg
 #define mono_arch_context_set_int_reg il2cpp_mono_arch_context_set_int_reg
 #define mono_walk_stack_with_ctx il2cpp_mono_walk_stack_with_ctx
@@ -446,7 +445,6 @@ void il2cpp_mono_arch_start_single_stepping();
 void il2cpp_mono_arch_stop_single_stepping();
 void il2cpp_mono_arch_skip_breakpoint(MonoContext* ctx, MonoJitInfo* ji);
 void il2cpp_mono_arch_skip_single_step(MonoContext* ctx);
-void il2cpp_mono_arch_init_lmf_ext(MonoLMFExt* ext, gpointer prev_lmf);
 mgreg_t il2cpp_mono_arch_context_get_int_reg(MonoContext* ctx, int reg);
 void il2cpp_mono_arch_context_set_int_reg(MonoContext* ctx, int reg, mgreg_t val);
 void il2cpp_mono_walk_stack_with_ctx(Il2CppMonoJitStackWalk func, MonoContext* start_ctx, MonoUnwindOptions unwind_options, void* user_data);

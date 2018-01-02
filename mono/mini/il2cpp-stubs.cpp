@@ -91,7 +91,7 @@ Il2CppMonoMethodSignature* il2cpp_mono_method_signature (MonoMethod *m)
 	MethodInfo* method = (MethodInfo*)m;
 
 	if (method_signatures == NULL)
-		method_signatures = mono_g_hash_table_new_type(NULL, NULL, MONO_HASH_KEY_GC, MONO_ROOT_SOURCE_DEBUGGER, "method-to-signature for il2cpp table");
+		method_signatures = mono_g_hash_table_new_type(NULL, NULL, MONO_HASH_KEY_GC, MONO_ROOT_SOURCE_DEBUGGER, NULL, "method-to-signature for il2cpp table");
 
 	Il2CppMonoMethodSignature* existing_signature = (Il2CppMonoMethodSignature*)mono_g_hash_table_lookup(method_signatures, method);
 	if (existing_signature != NULL)
@@ -1115,11 +1115,6 @@ void il2cpp_mono_arch_skip_breakpoint(MonoContext* ctx, MonoJitInfo* ji)
 }
 
 void il2cpp_mono_arch_skip_single_step(MonoContext* ctx)
-{
-	IL2CPP_ASSERT(0 && "This method is not yet implemented");
-}
-
-void il2cpp_mono_arch_init_lmf_ext(MonoLMFExt* ext, gpointer prev_lmf)
 {
 	IL2CPP_ASSERT(0 && "This method is not yet implemented");
 }
