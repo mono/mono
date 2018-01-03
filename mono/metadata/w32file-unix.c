@@ -3494,7 +3494,7 @@ mono_w32file_get_attributes_ex (const gunichar2 *name, MonoIOStat *stat)
 	stat->length = (stat->attributes & FILE_ATTRIBUTE_DIRECTORY) ? 0 : buf.st_size;
 
 // Multiply seconds by this
-#define SECMULT (1000*1000*10)
+#define SECMULT (1000*1000*10ULL)
 
 // Constants to convert Unix times to the API expected by .NET and Windows
 #define CONVERT_BASE  116444736000000000ULL
