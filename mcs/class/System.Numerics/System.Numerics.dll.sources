@@ -6,6 +6,14 @@ corefx/Vector.cs
 
 ../../../external/corefx/src/Common/src/System/Globalization/FormatProvider.Number.cs
 ../../../external/corefx/src/Common/src/System/Numerics/Hashing/HashHelpers.cs
+../../../external/corefx/src/Common/src/System/Text/ValueStringBuilder.cs
+
+# ValueStringBuilder.cs dependency
+../../../external/corefx/src/System.Buffers/src/System/Buffers/ArrayPool.cs
+../../../external/corefx/src/System.Buffers/src/System/Buffers/ArrayPoolEventSource.cs
+../../../external/corefx/src/System.Buffers/src/System/Buffers/DefaultArrayPool.cs
+../../../external/corefx/src/System.Buffers/src/System/Buffers/DefaultArrayPoolBucket.cs
+../../../external/corefx/src/System.Buffers/src/System/Buffers/Utilities.cs
 
 ../../../external/corefx/src/System.Runtime.Numerics/src/System/Globalization/FormatProvider.BigInteger.cs
 ../../../external/corefx/src/System.Runtime.Numerics/src/System/Globalization/FormatProvider.NumberBuffer.cs

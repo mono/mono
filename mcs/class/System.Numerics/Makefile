@@ -13,7 +13,8 @@ LIBRARY_WARN_AS_ERROR = yes
 
 RESX_RESOURCE_STRING = \
 	../../../external/corefx/src/System.Runtime.Numerics/src/Resources/Strings.resx \
-	../../../external/corefx/src/System.Numerics.Vectors/src/Resources/Strings.resx
+	../../../external/corefx/src/System.Numerics.Vectors/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Buffers/src/Resources/Strings.resx
 
 EXTRA_DISTFILES =
 

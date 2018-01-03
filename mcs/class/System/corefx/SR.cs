@@ -45,6 +45,7 @@ partial class SR
 	public const string PartitionerStatic_CanNotCallGetEnumeratorAfterSourceHasBeenDisposed = "Can not call GetEnumerator on partitions after the source enumerable is disposed";
 	public const string PartitionerStatic_CurrentCalledBeforeMoveNext = "MoveNext must be called at least once before calling Current.";
 	public const string ConcurrentBag_Enumerator_EnumerationNotStartedOrAlreadyFinished = "Enumeration has either not started or has already finished.";
+	public const string Arg_KeyNotFoundWithKey = "The given key '{0}' was not present in the dictionary.";
 	public const string Arg_NonZeroLowerBound = "The lower bound of target array must be zero.";
 	public const string Arg_WrongType = "The value '{0}' is not of type '{1}' and cannot be used in this generic collection.";
 	public const string Arg_ArrayPlusOffTooSmall = "Destination array is not long enough to copy all the items in the collection. Check array index and length.";
@@ -80,8 +81,6 @@ partial class SR
 	public const string Serialization_MissingKeys = "The keys for this dictionary are missing.";
 	public const string Serialization_MissingValues = "The values for this dictionary are missing.";
 	public const string ArgumentException_BufferNotFromPool = "The buffer is not associated with this pool and may not be returned to it.";
-	public const string ArgumentOutOfRange_IndexCountBuffer = "Index and count must refer to a location within the buffer.";
-	public const string Argument_InvalidCharSequenceNoIndex = "String contains invalid Unicode code points.";
 	public const string net_uri_BadAuthority = "Invalid URI: The Authority/Host could not be parsed.";
 	public const string net_uri_BadAuthorityTerminator = "Invalid URI: The Authority/Host cannot end with a backslash character ('\\\\').";
 	public const string net_uri_BadFormat = "Invalid URI: The format of the URI could not be determined.";
@@ -125,7 +124,6 @@ partial class SR
 	public const string ArgumentOutOfRange_Timeout = "The timeout must be greater than or equal to -1.";
 	public const string ArgumentOutOfRange_WriteTimeout = "The timeout must be either a positive number or -1.";
 	public const string IndexOutOfRange_IORaceCondition = "Probable I/O race condition detected while copying memory.  The I/O package is not thread safe by default.  In multithreaded applications, a stream must be accessed in a thread-safe way, such as a thread-safe wrapper returned by TextReader's or TextWriter's Synchronized methods.  This also applies to classes like StreamWriter and StreamReader.";
-	public const string IO_BindHandleFailed = "BindHandle for ThreadPool failed on this handle.";
 	public const string IO_OperationAborted = "The I/O operation has been aborted because of either a thread exit or an application request.";
 	public const string NotSupported_UnseekableStream = "Stream does not support seeking.";
 	public const string ObjectDisposed_StreamClosed = "Can not access a closed Stream.";
@@ -140,6 +138,9 @@ partial class SR
 	public const string IO_SharingViolation_NoFileName = "The process cannot access the port because it is being used by another process.";
 	public const string IO_SharingViolation_File = "The process cannot access the port '{0}' because it is being used by another process.";
 	public const string UnauthorizedAccess_IODenied_Path = "Access to the port '{0}' is denied.";
+	public const string PlatformNotSupported_IOPorts = "System.IO.Ports is currently only supported on Windows.";
+	public const string PlatformNotSupported_SerialPort_GetPortNames = "Enumeration of serial port names is not supported on the current platform.";
+	public const string IO_PathTooLong_Path = "The specified port name '{0}' is too long.  The port name must be less than 260 characters.";
 	public const string net_log_listener_delegate_exception = "Sending 500 response, AuthenticationSchemeSelectorDelegate threw an exception: {0}.";
 	public const string net_log_listener_unsupported_authentication_scheme = "Received a request with an unsupported authentication scheme, Authorization:{0} SupportedSchemes:{1}.";
 	public const string net_log_listener_unmatched_authentication_scheme = "Received a request with an unmatched or no authentication scheme. AuthenticationSchemes:{0}, Authorization:{1}.";
@@ -149,6 +150,7 @@ partial class SR
 	public const string net_listener_detach_error = "Can't detach Url group from request queue. Status code: {0}.";
 	public const string net_listener_scheme = "Only Uri prefixes starting with 'http://' or 'https://' are supported.";
 	public const string net_listener_host = "Only Uri prefixes with a valid hostname are supported.";
+	public const string net_listener_not_supported = "The request is not supported.";
 	public const string net_listener_mustcall = "Please call the {0} method before calling this method.";
 	public const string net_listener_slash = "Only Uri prefixes ending in '/' are allowed.";
 	public const string net_listener_already = "Failed to listen on prefix '{0}' because it conflicts with an existing registration on the machine.";
@@ -224,11 +226,8 @@ partial class SR
 	public const string net_invalid_enum = "The specified value is not valid in the '{0}' enumeration.";
 	public const string net_auth_message_not_encrypted = "Protocol error: A received message contains a valid signature but it was not encrypted as required by the effective Protection Level.";
 	public const string SSPIInvalidHandleType = "'{0}' is not a supported handle type.";
-	public const string net_cannot_change_after_headers = "Cannot be changed after headers are sent.";
-	public const string offset_out_of_range = "Offset exceeds the length of buffer.";
 	public const string net_io_operation_aborted = "I/O operation aborted: '{0}'.";
 	public const string net_invalid_path = "Invalid path.";
-	public const string net_no_client_certificate = "Client certificate not found.";
 	public const string net_listener_auth_errors = "Authentication errors.";
 	public const string net_listener_close = "Listener closed.";
 	public const string net_invalid_port = "Invalid port in prefix.";
