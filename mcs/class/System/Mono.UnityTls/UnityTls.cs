@@ -68,36 +68,10 @@ namespace Mono.Unity
         [DllImport (DLLNAME, CallingConvention=CALLCONV)]
         extern public static void                          unitytls_errorstate_raise_error(unitytls_errorstate* errorState, unitytls_error_code errorCode);
 
-
-        public struct unitytls_pubkey {}
-        [StructLayout (LayoutKind.Sequential)]
-        public struct unitytls_pubkey_ref { UInt64 handle; }
-
-        // ------------------------------------
-        // public Key
-        // ------------------------------------
-        [DllImport (DLLNAME, CallingConvention=CALLCONV)]
-        extern public static unitytls_pubkey_ref            unitytls_pubkey_get_ref(unitytls_pubkey* key, unitytls_errorstate* errorState);
-        [DllImport (DLLNAME, CallingConvention=CALLCONV)]
-        extern public static unitytls_pubkey*               unitytls_pubkey_parse_der(UInt8* buffer, size_t bufferLen, unitytls_errorstate* errorState);
-        [DllImport (DLLNAME, CallingConvention=CALLCONV)]
-        extern public static unitytls_pubkey*               unitytls_pubkey_parse_pem(Int8* buffer, size_t bufferLen, unitytls_errorstate* errorState);
-        [DllImport (DLLNAME, CallingConvention=CALLCONV)]
-        extern public static size_t                         unitytls_pubkey_export_der(unitytls_pubkey_ref key, UInt8* buffer, size_t bufferLen, unitytls_errorstate* errorState);
-        [DllImport (DLLNAME, CallingConvention=CALLCONV)]
-        extern public static size_t                         unitytls_pubkey_export_pem(unitytls_pubkey_ref key, Int8* buffer, size_t bufferLen, unitytls_errorstate* errorState);
-        [DllImport (DLLNAME, CallingConvention=CALLCONV)]
-        extern public static void                           unitytls_pubkey_free(unitytls_pubkey* key);
-
+        
         // ------------------------------------
         // Private Key
         // ------------------------------------
-        public enum unitytls_key_type : UInt32
-        {
-            UNITYTLS_KEY_TYPE_INVALID,
-            UNITYTLS_KEY_TYPE_RSA,
-            // UNITYTLS_KEY_TYPE_EC, // Not supported yet.
-        }
 
         public struct unitytls_key {}
         [StructLayout (LayoutKind.Sequential)]
@@ -107,16 +81,6 @@ namespace Mono.Unity
         extern public static unitytls_key_ref               unitytls_key_get_ref(unitytls_key* key, unitytls_errorstate* errorState);
         [DllImport (DLLNAME, CallingConvention=CALLCONV)]
         extern public static unitytls_key*                  unitytls_key_parse_der(UInt8* buffer, size_t bufferLen, UInt8* password, size_t passwordLen, unitytls_errorstate* errorState);
-        [DllImport (DLLNAME, CallingConvention=CALLCONV)]
-        extern public static unitytls_key*                  unitytls_key_parse_pem(Int8* buffer, size_t bufferLen, UInt8* password, size_t passwordLen, unitytls_errorstate* errorState);
-        [DllImport (DLLNAME, CallingConvention=CALLCONV)]
-        extern public static size_t                         unitytls_key_export_der(unitytls_key_ref key, UInt8* buffer, size_t bufferLen, unitytls_errorstate* errorState);
-        [DllImport (DLLNAME, CallingConvention=CALLCONV)]
-        extern public static size_t                         unitytls_key_export_pem(unitytls_key_ref key, Int8* buffer, size_t bufferLen, unitytls_errorstate* errorState);
-        [DllImport (DLLNAME, CallingConvention=CALLCONV)]
-        extern public static unitytls_pubkey_ref            unitytls_key_get_pubkey(unitytls_key_ref key, unitytls_errorstate* errorState);
-        [DllImport (DLLNAME, CallingConvention=CALLCONV)]
-        extern public static unitytls_key_type              unitytls_key_get_type(unitytls_key_ref key, unitytls_errorstate* errorState);
         [DllImport (DLLNAME, CallingConvention=CALLCONV)]
         extern public static void                           unitytls_key_free(unitytls_key* key);
 
@@ -128,19 +92,7 @@ namespace Mono.Unity
         public struct unitytls_x509_ref { UInt64 handle; }
 
         [DllImport (DLLNAME, CallingConvention=CALLCONV)]
-        extern public static unitytls_x509_ref              unitytls_x509_get_ref(unitytls_x509* cert, unitytls_errorstate* errorState);
-        [DllImport (DLLNAME, CallingConvention=CALLCONV)]
-        extern public static unitytls_x509*                 unitytls_x509_parse_der(UInt8* buffer, size_t bufferLen, unitytls_errorstate* errorState);
-        [DllImport (DLLNAME, CallingConvention=CALLCONV)]
-        extern public static unitytls_x509*                 unitytls_x509_parse_pem(Int8* buffer, size_t bufferLen, unitytls_errorstate* errorState);
-        [DllImport (DLLNAME, CallingConvention=CALLCONV)]
         extern public static size_t                         unitytls_x509_export_der(unitytls_x509_ref cert, UInt8* buffer, size_t bufferLen, unitytls_errorstate* errorState);
-        [DllImport (DLLNAME, CallingConvention=CALLCONV)]
-        extern public static size_t                         unitytls_x509_export_pem(unitytls_x509_ref cert, Int8* buffer, size_t bufferLen, unitytls_errorstate* errorState);
-        [DllImport (DLLNAME, CallingConvention=CALLCONV)]
-        extern public static unitytls_pubkey_ref            unitytls_x509_get_pubkey(unitytls_x509_ref cert, unitytls_errorstate* errorState);
-        [DllImport (DLLNAME, CallingConvention=CALLCONV)]
-        extern public static void                           unitytls_x509_free(unitytls_x509* cert);
 
         // ------------------------------------
         // X.509 Certificate List
@@ -152,10 +104,6 @@ namespace Mono.Unity
         [DllImport (DLLNAME, CallingConvention=CALLCONV)]
         extern public static unitytls_x509list_ref          unitytls_x509list_get_ref(unitytls_x509list* list, unitytls_errorstate* errorState);
         [DllImport (DLLNAME, CallingConvention=CALLCONV)]
-        extern public static unitytls_x509list*             unitytls_x509list_parse_pem(Int8* buffer, size_t bufferLen, unitytls_errorstate* errorState);
-        [DllImport (DLLNAME, CallingConvention=CALLCONV)]
-        extern public static size_t                         unitytls_x509list_export_pem(unitytls_x509list_ref list, Int8* buffer, size_t bufferLen, unitytls_errorstate* errorState);
-        [DllImport (DLLNAME, CallingConvention=CALLCONV)]
         extern public static size_t                         unitytls_x509list_get_size(unitytls_x509list_ref list, unitytls_errorstate* errorState);
         [DllImport (DLLNAME, CallingConvention=CALLCONV)]
         extern public static unitytls_x509_ref              unitytls_x509list_get_x509(unitytls_x509list_ref list, size_t index, unitytls_errorstate* errorState);
@@ -165,8 +113,6 @@ namespace Mono.Unity
         extern public static void                           unitytls_x509list_append(unitytls_x509list* list, unitytls_x509_ref cert, unitytls_errorstate* errorState);
         [DllImport (DLLNAME, CallingConvention=CALLCONV)]
         extern public static void                           unitytls_x509list_append_der(unitytls_x509list* list, UInt8* buffer, size_t bufferLen, unitytls_errorstate* errorState);
-        [DllImport (DLLNAME, CallingConvention=CALLCONV)]
-        extern public static size_t                         unitytls_x509list_append_pem(unitytls_x509list* list, Int8* buffer, size_t bufferLen, unitytls_errorstate* errorState);
         [DllImport (DLLNAME, CallingConvention=CALLCONV)]
         extern public static void                           unitytls_x509list_free(unitytls_x509list* list);
 
@@ -232,23 +178,10 @@ namespace Mono.Unity
             public unitytls_protocol min;
             public unitytls_protocol max;
         };
-        // TODO
-        //[DllImport (DLLNAME, CallingConvention=CALLCONV)]
-        //extern public static unitytls_tlsctx_protocolrange UNITYTLS_TLSCTX_PROTOCOLRANGE_DEFAULT;
-
-        public enum unitytls_tlsctx_handshakestate : UInt32
-        {
-            UNITYTLS_HANDSHAKESTATE_BEGIN,                   // Called right before a handshake is performed.
-            UNITYTLS_HANDSHAKESTATE_DONE,                    // Called after a handshake was successfully performed.
-
-            UNITYTLS_HANDSHAKESTATE_PEER_X509_CERT_VERIFY,   // Server certificate needs to be verified. Set error state if verification failed.
-            UNITYTLS_HANDSHAKESTATE_PEER_X509_CERT_REQUEST,  // A certificate is requested.
-        }
 
         public delegate size_t unitytls_tlsctx_write_callback(void* userData, UInt8* data, size_t bufferLen, unitytls_errorstate* errorState);
         public delegate size_t unitytls_tlsctx_read_callback(void* userData, UInt8* buffer, size_t bufferLen, unitytls_errorstate* errorState);
         public delegate void   unitytls_tlsctx_trace_callback(void* userData, unitytls_tlsctx* ctx, Int8* traceMessage, size_t traceMessageLen);
-        public delegate void   unitytls_tlsctx_handshake_callback(void* userData, unitytls_tlsctx* ctx, unitytls_tlsctx_handshakestate currentState, unitytls_errorstate* errorState);
         public delegate unitytls_x509verify_result unitytls_tlsctx_x509verify_callback(void* userData, unitytls_x509list_ref chain, unitytls_errorstate* errorState);
 
         [StructLayout (LayoutKind.Sequential)]
@@ -269,18 +202,12 @@ namespace Mono.Unity
         [DllImport (DLLNAME, CallingConvention=CALLCONV)]
         extern public static void                           unitytls_tlsctx_set_x509verify_callback(unitytls_tlsctx* ctx, unitytls_tlsctx_x509verify_callback cb, void* userData, unitytls_errorstate* errorState);
         [DllImport (DLLNAME, CallingConvention=CALLCONV)]
-        extern public static void                           unitytls_tlsctx_set_handshake_callback(unitytls_tlsctx* ctx, unitytls_tlsctx_handshake_callback cb, void* userData, unitytls_errorstate* errorState);
-        [DllImport (DLLNAME, CallingConvention=CALLCONV)]
         extern public static void                           unitytls_tlsctx_set_supported_ciphersuites(unitytls_tlsctx* ctx, unitytls_ciphersuite* supportedCiphersuites, size_t supportedCiphersuitesLen, unitytls_errorstate* errorState);
 
         [DllImport (DLLNAME, CallingConvention=CALLCONV)]
         extern public static unitytls_ciphersuite           unitytls_tlsctx_get_ciphersuite(unitytls_tlsctx* ctx, unitytls_errorstate* errorState);
         [DllImport (DLLNAME, CallingConvention=CALLCONV)]
         extern public static unitytls_protocol              unitytls_tlsctx_get_protocol(unitytls_tlsctx* ctx, unitytls_errorstate* errorState);
-        [DllImport (DLLNAME, CallingConvention=CALLCONV)]
-        extern public static unitytls_x509list_ref          unitytls_tlsctx_get_peer_x509list(unitytls_tlsctx* ctx, unitytls_errorstate* errorState);
-        [DllImport (DLLNAME, CallingConvention=CALLCONV)]
-        extern public static unitytls_x509verify_result     unitytls_tlsctx_get_verify_result(unitytls_tlsctx* ctx, unitytls_errorstate* errorState);
 
         [DllImport (DLLNAME, CallingConvention=CALLCONV)]
         extern public static unitytls_x509verify_result     unitytls_tlsctx_process_handshake(unitytls_tlsctx* ctx, unitytls_errorstate* errorState);
@@ -290,14 +217,5 @@ namespace Mono.Unity
         extern public static size_t                         unitytls_tlsctx_write(unitytls_tlsctx* ctx, UInt8* data, size_t bufferLen, unitytls_errorstate* errorState);
         [DllImport (DLLNAME, CallingConvention=CALLCONV)]
         extern public static void                           unitytls_tlsctx_free(unitytls_tlsctx* ctx);
-
-
-        // ------------------------------------
-        // Encoding / Decoding
-        // ------------------------------------
-        [DllImport (DLLNAME, CallingConvention=CALLCONV)]
-        extern public static size_t                         unitytls_base64_encode(Int8* outputBuffer, size_t outputBufferLen, UInt8* inputBuffer, size_t inputBufferLen, size_t lineMaxLength, unitytls_errorstate* errorState);
-        [DllImport (DLLNAME, CallingConvention=CALLCONV)]
-        extern public static size_t                         unitytls_base64_decode(UInt8* outputBuffer, size_t outputBufferLen, Int8* inputBuffer, size_t inputBufferLen, unitytls_errorstate* errorState);
     }
 }
