@@ -23,7 +23,10 @@ namespace System.Runtime.CompilerServices {
     [Serializable]
     public sealed class RuntimeWrappedException : Exception
     {
-        private RuntimeWrappedException(Object thrownObject)
+#if MONO
+        public
+#endif
+        RuntimeWrappedException(Object thrownObject)
             : base(Environment.GetResourceString("RuntimeWrappedException")) {
             SetErrorCode(System.__HResults.COR_E_RUNTIMEWRAPPED);
             m_wrappedException = thrownObject;

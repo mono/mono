@@ -24,7 +24,8 @@ System.Data.SqlClient/SQLDebugging.cs
 corefx/Odbc/OdbcFactory.cs
 corefx/Odbc/DbConnectionStringCommon.cs
 ../referencesource/System.Data/System/Data/Odbc/OdbcPermission.cs
-../../../external/corefx/src/System.Data.Odbc/src/Properties/SecurityTransparent.cs
+
+../../../external/corefx/src/Common/src/Interop/Interop.Odbc.cs
 ../../../external/corefx/src/System.Data.Odbc/src/System/Data/Odbc/DbDataRecord.cs
 ../../../external/corefx/src/System.Data.Odbc/src/System/Data/Odbc/Odbc32.cs
 ../../../external/corefx/src/System.Data.Odbc/src/System/Data/Odbc/OdbcCommand.cs
@@ -61,7 +62,6 @@ corefx/Odbc/DbConnectionStringCommon.cs
 ../../../external/corefx/src/System.Data.Odbc/src/System/Data/Odbc/OdbcType.cs
 ../../../external/corefx/src/System.Data.Odbc/src/System/Data/Odbc/OdbcUtils.cs
 ../../../external/corefx/src/System.Data.Odbc/src/Common/System/HResults.cs
-../../../external/corefx/src/System.Data.Odbc/src/Common/System/Data/Common/UnsafeNativeMethods.cs
 
 # OLEDB
 corefx/OleDbStubs.cs

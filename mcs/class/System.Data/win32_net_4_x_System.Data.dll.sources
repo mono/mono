@@ -46,5 +46,7 @@
 ../../../external/corefx/src/Common/src/System/Net/SecurityStatusAdapterPal.Windows.cs
 ../../../external/corefx/src/Common/src/System/Collections/Generic/BidirectionalDictionary.cs
 
+../../../external/corefx/src/Common/src/Interop/Windows/SChannel/Interop.SecPkgContext_ApplicationProtocol.cs
+
 # ODBC:
-../../../external/corefx/src/System.Data.Odbc/src/Common/System/Data/Common/ExternDll.Windows.cs
+../../../external/corefx/src/Common/src/Interop/Windows/Interop.Libraries.cs
