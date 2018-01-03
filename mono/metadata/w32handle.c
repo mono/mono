@@ -68,7 +68,7 @@ mono_w32handle_set_signal_state (MonoW32Handle *handle_data, gboolean state, gbo
 {
 #ifdef DEBUG
 	g_message ("%s: setting state of %p to %s (broadcast %s)", __func__,
-		   handle, state?"TRUE":"FALSE", broadcast?"TRUE":"FALSE");
+		   handle_data, state?"TRUE":"FALSE", broadcast?"TRUE":"FALSE");
 #endif
 
 	if (state) {
