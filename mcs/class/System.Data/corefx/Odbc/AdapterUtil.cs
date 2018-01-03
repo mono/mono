@@ -82,11 +82,6 @@ namespace System.Data.Common
 			return InvalidOperation(SR.GetString(SR.ADP_OffsetOutOfRangeException));
 		}
 
-		internal static ArgumentException InvalidDataType(TypeCode typecode)
-		{
-			return Argument(SR.GetString(SR.ADP_InvalidDataType, typecode.ToString()));
-		}
-
 		static internal InvalidOperationException QuotePrefixNotSet(string method) 
 		{
 			return InvalidOperation(Res.GetString(Res.ADP_QuotePrefixNotSet, method));
@@ -102,11 +97,6 @@ namespace System.Data.Common
 		internal static InvalidOperationException InvalidDataDirectory()
 		{
 			return ADP.InvalidOperation(SR.GetString(SR.ADP_InvalidDataDirectory));
-		}
-
-		internal static ArgumentException UnknownDataTypeCode(Type dataType, TypeCode typeCode)
-		{
-			return Argument(SR.GetString(SR.ADP_UnknownDataTypeCode, ((int)typeCode).ToString(CultureInfo.InvariantCulture), dataType.FullName));
 		}
 
 		internal static void EscapeSpecialCharacters(string unescapedString, StringBuilder escapedString)
@@ -135,29 +125,6 @@ namespace System.Data.Common
 			}
 			Debug.Assert(8 == ADP.PtrSize, "8 != IntPtr.Size"); // MDAC 73747
 			return (IntPtr)checked(pbase.ToInt64() + offset);
-		}
-
-		static internal ArgumentOutOfRangeException NotSupportedUserDefinedTypeSerializationFormat(Microsoft.SqlServer.Server.Format value, string method) {
-			return ADP.NotSupportedEnumerationValue(typeof(Microsoft.SqlServer.Server.Format), value.ToString(), method);
-		}
-
-		static internal ArgumentOutOfRangeException InvalidUserDefinedTypeSerializationFormat(Microsoft.SqlServer.Server.Format value) {
-#if DEBUG
-			switch(value) {
-			case Microsoft.SqlServer.Server.Format.Unknown:
-			case Microsoft.SqlServer.Server.Format.Native:
-			case Microsoft.SqlServer.Server.Format.UserDefined:
-				Debug.Assert(false, "valid UserDefinedTypeSerializationFormat " + value.ToString());
-				break;
-			}
-#endif
-			return InvalidEnumerationValue(typeof(Microsoft.SqlServer.Server.Format), (int) value);
-		}
-
-		static internal ArgumentOutOfRangeException ArgumentOutOfRange(string message, string parameterName, object value) {
-			ArgumentOutOfRangeException e = new ArgumentOutOfRangeException(parameterName, value, message);
-			TraceExceptionAsReturnValue(e);
-			return e;
 		}
 
 		static internal Exception InvalidXMLBadVersion() {

@@ -472,7 +472,18 @@ namespace System {
             // If we ever run on big endian machines, produce two versions where endianness is specified.
             Contract.Assert(IsLittleEndian, "This method is implemented assuming little endian with an ambiguous spec.");
             return *((double*)&value);
-        }                    
+        }
+
+#if MONO
+        // Converts a Span into an int
+        public static int ToInt32(ReadOnlySpan<byte> value)
+        {
+            if (value.Length < sizeof(int))
+                ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument.value);
+            return Unsafe.ReadUnaligned<int>(ref value.DangerousGetPinnableReference());
+        }
+#endif
+
     }
 
 

@@ -475,6 +475,7 @@ namespace System {
         pointer,
         ownedMemory,
         text,
+        length,
 #endif
     }
 

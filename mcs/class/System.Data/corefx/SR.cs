@@ -475,7 +475,7 @@ partial class SR
 	public const string Arg_RankMultiDimNotSupported = "Only single dimensional arrays are supported for the requested action.";
 	public const string Arg_RemoveArgNotFound = "Cannot remove the specified item because it was not found in the specified Collection.";
 	public const string ArgumentOutOfRange_NeedNonNegNum = "Non-negative number required.";
-	public const string ADP_DeriveParametersNotSupported = "{0} DeriveParameters only supports CommandType.StoredProcedure, not CommandType.{1}.";
+	public const string ADP_DeriveParametersNotSupported = "{0} DeriveParameters only supports CommandType.StoredProcedure, not CommandType. {1}.";
 	public const string ADP_NoStoredProcedureExists = "The stored procedure '{0}' doesn't exist.";
 	public const string ADP_MissingConnectionOptionValue = "Use of key '{0}' requires the key '{1}' to be present.";
 	public const string ADP_InvalidConnectionOptionValueLength = "The value's length for key '{0}' exceeds it's limit of '{1}'.";
@@ -505,6 +505,7 @@ partial class SR
 	public const string ADP_NonSequentialColumnAccess = "Invalid attempt to read from column ordinal '{0}'.  With CommandBehavior.SequentialAccess, you may only read from column ordinal '{1}' or greater.";
 	public const string ADP_InvalidDataType = "The parameter data type of {0} is invalid.";
 	public const string ADP_UnknownDataType = "No mapping exists from object type {0} to a known managed provider native type.";
+	public const string ADP_UnknownDataTypeCode = "Unable to handle an unknown TypeCode {0} returned by Type {1}.";
 	public const string ADP_DbTypeNotSupported = "No mapping exists from DbType {0} to a known {1}.";
 	public const string ADP_VersionDoesNotSupportDataType = "The version of SQL Server in use does not support datatype '{0}'.";
 	public const string ADP_ParameterValueOutOfRange = "Parameter value '{0}' is out of range.";
@@ -524,6 +525,7 @@ partial class SR
 	public const string SQL_EncryptionNotSupportedByClient = "The instance of SQL Server you attempted to connect to requires encryption but this machine does not support it.";
 	public const string SQL_EncryptionNotSupportedByServer = "The instance of SQL Server you attempted to connect to does not support encryption.";
 	public const string SQL_InvalidSQLServerVersionUnknown = "Unsupported SQL Server version.  The .Net Framework SqlClient Data Provider can only be used with SQL Server versions 7.0 and later.";
+	public const string SQL_CannotCreateNormalizer = "Cannot create normalizer for '{0}'.";
 	public const string SQL_CannotModifyPropertyAsyncOperationInProgress = "{0} cannot be changed while async operation is in progress.";
 	public const string SQL_InstanceFailure = "Instance failure.";
 	public const string SQL_InvalidPartnerConfiguration = "Server {0}, database {1} is not configured for database mirroring.";
@@ -609,6 +611,8 @@ partial class SR
 	public const string SqlMisc_StreamErrorMessage = "An error occurred while reading.";
 	public const string SqlMisc_TruncationMaxDataMessage = "Data returned is larger than 2Gb in size. Use SequentialAccess command behavior in order to get all of the data.";
 	public const string SqlMisc_SubclassMustOverride = "Subclass did not override a required method.";
+	public const string SqlUdtReason_NoUdtAttribute = "no UDT attribute";
+	public const string SQLUDT_InvalidSqlType = "Specified type is not registered on the target server. {0}.";
 	public const string Sql_InternalError = "Internal Error";
 	public const string ADP_OperationAborted = "Operation aborted.";
 	public const string ADP_OperationAbortedExceptionMessage = "Operation aborted due to an exception (see InnerException for details).";
@@ -639,6 +643,13 @@ partial class SR
 	public const string SqlProvider_DuplicateSortOrdinal = "The sort ordinal {0} was specified twice.";
 	public const string SqlProvider_MissingSortOrdinal = "The sort ordinal {0} was not specified.";
 	public const string SqlProvider_SortOrdinalGreaterThanFieldCount = "The sort ordinal {0} on field {1} exceeds the total number of fields.";
+	public const string SQLUDT_MaxByteSizeValue = "range: 0-8000";
+	public const string SQLUDT_Unexpected = "unexpected error encountered in SqlClient data provider. {0}";
+	public const string SQLUDT_UnexpectedUdtTypeName = "UdtTypeName property must be set only for UDT parameters.";
+	public const string SQLUDT_InvalidUdtTypeName = "UdtTypeName property must be set for UDT parameters.";
+	public const string SqlUdt_InvalidUdtMessage = "'{0}' is an invalid user defined type, reason: {1}.";
+	public const string SQL_UDTTypeName = "SqlParameter.UdtTypeName is an invalid multipart name";
+	public const string SQL_InvalidUdt3PartNameFormat = "Invalid 3 part name format for UdtTypeName.";
 	public const string IEnumerableOfSqlDataRecordHasNoRows = "There are no records in the SqlDataRecord enumeration. To send a table-valued parameter with no rows, use a null reference for the value instead.";
 	public const string SNI_ERROR_1 = "I/O Error detected in read/write operation";
 	public const string SNI_ERROR_2 = "Connection was terminated";
@@ -787,7 +798,6 @@ partial class SR
 	public const string ADP_DatabaseNameTooLong = "The argument is too long.";
 	public const string ADP_DataReaderNoData = "No data exists for the row/column.";
 	public const string ADP_NumericToDecimalOverflow = "The numerical value is too large to fit into a 96 bit decimal.";
-	public const string ADP_UnknownDataTypeCode = "Unable to handle an unknown TypeCode {0} returned by Type {1}.";
 	public const string ADP_DbRecordReadOnly = "'{0}' cannot be called when the record is read only.";
 	public const string ADP_OffsetOutOfRangeException = "Offset must refer to a location within the value.";
 	public const string ODBC_GetSchemaRestrictionRequired = "The ODBC managed provider requires that the TABLE_NAME restriction be specified and non-null for the GetSchema indexes collection.";
