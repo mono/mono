@@ -13,7 +13,7 @@ Branches for released Unity versions are of the form unity-\<version\>\[-mbe\][-
 ### Branches
 
 #### Trunk
-* [unity-trunk (PR to this branch for Mono)](https://github.com/Unity-Technologies/mono/tree/unity-trunk
+* [unity-trunk (PR to this branch for Mono)](https://github.com/Unity-Technologies/mono/tree/unity-trunk)
 * [unity-master (PR to this branch for MonoBleedingEdge)](https://github.com/Unity-Technologies/mono/tree/unity-master)
 
 #### 2017.3
