@@ -413,7 +413,7 @@ MonoString* il2cpp_mono_ldstr_checked(MonoDomain* domain, MonoImage* image, guin
 Il2CppMonoObject* il2cpp_mono_runtime_try_invoke(MonoMethod* method, void* obj, void** params, Il2CppMonoObject** exc, MonoError* error);
 Il2CppMonoObject* il2cpp_mono_runtime_invoke_checked(MonoMethod* method, void* obj, void** params, MonoError* error);
 void il2cpp_mono_gc_base_init();
-int il2cpp_mono_gc_register_root(char* start, size_t size, MonoGCDescriptor descr, MonoGCRootSource source, const char* msg);
+int il2cpp_mono_gc_register_root(char* start, size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char* msg);
 void il2cpp_mono_gc_deregister_root(char* addr);
 gint32 il2cpp_mono_environment_exitcode_get();
 void il2cpp_mono_environment_exitcode_set(gint32 value);

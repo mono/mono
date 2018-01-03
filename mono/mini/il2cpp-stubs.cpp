@@ -531,7 +531,7 @@ SgenDescriptor il2cpp_mono_gc_make_root_descr_all_refs(int numbits)
 	return NULL;
 }
 
-int il2cpp_mono_gc_register_root_wbarrier (char *start, size_t size, MonoGCDescriptor descr, MonoGCRootSource source, const char *msg)
+int il2cpp_mono_gc_register_root_wbarrier (char *start, size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg)
 {
 	il2cpp::gc::GarbageCollector::RegisterRoot(start, size);
 	return 1;
@@ -1283,7 +1283,7 @@ void il2cpp_mono_error_assert_ok_pos (MonoError *error, const char* filename, in
 	g_error ("%s:%d\n", filename, lineno);
 }
 
-void* il2cpp_mono_gc_alloc_fixed (size_t size, void* descr, MonoGCRootSource source, const char *msg)
+void* il2cpp_mono_gc_alloc_fixed (size_t size, void* descr, MonoGCRootSource source, void *key, const char *msg)
 {
 	return il2cpp_gc_alloc_fixed(size);
 }
