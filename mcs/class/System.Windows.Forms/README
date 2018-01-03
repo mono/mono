@@ -1,8 +1,8 @@
-Managed.Windows.Forms README
+System.Windows.Forms README
 
 * Introduction
 
-Managed.Windows.Forms is a managed implementation of
+This is a managed implementation of
 System.Windows.Forms.  It implements a driver interface to allow
 running on multiple windowing systems, for example X11 or Windows. All
 controls are implemented in managed code, using System.Drawing to draw
@@ -11,11 +11,8 @@ them.
 
 * Status
 
-This library is in a beta state.  Development is still proceeding as
-at a rapid page on the 1.1 codebase.  A limitted number of 2.0
-controls have been implemented, but the 2.0 api is not supported at
-this time.  Bug reports are welcome.  Please use
-http://bugzilla.ximian.com/
+This library is in a community-supported state. Bug reports are welcome.
+Please use https://github.com/mono/mono/issues
 
 
 * Contributions
@@ -26,10 +23,10 @@ controls need a lot of work, so ask on the mailing list or in irc if
 someone is working on it already, and if not, start in on it.  Also,
 the unit tests need a lot of work.  We can always use more of them,
 and there are still a small number of them which pass on MS .NET and
-fail on MWF.  For code contributions, please check the 'Guidelines'
+fail on Mono.  For code contributions, please check the 'Guidelines'
 file.
 
-The novell MWF team is currently:
+The Novell System.Windows.Forms team was:
 	Andreia Gaita		(shana.ufie@gmail.com)
 	Jackson Harper		(jackson@ximian.com)
 	Mike Kestner		(kestner@ximian.com)
@@ -40,4 +37,4 @@ The novell MWF team is currently:
 
 There is a mailing list dedicated to Mono's System.Windows.Forms 
 implementation, mono-winforms-list, see 
-http://lists.ximian.com/mailman/listinfo/mono-winforms-list
+https://lists.dot.net/mailman/listinfo/mono-winforms-list
