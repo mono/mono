@@ -13,33 +13,23 @@ Branches for released Unity versions are of the form unity-\<version\>\[-mbe\][-
 ### Branches
 
 #### Trunk
-* [unity-staging (PR to this branch for Mono)](https://github.com/Unity-Technologies/mono/tree/unity-staging)
-* [unity-trunk](https://github.com/Unity-Technologies/mono/tree/unity-trunk)
-* [unity-master-staging (PR to this branch for MonoBleedingEdge)](https://github.com/Unity-Technologies/mono/tree/unity-master-staging)
-* [unity-master](https://github.com/Unity-Technologies/mono/tree/unity-master)
+* [unity-trunk (PR to this branch for Mono)](https://github.com/Unity-Technologies/mono/tree/unity-trunk
+* [unity-master (PR to this branch for MonoBleedingEdge)](https://github.com/Unity-Technologies/mono/tree/unity-master)
 
 #### 2017.3
-* [unity-2017.3-staging](https://github.com/Unity-Technologies/mono/tree/unity-2017.3-staging)
 * [unity-2017.3](https://github.com/Unity-Technologies/mono/tree/unity-2017.3)
-* [unity-2017.3-mbe-staging](https://github.com/Unity-Technologies/mono/tree/unity-2017.3-mbe-staging)
 * [unity-2017.3-mbe](https://github.com/Unity-Technologies/mono/tree/unity-2017.3-mbe)
 
 #### 2017.2
-* [unity-2017.2-staging](https://github.com/Unity-Technologies/mono/tree/unity-2017.2-staging)
 * [unity-2017.2](https://github.com/Unity-Technologies/mono/tree/unity-2017.2)
-* [unity-2017.2-mbe-staging](https://github.com/Unity-Technologies/mono/tree/unity-2017.2-mbe-staging)
 * [unity-2017.2-mbe](https://github.com/Unity-Technologies/mono/tree/unity-2017.2-mbe)
 
 #### 2017.1
-* [unity-2017.1-staging](https://github.com/Unity-Technologies/mono/tree/unity-2017.1-staging)
 * [unity-2017.1](https://github.com/Unity-Technologies/mono/tree/unity-2017.1)
-* [unity-2017.1-mbe-staging](https://github.com/Unity-Technologies/mono/tree/unity-2017.1-mbe-staging)
 * [unity-2017.1-mbe](https://github.com/Unity-Technologies/mono/tree/unity-2017.1-mbe)
 
 #### 5.6
-* [unity-5.6-staging](https://github.com/Unity-Technologies/mono/tree/unity-5.6-staging)
 * [unity-5.6](https://github.com/Unity-Technologies/mono/tree/unity-5.6)
-* [unity-5.6-mbe-staging](https://github.com/Unity-Technologies/mono/tree/unity-5.6-mbe-staging)
 * [unity-5.6-mbe](https://github.com/Unity-Technologies/mono/tree/unity-5.6-mbe)
 
 
