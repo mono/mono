@@ -157,6 +157,12 @@ install()
 		exit 1
 	fi
 
+	# make sure we didn't miss any files with cygwin install paths
+	if grep -R '/tmp/mono'. --exclude=*.pc --exclude=mono-find-provides --exclude=mono-find-requires; then
+		echo "Found cygwin paths in files, please make sure they're fixed."
+		exit 1
+	fi
+
 	popd
 }
 

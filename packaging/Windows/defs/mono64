@@ -40,10 +40,12 @@ install()
 	rm -f	${INSTALLDIR}/bin/mono-sgen.* \
 		${INSTALLDIR}/bin/mono-boehm.* \
 		${INSTALLDIR}/lib/libmono-2.0.* \
+		${INSTALLDIR}/bin/libmonoboehm-2.0.* \
 		${INSTALLDIR}/lib/libmonoboehm-2.0.* \
+		${INSTALLDIR}/bin/libmonosgen-2.0.* \
 		${INSTALLDIR}/lib/libmonosgen-2.0.* \
-		${INSTALLDIR}/bin/MonoPosixHelper.* \
-		${INSTALLDIR}/lib/MonoPosixHelper.* \
+		${INSTALLDIR}/bin/*MonoPosixHelper.* \
+		${INSTALLDIR}/lib/*MonoPosixHelper.* \
 		${INSTALLDIR}/bin/mono \
 		${INSTALLDIR}/bin/pedump \
 		${INSTALLDIR}/bin/mono-package-runtime \
@@ -83,6 +85,8 @@ install()
 	chmod a+x *.bat *.exe
 	popd
 	popd
+
+	find ${INSTALLDIR} -name monodoc.dll.config -exec sed -i 's#value=".*/lib/monodoc#value="C:\\Program Files\\Mono\\lib\\monodoc#g' {} \;
 }
 
 prerequisites()
