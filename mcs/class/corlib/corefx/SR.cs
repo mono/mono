@@ -907,6 +907,7 @@ partial class SR
 	public const string Argument_GWithPrecisionNotSupported = "The 'G' format combined with a precision is not supported.";
 	public const string Argument_CannotParsePrecision = "Characters following the format symbol must be a number of {0} or less.";
 	public const string Argument_PrecisionTooLarge = "Precision cannot be larger than {0}.";
+	public const string Argument_OverlapAlignmentMismatch = "Overlapping spans have mismatching alignment.";
 	public const string Argument_EmptyValue = "Value cannot be empty.";
 	public const string PlatformNotSupported_RuntimeInformation = "RuntimeInformation is not supported for Portable Class Libraries.";
 }

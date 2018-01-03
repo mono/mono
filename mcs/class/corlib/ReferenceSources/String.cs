@@ -50,6 +50,16 @@ namespace System
 			}
 		}
 
+		public unsafe static implicit operator ReadOnlySpan<char> (String value)
+		{
+			if (value == null)
+				return default;
+
+			fixed (void* start = &value.m_firstChar)
+				return new ReadOnlySpan<char> (start, value.Length);
+		}
+
+
 		internal static unsafe int CompareOrdinalUnchecked (String strA, int indexA, int lenA, String strB, int indexB, int lenB)
 		{
 			if (strA == null) {
