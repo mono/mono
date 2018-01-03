@@ -1306,9 +1306,6 @@ mono_type_get_checked        (MonoImage *image, guint32 type_token, MonoGenericC
 gboolean
 mono_generic_class_is_generic_type_definition (MonoGenericClass *gklass);
 
-MonoMethod*
-mono_class_get_method_generic (MonoClass *klass, MonoMethod *method);
-
 MonoType*
 mono_type_get_basic_type_from_generic (MonoType *type);
 
