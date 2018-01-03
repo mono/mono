@@ -34,7 +34,6 @@ corefx/SR.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/ExpressionTreeCallRewriter.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/ICSharpBinder.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/ICSharpInvokeOrInvokeMemberBinder.cs
-../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/ResetBindException.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/RuntimeBinder.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/RuntimeBinderException.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/RuntimeBinderExtensions.cs

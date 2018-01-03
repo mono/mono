@@ -1894,6 +1894,8 @@ namespace System {
 
 #if MONO
         public virtual bool IsSZArray { get { throw new NotImplementedException (); } }
+
+        public virtual bool IsCollectible => true;
 #endif
 }
 
