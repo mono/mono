@@ -228,10 +228,18 @@ namespace Mono.Net.Security
 				providerCache = new Dictionary<Guid,MSI.MonoTlsProvider> ();
 
 #if UNITY
-				var unityTlsEntry = new Tuple<Guid,String> (UnityTlsId, "Mono.Unity.UnityTlsProvider");
-				providerRegistration.Add ("default", unityTlsEntry);
-				providerRegistration.Add ("unitytls", unityTlsEntry);
-#else
+				if (Mono.Unity.UnityTls.IsSupported())
+				{
+					var unityTlsEntry = new Tuple<Guid,String> (UnityTlsId, "Mono.Unity.UnityTlsProvider");
+					providerRegistration.Add ("default", unityTlsEntry);
+					providerRegistration.Add ("unitytls", unityTlsEntry);
+
+					//Console.Out.WriteLine("UnityTls activated");
+				}
+				else
+				{
+					//Console.Out.WriteLine("UnityTls not available, using Mono's default implementations");
+#endif
 
 				var appleTlsEntry = new Tuple<Guid,String> (AppleTlsId, "Mono.AppleTls.AppleTlsProvider");
 
@@ -258,6 +266,8 @@ namespace Mono.Net.Security
 					providerRegistration.Add ("default", legacyEntry);
 
 				providerRegistration.Add ("apple", appleTlsEntry);
+#if UNITY
+				}
 #endif
 			}
 		}
