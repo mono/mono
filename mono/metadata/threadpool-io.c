@@ -318,10 +318,15 @@ selector_thread (gpointer data)
 {
 	MonoError error;
 	MonoGHashTable *states;
-
-	MonoString *thread_name = mono_string_new_checked (mono_get_root_domain (), "Thread Pool I/O Selector", &error);
-	mono_error_assert_ok (&error);
-	mono_thread_set_name_internal (mono_thread_internal_current (), thread_name, FALSE, TRUE, &error);
+// "Thread Pool I/O Selector"
+#define THREAD_NAME 'T','h','r','e','a','d',' ','P','o','o','l',' ', \
+	'I','/','O',' ','S','e','l','e','c','t','o','r',0
+	const static char io_threadname8[] = {THREAD_NAME};
+	const static gunichar2 io_threadname16[] = {THREAD_NAME};
+#undef THREAD_NAME
+	mono_thread_set_name_internal (mono_thread_internal_current (),
+		sizeof (io_threadname8) - 1, io_threadname8, io_threadname16,
+		FALSE, TRUE, &error);
 	mono_error_assert_ok (&error);
 
 	if (mono_runtime_is_shutting_down ()) {

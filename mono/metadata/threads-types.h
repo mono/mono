@@ -55,6 +55,12 @@ typedef enum {
 
 typedef struct _MonoInternalThread MonoInternalThread;
 
+/* It is safe to access System.Threading.InternalThread from native code via a
+ * raw pointer because all instances should be pinned.  But for uniformity of
+ * icall wrapping, let's declare a MonoInternalThreadHandle anyway.
+ */
+TYPED_HANDLE_DECL (MonoInternalThread);
+
 typedef void (*MonoThreadCleanupFunc) (MonoNativeThreadId tid);
 /* INFO has type MonoThreadInfo* */
 typedef void (*MonoThreadNotifyPendingExcFunc) (gpointer info);
@@ -83,7 +89,7 @@ gboolean ves_icall_System_Threading_Thread_Join_internal(MonoThread *this_obj, i
 gint32 ves_icall_System_Threading_Thread_GetDomainID (void);
 gboolean ves_icall_System_Threading_Thread_Yield (void);
 MonoString* ves_icall_System_Threading_Thread_GetName_internal (MonoInternalThread *this_obj);
-void ves_icall_System_Threading_Thread_SetName_internal (MonoInternalThread *this_obj, MonoString *name);
+void ves_icall_System_Threading_Thread_SetName_internal (MonoInternalThreadHandle thread, MonoStringHandle name, MonoError *error);
 int ves_icall_System_Threading_Thread_GetPriority (MonoThread *this_obj);
 void ves_icall_System_Threading_Thread_SetPriority (MonoThread *this_obj, int priority);
 MonoObject* ves_icall_System_Threading_Thread_GetCachedCurrentCulture (MonoInternalThread *this_obj);
@@ -216,7 +222,9 @@ gunichar2* mono_thread_get_name (MonoInternalThread *this_obj, guint32 *name_len
 MONO_API MonoException* mono_thread_get_undeniable_exception (void);
 void mono_thread_self_abort (void);
 
-void mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, gboolean permanent, gboolean reset, MonoError *error);
+void mono_thread_set_name_internal (MonoInternalThread *thread, int length,
+	const char* utf8, const gunichar2* utf16, gboolean permanent,
+	gboolean reset, MonoError *error);
 
 void mono_thread_suspend_all_other_threads (void);
 gboolean mono_threads_abort_appdomain_threads (MonoDomain *domain, int timeout);

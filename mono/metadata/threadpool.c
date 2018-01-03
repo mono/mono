@@ -350,9 +350,14 @@ worker_callback (void)
 
 		domains_unlock ();
 
-		MonoString *thread_name = mono_string_new_checked (mono_get_root_domain (), "Thread Pool Worker", &error);
-		mono_error_assert_ok (&error);
-		mono_thread_set_name_internal (thread, thread_name, FALSE, TRUE, &error);
+// "Thread Pool Worker"
+#define THREAD_NAME 'T','h','r','e','a','d',' ','P','o','o','l',' ', \
+	'W','o','r','k','e','r',0
+		const static char pool_threadname8[] = {THREAD_NAME};
+		const static gunichar2 pool_threadname16[] = {THREAD_NAME};
+#undef THREAD_NAME
+		mono_thread_set_name_internal (thread, sizeof (pool_threadname8) - 1,
+			pool_threadname8, pool_threadname16, FALSE, TRUE, &error);
 		mono_error_assert_ok (&error);
 
 		mono_thread_clr_state (thread, (MonoThreadState)~ThreadState_Background);

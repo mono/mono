@@ -509,9 +509,15 @@ receiver_thread (void *arg)
 	MonoInternalThread *internal;
 
 	internal = mono_thread_internal_current ();
-	MonoString *attach_str = mono_string_new_checked (mono_domain_get (), "Attach receiver", &error);
-	mono_error_assert_ok (&error);
-	mono_thread_set_name_internal (internal, attach_str, TRUE, FALSE, &error);
+// "Attach receiver"
+#define THREAD_NAME 'A','t','t','a','c','h',' ', \
+	'r','e','c','e','i','v','e','r',0
+	const static char attach_threadname8[] = {THREAD_NAME};
+	const static gunichar2 attach_threadname16[] = {THREAD_NAME};
+#undef THREAD_NAME
+	mono_thread_set_name_internal (internal,
+		sizeof (attach_threadname8) - 1, attach_threadname8,
+		attach_threadname16, TRUE, FALSE, &error);
 	mono_error_assert_ok (&error);
 	/* Ask the runtime to not abort this thread */
 	//internal->flags |= MONO_THREAD_FLAG_DONT_MANAGE;

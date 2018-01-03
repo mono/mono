@@ -62,12 +62,6 @@ mono_ldstr_metadata_sig (MonoDomain *domain, const char* sig, MonoError *error);
 static void
 free_main_args (void);
 
-static char *
-mono_string_to_utf8_internal (MonoMemPool *mp, MonoImage *image, MonoString *s, MonoError *error);
-
-static char *
-mono_string_to_utf8_mp	(MonoMemPool *mp, MonoString *s, MonoError *error);
-
 static void
 array_full_copy_unchecked_size (MonoArray *src, MonoArray *dest, MonoClass *klass, uintptr_t size);
 
@@ -2601,7 +2595,7 @@ mono_remote_class (MonoDomain *domain, MonoStringHandle class_name, MonoClass *p
 		return rc;
 	}
 
-	name = mono_string_to_utf8_mp (domain->mp, MONO_HANDLE_RAW (class_name), error);
+	name = mono_string_to_utf8_internal (domain->mp, NULL, class_name, error);
 	if (!is_ok (error)) {
 		g_free (key);
 		mono_domain_unlock (domain);
@@ -7091,15 +7085,16 @@ mono_string_to_utf8 (MonoString *s)
 }
 
 /**
- * mono_string_to_utf8_checked:
- * \param s a \c System.String
- * \param error a \c MonoError.
+ * mono_utf16_to_utf8:
+ * \param chars
+ * \param length
+  * \param error a \c MonoError.
  * Converts a \c MonoString to its UTF-8 representation. May fail; check 
  * \p error to determine whether the conversion was successful.
  * The resulting buffer should be freed with \c mono_free().
  */
 char *
-mono_string_to_utf8_checked (MonoString *s, MonoError *error)
+mono_utf16_to_utf8 (const gunichar2 *chars, int length, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
@@ -7109,69 +7104,74 @@ mono_string_to_utf8_checked (MonoString *s, MonoError *error)
 
 	error_init (error);
 
-	if (s == NULL)
+	if (!chars)
 		return NULL;
 
-	if (!s->length)
+	if (!length)
 		return g_strdup ("");
 
-	as = g_utf16_to_utf8 (mono_string_chars (s), s->length, NULL, &written, &gerror);
+	as = g_utf16_to_utf8 (chars, length, NULL, &written, &gerror);
 	if (gerror) {
 		mono_error_set_argument (error, "string", "%s", gerror->message);
 		g_error_free (gerror);
 		return NULL;
 	}
-	/* g_utf16_to_utf8  may not be able to complete the conversion (e.g. NULL values were found, #335488) */
-	if (s->length > written) {
+	/* g_utf16_to_utf8 may not be able to complete the conversion (e.g. NULL values were found, #335488)
+	 * This zero-padding is lost in the memorypool and image paths that sometimes follow.
+	 */
+	if (length > written) {
 		/* allocate the total length and copy the part of the string that has been converted */
-		char *as2 = (char *)g_malloc0 (s->length);
+		char *as2 = (char *)g_malloc0 (length);
 		memcpy (as2, as, written);
 		g_free (as);
 		as = as2;
 	}
 
 	return as;
-}
-
-char *
-mono_string_handle_to_utf8 (MonoStringHandle s, MonoError *error)
-{
-	return mono_string_to_utf8_checked (MONO_HANDLE_RAW (s), error);
 }
 
 /**
- * mono_string_to_utf8_ignore:
- * \param s a MonoString
- * Converts a \c MonoString to its UTF-8 representation. Will ignore
- * invalid surrogate pairs.
+ * mono_string_to_utf8_checked:
+ * \param s a \c System.String
+ * \param error a \c MonoError.
+ * Converts a \c MonoString to its UTF-8 representation. May fail; check
+ * \p error to determine whether the conversion was successful.
  * The resulting buffer should be freed with \c mono_free().
  */
 char *
-mono_string_to_utf8_ignore (MonoString *s)
+mono_string_to_utf8_checked (MonoString *s, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	long written = 0;
-	char *as;
+	MonoUnwrappedString t = mono_unwrap_string (s);
 
-	if (s == NULL)
-		return NULL;
+	char *result = mono_utf16_to_utf8 (t.chars, t.length, error);
 
-	if (!s->length)
-		return g_strdup ("");
+	mono_unwrapped_string_cleanup (&t);
 
-	as = g_utf16_to_utf8 (mono_string_chars (s), s->length, NULL, &written, NULL);
+	return result;
+}
 
-	/* g_utf16_to_utf8  may not be able to complete the conversion (e.g. NULL values were found, #335488) */
-	if (s->length > written) {
-		/* allocate the total length and copy the part of the string that has been converted */
-		char *as2 = (char *)g_malloc0 (s->length);
-		memcpy (as2, as, written);
-		g_free (as);
-		as = as2;
-	}
+/**
+ * mono_string_handle_to_utf8:
+ * \param s a \c System.String
+ * \param error a \c MonoError.
+ * Converts a \c MonoString to its UTF-8 representation. May fail; check 
+ * \p error to determine whether the conversion was successful.
+ * The resulting buffer should be freed with \c mono_free().
+ */
+char *
+mono_string_handle_to_utf8 (MonoStringHandle s, MonoError *error)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
 
-	return as;
+	MonoUnwrappedString t = mono_unwrap_string_handle (s);
+
+	char *result = mono_utf16_to_utf8 (t.chars, t.length, error);
+
+	mono_unwrapped_string_cleanup (&t);
+	
+	return result;
 }
 
 /**
@@ -7320,7 +7320,7 @@ mono_string_from_utf32_checked (mono_unichar4 *data, MonoError *error)
 }
 
 static char *
-mono_string_to_utf8_internal (MonoMemPool *mp, MonoImage *image, MonoString *s, MonoError *error)
+mono_string_to_utf8_internal (MonoMemPool *mp, MonoImage *image, MonoStringHandle s, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
@@ -7328,12 +7328,15 @@ mono_string_to_utf8_internal (MonoMemPool *mp, MonoImage *image, MonoString *s, 
 	char *mp_s;
 	int len;
 
-	r = mono_string_to_utf8_checked (s, error);
-	if (!mono_error_ok (error))
-		return NULL;
+	r = mono_string_handle_to_utf8 (s, error);
+	return_val_if_nok (error, NULL);
 
 	if (!mp && !image)
 		return r;
+
+	// mono_string_handle_to_utf8 will pad this out
+	// to a minimum length with zeros, but conversion
+	// with an image or memorypool will not.
 
 	len = strlen (r) + 1;
 	if (mp)
@@ -7358,20 +7361,7 @@ mono_string_to_utf8_image (MonoImage *image, MonoStringHandle s, MonoError *erro
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	return mono_string_to_utf8_internal (NULL, image, MONO_HANDLE_RAW (s), error); /* FIXME pin the string */
-}
-
-/**
- * mono_string_to_utf8_mp:
- * \param s a \c System.String
- * Same as \c mono_string_to_utf8, but allocate the string from a mempool.
- */
-char *
-mono_string_to_utf8_mp (MonoMemPool *mp, MonoString *s, MonoError *error)
-{
-	MONO_REQ_GC_UNSAFE_MODE;
-
-	return mono_string_to_utf8_internal (mp, NULL, s, error);
+	return mono_string_to_utf8_internal (NULL, image, s, error);
 }
 
 

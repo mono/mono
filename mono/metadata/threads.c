@@ -1640,57 +1640,96 @@ ves_icall_System_Threading_Thread_GetName_internal (MonoInternalThread *this_obj
 	return str;
 }
 
-void 
-mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, gboolean permanent, gboolean reset, MonoError *error)
+void
+mono_thread_set_name_internal (MonoInternalThread *this_obj, int length, const char* utf8, const gunichar2 *utf16, gboolean permanent, gboolean reset, MonoError *error)
 {
+	error_init (error);
+
+	// If length is set, then utf8 or utf16 or both must be set.
+	g_assert (!length || utf8 || utf16);
+
+	// Convert the utf8 or duplicate the utf16 outside the lock.
+	gunichar2* dup16 = NULL;
+	gunichar2* old_name = NULL;
+	char* dup8 = NULL;
+	GError *gerror = NULL;
 	MonoNativeThreadId tid = 0;
+	gboolean unlock = FALSE;
+
+	if (length > 0) {
+		if (utf16) {
+			dup16 = (gunichar2*)g_memdup (utf16, length * sizeof (gunichar2));
+		} else {
+			dup16 = g_utf8_to_utf16 (utf8, length, NULL, NULL, &gerror);
+			if (gerror) {
+				mono_error_set_execution_engine (error, "String conversion error: %s", gerror->message);
+				goto exit;
+			}
+		}
+	}
 
 	LOCK_THREAD (this_obj);
-
-	error_init (error);
+	unlock = TRUE;
 
 	if (reset) {
 		this_obj->flags &= ~MONO_THREAD_FLAG_NAME_SET;
 	} else if (this_obj->flags & MONO_THREAD_FLAG_NAME_SET) {
 		UNLOCK_THREAD (this_obj);
-		
+		unlock = FALSE;
 		mono_error_set_invalid_operation (error, "Thread.Name can only be set once.");
-		return;
+		goto exit;
 	}
-	if (this_obj->name) {
-		g_free (this_obj->name);
-		this_obj->name_len = 0;
-	}
-	if (name) {
-		this_obj->name = g_memdup (mono_string_chars (name), mono_string_length (name) * sizeof (gunichar2));
-		this_obj->name_len = mono_string_length (name);
 
+	old_name = this_obj->name;
+	this_obj->name = NULL;
+	this_obj->name_len = 0;
+
+	if (length > 0) {
+		this_obj->name = dup16;
+		dup16 = NULL;
+		this_obj->name_len = length;
 		if (permanent)
 			this_obj->flags |= MONO_THREAD_FLAG_NAME_SET;
 	}
-	else
-		this_obj->name = NULL;
 
 	if (!(this_obj->state & ThreadState_Stopped))
 		tid = thread_get_tid (this_obj);
 
 	UNLOCK_THREAD (this_obj);
+	unlock = FALSE;
 
 	if (this_obj->name && tid) {
-		char *tname = mono_string_to_utf8_checked (name, error);
-		return_if_nok (error);
-		MONO_PROFILER_RAISE (thread_name, ((uintptr_t)tid, tname));
-		mono_native_thread_set_name (tid, tname);
-		mono_free (tname);
+		const char *profiler_name = 0;
+		if (utf8)
+			profiler_name = utf8;
+		else {
+			dup8 = mono_utf16_to_utf8 (utf16, length, error);
+			goto_if_nok (error, exit);
+			profiler_name = dup8;
+		}
+		MONO_PROFILER_RAISE (thread_name, ((uintptr_t)tid, profiler_name));
+		mono_native_thread_set_name (tid, profiler_name);
 	}
+exit:
+	if (unlock)
+		UNLOCK_THREAD (this_obj);
+	g_free (old_name);
+	g_free (dup8);
+	g_free (dup16);
+	g_clear_error (&gerror);
 }
 
 void 
-ves_icall_System_Threading_Thread_SetName_internal (MonoInternalThread *this_obj, MonoString *name)
+ves_icall_System_Threading_Thread_SetName_internal (MonoInternalThreadHandle thread, MonoStringHandle name_handle, MonoError *error)
 {
-	MonoError error;
-	mono_thread_set_name_internal (this_obj, name, TRUE, FALSE, &error);
-	mono_error_set_pending_exception (&error);
+	MONO_REQ_GC_UNSAFE_MODE;
+
+	// MonoInternalThread is always pinned.
+	MonoUnwrappedString name = mono_unwrap_string_handle (name_handle);
+
+	mono_thread_set_name_internal (MONO_HANDLE_RAW (thread), name.length, NULL, name.chars, TRUE, FALSE, error);
+
+	mono_unwrapped_string_cleanup (&name);
 }
 
 /*

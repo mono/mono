@@ -547,6 +547,51 @@ mono_context_get_handle (void);
 void
 mono_context_set_handle (MonoAppContextHandle new_context);
 
+/*
+MonoUnwrappedString is a common representation
+for both a MonoString* and a MonoStringHandle.
+
+Usage patterns:
+1.     MonoStringHandle s;
+       MonoUnwrappedString us = { 0 };
+       ... conditional branch ...
+       us = mono_unwrap_string_handle (s);
+       us.length;
+       us.chars;
+       mono_unwrapped_string_cleanup (&us); // ok without mono_unwrap_string_handle
+
+2.     MonoStringHandle s;
+       MonoUnwrappedString us = mono_unwrap_string_handle (s);
+       us.length;
+       us.chars;
+       mono_unwrapped_string_cleanup (&us);
+
+3.     MonoString* s;
+       MonoUnwrappedString us = mono_unwrap_string (s);
+       us.length;
+       us.chars;
+       mono_unwrapped_string_cleanup (&us);
+
+4.     MonoString* s;
+       MonoUnwrappedString us = { 0 ];
+       ... conditional branch ...
+       us = mono_unwrap_string (s);
+       us.length;
+       us.chars;
+       mono_unwrapped_string_cleanup (&us); // ok without mono_unwrap_string
+*/
+typedef struct MonoUnwrappedString {
+	const gunichar2 *chars;
+	size_t length;
+	struct {
+		guint gchandle;
+	} privat; // "private" but keep it legal C++
+} MonoUnwrappedString;
+
+MonoUnwrappedString mono_unwrap_string_handle (MonoStringHandle s);
+MonoUnwrappedString mono_unwrap_string (MonoString* s);
+void mono_unwrapped_string_cleanup (MonoUnwrappedString* self);
+
 G_END_DECLS
 
 #endif /* __MONO_HANDLE_H__ */
