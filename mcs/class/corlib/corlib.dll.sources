@@ -1695,6 +1695,7 @@ corefx/SR.cs
 ../../../external/corefx/src/System.Memory/src/System/MemoryExtensions.cs
 ../../../external/corefx/src/System.Memory/src/System/MemoryExtensions.Portable.cs
 ../../../external/corefx/src/System.Memory/src/System/SpanHelpers.cs
+../../../external/corefx/src/System.Memory/src/System/SpanHelpers.BinarySearch.cs
 ../../../external/corefx/src/System.Memory/src/System/SpanHelpers.Clear.cs
 ../../../external/corefx/src/System.Memory/src/System/SpanHelpers.byte.cs
 ../../../external/corefx/src/System.Memory/src/System/SpanHelpers.T.cs
