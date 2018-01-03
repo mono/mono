@@ -121,6 +121,7 @@ soapsuds
 sqlmetal
 sqlsharp
 svcutil
+vbc
 vbnc
 vbnc2
 wsdl
