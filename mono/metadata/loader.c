@@ -2631,7 +2631,7 @@ mono_method_get_header_internal (MonoMethod *method, MonoError *error)
 	gpointer loc;
 	MonoGenericContainer *container;
 
-	error_init (error);
+	MONO_API_ERROR_INIT (error);
 	img = method->klass->image;
 
 	if ((method->flags & METHOD_ATTRIBUTE_ABSTRACT) || (method->iflags & METHOD_IMPL_ATTRIBUTE_RUNTIME) || (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) || (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)) {

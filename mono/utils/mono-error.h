@@ -8,22 +8,6 @@
 #include <mono/utils/mono-publib.h>
 
 enum {
-	/*
-	The supplied strings were dup'd by means of calling mono_error_dup_strings.
-	*/
-	MONO_ERROR_FREE_STRINGS = 0x0001,
-
-	/*
-	Something happened while processing the error and the resulting message is incomplete.
-	*/
-	MONO_ERROR_INCOMPLETE = 0x0002,
-	/*
-	This MonoError is heap allocated in a mempool
-        */
-	MONO_ERROR_MEMPOOL_BOXED = 0x0004
-};
-
-enum {
 	MONO_ERROR_NONE = 0,
 	MONO_ERROR_MISSING_METHOD = 1,
 	MONO_ERROR_MISSING_FIELD = 2,
@@ -69,6 +53,7 @@ MONO_RT_EXTERNAL_ONLY
 MONO_API void
 mono_error_init (MonoError *error);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API void
 mono_error_init_flags (MonoError *error, unsigned short flags);
 

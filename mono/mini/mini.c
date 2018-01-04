@@ -2361,6 +2361,7 @@ mono_codegen (MonoCompile *cfg)
 			if (ji->type == MONO_PATCH_INFO_NONE)
 				continue;
 
+			error_init_check (&cfg->error);
 			target = mono_resolve_patch_target (cfg->method, cfg->domain, cfg->native_code, ji, cfg->run_cctors, &cfg->error);
 			if (!mono_error_ok (&cfg->error)) {
 				mono_cfg_set_exception (cfg, MONO_EXCEPTION_MONO_ERROR);
@@ -2370,6 +2371,7 @@ mono_codegen (MonoCompile *cfg)
 		}
 	}
 #else
+	error_init_check (&cfg->error);
 	mono_arch_patch_code (cfg, cfg->method, cfg->domain, cfg->native_code, cfg->patch_info, cfg->run_cctors, &cfg->error);
 	if (!is_ok (&cfg->error)) {
 		mono_cfg_set_exception (cfg, MONO_EXCEPTION_MONO_ERROR);
@@ -3209,7 +3211,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 
 	if (cfg->gen_seq_points)
 		cfg->seq_points = g_ptr_array_new ();
-	error_init (&cfg->error);
+	error_init_check (&cfg->error);
 
 	if (cfg->compile_aot && !try_generic_shared && (method->is_generic || mono_class_is_gtd (method->klass) || method_is_gshared)) {
 		cfg->exception_type = MONO_EXCEPTION_GENERIC_SHARING_FAILED;
@@ -3262,6 +3264,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 		return cfg;
 	}
 
+	error_init_check (&cfg->error);
 	header = cfg->header = mono_method_get_header_checked (cfg->method, &cfg->error);
 	if (!header) {
 		mono_cfg_set_exception (cfg, MONO_EXCEPTION_MONO_ERROR);

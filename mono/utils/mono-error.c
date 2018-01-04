@@ -18,6 +18,35 @@
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/object-internals.h>
 
+// flags in MonoError:
+enum {
+	/*
+	The supplied strings were dup'd by means of calling mono_error_dup_strings.
+	*/
+	MONO_ERROR_FREE_STRINGS = 0x0001,
+
+	/*
+	Something happened while processing the error and the resulting message is incomplete.
+	*/
+	MONO_ERROR_INCOMPLETE = 0x0002,
+	/*
+	This MonoError is heap allocated in a mempool
+        */
+	MONO_ERROR_MEMPOOL_BOXED = 0x0004
+};
+
+// Edit in source or debugger to control.
+volatile static gboolean error_check_is_warning = FALSE;
+
+void
+mono_error_init_check_failed (const char* file, unsigned line, const char* function)
+{
+	if (error_check_is_warning)
+		g_warning("%s:%u:%s check '%s' failed", file, line, function, "error_is_initialized");
+	else
+		g_assertion_message("%s:%u:%s assertion '%s' failed", file, line, function, "error_is_initialized");
+}
+
 #define set_error_messagev() do { \
 	if (!(error->full_message = g_strdup_vprintf (msg_format, args))) \
 			error->flags |= MONO_ERROR_INCOMPLETE; \
@@ -49,12 +78,12 @@ static void
 mono_error_prepare (MonoErrorInternal *error)
 {
 	/* mono_error_set_* after a mono_error_cleanup without an intervening init */
-	g_assert (error->error_code != MONO_ERROR_CLEANUP_CALLED_SENTINEL);
+	g_assert (error->error_code != MONO_ERROR_CLEANUP_CALLED_SENTINEL); // FIXME consider removing this
+
 	if (error->error_code != MONO_ERROR_NONE)
 		return;
 
-	error->type_name = error->assembly_name = error->member_name = error->full_message = error->exception_name_space = error->exception_name = error->full_message_with_fields = error->first_argument = error->member_signature = NULL;
-	error->exn.klass = NULL;
+	G_ZERO_AFTER_FIELD (error, flags);
 }
 
 static MonoClass*
@@ -90,14 +119,20 @@ get_assembly_name (MonoErrorInternal *error)
 	return "<unknown assembly>";
 }
 
-void
-mono_error_init_flags (MonoError *oerror, unsigned short flags)
+static void
+error_init_flags (MonoError *oerror, unsigned short flags)
 {
 	MonoErrorInternal *error = (MonoErrorInternal*)oerror;
 	g_assert (sizeof (MonoError) == sizeof (MonoErrorInternal));
 
 	error->error_code = MONO_ERROR_NONE;
 	error->flags = flags;
+}
+
+MONO_RT_EXTERNAL_ONLY void
+mono_error_init_flags (MonoError *oerror, unsigned short flags)
+{
+	error_init_flags (oerror, flags);
 }
 
 /**
@@ -109,7 +144,7 @@ mono_error_init_flags (MonoError *oerror, unsigned short flags)
 void
 mono_error_init (MonoError *error)
 {
-	mono_error_init_flags (error, 0);
+	error_init_flags (error, 0);
 }
 
 void
@@ -121,12 +156,12 @@ mono_error_cleanup (MonoError *oerror)
 	gboolean has_instance_handle = is_managed_exception (error);
 
 	/* Two cleanups in a row without an intervening init. */
-	g_assert (orig_error_code != MONO_ERROR_CLEANUP_CALLED_SENTINEL);
+	g_assert (orig_error_code != MONO_ERROR_CLEANUP_CALLED_SENTINEL); // FIXME consider removing this
 	/* Mempool stored error shouldn't be cleaned up */
 	g_assert (!is_boxed (error));
 
 	/* Mark it as cleaned up. */
-	error->error_code = MONO_ERROR_CLEANUP_CALLED_SENTINEL;
+	error->error_code = MONO_ERROR_CLEANUP_CALLED_SENTINEL; // FIXME consider changing this to 0.
 	error->flags = 0;
 
 	if (orig_error_code == MONO_ERROR_NONE)
@@ -139,10 +174,8 @@ mono_error_cleanup (MonoError *oerror)
 
 	g_free ((char*)error->full_message);
 	g_free ((char*)error->full_message_with_fields);
-	error->full_message = NULL;
-	error->full_message_with_fields = NULL;
 	if (!free_strings) //no memory was allocated
-		return;
+		goto exit;
 
 	g_free ((char*)error->type_name);
 	g_free ((char*)error->assembly_name);
@@ -151,9 +184,8 @@ mono_error_cleanup (MonoError *oerror)
 	g_free ((char*)error->exception_name);
 	g_free ((char*)error->first_argument);
 	g_free ((char*)error->member_signature);
-	error->type_name = error->assembly_name = error->member_name = error->exception_name_space = error->exception_name = error->first_argument = error->member_signature = NULL;
-	error->exn.klass = NULL;
-
+exit:
+	G_ZERO_AFTER_FIELD (error, flags);
 }
 
 gboolean
@@ -792,7 +824,7 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 		exception = (MonoException*) mono_gchandle_get_target (error->exn.instance_handle);
 		break;
 
-	case MONO_ERROR_CLEANUP_CALLED_SENTINEL:
+	case MONO_ERROR_CLEANUP_CALLED_SENTINEL: // FIXME consider removing this
 		mono_error_set_execution_engine (error_out, "MonoError reused after mono_error_cleanup");
 		break;
 
@@ -848,7 +880,7 @@ void
 mono_error_move (MonoError *dest, MonoError *src)
 {
 	memcpy (dest, src, sizeof (MonoErrorInternal));
-	error_init (src);
+	error_init_internal (src);
 }
 
 /**
@@ -868,7 +900,7 @@ mono_error_box (const MonoError *ierror, MonoImage *image)
 	g_assert (!is_managed_exception (from));
 	MonoErrorBoxed* box = mono_image_alloc (image, sizeof (MonoErrorBoxed));
 	box->image = image;
-	mono_error_init_flags (&box->error, MONO_ERROR_MEMPOOL_BOXED);
+	error_init_flags (&box->error, MONO_ERROR_MEMPOOL_BOXED);
 	MonoErrorInternal *to = (MonoErrorInternal*)&box->error;
 
 #define DUP_STR(field) do {						\

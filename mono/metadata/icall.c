@@ -1520,7 +1520,7 @@ leave:
 	if (!is_ok (error)) {
 		if (!throwOnError) {
 			mono_error_cleanup (error);
-			error_init (error);
+			error_init_reuse (error);
 		}
 		return MONO_HANDLE_CAST (MonoReflectionType, NULL_HANDLE);
 	} else

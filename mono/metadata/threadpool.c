@@ -286,7 +286,6 @@ try_invoke_perform_wait_callback (MonoObject** exc, MonoError *error)
 static void
 worker_callback (void)
 {
-	ERROR_DECL (error);
 	ThreadPoolDomain *tpdomain, *previous_tpdomain;
 	ThreadPoolCounter counter;
 	MonoInternalThread *thread;
@@ -324,6 +323,7 @@ worker_callback (void)
 	previous_tpdomain = NULL;
 
 	while (!mono_runtime_is_shutting_down ()) {
+		ERROR_DECL (error);
 		gboolean retire = FALSE;
 
 		if (thread->state & (ThreadState_AbortRequested | ThreadState_SuspendRequested)) {
@@ -350,6 +350,7 @@ worker_callback (void)
 
 		domains_unlock ();
 
+		// FIXME take this out of loop
 		MonoString *thread_name = mono_string_new_checked (mono_get_root_domain (), "Thread Pool Worker", error);
 		mono_error_assert_ok (error);
 		mono_thread_set_name_internal (thread, thread_name, FALSE, TRUE, error);

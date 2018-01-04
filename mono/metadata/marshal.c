@@ -8150,6 +8150,7 @@ mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, 
 
 			thread_info_var = mono_mb_add_local (mb, &mono_get_intptr_class ()->byval_arg);
 			stack_mark_var = mono_mb_add_local (mb, &handle_stack_mark_class->byval_arg);
+			// This is a special case MonoError to initialize.
 			error_var = mono_mb_add_local (mb, &error_class->byval_arg);
 
 			if (save_handles_to_locals) {
@@ -8188,6 +8189,7 @@ mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, 
 
 		if (uses_handles) {
 			mono_mb_emit_ldloc_addr (mb, stack_mark_var);
+			// This is a special case MonoError to initialize.
 			mono_mb_emit_ldloc_addr (mb, error_var);
 			mono_mb_emit_icall (mb, mono_icall_start);
 			mono_mb_emit_stloc (mb, thread_info_var);
@@ -12408,7 +12410,7 @@ mono_icall_start (HandleStackMark *stackmark, MonoError *error)
 	MonoThreadInfo *info = mono_thread_info_current ();
 
 	mono_stack_mark_init (info, stackmark);
-	error_init (error);
+	error_init_internal (error); // Not a bug; dynamically built icall frames are a special case.
 	return info;
 }
 

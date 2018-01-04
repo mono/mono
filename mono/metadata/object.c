@@ -485,7 +485,7 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 		else
 			mono_error_cleanup (error);
 
-		error_init (error);
+		error_init_reuse (error);
 
 		/* If the initialization failed, mark the class as unusable. */
 		/* Avoid infinite loops */
@@ -7102,7 +7102,7 @@ mono_string_to_utf8_checked (MonoString *s, MonoError *error)
 	char *as;
 	GError *gerror = NULL;
 
-	error_init (error);
+	MONO_API_ERROR_INIT (error);
 
 	if (s == NULL)
 		return NULL;
@@ -7592,7 +7592,7 @@ ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResult 
 		if (wait_event != NULL)
 			mono_w32event_set (wait_event);
 
-		error_init (error); //the else branch would leave it in an undefined state
+		error_init_reuse (error); //the else branch would leave it in an undefined state
 		if (ac->cb_method)
 			mono_runtime_invoke_checked (ac->cb_method, ac->cb_target, (gpointer*) &ares, error);
 

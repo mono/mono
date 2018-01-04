@@ -344,6 +344,13 @@ domain_dump_native_code (MonoDomain *domain) {
 #endif
 
 static void
+error_cleanup_reuse (MonoError *error)
+{
+	mono_error_cleanup (error);
+	error_init_reuse (error);
+}
+
+static void
 mini_regression_step (MonoImage *image, int verbose, int *total_run, int *total,
 		guint32 opt_flags,
 		GTimer *timer, MonoDomain *domain)
@@ -394,7 +401,7 @@ mini_regression_step (MonoImage *image, int verbose, int *total_run, int *total,
 #ifdef MONO_USE_AOT_COMPILER
 				ERROR_DECL (error);
 				func = (TestMethod)mono_aot_get_method_checked (mono_get_root_domain (), method, error);
-				mono_error_cleanup (error);
+				error_cleanup_reuse (error);
 				if (!func)
 					func = (TestMethod)(gpointer)cfg->native_code;
 #else
@@ -606,7 +613,7 @@ interp_regression_step (MonoImage *image, int verbose, int *total_run, int *tota
 		} else { /* no filter, check for `Category' attribute on method */
 			filter = TRUE;
 			MonoCustomAttrInfo* ainfo = mono_custom_attrs_from_method_checked (method, error);
-			mono_error_cleanup (error);
+			error_cleanup_reuse (error);
 
 			if (ainfo) {
 				int j;
@@ -622,12 +629,12 @@ interp_regression_step (MonoImage *image, int verbose, int *total_run, int *tota
 					MonoObject *obj = mono_custom_attrs_get_attr_checked (ainfo, klass, error);
 					/* FIXME: there is an ordering problem if there're multiple attributes, do this instead:
 					 * MonoObject *obj = create_custom_attr (ainfo->image, centry->ctor, centry->data, centry->data_size, error); */
-					mono_error_cleanup (error);
+					error_cleanup_reuse (error);
 					MonoMethod *getter = mono_class_get_method_from_name (klass, "get_Category", -1);
 					MonoObject *str = mini_get_interp_callbacks ()->runtime_invoke (getter, obj, NULL, &exc, error);
-					mono_error_cleanup (error);
+					error_cleanup_reuse (error);
 					char *utf8_str = mono_string_to_utf8_checked ((MonoString *) str, error);
-					mono_error_cleanup (error);
+					error_cleanup_reuse (error);
 					if (!strcmp (utf8_str, "!INTERPRETER")) {
 						g_print ("skip %s...\n", method->name);
 						filter = FALSE;

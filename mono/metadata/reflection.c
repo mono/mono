@@ -1850,7 +1850,7 @@ _mono_reflection_get_type_from_info (MonoTypeNameParse *info, MonoImage *image, 
 	if (type == NULL && !info->assembly.name && image != mono_defaults.corlib) {
 		/* ignore the error and try again */
 		mono_error_cleanup (error);
-		error_init (error);
+		error_init_reuse (error);
 		image = mono_defaults.corlib;
 		type = mono_reflection_get_type_with_rootimage (rootimage, image, info, ignorecase, &type_resolve, error);
 	}

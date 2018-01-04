@@ -107,7 +107,10 @@ typedef guint32 gunichar;
 #define ABS(a)         ((a) > 0 ? (a) : -(a))
 #endif
 
+// This is misnamed -- it also works with unions -- structs and unions are "aggregates".
 #define G_STRUCT_OFFSET(p_type,field) offsetof(p_type,field)
+
+#define G_ZERO_AFTER_FIELD(p, field) (memset(&(p)->field, 0, ((char*)(p + 1)) - (char*)(&(p)->field + 1)))
 
 #define EGLIB_STRINGIFY(x) #x
 #define EGLIB_TOSTRING(x) EGLIB_STRINGIFY(x)

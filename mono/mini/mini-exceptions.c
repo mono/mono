@@ -1980,6 +1980,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 					msg = mono_string_to_utf8_checked ((MonoString *) message, error);
 					if (!is_ok (error)) {
 						mono_error_cleanup (error);
+						error_init_reuse (error);
 						msg = g_strdup ("(error while display System.Exception.Message property)");
 					}
 				} else {
@@ -2151,7 +2152,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 					filter_idx ++;
 				}
 
-				error_init (error);
+				error_init_reuse (error);
 				if ((ei->flags == MONO_EXCEPTION_CLAUSE_NONE && 
 				     mono_object_isinst_checked (ex_obj, catch_class, error)) || filtered) {
 					/*
@@ -2239,6 +2240,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 					return 0;
 				}
 				mono_error_cleanup (error);
+				error_init_reuse (error);
 				if (ei->flags == MONO_EXCEPTION_CLAUSE_FAULT) {
 					if (mono_trace_is_enabled () && mono_trace_eval (method))
 						g_print ("EXCEPTION: fault clause %d of %s\n", i, mono_method_full_name (method, TRUE));

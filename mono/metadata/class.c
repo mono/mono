@@ -209,7 +209,7 @@ mono_class_from_typeref_checked (MonoImage *image, guint32 type_token, MonoError
 	MonoClass *res = NULL;
 	MonoImage *module;
 
-	error_init (error);
+	MONO_API_ERROR_INIT (error);
 
 	if (!mono_verifier_verify_typeref_row (image, (type_token & 0xffffff) - 1, error))
 		return NULL;

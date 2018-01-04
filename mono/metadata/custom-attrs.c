@@ -1344,7 +1344,7 @@ mono_custom_attrs_from_index_checked (MonoImage *image, guint32 idx, gboolean ig
 			g_warning ("Can't find custom attr constructor image: %s mtoken: 0x%08x due to: %s", image->name, mtoken, mono_error_get_message (error));
 			if (ignore_missing) {
 				mono_error_cleanup (error);
-				error_init (error);
+				error_init_reuse (error);
 			} else {
 				g_list_free (list);
 				g_free (ainfo);
@@ -1893,6 +1893,7 @@ leave:
 MonoArray*
 mono_reflection_get_custom_attrs_by_type (MonoObject *obj_raw, MonoClass *attr_klass, MonoError *error)
 {
+	MONO_API_ERROR_INIT (error);
 	HANDLE_FUNCTION_ENTER ();
 	MONO_HANDLE_DCL (MonoObject, obj);
 	MonoArrayHandle result = mono_reflection_get_custom_attrs_by_type_handle (obj, attr_klass, error);

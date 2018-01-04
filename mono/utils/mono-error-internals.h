@@ -49,37 +49,56 @@ Historically MonoError initialization was deferred, but always had to occur,
 	This was confusing.
 
 ERROR_DECL (error)
-	This is the overwhelmingly common case.
+	This is the overwhelmingly common case, including
+	that the parameter is named "error".
 	Declare and initialize a local variable, named "error",
-	pointing to an initialized MonoError (named "error_value",
-	using token pasting).
+	pointing to an initialized MonoError, named "error_value",
+	using token pasting. The code need not concern
+	itself with "error_value", just "error".
 
-ERROR_DECL_VALUE (foo)
-	Declare and initialize a local variable, named "foo";
-	no pointer is produced for it.
+ERROR_DECL_VALUE (error)
+	Declare and initialize a local variable, named "error";
+	no pointer is produced for it. Parameter is usually
+	not "error". As there is no pointer produced,
+	these uses come with a bunch of ampersands.
 
-MONO_API_ERROR_INIT
+MONO_API_ERROR_INIT (error)
 	This is used for MonoError in/out parameter on a public interface,
-	which must be presumed uninitialized. These are often
-	marked with MONO_API, MONO_RT_EXTERNAL_ONLY, MONO_PROFILER_API, etc.
-	Tnis includes functions called from dis, profiler, pedump, and driver.
-	dis, profiler, and pedump make sense, these are actually external and
-	uninitialized. Driver less so.
+	which must be presumed uninitialized for compatibility.
+	These are in headers without "internals" or "types" in their name.
+	For example:
+		grep -r MonoError /Library/Frameworks/Mono.framework/Versions/5.4.1/include
+			mono_class_from_typeref_checked
+			mono_method_get_header_checked
+			mono_string_to_utf8_checked
+			mono_reflection_get_custom_attrs_by_type
+	Also optionally for compatibility with profiler and Xamarin.
+	This is not functions marked MONO_API per se, as that is a superset.
+	Consider renaming to error_init_public or MONO_PUBLIC_ERROR_INIT, etc.
 
-error_init
+error_init (error)
 	Initialize a MonoError. These are historical and usually
 	but not always redundant, and should be reduced/eliminated.
 	All the non-redundant ones should be renamed and all the redundant
 	ones removed.
 
-error_init_reuse
-	This indicates an error has been cleaned up and will be reused.
-	Consider also changing mono_error_cleanup to call error_init_internal,
-	and then remove these.
+error_init_reuse (error)
+	Initialize an error again after mono_error_cleanup, for reuse.
+	Or maybe mono_error_cleanup should do this.
 
-error_init_internal
+error_init_check (error)
+	With the transition to ERROR_DECL, most error_init should be removable.
+	However this reveals places that were missing initialization.
+	Place error_init_check to look for missing initialization and add new
+	initialization that was missing. Where this helps is typically bugs,
+	unintended reuse of error and/or forgetting to check for error.
+	i.e. put in missing error checks, or put in error_init_reuse,
+	or consider having mono_error_cleanup end with init.
+
+error_init_internal (error)
 	Rare cases without a better name.
 	For example, setting up an icall frame, or initializing member data.
+	Best to layer something over this for search.
 
 new0, calloc, static
 	A zeroed MonoError is valid and initialized.
@@ -93,21 +112,34 @@ Different names indicate different scenarios, but the same code.
 #define ERROR_DECL(x) 			ERROR_DECL_VALUE (x##_value); MonoError * const x = &x##_value
 #define error_init_internal(error) 	((void)((error)->init = 0))
 #define MONO_API_ERROR_INIT(error) 	error_init_internal (error)
-#define error_init_reuse(error) 	error_init_internal (error)
 
-// Historical deferred initialization was called error_init.
+// Not reliable -- looking at uninitialized memory, could be zero by chance.
+// For use with assert/warn/check.
+#define error_is_initialized_maybe(error) (G_LIKELY ((error)->init == 0))
 
-// possible bug detection that did not work
-//#define error_init(error) (is_ok (error))
+// Report a warning or assertion failure.
+void
+mono_error_init_check_failed (const char* file, unsigned line, const char* function);
 
-// FIXME Eventually all error_init should be removed, however it is prudent
-// to leave them in for now, at least most of them, while we sort out
-// the few that are needed and to experiment with adding them back in bulk,
-// i.e. in an entire source file. Some are obviously not needed.
-//#define error_init(error) // nothing
-#define error_init(error) error_init_internal (error)
-// Function for experimentation, should go away.
-//void error_init(MonoError*);
+// Warn or assert, and then initialize.
+#define error_init_check(error) 						\
+	(error_is_initialized_maybe (error) || 					\
+		(mono_error_init_check_failed (__FILE__, __LINE__, __func__), 	\
+		 error_init_internal (error), 0))
+
+// Briefly historical due to cleanup + reuse, but make cleanup leave it initialized.
+///#define error_init_reuse(error)	error_init_check (error)
+// Still controversial.
+#define error_init_reuse(error)		error_init_internal (error)
+
+// Historical initializer, now deprecated.
+// This can/should be tweaked among several options.
+//void error_init(MonoError*);							// incremental build
+//#define error_init(error) ((error)->init = 0)					// silently init -- safest
+//#define error_init(error) /* do nothing */					// removal -- ideal but risky
+//#define error_init(error) g_assert (error_is_initialized_maybe (error)) 	// find bugs harshly
+//#define error_init(error) g_warn_if_fail (error_is_initialized_maybe (error)) // find bugs gently
+#define error_init(error) error_init_check (error)			  	// find bugs, gentleness set in .c file
 
 #define is_ok(error) ((error)->error_code == MONO_ERROR_NONE)
 
