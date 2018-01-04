@@ -501,7 +501,7 @@ mono_handle_unsafe_field_addr (MonoObjectHandle h, MonoClassField *field)
 
 //FIXME this should go somewhere else
 MonoStringHandle mono_string_new_handle (MonoDomain *domain, const char *data, MonoError *error);
-MonoStringHandle mono_string_new_handle_length (MonoDomain *domain, const char *data, int length, MonoError *error);
+MonoStringHandle mono_string_new_handle_length (MonoDomain *domain, const char *data, size_t length, MonoError *error);
 MonoArrayHandle mono_array_new_handle (MonoDomain *domain, MonoClass *eclass, uintptr_t n, MonoError *error);
 MonoArrayHandle
 mono_array_new_full_handle (MonoDomain *domain, MonoClass *array_class, uintptr_t *lengths, intptr_t *lower_bounds, MonoError *error);
