@@ -1543,6 +1543,7 @@ ves_icall_System_Diagnostics_PerformanceCounterCategory_CategoryHelpInternal (
 	}
 	result = mono_string_new_handle_length (mono_domain_get (), cdesc->help, cdesc->help_length, error);
 	goto_if_nok (error, return_null);
+
 exit:
 	mono_unwrapped_string_cleanup (&category);
 	return result;
@@ -1833,13 +1834,12 @@ ves_icall_System_Diagnostics_PerformanceCounterCategory_GetCategoryNames (MonoSt
 		goto_if_nok (error, exit);
 		i++;
 	}
-
 	goto exit;
-	
+
 return_null:
 	MONO_HANDLE_SET_NULL (MonoArray, res);
 	goto exit;
-	
+
 return_empty: // Return a zero sized array, not null, no error.
 	res = mono_array_new_handle (domain, mono_get_string_class (), 0, error);
 	goto exit;
@@ -1892,7 +1892,6 @@ ves_icall_System_Diagnostics_PerformanceCounterCategory_GetCounterNames (
 		}
 	} else
 		goto return_empty;
-	
 	goto exit;
 
 return_null:
