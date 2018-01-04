@@ -1119,6 +1119,22 @@ mono_invoke_unhandled_exception_hook (MonoObject *exc)
 	g_assert_not_reached ();
 }
 
+MonoException *
+mono_corlib_exception_new_with_args (const char *name_space, const char *name, const char *arg_0, const char *arg_1, MonoError *error)
+{
+	MonoDomain *domain = mono_domain_get ();
+	MonoString *str_0, *str_1;
+	error_init (error);
+
+	str_0 = arg_0 ? mono_string_new_checked (domain, arg_0, error) : NULL;
+	return_val_if_nok (error, NULL);
+
+	str_1 = arg_1 ? mono_string_new_checked (domain, arg_1, error) : NULL;
+	return_val_if_nok (error, NULL);
+
+	return mono_exception_from_name_two_strings_checked (mono_defaults.corlib, name_space, name, str_0, str_1, error);
+}
+
 /*
  * Sets @error to a method missing error.
  */
@@ -1187,4 +1203,36 @@ mono_error_set_method_missing (MonoError *error, MonoClass *klass, const char *m
 	g_string_free (res, FALSE);
 
 	mono_error_set_specific (error, MONO_ERROR_MISSING_METHOD, result);
+}
+
+#define SET_ERROR_MSG(STR_VAR, FMT_STR) do {	\
+	va_list __args;	\
+	va_start (__args, FMT_STR);	\
+	STR_VAR = g_strdup_vprintf (FMT_STR, __args);	\
+	va_end(__args);	\
+} while (0);
+
+/**
+ * \p image_name argument will be g_strdup'd. Called must free passed value
+ */
+void
+mono_error_set_bad_image_by_name (MonoError *error, const char *image_name, const char *msg_format, ...)
+{
+	char *str;
+	SET_ERROR_MSG (str, msg_format);
+
+	mono_error_set_specific (error, MONO_ERROR_BAD_IMAGE, str);
+	if (image_name)
+		mono_error_set_first_argument (error, image_name);
+}
+
+void
+mono_error_set_bad_image (MonoError *error, MonoImage *image, const char *msg_format, ...)
+{
+	char *str;
+	SET_ERROR_MSG (str, msg_format);
+
+	mono_error_set_specific (error, MONO_ERROR_BAD_IMAGE, str);
+	if (image)
+		mono_error_set_first_argument (error, mono_image_get_name (image));
 }

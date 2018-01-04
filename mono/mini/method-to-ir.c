@@ -45,6 +45,7 @@
 #include <mono/metadata/class.h>
 #include <mono/metadata/object.h>
 #include <mono/metadata/exception.h>
+#include <mono/metadata/exception-internals.h>
 #include <mono/metadata/opcodes.h>
 #include <mono/metadata/mono-endian.h>
 #include <mono/metadata/tokentype.h>

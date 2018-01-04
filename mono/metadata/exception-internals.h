@@ -38,4 +38,13 @@ mono_install_get_seq_point (MonoGetSeqPointFunc func);
 void
 mono_error_set_method_missing (MonoError *error, MonoClass *klass, const char *method_name, MonoMethodSignature *sig, const char *reason, ...) MONO_ATTR_FORMAT_PRINTF(5,6);
 
+void
+mono_error_set_bad_image (MonoError *error, MonoImage *image, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(3,4);
+
+void
+mono_error_set_bad_image_by_name (MonoError *error, const char *image_name, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(3,4);
+
+MonoException *
+mono_corlib_exception_new_with_args (const char *name_space, const char *name, const char *arg_0, const char *arg_1, MonoError *error);
+
 #endif

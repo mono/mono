@@ -5400,7 +5400,7 @@ ves_icall_System_Reflection_Assembly_InternalGetAssemblyName (MonoStringHandle f
 
 	if (!image){
 		if (status == MONO_IMAGE_IMAGE_INVALID)
-			mono_error_set_bad_image_name (error, g_strdup (filename), "%s", "");
+			mono_error_set_bad_image_by_name (error, filename, "Invalid Image", "");
 		else
 			mono_error_set_assembly_load (error, g_strdup (filename), "%s", "");
 		g_free (filename);

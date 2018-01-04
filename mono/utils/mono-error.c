@@ -187,9 +187,12 @@ mono_error_get_message (MonoError *oerror)
 	if (error->error_code == MONO_ERROR_NONE)
 		return NULL;
 
-	//MME is a simplified error
-	if (error->error_code == MONO_ERROR_MISSING_METHOD)
+	//Those are the simplified errors
+	switch (error->error_code) {
+	case MONO_ERROR_MISSING_METHOD:
+	case MONO_ERROR_BAD_IMAGE:
 		return error->full_message;
+	}
 
 	if (error->full_message_with_fields)
 		return error->full_message_with_fields;
@@ -346,9 +349,8 @@ mono_error_set_type_load_name (MonoError *oerror, const char *type_name, const c
 
 /*
  * Sets @error to be of type @error_code with message @message
- * XXX only works for MONO_ERROR_MISSING_METHOD for now
+ * XXX only works for MONO_ERROR_MISSING_METHOD and MONO_ERROR_BAD_IMAGE for now
 */
-
 void
 mono_error_set_specific (MonoError *oerror, int error_code, const char *message)
 {
@@ -369,28 +371,6 @@ mono_error_set_field_load (MonoError *oerror, MonoClass *klass, const char *fiel
 	mono_error_set_class (oerror, klass);
 	mono_error_set_member_name (oerror, field_name);
 	set_error_message ();	
-}
-
-void
-mono_error_set_bad_image_name (MonoError *oerror, const char *assembly_name, const char *msg_format, ...)
-{
-	MonoErrorInternal *error = (MonoErrorInternal*)oerror;
-	mono_error_prepare (error);
-
-	error->error_code = MONO_ERROR_BAD_IMAGE;
-	mono_error_set_assembly_name (oerror, assembly_name);
-	set_error_message ();
-}
-
-void
-mono_error_set_bad_image (MonoError *oerror, MonoImage *image, const char *msg_format, ...)
-{
-	MonoErrorInternal *error = (MonoErrorInternal*)oerror;
-	mono_error_prepare (error);
-
-	error->error_code = MONO_ERROR_BAD_IMAGE;
-	error->assembly_name = image ? mono_image_get_name (image) : "<no_image>";
-	set_error_message ();
 }
 
 void
@@ -636,10 +616,10 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 		return NULL;
 
 	case MONO_ERROR_MISSING_METHOD:
-		if (error->full_message)
-			exception = mono_exception_from_name_msg (mono_defaults.corlib, "System", "MissingMethodException", error->full_message);
-		else
-			exception = mono_exception_from_name_msg (mono_defaults.corlib, "System", "MissingMethodException", "Unknown Error");
+		exception = mono_corlib_exception_new_with_args ("System", "MissingMethodException", error->full_message, NULL, error_out);
+		break;
+	case MONO_ERROR_BAD_IMAGE:
+		exception = mono_corlib_exception_new_with_args ("System", "BadImageFormatException", error->full_message, error->first_argument, error_out);
 		break;
 
 	case MONO_ERROR_MISSING_FIELD:
@@ -687,7 +667,6 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 		break;
 
 	case MONO_ERROR_FILE_NOT_FOUND:
-	case MONO_ERROR_BAD_IMAGE:
 		if (error->assembly_name) {
 			msg = string_new_cleanup (domain, error->full_message);
 			if (!msg) {
@@ -703,15 +682,9 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 				}
 			}
 
-			if (error->error_code == MONO_ERROR_FILE_NOT_FOUND)
-				exception = mono_exception_from_name_two_strings_checked (mono_get_corlib (), "System.IO", "FileNotFoundException", msg, assembly_name, error_out);
-			else
-				exception = mono_exception_from_name_two_strings_checked (mono_defaults.corlib, "System", "BadImageFormatException", msg, assembly_name, error_out);
+			exception = mono_exception_from_name_two_strings_checked (mono_get_corlib (), "System.IO", "FileNotFoundException", msg, assembly_name, error_out);
 		} else {
-			if (error->error_code == MONO_ERROR_FILE_NOT_FOUND)
-				exception = mono_exception_from_name_msg (mono_get_corlib (), "System.IO", "FileNotFoundException", error->full_message);
-			else
-				exception = mono_exception_from_name_msg (mono_defaults.corlib, "System", "BadImageFormatException", error->full_message);
+			exception = mono_exception_from_name_msg (mono_get_corlib (), "System.IO", "FileNotFoundException", error->full_message);
 		}
 		break;
 
@@ -905,4 +878,11 @@ mono_error_set_from_boxed (MonoError *oerror, const MonoErrorBoxed *box)
 		  
 #undef DUP_STR
 	return (to->flags & MONO_ERROR_INCOMPLETE) == 0 ;
+}
+
+void
+mono_error_set_first_argument (MonoError *oerror, const char *first_argument)
+{
+	MonoErrorInternal* to = (MonoErrorInternal*)oerror;
+	to->first_argument = g_strdup (first_argument);
 }

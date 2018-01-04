@@ -2172,7 +2172,7 @@ ves_icall_System_Reflection_Assembly_LoadFrom (MonoStringHandle fname, MonoBoole
 	
 	if (!ass) {
 		if (status == MONO_IMAGE_IMAGE_INVALID)
-			mono_error_set_bad_image_name (error, g_strdup (name), "");
+			mono_error_set_bad_image_by_name (error, name, "Invalid Image");
 		else
 			mono_error_set_assembly_load (error, g_strdup (name), "%s", "");
 		goto leave;
@@ -2214,7 +2214,7 @@ ves_icall_System_AppDomain_LoadAssemblyRaw (MonoAppDomainHandle ad,
 	MonoImage *image = mono_image_open_from_data_full (assembly_data, raw_assembly_len, FALSE, NULL, refonly);
 
 	if (!image) {
-		mono_error_set_bad_image_name (error, g_strdup (""), "%s", "");
+		mono_error_set_bad_image_by_name (error, "In memory assembly", "0x%x", raw_data);
 		return refass;
 	}
 
@@ -2222,7 +2222,7 @@ ves_icall_System_AppDomain_LoadAssemblyRaw (MonoAppDomainHandle ad,
 		guint32 symbol_len = mono_array_handle_length (raw_symbol_store);
 		uint32_t symbol_gchandle;
 		mono_byte *raw_symbol_data = (mono_byte*) MONO_ARRAY_HANDLE_PIN (raw_symbol_store, mono_byte, 0, &symbol_gchandle);
-		mono_debug_open_image_from_memory (image, raw_symbol_data, symbol_len);
+		mono_debug_open_image_from_memory (image, raw_symbol_data, raw_data);
 		mono_gchandle_free (symbol_gchandle);
 	}
 
@@ -2231,7 +2231,7 @@ ves_icall_System_AppDomain_LoadAssemblyRaw (MonoAppDomainHandle ad,
 
 	if (!ass) {
 		mono_image_close (image);
-		mono_error_set_bad_image_name (error, g_strdup (""), "%s", "");
+		mono_error_set_bad_image_by_name (error, "In Memory assembly", "0x%x", assembly_data);
 		return refass; 
 	}
 

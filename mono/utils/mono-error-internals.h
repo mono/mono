@@ -168,12 +168,6 @@ void
 mono_error_set_field_load (MonoError *error, MonoClass *klass, const char *field_name, const char *msg_format, ...)  MONO_ATTR_FORMAT_PRINTF(4,5);
 
 void
-mono_error_set_bad_image (MonoError *error, MonoImage *image, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(3,4);
-
-void
-mono_error_set_bad_image_name (MonoError *error, const char *file_name, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(3,4);
-
-void
 mono_error_set_out_of_memory (MonoError *error, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(2,3);
 
 void
@@ -231,6 +225,9 @@ const char*
 mono_error_get_exception_name (MonoError *oerror);
 
 void
-mono_error_set_specific (MonoError *oerror, int error_code, const char *missing_method);
+mono_error_set_specific (MonoError *error, int error_code, const char *missing_method);
+
+void
+mono_error_set_first_argument (MonoError *oerror, const char *first_argument);
 
 #endif
