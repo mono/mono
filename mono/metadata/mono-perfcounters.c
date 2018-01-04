@@ -1567,7 +1567,6 @@ mono_perfcounter_category_exists (
 	/* no support for counters on other machines */
 	if (!perfcounter_string_handle_equal_ascii (machine, ".", 1))
 		return FALSE;
-
 	cdesc = find_category (category);
 	if (!cdesc) {
 		SharedCategory *scat = find_custom_category (category);
@@ -1633,7 +1632,6 @@ System_Diagnostics_PerformanceCounterCategory_Create_create_temp (
 	counter_info [i * 2] = mono_string_handle_to_utf8 (MONO_HANDLE_NEW_GET (MonoString, data, name), error);
 	goto_if_nok (error, failure);
 	counter_info [i * 2 + 1] = mono_string_handle_to_utf8 (MONO_HANDLE_NEW_GET (MonoString, data, help), error);
-	goto_if_nok (error, failure);
 failure:
 	HANDLE_FUNCTION_RETURN ();
 }
@@ -1746,44 +1744,47 @@ failure:
 }
 
 int
-ves_icall_System_Diagnostics_PerformanceCounterCategory_InstanceExistsInternal (
-	MonoStringHandle instance, MonoStringHandle category_handle, MonoStringHandle machine, MonoError *error)
-// previously mono_perfcounter_instance_exist
+mono_perfcounter_instance_exists (
+	MonoStringHandle instance, MonoUnwrappedString category, MonoStringHandle machine, MonoError *error)
+// FIXME merge with ves_icall_System_Diagnostics_PerformanceCounterCategory_InstanceExistsInternal
 {
 	const CategoryDesc *cdesc;
 	SharedInstance *sinst;
 	char *name = NULL;
 	int result = FALSE;
-	MonoUnwrappedString category = mono_unwrap_string_handle (category_handle);
 	/* no support for counters on other machines */
 	/*FIXME: machine appears to be wrong
 	if (!perfcounter_string_handle_equal_ascii (machine, ".", 1))
-		goto return_false;*/
+		return FALSE;*/
 	cdesc = find_category (category);
 	if (!cdesc) {
 		SharedCategory *scat;
 		scat = find_custom_category (category);
 		if (!scat)
-			goto return_false;
+			return FALSE;
 		name = mono_string_handle_to_utf8 (instance, error);
 		goto_if_nok (error, return_false);
 		sinst = find_custom_instance (scat, name);
+		g_free (name);
 		if (sinst)
-			goto return_true;
+			return TRUE;
 	} else {
 		/* FIXME: search instance */
 	}
-	goto return_false;
-exit:
-	g_free (name);
+	return FALSE;
+}
+
+int
+ves_icall_System_Diagnostics_PerformanceCounterCategory_InstanceExistsInternal (
+	MonoStringHandle instance, MonoStringHandle category_handle, MonoStringHandle machine, MonoError *error)
+// FIXME merge with mono_perfcounter_instance_exist
+{
+	MonoUnwrappedString category = mono_unwrap_string_handle (category_handle);
+
+	int result = mono_perfcounter_instance_exist (instance, category, machine, error);
+
 	mono_unwrapped_string_cleanup (&category);
 	return result;
-return_false:
-	result = FALSE;
-	goto exit;
-return_true:
-	result = TRUE;
-	goto exit;
 }
 
 static void
