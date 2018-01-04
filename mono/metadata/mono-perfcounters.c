@@ -743,12 +743,10 @@ instance_search (SharedHeader *header, void *data)
 static SharedInstance*
 find_custom_instance (SharedCategory* cat, char *name)
 {
-	InstanceSearch search;
+	InstanceSearch search = { 0 };
 	search.cat_offset = (char*)cat - (char*)shared_area;
 	search.cat = cat;
 	search.name = name;
-	search.list = NULL;
-	search.result = NULL;
 	foreach_shared_item (instance_search, &search);
 	return search.result;
 }
@@ -756,12 +754,9 @@ find_custom_instance (SharedCategory* cat, char *name)
 static GSList*
 get_custom_instances_list (SharedCategory* cat)
 {
-	InstanceSearch search;
+	InstanceSearch search = { 0 };
 	search.cat_offset = (char*)cat - (char*)shared_area;
 	search.cat = cat;
-	search.name = NULL;
-	search.list = NULL;
-	search.result = NULL;
 	foreach_shared_item (instance_search, &search);
 	return search.list;
 }
