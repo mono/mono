@@ -1748,8 +1748,7 @@ mono_perfcounter_instance_exists (
 {
 	const CategoryDesc *cdesc;
 	SharedInstance *sinst;
-	char *name = NULL;
-	int result = FALSE;
+	char *name;
 	/* no support for counters on other machines */
 	/*FIXME: machine appears to be wrong
 	if (!perfcounter_string_handle_equal_ascii (machine, ".", 1))
