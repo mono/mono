@@ -1881,7 +1881,6 @@ ves_icall_System_Diagnostics_PerformanceCounterCategory_GetCounterNames (
 		}
 		goto exit;
 	}
-
 	perfctr_lock ();
 	unlock = TRUE;
 	scat = find_custom_category (category);
