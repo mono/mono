@@ -1441,7 +1441,6 @@ ves_icall_System_Diagnostics_PerformanceCounter_GetImpl (
 	MonoBoolean *custom, MonoError *error)
 // previously mono_perfcounter_get_impl
 {
-	error_init (error);
 	MonoUnwrappedString category = mono_unwrap_string_handle (category_handle);
 	MonoUnwrappedString counter = mono_unwrap_string_handle (counter_handle);
 	MonoUnwrappedString instance = mono_unwrap_string_handle (instance_handle);
@@ -1460,7 +1459,6 @@ ves_icall_System_Diagnostics_PerformanceCounter_GetSample (
 	void *impl, MonoBoolean only_value, MonoCounterSample *sample, MonoError *error)
 // previously mono_perfcounter_get_sample
 {
-	error_init (error);
 	ImplVtable *vtable = (ImplVtable *)impl;
 	if (vtable && vtable->sample)
 		return vtable->sample (vtable, only_value, sample);
@@ -1472,7 +1470,6 @@ ves_icall_System_Diagnostics_PerformanceCounter_UpdateValue (
 	void *impl, MonoBoolean do_incr, gint64 value, MonoError *error)
 // previously mono_perfcounter_update_value
 {
-	error_init (error);
 	ImplVtable *vtable = (ImplVtable *)impl;
 	if (vtable && vtable->update)
 		return vtable->update (vtable, do_incr, value);
@@ -1483,7 +1480,6 @@ void
 ves_icall_System_Diagnostics_PerformanceCounter_FreeData (void *impl, MonoError *error)
 // previously mono_perfcounter_free_data
 {
-	error_init (error);
 	ImplVtable *vtable = (ImplVtable *)impl;
 	if (vtable && vtable->cleanup)
 		vtable->cleanup (vtable);
@@ -1530,7 +1526,6 @@ ves_icall_System_Diagnostics_PerformanceCounterCategory_CategoryHelpInternal (
 	MonoStringHandle category_handle, MonoStringHandle machine, MonoError *error)
 // previously mono_perfcounter_category_help
 {
-	error_init (error);
 	MONO_HANDLE_LOCAL_VARIABLE_INITIALIZED_NULL (MonoString, result);
 	const CategoryDesc *cdesc;
 	MonoUnwrappedString category = mono_unwrap_string_handle (category_handle);
@@ -1596,8 +1591,6 @@ MonoBoolean
 ves_icall_System_Diagnostics_PerformanceCounterCategory_CounterCategoryExists (
 	MonoStringHandle counter_handle, MonoStringHandle category_handle, MonoStringHandle machine, MonoError *error)
 {
-	error_init (error);
-
 	MonoUnwrappedString category = mono_unwrap_string_handle (category_handle);
 	MonoUnwrappedString counter = mono_unwrap_string_handle (counter_handle);
 
