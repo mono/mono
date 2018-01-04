@@ -1377,11 +1377,9 @@ mono_perfcounter_get_impl (
 >>>>>>> perfcounter icall work in progress
 	const CategoryDesc *cdesc;
 	void *result = NULL;
-
 	/* no support for counters on other machines */
 	if (!perfcounter_string_handle_equal_ascii (machine, ".", 1))
 		return NULL;
-
 	cdesc = find_category (category);
 	if (!cdesc) {
 		SharedCategory *scat = find_custom_category (category);
