@@ -1120,12 +1120,10 @@ mono_invoke_unhandled_exception_hook (MonoObject *exc)
 }
 
 /*
- * Returns a string ready to be consumed by managed code when formating a string to include class + method name.
- * IE, say you have void Foo:Bar(int). It will return "void {0}(int)".
- * The reason for this is that managed exception constructors for missing members require a both class and member names to be provided independently of the signature.
+ * Sets @error to a method missing error.
  */
-char *
-mono_exception_create_missing_method_message (MonoClass *klass, const char *method_name, MonoMethodSignature *sig, const char *reason, ...)
+void
+mono_error_set_method_missing (MonoError *error, MonoClass *klass, const char *method_name, MonoMethodSignature *sig, const char *reason, ...)
 {
 	int i;
 	char *result;
@@ -1187,5 +1185,6 @@ mono_exception_create_missing_method_message (MonoClass *klass, const char *meth
 	}
 	result = res->str;
 	g_string_free (res, FALSE);
-	return result;
+
+	mono_error_set_specific (error, MONO_ERROR_MISSING_METHOD, result);
 }

@@ -165,9 +165,6 @@ void
 mono_error_set_type_load_name (MonoError *error, const char *type_name, const char *assembly_name, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(4,5);
 
 void
-mono_error_set_method_load (MonoError *oerror, const char *missing_method);
-
-void
 mono_error_set_field_load (MonoError *error, MonoClass *klass, const char *field_name, const char *msg_format, ...)  MONO_ATTR_FORMAT_PRINTF(4,5);
 
 void
@@ -232,5 +229,8 @@ mono_error_set_from_boxed (MonoError *error, const MonoErrorBoxed *from);
 
 const char*
 mono_error_get_exception_name (MonoError *oerror);
+
+void
+mono_error_set_specific (MonoError *oerror, int error_code, const char *missing_method);
 
 #endif

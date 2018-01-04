@@ -35,7 +35,7 @@ typedef int (*MonoGetSeqPointFunc) (MonoDomain *domain, MonoMethod *method, gint
 void
 mono_install_get_seq_point (MonoGetSeqPointFunc func);
 
-char*
-mono_exception_create_missing_method_message (MonoClass *klass, const char *method_name, MonoMethodSignature *sig, const char *msg, ...);
+void
+mono_error_set_method_missing (MonoError *error, MonoClass *klass, const char *method_name, MonoMethodSignature *sig, const char *reason, ...) MONO_ATTR_FORMAT_PRINTF(5,6);
 
 #endif

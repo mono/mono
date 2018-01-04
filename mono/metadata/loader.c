@@ -525,7 +525,7 @@ find_method (MonoClass *in_class, MonoClass *ic, const char* name, MonoMethodSig
 
 	//we did not find the method
 	if (!result && mono_error_ok (error))
-		mono_error_set_method_load (error, mono_exception_create_missing_method_message (initial_class, name, sig, NULL));
+		mono_error_set_method_missing (error, initial_class, name, sig, NULL);
 		
  out:
 	g_free (class_name);
@@ -841,7 +841,7 @@ method_from_memberref (MonoImage *image, guint32 idx, MonoGenericContext *typesp
 	sig_idx = cols [MONO_MEMBERREF_SIGNATURE];
 
 	if (!mono_verifier_verify_memberref_method_signature (image, sig_idx, NULL)) {
-		mono_error_set_method_load (error, mono_exception_create_missing_method_message (klass, mname, NULL, "Verifier rejected method signature"));
+		mono_error_set_method_missing (error, klass, mname, NULL, "Verifier rejected method signature");
 		goto fail;
 	}
 
@@ -884,7 +884,7 @@ method_from_memberref (MonoImage *image, guint32 idx, MonoGenericContext *typesp
 	}
 
 	if (!method && mono_error_ok (error))
-		mono_error_set_method_load (error, mono_exception_create_missing_method_message (klass, mname, sig, "Failed to load due to unknown reasons"));
+		mono_error_set_method_missing (error, klass, mname, sig, "Failed to load due to unknown reasons");
 
 	return method;
 
@@ -2505,15 +2505,15 @@ mono_method_signature_checked (MonoMethod *m, MonoError *error)
 	/* Verify metadata consistency */
 	if (signature->generic_param_count) {
 		if (!container || !container->is_method) {
-			mono_error_set_method_load (error, mono_exception_create_missing_method_message (m->klass, m->name, signature, "Signature claims method has generic parameters, but generic_params table says it doesn't for method 0x%08x from image %s", idx, img->name));
+			mono_error_set_method_missing (error, m->klass, m->name, signature, "Signature claims method has generic parameters, but generic_params table says it doesn't for method 0x%08x from image %s", idx, img->name);
 			return NULL;
 		}
 		if (container->type_argc != signature->generic_param_count) {
-			mono_error_set_method_load (error, mono_exception_create_missing_method_message (m->klass, m->name, signature, "Inconsistent generic parameter count.  Signature says %d, generic_params table says %d for method 0x%08x from image %s", signature->generic_param_count, container->type_argc, idx, img->name));
+			mono_error_set_method_missing (error, m->klass, m->name, signature, "Inconsistent generic parameter count.  Signature says %d, generic_params table says %d for method 0x%08x from image %s", signature->generic_param_count, container->type_argc, idx, img->name);
 			return NULL;
 		}
 	} else if (container && container->is_method && container->type_argc) {
-		mono_error_set_method_load (error, mono_exception_create_missing_method_message (m->klass, m->name, signature, "generic_params table claims method has generic parameters, but signature says it doesn't for method 0x%08x from image %s", idx, img->name));
+		mono_error_set_method_missing (error, m->klass, m->name, signature, "generic_params table claims method has generic parameters, but signature says it doesn't for method 0x%08x from image %s", idx, img->name);
 		return NULL;
 	}
 	if (m->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) {
@@ -2550,7 +2550,7 @@ mono_method_signature_checked (MonoMethod *m, MonoError *error)
 		case PINVOKE_ATTRIBUTE_CALL_CONV_GENERIC:
 		case PINVOKE_ATTRIBUTE_CALL_CONV_GENERICINST:
 		default: {
-			mono_error_set_method_load (error, mono_exception_create_missing_method_message (m->klass, m->name, signature, "Unsupported calling convention : 0x%04x for method 0x%08x from image %s", piinfo->piflags, idx, img->name));
+			mono_error_set_method_missing (error, m->klass, m->name, signature, "Unsupported calling convention : 0x%04x for method 0x%08x from image %s", piinfo->piflags, idx, img->name);
 		}
 			return NULL;
 		}

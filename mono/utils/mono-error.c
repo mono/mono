@@ -344,13 +344,18 @@ mono_error_set_type_load_name (MonoError *oerror, const char *type_name, const c
 	set_error_message ();
 }
 
+/*
+ * Sets @error to be of type @error_code with message @message
+ * XXX only works for MONO_ERROR_MISSING_METHOD for now
+*/
+
 void
-mono_error_set_method_load (MonoError *oerror, const char *message)
+mono_error_set_specific (MonoError *oerror, int error_code, const char *message)
 {
 	MonoErrorInternal *error = (MonoErrorInternal*)oerror;
 	mono_error_prepare (error);
 
-	error->error_code = MONO_ERROR_MISSING_METHOD;
+	error->error_code = error_code;
 	error->full_message = message;
 }
 
