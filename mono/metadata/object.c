@@ -62,14 +62,14 @@ mono_ldstr_metadata_sig (MonoDomain *domain, const char* sig, MonoError *error);
 static void
 free_main_args (void);
 
+static char *
+mono_string_to_utf8_internal (MonoMemPool *mp, MonoImage *image, MonoStringHandle s, MonoError *error);
+
 static void
 array_full_copy_unchecked_size (MonoArray *src, MonoArray *dest, MonoClass *klass, uintptr_t size);
 
 static MonoMethod*
 class_get_virtual_method (MonoClass *klass, MonoMethod *method, gboolean is_proxy, MonoError *error);
-
-static char *
-mono_string_to_utf8_internal (MonoMemPool *mp, MonoImage *image, MonoStringHandle s, MonoError *error);
 
 /* Class lazy loading functions */
 static GENERATE_GET_CLASS_WITH_CACHE (pointer, "System.Reflection", "Pointer")
