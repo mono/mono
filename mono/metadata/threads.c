@@ -1654,7 +1654,6 @@ mono_thread_set_name_internal (MonoInternalThread *this_obj, int length, const c
 	char* dup8 = NULL;
 	GError *gerror = NULL;
 	MonoNativeThreadId tid = 0;
-	gboolean unlock = FALSE;
 
 	if (length > 0) {
 		if (utf16) {
@@ -1669,13 +1668,11 @@ mono_thread_set_name_internal (MonoInternalThread *this_obj, int length, const c
 	}
 
 	LOCK_THREAD (this_obj);
-	unlock = TRUE;
 
 	if (reset) {
 		this_obj->flags &= ~MONO_THREAD_FLAG_NAME_SET;
 	} else if (this_obj->flags & MONO_THREAD_FLAG_NAME_SET) {
 		UNLOCK_THREAD (this_obj);
-		unlock = FALSE;
 		mono_error_set_invalid_operation (error, "Thread.Name can only be set once.");
 		goto exit;
 	}
@@ -1696,7 +1693,6 @@ mono_thread_set_name_internal (MonoInternalThread *this_obj, int length, const c
 		tid = thread_get_tid (this_obj);
 
 	UNLOCK_THREAD (this_obj);
-	unlock = FALSE;
 
 	if (this_obj->name && tid) {
 		const char *profiler_name = 0;
@@ -1711,8 +1707,6 @@ mono_thread_set_name_internal (MonoInternalThread *this_obj, int length, const c
 		mono_native_thread_set_name (tid, profiler_name);
 	}
 exit:
-	if (unlock)
-		UNLOCK_THREAD (this_obj);
 	g_free (old_name);
 	g_free (dup8);
 	g_free (dup16);
