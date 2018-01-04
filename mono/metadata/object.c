@@ -78,6 +78,7 @@ static GENERATE_GET_CLASS_WITH_CACHE (unhandled_exception_event_args, "System", 
 static GENERATE_GET_CLASS_WITH_CACHE (sta_thread_attribute, "System", "STAThreadAttribute")
 static GENERATE_GET_CLASS_WITH_CACHE (activation_services, "System.Runtime.Remoting.Activation", "ActivationServices")
 
+
 #define ldstr_lock() mono_os_mutex_lock (&ldstr_section)
 #define ldstr_unlock() mono_os_mutex_unlock (&ldstr_section)
 static mono_mutex_t ldstr_section;
