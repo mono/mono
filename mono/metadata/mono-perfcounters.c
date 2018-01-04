@@ -1621,7 +1621,7 @@ System_Diagnostics_PerformanceCounterCategory_Create_create_temp (
 	MonoArrayHandle items, int i, char **counter_info, MonoError *error)
 // Avoid creating co-op handles in loops -- move loop body into functions.
 {
-	HANDLE_FUNCTION_ENTER()
+	HANDLE_FUNCTION_ENTER ()
 
 	MONO_HANDLE_LOCAL_VARIABLE_INITIALIZED_NULL (CounterCreationData, data);
 	MONO_HANDLE_ARRAY_GETREF (data, items, i);
@@ -1639,7 +1639,7 @@ System_Diagnostics_PerformanceCounterCategory_Create_copy_temp_to_shared (
 	MonoArrayHandle items, int i, char** counter_info, char* p)
 // Avoid creating co-op handles in loops -- move loop body into functions.
 {
-	HANDLE_FUNCTION_ENTER()
+	HANDLE_FUNCTION_ENTER ()
 
 	MONO_HANDLE_LOCAL_VARIABLE_INITIALIZED_NULL (CounterCreationData, data);
 	MONO_HANDLE_ARRAY_GETREF (data, items, i);
@@ -1789,7 +1789,7 @@ mono_new_string_into_array (
 	MonoDomain *domain, const char *str, size_t len, MonoArrayHandle array, size_t i, MonoError *error)
 // Avoid creating co-op handles in loops -- move loop body into functions.
 {
-	HANDLE_FUNCTION_ENTER()
+	HANDLE_FUNCTION_ENTER ()
 
 	MonoStringHandle strh = mono_string_new_handle_length (domain, str, len, error);
 	goto_if_nok (error, exit);
@@ -1913,7 +1913,7 @@ exit:
 static MonoArrayHandle
 get_string_array (void **array, int count, gboolean is_process, MonoError *error)
 {
-	HANDLE_FUNCTION_ENTER()
+	HANDLE_FUNCTION_ENTER ()
 
 	int i;
 	MonoDomain *domain = mono_domain_get ();
@@ -1941,13 +1941,13 @@ get_string_array (void **array, int count, gboolean is_process, MonoError *error
 return_null:
 	MONO_HANDLE_SET_NULL (MonoArray, res);
 exit:
-	HANDLE_FUNCTION_RETURN_REF (res);
+	HANDLE_FUNCTION_RETURN_REF (MonoArray, res);
 }
 
 static MonoArrayHandle
 get_string_array_of_strings (void **array, int count, MonoError *error)
 {
-	HANDLE_FUNCTION_ENTER()
+	HANDLE_FUNCTION_ENTER ()
 
 	int i;
 	MonoDomain *domain = mono_domain_get ();
@@ -1964,13 +1964,13 @@ get_string_array_of_strings (void **array, int count, MonoError *error)
 return_null:
 	MONO_HANDLE_SET_NULL (MonoArray, res);
 exit:
-	HANDLE_FUNCTION_RETURN_REF (res);
+	HANDLE_FUNCTION_RETURN_REF (MonoArray, res);
 }
 
 static MonoArrayHandle
 get_mono_instances (MonoError *error)
 {
-	HANDLE_FUNCTION_ENTER()
+	HANDLE_FUNCTION_ENTER ()
 
 	int count = 64;
 	int res;
@@ -1985,13 +1985,13 @@ get_mono_instances (MonoError *error)
 	} while (res == count);
 	array = get_string_array (buf, res, TRUE, error);
 	g_free (buf);
-	HANDLE_FUNCTION_RETURN_REF (array)
+	HANDLE_FUNCTION_RETURN_REF (MonoArray, array)
 }
 
 static MonoArrayHandle
 get_cpu_instances (MonoError *error)
 {
-	HANDLE_FUNCTION_ENTER()
+	HANDLE_FUNCTION_ENTER ()
 
 	MONO_HANDLE_LOCAL_VARIABLE_INITIALIZED_NULL (MonoArray, array);
 	int const count = mono_cpu_count () + 1; /* +1 for "_Total" */
@@ -2008,13 +2008,13 @@ get_cpu_instances (MonoError *error)
 return_null:
 	MONO_HANDLE_SET_NULL (MonoArray, array);
 exit:
-	HANDLE_FUNCTION_RETURN_REF (array)
+	HANDLE_FUNCTION_RETURN_REF (MonoArray, array)
 }
 
 static MonoArrayHandle
 get_processes_instances (MonoError *error)
 {
-	HANDLE_FUNCTION_ENTER()
+	HANDLE_FUNCTION_ENTER ()
 
 	MONO_HANDLE_LOCAL_VARIABLE_INITIALIZED_NULL (MonoArray, array);
 	int count = 0;
@@ -2024,13 +2024,13 @@ get_processes_instances (MonoError *error)
 	else
 		array = get_string_array (buf, count, TRUE, error);
 	g_free (buf);
-	HANDLE_FUNCTION_RETURN_REF (array);
+	HANDLE_FUNCTION_RETURN_REF (MonoArray, array);
 }
 
 static MonoArrayHandle
 get_networkinterface_instances (MonoError *error)
 {
-	HANDLE_FUNCTION_ENTER()
+	HANDLE_FUNCTION_ENTER ()
 
 	MONO_HANDLE_LOCAL_VARIABLE_INITIALIZED_NULL (MonoArray, array);
 	int count = 0;
@@ -2040,13 +2040,13 @@ get_networkinterface_instances (MonoError *error)
 	else
 		array = get_string_array_of_strings (buf, count, error);
 	g_strfreev ((char **) buf);
-	HANDLE_FUNCTION_RETURN_REF (array);
+	HANDLE_FUNCTION_RETURN_REF (MonoArray, array);
 }
 
 static MonoArrayHandle
 get_custom_instances (MonoUnwrappedString category, MonoError *error)
 {
-	HANDLE_FUNCTION_ENTER()
+	HANDLE_FUNCTION_ENTER ()
 
 	SharedCategory *scat;
 	MONO_HANDLE_LOCAL_VARIABLE_INITIALIZED_NULL (MonoArray, array);
@@ -2076,7 +2076,7 @@ return_null:
 	MONO_HANDLE_SET_NULL (MonoArray, array);
 exit:
 	g_slist_free (list);
-	HANDLE_FUNCTION_RETURN_REF (array)
+	HANDLE_FUNCTION_RETURN_REF (MonoArray, array)
 }
 
 MonoArrayHandle
