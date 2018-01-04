@@ -757,7 +757,7 @@ If this is too restrictive, g_error remains.
 */
 #define  g_assertf(x, format, ...) \
 	(G_LIKELY(x) ? 1 : (g_assertion_message ( \
-	"* Assertion at %s:%d, condition `%s' not met, function:%hs, " format "\n", \
+	"* Assertion at %s:%d, condition `%s' not met, function:%s, " format "\n", \
 	__FILE__, __LINE__, #x, __func__, __VA_ARGS__), 0))
 
 /*
