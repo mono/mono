@@ -675,7 +675,9 @@ namespace System.Threading
                     }
                 }
             }
-
+#if MONO
+            ThreadPool.NotifyWorkItemQueued();
+#endif
             EnsureThreadRequested();
         }
 
@@ -1896,6 +1898,11 @@ namespace System.Threading
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern void NotifyWorkItemProgressNative();
+
+        [System.Security.SecurityCritical]
+        [ResourceExposure(ResourceScope.None)]
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal static extern void NotifyWorkItemQueued();
 
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
