@@ -90,7 +90,7 @@ mono_string_handle_to_utf8 (MonoStringHandle s, MonoError *error)
 {
 	MonoUnwrappedString t = mono_unwrap_string_handle (s);
 
-	char * const utf8 = mono_unwrapped_string_to_utf8 (t, error);
+	char *utf8 = mono_unwrapped_string_to_utf8 (t, error);
 
 	mono_unwrapped_string_cleanup (&t);
 
@@ -1369,7 +1369,7 @@ static void*
 mono_perfcounter_get_impl (
 		MonoUnwrappedString category, MonoUnwrappedString counter, MonoUnwrappedString instance,
 		MonoStringHandle machine, int *type, MonoBoolean *custom, MonoError *error)
-// separate function to minimize diff
+// FIXME merge with ves_icall_System_Diagnostics_PerformanceCounter_GetImpl
 {
 <<<<<<< HEAD
 	ERROR_DECL (error);
@@ -1443,7 +1443,7 @@ ves_icall_System_Diagnostics_PerformanceCounter_GetImpl (
 	MonoUnwrappedString counter = mono_unwrap_string_handle (counter_handle);
 	MonoUnwrappedString instance = mono_unwrap_string_handle (instance_handle);
 	
-	void * const result = mono_perfcounter_get_impl (category, counter,
+	void *result = mono_perfcounter_get_impl (category, counter,
 		instance, machine, type, custom, error);
 
 	mono_unwrapped_string_cleanup (&category);
@@ -1514,7 +1514,7 @@ ves_icall_System_Diagnostics_PerformanceCounterCategory_CategoryDelete (
 	MonoStringHandle name_handle, MonoError *error)
 {
 	MonoUnwrappedString name = mono_unwrap_string_handle (name_handle);	
-	MonoBoolean const result = mono_perfcounter_category_del (name, error);
+	MonoBoolean result = mono_perfcounter_category_del (name, error);
  	mono_unwrapped_string_cleanup (&name);
 	return result;
 }
@@ -1591,7 +1591,7 @@ ves_icall_System_Diagnostics_PerformanceCounterCategory_CounterCategoryExists (
 	MonoUnwrappedString category = mono_unwrap_string_handle (category_handle);
 	MonoUnwrappedString counter = mono_unwrap_string_handle (counter_handle);
 
-	MonoBoolean const result = mono_perfcounter_category_exists (counter, category, machine);
+	MonoBoolean result = mono_perfcounter_category_exists (counter, category, machine);
 
 	mono_unwrapped_string_cleanup (&counter);
 	mono_unwrapped_string_cleanup (&category);
@@ -1741,8 +1741,8 @@ failure:
 	return result;
 }
 
-int
-mono_perfcounter_instance_exists (
+static int
+mono_perfcounter_instance_exist (
 	MonoStringHandle instance, MonoUnwrappedString category, MonoStringHandle machine, MonoError *error)
 // FIXME merge with ves_icall_System_Diagnostics_PerformanceCounterCategory_InstanceExistsInternal
 {
@@ -1760,7 +1760,7 @@ mono_perfcounter_instance_exists (
 		if (!scat)
 			return FALSE;
 		name = mono_string_handle_to_utf8 (instance, error);
-		goto_if_nok (error, return_false);
+		return_val_if_nok (error, FALSE);
 		sinst = find_custom_instance (scat, name);
 		g_free (name);
 		if (sinst)
@@ -1955,7 +1955,7 @@ get_string_array_of_strings (void **array, int count, MonoError *error)
 	goto_if_nok (error, return_null);
 
 	for (i = 0; i < count; ++i) {
-		char const * const p = (char*)array[i];
+		char *p = (char*)array[i];
 		mono_new_string_into_array (domain, p, strlen (p), res, i, error);
 		goto_if_nok (error, return_null);
 	}
@@ -1993,17 +1993,18 @@ get_cpu_instances (MonoError *error)
 {
 	HANDLE_FUNCTION_ENTER ()
 
+	void **buf = NULL;
+	int i, count;
 	MONO_HANDLE_LOCAL_VARIABLE_INITIALIZED_NULL (MonoArray, array);
-	int const count = mono_cpu_count () + 1; /* +1 for "_Total" */
-	void ** const buf = g_new (void*, count);
-	for (int i = 0; i < count; ++i)
+	count = mono_cpu_count () + 1; /* +1 for "_Total" */
+	buf = g_new (void*, count);
+	for (i = 0; i < count; ++i)
 		buf [i] = GINT_TO_POINTER (i - 1); /* -1 => _Total */
 	array = get_string_array (buf, count, FALSE, error);
 	g_free (buf);
 	MonoStringHandle total = mono_string_new_handle (mono_domain_get (), "_Total", error);
 	goto_if_nok (error, return_null);
 	MONO_HANDLE_ARRAY_SETREF (array, 0, total);
-
 	goto exit;
 return_null:
 	MONO_HANDLE_SET_NULL (MonoArray, array);
