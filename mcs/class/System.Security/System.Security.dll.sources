@@ -1,5 +1,5 @@
 #include common_System.Security.dll.sources
-corefx/SR.cs
+
 Mono.Security.Cryptography/ManagedProtection.cs
 Mono.Security.Cryptography/NativeDapiProtection.cs
 System.Security.Cryptography/MemoryProtectionScope.cs
@@ -13,6 +13,8 @@ System.Security.Cryptography.Pkcs/SignerInfoEnumerator.cs
 ../System.Core/System.Security.Cryptography.X509Certificates/RSACertificateExtensions.cs
 System.Security.Cryptography.X509Certificates/X509Certificate2UI.cs
 System.Security.Cryptography.X509Certificates/X509SelectionFlag.cs
+
+# System.Security.Cryptography.Xml
 ../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/AncestralNamespaceContextManager.cs
 ../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/AttributeSortOrder.cs
 ../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/C14NAncestralNamespaceContextManager.cs
@@ -57,9 +59,8 @@ System.Security.Cryptography.X509Certificates/X509SelectionFlag.cs
 ../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/KeyInfoName.cs
 ../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/KeyInfoNode.cs
 ../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/KeyInfoRetrievalMethod.cs
-System.Security.Cryptography.Xml/KeyInfoX509Data.cs
+../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/KeyInfoX509Data.cs
 ../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/KeyReference.cs
-System.Security.Cryptography.Xml/Manifest.cs
 ../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/MyXmlDocument.cs
 ../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/NamespaceFrame.cs
 ../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/NamespaceSortOrder.cs
@@ -72,8 +73,8 @@ System.Security.Cryptography.Xml/Manifest.cs
 ../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/RSAPKCS1SHA384SignatureDescription.cs
 ../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/RSAPKCS1SHA512SignatureDescription.cs
 ../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/RSAPKCS1SignatureDescription.cs
-System.Security.Cryptography.Xml/Signature.cs
-System.Security.Cryptography.Xml/SignedInfo.cs
+../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/Signature.cs
+../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/SignedInfo.cs
 System.Security.Cryptography.Xml/SignedXml.cs
 ../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/SignedXmlDebugLog.cs
 ../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/SymmetricKeyWrap.cs
@@ -90,8 +91,8 @@ System.Security.Cryptography.Xml/SignedXml.cs
 ../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/XmlDsigXPathTransform.cs
 ../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/XmlDsigXsltTransform.cs
 ../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/XmlLicenseTransform.cs
-System.Security.Cryptography.Xml/XmlSignature.cs
-../../build/common/MonoTODOAttribute.cs
+
+# System.Security.Permissions
 System.Security.Permissions/DataProtectionPermission.cs
 System.Security.Permissions/DataProtectionPermissionAttribute.cs
 System.Security.Permissions/DataProtectionPermissionFlags.cs

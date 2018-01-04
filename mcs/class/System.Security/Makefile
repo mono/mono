@@ -8,6 +8,7 @@ MONO_SECURITY=Mono.Security
 endif
 
 LIBRARY = System.Security.dll
+API_BIN_REFS := System.Numerics
 LIB_REFS = secxml/System bare/System.Xml $(MONO_SECURITY)
 KEYFILE = ../msfinal.pub
 LIB_MCS_FLAGS = \

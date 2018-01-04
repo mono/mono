@@ -94,6 +94,7 @@ namespace System.Security.Cryptography {
 			case "system.security.cryptography.hmac":
 			case "system.security.cryptography.hmacsha1":
 			case "hmacsha1":
+			case "http://www.w3.org/2000/09/xmldsig#hmac-sha1":
 				return new HMACSHA1 ();
 			case "system.security.cryptography.hmacsha256":
 			case "hmacsha256":
