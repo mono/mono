@@ -7101,7 +7101,7 @@ mono_string_to_utf8 (MonoString *s)
  * The resulting buffer should be freed with \c mono_free().
  */
 char *
-mono_utf16_to_utf8 (const gunichar2 *chars, int length, MonoError *error)
+mono_utf16_to_utf8 (const gunichar2 *chars, size_t length, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 

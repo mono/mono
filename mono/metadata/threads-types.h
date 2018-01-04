@@ -222,7 +222,7 @@ gunichar2* mono_thread_get_name (MonoInternalThread *this_obj, guint32 *name_len
 MONO_API MonoException* mono_thread_get_undeniable_exception (void);
 void mono_thread_self_abort (void);
 
-void mono_thread_set_name_internal (MonoInternalThread *thread, int length,
+void mono_thread_set_name_internal (MonoInternalThread *thread, size_t length,
 	const char* utf8, const gunichar2* utf16, gboolean permanent,
 	gboolean reset, MonoError *error);
 

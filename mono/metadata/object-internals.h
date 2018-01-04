@@ -1949,6 +1949,6 @@ MonoAssembly*
 mono_try_assembly_resolve_handle (MonoDomain *domain, MonoStringHandle fname, MonoAssembly *requesting, gboolean refonly, MonoError *error);
 
 char *
-mono_utf16_to_utf8 (const mono_unichar2 *chars, int length, MonoError *error);
+mono_utf16_to_utf8 (const mono_unichar2 *chars, size_t length, MonoError *error);
 
 #endif /* __MONO_OBJECT_INTERNALS_H__ */

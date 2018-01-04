@@ -1641,7 +1641,7 @@ ves_icall_System_Threading_Thread_GetName_internal (MonoInternalThread *this_obj
 }
 
 void
-mono_thread_set_name_internal (MonoInternalThread *this_obj, int length, const char* utf8, const gunichar2 *utf16, gboolean permanent, gboolean reset, MonoError *error)
+mono_thread_set_name_internal (MonoInternalThread *this_obj, size_t length, const char* utf8, const gunichar2 *utf16, gboolean permanent, gboolean reset, MonoError *error)
 {
 	error_init (error);
 
