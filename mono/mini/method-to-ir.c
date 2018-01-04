@@ -78,7 +78,7 @@
 #include "mini-runtime.h"
 
 #define BRANCH_COST 10
-#define INLINE_LENGTH_LIMIT 20
+#define INLINE_LENGTH_LIMIT 100
 
 /* These have 'cfg' as an implicit argument */
 #define INLINE_FAILURE(msg) do {									\
