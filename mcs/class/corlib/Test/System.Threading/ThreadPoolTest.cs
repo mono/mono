@@ -255,11 +255,12 @@ namespace MonoTests.System.Threading
 			Assert.AreEqual (0, var_3, "var_3");
 		}
 
-		[Test]
-		public static void PerformanceCounter ()
+#if !MOBILE
 		// This is test related to bug https://bugzilla.xamarin.com/show_bug.cgi?id=41294.
 		// The bug is that the performance counters return 0.
 		// "Work Items Added" and "# of Threads" are fixed, the others are not.
+		[Test]
+		public  void PerformanceCounter_WorkItems ()
 		{
 			var workItems = new PerformanceCounter ("Mono Threadpool", "Work Items Added");
 			var threads   = new PerformanceCounter ("Mono Threadpool", "# of Threads");
@@ -273,11 +274,12 @@ namespace MonoTests.System.Threading
 			var workItems1 = workItems.NextValue();
 			var threads0 = threads.NextValue();
 
-			Console.WriteLine ("workItems0:{0} workItems1:{1}", workItems0, workItems1);
-			Console.WriteLine ("{0}:{1}", "threads", threads0);
+			//Console.WriteLine ("workItems0:{0} workItems1:{1}", workItems0, workItems1);
+			//Console.WriteLine ("threads:{0}",  threads0);
 
-			Assert.IsTrue (workItems1 - workItems0 == N, "#1");
+			Assert.AreEqual (N, workItems1 - workItems0, "#1");
 			Assert.IsTrue (threads0 > 0, "#2");
 		}
+#endif
 	}
 }
