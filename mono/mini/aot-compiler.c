@@ -8120,13 +8120,8 @@ compile_thread_main (gpointer user_data)
 
 	MonoError error;
 	MonoInternalThread *internal = mono_thread_internal_current ();
-// "AOT compiler"
-#define THREAD_NAME 'A','O','T',' ','c','o','m','p','i','l','e','r',0
-	const static char aot_threadname8[] = {THREAD_NAME};
-	const static gunichar2 aot_threadname16[] = {THREAD_NAME};
-#undef THREAD_NAME
-	mono_thread_set_name_internal (internal, sizeof (aot_threadname8) - 1,
-		aot_threadname8, aot_threadname16, TRUE, FALSE, &error);
+	mono_thread_set_name_internal (internal,
+		G_LENGTH_AND_STRING_CONSTANT ("AOT compiler"), NULL, TRUE, FALSE, &error);
 	mono_error_assert_ok (&error);
 
 	for (i = 0; i < methods->len; ++i)

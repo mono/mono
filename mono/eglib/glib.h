@@ -81,6 +81,16 @@ typedef guint32 gunichar;
  */
 #define G_N_ELEMENTS(s)      (sizeof(s) / sizeof ((s) [0]))
 
+// void some_string_function (const char* s, size_t slength);
+// void other_string_function (size_t slength, const wchar_t* s);
+//
+// some_string_function (G_STRING_CONSTANT_AND_LENGTH("foo"))
+// other_string_function (G_LENGTH_AND_STRING_CONSTANT (L"foobar"))
+//
+// There are deliberately no parentheses around the macro expansion.
+#define G_STRING_CONSTANT_AND_LENGTH(x) (x), (G_N_ELEMENTS (x) - 1)
+#define G_LENGTH_AND_STRING_CONSTANT(x) (G_N_ELEMENTS (x) - 1), (x)
+
 #define FALSE                0
 #define TRUE                 1
 

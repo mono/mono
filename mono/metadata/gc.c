@@ -872,14 +872,8 @@ finalizer_thread (gpointer unused)
 	MonoError error;
 	gboolean wait = TRUE;
 
-// "Finalizer"
-#define THREAD_NAME 'F','i','n','a','l','i','z','e','r',0
-	const static char finalizer_threadname8[] = {THREAD_NAME};
-	const static gunichar2 finalizer_threadname16[] = {THREAD_NAME};
-#undef THREAD_NAME
 	mono_thread_set_name_internal (mono_thread_internal_current (),
-		sizeof (finalizer_threadname8) - 1, finalizer_threadname8,
-		finalizer_threadname16, FALSE, FALSE, &error);
+		G_LENGTH_AND_STRING_CONSTANT ("Finalizer"), NULL, FALSE, FALSE, &error);
 	mono_error_assert_ok (&error);
 
 	/* Register a hazard free queue pump callback */

@@ -10405,13 +10405,8 @@ debugger_thread (void *arg)
 	debugger_thread_id = mono_native_thread_id_get ();
 
 	MonoInternalThread *internal = mono_thread_internal_current ();
-// "Debugger agent"
-#define THREAD_NAME 'D','e','b','u','g','g','e','r',' ','a','g','e','n','t',0
-	const static char debug_threadname8[] = {THREAD_NAME};
-	const static gunichar2 debug_threadname16[] = {THREAD_NAME};
-#undef THREAD_NAME
-	mono_thread_set_name_internal (internal, sizeof (debug_threadname8) - 1,
-		debug_threadname8, debug_threadname16, TRUE, FALSE, &error);
+	mono_thread_set_name_internal (internal,
+		G_LENGTH_AND_STRING_CONSTANT ("Debugger agent"), NULL, TRUE, FALSE, &error);
 	mono_error_assert_ok (&error);
 
 	internal->state |= ThreadState_Background;

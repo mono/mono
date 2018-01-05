@@ -1695,7 +1695,7 @@ mono_thread_set_name_internal (MonoInternalThread *this_obj, size_t length, cons
 	UNLOCK_THREAD (this_obj);
 
 	if (this_obj->name && tid) {
-		const char *profiler_name = 0;
+		const char *profiler_name = NULL;
 		if (utf8)
 			profiler_name = utf8;
 		else {

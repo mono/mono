@@ -2597,14 +2597,8 @@ unload_thread_main (void *arg)
 
 	internal = mono_thread_internal_current ();
 
-// "Domain unloader"
-#define THREAD_NAME 'D','o','m','a','i','n',' ', \
-	'u','n','l','o','a','d','e','r',0
-	const static char unload_threadname8[] = {THREAD_NAME};
-	const static gunichar2 unload_threadname16[] = {THREAD_NAME};
-#undef THREAD_NAME
-	mono_thread_set_name_internal (internal, sizeof (unload_threadname8) - 1,
-		unload_threadname8, unload_threadname16, TRUE, FALSE, &error);
+	mono_thread_set_name_internal (internal,
+		G_LENGTH_AND_STRING_CONSTANT ("Domain unloader"), NULL, TRUE, FALSE, &error);
 	if (!is_ok (&error)) {
 		data->failure_reason = g_strdup (mono_error_get_message (&error));
 		mono_error_cleanup (&error);
