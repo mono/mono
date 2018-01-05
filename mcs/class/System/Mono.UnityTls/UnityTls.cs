@@ -69,21 +69,21 @@ namespace Mono.Unity
 
         public struct unitytls_key {}
         [StructLayout (LayoutKind.Sequential)]
-        public struct unitytls_key_ref { UInt64 handle; }
+        public struct unitytls_key_ref { public UInt64 handle; }
 
         // ------------------------------------
         // X.509 Certificate
         // -----------------------------------
         public struct unitytls_x509 {}
         [StructLayout (LayoutKind.Sequential)]
-        public struct unitytls_x509_ref { UInt64 handle; }
+        public struct unitytls_x509_ref { public UInt64 handle; }
 
         // ------------------------------------
         // X.509 Certificate List
         // ------------------------------------
         public struct unitytls_x509list {}
         [StructLayout (LayoutKind.Sequential)]
-        public struct unitytls_x509list_ref { UInt64 handle; }
+        public struct unitytls_x509list_ref { public UInt64 handle; }
 
         // ------------------------------------
         // X.509 Certificate Verification
@@ -119,7 +119,7 @@ namespace Mono.Unity
         // ------------------------------------
         public struct unitytls_tlsctx {}
         [StructLayout (LayoutKind.Sequential)]
-        public struct unitytls_tlsctx_ref { UInt64 handle; }
+        public struct unitytls_tlsctx_ref { public UInt64 handle; }
 
         public enum unitytls_ciphersuite : UInt32
         {
@@ -163,6 +163,8 @@ namespace Mono.Unity
         [StructLayout (LayoutKind.Sequential)]
         public class mono_unity_unitytls_interface
         {
+            public readonly UInt64 UNITYTLS_INVALID_HANDLE;
+
             public delegate unitytls_errorstate                 unitytls_errorstate_create_t();
             public unitytls_errorstate_create_t                 unitytls_errorstate_create;
             public delegate void                                unitytls_errorstate_raise_error_t(unitytls_errorstate* errorState, unitytls_error_code errorCode);
@@ -180,8 +182,6 @@ namespace Mono.Unity
 
             public delegate unitytls_x509list_ref               unitytls_x509list_get_ref_t(unitytls_x509list* list, unitytls_errorstate* errorState);
             public unitytls_x509list_get_ref_t                  unitytls_x509list_get_ref;
-            public delegate size_t                              unitytls_x509list_get_size_t(unitytls_x509list_ref list, unitytls_errorstate* errorState);
-            public unitytls_x509list_get_size_t                 unitytls_x509list_get_size;
             public delegate unitytls_x509_ref                   unitytls_x509list_get_x509_t(unitytls_x509list_ref list, size_t index, unitytls_errorstate* errorState);
             public unitytls_x509list_get_x509_t                 unitytls_x509list_get_x509;
             public delegate unitytls_x509list*                  unitytls_x509list_create_t(unitytls_errorstate* errorState);

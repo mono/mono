@@ -33,19 +33,18 @@ namespace Mono.Unity
 		public static X509CertificateCollection NativeChainToManagedCollection (UnityTls.unitytls_x509list_ref nativeCertificateChain, UnityTls.unitytls_errorstate* errorState)
 		{
 			X509CertificateCollection certificates = new X509CertificateCollection ();
+			var unityTls = UnityTls.GetInterface ();
 
-			// TODO: Should iterate until we get an invalid handle instead. Can't acces INVALID_HANDLE yet though due to limitations of UnityTls interface
-			size_t numCerts = UnityTls.GetInterface().unitytls_x509list_get_size (nativeCertificateChain, errorState);
-			for (int i = 0; i < numCerts; ++i) {
-				UnityTls.unitytls_x509_ref cert = UnityTls.GetInterface().unitytls_x509list_get_x509 (nativeCertificateChain, i, errorState);
-				size_t certBufferSize = UnityTls.GetInterface().unitytls_x509_export_der (cert, null, 0, errorState);
+			var cert = unityTls.unitytls_x509list_get_x509 (nativeCertificateChain, 0, errorState);
+			for (int i = 0; cert.handle != unityTls.UNITYTLS_INVALID_HANDLE; ++i) {
+				size_t certBufferSize = unityTls.unitytls_x509_export_der (cert, null, 0, errorState);
 				var certBuffer = new byte[certBufferSize];	// Need to reallocate every time since X509Certificate constructor takes no length but only a byte array.
-				
 				fixed(byte* certBufferPtr = certBuffer) {
-					UnityTls.GetInterface().unitytls_x509_export_der (cert, certBufferPtr, certBufferSize, errorState);
+					unityTls.unitytls_x509_export_der (cert, certBufferPtr, certBufferSize, errorState);
 				}
-				
 				certificates.Add (new X509Certificate (certBuffer));
+
+				cert = unityTls.unitytls_x509list_get_x509 (nativeCertificateChain, i, errorState);
 			}
 
 			return certificates;
