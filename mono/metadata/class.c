@@ -2510,15 +2510,19 @@ mono_class_get_inflated_method (MonoClass *klass, MonoMethod *method, MonoError 
 	mcount = mono_class_get_method_count (gklass);
 	for (i = 0; i < mcount; ++i) {
 		if (gklass->methods [i] == method) {
+			MonoMethod *inflated_method = NULL;
 			if (klass->methods) {
-				return klass->methods [i];
+				inflated_method = klass->methods[i];
 			} else {
-				return mono_class_inflate_generic_method_full_checked (gklass->methods [i], klass, mono_class_get_context (klass), error);
+				inflated_method = mono_class_inflate_generic_method_full_checked (gklass->methods [i], klass, mono_class_get_context (klass), error);
+				return_val_if_nok (error, NULL);
 			}
+			g_assert (inflated_method);
+			return inflated_method;
 		}
 	}
 
-	return NULL;
+	g_assert_not_reached ();
 }	
 
 /*
