@@ -130,12 +130,15 @@ static FILE *xdebug_fp, *il_file;
 static gboolean use_gdb_interface, save_symfiles;
 static int il_file_line_index;
 static GHashTable *xdebug_syms;
+static mono_mutex_t xdebug_lock;
 
 void
 mono_xdebug_init (const char *options)
 {
 	MonoImageWriter *w;
 	char **args, **ptr;
+
+	mono_os_mutex_init_recursive (&xdebug_lock);
 
 	args = g_strsplit (options, ",", -1);
 	for (ptr = args; ptr && *ptr; ptr ++) {
@@ -270,7 +273,6 @@ static int xdebug_method_count;
  *
  *   Emit debugging info for METHOD into an assembly file which can be assembled
  * and loaded into gdb to provide debugging info for JITted code.
- * LOCKING: Acquires the loader lock.
  */
 void
 mono_save_xdebug_info (MonoCompile *cfg)
@@ -278,7 +280,7 @@ mono_save_xdebug_info (MonoCompile *cfg)
 	MonoDebugMethodJitInfo *dmji;
 
 	if (use_gdb_interface) {
-		mono_loader_lock ();
+		mono_os_mutex_lock (&xdebug_lock);
 
 		if (!xdebug_syms)
 			xdebug_syms = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
@@ -316,18 +318,18 @@ mono_save_xdebug_info (MonoCompile *cfg)
 		g_free (sym);
 #endif
 		
-		mono_loader_unlock ();
+		mono_os_mutex_unlock (&xdebug_lock);
 	} else {
 		if (!xdebug_writer)
 			return;
 
-		mono_loader_lock ();
+		mono_os_mutex_lock (&xdebug_lock);
 		dmji = mono_debug_find_method (jinfo_get_method (cfg->jit_info), mono_domain_get ());
 		mono_dwarf_writer_emit_method (xdebug_writer, cfg, jinfo_get_method (cfg->jit_info), NULL, NULL, NULL,
 									   cfg->jit_info->code_start, cfg->jit_info->code_size, cfg->args, cfg->locals, cfg->unwind_ops, dmji);
 		mono_debug_free_method_jit_info (dmji);
 		fflush (xdebug_fp);
-		mono_loader_unlock ();
+		mono_os_mutex_unlock (&xdebug_lock);
 	}
 
 }
@@ -336,7 +338,6 @@ mono_save_xdebug_info (MonoCompile *cfg)
  * mono_save_trampoline_xdebug_info:
  *
  *   Same as mono_save_xdebug_info, but for trampolines.
- * LOCKING: Acquires the loader lock.
  */
 void
 mono_save_trampoline_xdebug_info (MonoTrampInfo *info)
@@ -349,8 +350,7 @@ mono_save_trampoline_xdebug_info (MonoTrampInfo *info)
 		MonoImageWriter *w;
 		MonoDwarfWriter *dw;
 
-		/* This can be called before the loader lock is initialized */
-		mono_loader_lock_if_inited ();
+		mono_os_mutex_lock (&xdebug_lock);
 
 		xdebug_begin_emit (&w, &dw);
 
@@ -358,15 +358,15 @@ mono_save_trampoline_xdebug_info (MonoTrampInfo *info)
 
 		xdebug_end_emit (w, dw, NULL);
 		
-		mono_loader_unlock_if_inited ();
+		mono_os_mutex_unlock (&xdebug_lock);
 	} else {
 		if (!xdebug_writer)
 			return;
 
-		mono_loader_lock_if_inited ();
+		mono_os_mutex_lock (&xdebug_lock);
 		mono_dwarf_writer_emit_trampoline (xdebug_writer, info_name, NULL, NULL, info->code, info->code_size, info->unwind_ops);
 		fflush (xdebug_fp);
-		mono_loader_unlock_if_inited ();
+		mono_os_mutex_unlock (&xdebug_lock);
 	}
 }
 
