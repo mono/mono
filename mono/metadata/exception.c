@@ -1135,6 +1135,52 @@ mono_corlib_exception_new_with_args (const char *name_space, const char *name, c
 	return mono_exception_from_name_two_strings_checked (mono_defaults.corlib, name_space, name, str_0, str_1, error);
 }
 
+void
+mono_error_set_field_missing (MonoError *error, MonoClass *klass, const char *field_name, MonoType *sig, const char *reason, ...)
+{
+	char *result;
+	GString *res;
+
+	res = g_string_new ("Field not found: ");
+
+
+	if (sig) {
+		mono_type_get_desc (res, sig, TRUE);
+		g_string_append_c (res, ' ');
+	}
+
+	if (klass) {
+		if (klass->name_space) {
+			g_string_append (res, klass->name_space);
+			g_string_append_c (res, '.');
+		}
+		g_string_append (res, klass->name);
+	}
+	else {
+		g_string_append (res, "<unknown type>");
+	}
+
+	g_string_append_c (res, '.');
+
+	if (field_name)
+		g_string_append (res, field_name);
+	else
+		g_string_append (res, "<unknown field>");
+
+	if (reason && *reason) {
+		va_list args;
+		va_start (args, reason);
+
+		g_string_append (res, " Due to: ");
+		g_string_append_vprintf (res, reason, args);
+		va_end (args);
+	}
+	result = res->str;
+	g_string_free (res, FALSE);
+
+	mono_error_set_specific (error, MONO_ERROR_MISSING_FIELD, result);
+}
+
 /*
  * Sets @error to a method missing error.
  */
@@ -1256,4 +1302,3 @@ mono_error_set_simple_file_not_found (MonoError *error, const char *file_name, g
 	else
 		mono_error_set_file_not_found (error, file_name, "Could not load file or assembly '%s' or one of its dependencies.", file_name);
 }
-

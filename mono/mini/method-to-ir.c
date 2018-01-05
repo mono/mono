@@ -10580,7 +10580,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			context_used = mini_class_check_context_used (cfg, klass);
 
 			if (ftype->attrs & FIELD_ATTRIBUTE_LITERAL) {
-				mono_error_set_field_load (&cfg->error, field->parent, field->name, "Using static instructions with literal field");
+				mono_error_set_field_missing (&cfg->error, field->parent, field->name, NULL, "Using static instructions with literal field");
 				CHECK_CFG_ERROR;
 			}
 

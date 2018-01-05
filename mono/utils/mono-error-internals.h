@@ -159,9 +159,6 @@ void
 mono_error_set_type_load_name (MonoError *error, const char *type_name, const char *assembly_name, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(4,5);
 
 void
-mono_error_set_field_load (MonoError *error, MonoClass *klass, const char *field_name, const char *msg_format, ...)  MONO_ATTR_FORMAT_PRINTF(4,5);
-
-void
 mono_error_set_out_of_memory (MonoError *error, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(2,3);
 
 void

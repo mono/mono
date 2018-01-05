@@ -2214,7 +2214,7 @@ ves_icall_System_AppDomain_LoadAssemblyRaw (MonoAppDomainHandle ad,
 	MonoImage *image = mono_image_open_from_data_full (assembly_data, raw_assembly_len, FALSE, NULL, refonly);
 
 	if (!image) {
-		mono_error_set_bad_image_by_name (error, "In memory assembly", "0x%x", raw_data);
+		mono_error_set_bad_image_by_name (error, "In memory assembly", "0x%p", raw_data);
 		return refass;
 	}
 
@@ -2231,7 +2231,7 @@ ves_icall_System_AppDomain_LoadAssemblyRaw (MonoAppDomainHandle ad,
 
 	if (!ass) {
 		mono_image_close (image);
-		mono_error_set_bad_image_by_name (error, "In Memory assembly", "0x%x", assembly_data);
+		mono_error_set_bad_image_by_name (error, "In Memory assembly", "0x%p", assembly_data);
 		return refass; 
 	}
 

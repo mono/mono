@@ -226,7 +226,7 @@ field_from_memberref (MonoImage *image, guint32 token, MonoClass **retklass,
 	/* we may want to check the signature here... */
 
 	if (*ptr++ != 0x6) {
-		mono_error_set_field_load (error, klass, fname, "Bad field signature class token %08x field name %s token %08x", class_index, fname, token);
+		mono_error_set_field_missing (error, klass, fname, NULL, "Bad field signature class token %08x field token %08x", class_index, token);
 		return NULL;
 	}
 
@@ -240,7 +240,7 @@ field_from_memberref (MonoImage *image, guint32 token, MonoClass **retklass,
 		ERROR_DECL_VALUE (inner_error);
 		sig_type = mono_metadata_parse_type_checked (image, NULL, 0, FALSE, ptr, &ptr, &inner_error);
 		if (sig_type == NULL) {
-			mono_error_set_field_load (error, klass, fname, "Could not parse field '%s' signature %08x due to: %s", fname, token, mono_error_get_message (&inner_error));
+			mono_error_set_field_missing (error, klass, fname, NULL, "Could not parse field signature %08x due to: %s", token, mono_error_get_message (&inner_error));
 			mono_error_cleanup (&inner_error);
 			return NULL;
 		}
@@ -253,7 +253,7 @@ field_from_memberref (MonoImage *image, guint32 token, MonoClass **retklass,
 	field = mono_class_get_field_from_name_full (klass, fname, sig_type);
 
 	if (!field) {
-		mono_error_set_field_load (error, klass, fname, "Could not find field '%s'", fname);
+		mono_error_set_field_missing (error, klass, fname, sig_type, "Could not find field in class");
 	}
 
 	return field;

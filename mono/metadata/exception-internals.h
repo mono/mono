@@ -39,6 +39,9 @@ void
 mono_error_set_method_missing (MonoError *error, MonoClass *klass, const char *method_name, MonoMethodSignature *sig, const char *reason, ...) MONO_ATTR_FORMAT_PRINTF(5,6);
 
 void
+mono_error_set_field_missing (MonoError *oerror, MonoClass *klass, const char *field_name, MonoType *sig, const char *reason, ...) MONO_ATTR_FORMAT_PRINTF(5,6);
+
+void
 mono_error_set_bad_image (MonoError *error, MonoImage *image, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(3,4);
 
 void

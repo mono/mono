@@ -192,6 +192,7 @@ mono_error_get_message (MonoError *oerror)
 	case MONO_ERROR_MISSING_METHOD:
 	case MONO_ERROR_BAD_IMAGE:
 	case MONO_ERROR_FILE_NOT_FOUND:
+	case MONO_ERROR_MISSING_FIELD:
 		return error->full_message;
 	}
 
@@ -327,7 +328,7 @@ mono_error_set_type_load_name (MonoError *oerror, const char *type_name, const c
 
 /*
  * Sets @error to be of type @error_code with message @message
- * XXX only works for MONO_ERROR_MISSING_METHOD, MONO_ERROR_BAD_IMAGE and MONO_ERROR_FILE_NOT_FOUND for now
+ * XXX only works for MONO_ERROR_MISSING_METHOD, MONO_ERROR_BAD_IMAGE, MONO_ERROR_FILE_NOT_FOUND and MONO_ERROR_MISSING_FIELD for now
 */
 void
 mono_error_set_specific (MonoError *oerror, int error_code, const char *message)
@@ -337,18 +338,6 @@ mono_error_set_specific (MonoError *oerror, int error_code, const char *message)
 
 	error->error_code = error_code;
 	error->full_message = message;
-}
-
-void
-mono_error_set_field_load (MonoError *oerror, MonoClass *klass, const char *field_name, const char *msg_format, ...)
-{
-	MonoErrorInternal *error = (MonoErrorInternal*)oerror;
-	mono_error_prepare (error);
-
-	error->error_code = MONO_ERROR_MISSING_FIELD;
-	mono_error_set_class (oerror, klass);
-	mono_error_set_member_name (oerror, field_name);
-	set_error_message ();	
 }
 
 void
@@ -570,7 +559,7 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 	MonoErrorInternal *error = (MonoErrorInternal*)oerror;
 
 	MonoException* exception = NULL;
-	MonoString *assembly_name = NULL, *type_name = NULL, *field_name = NULL;
+	MonoString *assembly_name = NULL, *type_name = NULL;
 	MonoDomain *domain = mono_domain_get ();
 
 	error_init (error_out);
@@ -580,7 +569,7 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 		return NULL;
 
 	case MONO_ERROR_MISSING_METHOD:
-		exception = mono_corlib_exception_new_with_args ("System", "MissingMethodException", error->full_message, NULL, error_out);
+		exception = mono_corlib_exception_new_with_args ("System", "MissingMethodException", error->full_message, error->first_argument, error_out);
 		break;
 	case MONO_ERROR_BAD_IMAGE:
 		exception = mono_corlib_exception_new_with_args ("System", "BadImageFormatException", error->full_message, error->first_argument, error_out);
@@ -588,25 +577,8 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 	case MONO_ERROR_FILE_NOT_FOUND:
 		exception = mono_corlib_exception_new_with_args ("System.IO", "FileNotFoundException", error->full_message, error->first_argument, error_out);
 		break;
-
 	case MONO_ERROR_MISSING_FIELD:
-		if ((error->type_name || error->exn.klass) && error->member_name) {
-			type_name = get_type_name_as_mono_string (error, domain, error_out);
-			if (!mono_error_ok (error_out))
-				break;
-			
-			field_name = string_new_cleanup (domain, error->member_name);
-			if (!field_name) {
-				mono_error_set_out_of_memory (error_out, "Could not allocate field name");
-				break;
-			}
-			
-			exception = mono_exception_from_name_two_strings_checked (mono_defaults.corlib, "System", "MissingFieldException", type_name, field_name, error_out);
-			if (exception)
-				set_message_on_exception (exception, error, error_out);
-		} else {
-			exception = mono_exception_from_name_msg (mono_defaults.corlib, "System", "MissingFieldException", error->full_message);
-		}
+		exception = mono_corlib_exception_new_with_args ("System", "MissingFieldException", error->full_message, error->first_argument, error_out);
 		break;
 
 	case MONO_ERROR_TYPE_LOAD:
