@@ -83,6 +83,8 @@
     <Compile Include="CP37.cs" />
     <Compile Include="CP500.cs" />
     <Compile Include="CP708.cs" />
+    <Compile Include="CP737.cs" />
+    <Compile Include="CP775.cs" />
     <Compile Include="CP852.cs" />
     <Compile Include="CP855.cs" />
     <Compile Include="CP857.cs" />
