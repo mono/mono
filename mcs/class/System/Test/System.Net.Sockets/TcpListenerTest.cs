@@ -49,7 +49,10 @@ namespace MonoTests.System.Net.Sockets
 				}
 			}
 			
-			// make sure the connection arrives
+			// There is no guarantee that the connecting socket will be in the listener's
+			//  accept queue yet (though it is highly likely on Linux). We wait up to one
+			//  second for the connecting socket to enter the listener's accept queue.
+			Assert.IsTrue (inListener.Server.Poll (1000, SelectMode.SelectRead));
 			Assert.IsTrue (inListener.Pending ());
 			Socket inSock = inListener.AcceptSocket ();
 
