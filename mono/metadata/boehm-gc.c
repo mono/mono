@@ -180,8 +180,8 @@ mono_gc_base_init (void)
 	default_push_other_roots = GC_push_other_roots;
 	GC_push_other_roots = mono_push_other_roots;
 
-#if !defined(HOST_ANDROID)
-	/* If GC_no_dls is set to true, GC_find_limit is not called. This causes a seg fault on Android. */
+#if defined(HAVE_BDWGC_GC) || !defined(HOST_ANDROID)
+	/* If GC_no_dls is set to true, GC_find_limit is not called. This causes a seg fault on Android With Mono's Older Boehm. */
 	GC_no_dls = TRUE;
 #endif
 	{
