@@ -5196,7 +5196,9 @@ mono_runtime_try_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 
 		if (mono_class_is_nullable (method->klass)) {
 			/* Need to create a boxed vtype instead */
+#ifndef IL2CPP_ON_MONO
 			g_assert (!obj);
+#endif
 
 			if (!params)
 				return NULL;
