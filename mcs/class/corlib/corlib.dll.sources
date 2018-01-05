@@ -1636,11 +1636,14 @@ corert/ThreadPoolBoundHandle.cs
 
 ../../../external/corert/src/Runtime.Base/src/System/Runtime/InteropServices/NativeCallableAttribute.cs
 
+../../../external/corert/src/System.Private.CoreLib/shared/System/Tuple.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/TupleExtensions.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/ValueTuple.cs
 
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Collections/DictionaryEntry.cs
 
+../../../external/corert/src/System.Private.CoreLib/shared/System/Collections/Generic/Dictionary.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/Collections/Generic/IDictionaryDebugView.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Collections/Generic/KeyValuePair.cs
 
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Diagnostics/Debug.cs
@@ -1655,15 +1658,12 @@ corert/ThreadPoolBoundHandle.cs
 
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Array.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Tuple.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/LowLevelComparer.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Collections/ObjectEqualityComparer.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/ArraySortHelper.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/IDictionaryDebugView.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/Dictionary.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/NonRandomizedStringEqualityComparer.cs
+
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/ThreadPoolCallbackWrapper.cs
 
 corefx/SR.cs
 
