@@ -2,36 +2,6 @@
 #include "mono/metadata/mono-debug.h"
 #include "mono/metadata/profiler.h"
 
-static char *
-pmip_pretty(MonoCompile* monoCompile)
-{
-	char* methodName;
-	char* assemblyName;
-	char* formattedPMIP;
-	MonoDebugSourceLocation* debugSourceLocation;
-	MonoDebugMethodInfo* debugMethodInfo;
-	MonoDomain* domain;
-	MonoMethod* method = monoCompile->method; 
-
-	domain = mono_domain_get();
-	if (!domain)
-		domain = mono_get_root_domain();
-
-	methodName = mono_method_full_name(method, TRUE);
-
-	debugSourceLocation = mono_debug_lookup_source_location(method, 0, domain);
-	debugMethodInfo = mono_debug_lookup_method(method);
-
-	assemblyName = method->klass->image->module_name;
-
-	formattedPMIP = g_strdup_printf("[%s] %s", assemblyName, methodName);
-
-	mono_debug_free_source_location(debugSourceLocation);
-	g_free(methodName);
-
-	return formattedPMIP;
-}
-
 #if !defined(DISABLE_JIT) && defined(HOST_WIN32)
 
 static gboolean enabled;
@@ -99,24 +69,27 @@ mixed_callstack_plugin_on_domain_unload_end()
 void
 mixed_callstack_plugin_save_method_info (MonoCompile *cfg)
 {
-	char* pretty_name;
-	char* frame;
+	char* method_name;
 	long bytesWritten = 0;
+	char frame[1024];
+	int bytes;
 
 	if (!enabled)
 		return;
 
-	pretty_name = pmip_pretty(cfg);
+	method_name = mono_method_full_name (cfg->method, TRUE);
+
+	bytes = snprintf (frame, sizeof (frame), "%p;%p;[%s] %s\n", cfg->native_code, ((char*)cfg->native_code) + cfg->code_size, cfg->method->klass->image->module_name, method_name);
+	/* negative value is encoding error */
+	if (bytes < 0 || bytes > sizeof (frame))
+		return;
 
 	mixed_callstack_plugin_lock ();
-	frame = g_strdup_printf("%p;%p;%s\n", cfg->native_code, ((char*)cfg->native_code) + cfg->code_size, pretty_name);
-	WriteFile(fileHandle, frame, strlen(frame), &bytesWritten, NULL);
+	WriteFile(fileHandle, frame, bytes, &bytesWritten, NULL);
 	FlushFileBuffers(fileHandle);
-
 	mixed_callstack_plugin_unlock ();
 
-	g_free(pretty_name);
-	g_free(frame);
+	g_free(method_name);
 }
 
 void
