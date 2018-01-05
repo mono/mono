@@ -146,7 +146,8 @@ MonoClass* mono_unity_defaults_get_byte_class();
 
 //unitytls
 typedef struct mono_unity_unitytls_interface mono_unity_unitytls_interface;
-mono_unity_unitytls_interface* mono_unity_get_unitytls_interface();
+MONO_API mono_unity_unitytls_interface* mono_unity_get_unitytls_interface();
+MONO_API void mono_unity_install_unitytls_interface(mono_unity_unitytls_interface* callbacks);
 
 //misc
 MonoAssembly* mono_unity_assembly_get_mscorlib();

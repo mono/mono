@@ -889,7 +889,8 @@ MonoClass* mono_unity_defaults_get_byte_class()
 
 static mono_unity_unitytls_interface* gUnitytlsInterface = NULL;
 
-mono_unity_unitytls_interface* mono_unity_get_unitytls_interface()
+MONO_API mono_unity_unitytls_interface* 
+mono_unity_get_unitytls_interface()
 {
 	return gUnitytlsInterface;
 }
