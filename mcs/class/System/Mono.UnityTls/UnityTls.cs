@@ -29,9 +29,6 @@ namespace Mono.Unity
         private const string DLLNAME = "MacStandalonePlayer_TLSModule_Dynamic.dylib";
         private const CallingConvention CALLCONV = CallingConvention.Cdecl;
 
-        // TODO
-        //extern const UInt64 UNITYTLS_INVALID_HANDLE;
-
         // ------------------------------------
         // Error Handling
         // ------------------------------------

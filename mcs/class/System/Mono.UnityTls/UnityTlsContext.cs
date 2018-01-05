@@ -28,6 +28,8 @@ namespace Mono.Unity
 	{
 		private const bool ActivateTracing = false;
 
+		private UnityTls.mono_unity_unitytls_interface unityTlsNative;
+
 		// Native UnityTls objects
 		private UnityTls.unitytls_tlsctx*   m_TlsContext = null;
 
@@ -51,10 +53,12 @@ namespace Mono.Unity
 			X509CertificateCollection clientCertificates, bool askForClientCert)
 			: base (parent, serverMode, targetHost, enabledProtocols, serverCertificate, clientCertificates, askForClientCert)
 		{
+			unityTlsNative = UnityTls.GetInterface();
+
 			// Need GCHandle to get a consistent pointer to this instance
 			m_handle = GCHandle.Alloc (this);
 
-			var errorState = UnityTls.GetInterface().unitytls_errorstate_create ();
+			var errorState = unityTlsNative.unitytls_errorstate_create ();
 
 			// Map selected protocols as best as we can.
 			UnityTls.unitytls_tlsctx_protocolrange protocolRange = new UnityTls.unitytls_tlsctx_protocolrange {
@@ -75,40 +79,41 @@ namespace Mono.Unity
 				if (serverCertificate2 == null || serverCertificate2.PrivateKey == null)
 					throw new ArgumentException ("serverCertificate does not have a private key", "serverCertificate");
 
+
 				UnityTls.unitytls_x509list* serverCerts = null;
 				UnityTls.unitytls_key* serverPrivateKey = null;
 				try {
-					serverCerts = UnityTls.GetInterface().unitytls_x509list_create (&errorState);
+					serverCerts = unityTlsNative.unitytls_x509list_create (&errorState);
 					CertHelper.AddCertificateToNativeChain (serverCerts, serverCertificate, &errorState);
-					var serverCertsRef = UnityTls.GetInterface().unitytls_x509list_get_ref (serverCerts, &errorState);
+					var serverCertsRef = unityTlsNative.unitytls_x509list_get_ref (serverCerts, &errorState);
 
 					byte[] privateKeyDer = PKCS8.PrivateKeyInfo.Encode (serverCertificate2.PrivateKey);
 					fixed(byte* privateKeyDerPtr = privateKeyDer) {
-						serverPrivateKey = UnityTls.GetInterface().unitytls_key_parse_der (privateKeyDerPtr, privateKeyDer.Length, null, 0, &errorState);
+						serverPrivateKey = unityTlsNative.unitytls_key_parse_der (privateKeyDerPtr, privateKeyDer.Length, null, 0, &errorState);
 					}
-					var serverKeyRef = UnityTls.GetInterface().unitytls_key_get_ref (serverPrivateKey, &errorState);
+					var serverKeyRef = unityTlsNative.unitytls_key_get_ref (serverPrivateKey, &errorState);
 
 					Mono.Unity.Debug.CheckAndThrow (errorState, "Failed to parse server key/certificate");
 
-					m_TlsContext = UnityTls.GetInterface().unitytls_tlsctx_create_server (protocolRange, callbacks, serverCertsRef, serverKeyRef, &errorState);
+					m_TlsContext = unityTlsNative.unitytls_tlsctx_create_server (protocolRange, callbacks, serverCertsRef, serverKeyRef, &errorState);
 				} finally {
-					UnityTls.GetInterface().unitytls_x509list_free (serverCerts);
-					UnityTls.GetInterface().unitytls_key_free (serverPrivateKey);
+					unityTlsNative.unitytls_x509list_free (serverCerts);
+					unityTlsNative.unitytls_key_free (serverPrivateKey);
 				}
 			}
 			else {
 				byte [] targetHostUtf8 = Encoding.UTF8.GetBytes (targetHost);
 				fixed (byte* targetHostUtf8Ptr = targetHostUtf8) {
-					m_TlsContext = UnityTls.GetInterface().unitytls_tlsctx_create_client (protocolRange, callbacks, targetHostUtf8Ptr, targetHostUtf8.Length, &errorState);
+					m_TlsContext = unityTlsNative.unitytls_tlsctx_create_client (protocolRange, callbacks, targetHostUtf8Ptr, targetHostUtf8.Length, &errorState);
 				}
 			}
 
-			UnityTls.GetInterface().unitytls_tlsctx_set_x509verify_callback (m_TlsContext, VerifyCallback, (void*)(IntPtr)m_handle, &errorState);
+			unityTlsNative.unitytls_tlsctx_set_x509verify_callback (m_TlsContext, VerifyCallback, (void*)(IntPtr)m_handle, &errorState);
 
 			Mono.Unity.Debug.CheckAndThrow (errorState, "Failed to create UnityTls context");
 
 			if (ActivateTracing) {
-				UnityTls.GetInterface().unitytls_tlsctx_set_trace_callback (m_TlsContext, TraceCallback, null, &errorState);
+				unityTlsNative.unitytls_tlsctx_set_trace_callback (m_TlsContext, TraceCallback, null, &errorState);
 				Mono.Unity.Debug.CheckAndThrow (errorState, "Failed to set trace callback");
 			}
 
@@ -149,9 +154,9 @@ namespace Mono.Unity
 			bool wouldBlock = false;
 			int numBytesRead = 0;
 
-			var errorState = UnityTls.GetInterface().unitytls_errorstate_create ();
+			var errorState = unityTlsNative.unitytls_errorstate_create ();
 			fixed (byte* bufferPtr = buffer) {
-				numBytesRead = UnityTls.GetInterface().unitytls_tlsctx_read (m_TlsContext, bufferPtr + offset, count, &errorState);
+				numBytesRead = unityTlsNative.unitytls_tlsctx_read (m_TlsContext, bufferPtr + offset, count, &errorState);
 			}
 
 			if (errorState.code == UnityTls.unitytls_error_code.UNITYTLS_USER_WOULD_BLOCK)
@@ -167,9 +172,9 @@ namespace Mono.Unity
 			bool wouldBlock = false;
 			int numBytesWritten = 0;
 
-			var errorState = UnityTls.GetInterface().unitytls_errorstate_create ();
+			var errorState = unityTlsNative.unitytls_errorstate_create ();
 			fixed (byte* bufferPtr = buffer) {
-				numBytesWritten = UnityTls.GetInterface().unitytls_tlsctx_write (m_TlsContext, bufferPtr + offset, count, &errorState);
+				numBytesWritten = unityTlsNative.unitytls_tlsctx_write (m_TlsContext, bufferPtr + offset, count, &errorState);
 			}
 
 			if (errorState.code == UnityTls.unitytls_error_code.UNITYTLS_USER_WOULD_BLOCK)
@@ -183,7 +188,7 @@ namespace Mono.Unity
 		public override void Shutdown ()
 		{
 			// Destroy native UnityTls objects
-			UnityTls.GetInterface().unitytls_tlsctx_free (m_TlsContext);
+			unityTlsNative.unitytls_tlsctx_free (m_TlsContext);
 			m_TlsContext = null;
 
 			m_HasContext = false;
@@ -248,8 +253,8 @@ namespace Mono.Unity
 		public override void FinishHandshake ()
 		{
 			// Query some data. Ignore errors on the way since failure is not crucial.
-			var cipherSuite = UnityTls.GetInterface().unitytls_tlsctx_get_ciphersuite(m_TlsContext, null);
-			var protocolVersion = UnityTls.GetInterface().unitytls_tlsctx_get_protocol(m_TlsContext, null);
+			var cipherSuite = unityTlsNative.unitytls_tlsctx_get_ciphersuite(m_TlsContext, null);
+			var protocolVersion = unityTlsNative.unitytls_tlsctx_get_protocol(m_TlsContext, null);
 
 			m_Connectioninfo = new MonoTlsConnectionInfo () {
 				CipherSuiteCode = (CipherSuiteCode)cipherSuite,
@@ -283,13 +288,13 @@ namespace Mono.Unity
 				Marshal.Copy ((IntPtr)data, m_WriteBuffer, 0, bufferLen);
 
 				if (!Parent.InternalWrite (m_WriteBuffer, 0, bufferLen)) {
-					UnityTls.GetInterface().unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_WRITE_FAILED);
+					unityTlsNative.unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_WRITE_FAILED);
 					return 0;
 				}
 
 				return bufferLen;
 			} catch { // handle all exceptions since we don't want to let them go through native code.
-				UnityTls.GetInterface().unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_UNKNOWN_ERROR);
+				unityTlsNative.unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_UNKNOWN_ERROR);
 				return 0;
 			}
 		}
@@ -311,18 +316,18 @@ namespace Mono.Unity
 				bool wouldBlock;
 				int numBytesRead = Parent.InternalRead (m_ReadBuffer, 0, bufferLen, out wouldBlock);
 				if (wouldBlock) {
-					UnityTls.GetInterface().unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_WOULD_BLOCK);
+					unityTlsNative.unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_WOULD_BLOCK);
 					return 0;
 				}
 				if (numBytesRead < 0) {
-					UnityTls.GetInterface().unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_READ_FAILED);
+					unityTlsNative.unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_READ_FAILED);
 					return 0;
 				}
 
 				Marshal.Copy (m_ReadBuffer, 0, (IntPtr)buffer, bufferLen);
 				return numBytesRead;
 			} catch { // handle all exceptions since we don't want to let them go through native code.
-				UnityTls.GetInterface().unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_UNKNOWN_ERROR);
+				unityTlsNative.unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_UNKNOWN_ERROR);
 				return 0;
 			}
 		}
