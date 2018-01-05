@@ -24,6 +24,7 @@ PROFILE_MCS_FLAGS = \
 	-d:WASM \
 	-d:DISABLE_REMOTING \
 	-d:DISABLE_COM \
+	-d:FEATURE_NO_BSD_SOCKETS	\
 	-nowarn:1699 \
 	-nostdlib \
 	$(DEFAULT_REFERENCES) \
