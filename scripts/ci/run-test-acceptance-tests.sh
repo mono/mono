@@ -13,7 +13,7 @@ fi
 ${TESTCMD} --label=check-roslyn --timeout=60m make -C acceptance-tests check-roslyn
 
 # run CoreCLR managed tests, we precompile them in parallel so individual steps don't need to do it
-${TESTCMD} --label=coreclr-compile-tests --timeout=80m --fatal make -C acceptance-tests coreclr-compile-tests
+${TESTCMD} --label=coreclr-compile-tests --timeout=120m --fatal make -C acceptance-tests coreclr-compile-tests
 ${TESTCMD} --label=coreclr-runtest-basic --timeout=10m make -C acceptance-tests coreclr-runtest-basic
 ${TESTCMD} --label=coreclr-runtest-coremanglib --timeout=10m make -C acceptance-tests coreclr-runtest-coremanglib
 
