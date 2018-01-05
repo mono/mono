@@ -1230,7 +1230,7 @@ mono_try_assembly_resolve_handle (MonoDomain *domain, MonoStringHandle fname, Mo
 
 	if (ret && !refonly && ret->ref_only) {
 		/* .NET Framework throws System.IO.FileNotFoundException in this case */
-		mono_error_set_file_not_found (error, "AssemblyResolveEvent handlers cannot return Assemblies loaded for reflection only");
+		mono_error_set_file_not_found (error, NULL, "AssemblyResolveEvent handlers cannot return Assemblies loaded for reflection only");
 		ret = NULL;
 		goto leave;
 	}
@@ -2174,7 +2174,7 @@ ves_icall_System_Reflection_Assembly_LoadFrom (MonoStringHandle fname, MonoBoole
 		if (status == MONO_IMAGE_IMAGE_INVALID)
 			mono_error_set_bad_image_by_name (error, name, "Invalid Image");
 		else
-			mono_error_set_assembly_load (error, g_strdup (name), "%s", "");
+			mono_error_set_file_not_found (error, name, "Invalid Image");
 		goto leave;
 	}
 

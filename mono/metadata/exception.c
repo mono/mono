@@ -1236,3 +1236,24 @@ mono_error_set_bad_image (MonoError *error, MonoImage *image, const char *msg_fo
 	if (image)
 		mono_error_set_first_argument (error, mono_image_get_name (image));
 }
+
+void
+mono_error_set_file_not_found (MonoError *error, const char *file_name, const char *msg_format, ...)
+{
+	char *str;
+	SET_ERROR_MSG (str, msg_format);
+
+	mono_error_set_specific (error, MONO_ERROR_FILE_NOT_FOUND, str);
+	if (file_name)
+		mono_error_set_first_argument (error, file_name);
+}
+
+void
+mono_error_set_simple_file_not_found (MonoError *error, const char *file_name, gboolean refection_only)
+{
+	if (refection_only)
+		mono_error_set_file_not_found (error, file_name, "Cannot resolve dependency to assembly because it has not been preloaded. When using the ReflectionOnly APIs, dependent assemblies must be pre-loaded or loaded on demand through the ReflectionOnlyAssemblyResolve event.");
+	else
+		mono_error_set_file_not_found (error, file_name, "Could not load file or assembly '%s' or one of its dependencies.", file_name);
+}
+

@@ -191,6 +191,7 @@ mono_error_get_message (MonoError *oerror)
 	switch (error->error_code) {
 	case MONO_ERROR_MISSING_METHOD:
 	case MONO_ERROR_BAD_IMAGE:
+	case MONO_ERROR_FILE_NOT_FOUND:
 		return error->full_message;
 	}
 
@@ -287,29 +288,6 @@ mono_error_set_corlib_exception (MonoError *oerror, const char *name_space, cons
 	error->exception_name = name;
 }
 
-
-void
-mono_error_set_assembly_load (MonoError *oerror, const char *assembly_name, const char *msg_format, ...)
-{
-	MonoErrorInternal *error = (MonoErrorInternal*)oerror;
-	mono_error_prepare (error);
-
-	error->error_code = MONO_ERROR_FILE_NOT_FOUND;
-	mono_error_set_assembly_name (oerror, assembly_name);
-
-	set_error_message ();
-}
-
-
-void
-mono_error_set_assembly_load_simple (MonoError *oerror, const char *assembly_name, gboolean refection_only)
-{
-	if (refection_only)
-		mono_error_set_assembly_load (oerror, assembly_name, "Cannot resolve dependency to assembly because it has not been preloaded. When using the ReflectionOnly APIs, dependent assemblies must be pre-loaded or loaded on demand through the ReflectionOnlyAssemblyResolve event.");
-	else
-		mono_error_set_assembly_load (oerror, assembly_name, "Could not load file or assembly '%s' or one of its dependencies.", assembly_name);
-}
-
 void
 mono_error_set_type_load_class (MonoError *oerror, MonoClass *klass, const char *msg_format, ...)
 {
@@ -349,7 +327,7 @@ mono_error_set_type_load_name (MonoError *oerror, const char *type_name, const c
 
 /*
  * Sets @error to be of type @error_code with message @message
- * XXX only works for MONO_ERROR_MISSING_METHOD and MONO_ERROR_BAD_IMAGE for now
+ * XXX only works for MONO_ERROR_MISSING_METHOD, MONO_ERROR_BAD_IMAGE and MONO_ERROR_FILE_NOT_FOUND for now
 */
 void
 mono_error_set_specific (MonoError *oerror, int error_code, const char *message)
@@ -446,20 +424,6 @@ mono_error_set_invalid_operation (MonoError *oerror, const char *msg_format, ...
 	va_list args;
 	va_start (args, msg_format);
 	mono_error_set_generic_errorv (oerror, "System", "InvalidOperationException", msg_format, args);
-	va_end (args);
-}
-
-/**
- * mono_error_set_file_not_found:
- *
- * System.IO.FileNotFoundException
- */
-void
-mono_error_set_file_not_found (MonoError *oerror, const char *msg_format, ...)
-{
-	va_list args;
-	va_start (args, msg_format);
-	mono_error_set_generic_errorv (oerror, "System.IO", "FileNotFoundException", msg_format, args);
 	va_end (args);
 }
 
@@ -606,7 +570,7 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 	MonoErrorInternal *error = (MonoErrorInternal*)oerror;
 
 	MonoException* exception = NULL;
-	MonoString *assembly_name = NULL, *type_name = NULL, *field_name = NULL, *msg = NULL;
+	MonoString *assembly_name = NULL, *type_name = NULL, *field_name = NULL;
 	MonoDomain *domain = mono_domain_get ();
 
 	error_init (error_out);
@@ -620,6 +584,9 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 		break;
 	case MONO_ERROR_BAD_IMAGE:
 		exception = mono_corlib_exception_new_with_args ("System", "BadImageFormatException", error->full_message, error->first_argument, error_out);
+		break;
+	case MONO_ERROR_FILE_NOT_FOUND:
+		exception = mono_corlib_exception_new_with_args ("System.IO", "FileNotFoundException", error->full_message, error->first_argument, error_out);
 		break;
 
 	case MONO_ERROR_MISSING_FIELD:
@@ -663,28 +630,6 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 				set_message_on_exception (exception, error, error_out);
 		} else {
 			exception = mono_exception_from_name_msg (mono_defaults.corlib, "System", "TypeLoadException", error->full_message);
-		}
-		break;
-
-	case MONO_ERROR_FILE_NOT_FOUND:
-		if (error->assembly_name) {
-			msg = string_new_cleanup (domain, error->full_message);
-			if (!msg) {
-				mono_error_set_out_of_memory (error_out, "Could not allocate message");
-				break;
-			}
-
-			if (error->assembly_name) {
-				assembly_name = string_new_cleanup (domain, error->assembly_name);
-				if (!assembly_name) {
-					mono_error_set_out_of_memory (error_out, "Could not allocate assembly name");
-					break;
-				}
-			}
-
-			exception = mono_exception_from_name_two_strings_checked (mono_get_corlib (), "System.IO", "FileNotFoundException", msg, assembly_name, error_out);
-		} else {
-			exception = mono_exception_from_name_msg (mono_get_corlib (), "System.IO", "FileNotFoundException", error->full_message);
 		}
 		break;
 

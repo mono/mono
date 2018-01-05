@@ -150,12 +150,6 @@ void
 mono_error_set_error (MonoError *error, int error_code, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(3,4);
 
 void
-mono_error_set_assembly_load (MonoError *error, const char *assembly_name, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(3,4);
-
-void
-mono_error_set_assembly_load_simple (MonoError *error, const char *assembly_name, gboolean refection_only);
-
-void
 mono_error_set_type_load_class (MonoError *error, MonoClass *klass, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(3,4);
 
 void
@@ -193,9 +187,6 @@ mono_error_set_not_supported (MonoError *error, const char *msg_format, ...) MON
 
 void
 mono_error_set_invalid_operation (MonoError *error, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(2,3);
-
-void
-mono_error_set_file_not_found (MonoError *error, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(2,3);
 
 void
 mono_error_set_exception_instance (MonoError *error, MonoException *exc);
