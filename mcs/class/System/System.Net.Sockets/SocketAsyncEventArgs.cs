@@ -249,12 +249,18 @@ namespace System.Net.Sockets
 
 		internal void FinishConnectByNameSyncFailure (Exception exception, int bytesTransferred, SocketFlags flags)
 		{
-			throw new NotImplementedException ();
+			if (current_socket != null)
+				current_socket.is_connected = false;
+			
+			Complete ();
 		}
 
 		internal void FinishOperationAsyncFailure (Exception exception, int bytesTransferred, SocketFlags flags)
 		{
-			throw new NotImplementedException ();
+			if (current_socket != null)
+				current_socket.is_connected = false;
+			
+			Complete ();
 		}
 
 		internal void FinishWrapperConnectSuccess (Socket connectSocket, int bytesTransferred, SocketFlags flags)
