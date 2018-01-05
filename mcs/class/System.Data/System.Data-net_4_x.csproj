@@ -54,6 +54,8 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Interop.Odbc.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\Interop.Libraries.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
@@ -327,13 +329,10 @@
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Xml\XmlDataImplementation.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Common\src\System\Xml\XPathNodePointer.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\Common\System\Data\Common\DBConnectionString.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\Common\System\Data\Common\ExternDll.Linux.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\Common\System\Data\Common\NameValuePermission.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\Common\System\Data\Common\SafeNativeMethods.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\Common\System\Data\Common\UnsafeNativeMethods.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\Common\System\Data\ProviderBase\DbBuffer.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\Common\System\HResults.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\Properties\SecurityTransparent.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\DbDataRecord.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\Odbc32.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.Odbc\src\System\Data\Odbc\OdbcCommand.cs" />
@@ -409,7 +408,9 @@
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\ProviderBase\DbReferenceCollection.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\ProviderBase\TimeoutTimer.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\Sql\SqlMetaData.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\Sql\SqlNorm.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\Sql\SqlNotificationRequest.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\Sql\SqlSer.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\ApplicationIntent.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\LocalDBAPI.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\LocalDBAPI.Unix.cs" />
@@ -489,6 +490,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlStatistics.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlTransaction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlUdtInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlUtil.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\TdsEnums.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\TdsParameterSetter.cs" />
@@ -553,8 +555,6 @@
     <Compile Include="corefx\SqlConnectionStringBuilder.cs" />
     <Compile Include="corefx\SqlDependencyUtils.cs" />
     <Compile Include="corefx\SqlException.cs" />
-    <Compile Include="corefx\SqlMetaData.cs" />
-    <Compile Include="corefx\SqlParameter.cs" />
     <Compile Include="corefx\SqlParameterCollection.cs" />
     <Compile Include="corefx\SR.cs" />
     <Compile Include="corefx\TdsEnums.cs" />

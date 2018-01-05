@@ -98,6 +98,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\KeyInfoName.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\KeyInfoNode.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\KeyInfoRetrievalMethod.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\KeyInfoX509Data.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\KeyReference.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\MyXmlDocument.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\NamespaceFrame.cs" />
@@ -111,11 +112,14 @@
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\RSAPKCS1SHA384SignatureDescription.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\RSAPKCS1SHA512SignatureDescription.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\RSAPKCS1SignatureDescription.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\Signature.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SignedInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SignedXmlDebugLog.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SymmetricKeyWrap.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\Transform.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\TransformChain.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\Utils.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\X509IssuerSerial.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlDecryptionTransform.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlDsigBase64Transform.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlDsigC14NTransform.cs" />
@@ -165,13 +169,7 @@
     <Compile Include="System.Security.Cryptography.Pkcs\SubjectIdentifierType.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate2UI.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509SelectionFlag.cs" />
-    <Compile Include="System.Security.Cryptography.Xml\KeyInfoX509Data.cs" />
-    <Compile Include="System.Security.Cryptography.Xml\Manifest.cs" />
-    <Compile Include="System.Security.Cryptography.Xml\Signature.cs" />
-    <Compile Include="System.Security.Cryptography.Xml\SignedInfo.cs" />
     <Compile Include="System.Security.Cryptography.Xml\SignedXml.cs" />
-    <Compile Include="System.Security.Cryptography.Xml\X509IssuerSerial.cs" />
-    <Compile Include="System.Security.Cryptography.Xml\XmlSignature.cs" />
     <Compile Include="System.Security.Cryptography\CryptographicAttribute.cs" />
     <Compile Include="System.Security.Cryptography\CryptographicAttributeCollection.cs" />
     <Compile Include="System.Security.Cryptography\CryptographicAttributeEnumerator.cs" />
@@ -209,6 +207,11 @@
       <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
       <Name>corlib-net_4_x</Name>
     </ProjectReference>
+    <Reference Include="./../../../external/binary-reference-assemblies/v4.7.1/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/v4.7.1/System.Numerics.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <ProjectReference Include="../System/System-secxml-net_4_x.csproj">
       <Project>{19954F80-065E-4D46-8FEF-62BA4D6CFDAD}</Project>
       <Name>System-secxml-net_4_x</Name>
