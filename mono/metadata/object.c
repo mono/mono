@@ -6167,6 +6167,7 @@ mono_string_new_utf32_checked (MonoDomain *domain, const mono_unichar4 *text, gi
 	
 	s = mono_string_new_size_checked (domain, utf16_len, error);
 	goto_if_nok (error, exit);
+
 	memcpy (mono_string_chars (s), utf16_output, utf16_len * 2);
 
 exit:
