@@ -186,7 +186,7 @@ namespace MonoTests.System.Configuration {
 		{
 			Environment.SetEnvironmentVariable ("XDG_DATA_HOME", null);
 			Environment.SetEnvironmentVariable ("XDG_CONFIG_HOME", null);
-			Directory.Delete (tempDir);
+			Directory.Delete (tempDir, true);
 		}
 
 		[Test]
