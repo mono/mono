@@ -55,6 +55,12 @@ typedef enum {
 
 typedef struct _MonoInternalThread MonoInternalThread;
 
+/* It's safe to access System.Threading.InternalThread from native code via a
+ * raw pointer because all instances should be pinned.  But for uniformity of
+ * icall wrapping, let's declare a MonoInternalThreadHandle anyway.
+ */
+TYPED_HANDLE_DECL (MonoInternalThread);
+
 typedef void (*MonoThreadCleanupFunc) (MonoNativeThreadId tid);
 /* INFO has type MonoThreadInfo* */
 typedef void (*MonoThreadNotifyPendingExcFunc) (gpointer info);
@@ -82,7 +88,7 @@ void ves_icall_System_Threading_Thread_Sleep_internal(gint32 ms);
 gboolean ves_icall_System_Threading_Thread_Join_internal(MonoThread *this_obj, int ms);
 gint32 ves_icall_System_Threading_Thread_GetDomainID (void);
 gboolean ves_icall_System_Threading_Thread_Yield (void);
-MonoString* ves_icall_System_Threading_Thread_GetName_internal (MonoInternalThread *this_obj);
+MonoStringHandle ves_icall_System_Threading_Thread_GetName_internal (MonoInternalThreadHandle this_obj, MonoError *error);
 void ves_icall_System_Threading_Thread_SetName_internal (MonoInternalThread *this_obj, MonoString *name);
 int ves_icall_System_Threading_Thread_GetPriority (MonoThreadObjectHandle this_obj, MonoError *error);
 void ves_icall_System_Threading_Thread_SetPriority (MonoThreadObjectHandle this_obj, int priority, MonoError *error);
