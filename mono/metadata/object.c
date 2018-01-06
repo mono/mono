@@ -62,6 +62,7 @@ mono_ldstr_metadata_sig (MonoDomain *domain, const char* sig, MonoError *error);
 static void
 free_main_args (void);
 
+// In order to share code, error is optional.
 static char *
 mono_string_to_utf8_internal (MonoMemPool *mp, MonoImage *image, MonoString *s, MonoError *error);
 
@@ -7078,16 +7079,7 @@ mono_ldstr_utf8 (MonoImage *image, guint32 idx, MonoError *error)
 char *
 mono_string_to_utf8 (MonoString *s)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
-
-	MonoError error;
-	char *result = mono_string_to_utf8_checked (s, &error);
-	
-	if (!is_ok (&error)) {
-		mono_error_cleanup (&error);
-		return NULL;
-	}
-	return result;
+	return mono_string_to_utf8_checked (s, NULL);
 }
 
 /**
@@ -7107,7 +7099,8 @@ mono_string_to_utf8_checked (MonoString *s, MonoError *error)
 	char *as;
 	GError *gerror = NULL;
 
-	error_init (error);
+	if (error) // In order to share code, error is optional.
+		error_init (error);
 
 	if (s == NULL)
 		return NULL;
@@ -7115,7 +7108,7 @@ mono_string_to_utf8_checked (MonoString *s, MonoError *error)
 	if (!s->length)
 		return g_strdup ("");
 
-	as = g_utf16_to_utf8 (mono_string_chars (s), s->length, NULL, &written, &gerror);
+	as = g_utf16_to_utf8 (mono_string_chars (s), s->length, NULL, &written, error ? &gerror : NULL);
 	if (gerror) {
 		mono_error_set_argument (error, "string", "%s", gerror->message);
 		g_error_free (gerror);
@@ -7322,8 +7315,6 @@ mono_string_from_utf32_checked (mono_unichar4 *data, MonoError *error)
 static char *
 mono_string_to_utf8_internal (MonoMemPool *mp, MonoImage *image, MonoString *s, MonoError *error)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
-
 	char *r;
 	char *mp_s;
 	int len;
