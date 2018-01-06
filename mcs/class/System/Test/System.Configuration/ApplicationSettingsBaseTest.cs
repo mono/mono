@@ -184,6 +184,8 @@ namespace MonoTests.System.Configuration {
 		[TestFixtureTearDown]
 		public void FixtureTearDown ()
 		{
+			Environment.SetEnvironmentVariable ("XDG_DATA_HOME", null);
+			Environment.SetEnvironmentVariable ("XDG_CONFIG_HOME", null);
 			Directory.Delete (tempDir);
 		}
 
