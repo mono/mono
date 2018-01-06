@@ -44,7 +44,7 @@ using System.Runtime.ConstrainedExecution;
 
 namespace System.Threading {
 	[StructLayout (LayoutKind.Sequential)]
-	sealed class InternalThread : CriticalFinalizerObject {
+	unsafe sealed class InternalThread : CriticalFinalizerObject {
 #pragma warning disable 169, 414, 649
 		#region Sync with metadata/object-internals.h
 		int lock_thread_id;
@@ -53,7 +53,7 @@ namespace System.Threading {
 		IntPtr native_handle; // used only on Win32
 		IntPtr unused3;
 		/* accessed only from unmanaged code */
-		private IntPtr name;
+		private byte* name_utf8;
 		private int name_len; 
 		private ThreadState state;
 		private object abort_exc;
@@ -385,7 +385,7 @@ namespace System.Threading {
 		private extern static string GetName_internal (InternalThread thread);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void SetName_internal (InternalThread thread, String name);
+		private unsafe extern static void SetName_internal (InternalThread thread, byte* name_utf8, int length);
 
 		/* 
 		 * The thread name must be shared by appdomains, so it is stored in
@@ -398,7 +398,14 @@ namespace System.Threading {
 			}
 			
 			set {
-				SetName_internal (Internal, value);
+				if (value == null)
+					value = "";
+				byte[] name_utf8 = System.Text.Encoding.UTF8.GetBytes(value);
+				unsafe {
+					fixed (byte* p = &name_utf8[0]) {
+						SetName_internal (Internal, p, name_utf8.Length);
+					}
+				}
 			}
 		}
 

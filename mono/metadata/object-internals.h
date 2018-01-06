@@ -388,7 +388,7 @@ struct _MonoInternalThread {
 	MonoThreadHandle *handle;
 	gpointer native_handle;
 	gpointer unused3;
-	gunichar2  *name;
+	char       *name_utf8;
 	guint32	    name_len;
 	guint32	    state;
 	MonoException *abort_exc;
@@ -437,12 +437,6 @@ struct _MonoInternalThread {
 	 * DO NOT RENAME! DO NOT ADD FIELDS AFTER! */
 	gpointer last;
 };
-
-/* It's safe to access System.Threading.InternalThread from native code via a
- * raw pointer because all instances should be pinned.  But for uniformity of
- * icall wrapping, let's declare a MonoInternalThreadHandle anyway.
- */
-TYPED_HANDLE_DECL (MonoInternalThread);
 
 struct _MonoThread {
 	MonoObject obj;

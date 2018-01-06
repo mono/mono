@@ -1030,11 +1030,11 @@ static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack
 	fire_attach_profiler_events ((MonoNativeThreadId) tid);
 
 	/* if the name was set before starting, we didn't invoke the profiler callback */
-	if (internal->name) {
-		char *tname = g_utf16_to_utf8 (internal->name, internal->name_len, NULL, NULL, NULL);
-		MONO_PROFILER_RAISE (thread_name, (internal->tid, tname));
-		mono_native_thread_set_name (MONO_UINT_TO_NATIVE_THREAD_ID (internal->tid), tname);
-		g_free (tname);
+	if (internal->name_utf8) {
+		// FIXME Unicode thread name on Windows 10.
+		// https://msdn.microsoft.com/en-us/library/windows/desktop/mt774976(v=vs.85).aspx
+		MONO_PROFILER_RAISE (thread_name, (internal->tid, internal->name_utf8));
+		mono_native_thread_set_name (MONO_UINT_TO_NATIVE_THREAD_ID (internal->tid), internal->name_utf8);
 	}
 
 	/* start_func is set only for unmanaged start functions */
@@ -1485,9 +1485,9 @@ ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThre
 		g_free (synch_cs);
 	}
 
-	if (this_obj->name) {
-		void *name = this_obj->name;
-		this_obj->name = NULL;
+	if (this_obj->name_utf8) {
+		void *name = this_obj->name_utf8;
+		this_obj->name_utf8 = NULL;
 		g_free (name);
 	}
 }
@@ -1558,13 +1558,12 @@ mono_thread_get_name (MonoInternalThread *this_obj, guint32 *name_len)
 
 	LOCK_THREAD (this_obj);
 	
-	if (!this_obj->name) {
+	if (!this_obj->name_utf8) {
 		*name_len = 0;
 		res = NULL;
 	} else {
 		*name_len = this_obj->name_len;
-		res = g_new (gunichar2, this_obj->name_len);
-		memcpy (res, this_obj->name, sizeof (gunichar2) * this_obj->name_len);
+		res = g_utf8_to_utf16 (this_obj->name_utf8, this_obj->name_len, NULL, NULL, NULL);
 	}
 	
 	UNLOCK_THREAD (this_obj);
@@ -1590,7 +1589,7 @@ mono_thread_get_name_utf8 (MonoThread *thread)
 
 	LOCK_THREAD (internal);
 
-	char *tname = g_utf16_to_utf8 (internal->name, internal->name_len, NULL, NULL, NULL);
+	char *tname = (char*)g_memdup (internal->name_utf8, internal->name_len + 1);
 
 	UNLOCK_THREAD (internal);
 
@@ -1621,17 +1620,15 @@ MonoString*
 ves_icall_System_Threading_Thread_GetName_internal (MonoInternalThread *this_obj)
 {
 	ERROR_DECL (error);
-	MonoString* str;
+	MonoString* str = NULL;
 
 	error_init (&error);
 
 	LOCK_THREAD (this_obj);
-	
-	if (!this_obj->name)
-		str = NULL;
-	else
-		str = mono_string_new_utf16_checked (mono_domain_get (), this_obj->name, this_obj->name_len, &error);
-	
+
+	if (this_obj->name_utf8)
+		str = mono_string_new_len_checked (mono_domain_get (), this_obj->name_utf8, this_obj->name_len, &error);
+
 	UNLOCK_THREAD (this_obj);
 
 	if (mono_error_set_pending_exception (&error))
@@ -1641,56 +1638,72 @@ ves_icall_System_Threading_Thread_GetName_internal (MonoInternalThread *this_obj
 }
 
 void 
-mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, gboolean permanent, gboolean reset, MonoError *error)
+mono_thread_set_name_internal (MonoInternalThread *this_obj, const char* name_utf8, size_t length, gboolean permanent, gboolean reset, MonoError *error)
 {
+	error_init (error);
+	char* dup = NULL;
+	char* old_name = NULL;
 	MonoNativeThreadId tid = 0;
 
-	LOCK_THREAD (this_obj);
+	// If length is set, then name must be set.
+	// The opposite is not true, as name could be empty.
+	g_assert (!length || name_utf8);
 
-	error_init (error);
+	// Duplicate the name outside the lock.
+	if (length > 0) {
+		dup = (char*)g_memdup (name_utf8, length + 1);
+		if (!dup)
+			return;
+	}
+
+	LOCK_THREAD (this_obj);
 
 	if (reset) {
 		this_obj->flags &= ~MONO_THREAD_FLAG_NAME_SET;
 	} else if (this_obj->flags & MONO_THREAD_FLAG_NAME_SET) {
 		UNLOCK_THREAD (this_obj);
-		
 		mono_error_set_invalid_operation (error, "Thread.Name can only be set once.");
-		return;
+		goto exit;
 	}
-	if (this_obj->name) {
-		g_free (this_obj->name);
-		this_obj->name_len = 0;
-	}
-	if (name) {
-		this_obj->name = g_memdup (mono_string_chars (name), mono_string_length (name) * sizeof (gunichar2));
-		this_obj->name_len = mono_string_length (name);
 
+	old_name = this_obj->name_utf8;
+	this_obj->name_len = 0;
+	this_obj->name_utf8 = NULL;
+
+	if (length > 0) {
+		this_obj->name_utf8 = dup;
+		dup = NULL;
+		this_obj->name_len = length;
 		if (permanent)
 			this_obj->flags |= MONO_THREAD_FLAG_NAME_SET;
 	}
-	else
-		this_obj->name = NULL;
 
 	if (!(this_obj->state & ThreadState_Stopped))
 		tid = thread_get_tid (this_obj);
 
 	UNLOCK_THREAD (this_obj);
 
-	if (this_obj->name && tid) {
-		char *tname = mono_string_to_utf8_checked (name, error);
-		return_if_nok (error);
-		MONO_PROFILER_RAISE (thread_name, ((uintptr_t)tid, tname));
-		mono_native_thread_set_name (tid, tname);
-		mono_free (tname);
+	// In a race the profiler/native thread name might not
+	// match the mono thread name, ok. Fixing the race
+	// would extend the time under the lock.
+	if (length > 0 && tid) {
+		MONO_PROFILER_RAISE (thread_name, ((uintptr_t)tid, name_utf8));
+		// FIXME Windows 10 has better thread names, and they are unicode only.
+		// The unicode name should flow from the managed String.
+		// https://msdn.microsoft.com/en-us/library/windows/desktop/mt774976(v=vs.85).aspx
+		mono_native_thread_set_name (tid, name_utf8);
 	}
+exit:
+	g_free (old_name);
+	g_free (dup);
 }
 
 void 
-ves_icall_System_Threading_Thread_SetName_internal (MonoInternalThread *this_obj, MonoString *name)
+ves_icall_System_Threading_Thread_SetName_internal (
+	MonoInternalThreadHandle thread, const char* name_utf8, int length, MonoError *error)
 {
-	ERROR_DECL (error);
-	mono_thread_set_name_internal (this_obj, name, TRUE, FALSE, &error);
-	mono_error_set_pending_exception (&error);
+	// InternalThread is always pinned.
+	mono_thread_set_name_internal (MONO_HANDLE_RAW (thread), name_utf8, length, TRUE, FALSE, error);
 }
 
 /*
@@ -3626,8 +3639,6 @@ static void
 dump_thread (MonoInternalThread *thread, ThreadDumpUserData *ud)
 {
 	GString* text = g_string_new (0);
-	char *name;
-	GError *error = NULL;
 	int i;
 
 	ud->thread = thread;
@@ -3643,11 +3654,8 @@ dump_thread (MonoInternalThread *thread, ThreadDumpUserData *ud)
 	/*
 	 * Do all the non async-safe work outside of get_thread_dump.
 	 */
-	if (thread->name) {
-		name = g_utf16_to_utf8 (thread->name, thread->name_len, NULL, NULL, &error);
-		g_assert (!error);
-		g_string_append_printf (text, "\n\"%s\"", name);
-		g_free (name);
+	if ((int)thread->name_len > 0) { // A little wonky with large numbers but ok.
+		g_string_append_printf (text, "\n\"%.*s\"", (int)thread->name_len, thread->name_utf8);
 	}
 	else if (thread->threadpool_thread) {
 		g_string_append (text, "\n\"<threadpool thread>\"");

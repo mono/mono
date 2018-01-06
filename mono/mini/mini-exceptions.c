@@ -2881,19 +2881,13 @@ mono_print_thread_dump_internal (void *sigctx, MonoContext *start_ctx)
 	MonoContext ctx;
 #endif
 	GString* text;
-	char *name;
-	GError *error = NULL;
 
 	if (!thread)
 		return;
 
 	text = g_string_new (0);
-	if (thread->name) {
-		name = g_utf16_to_utf8 (thread->name, thread->name_len, NULL, NULL, &error);
-		g_assert (!error);
-		g_string_append_printf (text, "\n\"%s\"", name);
-		g_free (name);
-	}
+	if ((int)thread->name_len > 0) // A little wonky with large numbers but ok.
+		g_string_append_printf (text, "\n\"%.*s\"", (int)thread->name_len, thread->name_utf8);
 	else if (thread->threadpool_thread)
 		g_string_append (text, "\n\"<threadpool thread>\"");
 	else

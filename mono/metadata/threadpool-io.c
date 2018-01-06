@@ -319,9 +319,7 @@ selector_thread (gpointer data)
 	ERROR_DECL (error);
 	MonoGHashTable *states;
 
-	MonoString *thread_name = mono_string_new_checked (mono_get_root_domain (), "Thread Pool I/O Selector", &error);
-	mono_error_assert_ok (&error);
-	mono_thread_set_name_internal (mono_thread_internal_current (), thread_name, FALSE, TRUE, &error);
+	mono_thread_set_name_internal (mono_thread_internal_current (), G_STRING_CONSTANT_AND_LENGTH ("Thread Pool I/O Selector"), FALSE, TRUE, &error);
 	mono_error_assert_ok (&error);
 
 	if (mono_runtime_is_shutting_down ()) {
