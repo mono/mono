@@ -725,6 +725,7 @@ INTERP_PLATFORM_DISABLED_TESTS= \
 	delegate-exit.exe \
 	delegate1.exe \
 	delegate3.exe \
+	thunks.exe \
 	finalizer-exception.exe \
 	monitor-abort.exe
 endif
