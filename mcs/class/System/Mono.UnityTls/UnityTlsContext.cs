@@ -218,19 +218,27 @@ namespace Mono.Unity
 
 		public override void StartHandshake ()
 		{
-			// TODO: Check if we started a handshake already?
-			// TODO, Not supported by UnityTls as of writing
+			// TODO: Client->Server authentification is not supported by UnityTls as of writing
 			if (IsServer && AskForClientCertificate) {
 				throw new NotImplementedException ("No support for server-sided client certificate check yet.");
 			}
 
-			// TODO: Set ciphers from Settings.EnabledCiphers
+			if (Settings != null && Settings.EnabledCiphers != null) {
+				var ciphers = new UnityTls.unitytls_ciphersuite [Settings.EnabledCiphers.Length];
+				for (int i = 0; i < ciphers.Length; i++)
+					ciphers [i] = (UnityTls.unitytls_ciphersuite)Settings.EnabledCiphers [i];
+				
+				var errorState = unityTlsNative.unitytls_errorstate_create ();
+				fixed (UnityTls.unitytls_ciphersuite* ciphersPtr = ciphers)
+					unityTlsNative.unitytls_tlsctx_set_supported_ciphersuites (m_TlsContext, ciphersPtr, ciphers.Length, &errorState);
+				Unity.Debug.CheckAndThrow (errorState, "Failed to set list of supported ciphers", AlertDescription.HandshakeFailure);
+			}
 		}
 
 		public override bool ProcessHandshake ()
 		{
-			var errorState = UnityTls.GetInterface().unitytls_errorstate_create ();
-			var result = UnityTls.GetInterface().unitytls_tlsctx_process_handshake (m_TlsContext, &errorState);
+			var errorState = unityTlsNative.unitytls_errorstate_create ();
+			var result = unityTlsNative.unitytls_tlsctx_process_handshake (m_TlsContext, &errorState);
 			if (errorState.code == UnityTls.unitytls_error_code.UNITYTLS_USER_WOULD_BLOCK)
 				return false;
 
