@@ -22,6 +22,10 @@ Please describe the behavior you are expecting
 
 You can use `mono --version` or About dialog to obtain this information.
 
+**Environment**:
+
+Paste output of `env` on your system if applicable.
+
 ### Stacktrace
 
 ```
