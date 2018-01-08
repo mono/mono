@@ -1899,10 +1899,12 @@ namespace System.Threading
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern void NotifyWorkItemProgressNative();
 
+#if MONO
         [System.Security.SecurityCritical]
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern void NotifyWorkItemQueued();
+#endif
 
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
