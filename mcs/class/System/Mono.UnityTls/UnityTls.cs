@@ -157,6 +157,9 @@ namespace Mono.Unity
         // ------------------------------------------------------------------------
         // unitytls interface defintion
         // ------------------------------------------------------------------------
+
+        // This native struct is used to provide all necessary fields and function calls from unitytls to the mono-unitytls-binding.
+        // Native implementation lives in unity:Modules/TLS/TLSMonoIntegration.cpp and needs to be adapted to every change.
         [StructLayout (LayoutKind.Sequential)]
         public class mono_unity_unitytls_interface
         {
