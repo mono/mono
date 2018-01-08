@@ -14,6 +14,7 @@
 #define MonoClass Il2CppClass
 #define MonoImage Il2CppImage
 #define MonoMethod MethodInfo
+#define MonoMethodInflated MethodInfo
 #define MonoClassField FieldInfo
 #define MonoArrayType Il2CppArrayType
 #define MonoGenericParam Il2CppGenericParameter
@@ -35,101 +36,28 @@
 #define MonoAppDomain Il2CppAppDomain
 #define MonoDomain Il2CppDomain
 #define MonoDomainFunc Il2CppDomainFunc
+#define MonoObject Il2CppObject
+#define MonoVTable Il2CppVTable
+#define MonoException Il2CppException
+#define MonoMarshalByRefObject Il2CppMarshalByRefObject
+
+//Unsupported in il2cpp, should never be referenced
+#define MonoCustomAttrInfo #error Custom Attributes Not Supported
+#define MonoCustomAttrEntry #error Custom Attributes Not Supported
+#define CattrNamedArg #error Custom Attributes Not Supported
+#define MonoJitTlsData #error Jit TLS Data Unsupported
 
 //still stubs everywhere
 typedef struct _Il2CppMonoMethodSignature Il2CppMonoMethodSignature;
-typedef struct _Il2CppMonoVTable Il2CppMonoVTable;
-typedef struct _Il2CppMonoMarshalByRefObject Il2CppMonoMarshalByRefObject;
-typedef struct _Il2CppMonoObject Il2CppMonoObject;
-typedef struct _Il2CppMonoCustomAttrInfo Il2CppMonoCustomAttrInfo;
-typedef struct _Il2CppMonoJitTlsData Il2CppMonoJitTlsData;
 typedef struct _Il2CppMonoRuntimeExceptionHandlingCallbacks Il2CppMonoRuntimeExceptionHandlingCallbacks;
-typedef struct _Il2CppMonoCustomAttrEntry Il2CppMonoCustomAttrEntry;
-typedef struct _Il2CppMonoStackFrameInfo Il2CppMonoStackFrameInfo;
 typedef struct Il2CppDefaults Il2CppMonoDefaults;
-typedef struct _Il2CppMonoMethodInflated Il2CppMonoMethodInflated;
-typedef struct _Il2CppMonoException Il2CppMonoException;
-typedef struct _Il2CppCattrNamedArg Il2CppCattrNamedArg;
 typedef struct _Il2CppMonoTypeNameParse Il2CppMonoTypeNameParse;
 
-
-struct _Il2CppMonoJitTlsData { void *dummy; };
-
-struct _Il2CppCattrNamedArg
-{
-	MonoType *type;
-	MonoClassField *field;
-	MonoProperty *prop;
-};
-
-struct _Il2CppMonoObject
-{
-	Il2CppMonoVTable *vtable;
-	void *synchronization;
-};
-
-struct _Il2CppMonoException
-{
-	Il2CppMonoObject object;
-};
-
-struct _Il2CppMonoMethodInflated
-{
-	MonoMethod *declaring;
-	MonoGenericContext context;
-};
-
-struct _Il2CppMonoStackFrameInfo
-{
-	MonoStackFrameType type;
-	MonoJitInfo *ji;
-	MonoMethod *method;
-	MonoMethod *actual_method;
-	MonoDomain *domain;
-	gboolean managed;
-	gboolean async_context;
-	int native_offset;
-	int il_offset;
-	gpointer interp_exit_data;
-	gpointer interp_frame;
-	gpointer lmf;
-	guint32 unwind_info_len;
-	guint8 *unwind_info;
-	mgreg_t **reg_locations;
-};
-
-struct _Il2CppMonoCustomAttrEntry
-{
-	MonoMethod *ctor;
-	uint32_t data_size;
-	const mono_byte* data;
-};
-
-struct _Il2CppMonoCustomAttrInfo
-{
-	int num_attrs;
-	Il2CppMonoCustomAttrEntry attrs [MONO_ZERO_LEN_ARRAY];
-};
-
-typedef gboolean (*Il2CppMonoInternalStackWalk) (Il2CppMonoStackFrameInfo *frame, MonoContext *ctx, gpointer data);
+typedef gboolean (*Il2CppMonoInternalStackWalk) (MonoStackFrameInfo *frame, MonoContext *ctx, gpointer data);
 
 struct _Il2CppMonoRuntimeExceptionHandlingCallbacks
 {
 	void (*il2cpp_mono_walk_stack_with_state) (Il2CppMonoInternalStackWalk func, MonoThreadUnwindState *state, MonoUnwindOptions options, void *user_data);
-};
-
-struct _Il2CppMonoMarshalByRefObject
-{
-	Il2CppMonoObject obj;
-};
-
-struct _Il2CppMonoVTable
-{
-	MonoClass *klass;
-	MonoDomain *domain;
-	guint8 initialized;
-	gpointer type;
-	guint init_failed     : 1;
 };
 
 struct _Il2CppMonoMethodSignature
@@ -148,14 +76,7 @@ struct _Il2CppMonoTypeNameParse
 	void *il2cppTypeNameParseInfo;
 };
 
-typedef struct Il2CppThreadUnwindState
-{
-	Il2CppSequencePoint** sequencePoints;
-	Il2CppSequencePointExecutionContext** executionContexts;
-	uint32_t frameCount;
-} Il2CppThreadUnwindState;
-
-TYPED_HANDLE_DECL (Il2CppMonoObject);
+TYPED_HANDLE_DECL (MonoObject);
 TYPED_HANDLE_DECL (MonoReflectionAssembly);
 Il2CppMonoDefaults il2cpp_mono_defaults;
 MonoDebugOptions il2cpp_mono_debug_options;
@@ -167,7 +88,7 @@ typedef void (*Il2CppMonoProfileAssemblyFunc) (MonoProfiler *prof, MonoAssembly 
 typedef void (*Il2CppMonoProfileJitResult) (MonoProfiler *prof, MonoMethod *method, MonoJitInfo* jinfo, int result);
 typedef void (*Il2CppMonoProfileAssemblyResult) (MonoProfiler *prof, MonoAssembly *assembly, int result);
 typedef void (*Il2CppMonoProfileThreadFunc) (MonoProfiler *prof, uintptr_t tid);
-typedef gboolean (*Il2CppMonoJitStackWalk) (Il2CppMonoStackFrameInfo *frame, MonoContext *ctx, gpointer data);
+typedef gboolean (*Il2CppMonoJitStackWalk) (MonoStackFrameInfo *frame, MonoContext *ctx, gpointer data);
 typedef void (*Il2CppDomainFunc) (MonoDomain *domain, void* user_data);
 
 typedef void (*emit_assembly_load_callback)(void*, void*);
