@@ -15,7 +15,7 @@ RESULT
 test_dir ()
 {
 	GDir *dir;
-	GError *gerror;
+	GError *error;
 	const gchar *name;
 
 	/*
@@ -30,17 +30,17 @@ test_dir ()
 		return FAILED ("2 Should be an error");
 
 	error = NULL;
-	dir = g_dir_open (".ljasdslakjd", 9, &gerror);
+	dir = g_dir_open (".ljasdslakjd", 9, &error);
 	if (dir != NULL)
 		return FAILED ("3 opendir should fail");
-	if (gerror == NULL)
+	if (error == NULL)
 		return FAILED ("4 got no error");
-	g_error_free (gerror);
-	gerror = NULL;
-	dir = g_dir_open (g_get_tmp_dir (), 9, &gerror);
+	g_error_free (error);
+	error = NULL;
+	dir = g_dir_open (g_get_tmp_dir (), 9, &error);
 	if (dir == NULL)
 		return FAILED ("5 opendir should succeed");
-	if (gerror != NULL)
+	if (error != NULL)
 		return FAILED ("6 got an error");
 	name = NULL;
 	name = g_dir_read_name (dir);
@@ -62,3 +62,5 @@ static Test dir_tests [] = {
 };
 
 DEFINE_TEST_GROUP_INIT(dir_tests_init, dir_tests)
+
+

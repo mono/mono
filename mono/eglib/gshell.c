@@ -29,7 +29,7 @@
 #include <glib.h>
 
 static int
-split_cmdline (const gchar *cmdline, GPtrArray *array, GError **gerror)
+split_cmdline (const gchar *cmdline, GPtrArray *array, GError **error)
 {
 	gchar *ptr;
 	gchar c;
@@ -81,15 +81,15 @@ split_cmdline (const gchar *cmdline, GPtrArray *array, GError **gerror)
 	}
 
 	if (escaped) {
-		if (gerror)
-			*gerror = g_error_new (G_LOG_DOMAIN, 0, "Unfinished escape.");
+		if (error)
+			*error = g_error_new (G_LOG_DOMAIN, 0, "Unfinished escape.");
 		g_string_free (str, TRUE);
 		return -1;
 	}
 
 	if (quote_char) {
-		if (gerror)
-			*gerror = g_error_new (G_LOG_DOMAIN, 0, "Unfinished quote.");
+		if (error)
+			*error = g_error_new (G_LOG_DOMAIN, 0, "Unfinished quote.");
 		g_string_free (str, TRUE);
 		return -1;
 	}
@@ -104,17 +104,17 @@ split_cmdline (const gchar *cmdline, GPtrArray *array, GError **gerror)
 }
 
 gboolean
-g_shell_parse_argv (const gchar *command_line, gint *argcp, gchar ***argvp, GError **gerror)
+g_shell_parse_argv (const gchar *command_line, gint *argcp, gchar ***argvp, GError **error)
 {
 	GPtrArray *array;
 	gint argc;
 	gchar **argv;
 
 	g_return_val_if_fail (command_line, FALSE);
-	g_return_val_if_fail (gerror == NULL || *gerror == NULL, FALSE);
+	g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
 	array = g_ptr_array_new();
-	if (split_cmdline (command_line, array, gerror)) {
+	if (split_cmdline (command_line, array, error)) {
 		g_ptr_array_add (array, NULL);
 		g_strfreev ((gchar **) array->pdata);
 		g_ptr_array_free (array, FALSE);
@@ -160,7 +160,7 @@ g_shell_quote (const gchar *unquoted_string)
 }
 
 gchar *
-g_shell_unquote (const gchar *quoted_string, GError **gerror)
+g_shell_unquote (const gchar *quoted_string, GError **error)
 {
 	GString *result;
 	const char *p;
@@ -192,7 +192,7 @@ g_shell_unquote (const gchar *quoted_string, GError **gerror)
 				g_string_append_c (result, *p);
 			}
 			if (!*p){
-				g_set_error (gerror, 0, 0, "Open quote");
+				g_set_error (error, 0, 0, "Open quote");
 				return NULL;
 			}
 		} else if (*p == '"'){
@@ -203,7 +203,7 @@ g_shell_unquote (const gchar *quoted_string, GError **gerror)
 				if (*p == '\\'){
 					p++;
 					if (*p == 0){
-						g_set_error (gerror, 0, 0, "Open quote");
+						g_set_error (error, 0, 0, "Open quote");
 						return NULL;
 					}
 					switch (*p){
@@ -220,7 +220,7 @@ g_shell_unquote (const gchar *quoted_string, GError **gerror)
 				g_string_append_c (result, *p);
 			}
 			if (!*p){
-				g_set_error (gerror, 0, 0, "Open quote");
+				g_set_error (error, 0, 0, "Open quote");
 				return NULL;
 			}
 		} else if (*p == '\\'){

@@ -50,7 +50,7 @@ int mkstemp (char *tmp_template);
 #define OPEN_FLAGS (O_RDONLY | O_LARGEFILE)
 #endif
 gboolean
-g_file_get_contents (const gchar *filename, gchar **contents, gsize *length, GError **gerror)
+g_file_get_contents (const gchar *filename, gchar **contents, gsize *length, GError **error)
 {
 	gchar *str;
 	int fd;
@@ -60,7 +60,7 @@ g_file_get_contents (const gchar *filename, gchar **contents, gsize *length, GEr
 
 	g_return_val_if_fail (filename != NULL, FALSE);
 	g_return_val_if_fail (contents != NULL, FALSE);
-	g_return_val_if_fail (gerror == NULL || *gerror == NULL, FALSE);
+	g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
 	*contents = NULL;
 	if (length)
@@ -68,17 +68,17 @@ g_file_get_contents (const gchar *filename, gchar **contents, gsize *length, GEr
 
 	fd = open (filename, OPEN_FLAGS);
 	if (fd == -1) {
-		if (gerror != NULL) {
+		if (error != NULL) {
 			int err = errno;
-			*gerror = g_error_new (G_LOG_DOMAIN, g_file_error_from_errno (err), "Error opening file");
+			*error = g_error_new (G_LOG_DOMAIN, g_file_error_from_errno (err), "Error opening file");
 		}
 		return FALSE;
 	}
 
 	if (fstat (fd, &st) != 0) {
-		if (gerror != NULL) {
+		if (error != NULL) {
 			int err = errno;
-			*gerror = g_error_new (G_LOG_DOMAIN, g_file_error_from_errno (err), "Error in fstat()");
+			*error = g_error_new (G_LOG_DOMAIN, g_file_error_from_errno (err), "Error in fstat()");
 		}
 		close (fd);
 		return FALSE;
@@ -103,29 +103,29 @@ g_file_get_contents (const gchar *filename, gchar **contents, gsize *length, GEr
 }
 
 gint
-g_file_open_tmp (const gchar *tmpl, gchar **name_used, GError **gerror)
+g_file_open_tmp (const gchar *tmpl, gchar **name_used, GError **error)
 {
 	const static gchar *default_tmpl = ".XXXXXX";
 	gchar *t;
 	gint fd;
 	size_t len;
 
-	g_return_val_if_fail (gerror == NULL || *gerror == NULL, -1);
+	g_return_val_if_fail (error == NULL || *error == NULL, -1);
 
 	if (tmpl == NULL)
 		tmpl = default_tmpl;
 
 	if (strchr (tmpl, G_DIR_SEPARATOR) != NULL) {
-		if (gerror) {
-			*gerror = g_error_new (G_LOG_DOMAIN, 24, "Template should not have any " G_DIR_SEPARATOR_S);
+		if (error) {
+			*error = g_error_new (G_LOG_DOMAIN, 24, "Template should not have any " G_DIR_SEPARATOR_S);
 		}
 		return -1;
 	}
 
 	len = strlen (tmpl);
 	if (len < 6 || strcmp (tmpl + len - 6, "XXXXXX")) {
-		if (gerror) {
-			*gerror = g_error_new (G_LOG_DOMAIN, 24, "Template should end with XXXXXX");
+		if (error) {
+			*error = g_error_new (G_LOG_DOMAIN, 24, "Template should end with XXXXXX");
 		}
 		return -1;
 	}
@@ -135,9 +135,9 @@ g_file_open_tmp (const gchar *tmpl, gchar **name_used, GError **gerror)
 	fd = mkstemp (t);
 
 	if (fd == -1) {
-		if (gerror) {
+		if (error) {
 			int err = errno;
-			*gerror = g_error_new (G_LOG_DOMAIN, g_file_error_from_errno (err), "Error in mkstemp()");
+			*error = g_error_new (G_LOG_DOMAIN, g_file_error_from_errno (err), "Error in mkstemp()");
 		}
 		g_free (t);
 		return -1;
