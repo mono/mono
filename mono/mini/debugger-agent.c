@@ -2950,6 +2950,8 @@ free_frames (StackFrame **frames, int nframes)
 static void
 invalidate_frames (DebuggerTlsData *tls)
 {
+	mono_loader_lock ();
+
 	if (!tls)
 		tls = (DebuggerTlsData *)mono_native_tls_get_value (debugger_tls_id);
 	g_assert (tls);
@@ -2961,6 +2963,8 @@ invalidate_frames (DebuggerTlsData *tls)
 	free_frames (tls->restore_frames, tls->restore_frame_count);
 	tls->restore_frame_count = 0;
 	tls->restore_frames = NULL;
+
+	mono_loader_unlock ();
 }
 
 /*
@@ -5671,6 +5675,8 @@ ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint* sp, MonoSeqPointI
 	/* Stop the previous operation */
 	ss_stop (ss_req);
 
+	gboolean locked = FALSE;
+
 	/*
 	 * Implement single stepping using breakpoints if possible.
 	 */
@@ -5683,6 +5689,10 @@ ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint* sp, MonoSeqPointI
 			/* Need parent frames */
 			if (!tls->context.valid)
 				mono_thread_state_init_from_monoctx (&tls->context, ctx);
+
+			mono_loader_lock ();
+			locked = TRUE;
+
 			compute_frame_info (tls->thread, tls);
 			frames = tls->frames;
 			nframes = tls->frame_count;
@@ -5721,6 +5731,8 @@ ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint* sp, MonoSeqPointI
 					if (ss_req_bp_cache)
 						g_hash_table_destroy (ss_req_bp_cache);
 					mono_debug_free_method_async_debug_info (asyncMethod);
+					if (locked)
+						mono_loader_unlock ();
 					return;
 				}
 			}
@@ -5738,6 +5750,8 @@ ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint* sp, MonoSeqPointI
 					if (ss_req_bp_cache)
 						g_hash_table_destroy (ss_req_bp_cache);
 					mono_debug_free_method_async_debug_info (asyncMethod);
+				if (locked)
+					mono_loader_unlock ();
 					return;
 				}
 			}
@@ -5859,6 +5873,9 @@ ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint* sp, MonoSeqPointI
 
 	if (ss_req_bp_cache)
 		g_hash_table_destroy (ss_req_bp_cache);
+
+	if (locked)
+		mono_loader_unlock ();
 }
 
 /*
