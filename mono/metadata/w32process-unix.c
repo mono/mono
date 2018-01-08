@@ -2217,7 +2217,7 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStar
 		}
 		/* Shell exec should not return a process handle when it spawned a GUI thing, like a browser. */
 		mono_w32handle_close (process_info->process_handle);
-		process_info->process_handle = NULL;
+		process_info->process_handle = INVALID_HANDLE_VALUE;
 	}
 
 done:
