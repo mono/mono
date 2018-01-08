@@ -98,7 +98,7 @@ mono_string_to_utf8str (MonoString *s)
 {
 	char *as, *tmp;
 	glong len;
-	GError *gerror = NULL;
+	GError *error = NULL;
 
 	if (s == NULL)
 		return NULL;
@@ -109,10 +109,10 @@ mono_string_to_utf8str (MonoString *s)
 		return as;
 	}
 
-	tmp = g_utf16_to_utf8 (mono_string_chars (s), s->length, NULL, &len, &gerror);
-	if (gerror) {
-		MonoException *exc = mono_get_exception_argument ("string", gerror->message);
-		g_error_free (gerror);
+	tmp = g_utf16_to_utf8 (mono_string_chars (s), s->length, NULL, &len, &error);
+	if (error) {
+		MonoException *exc = mono_get_exception_argument ("string", error->message);
+		g_error_free (error);
 		mono_set_pending_exception (exc);
 		return NULL;
 	} else {

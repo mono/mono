@@ -16,7 +16,7 @@
 RESULT
 test_file_get_contents ()
 {
-	GError *gerror;
+	GError *error;
 	gchar *content;
 	gboolean ret;
 	gsize length;
@@ -32,24 +32,24 @@ test_file_get_contents ()
 	contents != NULL
 	ret = g_file_get_contents ("", NULL, NULL, NULL);
 	error no such file and fails for 'error' not being null too
-	ret = g_file_get_contents ("", &content, NULL, &gerror);
+	ret = g_file_get_contents ("", &content, NULL, &error);
 	*/
 
-	gerror = NULL;
-	ret = g_file_get_contents ("", &content, NULL, &gerror);
+	error = NULL;
+	ret = g_file_get_contents ("", &content, NULL, &error);
 	if (ret)
 		return FAILED ("HAH!");
-	if (gerror == NULL)
+	if (error == NULL)
 		return FAILED ("Got nothing as error.");
 	if (content != NULL)
 		return FAILED ("Content is uninitialized");
 
-	g_error_free (gerror);
-	gerror = NULL;
-	ret = g_file_get_contents (filename, &content, &length, &gerror);
+	g_error_free (error);
+	error = NULL;
+	ret = g_file_get_contents (filename, &content, &length, &error);
 	if (!ret)
-		return FAILED ("The error is %d %s\n", gerror->code, gerror->message);
-	if (gerror != NULL)
+		return FAILED ("The error is %d %s\n", error->code, error->message);
+	if (error != NULL)
 		return FAILED ("Got an error returning TRUE");
 	if (content == NULL)
 		return FAILED ("Content is NULL");
@@ -63,7 +63,7 @@ test_file_get_contents ()
 RESULT
 test_open_tmp ()
 {
-	GError *gerror;
+	GError *error;
 	gint fd;
 	gchar *name = GINT_TO_POINTER (-1);
 
@@ -74,29 +74,29 @@ test_open_tmp ()
 	 *	return FAILED ("Default failed.");
 	 * close (fd);
 	*/
-	gerror = NULL;
-	fd = g_file_open_tmp ("invalidtemplate", NULL, &gerror);
+	error = NULL;
+	fd = g_file_open_tmp ("invalidtemplate", NULL, &error);
 	if (fd != -1)
 		return FAILED ("The template was invalid and accepted");
-	if (gerror == NULL)
+	if (error == NULL)
 		return FAILED ("No error returned.");
-	g_error_free (gerror);
+	g_error_free (error);
 
-	gerror = NULL;
-	fd = g_file_open_tmp ("i/nvalidtemplate", &name, &gerror);
+	error = NULL;
+	fd = g_file_open_tmp ("i/nvalidtemplate", &name, &error);
 	if (fd != -1)
 		return FAILED ("The template was invalid and accepted");
-	if (gerror == NULL)
+	if (error == NULL)
 		return FAILED ("No error returned.");
 	if (name == NULL)
 		return FAILED ("'name' is not reset");
-	g_error_free (gerror);
+	g_error_free (error);
 
-	gerror = NULL;
-	fd = g_file_open_tmp ("valid-XXXXXX", &name, &gerror);
+	error = NULL;
+	fd = g_file_open_tmp ("valid-XXXXXX", &name, &error);
 	if (fd == -1)
 		return FAILED ("This should be valid");
-	if (gerror != NULL)
+	if (error != NULL)
 		return FAILED ("No error returned.");
 	if (name == NULL)
 		return FAILED ("No name returned.");
