@@ -71,7 +71,7 @@ namespace Mono.Unity
 					targetHost = targetHost.Substring (0, pos);
 			}
 
-			var unityTlsNative = UnityTls.GetInterface();
+			var unityTlsNative = UnityTls.NativeInterface;
 
 			// convert cert to native
 			var errorState = unityTlsNative.unitytls_errorstate_create ();

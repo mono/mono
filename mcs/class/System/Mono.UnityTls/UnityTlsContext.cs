@@ -53,7 +53,7 @@ namespace Mono.Unity
 			X509CertificateCollection clientCertificates, bool askForClientCert)
 			: base (parent, serverMode, targetHost, enabledProtocols, serverCertificate, clientCertificates, askForClientCert)
 		{
-			unityTlsNative = UnityTls.GetInterface();
+			unityTlsNative = UnityTls.NativeInterface;
 
 			// Need GCHandle to get a consistent pointer to this instance
 			m_handle = GCHandle.Alloc (this);

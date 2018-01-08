@@ -227,17 +227,20 @@ namespace Mono.Unity
         public static bool IsSupported()
         {
             try {
-                return GetInterface() != null;
+                return NativeInterface != null;
             } catch (System.Exception) {
                 return false;
             }
         }
 
-        public static mono_unity_unitytls_interface GetInterface()
+        public static mono_unity_unitytls_interface NativeInterface
         {
-            if (marshalledInterface == null)
-                marshalledInterface = Marshal.PtrToStructure<mono_unity_unitytls_interface>(mono_unity_get_unitytls_interface());
-            return marshalledInterface;
+            get
+            {
+                if (marshalledInterface == null)
+                    marshalledInterface = Marshal.PtrToStructure<mono_unity_unitytls_interface>(mono_unity_get_unitytls_interface());
+                return marshalledInterface;
+            }
         }
     }
 }

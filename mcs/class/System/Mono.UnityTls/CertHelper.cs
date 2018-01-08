@@ -16,7 +16,7 @@ namespace Mono.Unity
 		{
 			byte[] certDer = certificate.GetRawCertData ();
 			fixed(byte* certDerPtr = certDer) {
-				UnityTls.GetInterface().unitytls_x509list_append_der (nativeCertificateChain, certDerPtr, certDer.Length, errorState);
+				UnityTls.NativeInterface.unitytls_x509list_append_der (nativeCertificateChain, certDerPtr, certDer.Length, errorState);
 			}
 
 			var certificateImpl2 = certificate.Impl as X509Certificate2Impl;
@@ -33,7 +33,7 @@ namespace Mono.Unity
 		public static X509CertificateCollection NativeChainToManagedCollection (UnityTls.unitytls_x509list_ref nativeCertificateChain, UnityTls.unitytls_errorstate* errorState)
 		{
 			X509CertificateCollection certificates = new X509CertificateCollection ();
-			var unityTls = UnityTls.GetInterface ();
+			var unityTls = UnityTls.NativeInterface;
 
 			var cert = unityTls.unitytls_x509list_get_x509 (nativeCertificateChain, 0, errorState);
 			for (int i = 0; cert.handle != unityTls.UNITYTLS_INVALID_HANDLE; ++i) {
