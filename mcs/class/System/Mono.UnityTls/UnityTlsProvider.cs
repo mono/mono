@@ -71,11 +71,9 @@ namespace Mono.Unity
 					targetHost = targetHost.Substring (0, pos);
 			}
 
-			var unityTlsNative = UnityTls.NativeInterface;
-
 			// convert cert to native
-			var errorState = unityTlsNative.unitytls_errorstate_create ();
-			var certificatesNative = unityTlsNative.unitytls_x509list_create (&errorState);
+			var errorState = UnityTls.NativeInterface.unitytls_errorstate_create ();
+			var certificatesNative = UnityTls.NativeInterface.unitytls_x509list_create (&errorState);
 			var result = UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_NOT_DONE;
 			try
 			{
@@ -87,28 +85,28 @@ namespace Mono.Unity
 				//validator.Settings.SendCloseNotify					// UnityTls always sends a close notify if the underlying impl supports it. Currently only used by MonoBtlsProvider
 
 				CertHelper.AddCertificatesToNativeChain (certificatesNative, certificates, &errorState);
-				var certificatesNativeRef = unityTlsNative.unitytls_x509list_get_ref (certificatesNative, &errorState);
+				var certificatesNativeRef = UnityTls.NativeInterface.unitytls_x509list_get_ref (certificatesNative, &errorState);
 				var targetHostUtf8 = Encoding.UTF8.GetBytes (targetHost);
 
 				if (validator.Settings.TrustAnchors != null) {
-					var trustCAnative = unityTlsNative.unitytls_x509list_create (&errorState);
+					var trustCAnative = UnityTls.NativeInterface.unitytls_x509list_create (&errorState);
 					CertHelper.AddCertificatesToNativeChain (trustCAnative, validator.Settings.TrustAnchors, &errorState);
-					var trustCAnativeRef = unityTlsNative.unitytls_x509list_get_ref (certificatesNative, &errorState);
+					var trustCAnativeRef = UnityTls.NativeInterface.unitytls_x509list_get_ref (certificatesNative, &errorState);
 
 					fixed (byte* targetHostUtf8Ptr = targetHostUtf8) {
-						result = unityTlsNative.unitytls_x509verify_explicit_ca (certificatesNativeRef, trustCAnativeRef, targetHostUtf8Ptr, targetHostUtf8.Length, null, null, &errorState);
+						result = UnityTls.NativeInterface.unitytls_x509verify_explicit_ca (certificatesNativeRef, trustCAnativeRef, targetHostUtf8Ptr, targetHostUtf8.Length, null, null, &errorState);
 					}
 
-					unityTlsNative.unitytls_x509list_free (trustCAnative);
+					UnityTls.NativeInterface.unitytls_x509list_free (trustCAnative);
 				} else {
 					fixed (byte* targetHostUtf8Ptr = targetHostUtf8) {
-						result = unityTlsNative.unitytls_x509verify_default_ca (certificatesNativeRef, targetHostUtf8Ptr, targetHostUtf8.Length, null, null, &errorState);
+						result = UnityTls.NativeInterface.unitytls_x509verify_default_ca (certificatesNativeRef, targetHostUtf8Ptr, targetHostUtf8.Length, null, null, &errorState);
 					}
 				}
 			}
 			finally
 			{
-				unityTlsNative.unitytls_x509list_free (certificatesNative);
+				UnityTls.NativeInterface.unitytls_x509list_free (certificatesNative);
 			}
 
 			errors = UnityTlsConversions.VerifyResultToPolicyErrror(result);
