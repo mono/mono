@@ -257,8 +257,9 @@ namespace Mono.Unity
 		public override void FinishHandshake ()
 		{
 			// Query some data. Ignore errors on the way since failure is not crucial.
-			var cipherSuite = UnityTls.NativeInterface.unitytls_tlsctx_get_ciphersuite(m_TlsContext, null);
-			var protocolVersion = UnityTls.NativeInterface.unitytls_tlsctx_get_protocol(m_TlsContext, null);
+			var errorState = UnityTls.NativeInterface.unitytls_errorstate_create ();
+			var cipherSuite = UnityTls.NativeInterface.unitytls_tlsctx_get_ciphersuite(m_TlsContext, &errorState);
+			var protocolVersion = UnityTls.NativeInterface.unitytls_tlsctx_get_protocol(m_TlsContext, &errorState);
 
 			m_Connectioninfo = new MonoTlsConnectionInfo () {
 				CipherSuiteCode = (CipherSuiteCode)cipherSuite,
