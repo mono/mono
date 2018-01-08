@@ -59,9 +59,7 @@ public class SslStreamTest {
 	}
 
 	[Test] //bug https://bugzilla.novell.com/show_bug.cgi?id=457120
-#if !UNITY
 	[Category ("MacNotWorking")] // Works but launches a prompt on 10.12 that will fail if you don't click in a few seconds
-#endif
 #if FEATURE_NO_BSD_SOCKETS
 	[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -149,3 +147,4 @@ public class SslStreamTest {
 	}
 }	
 }
+
