@@ -4,13 +4,21 @@
 2. 
 3. 
 
+<!--
+You may drag & drop the attachement (repro code/solution, screenshot, etc.) onto the issue.
+-->
+
 ## Current Behavior
 
+<!--
 What is the current behavior?
+-->
 
 ## Expected Behavior
 
+<!--
 Please describe the behavior you are expecting
+-->
 
 ### On which platforms did you notice this
 
@@ -20,7 +28,9 @@ Please describe the behavior you are expecting
 
 **Version Used**:
 
+<!--
 You can use `mono --version` or About dialog to obtain this information.
+-->
 
 ### Stacktrace
 
