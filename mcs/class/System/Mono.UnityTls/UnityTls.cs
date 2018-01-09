@@ -26,9 +26,6 @@ namespace Mono.Unity
 
     unsafe internal static partial class UnityTls
     {
-        private const string DLLNAME = "MacStandalonePlayer_TLSModule_Dynamic.dylib";
-        private const CallingConvention CALLCONV = CallingConvention.Cdecl;
-
         // ------------------------------------
         // Error Handling
         // ------------------------------------
