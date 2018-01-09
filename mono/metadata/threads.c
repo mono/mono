@@ -2258,21 +2258,21 @@ void
 ves_icall_System_Threading_Thread_ClrState (MonoInternalThreadHandle this_obj, guint32 state, MonoError *error)
 {
 	// InternalThreads are always pinned, so shallowly coop-handleize.
-	mono_thread_clr_state (MONO_HANDLE_RAW (this_obj), state);
+	mono_thread_clr_state (mono_internal_thread_handle_ptr (this_obj), state);
 }
 
 void
 ves_icall_System_Threading_Thread_SetState (MonoInternalThreadHandle thread_handle, guint32 state, MonoError *error)
 {
 	// InternalThreads are always pinned, so shallowly coop-handleize.
-	mono_thread_set_state (MONO_HANDLE_RAW (thread_handle), state);
+	mono_thread_set_state (mono_internal_thread_handle_ptr (thread_handle), state);
 }
 
 guint32
 ves_icall_System_Threading_Thread_GetState (MonoInternalThreadHandle thread_handle, MonoError *error)
 {
 	// InternalThreads are always pinned, so shallowly coop-handleize.
-	MonoInternalThread *this_obj = MONO_HANDLE_RAW (thread_handle);
+	MonoInternalThread *this_obj = mono_internal_thread_handle_ptr (thread_handle);
 
 	guint32 state;
 
