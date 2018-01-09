@@ -378,6 +378,9 @@ typedef struct tagTHREADNAME_INFO
 void
 mono_native_thread_set_name (MonoNativeThreadId tid, const char *name)
 {
+// While RaiseException is compiler-portable, __try/__finally is probably not.
+// One could gate this on IsDebuggerPresent but it is not sufficient.
+// The debugger can disappear right after, and all debuggers might not notice.
 #if defined(_MSC_VER)
 	/* http://msdn.microsoft.com/en-us/library/xcb2z8hs.aspx */
 	THREADNAME_INFO info;
@@ -391,6 +394,76 @@ mono_native_thread_set_name (MonoNativeThreadId tid, const char *name)
 	}
 	__except(EXCEPTION_EXECUTE_HANDLER) {
 	}
+#endif
+}
+
+void
+mono_native_thread_set_namew (HANDLE threadHandle, const wchar_t *name)
+{
+// Bing: SetThreadDescription.
+// https://msdn.microsoft.com/en-us/library/windows/desktop/mt774976(v=vs.85).aspx
+// This mechanism has the following advantages over the older mechanism:
+// - Supported by the kernel, not debuggers.
+// - It works when debugger is not attached.
+//   - Either before debugger is attached.
+//   - Between detach and reattach.
+//   - No debugger at all.
+//   - This is arguably a memory footprint disadvantage.
+// - There is an API to get the name, instead of being buried in the debugger.
+// - ETW knows about it, so thread names appear in ETW traces.
+// - Unicode (only) support.
+// - Implemented by Mono team.
+// - No exception used to implement it -- compiler-portable.
+// - It works on handles instead of IDs, which is more idiomatic.
+//
+// It has the following disadvantages:
+// - It is only present in newer versions of Windows -- requiring LoadLibrary/GetProcAddress.
+//   LoadLibrary/GetProcAddress are not allowed in UWP.
+//   You are supposed to delayload and check if delayload succeeded,
+//   however such requirement from a static lib to its client is onerous.
+// - The Xbox Win32 API is different, though the underlying kernel API is ABI-identical.
+// - The Xbox360 API is another different.
+//
+// It is called "description" instead of "name" because SetThreadName is already taken.
+// It was requested by Bruce Dawson of Google, formerly of Microsoft/Xbox.
+// https://randomascii.wordpress.com/2015/10/26/thread-naming-in-windows-time-for-something-better
+
+// UWP does not allow LoadLibrary.
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+
+	typedef HRESULT (WINAPI *PFN_SET_THREAD_DESCRIPTION) (HANDLE, PCWSTR);
+	static PFN_SET_THREAD_DESCRIPTION setThreadDescription;
+	static char sticky_fail;
+	HMODULE kernel32;
+
+	if (!threadHandle || !name || sticky_fail)
+		return;
+
+	// No locking is necessary.
+	// LoadLibrary/GetProcAddress will return the same values
+	// on multiple threads concurrently.
+
+	if (!setThreadDescription) {
+		// LOAD_LIBRARY_SEARCH_SYSTEM32 is present on Windows 8 and newer,
+		// and is available in a patch for Windows 7, that is often missing.
+		// Systems that lack LOAD_LIBRARY_SEARCH_SYSTEM32 also lack this API.
+		kernel32 = LoadLibraryExW(L"kernel32.dll", NULL, LOAD_LIBRARY_SEARCH_SYSTEM32);
+		if (!kernel32)
+			goto label_fail;
+		// When debugging, failing GetProcAddress issues
+		// output to the debugger, which users often include
+		// in bug reports, but it is not a bug, and it is much
+		// work to do anything about. Other code bases provide
+		// their own GetProcAddressWithoutDebugPrint.
+		*(PROC*)&setThreadDescription = GetProcAddress(kernel32, "SetThreadDescription");
+		if (!setThreadDescription)
+			goto label_fail;
+	}
+
+	setThreadDescription (threadHandle, name);
+	return;
+label_fail:
+	sticky_fail = TRUE;
 #endif
 }
 

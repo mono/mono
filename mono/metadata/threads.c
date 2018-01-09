@@ -1034,6 +1034,7 @@ static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack
 		char *tname = g_utf16_to_utf8 (internal->name, internal->name_len, NULL, NULL, NULL);
 		MONO_PROFILER_RAISE (thread_name, (internal->tid, tname));
 		mono_native_thread_set_name (MONO_UINT_TO_NATIVE_THREAD_ID (internal->tid), tname);
+		mono_native_thread_set_namew (internal->native_handle, internal->name);
 		g_free (tname);
 	}
 
@@ -1673,6 +1674,9 @@ mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, g
 
 	if (!(this_obj->state & ThreadState_Stopped))
 		tid = thread_get_tid (this_obj);
+
+	if (name)
+		mono_native_thread_set_namew (this_obj->native_handle, mono_string_chars (name));
 
 	UNLOCK_THREAD (this_obj);
 

@@ -532,6 +532,13 @@ mono_native_thread_create (MonoNativeThreadId *tid, gpointer func, gpointer arg)
 MONO_API void
 mono_native_thread_set_name (MonoNativeThreadId tid, const char *name);
 
+#ifdef HOST_WIN32
+void
+mono_native_thread_set_namew (HANDLE threadHandle, const wchar_t *name);
+#else
+#define mono_native_thread_set_namew(handle, name) /* nothing */
+#endif
+
 MONO_API gboolean
 mono_native_thread_join (MonoNativeThreadId tid);
 
