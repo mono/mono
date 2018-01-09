@@ -4,6 +4,9 @@ using System.Runtime.CompilerServices;
 
 namespace Mono.Unity
 {
+    // Unitytls uses UInt8 to denote raw buffers and Int8/char for strings.
+    // Since we need to funnel all in- and outgoing strings through Encoding.UTF8 it is easier to let the Int8 alias point to Byte instead of SByte.
+    // The aliases here are just there to keep the semantic in the interface and make it more similar to the c original.
     using UInt8 = Byte;
     using Int8 = Byte;
 
