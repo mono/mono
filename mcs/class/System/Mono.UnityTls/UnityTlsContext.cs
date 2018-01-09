@@ -43,6 +43,7 @@ namespace Mono.Unity
 		byte [] m_ReadBuffer;
 
 		GCHandle m_handle;
+		Exception lastException;
 
 		public UnityTlsContext (
 			MobileAuthenticatedStream parent,
@@ -150,10 +151,13 @@ namespace Mono.Unity
 			bool wouldBlock = false;
 			int numBytesRead = 0;
 
+			lastException = null;
 			var errorState = UnityTls.NativeInterface.unitytls_errorstate_create ();
 			fixed (byte* bufferPtr = buffer) {
 				numBytesRead = UnityTls.NativeInterface.unitytls_tlsctx_read (m_TlsContext, bufferPtr + offset, count, &errorState);
 			}
+			if (lastException != null)
+				throw lastException;
 
 			if (errorState.code == UnityTls.unitytls_error_code.UNITYTLS_USER_WOULD_BLOCK)
 				wouldBlock = true;
@@ -168,10 +172,13 @@ namespace Mono.Unity
 			bool wouldBlock = false;
 			int numBytesWritten = 0;
 
+			lastException = null;
 			var errorState = UnityTls.NativeInterface.unitytls_errorstate_create ();
 			fixed (byte* bufferPtr = buffer) {
 				numBytesWritten = UnityTls.NativeInterface.unitytls_tlsctx_write (m_TlsContext, bufferPtr + offset, count, &errorState);
 			}
+			if (lastException != null)
+				throw lastException;
 
 			if (errorState.code == UnityTls.unitytls_error_code.UNITYTLS_USER_WOULD_BLOCK)
 				wouldBlock = true;
@@ -233,10 +240,13 @@ namespace Mono.Unity
 
 		public override bool ProcessHandshake ()
 		{
+			lastException = null;
 			var errorState = UnityTls.NativeInterface.unitytls_errorstate_create ();
 			var result = UnityTls.NativeInterface.unitytls_tlsctx_process_handshake (m_TlsContext, &errorState);
 			if (errorState.code == UnityTls.unitytls_error_code.UNITYTLS_USER_WOULD_BLOCK)
 				return false;
+			if (lastException != null)
+				throw lastException;
 
 			// Not done is not an error if we are server and don't ask for ClientCertificate
 			if (result == UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_NOT_DONE && IsServer && !AskForClientCertificate)
@@ -298,8 +308,10 @@ namespace Mono.Unity
 				}
 
 				return bufferLen;
-			} catch { // handle all exceptions since we don't want to let them go through native code.
+			} catch (Exception ex) { // handle all exceptions and store them for later since we don't want to let them go through native code.
 				UnityTls.NativeInterface.unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_UNKNOWN_ERROR);
+				if (lastException == null)
+					lastException = ex;
 				return 0;
 			}
 		}
@@ -331,8 +343,10 @@ namespace Mono.Unity
 
 				Marshal.Copy (m_ReadBuffer, 0, (IntPtr)buffer, bufferLen);
 				return numBytesRead;
-			} catch { // handle all exceptions since we don't want to let them go through native code.
+			} catch (Exception ex) { // handle all exceptions and store them for later since we don't want to let them go through native code.
 				UnityTls.NativeInterface.unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_UNKNOWN_ERROR);
+				if (lastException == null)
+					lastException = ex;
 				return 0;
 			}
 		}
@@ -354,7 +368,9 @@ namespace Mono.Unity
 					return UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_SUCCESS;
 				else
 					return UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_FLAG_NOT_TRUSTED;
-			} catch { // handle all exceptions since we don't want to let them go through native code.
+			} catch (Exception ex) { // handle all exceptions and store them for later since we don't want to let them go through native code.
+				if (lastException == null)
+					lastException = ex;
 				return UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_FATAL_ERROR;
 			}
 		}
