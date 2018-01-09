@@ -4930,14 +4930,20 @@ breakpoints_cleanup (void)
 		}
 	}
 
-	for (i = 0; i < breakpoints->len; ++i)
-		g_free (g_ptr_array_index (breakpoints, i));
+    if (breakpoints)
+    {
+        for (i = 0; i < breakpoints->len; ++i)
+            g_free (g_ptr_array_index (breakpoints, i));
 
-	g_ptr_array_free (breakpoints, TRUE);
-	g_hash_table_destroy (bp_locs);
+        g_ptr_array_free (breakpoints, TRUE);
+        breakpoints = NULL;
+    }
 
-	breakpoints = NULL;
-	bp_locs = NULL;
+    if (bp_locs)
+    {
+        g_hash_table_destroy (bp_locs);
+        bp_locs = NULL;
+    }
 
 	mono_loader_unlock ();
 }
