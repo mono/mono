@@ -69,5 +69,5 @@ object for filters is passed in a local variable (cfg->exvar).
 throw: we first save all regs into a sigcontext struct and then call the stack
 unwinding code.
 
-catch handler: catch hanlders are always called from the stack unwinding
+catch handler: catch handlers are always called from the stack unwinding
 code. The exception object is passed in a local variable (cfg->exvar).
