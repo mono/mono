@@ -249,6 +249,8 @@ namespace System.Net.Sockets
 
 		internal void FinishConnectByNameSyncFailure (Exception exception, int bytesTransferred, SocketFlags flags)
 		{
+			SetResults (exception, bytesTransferred, flags);
+
 			if (current_socket != null)
 				current_socket.is_connected = false;
 			
@@ -257,6 +259,8 @@ namespace System.Net.Sockets
 
 		internal void FinishOperationAsyncFailure (Exception exception, int bytesTransferred, SocketFlags flags)
 		{
+			SetResults (exception, bytesTransferred, flags);
+
 			if (current_socket != null)
 				current_socket.is_connected = false;
 			
@@ -274,8 +278,29 @@ namespace System.Net.Sockets
 		internal void SetResults (SocketError socketError, int bytesTransferred, SocketFlags flags)
 		{
 			SocketError = socketError;
+			ConnectByNameError = null;
 			BytesTransferred = bytesTransferred;
 			SocketFlags = flags;
+		}
+
+		internal void SetResults (Exception exception, int bytesTransferred, SocketFlags flags)
+		{
+			ConnectByNameError = exception;
+			BytesTransferred = bytesTransferred;
+			SocketFlags = flags;
+
+			if (exception == null)
+			{
+				SocketError = SocketError.Success;
+			}
+			else
+			{
+				var socketException = exception as SocketException;
+				if (socketException != null)
+					SocketError = socketException.SocketErrorCode;
+				else
+					SocketError = SocketError.SocketError;
+			}
 		}
 	}
 }
