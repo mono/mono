@@ -1,4 +1,5 @@
 TOP=$(realpath $(CURDIR)/../..)
+include $(TOP)/sdks/versions.mk
 include $(TOP)/sdks/paths.mk
 
 EMCC=source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && emcc
