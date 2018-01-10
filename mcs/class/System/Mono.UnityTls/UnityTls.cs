@@ -35,21 +35,22 @@ namespace Mono.Unity
         public enum unitytls_error_code : UInt32
         {
             UNITYTLS_SUCCESS = 0,
-            UNITYTLS_INVALID_ARGUMENT,   // One of the arguments has an invalid value (e.g. null where not allowed)
-            UNITYTLS_INVALID_FORMAT,     // The passed data does not have a valid format.
-            UNITYTLS_INVALID_STATE,      // The object operating being operated on is not in a state that allows this function call.
-            UNITYTLS_BUFFER_OVERFLOW,    // A passed buffer was not large enough.
-            UNITYTLS_OUT_OF_MEMORY,      // Out of memory error
-            UNITYTLS_INTERNAL_ERROR,     // public implementation error.
-            UNITYTLS_NOT_SUPPORTED,      // The requested action is not supported on the current platform/implementation.
+            UNITYTLS_INVALID_ARGUMENT,      // One of the arguments has an invalid value (e.g. null where not allowed)
+            UNITYTLS_INVALID_FORMAT,        // The passed data does not have a valid format.
+            UNITYTLS_INVALID_PASSWORD,      // Invalid password
+            UNITYTLS_INVALID_STATE,         // The object operating being operated on is not in a state that allows this function call.
+            UNITYTLS_BUFFER_OVERFLOW,       // A passed buffer was not large enough.
+            UNITYTLS_OUT_OF_MEMORY,         // Out of memory error
+            UNITYTLS_INTERNAL_ERROR,        // Internal implementation error.
+            UNITYTLS_NOT_SUPPORTED,         // The requested action is not supported on the current platform/implementation.
             UNITYTLS_ENTROPY_SOURCE_FAILED, // Failed to generate requested amount of entropy data.
 
-            UNITYTLS_USER_WOULD_BLOCK,   // Can be set by the user to signal that a call (e.g. read/write callback) would block and needs to be called again.
-                                         // Some implementations may set this if not all bytes have been read/written.
-            UNITYTLS_USER_STREAM_CLOSED, // Can be set by the user to cancel a read/write operation.
-            UNITYTLS_USER_READ_FAILED,   // Can be set by the user to indicate a failed read operation.
-            UNITYTLS_USER_WRITE_FAILED,  // Can be set by the user to indicate a failed write operation.
-            UNITYTLS_USER_UNKNOWN_ERROR, // Can be set by the user to indicate a generic error.
+            UNITYTLS_USER_WOULD_BLOCK,      // Can be set by the user to signal that a call (e.g. read/write callback) would block and needs to be called again.
+                                            // Some implementations may set this if not all bytes have been read/written.
+            UNITYTLS_USER_STREAM_CLOSED,    // Can be set by the user to cancel a read/write operation.
+            UNITYTLS_USER_READ_FAILED,      // Can be set by the user to indicate a failed read operation.
+            UNITYTLS_USER_WRITE_FAILED,     // Can be set by the user to indicate a failed write operation.
+            UNITYTLS_USER_UNKNOWN_ERROR,    // Can be set by the user to indicate a generic error.
         }
 
         [StructLayout (LayoutKind.Sequential)]
