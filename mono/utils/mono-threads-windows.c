@@ -17,6 +17,82 @@
 #include <mono/utils/mono-os-wait.h>
 #include <limits.h>
 
+// There were originally two uses of this, which made it more worthwhile.
+typedef struct _Kernel32Proc {
+	PCSTR name;
+	PROC address;
+	char windows8_or_newer;
+	char sticky_fail;
+} Kernel32Proc;
+
+static PROC
+get_kernel32_proc_address (Kernel32Proc *proc)
+{
+	if (proc->sticky_fail)
+		return NULL;
+
+	PROC address = proc->address;
+	if (address)
+		return address;
+
+	// No locking is necessary.
+	// LoadLibrary/GetProcAddress will return the same values
+	// on multiple threads concurrently.
+	//
+	// LOAD_LIBRARY_SEARCH_SYSTEM32 is on Windows 8 and patched Windows 7.
+	// Windows 7 is often missing the patch.
+
+	HMODULE kernel32 = LoadLibraryExW(L"kernel32.dll", NULL, LOAD_LIBRARY_SEARCH_SYSTEM32);
+	if (!kernel32 && !proc->windows8_or_newer)
+		kernel32 = LoadLibraryW(L"kernel32.dll");
+	if (!kernel32)
+		goto label_fail;
+	// When debugging, failing GetProcAddress issues
+	// output to the debugger, which users often include
+	// in bug reports, but it is not a bug, and it is much
+	// work to do anything about. Other code bases provide
+	// their own GetProcAddressWithoutDebugPrint.
+	address = GetProcAddress(kernel32, proc->name);
+	if (!address)
+		goto label_fail;
+	proc->address = address;
+	return address;
+label_fail:
+	proc->sticky_fail = TRUE;
+	return NULL;
+}
+
+gboolean
+mono_fat_thread_ensure_id (FatThread *thread)
+{
+	if (thread->threadId || !thread->threadHandle)
+		return !!thread->threadId;
+
+	// Requires Server 2003 or newer, ok.
+	return !!(thread->threadId = GetThreadId (threadHandle));
+}
+
+gboolean
+mono_fat_thread_ensure_handle (FatThread *thread)
+{
+	if (thread->threadHandle || !thread->threadId)
+		return !!thread->threadHandle;
+
+	return !!(thread->threadHandle = OpenThread (MAXIMUM_ALLOWED, FALSE, thread->threadId));
+}
+
+#define MONO_NULLABLE(a, b) ((a) ? (b) : NULL)
+
+void
+mono_fat_thread_cleanup (FatThread *thread, GFatThread *longer_lived)
+{
+	if (thread->threadHandle) {
+		if (thread->threadHandle != MONO_NULLABLE (longer_lived, longer_lived->threadHandle))
+			CloseHandle (thread->threadHandle);
+		thread->threadHandle = NULL;
+	}
+}
+
 void
 mono_threads_suspend_init (void)
 {
@@ -362,6 +438,14 @@ mono_threads_get_max_stack_size (void)
 	return INT_MAX;
 }
 
+void
+mono_native_thread_set_name (MonoNativeThreadId tid, const char *name)
+{
+	MonoFatThread thread = { 0, tid };
+	MonoFatString fname = { name, strlen (name) };
+	mono_native_thread_set_name_internal (&thread, &fname);
+}
+
 #if defined(_MSC_VER)
 const DWORD MS_VC_EXCEPTION=0x406D1388;
 #pragma pack(push,8)
@@ -375,18 +459,29 @@ typedef struct tagTHREADNAME_INFO
 #pragma pack(pop)
 #endif
 
+
 void
-mono_native_thread_set_name (MonoNativeThreadId tid, const char *name)
+mono_native_thread_set_name_internal (MonoFatThread *thread, MonoFatString *name)
 {
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) || defined(_MSC_VER)
+
+	MonoFatThread local_thread = *thread;
+	MonoFatString local_name = *name;
+
 // While RaiseException is compiler-portable, __try/__finally is probably not.
 // One could gate this on IsDebuggerPresent but it is not sufficient.
 // The debugger can disappear right after, and all debuggers might not notice.
 #if defined(_MSC_VER)
+
+	if (!mono_fat_thread_ensure_id (&local_thread))
+			|| !mono_fat_string_ensure_utf8 (&local_name))
+		goto end_debugger_name;
+
 	/* http://msdn.microsoft.com/en-us/library/xcb2z8hs.aspx */
 	THREADNAME_INFO info;
 	info.dwType = 0x1000;
-	info.szName = name;
-	info.dwThreadID = tid;
+	info.szName = local_name.utf8;
+	info.dwThreadID = local_thread.threadId;
 	info.dwFlags = 0;
 
 	__try {
@@ -394,12 +489,11 @@ mono_native_thread_set_name (MonoNativeThreadId tid, const char *name)
 	}
 	__except(EXCEPTION_EXECUTE_HANDLER) {
 	}
-#endif
-}
 
-void
-mono_native_thread_set_namew (HANDLE threadHandle, const wchar_t *name)
-{
+end_debugger_name: ;
+
+#endif // MSC_VER for __try/__finally
+
 // Bing: SetThreadDescription.
 // https://msdn.microsoft.com/en-us/library/windows/desktop/mt774976(v=vs.85).aspx
 // This mechanism has the following advantages over the older mechanism:
@@ -431,40 +525,35 @@ mono_native_thread_set_namew (HANDLE threadHandle, const wchar_t *name)
 // UWP does not allow LoadLibrary.
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 
+	if (!mono_fat_thread_ensure_handle (&local_thread)
+			|| !mono_fat_string_ensure_utf16 (&local_name))
+		goto end_description;
+
 	typedef HRESULT (WINAPI *PFN_SET_THREAD_DESCRIPTION) (HANDLE, PCWSTR);
 	static PFN_SET_THREAD_DESCRIPTION setThreadDescription;
-	static char sticky_fail;
-	HMODULE kernel32;
+	static const Kernel32Proc proc = { "SetThreadDescription" };
 
-	if (!threadHandle || !name || sticky_fail)
-		return;
+	if (proc.sticky_fail)
+		goto end_description;
 
-	// No locking is necessary.
-	// LoadLibrary/GetProcAddress will return the same values
-	// on multiple threads concurrently.
+	proc.windows8_or_newer = TRUE;
+	*(PROC*)&setThreadDescription = get_kernel32_proc_address (&proc);
 
-	if (!setThreadDescription) {
-		// LOAD_LIBRARY_SEARCH_SYSTEM32 is present on Windows 8 and newer,
-		// and is available in a patch for Windows 7, that is often missing.
-		// Systems that lack LOAD_LIBRARY_SEARCH_SYSTEM32 also lack this API.
-		kernel32 = LoadLibraryExW(L"kernel32.dll", NULL, LOAD_LIBRARY_SEARCH_SYSTEM32);
-		if (!kernel32)
-			goto label_fail;
-		// When debugging, failing GetProcAddress issues
-		// output to the debugger, which users often include
-		// in bug reports, but it is not a bug, and it is much
-		// work to do anything about. Other code bases provide
-		// their own GetProcAddressWithoutDebugPrint.
-		*(PROC*)&setThreadDescription = GetProcAddress(kernel32, "SetThreadDescription");
-		if (!setThreadDescription)
-			goto label_fail;
-	}
+	if (!setThreadDescription)
+		goto end_description;
 
-	setThreadDescription (threadHandle, name);
-	return;
-label_fail:
-	sticky_fail = TRUE;
-#endif
+	setThreadDescription (local_thread->threadHandle, local_name->utf16);
+
+
+end_description: ;
+
+#endif // HAVE_CLASSIC_WINAPI_SUPPORT for LoadLibrary / GetProcAddress
+
+	mono_fat_thread_cleanup (&local_thread, thread);
+	mono_fat_string_cleanup (&local_name, name);
+
+#endif // MSC_VER or HAVE_CLASSIC_WINAPI_SUPPORT
+
 }
 
 #endif

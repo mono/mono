@@ -1031,11 +1031,15 @@ static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack
 
 	/* if the name was set before starting, we didn't invoke the profiler callback */
 	if (internal->name) {
-		char *tname = g_utf16_to_utf8 (internal->name, internal->name_len, NULL, NULL, NULL);
-		MONO_PROFILER_RAISE (thread_name, (internal->tid, tname));
-		mono_native_thread_set_name (MONO_UINT_TO_NATIVE_THREAD_ID (internal->tid), tname);
-		mono_native_thread_set_namew (internal->native_handle, internal->name);
-		g_free (tname);
+		MonoFatThread fthread = { internal->native_handle,
+				          MONO_UINT_TO_NATIVE_THREAD_ID (internal->tid)
+					};
+		GFatString fname = { NULL, 0, internal->name, internal->name_len };
+		if (g_fat_string_ensure_utf8 (&fname)) {
+			MONO_PROFILER_RAISE (thread_name, (internal->tid, fname.utf8));
+			mono_native_thread_set_name_internal (&fthread, &fname);
+			g_free (fname.utf8);
+		}
 	}
 
 	/* start_func is set only for unmanaged start functions */
@@ -1646,9 +1650,9 @@ mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, g
 {
 	MonoNativeThreadId tid = 0;
 
-	LOCK_THREAD (this_obj);
-
 	error_init (error);
+
+	LOCK_THREAD (this_obj);
 
 	if (reset) {
 		this_obj->flags &= ~MONO_THREAD_FLAG_NAME_SET;
@@ -1672,20 +1676,22 @@ mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, g
 	else
 		this_obj->name = NULL;
 
+	// Why this condition?
 	if (!(this_obj->state & ThreadState_Stopped))
 		tid = thread_get_tid (this_obj);
 
-	if (name)
-		mono_native_thread_set_namew (this_obj->native_handle, mono_string_chars (name));
-
 	UNLOCK_THREAD (this_obj);
 
-	if (this_obj->name && tid) {
-		char *tname = mono_string_to_utf8_checked (name, error);
-		return_if_nok (error);
-		MONO_PROFILER_RAISE (thread_name, ((uintptr_t)tid, tname));
-		mono_native_thread_set_name (tid, tname);
-		mono_free (tname);
+	if (name && tid) {
+		MonoFatThread fthread = { this_obj->native_handle,
+				          MONO_UINT_TO_NATIVE_THREAD_ID (tid)
+					};
+		GFatString fname = { NULL, 0, mono_string_chars (name), mono_string_length (name) };
+		if (g_fat_string_ensure_utf8 (&fname)) {
+			MONO_PROFILER_RAISE (thread_name, (tid, fname.utf8));
+			mono_native_thread_set_name_internal (&fthread, &fname);
+			g_free (fname.utf8);
+		}
 	}
 }
 

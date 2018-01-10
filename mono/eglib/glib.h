@@ -1073,10 +1073,51 @@ glong     g_utf8_pointer_to_offset (const gchar *str, const gchar *pos);
 #define G_HAVE_API_SUPPORT(x) (x)
 #define G_UNSUPPORTED_API "%s:%d: '%s' not supported.", __FILE__, __LINE__
 #define g_unsupported_api(name) G_STMT_START { g_warning (G_UNSUPPORTED_API, name); } G_STMT_END
+
+
+typedef struct _GFatString {
+// FIXME What to call it? Integrate into GString?
+// This type can start with either utf8 or utf16,
+// and can produce either, on demand, caching, with added terminal nul.
+// It should be considered read-only, though
+// there are safe sequences where you free
+// one side and change the other.
+	char *utf8;
+	gsize utf8_length;
+	gunichar2 *utf16;
+	gsize utf16_length;
+} GFatString;
+
+// allocate plen + extra_len, copy p/plen, and zero the rest
+gpointer
+g_dup0 (gconstpointer p, gsize plen, gsize extra_len);
+
+// i.e. g_dup0 (extra_len = sizeof (gunichar2))
+gunichar2*
+g_dup_utf16 (const gunichar2* utf16, gsize length);
+
+// i.e. g_dup0 (extra_len = 1)
+gchar*
+g_dup_utf8 (const gchar* utf8, gsize length);
+
+gboolean
+g_fat_string_ensure_utf8 (GFatString *self);
+
+gboolean
+g_fat_string_ensure_utf16 (GFatString *self);
+
+void
+g_fat_string_init (GFatString *self);
+
+// If you receive a FatString and "ensure" on it,
+// you only want to cleanup that which you grew it by.
+// So the pattern is copy the struct, ensure, cleanup the copy.
+// cleanup will only free what is in self that varies from longer_lived.
+//
+// If you do not receive a longer lived one, pass NULL.
+void
+g_fat_string_cleanup (GFatString *self, GFatString *longer_lived);
  
 G_END_DECLS
 
 #endif
-
-
-
