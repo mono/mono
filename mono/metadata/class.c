@@ -10210,8 +10210,14 @@ mono_class_has_parent_and_ignore_generics (MonoClass *klass, MonoClass *parent)
 static gboolean
 is_valid_family_access (MonoClass *access_klass, MonoClass *member_klass, MonoClass *context_klass)
 {
-	if (!mono_class_has_parent_and_ignore_generics (access_klass, member_klass))
-		return FALSE;
+	if (MONO_CLASS_IS_INTERFACE (member_klass) && !MONO_CLASS_IS_INTERFACE (access_klass)) {
+		/* Can happen with default interface methods */
+		if (!mono_class_implements_interface (access_klass, member_klass))
+			return FALSE;
+	} else {
+		if (!mono_class_has_parent_and_ignore_generics (access_klass, member_klass))
+			return FALSE;
+	}
 
 	if (context_klass == NULL)
 		return TRUE;

@@ -970,8 +970,7 @@ KNOWN_FAILING_TESTS = \
 	abort-try-holes.exe \
 	dim-constrainedcall.exe	\
 	dim-diamondshape.exe	\
-	dim-methodimpl.exe	\
-	dim-simple.exe
+	dim-methodimpl.exe
 
 DISABLED_TESTS = \
 	$(KNOWN_FAILING_TESTS) \
