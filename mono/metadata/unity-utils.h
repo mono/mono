@@ -180,4 +180,10 @@ mono_method_get_method_definition(MonoMethod *method);
 void
 mono_class_set_allow_gc_aware_layout(mono_bool allow);
 
+MONO_API void
+mono_unity_set_enable_handler_block_guards (mono_bool allow);
+
+mono_bool
+mono_unity_get_enable_handler_block_guards (void);
+
 #endif
