@@ -1073,9 +1073,41 @@ mono_profiler_install_jit_end (MonoLegacyProfileJitResult end)
 	}
 }
 
+
+static MonoProfilerCallInstrumentationFlags
+call_instrumentation_filter_callback (MonoProfiler *prof, MonoMethod *method)
+{
+	return MONO_PROFILER_CALL_INSTRUMENTATION_ENTER | MONO_PROFILER_CALL_INSTRUMENTATION_LEAVE | MONO_PROFILER_CALL_INSTRUMENTATION_TAIL_CALL | MONO_PROFILER_CALL_INSTRUMENTATION_EXCEPTION_LEAVE;
+}
+
+typedef enum
+{
+	MONO_PROFILE_NONE = 0,
+	MONO_PROFILE_APPDOMAIN_EVENTS = 1 << 0,
+	MONO_PROFILE_ASSEMBLY_EVENTS = 1 << 1,
+	MONO_PROFILE_MODULE_EVENTS = 1 << 2,
+	MONO_PROFILE_CLASS_EVENTS = 1 << 3,
+	MONO_PROFILE_JIT_COMPILATION = 1 << 4,
+	MONO_PROFILE_INLINING = 1 << 5,
+	MONO_PROFILE_EXCEPTIONS = 1 << 6,
+	MONO_PROFILE_ALLOCATIONS = 1 << 7,
+	MONO_PROFILE_GC = 1 << 8,
+	MONO_PROFILE_THREADS = 1 << 9,
+	MONO_PROFILE_REMOTING = 1 << 10,
+	MONO_PROFILE_TRANSITIONS = 1 << 11,
+	MONO_PROFILE_ENTER_LEAVE = 1 << 12,
+	MONO_PROFILE_COVERAGE = 1 << 13,
+	MONO_PROFILE_INS_COVERAGE = 1 << 14,
+	MONO_PROFILE_STATISTICAL = 1 << 15
+} LegacyMonoProfileFlags;
+
 void
 mono_profiler_set_events (int flags)
 {
+	if (flags & MONO_PROFILE_ENTER_LEAVE)
+		mono_profiler_set_call_instrumentation_filter_callback (current->handle, call_instrumentation_filter_callback);
+	else
+		mono_profiler_set_call_instrumentation_filter_callback (current->handle, NULL);
 	/* Do nothing. */
 
 	if (flags & MONO_PROFILE_ALLOCATIONS)
