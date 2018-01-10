@@ -55,6 +55,8 @@
 #include <mono/utils/w32api.h>
 #include <mono/utils/mono-os-wait.h>
 
+#include <mono/metadata/unity-utils.h>
+
 #ifdef HAVE_SIGNAL_H
 #include <signal.h>
 #endif
@@ -4851,7 +4853,7 @@ async_abort_critical (MonoThreadInfo *info, gpointer ud)
 	gboolean protected_wrapper;
 	gboolean running_managed;
 
-	if (mono_get_eh_callbacks ()->mono_install_handler_block_guard (mono_thread_info_get_suspend_state (info)))
+	if (mono_unity_get_enable_handler_block_guards () && mono_get_eh_callbacks ()->mono_install_handler_block_guard (mono_thread_info_get_suspend_state (info)))
 		return MonoResumeThread;
 
 	/*someone is already interrupting it*/
