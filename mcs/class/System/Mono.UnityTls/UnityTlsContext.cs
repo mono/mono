@@ -22,6 +22,8 @@ using Mono.Security.Cryptography;
 using Mono.Net.Security;
 using Mono.Util;
 
+using Int8 = System.Byte;
+
 namespace Mono.Unity
 {
 	unsafe internal class UnityTlsContext : MobileTlsContext
@@ -30,10 +32,12 @@ namespace Mono.Unity
 
 		// Native UnityTls objects
 		private UnityTls.unitytls_tlsctx*   m_TlsContext = null;
+		private UnityTls.unitytls_x509list*	m_RequestedClientCertChain = null;
+		private UnityTls.unitytls_key*		m_RequestedClientKey = null;
 
 		// States and certificates
 		X509Certificate       m_LocalClientCertificate;
-		X509Certificate2      m_RemoteCertificate;
+		X509Certificate       m_RemoteCertificate;
 		MonoTlsConnectionInfo m_Connectioninfo;
 		bool                  m_IsAuthenticated = false;
 		bool                  m_HasContext = false;
@@ -70,29 +74,24 @@ namespace Mono.Unity
 			};
 
 			if (serverMode) {
-				if (serverCertificate == null)
-					throw new ArgumentNullException ("serverCertificate");
-				X509Certificate2 serverCertificate2 = serverCertificate as X509Certificate2;
-				if (serverCertificate2 == null || serverCertificate2.PrivateKey == null)
-					throw new ArgumentException ("serverCertificate does not have a private key", "serverCertificate");
-
-
-				UnityTls.unitytls_x509list* serverCerts = null;
-				UnityTls.unitytls_key* serverPrivateKey = null;
+				ExtractNativeKeyAndChainFromManagedCertificate(serverCertificate, &errorState, out var serverCerts, out var serverPrivateKey);
 				try {
-					serverCerts = UnityTls.NativeInterface.unitytls_x509list_create (&errorState);
-					CertHelper.AddCertificateToNativeChain (serverCerts, serverCertificate, &errorState);
 					var serverCertsRef = UnityTls.NativeInterface.unitytls_x509list_get_ref (serverCerts, &errorState);
-
-					byte[] privateKeyDer = PKCS8.PrivateKeyInfo.Encode (serverCertificate2.PrivateKey);
-					fixed(byte* privateKeyDerPtr = privateKeyDer) {
-						serverPrivateKey = UnityTls.NativeInterface.unitytls_key_parse_der (privateKeyDerPtr, privateKeyDer.Length, null, 0, &errorState);
-					}
 					var serverKeyRef = UnityTls.NativeInterface.unitytls_key_get_ref (serverPrivateKey, &errorState);
-
 					Mono.Unity.Debug.CheckAndThrow (errorState, "Failed to parse server key/certificate");
 
 					m_TlsContext = UnityTls.NativeInterface.unitytls_tlsctx_create_server (protocolRange, callbacks, serverCertsRef, serverKeyRef, &errorState);
+
+					if (askForClientCert) {
+						UnityTls.unitytls_x509list* clientAuthCAList = null;
+						try {
+							clientAuthCAList = UnityTls.NativeInterface.unitytls_x509list_create (&errorState);
+							var clientAuthCAListRef = UnityTls.NativeInterface.unitytls_x509list_get_ref (clientAuthCAList, &errorState);
+							UnityTls.NativeInterface.unitytls_tlsctx_server_require_client_authentication (m_TlsContext, clientAuthCAListRef, &errorState);
+						} finally {
+							UnityTls.NativeInterface.unitytls_x509list_free (clientAuthCAList);
+						}
+					}
 				} finally {
 					UnityTls.NativeInterface.unitytls_x509list_free (serverCerts);
 					UnityTls.NativeInterface.unitytls_key_free (serverPrivateKey);
@@ -103,6 +102,8 @@ namespace Mono.Unity
 				fixed (byte* targetHostUtf8Ptr = targetHostUtf8) {
 					m_TlsContext = UnityTls.NativeInterface.unitytls_tlsctx_create_client (protocolRange, callbacks, targetHostUtf8Ptr, targetHostUtf8.Length, &errorState);
 				}
+
+				UnityTls.NativeInterface.unitytls_tlsctx_set_certificate_callback (m_TlsContext, CertificateCallback, (void*)(IntPtr)m_handle, &errorState);				
 			}
 
 			UnityTls.NativeInterface.unitytls_tlsctx_set_x509verify_callback (m_TlsContext, VerifyCallback, (void*)(IntPtr)m_handle, &errorState);
@@ -117,14 +118,37 @@ namespace Mono.Unity
 			m_HasContext = true;
 		}
 
+		static private void ExtractNativeKeyAndChainFromManagedCertificate(X509Certificate cert, UnityTls.unitytls_errorstate* errorState, out UnityTls.unitytls_x509list* nativeCertChain, out UnityTls.unitytls_key* nativeKey)
+		{
+			if (cert == null)
+				throw new ArgumentNullException ("cert");
+			X509Certificate2 cert2 = cert as X509Certificate2;
+			if (cert2 == null || cert2.PrivateKey == null)
+				throw new ArgumentException ("Certificate does not have a private key", "cert");
+
+			nativeCertChain = null;
+			nativeKey = null;
+			try {
+				nativeCertChain = UnityTls.NativeInterface.unitytls_x509list_create (errorState);
+				CertHelper.AddCertificateToNativeChain (nativeCertChain, cert, errorState);
+
+				byte[] privateKeyDer = PKCS8.PrivateKeyInfo.Encode (cert2.PrivateKey);
+				fixed(byte* privateKeyDerPtr = privateKeyDer) {
+					nativeKey = UnityTls.NativeInterface.unitytls_key_parse_der (privateKeyDerPtr, privateKeyDer.Length, null, 0, errorState);
+				}
+			} catch {
+				UnityTls.NativeInterface.unitytls_x509list_free (nativeCertChain);
+				UnityTls.NativeInterface.unitytls_key_free (nativeKey);
+				throw;
+			}
+		}
+
 		public override bool HasContext {
 			get { return m_HasContext; }
 		}
-
 		public override bool IsAuthenticated {
 			get { return m_IsAuthenticated; }
 		}
-
 		public override MonoTlsConnectionInfo ConnectionInfo {
 			get { return m_Connectioninfo; }
 		}
@@ -191,6 +215,8 @@ namespace Mono.Unity
 		public override void Shutdown ()
 		{
 			// Destroy native UnityTls objects
+			UnityTls.NativeInterface.unitytls_x509list_free (m_RequestedClientCertChain);
+			UnityTls.NativeInterface.unitytls_key_free (m_RequestedClientKey);
 			UnityTls.NativeInterface.unitytls_tlsctx_free (m_TlsContext);
 			m_TlsContext = null;
 
@@ -207,6 +233,16 @@ namespace Mono.Unity
 					// reset states
 					m_LocalClientCertificate = null;
 					m_RemoteCertificate = null;
+
+					if (m_LocalClientCertificate != null) {
+						m_LocalClientCertificate.Dispose ();
+						m_LocalClientCertificate = null;
+					}
+					if (m_RemoteCertificate != null) {
+						m_RemoteCertificate.Dispose ();
+						m_RemoteCertificate = null;
+					}
+
 					m_Connectioninfo = null;
 					m_IsAuthenticated = false;
 					m_HasContext = false;
@@ -221,11 +257,6 @@ namespace Mono.Unity
 
 		public override void StartHandshake ()
 		{
-			// TODO: Client->Server authentification is not supported by UnityTls as of writing
-			if (IsServer && AskForClientCertificate) {
-				throw new NotImplementedException ("No support for server-sided client certificate check yet.");
-			}
-
 			if (Settings != null && Settings.EnabledCiphers != null) {
 				var ciphers = new UnityTls.unitytls_ciphersuite [Settings.EnabledCiphers.Length];
 				for (int i = 0; i < ciphers.Length; i++)
@@ -363,6 +394,7 @@ namespace Mono.Unity
 		{
 			try {
 				X509CertificateCollection certificates = CertHelper.NativeChainToManagedCollection (chain, errorState);
+				m_RemoteCertificate = new X509Certificate (certificates [0]);
 
 				if (ValidateCertificate (certificates))
 					return UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_SUCCESS;
@@ -372,6 +404,45 @@ namespace Mono.Unity
 				if (lastException == null)
 					lastException = ex;
 				return UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_FATAL_ERROR;
+			}
+		}
+
+		
+		[MonoPInvokeCallback (typeof (UnityTls.unitytls_tlsctx_certificate_callback))]
+		static private void CertificateCallback (void* userData, UnityTls.unitytls_tlsctx* ctx, Int8* cn, size_t cnLen, UnityTls.unitytls_x509name* caList, size_t caListLen, UnityTls.unitytls_x509list_ref* chain, UnityTls.unitytls_key_ref* key, UnityTls.unitytls_errorstate* errorState)
+		{
+			var handle = (GCHandle)(IntPtr)userData;
+			var context = (UnityTlsContext)handle.Target;
+			context.CertificateCallback (ctx, cn, cnLen, caList, caListLen, chain, key, errorState);
+		}
+
+		private void CertificateCallback (UnityTls.unitytls_tlsctx* ctx, Int8* cn, size_t cnLen, UnityTls.unitytls_x509name* caList, size_t caListLen, UnityTls.unitytls_x509list_ref* chain, UnityTls.unitytls_key_ref* key, UnityTls.unitytls_errorstate* errorState)
+		{
+			try { 
+				if (m_RemoteCertificate == null)
+					throw new TlsException (AlertDescription.InternalError, "Cannot request client certificate before receiving one from the server.");
+				
+				m_LocalClientCertificate = SelectClientCertificate (m_RemoteCertificate, null);
+				
+				if (m_LocalClientCertificate == null) {
+					*chain = new UnityTls.unitytls_x509list_ref { handle = UnityTls.NativeInterface.UNITYTLS_INVALID_HANDLE };
+					*key = new UnityTls.unitytls_key_ref { handle = UnityTls.NativeInterface.UNITYTLS_INVALID_HANDLE };
+				} else {
+					// Need to create native objects for client chain/key. Need to keep them cached.
+					// Make sure we don't have old native objects still around.
+					UnityTls.NativeInterface.unitytls_x509list_free (m_RequestedClientCertChain);
+					UnityTls.NativeInterface.unitytls_key_free (m_RequestedClientKey);
+
+					ExtractNativeKeyAndChainFromManagedCertificate(m_LocalClientCertificate, errorState, out m_RequestedClientCertChain, out m_RequestedClientKey);
+					*chain = UnityTls.NativeInterface.unitytls_x509list_get_ref (m_RequestedClientCertChain, errorState);
+					*key = UnityTls.NativeInterface.unitytls_key_get_ref (m_RequestedClientKey, errorState);
+				}
+
+				Unity.Debug.CheckAndThrow (*errorState, "Failed to retrieve certificates on request.", AlertDescription.HandshakeFailure);
+			} catch (Exception ex) { // handle all exceptions and store them for later since we don't want to let them go through native code.
+				UnityTls.NativeInterface.unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_UNKNOWN_ERROR);
+				if (lastException == null)
+					lastException = ex;
 			}
 		}
 
