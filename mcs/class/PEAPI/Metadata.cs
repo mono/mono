@@ -1331,6 +1331,10 @@ namespace PEAPI {
 			output.WriteCodedIndex(CIx.MethodDefOrRef,header);
 		}
 
+		internal override uint SortKey()
+		{
+			return parent.Row;
+		}
 	}
 
 	/**************************************************************************/  
@@ -5549,6 +5553,7 @@ namespace PEAPI {
 			SortTable(metaDataTables[(int)MDTable.FieldMarshal]);
 			SortTable(metaDataTables[(int)MDTable.DeclSecurity]);
 			SortTable(metaDataTables[(int)MDTable.MethodSemantics]);
+			SortTable(metaDataTables[(int)MDTable.MethodImpl]);
 			SortTable(metaDataTables[(int)MDTable.ImplMap]);
 			if (metaDataTables[(int)MDTable.GenericParam] != null) {
 				SortTable(metaDataTables[(int)MDTable.GenericParam]);
