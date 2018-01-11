@@ -3963,7 +3963,7 @@ mono_class_verify_vtable (MonoClass *klass)
 	if (!klass->methods)
 		return;
 
-	count = mono_class_method_count (klass);
+	count = mono_class_get_method_count (klass);
 	for (i = 0; i < count; ++i) {
 		MonoMethod *cm = klass->methods [i];
 		int slot;
