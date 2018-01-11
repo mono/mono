@@ -43,7 +43,7 @@ ifndef DISABLE_IOS
 CheckXcodeDir=$(or $(and $(wildcard $(1))),$(warning Could not find Xcode in "$(1)"))
 
 ifneq ($(call CheckXcodeDir,/Applications/Xcode.app/Contents/Developer),)
-XCODE_DIR=/Applications/Xcode.app/Contents/Developer
+XCODE_DIR=/Applications/$(XCODE_VERSION).app/Contents/Developer
 else
 $(error Could not find Xcode)
 endif
