@@ -865,7 +865,7 @@ attribute_arguments
 		}
 		
 		Arguments args = ((Arguments) o [0]);
-		if (args.Count > 0 && !($3 is NamedArgument) && args [args.Count - 1] is NamedArgument)
+		if (lang_version < LanguageVersion.V_7_2 && args.Count > 0 && !($3 is NamedArgument) && args [args.Count - 1] is NamedArgument)
 			Error_NamedArgumentExpected ((NamedArgument) args [args.Count - 1]);
 		
 		args.Add ((Argument) $3);
@@ -3856,7 +3856,7 @@ argument_list
 	| argument_list COMMA argument
 	  {
 		Arguments list = (Arguments) $1;
-		if (list [list.Count - 1] is NamedArgument)
+		if (lang_version < LanguageVersion.V_7_2 && list [list.Count - 1] is NamedArgument)
 			Error_NamedArgumentExpected ((NamedArgument) list [list.Count - 1]);
 		
 		list.Add ((Argument) $3);
@@ -4001,7 +4001,7 @@ expression_list_arguments
 	| expression_list_arguments COMMA expression_list_argument
 	  {
 		Arguments args = (Arguments) $1;
-		if (args [args.Count - 1] is NamedArgument && !($3 is NamedArgument))
+		if (lang_version < LanguageVersion.V_7_2 && args [args.Count - 1] is NamedArgument && !($3 is NamedArgument))
 			Error_NamedArgumentExpected ((NamedArgument) args [args.Count - 1]);
 	  
 		args.Add ((Argument) $3);
@@ -4792,7 +4792,7 @@ pattern_list
 	| pattern_list COMMA pattern_argument
 	  {
 		Arguments args = (Arguments) $1;
-		if (args [args.Count - 1] is NamedArgument && !($3 is NamedArgument))
+		if (lang_version < LanguageVersion.V_7_2 && args [args.Count - 1] is NamedArgument && !($3 is NamedArgument))
 			Error_NamedArgumentExpected ((NamedArgument) args [args.Count - 1]);
 
 		args.Add ((Argument) $3);
@@ -7795,7 +7795,7 @@ void Warning_EmptyStatement (Location loc)
 
 void Error_NamedArgumentExpected (NamedArgument a)
 {
-	report.Error (1738, a.Location, "Named arguments must appear after the positional arguments");
+	report.Error (1738, a.Location, "Named arguments must appear after the positional arguments when using language version older than 7.2");
 }
 
 void Error_MissingInitializer (Location loc)
