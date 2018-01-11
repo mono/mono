@@ -532,34 +532,6 @@ mono_native_thread_create (MonoNativeThreadId *tid, gpointer func, gpointer arg)
 MONO_API void
 mono_native_thread_set_name (MonoNativeThreadId tid, const char *name);
 
-typedef struct _MonoFatThread {
-	MonoNativeThreadHandle threadHandle;
-	MonoNativeThreadId threadId;
-	// FIXME: Unused; are there portable invalid values,
-	// or even platform-specific invalid values?
-	// 0 is invalid for handle and id on Windows.
-	// So Windows does not need these but other platforms might.
-	struct {
-		int threadHandle : 1;
-		int threadId : 1;
-	} valid;
-} MonoFatThread;
-
-// Take a thread id and/or handle, and utf8 and/or utf16.
-// For best results on non-Windows, provide threadid and utf8.
-// For Windows, provide any.
-void
-mono_native_thread_set_name_internal (MonoFatThread* thread, GFatString* name);
-
-gboolean
-mono_fat_thread_ensure_id (MonoFatThread *thread);
-
-gboolean
-mono_fat_thread_ensure_handle (MonoFatThread *thread);
-
-void
-mono_fat_thread_cleanup (MonoFatThread *thread, MonoFatThread *longer_lived);
-
 MONO_API gboolean
 mono_native_thread_join (MonoNativeThreadId tid);
 

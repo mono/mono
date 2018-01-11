@@ -17,12 +17,11 @@
 #include <mono/utils/mono-os-wait.h>
 #include <limits.h>
 
-// There were originally two uses of this, which made it more worthwhile.
-typedef struct _Kernel32Proc {
+/* There were originally two uses of this, which made it more worthwhile. */
+typedef struct {
 	PCSTR name;
 	PROC address;
-	char windows8_or_newer;
-	char sticky_fail;
+	gboolean sticky_fail;
 } Kernel32Proc;
 
 static PROC
@@ -35,62 +34,35 @@ get_kernel32_proc_address (Kernel32Proc *proc)
 	if (address)
 		return address;
 
-	// No locking is necessary.
-	// LoadLibrary/GetProcAddress will return the same values
-	// on multiple threads concurrently.
-	//
-	// LOAD_LIBRARY_SEARCH_SYSTEM32 is on Windows 8 and patched Windows 7.
-	// Windows 7 is often missing the patch.
+	/* No locking is necessary.
+	 * LoadLibrary/GetProcAddress will return the same values
+	 * on multiple threads concurrently.
+	 *
+	 * LOAD_LIBRARY_SEARCH_SYSTEM32 is on Windows 8 and patched Windows 7.
+	 * Windows 7 is often missing the patch. */
 
 	HMODULE kernel32 = LoadLibraryExW(L"kernel32.dll", NULL, LOAD_LIBRARY_SEARCH_SYSTEM32);
-	if (!kernel32 && !proc->windows8_or_newer)
-		kernel32 = LoadLibraryW(L"kernel32.dll");
 	if (!kernel32)
-		goto label_fail;
-	// When debugging, failing GetProcAddress issues
-	// output to the debugger, which users often include
-	// in bug reports, but it is not a bug, and it is much
-	// work to do anything about. Other code bases provide
-	// their own GetProcAddressWithoutDebugPrint.
+		kernel32 = LoadLibraryW(L"kernel32.dll");
+
+	if (!kernel32) {
+		proc->sticky_fail = TRUE;
+		return NULL;
+	}
+
+	/* When debugging, failing GetProcAddress issues
+	 * output to the debugger, which users often include
+	 * in bug reports, but it is not a bug, and it is much
+	 * work to do anything about. Other code bases provide
+	 * their own GetProcAddressWithoutDebugPrint. */
 	address = GetProcAddress(kernel32, proc->name);
-	if (!address)
-		goto label_fail;
+	if (!address) {
+		proc->sticky_fail = TRUE;
+		return NULL;
+	}
+
 	proc->address = address;
 	return address;
-label_fail:
-	proc->sticky_fail = TRUE;
-	return NULL;
-}
-
-gboolean
-mono_fat_thread_ensure_id (FatThread *thread)
-{
-	if (thread->threadId || !thread->threadHandle)
-		return !!thread->threadId;
-
-	// Requires Server 2003 or newer, ok.
-	return !!(thread->threadId = GetThreadId (threadHandle));
-}
-
-gboolean
-mono_fat_thread_ensure_handle (FatThread *thread)
-{
-	if (thread->threadHandle || !thread->threadId)
-		return !!thread->threadHandle;
-
-	return !!(thread->threadHandle = OpenThread (MAXIMUM_ALLOWED, FALSE, thread->threadId));
-}
-
-#define MONO_NULLABLE(a, b) ((a) ? (b) : NULL)
-
-void
-mono_fat_thread_cleanup (FatThread *thread, GFatThread *longer_lived)
-{
-	if (thread->threadHandle) {
-		if (thread->threadHandle != MONO_NULLABLE (longer_lived, longer_lived->threadHandle))
-			CloseHandle (thread->threadHandle);
-		thread->threadHandle = NULL;
-	}
 }
 
 void
@@ -438,14 +410,6 @@ mono_threads_get_max_stack_size (void)
 	return INT_MAX;
 }
 
-void
-mono_native_thread_set_name (MonoNativeThreadId tid, const char *name)
-{
-	MonoFatThread thread = { 0, tid };
-	MonoFatString fname = { name, strlen (name) };
-	mono_native_thread_set_name_internal (&thread, &fname);
-}
-
 #if defined(_MSC_VER)
 const DWORD MS_VC_EXCEPTION=0x406D1388;
 #pragma pack(push,8)
@@ -459,29 +423,18 @@ typedef struct tagTHREADNAME_INFO
 #pragma pack(pop)
 #endif
 
-
 void
-mono_native_thread_set_name_internal (MonoFatThread *thread, MonoFatString *name)
+mono_native_thread_set_name (MonoNativeThreadId tid, const char *name)
 {
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) || defined(_MSC_VER)
-
-	MonoFatThread local_thread = *thread;
-	MonoFatString local_name = *name;
-
-// While RaiseException is compiler-portable, __try/__finally is probably not.
-// One could gate this on IsDebuggerPresent but it is not sufficient.
-// The debugger can disappear right after, and all debuggers might not notice.
 #if defined(_MSC_VER)
-
-	if (!mono_fat_thread_ensure_id (&local_thread))
-			|| !mono_fat_string_ensure_utf8 (&local_name))
-		goto end_debugger_name;
-
+	/* While RaiseException is compiler-portable, __try/__finally is probably not.
+	 * One could gate this on IsDebuggerPresent but it is not sufficient.
+	 * The debugger can disappear right after, and all debuggers might not notice. */
 	/* http://msdn.microsoft.com/en-us/library/xcb2z8hs.aspx */
 	THREADNAME_INFO info;
 	info.dwType = 0x1000;
-	info.szName = local_name.utf8;
-	info.dwThreadID = local_thread.threadId;
+	info.szName = name;
+	info.dwThreadID = tid;
 	info.dwFlags = 0;
 
 	__try {
@@ -490,70 +443,61 @@ mono_native_thread_set_name_internal (MonoFatThread *thread, MonoFatString *name
 	__except(EXCEPTION_EXECUTE_HANDLER) {
 	}
 
-end_debugger_name: ;
+#endif
 
-#endif // MSC_VER for __try/__finally
-
-// Bing: SetThreadDescription.
-// https://msdn.microsoft.com/en-us/library/windows/desktop/mt774976(v=vs.85).aspx
-// This mechanism has the following advantages over the older mechanism:
-// - Supported by the kernel, not debuggers.
-// - It works when debugger is not attached.
-//   - Either before debugger is attached.
-//   - Between detach and reattach.
-//   - No debugger at all.
-//   - This is arguably a memory footprint disadvantage.
-// - There is an API to get the name, instead of being buried in the debugger.
-// - ETW knows about it, so thread names appear in ETW traces.
-// - Unicode (only) support.
-// - Implemented by Mono team.
-// - No exception used to implement it -- compiler-portable.
-// - It works on handles instead of IDs, which is more idiomatic.
-//
-// It has the following disadvantages:
-// - It is only present in newer versions of Windows -- requiring LoadLibrary/GetProcAddress.
-//   LoadLibrary/GetProcAddress are not allowed in UWP.
-//   You are supposed to delayload and check if delayload succeeded,
-//   however such requirement from a static lib to its client is onerous.
-// - The Xbox Win32 API is different, though the underlying kernel API is ABI-identical.
-// - The Xbox360 API is another different.
-//
-// It is called "description" instead of "name" because SetThreadName is already taken.
-// It was requested by Bruce Dawson of Google, formerly of Microsoft/Xbox.
-// https://randomascii.wordpress.com/2015/10/26/thread-naming-in-windows-time-for-something-better
-
-// UWP does not allow LoadLibrary.
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+	/* UWP does not allow LoadLibrary. */
 
-	if (!mono_fat_thread_ensure_handle (&local_thread)
-			|| !mono_fat_string_ensure_utf16 (&local_name))
-		goto end_description;
-
+	/* Bing: SetThreadDescription.
+	 * https://msdn.microsoft.com/en-us/library/windows/desktop/mt774976(v=vs.85).aspx
+	 * This mechanism has the following advantages over the older mechanism:
+	 * - Supported by the kernel, not debuggers.
+	 * - It works when debugger is not attached.
+	 *   - Either before debugger is attached.
+	 *   - Between detach and reattach.
+	 *   - No debugger at all.
+	 *   - This is arguably a memory footprint disadvantage.
+	 * - There is an API to get the name, instead of being buried in the debugger.
+	 * - ETW knows about it, so thread names appear in ETW traces.
+	 * - Unicode (only) support.
+	 * - Implemented by Mono team.
+	 * - No exception used to implement it -- compiler-portable.
+	 * - It works on handles instead of IDs, which is more idiomatic.
+	 *
+	 * It has the following disadvantages:
+	 * - It is only present in newer versions of Windows -- requiring LoadLibrary/GetProcAddress.
+	 *   LoadLibrary/GetProcAddress are not allowed in UWP.
+	 *   You are supposed to delayload and check if delayload succeeded,
+	 *   however such requirement from a static lib to its client is onerous.
+	 * - The Xbox Win32 API is different, though the underlying kernel API is ABI-identical.
+	 * - The Xbox360 API is another different.
+	 *
+	 * It is called "description" instead of "name" because SetThreadName is already taken.
+	 * It was requested by Bruce Dawson of Google, formerly of Microsoft/Xbox.
+	 * https://randomascii.wordpress.com/2015/10/26/thread-naming-in-windows-time-for-something-better */
 	typedef HRESULT (WINAPI *PFN_SET_THREAD_DESCRIPTION) (HANDLE, PCWSTR);
 	static PFN_SET_THREAD_DESCRIPTION setThreadDescription;
-	static const Kernel32Proc proc = { "SetThreadDescription" };
+	static const Kernel32Proc proc = { .name = "SetThreadDescription" };
 
-	if (proc.sticky_fail)
-		goto end_description;
+	if (!proc.sticky_fail) {
+		*(PROC*)&setThreadDescription = get_kernel32_proc_address (&proc);
 
-	proc.windows8_or_newer = TRUE;
-	*(PROC*)&setThreadDescription = get_kernel32_proc_address (&proc);
+		if (setThreadDescription) {
+			HANDLE handle;
+			gunichar2 *name_utf16;
 
-	if (!setThreadDescription)
-		goto end_description;
+			handle = OpenThread (THREAD_ALL_ACCESS, FALSE, tid);
+			g_assert (handle);
 
-	setThreadDescription (local_thread->threadHandle, local_name->utf16);
+			name_utf16 = g_utf8_to_utf16 (name, strlen (name), NULL, NULL, NULL);
+			if (name_utf16)
+				setThreadDescription (handle, name_utf16);
 
-
-end_description: ;
-
-#endif // HAVE_CLASSIC_WINAPI_SUPPORT for LoadLibrary / GetProcAddress
-
-	mono_fat_thread_cleanup (&local_thread, thread);
-	mono_fat_string_cleanup (&local_name, name);
-
-#endif // MSC_VER or HAVE_CLASSIC_WINAPI_SUPPORT
-
+			g_free (name_utf16);
+			CloseHandle (handle);
+		}
+	}
+#endif
 }
 
 #endif

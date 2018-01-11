@@ -311,17 +311,3 @@ mono_threads_suspend_init (void)
 }
 
 #endif /* defined(USE_POSIX_BACKEND) */
-
-#if !defined(USE_WINDOWS_BACKEND)
-
-void
-mono_native_thread_set_name_internal (MonoFatThread *thread, GFatString* name)
-{
-	// It is understood that threadId will be set.
-	GFatString local_name = *name;
-	if (g_fat_string_ensure_utf8 (&local_name))
-		mono_native_thread_set_name (thread->threadId, local_name.utf8);
-	g_fat_string_cleanup (&local_name, name);
-}
-
-#endif
