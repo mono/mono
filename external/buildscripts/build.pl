@@ -181,20 +181,23 @@ else
 # abs_path ends up returning an empty string
 $externalBuildDeps = abs_path($externalBuildDeps) if (-d $externalBuildDeps);
 
-my $existingExternalMonoRoot = "$externalBuildDeps/mono";
+my $existingExternalMonoRoot = "$externalBuildDeps/MonoBleedingEdge";
 my $existingExternalMono = "";
+my $existingExternalMonoBinDir = "";
 my $monoHostArch = "";
 my $monoprefix = "$monoroot/tmp";
 my $runningOnWindows=0;
 if($^O eq "linux")
 {
 	$monoHostArch = $arch32 ? "i686" : "x86_64";
-	$existingExternalMono = "$existingExternalMonoRoot/linux";
+	$existingExternalMono = "$existingExternalMonoRoot";
+	$existingExternalMonoBinDir = "bin-linux64";
 }
 elsif($^O eq 'darwin')
 {
 	$monoHostArch = $arch32 ? "i386" : "x86_64";
-	$existingExternalMono = "$existingExternalMonoRoot/osx";
+	$existingExternalMono = "$existingExternalMonoRoot";
+	$existingExternalMonoBinDir = "bin";
 
 	# From Massi: I was getting failures in install_name_tool about space
 	# for the commands being too small, and adding here things like
@@ -211,7 +214,8 @@ elsif($^O eq 'darwin')
 else
 {
 	$monoHostArch = "i686";
-	$existingExternalMono = "$existingExternalMonoRoot/win";
+	$existingExternalMono = "$existingExternalMonoRoot";
+	$existingExternalMonoBinDir = "bin-x64";
 	$runningOnWindows = 1;
 
 	# We only care about an existing mono if we need to build.
@@ -317,10 +321,10 @@ if ($build)
 			{
 				# We need to extract builds.zip
 				print(">>> Extracting mono builds.zip...\n");
-				system("unzip", "$existingExternalMono/builds.zip", "-d", "$existingExternalMono") eq 0 or die("failed to extract mono builds.zip\n");
+				system("unzip", "$existingExternalMono/builds.zip", "-d", "$existingExternalMono/builds") eq 0 or die("failed to extract mono builds.zip\n");
 			}
 
-			$existingMonoRootPath = "$existingExternalMono/builds";
+			$existingMonoRootPath = "$existingExternalMono/builds/monodistribution";
 		}
 		else
 		{
@@ -1242,7 +1246,7 @@ if ($build)
 	}
 
 	print ">>> Existing Mono : $existingMonoRootPath\n\n";
-	$ENV{'PATH'} = "$existingMonoRootPath/bin:$ENV{'PATH'}";
+	$ENV{'PATH'} = "$existingMonoRootPath/$existingExternalMonoBinDir:$ENV{'PATH'}";
 
 	print ">>> PATH before Build = $ENV{PATH}\n\n";
 
