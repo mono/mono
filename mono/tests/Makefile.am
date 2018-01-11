@@ -969,8 +969,7 @@ KNOWN_FAILING_TESTS = \
 	appdomain-marshalbyref-assemblyload.exe	\
 	abort-try-holes.exe \
 	dim-constrainedcall.exe	\
-	dim-diamondshape.exe	\
-	dim-methodimpl.exe
+	dim-diamondshape.exe
 
 DISABLED_TESTS = \
 	$(KNOWN_FAILING_TESTS) \
