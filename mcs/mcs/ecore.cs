@@ -6068,9 +6068,15 @@ namespace Mono.CSharp {
 						else
 							ec.Report.SymbolRelatedToPreviousError (member);
 
-						ec.Report.Error (1744, na.Location,
-							"Named argument `{0}' cannot be used for a parameter which has positional argument specified",
-							na.Name);
+						if (name_index > a_idx) {
+							ec.Report.Error (8323, na.Location,
+								"Named argument `{0}' is used out of position but is followed by positional argument",
+								na.Name);
+						} else {
+							ec.Report.Error (1744, na.Location,
+								"Named argument `{0}' cannot be used for a parameter which has positional argument specified",
+								na.Name);
+						}
 					}
 				}
 				
