@@ -94,6 +94,23 @@ if [[ ${CI_TAGS} == 'product-sdks' ]];
 	   exit 0
 fi
 
+if [[ ${CI_TAGS} == 'webassembly' ]];
+   then
+	   echo "DISABLE_ANDROID=1" > sdks/Make.config
+	   echo "DISABLE_IOS=1" > sdks/Make.config
+	   ${TESTCMD} --label=runtimes --timeout=60m --fatal make -j4 -C sdks/builds package-wasm-interp
+	   ${TESTCMD} --label=bcl --timeout=60m --fatal make -j4 -C sdks/builds package-bcl
+	   ${TESTCMD} --label=wasm-build --timeout=60m --fatal make -j4 -C sdks/wasm build
+	   ${TESTCMD} --label=mini-test --timeout=60m make -C sdks/wasm run-mini
+	   #The following tests are
+	   #${TESTCMD} --label=mini-corlib --timeout=60m make -C sdks/wasm run-corlib
+	   #${TESTCMD} --label=mini-system --timeout=60m make -C sdks/wasm run-system
+	   ${TESTCMD} --label=mini-system-core --timeout=60m make -C sdks/wasm run-system-core
+	   ${TESTCMD} --label=package --timeout=60m make -C sdks/wasm package
+	   exit 0
+fi
+
+
 if [[ ${CI_TAGS} != *'mac-sdk'* ]]; # Mac SDK builds Mono itself
 	then
 	${TESTCMD} --label=configure --timeout=60m --fatal ./autogen.sh $EXTRA_CONF_FLAGS
