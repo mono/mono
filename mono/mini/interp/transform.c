@@ -1172,6 +1172,11 @@ no_intrinsic:
 		}
 	}
 
+	if (need_null_check) {
+		ADD_CODE (td, MINT_CKNULL_N);
+		ADD_CODE (td, csignature->param_count + 1);
+	}
+
 	/* need to handle typedbyref ... */
 	if (csignature->ret->type != MONO_TYPE_VOID) {
 		int mt = mint_type(csignature->ret);
