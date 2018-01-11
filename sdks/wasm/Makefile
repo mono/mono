@@ -108,6 +108,20 @@ run-%: toolchain build
 
 clean:
 	
-package:
+package: build
+	rm -rf tmp
+	mkdir tmp
+	mkdir tmp/bcl
+	cp -r $(TOP)/sdks/out/bcl/wasm/* tmp/bcl/
+	cp driver.c tmp/
+	cp mono.js tmp/
+	cp mono.wasm tmp/
+	cp mono.wasm.map tmp/
+	cp $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a tmp/
+	cp test.js tmp/
+	cp main.cs tmp/
+	cp library_mono.js tmp/
+	zip -r9 mono-wasm-$(shell git rev-parse --short HEAD).zip tmp/
+	rm -rf tmp
 
 FORCE:
