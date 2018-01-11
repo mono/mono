@@ -1,4 +1,4 @@
-TOP:=$(realpath $(CURDIR)/../..)
+TOP=$(realpath $(CURDIR)/../..)
 include $(TOP)/sdks/paths.mk
 
 EMCC=source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && emcc
@@ -72,12 +72,11 @@ $(patsubst %,managed/%,$(BCL_ASSEMBLIES)): managed/%: $(WASM_BCL_DIR)/% | manage
 
 #FIXME change BCL sdk build to include nunitlite.dll in out/bcl/wasm/
 managed/nunitlite.dll: $(TOP)/mcs/class/lib/wasm/nunitlite.dll | managed/
-	cd $(TOP)/mcs/tools/nunit-lite && $(MAKE) PROFILE=wasm
+	$(MAKE) -C $(TOP)/mcs/tools/nunit-lite PROFILE=wasm
 	cp $< $@
 
 managed/main.exe: $(TEST_DEPS) $(APP_SOURCES) | managed/
 	mcs /nostdlib /unsafe -out:$@ $(TEST_MCS_DEPS) $(APP_SOURCES)
-
 
 $(TOP)/mcs/class/lib/wasm/tests/wasm_corlib_test.dll: FORCE
 	$(MAKE) -C "$(TOP)/mcs/class/corlib" test-local PROFILE=wasm
