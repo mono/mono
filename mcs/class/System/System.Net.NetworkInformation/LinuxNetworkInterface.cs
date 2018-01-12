@@ -43,30 +43,12 @@ namespace System.Net.NetworkInformation {
 		const int AF_INET6 = 10;
 		const int AF_PACKET = 17;
 
-		static void FreeInterfaceAddresses (IntPtr ifap)
-		{
-#if MONODROID
-			AndroidPlatform.FreeInterfaceAddresses (ifap);
-#else
-			freeifaddrs (ifap);
-#endif
-		}
-
-		static int GetInterfaceAddresses (out IntPtr ifap)
-		{
-#if MONODROID
-			return AndroidPlatform.GetInterfaceAddresses (out ifap);
-#else
-			return getifaddrs (out ifap);
-#endif
-		}
-
 		public override NetworkInterface [] GetAllNetworkInterfaces ()
 		{
 
 			var interfaces = new Dictionary <string, LinuxNetworkInterface> ();
 			IntPtr ifap;
-			if (GetInterfaceAddresses (out ifap) != 0)
+			if (getifaddrs (out ifap) != 0)
 				throw new SystemException ("getifaddrs() failed");
 
 			try {
@@ -175,7 +157,7 @@ namespace System.Net.NetworkInformation {
 					next = addr.ifa_next;
 				}
 			} finally {
-				FreeInterfaceAddresses (ifap);
+				freeifaddrs (ifap);
 			}
 
 			NetworkInterface [] result = new NetworkInterface [interfaces.Count];
@@ -218,7 +200,7 @@ namespace System.Net.NetworkInformation {
 			IntPtr ifap = IntPtr.Zero;
 
 			try {
-				if (GetInterfaceAddresses(out ifap) != 0)
+				if (getifaddrs(out ifap) != 0)
 					yield break;
 
 				var next = ifap;
@@ -229,7 +211,7 @@ namespace System.Net.NetworkInformation {
 				}
 			} finally {
 				if (ifap != IntPtr.Zero)
-					FreeInterfaceAddresses(ifap);
+					freeifaddrs(ifap);
 			}
 		}
 	}

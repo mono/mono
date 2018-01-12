@@ -71,7 +71,7 @@ platform_sources += threadpool-worker-default.c
 endif
 
 if ENABLE_MONODROID
-platform_sources += android.c android.h
+platform_sources += android.c android.h android-ifaddrs.c
 endif
 
 if BITCODE

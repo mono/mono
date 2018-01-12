@@ -33,6 +33,7 @@
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 namespace System.Net.NetworkInformation {
 	internal abstract class UnixNetworkInterfaceAPI : NetworkInterfaceFactory
@@ -56,10 +57,18 @@ namespace System.Net.NetworkInformation {
 		[DllImport("libc")]
 		public static extern int if_nametoindex(string ifname);
 
+#if MONODROID
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+#else
 		[DllImport ("libc")]
+#endif
 		protected static extern int getifaddrs (out IntPtr ifap);
 
+#if MONODROID
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+#else
 		[DllImport ("libc")]
+#endif
 		protected static extern void freeifaddrs (IntPtr ifap);
 #endif
 	}

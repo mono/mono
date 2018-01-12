@@ -465,6 +465,12 @@ ICALL_TYPE(MAC_IFACE_PROPS, "System.Net.NetworkInformation.MacOsIPInterfacePrope
 ICALL(MAC_IFACE_PROPS_1, "ParseRouteInfo_internal", ves_icall_System_Net_NetworkInformation_MacOsIPInterfaceProperties_ParseRouteInfo_internal)
 #endif
 
+#ifdef ENABLE_MONODROID
+ICALL_TYPE(UNIXNETWORKINTERFACEAPI, "System.Net.NetworkInformation.NetworkInterfaceFactory/UnixNetworkInterfaceAPI", UNIXNETWORKINTERFACEAPI_1)
+NOHANDLES(ICALL(UNIXNETWORKINTERFACEAPI_1, "freeifaddrs", ves_icall_System_Net_NetworkInformation_NetworkInterfaceFactory_UnixNetworkInterfaceAPI_freeifaddrs))
+NOHANDLES(ICALL(UNIXNETWORKINTERFACEAPI_2, "getifaddrs", ves_icall_System_Net_NetworkInformation_NetworkInterfaceFactory_UnixNetworkInterfaceAPI_getifaddrs))
+#endif
+
 ICALL_TYPE(SOCK, "System.Net.Sockets.Socket", SOCK_1)
 HANDLES(ICALL(SOCK_1, "Accept_internal(intptr,int&,bool)", ves_icall_System_Net_Sockets_Socket_Accept_internal))
 HANDLES(ICALL(SOCK_2, "Available_internal(intptr,int&)", ves_icall_System_Net_Sockets_Socket_Available_internal))
