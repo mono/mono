@@ -583,30 +583,6 @@ my_dlsym (void *handle, const char *name, char **err, void *user_data)
 }
 
 MONO_API int
-monodroid_get_system_property (const char *name, char **value)
-{
-	char *pvalue;
-	char  sp_value [PROP_VALUE_MAX+1] = { 0, };
-	int   len;
-
-	if (value)
-		*value = NULL;
-
-	pvalue  = sp_value;
-	len     = __system_property_get (name, sp_value);
-
-	if (len >= 0 && value) {
-		*value = malloc (len + 1);
-		if (!*value)
-			return -len;
-		memcpy (*value, pvalue, len);
-		(*value)[len] = '\0';
-	}
-
-	return len;
-}
-
-MONO_API int
 _monodroid_get_android_api_level (void)
 {
 	return 24;

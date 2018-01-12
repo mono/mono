@@ -47,6 +47,12 @@ mono_jvm_initialize (JavaVM *vm);
 JNIEnv*
 mono_jvm_get_jnienv (void);
 
+MONO_API void
+monodroid_add_system_property (const gchar *name, const gchar *value);
+
+MONO_API gint32
+monodroid_get_system_property (const gchar *name, gchar **value);
+
 gpointer
 ves_icall_System_TimezoneInfo_AndroidTimeZones_GetDefaultTimeZoneId (void);
 
@@ -58,5 +64,8 @@ ves_icall_System_Net_NetworkInformation_NetworkInterfaceFactory_UnixNetworkInter
 
 void
 ves_icall_Mono_Unix_Android_AndroidUtils_DetectCpuAndArchitecture (guint16 *built_for_cpu, guint16 *running_on_cpu, MonoBoolean *is64bit);
+
+gint32
+ves_icall_System_TimezoneInfo_AndroidTimeZones_GetSystemProperty (const gchar *name, gchar **value);
 
 #endif /* __MONO_METADATA_ANDROID_H__ */
