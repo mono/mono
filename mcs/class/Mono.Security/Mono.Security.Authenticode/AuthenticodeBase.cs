@@ -31,6 +31,45 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 
+/*
+FIXME There are a number of problems and deficiencies in this code.
+
+- It requires the PE header to fit in 4K. This is not guaranteed
+by the file format and it is easy to construct valid files that violate it.
+i.e. with a large MS-DOS header.
+
+- It has a number of missing or incorrect range checks.
+  Incorrect, as in, checking that record or field starts within
+  range, but does not end within range.
+
+- It removes/ignores COFF symbols. These rarely/never occur, but removing
+them is not likely correct. It is not mentioned in either of the two specifications.
+This seems to be extra unnecessary incorrect code.
+
+- There are two specifications, Authenticode and PE:
+https://download.microsoft.com/download/9/c/5/9c5b2167-8017-4bae-9fde-d599bac8184a/Authenticode_PE.docx
+https://www.microsoft.com/whdc/system/platform/firmware/PECOFF.mspx
+https://msdn.microsoft.com/library/windows/desktop/ms680547(v=vs.85).aspx
+
+These are in contradiction regarding hashing of data after the sections.
+Such data is usually absent. More comparison is need between
+Mono runtime and desktop runtime/tools.
+The most common such data is an older signature, which is supposed to be ignored.
+The next most common is appended setup data, which isn't likely with managed code.
+  However this code has nothing to do with signing managed code specifically, just PEs.
+
+- A buffer size of 4K is small and probably not performant.
+  Buffering makes the code harder to update and correct, vs.
+  reading the entire file into memory.
+
+- It does not validate NumberOfRvasAndSizes field.
+  Usually it is valid.
+
+- It is missing a number of other validations.
+  For example, the optional header magic was ignored, so in the
+  interest of small change, we treat all non-0x20B values the same.
+*/
+
 namespace Mono.Security.Authenticode {
 
 	// References:
@@ -64,9 +103,23 @@ namespace Mono.Security.Authenticode {
 		private int dirSecurityOffset;
 		private int dirSecuritySize;
 		private int coffSymbolTableOffset;
+		private bool pe64 = false;
+
+		internal bool PE64 {
+			get {
+				if (blockNo < 1)
+					ReadFirstBlock ();
+				return pe64;
+			}
+		}
 
 		public AuthenticodeBase ()
 		{
+			// FIXME This is probably too small on modern machines.
+			// Consider growing it, or reading the entire file
+			// into memory. Reading the entire file into memory
+			// will simplify the existing code and make it easier
+			// to correct things.
 			fileblock = new byte [4096];
 		}
 
@@ -142,11 +195,15 @@ namespace Mono.Security.Authenticode {
 			peOffset = BitConverterLE.ToInt32 (fileblock, 60);
 			if (peOffset > fileblock.Length) {
 				// just in case (0.1%) this can actually happen
+				// FIXME This does not mean the file is invalid,
+				// just that this code cannot handle it.
 				string msg = String.Format (Locale.GetText (
 					"Header size too big (> {0} bytes)."),
 					fileblock.Length);
 				throw new NotSupportedException (msg);
 			}
+			// FIXME This verifies that PE starts within the file,
+			// but not that it fits.
 			if (peOffset > fs.Length)
 				return 4;
 
@@ -156,10 +213,33 @@ namespace Mono.Security.Authenticode {
 			if (BitConverterLE.ToUInt32 (fileblock, peOffset) != 0x4550)
 				return 5;
 
+			// PE signature is followed by 20 byte file header, and
+			// then 2 byte magic 0x10B for PE32 or 0x20B for PE32+,
+			// or 0x107 for the obscure ROM case.
+			// FIXME The code historically ignored this magic value
+			// entirely, so we only treat 0x20B differently to maintain
+			// this dubious behavior.
+			// FIXME The code also lacks range checks in a number of places,
+			// and will access arrays out of bounds for valid files.
+
+			ushort magic = BitConverterLE.ToUInt16 (fileblock, peOffset + 24);
+			const int IMAGE_NT_OPTIONAL_HDR64_MAGIC = 0x20B;
+			pe64 = magic == IMAGE_NT_OPTIONAL_HDR64_MAGIC;
+
+			// FIXME This fails to validate NumberOfRvasAndSizes.
 			// 2.2. Locate IMAGE_DIRECTORY_ENTRY_SECURITY (offset and size)
+			// These offsets are from the documentation, but add 24 for
+			// PE signature and file header.
 			dirSecurityOffset = BitConverterLE.ToInt32 (fileblock, peOffset + 152);
 			dirSecuritySize = BitConverterLE.ToInt32 (fileblock, peOffset + 156);
+			if (pe64)
+			{
+				dirSecurityOffset = BitConverterLE.ToInt32 (fileblock, peOffset + 168);
+				dirSecuritySize = BitConverterLE.ToInt32 (fileblock, peOffset + 168 + 4);
+			}
 
+			// FIXME Why does this matter? It is rarely present anyway.
+			// FIXME If it does matter, validate it is within the file?
 			// COFF symbol tables are deprecated - we'll strip them if we see them!
 			// (otherwise the signature won't work on MS and we don't want to support COFF for that)
 			coffSymbolTableOffset = BitConverterLE.ToInt32 (fileblock, peOffset + 12);
@@ -229,14 +309,41 @@ namespace Mono.Security.Authenticode {
 
 			// Authenticode(r) gymnastics
 			// Hash from (generally) 0 to 215 (216 bytes)
+			// 88 = 64 + 24
+			// 64 is the offset of Checksum within OptionalHeader.
+			// 24 is offset of OptionalHeader within PEHeader.
 			int pe = peOffset + 88;
 			hash.TransformBlock (fileblock, 0, pe, fileblock, 0);
 			// then skip 4 for checksum
 			pe += 4;
-			// Continue hashing from (generally) 220 to 279 (60 bytes)
-			hash.TransformBlock (fileblock, pe, 60, fileblock, pe);
-			// then skip 8 bytes for IMAGE_DIRECTORY_ENTRY_SECURITY
-			pe += 68;
+
+			if (pe64)
+			{
+				// security_directory, if present, is at offset 144 within OptionalHeader64
+				// FIXME This code fails to check if the security_directory is present.
+				// If it is absent, it may or may not be difficult to add, and reject
+				// the file as invalid.
+				// Checksum is at [64, 68].
+				// 144 - 68 = 76
+				// Hash from checksum to security_directory.
+				hash.TransformBlock (fileblock, pe, 76, fileblock, pe);
+				// then skip 8 bytes for IMAGE_DIRECTORY_ENTRY_SECURITY
+				pe += 76;
+				pe += 8;
+			}
+			else
+			{
+				// security_directory, if present, is at offset 128 within OptionalHeader32
+				// FIXME This code fails to check if the security_directory is present.
+				// If it is absent, it may or may not be difficult to add, and reject
+				// the file as invalid.
+				// Checksum is at [64, 68].
+				// 128 - 68 = 60
+				// Continue hashing from (generally) 220 to 279 (60 bytes)
+				hash.TransformBlock (fileblock, pe, 60, fileblock, pe);
+				// then skip 8 bytes for IMAGE_DIRECTORY_ENTRY_SECURITY
+				pe += 68;
+			}
 
 			// everything is present so start the hashing
 			if (n == 0) {

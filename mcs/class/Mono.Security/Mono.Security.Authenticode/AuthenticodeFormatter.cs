@@ -243,9 +243,14 @@ namespace Mono.Security.Authenticode {
 			using (FileStream fs = File.Open (fileName, FileMode.Open, FileAccess.ReadWrite)) {
 				int filesize;
 				if (SecurityOffset > 0) {
+					// FIXME Does it fit? Is it always the same size?
 					// file was already signed, we'll reuse the position for the updated signature
 					filesize = SecurityOffset;
 				} else if (CoffSymbolTableOffset > 0) {
+					// FIXME This is not documented as something to remove.
+					// However some documentation says to remove after the last
+					// section, and some does not, and this might be there,
+					// or it might not.
 					// strip (deprecated) COFF symbol table
 					fs.Seek (PEOffset + 12, SeekOrigin.Begin);
 					for (int i = 0; i < 8; i++)
@@ -264,6 +269,9 @@ namespace Mono.Security.Authenticode {
 				// IMAGE_DIRECTORY_ENTRY_SECURITY (offset, size)
 				byte[] data = BitConverterLE.GetBytes (filesize + addsize);
 				fs.Seek (PEOffset + 152, SeekOrigin.Begin);
+				if (PE64)
+					fs.Seek (PEOffset + 168, SeekOrigin.Begin);
+
 				fs.Write (data, 0, 4);
 				int size = asn.Length + 8;
 				int addsize_signature = (size & 7);
@@ -271,6 +279,9 @@ namespace Mono.Security.Authenticode {
 					addsize_signature = 8 - addsize_signature;
 				data = BitConverterLE.GetBytes (size + addsize_signature);
 				fs.Seek (PEOffset + 156, SeekOrigin.Begin);
+				if (PE64)
+					fs.Seek (PEOffset + 168 + 4, SeekOrigin.Begin);
+
 				fs.Write (data, 0, 4);
 				fs.Seek (filesize, SeekOrigin.Begin);
 				// align certificate entry to a multiple of 8 bytes
@@ -279,6 +290,7 @@ namespace Mono.Security.Authenticode {
 					fs.Write (fillup, 0, fillup.Length);
 				}
 				fs.Write (data, 0, data.Length);		// length (again)
+				// This magic value is documented.
 				data = BitConverterLE.GetBytes (0x00020200);    // magic
 				fs.Write (data, 0, data.Length);
 				fs.Write (asn, 0, asn.Length);
