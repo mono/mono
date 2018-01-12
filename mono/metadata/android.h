@@ -6,6 +6,8 @@
 
 #include <jni.h>
 
+#include "object.h"
+
 #include "utils/mono-publib.h"
 
 /* We're implementing getifaddrs behavior, this is the structure we use. It is exactly the same as
@@ -53,5 +55,8 @@ ves_icall_System_Net_NetworkInformation_NetworkInterfaceFactory_UnixNetworkInter
 
 void
 ves_icall_System_Net_NetworkInformation_NetworkInterfaceFactory_UnixNetworkInterfaceAPI_freeifaddrs (struct _monodroid_ifaddrs *ifa);
+
+void
+ves_icall_Mono_Unix_Android_AndroidUtils_DetectCpuAndArchitecture (guint16 *built_for_cpu, guint16 *running_on_cpu, MonoBoolean *is64bit);
 
 #endif /* __MONO_METADATA_ANDROID_H__ */

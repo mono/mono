@@ -118,6 +118,11 @@ HANDLES(ICALL(KPAIR_4, "_ProtectMachine", ves_icall_Mono_Security_Cryptography_K
 HANDLES(ICALL(KPAIR_5, "_ProtectUser", ves_icall_Mono_Security_Cryptography_KeyPairPersistence_ProtectUser))
 #endif /* !PLATFORM_RO_FS */
 
+#ifdef ENABLE_MONODROID
+ICALL_TYPE(ANDROIDUTILS, "Mono.Unix.Android.AndroidUtils", ANDROIDUTILS_1)
+NOHANDLES(ICALL(ANDROIDUTILS_1, "DetectCpuAndArchitecture", ves_icall_Mono_Unix_Android_AndroidUtils_DetectCpuAndArchitecture))
+#endif
+
 ICALL_TYPE(APPDOM, "System.AppDomain", APPDOM_23)
 HANDLES(ICALL(APPDOM_23, "DoUnhandledException", ves_icall_System_AppDomain_DoUnhandledException))
 HANDLES(ICALL(APPDOM_1, "ExecuteAssembly", ves_icall_System_AppDomain_ExecuteAssembly))
