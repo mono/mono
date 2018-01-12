@@ -13,14 +13,6 @@ namespace Android.Runtime {
 		static object lock_ = new object ();
 
 		// This is invoked by
-		// System.Core!System.AndroidPlatform.GetDefaultTimeZone ()
-		// DO NOT REMOVE
-		static string GetDefaultTimeZone ()
-		{
-			return "America/Los_Angeles"; //add glue code if you really care
-		}
-
-		// This is invoked by
 		// mscorlib.dll!System.AndroidPlatform.GetDefaultSyncContext()
 		// DO NOT REMOVE
 		static SynchronizationContext GetDefaultSyncContext ()

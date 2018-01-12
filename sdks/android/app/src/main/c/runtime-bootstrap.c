@@ -606,12 +606,6 @@ monodroid_get_system_property (const char *name, char **value)
 	return len;
 }
 
-MONO_API void
-monodroid_free (void *ptr)
-{
-	free (ptr);
-}
-
 typedef struct {
 	struct _monodroid_ifaddrs *ifa_next; /* Pointer to the next structure.      */
 

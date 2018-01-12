@@ -562,9 +562,6 @@ namespace System {
 			
 			[DllImport ("__Internal")]
 			static extern int monodroid_get_system_property (string name, ref IntPtr value);
-
-			[DllImport ("__Internal")]
-			static extern void monodroid_free (IntPtr ptr);
 			
 			static string GetDefaultTimeZoneName ()
 			{
@@ -586,12 +583,32 @@ namespace System {
 						return defaultTimeZone;
 				}
 				
-				defaultTimeZone = (AndroidPlatform.GetDefaultTimeZone () ?? String.Empty).Trim ();
+				defaultTimeZone = GetDefaultTimeZone ()?.Trim();
 				if (!String.IsNullOrEmpty (defaultTimeZone))
 					return defaultTimeZone;
 
 				return null;
 			}
+
+			static string GetDefaultTimeZone ()
+			{
+				IntPtr id = IntPtr.Zero;
+				try {
+					try {} finally {
+						id = GetDefaultTimeZoneId ();
+					}
+					return Marshal.PtrToStringAnsi (id);
+				} finally {
+					if (id != IntPtr.Zero)
+						Mono.Runtime.GFree (id);
+				}
+			}
+
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			static extern IntPtr GetDefaultTimeZoneId ();
+
+			[DllImport ("__Internal")]
+			static extern void monodroid_free (IntPtr ptr);
 
 #if SELF_TEST
 			/*
