@@ -94,15 +94,15 @@ if [[ ${CI_TAGS} == 'product-sdks' ]];
 	   exit 0
 fi
 
-if [[ ${CI_TAGS} == 'webassembly' ]];
+if [[ ${CI_TAGS} == '*webassembly*' ]];
    then
 	   echo "DISABLE_ANDROID=1" > sdks/Make.config
-	   echo "DISABLE_IOS=1" > sdks/Make.config
+	   echo "DISABLE_IOS=1" >> sdks/Make.config
 	   ${TESTCMD} --label=runtimes --timeout=60m --fatal make -j4 -C sdks/builds package-wasm-interp
 	   ${TESTCMD} --label=bcl --timeout=60m --fatal make -j4 -C sdks/builds package-bcl
 	   ${TESTCMD} --label=wasm-build --timeout=60m --fatal make -j4 -C sdks/wasm build
 	   ${TESTCMD} --label=mini-test --timeout=60m make -C sdks/wasm run-mini
-	   #The following tests are
+	   #The following tests are not passing yet, so enabling them would make us perma-red
 	   #${TESTCMD} --label=mini-corlib --timeout=60m make -C sdks/wasm run-corlib
 	   #${TESTCMD} --label=mini-system --timeout=60m make -C sdks/wasm run-system
 	   ${TESTCMD} --label=mini-system-core --timeout=60m make -C sdks/wasm run-system-core
