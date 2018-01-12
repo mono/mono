@@ -230,8 +230,8 @@ namespace Mono.Unity
             public unitytls_tlsctx_free_t                                 unitytls_tlsctx_free;
         }
 
-        [DllImport("__Internal")]
-        private static extern IntPtr mono_unity_get_unitytls_interface();
+        [MethodImplAttribute (MethodImplOptions.InternalCall)]
+        private static extern IntPtr GetUnityTlsInterface ();
         
         private static mono_unity_unitytls_interface marshalledInterface = null;
 
@@ -242,7 +242,7 @@ namespace Mono.Unity
             get
             {
                 if (marshalledInterface == null) {
-                    IntPtr rawInterface = mono_unity_get_unitytls_interface ();
+                    IntPtr rawInterface = GetUnityTlsInterface ();
                     if (rawInterface == IntPtr.Zero)
                         return null;
                     marshalledInterface = Marshal.PtrToStructure<mono_unity_unitytls_interface> (rawInterface);
