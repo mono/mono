@@ -104,6 +104,10 @@
 #include <mono/utils/mono-merp.h>
 #include <mono/utils/mono-logger-internals.h>
 
+#ifdef ENABLE_MONODROID
+#include "android.h"
+#endif
+
 #if !defined(HOST_WIN32) && defined(HAVE_SYS_UTSNAME_H)
 #include <sys/utsname.h>
 #endif
@@ -7982,6 +7986,12 @@ ves_icall_Mono_Runtime_GetDisplayName (MonoError *error)
 	display_name = mono_string_new_handle (mono_domain_get (), info, error);
 	g_free (info);
 	return display_name;
+}
+
+ICALL_EXPORT void
+ves_icall_Mono_Runtime_GFree (gpointer ptr)
+{
+	g_free (ptr);
 }
 
 #ifndef HOST_WIN32
