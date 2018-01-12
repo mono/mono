@@ -81,6 +81,7 @@ typedef struct
 	StackInfo *stack;
 	StackInfo *sp;
 	unsigned int max_stack_height;
+	unsigned int stack_capacity;
 	unsigned int vt_sp;
 	unsigned int max_vt_sp;
 	int n_data_items;
@@ -450,6 +451,13 @@ can_store (int stack_type, int var_type)
 		(s)->klass = k; \
 	} while (0)
 
+#define REALLOC_STACK(td, sppos) \
+	do { \
+		(td)->stack_capacity *= 2; \
+		(td)->stack = realloc ((td)->stack, (td)->stack_capacity * sizeof (td->stack [0])); \
+		(td)->sp = (td)->stack + sppos; \
+	} while (0);
+
 #define PUSH_SIMPLE_TYPE(td, ty) \
 	do { \
 		int sp_height; \
@@ -457,6 +465,8 @@ can_store (int stack_type, int var_type)
 		sp_height = (td)->sp - (td)->stack; \
 		if (sp_height > (td)->max_stack_height) \
 			(td)->max_stack_height = sp_height; \
+		if (sp_height > (td)->stack_capacity) \
+			REALLOC_STACK(td, sp_height); \
 		SET_SIMPLE_TYPE((td)->sp - 1, ty); \
 	} while (0)
 
@@ -467,6 +477,8 @@ can_store (int stack_type, int var_type)
 		sp_height = (td)->sp - (td)->stack; \
 		if (sp_height > (td)->max_stack_height) \
 			(td)->max_stack_height = sp_height; \
+		if (sp_height > (td)->stack_capacity) \
+			REALLOC_STACK(td, sp_height); \
 		SET_TYPE((td)->sp - 1, ty, k); \
 	} while (0)
 
@@ -785,12 +797,15 @@ interp_generate_mae_throw (TransformData *td, MonoMethod *method, MonoMethod *ta
 	/* Inject code throwing MethodAccessException */
 	ADD_CODE (td, MINT_MONO_LDPTR);
 	ADD_CODE (td, get_data_item_index (td, method));
+	PUSH_SIMPLE_TYPE (td, STACK_TYPE_I);
 
 	ADD_CODE (td, MINT_MONO_LDPTR);
 	ADD_CODE (td, get_data_item_index (td, target_method));
+	PUSH_SIMPLE_TYPE (td, STACK_TYPE_I);
 
 	ADD_CODE (td, MINT_LDFTN);
 	ADD_CODE (td, get_data_item_index (td, (gpointer)info->func));
+	PUSH_SIMPLE_TYPE (td, STACK_TYPE_I);
 
 	ADD_CODE (td, MINT_CALLI_NAT);
 	ADD_CODE (td, get_data_item_index (td, info->sig));
@@ -1728,6 +1743,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 	td->last_new_ip = NULL;
 
 	td->stack = g_malloc0 ((header->max_stack + 1) * sizeof (td->stack [0]));
+	td->stack_capacity = header->max_stack + 1;
 	td->sp = td->stack;
 	td->max_stack_height = 0;
 
@@ -2895,21 +2911,47 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			MonoType *ftype = mono_field_get_type (field);
 			gboolean is_static = !!(ftype->attrs & FIELD_ATTRIBUTE_STATIC);
 			mono_class_init (klass);
-			if (is_static) {
-				ADD_CODE (td, MINT_POP);
-				ADD_CODE (td, 0);
-				ADD_CODE (td, MINT_LDSFLDA);
+#ifndef DISABLE_REMOTING
+			if (klass->marshalbyref || mono_class_is_contextbound (klass) || klass == mono_defaults.marshalbyrefobject_class) {
+				g_assert (!is_static);
+				int offset = klass->valuetype ? field->offset - sizeof (MonoObject) : field->offset;
+
+				ADD_CODE (td, MINT_MONO_LDPTR);
+				ADD_CODE (td, get_data_item_index (td, klass));
+				PUSH_SIMPLE_TYPE (td, STACK_TYPE_I);
+				ADD_CODE (td, MINT_MONO_LDPTR);
 				ADD_CODE (td, get_data_item_index (td, field));
-			} else {
-				if ((td->sp - 1)->type == STACK_TYPE_O) {
-					ADD_CODE (td, MINT_LDFLDA);
+				PUSH_SIMPLE_TYPE (td, STACK_TYPE_I);
+				ADD_CODE (td, MINT_LDC_I4);
+				WRITE32 (td, &offset);
+				PUSH_SIMPLE_TYPE (td, STACK_TYPE_I4);
+#if SIZEOF_VOID_P == 8
+				ADD_CODE(td, MINT_CONV_I8_I4);
+#endif
+
+				MonoMethod *wrapper = mono_marshal_get_ldflda_wrapper (field->type);
+				/* td->ip is incremented by interp_transform_call */
+				interp_transform_call (td, method, wrapper, domain, generic_context, is_bb_start, body_start_offset, NULL, FALSE, error, FALSE);
+				return_if_nok (error);
+			} else
+#endif
+			{
+				if (is_static) {
+					ADD_CODE (td, MINT_POP);
+					ADD_CODE (td, 0);
+					ADD_CODE (td, MINT_LDSFLDA);
+					ADD_CODE (td, get_data_item_index (td, field));
 				} else {
-					g_assert ((td->sp -1)->type == STACK_TYPE_MP);
-					ADD_CODE (td, MINT_LDFLDA_UNSAFE);
+					if ((td->sp - 1)->type == STACK_TYPE_O) {
+						ADD_CODE (td, MINT_LDFLDA);
+					} else {
+						g_assert ((td->sp -1)->type == STACK_TYPE_MP);
+						ADD_CODE (td, MINT_LDFLDA_UNSAFE);
+					}
+					ADD_CODE (td, klass->valuetype ? field->offset - sizeof (MonoObject) : field->offset);
 				}
-				ADD_CODE (td, klass->valuetype ? field->offset - sizeof (MonoObject) : field->offset);
+				td->ip += 5;
 			}
-			td->ip += 5;
 			SET_SIMPLE_TYPE(td->sp - 1, STACK_TYPE_MP);
 			break;
 		}
@@ -4266,7 +4308,9 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			p = mono_interp_dis_mintop_len (p);
 		}
 	}
-	g_assert (td->max_stack_height <= (header->max_stack + 1));
+	/* Check if we use excessive stack space */
+	if (td->max_stack_height > header->max_stack * 3)
+		g_warning ("Excessive stack space usage for method %s, %d/%d", method->name, td->max_stack_height, header->max_stack);
 
 	int code_len = td->new_ip - td->new_code;
 
@@ -4289,6 +4333,8 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 		if (c->flags & MONO_EXCEPTION_CLAUSE_FILTER)
 			c->data.filter_offset = td->in_offsets [c->data.filter_offset];
 	}
+	rtm->stack_size = (sizeof (stackval)) * (td->max_stack_height + 2); /* + 1 for returns of called functions  + 1 for 0-ing in trace*/
+	rtm->stack_size = (rtm->stack_size + 7) & ~7;
 	rtm->vt_stack_size = td->max_vt_sp;
 	rtm->alloca_size = rtm->locals_size + rtm->args_size + rtm->vt_stack_size + rtm->stack_size;
 	rtm->data_items = mono_domain_alloc0 (domain, td->n_data_items * sizeof (td->data_items [0]));
@@ -4592,8 +4638,6 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Int
 	imethod = &tmp_imethod;
 
 	imethod->local_offsets = g_malloc (header->num_locals * sizeof(guint32));
-	imethod->stack_size = (sizeof (stackval)) * (header->max_stack + 2); /* + 1 for returns of called functions  + 1 for 0-ing in trace*/
-	imethod->stack_size = (imethod->stack_size + 7) & ~7;
 	offset = 0;
 	for (i = 0; i < header->num_locals; ++i) {
 		size = mono_type_size (header->locals [i], &align);

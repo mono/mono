@@ -6159,22 +6159,18 @@ mono_string_new_utf32_checked (MonoDomain *domain, const mono_unichar4 *text, gi
 	MonoString *s;
 	mono_unichar2 *utf16_output = NULL;
 	gint32 utf16_len = 0;
-	GError *gerror = NULL;
-	glong items_written;
 	
 	error_init (error);
-	utf16_output = g_ucs4_to_utf16 (text, len, NULL, &items_written, &gerror);
+	utf16_output = g_ucs4_to_utf16 (text, len, NULL, NULL, NULL);
 	
-	if (gerror)
-		g_error_free (gerror);
-
 	while (utf16_output [utf16_len]) utf16_len++;
 	
 	s = mono_string_new_size_checked (domain, utf16_len, error);
-	return_val_if_nok (error, NULL);
+	goto_if_nok (error, exit);
 
 	memcpy (mono_string_chars (s), utf16_output, utf16_len * 2);
 
+exit:
 	g_free (utf16_output);
 	
 	return s;
@@ -6786,23 +6782,6 @@ leave:
 	HANDLE_FUNCTION_RETURN_OBJ (result);
 }
 
-typedef struct {
-	MonoDomain *orig_domain;
-	MonoString *ins;
-	MonoString *res;
-} LDStrInfo;
-
-static void
-str_lookup (MonoDomain *domain, gpointer user_data)
-{
-	MONO_REQ_GC_UNSAFE_MODE;
-
-	LDStrInfo *info = (LDStrInfo *)user_data;
-	if (info->res || domain == info->orig_domain)
-		return;
-	info->res = (MonoString *)mono_g_hash_table_lookup (domain->ldstr_table, info->ins);
-}
-
 static MonoString*
 mono_string_get_pinned (MonoString *str, MonoError *error)
 {
@@ -6861,22 +6840,6 @@ mono_string_is_interned_lookup (MonoString *str, int insert, MonoError *error)
 			ldstr_unlock ();
 		}
 		return s;
-	} else {
-		LDStrInfo ldstr_info;
-		ldstr_info.orig_domain = domain;
-		ldstr_info.ins = str;
-		ldstr_info.res = NULL;
-
-		mono_domain_foreach (str_lookup, &ldstr_info);
-		if (ldstr_info.res) {
-			/* 
-			 * the string was already interned in some other domain:
-			 * intern it in the current one as well.
-			 */
-			mono_g_hash_table_insert (ldstr_table, str, str);
-			ldstr_unlock ();
-			return str;
-		}
 	}
 	ldstr_unlock ();
 	return NULL;
@@ -7214,20 +7177,11 @@ mono_unichar4*
 mono_string_to_utf32 (MonoString *s)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
-
-	mono_unichar4 *utf32_output = NULL; 
-	GError *error = NULL;
-	glong items_written;
 	
 	if (s == NULL)
 		return NULL;
 		
-	utf32_output = g_utf16_to_ucs4 (s->chars, s->length, NULL, &items_written, &error);
-	
-	if (error)
-		g_error_free (error);
-
-	return utf32_output;
+	return g_utf16_to_ucs4 (s->chars, s->length, NULL, NULL, NULL);
 }
 
 /**
