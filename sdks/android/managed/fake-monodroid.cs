@@ -6,12 +6,8 @@ using System.Linq;
 using System.Net;
 	
 namespace Android.Runtime {
-	public static class AndroidEnvironment {
-
-		public const string AndroidLogAppName = "Mono.Android";
-
-		static object lock_ = new object ();
-
+	public static class AndroidEnvironment
+	{
 		// This is invoked by
 		// mscorlib.dll!System.AndroidPlatform.GetDefaultSyncContext()
 		// DO NOT REMOVE
