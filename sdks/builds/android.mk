@@ -132,11 +132,13 @@ _android-$(1)_AC_VARS= \
 _android-$(1)_CFLAGS= \
 	-fstack-protector \
 	-DMONODROID=1 \
+	-DLINUX=1 \
 	$$(android-$(1)_CFLAGS)
 
 _android-$(1)_CXXFLAGS= \
 	-fstack-protector \
 	-DMONODROID=1 \
+	-DLINUX=1 \
 	$$(android-$(1)_CXXFLAGS)
 
 _android-$(1)_CPPFLAGS= \
@@ -251,9 +253,15 @@ $$(eval $$(call RuntimeTemplate,android-$(1)))
 
 endef
 
+ifeq ($(UNAME),Darwin)
 android-host-Darwin_CFLAGS=-mmacosx-version-min=10.9
 $(eval $(call AndroidHostTemplate,host-Darwin))
+else
+ifeq ($(UNAME),Linux)
+android-host-Linux_CFLAGS=-DLINUX
 $(eval $(call AndroidHostTemplate,host-Linux))
+endif
+endif
 
 ##
 # Parameters
@@ -278,11 +286,13 @@ _android-$(1)_AC_VARS= \
 	ac_cv_search_dlopen=no
 
 _android-$(1)_CFLAGS= \
+	-DWINDOWS=1 \
 	-DXAMARIN_PRODUCT_VERSION=0 \
 	$$(patsubst %,-I%,$$(JDK_INCLUDE_DIRS)) \
 	$$(android-$(1)_CFLAGS)
 
 _android-$(1)_CXXFLAGS= \
+	-DWINDOWS=1 \
 	-DXAMARIN_PRODUCT_VERSION=0 \
 	$$(patsubst %,-I%,$$(JDK_INCLUDE_DIRS)) \
 	$$(android-$(1)_CXXFLAGS)

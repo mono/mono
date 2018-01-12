@@ -49,8 +49,6 @@ namespace System {
 		static readonly Func<long, bool, byte[]> certStoreLookup;
 #endif  // SECURITY_DEP
 		static readonly Func<IWebProxy> getDefaultProxy;
-		static readonly GetInterfaceAddressesDelegate getInterfaceAddresses;
-		static readonly FreeInterfaceAddressesDelegate freeInterfaceAddresses;
 
 		static AndroidPlatform ()
 		{
@@ -75,16 +73,6 @@ namespace System {
 				typeof (Func<IWebProxy>), t, "GetDefaultProxy",
 				ignoreCase:false,
 				throwOnBindFailure:true);
-
-			getInterfaceAddresses = (GetInterfaceAddressesDelegate)Delegate.CreateDelegate (
-				typeof (GetInterfaceAddressesDelegate), t, "GetInterfaceAddresses",
-				ignoreCase: false,
-				throwOnBindFailure: false);
-			
-			freeInterfaceAddresses = (FreeInterfaceAddressesDelegate)Delegate.CreateDelegate (
-				typeof (FreeInterfaceAddressesDelegate), t, "FreeInterfaceAddresses",
-				ignoreCase: false,
-				throwOnBindFailure: false);
 		}
 
 #if SECURITY_DEP
@@ -120,23 +108,6 @@ namespace System {
 		internal static IWebProxy GetDefaultProxy ()
 		{
 			return getDefaultProxy ();
-		}
-
-		internal static int GetInterfaceAddresses (out IntPtr ifap)
-		{
-			ifap = IntPtr.Zero;
-			if (getInterfaceAddresses == null)
-				return -1;
-
-			return getInterfaceAddresses (out ifap);
-		}
-
-		internal static void FreeInterfaceAddresses (IntPtr ifap)
-		{
-			if (freeInterfaceAddresses == null)
-				return;
-
-			freeInterfaceAddresses (ifap);
 		}
 	}
 }

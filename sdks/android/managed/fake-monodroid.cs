@@ -20,28 +20,6 @@ namespace Android.Runtime {
 			return null; //we don't really care
 		}
 
-		// These are invoked by
-		// System.dll!System.AndroidPlatform.getifaddrs
-		// DO NOT REMOVE
-		[DllImport ("__Internal")]
-		static extern int monodroid_getifaddrs (out IntPtr ifap);
-
-		static int GetInterfaceAddresses (out IntPtr ifap)
-		{
-			return monodroid_getifaddrs (out ifap);
-		}
-		
-		// These are invoked by
-		// System.dll!System.AndroidPlatform.freeifaddrs
-		// DO NOT REMOVE
-		[DllImport ("__Internal")] 
-		static extern void monodroid_freeifaddrs (IntPtr ifap);
-
-		static void FreeInterfaceAddresses (IntPtr ifap)
-		{
-			monodroid_freeifaddrs (ifap);
-		}
-
 		[DllImport ("__Internal")]
 		static extern void _monodroid_detect_cpu_and_architecture (ref ushort built_for_cpu, ref ushort running_on_cpu, ref byte is64bit);
 
