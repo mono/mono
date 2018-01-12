@@ -197,7 +197,7 @@ class File // TBD
 
 int main()
 {
-	char buffer[4096 * 16] = { 0 };
+	char buffer[0x1000 * 2] = "MZ";
 	PIMAGE_DOS_HEADER dos = (PIMAGE_DOS_HEADER)&buffer;
 
 	// empty file
@@ -207,8 +207,6 @@ int main()
 	
 	// just dos header and PE signature is out of range
 	f = open("pe-sig-of-range.dll");
-	buffer[0] = 'M';
-	buffer[1] = 'Z';
 	dos->e_lfanew = 0x1000;
 	fwrite(dos, sizeof(*dos), 1, f);
 	fclose(f);
@@ -227,7 +225,7 @@ int main()
 
 	// 4k and PE signature crosses range
 	f = open("pe-sig-of-range-4kfile.dll");
-	dos->e_lfanew = 0x1000-2;
+	dos->e_lfanew = 0x1000 - 2;
 	fwrite(buffer, 0x1000, 1, f);
 	fclose(f);
 	
@@ -235,13 +233,11 @@ int main()
 	// or less carefully and just do every value
 	for (int i = 0; i < sizeof (IMAGE_NT_HEADERS32); ++i)
 	{
-		char buffer[4096 * 2] = { 0 };
+		char buffer[0x1000 * 2] = "MZ";
 		PIMAGE_DOS_HEADER dos = (PIMAGE_DOS_HEADER)&buffer;
 		PIMAGE_NT_HEADERS32 nt = (PIMAGE_NT_HEADERS32)&buffer[0x1000 - i];
 		char name[100];
 	
-		buffer[0] = 'M';
-		buffer[1] = 'Z';
 		dos->e_lfanew = 0x1000 - i;
 		nt->Signature = IMAGE_NT_SIGNATURE;
 		sprintf(name, "32-%d.dll", i);
@@ -252,13 +248,11 @@ int main()
 
 	for (int i = 0; i < sizeof (IMAGE_NT_HEADERS64); ++i)
 	{
-		char buffer[4096 * 2] = { 0 };
+		char buffer[0x1000 * 2] = "MZ";
 		PIMAGE_DOS_HEADER dos = (PIMAGE_DOS_HEADER)&buffer;
 		PIMAGE_NT_HEADERS64 nt = (PIMAGE_NT_HEADERS64)&buffer[0x1000 - i];
 		char name[100];
 
-		buffer[0] = 'M';
-		buffer[1] = 'Z';
 		dos->e_lfanew = 0x1000 - i;
 		nt->Signature = IMAGE_NT_SIGNATURE;
 		sprintf(name, "64-%d.dll", i);
