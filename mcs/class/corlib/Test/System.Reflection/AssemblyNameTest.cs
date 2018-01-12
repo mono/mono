@@ -1883,6 +1883,16 @@ public class AssemblyNameTest {
 		Assert.AreEqual (0xE0, t [6], "#4.6");
 		Assert.AreEqual (0x89, t [7], "#4.7");
 	}
+
+	[Test]
+	public void TestSettingCultureName ()
+	{
+	    AssemblyName aname = Assembly.GetExecutingAssembly ().GetName ();
+	    aname.CultureName = null;
+	    Assert.IsFalse(aname.ToString().Contains("en-US"));
+	    aname.CultureName = "en-US";
+	    Assert.IsTrue(aname.ToString().Contains("en-US"));
+	}
 }
 
 }
