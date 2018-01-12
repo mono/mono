@@ -228,7 +228,7 @@ namespace Mono.Net.Security
 				providerCache = new Dictionary<Guid,MSI.MonoTlsProvider> ();
 
 #if UNITY
-				if (Mono.Unity.UnityTls.IsSupported())
+				if (Mono.Unity.UnityTls.IsSupported)
 				{
 					var unityTlsEntry = new Tuple<Guid,String> (UnityTlsId, "Mono.Unity.UnityTlsProvider");
 					providerRegistration.Add ("default", unityTlsEntry);
