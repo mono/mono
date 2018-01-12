@@ -10,7 +10,7 @@
 #include <mono/metadata/profiler.h>
 #endif //RUNTIME_IL2CPP
 
-#ifdef IL2CPP_MONO_DEBUGGER
+#ifdef RUNTIME_IL2CPP
 
 #define THREAD_STATIC_FIELD_OFFSET -1
 
