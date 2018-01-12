@@ -1068,6 +1068,7 @@ HANDLES(ICALL(WAITH_2, "Wait_internal", ves_icall_System_Threading_WaitHandle_Wa
 #ifdef ENABLE_MONODROID
 ICALL_TYPE(ANDROIDTIMEZONES, "System.TimeZoneInfo/AndroidTimeZones", ANDROIDTIMEZONES_1)
 NOHANDLES(ICALL(ANDROIDTIMEZONES_1, "GetDefaultTimeZoneId", ves_icall_System_TimezoneInfo_AndroidTimeZones_GetDefaultTimeZoneId))
+NOHANDLES(ICALL(ANDROIDTIMEZONES_2, "GetSystemProperty", ves_icall_System_TimezoneInfo_AndroidTimeZones_GetSystemProperty))
 #endif
 
 ICALL_TYPE(TYPE, "System.Type", TYPE_1)

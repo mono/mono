@@ -560,25 +560,15 @@ namespace System {
 				}
 			}
 			
-			[DllImport ("__Internal")]
-			static extern int monodroid_get_system_property (string name, ref IntPtr value);
-			
 			static string GetDefaultTimeZoneName ()
 			{
-				IntPtr value = IntPtr.Zero;
-				int n = 0;
 				string defaultTimeZone  = Environment.GetEnvironmentVariable ("__XA_OVERRIDE_TIMEZONE_ID__");
-
 				if (!string.IsNullOrEmpty (defaultTimeZone))
 					return defaultTimeZone;
 
 				// Used by the tests
-				if (Environment.GetEnvironmentVariable ("__XA_USE_JAVA_DEFAULT_TIMEZONE_ID__") == null)
-					n = monodroid_get_system_property ("persist.sys.timezone", ref value);
-				
-				if (n > 0 && value != IntPtr.Zero) {
-					defaultTimeZone = (Marshal.PtrToStringAnsi (value) ?? String.Empty).Trim ();
-					monodroid_free (value);
+				if (Environment.GetEnvironmentVariable ("__XA_USE_JAVA_DEFAULT_TIMEZONE_ID__") == null) {
+					defaultTimeZone = GetPersistTimeZone ()?.Trim ();
 					if (!String.IsNullOrEmpty (defaultTimeZone))
 						return defaultTimeZone;
 				}
@@ -589,6 +579,23 @@ namespace System {
 
 				return null;
 			}
+
+			static string GetPersistTimeZone ()
+			{
+				IntPtr id = IntPtr.Zero;
+				try {
+					int res = GetSystemProperty ("persist.sys.timezone", ref id);
+					if (res <= 0 || id == IntPtr.Zero)
+						return null;
+					return Marshal.PtrToStringAnsi (id);
+				} finally {
+					if (id != IntPtr.Zero)
+						Mono.Runtime.GFree (id);
+				}
+			}
+
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			static extern int GetSystemProperty (string name, ref IntPtr value);
 
 			static string GetDefaultTimeZone ()
 			{
@@ -606,9 +613,6 @@ namespace System {
 
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			static extern IntPtr GetDefaultTimeZoneId ();
-
-			[DllImport ("__Internal")]
-			static extern void monodroid_free (IntPtr ptr);
 
 #if SELF_TEST
 			/*

@@ -203,8 +203,8 @@ $(eval $(call AndroidTargetTemplate,arm64-v8a,arm64,aarch64-linux-android,aarch6
 $(eval $(call AndroidTargetTemplate,x86,x86,i686-linux-android,i686-linux-android))
 
 ## android-x86_64
-android-x86_64_CFLAGS=-DL_cuserid=9
-android-x86_64_CXXFLAGS=-DL_cuserid=9
+android-x86_64_CFLAGS=-DL_cuserid=9 -DANDROID64
+android-x86_64_CXXFLAGS=-DL_cuserid=9 -DANDROID64
 $(eval $(call AndroidTargetTemplate,x86_64,x86_64,x86_64-linux-android,x86_64-linux-android))
 
 ##
