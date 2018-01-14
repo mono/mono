@@ -476,6 +476,11 @@ NOHANDLES(ICALL(UNIXNETWORKINTERFACEAPI_1, "freeifaddrs", ves_icall_System_Net_N
 NOHANDLES(ICALL(UNIXNETWORKINTERFACEAPI_2, "getifaddrs", ves_icall_System_Net_NetworkInformation_NetworkInterfaceFactory_UnixNetworkInterfaceAPI_getifaddrs))
 #endif
 
+#ifdef ENABLE_MONODROID
+ICALL_TYPE(UNIXIPINTERFACEPROPERTIES, "System.Net.NetworkInformation.UnixIPInterfaceProperties", UNIXIPINTERFACEPROPERTIES_1)
+NOHANDLES(ICALL(UNIXIPINTERFACEPROPERTIES_1, "GetDNSServers", ves_icall_System_Net_NetworkInformation_UnixIPInterfaceProperties_GetDNSServers))
+#endif
+
 ICALL_TYPE(SOCK, "System.Net.Sockets.Socket", SOCK_1)
 HANDLES(ICALL(SOCK_1, "Accept_internal(intptr,int&,bool)", ves_icall_System_Net_Sockets_Socket_Accept_internal))
 HANDLES(ICALL(SOCK_2, "Available_internal(intptr,int&)", ves_icall_System_Net_Sockets_Socket_Available_internal))

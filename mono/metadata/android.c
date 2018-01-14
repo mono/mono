@@ -435,3 +435,40 @@ ves_icall_Mono_Unix_Android_AndroidUtils_DetectCpuAndArchitecture (guint16 *buil
 	g_assert (running_on_cpu);
 	*running_on_cpu = get_running_on_cpu ();
 }
+
+gint32
+ves_icall_System_Net_NetworkInformation_UnixIPInterfaceProperties_GetDNSServers (gpointer *dns_servers_array)
+{
+	g_assert (dns_servers_array);
+	*dns_servers_array = NULL;
+
+	gsize  len;
+	gchar *dns;
+	gchar *dns_servers [8];
+	gint   count = 0;
+	gchar  prop_name[] = "net.dnsX";
+	for (gint i = 0; i < 8; i++) {
+		prop_name [7] = (char)(i + 0x31);
+		len = monodroid_get_system_property (prop_name, &dns);
+		if (len <= 0) {
+			dns_servers [i] = NULL;
+			continue;
+		}
+		dns_servers [i] = g_strndup (dns, len);
+		count++;
+	}
+
+	if (count <= 0)
+		return 0;
+
+	gchar **ret = g_new (gchar*, count);
+	gchar **p = ret;
+	for (gint i = 0; i < 8; i++) {
+		if (!dns_servers [i])
+			continue;
+		*p++ = dns_servers [i];
+	}
+
+	*dns_servers_array = (gpointer)ret;
+	return count;
+}
