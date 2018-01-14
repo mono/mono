@@ -68,4 +68,7 @@ ves_icall_Mono_Unix_Android_AndroidUtils_DetectCpuAndArchitecture (guint16 *buil
 gint32
 ves_icall_System_TimezoneInfo_AndroidTimeZones_GetSystemProperty (const gchar *name, gchar **value);
 
+gint32
+ves_icall_System_Net_NetworkInformation_UnixIPInterfaceProperties_GetDNSServers (gpointer *dns_servers_array);
+
 #endif /* __MONO_METADATA_ANDROID_H__ */

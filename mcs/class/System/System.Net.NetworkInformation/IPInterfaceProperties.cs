@@ -53,30 +53,34 @@ namespace System.Net.NetworkInformation {
 			throw new NotImplementedException ();
 		}
 #if MONODROID
-		[DllImport ("__Internal")]
-		static extern int _monodroid_get_dns_servers (out IntPtr dns_servers_array);
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern int GetDNSServers (ref IntPtr dns_servers_array);
 
 		void GetDNSServersFromOS ()
 		{
-			IntPtr dsa;
-			int len = _monodroid_get_dns_servers (out dsa);
-			if (len <= 0)
-				return;
+			IntPtr dsa = IntPtr.Zero;
+			try {
+				int len = GetDNSServers (ref dsa);
+				if (len <= 0)
+					return;
 
-			var servers = new IntPtr [len];
-			Marshal.Copy (dsa, servers, 0, len);
+				var servers = new IntPtr [len];
+				Marshal.Copy (dsa, servers, 0, len);
 
-			dns_servers = new IPAddressCollection ();
-			foreach (IntPtr s in servers) {
-				string server_ip = Marshal.PtrToStringAnsi (s);
-				Marshal.FreeHGlobal (s);
+				dns_servers = new IPAddressCollection ();
+				foreach (IntPtr s in servers) {
+					string server_ip = Marshal.PtrToStringAnsi (s);
+					Marshal.FreeHGlobal (s);
 
-				IPAddress addr;
-				if (!IPAddress.TryParse (server_ip, out addr))
-					continue;
-				dns_servers.InternalAdd (addr);
+					IPAddress addr;
+					if (!IPAddress.TryParse (server_ip, out addr))
+						continue;
+					dns_servers.InternalAdd (addr);
+				}
+			} finally {
+				if (dsa != IntPtr.Zero)
+					Mono.Runtime.GFree (dsa);
 			}
-			Marshal.FreeHGlobal (dsa);
 		}
 #else
 		static Regex ns = new Regex (@"\s*nameserver\s+(?<address>.*)");
