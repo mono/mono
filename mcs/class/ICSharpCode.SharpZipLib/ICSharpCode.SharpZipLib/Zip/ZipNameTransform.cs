@@ -44,6 +44,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 	/// <summary>
 	/// ZipNameTransform transforms name as per the Zip file convention.
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class ZipNameTransform : INameTransform
 	{
 		/// <summary>

@@ -38,6 +38,7 @@ using System.Text;
 
 namespace ICSharpCode.SharpZipLib.Tar {
 	
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public delegate void ProgressMessageHandler(TarArchive archive, TarEntry entry, string message);
 	
 	/// <summary>
@@ -61,6 +62,7 @@ namespace ICSharpCode.SharpZipLib.Tar {
 	/// TarBuffer.getCurrentRecordNum() and TarBuffer.getCurrentBlockNum()
 	/// methods, this would be rather trvial.
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class TarArchive
 	{
 		bool verbose;
