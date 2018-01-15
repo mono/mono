@@ -48,6 +48,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 	/// 
 	/// author of the original java version : Jochen Hoenicke
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class DeflaterHuffman
 	{
 		private static  int BUFSIZE = 1 << (DeflaterConstants.DEFAULT_MEM_LEVEL + 6);
@@ -79,6 +80,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 			15
 		};
 		
+		[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 		public class Tree 
 		{
 			public short[] freqs;
