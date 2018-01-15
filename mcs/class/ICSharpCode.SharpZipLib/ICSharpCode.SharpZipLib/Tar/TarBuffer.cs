@@ -51,6 +51,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 	/// TarBuffers are created by Tar IO Streams.
 	/// </p>
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class TarBuffer
 	{
 
