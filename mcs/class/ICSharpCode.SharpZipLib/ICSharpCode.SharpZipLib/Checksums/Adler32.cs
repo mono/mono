@@ -86,6 +86,7 @@ namespace ICSharpCode.SharpZipLib.Checksums
 	/// </summary>
 	/// <see cref="ICSharpCode.SharpZipLib.Zip.Compression.Streams.InflaterInputStream"/>
 	/// <see cref="ICSharpCode.SharpZipLib.Zip.Compression.Streams.DeflaterOutputStream"/>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public sealed class Adler32 : IChecksum
 	{
 		/// <summary>

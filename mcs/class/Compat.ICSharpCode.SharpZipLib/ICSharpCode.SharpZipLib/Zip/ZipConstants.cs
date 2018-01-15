@@ -43,6 +43,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 	/// <summary>
 	/// This class contains constants used for zip.
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public sealed class ZipConstants
 	{
 		/* The local file header */

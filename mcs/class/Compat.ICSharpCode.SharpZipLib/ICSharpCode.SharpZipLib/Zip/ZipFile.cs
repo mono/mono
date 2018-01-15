@@ -82,6 +82,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 	/// 	}
 	/// }
 	/// </example>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class ZipFile : IEnumerable
 	{
 		string     name;
