@@ -588,20 +588,6 @@ _monodroid_get_android_api_level (void)
 	return 24;
 }
 
-MONO_API int
-_monodroid_get_network_interface_up_state (void *ifname, int *is_up)
-{
-	*is_up = 1;
-	return 1;
-}
-
-MONO_API int
-_monodroid_get_network_interface_supports_multicast (void *ifname, int *supports_multicast)
-{
-	*supports_multicast = 0;
-	return 1;
-}
-
 JNIEXPORT jint JNICALL
 JNI_OnLoad (JavaVM *vm, void *reserved)
 {
