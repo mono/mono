@@ -901,13 +901,9 @@ namespace System.Net
 		internal int EndRead (HttpWebRequest request, IAsyncResult result)
 		{
 			Stream s = null;
+			Exception exception = null;
+
 			lock (this) {
-				if (request.Aborted)
-					throw new WebException ("Request aborted", WebExceptionStatus.RequestCanceled);
-				if (Data.request != request)
-					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
-				if (nstream == null)
-					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
 				s = nstream;
 			}
 
@@ -915,18 +911,34 @@ namespace System.Net
 			bool done = false;
 			WebAsyncResult wr = null;
 			IAsyncResult nsAsync = ((WebAsyncResult) result).InnerAsyncResult;
-			if (chunkedRead && (nsAsync is WebAsyncResult)) {
-				wr = (WebAsyncResult) nsAsync;
-				IAsyncResult inner = wr.InnerAsyncResult;
-				if (inner != null && !(inner is WebAsyncResult)) {
-					nbytes = s.EndRead (inner);
+			try {
+				if (chunkedRead && (nsAsync is WebAsyncResult)) {
+					wr = (WebAsyncResult) nsAsync;
+					IAsyncResult inner = wr.InnerAsyncResult;
+					if (inner != null && !(inner is WebAsyncResult)) {
+						nbytes = s.EndRead (inner);
+						done = nbytes == 0;
+					}
+				} else if (!(nsAsync is WebAsyncResult)) {
+					nbytes = s.EndRead (nsAsync);
+					wr = (WebAsyncResult) result;
 					done = nbytes == 0;
 				}
-			} else if (!(nsAsync is WebAsyncResult)) {
-				nbytes = s.EndRead (nsAsync);
-				wr = (WebAsyncResult) result;
-				done = nbytes == 0;
+			} catch (Exception exc) {
+				exception = exc;
 			}
+
+			lock (this) {
+				if (request.Aborted)
+					throw new WebException ("Request aborted", WebExceptionStatus.RequestCanceled);
+				if (Data.request != request)
+					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
+				if (nstream == null)
+					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
+			}
+
+			if (exception != null)
+				throw exception;
 
 			if (chunkedRead) {
 				try {
@@ -1029,6 +1041,24 @@ namespace System.Net
 		internal bool EndWrite (HttpWebRequest request, bool throwOnError, IAsyncResult result)
 		{
 			Stream s = null;
+			WebExceptionStatus newStatus = status;
+			bool complete;
+			Exception exception = null;
+
+			lock (this) {
+				s = nstream;
+			}
+
+			try {
+				s.EndWrite (result);
+				complete = true;
+			} catch (Exception exc) {
+				newStatus = WebExceptionStatus.SendFailure;
+				if (throwOnError && exc.InnerException != null)
+					exception = exc.InnerException;
+				complete = false;
+			}
+
 			lock (this) {
 				if (status == WebExceptionStatus.RequestCanceled)
 					return true;
@@ -1036,18 +1066,12 @@ namespace System.Net
 					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
 				if (nstream == null)
 					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
-				s = nstream;
 			}
 
-			try {
-				s.EndWrite (result);
-				return true;
-			} catch (Exception exc) {
-				status = WebExceptionStatus.SendFailure;
-				if (throwOnError && exc.InnerException != null)
-					throw exc.InnerException;
-				return false;
-			}
+			status = newStatus;
+			if (exception != null)
+				throw exception;
+			return complete;
 		}
 
 		internal int Read (HttpWebRequest request, byte [] buffer, int offset, int size)
@@ -1132,7 +1156,6 @@ namespace System.Net
 					try {
 						nstream.Close ();
 					} catch {}
-					nstream = null;
 				}
 
 				if (socket != null) {
