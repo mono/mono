@@ -1402,12 +1402,12 @@ namespace Mono.Options
 				}
 				// look for {i:foo} if maxIndex > 1
 				if (maxIndex > 1 && parts.Length == 2 && 
-					parts[0] == index.ToString (CultureInfo.InvariantCulture))	{
+					parts[0] == index.ToString (CultureInfo.InvariantCulture)) {
 					argName = parts[1];
 				}
 			}
 
-			if (string.IsNullOrEmpty (argName))	{
+			if (string.IsNullOrEmpty (argName)) {
 				argName = maxIndex == 1 ? "VALUE" : "VALUE" + (index + 1);
 			}
 			return argName;
