@@ -322,6 +322,12 @@ public class Tests : TestsBase, ITest2
 			new Tests ().attach ();
 			return 0;
 		}
+		if (args.Length > 0 && args [0] == "step-out-void-async") {
+			var wait = new ManualResetEvent (false);
+			step_out_void_async (wait);
+			wait.WaitOne ();//Don't exist until step_out_void_async is executed...
+			return 0;
+		}
 		assembly_load ();
 		breakpoints ();
 		single_stepping ();
@@ -1719,6 +1725,19 @@ public class Tests : TestsBase, ITest2
 			Thread.Sleep (200);
 			attach_break ();
 		}
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	static async void step_out_void_async (ManualResetEvent wait)
+	{
+		await Task.Yield ();
+		step_out_void_async_2 ();
+		wait.Set ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	static void step_out_void_async_2 ()
+	{
 	}
 }
 
