@@ -21,6 +21,16 @@ else
 LIB_REFS += System.EnterpriseServices System.Configuration
 endif
 
+ifdef MONO_FEATURE_APPLETLS
+LIB_MCS_FLAGS += -d:MONO_FEATURE_APPLETLS
+endif
+
+ifndef PROFILE_DISABLE_BTLS
+ifdef HAVE_BTLS
+LIB_MCS_FLAGS += -d:MONO_FEATURE_BTLS
+endif
+endif
+
 TXT_RESOURCE_STRINGS = ../referencesource/System.Data/system.data.txt
 RESX_RESOURCE_STRING = \
 	../../../external/corefx/src/System.Data.Common/src/Resources/Strings.resx	\
