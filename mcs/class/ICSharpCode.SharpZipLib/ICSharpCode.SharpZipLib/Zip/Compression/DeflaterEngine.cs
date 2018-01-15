@@ -47,6 +47,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 	/// <summary>
 	/// Strategies for deflater
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public enum DeflateStrategy 
 	{
 		/// <summary>
@@ -87,6 +88,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 	/// Low level compression engine for deflate algorithm which uses a 32K sliding window
 	/// with secondary compression from Huffman/Shannon-Fano codes.
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class DeflaterEngine : DeflaterConstants 
 	{
 		static int TOO_FAR = 4096;
