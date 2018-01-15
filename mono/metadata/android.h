@@ -71,4 +71,10 @@ ves_icall_System_TimezoneInfo_AndroidTimeZones_GetSystemProperty (const gchar *n
 gint32
 ves_icall_System_Net_NetworkInformation_UnixIPInterfaceProperties_GetDNSServers (gpointer *dns_servers_array);
 
+MonoBoolean
+ves_icall_System_Net_NetworkInformation_LinuxNetworkInterface_GetUpState (const gchar *ifname, MonoBoolean *is_up);
+
+MonoBoolean
+ves_icall_System_Net_NetworkInformation_LinuxNetworkInterface_GetSupportsMulticast (const gchar *ifname, MonoBoolean *supports_multicast);
+
 #endif /* __MONO_METADATA_ANDROID_H__ */

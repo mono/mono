@@ -33,6 +33,11 @@ static jclass     TimeZone_class;
 static jmethodID  TimeZone_getDefault;
 static jmethodID  TimeZone_getID;
 
+static jclass     NetworkInterface_class;
+static jmethodID  NetworkInterface_getByName;
+static jmethodID  NetworkInterface_isUp;
+static jmethodID  NetworkInterface_supportsMulticast;
+
 static jobject
 lref_to_gref (JNIEnv *env, jobject lref)
 {
@@ -67,6 +72,22 @@ mono_jvm_initialize (JavaVM *vm)
 	TimeZone_getID = (*env)->GetMethodID (env, TimeZone_class, "getID", "()Ljava/lang/String;");
 	if (!TimeZone_getID)
 		g_error ("%s: Fatal error: Could not find java.util.TimeZone.getDefault() method!", __func__);
+
+	NetworkInterface_class = lref_to_gref (env, (*env)->FindClass (env, "java/net/NetworkInterface"));
+	if (!NetworkInterface_class)
+		g_error ("Fatal error: Could not find java.net.NetworkInterface class!");
+
+	NetworkInterface_getByName = (*env)->GetStaticMethodID (env, NetworkInterface_class, "getByName", "(Ljava/lang/String;)Ljava/net/NetworkInterface;");
+	if (!NetworkInterface_getByName)
+		g_error ("Fatal error: Could not find java.net.NetworkInterface.getByName() method!");
+
+	NetworkInterface_isUp = (*env)->GetMethodID (env, NetworkInterface_class, "isUp", "()Z");
+	if (!NetworkInterface_isUp)
+		g_error ("Fatal error: Could not find java.net.NetworkInterface.isUp() method!");
+
+	NetworkInterface_supportsMulticast = (*env)->GetMethodID (env, NetworkInterface_class, "supportsMulticast", "()Z");
+	if (!NetworkInterface_supportsMulticast)
+		g_error ("Fatal error: Could not find java.net.NetworkInterface.supportsMulticast() method!");
 
 	initialized = TRUE;
 }
@@ -471,4 +492,63 @@ ves_icall_System_Net_NetworkInformation_UnixIPInterfaceProperties_GetDNSServers 
 
 	*dns_servers_array = (gpointer)ret;
 	return count;
+}
+
+static MonoBoolean
+_monodroid_get_network_interface_state (const gchar *ifname, MonoBoolean *is_up, MonoBoolean *supports_multicast)
+{
+	MonoBoolean ret;
+
+	if (!ifname || strlen (ifname) == 0 || (!is_up && !supports_multicast))
+		return FALSE;
+
+	g_assert (NetworkInterface_class);
+	g_assert (NetworkInterface_getByName);
+
+	JNIEnv *env = mono_jvm_get_jnienv ();
+	jstring NetworkInterface_nameArg = (*env)->NewStringUTF (env, ifname);
+	jobject networkInterface = (*env)->CallStaticObjectMethod (env, NetworkInterface_class, NetworkInterface_getByName, NetworkInterface_nameArg);
+	if ((*env)->ExceptionOccurred (env)) {
+		mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_ANDROID_NET, "Java exception occurred while looking up the interface '%s'", ifname);
+		(*env)->ExceptionDescribe (env);
+		(*env)->ExceptionClear (env);
+		ret = FALSE;
+		goto leave;
+	}
+
+	if (!networkInterface) {
+		mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_ANDROID_NET, "Failed to look up interface '%s' using Java API", ifname);
+		ret = FALSE;
+		goto leave;
+	}
+
+	if (is_up) {
+		g_assert (NetworkInterface_isUp);
+		*is_up = (gboolean)(*env)->CallBooleanMethod (env, networkInterface, NetworkInterface_isUp);
+	}
+
+	if (supports_multicast) {
+		g_assert (NetworkInterface_supportsMulticast);
+		*supports_multicast = (gboolean)(*env)->CallBooleanMethod (env, networkInterface, NetworkInterface_supportsMulticast);
+	}
+
+	ret = TRUE;
+
+leave:
+	if (networkInterface)
+		(*env)->DeleteLocalRef (env, networkInterface);
+
+	return ret;
+}
+
+MonoBoolean
+ves_icall_System_Net_NetworkInformation_LinuxNetworkInterface_GetUpState (const gchar *ifname, MonoBoolean *is_up)
+{
+	return _monodroid_get_network_interface_state (ifname, is_up, NULL);
+}
+
+MonoBoolean
+ves_icall_System_Net_NetworkInformation_LinuxNetworkInterface_GetSupportsMulticast (const gchar *ifname, MonoBoolean *supports_multicast)
+{
+	return _monodroid_get_network_interface_state (ifname, NULL, supports_multicast);
 }
