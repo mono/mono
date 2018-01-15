@@ -1394,23 +1394,20 @@ namespace Mono.Options
 		{
 			var matches = Regex.Matches (description ?? "", @"(?<=(?<!\{)\{)[^{}]*(?=\}(?!\}))"); // ignore double braces 
 			string argName = "";
-			foreach (Match match in matches)
-			{
+			foreach (Match match in matches) {
 				var parts = match.Value.Split (':');
-				if (maxIndex == 1)
-				{
-					// for maxIndex=1 it can be {foo} or {0:foo}
+				// for maxIndex=1 it can be {foo} or {0:foo}
+				if (maxIndex == 1) {
 					argName = parts[parts.Length - 1];
 				}
 				// look for {i:foo} if maxIndex > 1
-				if (maxIndex > 1 && parts.Length == 2 && parts[0] == index.ToString ())
-				{
+				if (maxIndex > 1 && parts.Length == 2 && 
+					parts[0] == index.ToString (CultureInfo.InvariantCulture))	{
 					argName = parts[1];
 				}
 			}
 
-			if (string.IsNullOrEmpty (argName))
-			{
+			if (string.IsNullOrEmpty (argName))	{
 				argName = maxIndex == 1 ? "VALUE" : "VALUE" + (index + 1);
 			}
 			return argName;
