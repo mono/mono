@@ -753,6 +753,7 @@ gchar     *g_ucs4_to_utf8  (const gunichar *str, glong len, glong *items_read, g
 gunichar2 *g_ucs4_to_utf16 (const gunichar *str, glong len, glong *items_read, glong *items_written, GError **err);
 
 /*
+TODO
 	glong inlen = strlen (foo); // this is slow and we don't do it for you
 	glong outlen = g_utf16_to_utf8_len (foo, inlen, err);
 	// check outlen < 0 or err

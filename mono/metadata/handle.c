@@ -598,7 +598,7 @@ mono_unwrapped_string_equal_asciiz (MonoUnwrappedString s, const char* t)
 }
 
 static gboolean
-mono_unwrapped_string_equal_ascii (MonoUnwrappedString s, const char* t, int tlen)
+mono_unwrapped_string_equal_ascii (MonoUnwrappedString s, const char* t, size_t tlen)
 {
 	return s.length == tlen && g_utf16_ascii_equal (s.chars, s.length, t, tlen);
 }
@@ -613,7 +613,7 @@ mono_string_handle_equal_asciiz (MonoStringHandle s, const char* t)
 }
 
 gboolean
-mono_string_handle_equal_ascii (MonoStringHandle s, const char* t, int tlen)
+mono_string_handle_equal_ascii (MonoStringHandle s, const char* t, size_t tlen)
 {
 	MonoUnwrappedString u = mono_unwrap_string_handle (s);
 	gboolean const result = mono_unwrapped_string_equal_ascii (u, t, tlen);
@@ -628,7 +628,7 @@ mono_string_equal_asciiz (MonoString *s, const char* t)
 }
 
 gboolean
-mono_string_equal_ascii (MonoString *s, const char* t, int tlen)
+mono_string_equal_ascii (MonoString *s, const char* t, size_t tlen)
 {
 	return mono_unwrapped_string_equal_ascii (mono_unwrap_string (s), t, tlen);
 }

@@ -589,7 +589,7 @@ Usage patterns:
 */
 typedef struct _MonoUnwrappedString {
 	const gunichar2 *chars;
-	int length; // FIXME? size_t
+	size_t length;
 	struct {
 		guint gchandle;
 	} privat; // "private" but keep it legal C++
@@ -606,9 +606,9 @@ void mono_unwrapped_string_cleanup (MonoUnwrappedString* self);
 // Comparisons with length are faster, as assuming a limited character set,
 // and all single byte characters, unequal length implies unequal strings.
 gboolean mono_string_handle_equal_asciiz (MonoStringHandle s, const char* t);
-gboolean mono_string_handle_equal_ascii (MonoStringHandle s, const char* t, int tlen);
+gboolean mono_string_handle_equal_ascii (MonoStringHandle s, const char* t, size_t tlen);
 gboolean mono_string_equal_asciiz (MonoString* s, const char* t);
-gboolean mono_string_equal_ascii (MonoString* s, const char* t, int tlen);
+gboolean mono_string_equal_ascii (MonoString* s, const char* t, size_t tlen);
 
 G_END_DECLS
 
