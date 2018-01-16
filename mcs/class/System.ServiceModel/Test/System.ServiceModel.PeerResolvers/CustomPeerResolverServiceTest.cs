@@ -6,7 +6,7 @@
 // 
 // Copyright 2007 Marcos Cobena (http://www.youcannoteatbits.org/)
 // 
-
+#if !MOBILE
 using System;
 using System.Collections.Generic;
 using System.ServiceModel;
@@ -210,3 +210,4 @@ namespace MonoTests.System.ServiceModel.PeerResolvers
 		}
 	}
 }
+#endif
