@@ -289,9 +289,39 @@ namespace Mono.Security.Authenticode {
 					byte[] fillup = new byte[addsize];
 					fs.Write (fillup, 0, fillup.Length);
 				}
+/*
+https://download.microsoft.com/download/9/c/5/9c5b2167-8017-4bae-9fde-d599bac8184a/Authenticode_PE.docx
+The Authenticode signature is in a WIN_CERTIFICATE structure, which is declared in Wintrust.h as follows:
+typedef struct _WIN_CERTIFICATE
+{
+    DWORD       dwLength;
+    WORD        wRevision;
+    WORD        wCertificateType;
+    BYTE        bCertificate[ANYSIZE_ARRAY];
+} WIN_CERTIFICATE, *LPWIN_CERTIFICATE;
+
+The fields in WIN_CERTIFICATE are set to the following values:
+dwLength is set to the length of bCertificate.
+wRevision is set to the WIN_CERTIFICATE version number.
+
+wCertificateType is set to 0x0002 for Authenticode signatures.
+This value is defined in Wintrust.h as WIN_CERT_TYPE_PKCS_SIGNED_DATA.
+bCertificate is set to a variable-length binary array that contains the Authenticode PKCS #7 signedData.
+The PKCS #7 integrity is verified as described in ”PKCS #7: Cryptographic Message Syntax Standard.”
+*/
+				// write WIN_CERTIFICATE.dwLength
 				fs.Write (data, 0, data.Length);		// length (again)
-				// This magic value is documented.
-				data = BitConverterLE.GetBytes (0x00020200);    // magic
+				// write WIN_CERTIFICATE.wRevision = 2 and wCertificateType = 2.
+// /usr/local/Cellar/mingw-w64/5.0.3/toolchain-x86_64/x86_64-w64-mingw32/include/wintrust.h				
+//const short WIN_CERT_REVISION_1_0 = 0x0100;
+const short WIN_CERT_REVISION_2_0 = 0x0200;
+//const short WIN_CERT_TYPE_X509 = 0x0001;
+const short WIN_CERT_TYPE_PKCS_SIGNED_DATA = 0x0002;
+//const short WIN_CERT_TYPE_RESERVED_1 = 0x0003;
+//const short WIN_CERT_TYPE_TS_STACK_SIGNED = 0x0004;
+				data = BitConverterLE.GetBytes (WIN_CERT_REVISION_2_0);
+				fs.Write (data, 0, data.Length);
+				data = BitConverterLE.GetBytes (WIN_CERT_TYPE_PKCS_SIGNED_DATA);
 				fs.Write (data, 0, data.Length);
 				fs.Write (asn, 0, asn.Length);
 				if (addsize_signature > 0) {

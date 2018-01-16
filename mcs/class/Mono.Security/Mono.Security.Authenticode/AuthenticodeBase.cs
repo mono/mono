@@ -317,8 +317,7 @@ namespace Mono.Security.Authenticode {
 			// then skip 4 for checksum
 			pe += 4;
 
-			if (pe64)
-			{
+			if (pe64) {
 				// security_directory, if present, is at offset 144 within OptionalHeader64
 				// FIXME This code fails to check if the security_directory is present.
 				// If it is absent, it may or may not be difficult to add, and reject
@@ -328,11 +327,9 @@ namespace Mono.Security.Authenticode {
 				// Hash from checksum to security_directory.
 				hash.TransformBlock (fileblock, pe, 76, fileblock, pe);
 				// then skip 8 bytes for IMAGE_DIRECTORY_ENTRY_SECURITY
-				pe += 76;
-				pe += 8;
+				pe += 76 + 8;
 			}
-			else
-			{
+			else {
 				// security_directory, if present, is at offset 128 within OptionalHeader32
 				// FIXME This code fails to check if the security_directory is present.
 				// If it is absent, it may or may not be difficult to add, and reject
