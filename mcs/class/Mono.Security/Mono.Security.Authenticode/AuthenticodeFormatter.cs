@@ -312,7 +312,7 @@ The PKCS #7 integrity is verified as described in ”PKCS #7: Cryptographic Mes
 				// write WIN_CERTIFICATE.dwLength
 				fs.Write (data, 0, data.Length);		// length (again)
 				// write WIN_CERTIFICATE.wRevision = 2 and wCertificateType = 2.
-// /usr/local/Cellar/mingw-w64/5.0.3/toolchain-x86_64/x86_64-w64-mingw32/include/wintrust.h				
+// /usr/local/Cellar/mingw-w64/5.0.3/toolchain-x86_64/x86_64-w64-mingw32/include/wintrust.h
 //const short WIN_CERT_REVISION_1_0 = 0x0100;
 const short WIN_CERT_REVISION_2_0 = 0x0200;
 //const short WIN_CERT_TYPE_X509 = 0x0001;
