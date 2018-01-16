@@ -2957,6 +2957,13 @@ namespace Mono.CSharp {
 				if ((restrictions & MemberLookupRestrictions.NameOfExcluded) == 0 && Name == "nameof")
 					return new NameOf (this);
 
+				if ((restrictions & MemberLookupRestrictions.ReadAccess) == 0 && Name == "_") {
+					if (rc.Module.Compiler.Settings.Version < LanguageVersion.V_7)
+						rc.Report.FeatureIsNotAvailable (rc.Module.Compiler, loc, "discards");
+
+					return new Discard (loc).Resolve (rc);
+				}
+
 				if (errorMode) {
 					if (variable_found) {
 						rc.Report.Error (841, loc, "A local variable `{0}' cannot be used before it is declared", Name);
@@ -5442,7 +5449,7 @@ namespace Mono.CSharp {
 				}
 
 				if (arg_type != parameter) {
-					if (arg_type == InternalType.VarOutType)
+					if (arg_type == InternalType.VarOutType || arg_type == InternalType.Discard)
 						return 0;
 
 					var ref_arg_type = arg_type as ReferenceContainer;
@@ -6048,6 +6055,11 @@ namespace Mono.CSharp {
 						// Set underlying variable type based on parameter type
 						//
 						((DeclarationExpression)a.Expr).Variable.Type = pt;
+						continue;
+					}
+
+					if (arg_type == InternalType.Discard) {
+						a.Expr.Type = pt;
 						continue;
 					}
 
