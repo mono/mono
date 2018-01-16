@@ -503,6 +503,9 @@ namespace Mono.CSharp
 				}
 
 				eclass = ExprClass.Value;
+
+				// TODO: The type is same only if there is no target element conversion
+				// var res = (/*byte*/ b, /*short*/ s) = (2, 4);
 				type = src.Type;
 				return this;
 			}
@@ -527,7 +530,14 @@ namespace Mono.CSharp
 
 		public override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			if (instance != null)
+				((ExpressionStatement)source).EmitStatement (ec);
+
+			foreach (ExpressionStatement expr in targetExprs)
+				expr.Emit (ec);
+
+			var ctor = MemberCache.FindMember (type, MemberFilter.Constructor (null), BindingRestriction.DeclaredOnly | BindingRestriction.InstanceOnly) as MethodSpec;
+			ec.Emit (OpCodes.Newobj, ctor);
 		}
 
 		public override void EmitStatement (EmitContext ec)
