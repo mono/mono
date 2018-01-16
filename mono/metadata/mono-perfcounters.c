@@ -1371,10 +1371,6 @@ mono_perfcounter_get_impl (
 		MonoStringHandle machine, int *type, MonoBoolean *custom, MonoError *error)
 // FIXME merge with ves_icall_System_Diagnostics_PerformanceCounter_GetImpl
 {
-<<<<<<< HEAD
-	ERROR_DECL (error);
-=======
->>>>>>> perfcounter icall work in progress
 	const CategoryDesc *cdesc;
 	void *result = NULL;
 	/* no support for counters on other machines */
@@ -1387,21 +1383,11 @@ mono_perfcounter_get_impl (
 			return NULL;
 		*custom = TRUE;
 		result = custom_get_impl (scat, counter, instance, type, error);
-<<<<<<< HEAD
-		if (mono_error_set_pending_exception (error))
-			return NULL;
-		return result;
-	}
-	gchar *c_instance = mono_string_to_utf8_checked (instance, error);
-	if (mono_error_set_pending_exception (error))
-		return NULL;
-=======
 		return_val_if_nok (error, NULL);
 		return result;
 	}
 	gchar *c_instance = mono_unwrapped_string_to_utf8 (instance, error);
 	return_val_if_nok (error, NULL);
->>>>>>> perfcounter icall work in progress
 	switch (cdesc->id) {
 	case CATEGORY_CPU:
 		result = cpu_get_impl (counter, c_instance, type, custom);
