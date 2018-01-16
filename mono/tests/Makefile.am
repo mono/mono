@@ -1969,7 +1969,7 @@ TESTSAOT_STRESS_PROCESS=$(TESTS_STRESS_PROCESS:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 endif
 
 test-process-stress: $(TESTS_STRESS_PROCESS) $(TESTSAOT_STRESS_PROCESS) test-runner.exe
-	$(TOOLS_RUNTIME) $(TEST_RUNNER) --testsuite-name $@ --timeout 900 $(TESTS_STRESS_PROCESS)
+	MONO_LOG_LEVEL=debug MONO_LOG_MASK=io-layer-process $(TOOLS_RUNTIME) $(TEST_RUNNER) --testsuite-name $@ --timeout 900 $(TESTS_STRESS_PROCESS)
 
 coreclr-gcstress:
 	$(MAKE) -C $(mono_build_root)/acceptance-tests coreclr-gcstress
