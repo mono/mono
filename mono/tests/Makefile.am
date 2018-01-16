@@ -2,33 +2,16 @@ SUBDIRS = gc-descriptors . testing_gac
 
 check-local:
 	ok=:; \
-	$(MAKE) test-jit || ok=false; \
-	$(MAKE) test-generic-sharing || ok=false; \
-	$(MAKE) test-type-load || ok=false; \
-	$(MAKE) test-multi-netmodule || ok=false; \
-	$(MAKE) test-cattr-type-load || ok=false; \
-	$(MAKE) test-reflection-load-with-context || ok=false; \
-	$(MAKE) test-platform || ok=false; \
-	$(MAKE) test-console-output || ok=false; \
-	$(MAKE) test-env-options || ok=false; \
-	$(MAKE) test-unhandled-exception-2 || ok=false; \
-	$(MAKE) test-appdomain-unload || ok=false; \
 	$(MAKE) test-process-stress || ok=false; \
-	$(MAKE) test-pedump || ok=false; \
-	$(MAKE) test-internalsvisibleto || ok=false; \
-	$(MAKE) rm-empty-logs || ok=false; \
-	$(MAKE) runtest-gac-loading || ok=false; \
 	$$ok
 
 check-full:
 	ok=; \
-	$(MAKE) test-sgen || ok=false; \
 	$(MAKE) check-local || ok=false; \
 	$$ok
 
 check-parallel:
 	ok=; \
-	$(MAKE) compile-tests; \
 	$(MAKE) check-full || ok=false; \
 	$$ok
 
