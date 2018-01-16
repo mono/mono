@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+if [[ ${label} != 'ubuntu-1404-amd64' ]]; then exit 0; fi
+
 export MONO_REPO_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../../" && pwd )"
 export TESTCMD=${MONO_REPO_ROOT}/scripts/ci/run-step.sh
 
