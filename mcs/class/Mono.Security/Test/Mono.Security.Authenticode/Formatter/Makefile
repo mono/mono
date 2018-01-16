@@ -9,8 +9,6 @@ clean:
 
 test check run: all
 	./writefiles
-	set -e
-	set -x
 	for a in *.dll ; do \
 	 	echo mono ./hashfile.exe $$a; \
 	 	mono ./hashfile.exe $$a; \

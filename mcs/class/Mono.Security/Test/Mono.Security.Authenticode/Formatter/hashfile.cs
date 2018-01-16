@@ -9,7 +9,7 @@ public class hashfile
 		File.Copy(args[0], temp);
 		var a = new Mono.Security.Authenticode.AuthenticodeFormatter();
 		var b = a.Sign(temp);
-		System.Console.WriteLine($"hashfile {temp}{b}", temp, b);
+		System.Console.WriteLine($"hashfile {temp}{b}");
 	
 		// TODO dump the signature
 		// TODO if hosting on windows, run signcode and compare
