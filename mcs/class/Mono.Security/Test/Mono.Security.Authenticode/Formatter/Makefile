@@ -5,7 +5,7 @@ MONO_PATH ?= /inst/m6/lib
 all: writefiles hashfile.exe
 
 clean:
-	rm -f writefiles hashfile.exe
+	rm -f writefiles hashfile.exe *.dll *.dll.temp
 
 test check run: all
 	./writefiles
