@@ -322,7 +322,7 @@ namespace Mono.Security.Authenticode {
 				// security_directory, if present, is at offset 144 within OptionalHeader64
 				// FIXME This code fails to check if the security_directory is present.
 				// If it is absent, it may or may not be difficult to add, and reject
-				// the file as invalid.
+				// the file as valid but unsignable.
 				// Checksum is at [64, 68].
 				// 144 - 68 = 76
 				// Hash from checksum to security_directory.
@@ -334,7 +334,7 @@ namespace Mono.Security.Authenticode {
 				// security_directory, if present, is at offset 128 within OptionalHeader32
 				// FIXME This code fails to check if the security_directory is present.
 				// If it is absent, it may or may not be difficult to add, and reject
-				// the file as invalid.
+				// the file as valid but unsignable.
 				// Checksum is at [64, 68].
 				// 128 - 68 = 60
 				// Continue hashing from (generally) 220 to 279 (60 bytes)
