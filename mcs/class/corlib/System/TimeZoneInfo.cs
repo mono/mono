@@ -170,9 +170,15 @@ namespace System
 #endif
 
 #if UNITY
-			var localTimeZoneFallback = CreateLocalUnity();
-			if(localTimeZoneFallback == null)
-			    localTimeZoneFallback = Utc;
+			TimeZoneInfo localTimeZoneFallback = null;
+			try {
+				localTimeZoneFallback = CreateLocalUnity();
+			} catch {
+				localTimeZoneFallback = null;
+			}
+
+			if (localTimeZoneFallback == null)
+				localTimeZoneFallback = Utc;
 #endif
 
 			var tz = Environment.GetEnvironmentVariable ("TZ");
