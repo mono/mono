@@ -341,8 +341,6 @@ void mono_handle_verify (MonoRawHandle handle);
 #define MONO_HANDLE_PAYLOAD_OFFSET_(PayloadType) MONO_STRUCT_OFFSET(PayloadType, __raw)
 #define MONO_HANDLE_PAYLOAD_OFFSET(TYPE) MONO_HANDLE_PAYLOAD_OFFSET_(TYPED_HANDLE_PAYLOAD_NAME (TYPE))
 
-// unused
-//#define MONO_HANDLE_INIT ((void*) mono_null_value_handle)
 #define NULL_HANDLE mono_null_value_handle
 
 //XXX add functions to get/set raw, set field, set field to null, set array, set array to null
