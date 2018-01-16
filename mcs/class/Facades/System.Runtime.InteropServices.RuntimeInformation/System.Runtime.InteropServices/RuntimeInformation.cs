@@ -47,7 +47,7 @@ namespace System.Runtime.InteropServices
 			case PlatformID.Win32NT:
 				return osPlatform == OSPlatform.Windows;
 			case PlatformID.Unix:
-				if (File.Exists ("/usr/lib/libc.dylib"))
+				if (Environment.Platform == PlatformID.MacOSX)
 					return osPlatform == OSPlatform.OSX;
 
 				return osPlatform == OSPlatform.Linux;
