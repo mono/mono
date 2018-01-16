@@ -67,6 +67,7 @@ MCS = $(MCS_NO_LIB)
 ILASM = $(TOOLS_RUNTIME) $(mcs_topdir)/class/lib/build/ilasm.exe
 
 TEST_RUNNER = ./test-runner.exe --runtime $(top_builddir)/runtime/mono-wrapper --mono-path "$(CLASS)"
+TEST_RUNNER += --runtime-args "--trace -O=-inline"
 
 if FULL_AOT_TESTS
 TEST_RUNNER += --runtime-args "$(TEST_AOT_RUN_FLAGS)"
@@ -1955,10 +1956,7 @@ compile-gac-loading:
 	$(MAKE) -C testing_gac compile-tests
 
 TESTS_STRESS_PROCESS_SRC=	\
-		process-stress-1.cs	\
-		process-stress-2.cs	\
-		process-stress-3.cs	\
-		process-leak.cs
+		process-stress-1.cs
 
 TESTS_STRESS_PROCESS=$(filter-out $(DISABLED_TESTS),$(TESTS_STRESS_PROCESS_SRC:.cs=.exe))
 
@@ -1971,7 +1969,7 @@ TESTSAOT_STRESS_PROCESS=$(TESTS_STRESS_PROCESS:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 endif
 
 test-process-stress: $(TESTS_STRESS_PROCESS) $(TESTSAOT_STRESS_PROCESS) test-runner.exe
-	$(TOOLS_RUNTIME) $(TEST_RUNNER) --testsuite-name $@ --disabled "$(DISABLED_TESTS)" --timeout 900 $(TESTS_STRESS_PROCESS)
+	$(TOOLS_RUNTIME) $(TEST_RUNNER) --testsuite-name $@ --timeout 900 $(TESTS_STRESS_PROCESS)
 
 coreclr-gcstress:
 	$(MAKE) -C $(mono_build_root)/acceptance-tests coreclr-gcstress
