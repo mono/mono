@@ -103,7 +103,7 @@ namespace Mono.Security.Authenticode {
 		private int dirSecurityOffset;
 		private int dirSecuritySize;
 		private int coffSymbolTableOffset;
-		private bool pe64 = false;
+		private bool pe64;
 
 		internal bool PE64 {
 			get {
@@ -230,12 +230,13 @@ namespace Mono.Security.Authenticode {
 			// 2.2. Locate IMAGE_DIRECTORY_ENTRY_SECURITY (offset and size)
 			// These offsets are from the documentation, but add 24 for
 			// PE signature and file header.
-			dirSecurityOffset = BitConverterLE.ToInt32 (fileblock, peOffset + 152);
-			dirSecuritySize = BitConverterLE.ToInt32 (fileblock, peOffset + 156);
-			if (pe64)
-			{
+			if (pe64) {
 				dirSecurityOffset = BitConverterLE.ToInt32 (fileblock, peOffset + 168);
 				dirSecuritySize = BitConverterLE.ToInt32 (fileblock, peOffset + 168 + 4);
+			}
+			else {
+				dirSecurityOffset = BitConverterLE.ToInt32 (fileblock, peOffset + 152);
+				dirSecuritySize = BitConverterLE.ToInt32 (fileblock, peOffset + 156);
 			}
 
 			// FIXME Why does this matter? It is rarely present anyway.

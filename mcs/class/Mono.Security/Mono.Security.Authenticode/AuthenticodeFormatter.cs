@@ -268,9 +268,10 @@ namespace Mono.Security.Authenticode {
 
 				// IMAGE_DIRECTORY_ENTRY_SECURITY (offset, size)
 				byte[] data = BitConverterLE.GetBytes (filesize + addsize);
-				fs.Seek (PEOffset + 152, SeekOrigin.Begin);
 				if (PE64)
 					fs.Seek (PEOffset + 168, SeekOrigin.Begin);
+				else
+					fs.Seek (PEOffset + 152, SeekOrigin.Begin);
 
 				fs.Write (data, 0, 4);
 				int size = asn.Length + 8;
@@ -278,9 +279,10 @@ namespace Mono.Security.Authenticode {
 				if (addsize_signature > 0)
 					addsize_signature = 8 - addsize_signature;
 				data = BitConverterLE.GetBytes (size + addsize_signature);
-				fs.Seek (PEOffset + 156, SeekOrigin.Begin);
 				if (PE64)
 					fs.Seek (PEOffset + 168 + 4, SeekOrigin.Begin);
+				else
+					fs.Seek (PEOffset + 156, SeekOrigin.Begin);
 
 				fs.Write (data, 0, 4);
 				fs.Seek (filesize, SeekOrigin.Begin);
