@@ -49,8 +49,11 @@ core *first_state;
 shifts *first_shift;
 reductions *first_reduction;
 
-int get_state();
-core *new_state();
+static int
+get_state (int symbol);
+
+static core *
+new_state (int symbol);
 
 static core **state_set;
 static core *this_state;
@@ -68,8 +71,25 @@ static short **kernel_base;
 static short **kernel_end;
 static short *kernel_items;
 
+#ifdef	DEBUG
+static void
+print_derives (void);
+#endif
 
-allocate_itemsets()
+static void
+save_reductions (void);
+
+static void
+save_shifts (void);
+
+static void
+new_itemsets (void);
+
+static void
+initialize_states (void);
+
+static void
+allocate_itemsets (void)
 {
     register short *itemp;
     register short *item_end;
@@ -110,8 +130,8 @@ allocate_itemsets()
     kernel_end = NEW2(nsyms, short *);
 }
 
-
-allocate_storage()
+static void
+allocate_storage (void)
 {
     allocate_itemsets();
     shiftset = NEW2(nsyms, short);
@@ -119,8 +139,8 @@ allocate_storage()
     state_set = NEW2(nitems, core *);
 }
 
-
-append_states()
+static void
+append_states (void)
 {
     register int i;
     register int j;
@@ -148,8 +168,8 @@ append_states()
     }
 }
 
-
-free_storage()
+static void
+free_storage (void)
 {
     FREE(shift_symbol);
     FREE(redset);
@@ -160,9 +180,8 @@ free_storage()
     FREE(state_set);
 }
 
-
-
-generate_states()
+static void
+generate_states (void)
 {
     allocate_storage();
     itemset = NEW2(nitems, short);
@@ -187,11 +206,8 @@ generate_states()
     free_storage();
 }
 
-
-
 int
-get_state(symbol)
-int symbol;
+get_state (int symbol)
 {
     register int key;
     register short *isp1;
@@ -252,9 +268,8 @@ int symbol;
     return (sp->number);
 }
 
-
-
-initialize_states()
+static void
+initialize_states (void)
 {
     register int i;
     register short *start_derives;
@@ -280,8 +295,8 @@ initialize_states()
     nstates = 1;
 }
 
-
-new_itemsets()
+static void
+new_itemsets (void)
 {
     register int i;
     register int shiftcount;
@@ -315,11 +330,8 @@ new_itemsets()
     nshifts = shiftcount;
 }
 
-
-
-core *
-new_state(symbol)
-int symbol;
+static core *
+new_state (int symbol)
 {
     register int n;
     register core *p;
@@ -355,10 +367,10 @@ int symbol;
     return (p);
 }
 
-
 /* show_cores is used for debugging */
 
-show_cores()
+void
+show_cores (void)
 {
     core *p;
     int i, j, k, n;
@@ -393,7 +405,8 @@ show_cores()
 
 /* show_ritems is used for debugging */
 
-show_ritems()
+void
+show_ritems (void)
 {
     int i;
 
@@ -401,9 +414,9 @@ show_ritems()
 	printf("ritem[%d] = %d\n", i, ritem[i]);
 }
 
-
 /* show_rrhs is used for debugging */
-show_rrhs()
+void
+show_rrhs (void)
 {
     int i;
 
@@ -414,7 +427,8 @@ show_rrhs()
 
 /* show_shifts is used for debugging */
 
-show_shifts()
+void
+show_shifts (void)
 {
     shifts *p;
     int i, j, k;
@@ -431,8 +445,8 @@ show_shifts()
     }
 }
 
-
-save_shifts()
+static void
+save_shifts (void)
 {
     register shifts *p;
     register short *sp1;
@@ -464,9 +478,8 @@ save_shifts()
     }
 }
 
-
-
-save_reductions()
+static void
+save_reductions (void)
 {
     register short *isp;
     register short *rp1;
@@ -514,8 +527,8 @@ save_reductions()
     }
 }
 
-
-set_derives()
+static void
+set_derives (void)
 {
     register int i, k;
     register int lhs;
@@ -545,14 +558,18 @@ set_derives()
 #endif
 }
 
-free_derives()
+#if 0
+void
+free_derives (void)
 {
     FREE(derives[start_symbol]);
     FREE(derives);
 }
+#endif
 
 #ifdef	DEBUG
-print_derives()
+static void
+print_derives (void)
 {
     register int i;
     register short *sp;
@@ -573,14 +590,14 @@ print_derives()
 }
 #endif
 
-
-set_nullable()
+static void
+set_nullable (void)
 {
     register int i, j;
     register int empty;
     int done;
 
-    nullable = MALLOC(nsyms);
+    nullable = (char*)MALLOC(nsyms);
     if (nullable == 0) no_space();
 
     for (i = 0; i < nsyms; ++i)
@@ -622,14 +639,14 @@ set_nullable()
 #endif
 }
 
-
-free_nullable()
+void
+free_nullable (void)
 {
     FREE(nullable);
 }
 
-
-lr0()
+void
+lr0 (void)
 {
     set_derives();
     set_nullable();
