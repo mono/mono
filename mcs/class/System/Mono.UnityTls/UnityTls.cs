@@ -163,9 +163,9 @@ namespace Mono.Unity
         // ------------------------------------------------------------------------
 
         // This native struct is used to provide all necessary fields and function calls from unitytls to the mono-unitytls-binding.
-        // Native implementation lives in unity:Modules/TLS/TLSMonoIntegration.cpp and needs to be adapted to every change.
+        // Native implementation lives in unity:Modules/TLS/InterfaceStruct.cpp and needs to be adapted to every change.
         [StructLayout (LayoutKind.Sequential)]
-        public class mono_unity_unitytls_interface
+        public class unitytls_interface_struct
         {
             public readonly UInt64 UNITYTLS_INVALID_HANDLE;
 
@@ -233,11 +233,11 @@ namespace Mono.Unity
         [MethodImplAttribute (MethodImplOptions.InternalCall)]
         private static extern IntPtr GetUnityTlsInterface ();
         
-        private static mono_unity_unitytls_interface marshalledInterface = null;
+        private static unitytls_interface_struct marshalledInterface = null;
 
         public static bool IsSupported => NativeInterface != null;
 
-        public static mono_unity_unitytls_interface NativeInterface
+        public static unitytls_interface_struct NativeInterface
         {
             get
             {
@@ -245,7 +245,7 @@ namespace Mono.Unity
                     IntPtr rawInterface = GetUnityTlsInterface ();
                     if (rawInterface == IntPtr.Zero)
                         return null;
-                    marshalledInterface = Marshal.PtrToStructure<mono_unity_unitytls_interface> (rawInterface);
+                    marshalledInterface = Marshal.PtrToStructure<unitytls_interface_struct> (rawInterface);
                 }
                 return marshalledInterface;
             }
