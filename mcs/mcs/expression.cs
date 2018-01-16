@@ -13211,4 +13211,73 @@ namespace Mono.CSharp
 			throw new NotSupportedException ();
 		}
 	}
+
+	class Discard : Expression, IAssignMethod, IMemoryLocation
+	{
+		public Discard (Location loc)
+		{
+			this.loc = loc;
+		}
+
+		public override Expression CreateExpressionTree (ResolveContext rc)
+		{
+			rc.Report.Error (8207, loc, "An expression tree cannot contain a discard");
+			return null;
+		}
+
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			type = InternalType.Discard;
+			eclass = ExprClass.Variable;
+			return this;
+		}
+
+		public override Expression DoResolveLValue (ResolveContext rc, Expression right_side)
+		{
+			if (right_side.Type == InternalType.DefaultType) {
+				rc.Report.Error (8183, loc, "Cannot infer the type of implicitly-typed discard");
+				type = InternalType.ErrorType;
+				return this;
+			}
+
+			if (right_side.Type.Kind == MemberKind.Void) {
+				rc.Report.Error (8209, loc, "Cannot assign void to a discard");
+				type = InternalType.ErrorType;
+				return this;
+			}
+
+			if (right_side != EmptyExpression.OutAccess) {
+				type = right_side.Type;
+			}
+
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void Emit (EmitContext ec, bool leave_copy)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool isCompound)
+		{
+			if (leave_copy)
+				source.Emit (ec);
+			else
+				source.EmitSideEffect (ec);
+		}
+
+		public void AddressOf (EmitContext ec, AddressOp mode)
+		{
+			var temp = ec.GetTemporaryLocal (type);
+			ec.Emit (OpCodes.Ldloca, temp);
+
+			// TODO: Should free it on next statement but don't have mechanism for that yet
+			// ec.FreeTemporaryLocal (temp, type);
+		}
+	}
 }
