@@ -7,9 +7,6 @@ all: writefiles hashfile.exe
 clean:
 	rm -f writefiles hashfile.exe
 
-writefiles: writefiles.cpp
-	g++ writefiles.cpp -o $@
-
 test check run: all
 	./writefiles
 	set -e

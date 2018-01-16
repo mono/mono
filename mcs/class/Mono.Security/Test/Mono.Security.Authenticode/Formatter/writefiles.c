@@ -187,10 +187,6 @@ FILE* open(const char* a)
 	return fopen(a, "wb");
 }
 
-class File // TBD
-{
-};
-
 int main()
 {
 	char buffer[0x1000 * 2] = "MZ";
