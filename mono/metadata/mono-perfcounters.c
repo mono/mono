@@ -77,7 +77,7 @@ mono_unwrapped_string_to_utf8 (MonoUnwrappedString s, MonoError *error)
 		// allocate the total length, copy the part of the string that has been converted, and zero the rest
 		char *zero_padded = (char *)g_malloc (s.length);
 		memcpy (zero_padded, utf8, written);
-		memset (zero_padded, 0, s.length - written);
+		memset (zero_padded + written, 0, s.length - written);
 		g_free (utf8);
 		return zero_padded;
 	}
