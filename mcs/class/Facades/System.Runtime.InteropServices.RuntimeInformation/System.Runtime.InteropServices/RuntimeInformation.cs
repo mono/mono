@@ -43,13 +43,12 @@ namespace System.Runtime.InteropServices
 
 		public static bool IsOSPlatform (OSPlatform osPlatform)
 		{
-			switch (Environment.OSVersion.Platform) {
+			switch (Environment.Platform) {
 			case PlatformID.Win32NT:
 				return osPlatform == OSPlatform.Windows;
+			case PlatformID.MacOSX:
+				return osPlatform == OSPlatform.OSX;
 			case PlatformID.Unix:
-				if (File.Exists ("/usr/lib/libc.dylib"))
-					return osPlatform == OSPlatform.OSX;
-
 				return osPlatform == OSPlatform.Linux;
 			default:
 				return false;
