@@ -397,7 +397,9 @@ gint32 il2cpp_mono_debug_il_offset_from_address(MonoMethod* method, MonoDomain* 
 
 void il2cpp_mono_set_is_debugger_attached(gboolean attached)
 {
+#if IL2CPP_MONO_DEBUGGER
 	il2cpp::utils::Debugger::SetIsDebuggerAttached(attached == TRUE);
+#endif
 }
 
 char* il2cpp_mono_type_full_name(MonoType* type)
@@ -1238,7 +1240,9 @@ MonoAssembly* il2cpp_domain_get_assemblies_iter(MonoAppDomain *domain, void* *it
 
 void il2cpp_start_debugger_thread()
 {
+#if IL2CPP_MONO_DEBUGGER
 	il2cpp::utils::Debugger::StartDebuggerThread();
+#endif
 }
 
 void* il2cpp_gc_alloc_fixed(size_t size)
@@ -1258,15 +1262,23 @@ const char* il2cpp_domain_get_name(MonoDomain* domain)
 
 Il2CppSequencePoint* il2cpp_get_sequence_points(void* *iter)
 {
+#if IL2CPP_MONO_DEBUGGER
 	return (Il2CppSequencePoint*)il2cpp::utils::Debugger::GetSequencePoints(iter);
+#else
+    return NULL;
+#endif
 }
 
 Il2CppSequencePoint* il2cpp_get_method_sequence_points(MonoMethod* method, void* *iter)
 {
+#if IL2CPP_MONO_DEBUGGER
 	if (!method)
 		return (Il2CppSequencePoint*)il2cpp::utils::Debugger::GetSequencePoints(iter);
 	else
 		return (Il2CppSequencePoint*)il2cpp::utils::Debugger::GetSequencePoints((const MethodInfo*)method, iter);
+#else
+    return NULL;
+#endif
 }
 
 gboolean il2cpp_mono_methods_match(MonoMethod* left, MonoMethod* right)
@@ -1431,7 +1443,11 @@ MonoClass* il2cpp_iterate_loaded_classes(void* *iter)
 
 const char** il2cpp_get_source_files_for_type(MonoClass *klass, int *count)
 {
+#if IL2CPP_MONO_DEBUGGER
 	return il2cpp::utils::Debugger::GetTypeSourceFiles((Il2CppClass*)klass, *count);
+#else
+    return NULL;
+#endif
 }
 
 MonoMethod* il2cpp_method_get_generic_definition(MonoMethodInflated *imethod)
@@ -1468,7 +1484,11 @@ MonoClass* il2cpp_mono_get_string_class (void)
 
 Il2CppSequencePoint* il2cpp_get_sequence_point(size_t id)
 {
+#if IL2CPP_MONO_DEBUGGER
     return il2cpp::utils::Debugger::GetSequencePoint(id);
+#else
+    return NULL;
+#endif
 }
 }
 #endif // RUNTIME_IL2CPP
