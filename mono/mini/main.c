@@ -16,7 +16,9 @@
  */
 #include <config.h>
 #include <fcntl.h>
+#ifndef HOST_WIN32
 #include <dirent.h>
+#endif
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/mono-config.h>
 #include <mono/utils/mono-mmap.h>
