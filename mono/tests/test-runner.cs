@@ -522,6 +522,17 @@ public class TestRunner
 			}
 		}
 
+		if (npassed > 0) {
+			Console.WriteLine ();
+			Console.WriteLine ("Passed test(s):");
+			foreach (ProcessData pd in passed) {
+				Console.WriteLine ();
+				Console.WriteLine (pd.test);
+				DumpFile (pd.stdoutName, pd.stdout.ToString ());
+				DumpFile (pd.stderrName, pd.stderr.ToString ());
+			}
+		}
+
 		if (ntimedout > 0) {
 			Console.WriteLine ();
 			Console.WriteLine ("Timed out test(s):");

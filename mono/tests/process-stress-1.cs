@@ -8,7 +8,7 @@ class Driver
 {
 	static void Main ()
 	{
-		for (int i = 0; i < 1000; ++i) {
+		for (int i = 0; i < 5; ++i) {
 			ProcessStartInfo psi = new ProcessStartInfo () {
 				FileName = "echo",
 				Arguments = "hello 1>/dev/null",

@@ -2,33 +2,16 @@ SUBDIRS = gc-descriptors . testing_gac
 
 check-local:
 	ok=:; \
-	$(MAKE) test-jit || ok=false; \
-	$(MAKE) test-generic-sharing || ok=false; \
-	$(MAKE) test-type-load || ok=false; \
-	$(MAKE) test-multi-netmodule || ok=false; \
-	$(MAKE) test-cattr-type-load || ok=false; \
-	$(MAKE) test-reflection-load-with-context || ok=false; \
-	$(MAKE) test-platform || ok=false; \
-	$(MAKE) test-console-output || ok=false; \
-	$(MAKE) test-env-options || ok=false; \
-	$(MAKE) test-unhandled-exception-2 || ok=false; \
-	$(MAKE) test-appdomain-unload || ok=false; \
 	$(MAKE) test-process-stress || ok=false; \
-	$(MAKE) test-pedump || ok=false; \
-	$(MAKE) test-internalsvisibleto || ok=false; \
-	$(MAKE) rm-empty-logs || ok=false; \
-	$(MAKE) runtest-gac-loading || ok=false; \
 	$$ok
 
 check-full:
 	ok=; \
-	$(MAKE) test-sgen || ok=false; \
 	$(MAKE) check-local || ok=false; \
 	$$ok
 
 check-parallel:
 	ok=; \
-	$(MAKE) compile-tests; \
 	$(MAKE) check-full || ok=false; \
 	$$ok
 
@@ -84,6 +67,7 @@ MCS = $(MCS_NO_LIB)
 ILASM = $(TOOLS_RUNTIME) $(mcs_topdir)/class/lib/build/ilasm.exe
 
 TEST_RUNNER = ./test-runner.exe --runtime $(top_builddir)/runtime/mono-wrapper --mono-path "$(CLASS)"
+TEST_RUNNER += --runtime-args "--trace -O=-inline"
 
 if FULL_AOT_TESTS
 TEST_RUNNER += --runtime-args "$(TEST_AOT_RUN_FLAGS)"
@@ -1982,10 +1966,7 @@ compile-gac-loading:
 	$(MAKE) -C testing_gac compile-tests
 
 TESTS_STRESS_PROCESS_SRC=	\
-		process-stress-1.cs	\
-		process-stress-2.cs	\
-		process-stress-3.cs	\
-		process-leak.cs
+		process-stress-1.cs
 
 TESTS_STRESS_PROCESS=$(filter-out $(DISABLED_TESTS),$(TESTS_STRESS_PROCESS_SRC:.cs=.exe))
 
@@ -1998,7 +1979,7 @@ TESTSAOT_STRESS_PROCESS=$(TESTS_STRESS_PROCESS:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 endif
 
 test-process-stress: $(TESTS_STRESS_PROCESS) $(TESTSAOT_STRESS_PROCESS) test-runner.exe
-	$(TOOLS_RUNTIME) $(TEST_RUNNER) --testsuite-name $@ --disabled "$(DISABLED_TESTS)" --timeout 900 $(TESTS_STRESS_PROCESS)
+	MONO_LOG_LEVEL=debug MONO_LOG_MASK=io-layer-process $(TOOLS_RUNTIME) $(TEST_RUNNER) --testsuite-name $@ --timeout 900 $(TESTS_STRESS_PROCESS)
 
 coreclr-gcstress:
 	$(MAKE) -C $(mono_build_root)/acceptance-tests coreclr-gcstress
