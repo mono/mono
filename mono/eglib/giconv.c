@@ -833,19 +833,15 @@ g_utf8_to_ucs4_fast (const gchar *str, glong len, glong *items_written)
 }
 
 static gunichar2 *
-eg_utf8_to_utf16_general (
-	const gchar *str, glong len, 
-	glong *items_read, glong *items_written, 
-	gboolean include_nuls, gboolean replace_invalid_codepoints,
-	GError **err
-) {
+eg_utf8_to_utf16_general (const gchar *str, glong len, glong *items_read, glong *items_written, gboolean include_nuls, gboolean replace_invalid_codepoints,	GError **err) 
+{
 	gunichar2 *outbuf, *outptr;
 	size_t outlen = 0;
 	size_t inleft;
 	char *inptr;
 	gunichar c;
 	int u, n;
-
+	
 	g_return_val_if_fail (str != NULL, NULL);
 	
 	if (len < 0) {

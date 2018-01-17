@@ -213,30 +213,6 @@ load_cattr_enum_type (MonoImage *image, const char *p, const char *boundp, const
 	return mono_class_from_mono_type (t);
 }
 
-static MonoString* 
-cattr_string_from_wtf8 (MonoDomain *domain, const char *text, guint length, MonoError *error)
-{
-	MONO_REQ_GC_UNSAFE_MODE;
-
-	error_init (error);
-
-	GError *eg_error = NULL;
-	MonoString *o = NULL;
-	guint16 *ut = NULL;
-	glong items_written;
-
-	ut = eg_wtf8_to_utf16 (text, length, NULL, &items_written, &eg_error);
-
-	if (!eg_error)
-		o = mono_string_new_utf16_checked (domain, ut, items_written, error);
-	else 
-		g_error_free (eg_error);
-
-	g_free (ut);
-
-	return o;
-}
-
 static void*
 load_cattr_value (MonoImage *image, MonoType *t, const char *p, const char *boundp, const char **end, MonoError *error)
 {
@@ -335,7 +311,13 @@ handle_enum:
 		if (slen > 0 && !bcheck_blob (p, slen - 1, boundp, error))
 			return NULL;
 		*end = p + slen;
-		return cattr_string_from_wtf8 (mono_domain_get (), p, slen, error);
+		// https://bugzilla.xamarin.com/show_bug.cgi?id=60848
+		// Custom attribute strings are encoded as wtf-8 instead of utf-8.
+		// If we decode using utf-8 like the spec says, we will silently fail
+		//  to decode some attributes in assemblies that Windows .NET Framework
+		//  and CoreCLR both manage to decode.
+		// See https://simonsapin.github.io/wtf-8/ for a description of wtf-8.
+		return mono_string_new_wtf8_len_checked (mono_domain_get (), p, slen, error);
 	case MONO_TYPE_CLASS: {
 		MonoReflectionType *rt;
 		char *n;
