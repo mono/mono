@@ -107,6 +107,10 @@ namespace System.ServiceModel.Channels.Http
 					if (m != null)
 						return m;
 				}
+
+                m = listeners.FirstOrDefault(p => absolutePath.StartsWith(p.Key.AbsolutePath))?.Value;
+                if (m != null)
+                    return m;
 			}
 			
 			if (m == null)
