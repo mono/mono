@@ -4361,6 +4361,29 @@ public class DebuggerTests
 		}
 	}
 
-}
+	[Test]
+	public void Bug59649 ()
+	{
+		Event e = run_until ("Bug59649");
 
-}
+		var req = create_step (e);
+		req.Filter = StepFilter.StaticCtor;
+		req.Enable ();
+
+		// Approach call instruction
+		e = step_once ();
+		//StackTraceDump (e);
+
+		// Follow call
+		e = step_into ();
+		//StackTraceDump (e);
+
+		e = step_into ();
+		//StackTraceDump (e);
+
+		// Is cctor in this bug, ends up in the static field constructor
+		// DummyCall
+		assert_location (e, "Call");
+	}
+} // class DebuggerTests
+} // namespace
