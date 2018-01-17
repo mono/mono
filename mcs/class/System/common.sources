@@ -258,6 +258,14 @@ Mono.AppleTls/Trust.cs
 Mono.AppleTls/SslConnection.cs
 Mono.AppleTls/Items.cs
 
+Mono.UnityTls/UnityTls.cs
+Mono.UnityTls/UnityTlsProvider.cs
+Mono.UnityTls/UnityTlsStream.cs
+Mono.UnityTls/UnityTlsContext.cs
+Mono.UnityTls/UnityTlsConversions.cs
+Mono.UnityTls/Debug.cs
+Mono.UnityTls/CertHelper.cs
+
 Mono.Util/MonoPInvokeCallbackAttribute.cs
 
 MonoTouch/Dummy.cs

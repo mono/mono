@@ -885,6 +885,22 @@ MonoClass* mono_unity_defaults_get_byte_class()
 	return mono_defaults.byte_class;
 }
 
+//unitytls
+
+static unitytls_interface_struct* gUnitytlsInterface = NULL;
+
+MONO_API unitytls_interface_struct* 
+mono_unity_get_unitytls_interface()
+{
+	return gUnitytlsInterface;
+}
+
+MONO_API void 
+mono_unity_install_unitytls_interface(unitytls_interface_struct* callbacks)
+{
+	gUnitytlsInterface = callbacks;
+}
+
 //misc
 
 MonoAssembly* mono_unity_assembly_get_mscorlib()
