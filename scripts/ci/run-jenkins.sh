@@ -7,6 +7,10 @@ export TEST_HARNESS_VERBOSE=1
 
 make_timeout=300m
 
+ulimit -n
+
+ulimit -H -n
+
 if [[ ${CI_TAGS} == *'clang-sanitizer'* ]]; then
 	export CC="clang"
 	export CXX="clang++"
