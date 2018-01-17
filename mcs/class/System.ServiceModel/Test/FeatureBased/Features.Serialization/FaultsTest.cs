@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !MOBILE
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Proxy.MonoTests.Features.Client;
@@ -41,3 +42,4 @@ namespace MonoTests.Features.Serialization
 		}
 	}
 }
+#endif

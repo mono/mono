@@ -1,3 +1,4 @@
+#if !MOBILE
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
@@ -21,3 +22,4 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		}
 	}
 }
+#endif
