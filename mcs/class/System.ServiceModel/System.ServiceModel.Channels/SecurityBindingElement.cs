@@ -44,7 +44,9 @@ namespace System.ServiceModel.Channels
 	{
 		internal SecurityBindingElement ()
 		{
+#if !XAMMAC_4_5
 			MessageSecurityVersion = MessageSecurityVersion.Default;
+#endif
 			endpoint = new SupportingTokenParameters ();
 #if !MOBILE && !XAMMAC_4_5
 			DefaultAlgorithmSuite = SecurityAlgorithmSuite.Default;
