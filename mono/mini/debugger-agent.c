@@ -10076,7 +10076,7 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 #ifndef RUNTIME_IL2CPP
 			buffer_add_int (buf, (vtable->initialized || vtable->init_failed) ? 1 : 0);
 #else
-			buffer_add_int (buf, vtable->initialized ? 1 : 0);
+			buffer_add_int (buf, klass->initialized ? 1 : 0);
 #endif
 		else
 			buffer_add_int (buf, 0);
