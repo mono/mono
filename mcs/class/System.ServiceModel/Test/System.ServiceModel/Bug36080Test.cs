@@ -82,7 +82,7 @@ namespace MonoTests.System.ServiceModel
 				client.SayHelloToAsync(str);
 
 				Assert.IsTrue (wait.WaitOne (TimeSpan.FromSeconds (20)), "timeout");
-#if MOBILE && !XAMMAC_4_5
+#if MOBILE || XAMMAC_4_5
 				if (error.GetType() == typeof(EndpointNotFoundException))
 					return;
 #endif
