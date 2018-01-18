@@ -194,7 +194,7 @@ public class Driver {
 		// if (test_name != null)
 		// 	testRunner.RunTest (test_name);
 
-		testRunner.Exclude ("WASM,NotWorking,ValueAdd,CAS,InetAccess,InterpreterNotWorking,MultiThreaded");
+		testRunner.Exclude ("NotWasm,WASM,NotWorking,ValueAdd,CAS,InetAccess,InterpreterNotWorking,MultiThreaded");
 		testRunner.Add (Assembly.LoadFrom (baseDir + "/" + testsuite_name));
 		// testRunner.RunOnly ("MonoTests.System.Threading.AutoResetEventTest.MultipleSet");
 

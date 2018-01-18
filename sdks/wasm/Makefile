@@ -73,35 +73,26 @@ $(patsubst %,managed/%,$(BCL_ASSEMBLIES)): managed/%: $(WASM_BCL_DIR)/% | manage
 
 #FIXME change BCL sdk build to include nunitlite.dll in out/bcl/wasm/
 managed/nunitlite.dll: $(TOP)/mcs/class/lib/wasm/nunitlite.dll | managed/
-	cd $(TOP)/mcs/tools/nunit-lite && make PROFILE=wasm
+	$(MAKE) -C $(TOP)/mcs/tools/nunit-lite PROFILE=wasm
 	cp $< $@
 
 managed/main.exe: $(TEST_DEPS) $(APP_SOURCES) | managed/
 	mcs /nostdlib /unsafe -out:$@ $(TEST_MCS_DEPS) $(APP_SOURCES)
 
-.PHONY: build-corlib-testsuite
-build-corlib-testsuite:
-	cd $(TOP)/mcs/class/corlib && make test-local PROFILE=wasm
-
-$(TOP)/mcs/class/lib/wasm/tests/wasm_corlib_test.dll: build-corlib-testsuite
+$(TOP)/mcs/class/lib/wasm/tests/wasm_corlib_test.dll: FORCE
+	$(MAKE) -C "$(TOP)/mcs/class/corlib" test-local PROFILE=wasm
 
 managed/wasm_corlib_test.dll: $(TOP)/mcs/class/lib/wasm/tests/wasm_corlib_test.dll
 	cp $< $@
 
-.PHONY: build-system-testsuite
-build-system-testsuite:
-	cd $(TOP)/mcs/class/System && make test-local PROFILE=wasm
-
-$(TOP)/mcs/class/lib/wasm/tests/wasm_System_test.dll: build-system-testsuite
+$(TOP)/mcs/class/lib/wasm/tests/wasm_System_test.dll: FORCE
+	$(MAKE) -C "$(TOP)/mcs/class/System" test-local PROFILE=wasm
 
 managed/wasm_System_test.dll: $(TOP)/mcs/class/lib/wasm/tests/wasm_System_test.dll
 	cp $< $@
 
-.PHONY: build-system-core-testsuite
-build-system-core-testsuite:
-	cd $(TOP)/mcs/class/System.Core && make test-local PROFILE=wasm
-
-$(TOP)/mcs/class/lib/wasm/tests/wasm_System.Core_test.dll: build-system-core-testsuite
+$(TOP)/mcs/class/lib/wasm/tests/wasm_System.Core_test.dll: FORCE
+	$(MAKE) -C "$(TOP)/mcs/class/System.Core" test-local PROFILE=wasm
 
 managed/wasm_System.Core_test.dll: $(TOP)/mcs/class/lib/wasm/tests/wasm_System.Core_test.dll
 	cp $< $@
@@ -119,3 +110,5 @@ run-%: toolchain build
 clean:
 	
 package:
+
+FORCE:
