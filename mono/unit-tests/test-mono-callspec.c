@@ -141,11 +141,11 @@ static MonoClass *test_mono_class_from_name (MonoImage *image,
 					     const char *name_space,
 					     const char *name)
 {
-	MonoError error;
+	ERROR_DECL (error);
 	MonoClass *klass;
 
-	klass = mono_class_from_name_checked (image, name_space, name, &error);
-	mono_error_cleanup (&error); /* FIXME Don't swallow the error */
+	klass = mono_class_from_name_checked (image, name_space, name, error);
+	mono_error_cleanup (error); /* FIXME Don't swallow the error */
 
 	return klass;
 }
