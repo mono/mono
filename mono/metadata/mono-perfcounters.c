@@ -1561,7 +1561,7 @@ failure:
 	return result;
 }
 
-int
+MonoBoolean
 mono_perfcounter_instance_exists (MonoString *instance, MonoString *category)
 {
 	ERROR_DECL (error);

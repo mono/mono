@@ -24,7 +24,7 @@ MonoBoolean mono_perfcounter_category_del    (MonoString *name);
 MonoString* mono_perfcounter_category_help   (MonoString *category);
 MonoBoolean mono_perfcounter_category_exists (MonoString *counter, MonoString *category);
 MonoBoolean mono_perfcounter_create          (MonoString *category, MonoString *help, int type, MonoArray *items);
-int         mono_perfcounter_instance_exists (MonoString *instance, MonoString *category);
+MonoBoolean mono_perfcounter_instance_exists (MonoString *instance, MonoString *category);
 MonoArray*  mono_perfcounter_category_names  (void);
 MonoArray*  mono_perfcounter_counter_names   (MonoString *category);
 MonoArray*  mono_perfcounter_instance_names  (MonoString *category);
