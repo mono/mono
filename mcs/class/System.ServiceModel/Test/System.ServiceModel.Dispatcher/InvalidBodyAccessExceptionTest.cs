@@ -1,4 +1,4 @@
-#if !MOBILE
+#if !MOBILE && !XAMMAC_4_5
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;

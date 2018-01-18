@@ -13,7 +13,7 @@ namespace MonoTests.System.ServiceModel.Channels
 	[TestFixture]
 	public class MessageBufferTest
 	{
-#if !MOBILE
+#if !MOBILE && !XAMMAC_4_5
 		[Test]
 		public void TestCreateNavigator ()
 		{

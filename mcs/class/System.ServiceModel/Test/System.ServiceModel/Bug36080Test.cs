@@ -53,7 +53,7 @@ namespace MonoTests.System.ServiceModel
 					element
 				});
 
-#if !MOBILE
+#if !MOBILE && !XAMMAC_4_5
 			// Init service
 			ServiceHost serviceHost = new ServiceHost (typeof (HelloWorldServiceImpl), new Uri (url));
 			serviceHost.AddServiceEndpoint (typeof (IHelloWorldService), binding, string.Empty);
@@ -82,7 +82,7 @@ namespace MonoTests.System.ServiceModel
 				client.SayHelloToAsync(str);
 
 				Assert.IsTrue (wait.WaitOne (TimeSpan.FromSeconds (20)), "timeout");
-#if MOBILE
+#if MOBILE || XAMMAC_4_5
 				if (error.GetType() == typeof(EndpointNotFoundException))
 					return;
 #endif
@@ -90,7 +90,7 @@ namespace MonoTests.System.ServiceModel
 				Assert.IsNull (error, "#1, inner exception: {0}", error);
 				Assert.AreEqual (str, result, "#2");
 			}  finally {
-#if !MOBILE
+#if !MOBILE && !XAMMAC_4_5
 				serviceHost.Close ();
 #endif
 			}
