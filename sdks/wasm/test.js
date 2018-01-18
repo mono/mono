@@ -128,3 +128,8 @@ for (var i = 0; i < arguments.length; ++i) {
 		print ("\nDONE")
 	}
 }
+
+var status = mono_send_msg ("test-result", "");
+print ("Test status " + status)
+if (status != "PASS")
+	exit (1)
