@@ -27,7 +27,8 @@ SOURCES = \
 	utf8.c		\
 	endian.c	\
 	module.c	\
-	memory.c
+	memory.c	\
+	assertf.c
 
 test_eglib_SOURCES = $(SOURCES)
 
