@@ -75,7 +75,7 @@ xtest_flags = -r:$(the_assembly) $(xunit_libs_ref) $(XTEST_MCS_FLAGS) $(XTEST_LI
 
 ifeq ($(wildcard $(xtest_sourcefile)),)
 xtest_sourcefile = $(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.sources)
-tests_CLEAN_FILES += $(xunit_test_lib) $(xtest_response) $(xtest_makefrag)
+tests_CLEAN_FILES += $(xunit_test_lib_output) $(xtest_response) $(xtest_makefrag)
 endif
 
 ifndef HAVE_CS_TESTS
@@ -105,6 +105,8 @@ test_assemblies :=
 test_lib_dir = $(topdir)/class/lib/$(PROFILE)/tests
 
 test_lib_output = $(topdir)/class/lib/$(PROFILE)/tests/$(test_lib)
+
+xunit_test_lib_output = $(topdir)/class/lib/$(PROFILE)/tests/$(xunit_test_lib)
 
 ifdef HAVE_CS_TESTS
 test_assemblies += $(test_lib_output)
@@ -278,22 +280,22 @@ endif
 
 check: run-xunit-test-local
 run-xunit-test: run-xunit-test-local
-xunit-test-local: $(xunit_test_lib)
+xunit-test-local: $(xunit_test_lib_output)
 run-xunit-test-local: run-xunit-test-lib
 
 # cp -rf is a HACK for xunit runner to require xunit.execution.desktop.dll file in local folder on .net only
 run-xunit-test-lib: xunit-test-local $(XTEST_REMOTE_EXECUTOR)
-	@cp -rf $(XTEST_HARNESS_PATH)/xunit.execution.desktop.dll xunit.execution.desktop.dll
+	@cp -f $(XTEST_HARNESS_PATH)/xunit.execution.desktop.dll $(dir $(xunit_test_lib_output))/xunit.execution.desktop.dll
 	ok=:; \
-	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(XTEST_COVERAGE_FLAGS) $(AOT_RUN_FLAGS) $(XTEST_HARNESS) $(xunit_test_lib) $(XTEST_HARNESS_FLAGS) $(XTEST_TRAIT) || ok=false; \
+	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(XTEST_COVERAGE_FLAGS) $(AOT_RUN_FLAGS) $(XTEST_HARNESS) $(xunit_test_lib_output) $(XTEST_HARNESS_FLAGS) $(XTEST_TRAIT) || ok=false; \
 	$$ok
 	@rm -f xunit.execution.desktop.dll
 
 # Some xunit tests want to be executed in a separate process (see RemoteExecutorTestBase)
 $(XTEST_REMOTE_EXECUTOR): $(topdir)/../mcs/class/test-helpers/RemoteExecutorConsoleApp.cs
-	$(TEST_COMPILE) $(topdir)/../mcs/class/test-helpers/RemoteExecutorConsoleApp.cs -r:$(xunit_test_lib) $(xtest_flags) /debug-
+	$(TEST_COMPILE) $(topdir)/../mcs/class/test-helpers/RemoteExecutorConsoleApp.cs -r:$(xunit_test_lib_output) $(xtest_flags) /debug-
 
-$(xunit_test_lib): $(the_assembly) $(xtest_response) $(xunit_libs_dep) $(xunit_src)
+$(xunit_test_lib_output): $(the_assembly) $(xtest_response) $(xunit_libs_dep) $(xunit_src) $(test_lib_dir)
 	$(TEST_COMPILE) $(LIBRARY_FLAGS) $(XTEST_LIB_FLAGS) -target:library -out:$@ $(xtest_flags) @$(xtest_response) $(xunit_src)
 
 xtest_response_preprocessed = $(xtest_response)_preprocessed
