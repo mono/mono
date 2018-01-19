@@ -57,6 +57,7 @@ namespace MonoTests.System.ServiceModel.Description
 			new ServiceEndpoint (null, null, null);
 		}
 
+#if !MONOTOUCH_WATCH
 		[Test]
 		public void ListenUri ()
 		{
@@ -64,6 +65,7 @@ namespace MonoTests.System.ServiceModel.Description
 			var se = new ServiceEndpoint (contract1, null, new EndpointAddress (uri));
 			Assert.AreEqual (uri, se.ListenUri, "#1");
 		}
+#endif
 
 		#region contracts
 
