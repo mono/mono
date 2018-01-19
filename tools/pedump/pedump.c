@@ -24,6 +24,7 @@
 #include <mono/metadata/assembly-internals.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/class-internals.h>
+#include <mono/metadata/class-init.h>
 #include <mono/metadata/verify-internals.h>
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/w32handle.h>

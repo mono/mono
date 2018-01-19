@@ -24,11 +24,28 @@ MonoClass *
 mono_class_create_array (MonoClass *element_class, uint32_t rank);
 
 MonoClass *
+mono_class_from_generic_parameter_internal (MonoGenericParam *param);
+
+MonoClass *
 mono_class_create_ptr (MonoType *type);
 
 MonoClass *
 mono_class_create_fnptr (MonoMethodSignature *sig);
 
+void
+mono_class_setup_vtable_general (MonoClass *klass, MonoMethod **overrides, int onum, GList *in_setup);
+
+void
+mono_class_init_sizes (MonoClass *klass);
+
+void
+mono_class_setup_methods (MonoClass *klass);
+
+void
+mono_class_setup_interface_offsets (MonoClass *klass);
+
+void
+mono_class_setup_vtable (MonoClass *klass);
 
 MONO_END_DECLS
 

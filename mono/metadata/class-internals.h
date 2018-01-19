@@ -919,19 +919,6 @@ mono_classes_cleanup (void);
 
 void
 mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_size, int real_size, gboolean sre);
-
-void
-mono_class_setup_interface_offsets (MonoClass *klass);
-
-void
-mono_class_setup_vtable_general (MonoClass *klass, MonoMethod **overrides, int onum, GList *in_setup);
-
-void
-mono_class_setup_vtable (MonoClass *klass);
-
-void
-mono_class_setup_methods (MonoClass *klass);
-
 void
 mono_class_setup_mono_type (MonoClass *klass);
 
@@ -1407,9 +1394,6 @@ mono_field_from_token_checked (MonoImage *image, uint32_t token, MonoClass **ret
 gpointer
 mono_ldtoken_checked (MonoImage *image, guint32 token, MonoClass **handle_class, MonoGenericContext *context, MonoError *error);
 
-MonoClass *
-mono_class_from_generic_parameter_internal (MonoGenericParam *param);
-
 MonoImage *
 get_image_for_generic_param (MonoGenericParam *param);
 
@@ -1551,6 +1535,16 @@ mono_class_set_failure (MonoClass *klass, MonoErrorBoxed *boxed_error);
 
 gboolean
 mono_class_set_type_load_failure_causedby_class (MonoClass *klass, const MonoClass *caused_by, const gchar* msg);
+
+gboolean mono_class_get_cached_class_info (MonoClass *klass, MonoCachedClassInfo *res);
+
+MonoMethod* mono_find_method_in_metadata (MonoClass *klass, const char *name, int param_count, int flags);
+
+int
+mono_class_get_object_finalize_slot (void);
+
+MonoMethod *
+mono_class_get_default_finalize_method (void);
 
 /*Now that everything has been defined, let's include the inline functions */
 #include <mono/metadata/class-inlines.h>
