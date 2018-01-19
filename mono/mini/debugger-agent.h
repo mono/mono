@@ -30,7 +30,7 @@ void
 #ifndef RUNTIME_IL2CPP
 debugger_agent_single_step_from_context (MonoContext *ctx);
 #else
-debugger_agent_single_step_from_context (MonoContext *ctx, uint64_t sequencePointId);
+debugger_agent_single_step_from_context (MonoContext *ctx, int sequencePointId);
 #endif
 
 void

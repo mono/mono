@@ -5675,7 +5675,7 @@ static void
 #ifndef RUNTIME_IL2CPP
 process_single_step_inner (DebuggerTlsData *tls, gboolean from_signal)
 #else
-process_single_step_inner (DebuggerTlsData *tls, gboolean from_signal, uint64_t sequencePointId)
+process_single_step_inner (DebuggerTlsData *tls, gboolean from_signal, int sequencePointId)
 #endif
 {
 	MonoJitInfo *ji;
@@ -5871,7 +5871,7 @@ void
 #ifndef RUNTIME_IL2CPP
 debugger_agent_single_step_from_context (MonoContext *ctx)
 #else
-debugger_agent_single_step_from_context (MonoContext *ctx, uint64_t sequencePointId)
+debugger_agent_single_step_from_context (MonoContext *ctx, int sequencePointId)
 #endif
 {
 	DebuggerTlsData *tls;

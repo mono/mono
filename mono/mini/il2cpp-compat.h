@@ -444,6 +444,6 @@ MonoGenericInst* il2cpp_method_get_generic_class_inst(MonoMethodInflated *imetho
 MonoClass* il2cpp_generic_class_get_container_class(MonoGenericClass *gclass);
 void il2cpp_mono_thread_detach(MonoThread* thread);
 MonoClass* il2cpp_mono_get_string_class (void);
-Il2CppSequencePoint* il2cpp_get_sequence_point(size_t id);
+Il2CppSequencePoint* il2cpp_get_sequence_point(int id);
 
 #endif // RUNTIME_IL2CPP
