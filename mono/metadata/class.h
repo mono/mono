@@ -74,6 +74,7 @@ mono_bounded_array_class_get (MonoClass *element_class, uint32_t rank, mono_bool
 MONO_API MonoClass *
 mono_array_class_get       (MonoClass *element_class, uint32_t rank);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoClass *
 mono_ptr_class_get         (MonoType *type);
 

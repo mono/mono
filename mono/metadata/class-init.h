@@ -17,6 +17,13 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token, MonoError 
 MonoClass*
 mono_class_create_generic_inst (MonoGenericClass *gclass);
 
+MonoClass *
+mono_class_create_ptr (MonoType *type);
+
+MonoClass *
+mono_class_create_fnptr (MonoMethodSignature *sig);
+
+
 MONO_END_DECLS
 
 #endif

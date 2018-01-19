@@ -61,8 +61,8 @@ gboolean mono_align_small_structs = FALSE;
 extern gint32 inflated_classes_size;
 gint32 inflated_methods_size;
 extern gint32 classes_size; /* FIXME this goes away when all the creators move to class-init.c */
-extern gint32 class_def_count, class_gtd_count, class_ginst_count;
-gint32  class_gparam_count, class_array_count, class_pointer_count;
+extern gint32 class_def_count, class_gtd_count, class_ginst_count, class_pointer_count;
+gint32  class_gparam_count, class_array_count;
 
 /* Low level lock which protects data structures in this module */
 static mono_mutex_t classes_mutex;
@@ -5808,157 +5808,7 @@ mono_class_from_generic_parameter (MonoGenericParam *param, MonoImage *arg2 G_GN
 MonoClass *
 mono_ptr_class_get (MonoType *type)
 {
-	MonoClass *result;
-	MonoClass *el_class;
-	MonoImage *image;
-	char *name;
-	MonoImageSet* image_set;
-
-	el_class = mono_class_from_mono_type (type);
-	image = el_class->image;
-	image_set  = class_kind_may_contain_generic_instances (el_class->class_kind) ? mono_metadata_get_image_set_for_class (el_class) : NULL;
-
-	if (image_set) {
-		mono_image_set_lock (image_set);
-		if (image_set->ptr_cache) {
-			if ((result = (MonoClass *)g_hash_table_lookup (image_set->ptr_cache, el_class))) {
-				mono_image_set_unlock (image_set);
-				return result;
-			}
-		}
-		mono_image_set_unlock (image_set);
-	} else {
-		mono_image_lock (image);
-		if (image->ptr_cache) {
-			if ((result = (MonoClass *)g_hash_table_lookup (image->ptr_cache, el_class))) {
-				mono_image_unlock (image);
-				return result;
-			}
-		}
-		mono_image_unlock (image);
-	}
-	
-	result = image_set ? (MonoClass *)mono_image_set_alloc0 (image_set, sizeof (MonoClassPointer)) : (MonoClass *)mono_image_alloc0 (image, sizeof (MonoClassPointer));
-
-	UnlockedAdd (&classes_size, sizeof (MonoClassPointer));
-	++class_pointer_count;
-
-	result->parent = NULL; /* no parent for PTR types */
-	result->name_space = el_class->name_space;
-	name = g_strdup_printf ("%s*", el_class->name);
-	result->name = image_set ? mono_image_set_strdup (image_set, name) : mono_image_strdup (image, name);
-	result->class_kind = MONO_CLASS_POINTER;
-	g_free (name);
-
-	MONO_PROFILER_RAISE (class_loading, (result));
-
-	result->image = el_class->image;
-	result->inited = TRUE;
-	result->instance_size = sizeof (MonoObject) + sizeof (gpointer);
-	result->min_align = sizeof (gpointer);
-	result->cast_class = result->element_class = el_class;
-	result->blittable = TRUE;
-
-	result->byval_arg.type = MONO_TYPE_PTR;
-	result->this_arg.type = result->byval_arg.type;
-	result->this_arg.data.type = result->byval_arg.data.type = &result->element_class->byval_arg;
-	result->this_arg.byref = TRUE;
-
-	mono_class_setup_supertypes (result);
-
-	if (image_set) {
-		mono_image_set_lock (image_set);
-		if (image_set->ptr_cache) {
-			MonoClass *result2;
-			if ((result2 = (MonoClass *)g_hash_table_lookup (image_set->ptr_cache, el_class))) {
-				mono_image_set_unlock (image_set);
-				MONO_PROFILER_RAISE (class_failed, (result));
-				return result2;
-			}
-		}
-		else {
-			image_set->ptr_cache = g_hash_table_new (mono_aligned_addr_hash, NULL);
-		}
-		g_hash_table_insert (image_set->ptr_cache, el_class, result);
-		mono_image_set_unlock (image_set);
-	} else {
-		mono_image_lock (image);
-		if (image->ptr_cache) {
-			MonoClass *result2;
-			if ((result2 = (MonoClass *)g_hash_table_lookup (image->ptr_cache, el_class))) {
-				mono_image_unlock (image);
-				MONO_PROFILER_RAISE (class_failed, (result));
-				return result2;
-			}
-		} else {
-			image->ptr_cache = g_hash_table_new (mono_aligned_addr_hash, NULL);
-		}
-		g_hash_table_insert (image->ptr_cache, el_class, result);
-		mono_image_unlock (image);
-	}
-
-	MONO_PROFILER_RAISE (class_loaded, (result));
-
-	return result;
-}
-
-static MonoClass *
-mono_fnptr_class_get (MonoMethodSignature *sig)
-{
-	MonoClass *result, *cached;
-	static GHashTable *ptr_hash = NULL;
-
-	/* FIXME: These should be allocate from a mempool as well, but which one ? */
-
-	mono_loader_lock ();
-	if (!ptr_hash)
-		ptr_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
-	cached = (MonoClass *)g_hash_table_lookup (ptr_hash, sig);
-	mono_loader_unlock ();
-	if (cached)
-		return cached;
-
-	result = g_new0 (MonoClass, 1);
-
-	result->parent = NULL; /* no parent for PTR types */
-	result->name_space = "System";
-	result->name = "MonoFNPtrFakeClass";
-	result->class_kind = MONO_CLASS_POINTER;
-
-	result->image = mono_defaults.corlib; /* need to fix... */
-	result->instance_size = sizeof (MonoObject) + sizeof (gpointer);
-	result->min_align = sizeof (gpointer);
-	result->cast_class = result->element_class = result;
-	result->byval_arg.type = MONO_TYPE_FNPTR;
-	result->this_arg.type = result->byval_arg.type;
-	result->this_arg.data.method = result->byval_arg.data.method = sig;
-	result->this_arg.byref = TRUE;
-	result->blittable = TRUE;
-	result->inited = TRUE;
-
-	mono_class_setup_supertypes (result);
-
-	mono_loader_lock ();
-
-	cached = (MonoClass *)g_hash_table_lookup (ptr_hash, sig);
-	if (cached) {
-		g_free (result);
-		mono_loader_unlock ();
-		return cached;
-	}
-
-	MONO_PROFILER_RAISE (class_loading, (result));
-
-	UnlockedAdd (&classes_size, sizeof (MonoClassPointer));
-	++class_pointer_count;
-
-	g_hash_table_insert (ptr_hash, sig, result);
-
-	mono_loader_unlock ();
-
-	MONO_PROFILER_RAISE (class_loaded, (result));
-
-	return result;
+	return mono_class_create_ptr (type);
 }
 
 /**
@@ -6009,9 +5859,9 @@ mono_class_from_mono_type (MonoType *type)
 	case MONO_TYPE_ARRAY:
 		return mono_bounded_array_class_get (type->data.array->eklass, type->data.array->rank, TRUE);
 	case MONO_TYPE_PTR:
-		return mono_ptr_class_get (type->data.type);
+		return mono_class_create_ptr (type->data.type);
 	case MONO_TYPE_FNPTR:
-		return mono_fnptr_class_get (type->data.method);
+		return mono_class_create_fnptr (type->data.method);
 	case MONO_TYPE_SZARRAY:
 		return mono_array_class_get (type->data.klass, 1);
 	case MONO_TYPE_CLASS:

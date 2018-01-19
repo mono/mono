@@ -54,6 +54,7 @@
 #include <mono/metadata/tokentype.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/class-internals.h>
+#include <mono/metadata/class-init.h>
 #include <mono/metadata/reflection-internals.h>
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/gc-internals.h>
@@ -6256,7 +6257,7 @@ ves_icall_RuntimeType_MakePointerType (MonoReflectionTypeHandle ref_type, MonoEr
 	if (!is_ok (error))
 		return MONO_HANDLE_CAST (MonoReflectionType, NULL_HANDLE);
 
-	MonoClass *pklass = mono_ptr_class_get (type);
+	MonoClass *pklass = mono_class_create_ptr (type);
 
 	return mono_type_get_object_handle (domain, &pklass->byval_arg, error);
 }

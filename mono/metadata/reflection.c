@@ -1985,7 +1985,7 @@ mono_reflection_get_type_internal (MonoImage *rootimage, MonoImage* image, MonoT
 			type = &klass->this_arg;
 			goto leave;
 		} else if (modval == -1) {
-			klass = mono_ptr_class_get (&klass->byval_arg);
+			klass = mono_class_create_ptr (&klass->byval_arg);
 		} else if (modval == -2) {
 			bounded = TRUE;
 		} else { /* array rank */
