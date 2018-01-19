@@ -36,7 +36,8 @@ FIXME There are a number of problems and deficiencies in this code.
 
 - It requires the PE header to fit in 4K. This is not guaranteed
 by the file format and it is easy to construct valid files that violate it.
-i.e. with a large MS-DOS header.
+i.e. with a large MS-DOS header. The code should just read the entire
+file into memory.
 
 - It has a number of missing or incorrect range checks.
   Incorrect, as in, checking that record or field starts within
@@ -57,6 +58,9 @@ Mono runtime and desktop runtime/tools.
 The most common such data is an older signature, which is supposed to be ignored.
 The next most common is appended setup data, which isn't likely with managed code.
   However this code has nothing to do with signing managed code specifically, just PEs.
+There is a slight inconsistency in the Authenticode_PE.doc around the location
+of the signature vs. other data past sections.
+The picture has the signature first, the text puts last.
 
 - A buffer size of 4K is small and probably not performant.
   Buffering makes the code harder to update and correct, vs.
@@ -68,6 +72,21 @@ The next most common is appended setup data, which isn't likely with managed cod
 - It is missing a number of other validations.
   For example, the optional header magic was ignored, so in the
   interest of small change, we treat all non-0x20B values the same.
+
+Mail with Microsoft confirms the documents do not agree, and that the PE document
+is outdated and/or incorrect and/or referring to no longer supported v1 Authenticode,
+and that the intent is for the signature to be at the end, per the text and not the picture.
+And that data past the sections is to be hashed -- there rarely is any.
+
+The plan is therefore:
+ read the entire file into memory
+ add missing validation
+ hash, excluding checksum, security directory, and security content
+ place security content at the end, replacing what is there if anything
+ remove the symbol code (here and in formatter)
+ expose more offsets from here to cleanup the formatter code
+
+There is also no unit tests for this code it seems.
 */
 
 namespace Mono.Security.Authenticode {
@@ -115,11 +134,8 @@ namespace Mono.Security.Authenticode {
 
 		public AuthenticodeBase ()
 		{
-			// FIXME This is probably too small on modern machines.
-			// Consider growing it, or reading the entire file
-			// into memory. Reading the entire file into memory
-			// will simplify the existing code and make it easier
-			// to correct things.
+			// FIXME Read the entire file into memory.
+			// See earlier comments.
 			fileblock = new byte [4096];
 		}
 
@@ -197,6 +213,8 @@ namespace Mono.Security.Authenticode {
 				// just in case (0.1%) this can actually happen
 				// FIXME This does not mean the file is invalid,
 				// just that this code cannot handle it.
+				// FIXME Read the entire file into memory.
+				// See earlier comments.
 				string msg = String.Format (Locale.GetText (
 					"Header size too big (> {0} bytes)."),
 					fileblock.Length);
@@ -239,10 +257,7 @@ namespace Mono.Security.Authenticode {
 				dirSecuritySize = BitConverterLE.ToInt32 (fileblock, peOffset + 156);
 			}
 
-			// FIXME Why does this matter? It is rarely present anyway.
-			// FIXME If it does matter, validate it is within the file?
-			// COFF symbol tables are deprecated - we'll strip them if we see them!
-			// (otherwise the signature won't work on MS and we don't want to support COFF for that)
+			// FIXME Remove this code and the dependency on it.
 			coffSymbolTableOffset = BitConverterLE.ToInt32 (fileblock, peOffset + 12);
 
 			return 0;
