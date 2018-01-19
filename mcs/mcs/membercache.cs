@@ -309,7 +309,6 @@ namespace Mono.CSharp {
 				//
 				if (!BuiltinTypeSpec.IsPrimitiveType (dt) || dt.BuiltinType == BuiltinTypeSpec.Type.Char) {
 					switch (dt.BuiltinType) {
-					case BuiltinTypeSpec.Type.String:
 					case BuiltinTypeSpec.Type.Delegate:
 					case BuiltinTypeSpec.Type.MulticastDelegate:
 						break;
@@ -317,6 +316,9 @@ namespace Mono.CSharp {
 						if (name == Operator.GetMetadataName (Operator.OpType.Implicit) || name == Operator.GetMetadataName (Operator.OpType.Explicit)) {
 							state |= StateFlags.HasConversionOperator;
 						} else {
+							if (dt.BuiltinType == BuiltinTypeSpec.Type.String)
+								break;
+
 							state |= StateFlags.HasUserOperator;
 						}
 
