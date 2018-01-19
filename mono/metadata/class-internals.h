@@ -1224,7 +1224,7 @@ MONO_API MonoGenericContainer *
 mono_metadata_load_generic_params (MonoImage *image, guint32 token,
 				   MonoGenericContainer *parent_container);
 
-MONO_API gboolean
+gboolean
 mono_metadata_load_generic_param_constraints_checked (MonoImage *image, guint32 token,
 					      MonoGenericContainer *container, MonoError *error);
 
