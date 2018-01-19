@@ -1,3 +1,3 @@
 #!/bin/bash -x
 
-`dirname ${BASH_SOURCE[0]}`/postinstall.real 2>&1 > /tmp/mono.`date +%s`.install.log || exit 1
+`dirname ${BASH_SOURCE[0]}`/postinstall.real || grep "./postinstall" /var/log/install.log > /tmp/mono.`date +%s`.install.log && exit 1
