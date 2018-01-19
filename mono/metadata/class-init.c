@@ -112,6 +112,83 @@ disable_gclass_recording (gclass_record_func func, void *user_data)
 	}
 }
 
+/**
+ * mono_class_setup_basic_field_info:
+ * \param class The class to initialize
+ *
+ * Initializes the following fields in MonoClass:
+ * * klass->fields (only field->parent and field->name)
+ * * klass->field.count
+ * * klass->first_field_idx
+ * LOCKING: Acquires the loader lock
+ */
+void
+mono_class_setup_basic_field_info (MonoClass *klass)
+{
+	MonoGenericClass *gklass;
+	MonoClassField *field;
+	MonoClassField *fields;
+	MonoClass *gtd;
+	MonoImage *image;
+	int i, top;
+
+	if (klass->fields)
+		return;
+
+	gklass = mono_class_try_get_generic_class (klass);
+	gtd = gklass ? mono_class_get_generic_type_definition (klass) : NULL;
+	image = klass->image;
+
+
+	if (gklass && image_is_dynamic (gklass->container_class->image) && !gklass->container_class->wastypebuilder) {
+		/*
+		 * This happens when a generic instance of an unfinished generic typebuilder
+		 * is used as an element type for creating an array type. We can't initialize
+		 * the fields of this class using the fields of gklass, since gklass is not
+		 * finished yet, fields could be added to it later.
+		 */
+		return;
+	}
+
+	if (gtd) {
+		mono_class_setup_basic_field_info (gtd);
+
+		mono_loader_lock ();
+		mono_class_set_field_count (klass, mono_class_get_field_count (gtd));
+		mono_loader_unlock ();
+	}
+
+	top = mono_class_get_field_count (klass);
+
+	fields = (MonoClassField *)mono_class_alloc0 (klass, sizeof (MonoClassField) * top);
+
+	/*
+	 * Fetch all the field information.
+	 */
+	int first_field_idx = mono_class_has_static_metadata (klass) ? mono_class_get_first_field_idx (klass) : 0;
+	for (i = 0; i < top; i++) {
+		field = &fields [i];
+		field->parent = klass;
+
+		if (gtd) {
+			field->name = mono_field_get_name (&gtd->fields [i]);
+		} else {
+			int idx = first_field_idx + i;
+			/* first_field_idx and idx points into the fieldptr table */
+			guint32 name_idx = mono_metadata_decode_table_row_col (image, MONO_TABLE_FIELD, idx, MONO_FIELD_NAME);
+			/* The name is needed for fieldrefs */
+			field->name = mono_metadata_string_heap (image, name_idx);
+		}
+	}
+
+	mono_memory_barrier ();
+
+	mono_loader_lock ();
+	if (!klass->fields)
+		klass->fields = fields;
+	mono_loader_unlock ();
+}
+
 static gboolean
 discard_gclass_due_to_failure (MonoClass *gclass, void *user_data)
 {
@@ -3653,8 +3730,6 @@ mono_class_setup_methods (MonoClass *klass)
 
 	mono_image_unlock (klass->image);
 }
-
-
 
 /**
  * mono_classes_init:

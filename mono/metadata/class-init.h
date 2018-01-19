@@ -39,6 +39,9 @@ void
 mono_class_init_sizes (MonoClass *klass);
 
 void
+mono_class_setup_basic_field_info (MonoClass *klass);
+
+void
 mono_class_setup_methods (MonoClass *klass);
 
 void
