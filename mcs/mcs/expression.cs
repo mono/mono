@@ -3464,11 +3464,6 @@ namespace Mono.CSharp
 			l = left.Type.GetSignatureForError ();
 			r = right.Type.GetSignatureForError ();
 
-			if (left.Type == InternalType.DefaultType || right.Type == InternalType.DefaultType) {
-				ec.Report.Error (8310, loc, "Operator `{0}' cannot be applied to operand `default'", oper);
-				return;
-			}
-
 			ec.Report.Error (19, loc, "Operator `{0}' cannot be applied to operands of type `{1}' and `{2}'",
 				oper, l, r);
 		}
@@ -4323,7 +4318,12 @@ namespace Mono.CSharp
 			//
 			// Only default with == and != is explicitly allowed
 			//
-			if (((Oper & Operator.EqualityMask) != 0) && (ltype == InternalType.DefaultType || rtype == InternalType.DefaultType)) {
+			if (ltype == InternalType.DefaultType || rtype == InternalType.DefaultType) {
+				if ((Oper & Operator.EqualityMask) == 0) {
+					ec.Report.Error (8310, loc, "Operator `{0}' cannot be applied to operand `default'", OperName (Oper));
+					return null;
+				}
+
 				if (ltype == rtype) {
 					ec.Report.Error (8315, loc, "Operator `{0}' is ambiguous on operands `default' and `default'", OperName (Oper));
 					return null;
