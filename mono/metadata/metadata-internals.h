@@ -765,7 +765,7 @@ mono_metadata_parse_method_signature_full   (MonoImage             *image,
 					     const char            **rptr,
 					     MonoError *error);
 
-MONO_API MonoMethodHeader *
+MonoMethodHeader *
 mono_metadata_parse_mh_full                 (MonoImage             *image,
 					     MonoGenericContainer  *container,
 					     const char            *ptr,
