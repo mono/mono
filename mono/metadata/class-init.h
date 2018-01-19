@@ -18,6 +18,12 @@ MonoClass*
 mono_class_create_generic_inst (MonoGenericClass *gclass);
 
 MonoClass *
+mono_class_create_bounded_array (MonoClass *element_class, uint32_t rank, mono_bool bounded);
+
+MonoClass *
+mono_class_create_array (MonoClass *element_class, uint32_t rank);
+
+MonoClass *
 mono_class_create_ptr (MonoType *type);
 
 MonoClass *

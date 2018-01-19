@@ -1989,7 +1989,7 @@ mono_reflection_get_type_internal (MonoImage *rootimage, MonoImage* image, MonoT
 		} else if (modval == -2) {
 			bounded = TRUE;
 		} else { /* array rank */
-			klass = mono_bounded_array_class_get (klass, modval, bounded);
+			klass = mono_class_create_bounded_array (klass, modval, bounded);
 		}
 	}
 

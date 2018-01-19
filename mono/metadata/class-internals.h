@@ -1546,6 +1546,11 @@ mono_method_get_header_internal (MonoMethod *method, MonoError *error);
 MonoType*
 mono_class_find_enum_basetype (MonoClass *klass, MonoError *error);
 
+gboolean
+mono_class_set_failure (MonoClass *klass, MonoErrorBoxed *boxed_error);
+
+gboolean
+mono_class_set_type_load_failure_causedby_class (MonoClass *klass, const MonoClass *caused_by, const gchar* msg);
 
 /*Now that everything has been defined, let's include the inline functions */
 #include <mono/metadata/class-inlines.h>

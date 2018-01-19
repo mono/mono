@@ -627,7 +627,7 @@ ves_icall_System_Array_CreateInstanceImpl (MonoReflectionType *type, MonoArray *
 	else
 		bounded = FALSE;
 
-	aklass = mono_bounded_array_class_get (klass, mono_array_length (lengths), bounded);
+	aklass = mono_class_create_bounded_array (klass, mono_array_length (lengths), bounded);
 
 	sizes = (uintptr_t *)alloca (aklass->rank * sizeof(intptr_t) * 2);
 	for (i = 0; i < aklass->rank; ++i) {
@@ -679,7 +679,7 @@ ves_icall_System_Array_CreateInstanceImpl64 (MonoReflectionType *type, MonoArray
 	else
 		bounded = FALSE;
 
-	aklass = mono_bounded_array_class_get (klass, mono_array_length (lengths), bounded);
+	aklass = mono_class_create_bounded_array (klass, mono_array_length (lengths), bounded);
 
 	sizes = (uintptr_t *)alloca (aklass->rank * sizeof(intptr_t) * 2);
 	for (i = 0; i < aklass->rank; ++i) {
@@ -6210,9 +6210,9 @@ ves_icall_RuntimeType_make_array_type (MonoReflectionTypeHandle ref_type, int ra
 
 	MonoClass *aklass;
 	if (rank == 0) //single dimentional array
-		aklass = mono_array_class_get (klass, 1);
+		aklass = mono_class_create_array (klass, 1);
 	else
-		aklass = mono_bounded_array_class_get (klass, rank, TRUE);
+		aklass = mono_class_create_bounded_array (klass, rank, TRUE);
 
 	if (mono_class_has_failure (aklass)) {
 		mono_error_set_for_class_failure (error, aklass);
