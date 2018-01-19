@@ -3869,7 +3869,7 @@ mono_assembly_load_module (MonoAssembly *assembly, guint32 idx)
 	return result;
 }
 
-MONO_API MonoImage*
+MonoImage*
 mono_assembly_load_module_checked (MonoAssembly *assembly, uint32_t idx, MonoError *error)
 {
 	return mono_image_load_file_for_image_checked (assembly->image, idx, error);
