@@ -757,7 +757,7 @@ mono_metadata_interfaces_from_typedef_full  (MonoImage             *image,
 											 MonoGenericContext    *context,
 											 MonoError *error);
 
-MONO_API MonoMethodSignature *
+MonoMethodSignature *
 mono_metadata_parse_method_signature_full   (MonoImage             *image,
 					     MonoGenericContainer  *generic_container,
 					     int                     def,
