@@ -68552,13 +68552,29 @@
   <test name="test-default-02.cs">
     <type name="C">
       <method name="Void Main()" attrs="145">
-        <size>8</size>
+        <size>36</size>
       </method>
       <method name="Void M[T](T, T)" attrs="145">
         <size>2</size>
       </method>
       <method name="Void M2(System.Object[])" attrs="145">
         <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+      <method name="Byte[] Test(S`1[System.Byte])" attrs="145">
+        <size>10</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-default-03.cs">
+    <type name="X">
+      <method name="Int32 Main()" attrs="150">
+        <size>25</size>
+      </method>
+      <method name="Byte[] Test(S`1[System.Byte])" attrs="145">
+        <size>10</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
