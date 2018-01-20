@@ -14,6 +14,7 @@
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/debug-helpers.h>
 #include <mono/mini/jit.h>
+#include <mono/utils/mono-error-internals.h>
 
 #define TESTPROG "callspec.exe"
 
