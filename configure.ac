@@ -376,12 +376,14 @@ case "$host" in
 		;;
 	*-*-os400*)
 		dnl IBM i PASE
-		CPPFLAGS="$CPPFLAGS -DGC_AIX_THREADS -D_REENTRANT"
+		CPPFLAGS="$CPPFLAGS -DGC_AIX_THREADS -D_ALL_SOURCE -D_REENTRANT"
 		libmono_cflags="-D_REENTRANT"
 		libgc_threads=pthreads
 		need_link_unlink=yes
 		use_sigposix=yes
 		parallel_mark="not tested"
+		dnl ppc Linux is the same? test further
+		disable_munmap=yes
 		;;
 	*)
 		AC_MSG_WARN([*** Please add $host to configure.ac checks!])
