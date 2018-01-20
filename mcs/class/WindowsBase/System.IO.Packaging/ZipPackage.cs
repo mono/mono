@@ -191,7 +191,7 @@ namespace System.IO.Packaging {
 							string ext = Path.GetExtension (file);
 							if (ext.StartsWith("."))
 								ext = ext.Substring (1);
-							xPath = string.Format("/content:Types/content:Default[@Extension='{0}']", ext);
+							xPath = string.Format("/content:Types/content:Default[translate(@Extension,'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ')='{0}']", ext.ToUpperInvariant());
 							node = doc.SelectSingleNode (xPath, manager);
 						}
 
