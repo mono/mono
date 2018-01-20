@@ -724,9 +724,6 @@ typedef struct {
 void
 mono_class_setup_supertypes (MonoClass *klass);
 
-void
-mono_class_setup_fields (MonoClass *klass);
-
 /* WARNING
  * Only call this function if you can ensure both @klass and @parent
  * have supertype information initialized.
@@ -1545,6 +1542,12 @@ mono_class_get_object_finalize_slot (void);
 
 MonoMethod *
 mono_class_get_default_finalize_method (void);
+
+void
+mono_field_resolve_type (MonoClassField *field, MonoError *error);
+
+gboolean
+mono_type_has_exceptions (MonoType *type);
 
 /*Now that everything has been defined, let's include the inline functions */
 #include <mono/metadata/class-inlines.h>

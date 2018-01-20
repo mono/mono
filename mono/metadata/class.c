@@ -66,15 +66,12 @@ extern gint32 class_def_count, class_gtd_count, class_ginst_count, class_gparam_
 /* Low level lock which protects data structures in this module */
 mono_mutex_t classes_mutex;
 
-extern MonoNativeTlsKey setup_fields_tls_id; /* FIXME move the field setup code to class-init.c */
-
 /* Function supplied by the runtime to find classes by name using information from the AOT file */
 static MonoGetClassFromName get_class_from_name = NULL;
 
 static gboolean can_access_type (MonoClass *access_klass, MonoClass *member_klass);
 
 static char* mono_assembly_name_from_token (MonoImage *image, guint32 type_token);
-static void mono_field_resolve_type (MonoClassField *field, MonoError *error);
 static guint32 mono_field_resolve_flags (MonoClassField *field);
 
 static inline void
@@ -1260,7 +1257,7 @@ fail:
 /*
  * Checks for MonoClass::has_failure without resolving all MonoType's into MonoClass'es
  */
-static gboolean
+gboolean
 mono_type_has_exceptions (MonoType *type)
 {
 	switch (type->type) {
@@ -1340,153 +1337,6 @@ mono_class_set_type_load_failure_causedby_class (MonoClass *klass, const MonoCla
 	}
 }
 
-
-/** 
- * mono_class_setup_fields:
- * \p klass The class to initialize
- *
- * Initializes klass->fields, computes class layout and sizes.
- * typebuilder_setup_fields () is the corresponding function for dynamic classes.
- * Sets the following fields in \p klass:
- *  - all the fields initialized by mono_class_init_sizes ()
- *  - element_class/cast_class (for enums)
- *  - sizes:element_size (for arrays)
- *  - field->type/offset for all fields
- *  - fields_inited
- *
- * LOCKING: Acquires the loader lock.
- */
-void
-mono_class_setup_fields (MonoClass *klass)
-{
-	ERROR_DECL (error);
-	MonoImage *m = klass->image;
-	int top;
-	guint32 layout = mono_class_get_flags (klass) & TYPE_ATTRIBUTE_LAYOUT_MASK;
-	int i;
-	guint32 real_size = 0;
-	guint32 packing_size = 0;
-	int instance_size;
-	gboolean explicit_size;
-	MonoClassField *field;
-	MonoGenericClass *gklass = mono_class_try_get_generic_class (klass);
-	MonoClass *gtd = gklass ? mono_class_get_generic_type_definition (klass) : NULL;
-
-	if (klass->fields_inited)
-		return;
-
-	if (gklass && image_is_dynamic (gklass->container_class->image) && !gklass->container_class->wastypebuilder) {
-		/*
-		 * This happens when a generic instance of an unfinished generic typebuilder
-		 * is used as an element type for creating an array type. We can't initialize
-		 * the fields of this class using the fields of gklass, since gklass is not
-		 * finished yet, fields could be added to it later.
-		 */
-		return;
-	}
-
-	mono_class_setup_basic_field_info (klass);
-	top = mono_class_get_field_count (klass);
-
-	if (gtd) {
-		mono_class_setup_fields (gtd);
-		if (mono_class_set_type_load_failure_causedby_class (klass, gtd, "Generic type definition failed"))
-			return;
-	}
-
-	instance_size = 0;
-	if (klass->parent) {
-		/* For generic instances, klass->parent might not have been initialized */
-		mono_class_init (klass->parent);
-		mono_class_setup_fields (klass->parent);
-		if (mono_class_set_type_load_failure_causedby_class (klass, klass->parent, "Could not set up parent class"))
-			return;
-		instance_size = klass->parent->instance_size;
-	} else {
-		instance_size = sizeof (MonoObject);
-	}
-
-	/* Get the real size */
-	explicit_size = mono_metadata_packing_from_typedef (klass->image, klass->type_token, &packing_size, &real_size);
-	if (explicit_size)
-		instance_size += real_size;
-
-	/*
-	 * This function can recursively call itself.
-	 * Prevent infinite recursion by using a list in TLS.
-	 */
-	GSList *init_list = (GSList *)mono_native_tls_get_value (setup_fields_tls_id);
-	if (g_slist_find (init_list, klass))
-		return;
-	init_list = g_slist_prepend (init_list, klass);
-	mono_native_tls_set_value (setup_fields_tls_id, init_list);
-
-	/*
-	 * Fetch all the field information.
-	 */
-	int first_field_idx = mono_class_has_static_metadata (klass) ? mono_class_get_first_field_idx (klass) : 0;
-	for (i = 0; i < top; i++) {
-		int idx = first_field_idx + i;
-		field = &klass->fields [i];
-
-		if (!field->type) {
-			mono_field_resolve_type (field, error);
-			if (!mono_error_ok (error)) {
-				/*mono_field_resolve_type already failed class*/
-				mono_error_cleanup (error);
-				break;
-			}
-			if (!field->type)
-				g_error ("could not resolve %s:%s\n", mono_type_get_full_name(klass), field->name);
-			g_assert (field->type);
-		}
-
-		if (!mono_type_get_underlying_type (field->type)) {
-			mono_class_set_type_load_failure (klass, "Field '%s' is an enum type with a bad underlying type", field->name);
-			break;
-		}
-
-		if (mono_field_is_deleted (field))
-			continue;
-		if (layout == TYPE_ATTRIBUTE_EXPLICIT_LAYOUT) {
-			guint32 uoffset;
-			mono_metadata_field_info (m, idx, &uoffset, NULL, NULL);
-			int offset = uoffset;
-
-			if (offset == (guint32)-1 && !(field->type->attrs & FIELD_ATTRIBUTE_STATIC)) {
-				mono_class_set_type_load_failure (klass, "Missing field layout info for %s", field->name);
-				break;
-			}
-			if (offset < -1) { /*-1 is used to encode special static fields */
-				mono_class_set_type_load_failure (klass, "Field '%s' has a negative offset %d", field->name, offset);
-				break;
-			}
-			if (mono_class_is_gtd (klass)) {
-				mono_class_set_type_load_failure (klass, "Generic class cannot have explicit layout.");
-				break;
-			}
-		}
-		if (mono_type_has_exceptions (field->type)) {
-			char *class_name = mono_type_get_full_name (klass);
-			char *type_name = mono_type_full_name (field->type);
-
-			mono_class_set_type_load_failure (klass, "Invalid type %s for instance field %s:%s", type_name, class_name, field->name);
-			g_free (class_name);
-			g_free (type_name);
-			break;
-		}
-		/* The def_value of fields is compute lazily during vtable creation */
-	}
-
-	if (!mono_class_has_failure (klass)) {
-		mono_loader_lock ();
-		mono_class_layout_fields (klass, instance_size, packing_size, real_size, FALSE);
-		mono_loader_unlock ();
-	}
-
-	init_list = g_slist_remove (init_list, klass);
-	mono_native_tls_set_value (setup_fields_tls_id, init_list);
-}
 
 /*
  * mono_type_get_basic_type_from_generic:
@@ -7074,7 +6924,7 @@ mono_class_setup_interfaces (MonoClass *klass, MonoError *error)
 	mono_loader_unlock ();
 }
 
-static void
+void
 mono_field_resolve_type (MonoClassField *field, MonoError *error)
 {
 	MonoClass *klass = field->parent;

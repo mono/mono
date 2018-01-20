@@ -42,6 +42,9 @@ void
 mono_class_setup_basic_field_info (MonoClass *klass);
 
 void
+mono_class_setup_fields (MonoClass *klass);
+
+void
 mono_class_setup_methods (MonoClass *klass);
 
 void
