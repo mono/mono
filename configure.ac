@@ -374,6 +374,15 @@ case "$host" in
 		libgc_threads=pthreads
 		use_sigposix=yes
 		;;
+	*-*-os400*)
+		dnl IBM i PASE
+		CPPFLAGS="$CPPFLAGS -DGC_AIX_THREADS -D_REENTRANT"
+		libmono_cflags="-D_REENTRANT"
+		libgc_threads=pthreads
+		need_link_unlink=yes
+		use_sigposix=yes
+		parallel_mark="not tested"
+		;;
 	*)
 		AC_MSG_WARN([*** Please add $host to configure.ac checks!])
 		libdl="-ldl"
