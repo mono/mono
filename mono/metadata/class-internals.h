@@ -1224,6 +1224,13 @@ MONO_API MonoGenericContainer *
 mono_metadata_load_generic_params (MonoImage *image, guint32 token,
 				   MonoGenericContainer *parent_container);
 
+// FIXME Convert callers of mono_metadata_load_generic_param_constraints_checked to
+// mono_metadata_load_generic_param_constraints_internal. The difference is MONO_API
+// and error initializations.
+gboolean
+mono_metadata_load_generic_param_constraints_internal (MonoImage *image, guint32 token,
+					      MonoGenericContainer *container, MonoError *error);
+
 MONO_API gboolean
 mono_metadata_load_generic_param_constraints_checked (MonoImage *image, guint32 token,
 					      MonoGenericContainer *container, MonoError *error);

@@ -3869,10 +3869,21 @@ mono_assembly_load_module (MonoAssembly *assembly, guint32 idx)
 	return result;
 }
 
-MONO_API MonoImage*
-mono_assembly_load_module_checked (MonoAssembly *assembly, uint32_t idx, MonoError *error)
+MonoImage*
+mono_assembly_load_module_internal (MonoAssembly *assembly, uint32_t idx, MonoError *error)
+// FIXME convert callers from mono_assembly_load_module_checked to mono_assembly_load_module_internal.
+// // _checked is MONO_API and its error initialization and will be EXTERNAL_ONLY, _internal is not.
 {
 	return mono_image_load_file_for_image_checked (assembly->image, idx, error);
+}
+
+MONO_API MonoImage*
+mono_assembly_load_module_checked (MonoAssembly *assembly, uint32_t idx, MonoError *error)
+// FIXME convert callers from mono_assembly_load_module_checked to mono_assembly_load_module_internal.
+// _checked is MONO_API and its error initialization and will be EXTERNAL_ONLY, _internal is not.
+{
+	MONO_API_ERROR_INIT (error);
+	return mono_assembly_load_module_internal (assembly, idx, error);
 }
 
 

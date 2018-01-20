@@ -757,6 +757,16 @@ mono_metadata_interfaces_from_typedef_full  (MonoImage             *image,
 											 MonoGenericContext    *context,
 											 MonoError *error);
 
+// FIXME Convert callers of mono_metadata_parse_method_signature_full to mono_metadata_parse_method_signature_internal
+// The difference is in error initialization.
+MonoMethodSignature *
+mono_metadata_parse_method_signature_internal   (MonoImage             *image,
+					     MonoGenericContainer  *generic_container,
+					     int                     def,
+					     const char             *ptr,
+					     const char            **rptr,
+					     MonoError *error);
+
 MONO_API MonoMethodSignature *
 mono_metadata_parse_method_signature_full   (MonoImage             *image,
 					     MonoGenericContainer  *generic_container,
@@ -764,6 +774,14 @@ mono_metadata_parse_method_signature_full   (MonoImage             *image,
 					     const char             *ptr,
 					     const char            **rptr,
 					     MonoError *error);
+
+// FIXME Convert callers of mono_metadata_parse_mh_full to mono_metadata_parse_mh_internal.
+// _full is MONO_API and its error initialization and will be EXTERNAL_ONLY, _internal is not.
+MonoMethodHeader *
+mono_metadata_parse_mh_internal             (MonoImage             *image,
+					     MonoGenericContainer  *container,
+					     const char            *ptr,
+						 MonoError *error);
 
 MONO_API MonoMethodHeader *
 mono_metadata_parse_mh_full                 (MonoImage             *image,

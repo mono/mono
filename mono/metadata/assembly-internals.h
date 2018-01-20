@@ -10,6 +10,11 @@
 
 #include <mono/metadata/assembly.h>
 
+// FIXME convert callers from mono_assembly_load_module_checked to mono_assembly_load_module_internal.
+// _checked is MONO_API and its error initialization and will be EXTERNAL_ONLY, _internal is not.
+MonoImage*
+mono_assembly_load_module_internal (MonoAssembly *assembly, uint32_t idx, MonoError *error);
+
 MONO_API MonoImage*    mono_assembly_load_module_checked (MonoAssembly *assembly, uint32_t idx, MonoError *error);
 
 MonoAssembly * mono_assembly_open_a_lot (const char *filename, MonoImageOpenStatus *status, gboolean refonly, gboolean load_from_context);

@@ -2129,10 +2129,13 @@ mono_metadata_signature_size (MonoMethodSignature *sig)
  *
  * \returns a \c MonoMethodSignature describing the signature.  On error sets
  * \p error and returns \c NULL.
+ *
+ * _full is MONO_API and its error initialization and will be EXTERNAL_ONLY, _internal is not.
  */
 MonoMethodSignature *
-mono_metadata_parse_method_signature_full (MonoImage *m, MonoGenericContainer *container,
+mono_metadata_parse_method_signature_internal (MonoImage *m, MonoGenericContainer *container,
 					   int def, const char *ptr, const char **rptr, MonoError *error)
+// FIXME Convert callers of mono_metadata_parse_method_signature_full to mono_metadata_parse_method_signature_internal.
 {
 	MonoMethodSignature *method;
 	int i, *pattrs = NULL;
@@ -2216,6 +2219,16 @@ mono_metadata_parse_method_signature_full (MonoImage *m, MonoGenericContainer *c
 	 */
 
 	return method;
+}
+
+MonoMethodSignature *
+mono_metadata_parse_method_signature_full (MonoImage *m, MonoGenericContainer *container,
+					   int def, const char *ptr, const char **rptr, MonoError *error)
+// FIXME Convert callers of mono_metadata_parse_method_signature_full to mono_metadata_parse_method_signature_internal.
+// _full is MONO_API and its error initialization and will be EXTERNAL_ONLY, _internal is not.
+{
+	MONO_API_ERROR_INIT (error);
+	return mono_metadata_parse_method_signature_internal (m, container, def, ptr, rptr, error);
 }
 
 /**
@@ -3975,9 +3988,12 @@ mono_method_get_header_summary (MonoMethod *method, MonoMethodHeaderSummary *sum
  * LOCKING: Acquires the loader lock.
  *
  * Returns: a transient MonoMethodHeader allocated from the heap.
+ *
+ * _full is MONO_API and its error initialization and will be EXTERNAL_ONLY, _internal is not.
  */
 MonoMethodHeader *
-mono_metadata_parse_mh_full (MonoImage *m, MonoGenericContainer *container, const char *ptr, MonoError *error)
+mono_metadata_parse_mh_internal (MonoImage *m, MonoGenericContainer *container, const char *ptr, MonoError *error)
+// FIXME Convert callers of mono_metadata_parse_mh_full to mono_metadata_parse_mh_internal.
 {
 	MonoMethodHeader *mh = NULL;
 	unsigned char flags = *(const unsigned char *) ptr;
@@ -4091,6 +4107,15 @@ fail:
 	g_free (mh);
 	return NULL;
 
+}
+
+MonoMethodHeader *
+mono_metadata_parse_mh_full (MonoImage *m, MonoGenericContainer *container, const char *ptr, MonoError *error)
+// FIXME convert callers of mono_metadata_parse_mh_full to mono_metadata_parse_mh_internal.
+// _full is MONO_API and its error initialization and will be EXTERNAL_ONLY, _internal is not.
+{
+	MONO_API_ERROR_INIT (error);
+	return mono_metadata_parse_mh_internal (m, container, ptr, error);
 }
 
 /**
@@ -6486,8 +6511,10 @@ mono_metadata_has_generic_params (MonoImage *image, guint32 token)
  * Memory is allocated from IMAGE's mempool.
  */
 gboolean
-mono_metadata_load_generic_param_constraints_checked (MonoImage *image, guint32 token,
+mono_metadata_load_generic_param_constraints_internal (MonoImage *image, guint32 token,
 					      MonoGenericContainer *container, MonoError *error)
+// FIXME Convert callers of mono_metadata_load_generic_param_constraints_checked to mono_metadata_load_generic_param_constrains_internal
+// _checked is MONO_API and its error initialization and will be EXTERNAL_ONLY, _internal is not.
 {
 
 	guint32 start_row, i, owner;
@@ -6501,6 +6528,16 @@ mono_metadata_load_generic_param_constraints_checked (MonoImage *image, guint32 
 		}
 	}
 	return TRUE;
+}
+
+gboolean
+mono_metadata_load_generic_param_constraints_checked (MonoImage *image, guint32 token,
+					      MonoGenericContainer *container, MonoError *error)
+// FIXME Convert callers of mono_metadata_load_generic_param_constraints_checked to mono_metadata_load_generic_param_constrains_internal
+// _checked is MONO_API and its error initialization and will be EXTERNAL_ONLY, _internal is not.
+{
+	MONO_API_ERROR_INIT (error);
+	return mono_metadata_load_generic_param_constraints_internal (image, token, container, error);
 }
 
 /*
