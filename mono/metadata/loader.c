@@ -47,7 +47,6 @@
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/mono-tls.h>
 #include <mono/utils/mono-path.h>
-#include <mono/metadata/loader-internals.h>
 
 MonoDefaults mono_defaults;
 
