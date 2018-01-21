@@ -376,7 +376,7 @@ case "$host" in
 		;;
 	*-*-os400*)
 		dnl IBM i PASE
-		CPPFLAGS="$CPPFLAGS -DGC_AIX_THREADS -D_ALL_SOURCE -D_REENTRANT"
+		CPPFLAGS="$CPPFLAGS -DGC_AIX_THREADS -D_ALL_SOURCE -D_XOPEN_SOURCE=700 -D_LARGE_FILES -D_REENTRANT"
 		libmono_cflags="-D_REENTRANT"
 		libgc_threads=pthreads
 		need_link_unlink=yes
@@ -2946,6 +2946,12 @@ AC_MSG_RESULT($try_dev_random)
 case "{$build}" in
     *-openbsd*)
     NAME_DEV_RANDOM="/dev/srandom"
+    ;;
+
+dnl IBM i does not have /dev/random, use unblocking only
+
+    *-*-os400*)
+    NAME_DEV_RANDOM="/dev/urandom"
     ;;
 
 dnl Win32 does not have /dev/random, they have their own method...
