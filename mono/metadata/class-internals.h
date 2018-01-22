@@ -1392,7 +1392,7 @@ mono_class_full_name (MonoClass *klass);
 MonoClass*
 mono_class_inflate_generic_class_checked (MonoClass *gklass, MonoGenericContext *context, MonoError *error);
 
-MonoClass *
+MONO_PROFILER_API MonoClass *
 mono_class_get_checked (MonoImage *image, guint32 type_token, MonoError *error);
 
 MonoClass *
@@ -1533,6 +1533,15 @@ mono_class_get_weak_bitmap (MonoClass *klass, int *nbits);
 
 MonoMethod *
 mono_class_get_method_from_name_checked (MonoClass *klass, const char *name, int param_count, int flags, MonoError *error);
+
+// FIXME Replace all internal callers of mono_method_get_header_checked with
+// mono_method_get_header_internal; the difference is in error initialization.
+//
+// And then mark mono_method_get_header_checked as MONO_RT_EXTERNAL_ONLY MONO_API.
+//
+// Internal callers expected to use ERROR_DECL. External callers are not.
+MonoMethodHeader*
+mono_method_get_header_internal (MonoMethod *method, MonoError *error);
 
 /*Now that everything has been defined, let's include the inline functions */
 #include <mono/metadata/class-inlines.h>

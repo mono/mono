@@ -43,7 +43,7 @@ namespace MonoTests.System.ServiceModel.Channels
 	[TestFixture]
 	public class HttpsTransportBindingElementTest
 	{
-#if !MOBILE
+#if !MOBILE && !XAMMAC_4_5
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void BuildChannelFactoryForHttpEndpoint ()

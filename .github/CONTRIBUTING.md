@@ -32,7 +32,7 @@ file in this directory.
 CLA
 =======
 
-Contributions are now taken under the [.NET Foundation CLA](https://cla2.dotnetfoundation.org/).
+Contributions are now taken under the [.NET Foundation CLA](https://cla.dotnetfoundation.org/).
 
 Code Review
 =======

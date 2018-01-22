@@ -532,7 +532,8 @@ TESTS_CS_SRC=		\
 	init_array_with_lazy_type.cs \
 	weak-fields.cs \
 	threads-leak.cs	\
-	threads-init.cs
+	threads-init.cs \
+	bug-60848.cs
 
 if AMD64
 TESTS_CS_SRC += async-exc-compilation.cs finally_guard.cs finally_block_ending_in_dead_bb.cs
@@ -735,6 +736,15 @@ INTERP_PLATFORM_DISABLED_TESTS= \
 	delegate3.exe \
 	thunks.exe \
 	finalizer-exception.exe \
+	delegate5.exe \
+	delegate8.exe \
+	bug-323114.exe \
+	threadpool-exceptions3.exe \
+	threadpool-exceptions6.exe \
+	bug-80392.2.exe \
+	remoting3.exe \
+	remoting2.exe \
+	appdomain-unload-callback.exe \
 	monitor-abort.exe
 endif
 
@@ -962,6 +972,10 @@ endif
 LLVM_DISABLED_TESTS = \
 	finally_block_ending_in_dead_bb.exe \
 	appdomain-threadpool-unload.exe
+
+# https://github.com/mono/mono/issues/6490
+LLVM_DISABLED_TESTS += \
+	weak-fields.exe
 
 LLVM = $(filter --llvm, $(MONO_ENV_OPTIONS))
 
