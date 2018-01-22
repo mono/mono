@@ -915,8 +915,6 @@ void
 mono_classes_cleanup (void);
 
 void
-mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_size, int real_size, gboolean sre);
-void
 mono_class_setup_mono_type (MonoClass *klass);
 
 void
