@@ -65,6 +65,11 @@
 #endif
 #define USE_SYSCTL 1
 #endif
+/* AIX defines hz in a header if _ALL_SOURCE (otherwise useful) is
+   defined, so undef */
+#if defined(_AIX) && defined(_ALL_SOURCE)
+#undef hz
+#endif
 
 #ifdef HAVE_SCHED_GETAFFINITY
 #  ifndef GLIBC_HAS_CPU_COUNT
