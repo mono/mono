@@ -6284,6 +6284,7 @@ mono_string_new_len_checked (MonoDomain *domain, const char *text, guint length,
 	else 
 		g_error_free (eg_error);
 
+	// FIXME avoid extra copy
 	g_free (ut);
 
 	return o;
@@ -6344,7 +6345,10 @@ mono_string_new_checked (MonoDomain *domain, const char *text, MonoError *error)
 		mono_error_set_execution_engine (error, "String conversion error: %s", eg_error->message);
 		g_error_free (eg_error);
 	}
-	
+	// FIXME avoid extra copy
+	// use g_utf8_to_utf18_buf with null buf (not yet provided)
+	// to get length, then mono_string_new_size_checked to allocate, then
+	// again g_utf8_to_utf16_buf into the gc memory
 	g_free (ut);
     
 /*FIXME g_utf8_get_char, g_utf8_next_char and g_utf8_validate are not part of eglib.*/
@@ -7056,6 +7060,7 @@ mono_ldstr_utf8 (MonoImage *image, guint32 idx, MonoError *error)
 		/* allocate the total length and copy the part of the string that has been converted */
 		char *as2 = (char *)g_malloc0 (len2);
 		memcpy (as2, as, written);
+		// FIXME avoid extra copy
 		g_free (as);
 		as = as2;
 	}
@@ -7121,6 +7126,7 @@ mono_string_to_utf8_checked (MonoString *s, MonoError *error)
 		/* allocate the total length and copy the part of the string that has been converted */
 		char *as2 = (char *)g_malloc0 (s->length);
 		memcpy (as2, as, written);
+		// FIXME avoid extra copy
 		g_free (as);
 		as = as2;
 	}
@@ -7162,6 +7168,7 @@ mono_string_to_utf8_ignore (MonoString *s)
 		/* allocate the total length and copy the part of the string that has been converted */
 		char *as2 = (char *)g_malloc0 (s->length);
 		memcpy (as2, as, written);
+		// FIXME avoid extra copy
 		g_free (as);
 		as = as2;
 	}
@@ -7297,6 +7304,7 @@ mono_string_from_utf32_checked (mono_unichar4 *data, MonoError *error)
 		g_error_free (gerror);
 
 	result = mono_string_from_utf16_checked (utf16_output, error);
+	// FIXME avoid extra copy
 	g_free (utf16_output);
 	return result;
 }
