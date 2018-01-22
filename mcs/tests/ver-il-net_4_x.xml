@@ -68710,19 +68710,6 @@
       </method>
     </type>
   </test>
-  <test name="test-default-03.cs">
-    <type name="X">
-      <method name="Int32 Main()" attrs="150">
-        <size>25</size>
-      </method>
-      <method name="Byte[] Test(S`1[System.Byte])" attrs="145">
-        <size>10</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
   <test name="test-dictinit-01.cs">
     <type name="Program">
       <method name="Int32 Main()" attrs="145">
@@ -73773,6 +73760,19 @@
       </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-tuple-09.cs">
+    <type name="TupleDeconstructionDeclaration">
+      <method name="Int32 Main()" attrs="150">
+        <size>99</size>
+      </method>
+      <method name="System.ValueTuple`2[System.String,System.Int64] GetValues()" attrs="145">
+        <size>21</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>
