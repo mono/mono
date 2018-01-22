@@ -4315,6 +4315,122 @@ leave_no_init_pending:
 	return !mono_class_has_failure (klass);
 }
 
+#ifndef DISABLE_COM
+/*
+ * COM initialization is delayed until needed.
+ * However when a [ComImport] attribute is present on a type it will trigger
+ * the initialization. This is not a problem unless the BCL being executed 
+ * lacks the types that COM depends on (e.g. Variant on Silverlight).
+ */
+static void
+init_com_from_comimport (MonoClass *klass)
+{
+	/* we don't always allow COM initialization under the CoreCLR (e.g. Moonlight does not require it) */
+	if (mono_security_core_clr_enabled ()) {
+		/* but some other CoreCLR user could requires it for their platform (i.e. trusted) code */
+		if (!mono_security_core_clr_determine_platform_image (klass->image)) {
+			/* but it can not be made available for application (i.e. user code) since all COM calls
+			 * are considered native calls. In this case we fail with a TypeLoadException (just like
+			 * Silverlight 2 does */
+			mono_class_set_type_load_failure (klass, "");
+			return;
+		}
+	}
+
+	/* FIXME : we should add an extra checks to ensure COM can be initialized properly before continuing */
+}
+#endif /*DISABLE_COM*/
+
+/*
+ * LOCKING: this assumes the loader lock is held
+ */
+void
+mono_class_setup_parent (MonoClass *klass, MonoClass *parent)
+{
+	gboolean system_namespace;
+	gboolean is_corlib = mono_is_corlib_image (klass->image);
+
+	system_namespace = !strcmp (klass->name_space, "System") && is_corlib;
+
+	/* if root of the hierarchy */
+	if (system_namespace && !strcmp (klass->name, "Object")) {
+		klass->parent = NULL;
+		klass->instance_size = sizeof (MonoObject);
+		return;
+	}
+	if (!strcmp (klass->name, "<Module>")) {
+		klass->parent = NULL;
+		klass->instance_size = 0;
+		return;
+	}
+
+	if (!MONO_CLASS_IS_INTERFACE (klass)) {
+		/* Imported COM Objects always derive from __ComObject. */
+#ifndef DISABLE_COM
+		if (MONO_CLASS_IS_IMPORT (klass)) {
+			init_com_from_comimport (klass);
+			if (parent == mono_defaults.object_class)
+				parent = mono_class_get_com_object_class ();
+		}
+#endif
+		if (!parent) {
+			/* set the parent to something useful and safe, but mark the type as broken */
+			parent = mono_defaults.object_class;
+			mono_class_set_type_load_failure (klass, "");
+			g_assert (parent);
+		}
+
+		klass->parent = parent;
+
+		if (mono_class_is_ginst (parent) && !parent->name) {
+			/*
+			 * If the parent is a generic instance, we may get
+			 * called before it is fully initialized, especially
+			 * before it has its name.
+			 */
+			return;
+		}
+
+#ifndef DISABLE_REMOTING
+		klass->marshalbyref = parent->marshalbyref;
+		klass->contextbound  = parent->contextbound;
+#endif
+
+		klass->delegate  = parent->delegate;
+
+		if (MONO_CLASS_IS_IMPORT (klass) || mono_class_is_com_object (parent))
+			mono_class_set_is_com_object (klass);
+		
+		if (system_namespace) {
+#ifndef DISABLE_REMOTING
+			if (klass->name [0] == 'M' && !strcmp (klass->name, "MarshalByRefObject"))
+				klass->marshalbyref = 1;
+
+			if (klass->name [0] == 'C' && !strcmp (klass->name, "ContextBoundObject")) 
+				klass->contextbound  = 1;
+#endif
+			if (klass->name [0] == 'D' && !strcmp (klass->name, "Delegate")) 
+				klass->delegate  = 1;
+		}
+
+		if (klass->parent->enumtype || (mono_is_corlib_image (klass->parent->image) && (strcmp (klass->parent->name, "ValueType") == 0) && 
+						(strcmp (klass->parent->name_space, "System") == 0)))
+			klass->valuetype = 1;
+		if (mono_is_corlib_image (klass->parent->image) && ((strcmp (klass->parent->name, "Enum") == 0) && (strcmp (klass->parent->name_space, "System") == 0))) {
+			klass->valuetype = klass->enumtype = 1;
+		}
+		/*klass->enumtype = klass->parent->enumtype; */
+	} else {
+		/* initialize com types if COM interfaces are present */
+#ifndef DISABLE_COM
+		if (MONO_CLASS_IS_IMPORT (klass))
+			init_com_from_comimport (klass);
+#endif
+		klass->parent = NULL;
+	}
+
+}
+
 /*
  * LOCKING: this assumes the loader lock is held
  */

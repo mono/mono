@@ -908,9 +908,6 @@ method_is_dynamic (MonoMethod *method)
 #endif
 }
 
-void
-mono_class_setup_parent    (MonoClass *klass, MonoClass *parent);
-
 MonoMethod*
 mono_class_get_method_by_index (MonoClass *klass, int index);
 

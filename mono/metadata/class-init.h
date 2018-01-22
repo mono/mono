@@ -69,6 +69,9 @@ void
 mono_class_setup_vtable (MonoClass *klass);
 
 void
+mono_class_setup_parent    (MonoClass *klass, MonoClass *parent);
+
+void
 mono_class_setup_mono_type (MonoClass *klass);
 
 
