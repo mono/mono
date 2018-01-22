@@ -332,7 +332,8 @@ extern guint8* mono_ppc_create_pre_code_ftnptr (guint8 *code);
 	#define UCONTEXT_REG_FPRn(ctx, n)
 	#define UCONTEXT_REG_NIP(ctx)
 	#define UCONTEXT_REG_LNK(ctx)
-
+#elif defined (_AIX)
+#define MONO_ARCH_USE_SIGACTION 1
 #else
 /* For other operating systems, we pull the definition from an external file */
 #include "mini-ppc-os.h"
