@@ -148,19 +148,19 @@ namespace Mono.Security.Authenticode {
 		}
 
 		// pkcs 1
-//		private const string rsaEncryption = "1.2.840.113549.1.1.1";
+		// private const string rsaEncryption = "1.2.840.113549.1.1.1";
 		// pkcs 7
-//		private const string data = "1.2.840.113549.1.7.1";
+		// private const string data = "1.2.840.113549.1.7.1";
 		private const string signedData = "1.2.840.113549.1.7.2";
 		// pkcs 9
-//		private const string contentType = "1.2.840.113549.1.9.3";
-//		private const string messageDigest  = "1.2.840.113549.1.9.4";
+		// private const string contentType = "1.2.840.113549.1.9.3";
+		// private const string messageDigest  = "1.2.840.113549.1.9.4";
 		private const string countersignature = "1.2.840.113549.1.9.6";
 		// microsoft spc (software publisher certificate)
 		private const string spcStatementType = "1.3.6.1.4.1.311.2.1.11";
 		private const string spcSpOpusInfo = "1.3.6.1.4.1.311.2.1.12";
 		private const string spcPelmageData = "1.3.6.1.4.1.311.2.1.15";
-//		private const string individualCodeSigning = "1.3.6.1.4.1.311.2.1.21";
+		// private const string individualCodeSigning = "1.3.6.1.4.1.311.2.1.21";
 		private const string commercialCodeSigning = "1.3.6.1.4.1.311.2.1.22";
 		private const string timestampCountersignature = "1.3.6.1.4.1.311.3.2.1";
 
@@ -192,8 +192,8 @@ namespace Mono.Security.Authenticode {
 			else
 				opus = Attribute (spcSpOpusInfo, Opus (description, url.ToString ()));
 			pkcs7.SignerInfo.AuthenticatedAttributes.Add (opus);
-// When using the MS Root Agency (test) we can't include this attribute in the signature or it won't validate!
-//			pkcs7.SignerInfo.AuthenticatedAttributes.Add (Attribute (spcStatementType, new ASN1 (0x30, ASN1Convert.FromOid (commercialCodeSigning).GetBytes ())));
+			// When using the MS Root Agency (test) we can't include this attribute in the signature or it won't validate!
+			// pkcs7.SignerInfo.AuthenticatedAttributes.Add (Attribute (spcStatementType, new ASN1 (0x30, ASN1Convert.FromOid (commercialCodeSigning).GetBytes ())));
 			pkcs7.GetASN1 (); // sign
 			return pkcs7.SignerInfo.Signature;
 		}
@@ -291,36 +291,37 @@ namespace Mono.Security.Authenticode {
 					byte[] fillup = new byte[addsize];
 					fs.Write (fillup, 0, fillup.Length);
 				}
-/*
-https://download.microsoft.com/download/9/c/5/9c5b2167-8017-4bae-9fde-d599bac8184a/Authenticode_PE.docx
-The Authenticode signature is in a WIN_CERTIFICATE structure, which is declared in Wintrust.h as follows:
-typedef struct _WIN_CERTIFICATE
-{
-    DWORD       dwLength;
-    WORD        wRevision;
-    WORD        wCertificateType;
-    BYTE        bCertificate[ANYSIZE_ARRAY];
-} WIN_CERTIFICATE, *LPWIN_CERTIFICATE;
 
-The fields in WIN_CERTIFICATE are set to the following values:
-dwLength is set to the length of bCertificate.
-wRevision is set to the WIN_CERTIFICATE version number.
+				/*
+				https://download.microsoft.com/download/9/c/5/9c5b2167-8017-4bae-9fde-d599bac8184a/Authenticode_PE.docx
+				The Authenticode signature is in a WIN_CERTIFICATE structure, which is declared in Wintrust.h as follows:
+				typedef struct _WIN_CERTIFICATE
+				{
+				    DWORD       dwLength;
+				    WORD        wRevision;
+				    WORD        wCertificateType;
+				    BYTE        bCertificate[ANYSIZE_ARRAY];
+				} WIN_CERTIFICATE, *LPWIN_CERTIFICATE;
+				
+				The fields in WIN_CERTIFICATE are set to the following values:
+				dwLength is set to the length of bCertificate.
+				wRevision is set to the WIN_CERTIFICATE version number.
 
-wCertificateType is set to 0x0002 for Authenticode signatures.
-This value is defined in Wintrust.h as WIN_CERT_TYPE_PKCS_SIGNED_DATA.
-bCertificate is set to a variable-length binary array that contains the Authenticode PKCS #7 signedData.
-The PKCS #7 integrity is verified as described in ”PKCS #7: Cryptographic Message Syntax Standard.”
-*/
+				wCertificateType is set to 0x0002 for Authenticode signatures.
+				This value is defined in Wintrust.h as WIN_CERT_TYPE_PKCS_SIGNED_DATA.
+				bCertificate is set to a variable-length binary array that contains the Authenticode PKCS #7 signedData.
+				The PKCS #7 integrity is verified as described in ”PKCS #7: Cryptographic Message Syntax Standard.”
+				*/
 				// write WIN_CERTIFICATE.dwLength
 				fs.Write (data, 0, data.Length);		// length (again)
 				// write WIN_CERTIFICATE.wRevision = 0x0200 and wCertificateType = 2.
-// /usr/local/Cellar/mingw-w64/5.0.3/toolchain-x86_64/x86_64-w64-mingw32/include/wintrust.h
-//const short WIN_CERT_REVISION_1_0 = 0x0100;
-const short WIN_CERT_REVISION_2_0 = 0x0200;
-//const short WIN_CERT_TYPE_X509 = 0x0001;
-const short WIN_CERT_TYPE_PKCS_SIGNED_DATA = 0x0002;
-//const short WIN_CERT_TYPE_RESERVED_1 = 0x0003;
-//const short WIN_CERT_TYPE_TS_STACK_SIGNED = 0x0004;
+				// /usr/local/Cellar/mingw-w64/5.0.3/toolchain-x86_64/x86_64-w64-mingw32/include/wintrust.h
+				// const short WIN_CERT_REVISION_1_0 = 0x0100;
+				const short WIN_CERT_REVISION_2_0 = 0x0200;
+				// const short WIN_CERT_TYPE_X509 = 0x0001;
+				const short WIN_CERT_TYPE_PKCS_SIGNED_DATA = 0x0002;
+				// const short WIN_CERT_TYPE_RESERVED_1 = 0x0003;
+				// const short WIN_CERT_TYPE_TS_STACK_SIGNED = 0x0004;
 				data = BitConverterLE.GetBytes (WIN_CERT_REVISION_2_0);
 				fs.Write (data, 0, data.Length);
 				data = BitConverterLE.GetBytes (WIN_CERT_TYPE_PKCS_SIGNED_DATA);
