@@ -54,10 +54,7 @@
 MonoStats mono_stats;
 
 /* Statistics */
-extern gint32 inflated_classes_size;
 extern gint32 inflated_methods_size;
-extern gint32 classes_size; /* FIXME this goes away when all the creators move to class-init.c */
-extern gint32 class_def_count, class_gtd_count, class_ginst_count, class_gparam_count, class_array_count, class_pointer_count;
 
 /* Function supplied by the runtime to find classes by name using information from the AOT file */
 static MonoGetClassFromName get_class_from_name = NULL;
