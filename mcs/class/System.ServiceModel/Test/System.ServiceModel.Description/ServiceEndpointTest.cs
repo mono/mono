@@ -57,15 +57,16 @@ namespace MonoTests.System.ServiceModel.Description
 			new ServiceEndpoint (null, null, null);
 		}
 
-#if !MONOTOUCH_WATCH
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ListenUri ()
 		{
 			Uri uri = new Uri ("http://localhost:" + NetworkHelpers.FindFreePort ());
 			var se = new ServiceEndpoint (contract1, null, new EndpointAddress (uri));
 			Assert.AreEqual (uri, se.ListenUri, "#1");
 		}
-#endif
 
 		#region contracts
 
