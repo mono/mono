@@ -177,9 +177,9 @@ namespace Mono.Unity
 
             public delegate unitytls_key_ref                              unitytls_key_get_ref_t(unitytls_key* key, unitytls_errorstate* errorState);
             public unitytls_key_get_ref_t                                 unitytls_key_get_ref;
-            public delegate unitytls_key*                                 unitytls_key_parse_pem_t(Int8* buffer, size_t bufferLen, UInt8* password, size_t passwordLen, unitytls_errorstate* errorState);
+            public delegate unitytls_key*                                 unitytls_key_parse_pem_t(Int8* buffer, size_t bufferLen, Int8* password, size_t passwordLen, unitytls_errorstate* errorState);
             public unitytls_key_parse_der_t                               unitytls_key_parse_pem;
-            public delegate unitytls_key*                                 unitytls_key_parse_der_t(UInt8* buffer, size_t bufferLen, UInt8* password, size_t passwordLen, unitytls_errorstate* errorState);
+            public delegate unitytls_key*                                 unitytls_key_parse_der_t(UInt8* buffer, size_t bufferLen, Int8* password, size_t passwordLen, unitytls_errorstate* errorState);
             public unitytls_key_parse_der_t                               unitytls_key_parse_der;
             public delegate void                                          unitytls_key_free_t(unitytls_key* key);
             public unitytls_key_free_t                                    unitytls_key_free;
