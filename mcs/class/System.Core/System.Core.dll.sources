@@ -3,6 +3,7 @@
 ../../build/common/MonoTODOAttribute.cs
 ../corlib/Mono.Security.Cryptography/CryptoTools.cs
 ../corlib/Mono.Security.Cryptography/SymmetricTransform.cs
+../System/System.IO/MonoIO.cs
 Assembly/AssemblyInfo.cs
 System/Actions.cs
 System/Funcs.cs

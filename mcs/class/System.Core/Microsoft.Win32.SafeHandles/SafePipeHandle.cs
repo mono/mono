@@ -32,6 +32,13 @@ using System.Security.AccessControl;
 using System.Security.Permissions;
 using System.Security.Principal;
 
+namespace System.IO
+{
+	internal enum MonoIOError: int {
+		ERROR_SUCCESS = 0
+	}
+}
+
 namespace Microsoft.Win32.SafeHandles
 {
 	[HostProtection (SecurityAction.LinkDemand, MayLeakOnAbort = true)]
