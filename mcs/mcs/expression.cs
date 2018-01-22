@@ -7208,8 +7208,7 @@ namespace Mono.CSharp
 		{
 			var sn = expr as SimpleName;
 			if (sn != null && sn.Name == "var" && sn.Arity == 0 && arguments?.Count > 1) {
-				var targets = new List<Expression> (arguments.Count);
-				var variables = new List<LocalVariable> (arguments.Count);
+				var variables = new List<BlockVariable> (arguments.Count);
 				foreach (var arg in arguments) {
 					var arg_sn = arg.Expr as SimpleName;
 					if (arg_sn == null || arg_sn.Arity != 0) {
@@ -7219,12 +7218,10 @@ namespace Mono.CSharp
 
 					var lv = new LocalVariable (rc.CurrentBlock, arg_sn.Name, arg.Expr.Location);
 					rc.CurrentBlock.AddLocalName (lv);
-					variables.Add (lv);
-
-					targets.Add (new LocalVariableReference (lv, arg_sn.Location));
+					variables.Add (new BlockVariable (new VarExpr (lv.Location), lv));
 				}
 
-				var res = new TupleDeconstruct (targets, variables, right_side, loc);
+				var res = new TupleDeconstruct (variables, right_side, loc);
 				return res.Resolve (rc);
 			}
 

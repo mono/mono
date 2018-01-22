@@ -5097,17 +5097,25 @@ assignment_expression
 		$$ = new CompoundAssign (Binary.Operator.ExclusiveOr, (Expression) $1, (Expression) $3);
 		lbag.AddLocation ($$, GetLocation ($2));
 	  }
-	| OPEN_PARENS_DECONSTRUCT deconstruct_exprs CLOSE_PARENS ASSIGN expression
+	| OPEN_PARENS_DECONSTRUCT deconstruct_assignment CLOSE_PARENS ASSIGN expression
 	  {
 		if (lang_version < LanguageVersion.V_7)
 			FeatureIsNotAvailable (GetLocation ($1), "tuples");
 
-	  	var exprs = (List<Expression>) $2;
+		var exprs = (List<Expression>) $2;
+		$$ = new TupleDeconstruct (exprs, (Expression) $5, GetLocation ($4));
+	  }
+	| OPEN_PARENS_DECONSTRUCT deconstruct_declaration CLOSE_PARENS ASSIGN expression
+	  {
+		if (lang_version < LanguageVersion.V_7)
+			FeatureIsNotAvailable (GetLocation ($1), "tuples");
+
+		var exprs = (List<BlockVariable>) $2;
 		$$ = new TupleDeconstruct (exprs, (Expression) $5, GetLocation ($4));
 	  }
 	;
 
-deconstruct_exprs
+deconstruct_assignment
 	: expression COMMA expression
 	  {
 		$$ = new List<Expression> () {
@@ -5115,10 +5123,47 @@ deconstruct_exprs
 			(Expression) $3
 	  	};
 	  }
-	| deconstruct_exprs COMMA expression
+	| deconstruct_assignment COMMA expression
 	  {
 		var src = (List<Expression>) $1;
 		src.Add ((Expression) $3);
+		$$ = src;
+	  }
+	;
+
+deconstruct_declaration
+	: variable_type identifier_inside_body
+	  {
+		var lt = (LocatedToken) $2;
+		var li = new LocalVariable (current_block, lt.Value, lt.Location);
+		current_block.AddLocalName (li);
+		$$ = new List<BlockVariable> (2) {
+			new BlockVariable ((FullNamedExpression) $1, li)
+		};
+	  }
+	| deconstruct_declaration COMMA variable_type identifier_inside_body
+	  {
+		var lt = (LocatedToken) $4;
+		var li = new LocalVariable (current_block, lt.Value, lt.Location);
+		current_block.AddLocalName (li);
+
+		var src = (List<BlockVariable>) $1;
+		src.Add (new BlockVariable ((FullNamedExpression) $3, li));
+		$$ = src;
+	  }
+	| deconstruct_declaration COMMA identifier_inside_body
+	  {
+		var lt = (LocatedToken) $3;
+		var li = new LocalVariable (current_block, lt.Value, lt.Location);
+
+		if (lt.Value != "_") {
+			report.Error (8184, lt.Location, "A deconstruction cannot mix declarations and expressions on the left-hand-side");
+		} else {
+			li.Type = InternalType.Discard;
+		}
+
+		var src = (List<BlockVariable>) $1;
+		src.Add (new BlockVariable (new TypeExpression (li.Type, lt.Location), li));
 		$$ = src;
 	  }
 	;
