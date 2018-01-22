@@ -4287,6 +4287,33 @@ public class DebuggerTests
 	}
 
 	[Test]
+	[Category("NotWorking")]
+	public void ShouldCorrectlyStepOverOnExitFromArgsAfterStepInMethodParameter() {
+		Event e = run_until ("ss_nested_with_two_args_wrapper");
+
+		var req = create_step(e);
+		req.Enable();
+
+		e = step_once();
+		assert_location(e, "ss_nested_with_two_args_wrapper");
+
+		e = step_into();
+		assert_location(e, "ss_nested_arg");
+
+		e = step_over();
+		assert_location(e, "ss_nested_arg");
+
+		e = step_over();
+		assert_location(e, "ss_nested_arg");
+
+		e = step_over();
+		assert_location(e, "ss_nested_with_two_args_wrapper");
+
+		e = step_into();
+		assert_location(e, "ss_nested_arg");
+	}
+
+	[Test]
 	// Uses a fixed port
 	[Category("NotWorking")]
 	public void Attach () {
