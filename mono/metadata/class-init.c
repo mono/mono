@@ -116,6 +116,9 @@ disable_gclass_recording (gclass_record_func func, void *user_data)
 	}
 }
 
+#define mono_class_new0(klass,struct_type, n_structs)		\
+    ((struct_type *) mono_class_alloc0 ((klass), ((gsize) sizeof (struct_type)) * ((gsize) (n_structs))))
+
 /**
  * mono_class_setup_basic_field_info:
  * \param class The class to initialize
@@ -4404,6 +4407,268 @@ mono_class_setup_methods (MonoClass *klass)
 	}
 
 	mono_image_unlock (klass->image);
+}
+
+/*
+ * mono_class_setup_properties:
+ *
+ *   Initialize klass->ext.property and klass->ext.properties.
+ *
+ * This method can fail the class.
+ */
+void
+mono_class_setup_properties (MonoClass *klass)
+{
+	guint startm, endm, i, j;
+	guint32 cols [MONO_PROPERTY_SIZE];
+	MonoTableInfo *msemt = &klass->image->tables [MONO_TABLE_METHODSEMANTICS];
+	MonoProperty *properties;
+	guint32 last;
+	int first, count;
+	MonoClassPropertyInfo *info;
+
+	info = mono_class_get_property_info (klass);
+	if (info)
+		return;
+
+	if (mono_class_is_ginst (klass)) {
+		MonoClass *gklass = mono_class_get_generic_class (klass)->container_class;
+
+		mono_class_init (gklass);
+		mono_class_setup_properties (gklass);
+		if (mono_class_set_type_load_failure_causedby_class (klass, gklass, "Generic type definition failed to load"))
+			return;
+
+		MonoClassPropertyInfo *ginfo = mono_class_get_property_info (gklass);
+		properties = mono_class_new0 (klass, MonoProperty, ginfo->count + 1);
+
+		for (i = 0; i < ginfo->count; i++) {
+			ERROR_DECL (error);
+			MonoProperty *prop = &properties [i];
+
+			*prop = ginfo->properties [i];
+
+			if (prop->get)
+				prop->get = mono_class_inflate_generic_method_full_checked (
+					prop->get, klass, mono_class_get_context (klass), error);
+			if (prop->set)
+				prop->set = mono_class_inflate_generic_method_full_checked (
+					prop->set, klass, mono_class_get_context (klass), error);
+
+			g_assert (mono_error_ok (error)); /*FIXME proper error handling*/
+			prop->parent = klass;
+		}
+
+		first = ginfo->first;
+		count = ginfo->count;
+	} else {
+		first = mono_metadata_properties_from_typedef (klass->image, mono_metadata_token_index (klass->type_token) - 1, &last);
+		count = last - first;
+
+		if (count) {
+			mono_class_setup_methods (klass);
+			if (mono_class_has_failure (klass))
+				return;
+		}
+
+		properties = (MonoProperty *)mono_class_alloc0 (klass, sizeof (MonoProperty) * count);
+		for (i = first; i < last; ++i) {
+			mono_metadata_decode_table_row (klass->image, MONO_TABLE_PROPERTY, i, cols, MONO_PROPERTY_SIZE);
+			properties [i - first].parent = klass;
+			properties [i - first].attrs = cols [MONO_PROPERTY_FLAGS];
+			properties [i - first].name = mono_metadata_string_heap (klass->image, cols [MONO_PROPERTY_NAME]);
+
+			startm = mono_metadata_methods_from_property (klass->image, i, &endm);
+			int first_idx = mono_class_get_first_method_idx (klass);
+			for (j = startm; j < endm; ++j) {
+				MonoMethod *method;
+
+				mono_metadata_decode_row (msemt, j, cols, MONO_METHOD_SEMA_SIZE);
+
+				if (klass->image->uncompressed_metadata) {
+					ERROR_DECL (error);
+					/* It seems like the MONO_METHOD_SEMA_METHOD column needs no remapping */
+					method = mono_get_method_checked (klass->image, MONO_TOKEN_METHOD_DEF | cols [MONO_METHOD_SEMA_METHOD], klass, NULL, error);
+					mono_error_cleanup (error); /* FIXME don't swallow this error */
+				} else {
+					method = klass->methods [cols [MONO_METHOD_SEMA_METHOD] - 1 - first_idx];
+				}
+
+				switch (cols [MONO_METHOD_SEMA_SEMANTICS]) {
+				case METHOD_SEMANTIC_SETTER:
+					properties [i - first].set = method;
+					break;
+				case METHOD_SEMANTIC_GETTER:
+					properties [i - first].get = method;
+					break;
+				default:
+					break;
+				}
+			}
+		}
+	}
+
+	info = mono_class_alloc0 (klass, sizeof (MonoClassPropertyInfo));
+	info->first = first;
+	info->count = count;
+	info->properties = properties;
+	mono_memory_barrier ();
+
+	/* This might leak 'info' which was allocated from the image mempool */
+	mono_class_set_property_info (klass, info);
+}
+
+static MonoMethod**
+inflate_method_listz (MonoMethod **methods, MonoClass *klass, MonoGenericContext *context)
+{
+	MonoMethod **om, **retval;
+	int count;
+
+	for (om = methods, count = 0; *om; ++om, ++count)
+		;
+
+	retval = g_new0 (MonoMethod*, count + 1);
+	count = 0;
+	for (om = methods, count = 0; *om; ++om, ++count) {
+		ERROR_DECL (error);
+		retval [count] = mono_class_inflate_generic_method_full_checked (*om, klass, context, error);
+		g_assert (mono_error_ok (error)); /*FIXME proper error handling*/
+	}
+
+	return retval;
+}
+
+/*This method can fail the class.*/
+void
+mono_class_setup_events (MonoClass *klass)
+{
+	int first, count;
+	guint startm, endm, i, j;
+	guint32 cols [MONO_EVENT_SIZE];
+	MonoTableInfo *msemt = &klass->image->tables [MONO_TABLE_METHODSEMANTICS];
+	guint32 last;
+	MonoEvent *events;
+
+	MonoClassEventInfo *info = mono_class_get_event_info (klass);
+	if (info)
+		return;
+
+	if (mono_class_is_ginst (klass)) {
+		MonoClass *gklass = mono_class_get_generic_class (klass)->container_class;
+		MonoGenericContext *context = NULL;
+
+		mono_class_setup_events (gklass);
+		if (mono_class_set_type_load_failure_causedby_class (klass, gklass, "Generic type definition failed to load"))
+			return;
+
+		MonoClassEventInfo *ginfo = mono_class_get_event_info (gklass);
+		first = ginfo->first;
+		count = ginfo->count;
+
+		events = mono_class_new0 (klass, MonoEvent, count);
+
+		if (count)
+			context = mono_class_get_context (klass);
+
+		for (i = 0; i < count; i++) {
+			ERROR_DECL (error);
+			MonoEvent *event = &events [i];
+			MonoEvent *gevent = &ginfo->events [i];
+
+			error_init (error); //since we do conditional calls, we must ensure the default value is ok
+
+			event->parent = klass;
+			event->name = gevent->name;
+			event->add = gevent->add ? mono_class_inflate_generic_method_full_checked (gevent->add, klass, context, error) : NULL;
+			g_assert (mono_error_ok (error)); /*FIXME proper error handling*/
+			event->remove = gevent->remove ? mono_class_inflate_generic_method_full_checked (gevent->remove, klass, context, error) : NULL;
+			g_assert (mono_error_ok (error)); /*FIXME proper error handling*/
+			event->raise = gevent->raise ? mono_class_inflate_generic_method_full_checked (gevent->raise, klass, context, error) : NULL;
+			g_assert (mono_error_ok (error)); /*FIXME proper error handling*/
+
+#ifndef MONO_SMALL_CONFIG
+			event->other = gevent->other ? inflate_method_listz (gevent->other, klass, context) : NULL;
+#endif
+			event->attrs = gevent->attrs;
+		}
+	} else {
+		first = mono_metadata_events_from_typedef (klass->image, mono_metadata_token_index (klass->type_token) - 1, &last);
+		count = last - first;
+
+		if (count) {
+			mono_class_setup_methods (klass);
+			if (mono_class_has_failure (klass)) {
+				return;
+			}
+		}
+
+		events = (MonoEvent *)mono_class_alloc0 (klass, sizeof (MonoEvent) * count);
+		for (i = first; i < last; ++i) {
+			MonoEvent *event = &events [i - first];
+
+			mono_metadata_decode_table_row (klass->image, MONO_TABLE_EVENT, i, cols, MONO_EVENT_SIZE);
+			event->parent = klass;
+			event->attrs = cols [MONO_EVENT_FLAGS];
+			event->name = mono_metadata_string_heap (klass->image, cols [MONO_EVENT_NAME]);
+
+			startm = mono_metadata_methods_from_event (klass->image, i, &endm);
+			int first_idx = mono_class_get_first_method_idx (klass);
+			for (j = startm; j < endm; ++j) {
+				MonoMethod *method;
+
+				mono_metadata_decode_row (msemt, j, cols, MONO_METHOD_SEMA_SIZE);
+
+				if (klass->image->uncompressed_metadata) {
+					ERROR_DECL (error);
+					/* It seems like the MONO_METHOD_SEMA_METHOD column needs no remapping */
+					method = mono_get_method_checked (klass->image, MONO_TOKEN_METHOD_DEF | cols [MONO_METHOD_SEMA_METHOD], klass, NULL, error);
+					mono_error_cleanup (error); /* FIXME don't swallow this error */
+				} else {
+					method = klass->methods [cols [MONO_METHOD_SEMA_METHOD] - 1 - first_idx];
+				}
+
+				switch (cols [MONO_METHOD_SEMA_SEMANTICS]) {
+				case METHOD_SEMANTIC_ADD_ON:
+					event->add = method;
+					break;
+				case METHOD_SEMANTIC_REMOVE_ON:
+					event->remove = method;
+					break;
+				case METHOD_SEMANTIC_FIRE:
+					event->raise = method;
+					break;
+				case METHOD_SEMANTIC_OTHER: {
+#ifndef MONO_SMALL_CONFIG
+					int n = 0;
+
+					if (event->other == NULL) {
+						event->other = g_new0 (MonoMethod*, 2);
+					} else {
+						while (event->other [n])
+							n++;
+						event->other = (MonoMethod **)g_realloc (event->other, (n + 2) * sizeof (MonoMethod*));
+					}
+					event->other [n] = method;
+					/* NULL terminated */
+					event->other [n + 1] = NULL;
+#endif
+					break;
+				}
+				default:
+					break;
+				}
+			}
+		}
+	}
+
+	info = mono_class_alloc0 (klass, sizeof (MonoClassEventInfo));
+	info->events = events;
+	info->first = first;
+	info->count = count;
+
+	mono_memory_barrier ();
+
+	mono_class_set_event_info (klass, info);
 }
 
 /**

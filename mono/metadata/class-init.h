@@ -48,6 +48,12 @@ void
 mono_class_setup_methods (MonoClass *klass);
 
 void
+mono_class_setup_properties (MonoClass *klass);
+
+void
+mono_class_setup_events (MonoClass *klass);
+
+void
 mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_size, int real_size, gboolean sre);
 
 void
