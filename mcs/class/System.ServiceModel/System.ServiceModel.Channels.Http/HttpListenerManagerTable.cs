@@ -108,9 +108,11 @@ namespace System.ServiceModel.Channels.Http
 						return m;
 				}
 
-                m = listeners.FirstOrDefault(p => absolutePath.StartsWith(p.Key.AbsolutePath))?.Value;
-                if (m != null)
-                    return m;
+				// Lastly, try to match the listener to the start of the current request path 
+				// This is to support WCF methods with path parameters in UriTemplate annotation
+				m = listeners.FirstOrDefault (p => absolutePath.StartsWith (p.Key.AbsolutePath)).Value;
+				if (m != null)
+					return m;
 			}
 			
 			if (m == null)
