@@ -431,8 +431,10 @@ namespace MonoTests.System.Reflection
 						Assert.IsFalse (lvi.IsPinned, "#3-1");
 
 					if (/* mcs */ lvi.LocalType == typeof (byte*) || /* csc */ lvi.LocalType == typeof (byte).MakeByRefType ()) {
-						foundPinnedBytePointer = true;
-						Assert.IsTrue (lvi.IsPinned, "#3-2");
+						// We have three locals. There's b the byte[], there's a byte* and there's a byte&.
+						// mcs emits a byte* for the latter type.
+						// We need to find one such pinned byte pointer. Therefore we're folding with logical or
+						foundPinnedBytePointer = foundPinnedBytePointer || lvi.IsPinned;
 					}
 				}
 			}
