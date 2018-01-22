@@ -23,7 +23,7 @@ mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize)
 
 	pt = pthread_self();
 	ps = sizeof(pi);
-	rbval = sizeof(regbuf);
+	rbv = sizeof(rb);
 
 	*staddr = NULL;
 	*stsize = (size_t)-1;
