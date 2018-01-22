@@ -22,6 +22,9 @@ TEST_HELPERS_SOURCES = \
 
 test-local: dtest-app.exe dtest-excfilter.exe
 
+dtest-app.exe: Test/dtest-app.cs $(TEST_HELPERS_SOURCES)
+	$(CSCOMPILE) -r:$(topdir)/class/lib/$(PROFILE)/System.Core.dll -r:$(topdir)/class/lib/$(PROFILE)/System.dll -out:$@ -unsafe $(PLATFORM_DEBUG_FLAGS) -optimize- Test/dtest-app.cs $(TEST_HELPERS_SOURCES)
+
 dtest-excfilter.exe: Test/dtest-excfilter.il
 	$(ILASM) -out:$@ /exe /debug Test/dtest-excfilter.il
 
@@ -31,9 +34,6 @@ NO_TEST=1
 check:
 
 endif
-
-dtest-app.exe: Test/dtest-app.cs $(TEST_HELPERS_SOURCES)
-	$(CSCOMPILE) -r:$(topdir)/class/lib/$(PROFILE)/System.Core.dll -r:$(topdir)/class/lib/$(PROFILE)/System.dll -out:$@ -unsafe $(PLATFORM_DEBUG_FLAGS) -optimize- Test/dtest-app.cs $(TEST_HELPERS_SOURCES)
 
 CLEAN_FILES = dtest-app.exe dtest-app.exe.mdb dtest-app.pdb dtest-excfilter.exe dtest-excfilter.exe.mdb dtest-excfilter.pdb
 
