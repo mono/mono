@@ -427,6 +427,7 @@ public class Tests : TestsBase, ITest2
 		}
 		ss7 ();
 		ss_nested ();
+		ss_nested_with_two_args_wrapper ();        
 		ss_regress_654694 ();
 		ss_step_through ();
 		ss_non_user_code ();
@@ -541,6 +542,21 @@ public class Tests : TestsBase, ITest2
 		ss_nested_1 (ss_nested_2 ());
 		ss_nested_1 (ss_nested_2 ());
 		ss_nested_3 ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_nested_with_two_args_wrapper () {
+		ss_nested_with_two_args(ss_nested_arg (), ss_nested_arg ());
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static int ss_nested_with_two_args (int a1, int a2) {
+		return a1 + a2;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static int ss_nested_arg () {
+		return 0;
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
