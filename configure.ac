@@ -374,8 +374,7 @@ case "$host" in
 		libgc_threads=pthreads
 		use_sigposix=yes
 		;;
-	*-*-os400*)
-		dnl IBM i PASE
+	*-*-aix*|*-*-os400*)
 		CPPFLAGS="$CPPFLAGS -DGC_AIX_THREADS -D_ALL_SOURCE -D_LARGE_FILES -D_REENTRANT"
 		libmono_cflags="-D_REENTRANT"
 		libgc_threads=pthreads
@@ -3387,7 +3386,8 @@ case "$host" in
 		INTL="intl"
 		;;
 	macppc-*-openbsd* | powerpc*-*-linux* | powerpc-*-openbsd* | \
-        powerpc-*-sysv* | powerpc-*-darwin* | powerpc-*-netbsd* | powerpc-*-freebsd* | powerpc-*-os400* )
+        powerpc-*-sysv* | powerpc-*-darwin* | powerpc-*-netbsd* | \
+        powerpc-*-freebsd* | powerpc-*-aix* | powerpc-*-os400* )
 		if test "x$ac_cv_sizeof_void_p" = "x8"; then
 			TARGET=POWERPC64;
 			CPPFLAGS="$CPPFLAGS -D__mono_ppc__ -D__mono_ppc64__"
