@@ -11,6 +11,12 @@
 
 MONO_BEGIN_DECLS
 
+void
+mono_classes_init (void);
+
+void
+mono_classes_cleanup (void);
+
 MonoClass *
 mono_class_create_from_typedef (MonoImage *image, guint32 type_token, MonoError *error);
 
@@ -61,6 +67,10 @@ mono_class_setup_interface_offsets (MonoClass *klass);
 
 void
 mono_class_setup_vtable (MonoClass *klass);
+
+void
+mono_class_setup_mono_type (MonoClass *klass);
+
 
 MONO_END_DECLS
 

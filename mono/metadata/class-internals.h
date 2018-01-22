@@ -909,15 +909,6 @@ method_is_dynamic (MonoMethod *method)
 }
 
 void
-mono_classes_init (void);
-
-void
-mono_classes_cleanup (void);
-
-void
-mono_class_setup_mono_type (MonoClass *klass);
-
-void
 mono_class_setup_parent    (MonoClass *klass, MonoClass *parent);
 
 MonoMethod*

@@ -24,6 +24,7 @@
 #include <mono/utils/mono-logger-internals.h>
 #include <mono/utils/unlocked.h>
 
+gboolean mono_print_vtable = FALSE;
 gboolean mono_align_small_structs = FALSE;
 
 /* Statistics */
@@ -31,7 +32,8 @@ gint32 classes_size;
 gint32 inflated_classes_size, inflated_methods_size;
 gint32 class_def_count, class_gtd_count, class_ginst_count, class_gparam_count, class_array_count, class_pointer_count;
 
-extern mono_mutex_t classes_mutex; /* FIXME move it from class.c to here */
+/* Low level lock which protects data structures in this module */
+mono_mutex_t classes_mutex;
 
 static gboolean class_kind_may_contain_generic_instances (MonoTypeKind kind);
 static int setup_interface_offsets (MonoClass *klass, int cur_slot, gboolean overwrite);
@@ -45,12 +47,17 @@ MonoNativeTlsKey setup_fields_tls_id;
 
 static MonoNativeTlsKey init_pending_tls_id;
 
-/*
- * Global pool of interface IDs, represented as a bitset.
- * LOCKING: Protected by the classes lock.
- */
-extern MonoBitSet *global_interface_bitset;
+static inline void
+classes_lock (void)
+{
+	mono_locks_os_acquire (&classes_mutex, ClassesLock);
+}
 
+static inline void
+classes_unlock (void)
+{
+	mono_locks_os_release (&classes_mutex, ClassesLock);
+}
 
 /*
 We use gclass recording to allow recursive system f types to be referenced by a parent.
@@ -3941,6 +3948,107 @@ generic_array_methods (MonoClass *klass)
 	return generic_array_method_num;
 }
 
+/*
+ * Global pool of interface IDs, represented as a bitset.
+ * LOCKING: Protected by the classes lock.
+ */
+MonoBitSet *global_interface_bitset = NULL;
+
+/*
+ * mono_unload_interface_ids:
+ * @bitset: bit set of interface IDs
+ *
+ * When an image is unloaded, the interface IDs associated with
+ * the image are put back in the global pool of IDs so the numbers
+ * can be reused.
+ */
+void
+mono_unload_interface_ids (MonoBitSet *bitset)
+{
+	classes_lock ();
+	mono_bitset_sub (global_interface_bitset, bitset);
+	classes_unlock ();
+}
+
+void
+mono_unload_interface_id (MonoClass *klass)
+{
+	if (global_interface_bitset && klass->interface_id) {
+		classes_lock ();
+		mono_bitset_clear (global_interface_bitset, klass->interface_id);
+		classes_unlock ();
+	}
+}
+
+/**
+ * mono_get_unique_iid:
+ * \param klass interface
+ *
+ * Assign a unique integer ID to the interface represented by \p klass.
+ * The ID will positive and as small as possible.
+ * LOCKING: Acquires the classes lock.
+ * \returns The new ID.
+ */
+static guint32
+mono_get_unique_iid (MonoClass *klass)
+{
+	int iid;
+	
+	g_assert (MONO_CLASS_IS_INTERFACE (klass));
+
+	classes_lock ();
+
+	if (!global_interface_bitset) {
+		global_interface_bitset = mono_bitset_new (128, 0);
+	}
+
+	iid = mono_bitset_find_first_unset (global_interface_bitset, -1);
+	if (iid < 0) {
+		int old_size = mono_bitset_size (global_interface_bitset);
+		MonoBitSet *new_set = mono_bitset_clone (global_interface_bitset, old_size * 2);
+		mono_bitset_free (global_interface_bitset);
+		global_interface_bitset = new_set;
+		iid = old_size;
+	}
+	mono_bitset_set (global_interface_bitset, iid);
+	/* set the bit also in the per-image set */
+	if (!mono_class_is_ginst (klass)) {
+		if (klass->image->interface_bitset) {
+			if (iid >= mono_bitset_size (klass->image->interface_bitset)) {
+				MonoBitSet *new_set = mono_bitset_clone (klass->image->interface_bitset, iid + 1);
+				mono_bitset_free (klass->image->interface_bitset);
+				klass->image->interface_bitset = new_set;
+			}
+		} else {
+			klass->image->interface_bitset = mono_bitset_new (iid + 1, 0);
+		}
+		mono_bitset_set (klass->image->interface_bitset, iid);
+	}
+
+	classes_unlock ();
+
+#ifndef MONO_SMALL_CONFIG
+	if (mono_print_vtable) {
+		int generic_id;
+		char *type_name = mono_type_full_name (&klass->byval_arg);
+		MonoGenericClass *gklass = mono_class_try_get_generic_class (klass);
+		if (gklass && !gklass->context.class_inst->is_open) {
+			generic_id = gklass->context.class_inst->id;
+			g_assert (generic_id != 0);
+		} else {
+			generic_id = 0;
+		}
+		printf ("Interface: assigned id %d to %s|%s|%d\n", iid, klass->image->name, type_name, generic_id);
+		g_free (type_name);
+	}
+#endif
+
+	/* I've confirmed iids safe past 16 bits, however bitset code uses a signed int while testing.
+	 * Once this changes, it should be safe for us to allow 2^32-1 interfaces, until then 2^31-2 is the max. */
+	g_assert (iid < INT_MAX);
+	return iid;
+}
+
 /**
  * mono_class_init:
  * \param klass the class to initialize
@@ -4205,6 +4313,148 @@ leave_no_init_pending:
 	mono_loader_unlock ();
 
 	return !mono_class_has_failure (klass);
+}
+
+/*
+ * LOCKING: this assumes the loader lock is held
+ */
+void
+mono_class_setup_mono_type (MonoClass *klass)
+{
+	const char *name = klass->name;
+	const char *nspace = klass->name_space;
+	gboolean is_corlib = mono_is_corlib_image (klass->image);
+
+	klass->this_arg.byref = 1;
+	klass->this_arg.data.klass = klass;
+	klass->this_arg.type = MONO_TYPE_CLASS;
+	klass->byval_arg.data.klass = klass;
+	klass->byval_arg.type = MONO_TYPE_CLASS;
+
+	if (is_corlib && !strcmp (nspace, "System")) {
+		if (!strcmp (name, "ValueType")) {
+			/*
+			 * do not set the valuetype bit for System.ValueType.
+			 * klass->valuetype = 1;
+			 */
+			klass->blittable = TRUE;
+		} else if (!strcmp (name, "Enum")) {
+			/*
+			 * do not set the valuetype bit for System.Enum.
+			 * klass->valuetype = 1;
+			 */
+			klass->valuetype = 0;
+			klass->enumtype = 0;
+		} else if (!strcmp (name, "Object")) {
+			klass->byval_arg.type = MONO_TYPE_OBJECT;
+			klass->this_arg.type = MONO_TYPE_OBJECT;
+		} else if (!strcmp (name, "String")) {
+			klass->byval_arg.type = MONO_TYPE_STRING;
+			klass->this_arg.type = MONO_TYPE_STRING;
+		} else if (!strcmp (name, "TypedReference")) {
+			klass->byval_arg.type = MONO_TYPE_TYPEDBYREF;
+			klass->this_arg.type = MONO_TYPE_TYPEDBYREF;
+		}
+	}
+
+	if (klass->valuetype) {
+		int t = MONO_TYPE_VALUETYPE;
+
+		if (is_corlib && !strcmp (nspace, "System")) {
+			switch (*name) {
+			case 'B':
+				if (!strcmp (name, "Boolean")) {
+					t = MONO_TYPE_BOOLEAN;
+				} else if (!strcmp(name, "Byte")) {
+					t = MONO_TYPE_U1;
+					klass->blittable = TRUE;						
+				}
+				break;
+			case 'C':
+				if (!strcmp (name, "Char")) {
+					t = MONO_TYPE_CHAR;
+				}
+				break;
+			case 'D':
+				if (!strcmp (name, "Double")) {
+					t = MONO_TYPE_R8;
+					klass->blittable = TRUE;						
+				}
+				break;
+			case 'I':
+				if (!strcmp (name, "Int32")) {
+					t = MONO_TYPE_I4;
+					klass->blittable = TRUE;
+				} else if (!strcmp(name, "Int16")) {
+					t = MONO_TYPE_I2;
+					klass->blittable = TRUE;
+				} else if (!strcmp(name, "Int64")) {
+					t = MONO_TYPE_I8;
+					klass->blittable = TRUE;
+				} else if (!strcmp(name, "IntPtr")) {
+					t = MONO_TYPE_I;
+					klass->blittable = TRUE;
+				}
+				break;
+			case 'S':
+				if (!strcmp (name, "Single")) {
+					t = MONO_TYPE_R4;
+					klass->blittable = TRUE;						
+				} else if (!strcmp(name, "SByte")) {
+					t = MONO_TYPE_I1;
+					klass->blittable = TRUE;
+				}
+				break;
+			case 'U':
+				if (!strcmp (name, "UInt32")) {
+					t = MONO_TYPE_U4;
+					klass->blittable = TRUE;
+				} else if (!strcmp(name, "UInt16")) {
+					t = MONO_TYPE_U2;
+					klass->blittable = TRUE;
+				} else if (!strcmp(name, "UInt64")) {
+					t = MONO_TYPE_U8;
+					klass->blittable = TRUE;
+				} else if (!strcmp(name, "UIntPtr")) {
+					t = MONO_TYPE_U;
+					klass->blittable = TRUE;
+				}
+				break;
+			case 'T':
+				if (!strcmp (name, "TypedReference")) {
+					t = MONO_TYPE_TYPEDBYREF;
+					klass->blittable = TRUE;
+				}
+				break;
+			case 'V':
+				if (!strcmp (name, "Void")) {
+					t = MONO_TYPE_VOID;
+				}
+				break;
+			default:
+				break;
+			}
+		}
+		klass->byval_arg.type = (MonoTypeEnum)t;
+		klass->this_arg.type = (MonoTypeEnum)t;
+	}
+
+	if (MONO_CLASS_IS_INTERFACE (klass)) {
+		klass->interface_id = mono_get_unique_iid (klass);
+
+		if (is_corlib && !strcmp (nspace, "System.Collections.Generic")) {
+			//FIXME IEnumerator needs to be special because GetEnumerator uses magic under the hood
+		    /* FIXME: System.Array/InternalEnumerator don't need all this interface fabrication machinery.
+		    * MS returns diferrent types based on which instance is called. For example:
+		    * 	object obj = new byte[10][];
+		    *	Type a = ((IEnumerable<byte[]>)obj).GetEnumerator ().GetType ();
+		    *	Type b = ((IEnumerable<IList<byte>>)obj).GetEnumerator ().GetType ();
+		    * 	a != b ==> true
+			*/
+			if (!strcmp (name, "IList`1") || !strcmp (name, "ICollection`1") || !strcmp (name, "IEnumerable`1") || !strcmp (name, "IEnumerator`1"))
+				klass->is_array_special_interface = 1;
+		}
+	}
 }
 
 static MonoMethod*
@@ -4669,6 +4919,96 @@ mono_class_setup_events (MonoClass *klass)
 	mono_memory_barrier ();
 
 	mono_class_set_event_info (klass, info);
+}
+
+
+/*
+ * mono_class_setup_interface_id:
+ *
+ * Initializes MonoClass::interface_id if required.
+ *
+ * LOCKING: Acquires the loader lock.
+ */
+void
+mono_class_setup_interface_id (MonoClass *klass)
+{
+	g_assert (MONO_CLASS_IS_INTERFACE (klass));
+	mono_loader_lock ();
+	if (!klass->interface_id)
+		klass->interface_id = mono_get_unique_iid (klass);
+	mono_loader_unlock ();
+}
+
+/*
+ * mono_class_setup_interfaces:
+ *
+ *   Initialize klass->interfaces/interfaces_count.
+ * LOCKING: Acquires the loader lock.
+ * This function can fail the type.
+ */
+void
+mono_class_setup_interfaces (MonoClass *klass, MonoError *error)
+{
+	int i, interface_count;
+	MonoClass **interfaces;
+
+	error_init (error);
+
+	if (klass->interfaces_inited)
+		return;
+
+	if (klass->rank == 1 && klass->byval_arg.type != MONO_TYPE_ARRAY) {
+		MonoType *args [1];
+
+		/* IList and IReadOnlyList -> 2x if enum*/
+		interface_count = klass->element_class->enumtype ? 4 : 2;
+		interfaces = (MonoClass **)mono_image_alloc0 (klass->image, sizeof (MonoClass*) * interface_count);
+
+		args [0] = &klass->element_class->byval_arg;
+		interfaces [0] = mono_class_bind_generic_parameters (
+			mono_defaults.generic_ilist_class, 1, args, FALSE);
+		interfaces [1] = mono_class_bind_generic_parameters (
+			   mono_defaults.generic_ireadonlylist_class, 1, args, FALSE);
+		if (klass->element_class->enumtype) {
+			args [0] = mono_class_enum_basetype (klass->element_class);
+			interfaces [2] = mono_class_bind_generic_parameters (
+				mono_defaults.generic_ilist_class, 1, args, FALSE);
+			interfaces [3] = mono_class_bind_generic_parameters (
+				   mono_defaults.generic_ireadonlylist_class, 1, args, FALSE);
+		}
+	} else if (mono_class_is_ginst (klass)) {
+		MonoClass *gklass = mono_class_get_generic_class (klass)->container_class;
+
+		mono_class_setup_interfaces (gklass, error);
+		if (!mono_error_ok (error)) {
+			mono_class_set_type_load_failure (klass, "Could not setup the interfaces");
+			return;
+		}
+
+		interface_count = gklass->interface_count;
+		interfaces = mono_class_new0 (klass, MonoClass *, interface_count);
+		for (i = 0; i < interface_count; i++) {
+			interfaces [i] = mono_class_inflate_generic_class_checked (gklass->interfaces [i], mono_generic_class_get_context (mono_class_get_generic_class (klass)), error);
+			if (!mono_error_ok (error)) {
+				mono_class_set_type_load_failure (klass, "Could not setup the interfaces");
+				return;
+			}
+		}
+	} else {
+		interface_count = 0;
+		interfaces = NULL;
+	}
+
+	mono_loader_lock ();
+	if (!klass->interfaces_inited) {
+		klass->interface_count = interface_count;
+		klass->interfaces = interfaces;
+
+		mono_memory_barrier ();
+
+		klass->interfaces_inited = TRUE;
+	}
+	mono_loader_unlock ();
 }
 
 /**
