@@ -233,46 +233,17 @@ namespace System.Net
 		{
 			WebConnection.Debug ($"{ME} INNER READ ASYNC: decoder={decoder} wantsMore={decoder?.WantsMoreInput}");
 
-		again:
-			Operation.ThrowIfDisposed (cancellationToken);
+			int nbytes;
+			bool needMore;
 
-			try {
-				if (decoder != null && decoder.DataAvailable)
-					return decoder.Read (buffer, offset, size);
-			} catch (Exception e) {
-				if (e is WebException || e is OperationCanceledException)
-					throw;
-				throw new WebException ("Invalid chunked data.", e, WebExceptionStatus.ServerProtocolViolation, null);
-			}
+			do {
+				(nbytes, needMore) = await InnerReadAsyncLoop (
+					buffer, offset, size, cancellationToken).ConfigureAwait (false);
+			} while (needMore);
 
-			int nbytes = 0;
-			bool done = false;
+			return nbytes;
 
-			if (decoder == null || decoder.WantsMoreInput) {
-				nbytes = await InnerStream.ReadAsync (buffer, offset, size, cancellationToken).ConfigureAwait (false);
-				WebConnection.Debug ($"{ME} INNER READ ASYNC #1: {nbytes}");
-				done = nbytes == 0;
-			}
-
-			if (decoder == null || nbytes <= 0)
-				return nbytes;
-
-			try {
-				decoder.BufferData (buffer, offset, nbytes);
-			} catch (Exception e) {
-				if (e is WebException || e is OperationCanceledException)
-					throw;
-				throw new WebException ("Invalid chunked data.", e, WebExceptionStatus.ServerProtocolViolation, null);
-			}
-
-			if ((done || nbytes == 0) && decoder.DataAvailable)
-				throw new WebException ("Read error", null, WebExceptionStatus.ReceiveFailure, null);
-
-			if (decoder.WantsMoreInput || decoder.DataAvailable)
-				goto again;
-
-			return 0;
-
+#if FIXME
 			try {
 				ChunkStream.WriteAndReadBack (buffer, offset, size, ref nbytes);
 				WebConnection.Debug ($"{ME} INNER READ ASYNC #1: {done} {nbytes} {ChunkStream.WantMore}");
@@ -290,6 +261,51 @@ namespace System.Net
 			}
 
 			return nbytes;
+#endif
+		}
+
+		async Task<(int nbytes, bool needMore)> InnerReadAsyncLoop (
+			byte[] buffer, int offset, int size,
+			CancellationToken cancellationToken)
+		{
+			Operation.ThrowIfDisposed (cancellationToken);
+
+			int nbytes = 0;
+
+			try {
+				if (decoder != null && decoder.DataAvailable) {
+					nbytes = decoder.Read (buffer, offset, size);
+					return (nbytes, false);
+				}
+			} catch (Exception e) {
+				if (e is WebException || e is OperationCanceledException)
+					throw;
+				throw new WebException ("Invalid chunked data.", e, WebExceptionStatus.ServerProtocolViolation, null);
+			}
+
+			bool done = false;
+
+			if (decoder == null || decoder.WantsMoreInput) {
+				nbytes = await InnerStream.ReadAsync (buffer, offset, size, cancellationToken).ConfigureAwait (false);
+				WebConnection.Debug ($"{ME} INNER READ ASYNC #1: {nbytes}");
+				done = nbytes == 0;
+			}
+
+			if (decoder == null || nbytes <= 0)
+				return (nbytes, false);
+
+			try {
+				decoder.BufferData (buffer, offset, nbytes);
+			} catch (Exception e) {
+				if (e is WebException || e is OperationCanceledException)
+					throw;
+				throw new WebException ("Invalid chunked data.", e, WebExceptionStatus.ServerProtocolViolation, null);
+			}
+
+			if ((done || nbytes == 0) && decoder.DataAvailable)
+				throw new WebException ("Read error", null, WebExceptionStatus.ReceiveFailure, null);
+
+			return (0, decoder.WantsMoreInput || decoder.DataAvailable);
 		}
 
 		async Task<int> EnsureReadAsync (byte[] buffer, int offset, int size, CancellationToken cancellationToken)
