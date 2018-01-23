@@ -3974,7 +3974,18 @@ AC_SEARCH_LIBS(nanosleep, rt)
 
 AC_SEARCH_LIBS(dlopen, dl)
 old_ldflags="${LDFLAGS}"
-LDFLAGS="${LDFLAGS} -Wl,-export-dynamic"
+# GNU specific option, this confuses IBM ld, but do offer alternatives when possible
+if test $lt_cv_prog_gnu_ld = yes; then
+	LDFLAGS="${LDFLAGS} -Wl,-export-dynamic"
+else
+	case $host in
+	*-*-aix*|*-*-os400*)
+		LDFLAGS="${LDFLAGS} -Wl,-bexpall"
+		;;
+	*)
+		;;
+	esac
+fi
 AC_TRY_LINK(, [int i;], found_export_dynamic=yes, found_export_dynamic=no)
 if test $found_export_dynamic = no; then
 	LDFLAGS="${old_ldflags}"
