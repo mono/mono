@@ -178,7 +178,7 @@ namespace System.Collections.Generic {
             get {
                 // Following trick can reduce the range check by one
                 if ((uint) index >= (uint)_size) {
-                    ThrowHelper.ThrowArgumentOutOfRangeException();
+                    ThrowHelper.ThrowArgumentOutOfRange_IndexException();
                 }
                 Contract.EndContractBlock();
 #if MONO
@@ -190,7 +190,7 @@ namespace System.Collections.Generic {
 
             set {
                 if ((uint) index >= (uint)_size) {
-                    ThrowHelper.ThrowArgumentOutOfRangeException();
+                    ThrowHelper.ThrowArgumentOutOfRange_IndexException();
                 }
                 Contract.EndContractBlock();
                 _items[index] = value;
@@ -883,7 +883,7 @@ namespace System.Collections.Generic {
         // 
         public void RemoveAt(int index) {
             if ((uint)index >= (uint)_size) {
-                ThrowHelper.ThrowArgumentOutOfRangeException();
+                ThrowHelper.ThrowArgumentOutOfRange_IndexException();
             }
             Contract.EndContractBlock();
             _size--;

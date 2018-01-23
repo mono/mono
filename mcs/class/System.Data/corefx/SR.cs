@@ -458,6 +458,11 @@ partial class SR
 	public const string DataColumns_RemoveExpression = "Cannot remove this column, because it is part of an expression: {0} = {1}.";
 	public const string DataRow_RowInsertTwice = "The rowOrder value={0} has been found twice for table named '{1}'.";
 	public const string Xml_ElementTypeNotFound = "Cannot find ElementType name='{0}'.";
+	public const string ADP_DbProviderFactories_InvariantNameNotFound = "The specified invariant name '{0}' wasn't found in the list of registered .NET Data Providers.";
+	public const string ADP_DbProviderFactories_NoInstance = "The requested .NET Data Provider's implementation does not have an Instance field of a System.Data.Common.DbProviderFactory derived type.";
+	public const string ADP_DbProviderFactories_FactoryNotLoadable = "The registered .NET Data Provider's DbProviderFactory implementation type '{0}' couldn't be loaded.";
+	public const string ADP_DbProviderFactories_NoAssemblyQualifiedName = "The missing .NET Data Provider's assembly qualified name is required.";
+	public const string ADP_DbProviderFactories_NotAFactoryType = "The type '{0}' doesn't inherit from DbProviderFactory.";
 	public const string ADP_ConnectionAlreadyOpen = "The connection was not closed. {0}";
 	public const string ADP_InternalConnectionError = "Internal DbConnection Error: {0}";
 	public const string ADP_InvalidOffsetValue = "Invalid parameter Offset value '{0}'. The value must be greater than or equal to 0.";

@@ -1636,26 +1636,9 @@ corert/ThreadPoolBoundHandle.cs
 
 ../../../external/corert/src/Runtime.Base/src/System/Runtime/InteropServices/NativeCallableAttribute.cs
 
-../../../external/corert/src/System.Private.CoreLib/shared/System/Tuple.cs
-../../../external/corert/src/System.Private.CoreLib/shared/System/TupleExtensions.cs
-../../../external/corert/src/System.Private.CoreLib/shared/System/ValueTuple.cs
-
-../../../external/corert/src/System.Private.CoreLib/shared/System/Collections/DictionaryEntry.cs
-
-../../../external/corert/src/System.Private.CoreLib/shared/System/Collections/Generic/Dictionary.cs
-../../../external/corert/src/System.Private.CoreLib/shared/System/Collections/Generic/IDictionaryDebugView.cs
-../../../external/corert/src/System.Private.CoreLib/shared/System/Collections/Generic/KeyValuePair.cs
-
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Diagnostics/Debug.cs
 
-../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/CompilerServices/IsReadOnlyAttribute.cs
-../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/CompilerServices/IsByRefLikeAttribute.cs
-../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/CompilerServices/ITuple.cs
-../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/CompilerServices/RuntimeFeature.cs
-../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/CompilerServices/TupleElementNamesAttribute.cs
-
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Threading/DeferredDisposableLifetime.cs
-
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Array.cs
 
@@ -1666,6 +1649,31 @@ corert/ThreadPoolBoundHandle.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/ThreadPoolCallbackWrapper.cs
 
 corefx/SR.cs
+
+../../../external/corefx/src/Common/src/CoreLib/System/Memory.cs
+../../../external/corefx/src/Common/src/CoreLib/System/MemoryDebugView.cs
+../../../external/corefx/src/Common/src/CoreLib/System/ReadOnlyMemory.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Tuple.cs
+../../../external/corefx/src/Common/src/CoreLib/System/TupleExtensions.cs
+../../../external/corefx/src/Common/src/CoreLib/System/ValueTuple.cs
+
+../../../external/corefx/src/Common/src/CoreLib/System/Buffers/IRetainable.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Buffers/MemoryHandle.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Buffers/OwnedMemory.cs
+
+../../../external/corefx/src/Common/src/CoreLib/System/Collections/DictionaryEntry.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Collections/Generic/Dictionary.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Collections/Generic/IDictionaryDebugView.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Collections/Generic/KeyValuePair.cs
+
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/IntrinsicAttribute.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/IsReadOnlyAttribute.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/IsByRefLikeAttribute.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/ITuple.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/RuntimeFeature.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/TupleElementNamesAttribute.cs
+
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/InteropServices/MemoryMarshal.cs
 
 ../../../external/corefx/src/Common/src/System/Collections/Generic/ReferenceEqualityComparer.cs
 
@@ -1680,10 +1688,7 @@ corefx/SR.cs
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/Partitioner.cs
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/PartitionerStatic.cs
 
-../../../external/corefx/src/System.Memory/src/System/Memory.cs
-../../../external/corefx/src/System.Memory/src/System/MemoryDebugView.cs
 ../../../external/corefx/src/System.Memory/src/System/Pinnable.cs
-../../../external/corefx/src/System.Memory/src/System/ReadOnlyMemory.cs
 ../../../external/corefx/src/System.Memory/src/System/ReadOnlySpan.cs
 ../../../external/corefx/src/System.Memory/src/System/Span.cs
 ../../../external/corefx/src/System.Memory/src/System/SpanDebugView.cs
@@ -1696,7 +1701,6 @@ corefx/SR.cs
 ../../../external/corefx/src/System.Memory/src/System/ThrowHelper.cs
 ../../../external/corefx/src/System.Memory/src/System/Buffers/*.cs
 ../../../external/corefx/src/System.Memory/src/System/Buffers/Binary/*.cs
-../../../external/corefx/src/System.Memory/src/System/Runtime/InteropServices/*.cs
 
 ../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/System/Runtime/InteropServices/RuntimeInformation/OSPlatform.cs
 ../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/System/Runtime/InteropServices/RuntimeInformation/Architecture.cs
