@@ -27,16 +27,10 @@ public enum Target {
 
 class SlnGenerator {
 	public static readonly string NewLine = "\r\n"; //Environment.NewLine; // "\n"; 
-	public SlnGenerator (string formatVersion = "2012")
+	public SlnGenerator (string slnVersion)
 	{
-		switch (formatVersion) {
-		case "2008":
-			this.header = MakeHeader ("10.00", "2008");
-			break;
-		default:
-			this.header = MakeHeader ("12.00", "2012");
-			break;
-		}
+		Console.WriteLine("Requested sln version is {0}", slnVersion);
+		this.header = MakeHeader ("12.00", "15", "15.0.0.0");
 	}
 
 	const string project_start = "Project(\"{{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}}\") = \"{0}\", \"{1}\", \"{2}\""; // Note: No need to double up on {} around {2}
@@ -45,9 +39,15 @@ class SlnGenerator {
 	public List<MsbuildGenerator.VsCsproj> libraries = new List<MsbuildGenerator.VsCsproj> ();
 	string header;
 
-	string MakeHeader (string formatVersion, string yearTag)
+	string MakeHeader (string formatVersion, string yearTag, string minimumVersion)
 	{
-		return string.Format ("Microsoft Visual Studio Solution File, Format Version {0}" + NewLine + "# Visual Studio {1}", formatVersion, yearTag);
+		return string.Format (
+			"Microsoft Visual Studio Solution File, Format Version {0}" + NewLine + 
+			"# Visual Studio {1}" + NewLine + 
+			"MinimumVisualStudioVersion = {2}", 
+			formatVersion, yearTag,
+			minimumVersion
+		);
 	}
 
 	public void Add (MsbuildGenerator.VsCsproj vsproj)
@@ -224,7 +224,7 @@ class MsbuildGenerator {
 	string OutputFile;
 	string StrongNameKeyContainer;
 	bool StrongNameDelaySign = false;
-	string LangVersion = "default";
+	string LangVersion = "7.2";
 	string CodePage;
 
 	// Class directory, relative to 
