@@ -98,14 +98,12 @@ namespace System.Net
 
 		public override bool CanWrite => false;
 
-		protected bool ChunkedRead {
-			get;
-			private set;
+		bool ChunkedRead {
+			get; set;
 		}
 
-		protected MonoChunkStream ChunkStream {
-			get;
-			private set;
+		MonoChunkStream ChunkStream {
+			get; set;
 		}
 
 		public override async Task<int> ReadAsync (byte[] buffer, int offset, int size, CancellationToken cancellationToken)
@@ -140,12 +138,12 @@ namespace System.Net
 
 			WebConnection.Debug ($"{ME} READ ASYNC #2: {totalRead} {contentLength}");
 
-			int oldBytes = 0, nbytes = 0;
+			int nbytes = 0;
 			Exception throwMe = null;
 
 			try {
 				// FIXME: NetworkStream.ReadAsync() does not support cancellation.
-				(oldBytes, nbytes) = await HttpWebRequest.RunWithTimeout (
+				nbytes = await HttpWebRequest.RunWithTimeout (
 					ct => ProcessRead (buffer, offset, size, ct),
 					ReadTimeout, () => {
 						Operation.Abort ();
@@ -155,7 +153,7 @@ namespace System.Net
 				throwMe = GetReadException (WebExceptionStatus.ReceiveFailure, e, "ReadAsync");
 			}
 
-			WebConnection.Debug ($"{ME} READ ASYNC #3: {totalRead} {contentLength} - {oldBytes} {nbytes} {throwMe?.Message}");
+			WebConnection.Debug ($"{ME} READ ASYNC #3: {totalRead} {contentLength} - {nbytes} {throwMe?.Message}");
 
 			if (throwMe != null) {
 				lock (locker) {
@@ -170,34 +168,33 @@ namespace System.Net
 			}
 
 			lock (locker) {
-				readTcs.TrySetResult (oldBytes + nbytes);
+				readTcs.TrySetResult (nbytes);
 				readTcs = null;
 				nestedRead = 0;
 			}
 
 			if (totalRead >= contentLength && !nextReadCalled) {
-				WebConnection.Debug ($"{ME} READ ASYNC - READ COMPLETE: {oldBytes} {nbytes} - {totalRead} {contentLength} {nextReadCalled}");
+				WebConnection.Debug ($"{ME} READ ASYNC - READ COMPLETE: {nbytes} - {totalRead} {contentLength} {nextReadCalled}");
 				if (!nextReadCalled) {
 					nextReadCalled = true;
 					Operation.CompleteResponseRead (true);
 				}
 			}
 
-			return oldBytes + nbytes;
+			return nbytes;
 		}
 
-		async Task<(int, int)> ProcessRead (byte[] buffer, int offset, int size, CancellationToken cancellationToken)
+		async Task<int> ProcessRead (byte[] buffer, int offset, int size, CancellationToken cancellationToken)
 		{
 			WebConnection.Debug ($"{ME} PROCESS READ: {totalRead} {contentLength}");
 
 			cancellationToken.ThrowIfCancellationRequested ();
-			if (totalRead >= contentLength) {
+			if (read_eof || totalRead >= contentLength) {
 				read_eof = true;
 				contentLength = totalRead;
-				return (0, 0);
+				return 0;
 			}
 
-			int oldBytes = 0;
 			int remaining = readBuffer?.Size ?? 0;
 			if (remaining > 0) {
 				int copy = (remaining > size) ? size : remaining;
@@ -207,38 +204,31 @@ namespace System.Net
 				offset += copy;
 				size -= copy;
 				totalRead += copy;
-				if (totalRead >= contentLength) {
-					contentLength = totalRead;
+				if (size == 0 || totalRead >= contentLength) {
 					read_eof = true;
+					contentLength = totalRead;
 				}
-				if (size == 0 || totalRead >= contentLength)
-					return (0, copy);
-				oldBytes = copy;
+				return copy;
 			}
 
 			if (contentLength != Int64.MaxValue && contentLength - totalRead < size)
 				size = (int)(contentLength - totalRead);
 
-			WebConnection.Debug ($"{ME} PROCESS READ #1: {oldBytes} {size} {read_eof}");
-
-			if (read_eof) {
-				contentLength = totalRead;
-				return (oldBytes, 0);
-			}
+			WebConnection.Debug ($"{ME} PROCESS READ #1: {size} {read_eof}");
 
 			var ret = await InnerReadAsync (buffer, offset, size, cancellationToken).ConfigureAwait (false);
 
 			if (ret <= 0) {
 				read_eof = true;
 				contentLength = totalRead;
-				return (oldBytes, 0);
+				return ret;
 			}
 
 			totalRead += ret;
-			return (oldBytes, ret);
+			return ret;
 		}
 
-		internal async Task<int> InnerReadAsync (byte[] buffer, int offset, int size, CancellationToken cancellationToken)
+		async Task<int> InnerReadAsync (byte[] buffer, int offset, int size, CancellationToken cancellationToken)
 		{
 			WebConnection.Debug ($"{ME} INNER READ ASYNC");
 
@@ -366,16 +356,9 @@ namespace System.Net
 				} catch (Exception e) {
 					throw GetReadException (WebExceptionStatus.ReceiveFailure, e, me);
 				}
-			} else if (ChunkStream == null) {
+			} else {
 				try {
 					ChunkStream = new MonoChunkStream (buffer.Buffer, buffer.Offset, buffer.Offset + buffer.Size, Headers);
-				} catch (Exception e) {
-					throw GetReadException (WebExceptionStatus.ServerProtocolViolation, e, me);
-				}
-			} else {
-				ChunkStream.ResetBuffer ();
-				try {
-					ChunkStream.Write (buffer.Buffer, buffer.Offset, buffer.Size);
 				} catch (Exception e) {
 					throw GetReadException (WebExceptionStatus.ServerProtocolViolation, e, me);
 				}
