@@ -870,6 +870,8 @@ corefx/SR.cs
 ../../../external/corefx/src/Common/src/System/Net/SecurityProtocol.cs
 ../../../external/corefx/src/Common/src/System/Net/UriScheme.cs
 
+../../../external/corefx/src/Common/src/System/Net/WebSockets/ManagedWebSocket.cs
+
 ../../../external/corefx/src/Common/src/System/Net/Logging/NetEventSource.Common.cs
 
 ../../../external/corefx/src/Common/src/System/Net/WebSockets/WebSocketValidate.cs
@@ -906,7 +908,6 @@ corefx/SR.cs
 
 ../../../external/corefx/src/System.Net.ServicePoint/src/System/Net/SecurityProtocolType.cs
 
-../../../external/corefx/src/System.Net.WebSockets/src/System/Net/WebSockets/ManagedWebSocket.cs
 ../../../external/corefx/src/System.Net.WebSockets/src/System/Net/WebSockets/ValueWebSocketReceiveResult.cs
 ../../../external/corefx/src/System.Net.WebSockets/src/System/Net/WebSockets/WebSocket.cs
 ../../../external/corefx/src/System.Net.WebSockets/src/System/Net/WebSockets/WebSocketCloseStatus.cs
@@ -920,6 +921,8 @@ corefx/SR.cs
 ../../../external/corefx/src/System.Net.WebSockets.Client/src/System/Net/WebSockets/ClientWebSocket.cs
 ../../../external/corefx/src/System.Net.WebSockets.Client/src/System/Net/WebSockets/ClientWebSocketOptions.cs
 ../../../external/corefx/src/System.Net.WebSockets.Client/src/System/Net/WebSockets/WebSocketHandle.Managed.cs
+
+../../../external/corefx/src/System.Net.WebSockets.WebSocketProtocol/src/System/Net/WebSockets/ManagedWebSocket.netstandard.cs
 
 ../../../external/corefx/src/System.Private.Uri/src/System/UriBuilder.cs
 
