@@ -124,6 +124,7 @@ common_sources = \
 	class-init.c		\
 	class-internals.h	\
 	class-inlines.h		\
+	class-private-definition.h	\
 	class-accessors.c	\
 	cominterop.c		\
 	cominterop.h		\
