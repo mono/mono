@@ -103,10 +103,6 @@ namespace System.Net
 			get; set;
 		}
 
-		MonoChunkStream ChunkStream {
-			get; set;
-		}
-
 		public override async Task<int> ReadAsync (byte[] buffer, int offset, int size, CancellationToken cancellationToken)
 		{
 			WebConnection.Debug ($"{ME} READ ASYNC");
@@ -308,6 +304,7 @@ namespace System.Net
 			return (0, decoder.WantsMoreInput || decoder.DataAvailable);
 		}
 
+#if FIXME
 		async Task<int> EnsureReadAsync (byte[] buffer, int offset, int size, CancellationToken cancellationToken)
 		{
 			byte[] morebytes = null;
@@ -332,6 +329,7 @@ namespace System.Net
 
 			return nbytes;
 		}
+#endif
 
 		bool CheckAuthHeader (string headerName)
 		{
