@@ -84,6 +84,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Runtime\InteropServices\MemoryMarshal.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Span.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\SpanDebugView.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\SpanHelpers.BinarySearch.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\SpanHelpers.byte.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\SpanHelpers.Clear.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\SpanHelpers.cs" />
