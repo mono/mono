@@ -554,6 +554,7 @@ AC_CHECK_HEADERS(sys/poll.h)
 AC_CHECK_HEADERS(sys/wait.h)
 AC_CHECK_HEADERS(grp.h)
 AC_CHECK_HEADERS(syslog.h)
+AC_CHECK_FUNCS(vsyslog)
 
 # for mono/dis
 AC_CHECK_HEADERS(wchar.h)
