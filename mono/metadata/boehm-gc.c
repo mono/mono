@@ -1307,7 +1307,7 @@ mono_gc_get_managed_allocator_by_type (int atype, ManagedAllocatorVariant varian
 guint32
 mono_gc_get_managed_allocator_types (void)
 {
-	return ATYPE_NUM;
+	return 0;
 }
 
 MonoMethod*

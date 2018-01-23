@@ -559,7 +559,7 @@ mono_profiler_sampling_thread_wait (void)
 mono_bool
 mono_profiler_enable_allocations (void)
 {
-	if (mono_profiler_state.startup_done)
+	if (mono_gc_get_managed_allocator_types () > 0 && mono_profiler_state.startup_done)
 		return FALSE;
 
 	return mono_profiler_state.allocations = TRUE;
@@ -1105,6 +1105,9 @@ mono_profiler_set_events (int flags)
 	else
 		mono_profiler_set_call_instrumentation_filter_callback (current->handle, NULL);
 	/* Do nothing. */
+
+	if (flags & MONO_PROFILE_ALLOCATIONS)
+		mono_profiler_enable_allocations ();
 }
 
 static void
