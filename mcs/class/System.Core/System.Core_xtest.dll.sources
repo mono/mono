@@ -50,8 +50,7 @@
 ../../../external/corefx/src/System.Linq.Expressions/tests/BinaryOperators/Logical/*.cs
 ../../../external/corefx/src/System.Linq.Expressions/tests/BinaryOperators/ReferenceComparison/*.cs
 ../../../external/corefx/src/System.Linq.Expressions/tests/Unary/IncDecAssign/*.cs
-../../../external/corefx/src/System.Linq.Expressions/tests/*.cs:CompilerTests.cs,StackSpillerTests.cs,ReadOnlyCollectionBuilderTests.cs
-Test/System.Linq.Expressions/TestExtensions.cs
+../../../external/corefx/src/System.Linq.Expressions/tests/*.cs:StackSpillerTests.cs,ReadOnlyCollectionBuilderTests.cs
 
 # System.Linq.Expressions
 ../../../external/corefx/src/System.Linq.Parallel/tests/Combinatorial/*.cs
