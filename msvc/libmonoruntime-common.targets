@@ -13,6 +13,7 @@
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\attach.c" />
     <ClInclude Include="$(MonoSourceLocation)\mono\metadata\cil-coff.h" />
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\class.c" />
+    <ClInclude Include="$(MonoSourceLocation)\mono\metadata\class-getters.h" />
     <ClInclude Include="$(MonoSourceLocation)\mono\metadata\class-internals.h" />
     <ClInclude Include="$(MonoSourceLocation)\mono\metadata\class-inlines.h" />
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\class-init.c" />

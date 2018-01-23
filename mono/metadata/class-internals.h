@@ -290,6 +290,17 @@ union _MonoClassSizes {
 #include "class-private-definition.h"
 #endif
 
+/* If MonoClass definition is hidden, just declare the getters.
+ * Otherwise, define them as static inline functions.
+ */
+#ifdef MONO_CLASS_DEF_PRIVATE
+#define MONO_CLASS_GETTER(funcname, rettype, optref, argtype, fieldname) rettype funcname (argtype *klass);
+#else
+#define MONO_CLASS_GETTER(funcname, rettype, optref, argtype, fieldname) static inline rettype funcname (argtype *klass) { return optref klass-> fieldname ; }
+#endif
+#include "class-getters.h"
+#undef MONO_CLASS_GETTER
+
 #ifdef COMPRESSED_INTERFACE_BITMAP
 int mono_compress_bitmap (uint8_t *dest, const uint8_t *bitmap, int size);
 int mono_class_interface_match (const uint8_t *bitmap, int id);

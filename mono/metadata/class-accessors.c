@@ -6,7 +6,11 @@
 #include <config.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/tabledefs.h>
-
+#ifdef MONO_CLASS_DEF_PRIVATE
+#define REALLY_INCLUDE_CLASS_DEF 1
+#include <mono/metadata/class-private-definition.h>
+#undef REALLY_INCLUDE_CLASS_DEF
+#endif
 
 typedef enum {
 	PROP_MARSHAL_INFO = 1, /* MonoMarshalType */
@@ -419,3 +423,9 @@ mono_class_get_weak_bitmap (MonoClass *klass, int *nbits)
 	*nbits = prop->nbits;
 	return prop->bits;
 }
+
+#ifdef MONO_CLASS_DEF_PRIVATE
+#define MONO_CLASS_GETTER(funcname, rettype, optref, argtype, fieldname) rettype funcname (argtype *klass) { return optref klass-> fieldname ; }
+#include "class-getters.h"
+#undef MONO_CLASS_GETTER
+#endif /* MONO_CLASS_DEF_PRIVATE */
