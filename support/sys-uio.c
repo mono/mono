@@ -82,6 +82,12 @@ Mono_Posix_Syscall_writev (int dirfd, struct Mono_Posix_Iovec *iov, gint32 iovcn
 }
 #endif /* def HAVE_WRITEV */
 
+#if defined(HAVE_PREADV) && defined(HAVE_PWRITEV) && defined(_AIX) && !defined(__64BIT__)
+/* we have it on 32-bit mode AIX, but as always, headers... */
+extern ssize_t  preadv(int, const struct iovec *, int, offset_t);
+extern ssize_t  pwritev(int, const struct iovec *, int, offset_t);
+#endif
+
 #ifdef HAVE_PREADV
 gint64
 Mono_Posix_Syscall_preadv (int dirfd, struct Mono_Posix_Iovec *iov, gint32 iovcnt, gint64 off)
