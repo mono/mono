@@ -98,14 +98,12 @@ namespace System.Net
 
 		public override bool CanWrite => false;
 
-		protected bool ChunkedRead {
-			get;
-			private set;
+		bool ChunkedRead {
+			get; set;
 		}
 
-		protected MonoChunkStream ChunkStream {
-			get;
-			private set;
+		MonoChunkStream ChunkStream {
+			get; set;
 		}
 
 		public override async Task<int> ReadAsync (byte[] buffer, int offset, int size, CancellationToken cancellationToken)
@@ -230,7 +228,7 @@ namespace System.Net
 			return ret;
 		}
 
-		internal async Task<int> InnerReadAsync (byte[] buffer, int offset, int size, CancellationToken cancellationToken)
+		async Task<int> InnerReadAsync (byte[] buffer, int offset, int size, CancellationToken cancellationToken)
 		{
 			WebConnection.Debug ($"{ME} INNER READ ASYNC");
 
