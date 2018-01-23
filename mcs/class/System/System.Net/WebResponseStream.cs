@@ -358,16 +358,9 @@ namespace System.Net
 				} catch (Exception e) {
 					throw GetReadException (WebExceptionStatus.ReceiveFailure, e, me);
 				}
-			} else if (ChunkStream == null) {
+			} else {
 				try {
 					ChunkStream = new MonoChunkStream (buffer.Buffer, buffer.Offset, buffer.Offset + buffer.Size, Headers);
-				} catch (Exception e) {
-					throw GetReadException (WebExceptionStatus.ServerProtocolViolation, e, me);
-				}
-			} else {
-				ChunkStream.ResetBuffer ();
-				try {
-					ChunkStream.Write (buffer.Buffer, buffer.Offset, buffer.Size);
 				} catch (Exception e) {
 					throw GetReadException (WebExceptionStatus.ServerProtocolViolation, e, me);
 				}
