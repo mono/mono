@@ -82,7 +82,7 @@ namespace System.Net
 			: base (request.Connection, request.Operation, request.InnerStream)
 		{
 			RequestStream = request;
-			request.InnerStream.ReadTimeout = ReadTimeout;
+			// request.InnerStream.ReadTimeout = ReadTimeout;
 
 #if MONO_WEB_DEBUG
 			ME = $"WRP(Cnc={Connection.ID}, Op={Operation.ID})";
@@ -201,7 +201,7 @@ namespace System.Net
 				offset += copy;
 				size -= copy;
 				totalRead += copy;
-				if (size == 0 || totalRead >= contentLength) {
+				if (totalRead >= contentLength) {
 					read_eof = true;
 					contentLength = totalRead;
 				}
