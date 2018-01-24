@@ -76,9 +76,16 @@ class SlnGenerator {
 		}
 	}
 
-	private void WriteProjectReference (StreamWriter sln, string prefixGuid, string library, string relativePath, string projectGuid)
+	private void WriteProjectReference (StreamWriter sln, string prefixGuid, string library, string relativePath, string projectGuid, params string[] dependencyGuids)
 	{
 		sln.WriteLine (project_start, prefixGuid, library, relativePath, projectGuid);
+
+		foreach (var guid in dependencyGuids) {
+    		sln.WriteLine ("    ProjectSection(ProjectDependencies) = postProject");
+    		sln.WriteLine ("        {0} = {0}", guid);
+    		sln.WriteLine ("    EndProjectSection");
+		}
+
 		sln.WriteLine (project_end);
 	}
 
@@ -87,7 +94,10 @@ class SlnGenerator {
 		var unixProjFile = proj.csProjFilename.Replace ("\\", "/");
 		var fullProjPath = Path.GetFullPath (unixProjFile);
 		var relativePath = MsbuildGenerator.GetRelativePath (slnFullPath, fullProjPath);
-		WriteProjectReference(sln, "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}", proj.library, relativePath, proj.projectGuid);
+		var dependencyGuids = new string[0];
+		if (proj.preBuildEvent.Contains ("jay"))
+			dependencyGuids = new [] { "{5D485D32-3B9F-4287-AB24-C8DA5B89F537}" };
+		WriteProjectReference(sln, "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}", proj.library, relativePath, proj.projectGuid, dependencyGuids);
 	}
 
 	private void WriteProjectConfigurationPlatforms (StreamWriter sln, string guid, string platformToBuild)
@@ -681,6 +691,7 @@ class MsbuildGenerator {
 		public List<VsCsproj> projReferences = new List<VsCsproj> ();
 		public string library;
 		public MsbuildGenerator MsbuildGenerator;
+		public string preBuildEvent, postBuildEvent;
 	}
 
 	public VsCsproj Csproj;
@@ -973,6 +984,9 @@ class MsbuildGenerator {
 			Replace ("@RESOURCES@", resources.ToString ()).
 			Replace ("@OPTIMIZE@", Optimize ? "true" : "false").
 			Replace ("@SOURCES@", sources.ToString ());
+
+		Csproj.preBuildEvent = prebuild;
+		Csproj.postBuildEvent = postbuild;
 
 		//Console.WriteLine ("Generated {0}", ofile.Replace ("\\", "/"));
 		using (var o = new StreamWriter (generatedProjFile)) {
