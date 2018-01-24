@@ -311,7 +311,7 @@ namespace System.Threading {
 
 		// Returns the system thread handle
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern IntPtr Thread_internal (MulticastDelegate start);
+		private extern bool Thread_internal (MulticastDelegate start);
 
 		private Thread (InternalThread it) {
 			internal_thread = it;
@@ -484,7 +484,7 @@ namespace System.Threading {
 #endif
 
 			// Thread_internal creates and starts the new thread, 
-			if (Thread_internal(m_Delegate) == IntPtr.Zero)
+			if (!Thread_internal(m_Delegate))
 				throw new SystemException ("Thread creation failed.");
 
 			m_ThreadStartArg = null;
