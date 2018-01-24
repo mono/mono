@@ -82,7 +82,7 @@ namespace System.Net
 			: base (request.Connection, request.Operation, request.InnerStream)
 		{
 			RequestStream = request;
-			// request.InnerStream.ReadTimeout = ReadTimeout;
+			request.InnerStream.ReadTimeout = ReadTimeout;
 
 #if MONO_WEB_DEBUG
 			ME = $"WRP(Cnc={Connection.ID}, Op={Operation.ID})";
@@ -238,26 +238,6 @@ namespace System.Net
 			} while (needMore);
 
 			return nbytes;
-
-#if FIXME
-			try {
-				ChunkStream.WriteAndReadBack (buffer, offset, size, ref nbytes);
-				WebConnection.Debug ($"{ME} INNER READ ASYNC #1: {done} {nbytes} {ChunkStream.WantMore}");
-				if (!done && nbytes == 0 && ChunkStream.WantMore)
-					nbytes = await EnsureReadAsync (buffer, offset, size, cancellationToken).ConfigureAwait (false);
-			} catch (Exception e) {
-				if (e is WebException || e is OperationCanceledException)
-					throw;
-				throw new WebException ("Invalid chunked data.", e, WebExceptionStatus.ServerProtocolViolation, null);
-			}
-
-			if ((done || nbytes == 0) && ChunkStream.ChunkLeft != 0) {
-				// HandleError (WebExceptionStatus.ReceiveFailure, null, "chunked EndRead");
-				throw new WebException ("Read error", null, WebExceptionStatus.ReceiveFailure, null);
-			}
-
-			return nbytes;
-#endif
 		}
 
 		async Task<(int nbytes, bool needMore)> InnerReadAsyncLoop (
@@ -303,33 +283,6 @@ namespace System.Net
 
 			return (0, decoder.WantsMoreInput || decoder.DataAvailable);
 		}
-
-#if FIXME
-		async Task<int> EnsureReadAsync (byte[] buffer, int offset, int size, CancellationToken cancellationToken)
-		{
-			byte[] morebytes = null;
-			int nbytes = 0;
-			while (nbytes == 0 && ChunkStream.WantMore && !cancellationToken.IsCancellationRequested) {
-				int localsize = ChunkStream.ChunkLeft;
-				if (localsize <= 0) // not read chunk size yet
-					localsize = 1024;
-				else if (localsize > 16384)
-					localsize = 16384;
-
-				if (morebytes == null || morebytes.Length < localsize)
-					morebytes = new byte[localsize];
-
-				int nread = await InnerStream.ReadAsync (morebytes, 0, localsize, cancellationToken).ConfigureAwait (false);
-				if (nread <= 0)
-					return 0; // Error
-
-				ChunkStream.Write (morebytes, 0, nread);
-				nbytes += ChunkStream.Read (buffer, offset + nbytes, size - nbytes);
-			}
-
-			return nbytes;
-		}
-#endif
 
 		bool CheckAuthHeader (string headerName)
 		{
@@ -400,7 +353,6 @@ namespace System.Net
 				}
 			} else {
 				try {
-					// ChunkStream = new MonoChunkStream (buffer.Buffer, buffer.Offset, buffer.Offset + buffer.Size, Headers);
 					decoder = new ChunkedDecoder (this);
 					decoder.BufferData (buffer.Buffer, buffer.Offset, buffer.Offset + buffer.Size);
 				} catch (Exception e) {
