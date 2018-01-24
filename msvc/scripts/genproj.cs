@@ -33,8 +33,25 @@ class SlnGenerator {
 		this.header = MakeHeader ("12.00", "15", "15.0.0.0");
 	}
 
-	const string project_start = "Project(\"{{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}}\") = \"{0}\", \"{1}\", \"{2}\""; // Note: No need to double up on {} around {2}
+	const string project_start = "Project(\"{0}\") = \"{1}\", \"{2}\", \"{3}\""; // Note: No need to double up on {} around {2}
 	const string project_end = "EndProject";
+
+	public List<string> profiles = new List<string> {
+		"net_4_x",
+		"basic",
+		"monodroid",
+		"monotouch",
+		"monotouch_tv",
+		"monotouch_watch",
+		"orbis",
+		"unreal",
+		"wasm",
+		"winaot",
+		"xammac",
+		"linux_build",
+		"linux_net_4_x",
+		"linux_xammac_net_4_5",
+	};
 
 	public List<MsbuildGenerator.VsCsproj> libraries = new List<MsbuildGenerator.VsCsproj> ();
 	string header;
@@ -59,34 +76,64 @@ class SlnGenerator {
 		}
 	}
 
+	private void WriteProjectReference (StreamWriter sln, string prefixGuid, string library, string relativePath, string projectGuid)
+	{
+		sln.WriteLine (project_start, prefixGuid, library, relativePath, projectGuid);
+		sln.WriteLine (project_end);
+	}
+
+	private void WriteProjectReference (StreamWriter sln, string slnFullPath, MsbuildGenerator.VsCsproj proj)
+	{
+		var unixProjFile = proj.csProjFilename.Replace ("\\", "/");
+		var fullProjPath = Path.GetFullPath (unixProjFile);
+		var relativePath = MsbuildGenerator.GetRelativePath (slnFullPath, fullProjPath);
+		WriteProjectReference(sln, "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}", proj.library, relativePath, proj.projectGuid);
+	}
+
+	private void WriteProjectConfigurationPlatforms (StreamWriter sln, string guid, string platformToBuild)
+	{
+		foreach (var profile in profiles) {
+			sln.WriteLine ("\t\t{0}.Debug|{1}.ActiveCfg = Debug|{2}", guid, profile, platformToBuild);
+			sln.WriteLine ("\t\t{0}.Debug|{1}.Build.0 = Debug|{2}", guid, profile, platformToBuild);
+			sln.WriteLine ("\t\t{0}.Release|{1}.ActiveCfg = Release|{2}", guid, profile, platformToBuild);
+			sln.WriteLine ("\t\t{0}.Release|{1}.Build.0 = Release|{2}", guid, profile, platformToBuild);
+		}
+	}
+
 	public void Write (string filename)
 	{
 		var fullPath = Path.GetDirectoryName (filename) + "/";
+		var jayGuid = "{5D485D32-3B9F-4287-AB24-C8DA5B89F537}";
 		
 		using (var sln = new StreamWriter (filename)) {
 			sln.WriteLine ();
 			sln.WriteLine (header);
+
+			// Manually insert jay's vcxproj. We depend on jay.exe to perform build steps later.
+			WriteProjectReference (sln, "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}", "jay", "mcs\\jay\\jay.vcxproj", jayGuid);
+
 			foreach (var proj in libraries) {
-				var unixProjFile = proj.csProjFilename.Replace ("\\", "/");
-				var fullProjPath = Path.GetFullPath (unixProjFile);
-				sln.WriteLine (project_start, proj.library, MsbuildGenerator.GetRelativePath (fullPath, fullProjPath), proj.projectGuid);
-				sln.WriteLine (project_end);
+				WriteProjectReference (sln, fullPath, proj);
 			}
+
 			sln.WriteLine ("Global");
 
 			sln.WriteLine ("\tGlobalSection(SolutionConfigurationPlatforms) = preSolution");
-			sln.WriteLine ("\t\tDebug|Any CPU = Debug|Any CPU");
-			sln.WriteLine ("\t\tRelease|Any CPU = Release|Any CPU");
+			foreach (var profile in profiles) {
+				sln.WriteLine ("\t\tDebug|{0} = Debug|{0}", profile);
+				sln.WriteLine ("\t\tRelease|{0} = Release|{0}", profile);
+			}
 			sln.WriteLine ("\tEndGlobalSection");
 
 			sln.WriteLine ("\tGlobalSection(ProjectConfigurationPlatforms) = postSolution");
+
+			// Manually insert jay's configurations because they are different
+			WriteProjectConfigurationPlatforms (sln, jayGuid, "Win32");
+
 			foreach (var proj in libraries) {
-				var guid = proj.projectGuid;
-				sln.WriteLine ("\t\t{0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU", guid);
-				sln.WriteLine ("\t\t{0}.Debug|Any CPU.Build.0 = Debug|Any CPU", guid);
-				sln.WriteLine ("\t\t{0}.Release|Any CPU.ActiveCfg = Release|Any CPU", guid);
-				sln.WriteLine ("\t\t{0}.Release|Any CPU.Build.0 = Release|Any CPU", guid);
+				WriteProjectConfigurationPlatforms (sln, proj.projectGuid, "Any CPU");
 			}
+
 			sln.WriteLine ("\tEndGlobalSection");
 
 			sln.WriteLine ("\tGlobalSection(SolutionProperties) = preSolution");
