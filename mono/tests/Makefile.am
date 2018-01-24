@@ -1583,7 +1583,7 @@ testtrace:
 	@$(MAKE) TEST_RUNTIME_ARGS="$${TEST_RUNTIME_ARGS} --trace" runtest
 
 testinterp: test-runner.exe compile-tests
-	$(TOOLS_RUNTIME) --debug $(TEST_RUNNER) -j a --runtime-args "--interpreter" --testsuite-name "runtime-interp" --timeout 300 --disabled "$(INTERP_DISABLED_TESTS)" $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH)
+	$(TOOLS_RUNTIME) --debug $(TEST_RUNNER) -j a --runtime-args "--interpreter" --testsuite-name "runtime-interp" --timeout 300 --repeat 200 --disabled "$(INTERP_DISABLED_TESTS)" $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH)
 
 testjitspeed: $(JITTEST_PROG) compile-tests
 	for i in $(TESTS_BENCH); do	\
