@@ -21,6 +21,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+#if !FEATURE_NO_BSD_SOCKETS
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -583,3 +584,4 @@ public partial class HelloWorldServiceClient : System.ServiceModel.ClientBase<IH
         }
     }
 }
+#endif
