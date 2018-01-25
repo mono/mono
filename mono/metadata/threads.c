@@ -1062,13 +1062,10 @@ static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack
 	if (start_func) {
 		start_func (start_func_arg);
 	} else {
-		void *args [1];
-
 		g_assert (start_delegate != NULL);
 
 		/* we may want to handle the exception here. See comment below on unhandled exceptions */
-		args [0] = (gpointer) start_delegate_arg;
-		mono_runtime_delegate_invoke_checked (start_delegate, args, error);
+		mono_runtime_delegate_invoke_checked (start_delegate, (gpointer*)&start_delegate_arg, error);
 
 		if (!mono_error_ok (error)) {
 			MonoException *ex = mono_error_convert_to_exception (error);

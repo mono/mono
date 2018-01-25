@@ -4527,20 +4527,17 @@ create_unhandled_exception_eventargs (MonoObject *exc, MonoError *error)
 
 	error_init (error);
 	MonoClass *klass;
-	gpointer args [2];
 	MonoMethod *method = NULL;
 	MonoBoolean is_terminating = TRUE;
 	MonoObject *obj;
+	gpointer args [ ] = { exc, &is_terminating };
 
 	klass = mono_class_get_unhandled_exception_event_args_class ();
 	mono_class_init (klass);
 
 	/* UnhandledExceptionEventArgs only has 1 public ctor with 2 args */
-	method = mono_class_get_method_from_name_flags (klass, ".ctor", 2, METHOD_ATTRIBUTE_PUBLIC);
+	method = mono_class_get_method_from_name_flags (klass, ".ctor", G_N_ELEMENTS (args), METHOD_ATTRIBUTE_PUBLIC);
 	g_assert (method);
-
-	args [0] = exc;
-	args [1] = &is_terminating;
 
 	obj = mono_object_new_checked (mono_domain_get (), klass, error);
 	return_val_if_nok (error, NULL);
@@ -7617,19 +7614,16 @@ mono_message_init (MonoDomain *domain,
 
 	static MonoMethod *init_message_method = NULL;
 
+	gpointer args [ ] = { method, out_args };
+
 	if (!init_message_method) {
-		init_message_method = mono_class_get_method_from_name (mono_defaults.mono_method_message_class, "InitMessage", 2);
+		init_message_method = mono_class_get_method_from_name (mono_defaults.mono_method_message_class, "InitMessage", G_N_ELEMENTS (args));
 		g_assert (init_message_method != NULL);
 	}
 
 	error_init (error);
 	/* FIXME set domain instead? */
 	g_assert (domain == mono_domain_get ());
-	
-	gpointer args[2];
-
-	args[0] = method;
-	args[1] = out_args;
 
 	mono_runtime_invoke_checked (init_message_method, this_obj, args, error);
 	return is_ok (error);
@@ -8287,8 +8281,10 @@ mono_load_remote_field_new_checked (MonoObject *this_obj, MonoClass *klass, Mono
 
 	g_assert (mono_object_is_transparent_proxy (this_obj));
 
+	gpointer args [ ] = { &klass, &field };
+
 	if (!tp_load) {
-		tp_load = mono_class_get_method_from_name (mono_defaults.transparent_proxy_class, "LoadRemoteFieldNew", -1);
+		tp_load = mono_class_get_method_from_name (mono_defaults.transparent_proxy_class, "LoadRemoteFieldNew", G_N_ELEMENTS (args));
 		if (!tp_load) {
 			mono_error_set_not_supported (error, "Linked away.");
 			return NULL;
@@ -8296,10 +8292,6 @@ mono_load_remote_field_new_checked (MonoObject *this_obj, MonoClass *klass, Mono
 	}
 	
 	/* MonoType *type = mono_class_get_type (klass); */
-
-	gpointer args[2];
-	args [0] = &klass;
-	args [1] = &field;
 
 	return mono_runtime_invoke_checked (tp_load, this_obj, args, error);
 }
@@ -8395,19 +8387,15 @@ mono_store_remote_field_new_checked (MonoObject *this_obj, MonoClass *klass, Mon
 	error_init (error);
 
 	g_assert (mono_object_is_transparent_proxy (this_obj));
+	gpointer args [ ] = { &klass, &field, arg };
 
 	if (!tp_store) {
-		tp_store = mono_class_get_method_from_name (mono_defaults.transparent_proxy_class, "StoreRemoteField", -1);
+		tp_store = mono_class_get_method_from_name (mono_defaults.transparent_proxy_class, "StoreRemoteField", G_N_ELEMENTS (args));
 		if (!tp_store) {
 			mono_error_set_not_supported (error, "Linked away.");
 			return FALSE;
 		}
 	}
-
-	gpointer args[3];
-	args [0] = &klass;
-	args [1] = &field;
-	args [2] = arg;
 
 	mono_runtime_invoke_checked (tp_store, this_obj, args, error);
 	return is_ok (error);
