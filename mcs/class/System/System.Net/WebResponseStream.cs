@@ -24,6 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System.IO;
+using System.IO.Compression;
 using System.Text;
 using System.Collections;
 using System.Collections.Generic;
@@ -289,6 +290,15 @@ namespace System.Net
 				innerStreamWrapper = new BufferedReadStream (Operation, null, buffer);
 			} else {
 				innerStreamWrapper = CreateStreamWrapper (buffer);
+			}
+
+			string content_encoding = Headers["Content-Encoding"];
+			if (content_encoding == "gzip" && (Request.AutomaticDecompression & DecompressionMethods.GZip) != 0) {
+				innerStreamWrapper = new GZipStream (innerStreamWrapper, CompressionMode.Decompress);
+				Headers.Remove (HttpRequestHeader.ContentEncoding);
+			} else if (content_encoding == "deflate" && (Request.AutomaticDecompression & DecompressionMethods.Deflate) != 0) {
+				innerStreamWrapper = new DeflateStream (innerStreamWrapper, CompressionMode.Decompress);
+				Headers.Remove (HttpRequestHeader.ContentEncoding);
 			}
 
 			WebConnection.Debug ($"{ME} INIT #1: - {ExpectContent} {closed} {nextReadCalled}");

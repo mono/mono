@@ -36,7 +36,6 @@ using System;
 using System.Collections;
 using System.Globalization;
 using System.IO;
-using System.IO.Compression;
 using System.Net.Sockets;
 using System.Runtime.Serialization;
 using System.Threading;
@@ -97,16 +96,6 @@ namespace System.Net
 			if (container != null) {
 				this.cookie_container = container;	
 				FillCookies ();
-			}
-
-			string content_encoding = webHeaders ["Content-Encoding"];
-			if (content_encoding == "gzip" && (stream.Request.AutomaticDecompression & DecompressionMethods.GZip) != 0) {
-				this.stream = new GZipStream (stream, CompressionMode.Decompress);
-				webHeaders.Remove (HttpRequestHeader.ContentEncoding);
-			}
-			else if (content_encoding == "deflate" && (stream.Request.AutomaticDecompression & DecompressionMethods.Deflate) != 0) {
-				this.stream = new DeflateStream (stream, CompressionMode.Decompress);
-				webHeaders.Remove (HttpRequestHeader.ContentEncoding);
 			}
 		}
 
