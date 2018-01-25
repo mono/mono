@@ -39,13 +39,13 @@
 ../../../external/corefx/src/System.Linq.Expressions/tests/Ternary/*.cs
 ../../../external/corefx/src/System.Linq.Expressions/tests/TestExtensions/*.cs
 ../../../external/corefx/src/System.Linq.Expressions/tests/TypeBinary/*.cs
-#../../../external/corefx/src/System.Linq.Expressions/tests/Unary/*.cs
+../../../external/corefx/src/System.Linq.Expressions/tests/Unary/*.cs:UnaryConvertTests.cs,UnaryQuoteTests.cs
 ../../../external/corefx/src/System.Linq.Expressions/tests/Variables/*.cs
 ../../../external/corefx/src/System.Linq.Expressions/tests/Visitor/*.cs
 ../../../external/corefx/src/System.Linq.Expressions/tests/BinaryOperators/Arithmetic/*.cs
 ../../../external/corefx/src/System.Linq.Expressions/tests/BinaryOperators/Assignment/*.cs
 ../../../external/corefx/src/System.Linq.Expressions/tests/BinaryOperators/Bitwise/*.cs
-../../../external/corefx/src/System.Linq.Expressions/tests/BinaryOperators/Coalesce/*.cs:BinaryCoalesceTests.cs
+../../../external/corefx/src/System.Linq.Expressions/tests/BinaryOperators/Coalesce/*.cs
 ../../../external/corefx/src/System.Linq.Expressions/tests/BinaryOperators/Comparison/*.cs
 ../../../external/corefx/src/System.Linq.Expressions/tests/BinaryOperators/Logical/*.cs
 ../../../external/corefx/src/System.Linq.Expressions/tests/BinaryOperators/ReferenceComparison/*.cs
