@@ -145,6 +145,9 @@ namespace System.Runtime.ExceptionServices {
         // This method will restore the original stack trace and bucketing details before throwing
         // the exception so that it is easy, from debugging standpoint, to understand what really went wrong on
         // the original thread.
+#if MONO
+        [System.Diagnostics.StackTraceHidden]
+#endif
         public void Throw()
         {
             // Restore the exception dispatch details before throwing the exception.
@@ -153,6 +156,7 @@ namespace System.Runtime.ExceptionServices {
         }
 
 #if MONO
+        [System.Diagnostics.StackTraceHidden]
         public static void Throw (Exception source) => Capture (source).Throw ();
 #endif
     }

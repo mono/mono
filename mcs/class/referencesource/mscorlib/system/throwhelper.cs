@@ -52,6 +52,9 @@ namespace System {
     using System.Collections.Generic;
 
     [Pure]
+#if MONO
+    [System.Diagnostics.StackTraceHidden]
+#endif
     internal static partial class ThrowHelper {
 #if !MONO
         internal static void ThrowArgumentOutOfRangeException() {        

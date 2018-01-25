@@ -1637,6 +1637,7 @@ corert/ThreadPoolBoundHandle.cs
 ../../../external/corert/src/Runtime.Base/src/System/Runtime/InteropServices/NativeCallableAttribute.cs
 
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Diagnostics/Debug.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/Diagnostics/StackTraceHiddenAttribute.cs
 
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Threading/DeferredDisposableLifetime.cs
 
