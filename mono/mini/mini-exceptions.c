@@ -2396,12 +2396,15 @@ mono_setup_altstack (MonoJitTlsData *tls)
 
 	g_assert ((guint8*)&sa >= (guint8*)tls->stack_ovf_guard_base + tls->stack_ovf_guard_size);
 
+/* the valloc call here seems problematic on AIX */
+#if !defined(_AIX)
 	if (mono_mprotect (tls->stack_ovf_guard_base, tls->stack_ovf_guard_size, MONO_MMAP_NONE)) {
 		/* mprotect can fail for the main thread stack */
 		gpointer gaddr = mono_valloc (tls->stack_ovf_guard_base, tls->stack_ovf_guard_size, MONO_MMAP_NONE|MONO_MMAP_PRIVATE|MONO_MMAP_ANON|MONO_MMAP_FIXED, MONO_MEM_ACCOUNT_EXCEPTIONS);
 		g_assert (gaddr == tls->stack_ovf_guard_base);
 		tls->stack_ovf_valloced = TRUE;
 	}
+#endif
 
 	/* Setup an alternate signal stack */
 	tls->signal_stack = mono_valloc (0, MONO_ARCH_SIGNAL_STACK_SIZE, MONO_MMAP_READ|MONO_MMAP_WRITE|MONO_MMAP_PRIVATE|MONO_MMAP_ANON, MONO_MEM_ACCOUNT_EXCEPTIONS);

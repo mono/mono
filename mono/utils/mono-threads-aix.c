@@ -30,7 +30,7 @@ mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize)
 
 	res = pthread_getthrds_np(&pt, PTHRDSINFO_QUERY_ALL, &pi, ps, rb, &rbv);
 	/* FIXME: are these the right values? */
-	*staddr = (void*)(pi.__pi_ustk - 288);
+	*staddr = (void*)(pi.__pi_stackaddr);
 	*stsize = pi.__pi_stacksize;
 }
 
