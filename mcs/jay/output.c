@@ -141,7 +141,7 @@ output (void)
       fprintf(stderr, "jay: line %d is too long\n", lno), done(1);
     switch (buf[0]) {
     case '#':	continue;
-    case 't':	if (!tflag) fputs("//t", stdout);
+    case 't':	if (!tflag) fputs("//t", output_file);
     case '.':	break;
     default:
       cp = strtok(buf, " \t\r\n");
@@ -162,7 +162,7 @@ output (void)
       }
       continue;
     }
-    fputs(buf+1, stdout), ++ outline;
+    fputs(buf+1, output_file), ++ outline;
   }
   free_parser();
 }
@@ -173,19 +173,19 @@ output_rule_data (void)
     register int i;
     register int j;
 
-	printf("/*\n All more than 3 lines long rules are wrapped into a method\n*/\n");
+	fprintf(output_file, "/*\n All more than 3 lines long rules are wrapped into a method\n*/\n");
 
     for (i = 0; i < nmethods; ++i)
 	{
-		printf("%s", methods[i]);
+		fprintf(output_file, "%s", methods[i]);
 		FREE(methods[i]);
-		printf("\n\n");
+		fprintf(output_file, "\n\n");
 	}
 	FREE(methods);
 
-	printf(default_line_format, ++outline + 1);
+	fprintf(output_file, default_line_format, ++outline + 1);
 
-    printf("  %s static %s short [] yyLhs  = {%16d,",
+    fprintf(output_file, "  %s static %s short [] yyLhs  = {%16d,",
 	   csharp ? "" : " protected",
 	   csharp ? "readonly" : "final",
 	    symbol_value[start_symbol]);
@@ -202,12 +202,12 @@ output_rule_data (void)
         else
 	    ++j;
 
-        printf("%5d,", symbol_value[rlhs[i]]);
+        fprintf(output_file, "%5d,", symbol_value[rlhs[i]]);
     }
     outline += 2;
-    printf("\n  };\n");
+    fprintf(output_file, "\n  };\n");
 
-    printf("  %s static %s short [] yyLen = {%12d,",
+    fprintf(output_file, "  %s static %s short [] yyLen = {%12d,",
 	   csharp ? "" : "protected",
 	   csharp ? "readonly" : "final",
 	   2);
@@ -224,10 +224,10 @@ output_rule_data (void)
 	else
 	  j++;
 
-        printf("%5d,", rrhs[i + 1] - rrhs[i] - 1);
+        fprintf(output_file, "%5d,", rrhs[i + 1] - rrhs[i] - 1);
     }
     outline += 2;
-    printf("\n  };\n");
+    fprintf(output_file, "\n  };\n");
 }
 
 static void
@@ -235,7 +235,7 @@ output_yydefred (void)
 {
     register int i, j;
 
-    printf("  %s static %s short [] yyDefRed = {%13d,",
+    fprintf(output_file, "  %s static %s short [] yyDefRed = {%13d,",
 	   csharp ? "" : "protected",
 	   csharp ? "readonly" : "final",	   
 	    (defred[0] ? defred[0] - 2 : 0));
@@ -252,11 +252,11 @@ output_yydefred (void)
 	    j = 1;
 	}
 
-	printf("%5d,", (defred[i] ? defred[i] - 2 : 0));
+	fprintf(output_file, "%5d,", (defred[i] ? defred[i] - 2 : 0));
     }
 
     outline += 2;
-    printf("\n  };\n");
+    fprintf(output_file, "\n  };\n");
 }
 
 static void
@@ -380,7 +380,7 @@ goto_actions (void)
     state_count = NEW2(nstates, short);
 
     k = default_goto(start_symbol + 1);
-    printf("  protected static %s short [] yyDgoto  = {%14d,", csharp ? "readonly" : "final", k);
+    fprintf(output_file, "  protected static %s short [] yyDgoto  = {%14d,", csharp ? "readonly" : "final", k);
     save_column(start_symbol + 1, k);
 
     j = 10;
@@ -396,12 +396,12 @@ goto_actions (void)
 	    ++j;
 
 	k = default_goto(i);
-	printf("%5d,", k);
+	fprintf(output_file, "%5d,", k);
 	save_column(i, k);
     }
 
     outline += 2;
-    printf("\n  };\n");
+    fprintf(output_file, "\n  };\n");
     FREE(state_count);
 }
 
@@ -696,7 +696,7 @@ output_base (void)
 {
     register int i, j;
 
-    printf("  protected static %s short [] yySindex = {%13d,", csharp? "readonly":"final", base[0]);
+    fprintf(output_file, "  protected static %s short [] yySindex = {%13d,", csharp? "readonly":"final", base[0]);
 
     j = 10;
     for (i = 1; i < nstates; i++)
@@ -710,11 +710,11 @@ output_base (void)
 	else
 	    ++j;
 
-	printf("%5d,", base[i]);
+	fprintf(output_file, "%5d,", base[i]);
     }
 
     outline += 2;
-    printf("\n  };\n  protected static %s short [] yyRindex = {%13d,",
+    fprintf(output_file, "\n  };\n  protected static %s short [] yyRindex = {%13d,",
 	   csharp ? "readonly" : "final",
 	    base[nstates]);
 
@@ -730,11 +730,11 @@ output_base (void)
 	else
 	    ++j;
 
-	printf("%5d,", base[i]);
+	fprintf(output_file, "%5d,", base[i]);
     }
 
     outline += 2;
-    printf("\n  };\n  protected static %s short [] yyGindex = {%13d,",
+    fprintf(output_file, "\n  };\n  protected static %s short [] yyGindex = {%13d,",
 	   csharp ? "readonly" : "final",
 	    base[2*nstates]);
 
@@ -750,11 +750,11 @@ output_base (void)
 	else
 	    ++j;
 
-	printf("%5d,", base[i]);
+	fprintf(output_file, "%5d,", base[i]);
     }
 
     outline += 2;
-    printf("\n  };\n");
+    fprintf(output_file, "\n  };\n");
     FREE(base);
 }
 
@@ -764,7 +764,7 @@ output_table (void)
     register int i;
     register int j;
 
-    printf("  protected static %s short [] yyTable = {%14d,", csharp ? "readonly" : "final", table[0]);
+    fprintf(output_file, "  protected static %s short [] yyTable = {%14d,", csharp ? "readonly" : "final", table[0]);
 
     j = 10;
     for (i = 1; i <= high; i++)
@@ -778,11 +778,11 @@ output_table (void)
 	else
 	    ++j;
 
-	printf("%5d,", table[i]);
+	fprintf(output_file, "%5d,", table[i]);
     }
 
     outline += 2;
-    printf("\n  };\n");
+    fprintf(output_file, "\n  };\n");
     FREE(table);
 }
 
@@ -792,7 +792,7 @@ output_check (void)
     register int i;
     register int j;
 
-    printf("  protected static %s short [] yyCheck = {%14d,",
+    fprintf(output_file, "  protected static %s short [] yyCheck = {%14d,",
 	   csharp ? "readonly" : "final",
 	    check[0]);
 
@@ -808,11 +808,11 @@ output_check (void)
 	else
 	    ++j;
 
-	printf("%5d,", check[i]);
+	fprintf(output_file, "%5d,", check[i]);
     }
 
     outline += 2;
-    printf("\n  };\n");
+    fprintf(output_file, "\n  };\n");
     FREE(check);
 }
 
@@ -859,7 +859,7 @@ output_defines (const char *prefix)
 	if (is_C_identifier(s))
 	{
 	    if (prefix)
-	        printf("  %s ", prefix);
+	        fprintf(output_file, "  %s ", prefix);
 	    c = *s;
 	    if (c == '"')
 	    {
@@ -877,12 +877,12 @@ output_defines (const char *prefix)
 		while ((c = *++s));
 	    }
 	    ++outline;
-	    printf(" = %d%s\n", symbol_value[i], csharp ? ";" : ";");
+	    fprintf(output_file, " = %d%s\n", symbol_value[i], csharp ? ";" : ";");
 	}
     }
 
     ++outline;
-    printf("  %s yyErrorCode = %d%s\n", prefix ? prefix : "", symbol_value[1], csharp ? ";" : ";");
+    fprintf(output_file, "  %s yyErrorCode = %d%s\n", prefix ? prefix : "", symbol_value[1], csharp ? ";" : ";");
 }
 
 static void
@@ -905,7 +905,7 @@ output_stored_text (FILE *file, const char *name)
 	    ++outline;
     	putchar(c);
       }
-      printf(default_line_format, ++outline + 1);
+      fprintf(output_file, default_line_format, ++outline + 1);
     }
     fclose(in);
 }
@@ -918,67 +918,67 @@ output_debug (void)
     const char * prefix = tflag ? "" : "//t";
 
     ++outline;
-    printf("  protected %s int yyFinal = %d;\n", csharp ? "const" : "static final", final_state);
+    fprintf(output_file, "  protected %s int yyFinal = %d;\n", csharp ? "const" : "static final", final_state);
 
       ++outline;
-	  printf ("%s // Put this array into a separate class so it is only initialized if debugging is actually used\n", prefix);
-	  printf ("%s // Use MarshalByRefObject to disable inlining\n", prefix);
-	  printf("%s class YYRules %s {\n", prefix, csharp ? ": MarshalByRefObject" : "");
-      printf("%s  public static %s string [] yyRule = {\n", prefix, csharp ? "readonly" : "final");
+	  fprintf(output_file, "%s // Put this array into a separate class so it is only initialized if debugging is actually used\n", prefix);
+	  fprintf(output_file, "%s // Use MarshalByRefObject to disable inlining\n", prefix);
+	  fprintf(output_file, "%s class YYRules %s {\n", prefix, csharp ? ": MarshalByRefObject" : "");
+      fprintf(output_file, "%s  public static %s string [] yyRule = {\n", prefix, csharp ? "readonly" : "final");
       for (i = 2; i < nrules; ++i)
       {
-	  printf("%s    \"%s :", prefix, symbol_name[rlhs[i]]);
+	  fprintf(output_file, "%s    \"%s :", prefix, symbol_name[rlhs[i]]);
 	  for (j = rrhs[i]; ritem[j] > 0; ++j)
 	  {
 	      s = symbol_name[ritem[j]];
 	      if (s[0] == '"')
 	      {
-		  printf(" \\\"");
+		  fprintf(output_file, " \\\"");
 		  while (*++s != '"')
 		  {
 		      if (*s == '\\')
 		      {
 			  if (s[1] == '\\')
-			      printf("\\\\\\\\");
+			      fprintf(output_file, "\\\\\\\\");
 			  else
-			      printf("\\\\%c", s[1]);
+			      fprintf(output_file, "\\\\%c", s[1]);
 			  ++s;
 		      }
 		      else
 			  putchar(*s);
 		  }
-		  printf("\\\"");
+		  fprintf(output_file, "\\\"");
 	      }
 	      else if (s[0] == '\'')
 	      {
 		  if (s[1] == '"')
-		      printf(" '\\\"'");
+		      fprintf(output_file, " '\\\"'");
 		  else if (s[1] == '\\')
 		  {
 		      if (s[2] == '\\')
-			  printf(" '\\\\\\\\");
+			  fprintf(output_file, " '\\\\\\\\");
 		      else
-			  printf(" '\\\\%c", s[2]);
+			  fprintf(output_file, " '\\\\%c", s[2]);
 		      s += 2;
 		      while (*++s != '\'')
 			  putchar(*s);
 		      putchar('\'');
 		  }
 		  else
-		      printf(" '%c'", s[1]);
+		      fprintf(output_file, " '%c'", s[1]);
 	      }
 	      else
-		  printf(" %s", s);
+		  fprintf(output_file, " %s", s);
 	  }
 	  ++outline;
-	  printf("\",\n");
+	  fprintf(output_file, "\",\n");
       }
       ++ outline;
-      printf("%s  };\n", prefix);
-	  printf ("%s public static string getRule (int index) {\n", prefix);
-	  printf ("%s    return yyRule [index];\n", prefix);
-	  printf ("%s }\n", prefix);
-	  printf ("%s}\n", prefix);
+      fprintf(output_file, "%s  };\n", prefix);
+	  fprintf(output_file, "%s public static string getRule (int index) {\n", prefix);
+	  fprintf(output_file, "%s    return yyRule [index];\n", prefix);
+	  fprintf(output_file, "%s }\n", prefix);
+	  fprintf(output_file, "%s}\n", prefix);
 
     max = 0;
     for (i = 2; i < ntokens; ++i)
@@ -987,7 +987,7 @@ output_debug (void)
 
 	/* need yyNames for yyExpecting() */
 
-      printf("  protected static %s string [] yyNames = {", csharp ? "readonly" : "final");
+      fprintf(output_file, "  protected static %s string [] yyNames = {", csharp ? "readonly" : "final");
       symnam = (char **) MALLOC((max+1)*sizeof(char *));
       if (symnam == 0) no_space();
   
@@ -999,7 +999,7 @@ output_debug (void)
 	  symnam[symbol_value[i]] = symbol_name[i];
       symnam[0] = (char*)"end-of-file";
   
-      j = 70; fputs("    ", stdout);
+      j = 70; fputs("    ", output_file);
       for (i = 0; i <= max; ++i)
       {
 	  if ((s = symnam[i]))
@@ -1021,25 +1021,25 @@ output_debug (void)
 		  if (j > 70)
 		  {
 		      ++outline;
-		      printf("\n    ");
+		      fprintf(output_file, "\n    ");
 		      j = k;
 		  }
-		  printf("\"\\\"");
+		  fprintf(output_file, "\"\\\"");
 		  s = symnam[i];
 		  while (*++s != '"')
 		  {
 		      if (*s == '\\')
 		      {
-			  printf("\\\\");
+			  fprintf(output_file, "\\\\");
 			  if (*++s == '\\')
-			      printf("\\\\");
+			      fprintf(output_file, "\\\\");
 			  else
 			      putchar(*s);
 		      }
 		      else
 			  putchar(*s);
 		  }
-		  printf("\\\"\",");
+		  fprintf(output_file, "\\\"\",");
 	      }
 	      else if (s[0] == '\'')
 	      {
@@ -1049,10 +1049,10 @@ output_debug (void)
 		      if (j > 70)
 		      {
 			  ++outline;
-		      	  printf("\n    ");
+		      	  fprintf(output_file, "\n    ");
 			  j = 7;
 		      }
-		      printf("\"'\\\"'\",");
+		      fprintf(output_file, "\"'\\\"'\",");
 		  }
 		  else
 		  {
@@ -1071,25 +1071,25 @@ output_debug (void)
 		      if (j > 70)
 		      {
 			  ++outline;
-		      	  printf("\n    ");
+		      	  fprintf(output_file, "\n    ");
 			  j = k;
 		      }
-		      printf("\"'");
+		      fprintf(output_file, "\"'");
 		      s = symnam[i];
 		      while (*++s != '\'')
 		      {
 			  if (*s == '\\')
 			  {
-			      printf("\\\\");
+			      fprintf(output_file, "\\\\");
 			      if (*++s == '\\')
-				  printf("\\\\");
+				  fprintf(output_file, "\\\\");
 			      else
 				  putchar(*s);
 			  }
 			  else
 			      putchar(*s);
 		      }
-		      printf("'\",");
+		      fprintf(output_file, "'\",");
 		  }
 	      }
 	      else
@@ -1099,12 +1099,12 @@ output_debug (void)
 		  if (j > 70)
 		  {
 		      ++outline;
-		      printf("\n    ");
+		      fprintf(output_file, "\n    ");
 		      j = k;
 		  }
 		  putchar('"');
 		  do { putchar(*s); } while (*++s);
-		  printf("\",");
+		  fprintf(output_file, "\",");
 	      }
 	  }
 	  else
@@ -1113,14 +1113,14 @@ output_debug (void)
 	      if (j > 70)
 	      {
 		  ++outline;
-		  printf("\n    ");
+		  fprintf(output_file, "\n    ");
 		  j = 5;
 	      }
-	      printf("null,");
+	      fprintf(output_file, "null,");
 	  }
       }
       outline += 2;
-      printf("\n  };\n");
+      fprintf(output_file, "\n  };\n");
       FREE(symnam);
 }
 
@@ -1141,7 +1141,7 @@ output_trailing_text (void)
 	if ((c = getc(in)) == EOF)
 	    return;
         ++outline;
-	printf(line_format, lineno, input_file_name);
+	fprintf(output_file, line_format, lineno, input_file_name);
 	if (c == '\n')
 	    ++outline;
 	putchar(c);
@@ -1150,7 +1150,7 @@ output_trailing_text (void)
     else
     {
 	++outline;
-	printf(line_format, lineno, input_file_name);
+	fprintf(output_file, line_format, lineno, input_file_name);
 	do { putchar(c); } while ((c = *++cptr) != '\n');
 	++outline;
 	putchar('\n');
@@ -1170,7 +1170,7 @@ output_trailing_text (void)
 	++outline;
 	putchar('\n');
     }
-    printf(default_line_format, ++outline + 1);
+    fprintf(output_file, default_line_format, ++outline + 1);
 }
 
 static void
@@ -1204,7 +1204,7 @@ output_semantic_actions (void)
 	putchar('\n');
     }
 
-    printf(default_line_format, ++outline + 1);
+    fprintf(output_file, default_line_format, ++outline + 1);
 }
 
 static void
