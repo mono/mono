@@ -1286,7 +1286,7 @@ mono_type_has_exceptions (MonoType *type)
 	case MONO_TYPE_ARRAY:
 		return mono_class_has_failure (type->data.array->eklass);
 	case MONO_TYPE_GENERICINST:
-		return mono_class_has_failure (mono_generic_class_get_class (type->data.generic_class));
+		return mono_class_has_failure (mono_class_create_generic_inst (type->data.generic_class));
 	default:
 		return FALSE;
 	}
@@ -6018,7 +6018,7 @@ mono_class_from_mono_type (MonoType *type)
 	case MONO_TYPE_VALUETYPE:
 		return type->data.klass;
 	case MONO_TYPE_GENERICINST:
-		return mono_generic_class_get_class (type->data.generic_class);
+		return mono_class_create_generic_inst (type->data.generic_class);
 	case MONO_TYPE_MVAR:
 	case MONO_TYPE_VAR:
 		return mono_class_from_generic_parameter_internal (type->data.generic_param);

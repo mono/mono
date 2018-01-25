@@ -2423,7 +2423,7 @@ mono_class_bind_generic_parameters (MonoClass *klass, int type_argc, MonoType **
 	inst = mono_metadata_get_generic_inst (type_argc, types);
 	gclass = mono_metadata_lookup_generic_class (klass, inst, is_dynamic);
 
-	return mono_generic_class_get_class (gclass);
+	return mono_class_create_generic_inst (gclass);
 }
 
 static MonoGenericInst*

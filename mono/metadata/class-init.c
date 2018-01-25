@@ -428,7 +428,7 @@ mono_generic_class_setup_parent (MonoClass *klass, MonoClass *gtd)
  * We only do this if we actually need it.
  */
 MonoClass*
-mono_generic_class_get_class (MonoGenericClass *gclass)
+mono_class_create_generic_inst (MonoGenericClass *gclass)
 {
 	MonoClass *klass, *gklass;
 
