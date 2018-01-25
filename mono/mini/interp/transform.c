@@ -1201,6 +1201,10 @@ no_intrinsic:
 				vt_res_size = mono_class_native_size (klass, NULL);
 			else
 				vt_res_size = mono_class_value_size (klass, NULL);
+			if (mono_class_has_failure (klass)) {
+				mono_error_set_for_class_failure (error, klass);
+				return;
+			}
 			PUSH_VT(td, vt_res_size);
 		}
 		PUSH_TYPE(td, stack_type[mt], klass);
@@ -4414,22 +4418,22 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Int
 	InterpMethod tmp_imethod;
 	InterpMethod *real_imethod;
 
-	error_init (&error);
+	error_init (error);
 
 	if (mono_class_is_open_constructed_type (&method->klass->byval_arg)) {
-		mono_error_set_invalid_operation (&error, "Could not execute the method because the containing type is not fully instantiated.");
-		return mono_error_convert_to_exception (&error);
+		mono_error_set_invalid_operation (error, "Could not execute the method because the containing type is not fully instantiated.");
+		return mono_error_convert_to_exception (error);
 	}
 
 	// g_printerr ("TRANSFORM(0x%016lx): begin %s::%s\n", mono_thread_current (), method->klass->name, method->name);
-	method_class_vt = mono_class_vtable_checked (domain, imethod->method->klass, &error);
-	if (!is_ok (&error))
-		return mono_error_convert_to_exception (&error);
+	method_class_vt = mono_class_vtable_checked (domain, imethod->method->klass, error);
+	if (!is_ok (error))
+		return mono_error_convert_to_exception (error);
 
 	if (!method_class_vt->initialized) {
-		mono_runtime_class_init_full (method_class_vt, &error);
-		if (!mono_error_ok (&error)) {
-			return mono_error_convert_to_exception (&error);
+		mono_runtime_class_init_full (method_class_vt, error);
+		if (!mono_error_ok (error)) {
+			return mono_error_convert_to_exception (error);
 		}
 	}
 
@@ -4509,9 +4513,9 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Int
 	}
 
 	if (!header) {
-		header = mono_method_get_header_checked (method, &error);
-		if (!is_ok (&error))
-			return mono_error_convert_to_exception (&error);
+		header = mono_method_get_header_checked (method, error);
+		if (!is_ok (error))
+			return mono_error_convert_to_exception (error);
 	}
 
 	g_assert ((signature->param_count + signature->hasthis) < 1000);
@@ -4557,19 +4561,19 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Int
 			break;
 		case MonoInlineMethod:
 			if (method->wrapper_type == MONO_WRAPPER_NONE && *ip != CEE_CALLI) {
-				m = mono_get_method_checked (image, read32 (ip + 1), NULL, generic_context, &error);
-				if (!is_ok (&error)) {
+				m = mono_get_method_checked (image, read32 (ip + 1), NULL, generic_context, error);
+				if (!is_ok (error)) {
 					g_free (is_bb_start);
 					mono_metadata_free_mh (header);
-					return mono_error_convert_to_exception (&error);
+					return mono_error_convert_to_exception (error);
 				}
 				mono_class_init (m->klass);
 				if (!mono_class_is_interface (m->klass)) {
-					mono_class_vtable_checked (domain, m->klass, &error);
-					if (!is_ok (&error)) {
+					mono_class_vtable_checked (domain, m->klass, error);
+					if (!is_ok (error)) {
 						g_free (is_bb_start);
 						mono_metadata_free_mh (header);
-						return mono_error_convert_to_exception (&error);
+						return mono_error_convert_to_exception (error);
 					}
 				}
 			}
@@ -4686,14 +4690,14 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Int
 	imethod->args_size = offset;
 	g_assert (imethod->args_size < 10000);
 
-	error_init (&error);
-	generate (method, header, imethod, is_bb_start, generic_context, &error);
+	error_init (error);
+	generate (method, header, imethod, is_bb_start, generic_context, error);
 
 	mono_metadata_free_mh (header);
 	g_free (is_bb_start);
 
-	if (!mono_error_ok (&error))
-		return mono_error_convert_to_exception (&error);
+	if (!mono_error_ok (error))
+		return mono_error_convert_to_exception (error);
 
 	// FIXME: Add a different callback ?
 	MONO_PROFILER_RAISE (jit_done, (method, imethod->jinfo));

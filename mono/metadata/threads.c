@@ -510,7 +510,7 @@ get_current_thread_ptr_for_domain (MonoDomain *domain, MonoInternalThread *threa
 		g_assert (current_thread_field);
 	}
 
-	ERROR_DECL (thread_vt_error);
+	ERROR_DECL_VALUE (thread_vt_error);
 	mono_class_vtable_checked (domain, mono_defaults.thread_class, &thread_vt_error);
 	mono_error_assert_ok (&thread_vt_error);
 	mono_domain_lock (domain);
@@ -539,12 +539,12 @@ create_thread_object (MonoDomain *domain, MonoInternalThread *internal)
 	MonoVTable *vtable;
 	ERROR_DECL (error);
 
-	vtable = mono_class_vtable_checked (domain, mono_defaults.thread_class, &error);
-	mono_error_assert_ok (&error);
+	vtable = mono_class_vtable_checked (domain, mono_defaults.thread_class, error);
+	mono_error_assert_ok (error);
 
-	thread = (MonoThread*)mono_object_new_mature (vtable, &error);
+	thread = (MonoThread*)mono_object_new_mature (vtable, error);
 	/* only possible failure mode is OOM, from which we don't expect to recover. */
-	mono_error_assert_ok (&error);
+	mono_error_assert_ok (error);
 
 	MONO_OBJECT_SETREF (thread, internal_thread, internal);
 
@@ -558,11 +558,11 @@ create_internal_thread_object (void)
 	MonoInternalThread *thread;
 	MonoVTable *vt;
 
-	vt = mono_class_vtable_checked (mono_get_root_domain (), mono_defaults.internal_thread_class, &error);
-	mono_error_assert_ok (&error);
-	thread = (MonoInternalThread*) mono_object_new_mature (vt, &error);
+	vt = mono_class_vtable_checked (mono_get_root_domain (), mono_defaults.internal_thread_class, error);
+	mono_error_assert_ok (error);
+	thread = (MonoInternalThread*) mono_object_new_mature (vt, error);
 	/* only possible failure mode is OOM, from which we don't exect to recover */
-	mono_error_assert_ok (&error);
+	mono_error_assert_ok (error);
 
 	thread->synch_cs = g_new0 (MonoCoopMutex, 1);
 	mono_coop_mutex_init_recursive (thread->synch_cs);
@@ -1055,10 +1055,10 @@ static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack
 
 		/* we may want to handle the exception here. See comment below on unhandled exceptions */
 		args [0] = (gpointer) start_delegate_arg;
-		mono_runtime_delegate_invoke_checked (start_delegate, args, &error);
+		mono_runtime_delegate_invoke_checked (start_delegate, args, error);
 
-		if (!mono_error_ok (&error)) {
-			MonoException *ex = mono_error_convert_to_exception (&error);
+		if (!mono_error_ok (error)) {
+			MonoException *ex = mono_error_convert_to_exception (error);
 
 			g_assert (ex != NULL);
 			MonoClass *klass = mono_object_get_class (&ex->object);
@@ -1069,7 +1069,7 @@ static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack
 				g_assert_not_reached ();
 			}
 		} else {
-			mono_error_cleanup (&error);
+			mono_error_cleanup (error);
 		}
 	}
 
@@ -1286,8 +1286,8 @@ void
 mono_thread_create (MonoDomain *domain, gpointer func, gpointer arg)
 {
 	ERROR_DECL (error);
-	if (!mono_thread_create_checked (domain, func, arg, &error))
-		mono_error_cleanup (&error);
+	if (!mono_thread_create_checked (domain, func, arg, error))
+		mono_error_cleanup (error);
 }
 
 gboolean
@@ -1448,9 +1448,9 @@ ves_icall_System_Threading_Thread_Thread_internal (MonoThread *this_obj,
 		return this_obj;
 	}
 
-	res = create_thread (this_obj, internal, start, NULL, NULL, MONO_THREAD_CREATE_FLAGS_NONE, &error);
+	res = create_thread (this_obj, internal, start, NULL, NULL, MONO_THREAD_CREATE_FLAGS_NONE, error);
 	if (!res) {
-		mono_error_cleanup (&error);
+		mono_error_cleanup (error);
 		UNLOCK_THREAD (internal);
 		return NULL;
 	}
@@ -1625,25 +1625,20 @@ mono_thread_get_managed_id (MonoThread *thread)
 	return id;
 }
 
-MonoString* 
-ves_icall_System_Threading_Thread_GetName_internal (MonoInternalThread *this_obj)
+MonoStringHandle
+ves_icall_System_Threading_Thread_GetName_internal (MonoInternalThreadHandle thread_handle, MonoError *error)
 {
-	ERROR_DECL (error);
-	MonoString* str;
+	// InternalThreads are always pinned, so shallowly coop-handleize.
+	MonoInternalThread * const this_obj = MONO_HANDLE_RAW (thread_handle);
 
-	error_init (&error);
+	MonoStringHandle str = MONO_HANDLE_NEW (MonoString, NULL);
 
 	LOCK_THREAD (this_obj);
 	
-	if (!this_obj->name)
-		str = NULL;
-	else
-		str = mono_string_new_utf16_checked (mono_domain_get (), this_obj->name, this_obj->name_len, &error);
-	
-	UNLOCK_THREAD (this_obj);
+	if (this_obj->name)
+		MONO_HANDLE_ASSIGN (str, mono_string_new_utf16_handle (mono_domain_get (), this_obj->name, this_obj->name_len, error));
 
-	if (mono_error_set_pending_exception (&error))
-		return NULL;
+	UNLOCK_THREAD (this_obj);
 	
 	return str;
 }
@@ -1697,8 +1692,8 @@ void
 ves_icall_System_Threading_Thread_SetName_internal (MonoInternalThread *this_obj, MonoString *name)
 {
 	ERROR_DECL (error);
-	mono_thread_set_name_internal (this_obj, name, TRUE, FALSE, &error);
-	mono_error_set_pending_exception (&error);
+	mono_thread_set_name_internal (this_obj, name, TRUE, FALSE, error);
+	mono_error_set_pending_exception (error);
 }
 
 /*
@@ -1766,8 +1761,8 @@ MonoArray*
 ves_icall_System_Threading_Thread_ByteArrayToRootDomain (MonoArray *arr)
 {
 	ERROR_DECL (error);
-	MonoArray *result = byte_array_to_domain (arr, mono_get_root_domain (), &error);
-	mono_error_set_pending_exception (&error);
+	MonoArray *result = byte_array_to_domain (arr, mono_get_root_domain (), error);
+	mono_error_set_pending_exception (error);
 	return result;
 }
 
@@ -1775,8 +1770,8 @@ MonoArray*
 ves_icall_System_Threading_Thread_ByteArrayToCurrentDomain (MonoArray *arr)
 {
 	ERROR_DECL (error);
-	MonoArray *result = byte_array_to_domain (arr, mono_domain_get (), &error);
-	mono_error_set_pending_exception (&error);
+	MonoArray *result = byte_array_to_domain (arr, mono_domain_get (), error);
+	mono_error_set_pending_exception (error);
 	return result;
 }
 
@@ -1895,11 +1890,11 @@ ves_icall_System_Threading_Thread_Join_internal (MonoThread *this_obj, int ms)
 
 	mono_thread_set_state (cur_thread, ThreadState_WaitSleepJoin);
 
-	ret = mono_join_uninterrupted (handle, ms, &error);
+	ret = mono_join_uninterrupted (handle, ms, error);
 
 	mono_thread_clr_state (cur_thread, ThreadState_WaitSleepJoin);
 
-	mono_error_set_pending_exception (&error);
+	mono_error_set_pending_exception (error);
 
 	if (ret == MONO_THREAD_INFO_WAIT_RET_SUCCESS_0) {
 		THREAD_DEBUG (g_message ("%s: join successful", __func__));
@@ -2263,36 +2258,25 @@ ves_icall_System_Threading_Thread_MemoryBarrier (void)
 }
 
 void
-ves_icall_System_Threading_Thread_ClrState (MonoInternalThread* this_obj, guint32 state)
+ves_icall_System_Threading_Thread_ClrState (MonoInternalThreadHandle this_obj, guint32 state, MonoError *error)
 {
-	mono_thread_clr_state (this_obj, (MonoThreadState)state);
-
-	if (state & ThreadState_Background) {
-		/* If the thread changes the background mode, the main thread has to
-		 * be notified, since it has to rebuild the list of threads to
-		 * wait for.
-		 */
-		mono_os_event_set (&background_change_event);
-	}
+	// InternalThreads are always pinned, so shallowly coop-handleize.
+	mono_thread_clr_state (mono_internal_thread_handle_ptr (this_obj), state);
 }
 
 void
-ves_icall_System_Threading_Thread_SetState (MonoInternalThread* this_obj, guint32 state)
+ves_icall_System_Threading_Thread_SetState (MonoInternalThreadHandle thread_handle, guint32 state, MonoError *error)
 {
-	mono_thread_set_state (this_obj, (MonoThreadState)state);
-	
-	if (state & ThreadState_Background) {
-		/* If the thread changes the background mode, the main thread has to
-		 * be notified, since it has to rebuild the list of threads to
-		 * wait for.
-		 */
-		mono_os_event_set (&background_change_event);
-	}
+	// InternalThreads are always pinned, so shallowly coop-handleize.
+	mono_thread_set_state (mono_internal_thread_handle_ptr (thread_handle), state);
 }
 
 guint32
-ves_icall_System_Threading_Thread_GetState (MonoInternalThread* this_obj)
+ves_icall_System_Threading_Thread_GetState (MonoInternalThreadHandle thread_handle, MonoError *error)
 {
+	// InternalThreads are always pinned, so shallowly coop-handleize.
+	MonoInternalThread *this_obj = mono_internal_thread_handle_ptr (thread_handle);
+
 	guint32 state;
 
 	LOCK_THREAD (this_obj);
@@ -2401,8 +2385,8 @@ ves_icall_System_Threading_Thread_Abort (MonoInternalThread *thread, MonoObject 
 
 	if (thread == mono_thread_internal_current ()) {
 		ERROR_DECL (error);
-		self_abort_internal (&error);
-		mono_error_set_pending_exception (&error);
+		self_abort_internal (error);
+		mono_error_set_pending_exception (error);
 	} else {
 		async_abort_internal (thread, TRUE);
 	}
@@ -2495,12 +2479,12 @@ ves_icall_System_Threading_Thread_GetAbortExceptionState (MonoThread *this_obj)
 	if (mono_object_domain (state) == domain)
 		return state;
 
-	deserialized = mono_object_xdomain_representation (state, domain, &error);
+	deserialized = mono_object_xdomain_representation (state, domain, error);
 
 	if (!deserialized) {
 		MonoException *invalid_op_exc = mono_get_exception_invalid_operation ("Thread.ExceptionState cannot access an ExceptionState from a different AppDomain");
-		if (!is_ok (&error)) {
-			MonoObject *exc = (MonoObject*)mono_error_convert_to_exception (&error);
+		if (!is_ok (error)) {
+			MonoObject *exc = (MonoObject*)mono_error_convert_to_exception (error);
 			MONO_OBJECT_SETREF (invalid_op_exc, inner_ex, exc);
 		}
 		mono_set_pending_exception (invalid_op_exc);
@@ -2648,12 +2632,12 @@ mono_thread_stop (MonoThread *thread)
 
 	if (internal == mono_thread_internal_current ()) {
 		ERROR_DECL (error);
-		self_abort_internal (&error);
+		self_abort_internal (error);
 		/*
 		This function is part of the embeding API and has no way to return the exception
 		to be thrown. So what we do is keep the old behavior and raise the exception.
 		*/
-		mono_error_raise_exception_deprecated (&error); /* OK to throw, see note */
+		mono_error_raise_exception_deprecated (error); /* OK to throw, see note */
 	} else {
 		async_abort_internal (internal, TRUE);
 	}
@@ -4037,8 +4021,8 @@ void
 mono_thread_self_abort (void)
 {
 	ERROR_DECL (error);
-	self_abort_internal (&error);
-	mono_error_set_pending_exception (&error);
+	self_abort_internal (error);
+	mono_error_set_pending_exception (error);
 }
 
 /*
@@ -4751,12 +4735,37 @@ mono_thread_cleanup_apartment_state (void)
 #endif
 }
 
+static void
+mono_thread_notify_change_state (MonoThreadState old_state, MonoThreadState new_state)
+{
+	MonoThreadState diff = old_state ^ new_state;
+	if (diff & ThreadState_Background) {
+		/* If the thread changes the background mode, the main thread has to
+		 * be notified, since it has to rebuild the list of threads to
+		 * wait for.
+		 */
+		mono_os_event_set (&background_change_event);
+	}
+}
+
+void
+mono_thread_clear_and_set_state (MonoInternalThread *thread, MonoThreadState clear, MonoThreadState set)
+{
+	LOCK_THREAD (thread);
+
+	MonoThreadState const old_state = thread->state;
+	MonoThreadState const new_state = (old_state & ~clear) | set;
+	thread->state = new_state;
+
+	UNLOCK_THREAD (thread);
+
+	mono_thread_notify_change_state (old_state, new_state);
+}
+
 void
 mono_thread_set_state (MonoInternalThread *thread, MonoThreadState state)
 {
-	LOCK_THREAD (thread);
-	thread->state |= state;
-	UNLOCK_THREAD (thread);
+	mono_thread_clear_and_set_state (thread, 0, state);
 }
 
 /**
@@ -4768,14 +4777,20 @@ gboolean
 mono_thread_test_and_set_state (MonoInternalThread *thread, MonoThreadState test, MonoThreadState set)
 {
 	LOCK_THREAD (thread);
+	
+	MonoThreadState const old_state = thread->state;
 
-	if ((thread->state & test) != 0) {
+	if ((old_state & test) != 0) {
 		UNLOCK_THREAD (thread);
 		return FALSE;
 	}
 
-	thread->state |= set;
+	MonoThreadState const new_state = old_state | set;
+	thread->state = new_state;
+
 	UNLOCK_THREAD (thread);
+
+	mono_thread_notify_change_state (old_state, new_state);
 
 	return TRUE;
 }
@@ -4783,21 +4798,15 @@ mono_thread_test_and_set_state (MonoInternalThread *thread, MonoThreadState test
 void
 mono_thread_clr_state (MonoInternalThread *thread, MonoThreadState state)
 {
-	LOCK_THREAD (thread);
-	thread->state &= ~state;
-	UNLOCK_THREAD (thread);
+	mono_thread_clear_and_set_state (thread, state, 0);
 }
 
 gboolean
 mono_thread_test_state (MonoInternalThread *thread, MonoThreadState test)
 {
-	gboolean ret = FALSE;
-
 	LOCK_THREAD (thread);
 
-	if ((thread->state & test) != 0) {
-		ret = TRUE;
-	}
+	gboolean const ret = ((thread->state & test) != 0);
 	
 	UNLOCK_THREAD (thread);
 	
@@ -5340,8 +5349,8 @@ void
 ves_icall_System_Threading_Thread_GetStackTraces (MonoArray **out_threads, MonoArray **out_stack_traces)
 {
 	ERROR_DECL (error);
-	mono_threads_get_thread_dump (out_threads, out_stack_traces, &error);
-	mono_error_set_pending_exception (&error);
+	mono_threads_get_thread_dump (out_threads, out_stack_traces, error);
+	mono_error_set_pending_exception (error);
 }
 
 /*

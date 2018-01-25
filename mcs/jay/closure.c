@@ -47,8 +47,17 @@ unsigned *ruleset;
 static unsigned *first_derives;
 static unsigned *EFF;
 
+void
+print_first_derives (void);
 
-set_EFF()
+void
+print_closure (int n);
+
+void
+print_EFF (void);
+
+static void
+set_EFF (void)
 {
     register unsigned *row;
     register int symbol;
@@ -83,8 +92,8 @@ set_EFF()
 #endif
 }
 
-
-set_first_derives()
+void
+set_first_derives (void)
 {
     register unsigned *rrow;
     register unsigned *vrow;
@@ -138,10 +147,8 @@ set_first_derives()
     FREE(EFF);
 }
 
-
-closure(nucleus, n)
-short *nucleus;
-int n;
+void
+closure (short *nucleus, int n)
 {
     register int ruleno;
     register unsigned word;
@@ -207,20 +214,18 @@ int n;
 #endif
 }
 
-
-
-finalize_closure()
+void
+finalize_closure (void)
 {
   FREE(itemset);
   FREE(ruleset);
   FREE(first_derives + ntokens * WORDSIZE(nrules));
 }
 
-
 #ifdef	DEBUG
 
-print_closure(n)
-int n;
+void
+print_closure (int n)
 {
   register short *isp;
 
@@ -229,8 +234,8 @@ int n;
     printf("   %d\n", *isp);
 }
 
-
-print_EFF()
+void
+print_EFF (void)
 {
     register int i, j;
     register unsigned *rowp;
@@ -260,8 +265,8 @@ print_EFF()
     }
 }
 
-
-print_first_derives()
+void
+print_first_derives (void)
 {
     register int i;
     register int j;

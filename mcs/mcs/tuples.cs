@@ -432,7 +432,7 @@ namespace Mono.CSharp
 	{
 		Expression source;
 		List<Expression> targetExprs;
-		List<LocalVariable> variablesToInfer;
+		List<BlockVariable> variables;
 		Expression instance;
 
 		public TupleDeconstruct (List<Expression> targetExprs, Expression source, Location loc)
@@ -442,10 +442,11 @@ namespace Mono.CSharp
 			this.loc = loc;
 		}
 
-		public TupleDeconstruct (List<Expression> targetExprs, List<LocalVariable> variables, Expression source, Location loc)
-			: this (targetExprs, source, loc)
+		public TupleDeconstruct (List<BlockVariable> variables, Expression source, Location loc)
 		{
-			this.variablesToInfer = variables;
+			this.source = source;
+			this.variables = variables;
+			this.loc = loc;
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -469,9 +470,18 @@ namespace Mono.CSharp
 			var src_type = src.Type;
 
 			if (src_type.IsTupleType) {
-				if (src_type.Arity != targetExprs.Count) {
+				int target_count;
+
+				if (targetExprs == null) {
+					target_count = variables.Count;
+					targetExprs = new List<Expression> (target_count);
+				} else {
+					target_count = targetExprs.Count;
+				}
+
+				if (src_type.Arity != target_count) {
 					rc.Report.Error (8132, loc, "Cannot deconstruct a tuple of `{0}' elements into `{1}' variables",
-						src_type.Arity.ToString (), targetExprs.Count.ToString ());
+						src_type.Arity.ToString (CultureInfo.InvariantCulture), target_count.ToString (CultureInfo.InvariantCulture));
 					return null;
 				}
 
@@ -482,27 +492,44 @@ namespace Mono.CSharp
 					instance = expr_variable.CreateReferenceExpression (rc, loc);
 				}
 
-				for (int i = 0; i < targetExprs.Count; ++i) {
+				for (int i = 0; i < target_count; ++i) {
 					var tle = src_type.TypeArguments [i];
 
-					var lv = variablesToInfer? [i];
-					if (lv != null) {
-						if (InternalType.HasNoType (tle)) {
-							rc.Report.Error (8130, Location, "Cannot infer the type of implicitly-typed deconstruction variable `{0}'", lv.Name);
-							lv.Type = InternalType.ErrorType;
+					if (variables != null) {
+						var variable = variables [i].Variable;
+
+						if (variable.Type == InternalType.Discard) {
+							variables [i] = null;
+							targetExprs.Add (EmptyExpressionStatement.Instance);
 							continue;
 						}
 
-						lv.Type = tle;
-						lv.PrepareAssignmentAnalysis ((BlockContext) rc);
-					}
+						var variable_type = variables [i].TypeExpression;
 
+						targetExprs.Add (new LocalVariableReference (variable, variable.Location));
+
+						if (variable_type is VarExpr) {
+							if (InternalType.HasNoType (tle)) {
+								rc.Report.Error (8130, Location, "Cannot infer the type of implicitly-typed deconstruction variable `{0}'", variable.Name);
+								tle = InternalType.ErrorType;
+							}
+
+							variable.Type = tle;
+						} else {
+							variable.Type = variable_type.ResolveAsType (rc);
+						}
+
+						variable.PrepareAssignmentAnalysis ((BlockContext)rc);
+					}
 
 					var element_src = tupleLiteral == null ? new MemberAccess (instance, NamedTupleSpec.GetElementPropertyName (i)) : tupleLiteral.Elements [i].Expr;
 					targetExprs [i] = new SimpleAssign (targetExprs [i], element_src).Resolve (rc);
 				}
 
 				eclass = ExprClass.Value;
+
+				// TODO: The type is same only if there is no target element conversion
+				// var res = (/*byte*/ b, /*short*/ s) = (2, 4);
 				type = src.Type;
 				return this;
 			}
@@ -527,11 +554,24 @@ namespace Mono.CSharp
 
 		public override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			if (instance != null)
+				((ExpressionStatement)source).EmitStatement (ec);
+
+			foreach (ExpressionStatement expr in targetExprs)
+				expr.Emit (ec);
+
+			var ctor = MemberCache.FindMember (type, MemberFilter.Constructor (null), BindingRestriction.DeclaredOnly | BindingRestriction.InstanceOnly) as MethodSpec;
+			ec.Emit (OpCodes.Newobj, ctor);
 		}
 
 		public override void EmitStatement (EmitContext ec)
 		{
+			if (variables != null) {
+				foreach (var lv in variables) {
+					lv?.Variable.CreateBuilder (ec);
+				}
+			}
+			
 			if (instance != null)
 				((ExpressionStatement) source).EmitStatement (ec);
 			
@@ -549,9 +589,6 @@ namespace Mono.CSharp
 			if (leave_copy)
 				throw new NotImplementedException ();
 
-			foreach (var lv in variablesToInfer)
-				lv.CreateBuilder (ec);
-
 			EmitStatement (ec);
 		}
 
@@ -564,11 +601,11 @@ namespace Mono.CSharp
 
 		public void SetGeneratedFieldAssigned (FlowAnalysisContext fc)
 		{
-			if (variablesToInfer == null)
+			if (variables == null)
 				return;
 
-			foreach (var lv in variablesToInfer)
-				fc.SetVariableAssigned (lv.VariableInfo);
+			foreach (var lv in variables)
+				fc.SetVariableAssigned (lv.Variable.VariableInfo);
 		}
 	}
 }

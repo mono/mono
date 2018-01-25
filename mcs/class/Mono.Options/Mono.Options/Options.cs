@@ -1390,28 +1390,27 @@ namespace Mono.Options
 			o.Write (s);
 		}
 
-		private static string GetArgumentName (int index, int maxIndex, string description)
+		static string GetArgumentName (int index, int maxIndex, string description)
 		{
-			if (description == null)
-				return maxIndex == 1 ? "VALUE" : "VALUE" + (index + 1);
-			string[] nameStart;
-			if (maxIndex == 1)
-				nameStart = new string[]{"{0:", "{"};
-			else
-				nameStart = new string[]{"{" + index + ":"};
-			for (int i = 0; i < nameStart.Length; ++i) {
-				int start, j = 0;
-				do {
-					start = description.IndexOf (nameStart [i], j);
-				} while (start >= 0 && j != 0 ? description [j++ - 1] == '{' : false);
-				if (start == -1)
-					continue;
-				int end = description.IndexOf ("}", start);
-				if (end == -1)
-					continue;
-				return description.Substring (start + nameStart [i].Length, end - start - nameStart [i].Length);
+			var matches = Regex.Matches (description ?? "", @"(?<=(?<!\{)\{)[^{}]*(?=\}(?!\}))"); // ignore double braces 
+			string argName = "";
+			foreach (Match match in matches) {
+				var parts = match.Value.Split (':');
+				// for maxIndex=1 it can be {foo} or {0:foo}
+				if (maxIndex == 1) {
+					argName = parts[parts.Length - 1];
+				}
+				// look for {i:foo} if maxIndex > 1
+				if (maxIndex > 1 && parts.Length == 2 && 
+					parts[0] == index.ToString (CultureInfo.InvariantCulture)) {
+					argName = parts[1];
+				}
 			}
-			return maxIndex == 1 ? "VALUE" : "VALUE" + (index + 1);
+
+			if (string.IsNullOrEmpty (argName)) {
+				argName = maxIndex == 1 ? "VALUE" : "VALUE" + (index + 1);
+			}
+			return argName;
 		}
 
 		private static string GetDescription (string description)

@@ -9,6 +9,7 @@
  */
 
 #include "mini.h"
+#include "mini-runtime.h"
 #include "jit.h"
 #include "config.h"
 #include <mono/metadata/verify.h>
@@ -134,8 +135,8 @@ mono_debug_add_vg_method (MonoMethod *method, MonoDebugMethodJitInfo *jit)
 	if (!RUNNING_ON_VALGRIND)
 		return;
 
-	header = mono_method_get_header_checked (method, &error);
-	mono_error_assert_ok (&error); /* FIXME don't swallow the error */
+	header = mono_method_get_header_checked (method, error);
+	mono_error_assert_ok (error); /* FIXME don't swallow the error */
 
 	full_name = mono_method_full_name (method, TRUE);
 
@@ -537,8 +538,8 @@ deserialize_debug_info (MonoMethod *method, guint8 *code_start, guint8 *buf, gui
 	guint8 *p;
 	int i;
 
-	header = mono_method_get_header_checked (method, &error);
-	mono_error_assert_ok (&error); /* FIXME don't swallow the error */
+	header = mono_method_get_header_checked (method, error);
+	mono_error_assert_ok (error); /* FIXME don't swallow the error */
 
 	jit = g_new0 (MonoDebugMethodJitInfo, 1);
 	jit->code_start = code_start;

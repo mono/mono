@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !MOBILE && !XAMMAC_4_5
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -464,3 +465,4 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		}
 	}
 }
+#endif

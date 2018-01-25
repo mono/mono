@@ -581,8 +581,11 @@ struct _MonoMethodHeader {
 };
 
 typedef struct {
+	const unsigned char *code;
 	guint32      code_size;
+	guint16      max_stack;
 	gboolean     has_clauses;
+	gboolean     has_locals;
 } MonoMethodHeaderSummary;
 
 #define MONO_SIZEOF_METHOD_HEADER (sizeof (struct _MonoMethodHeader) - MONO_ZERO_LEN_ARRAY * SIZEOF_VOID_P)
@@ -963,6 +966,9 @@ mono_loader_get_strict_strong_names (void);
 
 char*
 mono_signature_get_managed_fmt_string (MonoMethodSignature *sig);
+
+gboolean
+mono_type_in_image (MonoType *type, MonoImage *image);
 
 #endif /* __MONO_METADATA_INTERNALS_H__ */
 

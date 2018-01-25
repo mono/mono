@@ -43,6 +43,7 @@ namespace MonoTests.System.ServiceModel.Channels
 	[TestFixture]
 	public class HttpsTransportBindingElementTest
 	{
+#if !MOBILE && !XAMMAC_4_5
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void BuildChannelFactoryForHttpEndpoint ()
@@ -62,7 +63,7 @@ namespace MonoTests.System.ServiceModel.Channels
 			b.Security.Mode = BasicHttpSecurityMode.Transport;
 			b.BuildChannelListener<IReplyChannel> (new Uri ("http://localhost:8080"));
 		}
-
+#endif
 		[Test]
 		public void GetProperty ()
 		{

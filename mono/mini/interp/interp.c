@@ -241,8 +241,8 @@ ves_real_abort (int line, MonoMethod *mh,
 		const unsigned short *ip, stackval *stack, stackval *sp)
 {
 	ERROR_DECL (error);
-	MonoMethodHeader *header = mono_method_get_header_checked (mh, &error);
-	mono_error_cleanup (&error); /* FIXME: don't swallow the error */
+	MonoMethodHeader *header = mono_method_get_header_checked (mh, error);
+	mono_error_cleanup (error); /* FIXME: don't swallow the error */
 	g_printerr ("Execution aborted in method: %s::%s\n", mh->klass->name, mh->name);
 	g_printerr ("Line=%d IP=0x%04lx, Aborted execution\n", line, ip-(const unsigned short *) header->code);
 	g_print ("0x%04x %02x\n", ip-(const unsigned short *) header->code, *ip);
@@ -358,7 +358,7 @@ interp_pop_lmf (MonoLMFExt *ext)
 	mono_pop_lmf (&ext->lmf);
 }
 
-static inline InterpMethod*
+static InterpMethod*
 get_virtual_method (InterpMethod *imethod, MonoObject *obj)
 {
 	MonoMethod *m = imethod->method;
@@ -368,18 +368,18 @@ get_virtual_method (InterpMethod *imethod, MonoObject *obj)
 
 #ifndef DISABLE_REMOTING
 	if (mono_object_is_transparent_proxy (obj)) {
-		MonoMethod *remoting_invoke_method = mono_marshal_get_remoting_invoke_with_check (m, &error);
-		mono_error_assert_ok (&error);
-		ret = mono_interp_get_imethod (domain, remoting_invoke_method, &error);
-		mono_error_assert_ok (&error);
+		MonoMethod *remoting_invoke_method = mono_marshal_get_remoting_invoke_with_check (m, error);
+		mono_error_assert_ok (error);
+		ret = mono_interp_get_imethod (domain, remoting_invoke_method, error);
+		mono_error_assert_ok (error);
 		return ret;
 	}
 #endif
 
 	if ((m->flags & METHOD_ATTRIBUTE_FINAL) || !(m->flags & METHOD_ATTRIBUTE_VIRTUAL)) {
 		if (m->iflags & METHOD_IMPL_ATTRIBUTE_SYNCHRONIZED) {
-			ret = mono_interp_get_imethod (domain, mono_marshal_get_synchronized_wrapper (m), &error);
-			mono_error_cleanup (&error); /* FIXME: don't swallow the error */
+			ret = mono_interp_get_imethod (domain, mono_marshal_get_synchronized_wrapper (m), error);
+			mono_error_cleanup (error); /* FIXME: don't swallow the error */
 		} else {
 			ret = imethod;
 		}
@@ -406,16 +406,16 @@ get_virtual_method (InterpMethod *imethod, MonoObject *obj)
 			context.class_inst = mono_class_get_generic_container (virtual_method->klass)->context.class_inst;
 		context.method_inst = mono_method_get_context (m)->method_inst;
 
-		virtual_method = mono_class_inflate_generic_method_checked (virtual_method, &context, &error);
-		mono_error_cleanup (&error); /* FIXME: don't swallow the error */
+		virtual_method = mono_class_inflate_generic_method_checked (virtual_method, &context, error);
+		mono_error_cleanup (error); /* FIXME: don't swallow the error */
 	}
 
 	if (virtual_method->iflags & METHOD_IMPL_ATTRIBUTE_SYNCHRONIZED) {
 		virtual_method = mono_marshal_get_synchronized_wrapper (virtual_method);
 	}
 
-	InterpMethod *virtual_imethod = mono_interp_get_imethod (domain, virtual_method, &error);
-	mono_error_cleanup (&error); /* FIXME: don't swallow the error */
+	InterpMethod *virtual_imethod = mono_interp_get_imethod (domain, virtual_method, error);
+	mono_error_cleanup (error); /* FIXME: don't swallow the error */
 	return virtual_imethod;
 }
 
@@ -674,7 +674,7 @@ stackval_to_data_addr (MonoType *type_, stackval *val)
  * interp_throw:
  *   Throw an exception from the interpreter.
  */
-static void
+static MONO_NEVER_INLINE void
 interp_throw (ThreadContext *context, MonoException *ex, InterpFrame *frame, gconstpointer ip, gboolean rethrow)
 {
 	MonoLMFExt ext;
@@ -711,8 +711,8 @@ fill_in_trace (MonoException *exception, InterpFrame *frame)
 	ERROR_DECL (error);
 	char *stack_trace = dump_frame (frame);
 	MonoDomain *domain = frame->imethod->domain;
-	(exception)->stack_trace = mono_string_new_checked (domain, stack_trace, &error);
-	mono_error_cleanup (&error); /* FIXME: don't swallow the error */
+	(exception)->stack_trace = mono_string_new_checked (domain, stack_trace, error);
+	mono_error_cleanup (error); /* FIXME: don't swallow the error */
 	(exception)->trace_ips = get_trace_ips (domain, frame);
 	g_free (stack_trace);
 }
@@ -771,12 +771,12 @@ ves_array_create (InterpFrame *frame, MonoDomain *domain, MonoClass *klass, Mono
 		lower_bounds = (intptr_t *) lengths;
 		lengths += klass->rank;
 	}
-	obj = (MonoObject*) mono_array_new_full_checked (domain, klass, lengths, lower_bounds, &error);
-	if (!mono_error_ok (&error)) {
-		frame->ex = mono_error_convert_to_exception (&error);
+	obj = (MonoObject*) mono_array_new_full_checked (domain, klass, lengths, lower_bounds, error);
+	if (!mono_error_ok (error)) {
+		frame->ex = mono_error_convert_to_exception (error);
 		FILL_IN_TRACE (frame->ex, frame);
 	}
-	mono_error_cleanup (&error); /* FIXME: don't swallow the error */
+	mono_error_cleanup (error); /* FIXME: don't swallow the error */
 	return obj;
 }
 
@@ -827,8 +827,8 @@ ves_array_set (InterpFrame *frame)
 
 	if (sp [ac->rank].data.p && !mono_object_class (o)->element_class->valuetype) {
 		ERROR_DECL (error);
-		MonoObject *isinst = mono_object_isinst_checked (sp [ac->rank].data.p, mono_object_class (o)->element_class, &error);
-		mono_error_cleanup (&error);
+		MonoObject *isinst = mono_object_isinst_checked (sp [ac->rank].data.p, mono_object_class (o)->element_class, error);
+		mono_error_cleanup (error);
 		if (!isinst) {
 			frame->ex = mono_get_exception_array_type_mismatch ();
 			FILL_IN_TRACE (frame->ex, frame);
@@ -1155,7 +1155,7 @@ interp_frame_arg_to_storage (MonoInterpFrameHandle frame, MonoMethodSignature *s
 		return stackval_to_data_addr (sig->params [index], &iframe->stack_args [index]);
 }
 
-static void 
+static MONO_NEVER_INLINE void
 ves_pinvoke_method (InterpFrame *frame, MonoMethodSignature *sig, MonoFuncV addr, gboolean string_ctor, ThreadContext *context)
 {
 	MonoLMFExt ext;
@@ -1227,7 +1227,7 @@ interp_init_delegate (MonoDelegate *del)
  * runtime specifies that the implementation of the method is automatically
  * provided by the runtime and is primarily used for the methods of delegates.
  */
-static void
+static MONO_NEVER_INLINE void
 ves_imethod (InterpFrame *frame, ThreadContext *context)
 {
 	MonoMethod *method = frame->imethod->method;
@@ -1251,8 +1251,8 @@ ves_imethod (InterpFrame *frame, ThreadContext *context)
 		}
 	}
 
-	isinst_obj = mono_object_isinst_checked (obj, mono_defaults.array_class, &error);
-	mono_error_cleanup (&error); /* FIXME: don't swallow the error */
+	isinst_obj = mono_object_isinst_checked (obj, mono_defaults.array_class, error);
+	mono_error_cleanup (error); /* FIXME: don't swallow the error */
 	if (obj && isinst_obj) {
 		if (*name == 'S' && (strcmp (name, "Set") == 0)) {
 			ves_array_set (frame);
@@ -1390,8 +1390,8 @@ dump_frame (InterpFrame *inv)
 
 			if ((method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) == 0 &&
 				(method->iflags & METHOD_IMPL_ATTRIBUTE_RUNTIME) == 0) {
-				MonoMethodHeader *hd = mono_method_get_header_checked (method, &error);
-				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
+				MonoMethodHeader *hd = mono_method_get_header_checked (method, error);
+				mono_error_cleanup (error); /* FIXME: don't swallow the error */
 
 				if (hd != NULL) {
 					if (inv->ip) {
@@ -1435,8 +1435,8 @@ get_trace_ips (MonoDomain *domain, InterpFrame *top)
 		if (inv->imethod != NULL)
 			++i;
 
-	res = mono_array_new_checked (domain, mono_defaults.int_class, 3 * i, &error);
-	mono_error_cleanup (&error); /* FIXME: don't swallow the error */
+	res = mono_array_new_checked (domain, mono_defaults.int_class, 3 * i, error);
+	mono_error_cleanup (error); /* FIXME: don't swallow the error */
 
 	for (i = 0, inv = top; inv; inv = inv->parent)
 		if (inv->imethod != NULL) {
@@ -1716,7 +1716,7 @@ interp_entry (InterpEntryData *data)
 	}
 }
 
-static stackval * 
+static MONO_NEVER_INLINE stackval *
 do_icall (ThreadContext *context, int op, stackval *sp, gpointer ptr)
 {
 	MonoLMFExt ext;
@@ -1801,7 +1801,7 @@ do_icall (ThreadContext *context, int op, stackval *sp, gpointer ptr)
 	return sp;
 }
 
-static stackval *
+static MONO_NEVER_INLINE stackval *
 do_jit_call (stackval *sp, unsigned char *vt_sp, ThreadContext *context, InterpFrame *frame, InterpMethod *rmethod)
 {
 	MonoMethodSignature *sig;
@@ -1826,12 +1826,12 @@ do_jit_call (stackval *sp, unsigned char *vt_sp, ThreadContext *context, InterpF
 		MonoMethod *wrapper = mini_get_gsharedvt_out_sig_wrapper (sig);
 		//printf ("J: %s %s\n", mono_method_full_name (method, 1), mono_method_full_name (wrapper, 1));
 
-		gpointer jit_wrapper = mono_jit_compile_method_jit_only (wrapper, &error);
-		mono_error_assert_ok (&error);
+		gpointer jit_wrapper = mono_jit_compile_method_jit_only (wrapper, error);
+		mono_error_assert_ok (error);
 
-		gpointer addr = mono_jit_compile_method_jit_only (method, &error);
+		gpointer addr = mono_jit_compile_method_jit_only (method, error);
 		g_assert (addr);
-		mono_error_assert_ok (&error);
+		mono_error_assert_ok (error);
 
 		rmethod->jit_addr = addr;
 		rmethod->jit_sig = sig;
@@ -2012,7 +2012,7 @@ do_jit_call (stackval *sp, unsigned char *vt_sp, ThreadContext *context, InterpF
 	return sp;
 }
 
-static void
+static MONO_NEVER_INLINE void
 do_debugger_tramp (void (*tramp) (void), InterpFrame *frame)
 {
 	MonoLMFExt ext;
@@ -2021,7 +2021,7 @@ do_debugger_tramp (void (*tramp) (void), InterpFrame *frame)
 	interp_pop_lmf (&ext);
 }
 
-static void
+static MONO_NEVER_INLINE void
 do_transform_method (InterpFrame *frame, ThreadContext *context)
 {
 	MonoLMFExt ext;
@@ -2213,8 +2213,7 @@ interp_create_method_pointer (MonoMethod *method, MonoError *error)
 	wrapper = mini_get_interp_in_wrapper (sig);
 
 	gpointer jit_wrapper = mono_jit_compile_method_jit_only (wrapper, error);
-	if (!mono_error_ok (error))
-		g_error ("couldn't compile wrapper \"%s\" for \"%s\" (error: %s)\n", mono_method_get_full_name (wrapper), mono_method_get_full_name (method), mono_error_get_message (error));
+	mono_error_assertf_ok (error, "couldn't compile wrapper \"%s\" for \"%s\"", mono_method_get_full_name (wrapper), mono_method_get_full_name (method));
 
 	gpointer entry_func;
 	if (sig->param_count > MAX_INTERP_ENTRY_ARGS) {
@@ -2571,8 +2570,8 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			child_frame.stack_args = sp;
 
 			if (child_frame.imethod->method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) {
-				child_frame.imethod = mono_interp_get_imethod (rtm->domain, mono_marshal_get_native_wrapper (child_frame.imethod->method, FALSE, FALSE), &error);
-				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
+				child_frame.imethod = mono_interp_get_imethod (rtm->domain, mono_marshal_get_native_wrapper (child_frame.imethod->method, FALSE, FALSE), error);
+				mono_error_cleanup (error); /* FIXME: don't swallow the error */
 			}
 
 			if (csignature->hasthis) {
@@ -3598,19 +3597,19 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 				}
 			} else {
 				if (newobj_class != mono_defaults.string_class) {
-					MonoVTable *vtable = mono_class_vtable_checked (rtm->domain, newobj_class, &error);
-					if (!mono_error_ok (&error) || !mono_runtime_class_init_full (vtable, &error))
-						THROW_EX (mono_error_convert_to_exception (&error), ip);
-					o = mono_object_new_checked (rtm->domain, newobj_class, &error);
-					mono_error_cleanup (&error); /* FIXME: don't swallow the error */
+					MonoVTable *vtable = mono_class_vtable_checked (rtm->domain, newobj_class, error);
+					if (!mono_error_ok (error) || !mono_runtime_class_init_full (vtable, error))
+						THROW_EX (mono_error_convert_to_exception (error), ip);
+					o = mono_object_new_checked (rtm->domain, newobj_class, error);
+					mono_error_cleanup (error); /* FIXME: don't swallow the error */
 					EXCEPTION_CHECKPOINT;
 					sp->data.p = o;
 #ifndef DISABLE_REMOTING
 					if (mono_object_is_transparent_proxy (o)) {
-						MonoMethod *remoting_invoke_method = mono_marshal_get_remoting_invoke_with_check (child_frame.imethod->method, &error);
-						mono_error_assert_ok (&error);
-						child_frame.imethod = mono_interp_get_imethod (rtm->domain, remoting_invoke_method, &error);
-						mono_error_assert_ok (&error);
+						MonoMethod *remoting_invoke_method = mono_marshal_get_remoting_invoke_with_check (child_frame.imethod->method, error);
+						mono_error_assert_ok (error);
+						child_frame.imethod = mono_interp_get_imethod (rtm->domain, remoting_invoke_method, error);
+						mono_error_assert_ok (error);
 					}
 #endif
 				} else {
@@ -3659,8 +3658,8 @@ array_constructed:
 		MINT_IN_CASE(MINT_CASTCLASS)
 			c = rtm->data_items [*(guint16 *)(ip + 1)];
 			if ((o = sp [-1].data.p)) {
-				MonoObject *isinst_obj = mono_object_isinst_checked (o, c, &error);
-				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
+				MonoObject *isinst_obj = mono_object_isinst_checked (o, c, error);
+				mono_error_cleanup (error); /* FIXME: don't swallow the error */
 				if (!isinst_obj)
 					THROW_EX (mono_get_exception_invalid_cast (), ip);
 			}
@@ -3669,8 +3668,8 @@ array_constructed:
 		MINT_IN_CASE(MINT_ISINST)
 			c = rtm->data_items [*(guint16 *)(ip + 1)];
 			if ((o = sp [-1].data.p)) {
-				MonoObject *isinst_obj = mono_object_isinst_checked (o, c, &error);
-				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
+				MonoObject *isinst_obj = mono_object_isinst_checked (o, c, error);
+				mono_error_cleanup (error); /* FIXME: don't swallow the error */
 				if (!isinst_obj)
 					sp [-1].data.p = NULL;
 			}
@@ -3691,8 +3690,8 @@ array_constructed:
 			if (!o)
 				THROW_EX (mono_get_exception_null_reference (), ip);
 
-			MonoObject *isinst_obj = mono_object_isinst_checked (o, c, &error);
-			mono_error_cleanup (&error); /* FIXME: don't swallow the error */
+			MonoObject *isinst_obj = mono_object_isinst_checked (o, c, error);
+			mono_error_cleanup (error); /* FIXME: don't swallow the error */
 			if (!(isinst_obj || ((o->vtable->klass->rank == 0) && (o->vtable->klass->element_class == c->element_class))))
 				THROW_EX (mono_get_exception_invalid_cast (), ip);
 
@@ -3782,8 +3781,8 @@ array_constructed:
 			if (mono_object_is_transparent_proxy (o)) {
 				MonoClass *klass = ((MonoTransparentProxy*)o)->remote_class->proxy_class;
 
-				addr = mono_load_remote_field_checked (o, klass, field, &tmp, &error);
-				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
+				addr = mono_load_remote_field_checked (o, klass, field, &tmp, error);
+				mono_error_cleanup (error); /* FIXME: don't swallow the error */
 			} else
 #endif
 				addr = (char*)o + field->offset;
@@ -3809,8 +3808,8 @@ array_constructed:
 #ifndef DISABLE_REMOTING
 			if (mono_object_is_transparent_proxy (o)) {
 				MonoClass *klass = ((MonoTransparentProxy*)o)->remote_class->proxy_class;
-				addr = mono_load_remote_field_checked (o, klass, field, &tmp, &error);
-				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
+				addr = mono_load_remote_field_checked (o, klass, field, &tmp, error);
+				mono_error_cleanup (error); /* FIXME: don't swallow the error */
 			} else
 #endif
 				addr = (char*)o + field->offset;
@@ -3878,8 +3877,8 @@ array_constructed:
 #ifndef DISABLE_REMOTING
 			if (mono_object_is_transparent_proxy (o)) {
 				MonoClass *klass = ((MonoTransparentProxy*)o)->remote_class->proxy_class;
-				mono_store_remote_field_checked (o, klass, field, &sp [-1].data, &error);
-				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
+				mono_store_remote_field_checked (o, klass, field, &sp [-1].data, error);
+				mono_error_cleanup (error); /* FIXME: don't swallow the error */
 			} else
 #endif
 				stackval_to_data (field->type, &sp [-1], (char*)o + field->offset, FALSE);
@@ -3901,8 +3900,8 @@ array_constructed:
 #ifndef DISABLE_REMOTING
 			if (mono_object_is_transparent_proxy (o)) {
 				MonoClass *klass = ((MonoTransparentProxy*)o)->remote_class->proxy_class;
-				mono_store_remote_field_checked (o, klass, field, &sp [-1].data, &error);
-				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
+				mono_store_remote_field_checked (o, klass, field, &sp [-1].data, error);
+				mono_error_cleanup (error); /* FIXME: don't swallow the error */
 			} else
 #endif
 				mono_value_copy ((char *) o + field->offset, sp [-1].data.p, klass);
@@ -4034,25 +4033,25 @@ array_constructed:
 
 			if (mint_type (&c->byval_arg) == MINT_TYPE_VT && !c->enumtype && !(mono_class_is_magic_int (c) || mono_class_is_magic_float (c))) {
 				int size = mono_class_value_size (c, NULL);
-				sp [-1 - offset].data.p = mono_value_box_checked (rtm->domain, c, sp [-1 - offset].data.p, &error);
-				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
+				sp [-1 - offset].data.p = mono_value_box_checked (rtm->domain, c, sp [-1 - offset].data.p, error);
+				mono_error_cleanup (error); /* FIXME: don't swallow the error */
 				size = (size + 7) & ~7;
 				if (pop_vt_sp)
 					vt_sp -= size;
 			} else {
 				stackval_to_data (&c->byval_arg, &sp [-1 - offset], (char *) &sp [-1 - offset], FALSE);
-				sp [-1 - offset].data.p = mono_value_box_checked (rtm->domain, c, &sp [-1 - offset], &error);
-				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
+				sp [-1 - offset].data.p = mono_value_box_checked (rtm->domain, c, &sp [-1 - offset], error);
+				mono_error_cleanup (error); /* FIXME: don't swallow the error */
 			}
 			ip += 3;
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_NEWARR)
-			sp [-1].data.p = (MonoObject*) mono_array_new_checked (rtm->domain, rtm->data_items[*(guint16 *)(ip + 1)], sp [-1].data.i, &error);
-			if (!mono_error_ok (&error)) {
-				THROW_EX (mono_error_convert_to_exception (&error), ip);
+			sp [-1].data.p = (MonoObject*) mono_array_new_checked (rtm->domain, rtm->data_items[*(guint16 *)(ip + 1)], sp [-1].data.i, error);
+			if (!mono_error_ok (error)) {
+				THROW_EX (mono_error_convert_to_exception (error), ip);
 			}
-			mono_error_cleanup (&error); /* FIXME: don't swallow the error */
+			mono_error_cleanup (error); /* FIXME: don't swallow the error */
 			ip += 2;
 			/*if (profiling_classes) {
 				guint count = GPOINTER_TO_UINT (g_hash_table_lookup (profiling_classes, o->vtable->klass));
@@ -4244,8 +4243,8 @@ array_constructed:
 				mono_array_set ((MonoArray *)o, double, aindex, sp [2].data.f);
 				break;
 			case MINT_STELEM_REF: {
-				MonoObject *isinst_obj = mono_object_isinst_checked (sp [2].data.p, mono_object_class (o)->element_class, &error);
-				mono_error_cleanup (&error); /* FIXME: don't swallow the error */
+				MonoObject *isinst_obj = mono_object_isinst_checked (sp [2].data.p, mono_object_class (o)->element_class, error);
+				mono_error_cleanup (error); /* FIXME: don't swallow the error */
 				if (sp [2].data.p && !isinst_obj)
 					THROW_EX (mono_get_exception_array_type_mismatch (), ip);
 				mono_array_setref ((MonoArray *) o, aindex, sp [2].data.p);
@@ -4524,17 +4523,6 @@ array_constructed:
 			}
 			frame->ip = ip;
 
-			if (frame->ex_handler != NULL && MONO_OFFSET_IN_HANDLER(frame->ex_handler, frame->ip - rtm->code)) {
-				frame->ex_handler = NULL;
-				frame->ex = NULL;
-				if (frame->imethod->method->wrapper_type != MONO_WRAPPER_RUNTIME_INVOKE) {
-					MonoException *abort_exc = mono_thread_get_undeniable_exception ();
-					if (abort_exc)
-						THROW_EX (abort_exc, frame->ip);
-				}
-
-			}
-
 			if (*ip == MINT_LEAVE_S) {
 				ip += (short) *(ip + 1);
 			} else {
@@ -4556,7 +4544,20 @@ array_constructed:
 			}
 
 			if (frame->imethod->method->wrapper_type != MONO_WRAPPER_RUNTIME_INVOKE) {
-				MonoException *abort_exc = mono_thread_get_undeniable_exception ();
+				stackval tmp_sp;
+
+				child_frame.parent = frame;
+				child_frame.imethod = NULL;
+				/*
+				 * We need for mono_thread_get_undeniable_exception to be able to unwind
+				 * to check the abort threshold. For this to work we use child_frame as a
+				 * dummy frame that is stored in the lmf and serves as the transition frame
+				 */
+				context->current_frame = &child_frame;
+				do_icall (context, MINT_ICALL_V_P, &tmp_sp, mono_thread_get_undeniable_exception);
+				context->current_frame = frame;
+
+				MonoException *abort_exc = (MonoException*)tmp_sp.data.p;
 				if (abort_exc)
 					THROW_EX (abort_exc, frame->ip);
 			}
@@ -4597,8 +4598,8 @@ array_constructed:
 			++sp;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_MONO_NEWOBJ)
-			sp->data.p = mono_object_new_checked (rtm->domain, rtm->data_items [*(guint16 *)(ip + 1)], &error);
-			mono_error_cleanup (&error); /* FIXME: don't swallow the error */
+			sp->data.p = mono_object_new_checked (rtm->domain, rtm->data_items [*(guint16 *)(ip + 1)], error);
+			mono_error_cleanup (error); /* FIXME: don't swallow the error */
 			ip += 2;
 			sp++;
 			MINT_IN_BREAK;
@@ -5380,6 +5381,7 @@ interp_frame_iter_next (MonoInterpStackIter *iter, StackFrameInfo *frame)
 	/* This is the offset in the interpreter IR */
 	frame->native_offset = (guint8*)iframe->ip - (guint8*)iframe->imethod->code;
 	frame->ji = iframe->imethod->jinfo;
+	frame->managed = TRUE;
 
 	stack_iter->current = iframe->parent;
 

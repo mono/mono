@@ -3464,11 +3464,6 @@ namespace Mono.CSharp
 			l = left.Type.GetSignatureForError ();
 			r = right.Type.GetSignatureForError ();
 
-			if (left.Type == InternalType.DefaultType || right.Type == InternalType.DefaultType) {
-				ec.Report.Error (8310, loc, "Operator `{0}' cannot be applied to operand `default'", oper);
-				return;
-			}
-
 			ec.Report.Error (19, loc, "Operator `{0}' cannot be applied to operands of type `{1}' and `{2}'",
 				oper, l, r);
 		}
@@ -4323,7 +4318,12 @@ namespace Mono.CSharp
 			//
 			// Only default with == and != is explicitly allowed
 			//
-			if (((Oper & Operator.EqualityMask) != 0) && (ltype == InternalType.DefaultType || rtype == InternalType.DefaultType)) {
+			if (ltype == InternalType.DefaultType || rtype == InternalType.DefaultType) {
+				if ((Oper & Operator.EqualityMask) == 0) {
+					ec.Report.Error (8310, loc, "Operator `{0}' cannot be applied to operand `default'", OperName (Oper));
+					return null;
+				}
+
 				if (ltype == rtype) {
 					ec.Report.Error (8315, loc, "Operator `{0}' is ambiguous on operands `default' and `default'", OperName (Oper));
 					return null;
@@ -7210,8 +7210,7 @@ namespace Mono.CSharp
 		{
 			var sn = expr as SimpleName;
 			if (sn != null && sn.Name == "var" && sn.Arity == 0 && arguments?.Count > 1) {
-				var targets = new List<Expression> (arguments.Count);
-				var variables = new List<LocalVariable> (arguments.Count);
+				var variables = new List<BlockVariable> (arguments.Count);
 				foreach (var arg in arguments) {
 					var arg_sn = arg.Expr as SimpleName;
 					if (arg_sn == null || arg_sn.Arity != 0) {
@@ -7221,12 +7220,10 @@ namespace Mono.CSharp
 
 					var lv = new LocalVariable (rc.CurrentBlock, arg_sn.Name, arg.Expr.Location);
 					rc.CurrentBlock.AddLocalName (lv);
-					variables.Add (lv);
-
-					targets.Add (new LocalVariableReference (lv, arg_sn.Location));
+					variables.Add (new BlockVariable (new VarExpr (lv.Location), lv));
 				}
 
-				var res = new TupleDeconstruct (targets, variables, right_side, loc);
+				var res = new TupleDeconstruct (variables, right_side, loc);
 				return res.Resolve (rc);
 			}
 
@@ -13250,6 +13247,75 @@ namespace Mono.CSharp
 		public override void Emit (EmitContext ec)
 		{
 			throw new NotSupportedException ();
+		}
+	}
+
+	class Discard : Expression, IAssignMethod, IMemoryLocation
+	{
+		public Discard (Location loc)
+		{
+			this.loc = loc;
+		}
+
+		public override Expression CreateExpressionTree (ResolveContext rc)
+		{
+			rc.Report.Error (8207, loc, "An expression tree cannot contain a discard");
+			return null;
+		}
+
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			type = InternalType.Discard;
+			eclass = ExprClass.Variable;
+			return this;
+		}
+
+		public override Expression DoResolveLValue (ResolveContext rc, Expression right_side)
+		{
+			if (right_side.Type == InternalType.DefaultType) {
+				rc.Report.Error (8183, loc, "Cannot infer the type of implicitly-typed discard");
+				type = InternalType.ErrorType;
+				return this;
+			}
+
+			if (right_side.Type.Kind == MemberKind.Void) {
+				rc.Report.Error (8209, loc, "Cannot assign void to a discard");
+				type = InternalType.ErrorType;
+				return this;
+			}
+
+			if (right_side != EmptyExpression.OutAccess) {
+				type = right_side.Type;
+			}
+
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void Emit (EmitContext ec, bool leave_copy)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool isCompound)
+		{
+			if (leave_copy)
+				source.Emit (ec);
+			else
+				source.EmitSideEffect (ec);
+		}
+
+		public void AddressOf (EmitContext ec, AddressOp mode)
+		{
+			var temp = ec.GetTemporaryLocal (type);
+			ec.Emit (OpCodes.Ldloca, temp);
+
+			// TODO: Should free it on next statement but don't have mechanism for that yet
+			// ec.FreeTemporaryLocal (temp, type);
 		}
 	}
 }

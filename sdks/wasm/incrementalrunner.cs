@@ -283,6 +283,11 @@ public class IncrementalTestRunner {
 
 	internal Queue<Action> actions = new Queue<Action> ();
 	int test_step_count;
+	string test_status;
+
+	public string Status {
+		get { return test_status; }
+	}
 
 	TestSuiteAction rootAction;
 	void QueueActions (TestSuite suite) {
@@ -318,7 +323,13 @@ public class IncrementalTestRunner {
 		}
 
 		if (actions.Count == 0) {
-			new ResultReporter (rootAction.testResult, Console.Out).ReportResults ();
+			var res = new ResultReporter (rootAction.testResult, Console.Out);
+			if ((res.Summary.FailureCount + res.Summary.ErrorCount) > 0)
+				test_status = "FAIL";
+			else
+				test_status = "PASS";
+
+			res.ReportResults ();
 			return false;
 		}
 

@@ -185,6 +185,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+		[Category("MultiThreaded")]
 		public void ResponseUri ()
 		{
 			FileWebRequest req = (FileWebRequest) WebRequest.Create (_tempFileUri);

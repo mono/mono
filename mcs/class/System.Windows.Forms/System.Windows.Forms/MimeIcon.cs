@@ -119,10 +119,17 @@ namespace System.Windows.Forms
 				SmallIcons.ImageSize = new Size (24, 24);
 				LargeIcons.ImageSize = new Size (48, 48);
 				
-				platformMimeHandler = new GnomeHandler ();
-				if (platformMimeHandler.Start () == MimeExtensionHandlerStatus.OK) {
-					platform = EPlatformHandler.GNOME;
-				} else {
+				try {
+					platformMimeHandler = new GnomeHandler ();
+					if (platformMimeHandler.Start () == MimeExtensionHandlerStatus.OK) {
+						platform = EPlatformHandler.GNOME;
+					} else {
+						MimeIconEngine.LargeIcons.Images.Clear ();
+						MimeIconEngine.SmallIcons.Images.Clear ();
+						platformMimeHandler = new PlatformDefaultHandler ();
+						platformMimeHandler.Start ();
+					}
+				} catch {
 					MimeIconEngine.LargeIcons.Images.Clear ();
 					MimeIconEngine.SmallIcons.Images.Clear ();
 					platformMimeHandler = new PlatformDefaultHandler ();

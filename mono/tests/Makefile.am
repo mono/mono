@@ -532,14 +532,23 @@ TESTS_CS_SRC=		\
 	init_array_with_lazy_type.cs \
 	weak-fields.cs \
 	threads-leak.cs	\
-	threads-init.cs
+	threads-init.cs \
+	bug-60848.cs
 
 if AMD64
 TESTS_CS_SRC += async-exc-compilation.cs finally_guard.cs finally_block_ending_in_dead_bb.cs
+if !HOST_WIN32
+# requires working altstack
+TESTS_CS_SRC += bug-60862.cs
+endif
 endif
 
 if X86
 TESTS_CS_SRC += async-exc-compilation.cs finally_guard.cs finally_block_ending_in_dead_bb.cs
+if !HOST_WIN32
+# requires working altstack
+TESTS_CS_SRC += bug-60862.cs
+endif
 endif
 
 TESTS_IL_SRC=			\
@@ -727,6 +736,15 @@ INTERP_PLATFORM_DISABLED_TESTS= \
 	delegate3.exe \
 	thunks.exe \
 	finalizer-exception.exe \
+	delegate5.exe \
+	delegate8.exe \
+	bug-323114.exe \
+	threadpool-exceptions3.exe \
+	threadpool-exceptions6.exe \
+	bug-80392.2.exe \
+	remoting3.exe \
+	remoting2.exe \
+	appdomain-unload-callback.exe \
 	monitor-abort.exe
 endif
 
@@ -955,6 +973,10 @@ LLVM_DISABLED_TESTS = \
 	finally_block_ending_in_dead_bb.exe \
 	appdomain-threadpool-unload.exe
 
+# https://github.com/mono/mono/issues/6490
+LLVM_DISABLED_TESTS += \
+	weak-fields.exe
+
 LLVM = $(filter --llvm, $(MONO_ENV_OPTIONS))
 
 # The two finalizer tests only work under sgen
@@ -993,6 +1015,7 @@ DISABLED_TESTS = \
 #                exit code 0, but doesn't actually execute the test.
 # block_guard_restore_aligment_on_exit.exe: flaky (10% of the time it hangs and thus times out)
 # weak-fields.exe: https://bugzilla.xamarin.com/show_bug.cgi?id=60973
+# bug-60862.exe: missing support to map IP->method; only works on platforms with altstack support.
 INTERP_DISABLED_TESTS = \
 	$(KNOWN_FAILING_TESTS) \
 	$(INTERP_PLATFORM_DISABLED_TESTS) \
@@ -1011,6 +1034,7 @@ INTERP_DISABLED_TESTS = \
 	bug-58782-capture-and-throw.exe \
 	bug-58782-plain-throw.exe \
 	bug445361.exe \
+	bug-60862.exe \
 	calliGenericTest.exe \
 	cominterop.exe \
 	context-static.exe \
@@ -1988,7 +2012,7 @@ TESTSAOT_STRESS_PROCESS=$(TESTS_STRESS_PROCESS:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 endif
 
 test-process-stress: $(TESTS_STRESS_PROCESS) $(TESTSAOT_STRESS_PROCESS) test-runner.exe
-	$(TOOLS_RUNTIME) $(TEST_RUNNER) --testsuite-name $@ --disabled "$(DISABLED_TESTS)" --timeout 600 $(TESTS_STRESS_PROCESS)
+	$(TOOLS_RUNTIME) $(TEST_RUNNER) --testsuite-name $@ --disabled "$(DISABLED_TESTS)" --timeout 900 $(TESTS_STRESS_PROCESS)
 
 coreclr-gcstress:
 	$(MAKE) -C $(mono_build_root)/acceptance-tests coreclr-gcstress

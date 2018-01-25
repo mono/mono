@@ -161,7 +161,6 @@ DECL_OFFSET(MonoMethodRuntimeGenericContext, class_vtable)
 DECL_OFFSET(MonoJitTlsData, lmf)
 DECL_OFFSET(MonoJitTlsData, class_cast_from)
 DECL_OFFSET(MonoJitTlsData, class_cast_to)
-DECL_OFFSET(MonoJitTlsData, restore_stack_prot)
 
 DECL_OFFSET(MonoGSharedVtMethodRuntimeInfo, locals_size)
 DECL_OFFSET(MonoGSharedVtMethodRuntimeInfo, entries) //XXX more to fix here
@@ -280,12 +279,6 @@ DECL_OFFSET(SeqPointInfo, ss_tramp_addr)
 DECL_OFFSET(SeqPointInfo, bp_addrs)
 #endif
 
-DECL_OFFSET(InterpMethodArguments, ilen)
-DECL_OFFSET(InterpMethodArguments, iargs)
-DECL_OFFSET(InterpMethodArguments, flen)
-DECL_OFFSET(InterpMethodArguments, fargs)
-DECL_OFFSET(InterpMethodArguments, retval)
-DECL_OFFSET(InterpMethodArguments, is_float_ret)
 #if defined(TARGET_AMD64) || defined(TARGET_ARM) || defined(TARGET_ARM64)
 DECL_OFFSET(CallContext, gregs)
 DECL_OFFSET(CallContext, fregs)

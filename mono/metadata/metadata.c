@@ -1452,8 +1452,8 @@ MonoArrayType *
 mono_metadata_parse_array (MonoImage *m, const char *ptr, const char **rptr)
 {
 	ERROR_DECL (error);
-	MonoArrayType *ret = mono_metadata_parse_array_internal (m, NULL, FALSE, ptr, rptr, &error);
-	mono_error_cleanup (&error);
+	MonoArrayType *ret = mono_metadata_parse_array_internal (m, NULL, FALSE, ptr, rptr, error);
+	mono_error_cleanup (error);
 
 	return ret;
 }
@@ -1857,8 +1857,8 @@ mono_metadata_parse_type (MonoImage *m, MonoParseTypeMode mode, short opt_attrs,
 			  const char *ptr, const char **rptr)
 {
 	ERROR_DECL (error);
-	MonoType * type = mono_metadata_parse_type_internal (m, NULL, opt_attrs, FALSE, ptr, rptr, &error);
-	mono_error_cleanup (&error);
+	MonoType * type = mono_metadata_parse_type_internal (m, NULL, opt_attrs, FALSE, ptr, rptr, error);
+	mono_error_cleanup (error);
 	return type;
 }
 
@@ -1940,8 +1940,8 @@ mono_metadata_parse_signature (MonoImage *image, guint32 token)
 {
 	ERROR_DECL (error);
 	MonoMethodSignature *ret;
-	ret = mono_metadata_parse_signature_checked (image, token, &error);
-	mono_error_cleanup (&error);
+	ret = mono_metadata_parse_signature_checked (image, token, error);
+	mono_error_cleanup (error);
 	return ret;
 }
 
@@ -2242,8 +2242,8 @@ mono_metadata_parse_method_signature (MonoImage *m, int def, const char *ptr, co
 	 */
 	ERROR_DECL (error);
 	MonoMethodSignature *ret;
-	ret = mono_metadata_parse_method_signature_full (m, NULL, def, ptr, rptr, &error);
-	mono_error_assert_ok (&error);
+	ret = mono_metadata_parse_method_signature_full (m, NULL, def, ptr, rptr, error);
+	mono_error_assert_ok (error);
 
 	return ret;
 }
@@ -2402,6 +2402,12 @@ retry:
 		/* At this point, we should've avoided all potential allocations in mono_class_from_mono_type () */
 		return image == mono_class_from_mono_type (type)->image;
 	}
+}
+
+gboolean
+mono_type_in_image (MonoType *type, MonoImage *image)
+{
+	return type_in_image (type, image);
 }
 
 static inline void
@@ -3898,8 +3904,11 @@ mono_method_get_header_summary (MonoMethod *method, MonoMethodHeaderSummary *sum
 	while (method->is_inflated)
 		method = ((MonoMethodInflated*)method)->declaring;
 
+	summary->code = NULL;
 	summary->code_size = 0;
+	summary->max_stack = 0;
 	summary->has_clauses = FALSE;
+	summary->has_locals = FALSE;
 
 	/*FIXME extract this into a MACRO and share it with mono_method_get_header*/
 	if ((method->flags & METHOD_ATTRIBUTE_ABSTRACT) || (method->iflags & METHOD_IMPL_ATTRIBUTE_RUNTIME) || (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) || (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL))
@@ -3909,8 +3918,11 @@ mono_method_get_header_summary (MonoMethod *method, MonoMethodHeaderSummary *sum
 		MonoMethodHeader *header =  ((MonoMethodWrapper *)method)->header;
 		if (!header)
 			return FALSE;
+		summary->code = header->code;
 		summary->code_size = header->code_size;
+		summary->max_stack = header->max_stack;
 		summary->has_clauses = header->num_clauses > 0;
+		summary->has_locals = header->num_locals > 0;
 		return TRUE;
 	}
 
@@ -3933,14 +3945,22 @@ mono_method_get_header_summary (MonoMethod *method, MonoMethodHeaderSummary *sum
 	switch (format) {
 	case METHOD_HEADER_TINY_FORMAT:
 		ptr++;
+		summary->max_stack = 8;
+		summary->code = (unsigned char *) ptr;
 		summary->code_size = flags >> 2;
 		break;
 	case METHOD_HEADER_FAT_FORMAT:
 		fat_flags = read16 (ptr);
-		ptr += 4;
+		ptr += 2;
+		summary->max_stack = read16 (ptr);
+		ptr += 2;
 		summary->code_size = read32 (ptr);
+		ptr += 4;
+		summary->has_locals = !!read32 (ptr);
+		ptr += 4;
 		if (fat_flags & METHOD_HEADER_MORE_SECTS)
 			summary->has_clauses = TRUE;
+		summary->code = (unsigned char *) ptr;
 		break;
 	default:
 		return FALSE;
@@ -4093,8 +4113,8 @@ MonoMethodHeader *
 mono_metadata_parse_mh (MonoImage *m, const char *ptr)
 {
 	ERROR_DECL (error);
-	MonoMethodHeader *header = mono_metadata_parse_mh_full (m, NULL, ptr, &error);
-	mono_error_cleanup (&error);
+	MonoMethodHeader *header = mono_metadata_parse_mh_full (m, NULL, ptr, error);
+	mono_error_cleanup (error);
 	return header;
 }
 
@@ -4231,8 +4251,8 @@ MonoType *
 mono_metadata_parse_field_type (MonoImage *m, short field_flags, const char *ptr, const char **rptr)
 {
 	ERROR_DECL (error);
-	MonoType * type = mono_metadata_parse_type_internal (m, NULL, field_flags, FALSE, ptr, rptr, &error);
-	mono_error_cleanup (&error);
+	MonoType * type = mono_metadata_parse_type_internal (m, NULL, field_flags, FALSE, ptr, rptr, error);
+	mono_error_cleanup (error);
 	return type;
 }
 
@@ -4250,8 +4270,8 @@ MonoType *
 mono_metadata_parse_param (MonoImage *m, const char *ptr, const char **rptr)
 {
 	ERROR_DECL (error);
-	MonoType * type = mono_metadata_parse_type_internal (m, NULL, 0, FALSE, ptr, rptr, &error);
-	mono_error_cleanup (&error);
+	MonoType * type = mono_metadata_parse_type_internal (m, NULL, 0, FALSE, ptr, rptr, error);
+	mono_error_cleanup (error);
 	return type;
 }
 
@@ -4586,8 +4606,8 @@ mono_metadata_interfaces_from_typedef (MonoImage *meta, guint32 index, guint *co
 	MonoClass **interfaces = NULL;
 	gboolean rv;
 
-	rv = mono_metadata_interfaces_from_typedef_full (meta, index, &interfaces, count, TRUE, NULL, &error);
-	mono_error_assert_ok (&error);
+	rv = mono_metadata_interfaces_from_typedef_full (meta, index, &interfaces, count, TRUE, NULL, error);
+	mono_error_assert_ok (error);
 	if (rv)
 		return interfaces;
 	else
@@ -5848,9 +5868,9 @@ MonoType *
 mono_type_create_from_typespec (MonoImage *image, guint32 type_spec)
 {
 	ERROR_DECL (error);
-	MonoType *type = mono_type_create_from_typespec_checked (image, type_spec, &error);
+	MonoType *type = mono_type_create_from_typespec_checked (image, type_spec, error);
 	if (!type)
-		 g_error ("Could not create typespec %x due to %s", type_spec, mono_error_get_message (&error));
+		 g_error ("Could not create typespec %x due to %s", type_spec, mono_error_get_message (error));
 	return type;
 }
 
@@ -6278,7 +6298,7 @@ mono_class_get_overrides_full (MonoImage *image, guint32 type_token, MonoMethod 
 	guint32 cols [MONO_METHODIMPL_SIZE];
 	MonoMethod **result;
 	
-	error_init (error)
+	error_init (error);
 
 	*overrides = NULL;
 	if (num_overrides)

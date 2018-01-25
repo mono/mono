@@ -43,14 +43,71 @@ struct _MonoErrorBoxed {
 	MonoImage *image;
 };
 
-// Initial version for easier to read history.
-#define ERROR_DECL(name) \
-	MonoError name
+/*
+Historically MonoError initialization was deferred, but always had to occur,
+	even in success paths, as cleanup could be done unconditionally.
+	This was confusing.
 
-#define error_init(error) do {	\
-	((MonoErrorInternal*)(error))->error_code = MONO_ERROR_NONE;	\
-	((MonoErrorInternal*)(error))->flags = 0;	\
-} while (0);
+ERROR_DECL (error)
+	This is the overwhelmingly common case.
+	Declare and initialize a local variable, named "error",
+	pointing to an initialized MonoError (named "error_value",
+	using token pasting).
+
+ERROR_DECL_VALUE (foo)
+	Declare and initialize a local variable, named "foo";
+	no pointer is produced for it.
+
+MONO_API_ERROR_INIT
+	This is used for MonoError in/out parameter on a public interface,
+	which must be presumed uninitialized. These are often
+	marked with MONO_API, MONO_RT_EXTERNAL_ONLY, MONO_PROFILER_API, etc.
+	Tnis includes functions called from dis, profiler, pedump, and driver.
+	dis, profiler, and pedump make sense, these are actually external and
+	uninitialized. Driver less so.
+
+error_init
+	Initialize a MonoError. These are historical and usually
+	but not always redundant, and should be reduced/eliminated.
+	All the non-redundant ones should be renamed and all the redundant
+	ones removed.
+
+error_init_reuse
+	This indicates an error has been cleaned up and will be reused.
+	Consider also changing mono_error_cleanup to call error_init_internal,
+	and then remove these.
+
+error_init_internal
+	Rare cases without a better name.
+	For example, setting up an icall frame, or initializing member data.
+
+new0, calloc, static
+	A zeroed MonoError is valid and initialized.
+	Zeroing an entire MonoError is overkill, unless it is near other
+	bulk zeroing.
+
+All initialization is actually bottlenecked to error_init_internal.
+Different names indicate different scenarios, but the same code.
+*/
+#define ERROR_DECL_VALUE(x) 		MonoError x; error_init_internal (&x)
+#define ERROR_DECL(x) 			ERROR_DECL_VALUE (x##_value); MonoError * const x = &x##_value
+#define error_init_internal(error) 	((void)((error)->init = 0))
+#define MONO_API_ERROR_INIT(error) 	error_init_internal (error)
+#define error_init_reuse(error) 	error_init_internal (error)
+
+// Historical deferred initialization was called error_init.
+
+// possible bug detection that did not work
+//#define error_init(error) (is_ok (error))
+
+// FIXME Eventually all error_init should be removed, however it is prudent
+// to leave them in for now, at least most of them, while we sort out
+// the few that are needed and to experiment with adding them back in bulk,
+// i.e. in an entire source file. Some are obviously not needed.
+//#define error_init(error) // nothing
+#define error_init(error) error_init_internal (error)
+// Function for experimentation, should go away.
+//void error_init(MonoError*);
 
 #define is_ok(error) ((error)->error_code == MONO_ERROR_NONE)
 
@@ -66,10 +123,25 @@ do { 							\
 		return (value); 			\
 } while (0)						\
 
-void
-mono_error_assert_ok_pos (MonoError *error, const char* filename, int lineno) MONO_LLVM_INTERNAL;
-
-#define mono_error_assert_ok(e) mono_error_assert_ok_pos (e, __FILE__, __LINE__)
+/*
+ * Three macros to assert that a MonoError is ok:
+ * 1. mono_error_assert_ok(e) when you just want to print the error's message on failure
+ * 2. mono_error_assert_ok(e,msg) when you want to print "msg, due to <e's message>"
+ * 3. mono_error_assertf_ok(e,fmt,args...) when you want to print "<formatted msg>, due to <e's message>"
+ *    (fmt should specify the formatting just for args).
+ *
+ * What's the difference between mono_error_assert_msg_ok (e, "foo") and
+ * mono_error_assertf_ok (e, "foo") ?  The former works as you expect, the
+ * latter unhelpfully expands to
+ *
+ * g_assertf (is_ok (e), "foo, due to %s", ,  mono_error_get_message (err)).
+ *
+ * Note the double commas.  Turns out that to get rid of that extra comma
+ * portably we would have to write really ugly preprocessor macros.
+ */
+#define mono_error_assert_ok(error)            g_assertf (is_ok (error), "%s", mono_error_get_message (error))
+#define mono_error_assert_msg_ok(error, msg)   g_assertf (is_ok (error), msg ", due to %s", mono_error_get_message (error))
+#define mono_error_assertf_ok(error, fmt, ...) g_assertf (is_ok (error), fmt ", due to %s", __VA_ARGS__, mono_error_get_message (error))
 
 void
 mono_error_dup_strings (MonoError *error, gboolean dup_strings);

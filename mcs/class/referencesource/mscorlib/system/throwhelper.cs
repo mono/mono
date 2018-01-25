@@ -532,6 +532,8 @@ namespace System {
         ownedMemory,
         text,
         length,
+        comparer,
+        comparable
 #endif
     }
 

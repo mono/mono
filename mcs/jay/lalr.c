@@ -60,7 +60,8 @@ short *goto_map;
 short *from_state;
 short *to_state;
 
-short **transpose();
+static short **
+transpose (short **R, int n);
 
 static int infinity;
 static int maxrhs;
@@ -73,8 +74,50 @@ static short *INDEX;
 static short *VERTICES;
 static int top;
 
+static void
+set_state_table (void);
 
-lalr()
+static void
+set_accessing_symbol (void);
+
+static void
+set_shift_table (void);
+
+static void
+set_reduction_table (void);
+
+static void
+set_maxrhs (void);
+
+static void
+initialize_LA (void);
+
+static void
+set_goto_map (void);
+
+static void
+initialize_F (void);
+
+static void
+build_relations (void);
+
+static void
+compute_FOLLOWS (void);
+
+static void
+compute_lookaheads (void);
+
+static void
+traverse (int i);
+
+static void
+digraph (short **relation);
+
+static void
+add_lookback_edge (int stateno, int ruleno, int gotono);
+
+void
+lalr (void)
 {
     tokensetsize = WORDSIZE(ntokens);
 
@@ -91,9 +134,8 @@ lalr()
     compute_lookaheads();
 }
 
-
-
-set_state_table()
+static void
+set_state_table (void)
 {
     register core *sp;
 
@@ -102,9 +144,8 @@ set_state_table()
 	state_table[sp->number] = sp;
 }
 
-
-
-set_accessing_symbol()
+static void
+set_accessing_symbol (void)
 {
     register core *sp;
 
@@ -113,9 +154,8 @@ set_accessing_symbol()
 	accessing_symbol[sp->number] = sp->accessing_symbol;
 }
 
-
-
-set_shift_table()
+static void
+set_shift_table (void)
 {
     register shifts *sp;
 
@@ -124,9 +164,8 @@ set_shift_table()
 	shift_table[sp->number] = sp;
 }
 
-
-
-set_reduction_table()
+static void
+set_reduction_table (void)
 {
     register reductions *rp;
 
@@ -135,9 +174,8 @@ set_reduction_table()
 	reduction_table[rp->number] = rp;
 }
 
-
-
-set_maxrhs()
+static void
+set_maxrhs (void)
 {
   register short *itemp;
   register short *item_end;
@@ -163,9 +201,8 @@ set_maxrhs()
   maxrhs = max;
 }
 
-
-
-initialize_LA()
+static void
+initialize_LA (void)
 {
   register int i, j, k;
   register reductions *rp;
@@ -201,8 +238,8 @@ initialize_LA()
     }
 }
 
-
-set_goto_map()
+static void
+set_goto_map (void)
 {
   register shifts *sp;
   register int i;
@@ -271,10 +308,8 @@ set_goto_map()
 
 /*  Map_goto maps a state/symbol pair into its numeric representation.	*/
 
-int
-map_goto(state, symbol)
-int state;
-int symbol;
+static int
+map_goto (int state, int symbol)
 {
     register int high;
     register int low;
@@ -298,9 +333,8 @@ int symbol;
     }
 }
 
-
-
-initialize_F()
+static void
+initialize_F (void)
 {
   register int i;
   register int j;
@@ -375,9 +409,8 @@ initialize_F()
   FREE(edge);
 }
 
-
-
-build_relations()
+static void
+build_relations (void)
 {
   register int i;
   register int j;
@@ -468,9 +501,8 @@ build_relations()
   FREE(states);
 }
 
-
-add_lookback_edge(stateno, ruleno, gotono)
-int stateno, ruleno, gotono;
+static void
+add_lookback_edge (int stateno, int ruleno, int gotono)
 {
     register int i, k;
     register int found;
@@ -494,12 +526,8 @@ int stateno, ruleno, gotono;
     lookback[i] = sp;
 }
 
-
-
-short **
-transpose(R, n)
-short **R;
-int n;
+static short **
+transpose (short **R, int n)
 {
   register short **new_R;
   register short **temp_R;
@@ -552,15 +580,14 @@ int n;
   return (new_R);
 }
 
-
-
-compute_FOLLOWS()
+static void
+compute_FOLLOWS (void)
 {
   digraph(includes);
 }
 
-
-compute_lookaheads()
+static void
+compute_lookaheads (void)
 {
   register int i, n;
   register unsigned *fp1, *fp2, *fp3;
@@ -593,9 +620,8 @@ compute_lookaheads()
   FREE(F);
 }
 
-
-digraph(relation)
-short **relation;
+static void
+digraph (short **relation)
 {
   register int i;
 
@@ -619,10 +645,8 @@ short **relation;
   FREE(VERTICES);
 }
 
-
-
-traverse(i)
-register int i;
+static void
+traverse (int i)
 {
   register unsigned *fp1;
   register unsigned *fp2;

@@ -11,6 +11,7 @@
  */
 
 #include "mini.h"
+#include "mini-runtime.h"
 #include "ir-emit.h"
 #include "jit-icalls.h"
 
@@ -1527,7 +1528,7 @@ mono_decompose_array_access_opts (MonoCompile *cfg)
 						dest->dreg = ins->dreg;
 					} else {
 						MonoClass *array_class = mono_array_class_get (ins->inst_newa_class, 1);
-						ERROR_DECL (vt_error);
+						ERROR_DECL_VALUE (vt_error);
 						MonoVTable *vtable = mono_class_vtable_checked (cfg->domain, array_class, &vt_error);
 						MonoMethod *managed_alloc = mono_gc_get_managed_array_allocator (array_class);
 
