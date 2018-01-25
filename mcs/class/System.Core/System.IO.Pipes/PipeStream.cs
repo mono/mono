@@ -128,7 +128,7 @@ namespace System.IO.Pipes
 				if (!IsConnected)
 					throw new InvalidOperationException ("Pipe is not connected");
 				if (stream == null)
-					stream = new FileStream (handle.DangerousGetHandle (), CanRead ? (CanWrite ? FileAccess.ReadWrite : FileAccess.Read) : FileAccess.Write, true, buffer_size, IsAsync);
+					stream = new FileStream (handle.DangerousGetHandle (), CanRead ? (CanWrite ? FileAccess.ReadWrite : FileAccess.Read) : FileAccess.Write, false, buffer_size, IsAsync);
 				return stream;
 			}
 			set { stream = value; }

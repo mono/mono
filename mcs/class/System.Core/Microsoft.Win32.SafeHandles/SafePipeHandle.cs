@@ -32,6 +32,13 @@ using System.Security.AccessControl;
 using System.Security.Permissions;
 using System.Security.Principal;
 
+namespace System.IO
+{
+	internal enum MonoIOError: int {
+		ERROR_SUCCESS = 0
+	}
+}
+
 namespace Microsoft.Win32.SafeHandles
 {
 	[HostProtection (SecurityAction.LinkDemand, MayLeakOnAbort = true)]
@@ -46,12 +53,8 @@ namespace Microsoft.Win32.SafeHandles
 
 		protected override bool ReleaseHandle ()
 		{
-			try {
-				Marshal.FreeHGlobal (handle);
-				return true;
-			} catch (ArgumentException) {
-				return false;
-			}
+			MonoIOError error;
+			return MonoIO.Close (handle, out error);
 		}
 	}
 }
