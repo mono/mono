@@ -1640,6 +1640,7 @@ corert/RuntimeThread.cs
 corert/Stream.cs
 corert/ThreadPoolBoundHandle.cs
 corert/TaskScheduler.cs
+corert/Task.cs
 
 ../../../external/corert/src/Common/src/Interop/Unix/Interop.Libraries.cs
 

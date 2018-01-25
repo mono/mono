@@ -153,7 +153,7 @@ namespace System.Runtime.CompilerServices
             task.NotifyDebuggerOfWaitCompletionIfNecessary();
 
             // And throw an exception if the task is faulted or canceled.
-            if (!task.IsRanToCompletion) ThrowForNonSuccess(task);
+            if (!task.IsCompletedSuccessfully) ThrowForNonSuccess(task);
         }
 
         /// <summary>Throws an exception to handle a task that completed in a state other than RanToCompletion.</summary>
@@ -209,18 +209,18 @@ namespace System.Runtime.CompilerServices
         internal static void OnCompletedInternal(Task task, Action continuation, bool continueOnCapturedContext, bool flowExecutionContext)
         {
             if (continuation == null) throw new ArgumentNullException("continuation");
-            StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
 #if !MONO
+            StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
             // If TaskWait* ETW events are enabled, trace a beginning event for this await
             // and set up an ending event to be traced when the asynchronous await completes.
             if ( TplEtwProvider.Log.IsEnabled() || Task.s_asyncDebuggingEnabled)
             {
                 continuation = OutputWaitEtwEvents(task, continuation);
             }
-#endif
-
-            // Set the continuation onto the awaited task.
             task.SetContinuationForAwait(continuation, continueOnCapturedContext, flowExecutionContext, ref stackMark);
+#else
+            task.SetContinuationForAwait(continuation, continueOnCapturedContext, flowExecutionContext);
+#endif
         }
 
         /// <summary>
