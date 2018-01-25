@@ -59,8 +59,17 @@ namespace System.Net.NetworkInformation {
 		public override string DomainName {
 			get {
 				byte [] bytes = new byte [256];
-				if (getdomainname (bytes, 256) != 0)
-					throw new NetworkInformationException ();
+#if UNITY
+				try
+				{
+#endif
+					if (getdomainname (bytes, 256) != 0)
+						throw new NetworkInformationException ();
+#if UNITY
+				} catch (EntryPointNotFoundException) {
+					return String.Empty;
+				}
+#endif
 				int len = Array.IndexOf<byte> (bytes, 0);
 				return Encoding.ASCII.GetString (bytes, 0, len < 0 ? 256 : len);
 			}
