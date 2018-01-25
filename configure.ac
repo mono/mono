@@ -377,7 +377,9 @@ case "$host" in
 	*-*-aix*|*-*-os400*)
 		CPPFLAGS="$CPPFLAGS -DGC_AIX_THREADS -D_ALL_SOURCE -D_LARGE_FILES -D_REENTRANT"
 		libmono_cflags="-D_REENTRANT"
-		libgc_threads=pthreads
+		dnl SGen is the future
+		support_boehm=no
+		with_gc=sgen
 		need_link_unlink=yes
 		use_sigposix=yes
 		parallel_mark="not tested"
