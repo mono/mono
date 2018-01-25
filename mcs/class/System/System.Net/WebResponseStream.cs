@@ -282,20 +282,13 @@ namespace System.Net
 
 			ChunkedRead = (tencoding != null && tencoding.IndexOf ("chunked", StringComparison.OrdinalIgnoreCase) != -1);
 
-			Stream CreateWrapper ()
-			{
-				if (buffer == null || buffer.Size == 0)
-					return InnerStream;
-				return new BufferedReadStream (Operation, InnerStream, buffer);
-			}
-
 			if (ChunkedRead) {
 				innerStreamWrapper = new MonoChunkStream2 (
-					Operation, CreateWrapper (), Headers);
+					Operation, CreateStreamWrapper (buffer), Headers);
 			} else if (!IsNtlmAuth () && contentLength > 0 && buffer.Size >= contentLength) {
 				innerStreamWrapper = new BufferedReadStream (Operation, null, buffer);
 			} else {
-				innerStreamWrapper = CreateWrapper ();
+				innerStreamWrapper = CreateStreamWrapper (buffer);
 			}
 
 			WebConnection.Debug ($"{ME} INIT #1: - {ExpectContent} {closed} {nextReadCalled}");
@@ -308,6 +301,13 @@ namespace System.Net
 				}
 				Operation.CompleteResponseRead (true);
 			}
+		}
+
+		Stream CreateStreamWrapper (BufferOffsetSize buffer)
+		{
+			if (buffer == null || buffer.Size == 0)
+				return InnerStream;
+			return new BufferedReadStream (Operation, InnerStream, buffer);
 		}
 
 		internal async Task ReadAllAsync (bool resending, CancellationToken cancellationToken)
