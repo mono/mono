@@ -1,28 +1,37 @@
 using System;
+using System.Threading;
 
 namespace Internal.Runtime.Augments
 {
-	class RuntimeThread
+	internal class RuntimeThread
 	{
-		public static RuntimeThread InitializeThreadPoolThread ()
+		Thread thread = null;
+
+		RuntimeThread(Thread t) { thread = t; }
+		
+		public void ResetThreadPoolThread () {}
+		
+		public static RuntimeThread InitializeThreadPoolThread () => default;
+
+		public static RuntimeThread Create(ParameterizedThreadStart start, int maxStackSize) 
+			=> new RuntimeThread(new Thread(start, maxStackSize));
+
+		public bool IsBackground
 		{
-			return default;
+			get => thread.IsBackground;
+			set => thread.IsBackground = value;
 		}
 
-		public void ResetThreadPoolThread ()
+		public void Start() => thread.Start ();
+
+		public void Start (object state) => thread.Start (state);
+
+		public static bool Yield() => Thread.Yield ();
+
+		public static bool SpinWait (int iterations)
 		{
+			Thread.SpinWait (iterations);
+			return true;
 		}
-
-		public static RuntimeThread Create(object start, int maxStackSize) => throw new NotImplementedException ();
-
-		public bool IsBackground { get; set; }
-
-		public void Start () => throw new NotImplementedException ();
-
-		public void Start (object state) => throw new NotImplementedException ();
-
-		public static bool Yield () => throw new NotImplementedException ();
-
-		public static bool SpinWait (int iterations) => throw new NotImplementedException ();
 	}
 }
