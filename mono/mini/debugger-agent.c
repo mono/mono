@@ -9418,6 +9418,9 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 	case CMD_ASSEMBLY_GET_NAME: {
 		gchar *name;
 		MonoAssembly *mass = ass;
+#ifdef RUNTIME_IL2CPP
+        name = il2cpp_assembly_get_full_name(mass);
+#else
 		name = g_strdup_printf (
 		  "%s, Version=%d.%d.%d.%d, Culture=%s, PublicKeyToken=%s%s",
 		  mass->aname.name,
@@ -9425,7 +9428,7 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		  mass->aname.culture && *mass->aname.culture ? mass->aname.culture : "neutral",
 		  mass->aname.public_key_token[0] ? (char *)mass->aname.public_key_token : "null",
 		  (mass->aname.flags & ASSEMBLYREF_RETARGETABLE_FLAG) ? ", Retargetable=Yes" : "");
-
+#endif
 		buffer_add_string (buf, name);
 		g_free (name);
 		break;
@@ -9775,7 +9778,8 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 			return err;
 		break;
 #else
-		return ERR_NOT_IMPLEMENTED;
+        buffer_add_int (buf, 0);
+        return ERR_NONE;
 #endif //RUNTIME_IL2CPP
 	}
 	case CMD_TYPE_GET_FIELD_CATTRS: {
@@ -9802,7 +9806,8 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 			return err;
 		break;
 #else
-		return ERR_NOT_IMPLEMENTED;
+        buffer_add_int (buf, 0);
+        return ERR_NONE;
 #endif //RUNTIME_IL2CPP
 	}
 	case CMD_TYPE_GET_PROPERTY_CATTRS: {
@@ -9829,7 +9834,8 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 			return err;
 		break;
 #else
-		return ERR_NOT_IMPLEMENTED;
+        buffer_add_int (buf, 0);
+        return ERR_NONE;
 #endif //RUNTIME_IL2CPP
 	}
 	case CMD_TYPE_GET_VALUES:
@@ -10707,7 +10713,8 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 			return err;
 		break;
 #else
-		return ERR_NOT_IMPLEMENTED;
+        buffer_add_int (buf, 0);
+        return ERR_NONE;
 #endif //RUNTIME_IL2CPP
 	}
 	case CMD_METHOD_MAKE_GENERIC_METHOD: {

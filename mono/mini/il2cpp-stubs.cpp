@@ -1490,5 +1490,12 @@ Il2CppSequencePoint* il2cpp_get_sequence_point(int id)
     return NULL;
 #endif
 }
+    
+char* il2cpp_assembly_get_full_name(MonoAssembly *assembly)
+{
+    std::string s = il2cpp::vm::AssemblyName::AssemblyNameToString(assembly->aname);
+    return g_strdup(s.c_str());
+}
+
 }
 #endif // RUNTIME_IL2CPP
