@@ -588,7 +588,7 @@ namespace MonoTests.System.Reflection.Emit
 				// Ignore Metadata
 				lines = lines.Where (l => !l.StartsWith ("[")).ToArray ();
 
-				Assert.AreEqual (5, lines.Length, "#1");
+				Assert.AreEqual (4, lines.Length, "#1");
 				Assert.IsTrue (lines [1].Contains ("---"), "#2");
 			}
 		}

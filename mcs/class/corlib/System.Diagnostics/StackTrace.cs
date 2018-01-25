@@ -56,6 +56,7 @@ namespace System.Diagnostics {
         }
 
 		public const int METHODS_TO_SKIP = 0;
+		const string prefix = "  at ";
 
 		private StackFrame[] frames;
 		readonly StackTrace[] captured_traces;
@@ -198,31 +199,25 @@ namespace System.Diagnostics {
 
 		bool AddFrames (StringBuilder sb)
 		{
-			string debugInfo, indentation;
-			string unknown = Locale.GetText ("<unknown method>");
+			bool any_frame = false;
 
-			indentation = "  ";
-			debugInfo = Locale.GetText (" in {0}:{1} ");
-
-			var newline = String.Format ("{0}{1}{2} ", Environment.NewLine, indentation,
-					Locale.GetText ("at"));
-
-			int i;
-			for (i = 0; i < FrameCount; i++) {
+			for (int i = 0; i < FrameCount; i++) {
 				StackFrame frame = GetFrame (i);
-				if (i == 0)
-					sb.AppendFormat ("{0}{1} ", indentation, Locale.GetText ("at"));
-				else
-					sb.Append (newline);
 
 				if (frame.GetMethod () == null) {
+					if (any_frame)
+						sb.Append (Environment.NewLine);
+					sb.Append (prefix);
+
 					string internal_name = frame.GetInternalMethodName ();
 					if (internal_name != null)
 						sb.Append (internal_name);
 					else
-						sb.AppendFormat ("<0x{0:x5} + 0x{1:x5}> {2}", frame.GetMethodAddress (), frame.GetNativeOffset (), unknown);
+						sb.AppendFormat ("<0x{0:x5} + 0x{1:x5}> <unknown method>", frame.GetMethodAddress (), frame.GetNativeOffset ());
 				} else {
-					GetFullNameForStackTrace (sb, frame.GetMethod ());
+					GetFullNameForStackTrace (sb, frame.GetMethod (), any_frame, out var skipped);
+					if (skipped)
+						continue;
 
 					if (frame.GetILOffset () == -1) {
 						sb.AppendFormat (" <0x{0:x5} + 0x{1:x5}>", frame.GetMethodAddress (), frame.GetNativeOffset ());
@@ -243,14 +238,16 @@ namespace System.Diagnostics {
 						}
 					}
 
-					sb.AppendFormat (debugInfo, filename, frame.GetFileLineNumber ());
+					sb.AppendFormat (" in {0}:{1} ", filename, frame.GetFileLineNumber ());
 				}
+
+				any_frame = true;
 			}
 
-			return i != 0;
+			return any_frame;
 		}
 
-		internal void GetFullNameForStackTrace (StringBuilder sb, MethodBase mi)
+		void GetFullNameForStackTrace (StringBuilder sb, MethodBase mi, bool needsNewLine, out bool skipped)
 		{
 			var declaringType = mi.DeclaringType;
 			if (declaringType.IsGenericType && !declaringType.IsGenericTypeDefinition)
@@ -264,6 +261,14 @@ namespace System.Diagnostics {
 					break;
 				}
 			}
+
+			skipped = mi.IsDefined (typeof(StackTraceHiddenAttribute)) || declaringType.IsDefined (typeof(StackTraceHiddenAttribute));
+			if (skipped)
+				return;
+
+			if (needsNewLine)
+				sb.Append (Environment.NewLine);
+			sb.Append (prefix);
 
 			sb.Append (declaringType.ToString ());
 
@@ -300,7 +305,7 @@ namespace System.Diagnostics {
 				}
 			}
 			sb.Append (")");
-		}		
+		}
 
 		public override string ToString ()
 		{
