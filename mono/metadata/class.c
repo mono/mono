@@ -3242,7 +3242,7 @@ make_generic_name_string (MonoImage *image, int num)
 MonoClass *
 mono_class_from_generic_parameter (MonoGenericParam *param, MonoImage *arg2 G_GNUC_UNUSED, gboolean arg3 G_GNUC_UNUSED)
 {
-	return mono_class_from_generic_parameter_internal (param);
+	return mono_class_create_generic_parameter (param);
 }
 
 /**
@@ -3314,7 +3314,7 @@ mono_class_from_mono_type (MonoType *type)
 		return mono_class_create_generic_inst (type->data.generic_class);
 	case MONO_TYPE_MVAR:
 	case MONO_TYPE_VAR:
-		return mono_class_from_generic_parameter_internal (type->data.generic_param);
+		return mono_class_create_generic_parameter (type->data.generic_param);
 	default:
 		g_warning ("mono_class_from_mono_type: implement me 0x%02x\n", type->type);
 		g_assert_not_reached ();

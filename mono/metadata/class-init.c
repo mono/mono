@@ -843,7 +843,7 @@ mono_class_create_array (MonoClass *eclass, guint32 rank)
 	return mono_class_create_bounded_array (eclass, rank, FALSE);
 }
 
-// This is called by mono_class_from_generic_parameter_internal when a new class must be created.
+// This is called by mono_class_create_generic_parameter when a new class must be created.
 // pinfo is derived from param by the caller for us.
 static MonoClass*
 make_generic_param_class (MonoGenericParam *param, MonoGenericParamInfo *pinfo)
@@ -946,7 +946,7 @@ make_generic_param_class (MonoGenericParam *param, MonoGenericParamInfo *pinfo)
 #define FAST_CACHE_SIZE 16
 
 /*
- * get_anon_gparam_class and set_anon_gparam_class are helpers for mono_class_from_generic_parameter_internal.
+ * get_anon_gparam_class and set_anon_gparam_class are helpers for mono_class_create_generic_parameter.
  * The latter will sometimes create MonoClasses for anonymous generic params. To prevent this being wasteful,
  * we cache the MonoClasses.
  * FIXME: It would be better to instead cache anonymous MonoGenericParams, and allow anonymous params to point directly to classes using the pklass field.
@@ -1050,7 +1050,7 @@ set_anon_gparam_class (MonoGenericParam *param, MonoClass *klass)
  * LOCKING: Acquires the image lock (@image).
  */
 MonoClass *
-mono_class_from_generic_parameter_internal (MonoGenericParam *param)
+mono_class_create_generic_parameter (MonoGenericParam *param)
 {
 	MonoImage *image = get_image_for_generic_param (param);
 	MonoGenericParamInfo *pinfo = mono_generic_param_info (param);

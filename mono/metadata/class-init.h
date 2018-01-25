@@ -24,7 +24,7 @@ MonoClass *
 mono_class_create_array (MonoClass *element_class, uint32_t rank);
 
 MonoClass *
-mono_class_from_generic_parameter_internal (MonoGenericParam *param);
+mono_class_create_generic_parameter (MonoGenericParam *param);
 
 MonoClass *
 mono_class_create_ptr (MonoType *type);

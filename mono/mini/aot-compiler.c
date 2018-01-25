@@ -2980,7 +2980,7 @@ encode_klass_ref_inner (MonoAotCompile *acfg, MonoClass *klass, guint8 *buf, gui
 		if (par->gshared_constraint) {
 			MonoGSharedGenericParam *gpar = (MonoGSharedGenericParam*)par;
 			encode_type (acfg, par->gshared_constraint, p, &p);
-			encode_klass_ref (acfg, mono_class_from_generic_parameter_internal (gpar->parent), p, &p);
+			encode_klass_ref (acfg, mono_class_create_generic_parameter (gpar->parent), p, &p);
 		} else {
 			encode_value (klass->byval_arg.type, p, &p);
 			encode_value (mono_type_get_generic_param_num (&klass->byval_arg), p, &p);

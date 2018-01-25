@@ -2848,7 +2848,7 @@ ves_icall_RuntimeType_GetGenericArguments (MonoReflectionTypeHandle ref_type, Mo
 		MONO_HANDLE_ASSIGN (res, create_type_array (domain, runtimeTypeArray, container->type_argc, error));
 		goto_if_nok (error, leave);
 		for (int i = 0; i < container->type_argc; ++i) {
-			MonoClass *pklass = mono_class_from_generic_parameter_internal (mono_generic_container_get_param (container, i));
+			MonoClass *pklass = mono_class_create_generic_parameter (mono_generic_container_get_param (container, i));
 
 			if (!set_type_object_in_array (domain, &pklass->byval_arg, res, i, error))
 				goto leave;
@@ -3198,7 +3198,7 @@ set_array_generic_argument_handle_gparam (MonoDomain *domain, MonoGenericContain
 	HANDLE_FUNCTION_ENTER ();
 	error_init (error);
 	MonoGenericParam *param = mono_generic_container_get_param (container, i);
-	MonoClass *pklass = mono_class_from_generic_parameter_internal (param);
+	MonoClass *pklass = mono_class_create_generic_parameter (param);
 	MonoReflectionTypeHandle rt = mono_type_get_object_handle (domain, &pklass->byval_arg, error);
 	goto_if_nok (error, leave);
 	MONO_HANDLE_ARRAY_SETREF (arr, i, rt);

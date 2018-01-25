@@ -1653,7 +1653,7 @@ reflection_param_handle_mono_type (MonoReflectionGenericParamHandle ref_gparam, 
 		param->param.owner = mono_class_get_generic_container (owner);
 	}
 
-	MonoClass *pklass = mono_class_from_generic_parameter_internal ((MonoGenericParam *) param);
+	MonoClass *pklass = mono_class_create_generic_parameter ((MonoGenericParam *) param);
 
 	result = &pklass->byval_arg;
 
