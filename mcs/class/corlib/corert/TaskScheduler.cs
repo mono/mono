@@ -4,8 +4,7 @@ namespace System.Threading.Tasks
 	{
 		internal void InternalQueueTask(Task task)
 		{
-			task.FireTaskScheduledIfNeeded(this);
-			this.QueueTask(task);
+			throw new NotImplementedException ();
 		}
 	}
 }
