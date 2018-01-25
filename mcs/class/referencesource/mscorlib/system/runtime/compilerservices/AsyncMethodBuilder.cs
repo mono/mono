@@ -245,7 +245,7 @@ namespace System.Runtime.CompilerServices
         }
 
         // This property lazily instantiates the Task in a non-thread-safe manner.  
-        private Task Task 
+        internal Task Task 
         {
             get
             {
