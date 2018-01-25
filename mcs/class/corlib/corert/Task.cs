@@ -35,5 +35,7 @@ namespace System.Threading.Tasks
 				s_currentActiveTasks.Remove (taskId);
 			}
 		}
+
+		public void MarkAborted (ThreadAbortException e) {}
 	}
 }
