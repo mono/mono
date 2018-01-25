@@ -382,6 +382,8 @@ case "$host" in
 		with_gc=sgen
 		need_link_unlink=yes
 		use_sigposix=yes
+		dnl the valloc call to alloc the guard page bombs out, even with extending the data area
+		with_sigaltstack=no
 		parallel_mark="not tested"
 		dnl ppc Linux is the same? test further
 		disable_munmap=yes
