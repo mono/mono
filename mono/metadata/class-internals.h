@@ -15,9 +15,9 @@
 #include "mono/utils/mono-error.h"
 #include "mono/sgen/gc-internal-agnostic.h"
 
-#define MONO_CLASS_IS_ARRAY(c) ((c)->rank)
+#define MONO_CLASS_IS_ARRAY(c) (m_class_get_rank (c))
 
-#define MONO_CLASS_HAS_STATIC_METADATA(klass) ((klass)->type_token && !(klass)->image->dynamic && !mono_class_is_ginst (klass))
+#define MONO_CLASS_HAS_STATIC_METADATA(klass) (m_class_get_type_token (klass) && !m_class_get_image (klass)->dynamic && !mono_class_is_ginst (klass))
 
 #define MONO_DEFAULT_SUPERTABLE_SIZE 6
 
@@ -308,7 +308,7 @@ int mono_class_interface_match (const uint8_t *bitmap, int id);
 #define mono_class_interface_match(bmap,uiid) ((bmap) [(uiid) >> 3] & (1 << ((uiid)&7)))
 #endif
 
-#define MONO_CLASS_IMPLEMENTS_INTERFACE(k,uiid) (((uiid) <= (k)->max_interface_id) && mono_class_interface_match ((k)->interface_bitmap, (uiid)))
+#define MONO_CLASS_IMPLEMENTS_INTERFACE(k,uiid) (((uiid) <= m_class_get_max_interface_id (k)) && mono_class_interface_match (m_class_get_interface_bitmap (k), (uiid)))
 
 #define MONO_VTABLE_AVAILABLE_GC_BITS 4
 
@@ -318,8 +318,8 @@ int mono_class_interface_match (const uint8_t *bitmap, int id);
 #define mono_vtable_is_remote(vtable) (FALSE)
 #define mono_vtable_set_is_remote(vtable,enable) do {} while (0)
 #else
-#define mono_class_is_marshalbyref(klass) ((klass)->marshalbyref)
-#define mono_class_is_contextbound(klass) ((klass)->contextbound)
+#define mono_class_is_marshalbyref(klass) (m_class_get_marshalbyref (klass))
+#define mono_class_is_contextbound(klass) (m_class_get_contextbound (klass))
 #define mono_vtable_is_remote(vtable) ((vtable)->remote)
 #define mono_vtable_set_is_remote(vtable,enable) do { (vtable)->remote = enable ? 1 : 0; } while (0)
 #endif
@@ -327,7 +327,7 @@ int mono_class_interface_match (const uint8_t *bitmap, int id);
 #ifdef DISABLE_COM
 #define mono_class_is_com_object(klass) (FALSE)
 #else
-#define mono_class_is_com_object(klass) ((klass)->is_com_object)
+#define mono_class_is_com_object(klass) (m_class_is_com_object (klass))
 #endif
 
 
@@ -612,16 +612,16 @@ mono_class_setup_supertypes (MonoClass *klass);
 static inline gboolean
 mono_class_has_parent_fast (MonoClass *klass, MonoClass *parent)
 {
-	return (klass->idepth >= parent->idepth) && (klass->supertypes [parent->idepth - 1] == parent);
+	return (m_class_get_idepth (klass) >= m_class_get_idepth (parent)) && (m_class_get_supertypes (klass) [m_class_get_idepth (parent) - 1] == parent);
 }
 
 static inline gboolean
 mono_class_has_parent (MonoClass *klass, MonoClass *parent)
 {
-	if (G_UNLIKELY (!klass->supertypes))
+	if (G_UNLIKELY (!m_class_get_supertypes (klass)))
 		mono_class_setup_supertypes (klass);
 
-	if (G_UNLIKELY (!parent->supertypes))
+	if (G_UNLIKELY (!m_class_get_supertypes (parent)))
 		mono_class_setup_supertypes (parent);
 
 	return mono_class_has_parent_fast (klass, parent);
