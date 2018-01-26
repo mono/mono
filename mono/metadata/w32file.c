@@ -193,13 +193,19 @@ MonoBoolean
 ves_icall_System_IO_MonoIO_CreateDirectory (const gunichar2 *path, gint32 *error)
 {
 	gboolean ret;
+	const gunichar2 *path_remapped;
 	
+	if (path_remapped = mono_unity_remap_path_utf16 (path))
+		path = path_remapped;
+
 	*error=ERROR_SUCCESS;
 	
 	ret=mono_w32file_create_directory (path);
 	if(ret==FALSE) {
 		*error=mono_w32error_get_last ();
 	}
+
+	g_free (path_remapped);
 
 	return(ret);
 }
@@ -208,6 +214,10 @@ MonoBoolean
 ves_icall_System_IO_MonoIO_RemoveDirectory (const gunichar2 *path, gint32 *error)
 {
 	gboolean ret;
+	const gunichar2 *path_remapped;
+
+	if (path_remapped = mono_unity_remap_path_utf16 (path))
+		path = path_remapped;
 	
 	*error=ERROR_SUCCESS;
 	
@@ -215,6 +225,8 @@ ves_icall_System_IO_MonoIO_RemoveDirectory (const gunichar2 *path, gint32 *error
 	if(ret==FALSE) {
 		*error=mono_w32error_get_last ();
 	}
+
+	g_free (path_remapped);
 
 	return(ret);
 }
@@ -224,6 +236,10 @@ ves_icall_System_IO_MonoIO_FindFirstFile (const gunichar2 *path_with_pattern, Mo
 {
 	HANDLE hnd;
 	WIN32_FIND_DATA data;
+	const gunichar2 *path_with_pattern_remapped;
+
+	if (path_with_pattern_remapped = mono_unity_remap_path_utf16 (path_with_pattern))
+		path_with_pattern = path_with_pattern_remapped;
 
 	hnd = mono_w32file_find_first (path_with_pattern, &data);
 
@@ -231,6 +247,7 @@ ves_icall_System_IO_MonoIO_FindFirstFile (const gunichar2 *path_with_pattern, Mo
 		MONO_HANDLE_ASSIGN (file_name, NULL_HANDLE_STRING);
 		*file_attr = 0;
 		*ioerror = mono_w32error_get_last ();
+		g_free (path_with_pattern_remapped);
 		return hnd;
 	}
 
@@ -242,6 +259,7 @@ ves_icall_System_IO_MonoIO_FindFirstFile (const gunichar2 *path_with_pattern, Mo
 	*file_attr = data.dwFileAttributes;
 	*ioerror = ERROR_SUCCESS;
 
+	g_free (path_with_pattern_remapped);
 	return hnd;
 }
 
@@ -318,6 +336,10 @@ ves_icall_System_IO_MonoIO_SetCurrentDirectory (const gunichar2 *path,
 						gint32 *error)
 {
 	gboolean ret;
+	const gunichar2 *path_remapped;
+
+	if (path_remapped = mono_unity_remap_path_utf16 (path))
+		path = path_remapped;
 	
 	*error=ERROR_SUCCESS;
 	
@@ -325,15 +347,32 @@ ves_icall_System_IO_MonoIO_SetCurrentDirectory (const gunichar2 *path,
 	if(ret==FALSE) {
 		*error=mono_w32error_get_last ();
 	}
-	
+
+	g_free (path_remapped);
+
 	return(ret);
 }
 
 MonoBoolean
 ves_icall_System_IO_MonoIO_MoveFile (const gunichar2 *path, const gunichar2 *dest, gint32 *error)
 {
+
+	gboolean ret;
+	const gunichar2 *path_remapped;
+	const gunichar2 *dest_remapped;
+
+	if (path_remapped = mono_unity_remap_path_utf16 (path))
+		path = path_remapped;
+	if (dest_remapped = mono_unity_remap_path_utf16 (dest))
+		dest = dest_remapped;
+
 	*error=ERROR_SUCCESS;
-	return mono_w32file_move (path, dest, error);
+	ret = mono_w32file_move (path, dest, error);
+
+	g_free (path_remapped);
+	g_free (dest_remapped);
+
+	return ret;
 }
 
 MonoBoolean
@@ -341,29 +380,64 @@ ves_icall_System_IO_MonoIO_ReplaceFile (const gunichar2 *source_file_name, const
 					const gunichar2 *destination_backup_file_name, MonoBoolean ignore_metadata_errors,
 					gint32 *error)
 {
+	gboolean ret;
 	guint32 replace_flags = REPLACEFILE_WRITE_THROUGH;
+
+	const gunichar2 *source_file_name_remapped;
+	const gunichar2 *destination_file_name_remapped;
+	const gunichar2 *destination_backup_file_name_remapped;
+	if (source_file_name_remapped = mono_unity_remap_path_utf16 (source_file_name))
+		source_file_name = source_file_name_remapped;
+	if (destination_file_name_remapped = mono_unity_remap_path_utf16 (destination_file_name))
+		destination_file_name = destination_file_name_remapped;
+	if (destination_backup_file_name_remapped = mono_unity_remap_path_utf16 (destination_backup_file_name))
+		destination_backup_file_name = destination_backup_file_name_remapped;
 
 	*error = ERROR_SUCCESS;
 	if (ignore_metadata_errors)
 		replace_flags |= REPLACEFILE_IGNORE_MERGE_ERRORS;
 
 	/* FIXME: source and destination file names must not be NULL, but apparently they might be! */
-	return mono_w32file_replace (destination_file_name, source_file_name,
+	ret = mono_w32file_replace (destination_file_name, source_file_name,
 					  destination_backup_file_name, replace_flags, error);
+
+	g_free (source_file_name_remapped);
+	g_free (destination_file_name_remapped);
+	g_free (destination_backup_file_name_remapped);
+
+	return ret;
 }
 
 MonoBoolean
 ves_icall_System_IO_MonoIO_CopyFile (const gunichar2 *path, const gunichar2 *dest,
 				     MonoBoolean overwrite, gint32 *error)
 {
+	gboolean ret;
+	const gunichar2 *path_remapped;
+	const gunichar2 *dest_remapped;
+
+	if (path_remapped = mono_unity_remap_path_utf16 (path))
+		path = path_remapped;
+	if (dest_remapped = mono_unity_remap_path_utf16 (dest))
+		dest = dest_remapped;
+
 	*error=ERROR_SUCCESS;
-	return mono_w32file_copy (path, dest, overwrite, error);
+	ret = mono_w32file_copy (path, dest, overwrite, error);
+
+	g_free (path_remapped);
+	g_free (dest_remapped);
+
+	return ret;
 }
 
 MonoBoolean
 ves_icall_System_IO_MonoIO_DeleteFile (const gunichar2 *path, gint32 *error)
 {
 	gboolean ret;
+	const gunichar2 *path_remapped;
+
+	if (path_remapped = mono_unity_remap_path_utf16 (path))
+		path = path_remapped;
 	
 	*error=ERROR_SUCCESS;
 	
@@ -371,6 +445,8 @@ ves_icall_System_IO_MonoIO_DeleteFile (const gunichar2 *path, gint32 *error)
 	if(ret==FALSE) {
 		*error=mono_w32error_get_last ();
 	}
+
+	g_free (path_remapped);
 	
 	return(ret);
 }
@@ -379,6 +455,11 @@ gint32
 ves_icall_System_IO_MonoIO_GetFileAttributes (const gunichar2 *path, gint32 *error)
 {
 	gint32 ret;
+	const gunichar2 *path_remapped;
+
+	if (path_remapped = mono_unity_remap_path_utf16 (path))
+		path = path_remapped;
+
 	*error=ERROR_SUCCESS;
 	
 	ret = mono_w32file_get_attributes (path);
@@ -393,6 +474,9 @@ ves_icall_System_IO_MonoIO_GetFileAttributes (const gunichar2 *path, gint32 *err
 	  /* if(ret==INVALID_FILE_ATTRIBUTES) { */
 		*error=mono_w32error_get_last ();
 	}
+
+	g_free (path_remapped);
+
 	return(ret);
 }
 
@@ -433,6 +517,10 @@ MonoBoolean
 ves_icall_System_IO_MonoIO_GetFileStat (const gunichar2 *path, MonoIOStat *stat, gint32 *error)
 {
 	gboolean result;
+	const gunichar2 *path_remapped;
+
+	if (path_remapped = mono_unity_remap_path_utf16 (path))
+		path = path_remapped;
 
 	*error=ERROR_SUCCESS;
 	
@@ -442,6 +530,8 @@ ves_icall_System_IO_MonoIO_GetFileStat (const gunichar2 *path, MonoIOStat *stat,
 		*error=mono_w32error_get_last ();
 		memset (stat, 0, sizeof (MonoIOStat));
 	}
+
+	g_free (path_remapped);
 
 	return result;
 }
@@ -453,6 +543,10 @@ ves_icall_System_IO_MonoIO_Open (const gunichar2 *filename, gint32 mode,
 {
 	HANDLE ret;
 	int attributes, attrs;
+	const gunichar2 *filename_remapped;
+
+	if (filename_remapped = mono_unity_remap_path_utf16 (filename))
+		filename = filename_remapped;
 
 	*error=ERROR_SUCCESS;
 
@@ -488,8 +582,10 @@ ves_icall_System_IO_MonoIO_Open (const gunichar2 *filename, gint32 mode,
 	ret=mono_w32file_create (filename, convert_access ((MonoFileAccess)access_mode), convert_share ((MonoFileShare)share), convert_mode ((MonoFileMode)mode), attributes);
 	if(ret==INVALID_HANDLE_VALUE) {
 		*error=mono_w32error_get_last ();
-	} 
-	
+	}
+
+	g_free (filename_remapped);
+
 	return(ret);
 }
 

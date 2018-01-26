@@ -966,9 +966,12 @@ static MonoDl *
 cached_module_load (const char *name, int flags, char **err)
 {
 	MonoDl *res;
+	const char *name_remap;
 
 	if (err)
 		*err = NULL;
+	if (name_remap = mono_unity_remap_path (name))
+		name = name_remap;
 
 	MONO_ENTER_GC_SAFE;
 	mono_global_loader_data_lock ();
@@ -986,6 +989,7 @@ exit:
 	MONO_ENTER_GC_SAFE;
 	mono_global_loader_data_unlock ();
 	MONO_EXIT_GC_SAFE;
+	g_free((void*)name_remap);
 
 	return res;
 }

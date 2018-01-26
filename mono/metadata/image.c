@@ -1766,12 +1766,16 @@ do_mono_image_open (MonoAssemblyLoadContext *alc, const char *fname, MonoImageOp
 {
 	MonoCLIImageInfo *iinfo;
 	MonoImage *image;
+	const char *fname_remap;
+	if (fname_remap = mono_unity_remap_path (fname))
+		fname = fname_remap;
 
 	MonoImageStorage *storage = mono_image_storage_open (fname);
 
 	if (!storage) {
 		if (status)
 			*status = MONO_IMAGE_ERROR_ERRNO;
+		g_free((void*)fname_remap);
 		return NULL;
 	}
 
@@ -1783,6 +1787,7 @@ do_mono_image_open (MonoAssemblyLoadContext *alc, const char *fname, MonoImageOp
 		g_free (image);
 		if (status)
 			*status = MONO_IMAGE_IMAGE_INVALID;
+		g_free((void*)fname_remap);
 		return NULL;
 	}
 	iinfo = g_new0 (MonoCLIImageInfo, 1);
@@ -1798,6 +1803,7 @@ do_mono_image_open (MonoAssemblyLoadContext *alc, const char *fname, MonoImageOp
 #ifdef ENABLE_NETCORE
 	image->alc = alc;
 #endif
+	g_free((void*)fname_remap);
 	return do_mono_image_load (image, status, care_about_cli, care_about_pecoff);
 }
 
