@@ -66,18 +66,8 @@ class MakeBundle {
 	static bool custom_mode = true;
 	static string embedded_options = null;
 
-	static string runtime_bin = null;
+	static string runtime = null;
 
-	static string runtime {
-		get {
-			if (runtime_bin == null && IsUnix)
-				runtime_bin = Process.GetCurrentProcess().MainModule.FileName;
-			return runtime_bin;
-		}
-
-		set { runtime_bin = value; }
-	}
-	
 	static bool aot_compile = false;
 	static string aot_args = "static";
 	static DirectoryInfo aot_temp_dir = null;
@@ -737,8 +727,12 @@ class MakeBundle {
 	static bool GeneratePackage (List<string> files)
 	{
 		if (runtime == null){
-			Error ("You must specify at least one runtime with --runtime or --cross");
-			Environment.Exit (1);
+			if (IsUnix)
+				runtime = Process.GetCurrentProcess().MainModule.FileName;
+			else {
+				Error ("You must specify at least one runtime with --runtime or --cross");
+				Environment.Exit (1);
+			}
 		}
 		if (!File.Exists (runtime)){
 			Error ($"The specified runtime at {runtime} does not exist");
