@@ -172,12 +172,15 @@ MONO_API MonoClass* mono_custom_attrs_get_attrs (MonoCustomAttrInfo *ainfo, gpoi
 
 typedef size_t (*RemapPathFunction)(const char* path, char* buffer, size_t buffer_len);
 MONO_API void mono_unity_register_path_remapper (RemapPathFunction func);
-gboolean 
-mono_unity_file_remap_path(const char** path);
+
+const char*
+mono_unity_remap_path (const char* path);
+
+const gunichar2*
+mono_unity_remap_path_utf16 (const gunichar2* path);
+
 MonoBoolean
 ves_icall_System_IO_MonoIO_RemapPath  (MonoString *path, MonoString **new_path);
-const gunichar2 *
-mono_unity_get_remapped_path (const gunichar2 *path);
 
 MonoMethod*
 mono_method_get_method_definition(MonoMethod *method);

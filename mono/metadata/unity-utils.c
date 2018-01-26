@@ -1197,6 +1197,12 @@ size_t RemapPathFunction (const char* path, char* buffer, size_t buffer_len)
 */
 static RemapPathFunction g_RemapPathFunc = NULL;
 
+void
+mono_unity_register_path_remapper (RemapPathFunction func)
+{
+	g_RemapPathFunc = func;
+}
+
 /* calls remapper function if registered; allocates memory if remapping is available */
 static inline size_t
 call_remapper(const char* path, char** buf)
@@ -1204,7 +1210,7 @@ call_remapper(const char* path, char** buf)
 	size_t len;
 
 	if (!g_RemapPathFunc)
-		return FALSE;
+		return 0;
 
 	*buf = NULL;
 	len = g_RemapPathFunc(path, *buf, 0);
@@ -1218,80 +1224,67 @@ call_remapper(const char* path, char** buf)
 	return len;
 }
 
-/* updates 'path' if remapping is available; returns TRUE if updated (path must be free()'d) */
-gboolean 
-mono_unity_file_remap_path(const char** path)
+MonoBoolean
+ves_icall_System_IO_MonoIO_RemapPath  (MonoString *path, MonoString **new_path)
 {
-	size_t len;
-	char * buf;
+	MonoError error;
+	const gunichar2* path_remapped;
 
-	len = call_remapper(*path, &buf);
-	if (len == 0)
+	if (!g_RemapPathFunc)
+		return 0;
+
+	path_remapped = mono_unity_remap_path_utf16 (mono_string_chars (path));
+
+	if (!path_remapped)
 		return FALSE;
 
-	*path = buf;
+	mono_gc_wbarrier_generic_store (new_path, (MonoObject*)mono_string_from_utf16_checked (path_remapped, &error));
+
+	g_free (path_remapped);
+
+	mono_error_set_pending_exception (&error);
+
 	return TRUE;
 }
 
-
-
-/* sets 'new_path', and returns TRUE, if remapping is available */
-static gboolean
-remap_path (MonoString *path, MonoString** new_path)
+const char*
+mono_unity_remap_path (const char* path)
 {
-	MonoError error;
-	MonoString * str;
+	const char* path_remap = NULL;
+	call_remapper (path, &path_remap);
+
+	return path_remap;
+}
+
+const gunichar2*
+mono_unity_remap_path_utf16 (const gunichar2* path)
+{
+	const gunichar2* path_remap = NULL;
 	char * utf8_path;
 	char * buf;
 	char * path_end;
 	size_t len;
 
-	*new_path = NULL;
-
 	if (!g_RemapPathFunc)
-		return FALSE;
+		return path_remap;
 
-	utf8_path = mono_string_to_utf8_ignore(path);
-	len = call_remapper(utf8_path, &buf);
+	utf8_path = g_utf16_to_utf8 (path, -1, NULL, NULL, NULL);
+	len = call_remapper (utf8_path, &buf);
 	if (len == 0)
 	{
-		g_free(utf8_path);
-		return FALSE;
+		g_free (utf8_path);
+		return path_remap;
 	}
 
-	path_end = memchr(buf, '\0', len);
-	len = path_end ? (size_t) (path_end - buf) : len;
-	str = mono_string_new_len_checked (mono_domain_get (), buf, (guint)len, &error);
+	path_end = memchr (buf, '\0', len);
+	len = path_end ? (size_t)(path_end - buf) : len;
 
-	g_free(utf8_path);
+	path_remap = g_utf8_to_utf16 (buf, len, NULL, NULL, NULL);
+
+	g_free (utf8_path);
 	g_free (buf);
 
-	mono_gc_wbarrier_generic_store(new_path, (MonoObject*)str);
-	mono_error_set_pending_exception (&error);
-
-	return *new_path ? TRUE : FALSE;
-}
-
-/* returns remapped path, if remapping is available. otherwise returns original path */
-const gunichar2 *
-mono_unity_get_remapped_path (const gunichar2 *path)
-{
-	// JON TODO:
-	return path;
-	//MonoString * new_path;
-	//return remap_path(path, &new_path) ? new_path : path;
-}
-
-MonoBoolean
-ves_icall_System_IO_MonoIO_RemapPath  (MonoString *path, MonoString **new_path)
-{
-	return remap_path(path, new_path);
-}
-
-void
-mono_unity_register_path_remapper(RemapPathFunction func)
-{
-	g_RemapPathFunc = func;
+	return path_remap;
 }
 
 MonoMethod*
