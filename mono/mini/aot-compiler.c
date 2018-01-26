@@ -230,6 +230,7 @@ typedef struct MonoAotOptions {
 	gboolean dump_json;
 	gboolean profile_only;
 	gboolean no_opt;
+	gboolean merge_assemblies;
 } MonoAotOptions;
 
 typedef enum {
@@ -1073,6 +1074,18 @@ arch_emit_unwind_info_sections (MonoAotCompile *acfg, const char *function_start
 #define AOT_TARGET_STR ""
 #endif
 
+static const char* 
+arch_get_user_symbol_prefix ()
+{
+	const char *user_symbol_prefix = "";
+
+#ifdef TARGET_MACH
+	user_symbol_prefix = "_";
+#endif
+
+	return user_symbol_prefix;
+}
+
 static void
 arch_init (MonoAotCompile *acfg)
 {
@@ -1087,7 +1100,7 @@ arch_init (MonoAotCompile *acfg)
 	 * symbols.
 	 */
 	acfg->llvm_label_prefix = "";
-	acfg->user_symbol_prefix = "";
+	acfg->user_symbol_prefix = arch_get_user_symbol_prefix ();
 
 #if defined(TARGET_X86)
 	g_string_append (acfg->llc_args, " -march=x86 -mattr=sse4.1");
@@ -1131,7 +1144,6 @@ arch_init (MonoAotCompile *acfg)
 #endif
 
 #ifdef TARGET_MACH
-	acfg->user_symbol_prefix = "_";
 	acfg->llvm_label_prefix = "_";
 	acfg->inst_directive = ".word";
 	acfg->need_no_dead_strip = TRUE;
@@ -7589,6 +7601,8 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->profile_files = g_list_append (opts->profile_files, g_strdup (arg + strlen ("profile=")));
 		} else if (!strcmp (arg, "profile-only")) {
 			opts->profile_only = TRUE;
+		} else if (!strcmp (arg, "merge_assemblies")) {
+			opts->merge_assemblies = TRUE;
 		} else if (!strcmp (arg, "verbose")) {
 			opts->verbose = TRUE;
 		} else if (str_begins_with (arg, "llvmopts=")){
@@ -10552,6 +10566,17 @@ emit_aot_file_info (MonoAotCompile *acfg, MonoAotFileInfo *info)
 	}
 }
 
+static char *
+sanitize_aot_symbol_name (char *symbol)
+{
+	char *p = symbol;
+	for (p = symbol; *p; ++p) {
+		if (!(isalnum (*p) || *p == '_'))
+			*p = '_';
+	}
+	return g_strdup (symbol);
+}
+
 /*
  * Emit a structure containing all the information not stored elsewhere.
  */
@@ -10579,7 +10604,6 @@ emit_file_info (MonoAotCompile *acfg)
 
 	if (acfg->aot_opts.static_link) {
 		char symbol [MAX_SYMBOL_SIZE];
-		char *p;
 
 		/*
 		 * Emit a global symbol which can be passed by an embedding app to
@@ -10587,14 +10611,7 @@ emit_file_info (MonoAotCompile *acfg)
 		 * structure.
 		 */
 		sprintf (symbol, "%smono_aot_module_%s_info", acfg->user_symbol_prefix, acfg->image->assembly->aname.name);
-
-		/* Get rid of characters which cannot occur in symbols */
-		p = symbol;
-		for (p = symbol; *p; ++p) {
-			if (!(isalnum (*p) || *p == '_'))
-				*p = '_';
-		}
-		acfg->static_linking_symbol = g_strdup (symbol);
+		acfg->static_linking_symbol = sanitize_aot_symbol_name (symbol);
 	}
 
 	if (acfg->llvm)
@@ -12570,6 +12587,102 @@ static const char* interp_in_static_sigs[] = {
 	"void"
 };
 
+typedef struct {
+	const char *output_name;
+	GList *module_names;
+	GList *file_names;
+} MonoMergeState;
+
+void
+mono_merge_assembly_iter (gpointer pstate, MonoAssembly *assm)
+{
+	MonoMergeState *state = (MonoMergeState *)pstate;
+
+	// Input is statically linked .o files, output is dylib / sofile
+	char *aot_file_name = g_strdup_printf ("%s." AS_OBJECT_FILE_SUFFIX, assm->image->name);
+	gboolean exists = g_file_test (aot_file_name, G_FILE_TEST_EXISTS);
+	if (!exists)
+		g_error ("Can not find AOT object file at %s\n", aot_file_name);
+
+	char aot_symbol [MAX_SYMBOL_SIZE];
+	const char *user_symbol_prefix = arch_get_user_symbol_prefix ();
+	sprintf (aot_symbol, "%smono_aot_module_%s_info", user_symbol_prefix, assm->aname.name);
+
+	state->module_names = g_list_prepend (state->module_names, sanitize_aot_symbol_name (aot_symbol));
+	state->file_names = g_list_prepend (state->file_names, aot_file_name);
+}
+
+
+// FIXME: cross compilation
+// FIXME: llvm
+void
+mono_merge_assembly_finish (gpointer pstate)
+{
+	MonoMergeState *state = (MonoMergeState *)pstate;
+
+	char *assembly_file_name= g_strdup_printf ("%s.s", state->output_name);
+	char *object_file_name = g_strdup_printf ("%s.o", state->output_name);
+
+	// fixme: set the output name
+	FILE *outfile = fopen (assembly_file_name, "w");
+	if (!outfile)
+		g_error ("Unable to create file '%s': %s\n", assembly_file_name, strerror (errno));
+	MonoImageWriter *head = mono_img_writer_create (outfile, FALSE);
+	mono_img_writer_emit_start (head);
+	mono_img_writer_emit_section_change (head, ".data", 0);
+	mono_img_writer_emit_alignment (head, 8);
+
+	const char *user_symbol_prefix = arch_get_user_symbol_prefix ();
+	char module_str [MAX_SYMBOL_SIZE];
+	sprintf (module_str, "%smono_aot_modules", user_symbol_prefix);
+	mono_img_writer_emit_global (head, module_str, FALSE);
+	mono_img_writer_emit_label (head, module_str);
+
+	// Bake in the static module symbols
+	for (GList *name = state->module_names; name; name = name->next)
+		mono_img_writer_emit_pointer (head, (char *)(name->data));
+
+	/* Null terminate the table */
+	mono_img_writer_emit_int32 (head, 0); 
+	mono_img_writer_emit_int32 (head, 0); 
+	mono_img_writer_emit_writeout (head);
+
+	char *command = g_strdup_printf ("%s %s -c -o %s %s", AS_NAME, AS_OPTIONS, object_file_name, assembly_file_name);
+	fprintf (stderr, "Executing the native assembler: %s\n", command);
+	if (execute_system (command) != 0)
+		g_error ("Native assembler ran into error");
+	g_free (command);
+
+	GString *accum = g_string_new ("");
+	for (GList *name = state->file_names; name; name = name->next)
+		g_string_append_printf (accum, "%s ", (char *)(name->data));
+	g_string_append_printf (accum, "%s ", object_file_name);
+
+	char *ld_name = "ld";
+#ifdef LD_NAME
+	ld_name = LD_NAME;
+#endif
+
+	command = g_strdup_printf ("%s %s -o %s%s %s", ld_name, LD_OPTIONS, state->output_name, MONO_SOLIB_EXT, accum->str);
+	fprintf (stderr, "Executing the native linker: %s\n", command);
+	if (execute_system (command) != 0)
+		g_error ("Native linker ran into error");
+	g_free (command);
+
+	g_list_free (state->module_names);
+	g_list_free (state->file_names);
+	g_free (state);
+	g_string_free (accum, TRUE);
+}
+
+gpointer
+mono_merge_assembly_start (const char *output_name)
+{
+	MonoMergeState *state = g_malloc0 (sizeof (MonoMergeState));
+	state->output_name = output_name;
+	return state;
+}
+
 int
 mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options, gpointer **global_aot_state)
 {
@@ -13133,6 +13246,18 @@ void*
 mono_aot_readonly_field_override (MonoClassField *field)
 {
 	return NULL;
+}
+
+void
+mono_merge_assembly_read (MonoAssembly *assm, GList *aot_module_names, GList *aot_file_names)
+{
+	return;
+}
+
+void
+mono_merge_assembly_emit (GList *aot_module_names, GList *aot_file_names)
+{
+	return;
 }
 
 int

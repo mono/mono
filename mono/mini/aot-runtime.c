@@ -2404,6 +2404,29 @@ if (container_assm_name && !container_amodule) {
 	}
 }
 
+void
+mono_aot_register_modules_in_file (char *filename)
+{
+	char *err;
+	MonoDl *merged_modules = mono_dl_open (filename, MONO_DL_LAZY, &err);
+	if (!merged_modules)
+		g_error (err);
+
+	MonoAotFileInfo ***aot_file_infos;
+	find_symbol (merged_modules, NULL, "mono_aot_modules", (gpointer *) &aot_file_infos);
+
+	g_assert (aot_file_infos);
+
+	while (*aot_file_infos != NULL) {
+		MonoAotFileInfo *info = **aot_file_infos;
+		aot_file_infos++;
+
+		// Make this aot module available when loading an assembly later
+		mono_aot_register_module ((gpointer) info);
+	}
+}
+
+
 /*
  * mono_aot_register_module:
  *

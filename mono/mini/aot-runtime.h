@@ -254,6 +254,8 @@ GHashTable *mono_aot_get_weak_field_indexes (MonoImage *image);
 /* This is an exported function */
 MONO_API void     mono_aot_register_module           (gpointer *aot_info);
 
+void              mono_aot_register_modules_in_file   (char *filename);
+
 /* These are used to load the AOT data for aot images compiled with MONO_AOT_FILE_FLAG_SEPARATE_DATA */
 /*
  * Return the AOT data for ASSEMBLY. SIZE is the size of the data. OUT_HANDLE should be set to a handle which is later

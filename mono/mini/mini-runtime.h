@@ -334,6 +334,7 @@ struct MonoJumpInfo {
 };
 
 extern gboolean mono_break_on_exc;
+extern char *mono_merge_aot;
 extern gboolean mono_compile_aot;
 extern gboolean mono_aot_only;
 extern gboolean mono_llvm_only;

@@ -12,6 +12,10 @@ int mono_compile_deferred_assemblies (guint32 opts, const char *aot_options, gpo
 void* mono_aot_readonly_field_override (MonoClassField *field);
 gboolean mono_aot_is_shared_got_offset (int offset) MONO_LLVM_INTERNAL;
 
+gpointer mono_merge_assembly_start (const char *output_name);
+void mono_merge_assembly_iter (gpointer pstate, MonoAssembly *assm);
+void mono_merge_assembly_finish (gpointer pstate);
+
 guint32  mono_aot_get_got_offset            (MonoJumpInfo *ji) MONO_LLVM_INTERNAL;
 char*    mono_aot_get_method_name           (MonoCompile *cfg) MONO_LLVM_INTERNAL;
 char*    mono_aot_get_mangled_method_name   (MonoMethod *method) MONO_LLVM_INTERNAL;

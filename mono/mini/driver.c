@@ -1254,7 +1254,18 @@ static void main_thread_handler (gpointer user_data)
 	MainThreadArgs *main_args = (MainThreadArgs *)user_data;
 	MonoAssembly *assembly;
 
-	if (mono_compile_aot) {
+	if (mono_merge_aot) {
+		gpointer state = mono_merge_assembly_start (mono_merge_aot);
+		for (int i = 0; i < main_args->argc; ++i) {
+			assembly = mono_domain_assembly_open (main_args->domain, main_args->argv [i]);
+			if (!assembly) {
+				fprintf (stderr, "Can not open image %s\n", main_args->argv [i]);
+				exit (1);
+			}
+			mono_merge_assembly_iter (state, assembly);
+		}
+		mono_merge_assembly_finish (state);
+	} else if (mono_compile_aot) {
 		int i, res;
 		gpointer *aot_state = NULL;
 
@@ -2030,6 +2041,8 @@ mono_main (int argc, char* argv[])
 			mono_jit_set_aot_mode (MONO_AOT_MODE_HYBRID);
 		} else if (strcmp (argv [i], "--full-aot-interp") == 0) {
 			mono_jit_set_aot_mode (MONO_AOT_MODE_INTERP);
+		} else if (strncmp (argv [i], "--aot-preload=", 14) == 0) {
+			mono_aot_register_modules_in_file (&argv [i][14]);
 		} else if (strcmp (argv [i], "--print-vtable") == 0) {
 			mono_print_vtable = TRUE;
 		} else if (strcmp (argv [i], "--stats") == 0) {
@@ -2037,6 +2050,9 @@ mono_main (int argc, char* argv[])
 			mono_atomic_store_bool (&mono_stats.enabled, TRUE);
 			mono_atomic_store_bool (&mono_jit_stats.enabled, TRUE);
 #ifndef DISABLE_AOT
+		} else if (strncmp (argv [i], "--aot-merge=", 12) == 0) {
+			error_if_aot_unsupported ();
+			mono_merge_aot = &argv [i][12];
 		} else if (strcmp (argv [i], "--aot") == 0) {
 			error_if_aot_unsupported ();
 			mono_compile_aot = TRUE;
