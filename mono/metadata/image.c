@@ -1360,8 +1360,9 @@ do_mono_image_open (const char *fname, MonoImageOpenStatus *status,
 	MonoCLIImageInfo *iinfo;
 	MonoImage *image;
 	MonoFileMap *filed;
-
-	gboolean remapped = mono_unity_file_remap_path(&fname);
+	const char *fname_remap;
+	if (fname_remap = mono_unity_remap_path (fname))
+		fname = fname_remap;
 
 	if ((filed = mono_file_map_open (fname)) == NULL){
 		if (IS_PORTABILITY_SET) {
@@ -1375,8 +1376,7 @@ do_mono_image_open (const char *fname, MonoImageOpenStatus *status,
 		if (filed == NULL) {
 			if (status)
 				*status = MONO_IMAGE_ERROR_ERRNO;
-			if (remapped)
-				g_free((void*)fname);
+			g_free((void*)fname_remap);
 			return NULL;
 		}
 	}
@@ -1396,8 +1396,7 @@ do_mono_image_open (const char *fname, MonoImageOpenStatus *status,
 		g_free (image);
 		if (status)
 			*status = MONO_IMAGE_IMAGE_INVALID;
-		if (remapped)
-			g_free((void*)fname);
+		g_free((void*)fname_remap);
 		return NULL;
 	}
 	iinfo = g_new0 (MonoCLIImageInfo, 1);
@@ -1411,8 +1410,7 @@ do_mono_image_open (const char *fname, MonoImageOpenStatus *status,
 	image->core_clr_platform_code = mono_security_core_clr_determine_platform_image (image);
 
 	mono_file_map_close (filed);
-	if (remapped)
-		g_free((void*)fname);
+	g_free((void*)fname_remap);
 	return do_mono_image_load (image, status, care_about_cli, care_about_pecoff);
 }
 

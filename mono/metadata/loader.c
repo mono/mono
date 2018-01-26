@@ -1115,26 +1115,26 @@ static MonoDl*
 cached_module_load (const char *name, int flags, char **err)
 {
 	MonoDl *res;
+	const char *name_remap;
 
 	if (err)
 		*err = NULL;
-	gboolean remapped = mono_unity_file_remap_path(&name);
+	if (name_remap = mono_unity_remap_path (name))
+		name = name_remap;
 	global_loader_data_lock ();
 	if (!global_module_map)
 		global_module_map = g_hash_table_new (g_str_hash, g_str_equal);
 	res = (MonoDl *)g_hash_table_lookup (global_module_map, name);
 	if (res) {
 		global_loader_data_unlock ();
-		if (remapped)
-			g_free((void*)name);
+		g_free((void*)name_remap);
 		return res;
 	}
 	res = mono_dl_open (name, flags, err);
 	if (res)
 		g_hash_table_insert (global_module_map, g_strdup (name), res);
 	global_loader_data_unlock ();
-	if (remapped)
-		g_free((void*)name);
+	g_free((void*)name_remap);
 	return res;
 }
 
