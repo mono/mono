@@ -375,8 +375,13 @@ case "$host" in
 		use_sigposix=yes
 		;;
 	*-*-aix*|*-*-os400*)
-		CPPFLAGS="$CPPFLAGS -DGC_AIX_THREADS -D_ALL_SOURCE -D_LARGE_FILES -D_REENTRANT"
+		dnl Set up a 64-bit build
+		dnl Some of these flags may be redundant; but a 64-bit build does require some moving parts
+		CPPFLAGS="$CPPFLAGS -maix64 -Wl,-b64 -DGC_AIX_THREADS -D_ALL_SOURCE -D_LARGE_FILES -D_REENTRANT"
+		LDFLAGS="-maix64 -Wl,-b64"
 		libmono_cflags="-D_REENTRANT"
+		AR="ar -X64"
+		export OBJECT_MODE=64
 		dnl SGen is the future
 		support_boehm=no
 		with_gc=sgen
