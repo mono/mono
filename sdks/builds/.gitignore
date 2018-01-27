@@ -2,6 +2,8 @@
 .stamp-*
 *.mk.generated
 *.config.cache
+mxe-Win32/
+mxe-Win64/
 android-armeabi-*/
 android-armeabi-v7a-*/
 android-arm64-v8a-*/
