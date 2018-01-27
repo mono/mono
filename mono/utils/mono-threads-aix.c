@@ -19,7 +19,7 @@ mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize)
 	struct __pthrdsinfo pi;
 	pthread_t pt;
 	int res, rbv, ps;
-	int rb[64];
+	char rb[255];
 
 	pt = pthread_self();
 	ps = sizeof(pi);
@@ -31,7 +31,11 @@ mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize)
 	res = pthread_getthrds_np(&pt, PTHRDSINFO_QUERY_ALL, &pi, ps, rb, &rbv);
 	/* FIXME: are these the right values? */
 	*staddr = (void*)(pi.__pi_stackaddr);
-	*stsize = pi.__pi_stacksize;
+	/*
+	 * ruby doesn't use stacksize; see:
+	 * github.com/ruby/ruby/commit/a2594be783c727c6034308f5294333752c3845bb
+	 */
+	*stsize = pi.__pi_stackend - pi.__pi_stackaddr;
 }
 
 #endif
