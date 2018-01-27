@@ -250,15 +250,18 @@ namespace System.Diagnostics {
 		void GetFullNameForStackTrace (StringBuilder sb, MethodBase mi, bool needsNewLine, out bool skipped)
 		{
 			var declaringType = mi.DeclaringType;
-			if (declaringType.IsGenericType && !declaringType.IsGenericTypeDefinition)
-				declaringType = declaringType.GetGenericTypeDefinition ();
 
 			// Get generic definition
-			const BindingFlags bindingflags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
-			foreach (var m in declaringType.GetMethods (bindingflags)) {
-				if (m.MetadataToken == mi.MetadataToken) {
-					mi = m;
-					break;
+			if (declaringType.IsGenericType && !declaringType.IsGenericTypeDefinition) {
+				declaringType = declaringType.GetGenericTypeDefinition ();
+
+				const BindingFlags bindingflags = BindingFlags.Instance | BindingFlags.Static |
+					BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
+				foreach (var m in declaringType.GetMethods (bindingflags)) {
+					if (m.MetadataToken == mi.MetadataToken) {
+						mi = m;
+						break;
+					}
 				}
 			}
 
@@ -276,6 +279,7 @@ namespace System.Diagnostics {
 			sb.Append (mi.Name);
 
 			if (mi.IsGenericMethod) {
+				mi = ((MethodInfo)mi).GetGenericMethodDefinition ();
 				Type[] gen_params = mi.GetGenericArguments ();
 				sb.Append ("[");
 				for (int j = 0; j < gen_params.Length; j++) {
