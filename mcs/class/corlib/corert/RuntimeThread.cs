@@ -5,7 +5,7 @@ namespace Internal.Runtime.Augments
 {
 	class RuntimeThread
 	{
-		Thread thread = null;
+		readonly Thread thread;
 
 		RuntimeThread (Thread t) { thread = t; }
 		
