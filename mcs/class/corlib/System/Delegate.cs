@@ -115,7 +115,7 @@ namespace System
 			}
 		}
 
-		internal IntPtr GetNativeFunctionPointer() {
+		internal IntPtr GetNativeFunctionPointer () {
 			throw new NotImplementedException (); // or return method_ptr?
 		}
 
