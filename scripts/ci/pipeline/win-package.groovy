@@ -84,3 +84,16 @@ node ("w64") {
         }
     }
 }
+
+if (isReleaseJob) {
+    stage("Signing") {
+        timeout(time: 30, unit: 'MINUTES') {
+            // waits until the signing job posts completion signal to this pipeline input
+            input id: 'FinishedSigning', message: 'Waiting for signing to finish...', submitter: 'monojenkins'
+            echo "Signing done."
+        }
+    }
+}
+else {
+    echo "Not a release job, skipping signing."
+}
