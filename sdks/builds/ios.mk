@@ -262,6 +262,7 @@ $(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe: $(wildcard $(TOP)/tools/offs
 # Parameters:
 #  $(1): target (cross32 or cross64)
 #  $(2): arch (arm or aarch64)
+#  $(3): llvm (llvm32 or llvm64)
 #
 # Flags:
 #  ios_$(1)_AC_VARS
@@ -309,7 +310,8 @@ _ios_$(1)_CONFIGURE_FLAGS= \
 	--enable-dtrace=yes \
 	--enable-icall-symbol-map \
 	--enable-minimal=com,remoting \
-	--with-cross-offsets=$(2)-apple-darwin10.h
+	--with-cross-offsets=$(2)-apple-darwin10.h \
+	--with-llvm=$$(TOP)/sdks/out/llvm-$(3)
 
 _ios_$(1)_CONFIGURE_ENVIRONMENT= \
 	CC="$$(_ios_$(1)_CC)" \
@@ -321,7 +323,7 @@ _ios_$(1)_CONFIGURE_ENVIRONMENT= \
 .stamp-ios-$(1)-toolchain:
 	touch $$@
 
-.stamp-ios-$(1)-configure: $$(TOP)/configure build-llvm
+.stamp-ios-$(1)-configure: $$(TOP)/configure | package-llvm-$(3)
 	mkdir -p $$(TOP)/sdks/builds/ios-$(1)
 	cd $$(TOP)/sdks/builds/ios-$(1) && PATH="$$(PLATFORM_BIN):$$$$PATH" $$(TOP)/configure $$(_ios_$(1)_AC_VARS) $$(_ios_$(1)_CONFIGURE_ENVIRONMENT) $$(_ios_$(1)_CONFIGURE_FLAGS)
 	touch $$@
@@ -349,9 +351,8 @@ TARGETS += ios-$(1)
 
 endef
 
-ios_cross32_CONFIGURE_FLAGS = --build=i386-apple-darwin10 --with-llvm=$(TOP)/sdks/out/llvm32
-$(eval $(call iOSCrossTemplate,cross32,arm))
-ios_cross64_CONFIGURE_FLAGS = --with-llvm=$(TOP)/sdks/out/llvm64
-$(eval $(call iOSCrossTemplate,cross64,aarch64))
+ios_cross32_CONFIGURE_FLAGS=--build=i386-apple-darwin10
+$(eval $(call iOSCrossTemplate,cross32,arm,llvm32))
+$(eval $(call iOSCrossTemplate,cross64,aarch64,llvm64))
 
 
