@@ -79,7 +79,6 @@ node ("w64") {
                     uploadZips: false,
                     virtualPath: "${monoBranch}/${env.BUILD_NUMBER}/"
                 ])
-                currentBuild.description = "<hr/><h2>DOWNLOAD: <a href=\"https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${packageFileNameX86}\">${packageFileNameX86}</a> -- <a href=\"https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${packageFileNameX64}\">${packageFileNameX64}</a></h2><hr/>"
             }
         }
     }
@@ -97,3 +96,5 @@ if (isReleaseJob) {
 else {
     echo "Not a release job, skipping signing."
 }
+
+currentBuild.description = "<hr/><h2>DOWNLOAD: <a href=\"https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${packageFileNameX86}\">${packageFileNameX86}</a> -- <a href=\"https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${packageFileNameX64}\">${packageFileNameX64}</a></h2><hr/>"
