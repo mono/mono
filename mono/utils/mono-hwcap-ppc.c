@@ -63,11 +63,15 @@ mono_hwcap_arch_init (void)
 	}
 #elif defined(_AIX)
 	/*
-	 * FIXME: criteria for mono_hwcap_ppc_has_icache_snoop
-	 * and mono_hwcap_ppc_has_multiple_ls_units
+	 * FIXME: ensure these are valid, and we match Linux ones
 	 */
-	mono_hwcap_ppc_is_isa_2x = __power_8_andup() ? TRUE : FALSE;
+	mono_hwcap_ppc_is_isa_2x = __power_4_andup() ? TRUE : FALSE;
 	mono_hwcap_ppc_is_isa_64 = __cpu64() ? TRUE: FALSE;
-	mono_hwcap_ppc_has_move_fpr_gpr = _system_configuration.version >= PV_6_1 ? TRUE : FALSE;
+	/*
+	 * I dont see a way to get extended POWER6 and the PV_6_1
+	 * def seems to be trigged on the POWER6 here despite not
+	 * having these extended instructions, so POWER7 it is
+	 */
+	mono_hwcap_ppc_has_move_fpr_gpr = __power_7_andup() ? TRUE : FALSE;
 #endif
 }
