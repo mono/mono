@@ -29,7 +29,7 @@
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/DataTableLoadRowTest.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/DataTableReaderTest.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/DataTableReadWriteXmlTest.cs
-../../../external/corefx/src/System.Data.Common/tests/System/Data/DataTableReadXmlSchemaTest.cs
+#../../../external/corefx/src/System.Data.Common/tests/System/Data/DataTableReadXmlSchemaTest.cs
 #../../../external/corefx/src/System.Data.Common/tests/System/Data/DataTableTest.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/DataTableTest2.cs
 ../../../external/corefx/src/System.Data.Common/tests/System/Data/DataTableTest3.cs
