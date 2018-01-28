@@ -3526,7 +3526,7 @@ mini_create_ftnptr (MonoDomain *domain, gpointer addr)
 static gpointer
 mini_get_addr_from_ftnptr (gpointer descr)
 {
-#if ((defined(__ppc64__) || defined(__powerpc64__)) && _CALL_ELF != 2)
+#if ((defined(__ppc64__) || defined(__powerpc64__) || defined(_ARCH_PPC64)) && _CALL_ELF != 2)
 	return *(gpointer*)descr;
 #else
 	return descr;

@@ -25,6 +25,8 @@
 #if defined(__linux__) && defined(HAVE_SYS_AUXV_H)
 #include <string.h>
 #include <sys/auxv.h>
+#elif defined(_AIX)
+#include <sys/systemcfg.h>
 #endif
 
 void
@@ -59,5 +61,13 @@ mono_hwcap_arch_init (void)
 		if (!strcmp (str, "ppc970") || (!strncmp (str, "power", 5) && str [5] >= '4' && str [5] <= '7'))
 			mono_hwcap_ppc_has_multiple_ls_units = TRUE;
 	}
+#elif defined(_AIX)
+	/*
+	 * FIXME: criteria for mono_hwcap_ppc_has_icache_snoop
+	 * and mono_hwcap_ppc_has_multiple_ls_units
+	 */
+	mono_hwcap_ppc_is_isa_2x = __power_8_andup() ? TRUE : FALSE;
+	mono_hwcap_ppc_is_isa_64 = __cpu64() ? TRUE: FALSE;
+	mono_hwcap_ppc_has_move_fpr_gpr = _system_configuration.version >= PV_6_1 ? TRUE : FALSE;
 #endif
 }
