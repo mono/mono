@@ -171,7 +171,7 @@ typedef struct MonoCompileArch {
 #define PPC_LAST_FPARG_REG ppc_f13
 #define PPC_PASS_STRUCTS_BY_VALUE 1
 #define PPC_THREAD_PTR_REG ppc_r13
-//#define MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX 1
+#define MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX 1
 #define PPC_FIRST_ARG_REG ppc_r3
 #define PPC_LAST_ARG_REG ppc_r10
 #define PPC_FIRST_FPARG_REG ppc_f1
