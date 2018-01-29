@@ -11,6 +11,7 @@ using System.Runtime.CompilerServices;
 using Microsoft.Internal;
 using Microsoft.Internal.Collections;
 using System.Threading;
+using Lock = Microsoft.Internal.Lock;
 
 namespace System.ComponentModel.Composition.Hosting
 {
