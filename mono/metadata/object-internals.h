@@ -122,8 +122,17 @@ struct _MonoArray {
 	MonoArrayBounds *bounds;
 	/* total number of elements of the array */
 	mono_array_size_t max_length; 
+#if defined(_AIX)
+	/*
+	 * HACK: doubles in structs always align to 4 on AIX...
+	 * even on 64-bit - this is bad for aligned usage like
+	 * what FastCopy does
+	 */
+	guint64 vector [MONO_ZERO_LEN_ARRAY];
+#else
 	/* we use double to ensure proper alignment on platforms that need it */
 	double vector [MONO_ZERO_LEN_ARRAY];
+#endif
 };
 
 #define MONO_SIZEOF_MONO_ARRAY (sizeof (MonoArray) - MONO_ZERO_LEN_ARRAY * sizeof (double))

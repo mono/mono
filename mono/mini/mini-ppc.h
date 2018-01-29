@@ -152,8 +152,13 @@ typedef struct MonoCompileArch {
 #elif defined(_AIX)
 /* FIXME: are these values valid? on 32-bit? */
 #define PPC_RET_ADDR_OFFSET 16
+#if defined(__mono_ppc64__)
+#define PPC_STACK_PARAM_OFFSET 112
+#define PPC_MINIMAL_STACK_SIZE 112
+#else
 #define PPC_STACK_PARAM_OFFSET 56
 #define PPC_MINIMAL_STACK_SIZE 56
+#endif
 #define PPC_LARGEST_STRUCT_SIZE_TO_RETURN_VIA_REGISTERS 0
 #define PPC_MOST_FLOAT_STRUCT_MEMBERS_TO_RETURN_VIA_REGISTERS 0
 #define PPC_PASS_SMALL_FLOAT_STRUCTS_IN_FR_REGS 0
