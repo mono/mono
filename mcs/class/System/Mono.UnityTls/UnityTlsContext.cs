@@ -185,6 +185,8 @@ namespace Mono.Unity
 
 			if (errorState.code == UnityTls.unitytls_error_code.UNITYTLS_USER_WOULD_BLOCK)
 				wouldBlock = true;
+			else if (errorState.code == UnityTls.unitytls_error_code.UNITYTLS_STREAM_CLOSED)
+				return (0, false);	// According to Apple and Btls implementation this is how we should handle gracefully closed connections.
 			else
 				Mono.Unity.Debug.CheckAndThrow (errorState, "Failed to read data from TLS context");
 
@@ -206,6 +208,8 @@ namespace Mono.Unity
 
 			if (errorState.code == UnityTls.unitytls_error_code.UNITYTLS_USER_WOULD_BLOCK)
 				wouldBlock = true;
+			else if (errorState.code == UnityTls.unitytls_error_code.UNITYTLS_STREAM_CLOSED)
+				return (0, false);	// According to Apple and Btls implementation this is how we should handle gracefully closed connections.
 			else
 				Mono.Unity.Debug.CheckAndThrow (errorState, "Failed to write data to TLS context");
 
@@ -214,6 +218,11 @@ namespace Mono.Unity
 
 		public override void Shutdown ()
 		{
+			if(Settings != null && Settings.SendCloseNotify) {
+				var err = UnityTls.NativeInterface.unitytls_errorstate_create ();
+				UnityTls.NativeInterface.unitytls_tlsctx_notify_close (tlsContext, &err);
+			}
+
 			// Destroy native UnityTls objects
 			UnityTls.NativeInterface.unitytls_x509list_free (requestedClientCertChain);
 			UnityTls.NativeInterface.unitytls_key_free (requestedClientKey);
@@ -407,7 +416,6 @@ namespace Mono.Unity
 			}
 		}
 
-		
 		[MonoPInvokeCallback (typeof (UnityTls.unitytls_tlsctx_certificate_callback))]
 		static private void CertificateCallback (void* userData, UnityTls.unitytls_tlsctx* ctx, Int8* cn, size_t cnLen, UnityTls.unitytls_x509name* caList, size_t caListLen, UnityTls.unitytls_x509list_ref* chain, UnityTls.unitytls_key_ref* key, UnityTls.unitytls_errorstate* errorState)
 		{

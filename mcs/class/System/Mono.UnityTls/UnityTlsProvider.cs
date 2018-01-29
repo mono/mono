@@ -82,7 +82,6 @@ namespace Mono.Unity
 				//validator.Settings.CheckCertificateRevocationStatus	// not used by mono?
 				//validator.Settings.CertificateValidationTime
 				//validator.Settings.CertificateSearchPaths				// currently only used by MonoBtlsProvider
-				//validator.Settings.SendCloseNotify					// UnityTls always sends a close notify if the underlying impl supports it. Currently only used by MonoBtlsProvider
 
 				CertHelper.AddCertificatesToNativeChain (certificatesNative, certificates, &errorState);
 				var certificatesNativeRef = UnityTls.NativeInterface.unitytls_x509list_get_ref (certificatesNative, &errorState);

@@ -44,13 +44,15 @@ namespace Mono.Unity
             UNITYTLS_INTERNAL_ERROR,        // Internal implementation error.
             UNITYTLS_NOT_SUPPORTED,         // The requested action is not supported on the current platform/implementation.
             UNITYTLS_ENTROPY_SOURCE_FAILED, // Failed to generate requested amount of entropy data.
+            UNITYTLS_STREAM_CLOSED,         // The operation is not possible because the stream between the peers was closed.
 
+            UNITYTLS_USER_CUSTOM_ERROR_START    = 0x100000,
             UNITYTLS_USER_WOULD_BLOCK,      // Can be set by the user to signal that a call (e.g. read/write callback) would block and needs to be called again.
                                             // Some implementations may set this if not all bytes have been read/written.
-            UNITYTLS_USER_STREAM_CLOSED,    // Can be set by the user to cancel a read/write operation.
             UNITYTLS_USER_READ_FAILED,      // Can be set by the user to indicate a failed read operation.
             UNITYTLS_USER_WRITE_FAILED,     // Can be set by the user to indicate a failed write operation.
             UNITYTLS_USER_UNKNOWN_ERROR,    // Can be set by the user to indicate a generic error.
+            UNITYTLS_USER_CUSTOM_ERROR_END      = 0x200000,
         }
 
         [StructLayout (LayoutKind.Sequential)]
@@ -177,10 +179,10 @@ namespace Mono.Unity
 
             public delegate unitytls_key_ref                              unitytls_key_get_ref_t(unitytls_key* key, unitytls_errorstate* errorState);
             public unitytls_key_get_ref_t                                 unitytls_key_get_ref;
-            public delegate unitytls_key*                                 unitytls_key_parse_pem_t(Int8* buffer, size_t bufferLen, Int8* password, size_t passwordLen, unitytls_errorstate* errorState);
-            public unitytls_key_parse_der_t                               unitytls_key_parse_pem;
             public delegate unitytls_key*                                 unitytls_key_parse_der_t(UInt8* buffer, size_t bufferLen, Int8* password, size_t passwordLen, unitytls_errorstate* errorState);
             public unitytls_key_parse_der_t                               unitytls_key_parse_der;
+            public delegate unitytls_key*                                 unitytls_key_parse_pem_t(Int8* buffer, size_t bufferLen, Int8* password, size_t passwordLen, unitytls_errorstate* errorState);
+            public unitytls_key_parse_pem_t                               unitytls_key_parse_pem;
             public delegate void                                          unitytls_key_free_t(unitytls_key* key);
             public unitytls_key_free_t                                    unitytls_key_free;
 
@@ -231,8 +233,13 @@ namespace Mono.Unity
             public unitytls_tlsctx_read_t                                 unitytls_tlsctx_read;
             public delegate size_t                                        unitytls_tlsctx_write_t(unitytls_tlsctx* ctx, UInt8* data, size_t bufferLen, unitytls_errorstate* errorState);
             public unitytls_tlsctx_write_t                                unitytls_tlsctx_write;
+            public delegate void                                          unitytls_tlsctx_notify_close_t(unitytls_tlsctx* ctx, unitytls_errorstate* errorState);
+            public unitytls_tlsctx_notify_close_t                         unitytls_tlsctx_notify_close;
             public delegate void                                          unitytls_tlsctx_free_t(unitytls_tlsctx* ctx);
             public unitytls_tlsctx_free_t                                 unitytls_tlsctx_free;
+
+            public delegate void                                          unitytls_random_generate_bytes_t(UInt8 * buffer, size_t bufferLen, unitytls_errorstate * errorState);
+            public unitytls_random_generate_bytes_t                       unitytls_random_generate_bytes;
         }
 
         [MethodImplAttribute (MethodImplOptions.InternalCall)]
