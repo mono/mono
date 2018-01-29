@@ -1035,7 +1035,7 @@ namespace MonoTests.System.Net
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNotNull (ex.ParamName, "#5");
-				Assert.AreEqual ("path", ex.ParamName, "#6");
+				Assert.AreEqual ("address", ex.ParamName, "#6");
 			}
 		}
 
