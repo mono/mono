@@ -277,7 +277,6 @@ XTEST_COVERAGE_FLAGS = -O=-aot --profile=coverage:output=$(topdir)/class/lib/$(P
 endif
 
 check: run-xunit-test-local
-run-xunit-test: run-xunit-test-local
 xunit-test-local: $(xunit_test_lib)
 run-xunit-test-local: run-xunit-test-lib
 

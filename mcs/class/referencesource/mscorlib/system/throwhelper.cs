@@ -52,10 +52,15 @@ namespace System {
     using System.Collections.Generic;
 
     [Pure]
+#if MONO
+    [System.Diagnostics.StackTraceHidden]
+#endif
     internal static partial class ThrowHelper {
+#if !MONO
         internal static void ThrowArgumentOutOfRangeException() {        
             ThrowArgumentOutOfRangeException(ExceptionArgument.index, ExceptionResource.ArgumentOutOfRange_Index);            
         }
+#endif
 
         internal static void ThrowWrongKeyTypeArgumentException(object key, Type targetType) {
             throw new ArgumentException(Environment.GetResourceString("Arg_WrongType", key, targetType), "key");
@@ -147,6 +152,13 @@ namespace System {
         {
             return new ArgumentOutOfRangeException(GetArgumentName(argument), resource);
         }
+
+        internal static void ThrowArgumentOutOfRange_IndexException()
+        {
+            throw GetArgumentOutOfRangeException(ExceptionArgument.index,
+                                                    SR.ArgumentOutOfRange_Index);
+        }
+
         internal static void ThrowIndexArgumentOutOfRange_NeedNonNegNumException()
         {
             throw GetArgumentOutOfRangeException(ExceptionArgument.index,

@@ -37,7 +37,7 @@ node ("osx-amd64") {
 
                 // build the .pkg
                 timeout (time: 420, unit: 'MINUTES') {
-                    withEnv (["MONO_BRANCH=${isPr ? '' : monoBranch}"]) {
+                    withEnv (["MONO_BRANCH=${isPr ? '' : monoBranch}", "MONO_BUILD_REVISION=${commitHash}"]) {
                         sshagent (credentials: ['mono-extensions-ssh']) {
                             sh "external/bockbuild/bb MacSDKRelease --arch darwin-universal --verbose --package ${isReleaseJob ? '--release' : ''}"
                         }
@@ -66,23 +66,31 @@ node ("osx-amd64") {
                     uploadZips: false,
                     virtualPath: "${monoBranch}/${env.BUILD_NUMBER}/"
                 ])
-                currentBuild.description = "<hr/><h2>DOWNLOAD: <a href=\"https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${packageFileName}\">${packageFileName}</a></h2><hr/>"
             }
-        }
-    }
-}
 
-if (isReleaseJob) {
-    stage("Signing") {
-        timeout(time: 30, unit: 'MINUTES') {
-            // waits until the signing job posts completion signal to this pipeline input
-            input id: 'FinishedSigning', message: 'Waiting for signing to finish...', submitter: 'monojenkins'
-            echo "Signing done."
+            if (isReleaseJob) {
+                stage("Signing") {
+                    timeout(time: 30, unit: 'MINUTES') {
+                        // waits until the signing job posts completion signal to this pipeline input
+                        input id: 'FinishedSigning', message: 'Waiting for signing to finish...', submitter: 'monojenkins'
+                        echo "Signing done."
+                    }
+                }
+            }
+            else {
+                echo "Not a release job, skipping signing."
+            }
+
+            currentBuild.description = "<hr/><h2>DOWNLOAD: <a href=\"https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${packageFileName}\">${packageFileName}</a></h2><hr/>"
+            step([
+                $class: 'GitHubCommitStatusSetter',
+                commitShaSource: [$class: "ManuallyEnteredShaSource", sha: commitHash],
+                contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: 'PKG-mono'],
+                statusBackrefSource: [$class: 'ManuallyEnteredBackrefSource', backref: "https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${packageFileName}"],
+                statusResultSource: [$class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', state: 'SUCCESS', message: "${packageFileName}"]]]
+            ])
         }
     }
-}
-else {
-    echo "Not a release job, skipping signing."
 }
 
 if (!isPr) {
