@@ -67,31 +67,31 @@ node ("osx-amd64") {
                     virtualPath: "${monoBranch}/${env.BUILD_NUMBER}/"
                 ])
             }
+
+            if (isReleaseJob) {
+                stage("Signing") {
+                    timeout(time: 30, unit: 'MINUTES') {
+                        // waits until the signing job posts completion signal to this pipeline input
+                        input id: 'FinishedSigning', message: 'Waiting for signing to finish...', submitter: 'monojenkins'
+                        echo "Signing done."
+                    }
+                }
+            }
+            else {
+                echo "Not a release job, skipping signing."
+            }
+
+            currentBuild.description = "<hr/><h2>DOWNLOAD: <a href=\"https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${packageFileName}\">${packageFileName}</a></h2><hr/>"
+            step([
+                $class: 'GitHubCommitStatusSetter',
+                commitShaSource: [$class: "ManuallyEnteredShaSource", sha: commitHash],
+                contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: 'PKG-mono'],
+                statusBackrefSource: [$class: 'ManuallyEnteredBackrefSource', backref: "https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${packageFileName}"],
+                statusResultSource: [$class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', state: 'SUCCESS', message: "${packageFileName}"]]]
+            ])
         }
     }
 }
-
-if (isReleaseJob) {
-    stage("Signing") {
-        timeout(time: 30, unit: 'MINUTES') {
-            // waits until the signing job posts completion signal to this pipeline input
-            input id: 'FinishedSigning', message: 'Waiting for signing to finish...', submitter: 'monojenkins'
-            echo "Signing done."
-        }
-    }
-}
-else {
-    echo "Not a release job, skipping signing."
-}
-
-currentBuild.description = "<hr/><h2>DOWNLOAD: <a href=\"https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${packageFileName}\">${packageFileName}</a></h2><hr/>"
-step([
-    $class: 'GitHubCommitStatusSetter',
-    commitShaSource: [$class: "ManuallyEnteredShaSource", sha: commitHash],
-    contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: 'PKG-mono'],
-    statusBackrefSource: [$class: 'ManuallyEnteredBackrefSource', backref: "https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${packageFileName}"],
-    statusResultSource: [$class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', state: 'SUCCESS', message: "${packageFileName}"]]]
-])
 
 if (!isPr) {
     // trigger the Windows build
