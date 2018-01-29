@@ -85,6 +85,13 @@ else {
 }
 
 currentBuild.description = "<hr/><h2>DOWNLOAD: <a href=\"https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${packageFileName}\">${packageFileName}</a></h2><hr/>"
+step([
+    $class: 'GitHubCommitStatusSetter',
+    commitShaSource: [$class: "ManuallyEnteredShaSource", sha: commitHash],
+    contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: 'PKG-mono'],
+    statusBackrefSource: [$class: 'ManuallyEnteredBackrefSource', backref: "https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${packageFileName}"],
+    statusResultSource: [$class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', state: 'SUCCESS', message: "${packageFileName}"]]]
+])
 
 if (!isPr) {
     // trigger the Windows build
