@@ -6,6 +6,7 @@ using System.Diagnostics.Contracts;
 
 namespace System.Threading.Tasks
 {
+	// these members were copied from https://github.com/mono/mono/blob/7b4dfeebc40cf8c027819b8b7bd85a4e7c87ad50/mcs/class/referencesource/mscorlib/system/threading/Tasks/Task.cs#L220-L246
 	partial class Task
 	{
 		// This dictonary relates the task id, from an operation id located in the Async Causality log to the actual

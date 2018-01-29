@@ -1599,7 +1599,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/DebuggerSupport.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/DebuggerSupport.Dummy.cs
 ../../../external/corefx/src/Common/src/System/Threading/Tasks/BeginEndAwaitableAdapter.cs
-../../../external/corert/src/System.Private.CoreLib/shared/System/Threading/Tasks/TaskCanceledException.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/TaskCanceledException.cs
 ../referencesource/mscorlib/system/threading/Tasks/AsyncCausalityTracer.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/TaskFactory.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/FutureFactory.cs
@@ -1610,8 +1610,8 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/Task.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/Future.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/TaskContinuation.cs
-../../../external/corert/src/System.Private.CoreLib/shared/System/Threading/Tasks/TaskCompletionSource.cs
-../../../external/corert/src/System.Private.CoreLib/shared/System/Threading/Tasks/TaskSchedulerException.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/TaskCompletionSource.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/TaskSchedulerException.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/ThreadPoolTaskScheduler.cs
 ../../../external/corefx/src/System.Threading.Tasks.Parallel/src/System/Threading/Tasks/*.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Runtime/CompilerServices/DependencyReductionRootAttribute.cs
@@ -1632,6 +1632,9 @@ ReferenceSources/AppContextDefaultValues.cs
 
 coreclr/SorterArray.cs
 
+corefx/AwaitTaskContinuation.cs
+corefx/SynchronizationContext.cs
+
 corert/AddrofIntrinsics.cs
 corert/Debug.cs
 corert/EnvironmentAugments.cs
@@ -1639,11 +1642,8 @@ corert/RelocatedTypeAttribute.cs
 corert/RuntimeThread.cs
 corert/Stream.cs
 corert/ThreadPoolBoundHandle.cs
-corert/TaskScheduler.cs
 corert/Task.cs
-corert/AwaitTaskContinuation.cs
 corert/ThreadPool.cs
-corert/SynchronizationContext.cs
 corert/RuntimeAugments.cs
 
 ../../../external/corert/src/Common/src/Interop/Unix/Interop.Libraries.cs
