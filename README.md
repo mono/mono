@@ -541,7 +541,7 @@ file for information about Microsoft's patent grant.
 Mono Trademark Use Policy
 =========================
 
-The use of trademarks and logos for Mono can be found [here] (http://www.dotnetfoundation.org/legal/mono-tm). 
+The use of trademarks and logos for Mono can be found [here](http://www.dotnetfoundation.org/legal/mono-tm). 
 
 Maintaining the Class Library Solution Files
 ============================================
