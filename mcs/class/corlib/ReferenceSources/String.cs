@@ -36,6 +36,7 @@
 
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Globalization;
 
 namespace System
 {
@@ -59,6 +60,16 @@ namespace System
 				return new ReadOnlySpan<char> (start, value.Length);
 		}
 
+		internal static int CompareOrdinal (ReadOnlySpan<char> strA, ReadOnlySpan<char> strB)
+		{
+			int minLength = Math.Min (strA.Length, strB.Length);
+			for (int i = 0; i < minLength; i++) {
+				if (strA[i] != strB[i])
+					return strA[i] - strB[i];
+			}
+
+			return strA.Length - strB.Length;
+		}
 
 		internal static unsafe int CompareOrdinalUnchecked (String strA, int indexA, int lenA, String strB, int indexB, int lenB)
 		{
@@ -171,6 +182,119 @@ namespace System
 					ap++;
 				}
 			}
+			return -1;
+		}
+
+		internal unsafe int IndexOfUncheckedIgnoreCase (string value, int startIndex, int count)
+		{
+			int valueLen = value.Length;
+			if (count < valueLen)
+				return -1;
+
+//			if (valueLen <= 1) {
+//				if (valueLen == 1)
+//					return IndexOfUnchecked (value[0], startIndex, count);
+//				return startIndex;
+//			}
+
+			var ti = CultureInfo.InvariantCulture.TextInfo;
+
+			fixed (char* thisptr = &m_firstChar, valueptr = value) {
+				char* ap = thisptr + startIndex;
+				char* thisEnd = ap + count - valueLen + 1;
+				char valueUpper = ti.ToUpper (*valueptr);
+				while (ap != thisEnd) {
+					if (ti.ToUpper (*ap) == valueUpper) {
+						for (int i = 1; i < valueLen; i++) {
+							if (ti.ToUpper (ap[i]) != ti.ToUpper (valueptr [i]))
+								goto NextVal;
+						}
+						return (int)(ap - thisptr);
+					}
+					NextVal:
+					ap++;
+				}
+			}
+			return -1;
+		}
+
+		internal unsafe int LastIndexOfUnchecked (string value, int startIndex, int count)
+		{
+			int valueLen = value.Length;
+			if (count < valueLen)
+				return -1;
+
+			if (valueLen == 0)
+				return startIndex;
+
+			fixed (char* thisptr = &m_firstChar, valueptr = value) {
+				char* ap = thisptr + startIndex;
+
+				char* thisEnd = ap - count + valueLen - 1;
+				char* valueEnd = valueptr + valueLen - 1;
+
+				while (ap != thisEnd) {
+					if (*ap == *valueEnd) {
+						char* apEnd = ap;
+						while (valueptr != valueEnd) {
+							valueEnd--;
+							ap--;
+							if (*ap != *valueEnd) {
+								valueEnd = valueptr + valueLen - 1;
+								ap = apEnd;
+								goto NextVal;
+							}
+						}
+
+						return (int)(ap - thisptr);
+					}
+				NextVal:
+					ap--;
+				}
+			}
+
+			return -1;
+		}
+
+		internal unsafe int LastIndexOfUncheckedIgnoreCase (string value, int startIndex, int count)
+		{
+			int valueLen = value.Length;
+			if (count < valueLen)
+				return -1;
+
+			if (valueLen == 0)
+				return startIndex;
+
+			var ti = CultureInfo.InvariantCulture.TextInfo;
+
+			fixed (char* thisptr = &m_firstChar, valueptr = value) {
+				char* ap = thisptr + startIndex;
+
+				char* thisEnd = ap - count + valueLen - 1;
+				char* valueEnd = valueptr + valueLen - 1;
+
+				var valueEndUpper = ti.ToUpper (*valueEnd);
+
+				while (ap != thisEnd) {
+					if (ti.ToUpper (*ap) == valueEndUpper) {
+						char* apEnd = ap;
+						while (valueptr != valueEnd) {
+							valueEnd--;
+							ap--;
+							if (ti.ToUpper (*ap) != ti.ToUpper (*valueEnd)) {
+								valueEnd = valueptr + valueLen - 1;
+								ap = apEnd;
+								goto NextVal;
+							}
+						}
+
+						return (int)(ap - thisptr);
+					}
+				NextVal:
+					ap--;
+				}
+			}
+
 			return -1;
 		}
 

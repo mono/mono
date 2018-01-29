@@ -6,6 +6,8 @@ namespace System
 		public static readonly bool IsNotWinRT = true;
 		public static readonly bool IsWinRT = false;
 		public static readonly bool IsWindowsNanoServer = false;
+
+		public static bool IsWindows7 => false;
 		public static bool IsFullFramework => true;
 		public static bool IsNonZeroLowerBoundArraySupported => true;
 		public static bool IsUap => false;
