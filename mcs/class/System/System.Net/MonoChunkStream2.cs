@@ -36,7 +36,7 @@ namespace System.Net
 			get;
 		}
 
-		protected MonoChunkStream Decoder {
+		protected MonoChunkParser Decoder {
 			get;
 		}
 
@@ -46,7 +46,7 @@ namespace System.Net
 		{
 			Headers = headers;
 
-			Decoder = new MonoChunkStream (headers);
+			Decoder = new MonoChunkParser (headers);
 		}
 
 		public override async Task<int> ReadAsync (byte[] buffer, int offset, int size,
