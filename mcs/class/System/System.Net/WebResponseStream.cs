@@ -405,9 +405,6 @@ namespace System.Net
 
 				innerStreamWrapper = new BufferedReadStream (Operation, null, bos);
 
-				if (totalRead != 0)
-					Console.Error.WriteLine ($"{ME} MARTIN TEST: {totalRead}");
-
 				totalRead = 0;
 				nextReadCalled = true;
 				myReadTcs.TrySetResult (new_size);
