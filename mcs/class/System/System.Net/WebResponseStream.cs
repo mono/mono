@@ -284,7 +284,7 @@ namespace System.Net
 			ChunkedRead = (tencoding != null && tencoding.IndexOf ("chunked", StringComparison.OrdinalIgnoreCase) != -1);
 
 			if (ChunkedRead) {
-				innerStreamWrapper = new MonoChunkStream2 (
+				innerStreamWrapper = new MonoChunkStream (
 					Operation, CreateStreamWrapper (buffer), Headers);
 			} else if (!IsNtlmAuth () && contentLength > 0 && buffer.Size >= contentLength) {
 				innerStreamWrapper = new BufferedReadStream (Operation, null, buffer);

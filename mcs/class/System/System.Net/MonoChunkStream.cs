@@ -1,5 +1,5 @@
 //
-// MonoChunkStream2.cs
+// MonoChunkStream.cs
 //
 // Author:
 //       Martin Baulig <mabaul@microsoft.com>
@@ -30,7 +30,7 @@ using System.Threading.Tasks;
 
 namespace System.Net
 {
-	class MonoChunkStream2 : WebReadStream
+	class MonoChunkStream : WebReadStream
 	{
 		protected WebHeaderCollection Headers {
 			get;
@@ -40,7 +40,7 @@ namespace System.Net
 			get;
 		}
 
-		public MonoChunkStream2 (WebOperation operation, Stream innerStream,
+		public MonoChunkStream (WebOperation operation, Stream innerStream,
 		                         WebHeaderCollection headers)
 			: base (operation, innerStream)
 		{
