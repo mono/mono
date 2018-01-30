@@ -196,7 +196,7 @@ output_rule_data (void)
 	if (j >= 10)
 	{
 	    ++outline;
-	    putchar('\n');
+	    putc('\n', output_file);
 	    j = 1;
 	}
         else
@@ -218,7 +218,7 @@ output_rule_data (void)
 	if (j >= 10)
 	{
 	    ++outline;
-	    putchar('\n');
+	    putc('\n', output_file);
 	    j = 1;
 	}
 	else
@@ -248,7 +248,7 @@ output_yydefred (void)
 	else
 	{
 	    ++outline;
-	    putchar('\n');
+	    putc('\n', output_file);
 	    j = 1;
 	}
 
@@ -389,7 +389,7 @@ goto_actions (void)
 	if (j >= 10)
 	{
 	    ++outline;
-	    putchar('\n');
+	    putc('\n', output_file);
 	    j = 1;
 	}
 	else
@@ -704,7 +704,7 @@ output_base (void)
 	if (j >= 10)
 	{
 	    ++outline;
-	    putchar('\n');
+	    putc('\n', output_file);
 	    j = 1;
 	}
 	else
@@ -724,7 +724,7 @@ output_base (void)
 	if (j >= 10)
 	{
 	    ++outline;
-	    putchar('\n');
+	    putc('\n', output_file);
 	    j = 1;
 	}
 	else
@@ -744,7 +744,7 @@ output_base (void)
 	if (j >= 10)
 	{
 	    ++outline;
-	    putchar('\n');
+	    putc('\n', output_file);
 	    j = 1;
 	}
 	else
@@ -772,7 +772,7 @@ output_table (void)
 	if (j >= 10)
 	{
 	    ++outline;
-	    putchar('\n');
+	    putc('\n', output_file);
 	    j = 1;
 	}
 	else
@@ -802,7 +802,7 @@ output_check (void)
 	if (j >= 10)
 	{
 	    ++outline;
-	    putchar('\n');
+	    putc('\n', output_file);
 	    j = 1;
 	}
 	else
@@ -865,14 +865,14 @@ output_defines (const char *prefix)
 	    {
 		while ((c = *++s) != '"')
 		{
-		    putchar(c);
+		    putc(c, output_file);
 		}
 	    }
 	    else
 	    {
 		do
 		{
-		    putchar(c);
+		    putc(c, output_file);
 		}
 		while ((c = *++s));
 	    }
@@ -898,12 +898,12 @@ output_stored_text (FILE *file, const char *name)
     if ((c = getc(in)) != EOF) {
       if (c ==  '\n')
 	++outline;
-      putchar(c);
+      putc(c, output_file);
       while ((c = getc(in)) != EOF)
       {
 	if (c == '\n')
 	    ++outline;
-    	putchar(c);
+    	putc(c, output_file);
       }
       fprintf(output_file, default_line_format, ++outline + 1);
     }
@@ -945,7 +945,7 @@ output_debug (void)
 			  ++s;
 		      }
 		      else
-			  putchar(*s);
+			  putc(*s, output_file);
 		  }
 		  fprintf(output_file, "\\\"");
 	      }
@@ -961,8 +961,8 @@ output_debug (void)
 			  fprintf(output_file, " '\\\\%c", s[2]);
 		      s += 2;
 		      while (*++s != '\'')
-			  putchar(*s);
-		      putchar('\'');
+			  putc(*s, output_file);
+		      putc('\'', output_file);
 		  }
 		  else
 		      fprintf(output_file, " '%c'", s[1]);
@@ -1034,10 +1034,10 @@ output_debug (void)
 			  if (*++s == '\\')
 			      fprintf(output_file, "\\\\");
 			  else
-			      putchar(*s);
+			      putc(*s, output_file);
 		      }
 		      else
-			  putchar(*s);
+			  putc(*s, output_file);
 		  }
 		  fprintf(output_file, "\\\"\",");
 	      }
@@ -1084,10 +1084,10 @@ output_debug (void)
 			      if (*++s == '\\')
 				  fprintf(output_file, "\\\\");
 			      else
-				  putchar(*s);
+				  putc(*s, output_file);
 			  }
 			  else
-			      putchar(*s);
+			      putc(*s, output_file);
 		      }
 		      fprintf(output_file, "'\",");
 		  }
@@ -1102,8 +1102,8 @@ output_debug (void)
 		      fprintf(output_file, "\n    ");
 		      j = k;
 		  }
-		  putchar('"');
-		  do { putchar(*s); } while (*++s);
+		  putc('"', output_file);
+		  do { putc(*s, output_file); } while (*++s);
 		  fprintf(output_file, "\",");
 	      }
 	  }
@@ -1144,16 +1144,16 @@ output_trailing_text (void)
 	fprintf(output_file, line_format, lineno, input_file_name);
 	if (c == '\n')
 	    ++outline;
-	putchar(c);
+	putc(c, output_file);
 	last = c;
     }
     else
     {
 	++outline;
 	fprintf(output_file, line_format, lineno, input_file_name);
-	do { putchar(c); } while ((c = *++cptr) != '\n');
+	do { putc(c, output_file); } while ((c = *++cptr) != '\n');
 	++outline;
-	putchar('\n');
+	putc('\n', output_file);
 	last = '\n';
     }
 
@@ -1161,14 +1161,14 @@ output_trailing_text (void)
     {
 	if (c == '\n')
 	    ++outline;
-	putchar(c);
+	putc(c, output_file);
 	last = c;
     }
 
     if (last != '\n')
     {
 	++outline;
-	putchar('\n');
+	putc('\n', output_file);
     }
     fprintf(output_file, default_line_format, ++outline + 1);
 }
@@ -1189,19 +1189,19 @@ output_semantic_actions (void)
     last = c;
     if (c == '\n')
 	++outline;
-    putchar(c);
+    putc(c, output_file);
     while ((c = getc(action_file)) != EOF)
     {
 	if (c == '\n')
 	    ++outline;
-	putchar(c);
+	putc(c, output_file);
 	last = c;
     }
 
     if (last != '\n')
     {
 	++outline;
-	putchar('\n');
+	putc('\n', output_file);
     }
 
     fprintf(output_file, default_line_format, ++outline + 1);

@@ -115,7 +115,7 @@ done (int k)
     if (action_file) { fclose(action_file); unlink(action_file_name); }
     if (prolog_file) { fclose(prolog_file); unlink(prolog_file_name); }
     if (local_file) { fclose(local_file); unlink(local_file_name); }
-    if (output_file && (output_file != stdout)) { fclose(output_file); unlink(output_file_name); }
+    if (output_file && (output_file != stdout)) { fclose(output_file); if (k != 0) unlink(output_file_name); }
     exit(k);
 }
 
