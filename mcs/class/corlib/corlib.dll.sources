@@ -1595,7 +1595,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/threading/waithandleExtensions.cs
 
 ../../../external/corefx/src/Common/src/System/Threading/Tasks/RendezvousAwaitable.cs
-../../../external/corert/src/Common/src/System/Collections/Generic/LowLevelDictionary.cs
+../../../external/corefx/src/Common/src/System/Collections/Generic/LowLevelDictionary.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/DebuggerSupport.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/DebuggerSupport.Dummy.cs
 ../../../external/corefx/src/Common/src/System/Threading/Tasks/BeginEndAwaitableAdapter.cs
