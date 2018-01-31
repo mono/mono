@@ -133,6 +133,7 @@ monoutils_sources = \
 	mono-threads-posix-signals.c	\
 	mono-threads-mach.c	\
 	mono-threads-mach-helper.c	\
+	mono-threads-mach-helper.h	\
 	mono-threads-windows.c	\
 	mono-threads-linux.c	\
 	mono-threads-freebsd.c	\
