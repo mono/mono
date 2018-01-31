@@ -94,7 +94,7 @@ if [[ ${CI_TAGS} == 'product-sdks' ]];
 	   exit 0
 fi
 
-if [[ ${CI_TAGS} == '*webassembly*' ]];
+if [[ ${CI_TAGS} == *'webassembly'* ]];
    then
 	   echo "DISABLE_ANDROID=1" > sdks/Make.config
 	   echo "DISABLE_IOS=1" >> sdks/Make.config
