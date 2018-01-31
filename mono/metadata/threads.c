@@ -673,7 +673,7 @@ mono_thread_internal_set_priority (MonoInternalThread *internal, MonoThreadPrior
 
 	g_assert (internal->native_handle);
 
-	res = SetThreadPriority (internal->native_handle, priority - 2);
+	res = SetThreadPriority (internal->native_handle, (int)priority - 2);
 	if (!res)
 		g_error ("%s: SetThreadPriority failed, error %d", __func__, GetLastError ());
 #else /* HOST_WIN32 */
@@ -1826,10 +1826,10 @@ ves_icall_System_Threading_Thread_SetName_internal (MonoInternalThread *this_obj
  * Gets the priority of the given thread.
  * @return: The priority of the given thread.
  */
-int
+MonoThreadPriority
 ves_icall_System_Threading_Thread_GetPriority (MonoThreadObjectHandle this_obj, MonoError *error)
 {
-	gint32 priority;
+	MonoThreadPriority priority;
 
 	MonoInternalThread *internal = thread_handle_to_internal_ptr (this_obj);
 
@@ -1848,7 +1848,7 @@ ves_icall_System_Threading_Thread_GetPriority (MonoThreadObjectHandle this_obj, 
  * Sets the priority of the given thread.
  */
 void
-ves_icall_System_Threading_Thread_SetPriority (MonoThreadObjectHandle this_obj, int priority, MonoError *error)
+ves_icall_System_Threading_Thread_SetPriority (MonoThreadObjectHandle this_obj, MonoThreadPriority priority, MonoError *error)
 {
 	MonoInternalThread *internal = thread_handle_to_internal_ptr (this_obj);
 
@@ -2402,26 +2402,26 @@ ves_icall_System_Threading_Thread_MemoryBarrier (void)
 }
 
 void
-ves_icall_System_Threading_Thread_ClrState (MonoInternalThreadHandle this_obj, guint32 state, MonoError *error)
+ves_icall_System_Threading_Thread_ClrState (MonoInternalThreadHandle this_obj, MonoThreadState state, MonoError *error)
 {
 	// InternalThreads are always pinned, so shallowly coop-handleize.
 	mono_thread_clr_state (mono_internal_thread_handle_ptr (this_obj), state);
 }
 
 void
-ves_icall_System_Threading_Thread_SetState (MonoInternalThreadHandle thread_handle, guint32 state, MonoError *error)
+ves_icall_System_Threading_Thread_SetState (MonoInternalThreadHandle thread_handle, MonoThreadState state, MonoError *error)
 {
 	// InternalThreads are always pinned, so shallowly coop-handleize.
 	mono_thread_set_state (mono_internal_thread_handle_ptr (thread_handle), state);
 }
 
-guint32
+MonoThreadState
 ves_icall_System_Threading_Thread_GetState (MonoInternalThreadHandle thread_handle, MonoError *error)
 {
 	// InternalThreads are always pinned, so shallowly coop-handleize.
 	MonoInternalThread *this_obj = mono_internal_thread_handle_ptr (thread_handle);
 
-	guint32 state;
+	MonoThreadState state;
 
 	LOCK_THREAD (this_obj);
 	
@@ -5140,7 +5140,7 @@ mono_thread_clear_and_set_state (MonoInternalThread *thread, MonoThreadState cle
 void
 mono_thread_set_state (MonoInternalThread *thread, MonoThreadState state)
 {
-	mono_thread_clear_and_set_state (thread, 0, state);
+	mono_thread_clear_and_set_state (thread, (MonoThreadState)0, state);
 }
 
 /**
@@ -5173,7 +5173,7 @@ mono_thread_test_and_set_state (MonoInternalThread *thread, MonoThreadState test
 void
 mono_thread_clr_state (MonoInternalThread *thread, MonoThreadState state)
 {
-	mono_thread_clear_and_set_state (thread, state, 0);
+	mono_thread_clear_and_set_state (thread, state, (MonoThreadState)0);
 }
 
 gboolean

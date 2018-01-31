@@ -98,13 +98,17 @@ typedef enum {
 	MONO_ROOT_SOURCE_EPHEMERON = 15,
 } MonoGCRootSource;
 
+// These should match System.Runtime.InteropServices.GCHandleType.
+// And mcs/class/Mono.Profiler.Log/Mono.Profiler.Log/LogEnums.cs.
+// And mono/sgen/gc-internal-agnostic.h aliases them.
 typedef enum {
-	MONO_GC_HANDLE_TYPE_MIN = 0,
-	MONO_GC_HANDLE_WEAK = MONO_GC_HANDLE_TYPE_MIN,
-	MONO_GC_HANDLE_WEAK_TRACK_RESURRECTION,
-	MONO_GC_HANDLE_NORMAL,
-	MONO_GC_HANDLE_PINNED,
-	MONO_GC_HANDLE_TYPE_MAX,
+#define MONO_GC_HANDLE_TYPE_MIN MONO_GC_HANDLE_WEAK // Prefer no duplicates in enum type.
+       MONO_GC_HANDLE_WEAK			= 0,
+       MONO_GC_HANDLE_WEAK_TRACK_RESURRECTION	= 1,
+       MONO_GC_HANDLE_NORMAL			= 2,
+       MONO_GC_HANDLE_PINNED			= 3,
+       MONO_GC_HANDLE_WEAK_FIELDS		= 4,
+       MONO_GC_HANDLE_TYPE_MAX			= 5,
 } MonoGCHandleType;
 
 MONO_API void   mono_gc_collect         (int generation);

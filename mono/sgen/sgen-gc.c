@@ -2791,7 +2791,7 @@ sgen_have_pending_finalizers (void)
  * We do not coalesce roots.
  */
 int
-sgen_register_root (char *start, size_t size, SgenDescriptor descr, int root_type, int source, void *key, const char *msg)
+sgen_register_root (char *start, size_t size, SgenDescriptor descr, int root_type, MonoGCRootSource source, void *key, const char *msg)
 {
 	RootRecord new_root;
 	int i;
