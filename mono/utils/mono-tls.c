@@ -157,14 +157,20 @@
 
 #endif
 
-/* Tls variables for each MonoTlsKey */
+#ifdef __cplusplus
+// static and anonymous namespace both fail to link otherwise; Linux/amd64/gcc.
+#define MONO_TLS_STATIC /* nothing */
+#else
+#define MONO_TLS_STATIC static
+#endif
 
-static __thread gpointer mono_tls_thread MONO_TLS_FAST;
-static __thread gpointer mono_tls_jit_tls MONO_TLS_FAST;
-static __thread gpointer mono_tls_domain MONO_TLS_FAST;
-static __thread gpointer mono_tls_lmf MONO_TLS_FAST;
-static __thread gpointer mono_tls_sgen_thread_info MONO_TLS_FAST;
-static __thread gpointer mono_tls_lmf_addr MONO_TLS_FAST;
+/* Tls variables for each MonoTlsKey */
+MONO_TLS_STATIC __thread gpointer mono_tls_thread MONO_TLS_FAST;
+MONO_TLS_STATIC __thread gpointer mono_tls_jit_tls MONO_TLS_FAST;
+MONO_TLS_STATIC __thread gpointer mono_tls_domain MONO_TLS_FAST;
+MONO_TLS_STATIC __thread gpointer mono_tls_lmf MONO_TLS_FAST;
+MONO_TLS_STATIC __thread gpointer mono_tls_sgen_thread_info MONO_TLS_FAST;
+MONO_TLS_STATIC __thread gpointer mono_tls_lmf_addr MONO_TLS_FAST;
 
 #else
 
