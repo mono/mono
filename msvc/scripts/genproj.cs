@@ -1005,15 +1005,13 @@ class MsbuildGenerator {
 		if (q != -1)
 			target = target + Load (library.Substring (0, q) + suffix);
 
-		if (target.IndexOf ("@MONO@") != -1){
-			target_unix = target.Replace ("@MONO@", "mono").Replace ("@CAT@", "cat");
-			target_windows = target.Replace ("@MONO@", "").Replace ("@CAT@", "type");
-		} else {
-			target_unix = target.Replace ("jay.exe", "jay");
-			target_windows = target;
-		}
+		target_unix = target.Replace ("@MONO@", "mono").Replace ("@CAT@", "cat");
+		target_windows = target.Replace ("@MONO@", "").Replace ("@CAT@", "type");
+
+		target_unix = target_unix.Replace ("\\jay\\jay.exe", "\\jay\\jay\\jay");
+
 		target_unix = target_unix.Replace ("@COPY@", "cp");
-		target_windows = target_unix.Replace ("@COPY@", "copy");
+		target_windows = target_windows.Replace ("@COPY@", "copy");
 
 		target_unix = target_unix.Replace ("\r", "");
 		const string condition_unix    = "Condition=\" '$(OS)' != 'Windows_NT' \"";
