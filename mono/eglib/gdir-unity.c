@@ -60,13 +60,14 @@ GDir *
 g_dir_open (const gchar *path, guint flags, GError **error)
 {
     GDir *dir;
+    gboolean success;
 
     g_return_val_if_fail (path != NULL, NULL);
     g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
     dir = g_new0 (GDir, 1);
 
-    gboolean success = setup_dir_handle(dir, path, error);
+    success = setup_dir_handle(dir, path, error);
     if (!success)
         return NULL;
     
