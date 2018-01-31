@@ -264,6 +264,8 @@ arch_sources += mono-hwcap-cross.c
 
 endif
 
+CFLAGS := $(filter-out @CPLUSPLUS_REMOVE_CFLAGS@, @CFLAGS@) @CPLUSPLUS_ADD_CFLAGS@
+
 libmonoutils_la_SOURCES = $(monoutils_sources) $(arch_sources)
 libmonoutils_la_CFLAGS = $(JEMALLOC_CFLAGS)
 libmonoutils_la_LDFLAGS = $(JEMALLOC_LDFLAGS)
