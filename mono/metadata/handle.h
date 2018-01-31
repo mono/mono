@@ -245,7 +245,7 @@ Icall macros
 	do {							\
 		void* __result = MONO_HANDLE_RAW (HANDLE);	\
 		CLEAR_ICALL_FRAME;				\
-		return __result;				\
+		return mono_typed_handle_cast_voidptr ((HANDLE), __result); \
 	} while (0); } while (0);
 
 #if MONO_TYPE_SAFE_HANDLES
@@ -326,7 +326,7 @@ mono_thread_info_push_stack_mark (MonoThreadInfo *info, void *mark)
 		CLEAR_ICALL_COMMON	\
 		void* __ret = MONO_HANDLE_RAW (HANDLE);	\
 		CLEAR_ICALL_FRAME	\
-		return __ret;	\
+		return mono_typed_handle_cast_voidptr ((HANDLE), __ret); \
 	} while (0); } while (0)
 
 /*
