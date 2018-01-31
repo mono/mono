@@ -344,7 +344,9 @@ Handle macros/functions
 #ifdef MONO_HANDLE_TRACK_OWNER
 #define STRINGIFY_(x) #x
 #define STRINGIFY(x) STRINGIFY_(x)
-#define HANDLE_OWNER (__FILE__ ":" STRINGIFY (__LINE__))
+// Functions can provide a local with this name to override the default.
+extern char const * const mono_handle_track_owner;
+#define HANDLE_OWNER (mono_handle_track_owner ? mono_handle_track_owner : (__FILE__ ":" STRINGIFY (__LINE__)))
 #endif
 
 
