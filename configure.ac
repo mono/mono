@@ -691,7 +691,8 @@ AC_ARG_ENABLE(visibility-hidden,
 
 WARN=''
 if test x"$GCC" = xyes; then
-		WARN='-Wall -Wunused -Wmissing-prototypes -Wmissing-declarations -Wstrict-prototypes -Wnested-externs -Wpointer-arith -Wno-cast-qual -Wwrite-strings -Wno-switch -Wno-switch-enum -Wno-unused-value -Wno-attributes -Wno-format-zero-length'
+		WARN='-Wall -Wunused -Wmissing-declarations -Wpointer-arith -Wno-cast-qual -Wwrite-strings -Wno-switch -Wno-switch-enum -Wno-unused-value -Wno-attributes -Wno-format-zero-length'
+		CFLAGS="$CFLAGS -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs"
 
 		# We require C99 with some GNU extensions, e.g. `linux` macro
 		CFLAGS="$CFLAGS -std=gnu99"
