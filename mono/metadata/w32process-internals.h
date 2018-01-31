@@ -8,6 +8,8 @@
 #include <config.h>
 #include <glib.h>
 
+MONO_BEGIN_DECLS
+
 #ifndef HOST_WIN32
 
 typedef struct {
@@ -64,5 +66,7 @@ guint32
 mono_w32process_ver_language_name (guint32 lang, gunichar2 *lang_out, guint32 lang_len);
 
 #endif /* HOST_WIN32 */
+
+MONO_END_DECLS
 
 #endif /* _MONO_METADATA_W32PROCESS_INTERNALS_H_ */

@@ -11,6 +11,8 @@
 #include "object.h"
 #include "w32handle-namespace.h"
 
+MONO_BEGIN_DECLS
+
 void
 mono_w32semaphore_init (void);
 
@@ -27,5 +29,7 @@ typedef struct MonoW32HandleNamedSemaphore MonoW32HandleNamedSemaphore;
 
 MonoW32HandleNamespace*
 mono_w32semaphore_get_namespace (MonoW32HandleNamedSemaphore *semaphore);
+
+MONO_END_DECLS
 
 #endif /* _MONO_METADATA_W32SEMAPHORE_H_ */

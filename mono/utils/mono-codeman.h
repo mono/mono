@@ -7,6 +7,8 @@
 
 #include <mono/utils/mono-publib.h>
 
+MONO_BEGIN_DECLS
+
 typedef struct _MonoCodeManager MonoCodeManager;
 
 typedef struct {
@@ -32,6 +34,8 @@ MONO_API void             mono_code_manager_install_callbacks (MonoCodeManagerCa
 /* find the extra block allocated to resolve branches close to code */
 typedef int    (*MonoCodeManagerFunc)      (void *data, int csize, int size, void *user_data);
 void            mono_code_manager_foreach  (MonoCodeManager *cman, MonoCodeManagerFunc func, void *user_data);
+
+MONO_END_DECLS
 
 #endif /* __MONO_CODEMAN_H__ */
 

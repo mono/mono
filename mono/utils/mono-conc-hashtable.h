@@ -16,6 +16,8 @@
 #include <mono/utils/mono-os-mutex.h>
 #include <glib.h>
 
+MONO_BEGIN_DECLS
+
 typedef struct _MonoConcurrentHashTable MonoConcurrentHashTable;
 
 MONO_API MonoConcurrentHashTable* mono_conc_hashtable_new (GHashFunc hash_func, GEqualFunc key_equal_func);
@@ -26,5 +28,7 @@ MONO_API gpointer mono_conc_hashtable_insert (MonoConcurrentHashTable *hash_tabl
 MONO_API gpointer mono_conc_hashtable_remove (MonoConcurrentHashTable *hash_table, gpointer key);
 MONO_API void mono_conc_hashtable_foreach (MonoConcurrentHashTable *hashtable, GHFunc func, gpointer userdata);
 MONO_API void mono_conc_hashtable_foreach_steal (MonoConcurrentHashTable *hashtable, GHRFunc func, gpointer userdata);
+
+MONO_END_DECLS
 
 #endif
