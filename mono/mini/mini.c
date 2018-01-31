@@ -987,7 +987,7 @@ mono_get_array_new_va_icall (int rank)
 	if (info == NULL) {
 		esig = mono_get_array_new_va_signature (rank);
 		name = g_strdup (icall_name);
-		info = mono_register_jit_icall (mono_array_new_va, name, esig, FALSE);
+		info = mono_register_jit_icall ((gpointer)mono_array_new_va, name, esig, FALSE);
 	}
 	mono_jit_unlock ();
 
@@ -2900,7 +2900,7 @@ mono_insert_safepoints (MonoCompile *cfg)
 	if (cfg->method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {
 		WrapperInfo *info = mono_marshal_get_wrapper_info (cfg->method);
 		g_assert (mono_threads_is_coop_enabled ());
-		gpointer poll_func = &mono_threads_state_poll;
+		gpointer poll_func = (gpointer)&mono_threads_state_poll;
 
 		if (info && info->subtype == WRAPPER_SUBTYPE_ICALL_WRAPPER && info->d.icall.func == poll_func) {
 			if (cfg->verbose_level > 1)

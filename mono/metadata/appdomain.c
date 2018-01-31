@@ -2599,7 +2599,7 @@ deregister_reflection_info_roots (MonoDomain *domain)
 	mono_domain_assemblies_unlock (domain);
 }
 
-static gsize WINAPI
+static gulong __stdcall
 unload_thread_main (void *arg)
 {
 	ERROR_DECL (error);

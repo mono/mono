@@ -1524,7 +1524,7 @@ mono_decompose_array_access_opts (MonoCompile *cfg)
 						MONO_INST_NEW (cfg, iargs [2], OP_MOVE);
 						iargs [2]->dreg = ins->sreg1;
 
-						dest = mono_emit_jit_icall (cfg, ves_icall_array_new, iargs);
+						dest = mono_emit_jit_icall (cfg, (gpointer)ves_icall_array_new, iargs);
 						dest->dreg = ins->dreg;
 					} else {
 						MonoClass *array_class = mono_class_create_array (ins->inst_newa_class, 1);
@@ -1541,7 +1541,7 @@ mono_decompose_array_access_opts (MonoCompile *cfg)
 						if (managed_alloc)
 							dest = mono_emit_method_call (cfg, managed_alloc, iargs, NULL);
 						else
-							dest = mono_emit_jit_icall (cfg, ves_icall_array_new_specific, iargs);
+							dest = mono_emit_jit_icall (cfg,  (gpointer)ves_icall_array_new_specific, iargs);
 						dest->dreg = ins->dreg;
 					}
 					break;

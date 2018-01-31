@@ -283,7 +283,7 @@ mono_type_initialization_init (void)
 	type_initialization_hash = g_hash_table_new (NULL, NULL);
 	blocked_thread_hash = g_hash_table_new (NULL, NULL);
 	mono_os_mutex_init_recursive (&ldstr_section);
-	mono_register_jit_icall (ves_icall_string_alloc, "ves_icall_string_alloc", mono_create_icall_signature ("object int"), FALSE);
+	mono_register_jit_icall ((gpointer)ves_icall_string_alloc, "ves_icall_string_alloc", mono_create_icall_signature ("object int"), FALSE);
 }
 
 void
@@ -4758,6 +4758,25 @@ mono_unhandled_exception_checked (MonoObjectHandle exc, MonoError *error)
 	}
 }
 
+typedef struct MonoMainThunk {
+	MonoMainThreadFunc main_func;
+	gpointer main_data;
+} MonoMainThunk;
+
+static gulong __stdcall
+mono_main_thunk (gpointer void_data)
+/**
+ * MonoThreadStart returns 32bit unsigned long on Windows, pointer-sized unsigned long on non-Windows.
+ * MonoMainThreadFunc returns void.
+ * This thunk adapts them, without a function pointer cast.
+ * Function pointer casts are to be avoided more than data casts.
+ */
+{
+	MonoMainThunk* data = (MonoMainThunk*)void_data;
+	data->main_func(data->main_data);
+	return 0;
+}
+
 /**
  * mono_runtime_exec_managed_code:
  * \param domain Application domain
@@ -4779,7 +4798,10 @@ mono_runtime_exec_managed_code (MonoDomain *domain,
 				gpointer main_args)
 {
 	ERROR_DECL (error);
-	mono_thread_create_checked (domain, main_func, main_args, error);
+
+	MonoMainThunk thunk = { main_func, main_args };
+
+	mono_thread_create_checked (domain, mono_main_thunk, &thunk, error);
 	mono_error_assert_ok (error);
 
 	mono_thread_manage ();

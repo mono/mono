@@ -107,6 +107,9 @@ register_icall (gpointer func, const char *name, const char *sigstr, gboolean sa
 	mono_register_jit_icall (func, name, sig, save);
 }
 
+#define register_icall(func, name, sigstr, save) \
+	(register_icall ((gpointer)(func), (name), (sigstr), (save)))
+
 static inline void
 remoting_lock (void)
 {

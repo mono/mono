@@ -674,6 +674,9 @@ register_opcode_emulation (int opcode, const char *name, const char *sigstr, gpo
 #endif
 }
 
+#define register_opcode_emulation(opcode, name, sigstr, func, symbol, no_wrapper) \
+	(register_opcode_emulation ((opcode), (name), (sigstr), (gpointer)(func), (symbol), (no_wrapper)))
+
 /*
  * For JIT icalls implemented in C.
  * NAME should be the same as the name of the C function whose address is FUNC.
@@ -693,6 +696,9 @@ register_icall (gpointer func, const char *name, const char *sigstr, gboolean av
 	mono_register_jit_icall_full (func, name, sig, avoid_wrapper, avoid_wrapper ? name : NULL);
 }
 
+#define register_icall(func, name, sigstr, avoid_wrapper) \
+	(register_icall ((gpointer)(func), (name), (sigstr), (avoid_wrapper)))
+
 static void
 register_icall_no_wrapper (gpointer func, const char *name, const char *sigstr)
 {
@@ -706,6 +712,9 @@ register_icall_no_wrapper (gpointer func, const char *name, const char *sigstr)
 	mono_register_jit_icall_full (func, name, sig, TRUE, name);
 }
 
+#define register_icall_no_wrapper(func, name, sigstr) \
+	(register_icall_no_wrapper ((gpointer)(func), (name), (sigstr)))
+
 static void
 register_icall_with_wrapper (gpointer func, const char *name, const char *sigstr)
 {
@@ -718,6 +727,9 @@ register_icall_with_wrapper (gpointer func, const char *name, const char *sigstr
 
 	mono_register_jit_icall_full (func, name, sig, FALSE, NULL);
 }
+
+#define register_icall_with_wrapper(func, name, sigstr) \
+	(register_icall_with_wrapper ((gpointer)(func), (name), (sigstr)))
 
 static void
 register_dyn_icall (gpointer func, const char *name, const char *sigstr, gboolean save)
@@ -897,8 +909,10 @@ mono_thread_abort (MonoObject *obj)
 	}
 }
 
+typedef void (*MonoAbortFunction)(MonoObject*);
+
 static void*
-setup_jit_tls_data (gpointer stack_start, gpointer abort_func)
+setup_jit_tls_data (gpointer stack_start, MonoAbortFunction abort_func)
 {
 	MonoJitTlsData *jit_tls;
 	MonoLMF *lmf;
@@ -909,7 +923,7 @@ setup_jit_tls_data (gpointer stack_start, gpointer abort_func)
 
 	jit_tls = g_new0 (MonoJitTlsData, 1);
 
-	jit_tls->abort_func = (void (*)(MonoObject *))abort_func;
+	jit_tls->abort_func = abort_func;
 	jit_tls->end_of_stack = stack_start;
 
 	mono_set_jit_tls (jit_tls);
@@ -943,7 +957,7 @@ free_jit_tls_data (MonoJitTlsData *jit_tls)
 }
 
 static void
-mono_thread_start_cb (intptr_t tid, gpointer stack_start, gpointer func)
+mono_thread_start_cb (intptr_t tid, gpointer stack_start, MonoThreadStart func)
 {
 	MonoThreadInfo *thread;
 	void *jit_tls = setup_jit_tls_data (stack_start, mono_thread_abort);
@@ -2114,7 +2128,7 @@ lookup_start:
 				 * sometimes we load methods too eagerly and have to create them even if they
 				 * will never be called.
 				 */
-				return no_gsharedvt_in_wrapper;
+				return (gpointer)no_gsharedvt_in_wrapper;
 			}
 		}
 	}
@@ -2269,7 +2283,7 @@ mono_jit_free_method (MonoDomain *domain, MonoMethod *method)
 		char *type_and_method = g_strdup_printf ("%s.%s", type, method->name);
 
 		g_free (type);
-		mono_arch_invalidate_method (ji->ji, invalidated_delegate_trampoline, type_and_method);
+		mono_arch_invalidate_method (ji->ji, (gpointer)invalidated_delegate_trampoline, (gpointer)type_and_method);
 		destroy = FALSE;
 	}
 #endif
@@ -2971,20 +2985,20 @@ mono_llvmonly_get_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIM
 	res = (void **)mono_domain_alloc (domain, 2 * sizeof (gpointer));
 	switch (real_count) {
 	case 1:
-		res [0] = mono_llvmonly_imt_tramp_1;
+		res [0] = (gpointer)mono_llvmonly_imt_tramp_1;
 		break;
 	case 2:
-		res [0] = mono_llvmonly_imt_tramp_2;
+		res [0] = (gpointer)mono_llvmonly_imt_tramp_2;
 		break;
 	case 3:
-		res [0] = mono_llvmonly_imt_tramp_3;
+		res [0] = (gpointer)mono_llvmonly_imt_tramp_3;
 		break;
 	default:
-		res [0] = mono_llvmonly_imt_tramp;
+		res [0] = (gpointer)mono_llvmonly_imt_tramp;
 		break;
 	}
 	if (virtual_generic || fail_tramp)
-		res [0] = mono_llvmonly_fallback_imt_tramp;
+		res [0] = (gpointer)mono_llvmonly_fallback_imt_tramp;
 	res [1] = buf;
 
 	return res;
@@ -3219,11 +3233,11 @@ mini_get_vtable_trampoline (MonoVTable *vt, int slot_index)
 		if (slot_index < 0) {
 			/* Initialize the IMT trampoline to a 'trampoline' so the generated code doesn't have to initialize it */
 			// FIXME: Memory management
-			gpointer *ftndesc = g_malloc (2 * sizeof (gpointer));
+			gpointer *ftndesc = (gpointer*)g_malloc (2 * sizeof (gpointer));
 			IMTTrampInfo *info = g_new0 (IMTTrampInfo, 1);
 			info->vtable = vt;
 			info->slot = index;
-			ftndesc [0] = mini_llvmonly_initial_imt_tramp;
+			ftndesc [0] = (gpointer)mini_llvmonly_initial_imt_tramp;
 			ftndesc [1] = info;
 			mono_memory_barrier ();
 			return ftndesc;
@@ -4083,13 +4097,13 @@ static void
 register_icalls (void)
 {
 	mono_add_internal_call ("System.Diagnostics.StackFrame::get_frame_info",
-				ves_icall_get_frame_info);
+				(gpointer)ves_icall_get_frame_info);
 	mono_add_internal_call ("System.Diagnostics.StackTrace::get_trace",
-				ves_icall_get_trace);
+				(gpointer)ves_icall_get_trace);
 	mono_add_internal_call ("Mono.Runtime::mono_runtime_install_handlers",
-				mono_runtime_install_handlers);
+				(gpointer)mono_runtime_install_handlers);
 	mono_add_internal_call ("Mono.Runtime::mono_runtime_cleanup_handlers",
-				mono_runtime_cleanup_handlers);
+				(gpointer)mono_runtime_cleanup_handlers);
 
 #if defined(HOST_ANDROID) || defined(TARGET_ANDROID)
 	mono_add_internal_call ("System.Diagnostics.Debugger::Mono_UnhandledException_internal",

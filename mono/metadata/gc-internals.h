@@ -140,7 +140,7 @@ void* mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len);
 void* mono_gc_alloc_mature (MonoVTable *vtable, size_t size);
 MonoGCDescriptor mono_gc_make_descr_for_string (gsize *bitmap, int numbits);
 
-void mono_gc_register_obj_with_weak_fields (void *obj);
+void mono_gc_register_obj_with_weak_fields (MonoObject *obj);
 
 typedef void (*MonoFinalizationProc)(gpointer, gpointer); // same as SGenFinalizationProc, GC_finalization_proc
 
@@ -201,8 +201,12 @@ MonoMethod* mono_gc_get_write_barrier (void);
 
 /* Fast valuetype copy */
 /* WARNING: [dest, dest + size] must be within the bounds of a single type, otherwise the GC will lose remset entries */
-void mono_gc_wbarrier_range_copy (gpointer dest, gpointer src, int size);
-void* mono_gc_get_range_copy_func (void);
+void mono_gc_wbarrier_range_copy (gpointer dest, gconstpointer src, int size);
+
+typedef void (*MonoRangeCopyFunction)(gpointer, gconstpointer, int size);
+
+MonoRangeCopyFunction
+mono_gc_get_range_copy_func (void);
 
 
 /* helper for the managed alloc support */
