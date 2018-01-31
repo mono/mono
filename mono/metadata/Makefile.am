@@ -164,6 +164,7 @@ common_sources = \
 	domain-internals.h	\
 	environment.c		\
 	environment.h		\
+	environment-internal.h	\
 	exception.c		\
 	exception.h		\
 	exception-internals.h	\
