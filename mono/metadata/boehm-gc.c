@@ -580,7 +580,7 @@ void
 mono_gc_deregister_root (char* addr)
 {
 	GC_call_with_alloc_lock (deregister_root, addr);
-	MONO_PROFILER_RAISE (gc_root_unregister, ((const mono_byte *) addr));
+	MONO_PROFILER_RAISE (gc_root_unregister, (addr));
 }
 
 static void
@@ -709,7 +709,7 @@ mono_gc_alloc_fixed (size_t size, void *descr, MonoGCRootSource source, void *ke
 void
 mono_gc_free_fixed (void* addr)
 {
-	MONO_PROFILER_RAISE (gc_root_unregister, ((const mono_byte *) addr));
+	MONO_PROFILER_RAISE (gc_root_unregister, (addr));
 	GC_FREE (addr);
 }
 
@@ -2019,7 +2019,7 @@ mono_gchandle_free_domain (MonoDomain *domain)
 }
 
 void
-mono_gc_register_obj_with_weak_fields (void *obj)
+mono_gc_register_obj_with_weak_fields (MonoObject *obj)
 {
 	g_error ("Weak fields not supported by boehm gc");
 }

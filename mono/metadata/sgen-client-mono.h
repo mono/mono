@@ -681,7 +681,7 @@ sgen_client_root_registered (char *start, size_t size, int source, void *key, co
 static void G_GNUC_UNUSED
 sgen_client_root_deregistered (char *start)
 {
-	MONO_PROFILER_RAISE (gc_root_unregister, ((const mono_byte *) start));
+	MONO_PROFILER_RAISE (gc_root_unregister, (start));
 }
 
 static void G_GNUC_UNUSED

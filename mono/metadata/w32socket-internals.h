@@ -69,10 +69,10 @@ int
 mono_w32socket_connect (SOCKET s, const struct sockaddr *name, int namelen, gboolean blocking);
 
 int
-mono_w32socket_recv (SOCKET s, char *buf, int len, int flags, gboolean blocking);
+mono_w32socket_recv (SOCKET s, void *buf, int len, int flags, gboolean blocking);
 
 int
-mono_w32socket_recvfrom (SOCKET s, char *buf, int len, int flags, struct sockaddr *from, socklen_t *fromlen, gboolean blocking);
+mono_w32socket_recvfrom (SOCKET s, void *buf, int len, int flags, struct sockaddr *from, socklen_t *fromlen, gboolean blocking);
 
 int
 mono_w32socket_recvbuffers (SOCKET s, LPWSABUF lpBuffers, guint32 dwBufferCount, guint32 *lpNumberOfBytesRecvd, guint32 *lpFlags, gpointer lpOverlapped, gpointer lpCompletionRoutine, gboolean blocking);
@@ -120,7 +120,7 @@ gint
 mono_w32socket_shutdown (SOCKET sock, gint how);
 
 gint
-mono_w32socket_ioctl (SOCKET sock, gint32 command, gchar *input, gint inputlen, gchar *output, gint outputlen, glong *written);
+mono_w32socket_ioctl (SOCKET sock, gint32 command, void *input, gint inputlen, void *output, gint outputlen, glong *written);
 
 gboolean
 mono_w32socket_close (SOCKET sock);

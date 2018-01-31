@@ -746,7 +746,7 @@ mono_monitor_try_enter_inflated (MonoObject *obj, guint32 ms, gboolean allow_int
 {
 	LockWord lw;
 	MonoThreadsSync *mon;
-	HANDLE sem;
+	MonoCoopSem* sem;
 	gint64 then = 0, now, delta;
 	guint32 waitms;
 	guint32 new_status, old_status, tmp_status;
