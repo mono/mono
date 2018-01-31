@@ -1150,7 +1150,7 @@ static const char *ignored_assemblies_file_names[] = {
 	"System.Threading.Overlapped.dll"
 };
 
-#define IGNORED_ASSEMBLY(HASH, NAME, GUID, VER_STR) { HASH, NAME, GUID }
+#define IGNORED_ASSEMBLY(HASH, NAME, GUID, VER_STR) { (int)HASH, NAME, GUID }
 
 static const IgnoredAssembly ignored_assemblies [] = {
 	IGNORED_ASSEMBLY (0x10CADA75, SYS_NET_HTTP, "EA2EC6DC-51DD-479C-BFC2-E713FB9E7E47", "4.1.1 net46"),
