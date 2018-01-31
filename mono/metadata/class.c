@@ -403,7 +403,7 @@ mono_type_get_name_recurse (MonoType *type, GString *str, gboolean is_recursed,
 			g_string_append_c (str, '.');
 		}
 		if (format == MONO_TYPE_NAME_FORMAT_IL) {
-			char *s = strchr (klass->name, '`');
+			const char* s = strchr (klass->name, '`');
 			int len = s ? s - klass->name : strlen (klass->name);
 			g_string_append_len (str, klass->name, len);
 		} else {
@@ -3022,7 +3022,7 @@ mono_class_from_name_checked_aux (MonoImage *image, const char* name_space, cons
 
 	g_hash_table_insert (visited_images, image, GUINT_TO_POINTER(1));
 
-	if ((nested = strchr (name, '/'))) {
+	if ((nested = (char*)strchr (name, '/'))) {
 		int pos = nested - name;
 		int len = strlen (name);
 		if (len > 1023)

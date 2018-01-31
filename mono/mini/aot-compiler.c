@@ -12343,7 +12343,7 @@ mono_compile_deferred_assemblies (guint32 opts, const char *aot_options, gpointe
 
 	// FIXME: allow suffixes?
 	if (!astate->inflated_assembly) {
-		char *inflate = strstr (aot_options, "dedup-inflate");
+		const char* inflate = strstr (aot_options, "dedup-inflate");
 		if (!inflate)
 			return 0;
 		else 
