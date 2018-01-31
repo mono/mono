@@ -263,7 +263,7 @@ array_set_value_impl (MonoArrayHandle arr, MonoObjectHandle value, guint32 pos, 
 	ec = ac->element_class;
 
 	esize = mono_array_element_size (ac);
-	ea = mono_array_handle_pin_with_size (arr, esize, pos, &arr_gchandle);
+	ea = (gpointer*)mono_array_handle_pin_with_size (arr, esize, pos, &arr_gchandle);
 
 	if (mono_class_is_nullable (ec)) {
 		mono_nullable_init_from_handle ((guint8*)ea, value, ec);
@@ -341,7 +341,7 @@ array_set_value_impl (MonoArrayHandle arr, MonoObjectHandle value, guint32 pos, 
 	}
 
 	if (castOk) {
-		va = mono_object_handle_pin_unbox (value, &value_gchandle);
+		va = (gpointer*)mono_object_handle_pin_unbox (value, &value_gchandle);
 		if (ec->has_references)
 			mono_value_copy (ea, va, ec);
 		else
@@ -354,7 +354,7 @@ array_set_value_impl (MonoArrayHandle arr, MonoObjectHandle value, guint32 pos, 
 	if (!vc->valuetype)
 		INVALID_CAST;
 
-	va = mono_object_handle_pin_unbox (value, &value_gchandle);
+	va = (gpointer*)mono_object_handle_pin_unbox (value, &value_gchandle);
 
 	vsize = mono_class_instance_size (vc) - sizeof (MonoObject);
 
@@ -2063,7 +2063,7 @@ ves_icall_MonoField_SetValueInternal (MonoReflectionFieldHandle field, MonoObjec
 		case MONO_TYPE_PTR:
 			isref = FALSE;
 			if (!MONO_HANDLE_IS_NULL (value))
-				v = mono_object_handle_pin_unbox (value, &value_gchandle);
+				v = (char*)mono_object_handle_pin_unbox (value, &value_gchandle);
 			break;
 		case MONO_TYPE_STRING:
 		case MONO_TYPE_OBJECT:
@@ -2089,7 +2089,7 @@ ves_icall_MonoField_SetValueInternal (MonoReflectionFieldHandle field, MonoObjec
 				return_if_nok (error);
 
 				uint32_t nullable_gchandle = 0;
-				guint8 *nval = mono_object_handle_pin_unbox (nullable, &nullable_gchandle);
+				guint8 *nval = (guint8*)mono_object_handle_pin_unbox (nullable, &nullable_gchandle);
 				mono_nullable_init_from_handle (nval, value, nklass);
 
 				isref = FALSE;
@@ -2099,7 +2099,7 @@ ves_icall_MonoField_SetValueInternal (MonoReflectionFieldHandle field, MonoObjec
 			else {
 				isref = !gclass->container_class->valuetype;
 				if (!isref && !MONO_HANDLE_IS_NULL (value)) {
-					v = mono_object_handle_pin_unbox (value, &value_gchandle);
+					v = (char*)mono_object_handle_pin_unbox (value, &value_gchandle);
 				};
 			}
 			break;
@@ -6501,12 +6501,12 @@ ves_icall_Remoting_RealProxy_GetTransparentProxy (MonoObjectHandle this_obj, Mon
 		return NULL_HANDLE;
 	MONO_HANDLE_SETVAL (tp, custom_type_info, MonoBoolean, !MONO_HANDLE_IS_NULL (remoting_obj));
 
-	MonoRemoteClass *remote_class = mono_remote_class (domain, class_name, klass, error);
+	MonoRemoteClass* remote_class = (MonoRemoteClass*)mono_remote_class (domain, class_name, klass, error);
 	if (!is_ok (error))
 		return NULL_HANDLE;
 	MONO_HANDLE_SETVAL (tp, remote_class, MonoRemoteClass*, remote_class);
 
-	MONO_HANDLE_SETVAL (res, vtable, MonoVTable*, mono_remote_class_vtable (domain, remote_class, rp, error));
+	MONO_HANDLE_SETVAL (res, vtable, MonoVTable*, (MonoVTable*)mono_remote_class_vtable (domain, remote_class, rp, error));
 	if (!is_ok (error))
 		return NULL_HANDLE;
 	return res;
@@ -6549,8 +6549,8 @@ mono_icall_get_machine_name (MonoError *error)
 	if (n == -1)
 #endif
 	n = 512;
-	buf = g_malloc (n+1);
-	
+	buf = (char*)g_malloc (n + 1);
+
 	if (gethostname (buf, n) == 0){
 		buf [n] = 0;
 		result = mono_string_new_handle (mono_domain_get (), buf, error);

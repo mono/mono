@@ -2827,7 +2827,7 @@ mono_ptr_to_bstr(gpointer ptr, int slen)
 		gpointer ret = NULL;
 		gunichar* str = NULL;
 		guint32 len = slen;
-		str = g_utf16_to_ucs4(ptr, len,
+		str = g_utf16_to_ucs4((const gunichar2*)ptr, len,
 			NULL, NULL, NULL);
 		ret = sys_alloc_string_len_ms(str, len);
 		g_free(str);

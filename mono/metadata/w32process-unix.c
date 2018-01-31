@@ -2209,7 +2209,7 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStar
 		if (handler_needswait) {
 			gint32 exitcode;
 			MonoW32HandleWaitRet waitret;
-			waitret = process_wait (process_info->process_handle, MONO_INFINITE_WAIT, NULL);
+			waitret = process_wait ((MonoW32Handle*)process_info->process_handle, MONO_INFINITE_WAIT, NULL);
 			ves_icall_Microsoft_Win32_NativeMethods_GetExitCodeProcess (process_info->process_handle, &exitcode);
 			if (exitcode != 0)
 				ret = FALSE;

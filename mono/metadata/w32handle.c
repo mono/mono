@@ -251,7 +251,7 @@ again:
 
 	/* Will need to expand the array.  The caller will sort it out */
 
-	return GINT_TO_POINTER (-1);
+	return (MonoW32Handle*)GINT_TO_POINTER (-1);
 }
 
 gpointer

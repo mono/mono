@@ -14055,7 +14055,7 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 									vreg_to_lvreg [var->dreg] = sreg;
 								}
 								if (lvregs_len >= lvregs_size) {
-									guint32 *new_lvregs = mono_mempool_alloc0 (cfg->mempool, sizeof (guint32) * lvregs_size * 2);
+									guint32 *new_lvregs = (guint32*)mono_mempool_alloc0 (cfg->mempool, sizeof (guint32) * lvregs_size * 2);
 									memcpy (new_lvregs, lvregs, sizeof (guint32) * lvregs_size);
 									lvregs = new_lvregs;
 									lvregs_size *= 2;
@@ -14107,7 +14107,7 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 				g_assert (ins->dreg != -1);
 				vreg_to_lvreg [prev_dreg] = ins->dreg;
 				if (lvregs_len >= lvregs_size) {
-					guint32 *new_lvregs = mono_mempool_alloc0 (cfg->mempool, sizeof (guint32) * lvregs_size * 2);
+					guint32 *new_lvregs = (guint32*)mono_mempool_alloc0 (cfg->mempool, sizeof (guint32) * lvregs_size * 2);
 					memcpy (new_lvregs, lvregs, sizeof (guint32) * lvregs_size);
 					lvregs = new_lvregs;
 					lvregs_size *= 2;

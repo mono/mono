@@ -3386,7 +3386,7 @@ mono_reflection_method_get_handle (MonoObject *method, MonoError *error)
 	if (mono_is_sre_method_on_tb_inst (klass)) {
 		MonoClass *handle_class;
 
-		MonoMethod *result =  mono_reflection_resolve_object (NULL, method, &handle_class, NULL, error);
+		MonoMethod *result = (MonoMethod*)mono_reflection_resolve_object (NULL, method, &handle_class, NULL, error);
 		return_val_if_nok (error, NULL);
 
 		return result;
@@ -3558,9 +3558,9 @@ typebuilder_setup_properties (MonoClass *klass, MonoError *error)
 
 	error_init (error);
 
-	info = mono_class_get_property_info (klass);
+	info = (MonoClassPropertyInfo*)mono_class_get_property_info (klass);
 	if (!info) {
-		info = mono_class_alloc0 (klass, sizeof (MonoClassPropertyInfo));
+		info = (MonoClassPropertyInfo*)mono_class_alloc0 (klass, sizeof (MonoClassPropertyInfo));
 		mono_class_set_property_info (klass, info);
 	}
 
@@ -3612,7 +3612,7 @@ typebuilder_setup_events (MonoClass *klass, MonoError *error)
 
 	error_init (error);
 
-	info = mono_class_alloc0 (klass, sizeof (MonoClassEventInfo));
+	info = (MonoClassEventInfo*)mono_class_alloc0 (klass, sizeof (MonoClassEventInfo));
 	mono_class_set_event_info (klass, info);
 
 	info->count = tb->events ? mono_array_length (tb->events) : 0;

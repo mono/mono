@@ -219,7 +219,7 @@ tty_teardown (void)
 static void
 do_console_cancel_event (void)
 {
-	static MonoMethod *System_Console_DoConsoleCancelEventBackground_method = ((gpointer)-1);
+	static MonoMethod *System_Console_DoConsoleCancelEventBackground_method = (MonoMethod*)(intptr_t)-1;
 	ERROR_DECL (error);
 
 	if (mono_defaults.console_class == NULL)

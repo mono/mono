@@ -241,7 +241,7 @@ mono_ssa_rename_vars (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gboole
 
 				if (stack_history_len + 128 > stack_history_size) {
 					stack_history_size += 1024;
-					RenameInfo *new_history = mono_mempool_alloc (cfg->mempool, sizeof (RenameInfo) * stack_history_size);
+					RenameInfo *new_history = (RenameInfo*)mono_mempool_alloc (cfg->mempool, sizeof (RenameInfo) * stack_history_size);
 					memcpy (new_history, stack_history, stack_history_len * sizeof (RenameInfo));
 					stack_history = new_history;
 				}

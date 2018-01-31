@@ -407,7 +407,7 @@ mono_gc_thread_detach_with_lock (MonoThreadInfo *p)
 	if (p->runtime_thread)
 		mono_threads_add_joinable_thread ((gpointer)tid);
 
-	mono_handle_stack_free (p->handle_stack);
+	mono_handle_stack_free ((HandleStack*)p->handle_stack);
 	p->handle_stack = NULL;
 }
 
@@ -549,7 +549,7 @@ typedef struct {
 static gpointer
 register_root (gpointer arg)
 {
-	RootData* root_data = arg;
+	RootData* root_data = (RootData*)arg;
 	g_hash_table_insert (roots, root_data->start, root_data->end);
 	return NULL;
 }

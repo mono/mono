@@ -1185,7 +1185,7 @@ create_custom_attr_data_handle (MonoImage *image, MonoCustomAttrEntry *cattr, Mo
 	goto_if_nok (error, fail);
 	params [0] = ctor_obj;
 	params [1] = MONO_HANDLE_RAW (assm);
-	params [2] = (gpointer)&cattr->data;
+	params [2] = &cattr->data;
 	params [3] = &cattr->data_size;
 
 	mono_runtime_invoke_checked (ctor, MONO_HANDLE_RAW (attr), params, error);

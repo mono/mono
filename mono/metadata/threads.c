@@ -1133,7 +1133,7 @@ start_wrapper (gpointer data)
 	info->runtime_thread = TRUE;
 
 	/* Run the actual main function of the thread */
-	res = start_wrapper_internal (start_info, info->stack_end);
+	res = start_wrapper_internal (start_info, (gsize*)info->stack_end);
 
 	mono_thread_info_exit (res);
 
@@ -1691,7 +1691,7 @@ mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, g
 		this_obj->name_len = 0;
 	}
 	if (name) {
-		this_obj->name = g_memdup (mono_string_chars (name), mono_string_length (name) * sizeof (gunichar2));
+		this_obj->name = (gunichar2*)g_memdup (mono_string_chars (name), mono_string_length (name) * sizeof (gunichar2));
 		this_obj->name_len = mono_string_length (name);
 
 		if (permanent)
@@ -2941,7 +2941,7 @@ ves_icall_System_Threading_Volatile_Write_T (void *ptr, MonoObject *value)
 static void
 free_context (void *user_data)
 {
-	ContextStaticData *data = user_data;
+	ContextStaticData *data = (ContextStaticData*)user_data;
 
 	mono_threads_lock ();
 

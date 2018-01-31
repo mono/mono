@@ -1933,7 +1933,7 @@ mono_local_emulate_ops (MonoCompile *cfg)
 				}
 
 				/* We emit the call on a separate dummy basic block */
-				cfg->cbb = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoBasicBlock));
+				cfg->cbb = (MonoBasicBlock*)mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoBasicBlock));
 				first_bb = cfg->cbb;
 
 				call = mono_emit_jit_icall_by_info (cfg, bb->real_offset, info, args);

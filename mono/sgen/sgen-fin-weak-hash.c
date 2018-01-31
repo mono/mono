@@ -497,8 +497,8 @@ add_stage_entry (int num_entries, volatile gint32 *next_entry, StageEntry *entri
 
 	SGEN_ASSERT (0, index >= 0 && index < num_entries, "Invalid index");
 
-	UnlockedWritePointer ((void *)&entries [index].obj, obj);
-	UnlockedWritePointer (&entries [index].user_data, user_data);
+	UnlockedWritePointer ((volatile gpointer*)&entries [index].obj, obj);
+	UnlockedWritePointer (&entries [index].user_data, (gpointer)user_data);
 
 	mono_memory_write_barrier ();
 
@@ -518,7 +518,7 @@ add_stage_entry (int num_entries, volatile gint32 *next_entry, StageEntry *entri
 	}
 
 	SGEN_ASSERT (0, previous_state == STAGE_ENTRY_INVALID, "Invalid state transition - other thread can only make busy state invalid");
-	UnlockedWritePointer ((void *)&entries [index].obj, NULL);
+	UnlockedWritePointer ((volatile gpointer*)&entries [index].obj, NULL);
 	UnlockedWritePointer (&entries [index].user_data, NULL);
 	mono_memory_write_barrier ();
 	/* INVALID -> FREE */

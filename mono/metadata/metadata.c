@@ -3291,7 +3291,7 @@ mono_metadata_lookup_generic_class (MonoClass *container_class, MonoGenericInst 
 
 	mono_image_set_lock (set);
 
-	MonoGenericClass *gclass2 = mono_conc_hashtable_insert (set->gclass_cache, gclass, gclass);
+	MonoGenericClass *gclass2 = (MonoGenericClass*)mono_conc_hashtable_insert (set->gclass_cache, gclass, gclass);
 	if (!gclass2)
 		gclass2 = gclass;
 
@@ -5907,7 +5907,7 @@ mono_type_create_from_typespec_checked (MonoImage *image, guint32 type_spec, Mon
 	mono_image_lock (image);
 
 	/* We might leak some data in the image mempool if found */
-	type = mono_conc_hashtable_insert (image->typespec_cache, GUINT_TO_POINTER (type_spec), type2);
+	type = (MonoType*)mono_conc_hashtable_insert (image->typespec_cache, GUINT_TO_POINTER (type_spec), type2);
 	if (!type)
 		type = type2;
 

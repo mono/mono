@@ -491,7 +491,7 @@ extern const MonoObjectHandle mono_null_value_handle;
 static inline void
 mono_handle_assign (MonoObjectHandleOut dest, MonoObjectHandle src)
 {
-	MONO_HANDLE_SUPPRESS (dest->__raw = (gpointer)(src ? MONO_HANDLE_RAW (src) : NULL));
+	MONO_HANDLE_SUPPRESS (dest->__raw = (MonoObject*)(src ? MONO_HANDLE_RAW (src) : NULL));
 }
 
 /* It is unsafe to call this function directly - it does not pin the handle!  Use MONO_HANDLE_GET_FIELD_VAL(). */
@@ -513,7 +513,7 @@ uintptr_t mono_array_handle_length (MonoArrayHandle arr);
 static inline void
 mono_handle_array_getref (MonoObjectHandleOut dest, MonoArrayHandle array, uintptr_t index)
 {
-	MONO_HANDLE_SUPPRESS (dest->__raw = (gpointer)mono_array_get(MONO_HANDLE_RAW (array), gpointer, index));
+	MONO_HANDLE_SUPPRESS (dest->__raw = mono_array_get(MONO_HANDLE_RAW (array), MonoObject*, index));
 }
 
 #define mono_handle_class(o) MONO_HANDLE_SUPPRESS (mono_object_class (MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (o))))
@@ -536,7 +536,8 @@ mono_array_handle_memcpy_refs (MonoArrayHandle dest, uintptr_t dest_idx, MonoArr
 gpointer
 mono_array_handle_pin_with_size (MonoArrayHandle handle, int size, uintptr_t index, uint32_t *gchandle);
 
-#define MONO_ARRAY_HANDLE_PIN(handle,type,index,gchandle_out) mono_array_handle_pin_with_size (MONO_HANDLE_CAST(MonoArray,(handle)), sizeof (type), (index), (gchandle_out))
+#define MONO_ARRAY_HANDLE_PIN(handle,type,index,gchandle_out) \
+	((type*)mono_array_handle_pin_with_size (MONO_HANDLE_CAST(MonoArray,(handle)), sizeof (type), (index), (gchandle_out)))
 
 gunichar2 *
 mono_string_handle_pin_chars (MonoStringHandle s, uint32_t *gchandle_out);

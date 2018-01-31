@@ -376,7 +376,7 @@ log_level_get_name (GLogLevelFlags log_level)
 static void
 callback_adapter (const char *domain, GLogLevelFlags level, mono_bool fatal, const char *message)
 {
-	UserSuppliedLoggerUserData *ll =logCallback.user_data;
+	UserSuppliedLoggerUserData *ll = (UserSuppliedLoggerUserData*)logCallback.user_data;
 
 	ll->legacy_callback (domain, log_level_get_name(level), message, fatal, ll->user_data);
 }
@@ -384,7 +384,7 @@ callback_adapter (const char *domain, GLogLevelFlags level, mono_bool fatal, con
 static void
 eglib_log_adapter (const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer user_data)
 {
-	UserSuppliedLoggerUserData *ll = logCallback.user_data;
+	UserSuppliedLoggerUserData *ll = (UserSuppliedLoggerUserData*)logCallback.user_data;
 
 	ll->legacy_callback (log_domain, log_level_get_name (log_level), message, log_level & G_LOG_LEVEL_ERROR, ll->user_data);
 }
@@ -435,7 +435,7 @@ mono_trace_set_log_handler (MonoLogCallback callback, void *user_data)
 
 	if (logCallback.closer != NULL)
 		logCallback.closer();
-	UserSuppliedLoggerUserData *ll = g_malloc (sizeof (UserSuppliedLoggerUserData));
+	UserSuppliedLoggerUserData *ll = (UserSuppliedLoggerUserData*)g_malloc (sizeof (UserSuppliedLoggerUserData));
 	ll->legacy_callback = callback;
 	ll->user_data = user_data;
 	logCallback.opener = legacy_opener;

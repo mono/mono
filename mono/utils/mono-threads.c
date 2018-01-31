@@ -438,7 +438,7 @@ unregister_thread (void *arg)
 	MonoThreadInfo *info;
 	int small_id;
 	gboolean result;
-	gpointer handle;
+	MonoThreadHandle* handle;
 
 	info = (MonoThreadInfo *) arg;
 	g_assert (info);

@@ -243,6 +243,33 @@ sgen_client_object_has_critical_finalizer (GCObject *obj)
 const char* sgen_client_vtable_get_namespace (GCVTable vtable);
 const char* sgen_client_vtable_get_name (GCVTable vtable);
 
+#ifdef __cplusplus
+
+extern "C++"
+{
+
+inline const char*
+sgen_client_vtable_get_namespace (gpointer vtable)
+{
+	return sgen_client_vtable_get_namespace ((GCVTable)vtable);
+}
+
+inline const char*
+sgen_client_vtable_get_name (gpointer vtable)
+{
+	return sgen_client_vtable_get_name ((GCVTable)vtable);
+}
+
+inline mword
+sgen_safe_object_get_size (gpointer obj)
+{
+	return sgen_safe_object_get_size ((GCObject*)obj);
+}
+
+}
+
+#endif
+
 static gboolean G_GNUC_UNUSED
 sgen_client_bridge_need_processing (void)
 {
@@ -488,7 +515,7 @@ sgen_client_binary_protocol_cement (gpointer ptr, gpointer vtable, size_t size)
 {
 #ifdef ENABLE_DTRACE
 	if (G_UNLIKELY (MONO_GC_OBJ_CEMENTED_ENABLED())) {
-		MONO_GC_OBJ_CEMENTED ((mword)ptr, sgen_safe_object_get_size ((GCObject*)ptr),
+		MONO_GC_OBJ_CEMENTED ((mword)ptr, sgen_safe_object_get_size (ptr),
 				sgen_client_vtable_get_namespace (vtable), sgen_client_vtable_get_name (vtable));
 	}
 #endif
@@ -545,7 +572,7 @@ sgen_client_binary_protocol_dislink_update (gpointer link, gpointer obj, gboolea
 		GCVTable vt = obj ? SGEN_LOAD_VTABLE (obj) : NULL;
 		MONO_GC_WEAK_UPDATE ((mword)link,
 				(mword)obj,
-				obj ? (mword)sgen_safe_object_get_size (obj) : (mword)0,
+				obj ? sgen_safe_object_get_size (obj) : 0u,
 				obj ? sgen_client_vtable_get_namespace (vt) : NULL,
 				obj ? sgen_client_vtable_get_name (vt) : NULL,
 				track ? 1 : 0);

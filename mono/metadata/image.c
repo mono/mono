@@ -723,7 +723,7 @@ mono_image_load_module_checked (MonoImage *image, int idx, MonoError *error)
 		name = mono_metadata_string_heap (image, cols [MONO_MODULEREF_NAME]);
 		for (list_iter = valid_modules; list_iter; list_iter = list_iter->next) {
 			/* be safe with string dups, but we could just compare string indexes  */
-			if (strcmp (list_iter->data, name) == 0) {
+			if (strcmp ((const char*)list_iter->data, name) == 0) {
 				valid = TRUE;
 				break;
 			}

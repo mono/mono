@@ -389,7 +389,7 @@ mono_mmap_open_file (MonoString *path, int mode, MonoString *mapName, gint64 *ca
 		char * c_path = mono_string_to_utf8_checked (path, error);
 		if (mono_error_set_pending_exception (error))
 			return NULL;
-		handle = open_file_map (c_path, -1, mode, capacity, access, options, ioerror);
+		handle = (MmapHandle*)open_file_map (c_path, -1, mode, capacity, access, options, ioerror);
 		g_free (c_path);
 		return handle;
 	}
@@ -419,7 +419,7 @@ mono_mmap_open_file (MonoString *path, int mode, MonoString *mapName, gint64 *ca
 		}
 		named_regions_unlock ();
 	} else
-		handle = open_memory_map (c_mapName, mode, capacity, access, options, ioerror);
+		handle = (MmapHandle*)open_memory_map (c_mapName, mode, capacity, access, options, ioerror);
 
 	g_free (c_mapName);
 	return handle;

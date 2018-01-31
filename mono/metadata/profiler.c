@@ -31,7 +31,7 @@ load_profiler (MonoDl *module, const char *name, const char *desc)
 	char *err, *old_name = g_strdup_printf (OLD_INITIALIZER_NAME);
 	MonoProfilerInitializer func;
 
-	if (!(err = mono_dl_symbol (module, old_name, (gpointer) &func))) {
+	if (!(err = mono_dl_symbol (module, old_name, (gpointer*)&func))) {
 		mono_profiler_printf_err ("Found old-style startup symbol '%s' for the '%s' profiler; it has not been migrated to the new API.", old_name, name);
 		g_free (old_name);
 		return FALSE;
@@ -310,7 +310,7 @@ mono_profiler_get_coverage_data (MonoProfilerHandle handle, MonoMethod *method, 
 
 	coverage_lock ();
 
-	MonoProfilerCoverageInfo *info = g_hash_table_lookup (mono_profiler_state.coverage_hash, method);
+	MonoProfilerCoverageInfo *info = (MonoProfilerCoverageInfo*)g_hash_table_lookup (mono_profiler_state.coverage_hash, method);
 
 	coverage_unlock ();
 
@@ -422,7 +422,7 @@ mono_profiler_coverage_alloc (MonoMethod *method, guint32 entries)
 
 	coverage_lock ();
 
-	MonoProfilerCoverageInfo *info = g_malloc0 (sizeof (MonoProfilerCoverageInfo) + SIZEOF_VOID_P * 2 * entries);
+	MonoProfilerCoverageInfo *info = (MonoProfilerCoverageInfo*)g_malloc0 (sizeof (MonoProfilerCoverageInfo) + SIZEOF_VOID_P * 2 * entries);
 
 	info->entries = entries;
 

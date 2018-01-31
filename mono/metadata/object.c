@@ -2823,7 +2823,7 @@ mono_upgrade_remote_class (MonoDomain *domain, MonoObjectHandle proxy_object, Mo
 		MONO_HANDLE_SETVAL (tproxy, remote_class, MonoRemoteClass*, fresh_remote_class);
 		MonoRealProxyHandle real_proxy = MONO_HANDLE_NEW (MonoRealProxy, NULL);
 		MONO_HANDLE_GET (real_proxy, tproxy, rp);
-		MONO_HANDLE_SETVAL (proxy_object, vtable, MonoVTable*, mono_remote_class_vtable (domain, fresh_remote_class, real_proxy, error));
+		MONO_HANDLE_SETVAL (proxy_object, vtable, MonoVTable*, (MonoVTable*)mono_remote_class_vtable (domain, fresh_remote_class, real_proxy, error));
 		goto_if_nok (error, leave);
 	}
 	
@@ -5664,11 +5664,9 @@ mono_object_new_fast_checked (MonoVTable *vtable, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	MonoObject *o;
-
 	error_init (error);
 
-	o = mono_gc_alloc_obj (vtable, vtable->klass->instance_size);
+	MonoObject *o = (MonoObject*)mono_gc_alloc_obj (vtable, vtable->klass->instance_size);
 
 	// This deliberately skips mono_object_new_common_tail.
 
@@ -5683,9 +5681,7 @@ mono_object_new_mature (MonoVTable *vtable, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	MonoObject *o;
-
-	o = mono_gc_alloc_mature (vtable, vtable->klass->instance_size);
+	MonoObject *o = (MonoObject*)mono_gc_alloc_mature (vtable, vtable->klass->instance_size);
 
 	return mono_object_new_common_tail (o, vtable->klass, error);
 }

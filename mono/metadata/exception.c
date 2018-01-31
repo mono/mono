@@ -1110,7 +1110,7 @@ mono_exception_handle_get_native_backtrace (MonoExceptionHandle exc)
 	len = mono_array_handle_length (arr);
 	text = g_string_new_len (NULL, len * 20);
 	uint32_t gchandle;
-	void *addr = MONO_ARRAY_HANDLE_PIN (arr, gpointer, 0, &gchandle);
+	void **addr = (void**)MONO_ARRAY_HANDLE_PIN (arr, gpointer, 0, &gchandle);
 	MONO_ENTER_GC_SAFE;
 	messages = backtrace_symbols (addr, len);
 	MONO_EXIT_GC_SAFE;

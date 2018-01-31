@@ -187,7 +187,7 @@ clear_cached_object (MonoDomain *domain, gpointer o, MonoClass *klass)
 
 		if (mono_conc_g_hash_table_lookup_extended (domain->refobject_hash, &pe, &orig_pe, &orig_value)) {
 			mono_conc_g_hash_table_remove (domain->refobject_hash, &pe);
-			free_reflected_entry (orig_pe);
+			free_reflected_entry ((ReflectedEntry*)orig_pe);
 		}
 	}
 	mono_domain_unlock (domain);
@@ -196,7 +196,7 @@ clear_cached_object (MonoDomain *domain, gpointer o, MonoClass *klass)
 static void
 cleanup_refobject_hash (gpointer key, gpointer value, gpointer user_data)
 {
-	free_reflected_entry (key);
+	free_reflected_entry ((ReflectedEntry*)key);
 }
 
 void

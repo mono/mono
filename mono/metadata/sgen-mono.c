@@ -1914,7 +1914,7 @@ report_gc_root (GCRootReport *report, void *address, void *object)
 static void
 single_arg_report_root (MonoObject **obj, void *gc_data)
 {
-	GCRootReport *report = gc_data;
+	GCRootReport *report = (GCRootReport*)gc_data;
 	if (*obj)
 		report_gc_root (report, obj, *obj);
 }
@@ -1922,7 +1922,7 @@ single_arg_report_root (MonoObject **obj, void *gc_data)
 static void
 two_args_report_root (void *address, MonoObject *obj, void *gc_data)
 {
-	GCRootReport *report = gc_data;
+	GCRootReport *report = (GCRootReport*)gc_data;
 	if (obj)
 		report_gc_root (report, address, obj);
 }
@@ -2006,12 +2006,12 @@ find_pinned_obj (char *addr)
 
 	if (idx != pinned_objects.next_slot) {
 		if (pinned_objects.data [idx] == addr)
-			return pinned_objects.data [idx];
+			return (GCObject*)pinned_objects.data [idx];
 		if (idx == 0)
 			return NULL;
 	}
 
-	GCObject *obj = pinned_objects.data [idx - 1];
+	GCObject *obj = (GCObject*)pinned_objects.data [idx - 1];
 	if (addr > (char*)obj && addr < ((char*)obj + sgen_safe_object_get_size (obj)))
 		return obj;
 	return NULL;
@@ -2049,7 +2049,7 @@ typedef struct {
 static void
 report_handle_stack_root (gpointer *ptr, gpointer user_data)
 {
-	ReportHandleStackRoot *ud = user_data;
+	ReportHandleStackRoot *ud = (ReportHandleStackRoot*)user_data;
 	GCRootReport *report = ud->report;
 	gpointer addr = ud->info->client_info.info.handle_stack;
 
@@ -2131,7 +2131,7 @@ report_pin_queue (void)
 	sgen_pointer_queue_sort_uniq (&pinned_objects);
 
 	for (int i = 0; i < pinned_objects.next_slot; ++i) {
-		GCObject *obj = pinned_objects.data [i];
+		GCObject *obj = (GCObject*)pinned_objects.data [i];
 		ssize_t size = sgen_safe_object_get_size (obj);
 
 		ssize_t addr = (ssize_t)obj;
@@ -2516,7 +2516,7 @@ mono_gc_set_skip_thread (gboolean skip)
 		/* If we skip scanning a thread with a non-empty handle stack, we may move an
 		 * object but fail to update the reference in the handle.
 		 */
-		HandleStack *stack = info->client_info.info.handle_stack;
+		HandleStack *stack = (HandleStack*)info->client_info.info.handle_stack;
 		g_assert (stack == NULL || mono_handle_stack_is_empty (stack));
 	}
 }
@@ -2619,7 +2619,7 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 				 * resumes running we may potentially move an object but fail to
 				 * update the reference in the handle.
 				 */
-				HandleStack *stack = info->client_info.info.handle_stack;
+				HandleStack *stack = (HandleStack*)info->client_info.info.handle_stack;
 				g_assert (stack == NULL || mono_handle_stack_is_empty (stack));
 			}
 			continue;
