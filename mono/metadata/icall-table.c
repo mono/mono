@@ -110,7 +110,7 @@ static const struct msgstrtn_t {
 #undef ICALL_TYPE
 };
 static const guint16 icall_type_names_idx [] = {
-#define ICALL_TYPE(id,name,first) [Icall_type_ ## id] = offsetof (struct msgstrtn_t, MSGSTRFIELD(__LINE__)),
+#define ICALL_TYPE(id,name,first) (offsetof (struct msgstrtn_t, MSGSTRFIELD(__LINE__))),
 #include "metadata/icall-def.h"
 #undef ICALL_TYPE
 };
@@ -128,7 +128,7 @@ static const struct msgstr_t {
 #undef ICALL
 };
 static const guint16 icall_names_idx [] = {
-#define ICALL(id,name,func) [Icall_ ## id] = offsetof (struct msgstr_t, MSGSTRFIELD(__LINE__)),
+#define ICALL(id,name,func) (offsetof (struct msgstr_t, MSGSTRFIELD(__LINE__))),
 #include "metadata/icall-def.h"
 #undef ICALL
 };
