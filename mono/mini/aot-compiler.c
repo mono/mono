@@ -12195,18 +12195,21 @@ mono_read_method_cache (MonoAotCompile *acfg)
 
 	g_assert (acfg->dedup_cache);
 
-	FILE *cache = fopen (filename, "r");
+	FILE *cache;
+	cache = fopen (filename, "r");
 	if (!cache)
 		goto early_exit;
 
 	// Since we do pointer comparisons, and it can't be allocated at
 	// the address 0x1 due to alignment, we use this as a sentinel
-	gpointer other_acfg_sentinel = GINT_TO_POINTER (0x1);
+	gpointer other_acfg_sentinel;
+	other_acfg_sentinel = GINT_TO_POINTER (0x1);
 
 	if (fseek (cache, 0L, SEEK_END))
 		goto cleanup;
 
-	size_t fileLength = ftell (cache);
+	size_t fileLength;
+	fileLength = ftell (cache);
 	g_assert (fileLength > 0);
 
 	if (fseek (cache, 0L, SEEK_SET))
@@ -12215,8 +12218,10 @@ mono_read_method_cache (MonoAotCompile *acfg)
 	// Avoid thousands of new malloc entries
 	// FIXME: allocate into imageset, so we don't need to free.
 	// put the other mangled names there too.
-	char *bulk = g_malloc0 (fileLength * sizeof (char));
-	size_t offset = 0;
+	char *bulk;
+	bulk = g_malloc0 (fileLength * sizeof (char));
+	size_t offset;
+	offset = 0;
 
 	while (fgets (&bulk [offset], fileLength - offset, cache)) {
 		// strip newline

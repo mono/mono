@@ -1761,8 +1761,10 @@ fixup_method (MonoReflectionILGen *ilgen, gpointer value, MonoDynamicImage *asse
 			break;
 		case MONO_TABLE_TYPEREF:
 			g_assert (!strcmp (iltoken->member->vtable->klass->name, "RuntimeType"));
-			MonoClass *k = mono_class_from_mono_type (((MonoReflectionType*)iltoken->member)->type);
-			MonoObject *obj = mono_class_get_ref_info_raw (k); /* FIXME use handles */
+			MonoClass *k;
+			k = mono_class_from_mono_type (((MonoReflectionType*)iltoken->member)->type);
+			MonoObject *obj;
+			obj = mono_class_get_ref_info_raw (k); /* FIXME use handles */
 			g_assert (obj);
 			g_assert (!strcmp (mono_object_class (obj)->name, "TypeBuilder"));
 			g_assert (((MonoReflectionTypeBuilder*)obj)->module->dynamic_image != assembly);

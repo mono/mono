@@ -2020,9 +2020,11 @@ mono_marshal_xdomain_copy_value_handle (MonoObjectHandle val, MonoError *error)
 	if (MONO_HANDLE_IS_NULL (val))
 		goto leave;
 
-	MonoDomain *domain = mono_domain_get ();
+	MonoDomain *domain;
+	domain = mono_domain_get ();
 
-	MonoClass *klass = mono_handle_class (val);
+	MonoClass *klass;
+	klass = mono_handle_class (val);
 
 	switch (klass->byval_arg.type) {
 	case MONO_TYPE_VOID:

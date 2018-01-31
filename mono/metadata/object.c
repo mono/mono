@@ -5814,7 +5814,8 @@ mono_array_clone_in_domain (MonoDomain *domain, MonoArrayHandle array_handle, Mo
 		goto_if_nok (error, leave);
 	}
 
-	uint32_t dst_handle = mono_gchandle_from_handle (MONO_HANDLE_CAST (MonoObject, o), TRUE);
+	uint32_t dst_handle;
+	dst_handle = mono_gchandle_from_handle (MONO_HANDLE_CAST (MonoObject, o), TRUE);
 	array_full_copy_unchecked_size (MONO_HANDLE_RAW (array_handle), MONO_HANDLE_RAW (o), klass, size);
 	mono_gchandle_free (dst_handle);
 
@@ -6774,7 +6775,8 @@ mono_object_handle_isinst_mbyref (MonoObjectHandle obj, MonoClass *klass, MonoEr
 	if (MONO_HANDLE_IS_NULL (obj))
 		goto leave;
 
-	MonoVTable *vt = MONO_HANDLE_GETVAL (obj, vtable);
+	MonoVTable *vt;
+	vt = MONO_HANDLE_GETVAL (obj, vtable);
 	
 	if (mono_class_is_interface (klass)) {
 		if (MONO_VTABLE_IMPLEMENTS_INTERFACE (vt, klass->interface_id)) {
