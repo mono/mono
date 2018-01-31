@@ -221,7 +221,7 @@ mono_w32mutex_init (void)
 		NULL,			/* special_wait */
 		mutex_handle_prewait,			/* prewait */
 		mutex_details,	/* details */
-		mutex_typename,	/* typename */
+		mutex_typename,	/* type_name */
 		mutex_typesize,	/* typesize */
 	};
 
@@ -233,7 +233,7 @@ mono_w32mutex_init (void)
 		NULL,			/* special_wait */
 		mutex_handle_prewait,	/* prewait */
 		namedmutex_details,	/* details */
-		namedmutex_typename,	/* typename */
+		namedmutex_typename,	/* type_name */
 		namedmutex_typesize,	/* typesize */
 	};
 
