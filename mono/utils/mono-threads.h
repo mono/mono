@@ -61,7 +61,7 @@ typedef gsize mono_thread_start_return_t;
 #define MONO_NATIVE_THREAD_ID_TO_UINT(tid) (gsize)(tid)
 #define MONO_UINT_TO_NATIVE_THREAD_ID(tid) (MonoNativeThreadId)(gsize)(tid)
 
-typedef gsize (*MonoThreadStart)(gpointer);
+typedef gulong (*MonoThreadStart)(gpointer);
 
 #if !defined(__HAIKU__)
 #define MONO_THREADS_PLATFORM_HAS_ATTR_SETSCHED

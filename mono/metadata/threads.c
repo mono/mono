@@ -960,7 +960,7 @@ fire_attach_profiler_events (MonoNativeThreadId tid)
 		"Handle Stack"));
 }
 
-static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack_ptr)
+static gulong WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack_ptr)
 {
 	ERROR_DECL (error);
 	MonoThreadStart start_func;
@@ -1093,7 +1093,7 @@ static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack
 	return 0;
 }
 
-static gsize WINAPI
+static gulong WINAPI
 start_wrapper (gpointer data)
 {
 	StartInfo *start_info;
@@ -1184,7 +1184,7 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, MonoObject *sta
 	else
 		stack_set_size = 0;
 
-	if (!mono_thread_platform_create_thread ((MonoThreadStart)start_wrapper, start_info, &stack_set_size, &tid)) {
+	if (!mono_thread_platform_create_thread (start_wrapper, start_info, &stack_set_size, &tid)) {
 		/* The thread couldn't be created, so set an exception */
 		mono_threads_lock ();
 		mono_g_hash_table_remove (threads_starting_up, thread);
@@ -1257,7 +1257,7 @@ mono_threads_get_default_stacksize (void)
  *   ARG should not be a GC reference.
  */
 MonoInternalThread*
-mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, MonoThreadCreateFlags flags, MonoError *error)
+mono_thread_create_internal (MonoDomain *domain, MonoThreadStart func, gpointer arg, MonoThreadCreateFlags flags, MonoError *error)
 {
 	MonoThread *thread;
 	MonoInternalThread *internal;
@@ -1271,7 +1271,7 @@ mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, Mo
 
 	LOCK_THREAD (internal);
 
-	res = create_thread (thread, internal, NULL, (MonoThreadStart) func, arg, flags, error);
+	res = create_thread (thread, internal, NULL, func, arg, flags, error);
 
 	UNLOCK_THREAD (internal);
 
