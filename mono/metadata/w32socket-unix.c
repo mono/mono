@@ -293,13 +293,13 @@ mono_w32socket_connect (SOCKET sock, const struct sockaddr *addr, int addrlen, g
 }
 
 int
-mono_w32socket_recv (SOCKET sock, char *buf, int len, int flags, gboolean blocking)
+mono_w32socket_recv (SOCKET sock, void *buf, int len, int flags, gboolean blocking)
 {
 	return mono_w32socket_recvfrom (sock, buf, len, flags, NULL, 0, blocking);
 }
 
 int
-mono_w32socket_recvfrom (SOCKET sock, char *buf, int len, int flags, struct sockaddr *from, socklen_t *fromlen, gboolean blocking)
+mono_w32socket_recvfrom (SOCKET sock, void *buf, int len, int flags, struct sockaddr *from, socklen_t *fromlen, gboolean blocking)
 {
 	SocketHandle *sockethandle;
 	int ret;
@@ -582,7 +582,7 @@ mono_w32socket_transmit_file (SOCKET sock, gpointer file_handle, TRANSMIT_FILE_B
 #if defined(HAVE_SENDFILE) && (defined(__linux__) || defined(DARWIN))
 	struct stat statbuf;
 #else
-	gchar *buffer;
+	void *buffer;
 #endif
 
 	if (!mono_fdhandle_lookup_and_ref(sock, (MonoFDHandle**) &sockethandle)) {
@@ -1139,11 +1139,11 @@ static struct {
 };
 
 gint
-mono_w32socket_ioctl (SOCKET sock, gint32 command, gchar *input, gint inputlen, gchar *output, gint outputlen, glong *written)
+mono_w32socket_ioctl (SOCKET sock, gint32 command, void *input, gint inputlen, void *output, gint outputlen, glong *written)
 {
 	SocketHandle *sockethandle;
 	gint ret;
-	gchar *buffer;
+	void *buffer;
 
 	if (!mono_fdhandle_lookup_and_ref(sock, (MonoFDHandle**) &sockethandle)) {
 		mono_w32error_set_last (WSAENOTSOCK);
@@ -1258,7 +1258,7 @@ mono_w32socket_ioctl (SOCKET sock, gint32 command, gchar *input, gint inputlen, 
 		return 0;
 	}
 
-	buffer = inputlen > 0 ? (gchar*) g_memdup (input, inputlen) : NULL;
+	buffer = inputlen > 0 ? g_memdup (input, inputlen) : NULL;
 
 	MONO_ENTER_GC_SAFE;
 	ret = ioctl (((MonoFDHandle*) sockethandle)->fd, command, buffer);
