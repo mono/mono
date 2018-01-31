@@ -408,9 +408,13 @@ sgen_sources = \
 	sgen-mono.h		\
 	sgen-client-mono.h
 
+<<<<<<< HEAD
 # Per-library to workaround CoreFX/native until/unless https://github.com/dotnet/corefx/pull/31342.
 #CFLAGS := $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@) @CXX_ADD_CFLAGS@
 CFLAGS := $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@)
+=======
+CFLAGS := $(filter-out @CPLUSPLUS_REMOVE_CFLAGS@, @CFLAGS@) @CPLUSPLUS_ADD_CFLAGS@
+>>>>>>> [Cplusplus] Build system support for configure/autogen.sh -enable-cplusplus.
 
 libmonoruntime_la_SOURCES = $(common_sources) $(icall_tables_sources) $(ilgen_sources) $(gc_dependent_sources) $(null_gc_sources) $(boehm_sources)
 # Add CXX_ADD_CFLAGS per-library until/unless https://github.com/dotnet/corefx/pull/31342.
