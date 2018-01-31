@@ -20,6 +20,8 @@
 
 #include <mono/utils/mono-compiler.h>
 
+G_BEGIN_DECLS
+
 typedef struct _MonoImageWriter MonoImageWriter;
 
 #if defined(TARGET_AMD64) && !defined(HOST_WIN32) && !defined(__APPLE__)
@@ -115,5 +117,7 @@ gboolean mono_img_writer_subsections_supported (MonoImageWriter *acfg);
 FILE * mono_img_writer_get_fp (MonoImageWriter *acfg);
 
 const char *mono_img_writer_get_temp_label_prefix (MonoImageWriter *acfg);
+
+G_END_DECLS
 
 #endif

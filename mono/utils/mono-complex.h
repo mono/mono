@@ -23,6 +23,8 @@
 
 #ifdef _MSC_VER
 
+MONO_BEGIN_DECLS
+
 #define double_complex _C_double_complex
 
 static inline
@@ -93,5 +95,7 @@ double_complex mono_double_complex_sub(double_complex left, double_complex right
 {
 	return left - right;
 }
+
+MONO_END_DECLS
 
 #endif

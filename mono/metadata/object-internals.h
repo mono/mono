@@ -21,6 +21,8 @@
 #include "mono/utils/mono-tls.h"
 #include "mono/utils/mono-coop-mutex.h"
 
+MONO_BEGIN_DECLS
+
 /* Use this as MONO_CHECK_ARG (arg,expr,) in functions returning void */
 #define MONO_CHECK_ARG(arg, expr, retval) do {				\
 	if (G_UNLIKELY (!(expr)))					\
@@ -32,6 +34,21 @@
 		return retval;						\
 	} 								\
 } while (0)
+
+/* Use this as MONO_CHECK_ARG_NULL (arg,expr,) in functions returning void */
+#define MONO_CHECK_ARG(arg, expr, retval)		G_STMT_START{		  \
+		if (G_UNLIKELY (!(expr)))							  \
+       {								  \
+		MonoException *ex;					  \
+		char *msg = g_strdup_printf ("assertion `%s' failed",	  \
+		#expr);							  \
+		if (arg) {} /* check if the name exists */		  \
+		ex = mono_get_exception_argument (#arg, msg);		  \
+		g_free (msg);						  \
+		mono_set_pending_exception (ex);					  \
+		return retval;										  \
+       };				}G_STMT_END
+>>>>>>> [Cplusplus] Add extern "C" { } to many headers.
 
 /* Use this as MONO_CHECK_ARG_NULL (arg,) in functions returning void */
 #define MONO_CHECK_ARG_NULL(arg, retval) do { 			\
@@ -2082,5 +2099,7 @@ mono_class_get_virtual_method (MonoClass *klass, MonoMethod *method, gboolean is
 
 MonoStringHandle
 mono_string_empty_handle (MonoDomain *domain);
+
+MONO_END_DECLS
 
 #endif /* __MONO_OBJECT_INTERNALS_H__ */

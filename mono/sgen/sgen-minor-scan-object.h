@@ -9,6 +9,10 @@
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern guint64 stat_scan_object_called_nursery;
 
 #undef SERIAL_SCAN_OBJECT
@@ -151,3 +155,7 @@ SERIAL_DRAIN_GRAY_STACK (SgenGrayQueue *queue)
 		(ops)->scan_ptr_field = SERIAL_SCAN_PTR_FIELD;		\
 		(ops)->drain_gray_stack = SERIAL_DRAIN_GRAY_STACK;	\
 	} while (0)
+
+#ifdef __cplusplus
+} // extern "C"
+#endif

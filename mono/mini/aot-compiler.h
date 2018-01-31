@@ -7,6 +7,8 @@
 
 #include "mini.h"
 
+MONO_BEGIN_DECLS
+
 int mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options, gpointer **aot_state);
 int mono_compile_deferred_assemblies (guint32 opts, const char *aot_options, gpointer **aot_state);
 void* mono_aot_readonly_field_override (MonoClassField *field);
@@ -23,8 +25,6 @@ char*    mono_aot_get_direct_call_symbol    (MonoJumpInfoType type, gconstpointe
 int      mono_aot_get_method_index          (MonoMethod *method) MONO_LLVM_INTERNAL;
 MonoJumpInfo* mono_aot_patch_info_dup       (MonoJumpInfo* ji) MONO_LLVM_INTERNAL;
 
+MONO_END_DECLS
+
 #endif
-
-
-
-

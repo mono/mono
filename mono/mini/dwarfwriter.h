@@ -19,6 +19,8 @@
 
 #include <glib.h>
 
+MONO_BEGIN_DECLS
+
 typedef struct _MonoDwarfWriter MonoDwarfWriter;
 
 MonoDwarfWriter* mono_dwarf_writer_create (MonoImageWriter *writer, FILE *il_file, int il_file_start_line, gboolean emit_line_numbers);
@@ -39,5 +41,7 @@ mono_dwarf_writer_emit_method (MonoDwarfWriter *w, MonoCompile *cfg, MonoMethod 
 
 char *
 mono_dwarf_escape_path (const char *name);
+
+MONO_END_DECLS
 
 #endif

@@ -15,7 +15,6 @@
 
 #include <glib.h>
 
-
 #ifdef TARGET_WASM
 
 static inline void mono_memory_barrier (void)
