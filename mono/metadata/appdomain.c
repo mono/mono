@@ -2333,7 +2333,8 @@ ves_icall_System_Reflection_Assembly_LoadFrom (MonoStringHandle fname, MonoBoole
 	name = filename = mono_string_handle_to_utf8 (fname, error);
 	goto_if_nok (error, leave);
 	
-	MonoAssembly *requesting_assembly = NULL;
+	MonoAssembly *requesting_assembly;
+	requesting_assembly = NULL;
 	if (!refOnly) {
 		MonoMethod *executing_method = mono_runtime_get_caller_no_system_or_reflection ();
 		MonoAssembly *executing_assembly = executing_method ? m_class_get_image (executing_method->klass)->assembly : NULL;
