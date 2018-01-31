@@ -35,6 +35,11 @@
 #include <mono/utils/refcount.h>
 #include <mono/utils/w32api.h>
 
+#ifdef MONO_COMPLEX_CPLUSPLUS
+#define cabs std::abs
+#define creal std::real
+#endif // cplusplus
+
 #define CPU_USAGE_LOW 80
 #define CPU_USAGE_HIGH 95
 

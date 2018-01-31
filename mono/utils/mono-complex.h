@@ -12,6 +12,18 @@
 #include <config.h>
 #include <glib.h>
 
+#if defined (__cplusplus) && !defined (HOST_ANDROID)
+// This is portable ancient C++ but I do not know at the moment
+// what Android looks like, so hold back there.
+#define MONO_COMPLEX_CPLUSPLUS
+#endif
+
+#ifdef MONO_COMPLEX_CPLUSPLUS
+
+#include <complex>
+
+#else // __cplusplus
+
 #if !defined (HAVE_COMPLEX_H) || (defined (ANDROID_UNIFIED_HEADERS) && __ANDROID_API__ < 23)
 #include <../../support/libm/complex.h>
 #else
@@ -21,9 +33,11 @@
 #define _USE_MATH_DEFINES // needed by MSVC to define math constants
 #include <math.h>
 
-#ifdef _MSC_VER
+#endif // MONO_COMPLEX_CPLUSPLUS
 
 MONO_BEGIN_DECLS
+
+#if defined (_MSC_VER) && !defined (__cplusplus)
 
 #define double_complex _C_double_complex
 
@@ -64,12 +78,24 @@ double_complex mono_double_complex_sub(double_complex left, double_complex right
 
 #else
 
+#ifdef MONO_COMPLEX_CPLUSPLUS
+
+typedef std::complex<double> double_complex;
+
+#else
+
 #define double_complex double complex
+
+#endif
 
 static inline
 double_complex mono_double_complex_make(gdouble re, gdouble im)
 {
+#ifdef MONO_COMPLEX_CPLUSPLUS
+	return double_complex (re, im);
+#else
 	return re + im * I;
+#endif
 }
 
 static inline
