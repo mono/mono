@@ -10,6 +10,8 @@
 
 #include <mono/metadata/assembly.h>
 
+MONO_BEGIN_DECLS
+
 MONO_API MonoImage*    mono_assembly_load_module_checked (MonoAssembly *assembly, uint32_t idx, MonoError *error);
 
 MonoAssembly * mono_assembly_open_a_lot (const char *filename, MonoImageOpenStatus *status, gboolean refonly, gboolean load_from_context);
@@ -37,5 +39,7 @@ MonoAssembly*          mono_assembly_load_from_predicate (MonoImage *image, cons
  */
 gboolean
 mono_assembly_candidate_predicate_sn_same_name (MonoAssembly *candidate, gpointer wanted_name);
+
+MONO_END_DECLS
 
 #endif /* __MONO_METADATA_ASSEMBLY_INTERNALS_H__ */

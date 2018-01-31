@@ -272,6 +272,8 @@ typedef enum {
 
 typedef SuspendThreadResult (*MonoSuspendThreadCallback) (THREAD_INFO_TYPE *info, gpointer user_data);
 
+MONO_BEGIN_DECLS
+
 static inline gboolean
 mono_threads_filter_tools_threads (THREAD_INFO_TYPE *info)
 {
@@ -652,5 +654,7 @@ void mono_threads_join_unlock (void);
 typedef void (*background_job_cb)(void);
 void mono_threads_schedule_background_job (background_job_cb cb);
 #endif
+
+MONO_END_DECLS
 
 #endif /* __MONO_THREADS_H__ */

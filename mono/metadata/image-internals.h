@@ -8,6 +8,8 @@
 
 #include <mono/metadata/image.h>
 
+MONO_BEGIN_DECLS
+
 MonoImage *
 mono_find_image_owner (void *ptr);
 
@@ -19,5 +21,7 @@ mono_image_load_module_checked (MonoImage *image, int idx, MonoError *error);
 
 MonoImage *
 mono_image_open_a_lot (const char *fname, MonoImageOpenStatus *status, gboolean refonly, gboolean load_from_context);
+
+MONO_END_DECLS
 
 #endif /* __MONO_METADATA_IMAGE_INTERNALS_H__ */

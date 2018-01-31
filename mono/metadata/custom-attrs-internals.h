@@ -8,6 +8,8 @@
 #include <mono/metadata/object.h>
 #include <mono/metadata/reflection.h>
 
+MONO_BEGIN_DECLS
+
 MonoCustomAttrInfo*
 mono_custom_attrs_from_builders (MonoImage *alloc_img, MonoImage *image, MonoArray *cattrs);
 
@@ -21,5 +23,7 @@ mono_assembly_is_weak_field (MonoImage *image, guint32 field_idx);
 
 void
 mono_assembly_init_weak_fields (MonoImage *image);
+
+MONO_END_DECLS
 
 #endif  /* __MONO_METADATA_REFLECTION_CUSTOM_ATTRS_INTERNALS_H__ */

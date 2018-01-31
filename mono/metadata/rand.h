@@ -18,9 +18,13 @@
 #include <mono/metadata/object.h>
 #include "mono/utils/mono-compiler.h"
 
+MONO_BEGIN_DECLS
+
 MonoBoolean ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngOpen (void);
 gpointer ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngInitialize (MonoArray *seed);
 gpointer ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngGetBytes (gpointer handle, MonoArray *arry);
 void ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngClose (gpointer handle);
+
+MONO_END_DECLS
 
 #endif

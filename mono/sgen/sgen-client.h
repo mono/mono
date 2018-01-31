@@ -9,6 +9,8 @@
 
 #include "mono/sgen/sgen-pointer-queue.h"
 
+G_BEGIN_DECLS
+
 /*
  * Init whatever needs initing.  This is called relatively early in SGen initialization.
  * Must initialized the small ID for the current thread.
@@ -319,3 +321,5 @@ SgenThreadInfo* mono_thread_info_current (void);
 int mono_thread_info_get_small_id (void);
 
 #endif
+
+G_END_DECLS

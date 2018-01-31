@@ -15,6 +15,8 @@
 #include <mono/arch/arm64/arm64-codegen.h>
 #include <mono/mini/mini-arm64-gsharedvt.h>
 
+MONO_BEGIN_DECLS
+
 #define MONO_ARCH_CPU_SPEC mono_arm64_cpu_desc
 
 #define MONO_MAX_IREGS 32
@@ -266,5 +268,7 @@ GSList* mono_arm_get_exception_trampolines (gboolean aot);
 void mono_arm_resume_unwind (gpointer arg, mgreg_t pc, mgreg_t *int_regs, gdouble *fp_regs, gboolean corlib, gboolean rethrow);
 
 CallInfo* mono_arch_get_call_info (MonoMemPool *mp, MonoMethodSignature *sig);
+
+MONO_END_DECLS
 
 #endif /* __MONO_MINI_ARM64_H__ */

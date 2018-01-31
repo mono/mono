@@ -15,6 +15,8 @@
 #include "mono/utils/mono-error.h"
 #include "mono/sgen/gc-internal-agnostic.h"
 
+MONO_BEGIN_DECLS
+
 #define MONO_CLASS_IS_ARRAY(c) (m_class_get_rank (c))
 
 #define MONO_CLASS_HAS_STATIC_METADATA(klass) (m_class_get_type_token (klass) && !m_class_get_image (klass)->dynamic && !mono_class_is_ginst (klass))
@@ -1423,6 +1425,8 @@ mono_field_resolve_type (MonoClassField *field, MonoError *error);
 
 gboolean
 mono_type_has_exceptions (MonoType *type);
+
+MONO_END_DECLS
 
 /*Now that everything has been defined, let's include the inline functions */
 #include <mono/metadata/class-inlines.h>

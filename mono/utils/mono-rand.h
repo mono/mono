@@ -10,6 +10,8 @@
 #include "mono-compiler.h"
 #include "mono-error.h"
 
+MONO_BEGIN_DECLS
+
 gboolean
 mono_rand_open (void);
 gpointer
@@ -20,5 +22,7 @@ gboolean
 mono_rand_try_get_uint32 (gpointer *handle, guint32 *val, guint32 min, guint32 max, MonoError *error);
 void
 mono_rand_close (gpointer handle);
+
+MONO_END_DECLS
 
 #endif /* _MONO_UTILS_RAND_H_ */

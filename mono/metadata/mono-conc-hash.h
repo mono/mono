@@ -8,6 +8,7 @@
 
 #include <mono/metadata/mono-hash.h>
 
+MONO_BEGIN_DECLS
 
 typedef struct _MonoConcGHashTable MonoConcGHashTable;
 
@@ -18,5 +19,7 @@ void mono_conc_g_hash_table_foreach (MonoConcGHashTable *hash, GHFunc func, gpoi
 void mono_conc_g_hash_table_destroy (MonoConcGHashTable *hash);
 gpointer mono_conc_g_hash_table_insert (MonoConcGHashTable *h, gpointer k, gpointer v);
 gpointer mono_conc_g_hash_table_remove (MonoConcGHashTable *hash, gconstpointer key);
+
+MONO_END_DECLS
 
 #endif /* __MONO_CONC_G_HASH_H__ */

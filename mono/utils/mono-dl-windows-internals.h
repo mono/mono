@@ -11,8 +11,13 @@
 #ifdef HOST_WIN32
 #include "mono/utils/mono-dl.h"
 
+MONO_BEGIN_DECLS
+
 void*
 mono_dl_lookup_symbol_in_process (const char *symbol_name);
+
+MONO_END_DECLS
+
 #endif /* HOST_WIN32 */
 #endif /* __MONO_UTILS_DL_WINDOWS_H__ */
 

@@ -22,6 +22,8 @@
 #include "mono/utils/mono-threads.h"
 #include "mono/metadata/class-internals.h"
 
+MONO_BEGIN_DECLS
+
 /* This is a copy of System.Threading.ThreadState */
 typedef enum {
 	ThreadState_Running = 0x00000000,
@@ -276,5 +278,7 @@ mono_thread_internal_describe (MonoInternalThread *internal, GString *str);
 
 gboolean
 mono_thread_internal_is_current (MonoInternalThread *internal);
+
+MONO_END_DECLS
 
 #endif /* _MONO_METADATA_THREADS_TYPES_H_ */

@@ -7,6 +7,8 @@
 
 #include <glib.h>
 
+MONO_BEGIN_DECLS
+
 typedef void (*MonoThreadPoolWorkerCallback)(void);
 
 void
@@ -33,5 +35,7 @@ mono_threadpool_worker_set_max (gint32 value);
 
 void
 mono_threadpool_worker_set_suspended (gboolean suspended);
+
+MONO_END_DECLS
 
 #endif /* _MONO_METADATA_THREADPOOL_WORKER_H */

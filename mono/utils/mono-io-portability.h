@@ -9,6 +9,10 @@
 #include <mono/utils/mono-compiler.h>
 #include "config.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 enum {
         PORTABILITY_NONE        = 0x00,
         PORTABILITY_UNKNOWN     = 0x01,
@@ -40,6 +44,10 @@ extern int mono_io_portability_helpers;
 #define IS_PORTABILITY_CASE (mono_io_portability_helpers & PORTABILITY_CASE)
 #define IS_PORTABILITY_SET (mono_io_portability_helpers > 0)
 
+#endif
+
+#ifdef __cplusplus
+} // extern "C"
 #endif
 
 #endif

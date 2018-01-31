@@ -20,6 +20,8 @@
 #define MONO_WIN32_CRYPT_PROVIDER_HANDLE BCRYPT_ALG_HANDLE
 #endif
 
+MONO_BEGIN_DECLS
+
 MONO_WIN32_CRYPT_PROVIDER_HANDLE
 mono_rand_win_open_provider (void);
 
@@ -32,6 +34,7 @@ mono_rand_win_seed (MONO_WIN32_CRYPT_PROVIDER_HANDLE provider, guchar *seed, siz
 void
 mono_rand_win_close_provider (MONO_WIN32_CRYPT_PROVIDER_HANDLE provider);
 
+MONO_END_DECLS
+
 #endif /* HOST_WIN32 */
 #endif /* _MONO_UTILS_RAND_WINDOWS_H_ */
-

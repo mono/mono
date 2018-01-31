@@ -13,6 +13,8 @@
 #include <mono/metadata/method-builder.h>
 #include <mono/metadata/marshal.h>
 
+MONO_BEGIN_DECLS
+
 void
 mono_cominterop_init (void);
 
@@ -72,5 +74,7 @@ mono_class_try_get_com_object_class (void);
 
 void*
 mono_cominterop_get_com_interface (MonoObject* object, MonoClass* ic, MonoError *error);
+
+MONO_END_DECLS
 
 #endif /* __MONO_COMINTEROP_H__ */

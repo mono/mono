@@ -9,6 +9,8 @@
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/tabledefs.h>
 
+MONO_BEGIN_DECLS
+
 static inline gboolean
 mono_class_is_def (MonoClass *klass)
 {
@@ -92,5 +94,7 @@ mono_class_has_static_metadata (MonoClass *klass)
 {
 	return m_class_get_type_token (klass) && !m_class_get_image (klass)->dynamic && !mono_class_is_ginst (klass);
 }
+
+MONO_END_DECLS
 
 #endif

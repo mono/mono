@@ -8,6 +8,8 @@
 #ifndef __MONO_SGEN_CARD_TABLE_INLINES_H__
 #define __MONO_SGEN_CARD_TABLE_INLINES_H__
 
+G_BEGIN_DECLS
+
 /*WARNING: This function returns the number of cards regardless of overflow in case of overlapping cards.*/
 mword sgen_card_table_number_of_cards_in_range (mword address, mword size);
 guint8* sgen_find_next_card (guint8 *card_data, guint8 *end);
@@ -126,5 +128,7 @@ sgen_card_table_get_card_offset (char *ptr, char *base)
 {
 	return (ptr - base) >> CARD_BITS;
 }
+
+G_END_DECLS
 
 #endif

@@ -11,6 +11,8 @@
 #ifndef __MONO_UTILS_MONO_INTERNAL_HASH__
 #define __MONO_UTILS_MONO_INTERNAL_HASH__
 
+G_BEGIN_DECLS
+
 /* A MonoInternalHashTable is a hash table that does not allocate hash
    nodes.  It can be used if the following conditions are fulfilled:
 
@@ -73,5 +75,7 @@ mono_internal_hash_table_insert (MonoInternalHashTable *table,
 
 void
 mono_internal_hash_table_remove (MonoInternalHashTable *table, gpointer key);
+
+G_END_DECLS
 
 #endif

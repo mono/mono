@@ -12,6 +12,8 @@
 #include <mono/metadata/handle.h>
 #include <mono/metadata/object-internals.h>
 
+MONO_BEGIN_DECLS
+
 MonoAppDomainHandle
 ves_icall_System_AppDomain_getCurDomain            (MonoError *error);
 
@@ -116,5 +118,6 @@ ves_icall_System_AppDomain_InternalGetProcessGuid (MonoStringHandle newguid, Mon
 MonoBoolean
 ves_icall_System_CLRConfig_CheckThrowUnobservedTaskExceptions (void);
 
+MONO_END_DECLS
 
 #endif /*__MONO_METADATA_APPDOMAIN_ICALLS_H__*/

@@ -8,6 +8,8 @@
 #include <glib.h>
 #include <mono/utils/mono-publib.h>
 
+MONO_BEGIN_DECLS
+
 enum {
 	/* protection */
 	MONO_MMAP_NONE = 0,
@@ -83,6 +85,8 @@ typedef void *(*mono_file_map_alloc_fn)   (size_t length);
 typedef void  (*mono_file_map_release_fn) (void *addr);
 
 MONO_API void mono_file_map_set_allocator (mono_file_map_alloc_fn alloc, mono_file_map_release_fn release);
+
+MONO_END_DECLS
 
 #endif /* __MONO_UTILS_MMAP_H__ */
 

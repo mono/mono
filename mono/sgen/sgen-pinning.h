@@ -12,6 +12,10 @@
 
 #include "mono/sgen/sgen-pointer-queue.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 enum {
 	PIN_TYPE_STACK,
 	PIN_TYPE_STATIC_DATA,
@@ -57,5 +61,9 @@ gboolean sgen_cement_lookup (GCObject *obj);
 gboolean sgen_cement_lookup_or_register (GCObject *obj);
 void sgen_pin_cemented_objects (void);
 void sgen_cement_clear_below_threshold (void);
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
 
 #endif

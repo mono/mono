@@ -21,6 +21,8 @@
 #include "mono/utils/mono-tls.h"
 #include "mono/utils/mono-coop-mutex.h"
 
+MONO_BEGIN_DECLS
+
 /* Use this as MONO_CHECK_ARG_NULL (arg,expr,) in functions returning void */
 #define MONO_CHECK_ARG(arg, expr, retval)		G_STMT_START{		  \
 		if (G_UNLIKELY (!(expr)))							  \
@@ -1961,5 +1963,7 @@ mono_try_assembly_resolve_handle (MonoDomain *domain, MonoStringHandle fname, Mo
 
 gboolean
 mono_runtime_object_init_handle (MonoObjectHandle this_obj, MonoError *error);
+
+MONO_END_DECLS
 
 #endif /* __MONO_OBJECT_INTERNALS_H__ */

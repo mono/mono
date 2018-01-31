@@ -14,6 +14,10 @@
 
 #include "sgen-gc.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define PROTOCOL_HEADER_CHECK 0xde7ec7ab1ec0de
 /*
  * The version needs to be bumped every time we introduce breaking changes (like
@@ -244,4 +248,8 @@ gboolean binary_protocol_flush_buffers (gboolean force);
 #undef TYPE_POINTER
 #undef TYPE_BOOL
 
+#ifdef __cplusplus
+} // extern "C"
 #endif
+
+#endif // __MONO_SGENPROTOCOL_H__

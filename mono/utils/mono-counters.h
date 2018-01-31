@@ -8,6 +8,8 @@
 #include <stdio.h>
 #include <mono/utils/mono-publib.h>
 
+MONO_BEGIN_DECLS
+
 enum {
 	/* Counter type, bits 0-7. */
 	MONO_COUNTER_INT,    /* 32 bit int */
@@ -98,6 +100,8 @@ typedef void (*MonoResourceCallback) (int resource_type, uintptr_t value, int is
 MONO_API int  mono_runtime_resource_limit        (int resource_type, uintptr_t soft_limit, uintptr_t hard_limit);
 MONO_API void mono_runtime_resource_set_callback (MonoResourceCallback callback);
 MONO_API void mono_runtime_resource_check_limit  (int resource_type, uintptr_t value);
+
+MONO_END_DECLS
 
 #endif /* __MONO_COUNTERS_H__ */
 

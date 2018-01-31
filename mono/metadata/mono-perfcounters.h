@@ -9,6 +9,8 @@
 #include <mono/metadata/object.h>
 #include <mono/utils/mono-compiler.h>
 
+MONO_BEGIN_DECLS
+
 typedef struct _MonoCounterSample MonoCounterSample;
 
 void* mono_perfcounter_get_impl (MonoString* category, MonoString* counter, MonoString* instance,
@@ -32,5 +34,6 @@ MonoArray*  mono_perfcounter_instance_names  (MonoString *category);
 typedef gboolean (*PerfCounterEnumCallback) (char *category_name, char *name, unsigned char type, gint64 value, gpointer user_data);
 MONO_API void mono_perfcounter_foreach (PerfCounterEnumCallback cb, gpointer user_data);
 
-#endif /* __MONO_PERFCOUNTERS_H__ */
+MONO_END_DECLS
 
+#endif /* __MONO_PERFCOUNTERS_H__ */
