@@ -334,7 +334,7 @@ mono_locks_dump (gboolean include_untaken)
 					to_recycle++;
 			} else {
 				if (!monitor_is_on_freelist ((MonoThreadsSync *)mon->data)) {
-					MonoObject *holder = (MonoObject *)mono_gchandle_get_target ((guint32)mon->data);
+					MonoObject *holder = (MonoObject *)mono_gchandle_get_target ((guint32)(gsize)mon->data);
 					if (mon_status_get_owner (mon->status)) {
 						g_print ("Lock %p in object %p held by thread %d, nest level: %d\n",
 							mon, holder, mon_status_get_owner (mon->status), mon->nest);
@@ -391,7 +391,7 @@ mon_new (gsize id)
 		new_ = NULL;
 		for (marray = monitor_allocated; marray; marray = marray->next) {
 			for (i = 0; i < marray->num_monitors; ++i) {
-				if (mono_gchandle_get_target ((guint32)marray->monitors [i].data) == NULL) {
+				if (mono_gchandle_get_target ((guint32)(gsize)marray->monitors [i].data) == NULL) {
 					new_ = &marray->monitors [i];
 					if (new_->wait_list) {
 						/* Orphaned events left by aborted threads */
@@ -401,7 +401,7 @@ mon_new (gsize id)
 							new_->wait_list = g_slist_remove (new_->wait_list, new_->wait_list->data);
 						}
 					}
-					mono_gchandle_free ((guint32)new_->data);
+					mono_gchandle_free ((guint32)(gsize)new_->data);
 					new_->data = monitor_freelist;
 					monitor_freelist = new_;
 				}
@@ -469,7 +469,7 @@ static void
 discard_mon (MonoThreadsSync *mon)
 {
 	mono_monitor_allocator_lock ();
-	mono_gchandle_free ((guint32)mon->data);
+	mono_gchandle_free ((guint32)(gsize)mon->data);
 	mon_finalize (mon);
 	mono_monitor_allocator_unlock ();
 }
@@ -1119,7 +1119,7 @@ mono_monitor_get_object_monitor_gchandle (MonoObject *object)
 
 	if (lock_word_is_inflated (lw)) {
 		MonoThreadsSync *mon = lock_word_get_inflated_lock (lw);
-		return (guint32)mon->data;
+		return (guint32)(gsize)mon->data;
 	}
 	return 0;
 }

@@ -1296,31 +1296,25 @@ mono_metadata_translate_token_index (MonoImage *image, int table, guint32 idx)
 	case MONO_TABLE_METHOD:
 		if (image->tables [MONO_TABLE_METHOD_POINTER].rows)
 			return mono_metadata_decode_row_col (&image->tables [MONO_TABLE_METHOD_POINTER], idx - 1, MONO_METHOD_POINTER_METHOD);
-		else
-			return idx;
+		break;
 	case MONO_TABLE_FIELD:
 		if (image->tables [MONO_TABLE_FIELD_POINTER].rows)
 			return mono_metadata_decode_row_col (&image->tables [MONO_TABLE_FIELD_POINTER], idx - 1, MONO_FIELD_POINTER_FIELD);
-		else
-			return idx;
+		break;
 	case MONO_TABLE_EVENT:
 		if (image->tables [MONO_TABLE_EVENT_POINTER].rows)
 			return mono_metadata_decode_row_col (&image->tables [MONO_TABLE_EVENT_POINTER], idx - 1, MONO_EVENT_POINTER_EVENT);
-		else
-			return idx;
+		break;
 	case MONO_TABLE_PROPERTY:
 		if (image->tables [MONO_TABLE_PROPERTY_POINTER].rows)
 			return mono_metadata_decode_row_col (&image->tables [MONO_TABLE_PROPERTY_POINTER], idx - 1, MONO_PROPERTY_POINTER_PROPERTY);
-		else
-			return idx;
+		break;
 	case MONO_TABLE_PARAM:
 		if (image->tables [MONO_TABLE_PARAM_POINTER].rows)
 			return mono_metadata_decode_row_col (&image->tables [MONO_TABLE_PARAM_POINTER], idx - 1, MONO_PARAM_POINTER_PARAM);
-		else
-			return idx;
-	default:
-		return idx;
+		break;
 	}
+	return idx;
 }
 
 /**
