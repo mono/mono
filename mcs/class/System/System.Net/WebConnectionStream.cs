@@ -227,6 +227,13 @@ namespace System.Net
 		{
 		}
 
+		public override Task FlushAsync (CancellationToken cancellationToken)
+		{
+			return cancellationToken.IsCancellationRequested ?
+			    Task.FromCancellation (cancellationToken) :
+			    Task.CompletedTask;
+		}
+
 		internal void InternalClose ()
 		{
 			disposed = true;

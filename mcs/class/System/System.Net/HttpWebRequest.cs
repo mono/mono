@@ -68,6 +68,7 @@ namespace System.Net
 		bool hostChanged;
 		bool allowAutoRedirect = true;
 		bool allowBuffering = true;
+		bool allowReadStreamBuffering = false;
 		X509CertificateCollection certificates;
 		string connectionGroup;
 		bool haveContentLength;
@@ -245,11 +246,8 @@ namespace System.Net
 		}
 
 		public virtual bool AllowReadStreamBuffering {
-			get { return false; }
-			set {
-				if (value)
-					throw new InvalidOperationException ();
-			}
+			get { return allowReadStreamBuffering; }
+			set { allowReadStreamBuffering = value; }
 		}
 
 		static Exception GetMustImplement ()
@@ -539,7 +537,12 @@ namespace System.Net
 		[MonoTODO ("Use this")]
 		public int MaximumResponseHeadersLength {
 			get { return maxResponseHeadersLength; }
-			set { maxResponseHeadersLength = value; }
+			set {
+				if (value < 0 && value != System.Threading.Timeout.Infinite)
+					throw new ArgumentOutOfRangeException (nameof (value), SR.net_toosmall);
+
+				maxResponseHeadersLength = value;
+			}
 		}
 
 		[MonoTODO ("Use this")]
@@ -564,7 +567,13 @@ namespace System.Net
 		[MonoTODO]
 		public int ContinueTimeout {
 			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			set {
+				if (requestSent)
+					throw new InvalidOperationException (SR.net_reqsubmitted);
+				if ((value < 0) && (value != System.Threading.Timeout.Infinite))
+					throw new ArgumentOutOfRangeException (nameof (value), SR.net_io_timeout_use_ge_zero);
+				throw new NotImplementedException ();
+			}
 		}
 
 		public string MediaType {
@@ -603,7 +612,7 @@ namespace System.Net
 			get { return version; }
 			set {
 				if (value != HttpVersion.Version10 && value != HttpVersion.Version11)
-					throw new ArgumentException ("value");
+					throw new ArgumentException (SR.net_wrongversion, nameof (value));
 
 				force_version = true;
 				version = value;
@@ -863,7 +872,7 @@ namespace System.Net
 			}
 		}
 
-		async Task<Stream> MyGetRequestStreamAsync (CancellationToken cancellationToken)
+		Task<Stream> MyGetRequestStreamAsync (CancellationToken cancellationToken)
 		{
 			if (Aborted)
 				throw CreateRequestAbortedException ();
@@ -894,7 +903,7 @@ namespace System.Net
 				}
 			}
 
-			return await operation.GetRequestStream ().ConfigureAwait (false);
+			return operation.GetRequestStream ();
 		}
 
 		public override IAsyncResult BeginGetRequestStream (AsyncCallback callback, object state)
@@ -1004,7 +1013,7 @@ namespace System.Net
 
 					WebConnection.Debug ($"HWR GET RESPONSE LOOP: Req={ID} {auth_state.NtlmAuthState}");
 
-					writeStream = await operation.GetRequestStream ();
+					writeStream = await operation.GetRequestStreamInternal ();
 					await writeStream.WriteRequestAsync (cancellationToken).ConfigureAwait (false);
 
 					stream = await operation.GetResponseStream ();
