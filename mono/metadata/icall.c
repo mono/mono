@@ -102,6 +102,7 @@
 #include <mono/utils/w32api.h>
 #include <mono/utils/mono-merp.h>
 #include <mono/utils/mono-logger-internals.h>
+#include <mono/metadata/environment-internal.h>
 
 #if !defined(HOST_WIN32) && defined(HAVE_SYS_UTSNAME_H)
 #include <sys/utsname.h>
