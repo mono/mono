@@ -134,7 +134,7 @@ mono_mem_account_register_counters (void)
 {
 	for (int i = 0; i < MONO_MEM_ACCOUNT_MAX; ++i) {
 		const char *prefix = "Valloc ";
-		const char *name = mono_mem_account_type_name (i);
+		const char *name = mono_mem_account_type_name ((MonoMemAccountType)i);
 		char descr [128];
 		g_assert (strlen (prefix) + strlen (name) < sizeof (descr));
 		sprintf (descr, "%s%s", prefix, name);

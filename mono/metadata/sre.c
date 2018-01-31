@@ -2637,7 +2637,7 @@ reflection_init_generic_class (MonoReflectionTypeBuilderHandle ref_tb, MonoError
 
 	error_init (error);
 
-	MonoTypeBuilderState ref_state = MONO_HANDLE_GETVAL (ref_tb, state);
+	MonoTypeBuilderState ref_state = (MonoTypeBuilderState)MONO_HANDLE_GETVAL (ref_tb, state);
 	g_assert (ref_state == MonoTypeBuilderFinished);
 
 	MonoType *type = MONO_HANDLE_GETVAL (MONO_HANDLE_CAST (MonoReflectionType, ref_tb), type);

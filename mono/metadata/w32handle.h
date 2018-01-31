@@ -56,6 +56,20 @@ typedef enum {
 	MONO_W32HANDLE_WAIT_RET_FAILED      = -3,
 } MonoW32HandleWaitRet;
 
+#ifdef __cplusplus
+extern "C++" { // for embedding within extern "C"
+
+// FIXME generate from a macro
+inline MonoW32HandleWaitRet
+operator+ (MonoW32HandleWaitRet a, gsize b)
+{
+	return (MonoW32HandleWaitRet)((gsize)a + b);
+}
+
+} // extern C++
+
+#endif
+
 typedef struct 
 {
 	void (*close)(gpointer handle, gpointer data);

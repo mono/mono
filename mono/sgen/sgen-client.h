@@ -90,8 +90,8 @@ gpointer sgen_client_metadata_for_object (GCObject *obj);
 /*
  * No action required.
  */
-void sgen_client_gchandle_created (int handle_type, GCObject *obj, guint32 handle);
-void sgen_client_gchandle_destroyed (int handle_type, guint32 handle);
+void sgen_client_gchandle_created (GCHandleType handle_type, GCObject *obj, guint32 handle);
+void sgen_client_gchandle_destroyed (GCHandleType handle_type, guint32 handle);
 void sgen_client_ensure_weak_gchandles_accessible (void);
 
 /*

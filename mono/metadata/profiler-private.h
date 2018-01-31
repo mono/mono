@@ -15,6 +15,9 @@
 
 MONO_BEGIN_DECLS
 
+// FIXMEcplusplus
+//GENERATE_BIT_ENUM_OPERATORS (MonoProfilerCallInstrumentationFlags, int)
+
 struct _MonoProfilerDesc {
 	MonoProfilerHandle next;
 	MonoProfiler *prof;

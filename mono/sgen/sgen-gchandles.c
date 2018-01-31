@@ -186,7 +186,7 @@ alloc_handle (HandleData *handles, GCObject *obj, gboolean track)
 	/* Ensure that a GC handle cannot be given to another thread without the slot having been set. */
 	mono_memory_write_barrier ();
 	res = MONO_GC_HANDLE (index, handles->type);
-	sgen_client_gchandle_created (handles->type, obj, res);
+	sgen_client_gchandle_created ((GCHandleType)handles->type, obj, res);
 	return res;
 }
 
@@ -383,7 +383,7 @@ sgen_gchandle_free (guint32 gchandle)
 	} else {
 		/* print a warning? */
 	}
-	sgen_client_gchandle_destroyed (handles->type, gchandle);
+	sgen_client_gchandle_destroyed ((GCHandleType)handles->type, gchandle);
 }
 
 /*

@@ -2209,7 +2209,7 @@ emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_obje
 		if (ftype->attrs & FIELD_ATTRIBUTE_STATIC)
 			continue;
 
-		ntype = (MonoMarshalNative)mono_type_to_unmanaged (ftype, info->fields [i].mspec, TRUE, klass->unicode, &conv);
+		ntype = mono_type_to_unmanaged (ftype, info->fields [i].mspec, TRUE, klass->unicode, &conv);
 
 		if (last_field) {
 			msize = klass->instance_size - info->fields [i].field->offset;

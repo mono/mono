@@ -735,7 +735,7 @@ mono_profiler_call_context_free_buffer (void *buffer)
 MonoProfilerCallInstrumentationFlags
 mono_profiler_get_call_instrumentation_flags (MonoMethod *method)
 {
-	MonoProfilerCallInstrumentationFlags flags = MONO_PROFILER_CALL_INSTRUMENTATION_NONE;
+	int flags = MONO_PROFILER_CALL_INSTRUMENTATION_NONE;
 
 	for (MonoProfilerHandle handle = mono_profiler_state.profilers; handle; handle = handle->next) {
 		MonoProfilerCallInstrumentationFilterCallback cb = handle->call_instrumentation_filter;
@@ -744,7 +744,7 @@ mono_profiler_get_call_instrumentation_flags (MonoMethod *method)
 			flags |= cb (handle->prof, method);
 	}
 
-	return flags;
+	return (MonoProfilerCallInstrumentationFlags)flags;
 }
 
 void

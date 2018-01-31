@@ -3055,7 +3055,7 @@ mono_gchandle_set_target (guint32 gchandle, MonoObject *obj)
 }
 
 void
-sgen_client_gchandle_created (int handle_type, GCObject *obj, guint32 handle)
+sgen_client_gchandle_created (GCHandleType handle_type, GCObject *obj, guint32 handle)
 {
 #ifndef DISABLE_PERFCOUNTERS
 	mono_atomic_inc_i32 (&mono_perfcounters->gc_num_handles);
@@ -3065,7 +3065,7 @@ sgen_client_gchandle_created (int handle_type, GCObject *obj, guint32 handle)
 }
 
 void
-sgen_client_gchandle_destroyed (int handle_type, guint32 handle)
+sgen_client_gchandle_destroyed (GCHandleType handle_type, guint32 handle)
 {
 #ifndef DISABLE_PERFCOUNTERS
 	mono_atomic_dec_i32 (&mono_perfcounters->gc_num_handles);

@@ -1629,10 +1629,10 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		target = mini_get_gsharedvt_wrapper (TRUE, NULL, patch_info->data.sig, NULL, -1, FALSE);
 		break;
 	case MONO_PATCH_INFO_GET_TLS_TRAMP:
-		target = mono_tls_get_tls_getter (patch_info->data.index, FALSE);
+		target = mono_tls_get_tls_getter ((MonoTlsKey)patch_info->data.index, FALSE);
 		break;
 	case MONO_PATCH_INFO_SET_TLS_TRAMP:
-		target = mono_tls_get_tls_setter (patch_info->data.index, FALSE);
+		target = mono_tls_get_tls_setter ((MonoTlsKey)patch_info->data.index, FALSE);
 		break;
 	case MONO_PATCH_INFO_JIT_THREAD_ATTACH: {
 		MonoJitICallInfo *mi = mono_find_jit_icall_by_name ("mono_jit_thread_attach");

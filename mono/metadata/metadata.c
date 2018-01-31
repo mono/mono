@@ -6048,7 +6048,7 @@ mono_metadata_free_marshal_spec (MonoMarshalSpec *spec)
  * \returns A \c MonoMarshalNative enumeration value (<code>MONO_NATIVE_</code>) value
  * describing the underlying native reprensetation of the type.
  */
-guint32
+MonoMarshalNative
 mono_type_to_unmanaged (MonoType *type, MonoMarshalSpec *mspec, gboolean as_field,
 			gboolean unicode, MonoMarshalConv *conv) 
 {

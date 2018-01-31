@@ -15,8 +15,8 @@ typedef struct {
 	MonoTraceMask	mask;
 } MonoLogLevelEntry;
 
-GLogLevelFlags mono_internal_current_level	= INT_MAX;
-MonoTraceMask  mono_internal_current_mask	= ~((MonoTraceMask)0);
+GLogLevelFlags mono_internal_current_level	= (GLogLevelFlags)INT_MAX;
+MonoTraceMask  mono_internal_current_mask	= (MonoTraceMask)~0;
 gboolean mono_trace_log_header			= FALSE;
 
 static GQueue		*level_stack		= NULL;
@@ -296,16 +296,16 @@ mono_trace_set_mask_string (const char *value)
 		{ "io-layer-semaphore", MONO_TRACE_IO_LAYER_SEMAPHORE },
 		{ "io-layer-mutex", MONO_TRACE_IO_LAYER_MUTEX },
 		{ "io-layer-handle", MONO_TRACE_IO_LAYER_HANDLE },
-		{ "io-layer", MONO_TRACE_IO_LAYER_PROCESS
+		{ "io-layer", (MonoTraceMask)(MONO_TRACE_IO_LAYER_PROCESS
 		               | MONO_TRACE_IO_LAYER_SOCKET
 		               | MONO_TRACE_IO_LAYER_FILE
 		               | MONO_TRACE_IO_LAYER_EVENT
 		               | MONO_TRACE_IO_LAYER_SEMAPHORE
 		               | MONO_TRACE_IO_LAYER_MUTEX
-		               | MONO_TRACE_IO_LAYER_HANDLE },
+		               | MONO_TRACE_IO_LAYER_HANDLE) },
 		{ "w32handle", MONO_TRACE_IO_LAYER_HANDLE },
-		{ "all", ~((MonoTraceMask)0) },
-		{ NULL, 0 },
+		{ "all", (MonoTraceMask)~0 },
+		{ NULL, (MonoTraceMask)0 },
 	};
 
 	if(!value)
