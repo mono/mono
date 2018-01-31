@@ -2039,7 +2039,7 @@ ves_icall_System_Threading_Thread_Join_internal (MonoThreadObjectHandle thread_h
 
 		/* Wait for the thread to really exit */
 		MonoNativeThreadId tid = thread_get_tid (thread);
-		mono_thread_join ((gpointer)tid);
+		mono_thread_join ((gpointer)(gsize)tid);
 
 		return TRUE;
 	}
