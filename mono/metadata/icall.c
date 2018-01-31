@@ -109,11 +109,6 @@
 #include <sys/utsname.h>
 #endif
 
-/* icalls are defined ICALL_EXPORT so they are not static */
-#ifdef __GNUC__
-#pragma GCC diagnostic ignored "-Wmissing-prototypes"
-#endif
-
 //#define MONO_DEBUG_ICALLARRAY
 
 #ifdef MONO_DEBUG_ICALLARRAY
