@@ -87,7 +87,16 @@ enum {
 	STATE_EMPTY
 };
 
-typedef union {
+typedef union Anchor {
+
+// C++ does not by allow assigning volatile aggregates (struct, union, class).
+#ifdef __cplusplus
+	Anchor& operator=(const volatile Anchor& other)
+	{
+		value = other.value;
+		return *this;
+	}
+#endif
 	gint32 value;
 	struct {
 		guint32 avail : 15;
