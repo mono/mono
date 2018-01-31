@@ -20,13 +20,13 @@
 #include <mono/metadata/handle.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/w32api.h>
-#include "environment-internal.h"
+#include <mono/metadata/environment-internal.h>
 
 #if !defined(HOST_WIN32) && defined(HAVE_SYS_UTSNAME_H)
 #include <sys/utsname.h>
 #endif
 
-static gint32 exitcode=0;
+static gint32 exitcode;
 
 /**
  * mono_environment_exitcode_get:
@@ -34,7 +34,7 @@ static gint32 exitcode=0;
 gint32
 mono_environment_exitcode_get (void)
 {
-	return(exitcode);
+	return exitcode;
 }
 
 /**
@@ -43,14 +43,13 @@ mono_environment_exitcode_get (void)
 void
 mono_environment_exitcode_set (gint32 value)
 {
-	exitcode=value;
+	exitcode = value;
 }
 
 /* note: we better manipulate the string in managed code (easier and safer) */
 MonoStringHandle
 ves_icall_System_Environment_GetOSVersionString (MonoError *error)
 {
-	error_init (error);
 #ifdef HOST_WIN32
 	OSVERSIONINFOEX verinfo;
 
@@ -90,4 +89,3 @@ ves_icall_System_Environment_GetOSVersionString (MonoError *error)
 #endif
 	return mono_string_new_handle (mono_domain_get (), "0.0.0.0", error);
 }
-
