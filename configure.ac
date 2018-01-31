@@ -380,7 +380,12 @@ case "$host" in
 		CPPFLAGS="$CPPFLAGS -maix64 -Wl,-b64 -DGC_AIX_THREADS -D_ALL_SOURCE -D_LARGE_FILES -D_REENTRANT"
 		LDFLAGS="-maix64 -Wl,-b64"
 		libmono_cflags="-D_REENTRANT"
-		AR="ar -X64"
+		dnl Would you believe GNU nm doesn't know how to process AIX libraries?
+		dnl Hardcode IBM binutils in case GNU ones end up on our path. Also 
+		dnl specifiy 64-bit mode for ar specifically, as it doesn't seem to
+		dnl pick up on OBJECT_MODE.
+		AR="/usr/bin/ar -X64"
+		NM="/usr/bin/nm -X64"
 		export OBJECT_MODE=64
 		dnl SGen is the future
 		support_boehm=no
