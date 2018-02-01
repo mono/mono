@@ -700,7 +700,7 @@ namespace MonoTests.Mono.Security.Authenticode {
 			AuthenticodeDeformatter ad = new AuthenticodeDeformatter (filename);
 			// note: it's a valid signed PE file - but it doesn't 
 			// mean it's root is trusted on the current system
-			Assert.IsTrue (((ad.Reason == 0) || (ad.Reason == 6)), "Reason");
+			Assert.IsTrue (((ad.Reason == 0) || (ad.Reason == 6)), $"Reason = {ad.Reason}");
 			Assert.AreEqual ("35-A5-21-3B-FC-FE-FA-40-97-AA-BB-DE-3B-52-15-6F", BitConverter.ToString (ad.Hash), "Hash");
 			Assert.AreEqual (632011370700000000, ad.Timestamp.ToUniversalTime ().Ticks, "Timestamp");
 			Assert.AreEqual (4, ad.Certificates.Count, "#Certificates");
