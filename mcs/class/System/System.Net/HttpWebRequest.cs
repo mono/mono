@@ -68,7 +68,7 @@ namespace System.Net
 		bool hostChanged;
 		bool allowAutoRedirect = true;
 		bool allowBuffering = true;
-		bool allowReadStreamBuffering = false;
+		bool allowReadStreamBuffering;
 		X509CertificateCollection certificates;
 		string connectionGroup;
 		bool haveContentLength;
