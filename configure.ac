@@ -395,6 +395,8 @@ case "$host" in
 		dnl the valloc call to alloc the guard page bombs out, even with extending the data area
 		with_sigaltstack=no
 		parallel_mark="not tested"
+		dnl use pthread TLS, __thread has issues with the compiler flags we use
+		with_tls=pthread
 		dnl ppc Linux is the same? test further
 		disable_munmap=yes
 		;;
