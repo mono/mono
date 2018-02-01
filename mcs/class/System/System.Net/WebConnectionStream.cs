@@ -115,7 +115,7 @@ namespace System.Net
 			return e;
 		}
 
-		public override int Read (byte[] buffer, int offset, int size)
+		public override int Read (byte[] buffer, int offset, int count)
 		{
 			if (!CanRead)
 				throw new NotSupportedException (SR.net_writeonlystream);
@@ -127,17 +127,17 @@ namespace System.Net
 			int length = buffer.Length;
 			if (offset < 0 || length < offset)
 				throw new ArgumentOutOfRangeException (nameof (offset));
-			if (size < 0 || (length - offset) < size)
-				throw new ArgumentOutOfRangeException (nameof (size));
+			if (count < 0 || (length - offset) < count)
+				throw new ArgumentOutOfRangeException (nameof (count));
 
 			try {
-				return ReadAsync (buffer, offset, size, CancellationToken.None).Result;
+				return ReadAsync (buffer, offset, count, CancellationToken.None).Result;
 			} catch (Exception e) {
 				throw GetException (e);
 			}
 		}
 
-		public override IAsyncResult BeginRead (byte[] buffer, int offset, int size,
+		public override IAsyncResult BeginRead (byte[] buffer, int offset, int count,
 							AsyncCallback cb, object state)
 		{
 			if (!CanRead)
@@ -150,10 +150,10 @@ namespace System.Net
 			int length = buffer.Length;
 			if (offset < 0 || length < offset)
 				throw new ArgumentOutOfRangeException (nameof (offset));
-			if (size < 0 || (length - offset) < size)
-				throw new ArgumentOutOfRangeException (nameof (size));
+			if (count < 0 || (length - offset) < count)
+				throw new ArgumentOutOfRangeException (nameof (count));
 
-			var task = ReadAsync (buffer, offset, size, CancellationToken.None);
+			var task = ReadAsync (buffer, offset, count, CancellationToken.None);
 			return TaskToApm.Begin (task, cb, state);
 		}
 
@@ -169,7 +169,7 @@ namespace System.Net
 			}
 		}
 
-		public override IAsyncResult BeginWrite (byte[] buffer, int offset, int size,
+		public override IAsyncResult BeginWrite (byte[] buffer, int offset, int count,
 							 AsyncCallback cb, object state)
 		{
 			if (!CanWrite)
@@ -182,10 +182,10 @@ namespace System.Net
 			int length = buffer.Length;
 			if (offset < 0 || length < offset)
 				throw new ArgumentOutOfRangeException (nameof (offset));
-			if (size < 0 || (length - offset) < size)
-				throw new ArgumentOutOfRangeException (nameof (size));
+			if (count < 0 || (length - offset) < count)
+				throw new ArgumentOutOfRangeException (nameof (count));
 
-			var task = WriteAsync (buffer, offset, size, CancellationToken.None);
+			var task = WriteAsync (buffer, offset, count, CancellationToken.None);
 			return TaskToApm.Begin (task, cb, state);
 		}
 
@@ -201,7 +201,7 @@ namespace System.Net
 			}
 		}
 
-		public override void Write (byte[] buffer, int offset, int size)
+		public override void Write (byte[] buffer, int offset, int count)
 		{
 			if (!CanWrite)
 				throw new NotSupportedException (SR.net_readonlystream);
@@ -213,11 +213,11 @@ namespace System.Net
 			int length = buffer.Length;
 			if (offset < 0 || length < offset)
 				throw new ArgumentOutOfRangeException (nameof (offset));
-			if (size < 0 || (length - offset) < size)
-				throw new ArgumentOutOfRangeException (nameof (size));
+			if (count < 0 || (length - offset) < count)
+				throw new ArgumentOutOfRangeException (nameof (count));
 
 			try {
-				WriteAsync (buffer, offset, size).Wait ();
+				WriteAsync (buffer, offset, count).Wait ();
 			} catch (Exception e) {
 				throw GetException (e);
 			}
