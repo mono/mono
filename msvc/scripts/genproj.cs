@@ -957,6 +957,13 @@ class MsbuildGenerator {
 				"    <AssemblyOriginatorKeyFile>{0}</AssemblyOriginatorKeyFile>",
 				StrongNameKeyFile, StrongNameDelaySign ? "    <DelaySign>true</DelaySign>" + NewLine : "");
 		}
+
+		// If an EXE is built with nostdlib, it won't work unless run with mono.exe. This stops our build steps
+		//  from working in visual studio (because we already replace @MONO@ with '' on Windows.)
+
+		if (Target != Target.Library)
+			StdLib = true;
+
 		Csproj.output = template.
 			Replace ("@OUTPUTTYPE@", Target == Target.Library ? "Library" : "Exe").
 			Replace ("@SIGNATURE@", strongNameSection).
