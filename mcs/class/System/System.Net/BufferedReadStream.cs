@@ -1,5 +1,5 @@
 //
-// MonoChunkStream.cs
+// BufferedReadStream.cs
 //
 // Author:
 //       Martin Baulig <mabaul@microsoft.com>
@@ -30,27 +30,19 @@ using System.Threading.Tasks;
 
 namespace System.Net
 {
-	class MonoChunkStream : WebReadStream
+	class BufferedReadStream : WebReadStream
 	{
-		protected WebHeaderCollection Headers {
-			get;
-		}
+		readonly BufferOffsetSize readBuffer;
 
-		protected MonoChunkParser Decoder {
-			get;
-		}
-
-		public MonoChunkStream (WebOperation operation, Stream innerStream,
-		                         WebHeaderCollection headers)
+		public BufferedReadStream (WebOperation operation, Stream innerStream,
+		                           BufferOffsetSize readBuffer)
 			: base (operation, innerStream)
 		{
-			Headers = headers;
-
-			Decoder = new MonoChunkParser (headers);
+			this.readBuffer = readBuffer;
 		}
 
 		public override async Task<int> ReadAsync (byte[] buffer, int offset, int size,
-		                                           CancellationToken cancellationToken)
+							   CancellationToken cancellationToken)
 		{
 			cancellationToken.ThrowIfCancellationRequested ();
 
@@ -63,32 +55,22 @@ namespace System.Net
 			if (size < 0 || (length - offset) < size)
 				throw new ArgumentOutOfRangeException (nameof (size));
 
-			if (Decoder.DataAvailable)
-				return Decoder.Read (buffer, offset, size);
-
-			int ret = 0;
-			byte[] moreBytes = null;
-			while (ret == 0 && Decoder.WantMore) {
-				int localSize = Decoder.ChunkLeft;
-				if (localSize <= 0) // not read chunk size yet
-					localSize = 1024;
-				else if (localSize > 16384)
-					localSize = 16384;
-
-				if (moreBytes == null || moreBytes.Length < localSize)
-					moreBytes = new byte[localSize];
-
-				ret = await InnerStream.ReadAsync (
-					moreBytes, 0, localSize, cancellationToken).ConfigureAwait (false);
-
-				if (ret <= 0)
-					return ret;
-
-				Decoder.Write (moreBytes, 0, ret);
-				ret = Decoder.Read (buffer, offset, size);
+			var remaining = readBuffer?.Size ?? 0;
+			if (remaining > 0) {
+				int copy = (remaining > size) ? size : remaining;
+				Buffer.BlockCopy (readBuffer.Buffer, readBuffer.Offset, buffer, offset, copy);
+				readBuffer.Offset += copy;
+				readBuffer.Size -= copy;
+				offset += copy;
+				size -= copy;
+				return copy;
 			}
 
-			return ret;
+			if (InnerStream == null)
+				return 0;
+
+			return await InnerStream.ReadAsync (
+				buffer, offset, size, cancellationToken).ConfigureAwait (false);
 		}
 	}
 }
