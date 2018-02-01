@@ -694,7 +694,6 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/ServicePointManager.cs
 ../referencesource/System/net/System/Net/SocketAddress.cs
 ../referencesource/System/net/System/Net/SocketException.cs
-../referencesource/System/net/System/Net/webclient.cs
 ../referencesource/System/net/System/Net/WebException.cs
 ../referencesource/System/net/System/Net/WebExceptionStatus.cs
 ../referencesource/System/net/System/Net/WebHeaderCollection.cs
@@ -704,7 +703,6 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/WebRequest.cs
 ../referencesource/System/net/System/Net/WebResponse.cs
 ../referencesource/System/net/System/Net/WebUtility.cs
-../referencesource/System/net/System/Net/WriteStreamClosedEventArgs.cs
 
 ../referencesource/System/net/System/Net/Cache/RequestCache.cs
 ../referencesource/System/net/System/Net/Cache/RequestCacheEntry.cs
@@ -864,6 +862,9 @@ corefx/SR.cs
 ../../../external/corefx/src/Common/src/System/Collections/Generic/EnumerableHelpers.cs
 ../../../external/corefx/src/Common/src/System/Collections/Generic/LargeArrayBuilder.cs
 
+../../../external/corefx/src/Common/src/System/IO/DelegatingStream.cs
+../../../external/corefx/src/Common/src/System/IO/ChunkedMemoryStream.cs
+
 ../../../external/corefx/src/Common/src/System/Net/HttpStatusDescription.cs
 ../../../external/corefx/src/Common/src/System/Net/SecurityProtocol.cs
 ../../../external/corefx/src/Common/src/System/Net/UriScheme.cs
@@ -921,6 +922,8 @@ corefx/SR.cs
 ../../../external/corefx/src/System.Net.WebSockets.Client/src/System/Net/WebSockets/WebSocketHandle.Managed.cs
 
 ../../../external/corefx/src/System.Net.WebSockets.WebSocketProtocol/src/System/Net/WebSockets/ManagedWebSocket.netstandard.cs
+
+../../../external/corefx/src/System.Net.WebClient/src/System/Net/WebClient.cs
 
 ../../../external/corefx/src/System.Private.Uri/src/System/UriBuilder.cs
 
