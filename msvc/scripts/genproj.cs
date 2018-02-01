@@ -740,7 +740,7 @@ class MsbuildGenerator {
 				fx_version = "4.0";
 				profile = "net_4_0";
 			} else if (response.Contains (profile_4_x)) {
-				fx_version = "4.5";
+				fx_version = "4.6.2";
 				profile = "net_4_x";
 			}
 		}
@@ -963,6 +963,12 @@ class MsbuildGenerator {
 
 		if (Target != Target.Library)
 			StdLib = true;
+
+		// We have our target framework set to 4.5 in many places because broken scripts check for files with 4.5
+		//  in the path, even though we compile code that uses 4.6 features. So we need to manually fix that here.
+
+		if (fx_version == "4.5")
+			fx_version = "4.6.2";
 
 		Csproj.output = template.
 			Replace ("@OUTPUTTYPE@", Target == Target.Library ? "Library" : "Exe").
