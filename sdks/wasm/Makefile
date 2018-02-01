@@ -71,9 +71,11 @@ managed/:
 $(patsubst %,managed/%,$(BCL_ASSEMBLIES)): managed/%: $(WASM_BCL_DIR)/% | managed/
 	cp $< $@
 
+$(TOP)/mcs/class/lib/wasm/nunitlite.dll: FORCE
+	$(MAKE) -C $(TOP)/mcs/tools/nunit-lite PROFILE=wasm
+
 #FIXME change BCL sdk build to include nunitlite.dll in out/bcl/wasm/
 managed/nunitlite.dll: $(TOP)/mcs/class/lib/wasm/nunitlite.dll | managed/
-	$(MAKE) -C $(TOP)/mcs/tools/nunit-lite PROFILE=wasm
 	cp $< $@
 
 managed/main.exe: $(TEST_DEPS) $(APP_SOURCES) | managed/
