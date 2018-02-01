@@ -226,7 +226,6 @@ _ios_$(1)_CONFIGURE_FLAGS= \
 	--disable-visibility-hidden \
 	--enable-maintainer-mode \
 	--enable-minimal=com,remoting,shared_perfcounters \
-	--with-glib=embedded \
 	--with-tls=pthread \
 	--without-ikvm-native
 
@@ -310,8 +309,7 @@ _ios_$(1)_CONFIGURE_FLAGS= \
 	--enable-dtrace=yes \
 	--enable-icall-symbol-map \
 	--enable-minimal=com,remoting \
-	--with-cross-offsets=$(2)-apple-darwin10.h \
-	--with-glib=embedded
+	--with-cross-offsets=$(2)-apple-darwin10.h
 
 _ios_$(1)_CONFIGURE_ENVIRONMENT= \
 	CC="$$(_ios_$(1)_CC)" \
