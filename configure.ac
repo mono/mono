@@ -376,25 +376,22 @@ case "$host" in
 		;;
 	*-*-aix*|*-*-os400*)
 		dnl Set up a 64-bit build
-		dnl Some of these flags may be redundant; but a 64-bit build does require some moving parts
-		CPPFLAGS="$CPPFLAGS -maix64 -Wl,-b64 -DGC_AIX_THREADS -D_ALL_SOURCE -D_LARGE_FILES -D_REENTRANT"
-		LDFLAGS="-maix64 -Wl,-b64"
+		CPPFLAGS="$CPPFLAGS -maix64 -DGC_AIX_THREADS -D_ALL_SOURCE -D_LARGE_FILES -D_REENTRANT"
+		LDFLAGS="-maix64"
 		libmono_cflags="-D_REENTRANT"
 		dnl Would you believe GNU nm doesn't know how to process AIX libraries?
-		dnl Hardcode IBM binutils in case GNU ones end up on our path. Also 
-		dnl specifiy 64-bit mode for ar specifically, as it doesn't seem to
-		dnl pick up on OBJECT_MODE.
+		dnl Hardcode IBM binutils in case GNU ones end up on our path. Also
+		dnl specifiy 64-bit mode for tools.
 		AR="/usr/bin/ar -X64"
 		NM="/usr/bin/nm -X64"
-		export OBJECT_MODE=64
-		dnl SGen is the future
+		dnl SGen is the future (changes to Boehm support code would be
+		dnl required if you wish to re-enable Boehm)
 		support_boehm=no
 		with_gc=sgen
 		need_link_unlink=yes
 		use_sigposix=yes
 		dnl the valloc call to alloc the guard page bombs out, even with extending the data area
 		with_sigaltstack=no
-		parallel_mark="not tested"
 		dnl use pthread TLS, __thread has issues with the compiler flags we use
 		with_tls=pthread
 		dnl ppc Linux is the same? test further
@@ -4004,9 +4001,10 @@ if test $lt_cv_prog_gnu_ld = yes; then
 else
 	case $host in
 	*-*-aix*|*-*-os400*)
-		LDFLAGS="${LDFLAGS} -Wl,-bexpall"
 		;;
 	*)
+		dnl Try to use export-dynamic anyways
+		LDFLAGS="${LDFLAGS} -Wl,-export-dynamic"
 		;;
 	esac
 fi

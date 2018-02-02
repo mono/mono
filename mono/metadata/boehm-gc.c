@@ -130,12 +130,7 @@ mono_gc_base_init (void)
 	 * we used to do this only when running on valgrind,
 	 * but it happens also in other setups.
 	 */
-	/*
-         * even though AIX > 6 can have getattr, it doesn't exist on PASE and toolchains
-         * ship a "fixed" header file without "non-standard" declarations like it, so don't
-         * use it, even if it's there
-         */
-#if defined(HAVE_PTHREAD_GETATTR_NP) && defined(HAVE_PTHREAD_ATTR_GETSTACK) && !defined(_AIX)
+#if defined(HAVE_PTHREAD_GETATTR_NP) && defined(HAVE_PTHREAD_ATTR_GETSTACK)
 	{
 		size_t size;
 		void *sstart;
