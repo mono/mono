@@ -2621,7 +2621,8 @@ namespace MonoTests.System.Net
 			var hwr = (HttpWebRequest)WebRequest.Create (uri);
 
 			hwr.Host = address2;
-			Assert.AreEqual (address2, hwr.Host, "#1");
+			var expected = "[2001::1:1:1:157:0]";
+			Assert.AreEqual (expected, hwr.Host, "#1");
 		}
 
 		[Test]
