@@ -27,7 +27,7 @@ $(TOP)/sdks/builds/toolchains/emsdk:
 .stamp-wasm-interp-toolchain: .stamp-wasm-toolchain
 	touch $@
 
-.stamp-wasm-interp-configure: $(TOP)/configure .stamp-wasm-interp-toolchain
+.stamp-wasm-interp-configure: $(TOP)/configure
 	mkdir -p $(TOP)/sdks/builds/wasm-interp
 	cd $(TOP)/sdks/builds/wasm-interp && source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && CFLAGS="-Os -g" emconfigure $(TOP)/configure $(WASM_INTERP_CONFIGURE_FLAGS)
 	touch $@

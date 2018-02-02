@@ -12,7 +12,7 @@ define MxeTemplate
 	cd $$(TOP)/sdks/builds/toolchains/mxe && git checkout $$(MXE_HASH)
 	touch $$@
 
-.stamp-mxe-$(1)-configure: .stamp-mxe-$(1)-toolchain
+.stamp-mxe-$(1)-configure:
 	touch $$@
 
 .PHONY: build-custom-mxe-$(1)

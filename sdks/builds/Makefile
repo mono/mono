@@ -60,6 +60,8 @@ endif
 .PHONY: $(foreach target,$(TARGETS),toolchain-$(target))
 $(foreach target,$(TARGETS),toolchain-$(target)): toolchain-%: .stamp-%-toolchain
 
+$(foreach target,$(TARGETS),.stamp-$(target)-configure): .stamp-%-configure: .stamp-%-toolchain
+
 .PHONY: $(foreach target,$(TARGETS),configure-$(target))
 $(foreach target,$(TARGETS),configure-$(target)): configure-%: .stamp-%-configure
 
