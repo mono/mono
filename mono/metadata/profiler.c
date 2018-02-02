@@ -559,8 +559,10 @@ mono_profiler_sampling_thread_wait (void)
 mono_bool
 mono_profiler_enable_allocations (void)
 {
+#ifndef RUNTIME_IL2CPP
 	if (mono_gc_get_managed_allocator_types () > 0 && mono_profiler_state.startup_done)
 		return FALSE;
+#endif
 
 	return mono_profiler_state.allocations = TRUE;
 }
