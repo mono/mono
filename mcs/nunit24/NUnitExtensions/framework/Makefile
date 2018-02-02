@@ -3,9 +3,9 @@ SUBDIRS =
 include ../../../build/rules.make
 
 LIBRARY = nunit.framework.extensions.dll
-LIBRARY_SNK = $(topdir)/nunit24/nunit.snk
+LIBRARY_SNK = 
 
-LIB_MCS_FLAGS = /d:StronglyNamedAssembly /publicsign /keyfile:../../nunit.snk
+LIB_MCS_FLAGS = 
 LIB_REFS = System.Xml System
 NO_TEST = yo
 
