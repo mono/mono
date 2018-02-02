@@ -15,7 +15,8 @@
 
 #include <stdint.h>
 
-#ifndef _MSC_VER // inttypes.h doesn't exist on VS2010
+/* inttypes.h is only available from VS2013 */
+#if !defined(_MSC_VER) || (_MSC_VER >= 1800)
 #include <inttypes.h>
 #endif
 
