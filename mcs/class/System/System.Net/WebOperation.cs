@@ -215,7 +215,12 @@ namespace System.Net
 			}
 		}
 
-		public Task<WebRequestStream> GetRequestStream ()
+		public async Task<Stream> GetRequestStream ()
+		{
+			return await requestTask.Task.ConfigureAwait (false);
+		}
+
+		internal Task<WebRequestStream> GetRequestStreamInternal ()
 		{
 			return requestTask.Task;
 		}

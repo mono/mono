@@ -103,7 +103,7 @@ namespace System.Net
 			get; set;
 		}
 
-		public override async Task<int> ReadAsync (byte[] buffer, int offset, int size, CancellationToken cancellationToken)
+		public override async Task<int> ReadAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
 			WebConnection.Debug ($"{ME} READ ASYNC");
 
@@ -115,8 +115,8 @@ namespace System.Net
 			int length = buffer.Length;
 			if (offset < 0 || length < offset)
 				throw new ArgumentOutOfRangeException (nameof (offset));
-			if (size < 0 || (length - offset) < size)
-				throw new ArgumentOutOfRangeException (nameof (size));
+			if (count < 0 || (length - offset) < count)
+				throw new ArgumentOutOfRangeException (nameof (count));
 
 			if (Interlocked.CompareExchange (ref nestedRead, 1, 0) != 0)
 				throw new InvalidOperationException ("Invalid nested call.");
@@ -141,7 +141,7 @@ namespace System.Net
 			try {
 				// FIXME: NetworkStream.ReadAsync() does not support cancellation.
 				nbytes = await HttpWebRequest.RunWithTimeout (
-					ct => ProcessRead (buffer, offset, size, ct),
+					ct => ProcessRead (buffer, offset, count, ct),
 					ReadTimeout, () => {
 						Operation.Abort ();
 						InnerStream.Dispose ();
@@ -420,7 +420,7 @@ namespace System.Net
 			Operation.CompleteResponseRead (true);
 		}
 
-		public override Task WriteAsync (byte[] buffer, int offset, int size, CancellationToken cancellationToken)
+		public override Task WriteAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
 			return Task.FromException (new NotSupportedException (SR.net_readonlystream));
 		}

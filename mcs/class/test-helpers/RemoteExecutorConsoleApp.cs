@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 
 class Program 
 { 
@@ -41,7 +42,13 @@ class Program
 		}
 		else
 		{
-			throw new Exception($"ReturnType should be int or Task<int>. But was: {method.ReturnType.Name}");
+			// FIXME: we're called for compiler-generated helper methods
+			var attr = method.GetCustomAttribute<CompilerGeneratedAttribute> ();
+			if (attr == null)
+				attr = method.DeclaringType.GetCustomAttribute<CompilerGeneratedAttribute> ();
+			if (attr != null)
+				return -1;
+			throw new Exception ($"ReturnType of `{method}` should be int or Task<int>. But was: {method.ReturnType.Name}");
 		}
 
 		return result;
