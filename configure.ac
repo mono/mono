@@ -3415,6 +3415,13 @@ case "$host" in
 		fi
 		arch_target=ppc;
 		case $host_os in
+		  aix*|os400*)
+			dnl on AIX/PASE, shared libraries can be inside archives
+			dnl if they are, we specify them by lib.a(lib.so)
+			dnl we may hardcode 64-bit names at times, but we don't do 32-bit AIX, so
+			LIBC="libc.a(shr_64.o)"
+			INTL="libintl.a(libintl.so.9)"
+			;;
 		  linux*|darwin*)
 			;;
 		esac
