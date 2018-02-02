@@ -270,6 +270,8 @@ XTEST_HARNESS_FLAGS := -noappdomain -noshadow -parallel none -nunit TestResult-$
 XTEST_TRAIT := -notrait category=failing -notrait category=nonmonotests -notrait Benchmark=true -notrait category=outerloop
 TEST_MONO_PATH := $(TEST_MONO_PATH)$(PLATFORM_PATH_SEPARATOR)$(XTEST_HARNESS_PATH)
 
+TEST_MONO_PATH := $(XTEST_HARNESS_PATH):$(TEST_MONO_PATH)
+
 ifdef FIXTURE
 XTEST_HARNESS_FLAGS += -class $(FIXTURE)
 endif
