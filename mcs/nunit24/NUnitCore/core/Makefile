@@ -3,9 +3,9 @@ SUBDIRS =
 include ../../../build/rules.make
 
 LIBRARY = nunit.core.dll
-LIBRARY_SNK = 
+LIBRARY_SNK = $(topdir)/nunit24/nunit.snk
 
-LOCAL_MCS_FLAGS = -warn:1
+LOCAL_MCS_FLAGS = /d:StronglyNamedAssembly -warn:1 /publicsign /keyfile:../../nunit.snk
 LIB_REFS = nunit.framework nunit.core.interfaces System
 NO_TEST = yo
 

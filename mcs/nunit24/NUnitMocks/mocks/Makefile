@@ -3,9 +3,9 @@ SUBDIRS =
 include ../../../build/rules.make
 
 LIBRARY = nunit.mocks.dll
-LIBRARY_SNK = 
+LIBRARY_SNK = $(topdir)/nunit24/nunit.snk
 
-LOCAL_MCS_FLAGS= 
+LOCAL_MCS_FLAGS= /d:StronglyNamedAssembly /publicsign /keyfile:../../nunit.snk
 LIB_REFS = nunit.framework System
 NO_TEST = yo
 
