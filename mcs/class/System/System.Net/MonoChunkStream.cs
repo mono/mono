@@ -90,6 +90,40 @@ namespace System.Net
 
 			return ret;
 		}
+
+		public async Task ReadChunkTrailer (CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested ();
+
+			/*
+			 * We are expecting the chunk trailer, but no more data.
+			 */
+			if (Decoder.DataAvailable)
+				ThrowExpectingChunkTrailer ();
+
+			/*
+			 * Need to loop here since there might be header fields after
+			 * the chunk trailer.
+			 */
+			while (Decoder.WantMore) {
+				var buffer = new byte[256];
+				int ret = await InnerStream.ReadAsync (
+					buffer, 0, buffer.Length, cancellationToken).ConfigureAwait (false);
+				if (ret <= 0)
+					ThrowExpectingChunkTrailer ();
+
+				Decoder.Write (buffer, 0, ret);
+				ret = Decoder.Read (buffer, 0, 1);
+				if (ret != 0)
+					ThrowExpectingChunkTrailer ();
+			}
+		}
+
+		static void ThrowExpectingChunkTrailer ()
+		{
+			throw new WebException (
+				"Expecting chuk traier.", null,
+				WebExceptionStatus.ServerProtocolViolation, null);
+		}
 	}
 }
-

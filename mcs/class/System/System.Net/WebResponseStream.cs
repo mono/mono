@@ -38,6 +38,7 @@ namespace System.Net
 	class WebResponseStream : WebConnectionStream
 	{
 		Stream innerStreamWrapper;
+		MonoChunkStream innerChunkStream;
 		long contentLength;
 		long totalRead;
 		bool nextReadCalled;
@@ -211,6 +212,29 @@ namespace System.Net
 
 		async Task<int> InnerReadAsync (byte[] buffer, int offset, int size, CancellationToken cancellationToken)
 		{
+			var ret = await InnerReadAsyncInner (buffer, offset, size, cancellationToken).ConfigureAwait (false);
+			if (ret != 0)
+				return ret;
+
+			if (innerChunkStream == null || innerChunkStream == innerStreamWrapper)
+				return 0;
+
+			/*
+			 * We only get here when using GZip/Deflate decompression with
+			 * chunked encoding.  Since the GZipStream/DeflateStream knows
+			 * about the size of the content, it may not have read the
+			 * chunk trailer.
+			 */
+
+			WebConnection.Debug ($"{ME} INNER READ - READ CHUNK TRAILER");
+			await innerChunkStream.ReadChunkTrailer (cancellationToken);
+			WebConnection.Debug ($"{ME} INNER READ - READ CHUNK TRAILER #DONE");
+
+			return 0;
+		}
+
+		async Task<int> InnerReadAsyncInner (byte[] buffer, int offset, int size, CancellationToken cancellationToken)
+		{
 			Operation.ThrowIfDisposed (cancellationToken);
 
 			WebConnection.Debug ($"{ME} INNER READ ASYNC: stream={innerStreamWrapper}");
@@ -284,7 +308,7 @@ namespace System.Net
 			ChunkedRead = (tencoding != null && tencoding.IndexOf ("chunked", StringComparison.OrdinalIgnoreCase) != -1);
 
 			if (ChunkedRead) {
-				innerStreamWrapper = new MonoChunkStream (
+				innerStreamWrapper = innerChunkStream = new MonoChunkStream (
 					Operation, CreateStreamWrapper (buffer), Headers);
 			} else if (!IsNtlmAuth () && contentLength > 0 && buffer.Size >= contentLength) {
 				innerStreamWrapper = new BufferedReadStream (Operation, null, buffer);
