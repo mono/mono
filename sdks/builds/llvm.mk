@@ -2,6 +2,8 @@
 $(TOP)/sdks/builds/toolchains/llvm:
 	git clone -b master https://github.com/mono/llvm.git $@
 
+$(TOP)/sdks/builds/toolchains/llvm/configure: | $(TOP)/sdks/builds/toolchains/llvm
+
 ##
 # Parameters
 #  $(1): target
