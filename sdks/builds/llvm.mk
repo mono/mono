@@ -2,6 +2,8 @@
 $(TOP)/sdks/builds/toolchains/llvm:
 	git clone -b master https://github.com/mono/llvm.git $@
 
+$(TOP)/sdks/builds/toolchains/llvm/configure: | $(TOP)/sdks/builds/toolchains/llvm
+
 ##
 # Parameters
 #  $(1): target
@@ -31,7 +33,7 @@ _llvm_$(1)_CONFIGURE_FLAGS= \
 .stamp-llvm-$(1)-toolchain: | $$(TOP)/sdks/builds/toolchains/llvm
 	touch $$@
 
-.stamp-llvm-$(1)-configure: $$(TOP)/sdks/builds/toolchains/llvm/configure .stamp-llvm-$(1)-toolchain
+.stamp-llvm-$(1)-configure: $$(TOP)/sdks/builds/toolchains/llvm/configure
 	mkdir -p $$(TOP)/sdks/builds/llvm-$(1)
 	cd $$(TOP)/sdks/builds/llvm-$(1) && $$< $$(_llvm_$(1)_CONFIGURE_ENVIRONMENT) $$(_llvm_$(1)_CONFIGURE_FLAGS)
 	touch $$@
@@ -104,7 +106,7 @@ _llvm_$(1)_CONFIGURE_FLAGS = \
 	cd $$(TOP)/sdks/builds/toolchains/llvm && git checkout $(LLVM_HASH)
 	touch $$@
 
-.stamp-llvm-$(1)-configure: $$(TOP)/sdks/builds/toolchains/llvm/configure .stamp-llvm-$(1)-toolchain | package-mxe-$(3)
+.stamp-llvm-$(1)-configure: $$(TOP)/sdks/builds/toolchains/llvm/configure | package-mxe-$(3)
 	mkdir -p $$(TOP)/sdks/builds/llvm-$(1)
 	cd $$(TOP)/sdks/builds/llvm-$(1) && PATH="$$$$PATH:$$(_llvm_$(1)_PATH)" $$< $$(_llvm_$(1)_CONFIGURE_ENVIRONMENT) $$(_llvm_$(1)_CONFIGURE_FLAGS)
 	touch $$@
