@@ -5243,6 +5243,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_RCONV_TO_I8:
 			amd64_sse_cvtss2si_reg_reg_size (code, ins->dreg, ins->sreg1, 8);
 			break;
+		case OP_RCONV_TO_I:
 		case OP_RCONV_TO_R8:
 			amd64_sse_cvtss2sd_reg_reg (code, ins->dreg, ins->sreg1);
 			break;
