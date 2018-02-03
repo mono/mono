@@ -423,6 +423,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void OpenReadTaskAsyncOnFile ()
 		{
 			var tmp = Path.GetTempFileName ();
@@ -430,6 +431,7 @@ namespace MonoTests.System.Net
 
 			var client = new WebClient ();
 			var task = client.OpenReadTaskAsync (url);
+
 			Assert.IsTrue (task.Wait (2000));
 		}
 
@@ -1425,7 +1427,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category ("AndroidNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
+		[Category ("MobileNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -1799,7 +1801,7 @@ namespace MonoTests.System.Net
 		}
 		 
 		[Test]
-		[Category ("AndroidNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
+		[Category ("MobileNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -1819,7 +1821,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category ("AndroidNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
+		[Category ("MobileNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -1838,7 +1840,7 @@ namespace MonoTests.System.Net
 		}
 		
 		[Test]
-		[Category ("AndroidNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
+		[Category ("MobileNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -1857,7 +1859,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category ("AndroidNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
+		[Category ("MobileNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -1878,7 +1880,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category ("AndroidNotWorking")] // Test suite hangs if the tests runs as part of the entire BCL suite. Works when only this fixture is ran
+		[Category ("MobileNotWorking")] // Test suite hangs if the tests runs as part of the entire BCL suite. Works when only this fixture is ran
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
