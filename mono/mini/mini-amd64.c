@@ -5568,8 +5568,18 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				break;
 			}
 
-			if (unordered) {
-				guchar *unordered_check;
+			guchar *unordered_check;
+
+			switch (ins->opcode) {
+			case OP_RCEQ:
+			case OP_RCGT:
+				unordered_check = code;
+				x86_branch8 (code, X86_CC_P, 0, FALSE);
+				amd64_set_reg (code, x86_cond, ins->dreg, FALSE);
+				amd64_patch (unordered_check, code);
+				break;
+			case OP_RCLT_UN:
+			case OP_RCGT_UN: {
 				guchar *jump_to_end;
 
 				unordered_check = code;
@@ -5580,8 +5590,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				amd64_patch (unordered_check, code);
 				amd64_inc_reg (code, ins->dreg);
 				amd64_patch (jump_to_end, code);
-			} else {
+				break;
+			}
+			case OP_RCLT:
 				amd64_set_reg (code, x86_cond, ins->dreg, FALSE);
+				break;
+			default:
+				g_assert_not_reached ();
+				break;
 			}
 			break;
 		}
