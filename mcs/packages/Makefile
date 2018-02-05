@@ -10,6 +10,9 @@ ROSLYN_FILES_FOR_MONO = \
 	$(ROSLYN_CSC_DIR)/csi.exe				\
 	$(ROSLYN_CSC_DIR)/csi.exe.config			\
 	$(ROSLYN_CSC_DIR)/csi.rsp				\
+	$(ROSLYN_CSC_DIR)/vbc.exe				\
+	$(ROSLYN_CSC_DIR)/vbc.exe.config			\
+	$(ROSLYN_CSC_DIR)/vbc.rsp				\
 	$(ROSLYN_CSC_DIR)/Microsoft.CodeAnalysis.CSharp.dll	\
 	$(ROSLYN_CSC_DIR)/Microsoft.CodeAnalysis.CSharp.Scripting.dll \
 	$(ROSLYN_CSC_DIR)/Microsoft.CodeAnalysis.VisualBasic.dll \
