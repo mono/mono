@@ -48,7 +48,7 @@ namespace System.ServiceModel.Configuration
 #if !XAMMAC_4_5
 		static object GetSection (string name)
 		{
-			if (ServiceHostingEnvironment.InAspNet)
+			if (ServiceHostingEnvironmentInternal.InAspNet)
 				return WebConfigurationManager.GetSection (name);
 			else
 				return ConfigurationManager.GetSection (name);
