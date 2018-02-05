@@ -19,6 +19,9 @@ include $(CLEAR_VARS)
 LOCAL_LDLIBS    := -llog
 LOCAL_MODULE    := runtime-bootstrap
 LOCAL_SRC_FILES := runtime-bootstrap.c
+ifneq ($(MONO_WAIT_LLDB),)
+LOCAL_CFLAGS    := -DMONO_WAIT_LLDB=1
+endif
 include $(BUILD_SHARED_LIBRARY)
 
 
