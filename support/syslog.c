@@ -55,10 +55,20 @@ Mono_Posix_Syscall_syslog2 (int priority, const char *format, ...)
 {
 	va_list ap;
 
+#if HAVE_VSYSLOG
 	va_start (ap, format);
 	vsyslog (priority, format, ap);
 	va_end (ap);
+#else
+	/* some OSes like AIX lack vsyslog; simulate with vsprintf */
+	char message[256];
 
+	va_start (ap, format);
+	vsnprintf(message, 256, format, ap);
+	va_end(ap);
+
+	syslog(priority, message);
+#endif
 	return 0;
 }
 

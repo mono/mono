@@ -49,6 +49,11 @@ Mono_Posix_Syscall_nanosleep (struct Mono_Posix_Timespec *req,
 #endif
 
 #ifdef HAVE_STIME
+/* AIX has stime in libc, but not at all in headers, so declare here */
+#if defined(_AIX)
+extern int stime(time_t);
+#endif
+
 gint32
 Mono_Posix_Syscall_stime (mph_time_t *t)
 {
