@@ -39,6 +39,18 @@ mono_class_create_ptr (MonoType *type);
 MonoClass *
 mono_class_create_fnptr (MonoMethodSignature *sig);
 
+typedef enum _MonoClassReady {
+	/* Barebones readiness: just allocate a MonoClass and set its image, name and name space. */
+	MONO_CLASS_READY_BAREBONES = 0,
+	/* Instantiate readiness: metadata vtable is initialized, ready to create runtime vtables. */
+	MONO_CLASS_READY_INSTANTIATE = 0xff,
+	MONO_CLASS_READY_MIN = MONO_CLASS_READY_BAREBONES,
+	MONO_CLASS_READY_MAX = MONO_CLASS_READY_INSTANTIATE,
+} MonoClassReady;
+
+gboolean
+mono_class_init_ready (MonoClass *klass, MonoClassReady readiness);
+
 void
 mono_class_setup_vtable_general (MonoClass *klass, MonoMethod **overrides, int onum, GList *in_setup);
 

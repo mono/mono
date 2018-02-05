@@ -4097,6 +4097,12 @@ mono_get_unique_iid (MonoClass *klass)
 gboolean
 mono_class_init (MonoClass *klass)
 {
+	return mono_class_init_ready (klass, MONO_CLASS_READY_MAX);
+}
+
+gboolean
+mono_class_init_ready (MonoClass *klass, MonoClassReady readiness)
+{
 	int i, vtable_size = 0, array_method_count = 0;
 	MonoCachedClassInfo cached_info;
 	gboolean has_cached_info;
@@ -4106,6 +4112,17 @@ mono_class_init (MonoClass *klass)
 	int first_iface_slot = 0;
 	
 	g_assert (klass);
+
+	g_assert (readiness >= MONO_CLASS_READY_MIN && readiness <= MONO_CLASS_READY_MAX);
+
+	switch (readiness) {
+	case MONO_CLASS_READY_BAREBONES:
+		return !mono_class_has_failure (klass);
+	case MONO_CLASS_READY_INSTANTIATE:
+		break; /* continue with initialization */
+	default:
+		g_assert_not_reached ();
+	}
 
 	/* Double-checking locking pattern */
 	if (klass->inited || mono_class_has_failure (klass))
