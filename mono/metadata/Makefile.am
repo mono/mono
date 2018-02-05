@@ -201,6 +201,8 @@ common_sources = \
 	object-forward.h	\
 	object-internals.h	\
 	opcodes.c		\
+	pal_gssapi.c	\
+	pal_gssapi.h	\
 	property-bag.h	\
 	property-bag.c	\
 	w32socket.c		\
