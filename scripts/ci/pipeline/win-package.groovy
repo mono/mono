@@ -65,8 +65,8 @@ node ("w64") {
 
                     // move .msi files to the workspace root
                     sh 'mv packaging/Windows/resources/bin/Release/mono-*.msi .'
-                    packageFileNameX86 = findFiles (glob: "mono-*-win32-0.msi")[0]
-                    packageFileNameX64 = findFiles (glob: "mono-*-x64-0.msi")[0]
+                    packageFileNameX86 = findFiles (glob: "mono-*-win32-0.msi")[0].name
+                    packageFileNameX64 = findFiles (glob: "mono-*-x64-0.msi")[0].name
                 }
                 stage('Upload .msi to Azure') {
                     step([
