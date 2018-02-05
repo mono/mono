@@ -227,7 +227,7 @@ namespace System.Net
 			 */
 
 			WebConnection.Debug ($"{ME} INNER READ - READ CHUNK TRAILER");
-			await innerChunkStream.ReadChunkTrailer (cancellationToken);
+			await innerChunkStream.ReadChunkTrailer (cancellationToken).ConfigureAwait (false);
 			WebConnection.Debug ($"{ME} INNER READ - READ CHUNK TRAILER #DONE");
 
 			return 0;
