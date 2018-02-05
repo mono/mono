@@ -64,7 +64,7 @@ node ("osx-amd64") {
                     storageCredentialId: 'fbd29020e8166fbede5518e038544343',
                     uploadArtifactsOnlyIfSuccessful: true,
                     uploadZips: false,
-                    virtualPath: "${monoBranch}/${env.BUILD_NUMBER}/"
+                    virtualPath: "${monoBranch}/${env.BUILD_NUMBER}/${commitHash}/"
                 ])
             }
 
@@ -81,12 +81,12 @@ node ("osx-amd64") {
                 echo "Not a release job, skipping signing."
             }
 
-            currentBuild.description = "<hr/><h2>DOWNLOAD: <a href=\"https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${packageFileName}\">${packageFileName}</a></h2><hr/>"
+            currentBuild.description = "<hr/><h2>DOWNLOAD: <a href=\"https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${commitHash}/${packageFileName}\">${packageFileName}</a></h2><hr/>"
             step([
                 $class: 'GitHubCommitStatusSetter',
                 commitShaSource: [$class: "ManuallyEnteredShaSource", sha: commitHash],
                 contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: 'PKG-mono'],
-                statusBackrefSource: [$class: 'ManuallyEnteredBackrefSource', backref: "https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${packageFileName}"],
+                statusBackrefSource: [$class: 'ManuallyEnteredBackrefSource', backref: "https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${commitHash}/${packageFileName}"],
                 statusResultSource: [$class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', state: 'SUCCESS', message: "${packageFileName}"]]]
             ])
         }
