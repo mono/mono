@@ -65,6 +65,9 @@ mono_w32error_unix_to_win32 (guint32 error)
 	case ENOSYS: return ERROR_NOT_SUPPORTED;
 	case EBADF: return ERROR_INVALID_HANDLE;
 	case EIO: return ERROR_INVALID_HANDLE;
+#ifdef ERESTART
+	case ERESTART:
+#endif
 	case EINTR: return ERROR_IO_PENDING; /* best match I could find */
 	case EPIPE: return ERROR_WRITE_FAULT;
 	case ELOOP: return ERROR_CANT_RESOLVE_FILENAME;
