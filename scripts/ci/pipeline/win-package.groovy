@@ -77,7 +77,7 @@ node ("w64") {
                     storageCredentialId: 'fbd29020e8166fbede5518e038544343',
                     uploadArtifactsOnlyIfSuccessful: true,
                     uploadZips: false,
-                    virtualPath: "${monoBranch}/${env.BUILD_NUMBER}/"
+                    virtualPath: "${monoBranch}/${env.BUILD_NUMBER}/${commitHash}/"
                 ])
             }
 
@@ -94,19 +94,19 @@ node ("w64") {
                 echo "Not a release job, skipping signing."
             }
 
-            currentBuild.description = "<hr/><h2>DOWNLOAD: <a href=\"https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${packageFileNameX86}\">${packageFileNameX86}</a> -- <a href=\"https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${packageFileNameX64}\">${packageFileNameX64}</a></h2><hr/>"
+            currentBuild.description = "<hr/><h2>DOWNLOAD: <a href=\"https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${commitHash}/${packageFileNameX86}\">${packageFileNameX86}</a> -- <a href=\"https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${commitHash}/${packageFileNameX64}\">${packageFileNameX64}</a></h2><hr/>"
             step([
                 $class: 'GitHubCommitStatusSetter',
                 commitShaSource: [$class: "ManuallyEnteredShaSource", sha: commitHash],
                 contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: 'MSI-mono_x86'],
-                statusBackrefSource: [$class: 'ManuallyEnteredBackrefSource', backref: "https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${packageFileNameX86}"],
+                statusBackrefSource: [$class: 'ManuallyEnteredBackrefSource', backref: "https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${commitHash}/${packageFileNameX86}"],
                 statusResultSource: [$class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', state: 'SUCCESS', message: "${packageFileNameX86}"]]]
             ])
             step([
                 $class: 'GitHubCommitStatusSetter',
                 commitShaSource: [$class: "ManuallyEnteredShaSource", sha: commitHash],
                 contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: 'MSI-mono_x64'],
-                statusBackrefSource: [$class: 'ManuallyEnteredBackrefSource', backref: "https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${packageFileNameX64}"],
+                statusBackrefSource: [$class: 'ManuallyEnteredBackrefSource', backref: "https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${commitHash}/${packageFileNameX64}"],
                 statusResultSource: [$class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', state: 'SUCCESS', message: "${packageFileNameX64}"]]]
             ])
         }
