@@ -51,7 +51,7 @@ node ("osx-amd64") {
 
                     // move .pkg to the workspace root
                     sh 'mv packaging/MacSDKRelease/MonoFramework-MDK-*.pkg .'
-                    packageFileName = findFiles (glob: "MonoFramework-MDK-*.pkg")[0]
+                    packageFileName = findFiles (glob: "MonoFramework-MDK-*.pkg")[0].name
                 }
                 stage('Upload .pkg to Azure') {
                     step([
