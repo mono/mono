@@ -86,7 +86,6 @@ mixed_callstack_plugin_save_method_info (MonoCompile *cfg)
 
 	mixed_callstack_plugin_lock ();
 	WriteFile(fileHandle, frame, bytes, &bytesWritten, NULL);
-	FlushFileBuffers(fileHandle);
 	mixed_callstack_plugin_unlock ();
 
 	g_free(method_name);
@@ -109,7 +108,6 @@ mixed_callstack_plugin_save_trampoline_info (MonoTrampInfo *info)
 	mixed_callstack_plugin_lock ();
 	frame = g_strdup_printf ("%p;%p;%s\n", info->code, ((char*)info->code) + info->code_size, info->name ? info->name : "");
 	WriteFile(fileHandle, frame, strlen(frame), &bytesWritten, NULL);
-	FlushFileBuffers(fileHandle);
 	mixed_callstack_plugin_unlock ();
 
 	g_free(frame);
