@@ -27,9 +27,14 @@
 //
 
 namespace System.ServiceModel {
-
-	static class ServiceHostingEnvironmentInternal
+ 
+	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblySystemServiceModel_3_0)]
+	public static class ServiceHostingEnvironment
 	{
-		internal static bool InAspNet { get; set; }
+		public static bool AspNetCompatibilityEnabled { get; internal set; }
+ 
+		public static void EnsureServiceAvailable (string virtualPath)
+		{
+		}
 	}
 }

@@ -125,7 +125,7 @@ namespace System.ServiceModel.Channels.Http
 		{
 			HttpListenerManager m;
 			
-			if (ServiceHostingEnvironment.InAspNet)
+			if (ServiceHostingEnvironmentInternal.InAspNet)
 				m = new AspNetHttpListenerManager (uri);
 			else
 				m = new HttpStandaloneListenerManager (uri, element);
