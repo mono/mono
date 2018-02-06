@@ -2,7 +2,8 @@ def isPr = (env.ghprbPullId && !env.ghprbPullId.empty ? true : false)
 def monoBranch = (isPr ? "pr" : env.BRANCH_NAME)
 def isReleaseJob = (!isPr && monoBranch ==~ /201\d-\d\d/) // check if we're on a 2017-xx branch, i.e. release
 def jobName = (isPr ? "build-package-osx-mono-pullrequest" : "build-package-osx-mono")
-def windowsJobName = "build-package-win-mono"
+def windowsJobName = (isPr ? "build-package-win-mono-pullrequest" : "build-package-win-mono/${monoBranch}")
+def isWindowsPrBuild = (isPr && env.ghprbCommentBody.contains("@monojenkins build pkg and msi"))
 def packageFileName = null
 def commitHash = null
 def utils = null
@@ -98,7 +99,14 @@ node ("osx-amd64") {
     }
 }
 
-if (!isPr) {
+if (!isPr || isWindowsPrBuild) {
+    def parameters = null
+    if (isWindowsPrBuild) {
+        parameters = [[$class: 'StringParameterValue', name: 'sha1', value: commitHash],
+                      [$class: 'StringParameterValue', name: 'ghprbPullId', value: env.ghprbPullId],
+                      [$class: 'StringParameterValue', name: 'ghprbActualCommit', value: env.ghprbActualCommit]]
+    }
+
     // trigger the Windows build
-    build(job: "${windowsJobName}/${monoBranch}", wait: false)
+    build(job: "${windowsJobName}", wait: false, parameters: parameters)
 }
