@@ -2,14 +2,15 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+#include "config.h"
 #include <stdint.h>
 #include <glib.h>
 #include <mono/metadata/pal_gssapi.h>
 
-#if HAVE_GSSFW_HEADERS
+#if HAVE_GSS_GSS_H
 #include <GSS/GSS.h>
 #else
-#if HAVE_HEIMDAL_HEADERS
+#if HAVE_GSSAPI_GSSAPI_H
 #include <gssapi/gssapi.h>
 #include <gssapi/gssapi_krb5.h>
 #else
@@ -21,7 +22,7 @@
 #define ARRAYSIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 
 
-#if !HAVE_GSS_SPNEGO_MECHANISM
+#if !defined(GSS_SPNEGO_MECHANISM)
 static char gss_spnego_oid_value[] = "\x2b\x06\x01\x05\x05\x02"; // Binary representation of SPNEGO Oid (RFC 4178)
 static gss_OID_desc gss_mech_spnego_OID_desc = {.length = ARRAYSIZE(gss_spnego_oid_value) - 1,
                                                 .elements = (void*)gss_spnego_oid_value};
@@ -52,7 +53,7 @@ static uint32_t NetSecurityNative_AcquireCredSpNego(uint32_t* minorStatus,
     g_assert(outputCredHandle != 0);
     g_assert(*outputCredHandle == 0);
 
-#if HAVE_GSS_SPNEGO_MECHANISM
+#if defined(GSS_SPNEGO_MECHANISM)
     gss_OID_set_desc gss_mech_spnego_OID_set_desc = {.count = 1, .elements = GSS_SPNEGO_MECHANISM};
 #else
     gss_OID_set_desc gss_mech_spnego_OID_set_desc = {.count = 1, .elements = &gss_mech_spnego_OID_desc};
@@ -61,7 +62,7 @@ static uint32_t NetSecurityNative_AcquireCredSpNego(uint32_t* minorStatus,
         minorStatus, desiredName, 0, &gss_mech_spnego_OID_set_desc, credUsage, outputCredHandle, 0, 0);
 
     // call gss_set_cred_option with GSS_KRB5_CRED_NO_CI_FLAGS_X to support Kerberos Sign Only option from *nix client against a windows server
-#if HAVE_GSS_KRB5_CRED_NO_CI_FLAGS_X
+#if defined(GSS_KRB5_CRED_NO_CI_FLAGS_X)
     if (majorStatus == GSS_S_COMPLETE)
     {
         GssBuffer emptyBuffer = GSS_C_EMPTY_BUFFER;
@@ -178,7 +179,7 @@ uint32_t NetSecurityNative_InitSecContext(uint32_t* minorStatus,
 // Note: claimantCredHandle can be null
 // Note: *contextHandle is null only in the first call and non-null in the subsequent calls
 
-#if HAVE_GSS_SPNEGO_MECHANISM
+#if defined(GSS_SPNEGO_MECHANISM)
     gss_OID desiredMech;
     if (isNtlm)
     {
@@ -356,7 +357,7 @@ static uint32_t NetSecurityNative_AcquireCredWithPassword(uint32_t* minorStatus,
     g_assert(outputCredHandle != 0);
     g_assert(*outputCredHandle == 0);
 
-#if HAVE_GSS_SPNEGO_MECHANISM
+#if defined(GSS_SPNEGO_MECHANISM)
     (void)isNtlm; // unused
     // Specifying GSS_SPNEGO_MECHANISM as a desiredMech on OSX fails.
     gss_OID_set desiredMech = GSS_C_NO_OID_SET;
@@ -380,7 +381,7 @@ static uint32_t NetSecurityNative_AcquireCredWithPassword(uint32_t* minorStatus,
         minorStatus, desiredName, &passwordBuffer, 0, desiredMech, credUsage, outputCredHandle, 0, 0);
 
     // call gss_set_cred_option with GSS_KRB5_CRED_NO_CI_FLAGS_X to support Kerberos Sign Only option from *nix client against a windows server
-#if HAVE_GSS_KRB5_CRED_NO_CI_FLAGS_X
+#if defined(GSS_KRB5_CRED_NO_CI_FLAGS_X)
     if (majorStatus == GSS_S_COMPLETE)
     {
         GssBuffer emptyBuffer = GSS_C_EMPTY_BUFFER;
