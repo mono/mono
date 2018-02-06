@@ -87,9 +87,11 @@ node ("osx-amd64") {
                     echo "Not a release job, skipping signing."
                 }
 
-                def packageUrl = "https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${commitHash}/${packageFileName}"
-                currentBuild.description = "<hr/><h2>DOWNLOAD: <a href=\"${packageUrl}\">${packageFileName}</a></h2><hr/>"
-                utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, 'PKG-mono', packageUrl, 'SUCCESS', packageFileName)
+                def packageUrl = "https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${commitHash}"
+                currentBuild.description = "<hr/><h2>DOWNLOAD: <a href=\"${packageUrl}/${packageFileName}\">${packageFileName}</a></h2><hr/>"
+
+                utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, 'artifacts.json', "${packageUrl}/artifacts.json", 'SUCCESS', '')
+                utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, 'PKG-mono', "${packageUrl}/${packageFileName}", 'SUCCESS', packageFileName)
             }
             catch (Exception e) {
                 utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, 'PKG-mono', env.BUILD_URL, 'FAILURE', "Build failed.")
