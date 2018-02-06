@@ -535,6 +535,10 @@ AC_CHECK_HEADERS(sys/user.h, [], [],
 #endif
 ])
 
+AC_CHECK_HEADERS(GSS/GSS.h, [], [], [#define HAVE_GSSFW_HEADERS])
+AC_CHECK_DECLS(GSS_SPNEGO_MECHANISM, [], [], [[#define HAVE_GSS_SPNEGO_MECHANISM 1]])
+AC_CHECK_DECLS(GSS_KRB5_CRED_NO_CI_FLAGS_X, [], [], [[#define HAVE_GSS_KRB5_CRED_NO_CI_FLAGS_X 1]])
+
 AC_CHECK_HEADERS(linux/serial.h)
 
 AC_CHECK_HEADER(zlib.h, [have_zlib=yes], [have_zlib=no])

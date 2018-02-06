@@ -1,7 +1,6 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
-
 #pragma once
 
 #if HAVE_GSSFW_HEADERS || HAVE_HEIMDAL_HEADERS
@@ -15,6 +14,29 @@ typedef struct gss_ctx_id_struct GssCtxId;
 typedef struct gss_cred_id_struct GssCredId;
 typedef struct gss_buffer_desc_struct GssBuffer;
 #endif
+
+enum PAL_GssStatus
+{
+    PAL_GSS_COMPLETE = 0,
+    PAL_GSS_CONTINUE_NEEDED = 1
+};
+
+enum PAL_GssFlags
+{
+    PAL_GSS_C_DELEG_FLAG = 0x1,
+    PAL_GSS_C_MUTUAL_FLAG = 0x2,
+    PAL_GSS_C_REPLAY_FLAG = 0x4,
+    PAL_GSS_C_SEQUENCE_FLAG = 0x8,
+    PAL_GSS_C_CONF_FLAG = 0x10,
+    PAL_GSS_C_INTEG_FLAG = 0x20,
+    PAL_GSS_C_ANON_FLAG = 0x40,
+    PAL_GSS_C_PROT_READY_FLAG = 0x80,
+    PAL_GSS_C_TRANS_FLAG = 0x100,
+    PAL_GSS_C_DCE_STYLE = 0x1000,
+    PAL_GSS_C_IDENTIFY_FLAG = 0x2000,
+    PAL_GSS_C_EXTENDED_ERROR_FLAG = 0x4000,
+    PAL_GSS_C_DELEG_POLICY_FLAG = 0x8000
+};
 
 /*
 Issue: #7342

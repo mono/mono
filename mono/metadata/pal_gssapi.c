@@ -1,8 +1,9 @@
-#include <stdlib.h>
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
 #include <stdint.h>
-#include "config.h"
 #include <glib.h>
-#define HAVE_GSSFW_HEADERS 1
 #include <mono/metadata/pal_gssapi.h>
 
 #if HAVE_GSSFW_HEADERS
@@ -19,24 +20,26 @@
 
 #define ARRAYSIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 
+
 #if !HAVE_GSS_SPNEGO_MECHANISM
 static char gss_spnego_oid_value[] = "\x2b\x06\x01\x05\x05\x02"; // Binary representation of SPNEGO Oid (RFC 4178)
 static gss_OID_desc gss_mech_spnego_OID_desc = {.length = ARRAYSIZE(gss_spnego_oid_value) - 1,
-                                                .elements = (void*)(gss_spnego_oid_value)};
+                                                .elements = (void*)gss_spnego_oid_value};
 static char gss_ntlm_oid_value[] =
     "\x2b\x06\x01\x04\x01\x82\x37\x02\x02\x0a"; // Binary representation of NTLM OID
                                                 // (https://msdn.microsoft.com/en-us/library/cc236636.aspx)
 static gss_OID_desc gss_mech_ntlm_OID_desc = {.length = ARRAYSIZE(gss_ntlm_oid_value) - 1,
-                                              .elements = (void*)(gss_ntlm_oid_value)};
+                                              .elements = (void*)gss_ntlm_oid_value};
 #endif
 
+// transfers ownership of the underlying data from gssBuffer to PAL_GssBuffer
 static void NetSecurityNative_MoveBuffer(gss_buffer_t gssBuffer, struct PAL_GssBuffer* targetBuffer)
 {
-    g_assert(gssBuffer);
-    g_assert(targetBuffer);
+    g_assert(gssBuffer != 0);
+    g_assert(targetBuffer != 0);
 
     targetBuffer->length = (uint64_t)gssBuffer->length;
-    targetBuffer->data = (uint8_t)gssBuffer->value;
+    targetBuffer->data = (uint8_t*)gssBuffer->value;
 }
 
 static uint32_t NetSecurityNative_AcquireCredSpNego(uint32_t* minorStatus,
@@ -44,10 +47,10 @@ static uint32_t NetSecurityNative_AcquireCredSpNego(uint32_t* minorStatus,
                                                     gss_cred_usage_t credUsage,
                                                     GssCredId** outputCredHandle)
 {
-    g_assert(minorStatus);
-    g_assert(desiredName);
-    g_assert(outputCredHandle);
-    g_assert(!(*outputCredHandle));
+    g_assert(minorStatus != 0);
+    g_assert(desiredName != 0);
+    g_assert(outputCredHandle != 0);
+    g_assert(*outputCredHandle == 0);
 
 #if HAVE_GSS_SPNEGO_MECHANISM
     gss_OID_set_desc gss_mech_spnego_OID_set_desc = {.count = 1, .elements = GSS_SPNEGO_MECHANISM};
@@ -77,8 +80,8 @@ NetSecurityNative_InitiateCredSpNego(uint32_t* minorStatus, GssName* desiredName
 
 uint32_t NetSecurityNative_DeleteSecContext(uint32_t* minorStatus, GssCtxId** contextHandle)
 {
-    g_assert(minorStatus);
-    g_assert(contextHandle);
+    g_assert(minorStatus != 0);
+    g_assert(contextHandle != 0);
 
     return gss_delete_sec_context(minorStatus, contextHandle, GSS_C_NO_BUFFER);
 }
@@ -88,8 +91,8 @@ static uint32_t NetSecurityNative_DisplayStatus(uint32_t* minorStatus,
                                                 int statusType,
                                                 struct PAL_GssBuffer* outBuffer)
 {
-    g_assert(minorStatus);
-    g_assert(outBuffer);
+    g_assert(minorStatus != 0);
+    g_assert(outBuffer != 0);
 
     uint32_t messageContext;
     GssBuffer gssBuffer = {.length = 0, .value = 0};
@@ -115,10 +118,10 @@ NetSecurityNative_DisplayMajorStatus(uint32_t* minorStatus, uint32_t statusValue
 uint32_t
 NetSecurityNative_ImportUserName(uint32_t* minorStatus, char* inputName, uint32_t inputNameLen, GssName** outputName)
 {
-    g_assert(minorStatus);
-    g_assert(inputName);
-    g_assert(outputName);
-    g_assert(!(*outputName));
+    g_assert(minorStatus != 0);
+    g_assert(inputName != 0);
+    g_assert(outputName != 0);
+    g_assert(*outputName == 0);
 
     GssBuffer inputNameBuffer = {.length = inputNameLen, .value = inputName};
     gss_OID nameType = (gss_OID)GSS_C_NT_USER_NAME;
@@ -130,14 +133,14 @@ uint32_t NetSecurityNative_ImportPrincipalName(uint32_t* minorStatus,
                                                           uint32_t inputNameLen,
                                                           GssName** outputName)
 {
-    g_assert(minorStatus);
-    g_assert(inputName);
-    g_assert(outputName);
-    g_assert(!(*outputName));
+    g_assert(minorStatus != 0);
+    g_assert(inputName != 0);
+    g_assert(outputName != 0);
+    g_assert(*outputName == 0);
 
     gss_OID nameType;
 
-    if (strchr(inputName, '/'))
+    if (strchr(inputName, '/') != 0)
     {
         nameType = (gss_OID)GSS_KRB5_NT_PRINCIPAL_NAME;
     }
