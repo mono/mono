@@ -54,7 +54,9 @@ unix_sources = \
 	w32file-unix.c \
 	w32file-unix-glob.c \
 	w32file-unix-glob.h \
-	w32error-unix.c
+	w32error-unix.c	\
+	pal_gssapi.c	\
+	pal_gssapi.h
 
 platform_sources = $(unix_sources)
 endif
@@ -201,8 +203,6 @@ common_sources = \
 	object-forward.h	\
 	object-internals.h	\
 	opcodes.c		\
-	pal_gssapi.c	\
-	pal_gssapi.h	\
 	property-bag.h	\
 	property-bag.c	\
 	w32socket.c		\
