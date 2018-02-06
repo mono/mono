@@ -1,7 +1,8 @@
-def monoBranch = env.BRANCH_NAME
-def isReleaseJob = (monoBranch ==~ /201\d-\d\d/) // check if we're on a 2017-xx branch, i.e. release
-def jobName = "build-package-win-mono"
-def macJobName = "build-package-osx-mono"
+def isPr = (env.ghprbPullId && !env.ghprbPullId.empty ? true : false)
+def monoBranch = (isPr ? "pr" : env.BRANCH_NAME)
+def isReleaseJob = (!isPr && monoBranch ==~ /201\d-\d\d/) // check if we're on a 2017-xx branch, i.e. release
+def jobName = (isPr ? "build-package-win-mono-pullrequest" : "build-package-win-mono")
+def macJobName = (isPr ? "build-package-osx-mono-pullrequest" : "build-package-osx-mono/${monoBranch}")
 def packageFileNameX86 = null
 def packageFileNameX64 = null
 def commitHash = null
@@ -23,7 +24,7 @@ node ("w64") {
             stage('Download Mac .pkg from Azure') {
                 step([
                     $class: 'AzureStorageBuilder',
-                    downloadType: [value: 'project', containerName: '', projectName: "${macJobName}/${monoBranch}",
+                    downloadType: [value: 'project', containerName: '', projectName: "${macJobName}",
                                 buildSelector: [$class: 'TriggeredBuildSelector', upstreamFilterStrategy: 'UseGlobalSetting', allowUpstreamDependencies: false, fallbackToLastSuccessful: false]],
                     includeFilesPattern: '**/*.pkg',
                     excludeFilesPattern: '',
@@ -36,8 +37,8 @@ node ("w64") {
             }
             try {
                 stage('Build') {
-                    utils.reportGitHubStatus (commitHash, 'MSI-mono_x86', env.BUILD_URL, 'PENDING', 'Building...')
-                    utils.reportGitHubStatus (commitHash, 'MSI-mono_x64', env.BUILD_URL, 'PENDING', 'Building...')
+                    utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, 'MSI-mono_x86', env.BUILD_URL, 'PENDING', 'Building...')
+                    utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, 'MSI-mono_x64', env.BUILD_URL, 'PENDING', 'Building...')
 
                     // build the .msi
                     timeout (time: 420, unit: 'MINUTES') {
@@ -105,12 +106,12 @@ node ("w64") {
                 def packageUrlX64 = "https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${commitHash}/${packageFileNameX64}";
 
                 currentBuild.description = "<hr/><h2>DOWNLOAD: <a href=\"${packageUrlX86}\">${packageFileNameX86}</a> -- <a href=\"${packageUrlX64}\">${packageFileNameX64}</a></h2><hr/>"
-                utils.reportGitHubStatus (commitHash, 'MSI-mono_x86', packageUrlX86, 'SUCCESS', packageFileNameX86)
-                utils.reportGitHubStatus (commitHash, 'MSI-mono_x64', packageUrlX64, 'SUCCESS', packageFileNameX64)
+                utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, 'MSI-mono_x86', packageUrlX86, 'SUCCESS', packageFileNameX86)
+                utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, 'MSI-mono_x64', packageUrlX64, 'SUCCESS', packageFileNameX64)
             }
             catch (Exception e) {
-                utils.reportGitHubStatus (commitHash, 'MSI-mono_x86', env.BUILD_URL, 'FAILURE', "Build failed.")
-                utils.reportGitHubStatus (commitHash, 'MSI-mono_x64', env.BUILD_URL, 'FAILURE', "Build failed.")
+                utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, 'MSI-mono_x86', env.BUILD_URL, 'FAILURE', "Build failed.")
+                utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, 'MSI-mono_x64', env.BUILD_URL, 'FAILURE', "Build failed.")
                 throw e
             }
         }
