@@ -1,6 +1,9 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
+
+// Copied and converted to C99 from 
+// https://github.com/dotnet/corefx/blob/bffef76f6af208e2042a2f27bc081ee908bb390b/src/Native/Unix/System.Net.Security.Native/pal_gssapi.h
 #pragma once
 
 #if HAVE_GSS_GSS_H || HAVE_GSSAPI_GSSAPI_H
