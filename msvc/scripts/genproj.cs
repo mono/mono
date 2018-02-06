@@ -945,6 +945,26 @@ class MsbuildGenerator {
 
 		bool basic_or_build = (library.Contains ("-basic") || library.Contains ("-build"));
 
+		// If an EXE is built with nostdlib, it won't work unless run with mono.exe. This stops our build steps
+		//  from working in visual studio (because we already replace @MONO@ with '' on Windows.)
+
+		if (Target != Target.Library)
+			StdLib = true;
+
+		// We have our target framework set to 4.5 in many places because broken scripts check for files with 4.5
+		//  in the path, even though we compile code that uses 4.6 features. So we need to manually fix that here.
+
+		if (fx_version == "4.5")
+			fx_version = "4.6.2";
+
+		// The VS2017 signing system fails to sign using this key for some reason, so for now,
+		//  just disable code signing for the nunit assemblies. It's not important.
+		// I'd rather fix this by updating the makefiles but it seems to be impossible to disable
+		//  code signing in our make system...
+
+		if ((StrongNameKeyFile != null) && StrongNameKeyFile.Contains("nunit.snk"))
+			StrongNameKeyFile = null;
+
 		//
 		// Replace the template values
 		//
@@ -957,18 +977,6 @@ class MsbuildGenerator {
 				"    <AssemblyOriginatorKeyFile>{0}</AssemblyOriginatorKeyFile>",
 				StrongNameKeyFile, StrongNameDelaySign ? "    <DelaySign>true</DelaySign>" + NewLine : "");
 		}
-
-		// If an EXE is built with nostdlib, it won't work unless run with mono.exe. This stops our build steps
-		//  from working in visual studio (because we already replace @MONO@ with '' on Windows.)
-
-		if (Target != Target.Library)
-			StdLib = true;
-
-		// We have our target framework set to 4.5 in many places because broken scripts check for files with 4.5
-		//  in the path, even though we compile code that uses 4.6 features. So we need to manually fix that here.
-
-		if (fx_version == "4.5")
-			fx_version = "4.6.2";
 
 		Csproj.output = template.
 			Replace ("@OUTPUTTYPE@", Target == Target.Library ? "Library" : "Exe").
