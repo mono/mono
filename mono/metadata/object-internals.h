@@ -388,8 +388,7 @@ struct _MonoInternalThread {
 	MonoThreadHandle *handle;
 	gpointer native_handle;
 	gpointer unused3;
-	char       *name_utf8;
-	guint32	    name_len;
+	FatString name;
 	guint32	    state;
 	MonoException *abort_exc;
 	int abort_state_handle;

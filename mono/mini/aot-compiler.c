@@ -8120,7 +8120,9 @@ compile_thread_main (gpointer user_data)
 
 	ERROR_DECL (error);
 	MonoInternalThread *internal = mono_thread_internal_current ();
-	mono_thread_set_name_internal (internal, G_STRING_CONSTANT_AND_LENGTH ("AOT compiler"), TRUE, FALSE, &error);
+	mono_thread_set_name_internal (internal,
+		G_STRING_CONSTANT_AND_LENGTH ("AOT compiler"), NULL, 0,
+		TRUE, FALSE, &error);
 	mono_error_assert_ok (&error);
 
 	for (i = 0; i < methods->len; ++i)

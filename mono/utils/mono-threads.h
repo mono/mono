@@ -532,6 +532,17 @@ mono_native_thread_create (MonoNativeThreadId *tid, gpointer func, gpointer arg)
 MONO_API void
 mono_native_thread_set_name (MonoNativeThreadId tid, const char *name);
 
+#ifdef USE_WINDOWS_BACKEND
+MONO_API void
+mono_native_thread_set_name_utf16 (MonoNativeThreadId tid, const mono_unichar2 *name);
+#else
+#define mono_native_thread_set_name_utf16(tid, name) /* nothing */
+#endif
+
+
+MONO_API void
+mono_native_thread_set_name816 (MonoNativeThreadId tid, const char *name);
+
 MONO_API gboolean
 mono_native_thread_join (MonoNativeThreadId tid);
 

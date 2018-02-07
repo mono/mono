@@ -350,7 +350,9 @@ worker_callback (void)
 
 		domains_unlock ();
 
-		mono_thread_set_name_internal (thread, G_STRING_CONSTANT_AND_LENGTH ("Thread Pool Worker"), FALSE, TRUE, &error);
+		mono_thread_set_name_internal (thread,
+			G_STRING_CONSTANT_AND_LENGTH ("Thread Pool Worker"),
+			NULL, 0, FALSE, TRUE, &error);
 		mono_error_assert_ok (&error);
 
 		mono_thread_clr_state (thread, (MonoThreadState)~ThreadState_Background);

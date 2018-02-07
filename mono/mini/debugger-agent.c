@@ -10405,7 +10405,8 @@ debugger_thread (void *arg)
 	debugger_thread_id = mono_native_thread_id_get ();
 
 	MonoInternalThread *internal = mono_thread_internal_current ();
-	mono_thread_set_name_internal (internal, G_STRING_CONSTANT_AND_LENGTH ("Debugger agent"), TRUE, FALSE, &error);
+	mono_thread_set_name_internal (internal,
+		G_STRING_CONSTANT_AND_LENGTH ("Debugger agent"), NULL, 0, TRUE, FALSE, &error);
 	mono_error_assert_ok (&error);
 
 	internal->state |= ThreadState_Background;

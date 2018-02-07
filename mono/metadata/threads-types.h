@@ -88,8 +88,11 @@ void ves_icall_System_Threading_Thread_Sleep_internal(gint32 ms);
 gboolean ves_icall_System_Threading_Thread_Join_internal(MonoThread *this_obj, int ms);
 gint32 ves_icall_System_Threading_Thread_GetDomainID (void);
 gboolean ves_icall_System_Threading_Thread_Yield (void);
-MonoString* ves_icall_System_Threading_Thread_GetName_internal (MonoInternalThread *this_obj);
-void ves_icall_System_Threading_Thread_SetName_internal (MonoInternalThreadHandle thread, const char* name_utf8, int length, MonoError *error);
+MonoStringHandle
+ves_icall_System_Threading_Thread_GetName_internal (MonoInternalThreadHandle thread_handle, MonoError *error);
+void ves_icall_System_Threading_Thread_SetName_internal (MonoInternalThreadHandle thread,
+	const char* name_utf8, int name_utf8_length,
+	const gunichar2* name_utf16, int name_utf16_length, MonoError *error);
 int ves_icall_System_Threading_Thread_GetPriority (MonoThread *this_obj);
 void ves_icall_System_Threading_Thread_SetPriority (MonoThread *this_obj, int priority);
 MonoObject* ves_icall_System_Threading_Thread_GetCachedCurrentCulture (MonoInternalThread *this_obj);
@@ -222,7 +225,10 @@ gunichar2* mono_thread_get_name (MonoInternalThread *this_obj, guint32 *name_len
 MONO_API MonoException* mono_thread_get_undeniable_exception (void);
 void mono_thread_self_abort (void);
 
-void mono_thread_set_name_internal (MonoInternalThread *this_obj, const char *name_utf8, size_t length, gboolean permanent, gboolean reset, MonoError *error);
+void mono_thread_set_name_internal (MonoInternalThread *this_obj,
+	const gchar *name_utf8, size_t name_utf8_length,
+	const gunichar2 *name_utf16, size_t name_utf16_length,
+	gboolean permanent, gboolean reset, MonoError *error);
 
 void mono_thread_suspend_all_other_threads (void);
 gboolean mono_threads_abort_appdomain_threads (MonoDomain *domain, int timeout);

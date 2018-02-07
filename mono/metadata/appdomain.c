@@ -2596,7 +2596,7 @@ unload_thread_main (void *arg)
 	int i;
 
 	internal = mono_thread_internal_current ();
-	mono_thread_set_name_internal (internal, G_STRING_CONSTANT_AND_LENGTH ("Domain unloader"), TRUE, FALSE, &error);
+	mono_thread_set_name_internal (internal, G_STRING_CONSTANT_AND_LENGTH ("Domain unloader"), NULL, 0, TRUE, FALSE, &error);
 	if (!is_ok (&error)) {
 		data->failure_reason = g_strdup (mono_error_get_message (&error));
 		mono_error_cleanup (&error);

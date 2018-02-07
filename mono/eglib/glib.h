@@ -1084,9 +1084,43 @@ glong     g_utf8_pointer_to_offset (const gchar *str, const gchar *pos);
 #define G_UNSUPPORTED_API "%s:%d: '%s' not supported.", __FILE__, __LINE__
 #define g_unsupported_api(name) G_STMT_START { g_warning (G_UNSUPPORTED_API, name); } G_STMT_END
  
+typedef struct _FatString {
+// FIXME What to call it? Integrate into GString?
+// This type can start with either utf8 or utf16,
+// and can produce either, on demand, caching, with added terminal nul.
+// It should be considered read-only, though
+// there are safe sequences where you free
+// one side and change the other.
+	char *utf8;
+	gsize utf8_length;
+	gunichar2 *utf16;
+	gsize utf16_length;
+} FatString;
+
+// allocate plen + extra_len, copy p/plen, and zero the rest
+gpointer
+g_dup0 (gconstpointer p, gsize plen, gsize extra_len);
+
+// i.e. g_dup0 (extra_len = sizeof (gunichar2))
+gunichar2*
+g_dup_utf16 (const gunichar2* utf16, gsize length);
+
+// i.e. g_dup0 (extra_len = 1)
+gchar*
+g_dup_utf8 (const gchar* utf8, gsize length);
+
+gboolean
+g_fat_string_ensure_utf8 (FatString *self);
+
+gboolean
+g_fat_string_ensure_utf16 (FatString *self);
+
+void
+g_fat_string_init (FatString *self);
+
+void
+g_fat_string_cleanup (FatString *self);
+
 G_END_DECLS
 
 #endif
-
-
-

@@ -316,6 +316,15 @@ mono_threads_platform_init (void)
  * GetThreadContext, so we would fail to scan parts of the thread stack. We attempt
  * to query whether the thread is in such a transition so we try to restart it later.
  * We check CONTEXT_EXCEPTION_ACTIVE for this, which is highly undocumented.
+ *
+ * A better understanding of this problem is that, wow64 processes do run
+ * native 64 bit code, and their context does not fit in a 32bit context record.
+ * And, then also, the 64code code maybe runs on a different stack.
+ * There might be some desire to return the "last" 32bit context, prior to
+ * entering 64bit mode, but apparently that does not work.
+ *
+ * CorCLR and Chakra can be seen to have similar code.
+ * Cooperative suspend should fix this.
  */
 gboolean
 mono_threads_platform_in_critical_region (MonoNativeThreadId tid)
@@ -323,6 +332,7 @@ mono_threads_platform_in_critical_region (MonoNativeThreadId tid)
 	gboolean ret = FALSE;
 #if SIZEOF_VOID_P == 4 && G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 /* FIXME On cygwin these are not defined */
+// FIXME get the values and define them here.
 #if defined(CONTEXT_EXCEPTION_REQUEST) && defined(CONTEXT_EXCEPTION_REPORTING) && defined(CONTEXT_EXCEPTION_ACTIVE)
 	if (is_wow64) {
 		HANDLE handle = OpenThread (THREAD_ALL_ACCESS, FALSE, tid);
@@ -385,12 +395,82 @@ mono_native_thread_set_name (MonoNativeThreadId tid, const char *name)
 	info.szName = name;
 	info.dwThreadID = tid;
 	info.dwFlags = 0;
-
+// FIXME The ability to talk to a debugger via RaiseException
+// is compiler-portable, but the ability to __try/__except is maybe not.
+// One could gate this with IsDebuggerPresent, however
+// - The debugger can disappear right after it is called.
+// - Which debugger? They do not likely all support it.
+// You could isolate the call on a separate per-call thread and let the exception
+// be unhandled, perhaps.
 	__try {
 		RaiseException( MS_VC_EXCEPTION, 0, sizeof(info)/sizeof(ULONG_PTR),       (ULONG_PTR*)&info );
 	}
 	__except(EXCEPTION_EXECUTE_HANDLER) {
 	}
+#endif
+}
+
+void
+mono_native_thread_set_name_utf16 (MonoNativeThreadId tid, const gunichar2 *name)
+{
+// Bing: SetThreadDescription.
+// https://msdn.microsoft.com/en-us/library/windows/desktop/mt774976(v=vs.85).aspx
+// This mechanism has the following advantages over the older mechanism:
+// - Supported by the kernel, not debuggers.
+// - It works when debugger is not attached.
+//   - Either before debugger is attached.
+//   - Between detach and reattach.
+//   - No debugger at all.
+//   - This is arguably a memory footprint disadvantage.
+// - There is an API to get the name, instead of being buried in the debugger.
+// - ETW knows about it, so thread names appear in ETW traces.
+// - Unicode (only) support.
+// - Implemented by Mono team.
+// - No exception used to implement it.
+// - It works on handles instead of IDs, which is more idiomatic.
+//
+// It has the following disadvantage:
+// - It is only present in newer versions of Windows -- requiring LoadLibrary/GetProcAddress.
+// - The Xbox Win32 API is different, though the underlying kernel API is identical.
+// - The Xbox360 API is another different.
+//
+// It is called "description" instead of name because SetThreadName is already taken.
+
+// UWP does not allow LoadLibrary.
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+
+	typedef HRESULT (WINAPI *PFN_SET_THREAD_DESCRIPTION) (HANDLE, PCWSTR);
+	static PFN_SET_THREAD_DESCRIPTION setThreadDescription;
+	static char sticky_failure;
+	HMODULE kernel32;
+	HANDLE threadHandle;
+	
+	// LOAD_LIBRARY_SEARCH_SYSTEM32 does not work on older systems,
+	// but the API is not present on older systems either.
+	//
+	// LOAD_LIBRARY_SEARCH_SYSTEM32 is present on Windows 8 and newer,
+	// and is available in a patch for Windows 7, that is often missing.
+	
+	if (sticky_failure)
+		return;
+	
+	if (!setThreadDescription) {
+		kernel32 = LoadLibraryExW(L"kernel32.dll", NULL, LOAD_LIBRARY_SEARCH_SYSTEM32);
+		if (!kernel32)
+			goto label_fail;
+		setThreadDescription = (PFN_SET_THREAD_DESCRIPTION)GetProcAddress(Kernel32, "SetThreadDescription");
+	}
+	if (!setThreadDescription)
+		goto label_fail;
+	threadHandle = OpenThread (THREAD_SET_LIMITED_INFORMATION, FALSE, tid);
+	if (!threadHandle)
+		return; // not sticky
+	setThreadDescription (threadHandle, name);
+	CloseHandle (threadHandle);
+	return;
+label_fail:
+	sticky_failure = TRUE;
+	return;
 #endif
 }
 

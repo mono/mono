@@ -872,7 +872,9 @@ finalizer_thread (gpointer unused)
 	ERROR_DECL (error);
 	gboolean wait = TRUE;
 
-	mono_thread_set_name_internal (mono_thread_internal_current (), G_STRING_CONSTANT_AND_LENGTH ("Finalizer"), FALSE, FALSE, &error);
+	mono_thread_set_name_internal (mono_thread_internal_current (),
+		G_STRING_CONSTANT_AND_LENGTH ("Finalizer"),
+		NULL, 0, FALSE, FALSE, &error);
 	mono_error_assert_ok (&error);
 
 	/* Register a hazard free queue pump callback */

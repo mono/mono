@@ -1061,3 +1061,76 @@ g_strnfill (gsize length, gchar fill_char)
 	ret [length] = 0;
 	return ret;
 }
+
+gpointer
+g_dup0 (gconstpointer p, gsize plen, gsize extra_len)
+{
+	gpointer dup = g_malloc (plen + extra_len);
+	if (!dup)
+		return NULL;
+	memcpy (dup, p, plen);
+	// Zero the tail.
+	memset ((gchar*)dup + plen, 0, extra_len);
+	return dup;
+}
+
+gunichar2*
+g_dup_utf16 (const gunichar2* utf16, gsize length)
+{
+	return (gunichar2*)g_dup0 (utf16, length * sizeof (gunichar2), sizeof (gunichar2));
+}
+
+gchar*
+g_dup_utf8 (const gchar* utf8, gsize length)
+{
+	return (gchar*)g_dup0 (utf8, length, 1);
+}
+
+// FIXME These next two functions are so similar, perhaps there is a
+// better way to write them?
+
+gboolean
+g_fat_string_ensure_utf8 (FatString *self)
+{
+	if (self->utf8)
+		return TRUE;
+	if (!self->utf16)
+		return FALSE;
+
+	glong utf8_length = 0;
+	self->utf8 = g_utf16_to_utf8 (self->utf16, self->utf16_length, NULL, &utf8_length, NULL);
+	if (!self->utf8)
+		return FALSE;
+	self->utf8_length = utf8_length;
+	return TRUE;
+}
+
+gboolean
+g_fat_string_ensure_utf16 (FatString *self)
+{
+	if (self->utf16)
+		return TRUE;
+	if (!self->utf8)
+		return FALSE;
+
+	glong utf16_length = 0;
+	self->utf16 = eg_utf8_to_utf16_with_nuls (self->utf8, self->utf8_length, NULL, &utf16_length, NULL);
+	if (!self->utf16)
+		return FALSE;
+	self->utf16_length = utf16_length;
+	return TRUE;
+}
+
+void
+g_fat_string_init (FatString *self)
+{
+	memset(self, 0, sizeof(*self));
+}
+
+void
+g_fat_string_cleanup (FatString *self)
+{
+	g_free (self->utf8);
+	g_free (self->utf16);
+	g_fat_string_init (self);
+}
