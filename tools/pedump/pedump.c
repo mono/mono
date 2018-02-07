@@ -524,7 +524,7 @@ verify_image_file (const char *fname)
 			mono_error_cleanup (error);
 			continue;
 		}
-		mono_class_init (klass);
+		mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 		if (mono_class_has_failure (klass)) {
 			ERROR_DECL (type_load_error);
 			mono_error_set_for_class_failure (type_load_error, klass);

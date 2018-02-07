@@ -1079,7 +1079,7 @@ mono_class_compute_gc_descriptor (MonoClass *klass)
 	MonoGCDescriptor gc_descr;
 
 	if (!m_class_is_inited (klass))
-		mono_class_init (klass);
+		mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 	if (m_class_is_gc_descr_inited (klass))
 		return;
@@ -1948,7 +1948,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 		return runtime_info->domain_vtables [domain->domain_id];
 	}
 	if (!m_class_is_inited (klass) || mono_class_has_failure (klass)) {
-		if (!mono_class_init (klass) || mono_class_has_failure (klass)) {
+		if (!mono_class_init_ready (klass, MONO_CLASS_READY_MAX) || mono_class_has_failure (klass)) { /* FIXME lower readiness if possible */
 			mono_domain_unlock (domain);
 			mono_loader_unlock ();
 			mono_error_set_for_class_failure (error, klass);
@@ -1960,7 +1960,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 	if (m_class_get_byval_arg (klass)->type == MONO_TYPE_ARRAY || m_class_get_byval_arg (klass)->type == MONO_TYPE_SZARRAY) {
 		MonoClass *element_class = m_class_get_element_class (klass);
 		if (!m_class_is_inited (element_class))
-			mono_class_init (element_class);
+			mono_class_init_ready (element_class, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 		/*mono_class_init can leave the vtable layout to be lazily done and we can't afford this here*/
 		if (!mono_class_has_failure (element_class) && !m_class_get_vtable_size (element_class))
@@ -4561,7 +4561,7 @@ create_unhandled_exception_eventargs (MonoObject *exc, MonoError *error)
 	MonoObject *obj;
 
 	klass = mono_class_get_unhandled_exception_event_args_class ();
-	mono_class_init (klass);
+	mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 	/* UnhandledExceptionEventArgs only has 1 public ctor with 2 args */
 	method = mono_class_get_method_from_name_flags (klass, ".ctor", 2, METHOD_ATTRIBUTE_PUBLIC);
@@ -5550,7 +5550,7 @@ mono_object_new_specific_checked (MonoVTable *vtable, MonoError *error)
 			MonoClass *klass = mono_class_get_activation_services_class ();
 
 			if (!m_class_is_inited (klass))
-				mono_class_init (klass);
+				mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 			im = mono_class_get_method_from_name (klass, "CreateProxyForType", 1);
 			if (!im) {
@@ -5593,7 +5593,7 @@ mono_object_new_by_vtable (MonoVTable *vtable, MonoError *error)
 			MonoClass *klass = mono_class_get_activation_services_class ();
 
 			if (!m_class_is_inited (klass))
-				mono_class_init (klass);
+				mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 			im = mono_class_get_method_from_name (klass, "CreateProxyForType", 1);
 			if (!im) {
@@ -6043,7 +6043,7 @@ mono_array_new_full_checked (MonoDomain *domain, MonoClass *array_class, uintptr
 	error_init (error);
 
 	if (!m_class_is_inited (array_class))
-		mono_class_init (array_class);
+		mono_class_init_ready (array_class, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 	len = 1;
 
@@ -6909,7 +6909,7 @@ mono_object_handle_isinst (MonoObjectHandle obj, MonoClass *klass, MonoError *er
 	error_init (error);
 	
 	if (!m_class_is_inited (klass))
-		mono_class_init (klass);
+		mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 	if (mono_class_is_marshalbyref (klass) || mono_class_is_interface (klass)) {
 		return mono_object_handle_isinst_mbyref (obj, klass, error);

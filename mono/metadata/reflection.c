@@ -884,7 +884,7 @@ mono_get_reflection_missing_object (MonoDomain *domain)
 	if (!missing_value_field) {
 		MonoClass *missing_klass;
 		missing_klass = mono_class_get_missing_class ();
-		mono_class_init (missing_klass);
+		mono_class_init_ready (missing_klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 		missing_value_field = mono_class_get_field_from_name (missing_klass, "Value");
 		g_assert (missing_value_field);
 	}
@@ -1320,7 +1320,7 @@ get_default_param_value_blobs (MonoMethod *method, char **blobs, guint32 *types)
 	if (!methodsig->param_count)
 		return;
 
-	mono_class_init (klass);
+	mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 	if (image_is_dynamic (image)) {
 		MonoReflectionMethodAux *aux;
@@ -1900,7 +1900,7 @@ mono_reflection_get_type_internal (MonoImage *rootimage, MonoImage* image, MonoT
 		MonoClass *parent;
 
 		parent = klass;
-		mono_class_init (parent);
+		mono_class_init_ready (parent, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 		while ((klass = mono_class_get_nested_types (parent, &iter))) {
 			char *lastp;
@@ -2296,7 +2296,7 @@ mono_reflection_get_token_checked (MonoObjectHandle obj, MonoError *error)
 		MonoType *type = mono_reflection_type_handle_mono_type (MONO_HANDLE_CAST (MonoReflectionType, obj), error);
 		return_val_if_nok (error, 0);
 		MonoClass *mc = mono_class_from_mono_type (type);
-		if (!mono_class_init (mc)) {
+		if (!mono_class_init_ready (mc, MONO_CLASS_READY_MAX)) { /* FIXME lower readiness if possible */
 			mono_error_set_for_class_failure (error, mc);
 			return 0;
 		}
@@ -2743,7 +2743,7 @@ mono_declsec_get_demands (MonoMethod *method, MonoDeclSecurityActions* demands)
 
 	/* First we look for method-level attributes */
 	if (method->flags & METHOD_ATTRIBUTE_HAS_SECURITY) {
-		mono_class_init (method->klass);
+		mono_class_init_ready (method->klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 		memset (demands, 0, sizeof (MonoDeclSecurityActions));
 
 		result = mono_declsec_get_method_demands_params (method, demands, 
@@ -2754,7 +2754,7 @@ mono_declsec_get_demands (MonoMethod *method, MonoDeclSecurityActions* demands)
 	flags = mono_declsec_flags_from_class (method->klass);
 	if (flags & mask) {
 		if (!result) {
-			mono_class_init (method->klass);
+			mono_class_init_ready (method->klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 			memset (demands, 0, sizeof (MonoDeclSecurityActions));
 		}
 		result |= mono_declsec_get_class_demands_params (method->klass, demands, 
@@ -2795,7 +2795,7 @@ mono_declsec_get_linkdemands (MonoMethod *method, MonoDeclSecurityActions* klass
 
 	/* First we look for method-level attributes */
 	if (method->flags & METHOD_ATTRIBUTE_HAS_SECURITY) {
-		mono_class_init (method->klass);
+		mono_class_init_ready (method->klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 		result = mono_declsec_get_method_demands_params (method, cmethod, 
 			SECURITY_ACTION_LINKDEMAND, SECURITY_ACTION_NONCASLINKDEMAND, SECURITY_ACTION_LINKDEMANDCHOICE);
@@ -2804,7 +2804,7 @@ mono_declsec_get_linkdemands (MonoMethod *method, MonoDeclSecurityActions* klass
 	/* Here we use (or create) the class declarative cache to look for demands */
 	flags = mono_declsec_flags_from_class (method->klass);
 	if (flags & (MONO_DECLSEC_FLAG_LINKDEMAND | MONO_DECLSEC_FLAG_NONCAS_LINKDEMAND | MONO_DECLSEC_FLAG_LINKDEMAND_CHOICE)) {
-		mono_class_init (method->klass);
+		mono_class_init_ready (method->klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 		result |= mono_declsec_get_class_demands_params (method->klass, klass, 
 			SECURITY_ACTION_LINKDEMAND, SECURITY_ACTION_NONCASLINKDEMAND, SECURITY_ACTION_LINKDEMANDCHOICE);
@@ -2834,7 +2834,7 @@ mono_declsec_get_inheritdemands_class (MonoClass *klass, MonoDeclSecurityActions
 	/* Here we use (or create) the class declarative cache to look for demands */
 	flags = mono_declsec_flags_from_class (klass);
 	if (flags & (MONO_DECLSEC_FLAG_INHERITANCEDEMAND | MONO_DECLSEC_FLAG_NONCAS_INHERITANCEDEMAND | MONO_DECLSEC_FLAG_INHERITANCEDEMAND_CHOICE)) {
-		mono_class_init (klass);
+		mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 		memset (demands, 0, sizeof (MonoDeclSecurityActions));
 
 		result |= mono_declsec_get_class_demands_params (klass, demands, 
@@ -2864,7 +2864,7 @@ mono_declsec_get_inheritdemands_method (MonoMethod *method, MonoDeclSecurityActi
 	}
 
 	if (method->flags & METHOD_ATTRIBUTE_HAS_SECURITY) {
-		mono_class_init (method->klass);
+		mono_class_init_ready (method->klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 		memset (demands, 0, sizeof (MonoDeclSecurityActions));
 
 		return mono_declsec_get_method_demands_params (method, demands, 

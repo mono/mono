@@ -900,7 +900,7 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 			MonoMethod *m = decode_resolve_method_ref (module, p, &p, error);
 			if (!m)
 				return FALSE;
-			mono_class_init (m->klass);
+			mono_class_init_ready (m->klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 			if (mono_aot_only)
 				ref->method = m;
 			else {
@@ -3596,7 +3596,7 @@ decode_patch (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji, guin
 					g_error ("AOT Runtime could not load method due to %s", mono_error_get_message (error)); /* FIXME don't swallow the error */
 			}
 			g_assert (ji->data.method);
-			mono_class_init (ji->data.method->klass);
+			mono_class_init_ready (ji->data.method->klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 		}
 		break;
 	}

@@ -240,7 +240,7 @@ type_from_handle (MonoType *handle)
 	MonoDomain *domain = mono_domain_get (); 
 	MonoClass *klass = mono_class_from_mono_type (handle);
 
-	mono_class_init (klass);
+	mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 	ret = mono_type_get_object_checked (domain, handle, error);
 	mono_error_set_pending_exception (error);

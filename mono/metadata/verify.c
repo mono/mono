@@ -892,7 +892,7 @@ mono_type_is_valid_in_context (VerifyContext *ctx, MonoType *type)
 	}
 
 	klass = mono_class_from_mono_type (type);
-	mono_class_init (klass);
+	mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 	if (mono_class_has_failure (klass)) {
 		if (mono_class_is_ginst (klass) && !mono_class_is_valid_generic_instantiation (NULL, klass))
 			ADD_VERIFY_ERROR2 (ctx, g_strdup_printf ("Invalid generic instantiation of type %s.%s at 0x%04x", m_class_get_name_space (klass), m_class_get_name (klass), ctx->ip_offset), MONO_EXCEPTION_TYPE_LOAD);

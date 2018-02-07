@@ -603,7 +603,7 @@ cominterop_type_from_handle (MonoType *handle)
 	MonoDomain *domain = mono_domain_get (); 
 	MonoClass *klass = mono_class_from_mono_type (handle);
 
-	mono_class_init (klass);
+	mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 	ret = mono_type_get_object_checked (domain, handle, error);
 	mono_error_set_pending_exception (error);
@@ -1685,7 +1685,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_GetCCW (MonoObject* object, Mon
 	g_assert (type->type);
 	klass = mono_type_get_class (type->type);
 	g_assert (klass);
-	if (!mono_class_init (klass)) {
+	if (!mono_class_init_ready (klass, MONO_CLASS_READY_MAX)) { /* FIXME lower readiness if possible */
 		mono_set_pending_exception (mono_class_get_exception_for_failure (klass));
 		return NULL;
 	}
@@ -1855,7 +1855,7 @@ ves_icall_System_ComObject_GetInterfaceInternal (MonoComObject* obj, MonoReflect
 #ifndef DISABLE_COM
 	ERROR_DECL (error);
 	MonoClass *klass = mono_type_get_class (type->type);
-	if (!mono_class_init (klass)) {
+	if (!mono_class_init_ready (klass, MONO_CLASS_READY_MAX)) { /* FIXME lower readiness if possible */
 		mono_set_pending_exception (mono_class_get_exception_for_failure (klass));
 		return NULL;
 	}

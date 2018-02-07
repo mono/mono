@@ -1428,11 +1428,11 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		target = patch_info->data.target;
 		break;
 	case MONO_PATCH_INFO_IID:
-		mono_class_init (patch_info->data.klass);
+		mono_class_init_ready (patch_info->data.klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 		target = GUINT_TO_POINTER (m_class_get_interface_id (patch_info->data.klass));
 		break;
 	case MONO_PATCH_INFO_ADJUSTED_IID:
-		mono_class_init (patch_info->data.klass);
+		mono_class_init_ready (patch_info->data.klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 		target = GUINT_TO_POINTER ((guint32)(-((m_class_get_interface_id (patch_info->data.klass) + 1) * SIZEOF_VOID_P)));
 		break;
 	case MONO_PATCH_INFO_VTABLE:
@@ -1504,8 +1504,8 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 							   patch_info->data.token->token, &handle_class, patch_info->data.token->has_context ? &patch_info->data.token->context : NULL, error);
 		if (!mono_error_ok (error))
 			return NULL;
-		mono_class_init (handle_class);
-		mono_class_init (mono_class_from_mono_type ((MonoType *)handle));
+		mono_class_init_ready (handle_class, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
+		mono_class_init_ready (mono_class_from_mono_type ((MonoType *)handle), MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 		target = mono_type_get_object_checked (domain, (MonoType *)handle, error);
 		if (!mono_error_ok (error))
@@ -1519,7 +1519,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		handle = mono_ldtoken_checked (patch_info->data.token->image,
 							   patch_info->data.token->token, &handle_class, patch_info->data.token->has_context ? &patch_info->data.token->context : NULL, error);
 		mono_error_assert_msg_ok (error, "Could not patch ldtoken");
-		mono_class_init (handle_class);
+		mono_class_init_ready (handle_class, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 		target = handle;
 		break;
@@ -1830,7 +1830,7 @@ mini_get_class (MonoMethod *method, guint32 token, MonoGenericContext *context)
 		mono_error_cleanup (error); /* FIXME don't swallow the error */
 	}
 	if (klass)
-		mono_class_init (klass);
+		mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 	return klass;
 }
 
@@ -2181,7 +2181,7 @@ lookup_start:
 		if (!domain)
 			domain = mono_domain_get ();
 
-		mono_class_init (method->klass);
+		mono_class_init_ready (method->klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 		if ((code = mono_aot_get_method (domain, method, error))) {
 			MonoVTable *vtable;

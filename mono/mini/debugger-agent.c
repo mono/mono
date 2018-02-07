@@ -4448,7 +4448,7 @@ set_bp_in_method (MonoDomain *domain, MonoMethod *method, MonoSeqPointInfo *seq_
 		ERROR_DECL_VALUE (oerror);
 
 		/* Might be AOTed code */
-		mono_class_init (method->klass);
+		mono_class_init_ready (method->klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 		code = mono_aot_get_method (domain, method, &oerror);
 		if (code) {
 			mono_error_assert_ok (&oerror);

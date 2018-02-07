@@ -11,6 +11,7 @@
 
 #include <config.h>
 #include "security-manager.h"
+#include "mono/metadata/class-init.h"
 
 /* Class lazy loading functions */
 static GENERATE_GET_CLASS_WITH_CACHE (security_manager, "System.Security", "SecurityManager")
@@ -44,7 +45,7 @@ mono_security_manager_get_methods (void)
 	/* Initialize */
 	secman.securitymanager = mono_class_get_security_manager_class ();
 	if (!m_class_is_inited (secman.securitymanager))
-		mono_class_init (secman.securitymanager);
+		mono_class_init_ready (secman.securitymanager, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 	return &secman;
 }
@@ -102,7 +103,7 @@ mono_get_context_capture_method (void)
 	/* older corlib revisions won't have the class (nor the method) */
 	MonoClass *execution_context = mono_class_try_get_execution_context_class ();
 	if (execution_context && !method) {
-		mono_class_init (execution_context);
+		mono_class_init_ready (execution_context, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 		method = mono_class_get_method_from_name (execution_context, "Capture", 0);
 	}
 

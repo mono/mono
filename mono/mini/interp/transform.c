@@ -1159,7 +1159,7 @@ no_intrinsic:
 	}
 
 	if (target_method)
-		mono_class_init (target_method->klass);
+		mono_class_init_ready (target_method->klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 	if (!is_virtual && target_method && (target_method->flags & METHOD_ATTRIBUTE_ABSTRACT))
 		/* MS.NET seems to silently convert this to a callvirt */
@@ -2891,7 +2891,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			csignature = mono_method_signature (m);
 			klass = m->klass;
 
-			if (!mono_class_init (klass)) {
+			if (!mono_class_init_ready (klass, MONO_CLASS_READY_MAX)) { /* FIXME lower readiness if possible */
 				mono_error_set_for_class_failure (error, klass);
 				goto_if_nok (error, exit);
 			}
@@ -3054,7 +3054,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			goto_if_nok (error, exit);
 			MonoType *ftype = mono_field_get_type (field);
 			gboolean is_static = !!(ftype->attrs & FIELD_ATTRIBUTE_STATIC);
-			mono_class_init (klass);
+			mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 #ifndef DISABLE_REMOTING
 			if (m_class_get_marshalbyref (klass) || mono_class_is_contextbound (klass) || klass == mono_defaults.marshalbyrefobject_class) {
 				g_assert (!is_static);
@@ -3106,7 +3106,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			goto_if_nok (error, exit);
 			MonoType *ftype = mono_field_get_type (field);
 			gboolean is_static = !!(ftype->attrs & FIELD_ATTRIBUTE_STATIC);
-			mono_class_init (klass);
+			mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 			MonoClass *field_klass = mono_class_from_mono_type (ftype);
 			mt = mint_type (m_class_get_byval_arg (field_klass));
@@ -3154,7 +3154,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			goto_if_nok (error, exit);
 			MonoType *ftype = mono_field_get_type (field);
 			gboolean is_static = !!(ftype->attrs & FIELD_ATTRIBUTE_STATIC);
-			mono_class_init (klass);
+			mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 			mt = mint_type (ftype);
 
 			BARRIER_IF_VOLATILE (td);
@@ -3892,7 +3892,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 				handle = mono_ldtoken_checked (image, token, &klass, generic_context, error);
 				goto_if_nok (error, exit);
 			}
-			mono_class_init (klass);
+			mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 			mt = mint_type (m_class_get_byval_arg (klass));
 			g_assert (mt == MINT_TYPE_VT);
 			size = mono_class_value_size (klass, NULL);
@@ -4723,7 +4723,7 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Int
 		case MonoInlineType:
 			if (method->wrapper_type == MONO_WRAPPER_NONE) {
 				klass = mini_get_class (method, read32 (ip + 1), generic_context);
-				mono_class_init (klass);
+				mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 				/* quick fix to not do this for the fake ptr classes - probably should not be getting the vtable at all here */
 #if 0
 				g_error ("FIXME: interface method lookup: %s (in method %s)", klass->name, method->name);
@@ -4741,7 +4741,7 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Int
 					mono_metadata_free_mh (header);
 					return mono_error_convert_to_exception (error);
 				}
-				mono_class_init (m->klass);
+				mono_class_init_ready (m->klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 				if (!mono_class_is_interface (m->klass)) {
 					mono_class_vtable_checked (domain, m->klass, error);
 					if (!is_ok (error)) {

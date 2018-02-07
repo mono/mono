@@ -26,6 +26,7 @@
 #include "get.h"
 #include "dis-cil.h"
 #include "declsec.h"
+#include <mono/metadata/class-init.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/loader.h>
@@ -1546,7 +1547,7 @@ dis_data (MonoImage *m)
 			mono_error_cleanup (error);
 			continue;
 		}
-		mono_class_init (mono_class_from_mono_type (type));
+		mono_class_init_ready (mono_class_from_mono_type (type), MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 		size = mono_type_size (type, &align);
 
 		if (rva) {

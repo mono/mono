@@ -760,7 +760,7 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	mono_defaults.customattribute_data_class = mono_class_load_from_name (
 		mono_defaults.corlib, "System.Reflection", "CustomAttributeData");
 
-	mono_class_init (mono_defaults.array_class);
+	mono_class_init_ready (mono_defaults.array_class, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 	mono_defaults.generic_nullable_class = mono_class_load_from_name (
 		mono_defaults.corlib, "System", "Nullable`1");
 	mono_defaults.generic_ilist_class = mono_class_load_from_name (

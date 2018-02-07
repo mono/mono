@@ -478,7 +478,7 @@ mini_regression (MonoImage *image, int verbose, int *total_run)
 			mono_error_cleanup (error);
 			continue;
 		}
-		mono_class_init (method->klass);
+		mono_class_init_ready (method->klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 		if (!strncmp (method->name, "test_", 5) && mini_stats_fd) {
 			fprintf (mini_stats_fd, "\"%s\",", method->name);
@@ -692,7 +692,7 @@ interp_regression (MonoImage *image, int verbose, int *total_run)
 			mono_error_cleanup (error);
 			continue;
 		}
-		mono_class_init (method->klass);
+		mono_class_init_ready (method->klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 	}
 
 	total = 0;

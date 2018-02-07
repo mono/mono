@@ -15,6 +15,7 @@
 
 #include <glib.h>
 #include <config.h>
+#include <mono/metadata/class-init.h>
 #include <mono/metadata/environment.h>
 #include <mono/metadata/exception.h>
 #include <mono/metadata/exception-internals.h>
@@ -811,7 +812,7 @@ mono_get_exception_type_initialization_checked (const gchar *type_name, MonoExce
 
 	klass = mono_class_load_from_name (mono_get_corlib (), "System", "TypeInitializationException");
 
-	mono_class_init (klass);
+	mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 	iter = NULL;
 	while ((method = mono_class_get_methods (klass, &iter))) {
@@ -1000,7 +1001,7 @@ mono_get_exception_reflection_type_load_checked (MonoArrayHandle types, MonoArra
 
 	klass = mono_class_load_from_name (mono_get_corlib (), "System.Reflection", "ReflectionTypeLoadException");
 
-	mono_class_init (klass);
+	mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 	/* Find the Type[], Exception[] ctor */
 	iter = NULL;

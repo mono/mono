@@ -781,7 +781,7 @@ create_custom_attr (MonoImage *image, MonoMethod *method, const guchar *data, gu
 
 	error_init (error);
 
-	mono_class_init (method->klass);
+	mono_class_init_ready (method->klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 	if (!mono_verifier_verify_cattr_content (image, method, data, len, NULL)) {
 		set_custom_attr_fmt_error (error);
@@ -988,7 +988,7 @@ mono_reflection_create_custom_attr_data_args (MonoImage *image, MonoMethod *meth
 		return;
 	}
 
-	mono_class_init (method->klass);
+	mono_class_init_ready (method->klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 	
 	domain = mono_domain_get ();
 
@@ -1141,7 +1141,7 @@ reflection_resolve_custom_attribute_data (MonoReflectionMethod *ref_method, Mono
 	method = ref_method->method;
 	domain = mono_object_domain (ref_method);
 
-	if (!mono_class_init (method->klass)) {
+	if (!mono_class_init_ready (method->klass, MONO_CLASS_READY_MAX)) { /* FIXME lower readiness if possible */
 		mono_error_set_for_class_failure (error, method->klass);
 		goto leave;
 	}

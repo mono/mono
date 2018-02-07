@@ -72,7 +72,7 @@ mono_debug_open_method (MonoCompile *cfg)
 	if (!info)
 		return;
 
-	mono_class_init (cfg->method->klass);
+	mono_class_init_ready (cfg->method->klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 	header = cfg->header;
 	g_assert (header);

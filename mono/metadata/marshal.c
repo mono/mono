@@ -166,7 +166,7 @@ mono_object_isinst_icall (MonoObject *obj, MonoClass *klass)
 		MonoVTable *vt = obj->vtable;
 
 		if (!m_class_is_inited (klass))
-			mono_class_init (klass);
+			mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 		if (MONO_VTABLE_IMPLEMENTS_INTERFACE (vt, m_class_get_interface_id (klass)))
 			return obj;
@@ -5030,7 +5030,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_SizeOf (MonoReflectionTypeHandl
 
 	type = MONO_HANDLE_GETVAL (rtype, type);
 	klass = mono_class_from_mono_type (type);
-	if (!mono_class_init (klass)) {
+	if (!mono_class_init_ready (klass, MONO_CLASS_READY_MAX)) { /* FIXME lower readiness if possible */
 		mono_error_set_for_class_failure (error, klass);
 		return 0;
 	}
@@ -5126,7 +5126,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStructure_type (gpointer s
 	MONO_CHECK_ARG_NULL (type, NULL);
 
 	klass = mono_class_from_mono_type (type->type);
-	if (!mono_class_init (klass)) {
+	if (!mono_class_init_ready (klass, MONO_CLASS_READY_MAX)) { /* FIXME lower readiness if possible */
 		mono_set_pending_exception (mono_class_get_exception_for_failure (klass));
 		return NULL;
 	}
@@ -5164,7 +5164,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_OffsetOf (MonoReflectionTypeHan
 
 	MonoType *type = MONO_HANDLE_GETVAL (ref_type, type);
 	MonoClass *klass = mono_class_from_mono_type (type);
-	if (!mono_class_init (klass)) {
+	if (!mono_class_init_ready (klass, MONO_CLASS_READY_MAX)) { /* FIXME lower readiness if possible */
 		mono_error_set_for_class_failure (error, klass);
 		return 0;
 	}
@@ -5287,7 +5287,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_DestroyStructure (gpointer src,
 	MONO_CHECK_ARG_NULL (type,);
 
 	klass = mono_class_from_mono_type (type->type);
-	if (!mono_class_init (klass)) {
+	if (!mono_class_init_ready (klass, MONO_CLASS_READY_MAX)) { /* FIXME lower readiness if possible */
 		mono_set_pending_exception (mono_class_get_exception_for_failure (klass));
 		return;
 	}
@@ -5429,7 +5429,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_GetDelegateForFunctionPointerIn
 {
 	error_init (error);
 	MonoClass *klass = mono_type_get_class (MONO_HANDLE_GETVAL (type, type));
-	if (!mono_class_init (klass)) {
+	if (!mono_class_init_ready (klass, MONO_CLASS_READY_MAX)) { /* FIXME lower readiness if possible */
 		mono_error_set_for_class_failure (error, klass);
 		return NULL;
 	}
@@ -5485,7 +5485,7 @@ mono_marshal_load_type_info (MonoClass* klass)
 		return info;
 
 	if (!m_class_is_inited (klass))
-		mono_class_init (klass);
+		mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 	info = mono_class_get_marshal_info (klass);
 	if (info)

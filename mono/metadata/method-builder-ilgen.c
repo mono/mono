@@ -12,6 +12,7 @@
 #include "mono/metadata/tabledefs.h"
 #include "mono/metadata/exception.h"
 #include "mono/metadata/appdomain.h"
+#include "mono/metadata/class-init.h"
 #include "mono/metadata/debug-helpers.h"
 #include "mono/metadata/metadata-internals.h"
 #include "mono/metadata/domain-internals.h"
@@ -551,7 +552,7 @@ mono_mb_emit_exception_full (MonoMethodBuilder *mb, const char *exc_nspace, cons
 	MonoMethod *ctor = NULL;
 
 	MonoClass *mme = mono_class_load_from_name (mono_defaults.corlib, exc_nspace, exc_name);
-	mono_class_init (mme);
+	mono_class_init_ready (mme, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 	ctor = mono_class_get_method_from_name (mme, ".ctor", 0);
 	g_assert (ctor);
 	mono_mb_emit_op (mb, CEE_NEWOBJ, ctor);

@@ -1206,7 +1206,7 @@ ves_imethod (InterpFrame *frame, ThreadContext *context)
 	const char *name = method->name;
 	MonoObject *obj = (MonoObject*) frame->stack_args->data.p;
 
-	mono_class_init (method->klass);
+	mono_class_init_ready (method->klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 	if (method->klass == mono_defaults.array_class) {
 		if (!strcmp (method->name, "UnsafeMov")) {

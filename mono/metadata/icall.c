@@ -139,11 +139,11 @@ is_generic_parameter (MonoType *type)
 }
 
 static void
-mono_class_init_checked (MonoClass *klass, MonoError *error)
+mono_class_init_checked (MonoClass *klass, MonoClassReady readiness, MonoError *error)
 {
 	error_init (error);
 
-	if (!mono_class_init (klass))
+	if (!mono_class_init_ready (klass, readiness))
 		mono_error_set_for_class_failure (error, klass);
 }
 
@@ -620,7 +620,7 @@ ves_icall_System_Array_CreateInstanceImpl (MonoReflectionType *type, MonoArray *
 	}
 
 	klass = mono_class_from_mono_type (type->type);
-	mono_class_init_checked (klass, error);
+	mono_class_init_checked (klass, MONO_CLASS_READY_MAX, error); /* FIXME lower readiness if possible */
 	if (mono_error_set_pending_exception (error))
 		return NULL;
 
@@ -678,7 +678,7 @@ ves_icall_System_Array_CreateInstanceImpl64 (MonoReflectionType *type, MonoArray
 	}
 
 	klass = mono_class_from_mono_type (type->type);
-	mono_class_init_checked (klass, error);
+	mono_class_init_checked (klass, MONO_CLASS_READY_MAX, error); /* FIXME lower readiness if possible */
 	if (mono_error_set_pending_exception (error))
 		return NULL;
 
@@ -1758,7 +1758,7 @@ ves_icall_RuntimeTypeHandle_IsInstanceOfType (MonoReflectionTypeHandle ref_type,
 	error_init (error);
 	MonoType *type = MONO_HANDLE_GETVAL (ref_type, type);
 	MonoClass *klass = mono_class_from_mono_type (type);
-	mono_class_init_checked (klass, error);
+	mono_class_init_checked (klass, MONO_CLASS_READY_MAX, error); /* FIXME lower readiness if possible */
 	return_val_if_nok (error, FALSE);
 	MonoObjectHandle inst = mono_object_handle_isinst (obj, klass, error);
 	return_val_if_nok (error, FALSE);
@@ -2197,7 +2197,7 @@ ves_icall_MonoField_GetRawConstantValue (MonoReflectionField *rfield)
 	MonoType *t;
 	ERROR_DECL (error);
 
-	mono_class_init (field->parent);
+	mono_class_init_ready (field->parent, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 	t = mono_field_get_type_checked (field, error);
 	if (!mono_error_ok (error)) {
@@ -2595,9 +2595,9 @@ ves_icall_RuntimeType_GetInterfaceMapData (MonoReflectionTypeHandle ref_type, Mo
 	MonoType *iface = MONO_HANDLE_GETVAL (ref_iface, type);
 	MonoClass *iclass = mono_class_from_mono_type (iface);
 
-	mono_class_init_checked (klass, error);
+	mono_class_init_checked (klass, MONO_CLASS_READY_MAX, error); /* FIXME lower readiness if possible */
 	return_if_nok (error);
-	mono_class_init_checked (iclass, error);
+	mono_class_init_checked (iclass, MONO_CLASS_READY_MAX, error); /* FIXME lower readiness if possible */
 	return_if_nok (error);
 
 	mono_class_setup_vtable (klass);
@@ -2634,7 +2634,7 @@ ves_icall_RuntimeType_GetPacking (MonoReflectionTypeHandle ref_type, guint32 *pa
 	MonoType *type = MONO_HANDLE_GETVAL (ref_type, type);
 	MonoClass *klass = mono_class_from_mono_type (type);
 
-	mono_class_init_checked (klass, error);
+	mono_class_init_checked (klass, MONO_CLASS_READY_MAX, error); /* FIXME lower readiness if possible */
 	if (!is_ok (error))
 		return;
 
@@ -2660,7 +2660,7 @@ ves_icall_RuntimeTypeHandle_GetElementType (MonoReflectionTypeHandle ref_type, M
 	}
 
 	MonoClass *klass = mono_class_from_mono_type (type);
-	mono_class_init_checked (klass, error);
+	mono_class_init_checked (klass, MONO_CLASS_READY_MAX, error); /* FIXME lower readiness if possible */
 	if (!is_ok (error))
 		return MONO_HANDLE_CAST (MonoReflectionType, NULL_HANDLE);
 
@@ -2718,7 +2718,7 @@ ves_icall_RuntimeTypeHandle_HasReferences (MonoReflectionTypeHandle ref_type, Mo
 	MonoClass *klass;
 
 	klass = mono_class_from_mono_type (type);
-	mono_class_init (klass);
+	mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 	return m_class_has_references (klass);
 }
 
@@ -2736,7 +2736,7 @@ ves_icall_RuntimeTypeHandle_IsComObject (MonoReflectionTypeHandle ref_type, Mono
 	error_init (error);
 	MonoType *type = MONO_HANDLE_GETVAL (ref_type, type);
 	MonoClass *klass = mono_class_from_mono_type (type);
-	mono_class_init_checked (klass, error);
+	mono_class_init_checked (klass, MONO_CLASS_READY_MAX, error); /* FIXME lower readiness if possible */
 	if (!is_ok (error))
 		return FALSE;
 
@@ -2962,7 +2962,7 @@ ves_icall_RuntimeType_MakeGenericType (MonoReflectionTypeHandle reftype, MonoArr
 
 	g_assert (IS_MONOTYPE_HANDLE (reftype));
 	MonoType *type = MONO_HANDLE_GETVAL (reftype, type);
-	mono_class_init_checked (mono_class_from_mono_type (type), error);
+	mono_class_init_checked (mono_class_from_mono_type (type), MONO_CLASS_READY_MAX, error); /* FIXME lower readiness if possible */
 	if (!is_ok (error))
 		return MONO_HANDLE_CAST (MonoReflectionType, NULL_HANDLE);
 
@@ -3047,7 +3047,7 @@ ves_icall_RuntimeType_GetCorrespondingInflatedMethod (MonoReflectionTypeHandle r
 	MonoType *type = MONO_HANDLE_GETVAL (ref_type, type);
 	MonoClass *klass = mono_class_from_mono_type (type);
 		
-	mono_class_init_checked (klass, error);
+	mono_class_init_checked (klass, MONO_CLASS_READY_MAX, error); /* FIXME lower readiness if possible */
 	if (!is_ok (error))
 		return MONO_HANDLE_CAST (MonoReflectionMethod, NULL_HANDLE);
 
@@ -3650,7 +3650,7 @@ ves_icall_System_Enum_ToObject (MonoReflectionTypeHandle enumType, guint64 value
 	domain = MONO_HANDLE_DOMAIN (enumType);
 	enumc = mono_class_from_mono_type (MONO_HANDLE_GETVAL (enumType, type));
 
-	mono_class_init_checked (enumc, error);
+	mono_class_init_checked (enumc, MONO_CLASS_READY_MAX, error); /* FIXME lower readiness if possible */
 	goto_if_nok (error, return_null);
 
 	etype = mono_class_enum_basetype (enumc);
@@ -3709,7 +3709,7 @@ ves_icall_System_Enum_get_underlying_type (MonoReflectionTypeHandle type, MonoEr
 	MonoClass *klass;
 
 	klass = mono_class_from_mono_type (MONO_HANDLE_GETVAL (type, type));
-	mono_class_init_checked (klass, error);
+	mono_class_init_checked (klass, MONO_CLASS_READY_MAX, error); /* FIXME lower readiness if possible */
 	goto_if_nok (error, return_null);
 
 	etype = mono_class_enum_basetype (klass);
@@ -3854,7 +3854,7 @@ ves_icall_System_Enum_GetEnumValuesAndNames (MonoReflectionTypeHandle type, Mono
 	gboolean sorted = TRUE;
 
 	error_init (error);
-	mono_class_init_checked (enumc, error);
+	mono_class_init_checked (enumc, MONO_CLASS_READY_MAX, error); /* FIXME lower readiness if possible */
 	return_val_if_nok (error, FALSE);
 
 	if (!m_class_is_enumtype (enumc)) {
@@ -5363,7 +5363,7 @@ ves_icall_RuntimeType_get_core_clr_security_level (MonoReflectionTypeHandle rfie
 	MonoType *type = MONO_HANDLE_GETVAL (rfield, type);
 	MonoClass *klass = mono_class_from_mono_type (type);
 
-	mono_class_init_checked (klass, error);
+	mono_class_init_checked (klass, MONO_CLASS_READY_MAX, error); /* FIXME lower readiness if possible */
 	if (!is_ok (error))
 		return -1;
 	return mono_security_core_clr_class_level (klass);
@@ -6279,7 +6279,7 @@ ves_icall_RuntimeType_make_byref_type (MonoReflectionTypeHandle ref_type, MonoEr
 	MonoType *type = MONO_HANDLE_GETVAL (ref_type, type);
 
 	MonoClass *klass = mono_class_from_mono_type (type);
-	mono_class_init_checked (klass, error);
+	mono_class_init_checked (klass, MONO_CLASS_READY_MAX, error); /* FIXME lower readiness if possible */
 	if (!is_ok (error))
 		return MONO_HANDLE_CAST (MonoReflectionType, NULL_HANDLE);
 
@@ -6298,7 +6298,7 @@ ves_icall_RuntimeType_MakePointerType (MonoReflectionTypeHandle ref_type, MonoEr
 	MonoDomain *domain = MONO_HANDLE_DOMAIN (ref_type);
 	MonoType *type = MONO_HANDLE_GETVAL (ref_type, type);
 	MonoClass *klass = mono_class_from_mono_type (type);
-	mono_class_init_checked (klass, error);
+	mono_class_init_checked (klass, MONO_CLASS_READY_MAX, error); /* FIXME lower readiness if possible */
 	if (!is_ok (error))
 		return MONO_HANDLE_CAST (MonoReflectionType, NULL_HANDLE);
 
@@ -6321,7 +6321,7 @@ ves_icall_System_Delegate_CreateDelegate_internal (MonoReflectionTypeHandle ref_
 	MonoMethod *method = MONO_HANDLE_GETVAL (info, method);
 	MonoMethodSignature *sig = mono_method_signature(method);
 
-	mono_class_init_checked (delegate_class, error);
+	mono_class_init_checked (delegate_class, MONO_CLASS_READY_MAX, error); /* FIXME lower readiness if possible */
 	return_val_if_nok (error, NULL_HANDLE);
 
 	if (!(m_class_get_parent (delegate_class) == mono_defaults.multicastdelegate_class)) {
@@ -7077,7 +7077,7 @@ ves_icall_Remoting_RemotingServices_GetVirtualMethod (
 	MonoMethod *method = MONO_HANDLE_GETVAL (rmethod, method);
 	MonoType *type = MONO_HANDLE_GETVAL (rtype, type);
 	MonoClass *klass = mono_class_from_mono_type (type);
-	mono_class_init_checked (klass, error);
+	mono_class_init_checked (klass, MONO_CLASS_READY_MAX, error); /* FIXME lower readiness if possible */
 	return_val_if_nok (error, ret);
 
 	if (MONO_CLASS_IS_INTERFACE (klass))
@@ -7147,7 +7147,7 @@ ves_icall_System_Runtime_Activation_ActivationServices_AllocateUninitializedClas
 	
 	MonoDomain *domain = MONO_HANDLE_DOMAIN (type);
 	MonoClass *klass = mono_class_from_mono_type (MONO_HANDLE_GETVAL (type, type));
-	mono_class_init_checked (klass, error);
+	mono_class_init_checked (klass, MONO_CLASS_READY_MAX, error); /* FIXME lower readiness if possible */
 	return_val_if_nok (error, NULL_HANDLE);
 
 	if (MONO_CLASS_IS_INTERFACE (klass) || mono_class_is_abstract (klass)) {
@@ -7401,7 +7401,7 @@ ves_icall_System_Activator_CreateInstanceInternal (MonoReflectionTypeHandle ref_
 	MonoType *type = MONO_HANDLE_GETVAL (ref_type, type);
 	MonoClass *klass = mono_class_from_mono_type (type);
 
-	mono_class_init_checked (klass, error);
+	mono_class_init_checked (klass, MONO_CLASS_READY_MAX, error); /* FIXME lower readiness if possible */
 	if (!is_ok (error))
 		return NULL_HANDLE;
 
@@ -7638,7 +7638,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_PrelinkAll (MonoReflectionTypeH
 	MonoMethod* m;
 	gpointer iter = NULL;
 
-	mono_class_init_checked (klass, error);
+	mono_class_init_checked (klass, MONO_CLASS_READY_MAX, error); /* FIXME lower readiness if possible */
 	return_if_nok (error);
 
 	while ((m = mono_class_get_methods (klass, &iter))) {
@@ -7815,7 +7815,7 @@ ves_icall_property_info_get_default_value (MonoReflectionProperty *property)
 	const char *def_value;
 	MonoObject *o;
 
-	mono_class_init (prop->parent);
+	mono_class_init_ready (prop->parent, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 	if (!(prop->attrs & PROPERTY_ATTRIBUTE_HAS_DEFAULT)) {
 		mono_set_pending_exception (mono_get_exception_invalid_operation (NULL));
@@ -7837,7 +7837,7 @@ ves_icall_MonoCustomAttrs_IsDefinedInternal (MonoObjectHandle obj, MonoReflectio
 	error_init (error);
 	MonoClass *attr_class = mono_class_from_mono_type (MONO_HANDLE_GETVAL (attr_type, type));
 
-	mono_class_init_checked (attr_class, error);
+	mono_class_init_checked (attr_class, MONO_CLASS_READY_MAX, error); /* FIXME lower readiness if possible */
 	return_val_if_nok (error, FALSE);
 
 	MonoCustomAttrInfo *cinfo = mono_reflection_get_custom_attrs_info_checked (obj, error);
@@ -7861,7 +7861,7 @@ ves_icall_MonoCustomAttrs_GetCustomAttributesInternal (MonoObjectHandle obj, Mon
 		attr_class = mono_class_from_mono_type (MONO_HANDLE_GETVAL (attr_type, type));
 
 	if (attr_class) {
-		mono_class_init_checked (attr_class, error);
+		mono_class_init_checked (attr_class, MONO_CLASS_READY_MAX, error); /* FIXME lower readiness if possible */
 		if (!is_ok (error))
 			return MONO_HANDLE_CAST (MonoArray, NULL_HANDLE);
 	}

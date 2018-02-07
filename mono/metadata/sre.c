@@ -3462,7 +3462,7 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 
 	if (klass->parent) {
 		if (!klass->parent->size_inited)
-			mono_class_init (klass->parent);
+			mono_class_init_ready (klass->parent, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 		instance_size = klass->parent->instance_size;
 	} else {
 		instance_size = sizeof (MonoObject);
@@ -4101,7 +4101,7 @@ mono_reflection_resolve_object (MonoImage *image, MonoObject *obj, MonoClass **h
 		MonoType *type = mono_reflection_type_get_handle ((MonoReflectionType*)obj, error);
 		return_val_if_nok (error, NULL);
 		MonoClass *mc = mono_class_from_mono_type (type);
-		if (!mono_class_init (mc)) {
+		if (!mono_class_init_ready (mc, MONO_CLASS_READY_MAX)) { /* FIXME lower readiness if possible */
 			mono_error_set_for_class_failure (error, mc);
 			return NULL;
 		}

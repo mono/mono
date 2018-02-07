@@ -1509,7 +1509,7 @@ collect_implemented_interfaces_aux (MonoClass *klass, GPtrArray **res, GHashTabl
 			continue;
 		g_ptr_array_add (*res, ic);
 		g_hash_table_insert (*ifaces, ic, ic);
-		mono_class_init (ic);
+		mono_class_init_ready (ic, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 		if (mono_class_has_failure (ic)) {
 			mono_error_set_type_load_class (error, ic, "Error Loading class");
 			return;
@@ -1962,7 +1962,7 @@ gint32
 mono_class_instance_size (MonoClass *klass)
 {	
 	if (!m_class_is_size_inited (klass))
-		mono_class_init (klass);
+		mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 	return m_class_get_instance_size (klass);
 }
@@ -1979,7 +1979,7 @@ gint32
 mono_class_min_align (MonoClass *klass)
 {	
 	if (!m_class_is_size_inited (klass))
-		mono_class_init (klass);
+		mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 	return m_class_get_min_align (klass);
 }
@@ -2021,7 +2021,7 @@ gint32
 mono_class_data_size (MonoClass *klass)
 {	
 	if (!m_class_is_inited (klass))
-		mono_class_init (klass);
+		mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 	/* This can happen with dynamically created types */
 	if (!m_class_is_fields_inited (klass))
 		mono_class_setup_fields (klass);
@@ -3189,8 +3189,8 @@ mono_class_is_subclass_of (MonoClass *klass, MonoClass *klassc,
 			   gboolean check_interfaces)
 {
 	/* FIXME test for interfaces with variant generic arguments */
-	mono_class_init (klass);
-	mono_class_init (klassc);
+	mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
+	mono_class_init_ready (klassc, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 	
 	if (check_interfaces && MONO_CLASS_IS_INTERFACE (klassc) && !MONO_CLASS_IS_INTERFACE (klass)) {
 		if (MONO_CLASS_IMPLEMENTS_INTERFACE (klass, m_class_get_interface_id (klassc)))
@@ -3434,10 +3434,10 @@ mono_class_is_assignable_from (MonoClass *klass, MonoClass *oklass)
 	ERROR_DECL (error);
 	/*FIXME this will cause a lot of irrelevant stuff to be loaded.*/
 	if (!m_class_is_inited (klass))
-		mono_class_init (klass);
+		mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 	if (!m_class_is_inited (oklass))
-		mono_class_init (oklass);
+		mono_class_init_ready (oklass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 	if (mono_class_has_failure (klass) || mono_class_has_failure  (oklass))
 		return FALSE;
@@ -3771,7 +3771,7 @@ mono_class_get_cctor (MonoClass *klass)
 		return mono_class_get_method_from_name_flags (klass, ".cctor", -1, METHOD_ATTRIBUTE_SPECIAL_NAME);
 	}
 
-	mono_class_init (klass);
+	mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 	if (!m_class_has_cctor (klass))
 		return NULL;
@@ -3806,7 +3806,7 @@ mono_class_get_finalizer (MonoClass *klass)
 	MonoCachedClassInfo cached_info;
 
 	if (!m_class_is_inited (klass))
-		mono_class_init (klass);
+		mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 	if (!mono_class_has_finalizer (klass))
 		return NULL;
 
@@ -3967,7 +3967,7 @@ mono_ldtoken_checked (MonoImage *image, guint32 token, MonoClass **handle_class,
 		if (!type)
 			return NULL;
 
-		mono_class_init (mono_class_from_mono_type (type));
+		mono_class_init_ready (mono_class_from_mono_type (type), MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 		/* We return a MonoType* as handle */
 		return type;
 	}
@@ -3984,7 +3984,7 @@ mono_ldtoken_checked (MonoImage *image, guint32 token, MonoClass **handle_class,
 		if (!klass)
 			return NULL;
 
-		mono_class_init (klass);
+		mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 		return mono_class_get_field (klass, token);
 	}
 	case MONO_TOKEN_METHOD_DEF:
@@ -4480,7 +4480,7 @@ mono_class_get_interfaces (MonoClass* klass, gpointer *iter)
 		return NULL;
 	if (!*iter) {
 		if (!m_class_is_inited (klass))
-			mono_class_init (klass);
+			mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 		if (!m_class_is_interfaces_inited (klass)) {
 			mono_class_setup_interfaces (klass, error);
 			if (!mono_error_ok (error)) {
@@ -4941,7 +4941,7 @@ mono_class_get_method_from_name_checked (MonoClass *klass, const char *name,
 	MonoMethod *res = NULL;
 	int i;
 
-	mono_class_init (klass);
+	mono_class_init_ready (klass, MONO_CLASS_READY_MAX); /* FIXME lower readiness if possible */
 
 	if (mono_class_is_ginst (klass) && !m_class_get_methods (klass)) {
 		res = mono_class_get_method_from_name_checked (mono_class_get_generic_class (klass)->container_class, name, param_count, flags, error);
