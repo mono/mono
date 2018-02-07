@@ -69,38 +69,15 @@ else
 platform_sources += threadpool-worker-default.c
 endif
 
-
-#
-# libtool is not capable of creating static/shared versions of the same
-# convenience lib, so we have to do it ourselves
-#
 if SUPPORT_SGEN
-if DISABLE_EXECUTABLES
-shared_sgen_libraries = libmonoruntimesgen.la 
-else
-if SHARED_MONO
-shared_sgen_libraries = libmonoruntimesgen.la 
-endif
-endif
-sgen_libraries = $(shared_sgen_libraries) libmonoruntimesgen-static.la 
+sgen_libraries = libmonoruntimesgen.la
 endif
 
 if SUPPORT_BOEHM
-if DISABLE_EXECUTABLES
-shared_boehm_libraries = libmonoruntime.la
-else
-if SHARED_MONO
-shared_boehm_libraries = libmonoruntime.la
-endif
-endif
-boehm_libraries = $(shared_boehm_libraries) libmonoruntime-static.la
+boehm_libraries = libmonoruntime.la
 endif
 
-if DISABLE_EXECUTABLES
-noinst_LTLIBRARIES = libmonoruntime-config.la $(shared_sgen_libraries) $(shared_boehm_libraries)
-else
 noinst_LTLIBRARIES = libmonoruntime-config.la $(boehm_libraries) $(sgen_libraries)
-endif
 
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/mono $(LIBGC_CPPFLAGS) $(GLIB_CFLAGS) $(SHARED_CFLAGS)
 
@@ -143,8 +120,12 @@ common_sources = \
 	attach.c		\
 	cil-coff.h		\
 	class.c			\
+	class-getters.h		\
+	class-init.h		\
+	class-init.c		\
 	class-internals.h	\
 	class-inlines.h		\
+	class-private-definition.h	\
 	class-accessors.c	\
 	cominterop.c		\
 	cominterop.h		\
@@ -325,16 +306,6 @@ libmonoruntime_la_LIBADD = libmonoruntime-config.la
 libmonoruntimesgen_la_SOURCES = $(common_sources) $(gc_dependent_sources) $(sgen_sources)
 libmonoruntimesgen_la_CFLAGS = $(SGEN_DEFINES)
 libmonoruntimesgen_la_LIBADD = libmonoruntime-config.la
-
-libmonoruntime_static_la_SOURCES = $(libmonoruntime_la_SOURCES)
-libmonoruntime_static_la_LDFLAGS = -static
-libmonoruntime_static_la_CFLAGS = $(BOEHM_DEFINES)
-libmonoruntime_static_la_LIBADD = $(bundle_obj) libmonoruntime-config.la
-
-libmonoruntimesgen_static_la_SOURCES = $(libmonoruntimesgen_la_SOURCES)
-libmonoruntimesgen_static_la_LDFLAGS = -static
-libmonoruntimesgen_static_la_CFLAGS = $(SGEN_DEFINES)
-libmonoruntimesgen_static_la_LIBADD = libmonoruntime-config.la
 
 libmonoruntimeincludedir = $(includedir)/mono-$(API_VER)/mono/metadata
 

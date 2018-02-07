@@ -43,8 +43,6 @@
  * - d15/d16 are used as fp temporary registers
  */
 
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
-
 #define FP_TEMP_REG ARMREG_D16
 #define FP_TEMP_REG2 ARMREG_D17
 
@@ -1537,6 +1535,7 @@ dyn_call_supported (CallInfo *cinfo, MonoMethodSignature *sig)
 		case ArgHFA:
 		case ArgVtypeByRef:
 		case ArgOnStack:
+		case ArgVtypeOnStack:
 			break;
 		default:
 			return FALSE;
@@ -1651,7 +1650,7 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 		ArgInfo *ainfo = &cinfo->args [aindex + sig->hasthis];
 		int slot = -1;
 
-		if (ainfo->storage == ArgOnStack) {
+		if (ainfo->storage == ArgOnStack || ainfo->storage == ArgVtypeOnStack) {
 			slot = PARAM_REGS + 1 + (ainfo->offset / sizeof (mgreg_t));
 		} else {
 			slot = ainfo->reg;
@@ -1775,6 +1774,10 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 				break;
 			case ArgVtypeByRef:
 				p->regs [slot] = (mgreg_t)arg;
+				break;
+			case ArgVtypeOnStack:
+				for (i = 0; i < ainfo->size / 8; ++i)
+					p->regs [slot ++] = ((mgreg_t*)arg) [i];
 				break;
 			default:
 				g_assert_not_reached ();

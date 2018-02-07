@@ -226,7 +226,6 @@ _ios_$(1)_CONFIGURE_FLAGS= \
 	--disable-visibility-hidden \
 	--enable-maintainer-mode \
 	--enable-minimal=com,remoting,shared_perfcounters \
-	--with-glib=embedded \
 	--with-tls=pthread \
 	--without-ikvm-native
 
@@ -259,10 +258,23 @@ $(eval $(call iOSSimulatorTemplate,sim64,x86_64))
 $(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe: $(wildcard $(TOP)/tools/offsets-tool/*.cs)
 	$(MAKE) -C $(dir $@) MonoAotOffsetsDumper.exe
 
+LLVM_REV=3b82b3c9041eb997f627f881a67d20be37264e9c
+
+# Download a prebuilt llvm
+.stamp-ios-llvm-$(LLVM_REV):
+	./download-llvm.sh $(LLVM_REV)
+	touch $@
+
+build-ios-llvm: .stamp-ios-llvm-$(LLVM_REV)
+
+clean-ios-llvm:
+	$(RM) -rf ../out/ios-llvm64 ../out/ios-llvm32 .stamp-ios-llvm-$(LLVM_REV)
+
 ##
 # Parameters:
 #  $(1): target (cross32 or cross64)
 #  $(2): arch (arm or aarch64)
+#  $(3): llvm (llvm32 or llvm64)
 #
 # Flags:
 #  ios_$(1)_AC_VARS
@@ -311,7 +323,7 @@ _ios_$(1)_CONFIGURE_FLAGS= \
 	--enable-icall-symbol-map \
 	--enable-minimal=com,remoting \
 	--with-cross-offsets=$(2)-apple-darwin10.h \
-	--with-glib=embedded
+	--with-llvm=$$(TOP)/sdks/out/ios-$$(3)
 
 _ios_$(1)_CONFIGURE_ENVIRONMENT= \
 	CC="$$(_ios_$(1)_CC)" \
@@ -323,7 +335,7 @@ _ios_$(1)_CONFIGURE_ENVIRONMENT= \
 .stamp-ios-$(1)-toolchain:
 	touch $$@
 
-.stamp-ios-$(1)-configure: $$(TOP)/configure build-llvm
+.stamp-ios-$(1)-configure: $$(TOP)/configure | build-ios-llvm
 	mkdir -p $$(TOP)/sdks/builds/ios-$(1)
 	cd $$(TOP)/sdks/builds/ios-$(1) && PATH="$$(PLATFORM_BIN):$$$$PATH" $$(TOP)/configure $$(_ios_$(1)_AC_VARS) $$(_ios_$(1)_CONFIGURE_ENVIRONMENT) $$(_ios_$(1)_CONFIGURE_FLAGS)
 	touch $$@
@@ -340,7 +352,7 @@ $$(TOP)/sdks/builds/ios-$(1)/$(2)-apple-darwin10.h: .stamp-ios-$(1)-configure $$
 build-ios-$(1): $$(TOP)/sdks/builds/ios-$(1)/$(2)-apple-darwin10.h
 
 .PHONY: package-ios-$(1)
-package-ios-$(1): build-ios-$(1)
+package-ios-$(1):
 	$$(MAKE) -C $$(TOP)/sdks/builds/ios-$(1)/mono install
 
 .PHONY: clean-ios-$(1)
@@ -351,9 +363,8 @@ TARGETS += ios-$(1)
 
 endef
 
-ios_cross32_CONFIGURE_FLAGS = --build=i386-apple-darwin10 --with-llvm=$(TOP)/sdks/out/llvm32
-$(eval $(call iOSCrossTemplate,cross32,arm))
-ios_cross64_CONFIGURE_FLAGS = --with-llvm=$(TOP)/sdks/out/llvm64
-$(eval $(call iOSCrossTemplate,cross64,aarch64))
+ios_cross32_CONFIGURE_FLAGS=--build=i386-apple-darwin10
+$(eval $(call iOSCrossTemplate,cross32,arm,llvm32))
+$(eval $(call iOSCrossTemplate,cross64,aarch64,llvm64))
 
 

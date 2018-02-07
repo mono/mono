@@ -989,6 +989,7 @@ LLVM = $(filter --llvm, $(MONO_ENV_OPTIONS))
 # abort-try-holes.exe is flaky due to unwinding failure to the finally block when aborting
 # appdomain-marshalbyref-assemblyload.exe: https://bugzilla.xamarin.com/show_bug.cgi?id=49308
 # dim-*: https://github.com/mono/mono/pull/6252
+# threads-init.exe: runs out of system threads
 KNOWN_FAILING_TESTS = \
 	delegate-async-exception.exe	\
 	bug-348522.2.exe	\
@@ -997,6 +998,7 @@ KNOWN_FAILING_TESTS = \
 	bug-Xamarin-5278.exe \
 	appdomain-marshalbyref-assemblyload.exe	\
 	abort-try-holes.exe \
+	threads-init.exe \
 	dim-constrainedcall.exe	\
 	dim-diamondshape.exe
 
@@ -1056,10 +1058,7 @@ INTERP_DISABLED_TESTS = \
 	threadpool-exceptions4.exe \
 	threadpool-exceptions5.exe \
 	typeload-unaligned.exe \
-	weak-fields.exe \
-	vararg.exe \
-	vararg2.exe \
-	vararg3.exe
+	weak-fields.exe
 
 TESTS_CS=$(filter-out $(DISABLED_TESTS),$(TESTS_CS_SRC:.cs=.exe))
 TESTS_IL=$(filter-out $(DISABLED_TESTS),$(TESTS_IL_SRC:.il=.exe))

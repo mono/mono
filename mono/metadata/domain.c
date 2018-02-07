@@ -32,6 +32,7 @@
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/domain-internals.h>
 #include <mono/metadata/class-internals.h>
+#include <mono/metadata/class-init.h>
 #include <mono/metadata/debug-internals.h>
 #include <mono/metadata/assembly-internals.h>
 #include <mono/metadata/exception.h>
@@ -122,9 +123,6 @@ get_runtimes_from_exe (const char *exe_file, MonoImage **exe_image, const MonoRu
 
 static const MonoRuntimeInfo*
 get_runtime_by_version (const char *version);
-
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
-#define ALIGN_PTR_TO(ptr,align) (gpointer)((((gssize)(ptr)) + (align - 1)) & (~(align - 1)))
 
 static LockFreeMempool*
 lock_free_mempool_new (void)

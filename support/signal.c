@@ -132,6 +132,18 @@ int Mono_Posix_FromRealTimeSignum (int offset, int *r)
 #endif
 
 #if HAVE_PSIGNAL
+
+/* 
+ * HACK: similar to the mkdtemp one in glib; turns out gcc "helpfully"
+ * shadows system headers with "fixed" versions that omit functions...
+ * in any case, psignal is another victim of poor GNU decisions. Even
+ * then, we may have to do this anyways, as psignal, while present in
+ * libc, isn't in PASE headers - so do it anyways
+ */
+#if defined(_AIX)
+extern void psignal(int, const char *);
+#endif
+
 int
 Mono_Posix_Syscall_psignal (int sig, const char* s)
 {
