@@ -616,8 +616,11 @@ namespace Mono.Debugger.Soft
 		}
 
 		internal Value DecodeValue (ValueImpl v, Dictionary<int, Value> parent_vtypes) {
-			if (v.Value != null)
+			if (v.Value != null) {
+				if (Version.AtLeast (2, 46) && v.Type == ElementType.Ptr)
+					return new PointerValue(this, GetType(v.Klass), (long)v.Value);
 				return new PrimitiveValue (this, v.Value);
+			}
 
 			switch (v.Type) {
 			case ElementType.Void:
@@ -682,8 +685,11 @@ namespace Mono.Debugger.Soft
 				duplicates.Add (v);
 
 				return new ValueImpl { Type = ElementType.ValueType, Klass = (v as StructMirror).Type.Id, Fields = EncodeValues ((v as StructMirror).Fields, duplicates) };
+			} else if (v is PointerValue) {
+				PointerValue val = (PointerValue)v;
+				return new ValueImpl { Type = ElementType.Ptr, Klass = val.Type.Id, Value = val.Address };
 			} else {
-				throw new NotSupportedException ();
+				throw new NotSupportedException ("Value of type " + v.GetType());
 			}
 		}
 

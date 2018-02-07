@@ -145,6 +145,12 @@ public struct AStruct : ITest2 {
 	}
 }
 
+
+public struct BlittableStruct {
+	public int i;
+	public double d;
+}
+
 public class GClass<T> {
 	public T field;
 	public static T static_field;
@@ -343,6 +349,7 @@ public class Tests : TestsBase, ITest2
 		gc_suspend ();
 		set_ip ();
 		step_filters ();
+		pointers ();
 		if (args.Length > 0 && args [0] == "local-reflect")
 			local_reflect ();
 		if (args.Length > 0 && args [0] == "domain-test")
@@ -1719,6 +1726,18 @@ public class Tests : TestsBase, ITest2
 			Thread.Sleep (200);
 			attach_break ();
 		}
+	}
+
+	public static unsafe void pointer_arguments (int* a, BlittableStruct* s) {
+		*a = 0;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static unsafe void pointers () {
+		int[] a = new [] {1,2,3};
+		BlittableStruct s = new BlittableStruct () { i = 2, d = 3.0 };
+		fixed (int* pa = a)
+			pointer_arguments (pa, &s);
 	}
 }
 
