@@ -425,12 +425,12 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token, MonoError 
 	nspace = mono_metadata_string_heap (image, cols [MONO_TYPEDEF_NAMESPACE]);
 
 	if (mono_metadata_has_generic_params (image, type_token)) {
-		klass = mono_image_alloc0 (image, sizeof (MonoClassGtd));
+		klass = (MonoClass*)mono_image_alloc0 (image, sizeof (MonoClassGtd));
 		klass->class_kind = MONO_CLASS_GTD;
 		UnlockedAdd (&classes_size, sizeof (MonoClassGtd));
 		++class_gtd_count;
 	} else {
-		klass = mono_image_alloc0 (image, sizeof (MonoClassDef));
+		klass = (MonoClass*)mono_image_alloc0 (image, sizeof (MonoClassDef));
 		klass->class_kind = MONO_CLASS_DEF;
 		UnlockedAdd (&classes_size, sizeof (MonoClassDef));
 		++class_def_count;
@@ -587,9 +587,11 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token, MonoError 
 	/*
 	 * Compute the field and method lists
 	 */
-	int first_field_idx = cols [MONO_TYPEDEF_FIELD_LIST] - 1;
+	int first_field_idx;
+	first_field_idx = cols [MONO_TYPEDEF_FIELD_LIST] - 1;
 	mono_class_set_first_field_idx (klass, first_field_idx);
-	int first_method_idx = cols [MONO_TYPEDEF_METHOD_LIST] - 1;
+	int first_method_idx;
+	first_method_idx = cols [MONO_TYPEDEF_METHOD_LIST] - 1;
 	mono_class_set_first_method_idx (klass, first_method_idx);
 
 	if (tt->rows > tidx){		
@@ -828,7 +830,7 @@ mono_class_create_bounded_array (MonoClass *eclass, guint32 rank, gboolean bound
 		bounded = FALSE;
 
 	image = eclass->image;
-	image_set = class_kind_may_contain_generic_instances (eclass->class_kind) ? mono_metadata_get_image_set_for_class (eclass) : NULL;
+	image_set = class_kind_may_contain_generic_instances ((MonoTypeKind)eclass->class_kind) ? mono_metadata_get_image_set_for_class (eclass) : NULL;
 
 	/* Check cache */
 	cached = NULL;
@@ -1355,7 +1357,7 @@ mono_class_create_ptr (MonoType *type)
 
 	el_class = mono_class_from_mono_type (type);
 	image = el_class->image;
-	image_set  = class_kind_may_contain_generic_instances (el_class->class_kind) ? mono_metadata_get_image_set_for_class (el_class) : NULL;
+	image_set = class_kind_may_contain_generic_instances ((MonoTypeKind)el_class->class_kind) ? mono_metadata_get_image_set_for_class (el_class) : NULL;
 
 	if (image_set) {
 		mono_image_set_lock (image_set);
@@ -2132,7 +2134,7 @@ check_interface_method_override (MonoClass *klass, MonoMethod *im, MonoMethod *c
 			return FALSE;
 		}
 		
-		subname = strstr (cm->name, ic_name_space);
+		subname = (char*)strstr (cm->name, ic_name_space);
 		if (subname != cm->name) {
 			TRACE_INTERFACE_VTABLE (printf ("[ACTUAL NAMESPACE CHECK FAILED]"));
 			return FALSE;
@@ -4013,7 +4015,7 @@ setup_generic_array_ifaces (MonoClass *klass, MonoClass *iface, MonoMethod **met
 
 		inflated = mono_class_inflate_generic_method_checked (m, &tmp_context, error);
 		mono_error_assert_ok (error);
-		helper = g_hash_table_lookup (cache, inflated);
+		helper = (MonoMethod*)g_hash_table_lookup (cache, inflated);
 		if (!helper) {
 			helper = mono_marshal_get_generic_array_helper (klass, generic_array_method_info [i].name, inflated);
 			g_hash_table_insert (cache, inflated, helper);
@@ -4433,7 +4435,7 @@ mono_class_init (MonoClass *klass)
 	goto leave;
 
 leave:
-	init_list = mono_native_tls_get_value (init_pending_tls_id);
+	init_list = (GSList*)mono_native_tls_get_value (init_pending_tls_id);
 	init_list = g_slist_remove (init_list, klass);
 	mono_native_tls_set_value (init_pending_tls_id, init_list);
 
@@ -5008,7 +5010,7 @@ mono_class_setup_properties (MonoClass *klass)
 		}
 	}
 
-	info = mono_class_alloc0 (klass, sizeof (MonoClassPropertyInfo));
+	info = (MonoClassPropertyInfo*)mono_class_alloc0 (klass, sizeof (MonoClassPropertyInfo));
 	info->first = first;
 	info->count = count;
 	info->properties = properties;
@@ -5161,7 +5163,7 @@ mono_class_setup_events (MonoClass *klass)
 		}
 	}
 
-	info = mono_class_alloc0 (klass, sizeof (MonoClassEventInfo));
+	info = (MonoClassEventInfo*)mono_class_alloc0 (klass, sizeof (MonoClassEventInfo));
 	info->events = events;
 	info->first = first;
 	info->count = count;
