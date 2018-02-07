@@ -49,4 +49,13 @@ curl -L https://www.nuget.org/api/v2/package/System.Threading.Overlapped/4.3.0 -
 curl -L https://www.nuget.org/api/v2/package/System.Threading.Overlapped/4.0.1 -o nugets/system.threading.overlapped.4.0.1.nupkg
 curl -L https://www.nuget.org/api/v2/package/System.Threading.Overlapped/4.0.0 -o nugets/system.threading.overlapped.4.0.0.nupkg
 
+# Assemblies from Microsoft.NET.Build.Extensions are bundled with msbuild and they contain net4x assemblies, some of which
+# are incompatible with mono
+
+MS_EXTN_VERSIONS="2.1.0-preview1-62414-02" # https://github.com/dotnet/cli/blob/501e11d928c21608999c934f0a7078570b688c6c/build/DependencyVersions.props
+
+for ver in $MS_EXTN_VERSIONS; do
+	curl -L https://dotnet.myget.org/F/cli-deps/api/v2/package/Microsoft.NET.Build.Extensions/${ver} -o nugets/microsoft.net.build.extensions.${ver}.nupkg
+done
+
 touch .download_stamp_file
