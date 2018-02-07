@@ -3,6 +3,8 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Diagnostics.Contracts;
+using System.Security;
+using System.Security.Permissions;
 
 namespace System.Threading.Tasks
 {
@@ -38,5 +40,48 @@ namespace System.Threading.Tasks
 		}
 
 		public void MarkAborted (ThreadAbortException e) {}
+
+		// Copied from reference-sources
+		[SecurityCritical]
+		void ExecuteWithThreadLocal (ref Task currentTaskSlot)
+		{
+			// Remember the current task so we can restore it after running, and then
+			Task previousTask = currentTaskSlot;
+			try
+			{
+				// place the current task into TLS.
+				currentTaskSlot = this;
+
+				ExecutionContext ec = CapturedContext;
+				if (ec == null)
+				{
+					// No context, just run the task directly.
+					Execute ();
+				}
+				else
+				{
+					// Run the task.  We need a simple shim that converts the
+					// object back into a Task object, so that we can Execute it.
+
+					// Lazily initialize the callback delegate; benign ----
+					var callback = s_ecCallback;
+					if (callback == null) s_ecCallback = callback = new ContextCallback (ExecutionContextCallback);
+#if PFX_LEGACY_3_5
+					ExecutionContext.Run (ec, callback, this);
+#else
+					ExecutionContext.Run (ec, callback, this, true);
+#endif
+				}
+
+				if (AsyncCausalityTracer.LoggingOn)
+					AsyncCausalityTracer.TraceSynchronousWorkCompletion (CausalityTraceLevel.Required, CausalitySynchronousWork.Execution);
+
+				Finish (true);
+			}
+			finally
+			{
+				currentTaskSlot = previousTask;
+			}
+		}
 	}
 }
