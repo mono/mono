@@ -2,7 +2,7 @@
 
 set -ex
 
-LLVM_REV=$2
+LLVM_REV=$1
 
 URL=http://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm/llvm-osx64-$LLVM_REV.tar.gz
 
