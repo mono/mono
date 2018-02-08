@@ -680,16 +680,15 @@ namespace MonoTests.System.Net.Http
 #endif
 		public void Send_Complete_CustomHeaders_Host ()
 		{
-			bool? failed = null;
+			Exception error = null;
 			var port = NetworkHelpers.FindFreePort ();
 			var listener = CreateListener (l => {
 				var request = l.Request;
 
 				try {
 					Assert.AreEqual ("customhost", request.Headers["Host"], "#1");
-					failed = false;
-				} catch {
-					failed = true;
+				} catch (Exception ex) {
+					error = ex;
 				}
 			}, port);
 
@@ -704,7 +703,7 @@ namespace MonoTests.System.Net.Http
 
 				Assert.AreEqual ("", response.Content.ReadAsStringAsync ().Result, "#100");
 				Assert.AreEqual (HttpStatusCode.OK, response.StatusCode, "#101");
-				Assert.AreEqual (false, failed, "#102");
+				Assert.IsNull (error, "#102");
 			} finally {
 				listener.Abort ();
 				listener.Close ();
