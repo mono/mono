@@ -323,7 +323,7 @@ _ios_$(1)_CONFIGURE_FLAGS= \
 	--enable-icall-symbol-map \
 	--enable-minimal=com,remoting \
 	--with-cross-offsets=$(2)-apple-darwin10.h \
-	--with-llvm=$$(TOP)/sdks/out/ios-$$(3)
+	--with-llvm=$$(TOP)/sdks/out/ios-$(3)
 
 _ios_$(1)_CONFIGURE_ENVIRONMENT= \
 	CC="$$(_ios_$(1)_CC)" \
