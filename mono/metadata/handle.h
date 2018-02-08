@@ -215,7 +215,7 @@ Icall macros
 
 #define HANDLE_FUNCTION_RETURN_OBJ(HANDLE)			\
 	do {							\
-		void* __result = (MONO_HANDLE_RAW (HANDLE));	\
+		void* __result = MONO_HANDLE_RAW (HANDLE);	\
 		CLEAR_ICALL_FRAME;				\
 		return __result;				\
 	} while (0); } while (0);
@@ -385,7 +385,7 @@ This is why we evaluate index and value before any call to MONO_HANDLE_RAW or ot
 /* N.B. RESULT is evaluated before HANDLE */
 #define MONO_HANDLE_GET(RESULT, HANDLE, FIELD) do {			\
 		MonoObjectHandle __dest = MONO_HANDLE_CAST(MonoObject, RESULT);	\
-		MONO_HANDLE_SUPPRESS (mono_gc_wbarrier_generic_store (&__dest->__raw,  (MonoObject*)(MONO_HANDLE_RAW(MONO_HANDLE_UNSUPPRESS (HANDLE))->FIELD))); \
+		MONO_HANDLE_SUPPRESS (__dest->__raw = MONO_HANDLE_RAW(MONO_HANDLE_UNSUPPRESS (HANDLE))->FIELD); \
 	} while (0)
 
 #define MONO_HANDLE_NEW_GET(TYPE,HANDLE,FIELD) (MONO_HANDLE_NEW(TYPE,MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (HANDLE))->FIELD)))
@@ -443,7 +443,7 @@ This is why we evaluate index and value before any call to MONO_HANDLE_RAW or ot
 /* Given an object and a MonoClassField, return the value (must be non-object)
  * of the field.  It's the caller's responsibility to check that the object is
  * of the correct class. */
-#define MONO_HANDLE_GET_FIELD_VAL(HANDLE,TYPE,FIELD) *(TYPE *)(mono_handle_unsafe_field_addr (MONO_HANDLE_CAST (MonoObject, (HANDLE)), (FIELD)))
+#define MONO_HANDLE_GET_FIELD_VAL(HANDLE,TYPE,FIELD) (*(TYPE *)(mono_handle_unsafe_field_addr (MONO_HANDLE_CAST (MonoObject, (HANDLE)), (FIELD))))
 
 #define MONO_HANDLE_NEW_GET_FIELD(HANDLE,TYPE,FIELD) MONO_HANDLE_NEW (TYPE, MONO_HANDLE_SUPPRESS (*(TYPE**)(mono_handle_unsafe_field_addr (MONO_HANDLE_CAST (MonoObject, MONO_HANDLE_UNSUPPRESS (HANDLE)), (FIELD)))))
 
@@ -458,7 +458,7 @@ This is why we evaluate index and value before any call to MONO_HANDLE_RAW or ot
 		MonoObjectHandle __obj = MONO_HANDLE_CAST (MonoObject, (HANDLE)); \
 		MonoClassField *__field = (FIELD);			\
 		MonoObjectHandle __value = MONO_HANDLE_CAST (MonoObject, (VALH)); \
-		MONO_HANDLE_SUPPRESS (mono_gc_wbarrier_generic_store (mono_handle_unsafe_field_addr (__obj, __field), MONO_HANDLE_RAW (__value))); \
+		MONO_HANDLE_SUPPRESS (*(gpointer*)mono_handle_unsafe_field_addr (__obj, __field) = (gpointer)MONO_HANDLE_RAW (__value)); \
 	} while (0)
 
 /* Baked typed handles we all want */
@@ -485,11 +485,11 @@ extern const MonoObjectHandle mono_null_value_handle;
 static inline void
 mono_handle_assign (MonoObjectHandleOut dest, MonoObjectHandle src)
 {
-	MONO_HANDLE_SUPPRESS (mono_gc_wbarrier_generic_store (&dest->__raw, src ? MONO_HANDLE_RAW(src) : NULL));
+	MONO_HANDLE_SUPPRESS (dest->__raw = (src ? MONO_HANDLE_RAW(src) : NULL));
 }
 
 /* It is unsafe to call this function directly - it does not pin the handle!  Use MONO_HANDLE_GET_FIELD_VAL(). */
-static inline gchar*
+static inline gpointer
 mono_handle_unsafe_field_addr (MonoObjectHandle h, MonoClassField *field)
 {
 	return MONO_HANDLE_SUPPRESS (((gchar *)MONO_HANDLE_RAW (h)) + field->offset);
@@ -507,7 +507,7 @@ uintptr_t mono_array_handle_length (MonoArrayHandle arr);
 static inline void
 mono_handle_array_getref (MonoObjectHandleOut dest, MonoArrayHandle array, uintptr_t index)
 {
-	MONO_HANDLE_SUPPRESS (mono_gc_wbarrier_generic_store (&dest->__raw, mono_array_get (MONO_HANDLE_RAW (array),gpointer, index)));
+	MONO_HANDLE_SUPPRESS (dest->__raw = mono_array_get(MONO_HANDLE_RAW (array), gpointer, index));
 }
 
 #define mono_handle_class(o) MONO_HANDLE_SUPPRESS (mono_object_class (MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (o))))
