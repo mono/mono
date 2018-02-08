@@ -522,7 +522,8 @@ TESTS_CS_SRC=		\
 	bug-58782-capture-and-throw.cs \
 	recursive-struct-arrays.cs \
 	bug-59281.cs \
-	threads-leak.cs
+	threads-leak.cs \
+	weak-fields.cs
 
 if AMD64
 TESTS_CS_SRC += async-exc-compilation.cs finally_guard.cs finally_block_ending_in_dead_bb.cs
@@ -700,12 +701,13 @@ PLATFORM_DISABLED_TESTS += monitor.exe threadpool-exceptions5.exe appdomain-thre
 endif
 
 if ARM
-PLATFORM_DISABLED_TESTS += filter-stack.exe
+PLATFORM_DISABLED_TESTS += filter-stack.exe weak-fields.exe
 INTERP_DISABLED_TESTS_PLATFORM=finalizer-exception.exe main-returns-abort-resetabort.exe block_guard_restore_aligment_on_exit.exe \
 	delegate-exit.exe delegate-exit.exe delegate-delegate-exit.exe delegate-async-exit.exe delegate3.exe delegate1.exe
 endif
 
 if ARM64
+PLATFORM_DISABLED_TESTS += weak-fields.exe
 INTERP_DISABLED_TESTS_PLATFORM=finalizer-exception.exe main-returns-abort-resetabort.exe block_guard_restore_aligment_on_exit.exe
 endif
 
@@ -886,6 +888,10 @@ PROFILE_DISABLED_TESTS += \
 	appdomain-loader.exe \
 	assemblyresolve_event3.exe \
 	appdomain-serialize-exception.exe
+
+# https://bugzilla.xamarin.com/show_bug.cgi?id=60973
+PROFILE_DISABLED_TESTS += \
+	weak-fields.exe
 endif
 
 if HYBRID_AOT_TESTS
@@ -1066,6 +1072,7 @@ INTERP_DISABLED_TESTS = \
 	vararg.exe \
 	vararg2.exe \
 	vt-sync-method.exe \
+	weak-fields.exe \
 	winx64structs.exe \
 	xdomain-threads.exe
 
@@ -2095,5 +2102,13 @@ internalsvisibleto-correctcase-2-sign2048.dll internalsvisibleto-wrongcase-2-sig
 	$(Q) $(MCS_NO_UNSAFE) -out:internalsvisibleto-wrongcase-2-sign2048.dll -target:library -d:WRONG_CASE -d:SIGN2048 internalsvisibleto-library.cs
 	$(Q) $(MCS_NO_UNSAFE) -out:internalsvisibleto-compilertest-sign2048.exe -warn:0 -r:internalsvisibleto-correctcase-2-sign2048.dll -r:internalsvisibleto-wrongcase-2-sign2048.dll -d:SIGN2048 internalsvisibleto-compilertest.cs
 
+EXTRA_DIST += weakattribute.cs
+
+# Contains copies of types which don't exist in the desktop profile so tests can use them
+Mono.Runtime.Testing.dll: weakattribute.cs
+	$(MCS) -target:library -out:$@ $<
+
+weak-fields.exe: weak-fields.cs Mono.Runtime.Testing.dll
+	$(MCS) -r:Mono.Runtime.Testing.dll -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -r:TestDriver.dll $(TEST_DRIVER_HARD_KILL_FEATURE) -out:$@ $<
 
 CLEANFILES = $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH) $(TESTS_STRESS) $(TESTSAOT_CS) $(TESTSAOT_IL) $(TESTSAOT_BENCH) $(TESTSAOT_STRESS) *.dll *.stdout *.aotlog *.exe stest.dat

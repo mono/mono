@@ -3852,6 +3852,7 @@ mini_init (const char *filename, const char *runtime_version)
 	callbacks.create_remoting_trampoline = mono_jit_create_remoting_trampoline;
 #endif
 #endif
+	callbacks.get_weak_field_indexes = mono_aot_get_weak_field_indexes;
 
 	mono_install_callbacks (&callbacks);
 
