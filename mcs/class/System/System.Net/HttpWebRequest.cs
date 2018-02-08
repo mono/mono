@@ -1410,7 +1410,17 @@ namespace System.Net
 				webHeaders.ChangeInternal (connectionHeader, "close");
 			}
 
-			webHeaders.SetInternal ("Host", Host);
+			string host;
+			if (hostUri != null) {
+				if (hostHasPort)
+					host = hostUri.GetComponents (UriComponents.HostAndPort, UriFormat.Unescaped);
+				else
+					host = hostUri.GetComponents (UriComponents.Host, UriFormat.Unescaped);
+			} else {
+				host = Address.GetComponents (UriComponents.HostAndPort, UriFormat.Unescaped);
+			}
+			webHeaders.SetInternal ("Host", host);
+
 			if (cookieContainer != null) {
 				string cookieHeader = cookieContainer.GetCookieHeader (actualUri);
 				if (cookieHeader != "")
