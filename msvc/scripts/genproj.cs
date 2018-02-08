@@ -978,6 +978,8 @@ class MsbuildGenerator {
 				StrongNameKeyFile, StrongNameDelaySign ? "    <DelaySign>true</DelaySign>" + NewLine : "");
 		}
 
+		string assemblyName = Path.GetFileNameWithoutExtension (output_name);
+
 		Csproj.output = template.
 			Replace ("@OUTPUTTYPE@", Target == Target.Library ? "Library" : "Exe").
 			Replace ("@SIGNATURE@", strongNameSection).
@@ -990,7 +992,7 @@ class MsbuildGenerator {
 			Replace ("@NOCONFIG@", "<NoConfig>" + (!load_default_config).ToString () + "</NoConfig>").
 			Replace ("@ALLOWUNSAFE@", Unsafe ? "<AllowUnsafeBlocks>true</AllowUnsafeBlocks>" : "").
 			Replace ("@FX_VERSION", fx_version).
-			Replace ("@ASSEMBLYNAME@", Path.GetFileNameWithoutExtension (output_name)).
+			Replace ("@ASSEMBLYNAME@", assemblyName).
 			Replace ("@OUTPUTDIR@", build_output_dir).
 			Replace ("@OUTPUTSUFFIX@", Path.GetFileName (build_output_dir)).
 			Replace ("@DEFINECONSTANTS@", defines.ToString ()).
@@ -1004,7 +1006,8 @@ class MsbuildGenerator {
 			Replace ("@ADDITIONALLIBPATHS@", String.Empty).
 			Replace ("@RESOURCES@", resources.ToString ()).
 			Replace ("@OPTIMIZE@", Optimize ? "true" : "false").
-			Replace ("@SOURCES@", sources.ToString ());
+			Replace ("@SOURCES@", sources.ToString ()).
+			Replace ("@METADATAVERSION@", assemblyName == "mscorlib" ? "<RuntimeMetadataVersion>Mono</RuntimeMetadataVersion>" : "");
 
 		Csproj.preBuildEvent = prebuild;
 		Csproj.postBuildEvent = postbuild;
