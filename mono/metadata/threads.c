@@ -4537,16 +4537,13 @@ mono_thread_execute_interruption (void)
 		UNLOCK_THREAD (thread);
 		return exc;
 	} else if (thread->state & (ThreadState_AbortRequested)) {
-		UNLOCK_THREAD (thread);
-		g_assert (sys_thread->pending_exception == NULL);
-		if (thread->abort_exc == NULL) {
-			/* 
-			 * This might be racy, but it has to be called outside the lock
-			 * since it calls managed code.
-			 */
-			MONO_OBJECT_SETREF (thread, abort_exc, mono_get_exception_thread_abort ());
+		MonoException *exc = thread->abort_exc;
+		if (exc == NULL) {
+			exc = mono_get_exception_thread_abort ();
+			MONO_OBJECT_SETREF (thread, abort_exc, exc);
 		}
-		return thread->abort_exc;
+		UNLOCK_THREAD (thread);
+		return exc;
 	} else if (thread->state & (ThreadState_SuspendRequested)) {
 		/* calls UNLOCK_THREAD (thread) */
 		self_suspend_internal ();
