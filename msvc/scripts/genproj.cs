@@ -38,7 +38,6 @@ class SlnGenerator {
 
 	public List<string> profiles = new List<string> {
 		"net_4_x",
-		"basic",
 		"monodroid",
 		"monotouch",
 		"monotouch_tv",
@@ -48,10 +47,10 @@ class SlnGenerator {
 		"wasm",
 		"winaot",
 		"xammac",
-		"linux_build",
-		"linux_net_4_x",
-		"linux_xammac_net_4_5",
 	};
+
+	const string jay_vcxproj_guid = "{5D485D32-3B9F-4287-AB24-C8DA5B89F537}";
+	const string jay_sln_guid = "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}";
 
 	public List<MsbuildGenerator.VsCsproj> libraries = new List<MsbuildGenerator.VsCsproj> ();
 	string header;
@@ -96,7 +95,7 @@ class SlnGenerator {
 		var relativePath = MsbuildGenerator.GetRelativePath (slnFullPath, fullProjPath);
 		var dependencyGuids = new string[0];
 		if (proj.preBuildEvent.Contains ("jay"))
-			dependencyGuids = new [] { "{5D485D32-3B9F-4287-AB24-C8DA5B89F537}" };
+			dependencyGuids = new [] { jay_vcxproj_guid };
 		WriteProjectReference(sln, "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}", proj.library, relativePath, proj.projectGuid, dependencyGuids);
 	}
 
@@ -113,14 +112,13 @@ class SlnGenerator {
 	public void Write (string filename)
 	{
 		var fullPath = Path.GetDirectoryName (filename) + "/";
-		var jayGuid = "{5D485D32-3B9F-4287-AB24-C8DA5B89F537}";
 		
 		using (var sln = new StreamWriter (filename)) {
 			sln.WriteLine ();
 			sln.WriteLine (header);
 
 			// Manually insert jay's vcxproj. We depend on jay.exe to perform build steps later.
-			WriteProjectReference (sln, "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}", "jay", "mcs\\jay\\jay.vcxproj", jayGuid);
+			WriteProjectReference (sln, jay_sln_guid, "jay", "mcs\\jay\\jay.vcxproj", jay_vcxproj_guid);
 
 			foreach (var proj in libraries) {
 				WriteProjectReference (sln, fullPath, proj);
@@ -138,7 +136,7 @@ class SlnGenerator {
 			sln.WriteLine ("\tGlobalSection(ProjectConfigurationPlatforms) = postSolution");
 
 			// Manually insert jay's configurations because they are different
-			WriteProjectConfigurationPlatforms (sln, jayGuid, "Win32");
+			WriteProjectConfigurationPlatforms (sln, jay_vcxproj_guid, "Win32");
 
 			foreach (var proj in libraries) {
 				WriteProjectConfigurationPlatforms (sln, proj.projectGuid, "Any CPU");
@@ -281,7 +279,7 @@ class MsbuildGenerator {
 	string OutputFile;
 	string StrongNameKeyContainer;
 	bool StrongNameDelaySign = false;
-	string LangVersion = "7.2";
+	string LangVersion = "default";
 	string CodePage;
 
 	// Class directory, relative to 
@@ -962,7 +960,7 @@ class MsbuildGenerator {
 		// I'd rather fix this by updating the makefiles but it seems to be impossible to disable
 		//  code signing in our make system...
 
-		if ((StrongNameKeyFile != null) && StrongNameKeyFile.Contains("nunit.snk"))
+		if (StrongNameKeyFile?.Contains("nunit.snk") ?? false)
 			StrongNameKeyFile = null;
 
 		//
