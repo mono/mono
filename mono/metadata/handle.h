@@ -341,12 +341,15 @@ void mono_handle_verify (MonoRawHandle handle);
 #define MONO_HANDLE_PAYLOAD_OFFSET_(PayloadType) MONO_STRUCT_OFFSET(PayloadType, __raw)
 #define MONO_HANDLE_PAYLOAD_OFFSET(TYPE) MONO_HANDLE_PAYLOAD_OFFSET_(TYPED_HANDLE_PAYLOAD_NAME (TYPE))
 
-#define MONO_HANDLE_INIT ((void*) mono_null_value_handle)
 #define NULL_HANDLE mono_null_value_handle
 
 //XXX add functions to get/set raw, set field, set field to null, set array, set array to null
 #define MONO_HANDLE_RAW(HANDLE) (HANDLE_INVARIANTS (HANDLE), ((HANDLE)->__raw))
 #define MONO_HANDLE_DCL(TYPE, NAME) TYPED_HANDLE_NAME(TYPE) NAME = MONO_HANDLE_NEW (TYPE, (NAME ## _raw))
+#define MONO_HANDLE_LOCAL_VARIABLE_NOT_INITIALIZED(type, name) TYPED_HANDLE_NAME(type) name
+#define MONO_HANDLE_LOCAL_VARIABLE_INITIALIZED_NULL(type, name) \
+	MONO_HANDLE_LOCAL_VARIABLE_NOT_INITIALIZED (type, name) = MONO_HANDLE_NEW (type, NULL)
+#define MONO_HANDLE_SET_NULL(type, name) ((name) = MONO_HANDLE_NEW (type, NULL))
 
 #ifndef MONO_HANDLE_TRACK_OWNER
 #define MONO_HANDLE_NEW(TYPE, VALUE) (TYPED_HANDLE_NAME(TYPE))( mono_handle_new ((MonoObject*)(VALUE)) )
@@ -376,10 +379,10 @@ This is why we evaluate index and value before any call to MONO_HANDLE_RAW or ot
 
 #define MONO_HANDLE_SET(HANDLE, FIELD, VALUE) do {			\
 		MonoObjectHandle __val = MONO_HANDLE_CAST (MonoObject, VALUE);	\
-		do {							\
+		{							\
 			MONO_HANDLE_SUPPRESS_SCOPE(1);			\
 			MONO_OBJECT_SETREF (MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (HANDLE)), FIELD, MONO_HANDLE_RAW (__val)); \
-		} while (0);						\
+		} 							\
 	} while (0)
 
 /* N.B. RESULT is evaluated before HANDLE */
@@ -401,19 +404,19 @@ This is why we evaluate index and value before any call to MONO_HANDLE_RAW or ot
 #define MONO_HANDLE_ARRAY_SETREF(HANDLE, IDX, VALUE) do {	\
 		int __idx = (IDX);	\
    		MonoObjectHandle __val = MONO_HANDLE_CAST (MonoObject, VALUE);		\
-		do {							\
+		{							\
 			MONO_HANDLE_SUPPRESS_SCOPE(1);			\
 			mono_array_setref_fast (MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (HANDLE)), __idx, MONO_HANDLE_RAW (__val)); \
-		} while (0);						\
+		} 							\
 	} while (0)
 
 #define MONO_HANDLE_ARRAY_SETVAL(HANDLE, TYPE, IDX, VALUE) do {		\
 		int __idx = (IDX);					\
-   		TYPE __val = (VALUE);					\
-		do {							\
+		TYPE __val = (VALUE);					\
+		{							\
 			MONO_HANDLE_SUPPRESS_SCOPE(1);			\
 			mono_array_set (MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (HANDLE)), TYPE, __idx, __val); \
-		} while (0);						\
+		} 							\
 	} while (0)
 
 #define MONO_HANDLE_ARRAY_SETRAW(HANDLE, IDX, VALUE) do {	\
@@ -431,12 +434,11 @@ This is why we evaluate index and value before any call to MONO_HANDLE_RAW or ot
 		(DEST) =  __result;					\
 	} while (0)
 
-#define MONO_HANDLE_ARRAY_GETREF(DEST, HANDLE, IDX) do {		\
-		mono_handle_array_getref (MONO_HANDLE_CAST(MonoObject, (DEST)), (HANDLE), (IDX)); \
-	} while (0)
+#define MONO_HANDLE_ARRAY_GETREF(DEST, HANDLE, IDX) \
+		(mono_handle_array_getref (MONO_HANDLE_CAST(MonoObject, (DEST)), (HANDLE), (IDX)))
 
 #define MONO_HANDLE_ASSIGN(DESTH, SRCH)				\
-	mono_handle_assign (MONO_HANDLE_CAST (MonoObject, (DESTH)), MONO_HANDLE_CAST(MonoObject, (SRCH)))
+	(mono_handle_assign (MONO_HANDLE_CAST (MonoObject, (DESTH)), MONO_HANDLE_CAST(MonoObject, (SRCH))))
 
 #define MONO_HANDLE_DOMAIN(HANDLE) MONO_HANDLE_SUPPRESS (mono_object_domain (MONO_HANDLE_RAW (MONO_HANDLE_CAST (MonoObject, MONO_HANDLE_UNSUPPRESS (HANDLE)))))
 
