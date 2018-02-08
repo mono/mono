@@ -433,7 +433,7 @@ find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls, MonoJitInfo *res, Mo
 	if (prev_ji && (ip > prev_ji->code_start && ((guint8*)ip < ((guint8*)prev_ji->code_start) + prev_ji->code_size)))
 		ji = prev_ji;
 	else
-		ji = mini_jit_info_table_find (domain, (char *)ip, NULL);
+		ji = mini_jit_info_table_find (domain, ip, NULL);
 
 	if (managed)
 		*managed = FALSE;
@@ -592,7 +592,7 @@ mono_find_jit_info_ext (MonoDomain *domain, MonoJitTlsData *jit_tls,
 	if (prev_ji && (ip > prev_ji->code_start && ((guint8*)ip < ((guint8*)prev_ji->code_start) + prev_ji->code_size)))
 		ji = prev_ji;
 	else
-		ji = mini_jit_info_table_find (domain, (char *)ip, &target_domain);
+		ji = mini_jit_info_table_find (domain, ip, &target_domain);
 
 	if (!target_domain)
 		target_domain = domain;
@@ -632,6 +632,7 @@ mono_find_jit_info_ext (MonoDomain *domain, MonoJitTlsData *jit_tls,
 	frame->native_offset = -1;
 	frame->domain = target_domain;
 	frame->async_context = async;
+	frame->frame_addr = MONO_CONTEXT_GET_SP (ctx);
 
 	ji = frame->ji;
 
@@ -670,6 +671,7 @@ mono_find_jit_info_ext (MonoDomain *domain, MonoJitTlsData *jit_tls,
 typedef struct {
 	gboolean in_interp;
 	MonoInterpStackIter interp_iter;
+	gpointer last_frame_addr;
 } Unwinder;
 
 static void
@@ -697,7 +699,7 @@ unwinder_unwind_frame (Unwinder *unwinder,
 
 		/* Process debugger invokes */
 		/* The DEBUGGER_INVOKE should be returned before the first interpreter frame for the invoke */
-		if ((gpointer)MONO_CONTEXT_GET_SP (ctx) > (gpointer)(*lmf)) {
+		if (unwinder->last_frame_addr > (gpointer)(*lmf)) {
 			if (((guint64)(*lmf)->previous_lmf) & 2) {
 				MonoLMFExt *ext = (MonoLMFExt*)(*lmf);
 				if (ext->debugger_invoke) {
@@ -711,8 +713,7 @@ unwinder_unwind_frame (Unwinder *unwinder,
 		unwinder->in_interp = mini_get_interp_callbacks ()->frame_iter_next (&unwinder->interp_iter, frame);
 		if (frame->type == FRAME_TYPE_INTERP) {
 			parent = mini_get_interp_callbacks ()->frame_get_parent (frame->interp_frame);
-			/* This is needed so code which uses ctx->sp for frame ordering would work */
-			MONO_CONTEXT_SET_SP (new_ctx, parent);
+			unwinder->last_frame_addr = parent;
 		}
 		if (!unwinder->in_interp)
 			return unwinder_unwind_frame (unwinder, domain, jit_tls, prev_ji, ctx, new_ctx, trace, lmf, save_locations, frame);
@@ -728,6 +729,7 @@ unwinder_unwind_frame (Unwinder *unwinder,
 			parent = mini_get_interp_callbacks ()->frame_get_parent (frame->interp_exit_data);
 			MONO_CONTEXT_SET_SP (new_ctx, parent);
 		}
+		unwinder->last_frame_addr = frame->frame_addr;
 		return TRUE;
 	}
 }
@@ -891,7 +893,7 @@ mono_exception_walk_trace (MonoException *ex, MonoExceptionFrameWalk func, gpoin
 		memcpy (&trace_ip, mono_array_addr_fast (ta, ExceptionTraceIp, i), sizeof (ExceptionTraceIp));
 		gpointer ip = trace_ip.ip;
 		gpointer generic_info = trace_ip.generic_info;
-		MonoJitInfo *ji = mono_jit_info_table_find (domain, (char *)ip);
+		MonoJitInfo *ji = mono_jit_info_table_find (domain, ip);
 
 		if (ji == NULL) {
 			if (func (NULL, ip, 0, FALSE, user_data))
@@ -945,7 +947,7 @@ ves_icall_get_trace (MonoException *exc, gint32 skip, MonoBoolean need_file_info
 		if (trace_ip.ji) {
 			ji = trace_ip.ji;
 		} else {
-			ji = mono_jit_info_table_find (domain, (char *)ip);
+			ji = mono_jit_info_table_find (domain, ip);
 			if (ji == NULL) {
 				/* Unmanaged frame */
 				mono_array_setref (res, i, sf);
@@ -1145,7 +1147,7 @@ mono_walk_stack_full (MonoJitStackWalk func, MonoContext *start_ctx, MonoDomain 
 		for (l = ips; l; l = l->next) {
 			guint8 *ip = (guint8*)l->data;
 			memset (&frame, 0, sizeof (StackFrameInfo));
-			frame.ji = mini_jit_info_table_find (domain, (char*)ip, &frame.domain);
+			frame.ji = mini_jit_info_table_find (domain, ip, &frame.domain);
 			if (!frame.ji || frame.ji->is_trampoline)
 				continue;
 			frame.type = FRAME_TYPE_MANAGED;
@@ -1261,7 +1263,7 @@ ves_icall_get_frame_info (gint32 skip, MonoBoolean need_file_info,
 
 			frame_ip = ip;
 
-			ji = mini_jit_info_table_find (mono_domain_get (), (char*)ip, &frame_domain);
+			ji = mini_jit_info_table_find (mono_domain_get (), ip, &frame_domain);
 			if (!ji || ji->is_trampoline)
 				continue;
 
@@ -1402,7 +1404,7 @@ get_exception_catch_class (MonoJitExceptionInfo *ei, MonoJitInfo *ji, MonoContex
  * OUT_DOMAIN if it is not NULL.
  */
 MonoJitInfo*
-mini_jit_info_table_find_ext (MonoDomain *domain, char *addr, gboolean allow_trampolines, MonoDomain **out_domain)
+mini_jit_info_table_find_ext (MonoDomain *domain, gpointer addr, gboolean allow_trampolines, MonoDomain **out_domain)
 {
 	MonoJitInfo *ji;
 	MonoInternalThread *t = mono_thread_internal_current ();
@@ -1447,7 +1449,7 @@ mini_jit_info_table_find_ext (MonoDomain *domain, char *addr, gboolean allow_tra
 }
 
 MonoJitInfo*
-mini_jit_info_table_find (MonoDomain *domain, char *addr, MonoDomain **out_domain)
+mini_jit_info_table_find (MonoDomain *domain, gpointer addr, MonoDomain **out_domain)
 {
 	return mini_jit_info_table_find_ext (domain, addr, FALSE, out_domain);
 }
@@ -2366,8 +2368,6 @@ mono_handle_exception (MonoContext *ctx, MonoObject *obj)
 #ifndef MONO_ARCH_USE_SIGACTION
 #error "Can't use sigaltstack without sigaction"
 #endif
-
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
 
 void
 mono_setup_altstack (MonoJitTlsData *tls)

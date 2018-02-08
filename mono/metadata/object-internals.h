@@ -16,6 +16,7 @@
 #include "mono/utils/mono-compiler.h"
 #include "mono/utils/mono-error.h"
 #include "mono/utils/mono-error-internals.h"
+#include "mono/utils/mono-machine.h"
 #include "mono/utils/mono-stack-unwinding.h"
 #include "mono/utils/mono-tls.h"
 #include "mono/utils/mono-coop-mutex.h"
@@ -79,7 +80,7 @@
 #define mono_array_class_get_cached(eclass,rank) ({	\
 			static MonoClass *tmp_klass; \
 			if (!tmp_klass) { \
-				tmp_klass = mono_array_class_get ((eclass), (rank));	\
+				tmp_klass = mono_class_create_array ((eclass), (rank));	\
 				g_assert (tmp_klass); \
 			}; \
 			tmp_klass; })
@@ -94,7 +95,7 @@
 #else
 
 #define mono_class_get_field_from_name_cached(klass,name) mono_class_get_field_from_name ((klass), (name))
-#define mono_array_class_get_cached(eclass,rank) mono_array_class_get ((eclass), (rank))
+#define mono_array_class_get_cached(eclass,rank) mono_class_create_array ((eclass), (rank))
 #define mono_array_new_cached(domain, eclass, size, error) mono_array_new_checked ((domain), (eclass), (size), (error))
 
 #endif
@@ -122,8 +123,8 @@ struct _MonoArray {
 	MonoArrayBounds *bounds;
 	/* total number of elements of the array */
 	mono_array_size_t max_length; 
-	/* we use double to ensure proper alignment on platforms that need it */
-	double vector [MONO_ZERO_LEN_ARRAY];
+	/* we use mono_64bitaligned_t to ensure proper alignment on platforms that need it */
+	mono_64bitaligned_t vector [MONO_ZERO_LEN_ARRAY];
 };
 
 #define MONO_SIZEOF_MONO_ARRAY (sizeof (MonoArray) - MONO_ZERO_LEN_ARRAY * sizeof (double))

@@ -46,6 +46,26 @@ mph_fstab_offsets[] = {
 	MPH_STRING_OFFSET (struct Mono_Posix_Syscall__Fstab, fs_type, MPH_STRING_OFFSET_PTR)
 };
 
+#elif defined (HAVE_FSTAB_H) && defined(_AIX)
+
+/* AIX defines fstab, but it has contents like checklist */
+
+typedef struct fstab mph_fstab;
+
+static const mph_string_offset_t
+fstab_offsets[] = {
+	MPH_STRING_OFFSET (struct fstab, fs_spec, MPH_STRING_OFFSET_PTR),
+	MPH_STRING_OFFSET (struct fstab, fs_file, MPH_STRING_OFFSET_PTR),
+	MPH_STRING_OFFSET (struct fstab, fs_type, MPH_STRING_OFFSET_PTR)
+};
+
+static const mph_string_offset_t
+mph_fstab_offsets[] = {
+	MPH_STRING_OFFSET (struct Mono_Posix_Syscall__Fstab, fs_spec, MPH_STRING_OFFSET_PTR),
+	MPH_STRING_OFFSET (struct Mono_Posix_Syscall__Fstab, fs_file, MPH_STRING_OFFSET_PTR),
+	MPH_STRING_OFFSET (struct Mono_Posix_Syscall__Fstab, fs_type, MPH_STRING_OFFSET_PTR)
+};
+
 #elif defined (HAVE_FSTAB_H)
 
 typedef struct fstab mph_fstab;

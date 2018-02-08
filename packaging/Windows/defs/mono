@@ -29,7 +29,7 @@ build()
 	pushd ${REPODIR}
 	report "Building Mono"
 	mkdir -p ${INSTALLDIR}
-	EXTRA_CONF_FLAGS="--prefix=${INSTALLDIR}" CI_TAGS="no-tests" label="w32" scripts/ci/run-jenkins.sh || error "*** Could not run autogen ***"
+	EXTRA_CONF_FLAGS="--prefix=${INSTALLDIR}" CI_TAGS="win-i386,no-tests" scripts/ci/run-jenkins.sh || error "*** Could not run autogen ***"
 	popd
 }
 

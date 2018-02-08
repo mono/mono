@@ -141,6 +141,7 @@ typedef struct
 	MonoDebugMethodJitInfo *jit;
 	MonoJitInfo *ji;
 	MonoInterpFrameHandle interp_frame;
+	gpointer frame_addr;
 	int flags;
 	mgreg_t *reg_locations [MONO_MAX_IREGS];
 	/*
@@ -2721,7 +2722,7 @@ debugger_interrupt_critical (MonoThreadInfo *info, gpointer user_data)
 	data->valid_info = TRUE;
 	ji = mono_jit_info_table_find_internal (
 			(MonoDomain *)mono_thread_info_get_suspend_state (info)->unwind_data [MONO_UNWIND_DATA_DOMAIN],
-			(char *)MONO_CONTEXT_GET_IP (&mono_thread_info_get_suspend_state (info)->ctx),
+			MONO_CONTEXT_GET_IP (&mono_thread_info_get_suspend_state (info)->ctx),
 			TRUE,
 			TRUE);
 
@@ -3150,6 +3151,7 @@ process_frame (StackFrameInfo *info, MonoContext *ctx, gpointer user_data)
 	frame->flags = flags;
 	frame->ji = info->ji;
 	frame->interp_frame = info->interp_frame;
+	frame->frame_addr = info->frame_addr;
 	if (info->reg_locations)
 		memcpy (frame->reg_locations, info->reg_locations, MONO_MAX_IREGS * sizeof (mgreg_t*));
 	if (ctx) {
@@ -3175,8 +3177,7 @@ process_filter_frame (StackFrameInfo *info, MonoContext *ctx, gpointer user_data
 	 * directly from the filter to the call site; we abort stack unwinding here
 	 * once this happens and resume from the throw site.
 	 */
-
-	if (MONO_CONTEXT_GET_SP (ctx) >= MONO_CONTEXT_GET_SP (&ud->tls->filter_state.ctx))
+	if (info->frame_addr >= MONO_CONTEXT_GET_SP (&ud->tls->filter_state.ctx))
 		return TRUE;
 
 	return process_frame (info, ctx, user_data);
@@ -3268,7 +3269,7 @@ compute_frame_info (MonoInternalThread *thread, DebuggerTlsData *tls)
 		 * the still valid stack frames.
 		 */
 		for (i = 0; i < tls->frame_count; ++i) {
-			if (MONO_CONTEXT_GET_SP (&tls->frames [i]->ctx) == MONO_CONTEXT_GET_SP (&f->ctx)) {
+			if (tls->frames [i]->frame_addr == f->frame_addr) {
 				f->id = tls->frames [i]->id;
 				break;
 			}
@@ -4441,7 +4442,7 @@ set_bp_in_method (MonoDomain *domain, MonoMethod *method, MonoSeqPointInfo *seq_
 		code = mono_aot_get_method_checked (domain, method, &oerror);
 		if (code) {
 			mono_error_assert_ok (&oerror);
-			ji = mono_jit_info_table_find (domain, (char *)code);
+			ji = mono_jit_info_table_find (domain, code);
 		} else {
 			/* Might be interpreted */
 			ji = mini_get_interp_callbacks ()->find_jit_info (domain, method);
@@ -8609,7 +8610,7 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 				count = container->type_argc;
 				buffer_add_int (buf, count);
 				for (i = 0; i < count; i++) {
-					pklass = mono_class_from_generic_parameter_internal (mono_generic_container_get_param (container, i));
+					pklass = mono_class_create_generic_parameter (mono_generic_container_get_param (container, i));
 					buffer_add_typeid (buf, domain, pklass);
 				}
 			} else {
@@ -9272,7 +9273,7 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 						buffer_add_int (buf, count);
 						for (i = 0; i < count; i++) {
 							MonoGenericParam *param = mono_generic_container_get_param (container, i);
-							MonoClass *pklass = mono_class_from_generic_parameter_internal (param);
+							MonoClass *pklass = mono_class_create_generic_parameter (param);
 							buffer_add_typeid (buf, domain, pklass);
 						}
 					} else {

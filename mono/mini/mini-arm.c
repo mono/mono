@@ -66,8 +66,6 @@
 
 #define THUNK_SIZE (3 * 4)
 
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
-
 #if __APPLE__
 void sys_icache_invalidate (void *start, size_t len);
 #endif
@@ -7422,7 +7420,7 @@ mono_arch_get_seq_point_info (MonoDomain *domain, guint8 *code)
 	mono_domain_unlock (domain);
 
 	if (!info) {
-		ji = mono_jit_info_table_find (domain, (char*)code);
+		ji = mono_jit_info_table_find (domain, code);
 		g_assert (ji);
 
 		info = g_malloc0 (sizeof (SeqPointInfo) + ji->code_size);

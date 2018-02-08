@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 #AC_PREREQ([2.62])
 
-AC_INIT(mono, [5.11.0],
+AC_INIT(mono, [5.13.0],
         [https://github.com/mono/mono/issues/new])
 
 AC_CONFIG_SRCDIR([README.md])
@@ -40,7 +40,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # This can be reset to 0 when Mono's version number is bumped
 # since it's part of the corlib version (the prefix '1' in the full
 # version number is to ensure the number isn't treated as octal in C)
-MONO_CORLIB_COUNTER=4
+MONO_CORLIB_COUNTER=0
 MONO_CORLIB_VERSION=`printf "1%02d%02d%02d%03d" $MONO_VERSION_MAJOR $MONO_VERSION_MINOR 0 $MONO_CORLIB_COUNTER`
 
 AC_DEFINE_UNQUOTED(MONO_CORLIB_VERSION,$MONO_CORLIB_VERSION,[Version of the corlib-runtime interface])
@@ -374,6 +374,29 @@ case "$host" in
 		libgc_threads=pthreads
 		use_sigposix=yes
 		;;
+	*-*-aix*|*-*-os400*)
+		dnl Set up a 64-bit build
+		CPPFLAGS="$CPPFLAGS -maix64 -DGC_AIX_THREADS -D_ALL_SOURCE -D_LARGE_FILES -D_REENTRANT"
+		LDFLAGS="-maix64"
+		libmono_cflags="-D_REENTRANT"
+		dnl Would you believe GNU nm doesn't know how to process AIX libraries?
+		dnl Hardcode IBM binutils in case GNU ones end up on our path. Also
+		dnl specifiy 64-bit mode for tools.
+		AR="/usr/bin/ar -X64"
+		NM="/usr/bin/nm -X64"
+		dnl SGen is the future (changes to Boehm support code would be
+		dnl required if you wish to re-enable Boehm)
+		support_boehm=no
+		with_gc=sgen
+		need_link_unlink=yes
+		use_sigposix=yes
+		dnl the valloc call to alloc the guard page bombs out, even with extending the data area
+		with_sigaltstack=no
+		dnl use pthread TLS, __thread has issues with the compiler flags we use
+		with_tls=pthread
+		dnl ppc Linux is the same? test further
+		disable_munmap=yes
+		;;
 	*)
 		AC_MSG_WARN([*** Please add $host to configure.ac checks!])
 		libdl="-ldl"
@@ -544,6 +567,7 @@ AC_CHECK_HEADERS(sys/poll.h)
 AC_CHECK_HEADERS(sys/wait.h)
 AC_CHECK_HEADERS(grp.h)
 AC_CHECK_HEADERS(syslog.h)
+AC_CHECK_FUNCS(vsyslog)
 
 # for mono/dis
 AC_CHECK_HEADERS(wchar.h)
@@ -800,8 +824,9 @@ AC_ARG_WITH(crosspkgdir, [  --with-crosspkgdir=/path/to/pkg-config/dir      Chan
 	fi
 )
 
-AC_CHECK_PROG(ninja, ninja, yes, no)
-AM_CONDITIONAL(NINJA, test x$ninja != xno)
+AC_ARG_ENABLE(ninja,[  --enable-ninja    Enable using ninja where available], enable_ninja=$enableval)
+AC_CHECK_PROG(HAVE_NINJA, ninja, yes, no)
+AM_CONDITIONAL(NINJA, test x$enable_ninja = xyes -a x$HAVE_NINJA != xno)
 
 AC_ARG_ENABLE(werror, [  --enable-werror Pass -Werror to the C compiler], werror_flag=$enableval, werror_flag=no)
 if test x$werror_flag = xyes; then
@@ -2983,6 +3008,12 @@ case "{$build}" in
     NAME_DEV_RANDOM="/dev/srandom"
     ;;
 
+dnl IBM i does not have /dev/random, use unblocking only
+
+    *-*-os400*)
+    NAME_DEV_RANDOM="/dev/urandom"
+    ;;
+
 dnl Win32 does not have /dev/random, they have their own method...
 
     *-mingw*|*-*-cygwin*)
@@ -3416,7 +3447,8 @@ case "$host" in
 		INTL="intl"
 		;;
 	macppc-*-openbsd* | powerpc*-*-linux* | powerpc-*-openbsd* | \
-        powerpc-*-sysv* | powerpc-*-darwin* | powerpc-*-netbsd* | powerpc-*-freebsd* )
+        powerpc-*-sysv* | powerpc-*-darwin* | powerpc-*-netbsd* | \
+        powerpc-*-freebsd* | powerpc-*-aix* | powerpc-*-os400* )
 		if test "x$ac_cv_sizeof_void_p" = "x8"; then
 			TARGET=POWERPC64;
 			CPPFLAGS="$CPPFLAGS -D__mono_ppc__ -D__mono_ppc64__"
@@ -3427,6 +3459,13 @@ case "$host" in
 		fi
 		arch_target=ppc;
 		case $host_os in
+		  aix*|os400*)
+			dnl on AIX/PASE, shared libraries can be inside archives
+			dnl if they are, we specify them by lib.a(lib.so)
+			dnl we may hardcode 64-bit names at times, but we don't do 32-bit AIX, so
+			LIBC="libc.a(shr_64.o)"
+			INTL="libintl.a(libintl.so.9)"
+			;;
 		  linux*|darwin*)
 			;;
 		esac
@@ -4003,7 +4042,19 @@ AC_SEARCH_LIBS(nanosleep, rt)
 
 AC_SEARCH_LIBS(dlopen, dl)
 old_ldflags="${LDFLAGS}"
-LDFLAGS="${LDFLAGS} -Wl,-export-dynamic"
+# GNU specific option, this confuses IBM ld, but do offer alternatives when possible
+if test $lt_cv_prog_gnu_ld = yes; then
+	LDFLAGS="${LDFLAGS} -Wl,-export-dynamic"
+else
+	case $host in
+	*-*-aix*|*-*-os400*)
+		;;
+	*)
+		dnl Try to use export-dynamic anyways
+		LDFLAGS="${LDFLAGS} -Wl,-export-dynamic"
+		;;
+	esac
+fi
 AC_TRY_LINK(, [int i;], found_export_dynamic=yes, found_export_dynamic=no)
 if test $found_export_dynamic = no; then
 	LDFLAGS="${old_ldflags}"
@@ -4377,7 +4428,7 @@ fi
 
 AM_CONDITIONAL([ENABLE_COOP], [test x$with_cooperative_gc != xno])
 
-AC_ARG_ENABLE(checked_build, [  --enable-checked-build=LIST      To enable checked build (expensive asserts), configure with a comma-separated LIST of checked build modules and then include that same list in the environment variable MONO_CHECK_MODE at runtime. Recognized checked build modules: all, gc, metadata, thread],[
+AC_ARG_ENABLE(checked_build, [  --enable-checked-build=LIST      To enable checked build (expensive asserts), configure with a comma-separated LIST of checked build modules and then include that same list in the environment variable MONO_CHECK_MODE at runtime. Recognized checked build modules: all, gc, metadata, thread, private_types],[
 
 	if test x$enable_checked_build != x ; then
 		AC_DEFINE(ENABLE_CHECKED_BUILD,1,[Enable checked build])
@@ -4390,6 +4441,7 @@ AC_ARG_ENABLE(checked_build, [  --enable-checked-build=LIST      To enable check
 		eval "mono_checked_build_test_enable_gc='yes'"
 		eval "mono_checked_build_test_enable_metadata='yes'"
 		eval "mono_checked_build_test_enable_thread='yes'"
+		eval "mono_checked_build_test_enable_private_types='yes'"
 	fi
 
 	if test "x$mono_checked_build_test_enable_gc" = "xyes"; then
@@ -4404,6 +4456,9 @@ AC_ARG_ENABLE(checked_build, [  --enable-checked-build=LIST      To enable check
 		AC_DEFINE(ENABLE_CHECKED_BUILD_THREAD, 1, [Enable thread checked build])
 	fi
 
+	if test "x$mono_checked_build_test_enable_private_types" = "xyes"; then
+		AC_DEFINE(ENABLE_CHECKED_BUILD_PRIVATE_TYPES, 1, [Enable private types checked build])
+	fi
 ], [])
 
 AC_CHECK_HEADER([malloc.h], 

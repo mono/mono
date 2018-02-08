@@ -29,6 +29,7 @@
 #include <mono/metadata/domain-internals.h>
 #include "mono/metadata/metadata-internals.h"
 #include "mono/metadata/class-internals.h"
+#include "mono/metadata/class-init.h"
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/marshal.h>
 #include "mono/metadata/debug-helpers.h"
@@ -5987,7 +5988,7 @@ mono_array_new_checked (MonoDomain *domain, MonoClass *eclass, uintptr_t n, Mono
 
 	error_init (error);
 
-	ac = mono_array_class_get (eclass, 1);
+	ac = mono_class_create_array (eclass, 1);
 	g_assert (ac);
 
 	MonoVTable *vtable = mono_class_vtable_checked (domain, ac, error);
@@ -7721,7 +7722,7 @@ mono_message_invoke (MonoObject *target, MonoMethodMessage *msg,
 	if (!object_array_klass) {
 		MonoClass *klass;
 
-		klass = mono_array_class_get (mono_defaults.object_class, 1);
+		klass = mono_class_create_array (mono_defaults.object_class, 1);
 		g_assert (klass);
 
 		mono_memory_barrier ();
@@ -7999,10 +8000,10 @@ mono_delegate_ctor (MonoObjectHandle this_obj, MonoObjectHandle target, gpointer
 
 	g_assert (addr);
 
-	ji = mono_jit_info_table_find (domain, (char *)mono_get_addr_from_ftnptr (addr));
+	ji = mono_jit_info_table_find (domain, mono_get_addr_from_ftnptr (addr));
 	/* Shared code */
 	if (!ji && domain != mono_get_root_domain ())
-		ji = mono_jit_info_table_find (mono_get_root_domain (), (char *)mono_get_addr_from_ftnptr (addr));
+		ji = mono_jit_info_table_find (mono_get_root_domain (), mono_get_addr_from_ftnptr (addr));
 	if (ji) {
 		method = mono_jit_info_get_method (ji);
 		g_assert (!mono_class_is_gtd (method->klass));
