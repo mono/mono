@@ -535,6 +535,9 @@ AC_CHECK_HEADERS(sys/user.h, [], [],
 #endif
 ])
 
+AC_CHECK_HEADERS(GSS/GSS.h)
+AC_CHECK_HEADERS(gssapi/gssapi.h)
+
 AC_CHECK_HEADERS(linux/serial.h)
 
 AC_CHECK_HEADER(zlib.h, [have_zlib=yes], [have_zlib=no])
