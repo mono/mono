@@ -2222,7 +2222,7 @@ ves_icall_System_AppDomain_LoadAssemblyRaw (MonoAppDomainHandle ad,
 		guint32 symbol_len = mono_array_handle_length (raw_symbol_store);
 		uint32_t symbol_gchandle;
 		mono_byte *raw_symbol_data = (mono_byte*) MONO_ARRAY_HANDLE_PIN (raw_symbol_store, mono_byte, 0, &symbol_gchandle);
-		mono_debug_open_image_from_memory (image, raw_symbol_data, raw_data);
+		mono_debug_open_image_from_memory (image, raw_symbol_data, symbol_len);
 		mono_gchandle_free (symbol_gchandle);
 	}
 
