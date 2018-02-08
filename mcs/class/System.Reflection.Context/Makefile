@@ -4,7 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = System.Reflection.Context.dll
 LIB_REFS = System
-KEYFILE = ../msfinal.pub
+KEYFILE = ../ecma.pub
 LIB_MCS_FLAGS =
 
 NO_TEST = yes
