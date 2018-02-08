@@ -1231,7 +1231,6 @@
     <Compile Include="System.Net\ListenerAsyncResult.cs" />
     <Compile Include="System.Net\ListenerPrefix.cs" />
     <Compile Include="System.Net\MacProxy.cs" />
-    <Compile Include="System.Net\MonoChunkParser.cs" />
     <Compile Include="System.Net\MonoChunkStream.cs" />
     <Compile Include="System.Net\MonoHttpDate.cs" />
     <Compile Include="System.Net\NetConfig.cs" />

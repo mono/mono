@@ -242,7 +242,7 @@ namespace System.Net
 
 				repeat = SchedulerIteration (defaultGroup);
 
-				Debug ($"ITERATION #1: repeat={repeat} groups={groups?.Count}");
+				Debug ($"ITERATION #1: {repeat} {groups != null}");
 
 				if (groups != null) {
 					foreach (var group in groups) {
@@ -251,7 +251,7 @@ namespace System.Net
 					}
 				}
 
-				Debug ($"ITERATION #3: repeat={repeat}");
+				Debug ($"ITERATION #3: {repeat}");
 			} while (repeat);
 		}
 
@@ -324,10 +324,9 @@ namespace System.Net
 
 			// Is there anything in the queue?
 			var next = group.GetNextOperation ();
-			if (next == null) {
-				Debug ($"{me} no pending operations.");
+			Debug ($"{me} no pending operations.");
+			if (next == null)
 				return false;
-			}
 
 			Debug ($"{me} found pending operation Op={next.ID}");
 
