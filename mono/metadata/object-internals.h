@@ -1822,9 +1822,6 @@ mono_object_new_handle (MonoDomain *domain, MonoClass *klass, MonoError *error);
 MonoObject*
 mono_object_new_mature (MonoVTable *vtable, MonoError *error);
 
-MonoObject*
-mono_object_new_fast_checked (MonoVTable *vtable, MonoError *error);
-
 MonoObjectHandle
 mono_object_new_handle_mature (MonoVTable *vtable, MonoError *error);
 

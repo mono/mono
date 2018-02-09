@@ -5745,32 +5745,6 @@ MonoObject*
 mono_object_new_fast (MonoVTable *vtable)
 {
 	ERROR_DECL (error);
-	MonoObject *o = mono_object_new_fast_checked (vtable, error);
-	mono_error_cleanup (error);
-
-	return o;
-}
-
-/**
- * mono_object_new_fast_checked:
- * \param vtable virtual table for the object.
- * \param error holds the error return value.
- *
- * This function allocates a new \c MonoObject with the type derived
- * from the \p vtable information. The returned object is not tracked
- * for finalization.   If your object implements a finalizer, you should
- * use \c mono_object_new_alloc_specific_checked instead.
- *
- * If there is not enough memory, the \p error parameter will be set
- * and will contain a user-visible message with the amount of bytes
- * that were requested.
- *
- * \returns the allocated object, or NULL if there is not enough memory
- */
-MonoObject*
-mono_object_new_fast_checked (MonoVTable *vtable, MonoError *error)
-{
-	MONO_REQ_GC_UNSAFE_MODE;
 
 	MonoObject *o;
 
@@ -5782,6 +5756,8 @@ mono_object_new_fast_checked (MonoVTable *vtable, MonoError *error)
 
 	if (G_UNLIKELY (!o))
 		mono_error_set_out_of_memory (error, "Could not allocate %i bytes", vtable->klass->instance_size);
+
+	mono_error_cleanup (error);
 
 	return o;
 }
