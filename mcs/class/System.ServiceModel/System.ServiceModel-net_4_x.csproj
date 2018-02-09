@@ -33,7 +33,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699,414,169,67,3005,436,219,618</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;TRACE;NET_3_0;HAS_ACTIVATION</DefineConstants>
+    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;TRACE;NET_3_0;SERVICEMODEL_ACTIVATION_DEPENDENCY</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -41,7 +41,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,414,169,67,3005,436,219,618</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;TRACE;NET_3_0;HAS_ACTIVATION</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;TRACE;NET_3_0;SERVICEMODEL_ACTIVATION_DEPENDENCY</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -227,7 +227,6 @@
     <Compile Include="System.Collections.Generic\SynchronizedReadOnlyCollection.cs" />
     <Compile Include="System.IO\PipeException.cs" />
     <Compile Include="System.ServiceModel.Activation\AspNetIntegrationRequirementsAttribute.cs" />
-    <Compile Include="System.ServiceModel.Activation\ServiceHostFactory.cs" />
     <Compile Include="System.ServiceModel.Activation\ServiceHostFactoryBase.cs" />
     <Compile Include="System.ServiceModel.Activation\VirtualPathExtension.cs" />
     <Compile Include="System.ServiceModel.Channels.Http\HttpChannelListener.cs" />
@@ -1087,6 +1086,11 @@
       <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
       <Name>corlib-net_4_x</Name>
     </ProjectReference>
+    <Reference Include="./../../../external/binary-reference-assemblies/v4.7.1/System.ServiceModel.Activation.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/v4.7.1/System.ServiceModel.Activation.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <ProjectReference Include="../System/System-net_4_x.csproj">
       <Project>{2762E921-91A8-4C87-91E9-BA628013F753}</Project>
       <Name>System-net_4_x</Name>
@@ -1142,10 +1146,6 @@
     <ProjectReference Include="../System.Web/System.Web-net_4_x.csproj">
       <Project>{9DB806CB-B828-49B7-BAE2-2E52402CB4DC}</Project>
       <Name>System.Web-net_4_x</Name>
-    </ProjectReference>
-    <ProjectReference Include="../System.ServiceModel.Activation/System.ServiceModel.Activation-net_4_x.csproj">
-      <Project>{7A23227C-591B-4F80-9D62-4D0271073D82}</Project>
-      <Name>System.ServiceModel.Activation-net_4_x</Name>
     </ProjectReference>
     <ProjectReference Include="../System.Web.ApplicationServices/System.Web.ApplicationServices-net_4_x.csproj">
       <Project>{928432BE-3518-4103-97F6-48B9658588A6}</Project>

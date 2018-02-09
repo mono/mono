@@ -212,17 +212,17 @@
       <HintPath>./../../../external/binary-reference-assemblies/v4.7.1/System.Numerics.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <ProjectReference Include="../System/System-secxml-net_4_x.csproj">
-      <Project>{19954F80-065E-4D46-8FEF-62BA4D6CFDAD}</Project>
-      <Name>System-secxml-net_4_x</Name>
-    </ProjectReference>
-    <ProjectReference Include="../System.XML/System.Xml-bare-net_4_x.csproj">
-      <Project>{A5216031-11A3-44DD-B2FF-A14AE63BD0C3}</Project>
-      <Name>System.Xml-bare-net_4_x</Name>
-    </ProjectReference>
     <ProjectReference Include="../Mono.Security/Mono.Security-net_4_x.csproj">
       <Project>{42D59DE7-586F-4ACF-BDD5-E7869E39E3EF}</Project>
       <Name>Mono.Security-net_4_x</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System/System-net_4_x.csproj">
+      <Project>{2762E921-91A8-4C87-91E9-BA628013F753}</Project>
+      <Name>System-net_4_x</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System.XML/System.Xml-net_4_x.csproj">
+      <Project>{87FD2F0F-5222-4AE6-BD63-2D4975E11E5B}</Project>
+      <Name>System.Xml-net_4_x</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
