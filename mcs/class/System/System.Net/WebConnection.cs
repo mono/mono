@@ -265,6 +265,8 @@ namespace System.Net
 				goto retry;
 			}
 
+			networkStream.ReadTimeout = operation.Request.ReadWriteTimeout;
+
 			return new WebRequestStream (this, operation, networkStream, tunnel);
 		}
 
