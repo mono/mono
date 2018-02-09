@@ -3939,8 +3939,9 @@ mono_nullable_init_from_handle (guint8 *buf, MonoObjectHandle value, MonoClass *
  * \p buf.  On failure returns NULL and sets \p error.
  */
 MonoObject*
-mono_nullable_box (guint8 *buf, MonoClass *klass, MonoError *error)
+mono_nullable_box (gpointer vbuf, MonoClass *klass, MonoError *error)
 {
+	guint8 *buf = (guint8*)vbuf;
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	error_init (error);
