@@ -161,27 +161,41 @@ mono_icall_get_file_path_prefix (const gchar *path)
 }
 #endif /* HOST_WIN32 */
 
-ICALL_EXPORT MonoObject *
-ves_icall_System_Array_GetValueImpl (MonoArray *arr, guint32 pos)
+ICALL_EXPORT MonoObjectHandle
+ves_icall_System_Array_GetValueImpl (MonoArrayHandle arr, guint32 pos, MonoError *error)
 {
-	ERROR_DECL (error);
 	MonoClass *ac;
 	gint32 esize;
 	gpointer *ea;
-	MonoObject *result = NULL;
+	guint gchandle = 0;
+	MonoObjectHandle result;
 
-	ac = (MonoClass *)arr->obj.vtable->klass;
+	ac = mono_handle_class (arr);
 
 	esize = mono_array_element_size (ac);
-	ea = (gpointer*)((char*)arr->vector + (pos * esize));
+	ea = (gpointer*)mono_array_handle_pin_with_size (arr, esize, pos, &gchandle);
 
 	MonoClass *ac_element_class = m_class_get_element_class (ac);
-	if (m_class_is_valuetype (ac_element_class)) {
-		result = mono_value_box_checked (arr->obj.vtable->domain, ac_element_class, ea, error);
-		mono_error_set_pending_exception (error);
-	} else
-		result = (MonoObject *)*ea;
+	if (m_class_is_valuetype (ac_element_class))
+		result = mono_value_box_handle (MONO_HANDLE_DOMAIN (arr), ac_element_class, ea, error);
+	else
+		result = MONO_HANDLE_NEW (MonoObject, MONO_HANDLE_SUPPRESS ((MonoObject *)*ea));
+
+	mono_gchandle_free (gchandle);
+
 	return result;
+}
+
+// FIXME This is very temporary.
+static MonoObject*
+System_Array_GetValueImpl (MonoArray *arr_raw, guint32 pos)
+{
+	HANDLE_FUNCTION_ENTER ();
+	ERROR_DECL (error);
+	MONO_HANDLE_DCL (MonoArray, arr);
+	MonoObjectHandle result = ves_icall_System_Array_GetValueImpl (arr, pos, error);
+	mono_error_set_pending_exception (error);
+	HANDLE_FUNCTION_RETURN_OBJ (result);
 }
 
 ICALL_EXPORT MonoObject *
@@ -212,7 +226,7 @@ ves_icall_System_Array_GetValue (MonoArray *arr, MonoArray *idxs)
 			return NULL;
 		}
 
-		return ves_icall_System_Array_GetValueImpl (arr, *ind);
+		return System_Array_GetValueImpl (arr, *ind);
 	}
 	
 	for (i = 0; i < m_class_get_rank (ac); i++) {
@@ -228,7 +242,7 @@ ves_icall_System_Array_GetValue (MonoArray *arr, MonoArray *idxs)
 		pos = pos * arr->bounds [i].length + ind [i] - 
 			arr->bounds [i].lower_bound;
 
-	return ves_icall_System_Array_GetValueImpl (arr, pos);
+	return System_Array_GetValueImpl (arr, pos);
 }
 
 ICALL_EXPORT void
