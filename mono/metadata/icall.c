@@ -866,21 +866,24 @@ ves_icall_System_Array_GetGenericValueImpl (MonoArrayHandle arr, guint32 pos, gp
 }
 
 ICALL_EXPORT void
-ves_icall_System_Array_SetGenericValueImpl (MonoArray *arr, guint32 pos, gpointer value)
+ves_icall_System_Array_SetGenericValueImpl (MonoArrayHandle arr, guint32 pos, gpointer value, MonoError* error)
 {
+	MONO_REQ_GC_UNSAFE_MODE; 	// because of gpointer value
+
 	MonoClass *ac, *ec;
 	gint32 esize;
 	gpointer *ea;
+	guint gchandle = 0;
 
-	ac = (MonoClass *)arr->obj.vtable->klass;
+	ac = mono_handle_class (arr);
 	ec = m_class_get_element_class (ac);
 
 	esize = mono_array_element_size (ac);
-	ea = (gpointer*)((char*)arr->vector + (pos * esize));
+	ea = (gpointer*)mono_array_handle_pin_with_size (arr, esize, pos, &gchandle);
 
 	if (MONO_TYPE_IS_REFERENCE (m_class_get_byval_arg (ec))) {
 		g_assert (esize == sizeof (gpointer));
-		mono_gc_wbarrier_generic_store (ea, *(MonoObject **)value);
+		mono_gc_wbarrier_generic_store (ea, MONO_HANDLE_SUPPRESS (*(MonoObject **)value));
 	} else {
 		g_assert (m_class_is_inited (ec));
 		g_assert (esize == mono_class_value_size (ec, NULL));
@@ -889,6 +892,7 @@ ves_icall_System_Array_SetGenericValueImpl (MonoArray *arr, guint32 pos, gpointe
 		else
 			mono_gc_memmove_atomic (ea, value, esize);
 	}
+	mono_gchandle_free (gchandle);
 }
 
 ICALL_EXPORT void
