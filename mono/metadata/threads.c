@@ -989,9 +989,10 @@ static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack
 	MonoObject *start_delegate_arg;
 	MonoDomain *domain;
 
-	thread = start_info->thread;
-	internal = thread->internal_thread;
-	domain = mono_object_domain (start_info->thread);
+	MonoObjectHandle thread_obj = mono_gchandle_get_target_handle (start_info->thread_gchandle);
+	thread = (MonoThreadObjectHandle)thread_obj;
+	internal = MONO_HANDLE_GETVAL (thread, internal_thread); // internal_thread is pinned
+	domain = MONO_HANDLE_DOMAIN (thread);
 
 	THREAD_DEBUG (g_message ("%s: (%"G_GSIZE_FORMAT") Start wrapper", __func__, mono_native_thread_id_get ()));
 
@@ -1067,8 +1068,8 @@ static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack
 		g_assert (start_delegate != NULL);
 
 		/* we may want to handle the exception here. See comment below on unhandled exceptions */
-		args [0] = (gpointer) start_delegate_arg;
-		mono_runtime_delegate_invoke_checked (start_delegate, args, error);
+		gpointer args [ ] = { MONO_HANDLE_RAW (start_delegate_arg) };
+		mono_runtime_delegate_invoke_checked (MONO_HANDLE_RAW (start_delegate), args, error);
 
 		if (!mono_error_ok (error)) {
 			MonoException *ex = mono_error_convert_to_exception (error);
