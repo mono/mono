@@ -1249,7 +1249,7 @@ namespace System {
             get {return IsCOMObjectImpl();}
         }
 
-#if FEATURE_COMINTEROP || MONO_COM
+#if FEATURE_COMINTEROP || MONO_COM || UNITY_AOT
         internal bool IsWindowsRuntimeObject {
             [Pure]
             get { return IsWindowsRuntimeObjectImpl(); }
@@ -1313,7 +1313,7 @@ namespace System {
         // Protected routine to determine if this class represents a COM object
         abstract protected bool IsCOMObjectImpl();
 
-#if FEATURE_COMINTEROP || MONO_COM
+#if FEATURE_COMINTEROP || MONO_COM || UNITY_AOT
         // Protected routine to determine if this class represents a Windows Runtime object
         virtual internal bool IsWindowsRuntimeObjectImpl() {
             throw new NotImplementedException();
