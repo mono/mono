@@ -159,7 +159,7 @@ HANDLES(ICALL(ARRAY_5, "GetGenericValueImpl", ves_icall_System_Array_GetGenericV
 ICALL(ARRAY_6, "GetLength",        ves_icall_System_Array_GetLength)
 ICALL(ARRAY_15, "GetLongLength",        ves_icall_System_Array_GetLongLength)
 ICALL(ARRAY_7, "GetLowerBound",    ves_icall_System_Array_GetLowerBound)
-ICALL(ARRAY_8, "GetRank",          ves_icall_System_Array_GetRank)
+HANDLES(ICALL(ARRAY_8, "GetRank",  ves_icall_System_Array_GetRank))
 ICALL(ARRAY_9, "GetValue",         ves_icall_System_Array_GetValue)
 ICALL(ARRAY_10, "GetValueImpl",     ves_icall_System_Array_GetValueImpl)
 HANDLES(ICALL(ARRAY_11, "SetGenericValueImpl", ves_icall_System_Array_SetGenericValueImpl))

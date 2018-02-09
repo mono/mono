@@ -708,7 +708,7 @@ ves_icall_System_Array_CreateInstanceImpl64 (MonoReflectionType *type, MonoArray
 }
 
 ICALL_EXPORT gint32 
-ves_icall_System_Array_GetRank (MonoObject *arr)
+ves_icall_System_Array_GetRank (MonoObjectHandle arr, MonoError *error)
 {
 	return m_class_get_rank (mono_object_class (arr));
 }
