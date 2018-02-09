@@ -141,6 +141,8 @@ namespace System.Net
 #endif
 			}
 
+			Exception connectException = null;
+
 			foreach (IPAddress address in hostEntry.AddressList) {
 				operation.ThrowIfDisposed (cancellationToken);
 
@@ -169,7 +171,10 @@ namespace System.Net
 						throw;
 					} catch (Exception exc) {
 						Interlocked.Exchange (ref socket, null)?.Close ();
-						throw GetException (WebExceptionStatus.ConnectFailure, exc);
+						// Something went wrong, but we might have multiple IP Addresses
+						// and need to probe them all.
+						connectException = GetException (WebExceptionStatus.ConnectFailure, exc);
+						continue;
 					}
 				}
 
@@ -177,7 +182,10 @@ namespace System.Net
 					return;
 			}
 
-			throw GetException (WebExceptionStatus.ConnectFailure, null);
+			if (connectException == null)
+				connectException = GetException (WebExceptionStatus.ConnectFailure, null);
+
+			throw connectException;
 		}
 
 #if MONO_WEB_DEBUG
