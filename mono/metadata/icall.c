@@ -771,12 +771,14 @@ ves_icall_System_Array_GetLowerBound (MonoArray *arr, gint32 dimension)
 }
 
 ICALL_EXPORT void
-ves_icall_System_Array_ClearInternal (MonoArray *arr, int idx, int length)
+ves_icall_System_Array_ClearInternal (MonoArrayHandle arr, gint32 idx, gint32 length, MonoError* error)
 {
-	int sz = mono_array_element_size (mono_object_class (arr));
-	mono_gc_bzero_atomic (mono_array_addr_with_size_fast (arr, sz, idx), length * sz);
+	guint gchandle = 0;
+	int sz = mono_array_element_size (mono_handle_class (arr));
+	gpointer p = mono_array_handle_pin_with_size (arr, sz, idx, &gchandle);
+	mono_gc_bzero_atomic (p, length * sz);
+	mono_gchandle_free (gchandle);
 }
-
 
 ICALL_EXPORT gboolean
 ves_icall_System_Array_FastCopy (MonoArray *source, int source_idx, MonoArray* dest, int dest_idx, int length)
