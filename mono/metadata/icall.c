@@ -846,18 +846,23 @@ ves_icall_System_Array_FastCopy (MonoArray *source, int source_idx, MonoArray* d
 }
 
 ICALL_EXPORT void
-ves_icall_System_Array_GetGenericValueImpl (MonoArray *arr, guint32 pos, gpointer value)
+ves_icall_System_Array_GetGenericValueImpl (MonoArrayHandle arr, guint32 pos, gpointer value, MonoError* error)
 {
+	MONO_REQ_GC_UNSAFE_MODE; 	// because of gpointer value
+
 	MonoClass *ac;
 	gint32 esize;
 	gpointer *ea;
+	guint gchandle = 0;
 
-	ac = (MonoClass *)arr->obj.vtable->klass;
+	ac = mono_handle_class (arr);
 
 	esize = mono_array_element_size (ac);
-	ea = (gpointer*)((char*)arr->vector + (pos * esize));
+	ea = (gpointer*)mono_array_handle_pin_with_size (arr, esize, pos, &gchandle);
 
 	mono_gc_memmove_atomic (value, ea, esize);
+
+	mono_gchandle_free (gchandle);
 }
 
 ICALL_EXPORT void
