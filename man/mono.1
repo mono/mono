@@ -1160,18 +1160,18 @@ For platforms that do not otherwise have a way of obtaining random bytes
 this can be set to the name of a file system socket on which an egd or
 prngd daemon is listening.
 .TP
-\fBMONO_ENABLE_COOP\fR
-This makes the Mono runtime and the SGen garbage collector run in cooperative
-mode as opposed to run on preemptive mode.   Preemptive mode is the mode
+\fBMONO_DISABLE_COOP\fR
+This makes the Mono runtime and the SGen garbage collector run in preemptive
+mode as opposed to run on cooperative mode.   Preemptive mode is the mode
 that Mono has used historically, going back to the Boehm days, where the
 garbage collector would run at any point and suspend execution of all 
 threads as required to perform a garbage collection.  The cooperative mode
 on the other hand requires the cooperation of all threads to stop at a 
 safe point.   This makes for an easier to debug garbage collector.   As
-of Mono 4.3.0 it is a work in progress, and while it works, it has not
-been used extensively.   This option enabled the feature and allows us to
+of Mono 4.3.0 it is a work in progress, and as of Mono 5.14 it is the
+default.   This option disable the feature and allows us to
 find spots that need to be tuned for this mode of operation.   Alternatively,
-this mode can be enabled at compile time by using the --with-cooperative-gc
+this mode can be disabled at compile time by using the --with-cooperative-gc=no
 flag when calling configure.
 .TP
 \fBMONO_ENV_OPTIONS\fR

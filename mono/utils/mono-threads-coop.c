@@ -428,12 +428,12 @@ mono_threads_assert_gc_unsafe_region (void)
 gboolean
 mono_threads_is_coop_enabled (void)
 {
-#if defined(USE_COOP_GC)
+#if defined(HAVE_COOP_GC)
 	return TRUE;
 #else
 	static int is_coop_enabled = -1;
 	if (G_UNLIKELY (is_coop_enabled == -1))
-		is_coop_enabled = g_hasenv ("MONO_ENABLE_COOP") ? 1 : 0;
+		is_coop_enabled = g_hasenv ("MONO_DISABLE_COOP") ? 0 : 1;
 	return is_coop_enabled == 1;
 #endif
 }
@@ -441,12 +441,12 @@ mono_threads_is_coop_enabled (void)
 gboolean
 mono_threads_is_blocking_transition_enabled (void)
 {
-#if defined(USE_COOP_GC)
+#if defined(HAVE_COOP_GC)
 	return TRUE;
 #else
 	static int is_blocking_transition_enabled = -1;
 	if (G_UNLIKELY (is_blocking_transition_enabled == -1))
-		is_blocking_transition_enabled = (g_hasenv ("MONO_ENABLE_COOP") || g_hasenv ("MONO_ENABLE_BLOCKING_TRANSITION")) ? 1 : 0;
+		is_blocking_transition_enabled = (g_hasenv ("MONO_DISABLE_COOP") || g_hasenv ("MONO_DISABLE_BLOCKING_TRANSITION")) ? 0 : 1;
 	return is_blocking_transition_enabled == 1;
 #endif
 }

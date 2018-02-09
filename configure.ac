@@ -1067,7 +1067,6 @@ with_unreal_default=no
 with_wasm_default=no
 
 with_bitcode_default=no
-with_cooperative_gc_default=no
 
 INVARIANT_AOT_OPTIONS=nimt-trampolines=2000,ntrampolines=9000,nrgctx-fetch-trampolines=256,ngsharedvt-trampolines=4000
 
@@ -1106,7 +1105,6 @@ elif test x$with_runtime_preset = xbitcode; then
    DISABLE_MCS_DOCS_default=yes
    with_testing_aot_full_default=yes
    with_bitcode_default=yes
-   with_cooperative_gc_default=yes
    TEST_PROFILE=testing_aot_full
    enable_llvm_default=yes
 
@@ -4431,17 +4429,13 @@ AC_ARG_WITH(lazy_gc_thread_creation, [  --with-lazy-gc-thread-creation=yes|no   
 	fi
 ], [with_lazy_gc_thread_creation=no])
 
-AC_ARG_WITH(cooperative_gc, [  --with-cooperative-gc=yes|no      Enable cooperative stop-the-world garbage collection (sgen only) (defaults to no)], [], [with_cooperative_gc=default])
-
-if test x$with_cooperative_gc = xdefault; then
-	with_cooperative_gc=$with_cooperative_gc_default
-fi
+AC_ARG_WITH(cooperative_gc, [  --with-cooperative-gc=yes|no      Enable cooperative stop-the-world garbage collection (sgen only) (defaults to yes)], [], [with_cooperative_gc=yes])
 
 if test x$with_cooperative_gc != xno; then
-	AC_DEFINE(USE_COOP_GC,1,[Enable cooperative stop-the-world garbage collection.])
+	AC_DEFINE(HAVE_COOP_GC,1,[Enable cooperative stop-the-world garbage collection.])
 fi
 
-AM_CONDITIONAL([ENABLE_COOP], [test x$with_cooperative_gc != xno])
+AM_CONDITIONAL([DISABLE_COOP], [test x$with_cooperative_gc == xno])
 
 AC_ARG_ENABLE(checked_build, [  --enable-checked-build=LIST      To enable checked build (expensive asserts), configure with a comma-separated LIST of checked build modules and then include that same list in the environment variable MONO_CHECK_MODE at runtime. Recognized checked build modules: all, gc, metadata, thread, private_types],[
 
