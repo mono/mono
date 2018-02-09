@@ -20,6 +20,12 @@ namespace System.Data.SqlClient
 			"keyword and always reset the connection")]
 		public bool ConnectionReset { get; set; }
 
+		[MonoTODO("Not implemented in corefx: dotnet/corefx/issues/22474")]
+		public SqlAuthenticationMethod Authentication {
+			get => throw new NotImplementedException();
+			set => throw new NotImplementedException();
+		}
+
 		[MonoTODO("Not implemented in corefx: https://github.com/dotnet/corefx/issues/22474")]
 		public bool ContextConnection {
 			get => throw new NotImplementedException();
