@@ -102,7 +102,7 @@ public class AppBuilder
 			aot_args = "soft-debug";
 		if (isllvm) {
 			cross_runtime_args = "--llvm";
-			aot_args = ",llvm-path=$mono_sdkdir/llvm64/bin,llvm-outfile=$llvm_outfile";
+			aot_args = ",llvm-path=$mono_sdkdir/ios-llvm64/bin,llvm-outfile=$llvm_outfile";
 		}
 
 		Directory.CreateDirectory (builddir);
