@@ -174,33 +174,13 @@ namespace System.Net
 		}
 #endif
 
-		[Obsolete ("Serialization is obsoleted for this type", false)]
+		[Obsolete ("Serialization is obsoleted for this type.  http://go.microsoft.com/fwlink/?linkid=14202")]
 		protected HttpWebRequest (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
-			SerializationInfo info = serializationInfo;
-
-			requestUri = (Uri)info.GetValue ("requestUri", typeof (Uri));
-			actualUri = (Uri)info.GetValue ("actualUri", typeof (Uri));
-			allowAutoRedirect = info.GetBoolean ("allowAutoRedirect");
-			allowBuffering = info.GetBoolean ("allowBuffering");
-			certificates = (X509CertificateCollection)info.GetValue ("certificates", typeof (X509CertificateCollection));
-			connectionGroup = info.GetString ("connectionGroup");
-			contentLength = info.GetInt64 ("contentLength");
-			webHeaders = (WebHeaderCollection)info.GetValue ("webHeaders", typeof (WebHeaderCollection));
-			keepAlive = info.GetBoolean ("keepAlive");
-			maxAutoRedirect = info.GetInt32 ("maxAutoRedirect");
-			mediaType = info.GetString ("mediaType");
-			method = info.GetString ("method");
-			initialMethod = info.GetString ("initialMethod");
-			pipelined = info.GetBoolean ("pipelined");
-			version = (Version)info.GetValue ("version", typeof (Version));
-			proxy = (IWebProxy)info.GetValue ("proxy", typeof (IWebProxy));
-			sendChunked = info.GetBoolean ("sendChunked");
-			timeout = info.GetInt32 ("timeout");
-			redirects = info.GetInt32 ("redirects");
-			hostUri = (Uri)info.GetValue ("hostUri", typeof (Uri));
-			hostHasPort = info.GetBoolean ("hostHasPort");
-			ResetAuthorization ();
+			// In CoreFX, attempting to serialize this class fails due to
+			// non-serializable fields, so this constructor never gets called.
+			// They're throwing PlatformNotSupportedException() in here.
+			throw new SerializationException ();
 		}
 
 #if MONO_WEB_DEBUG
@@ -1253,35 +1233,13 @@ namespace System.Net
 		void ISerializable.GetObjectData (SerializationInfo serializationInfo,
 		   				  StreamingContext streamingContext)
 		{
-			GetObjectData (serializationInfo, streamingContext);
+			throw new SerializationException ();
 		}
 
 		protected override void GetObjectData (SerializationInfo serializationInfo,
 			StreamingContext streamingContext)
 		{
-			SerializationInfo info = serializationInfo;
-
-			info.AddValue ("requestUri", requestUri, typeof (Uri));
-			info.AddValue ("actualUri", actualUri, typeof (Uri));
-			info.AddValue ("allowAutoRedirect", allowAutoRedirect);
-			info.AddValue ("allowBuffering", allowBuffering);
-			info.AddValue ("certificates", certificates, typeof (X509CertificateCollection));
-			info.AddValue ("connectionGroup", connectionGroup);
-			info.AddValue ("contentLength", contentLength);
-			info.AddValue ("webHeaders", webHeaders, typeof (WebHeaderCollection));
-			info.AddValue ("keepAlive", keepAlive);
-			info.AddValue ("maxAutoRedirect", maxAutoRedirect);
-			info.AddValue ("mediaType", mediaType);
-			info.AddValue ("method", method);
-			info.AddValue ("initialMethod", initialMethod);
-			info.AddValue ("pipelined", pipelined);
-			info.AddValue ("version", version, typeof (Version));
-			info.AddValue ("proxy", proxy, typeof (IWebProxy));
-			info.AddValue ("sendChunked", sendChunked);
-			info.AddValue ("timeout", timeout);
-			info.AddValue ("redirects", redirects);
-			info.AddValue ("hostUri", hostUri);
-			info.AddValue ("hostHasPort", hostHasPort);
+			throw new SerializationException ();
 		}
 
 		void CheckRequestStarted ()
