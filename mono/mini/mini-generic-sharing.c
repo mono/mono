@@ -2645,8 +2645,7 @@ mini_method_get_mrgctx (MonoVTable *class_vtable, MonoMethod *method)
 	mono_domain_lock (domain);
 
 	if (!method_inst) {
-		/* Default interface methods */
-		g_assert (MONO_CLASS_IS_INTERFACE (method->klass));
+		g_assert (mini_method_is_default_method (method));
 
 		if (!domain_info->mrgctx_hash)
 			domain_info->mrgctx_hash = g_hash_table_new (NULL, NULL);
@@ -3009,7 +3008,7 @@ mono_method_needs_static_rgctx_invoke (MonoMethod *method, gboolean allow_type_v
 
 	return ((method->flags & METHOD_ATTRIBUTE_STATIC) ||
 			method->klass->valuetype ||
-			MONO_CLASS_IS_INTERFACE (method->klass)) &&
+			mini_method_is_default_method (method)) &&
 		(mono_class_is_ginst (method->klass) || mono_class_is_gtd (method->klass));
 }
 
@@ -3359,9 +3358,15 @@ mini_type_is_reference (MonoType *type)
 }
 
 gboolean
+mini_method_is_default_method (MonoMethod *m)
+{
+	return MONO_CLASS_IS_INTERFACE (m->klass) && !(m->flags & METHOD_ATTRIBUTE_ABSTRACT);
+}
+
+gboolean
 mini_method_needs_mrgctx (MonoMethod *m)
 {
-	if (mono_class_is_ginst (m->klass) && MONO_CLASS_IS_INTERFACE (m->klass) && !(m->flags & METHOD_ATTRIBUTE_ABSTRACT))
+	if (mono_class_is_ginst (m->klass) && mini_method_is_default_method (m))
 		return TRUE;
 	return (mini_method_get_context (m) && mini_method_get_context (m)->method_inst);
 }

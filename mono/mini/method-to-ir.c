@@ -2889,7 +2889,7 @@ static gboolean
 context_used_is_mrgctx (MonoCompile *cfg, int context_used)
 {
 	/* gshared dim methods use an mrgctx */
-	if (MONO_CLASS_IS_INTERFACE (cfg->method->klass))
+	if (mini_method_is_default_method (cfg->method))
 		return context_used != 0;
 	return context_used & MONO_GENERIC_CONTEXT_USED_METHOD;
 }
@@ -2916,7 +2916,7 @@ emit_get_rgctx (MonoCompile *cfg, int context_used)
 	if (context_used_is_mrgctx (cfg, context_used)) {
 		MonoInst *mrgctx_loc, *mrgctx_var;
 
-		if (!MONO_CLASS_IS_INTERFACE (method->klass)) {
+		if (!mini_method_is_default_method (method)) {
 			g_assert (!this_ins);
 			g_assert (method->is_inflated && mono_method_get_context (method)->method_inst);
 		}
