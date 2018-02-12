@@ -20,7 +20,7 @@ namespace System.IO {
 
 		public LogcatTextWriter (string appname, TextWriter stdout)
 		{
-			this.appname = Encoding.UTF8.GetBytes (appname);
+			this.appname = Encoding.UTF8.GetBytes (appname + '\0');
 			this.stdout = stdout;
 		}
 
@@ -48,13 +48,43 @@ namespace System.IO {
 			var o = line.ToString ();
 			line.Clear ();
 
+			Log (o);
+			stdout.WriteLine (o);
+		}
+
+		void Log (string message)
+		{
+			const int buffer_size = 512;
+
 			unsafe {
-				fixed (byte *b_appname = appname)
-				fixed (byte *b_message = Encoding.UTF8.GetBytes(o)) {
-					Log (b_appname, 1 << 5 /* G_LOG_LEVEL_MESSAGE */, b_message);
+				if (Encoding.UTF8.GetByteCount (message) < buffer_size) {
+					try {
+						fixed (char *b_message = message) {
+							byte* buffer = stackalloc byte[buffer_size];
+							int written = Encoding.UTF8.GetBytes (b_message, message.Length, buffer, buffer_size - 1);
+							buffer [written] = (byte)'\0';
+
+							Log (buffer);
+						}
+
+						return;
+					} catch (ArgumentException) {
+						/* It might be due to a failure to encode a character, or due to a smaller than necessary buffer. In the
+						* secode case, we want to fallback to simply allocating on the heap. */
+					}
+				}
+
+				fixed (byte *b_message = Encoding.UTF8.GetBytes(message + '\0')) {
+					Log (b_message);
 				}
 			}
-			stdout.WriteLine (o);
+		}
+
+		unsafe void Log (byte* b_message)
+		{
+			fixed (byte *b_appname = appname) {
+				Log (b_appname, 1 << 5 /* G_LOG_LEVEL_MESSAGE */, b_message);
+			}
 		}
 
 		public static bool IsRunningOnAndroid ()
