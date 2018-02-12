@@ -276,7 +276,7 @@ namespace MonoTests.System.Net.Http
 				httpClient.PostAsync (restRequest.RequestUri, restRequest.Content).Wait (WaitTimeout);
 				Assert.Fail ("#1");
 			} catch (AggregateException e) {
-				Assert.IsTrue (e.InnerException is TaskCanceledException, "#2");
+				Assert.That (e.InnerException, Is.InstanceOf<TaskCanceledException> (), "#2");
 			}
 		}
 
