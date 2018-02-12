@@ -763,7 +763,14 @@ void il2cpp_mono_thread_internal_reset_abort(MonoInternalThread* thread)
 
 gunichar2* il2cpp_mono_thread_get_name(MonoInternalThread* this_obj, guint32* name_len)
 {
-	return NULL;
+	std::string name = il2cpp::vm::Thread::GetName((Il2CppInternalThread*)this_obj);
+
+	if (name_len != NULL)
+		*name_len = name.size();
+
+	if (name.empty())
+		return NULL;
+	return g_utf8_to_utf16(name.c_str(), name.size(), NULL, NULL, NULL);
 }
 
 void il2cpp_mono_thread_set_name_internal(MonoInternalThread* this_obj, MonoString* name, gboolean permanent, gboolean reset, MonoError* error)
