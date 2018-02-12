@@ -1,4 +1,4 @@
-#if MONO_COM
+#if MONO_COM || UNITY_AOT
 #define FEATURE_COMINTEROP
 #endif
 // ==++==
