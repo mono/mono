@@ -124,6 +124,8 @@ endif
 
 endif
 
+LIB_MCS_FLAGS += -d:MONO_WEB_DEBUG
+
 EXTRA_DISTFILES = \
 	common.sources					\
 	common_networking.sources		\

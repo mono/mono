@@ -2342,6 +2342,7 @@ namespace MonoTests.System.Net
 		}
 		
 		[Test]
+		[Ignore ("Broken test: uses reflection to poke around implementation internals")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif

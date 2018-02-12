@@ -248,23 +248,21 @@ namespace System.Net
 
 		public override long Seek (long a, SeekOrigin b)
 		{
-			throw new NotSupportedException ();
+			throw new NotSupportedException (SR.net_noseek);
 		}
 
 		public override void SetLength (long a)
 		{
-			throw new NotSupportedException ();
+			throw new NotSupportedException (SR.net_noseek);
 		}
 
-		public override bool CanSeek {
-			get {
-				return false;
-			}
-		}
+		public override bool CanSeek => false;
+
+		public override long Length => throw new NotSupportedException (SR.net_noseek);
 
 		public override long Position {
-			get { throw new NotSupportedException (); }
-			set { throw new NotSupportedException (); }
+			get { throw new NotSupportedException (SR.net_noseek); }
+			set { throw new NotSupportedException (SR.net_noseek); }
 		}
 	}
 }

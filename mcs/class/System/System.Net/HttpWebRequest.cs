@@ -927,9 +927,24 @@ namespace System.Net
 		internal static Task<T> RunWithTimeout<T> (
 			Func<CancellationToken, Task<T>> func, int timeout, Action abort)
 		{
+			var cts = new CancellationTokenSource ();
+			return RunWithTimeout (func, timeout, abort, cts);
+		}
+
+		internal static Task<T> RunWithTimeout<T> (
+			Func<CancellationToken, Task<T>> func, int timeout, Action abort,
+			CancellationToken cancellationToken)
+		{
+			var cts = CancellationTokenSource.CreateLinkedTokenSource (cancellationToken);
+			return RunWithTimeout (func, timeout, abort, cts);
+		}
+
+		static Task<T> RunWithTimeout<T> (
+			Func<CancellationToken, Task<T>> func, int timeout, Action abort,
+			CancellationTokenSource cts)
+		{
 			// Call `func` here to propagate any potential exception that it
 			// might throw to our caller rather than returning a faulted task.
-			var cts = new CancellationTokenSource ();
 			var workerTask = func (cts.Token);
 			return RunWithTimeoutWorker (workerTask, timeout, abort, cts);
 		}
