@@ -68,6 +68,7 @@ namespace System.Net
 		bool hostChanged;
 		bool allowAutoRedirect = true;
 		bool allowBuffering = true;
+		bool allowReadStreamBuffering;
 		X509CertificateCollection certificates;
 		string connectionGroup;
 		bool haveContentLength;
@@ -93,6 +94,7 @@ namespace System.Net
 		bool sendChunked;
 		ServicePoint servicePoint;
 		int timeout = 100000;
+		int continueTimeout = 350;
 
 		WebRequestStream writeStream;
 		HttpWebResponse webResponse;
@@ -108,12 +110,19 @@ namespace System.Net
 		DecompressionMethods auto_decomp;
 		int maxResponseHeadersLength;
 		static int defaultMaxResponseHeadersLength;
+		static int defaultMaximumErrorResponseLength;
+		static RequestCachePolicy defaultCachePolicy;
 		int readWriteTimeout = 300000; // ms
 #if SECURITY_DEP
 		MonoTlsProvider tlsProvider;
 		MonoTlsSettings tlsSettings;
 #endif
 		ServerCertValidationCallback certValidationCallback;
+
+		// stores the user provided Host header as Uri. If the user specified a default port explicitly we'll lose
+		// that information when converting the host string to a Uri. _HostHasPort will store that information.
+		bool hostHasPort;
+		Uri hostUri;
 
 		enum NtlmAuthState
 		{
@@ -122,7 +131,6 @@ namespace System.Net
 			Response
 		}
 		AuthorizationState auth_state, proxy_auth_state;
-		string host;
 
 		[NonSerialized]
 		internal Func<Stream, Task> ResendContentFactory;
@@ -130,18 +138,15 @@ namespace System.Net
 		// Constructors
 		static HttpWebRequest ()
 		{
-			defaultMaxResponseHeadersLength = 64 * 1024;
+			defaultMaxResponseHeadersLength = 64;
+			defaultMaximumErrorResponseLength = 64;
+			defaultCachePolicy = new RequestCachePolicy (RequestCacheLevel.BypassCache);
 #if !MOBILE
 #pragma warning disable 618
 			NetConfig config = ConfigurationSettings.GetConfig ("system.net/settings") as NetConfig;
 #pragma warning restore 618
-			if (config != null) {
-				int x = config.MaxResponseHeadersLength;
-				if (x != -1)
-					x *= 64;
-
-				defaultMaxResponseHeadersLength = x;
-			}
+			if (config != null)
+				defaultMaxResponseHeadersLength = config.MaxResponseHeadersLength;
 #endif
 		}
 
@@ -169,32 +174,13 @@ namespace System.Net
 		}
 #endif
 
-		[Obsolete ("Serialization is obsoleted for this type", false)]
+		[Obsolete ("Serialization is obsoleted for this type.  http://go.microsoft.com/fwlink/?linkid=14202")]
 		protected HttpWebRequest (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
-			SerializationInfo info = serializationInfo;
-
-			requestUri = (Uri)info.GetValue ("requestUri", typeof (Uri));
-			actualUri = (Uri)info.GetValue ("actualUri", typeof (Uri));
-			allowAutoRedirect = info.GetBoolean ("allowAutoRedirect");
-			allowBuffering = info.GetBoolean ("allowBuffering");
-			certificates = (X509CertificateCollection)info.GetValue ("certificates", typeof (X509CertificateCollection));
-			connectionGroup = info.GetString ("connectionGroup");
-			contentLength = info.GetInt64 ("contentLength");
-			webHeaders = (WebHeaderCollection)info.GetValue ("webHeaders", typeof (WebHeaderCollection));
-			keepAlive = info.GetBoolean ("keepAlive");
-			maxAutoRedirect = info.GetInt32 ("maxAutoRedirect");
-			mediaType = info.GetString ("mediaType");
-			method = info.GetString ("method");
-			initialMethod = info.GetString ("initialMethod");
-			pipelined = info.GetBoolean ("pipelined");
-			version = (Version)info.GetValue ("version", typeof (Version));
-			proxy = (IWebProxy)info.GetValue ("proxy", typeof (IWebProxy));
-			sendChunked = info.GetBoolean ("sendChunked");
-			timeout = info.GetInt32 ("timeout");
-			redirects = info.GetInt32 ("redirects");
-			host = info.GetString ("host");
-			ResetAuthorization ();
+			// In CoreFX, attempting to serialize this class fails due to
+			// non-serializable fields, so this constructor never gets called.
+			// They're throwing PlatformNotSupportedException() in here.
+			throw new SerializationException ();
 		}
 
 #if MONO_WEB_DEBUG
@@ -245,11 +231,8 @@ namespace System.Net
 		}
 
 		public virtual bool AllowReadStreamBuffering {
-			get { return false; }
-			set {
-				if (value)
-					throw new InvalidOperationException ();
-			}
+			get { return allowReadStreamBuffering; }
+			set { allowReadStreamBuffering = value; }
 		}
 
 		static Exception GetMustImplement ()
@@ -309,19 +292,17 @@ namespace System.Net
 			set {
 				CheckRequestStarted ();
 
-				if (string.IsNullOrEmpty (value)) {
+				if (string.IsNullOrWhiteSpace (value)) {
 					webHeaders.RemoveInternal ("Connection");
 					return;
 				}
 
 				string val = value.ToLowerInvariant ();
 				if (val.Contains ("keep-alive") || val.Contains ("close"))
-					throw new ArgumentException ("Keep-Alive and Close may not be set with this property");
+					throw new ArgumentException (SR.net_connarg, nameof (value));
 
-				if (keepAlive)
-					value = value + ", Keep-Alive";
-
-				webHeaders.CheckUpdate ("Connection", value);
+				string checkedValue = HttpValidationHelpers.CheckBadHeaderValueChars (value);
+				webHeaders.CheckUpdate ("Connection", checkedValue);
 			}
 		}
 
@@ -393,23 +374,15 @@ namespace System.Net
 #if !MOBILE
 		[MonoTODO]
 		public static new RequestCachePolicy DefaultCachePolicy {
-			get {
-				throw GetMustImplement ();
-			}
-			set {
-				throw GetMustImplement ();
-			}
+			get { return defaultCachePolicy; }
+			set { defaultCachePolicy = value; }
 		}
 #endif
 
 		[MonoTODO]
 		public static int DefaultMaximumErrorResponseLength {
-			get {
-				throw GetMustImplement ();
-			}
-			set {
-				throw GetMustImplement ();
-			}
+			get { return defaultMaximumErrorResponseLength; }
+			set { defaultMaximumErrorResponseLength = value; }
 		}
 
 		public string Expect {
@@ -461,40 +434,40 @@ namespace System.Net
 		}
 
 		public string Host {
+
 			get {
-				if (host == null)
-					return actualUri.Authority;
-				return host;
+				Uri uri = hostUri ?? Address;
+				return (hostUri == null || !hostHasPort) && Address.IsDefaultPort ?
+				    uri.Host : uri.Host + ":" + uri.Port;
 			}
 			set {
+				CheckRequestStarted ();
+
 				if (value == null)
-					throw new ArgumentNullException ("value");
+					throw new ArgumentNullException (nameof (value));
 
-				if (!CheckValidHost (actualUri.Scheme, value))
-					throw new ArgumentException ("Invalid host: " + value);
+				Uri uri;
+				if ((value.IndexOf ('/') != -1) || (!TryGetHostUri (value, out uri)))
+					throw new ArgumentException (SR.net_invalid_host, nameof (value));
 
-				host = value;
+				hostUri = uri;
+
+				// Determine if the user provided string contains a port
+				if (!hostUri.IsDefaultPort) {
+					hostHasPort = true;
+				} else if (value.IndexOf (':') == -1) {
+					hostHasPort = false;
+				} else {
+					int endOfIPv6Address = value.IndexOf (']');
+					hostHasPort = endOfIPv6Address == -1 || value.LastIndexOf (':') > endOfIPv6Address;
+				}
 			}
 		}
 
-		static bool CheckValidHost (string scheme, string val)
+		bool TryGetHostUri (string hostName, out Uri hostUri)
 		{
-			if (val.Length == 0)
-				return false;
-
-			if (val[0] == '.')
-				return false;
-
-			int idx = val.IndexOf ('/');
-			if (idx >= 0)
-				return false;
-
-			IPAddress ipaddr;
-			if (IPAddress.TryParse (val, out ipaddr))
-				return true;
-
-			string u = scheme + "://" + val + "/";
-			return Uri.IsWellFormedUriString (u, UriKind.Absolute);
+			string s = Address.Scheme + "://" + hostName + Address.PathAndQuery;
+			return Uri.TryCreate (s, UriKind.Absolute, out hostUri);
 		}
 
 		public DateTime IfModifiedSince {
@@ -539,7 +512,13 @@ namespace System.Net
 		[MonoTODO ("Use this")]
 		public int MaximumResponseHeadersLength {
 			get { return maxResponseHeadersLength; }
-			set { maxResponseHeadersLength = value; }
+			set {
+				CheckRequestStarted ();
+				if (value < 0 && value != System.Threading.Timeout.Infinite)
+					throw new ArgumentOutOfRangeException (nameof (value), SR.net_toosmall);
+
+				maxResponseHeadersLength = value;
+			}
 		}
 
 		[MonoTODO ("Use this")]
@@ -551,11 +530,10 @@ namespace System.Net
 		public int ReadWriteTimeout {
 			get { return readWriteTimeout; }
 			set {
-				if (requestSent)
-					throw new InvalidOperationException ("The request has already been sent.");
+				CheckRequestStarted ();
 
-				if (value < -1)
-					throw new ArgumentOutOfRangeException ("value", "Must be >= -1");
+				if (value <= 0 && value != System.Threading.Timeout.Infinite)
+					throw new ArgumentOutOfRangeException (nameof (value), SR.net_io_timeout_use_gt_zero);
 
 				readWriteTimeout = value;
 			}
@@ -563,8 +541,15 @@ namespace System.Net
 
 		[MonoTODO]
 		public int ContinueTimeout {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				return continueTimeout;
+			}
+			set {
+				CheckRequestStarted ();
+				if ((value < 0) && (value != System.Threading.Timeout.Infinite))
+					throw new ArgumentOutOfRangeException (nameof (value), SR.net_io_timeout_use_ge_zero);
+				continueTimeout = value;
+			}
 		}
 
 		public string MediaType {
@@ -577,8 +562,10 @@ namespace System.Net
 		public override string Method {
 			get { return this.method; }
 			set {
-				if (value == null || value.Trim () == "")
-					throw new ArgumentException ("not a valid method");
+				if (string.IsNullOrEmpty (value))
+					throw new ArgumentException (SR.net_badmethod, nameof (value));
+				if (HttpValidationHelpers.IsInvalidMethodOrHeaderString (value))
+					throw new ArgumentException (SR.net_badmethod, nameof (value));
 
 				method = value.ToUpperInvariant ();
 				if (method != "HEAD" && method != "GET" && method != "POST" && method != "PUT" &&
@@ -603,7 +590,7 @@ namespace System.Net
 			get { return version; }
 			set {
 				if (value != HttpVersion.Version10 && value != HttpVersion.Version11)
-					throw new ArgumentException ("value");
+					throw new ArgumentException (SR.net_wrongversion, nameof (value));
 
 				force_version = true;
 				version = value;
@@ -672,22 +659,25 @@ namespace System.Net
 			get { return webHeaders["Transfer-Encoding"]; }
 			set {
 				CheckRequestStarted ();
-				string val = value;
-				if (val != null)
-					val = val.Trim ().ToLower ();
 
-				if (val == null || val.Length == 0) {
+				if (string.IsNullOrWhiteSpace (value)) {
 					webHeaders.RemoveInternal ("Transfer-Encoding");
 					return;
 				}
 
-				if (val == "chunked")
-					throw new ArgumentException ("Chunked encoding must be set with the SendChunked property");
+				string val = value.ToLower ();
+				//
+				// prevent them from adding chunked, or from adding an Encoding without
+				// turning on chunked, the reason is due to the HTTP Spec which prevents
+				// additional encoding types from being used without chunked
+				//
+				if (val.Contains ("chunked"))
+					throw new ArgumentException (SR.net_nochunked, nameof (value));
+				else if (!SendChunked)
+					throw new InvalidOperationException (SR.net_needchunked);
 
-				if (!sendChunked)
-					throw new ArgumentException ("SendChunked must be True", "value");
-
-				webHeaders.CheckUpdate ("Transfer-Encoding", value);
+				string checkedValue = HttpValidationHelpers.CheckBadHeaderValueChars (value);
+				webHeaders.CheckUpdate ("Transfer-Encoding", checkedValue);
 			}
 		}
 
@@ -863,7 +853,7 @@ namespace System.Net
 			}
 		}
 
-		async Task<Stream> MyGetRequestStreamAsync (CancellationToken cancellationToken)
+		Task<Stream> MyGetRequestStreamAsync (CancellationToken cancellationToken)
 		{
 			if (Aborted)
 				throw CreateRequestAbortedException ();
@@ -894,14 +884,11 @@ namespace System.Net
 				}
 			}
 
-			return await operation.GetRequestStream ().ConfigureAwait (false);
+			return operation.GetRequestStream ();
 		}
 
 		public override IAsyncResult BeginGetRequestStream (AsyncCallback callback, object state)
 		{
-			if (Aborted)
-				throw CreateRequestAbortedException ();
-
 			return TaskToApm.Begin (RunWithTimeout (MyGetRequestStreamAsync), callback, state);
 		}
 
@@ -932,11 +919,27 @@ namespace System.Net
 			throw new NotImplementedException ();
 		}
 
-		internal static async Task<T> RunWithTimeout<T> (Func<CancellationToken, Task<T>> func, int timeout, Action abort)
+		public override Task<Stream> GetRequestStreamAsync ()
 		{
-			using (var cts = new CancellationTokenSource ()) {
+			return RunWithTimeout (MyGetRequestStreamAsync);
+		}
+
+		internal static Task<T> RunWithTimeout<T> (
+			Func<CancellationToken, Task<T>> func, int timeout, Action abort)
+		{
+			// Call `func` here to propagate any potential exception that it
+			// might throw to our caller rather than returning a faulted task.
+			var cts = new CancellationTokenSource ();
+			var workerTask = func (cts.Token);
+			return RunWithTimeoutWorker (workerTask, timeout, abort, cts);
+		}
+
+		static async Task<T> RunWithTimeoutWorker<T> (
+			Task<T> workerTask, int timeout, Action abort,
+			CancellationTokenSource cts)
+		{
+			try {
 				var timeoutTask = Task.Delay (timeout);
-				var workerTask = func (cts.Token);
 				var ret = await Task.WhenAny (workerTask, timeoutTask).ConfigureAwait (false);
 				if (ret == timeoutTask) {
 					try {
@@ -948,6 +951,8 @@ namespace System.Net
 					throw new WebException (SR.net_timeout, WebExceptionStatus.Timeout);
 				}
 				return workerTask.Result;
+			} finally {
+				cts.Dispose ();
 			}
 		}
 
@@ -1004,7 +1009,7 @@ namespace System.Net
 
 					WebConnection.Debug ($"HWR GET RESPONSE LOOP: Req={ID} {auth_state.NtlmAuthState}");
 
-					writeStream = await operation.GetRequestStream ();
+					writeStream = await operation.GetRequestStreamInternal ();
 					await writeStream.WriteRequestAsync (cancellationToken).ConfigureAwait (false);
 
 					stream = await operation.GetResponseStream ();
@@ -1228,34 +1233,13 @@ namespace System.Net
 		void ISerializable.GetObjectData (SerializationInfo serializationInfo,
 		   				  StreamingContext streamingContext)
 		{
-			GetObjectData (serializationInfo, streamingContext);
+			throw new SerializationException ();
 		}
 
 		protected override void GetObjectData (SerializationInfo serializationInfo,
 			StreamingContext streamingContext)
 		{
-			SerializationInfo info = serializationInfo;
-
-			info.AddValue ("requestUri", requestUri, typeof (Uri));
-			info.AddValue ("actualUri", actualUri, typeof (Uri));
-			info.AddValue ("allowAutoRedirect", allowAutoRedirect);
-			info.AddValue ("allowBuffering", allowBuffering);
-			info.AddValue ("certificates", certificates, typeof (X509CertificateCollection));
-			info.AddValue ("connectionGroup", connectionGroup);
-			info.AddValue ("contentLength", contentLength);
-			info.AddValue ("webHeaders", webHeaders, typeof (WebHeaderCollection));
-			info.AddValue ("keepAlive", keepAlive);
-			info.AddValue ("maxAutoRedirect", maxAutoRedirect);
-			info.AddValue ("mediaType", mediaType);
-			info.AddValue ("method", method);
-			info.AddValue ("initialMethod", initialMethod);
-			info.AddValue ("pipelined", pipelined);
-			info.AddValue ("version", version, typeof (Version));
-			info.AddValue ("proxy", proxy, typeof (IWebProxy));
-			info.AddValue ("sendChunked", sendChunked);
-			info.AddValue ("timeout", timeout);
-			info.AddValue ("redirects", redirects);
-			info.AddValue ("host", host);
+			throw new SerializationException ();
 		}
 
 		void CheckRequestStarted ()
@@ -1384,7 +1368,19 @@ namespace System.Net
 				webHeaders.ChangeInternal (connectionHeader, "close");
 			}
 
-			webHeaders.SetInternal ("Host", Host);
+			string host;
+			if (hostUri != null) {
+				if (hostHasPort)
+					host = hostUri.GetComponents (UriComponents.HostAndPort, UriFormat.Unescaped);
+				else
+					host = hostUri.GetComponents (UriComponents.Host, UriFormat.Unescaped);
+			} else if (Address.IsDefaultPort) {
+				host = Address.GetComponents (UriComponents.Host, UriFormat.Unescaped);
+			} else {
+				host = Address.GetComponents (UriComponents.HostAndPort, UriFormat.Unescaped);
+			}
+			webHeaders.SetInternal ("Host", host);
+
 			if (cookieContainer != null) {
 				string cookieHeader = cookieContainer.GetCookieHeader (actualUri);
 				if (cookieHeader != "")
