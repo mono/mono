@@ -35,6 +35,7 @@ build_SUBDIRS :=  \
 	System.Security \
 	Mono.Posix \
 	System.Core \
+	System.Configuration \
 	System.ComponentModel.Composition.4.5 \
 	System.Numerics \
 	System.Xml.Linq \
