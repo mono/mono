@@ -18,6 +18,8 @@
 #include <mono/metadata/object-internals.h>
 #include <mono/utils/mono-compiler.h>
 
+G_BEGIN_DECLS
+
 void
 mono_mmap_close (void *mmap_handle, MonoError *error);
 
@@ -38,5 +40,7 @@ mono_mmap_map (void *handle, gint64 offset, gint64 *size, int access, void **mma
 
 gboolean
 mono_mmap_unmap (void *base_address, MonoError *error);
+
+G_END_DECLS
 
 #endif /* _MONO_METADATA_FILE_MMAP_H_ */
