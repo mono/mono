@@ -25,7 +25,11 @@
 MONO_BEGIN_DECLS
 
 /* This is a copy of System.Threading.ThreadState */
-typedef enum {
+enum
+#ifndef __cplusplus // FIXME
+MonoThreadState
+#endif
+{
 	ThreadState_Running = 0x00000000,
 	ThreadState_SuspendRequested = 0x00000002,
 	ThreadState_Background = 0x00000004,
@@ -35,8 +39,12 @@ typedef enum {
 	ThreadState_Suspended = 0x00000040,
 	ThreadState_AbortRequested = 0x00000080,
 	ThreadState_Aborted = 0x00000100
-} MonoThreadState; 
-
+};
+#ifdef __cplusplus
+typedef int MonoThreadState;
+#else
+typedef enum MonoThreadState MonoThreadState;
+#endif
 
 #ifdef __cplusplus
 
@@ -88,12 +96,8 @@ operator^ (Enum a, Enum b)			\
 
 #endif
 
-<<<<<<< HEAD
-GENERATE_BIT_ENUM_OPERATORS (MonoThreadState, guint32)
-=======
 //FIXMEcplusplus
 //GENERATE_BIT_ENUM_OPERATORS (MonoThreadState, guint32)
->>>>>>> 8e2f90471fc... fixup! [Cplusplus] Enums are not ints and are dealt with either by casting or providing operator overloads. Also do not duplicate enum types, so they do not go out of sync again.
 
 /* This is a copy of System.Threading.ApartmentState */
 typedef enum {
@@ -130,13 +134,22 @@ typedef void (*MonoThreadNotifyPendingExcFunc) (gpointer info);
 void
 mono_thread_callbacks_init (void);
 
-typedef enum {
+enum
+#ifndef __cplusplus // FIXME
+MonoThreadCreateFlags
+#endif
+{
 	MONO_THREAD_CREATE_FLAGS_NONE         = 0x0,
 	MONO_THREAD_CREATE_FLAGS_THREADPOOL   = 0x1,
 	MONO_THREAD_CREATE_FLAGS_DEBUGGER     = 0x2,
 	MONO_THREAD_CREATE_FLAGS_FORCE_CREATE = 0x4,
 	MONO_THREAD_CREATE_FLAGS_SMALL_STACK  = 0x8,
-} MonoThreadCreateFlags;
+};
+#ifdef __cplusplus
+typedef int MonoThreadCreateFlags;
+#else
+typedef enum MonoThreadCreateFlags MonoThreadCreateFlags;
+#endif
 
 //FIXMEcplusplus
 //GENERATE_BIT_ENUM_OPERATORS (MonoThreadCreateFlags, int)
