@@ -108,6 +108,8 @@
 #include <sys/utsname.h>
 #endif
 
+G_BEGIN_DECLS // lack of prototypes
+
 /* icalls are defined ICALL_EXPORT so they are not static */
 #ifdef __GNUC__
 #pragma GCC diagnostic ignored "-Wmissing-prototypes"
@@ -8206,9 +8208,9 @@ mono_lookup_internal_call_full (MonoMethod *method, mono_bool *uses_handles)
 		/* Fail only when the result is actually used */
 		/* mono_marshal_get_native_wrapper () depends on this */
 		if (method->klass == mono_defaults.string_class && !strcmp (method->name, ".ctor"))
-			return ves_icall_System_String_ctor_RedirectToCreateString;
+			return (gpointer)ves_icall_System_String_ctor_RedirectToCreateString;
 		else
-			return no_icall_table;
+			return (gpointer)no_icall_table;
 	} else {
 		res = icall_table.lookup (classname, sigstart - mlen, sigstart, uses_handles);
 		g_free (classname);
@@ -8497,3 +8499,5 @@ ves_icall_System_GC_RecordPressure (gint64 value, MonoError *error)
 {
 	mono_gc_add_memory_pressure (value);
 }
+
+G_END_DECLS // lack of prototypes

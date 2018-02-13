@@ -12,6 +12,8 @@
 
 #define MONO_ICALL_TABLE_CALLBACKS_VERSION 1
 
+G_BEGIN_DECLS
+
 typedef struct {
 	int version;
 	gpointer (*lookup) (char *classname, char *methodname, char *sigstart, gboolean *uses_handles);
@@ -23,5 +25,7 @@ mono_install_icall_table_callbacks (MonoIcallTableCallbacks *cb);
 
 MONO_API void
 mono_icall_table_init (void);
+
+G_END_DECLS
 
 #endif
