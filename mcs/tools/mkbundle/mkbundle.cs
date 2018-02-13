@@ -48,8 +48,19 @@ class MakeBundle {
 	static bool keeptemp = false;
 	static bool compile_only = false;
 	static bool static_link = false;
-	static string config_file = null;
+
+	// Points to the $sysconfig/mono/4.5/machine.config, which contains System.Configuration settings
 	static string machine_config_file = null;
+
+        // By default, we automatically bundle a machine-config, use this to turn off the behavior.
+        static bool no_machine_config = false;
+
+	// Points to the $sysconfig/mono/config file, contains <dllmap> and others
+	static string config_file = null;
+
+        // By default, we automatically bundle the above config file, use this to turn off the behavior.
+	static bool no_config = false;
+	
 	static string config_dir = null;
 	static string style = "linux";
 	static bool bundled_header = false;
@@ -65,7 +76,7 @@ class MakeBundle {
 	static string fetch_target = null;
 	static bool custom_mode = true;
 	static string embedded_options = null;
-
+	
 	static string runtime = null;
 
 	static bool aot_compile = false;
@@ -148,7 +159,7 @@ class MakeBundle {
 					return 1;
 				}
 				if (sdk_path != null || runtime != null)
-					Error ("You can only specify one of --runtime, --sdk or --cross");
+					Error ("You can only specify one of --runtime, --sdk or --cross {sdk_path}/{runtime}");
 				custom_mode = false;
 				autodeps = true;
 				cross_target = args [++i];
@@ -288,6 +299,12 @@ class MakeBundle {
 
 				if (!quiet)
 					Console.WriteLine ("WARNING:\n  Check that the machine.config file you are bundling\n  doesn't contain sensitive information specific to this machine.");
+				break;
+                        case "--no-machine-config":
+                                no_machine_config = true;
+                                break;
+			case "--no-config":
+				no_config = true;
 				break;
 			case "--config-dir":
 				if (i+1 == top) {
@@ -514,6 +531,7 @@ class MakeBundle {
 
 	static void VerifySdk (string path)
 	{
+		Console.WriteLine ("at: " + path);
 		if (!Directory.Exists (path))
 			Error ($"The specified SDK path does not exist: {path}");
 		runtime = Path.Combine (sdk_path, "bin", "mono");
@@ -523,6 +541,18 @@ class MakeBundle {
 		if (!Directory.Exists (lib_path))
 			Error ($"The SDK location does not contain a {path}/lib/mono/4.5 directory");
 		link_paths.Add (lib_path);
+                if (machine_config_file == null && !no_machine_config) {
+                        machine_config_file = Path.Combine (path, "etc", "mono", "4.5", "machine.config");
+                        if (!File.Exists (machine_config_file)){
+                                Error ($"Could not locate the file machine.config file at ${machine_config_file} use --machine-config FILE or --no-machine-config");
+                        }
+                }
+                if (config_file == null && !no_config) {
+                        config_file = Path.Combine (path, "etc", "mono", "config");
+                        if (!File.Exists (config_file)){
+                                Error ($"Could not locate the file config file at ${config_file} use --config FILE or --no-config");
+                        }
+                }
 	}
 
 	static string targets_dir = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.Personal), ".mono", "targets");
