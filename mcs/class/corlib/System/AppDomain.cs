@@ -1431,6 +1431,30 @@ namespace System {
 				arrResponse = null;
 		}
 
+		static void FireProcessExit (object state)
+		{
+			try {
+				var procExit = CurrentDomain.ProcessExit;
+				if (procExit != null)
+					procExit (CurrentDomain, null);
+			} catch (Exception e) {
+				NonFatalUnhandledException (e);
+			} finally {
+				lock (state) {
+					Monitor.Pulse (state);
+				}
+			}
+		}
+
+		//XXX This is called by the runtime shutdown process, see runtime.c
+		static bool RunProcessExit ()
+		{
+			object obj = new object ();
+			lock (obj) {
+				ThreadPool.UnsafeQueueUserWorkItem (FireProcessExit, obj);
+				return Monitor.Wait (obj, 3000);
+			}
+		}
 #pragma warning restore 169
 
 		// End of methods called from the runtime
@@ -1461,31 +1485,6 @@ namespace System {
 		public event UnhandledExceptionEventHandler UnhandledException;
 
 		public event EventHandler<FirstChanceExceptionEventArgs> FirstChanceException;
-
-		static void FireProcessExit (object state)
-		{
-			try {
-				var procExit = CurrentDomain.ProcessExit;
-				if (procExit != null)
-					procExit (CurrentDomain, null);
-			} catch (Exception e) {
-				NonFatalUnhandledException (e);
-			} finally {
-				lock (state) {
-					Monitor.Pulse (state);
-				}
-			}
-		}
-
-		//XXX This is called by the runtime shutdown process, see runtime.c
-		static bool RunProcessExit ()
-		{
-			object obj = new object ();
-			lock (obj) {
-				ThreadPool.UnsafeQueueUserWorkItem (FireProcessExit, obj);
-				return Monitor.Wait (obj, 3000);
-			}
-		}
 
 		[MonoTODO]
 		public bool IsHomogenous {
