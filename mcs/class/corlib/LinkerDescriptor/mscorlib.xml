@@ -248,10 +248,6 @@
 		<type fullname="System.MissingMethodException">
 			<!-- mini.c (mono_jit_compiler_method_inner) mono_exception_from_name_msg -->
 			<method signature="System.Void .ctor(System.String)" />
-			<!-- exception.c (mono_get_exception_type_load) mono_exception_from_name_two_strings -->
-			<method signature="System.Void .ctor(System.String,System.String)" />
-			<!-- exception.c  mono_exception_from_name_four_strings -->
-			<method signature="System.Void .ctor(System.String,System.String,System.String,System.String)" />
 		</type>
 		
 		<!-- threadpool.c: mono_thread_pool_init (assert) -->
