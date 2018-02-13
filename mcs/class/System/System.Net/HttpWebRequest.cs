@@ -951,6 +951,8 @@ namespace System.Net
 					throw new WebException (SR.net_timeout, WebExceptionStatus.Timeout);
 				}
 				return workerTask.Result;
+			} catch (Exception ex) {
+				throw FlattenException (ex);
 			} finally {
 				cts.Dispose ();
 			}
