@@ -14,7 +14,6 @@
 
 #include <config.h>
 #include <glib.h>
-
 #include <mono/metadata/object-internals.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/metadata/icalls.h>
