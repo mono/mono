@@ -123,7 +123,7 @@ namespace System {
 			else if (magic == 0x21e)
 				intOffset = 4;
 			else
-				throw new Exception (String.Format ("Magic number is wrong: {0}", magic));
+				throw new Exception (String.Format ("Magic number is unexpected: {0}", magic));
 		}
 
 		void ReadHeader (byte [] buffer, ref int position)
