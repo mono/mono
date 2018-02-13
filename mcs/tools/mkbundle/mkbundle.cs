@@ -514,6 +514,7 @@ class MakeBundle {
 
 	static void VerifySdk (string path)
 	{
+		Console.WriteLine ("at: " + path);
 		if (!Directory.Exists (path))
 			Error ($"The specified SDK path does not exist: {path}");
 		runtime = Path.Combine (sdk_path, "bin", "mono");
