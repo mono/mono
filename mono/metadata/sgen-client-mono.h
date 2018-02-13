@@ -243,33 +243,6 @@ sgen_client_object_has_critical_finalizer (GCObject *obj)
 const char* sgen_client_vtable_get_namespace (GCVTable vtable);
 const char* sgen_client_vtable_get_name (GCVTable vtable);
 
-#ifdef __cplusplus
-
-extern "C++"
-{
-
-inline const char*
-sgen_client_vtable_get_namespace (gpointer vtable)
-{
-	return sgen_client_vtable_get_namespace ((GCVTable)vtable);
-}
-
-inline const char*
-sgen_client_vtable_get_name (gpointer vtable)
-{
-	return sgen_client_vtable_get_name ((GCVTable)vtable);
-}
-
-inline mword
-sgen_safe_object_get_size (gpointer obj)
-{
-	return sgen_safe_object_get_size ((GCObject*)obj);
-}
-
-}
-
-#endif
-
 static gboolean G_GNUC_UNUSED
 sgen_client_bridge_need_processing (void)
 {
@@ -417,8 +390,8 @@ static void
 mono_binary_protocol_alloc_generic (gpointer obj, gpointer vtable, size_t size, gboolean pinned)
 {
 #ifdef ENABLE_DTRACE
-	const char *name_space = sgen_client_vtable_get_namespace (vtable);
-	const char *name = sgen_client_vtable_get_name (vtable);
+	const char *name_space = sgen_client_vtable_get_namespace ((GCVTable)vtable);
+	const char *name = sgen_client_vtable_get_name ((GCVTable)vtable);
 
 	if (sgen_ptr_in_nursery (obj)) {
 		if (G_UNLIKELY (MONO_GC_NURSERY_OBJ_ALLOC_ENABLED ()))
@@ -449,7 +422,7 @@ sgen_client_binary_protocol_alloc_pinned (gpointer obj, gpointer vtable, size_t 
 static void G_GNUC_UNUSED
 sgen_client_binary_protocol_alloc_degraded (gpointer obj, gpointer vtable, size_t size, gpointer provenance)
 {
-	MONO_GC_MAJOR_OBJ_ALLOC_DEGRADED ((mword)obj, size, sgen_client_vtable_get_namespace (vtable), sgen_client_vtable_get_name (vtable));
+	MONO_GC_MAJOR_OBJ_ALLOC_DEGRADED ((mword)obj, size, sgen_client_vtable_get_namespace ((GCVTable)vtable), sgen_client_vtable_get_name ((GCVTable)vtable));
 }
 
 static void G_GNUC_UNUSED
@@ -474,8 +447,8 @@ sgen_client_binary_protocol_pin (gpointer obj, gpointer vtable, size_t size)
 	if (G_UNLIKELY (MONO_GC_OBJ_PINNED_ENABLED ())) {
 		int gen = sgen_ptr_in_nursery (obj) ? GENERATION_NURSERY : GENERATION_OLD;
 		MONO_GC_OBJ_PINNED ((mword)obj,
-				sgen_safe_object_get_size (obj),
-				sgen_client_vtable_get_namespace (vtable), sgen_client_vtable_get_name (vtable), gen);
+				sgen_safe_object_get_size ((GCObject*)obj),
+				sgen_client_vtable_get_namespace ((GCVTable)vtable), sgen_client_vtable_get_name ((GCVTable)vtable), gen);
 	}
 #endif
 }
@@ -515,8 +488,8 @@ sgen_client_binary_protocol_cement (gpointer ptr, gpointer vtable, size_t size)
 {
 #ifdef ENABLE_DTRACE
 	if (G_UNLIKELY (MONO_GC_OBJ_CEMENTED_ENABLED())) {
-		MONO_GC_OBJ_CEMENTED ((mword)ptr, sgen_safe_object_get_size (ptr),
-				sgen_client_vtable_get_namespace (vtable), sgen_client_vtable_get_name (vtable));
+		MONO_GC_OBJ_CEMENTED ((mword)ptr, sgen_safe_object_get_size ((GCObject*)ptr),
+				sgen_client_vtable_get_namespace ((GCVTable)vtable), sgen_client_vtable_get_name ((GCVTable)vtable));
 	}
 #endif
 }
@@ -528,7 +501,7 @@ sgen_client_binary_protocol_copy (gpointer from, gpointer to, gpointer vtable, s
 	if (G_UNLIKELY (MONO_GC_OBJ_MOVED_ENABLED ())) {
 		int dest_gen = sgen_ptr_in_nursery (to) ? GENERATION_NURSERY : GENERATION_OLD;
 		int src_gen = sgen_ptr_in_nursery (from) ? GENERATION_NURSERY : GENERATION_OLD;
-		MONO_GC_OBJ_MOVED ((mword)to, (mword)from, dest_gen, src_gen, size, sgen_client_vtable_get_namespace (vtable), sgen_client_vtable_get_name (vtable));
+		MONO_GC_OBJ_MOVED ((mword)to, (mword)from, dest_gen, src_gen, size, sgen_client_vtable_get_namespace ((GCVTable)vtable), sgen_client_vtable_get_name ((GCVTable)vtable));
 	}
 #endif
 }
@@ -538,8 +511,8 @@ sgen_client_binary_protocol_global_remset (gpointer ptr, gpointer value, gpointe
 {
 #ifdef ENABLE_DTRACE
 	if (G_UNLIKELY (MONO_GC_GLOBAL_REMSET_ADD_ENABLED ())) {
-		MONO_GC_GLOBAL_REMSET_ADD ((mword)ptr, (mword)value, sgen_safe_object_get_size (value),
-				sgen_client_vtable_get_namespace (value_vtable), sgen_client_vtable_get_name (value_vtable));
+		MONO_GC_GLOBAL_REMSET_ADD ((mword)ptr, (mword)value, sgen_safe_object_get_size ((GCObject*)value),
+				sgen_client_vtable_get_namespace ((GCVTable)value_vtable), sgen_client_vtable_get_name ((GCVTable)value_vtable));
 	}
 #endif
 }
@@ -572,7 +545,7 @@ sgen_client_binary_protocol_dislink_update (gpointer link, gpointer obj, gboolea
 		GCVTable vt = obj ? SGEN_LOAD_VTABLE (obj) : NULL;
 		MONO_GC_WEAK_UPDATE ((mword)link,
 				(mword)obj,
-				obj ? sgen_safe_object_get_size (obj) : 0u,
+				obj ? sgen_safe_object_get_size ((GCObject*)obj) : 0u,
 				obj ? sgen_client_vtable_get_namespace (vt) : NULL,
 				obj ? sgen_client_vtable_get_name (vt) : NULL,
 				track ? 1 : 0);
