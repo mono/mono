@@ -91,7 +91,7 @@ ${TESTCMD} --label=System.Runtime.CompilerServices.Unsafe-xunit --timeout=5m mak
 ${TESTCMD} --label=Mono.Debugger.Soft --timeout=5m make -w -C mcs/class/Mono.Debugger.Soft run-test
 ${TESTCMD} --label=Microsoft.CSharp-xunit --timeout=5m make -w -C mcs/class/Microsoft.CSharp run-xunit-test
 ${TESTCMD} --label=Microsoft.Build --timeout=5m make -w -C mcs/class/Microsoft.Build run-test
-${TESTCMD} --label=monodoc --timeout=10m make -w -C mcs/tools/mdoc run-test
+if [[ ${CI_TAGS} == *'win-'* ]]; then ${TESTCMD} --label=monodoc --skip; else ${TESTCMD} --label=monodoc --timeout=10m make -w -C mcs/tools/mdoc run-test; fi
 ${TESTCMD} --label=Microsoft.Build-12 --timeout=10m make -w -C mcs/class/Microsoft.Build run-test PROFILE=xbuild_12
 ${TESTCMD} --label=Microsoft.Build.Engine-12 --timeout=60m make -w -C mcs/class/Microsoft.Build.Engine run-test PROFILE=xbuild_12
 ${TESTCMD} --label=Microsoft.Build.Framework-12 --timeout=60m make -w -C mcs/class/Microsoft.Build.Framework run-test PROFILE=xbuild_12
