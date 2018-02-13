@@ -123,7 +123,7 @@ gboolean mono_gc_user_markers_supported (void);
  * size bytes will be available from the returned address (ie, descr
  * must not be stored in the returned memory)
  */
-void* mono_gc_alloc_fixed            (size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg);
+MonoObject* mono_gc_alloc_fixed      (size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg);
 void  mono_gc_free_fixed             (void* addr);
 
 /* make sure the gchandle was allocated for an object in domain */
@@ -132,12 +132,12 @@ void     mono_gchandle_free_domain  (MonoDomain *domain);
 
 typedef void (*FinalizerThreadCallback) (gpointer user_data);
 
-void* mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size);
-void* mono_gc_alloc_obj (MonoVTable *vtable, size_t size);
-void* mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length);
-void* mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size);
-void* mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len);
-void* mono_gc_alloc_mature (MonoVTable *vtable, size_t size);
+MonoObject* mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size);
+MonoObject* mono_gc_alloc_obj (MonoVTable *vtable, size_t size);
+MonoArray* mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length);
+MonoArray* mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size);
+MonoString* mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len);
+MonoObject* mono_gc_alloc_mature (MonoVTable *vtable, size_t size);
 MonoGCDescriptor mono_gc_make_descr_for_string (gsize *bitmap, int numbits);
 
 void mono_gc_register_obj_with_weak_fields (MonoObject *obj);
