@@ -1504,5 +1504,23 @@ char* il2cpp_assembly_get_full_name(MonoAssembly *assembly)
     return g_strdup(s.c_str());
 }
 
+const MonoMethod* il2cpp_get_seq_point_method(Il2CppSequencePoint *seqPoint)
+{
+    return il2cpp::utils::Debugger::GetSequencePointMethod(seqPoint);
+}
+
+const MonoClass* il2cpp_get_class_from_index(int index)
+{
+    if (index < 0)
+        return NULL;
+
+    return il2cpp::vm::MetadataCache::GetTypeInfoFromTypeIndex(index);
+}
+
+const MonoType* il2cpp_get_type_from_index(int index)
+{
+    return il2cpp::vm::MetadataCache::GetIl2CppTypeFromIndex(index);
+}
+
 }
 #endif // RUNTIME_IL2CPP
