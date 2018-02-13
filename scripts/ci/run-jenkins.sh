@@ -74,6 +74,12 @@ if [ -x "/usr/bin/dpkg-architecture" ];
 	wget -qO- https://download.mono-project.com/test/new-certs.tgz| tar zx -C ~/.config/.mono/
 fi
 
+if [[ ${CI_TAGS} == *'win-'* ]];
+then
+	mkdir -p ~/.config/.mono/
+	wget -qO- https://download.mono-project.com/test/new-certs.tgz| tar zx -C ~/.config/.mono/
+fi
+
 if [[ ${CI_TAGS} == *'product-sdks-ios'* ]];
    then
 	   echo "DISABLE_ANDROID=1" > sdks/Make.config
