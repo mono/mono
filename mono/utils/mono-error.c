@@ -338,6 +338,7 @@ mono_error_set_specific (MonoError *oerror, int error_code, const char *message)
 
 	error->error_code = error_code;
 	error->full_message = message;
+	error->flags |= MONO_ERROR_FREE_STRINGS;
 }
 
 void
@@ -802,4 +803,5 @@ mono_error_set_first_argument (MonoError *oerror, const char *first_argument)
 {
 	MonoErrorInternal* to = (MonoErrorInternal*)oerror;
 	to->first_argument = g_strdup (first_argument);
+	to->flags |= MONO_ERROR_FREE_STRINGS;
 }
