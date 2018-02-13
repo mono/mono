@@ -2528,8 +2528,8 @@ apply_override (MonoClass *klass, MonoClass *override_class, MonoMethod **vtable
 	GHashTable *map = *override_map;
 	GHashTable *class_map = *override_class_map;
 
-	MonoMethod *prev_override = g_hash_table_lookup (map, decl);
-	MonoClass *prev_override_class = g_hash_table_lookup (class_map, decl);
+	MonoMethod *prev_override = (MonoMethod*)g_hash_table_lookup (map, decl);
+	MonoClass *prev_override_class = (MonoClass*)g_hash_table_lookup (class_map, decl);
 
 	g_hash_table_insert (map, decl, override);
 	g_hash_table_insert (class_map, decl, override_class);
@@ -2559,7 +2559,7 @@ apply_override (MonoClass *klass, MonoClass *override_class, MonoMethod **vtable
 		if (!*conflict_map)
 			*conflict_map = g_hash_table_new (mono_aligned_addr_hash, NULL);
 		GHashTable *cmap = *conflict_map;
-		GSList *entries = g_hash_table_lookup (cmap, decl);
+		GSList *entries = (GSList*)g_hash_table_lookup (cmap, decl);
 		if (!(decl->flags & METHOD_ATTRIBUTE_ABSTRACT))
 			entries = g_slist_prepend (entries, decl);
 		entries = g_slist_prepend (entries, prev_override);
@@ -2588,8 +2588,8 @@ handle_dim_conflicts (MonoMethod **vtable, MonoClass *klass, GHashTable *conflic
 		/* This is O(n^2), but that shouldn't be a problem in practice */
 		for (l = entries; l; l = l->next) {
 			for (l2 = entries; l2; l2 = l2->next) {
-				MonoMethod *m1 = l->data;
-				MonoMethod *m2 = l2->data;
+				MonoMethod *m1 = (MonoMethod*)l->data;
+				MonoMethod *m2 = (MonoMethod*)l2->data;
 				if (!m1 || !m2 || m1 == m2)
 					continue;
 				if (mono_class_is_assignable_from (m1->klass, m2->klass))
@@ -2603,7 +2603,7 @@ handle_dim_conflicts (MonoMethod **vtable, MonoClass *klass, GHashTable *conflic
 		for (l = entries; l; l = l->next) {
 			if (l->data) {
 				nentries ++;
-				impl = l->data;
+				impl = (MonoMethod*)l->data;
 			}
 		}
 		if (nentries > 1) {
@@ -2639,7 +2639,7 @@ handle_dim_conflicts (MonoMethod **vtable, MonoClass *klass, GHashTable *conflic
 		 */
 
 		/* Make a copy of the list from the class mempool */
-		GSList *conflicts = mono_class_alloc0 (klass, g_slist_length (dim_conflicts) * sizeof (GSList));
+		GSList *conflicts = (GSList*)mono_class_alloc0 (klass, g_slist_length (dim_conflicts) * sizeof (GSList));
 		int i = 0;
 		for (l = dim_conflicts; l; l = l->next) {
 			conflicts [i].data = l->data;

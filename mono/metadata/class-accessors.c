@@ -448,7 +448,7 @@ typedef struct {
 void
 mono_class_set_dim_conflicts (MonoClass *klass, GSList *conflicts)
 {
-	DimConflictData *info = mono_class_alloc (klass, sizeof (DimConflictData));
+	DimConflictData *info = (DimConflictData*)mono_class_alloc (klass, sizeof (DimConflictData));
 	info->data = conflicts;
 
 	g_assert (!mono_class_is_ginst (klass));
@@ -463,7 +463,7 @@ mono_class_get_dim_conflicts (MonoClass *klass)
 	if (mono_class_is_ginst (klass))
 		return mono_class_get_dim_conflicts (mono_class_get_generic_class (klass)->container_class);
 
-	DimConflictData *info = mono_property_bag_get (&klass->infrequent_data, PROP_DIM_CONFLICTS);
+	DimConflictData *info = (DimConflictData*)mono_property_bag_get (&klass->infrequent_data, PROP_DIM_CONFLICTS);
 
 	g_assert (info);
 	return info->data;
