@@ -3,4 +3,4 @@
 Assembly/AssemblyInfo.cs
 
 System.ServiceModel/ServiceHostingEnvironment.cs
-../System.ServiceModel/System.ServiceModel.Activation/ServiceHostFactory.cs
+System.ServiceModel.Activation/ServiceHostFactory.cs
