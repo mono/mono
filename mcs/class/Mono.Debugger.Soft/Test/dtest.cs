@@ -4288,6 +4288,7 @@ public class DebuggerTests
 	}
 
 	[Test]
+	[Category("NotWorking")] // flaky, see https://github.com/mono/mono/issues/6997
 	public void StepOutAsync () {
 		vm.Detach ();
 		Start (new string [] { "dtest-app.exe", "step-out-void-async" });
