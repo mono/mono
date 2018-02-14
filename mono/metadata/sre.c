@@ -3421,7 +3421,7 @@ mono_reflection_get_dynamic_overrides (MonoClass *klass, MonoMethod ***overrides
 static gint32
 modulebuilder_get_next_table_index (MonoReflectionModuleBuilder *mb, gint32 table, gint32 num_fields, MonoError *error)
 {
-	mono_error_init (error);
+	error_init (error);
 
 	if (mb->table_indexes == NULL) {
 		MonoArray *arr = mono_array_new_checked (mono_object_domain (&mb->module.obj), mono_defaults.int_class, 64, error);
@@ -3450,7 +3450,7 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 	int i, instance_size, packing_size = 0;
 	guint32 len, idx;
 
-	mono_error_init (error);
+	error_init (error);
 
 	if (klass->parent) {
 		if (!klass->parent->size_inited)
@@ -3533,7 +3533,9 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 			def_values [i].data = (const char *)mono_image_alloc (image, len);
 			memcpy ((gpointer)def_values [i].data, p, len);
 		}
-		mono_dynamic_image_register_token (tb->module->dynamic_image, mono_metadata_make_token (MONO_TABLE_FIELD, first_idx + i), (MonoObject*)fb);
+
+		MonoObjectHandle field_builder_handle = MONO_HANDLE_NEW (MonoObject, fb);
+		mono_dynamic_image_register_token (tb->module->dynamic_image, mono_metadata_make_token (MONO_TABLE_FIELD, first_idx + i), field_builder_handle, MONO_DYN_IMAGE_TOK_NEW);
 	}
 
 	if (!mono_class_has_failure (klass))
