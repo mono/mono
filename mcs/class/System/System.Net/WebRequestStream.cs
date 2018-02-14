@@ -39,7 +39,7 @@ namespace System.Net
 		bool requestWritten;
 		bool allowBuffering;
 		bool sendChunked;
-		TaskCompletionSource<int> pendingWrite;
+		TaskCompletionSource<object> pendingWrite;
 		long totalWritten;
 		byte[] headers;
 		bool headersSent;
@@ -68,12 +68,6 @@ namespace System.Net
 
 		public bool KeepAlive {
 			get;
-		}
-
-		public override long Length {
-			get {
-				throw new NotSupportedException ();
-			}
 		}
 
 		public override bool CanRead => false;
@@ -131,28 +125,38 @@ namespace System.Net
 			Operation.CompleteRequestWritten (this);
 		}
 
-		public override async Task WriteAsync (byte[] buffer, int offset, int size, CancellationToken cancellationToken)
+		public override Task WriteAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
-			WebConnection.Debug ($"{ME} WRITE ASYNC: {buffer.Length}/{offset}/{size}");
-
-			Operation.ThrowIfClosedOrDisposed (cancellationToken);
-
-			if (Operation.WriteBuffer != null)
-				throw new InvalidOperationException ();
-
 			if (buffer == null)
 				throw new ArgumentNullException (nameof (buffer));
 
 			int length = buffer.Length;
 			if (offset < 0 || length < offset)
 				throw new ArgumentOutOfRangeException (nameof (offset));
-			if (size < 0 || (length - offset) < size)
-				throw new ArgumentOutOfRangeException (nameof (size));
+			if (count < 0 || (length - offset) < count)
+				throw new ArgumentOutOfRangeException (nameof (count));
 
-			var myWriteTcs = new TaskCompletionSource<int> ();
+			WebConnection.Debug ($"{ME} WRITE ASYNC: {buffer.Length}/{offset}/{count}");
+
+			if (cancellationToken.IsCancellationRequested)
+				return Task.FromCanceled (cancellationToken);
+
+			Operation.ThrowIfClosedOrDisposed (cancellationToken);
+
+			if (Operation.WriteBuffer != null)
+				throw new InvalidOperationException ();
+
+			var myWriteTcs = new TaskCompletionSource<object> ();
 			if (Interlocked.CompareExchange (ref pendingWrite, myWriteTcs, null) != null)
 				throw new InvalidOperationException (SR.GetString (SR.net_repcall));
 
+			return WriteAsyncInner (buffer, offset, count, myWriteTcs, cancellationToken);
+		}
+
+		async Task WriteAsyncInner (byte[] buffer, int offset, int size,
+		                            TaskCompletionSource<object> myWriteTcs,
+		                            CancellationToken cancellationToken)
+		{
 			try {
 				await ProcessWrite (buffer, offset, size, cancellationToken).ConfigureAwait (false);
 
@@ -162,7 +166,7 @@ namespace System.Net
 					await FinishWriting (cancellationToken);
 
 				pendingWrite = null;
-				myWriteTcs.TrySetResult (0);
+				myWriteTcs.TrySetResult (null);
 			} catch (Exception ex) {
 				KillBuffer ();
 				closed = true;
@@ -364,7 +368,7 @@ namespace System.Net
 				cts.CancelAfter (WriteTimeout);
 				var timeoutTask = Task.Delay (WriteTimeout);
 				while (true) {
-					var myWriteTcs = new TaskCompletionSource<int> ();
+					var myWriteTcs = new TaskCompletionSource<object> ();
 					var oldTcs = Interlocked.CompareExchange (ref pendingWrite, myWriteTcs, null);
 					if (oldTcs == null)
 						break;

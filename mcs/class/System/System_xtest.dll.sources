@@ -25,10 +25,11 @@ System/RemoteExecutorTests.cs
 ../../../external/corefx/src/Common/tests/System/Net/Configuration.cs
 ../../../external/corefx/src/Common/tests/System/Net/Configuration.Http.cs
 ../../../external/corefx/src/Common/tests/System/Net/Configuration.Certificates.cs
-#../../../external/corefx/src/System.Net.Requests/tests/*.cs
+../../../external/corefx/src/System.Net.Requests/tests/*.cs:AuthenticationManagerTest.cs,FtpWebRequestTest.cs
+XTest/System.Net/HttpWebRequestTest.cs
 
 # System.Net.WebHeaderCollection
-#../../../external/corefx/src/System.Net.WebHeaderCollection/tests/*.cs
+../../../external/corefx/src/System.Net.WebHeaderCollection/tests/*.cs
 
 # System.Net.NameResolution
 #../../../external/corefx/src/System.Net.NameResolution/tests/FunctionalTests/*.cs
