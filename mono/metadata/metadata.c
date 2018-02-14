@@ -3351,19 +3351,21 @@ mono_metadata_parse_generic_inst (MonoImage *m, MonoGenericContainer *container,
 				  int count, const char *ptr, const char **rptr, MonoError *error)
 {
 	MonoType **type_argv;
-	MonoGenericInst *ginst;
-	int i;
+	MonoGenericInst *ginst = NULL;
+	int i, parse_count = 0;
 
 	error_init (error);
 	type_argv = g_new0 (MonoType*, count);
 
 	for (i = 0; i < count; i++) {
-		MonoType *t = mono_metadata_parse_type_checked (m, container, 0, FALSE, ptr, &ptr, error);
-		if (!t) {
-			g_free (type_argv);
-			return NULL;
-		}
+		/* this can be a transient type, mono_metadata_get_generic_inst will allocate
+		 * a canonical one, if needed.
+		 */
+		MonoType *t = mono_metadata_parse_type_checked (m, container, 0, TRUE, ptr, &ptr, error);
+		if (!t)
+			goto cleanup;
 		type_argv [i] = t;
+		parse_count++;
 	}
 
 	if (rptr)
@@ -3371,6 +3373,9 @@ mono_metadata_parse_generic_inst (MonoImage *m, MonoGenericContainer *container,
 
 	ginst = mono_metadata_get_generic_inst (count, type_argv);
 
+cleanup:
+	for (i = 0; i < parse_count; i++)
+		mono_metadata_free_type (type_argv [i]);
 	g_free (type_argv);
 
 	return ginst;
