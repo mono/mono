@@ -62,12 +62,18 @@ namespace System {
             }
         }
     
+#if MONO
+        internal static string FormatSignature(byte[] signature)
+        {
+            return "";
+        }
+#else
         // Called to format signature
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern String FormatSignature(byte [] signature);
-    
+#endif
     
     
         // Potentially called from the EE
