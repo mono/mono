@@ -2,8 +2,8 @@ class FsharpPackage(GitHubTarballPackage):
     def __init__(self):
         GitHubTarballPackage.__init__(self,
             'fsharp', 'fsharp',
-            '4.1.32',
-            'a8ec45a4a83e438ed99dc7721f263cb89a4ebe8b',
+            '4.1.33',
+            '561af8ba705fdbd84274702bc8073b9a94ba0a7d',
             configure='./configure --prefix="%{package_prefix}"',
             override_properties={ 'make': 'make' })
 
