@@ -288,6 +288,9 @@
 			<method name="Box" />
 			<!-- method-to-ir.c (handle_unbox_nullable) -->
 			<method name="Unbox" />
+			<!-- method-to-ir.c (handle_unbox_nullable) -->
+			<method name="UnboxExact" />
+
 		</type>
 		
 		<!-- domain.c: mono_defaults.object_class -->
