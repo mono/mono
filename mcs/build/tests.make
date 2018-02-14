@@ -264,6 +264,8 @@ XTEST_HARNESS = $(XTEST_HARNESS_PATH)/xunit.console.exe
 XTEST_HARNESS_FLAGS := -noappdomain -noshadow -parallel none -nunit TestResult-$(PROFILE)-xunit.xml
 XTEST_TRAIT := -notrait category=failing -notrait category=nonmonotests -notrait Benchmark=true -notrait category=outerloop
 
+TEST_MONO_PATH := $(XTEST_HARNESS_PATH):$(TEST_MONO_PATH)
+
 ifdef FIXTURE
 XTEST_HARNESS_FLAGS += -class $(FIXTURE)
 endif
