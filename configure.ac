@@ -1003,6 +1003,8 @@ AC_ARG_WITH(runtime_preset, [  --with-runtime_preset=net_4_x,all,aot,hybridaot,f
 AC_ARG_WITH(spectre-mitigation,             [  --with-spectre-mitigation=yes,no   If you want to build the runtime with compiler flags that enable Spectre mitigation (defaults to no)], [], [with_spectre_mitigation=default])
 AC_ARG_WITH(spectre-indirect-branch-choice,   [  --with-spectre-indirect-branch-choice=keep,thunk,inline,extern   Convert indirect branches to the specified kind of thunk (defaults to inline)], [], [with_spectre_indirect_branch_choice=inline])
 AC_ARG_WITH(spectre-function-return-choice, [  --with-spectre-function-return-choice=keep,thunk,inline,extern   Convert function return instructions to the specified kind of thunk (defaults to inline)], [], [with_spectre_function_return_choice=inline])
+AC_ARG_WITH(blockchain_status,             [  --with-blockchain-status=yes,no   Enables blockchain usage by the mono runtime (defaults to no)], [], [blockchain_status=default])
+
 
 dnl
 dnl Spectre compiler mitigation flag checks
@@ -5072,6 +5074,7 @@ echo "
 	DTrace:        $enable_dtrace
 	LLVM Back End: $enable_llvm (dynamically loaded: $enable_loadedllvm)
 	Spectre:       $spectre_mitigation_status
+	Blockchain:    $blockchain_status
 
    Libraries:
 	.NET 4.x:        $with_profile4_x
