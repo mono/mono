@@ -3965,14 +3965,16 @@ cleanup_context_checked (VerifyContext *ctx, MonoError *error)
 }
 
 gboolean
-mono_verifier_verify_pe_data (MonoImage *image, GSList **error_list)
+mono_verifier_verify_pe_data (MonoImage *image, MonoError *error)
 {
 	VerifyContext ctx;
+
+	error_init (error);
 
 	if (!mono_verifier_is_enabled_for_image (image))
 		return TRUE;
 
-	init_verify_context (&ctx, image, error_list != NULL);
+	init_verify_context (&ctx, image, TRUE);
 	ctx.stage = STAGE_PE;
 
 	verify_msdos_header (&ctx);
@@ -3991,18 +3993,20 @@ mono_verifier_verify_pe_data (MonoImage *image, GSList **error_list)
 	verify_resources_table (&ctx);
 
 cleanup:
-	return cleanup_context (&ctx, error_list);
+	return cleanup_context_checked (&ctx, error);
 }
 
 gboolean
-mono_verifier_verify_cli_data (MonoImage *image, GSList **error_list)
+mono_verifier_verify_cli_data (MonoImage *image, MonoError *error)
 {
 	VerifyContext ctx;
+
+	error_init (error);
 
 	if (!mono_verifier_is_enabled_for_image (image))
 		return TRUE;
 
-	init_verify_context (&ctx, image, error_list != NULL);
+	init_verify_context (&ctx, image, TRUE);
 	ctx.stage = STAGE_CLI;
 
 	verify_cli_header (&ctx);
@@ -4012,7 +4016,7 @@ mono_verifier_verify_cli_data (MonoImage *image, GSList **error_list)
 	verify_tables_schema (&ctx);
 
 cleanup:
-	return cleanup_context (&ctx, error_list);
+	return cleanup_context_checked (&ctx, error);
 }
 
 
@@ -4028,19 +4032,21 @@ cleanup:
  * operation still need more checking.
  */
 gboolean
-mono_verifier_verify_table_data (MonoImage *image, GSList **error_list)
+mono_verifier_verify_table_data (MonoImage *image, MonoError *error)
 {
 	VerifyContext ctx;
+
+	error_init (error);
 
 	if (!mono_verifier_is_enabled_for_image (image))
 		return TRUE;
 
-	init_verify_context (&ctx, image, error_list != NULL);
+	init_verify_context (&ctx, image, TRUE);
 	ctx.stage = STAGE_TABLES;
 
 	verify_tables_data (&ctx);
 
-	return cleanup_context (&ctx, error_list);
+	return cleanup_context_checked (&ctx, error);
 }
 
 
@@ -4048,14 +4054,16 @@ mono_verifier_verify_table_data (MonoImage *image, GSList **error_list)
  * Verifies all other constraints.
  */
 gboolean
-mono_verifier_verify_full_table_data (MonoImage *image, GSList **error_list)
+mono_verifier_verify_full_table_data (MonoImage *image, MonoError *error)
 {
 	VerifyContext ctx;
+
+	error_init (error);
 
 	if (!mono_verifier_is_enabled_for_image (image))
 		return TRUE;
 
-	init_verify_context (&ctx, image, error_list != NULL);
+	init_verify_context (&ctx, image, TRUE);
 	ctx.stage = STAGE_TABLES;
 
 	verify_typedef_table_full (&ctx);
@@ -4083,34 +4091,38 @@ mono_verifier_verify_full_table_data (MonoImage *image, GSList **error_list)
 	verify_tables_data_global_constraints_full (&ctx);
 
 cleanup:
-	return cleanup_context (&ctx, error_list);
+	return cleanup_context_checked (&ctx, error);
 }
 
 gboolean
-mono_verifier_verify_field_signature (MonoImage *image, guint32 offset, GSList **error_list)
+mono_verifier_verify_field_signature (MonoImage *image, guint32 offset, MonoError *error)
 {
 	VerifyContext ctx;
+
+	error_init (error);
 
 	if (!mono_verifier_is_enabled_for_image (image))
 		return TRUE;
 
-	init_verify_context (&ctx, image, error_list != NULL);
+	init_verify_context (&ctx, image, TRUE);
 	ctx.stage = STAGE_TABLES;
 
 	is_valid_field_signature (&ctx, offset);
-	return cleanup_context (&ctx, error_list);
+	return cleanup_context_checked (&ctx, error);
 }
 
 gboolean
-mono_verifier_verify_method_header (MonoImage *image, guint32 offset, GSList **error_list)
+mono_verifier_verify_method_header (MonoImage *image, guint32 offset, MonoError *error)
 {
 	VerifyContext ctx;
 	guint32 locals_token;
 
+	error_init (error);
+
 	if (!mono_verifier_is_enabled_for_image (image))
 		return TRUE;
 
-	init_verify_context (&ctx, image, error_list != NULL);
+	init_verify_context (&ctx, image, TRUE);
 	ctx.stage = STAGE_TABLES;
 
 	is_valid_method_header (&ctx, offset, &locals_token);
@@ -4119,7 +4131,7 @@ mono_verifier_verify_method_header (MonoImage *image, guint32 offset, GSList **e
 		is_valid_standalonesig_blob (&ctx, sig_offset);
 	}
 
-	return cleanup_context (&ctx, error_list);
+	return cleanup_context_checked (&ctx, error);
 }
 
 gboolean
@@ -4141,79 +4153,90 @@ mono_verifier_verify_method_signature (MonoImage *image, guint32 offset, MonoErr
 }
 
 gboolean
-mono_verifier_verify_memberref_method_signature (MonoImage *image, guint32 offset, GSList **error_list)
+mono_verifier_verify_memberref_method_signature (MonoImage *image, guint32 offset, MonoError *error)
 {
 	VerifyContext ctx;
+
+	error_init (error);
 
 	if (!mono_verifier_is_enabled_for_image (image))
 		return TRUE;
 
-	init_verify_context (&ctx, image, error_list != NULL);
+	init_verify_context (&ctx, image, TRUE);
 	ctx.stage = STAGE_TABLES;
 
 	is_valid_memberref_method_signature (&ctx, offset);
-	return cleanup_context (&ctx, error_list);
+	return cleanup_context_checked (&ctx, error);
 }
 
 gboolean
-mono_verifier_verify_memberref_field_signature (MonoImage *image, guint32 offset, GSList **error_list)
+mono_verifier_verify_memberref_field_signature (MonoImage *image, guint32 offset, MonoError *error)
 {
 	VerifyContext ctx;
+
+	error_init (error);
 
 	if (!mono_verifier_is_enabled_for_image (image))
 		return TRUE;
 
-	init_verify_context (&ctx, image, error_list != NULL);
+	init_verify_context (&ctx, image, TRUE);
 	ctx.stage = STAGE_TABLES;
 
 	is_valid_field_signature (&ctx, offset);
-	return cleanup_context (&ctx, error_list);
+	return cleanup_context_checked (&ctx, error);
 }
 
 gboolean
-mono_verifier_verify_standalone_signature (MonoImage *image, guint32 offset, GSList **error_list)
+mono_verifier_verify_standalone_signature (MonoImage *image, guint32 offset, MonoError *error)
 {
 	VerifyContext ctx;
+
+	error_init (error);
 
 	if (!mono_verifier_is_enabled_for_image (image))
 		return TRUE;
 
-	init_verify_context (&ctx, image, error_list != NULL);
+	init_verify_context (&ctx, image, TRUE);
 	ctx.stage = STAGE_TABLES;
 
 	is_valid_standalonesig_blob (&ctx, offset);
-	return cleanup_context (&ctx, error_list);
+	return cleanup_context_checked (&ctx, error);
 }
 
 gboolean
-mono_verifier_verify_typespec_signature (MonoImage *image, guint32 offset, guint32 token, GSList **error_list)
+mono_verifier_verify_typespec_signature (MonoImage *image, guint32 offset, guint32 token, MonoError *error)
 {
 	VerifyContext ctx;
+
+	error_init (error);
+
 
 	if (!mono_verifier_is_enabled_for_image (image))
 		return TRUE;
 
-	init_verify_context (&ctx, image, error_list != NULL);
+	init_verify_context (&ctx, image, TRUE);
 	ctx.stage = STAGE_TABLES;
 	ctx.token = token;
 
 	is_valid_typespec_blob (&ctx, offset);
-	return cleanup_context (&ctx, error_list);
+	return cleanup_context_checked (&ctx, error);
 }
 
 gboolean
-mono_verifier_verify_methodspec_signature (MonoImage *image, guint32 offset, GSList **error_list)
+mono_verifier_verify_methodspec_signature (MonoImage *image, guint32 offset, MonoError *error)
 {
 	VerifyContext ctx;
+
+	error_init (error);
 
 	if (!mono_verifier_is_enabled_for_image (image))
 		return TRUE;
 
-	init_verify_context (&ctx, image, error_list != NULL);
+	init_verify_context (&ctx, image, TRUE);
 	ctx.stage = STAGE_TABLES;
 
 	is_valid_methodspec_blob (&ctx, offset);
-	return cleanup_context (&ctx, error_list);
+	return cleanup_context_checked (&ctx, error);
 }
 
 static void
@@ -4238,51 +4261,59 @@ verify_user_string (VerifyContext *ctx, guint32 offset)
 }
 
 gboolean
-mono_verifier_verify_string_signature (MonoImage *image, guint32 offset, GSList **error_list)
+mono_verifier_verify_string_signature (MonoImage *image, guint32 offset, MonoError *error)
 {
 	VerifyContext ctx;
+
+	error_init (error);
 
 	if (!mono_verifier_is_enabled_for_image (image))
 		return TRUE;
 
-	init_verify_context (&ctx, image, error_list != NULL);
+	init_verify_context (&ctx, image, TRUE);
 	ctx.stage = STAGE_TABLES;
 
 	verify_user_string (&ctx, offset);
 
-	return cleanup_context (&ctx, error_list);
+	return cleanup_context_checked (&ctx, error);
 }
 
 gboolean
-mono_verifier_verify_cattr_blob (MonoImage *image, guint32 offset, GSList **error_list)
+mono_verifier_verify_cattr_blob (MonoImage *image, guint32 offset, MonoError *error)
 {
 	VerifyContext ctx;
+
+	error_init (error);
 
 	if (!mono_verifier_is_enabled_for_image (image))
 		return TRUE;
 
-	init_verify_context (&ctx, image, error_list != NULL);
+	init_verify_context (&ctx, image, TRUE);
 	ctx.stage = STAGE_TABLES;
 
 	is_valid_cattr_blob (&ctx, offset);
 
-	return cleanup_context (&ctx, error_list);
+	return cleanup_context_checked (&ctx, error);
 }
 
+
+//FIXME this should raise a System.Reflection.CustomAttributeFormatException
 gboolean
-mono_verifier_verify_cattr_content (MonoImage *image, MonoMethod *ctor, const guchar *data, guint32 size, GSList **error_list)
+mono_verifier_verify_cattr_content (MonoImage *image, MonoMethod *ctor, const guchar *data, guint32 size, MonoError *error)
 {
 	VerifyContext ctx;
+
+	error_init (error);
 
 	if (!mono_verifier_is_enabled_for_image (image))
 		return TRUE;
 
-	init_verify_context (&ctx, image, error_list != NULL);
+	init_verify_context (&ctx, image, TRUE);
 	ctx.stage = STAGE_TABLES;
 
 	is_valid_cattr_content (&ctx, ctor, (const char*)data, size);
 
-	return cleanup_context (&ctx, error_list);
+	return cleanup_context_checked (&ctx, error);
 }
 
 gboolean
@@ -4405,38 +4436,44 @@ mono_verifier_verify_methodimpl_row (MonoImage *image, guint32 row, MonoError *e
 
 #else
 gboolean
-mono_verifier_verify_table_data (MonoImage *image, GSList **error_list)
+mono_verifier_verify_table_data (MonoImage *image, MonoError *error)
 {
+	error_init (error);
 	return TRUE;
 }
 
 gboolean
-mono_verifier_verify_cli_data (MonoImage *image, GSList **error_list)
+mono_verifier_verify_cli_data (MonoImage *image, MonoError *error)
 {
+	error_init (error);
 	return TRUE;
 }
 
 gboolean
-mono_verifier_verify_pe_data (MonoImage *image, GSList **error_list)
+mono_verifier_verify_pe_data (MonoImage *image, MonoError *error)
 {
+	error_init (error);
 	return TRUE;
 }
 
 gboolean
-mono_verifier_verify_full_table_data (MonoImage *image, GSList **error_list)
+mono_verifier_verify_full_table_data (MonoImage *image, MonoError *error)
 {
+	error_init (error);
 	return TRUE;
 }
 
 gboolean
-mono_verifier_verify_field_signature (MonoImage *image, guint32 offset, GSList **error_list)
+mono_verifier_verify_field_signature (MonoImage *image, guint32 offset, MonoError *error)
 {
+	error_init (error);
 	return TRUE;
 }
 
 gboolean
-mono_verifier_verify_method_header (MonoImage *image, guint32 offset, GSList **error_list)
+mono_verifier_verify_method_header (MonoImage *image, guint32 offset, MonoError *error)
 {
+	error_init (error);
 	return TRUE;
 }
 
@@ -4448,38 +4485,44 @@ mono_verifier_verify_method_signature (MonoImage *image, guint32 offset, MonoErr
 }
 
 gboolean
-mono_verifier_verify_standalone_signature (MonoImage *image, guint32 offset, GSList **error_list)
+mono_verifier_verify_standalone_signature (MonoImage *image, guint32 offset, MonoError *error)
 {
+	error_init (error);
 	return TRUE;
 }
 
 gboolean
-mono_verifier_verify_typespec_signature (MonoImage *image, guint32 offset, guint32 token, GSList **error_list)
+mono_verifier_verify_typespec_signature (MonoImage *image, guint32 offset, guint32 token, MonoError *error)
 {
+	error_init (error);
 	return TRUE;
 }
 
 gboolean
-mono_verifier_verify_methodspec_signature (MonoImage *image, guint32 offset, GSList **error_list)
+mono_verifier_verify_methodspec_signature (MonoImage *image, guint32 offset, MonoError *error)
 {
+	error_init (error);
 	return TRUE;
 }
 
 gboolean
-mono_verifier_verify_string_signature (MonoImage *image, guint32 offset, GSList **error_list)
+mono_verifier_verify_string_signature (MonoImage *image, guint32 offset, MonoError *error)
 {
+	error_init (error);
 	return TRUE;
 }
 
 gboolean
-mono_verifier_verify_cattr_blob (MonoImage *image, guint32 offset, GSList **error_list)
+mono_verifier_verify_cattr_blob (MonoImage *image, guint32 offset, MonoError *error)
 {
+	error_init (error);
 	return TRUE;
 }
 
 gboolean
-mono_verifier_verify_cattr_content (MonoImage *image, MonoMethod *ctor, const guchar *data, guint32 size, GSList **error_list)
+mono_verifier_verify_cattr_content (MonoImage *image, MonoMethod *ctor, const guchar *data, guint32 size, MonoError *error)
 {
+	error_init (error);
 	return TRUE;
 }
 
@@ -4505,14 +4548,16 @@ mono_verifier_verify_methodimpl_row (MonoImage *image, guint32 row, MonoError *e
 }
 
 gboolean
-mono_verifier_verify_memberref_method_signature (MonoImage *image, guint32 offset, GSList **error_list)
+mono_verifier_verify_memberref_method_signature (MonoImage *image, guint32 offset, MonoError *error)
 {
+	error_init (error);
 	return TRUE;
 }
 
 gboolean
-mono_verifier_verify_memberref_field_signature (MonoImage *image, guint32 offset, GSList **error_list)
+mono_verifier_verify_memberref_field_signature (MonoImage *image, guint32 offset, MonoError *error)
 {
+	error_init (error);
 	return TRUE;
 }
 

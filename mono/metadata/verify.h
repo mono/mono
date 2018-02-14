@@ -8,6 +8,7 @@
 #include <mono/metadata/metadata.h>
 #include <mono/metadata/image.h>
 #include <mono/metadata/loader.h>
+#include <mono/utils/mono-error.h>
 #include <glib.h> /* GSList dep */
 
 MONO_BEGIN_DECLS
@@ -54,7 +55,6 @@ typedef struct {
 	MonoVerifyInfo info;
 	int8_t exception_type; /*should be one of MONO_EXCEPTION_* */
 } MonoVerifyInfoExtended;
-
 
 MONO_API GSList* mono_method_verify       (MonoMethod *method, int level);
 MONO_API void    mono_free_verify_list    (GSList *list);

@@ -1299,10 +1299,12 @@ static MonoImage *
 do_mono_image_load (MonoImage *image, MonoImageOpenStatus *status,
 		    gboolean care_about_cli, gboolean care_about_pecoff)
 {
+	ERROR_DECL (error);
 	MonoCLIImageInfo *iinfo;
 	MonoDotNetHeader *header;
-	GSList *errors = NULL;
 	GSList *l;
+
+	error_init (error);
 
 	MONO_PROFILER_RAISE (image_loading, (image));
 
@@ -1312,6 +1314,7 @@ do_mono_image_load (MonoImage *image, MonoImageOpenStatus *status,
 	header = &iinfo->cli_header;
 
 	if (!image->metadata_only) {
+
 		for (l = image_loaders; l; l = l->next) {
 			MonoImageLoader *loader = (MonoImageLoader *)l->data;
 			if (loader->match (image)) {
@@ -1331,7 +1334,7 @@ do_mono_image_load (MonoImage *image, MonoImageOpenStatus *status,
 		if (care_about_pecoff == FALSE)
 			goto done;
 
-		if (image->loader == &pe_loader && !mono_verifier_verify_pe_data (image, &errors))
+		if (image->loader == &pe_loader && !mono_verifier_verify_pe_data (image, error))
 			goto invalid_image;
 
 		if (!mono_image_load_pe_data (image))
@@ -1344,7 +1347,7 @@ do_mono_image_load (MonoImage *image, MonoImageOpenStatus *status,
 		goto done;
 	}
 
-	if (image->loader == &pe_loader && !image->metadata_only && !mono_verifier_verify_cli_data (image, &errors))
+	if (image->loader == &pe_loader && !image->metadata_only && !mono_verifier_verify_cli_data (image, error))
 		goto invalid_image;
 
 	if (!mono_image_load_cli_data (image))
@@ -1360,7 +1363,7 @@ do_mono_image_load (MonoImage *image, MonoImageOpenStatus *status,
 		}
 	}
 
-	if (image->loader == &pe_loader && !image->metadata_only && !mono_verifier_verify_table_data (image, &errors))
+	if (image->loader == &pe_loader && !image->metadata_only && !mono_verifier_verify_table_data (image, error))
 		goto invalid_image;
 
 	mono_image_load_names (image);
@@ -1375,10 +1378,9 @@ done:
 	return image;
 
 invalid_image:
-	if (errors) {
-		MonoVerifyInfo *info = (MonoVerifyInfo *)errors->data;
-		g_warning ("Could not load image %s due to %s", image->name, info->message);
-		mono_free_verify_list (errors);
+	if (!is_ok (error)) {
+		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Could not load image %s due to %s", image->name, mono_error_get_message (error));
+		mono_error_cleanup (error);
 	}
 	MONO_PROFILER_RAISE (image_failed, (image));
 	mono_image_close (image);

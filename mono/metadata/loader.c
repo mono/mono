@@ -199,10 +199,8 @@ field_from_memberref (MonoImage *image, guint32 token, MonoClass **retklass,
 
 	fname = mono_metadata_string_heap (image, cols [MONO_MEMBERREF_NAME]);
 
-	if (!mono_verifier_verify_memberref_field_signature (image, cols [MONO_MEMBERREF_SIGNATURE], NULL)) {
-		mono_error_set_bad_image (error, image, "Bad field '%u' signature 0x%08x", class_index, token);
+	if (!mono_verifier_verify_memberref_field_signature (image, cols [MONO_MEMBERREF_SIGNATURE], error))
 		return NULL;
-	}
 
 	switch (class_index) {
 	case MONO_MEMBERREF_PARENT_TYPEDEF:
@@ -694,14 +692,8 @@ mono_method_get_signature_checked (MonoMethod *method, MonoImage *image, guint32
 
 		sig = (MonoMethodSignature *)find_cached_memberref_sig (image, sig_idx);
 		if (!sig) {
-			if (!mono_verifier_verify_memberref_method_signature (image, sig_idx, NULL)) {
-				guint32 klass = cols [MONO_MEMBERREF_CLASS] & MONO_MEMBERREF_PARENT_MASK;
-				const char *fname = mono_metadata_string_heap (image, cols [MONO_MEMBERREF_NAME]);
-
-				//FIXME include the verification error
-				mono_error_set_bad_image (error, image, "Bad method signature class token 0x%08x field name %s token 0x%08x", klass, fname, token);
+			if (!mono_verifier_verify_memberref_method_signature (image, sig_idx, error))
 				return NULL;
-			}
 
 			ptr = mono_metadata_blob_heap (image, sig_idx);
 			mono_metadata_decode_blob_size (ptr, &ptr);
@@ -840,10 +832,8 @@ method_from_memberref (MonoImage *image, guint32 idx, MonoGenericContext *typesp
 
 	sig_idx = cols [MONO_MEMBERREF_SIGNATURE];
 
-	if (!mono_verifier_verify_memberref_method_signature (image, sig_idx, NULL)) {
-		mono_error_set_method_missing (error, klass, mname, NULL, "Verifier rejected method signature");
+	if (!mono_verifier_verify_memberref_method_signature (image, sig_idx, error))
 		goto fail;
-	}
 
 	ptr = mono_metadata_blob_heap (image, sig_idx);
 	mono_metadata_decode_blob_size (ptr, &ptr);
@@ -911,10 +901,8 @@ method_from_methodspec (MonoImage *image, MonoGenericContext *context, guint32 i
 	token = cols [MONO_METHODSPEC_METHOD];
 	nindex = token >> MONO_METHODDEFORREF_BITS;
 
-	if (!mono_verifier_verify_methodspec_signature (image, cols [MONO_METHODSPEC_SIGNATURE], NULL)) {
-		mono_error_set_bad_image (error, image, "Bad method signals signature 0x%08x", idx);
+	if (!mono_verifier_verify_methodspec_signature (image, cols [MONO_METHODSPEC_SIGNATURE], error))
 		return NULL;
-	}
 
 	ptr = mono_metadata_blob_heap (image, cols [MONO_METHODSPEC_SIGNATURE]);
 
