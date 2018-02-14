@@ -1860,7 +1860,7 @@ ncells ) {
 	}
 
 	//gh 6266
-    public static int test_store_to_magic_iface_array ()
+    public static int test_0_store_to_magic_iface_array ()
     {
       ICollection<IFoo> arr1 = new IFooImpl[1] { new IFooImpl() };
       ICollection<IFoo> arr2 = new IFooImpl[1] { new IFooImpl() };
