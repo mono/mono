@@ -300,7 +300,7 @@ class MakeBundle {
 				if (!quiet)
 					Console.WriteLine ("WARNING:\n  Check that the machine.config file you are bundling\n  doesn't contain sensitive information specific to this machine.");
 				break;
-                        case "--no-machine-config":
+			case "--no-machine-config":
                                 no_machine_config = true;
                                 break;
 			case "--no-config":
