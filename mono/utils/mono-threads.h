@@ -436,7 +436,7 @@ gboolean
 mono_thread_info_is_live (THREAD_INFO_TYPE *info);
 
 int
-mono_threads_get_max_stack_size (void);
+ves_icall_System_Threading_SystemMaxStackSize (MonoError* error);
 
 MonoThreadHandle*
 mono_threads_open_thread_handle (MonoThreadHandle *handle);

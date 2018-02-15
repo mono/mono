@@ -442,7 +442,7 @@ struct _MonoInternalThread {
 struct _MonoThread {
 	MonoObject obj;
 	struct _MonoInternalThread *internal_thread;
-	MonoObject *start_obj;
+	MonoObject *start_obj; // m_ThreadStartArg on managed side
 	MonoException *pending_exception;
 };
 

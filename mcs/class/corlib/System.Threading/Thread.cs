@@ -119,7 +119,7 @@ namespace System.Threading {
 #pragma warning disable 414		
 		#region Sync with metadata/object-internals.h
 		private InternalThread internal_thread;
-		object m_ThreadStartArg;
+		object m_ThreadStartArg; // start_obj on native side
 		object pending_exception;
 		#endregion
 #pragma warning restore 414
@@ -588,7 +588,7 @@ namespace System.Threading {
 		extern public static void VolatileWrite (ref UIntPtr address, UIntPtr value);
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static int SystemMaxStackStize ();
+		extern static int SystemMaxStackSize ();
 
 		static int GetProcessDefaultStackSize (int maxStackSize)
 		{
@@ -604,7 +604,7 @@ namespace System.Threading {
 				maxStackSize = (maxStackSize / (page_size - 1)) * page_size;
 
 			/* Respect the max stack size imposed by the system*/
-			return Math.Min (maxStackSize, SystemMaxStackStize ());
+			return Math.Min (maxStackSize, SystemMaxStackSize ());
 		}
 
 		void SetStart (MulticastDelegate start, int maxStackSize)

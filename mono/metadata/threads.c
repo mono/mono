@@ -551,6 +551,22 @@ create_thread_object (MonoDomain *domain, MonoInternalThread *internal)
 	return thread;
 }
 
+static MonoThreadObjectHandle
+create_thread_object_handle (MonoDomain *domain, MonoInternalThread* internal, MonoError *error)
+{
+	HANDLE_FUNCTION_ENTER ();
+
+	MonoVTable *vtable = mono_class_vtable_checked (domain, mono_defaults.thread_class, error);
+	mono_error_assert_ok (error);
+
+	MonoThreadObjectHandle thread = (MonoThreadObjectHandle)mono_object_new_handle_mature (vtable, error);
+	mono_error_assert_ok (error); // only possible failure mode is OOM, from which we don't expect to recover.
+
+	MONO_HANDLE_SETRAW (thread, internal_thread, internal); // internal_thread is pinned
+
+	HANDLE_FUNCTION_RETURN_REF (MonoThreadObject, thread);
+}
+
 static MonoInternalThread*
 create_internal_thread_object (void)
 {
@@ -940,9 +956,9 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 
 typedef struct {
 	gint32 ref;
-	MonoThread *thread;
-	MonoObject *start_delegate;
-	MonoObject *start_delegate_arg;
+	int		thread_gchandle;
+	int		start_delegate_gchandle;
+	int		start_delegate_arg_gchandle;
 	MonoThreadStart start_func;
 	gpointer start_func_arg;
 	gboolean force_attach;
@@ -975,18 +991,21 @@ fire_attach_profiler_events (MonoNativeThreadId tid)
 
 static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack_ptr)
 {
+	HANDLE_FUNCTION_ENTER ();
+
 	ERROR_DECL (error);
 	MonoThreadStart start_func;
 	void *start_func_arg;
 	gsize tid;
-	/* 
+	/*
+	 * FIXME? The comment is wrong?
 	 * We don't create a local to hold start_info->thread, so hopefully it won't get pinned during a
 	 * GC stack walk.
 	 */
-	MonoThread *thread;
+	MonoThreadObjectHandle thread;
 	MonoInternalThread *internal;
-	MonoObject *start_delegate;
-	MonoObject *start_delegate_arg;
+	MonoObjectHandle start_delegate;
+	MonoObjectHandle start_delegate_arg;
 	MonoDomain *domain;
 
 	MonoObjectHandle thread_obj = mono_gchandle_get_target_handle (start_info->thread_gchandle);
@@ -996,7 +1015,7 @@ static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack
 
 	THREAD_DEBUG (g_message ("%s: (%"G_GSIZE_FORMAT") Start wrapper", __func__, mono_native_thread_id_get ()));
 
-	if (!mono_thread_attach_internal (thread, start_info->force_attach, FALSE)) {
+	if (!mono_thread_attach_internal (MONO_HANDLE_RAW (thread), start_info->force_attach, FALSE)) {
 		start_info->failed = TRUE;
 
 		mono_coop_sem_post (&start_info->registered);
@@ -1013,8 +1032,8 @@ static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack
 
 	tid = internal->tid;
 
-	start_delegate = start_info->start_delegate;
-	start_delegate_arg = start_info->start_delegate_arg;
+	start_delegate = mono_gchandle_get_target_handle (start_info->start_delegate_gchandle);
+	start_delegate_arg = mono_gchandle_get_target_handle (start_info->start_delegate_arg_gchandle);
 	start_func = start_info->start_func;
 	start_func_arg = start_info->start_func_arg;
 
@@ -1063,8 +1082,6 @@ static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack
 	if (start_func) {
 		start_func (start_func_arg);
 	} else {
-		void *args [1];
-
 		g_assert (start_delegate != NULL);
 
 		/* we may want to handle the exception here. See comment below on unhandled exceptions */
@@ -1104,7 +1121,7 @@ static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack
 
 	mono_thread_detach_internal (internal);
 
-	return 0;
+	HANDLE_FUNCTION_RETURN_VAL (0);
 }
 
 static gsize WINAPI
@@ -1135,23 +1152,27 @@ start_wrapper (gpointer data)
  * LOCKING: Acquires the threads lock.
  */
 static gboolean
-create_thread (MonoThread *thread, MonoInternalThread *internal, MonoObject *start_delegate, MonoThreadStart start_func, gpointer start_func_arg,
+create_thread (MonoThreadObjectHandle thread, MonoInternalThread* internal, MonoObjectHandle start_delegate, MonoThreadStart start_func, gpointer start_func_arg,
 	MonoThreadCreateFlags flags, MonoError *error)
 {
+	HANDLE_FUNCTION_ENTER ();
+
 	StartInfo *start_info = NULL;
 	MonoNativeThreadId tid;
 	gboolean ret;
 	gsize stack_set_size;
 
-	if (start_delegate)
+	if (!start_delegate && !MONO_HANDLE_IS_NULL (start_delegate))
 		g_assert (!start_func && !start_func_arg);
+
 	if (start_func)
-		g_assert (!start_delegate);
+		g_assert (!start_delegate || MONO_HANDLE_IS_NULL (start_delegate));
 
 	if (flags & MONO_THREAD_CREATE_FLAGS_THREADPOOL) {
 		g_assert (!(flags & MONO_THREAD_CREATE_FLAGS_DEBUGGER));
 		g_assert (!(flags & MONO_THREAD_CREATE_FLAGS_FORCE_CREATE));
 	}
+
 	if (flags & MONO_THREAD_CREATE_FLAGS_DEBUGGER) {
 		g_assert (!(flags & MONO_THREAD_CREATE_FLAGS_THREADPOOL));
 		g_assert (!(flags & MONO_THREAD_CREATE_FLAGS_FORCE_CREATE));
@@ -1184,9 +1205,10 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, MonoObject *sta
 
 	start_info = g_new0 (StartInfo, 1);
 	start_info->ref = 2;
-	start_info->thread = thread;
-	start_info->start_delegate = start_delegate;
-	start_info->start_delegate_arg = thread->start_obj;
+	start_info->thread_gchandle = mono_gchandle_from_handle ((MonoObjectHandle)thread, TRUE);
+	start_info->start_delegate_gchandle = mono_gchandle_from_handle (start_delegate, TRUE);
+	MonoObjectHandle start_obj = MONO_HANDLE_NEW_GET (MonoObject, thread, start_obj);
+	start_info->start_delegate_arg_gchandle = mono_gchandle_from_handle (start_obj, TRUE);
 	start_info->start_func = start_func;
 	start_info->start_func_arg = start_func_arg;
 	start_info->force_attach = flags & MONO_THREAD_CREATE_FLAGS_FORCE_CREATE;
@@ -1233,7 +1255,7 @@ done:
 		g_free (start_info);
 	}
 
-	return ret;
+	HANDLE_FUNCTION_RETURN_VAL (ret);
 }
 
 /**
@@ -1273,15 +1295,18 @@ mono_threads_get_default_stacksize (void)
 MonoInternalThread*
 mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, MonoThreadCreateFlags flags, MonoError *error)
 {
-	MonoThread *thread;
-	MonoInternalThread *internal;
+	HANDLE_FUNCTION_ENTER ();
+
+	MonoThreadObjectHandle thread;
+	MonoInternalThread* internal;
 	gboolean res;
 
 	error_init (error);
 
 	internal = create_internal_thread_object ();
 
-	thread = create_thread_object (domain, internal);
+	thread = create_thread_object_handle (domain, internal, error);
+	return_val_if_nok (error, NULL);
 
 	LOCK_THREAD (internal);
 
@@ -1290,7 +1315,8 @@ mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, Mo
 	UNLOCK_THREAD (internal);
 
 	return_val_if_nok (error, NULL);
-	return internal;
+
+	HANDLE_FUNCTION_RETURN_VAL (internal);
 }
 
 /**
@@ -1418,7 +1444,7 @@ mono_thread_exit (void)
 }
 
 void
-ves_icall_System_Threading_Thread_ConstructInternalThread (MonoThread *this_obj)
+ves_icall_System_Threading_Thread_ConstructInternalThread (MonoThreadObjectHandle this_obj_handle, MonoError* error)
 {
 	MonoInternalThread *internal;
 
@@ -1426,7 +1452,13 @@ ves_icall_System_Threading_Thread_ConstructInternalThread (MonoThread *this_obj)
 
 	internal->state = ThreadState_Unstarted;
 
+	int gchandle = mono_gchandle_from_handle ((MonoObjectHandle)this_obj_handle, TRUE);
+
+	MonoThreadObject* this_obj = MONO_HANDLE_RAW (this_obj_handle);
+
 	mono_atomic_cas_ptr ((volatile gpointer *)&this_obj->internal_thread, internal, NULL);
+
+	mono_gchandle_free (gchandle);
 }
 
 MonoThreadObjectHandle
@@ -1436,23 +1468,25 @@ ves_icall_System_Threading_Thread_GetCurrentThread (MonoError *error)
 }
 
 MonoBoolean
-ves_icall_System_Threading_Thread_Thread_internal (MonoThread *this_obj,
-												   MonoObject *start)
+ves_icall_System_Threading_Thread_Thread_internal (MonoThreadObjectHandle this_obj, MonoObjectHandle start, MonoError *error)
 {
-	ERROR_DECL (error);
 	MonoInternalThread *internal;
 	gboolean res;
 
-	THREAD_DEBUG (g_message("%s: Trying to start a new thread: this (%p) start (%p)", __func__, this_obj, start));
+	THREAD_DEBUG (g_message("%s: Trying to start a new thread: this (%p) start (%p)", __func__, MONO_HANDLE_RAW (this_obj), MONO_HANDLE_RAW (start)));
 
-	if (!this_obj->internal_thread)
-		ves_icall_System_Threading_Thread_ConstructInternalThread (this_obj);
-	internal = this_obj->internal_thread;
+	internal = MONO_HANDLE_GETVAL(this_obj, internal_thread); // InternalThreads are always pinned.
+
+	if (!internal)
+		ves_icall_System_Threading_Thread_ConstructInternalThread (this_obj, error);
+
+	internal = MONO_HANDLE_GETVAL(this_obj, internal_thread); // InternalThreads are always pinned.
 
 	LOCK_THREAD (internal);
 
 	if ((internal->state & ThreadState_Unstarted) == 0) {
 		UNLOCK_THREAD (internal);
+		// FIXMEcoop
 		mono_set_pending_exception (mono_get_exception_thread_state ("Thread has already been started."));
 		return FALSE;
 	}
@@ -1464,7 +1498,6 @@ ves_icall_System_Threading_Thread_Thread_internal (MonoThread *this_obj,
 
 	res = create_thread (this_obj, internal, start, NULL, NULL, MONO_THREAD_CREATE_FLAGS_NONE, error);
 	if (!res) {
-		mono_error_cleanup (error);
 		UNLOCK_THREAD (internal);
 		return FALSE;
 	}
@@ -1481,8 +1514,10 @@ ves_icall_System_Threading_Thread_Thread_internal (MonoThread *this_obj,
  * This is called from the finalizer of the internal thread object.
  */
 void
-ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThread *this_obj)
+ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThreadHandle this_obj_handle, MonoError* error)
 {
+	MonoInternalThread* this_obj = MONO_HANDLE_RAW (this_obj_handle); // internal_thread is pinned
+
 	THREAD_DEBUG (g_message ("%s: Closing thread %p, handle %p", __func__, this, this_obj->handle));
 
 	/*
@@ -1515,7 +1550,7 @@ ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThre
 }
 
 void
-ves_icall_System_Threading_Thread_Sleep_internal(gint32 ms)
+ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError* error)
 {
 	guint32 res;
 	MonoInternalThread *thread = mono_thread_internal_current ();
@@ -1535,6 +1570,7 @@ ves_icall_System_Threading_Thread_Sleep_internal(gint32 ms)
 		mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
 
 		if (alerted) {
+			// FIXMEcoop https://github.com/mono/mono/pull/6639
 			MonoException* exc = mono_thread_execute_interruption ();
 			if (exc) {
 				mono_set_pending_exception (exc);
@@ -1550,18 +1586,19 @@ ves_icall_System_Threading_Thread_Sleep_internal(gint32 ms)
 	}
 }
 
-void ves_icall_System_Threading_Thread_SpinWait_nop (void)
+void
+ves_icall_System_Threading_Thread_SpinWait_nop (MonoError* error)
 {
 }
 
 gint32
-ves_icall_System_Threading_Thread_GetDomainID (void) 
+ves_icall_System_Threading_Thread_GetDomainID (MonoError* error)
 {
 	return mono_domain_get()->domain_id;
 }
 
 gboolean 
-ves_icall_System_Threading_Thread_Yield (void)
+ves_icall_System_Threading_Thread_Yield (MonoError* error)
 {
 	return mono_thread_info_yield ();
 }
@@ -1876,13 +1913,12 @@ mono_join_uninterrupted (MonoThreadHandle* thread_to_join, gint32 ms, MonoError 
 }
 
 gboolean
-ves_icall_System_Threading_Thread_Join_internal (MonoThread *this_obj, int ms)
+ves_icall_System_Threading_Thread_Join_internal (MonoThreadObjectHandle this_obj, int ms, MonoError* error)
 {
-	MonoInternalThread *thread = this_obj->internal_thread;
+	MonoInternalThread *thread = MONO_HANDLE_GETVAL(this_obj, internal_thread); // InternalThreads are always pinned.
 	MonoThreadHandle *handle = thread->handle;
 	MonoInternalThread *cur_thread = mono_thread_internal_current ();
 	gboolean ret;
-	ERROR_DECL (error);
 
 	if (mono_thread_current_check_pending_interrupt ())
 		return FALSE;
@@ -1891,8 +1927,8 @@ ves_icall_System_Threading_Thread_Join_internal (MonoThread *this_obj, int ms)
 	
 	if ((thread->state & ThreadState_Unstarted) != 0) {
 		UNLOCK_THREAD (thread);
-		
-		mono_set_pending_exception (mono_get_exception_thread_state ("Thread has not been started."));
+
+		mono_set_pending_exception (mono_get_exception_thread_state ("Thread has not been started.")); // FIXMEcoop https://github.com/mono/mono/pull/6689
 		return FALSE;
 	}
 
@@ -1907,8 +1943,6 @@ ves_icall_System_Threading_Thread_Join_internal (MonoThread *this_obj, int ms)
 	ret = mono_join_uninterrupted (handle, ms, error);
 
 	mono_thread_clr_state (cur_thread, ThreadState_WaitSleepJoin);
-
-	mono_error_set_pending_exception (error);
 
 	if (ret == MONO_THREAD_INFO_WAIT_RET_SUCCESS_0) {
 		THREAD_DEBUG (g_message ("%s: join successful", __func__));

@@ -497,6 +497,9 @@ mono_array_handle_length (MonoArrayHandle arr)
 uint32_t
 mono_gchandle_from_handle (MonoObjectHandle handle, mono_bool pinned)
 {
+	if (!handle || MONO_HANDLE_IS_NULL (handle))
+		return 0;
+
 	/* FIXME: chunk_element_to_chunk_idx does a linear search through the
 	 * chunks and we only need it for the assert */
 	MonoThreadInfo *info = mono_thread_info_current ();
