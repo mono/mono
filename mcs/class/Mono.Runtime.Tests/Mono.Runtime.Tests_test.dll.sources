@@ -9,12 +9,9 @@ JitTests.cs
 ../../../../mono/mini/arrays.cs
 ../../../../mono/mini/basic-float.cs
 ../../../../mono/mini/basic-math.cs
-../../../../mono/mini/basic.cs
 ../../../../mono/mini/exceptions.cs
 ../../../../mono/mini/devirtualization.cs
 ../../../../mono/mini/generics.cs
-../../../../mono/mini/basic-simd.cs
-../../../../mono/mini/basic-vectors.cs
 ../../../../mono/mini/aot-tests.cs
 ../../../../mono/mini/gc-test.cs
 ../../../../mono/mini/gshared.cs
