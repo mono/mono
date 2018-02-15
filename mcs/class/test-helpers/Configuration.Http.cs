@@ -9,6 +9,8 @@ namespace System.Net.Test.Common
 				var echoServers = new object[] { RemoteEchoServer };
 				var secureEchoServers = new object[] { SecureRemoteEchoServer };
 
+				Console.Error.WriteLine ($"HTTP CONFIG: {PlatformDetection.IsWindows} {Environment.OSVersion.Platform} {RemoteEchoServer} {SecureRemoteEchoServer}");
+
 				if (PlatformDetection.IsWindows) {
 					EchoServers = new object[][] { echoServers };
 				} else {
