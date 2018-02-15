@@ -111,6 +111,42 @@ mono_runtime_object_init (MonoObject *this_obj)
  * on error and sets \p error.
  */
 gboolean
+mono_runtime_object_init_handle (MonoObjectHandle this_obj, MonoError *error)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
+
+	error_init (error);
+
+	MonoClass * const klass = MONO_HANDLE_GETVAL (this_obj, vtable)->klass;
+	MonoMethod * const method = mono_class_get_method_from_name (klass, ".ctor", 0);
+	g_assertf (method, "Could not lookup zero argument constructor for class %s", mono_type_get_full_name (klass));
+
+	guint gchandle = 0;
+	gpointer raw;
+
+	if (method->klass->valuetype) {
+		raw = mono_object_handle_pin_unbox (this_obj, &gchandle);
+	} else {
+		gchandle = mono_gchandle_from_handle (this_obj, TRUE);
+		raw = MONO_HANDLE_RAW (this_obj);
+	}
+
+	mono_runtime_invoke_checked (method, raw, NULL, error);
+
+	mono_gchandle_free (gchandle);
+
+	return is_ok (error);
+}
+
+/**
+ * mono_runtime_object_init_checked:
+ * \param this_obj the object to initialize
+ * \param error set on error.
+ * This function calls the zero-argument constructor (which must
+ * exist) for the given object and returns TRUE on success, or FALSE
+ * on error and sets \p error.
+ */
+gboolean
 mono_runtime_object_init_checked (MonoObject *this_obj, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
@@ -3142,8 +3178,6 @@ mono_method_get_unmanaged_thunk (MonoMethod *method)
 	ERROR_DECL (error);
 	gpointer res;
 
-	g_assert (!mono_threads_is_coop_enabled ());
-
 	MONO_ENTER_GC_UNSAFE;
 	method = mono_marshal_get_thunk_invoke_wrapper (method);
 	res = mono_compile_method_checked (method, error);
@@ -5306,6 +5340,58 @@ mono_runtime_try_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 }
 
 /**
+ * mono_object_new_common_tail:
+ *
+ * This function centralizes post-processing of objects upon creation.
+ * i.e. calling mono_object_register_finalizer and mono_gc_register_obj_with_weak_fields,
+ * and setting error.
+ */
+static MonoObject*
+mono_object_new_common_tail (MonoObject* o, MonoClass* klass, MonoError* error)
+{
+	error_init (error);
+
+	if (G_UNLIKELY (!o)) {
+		mono_error_set_out_of_memory (error, "Could not allocate %i bytes", klass->instance_size);
+		return o;
+	}
+
+	if (G_UNLIKELY (klass->has_finalize))
+		mono_object_register_finalizer (o);
+
+	if (G_UNLIKELY (klass->has_weak_fields))
+		mono_gc_register_obj_with_weak_fields (o);
+
+	return o;
+}
+
+#if 0 // FIXMEcoop awaiting https://github.com/mono/mono/pull/6876
+/**
+ * mono_object_new_handle_tail:
+ *
+ * This function centralizes post-processing of objects upon creation.
+ * i.e. calling mono_object_register_finalizer and mono_gc_register_obj_with_weak_fields.
+ */
+static MonoObjectHandle
+mono_object_new_handle_common_tail (MonoObjectHandle o, MonoClass* klass, MonoError* error)
+{
+	if (G_UNLIKELY (MONO_HANDLE_IS_NULL (o))) {
+		mono_error_set_out_of_memory (error, "Could not allocate %i bytes", vtable->klass->instance_size);
+		return o;
+	}
+
+	if (G_UNLIKELY (klass->has_finalize))
+		mono_object_register_finalizer_handle (o);
+
+	if (G_UNLIKELY (klass->has_weak_fields))
+		mono_gc_register_object_with_weak_fields (o);
+
+	return o;
+}
+
+#endif
+
+/**
  * mono_object_new:
  * \param klass the class of the object that we want to create
  * \returns a newly created object whose definition is
@@ -5387,12 +5473,7 @@ mono_object_new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *error)
 
 	MonoObject *o = (MonoObject *)mono_gc_alloc_pinned_obj (vtable, mono_class_instance_size (klass));
 
-	if (G_UNLIKELY (!o))
-		mono_error_set_out_of_memory (error, "Could not allocate %i bytes", mono_class_instance_size (klass));
-	else if (G_UNLIKELY (vtable->klass->has_finalize))
-		mono_object_register_finalizer (o);
-
-	return o;
+	return mono_object_new_common_tail (o, klass, error);
 }
 
 /**
@@ -5510,20 +5591,9 @@ mono_object_new_alloc_specific_checked (MonoVTable *vtable, MonoError *error)
 
 	MonoObject *o;
 
-	error_init (error);
-
 	o = (MonoObject *)mono_gc_alloc_obj (vtable, vtable->klass->instance_size);
 
-	if (G_UNLIKELY (!o))
-		mono_error_set_out_of_memory (error, "Could not allocate %i bytes", vtable->klass->instance_size);
-	else if (G_UNLIKELY (vtable->klass->has_finalize || vtable->klass->has_weak_fields)) {
-		if (vtable->klass->has_finalize)
-			mono_object_register_finalizer (o);
-		if (vtable->klass->has_weak_fields)
-			mono_gc_register_obj_with_weak_fields (o);
-	}
-
-	return o;
+	return mono_object_new_common_tail (o, vtable->klass, error);
 }
 
 /**
@@ -5578,6 +5648,8 @@ mono_object_new_fast_checked (MonoVTable *vtable, MonoError *error)
 
 	o = mono_gc_alloc_obj (vtable, vtable->klass->instance_size);
 
+	// This deliberately skips mono_object_new_common_tail.
+
 	if (G_UNLIKELY (!o))
 		mono_error_set_out_of_memory (error, "Could not allocate %i bytes", vtable->klass->instance_size);
 
@@ -5591,16 +5663,9 @@ mono_object_new_mature (MonoVTable *vtable, MonoError *error)
 
 	MonoObject *o;
 
-	error_init (error);
-
 	o = mono_gc_alloc_mature (vtable, vtable->klass->instance_size);
 
-	if (G_UNLIKELY (!o))
-		mono_error_set_out_of_memory (error, "Could not allocate %i bytes", vtable->klass->instance_size);
-	else if (G_UNLIKELY (vtable->klass->has_finalize))
-		mono_object_register_finalizer (o);
-
-	return o;
+	return mono_object_new_common_tail (o, vtable->klass, error);
 }
 
 /**
@@ -5653,8 +5718,6 @@ mono_object_clone_checked (MonoObject *obj, MonoError *error)
 	MonoObject *o;
 	int size;
 
-	error_init (error);
-
 	size = obj->vtable->klass->instance_size;
 
 	if (obj->vtable->klass->rank)
@@ -5662,17 +5725,11 @@ mono_object_clone_checked (MonoObject *obj, MonoError *error)
 
 	o = (MonoObject *)mono_gc_alloc_obj (obj->vtable, size);
 
-	if (G_UNLIKELY (!o)) {
-		mono_error_set_out_of_memory (error, "Could not allocate %i bytes", size);
-		return NULL;
-	}
-
 	/* If the object doesn't contain references this will do a simple memmove. */
-	mono_gc_wbarrier_object_copy (o, obj);
+	if (G_LIKELY (o))
+		mono_gc_wbarrier_object_copy (o, obj);
 
-	if (obj->vtable->klass->has_finalize)
-		mono_object_register_finalizer (o);
-	return o;
+	return mono_object_new_common_tail (o, obj->vtable->klass, error);
 }
 
 /**

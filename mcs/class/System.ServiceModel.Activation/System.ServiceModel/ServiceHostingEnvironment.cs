@@ -1,12 +1,10 @@
 //
-// AssemblyInfo.cs
+// ServiceHostingEnvironment.cs
 //
 // Author:
-//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//	Ankit Jain  <jankit@novell.com>
 //
-// (C) 2003 Ximian, Inc.  http://www.ximian.com
-//
-
+// Copyright (C) 2006 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,23 +26,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Resources;
-
-[assembly: AssemblyVersion ("10.0.0.0")]
-
-/* TODO COMPLETE INFORMATION
-
-[assembly: AssemblyTitle ("")]
-[assembly: AssemblyDescription ("")]
-
-[assembly: CLSCompliant (true)]
-[assembly: AssemblyFileVersion ("0.0.0.1")]
-
-[assembly: ComVisible (false)]
-
-*/
-
-[assembly: AssemblyDelaySign (true)]
+namespace System.ServiceModel {
+ 
+	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblySystemServiceModel_3_0)]
+	public static class ServiceHostingEnvironment
+	{
+		public static bool AspNetCompatibilityEnabled { get; internal set; }
+ 
+		public static void EnsureServiceAvailable (string virtualPath)
+		{
+		}
+	}
+}

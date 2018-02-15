@@ -82,6 +82,7 @@ typedef enum {
 	MONO_AOT_TABLE_LLVM_GOT_INFO_OFFSETS,
 	MONO_AOT_TABLE_EXTRA_METHOD_INFO_OFFSETS,
 	MONO_AOT_TABLE_EXTRA_METHOD_TABLE,
+	MONO_AOT_TABLE_WEAK_FIELD_INDEXES,
 	MONO_AOT_TABLE_NUM
 } MonoAotFileTable;
 
@@ -109,6 +110,11 @@ typedef struct MonoAotFileInfo
 	gpointer jit_code_start;
 	gpointer jit_code_end;
 	gpointer method_addresses;
+
+	/*
+	 * Data tables.
+	 * One pointer for each entry in MonoAotFileTable.
+	 */
 	/* Data blob */
 	gpointer blob;
 	gpointer class_name_table;
@@ -120,6 +126,9 @@ typedef struct MonoAotFileInfo
 	gpointer got_info_offsets;
 	gpointer llvm_got_info_offsets;
 	gpointer image_table;
+	/* Points to an array of weak field indexes */
+	gpointer weak_field_indexes;
+
 	gpointer mem_end;
 	/* The GUID of the assembly which the AOT image was generated from */
 	gpointer assembly_guid;
@@ -148,9 +157,7 @@ typedef struct MonoAotFileInfo
 	gpointer unbox_trampolines_end;
 	/* Points to a table of unbox trampoline addresses/offsets */
 	gpointer unbox_trampoline_addresses;
-	/* Points to an array of weak field indexes */
-	gpointer weak_field_indexes;
-#define MONO_AOT_FILE_INFO_LAST_SYMBOL weak_field_indexes
+#define MONO_AOT_FILE_INFO_LAST_SYMBOL unbox_trampoline_addresses
 
 	/* Scalars */
 	/* The index of the first GOT slot used by the PLT */
@@ -203,7 +210,7 @@ typedef struct MonoAotFileInfo
 
 void      mono_aot_init                     (void);
 void      mono_aot_cleanup                  (void);
-gpointer  mono_aot_get_method_checked       (MonoDomain *domain,
+gpointer  mono_aot_get_method               (MonoDomain *domain,
 											 MonoMethod *method, MonoError *error);
 gpointer  mono_aot_get_method_from_token    (MonoDomain *domain, MonoImage *image, guint32 token, MonoError *error);
 gboolean  mono_aot_is_got_entry             (guint8 *code, guint8 *addr);

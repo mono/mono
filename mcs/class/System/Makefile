@@ -30,7 +30,7 @@ TEST_RESOURCES = \
 
 USE_XTEST_REMOTE_EXECUTOR = YES
 XTEST_LIB_REFS = System System.Core System.Net Facades/System.Threading.Tasks Facades/System.Runtime.InteropServices.RuntimeInformation System.Net.Http
-LIB_MCS_FLAGS = -d:CONFIGURATION_2_0 $(REFERENCE_SOURCES_FLAGS) -unsafe $(RESOURCE_FILES:%=-resource:%) -nowarn:436
+LIB_MCS_FLAGS = -d:CONFIGURATION_2_0 -d:XML_DEP $(REFERENCE_SOURCES_FLAGS) -unsafe $(RESOURCE_FILES:%=-resource:%) -nowarn:436
 
 ifndef NO_MONO_SECURITY
 MONO_SECURITY=Mono.Security
@@ -99,26 +99,26 @@ endif
 TXT_RESOURCE_STRINGS = ../referencesource/System/System.txt
 
 
-API_BIN_REFS := System.Net.Http
+API_BIN_REFS := System.Net.Http System.Xml
 
 #
 # Flags used to build the secxml version of System.
 #
 ifeq (secxml/, $(intermediate))
 LOCAL_MCS_FLAGS =
-LIB_REFS += bare/System.Xml $(MONO_SECURITY_REF)
-LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP $(EXTERN_ALIAS_FLAGS)
+LIB_REFS += $(MONO_SECURITY_REF)
+LIB_MCS_FLAGS += -d:SECURITY_DEP $(EXTERN_ALIAS_FLAGS)
 endif
 
 #
 # Flags used to build the final version of System (when intermediate is not defined)
 #
 ifndef intermediate
-LIB_REFS += System.Xml $(MONO_SECURITY_REF)
-LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP $(EXTERN_ALIAS_FLAGS)
+LIB_REFS += $(MONO_SECURITY_REF)
+LIB_MCS_FLAGS += -d:SECURITY_DEP $(EXTERN_ALIAS_FLAGS)
 
 ifndef MOBILE_PROFILE
-LIB_REFS += System.Configuration
+API_BIN_REFS += System.Configuration
 LIB_MCS_FLAGS += -d:CONFIGURATION_DEP
 endif
 
@@ -137,19 +137,11 @@ EXTRA_DISTFILES = \
 include ../../build/library.make
 
 system_library_deps := \
-	$(secxml_libdir)/System.dll 		\
-	$(the_libdir_base)System.Xml.dll	\
 	$(MONO_SECURITY_DLL)				\
 	$(bare_libdir)/System.dll
 
-ifndef MOBILE_PROFILE
-system_library_deps += $(the_libdir_base)System.Configuration.dll	
-endif
-
 artifacts = $(system_library_deps) 			\
-	$(bare_libdir)/System.Xml.dll			\
-	$(MONO_SECURITY_DLL)				\
-	$(the_libdir_base)System.Configuration.dll
+	$(MONO_SECURITY_DLL)
 
 .NOTPARALLEL: $(system_library_deps)
 
@@ -162,24 +154,8 @@ $(bare_libdir)/System.dll:
 	$(MAKE) intermediate=bare/ $(bare_libdir)/System.dll
 endif
 
-ifneq (secxml/,$(intermediate))
-$(secxml_libdir)/System.dll: $(bare_libdir)/System.dll $(bare_libdir)/System.Xml.dll $(MONO_SECURITY_DLL) $(bare_libdir)/System.dll
-	$(MAKE) intermediate=secxml/ $(secxml_libdir)/System.dll
-else
-build-sec:
-endif
-
-$(the_libdir_base)System.Xml.dll:
-	(cd ../System.XML; $(MAKE) $@)
-
-$(bare_libdir)/System.Xml.dll:
-	(cd ../System.XML; $(MAKE) $@)
-
 $(the_libdir_base)Mono.Security.dll: ../Mono.Security/Makefile
 	(cd ../Mono.Security; $(MAKE))
-
-$(the_libdir_base)System.Configuration.dll:
-	(cd ../System.Configuration; $(MAKE))
 
 $(build_lib): $(CYCLIC_DEP_FILES)
 

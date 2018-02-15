@@ -81,7 +81,6 @@ namespace System.Net
 			: base (request.Connection, request.Operation, request.InnerStream)
 		{
 			RequestStream = request;
-			request.InnerStream.ReadTimeout = ReadTimeout;
 
 #if MONO_WEB_DEBUG
 			ME = $"WRP(Cnc={Connection.ID}, Op={Operation.ID})";

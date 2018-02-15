@@ -747,13 +747,14 @@
       <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
       <Name>corlib-net_4_x</Name>
     </ProjectReference>
-    <ProjectReference Include="../System/System-secxml-net_4_x.csproj">
-      <Project>{19954F80-065E-4D46-8FEF-62BA4D6CFDAD}</Project>
-      <Name>System-secxml-net_4_x</Name>
-    </ProjectReference>
-    <ProjectReference Include="../System.Configuration/System.Configuration-net_4_x.csproj">
-      <Project>{D5CDC09C-F19A-4811-A6C8-70F51CBFB644}</Project>
-      <Name>System.Configuration-net_4_x</Name>
+    <Reference Include="./../../../external/binary-reference-assemblies/v4.7.1/System.Configuration.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/v4.7.1/System.Configuration.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <ProjectReference Include="../System/System-net_4_x.csproj">
+      <Project>{2762E921-91A8-4C87-91E9-BA628013F753}</Project>
+      <Name>System-net_4_x</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -56,9 +56,9 @@
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-    <Compile Include="..\System.ServiceModel\System.ServiceModel.Activation\ServiceHostFactory.cs" />
-    <Compile Include="..\System.ServiceModel\System.ServiceModel\ServiceHostingEnvironment.cs" />
-    <Compile Include="Assembly\AssemblyInfo.cs" />  </ItemGroup>
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="System.ServiceModel.Activation\ServiceHostFactory.cs" />
+    <Compile Include="System.ServiceModel\ServiceHostingEnvironment.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -93,9 +93,9 @@
       <Project>{2762E921-91A8-4C87-91E9-BA628013F753}</Project>
       <Name>System-net_4_x</Name>
     </ProjectReference>
-    <ProjectReference Include="../System.ServiceModel/System.ServiceModel-plainservice-net_4_x.csproj">
-      <Project>{88C258E1-F0AF-47DA-96C8-7FA6421067CD}</Project>
-      <Name>System.ServiceModel-plainservice-net_4_x</Name>
+    <ProjectReference Include="../System.ServiceModel/System.ServiceModel-net_4_x.csproj">
+      <Project>{FE596C31-BDA2-4850-8F79-F8F4DF70F44A}</Project>
+      <Name>System.ServiceModel-net_4_x</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

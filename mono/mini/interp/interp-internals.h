@@ -24,6 +24,7 @@
 
 #define BOX_NOT_CLEAR_VT_SP 0x4000
 
+#define MINT_VT_ALIGNMENT 8
 
 enum {
 	VAL_I32     = 0,
@@ -87,6 +88,7 @@ typedef struct _InterpMethod
 	MonoMethod *method;
 	struct _InterpMethod *next_jit_code_hash;
 	guint32 locals_size;
+	guint32 total_locals_size;
 	guint32 args_size;
 	guint32 stack_size;
 	guint32 vt_stack_size;
