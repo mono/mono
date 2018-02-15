@@ -446,5 +446,8 @@ void il2cpp_mono_thread_detach(MonoThread* thread);
 MonoClass* il2cpp_mono_get_string_class (void);
 Il2CppSequencePoint* il2cpp_get_sequence_point(int id);
 char* il2cpp_assembly_get_full_name(MonoAssembly *assembly);
+const MonoMethod* il2cpp_get_seq_point_method(Il2CppSequencePoint *seqPoint);
+const MonoClass* il2cpp_get_class_from_index(int index);
+const MonoType* il2cpp_get_type_from_index(int index);
 
 #endif // RUNTIME_IL2CPP
