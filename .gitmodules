@@ -7,6 +7,7 @@
 [submodule "external/cecil"]
 	path = external/cecil
 	url = git://github.com/mono/cecil.git
+	branch = mono-2017-12
 [submodule "external/rx"]
 	path = external/rx
 	url = git://github.com/mono/rx.git
@@ -43,6 +44,7 @@
 [submodule "external/linker"]
 	path = external/linker
 	url = git://github.com/mono/linker.git
+	branch = mono-2017-12
 [submodule "external/roslyn-binaries"]
 	path = external/roslyn-binaries
 	url = git://github.com/mono/roslyn-binaries.git
