@@ -682,7 +682,7 @@ mono_compile_method_checked (MonoMethod *method, MonoError *error)
 {
 	gpointer res;
 
-	MONO_REQ_GC_NEUTRAL_MODE
+	MONO_REQ_GC_NEUTRAL_MODE;
 
 	error_init (error);
 
@@ -706,7 +706,7 @@ mono_runtime_create_jump_trampoline (MonoDomain *domain, MonoMethod *method, gbo
 gpointer
 mono_runtime_create_delegate_trampoline (MonoClass *klass)
 {
-	MONO_REQ_GC_NEUTRAL_MODE
+	MONO_REQ_GC_NEUTRAL_MODE;
 
 	g_assert (callbacks.create_delegate_trampoline);
 	return callbacks.create_delegate_trampoline (mono_domain_get (), klass);
@@ -723,7 +723,7 @@ mono_runtime_create_delegate_trampoline (MonoClass *klass)
 void
 mono_runtime_free_method (MonoDomain *domain, MonoMethod *method)
 {
-	MONO_REQ_GC_NEUTRAL_MODE
+	MONO_REQ_GC_NEUTRAL_MODE;
 
 	if (callbacks.free_method)
 		callbacks.free_method (domain, method);
@@ -2445,7 +2445,7 @@ failure:
 gboolean
 mono_class_field_is_special_static (MonoClassField *field)
 {
-	MONO_REQ_GC_NEUTRAL_MODE
+	MONO_REQ_GC_NEUTRAL_MODE;
 
 	if (!(field->type->attrs & FIELD_ATTRIBUTE_STATIC))
 		return FALSE;
@@ -2467,7 +2467,7 @@ mono_class_field_is_special_static (MonoClassField *field)
 guint32
 mono_class_field_get_special_static_type (MonoClassField *field)
 {
-	MONO_REQ_GC_NEUTRAL_MODE
+	MONO_REQ_GC_NEUTRAL_MODE;
 
 	if (!(field->type->attrs & FIELD_ATTRIBUTE_STATIC))
 		return SPECIAL_STATIC_NONE;
@@ -2485,7 +2485,7 @@ mono_class_field_get_special_static_type (MonoClassField *field)
 gboolean
 mono_class_has_special_static_fields (MonoClass *klass)
 {
-	MONO_REQ_GC_NEUTRAL_MODE
+	MONO_REQ_GC_NEUTRAL_MODE;
 
 	MonoClassField *field;
 	gpointer iter;
@@ -2562,7 +2562,7 @@ create_remote_class_key (MonoRemoteClass *remote_class, MonoClass *extra_class)
 static gpointer*
 copy_remote_class_key (MonoDomain *domain, gpointer *key)
 {
-	MONO_REQ_GC_NEUTRAL_MODE
+	MONO_REQ_GC_NEUTRAL_MODE;
 
 	int key_size = (GPOINTER_TO_UINT (key [0]) + 1) * sizeof (gpointer);
 	gpointer *mp_key = (gpointer *)mono_domain_alloc (domain, key_size);
@@ -3314,7 +3314,7 @@ mono_field_static_set_value (MonoVTable *vt, MonoClassField *field, void *value)
 void *
 mono_vtable_get_static_field_data (MonoVTable *vt)
 {
-	MONO_REQ_GC_NEUTRAL_MODE
+	MONO_REQ_GC_NEUTRAL_MODE;
 
 	if (!vt->has_static_fields)
 		return NULL;
