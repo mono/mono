@@ -21,7 +21,7 @@ if [[ ${CI_TAGS} == *'osx-'* ]]; then ${TESTCMD} --label=System-btls --timeout=1
 ${TESTCMD} --label=System.XML --timeout=5m make -w -C mcs/class/System.XML run-test
 ${TESTCMD} --label=Mono.Security --timeout=5m make -w -C mcs/class/Mono.Security run-test
 ${TESTCMD} --label=System.Security --timeout=5m make -w -C mcs/class/System.Security run-test
-if [[ ${CI_TAGS} == *'win-'* ]] || [[ ${CI_TAGS} == *'linux-'* && ${CI_TAGS} != *'linux-arm64'* ]]
+if [[ ${CI_TAGS} == *'win-'* ]]
 then ${TESTCMD} --label=System.Drawing --skip;
 else ${TESTCMD} --label=System.Drawing --timeout=5m make -w -C mcs/class/System.Drawing run-test
 fi
