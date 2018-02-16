@@ -574,6 +574,31 @@ common_call_trampoline (mgreg_t *regs, guint8 *code, MonoMethod *m, MonoVTable *
 			vtable_slot = mini_resolve_imt_method (vt, vtable_slot, imt_method, &impl_method, &addr, &need_rgctx_tramp, &variant_iface, error);
 			return_val_if_nok (error, NULL);
 
+			if (mono_class_has_dim_conflicts (vt->klass)) {
+				GSList *conflicts = mono_class_get_dim_conflicts (vt->klass);
+				GSList *l;
+				MonoMethod *decl = imt_method;
+
+				if (decl->is_inflated)
+					decl = mono_method_get_declaring_generic_method (decl);
+
+				gboolean in_conflict = FALSE;
+				for (l = conflicts; l; l = l->next) {
+					if (decl == l->data) {
+						in_conflict = TRUE;
+						break;
+					}
+				}
+				if (in_conflict) {
+					char *class_name = mono_class_full_name (vt->klass);
+					char *method_name = mono_method_full_name (decl, TRUE);
+					mono_error_set_not_supported (error, "Interface method '%s' in class '%s' has multiple candidate implementations.", method_name, class_name);
+					g_free (class_name);
+					g_free (method_name);
+					return NULL;
+				}
+			}
+
 			/* We must handle magic interfaces on rank 1 arrays of ref types as if they were variant */
 			if (!variant_iface && vt->klass->rank == 1 && !vt->klass->element_class->valuetype && imt_method->klass->is_array_special_interface)
 				variant_iface = imt_method;
@@ -1176,7 +1201,7 @@ mono_delegate_trampoline (mgreg_t *regs, guint8 *code, gpointer *arg, guint8* tr
 	// ftnptrs are being used.  "method" would end up null on archtitectures without
 	// ftnptrs so we can just skip this.
 	} else if (delegate->method_ptr) {
-		ji = mono_jit_info_table_find (domain, (char *)mono_get_addr_from_ftnptr (delegate->method_ptr));
+		ji = mono_jit_info_table_find (domain, mono_get_addr_from_ftnptr (delegate->method_ptr));
 		if (ji)
 			method = jinfo_get_method (ji);
 	}

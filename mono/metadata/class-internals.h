@@ -42,7 +42,8 @@ typedef struct _MonoDynamicMethod MonoDynamicMethod;
 #define ICALL_EXPORT MONO_API
 #else
 #define ICALL_DECL_EXPORT
-#define ICALL_EXPORT static
+/* Can't be static as icall.c defines icalls referenced by icall-tables.c */
+#define ICALL_EXPORT
 #endif
 
 typedef enum {
@@ -1373,6 +1374,15 @@ mono_class_set_weak_bitmap (MonoClass *klass, int nbits, gsize *bits);
 
 gsize*
 mono_class_get_weak_bitmap (MonoClass *klass, int *nbits);
+
+gboolean
+mono_class_has_dim_conflicts (MonoClass *klass);
+
+void
+mono_class_set_dim_conflicts (MonoClass *klass, GSList *conflicts);
+
+GSList*
+mono_class_get_dim_conflicts (MonoClass *klass);
 
 MonoMethod *
 mono_class_get_method_from_name_checked (MonoClass *klass, const char *name, int param_count, int flags, MonoError *error);

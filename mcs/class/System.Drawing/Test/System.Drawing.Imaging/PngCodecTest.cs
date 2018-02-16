@@ -308,6 +308,7 @@ namespace MonoTests.System.Drawing.Imaging {
 
 		/* Checks bitmap features on a known 2bbp bitmap */
 		[Test]
+		[Category("NotWorking")]
 		public void Bitmap2bitFeatures ()
 		{
 			if (IsArm64Process ())
@@ -339,6 +340,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
+		[Category("NotWorking")]
 		public void Bitmap2bitPixels ()
 		{
 			if (IsArm64Process ())
@@ -374,6 +376,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
+		[Category("NotWorking")]
 		public void Bitmap2bitData ()
 		{
 			if (IsArm64Process ())

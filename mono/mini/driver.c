@@ -393,7 +393,7 @@ mini_regression_step (MonoImage *image, int verbose, int *total_run, int *total,
 					g_print ("Running '%s' ...\n", method->name);
 #ifdef MONO_USE_AOT_COMPILER
 				ERROR_DECL (error);
-				func = (TestMethod)mono_aot_get_method_checked (mono_get_root_domain (), method, error);
+				func = (TestMethod)mono_aot_get_method (mono_get_root_domain (), method, error);
 				mono_error_cleanup (error);
 				if (!func)
 					func = (TestMethod)(gpointer)cfg->native_code;
@@ -928,7 +928,7 @@ test_thread_func (ThreadData *td)
 					guint pos = (*data)->start + random () % (*data)->length;
 					MonoJitInfo *ji;
 
-					ji = mono_jit_info_table_find (domain, (char*)(gulong) pos);
+					ji = mono_jit_info_table_find (domain, (char*)(gsize)pos);
 
 					g_assert (ji->cas_inited);
 					g_assert ((*data)->ji == ji);

@@ -10,6 +10,7 @@ using Diag = System.Diagnostics;
 using System.Linq;
 using System.IO;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 
 using NUnit.Framework;
 
@@ -4284,6 +4285,26 @@ public class DebuggerTests
 		var req = create_step (e);
 		e = step_out (); // leave threadpool_bp
 		e = step_out (); // leave threadpool_io
+	}
+
+	[Test]
+	[Category("NotWorking")] // flaky, see https://github.com/mono/mono/issues/6997
+	public void StepOutAsync () {
+		vm.Detach ();
+		Start (new string [] { "dtest-app.exe", "step-out-void-async" });
+		var e = run_until ("step_out_void_async_2");
+		create_step (e);
+		var e2 = step_out ();
+		assert_location (e2, "MoveNext");//we are in step_out_void_async
+		step_req.Disable ();
+		step_req.Depth = StepDepth.Out;
+		step_req.Enable ();
+		vm.Resume ();
+		var e3 = GetNextEvent ();
+		//after step-out from async void, execution should continue
+		//and runtime should exit
+		Assert.IsTrue (e3 is VMDeathEvent, e3.GetType().FullName);
+		vm = null;
 	}
 
 	[Test]

@@ -85,6 +85,7 @@ typedef struct
 	unsigned int stack_capacity;
 	unsigned int vt_sp;
 	unsigned int max_vt_sp;
+	unsigned int total_locals_size;
 	int n_data_items;
 	int max_data_items;
 	void **data_items;
@@ -296,6 +297,15 @@ grow_code (TransformData *td)
 			ADD_CODE(td, sp_off == 1 ? MINT_CONV_I4_I8 : MINT_CONV_I4_I8_SP); \
 	} while (0)
 
+#define CHECK_TYPELOAD(klass) \
+	do { \
+		if (!(klass) || mono_class_has_failure (klass)) { \
+			mono_error_set_for_class_failure (error, klass); \
+			goto exit; \
+		} \
+	} while (0)
+
+
 static void 
 handle_branch (TransformData *td, int short_op, int long_op, int offset)
 {
@@ -303,6 +313,9 @@ handle_branch (TransformData *td, int short_op, int long_op, int offset)
 	int target = td->ip + offset - td->il_code;
 	if (target < 0 || target >= td->code_size)
 		g_assert_not_reached ();
+	/* Add exception checkpoint for backward branches */
+	if (offset < 0)
+		ADD_CODE(td, MINT_CHECKPOINT);
 	if (offset > 0 && td->stack_height [target] < 0) {
 		td->stack_height [target] = td->sp - td->stack;
 		if (td->stack_height [target] > 0)
@@ -485,14 +498,14 @@ can_store (int stack_type, int var_type)
 
 #define PUSH_VT(td, size) \
 	do { \
-		(td)->vt_sp += ((size) + 7) & ~7; \
+		(td)->vt_sp += ALIGN_TO ((size), MINT_VT_ALIGNMENT); \
 		if ((td)->vt_sp > (td)->max_vt_sp) \
 			(td)->max_vt_sp = (td)->vt_sp; \
 	} while (0)
 
 #define POP_VT(td, size) \
 	do { \
-		(td)->vt_sp -= ((size) + 7) & ~7; \
+		(td)->vt_sp -= ALIGN_TO ((size), MINT_VT_ALIGNMENT); \
 	} while (0)
 
 #if NO_UNALIGNED_ACCESS
@@ -679,11 +692,9 @@ load_local(TransformData *td, int n)
 }
 
 static void 
-store_local(TransformData *td, int n)
+store_local_general (TransformData *td, int offset, MonoType *type)
 {
-	MonoType *type = td->header->locals [n];
 	int mt = mint_type (type);
-	int offset = td->rtm->local_offsets [n];
 	CHECK_STACK (td, 1);
 #if SIZEOF_VOID_P == 8
 	if (td->sp [-1].type == STACK_TYPE_I4 && stack_type [mt] == STACK_TYPE_I8) {
@@ -710,6 +721,14 @@ store_local(TransformData *td, int n)
 		ADD_CODE(td, offset); /*FIX for large offset */
 	}
 	--td->sp;
+}
+
+static void
+store_local (TransformData *td, int n)
+{
+	MonoType *type = td->header->locals [n];
+	int offset = td->rtm->local_offsets [n];
+	store_local_general (td, offset, type);
 }
 
 #define SIMPLE_OP(td, op) \
@@ -1051,6 +1070,10 @@ no_intrinsic:
 
 	if (constrained_class) {
 		mono_class_setup_vtable (constrained_class);
+		if (mono_class_has_failure (constrained_class)) {
+			mono_error_set_for_class_failure (error, constrained_class);
+			return;
+		}
 #if DEBUG_INTERP
 		g_print ("CONSTRAINED.CALLVIRT: %s::%s.  %s (%p) ->\n", target_method->klass->name, target_method->name, mono_signature_full_name (target_method->signature), target_method);
 #endif
@@ -1185,19 +1208,20 @@ no_intrinsic:
 
 	if (csignature->call_convention == MONO_CALL_VARARG) {
 		csignature = mono_method_get_signature_checked (target_method, image, token, generic_context, error);
+		int vararg_stack = 0;
 		/*
 		 * For vararg calls, ArgIterator expects the signature and the varargs to be
 		 * stored in a linear memory. We allocate the necessary vt_stack space for
 		 * this. All varargs will be pushed to the vt_stack at call site.
 		 */
-		vt_stack_used += sizeof (gpointer);
-		PUSH_VT (td, sizeof (gpointer));
+		vararg_stack += sizeof (gpointer);
 		for (i = csignature->sentinelpos; i < csignature->param_count; ++i) {
 			int align, arg_size;
 			arg_size = mono_type_stack_size (csignature->params [i], &align);
-			vt_stack_used += arg_size;
-			PUSH_VT (td, arg_size);
+			vararg_stack += arg_size;
 		}
+		vt_stack_used += ALIGN_TO (vararg_stack, MINT_VT_ALIGNMENT);
+		PUSH_VT (td, vararg_stack);
 	}
 
 	g_assert (csignature->call_convention != MONO_CALL_THISCALL && csignature->call_convention != MONO_CALL_FASTCALL);
@@ -1210,7 +1234,7 @@ no_intrinsic:
 				size = mono_class_native_size (klass, NULL);
 			else
 				size = mono_class_value_size (klass, NULL);
-			size = (size + 7) & ~7;
+			size = ALIGN_TO (size, MINT_VT_ALIGNMENT);
 			vt_stack_used += size;
 		}
 	}
@@ -1407,6 +1431,25 @@ get_basic_blocks (TransformData *td)
 		if (i == CEE_THROW)
 			cbb = get_bb (td, NULL, ip);
 	}
+}
+
+/*
+ * These are additional locals that can be allocated as we transform the code.
+ * They are allocated past the method locals so they are accessed in the same
+ * way, with an offset relative to the frame->locals.
+ */
+static int
+create_interp_local (TransformData *td, MonoType *type)
+{
+	int align, size;
+	int offset = td->total_locals_size;
+
+	size = mono_type_size (type, &align);
+	offset = ALIGN_TO (offset, align);
+
+	td->total_locals_size = offset + size;
+
+	return offset;
 }
 
 static void
@@ -1713,6 +1756,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 	td->seq_points = g_ptr_array_new ();
 	td->relocs = g_ptr_array_new ();
 	td->verbose_level = mono_interp_traceopt;
+	td->total_locals_size = rtm->locals_size;
 	rtm->data_items = td->data_items;
 	for (i = 0; i < header->code_size; i++) {
 		td->stack_height [i] = -1;
@@ -2074,7 +2118,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			ADD_CODE (td, 0);
 			if (td->sp [-1].type == STACK_TYPE_VT) {
 				int size = mono_class_value_size (td->sp [-1].klass, NULL);
-				size = (size + 7) & ~7;
+				size = ALIGN_TO (size, MINT_VT_ALIGNMENT);
 				ADD_CODE(td, MINT_VTRESULT);
 				ADD_CODE(td, 0);
 				WRITE32(td, &size);
@@ -2125,7 +2169,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 				if (mint_type (ult) == MINT_TYPE_VT) {
 					MonoClass *klass = mono_class_from_mono_type (ult);
 					vt_size = mono_class_value_size (klass, NULL);
-					vt_size = (vt_size + 7) & ~7;
+					vt_size = ALIGN_TO (vt_size, MINT_VT_ALIGNMENT);
 				}
 			}
 			if (td->sp > td->stack)
@@ -2834,7 +2878,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 					if (mt == MINT_TYPE_VT) {
 						MonoClass *k = mono_class_from_mono_type (csignature->params [i]);
 						gint32 size = mono_class_value_size (k, NULL);
-						size = (size + 7) & ~7;
+						size = ALIGN_TO (size, MINT_VT_ALIGNMENT);
 						vt_stack_used += size;
 					}
 				}
@@ -2852,6 +2896,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			CHECK_STACK (td, 1);
 			token = read32 (td->ip + 1);
 			klass = mini_get_class (method, token, generic_context);
+			CHECK_TYPELOAD (klass);
 			ADD_CODE(td, MINT_CASTCLASS);
 			ADD_CODE(td, get_data_item_index (td, klass));
 			td->sp [-1].klass = klass;
@@ -2861,6 +2906,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			CHECK_STACK (td, 1);
 			token = read32 (td->ip + 1);
 			klass = mini_get_class (method, token, generic_context);
+			CHECK_TYPELOAD (klass);
 			ADD_CODE(td, MINT_ISINST);
 			ADD_CODE(td, get_data_item_index (td, klass));
 			td->ip += 5;
@@ -2893,11 +2939,23 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			}
 
 			if (mono_class_is_nullable (klass)) {
-				MonoMethod *target_method = mono_class_get_method_from_name (klass, "Unbox", 1);
+				MonoMethod *target_method;
+				if (mono_class_get_nullable_param (klass)->enumtype)
+					target_method = mono_class_get_method_from_name (klass, "UnboxExact", 1);
+				else
+					target_method = mono_class_get_method_from_name (klass, "Unbox", 1);
 				/* td->ip is incremented by interp_transform_call */
 				interp_transform_call (td, method, target_method, domain, generic_context, is_bb_start, body_start_offset, NULL, FALSE, error, FALSE);
-
 				goto_if_nok (error, exit);
+				/*
+				 * CEE_UNBOX needs to push address of vtype while Nullable.Unbox returns the value type
+				 * We create a local variable in the frame so that we can fetch its address.
+				 */
+				int local_offset = create_interp_local (td, &klass->byval_arg);
+				store_local_general (td, local_offset, &klass->byval_arg);
+				ADD_CODE (td, MINT_LDLOCA_S);
+				ADD_CODE (td, local_offset);
+				PUSH_SIMPLE_TYPE (td, STACK_TYPE_MP);
 			} else {
 				ADD_CODE (td, MINT_UNBOX);
 				ADD_CODE (td, get_data_item_index (td, klass));
@@ -2910,6 +2968,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			token = read32 (td->ip + 1);
 
 			klass = mini_get_class (method, token, generic_context);
+			CHECK_TYPELOAD (klass);
 
 			if (mini_type_is_reference (&klass->byval_arg)) {
 				int mt = mint_type (&klass->byval_arg);
@@ -2918,7 +2977,11 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 				SET_TYPE (td->sp - 1, stack_type [mt], klass);
 				td->ip += 5;
 			} else if (mono_class_is_nullable (klass)) {
-				MonoMethod *target_method = mono_class_get_method_from_name (klass, "Unbox", 1);
+				MonoMethod *target_method;
+				if (mono_class_get_nullable_param (klass)->enumtype)
+					target_method = mono_class_get_method_from_name (klass, "UnboxExact", 1);
+				else
+					target_method = mono_class_get_method_from_name (klass, "Unbox", 1);
 				/* td->ip is incremented by interp_transform_call */
 				interp_transform_call (td, method, target_method, domain, generic_context, is_bb_start, body_start_offset, NULL, FALSE, error, FALSE);
 
@@ -3035,7 +3098,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			}
 			if (td->sp [-1].type == STACK_TYPE_VT) {
 				int size = mono_class_value_size (klass, NULL);
-				size = (size + 7) & ~7;
+				size = ALIGN_TO (size, MINT_VT_ALIGNMENT);
 				td->vt_sp -= size;
 				ADD_CODE (td, MINT_VTRESULT);
 				ADD_CODE (td, 0);
@@ -3146,6 +3209,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 				klass = (MonoClass *)mono_method_get_wrapper_data (method, token);
 			else
 				klass = mini_get_class (method, token, generic_context);
+			CHECK_TYPELOAD (klass);
 
 			BARRIER_IF_VOLATILE (td);
 			ADD_CODE(td, td->sp [-1].type == STACK_TYPE_VT ? MINT_STOBJ_VT : MINT_STOBJ);
@@ -3218,6 +3282,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 				klass = (MonoClass *)mono_method_get_wrapper_data (method, token);
 			else
 				klass = mini_get_class (method, token, generic_context);
+			CHECK_TYPELOAD (klass);
 
 			if (mono_class_is_nullable (klass)) {
 				MonoMethod *target_method = mono_class_get_method_from_name (klass, "Box", 1);
@@ -3230,7 +3295,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			} else {
 				if (mint_type (&klass->byval_arg) == MINT_TYPE_VT && !klass->enumtype) {
 					size = mono_class_value_size (klass, NULL);
-					size = (size + 7) & ~7;
+					size = ALIGN_TO (size, MINT_VT_ALIGNMENT);
 					td->vt_sp -= size;
 				}
 				ADD_CODE(td, MINT_BOX);
@@ -3250,6 +3315,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 				klass = (MonoClass *)mono_method_get_wrapper_data (method, token);
 			else
 				klass = mini_get_class (method, token, generic_context);
+			CHECK_TYPELOAD (klass);
 
 			unsigned char lentype = (td->sp - 1)->type;
 			if (lentype == STACK_TYPE_I8) {
@@ -3281,7 +3347,15 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			else
 				klass = mini_get_class (method, token, generic_context);
 
+			CHECK_TYPELOAD (klass);
+
 			if (!klass->valuetype && method->wrapper_type == MONO_WRAPPER_NONE && !readonly) {
+				/*
+				 * Check the class for failures before the type check, which can
+				 * throw other exceptions.
+				 */
+				mono_class_setup_vtable (klass);
+				CHECK_TYPELOAD (klass);
 				ADD_CODE (td, MINT_LDELEMA_TC);
 			} else {
 				ADD_CODE (td, MINT_LDELEMA);
@@ -3376,6 +3450,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			CHECK_STACK (td, 2);
 			token = read32 (td->ip + 1);
 			klass = mini_get_class (method, token, generic_context);
+			CHECK_TYPELOAD (klass);
 			switch (mint_type (&klass->byval_arg)) {
 				case MINT_TYPE_I1:
 					ENSURE_I4 (td, 1);
@@ -3506,6 +3581,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			ENSURE_I4 (td, 2);
 			token = read32 (td->ip + 1);
 			klass = mini_get_class (method, token, generic_context);
+			CHECK_TYPELOAD (klass);
 			switch (mint_type (&klass->byval_arg)) {
 				case MINT_TYPE_I1:
 					SIMPLE_OP (td, MINT_STELEM_I1);
@@ -3569,6 +3645,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 
 			token = read32 (td->ip + 1);
 			klass = mini_get_class (method, token, generic_context);
+			CHECK_TYPELOAD (klass);
 
 			ADD_CODE (td, MINT_MKREFANY);
 			ADD_CODE (td, get_data_item_index (td, klass));
@@ -3582,6 +3659,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 
 			token = read32 (td->ip + 1);
 			klass = mini_get_class (method, token, generic_context);
+			CHECK_TYPELOAD (klass);
 
 			ADD_CODE (td, MINT_REFANYVAL);
 			ADD_CODE (td, get_data_item_index (td, klass));
@@ -3950,7 +4028,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 					size = mono_class_native_size(td->sp [-1].klass, NULL);
 				else
 					size = mono_class_value_size(td->sp [-1].klass, NULL);
-				size = (size + 7) & ~7;
+				size = ALIGN_TO (size, MINT_VT_ALIGNMENT);
 				ADD_CODE(td, MINT_VTRESULT);
 				ADD_CODE(td, 0);
 				WRITE32(td, &size);
@@ -4217,6 +4295,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 				CHECK_STACK(td, 1);
 				token = read32 (td->ip + 1);
 				klass = mini_get_class (method, token, generic_context);
+				CHECK_TYPELOAD (klass);
 				if (klass->valuetype) {
 					ADD_CODE (td, MINT_INITOBJ);
 					i32 = mono_class_value_size (klass, NULL);
@@ -4245,7 +4324,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			case CEE_CONSTRAINED_:
 				token = read32 (td->ip + 1);
 				constrained_class = mini_get_class (method, token, generic_context);
-				mono_class_init (constrained_class);
+				CHECK_TYPELOAD (constrained_class);
 				td->ip += 5;
 				break;
 			case CEE_INITBLK:
@@ -4279,7 +4358,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 				} else {
 					int align;
 					MonoClass *szclass = mini_get_class (method, token, generic_context);
-					mono_class_init (szclass);
+					CHECK_TYPELOAD (szclass);
 #if 0
 					if (!szclass->valuetype)
 						THROW_EX (mono_exception_from_name (mono_defaults.corlib, "System", "InvalidProgramException"), ip - 5);
@@ -4385,9 +4464,10 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			c->data.filter_offset = td->in_offsets [c->data.filter_offset];
 	}
 	rtm->stack_size = (sizeof (stackval)) * (td->max_stack_height + 2); /* + 1 for returns of called functions  + 1 for 0-ing in trace*/
-	rtm->stack_size = (rtm->stack_size + 7) & ~7;
+	rtm->stack_size = ALIGN_TO (rtm->stack_size, MINT_VT_ALIGNMENT);
 	rtm->vt_stack_size = td->max_vt_sp;
-	rtm->alloca_size = rtm->locals_size + rtm->args_size + rtm->vt_stack_size + rtm->stack_size;
+	rtm->total_locals_size = td->total_locals_size;
+	rtm->alloca_size = rtm->total_locals_size + rtm->args_size + rtm->vt_stack_size + rtm->stack_size;
 	rtm->data_items = mono_domain_alloc0 (domain, td->n_data_items * sizeof (td->data_items [0]));
 	memcpy (rtm->data_items, td->data_items, td->n_data_items * sizeof (td->data_items [0]));
 

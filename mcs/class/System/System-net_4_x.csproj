@@ -33,7 +33,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699,436</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;CONFIGURATION_2_0;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;CODEDOM;MONO_FEATURE_APPLETLS;MONO_FEATURE_BTLS;SECURITY_DEP;XML_DEP;MONO_SECURITY_ALIAS;CONFIGURATION_DEP</DefineConstants>
+    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;CONFIGURATION_2_0;XML_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;CODEDOM;MONO_FEATURE_APPLETLS;MONO_FEATURE_BTLS;SECURITY_DEP;MONO_SECURITY_ALIAS;CONFIGURATION_DEP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -41,7 +41,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,436</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;CONFIGURATION_2_0;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;CODEDOM;MONO_FEATURE_APPLETLS;MONO_FEATURE_BTLS;SECURITY_DEP;XML_DEP;MONO_SECURITY_ALIAS;CONFIGURATION_DEP</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;CONFIGURATION_2_0;XML_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;CODEDOM;MONO_FEATURE_APPLETLS;MONO_FEATURE_BTLS;SECURITY_DEP;MONO_SECURITY_ALIAS;CONFIGURATION_DEP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -1194,7 +1194,6 @@
     <Compile Include="System.Net\AuthenticationManager.cs" />
     <Compile Include="System.Net\BasicClient.cs" />
     <Compile Include="System.Net\BindIPEndPoint.cs" />
-    <Compile Include="System.Net\BufferedReadStream.cs" />
     <Compile Include="System.Net\ChunkedInputStream.cs" />
     <Compile Include="System.Net\DecompressionMethods.cs" />
     <Compile Include="System.Net\DefaultCertificatePolicy.cs" />
@@ -1231,7 +1230,6 @@
     <Compile Include="System.Net\ListenerAsyncResult.cs" />
     <Compile Include="System.Net\ListenerPrefix.cs" />
     <Compile Include="System.Net\MacProxy.cs" />
-    <Compile Include="System.Net\MonoChunkParser.cs" />
     <Compile Include="System.Net\MonoChunkStream.cs" />
     <Compile Include="System.Net\MonoHttpDate.cs" />
     <Compile Include="System.Net\NetConfig.cs" />
@@ -1248,7 +1246,6 @@
     <Compile Include="System.Net\WebConnectionStream.cs" />
     <Compile Include="System.Net\WebConnectionTunnel.cs" />
     <Compile Include="System.Net\WebOperation.cs" />
-    <Compile Include="System.Net\WebReadStream.cs" />
     <Compile Include="System.Net\WebRequestStream.cs" />
     <Compile Include="System.Net\WebResponseStream.cs" />
     <Compile Include="System.Runtime.InteropServices.ComTypes\ADVF.cs" />
@@ -1362,14 +1359,16 @@
       <HintPath>./../../../external/binary-reference-assemblies/v4.7.1/System.Net.Http.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <ProjectReference Include="../System.XML/System.Xml-net_4_x.csproj">
-      <Project>{87FD2F0F-5222-4AE6-BD63-2D4975E11E5B}</Project>
-      <Name>System.Xml-net_4_x</Name>
-    </ProjectReference>
-    <ProjectReference Include="../System.Configuration/System.Configuration-net_4_x.csproj">
-      <Project>{D5CDC09C-F19A-4811-A6C8-70F51CBFB644}</Project>
-      <Name>System.Configuration-net_4_x</Name>
-    </ProjectReference>
+    <Reference Include="./../../../external/binary-reference-assemblies/v4.7.1/System.Xml.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/v4.7.1/System.Xml.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/v4.7.1/System.Configuration.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/v4.7.1/System.Configuration.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security-net_4_x.csproj">
       <Project>{42D59DE7-586F-4ACF-BDD5-E7869E39E3EF}</Project>
       <Name>Mono.Security-net_4_x</Name>

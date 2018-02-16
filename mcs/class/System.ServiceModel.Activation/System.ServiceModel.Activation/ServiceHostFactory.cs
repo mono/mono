@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !HAS_ACTIVATION
-
 namespace System.ServiceModel.Activation
 {
 	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblySystemServiceModel_3_0)]
@@ -48,5 +46,3 @@ namespace System.ServiceModel.Activation
 		}
 	}
 }
-
-#endif

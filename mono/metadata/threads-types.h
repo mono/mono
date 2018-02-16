@@ -20,6 +20,7 @@
 #include "mono/utils/mono-compiler.h"
 #include "mono/utils/mono-membar.h"
 #include "mono/utils/mono-threads.h"
+#include "mono/metadata/class-internals.h"
 
 /* This is a copy of System.Threading.ThreadState */
 typedef enum {
@@ -243,7 +244,8 @@ uint32_t mono_alloc_special_static_data (uint32_t static_type, uint32_t size, ui
 void*    mono_get_special_static_data   (uint32_t offset);
 gpointer mono_get_special_static_data_for_thread (MonoInternalThread *thread, guint32 offset);
 
-MonoException* mono_thread_resume_interruption (gboolean exec);
+void
+mono_thread_resume_interruption (gboolean exec);
 void mono_threads_perform_thread_dump (void);
 
 gboolean

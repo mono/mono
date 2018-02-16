@@ -186,6 +186,17 @@ namespace System
 				return null;
 			return (T) o;
 		}
+
+		static T? UnboxExact (object o)
+		{
+			if (o == null)
+				return null;
+			if (o.GetType() != typeof (T))
+				throw new InvalidCastException();
+
+			return (T) o;
+		}
+
 #pragma warning restore 169
 	}
 }

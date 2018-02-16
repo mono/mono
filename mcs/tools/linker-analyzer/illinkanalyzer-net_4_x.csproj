@@ -94,6 +94,10 @@
       <Project>{359142A1-D80F-401E-AA64-7167C9317649}</Project>
       <Name>System.Core-net_4_x</Name>
     </ProjectReference>
+    <ProjectReference Include="../../class/Mono.Cecil/Mono.Cecil-net_4_x.csproj">
+      <Project>{2C0D558F-0B38-4691-967E-A910A1B995C1}</Project>
+      <Name>Mono.Cecil-net_4_x</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
