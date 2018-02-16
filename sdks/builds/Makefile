@@ -1,4 +1,5 @@
 TOP=$(realpath $(CURDIR)/../..)
+include $(TOP)/sdks/versions.mk
 include $(TOP)/sdks/paths.mk
 
 RELEASE?=true
@@ -11,10 +12,29 @@ ifeq (, $(shell which glibtoolize))
 EXTRA_PATH=$(wildcard /usr/local/Cellar/libtool/*/bin/)
 endif
 
+# Some of the targets cannot be built in parallel (ex: mxe). This is a gross hack, but fixing it would mean a unknown
+# amount of change. For example, we could invoke the MXE targets with `$(MAKE) -f mxe.mk build-mxe-Win32` and move the
+# .NOTPARALLEL there.
+.NOTPARALLEL:
+
+all: package
+
+## Common Mono targets
 $(TOP)/configure: $(TOP)/configure.ac $(TOP)/autogen.sh
 	cd $(TOP) && PATH=$(EXTRA_PATH):$$PATH NOCONFIGURE=1 ./autogen.sh
 
 TARGETS=
+
+## MXE targets
+ifndef DISABLE_ANDROID
+# FIXME add iOS support(?)
+include mxe.mk
+endif
+
+## LLVM targets
+ifeq ($(and $(DISABLE_ANDROID),$(DISABLE_IOS)),)
+include llvm.mk
+endif
 
 ## BCL targets
 ifndef DISABLE_BCL
@@ -39,6 +59,8 @@ endif
 ## Generic targets
 .PHONY: $(foreach target,$(TARGETS),toolchain-$(target))
 $(foreach target,$(TARGETS),toolchain-$(target)): toolchain-%: .stamp-%-toolchain
+
+$(foreach target,$(TARGETS),.stamp-$(target)-configure): .stamp-%-configure: .stamp-%-toolchain
 
 .PHONY: $(foreach target,$(TARGETS),configure-$(target))
 $(foreach target,$(TARGETS),configure-$(target)): configure-%: .stamp-%-configure
