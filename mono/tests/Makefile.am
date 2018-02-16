@@ -534,7 +534,7 @@ TESTS_CS_SRC=		\
 	threads-leak.cs	\
 	threads-init.cs \
 	bug-60848.cs \
-	marshal-sizeof-empty.cs
+	sizeof-empty-structs.cs
 
 if AMD64
 TESTS_CS_SRC += async-exc-compilation.cs finally_guard.cs finally_block_ending_in_dead_bb.cs

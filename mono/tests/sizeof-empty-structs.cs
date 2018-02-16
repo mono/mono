@@ -1,5 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Reflection;
+using System.Linq;
 
 public struct EmptyStruct {
 }
@@ -28,7 +30,18 @@ public struct EmptyExplicitSize0Struct {
 public struct EmptyExplicitSize1Struct {
 }
 
-class Program {
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public struct TestOffsets {
+    public int A;
+    public EmptyStruct B;
+    public int C;
+    public EmptyExplicitSize0Struct D;
+    public int E;
+    public EmptySequentialStruct F;
+    public int G;
+}
+
+class Program {    
     private static unsafe void CheckSize<T> (int expected, ref int exitCode) {
         var t = typeof(T);
         var actualSize = Marshal.SizeOf(t);
@@ -51,6 +64,8 @@ class Program {
 
         if (distanceBetweenElements != expected)
             exitCode += 1;
+
+        // We would sanity-check NumParamBytes here, but it's not implemented so it doesn't matter :)
     }
 
     // https://bugzilla.xamarin.com/show_bug.cgi?id=18941
@@ -65,6 +80,34 @@ class Program {
         CheckSize<EmptyExplicitPackStruct>(1, ref exitCode);
         CheckSize<EmptyExplicitSize0Struct>(1, ref exitCode);
         CheckSize<EmptyExplicitSize1Struct>(1, ref exitCode);
+
+        Console.WriteLine("--");
+
+        var t = typeof(TestOffsets);
+        var actualOffsets = (
+            from f in t.GetFields() 
+            select (name: f.Name, offset: Marshal.OffsetOf(t, f.Name).ToInt32())
+        ).ToList();
+
+        var expectedOffsets = new [] {
+            (name: "A", offset: 0),
+            (name: "B", offset: 4),
+            (name: "C", offset: 5),
+            (name: "D", offset: 9),
+            (name: "E", offset: 10),
+            (name: "F", offset: 14),
+            (name: "G", offset: 15)
+        };
+
+        if (!actualOffsets.SequenceEqual(expectedOffsets)) {
+            Console.WriteLine("Field offset mismatch:");
+
+            for (int i = 0; i < expectedOffsets.Length; i++) {
+                var expected = expectedOffsets[i];
+                var actual = actualOffsets[i];
+                Console.WriteLine($"OffsetOf({t.Name}.{actual.name}) == {actual.offset}, expected OffsetOf({expected.name}) == {expected.offset}.");
+            }
+        }
 
         return exitCode;
     }
