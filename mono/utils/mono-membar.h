@@ -76,7 +76,25 @@ static inline void mono_memory_write_barrier (void)
 {
 	mono_memory_barrier ();
 }
-#else
+
+#elif defined(PLATFORM_UNITY) && defined(UNITY_USE_PLATFORM_STUBS)
+
+static inline void mono_memory_barrier (void)
+{
+	g_assert(0 && "This function is not yet implemented for the Unity platform.");
+}
+
+static inline void mono_memory_read_barrier (void)
+{
+	g_assert(0 && "This function is not yet implemented for the Unity platform.");
+}
+
+static inline void mono_memory_write_barrier (void)
+{
+	g_assert(0 && "This function is not yet implemented for the Unity platform.");
+}
+
+#else 
 #error "Don't know how to do memory barriers!"
 #endif
 

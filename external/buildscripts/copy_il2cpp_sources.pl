@@ -57,4 +57,8 @@ foreach my $sourcesLine(@listOfSourceFilesLines)
     {
         copy($fileToCopy, $destFile) or die "failed to copy $fileToCopy to $destFile\n";
     }
+	else
+	{
+		die "Source file to copy does not exist: $fileToCopy\n";
+	}
 }
