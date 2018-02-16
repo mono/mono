@@ -3,6 +3,9 @@ using Microsoft.Win32;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+#if UNITY
+using System.Collections.Generic;
+#endif
 
 namespace System.ComponentModel
 {
@@ -12,6 +15,11 @@ namespace System.ComponentModel
 		[DllImport ("Kernel32", CharSet = CharSet.Unicode)]
 		static extern int FormatMessage(int dwFlags, IntPtr lpSource, uint dwMessageId, int dwLanguageId,
 			[Out] StringBuilder lpBuffer, int nSize, IntPtr[] arguments);
+#endif
+
+#if UNITY
+		static bool s_ErrorMessagesInitialized = false;
+		static Dictionary<int, string> s_ErrorMessage = new Dictionary<int, string>();
 #endif
 
 		internal static string GetErrorMessage (int error)
@@ -29,7 +37,14 @@ namespace System.ComponentModel
 				return sb.ToString ();
 			}
 #endif
-
+#if UNITY
+			if (!s_ErrorMessagesInitialized)
+				InitializeErrorMessages();
+			string message;
+			if (s_ErrorMessage.TryGetValue(error, out message))
+				return message;
+			return string.Format ("mono-io-layer-error ({0})", error);
+#else
 			switch (error) {
 			case 0: /* ERROR_SUCCESS */ return "Success";
 			case 2: /* ERROR_FILE_NOT_FOUND */ return "Cannot find the specified file";
@@ -1738,6 +1753,1728 @@ namespace System.ComponentModel
 			default:
 				return string.Format ("mono-io-layer-error ({0})", error);
 			}
+#endif // UNITY
+	}
+
+#if UNITY
+		static void InitializeErrorMessages()
+		{
+			if (s_ErrorMessagesInitialized)
+				return;
+
+			lock (s_ErrorMessage)
+			{
+				if (s_ErrorMessagesInitialized)
+					return;
+
+				s_ErrorMessage.Add(0, "Success"); /* ERROR_SUCCESS */
+				s_ErrorMessage.Add(2, "Cannot find the specified file"); /* ERROR_FILE_NOT_FOUND */
+				s_ErrorMessage.Add(3, "Cannot find the specified file"); /* ERROR_PATH_NOT_FOUND */
+				s_ErrorMessage.Add(4, "Too many open files"); /* ERROR_TOO_MANY_OPEN_FILES */
+				s_ErrorMessage.Add(5, "Access denied"); /* ERROR_ACCESS_DENIED */
+				s_ErrorMessage.Add(6, "Invalid handle"); /* ERROR_INVALID_HANDLE */
+				s_ErrorMessage.Add(13, "Invalid data"); /* ERROR_INVALID_DATA */
+				s_ErrorMessage.Add(14, "Out of memory"); /* ERROR_OUTOFMEMORY */
+				s_ErrorMessage.Add(17, "Not same device"); /* ERROR_NOT_SAME_DEVICE */
+				s_ErrorMessage.Add(18, "No more files"); /* ERROR_NO_MORE_FILES */
+				s_ErrorMessage.Add(24, "Bad length"); /* ERROR_BAD_LENGTH */
+				s_ErrorMessage.Add(31, "General failure"); /* ERROR_GEN_FAILURE */
+				s_ErrorMessage.Add(32, "Sharing violation"); /* ERROR_SHARING_VIOLATION */
+				s_ErrorMessage.Add(33, "Lock violation"); /* ERROR_LOCK_VIOLATION */
+				s_ErrorMessage.Add(50, "Operation not supported"); /* ERROR_NOT_SUPPORTED */
+				s_ErrorMessage.Add(55, "Device does not exist"); /* ERROR_DEV_NOT_EXIST */
+				s_ErrorMessage.Add(87, "Invalid parameter"); /* ERROR_INVALID_PARAMETER */
+				s_ErrorMessage.Add(120, "Call not implemented"); /* ERROR_CALL_NOT_IMPLEMENTED */
+				s_ErrorMessage.Add(123, "Invalid name"); /* ERROR_INVALID_NAME */
+				s_ErrorMessage.Add(127, "Process not found"); /* ERROR_PROC_NOT_FOUND */
+				s_ErrorMessage.Add(183, "Already exists"); /* ERROR_ALREADY_EXISTS */
+				s_ErrorMessage.Add(267, "Is a directory"); /* ERROR_DIRECTORY */
+				s_ErrorMessage.Add(995, "Operation aborted"); /* ERROR_OPERATION_ABORTED */
+				s_ErrorMessage.Add(6000, "Encryption failed"); /* ERROR_ENCRYPTION_FAILED */
+				s_ErrorMessage.Add(10004, "interrupted"); /* WSAEINTR */
+				s_ErrorMessage.Add(10009, "Bad file number"); /* WSAEBADF */
+				s_ErrorMessage.Add(10013, "Access denied"); /* WSAEACCES */
+				s_ErrorMessage.Add(10014, "Bad address"); /* WSAEFAULT */
+				s_ErrorMessage.Add(10022, "Invalid arguments"); /* WSAEINVAL */
+				s_ErrorMessage.Add(10024, "Too many open files"); /* WSAEMFILE */
+				s_ErrorMessage.Add(10035, "Operation on non-blocking socket would block"); /* WSAEWOULDBLOCK */
+				s_ErrorMessage.Add(10036, "Operation in progress"); /* WSAEINPROGRESS */
+				s_ErrorMessage.Add(10037, "Operation already in progress"); /* WSAEALREADY */
+				s_ErrorMessage.Add(10038, "The descriptor is not a socket"); /* WSAENOTSOCK */
+				s_ErrorMessage.Add(10039, "Destination address required"); /* WSAEDESTADDRREQ */
+				s_ErrorMessage.Add(10040, "Message too long"); /* WSAEMSGSIZE */
+				s_ErrorMessage.Add(10041, "Protocol wrong type for socket"); /* WSAEPROTOTYPE */
+				s_ErrorMessage.Add(10042, "Protocol option not supported"); /* WSAENOPROTOOPT */
+				s_ErrorMessage.Add(10043, "Protocol not supported"); /* WSAEPROTONOSUPPORT */
+				s_ErrorMessage.Add(10044, "Socket not supported"); /* WSAESOCKTNOSUPPORT */
+				s_ErrorMessage.Add(10045, "Operation not supported"); /* WSAEOPNOTSUPP */
+				s_ErrorMessage.Add(10046, "Protocol family not supported"); /* WSAEPFNOSUPPORT */
+				s_ErrorMessage.Add(10047, "An address incompatible with the requested protocol was used"); /* WSAEAFNOSUPPORT */
+				s_ErrorMessage.Add(10048, "Address already in use"); /* WSAEADDRINUSE */
+				s_ErrorMessage.Add(10049, "The requested address is not valid in this context"); /* WSAEADDRNOTAVAIL */
+				s_ErrorMessage.Add(10050, "Network subsystem is down"); /* WSAENETDOWN */
+				s_ErrorMessage.Add(10051, "Network is unreachable"); /* WSAENETUNREACH */
+				s_ErrorMessage.Add(10052, "Connection broken, keep-alive detected a problem"); /* WSAENETRESET */
+				s_ErrorMessage.Add(10053, "An established connection was aborted in your host machine."); /* WSAECONNABORTED */
+				s_ErrorMessage.Add(10054, "Connection reset by peer"); /* WSAECONNRESET */
+				s_ErrorMessage.Add(10055, "Not enough buffer space is available"); /* WSAENOBUFS */
+				s_ErrorMessage.Add(10056, "Socket is already connected"); /* WSAEISCONN */
+				s_ErrorMessage.Add(10057, "The socket is not connected"); /* WSAENOTCONN */
+				s_ErrorMessage.Add(10058, "The socket has been shut down"); /* WSAESHUTDOWN */
+				s_ErrorMessage.Add(10059, "Too many references: cannot splice"); /* WSAETOOMANYREFS */
+				s_ErrorMessage.Add(10060, "Connection timed out"); /* WSAETIMEDOUT */
+				s_ErrorMessage.Add(10061, "Connection refused"); /* WSAECONNREFUSED */
+				s_ErrorMessage.Add(10062, "Too many symbolic links encountered"); /* WSAELOOP */
+				s_ErrorMessage.Add(10063, "File name too long"); /* WSAENAMETOOLONG */
+				s_ErrorMessage.Add(10064, "Host is down"); /* WSAEHOSTDOWN */
+				s_ErrorMessage.Add(10065, "No route to host"); /* WSAEHOSTUNREACH */
+				s_ErrorMessage.Add(10066, "Directory not empty"); /* WSAENOTEMPTY */
+				s_ErrorMessage.Add(10067, "EPROCLIM"); /* WSAEPROCLIM */
+				s_ErrorMessage.Add(10068, "Too many users"); /* WSAEUSERS */
+				s_ErrorMessage.Add(10069, "Quota exceeded"); /* WSAEDQUOT */
+				s_ErrorMessage.Add(10070, "Stale NFS file handle"); /* WSAESTALE */
+				s_ErrorMessage.Add(10071, "Object is remote"); /* WSAEREMOTE */
+				s_ErrorMessage.Add(10091, "SYSNOTREADY"); /* WSASYSNOTREADY */
+				s_ErrorMessage.Add(10092, "VERNOTSUPPORTED"); /* WSAVERNOTSUPPORTED */
+				s_ErrorMessage.Add(10093, "Winsock not initialised"); /* WSANOTINITIALISED */
+				s_ErrorMessage.Add(10101, "EDISCON"); /* WSAEDISCON */
+				s_ErrorMessage.Add(10102, "ENOMORE"); /* WSAENOMORE */
+				s_ErrorMessage.Add(10103, "Operation canceled"); /* WSAECANCELLED */
+				s_ErrorMessage.Add(10104, "EINVALIDPROCTABLE"); /* WSAEINVALIDPROCTABLE */
+				s_ErrorMessage.Add(10105, "EINVALIDPROVIDER"); /* WSAEINVALIDPROVIDER */
+				s_ErrorMessage.Add(10106, "EPROVIDERFAILEDINIT"); /* WSAEPROVIDERFAILEDINIT */
+				s_ErrorMessage.Add(10107, "System call failed"); /* WSASYSCALLFAILURE */
+				s_ErrorMessage.Add(10108, "SERVICE_NOT_FOUND"); /* WSASERVICE_NOT_FOUND */
+				s_ErrorMessage.Add(10109, "TYPE_NOT_FOUND"); /* WSATYPE_NOT_FOUND */
+				s_ErrorMessage.Add(10112, "EREFUSED"); /* WSAEREFUSED */
+				s_ErrorMessage.Add(11001, "No such host is known"); /* WSAHOST_NOT_FOUND */
+				s_ErrorMessage.Add(11002, "A temporary error occurred on an authoritative name server.  Try again later."); /* WSATRY_AGAIN */
+				s_ErrorMessage.Add(11003, "No recovery"); /* WSANO_RECOVERY */
+				s_ErrorMessage.Add(11004, "No data"); /* WSANO_DATA */
+#if !MOBILE
+				s_ErrorMessage.Add(1, "Invalid function"); /* ERROR_INVALID_FUNCTION */
+				s_ErrorMessage.Add(7, "Arena trashed"); /* ERROR_ARENA_TRASHED */
+				s_ErrorMessage.Add(8, "Not enough memory"); /* ERROR_NOT_ENOUGH_MEMORY */
+				s_ErrorMessage.Add(9, "Invalid block"); /* ERROR_INVALID_BLOCK */
+				s_ErrorMessage.Add(10, "Bad environment"); /* ERROR_BAD_ENVIRONMENT */
+				s_ErrorMessage.Add(11, "Bad format"); /* ERROR_BAD_FORMAT */
+				s_ErrorMessage.Add(12, "Invalid access"); /* ERROR_INVALID_ACCESS */
+				s_ErrorMessage.Add(15, "Invalid drive"); /* ERROR_INVALID_DRIVE */
+				s_ErrorMessage.Add(16, "Current directory"); /* ERROR_CURRENT_DIRECTORY */
+				s_ErrorMessage.Add(19, "Write protect"); /* ERROR_WRITE_PROTECT */
+				s_ErrorMessage.Add(20, "Bad unit"); /* ERROR_BAD_UNIT */
+				s_ErrorMessage.Add(21, "Not ready"); /* ERROR_NOT_READY */
+				s_ErrorMessage.Add(22, "Bad command"); /* ERROR_BAD_COMMAND */
+				s_ErrorMessage.Add(23, "CRC"); /* ERROR_CRC */
+				s_ErrorMessage.Add(25, "Seek"); /* ERROR_SEEK */
+				s_ErrorMessage.Add(26, "Not DOS disk"); /* ERROR_NOT_DOS_DISK */
+				s_ErrorMessage.Add(27, "Sector not found"); /* ERROR_SECTOR_NOT_FOUND */
+				s_ErrorMessage.Add(28, "Out of paper"); /* ERROR_OUT_OF_PAPER */
+				s_ErrorMessage.Add(29, "Write fault"); /* ERROR_WRITE_FAULT */
+				s_ErrorMessage.Add(30, "Read fault"); /* ERROR_READ_FAULT */
+				s_ErrorMessage.Add(34, "Wrong disk"); /* ERROR_WRONG_DISK */
+				s_ErrorMessage.Add(36, "Sharing buffer exceeded"); /* ERROR_SHARING_BUFFER_EXCEEDED */
+				s_ErrorMessage.Add(38, "Handle EOF"); /* ERROR_HANDLE_EOF */
+				s_ErrorMessage.Add(39, "Handle disk full"); /* ERROR_HANDLE_DISK_FULL */
+				s_ErrorMessage.Add(51, "Rem not list"); /* ERROR_REM_NOT_LIST */
+				s_ErrorMessage.Add(52, "Duplicate name"); /* ERROR_DUP_NAME */
+				s_ErrorMessage.Add(53, "Bad netpath"); /* ERROR_BAD_NETPATH */
+				s_ErrorMessage.Add(54, "Network busy"); /* ERROR_NETWORK_BUSY */
+				s_ErrorMessage.Add(56, "Too many commands"); /* ERROR_TOO_MANY_CMDS */
+				s_ErrorMessage.Add(57, "ADAP HDW error"); /* ERROR_ADAP_HDW_ERR */
+				s_ErrorMessage.Add(58, "Bad net response"); /* ERROR_BAD_NET_RESP */
+				s_ErrorMessage.Add(59, "Unexpected net error"); /* ERROR_UNEXP_NET_ERR */
+				s_ErrorMessage.Add(60, "Bad rem adap"); /* ERROR_BAD_REM_ADAP */
+				s_ErrorMessage.Add(61, "Print queue full"); /* ERROR_PRINTQ_FULL */
+				s_ErrorMessage.Add(62, "No spool space"); /* ERROR_NO_SPOOL_SPACE */
+				s_ErrorMessage.Add(63, "Print cancelled"); /* ERROR_PRINT_CANCELLED */
+				s_ErrorMessage.Add(64, "Netname deleted"); /* ERROR_NETNAME_DELETED */
+				s_ErrorMessage.Add(65, "Network access denied"); /* ERROR_NETWORK_ACCESS_DENIED */
+				s_ErrorMessage.Add(66, "Bad device type"); /* ERROR_BAD_DEV_TYPE */
+				s_ErrorMessage.Add(67, "Bad net name"); /* ERROR_BAD_NET_NAME */
+				s_ErrorMessage.Add(68, "Too many names"); /* ERROR_TOO_MANY_NAMES */
+				s_ErrorMessage.Add(69, "Too many sessions"); /* ERROR_TOO_MANY_SESS */
+				s_ErrorMessage.Add(70, "Sharing paused"); /* ERROR_SHARING_PAUSED */
+				s_ErrorMessage.Add(71, "Req not accep"); /* ERROR_REQ_NOT_ACCEP */
+				s_ErrorMessage.Add(72, "Redir paused"); /* ERROR_REDIR_PAUSED */
+				s_ErrorMessage.Add(80, "File exists"); /* ERROR_FILE_EXISTS */
+				s_ErrorMessage.Add(82, "Cannot make"); /* ERROR_CANNOT_MAKE */
+				s_ErrorMessage.Add(83, "Fail i24"); /* ERROR_FAIL_I24 */
+				s_ErrorMessage.Add(84, "Out of structures"); /* ERROR_OUT_OF_STRUCTURES */
+				s_ErrorMessage.Add(85, "Already assigned"); /* ERROR_ALREADY_ASSIGNED */
+				s_ErrorMessage.Add(86, "Invalid password"); /* ERROR_INVALID_PASSWORD */
+				s_ErrorMessage.Add(88, "Net write fault"); /* ERROR_NET_WRITE_FAULT */
+				s_ErrorMessage.Add(89, "No proc slots"); /* ERROR_NO_PROC_SLOTS */
+				s_ErrorMessage.Add(100, "Too many semaphores"); /* ERROR_TOO_MANY_SEMAPHORES */
+				s_ErrorMessage.Add(101, "Exclusive semaphore already owned"); /* ERROR_EXCL_SEM_ALREADY_OWNED */
+				s_ErrorMessage.Add(102, "Semaphore is set"); /* ERROR_SEM_IS_SET */
+				s_ErrorMessage.Add(103, "Too many semaphore requests"); /* ERROR_TOO_MANY_SEM_REQUESTS */
+				s_ErrorMessage.Add(104, "Invalid at interrupt time"); /* ERROR_INVALID_AT_INTERRUPT_TIME */
+				s_ErrorMessage.Add(105, "Semaphore owner died"); /* ERROR_SEM_OWNER_DIED */
+				s_ErrorMessage.Add(106, "Semaphore user limit"); /* ERROR_SEM_USER_LIMIT */
+				s_ErrorMessage.Add(107, "Disk change"); /* ERROR_DISK_CHANGE */
+				s_ErrorMessage.Add(108, "Drive locked"); /* ERROR_DRIVE_LOCKED */
+				s_ErrorMessage.Add(109, "Broken pipe"); /* ERROR_BROKEN_PIPE */
+				s_ErrorMessage.Add(110, "Open failed"); /* ERROR_OPEN_FAILED */
+				s_ErrorMessage.Add(111, "Buffer overflow"); /* ERROR_BUFFER_OVERFLOW */
+				s_ErrorMessage.Add(112, "Disk full"); /* ERROR_DISK_FULL */
+				s_ErrorMessage.Add(113, "No more search handles"); /* ERROR_NO_MORE_SEARCH_HANDLES */
+				s_ErrorMessage.Add(114, "Invalid target handle"); /* ERROR_INVALID_TARGET_HANDLE */
+				s_ErrorMessage.Add(117, "Invalid category"); /* ERROR_INVALID_CATEGORY */
+				s_ErrorMessage.Add(118, "Invalid verify switch"); /* ERROR_INVALID_VERIFY_SWITCH */
+				s_ErrorMessage.Add(119, "Bad driver level"); /* ERROR_BAD_DRIVER_LEVEL */
+				s_ErrorMessage.Add(121, "Semaphore timeout"); /* ERROR_SEM_TIMEOUT */
+				s_ErrorMessage.Add(122, "Insufficient buffer"); /* ERROR_INSUFFICIENT_BUFFER */
+				s_ErrorMessage.Add(124, "Invalid level"); /* ERROR_INVALID_LEVEL */
+				s_ErrorMessage.Add(125, "No volume label"); /* ERROR_NO_VOLUME_LABEL */
+				s_ErrorMessage.Add(126, "Module not found"); /* ERROR_MOD_NOT_FOUND */
+				s_ErrorMessage.Add(128, "Wait no children"); /* ERROR_WAIT_NO_CHILDREN */
+				s_ErrorMessage.Add(129, "Child not complete"); /* ERROR_CHILD_NOT_COMPLETE */
+				s_ErrorMessage.Add(130, "Direct access handle"); /* ERROR_DIRECT_ACCESS_HANDLE */
+				s_ErrorMessage.Add(131, "Negative seek"); /* ERROR_NEGATIVE_SEEK */
+				s_ErrorMessage.Add(132, "Seek on device"); /* ERROR_SEEK_ON_DEVICE */
+				s_ErrorMessage.Add(133, "Is join target"); /* ERROR_IS_JOIN_TARGET */
+				s_ErrorMessage.Add(134, "Is joined"); /* ERROR_IS_JOINED */
+				s_ErrorMessage.Add(135, "Is substed"); /* ERROR_IS_SUBSTED */
+				s_ErrorMessage.Add(136, "Not joined"); /* ERROR_NOT_JOINED */
+				s_ErrorMessage.Add(137, "Not substed"); /* ERROR_NOT_SUBSTED */
+				s_ErrorMessage.Add(138, "Join to join"); /* ERROR_JOIN_TO_JOIN */
+				s_ErrorMessage.Add(139, "Subst to subst"); /* ERROR_SUBST_TO_SUBST */
+				s_ErrorMessage.Add(140, "Join to subst"); /* ERROR_JOIN_TO_SUBST */
+				s_ErrorMessage.Add(141, "Subst to join"); /* ERROR_SUBST_TO_JOIN */
+				s_ErrorMessage.Add(142, "Busy drive"); /* ERROR_BUSY_DRIVE */
+				s_ErrorMessage.Add(143, "Same drive"); /* ERROR_SAME_DRIVE */
+				s_ErrorMessage.Add(144, "Directory not root"); /* ERROR_DIR_NOT_ROOT */
+				s_ErrorMessage.Add(145, "Directory not empty"); /* ERROR_DIR_NOT_EMPTY */
+				s_ErrorMessage.Add(146, "Is subst path"); /* ERROR_IS_SUBST_PATH */
+				s_ErrorMessage.Add(147, "Is join path"); /* ERROR_IS_JOIN_PATH */
+				s_ErrorMessage.Add(148, "Path busy"); /* ERROR_PATH_BUSY */
+				s_ErrorMessage.Add(149, "Is subst target"); /* ERROR_IS_SUBST_TARGET */
+				s_ErrorMessage.Add(150, "System trace"); /* ERROR_SYSTEM_TRACE */
+				s_ErrorMessage.Add(151, "Invalid event count"); /* ERROR_INVALID_EVENT_COUNT */
+				s_ErrorMessage.Add(152, "Too many muxwaiters"); /* ERROR_TOO_MANY_MUXWAITERS */
+				s_ErrorMessage.Add(153, "Invalid list format"); /* ERROR_INVALID_LIST_FORMAT */
+				s_ErrorMessage.Add(154, "Label too long"); /* ERROR_LABEL_TOO_LONG */
+				s_ErrorMessage.Add(155, "Too many TCBs"); /* ERROR_TOO_MANY_TCBS */
+				s_ErrorMessage.Add(156, "Signal refused"); /* ERROR_SIGNAL_REFUSED */
+				s_ErrorMessage.Add(157, "Discarded"); /* ERROR_DISCARDED */
+				s_ErrorMessage.Add(158, "Not locked"); /* ERROR_NOT_LOCKED */
+				s_ErrorMessage.Add(159, "Bad thread ID addr"); /* ERROR_BAD_THREADID_ADDR */
+				s_ErrorMessage.Add(160, "Bad arguments"); /* ERROR_BAD_ARGUMENTS */
+				s_ErrorMessage.Add(161, "Bad pathname"); /* ERROR_BAD_PATHNAME */
+				s_ErrorMessage.Add(162, "Signal pending"); /* ERROR_SIGNAL_PENDING */
+				s_ErrorMessage.Add(164, "Max thrds reached"); /* ERROR_MAX_THRDS_REACHED */
+				s_ErrorMessage.Add(167, "Lock failed"); /* ERROR_LOCK_FAILED */
+				s_ErrorMessage.Add(170, "Busy"); /* ERROR_BUSY */
+				s_ErrorMessage.Add(173, "Cancel violation"); /* ERROR_CANCEL_VIOLATION */
+				s_ErrorMessage.Add(174, "Atomic locks not supported"); /* ERROR_ATOMIC_LOCKS_NOT_SUPPORTED */
+				s_ErrorMessage.Add(180, "Invalid segment number"); /* ERROR_INVALID_SEGMENT_NUMBER */
+				s_ErrorMessage.Add(182, "Invalid ordinal"); /* ERROR_INVALID_ORDINAL */
+				s_ErrorMessage.Add(186, "Invalid flag number"); /* ERROR_INVALID_FLAG_NUMBER */
+				s_ErrorMessage.Add(187, "Sem not found"); /* ERROR_SEM_NOT_FOUND */
+				s_ErrorMessage.Add(188, "Invalid starting codeseg"); /* ERROR_INVALID_STARTING_CODESEG */
+				s_ErrorMessage.Add(189, "Invalid stackseg"); /* ERROR_INVALID_STACKSEG */
+				s_ErrorMessage.Add(190, "Invalid moduletype"); /* ERROR_INVALID_MODULETYPE */
+				s_ErrorMessage.Add(191, "Invalid exe signature"); /* ERROR_INVALID_EXE_SIGNATURE */
+				s_ErrorMessage.Add(192, "Exe marked invalid"); /* ERROR_EXE_MARKED_INVALID */
+				s_ErrorMessage.Add(193, "Bad exe format"); /* ERROR_BAD_EXE_FORMAT */
+				s_ErrorMessage.Add(194, "Iterated data exceeds 64k (and that should be enough for anybody!)"); /* ERROR_ITERATED_DATA_EXCEEDS_64k */
+				s_ErrorMessage.Add(195, "Invalid minallocsize"); /* ERROR_INVALID_MINALLOCSIZE */
+				s_ErrorMessage.Add(196, "Dynlink from invalid ring"); /* ERROR_DYNLINK_FROM_INVALID_RING */
+				s_ErrorMessage.Add(197, "IOPL not enabled"); /* ERROR_IOPL_NOT_ENABLED */
+				s_ErrorMessage.Add(198, "Invalid segdpl"); /* ERROR_INVALID_SEGDPL */
+				s_ErrorMessage.Add(199, "Autodataseg exceeds 64k"); /* ERROR_AUTODATASEG_EXCEEDS_64k */
+				s_ErrorMessage.Add(200, "Ring2seg must be movable"); /* ERROR_RING2SEG_MUST_BE_MOVABLE */
+				s_ErrorMessage.Add(201, "Reloc chain exceeds seglim"); /* ERROR_RELOC_CHAIN_XEEDS_SEGLIM */
+				s_ErrorMessage.Add(202, "Infloop in reloc chain"); /* ERROR_INFLOOP_IN_RELOC_CHAIN */
+				s_ErrorMessage.Add(203, "Env var not found"); /* ERROR_ENVVAR_NOT_FOUND */
+				s_ErrorMessage.Add(205, "No signal sent"); /* ERROR_NO_SIGNAL_SENT */
+				s_ErrorMessage.Add(206, "Filename exceeds range"); /* ERROR_FILENAME_EXCED_RANGE */
+				s_ErrorMessage.Add(207, "Ring2 stack in use"); /* ERROR_RING2_STACK_IN_USE */
+				s_ErrorMessage.Add(208, "Meta expansion too long"); /* ERROR_META_EXPANSION_TOO_LONG */
+				s_ErrorMessage.Add(209, "Invalid signal number"); /* ERROR_INVALID_SIGNAL_NUMBER */
+				s_ErrorMessage.Add(210, "Thread 1 inactive"); /* ERROR_THREAD_1_INACTIVE */
+				s_ErrorMessage.Add(212, "Locked"); /* ERROR_LOCKED */
+				s_ErrorMessage.Add(214, "Too many modules"); /* ERROR_TOO_MANY_MODULES */
+				s_ErrorMessage.Add(215, "Nesting not allowed"); /* ERROR_NESTING_NOT_ALLOWED */
+				s_ErrorMessage.Add(216, "Exe machine type mismatch"); /* ERROR_EXE_MACHINE_TYPE_MISMATCH */
+				s_ErrorMessage.Add(230, "Bad pipe"); /* ERROR_BAD_PIPE */
+				s_ErrorMessage.Add(231, "Pipe busy"); /* ERROR_PIPE_BUSY */
+				s_ErrorMessage.Add(232, "No data"); /* ERROR_NO_DATA */
+				s_ErrorMessage.Add(233, "Pipe not connected"); /* ERROR_PIPE_NOT_CONNECTED */
+				s_ErrorMessage.Add(234, "More data"); /* ERROR_MORE_DATA */
+				s_ErrorMessage.Add(240, "VC disconnected"); /* ERROR_VC_DISCONNECTED */
+				s_ErrorMessage.Add(254, "Invalid EA name"); /* ERROR_INVALID_EA_NAME */
+				s_ErrorMessage.Add(255, "EA list inconsistent"); /* ERROR_EA_LIST_INCONSISTENT */
+				s_ErrorMessage.Add(258, "Wait timeout"); /* WAIT_TIMEOUT */
+				s_ErrorMessage.Add(259, "No more items"); /* ERROR_NO_MORE_ITEMS */
+				s_ErrorMessage.Add(266, "Cannot copy"); /* ERROR_CANNOT_COPY */
+				s_ErrorMessage.Add(275, "EAS didnt fit"); /* ERROR_EAS_DIDNT_FIT */
+				s_ErrorMessage.Add(276, "EA file corrupt"); /* ERROR_EA_FILE_CORRUPT */
+				s_ErrorMessage.Add(277, "EA table full"); /* ERROR_EA_TABLE_FULL */
+				s_ErrorMessage.Add(278, "Invalid EA handle"); /* ERROR_INVALID_EA_HANDLE */
+				s_ErrorMessage.Add(282, "EAs not supported"); /* ERROR_EAS_NOT_SUPPORTED */
+				s_ErrorMessage.Add(288, "Not owner"); /* ERROR_NOT_OWNER */
+				s_ErrorMessage.Add(298, "Too many posts"); /* ERROR_TOO_MANY_POSTS */
+				s_ErrorMessage.Add(299, "Partial copy"); /* ERROR_PARTIAL_COPY */
+				s_ErrorMessage.Add(300, "Oplock not granted"); /* ERROR_OPLOCK_NOT_GRANTED */
+				s_ErrorMessage.Add(301, "Invalid oplock protocol"); /* ERROR_INVALID_OPLOCK_PROTOCOL */
+				s_ErrorMessage.Add(302, "Disk too fragmented"); /* ERROR_DISK_TOO_FRAGMENTED */
+				s_ErrorMessage.Add(303, "Delete pending"); /* ERROR_DELETE_PENDING */
+				s_ErrorMessage.Add(317, "Mr Mid not found"); /* ERROR_MR_MID_NOT_FOUND */
+				s_ErrorMessage.Add(487, "Invalid address"); /* ERROR_INVALID_ADDRESS */
+				s_ErrorMessage.Add(534, "Arithmetic overflow"); /* ERROR_ARITHMETIC_OVERFLOW */
+				s_ErrorMessage.Add(535, "Pipe connected"); /* ERROR_PIPE_CONNECTED */
+				s_ErrorMessage.Add(536, "Pipe listening"); /* ERROR_PIPE_LISTENING */
+				s_ErrorMessage.Add(994, "EA access denied"); /* ERROR_EA_ACCESS_DENIED */
+				s_ErrorMessage.Add(996, "IO incomplete"); /* ERROR_IO_INCOMPLETE */
+				s_ErrorMessage.Add(997, "IO pending"); /* ERROR_IO_PENDING */
+				s_ErrorMessage.Add(998, "No access"); /* ERROR_NOACCESS */
+				s_ErrorMessage.Add(999, "Swap error"); /* ERROR_SWAPERROR */
+				s_ErrorMessage.Add(1001, "Stack overflow"); /* ERROR_STACK_OVERFLOW */
+				s_ErrorMessage.Add(1002, "Invalid message"); /* ERROR_INVALID_MESSAGE */
+				s_ErrorMessage.Add(1003, "Can not complete"); /* ERROR_CAN_NOT_COMPLETE */
+				s_ErrorMessage.Add(1004, "Invalid flags"); /* ERROR_INVALID_FLAGS */
+				s_ErrorMessage.Add(1005, "Unrecognised volume"); /* ERROR_UNRECOGNIZED_VOLUME */
+				s_ErrorMessage.Add(1006, "File invalid"); /* ERROR_FILE_INVALID */
+				s_ErrorMessage.Add(1007, "Full screen mode"); /* ERROR_FULLSCREEN_MODE */
+				s_ErrorMessage.Add(1008, "No token"); /* ERROR_NO_TOKEN */
+				s_ErrorMessage.Add(1009, "Bad DB"); /* ERROR_BADDB */
+				s_ErrorMessage.Add(1010, "Bad key"); /* ERROR_BADKEY */
+				s_ErrorMessage.Add(1011, "Can't open"); /* ERROR_CANTOPEN */
+				s_ErrorMessage.Add(1012, "Can't read"); /* ERROR_CANTREAD */
+				s_ErrorMessage.Add(1013, "Can't write"); /* ERROR_CANTWRITE */
+				s_ErrorMessage.Add(1014, "Registry recovered"); /* ERROR_REGISTRY_RECOVERED */
+				s_ErrorMessage.Add(1015, "Registry corrupt"); /* ERROR_REGISTRY_CORRUPT */
+				s_ErrorMessage.Add(1016, "Registry IO failed"); /* ERROR_REGISTRY_IO_FAILED */
+				s_ErrorMessage.Add(1017, "Not registry file"); /* ERROR_NOT_REGISTRY_FILE */
+				s_ErrorMessage.Add(1018, "Key deleted"); /* ERROR_KEY_DELETED */
+				s_ErrorMessage.Add(1019, "No log space"); /* ERROR_NO_LOG_SPACE */
+				s_ErrorMessage.Add(1020, "Key has children"); /* ERROR_KEY_HAS_CHILDREN */
+				s_ErrorMessage.Add(1021, "Child must be volatile"); /* ERROR_CHILD_MUST_BE_VOLATILE */
+				s_ErrorMessage.Add(1022, "Notify enum dir"); /* ERROR_NOTIFY_ENUM_DIR */
+				s_ErrorMessage.Add(1051, "Dependent services running"); /* ERROR_DEPENDENT_SERVICES_RUNNING */
+				s_ErrorMessage.Add(1052, "Invalid service control"); /* ERROR_INVALID_SERVICE_CONTROL */
+				s_ErrorMessage.Add(1053, "Service request timeout"); /* ERROR_SERVICE_REQUEST_TIMEOUT */
+				s_ErrorMessage.Add(1054, "Service no thread"); /* ERROR_SERVICE_NO_THREAD */
+				s_ErrorMessage.Add(1055, "Service database locked"); /* ERROR_SERVICE_DATABASE_LOCKED */
+				s_ErrorMessage.Add(1056, "Service already running"); /* ERROR_SERVICE_ALREADY_RUNNING */
+				s_ErrorMessage.Add(1057, "Invalid service account"); /* ERROR_INVALID_SERVICE_ACCOUNT */
+				s_ErrorMessage.Add(1058, "Service disabled"); /* ERROR_SERVICE_DISABLED */
+				s_ErrorMessage.Add(1059, "Circular dependency"); /* ERROR_CIRCULAR_DEPENDENCY */
+				s_ErrorMessage.Add(1060, "Service does not exist"); /* ERROR_SERVICE_DOES_NOT_EXIST */
+				s_ErrorMessage.Add(1061, "Service cannot accept ctrl"); /* ERROR_SERVICE_CANNOT_ACCEPT_CTRL */
+				s_ErrorMessage.Add(1062, "Service not active"); /* ERROR_SERVICE_NOT_ACTIVE */
+				s_ErrorMessage.Add(1063, "Failed service controller connect"); /* ERROR_FAILED_SERVICE_CONTROLLER_CONNECT */
+				s_ErrorMessage.Add(1064, "Exception in service"); /* ERROR_EXCEPTION_IN_SERVICE */
+				s_ErrorMessage.Add(1065, "Database does not exist"); /* ERROR_DATABASE_DOES_NOT_EXIST */
+				s_ErrorMessage.Add(1066, "Service specific error"); /* ERROR_SERVICE_SPECIFIC_ERROR */
+				s_ErrorMessage.Add(1067, "Process aborted"); /* ERROR_PROCESS_ABORTED */
+				s_ErrorMessage.Add(1068, "Service dependency fail"); /* ERROR_SERVICE_DEPENDENCY_FAIL */
+				s_ErrorMessage.Add(1069, "Service logon failed"); /* ERROR_SERVICE_LOGON_FAILED */
+				s_ErrorMessage.Add(1070, "Service start hang"); /* ERROR_SERVICE_START_HANG */
+				s_ErrorMessage.Add(1071, "Invalid service lock"); /* ERROR_INVALID_SERVICE_LOCK */
+				s_ErrorMessage.Add(1072, "Service marked for delete"); /* ERROR_SERVICE_MARKED_FOR_DELETE */
+				s_ErrorMessage.Add(1073, "Service exists"); /* ERROR_SERVICE_EXISTS */
+				s_ErrorMessage.Add(1074, "Already running lkg"); /* ERROR_ALREADY_RUNNING_LKG */
+				s_ErrorMessage.Add(1075, "Service dependency deleted"); /* ERROR_SERVICE_DEPENDENCY_DELETED */
+				s_ErrorMessage.Add(1076, "Boot already accepted"); /* ERROR_BOOT_ALREADY_ACCEPTED */
+				s_ErrorMessage.Add(1077, "Service never started"); /* ERROR_SERVICE_NEVER_STARTED */
+				s_ErrorMessage.Add(1078, "Duplicate service name"); /* ERROR_DUPLICATE_SERVICE_NAME */
+				s_ErrorMessage.Add(1079, "Different service account"); /* ERROR_DIFFERENT_SERVICE_ACCOUNT */
+				s_ErrorMessage.Add(1080, "Cannot detect driver failure"); /* ERROR_CANNOT_DETECT_DRIVER_FAILURE */
+				s_ErrorMessage.Add(1081, "Cannot detect process abort"); /* ERROR_CANNOT_DETECT_PROCESS_ABORT */
+				s_ErrorMessage.Add(1082, "No recovery program"); /* ERROR_NO_RECOVERY_PROGRAM */
+				s_ErrorMessage.Add(1083, "Service not in exe"); /* ERROR_SERVICE_NOT_IN_EXE */
+				s_ErrorMessage.Add(1084, "Not safeboot service"); /* ERROR_NOT_SAFEBOOT_SERVICE */
+				s_ErrorMessage.Add(1100, "End of media"); /* ERROR_END_OF_MEDIA */
+				s_ErrorMessage.Add(1101, "Filemark detected"); /* ERROR_FILEMARK_DETECTED */
+				s_ErrorMessage.Add(1102, "Beginning of media"); /* ERROR_BEGINNING_OF_MEDIA */
+				s_ErrorMessage.Add(1103, "Setmark detected"); /* ERROR_SETMARK_DETECTED */
+				s_ErrorMessage.Add(1104, "No data detected"); /* ERROR_NO_DATA_DETECTED */
+				s_ErrorMessage.Add(1105, "Partition failure"); /* ERROR_PARTITION_FAILURE */
+				s_ErrorMessage.Add(1106, "Invalid block length"); /* ERROR_INVALID_BLOCK_LENGTH */
+				s_ErrorMessage.Add(1107, "Device not partitioned"); /* ERROR_DEVICE_NOT_PARTITIONED */
+				s_ErrorMessage.Add(1108, "Unable to lock media"); /* ERROR_UNABLE_TO_LOCK_MEDIA */
+				s_ErrorMessage.Add(1109, "Unable to unload media"); /* ERROR_UNABLE_TO_UNLOAD_MEDIA */
+				s_ErrorMessage.Add(1110, "Media changed"); /* ERROR_MEDIA_CHANGED */
+				s_ErrorMessage.Add(1111, "Bus reset"); /* ERROR_BUS_RESET */
+				s_ErrorMessage.Add(1112, "No media in drive"); /* ERROR_NO_MEDIA_IN_DRIVE */
+				s_ErrorMessage.Add(1113, "No unicode translation"); /* ERROR_NO_UNICODE_TRANSLATION */
+				s_ErrorMessage.Add(1114, "DLL init failed"); /* ERROR_DLL_INIT_FAILED */
+				s_ErrorMessage.Add(1115, "Shutdown in progress"); /* ERROR_SHUTDOWN_IN_PROGRESS */
+				s_ErrorMessage.Add(1116, "No shutdown in progress"); /* ERROR_NO_SHUTDOWN_IN_PROGRESS */
+				s_ErrorMessage.Add(1117, "IO device"); /* ERROR_IO_DEVICE */
+				s_ErrorMessage.Add(1118, "Serial IO device"); /* ERROR_SERIAL_NO_DEVICE */
+				s_ErrorMessage.Add(1119, "IRQ busy"); /* ERROR_IRQ_BUSY */
+				s_ErrorMessage.Add(1120, "More writes"); /* ERROR_MORE_WRITES */
+				s_ErrorMessage.Add(1121, "Counter timeout"); /* ERROR_COUNTER_TIMEOUT */
+				s_ErrorMessage.Add(1122, "Floppy ID mark not found"); /* ERROR_FLOPPY_ID_MARK_NOT_FOUND */
+				s_ErrorMessage.Add(1123, "Floppy wrong cylinder"); /* ERROR_FLOPPY_WRONG_CYLINDER */
+				s_ErrorMessage.Add(1124, "Floppy unknown error"); /* ERROR_FLOPPY_UNKNOWN_ERROR */
+				s_ErrorMessage.Add(1125, "Floppy bad registers"); /* ERROR_FLOPPY_BAD_REGISTERS */
+				s_ErrorMessage.Add(1126, "Disk recalibrate failed"); /* ERROR_DISK_RECALIBRATE_FAILED */
+				s_ErrorMessage.Add(1127, "Disk operation failed"); /* ERROR_DISK_OPERATION_FAILED */
+				s_ErrorMessage.Add(1128, "Disk reset failed"); /* ERROR_DISK_RESET_FAILED */
+				s_ErrorMessage.Add(1129, "EOM overflow"); /* ERROR_EOM_OVERFLOW */
+				s_ErrorMessage.Add(1130, "Not enough server memory"); /* ERROR_NOT_ENOUGH_SERVER_MEMORY */
+				s_ErrorMessage.Add(1131, "Possible deadlock"); /* ERROR_POSSIBLE_DEADLOCK */
+				s_ErrorMessage.Add(1132, "Mapped alignment"); /* ERROR_MAPPED_ALIGNMENT */
+				s_ErrorMessage.Add(1140, "Set power state vetoed"); /* ERROR_SET_POWER_STATE_VETOED */
+				s_ErrorMessage.Add(1141, "Set power state failed"); /* ERROR_SET_POWER_STATE_FAILED */
+				s_ErrorMessage.Add(1142, "Too many links"); /* ERROR_TOO_MANY_LINKS */
+				s_ErrorMessage.Add(1150, "Old win version"); /* ERROR_OLD_WIN_VERSION */
+				s_ErrorMessage.Add(1151, "App wrong OS"); /* ERROR_APP_WRONG_OS */
+				s_ErrorMessage.Add(1152, "Single instance app"); /* ERROR_SINGLE_INSTANCE_APP */
+				s_ErrorMessage.Add(1153, "Rmode app"); /* ERROR_RMODE_APP */
+				s_ErrorMessage.Add(1154, "Invalid DLL"); /* ERROR_INVALID_DLL */
+				s_ErrorMessage.Add(1155, "No association"); /* ERROR_NO_ASSOCIATION */
+				s_ErrorMessage.Add(1156, "DDE fail"); /* ERROR_DDE_FAIL */
+				s_ErrorMessage.Add(1157, "DLL not found"); /* ERROR_DLL_NOT_FOUND */
+				s_ErrorMessage.Add(1158, "No more user handles"); /* ERROR_NO_MORE_USER_HANDLES */
+				s_ErrorMessage.Add(1159, "Message sync only"); /* ERROR_MESSAGE_SYNC_ONLY */
+				s_ErrorMessage.Add(1160, "Source element empty"); /* ERROR_SOURCE_ELEMENT_EMPTY */
+				s_ErrorMessage.Add(1161, "Destination element full"); /* ERROR_DESTINATION_ELEMENT_FULL */
+				s_ErrorMessage.Add(1162, "Illegal element address"); /* ERROR_ILLEGAL_ELEMENT_ADDRESS */
+				s_ErrorMessage.Add(1163, "Magazine not present"); /* ERROR_MAGAZINE_NOT_PRESENT */
+				s_ErrorMessage.Add(1164, "Device reinitialization needed"); /* ERROR_DEVICE_REINITIALIZATION_NEEDED */
+				s_ErrorMessage.Add(1165, "Device requires cleaning"); /* ERROR_DEVICE_REQUIRES_CLEANING */
+				s_ErrorMessage.Add(1166, "Device door open"); /* ERROR_DEVICE_DOOR_OPEN */
+				s_ErrorMessage.Add(1167, "Device not connected"); /* ERROR_DEVICE_NOT_CONNECTED */
+				s_ErrorMessage.Add(1168, "Not found"); /* ERROR_NOT_FOUND */
+				s_ErrorMessage.Add(1169, "No match"); /* ERROR_NO_MATCH */
+				s_ErrorMessage.Add(1170, "Set not found"); /* ERROR_SET_NOT_FOUND */
+				s_ErrorMessage.Add(1171, "Point not found"); /* ERROR_POINT_NOT_FOUND */
+				s_ErrorMessage.Add(1172, "No tracking service"); /* ERROR_NO_TRACKING_SERVICE */
+				s_ErrorMessage.Add(1173, "No volume ID"); /* ERROR_NO_VOLUME_ID */
+				s_ErrorMessage.Add(1175, "Unable to remove replaced"); /* ERROR_UNABLE_TO_REMOVE_REPLACED */
+				s_ErrorMessage.Add(1176, "Unable to move replacement"); /* ERROR_UNABLE_TO_MOVE_REPLACEMENT */
+				s_ErrorMessage.Add(1177, "Unable to move replacement 2"); /* ERROR_UNABLE_TO_MOVE_REPLACEMENT_2 */
+				s_ErrorMessage.Add(1178, "Journal delete in progress"); /* ERROR_JOURNAL_DELETE_IN_PROGRESS */
+				s_ErrorMessage.Add(1179, "Journal not active"); /* ERROR_JOURNAL_NOT_ACTIVE */
+				s_ErrorMessage.Add(1180, "Potential file found"); /* ERROR_POTENTIAL_FILE_FOUND */
+				s_ErrorMessage.Add(1181, "Journal entry deleted"); /* ERROR_JOURNAL_ENTRY_DELETED */
+				s_ErrorMessage.Add(1200, "Bad device"); /* ERROR_BAD_DEVICE */
+				s_ErrorMessage.Add(1201, "Connection unavail"); /* ERROR_CONNECTION_UNAVAIL */
+				s_ErrorMessage.Add(1202, "Device already remembered"); /* ERROR_DEVICE_ALREADY_REMEMBERED */
+				s_ErrorMessage.Add(1203, "No net or bad path"); /* ERROR_NO_NET_OR_BAD_PATH */
+				s_ErrorMessage.Add(1204, "Bad provider"); /* ERROR_BAD_PROVIDER */
+				s_ErrorMessage.Add(1205, "Cannot open profile"); /* ERROR_CANNOT_OPEN_PROFILE */
+				s_ErrorMessage.Add(1206, "Bad profile"); /* ERROR_BAD_PROFILE */
+				s_ErrorMessage.Add(1207, "Not container"); /* ERROR_NOT_CONTAINER */
+				s_ErrorMessage.Add(1208, "Extended error"); /* ERROR_EXTENDED_ERROR */
+				s_ErrorMessage.Add(1209, "Invalid group name"); /* ERROR_INVALID_GROUPNAME */
+				s_ErrorMessage.Add(1210, "Invalid computer name"); /* ERROR_INVALID_COMPUTERNAME */
+				s_ErrorMessage.Add(1211, "Invalid event name"); /* ERROR_INVALID_EVENTNAME */
+				s_ErrorMessage.Add(1212, "Invalid domain name"); /* ERROR_INVALID_DOMAINNAME */
+				s_ErrorMessage.Add(1213, "Invalid service name"); /* ERROR_INVALID_SERVICENAME */
+				s_ErrorMessage.Add(1214, "Invalid net name"); /* ERROR_INVALID_NETNAME */
+				s_ErrorMessage.Add(1215, "Invalid share name"); /* ERROR_INVALID_SHARENAME */
+				s_ErrorMessage.Add(1216, "Invalid password name"); /* ERROR_INVALID_PASSWORDNAME */
+				s_ErrorMessage.Add(1217, "Invalid message name"); /* ERROR_INVALID_MESSAGENAME */
+				s_ErrorMessage.Add(1218, "Invalid message dest"); /* ERROR_INVALID_MESSAGEDEST */
+				s_ErrorMessage.Add(1219, "Session credential conflict"); /* ERROR_SESSION_CREDENTIAL_CONFLICT */
+				s_ErrorMessage.Add(1220, "Remote session limit exceeded"); /* ERROR_REMOTE_SESSION_LIMIT_EXCEEDED */
+				s_ErrorMessage.Add(1221, "Dup domain name"); /* ERROR_DUP_DOMAINNAME */
+				s_ErrorMessage.Add(1222, "No network"); /* ERROR_NO_NETWORK */
+				s_ErrorMessage.Add(1223, "Cancelled"); /* ERROR_CANCELLED */
+				s_ErrorMessage.Add(1224, "User mapped file"); /* ERROR_USER_MAPPED_FILE */
+				s_ErrorMessage.Add(1225, "Connection refused"); /* ERROR_CONNECTION_REFUSED */
+				s_ErrorMessage.Add(1226, "Graceful disconnect"); /* ERROR_GRACEFUL_DISCONNECT */
+				s_ErrorMessage.Add(1227, "Address already associated"); /* ERROR_ADDRESS_ALREADY_ASSOCIATED */
+				s_ErrorMessage.Add(1228, "Address not associated"); /* ERROR_ADDRESS_NOT_ASSOCIATED */
+				s_ErrorMessage.Add(1229, "Connected invalid"); /* ERROR_CONNECTION_INVALID */
+				s_ErrorMessage.Add(1230, "Connection active"); /* ERROR_CONNECTION_ACTIVE */
+				s_ErrorMessage.Add(1231, "Network unreachable"); /* ERROR_NETWORK_UNREACHABLE */
+				s_ErrorMessage.Add(1232, "Host unreachable"); /* ERROR_HOST_UNREACHABLE */
+				s_ErrorMessage.Add(1233, "Protocol unreachable"); /* ERROR_PROTOCOL_UNREACHABLE */
+				s_ErrorMessage.Add(1234, "Port unreachable"); /* ERROR_PORT_UNREACHABLE */
+				s_ErrorMessage.Add(1235, "Request aborted"); /* ERROR_REQUEST_ABORTED */
+				s_ErrorMessage.Add(1236, "Connection aborted"); /* ERROR_CONNECTION_ABORTED */
+				s_ErrorMessage.Add(1237, "Retry"); /* ERROR_RETRY */
+				s_ErrorMessage.Add(1238, "Connection count limit"); /* ERROR_CONNECTION_COUNT_LIMIT */
+				s_ErrorMessage.Add(1239, "Login time restriction"); /* ERROR_LOGIN_TIME_RESTRICTION */
+				s_ErrorMessage.Add(1240, "Login wksta restriction"); /* ERROR_LOGIN_WKSTA_RESTRICTION */
+				s_ErrorMessage.Add(1241, "Incorrect address"); /* ERROR_INCORRECT_ADDRESS */
+				s_ErrorMessage.Add(1242, "Already registered"); /* ERROR_ALREADY_REGISTERED */
+				s_ErrorMessage.Add(1243, "Service not found"); /* ERROR_SERVICE_NOT_FOUND */
+				s_ErrorMessage.Add(1244, "Not authenticated"); /* ERROR_NOT_AUTHENTICATED */
+				s_ErrorMessage.Add(1245, "Not logged on"); /* ERROR_NOT_LOGGED_ON */
+				s_ErrorMessage.Add(1246, "Continue"); /* ERROR_CONTINUE */
+				s_ErrorMessage.Add(1247, "Already initialised"); /* ERROR_ALREADY_INITIALIZED */
+				s_ErrorMessage.Add(1248, "No more devices"); /* ERROR_NO_MORE_DEVICES */
+				s_ErrorMessage.Add(1249, "No such site"); /* ERROR_NO_SUCH_SITE */
+				s_ErrorMessage.Add(1250, "Domain controller exists"); /* ERROR_DOMAIN_CONTROLLER_EXISTS */
+				s_ErrorMessage.Add(1251, "Only if connected"); /* ERROR_ONLY_IF_CONNECTED */
+				s_ErrorMessage.Add(1252, "Override no changes"); /* ERROR_OVERRIDE_NOCHANGES */
+				s_ErrorMessage.Add(1253, "Bad user profile"); /* ERROR_BAD_USER_PROFILE */
+				s_ErrorMessage.Add(1254, "Not supported on SBS"); /* ERROR_NOT_SUPPORTED_ON_SBS */
+				s_ErrorMessage.Add(1255, "Server shutdown in progress"); /* ERROR_SERVER_SHUTDOWN_IN_PROGRESS */
+				s_ErrorMessage.Add(1256, "Host down"); /* ERROR_HOST_DOWN */
+				s_ErrorMessage.Add(1257, "Non account sid"); /* ERROR_NON_ACCOUNT_SID */
+				s_ErrorMessage.Add(1258, "Non domain sid"); /* ERROR_NON_DOMAIN_SID */
+				s_ErrorMessage.Add(1259, "Apphelp block"); /* ERROR_APPHELP_BLOCK */
+				s_ErrorMessage.Add(1260, "Access disabled by policy"); /* ERROR_ACCESS_DISABLED_BY_POLICY */
+				s_ErrorMessage.Add(1261, "Reg nat consumption"); /* ERROR_REG_NAT_CONSUMPTION */
+				s_ErrorMessage.Add(1262, "CSC share offline"); /* ERROR_CSCSHARE_OFFLINE */
+				s_ErrorMessage.Add(1263, "PK init failure"); /* ERROR_PKINIT_FAILURE */
+				s_ErrorMessage.Add(1264, "Smartcard subsystem failure"); /* ERROR_SMARTCARD_SUBSYSTEM_FAILURE */
+				s_ErrorMessage.Add(1265, "Downgrade detected"); /* ERROR_DOWNGRADE_DETECTED */
+				s_ErrorMessage.Add(1266, "Smartcard cert revoked"); /* SEC_E_SMARTCARD_CERT_REVOKED */
+				s_ErrorMessage.Add(1267, "Issuing CA untrusted"); /* SEC_E_ISSUING_CA_UNTRUSTED */
+				s_ErrorMessage.Add(1268, "Revocation offline"); /* SEC_E_REVOCATION_OFFLINE_C */
+				s_ErrorMessage.Add(1269, "PK init client failure"); /* SEC_E_PKINIT_CLIENT_FAILUR */
+				s_ErrorMessage.Add(1270, "Smartcard cert expired"); /* SEC_E_SMARTCARD_CERT_EXPIRED */
+				s_ErrorMessage.Add(1271, "Machine locked"); /* ERROR_MACHINE_LOCKED */
+				s_ErrorMessage.Add(1273, "Callback supplied invalid data"); /* ERROR_CALLBACK_SUPPLIED_INVALID_DATA */
+				s_ErrorMessage.Add(1274, "Sync foreground refresh required"); /* ERROR_SYNC_FOREGROUND_REFRESH_REQUIRED */
+				s_ErrorMessage.Add(1275, "Driver blocked"); /* ERROR_DRIVER_BLOCKED */
+				s_ErrorMessage.Add(1276, "Invalid import of non DLL"); /* ERROR_INVALID_IMPORT_OF_NON_DLL */
+				s_ErrorMessage.Add(1300, "Not all assigned"); /* ERROR_NOT_ALL_ASSIGNED */
+				s_ErrorMessage.Add(1301, "Some not mapped"); /* ERROR_SOME_NOT_MAPPED */
+				s_ErrorMessage.Add(1302, "No quotas for account"); /* ERROR_NO_QUOTAS_FOR_ACCOUNT */
+				s_ErrorMessage.Add(1303, "Local user session key"); /* ERROR_LOCAL_USER_SESSION_KEY */
+				s_ErrorMessage.Add(1304, "Null LM password"); /* ERROR_NULL_LM_PASSWORD */
+				s_ErrorMessage.Add(1305, "Unknown revision"); /* ERROR_UNKNOWN_REVISION */
+				s_ErrorMessage.Add(1306, "Revision mismatch"); /* ERROR_REVISION_MISMATCH */
+				s_ErrorMessage.Add(1307, "Invalid owner"); /* ERROR_INVALID_OWNER */
+				s_ErrorMessage.Add(1308, "Invalid primary group"); /* ERROR_INVALID_PRIMARY_GROUP */
+				s_ErrorMessage.Add(1309, "No impersonation token"); /* ERROR_NO_IMPERSONATION_TOKEN */
+				s_ErrorMessage.Add(1310, "Can't disable mandatory"); /* ERROR_CANT_DISABLE_MANDATORY */
+				s_ErrorMessage.Add(1311, "No logon servers"); /* ERROR_NO_LOGON_SERVERS */
+				s_ErrorMessage.Add(1312, "No such logon session"); /* ERROR_NO_SUCH_LOGON_SESSION */
+				s_ErrorMessage.Add(1313, "No such privilege"); /* ERROR_NO_SUCH_PRIVILEGE */
+				s_ErrorMessage.Add(1314, "Privilege not held"); /* ERROR_PRIVILEGE_NOT_HELD */
+				s_ErrorMessage.Add(1315, "Invalid account name"); /* ERROR_INVALID_ACCOUNT_NAME */
+				s_ErrorMessage.Add(1316, "User exists"); /* ERROR_USER_EXISTS */
+				s_ErrorMessage.Add(1317, "No such user"); /* ERROR_NO_SUCH_USER */
+				s_ErrorMessage.Add(1318, "Group exists"); /* ERROR_GROUP_EXISTS */
+				s_ErrorMessage.Add(1319, "No such group"); /* ERROR_NO_SUCH_GROUP */
+				s_ErrorMessage.Add(1320, "Member in group"); /* ERROR_MEMBER_IN_GROUP */
+				s_ErrorMessage.Add(1321, "Member not in group"); /* ERROR_MEMBER_NOT_IN_GROUP */
+				s_ErrorMessage.Add(1322, "Last admin"); /* ERROR_LAST_ADMIN */
+				s_ErrorMessage.Add(1323, "Wrong password"); /* ERROR_WRONG_PASSWORD */
+				s_ErrorMessage.Add(1324, "Ill formed password"); /* ERROR_ILL_FORMED_PASSWORD */
+				s_ErrorMessage.Add(1325, "Password restriction"); /* ERROR_PASSWORD_RESTRICTION */
+				s_ErrorMessage.Add(1326, "Logon failure"); /* ERROR_LOGON_FAILURE */
+				s_ErrorMessage.Add(1327, "Account restriction"); /* ERROR_ACCOUNT_RESTRICTION */
+				s_ErrorMessage.Add(1328, "Invalid logon hours"); /* ERROR_INVALID_LOGON_HOURS */
+				s_ErrorMessage.Add(1329, "Invalid workstation"); /* ERROR_INVALID_WORKSTATION */
+				s_ErrorMessage.Add(1330, "Password expired"); /* ERROR_PASSWORD_EXPIRED */
+				s_ErrorMessage.Add(1331, "Account disabled"); /* ERROR_ACCOUNT_DISABLED */
+				s_ErrorMessage.Add(1332, "None mapped"); /* ERROR_NONE_MAPPED */
+				s_ErrorMessage.Add(1333, "Too many LUIDs requested"); /* ERROR_TOO_MANY_LUIDS_REQUESTED */
+				s_ErrorMessage.Add(1334, "LUIDs exhausted"); /* ERROR_LUIDS_EXHAUSTED */
+				s_ErrorMessage.Add(1335, "Invalid sub authority"); /* ERROR_INVALID_SUB_AUTHORITY */
+				s_ErrorMessage.Add(1336, "Invalid ACL"); /* ERROR_INVALID_ACL */
+				s_ErrorMessage.Add(1337, "Invalid SID"); /* ERROR_INVALID_SID */
+				s_ErrorMessage.Add(1338, "Invalid security descr"); /* ERROR_INVALID_SECURITY_DESCR */
+				s_ErrorMessage.Add(1340, "Bad inheritance ACL"); /* ERROR_BAD_INHERITANCE_ACL */
+				s_ErrorMessage.Add(1341, "Server disabled"); /* ERROR_SERVER_DISABLED */
+				s_ErrorMessage.Add(1342, "Server not disabled"); /* ERROR_SERVER_NOT_DISABLED */
+				s_ErrorMessage.Add(1343, "Invalid ID authority"); /* ERROR_INVALID_ID_AUTHORITY */
+				s_ErrorMessage.Add(1344, "Allotted space exceeded"); /* ERROR_ALLOTTED_SPACE_EXCEEDED */
+				s_ErrorMessage.Add(1345, "Invalid group attributes"); /* ERROR_INVALID_GROUP_ATTRIBUTES */
+				s_ErrorMessage.Add(1346, "Bad impersonation level"); /* ERROR_BAD_IMPERSONATION_LEVEL */
+				s_ErrorMessage.Add(1347, "Can't open anonymous"); /* ERROR_CANT_OPEN_ANONYMOUS */
+				s_ErrorMessage.Add(1348, "Bad validation class"); /* ERROR_BAD_VALIDATION_CLASS */
+				s_ErrorMessage.Add(1349, "Bad token type"); /* ERROR_BAD_TOKEN_TYPE */
+				s_ErrorMessage.Add(1350, "No security on object"); /* ERROR_NO_SECURITY_ON_OBJECT */
+				s_ErrorMessage.Add(1351, "Can't access domain info"); /* ERROR_CANT_ACCESS_DOMAIN_INFO */
+				s_ErrorMessage.Add(1352, "Invalid server state"); /* ERROR_INVALID_SERVER_STATE */
+				s_ErrorMessage.Add(1353, "Invalid domain state"); /* ERROR_INVALID_DOMAIN_STATE */
+				s_ErrorMessage.Add(1354, "Invalid domain role"); /* ERROR_INVALID_DOMAIN_ROLE */
+				s_ErrorMessage.Add(1355, "No such domain"); /* ERROR_NO_SUCH_DOMAIN */
+				s_ErrorMessage.Add(1356, "Domain exists"); /* ERROR_DOMAIN_EXISTS */
+				s_ErrorMessage.Add(1357, "Domain limit exceeded"); /* ERROR_DOMAIN_LIMIT_EXCEEDED */
+				s_ErrorMessage.Add(1358, "Internal DB corruption"); /* ERROR_INTERNAL_DB_CORRUPTION */
+				s_ErrorMessage.Add(1359, "Internal error"); /* ERROR_INTERNAL_ERROR */
+				s_ErrorMessage.Add(1360, "Generic not mapped"); /* ERROR_GENERIC_NOT_MAPPED */
+				s_ErrorMessage.Add(1361, "Bad descriptor format"); /* ERROR_BAD_DESCRIPTOR_FORMAT */
+				s_ErrorMessage.Add(1362, "Not logon process"); /* ERROR_NOT_LOGON_PROCESS */
+				s_ErrorMessage.Add(1363, "Logon session exists"); /* ERROR_LOGON_SESSION_EXISTS */
+				s_ErrorMessage.Add(1364, "No such package"); /* ERROR_NO_SUCH_PACKAGE */
+				s_ErrorMessage.Add(1365, "Bad logon session state"); /* ERROR_BAD_LOGON_SESSION_STATE */
+				s_ErrorMessage.Add(1366, "Logon session collision"); /* ERROR_LOGON_SESSION_COLLISION */
+				s_ErrorMessage.Add(1367, "Invalid logon type"); /* ERROR_INVALID_LOGON_TYPE */
+				s_ErrorMessage.Add(1368, "Cannot impersonate"); /* ERROR_CANNOT_IMPERSONATE */
+				s_ErrorMessage.Add(1369, "Rxact invalid state"); /* ERROR_RXACT_INVALID_STATE */
+				s_ErrorMessage.Add(1370, "Rxact commit failure"); /* ERROR_RXACT_COMMIT_FAILURE */
+				s_ErrorMessage.Add(1371, "Special account"); /* ERROR_SPECIAL_ACCOUNT */
+				s_ErrorMessage.Add(1372, "Special group"); /* ERROR_SPECIAL_GROUP */
+				s_ErrorMessage.Add(1373, "Special user"); /* ERROR_SPECIAL_USER */
+				s_ErrorMessage.Add(1374, "Members primary group"); /* ERROR_MEMBERS_PRIMARY_GROUP */
+				s_ErrorMessage.Add(1375, "Token already in use"); /* ERROR_TOKEN_ALREADY_IN_USE */
+				s_ErrorMessage.Add(1376, "No such alias"); /* ERROR_NO_SUCH_ALIAS */
+				s_ErrorMessage.Add(1377, "Member not in alias"); /* ERROR_MEMBER_NOT_IN_ALIAS */
+				s_ErrorMessage.Add(1378, "Member in alias"); /* ERROR_MEMBER_IN_ALIAS */
+				s_ErrorMessage.Add(1379, "Alias exists"); /* ERROR_ALIAS_EXISTS */
+				s_ErrorMessage.Add(1380, "Logon not granted"); /* ERROR_LOGON_NOT_GRANTED */
+				s_ErrorMessage.Add(1381, "Too many secrets"); /* ERROR_TOO_MANY_SECRETS */
+				s_ErrorMessage.Add(1382, "Secret too long"); /* ERROR_SECRET_TOO_LONG */
+				s_ErrorMessage.Add(1383, "Internal DB error"); /* ERROR_INTERNAL_DB_ERROR */
+				s_ErrorMessage.Add(1384, "Too many context IDs"); /* ERROR_TOO_MANY_CONTEXT_IDS */
+				s_ErrorMessage.Add(1385, "Logon type not granted"); /* ERROR_LOGON_TYPE_NOT_GRANTED */
+				s_ErrorMessage.Add(1386, "NT cross encryption required"); /* ERROR_NT_CROSS_ENCRYPTION_REQUIRED */
+				s_ErrorMessage.Add(1387, "No such member"); /* ERROR_NO_SUCH_MEMBER */
+				s_ErrorMessage.Add(1388, "Invalid member"); /* ERROR_INVALID_MEMBER */
+				s_ErrorMessage.Add(1389, "Too many SIDs"); /* ERROR_TOO_MANY_SIDS */
+				s_ErrorMessage.Add(1390, "LM cross encryption required"); /* ERROR_LM_CROSS_ENCRYPTION_REQUIRED */
+				s_ErrorMessage.Add(1391, "No inheritance"); /* ERROR_NO_INHERITANCE */
+				s_ErrorMessage.Add(1392, "File corrupt"); /* ERROR_FILE_CORRUPT */
+				s_ErrorMessage.Add(1393, "Disk corrupt"); /* ERROR_DISK_CORRUPT */
+				s_ErrorMessage.Add(1394, "No user session key"); /* ERROR_NO_USER_SESSION_KEY */
+				s_ErrorMessage.Add(1395, "Licence quota exceeded"); /* ERROR_LICENSE_QUOTA_EXCEEDED */
+				s_ErrorMessage.Add(1396, "Wrong target name"); /* ERROR_WRONG_TARGET_NAME */
+				s_ErrorMessage.Add(1397, "Mutual auth failed"); /* ERROR_MUTUAL_AUTH_FAILED */
+				s_ErrorMessage.Add(1398, "Time skew"); /* ERROR_TIME_SKEW */
+				s_ErrorMessage.Add(1399, "Current domain not allowed"); /* ERROR_CURRENT_DOMAIN_NOT_ALLOWED */
+				s_ErrorMessage.Add(1400, "Invalid window handle"); /* ERROR_INVALID_WINDOW_HANDLE */
+				s_ErrorMessage.Add(1401, "Invalid menu handle"); /* ERROR_INVALID_MENU_HANDLE */
+				s_ErrorMessage.Add(1402, "Invalid cursor handle"); /* ERROR_INVALID_CURSOR_HANDLE */
+				s_ErrorMessage.Add(1403, "Invalid accel handle"); /* ERROR_INVALID_ACCEL_HANDLE */
+				s_ErrorMessage.Add(1404, "Invalid hook handle"); /* ERROR_INVALID_HOOK_HANDLE */
+				s_ErrorMessage.Add(1405, "Invalid DWP handle"); /* ERROR_INVALID_DWP_HANDLE */
+				s_ErrorMessage.Add(1406, "TLW with wschild"); /* ERROR_TLW_WITH_WSCHILD */
+				s_ErrorMessage.Add(1407, "Cannot find WND class"); /* ERROR_CANNOT_FIND_WND_CLASS */
+				s_ErrorMessage.Add(1408, "Window of other thread"); /* ERROR_WINDOW_OF_OTHER_THREAD */
+				s_ErrorMessage.Add(1409, "Hotkey already registered"); /* ERROR_HOTKEY_ALREADY_REGISTERED */
+				s_ErrorMessage.Add(1410, "Class already exists"); /* ERROR_CLASS_ALREADY_EXISTS */
+				s_ErrorMessage.Add(1411, "Class does not exist"); /* ERROR_CLASS_DOES_NOT_EXIST */
+				s_ErrorMessage.Add(1412, "Class has windows"); /* ERROR_CLASS_HAS_WINDOWS */
+				s_ErrorMessage.Add(1413, "Invalid index"); /* ERROR_INVALID_INDEX */
+				s_ErrorMessage.Add(1414, "Invalid icon handle"); /* ERROR_INVALID_ICON_HANDLE */
+				s_ErrorMessage.Add(1415, "Private dialog index"); /* ERROR_PRIVATE_DIALOG_INDEX */
+				s_ErrorMessage.Add(1416, "Listbox ID not found"); /* ERROR_LISTBOX_ID_NOT_FOUND */
+				s_ErrorMessage.Add(1417, "No wildcard characters"); /* ERROR_NO_WILDCARD_CHARACTERS */
+				s_ErrorMessage.Add(1418, "Clipboard not open"); /* ERROR_CLIPBOARD_NOT_OPEN */
+				s_ErrorMessage.Add(1419, "Hotkey not registered"); /* ERROR_HOTKEY_NOT_REGISTERED */
+				s_ErrorMessage.Add(1420, "Window not dialog"); /* ERROR_WINDOW_NOT_DIALOG */
+				s_ErrorMessage.Add(1421, "Control ID not found"); /* ERROR_CONTROL_ID_NOT_FOUND */
+				s_ErrorMessage.Add(1422, "Invalid combobox message"); /* ERROR_INVALID_COMBOBOX_MESSAGE */
+				s_ErrorMessage.Add(1423, "Window not combobox"); /* ERROR_WINDOW_NOT_COMBOBOX */
+				s_ErrorMessage.Add(1424, "Invalid edit height"); /* ERROR_INVALID_EDIT_HEIGHT */
+				s_ErrorMessage.Add(1425, "DC not found"); /* ERROR_DC_NOT_FOUND */
+				s_ErrorMessage.Add(1426, "Invalid hook filter"); /* ERROR_INVALID_HOOK_FILTER */
+				s_ErrorMessage.Add(1427, "Invalid filter proc"); /* ERROR_INVALID_FILTER_PROC */
+				s_ErrorMessage.Add(1428, "Hook needs HMOD"); /* ERROR_HOOK_NEEDS_HMOD */
+				s_ErrorMessage.Add(1429, "Global only hook"); /* ERROR_GLOBAL_ONLY_HOOK */
+				s_ErrorMessage.Add(1430, "Journal hook set"); /* ERROR_JOURNAL_HOOK_SET */
+				s_ErrorMessage.Add(1431, "Hook not installed"); /* ERROR_HOOK_NOT_INSTALLED */
+				s_ErrorMessage.Add(1432, "Invalid LB message"); /* ERROR_INVALID_LB_MESSAGE */
+				s_ErrorMessage.Add(1433, "Setcount on bad LB"); /* ERROR_SETCOUNT_ON_BAD_LB */
+				s_ErrorMessage.Add(1434, "LB without tabstops"); /* ERROR_LB_WITHOUT_TABSTOPS */
+				s_ErrorMessage.Add(1435, "Destroy object of other thread"); /* ERROR_DESTROY_OBJECT_OF_OTHER_THREAD */
+				s_ErrorMessage.Add(1436, "Child window menu"); /* ERROR_CHILD_WINDOW_MENU */
+				s_ErrorMessage.Add(1437, "No system menu"); /* ERROR_NO_SYSTEM_MENU */
+				s_ErrorMessage.Add(1438, "Invalid msgbox style"); /* ERROR_INVALID_MSGBOX_STYLE */
+				s_ErrorMessage.Add(1439, "Invalid SPI value"); /* ERROR_INVALID_SPI_VALUE */
+				s_ErrorMessage.Add(1440, "Screen already locked"); /* ERROR_SCREEN_ALREADY_LOCKED */
+				s_ErrorMessage.Add(1441, "HWNDs have different parent"); /* ERROR_HWNDS_HAVE_DIFF_PARENT */
+				s_ErrorMessage.Add(1442, "Not child window"); /* ERROR_NOT_CHILD_WINDOW */
+				s_ErrorMessage.Add(1443, "Invalid GW command"); /* ERROR_INVALID_GW_COMMAND */
+				s_ErrorMessage.Add(1444, "Invalid thread ID"); /* ERROR_INVALID_THREAD_ID */
+				s_ErrorMessage.Add(1445, "Non MDI child window"); /* ERROR_NON_MDICHILD_WINDOW */
+				s_ErrorMessage.Add(1446, "Popup already active"); /* ERROR_POPUP_ALREADY_ACTIVE */
+				s_ErrorMessage.Add(1447, "No scrollbars"); /* ERROR_NO_SCROLLBARS */
+				s_ErrorMessage.Add(1448, "Invalid scrollbar range"); /* ERROR_INVALID_SCROLLBAR_RANGE */
+				s_ErrorMessage.Add(1449, "Invalid showwin command"); /* ERROR_INVALID_SHOWWIN_COMMAND */
+				s_ErrorMessage.Add(1450, "No system resources"); /* ERROR_NO_SYSTEM_RESOURCES */
+				s_ErrorMessage.Add(1451, "Nonpaged system resources"); /* ERROR_NONPAGED_SYSTEM_RESOURCES */
+				s_ErrorMessage.Add(1452, "Paged system resources"); /* ERROR_PAGED_SYSTEM_RESOURCES */
+				s_ErrorMessage.Add(1453, "Working set quota"); /* ERROR_WORKING_SET_QUOTA */
+				s_ErrorMessage.Add(1454, "Pagefile quota"); /* ERROR_PAGEFILE_QUOTA */
+				s_ErrorMessage.Add(1455, "Commitment limit"); /* ERROR_COMMITMENT_LIMIT */
+				s_ErrorMessage.Add(1456, "Menu item not found"); /* ERROR_MENU_ITEM_NOT_FOUND */
+				s_ErrorMessage.Add(1457, "Invalid keyboard handle"); /* ERROR_INVALID_KEYBOARD_HANDLE */
+				s_ErrorMessage.Add(1458, "Hook type not allowed"); /* ERROR_HOOK_TYPE_NOT_ALLOWED */
+				s_ErrorMessage.Add(1459, "Requires interactive windowstation"); /* ERROR_REQUIRES_INTERACTIVE_WINDOWSTATION */
+				s_ErrorMessage.Add(1460, "Timeout"); /* ERROR_TIMEOUT */
+				s_ErrorMessage.Add(1461, "Invalid monitor handle"); /* ERROR_INVALID_MONITOR_HANDLE */
+				s_ErrorMessage.Add(1500, "Eventlog file corrupt"); /* ERROR_EVENTLOG_FILE_CORRUPT */
+				s_ErrorMessage.Add(1501, "Eventlog can't start"); /* ERROR_EVENTLOG_CANT_START */
+				s_ErrorMessage.Add(1502, "Log file full"); /* ERROR_LOG_FILE_FULL */
+				s_ErrorMessage.Add(1503, "Eventlog file changed"); /* ERROR_EVENTLOG_FILE_CHANGED */
+				s_ErrorMessage.Add(1601, "Install service failure"); /* ERROR_INSTALL_SERVICE_FAILURE */
+				s_ErrorMessage.Add(1602, "Install userexit"); /* ERROR_INSTALL_USEREXIT */
+				s_ErrorMessage.Add(1603, "Install failure"); /* ERROR_INSTALL_FAILURE */
+				s_ErrorMessage.Add(1604, "Install suspend"); /* ERROR_INSTALL_SUSPEND */
+				s_ErrorMessage.Add(1605, "Unknown product"); /* ERROR_UNKNOWN_PRODUCT */
+				s_ErrorMessage.Add(1606, "Unknown feature"); /* ERROR_UNKNOWN_FEATURE */
+				s_ErrorMessage.Add(1607, "Unknown component"); /* ERROR_UNKNOWN_COMPONENT */
+				s_ErrorMessage.Add(1608, "Unknown property"); /* ERROR_UNKNOWN_PROPERTY */
+				s_ErrorMessage.Add(1609, "Invalid handle state"); /* ERROR_INVALID_HANDLE_STATE */
+				s_ErrorMessage.Add(1610, "Bad configuration"); /* ERROR_BAD_CONFIGURATION */
+				s_ErrorMessage.Add(1611, "Index absent"); /* ERROR_INDEX_ABSENT */
+				s_ErrorMessage.Add(1612, "Install source absent"); /* ERROR_INSTALL_SOURCE_ABSENT */
+				s_ErrorMessage.Add(1613, "Install package version"); /* ERROR_INSTALL_PACKAGE_VERSION */
+				s_ErrorMessage.Add(1614, "Product uninstalled"); /* ERROR_PRODUCT_UNINSTALLED */
+				s_ErrorMessage.Add(1615, "Bad query syntax"); /* ERROR_BAD_QUERY_SYNTAX */
+				s_ErrorMessage.Add(1616, "Invalid field"); /* ERROR_INVALID_FIELD */
+				s_ErrorMessage.Add(1617, "Device removed"); /* ERROR_DEVICE_REMOVED */
+				s_ErrorMessage.Add(1618, "Install already running"); /* ERROR_INSTALL_ALREADY_RUNNING */
+				s_ErrorMessage.Add(1619, "Install package open failed"); /* ERROR_INSTALL_PACKAGE_OPEN_FAILED */
+				s_ErrorMessage.Add(1620, "Install package invalid"); /* ERROR_INSTALL_PACKAGE_INVALID */
+				s_ErrorMessage.Add(1621, "Install UI failure"); /* ERROR_INSTALL_UI_FAILURE */
+				s_ErrorMessage.Add(1622, "Install log failure"); /* ERROR_INSTALL_LOG_FAILURE */
+				s_ErrorMessage.Add(1623, "Install language unsupported"); /* ERROR_INSTALL_LANGUAGE_UNSUPPORTED */
+				s_ErrorMessage.Add(1624, "Install transform failure"); /* ERROR_INSTALL_TRANSFORM_FAILURE */
+				s_ErrorMessage.Add(1625, "Install package rejected"); /* ERROR_INSTALL_PACKAGE_REJECTED */
+				s_ErrorMessage.Add(1626, "Function not called"); /* ERROR_FUNCTION_NOT_CALLED */
+				s_ErrorMessage.Add(1627, "Function failed"); /* ERROR_FUNCTION_FAILED */
+				s_ErrorMessage.Add(1628, "Invalid table"); /* ERROR_INVALID_TABLE */
+				s_ErrorMessage.Add(1629, "Datatype mismatch"); /* ERROR_DATATYPE_MISMATCH */
+				s_ErrorMessage.Add(1630, "Unsupported type"); /* ERROR_UNSUPPORTED_TYPE */
+				s_ErrorMessage.Add(1631, "Create failed"); /* ERROR_CREATE_FAILED */
+				s_ErrorMessage.Add(1632, "Install temp unwritable"); /* ERROR_INSTALL_TEMP_UNWRITABLE */
+				s_ErrorMessage.Add(1633, "Install platform unsupported"); /* ERROR_INSTALL_PLATFORM_UNSUPPORTED */
+				s_ErrorMessage.Add(1634, "Install notused"); /* ERROR_INSTALL_NOTUSED */
+				s_ErrorMessage.Add(1635, "Patch package open failed"); /* ERROR_PATCH_PACKAGE_OPEN_FAILED */
+				s_ErrorMessage.Add(1636, "Patch package invalid"); /* ERROR_PATCH_PACKAGE_INVALID */
+				s_ErrorMessage.Add(1637, "Patch package unsupported"); /* ERROR_PATCH_PACKAGE_UNSUPPORTED */
+				s_ErrorMessage.Add(1638, "Product version"); /* ERROR_PRODUCT_VERSION */
+				s_ErrorMessage.Add(1639, "Invalid command line"); /* ERROR_INVALID_COMMAND_LINE */
+				s_ErrorMessage.Add(1640, "Install remote disallowed"); /* ERROR_INSTALL_REMOTE_DISALLOWED */
+				s_ErrorMessage.Add(1641, "Success reboot initiated"); /* ERROR_SUCCESS_REBOOT_INITIATED */
+				s_ErrorMessage.Add(1642, "Patch target not found"); /* ERROR_PATCH_TARGET_NOT_FOUND */
+				s_ErrorMessage.Add(1643, "Patch package rejected"); /* ERROR_PATCH_PACKAGE_REJECTED */
+				s_ErrorMessage.Add(1644, "Install transform rejected"); /* ERROR_INSTALL_TRANSFORM_REJECTED */
+				s_ErrorMessage.Add(1700, "RPC S Invalid string binding"); /* RPC_S_INVALID_STRING_BINDING */
+				s_ErrorMessage.Add(1701, "RPC S Wrong kind of binding"); /* RPC_S_WRONG_KIND_OF_BINDING */
+				s_ErrorMessage.Add(1702, "RPC S Invalid binding"); /* RPC_S_INVALID_BINDING */
+				s_ErrorMessage.Add(1703, "RPC S Protseq not supported"); /* RPC_S_PROTSEQ_NOT_SUPPORTED */
+				s_ErrorMessage.Add(1704, "RPC S Invalid RPC protseq"); /* RPC_S_INVALID_RPC_PROTSEQ */
+				s_ErrorMessage.Add(1705, "RPC S Invalid string UUID"); /* RPC_S_INVALID_STRING_UUID */
+				s_ErrorMessage.Add(1706, "RPC S Invalid endpoint format"); /* RPC_S_INVALID_ENDPOINT_FORMAT */
+				s_ErrorMessage.Add(1707, "RPC S Invalid net addr"); /* RPC_S_INVALID_NET_ADDR */
+				s_ErrorMessage.Add(1708, "RPC S No endpoint found"); /* RPC_S_NO_ENDPOINT_FOUND */
+				s_ErrorMessage.Add(1709, "RPC S Invalid timeout"); /* RPC_S_INVALID_TIMEOUT */
+				s_ErrorMessage.Add(1710, "RPC S Object not found"); /* RPC_S_OBJECT_NOT_FOUND */
+				s_ErrorMessage.Add(1711, "RPC S Already registered"); /* RPC_S_ALREADY_REGISTERED */
+				s_ErrorMessage.Add(1712, "RPC S Type already registered"); /* RPC_S_TYPE_ALREADY_REGISTERED */
+				s_ErrorMessage.Add(1713, "RPC S Already listening"); /* RPC_S_ALREADY_LISTENING */
+				s_ErrorMessage.Add(1714, "RPC S Not protseqs registered"); /* RPC_S_NO_PROTSEQS_REGISTERED */
+				s_ErrorMessage.Add(1715, "RPC S Not listening"); /* RPC_S_NOT_LISTENING */
+				s_ErrorMessage.Add(1716, "RPC S Unknown mgr type"); /* RPC_S_UNKNOWN_MGR_TYPE */
+				s_ErrorMessage.Add(1717, "RPC S Unknown IF"); /* RPC_S_UNKNOWN_IF */
+				s_ErrorMessage.Add(1718, "RPC S No bindings"); /* RPC_S_NO_BINDINGS */
+				s_ErrorMessage.Add(1719, "RPC S Not protseqs"); /* RPC_S_NO_PROTSEQS */
+				s_ErrorMessage.Add(1720, "RPC S Can't create endpoint"); /* RPC_S_CANT_CREATE_ENDPOINT */
+				s_ErrorMessage.Add(1721, "RPC S Out of resources"); /* RPC_S_OUT_OF_RESOURCES */
+				s_ErrorMessage.Add(1722, "RPC S Server unavailable"); /* RPC_S_SERVER_UNAVAILABLE */
+				s_ErrorMessage.Add(1723, "RPC S Server too busy"); /* RPC_S_SERVER_TOO_BUSY */
+				s_ErrorMessage.Add(1724, "RPC S Invalid network options"); /* RPC_S_INVALID_NETWORK_OPTIONS */
+				s_ErrorMessage.Add(1725, "RPC S No call active"); /* RPC_S_NO_CALL_ACTIVE */
+				s_ErrorMessage.Add(1726, "RPC S Call failed"); /* RPC_S_CALL_FAILED */
+				s_ErrorMessage.Add(1727, "RPC S Call failed DNE"); /* RPC_S_CALL_FAILED_DNE */
+				s_ErrorMessage.Add(1728, "RPC S Protocol error"); /* RPC_S_PROTOCOL_ERROR */
+				s_ErrorMessage.Add(1730, "RPC S Unsupported trans syn"); /* RPC_S_UNSUPPORTED_TRANS_SYN */
+				s_ErrorMessage.Add(1732, "RPC S Unsupported type"); /* RPC_S_UNSUPPORTED_TYPE */
+				s_ErrorMessage.Add(1733, "RPC S Invalid tag"); /* RPC_S_INVALID_TAG */
+				s_ErrorMessage.Add(1734, "RPC S Invalid bound"); /* RPC_S_INVALID_BOUND */
+				s_ErrorMessage.Add(1735, "RPC S No entry name"); /* RPC_S_NO_ENTRY_NAME */
+				s_ErrorMessage.Add(1736, "RPC S Invalid name syntax"); /* RPC_S_INVALID_NAME_SYNTAX */
+				s_ErrorMessage.Add(1737, "RPC S Unsupported name syntax"); /* RPC_S_UNSUPPORTED_NAME_SYNTAX */
+				s_ErrorMessage.Add(1739, "RPC S UUID no address"); /* RPC_S_UUID_NO_ADDRESS */
+				s_ErrorMessage.Add(1740, "RPC S Duplicate endpoint"); /* RPC_S_DUPLICATE_ENDPOINT */
+				s_ErrorMessage.Add(1741, "RPC S Unknown authn type"); /* RPC_S_UNKNOWN_AUTHN_TYPE */
+				s_ErrorMessage.Add(1742, "RPC S Max calls too small"); /* RPC_S_MAX_CALLS_TOO_SMALL */
+				s_ErrorMessage.Add(1743, "RPC S String too long"); /* RPC_S_STRING_TOO_LONG */
+				s_ErrorMessage.Add(1744, "RPC S Protseq not found"); /* RPC_S_PROTSEQ_NOT_FOUND */
+				s_ErrorMessage.Add(1745, "RPC S Procnum out of range"); /* RPC_S_PROCNUM_OUT_OF_RANGE */
+				s_ErrorMessage.Add(1746, "RPC S Binding has no auth"); /* RPC_S_BINDING_HAS_NO_AUTH */
+				s_ErrorMessage.Add(1747, "RPC S Unknown authn service"); /* RPC_S_UNKNOWN_AUTHN_SERVICE */
+				s_ErrorMessage.Add(1748, "RPC S Unknown authn level"); /* RPC_S_UNKNOWN_AUTHN_LEVEL */
+				s_ErrorMessage.Add(1749, "RPC S Invalid auth identity"); /* RPC_S_INVALID_AUTH_IDENTITY */
+				s_ErrorMessage.Add(1750, "RPC S Unknown authz service"); /* RPC_S_UNKNOWN_AUTHZ_SERVICE */
+				s_ErrorMessage.Add(1751, "EPT S Invalid entry"); /* EPT_S_INVALID_ENTRY */
+				s_ErrorMessage.Add(1752, "EPT S Can't perform op"); /* EPT_S_CANT_PERFORM_OP */
+				s_ErrorMessage.Add(1753, "EPT S Not registered"); /* EPT_S_NOT_REGISTERED */
+				s_ErrorMessage.Add(1754, "RPC S Nothing to export"); /* RPC_S_NOTHING_TO_EXPORT */
+				s_ErrorMessage.Add(1755, "RPC S Incomplete name"); /* RPC_S_INCOMPLETE_NAME */
+				s_ErrorMessage.Add(1756, "RPC S Invalid vers option"); /* RPC_S_INVALID_VERS_OPTION */
+				s_ErrorMessage.Add(1757, "RPC S No more members"); /* RPC_S_NO_MORE_MEMBERS */
+				s_ErrorMessage.Add(1758, "RPC S Not all objs unexported"); /* RPC_S_NOT_ALL_OBJS_UNEXPORTED */
+				s_ErrorMessage.Add(1759, "RPC S Interface not found"); /* RPC_S_INTERFACE_NOT_FOUND */
+				s_ErrorMessage.Add(1760, "RPC S Entry already exists"); /* RPC_S_ENTRY_ALREADY_EXISTS */
+				s_ErrorMessage.Add(1761, "RPC S Entry not found"); /* RPC_S_ENTRY_NOT_FOUND */
+				s_ErrorMessage.Add(1762, "RPC S Name service unavailable"); /* RPC_S_NAME_SERVICE_UNAVAILABLE */
+				s_ErrorMessage.Add(1763, "RPC S Invalid naf ID"); /* RPC_S_INVALID_NAF_ID */
+				s_ErrorMessage.Add(1764, "RPC S Cannot support"); /* RPC_S_CANNOT_SUPPORT */
+				s_ErrorMessage.Add(1765, "RPC S No context available"); /* RPC_S_NO_CONTEXT_AVAILABLE */
+				s_ErrorMessage.Add(1766, "RPC S Internal error"); /* RPC_S_INTERNAL_ERROR */
+				s_ErrorMessage.Add(1767, "RPC S Zero divide"); /* RPC_S_ZERO_DIVIDE */
+				s_ErrorMessage.Add(1768, "RPC S Address error"); /* RPC_S_ADDRESS_ERROR */
+				s_ErrorMessage.Add(1769, "RPC S FP div zero"); /* RPC_S_FP_DIV_ZERO */
+				s_ErrorMessage.Add(1770, "RPC S FP Underflow"); /* RPC_S_FP_UNDERFLOW */
+				s_ErrorMessage.Add(1771, "RPC S Overflow"); /* RPC_S_FP_OVERFLOW */
+				s_ErrorMessage.Add(1772, "RPC X No more entries"); /* RPC_X_NO_MORE_ENTRIES */
+				s_ErrorMessage.Add(1773, "RPC X SS char trans open fail"); /* RPC_X_SS_CHAR_TRANS_OPEN_FAIL */
+				s_ErrorMessage.Add(1774, "RPC X SS char trans short file"); /* RPC_X_SS_CHAR_TRANS_SHORT_FILE */
+				s_ErrorMessage.Add(1775, "RPC S SS in null context"); /* RPC_X_SS_IN_NULL_CONTEXT */
+				s_ErrorMessage.Add(1777, "RPC X SS context damaged"); /* RPC_X_SS_CONTEXT_DAMAGED */
+				s_ErrorMessage.Add(1778, "RPC X SS handles mismatch"); /* RPC_X_SS_HANDLES_MISMATCH */
+				s_ErrorMessage.Add(1779, "RPC X SS cannot get call handle"); /* RPC_X_SS_CANNOT_GET_CALL_HANDLE */
+				s_ErrorMessage.Add(1780, "RPC X Null ref pointer"); /* RPC_X_NULL_REF_POINTER */
+				s_ErrorMessage.Add(1781, "RPC X enum value out of range"); /* RPC_X_ENUM_VALUE_OUT_OF_RANGE */
+				s_ErrorMessage.Add(1782, "RPC X byte count too small"); /* RPC_X_BYTE_COUNT_TOO_SMALL */
+				s_ErrorMessage.Add(1783, "RPC X bad stub data"); /* RPC_X_BAD_STUB_DATA */
+				s_ErrorMessage.Add(1784, "Invalid user buffer"); /* ERROR_INVALID_USER_BUFFER */
+				s_ErrorMessage.Add(1785, "Unrecognised media"); /* ERROR_UNRECOGNIZED_MEDIA */
+				s_ErrorMessage.Add(1786, "No trust lsa secret"); /* ERROR_NO_TRUST_LSA_SECRET */
+				s_ErrorMessage.Add(1787, "No trust sam account"); /* ERROR_NO_TRUST_SAM_ACCOUNT */
+				s_ErrorMessage.Add(1788, "Trusted domain failure"); /* ERROR_TRUSTED_DOMAIN_FAILURE */
+				s_ErrorMessage.Add(1789, "Trusted relationship failure"); /* ERROR_TRUSTED_RELATIONSHIP_FAILURE */
+				s_ErrorMessage.Add(1790, "Trust failure"); /* ERROR_TRUST_FAILURE */
+				s_ErrorMessage.Add(1791, "RPC S call in progress"); /* RPC_S_CALL_IN_PROGRESS */
+				s_ErrorMessage.Add(1792, "Error netlogon not started"); /* ERROR_NETLOGON_NOT_STARTED */
+				s_ErrorMessage.Add(1793, "Account expired"); /* ERROR_ACCOUNT_EXPIRED */
+				s_ErrorMessage.Add(1794, "Redirector has open handles"); /* ERROR_REDIRECTOR_HAS_OPEN_HANDLES */
+				s_ErrorMessage.Add(1795, "Printer driver already installed"); /* ERROR_PRINTER_DRIVER_ALREADY_INSTALLED */
+				s_ErrorMessage.Add(1796, "Unknown port"); /* ERROR_UNKNOWN_PORT */
+				s_ErrorMessage.Add(1797, "Unknown printer driver"); /* ERROR_UNKNOWN_PRINTER_DRIVER */
+				s_ErrorMessage.Add(1798, "Unknown printprocessor"); /* ERROR_UNKNOWN_PRINTPROCESSOR */
+				s_ErrorMessage.Add(1799, "Invalid separator file"); /* ERROR_INVALID_SEPARATOR_FILE */
+				s_ErrorMessage.Add(1800, "Invalid priority"); /* ERROR_INVALID_PRIORITY */
+				s_ErrorMessage.Add(1801, "Invalid printer name"); /* ERROR_INVALID_PRINTER_NAME */
+				s_ErrorMessage.Add(1802, "Printer already exists"); /* ERROR_PRINTER_ALREADY_EXISTS */
+				s_ErrorMessage.Add(1803, "Invalid printer command"); /* ERROR_INVALID_PRINTER_COMMAND */
+				s_ErrorMessage.Add(1804, "Invalid datatype"); /* ERROR_INVALID_DATATYPE */
+				s_ErrorMessage.Add(1805, "Invalid environment"); /* ERROR_INVALID_ENVIRONMENT */
+				s_ErrorMessage.Add(1806, "RPC S no more bindings"); /* RPC_S_NO_MORE_BINDINGS */
+				s_ErrorMessage.Add(1807, "Nologon interdomain trust account"); /* ERROR_NOLOGON_INTERDOMAIN_TRUST_ACCOUNT */
+				s_ErrorMessage.Add(1808, "Nologon workstation trust account"); /* ERROR_NOLOGON_WORKSTATION_TRUST_ACCOUNT */
+				s_ErrorMessage.Add(1809, "Nologon server trust account"); /* ERROR_NOLOGON_SERVER_TRUST_ACCOUNT */
+				s_ErrorMessage.Add(1810, "Domain trust inconsistent"); /* ERROR_DOMAIN_TRUST_INCONSISTENT */
+				s_ErrorMessage.Add(1811, "Server has open handles"); /* ERROR_SERVER_HAS_OPEN_HANDLES */
+				s_ErrorMessage.Add(1812, "Resource data not found"); /* ERROR_RESOURCE_DATA_NOT_FOUND */
+				s_ErrorMessage.Add(1813, "Resource type not found"); /* ERROR_RESOURCE_TYPE_NOT_FOUND */
+				s_ErrorMessage.Add(1814, "Resource name not found"); /* ERROR_RESOURCE_NAME_NOT_FOUND */
+				s_ErrorMessage.Add(1815, "Resource lang not found"); /* ERROR_RESOURCE_LANG_NOT_FOUND */
+				s_ErrorMessage.Add(1816, "Not enough quota"); /* ERROR_NOT_ENOUGH_QUOTA */
+				s_ErrorMessage.Add(1817, "RPC S no interfaces"); /* RPC_S_NO_INTERFACES */
+				s_ErrorMessage.Add(1818, "RPC S Call cancelled"); /* RPC_S_CALL_CANCELLED */
+				s_ErrorMessage.Add(1819, "RPC S Binding incomplete"); /* RPC_S_BINDING_INCOMPLETE */
+				s_ErrorMessage.Add(1820, "RPC S Comm failure"); /* RPC_S_COMM_FAILURE */
+				s_ErrorMessage.Add(1821, "RPC S Unsupported authn level"); /* RPC_S_UNSUPPORTED_AUTHN_LEVEL */
+				s_ErrorMessage.Add(1822, "RPC S No princ name"); /* RPC_S_NO_PRINC_NAME */
+				s_ErrorMessage.Add(1823, "RPC S Not RPC error"); /* RPC_S_NOT_RPC_ERROR */
+				s_ErrorMessage.Add(1824, "RPC U UUID local only"); /* RPC_S_UUID_LOCAL_ONLY */
+				s_ErrorMessage.Add(1825, "RPC S Sec pkg error"); /* RPC_S_SEC_PKG_ERROR */
+				s_ErrorMessage.Add(1826, "RPC S Not cancelled"); /* RPC_S_NOT_CANCELLED */
+				s_ErrorMessage.Add(1827, "RPC X Invalid ES action"); /* RPC_X_INVALID_ES_ACTION */
+				s_ErrorMessage.Add(1828, "RPC X Wrong ES version"); /* RPC_X_WRONG_ES_VERSION */
+				s_ErrorMessage.Add(1829, "RPC X Wrong stub version"); /* RPC_X_WRONG_STUB_VERSION */
+				s_ErrorMessage.Add(1830, "RPC X Invalid pipe object"); /* RPC_X_INVALID_PIPE_OBJECT */
+				s_ErrorMessage.Add(1831, "RPC X Wrong pipe order"); /* RPC_X_WRONG_PIPE_ORDER */
+				s_ErrorMessage.Add(1832, "RPC X Wrong pipe version"); /* RPC_X_WRONG_PIPE_VERSION */
+				s_ErrorMessage.Add(1898, "RPC S group member not found"); /* RPC_S_GROUP_MEMBER_NOT_FOUND */
+				s_ErrorMessage.Add(1899, "EPT S Can't create"); /* EPT_S_CANT_CREATE */
+				s_ErrorMessage.Add(1900, "RPC S Invalid object"); /* RPC_S_INVALID_OBJECT */
+				s_ErrorMessage.Add(1901, "Invalid time"); /* ERROR_INVALID_TIME */
+				s_ErrorMessage.Add(1902, "Invalid form name"); /* ERROR_INVALID_FORM_NAME */
+				s_ErrorMessage.Add(1903, "Invalid form size"); /* ERROR_INVALID_FORM_SIZE */
+				s_ErrorMessage.Add(1904, "Already waiting"); /* ERROR_ALREADY_WAITING */
+				s_ErrorMessage.Add(1905, "Printer deleted"); /* ERROR_PRINTER_DELETED */
+				s_ErrorMessage.Add(1906, "Invalid printer state"); /* ERROR_INVALID_PRINTER_STATE */
+				s_ErrorMessage.Add(1907, "Password must change"); /* ERROR_PASSWORD_MUST_CHANGE */
+				s_ErrorMessage.Add(1908, "Domain controller not found"); /* ERROR_DOMAIN_CONTROLLER_NOT_FOUND */
+				s_ErrorMessage.Add(1909, "Account locked out"); /* ERROR_ACCOUNT_LOCKED_OUT */
+				s_ErrorMessage.Add(1910, "OR Invalid OXID"); /* OR_INVALID_OXID */
+				s_ErrorMessage.Add(1911, "OR Invalid OID"); /* OR_INVALID_OID */
+				s_ErrorMessage.Add(1912, "OR Invalid set"); /* OR_INVALID_SET */
+				s_ErrorMessage.Add(1913, "RPC S Send incomplete"); /* RPC_S_SEND_INCOMPLETE */
+				s_ErrorMessage.Add(1914, "RPC S Invalid async handle"); /* RPC_S_INVALID_ASYNC_HANDLE */
+				s_ErrorMessage.Add(1915, "RPC S Invalid async call"); /* RPC_S_INVALID_ASYNC_CALL */
+				s_ErrorMessage.Add(1916, "RPC X Pipe closed"); /* RPC_X_PIPE_CLOSED */
+				s_ErrorMessage.Add(1917, "RPC X Pipe discipline error"); /* RPC_X_PIPE_DISCIPLINE_ERROR */
+				s_ErrorMessage.Add(1918, "RPC X Pipe empty"); /* RPC_X_PIPE_EMPTY */
+				s_ErrorMessage.Add(1919, "No sitename"); /* ERROR_NO_SITENAME */
+				s_ErrorMessage.Add(1920, "Can't access file"); /* ERROR_CANT_ACCESS_FILE */
+				s_ErrorMessage.Add(1921, "Can't resolve filename"); /* ERROR_CANT_RESOLVE_FILENAME */
+				s_ErrorMessage.Add(1922, "RPC S Entry type mismatch"); /* RPC_S_ENTRY_TYPE_MISMATCH */
+				s_ErrorMessage.Add(1923, "RPC S Not all objs exported"); /* RPC_S_NOT_ALL_OBJS_EXPORTED */
+				s_ErrorMessage.Add(1924, "RPC S Interface not exported"); /* RPC_S_INTERFACE_NOT_EXPORTED */
+				s_ErrorMessage.Add(1925, "RPC S Profile not added"); /* RPC_S_PROFILE_NOT_ADDED */
+				s_ErrorMessage.Add(1926, "RPC S PRF ELT not added"); /* RPC_S_PRF_ELT_NOT_ADDED */
+				s_ErrorMessage.Add(1927, "RPC S PRF ELT not removed"); /* RPC_S_PRF_ELT_NOT_REMOVED */
+				s_ErrorMessage.Add(1928, "RPC S GRP ELT not added"); /* RPC_S_GRP_ELT_NOT_ADDED */
+				s_ErrorMessage.Add(1929, "RPC S GRP ELT not removed"); /* RPC_S_GRP_ELT_NOT_REMOVED */
+				s_ErrorMessage.Add(1930, "KM driver blocked"); /* ERROR_KM_DRIVER_BLOCKED */
+				s_ErrorMessage.Add(1931, "Context expired"); /* ERROR_CONTEXT_EXPIRED */
+				s_ErrorMessage.Add(2000, "Invalid pixel format"); /* ERROR_INVALID_PIXEL_FORMAT */
+				s_ErrorMessage.Add(2001, "Bad driver"); /* ERROR_BAD_DRIVER */
+				s_ErrorMessage.Add(2002, "Invalid window style"); /* ERROR_INVALID_WINDOW_STYLE */
+				s_ErrorMessage.Add(2003, "Metafile not supported"); /* ERROR_METAFILE_NOT_SUPPORTED */
+				s_ErrorMessage.Add(2004, "Transform not supported"); /* ERROR_TRANSFORM_NOT_SUPPORTED */
+				s_ErrorMessage.Add(2005, "Clipping not supported"); /* ERROR_CLIPPING_NOT_SUPPORTED */
+				s_ErrorMessage.Add(2010, "Invalid CMM"); /* ERROR_INVALID_CMM */
+				s_ErrorMessage.Add(2011, "Invalid profile"); /* ERROR_INVALID_PROFILE */
+				s_ErrorMessage.Add(2012, "Tag not found"); /* ERROR_TAG_NOT_FOUND */
+				s_ErrorMessage.Add(2013, "Tag not present"); /* ERROR_TAG_NOT_PRESENT */
+				s_ErrorMessage.Add(2014, "Duplicate tag"); /* ERROR_DUPLICATE_TAG */
+				s_ErrorMessage.Add(2015, "Profile not associated with device"); /* ERROR_PROFILE_NOT_ASSOCIATED_WITH_DEVICE */
+				s_ErrorMessage.Add(2016, "Profile not found"); /* ERROR_PROFILE_NOT_FOUND */
+				s_ErrorMessage.Add(2017, "Invalid colorspace"); /* ERROR_INVALID_COLORSPACE */
+				s_ErrorMessage.Add(2018, "ICM not enabled"); /* ERROR_ICM_NOT_ENABLED */
+				s_ErrorMessage.Add(2019, "Deleting ICM xform"); /* ERROR_DELETING_ICM_XFORM */
+				s_ErrorMessage.Add(2020, "Invalid transform"); /* ERROR_INVALID_TRANSFORM */
+				s_ErrorMessage.Add(2021, "Colorspace mismatch"); /* ERROR_COLORSPACE_MISMATCH */
+				s_ErrorMessage.Add(2022, "Invalid colorindex"); /* ERROR_INVALID_COLORINDEX */
+				s_ErrorMessage.Add(2108, "Connected other password"); /* ERROR_CONNECTED_OTHER_PASSWORD */
+				s_ErrorMessage.Add(2109, "Connected other password default"); /* ERROR_CONNECTED_OTHER_PASSWORD_DEFAULT */
+				s_ErrorMessage.Add(2202, "Bad username"); /* ERROR_BAD_USERNAME */
+				s_ErrorMessage.Add(2250, "Not connected"); /* ERROR_NOT_CONNECTED */
+				s_ErrorMessage.Add(2401, "Open files"); /* ERROR_OPEN_FILES */
+				s_ErrorMessage.Add(2402, "Active connections"); /* ERROR_ACTIVE_CONNECTIONS */
+				s_ErrorMessage.Add(2404, "Device in use"); /* ERROR_DEVICE_IN_USE */
+				s_ErrorMessage.Add(3000, "Unknown print monitor"); /* ERROR_UNKNOWN_PRINT_MONITOR */
+				s_ErrorMessage.Add(3001, "Printer driver in use"); /* ERROR_PRINTER_DRIVER_IN_USE */
+				s_ErrorMessage.Add(3002, "Spool file not found"); /* ERROR_SPOOL_FILE_NOT_FOUND */
+				s_ErrorMessage.Add(3003, "SPL no startdoc"); /* ERROR_SPL_NO_STARTDOC */
+				s_ErrorMessage.Add(3004, "SPL no addjob"); /* ERROR_SPL_NO_ADDJOB */
+				s_ErrorMessage.Add(3005, "Print processor already installed"); /* ERROR_PRINT_PROCESSOR_ALREADY_INSTALLED */
+				s_ErrorMessage.Add(3006, "Print monitor already installed"); /* ERROR_PRINT_MONITOR_ALREADY_INSTALLED */
+				s_ErrorMessage.Add(3007, "Invalid print monitor"); /* ERROR_INVALID_PRINT_MONITOR */
+				s_ErrorMessage.Add(3008, "Print monitor in use"); /* ERROR_PRINT_MONITOR_IN_USE */
+				s_ErrorMessage.Add(3009, "Printer has jobs queued"); /* ERROR_PRINTER_HAS_JOBS_QUEUED */
+				s_ErrorMessage.Add(3010, "Success reboot required"); /* ERROR_SUCCESS_REBOOT_REQUIRED */
+				s_ErrorMessage.Add(3011, "Success restart required"); /* ERROR_SUCCESS_RESTART_REQUIRED */
+				s_ErrorMessage.Add(3012, "Printer not found"); /* ERROR_PRINTER_NOT_FOUND */
+				s_ErrorMessage.Add(3013, "Printer driver warned"); /* ERROR_PRINTER_DRIVER_WARNED */
+				s_ErrorMessage.Add(3014, "Printer driver blocked"); /* ERROR_PRINTER_DRIVER_BLOCKED */
+				s_ErrorMessage.Add(4000, "Wins internal"); /* ERROR_WINS_INTERNAL */
+				s_ErrorMessage.Add(4001, "Can not del local wins"); /* ERROR_CAN_NOT_DEL_LOCAL_WINS */
+				s_ErrorMessage.Add(4002, "Static init"); /* ERROR_STATIC_INIT */
+				s_ErrorMessage.Add(4003, "Inc backup"); /* ERROR_INC_BACKUP */
+				s_ErrorMessage.Add(4004, "Full backup"); /* ERROR_FULL_BACKUP */
+				s_ErrorMessage.Add(4005, "Rec not existent"); /* ERROR_REC_NON_EXISTENT */
+				s_ErrorMessage.Add(4006, "RPL not allowed"); /* ERROR_RPL_NOT_ALLOWED */
+				s_ErrorMessage.Add(4100, "DHCP address conflict"); /* ERROR_DHCP_ADDRESS_CONFLICT */
+				s_ErrorMessage.Add(4200, "WMU GUID not found"); /* ERROR_WMI_GUID_NOT_FOUND */
+				s_ErrorMessage.Add(4201, "WMI instance not found"); /* ERROR_WMI_INSTANCE_NOT_FOUND */
+				s_ErrorMessage.Add(4202, "WMI ItemID not found"); /* ERROR_WMI_ITEMID_NOT_FOUND */
+				s_ErrorMessage.Add(4203, "WMI try again"); /* ERROR_WMI_TRY_AGAIN */
+				s_ErrorMessage.Add(4204, "WMI DP not found"); /* ERROR_WMI_DP_NOT_FOUND */
+				s_ErrorMessage.Add(4205, "WMI unresolved instance ref"); /* ERROR_WMI_UNRESOLVED_INSTANCE_REF */
+				s_ErrorMessage.Add(4206, "WMU already enabled"); /* ERROR_WMI_ALREADY_ENABLED */
+				s_ErrorMessage.Add(4207, "WMU GUID disconnected"); /* ERROR_WMI_GUID_DISCONNECTED */
+				s_ErrorMessage.Add(4208, "WMI server unavailable"); /* ERROR_WMI_SERVER_UNAVAILABLE */
+				s_ErrorMessage.Add(4209, "WMI DP failed"); /* ERROR_WMI_DP_FAILED */
+				s_ErrorMessage.Add(4210, "WMI invalid MOF"); /* ERROR_WMI_INVALID_MOF */
+				s_ErrorMessage.Add(4211, "WMI invalid reginfo"); /* ERROR_WMI_INVALID_REGINFO */
+				s_ErrorMessage.Add(4212, "WMI already disabled"); /* ERROR_WMI_ALREADY_DISABLED */
+				s_ErrorMessage.Add(4213, "WMI read only"); /* ERROR_WMI_READ_ONLY */
+				s_ErrorMessage.Add(4214, "WMI set failure"); /* ERROR_WMI_SET_FAILURE */
+				s_ErrorMessage.Add(4300, "Invalid media"); /* ERROR_INVALID_MEDIA */
+				s_ErrorMessage.Add(4301, "Invalid library"); /* ERROR_INVALID_LIBRARY */
+				s_ErrorMessage.Add(4302, "Invalid media pool"); /* ERROR_INVALID_MEDIA_POOL */
+				s_ErrorMessage.Add(4303, "Drive media mismatch"); /* ERROR_DRIVE_MEDIA_MISMATCH */
+				s_ErrorMessage.Add(4304, "Media offline"); /* ERROR_MEDIA_OFFLINE */
+				s_ErrorMessage.Add(4305, "Library offline"); /* ERROR_LIBRARY_OFFLINE */
+				s_ErrorMessage.Add(4306, "Empty"); /* ERROR_EMPTY */
+				s_ErrorMessage.Add(4307, "Not empty"); /* ERROR_NOT_EMPTY */
+				s_ErrorMessage.Add(4308, "Media unavailable"); /* ERROR_MEDIA_UNAVAILABLE */
+				s_ErrorMessage.Add(4309, "Resource disabled"); /* ERROR_RESOURCE_DISABLED */
+				s_ErrorMessage.Add(4310, "Invalid cleaner"); /* ERROR_INVALID_CLEANER */
+				s_ErrorMessage.Add(4311, "Unable to clean"); /* ERROR_UNABLE_TO_CLEAN */
+				s_ErrorMessage.Add(4312, "Object not found"); /* ERROR_OBJECT_NOT_FOUND */
+				s_ErrorMessage.Add(4313, "Database failure"); /* ERROR_DATABASE_FAILURE */
+				s_ErrorMessage.Add(4314, "Database full"); /* ERROR_DATABASE_FULL */
+				s_ErrorMessage.Add(4315, "Media incompatible"); /* ERROR_MEDIA_INCOMPATIBLE */
+				s_ErrorMessage.Add(4316, "Resource not present"); /* ERROR_RESOURCE_NOT_PRESENT */
+				s_ErrorMessage.Add(4317, "Invalid operation"); /* ERROR_INVALID_OPERATION */
+				s_ErrorMessage.Add(4318, "Media not available"); /* ERROR_MEDIA_NOT_AVAILABLE */
+				s_ErrorMessage.Add(4319, "Device not available"); /* ERROR_DEVICE_NOT_AVAILABLE */
+				s_ErrorMessage.Add(4320, "Request refused"); /* ERROR_REQUEST_REFUSED */
+				s_ErrorMessage.Add(4321, "Invalid drive object"); /* ERROR_INVALID_DRIVE_OBJECT */
+				s_ErrorMessage.Add(4322, "Library full"); /* ERROR_LIBRARY_FULL */
+				s_ErrorMessage.Add(4323, "Medium not accessible"); /* ERROR_MEDIUM_NOT_ACCESSIBLE */
+				s_ErrorMessage.Add(4324, "Unable to load medium"); /* ERROR_UNABLE_TO_LOAD_MEDIUM */
+				s_ErrorMessage.Add(4325, "Unable to inventory drive"); /* ERROR_UNABLE_TO_INVENTORY_DRIVE */
+				s_ErrorMessage.Add(4326, "Unable to inventory slot"); /* ERROR_UNABLE_TO_INVENTORY_SLOT */
+				s_ErrorMessage.Add(4327, "Unable to inventory transport"); /* ERROR_UNABLE_TO_INVENTORY_TRANSPORT */
+				s_ErrorMessage.Add(4328, "Transport full"); /* ERROR_TRANSPORT_FULL */
+				s_ErrorMessage.Add(4329, "Controlling ieport"); /* ERROR_CONTROLLING_IEPORT */
+				s_ErrorMessage.Add(4330, "Unable to eject mounted media"); /* ERROR_UNABLE_TO_EJECT_MOUNTED_MEDIA */
+				s_ErrorMessage.Add(4331, "Cleaner slot set"); /* ERROR_CLEANER_SLOT_SET */
+				s_ErrorMessage.Add(4332, "Cleaner slot not set"); /* ERROR_CLEANER_SLOT_NOT_SET */
+				s_ErrorMessage.Add(4333, "Cleaner cartridge spent"); /* ERROR_CLEANER_CARTRIDGE_SPENT */
+				s_ErrorMessage.Add(4334, "Unexpected omid"); /* ERROR_UNEXPECTED_OMID */
+				s_ErrorMessage.Add(4335, "Can't delete last item"); /* ERROR_CANT_DELETE_LAST_ITEM */
+				s_ErrorMessage.Add(4336, "Message exceeds max size"); /* ERROR_MESSAGE_EXCEEDS_MAX_SIZE */
+				s_ErrorMessage.Add(4337, "Volume contains sys files"); /* ERROR_VOLUME_CONTAINS_SYS_FILES */
+				s_ErrorMessage.Add(4338, "Indigenous type"); /* ERROR_INDIGENOUS_TYPE */
+				s_ErrorMessage.Add(4339, "No supporting drives"); /* ERROR_NO_SUPPORTING_DRIVES */
+				s_ErrorMessage.Add(4340, "Cleaner cartridge installed"); /* ERROR_CLEANER_CARTRIDGE_INSTALLED */
+				s_ErrorMessage.Add(4350, "Fill offline"); /* ERROR_FILE_OFFLINE */
+				s_ErrorMessage.Add(4351, "Remote storage not active"); /* ERROR_REMOTE_STORAGE_NOT_ACTIVE */
+				s_ErrorMessage.Add(4352, "Remote storage media error"); /* ERROR_REMOTE_STORAGE_MEDIA_ERROR */
+				s_ErrorMessage.Add(4390, "Not a reparse point"); /* ERROR_NOT_A_REPARSE_POINT */
+				s_ErrorMessage.Add(4391, "Reparse attribute conflict"); /* ERROR_REPARSE_ATTRIBUTE_CONFLICT */
+				s_ErrorMessage.Add(4392, "Invalid reparse data"); /* ERROR_INVALID_REPARSE_DATA */
+				s_ErrorMessage.Add(4393, "Reparse tag invalid"); /* ERROR_REPARSE_TAG_INVALID */
+				s_ErrorMessage.Add(4394, "Reparse tag mismatch"); /* ERROR_REPARSE_TAG_MISMATCH */
+				s_ErrorMessage.Add(4500, "Volume not sis enabled"); /* ERROR_VOLUME_NOT_SIS_ENABLED */
+				s_ErrorMessage.Add(5001, "Dependent resource exists"); /* ERROR_DEPENDENT_RESOURCE_EXISTS */
+				s_ErrorMessage.Add(5002, "Dependency not found"); /* ERROR_DEPENDENCY_NOT_FOUND */
+				s_ErrorMessage.Add(5003, "Dependency already exists"); /* ERROR_DEPENDENCY_ALREADY_EXISTS */
+				s_ErrorMessage.Add(5004, "Resource not online"); /* ERROR_RESOURCE_NOT_ONLINE */
+				s_ErrorMessage.Add(5005, "Host node not available"); /* ERROR_HOST_NODE_NOT_AVAILABLE */
+				s_ErrorMessage.Add(5006, "Resource not available"); /* ERROR_RESOURCE_NOT_AVAILABLE */
+				s_ErrorMessage.Add(5007, "Resource not found"); /* ERROR_RESOURCE_NOT_FOUND */
+				s_ErrorMessage.Add(5008, "Shutdown cluster"); /* ERROR_SHUTDOWN_CLUSTER */
+				s_ErrorMessage.Add(5009, "Can't evict active node"); /* ERROR_CANT_EVICT_ACTIVE_NODE */
+				s_ErrorMessage.Add(5010, "Object already exists"); /* ERROR_OBJECT_ALREADY_EXISTS */
+				s_ErrorMessage.Add(5011, "Object in list"); /* ERROR_OBJECT_IN_LIST */
+				s_ErrorMessage.Add(5012, "Group not available"); /* ERROR_GROUP_NOT_AVAILABLE */
+				s_ErrorMessage.Add(5013, "Group not found"); /* ERROR_GROUP_NOT_FOUND */
+				s_ErrorMessage.Add(5014, "Group not online"); /* ERROR_GROUP_NOT_ONLINE */
+				s_ErrorMessage.Add(5015, "Host node not resource owner"); /* ERROR_HOST_NODE_NOT_RESOURCE_OWNER */
+				s_ErrorMessage.Add(5016, "Host node not group owner"); /* ERROR_HOST_NODE_NOT_GROUP_OWNER */
+				s_ErrorMessage.Add(5017, "Resmon create failed"); /* ERROR_RESMON_CREATE_FAILED */
+				s_ErrorMessage.Add(5018, "Resmon online failed"); /* ERROR_RESMON_ONLINE_FAILED */
+				s_ErrorMessage.Add(5019, "Resource online"); /* ERROR_RESOURCE_ONLINE */
+				s_ErrorMessage.Add(5020, "Quorum resource"); /* ERROR_QUORUM_RESOURCE */
+				s_ErrorMessage.Add(5021, "Not quorum capable"); /* ERROR_NOT_QUORUM_CAPABLE */
+				s_ErrorMessage.Add(5022, "Cluster shutting down"); /* ERROR_CLUSTER_SHUTTING_DOWN */
+				s_ErrorMessage.Add(5023, "Invalid state"); /* ERROR_INVALID_STATE */
+				s_ErrorMessage.Add(5024, "Resource properties stored"); /* ERROR_RESOURCE_PROPERTIES_STORED */
+				s_ErrorMessage.Add(5025, "Not quorum class"); /* ERROR_NOT_QUORUM_CLASS */
+				s_ErrorMessage.Add(5026, "Core resource"); /* ERROR_CORE_RESOURCE */
+				s_ErrorMessage.Add(5027, "Quorum resource online failed"); /* ERROR_QUORUM_RESOURCE_ONLINE_FAILED */
+				s_ErrorMessage.Add(5028, "Quorumlog open failed"); /* ERROR_QUORUMLOG_OPEN_FAILED */
+				s_ErrorMessage.Add(5029, "Clusterlog corrupt"); /* ERROR_CLUSTERLOG_CORRUPT */
+				s_ErrorMessage.Add(5030, "Clusterlog record exceeds maxsize"); /* ERROR_CLUSTERLOG_RECORD_EXCEEDS_MAXSIZE */
+				s_ErrorMessage.Add(5031, "Clusterlog exceeds maxsize"); /* ERROR_CLUSTERLOG_EXCEEDS_MAXSIZE */
+				s_ErrorMessage.Add(5032, "Clusterlog chkpoint not found"); /* ERROR_CLUSTERLOG_CHKPOINT_NOT_FOUND */
+				s_ErrorMessage.Add(5033, "Clusterlog not enough space"); /* ERROR_CLUSTERLOG_NOT_ENOUGH_SPACE */
+				s_ErrorMessage.Add(5034, "Quorum owner alive"); /* ERROR_QUORUM_OWNER_ALIVE */
+				s_ErrorMessage.Add(5035, "Network not available"); /* ERROR_NETWORK_NOT_AVAILABLE */
+				s_ErrorMessage.Add(5036, "Node not available"); /* ERROR_NODE_NOT_AVAILABLE */
+				s_ErrorMessage.Add(5037, "All nodes not available"); /* ERROR_ALL_NODES_NOT_AVAILABLE */
+				s_ErrorMessage.Add(5038, "Resource failed"); /* ERROR_RESOURCE_FAILED */
+				s_ErrorMessage.Add(5039, "Cluster invalid node"); /* ERROR_CLUSTER_INVALID_NODE */
+				s_ErrorMessage.Add(5040, "Cluster node exists"); /* ERROR_CLUSTER_NODE_EXISTS */
+				s_ErrorMessage.Add(5041, "Cluster join in progress"); /* ERROR_CLUSTER_JOIN_IN_PROGRESS */
+				s_ErrorMessage.Add(5042, "Cluster node not found"); /* ERROR_CLUSTER_NODE_NOT_FOUND */
+				s_ErrorMessage.Add(5043, "Cluster local node not found"); /* ERROR_CLUSTER_LOCAL_NODE_NOT_FOUND */
+				s_ErrorMessage.Add(5044, "Cluster network exists"); /* ERROR_CLUSTER_NETWORK_EXISTS */
+				s_ErrorMessage.Add(5045, "Cluster network not found"); /* ERROR_CLUSTER_NETWORK_NOT_FOUND */
+				s_ErrorMessage.Add(5046, "Cluster netinterface exists"); /* ERROR_CLUSTER_NETINTERFACE_EXISTS */
+				s_ErrorMessage.Add(5047, "Cluster netinterface not found"); /* ERROR_CLUSTER_NETINTERFACE_NOT_FOUND */
+				s_ErrorMessage.Add(5048, "Cluster invalid request"); /* ERROR_CLUSTER_INVALID_REQUEST */
+				s_ErrorMessage.Add(5049, "Cluster invalid network provider"); /* ERROR_CLUSTER_INVALID_NETWORK_PROVIDER */
+				s_ErrorMessage.Add(5050, "Cluster node down"); /* ERROR_CLUSTER_NODE_DOWN */
+				s_ErrorMessage.Add(5051, "Cluster node unreachable"); /* ERROR_CLUSTER_NODE_UNREACHABLE */
+				s_ErrorMessage.Add(5052, "Cluster node not member"); /* ERROR_CLUSTER_NODE_NOT_MEMBER */
+				s_ErrorMessage.Add(5053, "Cluster join not in progress"); /* ERROR_CLUSTER_JOIN_NOT_IN_PROGRESS */
+				s_ErrorMessage.Add(5054, "Cluster invalid network"); /* ERROR_CLUSTER_INVALID_NETWORK */
+				s_ErrorMessage.Add(5056, "Cluster node up"); /* ERROR_CLUSTER_NODE_UP */
+				s_ErrorMessage.Add(5057, "Cluster ipaddr in use"); /* ERROR_CLUSTER_IPADDR_IN_USE */
+				s_ErrorMessage.Add(5058, "Cluster node not paused"); /* ERROR_CLUSTER_NODE_NOT_PAUSED */
+				s_ErrorMessage.Add(5059, "Cluster no security context"); /* ERROR_CLUSTER_NO_SECURITY_CONTEXT */
+				s_ErrorMessage.Add(5060, "Cluster network not internal"); /* ERROR_CLUSTER_NETWORK_NOT_INTERNAL */
+				s_ErrorMessage.Add(5061, "Cluster node already up"); /* ERROR_CLUSTER_NODE_ALREADY_UP */
+				s_ErrorMessage.Add(5062, "Cluster node already down"); /* ERROR_CLUSTER_NODE_ALREADY_DOWN */
+				s_ErrorMessage.Add(5063, "Cluster network already online"); /* ERROR_CLUSTER_NETWORK_ALREADY_ONLINE */
+				s_ErrorMessage.Add(5064, "Cluster network already offline"); /* ERROR_CLUSTER_NETWORK_ALREADY_OFFLINE */
+				s_ErrorMessage.Add(5065, "Cluster node already member"); /* ERROR_CLUSTER_NODE_ALREADY_MEMBER */
+				s_ErrorMessage.Add(5066, "Cluster last internal network"); /* ERROR_CLUSTER_LAST_INTERNAL_NETWORK */
+				s_ErrorMessage.Add(5067, "Cluster network has dependents"); /* ERROR_CLUSTER_NETWORK_HAS_DEPENDENTS */
+				s_ErrorMessage.Add(5068, "Invalid operation on quorum"); /* ERROR_INVALID_OPERATION_ON_QUORUM */
+				s_ErrorMessage.Add(5069, "Dependency not allowed"); /* ERROR_DEPENDENCY_NOT_ALLOWED */
+				s_ErrorMessage.Add(5070, "Cluster node paused"); /* ERROR_CLUSTER_NODE_PAUSED */
+				s_ErrorMessage.Add(5071, "Node can't host resource"); /* ERROR_NODE_CANT_HOST_RESOURCE */
+				s_ErrorMessage.Add(5072, "Cluster node not ready"); /* ERROR_CLUSTER_NODE_NOT_READY */
+				s_ErrorMessage.Add(5073, "Cluster node shutting down"); /* ERROR_CLUSTER_NODE_SHUTTING_DOWN */
+				s_ErrorMessage.Add(5074, "Cluster join aborted"); /* ERROR_CLUSTER_JOIN_ABORTED */
+				s_ErrorMessage.Add(5075, "Cluster incompatible versions"); /* ERROR_CLUSTER_INCOMPATIBLE_VERSIONS */
+				s_ErrorMessage.Add(5076, "Cluster maxnum of resources exceeded"); /* ERROR_CLUSTER_MAXNUM_OF_RESOURCES_EXCEEDED */
+				s_ErrorMessage.Add(5077, "Cluster system config changed"); /* ERROR_CLUSTER_SYSTEM_CONFIG_CHANGED */
+				s_ErrorMessage.Add(5078, "Cluster resource type not found"); /* ERROR_CLUSTER_RESOURCE_TYPE_NOT_FOUND */
+				s_ErrorMessage.Add(5079, "Cluster restype not supported"); /* ERROR_CLUSTER_RESTYPE_NOT_SUPPORTED */
+				s_ErrorMessage.Add(5080, "Cluster resname not found"); /* ERROR_CLUSTER_RESNAME_NOT_FOUND */
+				s_ErrorMessage.Add(5081, "Cluster no RPC packages registered"); /* ERROR_CLUSTER_NO_RPC_PACKAGES_REGISTERED */
+				s_ErrorMessage.Add(5082, "Cluster owner not in preflist"); /* ERROR_CLUSTER_OWNER_NOT_IN_PREFLIST */
+				s_ErrorMessage.Add(5083, "Cluster database seqmismatch"); /* ERROR_CLUSTER_DATABASE_SEQMISMATCH */
+				s_ErrorMessage.Add(5084, "Resmon invalid state"); /* ERROR_RESMON_INVALID_STATE */
+				s_ErrorMessage.Add(5085, "Cluster gum not locker"); /* ERROR_CLUSTER_GUM_NOT_LOCKER */
+				s_ErrorMessage.Add(5086, "Quorum disk not found"); /* ERROR_QUORUM_DISK_NOT_FOUND */
+				s_ErrorMessage.Add(5087, "Database backup corrupt"); /* ERROR_DATABASE_BACKUP_CORRUPT */
+				s_ErrorMessage.Add(5088, "Cluster node already has DFS root"); /* ERROR_CLUSTER_NODE_ALREADY_HAS_DFS_ROOT */
+				s_ErrorMessage.Add(5089, "Resource property unchangeable"); /* ERROR_RESOURCE_PROPERTY_UNCHANGEABLE */
+				s_ErrorMessage.Add(5890, "Cluster membership invalid state"); /* ERROR_CLUSTER_MEMBERSHIP_INVALID_STATE */
+				s_ErrorMessage.Add(5891, "Cluster quorumlog not found"); /* ERROR_CLUSTER_QUORUMLOG_NOT_FOUND */
+				s_ErrorMessage.Add(5892, "Cluster membership halt"); /* ERROR_CLUSTER_MEMBERSHIP_HALT */
+				s_ErrorMessage.Add(5893, "Cluster instance ID mismatch"); /* ERROR_CLUSTER_INSTANCE_ID_MISMATCH */
+				s_ErrorMessage.Add(5894, "Cluster network not found for IP"); /* ERROR_CLUSTER_NETWORK_NOT_FOUND_FOR_IP */
+				s_ErrorMessage.Add(5895, "Cluster property data type mismatch"); /* ERROR_CLUSTER_PROPERTY_DATA_TYPE_MISMATCH */
+				s_ErrorMessage.Add(5896, "Cluster evict without cleanup"); /* ERROR_CLUSTER_EVICT_WITHOUT_CLEANUP */
+				s_ErrorMessage.Add(5897, "Cluster parameter mismatch"); /* ERROR_CLUSTER_PARAMETER_MISMATCH */
+				s_ErrorMessage.Add(5898, "Node cannot be clustered"); /* ERROR_NODE_CANNOT_BE_CLUSTERED */
+				s_ErrorMessage.Add(5899, "Cluster wrong OS version"); /* ERROR_CLUSTER_WRONG_OS_VERSION */
+				s_ErrorMessage.Add(5900, "Cluster can't create dup cluster name"); /* ERROR_CLUSTER_CANT_CREATE_DUP_CLUSTER_NAME */
+				s_ErrorMessage.Add(6001, "Decryption failed"); /* ERROR_DECRYPTION_FAILED */
+				s_ErrorMessage.Add(6002, "File encrypted"); /* ERROR_FILE_ENCRYPTED */
+				s_ErrorMessage.Add(6003, "No recovery policy"); /* ERROR_NO_RECOVERY_POLICY */
+				s_ErrorMessage.Add(6004, "No EFS"); /* ERROR_NO_EFS */
+				s_ErrorMessage.Add(6005, "Wrong EFS"); /* ERROR_WRONG_EFS */
+				s_ErrorMessage.Add(6006, "No user keys"); /* ERROR_NO_USER_KEYS */
+				s_ErrorMessage.Add(6007, "File not encryped"); /* ERROR_FILE_NOT_ENCRYPTED */
+				s_ErrorMessage.Add(6008, "Not export format"); /* ERROR_NOT_EXPORT_FORMAT */
+				s_ErrorMessage.Add(6009, "File read only"); /* ERROR_FILE_READ_ONLY */
+				s_ErrorMessage.Add(6010, "Dir EFS disallowed"); /* ERROR_DIR_EFS_DISALLOWED */
+				s_ErrorMessage.Add(6011, "EFS server not trusted"); /* ERROR_EFS_SERVER_NOT_TRUSTED */
+				s_ErrorMessage.Add(6012, "Bad recovery policy"); /* ERROR_BAD_RECOVERY_POLICY */
+				s_ErrorMessage.Add(6013, "ETS alg blob too big"); /* ERROR_EFS_ALG_BLOB_TOO_BIG */
+				s_ErrorMessage.Add(6014, "Volume not support EFS"); /* ERROR_VOLUME_NOT_SUPPORT_EFS */
+				s_ErrorMessage.Add(6015, "EFS disabled"); /* ERROR_EFS_DISABLED */
+				s_ErrorMessage.Add(6016, "EFS version not support"); /* ERROR_EFS_VERSION_NOT_SUPPORT */
+				s_ErrorMessage.Add(6118, "No browser servers found"); /* ERROR_NO_BROWSER_SERVERS_FOUND */
+				s_ErrorMessage.Add(6200, "Sched E service not localsystem"); /* SCHED_E_SERVICE_NOT_LOCALSYSTEM */
+				s_ErrorMessage.Add(7001, "Ctx winstation name invalid"); /* ERROR_CTX_WINSTATION_NAME_INVALID */
+				s_ErrorMessage.Add(7002, "Ctx invalid PD"); /* ERROR_CTX_INVALID_PD */
+				s_ErrorMessage.Add(7003, "Ctx PD not found"); /* ERROR_CTX_PD_NOT_FOUND */
+				s_ErrorMessage.Add(7004, "Ctx WD not found"); /* ERROR_CTX_WD_NOT_FOUND */
+				s_ErrorMessage.Add(7005, "Ctx cannot make eventlog entry"); /* ERROR_CTX_CANNOT_MAKE_EVENTLOG_ENTRY */
+				s_ErrorMessage.Add(7006, "Ctx service name collision"); /* ERROR_CTX_SERVICE_NAME_COLLISION */
+				s_ErrorMessage.Add(7007, "Ctx close pending"); /* ERROR_CTX_CLOSE_PENDING */
+				s_ErrorMessage.Add(7008, "Ctx no outbuf"); /* ERROR_CTX_NO_OUTBUF */
+				s_ErrorMessage.Add(7009, "Ctx modem inf not found"); /* ERROR_CTX_MODEM_INF_NOT_FOUND */
+				s_ErrorMessage.Add(7010, "Ctx invalid modemname"); /* ERROR_CTX_INVALID_MODEMNAME */
+				s_ErrorMessage.Add(7011, "Ctx modem response error"); /* ERROR_CTX_MODEM_RESPONSE_ERROR */
+				s_ErrorMessage.Add(7012, "Ctx modem response timeout"); /* ERROR_CTX_MODEM_RESPONSE_TIMEOUT */
+				s_ErrorMessage.Add(7013, "Ctx modem response no carrier"); /* ERROR_CTX_MODEM_RESPONSE_NO_CARRIER */
+				s_ErrorMessage.Add(7014, "Ctx modem response no dial tone"); /* ERROR_CTX_MODEM_RESPONSE_NO_DIALTONE */
+				s_ErrorMessage.Add(7015, "Ctx modem response busy"); /* ERROR_CTX_MODEM_RESPONSE_BUSY */
+				s_ErrorMessage.Add(7016, "Ctx modem response voice"); /* ERROR_CTX_MODEM_RESPONSE_VOICE */
+				s_ErrorMessage.Add(7017, "Ctx TD error"); /* ERROR_CTX_TD_ERROR */
+				s_ErrorMessage.Add(7022, "Ctx winstation not found"); /* ERROR_CTX_WINSTATION_NOT_FOUND */
+				s_ErrorMessage.Add(7023, "Ctx winstation already exists"); /* ERROR_CTX_WINSTATION_ALREADY_EXISTS */
+				s_ErrorMessage.Add(7024, "Ctx winstation busy"); /* ERROR_CTX_WINSTATION_BUSY */
+				s_ErrorMessage.Add(7025, "Ctx bad video mode"); /* ERROR_CTX_BAD_VIDEO_MODE */
+				s_ErrorMessage.Add(7035, "Ctx graphics invalid"); /* ERROR_CTX_GRAPHICS_INVALID */
+				s_ErrorMessage.Add(7037, "Ctx logon disabled"); /* ERROR_CTX_LOGON_DISABLED */
+				s_ErrorMessage.Add(7038, "Ctx not console"); /* ERROR_CTX_NOT_CONSOLE */
+				s_ErrorMessage.Add(7040, "Ctx client query timeout"); /* ERROR_CTX_CLIENT_QUERY_TIMEOUT */
+				s_ErrorMessage.Add(7041, "Ctx console disconnect"); /* ERROR_CTX_CONSOLE_DISCONNECT */
+				s_ErrorMessage.Add(7042, "Ctx console connect"); /* ERROR_CTX_CONSOLE_CONNECT */
+				s_ErrorMessage.Add(7044, "Ctx shadow denied"); /* ERROR_CTX_SHADOW_DENIED */
+				s_ErrorMessage.Add(7045, "Ctx winstation access denied"); /* ERROR_CTX_WINSTATION_ACCESS_DENIED */
+				s_ErrorMessage.Add(7049, "Ctx invalid WD"); /* ERROR_CTX_INVALID_WD */
+				s_ErrorMessage.Add(7050, "Ctx shadow invalid"); /* ERROR_CTX_SHADOW_INVALID */
+				s_ErrorMessage.Add(7051, "Ctx shadow disabled"); /* ERROR_CTX_SHADOW_DISABLED */
+				s_ErrorMessage.Add(7052, "Ctx client licence in use"); /* ERROR_CTX_CLIENT_LICENSE_IN_USE */
+				s_ErrorMessage.Add(7053, "Ctx client licence not set"); /* ERROR_CTX_CLIENT_LICENSE_NOT_SET */
+				s_ErrorMessage.Add(7054, "Ctx licence not available"); /* ERROR_CTX_LICENSE_NOT_AVAILABLE */
+				s_ErrorMessage.Add(7055, "Ctx licence client invalid"); /* ERROR_CTX_LICENSE_CLIENT_INVALID */
+				s_ErrorMessage.Add(7056, "Ctx licence expired"); /* ERROR_CTX_LICENSE_EXPIRED */
+				s_ErrorMessage.Add(7057, "Ctx shadow not running"); /* ERROR_CTX_SHADOW_NOT_RUNNING */
+				s_ErrorMessage.Add(7058, "Ctx shadow ended by mode change"); /* ERROR_CTX_SHADOW_ENDED_BY_MODE_CHANGE */
+				s_ErrorMessage.Add(8001, "FRS err invalid API sequence"); /* FRS_ERR_INVALID_API_SEQUENCE */
+				s_ErrorMessage.Add(8002, "FRS err starting service"); /* FRS_ERR_STARTING_SERVICE */
+				s_ErrorMessage.Add(8003, "FRS err stopping service"); /* FRS_ERR_STOPPING_SERVICE */
+				s_ErrorMessage.Add(8004, "FRS err internal API"); /* FRS_ERR_INTERNAL_API */
+				s_ErrorMessage.Add(8005, "FRS err internal"); /* FRS_ERR_INTERNAL */
+				s_ErrorMessage.Add(8006, "FRS err service comm"); /* FRS_ERR_SERVICE_COMM */
+				s_ErrorMessage.Add(8007, "FRS err insufficient priv"); /* FRS_ERR_INSUFFICIENT_PRIV */
+				s_ErrorMessage.Add(8008, "FRS err authentication"); /* FRS_ERR_AUTHENTICATION */
+				s_ErrorMessage.Add(8009, "FRS err parent insufficient priv"); /* FRS_ERR_PARENT_INSUFFICIENT_PRIV */
+				s_ErrorMessage.Add(8010, "FRS err parent authentication"); /* FRS_ERR_PARENT_AUTHENTICATION */
+				s_ErrorMessage.Add(8011, "FRS err child to parent comm"); /* FRS_ERR_CHILD_TO_PARENT_COMM */
+				s_ErrorMessage.Add(8012, "FRS err parent to child comm"); /* FRS_ERR_PARENT_TO_CHILD_COMM */
+				s_ErrorMessage.Add(8013, "FRS err sysvol populate"); /* FRS_ERR_SYSVOL_POPULATE */
+				s_ErrorMessage.Add(8014, "FRS err sysvol populate timeout"); /* FRS_ERR_SYSVOL_POPULATE_TIMEOUT */
+				s_ErrorMessage.Add(8015, "FRS err sysvol is busy"); /* FRS_ERR_SYSVOL_IS_BUSY */
+				s_ErrorMessage.Add(8016, "FRS err sysvol demote"); /* FRS_ERR_SYSVOL_DEMOTE */
+				s_ErrorMessage.Add(8017, "FRS err invalid service parameter"); /* FRS_ERR_INVALID_SERVICE_PARAMETER */
+				s_ErrorMessage.Add(8200, "DS not installed"); /* ERROR_DS_NOT_INSTALLED */
+				s_ErrorMessage.Add(8201, "DS membership evaluated locally"); /* ERROR_DS_MEMBERSHIP_EVALUATED_LOCALLY */
+				s_ErrorMessage.Add(8202, "DS no attribute or value"); /* ERROR_DS_NO_ATTRIBUTE_OR_VALUE */
+				s_ErrorMessage.Add(8203, "DS invalid attribute syntax"); /* ERROR_DS_INVALID_ATTRIBUTE_SYNTAX */
+				s_ErrorMessage.Add(8204, "DS attribute type undefined"); /* ERROR_DS_ATTRIBUTE_TYPE_UNDEFINED */
+				s_ErrorMessage.Add(8205, "DS attribute or value exists"); /* ERROR_DS_ATTRIBUTE_OR_VALUE_EXISTS */
+				s_ErrorMessage.Add(8206, "DS busy"); /* ERROR_DS_BUSY */
+				s_ErrorMessage.Add(8207, "DS unavailable"); /* ERROR_DS_UNAVAILABLE */
+				s_ErrorMessage.Add(8208, "DS no rids allocated"); /* ERROR_DS_NO_RIDS_ALLOCATED */
+				s_ErrorMessage.Add(8209, "DS no more rids"); /* ERROR_DS_NO_MORE_RIDS */
+				s_ErrorMessage.Add(8210, "DS incorrect role owner"); /* ERROR_DS_INCORRECT_ROLE_OWNER */
+				s_ErrorMessage.Add(8211, "DS ridmgr init error"); /* ERROR_DS_RIDMGR_INIT_ERROR */
+				s_ErrorMessage.Add(8212, "DS obj class violation"); /* ERROR_DS_OBJ_CLASS_VIOLATION */
+				s_ErrorMessage.Add(8213, "DS can't on non leaf"); /* ERROR_DS_CANT_ON_NON_LEAF */
+				s_ErrorMessage.Add(8214, "DS can't on rnd"); /* ERROR_DS_CANT_ON_RDN */
+				s_ErrorMessage.Add(8215, "DS can't mod obj class"); /* ERROR_DS_CANT_MOD_OBJ_CLASS */
+				s_ErrorMessage.Add(8216, "DS cross dom move error"); /* ERROR_DS_CROSS_DOM_MOVE_ERROR */
+				s_ErrorMessage.Add(8217, "DS GC not available"); /* ERROR_DS_GC_NOT_AVAILABLE */
+				s_ErrorMessage.Add(8218, "Shared policy"); /* ERROR_SHARED_POLICY */
+				s_ErrorMessage.Add(8219, "Policy object not found"); /* ERROR_POLICY_OBJECT_NOT_FOUND */
+				s_ErrorMessage.Add(8220, "Policy only in DS"); /* ERROR_POLICY_ONLY_IN_DS */
+				s_ErrorMessage.Add(8221, "Promotion active"); /* ERROR_PROMOTION_ACTIVE */
+				s_ErrorMessage.Add(8222, "No promotion active"); /* ERROR_NO_PROMOTION_ACTIVE */
+				s_ErrorMessage.Add(8224, "DS operations error"); /* ERROR_DS_OPERATIONS_ERROR */
+				s_ErrorMessage.Add(8225, "DS protocol error"); /* ERROR_DS_PROTOCOL_ERROR */
+				s_ErrorMessage.Add(8226, "DS timelimit exceeded"); /* ERROR_DS_TIMELIMIT_EXCEEDED */
+				s_ErrorMessage.Add(8227, "DS sizelimit exceeded"); /* ERROR_DS_SIZELIMIT_EXCEEDED */
+				s_ErrorMessage.Add(8228, "DS admin limit exceeded"); /* ERROR_DS_ADMIN_LIMIT_EXCEEDED */
+				s_ErrorMessage.Add(8229, "DS compare false"); /* ERROR_DS_COMPARE_FALSE */
+				s_ErrorMessage.Add(8230, "DS compare true"); /* ERROR_DS_COMPARE_TRUE */
+				s_ErrorMessage.Add(8231, "DS auth method not supported"); /* ERROR_DS_AUTH_METHOD_NOT_SUPPORTED */
+				s_ErrorMessage.Add(8232, "DS strong auth required"); /* ERROR_DS_STRONG_AUTH_REQUIRED */
+				s_ErrorMessage.Add(8233, "DS inappropriate auth"); /* ERROR_DS_INAPPROPRIATE_AUTH */
+				s_ErrorMessage.Add(8234, "DS auth unknown"); /* ERROR_DS_AUTH_UNKNOWN */
+				s_ErrorMessage.Add(8235, "DS referral"); /* ERROR_DS_REFERRAL */
+				s_ErrorMessage.Add(8236, "DS unavailable crit extension"); /* ERROR_DS_UNAVAILABLE_CRIT_EXTENSION */
+				s_ErrorMessage.Add(8237, "DS confidentiality required"); /* ERROR_DS_CONFIDENTIALITY_REQUIRED */
+				s_ErrorMessage.Add(8238, "DS inappropriate matching"); /* ERROR_DS_INAPPROPRIATE_MATCHING */
+				s_ErrorMessage.Add(8239, "DS constraint violation"); /* ERROR_DS_CONSTRAINT_VIOLATION */
+				s_ErrorMessage.Add(8240, "DS no such object"); /* ERROR_DS_NO_SUCH_OBJECT */
+				s_ErrorMessage.Add(8241, "DS alias problem"); /* ERROR_DS_ALIAS_PROBLEM */
+				s_ErrorMessage.Add(8242, "DS invalid dn syntax"); /* ERROR_DS_INVALID_DN_SYNTAX */
+				s_ErrorMessage.Add(8243, "DS is leaf"); /* ERROR_DS_IS_LEAF */
+				s_ErrorMessage.Add(8244, "DS alias deref problem"); /* ERROR_DS_ALIAS_DEREF_PROBLEM */
+				s_ErrorMessage.Add(8245, "DS unwilling to perform"); /* ERROR_DS_UNWILLING_TO_PERFORM */
+				s_ErrorMessage.Add(8246, "DS loop detect"); /* ERROR_DS_LOOP_DETECT */
+				s_ErrorMessage.Add(8247, "DS naming violation"); /* ERROR_DS_NAMING_VIOLATION */
+				s_ErrorMessage.Add(8248, "DS object results too large"); /* ERROR_DS_OBJECT_RESULTS_TOO_LARGE */
+				s_ErrorMessage.Add(8249, "DS affects multiple dsas"); /* ERROR_DS_AFFECTS_MULTIPLE_DSAS */
+				s_ErrorMessage.Add(8250, "DS server down"); /* ERROR_DS_SERVER_DOWN */
+				s_ErrorMessage.Add(8251, "DS local error"); /* ERROR_DS_LOCAL_ERROR */
+				s_ErrorMessage.Add(8252, "DS encoding error"); /* ERROR_DS_ENCODING_ERROR */
+				s_ErrorMessage.Add(8253, "DS decoding error"); /* ERROR_DS_DECODING_ERROR */
+				s_ErrorMessage.Add(8254, "DS filter unknown"); /* ERROR_DS_FILTER_UNKNOWN */
+				s_ErrorMessage.Add(8255, "DS param error"); /* ERROR_DS_PARAM_ERROR */
+				s_ErrorMessage.Add(8256, "DS not supported"); /* ERROR_DS_NOT_SUPPORTED */
+				s_ErrorMessage.Add(8257, "DS no results returned"); /* ERROR_DS_NO_RESULTS_RETURNED */
+				s_ErrorMessage.Add(8258, "DS control not found"); /* ERROR_DS_CONTROL_NOT_FOUND */
+				s_ErrorMessage.Add(8259, "DS client loop"); /* ERROR_DS_CLIENT_LOOP */
+				s_ErrorMessage.Add(8260, "DS referral limit exceeded"); /* ERROR_DS_REFERRAL_LIMIT_EXCEEDED */
+				s_ErrorMessage.Add(8261, "DS sort control missing"); /* ERROR_DS_SORT_CONTROL_MISSING */
+				s_ErrorMessage.Add(8262, "DS offset range error"); /* ERROR_DS_OFFSET_RANGE_ERROR */
+				s_ErrorMessage.Add(8301, "DS root must be nc"); /* ERROR_DS_ROOT_MUST_BE_NC */
+				s_ErrorMessage.Add(8302, "DS and replica inhibited"); /* ERROR_DS_ADD_REPLICA_INHIBITED */
+				s_ErrorMessage.Add(8303, "DS att not def in schema"); /* ERROR_DS_ATT_NOT_DEF_IN_SCHEMA */
+				s_ErrorMessage.Add(8304, "DS max obj size exceeded"); /* ERROR_DS_MAX_OBJ_SIZE_EXCEEDED */
+				s_ErrorMessage.Add(8305, "DS obj string name exists"); /* ERROR_DS_OBJ_STRING_NAME_EXISTS */
+				s_ErrorMessage.Add(8306, "DS no rdn defined in schema"); /* ERROR_DS_NO_RDN_DEFINED_IN_SCHEMA */
+				s_ErrorMessage.Add(8307, "DS rdn doesn't match schema"); /* ERROR_DS_RDN_DOESNT_MATCH_SCHEMA */
+				s_ErrorMessage.Add(8308, "DS no requested atts found"); /* ERROR_DS_NO_REQUESTED_ATTS_FOUND */
+				s_ErrorMessage.Add(8309, "DS user buffer too small"); /* ERROR_DS_USER_BUFFER_TO_SMALL */
+				s_ErrorMessage.Add(8310, "DS att is not on obj"); /* ERROR_DS_ATT_IS_NOT_ON_OBJ */
+				s_ErrorMessage.Add(8311, "DS illegal mod operation"); /* ERROR_DS_ILLEGAL_MOD_OPERATION */
+				s_ErrorMessage.Add(8312, "DS obj too large"); /* ERROR_DS_OBJ_TOO_LARGE */
+				s_ErrorMessage.Add(8313, "DS bad instance type"); /* ERROR_DS_BAD_INSTANCE_TYPE */
+				s_ErrorMessage.Add(8314, "DS masterdsa required"); /* ERROR_DS_MASTERDSA_REQUIRED */
+				s_ErrorMessage.Add(8315, "DS object class required"); /* ERROR_DS_OBJECT_CLASS_REQUIRED */
+				s_ErrorMessage.Add(8316, "DS missing required att"); /* ERROR_DS_MISSING_REQUIRED_ATT */
+				s_ErrorMessage.Add(8317, "DS att not def for class"); /* ERROR_DS_ATT_NOT_DEF_FOR_CLASS */
+				s_ErrorMessage.Add(8318, "DS att already exists"); /* ERROR_DS_ATT_ALREADY_EXISTS */
+				s_ErrorMessage.Add(8320, "DS can't add att values"); /* ERROR_DS_CANT_ADD_ATT_VALUES */
+				s_ErrorMessage.Add(8321, "DS single value constraint"); /* ERROR_DS_SINGLE_VALUE_CONSTRAINT */
+				s_ErrorMessage.Add(8322, "DS range constraint"); /* ERROR_DS_RANGE_CONSTRAINT */
+				s_ErrorMessage.Add(8323, "DS att val already exists"); /* ERROR_DS_ATT_VAL_ALREADY_EXISTS */
+				s_ErrorMessage.Add(8324, "DS can't rem missing att"); /* ERROR_DS_CANT_REM_MISSING_ATT */
+				s_ErrorMessage.Add(8325, "DS can't rem missing att val"); /* ERROR_DS_CANT_REM_MISSING_ATT_VAL */
+				s_ErrorMessage.Add(8326, "DS root can't be subref"); /* ERROR_DS_ROOT_CANT_BE_SUBREF */
+				s_ErrorMessage.Add(8327, "DS no chaining"); /* ERROR_DS_NO_CHAINING */
+				s_ErrorMessage.Add(8328, "DS no chained eval"); /* ERROR_DS_NO_CHAINED_EVAL */
+				s_ErrorMessage.Add(8329, "DS no parent object"); /* ERROR_DS_NO_PARENT_OBJECT */
+				s_ErrorMessage.Add(8330, "DS parent is an alias"); /* ERROR_DS_PARENT_IS_AN_ALIAS */
+				s_ErrorMessage.Add(8331, "DS can't mix master and reps"); /* ERROR_DS_CANT_MIX_MASTER_AND_REPS */
+				s_ErrorMessage.Add(8332, "DS children exist"); /* ERROR_DS_CHILDREN_EXIST */
+				s_ErrorMessage.Add(8333, "DS obj not found"); /* ERROR_DS_OBJ_NOT_FOUND */
+				s_ErrorMessage.Add(8334, "DS aliased obj missing"); /* ERROR_DS_ALIASED_OBJ_MISSING */
+				s_ErrorMessage.Add(8335, "DS bad name syntax"); /* ERROR_DS_BAD_NAME_SYNTAX */
+				s_ErrorMessage.Add(8336, "DS alias points to alias"); /* ERROR_DS_ALIAS_POINTS_TO_ALIAS */
+				s_ErrorMessage.Add(8337, "DS can't redef alias"); /* ERROR_DS_CANT_DEREF_ALIAS */
+				s_ErrorMessage.Add(8338, "DS out of scope"); /* ERROR_DS_OUT_OF_SCOPE */
+				s_ErrorMessage.Add(8339, "DS object being removed"); /* ERROR_DS_OBJECT_BEING_REMOVED */
+				s_ErrorMessage.Add(8340, "DS can't delete dsa obj"); /* ERROR_DS_CANT_DELETE_DSA_OBJ */
+				s_ErrorMessage.Add(8341, "DS generic error"); /* ERROR_DS_GENERIC_ERROR */
+				s_ErrorMessage.Add(8342, "DS dsa must be int master"); /* ERROR_DS_DSA_MUST_BE_INT_MASTER */
+				s_ErrorMessage.Add(8343, "DS class not dsa"); /* ERROR_DS_CLASS_NOT_DSA */
+				s_ErrorMessage.Add(8344, "DS insuff access rights"); /* ERROR_DS_INSUFF_ACCESS_RIGHTS */
+				s_ErrorMessage.Add(8345, "DS illegal superior"); /* ERROR_DS_ILLEGAL_SUPERIOR */
+				s_ErrorMessage.Add(8346, "DS attribute owned by sam"); /* ERROR_DS_ATTRIBUTE_OWNED_BY_SAM */
+				s_ErrorMessage.Add(8347, "DS name too many parts"); /* ERROR_DS_NAME_TOO_MANY_PARTS */
+				s_ErrorMessage.Add(8348, "DS name too long"); /* ERROR_DS_NAME_TOO_LONG */
+				s_ErrorMessage.Add(8349, "DS name value too long"); /* ERROR_DS_NAME_VALUE_TOO_LONG */
+				s_ErrorMessage.Add(8350, "DS name unparseable"); /* ERROR_DS_NAME_UNPARSEABLE */
+				s_ErrorMessage.Add(8351, "DS name type unknown"); /* ERROR_DS_NAME_TYPE_UNKNOWN */
+				s_ErrorMessage.Add(8352, "DS not an object"); /* ERROR_DS_NOT_AN_OBJECT */
+				s_ErrorMessage.Add(8353, "DS sec desc too short"); /* ERROR_DS_SEC_DESC_TOO_SHORT */
+				s_ErrorMessage.Add(8354, "DS sec desc invalid"); /* ERROR_DS_SEC_DESC_INVALID */
+				s_ErrorMessage.Add(8355, "DS no deleted name"); /* ERROR_DS_NO_DELETED_NAME */
+				s_ErrorMessage.Add(8356, "DS subref must have parent"); /* ERROR_DS_SUBREF_MUST_HAVE_PARENT */
+				s_ErrorMessage.Add(8357, "DS ncname must be nc"); /* ERROR_DS_NCNAME_MUST_BE_NC */
+				s_ErrorMessage.Add(8358, "DS can't add system only"); /* ERROR_DS_CANT_ADD_SYSTEM_ONLY */
+				s_ErrorMessage.Add(8359, "DS class must be concrete"); /* ERROR_DS_CLASS_MUST_BE_CONCRETE */
+				s_ErrorMessage.Add(8360, "DS invalid dmd"); /* ERROR_DS_INVALID_DMD */
+				s_ErrorMessage.Add(8361, "DS obj GUID exists"); /* ERROR_DS_OBJ_GUID_EXISTS */
+				s_ErrorMessage.Add(8362, "DS not on backlink"); /* ERROR_DS_NOT_ON_BACKLINK */
+				s_ErrorMessage.Add(8363, "DS no crossref for nc"); /* ERROR_DS_NO_CROSSREF_FOR_NC */
+				s_ErrorMessage.Add(8364, "DS shutting down"); /* ERROR_DS_SHUTTING_DOWN */
+				s_ErrorMessage.Add(8365, "DS unknown operation"); /* ERROR_DS_UNKNOWN_OPERATION */
+				s_ErrorMessage.Add(8366, "DS invalid role owner"); /* ERROR_DS_INVALID_ROLE_OWNER */
+				s_ErrorMessage.Add(8367, "DS couldn't contact fsmo"); /* ERROR_DS_COULDNT_CONTACT_FSMO */
+				s_ErrorMessage.Add(8368, "DS cross nc dn rename"); /* ERROR_DS_CROSS_NC_DN_RENAME */
+				s_ErrorMessage.Add(8369, "DS can't mod system only"); /* ERROR_DS_CANT_MOD_SYSTEM_ONLY */
+				s_ErrorMessage.Add(8370, "DS replicator only"); /* ERROR_DS_REPLICATOR_ONLY */
+				s_ErrorMessage.Add(8371, "DS obj class not defined"); /* ERROR_DS_OBJ_CLASS_NOT_DEFINED */
+				s_ErrorMessage.Add(8372, "DS obj class not subclass"); /* ERROR_DS_OBJ_CLASS_NOT_SUBCLASS */
+				s_ErrorMessage.Add(8373, "DS name reference invalid"); /* ERROR_DS_NAME_REFERENCE_INVALID */
+				s_ErrorMessage.Add(8374, "DS cross ref exists"); /* ERROR_DS_CROSS_REF_EXISTS */
+				s_ErrorMessage.Add(8375, "DS can't del master crossref"); /* ERROR_DS_CANT_DEL_MASTER_CROSSREF */
+				s_ErrorMessage.Add(8376, "DS subtree notify not nc head"); /* ERROR_DS_SUBTREE_NOTIFY_NOT_NC_HEAD */
+				s_ErrorMessage.Add(8377, "DS notify filter too complex"); /* ERROR_DS_NOTIFY_FILTER_TOO_COMPLEX */
+				s_ErrorMessage.Add(8378, "DS dup rdn"); /* ERROR_DS_DUP_RDN */
+				s_ErrorMessage.Add(8379, "DS dup oid"); /* ERROR_DS_DUP_OID */
+				s_ErrorMessage.Add(8380, "DS dup mapi ID"); /* ERROR_DS_DUP_MAPI_ID */
+				s_ErrorMessage.Add(8381, "DS dup schema ID GUID"); /* ERROR_DS_DUP_SCHEMA_ID_GUID */
+				s_ErrorMessage.Add(8382, "DS dup LDAP display name"); /* ERROR_DS_DUP_LDAP_DISPLAY_NAME */
+				s_ErrorMessage.Add(8383, "DS semantic att test"); /* ERROR_DS_SEMANTIC_ATT_TEST */
+				s_ErrorMessage.Add(8384, "DS syntax mismatch"); /* ERROR_DS_SYNTAX_MISMATCH */
+				s_ErrorMessage.Add(8385, "DS exists in must have"); /* ERROR_DS_EXISTS_IN_MUST_HAVE */
+				s_ErrorMessage.Add(8386, "DS exists in may have"); /* ERROR_DS_EXISTS_IN_MAY_HAVE */
+				s_ErrorMessage.Add(8387, "DS nonexistent may have"); /* ERROR_DS_NONEXISTENT_MAY_HAVE */
+				s_ErrorMessage.Add(8388, "DS nonexistent must have"); /* ERROR_DS_NONEXISTENT_MUST_HAVE */
+				s_ErrorMessage.Add(8389, "DS aux cls test fail"); /* ERROR_DS_AUX_CLS_TEST_FAIL */
+				s_ErrorMessage.Add(8390, "DS nonexistent poss sup"); /* ERROR_DS_NONEXISTENT_POSS_SUP */
+				s_ErrorMessage.Add(8391, "DS sub cls test fail"); /* ERROR_DS_SUB_CLS_TEST_FAIL */
+				s_ErrorMessage.Add(8392, "DS bad rdn att ID syntax"); /* ERROR_DS_BAD_RDN_ATT_ID_SYNTAX */
+				s_ErrorMessage.Add(8393, "DS exists in aux cls"); /* ERROR_DS_EXISTS_IN_AUX_CLS */
+				s_ErrorMessage.Add(8394, "DS exists in sub cls"); /* ERROR_DS_EXISTS_IN_SUB_CLS */
+				s_ErrorMessage.Add(8395, "DS exists in poss sup"); /* ERROR_DS_EXISTS_IN_POSS_SUP */
+				s_ErrorMessage.Add(8396, "DS recalcschema failed"); /* ERROR_DS_RECALCSCHEMA_FAILED */
+				s_ErrorMessage.Add(8397, "DS tree delete not finished"); /* ERROR_DS_TREE_DELETE_NOT_FINISHED */
+				s_ErrorMessage.Add(8398, "DS can't delete"); /* ERROR_DS_CANT_DELETE */
+				s_ErrorMessage.Add(8399, "DS att schema req ID"); /* ERROR_DS_ATT_SCHEMA_REQ_ID */
+				s_ErrorMessage.Add(8400, "DS bad att schema syntax"); /* ERROR_DS_BAD_ATT_SCHEMA_SYNTAX */
+				s_ErrorMessage.Add(8401, "DS can't cache att"); /* ERROR_DS_CANT_CACHE_ATT */
+				s_ErrorMessage.Add(8402, "DS can't cache class"); /* ERROR_DS_CANT_CACHE_CLASS */
+				s_ErrorMessage.Add(8403, "DS can't remove att cache"); /* ERROR_DS_CANT_REMOVE_ATT_CACHE */
+				s_ErrorMessage.Add(8404, "DS can't remove class cache"); /* ERROR_DS_CANT_REMOVE_CLASS_CACHE */
+				s_ErrorMessage.Add(8405, "DS can't retrieve DN"); /* ERROR_DS_CANT_RETRIEVE_DN */
+				s_ErrorMessage.Add(8406, "DS missing supref"); /* ERROR_DS_MISSING_SUPREF */
+				s_ErrorMessage.Add(8407, "DS can't retrieve instance"); /* ERROR_DS_CANT_RETRIEVE_INSTANCE */
+				s_ErrorMessage.Add(8408, "DS code inconsistency"); /* ERROR_DS_CODE_INCONSISTENCY */
+				s_ErrorMessage.Add(8409, "DS database error"); /* ERROR_DS_DATABASE_ERROR */
+				s_ErrorMessage.Add(8410, "DS governsid missing"); /* ERROR_DS_GOVERNSID_MISSING */
+				s_ErrorMessage.Add(8411, "DS missing expected att"); /* ERROR_DS_MISSING_EXPECTED_ATT */
+				s_ErrorMessage.Add(8412, "DS ncname missing cr ref"); /* ERROR_DS_NCNAME_MISSING_CR_REF */
+				s_ErrorMessage.Add(8413, "DS security checking error"); /* ERROR_DS_SECURITY_CHECKING_ERROR */
+				s_ErrorMessage.Add(8414, "DS schema not loaded"); /* ERROR_DS_SCHEMA_NOT_LOADED */
+				s_ErrorMessage.Add(8415, "DS schema alloc failed"); /* ERROR_DS_SCHEMA_ALLOC_FAILED */
+				s_ErrorMessage.Add(8416, "DS att schema req syntax"); /* ERROR_DS_ATT_SCHEMA_REQ_SYNTAX */
+				s_ErrorMessage.Add(8417, "DS gcverify error"); /* ERROR_DS_GCVERIFY_ERROR */
+				s_ErrorMessage.Add(8418, "DS dra schema mismatch"); /* ERROR_DS_DRA_SCHEMA_MISMATCH */
+				s_ErrorMessage.Add(8419, "DS can't find dsa obj"); /* ERROR_DS_CANT_FIND_DSA_OBJ */
+				s_ErrorMessage.Add(8420, "DS can't find expected nc"); /* ERROR_DS_CANT_FIND_EXPECTED_NC */
+				s_ErrorMessage.Add(8421, "DS can't find nc in cache"); /* ERROR_DS_CANT_FIND_NC_IN_CACHE */
+				s_ErrorMessage.Add(8422, "DS can't retrieve child"); /* ERROR_DS_CANT_RETRIEVE_CHILD */
+				s_ErrorMessage.Add(8423, "DS security illegal modify"); /* ERROR_DS_SECURITY_ILLEGAL_MODIFY */
+				s_ErrorMessage.Add(8424, "DS can't replace hidden rec"); /* ERROR_DS_CANT_REPLACE_HIDDEN_REC */
+				s_ErrorMessage.Add(8425, "DS bad hierarchy file"); /* ERROR_DS_BAD_HIERARCHY_FILE */
+				s_ErrorMessage.Add(8426, "DS build hierarchy table failed"); /* ERROR_DS_BUILD_HIERARCHY_TABLE_FAILED */
+				s_ErrorMessage.Add(8427, "DS config param missing"); /* ERROR_DS_CONFIG_PARAM_MISSING */
+				s_ErrorMessage.Add(8428, "DS counting ab indices failed"); /* ERROR_DS_COUNTING_AB_INDICES_FAILED */
+				s_ErrorMessage.Add(8429, "DS hierarchy table malloc failed"); /* ERROR_DS_HIERARCHY_TABLE_MALLOC_FAILED */
+				s_ErrorMessage.Add(8430, "DS internal failure"); /* ERROR_DS_INTERNAL_FAILURE */
+				s_ErrorMessage.Add(8431, "DS unknown error"); /* ERROR_DS_UNKNOWN_ERROR */
+				s_ErrorMessage.Add(8432, "DS root requires class top"); /* ERROR_DS_ROOT_REQUIRES_CLASS_TOP */
+				s_ErrorMessage.Add(8433, "DS refusing fmso roles"); /* ERROR_DS_REFUSING_FSMO_ROLES */
+				s_ErrorMessage.Add(8434, "DS missing fmso settings"); /* ERROR_DS_MISSING_FSMO_SETTINGS */
+				s_ErrorMessage.Add(8435, "DS unable to surrender roles"); /* ERROR_DS_UNABLE_TO_SURRENDER_ROLES */
+				s_ErrorMessage.Add(8436, "DS dra generic"); /* ERROR_DS_DRA_GENERIC */
+				s_ErrorMessage.Add(8437, "DS dra invalid parameter"); /* ERROR_DS_DRA_INVALID_PARAMETER */
+				s_ErrorMessage.Add(8438, "DS dra busy"); /* ERROR_DS_DRA_BUSY */
+				s_ErrorMessage.Add(8439, "DS dra bad dn"); /* ERROR_DS_DRA_BAD_DN */
+				s_ErrorMessage.Add(8440, "DS dra bad nc"); /* ERROR_DS_DRA_BAD_NC */
+				s_ErrorMessage.Add(8441, "DS dra dn exists"); /* ERROR_DS_DRA_DN_EXISTS */
+				s_ErrorMessage.Add(8442, "DS dra internal error"); /* ERROR_DS_DRA_INTERNAL_ERROR */
+				s_ErrorMessage.Add(8443, "DS dra inconsistent dit"); /* ERROR_DS_DRA_INCONSISTENT_DIT */
+				s_ErrorMessage.Add(8444, "DS dra connection failed"); /* ERROR_DS_DRA_CONNECTION_FAILED */
+				s_ErrorMessage.Add(8445, "DS dra bad instance type"); /* ERROR_DS_DRA_BAD_INSTANCE_TYPE */
+				s_ErrorMessage.Add(8446, "DS dra out of mem"); /* ERROR_DS_DRA_OUT_OF_MEM */
+				s_ErrorMessage.Add(8447, "DS dra mail problem"); /* ERROR_DS_DRA_MAIL_PROBLEM */
+				s_ErrorMessage.Add(8448, "DS dra ref already exists"); /* ERROR_DS_DRA_REF_ALREADY_EXISTS */
+				s_ErrorMessage.Add(8449, "DS dra ref not found"); /* ERROR_DS_DRA_REF_NOT_FOUND */
+				s_ErrorMessage.Add(8450, "DS dra obj is rep source"); /* ERROR_DS_DRA_OBJ_IS_REP_SOURCE */
+				s_ErrorMessage.Add(8451, "DS dra db error"); /* ERROR_DS_DRA_DB_ERROR */
+				s_ErrorMessage.Add(8452, "DS dra no replica"); /* ERROR_DS_DRA_NO_REPLICA */
+				s_ErrorMessage.Add(8453, "DS dra access denied"); /* ERROR_DS_DRA_ACCESS_DENIED */
+				s_ErrorMessage.Add(8454, "DS dra not supported"); /* ERROR_DS_DRA_NOT_SUPPORTED */
+				s_ErrorMessage.Add(8455, "DS dra RPC cancelled"); /* ERROR_DS_DRA_RPC_CANCELLED */
+				s_ErrorMessage.Add(8456, "DS dra source disabled"); /* ERROR_DS_DRA_SOURCE_DISABLED */
+				s_ErrorMessage.Add(8457, "DS dra sink disabled"); /* ERROR_DS_DRA_SINK_DISABLED */
+				s_ErrorMessage.Add(8458, "DS dra name collision"); /* ERROR_DS_DRA_NAME_COLLISION */
+				s_ErrorMessage.Add(8459, "DS dra source reinstalled"); /* ERROR_DS_DRA_SOURCE_REINSTALLED */
+				s_ErrorMessage.Add(8460, "DS dra missing parent"); /* ERROR_DS_DRA_MISSING_PARENT */
+				s_ErrorMessage.Add(8461, "DS dra preempted"); /* ERROR_DS_DRA_PREEMPTED */
+				s_ErrorMessage.Add(8462, "DS dra abandon sync"); /* ERROR_DS_DRA_ABANDON_SYNC */
+				s_ErrorMessage.Add(8463, "DS dra shutdown"); /* ERROR_DS_DRA_SHUTDOWN */
+				s_ErrorMessage.Add(8464, "DS dra incompatible partial set"); /* ERROR_DS_DRA_INCOMPATIBLE_PARTIAL_SET */
+				s_ErrorMessage.Add(8465, "DS dra source is partial replica"); /* ERROR_DS_DRA_SOURCE_IS_PARTIAL_REPLICA */
+				s_ErrorMessage.Add(8466, "DS dra extn connection failed"); /* ERROR_DS_DRA_EXTN_CONNECTION_FAILED */
+				s_ErrorMessage.Add(8467, "DS install schema mismatch"); /* ERROR_DS_INSTALL_SCHEMA_MISMATCH */
+				s_ErrorMessage.Add(8468, "DS dup link ID"); /* ERROR_DS_DUP_LINK_ID */
+				s_ErrorMessage.Add(8469, "DS name error resolving"); /* ERROR_DS_NAME_ERROR_RESOLVING */
+				s_ErrorMessage.Add(8470, "DS name error not found"); /* ERROR_DS_NAME_ERROR_NOT_FOUND */
+				s_ErrorMessage.Add(8471, "DS name error not unique"); /* ERROR_DS_NAME_ERROR_NOT_UNIQUE */
+				s_ErrorMessage.Add(8472, "DS name error no mapping"); /* ERROR_DS_NAME_ERROR_NO_MAPPING */
+				s_ErrorMessage.Add(8473, "DS name error domain only"); /* ERROR_DS_NAME_ERROR_DOMAIN_ONLY */
+				s_ErrorMessage.Add(8474, "DS name error no syntactical mapping"); /* ERROR_DS_NAME_ERROR_NO_SYNTACTICAL_MAPPING */
+				s_ErrorMessage.Add(8475, "DS constructed att mod"); /* ERROR_DS_CONSTRUCTED_ATT_MOD */
+				s_ErrorMessage.Add(8476, "DS wrong om obj class"); /* ERROR_DS_WRONG_OM_OBJ_CLASS */
+				s_ErrorMessage.Add(8477, "DS dra repl pending"); /* ERROR_DS_DRA_REPL_PENDING */
+				s_ErrorMessage.Add(8478, "DS ds required"); /* ERROR_DS_DS_REQUIRED */
+				s_ErrorMessage.Add(8479, "DS invalid LDAP display name"); /* ERROR_DS_INVALID_LDAP_DISPLAY_NAME */
+				s_ErrorMessage.Add(8480, "DS non base search"); /* ERROR_DS_NON_BASE_SEARCH */
+				s_ErrorMessage.Add(8481, "DS can't retrieve atts"); /* ERROR_DS_CANT_RETRIEVE_ATTS */
+				s_ErrorMessage.Add(8482, "DS backlink without link"); /* ERROR_DS_BACKLINK_WITHOUT_LINK */
+				s_ErrorMessage.Add(8483, "DS epoch mismatch"); /* ERROR_DS_EPOCH_MISMATCH */
+				s_ErrorMessage.Add(8484, "DS src name mismatch"); /* ERROR_DS_SRC_NAME_MISMATCH */
+				s_ErrorMessage.Add(8485, "DS src and dst nc identical"); /* ERROR_DS_SRC_AND_DST_NC_IDENTICAL */
+				s_ErrorMessage.Add(8486, "DS dst nc mismatch"); /* ERROR_DS_DST_NC_MISMATCH */
+				s_ErrorMessage.Add(8487, "DS not authoritive for dst nc"); /* ERROR_DS_NOT_AUTHORITIVE_FOR_DST_NC */
+				s_ErrorMessage.Add(8488, "DS src GUID mismatch"); /* ERROR_DS_SRC_GUID_MISMATCH */
+				s_ErrorMessage.Add(8489, "DS can't move deleted object"); /* ERROR_DS_CANT_MOVE_DELETED_OBJECT */
+				s_ErrorMessage.Add(8490, "DS pdc operation in progress"); /* ERROR_DS_PDC_OPERATION_IN_PROGRESS */
+				s_ErrorMessage.Add(8491, "DS cross domain cleanup reqd"); /* ERROR_DS_CROSS_DOMAIN_CLEANUP_REQD */
+				s_ErrorMessage.Add(8492, "DS illegal xdom move operation"); /* ERROR_DS_ILLEGAL_XDOM_MOVE_OPERATION */
+				s_ErrorMessage.Add(8493, "DS can't with acct group membershps"); /* ERROR_DS_CANT_WITH_ACCT_GROUP_MEMBERSHPS */
+				s_ErrorMessage.Add(8494, "DS nc must have nc parent"); /* ERROR_DS_NC_MUST_HAVE_NC_PARENT */
+				s_ErrorMessage.Add(8496, "DS dst domain not native"); /* ERROR_DS_DST_DOMAIN_NOT_NATIVE */
+				s_ErrorMessage.Add(8497, "DS missing infrastructure container"); /* ERROR_DS_MISSING_INFRASTRUCTURE_CONTAINER */
+				s_ErrorMessage.Add(8498, "DS can't move account group"); /* ERROR_DS_CANT_MOVE_ACCOUNT_GROUP */
+				s_ErrorMessage.Add(8499, "DS can't move resource group"); /* ERROR_DS_CANT_MOVE_RESOURCE_GROUP */
+				s_ErrorMessage.Add(8500, "DS invalid search flag"); /* ERROR_DS_INVALID_SEARCH_FLAG */
+				s_ErrorMessage.Add(8501, "DS no tree delete above nc"); /* ERROR_DS_NO_TREE_DELETE_ABOVE_NC */
+				s_ErrorMessage.Add(8502, "DS couldn't lock tree for delete"); /* ERROR_DS_COULDNT_LOCK_TREE_FOR_DELETE */
+				s_ErrorMessage.Add(8503, "DS couldn't identify objects for tree delete"); /* ERROR_DS_COULDNT_IDENTIFY_OBJECTS_FOR_TREE_DELETE */
+				s_ErrorMessage.Add(8504, "DS sam init failure"); /* ERROR_DS_SAM_INIT_FAILURE */
+				s_ErrorMessage.Add(8505, "DS sensitive group violation"); /* ERROR_DS_SENSITIVE_GROUP_VIOLATION */
+				s_ErrorMessage.Add(8506, "DS can't mod primarygroupid"); /* ERROR_DS_CANT_MOD_PRIMARYGROUPID */
+				s_ErrorMessage.Add(8507, "DS illegal base schema mod"); /* ERROR_DS_ILLEGAL_BASE_SCHEMA_MOD */
+				s_ErrorMessage.Add(8508, "DS nonsafe schema change"); /* ERROR_DS_NONSAFE_SCHEMA_CHANGE */
+				s_ErrorMessage.Add(8509, "DS schema update disallowed"); /* ERROR_DS_SCHEMA_UPDATE_DISALLOWED */
+				s_ErrorMessage.Add(8510, "DS can't create under schema"); /* ERROR_DS_CANT_CREATE_UNDER_SCHEMA */
+				s_ErrorMessage.Add(8511, "DS install no src sch version"); /* ERROR_DS_INSTALL_NO_SRC_SCH_VERSION */
+				s_ErrorMessage.Add(8512, "DS install no sch version in inifile"); /* ERROR_DS_INSTALL_NO_SCH_VERSION_IN_INIFILE */
+				s_ErrorMessage.Add(8513, "DS invalid group type"); /* ERROR_DS_INVALID_GROUP_TYPE */
+				s_ErrorMessage.Add(8514, "DS no nest globalgroup in mixeddomain"); /* ERROR_DS_NO_NEST_GLOBALGROUP_IN_MIXEDDOMAIN */
+				s_ErrorMessage.Add(8515, "DS no nest localgroup in mixeddomain"); /* ERROR_DS_NO_NEST_LOCALGROUP_IN_MIXEDDOMAIN */
+				s_ErrorMessage.Add(8516, "DS global can't have local member"); /* ERROR_DS_GLOBAL_CANT_HAVE_LOCAL_MEMBER */
+				s_ErrorMessage.Add(8517, "DS global can't have universal member"); /* ERROR_DS_GLOBAL_CANT_HAVE_UNIVERSAL_MEMBER */
+				s_ErrorMessage.Add(8518, "DS universal can't have local member"); /* ERROR_DS_UNIVERSAL_CANT_HAVE_LOCAL_MEMBER */
+				s_ErrorMessage.Add(8519, "DS global can't have crossdomain member"); /* ERROR_DS_GLOBAL_CANT_HAVE_CROSSDOMAIN_MEMBER */
+				s_ErrorMessage.Add(8520, "DS local can't have crossdomain local member"); /* ERROR_DS_LOCAL_CANT_HAVE_CROSSDOMAIN_LOCAL_MEMBER */
+				s_ErrorMessage.Add(8521, "DS have primary members"); /* ERROR_DS_HAVE_PRIMARY_MEMBERS */
+				s_ErrorMessage.Add(8522, "DS string sd conversion failed"); /* ERROR_DS_STRING_SD_CONVERSION_FAILED */
+				s_ErrorMessage.Add(8523, "DS naming master gc"); /* ERROR_DS_NAMING_MASTER_GC */
+				s_ErrorMessage.Add(8524, "DS lookup failure"); /* ERROR_DS_LOOKUP_FAILURE */
+				s_ErrorMessage.Add(8525, "DS couldn't update spns"); /* ERROR_DS_COULDNT_UPDATE_SPNS */
+				s_ErrorMessage.Add(8526, "DS can't retrieve sd"); /* ERROR_DS_CANT_RETRIEVE_SD */
+				s_ErrorMessage.Add(8527, "DS key not unique"); /* ERROR_DS_KEY_NOT_UNIQUE */
+				s_ErrorMessage.Add(8528, "DS wrong linked att syntax"); /* ERROR_DS_WRONG_LINKED_ATT_SYNTAX */
+				s_ErrorMessage.Add(8529, "DS sam need bootkey password"); /* ERROR_DS_SAM_NEED_BOOTKEY_PASSWORD */
+				s_ErrorMessage.Add(8530, "DS sam need bootkey floppy"); /* ERROR_DS_SAM_NEED_BOOTKEY_FLOPPY */
+				s_ErrorMessage.Add(8531, "DS can't start"); /* ERROR_DS_CANT_START */
+				s_ErrorMessage.Add(8532, "DS init failure"); /* ERROR_DS_INIT_FAILURE */
+				s_ErrorMessage.Add(8533, "DS no pkt privacy on connection"); /* ERROR_DS_NO_PKT_PRIVACY_ON_CONNECTION */
+				s_ErrorMessage.Add(8534, "DS source domain in forest"); /* ERROR_DS_SOURCE_DOMAIN_IN_FOREST */
+				s_ErrorMessage.Add(8535, "DS destination domain not in forest"); /* ERROR_DS_DESTINATION_DOMAIN_NOT_IN_FOREST */
+				s_ErrorMessage.Add(8536, "DS destination auditing not enabled"); /* ERROR_DS_DESTINATION_AUDITING_NOT_ENABLED */
+				s_ErrorMessage.Add(8537, "DS can't find dc for src domain"); /* ERROR_DS_CANT_FIND_DC_FOR_SRC_DOMAIN */
+				s_ErrorMessage.Add(8538, "DS src obj not group or user"); /* ERROR_DS_SRC_OBJ_NOT_GROUP_OR_USER */
+				s_ErrorMessage.Add(8539, "DS src sid exists in forest"); /* ERROR_DS_SRC_SID_EXISTS_IN_FOREST */
+				s_ErrorMessage.Add(8540, "DS src and dst object class mismatch"); /* ERROR_DS_SRC_AND_DST_OBJECT_CLASS_MISMATCH */
+				s_ErrorMessage.Add(8541, "Sam init failure"); /* ERROR_SAM_INIT_FAILURE */
+				s_ErrorMessage.Add(8542, "DS dra schema info ship"); /* ERROR_DS_DRA_SCHEMA_INFO_SHIP */
+				s_ErrorMessage.Add(8543, "DS dra schema conflict"); /* ERROR_DS_DRA_SCHEMA_CONFLICT */
+				s_ErrorMessage.Add(8544, "DS dra earlier schema conflict"); /* ERROR_DS_DRA_EARLIER_SCHEMA_CONLICT */
+				s_ErrorMessage.Add(8545, "DS dra obj nc mismatch"); /* ERROR_DS_DRA_OBJ_NC_MISMATCH */
+				s_ErrorMessage.Add(8546, "DS nc still has dsas"); /* ERROR_DS_NC_STILL_HAS_DSAS */
+				s_ErrorMessage.Add(8547, "DS gc required"); /* ERROR_DS_GC_REQUIRED */
+				s_ErrorMessage.Add(8548, "DS local member of local only"); /* ERROR_DS_LOCAL_MEMBER_OF_LOCAL_ONLY */
+				s_ErrorMessage.Add(8549, "DS no fpo in universal groups"); /* ERROR_DS_NO_FPO_IN_UNIVERSAL_GROUPS */
+				s_ErrorMessage.Add(8550, "DS can't add to gc"); /* ERROR_DS_CANT_ADD_TO_GC */
+				s_ErrorMessage.Add(8551, "DS no checkpoint with pdc"); /* ERROR_DS_NO_CHECKPOINT_WITH_PDC */
+				s_ErrorMessage.Add(8552, "DS source auditing not enabled"); /* ERROR_DS_SOURCE_AUDITING_NOT_ENABLED */
+				s_ErrorMessage.Add(8553, "DS can't create in nondomain nc"); /* ERROR_DS_CANT_CREATE_IN_NONDOMAIN_NC */
+				s_ErrorMessage.Add(8554, "DS invalid name for spn"); /* ERROR_DS_INVALID_NAME_FOR_SPN */
+				s_ErrorMessage.Add(8555, "DS filter uses constructed attrs"); /* ERROR_DS_FILTER_USES_CONTRUCTED_ATTRS */
+				s_ErrorMessage.Add(8556, "DS unicodepwd not in quotes"); /* ERROR_DS_UNICODEPWD_NOT_IN_QUOTES */
+				s_ErrorMessage.Add(8557, "DS machine account quota exceeded"); /* ERROR_DS_MACHINE_ACCOUNT_QUOTA_EXCEEDED */
+				s_ErrorMessage.Add(8558, "DS must be run on dst dc"); /* ERROR_DS_MUST_BE_RUN_ON_DST_DC */
+				s_ErrorMessage.Add(8559, "DS src dc must be sp4 or greater"); /* ERROR_DS_SRC_DC_MUST_BE_SP4_OR_GREATER */
+				s_ErrorMessage.Add(8560, "DS can't tree delete critical obj"); /* ERROR_DS_CANT_TREE_DELETE_CRITICAL_OBJ */
+				s_ErrorMessage.Add(8561, "DS init failure console"); /* ERROR_DS_INIT_FAILURE_CONSOLE */
+				s_ErrorMessage.Add(8562, "DS sam init failure console"); /* ERROR_DS_SAM_INIT_FAILURE_CONSOLE */
+				s_ErrorMessage.Add(8563, "DS forest version too high"); /* ERROR_DS_FOREST_VERSION_TOO_HIGH */
+				s_ErrorMessage.Add(8564, "DS domain version too high"); /* ERROR_DS_DOMAIN_VERSION_TOO_HIGH */
+				s_ErrorMessage.Add(8565, "DS forest version too low"); /* ERROR_DS_FOREST_VERSION_TOO_LOW */
+				s_ErrorMessage.Add(8566, "DS domain version too low"); /* ERROR_DS_DOMAIN_VERSION_TOO_LOW */
+				s_ErrorMessage.Add(8567, "DS incompatible version"); /* ERROR_DS_INCOMPATIBLE_VERSION */
+				s_ErrorMessage.Add(8568, "DS low dsa version"); /* ERROR_DS_LOW_DSA_VERSION */
+				s_ErrorMessage.Add(8569, "DS no behaviour version in mixeddomain"); /* ERROR_DS_NO_BEHAVIOR_VERSION_IN_MIXEDDOMAIN */
+				s_ErrorMessage.Add(8570, "DS not supported sort order"); /* ERROR_DS_NOT_SUPPORTED_SORT_ORDER */
+				s_ErrorMessage.Add(8571, "DS name not unique"); /* ERROR_DS_NAME_NOT_UNIQUE */
+				s_ErrorMessage.Add(8572, "DS machine account created prent4"); /* ERROR_DS_MACHINE_ACCOUNT_CREATED_PRENT4 */
+				s_ErrorMessage.Add(8573, "DS out of version store"); /* ERROR_DS_OUT_OF_VERSION_STORE */
+				s_ErrorMessage.Add(8574, "DS incompatible controls used"); /* ERROR_DS_INCOMPATIBLE_CONTROLS_USED */
+				s_ErrorMessage.Add(8575, "DS no ref domain"); /* ERROR_DS_NO_REF_DOMAIN */
+				s_ErrorMessage.Add(8576, "DS reserved link ID"); /* ERROR_DS_RESERVED_LINK_ID */
+				s_ErrorMessage.Add(8577, "DS link ID not available"); /* ERROR_DS_LINK_ID_NOT_AVAILABLE */
+				s_ErrorMessage.Add(8578, "DS ag can't have universal member"); /* ERROR_DS_AG_CANT_HAVE_UNIVERSAL_MEMBER */
+				s_ErrorMessage.Add(8579, "DS modifydn disallowed by instance type"); /* ERROR_DS_MODIFYDN_DISALLOWED_BY_INSTANCE_TYPE */
+				s_ErrorMessage.Add(8580, "DS no object move in schema nc"); /* ERROR_DS_NO_OBJECT_MOVE_IN_SCHEMA_NC */
+				s_ErrorMessage.Add(8581, "DS modifydn disallowed by flag"); /* ERROR_DS_MODIFYDN_DISALLOWED_BY_FLAG */
+				s_ErrorMessage.Add(8582, "DS modifydn wrong grandparent"); /* ERROR_DS_MODIFYDN_WRONG_GRANDPARENT */
+				s_ErrorMessage.Add(8583, "DS name error trust referral"); /* ERROR_DS_NAME_ERROR_TRUST_REFERRAL */
+				s_ErrorMessage.Add(8584, "Not supported on standard server"); /* ERROR_NOT_SUPPORTED_ON_STANDARD_SERVER */
+				s_ErrorMessage.Add(8585, "DS can't access remote part of ad"); /* ERROR_DS_CANT_ACCESS_REMOTE_PART_OF_AD */
+				s_ErrorMessage.Add(8586, "DS cr impossible to validate"); /* ERROR_DS_CR_IMPOSSIBLE_TO_VALIDATE */
+				s_ErrorMessage.Add(8587, "DS thread limit exceeded"); /* ERROR_DS_THREAD_LIMIT_EXCEEDED */
+				s_ErrorMessage.Add(8588, "DS not closest"); /* ERROR_DS_NOT_CLOSEST */
+				s_ErrorMessage.Add(8589, "DS can't derive spn without server ref"); /* ERROR_DS_CANT_DERIVE_SPN_WITHOUT_SERVER_REF */
+				s_ErrorMessage.Add(8590, "DS single user mode failed"); /* ERROR_DS_SINGLE_USER_MODE_FAILED */
+				s_ErrorMessage.Add(8591, "DS ntdscript syntax error"); /* ERROR_DS_NTDSCRIPT_SYNTAX_ERROR */
+				s_ErrorMessage.Add(8592, "DS ntdscript process error"); /* ERROR_DS_NTDSCRIPT_PROCESS_ERROR */
+				s_ErrorMessage.Add(8593, "DS different repl epochs"); /* ERROR_DS_DIFFERENT_REPL_EPOCHS */
+				s_ErrorMessage.Add(8594, "DS drs extensions changed"); /* ERROR_DS_DRS_EXTENSIONS_CHANGED */
+				s_ErrorMessage.Add(8595, "DS replica set change not allowed on disabled cr"); /* ERROR_DS_REPLICA_SET_CHANGE_NOT_ALLOWED_ON_DISABLED_CR */
+				s_ErrorMessage.Add(8596, "DS no msds intid"); /* ERROR_DS_NO_MSDS_INTID */
+				s_ErrorMessage.Add(8597, "DS dup msds intid"); /* ERROR_DS_DUP_MSDS_INTID */
+				s_ErrorMessage.Add(8598, "DS exists in rdnattid"); /* ERROR_DS_EXISTS_IN_RDNATTID */
+				s_ErrorMessage.Add(8599, "DS authorisation failed"); /* ERROR_DS_AUTHORIZATION_FAILED */
+				s_ErrorMessage.Add(8600, "DS invalid script"); /* ERROR_DS_INVALID_SCRIPT */
+				s_ErrorMessage.Add(8601, "DS remote crossref op failed"); /* ERROR_DS_REMOTE_CROSSREF_OP_FAILED */
+				s_ErrorMessage.Add(9001, "DNS error rcode format error"); /* DNS_ERROR_RCODE_FORMAT_ERROR */
+				s_ErrorMessage.Add(9002, "DNS error rcode server failure"); /* DNS_ERROR_RCODE_SERVER_FAILURE */
+				s_ErrorMessage.Add(9003, "DNS error rcode name error"); /* DNS_ERROR_RCODE_NAME_ERROR */
+				s_ErrorMessage.Add(9004, "DNS error rcode not implemented"); /* DNS_ERROR_RCODE_NOT_IMPLEMENTED */
+				s_ErrorMessage.Add(9005, "DNS error rcode refused"); /* DNS_ERROR_RCODE_REFUSED */
+				s_ErrorMessage.Add(9006, "DNS error rcode yxdomain"); /* DNS_ERROR_RCODE_YXDOMAIN */
+				s_ErrorMessage.Add(9007, "DNS error rcode yxrrset"); /* DNS_ERROR_RCODE_YXRRSET */
+				s_ErrorMessage.Add(9008, "DNS error rcode nxrrset"); /* DNS_ERROR_RCODE_NXRRSET */
+				s_ErrorMessage.Add(9009, "DNS error rcode notauth"); /* DNS_ERROR_RCODE_NOTAUTH */
+				s_ErrorMessage.Add(9010, "DNS error rcode notzone"); /* DNS_ERROR_RCODE_NOTZONE */
+				s_ErrorMessage.Add(9016, "DNS error rcode badsig"); /* DNS_ERROR_RCODE_BADSIG */
+				s_ErrorMessage.Add(9017, "DNS error rcode badkey"); /* DNS_ERROR_RCODE_BADKEY */
+				s_ErrorMessage.Add(9018, "DNS error rcode badtime"); /* DNS_ERROR_RCODE_BADTIME */
+				s_ErrorMessage.Add(9501, "DNS info no records"); /* DNS_INFO_NO_RECORDS */
+				s_ErrorMessage.Add(9502, "DNS error bad packet"); /* DNS_ERROR_BAD_PACKET */
+				s_ErrorMessage.Add(9503, "DNS error no packet"); /* DNS_ERROR_NO_PACKET */
+				s_ErrorMessage.Add(9504, "DNS error rcode"); /* DNS_ERROR_RCODE */
+				s_ErrorMessage.Add(9505, "DNS error unsecure packet"); /* DNS_ERROR_UNSECURE_PACKET */
+				s_ErrorMessage.Add(9551, "DNS error invalid type"); /* DNS_ERROR_INVALID_TYPE */
+				s_ErrorMessage.Add(9552, "DNS error invalid IP address"); /* DNS_ERROR_INVALID_IP_ADDRESS */
+				s_ErrorMessage.Add(9553, "DNS error invalid property"); /* DNS_ERROR_INVALID_PROPERTY */
+				s_ErrorMessage.Add(9554, "DNS error try again later"); /* DNS_ERROR_TRY_AGAIN_LATER */
+				s_ErrorMessage.Add(9555, "DNS error not unique"); /* DNS_ERROR_NOT_UNIQUE */
+				s_ErrorMessage.Add(9556, "DNS error non RFC name"); /* DNS_ERROR_NON_RFC_NAME */
+				s_ErrorMessage.Add(9557, "DNS status FQDN"); /* DNS_STATUS_FQDN */
+				s_ErrorMessage.Add(9558, "DNS status dotted name"); /* DNS_STATUS_DOTTED_NAME */
+				s_ErrorMessage.Add(9559, "DNS status single part name"); /* DNS_STATUS_SINGLE_PART_NAME */
+				s_ErrorMessage.Add(9560, "DNS error invalid name char"); /* DNS_ERROR_INVALID_NAME_CHAR */
+				s_ErrorMessage.Add(9561, "DNS error numeric name"); /* DNS_ERROR_NUMERIC_NAME */
+				s_ErrorMessage.Add(9562, "DNS error not allowed on root server"); /* DNS_ERROR_NOT_ALLOWED_ON_ROOT_SERVER */
+				s_ErrorMessage.Add(9601, "DNS error zone does not exist"); /* DNS_ERROR_ZONE_DOES_NOT_EXIST */
+				s_ErrorMessage.Add(9602, "DNS error not zone info"); /* DNS_ERROR_NO_ZONE_INFO */
+				s_ErrorMessage.Add(9603, "DNS error invalid zone operation"); /* DNS_ERROR_INVALID_ZONE_OPERATION */
+				s_ErrorMessage.Add(9604, "DNS error zone configuration error"); /* DNS_ERROR_ZONE_CONFIGURATION_ERROR */
+				s_ErrorMessage.Add(9605, "DNS error zone has not SOA record"); /* DNS_ERROR_ZONE_HAS_NO_SOA_RECORD */
+				s_ErrorMessage.Add(9606, "DNS error zone has no NS records"); /* DNS_ERROR_ZONE_HAS_NO_NS_RECORDS */
+				s_ErrorMessage.Add(9607, "DNS error zone locked"); /* DNS_ERROR_ZONE_LOCKED */
+				s_ErrorMessage.Add(9608, "DNS error zone creation failed"); /* DNS_ERROR_ZONE_CREATION_FAILED */
+				s_ErrorMessage.Add(9609, "DNS error zone already exists"); /* DNS_ERROR_ZONE_ALREADY_EXISTS */
+				s_ErrorMessage.Add(9610, "DNS error autozone already exists"); /* DNS_ERROR_AUTOZONE_ALREADY_EXISTS */
+				s_ErrorMessage.Add(9611, "DNS error invalid zone type"); /* DNS_ERROR_INVALID_ZONE_TYPE */
+				s_ErrorMessage.Add(9612, "DNS error secondary requires master IP"); /* DNS_ERROR_SECONDARY_REQUIRES_MASTER_IP */
+				s_ErrorMessage.Add(9613, "DNS error zone not secondary"); /* DNS_ERROR_ZONE_NOT_SECONDARY */
+				s_ErrorMessage.Add(9614, "DNS error need secondary addresses"); /* DNS_ERROR_NEED_SECONDARY_ADDRESSES */
+				s_ErrorMessage.Add(9615, "DNS error wins init failed"); /* DNS_ERROR_WINS_INIT_FAILED */
+				s_ErrorMessage.Add(9616, "DNS error need wins servers"); /* DNS_ERROR_NEED_WINS_SERVERS */
+				s_ErrorMessage.Add(9617, "DNS error nbstat init failed"); /* DNS_ERROR_NBSTAT_INIT_FAILED */
+				s_ErrorMessage.Add(9618, "DNS error SOA delete invalid"); /* DNS_ERROR_SOA_DELETE_INVALID */
+				s_ErrorMessage.Add(9619, "DNS error forwarder already exists"); /* DNS_ERROR_FORWARDER_ALREADY_EXISTS */
+				s_ErrorMessage.Add(9620, "DNS error zone requires master IP"); /* DNS_ERROR_ZONE_REQUIRES_MASTER_IP */
+				s_ErrorMessage.Add(9621, "DNS error zone is shutdown"); /* DNS_ERROR_ZONE_IS_SHUTDOWN */
+				s_ErrorMessage.Add(9651, "DNS error primary requires datafile"); /* DNS_ERROR_PRIMARY_REQUIRES_DATAFILE */
+				s_ErrorMessage.Add(9652, "DNS error invalid datafile name"); /* DNS_ERROR_INVALID_DATAFILE_NAME */
+				s_ErrorMessage.Add(9653, "DNS error datafile open failure"); /* DNS_ERROR_DATAFILE_OPEN_FAILURE */
+				s_ErrorMessage.Add(9654, "DNS error file writeback failed"); /* DNS_ERROR_FILE_WRITEBACK_FAILED */
+				s_ErrorMessage.Add(9655, "DNS error datafile parsing"); /* DNS_ERROR_DATAFILE_PARSING */
+				s_ErrorMessage.Add(9701, "DNS error record does not exist"); /* DNS_ERROR_RECORD_DOES_NOT_EXIST */
+				s_ErrorMessage.Add(9702, "DNS error record format"); /* DNS_ERROR_RECORD_FORMAT */
+				s_ErrorMessage.Add(9703, "DNS error node creation failed"); /* DNS_ERROR_NODE_CREATION_FAILED */
+				s_ErrorMessage.Add(9704, "DNS error unknown record type"); /* DNS_ERROR_UNKNOWN_RECORD_TYPE */
+				s_ErrorMessage.Add(9705, "DNS error record timed out"); /* DNS_ERROR_RECORD_TIMED_OUT */
+				s_ErrorMessage.Add(9706, "DNS error name not in zone"); /* DNS_ERROR_NAME_NOT_IN_ZONE */
+				s_ErrorMessage.Add(9707, "DNS error CNAME loop"); /* DNS_ERROR_CNAME_LOOP */
+				s_ErrorMessage.Add(9708, "DNS error node is CNAME"); /* DNS_ERROR_NODE_IS_CNAME */
+				s_ErrorMessage.Add(9709, "DNS error CNAME collision"); /* DNS_ERROR_CNAME_COLLISION */
+				s_ErrorMessage.Add(9710, "DNS error record only at zone root"); /* DNS_ERROR_RECORD_ONLY_AT_ZONE_ROOT */
+				s_ErrorMessage.Add(9711, "DNS error record already exists"); /* DNS_ERROR_RECORD_ALREADY_EXISTS */
+				s_ErrorMessage.Add(9712, "DNS error secondary data"); /* DNS_ERROR_SECONDARY_DATA */
+				s_ErrorMessage.Add(9713, "DNS error no create cache data"); /* DNS_ERROR_NO_CREATE_CACHE_DATA */
+				s_ErrorMessage.Add(9714, "DNS error name does not exist"); /* DNS_ERROR_NAME_DOES_NOT_EXIST */
+				s_ErrorMessage.Add(9715, "DNS warning PTR create failed"); /* DNS_WARNING_PTR_CREATE_FAILED */
+				s_ErrorMessage.Add(9716, "DNS warning domain undeleted"); /* DNS_WARNING_DOMAIN_UNDELETED */
+				s_ErrorMessage.Add(9717, "DNS error ds unavailable"); /* DNS_ERROR_DS_UNAVAILABLE */
+				s_ErrorMessage.Add(9718, "DNS error ds zone already exists"); /* DNS_ERROR_DS_ZONE_ALREADY_EXISTS */
+				s_ErrorMessage.Add(9719, "DNS error no bootfile if ds zone"); /* DNS_ERROR_NO_BOOTFILE_IF_DS_ZONE */
+				s_ErrorMessage.Add(9751, "DNS info AXFR complete"); /* DNS_INFO_AXFR_COMPLETE */
+				s_ErrorMessage.Add(9752, "DNS error AXFR"); /* DNS_ERROR_AXFR */
+				s_ErrorMessage.Add(9753, "DNS info added local wins"); /* DNS_INFO_ADDED_LOCAL_WINS */
+				s_ErrorMessage.Add(9801, "DNS status continue needed"); /* DNS_STATUS_CONTINUE_NEEDED */
+				s_ErrorMessage.Add(9851, "DNS error no TCPIP"); /* DNS_ERROR_NO_TCPIP */
+				s_ErrorMessage.Add(9852, "DNS error no DNS servers"); /* DNS_ERROR_NO_DNS_SERVERS */
+				s_ErrorMessage.Add(9901, "DNS error dp does not exist"); /* DNS_ERROR_DP_DOES_NOT_EXIST */
+				s_ErrorMessage.Add(9902, "DNS error dp already exists"); /* DNS_ERROR_DP_ALREADY_EXISTS */
+				s_ErrorMessage.Add(9903, "DNS error dp not enlisted"); /* DNS_ERROR_DP_NOT_ENLISTED */
+				s_ErrorMessage.Add(9904, "DNS error dp already enlisted"); /* DNS_ERROR_DP_ALREADY_ENLISTED */
+				s_ErrorMessage.Add(10110, "E_NO_MORE"); /* WSA_E_NO_MORE */
+				s_ErrorMessage.Add(10111, "E_CANCELLED"); /* WSA_E_CANCELLED */
+				s_ErrorMessage.Add(11005, "QOS receivers"); /* WSA_QOS_RECEIVERS */
+				s_ErrorMessage.Add(11006, "QOS senders"); /* WSA_QOS_SENDERS */
+				s_ErrorMessage.Add(11007, "QOS no senders"); /* WSA_QOS_NO_SENDERS */
+				s_ErrorMessage.Add(11008, "QOS no receivers"); /* WSA_QOS_NO_RECEIVERS */
+				s_ErrorMessage.Add(11009, "QOS request confirmed"); /* WSA_QOS_REQUEST_CONFIRMED */
+				s_ErrorMessage.Add(11010, "QOS admission failure"); /* WSA_QOS_ADMISSION_FAILURE */
+				s_ErrorMessage.Add(11011, "QOS policy failure"); /* WSA_QOS_POLICY_FAILURE */
+				s_ErrorMessage.Add(11012, "QOS bad style"); /* WSA_QOS_BAD_STYLE */
+				s_ErrorMessage.Add(11013, "QOS bad object"); /* WSA_QOS_BAD_OBJECT */
+				s_ErrorMessage.Add(11014, "QOS traffic ctrl error"); /* WSA_QOS_TRAFFIC_CTRL_ERROR */
+				s_ErrorMessage.Add(11015, "QOS generic error"); /* WSA_QOS_GENERIC_ERROR */
+				s_ErrorMessage.Add(11016, "QOS eservicetype"); /* WSA_QOS_ESERVICETYPE */
+				s_ErrorMessage.Add(11017, "QOS eflowspec"); /* WSA_QOS_EFLOWSPEC */
+				s_ErrorMessage.Add(11018, "QOS eprovspecbuf"); /* WSA_QOS_EPROVSPECBUF */
+				s_ErrorMessage.Add(11019, "QOS efilterstyle"); /* WSA_QOS_EFILTERSTYLE */
+				s_ErrorMessage.Add(11020, "QOS efiltertype"); /* WSA_QOS_EFILTERTYPE */
+				s_ErrorMessage.Add(11021, "QOS efiltercount"); /* WSA_QOS_EFILTERCOUNT */
+				s_ErrorMessage.Add(11022, "QOS eobjlength"); /* WSA_QOS_EOBJLENGTH */
+				s_ErrorMessage.Add(11023, "QOS eflowcount"); /* WSA_QOS_EFLOWCOUNT */
+				s_ErrorMessage.Add(11024, "QOS eunknownpsobj"); /* WSA_QOS_EUNKNOWNPSOBJ */
+				s_ErrorMessage.Add(11025, "QOS epolicyobj"); /* WSA_QOS_EPOLICYOBJ */
+				s_ErrorMessage.Add(11026, "QOS eflowdesc"); /* WSA_QOS_EFLOWDESC */
+				s_ErrorMessage.Add(11027, "QOS epsflowspec"); /* WSA_QOS_EPSFLOWSPEC */
+				s_ErrorMessage.Add(11028, "QOS epsfilterspec"); /* WSA_QOS_EPSFILTERSPEC */
+				s_ErrorMessage.Add(11029, "QOS esdmodeobj"); /* WSA_QOS_ESDMODEOBJ */
+				s_ErrorMessage.Add(11030, "QOS eshaperateobj"); /* WSA_QOS_ESHAPERATEOBJ */
+				s_ErrorMessage.Add(11031, "QOS reserved petype"); /* WSA_QOS_RESERVED_PETYPE */
+				s_ErrorMessage.Add(13000, "IPSEC qm policy exists"); /* ERROR_IPSEC_QM_POLICY_EXISTS */
+				s_ErrorMessage.Add(13001, "IPSEC qm policy not found"); /* ERROR_IPSEC_QM_POLICY_NOT_FOUND */
+				s_ErrorMessage.Add(13002, "IPSEC qm policy in use"); /* ERROR_IPSEC_QM_POLICY_IN_USE */
+				s_ErrorMessage.Add(13003, "IPSEC mm policy exists"); /* ERROR_IPSEC_MM_POLICY_EXISTS */
+				s_ErrorMessage.Add(13004, "IPSEC mm policy not found"); /* ERROR_IPSEC_MM_POLICY_NOT_FOUND */
+				s_ErrorMessage.Add(13005, "IPSEC mm policy in use"); /* ERROR_IPSEC_MM_POLICY_IN_USE */
+				s_ErrorMessage.Add(13006, "IPSEC mm filter exists"); /* ERROR_IPSEC_MM_FILTER_EXISTS */
+				s_ErrorMessage.Add(13007, "IPSEC mm filter not found"); /* ERROR_IPSEC_MM_FILTER_NOT_FOUND */
+				s_ErrorMessage.Add(13008, "IPSEC transport filter exists"); /* ERROR_IPSEC_TRANSPORT_FILTER_EXISTS */
+				s_ErrorMessage.Add(13009, "IPSEC transport filter not found"); /* ERROR_IPSEC_TRANSPORT_FILTER_NOT_FOUND */
+				s_ErrorMessage.Add(13010, "IPSEC mm auth exists"); /* ERROR_IPSEC_MM_AUTH_EXISTS */
+				s_ErrorMessage.Add(13011, "IPSEC mm auth not found"); /* ERROR_IPSEC_MM_AUTH_NOT_FOUND */
+				s_ErrorMessage.Add(13012, "IPSEC mm auth in use"); /* ERROR_IPSEC_MM_AUTH_IN_USE */
+				s_ErrorMessage.Add(13013, "IPSEC default mm policy not found"); /* ERROR_IPSEC_DEFAULT_MM_POLICY_NOT_FOUND */
+				s_ErrorMessage.Add(13014, "IPSEC default mm auth not found"); /* ERROR_IPSEC_DEFAULT_MM_AUTH_NOT_FOUND */
+				s_ErrorMessage.Add(13015, "IPSEC default qm policy not found"); /* ERROR_IPSEC_DEFAULT_QM_POLICY_NOT_FOUND */
+				s_ErrorMessage.Add(13016, "IPSEC tunnel filter exists"); /* ERROR_IPSEC_TUNNEL_FILTER_EXISTS */
+				s_ErrorMessage.Add(13017, "IPSEC tunnel filter not found"); /* ERROR_IPSEC_TUNNEL_FILTER_NOT_FOUND */
+				s_ErrorMessage.Add(13018, "IPSEC mm filter pending deletion"); /* ERROR_IPSEC_MM_FILTER_PENDING_DELETION */
+				s_ErrorMessage.Add(13019, "IPSEC transport filter pending deletion"); /* ERROR_IPSEC_TRANSPORT_FILTER_PENDING_DELETION */
+				s_ErrorMessage.Add(13020, "IPSEC tunnel filter pending deletion"); /* ERROR_IPSEC_TUNNEL_FILTER_PENDING_DELETION */
+				s_ErrorMessage.Add(13021, "IPSEC mm policy pending deletion"); /* ERROR_IPSEC_MM_POLICY_PENDING_DELETION */
+				s_ErrorMessage.Add(13022, "IPSEC mm auth pending deletion"); /* ERROR_IPSEC_MM_AUTH_PENDING_DELETION */
+				s_ErrorMessage.Add(13023, "IPSEC qm policy pending deletion"); /* ERROR_IPSEC_QM_POLICY_PENDING_DELETION */
+				s_ErrorMessage.Add(13801, "IPSEC IKE auth fail"); /* ERROR_IPSEC_IKE_AUTH_FAIL */
+				s_ErrorMessage.Add(13802, "IPSEC IKE attrib fail"); /* ERROR_IPSEC_IKE_ATTRIB_FAIL */
+				s_ErrorMessage.Add(13803, "IPSEC IKE negotiation pending"); /* ERROR_IPSEC_IKE_NEGOTIATION_PENDING */
+				s_ErrorMessage.Add(13804, "IPSEC IKE general processing error"); /* ERROR_IPSEC_IKE_GENERAL_PROCESSING_ERROR */
+				s_ErrorMessage.Add(13805, "IPSEC IKE timed out"); /* ERROR_IPSEC_IKE_TIMED_OUT */
+				s_ErrorMessage.Add(13806, "IPSEC IKE no cert"); /* ERROR_IPSEC_IKE_NO_CERT */
+				s_ErrorMessage.Add(13807, "IPSEC IKE sa deleted"); /* ERROR_IPSEC_IKE_SA_DELETED */
+				s_ErrorMessage.Add(13808, "IPSEC IKE sa reaped"); /* ERROR_IPSEC_IKE_SA_REAPED */
+				s_ErrorMessage.Add(13809, "IPSEC IKE mm acquire drop"); /* ERROR_IPSEC_IKE_MM_ACQUIRE_DROP */
+				s_ErrorMessage.Add(13810, "IPSEC IKE qm acquire drop"); /* ERROR_IPSEC_IKE_QM_ACQUIRE_DROP */
+				s_ErrorMessage.Add(13811, "IPSEC IKE queue drop mm"); /* ERROR_IPSEC_IKE_QUEUE_DROP_MM */
+				s_ErrorMessage.Add(13812, "IPSEC IKE queue drop no mm"); /* ERROR_IPSEC_IKE_QUEUE_DROP_NO_MM */
+				s_ErrorMessage.Add(13813, "IPSEC IKE drop no response"); /* ERROR_IPSEC_IKE_DROP_NO_RESPONSE */
+				s_ErrorMessage.Add(13814, "IPSEC IKE mm delay drop"); /* ERROR_IPSEC_IKE_MM_DELAY_DROP */
+				s_ErrorMessage.Add(13815, "IPSEC IKE qm delay drop"); /* ERROR_IPSEC_IKE_QM_DELAY_DROP */
+				s_ErrorMessage.Add(13816, "IPSEC IKE error"); /* ERROR_IPSEC_IKE_ERROR */
+				s_ErrorMessage.Add(13817, "IPSEC IKE crl failed"); /* ERROR_IPSEC_IKE_CRL_FAILED */
+				s_ErrorMessage.Add(13818, "IPSEC IKE invalid key usage"); /* ERROR_IPSEC_IKE_INVALID_KEY_USAGE */
+				s_ErrorMessage.Add(13819, "IPSEC IKE invalid cert type"); /* ERROR_IPSEC_IKE_INVALID_CERT_TYPE */
+				s_ErrorMessage.Add(13820, "IPSEC IKE no private key"); /* ERROR_IPSEC_IKE_NO_PRIVATE_KEY */
+				s_ErrorMessage.Add(13822, "IPSEC IKE dh fail"); /* ERROR_IPSEC_IKE_DH_FAIL */
+				s_ErrorMessage.Add(13824, "IPSEC IKE invalid header"); /* ERROR_IPSEC_IKE_INVALID_HEADER */
+				s_ErrorMessage.Add(13825, "IPSEC IKE no policy"); /* ERROR_IPSEC_IKE_NO_POLICY */
+				s_ErrorMessage.Add(13826, "IPSEC IKE invalid signature"); /* ERROR_IPSEC_IKE_INVALID_SIGNATURE */
+				s_ErrorMessage.Add(13827, "IPSEC IKE kerberos error"); /* ERROR_IPSEC_IKE_KERBEROS_ERROR */
+				s_ErrorMessage.Add(13828, "IPSEC IKE no public key"); /* ERROR_IPSEC_IKE_NO_PUBLIC_KEY */
+				s_ErrorMessage.Add(13829, "IPSEC IKE process err"); /* ERROR_IPSEC_IKE_PROCESS_ERR */
+				s_ErrorMessage.Add(13830, "IPSEC IKE process err sa"); /* ERROR_IPSEC_IKE_PROCESS_ERR_SA */
+				s_ErrorMessage.Add(13831, "IPSEC IKE process err prop"); /* ERROR_IPSEC_IKE_PROCESS_ERR_PROP */
+				s_ErrorMessage.Add(13832, "IPSEC IKE process err trans"); /* ERROR_IPSEC_IKE_PROCESS_ERR_TRANS */
+				s_ErrorMessage.Add(13833, "IPSEC IKE process err ke"); /* ERROR_IPSEC_IKE_PROCESS_ERR_KE */
+				s_ErrorMessage.Add(13834, "IPSEC IKE process err ID"); /* ERROR_IPSEC_IKE_PROCESS_ERR_ID */
+				s_ErrorMessage.Add(13835, "IPSEC IKE process err cert"); /* ERROR_IPSEC_IKE_PROCESS_ERR_CERT */
+				s_ErrorMessage.Add(13836, "IPSEC IKE process err cert req"); /* ERROR_IPSEC_IKE_PROCESS_ERR_CERT_REQ */
+				s_ErrorMessage.Add(13837, "IPSEC IKE process err hash"); /* ERROR_IPSEC_IKE_PROCESS_ERR_HASH */
+				s_ErrorMessage.Add(13838, "IPSEC IKE process err sig"); /* ERROR_IPSEC_IKE_PROCESS_ERR_SIG */
+				s_ErrorMessage.Add(13839, "IPSEC IKE process err nonce"); /* ERROR_IPSEC_IKE_PROCESS_ERR_NONCE */
+				s_ErrorMessage.Add(13840, "IPSEC IKE process err notify"); /* ERROR_IPSEC_IKE_PROCESS_ERR_NOTIFY */
+				s_ErrorMessage.Add(13841, "IPSEC IKE process err delete"); /* ERROR_IPSEC_IKE_PROCESS_ERR_DELETE */
+				s_ErrorMessage.Add(13842, "IPSEC IKE process err vendor"); /* ERROR_IPSEC_IKE_PROCESS_ERR_VENDOR */
+				s_ErrorMessage.Add(13843, "IPSEC IKE invalid payload"); /* ERROR_IPSEC_IKE_INVALID_PAYLOAD */
+				s_ErrorMessage.Add(13844, "IPSEC IKE load soft sa"); /* ERROR_IPSEC_IKE_LOAD_SOFT_SA */
+				s_ErrorMessage.Add(13845, "IPSEC IKE soft sa torn down"); /* ERROR_IPSEC_IKE_SOFT_SA_TORN_DOWN */
+				s_ErrorMessage.Add(13846, "IPSEC IKE invalid cookie"); /* ERROR_IPSEC_IKE_INVALID_COOKIE */
+				s_ErrorMessage.Add(13847, "IPSEC IKE no peer cert"); /* ERROR_IPSEC_IKE_NO_PEER_CERT */
+				s_ErrorMessage.Add(13848, "IPSEC IKE peer CRL failed"); /* ERROR_IPSEC_IKE_PEER_CRL_FAILED */
+				s_ErrorMessage.Add(13849, "IPSEC IKE policy change"); /* ERROR_IPSEC_IKE_POLICY_CHANGE */
+				s_ErrorMessage.Add(13850, "IPSEC IKE no mm policy"); /* ERROR_IPSEC_IKE_NO_MM_POLICY */
+				s_ErrorMessage.Add(13851, "IPSEC IKE notcbpriv"); /* ERROR_IPSEC_IKE_NOTCBPRIV */
+				s_ErrorMessage.Add(13852, "IPSEC IKE secloadfail"); /* ERROR_IPSEC_IKE_SECLOADFAIL */
+				s_ErrorMessage.Add(13853, "IPSEC IKE failsspinit"); /* ERROR_IPSEC_IKE_FAILSSPINIT */
+				s_ErrorMessage.Add(13854, "IPSEC IKE failqueryssp"); /* ERROR_IPSEC_IKE_FAILQUERYSSP */
+				s_ErrorMessage.Add(13855, "IPSEC IKE srvacqfail"); /* ERROR_IPSEC_IKE_SRVACQFAIL */
+				s_ErrorMessage.Add(13856, "IPSEC IKE srvquerycred"); /* ERROR_IPSEC_IKE_SRVQUERYCRED */
+				s_ErrorMessage.Add(13857, "IPSEC IKE getspifail"); /* ERROR_IPSEC_IKE_GETSPIFAIL */
+				s_ErrorMessage.Add(13858, "IPSEC IKE invalid filter"); /* ERROR_IPSEC_IKE_INVALID_FILTER */
+				s_ErrorMessage.Add(13859, "IPSEC IKE out of memory"); /* ERROR_IPSEC_IKE_OUT_OF_MEMORY */
+				s_ErrorMessage.Add(13860, "IPSEC IKE add update key failed"); /* ERROR_IPSEC_IKE_ADD_UPDATE_KEY_FAILED */
+				s_ErrorMessage.Add(13861, "IPSEC IKE invalid policy"); /* ERROR_IPSEC_IKE_INVALID_POLICY */
+				s_ErrorMessage.Add(13862, "IPSEC IKE unknown doi"); /* ERROR_IPSEC_IKE_UNKNOWN_DOI */
+				s_ErrorMessage.Add(13863, "IPSEC IKE invalid situation"); /* ERROR_IPSEC_IKE_INVALID_SITUATION */
+				s_ErrorMessage.Add(13864, "IPSEC IKE dh failure"); /* ERROR_IPSEC_IKE_DH_FAILURE */
+				s_ErrorMessage.Add(13865, "IPSEC IKE invalid group"); /* ERROR_IPSEC_IKE_INVALID_GROUP */
+				s_ErrorMessage.Add(13866, "IPSEC IKE encrypt"); /* ERROR_IPSEC_IKE_ENCRYPT */
+				s_ErrorMessage.Add(13867, "IPSEC IKE decrypt"); /* ERROR_IPSEC_IKE_DECRYPT */
+				s_ErrorMessage.Add(13868, "IPSEC IKE policy match"); /* ERROR_IPSEC_IKE_POLICY_MATCH */
+				s_ErrorMessage.Add(13869, "IPSEC IKE unsupported ID"); /* ERROR_IPSEC_IKE_UNSUPPORTED_ID */
+				s_ErrorMessage.Add(13870, "IPSEC IKE invalid hash"); /* ERROR_IPSEC_IKE_INVALID_HASH */
+				s_ErrorMessage.Add(13871, "IPSEC IKE invalid hash alg"); /* ERROR_IPSEC_IKE_INVALID_HASH_ALG */
+				s_ErrorMessage.Add(13872, "IPSEC IKE invalid hash size"); /* ERROR_IPSEC_IKE_INVALID_HASH_SIZE */
+				s_ErrorMessage.Add(13873, "IPSEC IKE invalid encrypt alg"); /* ERROR_IPSEC_IKE_INVALID_ENCRYPT_ALG */
+				s_ErrorMessage.Add(13874, "IPSEC IKE invalid auth alg"); /* ERROR_IPSEC_IKE_INVALID_AUTH_ALG */
+				s_ErrorMessage.Add(13875, "IPSEC IKE invalid sig"); /* ERROR_IPSEC_IKE_INVALID_SIG */
+				s_ErrorMessage.Add(13876, "IPSEC IKE load failed"); /* ERROR_IPSEC_IKE_LOAD_FAILED */
+				s_ErrorMessage.Add(13877, "IPSEC IKE rpc delete"); /* ERROR_IPSEC_IKE_RPC_DELETE */
+				s_ErrorMessage.Add(13878, "IPSEC IKE benign reinit"); /* ERROR_IPSEC_IKE_BENIGN_REINIT */
+				s_ErrorMessage.Add(13879, "IPSEC IKE invalid responder lifetime notify"); /* ERROR_IPSEC_IKE_INVALID_RESPONDER_LIFETIME_NOTIFY */
+				s_ErrorMessage.Add(13881, "IPSEC IKE invalid cert keylen"); /* ERROR_IPSEC_IKE_INVALID_CERT_KEYLEN */
+				s_ErrorMessage.Add(13882, "IPSEC IKE mm limit"); /* ERROR_IPSEC_IKE_MM_LIMIT */
+				s_ErrorMessage.Add(13883, "IPSEC IKE negotiation disabled"); /* ERROR_IPSEC_IKE_NEGOTIATION_DISABLED */
+				s_ErrorMessage.Add(13884, "IPSEC IKE neg status end"); /* ERROR_IPSEC_IKE_NEG_STATUS_END */
+				s_ErrorMessage.Add(100001, "Device not configured"); /* WSAENXIO */
+#endif // MOBILE
+				s_ErrorMessagesInitialized = true;
+			}
+
 		}
+#endif // UNITY
 	}
 }
