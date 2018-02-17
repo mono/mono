@@ -22,6 +22,7 @@
 /data/lldb @lewurm @vargaz
 
 /docs @luhenry @marek-safar
+/docs/riscv.md @alexrp
 /docs/sources/mono-api-profiler.html @alexrp
 
 /external @marek-safar @luhenry
@@ -68,6 +69,8 @@
 
 /mono @luhenry
 
+/mono/arch/riscv @alexrp
+
 /mono/btls @baulig
 /mono/dis @lambdageek @vargaz
 /mono/eglib @kumpera @vargaz @luhenry
@@ -86,6 +89,7 @@
 /mono/mini/*cfgdump* @lewurm
 /mono/mini/*exceptions* @lewurm
 /mono/mini/*ppc* @lewurm
+/mono/mini/*riscv* @alexrp
 /mono/mini/*type-check* @lewurm
 /mono/mini/interp/* @lewurm @BrzVlad
 /mono/mini/*profiler* @alexrp
