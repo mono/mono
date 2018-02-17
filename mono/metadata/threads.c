@@ -1554,7 +1554,7 @@ void ves_icall_System_Threading_Thread_SpinWait_nop (void)
 }
 
 gint32
-ves_icall_System_Threading_Thread_GetDomainID (void) 
+ves_icall_System_Threading_Thread_GetDomainID (MonoError *error)
 {
 	return mono_domain_get()->domain_id;
 }

@@ -88,7 +88,10 @@ ves_icall_System_Threading_Thread_Thread_internal (MonoThread *this_obj, MonoObj
 void ves_icall_System_Threading_InternalThread_Thread_free_internal(MonoInternalThread *this_obj);
 void ves_icall_System_Threading_Thread_Sleep_internal(gint32 ms);
 gboolean ves_icall_System_Threading_Thread_Join_internal(MonoThread *this_obj, int ms);
-gint32 ves_icall_System_Threading_Thread_GetDomainID (void);
+
+gint32
+ves_icall_System_Threading_Thread_GetDomainID (MonoError *error);
+
 gboolean ves_icall_System_Threading_Thread_Yield (void);
 MonoStringHandle ves_icall_System_Threading_Thread_GetName_internal (MonoInternalThreadHandle this_obj, MonoError *error);
 void ves_icall_System_Threading_Thread_SetName_internal (MonoInternalThread *this_obj, MonoString *name);
