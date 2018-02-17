@@ -197,7 +197,9 @@ void ves_icall_System_Threading_Volatile_Write_T (void *ptr, MonoObject *value);
 
 void ves_icall_System_Threading_Thread_MemoryBarrier (void);
 void ves_icall_System_Threading_Thread_Interrupt_internal (MonoThread *this_obj);
-void ves_icall_System_Threading_Thread_SpinWait_nop (void);
+
+void
+ves_icall_System_Threading_Thread_SpinWait_nop (MonoError *error);
 
 void
 mono_threads_register_app_context (MonoAppContext* ctx, MonoError *error);

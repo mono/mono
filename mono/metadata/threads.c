@@ -1574,7 +1574,8 @@ ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error)
 	}
 }
 
-void ves_icall_System_Threading_Thread_SpinWait_nop (void)
+void
+ves_icall_System_Threading_Thread_SpinWait_nop (MonoError *error)
 {
 }
 
