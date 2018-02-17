@@ -960,7 +960,7 @@ ICALL(THREAD_22, "SleepInternal", ves_icall_System_Threading_Thread_Sleep_intern
 ICALL(THREAD_54, "SpinWait_nop", ves_icall_System_Threading_Thread_SpinWait_nop)
 ICALL(THREAD_23, "SuspendInternal", ves_icall_System_Threading_Thread_Suspend)
 ICALL(THREAD_56, "SystemMaxStackStize", mono_threads_get_max_stack_size)
-ICALL(THREAD_25, "Thread_internal", ves_icall_System_Threading_Thread_Thread_internal)
+HANDLES(ICALL(THREAD_25, "Thread_internal", ves_icall_System_Threading_Thread_Thread_internal))
 ICALL(THREAD_26, "VolatileRead(byte&)", ves_icall_System_Threading_Thread_VolatileRead1)
 ICALL(THREAD_27, "VolatileRead(double&)", ves_icall_System_Threading_Thread_VolatileReadDouble)
 ICALL(THREAD_28, "VolatileRead(int&)", ves_icall_System_Threading_Thread_VolatileRead4)
