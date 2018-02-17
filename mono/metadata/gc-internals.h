@@ -59,6 +59,9 @@ MONO_BEGIN_DECLS
 #define IS_GC_REFERENCE(class,t) (mono_gc_is_moving () ? FALSE : ((t)->type == MONO_TYPE_U && (class)->image == mono_defaults.corlib))
 
 void   mono_object_register_finalizer               (MonoObject  *obj);
+void
+mono_object_register_finalizer_handle (MonoObjectHandle obj);
+
 void   ves_icall_System_GC_InternalCollect          (int          generation);
 gint64 ves_icall_System_GC_GetTotalMemory           (MonoBoolean  forceCollection);
 void   ves_icall_System_GC_KeepAlive                (MonoObject  *obj);
@@ -132,17 +135,53 @@ void     mono_gchandle_free_domain  (MonoDomain *domain);
 
 typedef void (*FinalizerThreadCallback) (gpointer user_data);
 
-MonoObject* mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size);
-MonoObject* mono_gc_alloc_obj (MonoVTable *vtable, size_t size);
-MonoArray* mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length);
-MonoArray* mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size);
-MonoString* mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len);
-MonoObject* mono_gc_alloc_mature (MonoVTable *vtable, size_t size);
 MonoGCDescriptor mono_gc_make_descr_for_string (gsize *bitmap, int numbits);
 
-void mono_gc_register_obj_with_weak_fields (MonoObject *obj);
+MonoObject*
+mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size);
 
-typedef void (*MonoFinalizationProc)(gpointer, gpointer); // same as SGenFinalizationProc, GC_finalization_proc
+MonoObjectHandle
+mono_gc_alloc_handle_pinned_obj (MonoVTable *vtable, gsize size);
+
+MonoObject*
+mono_gc_alloc_obj (MonoVTable *vtable, size_t size);
+
+MonoObjectHandle
+mono_gc_alloc_handle_obj (MonoVTable *vtable, gsize size);
+
+MonoArray*
+mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length);
+
+MonoArrayHandle
+mono_gc_alloc_handle_vector (MonoVTable *vtable, gsize size, gsize max_length);
+
+MonoArray*
+mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size);
+
+MonoArrayHandle
+mono_gc_alloc_handle_array (MonoVTable *vtable, gsize size, gsize max_length, gsize bounds_size);
+
+MonoString*
+mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len);
+
+MonoStringHandle
+mono_gc_alloc_handle_string (MonoVTable *vtable, gsize size, gint32 len);
+
+MonoObject*
+mono_gc_alloc_mature (MonoVTable *vtable, size_t size);
+
+MonoGCDescriptor mono_gc_make_descr_for_string (gsize *bitmap, int numbits);
+
+MonoObjectHandle
+mono_gc_alloc_handle_mature (MonoVTable *vtable, gsize size);
+
+void
+mono_gc_register_obj_with_weak_fields (MonoObject *obj);
+
+void
+mono_gc_register_object_with_weak_fields (MonoObjectHandle obj);
+
+typedef void (*MonoFinalizationProc) (gpointer, gpointer); // same as SGenFinalizationProc, GC_finalization_proc
 
 void  mono_gc_register_for_finalization (MonoObject *obj, MonoFinalizationProc user_data);
 void  mono_gc_add_memory_pressure (gint64 value);
