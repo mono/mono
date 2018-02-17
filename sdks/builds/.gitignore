@@ -13,10 +13,10 @@ android-armeabi-v7a-*/
 android-arm64-v8a-*/
 android-x86-*/
 android-x86_64-*/
-android-host-Darwin/
-android-host-Linux/
-android-host-mxe-Win32/
-android-host-mxe-Win64/
+android-host-Darwin-*/
+android-host-Linux-*/
+android-host-mxe-Win32-*/
+android-host-mxe-Win64-*/
 ios-target32/
 ios-target64/
 ios-cross32/
