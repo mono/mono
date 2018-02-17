@@ -1417,7 +1417,7 @@ mono_thread_exit (void)
 }
 
 void
-ves_icall_System_Threading_Thread_ConstructInternalThread (MonoThread *this_obj)
+ves_icall_System_Threading_Thread_ConstructInternalThread (MonoThreadObjectHandle this_obj_handle, MonoError *error)
 {
 	MonoInternalThread *internal;
 
@@ -1425,7 +1425,13 @@ ves_icall_System_Threading_Thread_ConstructInternalThread (MonoThread *this_obj)
 
 	internal->state = ThreadState_Unstarted;
 
+	int thread_gchandle = mono_gchandle_from_handle ((MonoObjectHandle)this_obj_handle, TRUE);
+
+	MonoThreadObject *this_obj = MONO_HANDLE_RAW (this_obj_handle);
+
 	mono_atomic_cas_ptr ((volatile gpointer *)&this_obj->internal_thread, internal, NULL);
+
+	mono_gchandle_free (thread_gchandle);
 }
 
 MonoThreadObjectHandle
@@ -1445,7 +1451,7 @@ ves_icall_System_Threading_Thread_Thread_internal (MonoThread *this_obj,
 	THREAD_DEBUG (g_message("%s: Trying to start a new thread: this (%p) start (%p)", __func__, this_obj, start));
 
 	if (!this_obj->internal_thread)
-		ves_icall_System_Threading_Thread_ConstructInternalThread (this_obj);
+		ves_icall_System_Threading_Thread_ConstructInternalThread (this_obj, error);
 	internal = this_obj->internal_thread;
 
 	LOCK_THREAD (internal);
