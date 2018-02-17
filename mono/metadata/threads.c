@@ -54,6 +54,7 @@
 #include <mono/metadata/w32error.h>
 #include <mono/utils/w32api.h>
 #include <mono/utils/mono-os-wait.h>
+#include <mono/metadata/exception-internals.h>
 
 #ifdef HAVE_SIGNAL_H
 #include <signal.h>
@@ -2569,12 +2570,10 @@ mono_thread_suspend (MonoInternalThread *thread)
 }
 
 void
-ves_icall_System_Threading_Thread_Suspend (MonoThread *this_obj)
+ves_icall_System_Threading_Thread_Suspend (MonoThreadObjectHandle this_obj, MonoError *error)
 {
-	if (!mono_thread_suspend (this_obj->internal_thread)) {
-		mono_set_pending_exception (mono_get_exception_thread_state ("Thread has not been started, or is dead."));
-		return;
-	}
+	if (!mono_thread_suspend (thread_handle_to_internal_ptr (this_obj)))
+		mono_set_pending_exception_handle (mono_exception_new_thread_state ("Thread has not been started, or is dead.", error));
 }
 
 /* LOCKING: LOCK_THREAD(thread) must be held */
