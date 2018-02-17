@@ -73,8 +73,8 @@ ves_icall_System_Environment_GetOSVersionString (MonoError *error)
 	 * version string based on that; other Unices seem to cram everything in .release
 	 * and .version is for things like kernel variants.
 	 */
-	char version [128];
 	struct utsname name;
+	char version [sizeof(name)];
 
 	if (uname (&name) >= 0) {
 		sprintf (version, "%s.%s", name.version, name.release);
