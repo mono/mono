@@ -194,6 +194,10 @@ static void async_suspend_internal (MonoInternalThread *thread, gboolean interru
 static void self_suspend_internal (void);
 
 static MonoException* mono_thread_execute_interruption (void);
+
+static MonoExceptionHandle
+mono_thread_execute_interruption_handle (MonoError *error);
+
 static void ref_stack_destroy (gpointer rs);
 
 /* Spin lock for InterlockedXXX 64 bit functions */
@@ -1532,7 +1536,7 @@ ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThre
 }
 
 void
-ves_icall_System_Threading_Thread_Sleep_internal(gint32 ms)
+ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error)
 {
 	guint32 res;
 	MonoInternalThread *thread = mono_thread_internal_current ();
@@ -1552,9 +1556,12 @@ ves_icall_System_Threading_Thread_Sleep_internal(gint32 ms)
 		mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
 
 		if (alerted) {
-			MonoException* exc = mono_thread_execute_interruption ();
-			if (exc) {
-				mono_set_pending_exception (exc);
+			MonoExceptionHandle exc = mono_thread_execute_interruption_handle (error);
+			mono_error_assert_ok (error);
+			if (exc && !MONO_HANDLE_IS_NULL (exc)) {
+				mono_set_pending_exception_handle (exc);
+				return;
+			} else if (!is_ok (error)) {
 				return;
 			} else {
 				// FIXME: !MONO_INFINITE_WAIT
@@ -4571,8 +4578,8 @@ mono_thread_execute_interruption (void)
 	mono_thread_info_clear_self_interrupt ();
 
 	/* If there's a pending exception and an AbortRequested, the pending exception takes precedence */
-	if (sys_thread->pending_exception) {
-		exc = sys_thread->pending_exception;
+	exc = sys_thread->pending_exception;
+	if (exc) {
 		sys_thread->pending_exception = NULL;
 	} else if (thread->state & ThreadState_AbortRequested) {
 		exc = thread->abort_exc;
@@ -4595,6 +4602,69 @@ exit:
 	if (unlock)
 		UNLOCK_THREAD (thread);
 	
+	return exc;
+}
+
+static MonoExceptionHandle
+mono_thread_execute_interruption_handle (MonoError *error)
+{
+	MonoInternalThread *thread = mono_thread_internal_current ();
+	MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
+
+	LOCK_THREAD (thread);
+	gboolean unlock = TRUE;
+
+	/* MonoThread::interruption_requested can only be changed with atomics */
+	if (!mono_thread_clear_interruption_requested (thread))
+		goto exit;
+
+	MonoThreadObjectHandle sys_thread = MONO_HANDLE_NEW (MonoThreadObject, mono_thread_current ());
+
+	/* this will consume pending APC calls */
+#ifdef HOST_WIN32
+	MONO_ENTER_GC_SAFE;
+	mono_win32_wait_for_single_object_ex (GetCurrentThread (), 0, TRUE);
+	MONO_EXIT_GC_SAFE;
+#endif
+
+	/* Clear the interrupted flag of the thread so it can wait again */
+	mono_thread_info_clear_self_interrupt ();
+
+	/* If there's a pending exception and an AbortRequested, the pending exception takes precedence */
+	MONO_HANDLE_GET (exc, sys_thread, pending_exception);
+	if (!MONO_HANDLE_IS_NULL (exc)) {
+		MONO_HANDLE_SETRAW (sys_thread, pending_exception, NULL);
+		goto exit;
+	}
+
+	if (thread->state & ThreadState_AbortRequested) {
+		exc = MONO_HANDLE_NEW (MonoException, thread->abort_exc);
+		if (!MONO_HANDLE_IS_NULL (exc))
+			goto exit;
+		exc = mono_exception_new_thread_abort (error);
+		if (!MONO_HANDLE_IS_NULL (exc)) {
+			thread->abort_exc = MONO_HANDLE_RAW (exc);
+			goto exit;
+		}
+		// Under low memory, AbortRequested can fail and fall into other possibilities.
+	}
+
+	if (thread->state & ThreadState_SuspendRequested) {
+		/* calls UNLOCK_THREAD (thread) */
+		self_suspend_internal ();
+		unlock = FALSE;
+		goto exit;
+	}
+
+	if (thread->thread_interrupt_requested) {
+		thread->thread_interrupt_requested = FALSE;
+		UNLOCK_THREAD (thread);
+		unlock = FALSE;
+		exc = mono_exception_new_thread_interrupted (error);
+	}
+exit:
+	if (unlock)
+		UNLOCK_THREAD (thread);
 	return exc;
 }
 
