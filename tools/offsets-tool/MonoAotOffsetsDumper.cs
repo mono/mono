@@ -23,7 +23,6 @@ namespace CppSharp
 
         static List<string> Abis = new List<string> ();
         static string OutputDir;
-        static string OutputFile;
 
         static string MonodroidDir = @"";
         static string AndroidNdkPath = @"";
@@ -272,7 +271,6 @@ namespace CppSharp
             var options = new Mono.Options.OptionSet () {
                 { "abi=", "ABI triple to generate", v => Abis.Add(v) },
                 { "o|out=", "output directory", v => OutputDir = v },
-                { "outfile=", "output directory", v => OutputFile = v },
                 { "maccore=", "include directory", v => MaccoreDir = v },
                 { "monodroid=", "top monodroid directory", v => MonodroidDir = v },
                 { "android-ndk=", "Path to Android NDK", v => AndroidNdkPath = v },
@@ -652,18 +650,12 @@ namespace CppSharp
 
         static void Dump(ASTContext ctx, ParserTargetInfo targetInfo, Target target)
         {
-			string targetFile;
+            var targetFile = target.Triple;
 
-			if (!string.IsNullOrEmpty (OutputFile)) {
-				targetFile = OutputFile;
-			} else {
-				targetFile = target.Triple;
+            if (!string.IsNullOrEmpty (OutputDir))
+                targetFile = Path.Combine (OutputDir, targetFile);
 
-				if (!string.IsNullOrEmpty (OutputDir))
-					targetFile = Path.Combine (OutputDir, targetFile);
-
-				targetFile += ".h";
-			}
+            targetFile += ".h";
 
             using (var writer = new StreamWriter(targetFile))
             //using (var writer = Console.Out)
