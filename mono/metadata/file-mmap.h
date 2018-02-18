@@ -27,9 +27,11 @@ mono_mmap_configure_inheritability (void *mmap_handle, gboolean inheritability, 
 void
 mono_mmap_flush (void *mmap_handle, MonoError *error);
 
-extern void *mono_mmap_open_file (MonoString *string, int mode, MonoString *mapName, gint64 *capacity, int access, int options, int *error);
+void*
+mono_mmap_open_file (const gunichar2 *path, gint path_length, int mode, const gunichar2 *mapName, gint mapName_length, gint64 *capacity, int access, int options, int *win32error, MonoError *error);
 
-extern void *mono_mmap_open_handle (void *handle, MonoString *mapName, gint64 *capacity, int access, int options, int *error);
+void*
+mono_mmap_open_handle (void *handle, const gunichar2 *mapName, gint mapName_length, gint64 *capacity, int access, int options, int *win32error, MonoError *error);
 
 int
 mono_mmap_map (void *handle, gint64 offset, gint64 *size, int access, void **mmap_handle, void **base_address, MonoError *error);
