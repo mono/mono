@@ -989,7 +989,7 @@ ICALL(THREAD_49, "VolatileWrite(uint16&,uint16)", ves_icall_System_Threading_Thr
 ICALL(THREAD_50, "VolatileWrite(uintptr&,uintptr)", ves_icall_System_Threading_Thread_VolatileWriteIntPtr)
 ICALL(THREAD_51, "VolatileWrite(ulong&,ulong)", ves_icall_System_Threading_Thread_VolatileWrite8)
 ICALL(THREAD_9, "YieldInternal", ves_icall_System_Threading_Thread_Yield)
-ICALL(THREAD_52, "current_lcid()", ves_icall_System_Threading_Thread_current_lcid)
+HANDLES(ICALL(THREAD_52, "current_lcid()", ves_icall_System_Threading_Thread_current_lcid))
 
 ICALL_TYPE(THREADP, "System.Threading.ThreadPool", THREADP_1)
 HANDLES(ICALL(THREADP_1, "BindIOCompletionCallbackNative", ves_icall_System_Threading_ThreadPool_BindIOCompletionCallbackNative))
