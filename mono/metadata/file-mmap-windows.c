@@ -290,13 +290,15 @@ void *mono_mmap_open_handle (void *handle, MonoString *mapName, gint64 *capacity
 	return open_handle (handle, mapName, FILE_MODE_OPEN, capacity, access, options, error);
 }
 
-void mono_mmap_close (void *mmap_handle)
+void
+mono_mmap_close (void *mmap_handle, MonoError *error)
 {
 	g_assert (mmap_handle);
 	CloseHandle (mmap_handle);
 }
 
-void mono_mmap_configure_inheritability (void *mmap_handle, gboolean inheritability)
+void
+mono_mmap_configure_inheritability (void *mmap_handle, gboolean inheritability, MonoError *error)
 {
 	g_assert (mmap_handle);
 	if (!SetHandleInformation (mmap_handle, HANDLE_FLAG_INHERIT, inheritability ? HANDLE_FLAG_INHERIT : 0)) {
@@ -304,7 +306,8 @@ void mono_mmap_configure_inheritability (void *mmap_handle, gboolean inheritabil
 	}
 }
 
-void mono_mmap_flush (void *mmap_handle)
+void
+mono_mmap_flush (void *mmap_handle, MonoError *error)
 {
 	g_assert (mmap_handle);
 	MmapInstance *h = (MmapInstance *)mmap_handle;
@@ -345,7 +348,8 @@ void mono_mmap_flush (void *mmap_handle)
 	// TODO: Propagate error to caller
 }
 
-int mono_mmap_map (void *handle, gint64 offset, gint64 *size, int access, void **mmap_handle, void **base_address)
+int
+mono_mmap_map (void *handle, gint64 offset, gint64 *size, int access, void **mmap_handle, void **base_address, MonoError *error)
 {
 	static DWORD allocationGranularity = 0;
 	if (allocationGranularity == 0) {
@@ -404,7 +408,8 @@ int mono_mmap_map (void *handle, gint64 offset, gint64 *size, int access, void *
 	return 0;
 }
 
-gboolean mono_mmap_unmap (void *mmap_handle)
+gboolean
+mono_mmap_unmap (void *mmap_handle, MonoError *error)
 {
 	g_assert (mmap_handle);
 

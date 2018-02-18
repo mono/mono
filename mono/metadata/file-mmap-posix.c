@@ -457,7 +457,7 @@ mono_mmap_open_handle (void *input_fd, MonoString *mapName, gint64 *capacity, in
 }
 
 void
-mono_mmap_close (void *mmap_handle)
+mono_mmap_close (void *mmap_handle, MonoError *error)
 {
 	MmapHandle *handle = (MmapHandle *)mmap_handle;
 
@@ -475,7 +475,7 @@ mono_mmap_close (void *mmap_handle)
 }
 
 void
-mono_mmap_configure_inheritability (void *mmap_handle, gboolean inheritability)
+mono_mmap_configure_inheritability (void *mmap_handle, gboolean inheritability, MonoError *error)
 {
 	MmapHandle *h = (MmapHandle *)mmap_handle;
 	int fd, flags;
@@ -490,7 +490,7 @@ mono_mmap_configure_inheritability (void *mmap_handle, gboolean inheritability)
 }
 
 void
-mono_mmap_flush (void *mmap_handle)
+mono_mmap_flush (void *mmap_handle, MonoError *error)
 {
 	MmapInstance *h = (MmapInstance *)mmap_handle;
 
@@ -499,7 +499,7 @@ mono_mmap_flush (void *mmap_handle)
 }
 
 int
-mono_mmap_map (void *handle, gint64 offset, gint64 *size, int access, void **mmap_handle, void **base_address)
+mono_mmap_map (void *handle, gint64 offset, gint64 *size, int access, void **mmap_handle, void **base_address, MonoError *error)
 {
 	gint64 mmap_offset = 0;
 	MmapHandle *fh = (MmapHandle *)handle;
@@ -538,7 +538,7 @@ mono_mmap_map (void *handle, gint64 offset, gint64 *size, int access, void **mma
 }
 
 gboolean
-mono_mmap_unmap (void *mmap_handle)
+mono_mmap_unmap (void *mmap_handle, MonoError *error)
 {
 	int res = 0;
 	MmapInstance *h = (MmapInstance *)mmap_handle;
