@@ -99,7 +99,9 @@ gboolean ves_icall_System_Threading_Thread_Join_internal(MonoThread *this_obj, i
 gint32
 ves_icall_System_Threading_Thread_GetDomainID (MonoError *error);
 
-gboolean ves_icall_System_Threading_Thread_Yield (void);
+gboolean
+ves_icall_System_Threading_Thread_Yield (MonoError *error);
+
 MonoStringHandle ves_icall_System_Threading_Thread_GetName_internal (MonoInternalThreadHandle this_obj, MonoError *error);
 void ves_icall_System_Threading_Thread_SetName_internal (MonoInternalThread *this_obj, MonoString *name);
 int ves_icall_System_Threading_Thread_GetPriority (MonoThreadObjectHandle this_obj, MonoError *error);

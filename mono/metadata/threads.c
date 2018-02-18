@@ -1587,7 +1587,7 @@ ves_icall_System_Threading_Thread_GetDomainID (MonoError *error)
 }
 
 gboolean 
-ves_icall_System_Threading_Thread_Yield (void)
+ves_icall_System_Threading_Thread_Yield (MonoError *error)
 {
 	return mono_thread_info_yield ();
 }
