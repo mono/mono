@@ -88,7 +88,8 @@ ves_icall_System_Threading_Thread_ConstructInternalThread (MonoThreadObjectHandl
 MonoBoolean
 ves_icall_System_Threading_Thread_Thread_internal (MonoThreadObjectHandle this_obj, MonoObjectHandle start, MonoError *error);
 
-void ves_icall_System_Threading_InternalThread_Thread_free_internal(MonoInternalThread *this_obj);
+void
+ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThreadHandle this_obj, MonoError *error);
 
 void
 ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error);

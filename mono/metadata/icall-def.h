@@ -906,7 +906,7 @@ ICALL(ILOCK_21, "Increment(long&)", ves_icall_System_Threading_Interlocked_Incre
 ICALL(ILOCK_22, "Read(long&)", ves_icall_System_Threading_Interlocked_Read_Long)
 
 ICALL_TYPE(ITHREAD, "System.Threading.InternalThread", ITHREAD_1)
-ICALL(ITHREAD_1, "Thread_free_internal", ves_icall_System_Threading_InternalThread_Thread_free_internal)
+HANDLES(ICALL(ITHREAD_1, "Thread_free_internal", ves_icall_System_Threading_InternalThread_Thread_free_internal))
 
 ICALL_TYPE(MONIT, "System.Threading.Monitor", MONIT_8)
 ICALL(MONIT_8, "Enter", ves_icall_System_Threading_Monitor_Monitor_Enter)

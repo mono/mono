@@ -1502,8 +1502,9 @@ ves_icall_System_Threading_Thread_Thread_internal (MonoThreadObjectHandle thread
  * This is called from the finalizer of the internal thread object.
  */
 void
-ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThread *this_obj)
+ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThreadHandle this_obj_handle, MonoError *error)
 {
+	MonoInternalThread *this_obj = mono_internal_thread_handle_ptr (this_obj_handle);
 	THREAD_DEBUG (g_message ("%s: Closing thread %p, handle %p", __func__, this, this_obj->handle));
 
 	/*
