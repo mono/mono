@@ -18,7 +18,7 @@ define MxeTemplate
 .PHONY: build-custom-mxe-$(1)
 build-custom-mxe-$(1):
 	PATH="$$$$PATH:$$(dir $$(shell which autopoint))" $$(MAKE) -C $$(TOP)/sdks/builds/toolchains/mxe gcc cmake zlib pthreads dlfcn-win32 mman-win32 \
-		MXE_TARGETS="$(2)-w64-mingw32.static" PREFIX="$$(TOP)/sdks/out/mxe-$(1)" OS_SHORT_NAME="disable-native-plugins"
+		MXE_TARGETS="$(2)-w64-mingw32.static" PREFIX="$$(TOP)/sdks/out/mxe" OS_SHORT_NAME="disable-native-plugins"
 
 .PHONY: setup-custom-mxe-$(1)
 setup-custom-mxe-$(1):
