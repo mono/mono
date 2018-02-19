@@ -110,8 +110,11 @@ Different names indicate different scenarios, but the same code.
 
 #define is_ok(error) ((error)->error_code == MONO_ERROR_NONE)
 
-#define return_if_nok(error) do { if (!is_ok ((error))) return; } while (0)
-#define return_val_if_nok(error,val) do { if (!is_ok ((error))) return (val); } while (0)
+#define return_if(expr)          do { if (expr) return; } while (0)
+#define return_val_if(expr, val) do { if (expr) return (val); } while (0)
+
+#define return_if_nok(error)          return_if (!is_ok (error))
+#define return_val_if_nok(error, val) return_val_if (!is_ok (error), val)
 
 #define goto_if(expr, label) 	  do { if (expr) goto label; } while (0)
 #define goto_if_ok(error, label)  goto_if (is_ok (error), label)
