@@ -1614,7 +1614,6 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/TaskSchedulerException.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/ThreadPoolTaskScheduler.cs
 ../../../external/corefx/src/System.Threading.Tasks.Parallel/src/System/Threading/Tasks/*.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Runtime/CompilerServices/DependencyReductionRootAttribute.cs
 ../../../external/corert/src/System.Private.CoreLib/src/Internal/Runtime/Augments/AsyncCausalityTracer.cs
 ../../../external/corert/src/System.Private.CoreLib/src/Internal/Threading/Tasks/Tracing/TaskTrace.cs
 ../../../external/corert/src/System.Private.CoreLib/src/Internal/Runtime/Augments/TaskTraceCallbacks.cs
@@ -1635,6 +1634,7 @@ coreclr/SorterArray.cs
 corefx/AwaitTaskContinuation.cs
 corefx/SynchronizationContext.cs
 
+corert/DependencyReductionRootAttribute.cs
 corert/AddrofIntrinsics.cs
 corert/Debug.cs
 corert/EnvironmentAugments.cs
