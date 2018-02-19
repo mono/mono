@@ -1594,21 +1594,30 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/threading/waithandle.cs
 ../referencesource/mscorlib/system/threading/waithandleExtensions.cs
 
+../../../external/corefx/src/Common/src/System/Threading/Tasks/RendezvousAwaitable.cs
+../../../external/corefx/src/Common/src/System/Collections/Generic/LowLevelDictionary.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/DebuggerSupport.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/DebuggerSupport.Dummy.cs
+../../../external/corefx/src/Common/src/System/Threading/Tasks/BeginEndAwaitableAdapter.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/TaskCanceledException.cs
 ../referencesource/mscorlib/system/threading/Tasks/AsyncCausalityTracer.cs
-../referencesource/mscorlib/system/threading/Tasks/BeginEndAwaitableAdapter.cs
-../referencesource/mscorlib/system/threading/Tasks/TaskFactory.cs
-../referencesource/mscorlib/system/threading/Tasks/FutureFactory.cs
-../referencesource/mscorlib/system/threading/Tasks/TaskScheduler.cs
-../referencesource/mscorlib/system/threading/Tasks/TaskCanceledException.cs
-../referencesource/mscorlib/system/threading/Tasks/Task.cs
-../referencesource/mscorlib/system/threading/Tasks/Future.cs
-../referencesource/mscorlib/system/threading/Tasks/TaskCompletionSource.cs
-../referencesource/mscorlib/system/threading/Tasks/TaskContinuation.cs
-../referencesource/mscorlib/system/threading/Tasks/TaskSchedulerException.cs
-../referencesource/mscorlib/system/threading/Tasks/Parallel.cs
-../referencesource/mscorlib/system/threading/Tasks/ParallelLoopState.cs
-../referencesource/mscorlib/system/threading/Tasks/ParallelRangeManager.cs
-../referencesource/mscorlib/system/threading/Tasks/ThreadPoolTaskScheduler.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/TaskFactory.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/FutureFactory.cs
+../../../external/corert/src/Common/src/System/Collections/Generic/LowLevelList.cs
+../../../external/corert/src/System.Private.Interop/src/InteropExtensions/Lock.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/LockHolder.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/TaskScheduler.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/Task.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/Future.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/TaskContinuation.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/TaskCompletionSource.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/TaskSchedulerException.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/ThreadPoolTaskScheduler.cs
+../../../external/corefx/src/System.Threading.Tasks.Parallel/src/System/Threading/Tasks/*.cs
+../../../external/corert/src/System.Private.CoreLib/src/Internal/Runtime/Augments/AsyncCausalityTracer.cs
+../../../external/corert/src/System.Private.CoreLib/src/Internal/Threading/Tasks/Tracing/TaskTrace.cs
+../../../external/corert/src/System.Private.CoreLib/src/Internal/Runtime/Augments/TaskTraceCallbacks.cs
+
 ../referencesource/mscorlib/system/threading/Tasks/TaskExceptionHolder.cs
 ../referencesource/mscorlib/system/threading/Tasks/ConcurrentExclusiveSchedulerPair.cs
 ../referencesource/mscorlib/system/threading/Tasks/ProducerConsumerQueues.cs
@@ -1622,6 +1631,10 @@ ReferenceSources/AppContextDefaultValues.cs
 
 coreclr/SorterArray.cs
 
+corefx/AwaitTaskContinuation.cs
+corefx/SynchronizationContext.cs
+
+corert/DependencyReductionRootAttribute.cs
 corert/AddrofIntrinsics.cs
 corert/Debug.cs
 corert/EnvironmentAugments.cs
@@ -1629,6 +1642,9 @@ corert/RelocatedTypeAttribute.cs
 corert/RuntimeThread.cs
 corert/Stream.cs
 corert/ThreadPoolBoundHandle.cs
+corert/Task.cs
+corert/ThreadPool.cs
+corert/RuntimeAugments.cs
 
 ../../../external/corert/src/Common/src/Interop/Unix/Interop.Libraries.cs
 
