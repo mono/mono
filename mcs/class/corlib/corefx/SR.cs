@@ -910,4 +910,12 @@ partial class SR
 	public const string Argument_OverlapAlignmentMismatch = "Overlapping spans have mismatching alignment.";
 	public const string Argument_EmptyValue = "Value cannot be empty.";
 	public const string PlatformNotSupported_RuntimeInformation = "RuntimeInformation is not supported for Portable Class Libraries.";
+	public const string Parallel_Invoke_ActionNull = "One of the actions was null.";
+	public const string Parallel_ForEach_OrderedPartitionerKeysNotNormalized = "This method requires the use of an OrderedPartitioner with the KeysNormalized property set to true.";
+	public const string Parallel_ForEach_PartitionerNotDynamic = "The Partitioner used here must support dynamic partitioning.";
+	public const string Parallel_ForEach_PartitionerReturnedNull = "The Partitioner used here returned a null partitioner source.";
+	public const string Parallel_ForEach_NullEnumerator = "The Partitioner source returned a null enumerator.";
+	public const string ParallelState_Break_InvalidOperationException_BreakAfterStop = "Break was called after Stop was called.";
+	public const string ParallelState_Stop_InvalidOperationException_StopAfterBreak = "Stop was called after Break was called.";
+	public const string ParallelState_NotSupportedException_UnsupportedMethod = "This method is not supported.";
 }
