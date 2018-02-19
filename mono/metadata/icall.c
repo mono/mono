@@ -3611,68 +3611,78 @@ write_enum_value (char *mem, int type, guint64 value)
 	return;
 }
 
-ICALL_EXPORT MonoObject *
-ves_icall_System_Enum_ToObject (MonoReflectionType *enumType, guint64 value)
+ICALL_EXPORT MonoObjectHandle
+ves_icall_System_Enum_ToObject (MonoReflectionTypeHandle enumType, guint64 value, MonoError *error)
 {
-	ERROR_DECL (error);
 	MonoDomain *domain; 
 	MonoClass *enumc;
-	MonoObject *res;
+	MonoObjectHandle res;
 	MonoType *etype;
 
-	domain = mono_object_domain (enumType); 
-	enumc = mono_class_from_mono_type (enumType->type);
+	domain = MONO_HANDLE_DOMAIN (enumType);
+	enumc = mono_class_from_mono_type (MONO_HANDLE_GETVAL (enumType, type));
 
 	mono_class_init_checked (enumc, error);
-	if (mono_error_set_pending_exception (error))
-		return NULL;
+	return_val_if_nok (error, MONO_HANDLE_NEW (MonoObject, NULL));
 
 	etype = mono_class_enum_basetype (enumc);
 
-	res = mono_object_new_checked (domain, enumc, error);
-	if (mono_error_set_pending_exception (error))
-		return NULL;
-	write_enum_value ((char *)res + sizeof (MonoObject), etype->type, value);
+	res = mono_object_new_handle (domain, enumc, error);
+	return_val_if_nok (error, MONO_HANDLE_NEW (MonoObject, NULL));
+
+	guint32 res_gchandle = 0;
+	write_enum_value (mono_object_handle_pin_unbox (res, &res_gchandle), etype->type, value);
+	mono_gchandle_free (res_gchandle);
 
 	return res;
 }
 
 ICALL_EXPORT MonoBoolean
-ves_icall_System_Enum_InternalHasFlag (MonoObject *a, MonoObject *b)
+ves_icall_System_Enum_InternalHasFlag (MonoObjectHandle a, MonoObjectHandle b, MonoError *error)
 {
-	int size = mono_class_value_size (a->vtable->klass, NULL);
+	int size = mono_class_value_size (MONO_HANDLE_GETVAL (a, vtable)->klass, NULL);
 	guint64 a_val = 0, b_val = 0;
+	guint32 a_gchandle = 0, b_gchandle = 0;
 
-	memcpy (&a_val, mono_object_unbox (a), size);
-	memcpy (&b_val, mono_object_unbox (b), size);
+	// Good checks but maybe too slow.
+	// g_assert (size <= sizeof (guint64));
+	// g_assert (size == mono_class_value_size (MONO_HANDLE_GETVAL (b, vtable)->klass, NULL);
 
-	return (a_val & b_val) == b_val;
+	memcpy (&a_val, mono_object_handle_pin_unbox (a, &a_gchandle), size);
+	memcpy (&b_val, mono_object_handle_pin_unbox (b, &b_gchandle), size);
+
+	MonoBoolean result = (a_val & b_val) == b_val;
+
+	mono_gchandle_free (a_gchandle);
+	mono_gchandle_free (b_gchandle);
+
+	return result;
 }
 
-ICALL_EXPORT MonoObject *
-ves_icall_System_Enum_get_value (MonoObject *eobj)
+ICALL_EXPORT MonoObjectHandle
+ves_icall_System_Enum_get_value (MonoObjectHandle eobj, MonoError *error)
 {
-	ERROR_DECL (error);
-	MonoObject *res;
+	MonoObjectHandle res;
 	MonoClass *enumc;
 	gpointer dst;
 	gpointer src;
 	int size;
 
-	if (!eobj)
-		return NULL;
+	return_val_if (MONO_HANDLE_IS_NULL (eobj), MONO_HANDLE_NEW (MonoObject, NULL));
 
-	g_assert (eobj->vtable->klass->enumtype);
-	
-	enumc = mono_class_from_mono_type (mono_class_enum_basetype (eobj->vtable->klass));
-	res = mono_object_new_checked (mono_object_domain (eobj), enumc, error);
-	if (mono_error_set_pending_exception (error))
-		return NULL;
-	dst = (char *)res + sizeof (MonoObject);
-	src = (char *)eobj + sizeof (MonoObject);
+	g_assert (MONO_HANDLE_GETVAL (eobj, vtable)->klass->enumtype);
+
+	enumc = mono_class_from_mono_type (mono_class_enum_basetype (MONO_HANDLE_GETVAL (eobj, vtable)->klass));
+	res = mono_object_new_handle (MONO_HANDLE_DOMAIN (eobj), enumc, error);
+	return_val_if_nok (error, MONO_HANDLE_NEW (MonoObject, NULL));
+
+	guint32 res_gchandle = 0, eobj_gchandle = 0;
+	dst = mono_object_handle_pin_unbox (res, &res_gchandle);
+	src = mono_object_handle_pin_unbox (eobj, &eobj_gchandle);
 	size = mono_class_value_size (enumc, NULL);
-
 	memcpy (dst, src, size);
+	mono_gchandle_free (res_gchandle);
+	mono_gchandle_free (eobj_gchandle);
 
 	return res;
 }
