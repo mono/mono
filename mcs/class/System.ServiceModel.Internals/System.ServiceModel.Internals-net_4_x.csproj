@@ -172,10 +172,6 @@
       <Project>{87FD2F0F-5222-4AE6-BD63-2D4975E11E5B}</Project>
       <Name>System.Xml-net_4_x</Name>
     </ProjectReference>
-    <ProjectReference Include="../System.Configuration/System.Configuration-net_4_x.csproj">
-      <Project>{D5CDC09C-F19A-4811-A6C8-70F51CBFB644}</Project>
-      <Name>System.Configuration-net_4_x</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

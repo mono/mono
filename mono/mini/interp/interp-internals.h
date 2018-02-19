@@ -8,7 +8,6 @@
 #include <mono/metadata/domain-internals.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/debug-internals.h>
-#include "config.h"
 #include "interp.h"
 
 #define MINT_TYPE_I1 0
@@ -25,6 +24,7 @@
 
 #define BOX_NOT_CLEAR_VT_SP 0x4000
 
+#define MINT_VT_ALIGNMENT 8
 
 enum {
 	VAL_I32     = 0,
@@ -88,11 +88,13 @@ typedef struct _InterpMethod
 	MonoMethod *method;
 	struct _InterpMethod *next_jit_code_hash;
 	guint32 locals_size;
+	guint32 total_locals_size;
 	guint32 args_size;
 	guint32 stack_size;
 	guint32 vt_stack_size;
 	guint32 alloca_size;
 	unsigned int init_locals : 1;
+	unsigned int vararg : 1;
 	unsigned short *code;
 	unsigned short *new_body_start; /* after all STINARG instrs */
 	MonoPIFunc func;
@@ -122,6 +124,7 @@ struct _InterpFrame {
 	MonoMethod     *method; /* parent */
 	stackval       *retval; /* parent */
 	char           *args;
+	char           *varargs;
 	stackval       *stack_args; /* parent */
 	stackval       *stack;
 	stackval       *sp; /* For GC stack marking */

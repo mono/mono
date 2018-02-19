@@ -288,6 +288,26 @@ m_create_directory (const char *pathname, int mode)
         return ret;
 }
 
+#ifdef MONO_WAIT_LLDB
+static volatile int wait_for_lldb = 1;
+#else
+static volatile int wait_for_lldb = 0;
+#endif
+
+void
+monodroid_clear_lldb_wait (void)
+{
+	wait_for_lldb = 0;
+}
+
+static void
+wait_for_unmanaged_debugger ()
+{
+	while (wait_for_lldb) {
+		_log ("Waiting for lldb to attach...");
+		sleep (5);
+	}
+}
 
 
 static void
@@ -389,6 +409,8 @@ Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring
 
 	sprintf (buff, "%s/libMonoPosixHelper.so", data_dir);
 	mono_posix_helper_dso = dlopen (buff, RTLD_LAZY);
+
+	wait_for_unmanaged_debugger ();
 
 	main_assembly_name = "main.exe";
 

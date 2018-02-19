@@ -5,8 +5,8 @@
 #ifndef __MONO_ERROR_INTERNALS_H__
 #define __MONO_ERROR_INTERNALS_H__
 
+#include <mono/metadata/object-forward.h>
 #include "mono/utils/mono-compiler.h"
-#include "mono/metadata/class-internals.h"
 
 /*Keep in sync with MonoError*/
 typedef struct {
@@ -32,9 +32,8 @@ typedef struct {
 	const char *full_message;
 	const char *full_message_with_fields;
 	const char *first_argument;
-	const char *member_signature;
 
-	void *padding [2];
+	void *padding [3];
 } MonoErrorInternal;
 
 /* Invariant: the error strings are allocated in the mempool of the given image */
@@ -114,7 +113,9 @@ Different names indicate different scenarios, but the same code.
 #define return_if_nok(error) do { if (!is_ok ((error))) return; } while (0)
 #define return_val_if_nok(error,val) do { if (!is_ok ((error))) return (val); } while (0)
 
-#define goto_if_nok(error,label) do { if (!is_ok ((error))) goto label; } while (0)
+#define goto_if(expr, label) 	  do { if (expr) goto label; } while (0)
+#define goto_if_ok(error, label)  goto_if (is_ok (error), label)
+#define goto_if_nok(error, label) goto_if (!is_ok (error), label)
 
 /* Only use this in icalls */
 #define return_val_and_set_pending_if_nok(error, value) \
@@ -151,12 +152,6 @@ void
 mono_error_set_error (MonoError *error, int error_code, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(3,4);
 
 void
-mono_error_set_assembly_load (MonoError *error, const char *assembly_name, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(3,4);
-
-void
-mono_error_set_assembly_load_simple (MonoError *error, const char *assembly_name, gboolean refection_only);
-
-void
 mono_error_set_type_load_class (MonoError *error, MonoClass *klass, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(3,4);
 
 void
@@ -164,18 +159,6 @@ mono_error_vset_type_load_class (MonoError *error, MonoClass *klass, const char 
 
 void
 mono_error_set_type_load_name (MonoError *error, const char *type_name, const char *assembly_name, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(4,5);
-
-void
-mono_error_set_method_load (MonoError *oerror, MonoClass *klass, const char *method_name, const char *signature, const char *msg_format, ...);
-
-void
-mono_error_set_field_load (MonoError *error, MonoClass *klass, const char *field_name, const char *msg_format, ...)  MONO_ATTR_FORMAT_PRINTF(4,5);
-
-void
-mono_error_set_bad_image (MonoError *error, MonoImage *image, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(3,4);
-
-void
-mono_error_set_bad_image_name (MonoError *error, const char *file_name, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(3,4);
 
 void
 mono_error_set_out_of_memory (MonoError *error, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(2,3);
@@ -205,9 +188,6 @@ void
 mono_error_set_invalid_operation (MonoError *error, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(2,3);
 
 void
-mono_error_set_file_not_found (MonoError *error, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(2,3);
-
-void
 mono_error_set_exception_instance (MonoError *error, MonoException *exc);
 
 void
@@ -233,5 +213,11 @@ mono_error_set_from_boxed (MonoError *error, const MonoErrorBoxed *from);
 
 const char*
 mono_error_get_exception_name (MonoError *oerror);
+
+void
+mono_error_set_specific (MonoError *error, int error_code, const char *missing_method);
+
+void
+mono_error_set_first_argument (MonoError *oerror, const char *first_argument);
 
 #endif

@@ -23,25 +23,6 @@ namespace MonoTests.System.Net
 	[TestFixture]
 	public class WebClientTest
 	{
-		private string _tempFolder;
-
-		[SetUp]
-		public void SetUp ()
-		{
-			_tempFolder = Path.Combine (Path.GetTempPath (),
-				GetType ().FullName);
-			if (Directory.Exists (_tempFolder))
-				Directory.Delete (_tempFolder, true);
-			Directory.CreateDirectory (_tempFolder);
-		}
-
-		[TearDown]
-		public void TearDown ()
-		{
-			if (Directory.Exists (_tempFolder))
-				Directory.Delete (_tempFolder, true);
-		}
-
 		[Test]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (WebException))] // Something catches the PlatformNotSupportedException and re-throws an WebException
@@ -442,6 +423,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void OpenReadTaskAsyncOnFile ()
 		{
 			var tmp = Path.GetTempFileName ();
@@ -449,6 +431,7 @@ namespace MonoTests.System.Net
 
 			var client = new WebClient ();
 			var task = client.OpenReadTaskAsync (url);
+
 			Assert.IsTrue (task.Wait (2000));
 		}
 
@@ -840,8 +823,7 @@ namespace MonoTests.System.Net
 		[Test] // UploadFile (string, string)
 		public void UploadFile1_Address_Null ()
 		{
-			string tempFile = Path.Combine (_tempFolder, "upload.tmp");
-			File.Create (tempFile).Close ();
+			string tempFile = Path.GetTempFileName ();
 
 			WebClient wc = new WebClient ();
 			try {
@@ -853,14 +835,16 @@ namespace MonoTests.System.Net
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("address", ex.ParamName, "#6");
+			} finally {
+				if (File.Exists (tempFile))
+					File.Delete (tempFile);
 			}
 		}
 
 		[Test] // UploadFile (string, string)
 		public void UploadFile1_Address_SchemeNotSupported ()
 		{
-			string tempFile = Path.Combine (_tempFolder, "upload.tmp");
-			File.Create (tempFile).Close ();
+			string tempFile = Path.GetTempFileName ();
 
 			WebClient wc = new WebClient ();
 			try {
@@ -880,13 +864,17 @@ namespace MonoTests.System.Net
 				Assert.AreEqual (typeof (NotSupportedException), inner.GetType (), "#7");
 				Assert.IsNull (inner.InnerException, "#8");
 				Assert.IsNotNull (inner.Message, "#9");
+			} finally {
+				if (File.Exists (tempFile))
+					File.Delete (tempFile);
 			}
 		}
 
 		[Test] // UploadFile (string, string)
 		public void UploadFile1_FileName_NotFound ()
 		{
-			string tempFile = Path.Combine (_tempFolder, "upload.tmp");
+			var tempPath = Path.GetTempPath ();
+			string tempFile = Path.Combine (tempPath, Path.GetRandomFileName ());
 
 			WebClient wc = new WebClient ();
 			try {
@@ -932,7 +920,7 @@ namespace MonoTests.System.Net
 		[Test] // UploadFile (Uri, string)
 		public void UploadFile2_Address_Null ()
 		{
-			string tempFile = Path.Combine (_tempFolder, "upload.tmp");
+			string tempFile = Path.GetRandomFileName ();
 
 			WebClient wc = new WebClient ();
 			try {
@@ -950,8 +938,7 @@ namespace MonoTests.System.Net
 		[Test] // UploadFile (Uri, string)
 		public void UploadFile2_Address_SchemeNotSupported ()
 		{
-			string tempFile = Path.Combine (_tempFolder, "upload.tmp");
-			File.Create (tempFile).Close ();
+			string tempFile = Path.GetTempFileName ();
 
 			WebClient wc = new WebClient ();
 			try {
@@ -971,13 +958,17 @@ namespace MonoTests.System.Net
 				Assert.AreEqual (typeof (NotSupportedException), inner.GetType (), "#7");
 				Assert.IsNull (inner.InnerException, "#8");
 				Assert.IsNotNull (inner.Message, "#9");
+			} finally {
+				if (File.Exists (tempFile))
+					File.Delete (tempFile);
 			}
 		}
 
 		[Test] // UploadFile (Uri, string)
 		public void UploadFile2_FileName_NotFound ()
 		{
-			string tempFile = Path.Combine (_tempFolder, "upload.tmp");
+			var tempPath = Path.GetTempPath ();
+			string tempFile = Path.Combine (tempPath, Path.GetRandomFileName ());
 
 			WebClient wc = new WebClient ();
 			try {
@@ -1023,8 +1014,7 @@ namespace MonoTests.System.Net
 		[Test] // UploadFile (string, string, string)
 		public void UploadFile3_Address_Null ()
 		{
-			string tempFile = Path.Combine (_tempFolder, "upload.tmp");
-			File.Create (tempFile).Close ();
+			string tempFile = Path.GetRandomFileName ();
 
 			WebClient wc = new WebClient ();
 			try {
@@ -1035,15 +1025,14 @@ namespace MonoTests.System.Net
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNotNull (ex.ParamName, "#5");
-				Assert.AreEqual ("path", ex.ParamName, "#6");
+				Assert.AreEqual ("address", ex.ParamName, "#6");
 			}
 		}
 
 		[Test] // UploadFile (string, string, string)
 		public void UploadFile3_Address_SchemeNotSupported ()
 		{
-			string tempFile = Path.Combine (_tempFolder, "upload.tmp");
-			File.Create (tempFile).Close ();
+			string tempFile = Path.GetTempFileName ();
 
 			WebClient wc = new WebClient ();
 			try {
@@ -1063,13 +1052,17 @@ namespace MonoTests.System.Net
 				Assert.AreEqual (typeof (NotSupportedException), inner.GetType (), "#7");
 				Assert.IsNull (inner.InnerException, "#8");
 				Assert.IsNotNull (inner.Message, "#9");
+			} finally {
+				if (File.Exists (tempFile))
+					File.Delete (tempFile);
 			}
 		}
 
 		[Test] // UploadFile (string, string, string)
 		public void UploadFile3_FileName_NotFound ()
 		{
-			string tempFile = Path.Combine (_tempFolder, "upload.tmp");
+			var tempPath = Path.GetTempPath ();
+			string tempFile = Path.Combine (tempPath, Path.GetRandomFileName ());
 
 			WebClient wc = new WebClient ();
 			try {
@@ -1115,7 +1108,7 @@ namespace MonoTests.System.Net
 		[Test] // UploadFile (Uri, string, string)
 		public void UploadFile4_Address_Null ()
 		{
-			string tempFile = Path.Combine (_tempFolder, "upload.tmp");
+			string tempFile = Path.GetRandomFileName ();
 
 			WebClient wc = new WebClient ();
 			try {
@@ -1133,8 +1126,7 @@ namespace MonoTests.System.Net
 		[Test] // UploadFile (Uri, string, string)
 		public void UploadFile4_Address_SchemeNotSupported ()
 		{
-			string tempFile = Path.Combine (_tempFolder, "upload.tmp");
-			File.Create (tempFile).Close ();
+			string tempFile = Path.GetTempFileName ();
 
 			WebClient wc = new WebClient ();
 			try {
@@ -1154,13 +1146,17 @@ namespace MonoTests.System.Net
 				Assert.AreEqual (typeof (NotSupportedException), inner.GetType (), "#7");
 				Assert.IsNull (inner.InnerException, "#8");
 				Assert.IsNotNull (inner.Message, "#9");
+			} finally {
+				if (File.Exists (tempFile))
+					File.Delete (tempFile);
 			}
 		}
 
 		[Test] // UploadFile (Uri, string, string)
 		public void UploadFile4_FileName_NotFound ()
 		{
-			string tempFile = Path.Combine (_tempFolder, "upload.tmp");
+			var tempPath = Path.GetTempPath ();
+			string tempFile = Path.Combine (tempPath, Path.GetRandomFileName ());
 
 			WebClient wc = new WebClient ();
 			try {
@@ -1431,7 +1427,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category ("AndroidNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
+		[Category ("MobileNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -1805,7 +1801,7 @@ namespace MonoTests.System.Net
 		}
 		 
 		[Test]
-		[Category ("AndroidNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
+		[Category ("MobileNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -1825,7 +1821,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category ("AndroidNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
+		[Category ("MobileNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -1844,7 +1840,7 @@ namespace MonoTests.System.Net
 		}
 		
 		[Test]
-		[Category ("AndroidNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
+		[Category ("MobileNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -1863,7 +1859,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category ("AndroidNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
+		[Category ("MobileNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -1871,8 +1867,7 @@ namespace MonoTests.System.Net
 		{
 			UploadAsyncCancelEventTest (9304,(webClient, uri, cancelEvent) =>
 			{
-				string tempFile = Path.Combine (_tempFolder, "upload.tmp");
-				File.Create (tempFile).Close ();
+				string tempFile = Path.GetTempFileName ();
 
 				webClient.UploadFileCompleted += (sender, args) =>
 				{
@@ -1885,7 +1880,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category ("AndroidNotWorking")] // Test suite hangs if the tests runs as part of the entire BCL suite. Works when only this fixture is ran
+		[Category ("MobileNotWorking")] // Test suite hangs if the tests runs as part of the entire BCL suite. Works when only this fixture is ran
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif

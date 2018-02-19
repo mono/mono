@@ -14,6 +14,7 @@ basic_SUBDIRS := \
 	Mono.Security \
 	System \
 	System.XML \
+	System.Security \
 	System.Core \
 	System.ComponentModel.Composition.4.5 \
 	System.Numerics \
@@ -31,8 +32,10 @@ build_SUBDIRS :=  \
 	Mono.Security \
 	System \
 	System.XML \
+	System.Security \
 	Mono.Posix \
 	System.Core \
+	System.Configuration \
 	System.ComponentModel.Composition.4.5 \
 	System.Numerics \
 	System.Xml.Linq \
@@ -57,8 +60,8 @@ mobile_common_dirs := \
 	Mono.Security \
 	System	\
 	System.Core	\
-	System.Security	\
 	System.XML	\
+	System.Security	\
 	I18N		\
 	System.ServiceModel.Internals	\
 	System.Runtime.Serialization	\
@@ -154,10 +157,11 @@ xammac_4_5_dirs := \
 	corlib	\
 	Mono.Security \
 	System	\
-	Mono.Posix			\
-	System.Core	\
+	System.XML			\
 	System.Security			\
-	System.XML	\
+	Mono.Posix	\
+	System.Core	\
+	System.Configuration	\
 	I18N		\
 	System.ServiceModel.Internals	\
 	SMDiagnostics	\
@@ -204,10 +208,10 @@ net_4_x_dirs := \
 	Mono.Security \
 	System				\
 	System.XML			\
+	System.Security			\
 	Mono.CompilerServices.SymbolWriter \
 	Mono.Posix			\
 	System.Core			\
-	System.Security			\
 	System.Configuration	\
 	System.Drawing			\
 	System.IO.Compression 		\
@@ -227,9 +231,9 @@ net_4_x_dirs := \
 	System.Web.ApplicationServices	\
 	Novell.Directory.Ldap		\
 	System.DirectoryServices	\
-	System.Web			\
-	System.Web.Services		\
 	System.Design			\
+	System.Web.Services		\
+	System.Web			\
 	System.Runtime.Remoting		\
 	System.Configuration.Install 	\
 	System.Management		\

@@ -37,6 +37,7 @@
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/object.h>
 #include <mono/metadata/appdomain-icalls.h>
+#include <mono/metadata/class-init.h>
 #include <mono/metadata/domain-internals.h>
 #include "mono/metadata/metadata-internals.h"
 #include <mono/metadata/assembly-internals.h>
@@ -234,7 +235,7 @@ create_domain_objects (MonoDomain *domain)
 	 * This class is used during exception handling, so initialize it here, to prevent
 	 * stack overflows while handling stack overflows.
 	 */
-	mono_class_init (mono_array_class_get (mono_defaults.int_class, 1));
+	mono_class_init (mono_class_create_array (mono_defaults.int_class, 1));
 }
 
 /**
@@ -1229,7 +1230,7 @@ mono_try_assembly_resolve_handle (MonoDomain *domain, MonoStringHandle fname, Mo
 
 	if (ret && !refonly && ret->ref_only) {
 		/* .NET Framework throws System.IO.FileNotFoundException in this case */
-		mono_error_set_file_not_found (error, "AssemblyResolveEvent handlers cannot return Assemblies loaded for reflection only");
+		mono_error_set_file_not_found (error, NULL, "AssemblyResolveEvent handlers cannot return Assemblies loaded for reflection only");
 		ret = NULL;
 		goto leave;
 	}
@@ -2171,9 +2172,9 @@ ves_icall_System_Reflection_Assembly_LoadFrom (MonoStringHandle fname, MonoBoole
 	
 	if (!ass) {
 		if (status == MONO_IMAGE_IMAGE_INVALID)
-			mono_error_set_bad_image_name (error, g_strdup (name), "");
+			mono_error_set_bad_image_by_name (error, name, "Invalid Image");
 		else
-			mono_error_set_assembly_load (error, g_strdup (name), "%s", "");
+			mono_error_set_file_not_found (error, name, "Invalid Image");
 		goto leave;
 	}
 
@@ -2213,7 +2214,7 @@ ves_icall_System_AppDomain_LoadAssemblyRaw (MonoAppDomainHandle ad,
 	MonoImage *image = mono_image_open_from_data_full (assembly_data, raw_assembly_len, FALSE, NULL, refonly);
 
 	if (!image) {
-		mono_error_set_bad_image_name (error, g_strdup (""), "%s", "");
+		mono_error_set_bad_image_by_name (error, "In memory assembly", "0x%p", raw_data);
 		return refass;
 	}
 
@@ -2230,7 +2231,7 @@ ves_icall_System_AppDomain_LoadAssemblyRaw (MonoAppDomainHandle ad,
 
 	if (!ass) {
 		mono_image_close (image);
-		mono_error_set_bad_image_name (error, g_strdup (""), "%s", "");
+		mono_error_set_bad_image_by_name (error, "In Memory assembly", "0x%p", assembly_data);
 		return refass; 
 	}
 

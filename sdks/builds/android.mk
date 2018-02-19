@@ -146,3 +146,199 @@ $(eval $(call AndroidTargetTemplate,x86,x86,i686-linux-android,i686-linux-androi
 android_x86_64_CFLAGS=-DL_cuserid=9
 android_x86_64_CXXFLAGS=-DL_cuserid=9
 $(eval $(call AndroidTargetTemplate,x86_64,x86_64,x86_64-linux-android,x86_64-linux-android))
+
+##
+# Parameters
+#  $(1): target
+#
+# Flags:
+#  android_$(1)_CFLAGS
+#  android_$(1)_CXXFLAGS
+#
+# Notes:
+#  XA doesn't seem to build differently for Darwin and Linux, seems like a bug on their end
+define AndroidHostTemplate
+
+_android_$(1)_AR=ar
+_android_$(1)_AS=as
+_android_$(1)_CC=cc
+_android_$(1)_CXX=c++
+_android_$(1)_CXXCPP=cpp
+_android_$(1)_LD=ld
+_android_$(1)_RANLIB=ranlib
+_android_$(1)_STRIP=strip
+
+_android_$(1)_CFLAGS= \
+	$(if $(filter $(RELEASE),true),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) \
+	$$(android_$(1)_CFLAGS)
+
+_android_$(1)_CXXFLAGS= \
+	$(if $(filter $(RELEASE),true),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) \
+	$$(android_$(1)_CXXFLAGS)
+
+_android_$(1)_CONFIGURE_ENVIRONMENT= \
+	AR="$$(_android_$(1)_AR)" \
+	AS="$$(_android_$(1)_AS)" \
+	CC="$$(_android_$(1)_CC)" \
+	CFLAGS="$$(_android_$(1)_CFLAGS)" \
+	CXX="$$(_android_$(1)_CXX)" \
+	CXXFLAGS="$$(_android_$(1)_CXXFLAGS)" \
+	CXXCPP="$$(_android_$(1)_CXXCPP)" \
+	LD="$$(_android_$(1)_LD)" \
+	RANLIB="$$(_android_$(1)_RANLIB)" \
+	STRIP="$$(_android_$(1)_STRIP)"
+
+_android_$(1)_CONFIGURE_FLAGS= \
+	--cache-file=$$(TOP)/sdks/builds/android-$(1)-$$(CONFIGURATION).config.cache \
+	--prefix=$$(TOP)/sdks/out/android-$(1)-$$(CONFIGURATION) \
+	--disable-boehm \
+	--disable-iconv \
+	--disable-mono-debugger \
+	--disable-nls \
+	--enable-dynamic-btls \
+	--enable-maintainer-mode \
+	--with-mcs-docs=no \
+	--with-monodroid \
+	--with-profile4_x=no \
+	--without-ikvm-native
+
+.stamp-android-$(1)-toolchain:
+	touch $$@
+
+.stamp-android-$(1)-$$(CONFIGURATION)-configure: $$(TOP)/configure .stamp-android-$(1)-toolchain
+	mkdir -p $$(TOP)/sdks/builds/android-$(1)-$$(CONFIGURATION)
+	cd $$(TOP)/sdks/builds/android-$(1)-$$(CONFIGURATION) && $$< $$(_android_$(1)_CONFIGURE_ENVIRONMENT) $$(_android_$(1)_CONFIGURE_FLAGS)
+	touch $$@
+
+.PHONY: .stamp-android-$(1)-configure
+.stamp-android-$(1)-configure: .stamp-android-$(1)-$$(CONFIGURATION)-configure
+
+.PHONY: build-custom-android-$(1)
+build-custom-android-$(1):
+	$$(MAKE) -C android-$(1)-$$(CONFIGURATION)
+
+.PHONY: setup-custom-android-$(1)
+setup-custom-android-$(1):
+	mkdir -p $$(TOP)/sdks/out/android-$(1)-$$(CONFIGURATION)
+
+.PHONY: package-android-$(1)-$$(CONFIGURATION)
+package-android-$(1)-$$(CONFIGURATION):
+	$$(MAKE) -C $$(TOP)/sdks/builds/android-$(1)-$$(CONFIGURATION)/mono install
+	$$(MAKE) -C $$(TOP)/sdks/builds/android-$(1)-$$(CONFIGURATION)/support install
+
+.PHONY: package-android-$(1)
+package-android-$(1):
+	$$(MAKE) package-android-$(1)-$$(CONFIGURATION)
+
+.PHONY: clean-android-$(1)-$$(CONFIGURATION)
+clean-android-$(1)-$$(CONFIGURATION):
+	rm -rf .stamp-android-$(1)-toolchain .stamp-android-$(1)-$$(CONFIGURATION)-configure $$(TOP)/sdks/builds/android-$(1)-$$(CONFIGURATION) $$(TOP)/sdks/builds/android-$(1)-$$(CONFIGURATION).config.cache $$(TOP)/sdks/out/android-$(1)-$$(CONFIGURATION)
+
+.PHONY: clean-android-$(1)
+clean-android-$(1):
+	$$(MAKE) clean-android-$(1)-$$(CONFIGURATION)
+
+TARGETS += android-$(1)
+
+endef
+
+android_host-Darwin_CFLAGS=-mmacosx-version-min=10.9
+$(eval $(call AndroidHostTemplate,host-Darwin))
+$(eval $(call AndroidHostTemplate,host-Linux))
+
+##
+# Parameters
+#  $(1): target
+#  $(2): arch
+#  $(3): mxe
+define AndroidHostMxeTemplate
+
+_android_$(1)_PATH=$$(TOP)/sdks/out/mxe-$(3)/bin
+
+_android_$(1)_AR=$$(TOP)/sdks/out/mxe-$(3)/bin/$(2)-w64-mingw32.static-ar
+_android_$(1)_AS=$$(TOP)/sdks/out/mxe-$(3)/bin/$(2)-w64-mingw32.static-as
+_android_$(1)_CC=$$(TOP)/sdks/out/mxe-$(3)/bin/$(2)-w64-mingw32.static-gcc
+_android_$(1)_CXX=$$(TOP)/sdks/out/mxe-$(3)/bin/$(2)-w64-mingw32.static-g++
+_android_$(1)_DLLTOOL=$$(TOP)/sdks/out/mxe-$(3)/bin/$(2)-w64-mingw32.static-dlltool
+_android_$(1)_LD=$$(TOP)/sdks/out/mxe-$(3)/bin/$(2)-w64-mingw32.static-ld
+_android_$(1)_OBJDUMP=$$(TOP)/sdks/out/mxe-$(3)/bin/$(2)-w64-mingw32.static-objdump
+_android_$(1)_RANLIB=$$(TOP)/sdks/out/mxe-$(3)/bin/$(2)-w64-mingw32.static-ranlib
+_android_$(1)_STRIP=$$(TOP)/sdks/out/mxe-$(3)/bin/$(2)-w64-mingw32.static-strip
+
+_android_$(1)_AC_VARS= \
+	ac_cv_header_zlib_h=no \
+	ac_cv_search_dlopen=no
+
+_android_$(1)_CFLAGS= \
+	$(if $(filter $(RELEASE),true),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) \
+	-DXAMARIN_PRODUCT_VERSION=0
+
+_android_$(1)_CXXFLAGS= \
+	$(if $(filter $(RELEASE),true),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) \
+	-DXAMARIN_PRODUCT_VERSION=0
+
+_android_$(1)_CONFIGURE_ENVIRONMENT= \
+	AR="$$(_android_$(1)_AR)" \
+	AS="$$(_android_$(1)_AS)" \
+	CC="$$(_android_$(1)_CC)" \
+	CFLAGS="$$(_android_$(1)_CFLAGS)" \
+	CXX="$$(_android_$(1)_CXX)" \
+	CXXFLAGS="$$(_android_$(1)_CXXFLAGS)" \
+	LD="$$(_android_$(1)_LD)" \
+	RANLIB="$$(_android_$(1)_RANLIB)" \
+	STRIP="$$(_android_$(1)_STRIP)"
+
+_android_$(1)_CONFIGURE_FLAGS= \
+	--host=$(2)-w64-mingw32.static \
+	--target=$(2)-w64-mingw32.static \
+	--cache-file=$$(TOP)/sdks/builds/android-$(1)-$$(CONFIGURATION).config.cache \
+	--prefix=$$(TOP)/sdks/out/android-$(1)-$$(CONFIGURATION) \
+	--disable-boehm \
+	--disable-llvm \
+	--disable-mcs-build \
+	--disable-nls \
+	--enable-maintainer-mode \
+	--with-monodroid
+
+.stamp-android-$(1)-toolchain:
+	touch $$@
+
+.stamp-android-$(1)-$$(CONFIGURATION)-configure: $$(TOP)/configure .stamp-android-$(1)-toolchain | package-mxe-$(3)
+	mkdir -p $$(TOP)/sdks/builds/android-$(1)-$$(CONFIGURATION)
+	cd $$(TOP)/sdks/builds/android-$(1)-$$(CONFIGURATION) && PATH="$$$$PATH:$$(_android_$(1)_PATH)" $$< $$(_android_$(1)_AC_VARS) $$(_android_$(1)_CONFIGURE_ENVIRONMENT) $$(_android_$(1)_CONFIGURE_FLAGS)
+	touch $$@
+
+.PHONY: .stamp-android-$(1)-configure
+.stamp-android-$(1)-configure: .stamp-android-$(1)-$$(CONFIGURATION)-configure
+
+.PHONY: build-custom-android-$(1)
+build-custom-android-$(1):
+	$$(MAKE) -C android-$(1)-$$(CONFIGURATION)
+
+.PHONY: setup-custom-android-$(1)
+setup-custom-android-$(1):
+	mkdir -p $$(TOP)/sdks/out/android-$(1)-$$(CONFIGURATION)
+
+.PHONY: package-android-$(1)-$$(CONFIGURATION)
+package-android-$(1)-$$(CONFIGURATION):
+	$$(MAKE) -C $$(TOP)/sdks/builds/android-$(1)-$$(CONFIGURATION)/mono install
+	$$(MAKE) -C $$(TOP)/sdks/builds/android-$(1)-$$(CONFIGURATION)/support install
+
+.PHONY: package-android-$(1)
+package-android-$(1):
+	$$(MAKE) package-android-$(1)-$$(CONFIGURATION)
+
+.PHONY: clean-android-$(1)-$$(CONFIGURATION)
+clean-android-$(1)-$$(CONFIGURATION):
+	rm -rf .stamp-android-$(1)-toolchain .stamp-android-$(1)-$$(CONFIGURATION)-configure $$(TOP)/sdks/builds/android-$(1)-$$(CONFIGURATION) $$(TOP)/sdks/builds/android-$(1)-$$(CONFIGURATION).config.cache $$(TOP)/sdks/out/android-$(1)-$$(CONFIGURATION)
+
+.PHONY: clean-android-$(1)
+clean-android-$(1):
+	$$(MAKE) clean-android-$(1)-$$(CONFIGURATION)
+
+TARGETS += android-$(1)
+
+endef
+
+$(eval $(call AndroidHostMxeTemplate,host-mxe-Win32,i686,Win32))
+$(eval $(call AndroidHostMxeTemplate,host-mxe-Win64,x86_64,Win64))

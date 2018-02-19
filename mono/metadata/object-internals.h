@@ -16,6 +16,7 @@
 #include "mono/utils/mono-compiler.h"
 #include "mono/utils/mono-error.h"
 #include "mono/utils/mono-error-internals.h"
+#include "mono/utils/mono-machine.h"
 #include "mono/utils/mono-stack-unwinding.h"
 #include "mono/utils/mono-tls.h"
 #include "mono/utils/mono-coop-mutex.h"
@@ -79,7 +80,7 @@
 #define mono_array_class_get_cached(eclass,rank) ({	\
 			static MonoClass *tmp_klass; \
 			if (!tmp_klass) { \
-				tmp_klass = mono_array_class_get ((eclass), (rank));	\
+				tmp_klass = mono_class_create_array ((eclass), (rank));	\
 				g_assert (tmp_klass); \
 			}; \
 			tmp_klass; })
@@ -94,7 +95,7 @@
 #else
 
 #define mono_class_get_field_from_name_cached(klass,name) mono_class_get_field_from_name ((klass), (name))
-#define mono_array_class_get_cached(eclass,rank) mono_array_class_get ((eclass), (rank))
+#define mono_array_class_get_cached(eclass,rank) mono_class_create_array ((eclass), (rank))
 #define mono_array_new_cached(domain, eclass, size, error) mono_array_new_checked ((domain), (eclass), (size), (error))
 
 #endif
@@ -122,8 +123,8 @@ struct _MonoArray {
 	MonoArrayBounds *bounds;
 	/* total number of elements of the array */
 	mono_array_size_t max_length; 
-	/* we use double to ensure proper alignment on platforms that need it */
-	double vector [MONO_ZERO_LEN_ARRAY];
+	/* we use mono_64bitaligned_t to ensure proper alignment on platforms that need it */
+	mono_64bitaligned_t vector [MONO_ZERO_LEN_ARRAY];
 };
 
 #define MONO_SIZEOF_MONO_ARRAY (sizeof (MonoArray) - MONO_ZERO_LEN_ARRAY * sizeof (double))
@@ -1621,8 +1622,14 @@ mono_nullable_init_from_handle (guint8 *buf, MonoObjectHandle value, MonoClass *
 MonoObject *
 mono_value_box_checked (MonoDomain *domain, MonoClass *klass, void* val, MonoError *error);
 
+MonoObjectHandle
+mono_value_box_handle (MonoDomain *domain, MonoClass *klass, gpointer val, MonoError *error);
+
 MonoObject*
-mono_nullable_box (guint8 *buf, MonoClass *klass, MonoError *error);
+mono_nullable_box (gpointer buf, MonoClass *klass, MonoError *error);
+
+MonoObjectHandle
+mono_nullable_box_handle (gpointer buf, MonoClass *klass, MonoError *error);
 
 #ifdef MONO_SMALL_CONFIG
 #define MONO_IMT_SIZE 9
@@ -1809,14 +1816,20 @@ mono_glist_to_array (GList *list, MonoClass *eclass, MonoError *error);
 MonoObject *
 mono_object_new_checked (MonoDomain *domain, MonoClass *klass, MonoError *error);
 
+MonoObjectHandle
+mono_object_new_handle (MonoDomain *domain, MonoClass *klass, MonoError *error);
+
 MonoObject*
 mono_object_new_mature (MonoVTable *vtable, MonoError *error);
 
-MonoObject*
-mono_object_new_fast_checked (MonoVTable *vtable, MonoError *error);
+MonoObjectHandle
+mono_object_new_handle_mature (MonoVTable *vtable, MonoError *error);
 
 MonoObject *
 mono_object_clone_checked (MonoObject *obj, MonoError *error);
+
+MonoObjectHandle
+mono_object_clone_handle (MonoObjectHandle obj, MonoError *error);
 
 MonoObject *
 mono_object_isinst_checked (MonoObject *obj, MonoClass *klass, MonoError *error);
@@ -1957,5 +1970,12 @@ ves_icall_ModuleBuilder_set_wrappers_type (MonoReflectionModuleBuilderHandle mod
 
 MonoAssembly*
 mono_try_assembly_resolve_handle (MonoDomain *domain, MonoStringHandle fname, MonoAssembly *requesting, gboolean refonly, MonoError *error);
+
+gboolean
+mono_runtime_object_init_handle (MonoObjectHandle this_obj, MonoError *error);
+
+/* GC write barriers support */
+void
+mono_gc_wbarrier_object_copy_handle (MonoObjectHandle obj, MonoObjectHandle src);
 
 #endif /* __MONO_OBJECT_INTERNALS_H__ */

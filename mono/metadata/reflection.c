@@ -19,6 +19,7 @@
 #include "mono/metadata/metadata-internals.h"
 #include <mono/metadata/profiler-private.h>
 #include "mono/metadata/class-internals.h"
+#include "mono/metadata/class-init.h"
 #include "mono/metadata/gc-internals.h"
 #include "mono/metadata/domain-internals.h"
 #include "mono/metadata/opcodes.h"
@@ -489,8 +490,11 @@ mono_type_get_object_checked (MonoDomain *domain, MonoType *type, MonoError *err
 	norm_type = mono_type_normalize (type);
 	if (norm_type != type) {
 		res = mono_type_get_object_checked (domain, norm_type, error);
-		if (!mono_error_ok (error))
+		if (!mono_error_ok (error)) {
+			mono_domain_unlock (domain);
+			mono_loader_unlock ();
 			return NULL;
+		}
 		mono_g_hash_table_insert (domain->type_hash, type, res);
 		mono_domain_unlock (domain);
 		mono_loader_unlock ();
@@ -527,8 +531,11 @@ mono_type_get_object_checked (MonoDomain *domain, MonoType *type, MonoError *err
 	}
 	/* This is stored in vtables/JITted code so it has to be pinned */
 	res = (MonoReflectionType *)mono_object_new_pinned (domain, mono_defaults.runtimetype_class, error);
-	if (!mono_error_ok (error))
+	if (!mono_error_ok (error)) {
+		mono_domain_unlock (domain);
+		mono_loader_unlock ();
 		return NULL;
+	}
 
 	res->type = type;
 	mono_g_hash_table_insert (domain->type_hash, type, res);
@@ -1984,11 +1991,11 @@ mono_reflection_get_type_internal (MonoImage *rootimage, MonoImage* image, MonoT
 			type = &klass->this_arg;
 			goto leave;
 		} else if (modval == -1) {
-			klass = mono_ptr_class_get (&klass->byval_arg);
+			klass = mono_class_create_ptr (&klass->byval_arg);
 		} else if (modval == -2) {
 			bounded = TRUE;
 		} else { /* array rank */
-			klass = mono_bounded_array_class_get (klass, modval, bounded);
+			klass = mono_class_create_bounded_array (klass, modval, bounded);
 		}
 	}
 
@@ -2422,7 +2429,7 @@ mono_class_bind_generic_parameters (MonoClass *klass, int type_argc, MonoType **
 	inst = mono_metadata_get_generic_inst (type_argc, types);
 	gclass = mono_metadata_lookup_generic_class (klass, inst, is_dynamic);
 
-	return mono_generic_class_get_class (gclass);
+	return mono_class_create_generic_inst (gclass);
 }
 
 static MonoGenericInst*

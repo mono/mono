@@ -19,30 +19,30 @@ The Mono project is part of the [.NET Foundation](http://www.dotnetfoundation.or
 
 | OS           | Architecture       | Status                       |
 |--------------|--------------------|------------------------------|
-| Ubuntu 14.04 | amd64              | [![ubuntu-1404-amd64][1]][2] |
-| Ubuntu 14.04 | i386               | [![ubuntu-1404-i386][3]][4]  |
-| Debian 8     | armel              | [![debian-8-armel][5]][6]    |
-| Debian 8     | armhf              | [![debian-8-armhf][7]][8]    |
-| Debian 8     | arm64              | [![debian-8-arm64][9]][10]   |
+| Debian 9     | amd64              | [![debian-9-amd64][1]][2]    |
+| Debian 9     | i386               | [![debian-9-i386][3]][4]     |
+| Debian 9     | armel              | [![debian-9-armel][5]][6]    |
+| Debian 9     | armhf              | [![debian-9-armhf][7]][8]    |
+| Debian 9     | arm64              | [![debian-9-arm64][9]][10]   |
 | OS X         | amd64              | [![osx-amd64][11]][12]       |
 | OS X         | i386               | [![osx-i386][13]][14]        |
 | Windows      | amd64              | [![windows-amd64][15]][16]   |
-| Windows      | i386               | [![windows-amd64][17]][18]   |
+| Windows      | i386               | [![windows-i386][17]][18]    |
 | CentOS       | s390x (cs)         | [![centos-s390x][19]][20]    |
 | Debian 8     | ppc64el (cs)       | [![debian-8-ppc64el][21]][22]|
 
 _(cs) = community supported architecture_
 
-[1]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=ubuntu-1404-amd64/badge/icon
-[2]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=ubuntu-1404-amd64
-[3]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=ubuntu-1404-i386/badge/icon
-[4]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=ubuntu-1404-i386/
-[5]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-8-armel/badge/icon
-[6]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-8-armel/
-[7]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-8-armhf/badge/icon
-[8]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-8-armhf/
-[9]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-8-arm64/badge/icon
-[10]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-8-arm64/
+[1]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-9-amd64/badge/icon
+[2]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-9-amd64
+[3]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-9-i386/badge/icon
+[4]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-9-i386/
+[5]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-9-armel/badge/icon
+[6]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-9-armel/
+[7]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-9-armhf/badge/icon
+[8]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-9-armhf/
+[9]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-9-arm64/badge/icon
+[10]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-9-arm64/
 [11]: https://jenkins.mono-project.com/job/test-mono-mainline/label=osx-amd64/badge/icon
 [12]: https://jenkins.mono-project.com/job/test-mono-mainline/label=osx-amd64/
 [13]: https://jenkins.mono-project.com/job/test-mono-mainline/label=osx-i386/badge/icon
@@ -541,7 +541,7 @@ file for information about Microsoft's patent grant.
 Mono Trademark Use Policy
 =========================
 
-The use of trademarks and logos for Mono can be found [here] (http://www.dotnetfoundation.org/legal/mono-tm). 
+The use of trademarks and logos for Mono can be found [here](http://www.dotnetfoundation.org/legal/mono-tm). 
 
 Maintaining the Class Library Solution Files
 ============================================

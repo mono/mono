@@ -18,7 +18,7 @@ if [[ ${CI_TAGS} == *'clang-sanitizer'* ]]; then
 	make_timeout=30m
 fi
 
-if [[ ${label} == w* ]]; then
+if [[ ${CI_TAGS} == *'win-'* ]]; then
     # Passing -ggdb3 on Cygwin breaks linking against libmonosgen-x.y.dll
     export CFLAGS="$CFLAGS -g -O2"
 else
@@ -35,10 +35,10 @@ if [[ $CI_TAGS == *'retry-flaky-tests'* ]]; then
     export MONO_FLAKY_TEST_RETRIES=5
 fi
 
-if [[ ${label} == 'osx-i386' ]]; then CFLAGS="$CFLAGS -m32 -arch i386"; LDFLAGS="$LDFLAGS -m32 -arch i386"; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib --host=i386-apple-darwin11.2.0 --build=i386-apple-darwin11.2.0"; fi
-if [[ ${label} == 'osx-amd64' ]]; then CFLAGS="$CFLAGS -m64 -arch x86_64"; LDFLAGS="$LDFLAGS -m64 -arch x86_64" EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib"; fi
-if [[ ${label} == 'w32' ]]; then PLATFORM=Win32; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --host=i686-w64-mingw32"; export MONO_EXECUTABLE="${MONO_REPO_ROOT}/msvc/build/sgen/Win32/bin/Release/mono-sgen.exe"; fi
-if [[ ${label} == 'w64' ]]; then PLATFORM=x64; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --host=x86_64-w64-mingw32 --disable-boehm"; export MONO_EXECUTABLE="${MONO_REPO_ROOT}/msvc/build/sgen/x64/bin/Release/mono-sgen.exe"; fi
+if [[ ${CI_TAGS} == *'osx-i386'* ]]; then CFLAGS="$CFLAGS -m32 -arch i386"; LDFLAGS="$LDFLAGS -m32 -arch i386"; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib --host=i386-apple-darwin11.2.0 --build=i386-apple-darwin11.2.0"; fi
+if [[ ${CI_TAGS} == *'osx-amd64'* ]]; then CFLAGS="$CFLAGS -m64 -arch x86_64"; LDFLAGS="$LDFLAGS -m64 -arch x86_64" EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib"; fi
+if [[ ${CI_TAGS} == *'win-i386'* ]]; then PLATFORM=Win32; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --host=i686-w64-mingw32"; export MONO_EXECUTABLE="${MONO_REPO_ROOT}/msvc/build/sgen/Win32/bin/Release/mono-sgen.exe"; fi
+if [[ ${CI_TAGS} == *'win-amd64'* ]]; then PLATFORM=x64; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --host=x86_64-w64-mingw32 --disable-boehm"; export MONO_EXECUTABLE="${MONO_REPO_ROOT}/msvc/build/sgen/x64/bin/Release/mono-sgen.exe"; fi
 
 if [[ ${CI_TAGS} == *'coop-gc'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-cooperative-gc=yes"; fi
 
@@ -57,19 +57,13 @@ elif [[ ${CI_TAGS} == *'winaot'* ]];             then EXTRA_CONF_FLAGS="${EXTRA_
 elif [[ ${CI_TAGS} == *'aot'* ]];                then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=aot";
 elif [[ ${CI_TAGS} == *'bitcode'* ]];            then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=bitcode";
 elif [[ ${CI_TAGS} == *'acceptance-tests'* ]];   then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --prefix=${MONO_REPO_ROOT}/tmp/mono-acceptance-tests --with-sgen-default-concurrent=yes";
-elif [[ ${label} != w* ]] && [[ ${label} != 'debian-8-ppc64el' ]] && [[ ${label} != 'centos-s390x' ]] && [[ ${CI_TAGS} != *'monolite'* ]];
-    then
-    # only enable the concurrent collector by default on main unix archs
-    EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-sgen-default-concurrent=yes"
-
-    if [[ ${label} == 'ubuntu-1404-amd64' ]]; then
-        # only enable build of the additional profiles on one architecture to save time
-        EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=all"
-        # when building profiles like monotouch/monodroid which don't build System.Drawing.dll in the Mono repo we need
-        # to build the facades against _something_ to satisfy the typeforwards. In CI we can cheat a little and pass
-        # them System.Drawing.dll from the 'build' profile since we don't test those profiles here (we just ensure they compile).
-        export EXTERNAL_FACADE_DRAWING_REFERENCE=${MONO_REPO_ROOT}/mcs/class/lib/build/System.Drawing.dll
-    fi
+elif [[ ${CI_TAGS} == *'all-profiles'* ]]; then
+    # only enable build of the additional profiles on one config to save time
+    EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=all"
+    # when building profiles like monotouch/monodroid which don't build System.Drawing.dll in the Mono repo we need
+    # to build the facades against _something_ to satisfy the typeforwards. In CI we can cheat a little and pass
+    # them System.Drawing.dll from the 'build' profile since we don't test those profiles here (we just ensure they compile).
+    export EXTERNAL_FACADE_DRAWING_REFERENCE=${MONO_REPO_ROOT}/mcs/class/lib/build/System.Drawing.dll
 fi
 
 if [ -x "/usr/bin/dpkg-architecture" ];
@@ -80,7 +74,7 @@ if [ -x "/usr/bin/dpkg-architecture" ];
 	wget -qO- https://download.mono-project.com/test/new-certs.tgz| tar zx -C ~/.config/.mono/
 fi
 
-if [[ ${CI_TAGS} == 'product-sdks' ]];
+if [[ ${CI_TAGS} == *'product-sdks-ios'* ]];
    then
 	   echo "DISABLE_ANDROID=1" > sdks/Make.config
 	   ${TESTCMD} --label=runtimes --timeout=60m --fatal make -j4 -C sdks/builds package-ios-sim64 package-ios-target64
@@ -90,11 +84,17 @@ if [[ ${CI_TAGS} == 'product-sdks' ]];
 	   ${TESTCMD} --label=run-sim --timeout=20m make -C sdks/ios run-ios-sim-all
 	   ${TESTCMD} --label=build-ios-dev --timeout=60m make -C sdks/ios build-ios-dev-all
 	   ${TESTCMD} --label=build-ios-dev-llvm --timeout=60m make -C sdks/ios build-ios-dev-llvm-all
-	   tar cvzf mono-product-sdk-$GIT_COMMIT.tar.gz -C sdks/out/ bcl llvm64 llvm32 ios-cross32 ios-cross64
+	   ${TESTCMD} --label=package --timeout=60m tar cvzf mono-product-sdk-$GIT_COMMIT.tar.gz -C sdks/out/ bcl ios-llvm64 ios-llvm32 ios-cross32 ios-cross64
 	   exit 0
 fi
 
-if [[ ${CI_TAGS} == '*webassembly*' ]];
+if [[ ${CI_TAGS} == *'product-sdks-android'* ]];
+   then
+        ${TESTCMD} --label=runtimes --timeout=120m --fatal make -j4 -C sdks/builds package-android-{armeabi,armeabi-v7a,arme64-v8a,x86,x86_64} package-android-host-{Darwin,Linux,mxe-{Win32,Win64}} package-bcl
+        exit 0
+fi
+
+if [[ ${CI_TAGS} == *'webassembly'* ]];
    then
 	   echo "DISABLE_ANDROID=1" > sdks/Make.config
 	   echo "DISABLE_IOS=1" >> sdks/Make.config
@@ -115,12 +115,12 @@ if [[ ${CI_TAGS} != *'mac-sdk'* ]]; # Mac SDK builds Mono itself
 	then
 	${TESTCMD} --label=configure --timeout=60m --fatal ./autogen.sh $EXTRA_CONF_FLAGS
 fi
-if [[ ${label} == 'w32' ]];
+if [[ ${CI_TAGS} == *'win-i386'* ]];
     then
 	# only build boehm on w32 (only windows platform supporting boehm).
     ${TESTCMD} --label=make-msvc --timeout=60m --fatal /cygdrive/c/Program\ Files\ \(x86\)/MSBuild/14.0/Bin/MSBuild.exe /p:PlatformToolset=v140 /p:Platform=${PLATFORM} /p:Configuration=Release /p:MONO_TARGET_GC=boehm msvc/mono.sln
 fi
-if [[ ${label} == w* ]];
+if [[ ${CI_TAGS} == *'win-'* ]];
     then
     ${TESTCMD} --label=make-msvc-sgen --timeout=60m --fatal /cygdrive/c/Program\ Files\ \(x86\)/MSBuild/14.0/Bin/MSBuild.exe /p:PlatformToolset=v140 /p:Platform=${PLATFORM} /p:Configuration=Release /p:MONO_TARGET_GC=sgen msvc/mono.sln
 fi
@@ -136,7 +136,7 @@ fi
 if [[ ${CI_TAGS} == *'monolite'* ]]; then make get-monolite-latest; fi
 
 make_parallelism=-j4
-if [[ ${label} == 'debian-8-ppc64el' ]]; then make_parallelism=-j1; fi
+if [[ ${CI_TAGS} == *'linux-ppc64el'* ]]; then make_parallelism=-j1; fi
 
 if [[ ${CI_TAGS} != *'mac-sdk'* ]]; # Mac SDK builds Mono itself
 	then

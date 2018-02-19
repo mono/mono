@@ -51,7 +51,15 @@ Mono_Posix_ToStatvfs (void *_from, struct Mono_Posix_Statvfs *to)
 	to->f_files   = from->f_files;
 	to->f_ffree   = from->f_ffree;
 	to->f_favail  = from->f_favail;
+	/*
+         * On AIX with -D_ALL_SOURCE, fsid_t is a struct
+         * See: github.com/python/cpython/pull/4972
+         */
+#if defined(_AIX) && defined(_ALL_SOURCE)
+	to->f_fsid    = from->f_fsid.val[0];
+#else
 	to->f_fsid    = from->f_fsid;
+#endif
 	to->f_namemax =	from->f_namemax;
 
 	if (Mono_Posix_ToMountFlags (from->f_flag, &to->f_flag) != 0)
@@ -74,7 +82,11 @@ Mono_Posix_FromStatvfs (struct Mono_Posix_Statvfs *from, void *_to)
 	to->f_files   = from->f_files;
 	to->f_ffree   = from->f_ffree;
 	to->f_favail  = from->f_favail;
+#if defined(_AIX) && defined(_ALL_SOURCE)
+	to->f_fsid.val[0] = from->f_fsid;
+#else
 	to->f_fsid    = from->f_fsid;
+#endif
 	to->f_namemax =	from->f_namemax;
 
 	if (Mono_Posix_FromMountFlags (from->f_flag, &flag) != 0)

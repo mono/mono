@@ -56,8 +56,6 @@ static gboolean optimize_for_xen = TRUE;
 #define optimize_for_xen 0
 #endif
 
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
-
 #define IS_IMM32(val) ((((guint64)val) >> 32) == 0)
 
 #define IS_REX(inst) (((inst) >= 0x40) && ((inst) <= 0x4f))
@@ -8403,7 +8401,7 @@ mono_arch_get_seq_point_info (MonoDomain *domain, guint8 *code)
 	mono_domain_unlock (domain);
 
 	if (!info) {
-		ji = mono_jit_info_table_find (domain, (char*)code);
+		ji = mono_jit_info_table_find (domain, code);
 		g_assert (ji);
 
 		// FIXME: Optimize the size

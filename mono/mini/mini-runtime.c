@@ -181,7 +181,7 @@ get_method_from_ip (void *ip)
 	if (!domain)
 		domain = mono_get_root_domain ();
 
-	ji = mono_jit_info_table_find_internal (domain, (char *)ip, TRUE, TRUE);
+	ji = mono_jit_info_table_find_internal (domain, ip, TRUE, TRUE);
 	if (!ji) {
 		user_data.ip = ip;
 		user_data.method = NULL;
@@ -1554,13 +1554,9 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 	case MONO_PATCH_INFO_INTERRUPTION_REQUEST_FLAG:
 		target = mono_thread_interruption_request_flag ();
 		break;
-	case MONO_PATCH_INFO_METHOD_RGCTX: {
-		MonoVTable *vtable = mono_class_vtable_checked (domain, patch_info->data.method->klass, error);
-		mono_error_assert_ok (error);
-
-		target = mono_method_lookup_rgctx (vtable, mini_method_get_context (patch_info->data.method)->method_inst);
+	case MONO_PATCH_INFO_METHOD_RGCTX:
+		target = mini_method_get_rgctx (patch_info->data.method);
 		break;
-	}
 	case MONO_PATCH_INFO_RGCTX_SLOT_INDEX: {
 		int slot = mini_get_rgctx_entry_slot (patch_info->data.rgctx_entry);
 
@@ -2079,7 +2075,7 @@ lookup_start:
 
 		mono_class_init (method->klass);
 
-		if ((code = mono_aot_get_method_checked (domain, method, error))) {
+		if ((code = mono_aot_get_method (domain, method, error))) {
 			MonoVTable *vtable;
 
 			if (mono_gc_is_critical_method (method)) {
@@ -3001,7 +2997,7 @@ MONO_SIG_HANDLER_FUNC (, mono_sigfpe_signal_handler)
 	MONO_SIG_HANDLER_INFO_TYPE *info = MONO_SIG_HANDLER_GET_INFO ();
 	MONO_SIG_HANDLER_GET_CONTEXT;
 
-	ji = mono_jit_info_table_find_internal (mono_domain_get (), (char *)mono_arch_ip_from_context (ctx), TRUE, TRUE);
+	ji = mono_jit_info_table_find_internal (mono_domain_get (), mono_arch_ip_from_context (ctx), TRUE, TRUE);
 
 	MONO_ENTER_GC_UNSAFE_UNBALANCED;
 
@@ -3100,7 +3096,7 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 	}
 #endif
 
-	ji = mono_jit_info_table_find_internal (mono_domain_get (), (char *)mono_arch_ip_from_context (ctx), TRUE, TRUE);
+	ji = mono_jit_info_table_find_internal (mono_domain_get (), mono_arch_ip_from_context (ctx), TRUE, TRUE);
 
 #ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
 	if (mono_handle_soft_stack_ovf (jit_tls, ji, ctx, info, (guint8*)info->si_addr))
@@ -3502,14 +3498,12 @@ mini_get_debug_options (void)
 static gpointer
 mini_create_ftnptr (MonoDomain *domain, gpointer addr)
 {
-#if (!defined(__ppc64__) && !defined(__powerpc64__) || _CALL_ELF == 2)
-	return addr;
-#else
+#if defined(PPC_USES_FUNCTION_DESCRIPTOR)
 	gpointer* desc = NULL;
 
 	if ((desc = g_hash_table_lookup (domain->ftnptrs_hash, addr)))
 		return desc;
-#	if defined(__ppc64__) || defined(__powerpc64__)
+#	if defined(__ppc64__) || defined(__powerpc64__) || defined(_ARCH_PPC64)
 
 	desc = mono_domain_alloc0 (domain, 3 * sizeof (gpointer));
 
@@ -3519,13 +3513,15 @@ mini_create_ftnptr (MonoDomain *domain, gpointer addr)
 #	endif
 	g_hash_table_insert (domain->ftnptrs_hash, addr, desc);
 	return desc;
+#else
+	return addr;
 #endif
 }
 
 static gpointer
 mini_get_addr_from_ftnptr (gpointer descr)
 {
-#if ((defined(__ppc64__) || defined(__powerpc64__)) && _CALL_ELF != 2)
+#if ((defined(__ppc64__) || defined(__powerpc64__) || defined(_ARCH_PPC64)) && _CALL_ELF != 2)
 	return *(gpointer*)descr;
 #else
 	return descr;
@@ -3697,6 +3693,10 @@ mini_free_jit_domain_info (MonoDomain *domain)
 	g_hash_table_destroy (info->delegate_trampoline_hash);
 	if (info->static_rgctx_trampoline_hash)
 		g_hash_table_destroy (info->static_rgctx_trampoline_hash);
+	if (info->mrgctx_hash)
+		g_hash_table_destroy (info->mrgctx_hash);
+	if (info->method_rgctx_hash)
+		g_hash_table_destroy (info->method_rgctx_hash);
 	g_hash_table_destroy (info->llvm_vcall_trampoline_hash);
 	mono_conc_hashtable_destroy (info->runtime_invoke_hash);
 	g_hash_table_destroy (info->seq_points);

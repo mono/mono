@@ -9,7 +9,7 @@ LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)/Facades
 
 LIBRARY = System.IO.Compression.ZipFile.dll
 
-KEYFILE = ../../msfinal.pub
+KEYFILE = ../../ecma.pub
 SIGN_FLAGS = /delaysign /nowarn:1616,1699
 LIB_REFS = System System.IO.Compression.FileSystem
 LIB_MCS_FLAGS = $(SIGN_FLAGS)

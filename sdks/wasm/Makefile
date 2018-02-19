@@ -50,7 +50,7 @@ TEST_MCS_DEPS = $(patsubst %,-r:%, $(TEST_DEPS))
 
 .stamp-v8: .stamp-depot-tools
 	PATH=$(TOP)/sdks/wasm/depot_tools:$$PATH fetch v8
-	cd v8 && tools/dev/v8gen.py x64.release
+	cd v8 && tools/dev/v8gen.py -vv x64.release
 	cd v8 && $(TOP)/sdks/wasm/depot_tools/ninja -C out.gn/x64.release
 	touch $@
 
@@ -71,9 +71,11 @@ managed/:
 $(patsubst %,managed/%,$(BCL_ASSEMBLIES)): managed/%: $(WASM_BCL_DIR)/% | managed/
 	cp $< $@
 
+$(TOP)/mcs/class/lib/wasm/nunitlite.dll: FORCE
+	$(MAKE) -C $(TOP)/mcs/tools/nunit-lite PROFILE=wasm
+
 #FIXME change BCL sdk build to include nunitlite.dll in out/bcl/wasm/
 managed/nunitlite.dll: $(TOP)/mcs/class/lib/wasm/nunitlite.dll | managed/
-	$(MAKE) -C $(TOP)/mcs/tools/nunit-lite PROFILE=wasm
 	cp $< $@
 
 managed/main.exe: $(TEST_DEPS) $(APP_SOURCES) | managed/
@@ -122,7 +124,7 @@ package: build
 	cp test.js tmp/
 	cp main.cs tmp/
 	cp library_mono.js tmp/
-	zip -r9 mono-wasm-$(shell git rev-parse --short HEAD).zip tmp/
+	(cd tmp;  zip -r9 ../mono-wasm-$(shell git rev-parse --short HEAD).zip .)
 	rm -rf tmp
 
 FORCE:

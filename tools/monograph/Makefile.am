@@ -7,7 +7,7 @@ if DISABLE_EXECUTABLES
 runtime_lib=$(top_builddir)/mono/mini/$(LIBMONO_LA) $(static_libs)
 else
 static_libs=	\
-	$(top_builddir)/mono/metadata/libmonoruntimesgen-static.la	\
+	$(top_builddir)/mono/metadata/libmonoruntimesgen.la	\
 	$(top_builddir)/mono/utils/libmonoutils.la \
 	$(GLIB_LIBS) $(LIBICONV) \
 	$(LIBGC_STATIC_LIBS)

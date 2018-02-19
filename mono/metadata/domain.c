@@ -32,6 +32,7 @@
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/domain-internals.h>
 #include <mono/metadata/class-internals.h>
+#include <mono/metadata/class-init.h>
 #include <mono/metadata/debug-internals.h>
 #include <mono/metadata/assembly-internals.h>
 #include <mono/metadata/exception.h>
@@ -122,9 +123,6 @@ get_runtimes_from_exe (const char *exe_file, MonoImage **exe_image, const MonoRu
 
 static const MonoRuntimeInfo*
 get_runtime_by_version (const char *version);
-
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
-#define ALIGN_PTR_TO(ptr,align) (gpointer)((((gssize)(ptr)) + (align - 1)) & (~(align - 1)))
 
 static LockFreeMempool*
 lock_free_mempool_new (void)
@@ -440,8 +438,6 @@ mono_domain_create (void)
 	mono_os_mutex_init_recursive (&domain->assemblies_lock);
 	mono_os_mutex_init_recursive (&domain->jit_code_hash_lock);
 	mono_os_mutex_init_recursive (&domain->finalizable_objects_hash_lock);
-
-	domain->method_rgctx_hash = NULL;
 
 	mono_appdomains_lock ();
 	domain_id_alloc (domain);
@@ -1205,10 +1201,6 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 
 	g_hash_table_destroy (domain->finalizable_objects_hash);
 	domain->finalizable_objects_hash = NULL;
-	if (domain->method_rgctx_hash) {
-		g_hash_table_destroy (domain->method_rgctx_hash);
-		domain->method_rgctx_hash = NULL;
-	}
 	if (domain->generic_virtual_cases) {
 		g_hash_table_destroy (domain->generic_virtual_cases);
 		domain->generic_virtual_cases = NULL;

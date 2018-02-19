@@ -24,6 +24,7 @@
 #include "metadata/exception.h"
 #include "metadata/appdomain.h"
 #include "metadata/reflection-internals.h"
+#include "mono/metadata/class-init.h"
 #include "mono/metadata/debug-helpers.h"
 #include "mono/metadata/threads.h"
 #include "mono/metadata/monitor.h"
@@ -1983,8 +1984,6 @@ cominterop_get_ccw_checked (MonoObject* object, MonoClass* itf, MonoError *error
 	MonoCCW *ccw = NULL;
 	MonoCCWInterface* ccw_entry = NULL;
 	gpointer *vtable = NULL;
-	static gpointer iunknown[3] = {NULL, NULL, NULL};
-	static gpointer idispatch[4] = {NULL, NULL, NULL, NULL};
 	MonoClass* iface = NULL;
 	MonoClass* klass = NULL;
 	EmitMarshalContext m;
@@ -2017,19 +2016,6 @@ cominterop_get_ccw_checked (MonoObject* object, MonoClass* itf, MonoError *error
 			break;
 		}
 		ccw_list_item = g_list_next(ccw_list_item);
-	}
-
-	if (!iunknown [0]) {
-		iunknown [0] = cominterop_ccw_queryinterface;
-		iunknown [1] = cominterop_ccw_addref;
-		iunknown [2] = cominterop_ccw_release;
-	}
-
-	if (!idispatch [0]) {
-		idispatch [0] = cominterop_ccw_get_type_info_count;
-		idispatch [1] = cominterop_ccw_get_type_info;
-		idispatch [2] = cominterop_ccw_get_ids_of_names;
-		idispatch [3] = cominterop_ccw_invoke;
 	}
 
 	if (!ccw) {
@@ -2087,9 +2073,15 @@ cominterop_get_ccw_checked (MonoObject* object, MonoClass* itf, MonoError *error
 	if (!ccw_entry) {
 		int vtable_index = method_count-1+start_slot;
 		vtable = (void **)mono_image_alloc0 (klass->image, sizeof (gpointer)*(method_count+start_slot));
-		memcpy (vtable, iunknown, sizeof (iunknown));
-		if (start_slot == 7)
-			memcpy (vtable+3, idispatch, sizeof (idispatch));
+		vtable [0] = (gpointer)cominterop_ccw_queryinterface;
+		vtable [1] = (gpointer)cominterop_ccw_addref;
+		vtable [2] = (gpointer)cominterop_ccw_release;
+		if (start_slot == 7) {
+			vtable [3] = (gpointer)cominterop_ccw_get_type_info_count;
+			vtable [4] = (gpointer)cominterop_ccw_get_type_info;
+			vtable [5] = (gpointer)cominterop_ccw_get_ids_of_names;
+			vtable [6] = (gpointer)cominterop_ccw_invoke;
+		}
 
 		iface = itf;
 		for (i = mono_class_get_method_count (iface) - 1; i >= 0; i--) {
@@ -3316,7 +3308,7 @@ mono_marshal_safearray_begin (gpointer safearray, MonoArray **result, gpointer *
 			}
 
 			if (allocateNewArray) {
-				aklass = mono_bounded_array_class_get (mono_defaults.object_class, dim, bounded);
+				aklass = mono_class_create_bounded_array (mono_defaults.object_class, dim, bounded);
 				*result = mono_array_new_full_checked (mono_domain_get (), aklass, sizes, bounds, error);
 				if (mono_error_set_pending_exception (error))
 					return FALSE;

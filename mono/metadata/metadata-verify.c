@@ -9,6 +9,7 @@
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 #include <config.h>
+#include <mono/metadata/exception-internals.h>
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/verify.h>
 #include <mono/metadata/verify-internals.h>
@@ -21,6 +22,7 @@
 #include <mono/metadata/metadata.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/class-internals.h>
+#include <mono/metadata/class-init.h>
 #include <mono/metadata/tokentype.h>
 #include <mono/metadata/security-manager.h>
 #include <mono/metadata/security-core-clr.h>
@@ -2034,7 +2036,7 @@ is_valid_cattr_content (VerifyContext *ctx, MonoMethod *ctor, const char *ptr, g
 			} else
 				FAIL (ctx, g_strdup_printf ("CustomAttribute: Invalid array element type %x", etype));
 
-			type = &mono_array_class_get (klass, 1)->byval_arg;
+			type = &mono_class_create_array (klass, 1)->byval_arg;
 		} else {
 			FAIL (ctx, g_strdup_printf ("CustomAttribute: Invalid named parameter type %x", kind));
 		}

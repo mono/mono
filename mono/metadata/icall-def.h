@@ -180,11 +180,11 @@ HANDLES(ICALL(INTCFGHOST_1, "get_bundled_app_config", ves_icall_System_Configura
 HANDLES(ICALL(INTCFGHOST_2, "get_bundled_machine_config", ves_icall_System_Configuration_InternalConfigurationHost_get_bundled_machine_config))
 
 ICALL_TYPE(CONSOLE, "System.ConsoleDriver", CONSOLE_1)
-ICALL(CONSOLE_1, "InternalKeyAvailable", ves_icall_System_ConsoleDriver_InternalKeyAvailable )
-ICALL(CONSOLE_2, "Isatty", ves_icall_System_ConsoleDriver_Isatty )
-ICALL(CONSOLE_3, "SetBreak", ves_icall_System_ConsoleDriver_SetBreak )
-ICALL(CONSOLE_4, "SetEcho", ves_icall_System_ConsoleDriver_SetEcho )
-ICALL(CONSOLE_5, "TtySetup", ves_icall_System_ConsoleDriver_TtySetup )
+HANDLES(ICALL(CONSOLE_1, "InternalKeyAvailable", ves_icall_System_ConsoleDriver_InternalKeyAvailable))
+HANDLES(ICALL(CONSOLE_2, "Isatty", ves_icall_System_ConsoleDriver_Isatty))
+HANDLES(ICALL(CONSOLE_3, "SetBreak", ves_icall_System_ConsoleDriver_SetBreak))
+HANDLES(ICALL(CONSOLE_4, "SetEcho", ves_icall_System_ConsoleDriver_SetEcho))
+HANDLES(ICALL(CONSOLE_5, "TtySetup", ves_icall_System_ConsoleDriver_TtySetup))
 
 ICALL_TYPE(DTIME, "System.DateTime", DTIME_1)
 ICALL(DTIME_1, "GetSystemTimeAsFileTime", mono_100ns_datetime)
@@ -932,8 +932,8 @@ ICALL(SEMA_3, "ReleaseSemaphore_internal(intptr,int,int&)", ves_icall_System_Thr
 
 ICALL_TYPE(THREAD, "System.Threading.Thread", THREAD_1)
 ICALL(THREAD_1, "Abort_internal(System.Threading.InternalThread,object)", ves_icall_System_Threading_Thread_Abort)
-ICALL(THREAD_1a, "ByteArrayToCurrentDomain(byte[])", ves_icall_System_Threading_Thread_ByteArrayToCurrentDomain)
-ICALL(THREAD_1b, "ByteArrayToRootDomain(byte[])", ves_icall_System_Threading_Thread_ByteArrayToRootDomain)
+HANDLES(ICALL(THREAD_1a, "ByteArrayToCurrentDomain(byte[])", ves_icall_System_Threading_Thread_ByteArrayToCurrentDomain))
+HANDLES(ICALL(THREAD_1b, "ByteArrayToRootDomain(byte[])", ves_icall_System_Threading_Thread_ByteArrayToRootDomain))
 HANDLES(ICALL(THREAD_2, "ClrState(System.Threading.InternalThread,System.Threading.ThreadState)", ves_icall_System_Threading_Thread_ClrState))
 ICALL(THREAD_2a, "ConstructInternalThread", ves_icall_System_Threading_Thread_ConstructInternalThread)
 ICALL(THREAD_55, "GetAbortExceptionState", ves_icall_System_Threading_Thread_GetAbortExceptionState)
