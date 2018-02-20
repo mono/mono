@@ -3704,18 +3704,18 @@ ves_icall_System_Enum_get_underlying_type (MonoReflectionType *type)
 }
 
 ICALL_EXPORT int
-ves_icall_System_Enum_compare_value_to (MonoObject *eobj, MonoObject *other)
+ves_icall_System_Enum_compare_value_to (MonoObjectHandle enumHandle, MonoObjectHandle otherHandle, MonoError *error)
 {
-	gpointer tdata = (char *)eobj + sizeof (MonoObject);
-	gpointer odata = (char *)other + sizeof (MonoObject);
-	MonoType *basetype = mono_class_enum_basetype (eobj->vtable->klass);
-	g_assert (basetype);
-
-	if (other == NULL)
+	if (MONO_HANDLE_IS_NULL (otherHandle))
 		return 1;
 
-	if (eobj->vtable->klass != other->vtable->klass)
+	if (MONO_HANDLE_GETVAL (enumHandle, vtable)->klass != MONO_HANDLE_GETVAL (otherHandle, vtable)->klass)
 		return 2;
+
+	gpointer tdata = mono_handle_unbox_unsafe (enumHandle);
+	gpointer odata = mono_handle_unbox_unsafe (otherHandle);
+	MonoType *basetype = mono_class_enum_basetype (MONO_HANDLE_GETVAL (enumHandle, vtable)->klass);
+	g_assert (basetype);
 
 #define COMPARE_ENUM_VALUES(ENUM_TYPE) do { \
 		ENUM_TYPE me = *((ENUM_TYPE*)tdata); \
@@ -3743,11 +3743,9 @@ ves_icall_System_Enum_compare_value_to (MonoObject *eobj, MonoObject *other)
 			COMPARE_ENUM_VALUES (guint64);
 		case MONO_TYPE_I8:
 			COMPARE_ENUM_VALUES (gint64);
-		default:
-			break;
 	}
 #undef COMPARE_ENUM_VALUES
-	/* indicates that the enum was of an unsupported unerlying type */
+	/* indicates that the enum was of an unsupported underlying type */
 	return 3;
 }
 
