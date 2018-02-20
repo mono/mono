@@ -199,6 +199,7 @@ System.Diagnostics/EventSourceCreationDataTest.cs
 System.Diagnostics/FileVersionInfoTest.cs
 System.Diagnostics/PerformanceCounterPermissionAttributeTest.cs
 System.Diagnostics/PerformanceCounterPermissionTest.cs
+System.Diagnostics/PerformanceCounterTest.cs
 System.Diagnostics/ProcessStartInfoTest.cs
 System.Diagnostics/ProcessTest.cs
 System.Diagnostics/CounterCreationDataTest.cs
