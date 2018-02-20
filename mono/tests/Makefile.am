@@ -1051,7 +1051,6 @@ INTERP_DISABLED_TESTS = \
 	threadpool-exceptions4.exe \
 	threadpool-exceptions5.exe \
 	typeload-unaligned.exe \
-	weak-fields.exe \
 	vararg.exe \
 	vararg2.exe \
 	vararg3.exe	\
