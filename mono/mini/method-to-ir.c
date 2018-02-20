@@ -9549,8 +9549,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			ins->dreg = alloc_dreg ((cfg), (MonoStackType)(ins)->type);
 
 			/* Use the immediate opcodes if possible */
-			if ((sp [1]->opcode == OP_ICONST) && mono_arch_is_inst_imm (sp [1]->inst_c0)) {
-				int imm_opcode = mono_op_to_op_imm_noemul (ins->opcode);
+			int imm_opcode = mono_op_to_op_imm_noemul (ins->opcode);
+
+			if ((sp [1]->opcode == OP_ICONST) && mono_arch_is_inst_imm (ins->opcode, imm_opcode, sp [1]->inst_c0)) {
 				if (imm_opcode != -1) {
 					ins->opcode = imm_opcode;
 					ins->inst_p1 = (gpointer)(gssize)(sp [1]->inst_c0);
@@ -9576,7 +9577,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		case CEE_XOR:
 		case CEE_SHL:
 		case CEE_SHR:
-		case CEE_SHR_UN:
+		case CEE_SHR_UN: {
 			CHECK_STACK (2);
 
 			MONO_INST_NEW (cfg, ins, (*ip));
@@ -9588,11 +9589,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			add_widen_op (cfg, ins, &sp [0], &sp [1]);
 			ins->dreg = alloc_dreg ((cfg), (MonoStackType)(ins)->type);
 
-			/* FIXME: Pass opcode to is_inst_imm */
-
 			/* Use the immediate opcodes if possible */
-			if (((sp [1]->opcode == OP_ICONST) || (sp [1]->opcode == OP_I8CONST)) && mono_arch_is_inst_imm (sp [1]->opcode == OP_ICONST ? sp [1]->inst_c0 : sp [1]->inst_l)) {
-				int imm_opcode = mono_op_to_op_imm_noemul (ins->opcode);
+			int imm_opcode = mono_op_to_op_imm_noemul (ins->opcode);
+
+			if (((sp [1]->opcode == OP_ICONST) || (sp [1]->opcode == OP_I8CONST)) &&
+			    mono_arch_is_inst_imm (ins->opcode, imm_opcode, sp [1]->opcode == OP_ICONST ? sp [1]->inst_c0 : sp [1]->inst_l)) {
 				if (imm_opcode != -1) {
 					ins->opcode = imm_opcode;
 					if (sp [1]->opcode == OP_I8CONST) {
@@ -9617,6 +9618,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			*sp++ = mono_decompose_opcode (cfg, ins);
 			ip++;
 			break;
+		}
 		case CEE_NEG:
 		case CEE_NOT:
 		case CEE_CONV_I1:
