@@ -45,7 +45,8 @@ TEST_MCS_DEPS = $(patsubst %,-r:%, $(TEST_DEPS))
 
 
 .stamp-depot-tools:
-	git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git depot_tools
+	rm -rf $(TOP)/sdks/wasm/depot_tools
+	git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git $(TOP)/sdks/wasm/depot_tools
 	touch $@
 
 .stamp-v8: .stamp-depot-tools
