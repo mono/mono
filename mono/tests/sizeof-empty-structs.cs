@@ -50,26 +50,6 @@ class Program {
 
         if (actualSize != expected)
             exitCode += 1;
-
-        /*
-
-        var tempArray = new T[2];
-        var pin = GCHandle.Alloc(tempArray, GCHandleType.Pinned);
-
-        var offsetZero = (byte*)Marshal.UnsafeAddrOfPinnedArrayElement(tempArray, 0);
-        var offsetOne = (byte*)Marshal.UnsafeAddrOfPinnedArrayElement(tempArray, 1);
-        var distanceBetweenElements = offsetOne - offsetZero;
-
-        pin.Free();
-
-        Console.WriteLine($"{t.Name} (arr[1] - arr[0]) == {distanceBetweenElements}, expected {expected}");
-
-        if (distanceBetweenElements != expected)
-            exitCode += 1;
-
-        // We would sanity-check NumParamBytes here, but it's not implemented so it doesn't matter :)
-
-        */
     }
 
     // https://bugzilla.xamarin.com/show_bug.cgi?id=18941
