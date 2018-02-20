@@ -3611,30 +3611,31 @@ write_enum_value (char *mem, int type, guint64 value)
 	return;
 }
 
-ICALL_EXPORT MonoObject *
-ves_icall_System_Enum_ToObject (MonoReflectionType *enumType, guint64 value)
+ICALL_EXPORT MonoObjectHandle
+ves_icall_System_Enum_ToObject (MonoReflectionTypeHandle enumType, guint64 value, MonoError *error)
 {
-	ERROR_DECL (error);
 	MonoDomain *domain; 
 	MonoClass *enumc;
-	MonoObject *res;
+	MonoObjectHandle resultHandle;
 	MonoType *etype;
 
-	domain = mono_object_domain (enumType); 
-	enumc = mono_class_from_mono_type (enumType->type);
+	domain = MONO_HANDLE_DOMAIN (enumType);
+	enumc = mono_class_from_mono_type (MONO_HANDLE_GETVAL (enumType, type));
 
 	mono_class_init_checked (enumc, error);
-	if (mono_error_set_pending_exception (error))
-		return NULL;
+	goto_if_nok (error, return_null);
 
 	etype = mono_class_enum_basetype (enumc);
 
-	res = mono_object_new_checked (domain, enumc, error);
-	if (mono_error_set_pending_exception (error))
-		return NULL;
-	write_enum_value ((char *)res + sizeof (MonoObject), etype->type, value);
+	resultHandle = mono_object_new_handle (domain, enumc, error);
+	goto_if_nok (error, return_null);
 
-	return res;
+	write_enum_value (mono_handle_unbox_unsafe (resultHandle), etype->type, value);
+
+	return resultHandle;
+
+return_null:
+	return MONO_HANDLE_NEW (MonoObject, NULL);
 }
 
 ICALL_EXPORT MonoBoolean
