@@ -3035,9 +3035,6 @@ init_backend (MonoBackend *backend)
 #if defined(__mono_ilp32__)
 	backend->ilp32 = 1;
 #endif
-#ifdef MONO_ARCH_HAVE_DUMMY_INIT
-	backend->have_dummy_init = 1;
-#endif
 #ifdef MONO_ARCH_NEED_DIV_CHECK
 	backend->need_div_check = 1;
 #endif

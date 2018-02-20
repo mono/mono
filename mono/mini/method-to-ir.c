@@ -7307,7 +7307,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	 * (OP_DUMMY_ICONST etc.) which generate no code. These are only supported
 	 * on some platforms.
 	 */
-	if ((cfg->opt & MONO_OPT_UNSAFE) && cfg->backend->have_dummy_init)
+	if (cfg->opt & MONO_OPT_UNSAFE)
 		init_locals = header->init_locals;
 	else
 		init_locals = TRUE;

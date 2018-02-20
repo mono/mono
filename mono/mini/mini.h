@@ -1089,7 +1089,6 @@ typedef struct {
 	guint            have_generalized_imt_trampoline : 1;
 	guint            have_liverange_ops: 1;
 	guint            have_op_tail_call : 1;
-	guint            have_dummy_init : 1;
 	guint            gshared_supported : 1;
 	guint            use_fpstack : 1;
 	guint            ilp32 : 1;
