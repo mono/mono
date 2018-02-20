@@ -3750,10 +3750,10 @@ ves_icall_System_Enum_compare_value_to (MonoObjectHandle enumHandle, MonoObjectH
 }
 
 ICALL_EXPORT int
-ves_icall_System_Enum_get_hashcode (MonoObject *eobj)
+ves_icall_System_Enum_get_hashcode (MonoObjectHandle enumHandle, MonoError *error)
 {
-	gpointer data = (char *)eobj + sizeof (MonoObject);
-	MonoType *basetype = mono_class_enum_basetype (eobj->vtable->klass);
+	gpointer data = mono_handle_unbox_unsafe (enumHandle);
+	MonoType *basetype = mono_class_enum_basetype (MONO_HANDLE_GETVAL (enumHandle, vtable)->klass);
 	g_assert (basetype);
 
 	switch (basetype->type) {
