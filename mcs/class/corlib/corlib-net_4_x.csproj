@@ -60,6 +60,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\Dictionary.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\IDictionaryDebugView.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\KeyValuePair.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Diagnostics\StackTraceHiddenAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Memory.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\MemoryDebugView.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ReadOnlyMemory.cs" />
@@ -136,7 +137,6 @@
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\Interop\Windows\Interop.Libraries.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\Interop\Windows\Kernel32\Interop.FormatMessage.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Diagnostics\Debug.cs" />
-    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Diagnostics\StackTraceHiddenAttribute.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\IO\Win32Marshal.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Threading\DeferredDisposableLifetime.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\Internal\Runtime\Augments\AsyncCausalityTracer.cs" />
@@ -666,6 +666,7 @@
     <Compile Include="..\referencesource\mscorlib\system\runtime\interopservices\windowsruntime\irestrictederrorinfo.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\interopservices\windowsruntime\windowsruntimemarshal.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\NgenServicingAttributes.cs" />
+    <Compile Include="..\referencesource\mscorlib\system\runtime\ProfileOptimization.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\remoting\callcontext.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\serialization\deserializationeventhandler.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\serialization\formatter.cs" />
