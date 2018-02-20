@@ -1087,7 +1087,6 @@ typedef struct {
 	guint            emulate_long_shift_opts : 1;
 	guint            have_objc_get_selector : 1;
 	guint            have_generalized_imt_trampoline : 1;
-	guint            have_liverange_ops: 1;
 	guint            have_op_tail_call : 1;
 	guint            gshared_supported : 1;
 	guint            use_fpstack : 1;

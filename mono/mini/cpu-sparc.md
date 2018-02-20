@@ -320,4 +320,6 @@ vcall2: len:40 clob:c
 vcall2_reg: src1:i len:64 clob:c
 vcall2_membase: src1:b len:64 clob:c
 
+liverange_start: len:0
+liverange_end: len:0
 gc_safe_point: len:0

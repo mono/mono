@@ -14163,7 +14163,7 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 	 * Emit LIVERANGE_START/LIVERANGE_END opcodes, the backend will implement them
 	 * by storing the current native offset into MonoMethodVar->live_range_start/end.
 	 */
-	if (cfg->backend->have_liverange_ops && cfg->compute_precise_live_ranges && cfg->comp_done & MONO_COMP_LIVENESS) {
+	if (cfg->compute_precise_live_ranges && cfg->comp_done & MONO_COMP_LIVENESS) {
 		for (i = 0; i < cfg->num_varinfo; ++i) {
 			int vreg = MONO_VARINFO (cfg, i)->vreg;
 			MonoInst *ins;

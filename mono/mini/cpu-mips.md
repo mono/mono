@@ -458,4 +458,6 @@ mips_cond_exc_ino: src1:i src2:i len:44
 mips_cond_exc_ic: src1:i src2:i len:44
 mips_cond_exc_inc: src1:i src2:i len:44
 
+liverange_start: len:0
+liverange_end: len:0
 gc_safe_point: len:0

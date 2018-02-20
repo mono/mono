@@ -6011,6 +6011,18 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ins->backend.pc_offset = code - cfg->native_code;
 			bb->spill_slot_defs = g_slist_prepend_mempool (cfg->mempool, bb->spill_slot_defs, ins);
 			break;
+		case OP_LIVERANGE_START: {
+			if (cfg->verbose_level > 1)
+				printf ("R%d START=0x%x\n", MONO_VARINFO (cfg, ins->inst_c0)->vreg, (int)(code - cfg->native_code));
+			MONO_VARINFO (cfg, ins->inst_c0)->live_range_start = code - cfg->native_code;
+			break;
+		}
+		case OP_LIVERANGE_END: {
+			if (cfg->verbose_level > 1)
+				printf ("R%d END=0x%x\n", MONO_VARINFO (cfg, ins->inst_c0)->vreg, (int)(code - cfg->native_code));
+			MONO_VARINFO (cfg, ins->inst_c0)->live_range_end = code - cfg->native_code;
+			break;
+		}
 		case OP_GC_SAFE_POINT: {
 			guint8 *buf [1];
 

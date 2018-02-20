@@ -329,4 +329,6 @@ jump_table: dest:i len:8
 atomic_add_i4: src1:b src2:i dest:i len:28
 atomic_cas_i4: src1:b src2:i src3:i dest:i len:38
 
+liverange_start: len:0
+liverange_end: len:0
 gc_safe_point: len:0
