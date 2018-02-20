@@ -1252,6 +1252,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/resources/ultimateresourcefallbacklocation.cs
 
 ../referencesource/mscorlib/system/runtime/NgenServicingAttributes.cs
+../referencesource/mscorlib/system/runtime/ProfileOptimization.cs
 
 ../referencesource/mscorlib/system/runtime/exceptionservices/corruptingexceptioncommon.cs
 ../referencesource/mscorlib/system/runtime/exceptionservices/exceptionnotification.cs
