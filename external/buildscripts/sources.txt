@@ -540,23 +540,8 @@ support/libm/math_private.h
 ####################
 #mono mini files
 ####################
-mono/mini/aot-runtime.h
-mono/mini/cfgdump.h
 mono/mini/debugger-agent.c
 mono/mini/debugger-agent.h
 mono/mini/il2cpp-c-types.h
 mono/mini/il2cpp-compat.h
 mono/mini/il2cpp-stubs.cpp
-mono/mini/jit.h
-mono/mini/mini-amd64.h
-mono/mini/mini-arch.h
-mono/mini/mini-ops.h
-mono/mini/mini-runtime.h
-mono/mini/mini-unwind.h
-mono/mini/mini-x86.h
-mono/mini/mini.h
-mono/mini/optflags-def.h
-mono/mini/patch-info.h
-mono/mini/regalloc.h
-mono/mini/seq-points.h
-mono/mini/interp/interp.h
