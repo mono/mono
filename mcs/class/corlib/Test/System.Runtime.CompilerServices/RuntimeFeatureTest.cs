@@ -64,6 +64,10 @@ namespace MonoTests.System.Runtime.CompilerServices
                     field.Name,
                     RuntimeFeature.IsSupported ((string)value)
                 );
+
+            if (features.Count() == 0)
+                Assert.Inconclusive ("No features found, this can happen when running the linker.");
+
             CollectionAssert.AreEquivalent (ExpectedFeatures, features.ToDictionary (k => k.Key, v => v.Value));
         }
     }
