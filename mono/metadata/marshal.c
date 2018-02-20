@@ -11156,6 +11156,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_SizeOf (MonoReflectionTypeHandl
 	MonoClass *klass;
 	MonoType *type;
 	guint32 layout;
+	gint32 align, result;
 
 	error_init (error);
 
@@ -11180,7 +11181,8 @@ ves_icall_System_Runtime_InteropServices_Marshal_SizeOf (MonoReflectionTypeHandl
 		return 0;
 	}
 
-	return mono_class_native_size (klass, NULL);
+	result = mono_marshal_type_size (type, NULL, &align, FALSE, klass->unicode);
+	return (guint32)result;
 }
 
 void
