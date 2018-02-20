@@ -28,6 +28,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Linq;
 
@@ -36,9 +37,21 @@ namespace MonoTests.System.Runtime.CompilerServices
     [TestFixture]
     public class RuntimeFeatureTest
     {
-        readonly (string, bool)[] ExpectedFeatures = new [] {
-            ("PortablePdb", true)
+        readonly Dictionary<string, bool> ExpectedFeatures = new Dictionary<string, bool> {
+            {"PortablePdb", true}
         };
+
+        [Test]
+        public void PortablePdbSupported ()
+        {
+            Assert.IsTrue (RuntimeFeature.IsSupported (RuntimeFeature.PortablePdb));
+        }
+
+        [Test]
+        public void NonExistingFeatureNotSupported ()
+        {
+            Assert.IsFalse (RuntimeFeature.IsSupported ("foo"));
+        }
 
         [Test]
         public void NoNewFeaturesAdded ()
@@ -47,11 +60,11 @@ namespace MonoTests.System.Runtime.CompilerServices
             var features = from field in t.GetFields()
                 where field.FieldType == typeof (string)
                 let value = field.GetValue (null)
-                select (
+                select new KeyValuePair<string, bool> (
                     field.Name,
                     RuntimeFeature.IsSupported ((string)value)
                 );
-            Assert.AreEqual (ExpectedFeatures, features.ToArray ());
+            CollectionAssert.AreEquivalent (ExpectedFeatures, features.ToDictionary (k => k.Key, v => v.Value));
         }
     }
 }
