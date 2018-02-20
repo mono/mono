@@ -3471,6 +3471,100 @@ get_anonymous_container_for_image (MonoImage *image, gboolean is_mvar)
 	return result;
 }
 
+#define FAST_GPARAM_CACHE_SIZE 16
+
+static MonoGenericParam*
+lookup_anon_gparam (MonoImage *image, MonoGenericContainer *container, gint32 param_num, gboolean is_mvar)
+{
+	if (param_num >= 0 && param_num < FAST_GPARAM_CACHE_SIZE) {
+		MonoGenericParam *cache = is_mvar ? image->mvar_gparam_cache_fast : image->var_gparam_cache_fast;
+		if (!cache)
+			return NULL;
+		return &cache[param_num];
+	} else {
+		MonoGenericParam key = { .owner = container, .num = param_num, .gshared_constraint = NULL };
+		MonoConcurrentHashTable *cache = is_mvar ? image->mvar_gparam_cache : image->var_gparam_cache;
+		if (!cache)
+			return NULL;
+		return mono_conc_hashtable_lookup (cache, &key);
+	}
+}
+
+static MonoGenericParam*
+publish_anon_gparam_fast (MonoImage *image, MonoGenericContainer *container, gint32 param_num)
+{
+	g_assert (param_num >= 0 && param_num < FAST_GPARAM_CACHE_SIZE);
+	MonoGenericParam **cache = container->is_method ? &image->mvar_gparam_cache_fast : &image->var_gparam_cache_fast;
+	if (!*cache) {
+		mono_image_lock (image);
+		if (!*cache) {
+			*cache = mono_image_alloc0 (image, sizeof (MonoGenericParam) * FAST_GPARAM_CACHE_SIZE);
+			for (gint32 i = 0; i < FAST_GPARAM_CACHE_SIZE; ++i) {
+				MonoGenericParam *param = &(*cache)[i];
+				param->owner = container;
+				param->num = i;
+			}
+		}
+		mono_image_unlock (image);
+	}
+	return &(*cache)[param_num];
+}
+
+/*
+ * publish_anon_gparam_slow:
+ *
+ * Publish \p gparam anonymous generic parameter to the anon gparam cache for \p image.
+ *
+ * LOCKING: takes the image lock.
+ */
+static MonoGenericParam*
+publish_anon_gparam_slow (MonoImage *image, MonoGenericParam *gparam)
+{
+	MonoConcurrentHashTable **cache = gparam->owner->is_method ? &image->mvar_gparam_cache : &image->var_gparam_cache;
+	if (!*cache) {
+		mono_image_lock (image);
+		if (!*cache) {
+			*cache = mono_conc_hashtable_new ((GHashFunc)mono_metadata_generic_param_hash,
+							  (GEqualFunc) mono_metadata_generic_param_equal);
+		}
+		mono_image_unlock (image);
+	}
+	MonoGenericParam *other = mono_conc_hashtable_insert (*cache, gparam, gparam);
+	// If another thread published first return their param, otherwise return ours.
+	return other ? other : gparam;
+}
+
+/**
+ * mono_metadata_create_anon_gparam:
+ * \param image the MonoImage that owns the anonymous generic parameter
+ * \param param_num the parameter number
+ * \param is_mvar TRUE if this is a method generic parameter, FALSE if it's a class generic parameter.
+ *
+ * Returns: a new, or exisisting \c MonoGenericParam for an anonymous generic parameter with the given properties.
+ *
+ * LOCKING: takes the image lock.
+ */
+MonoGenericParam*
+mono_metadata_create_anon_gparam (MonoImage *image, gint32 param_num, gboolean is_mvar)
+{
+	MonoGenericContainer *container = get_anonymous_container_for_image (image, is_mvar);
+	MonoGenericParam *gparam = lookup_anon_gparam (image, container, param_num, is_mvar);
+	if (gparam)
+		return gparam;
+	if (param_num >= 0 && param_num < FAST_GPARAM_CACHE_SIZE) {
+		return publish_anon_gparam_fast (image, container, param_num);
+	} else {
+		// Create a candidate generic param and try to insert it in the cache.
+		// If multiple threads both try to publish the same param, all but one
+		// will leak, but that's okay.
+		gparam = mono_image_alloc0 (image, sizeof (MonoGenericParam));
+		gparam->owner = container;
+		gparam->num = param_num;
+
+		return publish_anon_gparam_slow (image, gparam);
+	}
+}
+
 /*
  * mono_metadata_parse_generic_param:
  * @generic_container: Our MonoClass's or MonoMethod's MonoGenericContainer;
@@ -3502,14 +3596,7 @@ mono_metadata_parse_generic_param (MonoImage *m, MonoGenericContainer *generic_c
 				g_error ("Cerating generic param object with invalid MonoType"); // This is not a generic param
 		}
 
-		/* Create dummy MonoGenericParam */
-		MonoGenericParam *param;
-
-		param = (MonoGenericParam *)mono_image_alloc0 (m, sizeof (MonoGenericParam));
-		param->num = index;
-		param->owner = get_anonymous_container_for_image (m, is_mvar);
-
-		return param;
+		return mono_metadata_create_anon_gparam (m, index, is_mvar);
 	}
 
 	if (index >= generic_container->type_argc) {

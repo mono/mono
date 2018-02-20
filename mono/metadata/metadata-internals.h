@@ -394,6 +394,13 @@ struct _MonoImage {
 	MonoClass **mvar_cache_fast;
 	GHashTable *var_cache_slow;
 	GHashTable *mvar_cache_slow;
+	/* Pre-allocated anon generic params for the first N generic
+	 * parameters, for a small N */
+	MonoGenericParam *var_gparam_cache_fast;
+	MonoGenericParam *mvar_gparam_cache_fast;
+	/* Anon generic parameters past N, if needed */
+	MonoConcurrentHashTable *var_gparam_cache;
+	MonoConcurrentHashTable *mvar_gparam_cache;
 	GHashTable *var_cache_constrained;
 	GHashTable *mvar_cache_constrained;
 
@@ -844,6 +851,9 @@ mono_assembly_fill_assembly_name_full (MonoImage *image, MonoAssemblyName *aname
 
 
 MONO_API guint32 mono_metadata_get_generic_param_row (MonoImage *image, guint32 token, guint32 *owner);
+
+MonoGenericParam*
+mono_metadata_create_anon_gparam (MonoImage *image, gint32 param_num, gboolean is_mvar);
 
 void mono_unload_interface_ids (MonoBitSet *bitset);
 
