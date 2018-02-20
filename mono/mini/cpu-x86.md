@@ -334,7 +334,6 @@ hard_nop: len:1
 # Linear IR opcodes
 nop: len:0
 dummy_use: src1:i len:0
-dummy_store: len:0
 dummy_iconst: dest:i len:0
 dummy_r8const: dest:f len:0
 not_reached: len:0

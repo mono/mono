@@ -220,7 +220,6 @@ bigmul_un: len:12 dest:l src1:i src2:i
 
 # Linear IR opcodes
 dummy_use: src1:i len:0
-dummy_store: len:0
 not_reached: len:0
 not_null: src1:i len:0
 
