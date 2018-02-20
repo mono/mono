@@ -11879,6 +11879,7 @@ gint32
 mono_marshal_type_size (MonoType *type, MonoMarshalSpec *mspec, guint32 *align,
 			gboolean as_field, gboolean unicode)
 {
+	gint32 padded_size;
 	MonoMarshalNative native_type = mono_type_to_unmanaged (type, mspec, as_field, unicode, NULL);
 	MonoClass *klass;
 
@@ -11936,7 +11937,10 @@ mono_marshal_type_size (MonoType *type, MonoMarshalSpec *mspec, guint32 *align,
 		*align = 16;
 		return 16;
 		}
-		return mono_class_native_size (klass, align);
+		padded_size = mono_class_native_size (klass, align);
+		if (padded_size == 0)
+			padded_size = 1;
+		return padded_size;
 	case MONO_NATIVE_BYVALTSTR: {
 		int esize = unicode ? 2: 1;
 		g_assert (mspec);

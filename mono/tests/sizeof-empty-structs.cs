@@ -51,6 +51,8 @@ class Program {
         if (actualSize != expected)
             exitCode += 1;
 
+        /*
+
         var tempArray = new T[2];
         var pin = GCHandle.Alloc(tempArray, GCHandleType.Pinned);
 
@@ -66,6 +68,8 @@ class Program {
             exitCode += 1;
 
         // We would sanity-check NumParamBytes here, but it's not implemented so it doesn't matter :)
+
+        */
     }
 
     // https://bugzilla.xamarin.com/show_bug.cgi?id=18941
@@ -80,6 +84,7 @@ class Program {
         CheckSize<EmptyExplicitPackStruct>(1, ref exitCode);
         CheckSize<EmptyExplicitSize0Struct>(1, ref exitCode);
         CheckSize<EmptyExplicitSize1Struct>(1, ref exitCode);
+        CheckSize<TestOffsets>(19, ref exitCode);
 
         Console.WriteLine("--");
 
