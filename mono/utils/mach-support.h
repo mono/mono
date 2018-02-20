@@ -17,6 +17,8 @@
 #include <mach/thread_act.h>
 #include <mach/thread_status.h>
 
+G_BEGIN_DECLS
+
 #define MONO_MACH_ARCH_SUPPORTED 1
 #if defined(__arm__)
 typedef _STRUCT_MCONTEXT *mcontext_t;
@@ -46,6 +48,8 @@ kern_return_t mono_mach_arch_get_thread_states (thread_port_t thread, thread_sta
 kern_return_t mono_mach_arch_set_thread_states (thread_port_t thread, thread_state_t state, mach_msg_type_number_t count, thread_state_t fpstate, mach_msg_type_number_t fpcount);
 void *mono_mach_arch_get_tls_value_from_thread (pthread_t thread, guint32 key);
 void *mono_mach_get_tls_address_from_thread (pthread_t thread, pthread_key_t key);
+
+G_END_DECLS
 
 #endif
 #endif /* __MONO_MACH_SUPPORT_H__ */

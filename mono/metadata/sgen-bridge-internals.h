@@ -19,6 +19,8 @@
 #include "mono/sgen/sgen-gc.h"
 #include "mono/metadata/sgen-bridge.h"
 
+MONO_BEGIN_DECLS
+
 extern volatile gboolean bridge_processing_in_progress;
 extern MonoGCBridgeCallbacks bridge_callbacks;
 
@@ -72,6 +74,8 @@ void sgen_tarjan_bridge_init (SgenBridgeProcessor *collector);
 void sgen_set_bridge_implementation (const char *name);
 void sgen_bridge_set_dump_prefix (const char *prefix);
 void sgen_init_bridge (void);
+
+MONO_END_DECLS
 
 #endif
 

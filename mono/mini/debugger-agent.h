@@ -8,6 +8,8 @@
 #include "mini.h"
 #include <mono/utils/mono-stack-unwinding.h>
 
+MONO_BEGIN_DECLS
+
 MONO_API void
 mono_debugger_agent_parse_options (char *options);
 
@@ -55,5 +57,7 @@ mono_debugger_agent_debug_log_is_enabled (void);
 
 MONO_API gboolean
 mono_debugger_agent_transport_handshake (void);
+
+MONO_END_DECLS
 
 #endif

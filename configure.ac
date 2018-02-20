@@ -691,7 +691,8 @@ AC_ARG_ENABLE(visibility-hidden,
 
 WARN=''
 if test x"$GCC" = xyes; then
-        WARN='-Wall -Wunused -Wmissing-prototypes -Wmissing-declarations -Wstrict-prototypes  -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wno-cast-qual -Wwrite-strings -Wno-switch -Wno-switch-enum -Wno-unused-value -Wno-attributes -Wno-format-zero-length'
+		WARN='-Wall -Wunused -Wmissing-declarations -Wpointer-arith -Wno-cast-qual -Wwrite-strings -Wno-switch -Wno-switch-enum -Wno-unused-value -Wno-attributes'
+		CFLAGS="$CFLAGS -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wno-format-zero-length"
 
 		# We require C99 with some GNU extensions, e.g. `linux` macro
 		CFLAGS="$CFLAGS -std=gnu99"
@@ -979,6 +980,42 @@ AC_SUBST(JEMALLOC_CPPFLAGS)
 AC_SUBST(JEMALLOC_LDFLAGS)
 AC_SUBST(JEMALLOC_AUTOCONF_FLAGS)
 fi
+
+AC_ARG_ENABLE(cplusplus, [  --enable-cplusplus   compile some code as C++])
+
+# C++11 helps with coop handles but we can do without it.
+# -fno-exceptions reduces/removes C++ runtime dependency on some platforms (Linux).
+# FIXME -fno-exceptions should be redundant with some undetermined source code changes.
+# i.e. most functions do not reference C++ runtime. Fix any that do.
+if test "x$enable_cplusplus" = "xyes"; then
+	CPLUSPLUS_ADD_CFLAGS=' -xc++ -std=gnu++98 -fno-exceptions -fno-rtti '
+	# -std=gnu99 -xc++ is not allowed and errors.
+	CPLUSPLUS_REMOVE_CFLAGS=-std=gnu99
+	# These give warnings and should be removed. They are C-only.
+	CPLUSPLUS_REMOVE_CFLAGS="$CPLUSPLUS_REMOVE_CFLAGS -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs"
+	# Likewise with CentOS 6 gcc 4.4.
+	CPLUSPLUS_REMOVE_CFLAGS="$CPLUSPLUS_REMOVE_CFLAGS -Werror-implicit-function-declaration"
+
+	# The C-only-ness of -Wno-format-zero-length varies with gcc version.
+	# It is C-only prior to 4.7. Using it with C++ prior to 4.7
+	# generates a warning every time we run gcc which is very unsightly.
+	# The warning is for e.g. sprintf(foo, "") which can just be
+	# foo[0] = 0 but Mono's use is more elaborate, not as easy to "fix",
+	# and completely legal and valid.
+	# We have to switch to C++ and not just use -xc++ because of -std=gnu99 (error when combined with -xc++).
+	# Alternatively, just run $CXX -xc++ -c /dev/null.
+	AC_LANG_PUSH(C++)
+	ORIG_CXXFLAGS=$CXXFLAGS
+	CXXFLAGS="$CXXFLAGS -Werror -Wno-format-zero-length -xc++ "
+	AC_MSG_CHECKING(or C-only-ness of -Wno-format-zero-length)
+	AC_TRY_COMPILE([ ], [ ], [ AC_MSG_RESULT(yes) ],
+				 [ AC_MSG_RESULT(no)
+				   CPLUSPLUS_REMOVE_CFLAGS="$CPLUSPLUS_REMOVE_CFLAGS -Wno-format-zero-length" ])
+	CXXFLAGS=$ORIG_CXXFLAGS
+	AC_LANG_POP(C++)
+fi
+AC_SUBST(CPLUSPLUS_ADD_CFLAGS)
+AC_SUBST(CPLUSPLUS_REMOVE_CFLAGS)
 
 #
 # Set the build profiles and options before things which use them

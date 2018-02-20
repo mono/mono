@@ -107,6 +107,9 @@ register_icall (gpointer func, const char *name, const char *sigstr, gboolean sa
 	mono_register_jit_icall (func, name, sig, save);
 }
 
+#define register_icall(func, name, sigstr, save) \
+	(register_icall ((gpointer)(func), (name), (sigstr), (save)))
+
 static inline void
 remoting_lock (void)
 {
@@ -2020,9 +2023,11 @@ mono_marshal_xdomain_copy_value_handle (MonoObjectHandle val, MonoError *error)
 	if (MONO_HANDLE_IS_NULL (val))
 		goto leave;
 
-	MonoDomain *domain = mono_domain_get ();
+	MonoDomain *domain;
+	domain = mono_domain_get ();
 
-	MonoClass *klass = mono_handle_class (val);
+	MonoClass *klass;
+	klass = mono_handle_class (val);
 
 	switch (klass->byval_arg.type) {
 	case MONO_TYPE_VOID:

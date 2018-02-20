@@ -133,6 +133,7 @@ monoutils_sources = \
 	mono-threads-posix-signals.c	\
 	mono-threads-mach.c	\
 	mono-threads-mach-helper.c	\
+	mono-threads-mach-helper.h	\
 	mono-threads-windows.c	\
 	mono-threads-linux.c	\
 	mono-threads-freebsd.c	\
@@ -262,6 +263,8 @@ else
 arch_sources += mono-hwcap-cross.c
 
 endif
+
+CFLAGS := $(filter-out @CPLUSPLUS_REMOVE_CFLAGS@, @CFLAGS@) @CPLUSPLUS_ADD_CFLAGS@
 
 libmonoutils_la_SOURCES = $(monoutils_sources) $(arch_sources)
 libmonoutils_la_CFLAGS = $(JEMALLOC_CFLAGS)

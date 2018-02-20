@@ -2506,7 +2506,7 @@ scan_card_table_for_block (MSBlockInfo *block, CardTableScanType scan_type, Scan
 #ifndef SGEN_HAVE_OVERLAPPING_CARDS
 	guint8 *cards_copy = alloca (sizeof (guint8) * CARDS_PER_BLOCK);
 #endif
-	guint8 *cards_preclean = alloca (sizeof (guint8) * CARDS_PER_BLOCK);
+	guint8 *cards_preclean = (guint8*)alloca (sizeof (guint8) * CARDS_PER_BLOCK);
 	gboolean small_objects;
 	int block_obj_size;
 	char *block_start;
@@ -2609,7 +2609,8 @@ scan_card_table_for_block (MSBlockInfo *block, CardTableScanType scan_type, Scan
 					goto next_object;
 			}
 
-			GCObject *object = (GCObject*)obj;
+			GCObject *object;
+			object = (GCObject*)obj;
 
 			if (small_objects) {
 				HEAVY_STAT (++scanned_objects);

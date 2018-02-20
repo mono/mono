@@ -21,6 +21,12 @@
 
 #include <glib.h>
 #include <config.h>
+
+// This matches exactly windows.h LPTHREAD_START_ROUTINE.
+//typedef unsigned long (__stdcall * MonoThreadStart)(void*);
+
+typedef unsigned long mono_thread_start_return_t;
+
 #ifdef HOST_WIN32
 
 #include <windows.h>
@@ -28,13 +34,11 @@
 typedef DWORD MonoNativeThreadId;
 typedef HANDLE MonoNativeThreadHandle; /* unused */
 
+// On Windows, DWORD is unsigned long and always 32 bits.
 typedef DWORD mono_native_thread_return_t;
-typedef DWORD mono_thread_start_return_t;
 
 #define MONO_NATIVE_THREAD_ID_TO_UINT(tid) (tid)
 #define MONO_UINT_TO_NATIVE_THREAD_ID(tid) ((MonoNativeThreadId)(tid))
-
-typedef LPTHREAD_START_ROUTINE MonoThreadStart;
 
 #else
 
@@ -56,18 +60,17 @@ typedef pid_t MonoNativeThreadHandle;
 typedef pthread_t MonoNativeThreadId;
 
 typedef void* mono_native_thread_return_t;
-typedef gsize mono_thread_start_return_t;
 
-#define MONO_NATIVE_THREAD_ID_TO_UINT(tid) (gsize)(tid)
-#define MONO_UINT_TO_NATIVE_THREAD_ID(tid) (MonoNativeThreadId)(gsize)(tid)
-
-typedef gsize (*MonoThreadStart)(gpointer);
+#define MONO_NATIVE_THREAD_ID_TO_UINT(tid) ((gsize)(tid))
+#define MONO_UINT_TO_NATIVE_THREAD_ID(tid) ((MonoNativeThreadId)(gsize)(tid))
 
 #if !defined(__HAIKU__)
 #define MONO_THREADS_PLATFORM_HAS_ATTR_SETSCHED
 #endif /* !defined(__HAIKU__) */
 
 #endif /* #ifdef HOST_WIN32 */
+
+typedef mono_native_thread_return_t (__stdcall * MonoNativeThreadStart)(void*);
 
 #ifndef MONO_INFINITE_WAIT
 #define MONO_INFINITE_WAIT ((guint32) 0xFFFFFFFF)
@@ -271,6 +274,8 @@ typedef enum {
 } SuspendThreadResult;
 
 typedef SuspendThreadResult (*MonoSuspendThreadCallback) (THREAD_INFO_TYPE *info, gpointer user_data);
+
+MONO_BEGIN_DECLS
 
 static inline gboolean
 mono_threads_filter_tools_threads (THREAD_INFO_TYPE *info)
@@ -525,7 +530,7 @@ MONO_API gboolean
 mono_native_thread_id_equals (MonoNativeThreadId id1, MonoNativeThreadId id2);
 
 MONO_API gboolean
-mono_native_thread_create (MonoNativeThreadId *tid, gpointer func, gpointer arg);
+mono_native_thread_create (MonoNativeThreadId *tid, MonoNativeThreadStart func, gpointer arg);
 
 MONO_API void
 mono_native_thread_set_name (MonoNativeThreadId tid, const char *name);
@@ -652,5 +657,7 @@ void mono_threads_join_unlock (void);
 typedef void (*background_job_cb)(void);
 void mono_threads_schedule_background_job (background_job_cb cb);
 #endif
+
+MONO_END_DECLS
 
 #endif /* __MONO_THREADS_H__ */

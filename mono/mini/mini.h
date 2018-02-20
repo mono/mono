@@ -2500,7 +2500,7 @@ guint mono_type_to_regmove (MonoCompile *cfg, MonoType *type) MONO_LLVM_INTERNAL
 
 void mono_cfg_add_try_hole (MonoCompile *cfg, MonoExceptionClause *clause, guint8 *start, MonoBasicBlock *bb);
 
-void mono_cfg_set_exception (MonoCompile *cfg, int type);
+void mono_cfg_set_exception (MonoCompile *cfg, MonoExceptionType type);
 void mono_cfg_set_exception_invalid_program (MonoCompile *cfg, char *msg);
 
 #define MONO_TIME_TRACK(a, phase) \
@@ -2581,6 +2581,8 @@ enum {
 	SIMD_PREFETCH_MODE_2,
 };
 
+MONO_BEGIN_DECLS
+
 const char *mono_arch_xregname (int reg);
 void        mono_simd_simplify_indirection (MonoCompile *cfg);
 MonoInst*   mono_emit_simd_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args);
@@ -2592,5 +2594,7 @@ gboolean    mono_class_is_magic_int (MonoClass *klass);
 gboolean    mono_class_is_magic_float (MonoClass *klass);
 MonoInst*   mono_emit_native_types_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args);
 MonoType*   mini_native_type_replace_type (MonoType *type) MONO_LLVM_INTERNAL;
+
+MONO_END_DECLS
 
 #endif /* __MONO_MINI_H__ */

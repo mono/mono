@@ -35,6 +35,11 @@
 #include <mono/utils/refcount.h>
 #include <mono/utils/w32api.h>
 
+#ifdef MONO_COMPLEX_CPLUSPLUS
+#define cabs std::abs
+#define creal std::real
+#endif // cplusplus
+
 #define CPU_USAGE_LOW 80
 #define CPU_USAGE_HIGH 95
 
@@ -307,20 +312,20 @@ mono_threadpool_worker_cleanup (void)
 static void
 work_item_push (void)
 {
-	gint32 old, new;
+	gint32 old, new_;
 
 	do {
 		old = mono_atomic_load_i32 (&worker.work_items_count);
 		g_assert (old >= 0);
 
-		new = old + 1;
-	} while (mono_atomic_cas_i32 (&worker.work_items_count, new, old) != old);
+		new_ = old + 1;
+	} while (mono_atomic_cas_i32 (&worker.work_items_count, new_, old) != old);
 }
 
 static gboolean
 work_item_try_pop (void)
 {
-	gint32 old, new;
+	gint32 old, new_;
 
 	do {
 		old = mono_atomic_load_i32 (&worker.work_items_count);
@@ -329,8 +334,8 @@ work_item_try_pop (void)
 		if (old == 0)
 			return FALSE;
 
-		new = old - 1;
-	} while (mono_atomic_cas_i32 (&worker.work_items_count, new, old) != old);
+		new_ = old - 1;
+	} while (mono_atomic_cas_i32 (&worker.work_items_count, new_, old) != old);
 
 	return TRUE;
 }
@@ -362,7 +367,7 @@ worker_park (void)
 {
 	gboolean timeout = FALSE;
 	gboolean interrupted = FALSE;
-	gint32 old, new;
+	gint32 old, new_;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] worker parking",
 		GUINT_TO_POINTER (MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ())));
@@ -385,8 +390,8 @@ worker_park (void)
 			old = mono_atomic_load_i32 (&worker.parked_threads_count);
 			g_assert (old >= G_MININT32);
 
-			new = old + 1;
-		} while (mono_atomic_cas_i32 (&worker.parked_threads_count, new, old) != old);
+			new_ = old + 1;
+		} while (mono_atomic_cas_i32 (&worker.parked_threads_count, new_, old) != old);
 
 		switch (mono_coop_sem_timedwait (&worker.parked_threads_sem, rand_next (&rand_handle, 5 * 1000, 60 * 1000), MONO_SEM_FLAGS_ALERTABLE)) {
 		case MONO_SEM_TIMEDWAIT_RET_SUCCESS:
@@ -407,8 +412,8 @@ worker_park (void)
 				old = mono_atomic_load_i32 (&worker.parked_threads_count);
 				g_assert (old > G_MININT32);
 
-				new = old - 1;
-			} while (mono_atomic_cas_i32 (&worker.parked_threads_count, new, old) != old);
+				new_ = old - 1;
+			} while (mono_atomic_cas_i32 (&worker.parked_threads_count, new_, old) != old);
 		}
 
 		COUNTER_ATOMIC (counter, {
@@ -427,7 +432,7 @@ static gboolean
 worker_try_unpark (void)
 {
 	gboolean res = TRUE;
-	gint32 old, new;
+	gint32 old, new_;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] try unpark worker",
 		GUINT_TO_POINTER (MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ())));
@@ -441,8 +446,8 @@ worker_try_unpark (void)
 			break;
 		}
 
-		new = old - 1;
-	} while (mono_atomic_cas_i32 (&worker.parked_threads_count, new, old) != old);
+		new_ = old - 1;
+	} while (mono_atomic_cas_i32 (&worker.parked_threads_count, new_, old) != old);
 
 	if (res)
 		mono_coop_sem_post (&worker.parked_threads_sem);
@@ -453,7 +458,7 @@ worker_try_unpark (void)
 	return res;
 }
 
-static gsize WINAPI
+static gulong __stdcall
 worker_thread (gpointer unused)
 {
 	MonoInternalThread *thread;
@@ -661,7 +666,7 @@ monitor_sufficient_delay_since_last_dequeue (void)
 
 static void hill_climbing_force_change (gint16 new_thread_count, ThreadPoolHeuristicStateTransition transition);
 
-static gsize WINAPI
+static gulong __stdcall
 monitor_thread (gpointer unused)
 {
 	MonoInternalThread *internal;

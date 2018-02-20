@@ -782,7 +782,8 @@ create_custom_attr (MonoImage *image, MonoMethod *method, const guchar *data, gu
 	attr = mono_object_new_checked (mono_domain_get (), method->klass, error);
 	if (!mono_error_ok (error)) goto fail;
 
-	MonoObject *exc = NULL;
+	MonoObject *exc;
+	exc = NULL;
 	mono_runtime_try_invoke (method, attr, params, &exc, error);
 	if (!mono_error_ok (error))
 		goto fail;
@@ -1176,13 +1177,15 @@ create_custom_attr_data_handle (MonoImage *image, MonoCustomAttrEntry *cattr, Mo
 	MonoObjectHandle attr = MONO_HANDLE_NEW (MonoObject, mono_object_new_checked (domain, mono_defaults.customattribute_data_class, error));
 	goto_if_nok (error, fail);
 
-	MonoReflectionMethod *ctor_obj = mono_method_get_object_checked (domain, cattr->ctor, NULL, error);
+	MonoReflectionMethod *ctor_obj;
+	ctor_obj = mono_method_get_object_checked (domain, cattr->ctor, NULL, error);
 	goto_if_nok (error, fail);
-	MonoReflectionAssemblyHandle assm = mono_assembly_get_object_handle (domain, image->assembly, error);
+	MonoReflectionAssemblyHandle assm;
+	assm = mono_assembly_get_object_handle (domain, image->assembly, error);
 	goto_if_nok (error, fail);
 	params [0] = ctor_obj;
 	params [1] = MONO_HANDLE_RAW (assm);
-	params [2] = (gpointer)&cattr->data;
+	params [2] = &cattr->data;
 	params [3] = &cattr->data_size;
 
 	mono_runtime_invoke_checked (ctor, MONO_HANDLE_RAW (attr), params, error);

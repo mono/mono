@@ -19,6 +19,8 @@
 #include <mono/utils/mono-error.h>
 #include "mono/utils/mono-conc-hashtable.h"
 
+MONO_BEGIN_DECLS
+
 struct _MonoType {
 	union {
 		MonoClass *klass; /* for VALUETYPE and CLASS */
@@ -969,6 +971,8 @@ mono_signature_get_managed_fmt_string (MonoMethodSignature *sig);
 
 gboolean
 mono_type_in_image (MonoType *type, MonoImage *image);
+
+MONO_END_DECLS
 
 #endif /* __MONO_METADATA_INTERNALS_H__ */
 

@@ -10,6 +10,8 @@
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/object-internals.h>
 
+MONO_BEGIN_DECLS
+
 typedef struct {
 	guint32 import_lookup_table;
 	guint32 timestamp;
@@ -51,5 +53,6 @@ mono_dynamic_image_add_to_blob_cached (MonoDynamicImage *assembly, char *b1, int
 void
 mono_dynimage_alloc_table (MonoDynamicTable *table, guint nrows);
 
-#endif  /* __MONO_METADATA_DYNAMIC_IMAGE_INTERNALS_H__ */
+MONO_END_DECLS
 
+#endif  /* __MONO_METADATA_DYNAMIC_IMAGE_INTERNALS_H__ */

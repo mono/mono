@@ -502,7 +502,8 @@ mono_domain_create_appdomain_checked (char *friendly_name, char *configuration_f
 	}
 	MONO_HANDLE_SET (setup, configuration_file, config_file);
 
-	MonoAppDomainHandle ad = mono_domain_create_appdomain_internal (friendly_name, setup, error);
+	MonoAppDomainHandle ad;
+	ad = mono_domain_create_appdomain_internal (friendly_name, setup, error);
 	goto_if_nok (error, leave);
 
 	result = mono_domain_from_appdomain_handle (ad);
@@ -540,7 +541,8 @@ mono_domain_set_config_checked (MonoDomain *domain, const char *base_dir, const 
 	MonoStringHandle base_dir_str = mono_string_new_handle (domain, base_dir, error);
 	goto_if_nok (error, leave);
 	MONO_HANDLE_SET (setup, application_base, base_dir_str);
-	MonoStringHandle config_file_name_str = mono_string_new_handle (domain, config_file_name, error);
+	MonoStringHandle config_file_name_str;
+	config_file_name_str = mono_string_new_handle (domain, config_file_name, error);
 	goto_if_nok (error, leave);
 	MONO_HANDLE_SET (setup, configuration_file, config_file_name_str);
 leave:
@@ -632,7 +634,8 @@ mono_domain_create_appdomain_internal (char *friendly_name, MonoAppDomainSetupHa
 
 	MONO_PROFILER_RAISE (domain_name, (data, data->friendly_name));
 
-	MonoStringHandle app_base = MONO_HANDLE_NEW_GET (MonoString, setup, application_base);
+	MonoStringHandle app_base;
+	app_base = MONO_HANDLE_NEW_GET (MonoString, setup, application_base);
 	if (MONO_HANDLE_IS_NULL (app_base)) {
 		/* Inherit from the root domain since MS.NET does this */
 		MonoDomain *root = mono_get_root_domain ();
@@ -665,7 +668,8 @@ mono_domain_create_appdomain_internal (char *friendly_name, MonoAppDomainSetupHa
 
 #ifndef DISABLE_SHADOW_COPY
 	/*FIXME, guard this for when the debugger is not running */
-	char *shadow_location = get_shadow_assembly_location_base (data, error);
+	char *shadow_location;
+	shadow_location = get_shadow_assembly_location_base (data, error);
 	if (!mono_error_ok (error)) {
 		g_free (data->friendly_name);
 		goto leave;
@@ -1219,8 +1223,10 @@ mono_try_assembly_resolve_handle (MonoDomain *domain, MonoStringHandle fname, Mo
 	params [0] = MONO_HANDLE_RAW (fname);
 	params[1] = requesting ? MONO_HANDLE_RAW (requesting_handle) : NULL;
 	params [2] = &isrefonly;
-	MonoObject *exc = NULL;
-	MonoReflectionAssemblyHandle result = MONO_HANDLE_NEW (MonoReflectionAssembly, mono_runtime_try_invoke (method, domain->domain, params, &exc, error));
+	MonoObject *exc;
+	exc = NULL;
+	MonoReflectionAssemblyHandle result;
+	result = MONO_HANDLE_NEW (MonoReflectionAssembly, mono_runtime_try_invoke (method, domain->domain, params, &exc, error));
 	if (!is_ok (error) || exc != NULL) {
 		if (is_ok (error))
 			mono_error_set_exception_instance (error, (MonoException*)exc);
@@ -1338,7 +1344,8 @@ mono_domain_fire_assembly_load (MonoAssembly *assembly, gpointer user_data)
 		goto leave;
 	}
 
-	MonoReflectionAssemblyHandle ref_assembly = mono_assembly_get_object_handle (domain, assembly, error);
+	MonoReflectionAssemblyHandle ref_assembly;
+	ref_assembly = mono_assembly_get_object_handle (domain, assembly, error);
 	mono_error_assert_ok (error);
 
 	if (assembly_load_method == NULL) {
@@ -2168,7 +2175,8 @@ ves_icall_System_Reflection_Assembly_LoadFrom (MonoStringHandle fname, MonoBoole
 	name = filename = mono_string_handle_to_utf8 (fname, error);
 	goto_if_nok (error, leave);
 	
-	MonoAssembly *ass = mono_assembly_open_predicate (filename, refOnly, TRUE, NULL, NULL, &status);
+	MonoAssembly *ass;
+	ass = mono_assembly_open_predicate (filename, refOnly, TRUE, NULL, NULL, &status);
 	
 	if (!ass) {
 		if (status == MONO_IMAGE_IMAGE_INVALID)
@@ -2290,7 +2298,8 @@ ves_icall_System_AppDomain_LoadAssembly (MonoAppDomainHandle ad, MonoStringHandl
 	}
 
 	g_assert (ass);
-	MonoReflectionAssemblyHandle refass = mono_assembly_get_object_handle (domain, ass, error);
+	MonoReflectionAssemblyHandle refass;
+	refass = mono_assembly_get_object_handle (domain, ass, error);
 	goto_if_nok (error, fail);
 
 	MONO_HANDLE_SET (refass, evidence, evidence);
@@ -2590,7 +2599,7 @@ deregister_reflection_info_roots (MonoDomain *domain)
 	mono_domain_assemblies_unlock (domain);
 }
 
-static gsize WINAPI
+static gulong __stdcall
 unload_thread_main (void *arg)
 {
 	ERROR_DECL (error);

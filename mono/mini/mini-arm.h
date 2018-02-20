@@ -11,6 +11,8 @@
 #include <mono/utils/mono-context.h>
 #include <glib.h>
 
+MONO_BEGIN_DECLS
+
 #if defined(ARM_FPU_NONE)
 #define MONO_ARCH_SOFT_FLOAT_FALLBACK 1
 #endif
@@ -428,5 +430,7 @@ mono_arm_emit_aotconst (gpointer ji, guint8 *code, guint8 *buf, int dreg, int pa
 
 CallInfo*
 mono_arch_get_call_info (MonoMemPool *mp, MonoMethodSignature *sig);
+
+MONO_END_DECLS
 
 #endif /* __MONO_MINI_ARM_H__ */

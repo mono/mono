@@ -7,6 +7,8 @@
 
 #include <glib.h>
 
+G_BEGIN_DECLS
+
 // Double floating point Bias
 #define MONO_DOUBLE_BIAS 1022
 
@@ -17,11 +19,17 @@ typedef struct {
 	guint exp    : 11;
 	guint mantHi : 20;
 	guint mantLo : 32;
+
+#define MONO_INIT_DOUBLE(sign, exp, mantHi, mantLo) { sign, exp, mantHi, mantLo }
+
 #else // BIGENDIAN
 	guint mantLo : 32;
 	guint mantHi : 20;
 	guint exp    : 11;
 	guint sign   : 1;
+
+#define MONO_INIT_DOUBLE(sign, exp, mantHi, mantLo) { mantLo, mantHi, exp, sign }
+
 #endif
 } MonoDouble;
 
@@ -63,5 +71,7 @@ typedef struct  {
 
 gint
 mono_double_from_number (gpointer from, MonoDouble *target);
+
+G_END_DECLS
 
 #endif

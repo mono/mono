@@ -11,6 +11,8 @@
 #include <mono/metadata/handle.h>
 #include <mono/utils/mono-error.h>
 
+MONO_BEGIN_DECLS
+
 MonoException *
 mono_get_exception_type_initialization_checked (const gchar *type_name, MonoException *inner, MonoError *error);
 
@@ -55,5 +57,7 @@ mono_error_set_simple_file_not_found (MonoError *oerror, const char *assembly_na
 
 MonoException *
 mono_corlib_exception_new_with_args (const char *name_space, const char *name, const char *arg_0, const char *arg_1, MonoError *error);
+
+MONO_END_DECLS
 
 #endif

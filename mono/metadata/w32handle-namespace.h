@@ -10,6 +10,8 @@
 
 #include "mono/metadata/w32handle.h"
 
+MONO_BEGIN_DECLS
+
 #define MONO_W32HANDLE_NAMESPACE_MAX_PATH 260
 
 typedef struct {
@@ -27,5 +29,7 @@ mono_w32handle_namespace_unlock (void);
 
 gpointer
 mono_w32handle_namespace_search_handle (MonoW32Type type, const gchar *name);
+
+MONO_END_DECLS
 
 #endif /* _MONO_METADATA_W32HANDLE_NAMESPACE_H_ */

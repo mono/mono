@@ -122,10 +122,10 @@ socket_data_destroy (MonoFDHandle *fdhandle)
 void
 mono_w32socket_initialize (void)
 {
-	MonoFDHandleCallback socket_data_callbacks = {
-		.close = socket_data_close,
-		.destroy = socket_data_destroy
-	};
+	MonoFDHandleCallback socket_data_callbacks;
+	memset (&socket_data_callbacks, 0, sizeof (socket_data_callbacks));
+	socket_data_callbacks.close = socket_data_close;
+	socket_data_callbacks.destroy = socket_data_destroy;
 
 	mono_fdhandle_register (MONO_FDTYPE_SOCKET, &socket_data_callbacks);
 }
@@ -293,13 +293,13 @@ mono_w32socket_connect (SOCKET sock, const struct sockaddr *addr, int addrlen, g
 }
 
 int
-mono_w32socket_recv (SOCKET sock, char *buf, int len, int flags, gboolean blocking)
+mono_w32socket_recv (SOCKET sock, void *buf, int len, int flags, gboolean blocking)
 {
 	return mono_w32socket_recvfrom (sock, buf, len, flags, NULL, 0, blocking);
 }
 
 int
-mono_w32socket_recvfrom (SOCKET sock, char *buf, int len, int flags, struct sockaddr *from, socklen_t *fromlen, gboolean blocking)
+mono_w32socket_recvfrom (SOCKET sock, void *buf, int len, int flags, struct sockaddr *from, socklen_t *fromlen, gboolean blocking)
 {
 	SocketHandle *sockethandle;
 	int ret;
@@ -438,7 +438,7 @@ mono_w32socket_recvbuffers (SOCKET sock, WSABUF *buffers, guint32 count, guint32
 }
 
 int
-mono_w32socket_send (SOCKET sock, char *buf, int len, int flags, gboolean blocking)
+mono_w32socket_send (SOCKET sock, void *buf, int len, int flags, gboolean blocking)
 {
 	SocketHandle *sockethandle;
 	int ret;
@@ -487,7 +487,7 @@ mono_w32socket_send (SOCKET sock, char *buf, int len, int flags, gboolean blocki
 }
 
 int
-mono_w32socket_sendto (SOCKET sock, const char *buf, int len, int flags, const struct sockaddr *to, int tolen, gboolean blocking)
+mono_w32socket_sendto (SOCKET sock, const void *buf, int len, int flags, const struct sockaddr *to, int tolen, gboolean blocking)
 {
 	SocketHandle *sockethandle;
 	int ret;
@@ -582,7 +582,7 @@ mono_w32socket_transmit_file (SOCKET sock, gpointer file_handle, TRANSMIT_FILE_B
 #if defined(HAVE_SENDFILE) && (defined(__linux__) || defined(DARWIN))
 	struct stat statbuf;
 #else
-	gchar *buffer;
+	void *buffer;
 #endif
 
 	if (!mono_fdhandle_lookup_and_ref(sock, (MonoFDHandle**) &sockethandle)) {
@@ -632,7 +632,7 @@ mono_w32socket_transmit_file (SOCKET sock, gpointer file_handle, TRANSMIT_FILE_B
 		MONO_EXIT_GC_SAFE;
 	} while (ret != -1 && errno == EINTR && !mono_thread_info_is_interrupt_state (info));
 #else
-	buffer = g_malloc (SF_BUFFER_SIZE);
+	buffer = (gchar*)g_malloc (SF_BUFFER_SIZE);
 
 	do {
 		do {
@@ -1129,21 +1129,21 @@ extension_transmit_file (SOCKET sock, gpointer file_handle, guint32 bytes_to_wri
 	return ret;
 }
 
-static struct {
+const static struct {
 	GUID guid;
 	gpointer func;
 } extension_functions[] = {
-	{ {0x7fda2e11,0x8630,0x436f,{0xa0,0x31,0xf5,0x36,0xa6,0xee,0xc1,0x57}} /* WSAID_DISCONNECTEX */, extension_disconect },
-	{ {0xb5367df0,0xcbac,0x11cf,{0x95,0xca,0x00,0x80,0x5f,0x48,0xa1,0x92}} /* WSAID_TRANSMITFILE */, extension_transmit_file },
+	{ {0x7fda2e11,0x8630,0x436f,{0xa0,0x31,0xf5,0x36,0xa6,0xee,0xc1,0x57}} /* WSAID_DISCONNECTEX */, (gpointer)extension_disconect },
+	{ {0xb5367df0,0xcbac,0x11cf,{0x95,0xca,0x00,0x80,0x5f,0x48,0xa1,0x92}} /* WSAID_TRANSMITFILE */, (gpointer)extension_transmit_file },
 	{ {0} , NULL },
 };
 
 gint
-mono_w32socket_ioctl (SOCKET sock, gint32 command, gchar *input, gint inputlen, gchar *output, gint outputlen, glong *written)
+mono_w32socket_ioctl (SOCKET sock, gint32 command, void *input, gint inputlen, void *output, gint outputlen, glong *written)
 {
 	SocketHandle *sockethandle;
 	gint ret;
-	gchar *buffer;
+	void *buffer;
 
 	if (!mono_fdhandle_lookup_and_ref(sock, (MonoFDHandle**) &sockethandle)) {
 		mono_w32error_set_last (WSAENOTSOCK);
@@ -1258,7 +1258,7 @@ mono_w32socket_ioctl (SOCKET sock, gint32 command, gchar *input, gint inputlen, 
 		return 0;
 	}
 
-	buffer = inputlen > 0 ? (gchar*) g_memdup (input, inputlen) : NULL;
+	buffer = inputlen > 0 ? g_memdup (input, inputlen) : NULL;
 
 	MONO_ENTER_GC_SAFE;
 	ret = ioctl (((MonoFDHandle*) sockethandle)->fd, command, buffer);

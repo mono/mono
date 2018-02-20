@@ -21,6 +21,8 @@
 #include "mono/utils/mono-tls.h"
 #include "mono/utils/mono-coop-mutex.h"
 
+MONO_BEGIN_DECLS
+
 /* Use this as MONO_CHECK_ARG_NULL (arg,expr,) in functions returning void */
 #define MONO_CHECK_ARG(arg, expr, retval)		G_STMT_START{		  \
 		if (G_UNLIKELY (!(expr)))							  \
@@ -391,7 +393,7 @@ struct _MonoInternalThread {
 	gpointer unused3;
 	gunichar2  *name;
 	guint32	    name_len;
-	guint32	    state;
+	MonoThreadState state;
 	MonoException *abort_exc;
 	int abort_state_handle;
 	guint64 tid;	/* This is accessed as a gsize in the code (so it can hold a 64bit pointer on systems that need it), but needs to reserve 64 bits of space on all machines as it corresponds to a field in managed code */
@@ -418,7 +420,7 @@ struct _MonoInternalThread {
 	gsize    flags;
 	gpointer thread_pinning_ref;
 	gsize __abort_protected_block_count;
-	gint32 priority;
+	MonoThreadPriority priority;
 	GPtrArray *owned_mutexes;
 	MonoOSEvent *suspended;
 	gint32 self_suspended; // TRUE | FALSE
@@ -1977,5 +1979,7 @@ mono_runtime_object_init_handle (MonoObjectHandle this_obj, MonoError *error);
 /* GC write barriers support */
 void
 mono_gc_wbarrier_object_copy_handle (MonoObjectHandle obj, MonoObjectHandle src);
+
+MONO_END_DECLS
 
 #endif /* __MONO_OBJECT_INTERNALS_H__ */

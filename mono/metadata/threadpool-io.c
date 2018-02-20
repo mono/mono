@@ -321,7 +321,7 @@ selector_thread_interrupt (gpointer unused)
 	selector_thread_wakeup ();
 }
 
-static gsize WINAPI
+static gulong WINAPI
 selector_thread (gpointer data)
 {
 	ERROR_DECL (error);
@@ -417,7 +417,10 @@ selector_thread (gpointer data)
 				domain = update->data.remove_domain.domain;
 				g_assert (domain);
 
-				FilterSockaresForDomainData user_data = { .domain = domain, .states = states };
+				FilterSockaresForDomainData user_data;
+				memset (&user_data, 0, sizeof (user_data));
+				user_data.domain = domain;
+				user_data.states = states;
 				mono_g_hash_table_foreach (states, filter_jobs_for_domain, &user_data);
 
 				for (j = i + 1; j < threadpool_io->updates_size; ++j) {

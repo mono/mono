@@ -561,7 +561,7 @@ mono_image_basic_method (ReflectionMethodBuilder *mb, MonoDynamicImage *assembly
 				}
 				pb->table_idx = table->next_idx++;
 				if (pb->attrs & PARAM_ATTRIBUTE_HAS_DEFAULT) {
-					guint32 field_type = 0;
+					MonoTypeEnum field_type = (MonoTypeEnum)0;
 					mtable = &assembly->tables [MONO_TABLE_CONSTANT];
 					mtable->rows ++;
 					alloc_table (mtable, mtable->rows);
@@ -1761,8 +1761,10 @@ fixup_method (MonoReflectionILGen *ilgen, gpointer value, MonoDynamicImage *asse
 			break;
 		case MONO_TABLE_TYPEREF:
 			g_assert (!strcmp (iltoken->member->vtable->klass->name, "RuntimeType"));
-			MonoClass *k = mono_class_from_mono_type (((MonoReflectionType*)iltoken->member)->type);
-			MonoObject *obj = mono_class_get_ref_info_raw (k); /* FIXME use handles */
+			MonoClass *k;
+			k = mono_class_from_mono_type (((MonoReflectionType*)iltoken->member)->type);
+			MonoObject *obj;
+			obj = mono_class_get_ref_info_raw (k); /* FIXME use handles */
 			g_assert (obj);
 			g_assert (!strcmp (mono_object_class (obj)->name, "TypeBuilder"));
 			g_assert (((MonoReflectionTypeBuilder*)obj)->module->dynamic_image != assembly);

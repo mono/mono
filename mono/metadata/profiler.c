@@ -31,7 +31,7 @@ load_profiler (MonoDl *module, const char *name, const char *desc)
 	char *err, *old_name = g_strdup_printf (OLD_INITIALIZER_NAME);
 	MonoProfilerInitializer func;
 
-	if (!(err = mono_dl_symbol (module, old_name, (gpointer) &func))) {
+	if (!(err = mono_dl_symbol (module, old_name, (gpointer*)&func))) {
 		mono_profiler_printf_err ("Found old-style startup symbol '%s' for the '%s' profiler; it has not been migrated to the new API.", old_name, name);
 		g_free (old_name);
 		return FALSE;
@@ -310,7 +310,7 @@ mono_profiler_get_coverage_data (MonoProfilerHandle handle, MonoMethod *method, 
 
 	coverage_lock ();
 
-	MonoProfilerCoverageInfo *info = g_hash_table_lookup (mono_profiler_state.coverage_hash, method);
+	MonoProfilerCoverageInfo *info = (MonoProfilerCoverageInfo*)g_hash_table_lookup (mono_profiler_state.coverage_hash, method);
 
 	coverage_unlock ();
 
@@ -345,14 +345,14 @@ mono_profiler_get_coverage_data (MonoProfilerHandle handle, MonoMethod *method, 
 				srcfile = sinfo->source_file;
 			}
 
-			MonoProfilerCoverageData data = {
-				.method = method,
-				.il_offset = sp->il_offset,
-				.counter = 0,
-				.file_name = srcfile,
-				.line = sp->line,
-				.column = 0,
-			};
+			MonoProfilerCoverageData data;
+			memset (&data, 0, sizeof (data));
+			data.method = method;
+			data.il_offset = sp->il_offset;
+			data.counter = 0;
+			data.file_name = srcfile;
+			data.line = sp->line;
+			data.column = 0;
 
 			cb (handle->prof, &data);
 		}
@@ -370,13 +370,13 @@ mono_profiler_get_coverage_data (MonoProfilerHandle handle, MonoMethod *method, 
 		if (cil_code && cil_code >= start && cil_code < end) {
 			guint32 offset = cil_code - start;
 
-			MonoProfilerCoverageData data = {
-				.method = method,
-				.il_offset = offset,
-				.counter = info->data [i].count,
-				.line = 1,
-				.column = 1,
-			};
+			MonoProfilerCoverageData data;
+			memset (&data, 0, sizeof (data));
+			data.method = method;
+			data.il_offset = offset;
+			data.counter = info->data [i].count;
+			data.line = 1;
+			data.column = 1;
 
 			if (minfo) {
 				MonoDebugSourceLocation *loc = mono_debug_method_lookup_location (minfo, offset);
@@ -411,7 +411,7 @@ mono_profiler_coverage_alloc (MonoMethod *method, guint32 entries)
 	gboolean cover = FALSE;
 
 	for (MonoProfilerHandle handle = mono_profiler_state.profilers; handle; handle = handle->next) {
-		MonoProfilerCoverageFilterCallback cb = handle->coverage_filter;
+		MonoProfilerCoverageFilterCallback cb = (MonoProfilerCoverageFilterCallback)handle->coverage_filter;
 
 		if (cb)
 			cover |= cb (handle->prof, method);
@@ -422,7 +422,7 @@ mono_profiler_coverage_alloc (MonoMethod *method, guint32 entries)
 
 	coverage_lock ();
 
-	MonoProfilerCoverageInfo *info = g_malloc0 (sizeof (MonoProfilerCoverageInfo) + SIZEOF_VOID_P * 2 * entries);
+	MonoProfilerCoverageInfo *info = (MonoProfilerCoverageInfo*)g_malloc0 (sizeof (MonoProfilerCoverageInfo) + SIZEOF_VOID_P * 2 * entries);
 
 	info->entries = entries;
 
@@ -735,16 +735,16 @@ mono_profiler_call_context_free_buffer (void *buffer)
 MonoProfilerCallInstrumentationFlags
 mono_profiler_get_call_instrumentation_flags (MonoMethod *method)
 {
-	MonoProfilerCallInstrumentationFlags flags = MONO_PROFILER_CALL_INSTRUMENTATION_NONE;
+	int flags = MONO_PROFILER_CALL_INSTRUMENTATION_NONE;
 
 	for (MonoProfilerHandle handle = mono_profiler_state.profilers; handle; handle = handle->next) {
-		MonoProfilerCallInstrumentationFilterCallback cb = handle->call_instrumentation_filter;
+		MonoProfilerCallInstrumentationFilterCallback cb = (MonoProfilerCallInstrumentationFilterCallback)handle->call_instrumentation_filter;
 
 		if (cb)
 			flags |= cb (handle->prof, method);
 	}
 
-	return flags;
+	return (MonoProfilerCallInstrumentationFlags)flags;
 }
 
 void
@@ -808,7 +808,7 @@ mono_profiler_cleanup (void)
 	MonoProfilerHandle head = mono_profiler_state.profilers;
 
 	while (head) {
-		MonoProfilerCleanupCallback cb = head->cleanup_callback;
+		MonoProfilerCleanupCallback cb = (MonoProfilerCleanupCallback)head->cleanup_callback;
 
 		if (cb)
 			cb (head->prof);
@@ -895,7 +895,7 @@ update_callback (volatile gpointer *location, gpointer new_, volatile gint32 *co
 	mono_profiler_raise_ ## name params \
 	{ \
 		for (MonoProfilerHandle h = mono_profiler_state.profilers; h; h = h->next) { \
-			MonoProfiler ## type ## Callback cb = h->name ## _cb; \
+			MonoProfiler ## type ## Callback cb = (MonoProfiler ## type ## Callback)h->name ## _cb; \
 			if (cb) \
 				cb args; \
 		} \

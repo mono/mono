@@ -202,9 +202,9 @@ mono_native_thread_id_equals (MonoNativeThreadId id1, MonoNativeThreadId id2)
  *   Low level thread creation function without any GC wrappers.
  */
 gboolean
-mono_native_thread_create (MonoNativeThreadId *tid, gpointer func, gpointer arg)
+mono_native_thread_create (MonoNativeThreadId *tid, MonoNativeThreadStart func, gpointer arg)
 {
-	return pthread_create (tid, NULL, (void *(*)(void *)) func, arg) == 0;
+	return pthread_create (tid, NULL, func, arg) == 0;
 }
 
 void

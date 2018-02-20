@@ -12,6 +12,10 @@
 
 #include <glib.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct {
 	void **data;
 	size_t size;
@@ -32,5 +36,9 @@ void* sgen_pointer_queue_pop (SgenPointerQueue *queue);
 gboolean sgen_pointer_queue_is_empty (SgenPointerQueue *queue);
 void sgen_pointer_queue_free (SgenPointerQueue *queue);
 gboolean sgen_pointer_queue_will_grow (SgenPointerQueue *queue);
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
 
 #endif

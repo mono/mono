@@ -506,7 +506,7 @@ static const struct msgstr_t {
 #undef TABLEDEF
 };
 static const gint16 tableidx [] = {
-#define TABLEDEF(a,b) [a] = offsetof (struct msgstr_t, MSGSTRFIELD(__LINE__)),
+#define TABLEDEF(a,b) offsetof (struct msgstr_t, MSGSTRFIELD(__LINE__)),
 #include "mono/cil/tables.def"
 #undef TABLEDEF
 };
@@ -1152,8 +1152,8 @@ mono_metadata_decode_row_col (const MonoTableInfo *t, int idx, guint col)
 {
 	guint32 bitfield = t->size_bitfield;
 	int i;
-	register const char *data; 
-	register int n;
+	const char *data;
+	int n;
 	
 	g_assert (idx < t->rows);
 	g_assert (col < mono_metadata_table_count (bitfield));
@@ -1296,31 +1296,25 @@ mono_metadata_translate_token_index (MonoImage *image, int table, guint32 idx)
 	case MONO_TABLE_METHOD:
 		if (image->tables [MONO_TABLE_METHOD_POINTER].rows)
 			return mono_metadata_decode_row_col (&image->tables [MONO_TABLE_METHOD_POINTER], idx - 1, MONO_METHOD_POINTER_METHOD);
-		else
-			return idx;
+		break;
 	case MONO_TABLE_FIELD:
 		if (image->tables [MONO_TABLE_FIELD_POINTER].rows)
 			return mono_metadata_decode_row_col (&image->tables [MONO_TABLE_FIELD_POINTER], idx - 1, MONO_FIELD_POINTER_FIELD);
-		else
-			return idx;
+		break;
 	case MONO_TABLE_EVENT:
 		if (image->tables [MONO_TABLE_EVENT_POINTER].rows)
 			return mono_metadata_decode_row_col (&image->tables [MONO_TABLE_EVENT_POINTER], idx - 1, MONO_EVENT_POINTER_EVENT);
-		else
-			return idx;
+		break;
 	case MONO_TABLE_PROPERTY:
 		if (image->tables [MONO_TABLE_PROPERTY_POINTER].rows)
 			return mono_metadata_decode_row_col (&image->tables [MONO_TABLE_PROPERTY_POINTER], idx - 1, MONO_PROPERTY_POINTER_PROPERTY);
-		else
-			return idx;
+		break;
 	case MONO_TABLE_PARAM:
 		if (image->tables [MONO_TABLE_PARAM_POINTER].rows)
 			return mono_metadata_decode_row_col (&image->tables [MONO_TABLE_PARAM_POINTER], idx - 1, MONO_PARAM_POINTER_PARAM);
-		else
-			return idx;
-	default:
-		return idx;
+		break;
 	}
+	return idx;
 }
 
 /**
@@ -3297,7 +3291,7 @@ mono_metadata_lookup_generic_class (MonoClass *container_class, MonoGenericInst 
 
 	mono_image_set_lock (set);
 
-	MonoGenericClass *gclass2 = mono_conc_hashtable_insert (set->gclass_cache, gclass, gclass);
+	MonoGenericClass *gclass2 = (MonoGenericClass*)mono_conc_hashtable_insert (set->gclass_cache, gclass, gclass);
 	if (!gclass2)
 		gclass2 = gclass;
 
@@ -5913,7 +5907,7 @@ mono_type_create_from_typespec_checked (MonoImage *image, guint32 type_spec, Mon
 	mono_image_lock (image);
 
 	/* We might leak some data in the image mempool if found */
-	type = mono_conc_hashtable_insert (image->typespec_cache, GUINT_TO_POINTER (type_spec), type2);
+	type = (MonoType*)mono_conc_hashtable_insert (image->typespec_cache, GUINT_TO_POINTER (type_spec), type2);
 	if (!type)
 		type = type2;
 
@@ -6048,7 +6042,7 @@ mono_metadata_free_marshal_spec (MonoMarshalSpec *spec)
  * \returns A \c MonoMarshalNative enumeration value (<code>MONO_NATIVE_</code>) value
  * describing the underlying native reprensetation of the type.
  */
-guint32
+MonoMarshalNative
 mono_type_to_unmanaged (MonoType *type, MonoMarshalSpec *mspec, gboolean as_field,
 			gboolean unicode, MonoMarshalConv *conv) 
 {

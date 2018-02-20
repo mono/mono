@@ -8,6 +8,8 @@
 #include <glib.h>
 #include <mono/utils/mono-publib.h>
 
+MONO_BEGIN_DECLS
+
 #define MONO_BITSET_BITS_PER_CHUNK (8 * sizeof (gsize))
 
 typedef struct {
@@ -120,5 +122,7 @@ MONO_API gboolean    mono_bitset_equal        (const MonoBitSet *src, const Mono
 MONO_API void        mono_bitset_foreach      (MonoBitSet *set, MonoBitSetFunc func, gpointer data);
 
 MONO_API void        mono_bitset_intersection_2 (MonoBitSet *dest, const MonoBitSet *src1, const MonoBitSet *src2);
+
+MONO_END_DECLS
 
 #endif /* __MONO_BITSET_H__ */

@@ -55,7 +55,7 @@ extern MonoBoolean ves_icall_System_Net_NetworkInformation_MacOsIPInterfacePrope
 		return FALSE;
 
 	// Allocate suffcient memory for available data based on the previous sysctl call
-	if ((buf = g_malloc (needed)) == NULL)
+	if ((buf = (char*)g_malloc (needed)) == NULL)
 		return FALSE;
 
 	// Second sysctl call to retrieve data into appropriately sized buffer

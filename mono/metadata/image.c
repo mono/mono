@@ -723,7 +723,7 @@ mono_image_load_module_checked (MonoImage *image, int idx, MonoError *error)
 		name = mono_metadata_string_heap (image, cols [MONO_MODULEREF_NAME]);
 		for (list_iter = valid_modules; list_iter; list_iter = list_iter->next) {
 			/* be safe with string dups, but we could just compare string indexes  */
-			if (strcmp (list_iter->data, name) == 0) {
+			if (strcmp ((const char*)list_iter->data, name) == 0) {
 				valid = TRUE;
 				break;
 			}
@@ -1150,7 +1150,7 @@ const char *ignored_assemblies_file_names[] = {
 	"System.Threading.Overlapped.dll"
 };
 
-#define IGNORED_ASSEMBLY(HASH, NAME, GUID, VER_STR)	{ .hash = HASH, .assembly_name = NAME, .guid = GUID }
+#define IGNORED_ASSEMBLY(HASH, NAME, GUID, VER_STR) { (int)HASH, NAME, GUID }
 
 static const IgnoredAssembly ignored_assemblies [] = {
 	IGNORED_ASSEMBLY (0xE4016B17, SYS_GLOBALIZATION_EXT, "50F4163A-D692-452F-90ED-2F8024BB5319", "15.5.0-preview-20171027-2 net461"),
@@ -1210,7 +1210,7 @@ const char *ignored_assemblies_names[] = {
 	"System.Threading.Overlapped"
 };
 
-#define IGNORED_ASM_VER(NAME, MAJOR, MINOR, BUILD, REVISION) { .assembly_name = NAME, .major = MAJOR, .minor = MINOR, .build = BUILD, .revision = REVISION }
+#define IGNORED_ASM_VER(NAME, MAJOR, MINOR, BUILD, REVISION) { NAME, MAJOR, MINOR, BUILD, REVISION }
 
 static const IgnoredAssemblyVersion ignored_assembly_versions [] = {
 	IGNORED_ASM_VER (SYS_GLOBALIZATION_EXT, 4, 0, 0, 0),

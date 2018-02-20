@@ -274,7 +274,7 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 	if (lseek (fd, directory_location, SEEK_SET) == -1)
 		goto doclose;
 	directory_size = sigstart-directory_location;
-	directory = g_malloc (directory_size);
+	directory = (char*)g_malloc (directory_size);
 	if (directory == NULL)
 		goto doclose;
 	if (read (fd, directory, directory_size) == -1)
@@ -287,7 +287,8 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 	for (i = 0; i < items; i++){
 		char *kind;
 		int strsize = STREAM_INT (p);
-		uint64_t offset, item_size;
+		uint64_t offset;
+		uint32_t item_size;
 		kind = p+4;
 		p += 4 + strsize;
 		offset = STREAM_LONG(p);
@@ -296,7 +297,7 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 		p += 4;
 		
 		if (mapaddress == NULL){
-			mapaddress = mono_file_map (directory_location-offset, MONO_MMAP_READ | MONO_MMAP_PRIVATE, fd, offset, &maphandle);
+			mapaddress = (unsigned char*)mono_file_map (directory_location-offset, MONO_MMAP_READ | MONO_MMAP_PRIVATE, fd, offset, &maphandle);
 			if (mapaddress == NULL){
 				perror ("Error mapping file");
 				exit (1);

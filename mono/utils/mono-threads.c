@@ -438,7 +438,7 @@ unregister_thread (void *arg)
 	MonoThreadInfo *info;
 	int small_id;
 	gboolean result;
-	gpointer handle;
+	MonoThreadHandle* handle;
 
 	info = (MonoThreadInfo *) arg;
 	g_assert (info);
@@ -1659,7 +1659,7 @@ mono_thread_info_wait_multiple_handle (MonoThreadHandle **thread_handles, gsize 
 
 	res = mono_os_event_wait_multiple (thread_events, nhandles, waitall, timeout, alertable);
 	if (res >= MONO_OS_EVENT_WAIT_RET_SUCCESS_0 && res <= MONO_OS_EVENT_WAIT_RET_SUCCESS_0 + nhandles - 1)
-		return MONO_THREAD_INFO_WAIT_RET_SUCCESS_0 + (res - MONO_OS_EVENT_WAIT_RET_SUCCESS_0);
+		return (MonoThreadInfoWaitRet)(MONO_THREAD_INFO_WAIT_RET_SUCCESS_0 + (res - MONO_OS_EVENT_WAIT_RET_SUCCESS_0));
 	else if (res == MONO_OS_EVENT_WAIT_RET_ALERTED)
 		return MONO_THREAD_INFO_WAIT_RET_ALERTED;
 	else if (res == MONO_OS_EVENT_WAIT_RET_TIMEOUT)

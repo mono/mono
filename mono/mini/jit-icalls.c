@@ -1814,7 +1814,7 @@ mono_init_vtable_slot (MonoVTable *vtable, int slot)
 	addr = resolve_vcall (vtable, slot, NULL, &arg, FALSE, error);
 	if (mono_error_set_pending_exception (error))
 		return NULL;
-	ftnptr = mono_domain_alloc0 (vtable->domain, 2 * sizeof (gpointer));
+	ftnptr = (gpointer*)mono_domain_alloc0 (vtable->domain, 2 * sizeof (gpointer));
 	ftnptr [0] = addr;
 	ftnptr [1] = arg;
 	mono_memory_barrier ();
@@ -1857,7 +1857,7 @@ mono_llvmonly_init_delegate (MonoDelegate *del)
 
 		ftndesc = mini_create_llvmonly_ftndesc (mono_domain_get (), addr, arg);
 		mono_memory_barrier ();
-		*del->method_code = (gpointer)ftndesc;
+		*del->method_code = (guint8*)ftndesc;
 	}
 	del->method_ptr = ftndesc->addr;
 	del->extra_arg = ftndesc->arg;

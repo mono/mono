@@ -16,6 +16,8 @@
 
 #include <mono/metadata/object-internals.h>
 
+MONO_BEGIN_DECLS
+
 #ifndef HOST_WIN32
 #define INVALID_SOCKET ((SOCKET)(guint32)(~0))
 #define SOCKET_ERROR (-1)
@@ -209,7 +211,7 @@ void
 ves_icall_System_Net_Sockets_Socket_Connect_internal (gsize sock, MonoObjectHandle sockaddr, gint32 *werror, gboolean blocking, MonoError *error);
 
 gint32
-ves_icall_System_Net_Sockets_Socket_Receive_internal (gsize sock, gchar *buffer, gint32 count,
+ves_icall_System_Net_Sockets_Socket_Receive_internal (gsize sock, void *buffer, gint32 count,
 						      gint32 flags, gint32 *werror, gboolean blocking, MonoError *error);
 
 gint32
@@ -217,12 +219,12 @@ ves_icall_System_Net_Sockets_Socket_Receive_array_internal (gsize sock, WSABUF *
 							    gint32 *werror, gboolean blocking, MonoError *error);
 
 gint32
-ves_icall_System_Net_Sockets_Socket_ReceiveFrom_internal (gsize sock, gchar *buffer, gint32 count,
+ves_icall_System_Net_Sockets_Socket_ReceiveFrom_internal (gsize sock, void *buffer, gint32 count,
 							  gint32 flags, MonoObjectHandle sockaddr, gint32 *werror, gboolean blocking, MonoError *error);
 
 
 gint32
-ves_icall_System_Net_Sockets_Socket_Send_internal (gsize sock, gchar *buffer, gint32 count,
+ves_icall_System_Net_Sockets_Socket_Send_internal (gsize sock, void *buffer, gint32 count,
 						   gint32 flags, gint32 *werror, gboolean blocking, MonoError *error);
 
 gint32
@@ -230,7 +232,7 @@ ves_icall_System_Net_Sockets_Socket_Send_array_internal (gsize sock, WSABUF *buf
 							 gint32 *werror, gboolean blocking, MonoError *error);
 
 gint32
-ves_icall_System_Net_Sockets_Socket_SendTo_internal (gsize sock, gchar *buffer, gint32 count,
+ves_icall_System_Net_Sockets_Socket_SendTo_internal (gsize sock, void *buffer, gint32 count,
 						     gint32 flags, MonoObjectHandle sockaddr, gint32 *werror,
 						     gboolean blocking, MonoError *error);
 
@@ -298,5 +300,7 @@ mono_network_init(void);
 
 void
 mono_network_cleanup(void);
+
+MONO_END_DECLS
 
 #endif /* _MONO_METADATA_W32SOCKET_H_ */

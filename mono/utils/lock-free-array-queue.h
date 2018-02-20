@@ -13,6 +13,8 @@
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-mmap.h>
 
+MONO_BEGIN_DECLS
+
 typedef struct _MonoLockFreeArrayChunk MonoLockFreeArrayChunk;
 
 typedef struct {
@@ -40,5 +42,7 @@ void mono_lock_free_array_queue_push (MonoLockFreeArrayQueue *q, gpointer entry_
 gboolean mono_lock_free_array_queue_pop (MonoLockFreeArrayQueue *q, gpointer entry_data_ptr);
 
 void mono_lock_free_array_queue_cleanup (MonoLockFreeArrayQueue *q);
+
+MONO_END_DECLS
 
 #endif

@@ -35,12 +35,12 @@ mono_callspec_eval_exception (MonoClass *klass, MonoCallSpec *spec)
 
 		switch (op->op) {
 		case MONO_TRACEOP_EXCEPTION:
-			if (strcmp ("", op->data) == 0 &&
-			    strcmp ("all", op->data2) == 0)
+			if (strcmp ("", (const char*)op->data) == 0 &&
+			    strcmp ("all", (const char*)op->data2) == 0)
 				inc = 1;
-			else if (strcmp ("", op->data) == 0 ||
-				 strcmp (klass->name_space, op->data) == 0)
-				if (strcmp (klass->name, op->data2) == 0)
+			else if (strcmp ("", (const char*)op->data) == 0 ||
+				 strcmp (klass->name_space, (const char*)op->data) == 0)
+				if (strcmp (klass->name, (const char*)op->data2) == 0)
 					inc = 1;
 			break;
 		default:
@@ -85,7 +85,7 @@ gboolean mono_callspec_eval (MonoMethod *method, const MonoCallSpec *spec)
 				inc = 1;
 			break;
 		case MONO_TRACEOP_METHOD:
-			mdesc = op->data;
+			mdesc = (MonoMethodDesc*)op->data;
 			is_full = mono_method_desc_is_full (mdesc);
 			if (is_full &&
 			    mono_method_desc_full_match (mdesc, method))
@@ -94,18 +94,18 @@ gboolean mono_callspec_eval (MonoMethod *method, const MonoCallSpec *spec)
 				inc = 1;
 			break;
 		case MONO_TRACEOP_CLASS:
-			if (strcmp (method->klass->name_space, op->data) == 0)
-				if (strcmp (method->klass->name, op->data2) ==
+			if (strcmp (method->klass->name_space, (const char*)op->data) == 0)
+				if (strcmp (method->klass->name, (const char*)op->data2) ==
 				    0)
 					inc = 1;
 			break;
 		case MONO_TRACEOP_ASSEMBLY:
 			if (strcmp (mono_image_get_name (method->klass->image),
-				    op->data) == 0)
+				     (const char*)op->data) == 0)
 				inc = 1;
 			break;
 		case MONO_TRACEOP_NAMESPACE:
-			if (strcmp (method->klass->name_space, op->data) == 0)
+			if (strcmp (method->klass->name_space, (const char*)op->data) == 0)
 				inc = 1;
 			break;
 		case MONO_TRACEOP_EXCEPTION:

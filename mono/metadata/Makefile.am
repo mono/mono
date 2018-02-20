@@ -164,6 +164,7 @@ common_sources = \
 	domain-internals.h	\
 	environment.c		\
 	environment.h		\
+	environment-internal.h	\
 	exception.c		\
 	exception.h		\
 	exception-internals.h	\
@@ -318,6 +319,8 @@ sgen_sources = \
 	sgen-stw.c				\
 	sgen-mono.c		\
 	sgen-client-mono.h
+
+CFLAGS := $(filter-out @CPLUSPLUS_REMOVE_CFLAGS@, @CFLAGS@) @CPLUSPLUS_ADD_CFLAGS@
 
 libmonoruntime_la_SOURCES = $(common_sources) $(icall_tables_sources) $(gc_dependent_sources) $(null_gc_sources) $(boehm_sources)
 libmonoruntime_la_CFLAGS = $(BOEHM_DEFINES)

@@ -11,6 +11,8 @@
 #include <mono/metadata/exception.h>
 #include <mono/metadata/object-internals.h>
 
+MONO_BEGIN_DECLS
+
 typedef struct _MonoNativeOverlapped MonoNativeOverlapped;
 
 void
@@ -65,5 +67,7 @@ ves_icall_System_Threading_ThreadPool_IsThreadPoolHosted (void);
 
 gboolean
 mono_threadpool_enqueue_work_item (MonoDomain *domain, MonoObject *work_item, MonoError *error);
+
+MONO_END_DECLS
 
 #endif // _MONO_METADATA_THREADPOOL_H_

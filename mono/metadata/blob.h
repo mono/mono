@@ -115,4 +115,3 @@ typedef enum {
 } MonoMetaTableEnum;
 
 #endif
-

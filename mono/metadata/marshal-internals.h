@@ -10,6 +10,8 @@
 #include <glib.h>
 #include <mono/metadata/object-internals.h>
 
+MONO_BEGIN_DECLS
+
 MonoObjectHandle
 mono_marshal_xdomain_copy_value_handle (MonoObjectHandle val, MonoError *error);
 
@@ -38,5 +40,7 @@ mono_marshal_free_hglobal (void *ptr);
 gpointer
 mono_string_to_utf8str (MonoString *s);
 #endif  /* HOST_WIN32 */
+
+MONO_END_DECLS
 
 #endif /* __MONO_METADATA_MARSHAL_INTERNALS_H__ */

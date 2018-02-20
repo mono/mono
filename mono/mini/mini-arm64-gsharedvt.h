@@ -5,6 +5,8 @@
 #ifndef __MINI_ARM64_GSHAREDVT_H__
 #define __MINI_ARM64_GSHAREDVT_H__
 
+MONO_BEGIN_DECLS
+
 /* Argument marshallings for calls between gsharedvt and normal code */
 typedef enum {
 	GSHAREDVT_ARG_NONE = 0,
@@ -84,5 +86,7 @@ typedef struct {
 
 gpointer
 mono_arm_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpointer *callee, gpointer mrgctx_reg);
+
+MONO_END_DECLS
 
 #endif /* __MINI_ARM64_GSHAREDVT_H__ */

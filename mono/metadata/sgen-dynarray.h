@@ -5,6 +5,8 @@
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
+MONO_BEGIN_DECLS
+
  // Growable array implementation used by sgen-new-bridge and sgen-tarjan-bridge.
 
 typedef struct {
@@ -250,7 +252,7 @@ dyn_array_ptr_set (DynPtrArray *da, int x, void *ptr)
 #ifdef OPTIMIZATION_SINGLETON_DYN_ARRAY
 	if (da->array.capacity == 1) {
 		g_assert (x == 0);
-		da->array.data = ptr;
+		da->array.data = (char*)ptr;
 	} else
 #endif
 	{
@@ -345,3 +347,5 @@ dyn_array_ptr_set_all (DynPtrArray *dst, DynPtrArray *src)
 	}
 	dst->array.size = src->array.size;
 }
+
+MONO_END_DECLS

@@ -81,7 +81,11 @@ typedef struct {
 	guint32  *bitmap;
 	gpointer *entries;
 	guint32   size;
+#ifdef __cplusplus
+	GCHandleType type : 8;
+#else
 	guint8    type;
+#endif
 	guint     slot_hint : 24; /* starting slot for search in bitmap */
 	/* 2^16 appdomains should be enough for everyone (though I know I'll regret this in 20 years) */
 	/* we alloc this only for weak refs, since we can get the domain directly in the other cases */
@@ -403,7 +407,7 @@ mono_gc_thread_detach_with_lock (MonoThreadInfo *p)
 	if (p->runtime_thread)
 		mono_threads_add_joinable_thread ((gpointer)tid);
 
-	mono_handle_stack_free (p->handle_stack);
+	mono_handle_stack_free ((HandleStack*)p->handle_stack);
 	p->handle_stack = NULL;
 }
 
@@ -545,7 +549,7 @@ typedef struct {
 static gpointer
 register_root (gpointer arg)
 {
-	RootData* root_data = arg;
+	RootData* root_data = (RootData*)arg;
 	g_hash_table_insert (roots, root_data->start, root_data->end);
 	return NULL;
 }
@@ -580,7 +584,7 @@ void
 mono_gc_deregister_root (char* addr)
 {
 	GC_call_with_alloc_lock (deregister_root, addr);
-	MONO_PROFILER_RAISE (gc_root_unregister, ((const mono_byte *) addr));
+	MONO_PROFILER_RAISE (gc_root_unregister, ((const mono_byte*)addr));
 }
 
 static void
@@ -698,22 +702,22 @@ mono_gc_make_root_descr_all_refs (int numbits)
 	return NULL;
 }
 
-void*
+MonoObject*
 mono_gc_alloc_fixed (size_t size, void *descr, MonoGCRootSource source, void *key, const char *msg)
 {
 	void *start = GC_MALLOC_UNCOLLECTABLE (size);
 	MONO_PROFILER_RAISE (gc_root_register, ((const mono_byte *) start, size, source, key, msg));
-	return start;
+	return (MonoObject*)start;
 }
 
 void
 mono_gc_free_fixed (void* addr)
 {
-	MONO_PROFILER_RAISE (gc_root_unregister, ((const mono_byte *) addr));
+	MONO_PROFILER_RAISE (gc_root_unregister, ((const mono_byte*)addr));
 	GC_FREE (addr);
 }
 
-void *
+MonoObject*
 mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 {
 	MonoObject *obj;
@@ -745,7 +749,7 @@ mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 	return obj;
 }
 
-void *
+MonoArray*
 mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 {
 	MonoArray *obj;
@@ -779,7 +783,7 @@ mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 	return obj;
 }
 
-void *
+MonoArray*
 mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size)
 {
 	MonoArray *obj;
@@ -816,7 +820,7 @@ mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uint
 	return obj;
 }
 
-void *
+MonoString*
 mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
 {
 	MonoString *obj = (MonoString *)GC_MALLOC_ATOMIC (size);
@@ -834,13 +838,13 @@ mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
 	return obj;
 }
 
-void*
+MonoObject*
 mono_gc_alloc_mature (MonoVTable *vtable, size_t size)
 {
 	return mono_gc_alloc_obj (vtable, size);
 }
 
-void*
+MonoObject*
 mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size)
 {
 	return mono_gc_alloc_obj (vtable, size);
@@ -1395,12 +1399,12 @@ mono_gc_is_disabled (void)
 }
 
 void
-mono_gc_wbarrier_range_copy (gpointer _dest, gpointer _src, int size)
+mono_gc_wbarrier_range_copy (gpointer _dest, gconstpointer _src, int size)
 {
 	g_assert_not_reached ();
 }
 
-void*
+MonoRangeCopyFunction
 mono_gc_get_range_copy_func (void)
 {
 	return &mono_gc_wbarrier_range_copy;
@@ -1492,7 +1496,7 @@ mono_gc_register_for_finalization (MonoObject *obj, MonoFinalizationProc user_da
 	g_assert (GC_base (obj) == (char*)obj - offset);
 #endif
 
-	GC_REGISTER_FINALIZER_NO_ORDER ((char*)obj - offset, (GC_finalization_proc)user_data, GUINT_TO_POINTER (offset), NULL, NULL);
+	GC_REGISTER_FINALIZER_NO_ORDER ((char*)obj - offset, user_data, GUINT_TO_POINTER (offset), NULL, NULL);
 }
 
 #ifndef HOST_WIN32
@@ -2019,7 +2023,7 @@ mono_gchandle_free_domain (MonoDomain *domain)
 }
 
 void
-mono_gc_register_obj_with_weak_fields (void *obj)
+mono_gc_register_obj_with_weak_fields (MonoObject *obj)
 {
 	g_error ("Weak fields not supported by boehm gc");
 }

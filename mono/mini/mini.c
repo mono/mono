@@ -987,7 +987,7 @@ mono_get_array_new_va_icall (int rank)
 	if (info == NULL) {
 		esig = mono_get_array_new_va_signature (rank);
 		name = g_strdup (icall_name);
-		info = mono_register_jit_icall (mono_array_new_va, name, esig, FALSE);
+		info = mono_register_jit_icall ((gpointer)mono_array_new_va, name, esig, FALSE);
 	}
 	mono_jit_unlock ();
 
@@ -1035,7 +1035,7 @@ mini_method_verify (MonoCompile *cfg, MonoMethod *method, gboolean fail_compile)
 			if (info->info.status == MONO_VERIFY_ERROR) {
 				if (fail_compile) {
 				char *method_name = mono_method_full_name (method, TRUE);
-					cfg->exception_type = info->exception_type;
+					cfg->exception_type = (MonoExceptionType)info->exception_type;
 					cfg->exception_message = g_strdup_printf ("Error verifying %s: %s", method_name, info->info.message);
 					g_free (method_name);
 				}
@@ -1057,7 +1057,7 @@ mini_method_verify (MonoCompile *cfg, MonoMethod *method, gboolean fail_compile)
 						mono_cfg_set_exception (cfg, MONO_EXCEPTION_MONO_ERROR);
 						g_free (msg);
 					} else {
-						cfg->exception_type = info->exception_type;
+						cfg->exception_type = (MonoExceptionType)info->exception_type;
 						cfg->exception_message = msg;
 					}
 					g_free (method_name);
@@ -2900,7 +2900,7 @@ mono_insert_safepoints (MonoCompile *cfg)
 	if (cfg->method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {
 		WrapperInfo *info = mono_marshal_get_wrapper_info (cfg->method);
 		g_assert (mono_threads_is_coop_enabled ());
-		gpointer poll_func = &mono_threads_state_poll;
+		gpointer poll_func = (gpointer)&mono_threads_state_poll;
 
 		if (info && info->subtype == WRAPPER_SUBTYPE_ICALL_WRAPPER && info->d.icall.func == poll_func) {
 			if (cfg->verbose_level > 1)
@@ -3893,14 +3893,14 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	if ((gboolean)mono_atomic_load_i32 ((gint32*)&mono_jit_stats.enabled)) {
 		if (code_size_ratio > mono_atomic_load_i32 (&mono_jit_stats.biggest_method_size)) {
 			mono_atomic_store_i32 (&mono_jit_stats.biggest_method_size, code_size_ratio);
-			char *biggest_method = g_strdup_printf ("%s::%s)", method->klass->name, method->name);
+			void *biggest_method = g_strdup_printf ("%s::%s)", method->klass->name, method->name);
 			biggest_method = mono_atomic_xchg_ptr ((gpointer*)&mono_jit_stats.biggest_method, biggest_method);
 			g_free (biggest_method);
 		}
 		code_size_ratio = (code_size_ratio * 100) / header->code_size;
 		if (code_size_ratio > mono_atomic_load_i32 (&mono_jit_stats.max_code_size_ratio)) {
 			mono_atomic_store_i32 (&mono_jit_stats.max_code_size_ratio, code_size_ratio);
-			char *max_ratio_method = g_strdup_printf ("%s::%s)", method->klass->name, method->name);
+			void *max_ratio_method = g_strdup_printf ("%s::%s)", method->klass->name, method->name);
 			max_ratio_method = mono_atomic_xchg_ptr ((gpointer*)&mono_jit_stats.max_ratio_method, max_ratio_method);
 			g_free (max_ratio_method);
 		}
@@ -3954,7 +3954,7 @@ mono_cfg_add_try_hole (MonoCompile *cfg, MonoExceptionClause *clause, guint8 *st
 }
 
 void
-mono_cfg_set_exception (MonoCompile *cfg, int type)
+mono_cfg_set_exception (MonoCompile *cfg, MonoExceptionType type)
 {
 	cfg->exception_type = type;
 }
@@ -4300,7 +4300,7 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 
 	/* Update llvm callees */
 	if (domain_jit_info (target_domain)->llvm_jit_callees) {
-		GSList *callees = g_hash_table_lookup (domain_jit_info (target_domain)->llvm_jit_callees, method);
+		GSList *callees = (GSList*)g_hash_table_lookup (domain_jit_info (target_domain)->llvm_jit_callees, method);
 		GSList *l;
 
 		for (l = callees; l; l = l->next) {

@@ -18,6 +18,8 @@
 #include <mono/metadata/threads-types.h>
 #include <mono/sgen/gc-internal-agnostic.h>
 
+MONO_BEGIN_DECLS
+
 #define mono_domain_finalizers_lock(domain) mono_os_mutex_lock (&(domain)->finalizable_objects_hash_lock);
 #define mono_domain_finalizers_unlock(domain) mono_os_mutex_unlock (&(domain)->finalizable_objects_hash_lock);
 
@@ -124,7 +126,7 @@ gboolean mono_gc_user_markers_supported (void);
  * size bytes will be available from the returned address (ie, descr
  * must not be stored in the returned memory)
  */
-void* mono_gc_alloc_fixed            (size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg);
+MonoObject* mono_gc_alloc_fixed      (size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg);
 void  mono_gc_free_fixed             (void* addr);
 
 /* make sure the gchandle was allocated for an object in domain */
@@ -133,42 +135,53 @@ void     mono_gchandle_free_domain  (MonoDomain *domain);
 
 typedef void (*FinalizerThreadCallback) (gpointer user_data);
 
-void* mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size);
+MonoGCDescriptor mono_gc_make_descr_for_string (gsize *bitmap, int numbits);
+
+MonoObject*
+mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size);
 
 MonoObjectHandle
 mono_gc_alloc_handle_pinned_obj (MonoVTable *vtable, gsize size);
 
-void* mono_gc_alloc_obj (MonoVTable *vtable, size_t size);
+MonoObject*
+mono_gc_alloc_obj (MonoVTable *vtable, size_t size);
 
 MonoObjectHandle
 mono_gc_alloc_handle_obj (MonoVTable *vtable, gsize size);
 
-void* mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length);
+MonoArray*
+mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length);
 
 MonoArrayHandle
 mono_gc_alloc_handle_vector (MonoVTable *vtable, gsize size, gsize max_length);
 
-void* mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size);
+MonoArray*
+mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size);
 
 MonoArrayHandle
 mono_gc_alloc_handle_array (MonoVTable *vtable, gsize size, gsize max_length, gsize bounds_size);
 
-void* mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len);
+MonoString*
+mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len);
 
 MonoStringHandle
 mono_gc_alloc_handle_string (MonoVTable *vtable, gsize size, gint32 len);
 
-void* mono_gc_alloc_mature (MonoVTable *vtable, size_t size);
+MonoObject*
+mono_gc_alloc_mature (MonoVTable *vtable, size_t size);
+
 MonoGCDescriptor mono_gc_make_descr_for_string (gsize *bitmap, int numbits);
 
 MonoObjectHandle
 mono_gc_alloc_handle_mature (MonoVTable *vtable, gsize size);
 
-void mono_gc_register_obj_with_weak_fields (void *obj);
+void
+mono_gc_register_obj_with_weak_fields (MonoObject *obj);
+
 void
 mono_gc_register_object_with_weak_fields (MonoObjectHandle obj);
 
-typedef void (*MonoFinalizationProc)(gpointer, gpointer); // same as SGenFinalizationProc, GC_finalization_proc
+typedef void (*MonoFinalizationProc) (gpointer, gpointer); // same as SGenFinalizationProc, GC_finalization_proc
 
 void  mono_gc_register_for_finalization (MonoObject *obj, MonoFinalizationProc user_data);
 void  mono_gc_add_memory_pressure (gint64 value);
@@ -227,8 +240,12 @@ MonoMethod* mono_gc_get_write_barrier (void);
 
 /* Fast valuetype copy */
 /* WARNING: [dest, dest + size] must be within the bounds of a single type, otherwise the GC will lose remset entries */
-void mono_gc_wbarrier_range_copy (gpointer dest, gpointer src, int size);
-void* mono_gc_get_range_copy_func (void);
+void mono_gc_wbarrier_range_copy (gpointer dest, gconstpointer src, int size);
+
+typedef void (*MonoRangeCopyFunction)(gpointer, gconstpointer, int size);
+
+MonoRangeCopyFunction
+mono_gc_get_range_copy_func (void);
 
 
 /* helper for the managed alloc support */
@@ -400,5 +417,6 @@ extern gboolean mono_do_not_finalize;
 /* List of names of classes not to finalize. */
 extern gchar **mono_do_not_finalize_class_names;
 
-#endif /* __MONO_METADATA_GC_INTERNAL_H__ */
+MONO_END_DECLS
 
+#endif /* __MONO_METADATA_GC_INTERNAL_H__ */

@@ -14,6 +14,8 @@
 #include <mono/utils/hazard-pointer.h>
 #include <mono/utils/mono-membar.h>
 
+MONO_BEGIN_DECLS
+
 typedef struct _MonoLinkedListSetNode MonoLinkedListSetNode;
 
 struct _MonoLinkedListSetNode {
@@ -170,5 +172,7 @@ mono_lls_filter_accept_all (gpointer elem)
 
 #define MONO_LLS_FOREACH_SAFE(list, type, elem) \
 	MONO_LLS_FOREACH_FILTERED_SAFE ((list), type, elem, mono_lls_filter_accept_all)
+
+MONO_END_DECLS
 
 #endif /* __MONO_SPLIT_ORDERED_LIST_H__ */

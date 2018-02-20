@@ -264,6 +264,10 @@ register_icall_no_wrapper (gpointer func, const char *name, const char *sigstr)
 	mono_register_jit_icall (func, name, sig, TRUE);
 }
 
+// Cast the first parameter to gpointer; macros do not recurse.
+#define register_icall(func, name, sigstr, no_wrapper) (register_icall ((gpointer)(func), (name), (sigstr), (no_wrapper)))
+#define register_icall_no_wrapper(func, name, sigstr) (register_icall_no_wrapper ((gpointer)(func), (name), (sigstr)))
+
 MonoMethodSignature*
 mono_signature_no_pinvoke (MonoMethod *method)
 {
@@ -492,7 +496,8 @@ mono_delegate_handle_to_ftnptr (MonoDelegateHandle delegate, MonoError *error)
 		goto leave;
 	}
 
-	MonoObjectHandle delegate_target = MONO_HANDLE_NEW_GET (MonoObject, delegate, target);
+	MonoObjectHandle delegate_target;
+	delegate_target = MONO_HANDLE_NEW_GET (MonoObject, delegate, target);
 	if (!MONO_HANDLE_IS_NULL (delegate_target)) {
 		/* Produce a location which can be embedded in JITted code */
 		target_handle = mono_gchandle_new_weakref (MONO_HANDLE_RAW (delegate_target), FALSE); /* FIXME: a version of mono_gchandle_new_weakref that takes a coop handle */
@@ -1671,6 +1676,7 @@ emit_ptr_to_object_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 static gpointer
 conv_to_icall (MonoMarshalConv conv, int *ind_store_type)
 {
+#define return return (gpointer)
 	int dummy;
 	if (!ind_store_type)
 		ind_store_type = &dummy;
@@ -1752,6 +1758,7 @@ conv_to_icall (MonoMarshalConv conv, int *ind_store_type)
 		g_assert_not_reached ();
 	}
 
+#undef return
 	return NULL;
 }
 
@@ -2208,7 +2215,7 @@ emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_obje
 		if (ftype->attrs & FIELD_ATTRIBUTE_STATIC)
 			continue;
 
-		ntype = (MonoMarshalNative)mono_type_to_unmanaged (ftype, info->fields [i].mspec, TRUE, klass->unicode, &conv);
+		ntype = mono_type_to_unmanaged (ftype, info->fields [i].mspec, TRUE, klass->unicode, &conv);
 
 		if (last_field) {
 			msize = klass->instance_size - info->fields [i].field->offset;
@@ -2438,13 +2445,13 @@ emit_thread_interrupt_checkpoint (MonoMethodBuilder *mb)
 	if (strstr (mb->name, "mono_thread_interruption_checkpoint"))
 		return;
 	
-	emit_thread_interrupt_checkpoint_call (mb, mono_thread_interruption_checkpoint);
+	emit_thread_interrupt_checkpoint_call (mb, (gpointer)mono_thread_interruption_checkpoint);
 }
 
 static void
 emit_thread_force_interrupt_checkpoint (MonoMethodBuilder *mb)
 {
-	emit_thread_interrupt_checkpoint_call (mb, mono_thread_force_interruption_checkpoint_noraise);
+	emit_thread_interrupt_checkpoint_call (mb, (gpointer)mono_thread_force_interruption_checkpoint_noraise);
 }
 
 void
@@ -12479,9 +12486,9 @@ static MonoObjectHandle
 mono_icall_handle_new (gpointer rawobj)
 {
 #ifdef MONO_HANDLE_TRACK_OWNER
-	return mono_handle_new (rawobj, "<marshal args>");
+	return (MonoObjectHandle)mono_handle_new ((MonoObject*)rawobj, "<marshal args>");
 #else
-	return mono_handle_new (rawobj);
+	return (MonoObjectHandle)mono_handle_new ((MonoObject*)rawobj);
 #endif
 }
 
@@ -12489,8 +12496,8 @@ static MonoObjectHandle
 mono_icall_handle_new_interior (gpointer rawobj)
 {
 #ifdef MONO_HANDLE_TRACK_OWNER
-	return mono_handle_new_interior (rawobj, "<marshal args>");
+	return (MonoObjectHandle)mono_handle_new_interior ((MonoObject*)rawobj, "<marshal args>");
 #else
-	return mono_handle_new_interior (rawobj);
+	return (MonoObjectHandle)mono_handle_new_interior ((MonoObject*)rawobj);
 #endif
 }

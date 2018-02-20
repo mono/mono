@@ -220,7 +220,7 @@ Icall macros
 	do {							\
 		void* __result = MONO_HANDLE_RAW (HANDLE);	\
 		CLEAR_ICALL_FRAME;				\
-		return __result;				\
+		return mono_typed_handle_cast_voidptr ((HANDLE), __result); \
 	} while (0); } while (0);
 
 // Return a coop handle from coop handle.
@@ -287,7 +287,7 @@ mono_thread_info_push_stack_mark (MonoThreadInfo *info, void *mark)
 		CLEAR_ICALL_COMMON	\
 		void* __ret = MONO_HANDLE_RAW (HANDLE);	\
 		CLEAR_ICALL_FRAME	\
-		return __ret;	\
+		return mono_typed_handle_cast_voidptr ((HANDLE), __ret); \
 	} while (0); } while (0)
 
 /*
@@ -325,10 +325,37 @@ void mono_handle_verify (MonoRawHandle handle);
  * typedef MonoObjectHandlePayload* MonoObjectHandle;
  * typedef MonoObjectHandlePayload* MonoObjectHandleOut;
  */
-#define TYPED_HANDLE_DECL(TYPE)						\
+
+#ifdef __cplusplus
+extern "C++"
+{
+template <typename T>
+struct TypedHandle { T* __raw; };
+
+template <typename T>
+inline T*
+mono_typed_handle_cast_voidptr (TypedHandle<T>* handle, void* voidp)
+// Convert void* to the type T associated with handle.
+{
+	return (T*)voidp;
+}
+
+}
+#define TYPED_HANDLE_DECL(TYPE)                                                \
+	typedef TypedHandle<TYPE> TYPED_HANDLE_PAYLOAD_NAME (TYPE) ; \
+	typedef TYPED_HANDLE_PAYLOAD_NAME (TYPE) * TYPED_HANDLE_NAME (TYPE); \
+	typedef TYPED_HANDLE_PAYLOAD_NAME (TYPE) * TYPED_OUT_HANDLE_NAME (TYPE)
+#else
+#define TYPED_HANDLE_DECL(TYPE)                                                \
 	typedef struct { TYPE *__raw; } TYPED_HANDLE_PAYLOAD_NAME (TYPE) ; \
 	typedef TYPED_HANDLE_PAYLOAD_NAME (TYPE) * TYPED_HANDLE_NAME (TYPE); \
 	typedef TYPED_HANDLE_PAYLOAD_NAME (TYPE) * TYPED_OUT_HANDLE_NAME (TYPE)
+
+// Convert void* to the type associated with handle.
+// C allows this in context, C++ does not.
+#define mono_typed_handle_cast_voidptr(handle, voidp) (voidp)
+#endif
+
 /*
  * TYPED_VALUE_HANDLE_DECL(SomeType):
  *   Expands to a decl for handles to SomeType (which is a managed valuetype (likely a struct) of some sort) and to an internal payload struct.
@@ -491,7 +518,7 @@ extern const MonoObjectHandle mono_null_value_handle;
 static inline void
 mono_handle_assign (MonoObjectHandleOut dest, MonoObjectHandle src)
 {
-	MONO_HANDLE_SUPPRESS (dest->__raw = (gpointer)(src ? MONO_HANDLE_RAW (src) : NULL));
+	MONO_HANDLE_SUPPRESS (dest->__raw = (MonoObject*)(src ? MONO_HANDLE_RAW (src) : NULL));
 }
 
 /* It is unsafe to call this function directly - it does not pin the handle!  Use MONO_HANDLE_GET_FIELD_VAL(). */
@@ -513,7 +540,7 @@ uintptr_t mono_array_handle_length (MonoArrayHandle arr);
 static inline void
 mono_handle_array_getref (MonoObjectHandleOut dest, MonoArrayHandle array, uintptr_t index)
 {
-	MONO_HANDLE_SUPPRESS (dest->__raw = (gpointer)mono_array_get(MONO_HANDLE_RAW (array), gpointer, index));
+	MONO_HANDLE_SUPPRESS (dest->__raw = mono_array_get(MONO_HANDLE_RAW (array), MonoObject*, index));
 }
 
 #define mono_handle_class(o) MONO_HANDLE_SUPPRESS (mono_object_class (MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (o))))
@@ -536,7 +563,8 @@ mono_array_handle_memcpy_refs (MonoArrayHandle dest, uintptr_t dest_idx, MonoArr
 gpointer
 mono_array_handle_pin_with_size (MonoArrayHandle handle, int size, uintptr_t index, uint32_t *gchandle);
 
-#define MONO_ARRAY_HANDLE_PIN(handle,type,index,gchandle_out) mono_array_handle_pin_with_size (MONO_HANDLE_CAST(MonoArray,(handle)), sizeof (type), (index), (gchandle_out))
+#define MONO_ARRAY_HANDLE_PIN(handle,type,index,gchandle_out) \
+	((type*)mono_array_handle_pin_with_size (MONO_HANDLE_CAST(MonoArray,(handle)), sizeof (type), (index), (gchandle_out)))
 
 gunichar2 *
 mono_string_handle_pin_chars (MonoStringHandle s, uint32_t *gchandle_out);

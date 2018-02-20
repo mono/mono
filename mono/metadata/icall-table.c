@@ -36,6 +36,8 @@
 #include <mono/utils/mono-publib.h>
 #include <mono/utils/bsearch.h>
 
+G_BEGIN_DECLS // lack of prototypes
+
 /*
  * icall.c defines a lot of icalls as static, to avoid having to add prototypes for
  * them, just don't include any mono headers and emit dummy prototypes.
@@ -110,7 +112,7 @@ static const struct msgstrtn_t {
 #undef ICALL_TYPE
 };
 static const guint16 icall_type_names_idx [] = {
-#define ICALL_TYPE(id,name,first) [Icall_type_ ## id] = offsetof (struct msgstrtn_t, MSGSTRFIELD(__LINE__)),
+#define ICALL_TYPE(id,name,first) (offsetof (struct msgstrtn_t, MSGSTRFIELD(__LINE__))),
 #include "metadata/icall-def.h"
 #undef ICALL_TYPE
 };
@@ -128,7 +130,7 @@ static const struct msgstr_t {
 #undef ICALL
 };
 static const guint16 icall_names_idx [] = {
-#define ICALL(id,name,func) [Icall_ ## id] = offsetof (struct msgstr_t, MSGSTRFIELD(__LINE__)),
+#define ICALL(id,name,func) (offsetof (struct msgstr_t, MSGSTRFIELD(__LINE__))),
 #include "metadata/icall-def.h"
 #undef ICALL
 };
@@ -166,7 +168,7 @@ icall_names [] = {
 #undef ICALL_TYPE
 #undef ICALL
 #define ICALL_TYPE(id,name,first)
-#define ICALL(id,name,func) func,
+#define ICALL(id,name,func) ((gpointer)(func)),
 static const gconstpointer
 icall_functions [] = {
 #include "metadata/icall-def.h"
@@ -205,7 +207,7 @@ static int
 compare_method_imap (const void *key, const void *elem)
 {
 	const char* method_name = (const char*)&icall_names_str + (*(guint16*)elem);
-	return strcmp (key, method_name);
+	return strcmp ((const char*)key, method_name);
 }
 
 static gsize
@@ -239,7 +241,7 @@ static int
 compare_class_imap (const void *key, const void *elem)
 {
 	const char* class_name = (const char*)&icall_type_names_str + (*(guint16*)elem);
-	return strcmp (key, class_name);
+	return strcmp ((const char*)key, class_name);
 }
 
 static const IcallTypeDesc*
@@ -257,7 +259,7 @@ static int
 compare_method_imap (const void *key, const void *elem)
 {
 	const char** method_name = (const char**)elem;
-	return strcmp (key, *method_name);
+	return strcmp ((const char*)key, *method_name);
 }
 
 static gsize
@@ -393,6 +395,8 @@ lookup_icall_symbol (gpointer func)
 	return NULL;
 #endif
 }
+
+G_END_DECLS // lack of prototypes
 
 void
 mono_icall_table_init (void)

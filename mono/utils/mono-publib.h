@@ -146,7 +146,18 @@ mono_set_allocator_vtable (MonoAllocatorVTable* vtable);
 
 #define MONO_DEPRECATED MONO_API MONO_RT_EXTERNAL_ONLY _MONO_DEPRECATED
 
+// __stdcall is builtin to Microsoft compilers as a keyword,
+// and builtin as a macro to gcc targeting Windows.
+// It only has meaning for Windows/x86; it is accepted but ignored
+// on other Windows targets (for source portability with Windows/x86).
+#if !defined(_MSC_VER) && !defined(__stdcall)
+#define __stdcall /* nothing */
+#endif
+
+// This matches exactly windows.h LPTHREAD_START_ROUTINE.
+// Unsigned long is always 32bits on Windows, and pointer-sized otherwise.
+typedef unsigned long (__stdcall * MonoThreadStart)(void*);
+
 MONO_END_DECLS
 
 #endif /* __MONO_PUBLIB_H__ */
-

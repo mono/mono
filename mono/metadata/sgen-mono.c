@@ -179,12 +179,12 @@ mono_gc_wbarrier_set_field (MonoObject *obj, gpointer field_ptr, MonoObject* val
 }
 
 void
-mono_gc_wbarrier_range_copy (gpointer _dest, gpointer _src, int size)
+mono_gc_wbarrier_range_copy (gpointer _dest, gconstpointer _src, int size)
 {
 	sgen_wbarrier_range_copy (_dest, _src, size);
 }
 
-void*
+MonoRangeCopyFunction
 mono_gc_get_range_copy_func (void)
 {
 	return sgen_get_remset ()->wbarrier_range_copy;
@@ -947,7 +947,7 @@ mono_gc_clear_domain (MonoDomain * domain)
  * Allocation
  */
 
-void*
+MonoObject*
 mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 {
 	MonoObject *obj = sgen_alloc_obj (vtable, size);
@@ -958,7 +958,7 @@ mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 	return obj;
 }
 
-void*
+MonoObject*
 mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size)
 {
 	MonoObject *obj = sgen_alloc_obj_pinned (vtable, size);
@@ -969,7 +969,7 @@ mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size)
 	return obj;
 }
 
-void*
+MonoObject*
 mono_gc_alloc_mature (MonoVTable *vtable, size_t size)
 {
 	MonoObject *obj = sgen_alloc_obj_mature (vtable, size);
@@ -983,7 +983,7 @@ mono_gc_alloc_mature (MonoVTable *vtable, size_t size)
 /**
  * mono_gc_alloc_fixed:
  */
-void*
+MonoObject*
 mono_gc_alloc_fixed (size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg)
 {
 	/* FIXME: do a single allocation */
@@ -994,7 +994,7 @@ mono_gc_alloc_fixed (size_t size, MonoGCDescriptor descr, MonoGCRootSource sourc
 		g_free (res);
 		res = NULL;
 	}
-	return res;
+	return (MonoObject*)res;
 }
 
 /**
@@ -1072,6 +1072,8 @@ create_allocator (int atype, ManagedAllocatorVariant variant)
 	int num_params, i;
 
 	if (!registered) {
+// Cast the first parameter to gpointer; macros do not recurse.
+#define mono_register_jit_icall(func, name, sig, no_wrapper) (mono_register_jit_icall ((gpointer)(func), (name), (sig), (no_wrapper)))
 		mono_register_jit_icall (mono_gc_alloc_obj, "mono_gc_alloc_obj", mono_create_icall_signature ("object ptr int"), FALSE);
 		mono_register_jit_icall (mono_gc_alloc_vector, "mono_gc_alloc_vector", mono_create_icall_signature ("object ptr int int"), FALSE);
 		mono_register_jit_icall (mono_gc_alloc_string, "mono_gc_alloc_string", mono_create_icall_signature ("object ptr int int32"), FALSE);
@@ -1723,7 +1725,7 @@ LOOP_HEAD:
  * Array and string allocation
  */
 
-void*
+MonoArray*
 mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 {
 	MonoArray *arr;
@@ -1764,7 +1766,7 @@ mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 	return arr;
 }
 
-void*
+MonoArray*
 mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size)
 {
 	MonoArray *arr;
@@ -1812,7 +1814,7 @@ mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uint
 	return arr;
 }
 
-void*
+MonoString*
 mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
 {
 	MonoString *str;
@@ -1880,9 +1882,9 @@ mono_gc_set_string_length (MonoString *str, gint32 new_length)
  */
 
 #define GC_ROOT_NUM 32
-#define SPECIAL_ADDRESS_FIN_QUEUE ((void*)1)
-#define SPECIAL_ADDRESS_CRIT_FIN_QUEUE ((void*)2)
-#define SPECIAL_ADDRESS_EPHEMERON ((void*)3)
+#define SPECIAL_ADDRESS_FIN_QUEUE ((mono_byte*)1)
+#define SPECIAL_ADDRESS_CRIT_FIN_QUEUE ((mono_byte*)2)
+#define SPECIAL_ADDRESS_EPHEMERON ((mono_byte*)3)
 
 typedef struct {
 	int count;		/* must be the first field */
@@ -1912,7 +1914,7 @@ report_gc_root (GCRootReport *report, void *address, void *object)
 static void
 single_arg_report_root (MonoObject **obj, void *gc_data)
 {
-	GCRootReport *report = gc_data;
+	GCRootReport *report = (GCRootReport*)gc_data;
 	if (*obj)
 		report_gc_root (report, obj, *obj);
 }
@@ -1920,7 +1922,7 @@ single_arg_report_root (MonoObject **obj, void *gc_data)
 static void
 two_args_report_root (void *address, MonoObject *obj, void *gc_data)
 {
-	GCRootReport *report = gc_data;
+	GCRootReport *report = (GCRootReport*)gc_data;
 	if (obj)
 		report_gc_root (report, address, obj);
 }
@@ -2004,12 +2006,12 @@ find_pinned_obj (char *addr)
 
 	if (idx != pinned_objects.next_slot) {
 		if (pinned_objects.data [idx] == addr)
-			return pinned_objects.data [idx];
+			return (GCObject*)pinned_objects.data [idx];
 		if (idx == 0)
 			return NULL;
 	}
 
-	GCObject *obj = pinned_objects.data [idx - 1];
+	GCObject *obj = (GCObject*)pinned_objects.data [idx - 1];
 	if (addr > (char*)obj && addr < ((char*)obj + sgen_safe_object_get_size (obj)))
 		return obj;
 	return NULL;
@@ -2020,7 +2022,7 @@ find_pinned_obj (char *addr)
  * We pass @root_report_address so register are properly accounted towards their thread
 */
 static void
-report_conservative_roots (GCRootReport *report, char *root_report_address, void **start, void **end)
+report_conservative_roots (GCRootReport *report, void *root_report_address, void **start, void **end)
 {
 	while (start < end) {
 		mword addr = (mword)*start;
@@ -2047,7 +2049,7 @@ typedef struct {
 static void
 report_handle_stack_root (gpointer *ptr, gpointer user_data)
 {
-	ReportHandleStackRoot *ud = user_data;
+	ReportHandleStackRoot *ud = (ReportHandleStackRoot*)user_data;
 	GCRootReport *report = ud->report;
 	gpointer addr = ud->info->client_info.info.handle_stack;
 
@@ -2061,11 +2063,11 @@ report_handle_stack_root (gpointer *ptr, gpointer user_data)
 static void
 report_handle_stack_roots (GCRootReport *report, SgenThreadInfo *info, gboolean precise)
 {
-	ReportHandleStackRoot ud = {
-		.precise = precise,
-		.report = report,
-		.info = info,
-	};
+	ReportHandleStackRoot ud;
+	memset (&ud, 0, sizeof (ud));
+	ud.precise = precise;
+	ud.report = report;
+	ud.info = info;
 
 	mono_handle_stack_scan ((HandleStack *) info->client_info.info.handle_stack, report_handle_stack_root, &ud, ud.precise, FALSE);
 }
@@ -2129,7 +2131,7 @@ report_pin_queue (void)
 	sgen_pointer_queue_sort_uniq (&pinned_objects);
 
 	for (int i = 0; i < pinned_objects.next_slot; ++i) {
-		GCObject *obj = pinned_objects.data [i];
+		GCObject *obj = (GCObject*)pinned_objects.data [i];
 		ssize_t size = sgen_safe_object_get_size (obj);
 
 		ssize_t addr = (ssize_t)obj;
@@ -2514,7 +2516,7 @@ mono_gc_set_skip_thread (gboolean skip)
 		/* If we skip scanning a thread with a non-empty handle stack, we may move an
 		 * object but fail to update the reference in the handle.
 		 */
-		HandleStack *stack = info->client_info.info.handle_stack;
+		HandleStack *stack = (HandleStack*)info->client_info.info.handle_stack;
 		g_assert (stack == NULL || mono_handle_stack_is_empty (stack));
 	}
 }
@@ -2617,7 +2619,7 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 				 * resumes running we may potentially move an object but fail to
 				 * update the reference in the handle.
 				 */
-				HandleStack *stack = info->client_info.info.handle_stack;
+				HandleStack *stack = (HandleStack*)info->client_info.info.handle_stack;
 				g_assert (stack == NULL || mono_handle_stack_is_empty (stack));
 			}
 			continue;
@@ -2681,9 +2683,10 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 			if (precise)
 				mono_handle_stack_scan ((HandleStack*)info->client_info.info.handle_stack, (GcScanFunc)ctx.ops->copy_or_mark_object, ctx.queue, precise, TRUE);
 			else {
-				PinHandleStackInteriorPtrData ud = { .start_nursery = start_nursery,
-								     .end_nursery = end_nursery,
-				};
+				PinHandleStackInteriorPtrData ud;
+				memset (&ud, 0, sizeof (ud));
+				ud.start_nursery = (void**)start_nursery;
+				ud.end_nursery = (void**)end_nursery;
 				mono_handle_stack_scan ((HandleStack*)info->client_info.info.handle_stack, pin_handle_stack_interior_ptrs, &ud, precise, FALSE);
 			}
 		}
@@ -2889,7 +2892,7 @@ mono_gc_make_descr_for_string (gsize *bitmap, int numbits)
 }
 
 void
-mono_gc_register_obj_with_weak_fields (void *obj)
+mono_gc_register_obj_with_weak_fields (GCObject *obj)
 {
 	return sgen_register_obj_with_weak_fields (obj);
 }
@@ -3055,7 +3058,7 @@ mono_gchandle_set_target (guint32 gchandle, MonoObject *obj)
 }
 
 void
-sgen_client_gchandle_created (int handle_type, GCObject *obj, guint32 handle)
+sgen_client_gchandle_created (GCHandleType handle_type, GCObject *obj, guint32 handle)
 {
 #ifndef DISABLE_PERFCOUNTERS
 	mono_atomic_inc_i32 (&mono_perfcounters->gc_num_handles);
@@ -3065,7 +3068,7 @@ sgen_client_gchandle_created (int handle_type, GCObject *obj, guint32 handle)
 }
 
 void
-sgen_client_gchandle_destroyed (int handle_type, guint32 handle)
+sgen_client_gchandle_destroyed (GCHandleType handle_type, guint32 handle)
 {
 #ifndef DISABLE_PERFCOUNTERS
 	mono_atomic_dec_i32 (&mono_perfcounters->gc_num_handles);

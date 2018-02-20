@@ -16,6 +16,8 @@
 #include <config.h>
 #include <glib.h>
 
+G_BEGIN_DECLS
+
 gdouble
 ves_icall_System_Math_Floor (gdouble x);
 
@@ -78,5 +80,7 @@ ves_icall_System_Math_SplitFractionDouble (gdouble *v);
 
 gdouble
 ves_icall_System_Math_Ceiling (gdouble v);
+
+G_END_DECLS
 
 #endif

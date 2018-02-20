@@ -15,6 +15,8 @@
 
 #include <mono/metadata/object-internals.h>
 
+MONO_BEGIN_DECLS
+
 /* This is a copy of System.Globalization.CompareOptions */
 typedef enum {
 	CompareOptions_None=0x00,
@@ -52,5 +54,7 @@ extern MonoString *ves_icall_System_String_InternalToUpper_Comp (MonoString *thi
 extern gunichar2 ves_icall_System_Char_InternalToUpper_Comp (gunichar2 c, MonoCultureInfo *cult);
 extern gunichar2 ves_icall_System_Char_InternalToLower_Comp (gunichar2 c, MonoCultureInfo *cult);
 extern void ves_icall_System_Text_Normalization_load_normalization_resource (guint8 **argProps, guint8** argMappedChars, guint8** argCharMapIndex, guint8** argHelperIndex, guint8** argMapIdxToComposite, guint8** argCombiningClass, MonoError *error);
+
+MONO_END_DECLS
 
 #endif /* _MONO_METADATA_FILEIO_H_ */

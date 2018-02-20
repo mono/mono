@@ -465,7 +465,7 @@ mono_method_header_get_num_clauses (MonoMethodHeader *header);
 MONO_API int
 mono_method_header_get_clauses (MonoMethodHeader *header, MonoMethod *method, void **iter, MonoExceptionClause *clause);
 
-MONO_API uint32_t 
+MONO_API MonoMarshalNative
 mono_type_to_unmanaged (MonoType *type, MonoMarshalSpec *mspec, 
 			mono_bool as_field, mono_bool unicode, MonoMarshalConv *conv);
 

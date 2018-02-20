@@ -99,7 +99,7 @@ mono_native_thread_id_get (void)
 }
 
 MONO_API gboolean
-mono_native_thread_create (MonoNativeThreadId *tid, gpointer func, gpointer arg)
+mono_native_thread_create (MonoNativeThreadId *tid, MonoNativeThreadStart func, gpointer arg)
 {
 	g_error ("WASM doesn't support threading");
 }
