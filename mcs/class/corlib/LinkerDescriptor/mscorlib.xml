@@ -676,6 +676,9 @@
 			<method signature="System.Void .ctor(System.Object)" />
 		</type>
 
+		<!-- fields are accessed via reflection by external code -->
+		<type fullname="System.Runtime.CompilerServices.RuntimeFeature" preserve="fields" />
+
 		<!-- icall.c | object-internal.h: MonoReflectionDllImportAttribute structure -->
 		<type fullname="System.Runtime.InteropServices.DllImportAttribute" preserve="fields"/> 
 		<!-- marshal.c: emit_marshal_custom (DISABLE_JIT is not defined for the AOT compiler, only the ARM runtimes) -->
