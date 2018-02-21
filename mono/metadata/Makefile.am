@@ -194,6 +194,7 @@ common_sources = \
 	metadata.c		\
 	metadata-verify.c	\
 	metadata-internals.h	\
+	metadataw.c		\
 	method-builder.h 	\
 	method-builder.c 	\
 	mono-basic-block.c	\

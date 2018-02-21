@@ -30,11 +30,20 @@ typedef void (*MonoDomainFunc) (MonoDomain *domain, void* user_data);
 MONO_API MonoDomain*
 mono_init                  (const char *filename);
 
+MONO_API MonoDomain*
+mono_init_w                (const wchar_t *filename);
+
 MONO_API MonoDomain *
 mono_init_from_assembly    (const char *domain_name, const char *filename);
 
 MONO_API MonoDomain *
+mono_init_from_assembly_w  (const wchar_t *domain_name, const wchar_t *filename);
+
+MONO_API MonoDomain *
 mono_init_version          (const char *domain_name, const char *version);
+
+MONO_API MonoDomain *
+mono_init_version_w        (const wchar_t *domain_name, const wchar_t *version);
 
 MONO_API MonoDomain*
 mono_get_root_domain       (void);
@@ -110,6 +119,9 @@ mono_domain_foreach        (MonoDomainFunc func, void* user_data);
 
 MONO_API MonoAssembly *
 mono_domain_assembly_open  (MonoDomain *domain, const char *name);
+
+MONO_API MonoAssembly *
+mono_domain_assembly_open_w (MonoDomain *domain, const wchar_t *name);
 
 MONO_API mono_bool
 mono_domain_finalize       (MonoDomain *domain, uint32_t timeout);
@@ -236,4 +248,3 @@ mono_security_set_core_clr_platform_callback (MonoCoreClrPlatformCB callback);
 MONO_END_DECLS
 
 #endif /* _MONO_METADATA_APPDOMAIN_H_ */
-
