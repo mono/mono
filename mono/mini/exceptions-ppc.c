@@ -808,9 +808,24 @@ void
 mono_arch_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), gpointer user_data)
 {
 	uintptr_t sp = (uintptr_t) MONO_CONTEXT_GET_SP(ctx);
+	/*
+	 * TODO: set user_data somewhere; I assume first arg greg? s390x uses
+	 * reg[2] and amd64 RDI
+	 */
 	sp -= PPC_MINIMAL_STACK_SIZE;
 	*(unsigned long *)sp = MONO_CONTEXT_GET_SP(ctx);
 	MONO_CONTEXT_SET_BP(ctx, sp);
-	MONO_CONTEXT_SET_IP(ctx, (unsigned long) async_cb);
+	mono_arch_setup_resume_sighandler_ctx(ctx, (unsigned long) async_cb);
 }
 
+void
+mono_arch_setup_resume_sighandler_ctx (MonoContext *ctx, gpointer func)
+{
+#ifdef PPC_USES_FUNCTION_DESCRIPTOR
+	MonoPPCFunctionDescriptor *handler_ftnptr = (MonoPPCFunctionDescriptor*)func;
+	MONO_CONTEXT_SET_IP(ctx, (gulong)handler_ftnptr->code);
+	ctx->regs[2] = (gulong)handler_ftnptr->toc;
+#else
+	MONO_CONTEXT_SET_IP(ctx, (unsigned long) func);
+#endif
+}
