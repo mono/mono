@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+  </head>
+  <body>
+	  C# output:
+	  <br>
+		 <textarea rows="10" cols="100" id="output"></textarea>
+	  <br>
+		  <button type="button" onclick="App.onClick()" id="button" disabled="true">Run</button>
+	  <br>
+	
+	<script type='text/javascript'>
+		var startLoadTime = Date.now();
+		var runtimeLoadTime = null;
+		var bclLoadTime = null;
+		var runtimeLoadTime = null;
+
+		var Module = { 
+			onRuntimeInitialized: function () {
+				var assemblies = [ "mscorlib.dll", "sample.dll" ];
+				runtimeLoadTime = Date.now ();
+				console.log ("Done with WASM module instantiation. Took " + (runtimeLoadTime - startLoadTime) + " ms");
+
+				Module.FS_createPath ("/", "managed", true, true);
+
+				var pending = 0;
+				assemblies.forEach (function(asm_name) {
+					console.log ("loading " + asm_name);
+					++pending;
+					fetch ("managed/" + asm_name, { credentials: 'same-origin' }).then (function (response) {
+						if (!response.ok)
+							throw "failed to load Assembly '" + asm_name + "'";
+						return response['arrayBuffer']();
+					}).then (function (blob) {
+						var asm = new Uint8Array (blob);
+						Module.FS_createDataFile ("managed/" + asm_name, null, asm, true, true, true);
+						console.log ("LOADED: " + asm_name);
+						--pending;
+						if (pending == 0)
+							Module.bclLoadingDone ();
+					});
+				});
+			},
+			
+			bclLoadingDone: function () {
+				bclLoadTime = Date.now ();
+				console.log ("Done loading the BCL. Took " + (bclLoadTime - runtimeLoadTime) + " ms");
+
+				MonoRuntime.init ();
+			}
+		};
+
+		var MonoRuntime = {
+			init: function () {
+				this.load_runtime = Module.cwrap ('mono_wasm_load_runtime', null, ['string']);
+				this.assembly_load = Module.cwrap ('mono_wasm_assembly_load', 'number', ['string']);
+				this.find_class = Module.cwrap ('mono_wasm_assembly_find_class', 'number', ['number', 'string', 'string']);
+				this.find_method = Module.cwrap ('mono_wasm_assembly_find_method', 'number', ['number', 'string', 'number']);
+				this.invoke_method = Module.cwrap ('mono_wasm_invoke_method', 'number', ['number', 'number', 'number']);
+				this.mono_string_get_utf8 = Module.cwrap ('mono_wasm_string_get_utf8', 'number', ['number']);
+				this.mono_string = Module.cwrap ('mono_wasm_string_from_js', 'number', ['string'])
+
+				this.load_runtime ("managed");
+				this.main_module = this.assembly_load ("sample")
+				if (!this.main_module)
+					throw "Could not find Main Module sample.dll";
+
+				this.math_class = this.find_class (this.main_module, "", "Math")
+				if (!this.math_class)
+					throw "Could not find Math class in main module";
+
+				this.add_method = this.find_method (this.math_class, "Add", -1)
+				if (!this.add_method)
+					throw "Could not find add method";
+
+				runtimeLoadTime = Date.now ();
+
+				console.log ("Done initializing the runtime. Took " + (runtimeLoadTime - bclLoadTime) + " ms");
+
+				App.init ();
+			},
+
+			conv_string: function (mono_obj) {
+				if (mono_obj == 0)
+					return null;
+				var raw = this.mono_string_get_utf8 (mono_obj);
+				var res = Module.UTF8ToString (raw);
+				Module._free (raw);
+
+				return res;
+			},
+		
+			call_method: function (method, this_arg, args) {
+				var args_mem = Module._malloc (args.length * 4);
+				var eh_throw = Module._malloc (4);
+				for (var i = 0; i < args.length; ++i)
+					Module.setValue (args_mem + i * 4, args [i], "i32");
+				Module.setValue (eh_throw, 0, "i32");
+
+				var res = this.invoke_method (method, this_arg, args_mem, eh_throw);
+
+				var eh_res = Module.getValue (eh_throw, "i32");
+
+				Module._free (args_mem);
+				Module._free (eh_throw);
+
+				if (eh_res != 0) {
+					var msg = this.conv_string (res);
+					throw new Error (msg);
+				}
+
+				return res;
+			},
+
+			perform_add: function (a, b) {
+				try {
+					var res = this.call_method (this.add_method, null, [this.mono_string (a), this.mono_string (b)]);
+					return this.conv_string (res);
+				} catch (e) {
+					return e.msg;
+				}
+			},
+
+		};
+
+		var App = {
+			onClick: function () {
+				this.output.value = "...";
+				var res = MonoRuntime.perform_add("1", "2");
+				this.output.value = res;
+			},
+
+			init: function () {
+				this.output = document.getElementById ("output");
+				this.button = document.getElementById ("button");
+
+				this.button.disabled = false;
+			},
+		};
+      </script>
+      <script async type="text/javascript" src="mono.js"></script>
+  </body>
+  </html>
