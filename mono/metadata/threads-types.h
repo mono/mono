@@ -195,7 +195,7 @@ mono_threads_release_app_context (MonoAppContext* ctx, MonoError *error);
 void ves_icall_System_Runtime_Remoting_Contexts_Context_RegisterContext (MonoAppContextHandle ctx, MonoError *error);
 void ves_icall_System_Runtime_Remoting_Contexts_Context_ReleaseContext (MonoAppContextHandle ctx, MonoError *error);
 
-MonoInternalThread *mono_thread_internal_current (void);
+MONO_PROFILER_API MonoInternalThread *mono_thread_internal_current (void);
 
 void mono_thread_internal_abort (MonoInternalThread *thread, gboolean appdomain_unload);
 void mono_thread_internal_suspend_for_shutdown (MonoInternalThread *thread);
@@ -209,7 +209,7 @@ void mono_thread_internal_unhandled_exception (MonoObject* exc);
 void mono_alloc_special_static_data_free (GHashTable *special_static_fields);
 gboolean mono_thread_current_check_pending_interrupt (void);
 
-void mono_thread_set_state (MonoInternalThread *thread, MonoThreadState state);
+MONO_PROFILER_API void mono_thread_set_state (MonoInternalThread *thread, MonoThreadState state);
 void mono_thread_clr_state (MonoInternalThread *thread, MonoThreadState state);
 gboolean mono_thread_test_state (MonoInternalThread *thread, MonoThreadState test);
 gboolean mono_thread_test_and_set_state (MonoInternalThread *thread, MonoThreadState test, MonoThreadState set);
@@ -225,7 +225,7 @@ gunichar2* mono_thread_get_name (MonoInternalThread *this_obj, guint32 *name_len
 MONO_API MonoException* mono_thread_get_undeniable_exception (void);
 void mono_thread_self_abort (void);
 
-void mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, gboolean permanent, gboolean reset, MonoError *error);
+MONO_PROFILER_API void mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, gboolean permanent, gboolean reset, MonoError *error);
 
 void mono_thread_suspend_all_other_threads (void);
 gboolean mono_threads_abort_appdomain_threads (MonoDomain *domain, int timeout);
