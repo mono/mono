@@ -82,6 +82,15 @@ namespace Xamarin.ApiDiff {
 
 		public static bool Lax;
 		public static bool Colorize = true;
+
+		public static int Verbosity;
+
+		public static void LogDebugMessage (string value)
+		{
+			if (Verbosity == 0)
+				return;
+			Console.WriteLine (value);
+		}
 	}
 	class Program {
 
@@ -122,7 +131,10 @@ namespace Xamarin.ApiDiff {
 				},
 				{ "c|colorize:", "Colorize HTML output", v => State.Colorize = string.IsNullOrEmpty (v) ? true : bool.Parse (v) },
 				{ "x|lax", "Ignore duplicate XML entries", v => State.Lax = true },
-				{ "ignore-nonbreaking", "Ignore all nonbreaking changes", v => State.IgnoreNonbreaking = true }
+				{ "ignore-nonbreaking", "Ignore all nonbreaking changes", v => State.IgnoreNonbreaking = true },
+				{ "v|verbose:", "Verbosity level; when set, will print debug messages",
+				  (int? v) => State.Verbosity = v ?? (State.Verbosity + 1)},
+				new ResponseFileSource (),
 			};
 
 			try {
