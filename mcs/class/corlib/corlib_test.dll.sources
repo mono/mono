@@ -220,6 +220,7 @@ System.Runtime.InteropServices/StructLayoutAttributeTest.cs
 System.Runtime.Remoting/ContextTest.cs
 System.Runtime.Remoting/SoapServicesTest.cs
 System.Runtime.Remoting/SynchronizationAttributeTest.cs
+System.Runtime.Remoting/RemotingServicesTest.cs
 System.Runtime.Remoting.Channels/ChannelServicesTest.cs
 System.Runtime.Remoting.Contexts/SynchronizationAttributeTest.cs
 System.Runtime.Remoting.Messaging/CallContextTest.cs

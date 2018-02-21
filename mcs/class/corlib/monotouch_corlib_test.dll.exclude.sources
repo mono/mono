@@ -41,6 +41,7 @@ System.Runtime.Remoting/ContextTest.cs
 System.Runtime.Remoting/RemotingConfigurationTest.cs
 System.Runtime.Remoting/SoapServicesTest.cs
 System.Runtime.Remoting/SynchronizationAttributeTest.cs
+System.Runtime.Remoting/RemotingServicesTest.cs
 System.Security.AccessControl/AuthorizationRuleTest.cs
 System.Security.AccessControl/CommonAceTest.cs
 System.Security.AccessControl/CommonAclTest.cs
