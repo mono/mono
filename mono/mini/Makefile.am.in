@@ -395,6 +395,7 @@ endif
 
 common_sources = \
 	mini.c			\
+	miniw.c			\
 	mini-runtime.c	\
 	seq-points.c	\
 	seq-points.h	\

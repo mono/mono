@@ -1304,3 +1304,49 @@ g_ucs4_to_utf16 (const gunichar *str, glong len, glong *items_read, glong *items
 	
 	return outbuf;
 }
+
+gchar*
+g_wcs_to_utf8 (const wchar_t *str, glong length)
+// "wcs" is what ANSI C and C++ call "wide character string".
+// For any "str" -- strlen, strchr, strtok, etc. there is "wcs" -- wcslen, wcschr, wcstok, etc.
+// where char has been replaced by wchar_t in the signature.
+// wchar_t is typically 16 bits on Windows and 32 bits on Unix.
+// $ echo "char a = sizeof(wchar_t);" | gcc -xc++ - -S -o - | grep [0-9]
+//	.byte	4                       ## 0x4
+{
+	g_assert (sizeof (wchar_t) == 1 || sizeof (wchar_t) == 2 || sizeof (wchar_t) == 4);
+	gchar* result;
+
+	if (!str)
+		return NULL;
+
+	switch (sizeof (wchar_t)) {
+	case 1: // hypothetical
+		if (length < 0)
+			length = strlen ((const char*)str);
+		result = (gchar*)g_malloc (length + 1);
+		if (!result)
+			return result;
+		memcpy (result, str, length);
+		result [length] = 0;
+		return result;
+	case 2: // typical on Windows but could be any platform
+		return g_utf16_to_utf8 ((const gunichar2*)str, length, NULL, NULL, NULL);
+	case 4: // typical on non-Windows
+		return g_ucs4_to_utf8 ((const gunichar*)str, length, NULL, NULL, NULL);
+	}
+}
+
+gchar**
+g_argvw_to_argv (int argc, wchar_t** argv_w)
+// free with g_strfreev
+{
+	// In ANSI main, argv is null terminated, so here too.
+	char** argv = g_new0 (char*, argc + 1);
+	if (!argv)
+		return argv;
+	int i;
+	for (i = 0; i < argc; ++i)
+		argv [i] = g_wcs_to_utf8 (argv_w [i], -1);
+	return argv;
+}

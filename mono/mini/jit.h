@@ -16,12 +16,22 @@ MONO_BEGIN_DECLS
 MONO_API MonoDomain * 
 mono_jit_init              (const char *file);
 
+MONO_API MonoDomain *
+mono_jit_init_w            (const wchar_t *file);
+
 MONO_API MonoDomain * 
 mono_jit_init_version      (const char *root_domain_name, const char *runtime_version);
+
+MONO_API MonoDomain *
+mono_jit_init_version_w    (const wchar_t *root_domain_name, const wchar_t *runtime_version);
 
 MONO_API int
 mono_jit_exec              (MonoDomain *domain, MonoAssembly *assembly, 
 			    int argc, char *argv[]);
+
+MONO_API int
+mono_jit_exec_w (MonoDomain *domain, MonoAssembly *assembly, int argc, wchar_t *argv [ ]);
+
 MONO_API void        
 mono_jit_cleanup           (MonoDomain *domain);
 
