@@ -52,6 +52,11 @@ typedef struct _Il2CppMonoMethodSignature Il2CppMonoMethodSignature;
 typedef struct _Il2CppMonoRuntimeExceptionHandlingCallbacks Il2CppMonoRuntimeExceptionHandlingCallbacks;
 typedef struct Il2CppDefaults Il2CppMonoDefaults;
 typedef struct _Il2CppMonoTypeNameParse Il2CppMonoTypeNameParse;
+typedef struct _Il2CppMonoDebugOptions Il2CppMonoDebugOptions;
+typedef struct _Il2CppEmptyStruct Il2CppMonoLMF;
+
+typedef MonoStackFrameInfo StackFrameInfo;
+typedef gpointer MonoInterpFrameHandle;
 
 typedef gboolean (*Il2CppMonoInternalStackWalk) (MonoStackFrameInfo *frame, MonoContext *ctx, gpointer data);
 
@@ -76,10 +81,20 @@ struct _Il2CppMonoTypeNameParse
 	void *il2cppTypeNameParseInfo;
 };
 
+struct _Il2CppMonoDebugOptions
+{
+    gboolean native_debugger_break;
+};
+
+struct _Il2CppEmptyStruct
+{
+    int dummy;
+};
+
 TYPED_HANDLE_DECL (MonoObject);
 TYPED_HANDLE_DECL (MonoReflectionAssembly);
 Il2CppMonoDefaults il2cpp_mono_defaults;
-MonoDebugOptions il2cpp_mono_debug_options;
+Il2CppMonoDebugOptions il2cpp_mono_debug_options;
 
 typedef void (*Il2CppMonoProfileFunc) (MonoProfiler *prof);
 typedef void (*Il2CppMonoProfileAppDomainFunc) (MonoProfiler *prof, MonoDomain *domain);

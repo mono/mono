@@ -50,6 +50,8 @@
 #define MonoRuntimeExceptionHandlingCallbacks Il2CppMonoRuntimeExceptionHandlingCallbacks
 #define debug_options il2cpp_mono_debug_options
 #define MonoTypeNameParse Il2CppMonoTypeNameParse
+#define MonoDebugOptions Il2CppMonoDebugOptions
+#define MonoLMF Il2CppMonoLMF
 
 #define mono_image_get_entry_point il2cpp_mono_image_get_entry_point
 #define mono_image_get_filename il2cpp_mono_image_get_filename
@@ -257,6 +259,9 @@
 #define mono_domain_assemblies_unlock
 
 #define mono_get_string_class il2cpp_mono_get_string_class
+
+#define MONO_MAX_IREGS 1
+#define NOT_IMPLEMENTED do { g_assert_not_reached (); } while (0)
 
 MonoMethod* il2cpp_mono_image_get_entry_point (MonoImage *image);
 const char* il2cpp_mono_image_get_filename (MonoImage *image);

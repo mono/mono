@@ -40,7 +40,6 @@ extern "C" {
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/profiler.h>
 #include <mono/sgen/sgen-conf.h>
-#include <mono/mini/mini.h>
 #include <mono/metadata/seq-points-data.h>
 #include "il2cpp-c-types.h"
 #include <mono/metadata/il2cpp-compat-metadata.h>
@@ -970,7 +969,7 @@ MonoMethod* il2cpp_mono_marshal_method_from_wrapper(MonoMethod* wrapper)
 	return NULL;
 }
 
-MonoDebugOptions* il2cpp_mini_get_debug_options()
+Il2CppMonoDebugOptions* il2cpp_mini_get_debug_options()
 {
 	IL2CPP_ASSERT(0 && "This method is not yet implemented");
 	return NULL;
@@ -982,13 +981,13 @@ gpointer il2cpp_mono_jit_find_compiled_method_with_jit_info(MonoDomain* domain, 
 	return 0;
 }
 
-MonoLMF** il2cpp_mono_get_lmf_addr()
+Il2CppMonoLMF** il2cpp_mono_get_lmf_addr()
 {
 	IL2CPP_ASSERT(0 && "This method is not yet implemented");
 	return NULL;
 }
 
-void il2cpp_mono_set_lmf(MonoLMF* lmf)
+void il2cpp_mono_set_lmf(Il2CppMonoLMF* lmf)
 {
 	IL2CPP_ASSERT(0 && "This method is not yet implemented");
 }

@@ -5,7 +5,10 @@
 #ifndef __MONO_DEBUGGER_AGENT_H__
 #define __MONO_DEBUGGER_AGENT_H__
 
+#ifndef RUNTIME_IL2CPP
 #include "mini.h"
+#endif
+
 #include "il2cpp-compat.h"
 #include <mono/utils/mono-stack-unwinding.h>
 
