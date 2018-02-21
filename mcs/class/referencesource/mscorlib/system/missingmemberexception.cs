@@ -61,11 +61,12 @@ namespace System {
                 }
             }
         }
-
+    
 #if MONO
-        internal static String FormatSignature(byte [] signature) {
-			throw new NotImplementedException ();
-		}
+        internal static string FormatSignature(byte[] signature)
+        {
+            return "";
+        }
 #else
         // Called to format signature
         [System.Security.SecurityCritical]  // auto-generated
