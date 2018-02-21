@@ -29,6 +29,9 @@ Once that's done, Start a web server from the SDK directory (where sample.html i
 python -m SimpleHTTPServer
 ```
 
+Unfortunately, the above http server doesn't give  wasm binaries the right mime type, which disables WebAssembly stream compilation.
+The included server.py script solves this and can be used instead.
+
 Go to `locahost:8000/sample.html` and it should work.
 
 [1] https://github.com/kripken/emscripten
