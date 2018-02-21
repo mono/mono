@@ -1382,7 +1382,7 @@ namespace System.Threading
     }
 
     [HostProtection(Synchronization=true, ExternalThreading=true)]
-    public static class ThreadPool
+    public static partial class ThreadPool
     {
         #if FEATURE_CORECLR
         [System.Security.SecurityCritical] // auto-generated

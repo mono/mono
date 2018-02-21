@@ -95,23 +95,31 @@ namespace System.Windows.Forms {
 			if (RunningOnUnix) {
 				//if (Environment.GetEnvironmentVariable ("not_supported_MONO_MWF_USE_NEW_X11_BACKEND") != null) {
 				//        driver=XplatUIX11_new.GetInstance ();
-				//} else 
-				if (Environment.GetEnvironmentVariable ("MONO_MWF_MAC_FORCE_X11") != null) {
-					driver = XplatUIX11.GetInstance ();
+				//} else
+				var loadable = Environment.GetEnvironmentVariable ("MONO_MWF_DRIVER");
+				if (loadable != null){
+					var a = System.Reflection.Assembly.LoadFile (loadable);
+					var mi = a?.GetType ("Bootstrap")?.GetMethod ("CreateInstance");
+					if (mi != null)
+						driver = (XplatUIDriver) mi.Invoke (null, null);
 				} else {
-					IntPtr buf = Marshal.AllocHGlobal (8192);
-					// This is a hacktastic way of getting sysname from uname ()
-					if (uname (buf) != 0) {
-						// WTF: We cannot run uname
-						driver=XplatUIX11.GetInstance ();
+					if (Environment.GetEnvironmentVariable ("MONO_MWF_MAC_FORCE_X11") != null) {
+						driver = XplatUIX11.GetInstance ();
 					} else {
-						string os = Marshal.PtrToStringAnsi (buf);
-						if (os == "Darwin")
-							driver=XplatUICarbon.GetInstance ();
-						else
+						IntPtr buf = Marshal.AllocHGlobal (8192);
+						// This is a hacktastic way of getting sysname from uname ()
+						if (uname (buf) != 0) {
+							// WTF: We cannot run uname
 							driver=XplatUIX11.GetInstance ();
+						} else {
+							string os = Marshal.PtrToStringAnsi (buf);
+							if (os == "Darwin")
+								driver=XplatUICarbon.GetInstance ();
+							else
+								driver=XplatUIX11.GetInstance ();
+						}
+						Marshal.FreeHGlobal (buf);
 					}
-					Marshal.FreeHGlobal (buf);
 				}
 			} else {
 				driver=XplatUIWin32.GetInstance ();

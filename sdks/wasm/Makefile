@@ -45,7 +45,8 @@ TEST_MCS_DEPS = $(patsubst %,-r:%, $(TEST_DEPS))
 
 
 .stamp-depot-tools:
-	git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git depot_tools
+	rm -rf $(TOP)/sdks/wasm/depot_tools
+	git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git $(TOP)/sdks/wasm/depot_tools
 	touch $@
 
 .stamp-v8: .stamp-depot-tools
@@ -61,7 +62,7 @@ driver.o: driver.c
 	$(EMCC) -g -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 driver.c -c -o driver.o
 
 mono.js: driver.o library_mono.js $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a
-	$(EMCC) -g4 -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s ASSERTIONS=2 --js-library library_mono.js driver.o $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a -o mono.js
+	$(EMCC) -g4 -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s ASSERTIONS=2 --js-library library_mono.js driver.o $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a -o mono.js -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']"
 
 build-native: mono.js
 
@@ -117,13 +118,14 @@ package: build
 	mkdir tmp/bcl
 	cp -r $(TOP)/sdks/out/bcl/wasm/* tmp/bcl/
 	cp driver.c tmp/
+	cp $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a tmp/
+	cp library_mono.js tmp/
 	cp mono.js tmp/
 	cp mono.wasm tmp/
 	cp mono.wasm.map tmp/
-	cp $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a tmp/
-	cp test.js tmp/
-	cp main.cs tmp/
-	cp library_mono.js tmp/
+	cp sample.html tmp/
+	cp sample.cs tmp/
+	cp README.md tmp/
 	(cd tmp;  zip -r9 ../mono-wasm-$(shell git rev-parse --short HEAD).zip .)
 	rm -rf tmp
 

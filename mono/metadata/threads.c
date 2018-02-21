@@ -1753,39 +1753,54 @@ ves_icall_System_Threading_Thread_SetPriority (MonoThreadObjectHandle this_obj, 
 
 /* If the array is already in the requested domain, we just return it,
    otherwise we return a copy in that domain. */
-static MonoArray*
-byte_array_to_domain (MonoArray *arr, MonoDomain *domain, MonoError *error)
+static MonoArrayHandle
+byte_array_to_domain (MonoArrayHandle arr, MonoDomain *domain, MonoError *error)
 {
-	MonoArray *copy;
+	HANDLE_FUNCTION_ENTER ()
 
-	error_init (error);
-	if (!arr)
-		return NULL;
+	if (!arr || MONO_HANDLE_IS_NULL (arr))
+		return MONO_HANDLE_NEW (MonoArray, NULL);
 
-	if (mono_object_domain (arr) == domain)
+	if (MONO_HANDLE_DOMAIN (arr) == domain)
 		return arr;
 
-	copy = mono_array_new_checked (domain, mono_defaults.byte_class, arr->max_length, error);
-	memmove (mono_array_addr (copy, guint8, 0), mono_array_addr (arr, guint8, 0), arr->max_length);
-	return copy;
+	size_t const size = mono_array_handle_length (arr);
+
+	// Capture arrays into common representation for repetitious code.
+	// These two variables could also be an array of size 2 and
+	// repitition implemented with a loop.
+	struct {
+		MonoArrayHandle handle;
+		gpointer p;
+		guint gchandle;
+	}
+	source = { arr },
+	dest = { mono_array_new_handle (domain, mono_defaults.byte_class, size, error) };
+	goto_if_nok (error, exit);
+
+	// Pin both arrays.
+	source.p = mono_array_handle_pin_with_size (source.handle, size, 0, &source.gchandle);
+	dest.p = mono_array_handle_pin_with_size (dest.handle, size, 0, &dest.gchandle);
+
+	memmove (dest.p, source.p, size);
+exit:
+	// Unpin both arrays.
+	mono_gchandle_free (source.gchandle);
+	mono_gchandle_free (dest.gchandle);
+
+	HANDLE_FUNCTION_RETURN_REF (MonoArray, dest.handle)
 }
 
-MonoArray*
-ves_icall_System_Threading_Thread_ByteArrayToRootDomain (MonoArray *arr)
+MonoArrayHandle
+ves_icall_System_Threading_Thread_ByteArrayToRootDomain (MonoArrayHandle arr, MonoError *error)
 {
-	ERROR_DECL (error);
-	MonoArray *result = byte_array_to_domain (arr, mono_get_root_domain (), error);
-	mono_error_set_pending_exception (error);
-	return result;
+	return byte_array_to_domain (arr, mono_get_root_domain (), error);
 }
 
-MonoArray*
-ves_icall_System_Threading_Thread_ByteArrayToCurrentDomain (MonoArray *arr)
+MonoArrayHandle
+ves_icall_System_Threading_Thread_ByteArrayToCurrentDomain (MonoArrayHandle arr, MonoError *error)
 {
-	ERROR_DECL (error);
-	MonoArray *result = byte_array_to_domain (arr, mono_domain_get (), error);
-	mono_error_set_pending_exception (error);
-	return result;
+	return byte_array_to_domain (arr, mono_domain_get (), error);
 }
 
 /**
@@ -4506,16 +4521,16 @@ static void CALLBACK dummy_apc (ULONG_PTR param)
 static MonoException*
 mono_thread_execute_interruption (void)
 {
+	MonoException *exc = NULL;
 	MonoInternalThread *thread = mono_thread_internal_current ();
 	MonoThread *sys_thread = mono_thread_current ();
 
 	LOCK_THREAD (thread);
+	gboolean unlock = TRUE;
 
 	/* MonoThread::interruption_requested can only be changed with atomics */
-	if (!mono_thread_clear_interruption_requested (thread)) {
-		UNLOCK_THREAD (thread);
-		return NULL;
-	}
+	if (!mono_thread_clear_interruption_requested (thread))
+		goto exit;
 
 	/* this will consume pending APC calls */
 #ifdef HOST_WIN32
@@ -4529,39 +4544,30 @@ mono_thread_execute_interruption (void)
 
 	/* If there's a pending exception and an AbortRequested, the pending exception takes precedence */
 	if (sys_thread->pending_exception) {
-		MonoException *exc;
-
 		exc = sys_thread->pending_exception;
 		sys_thread->pending_exception = NULL;
-
-		UNLOCK_THREAD (thread);
-		return exc;
-	} else if (thread->state & (ThreadState_AbortRequested)) {
-		UNLOCK_THREAD (thread);
-		g_assert (sys_thread->pending_exception == NULL);
-		if (thread->abort_exc == NULL) {
-			/* 
-			 * This might be racy, but it has to be called outside the lock
-			 * since it calls managed code.
-			 */
-			MONO_OBJECT_SETREF (thread, abort_exc, mono_get_exception_thread_abort ());
+	} else if (thread->state & ThreadState_AbortRequested) {
+		exc = thread->abort_exc;
+		if (exc == NULL) {
+			exc = mono_get_exception_thread_abort ();
+			MONO_OBJECT_SETREF (thread, abort_exc, exc);
 		}
-		return thread->abort_exc;
-	} else if (thread->state & (ThreadState_SuspendRequested)) {
+	} else if (thread->state & ThreadState_SuspendRequested) {
 		/* calls UNLOCK_THREAD (thread) */
 		self_suspend_internal ();
-		return NULL;
+		unlock = FALSE;
 	} else if (thread->thread_interrupt_requested) {
-
 		thread->thread_interrupt_requested = FALSE;
 		UNLOCK_THREAD (thread);
-		
-		return(mono_get_exception_thread_interrupted ());
+		unlock = FALSE;
+		exc = mono_get_exception_thread_interrupted ();
 	}
+
+exit:
+	if (unlock)
+		UNLOCK_THREAD (thread);
 	
-	UNLOCK_THREAD (thread);
-	
-	return NULL;
+	return exc;
 }
 
 /*

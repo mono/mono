@@ -545,7 +545,9 @@ namespace System {
         text,
         length,
         comparer,
-        comparable
+        comparable,
+        exceptions,
+        exception
 #endif
     }
 
@@ -600,7 +602,10 @@ namespace System {
         ObjectDisposed_RegKeyClosed,
         NotSupported_InComparableType,
         Argument_InvalidRegistryOptionsCheck,
-        Argument_InvalidRegistryViewCheck
+        Argument_InvalidRegistryViewCheck,
+        TaskT_TransitionToFinal_AlreadyCompleted,
+        TaskCompletionSourceT_TrySetException_NullException,
+        TaskCompletionSourceT_TrySetException_NoExceptions,
     }
 }
 

@@ -204,7 +204,7 @@ done:
 	if (!res && mono_error_ok (error)) {
 		char *name = mono_class_name_from_token (image, type_token);
 		char *assembly = mono_assembly_name_from_token (image, type_token);
-		mono_error_set_type_load_name (error, name, assembly, "Could not resolve type with token %08x (from typeref, class/assembly %s, %s)", type_token, name, assembly);
+		mono_error_set_type_load_name (error, name, assembly, "Could not resolve type with token %08x from typeref (expected class '%s' in assembly '%s')", type_token, name, assembly);
 	}
 	return res;
 }
@@ -1565,17 +1565,35 @@ mono_class_interface_offset_with_variance (MonoClass *klass, MonoClass *itf, gbo
 	*non_exact_match = FALSE;
 	if (i >= 0)
 		return i;
-	
+
 	if (itf->is_array_special_interface && klass->rank < 2) {
 		MonoClass *gtd = mono_class_get_generic_type_definition (itf);
+		int found = -1;
+
+		for (i = 0; i < klass->interface_offsets_count; i++) {
+			if (mono_class_is_variant_compatible (itf, klass->interfaces_packed [i], FALSE)) {
+				found = i;
+				*non_exact_match = TRUE;
+				break;
+			}
+
+		}
+		if (found != -1)
+			return klass->interface_offsets_packed [found];
 
 		for (i = 0; i < klass->interface_offsets_count; i++) {
 			// printf ("\t%s\n", mono_type_get_full_name (klass->interfaces_packed [i]));
 			if (mono_class_get_generic_type_definition (klass->interfaces_packed [i]) == gtd) {
+				found = i;
 				*non_exact_match = TRUE;
-				return klass->interface_offsets_packed [i];
+				break;
 			}
 		}
+
+		if (found == -1)
+			return -1;
+
+		return klass->interface_offsets_packed [found];
 	}
 
 	if (!mono_class_has_variant_generic_params (itf))
@@ -2623,7 +2641,7 @@ done:
 	if (!klass && mono_error_ok (error)) {
 		char *name = mono_class_name_from_token (image, type_token);
 		char *assembly = mono_assembly_name_from_token (image, type_token);
-		mono_error_set_type_load_name (error, name, assembly, "Could not resolve type with token %08x (class/assembly %s, %s)", type_token, name, assembly);
+		mono_error_set_type_load_name (error, name, assembly, "Could not resolve type with token %08x (expected class '%s' in assembly '%s')", type_token, name, assembly);
 	}
 
 	return klass;

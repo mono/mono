@@ -49,7 +49,7 @@ namespace System.Runtime.CompilerServices
 		Look into using quatratic probing/double hashing to reduce clustering problems.
 		Make reads and non-expanding writes (add/remove) lock free.
 	*/
-	public sealed class ConditionalWeakTable<TKey, TValue> 
+	public sealed class ConditionalWeakTable<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>
 		where TKey : class
 		where TValue : class
 	{
@@ -374,5 +374,12 @@ namespace System.Runtime.CompilerServices
 				return list;
 			}
 		}
+
+		IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator () => ((IEnumerable<KeyValuePair<TKey, TValue>>)this).GetEnumerator ();
 	}
 }

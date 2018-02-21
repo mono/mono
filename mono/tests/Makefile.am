@@ -534,6 +534,7 @@ TESTS_CS_SRC=		\
 	threads-leak.cs	\
 	threads-init.cs \
 	bug-60848.cs \
+	bug-59400.cs \
 	sizeof-empty-structs.cs
 
 if AMD64
@@ -1048,7 +1049,6 @@ INTERP_DISABLED_TESTS = \
 	safehandle.2.exe \
 	stackframes-async.2.exe \
 	static-constructor.exe \
-	thread6.exe \
 	threadpool-exceptions2.exe \
 	threadpool-exceptions4.exe \
 	threadpool-exceptions5.exe \
