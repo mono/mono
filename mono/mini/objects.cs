@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using System.Reflection;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
@@ -1826,6 +1827,30 @@ ncells ) {
 			object o = __refvalue (r, object);
 		} catch (InvalidCastException) {
 		}
+
+		return 0;
+	}
+
+	public interface IFoo
+	{
+	  int MyInt { get; }
+	}
+
+	public class IFooImpl : IFoo
+	{
+	  public int MyInt => 0;
+	}
+
+	//gh 6266
+	public static int test_0_store_to_magic_iface_array ()
+	{
+		ICollection<IFoo> arr1 = new IFooImpl[1] { new IFooImpl() };
+		ICollection<IFoo> arr2 = new IFooImpl[1] { new IFooImpl() };
+
+		ICollection<IFoo>[] a2d = new ICollection<IFoo>[2] {
+			arr1,
+			arr2,
+		};
 
 		return 0;
 	}
