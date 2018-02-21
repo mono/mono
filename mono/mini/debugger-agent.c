@@ -5166,14 +5166,6 @@ resume_from_signal_handler (void *sigctx, void *func)
 	MONO_CONTEXT_SET_IP (&ctx, func);
 #endif
 	mono_monoctx_to_sigctx (&ctx, sigctx);
-
-#if defined(PPC_USES_FUNCTION_DESCRIPTOR) && !defined(MONO_ARCH_HAVE_SETUP_RESUME_FROM_SIGNAL_HANDLER_CTX)
-	/*
-	 * mono_arch_setup_resume_sighandler_ctx would set up a function
-	 * descriptor for us otherwise
-	 */
-	mono_ppc_set_func_into_sigctx (sigctx, func);
-#endif
 }
 
 void
