@@ -392,8 +392,6 @@ gboolean mono_ppc_is_direct_call_sequence (guint32 *code);
 
 void mono_ppc_patch_plt_entry (guint8 *code, gpointer *got, mgreg_t *regs, guint8 *addr);
 
-void mono_ppc_set_func_into_sigctx (void *sigctx, void *func);
-
 
 // Debugging macros for ELF ABI v2
 #ifdef DEBUG_ELFABIV2

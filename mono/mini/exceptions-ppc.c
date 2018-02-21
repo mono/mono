@@ -618,22 +618,6 @@ mono_arch_ip_from_context (void *sigctx)
 #endif
 }
 
-void
-mono_ppc_set_func_into_sigctx (void *sigctx, void *func)
-{
-#ifdef MONO_CROSS_COMPILE
-	g_assert_not_reached ();
-#elif defined(PPC_USES_FUNCTION_DESCRIPTOR)
-	/* Have to set both the ip and the TOC reg */
-	os_ucontext *uc = sigctx;
-
-	UCONTEXT_REG_NIP(uc) = ((gsize*)func) [0];
-	UCONTEXT_REG_Rn (uc, 2) = ((gsize*)func)[1];
-#else
-	g_assert_not_reached ();
-#endif
-}
-
 static void
 altstack_handle_and_restore (void *sigctx, gpointer obj)
 {
