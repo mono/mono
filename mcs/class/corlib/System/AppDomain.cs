@@ -1397,6 +1397,9 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern void DoUnhandledException (Exception e);
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void NonFatalUnhandledException (Exception e);
+
 		internal void DoUnhandledException (UnhandledExceptionEventArgs args) {
 			if (UnhandledException != null)
 				UnhandledException (this, args);
@@ -1428,6 +1431,30 @@ namespace System {
 				arrResponse = null;
 		}
 
+		static void FireProcessExit (object state)
+		{
+			try {
+				var procExit = CurrentDomain.ProcessExit;
+				if (procExit != null)
+					procExit (CurrentDomain, null);
+			} catch (Exception e) {
+				NonFatalUnhandledException (e);
+			} finally {
+				lock (state) {
+					Monitor.Pulse (state);
+				}
+			}
+		}
+
+		//XXX This is called by the runtime shutdown process, see runtime.c
+		static bool RunProcessExit ()
+		{
+			object obj = new object ();
+			lock (obj) {
+				ThreadPool.UnsafeQueueUserWorkItem (FireProcessExit, obj);
+				return Monitor.Wait (obj, 3000);
+			}
+		}
 #pragma warning restore 169
 
 		// End of methods called from the runtime
