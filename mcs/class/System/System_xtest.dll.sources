@@ -1,3 +1,5 @@
+../test-helpers/Configuration.Http.cs
+
 ../../../external/corefx/src/Common/tests/System/Threading/Tasks/TaskTimeoutExtensions.cs
 
 ../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/AssertExtensions.cs
