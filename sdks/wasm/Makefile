@@ -126,6 +126,7 @@ package: build
 	cp sample.html tmp/
 	cp sample.cs tmp/
 	cp README.md tmp/
+	cp server.py tmp/
 	(cd tmp;  zip -r9 ../mono-wasm-$(shell git rev-parse --short HEAD).zip .)
 	rm -rf tmp
 
