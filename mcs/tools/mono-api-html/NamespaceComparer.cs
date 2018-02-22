@@ -58,7 +58,9 @@ namespace Xamarin.ApiDiff {
 		public override void Added (XElement target, bool wasParentAdded)
 		{
 			string name = target.Attribute ("name").Value;
-			if (State.IgnoreNew.Any (re => re.IsMatch (name)))
+			var namespaceDescription  = $"{name}: Added namespace";
+			State.LogDebugMessage ($"Possible -n value: {namespaceDescription}");
+			if (State.IgnoreNew.Any (re => re.IsMatch (namespaceDescription)))
 				return;
 
 			Output.WriteLine ("<!-- start namespace {0} --> <div> ", name);
@@ -92,7 +94,9 @@ namespace Xamarin.ApiDiff {
 		{
 			var name = source.Attribute ("name").Value;
 
-			if (State.IgnoreRemoved.Any (re => re.IsMatch (name)))
+			var namespaceDescription  = $"{name}: Removed namespace";
+			State.LogDebugMessage ($"Possible -r value: {namespaceDescription}");
+			if (State.IgnoreRemoved.Any (re => re.IsMatch (namespaceDescription)))
 				return;
 
 			Output.WriteLine ("<!-- start namespace {0} --> <div>", name);
