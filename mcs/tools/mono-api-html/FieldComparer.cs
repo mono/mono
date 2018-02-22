@@ -97,7 +97,7 @@ namespace Xamarin.ApiDiff {
 			var name = source.GetAttribute ("name");
 			var srcValue = source.GetAttribute ("value");
 			var tgtValue = target.GetAttribute ("value");
-			var change = new ApiChange ();
+			var change = new ApiChange (GetDescription (source));
 			change.Header = "Modified " + GroupName;
 
 			if (State.BaseType == "System.Enum") {
