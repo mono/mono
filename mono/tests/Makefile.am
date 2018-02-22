@@ -1219,10 +1219,12 @@ EXTRA_DIST=test-driver test-runner.cs $(TESTS_CS_SRC) $(TESTS_IL_SRC) \
 	$(TEST_TAILCALL_IL_SRC)
 
 %.exe: %.il
+	-mkdir -p $(@D)
 	$(ILASM) -out:$@ $<
 
 # FIXME missing dependencies on BCL
 %.exe_test_tailcall_done: %.exe Makefile $(srcdir)/../../runtime/mono-wrapper ../mini/mono
+	-mkdir -p $(@D)
 	cd ${PWD}
 	set -o pipefail; \
 	$(RUNTIME) -v --compile-all --test-tailcall-require $< | fgrep tailcalllog | tee $@
@@ -1244,30 +1246,40 @@ endif
 endif
 
 %.exe: %.cs $(TEST_DRIVER_DEPEND)
+	-mkdir -p $(@D)
 	$(MCS) -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -r:TestDriver.dll $(TEST_DRIVER_HARD_KILL_FEATURE) -out:$@ $<
 
 # N.B. test-runner.exe references the TOOLS_RUNTIME versions of the framework assemblies
 test-runner.exe: test-runner.cs $(TEST_DRIVER_DEPEND)
+	-mkdir -p $(@D)
 	$(MCS) -r:System.dll -r:System.Xml.dll -r:System.Core.dll -r:TestDriver.dll $(TEST_DRIVER_HARD_KILL_FEATURE) -out:$@ $<
 
 %.dll: %.cs
+	-mkdir -p $(@D)
 	$(MCS) -r:$(CLASS)/System.dll -target:library -out:$@ $<
+
 %.dll: %.il
+	-mkdir -p $(@D)
 	$(ILASM) /dll /output:$@ $<
 
 reference-loader.exe: reference-loader.cs TestingReferenceAssembly.dll TestingReferenceReferenceAssembly.dll $(TEST_DRIVER_DEPEND)
+	-mkdir -p $(@D)
 	$(MCS) -r:$(CLASS)/System.dll -r:TestDriver.dll -r:TestingReferenceAssembly.dll -r:TestingReferenceReferenceAssembly.dll $(TEST_DRIVER_HARD_KILL_FEATURE) -out:$@ $(srcdir)/reference-loader.cs
 
 TestingReferenceAssembly.dll: TestingReferenceAssembly.cs
+	-mkdir -p $(@D)
 	$(MCS) -target:library -out:$@ $<
 
 TestingReferenceReferenceAssembly.dll: TestingReferenceReferenceAssembly.cs TestingReferenceAssembly.dll
+	-mkdir -p $(@D)
 	$(MCS) -r:TestingReferenceAssembly.dll -target:library -out:$@ $<
 
 %.exe$(PLATFORM_AOT_SUFFIX): %.exe 
+	-mkdir -p $(@D)
 	$(RUNTIME) $(TEST_AOT_BUILD_FLAGS) $<
 
 %.dll$(PLATFORM_AOT_SUFFIX): %.dll 
+	-mkdir -p $(@D)
 	$(RUNTIME) $(TEST_AOT_BUILD_FLAGS) $<
 
 # mkbundle works on ppc, but the pkg-config POC doesn't when run with make test
