@@ -1565,9 +1565,12 @@ mono_metadata_generic_inst_hash (gconstpointer data)
 	const MonoGenericInst *ginst = (const MonoGenericInst *) data;
 	guint hash = 0;
 	int i;
+	g_assert (ginst);
+	g_assert (ginst->type_argv);
 	
 	for (i = 0; i < ginst->type_argc; ++i) {
 		hash *= 13;
+		g_assert (ginst->type_argv [i]);
 		hash += mono_metadata_type_hash (ginst->type_argv [i]);
 	}
 
@@ -3371,6 +3374,7 @@ mono_metadata_parse_generic_inst (MonoImage *m, MonoGenericContainer *container,
 	if (rptr)
 		*rptr = ptr;
 
+	g_assert (parse_count == count);
 	ginst = mono_metadata_get_generic_inst (count, type_argv);
 
 cleanup:
@@ -3459,7 +3463,6 @@ get_anonymous_container_for_image (MonoImage *image, gboolean is_mvar)
 		result = (MonoGenericContainer *)mono_image_alloc0 (image, sizeof (MonoGenericContainer));
 		result->owner.image = image;
 		result->is_anonymous = TRUE;
-		result->is_small_param = TRUE;
 		result->is_method = is_mvar;
 
 		// If another thread already made a container, use that and leak this new one.
@@ -5310,7 +5313,7 @@ mono_metadata_generic_param_hash (MonoGenericParam *p)
 		hash = ((hash << 5) - hash) ^ mono_metadata_type_hash (p->gshared_constraint);
 	info = mono_generic_param_info (p);
 	/* Can't hash on the owner klass/method, since those might not be set when this is called */
-	if (info)
+	if (!p->owner->is_anonymous)
 		hash = ((hash << 5) - hash) ^ info->token;
 	return hash;
 }
@@ -6620,7 +6623,7 @@ mono_metadata_load_generic_param_constraints_checked (MonoImage *image, guint32 
  *
  */
 MonoGenericContainer *
-mono_metadata_load_generic_params (MonoImage *image, guint32 token, MonoGenericContainer *parent_container)
+mono_metadata_load_generic_params (MonoImage *image, guint32 token, MonoGenericContainer *parent_container, gpointer real_owner)
 {
 	MonoTableInfo *tdef  = &image->tables [MONO_TABLE_GENERICPARAM];
 	guint32 cols [MONO_GENERICPARAM_SIZE];
@@ -6628,6 +6631,8 @@ mono_metadata_load_generic_params (MonoImage *image, guint32 token, MonoGenericC
 	MonoGenericContainer *container;
 	MonoGenericParamFull *params;
 	MonoGenericContext *context;
+	gboolean is_method = mono_metadata_token_table (token) == MONO_TABLE_METHOD;
+	gboolean is_anonymous = real_owner == NULL;
 
 	if (!(i = mono_metadata_get_generic_param_row (image, token, &owner)))
 		return NULL;
@@ -6635,18 +6640,25 @@ mono_metadata_load_generic_params (MonoImage *image, guint32 token, MonoGenericC
 	params = NULL;
 	n = 0;
 	container = (MonoGenericContainer *)mono_image_alloc0 (image, sizeof (MonoGenericContainer));
-	container->owner.image = image; // Temporarily mark as anonymous, but this will be overriden by caller
-	container->is_anonymous = TRUE;
+	container->is_anonymous = is_anonymous;
+	if (is_anonymous) {
+		container->owner.image = image;
+	} else {
+		if (is_method)
+			container->owner.method = real_owner;
+		else
+			container->owner.klass = real_owner;
+	}
 	do {
 		n++;
 		params = (MonoGenericParamFull *)g_realloc (params, sizeof (MonoGenericParamFull) * n);
 		memset (&params [n - 1], 0, sizeof (MonoGenericParamFull));
-		params [n - 1].param.owner = container;
-		params [n - 1].param.num = cols [MONO_GENERICPARAM_NUMBER];
+		params [n - 1].owner = container;
+		params [n - 1].num = cols [MONO_GENERICPARAM_NUMBER];
 		params [n - 1].info.token = i | MONO_TOKEN_GENERIC_PARAM;
 		params [n - 1].info.flags = cols [MONO_GENERICPARAM_FLAGS];
 		params [n - 1].info.name = mono_metadata_string_heap (image, cols [MONO_GENERICPARAM_NAME]);
-		if (params [n - 1].param.num != n - 1)
+		if (params [n - 1].num != n - 1)
 			g_warning ("GenericParam table unsorted or hole in generic param sequence: token %d", i);
 		if (++i > tdef->rows)
 			break;
@@ -6659,7 +6671,7 @@ mono_metadata_load_generic_params (MonoImage *image, guint32 token, MonoGenericC
 	g_free (params);
 	container->parent = parent_container;
 
-	if (mono_metadata_token_table (token) == MONO_TABLE_METHOD)
+	if (is_method)
 		container->is_method = 1;
 
 	g_assert (container->parent == NULL || container->is_method);

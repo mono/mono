@@ -451,9 +451,7 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token, MonoError 
 	 * Check whether we're a generic type definition.
 	 */
 	if (mono_class_is_gtd (klass)) {
-		MonoGenericContainer *generic_container = mono_metadata_load_generic_params (image, klass->type_token, NULL);
-		generic_container->owner.klass = klass;
-		generic_container->is_anonymous = FALSE; // Owner class is now known, container is no longer anonymous
+		MonoGenericContainer *generic_container = mono_metadata_load_generic_params (image, klass->type_token, NULL, klass);
 		context = &generic_container->context;
 		mono_class_set_generic_container (klass, generic_container);
 		MonoType *canonical_inst = &((MonoClassGtd*)klass)->canonical_inst;
@@ -1083,12 +1081,12 @@ mono_class_create_array (MonoClass *eclass, guint32 rank)
 }
 
 // This is called by mono_class_create_generic_parameter when a new class must be created.
-// pinfo is derived from param by the caller for us.
 static MonoClass*
-make_generic_param_class (MonoGenericParam *param, MonoGenericParamInfo *pinfo)
+make_generic_param_class (MonoGenericParam *param)
 {
 	MonoClass *klass, **ptr;
 	int count, pos, i;
+	MonoGenericParamInfo *pinfo = mono_generic_param_info (param);
 	MonoGenericContainer *container = mono_generic_param_owner (param);
 	g_assert_checked (container);
 
@@ -1101,7 +1099,7 @@ make_generic_param_class (MonoGenericParam *param, MonoGenericParamInfo *pinfo)
 	UnlockedAdd (&classes_size, sizeof (MonoClassGenericParam));
 	UnlockedIncrement (&class_gparam_count);
 
-	if (pinfo) {
+	if (!is_anonymous) {
 		CHECKED_METADATA_WRITE_PTR_EXEMPT ( klass->name , pinfo->name );
 	} else {
 		int n = mono_generic_param_num (param);
@@ -1122,7 +1120,7 @@ make_generic_param_class (MonoGenericParam *param, MonoGenericParamInfo *pinfo)
 
 	// Count non-NULL items in pinfo->constraints
 	count = 0;
-	if (pinfo)
+	if (!is_anonymous)
 		for (ptr = pinfo->constraints; ptr && *ptr; ptr++, count++)
 			;
 
@@ -1157,7 +1155,7 @@ make_generic_param_class (MonoGenericParam *param, MonoGenericParamInfo *pinfo)
 	klass->this_arg.byref = TRUE;
 
 	/* We don't use type_token for VAR since only classes can use it (not arrays, pointer, VARs, etc) */
-	klass->sizes.generic_param_token = pinfo ? pinfo->token : 0;
+	klass->sizes.generic_param_token = !is_anonymous ? pinfo->token : 0;
 
 	/*Init these fields to sane values*/
 	klass->min_align = 1;
@@ -1296,7 +1294,7 @@ mono_class_create_generic_parameter (MonoGenericParam *param)
 	MonoClass *klass, *klass2;
 
 	// If a klass already exists for this object and is cached, return it.
-	if (pinfo) // Non-anonymous
+	if (!param->owner->is_anonymous && param->gshared_constraint == NULL) // Non-anonymous
 		klass = pinfo->pklass;
 	else     // Anonymous
 		klass = get_anon_gparam_class (param, TRUE);
@@ -1305,7 +1303,7 @@ mono_class_create_generic_parameter (MonoGenericParam *param)
 		return klass;
 
 	// Create a new klass
-	klass = make_generic_param_class (param, pinfo);
+	klass = make_generic_param_class (param);
 
 	// Now we need to cache the klass we created.
 	// But since we wait to grab the lock until after creating the klass, we need to check to make sure
@@ -1316,7 +1314,7 @@ mono_class_create_generic_parameter (MonoGenericParam *param)
 	mono_image_lock (image);
 
     // Here "klass2" refers to the klass potentially created by the other thread.
-	if (pinfo) // Repeat check from above
+	if (!param->owner->is_anonymous && param->gshared_constraint == NULL) // Repeat check from above
 		klass2 = pinfo->pklass;
 	else
 		klass2 = get_anon_gparam_class (param, FALSE);
@@ -1325,7 +1323,7 @@ mono_class_create_generic_parameter (MonoGenericParam *param)
 		klass = klass2;
 	} else {
 		// Cache here
-		if (pinfo)
+		if (!param->owner->is_anonymous && param->gshared_constraint == NULL)
 			pinfo->pklass = klass;
 		else
 			set_anon_gparam_class (param, klass);
