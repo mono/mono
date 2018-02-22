@@ -396,10 +396,6 @@ struct _MonoImage {
 	/* Anon generic parameters past N, if needed */
 	MonoConcurrentHashTable *var_gparam_cache;
 	MonoConcurrentHashTable *mvar_gparam_cache;
-	/* Caches for MonoClasses for gparams with a gshared_constraint */
-	/* FIXME: get rid of these - cache in MonoGenericParamFull:pklass */
-	GHashTable *var_cache_constrained;
-	GHashTable *mvar_cache_constrained;
 
 	/* Maps malloc-ed char* pinvoke scope -> MonoDl* */
 	GHashTable *pinvoke_scopes;

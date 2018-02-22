@@ -1181,65 +1181,6 @@ make_generic_param_class (MonoGenericParam *param)
 }
 
 /*
- * get_anon_gparam_class and set_anon_gparam_class are helpers for mono_class_create_generic_parameter.
- * The latter will sometimes create MonoClasses for anonymous generic params. To prevent this being wasteful,
- * we cache the MonoClasses.
- * FIXME: It would be better to instead cache anonymous MonoGenericParams, and allow anonymous params to point directly to classes using the pklass field.
- * LOCKING: Takes the image lock depending on @take_lock.
- */
-static MonoClass *
-get_anon_gparam_class (MonoGenericParam *param, gboolean take_lock)
-{
-	MonoImage *image = get_image_for_generic_param (param);
-	gboolean is_mvar = mono_generic_param_owner (param)->is_method;
-	MonoClass *klass = NULL;
-	GHashTable *ht;
-
-	g_assert (image);
-
-	// For params with constraints we have to use pointer hashes.
-	g_assert (param->gshared_constraint);
-	{
-		ht = is_mvar ? image->mvar_cache_constrained : image->var_cache_constrained;
-		if (ht) {
-			if (take_lock)
-				mono_image_lock (image);
-			klass = (MonoClass *)g_hash_table_lookup (ht, param);
-			if (take_lock)
-				mono_image_unlock (image);
-		}
-		return klass;
-	}
-
-}
-
-/*
- * LOCKING: Image lock (param->image) must be held
- */
-static void
-set_anon_gparam_class (MonoGenericParam *param, MonoClass *klass)
-{
-	MonoImage *image = get_image_for_generic_param (param);
-	gboolean is_mvar = mono_generic_param_owner (param)->is_method;
-
-	g_assert (image);
-
-	g_assert (param->gshared_constraint);
-	{
-		GHashTable *ht = is_mvar ? image->mvar_cache_constrained : image->var_cache_constrained;
-		if (!ht) {
-			ht = g_hash_table_new ((GHashFunc)mono_metadata_generic_param_hash, (GEqualFunc)mono_metadata_generic_param_equal);
-			mono_memory_barrier ();
-			if (is_mvar)
-				image->mvar_cache_constrained = ht;
-			else
-				image->var_cache_constrained = ht;
-		}
-		g_hash_table_insert (ht, param, klass);
-	}
-}
-
-/*
  * LOCKING: Acquires the image lock (@image).
  */
 MonoClass *
@@ -1250,10 +1191,7 @@ mono_class_create_generic_parameter (MonoGenericParam *param)
 	MonoClass *klass, *klass2;
 
 	// If a klass already exists for this object and is cached, return it.
-	if (param->gshared_constraint == NULL) // Non-anonymous
-		klass = pinfo->pklass;
-	else     // Anonymous
-		klass = get_anon_gparam_class (param, TRUE);
+	klass = pinfo->pklass;
 
 	if (klass)
 		return klass;
@@ -1269,20 +1207,13 @@ mono_class_create_generic_parameter (MonoGenericParam *param)
 
 	mono_image_lock (image);
 
-    // Here "klass2" refers to the klass potentially created by the other thread.
-	if (param->gshared_constraint == NULL) // Repeat check from above
-		klass2 = pinfo->pklass;
-	else
-		klass2 = get_anon_gparam_class (param, FALSE);
+	// Here "klass2" refers to the klass potentially created by the other thread.
+	klass2 = pinfo->pklass;
 
 	if (klass2) {
 		klass = klass2;
 	} else {
-		// Cache here
-		if (param->gshared_constraint == NULL)
-			pinfo->pklass = klass;
-		else
-			set_anon_gparam_class (param, klass);
+		pinfo->pklass = klass;
 	}
 	mono_image_unlock (image);
 
