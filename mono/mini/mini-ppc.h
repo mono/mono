@@ -171,7 +171,6 @@ typedef struct MonoCompileArch {
 #define PPC_LAST_FPARG_REG ppc_f13
 #define PPC_PASS_STRUCTS_BY_VALUE 1
 #define PPC_THREAD_PTR_REG ppc_r13
-#define MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX 1
 #define PPC_FIRST_ARG_REG ppc_r3
 #define PPC_LAST_ARG_REG ppc_r10
 #define PPC_FIRST_FPARG_REG ppc_f1
@@ -228,7 +227,6 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_RETURN_CAN_USE_MULTIPLE_REGISTERS 0
 #define PPC_THREAD_PTR_REG ppc_r2
 #endif
-#define MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX 1
 #define PPC_FIRST_ARG_REG ppc_r3
 #define PPC_LAST_ARG_REG ppc_r10
 #define PPC_FIRST_FPARG_REG ppc_f1
@@ -246,6 +244,7 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_VTABLE_REG	ppc_r11
 #define MONO_ARCH_RGCTX_REG	MONO_ARCH_IMT_REG
 
+#define MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX 1
 #define MONO_ARCH_HAVE_SETUP_RESUME_FROM_SIGNAL_HANDLER_CTX 1
 
 #define MONO_ARCH_NO_IOV_CHECK 1
