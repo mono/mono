@@ -841,7 +841,7 @@ namespace System.Web
 			byte [] buffer;
 			buffer = worker_request.GetPreloadedEntityBody ();
 			// we check the instance field 'content_length' here, not the local var.
-			if (this.content_length <= 0 || worker_request.IsEntireEntityBodyIsPreloaded ()) {
+			if (this.content_length == 0 || worker_request.IsEntireEntityBodyIsPreloaded ()) {
 				if (buffer == null || content_length == 0) {
 					input_stream = new MemoryStream (new byte [0], 0, 0, false, true);
 				} else {

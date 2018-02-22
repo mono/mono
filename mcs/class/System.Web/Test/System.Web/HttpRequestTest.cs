@@ -1055,5 +1055,47 @@ namespace MonoTests.System.Web {
 		}
 
 	}
+
+	// This test ensures the HttpRequest object's InputStream property
+	// gets properly constructed and populated when the request is not
+	// preloaded.
+	[TestFixture]
+	public class Test_NonPreloadedRequest
+	{
+		private const string expected = "Hello, World!\n";
+
+		class FakeHttpWorkerRequest : BaseFakeHttpWorkerRequest
+		{
+			private readonly Stream body = new MemoryStream(Encoding.UTF8.GetBytes(expected));
+
+			public override string GetHttpVerbName()
+			{
+				return "POST";
+			}
+
+			public override int ReadEntityBody(byte[] buffer, int size)
+			{
+				return body.Read(buffer, 0, size);
+			}
+		}
+
+		HttpContext context = null;
+
+		[SetUp]
+		[Category ("NotDotNet")] // Cannot be runned on .net with no web context
+		public void SetUp()
+		{
+			HttpWorkerRequest workerRequest = new FakeHttpWorkerRequest();
+			context = new HttpContext(workerRequest);
+		}
+
+		[Test]
+		[Category ("NotDotNet")] // Cannot be runned on .net with no web context
+		public void InputStream_Contents()
+		{
+			Assert.AreEqual(expected, new StreamReader(context.Request.InputStream, Encoding.UTF8).ReadToEnd());
+		}
+
+	}
 }
 
