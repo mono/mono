@@ -1611,8 +1611,6 @@ TEST_TAILCALL_IL_SRC=\
 	tailcall/coreclr/JIT/opt/ETW/TailCallCases.il \
 	tailcall/coreclr/JIT/Regression/VS-ia64-JIT/V1.2-M02/b102844/tailcallcalli.il
 
-TEST_TAILCALL_IL_EXE: $(TEST_TAILCALL_IL_EXE) $(TEST_TAILCALL_CS_EXE)
-
 test-sgen-regular: $(TESTS_SGEN_REGULAR) $(TESTSAOT_SGEN_REGULAR)
 	ok=; \
 	$(MAKE) test-sgen-regular-ms-simple || ok=false; \
