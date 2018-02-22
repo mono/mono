@@ -70,6 +70,7 @@ char *input_file_name = (char*)"";
 char *prolog_file_name;
 char *local_file_name;
 char *verbose_file_name;
+char *output_file_name = 0;
 
 FILE *action_file;	/*  a temp file, used to save actions associated    */
 			/*  with rules until the parser is written	    */
@@ -77,6 +78,7 @@ FILE *input_file;	/*  the input file				    */
 FILE *prolog_file;	/*  temp files, used to save text until all	    */
 FILE *local_file;	/*  symbols have been defined			    */
 FILE *verbose_file;	/*  y.output					    */
+FILE *output_file; /* defaults to stdout */
 
 int nitems;
 int nrules;
@@ -113,6 +115,7 @@ done (int k)
     if (action_file) { fclose(action_file); unlink(action_file_name); }
     if (prolog_file) { fclose(prolog_file); unlink(prolog_file_name); }
     if (local_file) { fclose(local_file); unlink(local_file_name); }
+    if (output_file && (output_file != stdout)) { fclose(output_file); if (k != 0) unlink(output_file_name); }
     exit(k);
 }
 
@@ -143,7 +146,7 @@ set_signals (void)
 static void
 usage (void)
 {
-    fprintf(stderr, "usage: %s [-tvcp] [-b file_prefix] filename\n", myname);
+    fprintf(stderr, "usage: %s [-tvcp] [-b file_prefix] [-o output_filename] input_filename\n", myname);
     exit(1);
 }
 
@@ -172,9 +175,9 @@ getargs (int argc, char *argv[])
 	    if (i + 1 < argc) usage();
 	    return;
 
-        case '-':
-            ++i;
-            goto no_more_options;
+    case '-':
+        ++i;
+        goto no_more_options;
 
 	case 'b':
 	    if (*++s)
@@ -185,13 +188,22 @@ getargs (int argc, char *argv[])
 		usage();
 	    continue;
 
-        case 't':
-            tflag = 1;
-            break;
+    case 'o':
+        if (*++s)
+            output_file_name = s;
+        else if (++i < argc)
+            output_file_name = argv[i];
+        else
+            usage();
+        continue;
+
+    case 't':
+        tflag = 1;
+        break;
 
 	case 'p':
-            print_skel_dir ();
-            break;
+        print_skel_dir ();
+        break;
 
 	case 'c':
 	    csharp = 1;
@@ -222,12 +234,12 @@ getargs (int argc, char *argv[])
 		vflag = 1;
 		break;
 
-            case 'p':
-                print_skel_dir ();
-                break;
+        case 'p':
+            print_skel_dir ();
+            break;
 
-            case 'c':
-		csharp = 1;
+        case 'c':
+		    csharp = 1;
 	        line_format = "#line %d \"%s\"\n";
         	default_line_format = "#line default\n";
 
@@ -358,6 +370,17 @@ open_files (void)
 	verbose_file = fopen(verbose_file_name, "w");
 	if (verbose_file == 0)
 	    open_error(verbose_file_name);
+    }
+
+    if (output_file == 0)
+    {
+        if (output_file_name != 0) {
+            output_file = fopen(output_file_name, "w");
+            if (output_file == 0)
+                open_error(output_file_name);
+        } else {
+            output_file = stdout;
+        }
     }
 }
 
