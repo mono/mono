@@ -2170,9 +2170,11 @@ check_method_sharing (MonoCompile *cfg, MonoMethod *cmethod, gboolean *out_pass_
 static void
 test_tailcall (MonoCompile *cfg, MonoBoolean tailcall)
 {
+	// A lot of tests say "tailcall" throughout their verbose output.
+	// "tailcalllog" is more searchable.
+	g_assertf (tailcall || !mini_get_debug_options ()->test_tailcall_require, "tailcalllog fail from %s", cfg->method->name);
 	if (cfg->verbose_level)
-		printf ("%s tailcall from %s\n", tailcall ? "success" : "fail", cfg->method->name);
-	g_assertf (tailcall || !mini_get_debug_options ()->test_tailcall_require, "fail tailcall from %s", cfg->method->name);
+		printf ("tailcalllog %s from %s\n", tailcall ? "success" : "fail", cfg->method->name);
 }
 
 inline static MonoCallInst *

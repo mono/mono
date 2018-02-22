@@ -21,6 +21,49 @@ check-local:
 	$(MAKE) runtest-gac-loading || ok=false; \
 	$$ok
 
+# FIXME Some of these sound like negative tests -- "badtailcall". Verify and automate.
+TAILCALL_DISABLED_TESTS = \
+	tailcall/coreclr/JIT/Directed/IL/PInvokeTail/PInvokeTail.exe \
+	tailcall/coreclr/JIT/Directed/IL/PInvokeTail/tailwinapi.exe \
+	tailcall/coreclr/JIT/Directed/IL/mutualrecur-tailcall/MutualRecur-TailCall.exe \
+	tailcall/coreclr/JIT/Directed/coverage/importer/Desktop/badtailcall.exe \
+	tailcall/coreclr/JIT/Directed/coverage/importer/badtailcall.exe \
+	tailcall/coreclr/JIT/Directed/pinvoke/tail.exe \
+	tailcall/coreclr/JIT/Directed/tailcall/tailcall.exe \
+	tailcall/coreclr/JIT/Directed/zeroinit/tail.exe \
+	tailcall/coreclr/JIT/IL_Conformance/Old/Base/tailcall.exe \
+	tailcall/coreclr/JIT/Methodical/Invoke/fptr/recurse_tail_call.exe \
+	tailcall/coreclr/JIT/Methodical/Invoke/fptr/recurse_tail_calli.exe \
+	tailcall/coreclr/JIT/Methodical/nonvirtualcall/tailcall.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/compat_enum.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/compat_obj.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8_inl.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/compat_r8_r4_inl.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/compat_v.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/deep_array.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/deep_array_nz.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/gcval_nested.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/pointer_i.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/pointer.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/reference_i.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_implicit.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_mutual_rec.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_switch.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_virt.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall_v4/delegateTail.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall_v4/smallFrame.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall_v4/tailcall_AV.exe \
+	tailcall/coreclr/JIT/Regression/VS-ia64-JIT/V1.2-M02/b102844/tailcallcalli.exe
+
+check-tailcall: $(TESTS_TAILCALL)
+	set -e; \
+	set -o pipefail; \
+	for a in $(TESTS_TAILCALL); do \
+		echo "cd $$PWD && $(RUNTIME) -v --compile-all --test-tailcall-require $${a} | grep tailcalllog"; \
+		cd $$PWD; \
+		$(RUNTIME) -v --compile-all --test-tailcall-require $${a} | grep tailcalllog; \
+	done
+
 check-full:
 	ok=; \
 	$(MAKE) test-sgen || ok=false; \
@@ -1047,6 +1090,7 @@ DISABLED_TESTS = \
 	$(KNOWN_FAILING_TESTS) \
 	$(PLATFORM_DISABLED_TESTS) \
 	$(PROFILE_DISABLED_TESTS) \
+	$(TAILCALL_DISABLED_TESTS) \
 	$(if $(AOT),$(AOT_DISABLED_TESTS)) \
 	$(if $(CI),$(CI_DISABLED_TESTS)) \
 	$(if $(CI_PR),$(CI_PR_DISABLED_TESTS)) \
@@ -1151,7 +1195,7 @@ TESTS_IL=$(filter-out $(DISABLED_TESTS),$(TESTS_IL_SRC:.il=.exe))
 TESTS_BENCH=$(filter-out $(DISABLED_TESTS),$(TESTS_BENCH_SRC:.cs=.exe))
 TESTS_STRESS=$(filter-out $(DISABLED_TESTS),$(TESTS_STRESS_SRC:.cs=.exe))
 TESTS_GSHARED=$(filter-out $(DISABLED_TESTS),$(TESTS_GSHARED_SRC:.cs=.exe))
-TESTS_TAILCAIL=$(filter-out $(DISABLED_TESTS),$(TEST_TAILCAIL_CS_SRC:.cs=.exe)) $(filter-out $(DISABLED_TESTS),$(TEST_TAILCAIL_IL_SRC:.il=.exe))
+TESTS_TAILCALL=$(filter-out $(DISABLED_TESTS),$(TEST_TAILCALL_CS_SRC:.cs=.exe) $(TEST_TAILCALL_IL_SRC:.il=.exe))
 
 if FULL_AOT_TESTS
 TESTSAOT_CS=$(TESTS_CS:.exe=.exe$(PLATFORM_AOT_SUFFIX))
@@ -1159,7 +1203,8 @@ TESTSAOT_IL=$(TESTS_IL:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 TESTSAOT_BENCH=$(TESTS_BENCH:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 TESTSAOT_STRESS=$(TESTS_STRESS:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 TESTSAOT_GSHARED=$(TESTS_GSHARED:.exe=.exe$(PLATFORM_AOT_SUFFIX))
-TESTSAOT_TAILCAIL=$(TEST_TAILCAIL:.exe=.exe$(PLATFORM_AOT_SUFFIX))
+#FIXME
+#TESTSAOT_TAILCALL=$(TEST_TAILCALL:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 endif
 
 if HYBRID_AOT_TESTS
@@ -1168,13 +1213,14 @@ TESTSAOT_IL=$(TESTS_IL:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 TESTSAOT_BENCH=$(TESTS_BENCH:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 TESTSAOT_STRESS=$(TESTS_STRESS:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 TESTSAOT_GSHARED=$(TESTS_GSHARED:.exe=.exe$(PLATFORM_AOT_SUFFIX))
-TESTSAOT_TAILCAIL=$(TEST_TAILCAIL:.exe=.exe$(PLATFORM_AOT_SUFFIX))
+#FIXME
+#TESTSAOT_TAILCALL=$(TEST_TAILCALL:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 endif
 
 EXTRA_DIST=test-driver test-runner.cs $(TESTS_CS_SRC) $(TESTS_IL_SRC) \
 	$(TESTS_BENCH_SRC) $(TESTS_STRESS_SRC) stress-runner.pl \
-	$(TEST_TAILCAIL_CS_SRC) \
-	$(TEST_TAILCAIL_IL_SRC)
+	$(TEST_TAILCALL_CS_SRC) \
+	$(TEST_TAILCALL_IL_SRC)
 
 %.exe: %.il
 	$(ILASM) -out:$@ $<
@@ -1265,9 +1311,7 @@ test-env-options:
 compile-tests:
 	$(MAKE) -j4 compile-tests-parallel
 
-compile-tests-parallel: $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH) $(TESTS_STRESS) $(TESTS_GSHARED) \
-	$(TESTSAOT_CS) $(TESTSAOT_IL) $(TESTSAOT_BENCH) $(TESTSAOT_STRESS) $(TESTSAOT_GSHARED) \
-	$(TESTS_TAILCAIL) $(TESTSAOT_TAILCAIL) compile-gac-loading
+compile-tests-parallel: $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH) $(TESTS_STRESS) $(TESTS_GSHARED) $(TESTSAOT_CS) $(TESTSAOT_IL) $(TESTSAOT_BENCH) $(TESTSAOT_STRESS) $(TESTSAOT_GSHARED) $(TESTS_TAILCALL) $(TESTSAOT_TAILCALL) compile-gac-loading
 
 # Remove empty .stdout and .stderr files for wrench
 rm-empty-logs:
@@ -1473,85 +1517,87 @@ endif
 #coreclr/tailcall/JIT/opt/Tailcall/TailcallVerifyTransparentLibraryWithPrefix.il : Error : No entry point found.
 #coreclr/tailcall/JIT/opt/Tailcall/TailcallVerifyVerifiableLibraryWithPrefix.il : Error : No entry point found.
 
+# None of these have tail. instructions, just opportunity for the JIT to notice, so really,
+# put them all off for now.
 
-TEST_TAILCAIL_CS_SRC=\
-tailcall/corclr/JIT/CodeGenBringUpTests/RecursiveTailCall.cs \
-tailcall/corclr/JIT/Methodical/tailcall/Desktop/thread-race.cs \
-tailcall/corclr/JIT/Methodical/tailcall_v4/delegateParamCallTarget.cs \
-tailcall/corclr/JIT/opt/FastTailCall/FastTailCallCandidates.cs \
-tailcall/corclr/JIT/opt/FastTailCall/FastTailCallInlining.cs \
-tailcall/corclr/JIT/opt/FastTailCall/GitHubIssue12479.cs \
-tailcall/corclr/JIT/opt/FastTailCall/StackFixup.cs \
-tailcall/corclr/JIT/opt/FastTailCall/StructPassingSimple.cs \
-tailcall/corclr/JIT/opt/Loops/SearchLoopTail.cs
+xTEST_TAILCALL_CS_SRC=\
+tailcall/coreclr/JIT/CodeGenBringUpTests/RecursiveTailCall.cs \
+tailcall/coreclr/JIT/Methodical/tailcall/Desktop/thread-race.cs \
+tailcall/coreclr/JIT/Methodical/tailcall_v4/delegateParamCallTarget.cs \
+tailcall/coreclr/JIT/opt/FastTailCall/FastTailCallCandidates.cs \
+tailcall/coreclr/JIT/opt/FastTailCall/FastTailCallInlining.cs \
+tailcall/coreclr/JIT/opt/FastTailCall/GitHubIssue12479.cs \
+tailcall/coreclr/JIT/opt/FastTailCall/StackFixup.cs \
+tailcall/coreclr/JIT/opt/FastTailCall/StructPassingSimple.cs \
+tailcall/coreclr/JIT/opt/Loops/SearchLoopTail.cs
 
 # .il exists for these -- these were presumably for bootstrapping.
 # FIXME Confirm these are related like that.
-#tailcall/corclr/JIT/Methodical/Boxing/misc/tailjump.cs
-#tailcall/corclr/JIT/Methodical/Invoke/SEH/catchfinally_tail.cs
-#tailcall/corclr/JIT/Methodical/nonvirtualcall/tailcall.cs
+#tailcall/coreclr/JIT/Methodical/Boxing/misc/tailjump.cs
+#tailcall/coreclr/JIT/Methodical/Invoke/SEH/catchfinally_tail.cs
+#tailcall/coreclr/JIT/Methodical/nonvirtualcall/tailcall.cs
 
-TEST_TAILCAIL_IL_SRC=\
-tailcall/corclr/JIT/Directed/coverage/importer/badtailcall.il \
-tailcall/corclr/JIT/Directed/coverage/importer/Desktop/badtailcall.il \
-tailcall/corclr/JIT/Directed/IL/mutualrecur-tailcall/MutualRecur-TailCall.il \
-tailcall/corclr/JIT/Directed/IL/PInvokeTail/PInvokeTail.il \
-tailcall/corclr/JIT/Directed/IL/PInvokeTail/tailwinapi.il \
-tailcall/corclr/JIT/Directed/IL/Tailcall/JitTailcall1.il \
-tailcall/corclr/JIT/Directed/IL/Tailcall/Jittailcall2.il \
-tailcall/corclr/JIT/Directed/pinvoke/tail.il \
-tailcall/corclr/JIT/Directed/tailcall/tailcall.il \
-tailcall/corclr/JIT/Directed/zeroinit/tail.il \
-tailcall/corclr/JIT/IL_Conformance/Old/Base/tailcall.il \
-tailcall/corclr/JIT/Methodical/Boxing/boxunbox/tailcall.il \
-tailcall/corclr/JIT/Methodical/Boxing/misc/tailjump.il \
-tailcall/corclr/JIT/Methodical/Invoke/fptr/recurse_tail_call.il \
-tailcall/corclr/JIT/Methodical/Invoke/fptr/recurse_tail_calli.il \
-tailcall/corclr/JIT/Methodical/Invoke/SEH/catchfault_tail.il \
-tailcall/corclr/JIT/Methodical/Invoke/SEH/catchfinally_tail.il \
-tailcall/corclr/JIT/Methodical/nonvirtualcall/tailcall.il \
-tailcall/corclr/JIT/Methodical/tailcall/compat_enum.il \
-tailcall/corclr/JIT/Methodical/tailcall/compat_i2_bool.il \
-tailcall/corclr/JIT/Methodical/tailcall/compat_i4_i1.il \
-tailcall/corclr/JIT/Methodical/tailcall/compat_i4_u.il \
-tailcall/corclr/JIT/Methodical/tailcall/compat_i_u2.il \
-tailcall/corclr/JIT/Methodical/tailcall/compat_obj.il \
-tailcall/corclr/JIT/Methodical/tailcall/compat_r4_r8.il \
-tailcall/corclr/JIT/Methodical/tailcall/compat_r4_r8_inl.il \
-tailcall/corclr/JIT/Methodical/tailcall/compat_r8_r4.il \
-tailcall/corclr/JIT/Methodical/tailcall/compat_r8_r4_inl.il \
-tailcall/corclr/JIT/Methodical/tailcall/compat_v.il \
-tailcall/corclr/JIT/Methodical/tailcall/deep_array.il \
-tailcall/corclr/JIT/Methodical/tailcall/deep_array_nz.il \
-tailcall/corclr/JIT/Methodical/tailcall/deep_gc.il \
-tailcall/corclr/JIT/Methodical/tailcall/deep_inst.il \
-tailcall/corclr/JIT/Methodical/tailcall/deep_value.il \
-tailcall/corclr/JIT/Methodical/tailcall/deep_virt.il \
-tailcall/corclr/JIT/Methodical/tailcall/gcval.il \
-tailcall/corclr/JIT/Methodical/tailcall/gcval_nested.il \
-tailcall/corclr/JIT/Methodical/tailcall/gcval_sideeffect.il \
-tailcall/corclr/JIT/Methodical/tailcall/pointer.il \
-tailcall/corclr/JIT/Methodical/tailcall/pointer_i.il \
-tailcall/corclr/JIT/Methodical/tailcall/recurse_ep.il \
-tailcall/corclr/JIT/Methodical/tailcall/recurse_ep_void.il \
-tailcall/corclr/JIT/Methodical/tailcall/reference_i.il \
-tailcall/corclr/JIT/Methodical/tailcall/test_2a.il \
-tailcall/corclr/JIT/Methodical/tailcall/test_2b.il \
-tailcall/corclr/JIT/Methodical/tailcall/test_2c.il \
-tailcall/corclr/JIT/Methodical/tailcall/test_3b.il \
-tailcall/corclr/JIT/Methodical/tailcall/test_implicit.il \
-tailcall/corclr/JIT/Methodical/tailcall/test_mutual_rec.il \
-tailcall/corclr/JIT/Methodical/tailcall/test_switch.il \
-tailcall/corclr/JIT/Methodical/tailcall/test_virt.il \
-tailcall/corclr/JIT/Methodical/tailcall/test_void.il \
-tailcall/corclr/JIT/Methodical/tailcall_v4/delegateTail.il \
-tailcall/corclr/JIT/Methodical/tailcall_v4/hijacking.il \
-tailcall/corclr/JIT/Methodical/tailcall_v4/smallFrame.il \
-tailcall/corclr/JIT/Methodical/tailcall_v4/tailcall_AV.il \
-tailcall/corclr/JIT/opt/ETW/TailCallCases.il \
-tailcall/corclr/JIT/Regression/VS-ia64-JIT/V1.2-M02/b102844/tailcallcalli.il
+TEST_TAILCALL_IL_SRC=\
+tailcall/coreclr/JIT/Directed/coverage/importer/badtailcall.il \
+tailcall/coreclr/JIT/Directed/coverage/importer/Desktop/badtailcall.il \
+tailcall/coreclr/JIT/Directed/IL/mutualrecur-tailcall/MutualRecur-TailCall.il \
+tailcall/coreclr/JIT/Directed/IL/PInvokeTail/PInvokeTail.il \
+tailcall/coreclr/JIT/Directed/IL/PInvokeTail/tailwinapi.il \
+tailcall/coreclr/JIT/Directed/IL/Tailcall/JitTailcall1.il \
+tailcall/coreclr/JIT/Directed/IL/Tailcall/Jittailcall2.il \
+tailcall/coreclr/JIT/Directed/pinvoke/tail.il \
+tailcall/coreclr/JIT/Directed/tailcall/tailcall.il \
+tailcall/coreclr/JIT/Directed/zeroinit/tail.il \
+tailcall/coreclr/JIT/IL_Conformance/Old/Base/tailcall.il \
+tailcall/coreclr/JIT/Methodical/Boxing/boxunbox/tailcall.il \
+tailcall/coreclr/JIT/Methodical/Boxing/misc/tailjump.il \
+tailcall/coreclr/JIT/Methodical/Invoke/fptr/recurse_tail_call.il \
+tailcall/coreclr/JIT/Methodical/Invoke/fptr/recurse_tail_calli.il \
+tailcall/coreclr/JIT/Methodical/Invoke/SEH/catchfault_tail.il \
+tailcall/coreclr/JIT/Methodical/Invoke/SEH/catchfinally_tail.il \
+tailcall/coreclr/JIT/Methodical/nonvirtualcall/tailcall.il \
+tailcall/coreclr/JIT/Methodical/tailcall/compat_enum.il \
+tailcall/coreclr/JIT/Methodical/tailcall/compat_i2_bool.il \
+tailcall/coreclr/JIT/Methodical/tailcall/compat_i4_i1.il \
+tailcall/coreclr/JIT/Methodical/tailcall/compat_i4_u.il \
+tailcall/coreclr/JIT/Methodical/tailcall/compat_i_u2.il \
+tailcall/coreclr/JIT/Methodical/tailcall/compat_obj.il \
+tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8.il \
+tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8_inl.il \
+tailcall/coreclr/JIT/Methodical/tailcall/compat_r8_r4.il \
+tailcall/coreclr/JIT/Methodical/tailcall/compat_r8_r4_inl.il \
+tailcall/coreclr/JIT/Methodical/tailcall/compat_v.il \
+tailcall/coreclr/JIT/Methodical/tailcall/deep_array.il \
+tailcall/coreclr/JIT/Methodical/tailcall/deep_array_nz.il \
+tailcall/coreclr/JIT/Methodical/tailcall/deep_gc.il \
+tailcall/coreclr/JIT/Methodical/tailcall/deep_inst.il \
+tailcall/coreclr/JIT/Methodical/tailcall/deep_value.il \
+tailcall/coreclr/JIT/Methodical/tailcall/deep_virt.il \
+tailcall/coreclr/JIT/Methodical/tailcall/gcval.il \
+tailcall/coreclr/JIT/Methodical/tailcall/gcval_nested.il \
+tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.il \
+tailcall/coreclr/JIT/Methodical/tailcall/pointer.il \
+tailcall/coreclr/JIT/Methodical/tailcall/pointer_i.il \
+tailcall/coreclr/JIT/Methodical/tailcall/recurse_ep.il \
+tailcall/coreclr/JIT/Methodical/tailcall/recurse_ep_void.il \
+tailcall/coreclr/JIT/Methodical/tailcall/reference_i.il \
+tailcall/coreclr/JIT/Methodical/tailcall/test_2a.il \
+tailcall/coreclr/JIT/Methodical/tailcall/test_2b.il \
+tailcall/coreclr/JIT/Methodical/tailcall/test_2c.il \
+tailcall/coreclr/JIT/Methodical/tailcall/test_3b.il \
+tailcall/coreclr/JIT/Methodical/tailcall/test_implicit.il \
+tailcall/coreclr/JIT/Methodical/tailcall/test_mutual_rec.il \
+tailcall/coreclr/JIT/Methodical/tailcall/test_switch.il \
+tailcall/coreclr/JIT/Methodical/tailcall/test_virt.il \
+tailcall/coreclr/JIT/Methodical/tailcall/test_void.il \
+tailcall/coreclr/JIT/Methodical/tailcall_v4/delegateTail.il \
+tailcall/coreclr/JIT/Methodical/tailcall_v4/hijacking.il \
+tailcall/coreclr/JIT/Methodical/tailcall_v4/smallFrame.il \
+tailcall/coreclr/JIT/Methodical/tailcall_v4/tailcall_AV.il \
+tailcall/coreclr/JIT/opt/ETW/TailCallCases.il \
+tailcall/coreclr/JIT/Regression/VS-ia64-JIT/V1.2-M02/b102844/tailcallcalli.il
 
-TEST_TAILCAIL_IL_EXE: $(TEST_TAILCAIL_IL_EXE) $(TEST_TAILCAIL_CS_EXE)
+TEST_TAILCALL_IL_EXE: $(TEST_TAILCALL_IL_EXE) $(TEST_TAILCALL_CS_EXE)
 
 test-sgen-regular: $(TESTS_SGEN_REGULAR) $(TESTSAOT_SGEN_REGULAR)
 	ok=; \
