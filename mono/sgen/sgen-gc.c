@@ -3214,7 +3214,11 @@ init_sgen_minor (SgenMinor minor)
 #endif
 		break;
 	case SGEN_MINOR_SPLIT:
+#ifndef DISABLE_SGEN_SPLIT_NURSERY
 		sgen_split_nursery_init (&sgen_minor_collector);
+#else
+		g_error ("Sgenw as build with split nursery disabled");
+#endif
 		break;
 	default:
 		g_assert_not_reached ();
