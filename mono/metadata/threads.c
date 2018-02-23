@@ -91,10 +91,10 @@ extern int tkill (pid_t tid, int signal);
 					break; \
 			} while (1)
 
-#define SPIN_UNLOCK(i) i = 0
+#define SPIN_UNLOCK(i) ((i) = 0)
 
-#define LOCK_THREAD(thread) lock_thread((thread))
-#define UNLOCK_THREAD(thread) unlock_thread((thread))
+#define LOCK_THREAD(thread) (lock_thread (thread))
+#define UNLOCK_THREAD(thread) (unlock_thread (thread))
 
 typedef union {
 	gint32 ival;
@@ -125,8 +125,8 @@ static void mono_threads_unlock (void);
 static MonoCoopMutex threads_mutex;
 
 /* Controls access to the 'joinable_threads' hash table */
-#define joinable_threads_lock() mono_os_mutex_lock (&joinable_threads_mutex)
-#define joinable_threads_unlock() mono_os_mutex_unlock (&joinable_threads_mutex)
+#define joinable_threads_lock() (mono_os_mutex_lock (&joinable_threads_mutex))
+#define joinable_threads_unlock() (mono_os_mutex_unlock (&joinable_threads_mutex))
 static mono_mutex_t joinable_threads_mutex;
 
 /* Holds current status of static data heap */
@@ -166,8 +166,8 @@ static mono_cond_t zero_pending_joinable_thread_event;
 static void threads_add_pending_joinable_runtime_thread (MonoThreadInfo *mono_thread_info);
 static gboolean threads_wait_pending_joinable_threads (uint32_t timeout);
 
-#define SET_CURRENT_OBJECT(x) mono_tls_set_thread (x)
-#define GET_CURRENT_OBJECT() (MonoInternalThread*) mono_tls_get_thread ()
+#define SET_CURRENT_OBJECT(x) (mono_tls_set_thread (x))
+#define GET_CURRENT_OBJECT() ((MonoInternalThread*) mono_tls_get_thread ())
 
 /* function called at thread start */
 static MonoThreadStartCB mono_thread_start_cb = NULL;
@@ -180,7 +180,7 @@ static MonoThreadCleanupFunc mono_thread_cleanup_fn = NULL;
 
 /* The default stack size for each thread */
 static guint32 default_stacksize = 0;
-#define default_stacksize_for_thread(thread) ((thread)->stack_size? (thread)->stack_size: default_stacksize)
+#define default_stacksize_for_thread(thread) ((thread)->stack_size ? (thread)->stack_size : default_stacksize)
 
 static void context_adjust_static_data (MonoAppContext *ctx);
 static void mono_free_static_data (gpointer* static_data);
@@ -195,9 +195,10 @@ static void self_suspend_internal (void);
 static MonoException* mono_thread_execute_interruption (void);
 static void ref_stack_destroy (gpointer rs);
 
-/* Spin lock for InterlockedXXX 64 bit functions */
-#define mono_interlocked_lock() mono_os_mutex_lock (&interlocked_mutex)
-#define mono_interlocked_unlock() mono_os_mutex_unlock (&interlocked_mutex)
+/* Spin lock for InterlockedXXX 64 bit functions for platforms
+ * without working 64bit intrinsics. */
+#define mono_interlocked_lock() (mono_os_mutex_lock (&interlocked_mutex))
+#define mono_interlocked_unlock() (mono_os_mutex_unlock (&interlocked_mutex))
 static mono_mutex_t interlocked_mutex;
 
 /* global count of thread interruptions requested */
@@ -1939,7 +1940,7 @@ ves_icall_System_Threading_Thread_Join_internal (MonoThread *this_obj, int ms)
 	return FALSE;
 }
 
-#define MANAGED_WAIT_FAILED 0x7fffffff
+#define MANAGED_WAIT_FAILED (0x7fffffff)
 
 static gint32
 map_native_wait_result_to_managed (MonoW32HandleWaitRet val, gsize numobjects)
@@ -4083,12 +4084,12 @@ mono_thread_get_undeniable_exception (void)
 }
 
 #if MONO_SMALL_CONFIG
-#define NUM_STATIC_DATA_IDX 4
+#define NUM_STATIC_DATA_IDX (4)
 static const int static_data_size [NUM_STATIC_DATA_IDX] = {
 	64, 256, 1024, 4096
 };
 #else
-#define NUM_STATIC_DATA_IDX 8
+#define NUM_STATIC_DATA_IDX (8)
 static const int static_data_size [NUM_STATIC_DATA_IDX] = {
 	1024, 4096, 16384, 65536, 262144, 1048576, 4194304, 16777216
 };
@@ -4301,11 +4302,7 @@ search_slot_in_freelist (StaticDataInfo *static_data, guint32 size, guint32 alig
 	return NULL;
 }
 
-#if SIZEOF_VOID_P == 4
-#define ONE_P 1
-#else
-#define ONE_P 1ll
-#endif
+#define ONE_P ((uintptr_t)1)
 
 static void
 update_reference_bitmap (MonoBitSet **sets, guint32 offset, uintptr_t *bitmap, int numbits)
