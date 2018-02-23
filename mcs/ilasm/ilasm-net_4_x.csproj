@@ -16,7 +16,8 @@
     <OutputPath>./../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>obj-net_4_x-$(HostPlatform)</IntermediateOutputPath>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
-    <NoStdLib>True</NoStdLib>
+    <NoStdLib>False</NoStdLib>
+    
     
     <NoConfig>True</NoConfig>
     
@@ -24,7 +25,7 @@
     <RootNamespace>
     </RootNamespace>
     <AssemblyName>ilasm</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
 
   </PropertyGroup>
@@ -149,12 +150,12 @@
   -->
   <PropertyGroup>
     <PreBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
-$(ProjectDir)\..\jay\jay -ct &lt; $(ProjectDir)\..\jay\skeleton.cs $(ProjectDir)\parser\ILParser.jay > $(ProjectDir)\ILParser.cs
+$(ProjectDir)\..\jay\jay\jay -ct &lt; $(ProjectDir)\..\jay\skeleton.cs $(ProjectDir)\parser\ILParser.jay > $(ProjectDir)\ILParser.cs
 
 
     </PreBuildEvent>
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
-$(ProjectDir)\..\jay\jay -ct &lt; $(ProjectDir)\..\jay\skeleton.cs $(ProjectDir)\parser\ILParser.jay > $(ProjectDir)\ILParser.cs
+$(ProjectDir)\..\jay\jay.exe -ct &lt; $(ProjectDir)\..\jay\skeleton.cs $(ProjectDir)\parser\ILParser.jay > $(ProjectDir)\ILParser.cs
 
 
     </PreBuildEvent>
