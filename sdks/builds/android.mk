@@ -250,20 +250,19 @@ $(eval $(call AndroidHostTemplate,host-Linux))
 # Parameters
 #  $(1): target
 #  $(2): arch
-#  $(3): mxe
 define AndroidHostMxeTemplate
 
-_android_$(1)_PATH=$$(TOP)/sdks/out/mxe-$(3)/bin
+_android_$(1)_PATH=$$(TOP)/sdks/out/mxe/bin
 
-_android_$(1)_AR=$$(TOP)/sdks/out/mxe-$(3)/bin/$(2)-w64-mingw32.static-ar
-_android_$(1)_AS=$$(TOP)/sdks/out/mxe-$(3)/bin/$(2)-w64-mingw32.static-as
-_android_$(1)_CC=$$(TOP)/sdks/out/mxe-$(3)/bin/$(2)-w64-mingw32.static-gcc
-_android_$(1)_CXX=$$(TOP)/sdks/out/mxe-$(3)/bin/$(2)-w64-mingw32.static-g++
-_android_$(1)_DLLTOOL=$$(TOP)/sdks/out/mxe-$(3)/bin/$(2)-w64-mingw32.static-dlltool
-_android_$(1)_LD=$$(TOP)/sdks/out/mxe-$(3)/bin/$(2)-w64-mingw32.static-ld
-_android_$(1)_OBJDUMP=$$(TOP)/sdks/out/mxe-$(3)/bin/$(2)-w64-mingw32.static-objdump
-_android_$(1)_RANLIB=$$(TOP)/sdks/out/mxe-$(3)/bin/$(2)-w64-mingw32.static-ranlib
-_android_$(1)_STRIP=$$(TOP)/sdks/out/mxe-$(3)/bin/$(2)-w64-mingw32.static-strip
+_android_$(1)_AR=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-ar
+_android_$(1)_AS=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-as
+_android_$(1)_CC=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-gcc
+_android_$(1)_CXX=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-g++
+_android_$(1)_DLLTOOL=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-dlltool
+_android_$(1)_LD=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-ld
+_android_$(1)_OBJDUMP=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-objdump
+_android_$(1)_RANLIB=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-ranlib
+_android_$(1)_STRIP=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-strip
 
 _android_$(1)_AC_VARS= \
 	ac_cv_header_zlib_h=no \
@@ -303,7 +302,7 @@ _android_$(1)_CONFIGURE_FLAGS= \
 .stamp-android-$(1)-toolchain:
 	touch $$@
 
-.stamp-android-$(1)-$$(CONFIGURATION)-configure: $$(TOP)/configure .stamp-android-$(1)-toolchain | package-mxe-$(3)
+.stamp-android-$(1)-$$(CONFIGURATION)-configure: $$(TOP)/configure .stamp-android-$(1)-toolchain | package-mxe
 	mkdir -p $$(TOP)/sdks/builds/android-$(1)-$$(CONFIGURATION)
 	cd $$(TOP)/sdks/builds/android-$(1)-$$(CONFIGURATION) && PATH="$$$$PATH:$$(_android_$(1)_PATH)" $$< $$(_android_$(1)_AC_VARS) $$(_android_$(1)_CONFIGURE_ENVIRONMENT) $$(_android_$(1)_CONFIGURE_FLAGS)
 	touch $$@
@@ -340,5 +339,5 @@ TARGETS += android-$(1)
 
 endef
 
-$(eval $(call AndroidHostMxeTemplate,host-mxe-Win32,i686,Win32))
-$(eval $(call AndroidHostMxeTemplate,host-mxe-Win64,x86_64,Win64))
+$(eval $(call AndroidHostMxeTemplate,host-mxe-Win32,i686))
+$(eval $(call AndroidHostMxeTemplate,host-mxe-Win64,x86_64))

@@ -2,8 +2,7 @@
 .stamp-*
 *.mk.generated
 *.config.cache
-mxe-Win32/
-mxe-Win64/
+mxe/
 llvm-llvm32/
 llvm-llvm64/
 llvm-llvmwin32/
