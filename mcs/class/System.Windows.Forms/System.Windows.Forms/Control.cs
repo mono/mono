@@ -5250,7 +5250,7 @@ namespace System.Windows.Forms
 			}
 
 
-			XplatUI.PaintEventEnd (ref m, handle, true);
+			XplatUI.PaintEventEnd (ref m, handle, true, paint_event);
 		}
 
 		private void WmEraseBackground (ref Message m) {
