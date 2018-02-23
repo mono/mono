@@ -52,6 +52,7 @@ namespace System.Windows.Forms {
 		private string form_text;
 		private bool setting_form_text;
 		private Form active_child;
+		private Point next_child_stack_location;
 
 		#endregion	// Local Variables
 
@@ -996,6 +997,16 @@ namespace System.Windows.Forms {
 					return;
 				}
 			}
+		}
+
+		internal Point GetNextStackedFormLocation (CreateParams cp)
+		{
+			Point previous = next_child_stack_location;
+			next_child_stack_location = new Point (previous.X + 22, previous.Y + 22);
+			if (!ClientRectangle.Contains (next_child_stack_location.X * 3, next_child_stack_location.Y * 3)) {
+				next_child_stack_location = Point.Empty;
+			}
+			return previous;
 		}
 	}
 }

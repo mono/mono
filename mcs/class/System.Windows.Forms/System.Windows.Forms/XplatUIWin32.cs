@@ -1631,8 +1631,8 @@ namespace System.Windows.Forms {
 			}
 
 			Point location;
-			if (cp.HasWindowManager) {
-				location = Hwnd.GetNextStackedFormLocation (cp, Hwnd.ObjectFromHandle (cp.Parent));
+			if (cp.control is Form && cp.X == int.MinValue && cp.Y == int.MinValue) {
+				location = Hwnd.GetNextStackedFormLocation (cp);
 			} else {
 				location = new Point (cp.X, cp.Y);
 			}
