@@ -3894,7 +3894,7 @@ namespace System.Windows.Forms {
 			return new SizeF(width, font.Height);
 		}
 
-		internal override IntPtr GetParent(IntPtr handle)
+		internal override IntPtr GetParent(IntPtr handle, bool with_owner)
 		{
 			Hwnd	hwnd;
 
@@ -3902,6 +3902,7 @@ namespace System.Windows.Forms {
 			if (hwnd != null && hwnd.parent != null) {
 				return hwnd.parent.Handle;
 			}
+			// FIXME: Handle with_owner
 			return IntPtr.Zero;
 		}
 		

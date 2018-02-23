@@ -2293,8 +2293,12 @@ namespace System.Windows.Forms {
 		}
 
 		// If we ever start using this, we should probably replace FosterParent with IntPtr.Zero
-		internal override IntPtr GetParent(IntPtr handle) {
-			return Win32GetParent(handle);
+		internal override IntPtr GetParent(IntPtr handle, bool with_owner) {
+			if (with_owner) {
+				return Win32GetParent(handle);
+			} else {
+				return Win32GetAncestor(handle, AncestorType.GA_PARENT);
+			}
 		}
 
 		// This is a nop on win32 and x11

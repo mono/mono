@@ -193,13 +193,12 @@ namespace System.Windows.Forms
 			static internal Control ControlFromChildHandle (IntPtr handle) {
 				ControlNativeWindow	window;
 
-				Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
-				while (hwnd != null) {
+				while (handle != IntPtr.Zero) {
 					window = (ControlNativeWindow)NativeWindow.FromHandle (handle);
 					if (window != null) {
 						return window.owner;
 					}
-					hwnd = hwnd.Parent;
+					handle = XplatUI.GetParent(handle, false);
 				}
 
 				return null;
@@ -1670,6 +1669,17 @@ namespace System.Windows.Forms
 			foreach (Binding binding in data_bindings) {
 				binding.Check ();
 			}
+		}
+
+		internal static bool IsChild (IntPtr hWndParent, IntPtr hWnd)
+		{
+			for (var parent = XplatUI.GetParent(hWnd, true); parent != IntPtr.Zero; parent = XplatUI.GetParent(parent, true)) {
+				if (parent == hWndParent) {
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		private void ChangeParent(Control new_parent) {
@@ -5505,7 +5515,7 @@ namespace System.Windows.Forms
 //					bool parented = false;
 					for (int i=0; i<controls.Length; i++) {
 						if (controls [i].is_visible && controls[i].IsHandleCreated)
-							if (XplatUI.GetParent (controls[i].Handle) != window.Handle) {
+							if (XplatUI.GetParent (controls[i].Handle, false) != window.Handle) {
 								XplatUI.SetParent(controls[i].Handle, window.Handle);
 //								parented = true;
 							}

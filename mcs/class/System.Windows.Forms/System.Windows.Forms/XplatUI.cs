@@ -724,10 +724,10 @@ namespace System.Windows.Forms {
 			return driver.GetMessage (queue_id, ref msg, hWnd, wFilterMin, wFilterMax);
 		}
 
-		internal static IntPtr GetParent (IntPtr handle)
+		internal static IntPtr GetParent (IntPtr handle, bool with_owner)
 		{
-			DriverDebug ("GetParent ({0}): Called", Window (handle));
-			return driver.GetParent (handle);
+			DriverDebug ("GetParent ({0}, {1}): Called", Window (handle), with_owner);
+			return driver.GetParent (handle, with_owner);
 		}
 
 		internal static IntPtr GetPreviousWindow (IntPtr handle)

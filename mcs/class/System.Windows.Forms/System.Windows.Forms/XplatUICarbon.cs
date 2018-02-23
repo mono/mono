@@ -1288,13 +1288,14 @@ namespace System.Windows.Forms {
 			size = new Size ((int)bounds.size.width, (int)bounds.size.height);
 		}
 
-		internal override IntPtr GetParent(IntPtr handle) {
+		internal override IntPtr GetParent(IntPtr handle, bool with_owner) {
 			Hwnd	hwnd;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 			if (hwnd != null && hwnd.Parent != null) {
 				return hwnd.Parent.Handle;
 			}
+			// FIXME: Handle with_owner
 			return IntPtr.Zero;
 		}
 
