@@ -1108,7 +1108,7 @@ namespace Mono.Options
 		}
 
 		private readonly Regex ValueOption = new Regex (
-			@"^(?<flag>--|-|/)(?<name>[^:=]+)((?<sep>[:=])(?<value>.*))?$");
+			@"^(?<flag>--|-|–|––|—|——|/)(?<name>[^:=]+)((?<sep>[:=])(?<value>.*))?$");
 
 		protected bool GetOptionParts (string argument, out string flag, out string name, out string sep, out string value)
 		{
