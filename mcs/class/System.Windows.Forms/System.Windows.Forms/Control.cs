@@ -2465,7 +2465,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool Disposing {
 			get {
-				return is_disposed;
+				return is_disposing;
 			}
 		}
 
