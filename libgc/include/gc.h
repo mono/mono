@@ -835,6 +835,10 @@ typedef GC_PTR (*GC_fn_type) GC_PROTO((GC_PTR client_data));
 GC_API GC_PTR GC_call_with_alloc_lock
         	GC_PROTO((GC_fn_type fn, GC_PTR client_data));
 
+GC_API void GC_start_blocking GC_PROTO((void));
+
+GC_API void GC_end_blocking GC_PROTO((void));
+
 /* The following routines are primarily intended for use with a 	*/
 /* preprocessor which inserts calls to check C pointer arithmetic.	*/
 /* They indicate failure by invoking the corresponding _print_proc.	*/
