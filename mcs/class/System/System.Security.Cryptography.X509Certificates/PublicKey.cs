@@ -42,9 +42,13 @@ using Mono.Security.Cryptography;
 using MSX = Mono.Security.X509;
 #endif
 
+#endif
+
 namespace System.Security.Cryptography.X509Certificates {
 
 	public sealed class PublicKey {
+
+#if SECURITY_DEP
 
 		private const string rsaOid = "1.2.840.113549.1.1.1";
 		private const string dsaOid = "1.2.840.10040.4.1";
@@ -223,7 +227,17 @@ namespace System.Security.Cryptography.X509Certificates {
 			rsa.ImportParameters (rsaParams);
 			return rsa;
 		}
+#else
+		private PublicKey ()
+		{
+		}
+
+
+		public AsymmetricAlgorithm Key {
+			get {
+				return null;
+			}
+		}
+#endif
 	}
 }
-
-#endif
