@@ -93,22 +93,26 @@ namespace System.IO.MemoryMappedFiles
 			}
 		}
 
-		internal static IntPtr OpenFile (string path, FileMode mode, string mapName, out long capacity, MemoryMappedFileAccess access, MemoryMappedFileOptions options)
+		internal static unsafe IntPtr OpenFile (string path, FileMode mode, string mapName, out long capacity, MemoryMappedFileAccess access, MemoryMappedFileOptions options)
 		{
-			int error = 0;
-			IntPtr res = OpenFileInternal (path, mode, mapName, out capacity, access, options, out error);
-			if (error != 0)
-				throw CreateException (error, path);
-			return res;
+			fixed (char* fpath = path, fmapName = mapName) {
+				int error = 0;
+				IntPtr res = OpenFileInternal (path, mode, mapName, out capacity, access, options, out error);
+				if (error != 0)
+					throw CreateException (error, path);
+				return res;
+			}
 		}
 
-		internal static IntPtr OpenHandle (IntPtr handle, string mapName, out long capacity, MemoryMappedFileAccess access, MemoryMappedFileOptions options)
+		internal static unsafe IntPtr OpenHandle (IntPtr handle, string mapName, out long capacity, MemoryMappedFileAccess access, MemoryMappedFileOptions options)
 		{
-			int error = 0;
-			IntPtr res = OpenHandleInternal (handle, mapName, out capacity, access, options, out error);
-			if (error != 0)
-				throw CreateException (error, "<none>");
-			return res;
+			fixed (char* fmapName = mapName) {
+				int error = 0;
+				IntPtr res = OpenHandleInternal (handle, mapName, out capacity, access, options, out error);
+				if (error != 0)
+					throw CreateException (error, "<none>");
+				return res;
+			}
 		}
 	}
 
