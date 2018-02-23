@@ -12,11 +12,6 @@ ifeq (, $(shell which glibtoolize))
 EXTRA_PATH=$(wildcard /usr/local/Cellar/libtool/*/bin/)
 endif
 
-# Some of the targets cannot be built in parallel (ex: mxe). This is a gross hack, but fixing it would mean a unknown
-# amount of change. For example, we could invoke the MXE targets with `$(MAKE) -f mxe.mk build-mxe-Win32` and move the
-# .NOTPARALLEL there.
-.NOTPARALLEL:
-
 all: package
 
 ## Common Mono targets
