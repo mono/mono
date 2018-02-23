@@ -7,7 +7,7 @@
 #include <config.h>
 #include <glib.h>
 
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_XBOXONE_WINAPI_SUPPORT)
 #define CODESET 1
 #include <windows.h>
 
@@ -30,7 +30,7 @@ g_get_charset (G_CONST_RETURN char **charset)
 	return is_utf8;
 }
 
-#else /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
+#else /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_XBOXONE_WINAPI_SUPPORT) */
 
 #ifdef _MSC_VER
 // Quiet Visual Studio linker warning, LNK4221, in cases when this source file intentional ends up empty.

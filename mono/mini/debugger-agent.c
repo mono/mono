@@ -636,8 +636,6 @@ typedef struct ReplyPacket {
 	Buffer *data;
 } ReplyPacket;
 
-#define DEBUG(level,s) do { if (G_UNLIKELY ((level) <= log_level)) { s; fflush (log_file); } } while (0)
-
 #ifdef HOST_ANDROID
 #define DEBUG_PRINTF(level, ...) do { if (G_UNLIKELY ((level) <= log_level)) { g_print (__VA_ARGS__); } } while (0)
 #else
@@ -1465,7 +1463,11 @@ socket_transport_connect (const char *address)
 				break;       /* Success */
 			
 			MONO_ENTER_GC_SAFE;
+#ifdef HOST_WIN32
+			closesocket (sfd);
+#else
 			close (sfd);
+#endif
 			MONO_EXIT_GC_SAFE;
 		}
 

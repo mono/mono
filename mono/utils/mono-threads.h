@@ -151,7 +151,7 @@ typedef struct _MonoThreadInfoInterruptToken MonoThreadInfoInterruptToken;
 typedef struct {
 	MonoLinkedListSetNode node;
 	guint32 small_id; /*Used by hazard pointers */
-	MonoNativeThreadHandle native_handle; /* Valid on mach and android */
+	MonoNativeThreadHandle native_handle; /* Valid on mach, android and Windows */
 	int thread_state;
 
 	/*Tells if this thread was created by the runtime or not.*/
