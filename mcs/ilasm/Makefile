@@ -13,7 +13,7 @@ EXTRA_DISTFILES = \
 	$(wildcard tests/*.il)
 
 ILParser.cs: parser/ILParser.jay $(topdir)/jay/skeleton.cs
-	$(topdir)/jay/jay -ct < $(topdir)/jay/skeleton.cs $(CURDIR)/$< >$@
+	$(topdir)/jay/jay -ct -o $@ $(CURDIR)/$< < $(topdir)/jay/skeleton.cs
 
 include ../build/executable.make
 

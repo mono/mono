@@ -237,12 +237,14 @@ extern char *input_file_name;
 extern char *prolog_file_name;
 extern char *local_file_name;
 extern char *verbose_file_name;
+extern char *output_file_name;
 
 extern FILE *action_file;
 extern FILE *input_file;
 extern FILE *prolog_file;
 extern FILE *local_file;
 extern FILE *verbose_file;
+extern FILE *output_file;
 
 extern int nitems;
 extern int nrules;

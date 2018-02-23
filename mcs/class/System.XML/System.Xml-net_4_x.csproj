@@ -288,7 +288,6 @@
     <Compile Include="..\referencesource\System.Xml\System\Xml\Cache\XPathNodeInfoAtom.cs" />
     <Compile Include="..\referencesource\System.Xml\System\Xml\Cache\XPathNodeView.cs" />
     <Compile Include="..\referencesource\System.Xml\System\Xml\Cache\XPathNodeViewPropertyDescriptor.cs" />
-    <Compile Include="..\referencesource\System.Xml\System\Xml\Core\BinaryCompatibility.cs" />
     <Compile Include="..\referencesource\System.Xml\System\Xml\Core\CharEntityEncoderFallback.cs" />
     <Compile Include="..\referencesource\System.Xml\System\Xml\Core\ConformanceLevel.cs" />
     <Compile Include="..\referencesource\System.Xml\System\Xml\Core\DtdProcessing.cs" />
@@ -718,6 +717,7 @@
     <Compile Include="..\referencesource\System.Xml\System\Xml\Xslt\XslTransform.cs" />
     <Compile Include="..\referencesource\System.Xml\System\Xml\Xslt\XsltSettings.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="ReferenceSources\BinaryCompatibility.cs" />
     <Compile Include="ReferenceSources\LocalAppContextSwitches.cs" />
     <Compile Include="ReferenceSources\Res.cs" />
     <Compile Include="ReferenceSources\ThisAssembly.cs" />  </ItemGroup>

@@ -40,6 +40,7 @@ Ankh.NoLoad
 *.gpState
 .vscode/
 *.exp
+.vs/
 
 # Tooling
 _ReSharper*/
