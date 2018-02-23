@@ -3,6 +3,14 @@
 
 #if defined(PLATFORM_UNITY) && defined(UNITY_USE_PLATFORM_STUBS)
 
+#ifdef HOST_WIN32
+typedef struct {
+	gpointer lpBaseOfDll;
+	guint32 SizeOfImage;
+	gpointer EntryPoint;
+} MODULEINFO;
+#endif
+
 void
 mono_w32process_init (void)
 {
@@ -108,7 +116,7 @@ ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcess (void)
 }
 
 gboolean
-mono_w32process_get_fileversion_info (gunichar2 *filename, guint32 handle, guint32 len, gpointer data)
+mono_w32process_get_fileversion_info (gunichar2 *filename, gpointer* data)
 {
 	g_assert(0 && "This function is not yet implemented for the Unity platform.");
 	return FALSE;
