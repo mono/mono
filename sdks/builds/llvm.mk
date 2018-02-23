@@ -57,23 +57,22 @@ $(eval $(call LLVMTemplate,llvm64,x86_64))
 # Parameters
 #  $(1): target
 #  $(2): arch
-#  $(3): mxe
 #
 # Flags
 #  llvm_$(1)_CONFIGURE_ENVIRONMENT
 define LLVMMxeTemplate
 
-_llvm_$(1)_PATH=$$(TOP)/sdks/out/mxe-$(3)/bin
+_llvm_$(1)_PATH=$$(TOP)/sdks/out/mxe/bin
 
-_llvm_$(1)_AR=$$(TOP)/sdks/out/mxe-$(3)/bin/$(2)-w64-mingw32.static-ar
-_llvm_$(1)_AS=$$(TOP)/sdks/out/mxe-$(3)/bin/$(2)-w64-mingw32.static-as
-_llvm_$(1)_CC=$$(TOP)/sdks/out/mxe-$(3)/bin/$(2)-w64-mingw32.static-gcc
-_llvm_$(1)_CXX=$$(TOP)/sdks/out/mxe-$(3)/bin/$(2)-w64-mingw32.static-g++
-_llvm_$(1)_DLLTOOL=$$(TOP)/sdks/out/mxe-$(3)/bin/$(2)-w64-mingw32.static-dlltool
-_llvm_$(1)_LD=$$(TOP)/sdks/out/mxe-$(3)/bin/$(2)-w64-mingw32.static-ld
-_llvm_$(1)_OBJDUMP=$$(TOP)/sdks/out/mxe-$(3)/bin/$(2)-w64-mingw32.static-objdump
-_llvm_$(1)_RANLIB=$$(TOP)/sdks/out/mxe-$(3)/bin/$(2)-w64-mingw32.static-ranlib
-_llvm_$(1)_STRIP=$$(TOP)/sdks/out/mxe-$(3)/bin/$(2)-w64-mingw32.static-strip
+_llvm_$(1)_AR=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-ar
+_llvm_$(1)_AS=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-as
+_llvm_$(1)_CC=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-gcc
+_llvm_$(1)_CXX=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-g++
+_llvm_$(1)_DLLTOOL=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-dlltool
+_llvm_$(1)_LD=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-ld
+_llvm_$(1)_OBJDUMP=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-objdump
+_llvm_$(1)_RANLIB=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-ranlib
+_llvm_$(1)_STRIP=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-strip
 
 _llvm_$(1)_CXXFLAGS=
 
@@ -106,7 +105,7 @@ _llvm_$(1)_CONFIGURE_FLAGS = \
 	cd $$(TOP)/sdks/builds/toolchains/llvm && git checkout $(LLVM_HASH)
 	touch $$@
 
-.stamp-llvm-$(1)-configure: $$(TOP)/sdks/builds/toolchains/llvm/configure | package-mxe-$(3)
+.stamp-llvm-$(1)-configure: $$(TOP)/sdks/builds/toolchains/llvm/configure | package-mxe
 	mkdir -p $$(TOP)/sdks/builds/llvm-$(1)
 	cd $$(TOP)/sdks/builds/llvm-$(1) && PATH="$$$$PATH:$$(_llvm_$(1)_PATH)" $$< $$(_llvm_$(1)_CONFIGURE_ENVIRONMENT) $$(_llvm_$(1)_CONFIGURE_FLAGS)
 	touch $$@
@@ -123,5 +122,5 @@ TARGETS += llvm-$(1)
 
 endef
 
-$(eval $(call LLVMMxeTemplate,llvmwin32,i686,Win32))
-$(eval $(call LLVMMxeTemplate,llvmwin64,x86_64,Win64))
+$(eval $(call LLVMMxeTemplate,llvmwin32,i686))
+$(eval $(call LLVMMxeTemplate,llvmwin64,x86_64))
