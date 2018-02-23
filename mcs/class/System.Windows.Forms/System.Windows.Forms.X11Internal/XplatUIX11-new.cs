@@ -506,7 +506,7 @@ namespace System.Windows.Forms.X11Internal {
 
 		// XXX this should be someplace shareable by all non-win32 backends..  like in Hwnd itself.
 		// maybe a Hwnd.ParentHandle property
-		internal override IntPtr GetParent (IntPtr handle)
+		internal override IntPtr GetParent (IntPtr handle, bool with_owner)
 		{
 			Hwnd	hwnd;
 
@@ -514,6 +514,7 @@ namespace System.Windows.Forms.X11Internal {
 			if (hwnd != null && hwnd.parent != null) {
 				return hwnd.parent.Handle;
 			}
+			// FIXME: Handle with_owner
 			return IntPtr.Zero;
 		}
 
