@@ -6,7 +6,7 @@
 #    Install target into ../out/<target>
 # - clean-ios-<target>
 #    Clean target
-# Where <target> is: target32, target64, sim32, sim64, cross32, cross64
+# Where <target> is: target32, target32s, target64, sim32, sim64, cross32, cross64
 #
 
 PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
@@ -27,7 +27,7 @@ ios_LDFLAGS=
 
 ##
 # Parameters
-#  $(1): target (target32 or target64)
+#  $(1): target (target32/target32s/target64)
 #  $(2): arch (armv7 or arm64)
 #  $(3): arch (arm or aarch64)
 #
@@ -147,6 +147,7 @@ endef
 
 # ios_target32_BITCODE_MARKER=-fembed-bitcode-marker
 $(eval $(call iOSDeviceTemplate,target32,armv7,arm))
+$(eval $(call iOSDeviceTemplate,target32s,armv7s,arm))
 # ios_target64_BITCODE_MARKER=-fembed-bitcode-marker
 $(eval $(call iOSDeviceTemplate,target64,arm64,aarch64))
 
