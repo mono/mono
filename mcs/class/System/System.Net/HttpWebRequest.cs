@@ -1023,7 +1023,8 @@ namespace System.Net
 					if (throwMe != null) {
 						WebConnection.Debug ($"HWR GET RESPONSE LOOP #1 EX: Req={ID} {throwMe.Status} {throwMe.InnerException?.GetType ()}");
 						haveResponse = true;
-						myTcs.TrySetException (throwMe);
+						if (myTcs.TrySetException (throwMe))
+							throw myTcs.Task.Exception;
 						throw throwMe;
 					}
 
@@ -1056,7 +1057,8 @@ namespace System.Net
 						WebConnection.Debug ($"HWR GET RESPONSE LOOP #3 EX: Req={ID} {throwMe.Status} {throwMe.InnerException?.GetType ()}");
 						haveResponse = true;
 						stream?.Close ();
-						myTcs.TrySetException (throwMe);
+						if (myTcs.TrySetException (throwMe))
+							throw myTcs.Task.Exception;
 						throw throwMe;
 					}
 
