@@ -21,8 +21,13 @@ check-local:
 	$(MAKE) runtest-gac-loading || ok=false; \
 	$$ok
 
+# These are not actually tests, but they are source files part of another test.
+TAILCALL_DISABLED_TESTS_COMPILE = \
+	tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyTransparentLibraryWithPrefix.exe \
+	tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyVerifiableLibraryWithPrefix.exe
+
 # FIXME Some of these sound like negative tests -- "badtailcall". Verify and automate.
-TAILCALL_DISABLED_TESTS = \
+TAILCALL_DISABLED_TESTS_RUN = \
 	tailcall/coreclr/JIT/Directed/IL/PInvokeTail/PInvokeTail.exe \
 	tailcall/coreclr/JIT/Directed/IL/PInvokeTail/tailwinapi.exe \
 	tailcall/coreclr/JIT/Directed/IL/mutualrecur-tailcall/MutualRecur-TailCall.exe \
@@ -53,9 +58,16 @@ TAILCALL_DISABLED_TESTS = \
 	tailcall/coreclr/JIT/Methodical/tailcall_v4/delegateTail.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall_v4/smallFrame.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall_v4/tailcall_AV.exe \
-	tailcall/coreclr/JIT/Regression/VS-ia64-JIT/V1.2-M02/b102844/tailcallcalli.exe
+	tailcall/coreclr/JIT/Regression/VS-ia64-JIT/V1.2-M02/b102844/tailcallcalli.exe \
+	tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyWithPrefix.exe \
+	$(TAILCALL_DISABLED_TESTS_COMPILE)
 
-test-tailcall: $(TESTS_TAILCALL) $(TESTS_TAILCALL_OUT)
+compile-tailcall: $(TESTS_TAILCALL) $(TESTSAOT_TAILCALL)
+
+test-tailcall: compile-tailcall $(TESTS_TAILCALL_OUT)
+
+clean-tailcall:
+	rm -f $(TESTS_TAILCALL) $(TESTS_TAILCALL_OUT) $(TESTSAOT_TAILCALL)
 
 check-full:
 	ok=; \
@@ -1187,14 +1199,10 @@ TESTS_IL=$(filter-out $(DISABLED_TESTS),$(TESTS_IL_SRC:.il=.exe))
 TESTS_BENCH=$(filter-out $(DISABLED_TESTS),$(TESTS_BENCH_SRC:.cs=.exe))
 TESTS_STRESS=$(filter-out $(DISABLED_TESTS),$(TESTS_STRESS_SRC:.cs=.exe))
 TESTS_GSHARED=$(filter-out $(DISABLED_TESTS),$(TESTS_GSHARED_SRC:.cs=.exe))
-#FIXME For now we compile but do not run the C# tests.
-#TESTS_TAILCALL=$(filter-out $(TAILCALL_DISABLED_TESTS),$(TEST_TAILCALL_CS_SRC:.cs=.exe) $(TEST_TAILCALL_IL_SRC:.il=.exe))
-#TESTS_TAILCALL_OUT=$(TESTS_TAILCALL:.exe=.exe_test_tailcall_done)
-TESTS_TAILCALL=$(filter-out $(TAILCALL_DISABLED_TESTS),$(TEST_TAILCALL_CS_SRC:.cs=.exe) $(TEST_TAILCALL_IL_SRC:.il=.exe))
-TESTS_TAILCALL_OUT=$(filter-out $(TAILCALL_DISABLED_TESTS:.exe=.exe_test_tailcall_done),$(TEST_TAILCALL_IL_SRC:.il=.exe_test_tailcall_done))
+TESTS_TAILCALL=$(filter-out $(TAILCALL_DISABLED_TESTS_COMPILE),$(TEST_TAILCALL_CS_SRC:.cs=.exe) $(TEST_TAILCALL_IL_SRC:.il=.exe))
+TESTS_TAILCALL_OUT=$(filter-out $(TAILCALL_DISABLED_TESTS_RUN:.exe=.exe_test_tailcall_done),$(TEST_TAILCALL_IL_SRC:.il=.exe_test_tailcall_done))
 
-clean-local:
-	rm -f $(TESTS_TAILCALL_OUT) $(TESTS_TAILCALL)
+clean-local: clean-tailcall
 
 if FULL_AOT_TESTS
 TESTSAOT_CS=$(TESTS_CS:.exe=.exe$(PLATFORM_AOT_SUFFIX))
@@ -1221,8 +1229,13 @@ EXTRA_DIST=test-driver test-runner.cs $(TESTS_CS_SRC) $(TESTS_IL_SRC) \
 	$(TEST_TAILCALL_CS_SRC) \
 	$(TEST_TAILCALL_IL_SRC)
 
+# This test has extra sources.
+tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyWithPrefix.exe: \
+		tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyTransparentLibraryWithPrefix.il \
+		tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyVerifiableLibraryWithPrefix.il
+
 %.exe: %.il
-	$(ILASM) -out:$@ $<
+	$(ILASM) -out:$@ $^
 
 # Define I to empty to enable incremental.
 I ?= -not-incremental
@@ -1525,9 +1538,6 @@ endif
 #FIXME
 #coreclr/tailcall/CoreMangLib/system/span/SlowTailCallArgs.cs(124,13): error CS8107: Feature 'ref structs' is not available in C# 7.0. Please use language version 7.2 or greater.
 #coreclr/tailcall/CoreMangLib/cti/system/reflection/emit/opcodes/opcodestailcall.cs(17,9): error CS0103: The name 'TestLibrary' does not exist in the current context
-#coreclr/tailcall/JIT/opt/Tailcall/TailcallVerifyWithPrefix.il : Error : Reference to undefined class 'TailcallVerify.Condition22'
-#coreclr/tailcall/JIT/opt/Tailcall/TailcallVerifyTransparentLibraryWithPrefix.il : Error : No entry point found.
-#coreclr/tailcall/JIT/opt/Tailcall/TailcallVerifyVerifiableLibraryWithPrefix.il : Error : No entry point found.
 
 TEST_TAILCALL_CS_SRC=\
 	tailcall/coreclr/JIT/CodeGenBringUpTests/RecursiveTailCall.cs \
@@ -1550,6 +1560,9 @@ TEST_TAILCALL_CS_SRC=\
 #tailcall/coreclr/JIT/Methodical/nonvirtualcall/tailcall.cs
 
 TEST_TAILCALL_IL_SRC=\
+	tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyWithPrefix.il \
+	tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyTransparentLibraryWithPrefix.il \
+	tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyVerifiableLibraryWithPrefix.il \
 	tailcall/coreclr/JIT/Directed/coverage/importer/badtailcall.il \
 	tailcall/coreclr/JIT/Directed/coverage/importer/Desktop/badtailcall.il \
 	tailcall/coreclr/JIT/Directed/IL/mutualrecur-tailcall/MutualRecur-TailCall.il \
