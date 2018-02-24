@@ -1426,6 +1426,9 @@ mono_field_resolve_type (MonoClassField *field, MonoError *error);
 gboolean
 mono_type_has_exceptions (MonoType *type);
 
+void
+mono_class_set_nonblittable (MonoClass *klass);
+
 /*Now that everything has been defined, let's include the inline functions */
 #include <mono/metadata/class-inlines.h>
 

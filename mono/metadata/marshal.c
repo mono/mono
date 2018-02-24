@@ -11740,9 +11740,7 @@ mono_marshal_load_type_info (MonoClass* klass)
 
 	/* Update the class's blittable info, if the layouts don't match */
 	if (info->native_size != mono_class_value_size (klass, NULL)) {
-		mono_loader_lock ();
-		klass->blittable = FALSE;
-		mono_loader_unlock ();
+		mono_class_set_nonblittable (klass); /* FIXME - how is this justified? what if we previously thought the class was blittable? */
 	}
 
 	/* If this is an array type, ensure that we have element info */
