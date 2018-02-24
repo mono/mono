@@ -136,7 +136,7 @@ namespace System.Windows.Forms {
 			}
 			client_window = IntPtr.Zero;
 			whole_window = IntPtr.Zero;
-			zombie = false;
+			zombie = true;
 			for (int i = 0; i < marshal_free_list.Count; i++) {
 				Marshal.FreeHGlobal((IntPtr)marshal_free_list[i]);
 			}
