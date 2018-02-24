@@ -2232,7 +2232,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal override  Size IconSize { get{ throw new NotImplementedException(); } }
+		internal override  Size IconSize {
+			get {
+				return new Size (32, 32);
+			}
+		}
+
 		internal override  Size MaxWindowTrackSize { get{ throw new NotImplementedException(); } }
 		internal override bool MenuAccessKeysUnderlined {
 			get {
