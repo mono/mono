@@ -80,7 +80,7 @@ mono_file_map_fd (MonoFileMap *fmap)
 {
 	if (file_fd_func) return file_fd_func(fmap);
 #ifdef WIN32
-	return fileno ((FILE*)fmap);
+	return _fileno ((FILE*)fmap);
 #else
 	return (int)(size_t)fmap;
 #endif

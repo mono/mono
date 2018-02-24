@@ -1986,6 +1986,13 @@ ves_icall_System_Threading_WaitHandle_Wait_internal (gpointer *handles, gint32 n
 	return map_native_wait_result_to_managed (ret, numhandles);
 }
 
+/*
+ * UWP doesn't support SignalObjectAndWait until SDK version 15063. Our minspec currently is 10240.
+ * Since we don't care about running Mono runtime for now, let's just disable this icall and reevaluate
+ * in some months when we have to get libmono with IL2CPP up & running
+ */
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+
 gint32
 ves_icall_System_Threading_WaitHandle_SignalAndWait_Internal (gpointer toSignal, gpointer toWait, gint32 ms, MonoError *error)
 {
@@ -2012,6 +2019,8 @@ ves_icall_System_Threading_WaitHandle_SignalAndWait_Internal (gpointer toSignal,
 
 	return map_native_wait_result_to_managed (ret, 1);
 }
+
+#endif
 
 gint32 ves_icall_System_Threading_Interlocked_Increment_Int (gint32 *location)
 {
