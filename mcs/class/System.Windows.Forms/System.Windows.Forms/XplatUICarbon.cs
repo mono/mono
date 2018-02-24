@@ -1741,11 +1741,22 @@ namespace System.Windows.Forms {
 		}
 		
 		internal override void SetFocus(IntPtr handle) {
-			if (FocusWindow != IntPtr.Zero) {
-				PostMessage(FocusWindow, Msg.WM_KILLFOCUS, handle, IntPtr.Zero);
-			}
-			PostMessage(handle, Msg.WM_SETFOCUS, FocusWindow, IntPtr.Zero);
+			if (FocusWindow == handle)
+				return;
+
+			IntPtr previous_focus = FocusWindow;
 			FocusWindow = handle;
+
+			if (previous_focus != IntPtr.Zero) {
+				SendMessage(previous_focus, Msg.WM_KILLFOCUS, handle, IntPtr.Zero);
+				// Focus was changed from inside WM_KILLFOCUS
+				if (FocusWindow != handle)
+					return;
+			}
+
+			if (handle != IntPtr.Zero) {
+				SendMessage(handle, Msg.WM_SETFOCUS, FocusWindow, IntPtr.Zero);
+			}
 		}
 
 		internal override void SetIcon(IntPtr handle, Icon icon) {
