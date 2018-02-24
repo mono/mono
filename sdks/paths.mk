@@ -40,8 +40,6 @@ endif # DISABLE_ANDROID
 
 ifndef DISABLE_IOS
 
-CheckXcodeDir=$(or $(and $(wildcard $(1))),$(warning Could not find Xcode in "$(1)"))
-
 ifeq ($(wildcard $(XCODE_DIR)),)
 $(error Could not find Xcode at $(XCODE_DIR))
 endif

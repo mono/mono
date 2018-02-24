@@ -324,7 +324,7 @@ _ios_$(1)_CONFIGURE_FLAGS= \
 	--disable-libraries \
 	--disable-mcs-build \
 	--disable-nls \
-	--enable-dtrace=yes \
+	--enable-dtrace=no \
 	--enable-icall-symbol-map \
 	--enable-minimal=com,remoting \
 	--with-cross-offsets=$(4).h \
