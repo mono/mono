@@ -7,6 +7,7 @@
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/tabledefs.h>
 #ifdef MONO_CLASS_DEF_PRIVATE
+#include <mono/metadata/abi-details.h>
 #define REALLY_INCLUDE_CLASS_DEF 1
 #include <mono/metadata/class-private-definition.h>
 #undef REALLY_INCLUDE_CLASS_DEF
@@ -498,6 +499,8 @@ mono_class_set_failure (MonoClass *klass, MonoErrorBoxed *boxed_error)
 
 #ifdef MONO_CLASS_DEF_PRIVATE
 #define MONO_CLASS_GETTER(funcname, rettype, optref, argtype, fieldname) rettype funcname (argtype *klass) { return optref klass-> fieldname ; }
+#define MONO_CLASS_OFFSET(funcname, argtype, fieldname) intptr_t funcname (void) { return MONO_STRUCT_OFFSET (argtype, fieldname); }
 #include "class-getters.h"
 #undef MONO_CLASS_GETTER
+#undef MONO_CLASS_OFFSET
 #endif /* MONO_CLASS_DEF_PRIVATE */

@@ -299,8 +299,10 @@ union _MonoClassSizes {
 #else
 #define MONO_CLASS_GETTER(funcname, rettype, optref, argtype, fieldname) static inline rettype funcname (argtype *klass) { return optref klass-> fieldname ; }
 #endif
+#define MONO_CLASS_OFFSET(funcname, argtype, fieldname) /*nothing*/
 #include "class-getters.h"
 #undef MONO_CLASS_GETTER
+#undef MONO_CLASS_OFFSET
 
 #ifdef COMPRESSED_INTERFACE_BITMAP
 int mono_compress_bitmap (uint8_t *dest, const uint8_t *bitmap, int size);
