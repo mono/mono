@@ -1540,8 +1540,11 @@ disable_for_now_TEST_TAILCALL_CS_SRC=\
 	tailcall/coreclr/JIT/opt/FastTailCall/StructPassingSimple.cs \
 	tailcall/coreclr/JIT/opt/Loops/SearchLoopTail.cs
 
-# .il exists for these -- these were presumably for bootstrapping.
-# FIXME Confirm these are related like that.
+# At these locations we have .cs and .il.
+# The .il is clearly derived from the .cs, such as by running
+# csc + ildasm + edit.
+# The .cs is opportunistically optimizable, see https://github.com/mono/mono/issues/7259.
+# But for now we only want the .il.
 #tailcall/coreclr/JIT/Methodical/Boxing/misc/tailjump.cs
 #tailcall/coreclr/JIT/Methodical/Invoke/SEH/catchfinally_tail.cs
 #tailcall/coreclr/JIT/Methodical/nonvirtualcall/tailcall.cs
