@@ -1187,8 +1187,11 @@ TESTS_IL=$(filter-out $(DISABLED_TESTS),$(TESTS_IL_SRC:.il=.exe))
 TESTS_BENCH=$(filter-out $(DISABLED_TESTS),$(TESTS_BENCH_SRC:.cs=.exe))
 TESTS_STRESS=$(filter-out $(DISABLED_TESTS),$(TESTS_STRESS_SRC:.cs=.exe))
 TESTS_GSHARED=$(filter-out $(DISABLED_TESTS),$(TESTS_GSHARED_SRC:.cs=.exe))
+#FIXME For now we compile but do not run the C# tests.
+#TESTS_TAILCALL=$(filter-out $(TAILCALL_DISABLED_TESTS),$(TEST_TAILCALL_CS_SRC:.cs=.exe) $(TEST_TAILCALL_IL_SRC:.il=.exe))
+#TESTS_TAILCALL_OUT=$(TESTS_TAILCALL:.exe=.exe_test_tailcall_done)
 TESTS_TAILCALL=$(filter-out $(TAILCALL_DISABLED_TESTS),$(TEST_TAILCALL_CS_SRC:.cs=.exe) $(TEST_TAILCALL_IL_SRC:.il=.exe))
-TESTS_TAILCALL_OUT=$(TESTS_TAILCALL:.exe=.exe_test_tailcall_done)
+TESTS_TAILCALL_OUT=$(filter-out $(TAILCALL_DISABLED_TESTS:.exe=.exe_test_tailcall_done),$(TEST_TAILCALL_IL_SRC:.il=.exe_test_tailcall_done))
 
 clean-local:
 	rm -f $(TESTS_TAILCALL_OUT) $(TESTS_TAILCALL)
@@ -1526,10 +1529,7 @@ endif
 #coreclr/tailcall/JIT/opt/Tailcall/TailcallVerifyTransparentLibraryWithPrefix.il : Error : No entry point found.
 #coreclr/tailcall/JIT/opt/Tailcall/TailcallVerifyVerifiableLibraryWithPrefix.il : Error : No entry point found.
 
-# None of these have tail. instructions, just opportunity for the JIT to notice, so really,
-# put them all off for now.
-
-disable_for_now_TEST_TAILCALL_CS_SRC=\
+TEST_TAILCALL_CS_SRC=\
 	tailcall/coreclr/JIT/CodeGenBringUpTests/RecursiveTailCall.cs \
 	tailcall/coreclr/JIT/Methodical/tailcall/Desktop/thread-race.cs \
 	tailcall/coreclr/JIT/Methodical/tailcall_v4/delegateParamCallTarget.cs \
