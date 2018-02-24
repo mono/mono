@@ -2172,9 +2172,12 @@ test_tailcall (MonoCompile *cfg, MonoBoolean tailcall)
 {
 	// A lot of tests say "tailcall" throughout their verbose output.
 	// "tailcalllog" is more searchable.
+	//
+	// Do not change "tailcalllog" here without changing other places, e.g. tests that search for it.
+	//
 	g_assertf (tailcall || !mini_get_debug_options ()->test_tailcall_require, "tailcalllog fail from %s", cfg->method->name);
 	if (cfg->verbose_level)
-		printf ("tailcalllog %s from %s\n", tailcall ? "success" : "fail", cfg->method->name);
+		g_print ("tailcalllog %s from %s\n", tailcall ? "success" : "fail", cfg->method->name);
 }
 
 inline static MonoCallInst *

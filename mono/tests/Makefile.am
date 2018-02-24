@@ -55,9 +55,9 @@ TAILCALL_DISABLED_TESTS = \
 	tailcall/coreclr/JIT/Methodical/tailcall_v4/tailcall_AV.exe \
 	tailcall/coreclr/JIT/Regression/VS-ia64-JIT/V1.2-M02/b102844/tailcallcalli.exe
 
-check-tailcall: $(TESTS_TAILCALL) $(TESTS_TAILCALL_OUT)
+test-tailcall: $(TESTS_TAILCALL) $(TESTS_TAILCALL_OUT)
 
-check-full: check-tailcall
+check-full:
 	ok=; \
 	$(MAKE) test-sgen || ok=false; \
 	$(MAKE) check-local || ok=false; \
@@ -1191,7 +1191,7 @@ TESTS_TAILCALL=$(filter-out $(TAILCALL_DISABLED_TESTS),$(TEST_TAILCALL_CS_SRC:.c
 TESTS_TAILCALL_OUT=$(TESTS_TAILCALL:.exe=.exe_test_tailcall_done)
 
 clean-local:
-	rm -f $(TESTS_TAILCALL_OUT)
+	rm -f $(TESTS_TAILCALL_OUT) $(TESTS_TAILCALL)
 
 if FULL_AOT_TESTS
 TESTSAOT_CS=$(TESTS_CS:.exe=.exe$(PLATFORM_AOT_SUFFIX))
@@ -1221,11 +1221,18 @@ EXTRA_DIST=test-driver test-runner.cs $(TESTS_CS_SRC) $(TESTS_IL_SRC) \
 %.exe: %.il
 	$(ILASM) -out:$@ $<
 
-# FIXME missing dependencies on BCL
+# Define I to empty to enable incremental.
+I ?= -not-incremental
+
+# FIXME missing dependencies on BCL (just Console.WriteLine)
 %.exe_test_tailcall_done: %.exe Makefile $(srcdir)/../../runtime/mono-wrapper ../mini/mono
 	cd ${PWD}
 	set -o pipefail; \
-	$(RUNTIME) -v --compile-all --test-tailcall-require $< | fgrep tailcalllog | tee $@
+	( MONO_DEBUG="$(MONO_DEBUG),test-tailcall-require" \
+	$(RUNTIME) -v --compile-all $< \
+	| fgrep tailcalllog \
+	| tee $@$I ) \
+	|| ( rm -f $@* && false )
 
 if !FULL_AOT_TESTS
 if !HYBRID_AOT_TESTS
@@ -1522,7 +1529,7 @@ endif
 # None of these have tail. instructions, just opportunity for the JIT to notice, so really,
 # put them all off for now.
 
-xTEST_TAILCALL_CS_SRC=\
+disable_for_now_TEST_TAILCALL_CS_SRC=\
 	tailcall/coreclr/JIT/CodeGenBringUpTests/RecursiveTailCall.cs \
 	tailcall/coreclr/JIT/Methodical/tailcall/Desktop/thread-race.cs \
 	tailcall/coreclr/JIT/Methodical/tailcall_v4/delegateParamCallTarget.cs \

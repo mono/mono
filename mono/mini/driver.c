@@ -1601,13 +1601,6 @@ mono_jit_parse_options (int argc, char * argv[])
 			MonoDebugOptions *opt = mini_get_debug_options ();
 
 			opt->break_on_exc = TRUE;
-		} else if (strcmp (argv [i], "--test-tailcall-require") == 0) {
-			// This is an internal testing feature.
-			// Every tail. encountered is required to be optimized.
-			// It is asserted. There is no implied compatibility
-			// with this switch and it will be altered as desired
-			// to fit test needs. It is not in usage.
-			mini_get_debug_options ()->test_tailcall_require = TRUE;
 		} else if (strcmp (argv [i], "--stats") == 0) {
 			mono_counters_enable (-1);
 			mono_atomic_store_bool (&mono_stats.enabled, TRUE);
@@ -1949,13 +1942,6 @@ mono_main (int argc, char* argv[])
 			MonoDebugOptions *opt = mini_get_debug_options ();
 
 			opt->break_on_exc = TRUE;
-		} else if (strcmp (argv [i], "--test-tailcall-require") == 0) {
-			// This is an internal testing feature.
-			// Every tail. encountered is required to be optimized.
-			// It is asserted. There is no implied compatibility
-			// with this switch and it will be altered as desired
-			// to fit test needs. It is not in usage.
-			mini_get_debug_options ()->test_tailcall_require = TRUE;
 		} else if (strcmp (argv [i], "--break") == 0) {
 			if (i+1 >= argc){
 				fprintf (stderr, "Missing method name in --break command line option\n");
