@@ -9029,11 +9029,13 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			/* Tail prefix / tail call optimization */
 
-			/* FIXME: Enabling TAILC breaks some inlining/stack trace/etc tests */
+			/* FIXME: Enabling TAILC breaks some inlining/stack trace/etc tests.
+				  Inlining and stack traces are not guaranteed however. */
 			/* FIXME: runtime generic context pointer for jumps? */
 			/* FIXME: handle this for generic sharing eventually */
-			if ((ins_flag & MONO_INST_TAILCALL) &&
-				!vtable_arg && !cfg->gshared && is_supported_tail_call (cfg, method, cmethod, fsig, call_opcode))
+			if ((ins_flag & MONO_INST_TAILCALL)
+					&& (MONO_ARCH_HAVE_OP_TAIL_CALL || (!vtable_arg && !cfg->gshared))
+					&& is_supported_tail_call (cfg, method, cmethod, fsig, call_opcode))
 				supported_tail_call = TRUE;
 
 			if (supported_tail_call) {
