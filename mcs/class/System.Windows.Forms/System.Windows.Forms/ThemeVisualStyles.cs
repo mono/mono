@@ -35,7 +35,7 @@ namespace System.Windows.Forms
 	/// </summary>
 	/// <remarks>
 	/// This theme uses only the managed VisualStyles API.
-	/// To select it, set MONO_THEME to VisualStyles and call <see cref="Application.EnableVisualStyles"/>.
+	/// To select it, call <see cref="Application.EnableVisualStyles"/>.
 	/// </remarks>
 	class ThemeVisualStyles : ThemeWin32Classic
 	{
