@@ -2584,6 +2584,13 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			linkerArgs.Add ("oldnames.lib");
 		}
 
+		if (MakeBundle.compress) {
+			if (staticLinkMono)
+				linkerArgs.Add("zlibstatic.lib");
+			else
+				linkerArgs.Add("zlib.lib");
+		}
+
 		return;
 	}
 
