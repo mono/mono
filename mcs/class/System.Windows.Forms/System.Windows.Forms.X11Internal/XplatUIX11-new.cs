@@ -686,9 +686,9 @@ namespace System.Windows.Forms.X11Internal {
 			return display.PaintEventStart (ref m, handle, client);
 		}
 
-		internal override void PaintEventEnd (ref Message m, IntPtr handle, bool client)
+		internal override void PaintEventEnd (ref Message m, IntPtr handle, bool client, PaintEventArgs pevent)
 		{
-			display.PaintEventEnd (ref m, handle, client);
+			display.PaintEventEnd (ref m, handle, client, pevent);
 		}
 
 

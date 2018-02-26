@@ -5111,9 +5111,6 @@ namespace System.Windows.Forms {
 
 				hwnd.ClearInvalidArea();
 
-				hwnd.drawing_stack.Push (paint_event);
-				hwnd.drawing_stack.Push (dc);
-
 				return paint_event;
 			} else {
 				dc = Graphics.FromHwnd (paint_hwnd.whole_window);
@@ -5128,26 +5125,16 @@ namespace System.Windows.Forms {
 
 				hwnd.ClearNcInvalidArea ();
 
-				hwnd.drawing_stack.Push (paint_event);
-				hwnd.drawing_stack.Push (dc);
-
 				return paint_event;
 			}
 		}
 
-		internal override void PaintEventEnd(ref Message msg, IntPtr handle, bool client)
+		internal override void PaintEventEnd(ref Message msg, IntPtr handle, bool client, PaintEventArgs pevent)
 		{
-			Hwnd	hwnd;
-
-			hwnd = Hwnd.ObjectFromHandle (msg.HWnd);
-
-			Graphics dc = (Graphics)hwnd.drawing_stack.Pop ();
-			dc.Flush();
-			dc.Dispose();
-			
-			PaintEventArgs pe = (PaintEventArgs)hwnd.drawing_stack.Pop();
-			pe.SetGraphics (null);
-			pe.Dispose ();
+			if (pevent.Graphics != null)
+				pevent.Graphics.Dispose();
+			pevent.SetGraphics(null);
+			pevent.Dispose();
 
 			if (Caret.Visible == true) {
 				ShowCaret();

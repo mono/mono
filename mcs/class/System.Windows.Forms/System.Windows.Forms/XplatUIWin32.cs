@@ -1810,20 +1810,28 @@ namespace System.Windows.Forms {
 			Win32UpdateWindow(handle);
 		}
 
+		class Win32PaintEventArgs : PaintEventArgs
+		{
+			public Win32PaintEventArgs(Graphics g, Rectangle clip, object context)
+				: base(g, clip)
+			{
+				this.Context = context;
+			}
+
+			public object Context { get; private set; }
+		}
+
 		internal override PaintEventArgs PaintEventStart(ref Message msg, IntPtr handle, bool client) {
 			IntPtr		hdc;
 			PAINTSTRUCT	ps;
 			PaintEventArgs	paint_event;
 			RECT		rect;
 			Rectangle	clip_rect;
-			Hwnd		hwnd;
 
 			clip_rect = new Rectangle();
 			rect = new RECT();
 			ps = new PAINTSTRUCT();
 
-			hwnd = Hwnd.ObjectFromHandle(msg.HWnd);
-			
 			if (client) {
 				if (Win32GetUpdateRect(msg.HWnd, ref rect, false)) {
 					if (handle != msg.HWnd) {
@@ -1852,29 +1860,24 @@ namespace System.Windows.Forms {
 			// If we called BeginPaint, store the PAINTSTRUCT,
 			// otherwise store hdc, so that PaintEventEnd can know
 			// whether to call EndPaint or ReleaseDC.
+			object context;
 			if (ps.hdc != IntPtr.Zero) {
-				hwnd.drawing_stack.Push (ps);
+				context = ps;
 			} else {
-				hwnd.drawing_stack.Push (hdc);
+				context = hdc;
 			}
-			
-			Graphics dc = Graphics.FromHdc(hdc);
-			hwnd.drawing_stack.Push (dc);
 
-			paint_event = new PaintEventArgs(dc, clip_rect);
+			Graphics dc = Graphics.FromHdc(hdc);
+			paint_event = new Win32PaintEventArgs(dc, clip_rect, context);
 
 			return paint_event;
 		}
 
-		internal override void PaintEventEnd(ref Message m, IntPtr handle, bool client) {
-			Hwnd		hwnd;
-
-			hwnd = Hwnd.ObjectFromHandle(m.HWnd);
-
-			Graphics dc = (Graphics)hwnd.drawing_stack.Pop();
-			dc.Dispose ();
-
-			object o = hwnd.drawing_stack.Pop();
+		internal override void PaintEventEnd(ref Message m, IntPtr handle, bool client, PaintEventArgs pevent) {
+			if (pevent.Graphics != null)
+				pevent.Graphics.Dispose ();
+ 
+			object o = ((Win32PaintEventArgs)pevent).Context;
 			if (o is IntPtr) {
 				IntPtr hdc = (IntPtr) o;
 				Win32ReleaseDC (handle, hdc);
