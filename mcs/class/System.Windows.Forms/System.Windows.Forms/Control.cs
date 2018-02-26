@@ -5167,6 +5167,9 @@ namespace System.Windows.Forms
 		
 		private void WmDestroy (ref Message m) {
 			OnHandleDestroyed(EventArgs.Empty);
+
+			XplatUI.SetAllowDrop(window.Handle, false);
+			
 #if DebugRecreate
 			IntPtr handle = window.Handle;
 #endif

@@ -69,7 +69,6 @@ namespace System.Windows.Forms {
 		internal bool		reparented;
 		internal object		user_data;
 		internal Rectangle	client_rectangle;
-		internal ArrayList	marshal_free_list;
 		internal int		caption_height;
 		internal int		tool_caption_height;
 		internal bool		whacky_wm;
@@ -115,7 +114,6 @@ namespace System.Windows.Forms {
 			enabled = true;
 			reparented = false;
 			client_rectangle = Rectangle.Empty;
-			marshal_free_list = new ArrayList(2);
 			opacity = 0xffffffff;
 			fixed_size = false;
 			children = new ArrayList ();
@@ -135,10 +133,6 @@ namespace System.Windows.Forms {
 			client_window = IntPtr.Zero;
 			whole_window = IntPtr.Zero;
 			zombie = true;
-			for (int i = 0; i < marshal_free_list.Count; i++) {
-				Marshal.FreeHGlobal((IntPtr)marshal_free_list[i]);
-			}
-			marshal_free_list.Clear();
 		}
 		#endregion
 
