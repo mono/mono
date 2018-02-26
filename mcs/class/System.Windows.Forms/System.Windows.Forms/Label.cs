@@ -147,8 +147,6 @@ namespace System.Windows.Forms
 				ControlStyles.SupportsTransparentBackColor |
 				ControlStyles.OptimizedDoubleBuffer
 				, true);
-			
-			HandleCreated += new EventHandler (OnHandleCreatedLB);
 		}
 
 		#region Public Properties
@@ -586,7 +584,7 @@ namespace System.Windows.Forms
 		protected override void OnFontChanged (EventArgs e)
 		{
 			base.OnFontChanged (e);
-			if (autosize)
+			if (SelfSizing)
 				CalcAutoSize();
 			Invalidate ();
 		}
@@ -605,6 +603,8 @@ namespace System.Windows.Forms
 		protected override void OnParentChanged (EventArgs e)
 		{
 			base.OnParentChanged (e);
+			if (SelfSizing)
+				CalcAutoSize();
 		}
 
 		protected override void OnRightToLeftChanged (EventArgs e)
@@ -622,8 +622,10 @@ namespace System.Windows.Forms
 		protected override void OnTextChanged (EventArgs e)
 		{
 			base.OnTextChanged (e);
-			if (autosize)
+			if (SelfSizing)
 				CalcAutoSize ();
+			else if (Parent != null)
+				Parent.PerformLayout (this, "Text");
 			Invalidate ();
 		}
 
@@ -646,6 +648,11 @@ namespace System.Windows.Forms
 
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
 		{
+			if (SelfSizing) {
+				Size preferredSize = PreferredSize;
+				width = preferredSize.Width;
+				height = preferredSize.Height;
+			}
 			base.SetBoundsCore (x, y, width, height, specified);
 		}
 
@@ -668,6 +675,16 @@ namespace System.Windows.Forms
 
 		#endregion Public Methods
 
+		#region Private Properties
+
+		bool SelfSizing	{
+			get {
+				return AutoSize && Parent != null && Parent.LayoutEngine is Layout.DefaultLayout;
+			}
+		}
+
+		#endregion
+
 		#region Private Methods
 
 		private void CalcAutoSize ()
@@ -678,12 +695,6 @@ namespace System.Windows.Forms
 			Size s = InternalGetPreferredSize (Size.Empty);
 			
 			SetBounds (Left, Top, s.Width, s.Height, BoundsSpecified.Size);
-		}
-
-		private void OnHandleCreatedLB (Object o, EventArgs e)
-		{
-			if (autosize)
-				CalcAutoSize ();
 		}
 
 		private void SetUseMnemonic (bool use)
