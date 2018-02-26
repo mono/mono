@@ -5213,44 +5213,46 @@ namespace System.Windows.Forms
 			if (paint_event == null)
 				return;
 
-			DoubleBuffer current_buffer = null;
-			if (UseDoubleBuffering) {
-				current_buffer = GetBackBuffer ();
-				// This optimization doesn't work when the area is invalidated
-				// during a paint operation because finishing the paint operation
-				// clears the invalidated region and then this thing keeps the new
-				// invalidate from working.  To re-enable this, we would need a
-				// mechanism to allow for nested invalidates (see bug #328681)
-				//if (!current_buffer.InvalidRegion.IsVisible (paint_event.ClipRectangle)) {
-				//        // Just blit the previous image
-				//        current_buffer.Blit (paint_event);
-				//        XplatUI.PaintEventEnd (ref m, handle, true);
-				//        return;
-				//}
-				current_buffer.Start (paint_event);
+			try {
+				DoubleBuffer current_buffer = null;
+				if (UseDoubleBuffering) {
+					current_buffer = GetBackBuffer ();
+					// This optimization doesn't work when the area is invalidated
+					// during a paint operation because finishing the paint operation
+					// clears the invalidated region and then this thing keeps the new
+					// invalidate from working.  To re-enable this, we would need a
+					// mechanism to allow for nested invalidates (see bug #328681)
+					//if (!current_buffer.InvalidRegion.IsVisible (paint_event.ClipRectangle)) {
+					//        // Just blit the previous image
+					//        current_buffer.Blit (paint_event);
+					//        XplatUI.PaintEventEnd (ref m, handle, true);
+					//        return;
+					//}
+					current_buffer.Start (paint_event);
+				}
+				// If using OptimizedDoubleBuffer, ensure the clip region gets set
+				if (GetStyle (ControlStyles.OptimizedDoubleBuffer))
+					paint_event.Graphics.SetClip (Rectangle.Intersect (paint_event.ClipRectangle, this.ClientRectangle));
+
+				if (!GetStyle(ControlStyles.Opaque)) {
+					OnPaintBackground (paint_event);
+				}
+
+				// Button-derived controls choose to ignore their Opaque style, give them a chance to draw their background anyways
+				OnPaintBackgroundInternal (paint_event);
+
+				OnPaintInternal(paint_event);
+				if (!paint_event.Handled) {
+					OnPaint (paint_event);
+				}
+
+				if (current_buffer != null) {
+					current_buffer.End (paint_event);
+				}
 			}
-			// If using OptimizedDoubleBuffer, ensure the clip region gets set
-			if (GetStyle (ControlStyles.OptimizedDoubleBuffer))
-				paint_event.Graphics.SetClip (Rectangle.Intersect (paint_event.ClipRectangle, this.ClientRectangle));
-
-			if (!GetStyle(ControlStyles.Opaque)) {
-				OnPaintBackground (paint_event);
+			finally {
+				XplatUI.PaintEventEnd (ref m, handle, true, paint_event);
 			}
-
-			// Button-derived controls choose to ignore their Opaque style, give them a chance to draw their background anyways
-			OnPaintBackgroundInternal (paint_event);
-
-			OnPaintInternal(paint_event);
-			if (!paint_event.Handled) {
-				OnPaint (paint_event);
-			}
-
-			if (current_buffer != null) {
-				current_buffer.End (paint_event);
-			}
-
-
-			XplatUI.PaintEventEnd (ref m, handle, true, paint_event);
 		}
 
 		private void WmEraseBackground (ref Message m) {

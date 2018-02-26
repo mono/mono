@@ -2403,6 +2403,8 @@ namespace System.Windows.Forms {
 			if (value && IsMdiChild){
 				PerformLayout ();
 				ThemeEngine.Current.ManagedWindowSetButtonLocations (window_manager);
+				if (ActivateOnShow && MdiParent != null)
+					MdiParent.ActivateMdiChild (this);
 			}
 			
 			// Shown event is only called once, the first time the form is made visible

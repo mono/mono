@@ -510,31 +510,6 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		private void WaitForHwndMessage (Hwnd hwnd, Msg message) {
-			MSG msg = new MSG ();
-
-			bool done = false;
-			do {
-				if (GetMessage(null, ref msg, IntPtr.Zero, 0, 0)) {
-					if ((Msg)msg.message == Msg.WM_QUIT) {
-						PostQuitMessage (0);
-						done = true;
-					}
-					else {
-						if (msg.hwnd == hwnd.Handle) {
-							if ((Msg)msg.message == message)
-								break;
-							else if ((Msg)msg.message == Msg.WM_DESTROY)
-								done = true;
-						}
-
-						TranslateMessage (ref msg);
-						DispatchMessage (ref msg);
-					}
-				}
-			} while (!done);
-		}
-
 		private void SendParentNotify(IntPtr child, Msg cause, int x, int y) {
 			Hwnd hwnd;
 			
@@ -1056,7 +1031,6 @@ namespace System.Windows.Forms {
 						}
 					}
 					ShowWindow (WindowHandle);
-					WaitForHwndMessage (hwnd, Msg.WM_SHOWWINDOW);
 				}
 				HIViewSetVisible (WholeWindow, true);
 				HIViewSetVisible (ClientWindow, true);
@@ -1072,7 +1046,7 @@ namespace System.Windows.Forms {
 				SetWindowState(hwnd.Handle, FormWindowState.Maximized);
 			}
 
-			return hwnd.Handle;
+			return hwnd.zombie ? IntPtr.Zero : hwnd.Handle;
 		}
 
 		internal override IntPtr CreateWindow(IntPtr Parent, int X, int Y, int Width, int Height) {
@@ -1230,7 +1204,7 @@ namespace System.Windows.Forms {
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
-			if (hwnd == null) {
+			if (hwnd == null || hwnd.zombie) {
 				return;
 			}
 
@@ -1241,11 +1215,13 @@ namespace System.Windows.Forms {
 			ArrayList windows = new ArrayList ();
 
 			AccumulateDestroyedHandles (Control.ControlNativeWindow.ControlFromHandle(hwnd.Handle), windows);
-
+			windows.Add (hwnd);
 
 			foreach (Hwnd h in windows) {
 				SendMessage (h.Handle, Msg.WM_DESTROY, IntPtr.Zero, IntPtr.Zero);
 				h.zombie = true;
+				h.expose_pending = h.nc_expose_pending = false;
+				h.Dispose();
 			}
 
 			// TODO: This is crashing swf-messageboxes
@@ -1256,9 +1232,11 @@ namespace System.Windows.Forms {
 				CFRelease (hwnd.client_window);
 			*/
 
-			if (WindowMapping [hwnd.Handle] != null) { 
-				DisposeWindow ((IntPtr)(WindowMapping [hwnd.Handle]));
-				WindowMapping.Remove (hwnd.Handle);
+			if (WindowMapping [handle] != null) { 
+				IntPtr window_handle = (IntPtr)(WindowMapping [handle]);
+				DisposeWindow (window_handle);
+				WindowMapping.Remove (handle);
+				HandleMapping.Remove (window_handle);
 			}
 		}
 
@@ -1395,6 +1373,11 @@ namespace System.Windows.Forms {
 				goto loop;
 			} else {
 				msg = (MSG)queueobj;
+				if (msg.hwnd != IntPtr.Zero && msg.hwnd != FosterParent) {
+					Hwnd hwnd = Hwnd.ObjectFromHandle(msg.hwnd);
+					if (hwnd == null || hwnd.zombie)
+						goto loop;
+				}
 			}
 			return GetMessageResult;
 		}
@@ -1597,6 +1580,7 @@ namespace System.Windows.Forms {
 				ReleaseEvent (evtRef);
 			}
 			
+			loop:
 			lock (queuelock) {
 				if (MessageQueue.Count <= 0) {
 					return false;
@@ -1612,6 +1596,11 @@ namespace System.Windows.Forms {
 						return false;
 					}
 					msg = (MSG)queueobj;
+					if (msg.hwnd != IntPtr.Zero && msg.hwnd != FosterParent) {
+						Hwnd hwnd = Hwnd.ObjectFromHandle(msg.hwnd);
+						if (hwnd == null || hwnd.zombie)
+							goto loop;
+					}
 					return true;
 				}
 			}
@@ -1736,15 +1725,29 @@ namespace System.Windows.Forms {
 		}
 		
 		internal override void SetFocus(IntPtr handle) {
-			if (FocusWindow != IntPtr.Zero) {
-				PostMessage(FocusWindow, Msg.WM_KILLFOCUS, handle, IntPtr.Zero);
-			}
-			PostMessage(handle, Msg.WM_SETFOCUS, FocusWindow, IntPtr.Zero);
+			if (FocusWindow == handle)
+				return;
+
+			IntPtr previous_focus = FocusWindow;
 			FocusWindow = handle;
+
+			if (previous_focus != IntPtr.Zero) {
+				SendMessage(previous_focus, Msg.WM_KILLFOCUS, handle, IntPtr.Zero);
+				// Focus was changed from inside WM_KILLFOCUS
+				if (FocusWindow != handle)
+					return;
+			}
+
+			if (handle != IntPtr.Zero) {
+				SendMessage(handle, Msg.WM_SETFOCUS, FocusWindow, IntPtr.Zero);
+			}
 		}
 
 		internal override void SetIcon(IntPtr handle, Icon icon) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
+
+			if (hwnd == null || hwnd.zombie)
+				return;
 
 			// FIXME: we need to map the icon for active window switches
 			if (WindowMapping [hwnd.Handle] != null) {
@@ -1832,6 +1835,10 @@ namespace System.Windows.Forms {
 		
 		internal override bool SetVisible(IntPtr handle, bool visible, bool activate) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
+
+			if (hwnd == null || hwnd.zombie)
+				return false;
+
 			object window = WindowMapping [hwnd.Handle];
 			if (window != null)
 				if (visible)
@@ -1982,6 +1989,10 @@ namespace System.Windows.Forms {
 		
 		internal override void SetWindowStyle(IntPtr handle, CreateParams cp) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
+
+			if (hwnd == null || hwnd.zombie)
+				return;
+
 			SetHwndStyles(hwnd, cp);
 			
 			if (WindowMapping [hwnd.Handle] != null) {
@@ -2205,7 +2216,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal override  Size IconSize { get{ throw new NotImplementedException(); } }
+		internal override  Size IconSize {
+			get {
+				return new Size (32, 32);
+			}
+		}
+
 		internal override  Size MaxWindowTrackSize { get{ throw new NotImplementedException(); } }
 		internal override bool MenuAccessKeysUnderlined {
 			get {
