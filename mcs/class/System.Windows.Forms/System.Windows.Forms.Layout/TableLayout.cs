@@ -36,9 +36,11 @@ namespace System.Windows.Forms.Layout
 {
 	internal class TableLayout : LayoutEngine
 	{
+		internal static readonly TableLayout Instance = new TableLayout();
+
 		private static Control dummy_control = new Control ("Dummy");	// Used as a placeholder for row/col spans
 
-		public TableLayout () : base ()
+		private TableLayout () : base ()
 		{
 		}
 		

@@ -34,6 +34,12 @@ namespace System.Windows.Forms.Layout
 {
 	class DefaultLayout : LayoutEngine
 	{
+		internal static readonly DefaultLayout Instance = new DefaultLayout();
+
+		private DefaultLayout ()
+		{
+		}
+		
 		void LayoutDockedChildren (Control parent, Control[] controls)
 		{
 			Rectangle space = parent.DisplayRectangle;

@@ -34,9 +34,11 @@ namespace System.Windows.Forms.Layout
 {
 	class FlowLayout : LayoutEngine
 	{
+		internal static readonly FlowLayout Instance = new FlowLayout();
+		
 		private static FlowLayoutSettings default_settings = new FlowLayoutSettings ();
 		
-		public FlowLayout ()
+		private FlowLayout ()
 		{
 		}
 

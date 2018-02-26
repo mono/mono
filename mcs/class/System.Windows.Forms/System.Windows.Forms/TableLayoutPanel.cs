@@ -50,7 +50,6 @@ namespace System.Windows.Forms
 	public class TableLayoutPanel : Panel, IExtenderProvider
 	{
 		private TableLayoutSettings settings;
-		private static TableLayout layout_engine = new TableLayout ();
 		private TableLayoutPanelCellBorderStyle cell_border_style;
 
 		// This is the row/column the Control actually got placed
@@ -121,7 +120,7 @@ namespace System.Windows.Forms
 		}
 
 		public override System.Windows.Forms.Layout.LayoutEngine LayoutEngine {
-			get { return TableLayoutPanel.layout_engine; }
+			get { return System.Windows.Forms.Layout.TableLayout.Instance; }
 		}
 
 		[Browsable (false)]

@@ -124,9 +124,7 @@ namespace System.Windows.Forms
 		
 		public override LayoutEngine LayoutEngine {
 			get {
-				if (panel != null)
-					return panel.LayoutEngine;
-				return base.LayoutEngine; 
+				return System.Windows.Forms.Layout.TableLayout.Instance; 
 			}
 		}
 		

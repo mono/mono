@@ -64,7 +64,7 @@ namespace System.Windows.Forms
 		}
 
 		public override LayoutEngine LayoutEngine {
-			get { return this.LayoutSettings.LayoutEngine; }
+			get { return System.Windows.Forms.Layout.FlowLayout.Instance; }
 		}
 
 		internal FlowLayoutSettings LayoutSettings {
