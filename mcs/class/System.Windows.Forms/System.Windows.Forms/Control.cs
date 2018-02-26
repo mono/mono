@@ -5251,7 +5251,7 @@ namespace System.Windows.Forms
 				}
 			}
 			finally {
-				XplatUI.PaintEventEnd (ref m, handle, true);
+				XplatUI.PaintEventEnd (ref m, handle, true, paint_event);
 			}
 		}
 

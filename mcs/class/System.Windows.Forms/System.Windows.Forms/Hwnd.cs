@@ -67,7 +67,6 @@ namespace System.Windows.Forms {
 		internal bool		configure_pending;
 		internal bool		resizing_or_moving; // Used by the X11 backend to track form resize/move
 		internal bool		reparented;
-		internal Stack          drawing_stack;
 		internal object		user_data;
 		internal Rectangle	client_rectangle;
 		internal ArrayList	marshal_free_list;
@@ -119,7 +118,6 @@ namespace System.Windows.Forms {
 			marshal_free_list = new ArrayList(2);
 			opacity = 0xffffffff;
 			fixed_size = false;
-			drawing_stack = new Stack ();
 			children = new ArrayList ();
 			resizing_or_moving = false;
 			whacky_wm = false;

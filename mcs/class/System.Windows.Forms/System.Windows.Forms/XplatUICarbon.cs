@@ -1541,9 +1541,6 @@ namespace System.Windows.Forms {
 				paint_event = new PaintEventArgs(dc, hwnd.Invalid);
 				hwnd.expose_pending = false;
 				hwnd.ClearInvalidArea();
-
-				hwnd.drawing_stack.Push (paint_event);
-				hwnd.drawing_stack.Push (dc);
 			} else {
 				dc = Graphics.FromHwnd (paint_hwnd.whole_window);
 
@@ -1556,29 +1553,16 @@ namespace System.Windows.Forms {
 				}
 				hwnd.nc_expose_pending = false;
 				hwnd.ClearNcInvalidArea ();
-
-				hwnd.drawing_stack.Push (paint_event);
-				hwnd.drawing_stack.Push (dc);
 			}
 
 			return paint_event;
 		}
 		
-		internal override void PaintEventEnd(ref Message msg, IntPtr handle, bool client) {
-			Hwnd	hwnd;
-
-			hwnd = Hwnd.ObjectFromHandle(handle);
-
-			// FIXME: Pop is causing invalid stack ops sometimes; race condition?
-			try {
-				Graphics dc = (Graphics)hwnd.drawing_stack.Pop();
-				dc.Flush ();
-				dc.Dispose ();
-			
-				PaintEventArgs pe = (PaintEventArgs)hwnd.drawing_stack.Pop();
-				pe.SetGraphics (null);
-				pe.Dispose ();  
-			} catch {}
+		internal override void PaintEventEnd(ref Message msg, IntPtr handle, bool client, PaintEventArgs pevent) {
+			if (pevent.Graphics != null)
+				pevent.Graphics.Dispose();
+			pevent.SetGraphics(null);
+			pevent.Dispose();
 
 			if (Caret.Visible == 1) {
 				ShowCaret();

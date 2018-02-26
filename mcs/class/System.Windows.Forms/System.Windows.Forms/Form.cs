@@ -2789,7 +2789,7 @@ namespace System.Windows.Forms {
 				if (ActiveMaximizedMdiChild != null)
 					ActiveMaximizedMdiChild.DrawMaximizedButtons (ActiveMenu, pe);
 
-				XplatUI.PaintEventEnd (ref m, Handle, false);
+				XplatUI.PaintEventEnd (ref m, Handle, false, pe);
 			}
 
 			base.WndProc (ref m);
