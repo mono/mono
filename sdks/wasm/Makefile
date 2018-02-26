@@ -50,9 +50,11 @@ TEST_MCS_DEPS = $(patsubst %,-r:%, $(TEST_DEPS))
 	touch $@
 
 .stamp-v8: .stamp-depot-tools
-	PATH=$(TOP)/sdks/wasm/depot_tools:$$PATH fetch v8
-	cd v8 && tools/dev/v8gen.py -vv x64.release
-	cd v8 && $(TOP)/sdks/wasm/depot_tools/ninja -C out.gn/x64.release
+	rm -rf $(TOP)/sdks/wasm/v8
+	rm -rf $(TOP)/sdks/wasm/.gclient*
+	cd $(TOP)/sdks/wasm/ && PATH=$(TOP)/sdks/wasm/depot_tools:$$PATH fetch v8
+	cd $(TOP)/sdks/wasm/v8 && tools/dev/v8gen.py -vv x64.release
+	cd $(TOP)/sdks/wasm/v8 && $(TOP)/sdks/wasm/depot_tools/ninja -C out.gn/x64.release
 	touch $@
 
 .PHONY: toolchain
