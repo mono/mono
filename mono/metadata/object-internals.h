@@ -647,8 +647,6 @@ typedef struct {
 	void (*mono_reraise_exception) (MonoException *ex);
 } MonoRuntimeExceptionHandlingCallbacks;
 
-MONO_COLD void mono_set_pending_exception (MonoException *exc);
-
 /* remoting and async support */
 
 MonoAsyncResult *

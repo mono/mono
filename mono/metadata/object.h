@@ -247,6 +247,9 @@ MONO_RT_EXTERNAL_ONLY
 MONO_API void
 mono_raise_exception	    (MonoException *ex);
 
+MONO_API void
+mono_set_pending_exception  (MonoException *exc);
+
 MONO_RT_EXTERNAL_ONLY
 MONO_API void
 mono_reraise_exception	    (MonoException *ex);
