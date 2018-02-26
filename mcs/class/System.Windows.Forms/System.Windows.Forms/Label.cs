@@ -57,7 +57,6 @@ namespace System.Windows.Forms
 		internal ContentAlignment image_align;
 		internal StringFormat string_format;
 		internal ContentAlignment text_align;
-		static SizeF req_witdthsize = new SizeF (0,0);
 
 		#region Events
 		static object AutoSizeChangedEvent = new object ();
@@ -384,27 +383,22 @@ namespace System.Windows.Forms
 
 		internal virtual Size InternalGetPreferredSize (Size proposed)
 		{
+			Size borders_and_paddings = new Size(Padding.Horizontal, Padding.Vertical);
 			Size size;
+
+			if (use_compatible_text_rendering) {
+				borders_and_paddings.Height += border_style == BorderStyle.None ? 3 : 6;
+			}
 
 			if (Text == string.Empty) {
 				size = new Size (0, Font.Height);
 			} else {
-				size = Size.Ceiling (TextRenderer.MeasureString (Text, Font, req_witdthsize, string_format));
+				int proposed_width = proposed.Width == 0 ? int.MaxValue : (proposed.Width - borders_and_paddings.Width);
+				size = Size.Ceiling (TextRenderer.MeasureString (Text, Font, proposed_width, string_format));
 				size.Width += 3;
 			}
-
-			size.Width += Padding.Horizontal;
-			size.Height += Padding.Vertical;
 			
-			if (!use_compatible_text_rendering)
-				return size;
-
-			if (border_style == BorderStyle.None)
-				size.Height += 3;
-			else
-				size.Height += 6;
-			
-			return size;
+			return size + borders_and_paddings;
 		}
 
 		public override	Size GetPreferredSize (Size proposedSize)
