@@ -3742,6 +3742,29 @@ namespace MonoTests.System
 		{
 		}
 
+		[Test]
+		public void IsAssignableFromArraySpecialInterfaceGtd ()
+		{
+			// Regression test for https://github.com/mono/mono/issues/7095
+			// An "array special interface" is a Mono name for some
+			// interfaces that are implemented by arrays.
+			// Check that an array special interface GTD (ie, IList<> not IList<Foo>) work
+			// correctly with IsAssignableFrom.
+			var il = typeof (IList<>);
+			var ie = typeof (IEnumerable<>);
+			var ilparam = il.GetTypeInfo ().GenericTypeParameters [0];
+			var ilparr = ilparam.MakeArrayType ();
+
+			Assert.IsTrue (ie.IsAssignableFrom (ie), "IList<> ---> IEnumerable<>");
+			Assert.IsTrue (il.IsAssignableFrom (ilparr), "!0[] ---> IList<>");
+
+			var ilparrarr = ilparr.MakeArrayType ();
+
+			Assert.IsFalse (il.IsAssignableFrom (ilparrarr), "!0[][] -!-> IList<>");
+
+			Assert.IsFalse (il.IsAssignableFrom (typeof (Array)), "System.Array -!-> IList<>");
+		}
+
 		[Test] // Bug #612780
 		public void CannotMakeDerivedTypesFromTypedByRef ()
 		{
