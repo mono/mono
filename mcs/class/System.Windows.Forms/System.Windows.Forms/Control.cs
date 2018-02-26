@@ -3717,7 +3717,7 @@ namespace System.Windows.Forms
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		public virtual Size GetPreferredSize (Size proposedSize) {			
+		public virtual Size GetPreferredSize (Size proposedSize) {
 			proposedSize = ApplySizeConstraints (proposedSize);
 			return ApplySizeConstraints (GetPreferredSizeCore (proposedSize));
 		}
