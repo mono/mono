@@ -1076,7 +1076,18 @@ INTERP_DISABLED_TESTS = \
 	vararg.exe \
 	vararg2.exe \
 	vararg3.exe	\
-	dim-diamondshape.exe
+	dim-diamondshape.exe \
+	gptail1.exe		\
+	itaili1.exe		\
+	ivtail1.exe		\
+	sirtail1.exe		\
+	srtail1.exe		\
+	stail1.exe		\
+	tail1.exe		\
+	taili1.exe		\
+	vtail1.exe		\
+	itail1.exe 		\
+	sitail1.exe
 
 TESTS_CS=$(filter-out $(DISABLED_TESTS),$(TESTS_CS_SRC:.cs=.exe))
 TESTS_IL=$(filter-out $(DISABLED_TESTS),$(TESTS_IL_SRC:.il=.exe))
