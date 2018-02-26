@@ -1114,7 +1114,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/globalization/calendarweekrule.cs
 ../referencesource/mscorlib/system/globalization/charunicodeinfo.cs
 ../referencesource/mscorlib/system/globalization/chineselunisolarcalendar.cs
-../referencesource/mscorlib/system/globalization/compareinfo.cs
+#../referencesource/mscorlib/system/globalization/compareinfo.cs
 ../referencesource/mscorlib/system/globalization/culturenotfoundexception.cs
 ../referencesource/mscorlib/system/globalization/culturetypes.cs
 ../referencesource/mscorlib/system/globalization/daylighttime.cs
@@ -1647,7 +1647,10 @@ corert/RuntimeAugments.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/ArraySortHelper.cs
 
+../../../external/corert/src/System.Private.CoreLib/src/System/Globalization/GlobalizationMode.cs
+
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/LockHolder.cs
+
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/ThreadPoolCallbackWrapper.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/DebuggerSupport.cs
@@ -1665,6 +1668,8 @@ corert/RuntimeAugments.cs
 ../../../external/corert/src/System.Private.Interop/src/InteropExtensions/Lock.cs
 
 corefx/SR.cs
+corefx/CompareInfo.cs
+corefx/GlobalizationMode.cs
 
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Memory.cs
@@ -1685,6 +1690,9 @@ corefx/SR.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/Generic/KeyValuePair.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Diagnostics/StackTraceHiddenAttribute.cs
+
+../../../external/corefx/src/Common/src/CoreLib/System/Globalization/CompareInfo.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Globalization/CompareInfo.Invariant.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/IntrinsicAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/IsReadOnlyAttribute.cs
