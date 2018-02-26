@@ -2487,7 +2487,15 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 	static bool Target64BitApplication ()
 	{
 		// Should probably handled the --cross and sdk parameters.
-		return Environment.Is64BitProcess;
+		string targetArchitecture = GetEnv ("VSCMD_ARG_TGT_ARCH", "");
+		if (targetArchitecture.Length != 0) {
+			if (string.Compare (targetArchitecture, "x64", StringComparison.OrdinalIgnoreCase) == 0)
+				return true;
+			else
+				return false;
+		} else {
+			return Environment.Is64BitProcess;
+		}
 	}
 
 	static string GetMonoDir ()
