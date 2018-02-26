@@ -3700,23 +3700,26 @@ namespace System.Windows.Forms
 			return null;
 		}
 
-		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		public virtual Size GetPreferredSize (Size proposedSize) {
-			Size retsize = GetPreferredSizeCore (proposedSize);
-			
+		private Size ApplySizeConstraints (Size proposedSize) {
 			// If we're bigger than the MaximumSize, fix that
-			if (this.maximum_size.Width != 0 && retsize.Width > this.maximum_size.Width)
-				retsize.Width = this.maximum_size.Width;
-			if (this.maximum_size.Height != 0 && retsize.Height > this.maximum_size.Height)
-				retsize.Height = this.maximum_size.Height;
-				
+			if (this.maximum_size.Width != 0 && proposedSize.Width > this.maximum_size.Width)
+				proposedSize.Width = this.maximum_size.Width;
+			if (this.maximum_size.Height != 0 && proposedSize.Height > this.maximum_size.Height)
+				proposedSize.Height = this.maximum_size.Height;
+
 			// If we're smaller than the MinimumSize, fix that
-			if (this.minimum_size.Width != 0 && retsize.Width < this.minimum_size.Width)
-				retsize.Width = this.minimum_size.Width;
-			if (this.minimum_size.Height != 0 && retsize.Height < this.minimum_size.Height)
-				retsize.Height = this.minimum_size.Height;
-				
-			return retsize;
+			if (this.minimum_size.Width != 0 && proposedSize.Width < this.minimum_size.Width)
+				proposedSize.Width = this.minimum_size.Width;
+			if (this.minimum_size.Height != 0 && proposedSize.Height < this.minimum_size.Height)
+				proposedSize.Height = this.minimum_size.Height;
+
+			return proposedSize;
+		}
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public virtual Size GetPreferredSize (Size proposedSize) {			
+			proposedSize = ApplySizeConstraints (proposedSize);
+			return ApplySizeConstraints (GetPreferredSizeCore (proposedSize));
 		}
 
 		public void Hide() {
