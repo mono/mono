@@ -2,6 +2,8 @@
 
 #if defined(PLATFORM_UNITY) && defined(UNITY_USE_PLATFORM_STUBS)
 
+#include "Thread-c-api.h"
+
 void
 mono_threads_suspend_init (void)
 {
@@ -99,15 +101,13 @@ mono_threads_platform_create_thread (MonoThreadStart thread_fn, gpointer thread_
 MonoNativeThreadId
 mono_native_thread_id_get (void)
 {
-	g_assert(0 && "This function is not yet implemented for the Unity platform.");
-	return 0;
+	return (MonoNativeThreadId)UnityPalGetCurrentThreadId();
 }
 
 gboolean
 mono_native_thread_id_equals (MonoNativeThreadId id1, MonoNativeThreadId id2)
 {
-	g_assert(0 && "This function is not yet implemented for the Unity platform.");
-	return FALSE;
+	return id1 == id2;
 }
 
 gboolean
