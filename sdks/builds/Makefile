@@ -2,20 +2,15 @@ TOP=$(realpath $(CURDIR)/../..)
 include $(TOP)/sdks/versions.mk
 include $(TOP)/sdks/paths.mk
 
-RELEASE?=true
+CONFIGURATION?=release
 
-CONFIGURATION=$(if $(filter $(RELEASE),true),release,debug)
+RELEASE=$(if $(filter $(CONFIGURATION),release),true,false)
 
 #brew's libtool is not compatible with some of the deps needed (I.E. V8) so in those systems we need to explicit add to the path
 #this is due mono not being compatible with xcode's libtool, which is what's on path by default
 ifeq (, $(shell which glibtoolize))
 EXTRA_PATH=$(wildcard /usr/local/Cellar/libtool/*/bin/)
 endif
-
-# Some of the targets cannot be built in parallel (ex: mxe). This is a gross hack, but fixing it would mean a unknown
-# amount of change. For example, we could invoke the MXE targets with `$(MAKE) -f mxe.mk build-mxe-Win32` and move the
-# .NOTPARALLEL there.
-.NOTPARALLEL:
 
 all: package
 

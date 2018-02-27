@@ -64,9 +64,9 @@ namespace System.Globalization
 			}
 
 			lock (collators) {
-				if (!collators.TryGetValue (m_sortName, out collator)) {
+				if (!collators.TryGetValue (_sortName, out collator)) {
 					collator = new SimpleCollator (CultureInfo.GetCultureInfo (m_name));
-					collators [m_sortName] = collator;
+					collators [_sortName] = collator;
 				}
 			}
 
@@ -88,20 +88,11 @@ namespace System.Globalization
 			return(key);        	
 		}
 
-		int internal_index_switch (string s, int sindex, int count, char c, CompareOptions opt, bool first)
-		{
-			if (opt == CompareOptions.Ordinal && first)
-				return s.IndexOfUnchecked (c, sindex, count);
-
-			return UseManagedCollation ?
-				internal_index_managed (s, sindex, count, c, opt, first) :
-				internal_index (s, sindex, count, c, opt, first);
-		}	
-
 		int internal_index_switch (string s1, int sindex, int count, string s2, CompareOptions opt, bool first)
 		{
-			if (opt == CompareOptions.Ordinal && first)
-				return s1.IndexOfUnchecked (s2, sindex, count);
+			// TODO: should not be needed,  why is there specialization for OrdinalIgnore and not for Ordinal
+			if (opt == CompareOptions.Ordinal)
+				return first ? s1.IndexOfUnchecked (s2, sindex, count) : s1.LastIndexOfUnchecked (s2, sindex, count);
 			
 			return UseManagedCollation ?
 				internal_index_managed (s1, sindex, count, s2, opt, first) :

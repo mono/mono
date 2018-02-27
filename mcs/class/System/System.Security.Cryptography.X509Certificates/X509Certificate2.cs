@@ -27,8 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP
-
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 using MonoSecurity::Mono.Security;
@@ -38,8 +36,6 @@ using MX = MonoSecurity::Mono.Security.X509;
 using Mono.Security;
 using Mono.Security.Cryptography;
 using MX = Mono.Security.X509;
-#endif
-
 #endif
 
 using System.IO;
@@ -52,13 +48,6 @@ namespace System.Security.Cryptography.X509Certificates {
 	[Serializable]
 	public class X509Certificate2 : X509Certificate {
 	
-#if !SECURITY_DEP
-		// Used in Mono.Security HttpsClientStream
-		public X509Certificate2 (byte[] rawData)
-		{
-		}
-#endif
-#if SECURITY_DEP
 		new internal X509Certificate2Impl Impl {
 			get {
 				var impl2 = base.Impl as X509Certificate2Impl;
@@ -405,13 +394,5 @@ namespace System.Security.Cryptography.X509Certificates {
 				return X509Helper2.GetMonoCertificate (this);
 			}
 		}
-
-#else
-		// HACK - this ensure the type X509Certificate2 and PrivateKey property exists in the build before
-		// Mono.Security.dll is built. This is required to get working client certificate in SSL/TLS
-		public AsymmetricAlgorithm PrivateKey {
-			get { return null; }
-		}
-#endif
 	}
 }

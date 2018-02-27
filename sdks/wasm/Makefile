@@ -45,13 +45,16 @@ TEST_MCS_DEPS = $(patsubst %,-r:%, $(TEST_DEPS))
 
 
 .stamp-depot-tools:
-	git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git depot_tools
+	rm -rf $(TOP)/sdks/wasm/depot_tools
+	git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git $(TOP)/sdks/wasm/depot_tools
 	touch $@
 
 .stamp-v8: .stamp-depot-tools
-	PATH=$(TOP)/sdks/wasm/depot_tools:$$PATH fetch v8
-	cd v8 && tools/dev/v8gen.py -vv x64.release
-	cd v8 && $(TOP)/sdks/wasm/depot_tools/ninja -C out.gn/x64.release
+	rm -rf $(TOP)/sdks/wasm/v8
+	rm -rf $(TOP)/sdks/wasm/.gclient*
+	cd $(TOP)/sdks/wasm/ && PATH=$(TOP)/sdks/wasm/depot_tools:$$PATH fetch v8
+	cd $(TOP)/sdks/wasm/v8 && tools/dev/v8gen.py -vv x64.release
+	cd $(TOP)/sdks/wasm/v8 && $(TOP)/sdks/wasm/depot_tools/ninja -C out.gn/x64.release
 	touch $@
 
 .PHONY: toolchain
@@ -60,10 +63,24 @@ toolchain: .stamp-v8
 driver.o: driver.c
 	$(EMCC) -g -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 driver.c -c -o driver.o
 
-mono.js: driver.o library_mono.js $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a
-	$(EMCC) -g4 -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s ASSERTIONS=2 --js-library library_mono.js driver.o $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a -o mono.js
+debug/:
+	mkdir -p $@
+release/:
+	mkdir -p $@
 
-build-native: mono.js
+debug/mono.js: driver.o library_mono.js $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a | debug/
+	$(EMCC) -g4 -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s ASSERTIONS=2 --js-library library_mono.js driver.o $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a -o debug/mono.js -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']"
+
+release/mono.js: driver.o library_mono.js $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a | release/
+	$(EMCC) -Oz --llvm-opts 2 --llvm-lto 1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 --js-library library_mono.js driver.o $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a -o release/mono.js -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']"
+
+mono.js: release/mono.js
+	cp release/mono.js mono.js
+
+mono.wasm: release/mono.wasm
+	cp $< $@
+
+build-native: mono.js mono.wasm debug/mono.js release/mono.js
 
 managed/:
 	mkdir -p $@
@@ -117,13 +134,15 @@ package: build
 	mkdir tmp/bcl
 	cp -r $(TOP)/sdks/out/bcl/wasm/* tmp/bcl/
 	cp driver.c tmp/
-	cp mono.js tmp/
-	cp mono.wasm tmp/
-	cp mono.wasm.map tmp/
 	cp $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a tmp/
-	cp test.js tmp/
-	cp main.cs tmp/
 	cp library_mono.js tmp/
+	cp mono.js tmp/
+	cp -r debug tmp/
+	cp -r release tmp/
+	cp sample.html tmp/
+	cp sample.cs tmp/
+	cp README.md tmp/
+	cp server.py tmp/
 	(cd tmp;  zip -r9 ../mono-wasm-$(shell git rev-parse --short HEAD).zip .)
 	rm -rf tmp
 

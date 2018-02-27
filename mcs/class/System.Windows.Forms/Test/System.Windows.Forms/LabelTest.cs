@@ -183,7 +183,7 @@ namespace MonoTests.System.Windows.Forms
 			
 			Assert.AreEqual (FlatStyle.Standard, l.FlatStyle, "#30");
 			Assert.IsFalse (l.Focused, "#31");
-			Assert.AreEqual (FontFamily.GenericSansSerif, l.Font.FontFamily, "#32");
+			Assert.AreEqual (SystemFonts.DefaultFont, l.Font, "#32");
 			Assert.AreEqual (SystemColors.ControlText, l.ForeColor, "#33");
 			
 			Assert.IsFalse (l.HasChildren, "#35");

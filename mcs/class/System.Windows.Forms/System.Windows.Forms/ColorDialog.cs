@@ -165,7 +165,7 @@ namespace System.Windows.Forms {
 			greenLabel.TextAlign = ContentAlignment.MiddleRight;
 			// colorBaseLabel
 			colorBaseLabel.Location = new Point (228, 247);
-			colorBaseLabel.Size = new Size (60, 25);
+			colorBaseLabel.Size = new Size (60, 16);
 			colorBaseLabel.TabIndex = 28;
 			colorBaseLabel.Text = Locale.GetText ("Color");
 			colorBaseLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -384,11 +384,11 @@ namespace System.Windows.Forms {
 					if (fullOpen && allowFullOpen) {
 						defineColoursButton.Enabled = false;
 						colorMatrixControl.ColorToShow = baseColorControl.ColorToShow;
-						form.Size = GetFormSize (true);
+						form.ClientSize = GetFormClientSize (true);
 					} else {
 						if (allowFullOpen)
 							defineColoursButton.Enabled = true;
-						form.Size = GetFormSize (false);
+						form.ClientSize = GetFormClientSize (false);
 					}
 				}
 			}
@@ -483,7 +483,7 @@ namespace System.Windows.Forms {
 			defineColoursButton.Enabled = (AllowFullOpen && !FullOpen);
 			defineColoursButton.Refresh ();
 
-			form.Size = GetFormSize (FullOpen && AllowFullOpen);
+			form.ClientSize = GetFormClientSize (FullOpen && AllowFullOpen);
 			// currently needed, otherwise there are a lot of drawing artefacts/transparent controls if the same dialog gets opened again
 			form.Refresh ();
 			
@@ -493,12 +493,12 @@ namespace System.Windows.Forms {
 		
 		#region Private Methods
 
-		Size GetFormSize (bool fullOpen)
+		Size GetFormClientSize (bool fullOpen)
 		{
 			if (fullOpen)
-				return new Size (448, 332);
+				return new Size (446, 300);
 			else
-				return new Size (221, 332); // 300
+				return new Size (219, 300);
 		}
 
 		void OnClickCancelButton (object sender, EventArgs e)
@@ -521,7 +521,7 @@ namespace System.Windows.Forms {
 			if (allowFullOpen) {
 				defineColoursButton.Enabled = false;
 				colorMatrixControl.ColorToShow = baseColorControl.ColorToShow;
-				form.Size = GetFormSize (true);
+				form.ClientSize = GetFormClientSize (true);
 			}
 		}
 		

@@ -315,6 +315,8 @@ namespace System.Windows.Forms {
 				}
 			}
 
+			XplatUI.EndLoop(Thread.CurrentThread);
+
 			if (tracker.GrabControl.IsDisposed)
 				return true;
 

@@ -70,7 +70,9 @@ namespace Xamarin.ApiDiff {
 		public override void Added (XElement target, bool wasParentAdded)
 		{
 			string name = target.Attribute ("name").Value;
-			if (State.IgnoreNew.Any (re => re.IsMatch (name)))
+			var addedDescription  = $"{State.Namespace}.{name}: Added type";
+			State.LogDebugMessage ($"Possible -n value: {addedDescription}");
+			if (State.IgnoreNew.Any (re => re.IsMatch (addedDescription)))
 				return;
 			Output.WriteLine ("<div> <!-- start type {0} -->", name);
 			Output.WriteLine ("<h3>New Type {0}.{1}</h3>", State.Namespace, name);
@@ -220,9 +222,13 @@ namespace Xamarin.ApiDiff {
 
 			var sb = source.GetAttribute ("base");
 			var tb = target.GetAttribute ("base");
-			if (sb != tb && !(State.IgnoreNonbreaking && IsBaseChangeCompatible (sb, tb))) {
+			var rm = $"{State.Namespace}.{State.Type}: Modified base type: '{sb}' to '{tb}'";
+			State.LogDebugMessage ($"Possible -r value: {rm}");
+			if (sb != tb &&
+					!State.IgnoreRemoved.Any (re => re.IsMatch (rm)) &&
+					!(State.IgnoreNonbreaking && IsBaseChangeCompatible (sb, tb))) {
 				Output.Write ("Modified base type: ");
-				Output.WriteLine (new ApiChange ().AppendModified (sb, tb, true).Member.ToString ());
+				Output.WriteLine (new ApiChange ($"{State.Namespace}.{State.Type}").AppendModified (sb, tb, true).Member.ToString ());
 			}
 
 			ccomparer.Compare (source, target);
@@ -257,6 +263,8 @@ namespace Xamarin.ApiDiff {
 
       string name = State.Namespace + "." + GetTypeName (source);
 
+			var memberDescription = $"{name}: Removed type";
+			State.LogDebugMessage ($"Possible -r value: {memberDescription}");
 			if (State.IgnoreRemoved.Any (re => re.IsMatch (name)))
 				return;
 

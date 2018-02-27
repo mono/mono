@@ -491,7 +491,7 @@ mono_domain_create_appdomain_checked (char *friendly_name, char *configuration_f
 	MonoDomain *result = NULL;
 
 	MonoClass *klass = mono_class_load_from_name (mono_defaults.corlib, "System", "AppDomainSetup");
-	MonoAppDomainSetupHandle setup = MONO_HANDLE_NEW (MonoAppDomainSetup, mono_object_new_checked (mono_domain_get (), klass, error));
+	MonoAppDomainSetupHandle setup = (MonoAppDomainSetupHandle)mono_object_new_handle (mono_domain_get (), klass, error);
 	goto_if_nok (error, leave);
 	MonoStringHandle config_file;
 	if (configuration_file != NULL) {
@@ -560,7 +560,7 @@ copy_app_domain_setup (MonoDomain *domain, MonoAppDomainSetupHandle setup, MonoE
 	caller_domain = mono_domain_get ();
 	ads_class = mono_class_load_from_name (mono_defaults.corlib, "System", "AppDomainSetup");
 
-	MonoAppDomainSetupHandle copy = MONO_HANDLE_NEW (MonoAppDomainSetup, mono_object_new_checked (domain, ads_class, error));
+	MonoAppDomainSetupHandle copy = (MonoAppDomainSetupHandle)mono_object_new_handle(domain, ads_class, error);
 	goto_if_nok (error, leave);
 
 	mono_domain_set_internal (domain);
@@ -624,7 +624,7 @@ mono_domain_create_appdomain_internal (char *friendly_name, MonoAppDomainSetupHa
 	/* FIXME: pin all those objects */
 	data = mono_domain_create();
 
-	MonoAppDomainHandle ad = MONO_HANDLE_NEW (MonoAppDomain,  mono_object_new_checked (data, adclass, error));
+	MonoAppDomainHandle ad = (MonoAppDomainHandle)mono_object_new_handle (data, adclass, error);
 	goto_if_nok (error, leave);
 	MONO_HANDLE_SETVAL (ad, data, MonoDomain*, data);
 	data->domain = MONO_HANDLE_RAW (ad);
@@ -2507,10 +2507,10 @@ clear_cached_vtable (MonoVTable *vtable)
 	MonoClassRuntimeInfo *runtime_info;
 	void *data;
 
-	runtime_info = klass->runtime_info;
+	runtime_info = m_class_get_runtime_info (klass);
 	if (runtime_info && runtime_info->max_domain >= domain->domain_id)
 		runtime_info->domain_vtables [domain->domain_id] = NULL;
-	if (klass->has_static_refs && (data = mono_vtable_get_static_field_data (vtable)))
+	if (m_class_has_static_refs (klass) && (data = mono_vtable_get_static_field_data (vtable)))
 		mono_gc_free_fixed (data);
 }
 
@@ -2520,7 +2520,7 @@ zero_static_data (MonoVTable *vtable)
 	MonoClass *klass = vtable->klass;
 	void *data;
 
-	if (klass->has_static_refs && (data = mono_vtable_get_static_field_data (vtable)))
+	if (m_class_has_static_refs (klass) && (data = mono_vtable_get_static_field_data (vtable)))
 		mono_gc_bzero_aligned (data, mono_class_data_size (klass));
 }
 

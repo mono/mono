@@ -634,9 +634,6 @@ namespace System.Windows.Forms.X11Internal {
 
 				ClearInvalidArea();
 
-				drawing_stack.Push (paint_event);
-				drawing_stack.Push (dc);
-
 				return paint_event;
 			}
 			else {
@@ -653,22 +650,16 @@ namespace System.Windows.Forms.X11Internal {
 
 				ClearNcInvalidArea ();
 
-				drawing_stack.Push (paint_event);
-				drawing_stack.Push (dc);
-
 				return paint_event;
 			}
 		}
 
-		public void PaintEventEnd (ref Message m, bool client)
+		public void PaintEventEnd (ref Message m, bool client, PaintEventEnd pevent)
 		{
-			Graphics dc = (Graphics)drawing_stack.Pop ();
-			dc.Flush();
-			dc.Dispose();
-			
-			PaintEventArgs pe = (PaintEventArgs)drawing_stack.Pop();
-			pe.SetGraphics (null);
-			pe.Dispose ();
+			if (pevent.Graphics != null)
+				pevent.Graphics.Dispose();
+			pevent.SetGraphics(null);
+			pevent.Dispose();
 		}
 
 		public void DrawReversibleRectangle (Rectangle rect, int line_width)

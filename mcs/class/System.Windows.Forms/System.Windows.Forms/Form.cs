@@ -2403,6 +2403,8 @@ namespace System.Windows.Forms {
 			if (value && IsMdiChild){
 				PerformLayout ();
 				ThemeEngine.Current.ManagedWindowSetButtonLocations (window_manager);
+				if (ActivateOnShow && MdiParent != null)
+					MdiParent.ActivateMdiChild (this);
 			}
 			
 			// Shown event is only called once, the first time the form is made visible
@@ -2673,7 +2675,7 @@ namespace System.Windows.Forms {
 
 				IsActive = true;
 			} else {
-				if (XplatUI.IsEnabled (Handle) && XplatUI.GetParent (m.LParam) != Handle)
+				if (XplatUI.IsEnabled (Handle) && !IsChild (Handle, m.LParam))
 					ToolStripManager.FireAppFocusChanged (this);
 				IsActive = false;
 			}
@@ -2787,7 +2789,7 @@ namespace System.Windows.Forms {
 				if (ActiveMaximizedMdiChild != null)
 					ActiveMaximizedMdiChild.DrawMaximizedButtons (ActiveMenu, pe);
 
-				XplatUI.PaintEventEnd (ref m, Handle, false);
+				XplatUI.PaintEventEnd (ref m, Handle, false, pe);
 			}
 
 			base.WndProc (ref m);

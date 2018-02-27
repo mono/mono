@@ -1628,7 +1628,7 @@ reflection_param_handle_mono_type (MonoReflectionGenericParamHandle ref_gparam, 
 	MonoStringHandle ref_name = MONO_HANDLE_NEW_GET (MonoString, ref_gparam, name);
 	param->info.name = mono_string_to_utf8_image (image, ref_name, error);
 	mono_error_assert_ok (error);
-	param->param.num = MONO_HANDLE_GETVAL (ref_gparam, index);
+	param->num = MONO_HANDLE_GETVAL (ref_gparam, index);
 
 	MonoReflectionMethodBuilderHandle ref_mbuilder = MONO_HANDLE_NEW_GET (MonoReflectionMethodBuilder, ref_gparam, mbuilder);
 	if (!MONO_HANDLE_IS_NULL (ref_mbuilder)) {
@@ -1644,13 +1644,13 @@ reflection_param_handle_mono_type (MonoReflectionGenericParamHandle ref_gparam, 
 			generic_container->owner.image = image;
 			MONO_HANDLE_SETVAL (ref_mbuilder, generic_container, MonoGenericContainer*, generic_container);
 		}
-		param->param.owner = generic_container;
+		param->owner = generic_container;
 	} else {
 		MonoType *type = mono_reflection_type_handle_mono_type (MONO_HANDLE_CAST (MonoReflectionType, ref_tbuilder), error);
 		goto_if_nok (error, leave);
 		MonoClass *owner = mono_class_from_mono_type (type);
 		g_assert (mono_class_is_gtd (owner));
-		param->param.owner = mono_class_get_generic_container (owner);
+		param->owner = mono_class_get_generic_container (owner);
 	}
 
 	MonoClass *pklass = mono_class_create_generic_parameter ((MonoGenericParam *) param);
@@ -2642,11 +2642,11 @@ reflection_init_generic_class (MonoReflectionTypeBuilderHandle ref_tb, MonoError
 		MonoGenericParamFull *param = (MonoGenericParamFull *) param_type->data.generic_param;
 		generic_container->type_params [i] = *param;
 		/*Make sure we are a diferent type instance */
-		generic_container->type_params [i].param.owner = generic_container;
+		generic_container->type_params [i].owner = generic_container;
 		generic_container->type_params [i].info.pklass = NULL;
 		generic_container->type_params [i].info.flags = MONO_HANDLE_GETVAL (ref_gparam, attrs);
 
-		g_assert (generic_container->type_params [i].param.owner);
+		g_assert (generic_container->type_params [i].owner);
 	}
 
 	generic_container->context.class_inst = mono_get_shared_generic_inst (generic_container);
@@ -2723,7 +2723,7 @@ mono_reflection_marshal_as_attribute_from_marshal_spec (MonoDomain *domain, Mono
 {
 	error_init (error);
 	
-	MonoReflectionMarshalAsAttributeHandle minfo = MONO_HANDLE_NEW (MonoReflectionMarshalAsAttribute, mono_object_new_checked (domain, mono_class_get_marshal_as_attribute_class (), error));
+	MonoReflectionMarshalAsAttributeHandle minfo = (MonoReflectionMarshalAsAttributeHandle)mono_object_new_handle (domain, mono_class_get_marshal_as_attribute_class (), error);
 	goto_if_nok (error, fail);
 	guint32 utype = spec->native;
 	MONO_HANDLE_SETVAL (minfo, utype, guint32, utype);
@@ -2926,7 +2926,7 @@ reflection_methodbuilder_to_mono_method (MonoClass *klass,
 			mono_error_assert_ok (error);
 			MonoGenericParamFull *param = (MonoGenericParamFull *) gp_type->data.generic_param;
 			container->type_params [i] = *param;
-			container->type_params [i].param.owner = container;
+			container->type_params [i].owner = container;
 
 			gp->type.type->data.generic_param = (MonoGenericParam*)&container->type_params [i];
 
@@ -3418,6 +3418,25 @@ mono_reflection_get_dynamic_overrides (MonoClass *klass, MonoMethod ***overrides
 	*num_overrides = onum;
 }
 
+static gint32
+modulebuilder_get_next_table_index (MonoReflectionModuleBuilder *mb, gint32 table, gint32 num_fields, MonoError *error)
+{
+	error_init (error);
+
+	if (mb->table_indexes == NULL) {
+		MonoArray *arr = mono_array_new_checked (mono_object_domain (&mb->module.obj), mono_defaults.int_class, 64, error);
+		return_val_if_nok (error, 0);
+		for (int i = 0; i < 64; i++) {
+			mono_array_set (arr, int, i, 1);
+		}
+		MONO_OBJECT_SETREF (mb, table_indexes, arr);
+	}
+	gint32 index = mono_array_get (mb->table_indexes, gint32, table);
+	gint32 next_index = index + num_fields;
+	mono_array_set (mb->table_indexes, gint32, table, next_index);
+	return index;
+}
+
 /* This initializes the same data as mono_class_setup_fields () */
 static void
 typebuilder_setup_fields (MonoClass *klass, MonoError *error)
@@ -3431,6 +3450,8 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 	int i, instance_size, packing_size = 0;
 	guint32 len, idx;
 
+	error_init (error);
+
 	if (klass->parent) {
 		if (!klass->parent->size_inited)
 			mono_class_init (klass->parent);
@@ -3442,7 +3463,12 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 	int fcount = tb->num_fields;
 	mono_class_set_field_count (klass, fcount);
 
-	error_init (error);
+	gint32 first_idx = 0;
+	if (tb->num_fields > 0) {
+		first_idx = modulebuilder_get_next_table_index (tb->module, MONO_TABLE_FIELD, (gint32)tb->num_fields, error);
+		return_if_nok (error);
+	}
+	mono_class_set_first_field_idx (klass, first_idx - 1); /* Why do we subtract 1? because mono_class_create_from_typedef does it, too. */
 
 	if (tb->class_size) {
 		packing_size = tb->packing_size;
@@ -3507,6 +3533,9 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 			def_values [i].data = (const char *)mono_image_alloc (image, len);
 			memcpy ((gpointer)def_values [i].data, p, len);
 		}
+
+		MonoObjectHandle field_builder_handle = MONO_HANDLE_NEW (MonoObject, fb);
+		mono_dynamic_image_register_token (tb->module->dynamic_image, mono_metadata_make_token (MONO_TABLE_FIELD, first_idx + i), field_builder_handle, MONO_DYN_IMAGE_TOK_NEW);
 	}
 
 	if (!mono_class_has_failure (klass))

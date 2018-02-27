@@ -204,9 +204,6 @@ $(vtsdir)/$(PROFILE)_TestLib/BinarySerializationOverVersions.exe: $(vtsdir)/Bina
 		$(vtsdir)/BinarySerializationOverVersions.cs -out:$@
 	@cp $(vtsdir)/$(PROFILE)_TestLib/1.0/Address.dll $(vtsdir)/$(PROFILE)_TestLib
 
-# Need to define TEST_MONO_PATH to an absolute dir since the test is ran from a subdir
-TEST_MONO_PATH=$(PWD)/../lib/$(PROFILE)
-
 run-test-vts: test-vts
 	@echo Running vts tests...
 	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(TEST_HARNESS) $(NOSHADOW_FLAG) \

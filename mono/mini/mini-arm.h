@@ -93,7 +93,6 @@
 #endif
 
 #define MONO_ARCH_USE_FPSTACK FALSE
-#define MONO_ARCH_FPSTACK_SIZE 0
 
 #define MONO_ARCH_INST_SREG2_MASK(ins) (0)
 
@@ -332,6 +331,7 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_HAVE_FULL_AOT_TRAMPOLINES 1
 #define MONO_ARCH_HAVE_DECOMPOSE_LONG_OPTS 1
 
+#define MONO_ARCH_INTERPRETER_SUPPORTED 1
 #define MONO_ARCH_AOT_SUPPORTED 1
 #define MONO_ARCH_LLVM_SUPPORTED 1
 
@@ -356,7 +356,6 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_HAVE_OPCODE_NEEDS_EMULATION 1
 #define MONO_ARCH_HAVE_OBJC_GET_SELECTOR 1
 #define MONO_ARCH_HAVE_OP_TAIL_CALL 1
-#define MONO_ARCH_HAVE_DUMMY_INIT 1
 #define MONO_ARCH_HAVE_SDB_TRAMPOLINES 1
 #define MONO_ARCH_HAVE_PATCH_CODE_NEW 1
 #define MONO_ARCH_HAVE_OP_GENERIC_CLASS_INIT 1
@@ -373,7 +372,6 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_IMT_REG MONO_ARCH_RGCTX_REG
 /* First argument reg */
 #define MONO_ARCH_VTABLE_REG ARMREG_R0
-#define MONO_ARCH_EXC_REG ARMREG_R0
 
 #define MONO_CONTEXT_SET_LLVM_EXC_REG(ctx, exc) do { (ctx)->regs [0] = (gsize)exc; } while (0)
 

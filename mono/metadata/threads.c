@@ -4835,10 +4835,11 @@ self_interrupt_thread (void *_unused)
 {
 	MonoException *exc;
 	MonoThreadInfo *info;
+	MonoContext ctx;
 
 	exc = mono_thread_execute_interruption ();
 	if (!exc) {
-		if (mono_threads_is_coop_enabled ()) {
+		if (mono_threads_are_safepoints_enabled ()) {
 			/* We can return from an async call in coop, as
 			 * it's simply called when exiting the safepoint */
 			return;
@@ -4849,7 +4850,10 @@ self_interrupt_thread (void *_unused)
 
 	info = mono_thread_info_current ();
 
-	mono_raise_exception_with_context (exc, &info->thread_saved_state [ASYNC_SUSPEND_STATE_INDEX].ctx); /* FIXME using thread_saved_state [ASYNC_SUSPEND_STATE_INDEX] can race with another suspend coming in. */
+	/* FIXME using thread_saved_state [ASYNC_SUSPEND_STATE_INDEX] can race with another suspend coming in. */
+	ctx = info->thread_saved_state [ASYNC_SUSPEND_STATE_INDEX].ctx;
+
+	mono_raise_exception_with_context (exc, &ctx);
 }
 
 static gboolean
@@ -4880,10 +4884,10 @@ mono_thread_info_get_last_managed (MonoThreadInfo *info)
 	 * any runtime locks while unwinding. In coop case we shouldn't safepoint in regions
 	 * where we hold runtime locks.
 	 */
-	if (!mono_threads_is_coop_enabled ())
+	if (!mono_threads_are_safepoints_enabled ())
 		mono_thread_info_set_is_async_context (TRUE);
 	mono_get_eh_callbacks ()->mono_walk_stack_with_state (last_managed, mono_thread_info_get_suspend_state (info), MONO_UNWIND_SIGNAL_SAFE, &ji);
-	if (!mono_threads_is_coop_enabled ())
+	if (!mono_threads_are_safepoints_enabled ())
 		mono_thread_info_set_is_async_context (FALSE);
 	return ji;
 }
@@ -4991,7 +4995,7 @@ async_suspend_critical (MonoThreadInfo *info, gpointer ud)
 	running_managed = mono_jit_info_match (ji, MONO_CONTEXT_GET_IP (&mono_thread_info_get_suspend_state (info)->ctx));
 
 	if (running_managed && !protected_wrapper) {
-		if (mono_threads_is_coop_enabled ()) {
+		if (mono_threads_are_safepoints_enabled ()) {
 			mono_thread_info_setup_async_call (info, self_interrupt_thread, NULL);
 			return MonoResumeThread;
 		} else {

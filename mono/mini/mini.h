@@ -1087,9 +1087,7 @@ typedef struct {
 	guint            emulate_long_shift_opts : 1;
 	guint            have_objc_get_selector : 1;
 	guint            have_generalized_imt_trampoline : 1;
-	guint            have_liverange_ops: 1;
 	guint            have_op_tail_call : 1;
-	guint            have_dummy_init : 1;
 	guint            gshared_supported : 1;
 	guint            use_fpstack : 1;
 	guint            ilp32 : 1;
@@ -1097,6 +1095,7 @@ typedef struct {
 	guint            need_div_check : 1;
 	guint            no_unaligned_access : 1;
 	guint            disable_div_with_mul : 1;
+	guint            explicit_null_checks : 1;
 	int              monitor_enter_adjustment;
 	int              dyn_call_param_area;
 } MonoBackend;
@@ -2185,6 +2184,10 @@ gboolean  mono_arch_opcode_supported            (int opcode);
 void     mono_arch_setup_resume_sighandler_ctx  (MonoContext *ctx, gpointer func);
 gboolean  mono_arch_have_fast_tls               (void);
 
+#ifdef MONO_ARCH_HAS_REGISTER_ICALL
+void      mono_arch_register_icall              (void);
+#endif
+
 #ifdef MONO_ARCH_SOFT_FLOAT_FALLBACK
 gboolean  mono_arch_is_soft_float               (void);
 #else
@@ -2225,11 +2228,12 @@ gboolean mono_arch_handle_exception             (void *sigctx, gpointer obj);
 void     mono_arch_handle_altstack_exception    (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *siginfo, gpointer fault_addr, gboolean stack_ovf);
 gboolean mono_handle_soft_stack_ovf             (MonoJitTlsData *jit_tls, MonoJitInfo *ji, void *ctx, MONO_SIG_HANDLER_INFO_TYPE *siginfo, guint8* fault_addr);
 void     mono_handle_hard_stack_ovf             (MonoJitTlsData *jit_tls, MonoJitInfo *ji, void *ctx, guint8* fault_addr);
+void     mono_arch_undo_ip_adjustment           (MonoContext *ctx);
 gpointer mono_arch_ip_from_context              (void *sigctx);
 mgreg_t mono_arch_context_get_int_reg		    (MonoContext *ctx, int reg);
 void     mono_arch_context_set_int_reg		    (MonoContext *ctx, int reg, mgreg_t val);
 void     mono_arch_flush_register_windows       (void);
-gboolean mono_arch_is_inst_imm                  (gint64 imm);
+gboolean mono_arch_is_inst_imm                  (int opcode, int imm_opcode, gint64 imm);
 gboolean mono_arch_is_int_overflow              (void *sigctx, void *info);
 void     mono_arch_invalidate_method            (MonoJitInfo *ji, void *func, gpointer func_arg);
 guint32  mono_arch_get_patch_offset             (guint8 *code);

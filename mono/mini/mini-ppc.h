@@ -112,7 +112,6 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_CALLEE_SAVED_FREGS (~(MONO_ARCH_CALLEE_FREGS | 1))
 
 #define MONO_ARCH_USE_FPSTACK FALSE
-#define MONO_ARCH_FPSTACK_SIZE 0
 
 #ifdef __mono_ppc64__
 #define MONO_ARCH_INST_FIXED_REG(desc) (((desc) == 'a')? ppc_r3:\
@@ -147,8 +146,6 @@ typedef struct MonoCompileArch {
 #define PPC_PASS_SMALL_FLOAT_STRUCTS_IN_FR_REGS 0
 #define PPC_RETURN_SMALL_FLOAT_STRUCTS_IN_FR_REGS 0
 #define PPC_RETURN_SMALL_STRUCTS_IN_REGS 0
-#define MONO_ARCH_HAVE_DECOMPOSE_VTYPE_OPTS 0
-#define MONO_ARCH_RETURN_CAN_USE_MULTIPLE_REGISTERS 0
 #elif defined(_AIX)
 /* FIXME: are these values valid? on 32-bit? */
 #define PPC_RET_ADDR_OFFSET 16
@@ -164,14 +161,11 @@ typedef struct MonoCompileArch {
 #define PPC_PASS_SMALL_FLOAT_STRUCTS_IN_FR_REGS 0
 #define PPC_RETURN_SMALL_FLOAT_STRUCTS_IN_FR_REGS 0
 #define PPC_RETURN_SMALL_STRUCTS_IN_REGS 0
-#define MONO_ARCH_HAVE_DECOMPOSE_VTYPE_OPTS 0
-#define MONO_ARCH_RETURN_CAN_USE_MULTIPLE_REGISTERS 0
-//#define MONO_ARCH_HAVE_SETUP_ASYNC_CALLBACK 1
+#define MONO_ARCH_HAVE_SETUP_ASYNC_CALLBACK 1
 #define PPC_MINIMAL_PARAM_AREA_SIZE 64
 #define PPC_LAST_FPARG_REG ppc_f13
 #define PPC_PASS_STRUCTS_BY_VALUE 1
 #define PPC_THREAD_PTR_REG ppc_r13
-#define MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX 1
 #define PPC_FIRST_ARG_REG ppc_r3
 #define PPC_LAST_ARG_REG ppc_r10
 #define PPC_FIRST_FPARG_REG ppc_f1
@@ -188,8 +182,6 @@ typedef struct MonoCompileArch {
   #define PPC_PASS_SMALL_FLOAT_STRUCTS_IN_FR_REGS 1
   #define PPC_RETURN_SMALL_FLOAT_STRUCTS_IN_FR_REGS 1
   #define PPC_RETURN_SMALL_STRUCTS_IN_REGS 1
-  #define MONO_ARCH_HAVE_DECOMPOSE_VTYPE_OPTS 1
-  #define MONO_ARCH_RETURN_CAN_USE_MULTIPLE_REGISTERS 1
 
 // Define "DEBUG_ELFABIV2" to allow for debugging output for ELF ABI v2 function call and return codegen
 //  #define DEBUG_ELFABIV2
@@ -204,8 +196,6 @@ typedef struct MonoCompileArch {
   #define PPC_PASS_SMALL_FLOAT_STRUCTS_IN_FR_REGS 0
   #define PPC_RETURN_SMALL_FLOAT_STRUCTS_IN_FR_REGS 0
   #define PPC_RETURN_SMALL_STRUCTS_IN_REGS 0
-  #define MONO_ARCH_HAVE_DECOMPOSE_VTYPE_OPTS 0
-  #define MONO_ARCH_RETURN_CAN_USE_MULTIPLE_REGISTERS 0
  #endif
 #define MONO_ARCH_HAVE_SETUP_ASYNC_CALLBACK 1
 #define PPC_MINIMAL_PARAM_AREA_SIZE 64
@@ -224,11 +214,8 @@ typedef struct MonoCompileArch {
 #define PPC_PASS_SMALL_FLOAT_STRUCTS_IN_FR_REGS 0
 #define PPC_RETURN_SMALL_FLOAT_STRUCTS_IN_FR_REGS 0
 #define PPC_RETURN_SMALL_STRUCTS_IN_REGS 0
-#define MONO_ARCH_HAVE_DECOMPOSE_VTYPE_OPTS 0
-#define MONO_ARCH_RETURN_CAN_USE_MULTIPLE_REGISTERS 0
 #define PPC_THREAD_PTR_REG ppc_r2
 #endif
-#define MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX 1
 #define PPC_FIRST_ARG_REG ppc_r3
 #define PPC_LAST_ARG_REG ppc_r10
 #define PPC_FIRST_FPARG_REG ppc_f1
@@ -245,6 +232,9 @@ typedef struct MonoCompileArch {
 
 #define MONO_ARCH_VTABLE_REG	ppc_r11
 #define MONO_ARCH_RGCTX_REG	MONO_ARCH_IMT_REG
+
+#define MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX 1
+#define MONO_ARCH_HAVE_SETUP_RESUME_FROM_SIGNAL_HANDLER_CTX 1
 
 #define MONO_ARCH_NO_IOV_CHECK 1
 #define MONO_ARCH_HAVE_DECOMPOSE_OPTS 1
@@ -263,6 +253,15 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_SOFT_DEBUG_SUPPORTED 1
 #endif
 #define MONO_ARCH_HAVE_OP_TAIL_CALL 1
+
+#if defined(_AIX)
+/*
+ * HACK: AIX always allows accessing page 0! We can't rely on SIGSEGV
+ * to save us when a null dereference in managed code occurs, so we
+ * always have to check for null.
+ */
+#define MONO_ARCH_EXPLICIT_NULL_CHECKS 1
+#endif
 
 #define PPC_NUM_REG_ARGS (PPC_LAST_ARG_REG-PPC_FIRST_ARG_REG+1)
 #define PPC_NUM_REG_FPARGS (PPC_LAST_FPARG_REG-PPC_FIRST_FPARG_REG+1)
@@ -389,8 +388,6 @@ extern void mono_ppc_emitted (guint8 *code, gint64 length, const char *format, .
 gboolean mono_ppc_is_direct_call_sequence (guint32 *code);
 
 void mono_ppc_patch_plt_entry (guint8 *code, gpointer *got, mgreg_t *regs, guint8 *addr);
-
-void mono_ppc_set_func_into_sigctx (void *sigctx, void *func);
 
 
 // Debugging macros for ELF ABI v2

@@ -682,7 +682,7 @@ mono_ftnptr_to_delegate_handle (MonoClass *klass, gpointer ftn, MonoError *error
 			g_free (sig);
 		}
 
-		MONO_HANDLE_ASSIGN (d, MONO_HANDLE_NEW (MonoDelegate, mono_object_new_checked (mono_domain_get (), klass, error)));
+		MONO_HANDLE_ASSIGN (d, mono_object_new_handle (mono_domain_get (), klass, error));
 		goto_if_nok (error, leave);
 		gpointer compiled_ptr = mono_compile_method_checked (wrapper, error);
 		goto_if_nok (error, leave);
@@ -9845,6 +9845,11 @@ get_virtual_stelemref_kind (MonoClass *element_class)
 		return STELEMREF_OBJECT;
 	if (is_monomorphic_array (element_class))
 		return STELEMREF_SEALED_CLASS;
+
+	/* magic ifaces requires aditional checks for when the element type is an array */
+	if (MONO_CLASS_IS_INTERFACE (element_class) && element_class->is_array_special_interface)
+		return STELEMREF_COMPLEX;
+
 	/* Compressed interface bitmaps require code that is quite complex, so don't optimize for it. */
 	if (MONO_CLASS_IS_INTERFACE (element_class) && !mono_class_has_variant_generic_params (element_class))
 #ifdef COMPRESSED_INTERFACE_BITMAP
@@ -11156,6 +11161,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_SizeOf (MonoReflectionTypeHandl
 	MonoClass *klass;
 	MonoType *type;
 	guint32 layout;
+	gint32 align, result;
 
 	error_init (error);
 
@@ -11180,7 +11186,8 @@ ves_icall_System_Runtime_InteropServices_Marshal_SizeOf (MonoReflectionTypeHandl
 		return 0;
 	}
 
-	return mono_class_native_size (klass, NULL);
+	result = mono_marshal_type_size (type, NULL, &align, FALSE, klass->unicode);
+	return (guint32)result;
 }
 
 void
@@ -11879,6 +11886,7 @@ gint32
 mono_marshal_type_size (MonoType *type, MonoMarshalSpec *mspec, guint32 *align,
 			gboolean as_field, gboolean unicode)
 {
+	gint32 padded_size;
 	MonoMarshalNative native_type = mono_type_to_unmanaged (type, mspec, as_field, unicode, NULL);
 	MonoClass *klass;
 
@@ -11936,7 +11944,10 @@ mono_marshal_type_size (MonoType *type, MonoMarshalSpec *mspec, guint32 *align,
 		*align = 16;
 		return 16;
 		}
-		return mono_class_native_size (klass, align);
+		padded_size = mono_class_native_size (klass, align);
+		if (padded_size == 0)
+			padded_size = 1;
+		return padded_size;
 	case MONO_NATIVE_BYVALTSTR: {
 		int esize = unicode ? 2: 1;
 		g_assert (mspec);

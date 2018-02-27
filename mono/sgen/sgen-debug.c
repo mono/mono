@@ -26,6 +26,10 @@
 #include "mono/sgen/sgen-pinning.h"
 #include "mono/sgen/sgen-client.h"
 
+
+#ifndef DISABLE_SGEN_DEBUG_HELPERS
+
+
 #define LOAD_VTABLE	SGEN_LOAD_VTABLE
 
 #define object_is_forwarded	SGEN_OBJECT_IS_FORWARDED
@@ -955,7 +959,7 @@ is_xdomain_ref_allowed (GCObject **ptr, GCObject *obj, MonoDomain *domain)
 		return TRUE;
 
 #ifndef DISABLE_REMOTING
-	if (mono_defaults.real_proxy_class->supertypes && mono_class_has_parent_fast (o->vtable->klass, mono_defaults.real_proxy_class) &&
+	if (m_class_get_supertypes (mono_defaults.real_proxy_class) && mono_class_has_parent_fast (o->vtable->klass, mono_defaults.real_proxy_class) &&
 			offset == G_STRUCT_OFFSET (MonoRealProxy, unwrapped_server))
 		return TRUE;
 #endif
@@ -970,10 +974,10 @@ is_xdomain_ref_allowed (GCObject **ptr, GCObject *obj, MonoDomain *domain)
 	 * at System.Runtime.Remoting.Channels.CrossAppDomainSink.ProcessMessageInDomain (byte[],System.Runtime.Remoting.Messaging.CADMethodCallMessage) [0x00008] in /home/schani/Work/novell/trunk/mcs/class/corlib/System.Runtime.Remoting.Channels/CrossAppDomainChannel.cs:198
 	 * at (wrapper runtime-invoke) object.runtime_invoke_CrossAppDomainSink/ProcessMessageRes_object_object (object,intptr,intptr,intptr) <IL 0x0004c, 0xffffffff>
 	 */
-	if (!strcmp (ref->vtable->klass->name_space, "System") &&
-			!strcmp (ref->vtable->klass->name, "Byte[]") &&
-			!strcmp (o->vtable->klass->name_space, "System.IO") &&
-			!strcmp (o->vtable->klass->name, "MemoryStream"))
+	if (!strcmp (m_class_get_name_space (ref->vtable->klass), "System") &&
+		!strcmp (m_class_get_name (ref->vtable->klass), "Byte[]") &&
+		!strcmp (m_class_get_name_space (o->vtable->klass), "System.IO") &&
+		!strcmp (m_class_get_name (o->vtable->klass), "MemoryStream"))
 		return TRUE;
 	return FALSE;
 }
@@ -993,13 +997,14 @@ check_reference_for_xdomain (GCObject **ptr, GCObject *obj, MonoDomain *domain)
 		return;
 
 	field = NULL;
-	for (klass = obj->vtable->klass; klass; klass = klass->parent) {
+	for (klass = obj->vtable->klass; klass; klass = m_class_get_parent (klass)) {
 		int i;
 
 		int fcount = mono_class_get_field_count (klass);
+		MonoClassField *klass_fields = m_class_get_fields (klass);
 		for (i = 0; i < fcount; ++i) {
-			if (klass->fields[i].offset == offset) {
-				field = &klass->fields[i];
+			if (klass_fields[i].offset == offset) {
+				field = &klass_fields[i];
 				break;
 			}
 		}
@@ -1014,9 +1019,9 @@ check_reference_for_xdomain (GCObject **ptr, GCObject *obj, MonoDomain *domain)
 	} else
 		str = NULL;
 	g_print ("xdomain reference in %p (%s.%s) at offset %d (%s) to %p (%s.%s) (%s)  -  pointed to by:\n",
-			obj, obj->vtable->klass->name_space, obj->vtable->klass->name,
+			obj, m_class_get_name_space (obj->vtable->klass), m_class_get_name (obj->vtable->klass),
 			offset, field ? field->name : "",
-			ref, ref->vtable->klass->name_space, ref->vtable->klass->name, str ? str : "");
+			ref, m_class_get_name_space (ref->vtable->klass), m_class_get_name (ref->vtable->klass), str ? str : "");
 	mono_gc_scan_for_specific_ref (obj, TRUE);
 	if (str)
 		g_free (str);
@@ -1121,16 +1126,16 @@ dump_object (GCObject *obj, gboolean dump_location)
 	 * in strings, so we just ignore them;
 	 */
 	i = j = 0;
-	while (klass->name [i] && j < sizeof (class_name) - 1) {
-		if (!strchr ("<>\"", klass->name [i]))
-			class_name [j++] = klass->name [i];
+	while (m_class_get_name (klass) [i] && j < sizeof (class_name) - 1) {
+		if (!strchr ("<>\"", m_class_get_name (klass) [i]))
+			class_name [j++] = m_class_get_name (klass) [i];
 		++i;
 	}
 	g_assert (j < sizeof (class_name));
 	class_name [j] = 0;
 
 	fprintf (heap_dump_file, "<object class=\"%s.%s\" size=\"%zd\"",
-			klass->name_space, class_name,
+			m_class_get_name_space (klass), class_name,
 			safe_object_get_size (obj));
 	if (dump_location) {
 		const char *location;
@@ -1235,4 +1240,72 @@ sgen_find_object_for_ptr (char *ptr)
 	return found_obj;
 }
 
+#else
+
+void
+sgen_check_for_xdomain_refs (void)
+{
+}
+
+void
+sgen_check_heap_marked (gboolean nursery_must_be_pinned)
+{
+}
+
+void
+sgen_check_major_refs (void)
+{
+}
+
+void
+sgen_check_mod_union_consistency (void)
+{
+}
+
+void
+sgen_check_nursery_objects_pinned (gboolean pinned)
+{
+}
+
+void
+sgen_check_remset_consistency (void)
+{
+}
+
+void
+sgen_check_whole_heap (gboolean allow_missing_pinned)
+{
+}
+
+void
+sgen_debug_check_nursery_is_clean (void)
+{
+}
+
+void
+sgen_debug_dump_heap (const char *type, int num, const char *reason)
+{
+}
+
+void
+sgen_debug_enable_heap_dump (const char *filename)
+{
+}
+
+void
+sgen_debug_verify_nursery (gboolean do_dump_nursery_content)
+{
+}
+
+void
+sgen_dump_occupied (char *start, char *end, char *section_start)
+{
+}
+
+void
+sgen_scan_for_registered_roots_in_domain (MonoDomain *domain, int root_type)
+{
+}
+
+#endif /*DISABLE_SGEN_DEBUG_HELPERS */
 #endif /*HAVE_SGEN_GC*/

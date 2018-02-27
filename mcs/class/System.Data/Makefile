@@ -45,8 +45,6 @@ TEST_NUNITLITE_APP_CONFIG_GLOBAL=Test/test-config-file
 USE_XTEST_REMOTE_EXECUTOR = YES
 XTEST_LIB_REFS = System System.Core System.Xml Facades/System.Text.Encoding.CodePages Facades/System.Threading.Tasks Facades/System.Runtime.InteropServices.RuntimeInformation 
 
-TEST_MONO_PATH = .
-
 EXTRA_DISTFILES = \
 	$(wildcard Test/System.Data/*.xml)		\
 	$(wildcard Test/System.Data/*.xsd)		\

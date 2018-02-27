@@ -95,7 +95,7 @@ mono_exception_new_by_name_domain (MonoDomain *domain, MonoImage *image,
 
 	MonoClass * const klass = mono_class_load_from_name (image, name_space, name);
 
-	MonoObjectHandle o = MONO_HANDLE_NEW (MonoObject, mono_object_new_checked (domain, klass, error));
+	MonoObjectHandle o = mono_object_new_handle (domain, klass, error);
 	goto_if_nok (error, return_null);
 
 	if (domain != caller_domain)
@@ -1273,11 +1273,11 @@ mono_error_set_field_missing (MonoError *error, MonoClass *klass, const char *fi
 	}
 
 	if (klass) {
-		if (klass->name_space) {
-			g_string_append (res, klass->name_space);
+		if (m_class_get_name_space (klass)) {
+			g_string_append (res, m_class_get_name_space (klass));
 			g_string_append_c (res, '.');
 		}
-		g_string_append (res, klass->name);
+		g_string_append (res, m_class_get_name (klass));
 	}
 	else {
 		g_string_append (res, "<unknown type>");
@@ -1323,11 +1323,11 @@ mono_error_set_method_missing (MonoError *error, MonoClass *klass, const char *m
 	}
 
 	if (klass) {
-		if (klass->name_space) {
-			g_string_append (res, klass->name_space);
+		if (m_class_get_name_space (klass)) {
+			g_string_append (res, m_class_get_name_space (klass));
 			g_string_append_c (res, '.');
 		}
-		g_string_append (res, klass->name);
+		g_string_append (res, m_class_get_name (klass));
 	}
 	else {
 		g_string_append (res, "<unknown type>");
