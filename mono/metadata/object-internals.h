@@ -127,7 +127,7 @@ struct _MonoArray {
 	mono_64bitaligned_t vector [MONO_ZERO_LEN_ARRAY];
 };
 
-#define MONO_SIZEOF_MONO_ARRAY (sizeof (MonoArray) - MONO_ZERO_LEN_ARRAY * sizeof (double))
+#define MONO_SIZEOF_MONO_ARRAY (sizeof (MonoArray) - MONO_ZERO_LEN_ARRAY * sizeof (mono_64bitaligned_t))
 
 struct _MonoString {
 	MonoObject object;
@@ -741,7 +741,7 @@ mono_domain_get_tls_offset (void);
  * encountering instances of user defined subclasses of System.Type.
  */
 
-#define IS_MONOTYPE(obj) (!(obj) || (((MonoObject*)(obj))->vtable->klass->image == mono_defaults.corlib && ((MonoReflectionType*)(obj))->type != NULL))
+#define IS_MONOTYPE(obj) (!(obj) || (m_class_get_image (mono_object_class ((obj))) == mono_defaults.corlib && ((MonoReflectionType*)(obj))->type != NULL))
 
 #define IS_MONOTYPE_HANDLE(obj) IS_MONOTYPE (MONO_HANDLE_RAW (obj))
 
@@ -1161,7 +1161,6 @@ typedef struct {
 	MonoString *name;
 	MonoObject *def_value;
 	gint32 offset;
-	gint32 table_idx;
 	MonoReflectionType *typeb;
 	MonoArray *rva_data;
 	MonoArray *cattrs;
@@ -1221,6 +1220,7 @@ typedef struct {
 	gboolean is_main;
 	MonoArray *resources;
 	GHashTable *unparented_classes;
+	MonoArray *table_indexes;
 } MonoReflectionModuleBuilder;
 
 /* Safely acess System.Reflection.Emit.ModuleBuidler from native code */
@@ -1849,7 +1849,7 @@ mono_ldstr_checked (MonoDomain *domain, MonoImage *image, uint32_t str_index, Mo
 MonoString*
 mono_string_new_len_checked (MonoDomain *domain, const char *text, guint length, MonoError *error);
 
-MonoString*
+MONO_PROFILER_API MonoString*
 mono_string_new_checked (MonoDomain *domain, const char *text, MonoError *merror);
 
 MonoString*

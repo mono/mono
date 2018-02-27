@@ -7,6 +7,7 @@
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/tabledefs.h>
 #ifdef MONO_CLASS_DEF_PRIVATE
+#include <mono/metadata/abi-details.h>
 #define REALLY_INCLUDE_CLASS_DEF 1
 #include <mono/metadata/class-private-definition.h>
 #undef REALLY_INCLUDE_CLASS_DEF
@@ -141,7 +142,7 @@ mono_class_get_first_field_idx (MonoClass *klass)
 	if (mono_class_is_ginst (klass))
 		return mono_class_get_first_field_idx (mono_class_get_generic_class (klass)->container_class);
 
-	g_assert (mono_class_has_static_metadata (klass));
+	g_assert (klass->type_token && !mono_class_is_ginst (klass));
 
 	return m_classdef_get_first_field_idx ((MonoClassDef*)klass);
 }
@@ -149,7 +150,7 @@ mono_class_get_first_field_idx (MonoClass *klass)
 void
 mono_class_set_first_field_idx (MonoClass *klass, guint32 idx)
 {
-	g_assert (mono_class_has_static_metadata (klass));
+	g_assert (klass->type_token && !mono_class_is_ginst (klass));
 
 	((MonoClassDef*)klass)->first_field_idx = idx;
 }
@@ -469,8 +470,52 @@ mono_class_get_dim_conflicts (MonoClass *klass)
 	return info->data;
 }
 
+/**
+ * mono_class_set_failure:
+ * \param klass class in which the failure was detected
+ * \param ex_type the kind of exception/error to be thrown (later)
+ * \param ex_data exception data (specific to each type of exception/error)
+ *
+ * Keep a detected failure informations in the class for later processing.
+ * Note that only the first failure is kept.
+ *
+ * LOCKING: Acquires the loader lock.
+ */
+gboolean
+mono_class_set_failure (MonoClass *klass, MonoErrorBoxed *boxed_error)
+{
+	g_assert (boxed_error != NULL);
+
+	if (mono_class_has_failure (klass))
+		return FALSE;
+
+	mono_loader_lock ();
+	klass->has_failure = 1;
+	mono_class_set_exception_data (klass, boxed_error);
+	mono_loader_unlock ();
+
+	return TRUE;
+}
+
+/**
+ * mono_class_set_nonblittable:
+ * \param klass class which will be marked as not blittable.
+ *
+ * Mark \c klass as not blittable.
+ *
+ * LOCKING: Acquires the loader lock.
+ */
+void
+mono_class_set_nonblittable (MonoClass *klass) {
+	mono_loader_lock ();
+	klass->blittable = FALSE;
+	mono_loader_unlock ();
+}
+
 #ifdef MONO_CLASS_DEF_PRIVATE
 #define MONO_CLASS_GETTER(funcname, rettype, optref, argtype, fieldname) rettype funcname (argtype *klass) { return optref klass-> fieldname ; }
+#define MONO_CLASS_OFFSET(funcname, argtype, fieldname) intptr_t funcname (void) { return MONO_STRUCT_OFFSET (argtype, fieldname); }
 #include "class-getters.h"
 #undef MONO_CLASS_GETTER
+#undef MONO_CLASS_OFFSET
 #endif /* MONO_CLASS_DEF_PRIVATE */

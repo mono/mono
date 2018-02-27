@@ -35,7 +35,7 @@ namespace System.Windows.Forms
 	/// </summary>
 	/// <remarks>
 	/// This theme uses only the managed VisualStyles API.
-	/// To select it, set MONO_THEME to VisualStyles and call <see cref="Application.EnableVisualStyles"/>.
+	/// To select it, call <see cref="Application.EnableVisualStyles"/>.
 	/// </remarks>
 	class ThemeVisualStyles : ThemeWin32Classic
 	{
@@ -1544,7 +1544,7 @@ namespace System.Windows.Forms
 				new Rectangle (new Point ((textBoxBase.Width - textBoxBase.ClientSize.Width) / 2,
 					(textBoxBase.Height - textBoxBase.ClientSize.Height) / 2),
 					textBoxBase.ClientSize));
-			XplatUI.PaintEventEnd (ref m, textBoxBase.Handle, false);
+			XplatUI.PaintEventEnd (ref m, textBoxBase.Handle, false, e);
 			return true;
 		}
 		public override bool TextBoxBaseShouldPaintBackground (TextBoxBase textBoxBase)

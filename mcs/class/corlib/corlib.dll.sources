@@ -703,9 +703,9 @@ System.Security.Cryptography.X509Certificates/X509Certificate.cs
 System.Security.Cryptography.X509Certificates/X509Certificate20.cs
 System.Security.Cryptography.X509Certificates/X509CertificateImpl.cs
 System.Security.Cryptography.X509Certificates/X509CertificateImplMono.cs
-../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/System/Security/Cryptography/X509Certificates/X509ContentType.cs
 System.Security.Cryptography.X509Certificates/X509Helper.cs
-../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/System/Security/Cryptography/X509Certificates/X509KeyStorageFlags.cs
+System.Security.Cryptography.X509Certificates/X509CertificateImplApple.cs
+System.Security.Cryptography.X509Certificates/X509Helper.Apple.cs
 System.Security.Permissions/CodeAccessSecurityAttribute.cs
 System.Security.Permissions/EnvironmentPermission.cs
 System.Security.Permissions/EnvironmentPermissionAccess.cs
@@ -851,6 +851,8 @@ System.Threading/WaitHandle.cs
 
 System.Threading.Tasks/DecoupledTask.cs
 ../Mono.Parallel/Mono.Threading/AtomicBoolean.cs
+
+CoreFoundation/CFHelpers.cs
 
 ReferenceSources/__ConsoleStream.cs
 ReferenceSources/Array.cs
@@ -1112,7 +1114,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/globalization/calendarweekrule.cs
 ../referencesource/mscorlib/system/globalization/charunicodeinfo.cs
 ../referencesource/mscorlib/system/globalization/chineselunisolarcalendar.cs
-../referencesource/mscorlib/system/globalization/compareinfo.cs
+#../referencesource/mscorlib/system/globalization/compareinfo.cs
 ../referencesource/mscorlib/system/globalization/culturenotfoundexception.cs
 ../referencesource/mscorlib/system/globalization/culturetypes.cs
 ../referencesource/mscorlib/system/globalization/daylighttime.cs
@@ -1252,6 +1254,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/resources/ultimateresourcefallbacklocation.cs
 
 ../referencesource/mscorlib/system/runtime/NgenServicingAttributes.cs
+../referencesource/mscorlib/system/runtime/ProfileOptimization.cs
 
 ../referencesource/mscorlib/system/runtime/exceptionservices/corruptingexceptioncommon.cs
 ../referencesource/mscorlib/system/runtime/exceptionservices/exceptionnotification.cs
@@ -1594,29 +1597,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/threading/waithandle.cs
 ../referencesource/mscorlib/system/threading/waithandleExtensions.cs
 
-../../../external/corefx/src/Common/src/System/Threading/Tasks/RendezvousAwaitable.cs
-../../../external/corefx/src/Common/src/System/Collections/Generic/LowLevelDictionary.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/DebuggerSupport.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/DebuggerSupport.Dummy.cs
-../../../external/corefx/src/Common/src/System/Threading/Tasks/BeginEndAwaitableAdapter.cs
-../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/TaskCanceledException.cs
 ../referencesource/mscorlib/system/threading/Tasks/AsyncCausalityTracer.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/TaskFactory.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/FutureFactory.cs
-../../../external/corert/src/Common/src/System/Collections/Generic/LowLevelList.cs
-../../../external/corert/src/System.Private.Interop/src/InteropExtensions/Lock.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Threading/LockHolder.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/TaskScheduler.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/Task.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/Future.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/TaskContinuation.cs
-../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/TaskCompletionSource.cs
-../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/TaskSchedulerException.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/ThreadPoolTaskScheduler.cs
-../../../external/corefx/src/System.Threading.Tasks.Parallel/src/System/Threading/Tasks/*.cs
-../../../external/corert/src/System.Private.CoreLib/src/Internal/Runtime/Augments/AsyncCausalityTracer.cs
-../../../external/corert/src/System.Private.CoreLib/src/Internal/Threading/Tasks/Tracing/TaskTrace.cs
-../../../external/corert/src/System.Private.CoreLib/src/Internal/Runtime/Augments/TaskTraceCallbacks.cs
 
 ../referencesource/mscorlib/system/threading/Tasks/TaskExceptionHolder.cs
 ../referencesource/mscorlib/system/threading/Tasks/ConcurrentExclusiveSchedulerPair.cs
@@ -1648,14 +1629,17 @@ corert/RuntimeAugments.cs
 
 ../../../external/corert/src/Common/src/Interop/Unix/Interop.Libraries.cs
 
+../../../external/corert/src/Common/src/System/Collections/Generic/LowLevelList.cs
+
 ../../../external/corert/src/Common/src/System/Numerics/Hashing/HashHelpers.cs
 
 ../../../external/corert/src/Runtime.Base/src/System/Runtime/InteropServices/NativeCallableAttribute.cs
 
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Diagnostics/Debug.cs
-../../../external/corert/src/System.Private.CoreLib/shared/System/Diagnostics/StackTraceHiddenAttribute.cs
-
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Threading/DeferredDisposableLifetime.cs
+
+../../../external/corert/src/System.Private.CoreLib/src/Internal/Runtime/Augments/AsyncCausalityTracer.cs
+../../../external/corert/src/System.Private.CoreLib/src/Internal/Runtime/Augments/TaskTraceCallbacks.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Array.cs
 
@@ -1663,9 +1647,30 @@ corert/RuntimeAugments.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/ArraySortHelper.cs
 
+../../../external/corert/src/System.Private.CoreLib/src/System/Globalization/GlobalizationMode.cs
+
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/LockHolder.cs
+
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/ThreadPoolCallbackWrapper.cs
 
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/DebuggerSupport.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/DebuggerSupport.Dummy.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/TaskFactory.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/FutureFactory.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/TaskScheduler.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/Task.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/Future.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/TaskContinuation.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/ThreadPoolTaskScheduler.cs
+
+../../../external/corert/src/System.Private.CoreLib/src/Internal/Threading/Tasks/Tracing/TaskTrace.cs
+
+../../../external/corert/src/System.Private.Interop/src/InteropExtensions/Lock.cs
+
 corefx/SR.cs
+corefx/CompareInfo.cs
+corefx/GlobalizationMode.cs
+
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Memory.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/MemoryDebugView.cs
@@ -1679,9 +1684,15 @@ corefx/SR.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Buffers/OwnedMemory.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/DictionaryEntry.cs
+
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/Generic/Dictionary.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/Generic/IDictionaryDebugView.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/Generic/KeyValuePair.cs
+
+../../../external/corefx/src/Common/src/CoreLib/System/Diagnostics/StackTraceHiddenAttribute.cs
+
+../../../external/corefx/src/Common/src/CoreLib/System/Globalization/CompareInfo.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Globalization/CompareInfo.Invariant.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/IntrinsicAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/IsReadOnlyAttribute.cs
@@ -1692,7 +1703,15 @@ corefx/SR.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/InteropServices/MemoryMarshal.cs
 
+../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/TaskCanceledException.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/TaskCompletionSource.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/TaskSchedulerException.cs
+
+../../../external/corefx/src/Common/src/System/Collections/Generic/LowLevelDictionary.cs
 ../../../external/corefx/src/Common/src/System/Collections/Generic/ReferenceEqualityComparer.cs
+
+../../../external/corefx/src/Common/src/System/Threading/Tasks/BeginEndAwaitableAdapter.cs
+../../../external/corefx/src/Common/src/System/Threading/Tasks/RendezvousAwaitable.cs
 
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/CollectionExtensions.cs
 
@@ -1723,9 +1742,10 @@ corefx/SR.cs
 ../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/System/Runtime/InteropServices/RuntimeInformation/OSPlatform.cs
 ../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/System/Runtime/InteropServices/RuntimeInformation/Architecture.cs
 
+../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/System/Security/Cryptography/X509Certificates/X509ContentType.cs
+../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/System/Security/Cryptography/X509Certificates/X509KeyStorageFlags.cs
+
 ../../../external/corefx/src/System.Threading.Tasks.Extensions/src/System/Threading/Tasks/ValueTask.cs
 ../../../external/corefx/src/System.Threading.Tasks.Extensions/src/System/Runtime/CompilerServices/*.cs
 
-System.Security.Cryptography.X509Certificates/X509CertificateImplApple.cs
-System.Security.Cryptography.X509Certificates/X509Helper.Apple.cs
-CoreFoundation/CFHelpers.cs
+../../../external/corefx/src/System.Threading.Tasks.Parallel/src/System/Threading/Tasks/*.cs

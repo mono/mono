@@ -525,7 +525,7 @@ namespace MonoTests.System.Reflection.Emit
 
 			var field = type.DefineField ("field", t, FieldAttributes.Public);
 
-			type.CreateType ();
+			var tc = type.CreateType ();
 
 			var resolved_field = (FieldInfo) module.ResolveMember (0x04000001, new [] { typeof (string) }, Type.EmptyTypes);
 			Assert.IsNotNull (resolved_field);
@@ -1185,5 +1185,55 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.AreEqual ("17", s2);
 		}
 
+		[Test]
+		public void FieldBuilder_DistinctTokens ()
+		{
+			// Regression test for #33208
+			// Fields of distinct classes in the same
+			// module should have distinct tokens.
+
+			AssemblyBuilder ab = genAssembly ();
+			ModuleBuilder module = ab.DefineDynamicModule ("foo.dll", "foo.dll");
+
+			var tb1 = module.DefineType ("T1", TypeAttributes.Public);
+
+			var tb2 = module.DefineType ("T2", TypeAttributes.Public);
+
+			FieldBuilder fbX1 = tb1.DefineField ("X", typeof (Object), FieldAttributes.Public);
+
+			FieldBuilder fbX2 = tb2.DefineField ("X", typeof (Object), FieldAttributes.Public);
+
+			FieldBuilder fbY1 = tb1.DefineField ("Y", typeof (int), FieldAttributes.Public);
+
+			Assert.AreNotEqual (fbX1.GetToken (), fbX2.GetToken (), "GetToken() T1.X != T2.X");
+			Assert.AreNotEqual (fbX1.GetToken (), fbY1.GetToken (), "GetToken() T1.X != T1.Y");
+			Assert.AreNotEqual (fbY1.GetToken (), fbX2.GetToken (), "GetToken() T1.Y != T2.X");
+
+			// .NET throws NotSupportedException for
+			// FieldBuilder.MetadataToken, Mono doesn't.
+			// We'll check that the metadata tokens are
+			// distinct, but it's also okay to take these
+			// assertions out if we start following .NET
+			// behavior.
+			Assert.AreNotEqual (fbX1.MetadataToken, fbX2.MetadataToken, "MetadataToken T1.X != T2.X");
+			Assert.AreNotEqual (fbX1.MetadataToken, fbY1.MetadataToken, "MetadataToken T1.X != T1.Y");
+			Assert.AreNotEqual (fbY1.MetadataToken, fbX2.MetadataToken, "MetadataToken T1.Y != T2.X");
+
+			var t1 = tb1.CreateType ();
+			var t2 = tb2.CreateType ();
+
+			FieldInfo fX1 = t1.GetField ("X");
+			FieldInfo fX2 = t2.GetField ("X");
+
+			FieldInfo fY1 = t1.GetField ("Y");
+
+			Assert.AreNotEqual (fX1.MetadataToken, fX2.MetadataToken, "T1.X != T2.X");
+			Assert.AreNotEqual (fX1.MetadataToken, fY1.MetadataToken, "T1.X != T1.Y");
+			Assert.AreNotEqual (fY1.MetadataToken, fX2.MetadataToken, "T1.Y != T2.X");
+
+			Assert.AreEqual (module.ResolveField (fX1.MetadataToken), fX1, "resolve T1.X");
+			Assert.AreEqual (module.ResolveField (fX2.MetadataToken), fX2, "resolve T2.X");
+			Assert.AreEqual (module.ResolveField (fY1.MetadataToken), fY1, "resolve T1.Y");
+		}
 	}
 }

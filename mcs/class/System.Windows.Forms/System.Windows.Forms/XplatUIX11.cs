@@ -2922,9 +2922,8 @@ namespace System.Windows.Forms {
 			}
 
 			// Set the default location location for forms.
-			Point next;
-			if (cp.control is Form) {
-				next = Hwnd.GetNextStackedFormLocation (cp, parent_hwnd);
+			if (cp.control is Form && cp.X == int.MinValue && cp.Y == int.MinValue) {
+				Point next = Hwnd.GetNextStackedFormLocation (cp);
 				X = next.X;
 				Y = next.Y;
 			}
@@ -3894,7 +3893,7 @@ namespace System.Windows.Forms {
 			return new SizeF(width, font.Height);
 		}
 
-		internal override IntPtr GetParent(IntPtr handle)
+		internal override IntPtr GetParent(IntPtr handle, bool with_owner)
 		{
 			Hwnd	hwnd;
 
@@ -3902,6 +3901,7 @@ namespace System.Windows.Forms {
 			if (hwnd != null && hwnd.parent != null) {
 				return hwnd.parent.Handle;
 			}
+			// FIXME: Handle with_owner
 			return IntPtr.Zero;
 		}
 		
@@ -5111,9 +5111,6 @@ namespace System.Windows.Forms {
 
 				hwnd.ClearInvalidArea();
 
-				hwnd.drawing_stack.Push (paint_event);
-				hwnd.drawing_stack.Push (dc);
-
 				return paint_event;
 			} else {
 				dc = Graphics.FromHwnd (paint_hwnd.whole_window);
@@ -5128,26 +5125,16 @@ namespace System.Windows.Forms {
 
 				hwnd.ClearNcInvalidArea ();
 
-				hwnd.drawing_stack.Push (paint_event);
-				hwnd.drawing_stack.Push (dc);
-
 				return paint_event;
 			}
 		}
 
-		internal override void PaintEventEnd(ref Message msg, IntPtr handle, bool client)
+		internal override void PaintEventEnd(ref Message msg, IntPtr handle, bool client, PaintEventArgs pevent)
 		{
-			Hwnd	hwnd;
-
-			hwnd = Hwnd.ObjectFromHandle (msg.HWnd);
-
-			Graphics dc = (Graphics)hwnd.drawing_stack.Pop ();
-			dc.Flush();
-			dc.Dispose();
-			
-			PaintEventArgs pe = (PaintEventArgs)hwnd.drawing_stack.Pop();
-			pe.SetGraphics (null);
-			pe.Dispose ();
+			if (pevent.Graphics != null)
+				pevent.Graphics.Dispose();
+			pevent.SetGraphics(null);
+			pevent.Dispose();
 
 			if (Caret.Visible == true) {
 				ShowCaret();

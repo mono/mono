@@ -40,7 +40,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # This can be reset to 0 when Mono's version number is bumped
 # since it's part of the corlib version (the prefix '1' in the full
 # version number is to ensure the number isn't treated as octal in C)
-MONO_CORLIB_COUNTER=1
+MONO_CORLIB_COUNTER=2
 MONO_CORLIB_VERSION=`printf "1%02d%02d%02d%03d" $MONO_VERSION_MAJOR $MONO_VERSION_MINOR 0 $MONO_CORLIB_COUNTER`
 
 AC_DEFINE_UNQUOTED(MONO_CORLIB_VERSION,$MONO_CORLIB_VERSION,[Version of the corlib-runtime interface])
@@ -376,9 +376,9 @@ case "$host" in
 		;;
 	*-*-aix*|*-*-os400*)
 		dnl Set up a 64-bit build
-		CPPFLAGS="$CPPFLAGS -maix64 -DGC_AIX_THREADS -D_ALL_SOURCE -D_LARGE_FILES -D_REENTRANT"
+		CPPFLAGS="$CPPFLAGS -maix64 -DGC_AIX_THREADS -D_ALL_SOURCE -D_THREAD_SAFE -D_LARGE_FILES -D_REENTRANT"
 		LDFLAGS="-maix64"
-		libmono_cflags="-D_REENTRANT"
+		libmono_cflags="-D_THREAD_SAFE -D_REENTRANT"
 		dnl Would you believe GNU nm doesn't know how to process AIX libraries?
 		dnl Hardcode IBM binutils in case GNU ones end up on our path. Also
 		dnl specifiy 64-bit mode for tools.
@@ -1314,7 +1314,7 @@ fi
 AC_ARG_ENABLE(minimal, [  --enable-minimal=LIST      drop support for LIST subsystems.
      LIST is a comma-separated list from: aot, profiler, decimal, pinvoke, debug, appdomains, verifier, 
      reflection_emit, reflection_emit_save, large_code, logging, com, ssa, generics, attach, jit, interpreter, simd, soft_debug, perfcounters, normalization, desktop_loader, shared_perfcounters, remoting,
-	 security, lldb, mdb, sgen_remset, sgen_marksweep_par, sgen_marksweep_fixed, sgen_marksweep_fixed_par, sgen_copying.],
+	 security, lldb, mdb, sgen_marksweep_conc, sgen_split_nursery, sgen_gc_bridge, sgen_debug_helpers.],
 [
 	for feature in `echo "$enable_minimal" | sed -e "s/,/ /g"`; do
 		eval "mono_feature_disable_$feature='yes'"
@@ -1477,29 +1477,25 @@ if test "x$mono_feature_disable_mdb" = "xyes"; then
 	AC_MSG_NOTICE([Disabled support for .mdb symbol files.])
 fi
 
-if test "x$mono_feature_disable_sgen_remset" = "xyes"; then
-	AC_DEFINE(DISABLE_SGEN_REMSET, 1, [Disable wbarrier=remset support in SGEN.])
-	AC_MSG_NOTICE([Disabled wbarrier=remset support in SGEN.])
+if test "x$mono_feature_disable_sgen_marksweep_conc" = "xyes"; then
+	AC_DEFINE(DISABLE_SGEN_MAJOR_MARKSWEEP_CONC, 1, [Disable concurrent gc support in SGEN.])
+	AC_MSG_NOTICE([Disabled concurrent gc support in SGEN.])
 fi
 
-if test "x$mono_feature_disable_sgen_marksweep_par" = "xyes"; then
-	AC_DEFINE(DISABLE_SGEN_MAJOR_MARKSWEEP_PAR, 1, [Disable major=marksweep-par support in SGEN.])
-	AC_MSG_NOTICE([Disabled major=marksweep-par support in SGEN.])
+
+if test "x$mono_feature_disable_sgen_split_nursery" = "xyes"; then
+	AC_DEFINE(DISABLE_SGEN_SPLIT_NURSERY, 1, [Disable minor=split support in SGEN.])
+	AC_MSG_NOTICE([Disabled minor=split support in SGEN.])
 fi
 
-if test "x$mono_feature_disable_sgen_marksweep_fixed" = "xyes"; then
-	AC_DEFINE(DISABLE_SGEN_MAJOR_MARKSWEEP_FIXED, 1, [Disable major=marksweep-fixed support in SGEN.])
-	AC_MSG_NOTICE([Disabled major=marksweep-fixed support in SGEN.])
+if test "x$mono_feature_disable_sgen_gc_bridge" = "xyes"; then
+	AC_DEFINE(DISABLE_SGEN_GC_BRIDGE, 1, [Disable gc bridge support in SGEN.])
+	AC_MSG_NOTICE([Disabled gc bridge support in SGEN.])
 fi
 
-if test "x$mono_feature_disable_sgen_marksweep_fixed_par" = "xyes"; then
-	AC_DEFINE(DISABLE_SGEN_MAJOR_MARKSWEEP_FIXED_PAR, 1, [Disable major=marksweep-fixed-par support in SGEN.])
-	AC_MSG_NOTICE([Disabled major=marksweep-fixed-par support in SGEN.])
-fi
-
-if test "x$mono_feature_disable_sgen_copying" = "xyes"; then
-	AC_DEFINE(DISABLE_SGEN_MAJOR_COPYING, 1, [Disable major=copying support in SGEN.])
-	AC_MSG_NOTICE([Disabled major=copying support in SGEN.])
+if test "x$mono_feature_disable_sgen_debug_helpers" = "xyes"; then
+	AC_DEFINE(DISABLE_SGEN_DEBUG_HELPERS, 1, [Disable debug helpers in SGEN.])
+	AC_MSG_NOTICE([Disabled debug helpers in SGEN.])
 fi
 
 AC_ARG_ENABLE(executables, [  --disable-executables disable the build of the runtime executables], enable_executables=$enableval, enable_executables=yes)
@@ -3004,9 +3000,6 @@ try_dev_random=$enableval, try_dev_random=yes)
 AC_MSG_RESULT($try_dev_random)
 
 case "{$build}" in
-    *-openbsd*)
-    NAME_DEV_RANDOM="/dev/srandom"
-    ;;
 
 dnl IBM i does not have /dev/random, use unblocking only
 
@@ -3057,7 +3050,7 @@ if test "x$ac_cv_have_dev_random" = "xno" \
 *** will throw a NotImplemented exception.
 ***
 *** If you are seeing this message, and you know your system DOES have an
-*** entropy collection in place, please contact <crichton@gimp.org> and
+*** entropy collection in place, please report an issue on GitHub and
 *** provide information about the system and how to access the random device.
 ***
 *** Otherwise you can install either egd or prngd and set the environment
@@ -4076,7 +4069,7 @@ fi
 AC_SUBST(G_HAVE_ISO_VARARGS)
 
 AC_CHECK_HEADERS(getopt.h sys/select.h sys/time.h sys/wait.h pwd.h iconv.h localcharset.h sys/types.h sys/resource.h)
-AC_CHECK_LIB([iconv], [locale_charset],[],[AC_CHECK_LIB([charset], [locale_charset],[LIBS+="-liconv -lcharset"])])
+AC_CHECK_LIB([iconv], [locale_charset],[],[AC_CHECK_LIB([charset], [locale_charset],[LIBS+=" -liconv -lcharset"])])
 AC_CHECK_HEADER(alloca.h, [HAVE_ALLOCA_H=1], [HAVE_ALLOCA_H=0])
 AC_SUBST(HAVE_ALLOCA_H)
 

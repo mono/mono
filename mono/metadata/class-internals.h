@@ -299,8 +299,10 @@ union _MonoClassSizes {
 #else
 #define MONO_CLASS_GETTER(funcname, rettype, optref, argtype, fieldname) static inline rettype funcname (argtype *klass) { return optref klass-> fieldname ; }
 #endif
+#define MONO_CLASS_OFFSET(funcname, argtype, fieldname) /*nothing*/
 #include "class-getters.h"
 #undef MONO_CLASS_GETTER
+#undef MONO_CLASS_OFFSET
 
 #ifdef COMPRESSED_INTERFACE_BITMAP
 int mono_compress_bitmap (uint8_t *dest, const uint8_t *bitmap, int size);
@@ -435,22 +437,6 @@ struct _MonoGenericClass {
 	MonoImageSet *owner;
 };
 
-/*
- * A type parameter.
- */
-struct _MonoGenericParam {
-	/*
-	 * Type or method this parameter was defined in.
-	 */
-	MonoGenericContainer *owner;
-	guint16 num;
-	/*
-	 * If != NULL, this is a generated generic param used by the JIT to implement generic
-	 * sharing.
-	 */
-	MonoType *gshared_constraint;
-};
-
 /* Additional details about a MonoGenericParam */
 /* Keep in sync with managed Mono.RuntimeStructs.GenericParamInfo */
 typedef struct {
@@ -466,10 +452,25 @@ typedef struct {
 	MonoClass** constraints; /* NULL means end of list */
 } MonoGenericParamInfo;
 
-typedef struct {
-	MonoGenericParam param;
+/*
+ * A type parameter.
+ */
+struct _MonoGenericParam {
+	/*
+	 * Type or method this parameter was defined in.
+	 */
+	MonoGenericContainer *owner;
+	guint16 num;
+	/*
+	 * If != NULL, this is a generated generic param used by the JIT to implement generic
+	 * sharing.
+	 */
+	MonoType *gshared_constraint;
+
 	MonoGenericParamInfo info;
-} MonoGenericParamFull;
+};
+
+typedef MonoGenericParam MonoGenericParamFull;
 
 /*
  * The generic container.
@@ -494,15 +495,9 @@ struct _MonoGenericContainer {
 	int is_method     : 1;
 	/* If true, this container has no associated class/method and only the image is known. This can happen:
 	   1. For the special anonymous containers kept by MonoImage.
-	   2. During container creation via the mono_metadata_load_generic_params path-- in this case the caller
-	      sets the owner, so temporarily while load_generic_params is completing the container is anonymous.
-	   3. When user code creates a generic parameter via SRE, but has not yet set an owner. */
+	   2. When user code creates a generic parameter via SRE, but has not yet set an owner. */
 	int is_anonymous : 1;
-	/* If false, all params in this container are full-size. If true, all params are just param structs. */
-	/* This field is always == to the is_anonymous field, except in "temporary" cases (2) and (3) above. */
-	/* TODO: Merge GenericParam and GenericParamFull, remove this field. Benefit is marginal. */
-	int is_small_param : 1;
-	/* Our type parameters. */
+	/* Our type parameters. If this is a special anonymous container (case 1, above), this field is not valid, use mono_metadata_create_anon_gparam ()  */
 	MonoGenericParamFull *type_params;
 };
 
@@ -530,26 +525,16 @@ mono_generic_param_num (MonoGenericParam *p)
 	return p->num;
 }
 
-static inline gboolean
-mono_generic_param_is_fullsize (MonoGenericParam *p)
-{
-	return !mono_generic_param_owner (p)->is_small_param;
-}
-
 static inline MonoGenericParamInfo *
 mono_generic_param_info (MonoGenericParam *p)
 {
-	if (mono_generic_param_is_fullsize (p))
-		return &((MonoGenericParamFull *) p)->info;
-	return NULL;
+	return &((MonoGenericParamFull *) p)->info;
 }
 
 static inline const char *
 mono_generic_param_name (MonoGenericParam *p)
 {
-	if (mono_generic_param_is_fullsize (p))
-		return ((MonoGenericParamFull *) p)->info.name;
-	return NULL;
+	return ((MonoGenericParamFull *) p)->info.name;
 }
 
 static inline MonoGenericContainer *
@@ -1069,7 +1054,8 @@ mono_metadata_has_generic_params (MonoImage *image, guint32 token);
 
 MONO_API MonoGenericContainer *
 mono_metadata_load_generic_params (MonoImage *image, guint32 token,
-				   MonoGenericContainer *parent_container);
+				   MonoGenericContainer *parent_container,
+				   gpointer real_owner);
 
 MONO_API gboolean
 mono_metadata_load_generic_param_constraints_checked (MonoImage *image, guint32 token,
@@ -1423,6 +1409,9 @@ mono_field_resolve_type (MonoClassField *field, MonoError *error);
 
 gboolean
 mono_type_has_exceptions (MonoType *type);
+
+void
+mono_class_set_nonblittable (MonoClass *klass);
 
 /*Now that everything has been defined, let's include the inline functions */
 #include <mono/metadata/class-inlines.h>

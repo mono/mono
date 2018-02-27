@@ -391,6 +391,10 @@ namespace System {
 
 		void ChangeColor (string format, ConsoleColor color)
 		{
+			if (String.IsNullOrEmpty (format))
+				// the terminal doesn't support colors
+				return;
+
 			int ccValue = (int)color;
 			if ((ccValue & ~0xF) != 0)
 				throw new ArgumentException("Invalid Console Color");

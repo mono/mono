@@ -842,6 +842,11 @@ namespace Mono.Debugger.Soft
 			return vm.GetObject (vm.conn.Type_CreateInstance (id));
 		}
 
+		// Since protocol version 2.46
+		public int GetValueSize () {
+			return vm.conn.Type_GetValueSize (id);
+		}
+
 		// Since protocol version 2.11
 		public TypeMirror[] GetInterfaces () {
 			if (ifaces == null)

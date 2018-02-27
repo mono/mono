@@ -412,10 +412,16 @@ namespace System {
         //        "TimeSpan_LegacyFormatMode"=dword:00000001
         //
 #if !FEATURE_CORECLR
+#if MONO
+        private static bool LegacyFormatMode() {
+			return false;
+		}
+#else
         [System.Security.SecurityCritical]
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern bool LegacyFormatMode();
+#endif
 #endif // !FEATURE_CORECLR
         //
         // In Silverlight v4, specifying the APP_EARLIER_THAN_SL4.0 quirks mode allows applications to

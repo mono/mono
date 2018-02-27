@@ -1394,7 +1394,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		break;
 	}
 	case MONO_PATCH_INFO_GC_SAFE_POINT_FLAG:
-		g_assert (mono_threads_is_coop_enabled ());
+		g_assert (mono_threads_are_safepoints_enabled ());
 		target = (gpointer)&mono_polling_required;
 		break;
 	case MONO_PATCH_INFO_SWITCH: {
@@ -2726,7 +2726,7 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 	/* If coop is enabled, and the caller didn't ask for the exception to be caught separately,
 	   we always catch the exception and propagate it through the MonoError */
 	gboolean catchExcInMonoError =
-		(exc == NULL) && mono_threads_is_coop_enabled ();
+		(exc == NULL) && mono_threads_are_safepoints_enabled ();
 	MonoObject *invoke_exc = NULL;
 	if (catchExcInMonoError)
 		exc = &invoke_exc;
@@ -4136,7 +4136,7 @@ register_icalls (void)
 	register_icall (mono_thread_interruption_checkpoint, "mono_thread_interruption_checkpoint", "object", FALSE);
 	register_icall (mono_thread_force_interruption_checkpoint_noraise, "mono_thread_force_interruption_checkpoint_noraise", "object", FALSE);
 
-	if (mono_threads_is_coop_enabled ())
+	if (mono_threads_are_safepoints_enabled ())
 		register_icall (mono_threads_state_poll, "mono_threads_state_poll", "void", FALSE);
 
 #ifndef MONO_ARCH_NO_EMULATE_LONG_MUL_OPTS
@@ -4347,6 +4347,11 @@ register_icalls (void)
 	register_icall_no_wrapper (mono_tls_set_domain, "mono_tls_set_domain", "void ptr");
 	register_icall_no_wrapper (mono_tls_set_sgen_thread_info, "mono_tls_set_sgen_thread_info", "void ptr");
 	register_icall_no_wrapper (mono_tls_set_lmf_addr, "mono_tls_set_lmf_addr", "void ptr");
+
+
+#ifdef MONO_ARCH_HAS_REGISTER_ICALL
+	mono_arch_register_icall ();
+#endif
 }
 
 MonoJitStats mono_jit_stats = {0};

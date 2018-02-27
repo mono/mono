@@ -325,6 +325,8 @@ public class DebuggerTests
 			Assert.AreEqual (expected, (val as StringMirror).Value);
 		} else if (val is StructMirror && (val as StructMirror).Type.Name == "IntPtr") {
 			AssertValue (expected, (val as StructMirror).Fields [0]);
+		} else if (val is PointerValue) {
+			Assert.AreEqual (expected, (val as PointerValue).Address);
 		} else {
 			Assert.IsTrue (val is PrimitiveValue);
 			Assert.AreEqual (expected, (val as PrimitiveValue).Value);
@@ -3509,6 +3511,10 @@ public class DebuggerTests
 		Assert.AreEqual ("domains", frames [2].Method.Name);
 		Assert.AreEqual (vm.RootDomain, frames [2].Domain);
 
+		// Check enum creation in other domains
+		var anenum = vm.CreateEnumMirror (d_method.DeclaringType.Assembly.GetType ("AnEnum"), vm.CreateValue (1));
+		Assert.AreEqual (1, anenum.Value);
+
 		// Test breakpoints on already JITted methods in other domains
 		m = entry_point.DeclaringType.GetMethod ("invoke_in_domain_2");
 		Assert.IsNotNull (m);
@@ -4432,6 +4438,40 @@ public class DebuggerTests
 		// Is cctor in this bug, ends up in the static field constructor
 		// DummyCall
 		assert_location (e, "Call");
+	}
+
+	[Test]
+	public void Pointer_GetValue () {
+		var e = run_until ("pointer_arguments");
+		var frame = e.Thread.GetFrames () [0];
+
+		var param = frame.Method.GetParameters()[0];
+		Assert.AreEqual("Int32*", param.ParameterType.Name);
+
+		var pointerValue = frame.GetValue(param) as PointerValue;
+		Assert.AreEqual("Int32*", pointerValue.Type.Name);
+
+		AssertValue(1, pointerValue.Value);
+
+		var pointerValue2 = new PointerValue (pointerValue.VirtualMachine, pointerValue.Type, pointerValue.Address + pointerValue.Type.GetElementType().GetValueSize());
+
+		AssertValue(2, pointerValue2.Value);
+
+
+		param = frame.Method.GetParameters()[1];
+		Assert.AreEqual("BlittableStruct*", param.ParameterType.Name);
+
+		pointerValue = frame.GetValue(param) as PointerValue;
+		Assert.AreEqual("BlittableStruct*", pointerValue.Type.Name);
+
+		var structValue = pointerValue.Value as StructMirror;
+		Assert.AreEqual("BlittableStruct", structValue.Type.Name);
+
+		object f = structValue.Fields[0];
+		AssertValue (2, f);
+		f = structValue.Fields[1];
+		AssertValue (3.0, f);
+
 	}
 } // class DebuggerTests
 } // namespace

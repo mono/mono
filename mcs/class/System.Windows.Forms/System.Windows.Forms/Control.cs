@@ -193,13 +193,12 @@ namespace System.Windows.Forms
 			static internal Control ControlFromChildHandle (IntPtr handle) {
 				ControlNativeWindow	window;
 
-				Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
-				while (hwnd != null) {
+				while (handle != IntPtr.Zero) {
 					window = (ControlNativeWindow)NativeWindow.FromHandle (handle);
 					if (window != null) {
 						return window.owner;
 					}
-					hwnd = hwnd.Parent;
+					handle = XplatUI.GetParent(handle, false);
 				}
 
 				return null;
@@ -1672,6 +1671,17 @@ namespace System.Windows.Forms
 			}
 		}
 
+		internal static bool IsChild (IntPtr hWndParent, IntPtr hWnd)
+		{
+			for (var parent = XplatUI.GetParent(hWnd, true); parent != IntPtr.Zero; parent = XplatUI.GetParent(parent, true)) {
+				if (parent == hWndParent) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 		private void ChangeParent(Control new_parent) {
 			bool		pre_enabled;
 			bool		pre_visible;
@@ -2465,7 +2475,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool Disposing {
 			get {
-				return is_disposed;
+				return is_disposing;
 			}
 		}
 
@@ -2768,10 +2778,6 @@ namespace System.Windows.Forms
 		public bool IsHandleCreated {
 			get {
 				if (window == null || window.Handle == IntPtr.Zero)
-					return false;
-
-				Hwnd hwnd = Hwnd.ObjectFromHandle (window.Handle);
-				if (hwnd != null && hwnd.zombie)
 					return false;
 
 				return true;
@@ -4894,14 +4900,14 @@ namespace System.Windows.Forms
 		}
 
 		private void UpdateZOrderOfChild(Control child) {
-			if (IsHandleCreated && child.IsHandleCreated && (child.parent == this) && Hwnd.ObjectFromHandle(child.Handle).Mapped) {
+			if (IsHandleCreated && child.IsHandleCreated && (child.parent == this)) {
 				// Need to take into account all controls
 				Control [] all_controls = child_controls.GetAllControls ();
 
 				int index = Array.IndexOf (all_controls, child);
 				
 				for (; index > 0; index--) {
-					if (!all_controls [index - 1].IsHandleCreated || !all_controls [index - 1].VisibleInternal || !Hwnd.ObjectFromHandle(all_controls [index - 1].Handle).Mapped)
+					if (!all_controls [index - 1].IsHandleCreated || !all_controls [index - 1].VisibleInternal)
 						continue;
 					break;
 				}
@@ -4957,10 +4963,6 @@ namespace System.Windows.Forms
 
 			for (int i = 0; i < controls.Length; i ++) {
 				if (!controls[i].IsHandleCreated || !controls[i].VisibleInternal)
-					continue;
-
-				Hwnd hwnd = Hwnd.ObjectFromHandle (controls[i].Handle);
-				if (hwnd == null || hwnd.zero_sized)
 					continue;
 
 				children_to_order.Add (controls[i]);
@@ -5167,6 +5169,9 @@ namespace System.Windows.Forms
 		
 		private void WmDestroy (ref Message m) {
 			OnHandleDestroyed(EventArgs.Empty);
+
+			XplatUI.SetAllowDrop(window.Handle, false);
+			
 #if DebugRecreate
 			IntPtr handle = window.Handle;
 #endif
@@ -5213,44 +5218,46 @@ namespace System.Windows.Forms
 			if (paint_event == null)
 				return;
 
-			DoubleBuffer current_buffer = null;
-			if (UseDoubleBuffering) {
-				current_buffer = GetBackBuffer ();
-				// This optimization doesn't work when the area is invalidated
-				// during a paint operation because finishing the paint operation
-				// clears the invalidated region and then this thing keeps the new
-				// invalidate from working.  To re-enable this, we would need a
-				// mechanism to allow for nested invalidates (see bug #328681)
-				//if (!current_buffer.InvalidRegion.IsVisible (paint_event.ClipRectangle)) {
-				//        // Just blit the previous image
-				//        current_buffer.Blit (paint_event);
-				//        XplatUI.PaintEventEnd (ref m, handle, true);
-				//        return;
-				//}
-				current_buffer.Start (paint_event);
+			try {
+				DoubleBuffer current_buffer = null;
+				if (UseDoubleBuffering) {
+					current_buffer = GetBackBuffer ();
+					// This optimization doesn't work when the area is invalidated
+					// during a paint operation because finishing the paint operation
+					// clears the invalidated region and then this thing keeps the new
+					// invalidate from working.  To re-enable this, we would need a
+					// mechanism to allow for nested invalidates (see bug #328681)
+					//if (!current_buffer.InvalidRegion.IsVisible (paint_event.ClipRectangle)) {
+					//        // Just blit the previous image
+					//        current_buffer.Blit (paint_event);
+					//        XplatUI.PaintEventEnd (ref m, handle, true);
+					//        return;
+					//}
+					current_buffer.Start (paint_event);
+				}
+				// If using OptimizedDoubleBuffer, ensure the clip region gets set
+				if (GetStyle (ControlStyles.OptimizedDoubleBuffer))
+					paint_event.Graphics.SetClip (Rectangle.Intersect (paint_event.ClipRectangle, this.ClientRectangle));
+
+				if (!GetStyle(ControlStyles.Opaque)) {
+					OnPaintBackground (paint_event);
+				}
+
+				// Button-derived controls choose to ignore their Opaque style, give them a chance to draw their background anyways
+				OnPaintBackgroundInternal (paint_event);
+
+				OnPaintInternal(paint_event);
+				if (!paint_event.Handled) {
+					OnPaint (paint_event);
+				}
+
+				if (current_buffer != null) {
+					current_buffer.End (paint_event);
+				}
 			}
-			// If using OptimizedDoubleBuffer, ensure the clip region gets set
-			if (GetStyle (ControlStyles.OptimizedDoubleBuffer))
-				paint_event.Graphics.SetClip (Rectangle.Intersect (paint_event.ClipRectangle, this.ClientRectangle));
-
-			if (!GetStyle(ControlStyles.Opaque)) {
-				OnPaintBackground (paint_event);
+			finally {
+				XplatUI.PaintEventEnd (ref m, handle, true, paint_event);
 			}
-
-			// Button-derived controls choose to ignore their Opaque style, give them a chance to draw their background anyways
-			OnPaintBackgroundInternal (paint_event);
-
-			OnPaintInternal(paint_event);
-			if (!paint_event.Handled) {
-				OnPaint (paint_event);
-			}
-
-			if (current_buffer != null) {
-				current_buffer.End (paint_event);
-			}
-
-
-			XplatUI.PaintEventEnd (ref m, handle, true);
 		}
 
 		private void WmEraseBackground (ref Message m) {
@@ -5500,7 +5507,7 @@ namespace System.Windows.Forms
 //					bool parented = false;
 					for (int i=0; i<controls.Length; i++) {
 						if (controls [i].is_visible && controls[i].IsHandleCreated)
-							if (XplatUI.GetParent (controls[i].Handle) != window.Handle) {
+							if (XplatUI.GetParent (controls[i].Handle, false) != window.Handle) {
 								XplatUI.SetParent(controls[i].Handle, window.Handle);
 //								parented = true;
 							}

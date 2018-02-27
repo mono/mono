@@ -60,22 +60,24 @@ var mono_string_get_utf8 = Module.cwrap ('mono_wasm_string_get_utf8', 'number', 
 var mono_string = Module.cwrap ('mono_wasm_string_from_js', 'number', ['string'])
 
 function call_method (method, this_arg, args) {
-	var stack = Module.Runtime.stackSave ();
-	var args_mem = Runtime.stackAlloc (args.length);
-	var eh_throw = Runtime.stackAlloc (4);
+	var args_mem = Module._malloc (args.length * 4);
+	var eh_throw = Module._malloc (4);
 	for (var i = 0; i < args.length; ++i)
 		Module.setValue (args_mem + i * 4, args [i], "i32");
 	Module.setValue (eh_throw, 0, "i32");
 
 	var res = invoke_method (method, this_arg, args_mem, eh_throw);
 
-	if (Module.getValue (eh_throw, "i32") != 0) {
-		Module.Runtime.stackRestore(stack);
+	var eh_res = Module.getValue (eh_throw, "i32");
+
+	Module._free (args_mem);
+	Module._free (eh_throw);
+
+	if (eh_res != 0) {
 		var msg = conv_string (res);
 		throw new Error (msg); //the convention is that invoke_method ToString () any outgoing exception
 	}
 
-	Module.Runtime.stackRestore(stack);
 	return res;
 }
 
