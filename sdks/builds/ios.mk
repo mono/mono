@@ -9,35 +9,48 @@ include runtime.mk
 #    Install target into ../out/<target>
 # - clean-ios-<target>
 #    Clean target
-# Where <target> is: target32, target64, sim32, sim64, cross32, cross64
+# Where <target> is: target32, target32s, target64, sim32, sim64, cross32, cross64
 #
 
 PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 
 ios_CFLAGS= \
-	-DMONOTOUCH=1
+	$(if $(filter $(RELEASE),true),-O2,-O0 -ggdb3 -gdwarf-2)
 
 ios_CPPFLAGS= \
 	-DMONOTOUCH=1
 
 ios_CXXFLAGS= \
-	-DMONOTOUCH=1
+	$(if $(filter $(RELEASE),true),-O2,-O0 -ggdb3 -gdwarf-2)
 
 ios_LDFLAGS=
 
+COMMON_LDFLAGS=-Wl,-no_weak_imports
+
+BITCODE_CFLAGS=-fexceptions
+BITCODE_LDFLAGS=-framework CoreFoundation -lobjc -lc++
+BITCODE_CONFIGURE_FLAGS=--enable-llvm-runtime --with-bitcode=yes
+
 ##
+# Device builds
+#
 # Parameters
-#  $(1): target (target32 or target64)
+#  $(1): target (target32/target32s/target64)
 #  $(2): arch (armv7 or arm64)
 #  $(3): arch (arm or aarch64)
 #
 # Flags:
-#  ios-$(1)_AC_VARS
-#  ios-$(1)_CFLAGS
-#  ios-$(1)_CPPFLAGS
-#  ios-$(1)_CXXFLAGS
-#  ios-$(1)_LDFLAGS
-#  ios-$(1)_BITCODE_MARKER
+#  ios_$(1)_AC_VARS
+#  ios_$(1)_SYSROOT
+#  ios_$(1)_CONFIGURE_FLAGS
+#  ios_$(1)_CFLAGS
+#  ios_$(1)_CPPFLAGS
+#  ios_$(1)_CXXFLAGS
+#  ios_$(1)_LDFLAGS
+#  ios_$(1)_BITCODE_MARKER
+#
+# This handles tvos as well.
+#
 define iOSDeviceTemplate
 
 _ios-$(1)_CC=$$(CCACHE) $$(PLATFORM_BIN)/clang
@@ -60,30 +73,27 @@ _ios-$(1)_AC_VARS= \
 
 _ios-$(1)_CFLAGS= \
 	$$(ios_CFLAGS) \
-	-isysroot $(XCODE_DIR)/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS$$(IOS_VERSION).sdk -miphoneos-version-min=$$(IOS_VERSION_MIN) \
+	$$(ios_$(1)_SYSROOT) \
+	-arch $(2) \
 	-Wl,-application_extension \
 	-fexceptions \
-	-DSMALL_CONFIG -DDISABLE_POLICY_EVIDENCE=1 -DDISABLE_PROCESS_HANDLING=1 -D_XOPEN_SOURCE -DHOST_IOS -DHAVE_LARGE_FILE_SUPPORT=1 \
-	$$(ios-$(1)_BITCODE_MARKER) \
-	$$(ios-$(1)_CFLAGS)
+	$$(ios_$(1)_BITCODE_MARKER) \
+	$$(ios_$(1)_CFLAGS)
 
-_ios-$(1)_CPPFLAGS= \
-	$$(ios_CPPFLAGS) \
-	-isysroot $(XCODE_DIR)/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS$$(IOS_VERSION).sdk -miphoneos-version-min=$$(IOS_VERSION_MIN) \
-	-arch $(2) \
-	-Wl,-application_extension \
-	-DSMALL_CONFIG -DDISABLE_POLICY_EVIDENCE=1 -DDISABLE_PROCESS_HANDLING=1 -D_XOPEN_SOURCE -DHOST_IOS -DHAVE_LARGE_FILE_SUPPORT=1 \
-	$$(ios-$(1)_BITCODE_MARKER) \
-	$$(ios-$(1)_CPPFLAGS)
-
-_ios-$(1)_CXXFLAGS= \
+_ios_$(1)_CXXFLAGS= \
 	$$(ios_CXXFLAGS) \
-	-isysroot $(XCODE_DIR)/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS$$(IOS_VERSION).sdk -miphoneos-version-min=$$(IOS_VERSION_MIN) \
+	$$(ios_$(1)_SYSROOT) \
 	-arch $(2) \
 	-Wl,-application_extension \
+	$$(ios_$(1)_CXXFLAGS) \
+	$$(ios_$(1)_BITCODE_MARKER)
+
+_ios_$(1)_CPPFLAGS= \
+	$$(ios_CPPFLAGS) \
+	$$(ios_$(1)_SYSROOT) \
+	-arch $(2) \
 	-DSMALL_CONFIG -DDISABLE_POLICY_EVIDENCE=1 -DDISABLE_PROCESS_HANDLING=1 -D_XOPEN_SOURCE -DHOST_IOS -DHAVE_LARGE_FILE_SUPPORT=1 \
-	$$(ios-$(1)_BITCODE_MARKER) \
-	$$(ios-$(1)_CPPFLAGS)
+	$$(ios_$(1)_CPPFLAGS)
 
 _ios-$(1)_LDFLAGS= \
 	$$(ios_LDFLAGS) \
@@ -115,7 +125,8 @@ _ios-$(1)_CONFIGURE_FLAGS = \
 	--with-monotouch \
 	--with-tls=pthread \
 	--without-ikvm-native \
-	--without-sigaltstack
+	--without-sigaltstack \
+	$$(ios_$(1)_CONFIGURE_FLAGS)
 
 .stamp-ios-$(1)-toolchain:
 	touch $$@
@@ -124,12 +135,48 @@ $$(eval $$(call RuntimeTemplate,ios-$(1)))
 
 endef
 
+ios_sysroot = -isysroot $(XCODE_DIR)/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS$(IOS_VERSION).sdk -miphoneos-version-min=$(IOS_VERSION_MIN)
+tvos_sysroot = -isysroot $(XCODE_DIR)/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS$(TVOS_VERSION).sdk 	-mtvos-version-min=$(TVOS_VERSION_MIN)
+
+# explicitly disable dtrace, since it requires inline assembly, which is disabled on AppleTV (and mono's configure.ac doesn't know that (yet at least))
+ios_targettv_CONFIGURE_FLAGS = 	--enable-dtrace=no $(BITCODE_CONFIGURE_FLAGS)
+
+ios_target32_SYSROOT = $(ios_sysroot)
+ios_target32s_SYSROOT = $(ios_sysroot)
+ios_target64_SYSROOT = $(ios_sysroot)
+ios_targettv_SYSROOT = $(tvos_sysroot)
+
+ios_target32_CPPFLAGS = -DHOST_IOS
+ios_target32s_CPPFLAGS = -DHOST_IOS
+ios_target64_CPPFLAGS = -DHOST_IOS
+ios_targettv_CPPFLAGS = -DHOST_APPLETVOS -DTARGET_APPLETVOS
+
+ios_targettv_CFLAGS = -fembed-bitcode -fno-gnu-inline-asm
+ios_targettv_CXXFLAGS = -fembed-bitcode -fno-gnu-inline-asm
+
+ios_targettv_LDFLAGS = -Wl,-bitcode_bundle $(BITCODE_LDFLAGS)
+
+ios_targettv_AC_VARS = \
+	ac_cv_func_system=no			\
+	ac_cv_func_pthread_kill=no      \
+	ac_cv_func_kill=no              \
+	ac_cv_func_sigaction=no         \
+	ac_cv_func_fork=no              \
+	ac_cv_func_execv=no             \
+	ac_cv_func_execve=no            \
+	ac_cv_func_execvp=no            \
+	ac_cv_func_signal=no
+
 # ios_target32_BITCODE_MARKER=-fembed-bitcode-marker
 $(eval $(call iOSDeviceTemplate,target32,armv7,arm))
+$(eval $(call iOSDeviceTemplate,target32s,armv7s,arm))
 # ios_target64_BITCODE_MARKER=-fembed-bitcode-marker
 $(eval $(call iOSDeviceTemplate,target64,arm64,aarch64))
+$(eval $(call iOSDeviceTemplate,targettv,arm64,aarch64))
 
 ##
+# Simulator builds
+#
 # Parameters
 #  $(1): target (sim32 or sim64)
 #  $(2): arch (i386 or x86_64)
@@ -275,7 +322,7 @@ _ios_$(1)_CONFIGURE_FLAGS= \
 	--disable-libraries \
 	--disable-mcs-build \
 	--disable-nls \
-	--enable-dtrace=yes \
+	--enable-dtrace=no \
 	--enable-icall-symbol-map \
 	--enable-minimal=com,remoting \
 	--with-cross-offsets=$(4).h \
@@ -286,10 +333,7 @@ _ios_$(1)_CONFIGURE_FLAGS= \
 
 .stamp-ios-$(1)-$$(CONFIGURATION)-configure: | build-ios-llvm
 
-$$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/mono/utils/mono-dtrace.h: .stamp-ios-$(1)-$$(CONFIGURATION)-configure
-	$$(MAKE) -C $$(dir $$@) $$(notdir $$@)
-
-$$(TOP)/sdks/builds/ios-$(1)/$(4).h: .stamp-ios-$(1)-configure $$(TOP)/sdks/builds/ios-$(1)/mono/utils/mono-dtrace.h $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe
+$$(TOP)/sdks/builds/ios-$(1)/$(4).h: .stamp-ios-$(1)-configure $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe
 	cd $$(TOP)/sdks/builds/ios-$(1) && \
 		MONO_PATH=$(TOP)/tools/offsets-tool/CppSharp/osx_32 \
 			mono --arch=32 --debug $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe \
@@ -311,3 +355,5 @@ ios_crosswatch_CONFIGURE_FLAGS=--build=i386-apple-darwin10 	--with-cooperative-g
 $(eval $(call iOSCrossTemplate,cross32,arm,llvm32,arm-darwin,arm-apple-darwin10))
 $(eval $(call iOSCrossTemplate,cross64,aarch64,llvm64,aarch64-darwin,aarch64-apple-darwin10))
 $(eval $(call iOSCrossTemplate,crosswatch,armv7k,llvm32,armv7k-unknown-darwin,armv7k-apple-darwin))
+
+configure-mono: $(TOP)/configure
