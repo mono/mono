@@ -259,7 +259,7 @@ HANDLES(ICALL(ENUM_3, "InternalCompareTo", ves_icall_System_Enum_compare_value_t
 HANDLES(ICALL(ENUM_4, "InternalGetUnderlyingType", ves_icall_System_Enum_get_underlying_type))
 HANDLES(ICALL(ENUM_5, "InternalHasFlag", ves_icall_System_Enum_InternalHasFlag))
 HANDLES(ICALL(ENUM_6, "get_hashcode", ves_icall_System_Enum_get_hashcode))
-ICALL(ENUM_7, "get_value", ves_icall_System_Enum_get_value)
+HANDLES(ICALL(ENUM_7, "get_value", ves_icall_System_Enum_get_value))
 
 ICALL_TYPE(ENV, "System.Environment", ENV_1)
 ICALL(ENV_1, "Exit", ves_icall_System_Environment_Exit)

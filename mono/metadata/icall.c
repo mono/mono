@@ -3650,32 +3650,29 @@ ves_icall_System_Enum_InternalHasFlag (MonoObjectHandle a, MonoObjectHandle b, M
 	return (a_val & b_val) == b_val;
 }
 
-ICALL_EXPORT MonoObject *
-ves_icall_System_Enum_get_value (MonoObject *eobj)
+ICALL_EXPORT MonoObjectHandle
+ves_icall_System_Enum_get_value (MonoObjectHandle ehandle, MonoError *error)
 {
-	ERROR_DECL (error);
-	MonoObject *res;
+	MonoObjectHandle resultHandle;
 	MonoClass *enumc;
-	gpointer dst;
-	gpointer src;
 	int size;
 
-	if (!eobj)
-		return NULL;
+	goto_if (MONO_HANDLE_IS_NULL (ehandle), return_null);
+	goto_if (!MONO_HANDLE_RAW (ehandle), return_null);
 
-	g_assert (eobj->vtable->klass->enumtype);
-	
-	enumc = mono_class_from_mono_type (mono_class_enum_basetype (eobj->vtable->klass));
-	res = mono_object_new_checked (mono_object_domain (eobj), enumc, error);
-	if (mono_error_set_pending_exception (error))
-		return NULL;
-	dst = (char *)res + sizeof (MonoObject);
-	src = (char *)eobj + sizeof (MonoObject);
+	g_assert (MONO_HANDLE_GETVAL (ehandle, vtable)->klass->enumtype);
+
+	enumc = mono_class_from_mono_type (mono_class_enum_basetype (MONO_HANDLE_GETVAL (ehandle, vtable)->klass));
+
+	resultHandle = mono_object_new_handle (MONO_HANDLE_DOMAIN (ehandle), enumc, error);
+	goto_if_nok (error, return_null);
 	size = mono_class_value_size (enumc, NULL);
 
-	memcpy (dst, src, size);
+	memcpy (mono_handle_unbox_unsafe (resultHandle), mono_handle_unbox_unsafe (ehandle), size);
 
-	return res;
+	return resultHandle;
+return_null:
+	return MONO_HANDLE_NEW (MonoObject, NULL);
 }
 
 ICALL_EXPORT MonoReflectionTypeHandle
