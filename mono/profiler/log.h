@@ -7,7 +7,7 @@
 
 #define BUF_ID 0x4D504C01
 #define LOG_HEADER_ID 0x4D505A01
-#define LOG_VERSION_MAJOR 2
+#define LOG_VERSION_MAJOR 3
 #define LOG_VERSION_MINOR 0
 #define LOG_DATA_VERSION 16
 
@@ -15,6 +15,7 @@
  * Changes in major/minor versions:
  * version 1.0: removed sysid field from header
  *              added args, arch, os fields to header
+ * version 3.0: added nanoseconds startup time to header
  *
  * Changes in data versions:
  * version 2: added offsets in heap walk
@@ -95,10 +96,12 @@
  *
  * header format:
  * [id: 4 bytes] constant value: LOG_HEADER_ID
- * [major: 1 byte] [minor: 1 byte] major and minor version of the log profiler
+ * [major: 1 byte] major version of the log profiler
+ * [minor: 1 byte] minor version of the log profiler
  * [format: 1 byte] version of the data format for the rest of the file
  * [ptrsize: 1 byte] size in bytes of a pointer in the profiled program
  * [startup time: 8 bytes] time in milliseconds since the unix epoch when the program started
+ * [ns startup time: 8 bytes] time in nanoseconds since an unspecified epoch when the program started
  * [timer overhead: 4 bytes] approximate overhead in nanoseconds of the timer
  * [flags: 4 bytes] file format flags, should be 0 for now
  * [pid: 4 bytes] pid of the profiled process

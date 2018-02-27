@@ -972,6 +972,7 @@ dump_header (void)
 		sizeof (gint8) /* data version */ +
 		sizeof (gint8) /* word size */ +
 		sizeof (gint64) /* startup time */ +
+		sizeof (gint64) /* startup time (nanoseconds) */ +
 		sizeof (gint32) /* timer overhead */ +
 		sizeof (gint32) /* flags */ +
 		sizeof (gint32) /* process id */ +
@@ -988,6 +989,7 @@ dump_header (void)
 	*p++ = LOG_DATA_VERSION;
 	*p++ = sizeof (void *);
 	p = write_int64 (p, ((uint64_t) time (NULL)) * 1000);
+	p = write_int64 (p, current_time ());
 	p = write_int32 (p, log_profiler.timer_overhead);
 	p = write_int32 (p, 0); /* flags */
 	p = write_int32 (p, process_id ());

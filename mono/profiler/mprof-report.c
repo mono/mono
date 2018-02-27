@@ -3220,23 +3220,38 @@ load_file (char *name)
 	if (ctx->file != stdin)
 		ctx->gzfile = gzdopen (fileno (ctx->file), "rb");
 #endif
-	if (!load_data (ctx, 30))
+	if (!load_data (ctx, 16))
 		return NULL;
 	p = ctx->buf;
-	if (read_int32 (p) != LOG_HEADER_ID || p [6] > LOG_DATA_VERSION)
+	if (read_int32 (p) != LOG_HEADER_ID)
 		return NULL;
-	ctx->version_major = p [4];
-	ctx->version_minor = p [5];
-	ctx->data_version = p [6];
+	p += 4;
+	ctx->version_major = *p++;
+	ctx->version_minor = *p++;
+	ctx->data_version = *p++;
+	if (ctx->data_version > LOG_DATA_VERSION)
+		return NULL;
 	/* reading 64 bit files on 32 bit systems not supported yet */
-	if (p [7] > sizeof (void*))
+	if (*p++ > sizeof (void*))
 		return NULL;
-	if (read_int32 (p + 20)) /* flags must be 0 */
+	ctx->startup_time = read_int64 (p);
+	p += 8;
+	// nanoseconds startup time
+	if (ctx->version_major >= 3)
+		if (!load_data (ctx, 8))
+			return NULL;
+	if (!load_data (ctx, 14))
 		return NULL;
-	ctx->startup_time = read_int64 (p + 8);
-	ctx->timer_overhead = read_int32 (p + 16);
-	ctx->pid = read_int32 (p + 24);
-	ctx->port = read_int16 (p + 28);
+	p = ctx->buf;
+	ctx->timer_overhead = read_int32 (p);
+	p += 4;
+	if (read_int32 (p)) /* flags must be 0 */
+		return NULL;
+	p += 4;
+	ctx->pid = read_int32 (p);
+	p += 4;
+	ctx->port = read_int16 (p);
+	p += 2;
 	if (ctx->version_major >= 1) {
 		if (!read_header_string (ctx, &ctx->args))
 			return NULL;
