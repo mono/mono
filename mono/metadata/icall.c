@@ -3639,13 +3639,13 @@ return_null:
 }
 
 ICALL_EXPORT MonoBoolean
-ves_icall_System_Enum_InternalHasFlag (MonoObject *a, MonoObject *b)
+ves_icall_System_Enum_InternalHasFlag (MonoObjectHandle a, MonoObjectHandle b, MonoError *error)
 {
-	int size = mono_class_value_size (a->vtable->klass, NULL);
+	int size = mono_class_value_size (MONO_HANDLE_GETVAL (a, vtable)->klass, NULL);
 	guint64 a_val = 0, b_val = 0;
 
-	memcpy (&a_val, mono_object_unbox (a), size);
-	memcpy (&b_val, mono_object_unbox (b), size);
+	memcpy (&a_val, mono_handle_unbox_unsafe (a), size);
+	memcpy (&b_val, mono_handle_unbox_unsafe (b), size);
 
 	return (a_val & b_val) == b_val;
 }
