@@ -918,6 +918,8 @@ lookup_unmanaged_binary (uintptr_t addr)
 
 // For backwards compatibility.
 enum {
+	TYPE_SAMPLE_UBIN = 2 << 4,
+
 	TYPE_COVERAGE = 9,
 
 	TYPE_COVERAGE_ASSEMBLY = 0 << 4,

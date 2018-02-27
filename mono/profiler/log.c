@@ -2383,33 +2383,6 @@ add_code_pointer (uintptr_t ip)
 	num_code_pages += add_code_page (code_pages, size_code_pages, ip & CPAGE_MASK);
 }
 
-/* ELF code crashes on some systems. */
-//#if defined(HAVE_DL_ITERATE_PHDR) && defined(ELFMAG0)
-#if 0
-static void
-dump_ubin (const char *filename, uintptr_t load_addr, uint64_t offset, uintptr_t size)
-{
-	int len = strlen (filename) + 1;
-
-	ENTER_LOG (&sample_ubins_ctr, logbuffer,
-		EVENT_SIZE /* event */ +
-		LEB128_SIZE /* load address */ +
-		LEB128_SIZE /* offset */ +
-		LEB128_SIZE /* size */ +
-		len /* file name */
-	);
-
-	emit_event (logbuffer, TYPE_SAMPLE | TYPE_SAMPLE_UBIN);
-	emit_ptr (logbuffer, load_addr);
-	emit_uvalue (logbuffer, offset);
-	emit_uvalue (logbuffer, size);
-	memcpy (logbuffer->cursor, filename, len);
-	logbuffer->cursor += len;
-
-	EXIT_LOG;
-}
-#endif
-
 static void
 dump_usym (const char *name, uintptr_t value, uintptr_t size)
 {
@@ -2423,7 +2396,7 @@ dump_usym (const char *name, uintptr_t value, uintptr_t size)
 	);
 
 	emit_event (logbuffer, TYPE_SAMPLE | TYPE_SAMPLE_USYM);
-	emit_ptr (logbuffer, (void*)value);
+	emit_ptr (logbuffer, (void *) value);
 	emit_value (logbuffer, size);
 	memcpy (logbuffer->cursor, name, len);
 	logbuffer->cursor += len;
@@ -2431,8 +2404,6 @@ dump_usym (const char *name, uintptr_t value, uintptr_t size)
 	EXIT_LOG;
 }
 
-/* ELF code crashes on some systems. */
-//#if defined(ELFMAG0)
 static const char*
 symbol_for (uintptr_t code)
 {

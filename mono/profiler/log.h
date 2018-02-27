@@ -84,6 +84,7 @@
                added mvid to image load events
                added generation field to TYPE_HEAO_OBJECT
                added TYPE_AOT_ID
+               removed TYPE_SAMPLE_UBIN
  */
 
 /*
@@ -298,7 +299,7 @@
  *
  * type sample format
  * type: TYPE_SAMPLE
- * exinfo: one of TYPE_SAMPLE_HIT, TYPE_SAMPLE_USYM, TYPE_SAMPLE_UBIN, TYPE_SAMPLE_COUNTERS_DESC, TYPE_SAMPLE_COUNTERS
+ * exinfo: one of TYPE_SAMPLE_HIT, TYPE_SAMPLE_USYM, TYPE_SAMPLE_COUNTERS_DESC, TYPE_SAMPLE_COUNTERS
  * if exinfo == TYPE_SAMPLE_HIT
  * 	[thread: sleb128] thread id as difference from ptr_base
  * 	[count: uleb128] number of following instruction addresses
@@ -310,11 +311,6 @@
  * 	[address: sleb128] symbol address as a difference from ptr_base
  * 	[size: uleb128] symbol size (may be 0 if unknown)
  * 	[name: string] symbol name
- * if exinfo == TYPE_SAMPLE_UBIN
- * 	[address: sleb128] address where binary has been loaded as a difference from ptr_base
- * 	[offset: uleb128] file offset of mapping (the same file can be mapped multiple times)
- * 	[size: uleb128] memory size
- * 	[name: string] binary name
  * if exinfo == TYPE_SAMPLE_COUNTERS_DESC
  * 	[len: uleb128] number of counters
  * 	for i = 0 to len
@@ -401,7 +397,6 @@ enum {
 	/* extended type for TYPE_SAMPLE */
 	TYPE_SAMPLE_HIT           = 0 << 4,
 	TYPE_SAMPLE_USYM          = 1 << 4,
-	TYPE_SAMPLE_UBIN          = 2 << 4,
 	TYPE_SAMPLE_COUNTERS_DESC = 3 << 4,
 	TYPE_SAMPLE_COUNTERS      = 4 << 4,
 	/* extended type for TYPE_RUNTIME */

@@ -558,6 +558,7 @@ namespace Mono.Profiler.Log {
 		}
 	}
 
+	[Obsolete ("This event is no longer produced.")]
 	public sealed class UnmanagedBinaryEvent : LogEvent {
 
 		public long SegmentPointer { get; internal set; }
