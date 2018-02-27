@@ -3171,12 +3171,8 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	/* coop requires loop detection to happen */
 	if (mono_threads_are_safepoints_enabled ())
 		cfg->opt |= MONO_OPT_LOOP;
-#if defined(_AIX)
-	/*
-	 * HACK: AIX always allows accessing page 0! We can't rely on SIGSEGV
-	 * to save us when a null dereference in managed code occurs, so we
-	 * always have to check for null.
-	 */
+#if defined(MONO_ARCH_NEED_NULL_CHECK)
+	/* some platforms have null pages, so we can't rely on SIGSEGV */
 	cfg->explicit_null_checks = TRUE;
 #else
 	cfg->explicit_null_checks = debug_options.explicit_null_checks || (flags & JIT_FLAG_EXPLICIT_NULL_CHECKS);
