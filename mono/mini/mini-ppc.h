@@ -260,7 +260,7 @@ typedef struct MonoCompileArch {
  * to save us when a null dereference in managed code occurs, so we
  * always have to check for null.
  */
-#define MONO_ARCH_NEED_NULL_CHECK 1
+#define MONO_ARCH_EXPLICIT_NULL_CHECKS 1
 #endif
 
 #define PPC_NUM_REG_ARGS (PPC_LAST_ARG_REG-PPC_FIRST_ARG_REG+1)
