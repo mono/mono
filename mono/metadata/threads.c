@@ -1599,7 +1599,7 @@ ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThre
 }
 
 void
-ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms)
+ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error)
 {
 	guint32 res;
 	MonoInternalThread *thread = mono_thread_internal_current ();
@@ -1619,9 +1619,11 @@ ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms)
 		mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
 
 		if (alerted) {
-			MonoException* exc = mono_thread_execute_interruption_ptr ();
-			if (exc) {
-				mono_set_pending_exception (exc);
+			// NOTE: Normally handles are not allowed in a loop,
+			// but this terminates when it gets one.
+			MonoExceptionHandle exc = mono_thread_execute_interruption ();
+			if (!MONO_HANDLE_IS_NULL (exc)) {
+				mono_set_pending_exception_handle (exc);
 				return;
 			} else {
 				// FIXME: !MONO_INFINITE_WAIT
@@ -1947,7 +1949,8 @@ mono_thread_internal_current_handle (void)
 static MonoThreadInfoWaitRet
 mono_join_uninterrupted (MonoThreadHandle* thread_to_join, gint32 ms, MonoError *error)
 {
-	MonoException *exc;
+	HANDLE_FUNCTION_ENTER ();
+
 	MonoThreadInfoWaitRet ret;
 	gint64 start;
 	gint32 diff_ms;
@@ -1962,12 +1965,14 @@ mono_join_uninterrupted (MonoThreadHandle* thread_to_join, gint32 ms, MonoError 
 		MONO_EXIT_GC_SAFE;
 
 		if (ret != MONO_THREAD_INFO_WAIT_RET_ALERTED)
-			return ret;
+			break;
 
-		exc = mono_thread_execute_interruption_ptr ();
-		if (exc) {
-			mono_error_set_exception_instance (error, exc);
-			return ret;
+		// NOTE: Normally handles are not allowed in a loop,
+		// but this terminates when it gets one.
+		MonoExceptionHandle exc = mono_thread_execute_interruption ();
+		if (!MONO_HANDLE_IS_NULL (exc)) {
+			mono_error_set_exception_handle (error, exc);
+			break;
 		}
 
 		if (ms == -1)
@@ -1977,12 +1982,12 @@ mono_join_uninterrupted (MonoThreadHandle* thread_to_join, gint32 ms, MonoError 
 		diff_ms = (gint32)(mono_msec_ticks () - start);
 		if (diff_ms >= ms) {
 			ret = MONO_THREAD_INFO_WAIT_RET_TIMEOUT;
-			return ret;
+			break;
 		}
 		wait = ms - diff_ms;
 	}
 
-	return ret;
+	HANDLE_FUNCTION_RETURN_VAL (ret);
 }
 
 gboolean
@@ -2061,7 +2066,6 @@ ves_icall_System_Threading_WaitHandle_Wait_internal (gpointer *handles, gint32 n
 {
 	MonoW32HandleWaitRet ret;
 	MonoInternalThread *thread;
-	MonoException *exc;
 	gint64 start;
 	guint32 timeoutLeft;
 
@@ -2096,9 +2100,11 @@ ves_icall_System_Threading_WaitHandle_Wait_internal (gpointer *handles, gint32 n
 		if (ret != MONO_W32HANDLE_WAIT_RET_ALERTED)
 			break;
 
-		exc = mono_thread_execute_interruption_ptr ();
-		if (exc) {
-			mono_error_set_exception_instance (error, exc);
+		// NOTE: Normally handles are not allowed in a loop,
+		// but this terminates when it gets one.
+		MonoExceptionHandle exc = mono_thread_execute_interruption ();
+		if (!MONO_HANDLE_IS_NULL (exc)) {
+			mono_error_set_exception_handle (error, exc);
 			break;
 		}
 
@@ -4967,6 +4973,8 @@ mono_runtime_set_pending_exception (MonoException *exc, mono_bool overwrite)
 	mono_thread_request_interruption_native ();
 
 	return TRUE;
+=======
+>>>>>>> [Coop] Convert thread abort and sleep and interruption to coop/handle.
 }
 
 
