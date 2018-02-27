@@ -6,6 +6,7 @@
 #include <config.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/tabledefs.h>
+#include <mono/metadata/class-abi-details.h>
 #ifdef MONO_CLASS_DEF_PRIVATE
 #include <mono/metadata/abi-details.h>
 #define REALLY_INCLUDE_CLASS_DEF 1
