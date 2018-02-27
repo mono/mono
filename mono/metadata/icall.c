@@ -3678,29 +3678,26 @@ ves_icall_System_Enum_get_value (MonoObject *eobj)
 	return res;
 }
 
-ICALL_EXPORT MonoReflectionType *
-ves_icall_System_Enum_get_underlying_type (MonoReflectionType *type)
+ICALL_EXPORT MonoReflectionTypeHandle
+ves_icall_System_Enum_get_underlying_type (MonoReflectionTypeHandle type, MonoError *error)
 {
-	ERROR_DECL (error);
-	MonoReflectionType *ret;
 	MonoType *etype;
 	MonoClass *klass;
 
-	klass = mono_class_from_mono_type (type->type);
+	klass = mono_class_from_mono_type (MONO_HANDLE_GETVAL (type, type));
 	mono_class_init_checked (klass, error);
-	if (mono_error_set_pending_exception (error))
-		return NULL;
+	goto_if_nok (error, return_null);
 
 	etype = mono_class_enum_basetype (klass);
 	if (!etype) {
-		mono_set_pending_exception (mono_get_exception_argument ("enumType", "Type provided must be an Enum."));
-		return NULL;
+		mono_set_pending_exception_handle (mono_exception_new_argument ("enumType", "Type provided must be an Enum.", error));
+		goto return_null;
 	}
 
-	ret = mono_type_get_object_checked (mono_object_domain (type), etype, error);
-	mono_error_set_pending_exception (error);
+	return mono_type_get_object_handle (MONO_HANDLE_DOMAIN (type), etype, error);
 
-	return ret;
+return_null:
+	return MONO_HANDLE_NEW (MonoReflectionType, NULL);
 }
 
 ICALL_EXPORT int
