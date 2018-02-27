@@ -153,7 +153,9 @@ gint64 ves_icall_System_Threading_Interlocked_Decrement_Long(gint64 * location);
 void
 ves_icall_System_Threading_Thread_Abort (MonoInternalThreadHandle thread_handle, MonoObjectHandle state, MonoError *error);
 
-void ves_icall_System_Threading_Thread_ResetAbort (MonoThread *this_obj);
+void
+ves_icall_System_Threading_Thread_ResetAbort (MonoThreadObjectHandle this_obj, MonoError *error);
+
 MonoObject* ves_icall_System_Threading_Thread_GetAbortExceptionState (MonoThread *thread);
 
 void

@@ -2548,7 +2548,7 @@ mono_thread_internal_abort (MonoInternalThread *thread, gboolean appdomain_unloa
 }
 
 void
-ves_icall_System_Threading_Thread_ResetAbort (MonoThread *this_obj)
+ves_icall_System_Threading_Thread_ResetAbort (MonoThreadObjectHandle this_obj, MonoError *error)
 {
 	MonoInternalThread *thread = mono_thread_internal_current ();
 	gboolean was_aborting, is_domain_abort;
@@ -2563,7 +2563,8 @@ ves_icall_System_Threading_Thread_ResetAbort (MonoThread *this_obj)
 
 	if (!was_aborting) {
 		const char *msg = "Unable to reset abort because no abort was requested";
-		mono_set_pending_exception (mono_get_exception_thread_state (msg));
+		mono_set_pending_exception_handle (mono_exception_new_thread_state (msg, error));
+		mono_error_assert_ok (error);
 		return;
 	} else if (is_domain_abort) {
 		/* Silently ignore abort resets in unloading appdomains */
