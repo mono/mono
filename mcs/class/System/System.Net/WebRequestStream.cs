@@ -131,28 +131,38 @@ namespace System.Net
 			Operation.CompleteRequestWritten (this);
 		}
 
-		public override async Task WriteAsync (byte[] buffer, int offset, int size, CancellationToken cancellationToken)
+		public override Task WriteAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
-			WebConnection.Debug ($"{ME} WRITE ASYNC: {buffer.Length}/{offset}/{size}");
-
-			Operation.ThrowIfClosedOrDisposed (cancellationToken);
-
-			if (Operation.WriteBuffer != null)
-				throw new InvalidOperationException ();
-
 			if (buffer == null)
 				throw new ArgumentNullException (nameof (buffer));
 
 			int length = buffer.Length;
 			if (offset < 0 || length < offset)
 				throw new ArgumentOutOfRangeException (nameof (offset));
-			if (size < 0 || (length - offset) < size)
-				throw new ArgumentOutOfRangeException (nameof (size));
+			if (count < 0 || (length - offset) < count)
+				throw new ArgumentOutOfRangeException (nameof (count));
+
+			WebConnection.Debug ($"{ME} WRITE ASYNC: {buffer.Length}/{offset}/{count}");
+
+			if (cancellationToken.IsCancellationRequested)
+				return Task.FromCanceled (cancellationToken);
+
+			Operation.ThrowIfClosedOrDisposed (cancellationToken);
+
+			if (Operation.WriteBuffer != null)
+				throw new InvalidOperationException ();
 
 			var completion = new WebCompletionSource ();
 			if (Interlocked.CompareExchange (ref pendingWrite, completion, null) != null)
 				throw new InvalidOperationException (SR.GetString (SR.net_repcall));
 
+			return WriteAsyncInner (buffer, offset, count, completion, cancellationToken);
+		}
+
+		async Task WriteAsyncInner (byte[] buffer, int offset, int size,
+		                            WebCompletionSource completion,
+		                            CancellationToken cancellationToken)
+		{
 			try {
 				await ProcessWrite (buffer, offset, size, cancellationToken).ConfigureAwait (false);
 
