@@ -62,6 +62,8 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\IDictionaryDebugView.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\KeyValuePair.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Diagnostics\StackTraceHiddenAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CompareInfo.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CompareInfo.Invariant.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Memory.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\MemoryDebugView.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ReadOnlyMemory.cs" />
@@ -147,6 +149,7 @@
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Array.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\Generic\ArraySortHelper.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\LowLevelComparer.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Globalization\GlobalizationMode.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\LockHolder.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\DebuggerSupport.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\DebuggerSupport.Dummy.cs" />
@@ -355,7 +358,6 @@
     <Compile Include="..\referencesource\mscorlib\system\globalization\CalendricalCalculationsHelper.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\charunicodeinfo.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\chineselunisolarcalendar.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\globalization\compareinfo.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\culturenotfoundexception.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\culturetypes.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\datetimeformat.cs" />
@@ -903,6 +905,8 @@
     <Compile Include="coreclr\SorterArray.cs" />
     <Compile Include="CoreFoundation\CFHelpers.cs" />
     <Compile Include="corefx\AwaitTaskContinuation.cs" />
+    <Compile Include="corefx\CompareInfo.cs" />
+    <Compile Include="corefx\GlobalizationMode.cs" />
     <Compile Include="corefx\SR.cs" />
     <Compile Include="corefx\SynchronizationContext.cs" />
     <Compile Include="corert\AddrofIntrinsics.cs" />
