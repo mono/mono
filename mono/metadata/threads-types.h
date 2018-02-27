@@ -91,7 +91,9 @@ ves_icall_System_Threading_Thread_Thread_internal (MonoThreadObjectHandle this_o
 void
 ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThreadHandle this_obj, MonoError *error);
 
-void ves_icall_System_Threading_Thread_Sleep_internal(gint32 ms);
+void
+ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error);
+
 gboolean ves_icall_System_Threading_Thread_Join_internal(MonoThread *this_obj, int ms);
 
 gint32
@@ -148,7 +150,9 @@ gint64 ves_icall_System_Threading_Interlocked_Increment_Long(gint64 *location);
 gint32 ves_icall_System_Threading_Interlocked_Decrement_Int(gint32 *location);
 gint64 ves_icall_System_Threading_Interlocked_Decrement_Long(gint64 * location);
 
-void ves_icall_System_Threading_Thread_Abort (MonoInternalThread *thread, MonoObject *state);
+void
+ves_icall_System_Threading_Thread_Abort (MonoInternalThreadHandle thread_handle, MonoObjectHandle state, MonoError *error);
+
 void ves_icall_System_Threading_Thread_ResetAbort (MonoThread *this_obj);
 MonoObject* ves_icall_System_Threading_Thread_GetAbortExceptionState (MonoThread *thread);
 
@@ -259,6 +263,9 @@ mono_thread_interruption_checkpoint_bool (void);
 
 void
 mono_thread_interruption_checkpoint_void (void);
+
+MonoExceptionHandle
+mono_thread_interruption_checkpoint_handle (void);
 
 MonoException* mono_thread_force_interruption_checkpoint_noraise (void);
 gint32* mono_thread_interruption_request_flag (void);

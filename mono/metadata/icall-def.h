@@ -960,7 +960,7 @@ ICALL(SEMA_2, "OpenSemaphore_internal(string,System.Security.AccessControl.Semap
 ICALL(SEMA_3, "ReleaseSemaphore_internal(intptr,int,int&)", ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal)
 
 ICALL_TYPE(THREAD, "System.Threading.Thread", THREAD_1)
-ICALL(THREAD_1, "Abort_internal(System.Threading.InternalThread,object)", ves_icall_System_Threading_Thread_Abort)
+HANDLES(ICALL(THREAD_1, "Abort_internal(System.Threading.InternalThread,object)", ves_icall_System_Threading_Thread_Abort))
 HANDLES(ICALL(THREAD_1a, "ByteArrayToCurrentDomain(byte[])", ves_icall_System_Threading_Thread_ByteArrayToCurrentDomain))
 HANDLES(ICALL(THREAD_1b, "ByteArrayToRootDomain(byte[])", ves_icall_System_Threading_Thread_ByteArrayToRootDomain))
 HANDLES(ICALL(THREAD_2, "ClrState(System.Threading.InternalThread,System.Threading.ThreadState)", ves_icall_System_Threading_Thread_ClrState))
@@ -980,7 +980,7 @@ ICALL(THREAD_15, "ResumeInternal", ves_icall_System_Threading_Thread_Resume)
 ICALL(THREAD_18, "SetName_internal(System.Threading.InternalThread,string)", ves_icall_System_Threading_Thread_SetName_internal)
 HANDLES(ICALL(THREAD_58, "SetPriorityNative", ves_icall_System_Threading_Thread_SetPriority))
 HANDLES(ICALL(THREAD_21, "SetState(System.Threading.InternalThread,System.Threading.ThreadState)", ves_icall_System_Threading_Thread_SetState))
-ICALL(THREAD_22, "SleepInternal", ves_icall_System_Threading_Thread_Sleep_internal)
+HANDLES(ICALL(THREAD_22, "SleepInternal", ves_icall_System_Threading_Thread_Sleep_internal))
 HANDLES(ICALL(THREAD_54, "SpinWait_nop", ves_icall_System_Threading_Thread_SpinWait_nop))
 HANDLES(ICALL(THREAD_23, "SuspendInternal", ves_icall_System_Threading_Thread_Suspend))
 // FIXME SystemMaxStackStize should be SystemMaxStackSize
