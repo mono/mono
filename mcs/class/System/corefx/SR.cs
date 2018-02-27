@@ -232,4 +232,9 @@ partial class SR
 	public const string net_listener_close = "Listener closed.";
 	public const string net_invalid_port = "Invalid port in prefix.";
 	public const string net_WebSockets_InvalidState = "The WebSocket is in an invalid state ('{0}') for this operation. Valid states are: '{1}'";
+	public const string PlatformNotSupported_CompileToAssembly = "This platform does not support writing compiled regular expressions to an assembly.";
+	public const string NotSupported_ReadOnlyCollection = "Collection is read-only.";
+	public const string InvalidEmptyArgument = "Argument {0} cannot be zero-length.";
+
+	
 }
