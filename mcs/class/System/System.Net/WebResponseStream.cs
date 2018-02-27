@@ -158,7 +158,7 @@ namespace System.Net
 
 			if (throwMe != null) {
 				lock (locker) {
-					completion.SetException (throwMe);
+					completion.TrySetException (throwMe);
 					pendingRead = null;
 					nestedRead = 0;
 				}
@@ -169,7 +169,7 @@ namespace System.Net
 			}
 
 			lock (locker) {
-				pendingRead.SetCompleted ();
+				pendingRead.TrySetCompleted ();
 				pendingRead = null;
 				nestedRead = 0;
 			}
@@ -496,10 +496,10 @@ namespace System.Net
 				readBuffer = new BufferOffsetSize (b, 0, new_size, false);
 				totalRead = 0;
 				nextReadCalled = true;
-				completion.SetCompleted ();
+				completion.TrySetCompleted ();
 			} catch (Exception ex) {
 				WebConnection.Debug ($"{ME} READ ALL ASYNC EX: {ex.Message}");
-				completion.SetException (ex);
+				completion.TrySetException (ex);
 				throw;
 			} finally {
 				WebConnection.Debug ($"{ME} READ ALL ASYNC #2");
