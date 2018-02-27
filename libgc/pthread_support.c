@@ -1245,7 +1245,6 @@ void GC_start_blocking(void) {
     GC_thread me;
     LOCK();
     me = GC_lookup_thread(pthread_self());
-    GC_ASSERT(!(me -> thread_blocked));
 #   ifdef SPARC
 	me -> stop_info.stack_ptr = (ptr_t)GC_save_regs_in_stack();
 #   else
@@ -1273,7 +1272,6 @@ void GC_end_blocking(void) {
     GC_thread me;
     LOCK();   /* This will block if the world is stopped.	*/
     me = GC_lookup_thread(pthread_self());
-    GC_ASSERT(me -> thread_blocked);
     me -> thread_blocked = FALSE;
     UNLOCK();
 }
