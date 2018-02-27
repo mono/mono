@@ -2427,6 +2427,10 @@ decode_buffer (ProfContext *ctx)
 					add_image (ptr_base + ptrdiff, (char*)p);
 				while (*p) p++;
 				p++;
+				if (ctx->data_version >= 16) {
+					while (*p) p++; // mvid
+					p++;
+				}
 			} else if (mtype == TYPE_ASSEMBLY) {
 				if (ctx->data_version > 13)
 					decode_sleb128 (p, &p); // image

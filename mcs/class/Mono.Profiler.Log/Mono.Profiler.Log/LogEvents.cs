@@ -101,6 +101,8 @@ namespace Mono.Profiler.Log {
 
 		public string Name { get; internal set; }
 
+		public Guid ModuleVersionId { get; internal set; }
+
 		internal override void Accept (LogEventVisitor visitor)
 		{
 			visitor.Visit (this);

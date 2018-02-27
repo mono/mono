@@ -232,10 +232,18 @@ namespace Mono.Profiler.Log {
 					break;
 				case LogMetadataType.Image:
 					if (load) {
-						ev = new ImageLoadEvent {
+						var ile = new ImageLoadEvent {
 							ImagePointer = ReadPointer (),
 							Name = _reader.ReadCString (),
 						};
+
+						if (StreamHeader.FormatVersion >= 16) {
+							var guid = _reader.ReadCString ();
+
+							ile.ModuleVersionId = guid == string.Empty ? Guid.Empty : Guid.Parse (guid);
+						}
+
+						ev = ile;
 					} else if (unload) {
 						ev = new ImageUnloadEvent {
 							ImagePointer = ReadPointer (),

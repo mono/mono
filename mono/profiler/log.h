@@ -81,6 +81,7 @@
                changed TYPE_ALLOC and TYPE_HEAP_OBJECT to include a vtable pointer instead of a class pointer
                added MONO_ROOT_SOURCE_EPHEMERON
  * version 16: removed TYPE_COVERAGE
+               added mvid to image load events
                added TYPE_AOT_ID
  */
 
@@ -210,6 +211,7 @@
  * 	[name: string] full class name
  * if mtype == TYPE_IMAGE
  * 	[name: string] image file name
+ * 	[mvid: string] image mvid, can be empty for dynamic images
  * if mtype == TYPE_ASSEMBLY
  *	[image: sleb128] MonoImage* as a pointer difference from ptr_base
  * 	[name: string] assembly name

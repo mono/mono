@@ -1714,12 +1714,20 @@ image_loaded (MonoProfiler *prof, MonoImage *image)
 {
 	const char *name = mono_image_get_filename (image);
 	int nlen = strlen (name) + 1;
+	const char *guid = mono_image_get_guid (image);
+
+	// Dynamic images don't have a GUID set.
+	if (!guid)
+		guid = "";
+
+	int glen = strlen (guid) + 1;
 
 	ENTER_LOG (&image_loads_ctr, logbuffer,
 		EVENT_SIZE /* event */ +
 		BYTE_SIZE /* type */ +
 		LEB128_SIZE /* image */ +
-		nlen /* name */
+		nlen /* name */ +
+		glen /* guid */
 	);
 
 	emit_event (logbuffer, TYPE_END_LOAD | TYPE_METADATA);
@@ -1727,6 +1735,8 @@ image_loaded (MonoProfiler *prof, MonoImage *image)
 	emit_ptr (logbuffer, image);
 	memcpy (logbuffer->cursor, name, nlen);
 	logbuffer->cursor += nlen;
+	memcpy (logbuffer->cursor, guid, glen);
+	logbuffer->cursor += glen;
 
 	EXIT_LOG;
 }
