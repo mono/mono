@@ -39,28 +39,27 @@ namespace System.Net
 			completion = new TaskCompletionSource<Result> ();
 		}
 
-		public bool SetCompleted ()
+		public bool TrySetCompleted ()
 		{
-			var result = new Result (1, null);
-			return completion.TrySetResult (new Result (1, null));
+			return completion.TrySetResult (new Result (State.Completed, null));
 		}
 
-		public bool SetCanceled ()
+		public bool TrySetCanceled ()
 		{
 			var error = new OperationCanceledException ();
-			var result = new Result (2, ExceptionDispatchInfo.Capture (error));
+			var result = new Result (State.Canceled, ExceptionDispatchInfo.Capture (error));
 			return completion.TrySetResult (result);
 		}
 
-		public bool SetException (Exception error)
+		public bool TrySetException (Exception error)
 		{
-			var result = new Result (3, ExceptionDispatchInfo.Capture (error));
+			var result = new Result (State.Faulted, ExceptionDispatchInfo.Capture (error));
 			return completion.TrySetResult (result);
 		}
 
 		public bool IsCompleted => completion.Task.IsCompleted;
 
-		public void Throw ()
+		public void ThrowOnError ()
 		{
 			if (!completion.Task.IsCompleted)
 				return;
@@ -70,16 +69,23 @@ namespace System.Net
 		public async Task<bool> WaitForCompletion (bool throwOnError)
 		{
 			var result = await completion.Task.ConfigureAwait (false);
-			if (result.State == 1)
+			if (result.State == State.Completed)
 				return true;
 			if (throwOnError)
 				result.Error.Throw ();
 			return false;
 		}
 
+		enum State : int {
+			Running,
+			Completed,
+			Canceled,
+			Faulted
+		}
+
 		class Result
 		{
-			public int State {
+			public State State {
 				get;
 			}
 
@@ -87,7 +93,7 @@ namespace System.Net
 				get;
 			}
 
-			public Result (int state, ExceptionDispatchInfo error)
+			public Result (State state, ExceptionDispatchInfo error)
 			{
 				State = state;
 				Error = error;

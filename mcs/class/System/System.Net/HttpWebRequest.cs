@@ -975,7 +975,7 @@ namespace System.Net
 				var oldCompletion = Interlocked.CompareExchange (ref responseTask, completion, null);
 				WebConnection.Debug ($"HWR GET RESPONSE: Req={ID} {oldCompletion != null}");
 				if (oldCompletion != null) {
-					oldCompletion.Throw ();
+					oldCompletion.ThrowOnError ();
 					if (haveResponse && oldCompletion.IsCompleted)
 						return webResponse;
 					throw new InvalidOperationException ("Cannot re-call start of asynchronous " +
@@ -1024,14 +1024,14 @@ namespace System.Net
 					if (throwMe != null) {
 						WebConnection.Debug ($"HWR GET RESPONSE LOOP #1 EX: Req={ID} {throwMe.Status} {throwMe.InnerException?.GetType ()}");
 						haveResponse = true;
-						completion.SetException (throwMe);
+						completion.TrySetException (throwMe);
 						throw throwMe;
 					}
 
 					if (!redirect) {
 						haveResponse = true;
 						webResponse = response;
-						completion.SetCompleted ();
+						completion.TrySetCompleted ();
 						return response;
 					}
 
@@ -1057,7 +1057,7 @@ namespace System.Net
 						WebConnection.Debug ($"HWR GET RESPONSE LOOP #3 EX: Req={ID} {throwMe.Status} {throwMe.InnerException?.GetType ()}");
 						haveResponse = true;
 						stream?.Close ();
-						completion.SetException (throwMe);
+						completion.TrySetException (throwMe);
 						throw throwMe;
 					}
 
@@ -1216,7 +1216,7 @@ namespace System.Net
 			if (operation != null)
 				operation.Abort ();
 
-			responseTask?.SetCanceled ();
+			responseTask?.TrySetCanceled ();
 
 			if (webResponse != null) {
 				try {

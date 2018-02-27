@@ -162,7 +162,7 @@ namespace System.Net
 					await FinishWriting (cancellationToken);
 
 				pendingWrite = null;
-				completion.SetCompleted ();
+				completion.TrySetCompleted ();
 			} catch (Exception ex) {
 				KillBuffer ();
 				closed = true;
@@ -175,7 +175,7 @@ namespace System.Net
 				Operation.CompleteRequestWritten (this, ex);
 
 				pendingWrite = null;
-				completion.SetException (ex);
+				completion.TrySetException (ex);
 				throw;
 			}
 		}
