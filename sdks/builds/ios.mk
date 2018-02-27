@@ -201,11 +201,15 @@ $(eval $(call iOSDeviceTemplate,targettv,arm64,aarch64))
 #  $(2): arch (i386 or x86_64)
 #
 # Flags:
+#  ios_$(1)_SYSROOT
 #  ios_$(1)_AC_VARS
 #  ios_$(1)_CFLAGS
 #  ios_$(1)_CPPFLAGS
 #  ios_$(1)_CXXFLAGS
 #  ios_$(1)_LDFLAGS
+#
+# This handles tvos as well.
+#
 define iOSSimulatorTemplate
 
 _ios_$(1)_CC=$$(CCACHE) $$(PLATFORM_BIN)/clang
@@ -224,26 +228,23 @@ _ios_$(1)_AC_VARS= \
 
 _ios_$(1)_CFLAGS= \
 	$$(ios_CFLAGS) \
-	-isysroot $$(XCODE_DIR)/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator$$(IOS_VERSION).sdk -mios-simulator-version-min=$$(IOS_VERSION_MIN) \
+	$$(ios_$(1)_SYSROOT) \
 	-arch $(2) \
 	-Wl,-application_extension \
-	-DHOST_IOS \
 	$$(ios_$(1)_CFLAGS)
 
 _ios_$(1)_CPPFLAGS= \
 	$$(ios_CPPFLAGS) \
-	-isysroot $$(XCODE_DIR)/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator$$(IOS_VERSION).sdk -mios-simulator-version-min=$$(IOS_VERSION_MIN) \
+	$$(ios_$(1)_SYSROOT) \
 	-arch $(2) \
 	-Wl,-application_extension \
-	-DHOST_IOS \
 	$$(ios_$(1)_CPPFLAGS)
 
 _ios_$(1)_CXXFLAGS= \
 	$$(ios_CXXFLAGS) \
-	-isysroot $$(XCODE_DIR)/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator$$(IOS_VERSION).sdk -mios-simulator-version-min=$$(IOS_VERSION_MIN) \
+	$$(ios_$(1)_SYSROOT) \
 	-arch $(2) \
 	-Wl,-application_extension\
-	-DHOST_IOS \
 	$$(ios_$(1)_CXXFLAGS)
 
 _ios_$(1)_LDFLAGS= \
@@ -297,8 +298,30 @@ TARGETS += ios-$(1)
 
 endef
 
+ios_sim_sysroot = -isysroot $(XCODE_DIR)/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator$(IOS_VERSION).sdk -mios-simulator-version-min=$(IOS_VERSION_MIN)
+tvos_sim_sysroot = -isysroot $(XCODE_DIR)/Platforms/AppleTVSimulator.platform/Developer/SDKs/AppleTVSimulator$(TVOS_VERSION).sdk -mtvos-simulator-version-min=$(TVOS_VERSION_MIN)
+
+ios_sim32_SYSROOT = $(ios_sim_sysroot)
+ios_sim64_SYSROOT = $(ios_sim_sysroot)
+ios_simtv_SYSROOT = $(tvos_sim_sysroot)
+
+ios_sim32_CPPFLAGS = -DHOST_IOS
+ios_sim64_CPPFLAGS = -DHOST_IOS
+ios_simtv_CPPFLAGS = -DHOST_APPLETVOS -DTARGET_APPLETVOS
+
+ios_simtv_AC_VARS = \
+	ac_cv_func_pthread_kill=no \
+	ac_cv_func_kill=no \
+	ac_cv_func_sigaction=no \
+	ac_cv_func_fork=no \
+	ac_cv_func_execv=no \
+	ac_cv_func_execve=no \
+	ac_cv_func_execvp=no \
+	ac_cv_func_signal=no
+
 $(eval $(call iOSSimulatorTemplate,sim32,i386))
 $(eval $(call iOSSimulatorTemplate,sim64,x86_64))
+$(eval $(call iOSSimulatorTemplate,simtv,x86_64))
 
 $(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe: $(wildcard $(TOP)/tools/offsets-tool/*.cs)
 	$(MAKE) -C $(dir $@) MonoAotOffsetsDumper.exe
