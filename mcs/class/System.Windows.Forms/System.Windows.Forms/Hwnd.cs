@@ -69,7 +69,6 @@ namespace System.Windows.Forms {
 		internal bool		reparented;
 		internal object		user_data;
 		internal Rectangle	client_rectangle;
-		internal ArrayList	marshal_free_list;
 		internal int		caption_height;
 		internal int		tool_caption_height;
 		internal bool		whacky_wm;
@@ -115,7 +114,6 @@ namespace System.Windows.Forms {
 			enabled = true;
 			reparented = false;
 			client_rectangle = Rectangle.Empty;
-			marshal_free_list = new ArrayList(2);
 			opacity = 0xffffffff;
 			fixed_size = false;
 			children = new ArrayList ();
@@ -135,10 +133,6 @@ namespace System.Windows.Forms {
 			client_window = IntPtr.Zero;
 			whole_window = IntPtr.Zero;
 			zombie = true;
-			for (int i = 0; i < marshal_free_list.Count; i++) {
-				Marshal.FreeHGlobal((IntPtr)marshal_free_list[i]);
-			}
-			marshal_free_list.Clear();
 		}
 		#endregion
 
@@ -811,28 +805,22 @@ namespace System.Windows.Forms {
 			return String.Format("Hwnd, Mapped:{3} ClientWindow:0x{0:X}, WholeWindow:0x{1:X}, Zombie={4}, Parent:[{2:X}]", client_window.ToInt32(), whole_window.ToInt32(), parent != null ? parent.ToString() : "<null>", Mapped, zombie);
 		}
 
-		public static Point GetNextStackedFormLocation  (CreateParams cp, Hwnd parent_hwnd)
+		public static Point GetNextStackedFormLocation (CreateParams cp)
 		{
 			if (cp.control == null)
 				return Point.Empty;
 		
+			MdiClient parent = cp.control.Parent as MdiClient;
+			if (parent != null)
+				return parent.GetNextStackedFormLocation (cp);
+
 			int X = cp.X;
 			int Y = cp.Y;
 			Point previous, next;
 			Rectangle within;
 
-			if (parent_hwnd != null) {
-				Control parent = cp.control.Parent;
-				previous = parent_hwnd.previous_child_startup_location;
-				if (parent_hwnd.client_rectangle == Rectangle.Empty && parent != null) {
-					within = parent.ClientRectangle;
-				} else {
-					within = parent_hwnd.client_rectangle;
-				}
-			} else {
-				previous = Hwnd.previous_main_startup_location;
-				within = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea;
-			}
+			previous = Hwnd.previous_main_startup_location;
+			within = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea;
 
 			if (previous.X == int.MinValue || previous.Y == int.MinValue) {
 				next = Point.Empty;
@@ -848,18 +836,9 @@ namespace System.Windows.Forms {
 				next = new Point (22, 22);
 			}
 
-			if (parent_hwnd != null) {
-				parent_hwnd.previous_child_startup_location = next;
-			} else {
-				Hwnd.previous_main_startup_location = next;
-			}
+			Hwnd.previous_main_startup_location = next;
 
-			if (X == int.MinValue && Y == int.MinValue) {
-				X = next.X;
-				Y = next.Y;
-			}
-			
-			return new Point (X, Y);
+			return next;
 		}
 
 		#endregion	// Methods

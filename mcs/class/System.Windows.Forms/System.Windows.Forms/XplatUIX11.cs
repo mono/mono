@@ -2922,9 +2922,8 @@ namespace System.Windows.Forms {
 			}
 
 			// Set the default location location for forms.
-			Point next;
-			if (cp.control is Form) {
-				next = Hwnd.GetNextStackedFormLocation (cp, parent_hwnd);
+			if (cp.control is Form && cp.X == int.MinValue && cp.Y == int.MinValue) {
+				Point next = Hwnd.GetNextStackedFormLocation (cp);
 				X = next.X;
 				Y = next.Y;
 			}
@@ -3894,7 +3893,7 @@ namespace System.Windows.Forms {
 			return new SizeF(width, font.Height);
 		}
 
-		internal override IntPtr GetParent(IntPtr handle)
+		internal override IntPtr GetParent(IntPtr handle, bool with_owner)
 		{
 			Hwnd	hwnd;
 
@@ -3902,6 +3901,7 @@ namespace System.Windows.Forms {
 			if (hwnd != null && hwnd.parent != null) {
 				return hwnd.parent.Handle;
 			}
+			// FIXME: Handle with_owner
 			return IntPtr.Zero;
 		}
 		

@@ -317,7 +317,7 @@ namespace System.Windows.Forms {
 		internal abstract bool IsEnabled(IntPtr handle);
 		internal virtual bool IsKeyLocked (VirtualKeys key) { return false; }
 		internal abstract IntPtr SetParent(IntPtr handle, IntPtr parent);
-		internal abstract IntPtr GetParent(IntPtr handle);
+		internal abstract IntPtr GetParent(IntPtr handle, bool with_owner);
 
 		internal abstract void UpdateWindow(IntPtr handle);
 		internal abstract PaintEventArgs PaintEventStart (ref Message msg, IntPtr handle, bool client);
