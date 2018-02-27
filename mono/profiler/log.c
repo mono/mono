@@ -1194,6 +1194,7 @@ gc_reference (MonoObject *obj, MonoClass *klass, uintptr_t size, uintptr_t num, 
 		LEB128_SIZE /* obj */ +
 		LEB128_SIZE /* vtable */ +
 		LEB128_SIZE /* size */ +
+		BYTE_SIZE /* generation */ +
 		LEB128_SIZE /* num */ +
 		num * (
 			LEB128_SIZE /* offset */ +
@@ -1205,6 +1206,7 @@ gc_reference (MonoObject *obj, MonoClass *klass, uintptr_t size, uintptr_t num, 
 	emit_obj (logbuffer, obj);
 	emit_ptr (logbuffer, mono_object_get_vtable (obj));
 	emit_value (logbuffer, size);
+	emit_byte (logbuffer, mono_gc_get_generation (obj));
 	emit_value (logbuffer, num);
 
 	uintptr_t last_offset = 0;

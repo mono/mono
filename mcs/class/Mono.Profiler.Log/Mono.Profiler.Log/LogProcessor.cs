@@ -416,6 +416,7 @@ namespace Mono.Profiler.Log {
 						ClassPointer = StreamHeader.FormatVersion < 15 ? ReadPointer () : 0,
 						VTablePointer = StreamHeader.FormatVersion >= 15 ? ReadPointer () : 0,
 						ObjectSize = (long) _reader.ReadULeb128 (),
+						Generation = StreamHeader.FormatVersion >= 16 ? _reader.ReadByte () : 0,
 					};
 
 					var list = new HeapObjectEvent.HeapObjectReference [(int) _reader.ReadULeb128 ()];

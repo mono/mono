@@ -2593,6 +2593,8 @@ decode_buffer (ProfContext *ctx)
 					objdiff = decode_sleb128 (p + 1, &p);
 				intptr_t ptrdiff = decode_sleb128 (p, &p);
 				uint64_t size = decode_uleb128 (p, &p);
+				if (ctx->data_version >= 16)
+					p++; // generation
 				uintptr_t num = decode_uleb128 (p, &p);
 				uintptr_t ref_offset = 0;
 				uintptr_t last_obj_offset = 0;

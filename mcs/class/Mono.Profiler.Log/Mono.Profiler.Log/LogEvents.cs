@@ -262,6 +262,8 @@ namespace Mono.Profiler.Log {
 
 		public long ObjectSize { get; internal set; }
 
+		public int Generation { get; internal set; }
+
 		public IReadOnlyList<HeapObjectReference> References { get; internal set; }
 
 		internal override void Accept (LogEventVisitor visitor)
@@ -328,7 +330,7 @@ namespace Mono.Profiler.Log {
 
 		public LogGCEvent Type { get; internal set; }
 
-		public byte Generation { get; internal set; }
+		public int Generation { get; internal set; }
 
 		internal override void Accept (LogEventVisitor visitor)
 		{

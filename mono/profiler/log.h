@@ -82,6 +82,7 @@
                added MONO_ROOT_SOURCE_EPHEMERON
  * version 16: removed TYPE_COVERAGE
                added mvid to image load events
+               added generation field to TYPE_HEAO_OBJECT
                added TYPE_AOT_ID
  */
 
@@ -272,6 +273,7 @@
  * 	[object: sleb128] the object as a difference from obj_base
  * 	[vtable: sleb128] MonoVTable* as a pointer difference from ptr_base
  * 	[size: uleb128] size of the object on the heap
+ * 	[generation: byte] generation the object is in
  * 	[num_refs: uleb128] number of object references
  * 	each referenced objref is preceded by a uleb128 encoded offset: the
  * 	first offset is from the object address and each next offset is relative
