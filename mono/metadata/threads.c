@@ -196,7 +196,12 @@ static void self_suspend_internal (void);
 static gboolean
 mono_thread_set_interruption_requested_flags (MonoInternalThread *thread, gboolean sync);
 
-static MonoException* mono_thread_execute_interruption (void);
+static MonoException*
+mono_thread_execute_interruption (void);
+
+static void
+mono_thread_execute_interruption_void (void);
+
 static void ref_stack_destroy (gpointer rs);
 
 /* Spin lock for InterlockedXXX 64 bit functions */
@@ -3413,7 +3418,7 @@ mono_threads_set_shutting_down (void)
 
 		if (current_thread->state & (ThreadState_SuspendRequested | ThreadState_AbortRequested)) {
 			UNLOCK_THREAD (current_thread);
-			mono_thread_execute_interruption ();
+			mono_thread_execute_interruption_void ();
 		} else {
 			UNLOCK_THREAD (current_thread);
 		}
@@ -3484,7 +3489,7 @@ mono_thread_manage (void)
 	if (!mono_runtime_try_shutdown ()) {
 		/*FIXME mono_thread_suspend probably should call mono_thread_execute_interruption when self interrupting. */
 		mono_thread_suspend (mono_thread_internal_current ());
-		mono_thread_execute_interruption ();
+		mono_thread_execute_interruption_void ();
 	}
 
 	/* 
@@ -4678,6 +4683,12 @@ exit:
 	return exc;
 }
 
+static void
+mono_thread_execute_interruption_void (void)
+{
+	mono_thread_execute_interruption ();
+}
+
 /*
  * mono_thread_request_interruption
  *
@@ -4743,7 +4754,7 @@ mono_thread_resume_interruption (gboolean exec)
 	mono_thread_info_self_interrupt ();
 
 	if (exec) // Ignore the exception here, it will be raised later.
-		mono_thread_execute_interruption ();
+		mono_thread_execute_interruption_void ();
 }
 
 gboolean mono_thread_interruption_requested ()
