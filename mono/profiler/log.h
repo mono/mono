@@ -81,6 +81,7 @@
                changed TYPE_ALLOC and TYPE_HEAP_OBJECT to include a vtable pointer instead of a class pointer
                added MONO_ROOT_SOURCE_EPHEMERON
  * version 16: removed TYPE_COVERAGE
+               added TYPE_AOT_ID
  */
 
 /*
@@ -338,9 +339,11 @@
  *
  * type meta format:
  * type: TYPE_META
- * exinfo: one of: TYPE_SYNC_POINT
+ * exinfo: one of: TYPE_SYNC_POINT, TYPE_AOT_ID
  * if exinfo == TYPE_SYNC_POINT
  *	[type: byte] MonoProfilerSyncPointType enum value
+ * if exinfo == TYPE_AOT_ID
+ * 	[aot id: string] current runtime's AOT ID
  */
 
 enum {
@@ -401,6 +404,7 @@ enum {
 	TYPE_JITHELPER = 1 << 4,
 	/* extended type for TYPE_META */
 	TYPE_SYNC_POINT = 0 << 4,
+	TYPE_AOT_ID     = 1 << 4,
 };
 
 enum {

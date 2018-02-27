@@ -597,6 +597,11 @@ namespace Mono.Profiler.Log {
 						Type = (LogSynchronizationPoint) _reader.ReadByte (),
 					};
 					break;
+				case LogEventType.MetaAotId:
+					ev = new AotIdEvent {
+						AotId = Guid.Parse (_reader.ReadCString ()),
+					};
+					break;
 				default:
 					throw new LogException ($"Invalid extended event type ({extType}).");
 				}

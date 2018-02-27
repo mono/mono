@@ -593,4 +593,14 @@ namespace Mono.Profiler.Log {
 			visitor.Visit (this);
 		}
 	}
+
+	public sealed class AotIdEvent : LogEvent {
+
+		public Guid AotId { get; internal set; }
+
+		internal override void Accept (LogEventVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
+	}
 }

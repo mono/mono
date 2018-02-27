@@ -20,6 +20,7 @@
 #include <mono/metadata/mono-gc.h>
 #include <mono/metadata/mono-perfcounters.h>
 #include <mono/metadata/object-internals.h>
+#include <mono/metadata/runtime.h>
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/threads.h>
 #include <mono/metadata/threads-types.h>
@@ -71,6 +72,7 @@ static gint32 sample_allocations_ctr,
 
 // Statistics for profiler events.
 static gint32 sync_points_ctr,
+              aot_ids_ctr,
               heap_objects_ctr,
               heap_starts_ctr,
               heap_ends_ctr,
@@ -1115,6 +1117,28 @@ send_log_unsafe (gboolean if_needed)
 		send_buffer (thread);
 		init_buffer_state (thread);
 	}
+}
+
+static void
+dump_aot_id (void)
+{
+	const char *aotid = mono_runtime_get_aotid ();
+
+	if (!aotid)
+		return;
+
+	int alen = strlen (aotid) + 1;
+
+	ENTER_LOG (&aot_ids_ctr, logbuffer,
+		EVENT_SIZE /* event */ +
+		alen /* aot id */
+	);
+
+	emit_event (logbuffer, TYPE_META | TYPE_AOT_ID);
+	memcpy (logbuffer->cursor, aotid, alen);
+	logbuffer->cursor += alen;
+
+	EXIT_LOG;
 }
 
 // Assumes that the exclusive lock is held.
@@ -2870,6 +2894,8 @@ signal_helper_thread (char c)
 static void
 log_early_shutdown (MonoProfiler *prof)
 {
+	dump_aot_id ();
+
 	if (log_config.hs_on_shutdown) {
 		mono_atomic_store_i32 (&log_profiler.heapshot_requested, 1);
 		mono_gc_collect (mono_gc_max_generation ());
@@ -3865,6 +3891,7 @@ runtime_initialized (MonoProfiler *profiler)
 	register_counter ("Log buffers allocated", &buffer_allocations_ctr);
 
 	register_counter ("Event: Sync points", &sync_points_ctr);
+	register_counter ("Event: AOT IDs", &aot_ids_ctr);
 	register_counter ("Event: Heap objects", &heap_objects_ctr);
 	register_counter ("Event: Heap starts", &heap_starts_ctr);
 	register_counter ("Event: Heap ends", &heap_ends_ctr);

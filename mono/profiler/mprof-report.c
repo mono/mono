@@ -3174,6 +3174,11 @@ decode_buffer (ProfContext *ctx)
 				int type = *p++;
 				if (debug)
 					fprintf (outfile, "sync point %i (%s)\n", type, sync_point_name (type));
+			} else if (subtype == TYPE_AOT_ID) {
+				if (debug)
+					fprintf (outfile, "aot id %s\n", p);
+				while (*p) p++; // aot id
+				p++;
 			}
 			break;
 		}
@@ -3829,6 +3834,7 @@ dump_stats (void)
 	DUMP_EVENT_STAT (TYPE_COVERAGE, TYPE_COVERAGE_CLASS);
 
 	DUMP_EVENT_STAT (TYPE_META, TYPE_SYNC_POINT);
+	DUMP_EVENT_STAT (TYPE_META, TYPE_AOT_ID);
 }
 
 
