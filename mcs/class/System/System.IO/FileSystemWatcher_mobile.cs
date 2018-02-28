@@ -59,6 +59,6 @@ namespace System.IO
         protected void OnRenamed (RenamedEventArgs e) { throw new NotImplementedException (); }
         public WaitForChangedResult WaitForChanged (WatcherChangeTypes changeType) { throw new NotImplementedException (); }
         public WaitForChangedResult WaitForChanged (WatcherChangeTypes changeType, int timeout) { throw new NotImplementedException (); }
-        protected override void Dispose (bool disposing) { throw new NotImplementedException (); }
+        protected override void Dispose (bool disposing) { }
     }
 }
