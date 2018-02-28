@@ -18,6 +18,7 @@
 #include "sgen/sgen-cardtable.h"
 #include "sgen/sgen-pinning.h"
 #include "sgen/sgen-workers.h"
+#include "metadata/class-init.h"
 #include "metadata/marshal.h"
 #include "metadata/method-builder.h"
 #include "metadata/abi-details.h"
@@ -384,22 +385,15 @@ static GCVTable
 get_array_fill_vtable (void)
 {
 	if (!array_fill_vtable) {
-		static MonoClass klass;
 		static char _vtable[sizeof(MonoVTable)+8];
 		MonoVTable* vtable = (MonoVTable*) ALIGN_TO((mword)_vtable, 8);
 		gsize bmap;
 
+		MonoClass *klass = mono_class_create_array_fill_type ();
 		MonoDomain *domain = mono_get_root_domain ();
 		g_assert (domain);
 
-		klass.element_class = mono_defaults.byte_class;
-		klass.rank = 1;
-		klass.instance_size = MONO_SIZEOF_MONO_ARRAY;
-		klass.sizes.element_size = 1;
-		klass.size_inited = 1;
-		klass.name = "array_filler_type";
-
-		vtable->klass = &klass;
+		vtable->klass = klass;
 		bmap = 0;
 		vtable->gc_descr = mono_gc_make_descr_for_array (TRUE, &bmap, 0, 1);
 		vtable->rank = 1;
