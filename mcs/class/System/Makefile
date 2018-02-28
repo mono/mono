@@ -20,7 +20,8 @@ RESX_RESOURCE_STRING = \
 	../../../external/corefx/src/System.Buffers/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Private.Uri/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.IO.Ports/src/Resources/Strings.resx \
-	../../../external/corefx/src/System.Net.HttpListener/src/Resources/Strings.resx
+	../../../external/corefx/src/System.Net.HttpListener/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Net.Requests/src/Resources/Strings.resx
 
 TEST_RESOURCES = \
 	Test/System/test-uri-props.txt \
