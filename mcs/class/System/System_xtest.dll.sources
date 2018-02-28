@@ -95,7 +95,6 @@ System/RemoteExecutorTests.cs
 
 # System.IO.FileSystemWatcher
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/tests/Utility/*.cs
-../../../external/corefx/src/System.IO.FileSystem.Watcher/tests/FileSystemWatcher.cs
-../../../external/corefx/src/System.IO.FileSystem.Watcher/tests/FileSystemWatcher.unit.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/tests/*.cs:InternalBufferOverflowException.cs,FileSystemWatcher.File.NotifyFilter.cs,FileSystemWatcher.InternalBufferSize.cs
 ../../../external/corefx/src/Common/tests/System/IO/TempFile.cs
 ../../../external/corefx/src/Common/tests/System/IO/TempDirectory.cs
