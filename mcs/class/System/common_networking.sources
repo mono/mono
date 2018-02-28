@@ -43,6 +43,7 @@ System.Net/ServicePoint.cs
 System.Net/ServicePointManager.cs
 System.Net/ServicePointManager.extra.cs
 System.Net/ServicePointScheduler.cs
+System.Net/WebCompletionSource.cs
 System.Net/WebConnection.cs
 System.Net/WebConnectionStream.cs
 System.Net/WebConnectionTunnel.cs

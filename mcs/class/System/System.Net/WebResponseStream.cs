@@ -41,7 +41,7 @@ namespace System.Net
 		long totalRead;
 		bool nextReadCalled;
 		int stream_length; // -1 when CL not present
-		TaskCompletionSource<int> readTcs;
+		WebCompletionSource pendingRead;
 		object locker = new object ();
 		int nestedRead;
 		bool read_eof;
@@ -126,16 +126,16 @@ namespace System.Net
 			if (Interlocked.CompareExchange (ref nestedRead, 1, 0) != 0)
 				throw new InvalidOperationException ("Invalid nested call.");
 
-			var myReadTcs = new TaskCompletionSource<int> ();
+			var completion = new WebCompletionSource ();
 			while (!cancellationToken.IsCancellationRequested) {
 				/*
-				 * 'readTcs' is set by ReadAllAsync().
+				 * 'currentRead' is set by ReadAllAsync().
 				 */
-				var oldReadTcs = Interlocked.CompareExchange (ref readTcs, myReadTcs, null);
-				WebConnection.Debug ($"{ME} READ ASYNC #1: {oldReadTcs != null}");
-				if (oldReadTcs == null)
+				var oldCompletion = Interlocked.CompareExchange (ref pendingRead, completion, null);
+				WebConnection.Debug ($"{ME} READ ASYNC #1: {oldCompletion != null}");
+				if (oldCompletion == null)
 					break;
-				await oldReadTcs.Task.ConfigureAwait (false);
+				await oldCompletion.WaitForCompletion (true).ConfigureAwait (false);
 			}
 
 			WebConnection.Debug ($"{ME} READ ASYNC #2: {totalRead} {contentLength}");
@@ -159,8 +159,8 @@ namespace System.Net
 
 			if (throwMe != null) {
 				lock (locker) {
-					myReadTcs.TrySetException (throwMe);
-					readTcs = null;
+					completion.TrySetException (throwMe);
+					pendingRead = null;
 					nestedRead = 0;
 				}
 
@@ -170,8 +170,8 @@ namespace System.Net
 			}
 
 			lock (locker) {
-				readTcs.TrySetResult (oldBytes + nbytes);
-				readTcs = null;
+				pendingRead.TrySetCompleted ();
+				pendingRead = null;
 				nestedRead = 0;
 			}
 
@@ -406,18 +406,19 @@ namespace System.Net
 			}
 
 			var timeoutTask = Task.Delay (ReadTimeout);
-			var myReadTcs = new TaskCompletionSource<int> ();
+			var completion = new WebCompletionSource ();
 			while (true) {
 				/*
-				 * 'readTcs' is set by ReadAsync().
+				 * 'currentRead' is set by ReadAsync().
 				 */
 				cancellationToken.ThrowIfCancellationRequested ();
-				var oldReadTcs = Interlocked.CompareExchange (ref readTcs, myReadTcs, null);
-				if (oldReadTcs == null)
+				var oldCompletion = Interlocked.CompareExchange (ref pendingRead, completion, null);
+				if (oldCompletion == null)
 					break;
 
 				// ReadAsync() is in progress.
-				var anyTask = await Task.WhenAny (oldReadTcs.Task, timeoutTask).ConfigureAwait (false);
+				var oldReadTask = oldCompletion.WaitForCompletion (true);
+				var anyTask = await Task.WhenAny (oldReadTask, timeoutTask).ConfigureAwait (false);
 				if (anyTask == timeoutTask)
 					throw new WebException ("The operation has timed out.", WebExceptionStatus.Timeout);
 			}
@@ -496,14 +497,14 @@ namespace System.Net
 				readBuffer = new BufferOffsetSize (b, 0, new_size, false);
 				totalRead = 0;
 				nextReadCalled = true;
-				myReadTcs.TrySetResult (new_size);
+				completion.TrySetCompleted ();
 			} catch (Exception ex) {
 				WebConnection.Debug ($"{ME} READ ALL ASYNC EX: {ex.Message}");
-				myReadTcs.TrySetException (ex);
+				completion.TrySetException (ex);
 				throw;
 			} finally {
 				WebConnection.Debug ($"{ME} READ ALL ASYNC #2");
-				readTcs = null;
+				pendingRead = null;
 			}
 
 			Operation.CompleteResponseRead (true);
