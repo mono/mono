@@ -35,7 +35,12 @@ mono_mkstemp (char *templ)
 
 	len = strlen (templ);
 	do {
+#if HOST_WIN32
+		t = _mktemp (templ);
+#else
 		t = mktemp (templ);
+#endif
+
 		if (t == NULL) {
 			errno = EINVAL;
 			return -1;
@@ -45,7 +50,11 @@ mono_mkstemp (char *templ)
 			return -1;
 		}
 
-		ret = open (templ, O_RDWR | O_BINARY | O_CREAT | O_EXCL, 0600);
+#if HOST_WIN32
+		ret = _open (templ, O_RDWR | O_BINARY | O_CREAT | O_EXCL, 0600);
+#else
+		ret = open(templ, O_RDWR | O_BINARY | O_CREAT | O_EXCL, 0600);
+#endif
 		if (ret == -1) {
 			if (errno != EEXIST)
 				return -1;
