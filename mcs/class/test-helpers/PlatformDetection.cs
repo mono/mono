@@ -23,5 +23,6 @@ namespace System
 				return id == PlatformID.Win32Windows || id == PlatformID.Win32NT;
 			}
 		}
+		public static bool IsInAppContainer => false;
 	}
 }
