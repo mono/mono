@@ -294,9 +294,6 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
-#if MONOTOUCH
-		[Ignore ("On device sometimes hangs in the call to listener.GetContext (). See bug #60542.")]
-#endif
 		public void HttpRequestIgnoreBadCookies ()
 		{
 			var port = NetworkHelpers.FindFreePort ();
