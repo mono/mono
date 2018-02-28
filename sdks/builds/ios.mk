@@ -47,7 +47,7 @@ BITCODE_CONFIGURE_FLAGS=--enable-llvm-runtime --with-bitcode=yes
 #  ios_$(1)_LDFLAGS
 #  ios_$(1)_BITCODE_MARKER
 #
-# This handles tvos as well.
+# This handles tvos/watchos as well.
 #
 define iOSDeviceTemplate
 
@@ -156,24 +156,31 @@ endef
 
 ios_sysroot = -isysroot $(XCODE_DIR)/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS$(IOS_VERSION).sdk -miphoneos-version-min=$(IOS_VERSION_MIN)
 tvos_sysroot = -isysroot $(XCODE_DIR)/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS$(TVOS_VERSION).sdk 	-mtvos-version-min=$(TVOS_VERSION_MIN)
+watchos_sysroot = -isysroot $(XCODE_DIR)/Platforms/WatchOS.platform/Developer/SDKs/WatchOS$(WATCH_VERSION).sdk -mwatchos-version-min=$(WATCHOS_VERSION_MIN)
 
 # explicitly disable dtrace, since it requires inline assembly, which is disabled on AppleTV (and mono's configure.ac doesn't know that (yet at least))
 ios_targettv_CONFIGURE_FLAGS = 	--enable-dtrace=no $(BITCODE_CONFIGURE_FLAGS)
+ios_targetwatch_CONFIGURE_FLAGS = --with-cooperative-gc=yes $(BITCODE_CONFIGURE_FLAGS)
 
 ios_target32_SYSROOT = $(ios_sysroot)
 ios_target32s_SYSROOT = $(ios_sysroot)
 ios_target64_SYSROOT = $(ios_sysroot)
 ios_targettv_SYSROOT = $(tvos_sysroot)
+ios_targetwatch_SYSROOT = $(watchos_sysroot)
 
 ios_target32_CPPFLAGS = -DHOST_IOS
 ios_target32s_CPPFLAGS = -DHOST_IOS
 ios_target64_CPPFLAGS = -DHOST_IOS
 ios_targettv_CPPFLAGS = -DHOST_APPLETVOS -DTARGET_APPLETVOS
+ios_targetwatch_CPPFLAGS = -DHOST_IOS -DHOST_WATCHOS
 
 ios_targettv_CFLAGS = -fembed-bitcode -fno-gnu-inline-asm
 ios_targettv_CXXFLAGS = -fembed-bitcode -fno-gnu-inline-asm
+ios_targetwatch_CFLAGS = -fembed-bitcode -fno-gnu-inline-asm
+ios_targetwatch_CXXFLAGS = -fembed-bitcode -fno-gnu-inline-asm
 
 ios_targettv_LDFLAGS = -Wl,-bitcode_bundle $(BITCODE_LDFLAGS)
+ios_targetwatch_LDFLAGS = -Wl,-bitcode_bundle $(BITCODE_LDFLAGS)
 
 ios_targettv_AC_VARS = \
 	ac_cv_func_system=no			\
@@ -185,6 +192,7 @@ ios_targettv_AC_VARS = \
 	ac_cv_func_execve=no            \
 	ac_cv_func_execvp=no            \
 	ac_cv_func_signal=no
+ios_targetwatch_AC_VARS = $(ios_targettv_AC_VARS)
 
 # ios_target32_BITCODE_MARKER=-fembed-bitcode-marker
 $(eval $(call iOSDeviceTemplate,target32,armv7,arm))
@@ -192,6 +200,7 @@ $(eval $(call iOSDeviceTemplate,target32s,armv7s,arm))
 # ios_target64_BITCODE_MARKER=-fembed-bitcode-marker
 $(eval $(call iOSDeviceTemplate,target64,arm64,aarch64))
 $(eval $(call iOSDeviceTemplate,targettv,arm64,aarch64))
+$(eval $(call iOSDeviceTemplate,targetwatch,armv7k,armv7k))
 
 ##
 # Simulator builds
