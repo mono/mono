@@ -335,7 +335,7 @@ typedef enum {
 MONO_API mono_bool
 mono_type_is_byref       (MonoType *type);
 
-MONO_API uint32_t
+MONO_API uint16_t
 mono_type_get_attrs      (MonoType *type);
 
 MONO_API int
