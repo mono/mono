@@ -110,9 +110,8 @@ namespace System.IO {
 			return true;
 		}
 		
-		public void StartDispatching (object handle)
+		public void StartDispatching (FileSystemWatcher fsw)
 		{
-			var fsw = handle as FileSystemWatcher;
 			FAMData data;
 			lock (this) {
 				if (thread == null) {
@@ -200,9 +199,8 @@ namespace System.IO {
 			}
 		}
 
-		public void StopDispatching (object handle)
+		public void StopDispatching (FileSystemWatcher fsw)
 		{
-			var fsw = handle as FileSystemWatcher;
 			FAMData data;
 			lock (this) {
 				data = (FAMData) watches [fsw];
@@ -410,10 +408,6 @@ namespace System.IO {
 			return fam_Pending (ref fc);
 		}
 
-		public void Dispose (object handle)
-		{
-			// does nothing
-		}
 
 		
 		[DllImport ("libfam.so.0", EntryPoint="FAMOpen")]

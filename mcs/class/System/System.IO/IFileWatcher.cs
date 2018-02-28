@@ -30,9 +30,8 @@
 
 namespace System.IO {
 	interface IFileWatcher {
-		void StartDispatching (object fsw);
-		void StopDispatching (object fsw);
-		void Dispose (object fsw);
+		void StartDispatching (FileSystemWatcher fsw);
+		void StopDispatching (FileSystemWatcher fsw);
 	}
 }
 

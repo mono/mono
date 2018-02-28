@@ -736,9 +736,8 @@ namespace System.IO {
 			return true;
 		}
 
-		public void StartDispatching (object handle)
+		public void StartDispatching (FileSystemWatcher fsw)
 		{
-			var fsw = handle as FileSystemWatcher;
 			KqueueMonitor monitor;
 
 			if (watches.ContainsKey (fsw)) {
@@ -751,19 +750,13 @@ namespace System.IO {
 			monitor.Start ();
 		}
 
-		public void StopDispatching (object handle)
+		public void StopDispatching (FileSystemWatcher fsw)
 		{
-			var fsw = handle as FileSystemWatcher;
 			KqueueMonitor monitor = (KqueueMonitor)watches [fsw];
 			if (monitor == null)
 				return;
 
 			monitor.Stop ();
-		}
-
-		public void Dispose (object handle)
-		{
-			// does nothing
 		}
 			
 		[DllImport ("libc")]

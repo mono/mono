@@ -142,11 +142,7 @@ System.IO/IFileWatcher.cs
 System.IO/InotifyWatcher.cs
 System.IO/KeventWatcher.cs
 System.IO/SearchPattern.cs
-
-../../../external/corefx/src/Common/src/System/IO/PathInternal.CaseSensitivity.cs
-../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/PatternMatcher.cs
-../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.cs
-System.IO/CoreFXFileSystemWatcherProxy.cs
+System.IO/WindowsWatcher.cs
 
 System.IO.Ports/Handshake.cs
 System.IO.Ports/ISerialStream.cs

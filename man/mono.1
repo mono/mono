@@ -1126,11 +1126,8 @@ When Mono is built with a soft float fallback on ARM and this variable is set to
 "1", Mono will always emit soft float code, even if a VFP unit is
 detected.
 .TP
-\fBMONO_DARWIN_USE_KQUEUE_FSW\fR
-Fall back on the kqueue FileSystemWatcher implementation in Darwin. The default is the FSEvent implementation.
-.TP
 \fBMONO_DARWIN_WATCHER_MAXFDS\fR
-This is a debugging aid used to force limits on the kqueue FileSystemWatcher
+This is a debugging aid used to force limits on the FileSystemWatcher
 implementation in Darwin.   There is no limit by default.
 .TP
 \fBMONO_DISABLE_AIO\fR
