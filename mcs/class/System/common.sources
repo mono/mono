@@ -1,6 +1,5 @@
 Assembly/AssemblyInfo.cs
 ../../build/common/SR.cs
-corefx/SR.cs
 
 corefx/ZLibNative.cs
 
@@ -40,6 +39,7 @@ System.IO/IODescriptionAttribute.cs
 System.IO/NotifyFilters.cs
 System.IO/RenamedEventArgs.cs
 System.IO/RenamedEventHandler.cs
+System.IO/WaitForChangedResult.cs
 System.IO/WatcherChangeTypes.cs
 
 System.Net/BasicClient.cs
@@ -928,4 +928,3 @@ corefx/SR.cs
 ../../../external/corefx/src/System.Private.Uri/src/System/UriBuilder.cs
 
 ../../../external/corefx/src/System.Runtime.Extensions/src/System/CodeDom/Compiler/IndentedTextWriter.cs
-../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/WaitForChangedResult.cs

@@ -79,9 +79,8 @@ namespace System.IO {
 			return true;
 		}
 		
-		public void StartDispatching (object handle)
+		public void StartDispatching (FileSystemWatcher fsw)
 		{
-			var fsw = handle as FileSystemWatcher;
 			DefaultWatcherData data;
 			lock (this) {
 				if (watches == null)
@@ -117,9 +116,8 @@ namespace System.IO {
 			}
 		}
 
-		public void StopDispatching (object handle)
+		public void StopDispatching (FileSystemWatcher fsw)
 		{
-			var fsw = handle as FileSystemWatcher;
 			DefaultWatcherData data;
 			lock (this) {
 				if (watches == null) return;
@@ -132,11 +130,6 @@ namespace System.IO {
 					data.DisabledTime = DateTime.UtcNow;
 				}
 			}
-		}
-
-		public void Dispose (object handle)
-		{
-			// does nothing
 		}
 
 

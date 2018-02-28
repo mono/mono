@@ -1,10 +1,10 @@
+// 
+// System.IO.WaitForChangedResult.cs
 //
-// System.Web.Compilation.NullFileWatcher
+// Author:
+//   Tim Coleman (tim@timcoleman.com)
 //
-// Authors:
-//	Marek Habersack <mhabersack@novell.com>
-//
-// Copyright (C) 2008 Novell, Inc (http://novell.com/)
+// Copyright (C) Tim Coleman, 2002
 //
 
 //
@@ -27,33 +27,43 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 using System;
 
-namespace System.IO
-{
-	class NullFileWatcher : IFileWatcher
-	{
-		static IFileWatcher instance;
+namespace System.IO {
+	public struct WaitForChangedResult {
+
+		#region Fields
+
+		WatcherChangeTypes changeType;
+		string name;
+		string oldName;
+		bool timedOut;
+
+		#endregion // Fields
 		
-		public void StartDispatching (FileSystemWatcher fsw)
-		{
-			// does nothing
+		#region Properties
+
+		public WatcherChangeTypes ChangeType {
+			get { return changeType; }
+			set { changeType = value; }
 		}
 
-		public void StopDispatching (FileSystemWatcher fsw)
-		{
-			// does nothing
+		public string Name {
+			get { return name; }
+			set { name = value; }
 		}
 
-		public static bool GetInstance (out IFileWatcher watcher)
-		{
-			if (instance != null) {
-				watcher = instance;
-				return true;
-			}
-
-			instance = watcher = new NullFileWatcher ();
-			return true;
+		public string OldName {
+			get { return oldName; }
+			set { oldName = value; }
 		}
+
+		public bool TimedOut {
+			get { return timedOut; }
+			set { timedOut = value; }
+		}
+
+		#endregion // Properties
 	}
 }

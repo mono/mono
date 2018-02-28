@@ -1,10 +1,10 @@
-//
-// System.Web.Compilation.NullFileWatcher
+// 
+// System.IO.WindowsWatcher.cs: windows IFileWatcher
 //
 // Authors:
-//	Marek Habersack <mhabersack@novell.com>
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// Copyright (C) 2008 Novell, Inc (http://novell.com/)
+// (c) 2004 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -27,33 +27,27 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
 
-namespace System.IO
-{
-	class NullFileWatcher : IFileWatcher
+namespace System.IO {
+	class WindowsWatcher : IFileWatcher
 	{
-		static IFileWatcher instance;
+		private WindowsWatcher ()
+		{
+		}
+		
+		// Locked by caller
+		public static bool GetInstance (out IFileWatcher watcher)
+		{
+			throw new NotSupportedException ();
+		}
 		
 		public void StartDispatching (FileSystemWatcher fsw)
 		{
-			// does nothing
 		}
 
 		public void StopDispatching (FileSystemWatcher fsw)
 		{
-			// does nothing
-		}
-
-		public static bool GetInstance (out IFileWatcher watcher)
-		{
-			if (instance != null) {
-				watcher = instance;
-				return true;
-			}
-
-			instance = watcher = new NullFileWatcher ();
-			return true;
 		}
 	}
 }
+
