@@ -29,7 +29,7 @@ class SlnGenerator {
 	public static readonly string NewLine = "\r\n"; //Environment.NewLine; // "\n"; 
 	public SlnGenerator (string slnVersion)
 	{
-		Console.WriteLine("Requested sln version is {0}", slnVersion);
+		Console.Error.WriteLine("// Requested sln version is {0}", slnVersion);
 		this.header = MakeHeader ("12.00", "15", "15.0.0.0");
 	}
 
@@ -71,7 +71,7 @@ class SlnGenerator {
 		try {
 			libraries.Add (vsproj);
 		} catch (Exception ex) {
-			Console.WriteLine (ex);
+			Console.Error.WriteLine ($"Error while adding library: {ex.Message}");
 		}
 	}
 
@@ -102,10 +102,10 @@ class SlnGenerator {
 	private void WriteProjectConfigurationPlatforms (StreamWriter sln, string guid, string platformToBuild)
 	{
 		foreach (var profile in profiles) {
-			sln.WriteLine ("\t\t{0}.Debug|{1}.ActiveCfg = Debug|{2}", guid, profile, platformToBuild);
-			sln.WriteLine ("\t\t{0}.Debug|{1}.Build.0 = Debug|{2}", guid, profile, platformToBuild);
-			sln.WriteLine ("\t\t{0}.Release|{1}.ActiveCfg = Release|{2}", guid, profile, platformToBuild);
-			sln.WriteLine ("\t\t{0}.Release|{1}.Build.0 = Release|{2}", guid, profile, platformToBuild);
+			sln.WriteLine ("\t\t{0}.Debug|{1}.ActiveCfg = Debug|{2}", guid, profile, platformToBuild ?? profile);
+			sln.WriteLine ("\t\t{0}.Debug|{1}.Build.0 = Debug|{2}", guid, profile, platformToBuild ?? profile);
+			sln.WriteLine ("\t\t{0}.Release|{1}.ActiveCfg = Release|{2}", guid, profile, platformToBuild ?? profile);
+			sln.WriteLine ("\t\t{0}.Release|{1}.Build.0 = Release|{2}", guid, profile, platformToBuild ?? profile);
 		}
 	}
 
@@ -139,7 +139,7 @@ class SlnGenerator {
 			WriteProjectConfigurationPlatforms (sln, jay_vcxproj_guid, "Win32");
 
 			foreach (var proj in libraries) {
-				WriteProjectConfigurationPlatforms (sln, proj.projectGuid, "Any CPU");
+				WriteProjectConfigurationPlatforms (sln, proj.projectGuid, null);
 			}
 
 			sln.WriteLine ("\tEndGlobalSection");
@@ -171,7 +171,7 @@ class MsbuildGenerator {
 
 	static void Usage ()
 	{
-		Console.WriteLine ("Invalid argument");
+		Console.Error.WriteLine ("// Invalid argument");
 	}
 
 	static string template;
@@ -245,11 +245,11 @@ class MsbuildGenerator {
 	{
 		var projectFile = NativeName (CsprojFilename);
 		if (File.Exists (projectFile)){
-			var doc = XDocument.Load (projectFile);
 			try {
+				var doc = XDocument.Load (projectFile);
 				return doc.XPathSelectElement ("x:Project/x:PropertyGroup/x:ProjectGuid", xmlns).Value;
 			} catch (Exception exc) {
-				Console.WriteLine("Failed to parse guid from {0}: {1}", projectFile, exc.Message);
+				Console.Error.WriteLine($"// Failed to parse guid from {projectFile}: {exc.Message}");
 			}
 		}
 		return "{" + Guid.NewGuid ().ToString ().ToUpper () + "}";
@@ -406,11 +406,11 @@ class MsbuildGenerator {
 				embedded_resources [s [0]] = s [1];
 				break;
 			case 3:
-				Console.WriteLine ("Does not support this method yet: {0}", arg);
+				Console.Error.WriteLine ("// Does not support this method yet: {0}", arg);
 				Environment.Exit (1);
 				break;
 			default:
-				Console.WriteLine ("Wrong number of arguments for option `{0}'", option);
+				Console.Error.WriteLine ("// Wrong number of arguments for option `{0}'", option);
 				Environment.Exit (1);
 				break;
 			}
@@ -418,14 +418,14 @@ class MsbuildGenerator {
 			return true;
 
 		case "/recurse":
-			Console.WriteLine ("/recurse not supported");
+			Console.Error.WriteLine ("// /recurse not supported");
 			Environment.Exit (1);
 			return true;
 
 		case "/r":
 		case "/reference": {
 				if (value.Length == 0) {
-					Console.WriteLine ("-reference requires an argument");
+					Console.Error.WriteLine ("// /reference requires an argument");
 					Environment.Exit (1);
 				}
 
@@ -452,7 +452,7 @@ class MsbuildGenerator {
 		case "/win32res":
 		case "/doc": 
 			if (showWarnings)
-				Console.WriteLine ("{0} = not supported", arg);
+				Console.Error.WriteLine ("// {0} = not supported", arg);
 			return true;
 			
 		case "/lib": {
@@ -529,7 +529,7 @@ class MsbuildGenerator {
 				string [] warns;
 
 				if (value.Length == 0) {
-					Console.WriteLine ("/nowarn requires an argument");
+					Console.Error.WriteLine ("// /nowarn requires an argument");
 					Environment.Exit (1);
 				}
 
@@ -545,7 +545,7 @@ class MsbuildGenerator {
 						}
 						ignore_warning.Add (warn);
 					} catch {
-						Console.WriteLine (String.Format ("`{0}' is not a valid warning number", wc));
+						Console.Error.WriteLine ($"// `{wc}' is not a valid warning number");
 						Environment.Exit (1);
 					}
 				}
@@ -570,14 +570,14 @@ class MsbuildGenerator {
 
 		case "/keyfile":
 			if (value == String.Empty) {
-				Console.WriteLine ("{0} requires an argument", arg);
+				Console.Error.WriteLine ($"// {arg} requires an argument");
 				Environment.Exit (1);
 			}
 			StrongNameKeyFile = value;
 			return true;
 		case "/keycontainer":
 			if (value == String.Empty) {
-				Console.WriteLine ("{0} requires an argument", arg);
+				Console.Error.WriteLine ($"// {arg} requires an argument");
 				Environment.Exit (1);
 			}
 			StrongNameKeyContainer = value;
@@ -614,7 +614,7 @@ class MsbuildGenerator {
 			return true;
 		}
 
-		Console.WriteLine ("Failing with : {0}", arg);
+		Console.Error.WriteLine ($"// Failing with : {arg}");
 		return false;
 	}
 
@@ -791,7 +791,7 @@ class MsbuildGenerator {
 					var resp_file_full = Path.Combine (base_dir, response_file);
 					extra_args = LoadArgs (resp_file_full);
 					if (extra_args == null) {
-						Console.WriteLine ($"{library_output}: Unable to open response file: {resp_file_full}");
+						Console.Error.WriteLine ($"// {library_output}: Unable to open response file: {resp_file_full}");
 						Environment.Exit (1);
 					}
 
@@ -801,7 +801,7 @@ class MsbuildGenerator {
 
 				if (CSCParseOption (f [i], ref f))
 					continue;
-				Console.WriteLine ("{library_output}: Failure with {0}", f [i]);
+				Console.Error.WriteLine ($"// {library_output}: Failure with {f [i]}");
 				Environment.Exit (1);
 			}
 		}
@@ -813,10 +813,10 @@ class MsbuildGenerator {
 
 		Array.Sort (source_files);
 
-		var itemGroupConditionalHeader = "  <ItemGroup Condition=\"fixme\">";
+		var groupConditional = $"Condition=\" '$(Platform)' == '{profile}' \"";
 
 		StringBuilder sources = new StringBuilder ();
-		sources.Append (itemGroupConditionalHeader + NewLine);
+		sources.Append ($"  <ItemGroup {groupConditional}>{NewLine}");
 
 		foreach (string s in source_files) {
 			if (s.Length == 0)
@@ -859,7 +859,7 @@ class MsbuildGenerator {
 
 		var refs = new StringBuilder ();
 
-		refs.Append (itemGroupConditionalHeader + NewLine);
+		refs.Append ($"  <ItemGroup {groupConditional}>{NewLine}");
 
 		if (response.Contains ("_test")) {
 			refs.Append ($@"    <Reference Include=""nunitlite"">{NewLine}");
@@ -898,14 +898,14 @@ class MsbuildGenerator {
 			foreach (var pair in pairs){
 				var p = pair.IndexOf (",");
 				if (p == -1){
-					Console.Error.WriteLine ($"Found a resource without a filename: {pairs} for {Csproj.csProjFilename}");
+					Console.Error.WriteLine ($"// Found a resource without a filename: {pairs} for {Csproj.csProjFilename}");
 					Environment.Exit (1);
 				}
 				AppendResource (resources, pair.Substring (p+1), pair.Substring (0, p) + ".resources");
 			}
 		}
 		if (resources.Length > 0){
-			resources.Insert (0, itemGroupConditionalHeader + NewLine);
+			resources.Insert (0, $"  <ItemGroup {groupConditional}>{NewLine}");
 			resources.Append ("  </ItemGroup>" + NewLine);
 		}
 
@@ -927,8 +927,8 @@ class MsbuildGenerator {
 					AddProjectReference (refs, Csproj, match, reference, null);
 				} else {
 					if (showWarnings){
-						Console.WriteLine ("{0}: Could not find a matching project reference for {1}", library, Path.GetFileName (reference));
-						Console.WriteLine ("  --> Adding reference with hintpath instead");
+						Console.Error.WriteLine ($"{library}: Could not find a matching project reference for {Path.GetFileName (reference)}");
+						Console.Error.WriteLine ("  --> Adding reference with hintpath instead");
 					}
 					refs.Append ("    <Reference Include=\"" + reference + "\">" + NewLine);
 					refs.Append ("      <SpecificVersion>False</SpecificVersion>" + NewLine);
@@ -1011,10 +1011,18 @@ class MsbuildGenerator {
 		}
 
 		string assemblyName = Path.GetFileNameWithoutExtension (output_name);
+		var outputSuffix = Path.GetFileName (build_output_dir);
 
 		string textToUpdate = updatingExistingProject 
 			? File.ReadAllText(generatedProjFile)
 			: template;
+
+		var properties = new StringBuilder ();
+		properties.AppendLine ($"  <PropertyGroup {groupConditional} >");
+		properties.AppendLine ($"    <OutputPath>{build_output_dir}</OutputPath>");
+  		properties.AppendLine ($"    <IntermediateOutputPath>obj-{outputSuffix}</IntermediateOutputPath>");
+  		properties.AppendLine ($"    <DefineConstants>{defines.ToString ()}</DefineConstants>");
+		properties.AppendLine ("  </PropertyGroup>");
 
 		Csproj.output = textToUpdate.
 			Replace ("@OUTPUTTYPE@", Target == Target.Library ? "Library" : "Exe").
@@ -1029,9 +1037,6 @@ class MsbuildGenerator {
 			Replace ("@ALLOWUNSAFE@", Unsafe ? "<AllowUnsafeBlocks>true</AllowUnsafeBlocks>" : "").
 			Replace ("@FX_VERSION@", fx_version).
 			Replace ("@ASSEMBLYNAME@", assemblyName).
-			Replace ("@OUTPUTDIR@", build_output_dir).
-			Replace ("@OUTPUTSUFFIX@", Path.GetFileName (build_output_dir)).
-			Replace ("@DEFINECONSTANTS@", defines.ToString ()).
 			Replace ("@DEBUG@", want_debugging_support ? "true" : "false").
 			Replace ("@DEBUGTYPE@", want_debugging_support ? "full" : "pdbonly").
 			Replace ("@PREBUILD@", prebuild).
@@ -1042,11 +1047,13 @@ class MsbuildGenerator {
 			Replace ("@OPTIMIZE@", Optimize ? "true" : "false").
 			Replace ("@METADATAVERSION@", assemblyName == "mscorlib" ? "<RuntimeMetadataVersion>Mono</RuntimeMetadataVersion>" : "");
 
+		var propertiesPlaceholder = "<!-- @ALL_PROFILE_PROPERTIES@ -->";
 		var refsPlaceholder = "<!-- @ALL_REFERENCES@ -->";
 		var resourcesPlaceholder = "<!-- @ALL_RESOURCES@ -->";
 		var sourcesPlaceholder = "<!-- @ALL_SOURCES@ -->";
 
 		Csproj.output = Csproj.output.
+			Replace (propertiesPlaceholder, properties.ToString () + "\r\n" + propertiesPlaceholder).
 			Replace (refsPlaceholder, refs.ToString () + "\r\n" + refsPlaceholder).
 			Replace (resourcesPlaceholder, resources.ToString () + "\r\n" + resourcesPlaceholder).
 			Replace (sourcesPlaceholder, sources.ToString () + "\r\n" + sourcesPlaceholder);
@@ -1144,12 +1151,12 @@ class MsbuildGenerator {
 
 		}
 		var ljoined = String.Join (", ", libs);
-		Console.WriteLine ($"{library_output}: did not find referenced {dllReferenceName} with libs={ljoined}");
+		Console.Error.WriteLine ($"{library_output}: did not find referenced {dllReferenceName} with libs={ljoined}");
 
 		// FIXME: This is incredibly noisy and generates a billion lines of output
 		if (false)
 		foreach (var p in projects) {
-			Console.WriteLine ("{0}", p.Value.AbsoluteLibraryOutput);
+			Console.Error.WriteLine ("{0}", p.Value.AbsoluteLibraryOutput);
 		}
 
 		return null;
@@ -1213,20 +1220,20 @@ public class Driver {
 	static void Main (string [] args)
 	{
 		if (!File.Exists ("genproj.cs")) {
-			Console.WriteLine ("This command must be executed from mono/msvc/scripts");
+			Console.Error.WriteLine ("This command must be executed from mono/msvc/scripts");
 			Environment.Exit (1);
 		}
 
 		if (args.Length == 1 && args [0].ToLower ().Contains ("-h")) {
-			Console.WriteLine ("Usage:");
-			Console.WriteLine ("genproj.exe [visual_studio_release] [output_full_solutions] [with_tests]");
-			Console.WriteLine ("If output_full_solutions is false, only the main System*.dll");
-			Console.WriteLine (" assemblies (and dependencies) is included in the solution.");
-			Console.WriteLine ("Example:");
-			Console.WriteLine ("genproj.exe 2012 false false");
-			Console.WriteLine ("genproj.exe with no arguments is equivalent to 'genproj.exe 2012 true false'\n\n");
-			Console.WriteLine ("genproj.exe deps");
-			Console.WriteLine ("Generates a Makefile dependency file from the projects input");
+			Console.Error.WriteLine ("Usage:");
+			Console.Error.WriteLine ("genproj.exe [visual_studio_release] [output_full_solutions] [with_tests]");
+			Console.Error.WriteLine ("If output_full_solutions is false, only the main System*.dll");
+			Console.Error.WriteLine (" assemblies (and dependencies) is included in the solution.");
+			Console.Error.WriteLine ("Example:");
+			Console.Error.WriteLine ("genproj.exe 2012 false false");
+			Console.Error.WriteLine ("genproj.exe with no arguments is equivalent to 'genproj.exe 2012 true false'\n\n");
+			Console.Error.WriteLine ("genproj.exe deps");
+			Console.Error.WriteLine ("Generates a Makefile dependency file from the projects input");
 			Environment.Exit (0);
 		}
 
@@ -1242,7 +1249,7 @@ public class Driver {
 		var projects = new Dictionary<string,MsbuildGenerator> ();
 
 		var duplicates = new List<string> ();
-		Console.WriteLine("// Deleting existing project files");
+		Console.Error.WriteLine("// Deleting existing project files");
 		foreach (var project in GetProjects (withTests)) {
 			var library_output = project.Element ("library_output").Value;
 
@@ -1250,7 +1257,7 @@ public class Driver {
 			projects [library_output] = gen;
 			gen.EraseExisting ();
 		}
-		Console.WriteLine("// Updating project files");
+		Console.Error.WriteLine("// Generating project files");
 		foreach (var project in GetProjects (withTests)){
 			var library_output = project.Element ("library_output").Value;
 			// Console.WriteLine ("=== {0} ===", library_output);
@@ -1265,7 +1272,7 @@ public class Driver {
 				}
 				
 			} catch (Exception e) {
-				Console.WriteLine ("Error in {0}\n{1}", project, e);
+				Console.Error.WriteLine ("// Error in {0}\n{1}", project, e);
 			}
 		}
 
@@ -1278,9 +1285,9 @@ public class Driver {
 			var sb = new StringBuilder ();
 			sb.AppendLine ("// WARNING: Skipped some project references, apparent duplicates in order.xml:");
 			foreach (var item in duplicates) {
-				sb.AppendLine (item);
+				sb.AppendLine ($"// {item}");
 			}
-			Console.WriteLine (sb.ToString ());
+			Console.Error.WriteLine (sb.ToString ());
 		}
 
 		WriteSolution (four_five_sln_gen, Path.Combine ("..", "..", MakeSolutionName (MsbuildGenerator.profile_4_x)));
