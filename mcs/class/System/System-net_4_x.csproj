@@ -54,6 +54,21 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\Interop.Libraries.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\System.Native\Interop.INotify.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Errors.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.IOErrors.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Close.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.FLock.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Open.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Poll.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Read.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ReadDir.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeDirectoryHandle.Unix.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeFileHandle.Unix.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\CodeDom\CodeObject.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\CodeDom\CodeTypeReference.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\CodeDom\CodeTypeReferenceCollection.cs" />
@@ -63,6 +78,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\CSharpHelpers.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\ChunkedMemoryStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\DelegatingStream.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\PathInternal.CaseSensitivity.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\TempFileCollection.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpStatusDescription.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
@@ -208,6 +224,10 @@
     <Compile Include="..\..\..\external\corefx\src\System.IO.Compression\src\System\IO\Compression\CompressionLevel.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.Compression\src\System\IO\Compression\CompressionMode.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.Compression\src\System\IO\Compression\GZipStream.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.Linux.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\PatternMatcher.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\WaitForChangedResult.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.ServicePoint\src\System\Net\SecurityProtocolType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.WebClient\src\System\Net\WebClient.cs" />
@@ -1074,6 +1094,7 @@
     <Compile Include="System.IO.Ports\SerialSignal.cs" />
     <Compile Include="System.IO.Ports\StopBits.cs" />
     <Compile Include="System.IO.Ports\WinSerialStream.cs" />
+    <Compile Include="System.IO\CoreFXFileSystemWatcherProxy.cs" />
     <Compile Include="System.IO\DefaultWatcher.cs" />
     <Compile Include="System.IO\ErrorEventArgs.cs" />
     <Compile Include="System.IO\ErrorEventHandler.cs" />
@@ -1093,9 +1114,7 @@
     <Compile Include="System.IO\RenamedEventArgs.cs" />
     <Compile Include="System.IO\RenamedEventHandler.cs" />
     <Compile Include="System.IO\SearchPattern.cs" />
-    <Compile Include="System.IO\WaitForChangedResult.cs" />
     <Compile Include="System.IO\WatcherChangeTypes.cs" />
-    <Compile Include="System.IO\WindowsWatcher.cs" />
     <Compile Include="System.Media\AudioData.cs" />
     <Compile Include="System.Media\AudioDevice.cs" />
     <Compile Include="System.Media\SoundPlayer.cs" />
@@ -1244,6 +1263,7 @@
     <Compile Include="System.Net\ServicePointScheduler.cs" />
     <Compile Include="System.Net\SocketPermission.cs" />
     <Compile Include="System.Net\SocketPermissionAttribute.cs" />
+    <Compile Include="System.Net\WebCompletionSource.cs" />
     <Compile Include="System.Net\WebConnection.cs" />
     <Compile Include="System.Net\WebConnectionStream.cs" />
     <Compile Include="System.Net\WebConnectionTunnel.cs" />
