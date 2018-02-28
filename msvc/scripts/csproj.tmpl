@@ -33,8 +33,6 @@
     <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
 
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-
 <!-- @ALL_PROFILE_PROPERTIES@ -->
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -54,6 +52,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 
 <!-- @ALL_SOURCES@ -->
 <!-- @ALL_REFERENCES@ -->
