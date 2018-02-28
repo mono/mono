@@ -39,7 +39,7 @@ namespace System.Net
 		bool requestWritten;
 		bool allowBuffering;
 		bool sendChunked;
-		TaskCompletionSource<int> pendingWrite;
+		WebCompletionSource pendingWrite;
 		long totalWritten;
 		byte[] headers;
 		bool headersSent;
@@ -131,28 +131,38 @@ namespace System.Net
 			Operation.CompleteRequestWritten (this);
 		}
 
-		public override async Task WriteAsync (byte[] buffer, int offset, int size, CancellationToken cancellationToken)
+		public override Task WriteAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
-			WebConnection.Debug ($"{ME} WRITE ASYNC: {buffer.Length}/{offset}/{size}");
-
-			Operation.ThrowIfClosedOrDisposed (cancellationToken);
-
-			if (Operation.WriteBuffer != null)
-				throw new InvalidOperationException ();
-
 			if (buffer == null)
 				throw new ArgumentNullException (nameof (buffer));
 
 			int length = buffer.Length;
 			if (offset < 0 || length < offset)
 				throw new ArgumentOutOfRangeException (nameof (offset));
-			if (size < 0 || (length - offset) < size)
-				throw new ArgumentOutOfRangeException (nameof (size));
+			if (count < 0 || (length - offset) < count)
+				throw new ArgumentOutOfRangeException (nameof (count));
 
-			var myWriteTcs = new TaskCompletionSource<int> ();
-			if (Interlocked.CompareExchange (ref pendingWrite, myWriteTcs, null) != null)
+			WebConnection.Debug ($"{ME} WRITE ASYNC: {buffer.Length}/{offset}/{count}");
+
+			if (cancellationToken.IsCancellationRequested)
+				return Task.FromCanceled (cancellationToken);
+
+			Operation.ThrowIfClosedOrDisposed (cancellationToken);
+
+			if (Operation.WriteBuffer != null)
+				throw new InvalidOperationException ();
+
+			var completion = new WebCompletionSource ();
+			if (Interlocked.CompareExchange (ref pendingWrite, completion, null) != null)
 				throw new InvalidOperationException (SR.GetString (SR.net_repcall));
 
+			return WriteAsyncInner (buffer, offset, count, completion, cancellationToken);
+		}
+
+		async Task WriteAsyncInner (byte[] buffer, int offset, int size,
+		                            WebCompletionSource completion,
+		                            CancellationToken cancellationToken)
+		{
 			try {
 				await ProcessWrite (buffer, offset, size, cancellationToken).ConfigureAwait (false);
 
@@ -162,7 +172,7 @@ namespace System.Net
 					await FinishWriting (cancellationToken);
 
 				pendingWrite = null;
-				myWriteTcs.TrySetResult (0);
+				completion.TrySetCompleted ();
 			} catch (Exception ex) {
 				KillBuffer ();
 				closed = true;
@@ -175,7 +185,7 @@ namespace System.Net
 				Operation.CompleteRequestWritten (this, ex);
 
 				pendingWrite = null;
-				myWriteTcs.TrySetException (ex);
+				completion.TrySetException (ex);
 				throw;
 			}
 		}
@@ -364,11 +374,12 @@ namespace System.Net
 				cts.CancelAfter (WriteTimeout);
 				var timeoutTask = Task.Delay (WriteTimeout);
 				while (true) {
-					var myWriteTcs = new TaskCompletionSource<int> ();
-					var oldTcs = Interlocked.CompareExchange (ref pendingWrite, myWriteTcs, null);
-					if (oldTcs == null)
+					var completion = new WebCompletionSource ();
+					var oldCompletion = Interlocked.CompareExchange (ref pendingWrite, completion, null);
+					if (oldCompletion == null)
 						break;
-					var ret = await Task.WhenAny (timeoutTask, oldTcs.Task).ConfigureAwait (false);
+					var oldWriteTask = oldCompletion.WaitForCompletion (true);
+					var ret = await Task.WhenAny (timeoutTask, oldWriteTask).ConfigureAwait (false);
 					if (ret == timeoutTask)
 						throw new WebException ("The operation has timed out.", WebExceptionStatus.Timeout);
 				}

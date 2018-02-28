@@ -741,7 +741,7 @@ mono_domain_get_tls_offset (void);
  * encountering instances of user defined subclasses of System.Type.
  */
 
-#define IS_MONOTYPE(obj) (!(obj) || (((MonoObject*)(obj))->vtable->klass->image == mono_defaults.corlib && ((MonoReflectionType*)(obj))->type != NULL))
+#define IS_MONOTYPE(obj) (!(obj) || (m_class_get_image (mono_object_class ((obj))) == mono_defaults.corlib && ((MonoReflectionType*)(obj))->type != NULL))
 
 #define IS_MONOTYPE_HANDLE(obj) IS_MONOTYPE (MONO_HANDLE_RAW (obj))
 
@@ -1849,7 +1849,7 @@ mono_ldstr_checked (MonoDomain *domain, MonoImage *image, uint32_t str_index, Mo
 MonoString*
 mono_string_new_len_checked (MonoDomain *domain, const char *text, guint length, MonoError *error);
 
-MonoString*
+MONO_PROFILER_API MonoString*
 mono_string_new_checked (MonoDomain *domain, const char *text, MonoError *merror);
 
 MonoString*
