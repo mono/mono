@@ -125,8 +125,8 @@ namespace System.IO {
 				bool ok = false;
 				switch (mode) {
 				case 1: // windows
-					ok = DefaultWatcher.GetInstance (out watcher);
-					watcher_handle = this;
+					ok = CoreFXFileSystemWatcherProxy.GetInstance (out watcher);
+					watcher_handle = (watcher as CoreFXFileSystemWatcherProxy).NewWatcher (this);
 					break;
 				case 2: // libfam
 					ok = FAMWatcher.GetInstance (out watcher, false);
