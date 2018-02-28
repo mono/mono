@@ -189,7 +189,7 @@ $(eval $(call iOSDeviceTemplate,targettv,arm64,aarch64))
 #  ios_$(1)_CXXFLAGS
 #  ios_$(1)_LDFLAGS
 #
-# This handles tvos as well.
+# This handles tvos/watchos as well.
 #
 define iOSSimulatorTemplate
 
@@ -246,7 +246,8 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 	--enable-maintainer-mode \
 	--enable-minimal=com,remoting,shared_perfcounters \
 	--with-tls=pthread \
-	--without-ikvm-native
+	--without-ikvm-native \
+	$$(ios_$(1)_CONFIGURE_FLAGS)
 
 # _ios-$(1)_CONFIGURE_FLAGS += --enable-extension-module=xamarin
 
@@ -259,16 +260,31 @@ endef
 
 ios_sim_sysroot = -isysroot $(XCODE_DIR)/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator$(IOS_VERSION).sdk -mios-simulator-version-min=$(IOS_VERSION_MIN)
 tvos_sim_sysroot = -isysroot $(XCODE_DIR)/Platforms/AppleTVSimulator.platform/Developer/SDKs/AppleTVSimulator$(TVOS_VERSION).sdk -mtvos-simulator-version-min=$(TVOS_VERSION_MIN)
+watchos_sim_sysroot = -isysroot $(XCODE_DIR)/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator$(WATCH_VERSION).sdk -mwatchos-simulator-version-min=$(WATCHOS_VERSION_MIN)
 
 ios_sim32_SYSROOT = $(ios_sim_sysroot)
 ios_sim64_SYSROOT = $(ios_sim_sysroot)
 ios_simtv_SYSROOT = $(tvos_sim_sysroot)
+ios_simwatch_SYSROOT = $(watchos_sim_sysroot)
+
+ios_simwatch_CONFIGURE_FLAGS = --with-cooperative-gc=yes
 
 ios_sim32_CPPFLAGS = -DHOST_IOS
 ios_sim64_CPPFLAGS = -DHOST_IOS
 ios_simtv_CPPFLAGS = -DHOST_APPLETVOS -DTARGET_APPLETVOS
+ios_simwatch_CPPFLAGS = -DHOST_IOS -DHOST_WATCHOS
 
 ios_simtv_AC_VARS = \
+	ac_cv_func_pthread_kill=no \
+	ac_cv_func_kill=no \
+	ac_cv_func_sigaction=no \
+	ac_cv_func_fork=no \
+	ac_cv_func_execv=no \
+	ac_cv_func_execve=no \
+	ac_cv_func_execvp=no \
+	ac_cv_func_signal=no
+ios_simwatch_AC_VARS =  \
+	ac_cv_func_system=no \
 	ac_cv_func_pthread_kill=no \
 	ac_cv_func_kill=no \
 	ac_cv_func_sigaction=no \
@@ -281,6 +297,7 @@ ios_simtv_AC_VARS = \
 $(eval $(call iOSSimulatorTemplate,sim32,i386))
 $(eval $(call iOSSimulatorTemplate,sim64,x86_64))
 $(eval $(call iOSSimulatorTemplate,simtv,x86_64))
+$(eval $(call iOSSimulatorTemplate,simwatch,i386))
 
 LLVM_REV=3b82b3c9041eb997f627f881a67d20be37264e9c
 
