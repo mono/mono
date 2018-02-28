@@ -7695,6 +7695,18 @@ mono_type_is_byref (MonoType *type)
 }
 
 /**
+ * mono_type_get_attrs:
+ * @type: the MonoType operated on
+ *
+ * Returns: the param attributes.
+ */
+uint16_t
+mono_type_get_attrs (MonoType *type)
+{
+	return type->attrs;
+}
+
+/**
  * mono_type_get_type:
  * \param type the \c MonoType operated on
  * \returns the IL type value for \p type. This is one of the \c MonoTypeEnum

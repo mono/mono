@@ -350,6 +350,9 @@ typedef void(*MonoGenericClassFunc) (MonoGenericClass *genericClass, void* user_
 MONO_API MONO_RT_EXTERNAL_ONLY mono_bool
 mono_type_is_byref       (MonoType *type);
 
+MONO_API MONO_RT_EXTERNAL_ONLY uint32_t
+mono_type_get_attrs      (MonoType *type);
+
 MONO_API MONO_RT_EXTERNAL_ONLY int
 mono_type_get_type       (MonoType *type);
 
