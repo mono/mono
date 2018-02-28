@@ -39,7 +39,7 @@ namespace System.Net
 		bool requestWritten;
 		bool allowBuffering;
 		bool sendChunked;
-		TaskCompletionSource<int> pendingWrite;
+		WebCompletionSource pendingWrite;
 		long totalWritten;
 		byte[] headers;
 		bool headersSent;
@@ -152,8 +152,8 @@ namespace System.Net
 			if (Operation.WriteBuffer != null)
 				throw new InvalidOperationException ();
 
-			var myWriteTcs = new TaskCompletionSource<int> ();
-			if (Interlocked.CompareExchange (ref pendingWrite, myWriteTcs, null) != null)
+			var completion = new WebCompletionSource ();
+			if (Interlocked.CompareExchange (ref pendingWrite, completion, null) != null)
 				throw new InvalidOperationException (SR.GetString (SR.net_repcall));
 
 			return WriteAsyncInner (buffer, offset, count, myWriteTcs, cancellationToken);
@@ -172,7 +172,7 @@ namespace System.Net
 					await FinishWriting (cancellationToken);
 
 				pendingWrite = null;
-				myWriteTcs.TrySetResult (0);
+				completion.TrySetCompleted ();
 			} catch (Exception ex) {
 				KillBuffer ();
 				closed = true;
@@ -185,7 +185,7 @@ namespace System.Net
 				Operation.CompleteRequestWritten (this, ex);
 
 				pendingWrite = null;
-				myWriteTcs.TrySetException (ex);
+				completion.TrySetException (ex);
 				throw;
 			}
 		}
@@ -374,11 +374,12 @@ namespace System.Net
 				cts.CancelAfter (WriteTimeout);
 				var timeoutTask = Task.Delay (WriteTimeout);
 				while (true) {
-					var myWriteTcs = new TaskCompletionSource<int> ();
-					var oldTcs = Interlocked.CompareExchange (ref pendingWrite, myWriteTcs, null);
-					if (oldTcs == null)
+					var completion = new WebCompletionSource ();
+					var oldCompletion = Interlocked.CompareExchange (ref pendingWrite, completion, null);
+					if (oldCompletion == null)
 						break;
-					var ret = await Task.WhenAny (timeoutTask, oldTcs.Task).ConfigureAwait (false);
+					var oldWriteTask = oldCompletion.WaitForCompletion (true);
+					var ret = await Task.WhenAny (timeoutTask, oldWriteTask).ConfigureAwait (false);
 					if (ret == timeoutTask)
 						throw new WebException ("The operation has timed out.", WebExceptionStatus.Timeout);
 				}

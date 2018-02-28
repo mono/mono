@@ -98,7 +98,7 @@ namespace System.Net
 
 		WebRequestStream writeStream;
 		HttpWebResponse webResponse;
-		TaskCompletionSource<HttpWebResponse> responseTask;
+		WebCompletionSource responseTask;
 		WebOperation currentOperation;
 		int aborted;
 		bool gotRequestStream;
@@ -975,15 +975,16 @@ namespace System.Net
 			if (!sendChunked && transferEncoding != null && transferEncoding.Trim () != "")
 				throw new ProtocolViolationException ("SendChunked should be true.");
 
-			var myTcs = new TaskCompletionSource<HttpWebResponse> ();
+			var completion = new WebCompletionSource ();
 			WebOperation operation;
 			lock (locker) {
 				getResponseCalled = true;
-				var oldTcs = Interlocked.CompareExchange (ref responseTask, myTcs, null);
-				WebConnection.Debug ($"HWR GET RESPONSE: Req={ID} {oldTcs != null}");
-				if (oldTcs != null) {
-					if (haveResponse && oldTcs.Task.IsCompleted)
-						return oldTcs.Task.Result;
+				var oldCompletion = Interlocked.CompareExchange (ref responseTask, completion, null);
+				WebConnection.Debug ($"HWR GET RESPONSE: Req={ID} {oldCompletion != null}");
+				if (oldCompletion != null) {
+					oldCompletion.ThrowOnError ();
+					if (haveResponse && oldCompletion.IsCompleted)
+						return webResponse;
 					throw new InvalidOperationException ("Cannot re-call start of asynchronous " +
 								"method while a previous call is still in progress.");
 				}
@@ -1030,14 +1031,14 @@ namespace System.Net
 					if (throwMe != null) {
 						WebConnection.Debug ($"HWR GET RESPONSE LOOP #1 EX: Req={ID} {throwMe.Status} {throwMe.InnerException?.GetType ()}");
 						haveResponse = true;
-						myTcs.TrySetException (throwMe);
+						completion.TrySetException (throwMe);
 						throw throwMe;
 					}
 
 					if (!redirect) {
 						haveResponse = true;
 						webResponse = response;
-						myTcs.TrySetResult (response);
+						completion.TrySetCompleted ();
 						return response;
 					}
 
@@ -1063,7 +1064,7 @@ namespace System.Net
 						WebConnection.Debug ($"HWR GET RESPONSE LOOP #3 EX: Req={ID} {throwMe.Status} {throwMe.InnerException?.GetType ()}");
 						haveResponse = true;
 						stream?.Close ();
-						myTcs.TrySetException (throwMe);
+						completion.TrySetException (throwMe);
 						throw throwMe;
 					}
 
