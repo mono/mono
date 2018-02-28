@@ -1271,7 +1271,11 @@ mono_image_fill_export_table (MonoDomain *domain, MonoReflectionTypeBuilder *tb,
 
 	klass = mono_class_from_mono_type (t);
 
-	klass->type_token = mono_metadata_make_token (MONO_TABLE_TYPEDEF, tb->table_idx);
+	guint32 tb_token = mono_metadata_make_token (MONO_TABLE_TYPEDEF, tb->table_idx);
+	if (m_class_get_type_token (klass) != tb_token) {
+		g_warning ("TypeBuilder token %08x does not match klass token %08x", tb_token, m_class_get_type_token (klass));
+	}
+	klass->type_token = tb_token; /* FIXME: shouldn't this already be set? Why is this assignment here? */
 
 	idx = mono_image_fill_export_table_from_class (domain, klass, module_index, 
 												   parent_index, assembly);
