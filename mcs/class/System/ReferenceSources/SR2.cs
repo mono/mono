@@ -15,6 +15,4 @@ partial class SR
 	public const string net_log_set_socketoption_reuseport_default_on = "net_log_set_socketoption_reuseport_default_on";
 	public const string net_log_set_socketoption_reuseport_not_supported = "net_log_set_socketoption_reuseport_not_supported";
 	public const string net_log_set_socketoption_reuseport = "net_log_set_socketoption_reuseport";
-
-	public const string net_reqaborted = "The request was aborted: The request was canceled.";
 }
