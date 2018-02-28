@@ -146,7 +146,7 @@ update-llvm-version:
 update-solution-files:
 	$(MAKE) update-csproj
 	$(MAKE) package-inputs
-	(cd msvc/scripts; $(MAKE) genproj.exe; mono genproj.exe $(GENPROJ_ARGS))
+	(cd msvc/scripts; $(MAKE) genproj.exe; mono --debug genproj.exe $(GENPROJ_ARGS))
 
 update-solution-files-with-tests:
 	$(MAKE) "GENPROJ_ARGS=2012 true true" update-solution-files

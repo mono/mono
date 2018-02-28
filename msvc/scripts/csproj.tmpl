@@ -25,7 +25,7 @@
     <RootNamespace>
     </RootNamespace>
     <AssemblyName>@ASSEMBLYNAME@</AssemblyName>
-    <TargetFrameworkVersion>v@FX_VERSION</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v@FX_VERSION@</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
 @SIGNATURE@
   </PropertyGroup>
@@ -53,22 +53,14 @@
     <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-@SOURCES@  </ItemGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  <!-- @ALL_SOURCES@ -->
+  <!-- @ALL_REFERENCES@ -->
   <PropertyGroup>
 @PREBUILD@
 @POSTBUILD@
   </PropertyGroup>
   <ItemGroup>
-@REFERENCES@  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-@RESOURCES@</Project>
+  <!-- @ALL_RESOURCES@ -->
+</Project>

@@ -206,7 +206,10 @@ class MsbuildGenerator {
 		this.xproject = xproject;
 		dir = xproject.Attribute ("dir").Value;
 		library = xproject.Attribute ("library").Value;
-		CsprojFilename = "..\\..\\mcs\\" + dir + "\\" + library + ".csproj";
+		// HACK: 
+		var profileIndex = library.LastIndexOf("-");
+		var libraryWithoutProfile = library.Substring(0, profileIndex);
+		CsprojFilename = "..\\..\\mcs\\" + dir + "\\" + libraryWithoutProfile + ".csproj";
 		LibraryOutput = xproject.Element ("library_output").Value;
 
 		projectGuid = LookupOrGenerateGuid ();
@@ -243,7 +246,11 @@ class MsbuildGenerator {
 		var projectFile = NativeName (CsprojFilename);
 		if (File.Exists (projectFile)){
 			var doc = XDocument.Load (projectFile);
-			return doc.XPathSelectElement ("x:Project/x:PropertyGroup/x:ProjectGuid", xmlns).Value;
+			try {
+				return doc.XPathSelectElement ("x:Project/x:PropertyGroup/x:ProjectGuid", xmlns).Value;
+			} catch (Exception exc) {
+				Console.WriteLine("Failed to parse guid from {0}: {1}", projectFile, exc.Message);
+			}
 		}
 		return "{" + Guid.NewGuid ().ToString ().ToUpper () + "}";
 	}
@@ -700,11 +707,30 @@ class MsbuildGenerator {
 		resources.AppendFormat ("      <LogicalName>{0}</LogicalName>" + NewLine, logical);
 		resources.AppendFormat ("    </EmbeddedResource>" + NewLine);
 	}
+
+	internal string GetProjectFilename () 
+	{
+		return NativeName (Csproj.csProjFilename);
+	}
+
+	public void EraseExisting () 
+	{
+		var generatedProjFile = GetProjectFilename();
+		if (File.Exists(generatedProjFile))
+			File.Delete(generatedProjFile);
+	}
 	
 	public VsCsproj Generate (string library_output, Dictionary<string,MsbuildGenerator> projects, bool showWarnings = false)
 	{
-		var generatedProjFile = NativeName (Csproj.csProjFilename);
-		//Console.WriteLine ("Generating: {0}", generatedProjFile);
+		var generatedProjFile = GetProjectFilename();
+		var updatingExistingProject = File.Exists(generatedProjFile);
+
+		Console.WriteLine (
+			"{0}: {1}", updatingExistingProject 
+				? "Updating" 
+				: "Generating", 
+			generatedProjFile
+		);
 
 		string boot, flags, output_name, built_sources, response, profile, reskey;
 
@@ -787,7 +813,11 @@ class MsbuildGenerator {
 
 		Array.Sort (source_files);
 
+		var itemGroupConditionalHeader = "  <ItemGroup Condition=\"fixme\">";
+
 		StringBuilder sources = new StringBuilder ();
+		sources.Append (itemGroupConditionalHeader + NewLine);
+
 		foreach (string s in source_files) {
 			if (s.Length == 0)
 				continue;
@@ -812,8 +842,8 @@ class MsbuildGenerator {
 
 			sources.AppendFormat ("    <Compile Include=\"{0}\" />" + NewLine, src);
 		}
-		if (sources.Length > 1)
-			sources.Remove (sources.Length - 1, 1);
+
+		sources.Append ("  </ItemGroup>");
 
 		//if (library == "corlib-build") // otherwise, does not compile on fx_version == 4.0
 		//{
@@ -828,6 +858,8 @@ class MsbuildGenerator {
 		//}
 
 		var refs = new StringBuilder ();
+
+		refs.Append (itemGroupConditionalHeader + NewLine);
 
 		if (response.Contains ("_test")) {
 			refs.Append ($@"    <Reference Include=""nunitlite"">{NewLine}");
@@ -873,8 +905,8 @@ class MsbuildGenerator {
 			}
 		}
 		if (resources.Length > 0){
-			resources.Insert (0, "  <ItemGroup>" + NewLine);
-			resources.AppendFormat ("  </ItemGroup>" + NewLine);
+			resources.Insert (0, itemGroupConditionalHeader + NewLine);
+			resources.Append ("  </ItemGroup>" + NewLine);
 		}
 
 		if (references.Count > 0 || reference_aliases.Count > 0) {
@@ -924,6 +956,8 @@ class MsbuildGenerator {
 				}
 			}
 		}
+
+		refs.Append ("  </ItemGroup>");
 
 		// Possible inputs:
 		// ../class/lib/build/tmp/System.Xml.dll  [No longer possible, we should be removing this from order.xml]
@@ -978,7 +1012,11 @@ class MsbuildGenerator {
 
 		string assemblyName = Path.GetFileNameWithoutExtension (output_name);
 
-		Csproj.output = template.
+		string textToUpdate = updatingExistingProject 
+			? File.ReadAllText(generatedProjFile)
+			: template;
+
+		Csproj.output = textToUpdate.
 			Replace ("@OUTPUTTYPE@", Target == Target.Library ? "Library" : "Exe").
 			Replace ("@SIGNATURE@", strongNameSection).
 			Replace ("@PROJECTGUID@", Csproj.projectGuid).
@@ -989,28 +1027,35 @@ class MsbuildGenerator {
 			Replace ("@NOSTDLIB@", "<NoStdLib>" + (!StdLib).ToString () + "</NoStdLib>").
 			Replace ("@NOCONFIG@", "<NoConfig>" + (!load_default_config).ToString () + "</NoConfig>").
 			Replace ("@ALLOWUNSAFE@", Unsafe ? "<AllowUnsafeBlocks>true</AllowUnsafeBlocks>" : "").
-			Replace ("@FX_VERSION", fx_version).
+			Replace ("@FX_VERSION@", fx_version).
 			Replace ("@ASSEMBLYNAME@", assemblyName).
 			Replace ("@OUTPUTDIR@", build_output_dir).
 			Replace ("@OUTPUTSUFFIX@", Path.GetFileName (build_output_dir)).
 			Replace ("@DEFINECONSTANTS@", defines.ToString ()).
 			Replace ("@DEBUG@", want_debugging_support ? "true" : "false").
 			Replace ("@DEBUGTYPE@", want_debugging_support ? "full" : "pdbonly").
-			Replace ("@REFERENCES@", refs.ToString ()).
 			Replace ("@PREBUILD@", prebuild).
 			Replace ("@POSTBUILD@", postbuild).
 			Replace ("@STARTUPOBJECT@", main == null ? "" : $"<StartupObject>{main}</StartupObject>").
 			//Replace ("@ADDITIONALLIBPATHS@", String.Format ("<AdditionalLibPaths>{0}</AdditionalLibPaths>", string.Join (",", libs.ToArray ()))).
 			Replace ("@ADDITIONALLIBPATHS@", String.Empty).
-			Replace ("@RESOURCES@", resources.ToString ()).
 			Replace ("@OPTIMIZE@", Optimize ? "true" : "false").
-			Replace ("@SOURCES@", sources.ToString ()).
 			Replace ("@METADATAVERSION@", assemblyName == "mscorlib" ? "<RuntimeMetadataVersion>Mono</RuntimeMetadataVersion>" : "");
+
+		var refsPlaceholder = "<!-- @ALL_REFERENCES@ -->";
+		var resourcesPlaceholder = "<!-- @ALL_RESOURCES@ -->";
+		var sourcesPlaceholder = "<!-- @ALL_SOURCES@ -->";
+
+		Csproj.output = Csproj.output.
+			Replace (refsPlaceholder, refs.ToString () + "\r\n" + refsPlaceholder).
+			Replace (resourcesPlaceholder, resources.ToString () + "\r\n" + resourcesPlaceholder).
+			Replace (sourcesPlaceholder, sources.ToString () + "\r\n" + sourcesPlaceholder);
 
 		Csproj.preBuildEvent = prebuild;
 		Csproj.postBuildEvent = postbuild;
 
 		//Console.WriteLine ("Generated {0}", ofile.Replace ("\\", "/"));
+		// Console.WriteLine("Writing {0}", generatedProjFile);
 		using (var o = new StreamWriter (generatedProjFile)) {
 			o.WriteLine (Csproj.output);
 		}
@@ -1100,9 +1145,13 @@ class MsbuildGenerator {
 		}
 		var ljoined = String.Join (", ", libs);
 		Console.WriteLine ($"{library_output}: did not find referenced {dllReferenceName} with libs={ljoined}");
+
+		// FIXME: This is incredibly noisy and generates a billion lines of output
+		if (false)
 		foreach (var p in projects) {
 			Console.WriteLine ("{0}", p.Value.AbsoluteLibraryOutput);
 		}
+
 		return null;
 	}
 
@@ -1152,8 +1201,10 @@ public class Driver {
 			if (library.Contains ("tests") && !withTests)
 				continue;
 
+			/*
 			if (profile != "net_4_x")
 				continue;
+			*/
 
 			yield return project;
 		}
@@ -1191,13 +1242,18 @@ public class Driver {
 		var projects = new Dictionary<string,MsbuildGenerator> ();
 
 		var duplicates = new List<string> ();
+		Console.WriteLine("// Deleting existing project files");
 		foreach (var project in GetProjects (withTests)) {
 			var library_output = project.Element ("library_output").Value;
-			projects [library_output] = new MsbuildGenerator (project);
+
+			var gen = new MsbuildGenerator (project);
+			projects [library_output] = gen;
+			gen.EraseExisting ();
 		}
+		Console.WriteLine("// Updating project files");
 		foreach (var project in GetProjects (withTests)){
 			var library_output = project.Element ("library_output").Value;
-			//Console.WriteLine ("=== {0} ===", library_output);
+			// Console.WriteLine ("=== {0} ===", library_output);
 			var gen = projects [library_output];
 			try {
 				var csproj = gen.Generate (library_output, projects);
@@ -1220,7 +1276,7 @@ public class Driver {
 
 		if (duplicates.Count () > 0) {
 			var sb = new StringBuilder ();
-			sb.AppendLine ("WARNING: Skipped some project references, apparent duplicates in order.xml:");
+			sb.AppendLine ("// WARNING: Skipped some project references, apparent duplicates in order.xml:");
 			foreach (var item in duplicates) {
 				sb.AppendLine (item);
 			}
