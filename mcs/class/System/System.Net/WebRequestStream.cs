@@ -156,11 +156,11 @@ namespace System.Net
 			if (Interlocked.CompareExchange (ref pendingWrite, completion, null) != null)
 				throw new InvalidOperationException (SR.GetString (SR.net_repcall));
 
-			return WriteAsyncInner (buffer, offset, count, myWriteTcs, cancellationToken);
+			return WriteAsyncInner (buffer, offset, count, completion, cancellationToken);
 		}
 
 		async Task WriteAsyncInner (byte[] buffer, int offset, int size,
-		                            TaskCompletionSource<int> myWriteTcs,
+		                            WebCompletionSource completion,
 		                            CancellationToken cancellationToken)
 		{
 			try {
