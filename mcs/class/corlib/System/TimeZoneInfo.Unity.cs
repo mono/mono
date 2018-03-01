@@ -85,7 +85,7 @@ namespace System {
 			if(!disableDaylightSavings)
 			{
 				//the icall only supports years from 1970 through 2037.
-				int firstSupportedDate = 1970;
+				int firstSupportedDate = 1971;
 				int lastSupportedDate = 2037;
 
 				//first, generate rules from the current year until the last year mktime is guaranteed to supports
