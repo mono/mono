@@ -22,6 +22,8 @@ namespace Mono.Profiler.Log {
 
 		public ulong StartupTime { get; }
 
+		public ulong TimestampStartupTime { get; }
+
 		public int TimerOverhead { get; }
 
 		public int Flags { get; }
@@ -51,6 +53,10 @@ namespace Mono.Profiler.Log {
 			
 			PointerSize = reader.ReadByte ();
 			StartupTime = reader.ReadUInt64 ();
+
+			if (Version.Major >= 3)
+				TimestampStartupTime = reader.ReadUInt64 ();
+
 			TimerOverhead = reader.ReadInt32 ();
 			Flags = reader.ReadInt32 ();
 			ProcessId = reader.ReadInt32 ();
