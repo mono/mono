@@ -71,20 +71,14 @@ namespace System.Net
 			completion.Task.Result.Error?.Throw ();
 		}
 
-		public async Task<(bool success, object result)> WaitForCompletion (bool throwOnError)
+		public async Task<T> WaitForCompletion ()
 		{
 			var result = await completion.Task.ConfigureAwait (false);
 			if (result.State == State.Completed)
-				return (true, result.Argument);
-			if (throwOnError)
-				result.Error.Throw ();
-			return (false, null);
-		}
-
-		public async Task<T> WaitForCompletion ()
-		{
-			var (result, argument) = await WaitForCompletion (true);
-			return (T)argument;
+				return (T)result.Argument;
+			// This will always throw once we get here.
+			result.Error.Throw ();
+			throw new InvalidOperationException ("Should never happen.");
 		}
 
 		enum State : int {
