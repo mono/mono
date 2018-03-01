@@ -30,13 +30,18 @@ using System.Runtime.ExceptionServices;
 
 namespace System.Net
 {
-	class WebCompletionSource
+	class WebCompletionSource<T>
 	{
 		TaskCompletionSource<Result> completion;
 
 		public WebCompletionSource ()
 		{
 			completion = new TaskCompletionSource<Result> ();
+		}
+
+		public bool TrySetCompleted (T argument)
+		{
+			return completion.TrySetResult (new Result (argument));
 		}
 
 		public bool TrySetCompleted ()
@@ -66,14 +71,20 @@ namespace System.Net
 			completion.Task.Result.Error?.Throw ();
 		}
 
-		public async Task<bool> WaitForCompletion (bool throwOnError)
+		public async Task<(bool success, object result)> WaitForCompletion (bool throwOnError)
 		{
 			var result = await completion.Task.ConfigureAwait (false);
 			if (result.State == State.Completed)
-				return true;
+				return (true, result.Argument);
 			if (throwOnError)
 				result.Error.Throw ();
-			return false;
+			return (false, null);
+		}
+
+		public async Task<T> WaitForCompletion ()
+		{
+			var (result, argument) = await WaitForCompletion (true);
+			return (T)argument;
 		}
 
 		enum State : int {
@@ -93,11 +104,25 @@ namespace System.Net
 				get;
 			}
 
+			public T Argument {
+				get;
+			}
+
+			public Result (T argument)
+			{
+				State = State.Completed;
+				Argument = argument;
+			}
+
 			public Result (State state, ExceptionDispatchInfo error)
 			{
 				State = state;
 				Error = error;
 			}
 		}
+	}
+
+	class WebCompletionSource : WebCompletionSource<object>
+	{
 	}
 }
