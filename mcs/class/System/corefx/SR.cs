@@ -544,4 +544,7 @@ partial class SR
 	public const string net_ftpstatuscode_FileActionAborted = "Exceeded storage allocation (for current directory or data set)";
 	public const string net_ftpstatuscode_ActionNotTakenFilenameNotAllowed = "File name not allowed";
 	public const string net_invalid_host = "The specified value is not a valid Host header string.";
+	public const string PlatformNotSupported_CompileToAssembly = "This platform does not support writing compiled regular expressions to an assembly.";
+	public const string NotSupported_ReadOnlyCollection = "Collection is read-only.";
+	public const string InvalidEmptyArgument = "Argument {0} cannot be zero-length.";
 }
