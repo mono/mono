@@ -57,7 +57,7 @@ MS_EXTN_VERSIONS="$MS_EXTN_VERSIONS 15.5.0-preview-20171027-2" # https://github.
 MS_EXTN_VERSIONS="$MS_EXTN_VERSIONS 2.1.0-preview1-62414-02" # https://github.com/dotnet/cli/blob/501e11d928c21608999c934f0a7078570b688c6c/build/DependencyVersions.props
 
 for ver in $MS_EXTN_VERSIONS; do
-	curl -L https://dotnet.myget.org/F/cli-deps/api/v2/package/Microsoft.NET.Build.Extensions/${ver} -o nugets/microsoft.net.build.extensions.${ver}.nupkg
+	curl -L https://dotnet.myget.org/F/dotnet-core/api/v2/package/Microsoft.NET.Build.Extensions/${ver} -o nugets/microsoft.net.build.extensions.${ver}.nupkg
 done
 
 touch .download_stamp_file
