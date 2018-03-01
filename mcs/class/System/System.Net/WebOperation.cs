@@ -279,10 +279,8 @@ namespace System.Net
 
 				responseTask.TrySetCompleted (stream);
 			} catch (OperationCanceledException) {
-				Console.Error.WriteLine ($"WO SET CANCELED!");
 				SetCanceled ();
 			} catch (Exception e) {
-				Console.Error.WriteLine ($"WO SET ERROR!");
 				SetError (e);
 			}
 		}
