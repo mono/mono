@@ -131,64 +131,55 @@ namespace System.Windows.Forms
 			int width = 0;
 			int height = 0;
 			bool horizontal = FlowDirection == FlowDirection.LeftToRight || FlowDirection == FlowDirection.RightToLeft;
-			if (!WrapContents || (horizontal && proposedSize.Width == 0) || (!horizontal && proposedSize.Height == 0)) {
-				foreach (Control control in Controls) {
-					Size control_preferred_size;
-					if (control.AutoSize)
-						control_preferred_size = control.PreferredSize;
-					else
-						control_preferred_size = control.Size;
-					Padding control_margin = control.Margin;
-					if (horizontal) {
-						width += control_preferred_size.Width + control_margin.Horizontal;
-						height = Math.Max (height, control_preferred_size.Height + control_margin.Vertical);
-					} else {
-						height += control_preferred_size.Height + control_margin.Vertical;
-						width = Math.Max (width, control_preferred_size.Width + control_margin.Horizontal);
-					}
-				}
-			} else {
-				int size_in_flow_direction = 0;
-				int size_in_other_direction = 0;
-				int increase;
-				foreach (Control control in Controls) {
-					Size control_preferred_size;
-					if (control.AutoSize)
-						control_preferred_size = control.PreferredSize;
-					else
-						control_preferred_size = control.ExplicitBounds.Size;
-					Padding control_margin = control.Margin;
-					if (horizontal) {
-						increase = control_preferred_size.Width + control_margin.Horizontal;
-						if (size_in_flow_direction != 0 && size_in_flow_direction + increase >= proposedSize.Width) {
-							width = Math.Max (width, size_in_flow_direction);
-							size_in_flow_direction = 0;
-							height += size_in_other_direction;
-							size_in_other_direction = 0;
-						}
-						size_in_flow_direction += increase;
-						size_in_other_direction = Math.Max (size_in_other_direction, control_preferred_size.Height + control_margin.Vertical);
-					} else {
-						increase = control_preferred_size.Height + control_margin.Vertical;
-						if (size_in_flow_direction != 0 && size_in_flow_direction + increase >= proposedSize.Height) {
-							height = Math.Max (height, size_in_flow_direction);
-							size_in_flow_direction = 0;
-							width += size_in_other_direction;
-							size_in_other_direction = 0;
-						}
-						size_in_flow_direction += increase;
-						size_in_other_direction = Math.Max (size_in_other_direction, control_preferred_size.Width + control_margin.Horizontal);
-					}
-				}
+			int size_in_flow_direction = 0;
+			int size_in_other_direction = 0;
+			int increase;
+			Size margin = new Size (0, 0);
+			bool force_flow_break = false;
+
+			proposedSize = new Size (proposedSize.Width - Padding.Horizontal, proposedSize.Height - Padding.Vertical);
+
+			foreach (Control control in Controls) {
+				Size control_preferred_size;
+				if (control.AutoSize)
+					control_preferred_size = control.PreferredSize;
+				else
+					control_preferred_size = control.ExplicitBounds.Size;
+				Padding control_margin = control.Margin;
 				if (horizontal) {
-					width = Math.Max (width, size_in_flow_direction);
-					height += size_in_other_direction;
+					increase = control_preferred_size.Width + control_margin.Horizontal;
+					if (WrapContents && ((proposedSize.Width > 0 && size_in_flow_direction != 0 && size_in_flow_direction + increase >= proposedSize.Width) || force_flow_break)) {
+						width = Math.Max (width, size_in_flow_direction);
+						size_in_flow_direction = 0;
+						height += size_in_other_direction;
+						size_in_other_direction = 0;
+					}
+					size_in_flow_direction += increase;
+					size_in_other_direction = Math.Max (size_in_other_direction, control_preferred_size.Height + control_margin.Vertical);
 				} else {
-					height = Math.Max (height, size_in_flow_direction);
-					width += size_in_other_direction;
+					increase = control_preferred_size.Height + control_margin.Vertical;
+					if (WrapContents && ((proposedSize.Height > 0 && size_in_flow_direction != 0 && size_in_flow_direction + increase >= proposedSize.Height) || force_flow_break)) {
+						height = Math.Max (height, size_in_flow_direction);
+						size_in_flow_direction = 0;
+						width += size_in_other_direction;
+						size_in_other_direction = 0;
+					}
+					size_in_flow_direction += increase;
+					size_in_other_direction = Math.Max (size_in_other_direction, control_preferred_size.Width + control_margin.Horizontal);
 				}
+
+				force_flow_break = settings.GetFlowBreak(control);
 			}
-			return new Size (width, height);
+
+			if (horizontal) {
+				width = Math.Max (width, size_in_flow_direction);
+				height += size_in_other_direction;
+			} else {
+				height = Math.Max (height, size_in_flow_direction);
+				width += size_in_other_direction;
+			}
+
+			return new Size (width + Padding.Horizontal, height + Padding.Vertical);
 		}
 		#endregion
 	}
