@@ -8,7 +8,11 @@ namespace System
 		public static readonly bool IsWindowsNanoServer = false;
 
 		public static bool IsWindows7 => false;
+#if MONO_COREFX
+		public static bool IsFullFramework => false;
+#else
 		public static bool IsFullFramework => true;
+#endif
 		public static bool IsNonZeroLowerBoundArraySupported => true;
 		public static bool IsUap => false;
 

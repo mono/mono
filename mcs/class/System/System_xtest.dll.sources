@@ -99,3 +99,7 @@ System/RemoteExecutorTests.cs
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/tests/FileSystemWatcher.unit.cs
 ../../../external/corefx/src/Common/tests/System/IO/TempFile.cs
 ../../../external/corefx/src/Common/tests/System/IO/TempDirectory.cs
+
+# System.Text.RegularExpressions
+../../../external/corefx/src/Common/tests/System/Diagnostics/DebuggerAttributes.cs
+../../../external/corefx/src/System.Text.RegularExpressions/tests/*.cs:Regex.Serialization.cs,MatchCollectionTests.cs,MatchCollectionTests2.cs
