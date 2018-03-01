@@ -286,7 +286,6 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexCharClass.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexCode.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexCompilationInfo.cs
-../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexCompiler.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexFCD.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexGroup.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexGroupCollection.cs
@@ -303,9 +302,7 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexTree.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexWriter.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/CompiledRegexRunner.cs
-../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/CompiledRegexRunnerFactory.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/HashtableExtensions.cs
-../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexLWCGCompiler.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexCollectionDebuggerProxy.cs
 ../../../external/corefx/src/Common/src/System/NotImplemented.cs
 
