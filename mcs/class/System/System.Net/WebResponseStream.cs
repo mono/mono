@@ -134,7 +134,7 @@ namespace System.Net
 				WebConnection.Debug ($"{ME} READ ASYNC #1: {oldCompletion != null}");
 				if (oldCompletion == null)
 					break;
-				await oldCompletion.WaitForCompletion (true).ConfigureAwait (false);
+				await oldCompletion.WaitForCompletion ().ConfigureAwait (false);
 			}
 
 			WebConnection.Debug ($"{ME} READ ASYNC #2: {totalRead} {contentLength}");
@@ -416,7 +416,7 @@ namespace System.Net
 					break;
 
 				// ReadAsync() is in progress.
-				var oldReadTask = oldCompletion.WaitForCompletion (true);
+				var oldReadTask = oldCompletion.WaitForCompletion ();
 				var anyTask = await Task.WhenAny (oldReadTask, timeoutTask).ConfigureAwait (false);
 				if (anyTask == timeoutTask)
 					throw new WebException ("The operation has timed out.", WebExceptionStatus.Timeout);
