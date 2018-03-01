@@ -122,7 +122,6 @@ mono_set_allocator_vtable (MonoAllocatorVTable* vtable);
 #if defined (__clang__)
 #define MONO_RT_EXTERNAL_ONLY \
 	__attribute__ ((__unavailable__ ("The mono runtime must not call this function"))) \
-	__attribute__ ((__noinline__))
 	MONO_RT_CENTRINEL_SUPPRESS
 #elif defined (__GNUC__)
 #define MONO_RT_EXTERNAL_ONLY \
