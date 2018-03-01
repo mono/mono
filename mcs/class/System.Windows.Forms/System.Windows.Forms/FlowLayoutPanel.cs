@@ -141,10 +141,16 @@ namespace System.Windows.Forms
 
 			foreach (Control control in Controls) {
 				Size control_preferred_size;
-				if (control.AutoSize)
-					control_preferred_size = control.PreferredSize;
-				else
+				if (control.AutoSize) {
+					Size proposed_constraints = new Size(int.MaxValue, Math.Max(1, proposedSize.Height - control.Margin.Vertical));
+					if (size_in_flow_direction == 0)
+						proposed_constraints.Width = Math.Max(1, proposedSize.Width - control.Margin.Horizontal);
+					control_preferred_size = control.GetPreferredSize(proposed_constraints);
+				} else {
 					control_preferred_size = control.ExplicitBounds.Size;
+					if ((control.Anchor & (AnchorStyles.Top | AnchorStyles.Bottom)) == (AnchorStyles.Top | AnchorStyles.Bottom))
+						control_preferred_size.Height = control.MinimumSize.Height;
+				}
 				Padding control_margin = control.Margin;
 				if (horizontal) {
 					increase = control_preferred_size.Width + control_margin.Horizontal;
