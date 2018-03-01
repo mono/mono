@@ -140,6 +140,8 @@ namespace System.Windows.Forms
 			proposedSize = new Size (proposedSize.Width - Padding.Horizontal, proposedSize.Height - Padding.Vertical);
 
 			foreach (Control control in Controls) {
+				if (!control.VisibleInternal)
+					continue;
 				Size control_preferred_size;
 				if (control.AutoSize) {
 					Size proposed_constraints = new Size(int.MaxValue, Math.Max(1, proposedSize.Height - control.Margin.Vertical));

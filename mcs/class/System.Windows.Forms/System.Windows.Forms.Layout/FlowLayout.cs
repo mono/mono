@@ -91,7 +91,7 @@ namespace System.Windows.Forms.Layout
 
 			foreach (Control c in parent.Controls) {
 				// Only apply layout to visible controls.
-				if (!c.Visible) { continue; }
+				if (!c.VisibleInternal) { continue; }
 
 				// Resize any AutoSize controls to their preferred size
 				if (c.AutoSize == true) {
