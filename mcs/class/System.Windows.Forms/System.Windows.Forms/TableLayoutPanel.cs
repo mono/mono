@@ -130,12 +130,11 @@ namespace System.Windows.Forms
 			get { return this.settings; }
 			set {
 				if (value.isSerialized) {
+					this.settings = new TableLayoutSettings(this, value);
 					// Serialized version doesn't calculate these.
-					value.ColumnCount = value.ColumnStyles.Count;
-					value.RowCount = value.RowStyles.Count;
-					value.panel = this;
-					
-					this.settings = value;
+					this.settings.ColumnCount = value.ColumnStyles.Count;
+					this.settings.RowCount = value.RowStyles.Count;
+					this.PerformLayout();
 				} else
 					throw new NotSupportedException ("LayoutSettings value cannot be set directly.");
 			}
