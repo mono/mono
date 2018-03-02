@@ -349,9 +349,6 @@ $(eval $(call iOSSimulatorTemplate,sim64,x86_64))
 $(eval $(call iOSSimulatorTemplate,simtv,x86_64))
 $(eval $(call iOSSimulatorTemplate,simwatch,i386))
 
-$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe: $(wildcard $(TOP)/tools/offsets-tool/*.cs)
-	$(MAKE) -C $(dir $@) MonoAotOffsetsDumper.exe
-
 LLVM_REV=3b82b3c9041eb997f627f881a67d20be37264e9c
 
 # Download a prebuilt llvm
@@ -468,5 +465,3 @@ ios_crosswatch_CONFIGURE_FLAGS=--build=i386-apple-darwin10 	--with-cooperative-g
 $(eval $(call iOSCrossTemplate,cross32,arm,llvm32,arm-darwin,arm-apple-darwin10))
 $(eval $(call iOSCrossTemplate,cross64,aarch64,llvm64,aarch64-darwin,aarch64-apple-darwin10))
 $(eval $(call iOSCrossTemplate,crosswatch,armv7k,llvm32,armv7k-unknown-darwin,armv7k-apple-darwin))
-
-configure-mono: $(TOP)/configure
