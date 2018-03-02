@@ -35,11 +35,7 @@ mono_mkstemp (char *templ)
 
 	len = strlen (templ);
 	do {
-#if HOST_WIN32
-		t = _mktemp (templ);
-#else
-		t = mktemp (templ);
-#endif
+		t = g_mktemp (templ);
 
 		if (t == NULL) {
 			errno = EINVAL;

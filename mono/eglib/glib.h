@@ -926,6 +926,11 @@ gboolean   g_file_test (const gchar *filename, GFileTest test);
 #define g_access access
 #endif
 #ifdef G_OS_WIN32
+#define g_mktemp _mktemp
+#else
+#define g_mktemp mktemp
+#endif
+#ifdef G_OS_WIN32
 #define g_unlink _unlink
 #else
 #define g_unlink unlink
