@@ -878,12 +878,6 @@ corefx/SR.cs
 
 ../../../external/corefx/src/System.Runtime/src/System/Collections/Generic/ISet.cs
 
-../../../external/corefx/src/System.Buffers/src/System/Buffers/ArrayPool.cs
-../../../external/corefx/src/System.Buffers/src/System/Buffers/ArrayPoolEventSource.cs
-../../../external/corefx/src/System.Buffers/src/System/Buffers/DefaultArrayPool.cs
-../../../external/corefx/src/System.Buffers/src/System/Buffers/DefaultArrayPoolBucket.cs
-../../../external/corefx/src/System.Buffers/src/System/Buffers/Utilities.cs
-
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/BitHelper.cs
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/ICollectionDebugView.cs
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/IDictionaryDebugView.cs

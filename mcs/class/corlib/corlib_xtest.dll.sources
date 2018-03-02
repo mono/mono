@@ -155,6 +155,9 @@
 ../../../external/corefx/src/System.ValueTuple/tests/*.cs
 
 # System.Runtime
+# TODO: Many more to be included
+../../../external/corefx/src/System.Runtime/tests/System/String.SplitTests.cs
+
 ../../../external/corefx/src/System.Runtime/tests/System/Runtime/CompilerServices/*.cs:RuntimeHelpersTests.netcoreapp.cs,ConditionalWeakTableTests.netcoreapp.cs,ConditionalWeakTableTests.cs
 
 # System.Threading.Tasks
