@@ -30,13 +30,13 @@ _android_$(1)_AC_VARS= \
 	ac_cv_func_sched_setaffinity=no
 
 _android_$(1)_CFLAGS= \
-	$(if $(filter $(RELEASE),true),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) \
+	$(if $(RELEASE),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) \
 	-fstack-protector \
 	-DMONODROID=1 \
 	$$(android_$(1)_CFLAGS)
 
 _android_$(1)_CXXFLAGS= \
-	$(if $(filter $(RELEASE),true),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) \
+	$(if $(RELEASE),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) \
 	-fstack-protector \
 	-DMONODROID=1 \
 	$$(android_$(1)_CXXFLAGS)
@@ -169,11 +169,11 @@ _android_$(1)_RANLIB=ranlib
 _android_$(1)_STRIP=strip
 
 _android_$(1)_CFLAGS= \
-	$(if $(filter $(RELEASE),true),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) \
+	$(if $(RELEASE),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) \
 	$$(android_$(1)_CFLAGS)
 
 _android_$(1)_CXXFLAGS= \
-	$(if $(filter $(RELEASE),true),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) \
+	$(if $(RELEASE),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) \
 	$$(android_$(1)_CXXFLAGS)
 
 _android_$(1)_CONFIGURE_ENVIRONMENT= \
@@ -269,11 +269,11 @@ _android_$(1)_AC_VARS= \
 	ac_cv_search_dlopen=no
 
 _android_$(1)_CFLAGS= \
-	$(if $(filter $(RELEASE),true),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) \
+	$(if $(RELEASE),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) \
 	-DXAMARIN_PRODUCT_VERSION=0
 
 _android_$(1)_CXXFLAGS= \
-	$(if $(filter $(RELEASE),true),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) \
+	$(if $(RELEASE),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) \
 	-DXAMARIN_PRODUCT_VERSION=0
 
 _android_$(1)_CONFIGURE_ENVIRONMENT= \

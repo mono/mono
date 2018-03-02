@@ -12,14 +12,14 @@
 PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 
 ios_CFLAGS= \
-	$(if $(filter $(RELEASE),true),-O2,-O0 -ggdb3 -gdwarf-2)
+	$(if $(RELEASE),-O2,-O0 -ggdb3 -gdwarf-2)
 
 ios_CPPFLAGS= \
-	$(if $(filter $(RELEASE),true),-O2,-O0 -ggdb3 -gdwarf-2) \
+	$(if $(RELEASE),-O2,-O0 -ggdb3 -gdwarf-2) \
 	-DMONOTOUCH=1
 
 ios_CXXFLAGS= \
-	$(if $(filter $(RELEASE),true),-O2,-O0 -ggdb3 -gdwarf-2)
+	$(if $(RELEASE),-O2,-O0 -ggdb3 -gdwarf-2)
 
 ios_LDFLAGS=
 
