@@ -921,6 +921,11 @@ gboolean   g_file_test (const gchar *filename, GFileTest test);
 #define g_rename rename
 #define g_stat stat
 #ifdef G_OS_WIN32
+#define g_access _access
+#else
+#define g_access access
+#endif
+#ifdef G_OS_WIN32
 #define g_unlink _unlink
 #else
 #define g_unlink unlink
