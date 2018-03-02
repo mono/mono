@@ -40,7 +40,7 @@ namespace System.Windows.Forms.Layout
 		private DefaultLayout ()
 		{
 		}
-		
+	
 		static void LayoutDockedChildren (Control parent, Control[] controls)
 		{
 			Rectangle space = parent.DisplayRectangle;
@@ -106,34 +106,26 @@ namespace System.Windows.Forms.Layout
 				mdi.SetBoundsInternal (space.Left, space.Top, space.Width, space.Height, BoundsSpecified.None);
 		}
 
-		static void LayoutAnchoredChildren (Control parent, Control[] controls)
+		static void LayoutAnchoredChildren (Control parent, IList controls)
 		{
-			Rectangle space = parent.ClientRectangle;
+			Rectangle space = parent.DisplayRectangle;
 
-			for (int i = 0; i < controls.Length; i++) {
-				int left;
-				int top;
-				int width;
-				int height;
-
-				Control child = controls[i];
-
+			foreach (Control child in controls) {
 				if (!child.VisibleInternal || child.Dock != DockStyle.None)
 					continue;
 
 				AnchorStyles anchor = child.Anchor;
 
-				left = child.Left;
-				top = child.Top;
-				
-				width = child.Width;
-				height = child.Height;
+				int left = child.Left;
+				int top = child.Top;
+				int width = child.Width;
+				int height = child.Height;
 
 				if ((anchor & AnchorStyles.Right) != 0) {
 					if ((anchor & AnchorStyles.Left) != 0)
-						width = space.Width - child.dist_right - left;
+						width = space.Right - child.dist_right - left;
 					else
-						left = space.Width - child.dist_right - width;
+						left = space.Right - child.dist_right - width;
 				}
 				else if ((anchor & AnchorStyles.Left) == 0) {
 					// left+=diff_width/2 will introduce rounding errors (diff_width removed from svn after r51780)
@@ -144,9 +136,9 @@ namespace System.Windows.Forms.Layout
 
 				if ((anchor & AnchorStyles.Bottom) != 0) {
 					if ((anchor & AnchorStyles.Top) != 0)
-						height = space.Height - child.dist_bottom - top;
+						height = space.Bottom - child.dist_bottom - top;
 					else
-						top = space.Height - child.dist_bottom - height;
+						top = space.Bottom - child.dist_bottom - height;
 				}
 				else if ((anchor & AnchorStyles.Top) == 0) {
 					// top += diff_height/2 will introduce rounding errors (diff_height removed from after r51780)
@@ -162,39 +154,28 @@ namespace System.Windows.Forms.Layout
 				if (height < 0)
 					height = 0;
 
-				child.SetBoundsInternal (left, top, width, height, BoundsSpecified.None);
-			}
-		}
-		
-		static void LayoutAutoSizedChildren (Control parent, Control[] controls)
-		{
-			for (int i = 0; i < controls.Length; i++) {
-				int left;
-				int top;
+				if (child.AutoSizeInternal) {
+					Size proposedSize = Size.Empty;
+					if ((anchor & (AnchorStyles.Left | AnchorStyles.Right)) == (AnchorStyles.Left | AnchorStyles.Right))
+						proposedSize.Width = width;
+					if ((anchor & (AnchorStyles.Top | AnchorStyles.Bottom)) == (AnchorStyles.Top | AnchorStyles.Bottom))
+						proposedSize.Height = height;
 
-				Control child = controls[i];
-				if (!child.VisibleInternal
-				    || child.Dock != DockStyle.None
-				    || !child.AutoSizeInternal)
-					continue;
+					Size preferredsize = GetPreferredControlSize (child, proposedSize);
 
-				AnchorStyles anchor = child.Anchor;
-				left = child.Left;
-				top = child.Top;
-				
-				Size proposed_size = Size.Empty;
-				if ((anchor & (AnchorStyles.Left | AnchorStyles.Right)) == (AnchorStyles.Left | AnchorStyles.Right))
-					proposed_size.Width = child.Width;
-				if ((anchor & (AnchorStyles.Top | AnchorStyles.Bottom)) == (AnchorStyles.Top | AnchorStyles.Bottom))
-					proposed_size.Height = child.Height;
-				Size preferredsize = GetPreferredControlSize (child, proposed_size);
+					if ((anchor & (AnchorStyles.Left | AnchorStyles.Right)) != AnchorStyles.Right)
+						child.dist_right += width - preferredsize.Width;
+					else
+						left += width - preferredsize.Width;
+					if ((anchor & (AnchorStyles.Top | AnchorStyles.Bottom)) != AnchorStyles.Bottom)
+						child.dist_bottom += height - preferredsize.Height;
+					else
+						top += height - preferredsize.Height;
 
-				if (((anchor & AnchorStyles.Left) != 0) || ((anchor & AnchorStyles.Right) == 0))
-					child.dist_right += child.Width - preferredsize.Width;
-				if (((anchor & AnchorStyles.Top) != 0) || ((anchor & AnchorStyles.Bottom) == 0))
-					child.dist_bottom += child.Height - preferredsize.Height;
-
-				child.SetBoundsInternal (left, top, preferredsize.Width, preferredsize.Height, BoundsSpecified.None);
+					child.SetBoundsInternal (left, top, preferredsize.Width, preferredsize.Height, BoundsSpecified.None);
+				} else {
+					child.SetBoundsInternal (left, top, width, height, BoundsSpecified.None);
+				}
 			}
 		}
 
@@ -249,7 +230,6 @@ namespace System.Windows.Forms.Layout
 
 			LayoutDockedChildren (parent, controls);
 			LayoutAnchoredChildren (parent, controls);
-			LayoutAutoSizedChildren (parent, controls);
 			if (parent is Form) LayoutAutoSizeContainer (parent);
 
 			return false;
