@@ -45,6 +45,8 @@ static partial class SR
 	{
 		return string.Format (CultureInfo.InvariantCulture, resourceFormat, p1, p2, p3);
 	}
+
+	internal static string GetResourceString (string str) => str;
 }
 
 #if !INSIDE_CORLIB
