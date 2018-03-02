@@ -105,9 +105,6 @@ mono_byvalarray_to_array (MonoArray *arr, gpointer native_arr, MonoClass *eltype
 static void
 mono_array_to_byvalarray (gpointer native_arr, MonoArray *arr, MonoClass *eltype, guint32 elnum);
 
-static void
-mono_marshal_set_last_error_windows (int error);
-
 gpointer
 mono_delegate_handle_to_ftnptr (MonoDelegateHandle delegate, MonoError *error);
 
@@ -4809,7 +4806,7 @@ mono_marshal_set_last_error (void)
 #endif
 }
 
-static void
+void
 mono_marshal_set_last_error_windows (int error)
 {
 #ifdef WIN32

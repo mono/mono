@@ -579,6 +579,9 @@ mono_array_to_byte_byvalarray (gpointer native_arr, MonoArray *arr, guint32 elnu
 gpointer
 mono_array_to_lparray (MonoArray *array);
 
+void
+mono_marshal_set_last_error_windows (int error);
+
 void 
 mono_struct_delete_old (MonoClass *klass, char *ptr);
 
