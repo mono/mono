@@ -199,7 +199,7 @@ namespace System.Windows.Forms.Layout
 			else
 				FinishColumn (rowControls);
 
-			return false;
+			return parent.AutoSizeInternal;
 		}
 
 		internal override Size GetPreferredSize (object container, Size proposedSize)

@@ -91,7 +91,7 @@ namespace System.Windows.Forms.Layout
 			Console.WriteLine ();
 #endif
 
-			return false;
+			return panel.AutoSizeInternal;
 		}
 
 		internal Control[,] CalculateControlPositions (TableLayoutPanel panel, int columns, int rows)

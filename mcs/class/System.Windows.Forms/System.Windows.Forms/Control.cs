@@ -64,6 +64,7 @@ namespace System.Windows.Forms
 		// Basic
 		internal Rectangle		bounds;			// bounding rectangle for control (client area + decorations)
 		Rectangle               explicit_bounds; // explicitly set bounds
+		bool					explicit_bounds_valid; // explicit bounds were set at least once
 		internal object			creator_thread;		// thread that created the control
 		internal                ControlNativeWindow	window;			// object for native window handle
 		private                 IWindowTarget window_target;
@@ -109,6 +110,7 @@ namespace System.Windows.Forms
 		// Layout
 		internal int layout_suspended;
 		bool layout_pending; // true if our parent needs to re-layout us
+		bool layout_dirty;
 		internal AnchorStyles anchor_style; // anchoring requirements for our control
 		internal DockStyle dock_style; // docking requirements for our control
 		private bool recalculate_distances = true;  // Delay anchor calculations
@@ -145,7 +147,6 @@ namespace System.Windows.Forms
 		Size minimum_size;
 		Padding margin;
 		private ContextMenuStrip context_menu_strip;
-		private bool nested_layout = false;
 		Point auto_scroll_offset;
 		private AutoSizeMode auto_size_mode;
 		private bool suppressing_key_press;
@@ -919,6 +920,7 @@ namespace System.Windows.Forms
 			client_size = ClientSizeFromSize (bounds.Size);
 			client_rect = new Rectangle (Point.Empty, client_size);
 			explicit_bounds = bounds;
+			explicit_bounds_valid = false;
 		}
 
 		public Control (Control parent, string text) : this()
@@ -2495,6 +2497,10 @@ namespace System.Windows.Forms
 
 				dock_style = value;
 				anchor_style = AnchorStyles.Top | AnchorStyles.Left;
+				if (!explicit_bounds_valid) {
+					explicit_bounds = bounds;
+					explicit_bounds_valid = true;
+				}
 				bounds = explicit_bounds;
 
 				if (parent != null)
@@ -3815,10 +3821,13 @@ namespace System.Windows.Forms
 			try {
 				OnLayout(levent);
 			}
-
-				// Need to make sure we decremend layout_suspended
+			// Need to make sure we decremend layout_suspended
 			finally {
 				layout_suspended--;
+				layout_dirty = false;
+
+				if (parent != null && parent.layout_dirty)
+					parent.PerformLayout(this, "PreferredSize");
 			}
 		}
 
@@ -4697,6 +4706,9 @@ namespace System.Windows.Forms
 			else
 				explicit_bounds.Height = old_explicit.Height;
 
+			if (specified != BoundsSpecified.None)
+				explicit_bounds_valid = true;
+
 			// Impose restrictions based on MinimumSize and MaximumSize
 			new_bounds.Size = ApplySizeConstraints(new_bounds.Size);
 
@@ -4861,7 +4873,7 @@ namespace System.Windows.Forms
 
 			// Assume explicit bounds set. SetBoundsCore will restore old bounds
 			// if needed.
-			explicit_bounds = bounds;
+			//explicit_bounds = bounds;
 
 			client_size.Width=clientWidth;
 			client_size.Height=clientHeight;
@@ -5943,15 +5955,11 @@ namespace System.Windows.Forms
 			Size s = Size;
 			
 			// If our layout changed our PreferredSize, our parent
-			// needs to re-lay us out.  However, it's not always possible to
-			// be our preferred size, so only try once so we don't loop forever.
-			if (Parent != null && AutoSize && !nested_layout && PreferredSize != s) {
-				nested_layout = true;
-				Parent.PerformLayout ();
-				nested_layout = false;
+			// needs to re-lay us out.
+			bool needs_parent_layout = LayoutEngine.Layout(this, levent);
+			if (parent != null && needs_parent_layout) {
+				parent.layout_dirty = true;
 			}
-			
-			LayoutEngine.Layout (this, levent);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]

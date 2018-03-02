@@ -3139,8 +3139,6 @@ namespace System.Windows.Forms {
 
 		protected override void OnLayout (LayoutEventArgs levent)
 		{
-			base.OnLayout (levent);
-			
 			if (AutoSize) {
 				Size new_size = GetPreferredSizeCore (Size.Empty);
 				if (AutoSizeMode == AutoSizeMode.GrowOnly) {
@@ -3152,6 +3150,8 @@ namespace System.Windows.Forms {
 
 				SetBoundsInternal (bounds.X, bounds.Y, new_size.Width, new_size.Height, BoundsSpecified.None);
 			}
+
+			base.OnLayout (levent);			
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
