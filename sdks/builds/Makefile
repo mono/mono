@@ -4,7 +4,7 @@ include $(TOP)/sdks/paths.mk
 
 CONFIGURATION?=release
 
-RELEASE=$(if $(filter $(CONFIGURATION),release),true,false)
+RELEASE=$(if $(filter $(CONFIGURATION),release),1)
 
 CCACHE:=$(shell which ccache)
 
