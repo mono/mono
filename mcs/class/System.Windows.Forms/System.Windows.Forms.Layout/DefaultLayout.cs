@@ -29,6 +29,7 @@
 
 using System;
 using System.Drawing;
+using System.Collections;
 
 namespace System.Windows.Forms.Layout
 {
@@ -50,11 +51,7 @@ namespace System.Windows.Forms.Layout
 				Control child = controls[i];
 				Size child_size = child.Size;
 
-				if (child.AutoSizeInternal)
-					child_size = GetPreferredControlSize (child);
-
-				if (!child.VisibleInternal
-				    || child.ControlLayoutType == Control.LayoutType.Anchor)
+				if (!child.VisibleInternal || child.Dock == DockStyle.None)
 					continue;
 
 				// MdiClient never fills the whole area like other controls, have to do it later
@@ -69,23 +66,31 @@ namespace System.Windows.Forms.Layout
 					break;
 
 				case DockStyle.Left:
+					if (child.AutoSizeInternal)
+						child_size = child.GetPreferredSize(new Size(0, space.Height));
 					child.SetBoundsInternal (space.Left, space.Y, child_size.Width, space.Height, BoundsSpecified.None);
 					space.X += child.Width;
 					space.Width -= child.Width;
 					break;
 
 				case DockStyle.Top:
+					if (child.AutoSizeInternal)
+						child_size = child.GetPreferredSize(new Size(space.Width, 0));
 					child.SetBoundsInternal (space.Left, space.Y, space.Width, child_size.Height, BoundsSpecified.None);
 					space.Y += child.Height;
 					space.Height -= child.Height;
 					break;
 
 				case DockStyle.Right:
+					if (child.AutoSizeInternal)
+						child_size = child.GetPreferredSize(new Size(0, space.Height));
 					child.SetBoundsInternal (space.Right - child_size.Width, space.Y, child_size.Width, space.Height, BoundsSpecified.None);
 					space.Width -= child.Width;
 					break;
 
 				case DockStyle.Bottom:
+					if (child.AutoSizeInternal)
+						child_size = child.GetPreferredSize(new Size(space.Width, 0));
 					child.SetBoundsInternal (space.Left, space.Bottom - child_size.Height, space.Width, child_size.Height, BoundsSpecified.None);
 					space.Height -= child.Height;
 					break;
@@ -113,8 +118,7 @@ namespace System.Windows.Forms.Layout
 
 				Control child = controls[i];
 
-				if (!child.VisibleInternal
-				    || child.ControlLayoutType == Control.LayoutType.Dock)
+				if (!child.VisibleInternal || child.Dock != DockStyle.None)
 					continue;
 
 				AnchorStyles anchor = child.Anchor;
@@ -170,7 +174,7 @@ namespace System.Windows.Forms.Layout
 
 				Control child = controls[i];
 				if (!child.VisibleInternal
-				    || child.ControlLayoutType == Control.LayoutType.Dock
+				    || child.Dock != DockStyle.None
 				    || !child.AutoSizeInternal)
 					continue;
 
@@ -178,7 +182,12 @@ namespace System.Windows.Forms.Layout
 				left = child.Left;
 				top = child.Top;
 				
-				Size preferredsize = GetPreferredControlSize (child);
+				Size proposed_size = Size.Empty;
+				if ((anchor & (AnchorStyles.Left | AnchorStyles.Right)) == (AnchorStyles.Left | AnchorStyles.Right))
+					proposed_size.Width = child.Width;
+				if ((anchor & (AnchorStyles.Top | AnchorStyles.Bottom)) == (AnchorStyles.Top | AnchorStyles.Bottom))
+					proposed_size.Height = child.Height;
+				Size preferredsize = GetPreferredControlSize (child, proposed_size);
 
 				if (((anchor & AnchorStyles.Left) != 0) || ((anchor & AnchorStyles.Right) == 0))
 					child.dist_right += child.Width - preferredsize.Width;
@@ -196,7 +205,7 @@ namespace System.Windows.Forms.Layout
 			int width;
 			int height;
 
-			if (!container.VisibleInternal || container.ControlLayoutType == Control.LayoutType.Dock || !container.AutoSizeInternal)
+			if (!container.VisibleInternal || container.Dock != DockStyle.None || !container.AutoSizeInternal)
 				return;
 
 			left = container.Left;
@@ -246,16 +255,18 @@ namespace System.Windows.Forms.Layout
 			return false;
 		}
 
-		static private Size GetPreferredControlSize (Control child)
+		static private Size GetPreferredControlSize (Control child, Size proposed)
 		{
-			int width;
-			int height;
-			Size preferredsize = child.PreferredSize;
+			var preferredsize = child.GetPreferredSize (proposed);
 
-			if (child.GetAutoSizeMode () == AutoSizeMode.GrowAndShrink || (child.Dock != DockStyle.None && !(child is Button) && !(child is FlowLayoutPanel))) {
+			int width, height;
+			if (child.GetAutoSizeMode () == AutoSizeMode.GrowAndShrink)
+			{
 				width = preferredsize.Width;
 				height = preferredsize.Height;
-			} else {
+			}
+			else
+			{
 				width = child.ExplicitBounds.Width;
 				height = child.ExplicitBounds.Height;
 				if (preferredsize.Width > width)
@@ -263,84 +274,61 @@ namespace System.Windows.Forms.Layout
 				if (preferredsize.Height > height)
 					height = preferredsize.Height;
 			}
-			if (child.AutoSizeInternal && child is FlowLayoutPanel && child.Dock != DockStyle.None) {
-				switch (child.Dock) {
-				case DockStyle.Left:
-				case DockStyle.Right:
-					if (preferredsize.Width < child.ExplicitBounds.Width && preferredsize.Height < child.Parent.PaddingClientRectangle.Height)
-						width = preferredsize.Width;
-					break;
-				case DockStyle.Top:
-				case DockStyle.Bottom:
-					if (preferredsize.Height < child.ExplicitBounds.Height && preferredsize.Width < child.Parent.PaddingClientRectangle.Width)
-						height = preferredsize.Height;
-					break;
-				}
-			}
-			// Sanity
-			if (width < child.MinimumSize.Width)
-				width = child.MinimumSize.Width;
-
-			if (height < child.MinimumSize.Height)
-				height = child.MinimumSize.Height;
-
-			if (child.MaximumSize.Width != 0 && width > child.MaximumSize.Width)
-				width = child.MaximumSize.Width;
-
-			if (child.MaximumSize.Height != 0 && height > child.MaximumSize.Height)
-				height = child.MaximumSize.Height;
-				
-			return new Size (width, height);
+			return new Size(width, height);
 		}
 
 		internal override Size GetPreferredSize (object container, Size proposedConstraints)
 		{
 			Control parent = container as Control;
+			IList controls = parent.Controls;
 			Size retsize = Size.Empty;
 
 			// Add up the requested sizes for Docked controls
-			foreach (Control child in parent.Controls) {
-				if (!child.VisibleInternal)
+			for (int i = controls.Count - 1; i >= 0; i--) {
+				Control child = (Control)controls[i];
+				if (!child.VisibleInternal || child.Dock == DockStyle.None)
 					continue;
-					
-				var sz = child.GetPreferredSize (new Size(0, 0));
-				//Console.WriteLine(" type=" + child.GetType().Name + ", text=" + (child.Text ?? "") + ", w=" + sz.Width + ", h=" + sz.Height + ", dock=" + child.Dock);
 
-				if (child.Dock == DockStyle.Left || child.Dock == DockStyle.Right)
-				{
-					retsize.Width += sz.Width + child.Margin.Horizontal;
-					retsize.Height = Math.Max(retsize.Height, sz.Height + child.Margin.Vertical);
-				}
-				else if (child.Dock == DockStyle.Top || child.Dock == DockStyle.Bottom)
-				{
-					retsize.Height += sz.Height + child.Margin.Vertical;
-					retsize.Width = Math.Max(retsize.Width, sz.Width + child.Margin.Horizontal);
-				}
-				else if (child.Dock == DockStyle.None)
-				{
-				}
-				else if (child.Dock == DockStyle.Fill)
-				{
-					// Strange, but it works
-					retsize.Width = Math.Max(retsize.Width, sz.Width + child.Margin.Horizontal);
-					retsize.Height = Math.Max(retsize.Height, sz.Height + child.Margin.Vertical);
+				if (child.Dock == DockStyle.Left || child.Dock == DockStyle.Right) {
+					Size sz = child.AutoSizeInternal ? child.GetPreferredSize (new Size(0, proposedConstraints.Height)) : child.Size;
+					retsize.Width += sz.Width;
+				} else if (child.Dock == DockStyle.Top || child.Dock == DockStyle.Bottom) {
+					Size sz = child.AutoSizeInternal ? child.GetPreferredSize (new Size(proposedConstraints.Width, 0)) : child.Size;
+					retsize.Height += sz.Height;
+				} else if (child.Dock == DockStyle.Fill && child.AutoSizeInternal) {
+					Size sz = child.GetPreferredSize (proposedConstraints);
+					retsize += sz;
 				}
 			}
-			
+
 			// See if any non-Docked control is positioned lower or more right than our size
 			foreach (Control child in parent.Controls) {
-				if (!child.VisibleInternal)
-					continue;
-
-				if (child.Dock != DockStyle.None)
+				if (!child.VisibleInternal || child.Dock != DockStyle.None)
 					continue;
 					
 				// If its anchored to the bottom or right, that doesn't really count
-				if ((child.Anchor & AnchorStyles.Bottom) == AnchorStyles.Bottom || (child.Anchor & AnchorStyles.Right) == AnchorStyles.Right)
+				if ((child.Anchor & (AnchorStyles.Bottom | AnchorStyles.Top)) == AnchorStyles.Bottom ||
+				    (child.Anchor & (AnchorStyles.Right | AnchorStyles.Left)) == AnchorStyles.Right)
 					continue;
-					
-				retsize.Width = Math.Max (retsize.Width, child.Bounds.Right + child.Margin.Right);
-				retsize.Height = Math.Max (retsize.Height, child.Bounds.Bottom + child.Margin.Bottom);
+
+				Rectangle childBounds = child.Bounds;
+				if (child.AutoSizeInternal) {
+					Size proposedChildSize = Size.Empty;
+					if ((child.Anchor & (AnchorStyles.Left | AnchorStyles.Right)) == (AnchorStyles.Left | AnchorStyles.Right)) {
+						proposedChildSize.Width = proposedConstraints.Width - child.dist_right - (child.Left - parent.DisplayRectangle.Left);
+					}
+					if ((child.Anchor & (AnchorStyles.Top | AnchorStyles.Bottom)) == (AnchorStyles.Top | AnchorStyles.Bottom)) {
+						proposedChildSize.Height = proposedConstraints.Height - child.dist_bottom - (child.Top - parent.DisplayRectangle.Top);
+					}
+					Size preferredsize = GetPreferredControlSize (child, proposedChildSize);
+					childBounds = new Rectangle(child.Location, preferredsize);
+				}
+
+				// This is the non-sense Microsoft uses (Padding vs DisplayRectangle)
+				retsize.Width = Math.Max (retsize.Width, childBounds.Right - parent.Padding.Left + child.Margin.Right);
+				retsize.Height = Math.Max (retsize.Height, childBounds.Bottom - parent.Padding.Top + child.Margin.Bottom);
+				//retsize.Width = Math.Max (retsize.Width, childBounds.Right - parent.DisplayRectangle.Left + child.Margin.Right);
+				//retsize.Height = Math.Max (retsize.Height, childBounds.Bottom - parent.DisplayRectangle.Top + child.Margin.Bottom);
 			}
 
 			return retsize;

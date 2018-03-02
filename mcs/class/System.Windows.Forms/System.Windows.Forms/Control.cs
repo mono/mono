@@ -107,15 +107,10 @@ namespace System.Windows.Forms
 		internal bool		force_double_buffer;	// Always doublebuffer regardless of ControlStyle
 
 		// Layout
-		internal enum LayoutType {
-			Anchor,
-			Dock
-		}
 		internal int layout_suspended;
 		bool layout_pending; // true if our parent needs to re-layout us
 		internal AnchorStyles anchor_style; // anchoring requirements for our control
 		internal DockStyle dock_style; // docking requirements for our control
-		LayoutType layout_type;
 		private bool recalculate_distances = true;  // Delay anchor calculations
 
 		// Please leave the next 2 as internal until DefaultLayout (2.0) is rewritten
@@ -870,7 +865,6 @@ namespace System.Windows.Forms
 				if (!(SynchronizationContext.Current is WindowsFormsSynchronizationContext))
 					SynchronizationContext.SetSynchronizationContext (new WindowsFormsSynchronizationContext ());
 
-			layout_type = LayoutType.Anchor;
 			anchor_style = AnchorStyles.Top | AnchorStyles.Left;
 
 			is_created = false;
@@ -1055,10 +1049,6 @@ namespace System.Windows.Forms
 
 		internal bool VisibleInternal {
 			get { return is_visible; }
-		}
-
-		internal LayoutType ControlLayoutType {
-			get { return layout_type; }
 		}
 
 		internal BorderStyle InternalBorderStyle {
@@ -2008,12 +1998,10 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				layout_type = LayoutType.Anchor;
-
 				if (anchor_style == value)
 					return;
 					
-				anchor_style=value;
+				anchor_style = value;
 				dock_style = DockStyle.None;
 				
 				UpdateDistances ();
@@ -2496,10 +2484,6 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				// If the user sets this to None, we need to still use Anchor layout
-				if (value != DockStyle.None)
-					layout_type = LayoutType.Dock;
-
 				if (dock_style == value) {
 					return;
 				}
@@ -2511,11 +2495,7 @@ namespace System.Windows.Forms
 
 				dock_style = value;
 				anchor_style = AnchorStyles.Top | AnchorStyles.Left;
-
-				if (dock_style == DockStyle.None) {
-					bounds = explicit_bounds;
-					layout_type = LayoutType.Anchor;
-				}
+				bounds = explicit_bounds;
 
 				if (parent != null)
 					parent.PerformLayout(this, "Dock");
@@ -3713,9 +3693,9 @@ namespace System.Windows.Forms
 				proposedSize.Height = this.maximum_size.Height;
 
 			// If we're smaller than the MinimumSize, fix that
-			if (this.minimum_size.Width != 0 && proposedSize.Width < this.minimum_size.Width)
+			if (proposedSize.Width < this.minimum_size.Width)
 				proposedSize.Width = this.minimum_size.Width;
-			if (this.minimum_size.Height != 0 && proposedSize.Height < this.minimum_size.Height)
+			if (proposedSize.Height < this.minimum_size.Height)
 				proposedSize.Height = this.minimum_size.Height;
 
 			return proposedSize;
@@ -4717,6 +4697,9 @@ namespace System.Windows.Forms
 			else
 				explicit_bounds.Height = old_explicit.Height;
 
+			// Impose restrictions based on MinimumSize and MaximumSize
+			new_bounds.Size = ApplySizeConstraints(new_bounds.Size);
+
 			// We need to store the explicit bounds because UpdateBounds is always going
 			// to change it, and we have to fix it.  However, UpdateBounds also calls
 			// OnLocationChanged, OnSizeChanged, and OnClientSizeChanged.  The user can
@@ -4727,7 +4710,7 @@ namespace System.Windows.Forms
 			// we better not mess it up.  Fun stuff.
 			Rectangle stored_explicit_bounds = explicit_bounds;
 			
-			UpdateBounds(x, y, width, height);
+			UpdateBounds(x, y, new_bounds.Width, new_bounds.Height);
 
 			if (explicit_bounds.X == x)
 				explicit_bounds.X = stored_explicit_bounds.X;
