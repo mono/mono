@@ -46,11 +46,7 @@ mono_mkstemp (char *templ)
 			return -1;
 		}
 
-#if HOST_WIN32
-		ret = _open (templ, O_RDWR | O_BINARY | O_CREAT | O_EXCL, 0600);
-#else
-		ret = open(templ, O_RDWR | O_BINARY | O_CREAT | O_EXCL, 0600);
-#endif
+		ret = g_open (templ, O_RDWR | O_BINARY | O_CREAT | O_EXCL, 0600);
 		if (ret == -1) {
 			if (errno != EEXIST)
 				return -1;
