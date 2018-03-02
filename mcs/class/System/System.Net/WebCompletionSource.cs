@@ -36,7 +36,8 @@ namespace System.Net
 
 		public WebCompletionSource ()
 		{
-			completion = new TaskCompletionSource<Result> ();
+			completion = new TaskCompletionSource<Result> (
+				TaskCreationOptions.RunContinuationsAsynchronously);
 		}
 
 		public bool TrySetCompleted (T argument)
