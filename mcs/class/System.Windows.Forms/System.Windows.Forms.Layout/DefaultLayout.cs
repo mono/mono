@@ -179,60 +179,15 @@ namespace System.Windows.Forms.Layout
 			}
 		}
 
-		static void LayoutAutoSizeContainer (Control container)
-		{
-			int left;
-			int top;
-			int width;
-			int height;
-
-			if (!container.VisibleInternal || container.Dock != DockStyle.None || !container.AutoSizeInternal)
-				return;
-
-			left = container.Left;
-			top = container.Top;
-
-			Size preferredsize = container.PreferredSize;
-
-			if (container.GetAutoSizeMode () == AutoSizeMode.GrowAndShrink) {
-				width = preferredsize.Width;
-				height = preferredsize.Height;
-			} else {
-				width = container.ExplicitBounds.Width;
-				height = container.ExplicitBounds.Height;
-				if (preferredsize.Width > width)
-					width = preferredsize.Width;
-				if (preferredsize.Height > height)
-					height = preferredsize.Height;
-			}
-
-			// Sanity
-			if (width < container.MinimumSize.Width)
-				width = container.MinimumSize.Width;
-
-			if (height < container.MinimumSize.Height)
-				height = container.MinimumSize.Height;
-
-			if (container.MaximumSize.Width != 0 && width > container.MaximumSize.Width)
-				width = container.MaximumSize.Width;
-
-			if (container.MaximumSize.Height != 0 && height > container.MaximumSize.Height)
-				height = container.MaximumSize.Height;
-
-			container.SetBoundsInternal (left, top, width, height, BoundsSpecified.None);
-		}
-
 		public override bool Layout (object container, LayoutEventArgs args)
 		{
 			Control parent = container as Control;
-
 			Control[] controls = parent.Controls.GetAllControls ();
 
 			LayoutDockedChildren (parent, controls);
 			LayoutAnchoredChildren (parent, controls);
-			if (parent is Form) LayoutAutoSizeContainer (parent);
 
-			return false;
+			return parent.AutoSize;
 		}
 
 		static private Size GetPreferredControlSize (Control child, Size proposed)
