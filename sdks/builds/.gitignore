@@ -16,12 +16,18 @@ android-host-Darwin-*/
 android-host-Linux-*/
 android-host-mxe-Win32-*/
 android-host-mxe-Win64-*/
-ios-target32/
-ios-target64/
-ios-cross32/
-ios-cross64/
-ios-sim32/
-ios-sim64/
+ios-target32-*/
+ios-target32s-*/
+ios-target64-*/
+ios-targettv-*/
+ios-targetwatch-*/
+ios-cross32-*/
+ios-cross64-*/
+ios-crosswatch-*/
+ios-sim32-*/
+ios-sim64-*/
+ios-simtv-*/
+ios-simwatch-*/
 wasm-interp/
 bcl/
 
