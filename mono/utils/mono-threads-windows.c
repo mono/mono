@@ -82,7 +82,7 @@ mono_threads_suspend_check_suspend_result (MonoThreadInfo *info)
 void
 mono_threads_suspend_abort_syscall (MonoThreadInfo *info)
 {
-    DWORD id = mono_thread_info_get_tid(info);
+	DWORD id = mono_thread_info_get_tid(info);
 	g_assert (info->native_handle);
 	mono_win32_abort_wait (info, info->native_handle, id);
 }
