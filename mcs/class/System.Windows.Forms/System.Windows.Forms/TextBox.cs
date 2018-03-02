@@ -74,7 +74,6 @@ namespace System.Windows.Forms {
 			backcolor_set = false;
 
 			SetStyle (ControlStyles.StandardClick | ControlStyles.StandardDoubleClick, false);
-			SetStyle (ControlStyles.FixedHeight, true);
 
 			undo = new MenuItem(Locale.GetText("&Undo"));
 			cut = new MenuItem(Locale.GetText("Cu&t"));

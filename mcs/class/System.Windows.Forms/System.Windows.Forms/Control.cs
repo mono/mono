@@ -1044,6 +1044,10 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		internal bool AutoSizeInternal {
+			get { return this.auto_size; }
+		}
+
 		// Mouse is currently within the control's bounds
 		internal bool Entered {
 			get { return this.is_entered; }

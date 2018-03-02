@@ -202,6 +202,80 @@ namespace System.Windows.Forms.Layout
 			return false;
 		}
 
+		internal override Size GetPreferredSize (object container, Size proposedSize)
+		{
+			FlowLayoutPanel parent = container as FlowLayoutPanel;
+			ToolStripPanel toolStripPanel = container as ToolStripPanel;
+			int width = 0;
+			int height = 0;
+			bool horizontal = true;
+			int size_in_flow_direction = 0;
+			int size_in_other_direction = 0;
+			int increase;
+			Size margin = new Size (0, 0);
+			bool force_flow_break = false;
+			bool wrap = false;
+
+			if (parent != null) {
+				horizontal = parent.FlowDirection == FlowDirection.LeftToRight || parent.FlowDirection == FlowDirection.RightToLeft;
+				wrap = parent.WrapContents;
+			} else if (toolStripPanel != null) {
+				horizontal = toolStripPanel.Orientation == Orientation.Horizontal;
+				wrap = false;
+			}
+
+			foreach (Control control in ((Control)container).Controls) {
+				if (!control.VisibleInternal)
+					continue;
+				Size control_preferred_size;
+				if (control.AutoSize) {
+					Size proposed_constraints = new Size(int.MaxValue, Math.Max(1, proposedSize.Height - control.Margin.Vertical));
+					if (size_in_flow_direction == 0)
+						proposed_constraints.Width = Math.Max(1, proposedSize.Width - control.Margin.Horizontal);
+					control_preferred_size = control.GetPreferredSize(proposed_constraints);
+				} else {
+					control_preferred_size = control.ExplicitBounds.Size;
+					if ((control.Anchor & (AnchorStyles.Top | AnchorStyles.Bottom)) == (AnchorStyles.Top | AnchorStyles.Bottom))
+						control_preferred_size.Height = control.MinimumSize.Height;
+				}
+				Padding control_margin = control.Margin;
+				if (horizontal) {
+					increase = control_preferred_size.Width + control_margin.Horizontal;
+					if (wrap && ((proposedSize.Width > 0 && size_in_flow_direction != 0 && size_in_flow_direction + increase >= proposedSize.Width) || force_flow_break)) {
+						width = Math.Max (width, size_in_flow_direction);
+						size_in_flow_direction = 0;
+						height += size_in_other_direction;
+						size_in_other_direction = 0;
+					}
+					size_in_flow_direction += increase;
+					size_in_other_direction = Math.Max (size_in_other_direction, control_preferred_size.Height + control_margin.Vertical);
+				} else {
+					increase = control_preferred_size.Height + control_margin.Vertical;
+					if (wrap && ((proposedSize.Height > 0 && size_in_flow_direction != 0 && size_in_flow_direction + increase >= proposedSize.Height) || force_flow_break)) {
+						height = Math.Max (height, size_in_flow_direction);
+						size_in_flow_direction = 0;
+						width += size_in_other_direction;
+						size_in_other_direction = 0;
+					}
+					size_in_flow_direction += increase;
+					size_in_other_direction = Math.Max (size_in_other_direction, control_preferred_size.Width + control_margin.Horizontal);
+				}
+
+				if (parent != null)
+					force_flow_break = parent.LayoutSettings.GetFlowBreak(control);
+			}
+
+			if (horizontal) {
+				width = Math.Max (width, size_in_flow_direction);
+				height += size_in_other_direction;
+			} else {
+				height = Math.Max (height, size_in_flow_direction);
+				width += size_in_other_direction;
+			}
+
+			return new Size (width, height);
+		}
+		
 		// Calculate the heights of the controls, returns the y coordinate of the greatest height it uses
 		private int FinishRow (List<Control> row)
 		{

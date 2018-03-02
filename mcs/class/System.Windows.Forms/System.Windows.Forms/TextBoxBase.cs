@@ -83,7 +83,7 @@ namespace System.Windows.Forms
 		internal int			click_point_x;
 		internal int 			click_point_y;
 		internal CaretSelection		click_mode;
-		internal BorderStyle actual_border_style;
+		internal BorderStyle actual_border_style = BorderStyle.Fixed3D;
 		internal bool shortcuts_enabled = true;
 		#if Debug
 		internal static bool	draw_lines = false;
@@ -100,7 +100,6 @@ namespace System.Windows.Forms
 			accepts_tab = false;
 			auto_size = true;
 			InternalBorderStyle = BorderStyle.Fixed3D;
-			actual_border_style = BorderStyle.Fixed3D;
 			character_casing = CharacterCasing.Normal;
 			hide_selection = true;
 			max_length = short.MaxValue;
@@ -151,10 +150,11 @@ namespace System.Windows.Forms
 			this.Controls.AddImplicit (vscroll);
 			ResumeLayout ();
 			
-			SetStyle(ControlStyles.UserPaint | ControlStyles.StandardClick, false);
-			SetStyle(ControlStyles.UseTextForAccessibility, false);
+			SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick, false);
+			SetStyle (ControlStyles.UseTextForAccessibility, false);
+			SetStyle (ControlStyles.FixedHeight, true);
 			
-			base.SetAutoSizeMode (AutoSizeMode.GrowAndShrink);
+			//base.SetAutoSizeMode (AutoSizeMode.GrowAndShrink);
 
 			canvas_width = ClientSize.Width;
 			canvas_height = ClientSize.Height;
@@ -177,7 +177,20 @@ namespace System.Windows.Forms
 
 		internal override Size GetPreferredSizeCore (Size proposedSize)
 		{
-			return new Size (Width, Height);
+			Size bordersAndPadding = SizeFromClientSize(Size.Empty) + Padding.Size;
+			if (BorderStyle != BorderStyle.None)
+				bordersAndPadding += new Size(0, 7);
+			proposedSize -= bordersAndPadding;
+
+			TextFormatFlags format = TextFormatFlags.NoPrefix;
+			if (!Multiline)
+				format |= TextFormatFlags.SingleLine;
+			else if (WordWrap)
+				format |= TextFormatFlags.WordBreak;
+
+			Size textSize = TextRenderer.MeasureText(this.Text, this.Font, proposedSize, format);
+			textSize.Height = Math.Max(textSize.Height, FontHeight);
+			return textSize + bordersAndPadding;
 		}
 
 		internal override void HandleClick (int clicks, MouseEventArgs me)
@@ -431,12 +444,8 @@ namespace System.Windows.Forms
 				if (value != document.multiline) {
 					document.multiline = value;
 
-					if (this is TextBox)
-						SetStyle (ControlStyles.FixedHeight, !value);
-
-					// SetBoundsCore overrides the Height for multiline if it needs to,
-					// so we don't need to worry about it here.
-					SetBoundsCore (Left, Top, Width, ExplicitBounds.Height, BoundsSpecified.None);
+					SetStyle (ControlStyles.FixedHeight, !value);
+					FixupHeight ();
 					
 					if (Parent != null)
 						Parent.PerformLayout ();
@@ -469,13 +478,11 @@ namespace System.Windows.Forms
 		// This returns the preferred outer height, not the client height.
 		public int PreferredHeight {
 			get {
-				int clientDelta = Height - ClientSize.Height;
-				if (BorderStyle != BorderStyle.None)
-					return Font.Height + 7 + clientDelta;
-
-				// usually in borderless mode the top margin is 0, but
-				// try to access it, in case it was set manually, as ToolStrip* controls do
-				return Font.Height + TopMargin + clientDelta;
+				int height = FontHeight;
+				if (BorderStyle != BorderStyle.None) {
+					height += 7;
+				}
+				return height;
 			}
 		}
 
@@ -702,7 +709,7 @@ namespace System.Windows.Forms
 
 		protected override System.Drawing.Size DefaultSize {
 			get {
-				return new Size(100, 20);
+				return new Size(100, PreferredHeight);
 			}
 		}
 
@@ -993,12 +1000,7 @@ namespace System.Windows.Forms
 		protected override void OnFontChanged (EventArgs e)
 		{
 			base.OnFontChanged (e);
-
-			if (auto_size && !document.multiline) {
-				if (PreferredHeight != Height) {
-					Height = PreferredHeight;
-				}
-			}
+			FixupHeight ();
 		}
 
 		protected override void OnHandleCreated (EventArgs e)
@@ -1719,7 +1721,7 @@ namespace System.Windows.Forms
 
 		internal int TopMargin {
 			get {
-				return document.top_margin;
+				return document == null ? 0 : document.top_margin;
 			}
 			set {
 				document.top_margin = value;
@@ -1769,8 +1771,10 @@ namespace System.Windows.Forms
 			if (!richtext) {
 				if (!document.multiline) {
 					if (PreferredHeight != Height) {
-						Height = PreferredHeight;
+						SetBoundsCore (Left, Top, Width, PreferredHeight, BoundsSpecified.None);
 					}
+				} else {
+					SetBoundsCore (Left, Top, Width, Math.Max(PreferredHeight, ExplicitBounds.Height), BoundsSpecified.None);
 				}
 			}
 		}

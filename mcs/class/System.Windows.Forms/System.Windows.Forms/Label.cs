@@ -393,7 +393,7 @@ namespace System.Windows.Forms
 			if (Text == string.Empty) {
 				size = new Size (0, Font.Height);
 			} else {
-				int proposed_width = proposed.Width == 0 ? int.MaxValue : (proposed.Width - borders_and_paddings.Width);
+				int proposed_width = proposed.Width <= 1 ? int.MaxValue : (proposed.Width - borders_and_paddings.Width);
 				size = Size.Ceiling (TextRenderer.MeasureString (Text, Font, proposed_width, string_format));
 				size.Width += 3;
 			}
