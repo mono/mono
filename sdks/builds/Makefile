@@ -15,8 +15,15 @@ endif
 all: package
 
 ## Common Mono targets
+
+.PHONY: configure-mono
+configure-mono: $(TOP)/configure
+
 $(TOP)/configure: $(TOP)/configure.ac $(TOP)/autogen.sh
 	cd $(TOP) && PATH=$(EXTRA_PATH):$$PATH NOCONFIGURE=1 ./autogen.sh
+
+$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe: $(wildcard $(TOP)/tools/offsets-tool/*.cs)
+	$(MAKE) -C $(dir $@) MonoAotOffsetsDumper.exe
 
 TARGETS=
 

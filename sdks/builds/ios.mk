@@ -255,9 +255,6 @@ endef
 $(eval $(call iOSSimulatorTemplate,sim32,i386))
 $(eval $(call iOSSimulatorTemplate,sim64,x86_64))
 
-$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe: $(wildcard $(TOP)/tools/offsets-tool/*.cs)
-	$(MAKE) -C $(dir $@) MonoAotOffsetsDumper.exe
-
 LLVM_REV=3b82b3c9041eb997f627f881a67d20be37264e9c
 
 # Download a prebuilt llvm
