@@ -125,7 +125,7 @@ mono_threads_suspend_begin_async_resume (MonoThreadInfo *info)
 		}
 	}
 #else
-	g_assert(0 && "Not implemented due to lack of SetThreadContext");	
+	g_error ("Not implemented due to lack of SetThreadContext");	
 #endif
 
 	result = ResumeThread (handle);
@@ -140,8 +140,8 @@ mono_threads_suspend_register (MonoThreadInfo *info)
 	BOOL success;
 	HANDLE currentThreadHandle = NULL;
 
-	success = DuplicateHandle(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), &currentThreadHandle, 0, FALSE, DUPLICATE_SAME_ACCESS);
-	g_assert(success && "Failed to duplicate current thread handle");
+	success = DuplicateHandle (GetCurrentProcess (), GetCurrentThread (), GetCurrentProcess (), &currentThreadHandle, 0, FALSE, DUPLICATE_SAME_ACCESS);
+	g_assertf (success, "Failed to duplicate current thread handle");
 
 	info->native_handle = currentThreadHandle;
 }
@@ -149,7 +149,7 @@ mono_threads_suspend_register (MonoThreadInfo *info)
 void
 mono_threads_suspend_free (MonoThreadInfo *info)
 {
-	CloseHandle(info->native_handle);
+	CloseHandle (info->native_handle);
 	info->native_handle = NULL;
 }
 
