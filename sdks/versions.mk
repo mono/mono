@@ -17,8 +17,7 @@ ANDROID_PLATFORM_VERSION_x86_64?=21
 
 # iOS
 
-## Xcode needs to be installed in /Applications/$(XCODE_VERSION).app
-XCODE_VERSION=Xcode
+XCODE_DIR?=/Applications/Xcode.app/Contents/Developer
 
 #MACOS_VERSION?=10.13
 MACOS_VERSION_MIN?=10.7
