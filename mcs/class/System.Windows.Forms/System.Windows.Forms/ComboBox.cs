@@ -111,7 +111,9 @@ namespace System.Windows.Forms
 			MouseWheel += new MouseEventHandler (OnMouseWheelCB);
 			MouseEnter += new EventHandler (OnMouseEnter);
 			MouseLeave += new EventHandler (OnMouseLeave);
-			KeyDown +=new KeyEventHandler(OnKeyDownCB);
+			KeyDown += new KeyEventHandler (OnKeyDownCB);
+
+			can_cache_preferred_size = true;
 		}
 
 		#region events

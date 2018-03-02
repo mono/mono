@@ -44,6 +44,7 @@ namespace System.Windows.Forms {
 			base.TabStop = false;
 			SetStyle(ControlStyles.Selectable, false);
 			SetStyle (ControlStyles.SupportsTransparentBackColor, true);
+			can_cache_preferred_size = true;
 		}
 		#endregion	// Constructors & Destructors
 

@@ -146,6 +146,8 @@ namespace System.Windows.Forms
 				ControlStyles.SupportsTransparentBackColor |
 				ControlStyles.OptimizedDoubleBuffer
 				, true);
+
+			can_cache_preferred_size = true;
 		}
 
 		#region Public Properties
@@ -381,7 +383,7 @@ namespace System.Windows.Forms
 			set { base.ImeMode = value; }
 		}
 
-		internal virtual Size InternalGetPreferredSize (Size proposed)
+		internal override Size GetPreferredSizeCore (Size proposed)
 		{
 			Size borders_and_paddings = new Size(Padding.Horizontal, Padding.Vertical);
 			Size size;
@@ -403,21 +405,24 @@ namespace System.Windows.Forms
 
 		public override	Size GetPreferredSize (Size proposedSize)
 		{
-			return InternalGetPreferredSize (proposedSize);
+			// This is consistent with GetPreferredSizeCore and enables caching.
+			if (proposedSize.Width == 1)
+				proposedSize.Width = 0;
+			return base.GetPreferredSize(proposedSize);
 		}
 
 		[Browsable(false)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public virtual int PreferredHeight {
-			get { return InternalGetPreferredSize (Size.Empty).Height; }
+			get { return GetPreferredSizeCore (Size.Empty).Height; }
 		}
 
 		[Browsable(false)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public virtual int PreferredWidth {
-			get { return InternalGetPreferredSize (Size.Empty).Width; }
+			get { return GetPreferredSizeCore (Size.Empty).Width; }
 		}
 
 		[Obsolete ("This property has been deprecated.  Use BackColor instead.")]
@@ -686,8 +691,8 @@ namespace System.Windows.Forms
 			if (!AutoSize)
 				return;
 
-			Size s = InternalGetPreferredSize (Size.Empty);
-			
+			cached_preferred_size = Size.Empty;
+			Size s = PreferredSize;			
 			SetBounds (Left, Top, s.Width, s.Height, BoundsSpecified.Size);
 		}
 

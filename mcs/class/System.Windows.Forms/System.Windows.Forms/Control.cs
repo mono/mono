@@ -33,6 +33,7 @@
 #undef DebugRecreate
 #undef DebugFocus
 #undef DebugMessages
+#undef DebugPreferredSizeCache
 
 using System;
 using System.ComponentModel;
@@ -118,6 +119,9 @@ namespace System.Windows.Forms
 		// Please leave the next 2 as internal until DefaultLayout (2.0) is rewritten
 		internal int			dist_right; // distance to the right border of the parent
 		internal int			dist_bottom; // distance to the bottom border of the parent
+
+		internal bool can_cache_preferred_size;
+		internal Size cached_preferred_size;
 
 		// to be categorized...
 		ControlCollection       child_controls; // our children
@@ -921,6 +925,7 @@ namespace System.Windows.Forms
 			client_rect = new Rectangle (Point.Empty, client_size);
 			explicit_bounds = bounds;
 			explicit_bounds_valid = false;
+			cached_preferred_size = Size.Empty;
 		}
 
 		public Control (Control parent, string text) : this()
@@ -3709,8 +3714,22 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public virtual Size GetPreferredSize (Size proposedSize) {
+#if !DebugPreferredSizeCache
+			if (can_cache_preferred_size && proposedSize == Size.Empty && !cached_preferred_size.IsEmpty)
+				return cached_preferred_size;
+#endif
+
 			proposedSize = ApplySizeConstraints (proposedSize);
-			return ApplySizeConstraints (GetPreferredSizeCore (proposedSize));
+			Size size = ApplySizeConstraints (GetPreferredSizeCore (proposedSize));
+
+			if (can_cache_preferred_size && proposedSize == Size.Empty) {
+#if DebugPreferredSizeCache				
+				Debug.Assert(cached_preferred_size.IsEmpty || cached_preferred_size == size, "Invalid preferred size cache");
+#endif
+				cached_preferred_size = size;
+			}
+
+			return size;
 		}
 
 		public void Hide() {
@@ -3803,6 +3822,7 @@ namespace System.Windows.Forms
 		public void PerformLayout(Control affectedControl, string affectedProperty) {
 			LayoutEventArgs levent = new LayoutEventArgs(affectedControl, affectedProperty);
 
+			cached_preferred_size = Size.Empty;
 			foreach (Control c in Controls.GetAllControls ())
 				if (c.recalculate_distances)
 					c.UpdateDistances ();
@@ -4735,6 +4755,12 @@ namespace System.Windows.Forms
 
 			if (explicit_bounds.Height == height)
 				explicit_bounds.Height = stored_explicit_bounds.Height;
+
+			if (parent != null) {
+				// DefaultLayout calculates preferred size based on the control boundaries,
+				// so reset its cache.
+				parent.cached_preferred_size = Size.Empty;
+			}
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -4813,6 +4839,10 @@ namespace System.Windows.Forms
 				else {
 					OnVisibleChanged(EventArgs.Empty);
 				}
+
+				if (parent != null) {
+					parent.cached_preferred_size = Size.Empty;
+				}
 			}
 		}
 
@@ -4887,8 +4917,9 @@ namespace System.Windows.Forms
 
 			if (resized) {
 				OnSizeInitializedOrChanged ();
-				OnSizeChanged(EventArgs.Empty);
+				OnSizeChanged (EventArgs.Empty);
 				OnClientSizeChanged (EventArgs.Empty);
+				this.cached_preferred_size = Size.Empty;
 			}
 		}
 

@@ -162,6 +162,8 @@ namespace System.Windows.Forms
 			document.ViewPortHeight = canvas_height;
 
 			Cursor = Cursors.IBeam;
+
+			can_cache_preferred_size = true;
 		}
 		#endregion	// Internal Constructor
 

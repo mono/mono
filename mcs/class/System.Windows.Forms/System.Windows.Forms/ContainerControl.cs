@@ -57,6 +57,7 @@ namespace System.Windows.Forms {
 			ControlRemoved += new ControlEventHandler(OnControlRemoved);
 			auto_scale_dimensions = SizeF.Empty;
 			auto_scale_mode = AutoScaleMode.Inherit;
+			can_cache_preferred_size = true;
 		}
 		#endregion	// Public Constructors
 
