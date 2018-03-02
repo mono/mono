@@ -940,6 +940,11 @@ gboolean   g_file_test (const gchar *filename, GFileTest test);
 #else
 #define g_unlink unlink
 #endif
+#ifdef G_OS_WIN32
+#define g_write _write
+#else
+#define g_write write
+#endif
 #define g_fopen fopen
 #define g_lstat lstat
 #define g_rmdir rmdir
