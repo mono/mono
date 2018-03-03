@@ -14,14 +14,7 @@ include runtime.mk
 
 PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 
-ios_CFLAGS= \
-	$(if $(filter $(RELEASE),true),-O2,-O0 -ggdb3 -gdwarf-2)
-
-ios_CPPFLAGS= \
-	-DMONOTOUCH=1
-
-ios_CXXFLAGS= \
-	$(if $(filter $(RELEASE),true),-O2,-O0 -ggdb3 -gdwarf-2)
+ios_CPPFLAGS=-DMONOTOUCH=1
 
 ios_LDFLAGS=
 
@@ -40,14 +33,14 @@ BITCODE_CONFIGURE_FLAGS=--enable-llvm-runtime --with-bitcode=yes
 #  $(3): arch (arm or aarch64)
 #
 # Flags:
-#  ios_$(1)_AC_VARS
-#  ios_$(1)_SYSROOT
-#  ios_$(1)_CONFIGURE_FLAGS
-#  ios_$(1)_CFLAGS
-#  ios_$(1)_CPPFLAGS
-#  ios_$(1)_CXXFLAGS
-#  ios_$(1)_LDFLAGS
-#  ios_$(1)_BITCODE_MARKER
+#  ios-$(1)_AC_VARS
+#  ios-$(1)_SYSROOT
+#  ios-$(1)_CONFIGURE_FLAGS
+#  ios-$(1)_CFLAGS
+#  ios-$(1)_CPPFLAGS
+#  ios-$(1)_CXXFLAGS
+#  ios-$(1)_LDFLAGS
+#  ios-$(1)_BITCODE_MARKER
 #
 # This handles tvos/watchos as well.
 #
@@ -72,28 +65,26 @@ _ios-$(1)_AC_VARS= \
 	$$(ios-$(1)_AC_VARS)
 
 _ios-$(1)_CFLAGS= \
-	$$(ios_CFLAGS) \
-	$$(ios_$(1)_SYSROOT) \
+	$$(ios-$(1)_SYSROOT) \
 	-arch $(2) \
 	-Wl,-application_extension \
 	-fexceptions \
-	$$(ios_$(1)_BITCODE_MARKER) \
-	$$(ios_$(1)_CFLAGS)
+	$$(ios-$(1)_BITCODE_MARKER) \
+	$$(ios-$(1)_CFLAGS)
 
-_ios_$(1)_CXXFLAGS= \
-	$$(ios_CXXFLAGS) \
-	$$(ios_$(1)_SYSROOT) \
+_ios-$(1)_CXXFLAGS= \
+	$$(ios-$(1)_SYSROOT) \
 	-arch $(2) \
 	-Wl,-application_extension \
-	$$(ios_$(1)_CXXFLAGS) \
-	$$(ios_$(1)_BITCODE_MARKER)
+	$$(ios-$(1)_CXXFLAGS) \
+	$$(ios-$(1)_BITCODE_MARKER)
 
-_ios_$(1)_CPPFLAGS= \
+_ios-$(1)_CPPFLAGS= \
 	$$(ios_CPPFLAGS) \
-	$$(ios_$(1)_SYSROOT) \
+	$$(ios-$(1)_SYSROOT) \
 	-arch $(2) \
 	-DSMALL_CONFIG -DDISABLE_POLICY_EVIDENCE=1 -DDISABLE_PROCESS_HANDLING=1 -D_XOPEN_SOURCE -DHOST_IOS -DHAVE_LARGE_FILE_SUPPORT=1 \
-	$$(ios_$(1)_CPPFLAGS)
+	$$(ios-$(1)_CPPFLAGS)
 
 _ios-$(1)_LDFLAGS= \
 	$$(ios_LDFLAGS) \
@@ -126,7 +117,7 @@ _ios-$(1)_CONFIGURE_FLAGS = \
 	--with-tls=pthread \
 	--without-ikvm-native \
 	--without-sigaltstack \
-	$$(ios_$(1)_CONFIGURE_FLAGS)
+	$$(ios-$(1)_CONFIGURE_FLAGS)
 
 .stamp-ios-$(1)-toolchain:
 	touch $$@
@@ -140,30 +131,30 @@ tvos_sysroot = -isysroot $(XCODE_DIR)/Platforms/AppleTVOS.platform/Developer/SDK
 watchos_sysroot = -isysroot $(XCODE_DIR)/Platforms/WatchOS.platform/Developer/SDKs/WatchOS$(WATCH_VERSION).sdk -mwatchos-version-min=$(WATCHOS_VERSION_MIN)
 
 # explicitly disable dtrace, since it requires inline assembly, which is disabled on AppleTV (and mono's configure.ac doesn't know that (yet at least))
-ios_targettv_CONFIGURE_FLAGS = 	--enable-dtrace=no $(BITCODE_CONFIGURE_FLAGS)
-ios_targetwatch_CONFIGURE_FLAGS = --with-cooperative-gc=yes $(BITCODE_CONFIGURE_FLAGS)
+ios-targettv_CONFIGURE_FLAGS = 	--enable-dtrace=no $(BITCODE_CONFIGURE_FLAGS)
+ios-targetwatch_CONFIGURE_FLAGS = --with-cooperative-gc=yes $(BITCODE_CONFIGURE_FLAGS)
 
-ios_target32_SYSROOT = $(ios_sysroot)
-ios_target32s_SYSROOT = $(ios_sysroot)
-ios_target64_SYSROOT = $(ios_sysroot)
-ios_targettv_SYSROOT = $(tvos_sysroot)
-ios_targetwatch_SYSROOT = $(watchos_sysroot)
+ios-target32_SYSROOT = $(ios_sysroot)
+ios-target32s_SYSROOT = $(ios_sysroot)
+ios-target64_SYSROOT = $(ios_sysroot)
+ios-targettv_SYSROOT = $(tvos_sysroot)
+ios-targetwatch_SYSROOT = $(watchos_sysroot)
 
-ios_target32_CPPFLAGS = -DHOST_IOS
-ios_target32s_CPPFLAGS = -DHOST_IOS
-ios_target64_CPPFLAGS = -DHOST_IOS
-ios_targettv_CPPFLAGS = -DHOST_APPLETVOS -DTARGET_APPLETVOS
-ios_targetwatch_CPPFLAGS = -DHOST_IOS -DHOST_WATCHOS
+ios-target32_CPPFLAGS = -DHOST_IOS
+ios-target32s_CPPFLAGS = -DHOST_IOS
+ios-target64_CPPFLAGS = -DHOST_IOS
+ios-targettv_CPPFLAGS = -DHOST_APPLETVOS -DTARGET_APPLETVOS
+ios-targetwatch_CPPFLAGS = -DHOST_IOS -DHOST_WATCHOS
 
-ios_targettv_CFLAGS = -fembed-bitcode -fno-gnu-inline-asm
-ios_targettv_CXXFLAGS = -fembed-bitcode -fno-gnu-inline-asm
-ios_targetwatch_CFLAGS = -fembed-bitcode -fno-gnu-inline-asm
-ios_targetwatch_CXXFLAGS = -fembed-bitcode -fno-gnu-inline-asm
+ios-targettv_CFLAGS = -fembed-bitcode -fno-gnu-inline-asm
+ios-targettv_CXXFLAGS = -fembed-bitcode -fno-gnu-inline-asm
+ios-targetwatch_CFLAGS = -fembed-bitcode -fno-gnu-inline-asm
+ios-targetwatch_CXXFLAGS = -fembed-bitcode -fno-gnu-inline-asm
 
-ios_targettv_LDFLAGS = -Wl,-bitcode_bundle $(BITCODE_LDFLAGS)
-ios_targetwatch_LDFLAGS = -Wl,-bitcode_bundle $(BITCODE_LDFLAGS)
+ios-targettv_LDFLAGS = -Wl,-bitcode_bundle $(BITCODE_LDFLAGS)
+ios-targetwatch_LDFLAGS = -Wl,-bitcode_bundle $(BITCODE_LDFLAGS)
 
-ios_targettv_AC_VARS = \
+ios-targettv_AC_VARS = \
 	ac_cv_func_system=no			\
 	ac_cv_func_pthread_kill=no      \
 	ac_cv_func_kill=no              \
@@ -173,12 +164,12 @@ ios_targettv_AC_VARS = \
 	ac_cv_func_execve=no            \
 	ac_cv_func_execvp=no            \
 	ac_cv_func_signal=no
-ios_targetwatch_AC_VARS = $(ios_targettv_AC_VARS)
+ios-targetwatch_AC_VARS = $(ios-targettv_AC_VARS)
 
-# ios_target32_BITCODE_MARKER=-fembed-bitcode-marker
+# ios-target32_BITCODE_MARKER=-fembed-bitcode-marker
 $(eval $(call iOSDeviceTemplate,target32,armv7,arm))
 $(eval $(call iOSDeviceTemplate,target32s,armv7s,arm))
-# ios_target64_BITCODE_MARKER=-fembed-bitcode-marker
+# ios-target64_BITCODE_MARKER=-fembed-bitcode-marker
 $(eval $(call iOSDeviceTemplate,target64,arm64,aarch64))
 $(eval $(call iOSDeviceTemplate,targettv,arm64,aarch64))
 $(eval $(call iOSDeviceTemplate,targetwatch,armv7k,armv7k))
@@ -191,12 +182,12 @@ $(eval $(call iOSDeviceTemplate,targetwatch,armv7k,armv7k))
 #  $(2): arch (i386 or x86_64)
 #
 # Flags:
-#  ios_$(1)_SYSROOT
-#  ios_$(1)_AC_VARS
-#  ios_$(1)_CFLAGS
-#  ios_$(1)_CPPFLAGS
-#  ios_$(1)_CXXFLAGS
-#  ios_$(1)_LDFLAGS
+#  ios-$(1)_SYSROOT
+#  ios-$(1)_AC_VARS
+#  ios-$(1)_CFLAGS
+#  ios-$(1)_CPPFLAGS
+#  ios-$(1)_CXXFLAGS
+#  ios-$(1)_LDFLAGS
 #
 # This handles tvos/watchos as well.
 #
@@ -217,25 +208,23 @@ _ios-$(1)_AC_VARS= \
 	$(ios-$(1)_AC_VARS)
 
 _ios-$(1)_CFLAGS= \
-	$$(ios_CFLAGS) \
-	$$(ios_$(1)_SYSROOT) \
+	$$(ios-$(1)_SYSROOT) \
 	-arch $(2) \
 	-Wl,-application_extension \
-	$$(ios_$(1)_CFLAGS)
+	$$(ios-$(1)_CFLAGS)
 
 _ios-$(1)_CPPFLAGS= \
 	$$(ios_CPPFLAGS) \
-	$$(ios_$(1)_SYSROOT) \
+	$$(ios-$(1)_SYSROOT) \
 	-arch $(2) \
 	-Wl,-application_extension \
-	$$(ios_$(1)_CPPFLAGS)
+	$$(ios-$(1)_CPPFLAGS)
 
 _ios-$(1)_CXXFLAGS= \
-	$$(ios_CXXFLAGS) \
-	$$(ios_$(1)_SYSROOT) \
+	$$(ios-$(1)_SYSROOT) \
 	-arch $(2) \
 	-Wl,-application_extension\
-	$$(ios_$(1)_CXXFLAGS)
+	$$(ios-$(1)_CXXFLAGS)
 
 _ios-$(1)_LDFLAGS= \
 	$$(ios_LDFLAGS) \
@@ -256,7 +245,7 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 	--enable-minimal=com,remoting,shared_perfcounters \
 	--with-tls=pthread \
 	--without-ikvm-native \
-	$$(ios_$(1)_CONFIGURE_FLAGS)
+	$$(ios-$(1)_CONFIGURE_FLAGS)
 
 # _ios-$(1)_CONFIGURE_FLAGS += --enable-extension-module=xamarin
 
@@ -271,19 +260,19 @@ ios_sim_sysroot = -isysroot $(XCODE_DIR)/Platforms/iPhoneSimulator.platform/Deve
 tvos_sim_sysroot = -isysroot $(XCODE_DIR)/Platforms/AppleTVSimulator.platform/Developer/SDKs/AppleTVSimulator$(TVOS_VERSION).sdk -mtvos-simulator-version-min=$(TVOS_VERSION_MIN)
 watchos_sim_sysroot = -isysroot $(XCODE_DIR)/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator$(WATCH_VERSION).sdk -mwatchos-simulator-version-min=$(WATCHOS_VERSION_MIN)
 
-ios_sim32_SYSROOT = $(ios_sim_sysroot)
-ios_sim64_SYSROOT = $(ios_sim_sysroot)
-ios_simtv_SYSROOT = $(tvos_sim_sysroot)
-ios_simwatch_SYSROOT = $(watchos_sim_sysroot)
+ios-sim32_SYSROOT = $(ios_sim_sysroot)
+ios-sim64_SYSROOT = $(ios_sim_sysroot)
+ios-simtv_SYSROOT = $(tvos_sim_sysroot)
+ios-simwatch_SYSROOT = $(watchos_sim_sysroot)
 
-ios_simwatch_CONFIGURE_FLAGS = --with-cooperative-gc=yes
+ios-simwatch_CONFIGURE_FLAGS = --with-cooperative-gc=yes
 
-ios_sim32_CPPFLAGS = -DHOST_IOS
-ios_sim64_CPPFLAGS = -DHOST_IOS
-ios_simtv_CPPFLAGS = -DHOST_APPLETVOS -DTARGET_APPLETVOS
-ios_simwatch_CPPFLAGS = -DHOST_IOS -DHOST_WATCHOS
+ios-sim32_CPPFLAGS = -DHOST_IOS
+ios-sim64_CPPFLAGS = -DHOST_IOS
+ios-simtv_CPPFLAGS = -DHOST_APPLETVOS -DTARGET_APPLETVOS
+ios-simwatch_CPPFLAGS = -DHOST_IOS -DHOST_WATCHOS
 
-ios_simtv_AC_VARS = \
+ios-simtv_AC_VARS = \
 	ac_cv_func_pthread_kill=no \
 	ac_cv_func_kill=no \
 	ac_cv_func_sigaction=no \
@@ -292,7 +281,7 @@ ios_simtv_AC_VARS = \
 	ac_cv_func_execve=no \
 	ac_cv_func_execvp=no \
 	ac_cv_func_signal=no
-ios_simwatch_AC_VARS =  \
+ios-simwatch_AC_VARS =  \
 	ac_cv_func_system=no \
 	ac_cv_func_pthread_kill=no \
 	ac_cv_func_kill=no \
@@ -336,10 +325,10 @@ clean-ios-llvm:
 #  ios-$(1)_CONFIGURE_FLAGS
 define iOSCrossTemplate
 
-_ios_$(1)_OFFSET_TOOL_ABI=$(5)
+_ios-$(1)_OFFSET_TOOL_ABI=$(5)
 
-_ios_$(1)_CC=$$(CCACHE) $$(PLATFORM_BIN)/clang
-_ios_$(1)_CXX=$$(CCACHE) $$(PLATFORM_BIN)/clang++
+_ios-$(1)_CC=$$(CCACHE) $$(PLATFORM_BIN)/clang
+_ios-$(1)_CXX=$$(CCACHE) $$(PLATFORM_BIN)/clang++
 
 _ios-$(1)_AC_VARS= \
 	$$(ios-$(1)_AC_VARS)
@@ -360,11 +349,11 @@ _ios-$(1)_LDFLAGS= \
 	-stdlib=libc++ \
 	$$(ios-$(1)_LDFLAGS)
 
-_ios_$(1)_CONFIGURE_FLAGS= \
-	$$(ios_$(1)_CONFIGURE_FLAGS) \
+_ios-$(1)_CONFIGURE_FLAGS= \
+	$$(ios-$(1)_CONFIGURE_FLAGS) \
 	--target=$(4) \
-	--cache-file=$$(TOP)/sdks/builds/ios-$(1).config.cache \
-	--prefix=$$(TOP)/sdks/out/ios-$(1) \
+	--cache-file=$$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION).config.cache \
+	--prefix=$$(TOP)/sdks/out/ios-$(1)-$$(CONFIGURATION) \
 	--disable-boehm \
 	--disable-btls \
 	--disable-iconv \
@@ -380,29 +369,22 @@ _ios_$(1)_CONFIGURE_FLAGS= \
 .stamp-ios-$(1)-toolchain:
 	touch $$@
 
-.stamp-ios-$(1)-$$(CONFIGURATION)-configure: | build-ios-llvm
+.stamp-ios-$(1)-configure-$$(CONFIGURATION): | build-ios-llvm
 
-$$(TOP)/sdks/builds/ios-$(1)/$(4).h: .stamp-ios-$(1)-configure $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe
-	cd $$(TOP)/sdks/builds/ios-$(1) && \
+$$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h: .stamp-ios-$(1)-configure-$$(CONFIGURATION) $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe
+	cd $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION) && \
 		MONO_PATH=$(TOP)/tools/offsets-tool/CppSharp/osx_32 \
 			mono --arch=32 --debug $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe \
-				--gen-ios --abi $$(_ios_$(1)_OFFSET_TOOL_ABI) --outfile $$@ --mono $$(TOP) --targetdir $$(TOP)/sdks/builds/ios-$(1)
+				--gen-ios --abi $$(_ios_$(1)_OFFSET_TOOL_ABI) --outfile $$@ --mono $$(TOP) --targetdir $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)
 
-build-ios-$(1): $$(TOP)/sdks/builds/ios-$(1)/$(4).h
-
-.PHONY: package-ios-$(1)
-package-ios-$(1):
-	$$(MAKE) -C $$(TOP)/sdks/builds/ios-$(1)/mono install
-
-build-ios-$(1)-$$(CONFIGURATION): $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(2)-apple-darwin10.h
+build-ios-$(1)-$$(CONFIGURATION): $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h
 
 $$(eval $$(call RuntimeTemplate,ios-$(1)))
 
 endef
 
-ios_crosswatch_CONFIGURE_FLAGS=--build=i386-apple-darwin10 	--with-cooperative-gc=yes
+ios-cross32_CONFIGURE_FLAGS=--build=i386-apple-darwin10
+ios-crosswatch_CONFIGURE_FLAGS=--build=i386-apple-darwin10 	--with-cooperative-gc=yes
 $(eval $(call iOSCrossTemplate,cross32,arm,llvm32,arm-darwin,arm-apple-darwin10))
 $(eval $(call iOSCrossTemplate,cross64,aarch64,llvm64,aarch64-darwin,aarch64-apple-darwin10))
 $(eval $(call iOSCrossTemplate,crosswatch,armv7k,llvm32,armv7k-unknown-darwin,armv7k-apple-darwin))
-
-configure-mono: $(TOP)/configure

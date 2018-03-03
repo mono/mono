@@ -3,6 +3,7 @@ TOP=$(realpath $(CURDIR)/../..)
 CONFIGURATION?=release
 
 RELEASE=$(if $(filter $(CONFIGURATION),release),1)
+<<<<<<< HEAD
 
 UNAME=$(shell uname)
 ifneq ($(UNAME),Darwin)
@@ -12,6 +13,8 @@ endif
 
 include $(TOP)/sdks/versions.mk
 include $(TOP)/sdks/paths.mk
+=======
+>>>>>>> 43ac34b36e2... [sdks] Unify targets to build runtimes (#7394)
 
 CCACHE:=$(shell which ccache)
 
