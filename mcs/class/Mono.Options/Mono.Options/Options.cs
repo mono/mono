@@ -1267,7 +1267,7 @@ namespace Mono.Options
 				}
 				CommandOption co = p as CommandOption;
 				if (co != null) {
-					WriteCommandDescription (o, co.Command);
+					WriteCommandDescription (o, co.Command, co.CommandName);
 					continue;
 				}
 
@@ -1311,9 +1311,9 @@ namespace Mono.Options
 			}
 		}
 
-		internal void WriteCommandDescription (TextWriter o, Command c)
+		internal void WriteCommandDescription (TextWriter o, Command c, string commandName)
 		{
-			var name = new string (' ', 8) + c.Name;
+			var name = new string (' ', 8) + (commandName ?? c.Name);
 			if (name.Length < OptionWidth - 1) {
 				WriteDescription (o, name + new string (' ', OptionWidth - name.Length) + c.Help, CommandHelpIndentRemaining, 80, Description_RemWidth);
 			} else {
@@ -1476,8 +1476,25 @@ namespace Mono.Options
 			if (string.IsNullOrEmpty (name))
 				throw new ArgumentNullException (nameof (name));
 
-			Name    = name;
+			Name    = NormalizeCommandName (name);
 			Help    = help;
+		}
+
+		static string NormalizeCommandName (string name)
+		{
+			var value = new StringBuilder (name.Length);
+			var space = false;
+			for (int i = 0; i < name.Length; ++i) {
+				if (!char.IsWhiteSpace (name, i)) {
+					space   = false;
+					value.Append (name [i]);
+				}
+				else if (!space) {
+					space   = true;
+					value.Append (' ');
+				}
+			}
+			return value.ToString ();
 		}
 
 		public virtual int Invoke (IEnumerable<string> arguments)
@@ -1491,16 +1508,18 @@ namespace Mono.Options
 	class CommandOption : Option
 	{
 		public      Command             Command         {get;}
+		public      string              CommandName     {get;}
 
 		// Prototype starts with '=' because this is an invalid prototype
 		// (see Option.ParsePrototype(), and thus it'll prevent Category
 		// instances from being accidentally used as normal options.
-		public CommandOption (Command command, bool hidden = false)
-			: base ("=:Command:= " + command?.Name, command?.Name, maxValueCount: 0, hidden: hidden)
+		public CommandOption (Command command, string commandName = null, bool hidden = false)
+			: base ("=:Command:= " + (commandName ?? command?.Name), (commandName ?? command?.Name), maxValueCount: 0, hidden: hidden)
 		{
 			if (command == null)
 				throw new ArgumentNullException (nameof (command));
 			Command = command;
+			CommandName = commandName ?? command.Name;
 		}
 
 		protected override void OnParseComplete (OptionContext c)
@@ -1574,12 +1593,15 @@ namespace Mono.Options
 
 	public class CommandSet : KeyedCollection<string, Command>
 	{
-		readonly    OptionSet       options;
-		readonly    TextWriter      outWriter;
-		readonly    TextWriter      errorWriter;
 		readonly    string          suite;
 
-		HelpCommand help;
+		OptionSet                   options;
+		TextWriter                  outWriter;
+		TextWriter                  errorWriter;
+
+		internal    List<CommandSet>        NestedCommandSets;
+
+		internal    HelpCommand     help;
 
 		internal    bool            showHelp;
 
@@ -1719,6 +1741,47 @@ namespace Mono.Options
 			return this;
 		}
 
+		public CommandSet Add (CommandSet nestedCommands)
+		{
+			if (nestedCommands == null)
+				throw new ArgumentNullException (nameof (nestedCommands));
+
+			if (NestedCommandSets == null) {
+				NestedCommandSets   = new List<CommandSet> ();
+			}
+
+			if (!AlreadyAdded (nestedCommands)) {
+				NestedCommandSets.Add (nestedCommands);
+				foreach (var o in nestedCommands.options) {
+					if (o is CommandOption c) {
+						options.Add (new CommandOption (c.Command, $"{nestedCommands.Suite} {c.CommandName}"));
+					}
+					else {
+						options.Add (o);
+					}
+				}
+			}
+
+			nestedCommands.options      = this.options;
+			nestedCommands.outWriter    = this.outWriter;
+			nestedCommands.errorWriter  = this.errorWriter;
+
+			return this;
+		}
+
+		bool AlreadyAdded (CommandSet value)
+		{
+			if (value == this)
+				return true;
+			if (NestedCommandSets == null)
+				return false;
+			foreach (var nc in NestedCommandSets) {
+				if (nc.AlreadyAdded (value))
+					return true;
+			}
+			return false;
+		}
+
 		public int Run (IEnumerable<string> arguments)
 		{
 			if (arguments == null)
@@ -1744,12 +1807,11 @@ namespace Mono.Options
 				Out.WriteLine (options.MessageLocalizer ($"Use `{Suite} help` for usage."));
 				return 1;
 			}
-			var command = Contains (extra [0]) ? this [extra [0]] : null;
+			var command = GetCommand (extra);
 			if (command == null) {
 				help.WriteUnknownCommand (extra [0]);
 				return 1;
 			}
-			extra.RemoveAt (0);
 			if (showHelp) {
 				if (command.Options?.Contains ("help") ?? true) {
 					extra.Add ("--help");
@@ -1759,6 +1821,51 @@ namespace Mono.Options
 				return 0;
 			}
 			return command.Invoke (extra);
+		}
+
+		internal Command GetCommand (List<string> extra)
+		{
+			return TryGetLocalCommand (extra) ?? TryGetNestedCommand (extra);
+		}
+
+		Command TryGetLocalCommand (List<string> extra)
+		{
+			var name    = extra [0];
+			if (Contains (name)) {
+				extra.RemoveAt (0);
+				return this [name];
+			}
+			for (int i = 1; i < extra.Count; ++i) {
+				name = name + " " + extra [i];
+				if (!Contains (name))
+					continue;
+				extra.RemoveRange (0, i+1);
+				return this [name];
+			}
+			return null;
+		}
+
+		Command TryGetNestedCommand (List<string> extra)
+		{
+			if (NestedCommandSets == null)
+				return null;
+
+			var nestedCommands	= NestedCommandSets.Find (c => c.Suite == extra [0]);
+			if (nestedCommands == null)
+				return null;
+
+			var extraCopy = new List<string> (extra);
+			extraCopy.RemoveAt (0);
+			if (extraCopy.Count == 0)
+				return null;
+
+			var command = nestedCommands.GetCommand (extraCopy);
+			if (command != null) {
+				extra.Clear ();
+				extra.AddRange (extraCopy);
+				return command;
+			}
+			return null;
 		}
 	}
 
@@ -1772,23 +1879,28 @@ namespace Mono.Options
 		public override int Invoke (IEnumerable<string> arguments)
 		{
 			var extra   = new List<string> (arguments ?? new string [0]);
+			Console.WriteLine ($"# HelpCommand.Invoke: arguments={string.Join (" ", arguments)}");
 			var _       = CommandSet.Options.MessageLocalizer;
 			if (extra.Count == 0) {
 				CommandSet.Options.WriteOptionDescriptions (CommandSet.Out);
 				return 0;
 			}
-			var command = CommandSet.Contains (extra [0])
-				? CommandSet [extra [0]]
-				: null;
-			if (command == this || extra [0] == "--help") {
+			var command = CommandSet.GetCommand (extra);
+			if (command == this || extra.Contains ("--help")) {
 				CommandSet.Out.WriteLine (_ ($"Usage: {CommandSet.Suite} COMMAND [OPTIONS]"));
 				CommandSet.Out.WriteLine (_ ($"Use `{CommandSet.Suite} help COMMAND` for help on a specific command."));
 				CommandSet.Out.WriteLine ();
 				CommandSet.Out.WriteLine (_ ($"Available commands:"));
 				CommandSet.Out.WriteLine ();
-				foreach (var c in CommandSet) {
-					CommandSet.Options.WriteCommandDescription (CommandSet.Out, c);
+				var commands    = GetCommands ();
+				commands.Sort ((x, y) => string.Compare (x.Key, y.Key, StringComparison.OrdinalIgnoreCase));
+				foreach (var c in commands) {
+					if (c.Key == "help") {
+						continue;
+					}
+					CommandSet.Options.WriteCommandDescription (CommandSet.Out, c.Value, c.Key);
 				}
+				CommandSet.Options.WriteCommandDescription (CommandSet.Out, CommandSet.help, "help");
 				return 0;
 			}
 			if (command == null) {
@@ -1800,6 +1912,36 @@ namespace Mono.Options
 				return 0;
 			}
 			return command.Invoke (new [] { "--help" });
+		}
+
+		List<KeyValuePair<string, Command>> GetCommands ()
+		{
+			var commands    = new List<KeyValuePair<string, Command>> ();
+
+			foreach (var c in CommandSet) {
+				commands.Add (new KeyValuePair<string, Command>(c.Name, c));
+			}
+
+			if (CommandSet.NestedCommandSets == null)
+				return commands;
+
+			foreach (var nc in CommandSet.NestedCommandSets) {
+				AddNestedCommands ("", nc);
+			}
+
+			return commands;
+
+			void AddNestedCommands (string outer, CommandSet value)
+			{
+				foreach (var v in value) {
+					commands.Add (new KeyValuePair<string, Command>($"{outer}{value.Suite} {v.Name}", v));
+				}
+				if (value.NestedCommandSets == null)
+					return;
+				foreach (var nc in value.NestedCommandSets) {
+					AddNestedCommands ($"{outer}{value.Suite} ", nc);
+				}
+			}
 		}
 
 		internal void WriteUnknownCommand (string unknownCommand)
