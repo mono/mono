@@ -4152,29 +4152,17 @@ namespace System.Windows.Forms
 			if ((specified & BoundsSpecified.Height) == 0)
 				height = Height;
 		
-			SetBoundsInternal (x, y, width, height, specified);
+			if (bounds.X != x || bounds.Y != y || bounds.Width != width || bounds.Height != height) {
+				SetBoundsCore (x, y, width, height, specified);
+
+				if (parent != null)
+					parent.PerformLayout(this, "Bounds");
+			}
 		}
 
 		internal void SetBoundsInternal (int x, int y, int width, int height, BoundsSpecified specified)
 		{
-			// SetBoundsCore is really expensive to call, so we want to avoid it if we can.
-			// We can avoid it if:
-			// - The requested dimensions are the same as our current dimensions
-			// AND
-			// - Any BoundsSpecified is the same as our current explicit_size
-			if (bounds.X != x || (explicit_bounds.X != x && (specified & BoundsSpecified.X) == BoundsSpecified.X))
-				SetBoundsCore (x, y, width, height, specified);
-			else if (bounds.Y != y || (explicit_bounds.Y != y && (specified & BoundsSpecified.Y) == BoundsSpecified.Y))
-				SetBoundsCore (x, y, width, height, specified);
-			else if (bounds.Width != width || (explicit_bounds.Width != width && (specified & BoundsSpecified.Width) == BoundsSpecified.Width))
-				SetBoundsCore (x, y, width, height, specified);
-			else if (bounds.Height != height || (explicit_bounds.Height != height && (specified & BoundsSpecified.Height) == BoundsSpecified.Height))
-				SetBoundsCore (x, y, width, height, specified);
-			else
-				return;
-			
-			if (parent != null)
-				parent.PerformLayout(this, "Bounds");
+			SetBoundsCore (x, y, width, height, specified);
 		}
 
 		public void Show () {
@@ -4692,79 +4680,37 @@ namespace System.Windows.Forms
 		
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
-			SetBoundsCoreInternal (x, y, width, height, specified);
-		}
-		
-		internal virtual void SetBoundsCoreInternal(int x, int y, int width, int height, BoundsSpecified specified) {
 			// Nasty hack for 2.0 DateTimePicker
 			height = OverrideHeight (height);
-			
-			Rectangle old_explicit = explicit_bounds;
+
 			Rectangle new_bounds = new Rectangle (x, y, width, height);
-
-			// SetBoundsCore updates the Win32 control itself. UpdateBounds updates the controls variables and fires events, I'm guessing - pdb
-			if (IsHandleCreated) {
-				XplatUI.SetWindowPos(Handle, x, y, width, height);
-
-				// Win32 automatically changes negative width/height to 0.
-				// The control has already been sent a WM_WINDOWPOSCHANGED message and it has the correct
-				// data, but it'll be overwritten when we call UpdateBounds unless we get the updated
-				// size.
-				int cw, ch, ix, iy;
-				XplatUI.GetWindowPos(Handle, this is Form, out ix, out iy, out width, out height, out cw, out ch);
-			}
-
+			
 			// BoundsSpecified tells us which variables were programatic (user-set).
 			// We need to store those in the explicit bounds
 			if ((specified & BoundsSpecified.X) == BoundsSpecified.X)
 				explicit_bounds.X = new_bounds.X;
-			else
-				explicit_bounds.X = old_explicit.X;
-
 			if ((specified & BoundsSpecified.Y) == BoundsSpecified.Y)
 				explicit_bounds.Y = new_bounds.Y;
-			else
-				explicit_bounds.Y = old_explicit.Y;
-
 			if ((specified & BoundsSpecified.Width) == BoundsSpecified.Width)
 				explicit_bounds.Width = new_bounds.Width;
-			else
-				explicit_bounds.Width = old_explicit.Width;
-
 			if ((specified & BoundsSpecified.Height) == BoundsSpecified.Height)
 				explicit_bounds.Height = new_bounds.Height;
-			else
-				explicit_bounds.Height = old_explicit.Height;
-
 			if (specified != BoundsSpecified.None)
 				explicit_bounds_valid = true;
 
 			// Impose restrictions based on MinimumSize and MaximumSize
 			new_bounds.Size = ApplySizeConstraints(new_bounds.Size);
 
-			// We need to store the explicit bounds because UpdateBounds is always going
-			// to change it, and we have to fix it.  However, UpdateBounds also calls
-			// OnLocationChanged, OnSizeChanged, and OnClientSizeChanged.  The user can
-			// override those or use those events to change the size explicitly, and we 
-			// can't undo those changes.  So if the bounds after calling UpdateBounds are
-			// the same as the ones we sent it, we need to fix the explicit bounds.  If
-			// it's not the same as we sent UpdateBounds, then someone else changed it, and
-			// we better not mess it up.  Fun stuff.
-			Rectangle stored_explicit_bounds = explicit_bounds;
-			
-			UpdateBounds(x, y, new_bounds.Width, new_bounds.Height);
-
-			if (explicit_bounds.X == x)
-				explicit_bounds.X = stored_explicit_bounds.X;
-
-			if (explicit_bounds.Y == y)
-				explicit_bounds.Y = stored_explicit_bounds.Y;
-
-			if (explicit_bounds.Width == width)
-				explicit_bounds.Width = stored_explicit_bounds.Width;
-
-			if (explicit_bounds.Height == height)
-				explicit_bounds.Height = stored_explicit_bounds.Height;
+			// SetBoundsCore updates the Win32 control itself. UpdateBounds updates the controls variables and fires events, I'm guessing - pdb
+			if (IsHandleCreated) {
+				// We will get WM_WINDOWPOSCHANGED message, which will call UpdateBounds
+				XplatUI.SetWindowPos(Handle, x, y, new_bounds.Width, new_bounds.Height);
+				// Workaround a bug in some XplatUI backends
+				if (new_bounds.Width == 0 || new_bounds.Height == 0)
+					UpdateBounds(x, y, new_bounds.Width, new_bounds.Height);
+			} else {
+				UpdateBounds(x, y, new_bounds.Width, new_bounds.Height);
+			}
 
 			if (parent != null) {
 				// DefaultLayout calculates preferred size based on the control boundaries,
@@ -5238,13 +5184,9 @@ namespace System.Windows.Forms
 		}
 
 		private void WmWindowPosChanged (ref Message m) {
-			if (Visible) {
-				Rectangle save_bounds = explicit_bounds;
-				UpdateBounds();
-				explicit_bounds = save_bounds;
-				if (GetStyle(ControlStyles.ResizeRedraw)) {
-					Invalidate();
-				}
+			UpdateBounds();
+			if (Visible && GetStyle(ControlStyles.ResizeRedraw)) {
+				Invalidate();
 			}
 		}
 
