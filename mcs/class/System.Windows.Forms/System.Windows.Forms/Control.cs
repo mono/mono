@@ -6328,7 +6328,7 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnVisibleChanged(EventArgs e) {
-			if (Visible)
+			if (parent != null && Visible)
 				CreateControl ();
 				
 			EventHandler eh = (EventHandler)(Events [VisibleChangedEvent]);
