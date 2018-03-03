@@ -41,6 +41,19 @@ namespace System.Windows.Forms.Layout
 		{
 		}
 	
+		public override void InitLayout (object child, BoundsSpecified specified)
+		{
+			Control control = child as Control;
+			Control parent = control.Parent;
+			if (parent != null) {
+				Rectangle bounds = control.Bounds;
+				if ((specified & (BoundsSpecified.Width | BoundsSpecified.X)) != BoundsSpecified.None)
+					control.dist_right = parent.DisplayRectangle.Right - bounds.X - bounds.Width;
+				if ((specified & (BoundsSpecified.Height | BoundsSpecified.Y)) != BoundsSpecified.None)
+					control.dist_bottom = parent.DisplayRectangle.Bottom - bounds.Y - bounds.Height;
+			}		
+		}
+
 		static void LayoutDockedChildren (Control parent, Control[] controls)
 		{
 			Rectangle space = parent.DisplayRectangle;

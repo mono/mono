@@ -114,7 +114,6 @@ namespace System.Windows.Forms
 		bool layout_dirty;
 		internal AnchorStyles anchor_style; // anchoring requirements for our control
 		internal DockStyle dock_style; // docking requirements for our control
-		private bool recalculate_distances = true;  // Delay anchor calculations
 
 		// Please leave the next 2 as internal until DefaultLayout (2.0) is rewritten
 		internal int			dist_right; // distance to the right border of the parent
@@ -482,8 +481,6 @@ namespace System.Windows.Forms
 				if (child_is_mdichild && form_value.MdiParent != null && form_value.MdiParent != owner && form_value.MdiParent != owner.Parent) {
 					throw new ArgumentException ("Form cannot be added to the Controls collection that has a valid MDI parent.", "value");
 				}
-				
-				value.recalculate_distances = true;
 				
 				if (Contains (value)) {
 					owner.PerformLayout();
@@ -1749,6 +1746,10 @@ namespace System.Windows.Forms
 			if ((binding_context == null) && Created) {
 				OnBindingContextChanged(EventArgs.Empty);
 			}
+
+			if (new_parent != null) {
+				new_parent.LayoutEngine.InitLayout(this, BoundsSpecified.All);				
+			}
 		}
 
 		// Sometimes we need to do this calculation without it being virtual (constructor)
@@ -1787,17 +1788,6 @@ namespace System.Windows.Forms
 		internal virtual Size GetPreferredSizeCore (Size proposedSize)
 		{
 			return this.explicit_bounds.Size;
-		}
-
-		private void UpdateDistances() {
-			if (parent != null) {
-				if (bounds.Width >= 0)
-					dist_right = parent.ClientSize.Width - bounds.X - bounds.Width;
-				if (bounds.Height >= 0)
-					dist_bottom = parent.ClientSize.Height - bounds.Y - bounds.Height;
-
-				recalculate_distances = false;
-			}
 		}
 		
 		private Cursor GetAvailableCursor ()
@@ -2011,10 +2001,10 @@ namespace System.Windows.Forms
 				anchor_style = value;
 				dock_style = DockStyle.None;
 				
-				UpdateDistances ();
-
-				if (parent != null)
-					parent.PerformLayout(this, "Anchor");
+				if (parent != null) {
+					parent.LayoutEngine.InitLayout (this, BoundsSpecified.All);
+					parent.PerformLayout (this, "Anchor");
+				}
 			}
 		}
 
@@ -2050,8 +2040,10 @@ namespace System.Windows.Forms
 					if (!value) {
 						Size = explicit_bounds.Size;
 					} else {
-						if (Parent != null)
+						if (Parent != null) {
+							Parent.LayoutEngine.InitLayout (this, BoundsSpecified.Size);
 							Parent.PerformLayout (this, "AutoSize");
+						}
 					}
 
 					OnAutoSizeChanged (EventArgs.Empty);
@@ -2508,12 +2500,13 @@ namespace System.Windows.Forms
 				}
 				bounds = explicit_bounds;
 
-				if (parent != null)
-					parent.PerformLayout(this, "Dock");
-				else if (Controls.Count > 0)
+				if (parent != null) {
+					parent.LayoutEngine.InitLayout (this, BoundsSpecified.All);
+					parent.PerformLayout (this, "Dock");
+				} else if (Controls.Count > 0)
 					PerformLayout ();
 
-				OnDockChanged(EventArgs.Empty);
+				OnDockChanged (EventArgs.Empty);
 			}
 		}
 
@@ -3823,9 +3816,6 @@ namespace System.Windows.Forms
 			LayoutEventArgs levent = new LayoutEventArgs(affectedControl, affectedProperty);
 
 			cached_preferred_size = Size.Empty;
-			foreach (Control c in Controls.GetAllControls ())
-				if (c.recalculate_distances)
-					c.UpdateDistances ();
 
 			if (layout_suspended > 0) {
 				layout_pending = true;
@@ -4011,12 +4001,13 @@ namespace System.Windows.Forms
 				if (this is ContainerControl)
 					(this as ContainerControl).PerformDelayedAutoScale();
 
-				if (!performLayout)
-					foreach (Control c in Controls.GetAllControls ())
-						c.UpdateDistances ();
-
-				if (performLayout && layout_pending) {
-					PerformLayout();
+				if (performLayout) {
+					if (layout_pending)
+						PerformLayout();
+				} else {
+					// Reproduce the weird behavior, where ResumeLayout(false) resets the anchors
+					foreach (Control c in Controls)
+                        LayoutEngine.InitLayout(c, BoundsSpecified.All);
 				}
 			}
 		}
@@ -4163,10 +4154,6 @@ namespace System.Windows.Forms
 				SetBoundsCore (x, y, width, height, specified);
 			else
 				return;
-			
-			// If the user explicitly moved or resized us, recalculate our anchor distances
-			if (specified != BoundsSpecified.None)
-				UpdateDistances ();
 			
 			if (parent != null)
 				parent.PerformLayout(this, "Bounds");
@@ -4354,6 +4341,7 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void InitLayout() {
+			LayoutEngine.InitLayout(this, BoundsSpecified.All);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -4676,7 +4664,11 @@ namespace System.Windows.Forms
 		{
 			if (auto_size_mode != mode) {
 				auto_size_mode = mode;
-				PerformLayout (this, "AutoSizeMode");
+				cached_preferred_size = Size.Empty;
+				if (parent != null) {
+					parent.LayoutEngine.InitLayout (this, BoundsSpecified.Size);
+					PerformLayout (this, "AutoSizeMode");
+				}
 			}
 		}
 		
@@ -4760,6 +4752,7 @@ namespace System.Windows.Forms
 				// DefaultLayout calculates preferred size based on the control boundaries,
 				// so reset its cache.
 				parent.cached_preferred_size = Size.Empty;
+				parent.LayoutEngine.InitLayout (this, specified);
 			}
 		}
 
