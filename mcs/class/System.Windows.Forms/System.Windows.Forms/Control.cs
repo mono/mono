@@ -510,9 +510,11 @@ namespace System.Windows.Forms
 				all_controls = null;
 				list.Add (value);
 
-				value.ChangeParent(owner);
-
-				value.InitLayout();
+				// Avoid triggering layout with changes in ChangeParent
+				owner.SuspendLayout ();
+				value.ChangeParent (owner);
+				value.InitLayout ();
+				owner.ResumeLayout (false);
 
 				if (owner.Visible)
 					owner.UpdateChildrenZOrder();
@@ -543,8 +545,11 @@ namespace System.Windows.Forms
 				all_controls = null;
 				impl_list.Add (control);
 
+				// Avoid triggering layout with changes in ChangeParent
+				owner.SuspendLayout ();
 				control.ChangeParent (owner);
 				control.InitLayout ();
+				owner.ResumeLayout (false);
 				if (owner.Visible)
 					owner.UpdateChildrenZOrder ();
 				
@@ -715,6 +720,8 @@ namespace System.Windows.Forms
 				all_controls = null;
 				list.Remove(value);
 
+				value.ChangeParent(null);
+				owner.UpdateChildrenZOrder();
 				owner.PerformLayout(value, "Parent");
 				owner.OnControlRemoved(new ControlEventArgs(value));
 
@@ -724,10 +731,6 @@ namespace System.Windows.Forms
 					// so that they can update their active control
 					container.ChildControlRemoved (value);
 				}
-
-				value.ChangeParent(null);
-
-				owner.UpdateChildrenZOrder();
 			}
 
 			internal virtual void RemoveImplicit (Control control)
@@ -957,6 +960,7 @@ namespace System.Windows.Forms
 				is_disposing = true;
 				Capture = false;
 
+				SuspendLayout ();
 				DisposeBackBuffer ();
 
 				if (this.InvokeRequired) {
@@ -975,6 +979,9 @@ namespace System.Windows.Forms
 					children[i].parent = null;	// Need to set to null or our child will try and remove from ourselves and crash
 					children[i].Dispose();
 				}
+
+				ResumeLayout (false);
+				is_disposing = false;
 			}
 			is_disposed = true;
 			base.Dispose(disposing);
@@ -1712,11 +1719,18 @@ namespace System.Windows.Forms
 			
 			OnParentChanged(EventArgs.Empty);
 
+			if (Disposing) {
+				return;
+			}
+
 			if (pre_enabled != Enabled) {
 				OnEnabledChanged(EventArgs.Empty);
 			}
 
-			if (pre_visible != Visible) {
+			// Do not raise the VisibleChanged event when a non-toplevel control is being removed from a
+			// parent and VisibleInternal remains set to true.
+			bool new_visible = Visible && (GetTopLevel() || parent != null);
+			if (pre_visible != new_visible) {
 				OnVisibleChanged(EventArgs.Empty);
 			}
 
@@ -2627,8 +2641,8 @@ namespace System.Windows.Forms
 
 				font = value;
 				Invalidate();
+				// Layout is performed inside OnFontChanged
 				OnFontChanged (EventArgs.Empty);
-				PerformLayout ();
 			}
 		}
 
@@ -3120,8 +3134,10 @@ namespace System.Windows.Forms
 					OnTextChanged (EventArgs.Empty);
 
 					// Label has its own AutoSize implementation
-					if (AutoSize && Parent != null && (!(this is Label)))
+					if (AutoSize && Parent != null && (!(this is Label))) {
+						cached_preferred_size = Size.Empty;
 						Parent.PerformLayout (this, "Text");
+					}
 				}
 			}
 		}
@@ -3816,6 +3832,8 @@ namespace System.Windows.Forms
 			LayoutEventArgs levent = new LayoutEventArgs(affectedControl, affectedProperty);
 
 			cached_preferred_size = Size.Empty;
+			if (affectedControl != null)
+				affectedControl.cached_preferred_size = Size.Empty;
 
 			if (layout_suspended > 0) {
 				layout_pending = true;
@@ -4825,17 +4843,15 @@ namespace System.Windows.Forms
 						if (parent != null)
 							parent.UpdateZOrderOfChild (this);
 					}
-					
-					if (!(this is Form))
-						OnVisibleChanged (EventArgs.Empty);
-				}
-				else {
-					OnVisibleChanged(EventArgs.Empty);
 				}
 
+				this.cached_preferred_size = Size.Empty;
 				if (parent != null) {
 					parent.cached_preferred_size = Size.Empty;
 				}
+
+				if (!(this is Form))
+					OnVisibleChanged (EventArgs.Empty);
 			}
 		}
 
@@ -5217,7 +5233,6 @@ namespace System.Windows.Forms
 			}
 
 			if (is_disposing) {
-				is_disposing = false;
 				is_visible = false;
 			}
 		}
@@ -5869,7 +5884,10 @@ namespace System.Windows.Forms
 			EventHandler eh = (EventHandler)(Events [FontChangedEvent]);
 			if (eh != null)
 				eh (this, e);
+			SuspendLayout ();
 			for (int i=0; i<child_controls.Count; i++) child_controls[i].OnParentFontChanged(e);
+			ResumeLayout (false);
+ 			PerformLayout (this, "Font");
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
