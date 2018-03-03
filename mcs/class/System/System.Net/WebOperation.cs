@@ -155,6 +155,13 @@ namespace System.Net
 			return (old ?? exception, old == null);
 		}
 
+		internal ExceptionDispatchInfo CheckDisposed (CancellationToken cancellationToken)
+		{
+			if (Aborted || cancellationToken.IsCancellationRequested)
+				return CheckThrowDisposed (false, ref disposedInfo);
+			return null;
+		}
+
 		internal void ThrowIfDisposed ()
 		{
 			ThrowIfDisposed (CancellationToken.None);
@@ -163,7 +170,7 @@ namespace System.Net
 		internal void ThrowIfDisposed (CancellationToken cancellationToken)
 		{
 			if (Aborted || cancellationToken.IsCancellationRequested)
-				ThrowDisposed (ref disposedInfo);
+				CheckThrowDisposed (true, ref disposedInfo);
 		}
 
 		internal void ThrowIfClosedOrDisposed ()
@@ -174,15 +181,17 @@ namespace System.Net
 		internal void ThrowIfClosedOrDisposed (CancellationToken cancellationToken)
 		{
 			if (Closed || cancellationToken.IsCancellationRequested)
-				ThrowDisposed (ref closedInfo);
+				CheckThrowDisposed (true, ref closedInfo);
 		}
 
-		void ThrowDisposed (ref ExceptionDispatchInfo field)
+		ExceptionDispatchInfo CheckThrowDisposed (bool throwIt, ref ExceptionDispatchInfo field)
 		{
 			var (exception, disposed) = SetDisposed (ref field);
 			if (disposed)
 				cts?.Cancel ();
-			exception.Throw ();
+			if (throwIt)
+				exception.Throw ();
+			return exception;
 		}
 
 		internal void RegisterRequest (ServicePoint servicePoint, WebConnection connection)
