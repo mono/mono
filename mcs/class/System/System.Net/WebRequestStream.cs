@@ -179,13 +179,19 @@ namespace System.Net
 
 				WebConnection.Debug ($"{ME} WRITE ASYNC EX: {ex.Message}");
 
-				if (ex is SocketException)
+				var oldError = Operation.CheckDisposed (cancellationToken);
+				if (oldError != null)
+					ex = oldError.SourceException;
+				else if (ex is SocketException)
 					ex = new IOException ("Error writing request", ex);
 
 				Operation.CompleteRequestWritten (this, ex);
 
 				pendingWrite = null;
 				completion.TrySetException (ex);
+
+				if (oldError != null)
+					oldError.Throw ();
 				throw;
 			}
 		}
@@ -237,12 +243,7 @@ namespace System.Net
 				}
 			}
 
-			try {
-				await InnerStream.WriteAsync (buffer, offset, size, cancellationToken).ConfigureAwait (false);
-			} catch {
-				if (!IgnoreIOErrors)
-					throw;
-			}
+			await InnerStream.WriteAsync (buffer, offset, size, cancellationToken).ConfigureAwait (false);
 		}
 
 		void CheckWriteOverflow (long contentLength, long totalWritten, long size)
