@@ -329,9 +329,10 @@ namespace MonoTests.System.Windows.Forms
 
 			try {
 				control.CreateControl ();
-			} catch (ObjectDisposedException ex) {
+				Assert.Fail("#1");
+			}
+			catch (ObjectDisposedException ex) {
 				Console.WriteLine (ex);
-				Assert.Fail ("#1");
 			}
 			Assert.IsFalse (control.IsHandleCreated, "#2");
 
