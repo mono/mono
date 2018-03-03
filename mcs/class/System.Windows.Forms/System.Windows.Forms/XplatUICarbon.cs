@@ -1923,13 +1923,13 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			if (!hwnd.zero_sized) {
-				hwnd.x = x;
-				hwnd.y = y;
-				hwnd.width = width;
-				hwnd.height = height;
-				SendMessage(hwnd.client_window, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
+			hwnd.x = x;
+			hwnd.y = y;
+			hwnd.width = width;
+			hwnd.height = height;
+			SendMessage(hwnd.client_window, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
 
+			if (!hwnd.zero_sized) {
 				Control ctrl = Control.FromHandle (handle);
 				CreateParams cp = ctrl.GetCreateParams ();
 				Size TranslatedSize = TranslateWindowSizeToQuartzWindowSize (cp, new Size (width, height));

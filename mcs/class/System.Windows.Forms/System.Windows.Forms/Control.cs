@@ -4152,12 +4152,12 @@ namespace System.Windows.Forms
 			if ((specified & BoundsSpecified.Height) == 0)
 				height = Height;
 		
-			if (bounds.X != x || bounds.Y != y || bounds.Width != width || bounds.Height != height) {
-				SetBoundsCore (x, y, width, height, specified);
+			bool bounds_changed = bounds.X != x || bounds.Y != y || bounds.Width != width || bounds.Height != height;
+			
+			SetBoundsCore (x, y, width, height, specified);
 
-				if (parent != null)
-					parent.PerformLayout(this, "Bounds");
-			}
+			if (parent != null && bounds_changed)
+				parent.PerformLayout(this, "Bounds");
 		}
 
 		internal void SetBoundsInternal (int x, int y, int width, int height, BoundsSpecified specified)
@@ -4698,6 +4698,9 @@ namespace System.Windows.Forms
 			if (specified != BoundsSpecified.None)
 				explicit_bounds_valid = true;
 
+			if (new_bounds.Equals(bounds))
+				return;
+
 			// Impose restrictions based on MinimumSize and MaximumSize
 			new_bounds.Size = ApplySizeConstraints(new_bounds.Size);
 
@@ -4705,9 +4708,6 @@ namespace System.Windows.Forms
 			if (IsHandleCreated) {
 				// We will get WM_WINDOWPOSCHANGED message, which will call UpdateBounds
 				XplatUI.SetWindowPos(Handle, x, y, new_bounds.Width, new_bounds.Height);
-				// Workaround a bug in some XplatUI backends
-				if (new_bounds.Width == 0 || new_bounds.Height == 0)
-					UpdateBounds(x, y, new_bounds.Width, new_bounds.Height);
 			} else {
 				UpdateBounds(x, y, new_bounds.Width, new_bounds.Height);
 			}
