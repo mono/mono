@@ -1210,7 +1210,7 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual (true, Child.Visible, "#A0");
 				Main.Controls.Add (Child);
 				Assert.AreEqual (true, Child.Visible, "#B0");
-				Assert.AreEqual ("ParentChanged;BindingContextChanged;Layout;VisibleChanged;BindingContextChanged;BindingContextChanged", log.EventsJoined (), "#B1");
+				Assert.AreEqual ("ParentChanged;BindingContextChanged;VisibleChanged;Layout;VisibleChanged", log.EventsJoined (), "#B1");
 			}
 		}
 		[Test]
