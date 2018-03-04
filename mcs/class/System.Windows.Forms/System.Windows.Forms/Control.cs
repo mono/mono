@@ -3135,7 +3135,6 @@ namespace System.Windows.Forms
 
 					// Label has its own AutoSize implementation
 					if (AutoSize && Parent != null && (!(this is Label))) {
-						cached_preferred_size = Size.Empty;
 						Parent.PerformLayout (this, "Text");
 					}
 				}
@@ -6249,6 +6248,7 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnTextChanged(EventArgs e) {
+			cached_preferred_size = Size.Empty;			
 			EventHandler eh = (EventHandler)(Events [TextChangedEvent]);
 			if (eh != null)
 				eh (this, e);

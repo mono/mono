@@ -349,6 +349,18 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void PreferredSizeTest ()
+		{
+			textBox.Size = new Size (1, textBox.PreferredHeight);
+			textBox.Text = "Text";
+			Size saved_preferred_size = textBox.PreferredSize;
+			// Ensure that the preferred size reflects the Text
+			Assert.AreNotEqual (saved_preferred_size, textBox.Size);
+			textBox.Text = "Long Text";
+			Assert.AreNotEqual (saved_preferred_size, textBox.PreferredSize);
+		}
+
+		[Test]
 		public void SelectTest ()
 		{
 			textBox.Text = "This is a sample test.";
