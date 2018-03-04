@@ -69,8 +69,8 @@ namespace System.Windows.Forms {
 			this.RightToLeftChanged += new EventHandler (TextBox_RightToLeftChanged);
 			MouseWheel += new MouseEventHandler (TextBox_MouseWheel);
 
-			BackColor = ThemeEngine.Current.ColorControl;
-			ForeColor = ThemeEngine.Current.ColorControlText;
+			BackColor = ThemeEngine.Current.ColorWindow;
+			ForeColor = ThemeEngine.Current.ColorWindowText;
 			backcolor_set = false;
 
 			SetStyle (ControlStyles.StandardClick | ControlStyles.StandardDoubleClick, false);
