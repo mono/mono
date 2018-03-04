@@ -568,8 +568,7 @@ namespace System.Windows.Forms
 			ShowShortcut = itemSrc.ShowShortcut;
 			Text = itemSrc.Text;
 			Visible = itemSrc.Visible;
-			Name = itemSrc.Name;
-			Tag = itemSrc.Tag;
+			// Name and Tag are not cloned
 
 			// Events
 			Events[ClickEvent] = itemSrc.Events[ClickEvent];
