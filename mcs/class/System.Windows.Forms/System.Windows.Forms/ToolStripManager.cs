@@ -349,21 +349,27 @@ namespace System.Windows.Forms
 
 		public static bool RevertMerge (string targetName)
 		{
+			if (targetName == null)
+				return false;
+
 			return RevertMerge (FindToolStrip (targetName));
 		}
 		
 		public static bool RevertMerge (ToolStrip targetToolStrip)
 		{
 			if (targetToolStrip == null)
-				return false;
+				throw new ArgumentNullException ("targetToolStrip");
 
 			return RevertMerge (targetToolStrip, targetToolStrip.CurrentlyMergedWith);			
 		}
 		
 		public static bool RevertMerge (ToolStrip targetToolStrip, ToolStrip sourceToolStrip)
 		{
+			if (targetToolStrip == null)
+				throw new ArgumentNullException ("targetToolStrip");
+
 			if (sourceToolStrip == null)
-				return false;
+				throw new ArgumentNullException ("sourceToolStrip");
 				
 			List<ToolStripItem> items_to_move = new List<ToolStripItem> ();
 			
