@@ -978,7 +978,8 @@ namespace System.Windows.Forms
 				case Keys.PageUp:
 				case Keys.PageDown:
 				case Keys.Home:
-				case Keys.End: {
+				case Keys.End:
+				case Keys.Back: {
 					return true;
 				}
 			}
