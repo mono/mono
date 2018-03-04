@@ -78,6 +78,7 @@ namespace System.Windows.Forms {
 		private	Icon			icon;
 		private Size			maximum_size;
 		private Size			minimum_size;
+		private Size			minimum_auto_size;
 		private SizeGripStyle		size_grip_style;
 		private SizeGrip		size_grip;
 		private Rectangle		maximized_bounds;
@@ -514,6 +515,10 @@ namespace System.Windows.Forms {
 			set { 
 				if (base.AutoSize != value) {
 					base.AutoSize = value;
+					if (!value) {
+						minimum_auto_size = Size.Empty;
+						UpdateMinMax ();
+					}
 					PerformLayout (this, "AutoSize");
 				}
 			}
@@ -827,7 +832,7 @@ namespace System.Windows.Forms {
 						
 					OnMaximumSizeChanged(EventArgs.Empty);
 					if (IsHandleCreated) {
-						XplatUI.SetWindowMinMax(Handle, maximized_bounds, minimum_size, maximum_size);
+						UpdateMinMax();
 					}
 				}
 			}
@@ -1014,7 +1019,7 @@ namespace System.Windows.Forms {
 
 					OnMinimumSizeChanged(EventArgs.Empty);
 					if (IsHandleCreated) {
-						XplatUI.SetWindowMinMax(Handle, maximized_bounds, minimum_size, maximum_size);
+						UpdateMinMax();
 					}
 				}
 			}
@@ -1513,7 +1518,7 @@ namespace System.Windows.Forms {
 				maximized_bounds = value;
 				OnMaximizedBoundsChanged(EventArgs.Empty);
 				if (IsHandleCreated) {
-					XplatUI.SetWindowMinMax(Handle, maximized_bounds, minimum_size, maximum_size);
+					UpdateMinMax();
 				}
 			}
 		}
@@ -1886,7 +1891,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			XplatUI.SetWindowMinMax(window.Handle, maximized_bounds, minimum_size, maximum_size);
+			UpdateMinMax();
 			
 			if (show_icon && (FormBorderStyle != FormBorderStyle.FixedDialog) && (icon != null)) {
 				XplatUI.SetIcon(window.Handle, icon);
@@ -2890,6 +2895,13 @@ namespace System.Windows.Forms {
 			
 			is_loaded = true;
 		}
+
+		private void UpdateMinMax()
+		{
+			var min_size = AutoSize ? new Size (Math.Max (minimum_auto_size.Width, minimum_size.Width), Math.Max (minimum_auto_size.Height, minimum_size.Height)) : minimum_size;
+			if (IsHandleCreated)
+				XplatUI.SetWindowMinMax (Handle, maximized_bounds, min_size, maximum_size);
+		}		
 		#endregion
 		
 		#region Events
@@ -3141,6 +3153,10 @@ namespace System.Windows.Forms {
 		{
 			if (AutoSize) {
 				Size new_size = GetPreferredSizeCore (Size.Empty);
+				if (new_size != minimum_auto_size) {
+					minimum_auto_size = new_size;
+					UpdateMinMax();
+				}				
 				if (AutoSizeMode == AutoSizeMode.GrowOnly) {
 					new_size.Width = Math.Max (new_size.Width, Width);
 					new_size.Height = Math.Max (new_size.Height, Height);
