@@ -411,7 +411,7 @@ namespace System.Windows.Forms
 				if (Parent != null)
 					return Parent.Font;
 					
-				return DefaultFont;
+				return ToolStripManager.DefaultFont;
 			}
 			set { 
 				if (this.font != value) {
@@ -1657,8 +1657,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-		private static Font DefaultFont { get { return new Font ("Tahoma", 8.25f); } }
-		
 		internal virtual ToolStripTextDirection DefaultTextDirection { get { return ToolStripTextDirection.Inherit; } }
 
 		internal virtual void Dismiss (ToolStripDropDownCloseReason reason)

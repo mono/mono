@@ -108,7 +108,7 @@ namespace System.Windows.Forms
 			this.default_drop_down_direction = ToolStripDropDownDirection.BelowRight;
 			this.displayed_items = new ToolStripItemCollection (this, null, true);
 			this.Dock = this.DefaultDock;
-			base.Font = new Font ("Tahoma", 8.25f);
+			base.Font = ToolStripManager.DefaultFont;
 			this.fore_color = Control.DefaultForeColor;
 			this.grip_margin = this.DefaultGripMargin;
 			this.grip_style = ToolStripGripStyle.Visible;

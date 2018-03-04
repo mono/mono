@@ -436,6 +436,11 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Private/Internal Methods
+
+		internal static Font DefaultFont {
+			get { return SystemFonts.MessageBoxFont; }
+		}
+
 		internal static bool ActivatedByKeyboard {
 			get { return activated_by_keyboard; }
 			set { activated_by_keyboard = value; }
