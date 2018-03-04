@@ -569,6 +569,7 @@ namespace System.Windows.Forms
 			Text = itemSrc.Text;
 			Visible = itemSrc.Visible;
 			// Name and Tag are not cloned
+			Name = "";
 
 			// Events
 			Events[ClickEvent] = itemSrc.Events[ClickEvent];
