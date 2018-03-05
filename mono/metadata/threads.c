@@ -2587,7 +2587,8 @@ void
 ves_icall_System_Threading_Thread_Suspend (MonoThreadObjectHandle this_obj, MonoError *error)
 {
 	if (!mono_thread_suspend (thread_handle_to_internal_ptr (this_obj)))
-		mono_set_pending_exception_handle (mono_exception_new_thread_state ("Thread has not been started, or is dead.", error));
+		mono_error_set_generic_error (error, "System.Threading", "ThreadStateException", "Thread has not been started, or is dead.");
+
 }
 
 /* LOCKING: LOCK_THREAD(thread) must be held */
