@@ -4651,7 +4651,7 @@ mono_thread_execute_interruption_handle (MonoError *error)
 			goto exit;
 		exc = mono_exception_new_thread_abort (error);
 		if (!MONO_HANDLE_IS_NULL (exc)) {
-			thread->abort_exc = MONO_HANDLE_RAW (exc);
+			MONO_OBJECT_SETREF (thread, abort_exc, MONO_HANDLE_RAW (exc));
 			goto exit;
 		}
 		// Under low memory, AbortRequested can fail and fall into other possibilities.
