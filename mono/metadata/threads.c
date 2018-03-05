@@ -1564,7 +1564,7 @@ ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error)
 		if (alerted) {
 			MonoExceptionHandle exc = mono_thread_execute_interruption_handle (error);
 			mono_error_assert_ok (error);
-			if (exc && !MONO_HANDLE_IS_NULL (exc)) {
+			if (!MONO_HANDLE_IS_NULL (exc)) {
 				mono_set_pending_exception_handle (exc);
 				return;
 			} else if (!is_ok (error)) {
