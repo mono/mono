@@ -45,7 +45,7 @@ PREPARE_OUTDIR = @\
 	mkdir -p $(MSYM_DIR);
 
 COMPILE = \
-	$(CSCOMPILE) $(TEST_CS) -out:$(TEST_EXE); \
+	$(CSCOMPILE) $(TEST_CS) -r:$(LIB_PATH)/mscorlib.dll -out:$(TEST_EXE); \
 	$(MONO) $(LIB_PATH)/$(PROGRAM) store-symbols $(MSYM_DIR) $(OUT_DIR); \
 	$(MONO) $(LIB_PATH)/$(PROGRAM) store-symbols $(MSYM_DIR) $(LIB_PATH);
 

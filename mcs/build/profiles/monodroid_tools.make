@@ -9,9 +9,9 @@ profile-check:
 	@:
 
 TARGET_NET_REFERENCE = v4.6
-DEFAULT_REFERENCES = -r:$(topdir)/../external/binary-reference-assemblies/$(TARGET_NET_REFERENCE)/mscorlib.dll
+DEFAULT_REFERENCES = mscorlib
 
-PROFILE_MCS_FLAGS = -d:NET_4_6 -d:MONO -d:WIN_PLATFORM -nowarn:1699 -nostdlib $(DEFAULT_REFERENCES) $(PLATFORM_DEBUG_FLAGS)
+PROFILE_MCS_FLAGS = -d:NET_4_6 -d:MONO -d:WIN_PLATFORM -nowarn:1699 -nostdlib $(PLATFORM_DEBUG_FLAGS)
 
 FRAMEWORK_VERSION = 4.5
 
