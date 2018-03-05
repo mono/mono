@@ -401,6 +401,10 @@ _ios_$(1)_CXXFLAGS= \
 	-stdlib=libc++ \
 	$$(ios_$(1)_CXXFLAGS)
 
+_ios_$(1)_CPPFLAGS= \
+	-DMONOTOUCH=1 \
+	$$(ios_$(1)_CPPFLAGS)
+
 _ios_$(1)_LDFLAGS= \
 	$$(ios_LDFLAGS) \
 	-stdlib=libc++ \
@@ -428,6 +432,7 @@ _ios_$(1)_CONFIGURE_ENVIRONMENT= \
 	CXX="$$(_ios_$(1)_CXX)" \
 	CFLAGS="$$(_ios_$(1)_CFLAGS)" \
 	CXXFLAGS="$$(_ios_$(1)_CXXFLAGS)" \
+	CPPFLAGS="$$(_ios_$(1)_CPPFLAGS)" \
 	LDFLAGS="$$(_ios_$(1)_LDFLAGS)"
 
 .stamp-ios-$(1)-toolchain:
