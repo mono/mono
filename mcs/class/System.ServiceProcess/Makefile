@@ -6,7 +6,8 @@ LIBRARY = System.ServiceProcess.dll
 LIB_REFS = System System.Configuration.Install System.Windows.Forms
 KEYFILE = ../msfinal.pub
 LIB_MCS_FLAGS = /nowarn:0618
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
+TEST_MCS_FLAGS =
+TEST_LIB_REFS = System
 
 EXTRA_DISTFILES =
 
