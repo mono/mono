@@ -9,7 +9,7 @@
 #include <glib.h>
 #include "mono/utils/mono-compiler.h"
 
-#if G_HAVE_API_SUPPORT(HAVE_UWP_WINAPI_SUPPORT | HAVE_XBOXONE_WINAPI_SUPPORT)
+#if G_HAVE_API_SUPPORT(HAVE_UWP_WINAPI_SUPPORT)
 #include <windows.h>
 
 DWORD
@@ -21,7 +21,7 @@ mono_win32_msg_wait_for_multiple_objects_ex (DWORD count, CONST HANDLE *handles,
 	return WAIT_FAILED;
 }
 
-#else /* G_HAVE_API_SUPPORT(HAVE_UWP_WINAPI_SUPPORT | HAVE_XBOXONE_WINAPI_SUPPORT) */
+#else /* G_HAVE_API_SUPPORT(HAVE_UWP_WINAPI_SUPPORT) */
 
 MONO_EMPTY_SOURCE_FILE (mono_os_wait_win32_uwp);
-#endif /* G_HAVE_API_SUPPORT(HAVE_UWP_WINAPI_SUPPORT | HAVE_XBOXONE_WINAPI_SUPPORT) */
+#endif /* G_HAVE_API_SUPPORT(HAVE_UWP_WINAPI_SUPPORT) */

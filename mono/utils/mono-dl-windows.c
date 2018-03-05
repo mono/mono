@@ -55,7 +55,7 @@ mono_dl_open_file (const char *file, int flags)
 #endif
 		guint32 last_error = 0;
 
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_XBOXONE_WINAPI_SUPPORT)
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 		hModule = LoadLibrary (file_utf16);
 #else
 		hModule = LoadPackagedLibrary (file_utf16, NULL);

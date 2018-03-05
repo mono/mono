@@ -9,7 +9,7 @@
 #include <glib.h>
 #include "mono/utils/mono-compiler.h"
 
-#if G_HAVE_API_SUPPORT(HAVE_UWP_WINAPI_SUPPORT | HAVE_XBOXONE_WINAPI_SUPPORT)
+#if G_HAVE_API_SUPPORT(HAVE_UWP_WINAPI_SUPPORT)
 #include <windows.h>
 #include "mono/utils/mono-dl-windows-internals.h"
 
@@ -37,7 +37,7 @@ mono_dl_current_error_string (void)
 	return ret;
 }
 
-#else /* G_HAVE_API_SUPPORT(HAVE_UWP_WINAPI_SUPPORT | HAVE_XBOXONE_WINAPI_SUPPORT) */
+#else /* G_HAVE_API_SUPPORT(HAVE_UWP_WINAPI_SUPPORT) */
 
 MONO_EMPTY_SOURCE_FILE (mono_dl_windows_uwp);
-#endif /* G_HAVE_API_SUPPORT(HAVE_UWP_WINAPI_SUPPORT | HAVE_XBOXONE_WINAPI_SUPPORT) */
+#endif /* G_HAVE_API_SUPPORT(HAVE_UWP_WINAPI_SUPPORT) */
