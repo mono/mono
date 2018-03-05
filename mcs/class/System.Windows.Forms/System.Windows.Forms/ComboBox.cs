@@ -98,7 +98,8 @@ namespace System.Windows.Forms
 			items = new ObjectCollection (this);
 			DropDownStyle = ComboBoxStyle.DropDown;
 			item_height = FontHeight + 2;
-			background_color = ThemeEngine.Current.ColorControl;
+			background_color = ThemeEngine.Current.ColorWindow;
+			foreground_color = ThemeEngine.Current.ColorWindowText;
 			border_style = BorderStyle.None;
 
 			drop_down_height = default_drop_down_height;
