@@ -1421,8 +1421,8 @@ mono_thread_exit (void)
 	mono_thread_info_exit (0);
 }
 
-void
-ves_icall_System_Threading_Thread_ConstructInternalThread (MonoThreadObjectHandle this_obj_handle, MonoError *error)
+static void
+mono_thread_construct_internal (MonoThreadObjectHandle this_obj_handle)
 {
 	MonoInternalThread *internal;
 
@@ -1437,6 +1437,12 @@ ves_icall_System_Threading_Thread_ConstructInternalThread (MonoThreadObjectHandl
 	mono_atomic_cas_ptr ((volatile gpointer *)&this_obj->internal_thread, internal, NULL);
 
 	mono_gchandle_free (thread_gchandle);
+}
+
+void
+ves_icall_System_Threading_Thread_ConstructInternalThread (MonoThreadObjectHandle this_obj_handle, MonoError *error)
+{
+	mono_thread_construct_internal (this_obj_handle);
 }
 
 MonoThreadObjectHandle
@@ -1464,8 +1470,7 @@ ves_icall_System_Threading_Thread_Thread_internal (MonoThreadObjectHandle thread
 	internal = thread_handle_to_internal_ptr (thread_handle);
 
 	if (!internal) {
-		ves_icall_System_Threading_Thread_ConstructInternalThread (thread_handle, error);
-		mono_error_assert_ok (error);
+		mono_thread_construct_internal (thread_handle);
 		internal = thread_handle_to_internal_ptr (thread_handle);
 		g_assert (internal);
 	}
