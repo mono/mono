@@ -5982,14 +5982,13 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			if (!hwnd.zero_sized) {
-				//Hack?
-				hwnd.x = x;
-				hwnd.y = y;
-				hwnd.width = width;
-				hwnd.height = height;
-				SendMessage(hwnd.client_window, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
+			hwnd.x = x;
+			hwnd.y = y;
+			hwnd.width = width;
+			hwnd.height = height;
+			SendMessage(hwnd.client_window, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
 
+			if (!hwnd.zero_sized) {
 				if (hwnd.fixed_size) {
 					SetWindowMinMax(handle, Rectangle.Empty, new Size(width, height), new Size(width, height));
 				}

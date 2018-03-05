@@ -324,7 +324,43 @@ namespace MonoTests.System.Windows.Forms
 		   Assert.AreEqual (-1, b.ImageIndex, "D14");
 		   Assert.AreEqual (string.Empty, b.ImageKey, "D15");
 	   }
-   }
+
+		[Test]
+		public void SelfSizingTest ()
+		{
+			TableLayoutPanel p1 = new TableLayoutPanel ();
+			Label l1 = new Label ();
+			l1.AutoSize = true;
+			p1.Controls.Add (l1);
+			p1.SuspendLayout ();
+			Size l1_saved_size = l1.Size;
+			l1.Text = "Text";
+			Assert.AreEqual (l1_saved_size, l1.Size, "#1");
+			p1.ResumeLayout ();
+			Assert.AreNotEqual (l1_saved_size, l1.Size, "#1a");
+
+			FlowLayoutPanel p2 = new FlowLayoutPanel ();
+			Label l2 = new Label ();
+			l2.AutoSize = true;
+			p2.Controls.Add (l2);
+			p2.SuspendLayout ();
+			Size l2_saved_size = l2.Size;
+			l2.Text = "Text";
+			Assert.AreEqual (l2_saved_size, l2.Size, "#2");
+			p2.ResumeLayout ();
+			Assert.AreNotEqual (l2_saved_size, l2.Size, "#2a");
+
+			Panel p3 = new Panel ();
+			Label l3 = new Label ();
+			l3.AutoSize = true;
+			p3.Controls.Add (l3);
+			p3.SuspendLayout ();
+			Size l3_saved_size = l3.Size;
+			l3.Text = "Text";
+			Assert.AreNotEqual (l3_saved_size, l3.Size, "#2");
+			p3.ResumeLayout ();
+		}
+	}
 
    [TestFixture]
    public class LabelEventTest : TestHelper

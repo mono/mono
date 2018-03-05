@@ -249,7 +249,6 @@ namespace System.Windows.Forms {
 
 			this.owner = owner;
 
-			multiline = true;
 			password_char = "";
 			calc_pass = false;
 			recalc_pending = false;

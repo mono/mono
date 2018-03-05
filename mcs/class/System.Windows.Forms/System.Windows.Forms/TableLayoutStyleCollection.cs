@@ -175,6 +175,5 @@ namespace System.Windows.Forms {
 				((IList)this)[index] = value;
 			}
 		}
-	}
-		
+	}		
 }
