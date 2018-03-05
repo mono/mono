@@ -124,6 +124,11 @@ namespace Mono.Profiling.Tests.Stress {
 			if (Environment.GetEnvironmentVariable ("MONO_PROFILER_STRESS_OPTIONS") is string envOptions)
 				options = envOptions;
 
+			var suspend = false;
+
+			if (Environment.GetEnvironmentVariable ("MONO_PROFILER_STRESS_SUSPEND") is string envSuspend)
+				suspend = bool.Parse (envSuspend);
+
 			var rand = new Random (seed);
 			var cpus = Environment.ProcessorCount;
 
@@ -173,6 +178,9 @@ namespace Mono.Profiling.Tests.Stress {
 
 				info.EnvironmentVariables.Clear ();
 				info.EnvironmentVariables.Add ("MONO_PATH", classDir);
+
+				if (suspend)
+					info.EnvironmentVariables.Add ("MONO_DEBUG", "suspend-on-native-crash,suspend-on-unhandled");
 
 				var progress = $"({i + 1}/{benchmarks.Length})";
 
