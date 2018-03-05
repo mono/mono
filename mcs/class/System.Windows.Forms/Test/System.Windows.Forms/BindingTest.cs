@@ -45,7 +45,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			Binding b = new Binding (prop, data_source, data_member);
 
 			Assert.IsNull (b.BindingManagerBase, "ctor1");
-			Console.WriteLine ("MEMBER INFO:  " + b.BindingMemberInfo);
 			Assert.IsNotNull (b.BindingMemberInfo, "ctor2");
 			Assert.IsNull (b.Control, "ctor3");
 			Assert.IsFalse (b.IsBinding, "ctor4");
@@ -328,7 +327,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			Binding binding = new Binding ("Text", parent, "Two.Three.MockItem.Text");
 
 			c.DataBindings.Add (binding);
-			Console.WriteLine ("c.Text: " + c.Text);
 			Assert.AreEqual ("A", c.Text, "#A1");
 
 			item.Text = "B";
@@ -633,7 +631,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 
 			binding.FormatString = "c";
 			Assert.AreEqual ((666).ToString ("c"), c.Text, "#B1");
-			Console.WriteLine (c.Text);
 
 			binding.FormattingEnabled = false;
 			Assert.AreEqual ((666).ToString (), c.Text, "#C1");

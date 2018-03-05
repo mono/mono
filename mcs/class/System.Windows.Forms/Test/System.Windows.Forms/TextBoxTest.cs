@@ -35,7 +35,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TextBoxBasePropertyTest ()
 		{
 			Assert.AreEqual (false, textBox.AcceptsTab, "#1a");
@@ -426,8 +425,7 @@ namespace MonoTests.System.Windows.Forms
 			form.Dispose ();
 		}
 
-		[Test]
-		[Category ("NotWorking")]
+		[Test]		
 		public void ForeColorTest ()
 		{
 			Assert.AreEqual (SystemColors.WindowText, textBox.ForeColor, "#A1");
@@ -458,6 +456,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (Color.Blue, textBox.ForeColor, "#B10");
 			Assert.AreEqual (2, _invalidated, "#B11");
 			Assert.AreEqual (0, _paint, "#B12");
+
+			form.Close ();
 		}
 
 		[Test]

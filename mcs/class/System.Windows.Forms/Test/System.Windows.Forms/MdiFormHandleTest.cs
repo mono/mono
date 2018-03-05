@@ -1098,14 +1098,8 @@ namespace MonoTests.System.Windows.Forms
 		{
 			SetUp ();
 			Assert.IsFalse (child1.IsHandleCreated, "A1");
-			child1.HandleCreated += new EventHandler (HandleCreated_WriteStackTrace);
 			child1.Show ();
 			Assert.IsTrue (child1.IsHandleCreated, "A2");
-		}
-
-		void HandleCreated_WriteStackTrace (object sender, EventArgs e)
-		{
-			Console.WriteLine ("Stacktrace?");//Environment.StackTrace);
 		}
 
 		public delegate void InvokeDelegate ();

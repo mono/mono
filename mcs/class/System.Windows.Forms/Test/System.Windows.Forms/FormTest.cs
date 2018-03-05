@@ -1140,6 +1140,9 @@ namespace MonoTests.System.Windows.Forms
 			f2.Show ();
 			f2.Parent = null;
 			Assert.IsNull (f2.Parent, "#2");
+
+			f1.Close();
+			f2.Close();
 		}
 
 		[Test] // bug #80791
