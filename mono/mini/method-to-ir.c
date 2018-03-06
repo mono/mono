@@ -7008,12 +7008,8 @@ is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmetho
 		supported_tail_call = FALSE;
 
 	g_assert (call_opcode == CEE_CALL || call_opcode == CEE_CALLVIRT || call_opcode == CEE_CALLI);
-	switch (call_opcode)
-	{
+	switch (call_opcode) {
 	case CEE_CALL:
-		break;
-	default:
-		supported_tail_call = FALSE;
 		break;
 	case CEE_CALLI:
 		supported_tail_call = FALSE;
@@ -7021,6 +7017,9 @@ is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmetho
 	case CEE_CALLVIRT: // FIXME finish all architectures, AOT, LLVM
 		if (!cfg->backend->have_op_tail_call_membase || cfg->compile_aot || cfg->llvm_only || COMPILE_LLVM (cfg))
 			supported_tail_call = FALSE;
+		break;
+	default:
+		supported_tail_call = FALSE;
 		break;
 	}
 
