@@ -3015,7 +3015,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 		case CEE_THROW:
 			CHECK_STACK (td, 1);
 			SIMPLE_OP (td, MINT_THROW);
-			--td->sp;
+			td->sp = td->stack;
 			break;
 		case CEE_LDFLDA: {
 			CHECK_STACK (td, 1);
@@ -4349,6 +4349,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 				g_assert (clause_index != -1);
 				SIMPLE_OP (td, MINT_RETHROW);
 				ADD_CODE (td, rtm->exvar_offsets [clause_index]);
+				td->sp = td->stack;
 				break;
 			}
 			case CEE_SIZEOF: {
