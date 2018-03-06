@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Text;
 
 using NUnit.Framework;
 using CategoryAttribute = NUnit.Framework.CategoryAttribute;
@@ -724,6 +725,52 @@ namespace MonoTests.System.Windows.Forms
 			f.Dispose ();
 		}
 		
+		[Test]
+		public void Bug6357 ()
+		{
+			Form f = new Form (); 
+			f.ShowInTaskbar = false;
+			f.Visible = true;
+			f.ClientSize = new Size (300, 130);
+			textBox.Visible = true;
+			textBox.AppendText(
+				"Achtung! Passwort für URL angepasst! Anführungszeichen im Passwort funktionieren in URL nur mit Escape.\r\n" +
+				"\r\n" +
+				"{S:fileFilepath} -> {S:##volumeDriveLetter}:\\\r\n" +
+				"\r\n" +
+				"Verschlüsselter Kontainer (VeraCrypt).\r\n" +
+				"\r\n" +
+				"URL-Anmerkungen:\r\n" +
+				"- nur für Windows\r\n" +
+				"- volumeDriveLetter muss frei sein\r\n" +
+				"\r\n" +
+				"veracrypt --mount /media/NAS_container_flo/test.vc -p '1 1' --fs-options=X-mount.mkdir=0700 /media/vera\r\n" +
+				"\r\n" +
+				"cmd://veracrypt --mount {S:fFilepath} -p '{PASSWORD}' --pim='{S:#pim}' --fs-options=X-mount.mkdir=0700 {S:mPoint}" +
+				"\r\n" +
+				"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\r\n" +
+				"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+			textBox.Multiline = true;
+			textBox.ScrollBars = ScrollBars.Vertical;
+			textBox.Dock = DockStyle.Fill;			
+			f.Controls.Add (textBox);
+
+			Assert.AreEqual (textBox.TextLength, textBox.SelectionStart);
+
+			textBox.Focus ();
+			// Select a bit of the text
+			SendKeys.SendWait ("+{UP}");
+			SendKeys.SendWait ("+{UP}");
+			SendKeys.SendWait ("+{UP}");
+			SendKeys.SendWait ("+{UP}");
+			SendKeys.SendWait ("+{UP}");
+			SendKeys.SendWait ("{BS}"); // Remove the text with Backspace
+			Assert.AreEqual (0, textBox.SelectionLength);
+
+			f.Dispose ();
+		}
+
+
 		[Test]
 		public void ModifiedEventTest ()
 		{

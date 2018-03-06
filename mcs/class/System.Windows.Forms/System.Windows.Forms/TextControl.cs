@@ -3236,7 +3236,6 @@ namespace System.Windows.Forms {
 
 			Insert(selection_start.line, selection_start.pos, false, s);
 			undo.RecordInsertString (selection_start.line, selection_start.pos, s);
-			ResumeRecalc (false);
 
 			Line begin_update_line = selection_start.line;
 			int begin_update_pos = selection_start.pos;
@@ -3267,6 +3266,7 @@ namespace System.Windows.Forms {
 				SetSelectionVisible (true);
 			}
 
+			ResumeRecalc (false);
 			PositionCaret (selection_start.line, selection_start.pos);
 			UpdateView (begin_update_line, selection_end.line.line_no - begin_update_line.line_no, begin_update_pos);
 		}
