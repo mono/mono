@@ -4247,8 +4247,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			arm_blrx (code, ARMREG_IP0);
 			code = emit_move_return_value (cfg, code, ins);
 			break;
-		case OP_TAILCALL:
-		case OP_TAILCALL_MEMBASE: {
+		case OP_TAILCALL: {
 			MonoCallInst *call = (MonoCallInst*)ins;
 
 			g_assert (!cfg->method->save_lmf);

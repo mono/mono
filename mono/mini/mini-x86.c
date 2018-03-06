@@ -3067,8 +3067,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (ins->dreg != ins->sreg1)
 				x86_mov_reg_reg (code, ins->dreg, ins->sreg1, 4);
 			break;
-		case OP_TAILCALL:
-		case OP_TAILCALL_MEMBASE: {
+		case OP_TAILCALL: {
 			MonoCallInst *call = (MonoCallInst*)ins;
 			int pos = 0, i;
 
