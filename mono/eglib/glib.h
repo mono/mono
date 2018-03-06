@@ -917,18 +917,17 @@ GFileError g_file_error_from_errno (gint err_no);
 gint       g_file_open_tmp (const gchar *tmpl, gchar **name_used, GError **gerror);
 gboolean   g_file_test (const gchar *filename, GFileTest test);
 
+#ifdef G_OS_WIN32
+#define g_open _open
+#else
 #define g_open open
+#endif
 #define g_rename rename
 #define g_stat stat
 #ifdef G_OS_WIN32
 #define g_access _access
 #else
 #define g_access access
-#endif
-#ifdef G_OS_WIN32
-#define g_open _open
-#else
-#define g_open open
 #endif
 #ifdef G_OS_WIN32
 #define g_mktemp _mktemp
