@@ -1995,9 +1995,9 @@ wait_or_register_method_to_compile (MonoMethod *method, MonoDomain *domain)
 		//Dependency management is too compilated and we want to get rid of this anyways.
 
 		//We can't suspend the current thread if it's running a protected block (such as a cctor)
-		//We can't relie only on JIT nesting as cctor's can be run from outside the JIT.
+		//We can't rely only on JIT nesting as cctor's can be run from outside the JIT.
 
-		//Finally, he hit a timeout or spurious wakeup. We're better of just giving up and keep recompiling
+		//Finally, he hit a timeout or spurious wakeup. We're better off just giving up and keep recompiling
 		++entry->compilation_count;
 		++jit_methods_multiple;
 		++jit_tls->active_jit_methods;
