@@ -7007,7 +7007,6 @@ is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmetho
 	if (cmethod->wrapper_type && cmethod->wrapper_type != MONO_WRAPPER_DYNAMIC_METHOD)
 		supported_tail_call = FALSE;
 
-	g_assert (call_opcode == CEE_CALL || call_opcode == CEE_CALLVIRT || call_opcode == CEE_CALLI);
 	switch (call_opcode) {
 	case CEE_CALL:
 		break;
@@ -7019,6 +7018,7 @@ is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmetho
 			supported_tail_call = FALSE;
 		break;
 	default:
+		g_assertf (call_opcode == CEE_CALL || call_opcode == CEE_CALLVIRT || call_opcode == CEE_CALLI, "%s (%d)", mono_opcode_name (call_opcode), (int)call_opcode);
 		supported_tail_call = FALSE;
 		break;
 	}
