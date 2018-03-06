@@ -75,7 +75,7 @@ mono_dl_open_file (const char *file, int flags)
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 		hModule = GetModuleHandle (NULL);
 #else
-		g_assert(0 && "Not supported");
+		g_error("Not supported");
 #endif
 	}
 	return hModule;
