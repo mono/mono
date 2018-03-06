@@ -373,8 +373,8 @@ namespace Mono.Profiler.Log {
 				case LogEventType.MonitorBacktrace:
 					ev = new MonitorEvent {
 						Event = StreamHeader.FormatVersion >= 14 ?
-						        (LogMonitorEvent) _reader.ReadByte () :
-						        (LogMonitorEvent) ((((byte) type & 0xf0) >> 4) & 0x3),
+						                    (LogMonitorEvent) _reader.ReadByte () :
+						                    (LogMonitorEvent) ((((byte) type & 0xf0) >> 4) & 0x3),
 						ObjectPointer = ReadObject (),
 						Backtrace = ReadBacktrace (extType == LogEventType.MonitorBacktrace),
 					};
@@ -476,9 +476,9 @@ namespace Mono.Profiler.Log {
 							Section = section,
 							SectionName = section == LogCounterSection.User ? _reader.ReadCString () : null,
 							CounterName = _reader.ReadCString (),
-							Type = StreamHeader.FormatVersion < 15 ? (LogCounterType) _reader.ReadByte () : (LogCounterType) _reader.ReadULeb128 (),
-							Unit = StreamHeader.FormatVersion < 15 ? (LogCounterUnit) _reader.ReadByte () : (LogCounterUnit) _reader.ReadULeb128 (),
-							Variance = StreamHeader.FormatVersion < 15 ? (LogCounterVariance) _reader.ReadByte () : (LogCounterVariance) _reader.ReadULeb128 (),
+							Type = (LogCounterType) _reader.ReadByte (),
+							Unit = (LogCounterUnit) _reader.ReadByte (),
+							Variance = (LogCounterVariance) _reader.ReadByte (),
 							Index = (long) _reader.ReadULeb128 (),
 						};
 					}
@@ -498,7 +498,7 @@ namespace Mono.Profiler.Log {
 						if (index == 0)
 							break;
 
-						var counterType = StreamHeader.FormatVersion < 15 ? (LogCounterType) _reader.ReadByte () : (LogCounterType) _reader.ReadULeb128 ();
+						var counterType = (LogCounterType) _reader.ReadByte ();
 
 						object value = null;
 
