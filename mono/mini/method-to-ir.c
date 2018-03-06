@@ -2030,6 +2030,8 @@ static int
 callvirt_to_call (int opcode)
 {
 	switch (opcode) {
+	case OP_TAILCALL_MEMBASE:
+		return OP_TAILCALL;
 	case OP_CALL_MEMBASE:
 		return OP_CALL;
 	case OP_VOIDCALL_MEMBASE:
@@ -2173,8 +2175,7 @@ mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig,
 
 	if (tail) {
 		mini_profiler_emit_tail_call (cfg, target);
-
-		MONO_INST_NEW_CALL (cfg, call, OP_TAILCALL);
+		MONO_INST_NEW_CALL (cfg, call, virtual_ ? OP_TAILCALL_MEMBASE : OP_TAILCALL);
 	} else
 		MONO_INST_NEW_CALL (cfg, call, ret_type_to_call_opcode (cfg, sig->ret, calli, virtual_));
 
@@ -2437,7 +2438,7 @@ mono_emit_method_call_full (MonoCompile *cfg, MonoMethod *method, MonoMethodSign
 			For a test case look into #667921.
 
 			FIXME: a dummy use is not the best way to do it as the local register allocator
-			will put it on a caller save register and spil it around the call. 
+			will put it on a caller save register and spill it around the call.
 			Ideally, we would either put it on a callee save register or only do the store part.  
 			 */
 			EMIT_NEW_DUMMY_USE (cfg, dummy_use, args [0]);
@@ -7005,8 +7006,23 @@ is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmetho
 		supported_tail_call = FALSE;
 	if (cmethod->wrapper_type && cmethod->wrapper_type != MONO_WRAPPER_DYNAMIC_METHOD)
 		supported_tail_call = FALSE;
-	if (call_opcode != CEE_CALL)
+
+	g_assert (call_opcode == CEE_CALL || call_opcode == CEE_CALLVIRT || call_opcode == CEE_CALLI);
+	switch (call_opcode)
+	{
+	case CEE_CALL:
+		break;
+	default:
 		supported_tail_call = FALSE;
+		break;
+	case CEE_CALLI:
+		supported_tail_call = FALSE;
+		break;
+	case CEE_CALLVIRT: // FIXME finish all architectures, AOT, LLVM
+		if (!cfg->backend->have_op_tail_call_membase || cfg->compile_aot || cfg->llvm_only || COMPILE_LLVM (cfg))
+			supported_tail_call = FALSE;
+		break;
+	}
 
 	/* Debugging support */
 #if 0
@@ -9034,7 +9050,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			/* FIXME: runtime generic context pointer for jumps? */
 			/* FIXME: handle this for generic sharing eventually */
 			if ((ins_flag & MONO_INST_TAILCALL)
-					&& (MONO_ARCH_HAVE_OP_TAIL_CALL || (!vtable_arg && !cfg->gshared))
+					&& (cfg->backend->have_op_tail_call || (!vtable_arg && !cfg->gshared))
 					&& is_supported_tail_call (cfg, method, cmethod, fsig, call_opcode))
 				supported_tail_call = TRUE;
 

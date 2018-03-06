@@ -641,6 +641,10 @@ TESTS_IL_SRC=			\
 	dim-simple.il	\
 	dim-valuetypes.il
 
+if AMD64
+TESTS_IL_SRC += tailcall-virt.il
+endif
+
 TESTS_GSHARED_SRC = \
 	generics-sharing.2.cs	\
 	shared-generic-methods.2.cs	\
@@ -932,7 +936,8 @@ PROFILE_DISABLED_TESTS += \
 endif
 
 AOT_DISABLED_TESTS= \
-	constraints-load.exe
+	constraints-load.exe \
+	tailcall-virt.exe
 
 CI_DISABLED_TESTS = \
 	main-returns-background-resetabort.exe \
@@ -961,7 +966,8 @@ endif
 # appdomain-threadpool-unload.exe creates 100 appdomains, takes too long with llvm
 LLVM_DISABLED_TESTS = \
 	finally_block_ending_in_dead_bb.exe \
-	appdomain-threadpool-unload.exe
+	appdomain-threadpool-unload.exe \
+	tailcall-virt.exe
 
 # https://github.com/mono/mono/issues/6490
 LLVM_DISABLED_TESTS += \

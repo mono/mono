@@ -2337,7 +2337,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 			call->vret_in_reg = TRUE;
 			break;
 		}
-		if (call->inst.opcode == OP_TAILCALL)
+		if (call->inst.opcode == OP_TAILCALL || call->inst.opcode == OP_TAILCALL_MEMBASE)
 			break;
 		/*
 		 * The vtype is returned in registers, save the return area address in a local, and save the vtype into
@@ -5055,7 +5055,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				}
 			}
 			break;
-		case OP_TAILCALL: {
+		case OP_TAILCALL:
+		case OP_TAILCALL_MEMBASE: {
 			MonoCallInst *call = (MonoCallInst*)ins;
 
 			/*
