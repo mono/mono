@@ -332,7 +332,7 @@ namespace MonoTests.System.Windows.Forms
 				Assert.Fail("#1");
 			}
 			catch (ObjectDisposedException ex) {
-				Console.WriteLine (ex);
+				//Console.WriteLine (ex);
 			}
 			Assert.IsFalse (control.IsHandleCreated, "#2");
 
@@ -3240,7 +3240,7 @@ namespace MonoTests.System.Windows.Forms
 
 			protected override void WndProc(ref Message m)
 			{
-				Console.WriteLine ("WndProc: " + m.ToString ());
+				//Console.WriteLine ("WndProc: " + m.ToString ());
 				Messages.Add (m);
 				base.WndProc (ref m);
 			}

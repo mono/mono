@@ -349,7 +349,7 @@ namespace System.Windows.Forms.X11Internal {
 
 			hwnd.CreateWindow (cp);
 
-			return hwnd.Handle;
+			return hwnd.zombie ? IntPtr.Zero : hwnd.Handle;
 		}
 
 		internal override IntPtr CreateWindow (IntPtr Parent, int X, int Y, int Width, int Height)

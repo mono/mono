@@ -1140,6 +1140,9 @@ namespace MonoTests.System.Windows.Forms
 			f2.Show ();
 			f2.Parent = null;
 			Assert.IsNull (f2.Parent, "#2");
+
+			f1.Close();
+			f2.Close();
 		}
 
 		[Test] // bug #80791
@@ -1210,7 +1213,7 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual (true, Child.Visible, "#A0");
 				Main.Controls.Add (Child);
 				Assert.AreEqual (true, Child.Visible, "#B0");
-				Assert.AreEqual ("ParentChanged;BindingContextChanged;Layout;VisibleChanged;BindingContextChanged;BindingContextChanged", log.EventsJoined (), "#B1");
+				Assert.AreEqual ("ParentChanged;BindingContextChanged;VisibleChanged;Layout;VisibleChanged", log.EventsJoined (), "#B1");
 			}
 		}
 		[Test]
