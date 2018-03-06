@@ -28,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
@@ -205,8 +206,9 @@ namespace System.Diagnostics {
 			return aotid;
 		}
 
-		bool AddFrames (StringBuilder sb)
+		bool AddFrames (StringBuilder sb, out bool isAsync)
 		{
+			isAsync = false;
 			bool any_frame = false;
 
 			for (int i = 0; i < FrameCount; i++) {
@@ -223,7 +225,7 @@ namespace System.Diagnostics {
 					else
 						sb.AppendFormat ("<0x{0:x5} + 0x{1:x5}> <unknown method>", frame.GetMethodAddress (), frame.GetNativeOffset ());
 				} else {
-					GetFullNameForStackTrace (sb, frame.GetMethod (), any_frame, out var skipped);
+					GetFullNameForStackTrace (sb, frame.GetMethod (), any_frame, out var skipped, out isAsync);
 					if (skipped)
 						continue;
 
@@ -255,9 +257,20 @@ namespace System.Diagnostics {
 			return any_frame;
 		}
 
-		void GetFullNameForStackTrace (StringBuilder sb, MethodBase mi, bool needsNewLine, out bool skipped)
+		void GetFullNameForStackTrace (StringBuilder sb, MethodBase mi, bool needsNewLine, out bool skipped, out bool isAsync)
 		{
-			var declaringType = mi.DeclaringType;
+			isAsync = false;
+			Type declaringType = mi.DeclaringType;
+			string methodName = mi.Name;
+			bool methodChanged = false;
+			if (declaringType != null && declaringType.IsDefined(typeof(CompilerGeneratedAttribute)))
+			{
+				isAsync = typeof(IAsyncStateMachine).IsAssignableFrom(declaringType);
+				if (isAsync || typeof(IEnumerator).IsAssignableFrom(declaringType))
+				{
+					methodChanged = TryResolveStateMachineMethod(ref mi, out declaringType);
+				}
+			}
 
 			// Get generic definition
 			if (declaringType.IsGenericType && !declaringType.IsGenericTypeDefinition) {
@@ -317,6 +330,54 @@ namespace System.Diagnostics {
 				}
 			}
 			sb.Append (")");
+
+			if (methodChanged)
+			{
+				// Append original method name e.g. +MoveNext()
+				sb.Append ("+");
+				sb.Append (methodName);
+				sb.Append ("()");
+			}
+		}
+        
+        private static bool TryResolveStateMachineMethod (ref MethodBase method, out Type declaringType)
+		{
+			declaringType = method.DeclaringType;
+
+			Type parentType = declaringType.DeclaringType;
+			if (parentType == null)
+			{
+				return false;
+			}
+
+			MethodInfo[] methods = parentType.GetMethods (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+			if (methods == null)
+			{
+				return false;
+			}
+
+			foreach (MethodInfo candidateMethod in methods)
+			{
+				IEnumerable<StateMachineAttribute> attributes = candidateMethod.GetCustomAttributes<StateMachineAttribute>();
+				if (attributes == null)
+				{
+					continue;
+				}
+
+				foreach (StateMachineAttribute asma in attributes)
+				{
+					if (asma.StateMachineType == declaringType)
+					{
+						method = candidateMethod;
+						declaringType = candidateMethod.DeclaringType;
+						// Mark the iterator as changed; so it gets the + annotation of the original method
+						// async statemachines resolve directly to their builder methods so aren't marked as changed
+						return asma is IteratorStateMachineAttribute;
+					}
+				}
+			}
+
+			return false;
 		}
 
 		public override string ToString ()
@@ -328,16 +389,19 @@ namespace System.Diagnostics {
 			//
 			if (captured_traces != null) {
 				foreach (var t in captured_traces) {
-					if (!t.AddFrames (sb))
+					if (!t.AddFrames (sb, out var isAsync))
 						continue;
 
-					sb.Append (Environment.NewLine);
-					sb.Append ("--- End of stack trace from previous location where exception was thrown ---");
-					sb.Append (Environment.NewLine);
+					if (!isAsync)
+					{
+						sb.Append (Environment.NewLine);
+						sb.Append ("--- End of stack trace from previous location where exception was thrown ---");
+						sb.Append (Environment.NewLine);
+					}
 				}
 			}
 
-			AddFrames (sb);
+			AddFrames (sb, out _);
 
 			return sb.ToString ();
 		}
