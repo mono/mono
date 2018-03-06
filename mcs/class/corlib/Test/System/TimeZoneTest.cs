@@ -186,7 +186,7 @@ public class TimeZoneTest {
 				TST (t1);
 				break;
 			case "GMT":
-#if __IOS__
+#if MONOTOUCH
 				if (string.IsNullOrEmpty (t1.DaylightName))
 					Assert.Ignore ("This test may fail due to: http://www.openradar.me/38174449");
 #endif
