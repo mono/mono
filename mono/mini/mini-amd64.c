@@ -4603,10 +4603,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			// R10 can work?
 			// Unused parameter registers are also ok.
 			// non-volatiles cannot work.
-			if (membase) {
+			if (membase)
 				amd64_mov_reg_reg (code, AMD64_R11, ins->sreg1, 8);
-				ins->sreg1 = AMD64_R11;
-			}
 
 			/* Restore callee saved registers */
 			save_area_offset = cfg->arch.reg_save_area_offset;
