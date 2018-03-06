@@ -703,6 +703,13 @@ TESTS_GSHARED_SRC = \
 
 PLATFORM_DISABLED_TESTS=
 
+# tailcall-virt only currently passes on AMD64 JIT.
+# Not LLVM, not AOT, not ARM, not interpreter, etc.
+
+if !AMD64
+PLATFORM_DISABLED_TESTS += tailcall-virt.exe
+endif
+
 if HOST_WIN32
 PLATFORM_DISABLED_TESTS += bug-58782-plain-throw.exe bug-58782-capture-and-throw.exe
 endif
@@ -1015,7 +1022,8 @@ DISABLED_TESTS = \
 	$(if $(CI_PR),$(CI_PR_DISABLED_TESTS)) \
 	$(if $(LLVM),$(LLVM_DISABLED_TESTS))
 
-INTERP_DISABLED_TESTS = $(DISABLED_TESTS)
+INTERP_DISABLED_TESTS = $(DISABLED_TESTS) \
+	tailcall-virt.exe
 
 # bug-48015.exe: be careful when re-enabling, it happens that it returns with exit code 0, but doesn't actually execute the test.
 # bug-60862.exe: missing support to map IP->method; only works on platforms with altstack support.
@@ -1089,7 +1097,8 @@ INTERP_DISABLED_TESTS += \
 	itail1.exe \
 	pinvoke2.exe \
 	pinvoke3.exe \
-	sitail1.exe
+	sitail1.exe \
+	tailcall-virt.exe
 endif
 
 if AMD64
@@ -1105,7 +1114,8 @@ INTERP_DISABLED_TESTS += \
 	pinvoke.exe \
 	pinvoke2.exe \
 	pinvoke3.exe \
-	sitail1.exe
+	sitail1.exe \
+	tailcall-virt.exe
 endif
 
 TESTS_CS=$(filter-out $(DISABLED_TESTS),$(TESTS_CS_SRC:.cs=.exe))
