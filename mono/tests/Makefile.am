@@ -1025,7 +1025,10 @@ DISABLED_TESTS = \
 	$(if $(LLVM),$(LLVM_DISABLED_TESTS))
 
 INTERP_DISABLED_TESTS = $(DISABLED_TESTS) \
-	tailcall-virt.exe
+	tailcall-virt.exe   \
+	tailcall-rgctxa.exe \
+	tailcall-rgctxb.exe \
+	tailcall-mrgctx.exe
 
 # bug-48015.exe: be careful when re-enabling, it happens that it returns with exit code 0, but doesn't actually execute the test.
 # bug-60862.exe: missing support to map IP->method; only works on platforms with altstack support.
