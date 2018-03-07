@@ -930,4 +930,9 @@ partial class SR
 	public const string ParallelState_Break_InvalidOperationException_BreakAfterStop = "Break was called after Stop was called.";
 	public const string ParallelState_Stop_InvalidOperationException_StopAfterBreak = "Stop was called after Break was called.";
 	public const string ParallelState_NotSupportedException_UnsupportedMethod = "This method is not supported.";
+	public const string NotSupported_SortedListNestedWrite = "This operation is not supported on SortedList nested types because they require modifying the original SortedList";
+	public const string InvalidOperation_EmptyStack = "Stack empty.";
+	public const string Arg_RemoveArgNotFound = "Cannot remove the specified item because it was not found in the specified Collection.";
+	public const string ArgumentNull_Dictionary = "Dictionary cannot be null.";
+	public const string ArgumentOutOfRange_QueueGrowFactor = "Queue grow factor must be between {0} and {1}.";
 }
