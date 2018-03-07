@@ -2217,7 +2217,6 @@ CORECLR_COREMANGLIB_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/gc/gcgettotalmemory.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/gc/gckeepalive.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/gc/gcmaxgeneration.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/gc/gcsuppressfinalize.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/gc/gcwaitforpendingfinalizers.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/calendarweekrule/calendarweekrulefirstday.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/calendarweekrule/calendarweekrulefirstfourdayweek.cs	\
