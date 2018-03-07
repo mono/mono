@@ -30,6 +30,7 @@ System/IntegerTryParse.cs
 System/LazyTest.cs
 System/TupleTest.cs
 System/TypedReferenceTest.cs
+System/GetInterfaceTest.cs
 System.Collections/ArrayListTest.cs
 System.Collections/BitArrayTest.cs
 System.Collections/CaseInsensitiveComparerTest.cs
