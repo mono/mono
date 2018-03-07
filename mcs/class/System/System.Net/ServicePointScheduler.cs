@@ -245,14 +245,9 @@ namespace System.Net
 				Debug ($"ITERATION #1: {repeat} {groups != null}");
 
 				if (groups != null) {
-					var keys = new string[groups.Count];
-					groups.Keys.CopyTo (keys, 0);
-					foreach (var groupName in keys) {
-						if (!groups.ContainsKey (groupName))
-							continue;
-						var group = groups[groupName];
-						Debug ($"ITERATION #2: group={group.ID}");
-						repeat |= SchedulerIteration (group);
+					foreach (var group in groups) {
+						Debug ($"ITERATION #2: group={group.Value.ID}");
+						repeat |= SchedulerIteration (group.Value);
 					}
 				}
 
