@@ -704,8 +704,8 @@ TESTS_GSHARED_SRC = \
 PLATFORM_DISABLED_TESTS=\
 	tailcall-rgctxb.exe
 
-# tailcall-virt only currently passes on AMD64 JIT.
-# Not LLVM, not AOT, not ARM, not interpreter, etc.
+# tailcall-virt only currently passes on AMD64 JIT and AOT.
+# Not LLVM, not ARM, not interpreter, etc.
 
 if !AMD64
 PLATFORM_DISABLED_TESTS += tailcall-virt.exe
@@ -945,8 +945,7 @@ PROFILE_DISABLED_TESTS += \
 endif
 
 AOT_DISABLED_TESTS= \
-	constraints-load.exe \
-	tailcall-virt.exe
+	constraints-load.exe
 
 CI_DISABLED_TESTS = \
 	main-returns-background-resetabort.exe \
