@@ -30,6 +30,7 @@ namespace System.Net.Configuration {
 
 		internal bool Ipv6Enabled {
 			get {
+#if !UNITY
 #if CONFIGURATION_DEP && !MOBILE
 				try {
 					var config = (SettingsSection) System.Configuration.ConfigurationManager.GetSection ("system.net/settings");
@@ -37,6 +38,7 @@ namespace System.Net.Configuration {
 						return config.Ipv6.Enabled;
 				} catch {
 				}
+#endif
 #endif
 
 				return true;
