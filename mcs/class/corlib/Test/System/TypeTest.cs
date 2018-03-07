@@ -4886,6 +4886,30 @@ namespace MonoTests.System
 			}
 		}
 
+		// https://github.com/mono/mono/issues/6579
+		[Test]
+		public void GetInterfaceCaseInsensitiveTest()
+		{
+			var type = typeof(Dictionary<string, object>);
+
+			Assert.NotNull (
+				type.GetInterface ("System.Collections.IDictionary", false),
+				"strict named interface must be found (ignoreCase = false)"
+			);
+			Assert.NotNull (
+				type.GetInterface ("System.Collections.IDictionary", true),
+				"strict named interface must be found (ignoreCase = true)"
+			);
+			Assert.Null (
+				type.GetInterface ("System.Collections.Idictionary", false),
+				"interface, named in mixed case, must not be found (ignoreCase = false)"
+			);
+			Assert.NotNull (
+				type.GetInterface ("System.Collections.Idictionary", true),
+				"interface, named in mixed case, must be found (ignoreCase = true)"
+			);
+		}
+
 		interface Bug59738Interface<T> {
 		}
 
