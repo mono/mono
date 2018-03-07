@@ -136,3 +136,9 @@ simple-test.exe: Test/simple/Program.cs $(topdir)/class/lib/$(PROFILE)/System.Wi
 
 test-simple: simple-test.exe
 	$(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) simple-test.exe
+
+notepad.exe: samples/notepad.cs $(topdir)/class/lib/$(PROFILE)/System.Windows.Forms.dll $(topdir)/class/lib/$(PROFILE)/System.Drawing.dll $(topdir)/class/lib/$(PROFILE)/System.dll
+	$(CSCOMPILE) -out:$@ samples/notepad.cs -r:$(topdir)/class/lib/$(PROFILE)/System.Windows.Forms.dll -r:$(topdir)/class/lib/$(PROFILE)/System.Drawing.dll -r:$(topdir)/class/lib/$(PROFILE)/System.dll
+
+test-notepad: notepad.exe
+	$(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) notepad.exe

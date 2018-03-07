@@ -59,7 +59,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (ToolStripDropDownDirection.BelowRight, ts.DefaultDropDownDirection, "A11");
 			Assert.AreEqual (new Rectangle (7, 0, 92, 25), ts.DisplayRectangle, "A12");
 			Assert.AreEqual (DockStyle.Top, ts.Dock, "A13");
-			Assert.AreEqual (new Font ("Tahoma", 8.25f), ts.Font, "A14");
+			Assert.AreEqual (SystemFonts.MessageBoxFont, ts.Font, "A14");
 			Assert.AreEqual (SystemColors.ControlText, ts.ForeColor, "A15");
 			Assert.AreEqual (ToolStripGripDisplayStyle.Vertical, ts.GripDisplayStyle, "A16");
 			Assert.AreEqual (new Padding (2), ts.GripMargin, "A17");

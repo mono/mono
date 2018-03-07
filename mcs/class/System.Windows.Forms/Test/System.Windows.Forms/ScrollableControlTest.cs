@@ -341,6 +341,8 @@ namespace MonoTests.System.Windows.Forms
 			scrollable.PerformLayout ();
 
 			Assert.AreEqual (true, scrollable.VerticalScroll.Visible, "#C0");
+
+			f.Close();
 		}
 
 		// Tests Xamarin-2562

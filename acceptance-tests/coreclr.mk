@@ -2217,7 +2217,6 @@ CORECLR_COREMANGLIB_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/gc/gcgettotalmemory.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/gc/gckeepalive.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/gc/gcmaxgeneration.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/gc/gcsuppressfinalize.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/gc/gcwaitforpendingfinalizers.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/calendarweekrule/calendarweekrulefirstday.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/calendarweekrule/calendarweekrulefirstfourdayweek.cs	\
@@ -3981,6 +3980,10 @@ CORECLR_DISABLED_TEST_CS_SRC +=        \
 CORECLR_DISABLED_TEST_CS_SRC +=        \
        $(CORECLR_PATH)/tests/src/JIT/Directed/newarr/newarr.cs	\
 	   $(CORECLR_PATH)/tests/src/baseservices/exceptions/sharedexceptions/emptystacktrace/oomexception01.cs
+
+# https://github.com/mono/mono/issues/7432
+CORECLR_DISABLED_TEST_CS_SRC +=	\
+	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/gc/gcsuppressfinalize.cs
 
 CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/BBT/Scenario4/Not-Int32.il	\

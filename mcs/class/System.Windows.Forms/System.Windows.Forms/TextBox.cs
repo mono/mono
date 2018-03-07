@@ -69,12 +69,11 @@ namespace System.Windows.Forms {
 			this.RightToLeftChanged += new EventHandler (TextBox_RightToLeftChanged);
 			MouseWheel += new MouseEventHandler (TextBox_MouseWheel);
 
-			BackColor = ThemeEngine.Current.ColorControl;
-			ForeColor = ThemeEngine.Current.ColorControlText;
+			BackColor = ThemeEngine.Current.ColorWindow;
+			ForeColor = ThemeEngine.Current.ColorWindowText;
 			backcolor_set = false;
 
 			SetStyle (ControlStyles.StandardClick | ControlStyles.StandardDoubleClick, false);
-			SetStyle (ControlStyles.FixedHeight, true);
 
 			undo = new MenuItem(Locale.GetText("&Undo"));
 			cut = new MenuItem(Locale.GetText("Cu&t"));

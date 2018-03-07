@@ -24,6 +24,7 @@
 ../../../external/linker/linker/Linker.Steps/ResolveFromXmlStep.cs
 ../../../external/linker/linker/Linker.Steps/SweepStep.cs
 ../../../external/linker/linker/Linker.Steps/RegenerateGuidStep.cs
+../../../external/linker/linker/Linker.Steps/RemoveSecurityStep.cs
 ../../../external/linker/linker/Linker.Steps/ResolveFromXApiStep.cs
 ../../../external/linker/linker/Linker.Steps/ResolveFromAssemblyStep.cs
 ../../../external/linker/linker/Linker.Steps/ResolveStep.cs

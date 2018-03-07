@@ -47,7 +47,7 @@ namespace System.Windows.Forms
 		private Dictionary<Object, int> column_spans;
 		private Dictionary<Object, int> rows;
 		private Dictionary<Object, int> row_spans;
-		internal TableLayoutPanel panel;
+		private TableLayoutPanel panel;
 		internal bool isSerialized;
 
 		#region Internal Constructor
@@ -63,6 +63,24 @@ namespace System.Windows.Forms
 			this.rows = new Dictionary<object, int> ();
 			this.row_spans = new Dictionary<object, int> ();
 			this.panel = panel;
+		}
+
+		internal TableLayoutSettings (TableLayoutPanel panel, TableLayoutSettings settings)
+		{
+			this.column_styles = new TableLayoutColumnStyleCollection (panel);
+			this.row_styles = new TableLayoutRowStyleCollection (panel);
+			this.grow_style = settings.grow_style;
+			this.column_count = settings.column_count;
+			this.row_count = settings.row_count;
+			this.columns = new Dictionary<object, int> (settings.columns);
+			this.column_spans = new Dictionary<object, int> (settings.column_spans);
+			this.rows = new Dictionary<object, int> (settings.rows);
+			this.row_spans = new Dictionary<object, int> (settings.row_spans);
+			this.panel = panel;
+			foreach (ColumnStyle column_style in settings.column_styles)
+				this.column_styles.Add(new ColumnStyle(column_style.SizeType, column_style.Width));
+			foreach (RowStyle row_style in settings.row_styles)
+				this.row_styles.Add(new RowStyle(row_style.SizeType, row_style.Height));
 		}
 
 		private TableLayoutSettings (SerializationInfo serializationInfo, StreamingContext context)
@@ -124,9 +142,7 @@ namespace System.Windows.Forms
 		
 		public override LayoutEngine LayoutEngine {
 			get {
-				if (panel != null)
-					return panel.LayoutEngine;
-				return base.LayoutEngine; 
+				return System.Windows.Forms.Layout.TableLayout.Instance; 
 			}
 		}
 		

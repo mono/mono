@@ -359,33 +359,80 @@ not require runtime code generation. The "llvmonly" setting does the same, but f
 to go through the llvm backend.
 
 .SH WINDOWS
-If you are using the old embedding on Windows systems, it it necessary
-to have Unix-like toolchain to be installed for \fImkbundle\fP to
-work.  You can use cygwin's and install gcc, gcc-mingw and as
-packages.
+If you are using the old embedding on Windows systems, it possible to use
+a Unix-like toolchain like cygwin's and install gcc, gcc-mingw packages or
+use Visual Studio 2015/2017 VC toolchain together with Clang for Visual Studio as assembler.
+Clang can be installed as an individual component, "Clang/C2", using Visual Studio installer.
+.PP
+Using Visual Studio toolchain, mkbundle will, by default, use latest installed Visual Studio compiler
+and linker as well as Windows SDK. If executed from one of the Visual Studio developer command prompts,
+mkbundle will retrieve information directly from that build environment.
 .SH ENVIRONMENT VARIABLES
 .TP
 .I "AS"
-Assembler command. The default is "as".
+Assembler command. The default is "as". For Visual Studio, default is "clang.exe".
+If "clang.exe" for Visual Studio is not installed, mkbundle will fall back using "as".
 .TP
 .I "CC"
-C compiler command. The default is "cc" under Linux and "gcc"
-under Windows.
+C compiler command. The default is "cc" for Linux, "gcc"
+for cygwin and "cl.exe" for Visual Studio.
 .TP
 .I "MONO_BUNDLED_OPTIONS"
 Options to be passed to the bundled
 Mono runtime, separated by spaces. See the mono(1) manual page or run mono --help.
+.SH WINDOWS VISUAL STUDIO ENVIRONMENT VARIABLES
+.TP
+.I "VisualStudioVersion"
+Visual Studio version used in mkbundle build.
+Default, latest installed Visual Studio version.
+Values, "14.0" for Visual Studio 2015 or "15.0" for Visual Studio 2017.
+.TP
+.I "WindowsSdkVersion"
+Windows SDK version used in mkbundle build.
+Default/unknown, latest installed Windows SDK.
+Values, "8.1", "10.0.10240.0", "10.0.15063.0" etc.
+.TP
+.I "VSCMD_ARG_TGT_ARCH"
+Output target architecture used in mkbundle build.
+Default/unknown, use architecture of .NET runtime executing mkbundle.
+Values, "x86" or "x64".
+NOTE, when running from a Visual Studio command prompt, this variable should already be set
+by the command prompt and match the rest of that build environment.
+.TP
+.I "INCLUDE"
+Override all custom include paths passed to "cl.exe".
+Predefined by Visual Studio developer command prompt or auto detected by mkbundle when undefined.
+.TP
+.I "LIB"
+Override all custom library paths passed to "link.exe".
+Predefined by Visual Studio developer command prompt or auto detected by mkbundle when undefined.
+.TP
+.I "MONOPREFIX"
+Use a custom Mono SDK install root matching the output target architecture (x86/x64).
+Default, mkbundle will look for installed Mono SDK’s matching targeted architecture.
+.TP
+.I "MONOLIB"
+Use a different mono library name or an absolute path to the mono library passed to linker.
+Default, mkbundle will use default mono library name depending on mkbundle dynamic/static use case.
+NOTE, supplied mono library needs to match mkbundle dynamic/static use case and target architecture.
+.TP
+.I "VCCRT"
+Override C-runtime library linker settings.
+Default "MD", mkbundle will use dynamic C-runtime linking on Windows compatible with Mono SDK distribution.
+If a custom built Mono runtime using static C-Runtime linkage is used, setting this variable to "MT"
+will link using static C-runtime libraries.
+.TP
+.I "VCSUBSYSTEM"
+Override Windows subsystem.
+Default, "windows". If console subsystem is preferred, use "console".
+NOTE, if console output is expected from output target process then
+set this variable to "console".
 .SH FILES
 This program will load referenced assemblies from the Mono assembly
 cache. 
 .PP
 Targets are loaded from ~/.mono/targets/TARGETNAME/mono
 .SH BUGS
-The option "--static" is not supported under Windows when using the
-old embedding.
-Moreover, a full cygwin environment containing at least "gcc" and "as"
-is required for the build process. The generated executable does not
-depend on cygwin.
 .SH MAILING LISTS
 Visit http://lists.ximian.com/mailman/listinfo/mono-devel-list for details.
 .SH WEB SITE

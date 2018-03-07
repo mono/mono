@@ -38,8 +38,6 @@ namespace System.Windows.Forms
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	public class ToolStripOverflow : ToolStripDropDown, IComponent, IDisposable
 	{
-		private LayoutEngine layout_engine;
-		
 		#region Public Constructors
 		public ToolStripOverflow (ToolStripItem parentItem)
 		{
@@ -55,10 +53,7 @@ namespace System.Windows.Forms
 		
 		public override LayoutEngine LayoutEngine {
 			get {
-				if (this.layout_engine == null)
-					this.layout_engine = new FlowLayout ();
-					
-				return base.LayoutEngine;
+				return FlowLayout.Instance;
 			}
 		}
 		#endregion

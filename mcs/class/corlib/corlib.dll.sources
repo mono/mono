@@ -1644,11 +1644,11 @@ corert/RuntimeAugments.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Array.cs
 
-../../../external/corert/src/System.Private.CoreLib/src/System/Collections/LowLevelComparer.cs
-
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/ArraySortHelper.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Globalization/GlobalizationMode.cs
+
+../../../external/corert/src/System.Private.CoreLib/src/System/Runtime/CompilerServices/ReflectionBlockedAttribute.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/LockHolder.cs
 

@@ -39,7 +39,6 @@ namespace System.Windows.Forms
 	{
 		private Rectangle bounds;
 		internal List<Control> controls;
-		private LayoutEngine layout_engine;
 		private Padding margin;
 		private Padding padding;
 		private ToolStripPanel parent;
@@ -49,7 +48,6 @@ namespace System.Windows.Forms
 		{
 			this.bounds = Rectangle.Empty;
 			this.controls = new List<Control> ();
-			this.layout_engine = new DefaultLayout ();
 			this.parent = parent;
 		}
 		#endregion
@@ -71,10 +69,7 @@ namespace System.Windows.Forms
 
 		public LayoutEngine LayoutEngine {
 			get { 
-				if (this.layout_engine == null)
-					this.layout_engine = new DefaultLayout ();
-					
-				return this.layout_engine;
+				return DefaultLayout.Instance;
 			}
 		}
 

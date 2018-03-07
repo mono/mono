@@ -4,7 +4,9 @@ include $(TOP)/sdks/paths.mk
 
 CONFIGURATION?=release
 
-RELEASE=$(if $(filter $(CONFIGURATION),release),true,false)
+RELEASE=$(if $(filter $(CONFIGURATION),release),1)
+
+CCACHE:=$(shell which ccache)
 
 #brew's libtool is not compatible with some of the deps needed (I.E. V8) so in those systems we need to explicit add to the path
 #this is due mono not being compatible with xcode's libtool, which is what's on path by default
@@ -15,8 +17,15 @@ endif
 all: package
 
 ## Common Mono targets
+
+.PHONY: configure-mono
+configure-mono: $(TOP)/configure
+
 $(TOP)/configure: $(TOP)/configure.ac $(TOP)/autogen.sh
 	cd $(TOP) && PATH=$(EXTRA_PATH):$$PATH NOCONFIGURE=1 ./autogen.sh
+
+$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe: $(wildcard $(TOP)/tools/offsets-tool/*.cs)
+	$(MAKE) -C $(dir $@) MonoAotOffsetsDumper.exe
 
 TARGETS=
 
