@@ -704,8 +704,8 @@ TESTS_GSHARED_SRC = \
 PLATFORM_DISABLED_TESTS=\
 	tailcall-rgctxb.exe
 
-# tailcall-virt only currently passes on AMD64 JIT and AOT.
-# Not LLVM, not ARM, not interpreter, etc.
+# tailcall-virt only currently implemented on AMD64 (JIT, AOT, LLVM).
+# Not ARM, not interpreter, etc.
 
 if !AMD64
 PLATFORM_DISABLED_TESTS += tailcall-virt.exe
@@ -974,8 +974,7 @@ endif
 # appdomain-threadpool-unload.exe creates 100 appdomains, takes too long with llvm
 LLVM_DISABLED_TESTS = \
 	finally_block_ending_in_dead_bb.exe \
-	appdomain-threadpool-unload.exe \
-	tailcall-virt.exe
+	appdomain-threadpool-unload.exe
 
 # https://github.com/mono/mono/issues/6490
 LLVM_DISABLED_TESTS += \

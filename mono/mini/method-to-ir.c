@@ -7013,8 +7013,8 @@ is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmetho
 	case CEE_CALLI:
 		supported_tail_call = FALSE;
 		break;
-	case CEE_CALLVIRT: // FIXME finish all architectures, LLVM
-		if (!cfg->backend->have_op_tail_call_membase || cfg->llvm_only || COMPILE_LLVM (cfg))
+	case CEE_CALLVIRT:
+		if (!cfg->backend->have_op_tail_call_membase)
 			supported_tail_call = FALSE;
 		break;
 	default:
