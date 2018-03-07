@@ -382,3 +382,6 @@ ReferenceSources/ConfigurationManagerInternalFactory.cs
 ../../../external/corefx/src/System.CodeDom/src/System/CodeDom/FieldDirection.cs
 ../../../external/corefx/src/System.CodeDom/src/System/CodeDom/MemberAttributes.cs
 ../../../external/corefx/src/System.CodeDom/src/System/Collections/Specialized/FixedStringLookup.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexCompiler.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/CompiledRegexRunnerFactory.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexLWCGCompiler.cs

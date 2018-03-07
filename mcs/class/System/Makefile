@@ -29,6 +29,7 @@ TEST_RESOURCES = \
 	Test/System/test-uri-relative-props.txt
 
 USE_XTEST_REMOTE_EXECUTOR = YES
+XTEST_LIB_FLAGS := -d:MONO_COREFX
 XTEST_LIB_REFS = System System.Core System.Net Facades/System.Threading.Tasks Facades/System.Runtime.InteropServices.RuntimeInformation System.Net.Http
 LIB_MCS_FLAGS = -d:CONFIGURATION_2_0 -d:XML_DEP -d:SECURITY_DEP $(REFERENCE_SOURCES_FLAGS) -unsafe $(RESOURCE_FILES:%=-resource:%) -nowarn:436
 
@@ -66,6 +67,10 @@ endif
 
 ifdef MONO_FEATURE_APPLETLS
 LIB_MCS_FLAGS += -d:MONO_FEATURE_APPLETLS
+endif
+
+ifndef AOT_FRIENDLY_PROFILE
+LIB_MCS_FLAGS += -d:FEATURE_COMPILED
 endif
 
 ifdef ONLY_APPLETLS

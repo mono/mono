@@ -8,7 +8,7 @@ namespace System
 		public static readonly bool IsWindowsNanoServer = false;
 
 		public static bool IsWindows7 => false;
-		public static bool IsFullFramework => true;
+		public static bool IsFullFramework => false;
 		public static bool IsNonZeroLowerBoundArraySupported => true;
 		public static bool IsUap => false;
 
