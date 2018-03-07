@@ -3415,13 +3415,13 @@ namespace System
             List<RuntimeType> list = null;
             foreach (RuntimeType t in GetInterfaces ()) {
 
-				if (ignoreCase) {
-					if (t.Name.ToLowerInvariant() != name)
-						continue;
-				} else {
-					if (t.Name != name)
-						continue;
-				}
+                if (ignoreCase) {
+                    if (t.Name.ToLowerInvariant() != name)
+                        continue;
+                } else {
+                    if (t.Name != name)
+                        continue;
+                }
 
                 if (list == null)
                     list = new List<RuntimeType> (2);
