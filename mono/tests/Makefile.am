@@ -565,6 +565,10 @@ TESTS_IL_SRC=			\
 	tail1.il		\
 	taili1.il		\
 	vtail1.il		\
+	tailcall-virt.il 	\
+	tailcall-rgctxa.il 	\
+	tailcall-rgctxb.il 	\
+	tailcall-mrgctx.il 	\
 	field-access.il		\
 	method-access.il	\
 	ldftn-access.il		\
@@ -641,10 +645,6 @@ TESTS_IL_SRC=			\
 	dim-simple.il	\
 	dim-valuetypes.il
 
-if AMD64
-TESTS_IL_SRC += tailcall-virt.il
-endif
-
 TESTS_GSHARED_SRC = \
 	generics-sharing.2.cs	\
 	shared-generic-methods.2.cs	\
@@ -701,7 +701,8 @@ TESTS_GSHARED_SRC = \
 	bug-1147.cs	\
 	generic-type-builder.2.cs
 
-PLATFORM_DISABLED_TESTS=
+PLATFORM_DISABLED_TESTS=\
+	tailcall-rgctxb.exe
 
 # tailcall-virt only currently passes on AMD64 JIT.
 # Not LLVM, not AOT, not ARM, not interpreter, etc.
@@ -774,7 +775,8 @@ PLATFORM_DISABLED_TESTS += \
 	sgen-bridge-xref.exe
 endif
 
-PROFILE_DISABLED_TESTS=
+PROFILE_DISABLED_TESTS= \
+	tailcall-rgctxb.exe
 
 if FULL_AOT_TESTS
 # Tests which rely on TypeLoadExceptions
@@ -993,6 +995,7 @@ LLVM = $(filter --llvm, $(MONO_ENV_OPTIONS))
 # appdomain-marshalbyref-assemblyload.exe: https://bugzilla.xamarin.com/show_bug.cgi?id=49308
 # threads-init.exe: runs out of system threads
 # dim-constrainedcall.exe: fails on dontnet as well (https://github.com/dotnet/coreclr/issues/15353)
+# tailcall-rgctxb.exe seems like it would but it does not, needs debugging
 KNOWN_FAILING_TESTS = \
 	delegate-async-exception.exe	\
 	bug-348522.2.exe	\
@@ -1011,7 +1014,8 @@ KNOWN_FAILING_TESTS = \
 	stail1.exe \
 	tail1.exe \
 	taili1.exe \
-	vtail1.exe
+	vtail1.exe \
+	tailcall-rgctxb.exe
 
 DISABLED_TESTS = \
 	$(KNOWN_FAILING_TESTS) \
