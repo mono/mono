@@ -62,12 +62,10 @@ TAILCALL_DISABLED_TESTS_RUN = \
 	tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyWithPrefix.exe \
 	$(TAILCALL_DISABLED_TESTS_COMPILE)
 
-compile-tailcall: $(TESTS_TAILCALL) $(TESTSAOT_TAILCALL)
+compile-tailcall: $(TESTS_TAILCALL_COMPILE) $(TESTSAOT_TAILCALL)
 
-test-tailcall: compile-tailcall $(TESTS_TAILCALL_OUT)
-
-clean-tailcall:
-	rm -f $(TESTS_TAILCALL) $(TESTS_TAILCALL_OUT) $(TESTSAOT_TAILCALL)
+test-tailcall: compile-tailcall
+	MONO_DEBUG=test-tailcall-require $(TOOLS_RUNTIME) --debug $(TEST_RUNNER) -j a --runtime-args "--compile-all" --testsuite-name "runtime-tailcall" --timeout 300 --disabled "$(DISABLED_TESTS)" $(TESTS_TAILCALL_RUN)
 
 check-full:
 	ok=; \
@@ -1199,10 +1197,8 @@ TESTS_IL=$(filter-out $(DISABLED_TESTS),$(TESTS_IL_SRC:.il=.exe))
 TESTS_BENCH=$(filter-out $(DISABLED_TESTS),$(TESTS_BENCH_SRC:.cs=.exe))
 TESTS_STRESS=$(filter-out $(DISABLED_TESTS),$(TESTS_STRESS_SRC:.cs=.exe))
 TESTS_GSHARED=$(filter-out $(DISABLED_TESTS),$(TESTS_GSHARED_SRC:.cs=.exe))
-TESTS_TAILCALL=$(filter-out $(TAILCALL_DISABLED_TESTS_COMPILE),$(TEST_TAILCALL_CS_SRC:.cs=.exe) $(TEST_TAILCALL_IL_SRC:.il=.exe))
-TESTS_TAILCALL_OUT=$(filter-out $(TAILCALL_DISABLED_TESTS_RUN:.exe=.exe_test_tailcall_done),$(TEST_TAILCALL_IL_SRC:.il=.exe_test_tailcall_done))
-
-clean-local: clean-tailcall
+TESTS_TAILCALL_COMPILE=$(filter-out $(TAILCALL_DISABLED_TESTS_COMPILE),$(TEST_TAILCALL_CS_SRC:.cs=.exe) $(TEST_TAILCALL_IL_SRC:.il=.exe))
+TESTS_TAILCALL_RUN=$(filter-out $(TAILCALL_DISABLED_TESTS_RUN),$(TESTS_TAILCALL_COMPILE))
 
 if FULL_AOT_TESTS
 TESTSAOT_CS=$(TESTS_CS:.exe=.exe$(PLATFORM_AOT_SUFFIX))
@@ -1210,8 +1206,8 @@ TESTSAOT_IL=$(TESTS_IL:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 TESTSAOT_BENCH=$(TESTS_BENCH:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 TESTSAOT_STRESS=$(TESTS_STRESS:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 TESTSAOT_GSHARED=$(TESTS_GSHARED:.exe=.exe$(PLATFORM_AOT_SUFFIX))
-#FIXME
-#TESTSAOT_TAILCALL=$(TEST_TAILCALL:.exe=.exe$(PLATFORM_AOT_SUFFIX))
+# AOT tests are run by running the non-AOT files. Runtime probes for the AOT file.
+TESTSAOT_TAILCALL=$(TESTS_TAILCALL_COMPILE:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 endif
 
 if HYBRID_AOT_TESTS
@@ -1220,8 +1216,7 @@ TESTSAOT_IL=$(TESTS_IL:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 TESTSAOT_BENCH=$(TESTS_BENCH:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 TESTSAOT_STRESS=$(TESTS_STRESS:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 TESTSAOT_GSHARED=$(TESTS_GSHARED:.exe=.exe$(PLATFORM_AOT_SUFFIX))
-#FIXME
-#TESTSAOT_TAILCALL=$(TEST_TAILCALL:.exe=.exe$(PLATFORM_AOT_SUFFIX))
+TESTSAOT_TAILCALL=$(TESTS_TAILCALL_COMPILE:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 endif
 
 EXTRA_DIST=test-driver test-runner.cs $(TESTS_CS_SRC) $(TESTS_IL_SRC) \
@@ -1236,19 +1231,6 @@ tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyWithPrefix.exe: \
 
 %.exe: %.il
 	$(ILASM) -out:$@ $^
-
-# Define I to empty to enable incremental.
-I ?= -not-incremental
-
-# FIXME missing dependencies on BCL (just Console.WriteLine)
-%.exe_test_tailcall_done: %.exe Makefile $(srcdir)/../../runtime/mono-wrapper ../mini/mono
-	cd ${PWD}
-	set -o pipefail; \
-	( MONO_DEBUG="$(MONO_DEBUG),test-tailcall-require" \
-	$(RUNTIME) -v --compile-all $< \
-	| fgrep tailcalllog \
-	| tee $@$I ) \
-	|| ( rm -f $@* && false )
 
 if !FULL_AOT_TESTS
 if !HYBRID_AOT_TESTS
@@ -2366,3 +2348,4 @@ weak-fields.exe: weak-fields.cs Mono.Runtime.Testing.dll
 	$(MCS) -r:Mono.Runtime.Testing.dll -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -r:TestDriver.dll $(TEST_DRIVER_HARD_KILL_FEATURE) -out:$@ $<
 
 CLEANFILES = $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH) $(TESTS_STRESS) $(TESTSAOT_CS) $(TESTSAOT_IL) $(TESTSAOT_BENCH) $(TESTSAOT_STRESS) *.dll *.stdout *.aotlog *.exe stest.dat LeafAssembly.dll MidAssembly.dll appdomain-marshalbyref-assemblyload2/*.dll 
+CLEANFILES += $(TESTS_TAILCALL_COMPILE) $(TESTSAOT_TAILCALL)
