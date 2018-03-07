@@ -39,7 +39,7 @@ namespace System.CodeDom.Compiler
 	[ConfigurationCollection (typeof (Compiler), AddItemName = "compiler", CollectionType = ConfigurationElementCollectionType.BasicMap)]
 	internal sealed class CompilerCollection : ConfigurationElementCollection
 	{
-		static readonly string defaultCompilerVersion = "3.5";
+		static readonly string defaultCompilerVersion = "4.0";
 		static ConfigurationPropertyCollection properties;
 		static List <CompilerInfo> compiler_infos;
 		static Dictionary <string, CompilerInfo> compiler_languages;
@@ -50,30 +50,15 @@ namespace System.CodeDom.Compiler
 			properties = new ConfigurationPropertyCollection ();
 			compiler_infos = new List <CompilerInfo> ();
 			compiler_languages = new Dictionary <string, CompilerInfo> (16, StringComparer.OrdinalIgnoreCase);
-			compiler_extensions = new Dictionary <string, CompilerInfo> (6, StringComparer.OrdinalIgnoreCase);
+			compiler_extensions = new Dictionary <string, CompilerInfo> (4, StringComparer.OrdinalIgnoreCase);
 				
-			CompilerInfo compiler = new CompilerInfo (null, "Microsoft.CSharp.CSharpCodeProvider, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089", 
+			CompilerInfo compiler = new CompilerInfo (null, "Microsoft.CSharp.CSharpCodeProvider, " + Consts.AssemblySystem,
 				new [] { ".cs" }, new [] { "c#", "cs", "csharp" });
 			compiler.ProviderOptions ["CompilerVersion"] = defaultCompilerVersion;
 			AddCompilerInfo (compiler);
 
-			compiler = new CompilerInfo (null, "Microsoft.VisualBasic.VBCodeProvider, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089", 
+			compiler = new CompilerInfo (null, "Microsoft.VisualBasic.VBCodeProvider, " + Consts.AssemblySystem,
 				new [] { ".vb" }, new [] { "vb", "vbs", "visualbasic", "vbscript" });
-			compiler.ProviderOptions ["CompilerVersion"] = defaultCompilerVersion;
-			AddCompilerInfo (compiler);
-
-			compiler = new CompilerInfo (null, "Microsoft.JScript.JScriptCodeProvider, Microsoft.JScript, Version=8.0.1100.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", 
-				new [] { ".js" }, new [] { "js", "jscript", "javascript" });
-			compiler.ProviderOptions ["CompilerVersion"] = defaultCompilerVersion;
-			AddCompilerInfo (compiler);
-
-			compiler = new CompilerInfo (null, "Microsoft.VJSharp.VJSharpCodeProvider, VJSharpCodeProvider, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", 
-				new [] { ".jsl", ".java" }, new [] { "vj#", "vjs", "vjsharp" });
-			compiler.ProviderOptions ["CompilerVersion"] = defaultCompilerVersion;
-			AddCompilerInfo (compiler);
-
-			compiler = new CompilerInfo (null, "Microsoft.VisualC.CppCodeProvider, CppCodeProvider, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", 
-				new [] { ".h" }, new [] { "c++", "mc", "cpp" });
 			compiler.ProviderOptions ["CompilerVersion"] = defaultCompilerVersion;
 			AddCompilerInfo (compiler);
 		}
