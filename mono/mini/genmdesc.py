@@ -101,14 +101,12 @@ def parse_input(infile, opcodes):
 
     for line in infile:
         line = line.strip ()
-
         # remove comments
         line = re.sub (remove_comments, "", line)
 
         # Ignore empty lines -- including it was just a comment.
         if line == "":
             continue
-
         # Lines look like:
         # expand_i2: dest:x src1:i len:18
         parts = line.split (" ")
