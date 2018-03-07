@@ -3765,6 +3765,25 @@ namespace MonoTests.System
 			Assert.IsFalse (il.IsAssignableFrom (typeof (Array)), "System.Array -!-> IList<>");
 		}
 
+		[Test]
+		public void IsAssignableFromArrayEnumerator ()
+		{
+			// Regression test for https://github.com/mono/mono/issues/7093
+			// An array does not implement IEnumerator`1
+
+			var arrStr = typeof (string[]);
+			var ieStr = typeof (IEnumerator<string>);
+			var ieEqStr = typeof (IEnumerator<IEquatable<string>>);
+			Assert.IsFalse (ieStr.IsAssignableFrom (arrStr), "string[] -!-> IEnumerator<string>");
+			Assert.IsFalse (ieEqStr.IsAssignableFrom (arrStr), "string[] -!-> IEnumerator<IEquatable<string>>");
+
+			var arrInt = typeof (int[]);
+			var ieInt = typeof (IEnumerator<int>);
+			var ieEqInt = typeof (IEnumerator<IEquatable<int>>);
+			Assert.IsFalse (ieInt.IsAssignableFrom (arrInt), "int[] -!-> IEnumerator<int>");
+			Assert.IsFalse (ieEqInt.IsAssignableFrom (arrInt), "int[] -!-> IEnumerator<IEquatable<int>>");
+		}
+
 		[Test] // Bug #612780
 		public void CannotMakeDerivedTypesFromTypedByRef ()
 		{
