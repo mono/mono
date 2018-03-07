@@ -1383,7 +1383,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/StateMachineAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/SuppressIldasmAttribute.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/suppressmergecheckattribute.cs
-../referencesource/mscorlib/system/runtime/compilerservices/TaskAwaiter.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Runtime/CompilerServices/TaskAwaiter.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/typedependencyattribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/TypeForwardedFromAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/TypeForwardedToAttribute.cs
