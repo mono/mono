@@ -167,10 +167,6 @@ $(ProjectDir)\..\jay\jay.exe -ct &lt; $(ProjectDir)\..\jay\skeleton.cs $(Project
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../class/corlib/corlib-net_4_x.csproj">
-      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
-      <Name>corlib-net_4_x</Name>
-    </ProjectReference>
     <ProjectReference Include="../class/PEAPI/PEAPI-net_4_x.csproj">
       <Project>{34443C71-09F1-4F21-ABB4-82822376F74F}</Project>
       <Name>PEAPI-net_4_x</Name>

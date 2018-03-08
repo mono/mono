@@ -1515,10 +1515,6 @@ mono $([MSBuild]::GetDirectoryNameOfFileAbove($(TargetDir), culevel.exe))\culeve
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../corlib/corlib-net_4_x.csproj">
-      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
-      <Name>corlib-net_4_x</Name>
-    </ProjectReference>
     <ProjectReference Include="../System/System-net_4_x.csproj">
       <Project>{2762E921-91A8-4C87-91E9-BA628013F753}</Project>
       <Name>System-net_4_x</Name>
@@ -1570,6 +1566,10 @@ mono $([MSBuild]::GetDirectoryNameOfFileAbove($(TargetDir), culevel.exe))\culeve
     <ProjectReference Include="../System.Design/System.Design-net_4_x.csproj">
       <Project>{EFEDC380-2CB0-4B40-9566-D2302867A4D9}</Project>
       <Name>System.Design-net_4_x</Name>
+    </ProjectReference>
+    <ProjectReference Include="../corlib/corlib-net_4_x.csproj">
+      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
+      <Name>corlib-net_4_x</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

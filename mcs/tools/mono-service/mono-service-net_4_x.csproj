@@ -80,10 +80,6 @@
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../../class/corlib/corlib-net_4_x.csproj">
-      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
-      <Name>corlib-net_4_x</Name>
-    </ProjectReference>
     <ProjectReference Include="../../class/System.ServiceProcess/System.ServiceProcess-net_4_x.csproj">
       <Project>{CF24A609-AEF3-4E7A-95FC-C7A3CEAA7CC3}</Project>
       <Name>System.ServiceProcess-net_4_x</Name>

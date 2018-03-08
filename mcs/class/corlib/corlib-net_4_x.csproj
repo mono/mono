@@ -182,6 +182,7 @@
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\Generic\ArraySortHelper.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Globalization\GlobalizationMode.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Runtime\CompilerServices\ReflectionBlockedAttribute.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Runtime\CompilerServices\TaskAwaiter.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\LockHolder.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\DebuggerSupport.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\DebuggerSupport.Dummy.cs" />
@@ -603,7 +604,6 @@
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\requiredattributeattribute.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\scopelessenumattribute.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\suppressmergecheckattribute.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\TaskAwaiter.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\typedependencyattribute.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\YieldAwaitable.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\exceptionservices\corruptingexceptioncommon.cs" />
