@@ -77,10 +77,6 @@
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../../class/corlib/corlib-net_4_x.csproj">
-      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
-      <Name>corlib-net_4_x</Name>
-    </ProjectReference>
     <ProjectReference Include="../../class/monodoc/monodoc-net_4_x.csproj">
       <Project>{0248869F-8D3B-4AB2-B976-B2A9AF1319A9}</Project>
       <Name>monodoc-net_4_x</Name>

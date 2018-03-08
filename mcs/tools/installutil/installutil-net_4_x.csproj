@@ -77,10 +77,6 @@
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../../class/corlib/corlib-net_4_x.csproj">
-      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
-      <Name>corlib-net_4_x</Name>
-    </ProjectReference>
     <ProjectReference Include="../../class/System.Configuration.Install/System.Configuration.Install-net_4_x.csproj">
       <Project>{B144ACD4-089D-4769-8605-583FBEDB5B7C}</Project>
       <Name>System.Configuration.Install-net_4_x</Name>

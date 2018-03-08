@@ -77,10 +77,6 @@
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../../class/corlib/corlib-net_4_x.csproj">
-      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
-      <Name>corlib-net_4_x</Name>
-    </ProjectReference>
     <ProjectReference Include="../../class/System.Runtime.Remoting/System.Runtime.Remoting-net_4_x.csproj">
       <Project>{F19F77AE-1A81-4676-BAB8-6C1DA243A961}</Project>
       <Name>System.Runtime.Remoting-net_4_x</Name>
