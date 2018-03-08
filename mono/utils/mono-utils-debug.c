@@ -18,7 +18,7 @@ mono_is_usermode_native_debugger_present (void)
 	// This is just a few instructions and no syscall. It is very fast.
 	// Kernel debugger is detected otherwise and is also useful for usermode debugging.
 	// Mono managed debugger is detected otherwise.
-	return IsDebuggerPresent () != FALSE;
+	return IsDebuggerPresent () ? TRUE : FALSE;
 }
 
 #else
