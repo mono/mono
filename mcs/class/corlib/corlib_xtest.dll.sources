@@ -154,6 +154,9 @@
 
 ../../../external/corefx/src/System.ValueTuple/tests/*.cs
 
+# System.Runtime
+../../../external/corefx/src/System.Runtime/tests/System/Runtime/CompilerServices/*.cs:RuntimeHelpersTests.netcoreapp.cs,ConditionalWeakTableTests.netcoreapp.cs,ConditionalWeakTableTests.cs
+
 # System.Threading.Tasks
 ../../../external/corefx/src/System.Threading.Tasks/tests/System.Runtime.CompilerServices/*.cs
 ../../../external/corefx/src/System.Threading.Tasks/tests/Task/*.cs:*.netcoreapp.cs,TaskContinueWithTests.cs
