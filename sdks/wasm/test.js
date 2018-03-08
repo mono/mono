@@ -51,7 +51,7 @@ assemblies.forEach (function(asm_name) {
 });
 
 
-var load_runtime = Module.cwrap ('mono_wasm_load_runtime', null, ['string'])
+var load_runtime = Module.cwrap ('mono_wasm_load_runtime', null, ['string', 'number'])
 var assembly_load = Module.cwrap ('mono_wasm_assembly_load', 'number', ['string'])
 var find_class = Module.cwrap ('mono_wasm_assembly_find_class', 'number', ['number', 'string', 'string'])
 var find_method = Module.cwrap ('mono_wasm_assembly_find_method', 'number', ['number', 'string', 'number'])
@@ -102,7 +102,7 @@ function mono_send_msg (key, val) {
 	}
 }
 
-load_runtime ("managed");
+load_runtime ("managed", 0);
 var main_module = assembly_load ("main")
 if (!main_module)
 	throw 1;
