@@ -1,4 +1,4 @@
-/* gdebug.c
+/* mono-utils-debug.c
  *
  * Copyright 2018 Microsoft
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
@@ -6,13 +6,14 @@
 
 #include <config.h>
 #include <glib.h>
+#include "mono-utils-debug.h"
 
 #if defined (_WIN32)
 
 #include <windows.h>
 
 gboolean
-g_is_usermode_native_debugger_present (void)
+mono_is_usermode_native_debugger_present (void)
 {
 	// This is just a few instructions and no syscall. It is very fast.
 	// Kernel debugger is detected otherwise and is also useful for usermode debugging.
@@ -22,12 +23,12 @@ g_is_usermode_native_debugger_present (void)
 
 #elif defined (__APPLE__)
 
-#include <errno.h>
 #include <unistd.h>
+#include <errno.h>
 #include <sys/sysctl.h>
 
 static gboolean
-g_is_usermode_native_debugger_present_slow (void)
+mono_is_usermode_native_debugger_present_slow (void)
 // https://developer.apple.com/library/content/qa/qa1361/_index.html
 // This is a syscall so it is very slow.
 {
@@ -39,21 +40,21 @@ g_is_usermode_native_debugger_present_slow (void)
 
 	sysctl (mib, sizeof (mib) / sizeof (*mib), &info, &size, NULL, 0);
 
-	// We're being debugged if the P_TRACED flag is set.
+	// Return the traced flag.
 	return (info.kp_proc.p_flag & P_TRACED) != 0;
 }
 
-static gchar g_is_usermode_native_debugger_present_cache; // 0:uninitialized 1:true 2:false
+static gchar mono_is_usermode_native_debugger_present_cache; // 0:uninitialized 1:true 2:false
 
 gboolean
-g_is_usermode_native_debugger_present (void)
+mono_is_usermode_native_debugger_present (void)
 {
-	if (g_is_usermode_native_debugger_present_cache == 0) {
+	if (mono_is_usermode_native_debugger_present_cache == 0) {
 		int er = errno;
-		g_is_usermode_native_debugger_present_cache = g_is_usermode_native_debugger_present_slow () ? 1 : 2;
-		er = errno;
+		mono_is_usermode_native_debugger_present_cache = mono_is_usermode_native_debugger_present_slow () ? 1 : 2;
+		errno = er;
 	}
-	return g_is_usermode_native_debugger_present_cache == 1;
+	return mono_is_usermode_native_debugger_present_cache == 1;
 }
 
 #else
@@ -61,14 +62,14 @@ g_is_usermode_native_debugger_present (void)
 // FIXME Other operating systems.
 
 gboolean
-g_is_usermode_native_debugger_present (void)
+mono_is_usermode_native_debugger_present (void)
 {
 	return FALSE;
 }
 
 #endif
 
-#ifdef GDEBUG_TEST
+#if 0 // test
 
 int
 #ifdef _MSC_VER
@@ -76,7 +77,7 @@ __cdecl
 #endif
 main ()
 {
-	printf ("g_is_usermode_native_debugger_present:%d\n", g_is_usermode_native_debugger_present ());
+	printf ("mono_usermode_native_debugger_present:%d\n", mono_is_usermode_native_debugger_present ());
 }
 
 #endif

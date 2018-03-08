@@ -1110,17 +1110,10 @@ glong     g_utf8_pointer_to_offset (const gchar *str, const gchar *pos);
 #define G_HAVE_API_SUPPORT(x) (x)
 #define G_UNSUPPORTED_API "%s:%d: '%s' not supported.", __FILE__, __LINE__
 #define g_unsupported_api(name) G_STMT_START { g_warning (G_UNSUPPORTED_API, name); } G_STMT_END
-
-gboolean
-g_is_usermode_native_debugger_present (void);
-// i.e. Win32 IsDebuggerPresent which is just call mov mov ret.
-// Other slower methods on other systems if possible and unintrusive (OSX).
-// This is very useful as in:
-//   if (g_is_usermode_native_debugger_present ()) G_BREAKPOINT
-// "native" meaning "not managed"
-// "usermode" meaning "not kernel"
-// Both other kinds exist and are detected differently.
-
+ 
 G_END_DECLS
 
 #endif
+
+
+
