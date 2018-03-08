@@ -3453,18 +3453,18 @@ compute_frame_info (MonoInternalThread *thread, DebuggerTlsData *tls)
 	for (tmp = user_data.frames; tmp; tmp = tmp->next) {
 		f = (StackFrame *)tmp->data;
 
-#ifndef RUNTIME_IL2CPP
 		/* 
 		 * Reuse the id for already existing stack frames, so invokes don't invalidate
 		 * the still valid stack frames.
 		 */
 		for (i = 0; i < tls->frame_count; ++i) {
+#ifndef RUNTIME_IL2CPP
 			if (MONO_CONTEXT_GET_SP (&tls->frames [i]->ctx) == MONO_CONTEXT_GET_SP (&f->ctx)) {
 				f->id = tls->frames [i]->id;
 				break;
 			}
-		}
 #endif // !RUNTIME_IL2CPP
+		}
 
 		if (i >= tls->frame_count)
 			f->id = mono_atomic_inc_i32 (&frame_id);
