@@ -1024,11 +1024,14 @@ DISABLED_TESTS = \
 	$(if $(CI_PR),$(CI_PR_DISABLED_TESTS)) \
 	$(if $(LLVM),$(LLVM_DISABLED_TESTS))
 
+# Interpreter does not currently implement tailcall.
+# Disable all tailcall tests that are not otherwise disabled.
 INTERP_DISABLED_TESTS = $(DISABLED_TESTS) \
+	itail1.exe \
+	sitail1.exe \
+	tailcall-mrgctx.exe \
 	tailcall-virt.exe   \
-	tailcall-rgctxa.exe \
-	tailcall-rgctxb.exe \
-	tailcall-mrgctx.exe
+	tailcall-rgctxa.exe
 
 # bug-48015.exe: be careful when re-enabling, it happens that it returns with exit code 0, but doesn't actually execute the test.
 # bug-60862.exe: missing support to map IP->method; only works on platforms with altstack support.
@@ -1068,7 +1071,6 @@ INTERP_DISABLED_TESTS += \
 	field-access.exe \
 	finalizer-exception.exe \
 	handleref.exe \
-	itail1.exe \
 	monitor-abort.exe \
 	nullable_boxing.2.exe \
 	pinvoke.exe \
@@ -1077,7 +1079,6 @@ INTERP_DISABLED_TESTS += \
 	remoting2.exe \
 	remoting3.exe \
 	safehandle.2.exe \
-	sitail1.exe \
 	stackframes-async.2.exe \
 	static-constructor.exe \
 	threadpool-exceptions2.exe \
@@ -1099,11 +1100,8 @@ INTERP_DISABLED_TESTS += \
 	calliGenericTest.exe \
 	delegate-with-null-target.exe \
 	dim-diamondshape.exe \
-	itail1.exe \
 	pinvoke2.exe \
-	pinvoke3.exe \
-	sitail1.exe \
-	tailcall-virt.exe
+	pinvoke3.exe
 endif
 
 if AMD64
@@ -1115,12 +1113,9 @@ INTERP_DISABLED_TESTS += \
 	cominterop.exe \
 	delegate-with-null-target.exe \
 	dim-diamondshape.exe \
-	itail1.exe \
 	pinvoke.exe \
 	pinvoke2.exe \
-	pinvoke3.exe \
-	sitail1.exe \
-	tailcall-virt.exe
+	pinvoke3.exe
 endif
 
 TESTS_CS=$(filter-out $(DISABLED_TESTS),$(TESTS_CS_SRC:.cs=.exe))
