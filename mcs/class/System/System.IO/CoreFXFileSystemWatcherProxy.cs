@@ -25,23 +25,25 @@ namespace System.IO {
 		{
 			C internal_fsw = null;
 			M fsw = null;
-			bool live, havelock;
+			bool live, take_lock;
 
 			if (cancel_op != null) { // highest priority and must not lock
-				havelock = Monitor.TryEnter (instance, INTERRUPT_MS);
-				live = (handle != null && (internal_map.TryGetValue (handle, out internal_fsw) || external_map.TryGetValue (handle, out fsw))) ;
-				if (live && havelock)
-					try { cancel_op (internal_fsw, fsw); }
-					catch (Exception) { };
 
-				if (havelock)
-					Monitor.Exit (instance);
-				if (live && !havelock)
-					try {
-						var t = Task<bool>.Run( () => { cancel_op (internal_fsw, fsw); return true;});
-						t.Wait (INTERRUPT_MS);
-					}
-					catch (Exception) { };
+				take_lock = !Monitor.IsEntered (instance);
+				if (take_lock)
+					Monitor.Enter (instance);
+				try {
+					live = (handle != null && (internal_map.TryGetValue (handle, out internal_fsw) || external_map.TryGetValue (handle, out fsw))) ;
+					if (live)
+						cancel_op (internal_fsw, fsw);
+				}
+				catch {
+					/* this could be during Dispose() so it may fail for any reason */
+				}
+				finally {
+					if (take_lock)
+						Monitor.Exit (instance);
+				}
 				return;
 			}
 			if (map_op != null && handle == null) {
