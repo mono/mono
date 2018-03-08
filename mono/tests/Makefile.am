@@ -777,6 +777,21 @@ if AMD64
 # #651684
 PLATFORM_DISABLED_TESTS += finally_guard.exe
 
+if HOST_LINUX
+
+PLATFORM_DISABLED_TESTS += \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_2b.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_2a.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/recurse_ep_void.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_2c.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_void.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/compat_r8_r4.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe
+
+endif
+
 if HOST_WIN32
 PLATFORM_DISABLED_TESTS += w32message.exe
 endif
@@ -784,6 +799,12 @@ endif
 endif
 
 if X86
+
+PLATFORM_DISABLED_TESTS += \
+	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_3b.exe \
+	tailcall/coreclr/JIT/Directed/IL/Tailcall/Jittailcall2.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe
 
 if HOST_WIN32
 PLATFORM_DISABLED_TESTS += async-exc-compilation.exe finally_guard.exe finally_block_ending_in_dead_bb.exe \
@@ -817,10 +838,33 @@ PLATFORM_DISABLED_TESTS += filter-stack.exe weak-fields.exe
 PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
 PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
+
+PLATFORM_DISABLED_TESTS += \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_2a.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_2b.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_2c.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/recurse_ep_void.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_void.exe \
+	tailcall/coreclr/JIT/Directed/IL/Tailcall/Jittailcall2.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall_v4/hijacking.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe
 endif
 
 if ARM64
 PLATFORM_DISABLED_TESTS += weak-fields.exe
+
+PLATFORM_DISABLED_TESTS += \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_2b.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_2a.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/recurse_ep_void.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_2c.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_void.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/compat_r8_r4.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_void.exe
 endif
 
 if MIPS
