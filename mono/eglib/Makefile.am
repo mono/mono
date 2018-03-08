@@ -23,6 +23,7 @@ libeglib_la_SOURCES = \
 	glib.h	     	\
 	garray.c	\
 	gbytearray.c	\
+	gdebug.c	\
 	gerror.c	\
 	ghashtable.c 	\
 	giconv.c	\
