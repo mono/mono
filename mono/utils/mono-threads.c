@@ -1153,6 +1153,12 @@ mono_thread_info_abort_socket_syscall_for_close (MonoNativeThreadId tid)
 	}
 
 	mono_thread_info_suspend_lock ();
+	/* lookup info again in case we raced with shutdown of the other thread and it's already gone.*/
+	info = mono_thread_info_lookup (tid);
+	if (!info) {
+		mono_thread_info_suspend_unlock ();
+		return;
+	}
 	mono_threads_begin_global_suspend ();
 
 	mono_threads_suspend_abort_syscall (info);
