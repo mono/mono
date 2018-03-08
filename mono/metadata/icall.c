@@ -1096,6 +1096,9 @@ ves_icall_System_ValueType_InternalGetHashCode (MonoObject *this_obj, MonoArray 
 		case MONO_TYPE_I4:
 			result ^= *(gint32*)((guint8*)this_obj + field->offset);
 			break;
+		case MONO_TYPE_PTR:
+			result ^= mono_aligned_addr_hash (*(gpointer*)((guint8*)this_obj + field->offset));
+			break;
 		case MONO_TYPE_STRING: {
 			MonoString *s;
 			s = *(MonoString**)((guint8*)this_obj + field->offset);
@@ -1193,6 +1196,10 @@ ves_icall_System_ValueType_Equals (MonoObject *this_obj, MonoObject *that, MonoA
 			break;
 		case MONO_TYPE_R8:
 			if (*(double*)((guint8*)this_obj + field->offset) != *(double*)((guint8*)that + field->offset))
+				return FALSE;
+			break;
+		case MONO_TYPE_PTR:
+			if (*(gpointer*)((guint8*)this_obj + field->offset) != *(gpointer*)((guint8*)that + field->offset))
 				return FALSE;
 			break;
 
