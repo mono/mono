@@ -21,29 +21,67 @@ mono_is_usermode_native_debugger_present (void)
 	return IsDebuggerPresent () != FALSE;
 }
 
-#elif defined (__APPLE__)
+#else
 
 #include <unistd.h>
 #include <errno.h>
+#include <fcntl.h>
+#if defined (__APPLE__)
 #include <sys/sysctl.h>
+#endif
+#if defined (__NetBSD__)
+#include <kvm.h>
+#endif
 
 static gboolean
 mono_is_usermode_native_debugger_present_slow (void)
-// https://developer.apple.com/library/content/qa/qa1361/_index.html
-// This is a syscall so it is very slow.
+// PAL_IsDebuggerPresent https://github.com/dotnet/coreclr/blob/master/src/pal/src/init/pal.cpp
 {
-	int mib[4] = { CTL_KERN, KERN_PROC, KERN_PROC_PID, getpid () };
+#if defined (__APPLE__)
+
 	struct kinfo_proc info;
-
-	memset (&info, 0, sizeof (info));
 	size_t size = sizeof (info);
+	memset (&info, 0, size);
+	int mib [4] = { CTL_KERN, KERN_PROC, KERN_PROC_PID, getpid () };
+	return sysctl (mib, sizeof (mib) / sizeof (*mib), &info, &size, NULL, 0) == 0
+		&& (info.kp_proc.p_flag & P_TRACED) != 0;
 
-	sysctl (mib, sizeof (mib) / sizeof (*mib), &info, &size, NULL, 0);
+#elif defined (__linux__)
 
-	// Return the traced flag.
-	return (info.kp_proc.p_flag & P_TRACED) != 0;
+	int const status_fd = open ("/proc/self/status", O_RDONLY);
+	if (status_fd == -1)
+		return FALSE;
+
+	char buf [4098];
+	buf [0] = '\n'; // consider if the first line
+	buf [1] = 0; // clear out garbage
+	ssize_t const num_read = read (status_fd, &buf [1], sizeof(buf) - 2);
+	close (status_fd);
+	static const char TracerPid [ ] = "\nTracerPid:";
+	if (num_read <= sizeof (TracerPid))
+		return FALSE;
+
+	buf [num_read + 1] = 0;
+	char const * const tracer_pid = strstr (buf, TracerPid);
+	return tracer_pid && !!atoi (tracer_pid + sizeof (TracerPid) - 1);
+
+#elif defined (__NetBSD__)
+
+	kvm_t * const kd = kvm_open (NULL, NULL, NULL, KVM_NO_FILES, "kvm_open");
+	if (!kd)
+		return FALSE;
+	int cnt = 0;
+	struct kinfo_proc const * const info = kvm_getprocs (kd, KERN_PROC_PID, getpid (), &cnt);
+	int const traced = info && cnt > 0 && (info->kp_proc.p_slflag & PSL_TRACED);
+	kvm_close (kd);
+	return traced != 0;
+
+#else
+	return FALSE; // FIXME Other operating systems.
+#endif
 }
 
+// Cache because it is slow.
 static gchar mono_is_usermode_native_debugger_present_cache; // 0:uninitialized 1:true 2:false
 
 gboolean
@@ -57,17 +95,7 @@ mono_is_usermode_native_debugger_present (void)
 	return mono_is_usermode_native_debugger_present_cache == 1;
 }
 
-#else
-
-// FIXME Other operating systems.
-
-gboolean
-mono_is_usermode_native_debugger_present (void)
-{
-	return FALSE;
-}
-
-#endif
+#endif // fast uncached Window vs. slow cached the rest
 
 #if 0 // test
 
