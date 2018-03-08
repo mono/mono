@@ -196,14 +196,17 @@ namespace System.Windows.Forms {
 
 					if (page_infos.Length > 0) {
 						image_size = ThemeEngine.Current.PrintPreviewControlGetPageSize (this);
-						if (image_size.Width >= 0 && image_size.Width < page_infos[0].Image.Width
-						    && image_size.Height >= 0 && image_size.Height < page_infos[0].Image.Height) {
+						// Only resize the pages if they are stored as bitmaps. The print controller
+						// could internally use scalable metafiles and they should be preserved to
+						// allow loss-less resizing.
+						for (int i = 0; i < page_infos.Length; i ++) {
+							if (page_infos[i].Image is Bitmap
+								&& image_size.Width >= 0 && image_size.Width < page_infos[i].Image.Width
+						    	&& image_size.Height >= 0 && image_size.Height < page_infos[i].Image.Height) {
 
-							for (int i = 0; i < page_infos.Length; i ++) {
 								image_cache[i] = new Bitmap (image_size.Width, image_size.Height);
-								Graphics g = Graphics.FromImage (image_cache[i]);
-								g.DrawImage (page_infos[i].Image, new Rectangle (new Point (0, 0), image_size), 0, 0, page_infos[i].Image.Width, page_infos[i].Image.Height, GraphicsUnit.Pixel);
-								g.Dispose ();
+								using (Graphics g = Graphics.FromImage (image_cache[i]))
+									g.DrawImage (page_infos[i].Image, new Rectangle (new Point (0, 0), image_size), 0, 0, page_infos[i].Image.Width, page_infos[i].Image.Height, GraphicsUnit.Pixel);
 							}
 						}
 					}
