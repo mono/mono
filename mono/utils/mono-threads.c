@@ -1142,18 +1142,8 @@ mono_thread_info_abort_socket_syscall_for_close (MonoNativeThreadId tid)
 	if (tid == mono_native_thread_id_get ())
 		return;
 
-	hp = mono_hazard_pointer_get ();
-	info = mono_thread_info_lookup (tid);
-	if (!info)
-		return;
-
-	if (mono_thread_info_run_state (info) == STATE_DETACHED) {
-		mono_hazard_pointer_clear (hp, 1);
-		return;
-	}
-
 	mono_thread_info_suspend_lock ();
-	/* lookup info again in case we raced with shutdown of the other thread and it's already gone.*/
+	hp = mono_hazard_pointer_get ();
 	info = mono_thread_info_lookup (tid);
 	if (!info) {
 		mono_thread_info_suspend_unlock ();
