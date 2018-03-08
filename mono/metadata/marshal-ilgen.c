@@ -4056,7 +4056,7 @@ emit_thunk_invoke_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 	MonoImage *image = get_method_image (method);
 	MonoMethodSignature *sig = mono_method_signature (method);
 	int param_count = sig->param_count + sig->hasthis + 1;
-	int pos_leave;
+	int pos_leave, coop_gc_var, coop_gc_stack_dummy;
 	MonoExceptionClause *clause;
 	MonoType *object_type = m_class_get_byval_arg (mono_defaults.object_class);
 
@@ -4067,10 +4067,23 @@ emit_thunk_invoke_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 	if (!MONO_TYPE_IS_VOID (sig->ret))
 		mono_mb_add_local (mb, sig->ret);
 
+	if (mono_threads_is_blocking_transition_enabled ()) {
+		/* local 4, dummy local used to get a stack address for suspend funcs */
+		coop_gc_stack_dummy = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
+		/* local 5, the local to be used when calling the suspend funcs */
+		coop_gc_var = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
+	}
+
 	/* clear exception arg */
 	mono_mb_emit_ldarg (mb, param_count - 1);
 	mono_mb_emit_byte (mb, CEE_LDNULL);
 	mono_mb_emit_byte (mb, CEE_STIND_REF);
+
+	if (mono_threads_is_blocking_transition_enabled ()) {
+		mono_mb_emit_ldloc_addr (mb, coop_gc_stack_dummy);
+		mono_mb_emit_icall (mb, mono_threads_enter_gc_unsafe_region_unbalanced);
+		mono_mb_emit_stloc (mb, coop_gc_var);
+	}
 
 	/* try */
 	clause = (MonoExceptionClause *)mono_image_alloc0 (image, sizeof (MonoExceptionClause));
@@ -4139,6 +4152,12 @@ emit_thunk_invoke_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 		/* box the return value */
 		if (MONO_TYPE_ISSTRUCT (sig->ret))
 			mono_mb_emit_op (mb, CEE_BOX, mono_class_from_mono_type (sig->ret));
+	}
+
+	if (mono_threads_is_blocking_transition_enabled ()) {
+		mono_mb_emit_ldloc (mb, coop_gc_var);
+		mono_mb_emit_ldloc_addr (mb, coop_gc_stack_dummy);
+		mono_mb_emit_icall (mb, mono_threads_exit_gc_unsafe_region_unbalanced);
 	}
 
 	mono_mb_emit_byte (mb, CEE_RET);
