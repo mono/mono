@@ -815,6 +815,11 @@ typedef struct {
 void          mono_register_bundled_assemblies (const MonoBundledAssembly **assemblies);
 void          mono_register_config_for_assembly (const char* assembly_name, const char* config_xml);
 ");
+
+				// These values are part of the public API, so they are expected not to change
+				tc.WriteLine("#define MONO_AOT_MODE_NORMAL 1");
+				tc.WriteLine("#define MONO_AOT_MODE_FULL 3");
+				tc.WriteLine("#define MONO_AOT_MODE_LLVMONLY 4");
 			} else {
 				tc.WriteLine ("#include <mono/metadata/mono-config.h>");
 				tc.WriteLine ("#include <mono/metadata/assembly.h>\n");
