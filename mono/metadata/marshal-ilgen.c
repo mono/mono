@@ -2540,7 +2540,7 @@ emit_marshal_array_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 		mono_mb_emit_op (mb, CEE_NEWARR, eklass);
 		mono_mb_emit_stloc (mb, conv_arg);
 
-		if (m_class_is_blittable (klass)) {
+		if (m_class_is_blittable (eklass)) {
 			mono_mb_emit_ldloc (mb, conv_arg);
 			mono_mb_emit_byte (mb, CEE_CONV_I);
 			mono_mb_emit_icon (mb, MONO_STRUCT_OFFSET (MonoArray, vector));
@@ -2652,7 +2652,7 @@ emit_marshal_array_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 		mono_mb_emit_ldarg (mb, argnum);
 		mono_mb_emit_stloc (mb, dest_ptr);
 
-		if (m_class_is_blittable (klass)) {
+		if (m_class_is_blittable (eklass)) {
 			/* dest */
 			mono_mb_emit_ldarg (mb, argnum);
 			/* src */
