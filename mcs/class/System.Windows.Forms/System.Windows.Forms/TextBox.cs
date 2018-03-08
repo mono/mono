@@ -345,7 +345,11 @@ namespace System.Windows.Forms {
 				document.GetLine (i).Alignment = new_alignment;
 			}
 
-			document.RecalculateDocument (CreateGraphicsInternal ());
+			if (!IsHandleCreated)
+				return;
+
+			using (var graphics = CreateGraphics())
+				document.RecalculateDocument (graphics);
 
 			Invalidate ();	// Make sure we refresh
 		}

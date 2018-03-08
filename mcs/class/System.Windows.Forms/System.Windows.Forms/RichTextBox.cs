@@ -1779,7 +1779,9 @@ namespace System.Windows.Forms {
 			if (rtf_section_stack != null)
 				rtf_section_stack.Clear();
 
-			document.RecalculateDocument(CreateGraphicsInternal(), cursor_y, document.Lines, false);
+			if (IsHandleCreated)
+				using (var graphics = CreateGraphics())
+					document.RecalculateDocument(graphics, cursor_y, document.Lines, false);
 			document.ResumeRecalc (true);
 
 			document.Invalidate (document.GetLine(cursor_y), 0, document.GetLine(document.Lines), -1);

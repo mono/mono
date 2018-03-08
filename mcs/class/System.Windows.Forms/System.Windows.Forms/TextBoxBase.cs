@@ -469,8 +469,7 @@ namespace System.Windows.Forms
 					}
 				}
 
-				if (IsHandleCreated)
-					CalculateDocument ();
+				CalculateDocument ();
 			}
 		}
 
@@ -1743,14 +1742,6 @@ namespace System.Windows.Forms
 
 		#endregion UIA Framework Properties
 
-		internal Graphics CreateGraphicsInternal ()
-		{
-			if (IsHandleCreated)
-				return base.CreateGraphics();
-				
-			return DeviceContext;
-		}
-
 		internal override void OnPaintInternal (PaintEventArgs pevent)
 		{
 			Draw (pevent.Graphics, pevent.ClipRectangle);
@@ -1966,14 +1957,12 @@ namespace System.Windows.Forms
 
 		private void TextBoxBase_SizeChanged (object sender, EventArgs e)
 		{
-			if (IsHandleCreated)
-				CalculateDocument ();
+			CalculateDocument ();
 		}
 
 		private void TextBoxBase_RightToLeftChanged (object o, EventArgs e)
 		{
-			if (IsHandleCreated)
-				CalculateDocument ();
+			CalculateDocument ();
 		}
 
 		private void TextBoxBase_MouseWheel (object sender, MouseEventArgs e)
@@ -2034,9 +2023,12 @@ namespace System.Windows.Forms
 
 		internal void CalculateDocument()
 		{
-			CalculateScrollBars ();
-			document.RecalculateDocument (CreateGraphicsInternal ());
+			if (!IsHandleCreated)
+				return;
 
+			CalculateScrollBars ();
+			using (var graphics = CreateGraphics())
+				document.RecalculateDocument (graphics);
 
 			if (document.caret.line != null && document.caret.line.Y < document.ViewPortHeight) {
 				// The window has probably been resized, making the entire thing visible, so
@@ -2246,13 +2238,18 @@ namespace System.Windows.Forms
 		{
 			Line	line;
 
+			if (!IsHandleCreated)
+				return;
+
 			document.SuspendRecalc ();
 			// Font changes apply to the whole document
 			for (int i = 1; i <= document.Lines; i++) {
 				line = document.GetLine(i);
 				if (LineTag.FormatText(line, 1, line.text.Length, Font, ForeColor,
-						Color.Empty, FormatSpecified.Font | FormatSpecified.Color))
-					document.RecalculateDocument (CreateGraphicsInternal (), line.LineNo, line.LineNo, false);
+						Color.Empty, FormatSpecified.Font | FormatSpecified.Color)) {
+					using (var graphics = CreateGraphics())
+						document.RecalculateDocument (graphics, line.LineNo, line.LineNo, false);
+				}
 			}
 			document.ResumeRecalc (false);
 
