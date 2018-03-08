@@ -1779,12 +1779,14 @@ namespace System.Windows.Forms {
 			if (rtf_section_stack != null)
 				rtf_section_stack.Clear();
 
-			if (IsHandleCreated)
+			if (IsHandleCreated) {
 				using (var graphics = CreateGraphics())
 					document.RecalculateDocument(graphics, cursor_y, document.Lines, false);
-			document.ResumeRecalc (true);
-
-			document.Invalidate (document.GetLine(cursor_y), 0, document.GetLine(document.Lines), -1);
+				document.ResumeRecalc (true);
+				document.Invalidate (document.GetLine(cursor_y), 0, document.GetLine(document.Lines), -1);
+			} else {
+				document.ResumeRecalc (false);
+			}
 		}
 
 		private void RichTextBox_HScrolled(object sender, EventArgs e) {
