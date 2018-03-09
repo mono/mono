@@ -269,13 +269,13 @@ mono_mmap_open_file (const gunichar2 *path, gint path_length, int mode, const gu
 		// backed by physical memory / pagefile.
 	}
 
-	result = open_handle (hFile, mapName, mode, capacity, access, options, ioerror);
+	result = open_handle (hFile, mapName, mapName_length, mode, capacity, access, options, ioerror);
 
 done:
 	if (hFile != INVALID_HANDLE_VALUE)
 		CloseHandle (hFile);
 	if (!result && delete_on_error)
-		DeleteFileW (w_path);
+		DeleteFileW (path);
 
 	return result;
 }
@@ -285,7 +285,7 @@ mono_mmap_open_handle (void *handle, const gunichar2 *mapName, gint mapName_leng
 {
 	g_assert (handle != NULL);
 
-	return open_handle (handle, mapName, FILE_MODE_OPEN, capacity, access, options, ioerror, error);
+	return open_handle (handle, mapName, mapName_length, FILE_MODE_OPEN, capacity, access, options, ioerror, error);
 }
 
 void
