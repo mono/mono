@@ -8335,7 +8335,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			gboolean direct_icall = FALSE;
 			gboolean constrained_partial_call = FALSE;
 			MonoMethod *cil_method;
-
+			gboolean const inst_tailcall = G_UNLIKELY (debug_tailcall_try_all
+							? (ip [5] == CEE_RET)
+							: ((ins_flag & MONO_INST_TAILCALL) != 0));
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
 
@@ -9074,12 +9076,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			ins = mini_redirect_call (cfg, cmethod, fsig, sp, virtual_ ? sp [0] : NULL);
 			if (ins)
 				goto call_end;
-
-			gboolean inst_tailcall;
-			if (debug_tailcall_try_all)
-				inst_tailcall = ip [5] == CEE_RET;
-			else
-				inst_tailcall = (ins_flag & MONO_INST_TAILCALL) != 0;
 
 			/* Tail prefix / tail call optimization */
 
