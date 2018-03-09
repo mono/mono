@@ -6,7 +6,7 @@
 
 #include <config.h>
 #include <glib.h>
-#include "mono/utils/mono-utils-debug.h"
+#include "mono-utils-debug.h"
 
 #if defined (_WIN32)
 
