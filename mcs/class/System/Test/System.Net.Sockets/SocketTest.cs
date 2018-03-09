@@ -163,6 +163,7 @@ namespace MonoTests.System.Net.Sockets
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Ignore ("https://github.com/mono/mono/issues/6513")] // frequently fails on ARM
 		public void AcceptBlockingStatus()
 		{
 			bool block;
