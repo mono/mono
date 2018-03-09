@@ -74,6 +74,7 @@
 #include <mono/utils/mono-proclib.h>
 #include <mono/utils/w32api.h>
 #include "debugger-agent.h"
+#include "debugger-engine.h"
 #include "mini.h"
 #include "seq-points.h"
 #include "aot-runtime.h"
@@ -611,13 +612,8 @@ typedef struct ReplyPacket {
 	Buffer *data;
 } ReplyPacket;
 
-#define DEBUG(level,s) do { if (G_UNLIKELY ((level) <= log_level)) { s; fflush (log_file); } } while (0)
 
-#ifdef HOST_ANDROID
-#define DEBUG_PRINTF(level, ...) do { if (G_UNLIKELY ((level) <= log_level)) { g_print (__VA_ARGS__); } } while (0)
-#else
-#define DEBUG_PRINTF(level, ...) do { if (G_UNLIKELY ((level) <= log_level)) { fprintf (log_file, __VA_ARGS__); fflush (log_file); } } while (0)
-#endif
+#define DEBUG_PRINTF(level, ...) mono_de_log (level, __VA_ARGS__)
 
 #ifdef HOST_WIN32
 #define get_last_sock_error() WSAGetLastError()
@@ -682,11 +678,7 @@ static MonoNativeThreadId debugger_thread_id;
 
 static MonoThreadHandle *debugger_thread_handle;
 
-static int log_level;
-
 static gboolean embedding;
-
-static FILE *log_file;
 
 /* Assemblies whose assembly load event has no been sent yet */
 /* Protected by the dbg lock */
@@ -988,6 +980,12 @@ mono_debugger_agent_init (void)
 	if (!agent_config.enabled)
 		return;
 
+
+	MonoDebuggerEngineOptions de;
+	de.log_level = agent_config.log_level;
+	de.log_file = agent_config.log_file;
+	mono_de_init (&de);
+
 	transport_init ();
 
 	/* Need to know whenever a thread has acquired the loader mutex */
@@ -1025,20 +1023,8 @@ mono_debugger_agent_init (void)
 	pending_assembly_loads = g_ptr_array_new ();
 	domains = g_hash_table_new (mono_aligned_addr_hash, NULL);
 
-	log_level = agent_config.log_level;
-
 	embedding = agent_config.embedding;
 	disconnected = TRUE;
-
-	if (agent_config.log_file) {
-		log_file = fopen (agent_config.log_file, "w+");
-		if (!log_file) {
-			fprintf (stderr, "Unable to create log file '%s': %s.\n", agent_config.log_file, strerror (errno));
-			exit (1);
-		}
-	} else {
-		log_file = stdout;
-	}
 
 	ids_init ();
 	objrefs_init ();
@@ -2368,7 +2354,7 @@ decode_typeid (guint8 *buf, guint8 **endbuf, guint8 *limit, MonoDomain **domain,
 	MonoClass *klass;
 
 	klass = (MonoClass *)decode_ptr_id (buf, endbuf, limit, ID_TYPE, domain, err);
-	if (G_UNLIKELY (log_level >= 2) && klass) {
+	if (G_UNLIKELY (mono_de_get_log_level () >= 2) && klass) {
 		char *s;
 
 		s = mono_type_full_name (&klass->byval_arg);
@@ -2396,7 +2382,7 @@ decode_methodid (guint8 *buf, guint8 **endbuf, guint8 *limit, MonoDomain **domai
 	MonoMethod *m;
 
 	m = (MonoMethod *)decode_ptr_id (buf, endbuf, limit, ID_METHOD, domain, err);
-	if (G_UNLIKELY (log_level >= 2) && m) {
+	if (G_UNLIKELY (mono_de_get_log_level () >= 2) && m) {
 		char *s;
 
 		s = mono_method_full_name (m, TRUE);
@@ -2428,7 +2414,7 @@ static inline void
 buffer_add_typeid (Buffer *buf, MonoDomain *domain, MonoClass *klass)
 {
 	buffer_add_ptr_id (buf, domain, ID_TYPE, klass);
-	if (G_UNLIKELY (log_level >= 2) && klass) {
+	if (G_UNLIKELY (mono_de_get_log_level () >= 2) && klass) {
 		char *s;
 
 		s = mono_type_full_name (&klass->byval_arg);
@@ -2444,7 +2430,7 @@ static inline void
 buffer_add_methodid (Buffer *buf, MonoDomain *domain, MonoMethod *method)
 {
 	buffer_add_ptr_id (buf, domain, ID_METHOD, method);
-	if (G_UNLIKELY (log_level >= 2) && method) {
+	if (G_UNLIKELY (mono_de_get_log_level () >= 2) && method) {
 		char *s;
 
 		s = mono_method_full_name (method, 1);
@@ -2459,7 +2445,7 @@ buffer_add_assemblyid (Buffer *buf, MonoDomain *domain, MonoAssembly *assembly)
 	int id;
 
 	id = buffer_add_ptr_id (buf, domain, ID_ASSEMBLY, assembly);
-	if (G_UNLIKELY (log_level >= 2) && assembly)
+	if (G_UNLIKELY (mono_de_get_log_level () >= 2) && assembly)
 		DEBUG_PRINTF (2, "[dbg]   send assembly [%s][%s][%d]\n", assembly->aname.name, domain->friendly_name, id);
 }
 
@@ -5292,7 +5278,7 @@ process_single_step_inner (DebuggerTlsData *tls, gboolean from_signal)
 	ji = get_top_method_ji (ip, &domain, (gpointer*)&ip);
 	g_assert (ji && !ji->is_trampoline);
 
-	if (log_level > 0) {
+	if (mono_de_get_log_level () > 0) {
 		DEBUG_PRINTF (1, "[%p] Single step event (depth=%s) at %s (%p)[0x%x], sp %p, last sp %p\n", (gpointer) (gsize) mono_native_thread_id_get (), ss_depth_to_string (ss_req->depth), mono_method_full_name (jinfo_get_method (ji), TRUE), MONO_CONTEXT_GET_IP (ctx), (int)((guint8*)MONO_CONTEXT_GET_IP (ctx) - (guint8*)ji->code_start), MONO_CONTEXT_GET_SP (ctx), ss_req->last_sp);
 	}
 
@@ -10551,7 +10537,7 @@ debugger_thread (void *arg)
 
 		g_assert (flags == 0);
 
-		if (log_level) {
+		if (mono_de_get_log_level ()) {
 			const char *cmd_str;
 			char cmd_num [256];
 
