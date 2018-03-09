@@ -8899,10 +8899,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				INLINE_FAILURE ("tail call");
 
 				/* keep it simple */
-				for (i =  fsig->param_count - 1; i >= 0; i--) {
-					if (MONO_TYPE_ISSTRUCT (mono_method_signature (cmethod)->params [i])) 
-						has_vtargs = TRUE;
-				}
+				for (i = fsig->param_count - 1; !has_vtargs && i >= 0; i--)
+					has_vtargs = MONO_TYPE_ISSTRUCT (mono_method_signature (cmethod)->params [i]);
 
 				if (!has_vtargs) {
 					if (need_seq_point) {
