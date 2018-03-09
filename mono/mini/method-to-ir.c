@@ -8923,6 +8923,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					if (ip_in_bb (cfg, cfg->cbb, ip + 5))
 						skip_ret = TRUE;
 					push_res = FALSE;
+					need_seq_point = FALSE;
 					goto call_end;
 				}
 			}
@@ -9169,6 +9170,7 @@ tailcall_remove_ret:
 				if (tblock == cfg->cbb || tblock->in_count == 0)
 					skip_ret = TRUE;
 				push_res = FALSE;
+				need_seq_point = FALSE;
 			}
 
 		call_end: // FIXME Use of this label skips tailcall handling.
