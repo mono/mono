@@ -59,6 +59,10 @@ ${TESTCMD} --label=Microsoft.Build.Tasks --timeout=5m make -w -C mcs/class/Micro
 ${TESTCMD} --label=Microsoft.Build.Utilities --timeout=5m make -w -C mcs/class/Microsoft.Build.Utilities run-test
 ${TESTCMD} --label=Mono.C5 --timeout=5m make -w -C mcs/class/Mono.C5 run-test
 ${TESTCMD} --label=Mono.Options --timeout=5m make -w -C mcs/class/Mono.Options run-test
+if [[ ${CI_TAGS} == *'win-'* ]] || [[ ${CI_TAGS} == *'coop-gc'* ]]
+then ${TESTCMD} --label=Mono.Profiler.Log-xunit --skip;
+else ${TESTCMD} --label=Mono.Profiler.Log-xunit --timeout=30m make -w -C mcs/class/Mono.Profiler.Log run-xunit-test
+fi
 ${TESTCMD} --label=Mono.Tasklets --timeout=5m make -w -C mcs/class/Mono.Tasklets run-test
 ${TESTCMD} --label=System.Configuration --timeout=5m make -w -C mcs/class/System.Configuration run-test
 ${TESTCMD} --label=System.Transactions --timeout=5m make -w -C mcs/class/System.Transactions run-test
