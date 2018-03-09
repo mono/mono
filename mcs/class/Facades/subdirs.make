@@ -27,7 +27,8 @@ System.Xml.XPath System.Xml.XmlDocument System.Xml.Xsl.Primitives Microsoft.Win3
 System.IO.FileSystem.AccessControl System.Reflection.TypeExtensions System.Reflection.Emit.Lightweight System.Reflection.Emit.ILGeneration System.Reflection.Emit \
 System.Threading.AccessControl System.ValueTuple \
 System.Security.Cryptography.Primitives System.Text.Encoding.CodePages System.IO.FileSystem.Watcher \
-System.Security.Cryptography.ProtectedData System.ServiceProcess.ServiceController System.IO.Pipes
+System.Security.Cryptography.ProtectedData System.ServiceProcess.ServiceController System.IO.Pipes \
+System.Net.Http.Rtc System.Net.Ping System.Resources.Reader System.Resources.Writer System.Runtime.Serialization.Formatters System.Security.Cryptography.Csp
 
 # common_SUBDIRS dependencies
 common_DEPS_SUBDIRS = System.Security.Cryptography.X509Certificates System.ServiceModel.Primitives System.Runtime.Serialization.Primitives \
@@ -89,7 +90,7 @@ unreal_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 wasm_SUBDIRS = $(common_DEPS_SUBDIRS) $(netstandard_drawing_SUBDIRS) $(mobile_only_DEPS_SUBDIRS)
 wasm_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 
-mobile_only_SUBDIRS = System.Net.Ping System.Runtime.Serialization.Formatters System.Security.Cryptography.Csp System.Security.Cryptography.Pkcs \
+mobile_only_SUBDIRS = System.Security.Cryptography.Pkcs \
 System.Security.Cryptography.Cng System.Runtime.Loader System.Xml.XPath.XmlDocument System.Reflection.DispatchProxy
 
 mobile_only_DEPS_SUBDIRS = System.Security.Cryptography.OpenSsl
