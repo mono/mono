@@ -52,6 +52,7 @@ class SlnGenerator {
 	const string jay_vcxproj_guid = "{5D485D32-3B9F-4287-AB24-C8DA5B89F537}";
 	const string jay_sln_guid = "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}";
 
+	public Dictionary<string, List<string>> profilesByGuid = new Dictionary<string, List<string>> ();
 	public List<MsbuildGenerator.VsCsproj> libraries = new List<MsbuildGenerator.VsCsproj> ();
 	string header;
 
@@ -99,13 +100,24 @@ class SlnGenerator {
 		WriteProjectReference(sln, "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}", proj.library, relativePath, proj.projectGuid, dependencyGuids);
 	}
 
-	private void WriteProjectConfigurationPlatforms (StreamWriter sln, string guid, string platformToBuild)
+	private void WriteProjectConfigurationPlatforms (StreamWriter sln, string guid, string defaultPlatform)
 	{
 		foreach (var profile in profiles) {
-			sln.WriteLine ("\t\t{0}.Debug|{1}.ActiveCfg = Debug|{2}", guid, profile, platformToBuild ?? profile);
-			sln.WriteLine ("\t\t{0}.Debug|{1}.Build.0 = Debug|{2}", guid, profile, platformToBuild ?? profile);
-			sln.WriteLine ("\t\t{0}.Release|{1}.ActiveCfg = Release|{2}", guid, profile, platformToBuild ?? profile);
-			sln.WriteLine ("\t\t{0}.Release|{1}.Build.0 = Release|{2}", guid, profile, platformToBuild ?? profile);
+			var platformToBuild = profile;
+
+			List<string> projectProfiles;
+			if (
+				!profilesByGuid.TryGetValue (guid, out projectProfiles) ||
+				!projectProfiles.Contains (platformToBuild)
+			) {
+				Console.Error.WriteLine($"Project {guid} has no profile {platformToBuild} so using {defaultPlatform}");
+				platformToBuild = defaultPlatform;
+			}
+
+			sln.WriteLine ("\t\t{0}.Debug|{1}.ActiveCfg = Debug|{2}", guid, profile, platformToBuild);
+			sln.WriteLine ("\t\t{0}.Debug|{1}.Build.0 = Debug|{2}", guid, profile, platformToBuild);
+			sln.WriteLine ("\t\t{0}.Release|{1}.ActiveCfg = Release|{2}", guid, profile, platformToBuild);
+			sln.WriteLine ("\t\t{0}.Release|{1}.Build.0 = Release|{2}", guid, profile, platformToBuild);
 		}
 	}
 
@@ -128,18 +140,18 @@ class SlnGenerator {
 
 			sln.WriteLine ("\tGlobalSection(SolutionConfigurationPlatforms) = preSolution");
 			foreach (var profile in profiles) {
-				sln.WriteLine ("\t\tDebug|{0} = Debug|{0}", profile);
-				sln.WriteLine ("\t\tRelease|{0} = Release|{0}", profile);
+				sln.WriteLine ("\t\tDebug|{0} = Debug|{0}", profile, profile);
+				sln.WriteLine ("\t\tRelease|{0} = Release|{0}", profile, profile);
 			}
 			sln.WriteLine ("\tEndGlobalSection");
 
 			sln.WriteLine ("\tGlobalSection(ProjectConfigurationPlatforms) = postSolution");
 
 			// Manually insert jay's configurations because they are different
-			WriteProjectConfigurationPlatforms (sln, jay_vcxproj_guid, "Win32");
+			WriteProjectConfigurationPlatforms (sln, jay_vcxproj_guid, "Win32", new[] { "Win32" });
 
 			foreach (var proj in libraries) {
-				WriteProjectConfigurationPlatforms (sln, proj.projectGuid, null);
+				WriteProjectConfigurationPlatforms (sln, proj.projectGuid, "net_4_x", proj.profiles);
 			}
 
 			sln.WriteLine ("\tEndGlobalSection");
@@ -1271,6 +1283,11 @@ public class Driver {
 					duplicates.Add (csprojFilename);
 				}
 				
+				List<string> profileNames;
+				if (!four_five_sln_gen.profilesByGuid.TryGetValue (csproj.guid, out profileNames))
+					four_five_sln_gen.profilesByGuid[csproj.guid] = profileNames = new List<string>();
+
+				profileNames.Add(project.Element ("profile").Value);
 			} catch (Exception e) {
 				Console.Error.WriteLine ("// Error in {0}\n{1}", project, e);
 			}
