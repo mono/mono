@@ -17,7 +17,7 @@
 /* noilgen version */
 struct _MonoMethodBuilder {
 	MonoMethod *method;
-	char *name;
+	gchar *name;
 	gboolean no_dup_name;
 };
 

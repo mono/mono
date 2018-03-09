@@ -17,17 +17,17 @@
 /* ilgen version */
 struct _MonoMethodBuilder {
 	MonoMethod *method;
-	char *name;
+	gchar *name;
 	gboolean no_dup_name;
 	GList *locals_list;
-	int locals;
+	gint locals;
 	gboolean dynamic;
 	gboolean skip_visibility, init_locals;
 	guint32 code_size, pos;
-	unsigned char *code;
-	int num_clauses;
+	guchar *code;
+	gint num_clauses;
 	MonoExceptionClause *clauses;
-	const char **param_names;
+	const gchar **param_names;
 };
 
 #endif
