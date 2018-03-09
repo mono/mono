@@ -52,7 +52,7 @@ class SlnGenerator {
 	const string jay_vcxproj_guid = "{5D485D32-3B9F-4287-AB24-C8DA5B89F537}";
 	const string jay_sln_guid = "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}";
 
-	public Dictionary<string, List<string>> profilesByGuid = new Dictionary<string, List<string>> ();
+	public static Dictionary<string, HashSet<string>> profilesByGuid = new Dictionary<string, HashSet<string>> ();
 	public List<MsbuildGenerator.VsCsproj> libraries = new List<MsbuildGenerator.VsCsproj> ();
 	string header;
 
@@ -105,7 +105,7 @@ class SlnGenerator {
 		foreach (var profile in profiles) {
 			var platformToBuild = profile;
 
-			List<string> projectProfiles;
+			HashSet<string> projectProfiles;
 			if (
 				!profilesByGuid.TryGetValue (guid, out projectProfiles) ||
 				!projectProfiles.Contains (platformToBuild)
@@ -148,10 +148,10 @@ class SlnGenerator {
 			sln.WriteLine ("\tGlobalSection(ProjectConfigurationPlatforms) = postSolution");
 
 			// Manually insert jay's configurations because they are different
-			WriteProjectConfigurationPlatforms (sln, jay_vcxproj_guid, "Win32", new[] { "Win32" });
+			WriteProjectConfigurationPlatforms (sln, jay_vcxproj_guid, "Win32");
 
 			foreach (var proj in libraries) {
-				WriteProjectConfigurationPlatforms (sln, proj.projectGuid, "net_4_x", proj.profiles);
+				WriteProjectConfigurationPlatforms (sln, proj.projectGuid, "net_4_x");
 			}
 
 			sln.WriteLine ("\tEndGlobalSection");
@@ -211,6 +211,8 @@ class MsbuildGenerator {
 	string base_dir;
 	string mcs_topdir;
 
+	static readonly Dictionary<string, string> GuidForCsprojCache = new Dictionary<string, string> ();
+
 	public string LibraryOutput, AbsoluteLibraryOutput;
 
 	public MsbuildGenerator (XElement xproject)
@@ -256,15 +258,24 @@ class MsbuildGenerator {
 	string LookupOrGenerateGuid ()
 	{
 		var projectFile = NativeName (CsprojFilename);
+
+		string result;
+		if (GuidForCsprojCache.TryGetValue (projectFile, out result))
+			return result;
+
 		if (File.Exists (projectFile)){
 			try {
 				var doc = XDocument.Load (projectFile);
-				return doc.XPathSelectElement ("x:Project/x:PropertyGroup/x:ProjectGuid", xmlns).Value;
+				result = doc.XPathSelectElement ("x:Project/x:PropertyGroup/x:ProjectGuid", xmlns).Value;
 			} catch (Exception exc) {
 				Console.Error.WriteLine($"// Failed to parse guid from {projectFile}: {exc.Message}");
 			}
+		} else {
+			result = "{" + Guid.NewGuid ().ToString ().ToUpper () + "}";
 		}
-		return "{" + Guid.NewGuid ().ToString ().ToUpper () + "}";
+
+		GuidForCsprojCache[projectFile] = result;
+		return result;
 	}
 
 	// Currently used
@@ -732,7 +743,7 @@ class MsbuildGenerator {
 			File.Delete(generatedProjFile);
 	}
 	
-	public VsCsproj Generate (string library_output, Dictionary<string,MsbuildGenerator> projects, bool showWarnings = false)
+	public VsCsproj Generate (string library_output, Dictionary<string,MsbuildGenerator> projects, out string profile, bool showWarnings = false)
 	{
 		var generatedProjFile = GetProjectFilename();
 		var updatingExistingProject = File.Exists(generatedProjFile);
@@ -744,7 +755,7 @@ class MsbuildGenerator {
 			generatedProjFile
 		);
 
-		string boot, flags, output_name, built_sources, response, profile, reskey;
+		string boot, flags, output_name, built_sources, response, reskey;
 
 		boot = xproject.Element ("boot").Value;
 		flags = xproject.Element ("flags").Value;
@@ -1275,7 +1286,8 @@ public class Driver {
 			// Console.WriteLine ("=== {0} ===", library_output);
 			var gen = projects [library_output];
 			try {
-				var csproj = gen.Generate (library_output, projects);
+				string profileName;
+				var csproj = gen.Generate (library_output, projects, out profileName);
 				var csprojFilename = csproj.csProjFilename;
 				if (!sln_gen.ContainsProjectIdentifier (csproj.library)) {
 					sln_gen.Add (csproj);
@@ -1283,11 +1295,14 @@ public class Driver {
 					duplicates.Add (csprojFilename);
 				}
 				
-				List<string> profileNames;
-				if (!four_five_sln_gen.profilesByGuid.TryGetValue (csproj.guid, out profileNames))
-					four_five_sln_gen.profilesByGuid[csproj.guid] = profileNames = new List<string>();
+				HashSet<string> profileNames;
+				if (!SlnGenerator.profilesByGuid.TryGetValue (csproj.projectGuid, out profileNames)) {
+					Console.Error.WriteLine($"Created profile name list for {library_output} {csproj.projectGuid}");
+					SlnGenerator.profilesByGuid[csproj.projectGuid] = profileNames = new HashSet<string>();
+				}
 
-				profileNames.Add(project.Element ("profile").Value);
+				Console.Error.WriteLine($"{library_output} {csproj.projectGuid} {profileName}");
+				profileNames.Add(profileName);
 			} catch (Exception e) {
 				Console.Error.WriteLine ("// Error in {0}\n{1}", project, e);
 			}
