@@ -8746,6 +8746,28 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (check_this)
 				MONO_EMIT_NEW_CHECK_THIS (cfg, sp [0]->dreg);
 
+			/* Tail prefix / tail call optimization */
+
+			/* FIXME: Enabling TAILC breaks some inlining/stack trace/etc tests.
+				  Inlining and stack traces are not guaranteed however. */
+			/* FIXME: runtime generic context pointer for jumps? */
+			/* FIXME: handle this for generic sharing eventually */
+			supported_tail_call = inst_tailcall && is_supported_tail_call (cfg, method, cmethod, fsig, call_opcode, virtual_, vtable_arg);
+
+			// http://www.mono-project.com/docs/advanced/runtime/docs/generic-sharing/
+			// 1. Non-generic non-static methods of reference types have access to the
+			//    RGCTX via the “this” argument (this->vtable->rgctx).
+			// 2. a Non-generic static methods of reference types and b. non-generic methods
+			//    of value types need to be passed a pointer to the caller’s class’s VTable in the MONO_ARCH_RGCTX_REG register.
+			// 3. Generic methods need to be passed a pointer to the MRGCTX in the MONO_ARCH_RGCTX_REG register
+			if (inst_tailcall && (debug_tailcall ? cfg->verbose_level : (cfg->verbose_level >= 2)))
+				g_print ("tail.%s %s -> %s supported_tail_call:%d gshared:%d vtable_arg:%d\n",
+					mono_opcode_name (*ip), method->name, cmethod->name,
+					(int)supported_tail_call, (int)cfg->gshared, !!vtable_arg);
+
+			// Handle tail calls similarly to normal calls.
+			tail_call = supported_tail_call && cfg->backend->have_op_tail_call;
+
 			/* Calling virtual generic methods */
 			if (virtual_ && (cmethod->flags & METHOD_ATTRIBUTE_VIRTUAL) &&
 		 	    !(MONO_METHOD_IS_FINAL (cmethod) && 
@@ -9079,23 +9101,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			/* Tail prefix / tail call optimization */
 
-			/* FIXME: Enabling TAILC breaks some inlining/stack trace/etc tests.
-				  Inlining and stack traces are not guaranteed however. */
-			/* FIXME: runtime generic context pointer for jumps? */
-			/* FIXME: handle this for generic sharing eventually */
-			supported_tail_call = inst_tailcall && is_supported_tail_call (cfg, method, cmethod, fsig, call_opcode, virtual_, vtable_arg);
-
-			// http://www.mono-project.com/docs/advanced/runtime/docs/generic-sharing/
-			// 1. Non-generic non-static methods of reference types have access to the
-			//    RGCTX via the “this” argument (this->vtable->rgctx).
-			// 2. a Non-generic static methods of reference types and b. non-generic methods
-			//    of value types need to be passed a pointer to the caller’s class’s VTable in the MONO_ARCH_RGCTX_REG register.
-			// 3. Generic methods need to be passed a pointer to the MRGCTX in the MONO_ARCH_RGCTX_REG register
-			if (inst_tailcall && (debug_tailcall ? cfg->verbose_level : (cfg->verbose_level >= 2)))
-				g_print ("tail.%s %s -> %s supported_tail_call:%d gshared:%d vtable_arg:%d\n",
-					mono_opcode_name (*ip), method->name, cmethod->name,
-					(int)supported_tail_call, (int)cfg->gshared, !!vtable_arg);
-
 			if (supported_tail_call) {
 				MonoCallInst *call;
 
@@ -9104,10 +9109,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 				//printf ("HIT: %s -> %s\n", mono_method_full_name (cfg->method, TRUE), mono_method_full_name (cmethod, TRUE));
 
-				if (cfg->backend->have_op_tail_call) {
-					/* Handle tail calls similarly to normal calls */
-					tail_call = TRUE;
-				} else {
+				if (!cfg->backend->have_op_tail_call) {
 					mini_profiler_emit_tail_call (cfg, cmethod);
 
 					MONO_INST_NEW_CALL (cfg, call, OP_JMP);
