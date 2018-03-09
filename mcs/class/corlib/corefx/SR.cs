@@ -942,4 +942,12 @@ partial class SR
 	public const string Argument_ArrayTooLarge = "The input array length must not exceed Int32.MaxValue / {0}. Otherwise BitArray.Length would exceed Int32.MaxValue.";
 	public const string Arg_ArrayLengthsDiffer = "Array lengths must be the same.";
 	public const string Arg_BitArrayTypeUnsupported = "Only supported array types for CopyTo on BitArrays are Boolean[], Int32[] and Byte[].";
+	public const string ArgumentOutOfRange_InvalidThreshold = "The specified threshold for creating dictionary is out of range.";
+	public const string Argument_ItemNotExist = "The specified item does not exist in this KeyedCollection.";
+	public const string Arg_CannotMixComparisonInfrastructure = "The usage of IKeyComparer and IHashCodeProvider/IComparer interfaces cannot be mixed; use one or the other.";
+	public const string ArgumentOutOfRange_HashtableLoadFactor = "Load factor needs to be between 0.1 and 1.0.";
+	public const string InvalidOperation_HashInsertFailed = "Hashtable insert failed. Load factor too high. The most common cause is multiple threads writing to the Hashtable simultaneously.";
+	public const string Serialization_InvalidOnDeser = "OnDeserialization method was called while the object was not being deserialized.";
+	public const string Serialization_MissingValues = "The Values for this Hashtable are missing.";
+	public const string Serialization_KeyValueDifferentSizes = "The keys and values arrays have different sizes.";
 }

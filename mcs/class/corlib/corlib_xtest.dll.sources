@@ -222,14 +222,14 @@
 # System.Collections.NonGeneric
 #../../../external/corefx/src/System.Collections.NonGeneric/tests/ArrayList/*.cs
 ../../../external/corefx/src/System.Collections.NonGeneric/tests/Hashtable/*.cs
-../../../external/corefx/src/System.Collections.NonGeneric/tests/*.cs:SortedListTests.cs,CollectionBaseTests.cs,DictionaryBaseTests.cs,HashtableTests.cs,ArrayListTests.cs,ReadOnlyCollectionBaseTests.cs
+../../../external/corefx/src/System.Collections.NonGeneric/tests/*.cs:SortedListTests.cs,CollectionBaseTests.cs,DictionaryBaseTests.cs,ArrayListTests.cs,ReadOnlyCollectionBaseTests.cs
 
 # System.Collections.Concurrent
 ../../../external/corefx/src/System.Collections.Concurrent/tests/ConcurrentDictionary/*.cs
 ../../../external/corefx/src/System.Collections.Concurrent/tests/*.cs:ProducerConsumerCollectionTests.cs,EtwTests.cs,ConcurrentBagTests.cs,ConcurrentQueueTests.cs,ConcurrentStackTests.cs
 
 # System.Collections.Specialized
-#../../../external/corefx/src/System.Collections.Specialized/tests/StringDictionary/*.cs
+../../../external/corefx/src/System.Collections.Specialized/tests/StringDictionary/*.cs
 ../../../external/corefx/src/System.Collections.Specialized/tests/NameObjectCollectionBase/*.cs:NameObjectCollectionBase.KeysTests.cs,NameObjectCollectionBase.CopyToTests.cs
 #../../../external/corefx/src/System.Collections.Specialized/tests/NameValueCollection/*.cs
 ../../../external/corefx/src/System.Collections.Specialized/tests/ListDictionary/*.cs
