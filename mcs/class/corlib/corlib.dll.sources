@@ -1040,8 +1040,9 @@ ReferenceSources/Type.cs
 ReferenceSources/AppContextDefaultValues.cs
 
 ../../../external/corefx/src/System.Runtime.Extensions/src/System/Collections/ArrayList.cs
-../../../external/corefx/src/System.Collections/src/System/Collections/BitArray.cs
 ../../../external/corefx/src/System.Collections.NonGeneric/src/System/Collections/*.cs
+../../../external/corefx/src/System.Collections/src/System/Collections/BitArray.cs
+../../../external/corefx/src/System.Collections/src/System/Collections/StructuralComparisons.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/Comparer.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/DictionaryEntry.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/ICollection.cs
@@ -1056,20 +1057,21 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/IStructuralEquatable.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/ListDictionaryInternal.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/Generic/*.cs
-../../../external/corefx/src/Common/src/System/Collections/CompatibleComparer.cs
-../referencesource/mscorlib/system/collections/emptyreadonlydictionaryinternal.cs
-../../../external/corefx/src/System.Runtime.Extensions/src/System/Collections/Hashtable.cs
-../../../external/corefx/src/System.Runtime.Extensions/src/System/Collections/IHashCodeProvider.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/ObjectModel/Collection.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/ObjectModel/ReadOnlyCollection.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Collections/DictionaryEntry.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Collections/Generic/Dictionary.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Collections/Generic/IDictionaryDebugView.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Collections/Generic/KeyValuePair.cs
+../../../external/corefx/src/Common/src/System/Collections/CompatibleComparer.cs
+../../../external/corefx/src/System.Runtime.Extensions/src/System/Collections/Hashtable.cs
+../../../external/corefx/src/System.Runtime.Extensions/src/System/Collections/IHashCodeProvider.cs
 ../../../external/corefx/src/System.ObjectModel/src/System/Collections/Generic/DebugView.cs
 ../../../external/corefx/src/System.ObjectModel/src/System/Collections/ObjectModel/KeyedCollection.cs
 ../../../external/corefx/src/System.ObjectModel/src/System/Collections/ObjectModel/ReadOnlyDictionary.cs
-../../../external/corefx/src/System.Collections/src/System/Collections/StructuralComparisons.cs
 ../referencesource/mscorlib/system/collections/generic/comparer.cs
-../referencesource/mscorlib/system/collections/generic/debugview.cs
 ../referencesource/mscorlib/system/collections/generic/equalitycomparer.cs
-
+../referencesource/mscorlib/system/collections/emptyreadonlydictionaryinternal.cs
 
 ../referencesource/mscorlib/system/diagnostics/assert.cs
 ../referencesource/mscorlib/system/diagnostics/assertfilter.cs
@@ -1667,11 +1669,6 @@ corefx/GlobalizationMode.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Buffers/MemoryHandle.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Buffers/OwnedMemory.cs
 
-../../../external/corefx/src/Common/src/CoreLib/System/Collections/DictionaryEntry.cs
-
-../../../external/corefx/src/Common/src/CoreLib/System/Collections/Generic/Dictionary.cs
-../../../external/corefx/src/Common/src/CoreLib/System/Collections/Generic/IDictionaryDebugView.cs
-../../../external/corefx/src/Common/src/CoreLib/System/Collections/Generic/KeyValuePair.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Diagnostics/StackTraceHiddenAttribute.cs
 
