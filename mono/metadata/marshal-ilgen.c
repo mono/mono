@@ -3047,7 +3047,7 @@ emit_marshal_scalar_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 }
 
 static void
-emit_virtual_stelemref_ilgen (MonoMethodBuilder *mb, const char **param_names, int kind)
+emit_virtual_stelemref_ilgen (MonoMethodBuilder *mb, const char **param_names, MonoStelemrefKind kind)
 {
 	guint32 b1, b2, b3, b4;
 	int aklass, vklass, vtable, uiid;

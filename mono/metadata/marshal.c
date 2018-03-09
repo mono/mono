@@ -4324,7 +4324,7 @@ is_monomorphic_array (MonoClass *klass)
 	return mono_class_is_sealed (element_class) || m_class_is_valuetype (element_class);
 }
 
-static int
+static MonoStelemrefKind
 get_virtual_stelemref_kind (MonoClass *element_class)
 {
 	if (element_class == mono_defaults.object_class)
@@ -4365,10 +4365,19 @@ record_slot_vstore (MonoObject *array, size_t index, MonoObject *value)
 #endif
 
 static void
-emit_virtual_stelemref_noilgen (MonoMethodBuilder *mb, const char **param_names, int kind)
+emit_virtual_stelemref_noilgen (MonoMethodBuilder *mb, const char **param_names, MonoStelemrefKind kind)
 {
 }
 
+static const char *strelemref_wrapper_name[] = {
+	"object", "sealed_class", "class", "class_small_idepth", "interface", "complex"
+};
+
+static const gchar *
+mono_marshal_get_strelemref_wrapper_name (MonoStelemrefKind kind)
+{
+	return strelemref_wrapper_name [kind];
+}
 
 /*
  * TODO:
@@ -4378,7 +4387,7 @@ emit_virtual_stelemref_noilgen (MonoMethodBuilder *mb, const char **param_names,
  *	- Add a case for arrays of arrays.
  */
 static MonoMethod*
-get_virtual_stelemref_wrapper (int kind)
+get_virtual_stelemref_wrapper (MonoStelemrefKind kind)
 {
 	static MonoMethod *cached_methods [STELEMREF_KIND_COUNT] = { NULL }; /*object iface sealed regular*/
 	static MonoMethodSignature *signature;
@@ -4395,7 +4404,7 @@ get_virtual_stelemref_wrapper (int kind)
 	MonoType *object_type = m_class_get_byval_arg (mono_defaults.object_class);
 	MonoType *int_type = m_class_get_byval_arg (mono_defaults.int_class);
 
-	name = g_strdup_printf ("virt_stelemref_%s", strelemref_wrapper_name [kind]);
+	name = g_strdup_printf ("virt_stelemref_%s", mono_marshal_get_strelemref_wrapper_name (kind));
 	mb = mono_mb_new (mono_defaults.object_class, name, MONO_WRAPPER_STELEMREF);
 	g_free (name);
 
@@ -4435,7 +4444,7 @@ get_virtual_stelemref_wrapper (int kind)
 MonoMethod*
 mono_marshal_get_virtual_stelemref (MonoClass *array_class)
 {
-	int kind;
+	MonoStelemrefKind kind;
 
 	g_assert (m_class_get_rank (array_class) == 1);
 	kind = get_virtual_stelemref_kind (m_class_get_element_class (array_class));
