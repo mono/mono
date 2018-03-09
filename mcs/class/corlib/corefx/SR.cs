@@ -935,9 +935,11 @@ partial class SR
 	public const string Arg_RemoveArgNotFound = "Cannot remove the specified item because it was not found in the specified Collection.";
 	public const string ArgumentNull_Dictionary = "Dictionary cannot be null.";
 	public const string ArgumentOutOfRange_QueueGrowFactor = "Queue grow factor must be between {0} and {1}.";
-
-	public const string ArgumentNull_Collection = "ArgumentNull_Collection";
-	public const string ArgumentOutOfRange_ArrayListInsert = "ArgumentOutOfRange_ArrayListInsert";
-	public const string InvalidOperation_UnderlyingArrayListChanged = "InvalidOperation_UnderlyingArrayListChanged";
-	public const string NotSupported_RangeCollection = "NotSupported_RangeCollection";
+	public const string ArgumentNull_Collection = "Collection cannot be null.";
+	public const string ArgumentOutOfRange_ArrayListInsert = "Insertion index was out of range. Must be non-negative and less than or equal to size.";
+	public const string InvalidOperation_UnderlyingArrayListChanged = "This range in the underlying list is invalid. A possible cause is that elements were removed.";
+	public const string NotSupported_RangeCollection = "The specified operation is not supported on Ranges.";
+	public const string Argument_ArrayTooLarge = "The input array length must not exceed Int32.MaxValue / {0}. Otherwise BitArray.Length would exceed Int32.MaxValue.";
+	public const string Arg_ArrayLengthsDiffer = "Array lengths must be the same.";
+	public const string Arg_BitArrayTypeUnsupported = "Only supported array types for CopyTo on BitArrays are Boolean[], Int32[] and Byte[].";
 }
