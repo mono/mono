@@ -874,7 +874,7 @@ ves_icall_System_Array_FastCopy (MonoArray *source, int source_idx, MonoArray* d
 }
 
 ICALL_EXPORT void
-ves_icall_System_Array_GetGenericValueImpl (MonoArrayHandle arr, guint32 pos, gpointer value, MonoError* error)
+ves_icall_System_Array_GetGenericValueImpl (MonoArray *arr, guint32 pos, gpointer value)
 {
 	if (icall_array_verbose)
 		g_print ("%s arr:%p pos:%d val:%p\n", __func__, arr, (int)pos, value);
@@ -884,16 +884,13 @@ ves_icall_System_Array_GetGenericValueImpl (MonoArrayHandle arr, guint32 pos, gp
 	MonoClass *ac;
 	gint32 esize;
 	gpointer *ea;
-	guint gchandle = 0;
 
-	ac = mono_handle_class (arr);
+	ac = (MonoClass *)arr->obj.vtable->klass;
 
 	esize = mono_array_element_size (ac);
-	ea = (gpointer*)mono_array_handle_pin_with_size (arr, esize, pos, &gchandle);
+	ea = (gpointer*)((char*)arr->vector + (pos * esize));
 
 	mono_gc_memmove_atomic (value, ea, esize);
-
-	mono_gchandle_free (gchandle);
 }
 
 ICALL_EXPORT void
