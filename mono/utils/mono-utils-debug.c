@@ -6,7 +6,7 @@
 
 #include <config.h>
 #include <glib.h>
-#include "mono-utils-debug.h"
+#include "mono/utils/mono-utils-debug.h"
 
 #if defined (_WIN32)
 
@@ -66,18 +66,18 @@ mono_is_usermode_native_debugger_present_slow (void)
 
 	buf [num_read + 1] = 0;
 	char const * const tracer_pid = strstr (buf, TracerPid);
-	return tracer_pid && !!atoi (tracer_pid + sizeof (TracerPid) - 1);
+	return tracer_pid && atoi (tracer_pid + sizeof (TracerPid) - 1);
 
 #elif defined (__NetBSD__)
 
 	kvm_t * const kd = kvm_open (NULL, NULL, NULL, KVM_NO_FILES, "kvm_open");
 	if (!kd)
 		return FALSE;
-	int cnt = 0;
-	struct kinfo_proc const * const info = kvm_getprocs (kd, KERN_PROC_PID, getpid (), &cnt);
-	int const traced = info && cnt > 0 && (info->kp_proc.p_slflag & PSL_TRACED);
+	int count = 0;
+	struct kinfo_proc const * const info = kvm_getprocs (kd, KERN_PROC_PID, getpid (), &count);
+	gboolean const traced = info && count > 0 && (info->kp_proc.p_slflag & PSL_TRACED);
 	kvm_close (kd);
-	return traced != 0;
+	return traced;
 
 #else
 	return FALSE; // FIXME Other operating systems.
