@@ -1039,7 +1039,7 @@ ReferenceSources/Type.cs
 ../referencesource/mscorlib/system/AppContext/AppContextSwitches.cs
 ReferenceSources/AppContextDefaultValues.cs
 
-../referencesource/mscorlib/system/collections/arraylist.cs
+../../../external/corefx/src/System.Runtime.Extensions/src/System/Collections/ArrayList.cs
 ../referencesource/mscorlib/system/collections/bitarray.cs
 ../../../external/corefx/src/System.Collections.NonGeneric/src/System/Collections/*.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/Comparer.cs

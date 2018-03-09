@@ -935,4 +935,9 @@ partial class SR
 	public const string Arg_RemoveArgNotFound = "Cannot remove the specified item because it was not found in the specified Collection.";
 	public const string ArgumentNull_Dictionary = "Dictionary cannot be null.";
 	public const string ArgumentOutOfRange_QueueGrowFactor = "Queue grow factor must be between {0} and {1}.";
+
+	public const string ArgumentNull_Collection = "ArgumentNull_Collection";
+	public const string ArgumentOutOfRange_ArrayListInsert = "ArgumentOutOfRange_ArrayListInsert";
+	public const string InvalidOperation_UnderlyingArrayListChanged = "InvalidOperation_UnderlyingArrayListChanged";
+	public const string NotSupported_RangeCollection = "NotSupported_RangeCollection";
 }
