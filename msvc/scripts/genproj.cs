@@ -78,6 +78,8 @@ class SlnGenerator {
 
 	private void WriteProjectReference (StreamWriter sln, string prefixGuid, string library, string relativePath, string projectGuid, params string[] dependencyGuids)
 	{
+		// HACK
+		library = library.Replace("-net_4_x", "");
 		sln.WriteLine (project_start, prefixGuid, library, relativePath, projectGuid);
 
 		foreach (var guid in dependencyGuids) {
@@ -1196,22 +1198,7 @@ public class Driver {
 			string dir = project.Attribute ("dir").Value;
 			string library = project.Attribute ("library").Value;
 			var profile = project.Element ("profile").Value;
-
-#if false
-			// Skip facades for now, the tool doesn't know how to deal with them yet.
-			if (dir.Contains ("Facades"))
-				continue;
-
-			// These are currently broken, skip until they're fixed.
-			if (dir.StartsWith ("mcs") || dir.Contains ("apigen"))
-				continue;
-
-			//
-			// Do only class libraries for now
-			//
-			if (!(dir.StartsWith ("class") || dir.StartsWith ("mcs") || dir.StartsWith ("basic")))
-				continue;
-#endif
+			
 			//
 			// Do not do 2.1, it is not working yet
 			// Do not do basic, as there is no point (requires a system mcs to be installed).
@@ -1230,11 +1217,6 @@ public class Driver {
 			
 			if (library.Contains ("tests") && !withTests)
 				continue;
-
-			/*
-			if (profile != "net_4_x")
-				continue;
-			*/
 
 			yield return project;
 		}
