@@ -110,7 +110,7 @@ class SlnGenerator {
 				!profilesByGuid.TryGetValue (guid, out projectProfiles) ||
 				!projectProfiles.Contains (platformToBuild)
 			) {
-				Console.Error.WriteLine($"Project {guid} has no profile {platformToBuild} so using {defaultPlatform}");
+				Console.Error.WriteLine($"// Project {guid} has no profile {platformToBuild} so using {defaultPlatform}");
 				platformToBuild = defaultPlatform;
 			}
 
@@ -1296,12 +1296,9 @@ public class Driver {
 				}
 				
 				HashSet<string> profileNames;
-				if (!SlnGenerator.profilesByGuid.TryGetValue (csproj.projectGuid, out profileNames)) {
-					Console.Error.WriteLine($"Created profile name list for {library_output} {csproj.projectGuid}");
+				if (!SlnGenerator.profilesByGuid.TryGetValue (csproj.projectGuid, out profileNames))
 					SlnGenerator.profilesByGuid[csproj.projectGuid] = profileNames = new HashSet<string>();
-				}
 
-				Console.Error.WriteLine($"{library_output} {csproj.projectGuid} {profileName}");
 				profileNames.Add(profileName);
 			} catch (Exception e) {
 				Console.Error.WriteLine ("// Error in {0}\n{1}", project, e);
@@ -1400,7 +1397,7 @@ public class Driver {
 
 	static void WriteSolution (SlnGenerator sln_gen, string slnfilename)
 	{
-		Console.WriteLine (String.Format ("Writing solution {1}, with {0} projects", sln_gen.Count, slnfilename));
+		Console.WriteLine (String.Format ("// Writing solution {1}, with {0} projects", sln_gen.Count, slnfilename));
 		sln_gen.Write (slnfilename);
 	}
 
