@@ -9137,21 +9137,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					ins->inst_p0 = cmethod;
 					ins->inst_p1 = arg_array [0];
 					MONO_ADD_INS (cfg->cbb, ins);
-					link_bblock (cfg, cfg->cbb, end_bblock);
-					start_new_bblock = 1;
 
-					// FIXME: Eliminate unreachable epilogs
-
-					/*
-					 * OP_TAILCALL has no return value, so skip the CEE_RET if it is
-					 * only reachable from this call.
-					 */
-					GET_BBLOCK (cfg, tblock, ip + 5);
-					if (tblock == cfg->cbb || tblock->in_count == 0)
-						skip_ret = TRUE;
-					push_res = FALSE;
-
-					goto call_end;
+					goto tailcall_remove_ret;
 				}
 			}
 
@@ -9171,6 +9158,7 @@ common_call:
 											  imt_arg, vtable_arg);
 
 			if (tail_call && !cfg->llvm_only) {
+tailcall_remove_ret:
 				link_bblock (cfg, cfg->cbb, end_bblock);
 				start_new_bblock = 1;
 
