@@ -8775,8 +8775,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			    fsig->generic_param_count && 
 				!(cfg->gsharedvt && mini_is_gsharedvt_signature (fsig)) &&
 				!cfg->llvm_only) {
-				MonoInst *this_temp, *this_arg_temp, *store;
-				MonoInst *iargs [4];
 
 				g_assert (fsig->is_inflated);
 
@@ -8790,8 +8788,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					g_assert (!imt_arg);
 					if (!context_used)
 						g_assert (cmethod->is_inflated);
-					imt_arg = emit_get_rgctx_method (cfg, context_used,
-													 cmethod, MONO_RGCTX_INFO_METHOD);
+					imt_arg = emit_get_rgctx_method (cfg, context_used, cmethod, MONO_RGCTX_INFO_METHOD);
 
 					if (tail_call) {
 						/* Prevent inlining of methods with tail calls (the call stack would be altered) */
@@ -8800,25 +8797,27 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					virtual_ = TRUE;
 					vtable_arg = NULL;
 					goto common_call;
-				} else {
-					this_temp = mono_compile_create_var (cfg, type_from_stack_type (sp [0]), OP_LOCAL);
-					NEW_TEMPSTORE (cfg, store, this_temp->inst_c0, sp [0]);
-					MONO_ADD_INS (cfg->cbb, store);
-
-					/* FIXME: This should be a managed pointer */
-					this_arg_temp = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
-
-					EMIT_NEW_TEMPLOAD (cfg, iargs [0], this_temp->inst_c0);
-					iargs [1] = emit_get_rgctx_method (cfg, context_used,
-													   cmethod, MONO_RGCTX_INFO_METHOD);
-					EMIT_NEW_TEMPLOADA (cfg, iargs [2], this_arg_temp->inst_c0);
-					addr = mono_emit_jit_icall (cfg,
-												mono_helper_compile_generic_method, iargs);
-
-					EMIT_NEW_TEMPLOAD (cfg, sp [0], this_arg_temp->inst_c0);
-
-					ins = (MonoInst*)mini_emit_calli (cfg, fsig, sp, addr, NULL, NULL);
 				}
+
+				MonoInst *this_temp, *this_arg_temp, *store;
+				MonoInst *iargs [4];
+
+				this_temp = mono_compile_create_var (cfg, type_from_stack_type (sp [0]), OP_LOCAL);
+				NEW_TEMPSTORE (cfg, store, this_temp->inst_c0, sp [0]);
+				MONO_ADD_INS (cfg->cbb, store);
+
+				/* FIXME: This should be a managed pointer */
+				this_arg_temp = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
+
+				EMIT_NEW_TEMPLOAD (cfg, iargs [0], this_temp->inst_c0);
+				iargs [1] = emit_get_rgctx_method (cfg, context_used, cmethod, MONO_RGCTX_INFO_METHOD);
+
+				EMIT_NEW_TEMPLOADA (cfg, iargs [2], this_arg_temp->inst_c0);
+				addr = mono_emit_jit_icall (cfg, mono_helper_compile_generic_method, iargs);
+
+				EMIT_NEW_TEMPLOAD (cfg, sp [0], this_arg_temp->inst_c0);
+
+				ins = (MonoInst*)mini_emit_calli (cfg, fsig, sp, addr, NULL, NULL);
 
 				goto call_end;
 			}
