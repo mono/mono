@@ -260,19 +260,19 @@ class MsbuildGenerator {
 		var projectFile = NativeName (CsprojFilename);
 
 		string result;
-		if (GuidForCsprojCache.TryGetValue (projectFile, out result))
-			return result;
+		GuidForCsprojCache.TryGetValue (projectFile, out result);
 
-		if (File.Exists (projectFile)){
+		if (String.IsNullOrEmpty(result) && File.Exists (projectFile)){
 			try {
 				var doc = XDocument.Load (projectFile);
 				result = doc.XPathSelectElement ("x:Project/x:PropertyGroup/x:ProjectGuid", xmlns).Value;
 			} catch (Exception exc) {
 				Console.Error.WriteLine($"// Failed to parse guid from {projectFile}: {exc.Message}");
 			}
-		} else {
-			result = "{" + Guid.NewGuid ().ToString ().ToUpper () + "}";
 		}
+
+		if (String.IsNullOrEmpty(result))
+			result = "{" + Guid.NewGuid ().ToString ().ToUpper () + "}";
 
 		GuidForCsprojCache[projectFile] = result;
 		return result;
@@ -1295,11 +1295,15 @@ public class Driver {
 					duplicates.Add (csprojFilename);
 				}
 				
-				HashSet<string> profileNames;
-				if (!SlnGenerator.profilesByGuid.TryGetValue (csproj.projectGuid, out profileNames))
-					SlnGenerator.profilesByGuid[csproj.projectGuid] = profileNames = new HashSet<string>();
+				if (profileName == null) {
+					Console.Error.WriteLine ($"{library_output} has no profile");
+				} else {
+					HashSet<string> profileNames;
+					if (!SlnGenerator.profilesByGuid.TryGetValue (csproj.projectGuid, out profileNames))
+						SlnGenerator.profilesByGuid[csproj.projectGuid] = profileNames = new HashSet<string>();
 
-				profileNames.Add(profileName);
+					profileNames.Add(profileName);
+				}
 			} catch (Exception e) {
 				Console.Error.WriteLine ("// Error in {0}\n{1}", project, e);
 			}
