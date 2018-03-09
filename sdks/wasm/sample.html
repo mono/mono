@@ -53,7 +53,7 @@
 
 		var MonoRuntime = {
 			init: function () {
-				this.load_runtime = Module.cwrap ('mono_wasm_load_runtime', null, ['string']);
+				this.load_runtime = Module.cwrap ('mono_wasm_load_runtime', null, ['string', 'number']);
 				this.assembly_load = Module.cwrap ('mono_wasm_assembly_load', 'number', ['string']);
 				this.find_class = Module.cwrap ('mono_wasm_assembly_find_class', 'number', ['number', 'string', 'string']);
 				this.find_method = Module.cwrap ('mono_wasm_assembly_find_method', 'number', ['number', 'string', 'number']);
@@ -61,7 +61,7 @@
 				this.mono_string_get_utf8 = Module.cwrap ('mono_wasm_string_get_utf8', 'number', ['number']);
 				this.mono_string = Module.cwrap ('mono_wasm_string_from_js', 'number', ['string'])
 
-				this.load_runtime ("managed");
+				this.load_runtime ("managed", 1);
 				this.main_module = this.assembly_load ("sample")
 				if (!this.main_module)
 					throw "Could not find Main Module sample.dll";
