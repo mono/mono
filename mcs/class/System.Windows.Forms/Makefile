@@ -110,7 +110,7 @@ TEST_MCS_FLAGS = \
 
 DummyAssembly.dll:
 	$(CSCOMPILE) /target:library /out:$@ Test/DummyAssembly/AnotherSerializable.cs Test/DummyAssembly/Convertable.cs Test/DummyAssembly/Properties/AssemblyInfo.cs \
-	-r:$(topdir)/class/lib/$(PROFILE)/System.dll
+	-r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -r:$(topdir)/class/lib/$(PROFILE)/System.dll
 
 test-local: DummyAssembly.dll
 
