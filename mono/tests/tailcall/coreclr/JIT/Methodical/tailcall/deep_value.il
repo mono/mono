@@ -3,11 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 .assembly extern mscorlib { }
-.assembly extern System.Console
-{
-  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )
-  .ver 4:0:0:0
-}
 .assembly deep_value { }
 .namespace JitTest
 {
@@ -1245,9 +1240,9 @@
 
       IL_0015:  ldloca     V_0
       IL_0019:  ldfld      int32 JitTest.ValueClass::m_fld
-      IL_001e:  call       void [System.Console]System.Console::Write(int32)
+      IL_001e:  call       void [mscorlib]System.Console::Write(int32)
       IL_0023:  ldstr      " - prime!"
-      IL_0028:  call       void [System.Console]System.Console::WriteLine(class System.String)
+      IL_0028:  call       void [mscorlib]System.Console::WriteLine(class System.String)
       IL_002d:  ldloca     V_0
       IL_0031:  dup
       IL_0032:  ldfld      int32 JitTest.ValueClass::m_fld

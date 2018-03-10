@@ -2,20 +2,14 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-.assembly extern System.Console
-{
-  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )
-  .ver 4:0:0:0
-}
+.assembly extern mscorlib { }
 
-.assembly extern legacy library mscorlib {}
-
-.assembly tailcall.exe{}
+.assembly tailcall.exe { }
 
 .method public static int32 main(string[]) {
 .locals     (class [mscorlib]System.IO.TextWriter,class _tailcall)
 .entrypoint
-	call	    class [mscorlib]System.IO.TextWriter [System.Console]System.Console::get_Out()
+	call	    class [mscorlib]System.IO.TextWriter [mscorlib]System.Console::get_Out()
     stloc       0
     newobj   instance    void _tailcall::.ctor()
     stloc       1
@@ -55,7 +49,7 @@ end:
 .maxstack   10
     ldarg.0
     call instance void [mscorlib]System.Object::.ctor()
-	call	    class [mscorlib]System.IO.TextWriter [System.Console]System.Console::get_Out()
+	call	    class [mscorlib]System.IO.TextWriter [mscorlib]System.Console::get_Out()
     ldstr       "TAILCALL test initialized."
 
 
@@ -66,7 +60,7 @@ end:
 .method public         int32 method1() {
 .locals     (int32,string)
 
-	call	    class [mscorlib]System.IO.TextWriter [System.Console]System.Console::get_Out()
+	call	    class [mscorlib]System.IO.TextWriter [mscorlib]System.Console::get_Out()
     ldstr       "Beginning Test."
 
 
@@ -82,7 +76,7 @@ end:
 .method public         int32 method2() {
 .locals     ()
 
-	call	    class [mscorlib]System.IO.TextWriter [System.Console]System.Console::get_Out()
+	call	    class [mscorlib]System.IO.TextWriter [mscorlib]System.Console::get_Out()
     ldstr       "Method2 has been called."
 
 

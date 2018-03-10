@@ -2,39 +2,9 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+.assembly extern mscorlib { }
 
-
-
-
-
-.assembly extern System.Console
-{
-  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )
-  .ver 4:0:0:0
-}
-.assembly extern mscorlib
-{
-  .publickeytoken = (B7 7A 5C 56 19 34 E0 89 )                         
-  .hash = (5C EA 16 0E 69 C8 EE F2 C9 A5 6E 45 32 31 FA 61   
-           19 8E E7 4D )                                     
-  .ver 2:0:3600:0
-}
-.assembly tailcall
-{
-
-
-  .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilationRelaxationsAttribute::.ctor(int32) = ( 01 00 08 00 00 00 00 00 ) 
-  .hash algorithm 0x00008004
-  .ver 0:0:0:0
-}
-.module tailcall.exe
-.imagebase 0x00400000
-.file alignment 0x00000200
-.stackreserve 0x00100000
-.subsystem 0x0003       
-.corflags 0x00000001    
-
-
+.assembly tailcall { }
 
 .class public auto ansi beforefieldinit Class1
        extends [mscorlib]System.Object
@@ -120,7 +90,7 @@ ret
     IL_0016:  ldc.i4.s   100
     IL_0018:  bne.un.s   IL_0053
 
-    IL_001a:  call       string [system.runtime.extensions]System.Environment::get_StackTrace()
+    IL_001a:  call       string [mscorlib]System.Environment::get_StackTrace()
     IL_001f:  stloc.0
     IL_0020:  ldloc.0
     IL_0021:  ldstr      "Main"
@@ -132,11 +102,11 @@ ret
     IL_0033:  ldloc.0
     IL_0034:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_0039:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0039:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_003e:  ldstr      "Test Failed"
-    IL_0043:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0043:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0048:  ldc.i4.0
-    IL_0049:  call       void [system.runtime.extensions]System.Environment::Exit(int32)
+    IL_0049:  call       void [mscorlib]System.Environment::Exit(int32)
     IL_004e:  call       void [mscorlib]System.GC::Collect()
     IL_0053:  ldarg.0
     IL_0054:  dup
@@ -239,7 +209,7 @@ ret
     IL_001b:  bne.un.s   IL_0056
 
     IL_001d:  call       void [mscorlib]System.GC::Collect()
-    IL_0022:  call       string [system.runtime.extensions]System.Environment::get_StackTrace()
+    IL_0022:  call       string [mscorlib]System.Environment::get_StackTrace()
     IL_0027:  stloc.0
     IL_0028:  ldloc.0
     IL_0029:  ldstr      "Main"
@@ -251,11 +221,11 @@ ret
     IL_003b:  ldloc.0
     IL_003c:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_0041:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0041:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0046:  ldstr      "Test Failed"
-    IL_004b:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_004b:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0050:  ldc.i4.0
-    IL_0051:  call       void [system.runtime.extensions]System.Environment::Exit(int32)
+    IL_0051:  call       void [mscorlib]System.Environment::Exit(int32)
     IL_0056:  ldarg.0
     IL_0057:  dup
     IL_0058:  ldfld      int32 Class1::'value'
@@ -290,7 +260,7 @@ ret
              int32 V_2,
              object[] V_3)
     IL_0000:  ldstr      "Test Start"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  newobj     instance void Class1::.ctor()
     IL_000f:  stloc.0
     IL_0010:  ldloc.0
@@ -328,15 +298,15 @@ ret
     IL_0054:  stelem.ref
     IL_0055:  ldloc.3
     IL_0056:  call       string [mscorlib]System.String::Concat(object[])
-    IL_005b:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_005b:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0060:  ldstr      "Test Failed"
-    IL_0065:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0065:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_006a:  ldc.i4.0
     IL_006b:  stloc.2
     IL_006c:  br.s       IL_007d
 
     IL_006e:  ldstr      "Test Passed"
-    IL_0073:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0073:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0078:  ldc.i4.s   100
     IL_007a:  stloc.2
     IL_007b:  br.s       IL_007d

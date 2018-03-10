@@ -2,25 +2,10 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-.assembly extern System.Console
-{
-  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )
-  .ver 4:0:0:0
-}
+.assembly extern mscorlib { }
 
-
-
-
-
-// Metadata version: v4.0.AMD64chk
-.assembly extern mscorlib
-{
-  .publickeytoken = (B7 7A 5C 56 19 34 E0 89 )                         // .z\V.4..
-  .ver 4:0:0:0
-}
 .assembly TailCallCases
 {
-
   // --- The following custom attribute is added automatically, do not uncomment -------
   //  .custom instance void [mscorlib]System.Diagnostics.DebuggableAttribute::.ctor(valuetype [mscorlib]System.Diagnostics.DebuggableAttribute/DebuggingModes) = ( 01 00 03 00 00 00 00 00 ) 
 
@@ -244,25 +229,25 @@
     IL_0015:  ldloc.0
     IL_0016:  call       int32 ETW.TailCallETW::recursive(int32)
     IL_001b:  box        [mscorlib]System.Int32
-    IL_0020:  call       void [System.Console]System.Console::WriteLine(string,
+    IL_0020:  call       void [mscorlib]System.Console::WriteLine(string,
                                                                   object)
     IL_0025:  ldstr      "Optimized gives: {0}"
     IL_002a:  ldloc.0
     IL_002b:  call       int32 ETW.TailCallETW::optimized(int32)
     IL_0030:  box        [mscorlib]System.Int32
-    IL_0035:  call       void [System.Console]System.Console::WriteLine(string,
+    IL_0035:  call       void [mscorlib]System.Console::WriteLine(string,
                                                                   object)
     IL_003a:  ldstr      "Helper gives: {0}"
     IL_003f:  ldloc.1
     IL_0040:  call       int32 ETW.TailCallETW::helper(valuetype ETW.threeByteStruct)
     IL_0045:  box        [mscorlib]System.Int32
-    IL_004a:  call       void [System.Console]System.Console::WriteLine(string,
+    IL_004a:  call       void [mscorlib]System.Console::WriteLine(string,
                                                                   object)
     IL_004f:  ldstr      "Failed gives: {0}"
     IL_0054:  ldloc.0
     IL_0055:  call       int32 ETW.TailCallETW::failed(int32)
     IL_005a:  box        [mscorlib]System.Int32
-    IL_005f:  call       void [System.Console]System.Console::WriteLine(string,
+    IL_005f:  call       void [mscorlib]System.Console::WriteLine(string,
                                                                   object)
     IL_0064:  ldc.i4.s   100
     IL_0066:  ret
@@ -279,8 +264,3 @@
   } // end of method TailCallETW::.ctor
 
 } // end of class ETW.TailCallETW
-
-
-// =============================================================
-
-// *********** DISASSEMBLY COMPLETE ***********************

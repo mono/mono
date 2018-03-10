@@ -3,11 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 .assembly extern mscorlib { }
-.assembly extern System.Console
-{
-  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )
-  .ver 4:0:0:0
-}
 .assembly gcval_sideeffect { }
 .namespace JitTest
 {
@@ -73,7 +68,7 @@
       IL_001c:  br.s       IL_0023
 
       IL_001e:  ldstr      "passed"
-      IL_0023:  call       void [System.Console]System.Console::WriteLine(class System.String)
+      IL_0023:  call       void [mscorlib]System.Console::WriteLine(class System.String)
       IL_0028:  ldloc.0
       IL_0029:  stloc.1
       IL_002a:  br.s       IL_002c
@@ -85,5 +80,3 @@
   } // end of class LargeVT
 
 } // end of namespace JitTest
-
-//*********** DISASSEMBLY COMPLETE ***********************

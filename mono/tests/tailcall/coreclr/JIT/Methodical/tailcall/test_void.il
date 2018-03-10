@@ -2,11 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-.assembly extern System.Console
-{
-  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )
-  .ver 4:0:0:0
-}
 .assembly extern mscorlib { }
 .assembly test_void { }
 .namespace JitTest
@@ -29,9 +24,9 @@
       bne.un.s   IL_0029
 
       ldstr      "PASSED: 10! == 3628800"
-      call       void [System.Console]System.Console::WriteLine(class System.String)
+      call       void [mscorlib]System.Console::WriteLine(class System.String)
       ldc.i4.s   100
-      call       void [system.runtime.extensions]System.Environment::Exit(int32)
+      call       void [mscorlib]System.Environment::Exit(int32)
       ret
 
 IL_0029:
@@ -39,9 +34,9 @@ IL_0029:
       ldsflda    int32 JitTest.Test::m
       call       instance class System.String [mscorlib]System.Int32::ToString()
       call       class System.String [mscorlib]System.String::Concat(class System.String, class System.String)
-      call       void [System.Console]System.Console::WriteLine(class System.String)
+      call       void [mscorlib]System.Console::WriteLine(class System.String)
       ldc.i4.s   101
-      call       void [system.runtime.extensions]System.Environment::Exit(int32)
+      call       void [mscorlib]System.Environment::Exit(int32)
       ret
 
 IL_0047:

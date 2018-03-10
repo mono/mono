@@ -2,12 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-.assembly extern System.Console
-{
-  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )
-  .ver 4:0:0:0
-}
-
 .assembly extern mscorlib { }
 .assembly menus { }
 .namespace JitTest
@@ -109,7 +103,7 @@
       IL_0007:  brtrue.s   IL_001b
 
       IL_0009:  ldstr      "CreatePopupMenu failed"
-      IL_000e:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_000e:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0013:  ldc.i4.s   101
       IL_0015:  stloc.3
       IL_0016:  br         IL_00af
@@ -202,7 +196,7 @@
         IL_009f:  endfinally
       }  // end handler
       IL_00a0:  ldstr      "=== PASSED ==="
-      IL_00a5:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_00a5:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_00aa:  ldc.i4.s   100
       IL_00ac:  stloc.3
       IL_00ad:  br.s       IL_00af

@@ -2,36 +2,8 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-.assembly extern System.Console
-{
-  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )
-  .ver 4:0:0:0
-}
-
-
-
-
-
-// Metadata version: v1.2.21127
-.assembly extern legacy library mscorlib
-{
-  .ver 0:0:0:0
-}
-.assembly legacy library bug
-{
-  .ver 0:0:0:0
-}
-.module bug.exe
-// MVID: {643CA244-98FB-40AF-A64C-CDBA1F121F03}
-.imagebase 0x00400000
-.file alignment 0x00000200
-.stackreserve 0x00100000
-.subsystem 0x0003       // WINDOWS_CUI
-.corflags 0x00000001    //  ILONLY
-// Image base: 0x04090000
-
-
-// =============== CLASS MEMBERS DECLARATION ===================
+.assembly extern mscorlib { }
+.assembly bug { }
 
 .namespace JitTest
 {
@@ -64,7 +36,7 @@
       // Code size       11 (0xb)
       .maxstack  8
       IL_0000:  ldstr      "Looks good."
-      IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_000a:  ret
     } // end of method Test::DummyMethod
 
@@ -109,8 +81,3 @@
   } // end of class Test
 
 } // end of namespace JitTest
-
-
-// =============================================================
-
-//*********** DISASSEMBLY COMPLETE ***********************

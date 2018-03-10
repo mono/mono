@@ -2,27 +2,12 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-
-
 // Metadata version: v2.0.50727
 .module extern kernel32
 
 .assembly extern mscorlib { }
-.assembly extern System.Console
-{
-  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )
-  .ver 4:0:0:0
-}
-.assembly extern System.Threading.Thread
-{
-  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )
-  .ver 4:0:0:0
-}
-.assembly extern System.Linq
-{
-  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )                     
-  .ver 4:0:0:0
-}
+.assembly extern System.Core { }
+
 .assembly TailcallVerifyWithPrefix
 {
   .custom instance void [mscorlib]System.Reflection.AssemblyDescriptionAttribute::.ctor(string) = ( 01 00 00 00 00 ) 
@@ -76,7 +61,7 @@
     IL_0000:  ldstr      "Executing Condition18.Test1 - Caller(declarative s"
     + "ecurity): Arguments: None - ReturnType: 3 byte struct; Callee: Argument"
     + "s: None - ReturnType: 3 byte struct"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition18::Result
     .try
@@ -104,14 +89,14 @@
       IL_003c:  beq.s   IL_006e
 
       IL_003e:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0043:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0043:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0048:  ldstr      "------------------------------------------------"
-      IL_004d:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0052:  call       void [System.Console]System.Console::WriteLine()
+      IL_004d:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0052:  call       void [mscorlib]System.Console::WriteLine()
       IL_0057:  ldloc.0
       IL_0058:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005d:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0062:  call       void [System.Console]System.Console::WriteLine()
+      IL_005d:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0062:  call       void [mscorlib]System.Console::WriteLine()
       IL_0067:  ldc.i4.s   101
       IL_0069:  stsfld     int32 TailcallVerify.Condition18::Result
       IL_006e:  leave.s    IL_0070
@@ -128,7 +113,7 @@
     IL_0085:  ldstr      "PASSED"
     IL_008a:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_008f:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_008f:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0094:  ldsfld     int32 TailcallVerify.Condition18::Result
     IL_0099:  ret
   } // end of method Condition18::Test1
@@ -148,7 +133,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition18::Result
     IL_002e:  tail. call       valuetype TailcallVerify.ValueType3Bytes TailcallVerify.Condition18::Callee1()
@@ -182,7 +167,7 @@
     IL_0000:  ldstr      "Executing Condition18.Test2 - Caller(imperative se"
     + "curity): Arguments: None - ReturnType: 3 byte struct; Callee: Arguments"
     + ": None - ReturnType: 3 byte struct"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition18::Result
     .try
@@ -210,14 +195,14 @@
       IL_003c:  bne.un.s   IL_006e
 
       IL_003e:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0043:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0043:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0048:  ldstr      "------------------------------------------------"
-      IL_004d:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0052:  call       void [System.Console]System.Console::WriteLine()
+      IL_004d:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0052:  call       void [mscorlib]System.Console::WriteLine()
       IL_0057:  ldloc.0
       IL_0058:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005d:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0062:  call       void [System.Console]System.Console::WriteLine()
+      IL_005d:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0062:  call       void [mscorlib]System.Console::WriteLine()
       IL_0067:  ldc.i4.s   101
       IL_0069:  stsfld     int32 TailcallVerify.Condition18::Result
       IL_006e:  leave.s    IL_0070
@@ -234,7 +219,7 @@
     IL_0085:  ldstr      "PASSED"
     IL_008a:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_008f:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_008f:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0094:  ldsfld     int32 TailcallVerify.Condition18::Result
     IL_0099:  ret
   } // end of method Condition18::Test2
@@ -260,7 +245,7 @@
     IL_0028:  bne.un.s   IL_003b
 
     IL_002a:  ldstr      "Failed, Method was inlined..."
-    IL_002f:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_002f:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0034:  ldc.i4.s   101
     IL_0036:  stsfld     int32 TailcallVerify.Condition18::Result
     IL_003b:  tail. call       valuetype TailcallVerify.ValueType3Bytes TailcallVerify.Condition18::Callee2()
@@ -294,7 +279,7 @@
     IL_0000:  ldstr      "Executing Condition18.Test3 - Caller(imperative se"
     + "curity): Arguments: None - ReturnType: 3 byte struct; Callee: Arguments"
     + ": None - ReturnType: 3 byte struct"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition18::Result
     .try
@@ -322,14 +307,14 @@
       IL_003c:  bne.un.s   IL_006e
 
       IL_003e:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0043:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0043:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0048:  ldstr      "------------------------------------------------"
-      IL_004d:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0052:  call       void [System.Console]System.Console::WriteLine()
+      IL_004d:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0052:  call       void [mscorlib]System.Console::WriteLine()
       IL_0057:  ldloc.0
       IL_0058:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005d:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0062:  call       void [System.Console]System.Console::WriteLine()
+      IL_005d:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0062:  call       void [mscorlib]System.Console::WriteLine()
       IL_0067:  ldc.i4.s   101
       IL_0069:  stsfld     int32 TailcallVerify.Condition18::Result
       IL_006e:  leave.s    IL_0070
@@ -346,7 +331,7 @@
     IL_0085:  ldstr      "PASSED"
     IL_008a:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_008f:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_008f:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0094:  ldsfld     int32 TailcallVerify.Condition18::Result
     IL_0099:  ret
   } // end of method Condition18::Test3
@@ -372,7 +357,7 @@
     IL_0028:  bne.un.s   IL_003b
 
     IL_002a:  ldstr      "Failed, Method was inlined..."
-    IL_002f:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_002f:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0034:  ldc.i4.s   101
     IL_0036:  stsfld     int32 TailcallVerify.Condition18::Result
     IL_003b:  tail. call       valuetype TailcallVerify.ValueType3Bytes TailcallVerify.Condition18::Callee3()
@@ -461,7 +446,7 @@
     IL_0000:  ldstr      "Executing Condition17.Test1 - Caller: Arguments: N"
     + "one - ReturnType: 3 byte struct; Callee: Arguments: None - ReturnType: "
     + "void"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition17::Result
     .try
@@ -492,14 +477,14 @@
 
       IL_0046:  ldstr      "FAILED: DID NOT find the word 'Caller' in the stac"
       + "ktrace."
-      IL_004b:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_004b:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0050:  ldstr      "------------------------------------------------"
-      IL_0055:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_005a:  call       void [System.Console]System.Console::WriteLine()
+      IL_0055:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_005a:  call       void [mscorlib]System.Console::WriteLine()
       IL_005f:  ldloc.1
       IL_0060:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_0065:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_006a:  call       void [System.Console]System.Console::WriteLine()
+      IL_0065:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_006a:  call       void [mscorlib]System.Console::WriteLine()
       IL_006f:  ldc.i4.s   101
       IL_0071:  stsfld     int32 TailcallVerify.Condition17::Result
       IL_0076:  leave.s    IL_0078
@@ -516,7 +501,7 @@
     IL_008d:  ldstr      "PASSED"
     IL_0092:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_0097:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0097:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_009c:  ldsfld     int32 TailcallVerify.Condition17::Result
     IL_00a1:  ret
   } // end of method Condition17::Test1
@@ -535,7 +520,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition17::Result
     IL_002e:  ldarga.s   u
@@ -603,10 +588,10 @@
     .maxstack  3
     .locals init ([0] class TailcallVerify.Condition16 con,
              [1] class [mscorlib]System.Exception e,
-             [2] class [System.Threading.Thread]System.Threading.Thread t)
+             [2] class [mscorlib]System.Threading.Thread t)
     IL_0000:  ldstr      "Executing Condition16.Test1 - Caller: Arguments: N"
     + "one - ReturnType: void; Callee: Arguments: None - ReturnType: void"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition16::Result
     IL_0011:  newobj     instance void TailcallVerify.Condition16::.ctor()
@@ -636,14 +621,14 @@
       IL_0045:  bne.un.s   IL_0077
 
       IL_0047:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_004c:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_004c:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0051:  ldstr      "------------------------------------------------"
-      IL_0056:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_005b:  call       void [System.Console]System.Console::WriteLine()
+      IL_0056:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_005b:  call       void [mscorlib]System.Console::WriteLine()
       IL_0060:  ldloc.1
       IL_0061:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_0066:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_006b:  call       void [System.Console]System.Console::WriteLine()
+      IL_0066:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_006b:  call       void [mscorlib]System.Console::WriteLine()
       IL_0070:  ldc.i4.s   101
       IL_0072:  stsfld     int32 TailcallVerify.Condition16::Result
       IL_0077:  ldsfld     class [mscorlib]System.Threading.ParameterizedThreadStart TailcallVerify.Condition16::'CS$<>9__CachedAnonymousMethodDelegate1'
@@ -655,13 +640,13 @@
                                                                                                     native int)
       IL_008a:  stsfld     class [mscorlib]System.Threading.ParameterizedThreadStart TailcallVerify.Condition16::'CS$<>9__CachedAnonymousMethodDelegate1'
       IL_008f:  ldsfld     class [mscorlib]System.Threading.ParameterizedThreadStart TailcallVerify.Condition16::'CS$<>9__CachedAnonymousMethodDelegate1'
-      IL_0094:  newobj     instance void [System.Threading.Thread]System.Threading.Thread::.ctor(class [mscorlib]System.Threading.ParameterizedThreadStart)
+      IL_0094:  newobj     instance void [mscorlib]System.Threading.Thread::.ctor(class [mscorlib]System.Threading.ParameterizedThreadStart)
       IL_0099:  stloc.2
       IL_009a:  ldloc.2
       IL_009b:  ldloc.0
-      IL_009c:  callvirt   instance void [System.Threading.Thread]System.Threading.Thread::Start(object)
+      IL_009c:  callvirt   instance void [mscorlib]System.Threading.Thread::Start(object)
       IL_00a1:  ldloc.2
-      IL_00a2:  callvirt   instance void [System.Threading.Thread]System.Threading.Thread::Join()
+      IL_00a2:  callvirt   instance void [mscorlib]System.Threading.Thread::Join()
       IL_00a7:  leave.s    IL_00a9
 
     }  // end handler
@@ -676,7 +661,7 @@
     IL_00be:  ldstr      "PASSED"
     IL_00c3:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_00c8:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_00c8:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_00cd:  ldsfld     int32 TailcallVerify.Condition16::Result
     IL_00d2:  ret
   } // end of method Condition16::Test1
@@ -696,7 +681,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition16::Result
     IL_002e:  ldarg.0
@@ -709,7 +694,7 @@
   {
     // Code size       59 (0x3b)
     .maxstack  3
-    .locals init ([0] class [System.Threading.Thread]System.Threading.Thread t)
+    .locals init ([0] class [mscorlib]System.Threading.Thread t)
     IL_0000:  ldsfld     class [mscorlib]System.Threading.ParameterizedThreadStart TailcallVerify.Condition16::'CS$<>9__CachedAnonymousMethodDelegate3'
     IL_0005:  brtrue.s   IL_0018
 
@@ -719,13 +704,13 @@
                                                                                                   native int)
     IL_0013:  stsfld     class [mscorlib]System.Threading.ParameterizedThreadStart TailcallVerify.Condition16::'CS$<>9__CachedAnonymousMethodDelegate3'
     IL_0018:  ldsfld     class [mscorlib]System.Threading.ParameterizedThreadStart TailcallVerify.Condition16::'CS$<>9__CachedAnonymousMethodDelegate3'
-    IL_001d:  newobj     instance void [System.Threading.Thread]System.Threading.Thread::.ctor(class [mscorlib]System.Threading.ParameterizedThreadStart)
+    IL_001d:  newobj     instance void [mscorlib]System.Threading.Thread::.ctor(class [mscorlib]System.Threading.ParameterizedThreadStart)
     IL_0022:  stloc.0
     IL_0023:  ldloc.0
     IL_0024:  ldarg.0
-    IL_0025:  callvirt   instance void [System.Threading.Thread]System.Threading.Thread::Start(object)
+    IL_0025:  callvirt   instance void [mscorlib]System.Threading.Thread::Start(object)
     IL_002a:  ldloc.0
-    IL_002b:  callvirt   instance void [System.Threading.Thread]System.Threading.Thread::Join()
+    IL_002b:  callvirt   instance void [mscorlib]System.Threading.Thread::Join()
     IL_0030:  ldc.i4.1
     IL_0031:  volatile.
     IL_0033:  ldsfld     int32 modreq([mscorlib]System.Runtime.CompilerServices.IsVolatile) TailcallVerify.Condition16::zero
@@ -759,13 +744,13 @@
     IL_000b:  brfalse.s  IL_001e
 
     IL_000d:  ldstr      "GOOD: got the lock again..."
-    IL_0012:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0012:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0017:  ldarg.0
     IL_0018:  call       void [mscorlib]System.Threading.Monitor::Exit(object)
     IL_001d:  ret
 
     IL_001e:  ldstr      "BAD: Failed to get the lock"
-    IL_0023:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0023:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0028:  ldc.i4.s   101
     IL_002a:  stsfld     int32 TailcallVerify.Condition16::Result
     IL_002f:  ret
@@ -783,13 +768,13 @@
     IL_000b:  brfalse.s  IL_001f
 
     IL_000d:  ldstr      "BAD: got the lock again..."
-    IL_0012:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0012:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0017:  ldc.i4.s   101
     IL_0019:  stsfld     int32 TailcallVerify.Condition16::Result
     IL_001e:  ret
 
     IL_001f:  ldstr      "GOOD: Failed to get the lock"
-    IL_0024:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0024:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0029:  ret
   } // end of method Condition16::'<Callee1>b__2'
 
@@ -821,7 +806,7 @@
     IL_0000:  ldstr      "Executing Condition13.Test1 - Caller: Arguments: N"
     + "one - ReturnType: 3 byte struct; Callee: Arguments: None - ReturnType: "
     + "3 byte struct"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition13::Result
     .try
@@ -849,14 +834,14 @@
       IL_003c:  beq.s      IL_006e
 
       IL_003e:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0043:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0043:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0048:  ldstr      "------------------------------------------------"
-      IL_004d:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0052:  call       void [System.Console]System.Console::WriteLine()
+      IL_004d:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0052:  call       void [mscorlib]System.Console::WriteLine()
       IL_0057:  ldloc.0
       IL_0058:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005d:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0062:  call       void [System.Console]System.Console::WriteLine()
+      IL_005d:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0062:  call       void [mscorlib]System.Console::WriteLine()
       IL_0067:  ldc.i4.s   101
       IL_0069:  stsfld     int32 TailcallVerify.Condition13::Result
       IL_006e:  leave.s    IL_0070
@@ -873,7 +858,7 @@
     IL_0085:  ldstr      "PASSED"
     IL_008a:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_008f:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_008f:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0094:  ldsfld     int32 TailcallVerify.Condition13::Result
     IL_0099:  ret
   } // end of method Condition13::Test1
@@ -893,7 +878,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition13::Result
     IL_002e:  tail. call       valuetype TailcallVerify.ValueType3Bytes TailcallVerify.Condition13::Callee1()
@@ -957,7 +942,7 @@
     IL_0000:  ldstr      "Executing Condition12.Test1 - Caller: Arguments: i"
     + "nt,int,int - ReturnType: void; Callee: Arguments: string,string,string "
     + "- ReturnType: void"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition12::Result
     .try
@@ -988,14 +973,14 @@
       IL_0030:  beq.s      IL_0062
 
       IL_0032:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0037:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0037:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_003c:  ldstr      "------------------------------------------------"
-      IL_0041:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0046:  call       void [System.Console]System.Console::WriteLine()
+      IL_0041:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0046:  call       void [mscorlib]System.Console::WriteLine()
       IL_004b:  ldloc.0
       IL_004c:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_0051:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0056:  call       void [System.Console]System.Console::WriteLine()
+      IL_0051:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0056:  call       void [mscorlib]System.Console::WriteLine()
       IL_005b:  ldc.i4.s   101
       IL_005d:  stsfld     int32 TailcallVerify.Condition12::Result
       IL_0062:  leave.s    IL_0064
@@ -1012,7 +997,7 @@
     IL_0079:  ldstr      "PASSED"
     IL_007e:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_0083:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0083:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0088:  ldsfld     int32 TailcallVerify.Condition12::Result
     IL_008d:  ret
   } // end of method Condition12::Test1
@@ -1036,7 +1021,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition12::Result
     IL_002e:  ldstr      "1"
@@ -1120,7 +1105,7 @@
     IL_0000:  ldstr      "Executing Condition9.Test1 - Caller: Arguments: No"
     + "ne - ReturnType: void; Callee(Interface Member): Arguments: None - Retu"
     + "rnType: void"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition9::Result
     .try
@@ -1147,14 +1132,14 @@
       IL_003b:  beq.s      IL_006d
 
       IL_003d:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0042:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0042:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0047:  ldstr      "------------------------------------------------"
-      IL_004c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0051:  call       void [System.Console]System.Console::WriteLine()
+      IL_004c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0051:  call       void [mscorlib]System.Console::WriteLine()
       IL_0056:  ldloc.0
       IL_0057:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0061:  call       void [System.Console]System.Console::WriteLine()
+      IL_005c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0061:  call       void [mscorlib]System.Console::WriteLine()
       IL_0066:  ldc.i4.s   101
       IL_0068:  stsfld     int32 TailcallVerify.Condition9::Result
       IL_006d:  leave.s    IL_006f
@@ -1171,7 +1156,7 @@
     IL_0084:  ldstr      "PASSED"
     IL_0089:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_008e:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_008e:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0093:  ldsfld     int32 TailcallVerify.Condition9::Result
     IL_0098:  ret
   } // end of method Condition9::Test1
@@ -1191,7 +1176,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition9::Result
     IL_002e:  newobj     instance void TailcallVerify.Condition9::.ctor()
@@ -1252,7 +1237,7 @@
     IL_0000:  ldstr      "Executing Condition11.Test1 - Caller: Arguments: N"
     + "one - ReturnType: void; Callee(virtual): Arguments: None - ReturnType: "
     + "void"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition11::Result
     .try
@@ -1279,14 +1264,14 @@
       IL_003b:  beq.s      IL_006d
 
       IL_003d:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0042:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0042:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0047:  ldstr      "------------------------------------------------"
-      IL_004c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0051:  call       void [System.Console]System.Console::WriteLine()
+      IL_004c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0051:  call       void [mscorlib]System.Console::WriteLine()
       IL_0056:  ldloc.0
       IL_0057:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0061:  call       void [System.Console]System.Console::WriteLine()
+      IL_005c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0061:  call       void [mscorlib]System.Console::WriteLine()
       IL_0066:  ldc.i4.s   101
       IL_0068:  stsfld     int32 TailcallVerify.Condition11::Result
       IL_006d:  leave.s    IL_006f
@@ -1303,7 +1288,7 @@
     IL_0084:  ldstr      "PASSED"
     IL_0089:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_008e:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_008e:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0093:  ldsfld     int32 TailcallVerify.Condition11::Result
     IL_0098:  ret
   } // end of method Condition11::Test1
@@ -1323,7 +1308,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition11::Result
     IL_002e:  newobj     instance void TailcallVerify.Condition11::.ctor()
@@ -1355,7 +1340,7 @@
     IL_0000:  ldstr      "Executing Condition11.Test2  - Caller: Arguments: "
     + "None - ReturnType: void; Callee (virtual call): Arguments: 0 - ReturnTy"
     + "pe: Int32"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition11::Result
     .try
@@ -1385,14 +1370,14 @@
       IL_0042:  beq.s      IL_0074
 
       IL_0044:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0049:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0049:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_004e:  ldstr      "------------------------------------------------"
-      IL_0053:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0058:  call       void [System.Console]System.Console::WriteLine()
+      IL_0053:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0058:  call       void [mscorlib]System.Console::WriteLine()
       IL_005d:  ldloc.1
       IL_005e:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_0063:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0068:  call       void [System.Console]System.Console::WriteLine()
+      IL_0063:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0068:  call       void [mscorlib]System.Console::WriteLine()
       IL_006d:  ldc.i4.s   101
       IL_006f:  stsfld     int32 TailcallVerify.Condition11::Result
       IL_0074:  leave.s    IL_0076
@@ -1409,7 +1394,7 @@
     IL_008b:  ldstr      "PASSED"
     IL_0090:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_0095:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0095:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_009a:  ldsfld     int32 TailcallVerify.Condition11::Result
     IL_009f:  ret
   } // end of method Condition11::Test2
@@ -1429,7 +1414,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition11::Result
     IL_002e:  ldarg.0
@@ -1886,10 +1871,10 @@
     IL_0388:  callvirt   instance class [mscorlib]System.Text.StringBuilder [mscorlib]System.Text.StringBuilder::AppendLine(string)
     IL_038d:  pop
     IL_038e:  ldstr      "RunTests.bat written to your current folder!!"
-    IL_0393:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0393:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0398:  ldstr      "Make sure BVT_ROOT is set or Condition23.Test1 wil"
     + "l fail!!"
-    IL_039d:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_039d:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_03a2:  ldstr      "RunTests.bat"
     IL_03a7:  ldloc.s    sb
     IL_03a9:  callvirt   instance string [mscorlib]System.Object::ToString()
@@ -2778,7 +2763,7 @@
 
     IL_0792:  ldstr      "Make sure to run this with Tools\\PartialTr"
     + "ustRunner\\PTRunner.exe or it will fail!!"
-    IL_0797:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0797:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_079c:  call       int32 TailcallVerify.Condition23::Test1()
     IL_07a1:  call       void TailcallVerify.Program::set_Result(int32)
     IL_07a6:  call       int32 TailcallVerify.Program::get_Result()
@@ -2972,24 +2957,24 @@
     .maxstack  1
     IL_0000:  ldstr      "TailcallVerifyWithPrefix.exe ConditionX.TestX | /\? |"
     + " /create"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldstr      "------------------ Available Switches ------------"
     + "--------"
-    IL_000f:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_000f:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0014:  ldstr      "No Arguments: Runs all contained testcases (better"
     + " use the /create switch)"
-    IL_0019:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0019:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_001e:  ldstr      "ConditionX.TestX: Runs one of the contained testca"
     + "ses, e.g. Condtion1.Test1"
-    IL_0023:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0023:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0028:  ldstr      "/\?: This little help..."
-    IL_002d:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_002d:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0032:  ldstr      "/Create: Creates a little RunTests.bat file in the"
     + " same folder which runs all testcases "
-    IL_0037:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0037:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_003c:  ldstr      "and opens a result.txt file containing the ERRORLE"
     + "VEL for each."
-    IL_0041:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0041:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0046:  ret
   } // end of method Program::Usage
 
@@ -3032,7 +3017,7 @@
     .locals init ([0] class [mscorlib]System.Exception e)
     IL_0000:  ldstr      "Executing Condition8.Test1 - Caller: Arguments: No"
     + "ne - ReturnType: void; Callee: Arguments: varargs - ReturnType: void"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition8::Result
     .try
@@ -3059,14 +3044,14 @@
       IL_003b:  beq.s      IL_006d
 
       IL_003d:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0042:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0042:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0047:  ldstr      "------------------------------------------------"
-      IL_004c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0051:  call       void [System.Console]System.Console::WriteLine()
+      IL_004c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0051:  call       void [mscorlib]System.Console::WriteLine()
       IL_0056:  ldloc.0
       IL_0057:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0061:  call       void [System.Console]System.Console::WriteLine()
+      IL_005c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0061:  call       void [mscorlib]System.Console::WriteLine()
       IL_0066:  ldc.i4.s   101
       IL_0068:  stsfld     int32 TailcallVerify.Condition8::Result
       IL_006d:  leave.s    IL_006f
@@ -3083,7 +3068,7 @@
     IL_0084:  ldstr      "PASSED"
     IL_0089:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_008e:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_008e:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0093:  ldsfld     int32 TailcallVerify.Condition8::Result
     IL_0098:  ret
   } // end of method Condition8::Test1
@@ -3102,7 +3087,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition8::Result
     IL_002e:  ldc.i4.0
@@ -3135,7 +3120,7 @@
     .locals init ([0] class [mscorlib]System.Exception e)
     IL_0000:  ldstr      "Executing Condition8.Test2 - Caller: Arguments: va"
     + "rargs - ReturnType: void; Callee: Arguments: None - ReturnType: void"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition8::Result
     .try
@@ -3168,14 +3153,14 @@
       IL_003e:  beq.s      IL_0070
 
       IL_0040:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0045:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0045:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_004a:  ldstr      "------------------------------------------------"
-      IL_004f:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0054:  call       void [System.Console]System.Console::WriteLine()
+      IL_004f:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0054:  call       void [mscorlib]System.Console::WriteLine()
       IL_0059:  ldloc.0
       IL_005a:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005f:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0064:  call       void [System.Console]System.Console::WriteLine()
+      IL_005f:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0064:  call       void [mscorlib]System.Console::WriteLine()
       IL_0069:  ldc.i4.s   101
       IL_006b:  stsfld     int32 TailcallVerify.Condition8::Result
       IL_0070:  leave.s    IL_0072
@@ -3192,7 +3177,7 @@
     IL_0087:  ldstr      "PASSED"
     IL_008c:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_0091:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0091:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0096:  ldsfld     int32 TailcallVerify.Condition8::Result
     IL_009b:  ret
   } // end of method Condition8::Test2
@@ -3212,7 +3197,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition8::Result
     IL_002e:  tail. call       void TailcallVerify.Condition8::Callee2()
@@ -3238,7 +3223,7 @@
     .locals init ([0] class [mscorlib]System.Exception e)
     IL_0000:  ldstr      "Executing Condition8.Test3 - Caller: Arguments: va"
     + "rarg - ReturnType: void; Callee: Arguments: vararg - ReturnType: void"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition8::Result
     .try
@@ -3271,14 +3256,14 @@
       IL_003e:  beq.s      IL_0070
 
       IL_0040:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0045:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0045:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_004a:  ldstr      "------------------------------------------------"
-      IL_004f:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0054:  call       void [System.Console]System.Console::WriteLine()
+      IL_004f:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0054:  call       void [mscorlib]System.Console::WriteLine()
       IL_0059:  ldloc.0
       IL_005a:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005f:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0064:  call       void [System.Console]System.Console::WriteLine()
+      IL_005f:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0064:  call       void [mscorlib]System.Console::WriteLine()
       IL_0069:  ldc.i4.s   101
       IL_006b:  stsfld     int32 TailcallVerify.Condition8::Result
       IL_0070:  leave.s    IL_0072
@@ -3295,7 +3280,7 @@
     IL_0087:  ldstr      "PASSED"
     IL_008c:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_0091:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0091:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0096:  ldsfld     int32 TailcallVerify.Condition8::Result
     IL_009b:  ret
   } // end of method Condition8::Test3
@@ -3315,7 +3300,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition8::Result
     IL_002e:  ldc.i4.0
@@ -3391,7 +3376,7 @@
     + "one - ReturnType: void; CalleeIsOdd1: Arguments: int, int, int, int, 3 "
     + "byte struct - ReturnType: 3 byte struct; CalleeIsEven1: Arguments: int,"
     + " int, int, int, 3 byte struct - ReturnType: 3 byte struct;"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition21::Result
     IL_0011:  ldsfld     class [mscorlib]System.Collections.Generic.List`1<int64> TailcallVerify.Condition21::evenList
@@ -3422,28 +3407,28 @@
       IL_004f:  beq.s      IL_0081
 
       IL_0051:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0056:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0056:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_005b:  ldstr      "------------------------------------------------"
-      IL_0060:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0065:  call       void [System.Console]System.Console::WriteLine()
+      IL_0060:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0065:  call       void [mscorlib]System.Console::WriteLine()
       IL_006a:  ldloc.0
       IL_006b:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_0070:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0075:  call       void [System.Console]System.Console::WriteLine()
+      IL_0070:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0075:  call       void [mscorlib]System.Console::WriteLine()
       IL_007a:  ldc.i4.s   101
       IL_007c:  stsfld     int32 TailcallVerify.Condition21::Result
       IL_0081:  leave.s    IL_0083
 
     }  // end handler
     IL_0083:  ldsfld     class [mscorlib]System.Collections.Generic.List`1<int64> TailcallVerify.Condition21::evenList
-    IL_0088:  call       class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0> [System.Linq]System.Linq.Enumerable::Distinct<int64>(class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0>)
-    IL_008d:  call       int32 [System.Linq]System.Linq.Enumerable::Count<int64>(class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0>)
+    IL_0088:  call       class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0> [System.Core]System.Linq.Enumerable::Distinct<int64>(class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0>)
+    IL_008d:  call       int32 [System.Core]System.Linq.Enumerable::Count<int64>(class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0>)
     IL_0092:  ldc.i4.1
     IL_0093:  beq.s      IL_00e4
 
     IL_0095:  ldstr      "FAILED: The local on the stack for CalleeIsEven3 s"
     + "hifted. (should have always the same address)"
-    IL_009a:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_009a:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_009f:  ldsfld     class [mscorlib]System.Collections.Generic.List`1<int64> TailcallVerify.Condition21::evenList
     IL_00a4:  callvirt   instance valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<!0> class [mscorlib]System.Collections.Generic.List`1<int64>::GetEnumerator()
     IL_00a9:  stloc.3
@@ -3457,7 +3442,7 @@
       IL_00b4:  ldstr      "0x{0:x8}"
       IL_00b9:  ldloc.1
       IL_00ba:  box        [mscorlib]System.Int64
-      IL_00bf:  call       void [System.Console]System.Console::WriteLine(string,
+      IL_00bf:  call       void [mscorlib]System.Console::WriteLine(string,
                                                                     object)
       IL_00c4:  ldloca.s   CS$5$0000
       IL_00c6:  call       instance bool valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<int64>::MoveNext()
@@ -3476,14 +3461,14 @@
     IL_00dd:  ldc.i4.s   101
     IL_00df:  stsfld     int32 TailcallVerify.Condition21::Result
     IL_00e4:  ldsfld     class [mscorlib]System.Collections.Generic.List`1<int64> TailcallVerify.Condition21::oddList
-    IL_00e9:  call       class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0> [System.Linq]System.Linq.Enumerable::Distinct<int64>(class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0>)
-    IL_00ee:  call       int32 [System.Linq]System.Linq.Enumerable::Count<int64>(class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0>)
+    IL_00e9:  call       class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0> [System.Core]System.Linq.Enumerable::Distinct<int64>(class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0>)
+    IL_00ee:  call       int32 [System.Core]System.Linq.Enumerable::Count<int64>(class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0>)
     IL_00f3:  ldc.i4.1
     IL_00f4:  beq.s      IL_0146
 
     IL_00f6:  ldstr      "FAILED: The local on the stack for CalleeIsOdd3 sh"
     + "ifted. (should have always the same address)"
-    IL_00fb:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_00fb:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0100:  ldsfld     class [mscorlib]System.Collections.Generic.List`1<int64> TailcallVerify.Condition21::oddList
     IL_0105:  callvirt   instance valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<!0> class [mscorlib]System.Collections.Generic.List`1<int64>::GetEnumerator()
     IL_010a:  stloc.s    CS$5$0001
@@ -3497,7 +3482,7 @@
       IL_0116:  ldstr      "0x{0:x8}"
       IL_011b:  ldloc.2
       IL_011c:  box        [mscorlib]System.Int64
-      IL_0121:  call       void [System.Console]System.Console::WriteLine(string,
+      IL_0121:  call       void [mscorlib]System.Console::WriteLine(string,
                                                                     object)
       IL_0126:  ldloca.s   CS$5$0001
       IL_0128:  call       instance bool valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<int64>::MoveNext()
@@ -3526,7 +3511,7 @@
     IL_015b:  ldstr      "PASSED"
     IL_0160:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_0165:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0165:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_016a:  ldsfld     int32 TailcallVerify.Condition21::Result
     IL_016f:  ret
   } // end of method Condition21::Test1
@@ -3548,7 +3533,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "FAILED: Caller3 was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition21::Result
     IL_002e:  ldloca.s   CS$0$0000
@@ -3631,7 +3616,7 @@
     IL_0048:  beq.s      IL_005b
 
     IL_004a:  ldstr      "FAILED: Passed in arguments are wrong..."
-    IL_004f:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_004f:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0054:  ldc.i4.s   101
     IL_0056:  stsfld     int32 TailcallVerify.Condition21::Result
     IL_005b:  ldc.i4.0
@@ -3644,7 +3629,7 @@
     IL_0076:  bne.un.s   IL_0089
 
     IL_0078:  ldstr      "FAILED: CalleeIsOdd3 was inlined..."
-    IL_007d:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_007d:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0082:  ldc.i4.s   101
     IL_0084:  stsfld     int32 TailcallVerify.Condition21::Result
     IL_0089:  ldarg.0
@@ -3727,7 +3712,7 @@
     IL_0048:  beq.s      IL_005b
 
     IL_004a:  ldstr      "FAILED: Passed in arguments are wrong..."
-    IL_004f:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_004f:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0054:  ldc.i4.s   101
     IL_0056:  stsfld     int32 TailcallVerify.Condition21::Result
     IL_005b:  ldc.i4.0
@@ -3740,7 +3725,7 @@
     IL_0076:  bne.un.s   IL_0089
 
     IL_0078:  ldstr      "FAILED: CalleeIsEven3 was inlined..."
-    IL_007d:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_007d:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0082:  ldc.i4.s   101
     IL_0084:  stsfld     int32 TailcallVerify.Condition21::Result
     IL_0089:  ldarg.0
@@ -3785,7 +3770,7 @@
     + "one - ReturnType: void; CalleeIsOdd3: Arguments: int, int, int, int, 3 "
     + "byte struct - ReturnType: 3 byte struct; CalleeIsEven3: Arguments: int,"
     + " int, int, int, 3 byte struct - ReturnType: 3 byte struct;"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition21::Result
     IL_0011:  ldsfld     class [mscorlib]System.Collections.Generic.List`1<int64> TailcallVerify.Condition21::evenList
@@ -3816,28 +3801,28 @@
       IL_004f:  beq.s      IL_0081
 
       IL_0051:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0056:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0056:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_005b:  ldstr      "------------------------------------------------"
-      IL_0060:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0065:  call       void [System.Console]System.Console::WriteLine()
+      IL_0060:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0065:  call       void [mscorlib]System.Console::WriteLine()
       IL_006a:  ldloc.0
       IL_006b:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_0070:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0075:  call       void [System.Console]System.Console::WriteLine()
+      IL_0070:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0075:  call       void [mscorlib]System.Console::WriteLine()
       IL_007a:  ldc.i4.s   101
       IL_007c:  stsfld     int32 TailcallVerify.Condition21::Result
       IL_0081:  leave.s    IL_0083
 
     }  // end handler
     IL_0083:  ldsfld     class [mscorlib]System.Collections.Generic.List`1<int64> TailcallVerify.Condition21::evenList
-    IL_0088:  call       class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0> [System.Linq]System.Linq.Enumerable::Distinct<int64>(class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0>)
-    IL_008d:  call       int32 [System.Linq]System.Linq.Enumerable::Count<int64>(class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0>)
+    IL_0088:  call       class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0> [System.Core]System.Linq.Enumerable::Distinct<int64>(class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0>)
+    IL_008d:  call       int32 [System.Core]System.Linq.Enumerable::Count<int64>(class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0>)
     IL_0092:  ldc.i4.2
     IL_0093:  beq.s      IL_00e4
 
     IL_0095:  ldstr      "FAILED: The local on the stack for CalleeIsEven3 s"
     + "hifted. (should have always the same address except for the first one.)"
-    IL_009a:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_009a:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_009f:  ldsfld     class [mscorlib]System.Collections.Generic.List`1<int64> TailcallVerify.Condition21::evenList
     IL_00a4:  callvirt   instance valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<!0> class [mscorlib]System.Collections.Generic.List`1<int64>::GetEnumerator()
     IL_00a9:  stloc.3
@@ -3851,7 +3836,7 @@
       IL_00b4:  ldstr      "0x{0:x8}"
       IL_00b9:  ldloc.1
       IL_00ba:  box        [mscorlib]System.Int64
-      IL_00bf:  call       void [System.Console]System.Console::WriteLine(string,
+      IL_00bf:  call       void [mscorlib]System.Console::WriteLine(string,
                                                                     object)
       IL_00c4:  ldloca.s   CS$5$0000
       IL_00c6:  call       instance bool valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<int64>::MoveNext()
@@ -3870,14 +3855,14 @@
     IL_00dd:  ldc.i4.s   101
     IL_00df:  stsfld     int32 TailcallVerify.Condition21::Result
     IL_00e4:  ldsfld     class [mscorlib]System.Collections.Generic.List`1<int64> TailcallVerify.Condition21::oddList
-    IL_00e9:  call       class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0> [System.Linq]System.Linq.Enumerable::Distinct<int64>(class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0>)
-    IL_00ee:  call       int32 [System.Linq]System.Linq.Enumerable::Count<int64>(class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0>)
+    IL_00e9:  call       class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0> [System.Core]System.Linq.Enumerable::Distinct<int64>(class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0>)
+    IL_00ee:  call       int32 [System.Core]System.Linq.Enumerable::Count<int64>(class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0>)
     IL_00f3:  ldc.i4.1
     IL_00f4:  beq.s      IL_0146
 
     IL_00f6:  ldstr      "FAILED: The local on the stack for CalleeIsOdd3 sh"
     + "ifted. (should have always the same address)"
-    IL_00fb:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_00fb:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0100:  ldsfld     class [mscorlib]System.Collections.Generic.List`1<int64> TailcallVerify.Condition21::oddList
     IL_0105:  callvirt   instance valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<!0> class [mscorlib]System.Collections.Generic.List`1<int64>::GetEnumerator()
     IL_010a:  stloc.s    CS$5$0001
@@ -3891,7 +3876,7 @@
       IL_0116:  ldstr      "0x{0:x8}"
       IL_011b:  ldloc.2
       IL_011c:  box        [mscorlib]System.Int64
-      IL_0121:  call       void [System.Console]System.Console::WriteLine(string,
+      IL_0121:  call       void [mscorlib]System.Console::WriteLine(string,
                                                                     object)
       IL_0126:  ldloca.s   CS$5$0001
       IL_0128:  call       instance bool valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<int64>::MoveNext()
@@ -3920,7 +3905,7 @@
     IL_015b:  ldstr      "PASSED"
     IL_0160:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_0165:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0165:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_016a:  ldsfld     int32 TailcallVerify.Condition21::Result
     IL_016f:  ret
   } // end of method Condition21::Test2
@@ -3940,7 +3925,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "FAILED: Caller3 was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition21::Result
     IL_002e:  ldc.i4.s   20
@@ -3999,14 +3984,14 @@
     IL_0038:  bne.un.s   IL_004b
 
     IL_003a:  ldstr      "FAILED: CalleeIsOdd3 was inlined..."
-    IL_003f:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_003f:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0044:  ldc.i4.s   101
     IL_0046:  stsfld     int32 TailcallVerify.Condition21::Result
     IL_004b:  ldarg.0
     IL_004c:  brtrue.s   IL_0067
 
     IL_004e:  ldstr      "IsOdd"
-    IL_0053:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0053:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0058:  ldc.i4.1
     IL_0059:  ldarg.0
     IL_005a:  div
@@ -4061,14 +4046,14 @@
     IL_0038:  bne.un.s   IL_004b
 
     IL_003a:  ldstr      "FAILED: CalleeIsEven3 was inlined..."
-    IL_003f:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_003f:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0044:  ldc.i4.s   101
     IL_0046:  stsfld     int32 TailcallVerify.Condition21::Result
     IL_004b:  ldarg.0
     IL_004c:  brtrue.s   IL_0067
 
     IL_004e:  ldstr      "IsEven"
-    IL_0053:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0053:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0058:  ldc.i4.1
     IL_0059:  ldarg.0
     IL_005a:  div
@@ -4113,7 +4098,7 @@
   {
     // Code size       394 (0x18a)
     .maxstack  3
-    .locals init ([0] class [System.Threading.Thread]System.Threading.Thread t1,
+    .locals init ([0] class [mscorlib]System.Threading.Thread t1,
              [1] class [mscorlib]System.Exception e,
              [2] int64 l,
              [3] int64 V_3,
@@ -4123,7 +4108,7 @@
     + "one - ReturnType: void; CalleeIsOdd3: Arguments: int, int, int, int, 3 "
     + "byte struct - ReturnType: 3 byte struct; CalleeIsEven3: Arguments: int,"
     + " int, int, int, 3 byte struct - ReturnType: 3 byte struct;"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition21::Result
     IL_0011:  ldsfld     class [mscorlib]System.Collections.Generic.List`1<int64> TailcallVerify.Condition21::evenList
@@ -4134,14 +4119,14 @@
     {
       IL_0025:  ldnull
       IL_0026:  ldftn      void TailcallVerify.Condition21::Caller3()
-      IL_002c:  newobj     instance void [System.Threading.Thread]System.Threading.ThreadStart::.ctor(object,
+      IL_002c:  newobj     instance void [mscorlib]System.Threading.ThreadStart::.ctor(object,
                                                                                        native int)
-      IL_0031:  newobj     instance void [System.Threading.Thread]System.Threading.Thread::.ctor(class [System.Threading.Thread]System.Threading.ThreadStart)
+      IL_0031:  newobj     instance void [mscorlib]System.Threading.Thread::.ctor(class [mscorlib]System.Threading.ThreadStart)
       IL_0036:  stloc.0
       IL_0037:  ldloc.0
-      IL_0038:  callvirt   instance void [System.Threading.Thread]System.Threading.Thread::Start()
+      IL_0038:  callvirt   instance void [mscorlib]System.Threading.Thread::Start()
       IL_003d:  ldloc.0
-      IL_003e:  callvirt   instance void [System.Threading.Thread]System.Threading.Thread::Join()
+      IL_003e:  callvirt   instance void [mscorlib]System.Threading.Thread::Join()
       IL_0043:  leave.s    IL_009c
 
     }  // end .try
@@ -4163,28 +4148,28 @@
       IL_0068:  beq.s      IL_009a
 
       IL_006a:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_006f:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_006f:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0074:  ldstr      "------------------------------------------------"
-      IL_0079:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_007e:  call       void [System.Console]System.Console::WriteLine()
+      IL_0079:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_007e:  call       void [mscorlib]System.Console::WriteLine()
       IL_0083:  ldloc.1
       IL_0084:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_0089:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_008e:  call       void [System.Console]System.Console::WriteLine()
+      IL_0089:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_008e:  call       void [mscorlib]System.Console::WriteLine()
       IL_0093:  ldc.i4.s   101
       IL_0095:  stsfld     int32 TailcallVerify.Condition21::Result
       IL_009a:  leave.s    IL_009c
 
     }  // end handler
     IL_009c:  ldsfld     class [mscorlib]System.Collections.Generic.List`1<int64> TailcallVerify.Condition21::evenList
-    IL_00a1:  call       class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0> [System.Linq]System.Linq.Enumerable::Distinct<int64>(class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0>)
-    IL_00a6:  call       int32 [System.Linq]System.Linq.Enumerable::Count<int64>(class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0>)
+    IL_00a1:  call       class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0> [System.Core]System.Linq.Enumerable::Distinct<int64>(class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0>)
+    IL_00a6:  call       int32 [System.Core]System.Linq.Enumerable::Count<int64>(class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0>)
     IL_00ab:  ldc.i4.1
     IL_00ac:  beq.s      IL_00fe
 
     IL_00ae:  ldstr      "FAILED: The local on the stack for CalleeIsEven3 s"
     + "hifted. (should have always the same address)"
-    IL_00b3:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_00b3:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_00b8:  ldsfld     class [mscorlib]System.Collections.Generic.List`1<int64> TailcallVerify.Condition21::evenList
     IL_00bd:  callvirt   instance valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<!0> class [mscorlib]System.Collections.Generic.List`1<int64>::GetEnumerator()
     IL_00c2:  stloc.s    CS$5$0000
@@ -4198,7 +4183,7 @@
       IL_00ce:  ldstr      "0x{0:x8}"
       IL_00d3:  ldloc.2
       IL_00d4:  box        [mscorlib]System.Int64
-      IL_00d9:  call       void [System.Console]System.Console::WriteLine(string,
+      IL_00d9:  call       void [mscorlib]System.Console::WriteLine(string,
                                                                     object)
       IL_00de:  ldloca.s   CS$5$0000
       IL_00e0:  call       instance bool valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<int64>::MoveNext()
@@ -4217,14 +4202,14 @@
     IL_00f7:  ldc.i4.s   101
     IL_00f9:  stsfld     int32 TailcallVerify.Condition21::Result
     IL_00fe:  ldsfld     class [mscorlib]System.Collections.Generic.List`1<int64> TailcallVerify.Condition21::oddList
-    IL_0103:  call       class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0> [System.Linq]System.Linq.Enumerable::Distinct<int64>(class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0>)
-    IL_0108:  call       int32 [System.Linq]System.Linq.Enumerable::Count<int64>(class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0>)
+    IL_0103:  call       class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0> [System.Core]System.Linq.Enumerable::Distinct<int64>(class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0>)
+    IL_0108:  call       int32 [System.Core]System.Linq.Enumerable::Count<int64>(class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0>)
     IL_010d:  ldc.i4.1
     IL_010e:  beq.s      IL_0160
 
     IL_0110:  ldstr      "FAILED: The local on the stack for CalleeIsOdd3 sh"
     + "ifted. (should have always the same address)"
-    IL_0115:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0115:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_011a:  ldsfld     class [mscorlib]System.Collections.Generic.List`1<int64> TailcallVerify.Condition21::oddList
     IL_011f:  callvirt   instance valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<!0> class [mscorlib]System.Collections.Generic.List`1<int64>::GetEnumerator()
     IL_0124:  stloc.s    CS$5$0001
@@ -4238,7 +4223,7 @@
       IL_0130:  ldstr      "0x{0:x8}"
       IL_0135:  ldloc.3
       IL_0136:  box        [mscorlib]System.Int64
-      IL_013b:  call       void [System.Console]System.Console::WriteLine(string,
+      IL_013b:  call       void [mscorlib]System.Console::WriteLine(string,
                                                                     object)
       IL_0140:  ldloca.s   CS$5$0001
       IL_0142:  call       instance bool valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<int64>::MoveNext()
@@ -4267,7 +4252,7 @@
     IL_0175:  ldstr      "PASSED"
     IL_017a:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_017f:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_017f:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0184:  ldsfld     int32 TailcallVerify.Condition21::Result
     IL_0189:  ret
   } // end of method Condition21::Test3
@@ -4287,7 +4272,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "FAILED: Caller3 was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition21::Result
     .try
@@ -4378,7 +4363,7 @@
     IL_0038:  bne.un.s   IL_004b
 
     IL_003a:  ldstr      "FAILED: CalleeIsOdd3 was inlined..."
-    IL_003f:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_003f:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0044:  ldc.i4.s   101
     IL_0046:  stsfld     int32 TailcallVerify.Condition21::Result
     IL_004b:  ldarg.0
@@ -4444,7 +4429,7 @@
     IL_0038:  bne.un.s   IL_004b
 
     IL_003a:  ldstr      "FAILED: CalleeIsEven3 was inlined..."
-    IL_003f:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_003f:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0044:  ldc.i4.s   101
     IL_0046:  stsfld     int32 TailcallVerify.Condition21::Result
     IL_004b:  ldarg.0
@@ -4484,7 +4469,7 @@
              [1] int32 V_1)
     IL_0000:  ldstr      "Executing Condition21.Test4 - Verifying helper fra"
     + "me location on the stack."
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition21::Result
     IL_0011:  ldsfld     class [mscorlib]System.Collections.Generic.List`1<int64> TailcallVerify.Condition21::oddList
@@ -4546,18 +4531,18 @@
 
     IL_0082:  ldstr      "The following shows a list of stack addresses of a"
     + " local on the stack."
-    IL_0087:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0087:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_008c:  ldstr      "You should see the same address three times before"
     + " it decreases and repeats again."
-    IL_0091:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0091:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0096:  ldstr      "This happens because the call chain looks like thi"
     + "s E->E->E->E->O->O->O->E->E->E->E->O->O->O"
-    IL_009b:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_009b:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_00a0:  ldstr      "where E is a method where tailcalls are not allowe"
     + "d (it's synchronized) and O is a"
-    IL_00a5:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_00a5:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_00aa:  ldstr      "method that gets tailcall'ed."
-    IL_00af:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_00af:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_00b4:  ldc.i4.0
     IL_00b5:  stloc.1
     IL_00b6:  br.s       IL_00d6
@@ -4567,7 +4552,7 @@
     IL_00c2:  ldloc.1
     IL_00c3:  callvirt   instance !0 class [mscorlib]System.Collections.Generic.List`1<int64>::get_Item(int32)
     IL_00c8:  box        [mscorlib]System.Int64
-    IL_00cd:  call       void [System.Console]System.Console::WriteLine(string,
+    IL_00cd:  call       void [mscorlib]System.Console::WriteLine(string,
                                                                   object)
     IL_00d2:  ldloc.1
     IL_00d3:  ldc.i4.1
@@ -4589,7 +4574,7 @@
     IL_00f8:  ldstr      "PASSED"
     IL_00fd:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_0102:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0102:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0107:  ldsfld     int32 TailcallVerify.Condition21::Result
     IL_010c:  ret
   } // end of method Condition21::Test4
@@ -4609,7 +4594,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "FAILED: Caller4 was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition21::Result
     IL_002e:  ldc.i4     0xc8
@@ -4652,7 +4637,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "FAILED: CalleeE4 was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition21::Result
     IL_002e:  ldarg.0
@@ -4745,7 +4730,7 @@
     IL_0038:  bne.un.s   IL_004b
 
     IL_003a:  ldstr      "FAILED: CalleeO4 was inlined..."
-    IL_003f:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_003f:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0044:  ldc.i4.s   101
     IL_0046:  stsfld     int32 TailcallVerify.Condition21::Result
     IL_004b:  ldarg.0
@@ -4810,14 +4795,14 @@
     .maxstack  3
     .locals init ([0] class TailcallVerify.Condition21 con1,
              [1] class TailcallVerify.Condition21 con2,
-             [2] class [System.Threading.Thread]System.Threading.Thread t1,
-             [3] class [System.Threading.Thread]System.Threading.Thread t2,
+             [2] class [mscorlib]System.Threading.Thread t1,
+             [3] class [mscorlib]System.Threading.Thread t2,
              [4] class [mscorlib]System.Exception ex,
              [5] int32 i,
              [6] int32 V_6)
     IL_0000:  ldstr      "Executing Condition21.Test5 - Verifying helper fra"
     + "me location on the stack while using multiple threads."
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition21::Result
     IL_0011:  newobj     instance void TailcallVerify.Condition21::.ctor()
@@ -4826,26 +4811,26 @@
     IL_001c:  stloc.1
     IL_001d:  ldloc.0
     IL_001e:  ldftn      instance void TailcallVerify.Condition21::Caller5()
-    IL_0024:  newobj     instance void [System.Threading.Thread]System.Threading.ThreadStart::.ctor(object,
+    IL_0024:  newobj     instance void [mscorlib]System.Threading.ThreadStart::.ctor(object,
                                                                                      native int)
-    IL_0029:  newobj     instance void [System.Threading.Thread]System.Threading.Thread::.ctor(class [System.Threading.Thread]System.Threading.ThreadStart)
+    IL_0029:  newobj     instance void [mscorlib]System.Threading.Thread::.ctor(class [mscorlib]System.Threading.ThreadStart)
     IL_002e:  stloc.2
     IL_002f:  ldloc.1
     IL_0030:  ldftn      instance void TailcallVerify.Condition21::Caller5()
-    IL_0036:  newobj     instance void [System.Threading.Thread]System.Threading.ThreadStart::.ctor(object,
+    IL_0036:  newobj     instance void [mscorlib]System.Threading.ThreadStart::.ctor(object,
                                                                                      native int)
-    IL_003b:  newobj     instance void [System.Threading.Thread]System.Threading.Thread::.ctor(class [System.Threading.Thread]System.Threading.ThreadStart)
+    IL_003b:  newobj     instance void [mscorlib]System.Threading.Thread::.ctor(class [mscorlib]System.Threading.ThreadStart)
     IL_0040:  stloc.3
     .try
     {
       IL_0041:  ldloc.2
-      IL_0042:  callvirt   instance void [System.Threading.Thread]System.Threading.Thread::Start()
+      IL_0042:  callvirt   instance void [mscorlib]System.Threading.Thread::Start()
       IL_0047:  ldloc.3
-      IL_0048:  callvirt   instance void [System.Threading.Thread]System.Threading.Thread::Start()
+      IL_0048:  callvirt   instance void [mscorlib]System.Threading.Thread::Start()
       IL_004d:  ldloc.2
-      IL_004e:  callvirt   instance void [System.Threading.Thread]System.Threading.Thread::Join()
+      IL_004e:  callvirt   instance void [mscorlib]System.Threading.Thread::Join()
       IL_0053:  ldloc.3
-      IL_0054:  callvirt   instance void [System.Threading.Thread]System.Threading.Thread::Join()
+      IL_0054:  callvirt   instance void [mscorlib]System.Threading.Thread::Join()
       IL_0059:  leave.s    IL_007c
 
     }  // end .try
@@ -4857,7 +4842,7 @@
       IL_0064:  callvirt   instance string [mscorlib]System.Exception::get_Message()
       IL_0069:  call       string [mscorlib]System.String::Concat(string,
                                                                   string)
-      IL_006e:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_006e:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0073:  ldc.i4.s   101
       IL_0075:  stsfld     int32 TailcallVerify.Condition21::Result
       IL_007a:  leave.s    IL_007c
@@ -4877,21 +4862,21 @@
 
     IL_009d:  ldstr      "The following shows a list of stack addresses of a"
     + " local on the stack."
-    IL_00a2:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_00a2:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_00a7:  ldstr      "You should see the same address three times before"
     + " it decreases and repeats again."
-    IL_00ac:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_00ac:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_00b1:  ldstr      "This happens because the call chain looks like thi"
     + "s E->E->E->E->O->O->O->E->E->E->E->O->O->O"
-    IL_00b6:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_00b6:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_00bb:  ldstr      "where E is a method where tailcalls are not allowe"
     + "d (it's synchronized) and O is a"
-    IL_00c0:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_00c0:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_00c5:  ldstr      "method that gets tailcall'ed."
-    IL_00ca:  call       void [System.Console]System.Console::WriteLine(string)
-    IL_00cf:  call       void [System.Console]System.Console::WriteLine()
+    IL_00ca:  call       void [mscorlib]System.Console::WriteLine(string)
+    IL_00cf:  call       void [mscorlib]System.Console::WriteLine()
     IL_00d4:  ldstr      "------ Stack addresses for thread 1. ---------"
-    IL_00d9:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_00d9:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_00de:  ldc.i4.0
     IL_00df:  stloc.s    i
     IL_00e1:  br.s       IL_0105
@@ -4902,7 +4887,7 @@
     IL_00ee:  ldloc.s    i
     IL_00f0:  callvirt   instance !0 class [mscorlib]System.Collections.Generic.List`1<int64>::get_Item(int32)
     IL_00f5:  box        [mscorlib]System.Int64
-    IL_00fa:  call       void [System.Console]System.Console::WriteLine(string,
+    IL_00fa:  call       void [mscorlib]System.Console::WriteLine(string,
                                                                   object)
     IL_00ff:  ldloc.s    i
     IL_0101:  ldc.i4.1
@@ -4914,9 +4899,9 @@
     IL_010d:  callvirt   instance int32 class [mscorlib]System.Collections.Generic.List`1<int64>::get_Count()
     IL_0112:  blt.s      IL_00e3
 
-    IL_0114:  call       void [System.Console]System.Console::WriteLine()
+    IL_0114:  call       void [mscorlib]System.Console::WriteLine()
     IL_0119:  ldstr      "------ Stack addresses for thread 2. ---------"
-    IL_011e:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_011e:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0123:  ldc.i4.0
     IL_0124:  stloc.s    V_6
     IL_0126:  br.s       IL_014a
@@ -4927,7 +4912,7 @@
     IL_0133:  ldloc.s    V_6
     IL_0135:  callvirt   instance !0 class [mscorlib]System.Collections.Generic.List`1<int64>::get_Item(int32)
     IL_013a:  box        [mscorlib]System.Int64
-    IL_013f:  call       void [System.Console]System.Console::WriteLine(string,
+    IL_013f:  call       void [mscorlib]System.Console::WriteLine(string,
                                                                   object)
     IL_0144:  ldloc.s    V_6
     IL_0146:  ldc.i4.1
@@ -4950,7 +4935,7 @@
     IL_016e:  ldstr      "PASSED"
     IL_0173:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_0178:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0178:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_017d:  ldsfld     int32 TailcallVerify.Condition21::Result
     IL_0182:  ret
   } // end of method Condition21::Test5
@@ -5024,7 +5009,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "FAILED: Caller5 was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition21::Result
     .try
@@ -5112,7 +5097,7 @@
     IL_0026:  bne.un.s   IL_0039
 
     IL_0028:  ldstr      "FAILED: CalleeE5 was inlined..."
-    IL_002d:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_002d:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0032:  ldc.i4.s   101
     IL_0034:  stsfld     int32 TailcallVerify.Condition21::Result
     IL_0039:  ldarg.1
@@ -5212,7 +5197,7 @@
     IL_0039:  bne.un.s   IL_004c
 
     IL_003b:  ldstr      "FAILED: CalleeO5 was inlined..."
-    IL_0040:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0040:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0045:  ldc.i4.s   101
     IL_0047:  stsfld     int32 TailcallVerify.Condition21::Result
     IL_004c:  ldarg.1
@@ -5284,7 +5269,7 @@
     .locals init ([0] class [mscorlib]System.Exception e)
     IL_0000:  ldstr      "Executing Condition21.Test6  - Caller: Arguments: "
     + "None - ReturnType: void; Callee: Arguments: None - ReturnType: void"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition21::Result
     .try
@@ -5311,14 +5296,14 @@
       IL_003b:  beq.s      IL_006d
 
       IL_003d:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0042:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0042:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0047:  ldstr      "------------------------------------------------"
-      IL_004c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0051:  call       void [System.Console]System.Console::WriteLine()
+      IL_004c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0051:  call       void [mscorlib]System.Console::WriteLine()
       IL_0056:  ldloc.0
       IL_0057:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0061:  call       void [System.Console]System.Console::WriteLine()
+      IL_005c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0061:  call       void [mscorlib]System.Console::WriteLine()
       IL_0066:  ldc.i4.s   101
       IL_0068:  stsfld     int32 TailcallVerify.Condition21::Result
       IL_006d:  leave.s    IL_006f
@@ -5335,7 +5320,7 @@
     IL_0084:  ldstr      "PASSED"
     IL_0089:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_008e:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_008e:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0093:  ldsfld     int32 TailcallVerify.Condition21::Result
     IL_0098:  ret
   } // end of method Condition21::Test6
@@ -5354,7 +5339,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition21::Result
     IL_002e:  ldftn        void TailcallVerify.Condition21::Callee6()
@@ -5381,7 +5366,7 @@
     .locals init ([0] class [mscorlib]System.Exception e)
     IL_0000:  ldstr      "Executing Condition21.Test7  - Caller: Arguments: "
     + "Int32 - ReturnType: Int32; Callee: Arguments: Int32 - ReturnType: Int32"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition21::Result
     .try
@@ -5410,14 +5395,14 @@
       IL_003d:  beq.s      IL_006f
 
       IL_003f:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0044:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0044:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0049:  ldstr      "------------------------------------------------"
-      IL_004e:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0053:  call       void [System.Console]System.Console::WriteLine()
+      IL_004e:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0053:  call       void [mscorlib]System.Console::WriteLine()
       IL_0058:  ldloc.0
       IL_0059:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005e:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0063:  call       void [System.Console]System.Console::WriteLine()
+      IL_005e:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0063:  call       void [mscorlib]System.Console::WriteLine()
       IL_0068:  ldc.i4.s   101
       IL_006a:  stsfld     int32 TailcallVerify.Condition21::Result
       IL_006f:  leave.s    IL_0071
@@ -5434,7 +5419,7 @@
     IL_0086:  ldstr      "PASSED"
     IL_008b:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_0090:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0090:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0095:  ldsfld     int32 TailcallVerify.Condition21::Result
     IL_009a:  ret
   } // end of method Condition21::Test7
@@ -5454,7 +5439,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition21::Result
     IL_002e:  ldarg.0
@@ -5557,14 +5542,14 @@
         IL_002b:  beq.s      IL_0058
 
         IL_002d:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-        IL_0032:  call       void [System.Console]System.Console::WriteLine(string)
+        IL_0032:  call       void [mscorlib]System.Console::WriteLine(string)
         IL_0037:  ldstr      "------------------------------------------------"
-        IL_003c:  call       void [System.Console]System.Console::WriteLine(string)
-        IL_0041:  call       void [System.Console]System.Console::WriteLine()
+        IL_003c:  call       void [mscorlib]System.Console::WriteLine(string)
+        IL_0041:  call       void [mscorlib]System.Console::WriteLine()
         IL_0046:  ldloc.0
         IL_0047:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-        IL_004c:  call       void [System.Console]System.Console::WriteLine(string)
-        IL_0051:  call       void [System.Console]System.Console::WriteLine()
+        IL_004c:  call       void [mscorlib]System.Console::WriteLine(string)
+        IL_0051:  call       void [mscorlib]System.Console::WriteLine()
         IL_0056:  rethrow
         IL_0058:  leave.s    IL_005a
 
@@ -5603,14 +5588,14 @@
         IL_002b:  beq.s      IL_0058
 
         IL_002d:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-        IL_0032:  call       void [System.Console]System.Console::WriteLine(string)
+        IL_0032:  call       void [mscorlib]System.Console::WriteLine(string)
         IL_0037:  ldstr      "------------------------------------------------"
-        IL_003c:  call       void [System.Console]System.Console::WriteLine(string)
-        IL_0041:  call       void [System.Console]System.Console::WriteLine()
+        IL_003c:  call       void [mscorlib]System.Console::WriteLine(string)
+        IL_0041:  call       void [mscorlib]System.Console::WriteLine()
         IL_0046:  ldloc.0
         IL_0047:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-        IL_004c:  call       void [System.Console]System.Console::WriteLine(string)
-        IL_0051:  call       void [System.Console]System.Console::WriteLine()
+        IL_004c:  call       void [mscorlib]System.Console::WriteLine(string)
+        IL_0051:  call       void [mscorlib]System.Console::WriteLine()
         IL_0056:  rethrow
         IL_0058:  leave.s    IL_005a
 
@@ -5636,7 +5621,7 @@
       IL_001b:  bne.un.s   IL_002e
 
       IL_001d:  ldstr      "Failed, Method was inlined..."
-      IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0027:  ldc.i4.s   101
       IL_0029:  stsfld     int32 TailcallVerify.Condition10::Result
       IL_002e:  ldarg.0
@@ -5662,7 +5647,7 @@
       IL_001b:  bne.un.s   IL_002e
 
       IL_001d:  ldstr      "Failed, Method was inlined..."
-      IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0027:  ldc.i4.s   101
       IL_0029:  stsfld     int32 TailcallVerify.Condition10::Result
       IL_002e:  ldarg.0
@@ -5727,9 +5712,9 @@
       IL_002c:  beq.s      IL_0045
 
       IL_002e:  ldstr      "FAILED: Callee1Recursive was not tailcall'ed..."
-      IL_0033:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0033:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0038:  ldloc.0
-      IL_0039:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0039:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_003e:  ldc.i4.s   101
       IL_0040:  stsfld     int32 TailcallVerify.Condition10::Result
       IL_0045:  ldarg.1
@@ -5806,14 +5791,14 @@
         IL_003d:  beq.s      IL_006a
 
         IL_003f:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-        IL_0044:  call       void [System.Console]System.Console::WriteLine(string)
+        IL_0044:  call       void [mscorlib]System.Console::WriteLine(string)
         IL_0049:  ldstr      "------------------------------------------------"
-        IL_004e:  call       void [System.Console]System.Console::WriteLine(string)
-        IL_0053:  call       void [System.Console]System.Console::WriteLine()
+        IL_004e:  call       void [mscorlib]System.Console::WriteLine(string)
+        IL_0053:  call       void [mscorlib]System.Console::WriteLine()
         IL_0058:  ldloc.2
         IL_0059:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-        IL_005e:  call       void [System.Console]System.Console::WriteLine(string)
-        IL_0063:  call       void [System.Console]System.Console::WriteLine()
+        IL_005e:  call       void [mscorlib]System.Console::WriteLine(string)
+        IL_0063:  call       void [mscorlib]System.Console::WriteLine()
         IL_0068:  rethrow
         IL_006a:  leave.s    IL_006c
 
@@ -5840,7 +5825,7 @@
       IL_001b:  bne.un.s   IL_002e
 
       IL_001d:  ldstr      "Failed, Method was inlined..."
-      IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0027:  ldc.i4.s   101
       IL_0029:  stsfld     int32 TailcallVerify.Condition10::Result
       IL_002e:  ldarg.0
@@ -5884,7 +5869,7 @@
     IL_0000:  ldstr      "Executing Condition10.Test1 - Caller<string>: Argu"
     + "ments: None - ReturnType: void; Callee: Arguments: None - ReturnType: v"
     + "oid"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition10::Result
     .try
@@ -5911,14 +5896,14 @@
       IL_003b:  beq.s      IL_006d
 
       IL_003d:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0042:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0042:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0047:  ldstr      "------------------------------------------------"
-      IL_004c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0051:  call       void [System.Console]System.Console::WriteLine()
+      IL_004c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0051:  call       void [mscorlib]System.Console::WriteLine()
       IL_0056:  ldloc.0
       IL_0057:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0061:  call       void [System.Console]System.Console::WriteLine()
+      IL_005c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0061:  call       void [mscorlib]System.Console::WriteLine()
       IL_0066:  ldc.i4.s   101
       IL_0068:  stsfld     int32 TailcallVerify.Condition10::Result
       IL_006d:  leave.s    IL_006f
@@ -5935,7 +5920,7 @@
     IL_0084:  ldstr      "PASSED"
     IL_0089:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_008e:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_008e:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0093:  ldsfld     int32 TailcallVerify.Condition10::Result
     IL_0098:  ret
   } // end of method Condition10::Test1
@@ -5954,7 +5939,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition10::Result
     IL_002e:  tail. call       void TailcallVerify.Condition10::Callee1()
@@ -5981,7 +5966,7 @@
     IL_0000:  ldstr      "Executing Condition10.Test2 - Caller: Arguments: N"
     + "one - ReturnType: void; Callee<string>: Arguments: None - ReturnType: v"
     + "oid"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition10::Result
     .try
@@ -6008,14 +5993,14 @@
       IL_003b:  beq.s      IL_006d
 
       IL_003d:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0042:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0042:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0047:  ldstr      "------------------------------------------------"
-      IL_004c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0051:  call       void [System.Console]System.Console::WriteLine()
+      IL_004c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0051:  call       void [mscorlib]System.Console::WriteLine()
       IL_0056:  ldloc.0
       IL_0057:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0061:  call       void [System.Console]System.Console::WriteLine()
+      IL_005c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0061:  call       void [mscorlib]System.Console::WriteLine()
       IL_0066:  ldc.i4.s   101
       IL_0068:  stsfld     int32 TailcallVerify.Condition10::Result
       IL_006d:  leave.s    IL_006f
@@ -6032,7 +6017,7 @@
     IL_0084:  ldstr      "PASSED"
     IL_0089:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_008e:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_008e:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0093:  ldsfld     int32 TailcallVerify.Condition10::Result
     IL_0098:  ret
   } // end of method Condition10::Test2
@@ -6054,7 +6039,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition10::Result
     IL_002e:  call       void TailcallVerify.Condition10::Callee2<string>()
@@ -6085,19 +6070,19 @@
     IL_0000:  ldstr      "Executing Condition10.Test3 - class Foo1<string, i"
     + "nt>: Caller: Arguments: None - ReturnType: void; Callee: Arguments: Non"
     + "e - ReturnType: void"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldstr      "                              class Foo1<string, i"
     + "nt>: Caller: Arguments: None - ReturnType: void; Callee: Arguments: Non"
     + "e - ReturnType: void"
-    IL_000f:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_000f:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0014:  ldstr      "                              class Foo1<string, s"
     + "hort>: Caller: Arguments: None - ReturnType: void; Callee: Arguments: N"
     + "one - ReturnType: void"
-    IL_0019:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0019:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_001e:  ldstr      "                              class Foo1<string, V"
     + "alueType3Bytes>: Caller: Arguments: None - ReturnType: void; Callee: Ar"
     + "guments: None - ReturnType: void"
-    IL_0023:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0023:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0028:  ldc.i4.s   100
     IL_002a:  stsfld     int32 TailcallVerify.Condition10::Result
     .try
@@ -6147,7 +6132,7 @@
     IL_0095:  ldstr      "PASSED"
     IL_009a:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_009f:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_009f:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_00a4:  ldsfld     int32 TailcallVerify.Condition10::Result
     IL_00a9:  ret
   } // end of method Condition10::Test3
@@ -6164,19 +6149,19 @@
     IL_0000:  ldstr      "Executing Condition10.Test4 - class Foo2<string, i"
     + "nt>: Caller: Arguments: string, int - ReturnType: void; Callee: Argumen"
     + "ts: string - ReturnType: void"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldstr      "                              class Foo2<string, i"
     + "nt>: Caller: Arguments: string, int - ReturnType: void; Callee: Argumen"
     + "ts: string - ReturnType: void"
-    IL_000f:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_000f:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0014:  ldstr      "                              class Foo2<string, s"
     + "hort>: Caller: Arguments: string, short - ReturnType: void; Callee: Arg"
     + "uments: string - ReturnType: void"
-    IL_0019:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0019:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_001e:  ldstr      "                              class Foo2<string, V"
     + "alueType3Bytes>: Caller: Arguments: string, ValueType3Bytes - ReturnTyp"
     + "e: void; Callee: Arguments: string - ReturnType: void"
-    IL_0023:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0023:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0028:  ldc.i4.s   100
     IL_002a:  stsfld     int32 TailcallVerify.Condition10::Result
     .try
@@ -6224,7 +6209,7 @@
     IL_008c:  ldstr      "PASSED"
     IL_0091:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_0096:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0096:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_009b:  ldsfld     int32 TailcallVerify.Condition10::Result
     IL_00a0:  ret
   } // end of method Condition10::Test4
@@ -6241,7 +6226,7 @@
     IL_0000:  ldstr      "Executing Condition10.Test5 - Caller: Arguments: N"
     + "one - ReturnType: void; Callee<string>: Arguments: None - ReturnType: v"
     + "oid"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition10::Result
     .try
@@ -6283,14 +6268,14 @@
       IL_0069:  beq.s      IL_009c
 
       IL_006b:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0070:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0070:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0075:  ldstr      "------------------------------------------------"
-      IL_007a:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_007f:  call       void [System.Console]System.Console::WriteLine()
+      IL_007a:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_007f:  call       void [mscorlib]System.Console::WriteLine()
       IL_0084:  ldloc.s    e
       IL_0086:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_008b:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0090:  call       void [System.Console]System.Console::WriteLine()
+      IL_008b:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0090:  call       void [mscorlib]System.Console::WriteLine()
       IL_0095:  ldc.i4.s   101
       IL_0097:  stsfld     int32 TailcallVerify.Condition10::Result
       IL_009c:  leave.s    IL_009e
@@ -6307,7 +6292,7 @@
     IL_00b3:  ldstr      "PASSED"
     IL_00b8:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_00bd:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_00bd:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_00c2:  ldsfld     int32 TailcallVerify.Condition10::Result
     IL_00c7:  ret
   } // end of method Condition10::Test5
@@ -6349,7 +6334,7 @@
     .locals init ([0] class [mscorlib]System.Exception e)
     IL_0000:  ldstr      "Executing Condition7.Test1 - Caller: Arguments: No"
     + "ne - ReturnType: void; Callee: Arguments: 10 x Int32 - ReturnType: void"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition7::Result
     .try
@@ -6376,14 +6361,14 @@
       IL_003b:  beq.s      IL_006d
 
       IL_003d:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0042:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0042:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0047:  ldstr      "------------------------------------------------"
-      IL_004c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0051:  call       void [System.Console]System.Console::WriteLine()
+      IL_004c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0051:  call       void [mscorlib]System.Console::WriteLine()
       IL_0056:  ldloc.0
       IL_0057:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0061:  call       void [System.Console]System.Console::WriteLine()
+      IL_005c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0061:  call       void [mscorlib]System.Console::WriteLine()
       IL_0066:  ldc.i4.s   101
       IL_0068:  stsfld     int32 TailcallVerify.Condition7::Result
       IL_006d:  leave.s    IL_006f
@@ -6400,7 +6385,7 @@
     IL_0084:  ldstr      "PASSED"
     IL_0089:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_008e:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_008e:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0093:  ldsfld     int32 TailcallVerify.Condition7::Result
     IL_0098:  ret
   } // end of method Condition7::Test1
@@ -6419,7 +6404,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition7::Result
     IL_002e:  ldc.i4.0
@@ -6474,7 +6459,7 @@
     IL_0000:  ldstr      "Executing Condition7.Test2 - Caller: Arguments: No"
     + "ne - ReturnType: void; Callee: Arguments: i32,i64,mb3,i16,u8,f64,f32,mb"
     + "5 - ReturnType: void"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition7::Result
     .try
@@ -6501,14 +6486,14 @@
       IL_003b:  beq.s      IL_006d
 
       IL_003d:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0042:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0042:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0047:  ldstr      "------------------------------------------------"
-      IL_004c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0051:  call       void [System.Console]System.Console::WriteLine()
+      IL_004c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0051:  call       void [mscorlib]System.Console::WriteLine()
       IL_0056:  ldloc.0
       IL_0057:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0061:  call       void [System.Console]System.Console::WriteLine()
+      IL_005c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0061:  call       void [mscorlib]System.Console::WriteLine()
       IL_0066:  ldc.i4.s   101
       IL_0068:  stsfld     int32 TailcallVerify.Condition7::Result
       IL_006d:  leave.s    IL_006f
@@ -6525,7 +6510,7 @@
     IL_0084:  ldstr      "PASSED"
     IL_0089:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_008e:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_008e:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0093:  ldsfld     int32 TailcallVerify.Condition7::Result
     IL_0098:  ret
   } // end of method Condition7::Test2
@@ -6550,7 +6535,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition7::Result
     IL_002e:  ldloca.s   CS$0$0000
@@ -6662,7 +6647,7 @@
     IL_007f:  ldc.i4.s   101
     IL_0081:  stsfld     int32 TailcallVerify.Condition7::Result
     IL_0086:  ldstr      "FAILED: Passed in arguments are invalid."
-    IL_008b:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_008b:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0090:  ldstr      "i1:{0} != Int32.MinValue || i2:{1} != Int64.MaxVal"
     + "ue || v3.i1:{2} != byte.MinValue || v3.i2:{3} != short.MaxValue || i4:{"
     + "4} != Int16.MinValue || b5:{5} != byte.MaxValue || d6:{6} != double.Min"
@@ -6732,9 +6717,9 @@
     IL_011d:  box        [mscorlib]System.Int16
     IL_0122:  stelem.ref
     IL_0123:  ldloc.0
-    IL_0124:  call       void [System.Console]System.Console::Write(string)
+    IL_0124:  call       void [mscorlib]System.Console::Write(string)
               callvirt   instance string [mscorlib]System.Object::ToString()
-              call       void [System.Console]System.Console::WriteLine(string)
+              call       void [mscorlib]System.Console::WriteLine(string)
 
     IL_0129:  ldc.i4.1
     IL_012a:  volatile.
@@ -6758,7 +6743,7 @@
     IL_0000:  ldstr      "Executing Condition7.Test3 - Caller: Arguments: mb"
     + "3,mb5,mb8,mb3,mb5,mb3 - ReturnType: void; Callee: Arguments: mb3,mb5,mb"
     + "8,mb3,mb5,mb3 - ReturnType: void"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition7::Result
     .try
@@ -6801,14 +6786,14 @@
       IL_0063:  beq.s      IL_0095
 
       IL_0065:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_006a:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_006a:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_006f:  ldstr      "------------------------------------------------"
-      IL_0074:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0079:  call       void [System.Console]System.Console::WriteLine()
+      IL_0074:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0079:  call       void [mscorlib]System.Console::WriteLine()
       IL_007e:  ldloc.0
       IL_007f:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_0084:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0089:  call       void [System.Console]System.Console::WriteLine()
+      IL_0084:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0089:  call       void [mscorlib]System.Console::WriteLine()
       IL_008e:  ldc.i4.s   101
       IL_0090:  stsfld     int32 TailcallVerify.Condition7::Result
       IL_0095:  leave.s    IL_0097
@@ -6825,7 +6810,7 @@
     IL_00ac:  ldstr      "PASSED"
     IL_00b1:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_00b6:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_00b6:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_00bb:  ldsfld     int32 TailcallVerify.Condition7::Result
     IL_00c0:  ret
   } // end of method Condition7::Test3
@@ -6849,7 +6834,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition7::Result
     IL_002e:  ldarg.0
@@ -6900,7 +6885,7 @@
     IL_0000:  ldstr      "Executing Condition7.Test4 - Caller: Arguments: mb"
     + "3,mb5,mb8,mb3,mb5,mb3 - ReturnType: void; Callee: Arguments: mb3,mb5,mb"
     + "8,mb3,mb5,mb3 - ReturnType: void"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition7::Result
     .try
@@ -6943,14 +6928,14 @@
       IL_0063:  beq.s      IL_0095
 
       IL_0065:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_006a:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_006a:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_006f:  ldstr      "------------------------------------------------"
-      IL_0074:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0079:  call       void [System.Console]System.Console::WriteLine()
+      IL_0074:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0079:  call       void [mscorlib]System.Console::WriteLine()
       IL_007e:  ldloc.0
       IL_007f:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_0084:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0089:  call       void [System.Console]System.Console::WriteLine()
+      IL_0084:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0089:  call       void [mscorlib]System.Console::WriteLine()
       IL_008e:  ldc.i4.s   101
       IL_0090:  stsfld     int32 TailcallVerify.Condition7::Result
       IL_0095:  leave.s    IL_0097
@@ -6967,7 +6952,7 @@
     IL_00ac:  ldstr      "PASSED"
     IL_00b1:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_00b6:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_00b6:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_00bb:  ldsfld     int32 TailcallVerify.Condition7::Result
     IL_00c0:  ret
   } // end of method Condition7::Test4
@@ -6992,7 +6977,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition7::Result
     IL_002e:  ldc.i4.5
@@ -7077,7 +7062,7 @@
     .locals init ([0] class [mscorlib]System.Exception e)
     IL_0000:  ldstr      "Executing Condition20.Test1 - Caller: Arguments: i"
     + "nt - ReturnType: void; Callee: the same as Caller (called again)"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition20::Result
     .try
@@ -7106,14 +7091,14 @@
 
       IL_0042:  ldstr      "FAILED: Did not find the word 'Caller' in the stac"
       + "ktrace."
-      IL_0047:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0047:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_004c:  ldstr      "------------------------------------------------"
-      IL_0051:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0056:  call       void [System.Console]System.Console::WriteLine()
+      IL_0051:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0056:  call       void [mscorlib]System.Console::WriteLine()
       IL_005b:  ldloc.0
       IL_005c:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_0061:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0066:  call       void [System.Console]System.Console::WriteLine()
+      IL_0061:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0066:  call       void [mscorlib]System.Console::WriteLine()
       IL_006b:  ldc.i4.s   101
       IL_006d:  stsfld     int32 TailcallVerify.Condition20::Result
       IL_0072:  leave.s    IL_0074
@@ -7130,7 +7115,7 @@
     IL_0089:  ldstr      "PASSED"
     IL_008e:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_0093:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0093:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0098:  ldsfld     int32 TailcallVerify.Condition20::Result
     IL_009d:  ret
   } // end of method Condition20::Test1
@@ -7149,7 +7134,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition20::Result
     IL_002e:  ldc.i4.s   10
@@ -7198,7 +7183,7 @@
     IL_0000:  ldstr      "Executing Condition6.Test1 - Caller: Arguments: No"
     + "ne - ReturnType: void; Callee: Arguments: 3 byte struct - ReturnType: v"
     + "oid"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition6::Result
     .try
@@ -7218,14 +7203,14 @@
       IL_002a:  beq.s      IL_005c
 
       IL_002c:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0031:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0031:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0036:  ldstr      "------------------------------------------------"
-      IL_003b:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0040:  call       void [System.Console]System.Console::WriteLine()
+      IL_003b:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0040:  call       void [mscorlib]System.Console::WriteLine()
       IL_0045:  ldloc.0
       IL_0046:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_004b:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0050:  call       void [System.Console]System.Console::WriteLine()
+      IL_004b:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0050:  call       void [mscorlib]System.Console::WriteLine()
       IL_0055:  ldc.i4.s   101
       IL_0057:  stsfld     int32 TailcallVerify.Condition6::Result
       IL_005c:  leave.s    IL_005e
@@ -7242,7 +7227,7 @@
     IL_0073:  ldstr      "PASSED"
     IL_0078:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_007d:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_007d:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0082:  ldsfld     int32 TailcallVerify.Condition6::Result
     IL_0087:  ret
   } // end of method Condition6::Test1
@@ -7263,7 +7248,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition6::Result
     IL_002e:  ldloca.s   CS$0$0000
@@ -7300,7 +7285,7 @@
     IL_0000:  ldstr      "Executing Condition6.Test2 - Caller: Arguments: No"
     + "ne - ReturnType: void; Callee: Arguments: 3 byte struct - ReturnType: v"
     + "oid"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition6::Result
     .try
@@ -7320,14 +7305,14 @@
       IL_002a:  beq.s      IL_005c
 
       IL_002c:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0031:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0031:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0036:  ldstr      "------------------------------------------------"
-      IL_003b:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0040:  call       void [System.Console]System.Console::WriteLine()
+      IL_003b:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0040:  call       void [mscorlib]System.Console::WriteLine()
       IL_0045:  ldloc.0
       IL_0046:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_004b:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0050:  call       void [System.Console]System.Console::WriteLine()
+      IL_004b:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0050:  call       void [mscorlib]System.Console::WriteLine()
       IL_0055:  ldc.i4.s   101
       IL_0057:  stsfld     int32 TailcallVerify.Condition6::Result
       IL_005c:  leave.s    IL_005e
@@ -7344,7 +7329,7 @@
     IL_0073:  ldstr      "PASSED"
     IL_0078:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_007d:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_007d:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0082:  ldsfld     int32 TailcallVerify.Condition6::Result
     IL_0087:  ret
   } // end of method Condition6::Test2
@@ -7366,7 +7351,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition6::Result
     IL_002e:  ldloca.s   CS$0$0000
@@ -7408,7 +7393,7 @@
     IL_0000:  ldstr      "Executing Condition6.Test3 - Caller: Arguments: No"
     + "ne - ReturnType: void; Callee: Arguments: 3 byte struct - ReturnType: v"
     + "oid"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition6::Result
     .try
@@ -7428,14 +7413,14 @@
       IL_002a:  beq.s      IL_005c
 
       IL_002c:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0031:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0031:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0036:  ldstr      "------------------------------------------------"
-      IL_003b:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0040:  call       void [System.Console]System.Console::WriteLine()
+      IL_003b:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0040:  call       void [mscorlib]System.Console::WriteLine()
       IL_0045:  ldloc.0
       IL_0046:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_004b:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0050:  call       void [System.Console]System.Console::WriteLine()
+      IL_004b:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0050:  call       void [mscorlib]System.Console::WriteLine()
       IL_0055:  ldc.i4.s   101
       IL_0057:  stsfld     int32 TailcallVerify.Condition6::Result
       IL_005c:  leave.s    IL_005e
@@ -7452,7 +7437,7 @@
     IL_0073:  ldstr      "PASSED"
     IL_0078:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_007d:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_007d:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0082:  ldsfld     int32 TailcallVerify.Condition6::Result
     IL_0087:  ret
   } // end of method Condition6::Test3
@@ -7475,7 +7460,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition6::Result
     IL_002e:  ldloca.s   CS$0$0000
@@ -7522,7 +7507,7 @@
     IL_0000:  ldstr      "Executing Condition6.Test4 - Caller: Arguments: No"
     + "ne - ReturnType: void; Callee: Arguments: 3 byte struct - ReturnType: v"
     + "oid"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition6::Result
     .try
@@ -7542,14 +7527,14 @@
       IL_002a:  beq.s      IL_005c
 
       IL_002c:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0031:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0031:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0036:  ldstr      "------------------------------------------------"
-      IL_003b:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0040:  call       void [System.Console]System.Console::WriteLine()
+      IL_003b:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0040:  call       void [mscorlib]System.Console::WriteLine()
       IL_0045:  ldloc.0
       IL_0046:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_004b:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0050:  call       void [System.Console]System.Console::WriteLine()
+      IL_004b:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0050:  call       void [mscorlib]System.Console::WriteLine()
       IL_0055:  ldc.i4.s   101
       IL_0057:  stsfld     int32 TailcallVerify.Condition6::Result
       IL_005c:  leave.s    IL_005e
@@ -7566,7 +7551,7 @@
     IL_0073:  ldstr      "PASSED"
     IL_0078:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_007d:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_007d:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0082:  ldsfld     int32 TailcallVerify.Condition6::Result
     IL_0087:  ret
   } // end of method Condition6::Test4
@@ -7590,7 +7575,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition6::Result
     IL_002e:  ldloca.s   CS$0$0000
@@ -7642,7 +7627,7 @@
     IL_0000:  ldstr      "Executing Condition6.Test5 - Caller: Arguments: No"
     + "ne - ReturnType: void; Callee: Arguments: 3 byte struct - ReturnType: v"
     + "oid"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition6::Result
     .try
@@ -7662,14 +7647,14 @@
       IL_002a:  beq.s      IL_005c
 
       IL_002c:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0031:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0031:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0036:  ldstr      "------------------------------------------------"
-      IL_003b:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0040:  call       void [System.Console]System.Console::WriteLine()
+      IL_003b:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0040:  call       void [mscorlib]System.Console::WriteLine()
       IL_0045:  ldloc.0
       IL_0046:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_004b:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0050:  call       void [System.Console]System.Console::WriteLine()
+      IL_004b:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0050:  call       void [mscorlib]System.Console::WriteLine()
       IL_0055:  ldc.i4.s   101
       IL_0057:  stsfld     int32 TailcallVerify.Condition6::Result
       IL_005c:  leave.s    IL_005e
@@ -7686,7 +7671,7 @@
     IL_0073:  ldstr      "PASSED"
     IL_0078:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_007d:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_007d:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0082:  ldsfld     int32 TailcallVerify.Condition6::Result
     IL_0087:  ret
   } // end of method Condition6::Test5
@@ -7711,7 +7696,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition6::Result
     IL_002e:  ldloca.s   CS$0$0000
@@ -7800,7 +7785,7 @@
     + "IL instruction between the tail. call to the Callee and the ret IL instructio"
     + "n which is not allowed. Expecting to catch an InvalidProgramException i"
     + "nternally if tail. prefix is present."
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition5::Result
     .try
@@ -7842,7 +7827,7 @@
     IL_0053:  ldstr      "PASSED"
     IL_0058:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_005d:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_005d:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0062:  ldsfld     int32 TailcallVerify.Condition5::Result
     IL_0067:  ret
   } // end of method Condition5::Test1
@@ -7862,7 +7847,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition5::Result
     IL_002e:  tail. call       int32 TailcallVerify.Condition5::Callee1()
@@ -7892,7 +7877,7 @@
     .locals init ([0] class [mscorlib]System.Exception e)
     IL_0000:  ldstr      "Executing Condition5.Test2 - Caller: Arguments: No"
     + "ne - ReturnType: byte; Callee: Arguments: None - ReturnType: byte"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition5::Result
     .try
@@ -7920,14 +7905,14 @@
       IL_003c:  beq.s      IL_006e
 
       IL_003e:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0043:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0043:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0048:  ldstr      "------------------------------------------------"
-      IL_004d:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0052:  call       void [System.Console]System.Console::WriteLine()
+      IL_004d:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0052:  call       void [mscorlib]System.Console::WriteLine()
       IL_0057:  ldloc.0
       IL_0058:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005d:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0062:  call       void [System.Console]System.Console::WriteLine()
+      IL_005d:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0062:  call       void [mscorlib]System.Console::WriteLine()
       IL_0067:  ldc.i4.s   101
       IL_0069:  stsfld     int32 TailcallVerify.Condition5::Result
       IL_006e:  leave.s    IL_0070
@@ -7944,7 +7929,7 @@
     IL_0085:  ldstr      "PASSED"
     IL_008a:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_008f:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_008f:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0094:  ldsfld     int32 TailcallVerify.Condition5::Result
     IL_0099:  ret
   } // end of method Condition5::Test2
@@ -7964,7 +7949,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition5::Result
     IL_002e:  tail. call       uint8 TailcallVerify.Condition5::Callee2()
@@ -7992,7 +7977,7 @@
     .locals init ([0] class [mscorlib]System.Exception e)
     IL_0000:  ldstr      "Executing Condition5.Test3 - Caller: Arguments: No"
     + "ne - ReturnType: Int32; Callee: Arguments: None - ReturnType: Int32"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition5::Result
     .try
@@ -8020,14 +8005,14 @@
       IL_003c:  beq.s      IL_006e
 
       IL_003e:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0043:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0043:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0048:  ldstr      "------------------------------------------------"
-      IL_004d:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0052:  call       void [System.Console]System.Console::WriteLine()
+      IL_004d:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0052:  call       void [mscorlib]System.Console::WriteLine()
       IL_0057:  ldloc.0
       IL_0058:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005d:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0062:  call       void [System.Console]System.Console::WriteLine()
+      IL_005d:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0062:  call       void [mscorlib]System.Console::WriteLine()
       IL_0067:  ldc.i4.s   101
       IL_0069:  stsfld     int32 TailcallVerify.Condition5::Result
       IL_006e:  leave.s    IL_0070
@@ -8044,7 +8029,7 @@
     IL_0085:  ldstr      "PASSED"
     IL_008a:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_008f:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_008f:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0094:  ldsfld     int32 TailcallVerify.Condition5::Result
     IL_0099:  ret
   } // end of method Condition5::Test3
@@ -8064,7 +8049,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition5::Result
     IL_002e:  tail. call       int32 TailcallVerify.Condition5::Callee3()
@@ -8091,7 +8076,7 @@
     .locals init ([0] class [mscorlib]System.Exception e)
     IL_0000:  ldstr      "Executing Condition5.Test4 - Caller: Arguments: No"
     + "ne - ReturnType: UInt32; Callee: Arguments: None - ReturnType: Int32"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition5::Result
     .try
@@ -8119,14 +8104,14 @@
       IL_003c:  beq.s      IL_006e
 
       IL_003e:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0043:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0043:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0048:  ldstr      "------------------------------------------------"
-      IL_004d:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0052:  call       void [System.Console]System.Console::WriteLine()
+      IL_004d:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0052:  call       void [mscorlib]System.Console::WriteLine()
       IL_0057:  ldloc.0
       IL_0058:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005d:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0062:  call       void [System.Console]System.Console::WriteLine()
+      IL_005d:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0062:  call       void [mscorlib]System.Console::WriteLine()
       IL_0067:  ldc.i4.s   101
       IL_0069:  stsfld     int32 TailcallVerify.Condition5::Result
       IL_006e:  leave.s    IL_0070
@@ -8143,7 +8128,7 @@
     IL_0085:  ldstr      "PASSED"
     IL_008a:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_008f:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_008f:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0094:  ldsfld     int32 TailcallVerify.Condition5::Result
     IL_0099:  ret
   } // end of method Condition5::Test4
@@ -8163,7 +8148,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition5::Result
     IL_002e:  tail. call       int32 TailcallVerify.Condition5::Callee4()
@@ -8190,7 +8175,7 @@
     .locals init ([0] class [mscorlib]System.Exception e)
     IL_0000:  ldstr      "Executing Condition5.Test5 - Caller: Arguments: No"
     + "ne - ReturnType: Int32; Callee: Arguments: None - ReturnType: UInt32"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition5::Result
     .try
@@ -8218,14 +8203,14 @@
       IL_003c:  beq.s      IL_006e
 
       IL_003e:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0043:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0043:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0048:  ldstr      "------------------------------------------------"
-      IL_004d:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0052:  call       void [System.Console]System.Console::WriteLine()
+      IL_004d:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0052:  call       void [mscorlib]System.Console::WriteLine()
       IL_0057:  ldloc.0
       IL_0058:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005d:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0062:  call       void [System.Console]System.Console::WriteLine()
+      IL_005d:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0062:  call       void [mscorlib]System.Console::WriteLine()
       IL_0067:  ldc.i4.s   101
       IL_0069:  stsfld     int32 TailcallVerify.Condition5::Result
       IL_006e:  leave.s    IL_0070
@@ -8242,7 +8227,7 @@
     IL_0085:  ldstr      "PASSED"
     IL_008a:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_008f:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_008f:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0094:  ldsfld     int32 TailcallVerify.Condition5::Result
     IL_0099:  ret
   } // end of method Condition5::Test5
@@ -8262,7 +8247,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition5::Result
     IL_002e:  tail. call       uint32 TailcallVerify.Condition5::Callee5()
@@ -8289,7 +8274,7 @@
     .locals init ([0] class [mscorlib]System.Exception e)
     IL_0000:  ldstr      "Executing Condition5.Test6 - Caller: Arguments: No"
     + "ne - ReturnType: Int64; Callee: Arguments: None - ReturnType: UInt64"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition5::Result
     .try
@@ -8317,14 +8302,14 @@
       IL_003c:  beq.s      IL_006e
 
       IL_003e:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0043:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0043:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0048:  ldstr      "------------------------------------------------"
-      IL_004d:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0052:  call       void [System.Console]System.Console::WriteLine()
+      IL_004d:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0052:  call       void [mscorlib]System.Console::WriteLine()
       IL_0057:  ldloc.0
       IL_0058:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005d:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0062:  call       void [System.Console]System.Console::WriteLine()
+      IL_005d:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0062:  call       void [mscorlib]System.Console::WriteLine()
       IL_0067:  ldc.i4.s   101
       IL_0069:  stsfld     int32 TailcallVerify.Condition5::Result
       IL_006e:  leave.s    IL_0070
@@ -8341,7 +8326,7 @@
     IL_0085:  ldstr      "PASSED"
     IL_008a:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_008f:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_008f:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0094:  ldsfld     int32 TailcallVerify.Condition5::Result
     IL_0099:  ret
   } // end of method Condition5::Test6
@@ -8361,7 +8346,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition5::Result
     IL_002e:  tail. call       uint64 TailcallVerify.Condition5::Callee6()
@@ -8389,7 +8374,7 @@
     .locals init ([0] class [mscorlib]System.Exception e)
     IL_0000:  ldstr      "Executing Condition5.Test7 - Caller: Arguments: No"
     + "ne - ReturnType: UInt64; Callee: Arguments: None - ReturnType: Int64"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition5::Result
     .try
@@ -8417,14 +8402,14 @@
       IL_003c:  beq.s      IL_006e
 
       IL_003e:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0043:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0043:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0048:  ldstr      "------------------------------------------------"
-      IL_004d:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0052:  call       void [System.Console]System.Console::WriteLine()
+      IL_004d:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0052:  call       void [mscorlib]System.Console::WriteLine()
       IL_0057:  ldloc.0
       IL_0058:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005d:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0062:  call       void [System.Console]System.Console::WriteLine()
+      IL_005d:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0062:  call       void [mscorlib]System.Console::WriteLine()
       IL_0067:  ldc.i4.s   101
       IL_0069:  stsfld     int32 TailcallVerify.Condition5::Result
       IL_006e:  leave.s    IL_0070
@@ -8441,7 +8426,7 @@
     IL_0085:  ldstr      "PASSED"
     IL_008a:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_008f:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_008f:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0094:  ldsfld     int32 TailcallVerify.Condition5::Result
     IL_0099:  ret
   } // end of method Condition5::Test7
@@ -8461,7 +8446,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition5::Result
     IL_002e:  tail. call       uint64 TailcallVerify.Condition5::Callee7()
@@ -8490,7 +8475,7 @@
     IL_0000:  ldstr      "Executing Condition5.Test8 - Caller: Arguments: No"
     + "ne - ReturnType: UInt64; Callee: Arguments: None - ReturnType: UInt32 -"
     + " Expecting a InvalidProgramException"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition5::Result
     .try
@@ -8532,7 +8517,7 @@
     IL_0053:  ldstr      "PASSED"
     IL_0058:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_005d:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_005d:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0062:  ldsfld     int32 TailcallVerify.Condition5::Result
     IL_0067:  ret
   } // end of method Condition5::Test8
@@ -8552,7 +8537,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition5::Result
     IL_002e:  tail. call       valuetype TailcallVerify.ValueTypeSingleInt64 TailcallVerify.Condition5::Callee8()
@@ -8588,7 +8573,7 @@
     IL_0000:  ldstr      "Executing Condition5.Test9 - Caller: Arguments: No"
     + "ne - ReturnType: UInt32; Callee: Arguments: None - ReturnType: UInt64 -"
     + " Expecting a InvalidProgramException"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition5::Result
     .try
@@ -8630,7 +8615,7 @@
     IL_0053:  ldstr      "PASSED"
     IL_0058:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_005d:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_005d:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0062:  ldsfld     int32 TailcallVerify.Condition5::Result
     IL_0067:  ret
   } // end of method Condition5::Test9
@@ -8650,7 +8635,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition5::Result
     IL_002e:  tail. call       uint64 TailcallVerify.Condition5::Callee9()
@@ -8713,7 +8698,7 @@
     IL_0000:  ldstr      "Executing Condition4.Test1 - Caller: Arguments: No"
     + "ne - ReturnType: 3 byte struct; Callee: Arguments: None - ReturnType: 3"
     + " byte struct"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition4::Result
     .try
@@ -8741,14 +8726,14 @@
       IL_003c:  beq.s      IL_006e
 
       IL_003e:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0043:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0043:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0048:  ldstr      "------------------------------------------------"
-      IL_004d:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0052:  call       void [System.Console]System.Console::WriteLine()
+      IL_004d:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0052:  call       void [mscorlib]System.Console::WriteLine()
       IL_0057:  ldloc.0
       IL_0058:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005d:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0062:  call       void [System.Console]System.Console::WriteLine()
+      IL_005d:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0062:  call       void [mscorlib]System.Console::WriteLine()
       IL_0067:  ldc.i4.s   101
       IL_0069:  stsfld     int32 TailcallVerify.Condition4::Result
       IL_006e:  leave.s    IL_0070
@@ -8765,7 +8750,7 @@
     IL_0085:  ldstr      "PASSED"
     IL_008a:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_008f:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_008f:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0094:  ldsfld     int32 TailcallVerify.Condition4::Result
     IL_0099:  ret
   } // end of method Condition4::Test1
@@ -8785,7 +8770,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition4::Result
     IL_002e:  tail. call       valuetype TailcallVerify.ValueType3Bytes TailcallVerify.Condition4::Callee1()
@@ -8820,7 +8805,7 @@
     IL_0000:  ldstr      "Executing Condition4.Test2 - Caller: Arguments: No"
     + "ne - ReturnType: 3 byte struct; Callee: Arguments: None - ReturnType: 3"
     + " byte struct [Verifying the field values in the return type struct]"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition4::Result
     .try
@@ -8840,20 +8825,20 @@
       IL_0030:  stsfld     int32 TailcallVerify.Condition4::Result
       IL_0035:  ldstr      "FAILED: The fields in the return type struct have "
       + "the wrong values."
-      IL_003a:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_003a:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_003f:  ldstr      "v.i1: != byte.MinValue || v.i2: != short.M"
       + "axValue"
-                call       void [System.Console]System.Console::WriteLine(string)
+                call       void [mscorlib]System.Console::WriteLine(string)
       IL_0044:  ldloca.s   v
       IL_0046:  ldfld      uint8 TailcallVerify.ValueType3Bytes::i1
       IL_004b:  box        [mscorlib]System.Byte
                 callvirt   instance string [mscorlib]System.Object::ToString()
-                call       void [System.Console]System.Console::WriteLine(string)
+                call       void [mscorlib]System.Console::WriteLine(string)
       IL_0050:  ldloca.s   v
       IL_0052:  ldfld      int16 TailcallVerify.ValueType3Bytes::i2
       IL_0057:  box        [mscorlib]System.Int16
                 callvirt   instance string [mscorlib]System.Object::ToString()
-      IL_005c:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_005c:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0061:  leave.s    IL_0082
 
     }  // end .try
@@ -8867,7 +8852,7 @@
       IL_0071:  callvirt   instance string [mscorlib]System.Object::ToString()
       IL_0076:  call       string [mscorlib]System.String::Concat(string,
                                                                   string)
-      IL_007b:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_007b:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0080:  leave.s    IL_0082
 
     }  // end handler
@@ -8882,7 +8867,7 @@
     IL_0097:  ldstr      "PASSED"
     IL_009c:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_00a1:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_00a1:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_00a6:  ldsfld     int32 TailcallVerify.Condition4::Result
     IL_00ab:  ret
   } // end of method Condition4::Test2
@@ -8902,7 +8887,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition4::Result
     IL_002e:  tail. call       valuetype TailcallVerify.ValueType3Bytes TailcallVerify.Condition4::Callee2()
@@ -8965,7 +8950,7 @@
     .locals init ([0] class [mscorlib]System.Exception e)
     IL_0000:  ldstr      "Executing Condition3.Test1 - Caller: Arguments: No"
     + "ne - ReturnType: Int32; Callee: Arguments: None - ReturnType: Int32"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition3::Result
     .try
@@ -8993,14 +8978,14 @@
       IL_003c:  beq.s      IL_006e
 
       IL_003e:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0043:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0043:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0048:  ldstr      "------------------------------------------------"
-      IL_004d:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0052:  call       void [System.Console]System.Console::WriteLine()
+      IL_004d:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0052:  call       void [mscorlib]System.Console::WriteLine()
       IL_0057:  ldloc.0
       IL_0058:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005d:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0062:  call       void [System.Console]System.Console::WriteLine()
+      IL_005d:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0062:  call       void [mscorlib]System.Console::WriteLine()
       IL_0067:  ldc.i4.s   101
       IL_0069:  stsfld     int32 TailcallVerify.Condition3::Result
       IL_006e:  leave.s    IL_0070
@@ -9017,7 +9002,7 @@
     IL_0085:  ldstr      "PASSED"
     IL_008a:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_008f:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_008f:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0094:  ldsfld     int32 TailcallVerify.Condition3::Result
     IL_0099:  ret
   } // end of method Condition3::Test1
@@ -9037,7 +9022,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition3::Result
     IL_002e:  tail. call       int32 TailcallVerify.Condition3::Callee1()
@@ -9066,7 +9051,7 @@
     .locals init ([0] class [mscorlib]System.Exception e)
     IL_0000:  ldstr      "Executing Condition3.Test2 - Caller: Arguments: No"
     + "ne - ReturnType: void; Callee: Arguments: None - ReturnType: string"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition3::Result
     .try
@@ -9094,14 +9079,14 @@
       IL_003c:  beq.s      IL_006e
 
       IL_003e:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0043:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0043:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0048:  ldstr      "------------------------------------------------"
-      IL_004d:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0052:  call       void [System.Console]System.Console::WriteLine()
+      IL_004d:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0052:  call       void [mscorlib]System.Console::WriteLine()
       IL_0057:  ldloc.0
       IL_0058:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005d:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0062:  call       void [System.Console]System.Console::WriteLine()
+      IL_005d:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0062:  call       void [mscorlib]System.Console::WriteLine()
       IL_0067:  ldc.i4.s   101
       IL_0069:  stsfld     int32 TailcallVerify.Condition3::Result
       IL_006e:  leave.s    IL_0070
@@ -9118,7 +9103,7 @@
     IL_0085:  ldstr      "PASSED"
     IL_008a:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_008f:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_008f:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0094:  ldsfld     int32 TailcallVerify.Condition3::Result
     IL_0099:  ret
   } // end of method Condition3::Test2
@@ -9138,7 +9123,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition3::Result
     IL_002e:  tail. call       string TailcallVerify.Condition3::Callee2()
@@ -9203,7 +9188,7 @@
     .locals init ([0] class [mscorlib]System.Exception e)
     IL_0000:  ldstr      "Executing Condition2.Test1  - Caller: Arguments: N"
     + "one - ReturnType: void; Callee: Arguments: 0 - ReturnType: Int32"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition2::Result
     .try
@@ -9230,14 +9215,14 @@
       IL_003b:  beq.s      IL_006d
 
       IL_003d:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0042:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0042:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0047:  ldstr      "------------------------------------------------"
-      IL_004c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0051:  call       void [System.Console]System.Console::WriteLine()
+      IL_004c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0051:  call       void [mscorlib]System.Console::WriteLine()
       IL_0056:  ldloc.0
       IL_0057:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0061:  call       void [System.Console]System.Console::WriteLine()
+      IL_005c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0061:  call       void [mscorlib]System.Console::WriteLine()
       IL_0066:  ldc.i4.s   101
       IL_0068:  stsfld     int32 TailcallVerify.Condition2::Result
       IL_006d:  leave.s    IL_006f
@@ -9254,7 +9239,7 @@
     IL_0084:  ldstr      "PASSED"
     IL_0089:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_008e:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_008e:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0093:  ldsfld     int32 TailcallVerify.Condition2::Result
     IL_0098:  ret
   } // end of method Condition2::Test1
@@ -9273,7 +9258,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition2::Result
 //            tail.      // tail.call, pop, ret sequence is never valid for .NET Core (but is accepted by .NET x64)
@@ -9304,7 +9289,7 @@
     .locals init ([0] class [mscorlib]System.Exception e)
     IL_0000:  ldstr      "Executing Condition2.Test2  - Caller: Arguments: N"
     + "one - ReturnType: void; Callee: Arguments: Int32 - ReturnType: string"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition2::Result
     .try
@@ -9331,14 +9316,14 @@
       IL_003b:  beq.s      IL_006d
 
       IL_003d:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0042:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0042:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0047:  ldstr      "------------------------------------------------"
-      IL_004c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0051:  call       void [System.Console]System.Console::WriteLine()
+      IL_004c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0051:  call       void [mscorlib]System.Console::WriteLine()
       IL_0056:  ldloc.0
       IL_0057:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0061:  call       void [System.Console]System.Console::WriteLine()
+      IL_005c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0061:  call       void [mscorlib]System.Console::WriteLine()
       IL_0066:  ldc.i4.s   101
       IL_0068:  stsfld     int32 TailcallVerify.Condition2::Result
       IL_006d:  leave.s    IL_006f
@@ -9355,7 +9340,7 @@
     IL_0084:  ldstr      "PASSED"
     IL_0089:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_008e:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_008e:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0093:  ldsfld     int32 TailcallVerify.Condition2::Result
     IL_0098:  ret
   } // end of method Condition2::Test2
@@ -9374,7 +9359,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition2::Result
     IL_002e:  ldc.i4.0
@@ -9441,7 +9426,7 @@
     IL_0000:  ldstr      "Executing Condition1.Test1 - Caller: Arguments: No"
     + "ne - ReturnType: void; Callee: Arguments: None - ReturnType: 3 byte str"
     + "uct"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition1::Result
     .try
@@ -9468,14 +9453,14 @@
       IL_003b:  beq.s      IL_006d
 
       IL_003d:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0042:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0042:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0047:  ldstr      "------------------------------------------------"
-      IL_004c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0051:  call       void [System.Console]System.Console::WriteLine()
+      IL_004c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0051:  call       void [mscorlib]System.Console::WriteLine()
       IL_0056:  ldloc.0
       IL_0057:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0061:  call       void [System.Console]System.Console::WriteLine()
+      IL_005c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0061:  call       void [mscorlib]System.Console::WriteLine()
       IL_0066:  ldc.i4.s   101
       IL_0068:  stsfld     int32 TailcallVerify.Condition1::Result
       IL_006d:  leave.s    IL_006f
@@ -9492,7 +9477,7 @@
     IL_0084:  ldstr      "PASSED"
     IL_0089:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_008e:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_008e:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0093:  ldsfld     int32 TailcallVerify.Condition1::Result
     IL_0098:  ret
   } // end of method Condition1::Test1
@@ -9511,7 +9496,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition1::Result
 //            tail.      // tail.call, pop, ret sequence is never valid for .NET Core (but is accepted by .NET x64)
@@ -9547,7 +9532,7 @@
     IL_0000:  ldstr      "Executing Condition1.Test2 - Caller: Arguments: No"
     + "ne - ReturnType: void; Callee: Arguments: Int32 - ReturnType: 3 byte st"
     + "ruct"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition1::Result
     .try
@@ -9574,14 +9559,14 @@
       IL_003b:  beq.s      IL_006d
 
       IL_003d:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0042:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0042:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0047:  ldstr      "------------------------------------------------"
-      IL_004c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0051:  call       void [System.Console]System.Console::WriteLine()
+      IL_004c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0051:  call       void [mscorlib]System.Console::WriteLine()
       IL_0056:  ldloc.0
       IL_0057:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0061:  call       void [System.Console]System.Console::WriteLine()
+      IL_005c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0061:  call       void [mscorlib]System.Console::WriteLine()
       IL_0066:  ldc.i4.s   101
       IL_0068:  stsfld     int32 TailcallVerify.Condition1::Result
       IL_006d:  leave.s    IL_006f
@@ -9598,7 +9583,7 @@
     IL_0084:  ldstr      "PASSED"
     IL_0089:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_008e:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_008e:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0093:  ldsfld     int32 TailcallVerify.Condition1::Result
     IL_0098:  ret
   } // end of method Condition1::Test2
@@ -9617,7 +9602,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition1::Result
     IL_002e:  ldc.i4.0
@@ -9654,7 +9639,7 @@
     IL_0000:  ldstr      "Executing Condition1.Test3 - Caller: Arguments: No"
     + "ne - ReturnType: void; Callee: Arguments: 8 x int - ReturnType: 3 byte "
     + "struct"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition1::Result
     .try
@@ -9681,14 +9666,14 @@
       IL_003b:  beq.s      IL_006d
 
       IL_003d:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0042:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0042:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0047:  ldstr      "------------------------------------------------"
-      IL_004c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0051:  call       void [System.Console]System.Console::WriteLine()
+      IL_004c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0051:  call       void [mscorlib]System.Console::WriteLine()
       IL_0056:  ldloc.0
       IL_0057:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0061:  call       void [System.Console]System.Console::WriteLine()
+      IL_005c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0061:  call       void [mscorlib]System.Console::WriteLine()
       IL_0066:  ldc.i4.s   101
       IL_0068:  stsfld     int32 TailcallVerify.Condition1::Result
       IL_006d:  leave.s    IL_006f
@@ -9705,7 +9690,7 @@
     IL_0084:  ldstr      "PASSED"
     IL_0089:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_008e:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_008e:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0093:  ldsfld     int32 TailcallVerify.Condition1::Result
     IL_0098:  ret
   } // end of method Condition1::Test3
@@ -9724,7 +9709,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition1::Result
     IL_002e:  ldc.i4     0x80000000
@@ -9796,7 +9781,7 @@
     IL_004a:  beq.s      IL_005d
 
     IL_004c:  ldstr      "FAILED: Passed in arguments are invalid."
-    IL_0051:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0051:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0056:  ldc.i4.s   101
     IL_0058:  stsfld     int32 TailcallVerify.Condition1::Result
     IL_005d:  ldc.i4.1
@@ -9816,7 +9801,7 @@
     IL_0000:  ldstr      "Executing Condition1.Test4 - Caller: Arguments: No"
     + "ne - ReturnType: void; Callee: Arguments: i32,i64,mb3,i16,u8,f64,f32,mb"
     + "5 - ReturnType: 3 byte struct"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition1::Result
     .try
@@ -9843,14 +9828,14 @@
       IL_003b:  beq.s      IL_006d
 
       IL_003d:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0042:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0042:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0047:  ldstr      "------------------------------------------------"
-      IL_004c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0051:  call       void [System.Console]System.Console::WriteLine()
+      IL_004c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0051:  call       void [mscorlib]System.Console::WriteLine()
       IL_0056:  ldloc.0
       IL_0057:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0061:  call       void [System.Console]System.Console::WriteLine()
+      IL_005c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0061:  call       void [mscorlib]System.Console::WriteLine()
       IL_0066:  ldc.i4.s   101
       IL_0068:  stsfld     int32 TailcallVerify.Condition1::Result
       IL_006d:  leave.s    IL_006f
@@ -9867,7 +9852,7 @@
     IL_0084:  ldstr      "PASSED"
     IL_0089:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_008e:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_008e:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0093:  ldsfld     int32 TailcallVerify.Condition1::Result
     IL_0098:  ret
   } // end of method Condition1::Test4
@@ -9892,7 +9877,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition1::Result
     IL_002e:  ldloca.s   CS$0$0000
@@ -10008,7 +9993,7 @@
     IL_0082:  beq        IL_0131
 
     IL_0087:  ldstr      "FAILED: Passed in arguments are invalid."
-    IL_008c:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_008c:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0091:  ldstr      "i1:{0} != Int32.MinValue || i2:{1} != Int64.MaxVal"
     + "ue || v3.i1:{2} != byte.MinValue || v3.i2:{3} != short.MaxValue || i4:{"
     + "4} != Int16.MinValue || b5:{5} != byte.MaxValue || d6:{6} != double.Min"
@@ -10078,7 +10063,7 @@
     IL_011e:  box        [mscorlib]System.Int16
     IL_0123:  stelem.ref
     IL_0124:  ldloc.1
-    IL_0125:  call       void [System.Console]System.Console::WriteLine(string,
+    IL_0125:  call       void [mscorlib]System.Console::WriteLine(string,
                                                                   object[])
     IL_012a:  ldc.i4.s   101
     IL_012c:  stsfld     int32 TailcallVerify.Condition1::Result
@@ -10179,7 +10164,7 @@
     IL_0000:  ldstr      "Executing Condition19.Test1 - Caller: Arguments: N"
     + "one - ReturnType: void; Callee (doing a pinvoke call): Arguments: None "
     + "- ReturnType: void"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition19::Result
     .try
@@ -10206,14 +10191,14 @@
       IL_003b:  beq.s      IL_006d
 
       IL_003d:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0042:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0042:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0047:  ldstr      "------------------------------------------------"
-      IL_004c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0051:  call       void [System.Console]System.Console::WriteLine()
+      IL_004c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0051:  call       void [mscorlib]System.Console::WriteLine()
       IL_0056:  ldloc.0
       IL_0057:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0061:  call       void [System.Console]System.Console::WriteLine()
+      IL_005c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0061:  call       void [mscorlib]System.Console::WriteLine()
       IL_0066:  ldc.i4.s   101
       IL_0068:  stsfld     int32 TailcallVerify.Condition19::Result
       IL_006d:  leave.s    IL_006f
@@ -10230,7 +10215,7 @@
     IL_0084:  ldstr      "PASSED"
     IL_0089:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_008e:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_008e:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0093:  ldsfld     int32 TailcallVerify.Condition19::Result
     IL_0098:  ret
   } // end of method Condition19::Test1
@@ -10249,7 +10234,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition19::Result
     IL_002e:  ldc.i4.1
@@ -10268,7 +10253,7 @@
     IL_0010:  box        [mscorlib]System.Int32
     IL_0015:  call       string [mscorlib]System.String::Concat(object,
                                                                 object)
-    IL_001a:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_001a:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_001f:  ldc.i4.1
     IL_0020:  volatile.
     IL_0022:  ldsfld     int32 modreq([mscorlib]System.Runtime.CompilerServices.IsVolatile) TailcallVerify.Condition19::zero
@@ -10285,7 +10270,7 @@
     IL_0000:  ldstr      "Executing Condition19.Test2 - Caller: Arguments: N"
     + "one - ReturnType: void; Callee (IS A pinvoke call): Arguments: None - R"
     + "eturnType: void"
-    IL_0005:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0005:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000a:  ldc.i4.s   100
     IL_000c:  stsfld     int32 TailcallVerify.Condition19::Result
     .try
@@ -10312,14 +10297,14 @@
       IL_003b:  beq.s      IL_006d
 
       IL_003d:  ldstr      "FAILED: Found the word 'Caller' in the stacktrace."
-      IL_0042:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0042:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0047:  ldstr      "------------------------------------------------"
-      IL_004c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0051:  call       void [System.Console]System.Console::WriteLine()
+      IL_004c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0051:  call       void [mscorlib]System.Console::WriteLine()
       IL_0056:  ldloc.0
       IL_0057:  callvirt   instance string [mscorlib]System.Exception::get_StackTrace()
-      IL_005c:  call       void [System.Console]System.Console::WriteLine(string)
-      IL_0061:  call       void [System.Console]System.Console::WriteLine()
+      IL_005c:  call       void [mscorlib]System.Console::WriteLine(string)
+      IL_0061:  call       void [mscorlib]System.Console::WriteLine()
       IL_0066:  ldc.i4.s   101
       IL_0068:  stsfld     int32 TailcallVerify.Condition19::Result
       IL_006d:  leave.s    IL_006f
@@ -10336,7 +10321,7 @@
     IL_0084:  ldstr      "PASSED"
     IL_0089:  call       string [mscorlib]System.String::Concat(string,
                                                                 string)
-    IL_008e:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_008e:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0093:  ldsfld     int32 TailcallVerify.Condition19::Result
     IL_0098:  ret
   } // end of method Condition19::Test2
@@ -10355,7 +10340,7 @@
     IL_001b:  bne.un.s   IL_002e
 
     IL_001d:  ldstr      "Failed, Method was inlined..."
-    IL_0022:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0022:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0027:  ldc.i4.s   101
     IL_0029:  stsfld     int32 TailcallVerify.Condition19::Result
     IL_002e:  ldstr      "result: "
@@ -10363,7 +10348,7 @@
     IL_0038:  box        [mscorlib]System.Int32
     IL_003d:  call       string [mscorlib]System.String::Concat(object,
                                                                 object)
-    IL_0042:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0042:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0047:  ldc.i4.0
     IL_0048:  tail. call       void TailcallVerify.Win32Interop::Callee(int32)
     IL_004d:  ret
@@ -10429,5 +10414,3 @@
 .data cil I_00005C00 = bytearray (
                  01 00 00 00 02 00 00 00 03 00 00 00 04 00 00 00
                  05 00 00 00) 
-// *********** DISASSEMBLY COMPLETE ***********************
-// WARNING: Created Win32 resource file TailcallVerifyWithPrefix.res

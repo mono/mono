@@ -2,12 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-.assembly extern System.Console
-{
-  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )
-  .ver 4:0:0:0
-}
-
 .assembly extern mscorlib { }
 .assembly 'tailcall' { }
 .namespace JitTest
@@ -192,7 +186,7 @@
       			pop
       			pop
       IL_000c:  ldstr      "=== TEST PASSED ==="
-      IL_0011:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0011:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0016:  ldc.i4.s   100
       IL_0018:  stloc.0
       IL_0019:  br.s       IL_001b
@@ -213,4 +207,3 @@
   } // end of class App
 
 } // end of namespace JitTest
-

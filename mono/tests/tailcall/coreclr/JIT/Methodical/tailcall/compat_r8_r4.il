@@ -2,11 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-.assembly extern System.Console
-{
-  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )
-  .ver 4:0:0:0
-}
 .assembly extern mscorlib { }
 .assembly compat_r8_r4 { }
 .namespace JitTest
@@ -78,14 +73,14 @@
       IL_0006:  ldc.r4     10.
       IL_000b:  beq.s      IL_0016
 
-      IL_000d:  call       void [System.Console]System.Console::WriteLine(float32)
+      IL_000d:  call       void [mscorlib]System.Console::WriteLine(float32)
       IL_0012:  ldc.i4.1
       IL_0013:  stloc.0
       IL_0014:  br.s       IL_0026
 
       IL_0016:  pop
       IL_0017:  ldstr      "passed"
-      IL_001c:  call       void [System.Console]System.Console::WriteLine(class System.String)
+      IL_001c:  call       void [mscorlib]System.Console::WriteLine(class System.String)
       IL_0021:  ldc.i4.s   100
       IL_0023:  stloc.0
       IL_0024:  br.s       IL_0026
@@ -102,7 +97,5 @@
       IL_0001:  call       instance void [mscorlib]System.Object::.ctor()
       IL_0006:  ret
     } 
-
   } 
-
-} 
+}

@@ -3,11 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 .assembly extern mscorlib { }
-.assembly extern System.Console
-{
-  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )
-  .ver 4:0:0:0
-}
 .assembly reference_i { }
 .method public static class System.String 
         rems(int32& n,
@@ -100,14 +95,12 @@
 
   IL_001f:  ldloca.s   V_0
   IL_0021:  call       instance class System.String [mscorlib]System.Int32::ToString()
-  IL_0026:  call       void [System.Console]System.Console::Write(class System.String)
+  IL_0026:  call       void [mscorlib]System.Console::Write(class System.String)
   IL_002b:  ldstr      " "
-  IL_0030:  call       void [System.Console]System.Console::Write(class System.String)
+  IL_0030:  call       void [mscorlib]System.Console::Write(class System.String)
   IL_0035:  br.s       IL_0004
 
-  IL_0037:  call       void [System.Console]System.Console::WriteLine()
+  IL_0037:  call       void [mscorlib]System.Console::WriteLine()
   IL_003c:  ldc.i4     0x64
   IL_0041:  ret
 } // end of global method main
-
-//*********** DISASSEMBLY COMPLETE ***********************

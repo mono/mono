@@ -2,12 +2,8 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-.assembly extern legacy library mscorlib {}
-.assembly extern System.Console
-{
-  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )
-  .ver 4:0:0:0
-}
+.assembly extern mscorlib { }
+
 .assembly jittailcall1
 {
 }
@@ -45,15 +41,15 @@ NonZero:
   .method static void Test(int32 N)
   { .maxstack   1
     ldarg       N
-    call        void [System.Console]System.Console::Write(int32)
+    call        void [mscorlib]System.Console::Write(int32)
     ldstr       " is "
-    call        void [System.Console]System.Console::Write(class [mscorlib]System.String)
+    call        void [mscorlib]System.Console::Write(class [mscorlib]System.String)
     ldarg       N
     call        bool EvenOdd::IsEven(int32)
     brfalse     LoadOdd
     ldstr       "even"
 Print:
-    tail. call  void [System.Console]System.Console::WriteLine(class [mscorlib]System.String)
+    tail. call  void [mscorlib]System.Console::WriteLine(class [mscorlib]System.String)
     ret
 LoadOdd:
     ldstr       "odd"

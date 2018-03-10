@@ -3,11 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 .assembly extern mscorlib { }
-.assembly extern System.Console
-{
-  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )
-  .ver 4:0:0:0
-}
 .assembly compat_obj { }
 .namespace JitTest
 {
@@ -63,12 +58,12 @@
       .locals (int32 V_0)
       IL_0000:  ldc.i4.0
       IL_0001:  call       class JitTest.BaseClass JitTest.BaseClass::caller(bool)
-      IL_0006:  call       void [System.Console]System.Console::WriteLine(class System.Object)
+      IL_0006:  call       void [mscorlib]System.Console::WriteLine(class System.Object)
       IL_000b:  ldc.i4.1
       IL_000c:  call       class JitTest.BaseClass JitTest.BaseClass::caller(bool)
-      IL_0011:  call       void [System.Console]System.Console::WriteLine(class System.Object)
+      IL_0011:  call       void [mscorlib]System.Console::WriteLine(class System.Object)
       IL_0016:  ldstr      "passed"
-      IL_001b:  call       void [System.Console]System.Console::WriteLine(class System.String)
+      IL_001b:  call       void [mscorlib]System.Console::WriteLine(class System.String)
       IL_0020:  ldc.i4.s   100
       IL_0022:  stloc.0
       IL_0023:  br.s       IL_0025
@@ -90,5 +85,3 @@
   } // end of class DerivedClass
 
 } // end of namespace JitTest
-
-//*********** DISASSEMBLY COMPLETE ***********************

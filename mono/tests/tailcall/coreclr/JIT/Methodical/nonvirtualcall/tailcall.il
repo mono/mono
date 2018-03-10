@@ -2,21 +2,9 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-.assembly extern System.Console
-{
-  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )
-  .ver 4:0:0:0
-}
 
-
-
-
-
-// Metadata version: v2.0.50509
 .assembly extern mscorlib
 {
-  .publickeytoken = (B7 7A 5C 56 19 34 E0 89 )                         // .z\V.4..
-  .ver 2:0:0:0
 }
 .assembly tailcall
 {
@@ -24,14 +12,6 @@
   .hash algorithm 0x00008004
   .ver 0:0:0:0
 }
-.module nonvirtualcalls_tailcall.exe
-// MVID: {EC3860F1-6469-489C-86D2-A81D88AE196E}
-.imagebase 0x00400000
-.file alignment 0x00000200
-.stackreserve 0x00100000
-.subsystem 0x0003       // WINDOWS_CUI
-.corflags 0x00000001    //  ILONLY
-// Image base: 0x000000001AB30000
 
 
 // =============== CLASS MEMBERS DECLARATION ===================
@@ -531,7 +511,7 @@
     .maxstack  2
     IL_0000:  nop
     IL_0001:  ldstr      "Call from inside GrandChild"
-    IL_0006:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_0006:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_000b:  nop
     IL_000c:  ldstr      "Child.AbstractFinal"
     IL_0011:  ldarg.0
@@ -626,7 +606,7 @@
       IL_0002:  call       void Test.Program::CallFromInsideGrandChild()
       IL_0007:  nop
       IL_0008:  ldstr      "Test SUCCESS"
-      IL_000d:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_000d:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0012:  nop
       IL_0013:  ldc.i4.s   100
       IL_0015:  stloc.1
@@ -638,10 +618,10 @@
       IL_0018:  stloc.0
       IL_0019:  nop
       IL_001a:  ldloc.0
-      IL_001b:  call       void [System.Console]System.Console::WriteLine(object)
+      IL_001b:  call       void [mscorlib]System.Console::WriteLine(object)
       IL_0020:  nop
       IL_0021:  ldstr      "Test FAILED"
-      IL_0026:  call       void [System.Console]System.Console::WriteLine(string)
+      IL_0026:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_002b:  nop
       IL_002c:  ldc.i4.s   101
       IL_002e:  stloc.1

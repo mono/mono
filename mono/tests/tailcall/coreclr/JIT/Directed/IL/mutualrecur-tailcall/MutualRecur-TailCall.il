@@ -2,12 +2,8 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-.assembly extern System.Console
-{
-  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )
-  .ver 4:0:0:0
-}
-.assembly extern legacy library mscorlib {}
+.assembly extern mscorlib { }
+
 .assembly mutualrecurtailcall
 {
 }
@@ -4630,7 +4626,7 @@
   IL_0e29:  call       void ?Function1_100@@YAXH@Z(int32)
   IL_0e2e:  br         IL_000b
 
-  IL_0e33:  	call	    class [mscorlib]System.IO.TextWriter [System.Console]System.Console::get_Out()
+  IL_0e33:  	call	    class [mscorlib]System.IO.TextWriter [mscorlib]System.Console::get_Out()
   IL_0e38:  ldstr "Mutualrecur test passed" 
   IL_0e3d:  
   IL_0e42:  callvirt   instance void [mscorlib]System.IO.TextWriter::WriteLine(class [mscorlib]System.String)

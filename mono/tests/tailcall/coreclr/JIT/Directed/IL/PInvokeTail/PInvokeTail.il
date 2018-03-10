@@ -2,13 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-.assembly extern System.Console
-{
-  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )
-  .ver 4:0:0:0
-}
-
-.assembly extern legacy library mscorlib {}
+.assembly extern mscorlib { }
 .assembly pinvoketail
 {
 }
@@ -55,7 +49,7 @@
   IL_0005:  ldc.i4     0x0
   IL_000a:  bge        IL_0029
 
-  IL_000f:  	call	    class [mscorlib]System.IO.TextWriter [System.Console]System.Console::get_Out()
+  IL_000f:  	call	    class [mscorlib]System.IO.TextWriter [mscorlib]System.Console::get_Out()
   IL_0014:  ldstr "Puts Failed" //ldptr      D_00003020
   IL_0019:  //newobj     instance void [mscorlib]System.String::.ctor(wchar*)
   IL_001e:  callvirt   instance void [mscorlib]System.IO.TextWriter::WriteLine(string)
@@ -66,14 +60,14 @@
   IL_002e:  ldc.i4     0x0
   IL_0033:  bge        IL_0052
 
-  IL_0038:  	call	    class [mscorlib]System.IO.TextWriter [System.Console]System.Console::get_Out()
+  IL_0038:  	call	    class [mscorlib]System.IO.TextWriter [mscorlib]System.Console::get_Out()
   IL_003d:  ldstr "wrapper: Puts failed"//ldptr      D_00003040
   IL_0042:  //newobj     instance void [mscorlib]System.String::.ctor(wchar*)
   IL_0047:  callvirt   instance void [mscorlib]System.IO.TextWriter::WriteLine(string)
   IL_004c:  ldc.i4     0x1
   IL_0051:  ret
 
-  IL_0052:  	call	    class [mscorlib]System.IO.TextWriter [System.Console]System.Console::get_Out()
+  IL_0052:  	call	    class [mscorlib]System.IO.TextWriter [mscorlib]System.Console::get_Out()
   IL_0057:  ldstr "passed"//ldptr      D_00003070
   IL_005c:  //newobj     instance void [mscorlib]System.String::.ctor(wchar*)
   IL_0061:  callvirt   instance void [mscorlib]System.IO.TextWriter::WriteLine(string)

@@ -88,7 +88,7 @@
     IL_0001:  ldfld      object[] Closure::Constants
     IL_0006:  ldc.i4.0
     IL_0007:  ldelem.ref
-    IL_0008:  castclass  class [System.Runtime]System.Func`10<object,object,object,object,object,object,object,object,object,object>
+    IL_0008:  castclass  class [mscorlib]System.Func`10<object,object,object,object,object,object,object,object,object,object>
     IL_000d:  ldarg.1
     IL_000e:  box        [mscorlib]System.Int32
     IL_0013:  ldarg.2
@@ -108,7 +108,7 @@
     IL_0042:  ldarg.s    i9
     IL_0044:  box        [mscorlib]System.Int32
     IL_0049:  tail.
-              callvirt   instance !9 class [System.Runtime]System.Func`10<object,object,object,object,object,object,object,object,object,object>::Invoke(!0,
+              callvirt   instance !9 class [mscorlib]System.Func`10<object,object,object,object,object,object,object,object,object,object>::Invoke(!0,
                                                                                                                                                       !1,
                                                                                                                                                       !2,
                                                                                                                                                       !3,
@@ -129,8 +129,8 @@
   {
     .entrypoint
     .maxstack  10
-    .locals init (class [System.Runtime]System.Func`10<object,object,object,object,object,object,object,object,object,object> V_0,
-             class [System.Runtime]System.Func`10<int32,int32,int32,int32,int32,int32,int32,int32,int32,object> V_1,
+    .locals init (class [mscorlib]System.Func`10<object,object,object,object,object,object,object,object,object,object> V_0,
+             class [mscorlib]System.Func`10<int32,int32,int32,int32,int32,int32,int32,int32,int32,object> V_1,
              object[] V_2,
              string[] V_3,
              object[] V_4)
@@ -161,7 +161,7 @@
                                                         object,
                                                         object,
                                                         object)
-    IL_0027:  newobj     instance void class [System.Runtime]System.Func`10<object,object,object,object,object,object,object,object,object,object>::.ctor(object,
+    IL_0027:  newobj     instance void class [mscorlib]System.Func`10<object,object,object,object,object,object,object,object,object,object>::.ctor(object,
                                                                                                                                                        native int)
     IL_002c:  stloc.0
     IL_002d:  ldc.i4.1
@@ -184,7 +184,7 @@
                                                         int32,
                                                         int32,
                                                         int32)
-    IL_0048:  newobj     instance void class [System.Runtime]System.Func`10<int32,int32,int32,int32,int32,int32,int32,int32,int32,object>::.ctor(object,
+    IL_0048:  newobj     instance void class [mscorlib]System.Func`10<int32,int32,int32,int32,int32,int32,int32,int32,int32,object>::.ctor(object,
                                                                                                                                               native int)
     IL_004d:  stloc.1
     IL_004e:  ldloc.1
@@ -197,7 +197,7 @@
     IL_0055:  ldc.i4.7
     IL_0056:  ldc.i4.8
     IL_0057:  ldc.i4.s   9
-    IL_0059:  callvirt   instance !9 class [System.Runtime]System.Func`10<int32,int32,int32,int32,int32,int32,int32,int32,int32,object>::Invoke(!0,
+    IL_0059:  callvirt   instance !9 class [mscorlib]System.Func`10<int32,int32,int32,int32,int32,int32,int32,int32,int32,object>::Invoke(!0,
                                                                                                                                              !1,
                                                                                                                                              !2,
                                                                                                                                              !3,

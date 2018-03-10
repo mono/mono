@@ -2,26 +2,9 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-.assembly extern System.Console
-{
-  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )
-  .ver 4:0:0:0
-}
+.assembly extern mscorlib { }
 
-// Metadata version: v4.0.AMD64chk
-.assembly extern mscorlib
-{
-  .publickeytoken = (B7 7A 5C 56 19 34 E0 89 )                         // .z\V.4..
-  .ver 4:0:0:0
-}
-.assembly o
-{
-  .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilationRelaxationsAttribute::.ctor(int32) = ( 01 00 08 00 00 00 00 00 ) 
-  .custom instance void [mscorlib]System.Runtime.CompilerServices.RuntimeCompatibilityAttribute::.ctor() = ( 01 00 01 00 54 02 16 57 72 61 70 4E 6F 6E 45 78   // ....T..WrapNonEx
-                                                                                                             63 65 70 74 69 6F 6E 54 68 72 6F 77 73 01 )       // ceptionThrows.
-  .hash algorithm 0x00008004
-  .ver 0:0:0:0
-}
+.assembly o { }
 .module o.exe
 // MVID: {E5624CCE-2F8F-498D-8C7E-6479B0B6CEC7}
 .imagebase 0x00400000
@@ -55,7 +38,7 @@
     IL_0015:  call       void TCS.TailCallStructs::Caller_0(valuetype CSCreate.MB1,
                                                             int32&)
     IL_001a:  ldloc.0
-    IL_001b:  call       void [System.Console]System.Console::WriteLine(int32)
+    IL_001b:  call       void [mscorlib]System.Console::WriteLine(int32)
     IL_0020:  ret
   } // end of method TailCallStructs::Head_0
 
@@ -88,7 +71,7 @@
     IL_000b:  stloc.0
     IL_000c:  ldloca.s   V_0
     IL_000e:  ldfld      uint8 CSCreate.MB1::b0
-    IL_0013:  call       void [System.Console]System.Console::WriteLine(int32)
+    IL_0013:  call       void [mscorlib]System.Console::WriteLine(int32)
     IL_0018:  ldarg.0
     IL_0019:  dup
     IL_001a:  ldind.i4
@@ -196,8 +179,3 @@ ldc.i4 100
   .field public uint8 b6
   .field public uint8 b7
 } // end of class CSCreate.MB8
-
-
-// =============================================================
-
-// *********** DISASSEMBLY COMPLETE ***********************

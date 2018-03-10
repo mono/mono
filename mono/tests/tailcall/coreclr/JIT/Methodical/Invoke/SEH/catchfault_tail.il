@@ -3,20 +3,12 @@
 // See the LICENSE file in the project root for more information.
 
 
-
-
-
 .assembly extern mscorlib { }
-.assembly extern System.Console
-{
-  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )
-  .ver 4:0:0:0
-}
+
 .assembly 'catchfault_tail'// as "catchfault_tail"
 {
 }
-.module 'catchfault_tail.exe'
-// MVID: {7D0BA0DB-DCB6-4997-83C9-9F31894A25EF}
+
 .namespace JitTest
 {
   .class private auto ansi Test1
@@ -58,7 +50,7 @@
         IL_0023:  ldc.i4.0
         IL_0024:  stelem.i4
         IL_0025:  ldstr      "Shouldn't have reached here."
-        IL_002a:  call       void [System.Console]System.Console::WriteLine(class System.String)
+        IL_002a:  call       void [mscorlib]System.Console::WriteLine(class System.String)
         IL_002f:  newobj     instance void ['mscorlib']System.Exception::.ctor()
         IL_0034:  throw
 
@@ -121,7 +113,7 @@
           IL_0025:  ldc.i4.0
           IL_0026:  stelem.i4
           IL_0027:  ldstr      "Shouldn't have reached here."
-          IL_002c:  call       void [System.Console]System.Console::WriteLine(class System.String)
+          IL_002c:  call       void [mscorlib]System.Console::WriteLine(class System.String)
           IL_0031:  newobj     instance void ['mscorlib']System.Exception::.ctor()
           IL_0036:  throw
 
@@ -194,7 +186,7 @@
         IL_0010:  brtrue.s   IL_0020
 
         IL_0012:  ldstr      "try...catch test failed."
-        IL_0017:  call       void [System.Console]System.Console::WriteLine(class System.String)
+        IL_0017:  call       void [mscorlib]System.Console::WriteLine(class System.String)
         IL_001c:  ldc.i4.1
         IL_001d:  stloc.0
         IL_001e:  leave.s    IL_005f
@@ -208,7 +200,7 @@
         IL_0030:  brtrue.s   IL_0040
 
         IL_0032:  ldstr      "try...finally test failed."
-        IL_0037:  call       void [System.Console]System.Console::WriteLine(class System.String)
+        IL_0037:  call       void [mscorlib]System.Console::WriteLine(class System.String)
         IL_003c:  ldc.i4.2
         IL_003d:  stloc.0
         IL_003e:  leave.s    IL_005f
@@ -220,14 +212,14 @@
       {
         IL_0042:  pop
         IL_0043:  ldstr      "Failed w/ exception"
-        IL_0048:  call       void [System.Console]System.Console::WriteLine(class System.String)
+        IL_0048:  call       void [mscorlib]System.Console::WriteLine(class System.String)
         IL_004d:  ldc.i4.m1
         IL_004e:  stloc.0
         IL_004f:  leave.s    IL_005f
 
       }  // end handler
       IL_0051:  ldstr      "Passed"
-      IL_0056:  call       void [System.Console]System.Console::WriteLine(class System.String)
+      IL_0056:  call       void [mscorlib]System.Console::WriteLine(class System.String)
       IL_005b:  ldc.i4    0x64
       IL_005c:  stloc.0
       IL_005d:  br.s       IL_005f

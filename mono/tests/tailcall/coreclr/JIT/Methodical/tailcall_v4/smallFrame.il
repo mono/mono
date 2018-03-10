@@ -2,45 +2,9 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-.assembly extern System.Console
-{
-  .publickeytoken = (B0 3F 5F 7F 11 D5 0A 3A )
-  .ver 4:0:0:0
-}
+.assembly extern mscorlib { }
 
-
-
-
-
-// Metadata version: v4.0.amd64chk
-.assembly extern mscorlib
-{
-  .publickeytoken = (B7 7A 5C 56 19 34 E0 89 )                         // .z\V.4..
-  .ver 4:0:0:0
-}
-.assembly retbuf_bug
-{
-
-  // --- The following custom attribute is added automatically, do not uncomment -------
-  //  .custom instance void [mscorlib]System.Diagnostics.DebuggableAttribute::.ctor(valuetype [mscorlib]System.Diagnostics.DebuggableAttribute/DebuggingModes) = ( 01 00 02 00 00 00 00 00 ) 
-
-  .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilationRelaxationsAttribute::.ctor(int32) = ( 01 00 08 00 00 00 00 00 ) 
-  .custom instance void [mscorlib]System.Runtime.CompilerServices.RuntimeCompatibilityAttribute::.ctor() = ( 01 00 01 00 54 02 16 57 72 61 70 4E 6F 6E 45 78   // ....T..WrapNonEx
-                                                                                                             63 65 70 74 69 6F 6E 54 68 72 6F 77 73 01 )       // ceptionThrows.
-  .hash algorithm 0x00008004
-  .ver 0:0:0:0
-}
-.module retbuf_bug.exe
-// MVID: {FD923469-B98F-4B21-ABCA-4105B0A8ED94}
-.imagebase 0x00400000
-.file alignment 0x00000200
-.stackreserve 0x00100000
-.subsystem 0x0003       // WINDOWS_CUI
-.corflags 0x00000001    //  ILONLY
-// Image base: 0x00000000002B0000
-
-
-// =============== CLASS MEMBERS DECLARATION ===================
+.assembly retbuf_bug { }
 
 .class private sequential ansi sealed beforefieldinit RetBuff
        extends [mscorlib]System.ValueType
@@ -337,7 +301,7 @@
 
     //.line 105,105 : 4,30 ''
     IL_017a:  ldstr      "Pass"
-    IL_017f:  call       void [System.Console]System.Console::WriteLine(string)
+    IL_017f:  call       void [mscorlib]System.Console::WriteLine(string)
     //.line 106,106 : 4,18 ''
     IL_0184:  ldloc.0
     IL_0185:  ret
@@ -346,7 +310,7 @@
     IL_0186:  ldstr      "Failed: {0}"
     IL_018b:  ldloc.0
     IL_018c:  box        [mscorlib]System.Int32
-    IL_0191:  call       void [System.Console]System.Console::WriteLine(string,
+    IL_0191:  call       void [mscorlib]System.Console::WriteLine(string,
                                                                   object)
     //.line 110,110 : 3,17 ''
     IL_0196:  ldloc.0
@@ -386,9 +350,3 @@
   } // end of method RetBufferBug::TailCallee
 
 } // end of class RetBufferBug
-
-
-// =============================================================
-
-// *********** DISASSEMBLY COMPLETE ***********************
-// WARNING: Created Win32 resource file retbuf_bug.res
