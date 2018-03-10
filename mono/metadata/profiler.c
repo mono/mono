@@ -399,15 +399,9 @@ mono_profiler_get_coverage_data (MonoProfilerHandle handle, MonoMethod *method, 
 	return TRUE;
 }
 
-MonoProfilerCoverageInfo *
-mono_profiler_coverage_alloc (MonoMethod *method, guint32 entries)
+gboolean
+mono_profiler_coverage_instrumentation_enabled (MonoMethod *method)
 {
-	if (!mono_profiler_state.code_coverage)
-		return FALSE;
-
-	if (method->wrapper_type)
-		return FALSE;
-
 	gboolean cover = FALSE;
 
 	for (MonoProfilerHandle handle = mono_profiler_state.profilers; handle; handle = handle->next) {
@@ -417,7 +411,19 @@ mono_profiler_coverage_alloc (MonoMethod *method, guint32 entries)
 			cover |= cb (handle->prof, method);
 	}
 
-	if (!cover)
+	return cover;
+}
+
+MonoProfilerCoverageInfo *
+mono_profiler_coverage_alloc (MonoMethod *method, guint32 entries)
+{
+	if (!mono_profiler_state.code_coverage)
+		return FALSE;
+
+	if (method->wrapper_type)
+		return FALSE;
+
+	if (!mono_profiler_coverage_instrumentation_enabled (method))
 		return NULL;
 
 	coverage_lock ();
