@@ -4757,7 +4757,7 @@ namespace System.Windows.Forms
 			if (value != is_visible) {
 				is_visible = value;
 				
-				if (is_visible && ((window.Handle == IntPtr.Zero) || !is_created)) {
+				if (is_visible && (GetTopLevel() || (parent != null && parent.Created)) && ((window.Handle == IntPtr.Zero) || !is_created)) {
 					CreateControl();
 					if (!(this is Form))
 						UpdateZOrder ();
