@@ -43,7 +43,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (0, event_count, "3");
 			p.ResumeLayout ();
 			Assert.AreEqual (1, event_count, "4");
-			Assert.AreEqual (null, most_recent_args.AffectedProperty, "5");
+			Assert.AreEqual ("Anchor", most_recent_args.AffectedProperty, "5");
 
 			/* with the anchor style set to something, resize the parent */
 			event_count = 0;
@@ -58,12 +58,12 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (0, event_count, "8");
 			p.ResumeLayout ();
 			Assert.AreEqual (1, event_count, "9");
-			Assert.AreEqual (null, most_recent_args.AffectedProperty, "10");
+			Assert.AreEqual ("Bounds", most_recent_args.AffectedProperty, "10");
 
 			/* with the anchor style set to something, resize the child */
 			event_count = 0;
 			b.Size = new Size (100, 100);
-			Assert.AreEqual (1, event_count, "11");
+			Assert.AreEqual (2, event_count, "11");
 			Assert.AreEqual ("Bounds", most_recent_args.AffectedProperty, "12");
 
 			/* and again with layout suspended */
@@ -73,7 +73,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (0, event_count, "13");
 			p.ResumeLayout ();
 			Assert.AreEqual (1, event_count, "14");
-			Assert.AreEqual (null, most_recent_args.AffectedProperty, "15");
+			Assert.AreEqual ("Bounds", most_recent_args.AffectedProperty, "15");
 		}
 
 		[Test]
@@ -524,11 +524,9 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void Bug82762 ()
 		{
-			if (TestHelper.RunningOnUnix)
-				Assert.Ignore ("WM Size dependent");
-				
 			Form f = new Form ();
 			f.ShowInTaskbar = false;
+			f.ClientSize = new Size (284, 264);
 			
 			Button b = new Button ();
 			b.Size = new Size (100, 100);
