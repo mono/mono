@@ -75,6 +75,26 @@ namespace MonoTests.System.Windows.Forms
 			p.ResumeLayout ();
 			Assert.AreEqual (1, event_count, "14");
 			Assert.AreEqual ("Bounds", most_recent_args.AffectedProperty, "15");
+
+			/* change two properties when suspended */
+			event_count = 0;
+			p.SuspendLayout();
+			b.Anchor = AnchorStyles.Left;
+			b.Size = new Size(150, 150);
+			Assert.AreEqual(0, event_count, "15");
+			p.ResumeLayout();
+			Assert.AreEqual(1, event_count, "16");
+			Assert.AreEqual("Bounds", most_recent_args.AffectedProperty, "17");
+
+			/* and now in the opposite order */
+			event_count = 0;
+			p.SuspendLayout();
+			b.Size = new Size(100, 100);
+			b.Anchor = AnchorStyles.Top;
+			Assert.AreEqual(0, event_count, "17");
+			p.ResumeLayout();
+			Assert.AreEqual(1, event_count, "18");
+			Assert.AreEqual("Bounds", most_recent_args.AffectedProperty, "19");
 		}
 
 		[Test]
