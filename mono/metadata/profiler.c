@@ -562,7 +562,7 @@ mono_profiler_enable_allocations (void)
  * filter functions from all installed profilers. If any of them return flags
  * other than \c MONO_PROFILER_CALL_INSTRUMENTATION_NONE, then the given method
  * will be instrumented as requested. All filters are guaranteed to be called
- * exactly once per method, even if earlier filters have already specified all
+ * at least once per method, even if earlier filters have already specified all
  * flags.
  *
  * Note that filter functions must be installed before a method is compiled in
