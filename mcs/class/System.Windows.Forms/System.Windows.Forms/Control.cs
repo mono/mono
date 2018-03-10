@@ -111,6 +111,7 @@ namespace System.Windows.Forms
 		// Layout
 		internal int layout_suspended;
 		bool layout_pending; // true if our parent needs to re-layout us
+		LayoutEventArgs layout_pending_event_args;
 		bool layout_dirty;
 		internal AnchorStyles anchor_style; // anchoring requirements for our control
 		internal DockStyle dock_style; // docking requirements for our control
@@ -3834,6 +3835,7 @@ namespace System.Windows.Forms
 
 			if (layout_suspended > 0) {
 				layout_pending = true;
+				layout_pending_event_args = levent;
 				return;
 			}
 					
@@ -4017,8 +4019,14 @@ namespace System.Windows.Forms
 					(this as ContainerControl).PerformDelayedAutoScale();
 
 				if (performLayout) {
-					if (layout_pending)
-						PerformLayout();
+					if (layout_pending) {
+						LayoutEventArgs event_args = layout_pending_event_args;
+						layout_pending_event_args = null;
+						if (event_args != null)
+							PerformLayout (event_args.AffectedControl, event_args.AffectedProperty);
+						else
+							PerformLayout ();
+					}
 				} else {
 					// Reproduce the weird behavior, where ResumeLayout(false) resets the anchors
 					foreach (Control c in Controls)
