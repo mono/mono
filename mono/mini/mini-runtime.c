@@ -4037,6 +4037,19 @@ mini_init (const char *filename, const char *runtime_version)
 #endif
 	mono_code_manager_install_callbacks (&code_manager_callbacks);
 
+	mono_profiler_state.context_enable = mini_profiler_context_enable;
+	mono_profiler_state.context_get_this = mini_profiler_context_get_this;
+	mono_profiler_state.context_get_argument = mini_profiler_context_get_argument;
+	mono_profiler_state.context_get_local = mini_profiler_context_get_local;
+	mono_profiler_state.context_get_result = mini_profiler_context_get_result;
+	mono_profiler_state.context_free_buffer = mini_profiler_context_free_buffer;
+
+	if (profile_options)
+		for (guint i = 0; i < profile_options->len; i++)
+			mono_profiler_load ((const char *) g_ptr_array_index (profile_options, i));
+
+	mono_profiler_started ();
+
 	mono_hwcap_init ();
 
 	mono_arch_cpu_init ();
@@ -4105,19 +4118,6 @@ mini_init (const char *filename, const char *runtime_version)
 	mono_install_get_cached_class_info (mono_aot_get_cached_class_info);
 	mono_install_get_class_from_name (mono_aot_get_class_from_name);
 	mono_install_jit_info_find_in_aot (mono_aot_find_jit_info);
-
-	mono_profiler_state.context_enable = mini_profiler_context_enable;
-	mono_profiler_state.context_get_this = mini_profiler_context_get_this;
-	mono_profiler_state.context_get_argument = mini_profiler_context_get_argument;
-	mono_profiler_state.context_get_local = mini_profiler_context_get_local;
-	mono_profiler_state.context_get_result = mini_profiler_context_get_result;
-	mono_profiler_state.context_free_buffer = mini_profiler_context_free_buffer;
-
-	if (profile_options)
-		for (guint i = 0; i < profile_options->len; i++)
-			mono_profiler_load ((const char *) g_ptr_array_index (profile_options, i));
-
-	mono_profiler_started ();
 
 	if (mini_debug_options.collect_pagefault_stats)
 		mono_aot_set_make_unreadable (TRUE);
