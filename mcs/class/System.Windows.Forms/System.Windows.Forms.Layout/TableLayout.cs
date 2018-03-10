@@ -81,7 +81,7 @@ namespace System.Windows.Forms.Layout
 			
 			// STEP 3:
 			// - Size and position each control
-			LayoutControls(panel);
+			LayoutControls (panel);
 
 #if TABLE_DEBUG
 			Console.WriteLine ("-- CalculatedPositions:");
@@ -91,7 +91,7 @@ namespace System.Windows.Forms.Layout
 			Console.WriteLine ();
 #endif
 
-			return panel.AutoSizeInternal;
+			return ((IArrangedElement)panel).AutoSize;
 		}
 
 		internal Control[,] CalculateControlPositions (TableLayoutPanel panel, int columns, int rows)
@@ -438,7 +438,7 @@ namespace System.Windows.Forms.Layout
 			TableLayoutSettings settings = panel.LayoutSettings;
 			int columns = actual_positions.GetLength(0);
 			int rows = actual_positions.GetLength(1);
-			bool auto_size = panel.AutoSizeInternal && measureOnly;
+			bool auto_size = ((IArrangedElement)panel).AutoSize && measureOnly;
 			bool boundBySize = !measureOnly;
 
 			column_widths = new int[actual_positions.GetLength (0)];
@@ -553,9 +553,9 @@ namespace System.Windows.Forms.Layout
 			return saved;
 		}
 		
-		private static Size GetControlSize (Control c, Size proposedSize)
+		private static Size GetControlSize (IArrangedElement c, Size proposedSize)
 		{
-			if (c.AutoSizeInternal) {
+			if (c.AutoSize) {
 				return c.GetPreferredSize (proposedSize);
 			} else {
 				return c.ExplicitBounds.Size;				
@@ -624,7 +624,7 @@ namespace System.Windows.Forms.Layout
 						else	// (center control)
 							new_y = (current_pos.Y + (column_height - c.Margin.Top - c.Margin.Bottom) / 2) + c.Margin.Top - (new_height / 2);
 
-						c.SetBoundsInternal (new_x, new_y, new_width, new_height, BoundsSpecified.None);
+						((IArrangedElement)c).SetBounds (new_x, new_y, new_width, new_height, BoundsSpecified.None);
 					}
 
 					current_pos.Offset (panel.column_widths[x] + border_width, 0);

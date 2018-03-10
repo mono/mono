@@ -42,7 +42,7 @@ namespace System.Windows.Forms
 	[DefaultProperty ("Items")]
 	[Designer ("System.Windows.Forms.Design.ToolStripDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[DesignerSerializer ("System.Windows.Forms.Design.ToolStripCodeDomSerializer, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
-	public class ToolStrip : ScrollableControl, IComponent, IDisposable, IToolStripData
+	public class ToolStrip : ScrollableControl, IComponent, IDisposable, IToolStripData, IArrangedContainer
 	{
 		#region Private Variables
 		private bool allow_item_reorder;
@@ -1591,6 +1591,10 @@ namespace System.Windows.Forms
 				(next_item as ToolStripControlHost).Focus ();
 		
 			return next_item;
+		}
+
+		ArrangedElementCollection IArrangedContainer.Controls {
+			get { return Items; }
 		}
 
 		#region Stuff for ToolTips

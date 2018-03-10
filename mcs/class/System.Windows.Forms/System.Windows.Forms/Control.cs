@@ -47,6 +47,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Threading;
+using System.Windows.Forms.Layout;
 
 namespace System.Windows.Forms
 {
@@ -58,7 +59,7 @@ namespace System.Windows.Forms
 	[DesignerSerializer("System.Windows.Forms.Design.ControlCodeDomSerializer, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
 	[ToolboxItemFilter("System.Windows.Forms")]
 	public class Control : Component, ISynchronizeInvoke, IWin32Window
-		, IBindableComponent, IDropTarget, IBounds
+		, IBindableComponent, IDropTarget, IBounds, IArrangedElement, IArrangedContainer
 	{
 		#region Local Variables
 
@@ -118,8 +119,8 @@ namespace System.Windows.Forms
 		internal DockStyle dock_style; // docking requirements for our control
 
 		// Please leave the next 2 as internal until DefaultLayout (2.0) is rewritten
-		internal int			dist_right; // distance to the right border of the parent
-		internal int			dist_bottom; // distance to the bottom border of the parent
+		int			dist_right; // distance to the right border of the parent
+		int			dist_bottom; // distance to the bottom border of the parent
 
 		internal bool can_cache_preferred_size;
 		internal Size cached_preferred_size;
@@ -1051,8 +1052,22 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		internal bool AutoSizeInternal {
+		bool IArrangedElement.AutoSize {
 			get { return this.auto_size; }
+		}
+
+		bool IArrangedElement.Visible {
+			get { return this.is_visible; }
+		}
+
+		int IArrangedElement.DistanceRight {
+			get { return this.dist_right; }
+			set { this.dist_right = value; }
+		}
+
+		int IArrangedElement.DistanceBottom {
+			get { return this.dist_bottom; }
+			set { this.dist_bottom = value; }
 		}
 
 		// Mouse is currently within the control's bounds
@@ -1089,6 +1104,7 @@ namespace System.Windows.Forms
 		internal Size InternalClientSize { set { this.client_size = value; } }
 		internal virtual bool ActivateOnShow { get { return true; } }
 		internal Rectangle ExplicitBounds { get { return this.explicit_bounds; } set { this.explicit_bounds = value; } }
+		Rectangle IArrangedElement.ExplicitBounds { get { return this.explicit_bounds; } }
 
 		internal bool ValidationFailed { 
 			get { 
@@ -2414,6 +2430,12 @@ namespace System.Windows.Forms
 			}
 		}
 
+		ArrangedElementCollection IArrangedContainer.Controls {
+			get {
+				return this.child_controls;
+			}
+		}
+
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -2914,6 +2936,12 @@ namespace System.Windows.Forms
 
 					value.Controls.Add(this);
 				}
+			}
+		}
+
+		IArrangedContainer IArrangedElement.Parent {
+			get {
+				return this.parent;
 			}
 		}
 
@@ -4170,7 +4198,7 @@ namespace System.Windows.Forms
 				parent.PerformLayout(this, "Bounds");
 		}
 
-		internal void SetBoundsInternal (int x, int y, int width, int height, BoundsSpecified specified)
+		void IArrangedElement.SetBounds (int x, int y, int width, int height, BoundsSpecified specified)
 		{
 			SetBoundsCore (x, y, width, height, specified);
 		}
@@ -4291,6 +4319,11 @@ namespace System.Windows.Forms
 		protected internal AutoSizeMode GetAutoSizeMode () 
 		{
 			return auto_size_mode;
+		}
+
+		AutoSizeMode IArrangedElement.GetAutoSizeMode () 
+		{
+			return GetAutoSizeMode ();
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]

@@ -31,6 +31,7 @@ using System;
 using System.Drawing;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Windows.Forms.Layout;
 
 namespace System.Windows.Forms
 {
@@ -39,7 +40,7 @@ namespace System.Windows.Forms
 	[DesignTimeVisible (false)]
 	[ToolboxItem (false)]
 	[Designer ("System.Windows.Forms.Design.ToolStripItemDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-	public abstract class ToolStripItem : Component, IDropTarget, IComponent, IDisposable
+	public abstract class ToolStripItem : Component, IDropTarget, IComponent, IDisposable, IArrangedElement
 	{
 		#region Private Variables
 		private AccessibleObject accessibility_object;
@@ -1934,6 +1935,47 @@ namespace System.Windows.Forms
 		
 		internal int Right { get { return this.bounds.Right; } }
 		internal int Bottom { get { return this.bounds.Bottom; } }
+
+		bool IArrangedElement.Visible {
+			get { return InternalVisible; }
+		}
+
+		Rectangle IArrangedElement.DisplayRectangle {
+            get { return this.Bounds; }
+        }
+		int IArrangedElement.DistanceRight {
+			get { throw new NotSupportedException(); }
+			set { throw new NotSupportedException(); }
+		}
+
+		int IArrangedElement.DistanceBottom {
+			get { throw new NotSupportedException(); }
+			set { throw new NotSupportedException(); }
+		}
+
+		AutoSizeMode IArrangedElement.GetAutoSizeMode ()
+		{
+			return AutoSizeMode.GrowAndShrink;
+		}
+
+		Rectangle IArrangedElement.ExplicitBounds {
+			get { return this.bounds; }
+		}
+
+		Size IArrangedElement.MinimumSize {
+			get { return Size.Empty; }
+		}
+
+		void IArrangedElement.SetBounds (int left, int top, int width, int height, BoundsSpecified specified)
+		{
+			this.bounds = new Rectangle (left, top, width, height);
+			this.OnLocationChanged (EventArgs.Empty);
+		}
+
+		IArrangedContainer IArrangedElement.Parent {
+			get { return this.Parent ?? this.Owner; }
+		}
+
 		#endregion
 
 		#region IDropTarget Members
