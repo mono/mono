@@ -1839,9 +1839,29 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (test.Visible, "1");
 			test.Visible = true;
 			Assert.IsTrue (test.Visible, "2");
-			Assert.IsTrue (test.reached, "3");
+			// OnCreateControl is only called when the control is truly visible, which
+			// this one is not since it's not top-level.
+			Assert.IsFalse (test.reached, "3");
 		}
 
+		[Test]
+		public void CreateControlOnFormVisibleTest()
+		{
+			using (Form f = new Form())
+			{
+				OnCreateControlTest test = new OnCreateControlTest();
+				test.Visible = false;
+				Assert.IsFalse(test.IsHandleCreated, "0");
+				Assert.IsFalse(test.Visible, "1");
+				f.Show();
+				f.Controls.Add(test);
+				Assert.IsFalse(test.IsHandleCreated, "2");
+				Assert.IsFalse(test.Visible, "3");
+				test.Visible = true;
+				Assert.IsTrue(test.Visible, "4");
+				Assert.IsTrue(test.reached, "5");
+			}
+		}
 
 		[Test]
 		public void CreateGraphicsTest ()
