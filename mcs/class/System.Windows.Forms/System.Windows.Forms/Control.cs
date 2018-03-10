@@ -112,6 +112,7 @@ namespace System.Windows.Forms
 		internal int layout_suspended;
 		bool layout_pending; // true if our parent needs to re-layout us
 		LayoutEventArgs layout_pending_event_args;
+		bool layout_pending_after_resume;
 		bool layout_dirty;
 		internal AnchorStyles anchor_style; // anchoring requirements for our control
 		internal DockStyle dock_style; // docking requirements for our control
@@ -3834,8 +3835,10 @@ namespace System.Windows.Forms
 				affectedControl.cached_preferred_size = Size.Empty;
 
 			if (layout_suspended > 0) {
+				if (layout_pending_event_args == null || layout_pending_after_resume)
+					layout_pending_event_args = levent;
 				layout_pending = true;
-				layout_pending_event_args = levent;
+				layout_pending_after_resume = false;					
 				return;
 			}
 					
@@ -4014,6 +4017,7 @@ namespace System.Windows.Forms
 				layout_suspended--;
 			}
 
+			layout_pending_after_resume = true;
 			if (layout_suspended == 0) {
 				if (this is ContainerControl)
 					(this as ContainerControl).PerformDelayedAutoScale();
@@ -4028,6 +4032,7 @@ namespace System.Windows.Forms
 							PerformLayout ();
 					}
 				} else {
+					layout_pending_event_args = null;
 					// Reproduce the weird behavior, where ResumeLayout(false) resets the anchors
 					foreach (Control c in Controls)
                         LayoutEngine.InitLayout(c, BoundsSpecified.All);
@@ -4689,7 +4694,7 @@ namespace System.Windows.Forms
 			height = OverrideHeight (height);
 
 			Rectangle new_bounds = new Rectangle (x, y, width, height);
-			
+				
 			// BoundsSpecified tells us which variables were programatic (user-set).
 			// We need to store those in the explicit bounds
 			if ((specified & BoundsSpecified.X) == BoundsSpecified.X)
@@ -4706,10 +4711,15 @@ namespace System.Windows.Forms
 			if (new_bounds.Equals(bounds))
 				return;
 
+			// Prevent the parent from doing layout as part of the callbacks from WM_WINDOWPOSCHANGED
+			// window message. Make sure it is postponed at least until the InitLayout call below is
+			// called.
+			if (parent != null)
+				parent.SuspendLayout ();
+
 			// Impose restrictions based on MinimumSize and MaximumSize
 			new_bounds.Size = ApplySizeConstraints(new_bounds.Size);
 
-			// SetBoundsCore updates the Win32 control itself. UpdateBounds updates the controls variables and fires events, I'm guessing - pdb
 			if (IsHandleCreated) {
 				// We will get WM_WINDOWPOSCHANGED message, which will call UpdateBounds
 				XplatUI.SetWindowPos(Handle, x, y, new_bounds.Width, new_bounds.Height);
@@ -4722,6 +4732,8 @@ namespace System.Windows.Forms
 				// so reset its cache.
 				parent.cached_preferred_size = Size.Empty;
 				parent.LayoutEngine.InitLayout (this, specified);
+
+				parent.ResumeLayout ();
 			}
 		}
 
