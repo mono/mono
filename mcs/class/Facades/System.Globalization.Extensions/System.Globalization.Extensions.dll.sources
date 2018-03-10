@@ -1,6 +1,2 @@
 TypeForwarders.cs
 AssemblyInfo.cs
-
-SR.cs
-../../../../external/corefx/src/System.Runtime.Extensions/src/System/Globalization/Extensions.cs
-../../../../external/corefx/src/System.Runtime.Extensions/src/System/StringNormalizationExtensions.cs
