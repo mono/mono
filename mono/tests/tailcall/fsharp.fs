@@ -84,8 +84,8 @@ and mutualTail2IsEven a b c d e f g h i j k l m x =
     | 0 -> (true,  a, b, c)
     | n -> mutualTail2IsOdd a b c d e f g h i (x - 1)
 
-//RunTest "mutualTail2IsOdd"  (mutualTail2IsOdd  0.0M [| 1 .. 10 |] "str" 0L 0L 0L 0L 0L 0L HugeInt)             (false, 0.0M, [| 1 .. 10 |], "str")
-//RunTest "mutualTail2IsEven" (mutualTail2IsEven 0.0M [| 1 .. 10 |] "str" 0L 0L 0L 0L 0L 0L 0L 0L 0L 0L HugeInt) (true,  0.0M, [| 1 .. 10 |], "str")
+RunTest "mutualTail2IsOdd"  (mutualTail2IsOdd  0.0M [| 1 .. 10 |] "str" 0L 0L 0L 0L 0L 0L HugeInt)             (false, 0.0M, [| 1 .. 10 |], "str")
+RunTest "mutualTail2IsEven" (mutualTail2IsEven 0.0M [| 1 .. 10 |] "str" 0L 0L 0L 0L 0L 0L 0L 0L 0L 0L HugeInt) (true,  0.0M, [| 1 .. 10 |], "str")
 
 // Generic tail call within a type
 type TailCallLoop<'T1>() =
@@ -128,41 +128,35 @@ RunTest "TailCallLoopGenericClassAndMethod<string>.Method1<string>"      ((new T
 // Generic tail call within a type via virtual method in abstract class hierarchy
 [<AbstractClass>]
 type AbstractTailCallLoopGenericClassAndMethod<'T1>(resultA: 'T1) =
-    abstract Method3<'T2> : int * 'T2 -> ('T1 * 'T2)
-    abstract Method4<'T2> : int * 'T2 -> ('T1 * 'T2)
-    default this.Method4<'T2>(x:int, resultB: 'T2) =
-        if x = 0 then (resultA, resultB) else this.Method3 (x  - 1, resultB)
+    abstract Method1<'T2> : int * 'T2 -> ('T1 * 'T2)
+    abstract Method2<'T2> : int * 'T2 -> ('T1 * 'T2)
+    default this.Method2<'T2>(x:int, resultB: 'T2) =
+        if x = 0 then (resultA, resultB) else this.Method1 (x  - 1, resultB)
 
 type TailCallLoopGenericClassAndMethodAbstractClass<'T1>(resultA: 'T1) =
     inherit AbstractTailCallLoopGenericClassAndMethod<'T1>(resultA)
-    override this.Method3<'T2>(x:int, resultB: 'T2) =
-        if x = 0 then (resultA, resultB) else this.Method4 (x - 1, resultB)
+    override this.Method1<'T2>(x:int, resultB: 'T2) =
+        if x = 0 then (resultA, resultB) else this.Method2 (x - 1, resultB)
 
-RunTest "TailCallLoopGenericClassAndMethodAbstractClass<byte>.Method3<byte>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<byte>(3uy)).Method3<byte>(10000000, 4uy))      (3uy, 4uy)
+RunTest "TailCallLoopGenericClassAndMethodAbstractClass<byte>.Method1<byte>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<byte>(3uy)).Method1<byte>(10000000, 4uy))      (3uy, 4uy)
+RunTest "TailCallLoopGenericClassAndMethodAbstractClass<byte>.Method1<int>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<byte>(3uy)).Method1<int>(10000000, 4))      (3uy, 4)
+RunTest "TailCallLoopGenericClassAndMethodAbstractClass<byte>.Method1<DateTime>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<byte>(3uy)).Method1<DateTime>(10000000, DateTime.MinValue))      (3uy, DateTime.MinValue)
+RunTest "TailCallLoopGenericClassAndMethodAbstractClass<byte>.Method1<string>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<byte>(3uy)).Method1<string>(10000000, "abc"))      (3uy, "abc")
 
-exit 0
+RunTest "TailCallLoopGenericClassAndMethodAbstractClass<int>.Method1<byte>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<int>(3)).Method1<byte>(10000000, 4uy))      (3, 4uy)
+RunTest "TailCallLoopGenericClassAndMethodAbstractClass<int>.Method1<int>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<int>(3)).Method1<int>(10000000, 4))      (3, 4)
+RunTest "TailCallLoopGenericClassAndMethodAbstractClass<int>.Method1<DateTime>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<int>(3)).Method1<DateTime>(10000000, DateTime.MinValue))      (3, DateTime.MinValue)
+RunTest "TailCallLoopGenericClassAndMethodAbstractClass<int>.Method1<string>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<int>(3)).Method1<string>(10000000, "abc"))      (3, "abc")
 
-// mono was failing around here
+RunTest "TailCallLoopGenericClassAndMethodAbstractClass<DateTime>.Method1<byte>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<DateTime>(DateTime.MaxValue)).Method1<byte>(10000000, 4uy))      (DateTime.MaxValue, 4uy)
+RunTest "TailCallLoopGenericClassAndMethodAbstractClass<DateTime>.Method1<int>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<DateTime>(DateTime.MaxValue)).Method1<int>(10000000, 4))      (DateTime.MaxValue, 4)
+RunTest "TailCallLoopGenericClassAndMethodAbstractClass<DateTime>.Method1<DateTime>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<DateTime>(DateTime.MaxValue)).Method1<DateTime>(10000000, DateTime.MinValue))      (DateTime.MaxValue, DateTime.MinValue)
+RunTest "TailCallLoopGenericClassAndMethodAbstractClass<DateTime>.Method1<string>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<DateTime>(DateTime.MaxValue)).Method1<string>(10000000, "abc"))      (DateTime.MaxValue, "abc")
 
-//RunTest "TailCallLoopGenericClassAndMethodAbstractClass<byte>.Method1<int>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<byte>(3uy)).Method1<int>(10000000, 4))      (3uy, 4)
-//RunTest "TailCallLoopGenericClassAndMethodAbstractClass<byte>.Method1<DateTime>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<byte>(3uy)).Method1<DateTime>(10000000, DateTime.MinValue))      (3uy, DateTime.MinValue)
-//RunTest "TailCallLoopGenericClassAndMethodAbstractClass<byte>.Method1<string>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<byte>(3uy)).Method1<string>(10000000, "abc"))      (3uy, "abc")
-
-
-//RunTest "TailCallLoopGenericClassAndMethodAbstractClass<int>.Method1<byte>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<int>(3)).Method1<byte>(10000000, 4uy))      (3, 4uy)
-//RunTest "TailCallLoopGenericClassAndMethodAbstractClass<int>.Method1<int>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<int>(3)).Method1<int>(10000000, 4))      (3, 4)
-//RunTest "TailCallLoopGenericClassAndMethodAbstractClass<int>.Method1<DateTime>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<int>(3)).Method1<DateTime>(10000000, DateTime.MinValue))      (3, DateTime.MinValue)
-//RunTest "TailCallLoopGenericClassAndMethodAbstractClass<int>.Method1<string>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<int>(3)).Method1<string>(10000000, "abc"))      (3, "abc")
-
-//RunTest "TailCallLoopGenericClassAndMethodAbstractClass<DateTime>.Method1<byte>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<DateTime>(DateTime.MaxValue)).Method1<byte>(10000000, 4uy))      (DateTime.MaxValue, 4uy)
-//RunTest "TailCallLoopGenericClassAndMethodAbstractClass<DateTime>.Method1<int>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<DateTime>(DateTime.MaxValue)).Method1<int>(10000000, 4))      (DateTime.MaxValue, 4)
-//RunTest "TailCallLoopGenericClassAndMethodAbstractClass<DateTime>.Method1<DateTime>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<DateTime>(DateTime.MaxValue)).Method1<DateTime>(10000000, DateTime.MinValue))      (DateTime.MaxValue, DateTime.MinValue)
-//RunTest "TailCallLoopGenericClassAndMethodAbstractClass<DateTime>.Method1<string>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<DateTime>(DateTime.MaxValue)).Method1<string>(10000000, "abc"))      (DateTime.MaxValue, "abc")
-
-//RunTest "TailCallLoopGenericClassAndMethodAbstractClass<string>.Method1<byte>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<string>("qq")).Method1<byte>(10000000, 4uy))      ("qq", 4uy)
-//RunTest "TailCallLoopGenericClassAndMethodAbstractClass<string>.Method1<int>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<string>("qq")).Method1<int>(10000000, 4))      ("qq", 4)
-//RunTest "TailCallLoopGenericClassAndMethodAbstractClass<string>.Method1<DateTime>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<string>("qq")).Method1<DateTime>(10000000, DateTime.MinValue))      ("qq", DateTime.MinValue)
-//RunTest "TailCallLoopGenericClassAndMethodAbstractClass<DatstringeTime>.Method1<string>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<string>("qq")).Method1<string>(10000000, "abc"))      ("qq", "abc")
+RunTest "TailCallLoopGenericClassAndMethodAbstractClass<string>.Method1<byte>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<string>("qq")).Method1<byte>(10000000, 4uy))      ("qq", 4uy)
+RunTest "TailCallLoopGenericClassAndMethodAbstractClass<string>.Method1<int>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<string>("qq")).Method1<int>(10000000, 4))      ("qq", 4)
+RunTest "TailCallLoopGenericClassAndMethodAbstractClass<string>.Method1<DateTime>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<string>("qq")).Method1<DateTime>(10000000, DateTime.MinValue))      ("qq", DateTime.MinValue)
+RunTest "TailCallLoopGenericClassAndMethodAbstractClass<DatstringeTime>.Method1<string>"      ((new TailCallLoopGenericClassAndMethodAbstractClass<string>("qq")).Method1<string>(10000000, "abc"))      ("qq", "abc")
 
 
 // Generic tail call within a type via interface
