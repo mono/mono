@@ -50,6 +50,8 @@ namespace System.Windows.Forms
 			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 			SetStyle (ControlStyles.ResizeRedraw, true);
 
+			SetTopLevel (true);
+
 			this.auto_close = true;
 			is_visible = false;
 			this.DefaultDropDownDirection = ToolStripDropDownDirection.Right;
