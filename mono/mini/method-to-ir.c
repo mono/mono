@@ -8338,6 +8338,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			gboolean const inst_tailcall = G_UNLIKELY (debug_tailcall_try_all
 							? (ip [5] == CEE_RET)
 							: ((ins_flag & MONO_INST_TAILCALL) != 0));
+			gboolean common_call = FALSE;
+			gboolean tailcall_remove_ret = FALSE;
+
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
 
@@ -8796,7 +8799,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					}
 					virtual_ = TRUE;
 					vtable_arg = NULL;
-					goto common_call;
+					common_call = TRUE;
+					goto call_end;
 				}
 
 				MonoInst *this_temp, *this_arg_temp, *store;
@@ -9136,7 +9140,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					ins->inst_p1 = arg_array [0];
 					MONO_ADD_INS (cfg->cbb, ins);
 
-					goto tailcall_remove_ret;
+					tailcall_remove_ret = TRUE;
+					goto call_end;
 				}
 			}
 
@@ -9151,12 +9156,15 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			/* Common call */
 			if (!(method->iflags & METHOD_IMPL_ATTRIBUTE_AGGRESSIVE_INLINING) && !(cmethod->iflags & METHOD_IMPL_ATTRIBUTE_AGGRESSIVE_INLINING))
 				INLINE_FAILURE ("call");
-common_call:
-			ins = mono_emit_method_call_full (cfg, cmethod, fsig, tail_call, sp, virtual_ ? sp [0] : NULL,
-											  imt_arg, vtable_arg);
+			common_call = TRUE;
 
-			if (tail_call && !cfg->llvm_only) {
-tailcall_remove_ret:
+			call_end:
+
+			if (common_call) // FIXME goto call_end && !common_call often skips tailcall processing.
+				ins = mono_emit_method_call_full (cfg, cmethod, fsig, tail_call, sp, virtual_ ? sp [0] : NULL,
+												  imt_arg, vtable_arg);
+
+			if (tailcall_remove_ret || (common_call && tail_call && !cfg->llvm_only)) {
 				link_bblock (cfg, cfg->cbb, end_bblock);
 				start_new_bblock = 1;
 
@@ -9172,8 +9180,6 @@ tailcall_remove_ret:
 				push_res = FALSE;
 				need_seq_point = FALSE;
 			}
-
-		call_end: // FIXME Use of this label skips tailcall handling.
 
 			/* End of call, INS should contain the result of the call, if any */
 
