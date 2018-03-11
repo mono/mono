@@ -304,16 +304,16 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexCollectionDebuggerProxy.cs
 ../../../external/corefx/src/Common/src/System/NotImplemented.cs
 
-../referencesource/System/compmod/system/collections/specialized/casesensitivestringdictionary.cs
 ../../../external/corefx/src/System.Collections.Specialized/src/System/Collections/Specialized/BitVector32.cs
 ../../../external/corefx/src/System.Collections.Specialized/src/System/Collections/Specialized/HybridDictionary.cs
 ../../../external/corefx/src/System.Collections.Specialized/src/System/Collections/Specialized/IOrderedDictionary.cs
 ../../../external/corefx/src/System.Collections.Specialized/src/System/Collections/Specialized/ListDictionary.cs
 ../../../external/corefx/src/System.Collections.Specialized/src/System/Collections/Specialized/OrderedDictionary.cs
 ../../../external/corefx/src/System.Collections.Specialized/src/System/Collections/Specialized/StringCollection.cs
-../../../external/corefx/src/System.Collections.Specialized/src/System/Collections/Specialized/StringDictionary.cs
 ../../../external/corefx/src/System.Collections.Specialized/src/System/Collections/Specialized/NameValueCollection.cs
+../referencesource/System/compmod/system/collections/specialized/stringdictionary.cs
 ../referencesource/System/compmod/system/collections/specialized/nameobjectcollectionbase.cs
+../referencesource/System/compmod/system/collections/specialized/casesensitivestringdictionary.cs
 ../../../external/corefx/src/System.Collections.NonGeneric/src/System/Collections/Specialized/CollectionsUtil.cs
 ../../../external/corefx/src/System.ObjectModel/src/System/Collections/ObjectModel/ReadOnlyObservableCollection.cs
 ../../../external/corefx/src/System.ObjectModel/src/System/Collections/ObjectModel/ObservableCollection.cs
