@@ -64,7 +64,7 @@ TAILCALL_DISABLED_TESTS_RUN = \
 
 compile-tailcall: $(TESTS_TAILCALL_COMPILE) $(TESTSAOT_TAILCALL)
 
-test-tailcall: compile-tailcall
+test-tailcall: compile-tailcall test-runner.exe
 	MONO_DEBUG=test-tailcall-require $(TOOLS_RUNTIME) --debug $(TEST_RUNNER) -j a --runtime-args "--compile-all" --testsuite-name "runtime-tailcall" --timeout 300 --disabled "$(DISABLED_TESTS)" $(TESTS_TAILCALL_RUN)
 
 check-full:
