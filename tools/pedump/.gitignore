@@ -2,4 +2,5 @@
 /Makefile
 /pedump
 /pedump.exe
-
+.libs/pedump_ltshwrapper
+.libs/lt-pedump.c
