@@ -62,6 +62,15 @@ TAILCALL_DISABLED_TESTS_RUN = \
 	tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyWithPrefix.exe \
 	$(TAILCALL_DISABLED_TESTS_COMPILE)
 
+if FULL_AOT_TESTS
+
+# FullAOT Assertion at method-to-ir.c:9203, condition `*ip == CEE_RET' not met
+# This should raise a bad image format exception.
+TAILCALL_DISABLED_TESTS_COMPILE += \
+	tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyWithPrefix.exe
+
+endif
+
 compile-tailcall: $(TESTS_TAILCALL_COMPILE) $(TESTSAOT_TAILCALL)
 
 test-tailcall: compile-tailcall test-runner.exe
