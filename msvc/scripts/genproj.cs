@@ -929,9 +929,9 @@ class MsbuildGenerator {
 		// ../class/lib/build/tmp/System.Xml.dll  [No longer possible, we should be removing this from order.xml]
 		//   /class/lib/basic/System.Core.dll
 		// <library_output>mcs.exe</library_output>
-		string build_output_dir;
+		string build_output_dir = Path.GetDirectoryName (LibraryOutput);
 		if (LibraryOutput.Contains ("/"))
-			build_output_dir = Path.GetDirectoryName (LibraryOutput);
+			build_output_dir = Path.IsPathRooted (build_output_dir) ? build_output_dir : build_output_dir.Replace("/", "\\");
 		else
 			build_output_dir = "bin\\Debug\\" + library;
 

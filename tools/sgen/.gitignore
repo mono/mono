@@ -4,3 +4,5 @@ Makefile.in
 /sgen-grep-binprot
 /*.o
 /*.a
+.libs/sgen-grep-binprot_ltshwrapper
+.libs/lt-sgen-grep-binprot.c
