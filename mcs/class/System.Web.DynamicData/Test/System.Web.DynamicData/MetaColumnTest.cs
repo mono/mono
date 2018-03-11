@@ -109,7 +109,7 @@ namespace MonoTests.System.Web.DynamicData
 			MetaColumn mc = t.GetColumn ("ColumnNoAttributes");
 			Assert.IsNotNull (mc, "#A1");
 			Assert.IsNotNull (mc.Attributes, "#A2");
-			Assert.AreEqual (6, mc.Attributes.Count, "#A3");
+			Assert.AreEqual (5, mc.Attributes.Count, "#A3");
 			Assert.IsTrue (mc.IsRequired, "#A3-1");
 
 			mc = t.GetColumn ("ColumnFormatInEditMode");
