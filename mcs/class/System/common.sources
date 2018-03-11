@@ -310,7 +310,7 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.ObjectModel/src/System/Collections/ObjectModel/ReadOnlyObservableCollection.cs
 ../../../external/corefx/src/System.ObjectModel/src/System/Collections/ObjectModel/ObservableCollection.cs
 ../../../external/corefx/src/System.ObjectModel/src/System/Collections/Specialized/*.cs
-../../../external/corefx/src/System.Globalization.Extensions/ref/System.Globalization.Extensions.netfx.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/Globalization/GlobalizationExtensions.cs
 
 ../referencesource/System/compmod/system/componentmodel/AddingNewEventArgs.cs
 ../referencesource/System/compmod/system/componentmodel/AddingNewEventHandler.cs
