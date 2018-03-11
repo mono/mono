@@ -84,6 +84,7 @@ and mutualTail2IsEven a b c d e f g h i j k l m x =
     | 0 -> (true,  a, b, c)
     | n -> mutualTail2IsOdd a b c d e f g h i (x - 1)
 
+// These two tests fail on Mono and probably CoreCLR.
 RunTest "mutualTail2IsOdd"  (mutualTail2IsOdd  0.0M [| 1 .. 10 |] "str" 0L 0L 0L 0L 0L 0L HugeInt)             (false, 0.0M, [| 1 .. 10 |], "str")
 RunTest "mutualTail2IsEven" (mutualTail2IsEven 0.0M [| 1 .. 10 |] "str" 0L 0L 0L 0L 0L 0L 0L 0L 0L 0L HugeInt) (true,  0.0M, [| 1 .. 10 |], "str")
 

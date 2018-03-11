@@ -557,6 +557,7 @@ endif
 endif
 
 TESTS_IL_SRC=			\
+	tailcall/fsharp.il	\
 	gptail1.il		\
 	itail1.il		\
 	itaili1.il		\
@@ -716,7 +717,8 @@ PLATFORM_DISABLED_TESTS=\
 # Not ARM, not interpreter, etc.
 
 if !AMD64
-PLATFORM_DISABLED_TESTS += tailcall-virt.exe
+PLATFORM_DISABLED_TESTS += tailcall-virt.exe \
+	tailcall/fsharp.exe
 endif
 
 if HOST_WIN32
@@ -965,6 +967,10 @@ if HYBRID_AOT_TESTS
 PROFILE_DISABLED_TESTS += \
 	bug-80307.exe \
 	namedmutex-destroy-race.exe
+
+# It hangs.
+PROFILE_DISABLED_TESTS += tailcall/fsharp.exe
+
 endif
 
 AOT_DISABLED_TESTS= \
@@ -1055,6 +1061,7 @@ INTERP_DISABLED_TESTS = $(DISABLED_TESTS) \
 	tailcall-virt.exe   \
 	tailcall-rgctxa.exe \
 	tailcall-generic-cast-conservestack-il.exe \
+	tailcall/fsharp.exe \
 	bug-60843.exe
 
 # bug-48015.exe: be careful when re-enabling, it happens that it returns with exit code 0, but doesn't actually execute the test.
