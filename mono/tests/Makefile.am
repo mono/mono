@@ -64,21 +64,96 @@ TAILCALL_DISABLED_TESTS_RUN = \
 
 if FULL_AOT_TESTS
 
-# FullAOT Assertion at mono-codeman.c:449, condition `!cman->read_only' not met
-TAILCALL_DISABLED_TESTS_RUN += \
-	$(TESTS_TAILCALL_COMPILE)
-
 # FullAOT Assertion at method-to-ir.c:9203, condition `*ip == CEE_RET' not met
 # This should raise a bad image format exception.
 TAILCALL_DISABLED_TESTS_COMPILE += \
 	tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyWithPrefix.exe
 
+# Tests that fail assert about tailcall.
+TAILCALL_DISABLED_TESTS_RUN += \
+	tailcall/coreclr/JIT/Directed/IL/PInvokeTail/PInvokeTail.exe \
+	tailcall/coreclr/JIT/Directed/IL/PInvokeTail/tailwinapi.exe \
+	tailcall/coreclr/JIT/Directed/pinvoke/tail.exe \
+	tailcall/coreclr/JIT/Directed/zeroinit/tail.exe \
+	tailcall/coreclr/JIT/Methodical/Invoke/fptr/recurse_tail_call.exe \
+	tailcall/coreclr/JIT/Methodical/Invoke/fptr/recurse_tail_calli.exe \
+	tailcall/coreclr/JIT/Methodical/nonvirtualcall/tailcall.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/Desktop/thread-race.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/compat_enum.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/compat_obj.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8_inl.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/compat_r8_r4_inl.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/compat_v.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/deep_array_nz.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/gcval_nested.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/pointer.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/reference_i.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_mutual_rec.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_switch.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall_v4/delegateTail.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall_v4/tailcall_AV.exe \
+	tailcall/coreclr/JIT/Regression/VS-ia64-JIT/V1.2-M02/b102844/tailcallcalli.exe
+
+# Tests fail no assert, print that they pass, but exit with non-zero.
+# These are effectively passing, but need change to indicate so.
+# Leaving us with no FullAOT tests.
+TAILCALL_DISABLED_TESTS_RUN += \
+	tailcall/coreclr/JIT/CodeGenBringUpTests/RecursiveTailCall.exe \
+	tailcall/coreclr/JIT/Directed/IL/Tailcall/JitTailcall1.exe \
+	tailcall/coreclr/JIT/Directed/IL/Tailcall/Jittailcall2.exe \
+	tailcall/coreclr/JIT/Methodical/Boxing/boxunbox/tailcall.exe \
+	tailcall/coreclr/JIT/Methodical/Boxing/misc/tailjump.exe \
+	tailcall/coreclr/JIT/Methodical/Invoke/SEH/catchfault_tail.exe \
+	tailcall/coreclr/JIT/Methodical/Invoke/SEH/catchfinally_tail.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/compat_i2_bool.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/compat_i4_i1.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/compat_i4_u.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/compat_i_u2.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/compat_r8_r4.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/deep_gc.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/deep_inst.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/deep_value.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/deep_value.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/deep_virt.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/recurse_ep.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/recurse_ep_void.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_2.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_2a.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_2b.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_2c.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_3b.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_void.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall_v4/delegateParamCallTarget.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall_v4/hijacking.exe \
+	tailcall/coreclr/JIT/opt/ETW/TailCallCases.exe \
+	tailcall/coreclr/JIT/opt/FastTailCall/FastTailCallCandidates.exe \
+	tailcall/coreclr/JIT/opt/FastTailCall/FastTailCallInlining.exe \
+	tailcall/coreclr/JIT/opt/FastTailCall/FastTailCallInlining.exe \
+	tailcall/coreclr/JIT/opt/FastTailCall/GitHubIssue12479.exe \
+	tailcall/coreclr/JIT/opt/FastTailCall/StackFixup.exe \
+	tailcall/coreclr/JIT/opt/FastTailCall/StructPassingSimple.exe \
+	tailcall/coreclr/JIT/opt/Loops/SearchLoopTail.exe
+
+# This test is also slow, though its sleep can be dialed down.
+#TAILCALL_DISABLED_TESTS_RUN += tailcall/coreclr/JIT/Methodical/tailcall_v4/hijacking.exe
+
 endif
 
 compile-tailcall: $(TESTS_TAILCALL_COMPILE) $(TESTSAOT_TAILCALL)
 
+if FULL_AOT_TESTS
+
+else
+
+TEST_TAILCALL_COMPILE_ALL=--runtime-args "--compile-all"
+
+endif
+
 test-tailcall: compile-tailcall test-runner.exe
-	MONO_DEBUG=test-tailcall-require $(TOOLS_RUNTIME) --debug $(TEST_RUNNER) -j a --runtime-args "--compile-all" --testsuite-name "runtime-tailcall" --timeout 300 --disabled "$(DISABLED_TESTS)" $(TESTS_TAILCALL_RUN)
+	MONO_DEBUG=test-tailcall-require $(TOOLS_RUNTIME) --debug $(TEST_RUNNER) -j a $(TEST_TAILCALL_COMPILE_ALL) --testsuite-name "runtime-tailcall" --timeout 300 --disabled "$(DISABLED_TESTS)" $(TESTS_TAILCALL_RUN)
 
 check-full:
 	ok=; \
