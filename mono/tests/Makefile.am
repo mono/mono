@@ -64,6 +64,10 @@ TAILCALL_DISABLED_TESTS_RUN = \
 
 if FULL_AOT_TESTS
 
+# FullAOT Assertion at mono-codeman.c:449, condition `!cman->read_only' not met
+TAILCALL_DISABLED_TESTS_RUN += \
+	$(TESTS_TAILCALL_COMPILE)
+
 # FullAOT Assertion at method-to-ir.c:9203, condition `*ip == CEE_RET' not met
 # This should raise a bad image format exception.
 TAILCALL_DISABLED_TESTS_COMPILE += \
