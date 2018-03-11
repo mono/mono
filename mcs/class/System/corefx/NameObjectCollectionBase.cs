@@ -10,7 +10,7 @@ namespace System.Collections.Specialized
     partial class NameObjectCollectionBase
     {
         // Allow internal extenders to avoid creating the hashtable/arraylist.
-        internal NameObjectCollectionBase(DBNull dummy)
+        internal NameObjectCollectionBase (DBNull dummy)
         {
         }
     }
