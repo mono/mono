@@ -2092,7 +2092,7 @@ lookup_start:
 			 * This is not a problem, since it will be initialized when the method is first
 			 * called by init_method ().
 			 */
-			if (!mono_llvm_only) {
+			if (!mono_llvm_only && !mono_class_is_open_constructed_type (&method->klass->byval_arg)) {
 				vtable = mono_class_vtable (domain, method->klass);
 				g_assert (vtable);
 				if (!mono_runtime_class_init_full (vtable, error))
