@@ -47,23 +47,26 @@ namespace System.Windows.Forms.Layout
 			base.InitLayout (child, specified);
 		}
 
+		private FlowLayoutSettings GetLayoutSettings (IArrangedContainer container)
+		{
+			if (container is FlowLayoutPanel)
+				return ((FlowLayoutPanel)container).LayoutSettings;
+			if (container is ToolStrip)
+				return (FlowLayoutSettings) ((ToolStrip)container).LayoutSettings;
+			return default_settings;
+		}
+
 		public override bool Layout (object container, LayoutEventArgs args)
 		{
+			// TODO: Handle ToolStripPanel/ToolStripPanelRow
 			if (container is ToolStripPanel)
 				return false;
 				
 			IArrangedContainer parent = container as IArrangedContainer;
-			
-			FlowLayoutSettings settings;
-			if (parent is FlowLayoutPanel)
-				settings = ((FlowLayoutPanel)parent).LayoutSettings;
-			else if (parent is ToolStrip)
-				settings = (FlowLayoutSettings) ((ToolStrip)parent).LayoutSettings;
-			else
-				settings = default_settings;
+			if (parent.Controls.Count == 0)
+				return false;
 
-			// Nothing to layout, exit method
-			if (parent.Controls.Count == 0) return false;
+			FlowLayoutSettings settings = GetLayoutSettings (parent);
 
 			// Use DisplayRectangle so that parent.Padding is honored.
 			Rectangle parentDisplayRectangle = parent.DisplayRectangle;
@@ -203,27 +206,19 @@ namespace System.Windows.Forms.Layout
 
 		internal override Size GetPreferredSize (object container, Size proposedSize)
 		{
-			FlowLayoutPanel parent = container as FlowLayoutPanel;
-			ToolStripPanel toolStripPanel = container as ToolStripPanel;
+			IArrangedContainer parent = container as IArrangedContainer;
+			FlowLayoutSettings settings = GetLayoutSettings (parent);
 			int width = 0;
 			int height = 0;
-			bool horizontal = true;
+			bool horizontal = settings.FlowDirection == FlowDirection.LeftToRight || settings.FlowDirection == FlowDirection.RightToLeft;
 			int size_in_flow_direction = 0;
 			int size_in_other_direction = 0;
 			int increase;
 			Size margin = new Size (0, 0);
 			bool force_flow_break = false;
-			bool wrap = false;
+			bool wrap = settings.WrapContents;
 
-			if (parent != null) {
-				horizontal = parent.FlowDirection == FlowDirection.LeftToRight || parent.FlowDirection == FlowDirection.RightToLeft;
-				wrap = parent.WrapContents;
-			} else if (toolStripPanel != null) {
-				horizontal = toolStripPanel.Orientation == Orientation.Horizontal;
-				wrap = false;
-			}
-
-			foreach (IArrangedElement control in ((IArrangedContainer)container).Controls) {
+			foreach (IArrangedElement control in parent.Controls) {
 				if (!control.Visible)
 					continue;
 				Size control_preferred_size;
@@ -261,7 +256,7 @@ namespace System.Windows.Forms.Layout
 				}
 
 				if (parent != null)
-					force_flow_break = parent.LayoutSettings.GetFlowBreak(control);
+					force_flow_break = settings.GetFlowBreak(control);
 			}
 
 			if (horizontal) {
