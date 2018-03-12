@@ -550,7 +550,11 @@ namespace System.Windows.Forms
 
 		protected override LayoutSettings CreateLayoutSettings (ToolStripLayoutStyle style)
 		{
-			return base.CreateLayoutSettings (style);
+			LayoutSettings layout_settings = base.CreateLayoutSettings (style);
+			if (style == ToolStripLayoutStyle.Flow) {
+                ((FlowLayoutSettings)layout_settings).FlowDirection = FlowDirection.TopDown;
+            }
+			return layout_settings;
 		}
 		
 		protected override void Dispose (bool disposing)
