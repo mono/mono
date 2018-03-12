@@ -34,7 +34,7 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void StartPage ()
 		{
-			if (PrinterSettings.InstalledPrinters.Count > 0)
+			if (PrinterSettings.InstalledPrinters.Count == 0)
 				Assert.Ignore ("The test depends on printer being available.");
 
 			using (Form f = new Form ())
