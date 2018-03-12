@@ -210,6 +210,13 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+		[Category("NotOnWindows")]
+		public void GetHostAddresses_IPv6 ()
+		{
+			var address = Dns.GetHostAddresses("ipv6.google.com");
+		}
+
+		[Test]
 		public void GetHostName ()
 		{
 			string hostName = Dns.GetHostName ();

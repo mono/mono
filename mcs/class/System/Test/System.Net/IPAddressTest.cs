@@ -241,9 +241,6 @@ public class IPAddressTest
 	[Test]
 	public void IsLoopbackV6 ()
 	{
-//		if (!Socket.SupportsIPv6)
-//			Assert.Ignore ("IPv6 must be enabled in machine.config");
-
 		IPAddress ip = IPAddress.IPv6Loopback;
 		Assert.IsTrue (IPAddress.IsLoopback (ip), "#1");
 
@@ -612,9 +609,6 @@ public class IPAddressTest
 	[Test]
 	public void ParseWrongV6 ()
 	{
-		//if (!Socket.SupportsIPv6)
-		//	Assert.Ignore ("IPv6 must be enabled in machine.config");
-
 		for (int i = 0; i < ipv6ParseWrong.Length; i++) {
 			string ipAddress = ipv6ParseWrong [i];
 
