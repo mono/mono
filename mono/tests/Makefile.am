@@ -968,13 +968,14 @@ PROFILE_DISABLED_TESTS += \
 	bug-80307.exe \
 	namedmutex-destroy-race.exe
 
-# It hangs.
-PROFILE_DISABLED_TESTS += tailcall/fsharp.exe
-
 endif
 
 AOT_DISABLED_TESTS= \
 	constraints-load.exe
+
+# tailcall/fsharp.exe AOT hangs
+# tailcall/fsharp.exe FullAOT stack overflow in CI but not locally.
+AOT_DISABLED_TESTS += tailcall/fsharp.exe
 
 CI_DISABLED_TESTS = \
 	main-returns-background-resetabort.exe \
