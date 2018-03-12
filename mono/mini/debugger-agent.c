@@ -9134,6 +9134,21 @@ event_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 				return err;
 			}
 
+#if RUNTIME_IL2CPP
+            {
+                DebuggerTlsData* tls;
+                mono_loader_lock();
+                tls = (DebuggerTlsData *)mono_g_hash_table_lookup(thread_to_tls, THREAD_TO_INTERNAL(step_thread));
+                mono_loader_unlock();
+
+                if (tls->il2cpp_context.frameCount == 1 && depth == STEP_DEPTH_OUT)
+                {
+                    g_free(req);
+                    return ERR_NONE;
+                }
+            }
+#endif
+
 			err = ss_create (THREAD_TO_INTERNAL (step_thread), size, depth, filter, req);
 			if (err != ERR_NONE) {
 				g_free (req);
