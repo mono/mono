@@ -3168,12 +3168,10 @@ namespace System.Windows.Forms
 		public Control TopLevelControl {
 			get {
 				Control	p = this;
-
-				while (p.parent != null) {
+				while (p != null && !p.GetTopLevel()) {
 					p = p.parent;
 				}
-
-				return p is Form ? p : null;
+				return p;
 			}
 		}
 
