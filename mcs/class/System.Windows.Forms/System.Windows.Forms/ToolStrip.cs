@@ -426,6 +426,8 @@ namespace System.Windows.Forms
 
 					if (this.layout_style == ToolStripLayoutStyle.Flow)
 						this.layout_engine = FlowLayout.Instance;
+					else if (this.layout_style == ToolStripLayoutStyle.Table)
+						this.layout_engine = TableLayout.Instance;
 					else
 						this.layout_engine = new ToolStripSplitStackLayout ();
 
@@ -714,7 +716,7 @@ namespace System.Windows.Forms
 				case ToolStripLayoutStyle.Flow:
 					return new FlowLayoutSettings (this);
 				case ToolStripLayoutStyle.Table:
-					//return new TableLayoutSettings ();
+					return new TableLayoutSettings (this);
 				case ToolStripLayoutStyle.StackWithOverflow:
 				case ToolStripLayoutStyle.HorizontalStackWithOverflow:
 				case ToolStripLayoutStyle.VerticalStackWithOverflow:

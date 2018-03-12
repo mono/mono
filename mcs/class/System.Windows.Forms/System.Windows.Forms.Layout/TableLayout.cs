@@ -59,8 +59,8 @@ namespace System.Windows.Forms.Layout
 		// 3) Size and position each control
 		public override bool Layout (object container, LayoutEventArgs args)
 		{
-			TableLayoutPanel panel = container as TableLayoutPanel;
-			TableLayoutSettings settings = panel.LayoutSettings;
+			IArrangedContainer panel = container as IArrangedContainer;
+			TableLayoutSettings settings = GetLayoutSettings(panel);
 			
 #if TABLE_DEBUG
 			Console.WriteLine ("Beginning layout on panel: {0}, control count: {1}, col/row count: {2}x{3}", panel.Name, panel.Controls.Count, settings.ColumnCount, settings.RowCount);
@@ -69,23 +69,27 @@ namespace System.Windows.Forms.Layout
 			// STEP 1:
 			// - Figure out which row/column each control goes into
 			// - Store data in the TableLayoutPanel.actual_positions
-			panel.actual_positions = CalculateControlPositions (panel, Math.Max (settings.ColumnCount, 1), Math.Max (settings.RowCount, 1));
+			var actual_positions = CalculateControlPositions (panel, Math.Max (settings.ColumnCount, 1), Math.Max (settings.RowCount, 1));
 
 			// STEP 2:
 			// - Figure out the sizes of each row/column
 			// - Store data in the TableLayoutPanel.widths/heights
 			int[] widths, heights;
-			CalculateColumnRowSizes (panel, panel.actual_positions, out widths, out heights, panel.DisplayRectangle.Size, false);
-			panel.column_widths = widths;
-			panel.row_heights = heights;
+			CalculateColumnRowSizes (panel, actual_positions, out widths, out heights, panel.DisplayRectangle.Size, false);
+
+			if (panel is TableLayoutPanel table_panel) {
+				table_panel.actual_positions = actual_positions;
+				table_panel.column_widths = widths;
+				table_panel.row_heights = heights;
+			}
 			
 			// STEP 3:
 			// - Size and position each control
-			LayoutControls (panel);
+			LayoutControls (panel, actual_positions, widths, heights);
 
 #if TABLE_DEBUG
 			Console.WriteLine ("-- CalculatedPositions:");
-			OutputControlGrid (panel.actual_positions, widths, heights);
+			OutputControlGrid (actual_positions, widths, heights);
 
 			Console.WriteLine ("Finished layout on panel: {0}", panel.Name);
 			Console.WriteLine ();
@@ -94,21 +98,29 @@ namespace System.Windows.Forms.Layout
 			return ((IArrangedElement)panel).AutoSize;
 		}
 
-		internal Control[,] CalculateControlPositions (TableLayoutPanel panel, int columns, int rows)
+		private static TableLayoutSettings GetLayoutSettings (IArrangedContainer container)
 		{
-			Control[,] grid = new Control[columns, rows];
+			if (container is TableLayoutPanel panel)
+				return panel.LayoutSettings;
+			else if (container is ToolStrip tool_strip)
+				return (TableLayoutSettings)tool_strip.LayoutSettings;
+			throw new NotSupportedException ();
+		}
 
-			TableLayoutSettings settings = panel.LayoutSettings;
+		private IArrangedElement[,] CalculateControlPositions (IArrangedContainer container, int columns, int rows)
+		{
+			IArrangedElement[,] grid = new IArrangedElement[columns, rows];
+			TableLayoutSettings settings = GetLayoutSettings (container);
 
 			// First place all controls that have an explicit col/row
-			foreach (Control c in panel.Controls) {
+			foreach (IArrangedElement c in container.Controls) {
 				int col = settings.GetColumn (c);
 				int row = settings.GetRow (c);
 				if (col >= 0 && row >= 0) {
 					if (col >= columns)
-						 return CalculateControlPositions (panel, col + 1, rows);
+						 return CalculateControlPositions (container, col + 1, rows);
 					if (row >= rows)
-						 return CalculateControlPositions (panel, columns, row + 1);
+						 return CalculateControlPositions (container, columns, row + 1);
 
 					if (grid[col, row] == null) {
 						int col_span = Math.Min (settings.GetColumnSpan (c), columns);
@@ -121,14 +133,14 @@ namespace System.Windows.Forms.Layout
 								col = 0;
 							}
 							else if (settings.GrowStyle == TableLayoutPanelGrowStyle.AddColumns)
-								return CalculateControlPositions (panel, columns + 1, rows);
+								return CalculateControlPositions (container, columns + 1, rows);
 							else
 								throw new ArgumentException ();
 						}
 
 						if (row + row_span > rows) {
 							if (settings.GrowStyle == TableLayoutPanelGrowStyle.AddRows)
-								return CalculateControlPositions (panel, columns, rows + 1);
+								return CalculateControlPositions (container, columns, rows + 1);
 							else
 								throw new ArgumentException ();
 						}
@@ -149,7 +161,7 @@ namespace System.Windows.Forms.Layout
 			int y_pointer = 0;
 
 			// Fill in gaps with controls that do not have an explicit col/row
-			foreach (Control c in panel.Controls) {
+			foreach (IArrangedElement c in container.Controls) {
 				int col = settings.GetColumn (c);
 				int row = settings.GetRow (c);
 
@@ -171,7 +183,7 @@ namespace System.Windows.Forms.Layout
 								if (y + 1 < rows)
 									break;
 								else if (settings.GrowStyle == TableLayoutPanelGrowStyle.AddColumns)
-									return CalculateControlPositions (panel, columns + 1, rows);
+									return CalculateControlPositions (container, columns + 1, rows);
 								else
 									throw new ArgumentException ();
 							}
@@ -180,7 +192,7 @@ namespace System.Windows.Forms.Layout
 								if (x + 1 < columns)
 									break;
 								else if (settings.GrowStyle == TableLayoutPanelGrowStyle.AddRows)
-									return CalculateControlPositions (panel, columns, rows + 1);
+									return CalculateControlPositions (container, columns, rows + 1);
 								else
 									throw new ArgumentException ();
 							}
@@ -219,10 +231,10 @@ namespace System.Windows.Forms.Layout
 
 				switch (adjustedGrowStyle) {
 					case TableLayoutPanelGrowStyle.AddColumns:
-						return CalculateControlPositions (panel, columns + 1, rows);
+						return CalculateControlPositions (container, columns + 1, rows);
 					case TableLayoutPanelGrowStyle.AddRows:
 					default:
-						return CalculateControlPositions (panel, columns, rows + 1);
+						return CalculateControlPositions (container, columns, rows + 1);
 					case TableLayoutPanelGrowStyle.FixedSize:
 						throw new ArgumentException ();
 				}
@@ -233,7 +245,7 @@ namespace System.Windows.Forms.Layout
 			return grid;
 		}
 
-		private static void CalculateColumnWidths (TableLayoutSettings settings, Control[,] actual_positions, int max_colspan, TableLayoutColumnStyleCollection col_styles, bool auto_size, int[] column_widths, bool minimum_sizes)
+		private static void CalculateColumnWidths (TableLayoutSettings settings, IArrangedElement[,] actual_positions, int max_colspan, TableLayoutColumnStyleCollection col_styles, bool auto_size, int[] column_widths, bool minimum_sizes)
 		{
 			Size proposed_size = minimum_sizes ? new Size(1, 0) : Size.Empty;
 			int rows = actual_positions.GetLength(1);
@@ -264,8 +276,8 @@ namespace System.Windows.Forms.Layout
 						int max_width = column_widths[index];
 						// Find the widest control in the column
 						for (int i = 0; i < rows; i ++) {
-							Control c = actual_positions[index - colspan, i];
-							if (c != null && c != dummy_control && c.VisibleInternal) {
+							IArrangedElement c = actual_positions[index - colspan, i];
+							if (c != null && c != dummy_control && c.Visible) {
 								// Skip any controls not being sized in this pass.
 								if (settings.GetColumnSpan (c) != colspan + 1)
 									continue;
@@ -295,7 +307,7 @@ namespace System.Windows.Forms.Layout
 			}
 		}
 
-		private static void CalculateRowHeights (TableLayoutSettings settings, Control[,] actual_positions, int max_rowspan, TableLayoutRowStyleCollection row_styles, bool auto_size, int[] column_widths, int[] row_heights)
+		private static void CalculateRowHeights (TableLayoutSettings settings, IArrangedElement[,] actual_positions, int max_rowspan, TableLayoutRowStyleCollection row_styles, bool auto_size, int[] column_widths, int[] row_heights)
 		{
 			int columns = actual_positions.GetLength(0);
 			float max_percent_size = 0;
@@ -325,8 +337,8 @@ namespace System.Windows.Forms.Layout
 						int max_height = row_heights[index];
 						// Find the tallest control in the row
 						for (int i = 0; i < columns; i++) {
-							Control c = actual_positions[i, index - rowspan];
-							if (c != null && c != dummy_control && c.VisibleInternal) {
+							IArrangedElement c = actual_positions[i, index - rowspan];
+							if (c != null && c != dummy_control && c.Visible) {
 								// Skip any controls not being sized in this pass.
 								if (settings.GetRowSpan (c) != rowspan + 1)
 									continue;
@@ -433,9 +445,10 @@ namespace System.Windows.Forms.Layout
 			return saved;
 		}
 
-		private void CalculateColumnRowSizes (TableLayoutPanel panel, Control[,] actual_positions, out int[] column_widths, out int[] row_heights, Size size, bool measureOnly)
+		private void CalculateColumnRowSizes (IArrangedContainer panel, IArrangedElement[,] actual_positions, out int[] column_widths, out int[] row_heights, Size size, bool measureOnly)
 		{
-			TableLayoutSettings settings = panel.LayoutSettings;
+			TableLayoutPanel table_panel = panel as TableLayoutPanel;
+			TableLayoutSettings settings = GetLayoutSettings (panel);
 			int columns = actual_positions.GetLength(0);
 			int rows = actual_positions.GetLength(1);
 			bool auto_size = ((IArrangedElement)panel).AutoSize && measureOnly;
@@ -446,18 +459,21 @@ namespace System.Windows.Forms.Layout
 
 			// Calculate the bounded size only if we are in default layout and docked, otherwise calculate unbounded.
 			if (measureOnly && size.Width > 0) {
-				if (panel.Parent != null && panel.Parent.LayoutEngine is DefaultLayout) {
+				if (table_panel != null && table_panel.Parent != null && table_panel.Parent.LayoutEngine is DefaultLayout) {
 					boundBySize |= panel.Dock == DockStyle.Top || panel.Dock == DockStyle.Bottom || panel.Dock == DockStyle.Fill;
 					boundBySize |= (panel.Anchor & (AnchorStyles.Left | AnchorStyles.Right)) == (AnchorStyles.Left | AnchorStyles.Right);
 				}			
 			}
 
-			int border_width = TableLayoutPanel.GetCellBorderWidth (panel.CellBorderStyle);
+			int border_width = 0;
+			if (table_panel != null) {
+			 	border_width = TableLayoutPanel.GetCellBorderWidth (table_panel.CellBorderStyle);
+			}
 				
 			// Find the largest column-span/row-span values.
 			int max_colspan = 0, max_rowspan = 0;
-			foreach (Control c in panel.Controls) {
-				if (c.VisibleInternal && c != dummy_control) {
+			foreach (IArrangedElement c in panel.Controls) {
+				if (c.Visible && c != dummy_control) {
 					max_colspan = Math.Max(max_colspan, settings.GetColumnSpan(c));
 					max_rowspan = Math.Max(max_rowspan, settings.GetRowSpan(c));
 				}
@@ -562,14 +578,17 @@ namespace System.Windows.Forms.Layout
 			}
 		}
 
-		private void LayoutControls (TableLayoutPanel panel)
+		private void LayoutControls (IArrangedContainer panel, IArrangedElement[,] actual_positions, int[] column_widths, int[] row_heights)
 		{
-			TableLayoutSettings settings = panel.LayoutSettings;
+			TableLayoutSettings settings = GetLayoutSettings (panel);
 			
-			int border_width = TableLayoutPanel.GetCellBorderWidth (panel.CellBorderStyle);
+			int border_width = 0;
+			if (panel is TableLayoutPanel table_panel) {
+			 	border_width = TableLayoutPanel.GetCellBorderWidth (table_panel.CellBorderStyle);
+			}
 
-			int columns = panel.actual_positions.GetLength(0);
-			int rows = panel.actual_positions.GetLength(1);
+			int columns = actual_positions.GetLength(0);
+			int rows = actual_positions.GetLength(1);
 
 			Point current_pos = new Point (panel.DisplayRectangle.Left + border_width, panel.DisplayRectangle.Top + border_width);
 
@@ -577,8 +596,8 @@ namespace System.Windows.Forms.Layout
 			{
 				for (int x = 0; x < columns; x++)
 				{
-					Control c = panel.actual_positions[x,y];
-					if(c != null && c != dummy_control && c.VisibleInternal) {
+					IArrangedElement c = actual_positions[x,y];
+					if(c != null && c != dummy_control && c.Visible) {
 						Size preferred;
 						
 						int new_x = 0;
@@ -586,13 +605,13 @@ namespace System.Windows.Forms.Layout
 						int new_width = 0;
 						int new_height = 0;
 
-						int column_width = panel.column_widths[x];
-						for (int i = 1; i < Math.Min (settings.GetColumnSpan(c), panel.column_widths.Length - x); i++)
-							column_width += panel.column_widths[x + i];
+						int column_width = column_widths[x];
+						for (int i = 1; i < Math.Min (settings.GetColumnSpan(c), column_widths.Length - x); i++)
+							column_width += column_widths[x + i];
 
-						int column_height = panel.row_heights[y];
-						for (int i = 1; i < Math.Min (settings.GetRowSpan(c), panel.row_heights.Length - y); i++)
-							column_height += panel.row_heights[y + i];
+						int column_height = row_heights[y];
+						for (int i = 1; i < Math.Min (settings.GetRowSpan(c), row_heights.Length - y); i++)
+							column_height += row_heights[y + i];
 
 						preferred = GetControlSize(c, new Size(column_width - c.Margin.Horizontal, column_height - c.Margin.Vertical));
 
@@ -624,13 +643,13 @@ namespace System.Windows.Forms.Layout
 						else	// (center control)
 							new_y = (current_pos.Y + (column_height - c.Margin.Top - c.Margin.Bottom) / 2) + c.Margin.Top - (new_height / 2);
 
-						((IArrangedElement)c).SetBounds (new_x, new_y, new_width, new_height, BoundsSpecified.None);
+						c.SetBounds (new_x, new_y, new_width, new_height, BoundsSpecified.None);
 					}
 
-					current_pos.Offset (panel.column_widths[x] + border_width, 0);
+					current_pos.Offset (column_widths[x] + border_width, 0);
 				}
 
-				current_pos.Offset ((-1 * current_pos.X) + border_width + panel.DisplayRectangle.Left, panel.row_heights[y] + border_width);
+				current_pos.Offset ((-1 * current_pos.X) + border_width + panel.DisplayRectangle.Left, row_heights[y] + border_width);
 			}
 		}
 	
@@ -662,7 +681,7 @@ namespace System.Windows.Forms.Layout
 		}
 	
 		[Conditional("TABLE_DEBUG")]
-		private void OutputControlGrid (Control[,] grid, int[] column_widths, int[] row_heights)
+		private void OutputControlGrid (IArrangedElement[,] grid, int[] column_widths, int[] row_heights)
 		{
 			Console.WriteLine ("     Size: {0}x{1}", grid.GetLength (0), grid.GetLength (1));
 

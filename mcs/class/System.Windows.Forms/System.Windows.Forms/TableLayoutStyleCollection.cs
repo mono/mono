@@ -34,11 +34,13 @@ namespace System.Windows.Forms {
 	public abstract class TableLayoutStyleCollection : IList, ICollection, IEnumerable
 	{
 		ArrayList al = new ArrayList ();
-		TableLayoutPanel table;
+		IArrangedContainer table;
+		string property_name;
 		
-		internal TableLayoutStyleCollection (TableLayoutPanel table)
+		internal TableLayoutStyleCollection (IArrangedContainer table, string propertyName)
 		{
 			this.table = table;
+			this.property_name = propertyName;
 		}
 		
 		public int Add (TableLayoutStyle style)
@@ -52,7 +54,7 @@ namespace System.Windows.Forms {
 				style.Owner = null;
 			al.Clear ();
 			if (table != null)
-				table.PerformLayout ();
+				table.PerformLayout (table, this.property_name);
 		}
 		
 		public int Count {
@@ -64,7 +66,7 @@ namespace System.Windows.Forms {
 			((TableLayoutStyle)al[index]).Owner = null;
 			al.RemoveAt (index);
 			if (table != null)
-				table.PerformLayout ();
+				table.PerformLayout (table, this.property_name);
 		}
 		
 #region IList methods
@@ -81,7 +83,7 @@ namespace System.Windows.Forms {
 			int result = al.Add (layoutStyle);
 
 			if (table != null)
-				table.PerformLayout ();
+				table.PerformLayout (table, this.property_name);
 
 			return result;
 		}
@@ -103,7 +105,7 @@ namespace System.Windows.Forms {
 			((TableLayoutStyle)style).Owner = table;
 			al.Insert (index, (TableLayoutStyle) style);
 			if (table != null)
-				table.PerformLayout ();
+				table.PerformLayout (table, this.property_name);
 		}
 
 		void IList.Remove (object style)
@@ -111,7 +113,7 @@ namespace System.Windows.Forms {
 			((TableLayoutStyle)style).Owner = null;
 			al.Remove ((TableLayoutStyle) style);
 			if (table != null)
-				table.PerformLayout ();
+				table.PerformLayout (table, this.property_name);
 		}
 
 		bool IList.IsFixedSize {
@@ -136,7 +138,7 @@ namespace System.Windows.Forms {
 				((TableLayoutStyle)value).Owner = table;
 				al [index] = value;
 				if (table != null)
-					table.PerformLayout ();
+					table.PerformLayout (table, this.property_name);
 			}
 		}
 #endregion

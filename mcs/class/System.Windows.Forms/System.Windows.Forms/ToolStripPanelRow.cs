@@ -35,7 +35,7 @@ using System.Collections.Generic;
 namespace System.Windows.Forms
 {
 	[ToolboxItem (false)]
-	public class ToolStripPanelRow : Component, IComponent, IDisposable, IBounds
+	public class ToolStripPanelRow : Component, IComponent, IDisposable
 	{
 		private Rectangle bounds;
 		internal List<Control> controls;

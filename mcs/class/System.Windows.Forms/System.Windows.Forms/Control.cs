@@ -59,7 +59,7 @@ namespace System.Windows.Forms
 	[DesignerSerializer("System.Windows.Forms.Design.ControlCodeDomSerializer, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
 	[ToolboxItemFilter("System.Windows.Forms")]
 	public class Control : Component, ISynchronizeInvoke, IWin32Window
-		, IBindableComponent, IDropTarget, IBounds, IArrangedElement, IArrangedContainer
+		, IBindableComponent, IDropTarget, IArrangedElement, IArrangedContainer
 	{
 		#region Local Variables
 
@@ -3850,17 +3850,21 @@ namespace System.Windows.Forms
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public void PerformLayout() {
-			PerformLayout(null, null);
+		public void PerformLayout () {
+			PerformLayout (null, null);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public void PerformLayout(Control affectedControl, string affectedProperty) {
-			LayoutEventArgs levent = new LayoutEventArgs(affectedControl, affectedProperty);
-
+		public void PerformLayout (Control affectedControl, string affectedProperty) {
 			cached_preferred_size = Size.Empty;
 			if (affectedControl != null)
 				affectedControl.cached_preferred_size = Size.Empty;
+			PerformLayout ((IComponent) affectedControl, affectedProperty);
+		}
+
+		internal void PerformLayout (IComponent affectedComponent, string affectedProperty)
+		{
+			LayoutEventArgs levent = new LayoutEventArgs (affectedComponent, affectedProperty);
 
 			if (layout_suspended > 0) {
 				if (layout_pending_event_args == null || layout_pending_after_resume)
@@ -3887,6 +3891,11 @@ namespace System.Windows.Forms
 				if (parent != null && parent.layout_dirty)
 					parent.PerformLayout(this, "PreferredSize");
 			}
+		}
+
+		void IArrangedContainer.PerformLayout (IArrangedElement affectedElement, string affectedProperty)
+		{
+			PerformLayout (affectedElement, affectedProperty);
 		}
 
 		public Point PointToClient (Point p) {

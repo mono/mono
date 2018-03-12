@@ -25,10 +25,11 @@
 
 using System.Collections;
 using System.Drawing;
+using System.ComponentModel;
 
 namespace System.Windows.Forms.Layout
 {
-    interface IArrangedElement
+    interface IArrangedElement : IComponent
     {
         bool Visible { get; }
         bool AutoSize { get; }
@@ -42,6 +43,7 @@ namespace System.Windows.Forms.Layout
         DockStyle Dock { get; }
         Rectangle DisplayRectangle { get; }
         IArrangedContainer Parent { get; }
+        string Name { get; }
         void SetBounds(int x, int y, int width, int height, BoundsSpecified specified);
         Size GetPreferredSize(Size proposedSize);
         int DistanceRight { get; set; }
