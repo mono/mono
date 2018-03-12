@@ -1101,10 +1101,8 @@ if ARM64
 INTERP_DISABLED_TESTS += \
 	bug-48015.exe \
 	bug-80307.exe \
-	calliGenericTest.exe \
 	delegate-with-null-target.exe \
 	dim-diamondshape.exe \
-	pinvoke2.exe \
 	pinvoke3.exe
 endif
 
@@ -1113,13 +1111,10 @@ INTERP_DISABLED_TESTS += \
 	assemblyresolve_event6.exe \
 	bug-48015.exe \
 	bug-60862.exe \
-	calliGenericTest.exe \
 	cominterop.exe \
 	delegate-with-null-target.exe \
 	dim-diamondshape.exe \
-	pinvoke.exe \
-	pinvoke2.exe \
-	pinvoke3.exe
+	pinvoke.exe
 endif
 
 TESTS_CS=$(filter-out $(DISABLED_TESTS),$(TESTS_CS_SRC:.cs=.exe))
