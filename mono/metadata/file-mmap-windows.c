@@ -269,7 +269,7 @@ mono_mmap_open_file (const gunichar2 *path, gint path_length, int mode, const gu
 		// backed by physical memory / pagefile.
 	}
 
-	result = open_handle (hFile, mapName, mapName_length, mode, capacity, access, options, ioerror);
+	result = open_handle (hFile, mapName, mapName_length, mode, capacity, access, options, ioerror, error);
 
 done:
 	if (hFile != INVALID_HANDLE_VALUE)
