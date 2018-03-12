@@ -1505,7 +1505,11 @@ char* il2cpp_assembly_get_full_name(MonoAssembly *assembly)
 
 const MonoMethod* il2cpp_get_seq_point_method(Il2CppSequencePoint *seqPoint)
 {
+#if IL2CPP_MONO_DEBUGGER
     return il2cpp::utils::Debugger::GetSequencePointMethod(seqPoint);
+#else
+    return NULL;
+#endif
 }
 
 const MonoClass* il2cpp_get_class_from_index(int index)

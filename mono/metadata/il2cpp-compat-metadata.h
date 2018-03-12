@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef IL2CPP_MONO_DEBUGGER
+#ifdef RUNTIME_IL2CPP
 
 #include <mono/sgen/sgen-conf.h>
 #include <mono/metadata/mono-gc.h>
