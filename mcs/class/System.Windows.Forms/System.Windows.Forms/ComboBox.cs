@@ -2422,6 +2422,7 @@ namespace System.Windows.Forms
 
 				SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 				SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);
+				SetTopLevel (true);
 
 				this.is_visible = false;
 

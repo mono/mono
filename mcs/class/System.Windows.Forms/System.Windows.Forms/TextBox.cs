@@ -794,6 +794,8 @@ namespace System.Windows.Forms {
 
 				is_visible = false;
 				InternalBorderStyle = BorderStyle.FixedSingle;
+
+				SetTopLevel (true);
 			}
 
 			protected override CreateParams CreateParams {

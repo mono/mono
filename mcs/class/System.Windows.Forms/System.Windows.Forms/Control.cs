@@ -3168,12 +3168,10 @@ namespace System.Windows.Forms
 		public Control TopLevelControl {
 			get {
 				Control	p = this;
-
-				while (p.parent != null) {
+				while (p != null && !p.GetTopLevel()) {
 					p = p.parent;
 				}
-
-				return p is Form ? p : null;
+				return p;
 			}
 		}
 
@@ -4757,7 +4755,7 @@ namespace System.Windows.Forms
 			if (value != is_visible) {
 				is_visible = value;
 				
-				if (is_visible && ((window.Handle == IntPtr.Zero) || !is_created)) {
+				if (is_visible && (GetTopLevel() || (parent != null && parent.Created)) && ((window.Handle == IntPtr.Zero) || !is_created)) {
 					CreateControl();
 					if (!(this is Form))
 						UpdateZOrder ();
