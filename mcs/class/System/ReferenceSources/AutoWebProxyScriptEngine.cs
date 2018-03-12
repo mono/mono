@@ -46,14 +46,22 @@ namespace System.Net
 			WebProxyData data;
 
 			// TODO: Could re-use some pieces from _AutoWebProxyScriptEngine.cs
-			if (IsWindows ()) {
-				data = InitializeRegistryGlobalProxy ();
+			try {
+				if (IsWindows ()) {
+					data = InitializeRegistryGlobalProxy ();
+					if (data != null)
+						return data;
+				}
+
+				data = ReadEnvVariables ();
 				if (data != null)
 					return data;
 			}
+			catch (DllNotFoundException) {
+				// This path will be hit on UWP since we're not allowed to read from registry
+			}
 
-			data = ReadEnvVariables ();
-			return data ?? new WebProxyData ();
+			return new WebProxyData ();
 		}
 
 		WebProxyData ReadEnvVariables ()
