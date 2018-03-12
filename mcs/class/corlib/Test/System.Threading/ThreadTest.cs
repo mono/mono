@@ -835,7 +835,6 @@ namespace MonoTests.System.Threading
 #endif
 
 		[Test]
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void Test_Interrupt ()
 		{
 			ManualResetEvent mre = new ManualResetEvent (false);
