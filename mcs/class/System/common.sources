@@ -22,7 +22,6 @@ System.Diagnostics/ProcessPriorityClass.cs
 System.Diagnostics/ProcessStartInfo.cs
 System.Diagnostics/ProcessThread.cs
 System.Diagnostics/ProcessWindowStyle.cs
-System.Diagnostics/StackFrameExtensions.cs
 System.Diagnostics/Stopwatch.cs
 System.Diagnostics/ThreadPriorityLevel.cs
 System.Diagnostics/ThreadState.cs
@@ -934,3 +933,4 @@ corefx/SR.cs
 
 ../../../external/corefx/src/System.Runtime.InteropServices/src/System/Security/SecureStringMarshal.cs
 ../../../external/corefx/src/System.Runtime.Extensions/src/System/StringNormalizationExtensions.cs
+../../../external/corefx/src/System.Diagnostics.StackTrace/src/System/Diagnostics/StackFrameExtensions.cs
