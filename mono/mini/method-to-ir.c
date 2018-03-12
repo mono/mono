@@ -2160,6 +2160,12 @@ check_method_sharing (MonoCompile *cfg, MonoMethod *cmethod, gboolean *out_pass_
 		*out_pass_mrgctx = pass_mrgctx;
 }
 
+inline static gboolean
+mono_need_unbox_trampoline (MonoMethod *method)
+{
+	return method->klass == mono_defaults.object_class || mono_class_is_interface (method->klass);
+}
+
 inline static MonoCallInst *
 mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig, 
 					 MonoInst **args, int calli, int virtual_, int tail, int rgctx, int unbox_trampoline, MonoMethod *target)
@@ -2170,7 +2176,7 @@ mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig,
 	int i;
 #endif
 
-	if (cfg->llvm_only)
+	if (cfg->llvm_only || unbox_trampoline || (virtual_ && !cfg->backend->have_op_tail_call_membase))
 		tail = FALSE;
 
 	if (tail) {
@@ -2397,7 +2403,7 @@ mono_emit_method_call_full (MonoCompile *cfg, MonoMethod *method, MonoMethodSign
 	if (cfg->llvm_only && virtual_ && (method->flags & METHOD_ATTRIBUTE_VIRTUAL))
 		return emit_llvmonly_virtual_call (cfg, method, sig, 0, args);
 
-	need_unbox_trampoline = method->klass == mono_defaults.object_class || mono_class_is_interface (method->klass);
+	need_unbox_trampoline = mono_need_unbox_trampoline (method);
 
 	call = mono_emit_call_args (cfg, sig, args, FALSE, virtual_, tail, rgctx_arg ? TRUE : FALSE, need_unbox_trampoline, method);
 
@@ -6989,6 +6995,9 @@ is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmetho
 {
 	gboolean supported_tail_call;
 	int i;
+
+	if (mono_need_unbox_trampoline (method))
+		return FALSE;
 
 	supported_tail_call = mono_arch_tail_call_supported (cfg, mono_method_signature (method), mono_method_signature (cmethod));
 
