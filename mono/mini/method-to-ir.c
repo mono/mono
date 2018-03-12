@@ -6985,53 +6985,34 @@ is_jit_optimizer_disabled (MonoMethod *m)
 }
 
 static gboolean
-is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmethod, MonoMethodSignature *fsig, int call_opcode)
+is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmethod, MonoMethodSignature *fsig, int call_opcode, gboolean virtual_, MonoInst *vtable_arg)
 {
-	gboolean supported_tail_call;
+	g_assertf (call_opcode == CEE_CALL || call_opcode == CEE_CALLVIRT || call_opcode == CEE_CALLI, "%s (%d)", mono_opcode_name (call_opcode), (int)call_opcode);
+
+	if (       (cfg->gshared 			      && !cfg->backend->have_op_tail_call)
+		|| ((virtual_ || call_opcode == CEE_CALLVIRT) && !cfg->backend->have_op_tail_call_membase)
+		|| vtable_arg
+		|| call_opcode == CEE_CALLI
+		|| (fsig->hasthis && cmethod->klass->valuetype) // This might point to the current method's stack. Range check?
+		|| (cmethod->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)
+		|| cfg->method->save_lmf
+		|| (cmethod->wrapper_type && cmethod->wrapper_type != MONO_WRAPPER_DYNAMIC_METHOD)
+		|| !mono_arch_tail_call_supported (cfg, mono_method_signature (method), mono_method_signature (cmethod)))
+		return FALSE;
+
 	int i;
-
-	supported_tail_call = mono_arch_tail_call_supported (cfg, mono_method_signature (method), mono_method_signature (cmethod));
-
 	for (i = 0; i < fsig->param_count; ++i) {
 		if (fsig->params [i]->byref || fsig->params [i]->type == MONO_TYPE_PTR || fsig->params [i]->type == MONO_TYPE_FNPTR)
-			/* These can point to the current method's stack */
-			supported_tail_call = FALSE;
-	}
-	if (fsig->hasthis && cmethod->klass->valuetype)
-		/* this might point to the current method's stack */
-		supported_tail_call = FALSE;
-	if (cmethod->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)
-		supported_tail_call = FALSE;
-	if (cfg->method->save_lmf)
-		supported_tail_call = FALSE;
-	if (cmethod->wrapper_type && cmethod->wrapper_type != MONO_WRAPPER_DYNAMIC_METHOD)
-		supported_tail_call = FALSE;
-
-	switch (call_opcode) {
-	case CEE_CALL:
-		break;
-	case CEE_CALLI:
-		supported_tail_call = FALSE;
-		break;
-	case CEE_CALLVIRT:
-		if (!cfg->backend->have_op_tail_call_membase)
-			supported_tail_call = FALSE;
-		break;
-	default:
-		g_assertf (call_opcode == CEE_CALL || call_opcode == CEE_CALLVIRT || call_opcode == CEE_CALLI, "%s (%d)", mono_opcode_name (call_opcode), (int)call_opcode);
-		supported_tail_call = FALSE;
-		break;
+			return FALSE; // These can point to the current method's stack. Range check?
 	}
 
 	/* Debugging support */
 #if 0
-	if (supported_tail_call) {
-		if (!mono_debug_count ())
-			supported_tail_call = FALSE;
-	}
+	if (!mono_debug_count ())
+		return FALSE;
 #endif
 
-	return supported_tail_call;
+	return TRUE;
 }
 
 /*
@@ -9051,10 +9032,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				  Inlining and stack traces are not guaranteed however. */
 			/* FIXME: runtime generic context pointer for jumps? */
 			/* FIXME: handle this for generic sharing eventually */
-			if (inst_tailcall
-					&& (cfg->backend->have_op_tail_call || (!vtable_arg && !cfg->gshared))
-					&& is_supported_tail_call (cfg, method, cmethod, fsig, call_opcode))
-				supported_tail_call = TRUE;
+			supported_tail_call = inst_tailcall && is_supported_tail_call (cfg, method, cmethod, fsig, call_opcode, virtual_, vtable_arg);
 
 			// http://www.mono-project.com/docs/advanced/runtime/docs/generic-sharing/
 			// 1. Non-generic non-static methods of reference types have access to the
@@ -9062,7 +9040,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			// 2. a Non-generic static methods of reference types and b. non-generic methods
 			//    of value types need to be passed a pointer to the caller’s class’s VTable in the MONO_ARCH_RGCTX_REG register.
 			// 3. Generic methods need to be passed a pointer to the MRGCTX in the MONO_ARCH_RGCTX_REG register
-			if (inst_tailcall && cfg->verbose_level >= 2)
+			if (inst_tailcall && cfg->verbose_level)
 				g_print ("tail.%s %s -> %s supported_tail_call:%d gshared:%d vtable_arg:%d\n",
 					mono_opcode_name (*ip), method->name, cmethod->name,
 					(int)supported_tail_call, (int)cfg->gshared, !!vtable_arg);
