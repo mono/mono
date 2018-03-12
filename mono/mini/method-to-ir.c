@@ -9756,7 +9756,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		case CEE_STIND_I8:
 		case CEE_STIND_R4:
 		case CEE_STIND_R8:
-		case CEE_STIND_I:
+		case CEE_STIND_I: {
 			CHECK_STACK (2);
 			sp -= 2;
 
@@ -9765,6 +9765,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_REL);
 			}
 
+			if (*ip == CEE_STIND_R4 && sp [1]->type == STACK_R8)
+				sp [1] = convert_value (cfg, &mono_defaults.single_class->byval_arg, sp [1]);
 			NEW_STORE_MEMBASE (cfg, ins, stind_to_store_membase (*ip), sp [0]->dreg, 0, sp [1]->dreg);
 			ins->flags |= ins_flag;
 			ins_flag = 0;
@@ -9782,7 +9784,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			inline_costs += 1;
 			++ip;
 			break;
-
+		}
 		case CEE_MUL:
 			CHECK_STACK (2);
 
