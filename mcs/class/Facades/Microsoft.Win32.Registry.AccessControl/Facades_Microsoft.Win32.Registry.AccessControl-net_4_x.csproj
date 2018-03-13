@@ -56,8 +56,8 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\..\..\..\external\corefx\src\Microsoft.Win32.Registry.AccessControl\src\Microsoft\Win32\RegistryAclExtensions.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="RegistryAclExtensions.cs" />
     <Compile Include="TypeForwarders.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -56,7 +56,6 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\..\..\..\external\corefx\src\System.Runtime.Serialization.Primitives\src\System\Runtime\Serialization\ISerializationSurrogateProvider.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="TypeForwarders.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
