@@ -6985,7 +6985,7 @@ is_jit_optimizer_disabled (MonoMethod *m)
 }
 
 static gboolean
-is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmethod, MonoMethodSignature *fsig, int call_opcode, MonoInst *vtable_arg)
+is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmethod, MonoMethodSignature *fsig, int call_opcode, gboolean virtual_, MonoInst *vtable_arg)
 {
 	int i;
 
@@ -6996,7 +6996,7 @@ is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmetho
 		|| cfg->method->save_lmf
 		|| (cmethod->wrapper_type && cmethod->wrapper_type != MONO_WRAPPER_DYNAMIC_METHOD)
 		|| call_opcode == CEE_CALLI
-		|| (call_opcode == CEE_CALLVIRT && !cfg->backend->have_op_tail_call_membase)
+		|| ((virtual_ || call_opcode == CEE_CALLVIRT) && !cfg->backend->have_op_tail_call_membase)
 		|| ((vtable_arg || cfg->gshared) && !cfg->backend->have_op_tail_call)
 		|| !mono_arch_tail_call_supported (cfg, mono_method_signature (method), mono_method_signature (cmethod)))
 		return FALSE;
@@ -9033,7 +9033,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				  Inlining and stack traces are not guaranteed however. */
 			/* FIXME: runtime generic context pointer for jumps? */
 			/* FIXME: handle this for generic sharing eventually */
-			supported_tail_call = inst_tailcall && is_supported_tail_call (cfg, method, cmethod, fsig, call_opcode, vtable_arg);
+			supported_tail_call = inst_tailcall && is_supported_tail_call (cfg, method, cmethod, fsig, call_opcode, virtual_, vtable_arg);
 
 			// http://www.mono-project.com/docs/advanced/runtime/docs/generic-sharing/
 			// 1. Non-generic non-static methods of reference types have access to the
