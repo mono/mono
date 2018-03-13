@@ -930,3 +930,7 @@ corefx/SR.cs
 
 ../../../external/corefx/src/System.Runtime.Extensions/src/System/CodeDom/Compiler/IndentedTextWriter.cs
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/WaitForChangedResult.cs
+
+../../../external/corefx/src/System.Runtime.InteropServices/src/System/Security/SecureStringMarshal.cs
+../../../external/corefx/src/System.Runtime.Extensions/src/System/StringNormalizationExtensions.cs
+../../../external/corefx/src/System.Diagnostics.StackTrace/src/System/Diagnostics/StackFrameExtensions.cs

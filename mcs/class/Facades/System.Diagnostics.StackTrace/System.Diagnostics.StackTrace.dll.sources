@@ -1,5 +1,2 @@
 TypeForwarders.cs
 AssemblyInfo.cs
-
-../../../build/common/MonoTODOAttribute.cs
-StackFrameExtensions.cs
