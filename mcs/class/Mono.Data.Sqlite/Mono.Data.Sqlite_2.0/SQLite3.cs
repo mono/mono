@@ -929,29 +929,25 @@ namespace Mono.Data.Sqlite
       return UnsafeNativeMethods.sqlite3_aggregate_context(context, 1);
     }
 
-#if MONOTOUCH
-	internal override void SetPassword(byte[] passwordBytes)
-	{
-		throw new NotImplementedException ();
-	}
-
-	internal override void ChangePassword(byte[] newPasswordBytes)
-	{
-		throw new NotImplementedException ();
-	}
-#else
     internal override void SetPassword(byte[] passwordBytes)
     {
+#if MOBILE
+      throw new PlatformNotSupportedException();
+#else
       int n = UnsafeNativeMethods.sqlite3_key(_sql, passwordBytes, passwordBytes.Length);
       if (n > 0) throw new SqliteException(n, SQLiteLastError());
+#endif
     }
 
     internal override void ChangePassword(byte[] newPasswordBytes)
     {
+#if MOBILE
+      throw new PlatformNotSupportedException();
+#else
       int n = UnsafeNativeMethods.sqlite3_rekey(_sql, newPasswordBytes, (newPasswordBytes == null) ? 0 : newPasswordBytes.Length);
       if (n > 0) throw new SqliteException(n, SQLiteLastError());
-    }
 #endif
+    }
 		
 #if MONOTOUCH
     SQLiteUpdateCallback update_callback;
