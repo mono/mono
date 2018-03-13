@@ -3720,7 +3720,7 @@ amd64_handle_varargs_nregs (guint8 *code, guint32 nregs)
 }
 
 static guint8*
-amd64_handle_varargs_call (MonoCompile *cfg, guint8 *code, MonoCallInst *call)
+amd64_handle_varargs_call (MonoCompile *cfg, guint8 *code, MonoCallInst *call, gboolean free_rax)
 {
 #ifdef TARGET_WIN32
 	return code;
@@ -3743,7 +3743,7 @@ amd64_handle_varargs_call (MonoCompile *cfg, guint8 *code, MonoCallInst *call)
 		return code;
 	}
 	MonoInst *ins = (MonoInst*)call;
-	if (ins->sreg1 == AMD64_RAX) {
+	if (free_rax && ins->sreg1 == AMD64_RAX) {
 		amd64_mov_reg_reg (code, AMD64_R11, AMD64_RAX, 8);
 		ins->sreg1 = AMD64_R11;
 	}
@@ -4637,8 +4637,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			int i, save_area_offset;
 			gboolean membase = (ins->opcode == OP_TAILCALL_MEMBASE);
 
-			// FIXME varargs
-
 			g_assert (!cfg->method->save_lmf);
 
 			/* the size of the tailcall op depends on signature, let's check for enough
@@ -4653,16 +4651,20 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				cfg->stat_code_reallocs++;
 			}
 
+			// FIXME hardcoding RAX here is not ideal.
+
 			if (membase) {
-				// rex opcode modrm up-to-4bytes => 7 bytes
 				amd64_mov_reg_membase (code, AMD64_RAX, ins->sreg1, ins->inst_offset, 8);
 			} else {
-				mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_METHOD_JUMP, call->method);
-				if (cfg->compile_aot) {
-					// rex opcode modrm 4bytes => 7 bytes
+				 if (cfg->compile_aot) {
+					mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_METHOD_JUMP, call->method);
 					amd64_mov_reg_membase (code, AMD64_RAX, AMD64_RIP, 0, 8);
 				} else {
-					// rex opcode 8byte => 10 bytes
+					// FIXME Patch data instead of code.
+					guint32 pad_size = (guint32)((code + 2 - cfg->native_code) % 8);
+					if (pad_size)
+						amd64_padding (code, 8 - pad_size);
+					mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_METHOD_JUMP, call->method);
 					amd64_set_reg_template (code, AMD64_RAX);
 				}
 			}
@@ -4698,13 +4700,24 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 #endif
 			}
 
+#ifdef TARGET_WIN32
 			// Redundant REX byte indicates a tailcall to the native unwinder. It means nothing to the processor.
 			// https://github.com/dotnet/coreclr/blob/966dabb5bb3c4bf1ea885e1e8dc6528e8c64dc4f/src/unwinder/amd64/unwinder_amd64.cpp#L1394
-			// FIXME This should be call rip+32 for AOT direct to same assembly.
-			// FIXME This should be call [rip+32] for AOT direct to not-same assembly.
-			// FIXME This should be call [rip+32] for JIT direct -- patch data instead of code.
+			// FIXME This should be jmp rip+32 for AOT direct to same assembly.
+			// FIXME This should be jmp [rip+32] for AOT direct to not-same assembly (through data).
+			// FIXME This should be jmp [rip+32] for JIT direct -- patch data instead of code.
+			// This is only close to ideal for membase, and even then it should
+			// have a more dynamic register allocation.
 			x86_imm_emit8 (code, 0x48);
 			amd64_jump_reg (code, AMD64_RAX);
+#else
+			// NT does not have varargs rax use, and NT ABI does not have red zone.
+			// Use red-zone mov/jmp instead of push/ret to preserve call/ret speculation stack.
+			// FIXME Just like NT the direct cases are are not ideal.
+			amd64_mov_membase_reg (code, AMD64_RSP, -8, AMD64_RAX, 8);
+			code = amd64_handle_varargs_call (cfg, code, call, FALSE);
+			amd64_jump_membase (code, AMD64_RSP, -8);
+#endif
 			ins->flags |= MONO_INST_GC_CALLSITE;
 			ins->backend.pc_offset = code - cfg->native_code;
 			break;
@@ -4727,7 +4740,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_VOIDCALL:
 			call = (MonoCallInst*)ins;
 
-			code = amd64_handle_varargs_call (cfg, code, call);
+			code = amd64_handle_varargs_call (cfg, code, call, TRUE);
 			if (ins->flags & MONO_INST_HAS_METHOD)
 				code = emit_call (cfg, code, MONO_PATCH_INFO_METHOD, call->method, FALSE);
 			else
@@ -4750,7 +4763,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				ins->sreg1 = AMD64_R11;
 			}
 
-			code = amd64_handle_varargs_call (cfg, code, call);
+			code = amd64_handle_varargs_call (cfg, code, call, TRUE);
 			amd64_call_reg (code, ins->sreg1);
 			ins->flags |= MONO_INST_GC_CALLSITE;
 			ins->backend.pc_offset = code - cfg->native_code;
