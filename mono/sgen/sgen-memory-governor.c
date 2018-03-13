@@ -23,7 +23,7 @@
 #include "mono/sgen/sgen-workers.h"
 #include "mono/sgen/sgen-client.h"
 
-#define MIN_MINOR_COLLECTION_ALLOWANCE	((mword)(SGEN_DEFAULT_NURSERY_SIZE * default_allowance_nursery_size_ratio))
+#define MIN_MINOR_COLLECTION_ALLOWANCE	((mword)(sgen_nursery_size * default_allowance_nursery_size_ratio))
 
 static SgenPointerQueue log_entries = SGEN_POINTER_QUEUE_INIT (INTERNAL_MEM_TEMPORARY);
 static mono_mutex_t log_entries_mutex;
