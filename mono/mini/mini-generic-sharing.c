@@ -3747,16 +3747,6 @@ mini_get_shared_method_full (MonoMethod *method, GetSharedMethodFlags flags, Mon
 	return mono_class_inflate_generic_method_checked (declaring_method, &shared_context, error);
 }
 
-MonoMethod*
-mini_get_shared_method (MonoMethod *method)
-{
-	ERROR_DECL (error);
-	MonoMethod *res = mini_get_shared_method_full (method, SharedModeNone, error);
-	mono_error_assert_ok (error);
-
-	return res;
-}
-
 int
 mini_get_rgctx_entry_slot (MonoJumpInfoRgctxEntry *entry)
 {

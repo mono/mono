@@ -3755,8 +3755,10 @@ static void
 add_extra_method_with_depth (MonoAotCompile *acfg, MonoMethod *method, int depth)
 {
 	ERROR_DECL (error);
-	if (mono_method_is_generic_sharable_full (method, TRUE, TRUE, FALSE))
-		method = mini_get_shared_method (method);
+	if (mono_method_is_generic_sharable_full (method, TRUE, TRUE, FALSE)) {
+		method = mini_get_shared_method_full (method, SharedModeNone, error);
+		mono_error_assert_ok (error);
+	}
 	else if ((acfg->opts & MONO_OPT_GSHAREDVT) && prefer_gsharedvt_method (acfg, method) && mono_method_is_generic_sharable_full (method, FALSE, FALSE, TRUE)) {
 		/* Use the gsharedvt version */
 		method = mini_get_shared_method_full (method, AllValueTypes | GSharedVT, error);
@@ -10965,9 +10967,16 @@ collect_methods (MonoAotCompile *acfg)
 		}
 		*/
 
-		if (method->is_generic || mono_class_is_gtd (method->klass))
+		if (method->is_generic || mono_class_is_gtd (method->klass)) {
 			/* Compile the ref shared version instead */
-			method = mini_get_shared_method (method);
+			method = mini_get_shared_method_full (method, SharedModeNone, error);
+			if (!method) {
+				aot_printerrf (acfg, "Failed to load method 0x%x from '%s' due to %s.\n", token, image->name, mono_error_get_message (error));
+				aot_printerrf (acfg, "Run with MONO_LOG_LEVEL=debug for more information.\n");
+				mono_error_cleanup (error);
+				return FALSE;
+			}
+		}
 
 		/* Since we add the normal methods first, their index will be equal to their zero based token index */
 		add_method_with_index (acfg, method, i, FALSE);

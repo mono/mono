@@ -1189,7 +1189,7 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 				}
 				if (target) {
 					/*
-					 * Due to the way mini_get_shared_method () works, we could end up with
+					 * Due to the way mini_get_shared_method_full () works, we could end up with
 					 * multiple copies of the same wrapper.
 					 */
 					if (wrapper->klass != target->klass)
@@ -4692,7 +4692,9 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 			/* Partial sharing */
 			MonoMethod *shared;
 
-			shared = mini_get_shared_method (method);
+			shared = mini_get_shared_method_full (method, SharedModeNone, error);
+			return_val_if_nok (error, NULL);
+
 			method_index = find_aot_method (shared, &amodule);
 			if (method_index != 0xffffff)
 				method = shared;
