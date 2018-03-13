@@ -1945,8 +1945,9 @@ namespace System.Windows.Forms
 		}
 
 		Rectangle IArrangedElement.DisplayRectangle {
-            get { return this.Bounds; }
-        }
+			get { return this.Bounds; }
+		}
+		
 		int IArrangedElement.DistanceRight {
 			get { throw new NotSupportedException(); }
 			set { throw new NotSupportedException(); }

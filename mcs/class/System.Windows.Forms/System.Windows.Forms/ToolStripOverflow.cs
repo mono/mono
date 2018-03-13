@@ -81,9 +81,9 @@ namespace System.Windows.Forms
 		protected override LayoutSettings CreateLayoutSettings(ToolStripLayoutStyle style) {
 			LayoutSettings layout_settings = base.CreateLayoutSettings (style);
 			if (style == ToolStripLayoutStyle.Flow) {
-                ((FlowLayoutSettings)layout_settings).FlowDirection = FlowDirection.LeftToRight;
-                ((FlowLayoutSettings)layout_settings).WrapContents = true;
-            }
+				((FlowLayoutSettings)layout_settings).FlowDirection = FlowDirection.LeftToRight;
+				((FlowLayoutSettings)layout_settings).WrapContents = true;
+			}
 			return layout_settings;
 		}
 		

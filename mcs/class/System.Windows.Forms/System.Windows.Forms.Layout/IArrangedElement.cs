@@ -29,24 +29,24 @@ using System.ComponentModel;
 
 namespace System.Windows.Forms.Layout
 {
-    interface IArrangedElement : IComponent
-    {
-        bool Visible { get; }
-        bool AutoSize { get; }
-        AutoSizeMode GetAutoSizeMode();
-        Rectangle Bounds { get; }
-        Rectangle ExplicitBounds { get; }
-        Padding Padding { get; }
-        Padding Margin { get; }
-        Size MinimumSize { get; }
-        AnchorStyles Anchor { get; }
-        DockStyle Dock { get; }
-        Rectangle DisplayRectangle { get; }
-        IArrangedContainer Parent { get; }
-        string Name { get; }
-        void SetBounds(int x, int y, int width, int height, BoundsSpecified specified);
-        Size GetPreferredSize(Size proposedSize);
-        int DistanceRight { get; set; }
-        int DistanceBottom { get; set; }
-    }
+	interface IArrangedElement : IComponent
+	{
+		bool Visible { get; }
+		bool AutoSize { get; }
+		AutoSizeMode GetAutoSizeMode();
+		Rectangle Bounds { get; }
+		Rectangle ExplicitBounds { get; }
+		Padding Padding { get; }
+		Padding Margin { get; }
+		Size MinimumSize { get; }
+		AnchorStyles Anchor { get; }
+		DockStyle Dock { get; }
+		Rectangle DisplayRectangle { get; }
+		IArrangedContainer Parent { get; }
+		string Name { get; }
+		void SetBounds(int x, int y, int width, int height, BoundsSpecified specified);
+		Size GetPreferredSize(Size proposedSize);
+		int DistanceRight { get; set; }
+		int DistanceBottom { get; set; }
+	}
 }

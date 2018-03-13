@@ -28,9 +28,9 @@ using System.Drawing;
 
 namespace System.Windows.Forms.Layout
 {
-    interface IArrangedContainer : IArrangedElement
-    {
-        ArrangedElementCollection Controls { get; }
-        void PerformLayout (IArrangedElement affectedElement, string affectedProperty);
-    }
+	interface IArrangedContainer : IArrangedElement
+	{
+		ArrangedElementCollection Controls { get; }
+		void PerformLayout (IArrangedElement affectedElement, string affectedProperty);
+	}
 }
