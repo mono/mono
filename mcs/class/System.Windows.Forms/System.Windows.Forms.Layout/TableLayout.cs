@@ -60,7 +60,7 @@ namespace System.Windows.Forms.Layout
 		public override bool Layout (object container, LayoutEventArgs args)
 		{
 			IArrangedContainer panel = container as IArrangedContainer;
-			TableLayoutSettings settings = GetLayoutSettings(panel);
+			TableLayoutSettings settings = GetLayoutSettings (panel);
 			
 #if TABLE_DEBUG
 			Console.WriteLine ("Beginning layout on panel: {0}, control count: {1}, col/row count: {2}x{3}", panel.Name, panel.Controls.Count, settings.ColumnCount, settings.RowCount);
@@ -655,15 +655,19 @@ namespace System.Windows.Forms.Layout
 	
 		internal override Size GetPreferredSize (object container, Size proposedSize)
 		{
-			TableLayoutPanel panel = container as TableLayoutPanel;
+			IArrangedContainer panel = (IArrangedContainer) container;
+			TableLayoutSettings settings = GetLayoutSettings (panel);
 
 			// If the tablelayoutowner is autosize, we have to make sure it is big enough
 			// to hold every non-autosize control
-			var actual_positions = CalculateControlPositions (panel, Math.Max (panel.ColumnCount, 1), Math.Max (panel.RowCount, 1));
+			var actual_positions = CalculateControlPositions (panel, Math.Max (settings.ColumnCount, 1), Math.Max (settings.RowCount, 1));
 
 			int[] column_sizes;
 			int[] row_sizes;
-			int border_width = TableLayoutPanel.GetCellBorderWidth(panel.CellBorderStyle);
+			int border_width = 0;
+			if (panel is TableLayoutPanel table_panel) {
+			 	border_width = TableLayoutPanel.GetCellBorderWidth (table_panel.CellBorderStyle);
+			}
 			CalculateColumnRowSizes(panel, actual_positions, out column_sizes, out row_sizes, proposedSize, true);
 			OutputControlGrid(actual_positions, column_sizes, row_sizes);
 

@@ -570,9 +570,10 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		public bool IsOnDropDown {
 			get {
-				if (this.parent != null && this.parent is ToolStripDropDown)
-					return true;
-
+				if (this.parent != null)
+					return this.parent is ToolStripDropDown;
+				if (this.owner != null)
+					return this.owner is ToolStripDropDown;
 				return false;
 			}
 		}
@@ -1283,8 +1284,11 @@ namespace System.Windows.Forms
 		protected internal virtual void SetBounds (Rectangle bounds)
 		{
 			if (this.bounds != bounds) {
+				Point old_location = bounds.Location;
 				this.bounds = bounds;
 				OnBoundsChanged ();
+				if (old_location != bounds.Location)
+					OnLocationChanged (EventArgs.Empty);
 			}
 		}
 		
@@ -1879,7 +1883,7 @@ namespace System.Windows.Forms
 					return true;
 
 				if (!(this.Owner is ToolStripDropDownMenu))
-					return false;
+					return true;
 
 				ToolStripDropDownMenu tsddm = (ToolStripDropDownMenu)this.Owner;
 
@@ -1968,8 +1972,7 @@ namespace System.Windows.Forms
 
 		void IArrangedElement.SetBounds (int left, int top, int width, int height, BoundsSpecified specified)
 		{
-			this.bounds = new Rectangle (left, top, width, height);
-			this.OnLocationChanged (EventArgs.Empty);
+			SetBounds (new Rectangle (left, top, width, height));
 		}
 
 		IArrangedContainer IArrangedElement.Parent {
