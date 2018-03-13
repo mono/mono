@@ -202,13 +202,12 @@ amd64_patch_aligned (unsigned char* code, gpointer target, gboolean aligned)
 		g_assert (!aligned || ((gsize)(code + 2) % 4) == 0);
 		*(guint32*)(code + 2) = (guint32)(guint64)target - 7;
 	}
-	else if ((code [0] == 0xff) && (code [1] == 0x15)) {
-		/* call *<OFFSET>(%rip) */
-		g_assert (!aligned || ((gsize)(code + 2) % 4) == 0);
+	else if (code [0] == 0xff && (code [1] == 0x15 || code [1] == 0x25)) {
+		/* call or jmp *<OFFSET>(%rip) */
 		*(guint32*)(code + 2) = ((guint32)(guint64)target) - 7;
 	}
-	else if (code [0] == 0xe8) {
-		/* call <DISP> */
+	else if (code [0] == 0xe8 || code [0] == 0xe9) {
+		/* call or jmp <DISP> */
 		gint64 disp = (guint8*)target - (guint8*)code;
 		g_assert (amd64_is_imm32 (disp));
 		g_assert (!aligned || ((gsize)(code + 1) % 4) == 0);
