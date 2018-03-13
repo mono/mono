@@ -181,7 +181,8 @@ amd64_use_imm32 (gint64 val)
 }
 
 static void
-amd64_patch (unsigned char* code, gpointer target)
+amd64_patch_aligned (unsigned char* code, gpointer target, gboolean aligned)
+// "aligned" just generated and never run, vs. in the midst of running.
 {
 	guint8 rex = 0;
 
@@ -193,30 +194,42 @@ amd64_patch (unsigned char* code, gpointer target)
 
 	if ((code [0] & 0xf8) == 0xb8) {
 		/* amd64_set_reg_template */
+		g_assert (!aligned || ((gsize)(code + 1) % 8) == 0);
 		*(guint64*)(code + 1) = (guint64)target;
 	}
 	else if ((code [0] == 0x8b) && rex && x86_modrm_mod (code [1]) == 0 && x86_modrm_rm (code [1]) == 5) {
 		/* mov 0(%rip), %dreg */
+		g_assert (!aligned || ((gsize)(code + 2) % 4) == 0);
 		*(guint32*)(code + 2) = (guint32)(guint64)target - 7;
 	}
 	else if ((code [0] == 0xff) && (code [1] == 0x15)) {
 		/* call *<OFFSET>(%rip) */
+		g_assert (!aligned || ((gsize)(code + 2) % 4) == 0);
 		*(guint32*)(code + 2) = ((guint32)(guint64)target) - 7;
 	}
 	else if (code [0] == 0xe8) {
 		/* call <DISP> */
 		gint64 disp = (guint8*)target - (guint8*)code;
 		g_assert (amd64_is_imm32 (disp));
+		g_assert (!aligned || ((gsize)(code + 1) % 4) == 0);
+		x86_patch (code, (unsigned char*)target);
+	} else {
+		//FIXME trampoline creation
+		//g_assert (!aligned);
 		x86_patch (code, (unsigned char*)target);
 	}
-	else
-		x86_patch (code, (unsigned char*)target);
+}
+
+static void
+amd64_patch (unsigned char* code, gpointer target)
+{
+	amd64_patch_aligned (code, target, FALSE);
 }
 
 void 
 mono_amd64_patch (unsigned char* code, gpointer target)
 {
-	amd64_patch (code, target);
+	amd64_patch_aligned (code, target, TRUE);
 }
 
 #define DEBUG(a) if (cfg->verbose_level > 1) a
@@ -4579,7 +4592,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			int i, save_area_offset;
 			gboolean membase = (ins->opcode == OP_TAILCALL_MEMBASE);
 
-			// FIXME make this two pass for an accurate size
 			// FIXME varargs
 
 			g_assert (!cfg->method->save_lmf);
@@ -4587,9 +4599,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			/* the size of the tailcall op depends on signature, let's check for enough
 			 * space in the code buffer here again */
 			max_len += AMD64_NREG * 4 + call->stack_usage * 15 + EXTRA_CODE_SPACE;
-
-			if (membase)
-				max_len += 3;
+			max_len += 64; // FIXME make this two pass for an accurate size
 
 			if (G_UNLIKELY (offset + max_len > cfg->code_size)) {
 				cfg->code_size *= 2;
@@ -4598,13 +4608,19 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				cfg->stat_code_reallocs++;
 			}
 
-			// FIXME This is overly pessimistic.
-			// Rax can work, swap with below.
-			// R10 can work?
-			// Unused parameter registers are also ok.
-			// non-volatiles cannot work.
-			if (membase)
-				amd64_mov_reg_reg (code, AMD64_R11, ins->sreg1, 8);
+			if (membase) {
+				// rex opcode modrm up-to-4bytes => 7 bytes
+				amd64_mov_reg_membase (code, AMD64_RAX, ins->sreg1, ins->inst_offset, 8);
+			} else {
+				mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_METHOD_JUMP, call->method);
+				if (cfg->compile_aot) {
+					// rex opcode modrm 4bytes => 7 bytes
+					amd64_mov_reg_membase (code, AMD64_RAX, AMD64_RIP, 0, 8);
+				} else {
+					// rex opcode 8byte => 10 bytes
+					amd64_set_reg_template (code, AMD64_RAX);
+				}
+			}
 
 			/* Restore callee saved registers */
 			save_area_offset = cfg->arch.reg_save_area_offset;
@@ -4621,12 +4637,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				if (call->stack_usage)
 					NOT_IMPLEMENTED;
 			} else {
+				amd64_push_reg (code, AMD64_RAX);
 				/* Copy arguments on the stack to our argument area */
 				for (i = 0; i < call->stack_usage; i += sizeof(mgreg_t)) {
-					amd64_mov_reg_membase (code, AMD64_RAX, AMD64_RSP, i, sizeof(mgreg_t));
+					amd64_mov_reg_membase (code, AMD64_RAX, AMD64_RSP, i + 8, sizeof(mgreg_t));
 					amd64_mov_membase_reg (code, AMD64_RBP, ARGS_OFFSET + i, AMD64_RAX, sizeof(mgreg_t));
 				}
-
+				amd64_pop_reg (code, AMD64_RAX);
 #ifdef TARGET_WIN32
 				amd64_lea_membase (code, AMD64_RSP, AMD64_RBP, 0);
 				amd64_pop_reg (code, AMD64_RBP);
@@ -4635,22 +4652,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				amd64_leave (code);
 #endif
 			}
-			if (membase) {
-				// rex opcode modrm 4bytes => 7 bytes
-				amd64_jump_membase (code, AMD64_R11, ins->inst_offset);
-			} else {
-				// FIXME move this earlier to fix ABI violation
-				mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_METHOD_JUMP, call->method);
-				if (cfg->compile_aot) {
-					// rex opcode modrm 4bytes => 7 bytes
-					amd64_mov_reg_membase (code, AMD64_R11, AMD64_RIP, 0, 8);
-				} else {
-					// rex opcode 8byte => 10 bytes
-					amd64_set_reg_template (code, AMD64_R11);
-				}
-				// rex + opcode => 2 bytes
-				amd64_jump_reg (code, AMD64_R11);
-			}
+
+			// Redundant REX byte indicates a tailcall to the native unwinder. It means nothing to the processor.
+			// https://github.com/dotnet/coreclr/blob/966dabb5bb3c4bf1ea885e1e8dc6528e8c64dc4f/src/unwinder/amd64/unwinder_amd64.cpp#L1394
+			// FIXME This should be call rip+32 for AOT direct to same assembly.
+			// FIXME This should be call [rip+32] for AOT direct to not-same assembly.
+			// FIXME This should be call [rip+32] for JIT direct -- patch data instead of code.
+			x86_imm_emit8 (code, 0x48);
+			amd64_jump_reg (code, AMD64_RAX);
 			ins->flags |= MONO_INST_GC_CALLSITE;
 			ins->backend.pc_offset = code - cfg->native_code;
 			break;
