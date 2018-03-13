@@ -1026,7 +1026,9 @@ class_type_info (MonoDomain *domain, MonoClass *klass, MonoRgctxInfoType info_ty
 
 		if (mono_llvm_only) {
 			/* FIXME: We have no access to the gsharedvt signature/gsctx used by the caller, so have to construct it ourselves */
-			gmethod = mini_get_shared_method_full (method, FALSE, TRUE);
+			gmethod = mini_get_shared_method_full (method, GSharedVT, error);
+			if (!gmethod)
+				return NULL;
 			sig = mono_method_signature (method);
 			gsig = mono_method_signature (gmethod);
 
@@ -1042,7 +1044,9 @@ class_type_info (MonoDomain *domain, MonoClass *klass, MonoRgctxInfoType info_ty
 			/* Need to add an out wrapper */
 
 			/* FIXME: We have no access to the gsharedvt signature/gsctx used by the caller, so have to construct it ourselves */
-			gmethod = mini_get_shared_method_full (method, FALSE, TRUE);
+			gmethod = mini_get_shared_method_full (method, GSharedVT, error);
+			if (!gmethod)
+				return NULL;
 			sig = mono_method_signature (method);
 			gsig = mono_method_signature (gmethod);
 
@@ -3660,16 +3664,21 @@ get_shared_inst (MonoGenericInst *inst, MonoGenericInst *shared_inst, MonoGeneri
  * METHOD can be a non-inflated generic method.
  */
 MonoMethod*
-mini_get_shared_method_full (MonoMethod *method, gboolean all_vt, gboolean is_gsharedvt)
+mini_get_shared_method_full (MonoMethod *method, GetSharedMethodFlags flags, MonoError *error)
 {
-	ERROR_DECL (error);
+
 	MonoGenericContext shared_context;
-	MonoMethod *declaring_method, *res;
+	MonoMethod *declaring_method;
 	gboolean partial = FALSE;
 	gboolean gsharedvt = FALSE;
 	MonoGenericContainer *class_container, *method_container = NULL;
 	MonoGenericContext *context = mono_method_get_context (method);
 	MonoGenericInst *inst;
+
+	error_init (error);
+	
+	gboolean all_vt = flags & AllValueTypes;
+	gboolean is_gsharedvt = flags & GSharedVT;
 
 	/*
 	 * Instead of creating a shared version of the wrapper, create a shared version of the original
@@ -3680,13 +3689,19 @@ mini_get_shared_method_full (MonoMethod *method, gboolean all_vt, gboolean is_gs
 	if (method->wrapper_type == MONO_WRAPPER_SYNCHRONIZED) {
 		MonoMethod *wrapper = mono_marshal_method_from_wrapper (method);
 
-		return mono_marshal_get_synchronized_wrapper (mini_get_shared_method_full (wrapper, all_vt, is_gsharedvt));
+		MonoMethod *gwrapper = mini_get_shared_method_full (wrapper, flags, error);
+		return_val_if_nok (error, NULL);
+
+		return mono_marshal_get_synchronized_wrapper (gwrapper);
 	}
 	if (method->wrapper_type == MONO_WRAPPER_DELEGATE_INVOKE) {
 		WrapperInfo *info = mono_marshal_get_wrapper_info (method);
 
 		if (info->subtype == WRAPPER_SUBTYPE_NONE) {
-			MonoMethod *m = mono_marshal_get_delegate_invoke (mini_get_shared_method_full (info->d.delegate_invoke.method, all_vt, is_gsharedvt), NULL);
+			MonoMethod *ginvoke = mini_get_shared_method_full (info->d.delegate_invoke.method, flags, error);
+			return_val_if_nok (error, NULL);
+
+			MonoMethod *m = mono_marshal_get_delegate_invoke (ginvoke, NULL);
 			return m;
 		}
 	}
@@ -3729,18 +3744,17 @@ mini_get_shared_method_full (MonoMethod *method, gboolean all_vt, gboolean is_gs
 	if (inst)
 		shared_context.method_inst = get_shared_inst (inst, shared_context.method_inst, method_container, all_vt, gsharedvt, partial);
 
-	res = mono_class_inflate_generic_method_checked (declaring_method, &shared_context, error);
-	g_assert (mono_error_ok (error)); /* FIXME don't swallow the error */
-
-	//printf ("%s\n", mono_method_full_name (res, 1));
-
-	return res;
+	return mono_class_inflate_generic_method_checked (declaring_method, &shared_context, error);
 }
 
 MonoMethod*
 mini_get_shared_method (MonoMethod *method)
 {
-	return mini_get_shared_method_full (method, FALSE, FALSE);
+	ERROR_DECL (error);
+	MonoMethod *res = mini_get_shared_method_full (method, SharedModeNone, error);
+	mono_error_assert_ok (error);
+
+	return res;
 }
 
 int

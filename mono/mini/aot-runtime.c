@@ -4702,10 +4702,16 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 			MonoMethod *shared;
 			/* gsharedvt */
 			/* Use the all-vt shared method since this is what was AOTed */
-			shared = mini_get_shared_method_full (method, TRUE, TRUE);
+			shared = mini_get_shared_method_full (method, AllValueTypes | GSharedVT, error);
+			if (!shared)
+				return NULL;
+
 			method_index = find_aot_method (shared, &amodule);
-			if (method_index != 0xffffff)
-				method = mini_get_shared_method_full (method, TRUE, FALSE);
+			if (method_index != 0xffffff) {
+				method = mini_get_shared_method_full (method, AllValueTypes, error);
+				if (!method)
+					return NULL;
+			}
 		}
 
 		if (method_index == 0xffffff) {
@@ -5648,6 +5654,7 @@ mono_aot_get_static_rgctx_trampoline (gpointer ctx, gpointer addr)
 gpointer
 mono_aot_get_unbox_trampoline (MonoMethod *method)
 {
+	ERROR_DECL (error);
 	guint32 method_index = mono_metadata_token_index (method->token) - 1;
 	MonoAotModule *amodule;
 	gpointer code;
@@ -5659,11 +5666,14 @@ mono_aot_get_unbox_trampoline (MonoMethod *method)
 	if (method->is_inflated && !mono_method_is_generic_sharable_full (method, FALSE, FALSE, FALSE)) {
 		method_index = find_aot_method (method, &amodule);
 		if (method_index == 0xffffff && mono_method_is_generic_sharable_full (method, FALSE, TRUE, FALSE)) {
-			MonoMethod *shared = mini_get_shared_method_full (method, FALSE, FALSE);
+			MonoMethod *shared = mini_get_shared_method_full (method, SharedModeNone, error);
+			mono_error_assert_ok (error);
 			method_index = find_aot_method (shared, &amodule);
 		}
 		if (method_index == 0xffffff && mono_method_is_generic_sharable_full (method, FALSE, TRUE, TRUE)) {
-			MonoMethod *shared = mini_get_shared_method_full (method, TRUE, TRUE);
+			MonoMethod *shared = mini_get_shared_method_full (method, AllValueTypes | GSharedVT, error);
+			mono_error_assert_ok (error);
+
 			method_index = find_aot_method (shared, &amodule);
 		}
 		g_assert (method_index != 0xffffff);
