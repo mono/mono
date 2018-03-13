@@ -112,6 +112,7 @@ namespace Mono.Unity
             UNITYTLS_X509VERIFY_FLAG_UNKNOWN_ERROR = 0x08000000,
         }
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate unitytls_x509verify_result unitytls_x509verify_callback(void* userData, unitytls_x509_ref cert, unitytls_x509verify_result result, unitytls_errorstate* errorState);
 
         // ------------------------------------
@@ -144,10 +145,15 @@ namespace Mono.Unity
             public unitytls_protocol max;
         };
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate size_t unitytls_tlsctx_write_callback(void* userData, UInt8* data, size_t bufferLen, unitytls_errorstate* errorState);
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate size_t unitytls_tlsctx_read_callback(void* userData, UInt8* buffer, size_t bufferLen, unitytls_errorstate* errorState);
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void   unitytls_tlsctx_trace_callback(void* userData, unitytls_tlsctx* ctx, Int8* traceMessage, size_t traceMessageLen);
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void   unitytls_tlsctx_certificate_callback(void* userData, unitytls_tlsctx* ctx, Int8* cn, size_t cnLen, unitytls_x509name* caList, size_t caListLen, unitytls_x509list_ref* chain, unitytls_key_ref* key, unitytls_errorstate* errorState);
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate unitytls_x509verify_result unitytls_tlsctx_x509verify_callback(void* userData, unitytls_x509list_ref chain, unitytls_errorstate* errorState);
 
         [StructLayout (LayoutKind.Sequential)]
