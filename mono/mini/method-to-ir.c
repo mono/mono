@@ -6987,51 +6987,32 @@ is_jit_optimizer_disabled (MonoMethod *m)
 static gboolean
 is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmethod, MonoMethodSignature *fsig, int call_opcode)
 {
-	gboolean supported_tail_call;
 	int i;
 
-	supported_tail_call = mono_arch_tail_call_supported (cfg, mono_method_signature (method), mono_method_signature (cmethod));
+	g_assertf (call_opcode == CEE_CALL || call_opcode == CEE_CALLVIRT || call_opcode == CEE_CALLI, "%s (%d)", mono_opcode_name (call_opcode), (int)call_opcode);
+
+	if (       (fsig->hasthis && cmethod->klass->valuetype)  // This might point to the current method's stack. Emit range check?
+		|| (cmethod->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)
+		|| cfg->method->save_lmf
+		|| (cmethod->wrapper_type && cmethod->wrapper_type != MONO_WRAPPER_DYNAMIC_METHOD)
+		|| call_opcode == CEE_CALLI
+		|| (call_opcode == CEE_CALLVIRT && !cfg->backend->have_op_tail_call_membase)
+		|| !mono_arch_tail_call_supported (cfg, mono_method_signature (method), mono_method_signature (cmethod)))
+		return FALSE;
 
 	for (i = 0; i < fsig->param_count; ++i) {
 		if (fsig->params [i]->byref || fsig->params [i]->type == MONO_TYPE_PTR || fsig->params [i]->type == MONO_TYPE_FNPTR)
-			/* These can point to the current method's stack */
-			supported_tail_call = FALSE;
-	}
-	if (fsig->hasthis && cmethod->klass->valuetype)
-		/* this might point to the current method's stack */
-		supported_tail_call = FALSE;
-	if (cmethod->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)
-		supported_tail_call = FALSE;
-	if (cfg->method->save_lmf)
-		supported_tail_call = FALSE;
-	if (cmethod->wrapper_type && cmethod->wrapper_type != MONO_WRAPPER_DYNAMIC_METHOD)
-		supported_tail_call = FALSE;
-
-	switch (call_opcode) {
-	case CEE_CALL:
-		break;
-	case CEE_CALLI:
-		supported_tail_call = FALSE;
-		break;
-	case CEE_CALLVIRT:
-		if (!cfg->backend->have_op_tail_call_membase)
-			supported_tail_call = FALSE;
-		break;
-	default:
-		g_assertf (call_opcode == CEE_CALL || call_opcode == CEE_CALLVIRT || call_opcode == CEE_CALLI, "%s (%d)", mono_opcode_name (call_opcode), (int)call_opcode);
-		supported_tail_call = FALSE;
-		break;
+			return FALSE; // These can point to the current method's stack. Emit range check?
 	}
 
 	/* Debugging support */
 #if 0
-	if (supported_tail_call) {
-		if (!mono_debug_count ())
-			supported_tail_call = FALSE;
+	if (!mono_debug_count ())
+		return FALSE;
 	}
 #endif
 
-	return supported_tail_call;
+	return TRUE;
 }
 
 /*
