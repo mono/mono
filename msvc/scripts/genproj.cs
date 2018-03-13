@@ -104,6 +104,8 @@ class SlnGenerator {
 
 	private void WriteProjectConfigurationPlatforms (StreamWriter sln, string guid, string defaultPlatform)
 	{
+		var fallbackProfileNames = new List<string> ();
+
 		foreach (var profile in profiles) {
 			var platformToBuild = profile;
 
@@ -112,7 +114,7 @@ class SlnGenerator {
 				!profilesByGuid.TryGetValue (guid, out projectProfiles) ||
 				!projectProfiles.Contains (platformToBuild)
 			) {
-				Console.Error.WriteLine($"// Project {guid} has no profile {platformToBuild} so using {defaultPlatform}");
+				fallbackProfileNames.Add (platformToBuild);
 				platformToBuild = defaultPlatform;
 			}
 
@@ -121,6 +123,9 @@ class SlnGenerator {
 			sln.WriteLine ("\t\t{0}.Release|{1}.ActiveCfg = Release|{2}", guid, profile, platformToBuild);
 			sln.WriteLine ("\t\t{0}.Release|{1}.Build.0 = Release|{2}", guid, profile, platformToBuild);
 		}
+
+		if (fallbackProfileNames.Count > 0)
+			Console.Error.WriteLine ($"// Project {guid} does not have profile(s) {string.Join(", ", fallbackProfileNames)} so using {defaultPlatform}");
 	}
 
 	public void Write (string filename)

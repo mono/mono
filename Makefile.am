@@ -144,7 +144,7 @@ update-llvm-version:
 
 
 update-solution-files:
-	(pushd msvc/scripts; $(MAKE) genproj.exe; popd)
+	(pushd msvc/scripts; rm genproj.exe; $(MAKE) genproj.exe; popd)
 	$(MAKE) update-csproj
 	$(MAKE) package-inputs
 	(cd msvc/scripts; mono --debug genproj.exe $(GENPROJ_ARGS))
