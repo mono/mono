@@ -28,7 +28,7 @@ System.IO.FileSystem.AccessControl System.Reflection.TypeExtensions System.Refle
 System.Threading.AccessControl System.ValueTuple \
 System.Security.Cryptography.Primitives System.Text.Encoding.CodePages System.IO.FileSystem.Watcher \
 System.Security.Cryptography.ProtectedData System.ServiceProcess.ServiceController System.IO.Pipes \
-System.Net.Http.Rtc System.Net.Ping System.Resources.Reader System.Resources.Writer System.Runtime.Serialization.Formatters System.Security.Cryptography.Csp
+System.Net.Ping System.Resources.Reader System.Resources.Writer System.Runtime.Serialization.Formatters System.Security.Cryptography.Csp
 
 # common_SUBDIRS dependencies
 common_DEPS_SUBDIRS = System.Security.Cryptography.X509Certificates System.ServiceModel.Primitives System.Runtime.Serialization.Primitives \
@@ -51,7 +51,7 @@ testing_aot_full_SUBDIRS = $(monotouch_SUBDIRS)
 testing_aot_full_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
 
 net_4_x_SUBDIRS = $(common_DEPS_SUBDIRS) $(netstandard_drawing_SUBDIRS)
-net_4_x_PARALLEL_SUBDIRS = $(common_SUBDIRS)
+net_4_x_PARALLEL_SUBDIRS = $(common_SUBDIRS) System.Net.Http.Rtc
 
 basic_PARALLEL_SUBDIRS = System.Runtime System.Reflection System.Collections System.Resources.ResourceManager System.Globalization \
 System.Threading.Tasks System.Collections.Concurrent System.Text.Encoding System.IO System.Threading System.Diagnostics.Debug \
