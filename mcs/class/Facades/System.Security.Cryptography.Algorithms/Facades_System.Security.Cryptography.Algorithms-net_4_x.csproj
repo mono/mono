@@ -56,9 +56,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\..\..\..\external\corefx\src\System.Security.Cryptography.Algorithms\src\System\Security\Cryptography\IncrementalHash.net46.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="SR.cs" />
     <Compile Include="TypeForwarders.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
