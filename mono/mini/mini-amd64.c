@@ -181,9 +181,13 @@ amd64_use_imm32 (gint64 val)
 }
 
 static void
-amd64_patch_aligned (unsigned char* code, gpointer target, gboolean aligned)
-// "aligned" just generated and never run, vs. in the midst of running.
+amd64_patch (unsigned char* code, gpointer target)
 {
+	// NOTE: Sometimes code has just been generated, is not running yet,
+	// and has no alignment requirements. Sometimes it could be running while we patch it,
+	// and there are alignment requirements.
+	// FIXME Assert alignment.
+
 	guint8 rex = 0;
 
 	/* Skip REX */
@@ -194,12 +198,10 @@ amd64_patch_aligned (unsigned char* code, gpointer target, gboolean aligned)
 
 	if ((code [0] & 0xf8) == 0xb8) {
 		/* amd64_set_reg_template */
-		g_assert (!aligned || ((gsize)(code + 1) % 8) == 0);
 		*(guint64*)(code + 1) = (guint64)target;
 	}
 	else if ((code [0] == 0x8b) && rex && x86_modrm_mod (code [1]) == 0 && x86_modrm_rm (code [1]) == 5) {
 		/* mov 0(%rip), %dreg */
-		g_assert (!aligned || ((gsize)(code + 2) % 4) == 0);
 		*(guint32*)(code + 2) = (guint32)(guint64)target - 7;
 	}
 	else if (code [0] == 0xff && (code [1] == 0x15 || code [1] == 0x25)) {
@@ -210,25 +212,16 @@ amd64_patch_aligned (unsigned char* code, gpointer target, gboolean aligned)
 		/* call or jmp <DISP> */
 		gint64 disp = (guint8*)target - (guint8*)code;
 		g_assert (amd64_is_imm32 (disp));
-		g_assert (!aligned || ((gsize)(code + 1) % 4) == 0);
-		x86_patch (code, (unsigned char*)target);
-	} else {
-		//FIXME trampoline creation
-		//g_assert (!aligned);
 		x86_patch (code, (unsigned char*)target);
 	}
-}
-
-static void
-amd64_patch (unsigned char* code, gpointer target)
-{
-	amd64_patch_aligned (code, target, FALSE);
+	else
+		x86_patch (code, (unsigned char*)target);
 }
 
 void 
 mono_amd64_patch (unsigned char* code, gpointer target)
 {
-	amd64_patch_aligned (code, target, TRUE);
+	amd64_patch (code, target);
 }
 
 #define DEBUG(a) if (cfg->verbose_level > 1) a
