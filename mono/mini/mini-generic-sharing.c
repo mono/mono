@@ -3673,7 +3673,6 @@ mini_get_shared_method_full (MonoMethod *method, GetSharedMethodFlags flags, Mon
 
 	MonoGenericContext shared_context;
 	MonoMethod *declaring_method;
-	gboolean gsharedvt = FALSE;
 	MonoGenericContainer *class_container, *method_container = NULL;
 	MonoGenericContext *context = mono_method_get_context (method);
 	MonoGenericInst *inst;
@@ -3721,14 +3720,11 @@ mini_get_shared_method_full (MonoMethod *method, GetSharedMethodFlags flags, Mon
 	else
 		shared_context = mono_class_get_generic_container (declaring_method->klass)->context;
 
-	if (is_gsharedvt) {
-		gsharedvt = TRUE;
-	} else {
-		if (!mono_method_is_generic_sharable_full (method, FALSE, TRUE, FALSE))
-			gsharedvt = mini_is_gsharedvt_sharable_method (method);
-		else
-			gsharedvt = FALSE;
-	}
+	gboolean use_gsharedvt_inst = FALSE;
+	if (all_vt || is_gsharedvt)
+		use_gsharedvt_inst = TRUE;
+	else if (!mono_method_is_generic_sharable_full (method, FALSE, TRUE, FALSE))
+		use_gsharedvt_inst = mini_is_gsharedvt_sharable_method (method);
 
 	class_container = mono_class_try_get_generic_container (declaring_method->klass); //FIXME is this a case for a try_get?
 	method_container = mono_method_get_generic_container (declaring_method);
@@ -3742,14 +3738,14 @@ mini_get_shared_method_full (MonoMethod *method, GetSharedMethodFlags flags, Mon
 	else
 		inst = shared_context.class_inst;
 	if (inst)
-		shared_context.class_inst = get_shared_inst (inst, shared_context.class_inst, class_container, all_vt | gsharedvt);
+		shared_context.class_inst = get_shared_inst (inst, shared_context.class_inst, class_container, use_gsharedvt_inst);
 
 	if (context)
 		inst = context->method_inst;
 	else
 		inst = shared_context.method_inst;
 	if (inst)
-		shared_context.method_inst = get_shared_inst (inst, shared_context.method_inst, method_container, all_vt | gsharedvt);
+		shared_context.method_inst = get_shared_inst (inst, shared_context.method_inst, method_container, use_gsharedvt_inst);
 
 	return mono_class_inflate_generic_method_checked (declaring_method, &shared_context, error);
 }
