@@ -259,7 +259,7 @@ mono_get_seq_points (MonoDomain *domain, MonoMethod *method)
 
 	if (method->is_inflated) {
 		declaring_generic_method = mono_method_get_declaring_generic_method (method);
-		shared_method = mini_get_shared_method_full (method, SharedModeNone, error);
+		shared_method = mini_get_shared_method_full (method, SHARE_MODE_NONE, error);
 		mono_error_assert_ok (error);
 	}
 

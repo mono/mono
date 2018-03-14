@@ -1026,7 +1026,7 @@ class_type_info (MonoDomain *domain, MonoClass *klass, MonoRgctxInfoType info_ty
 
 		if (mono_llvm_only) {
 			/* FIXME: We have no access to the gsharedvt signature/gsctx used by the caller, so have to construct it ourselves */
-			gmethod = mini_get_shared_method_full (method, GSharedVT, error);
+			gmethod = mini_get_shared_method_full (method, SHARE_MODE_GSHAREDVT, error);
 			if (!gmethod)
 				return NULL;
 			sig = mono_method_signature (method);
@@ -1044,7 +1044,7 @@ class_type_info (MonoDomain *domain, MonoClass *klass, MonoRgctxInfoType info_ty
 			/* Need to add an out wrapper */
 
 			/* FIXME: We have no access to the gsharedvt signature/gsctx used by the caller, so have to construct it ourselves */
-			gmethod = mini_get_shared_method_full (method, GSharedVT, error);
+			gmethod = mini_get_shared_method_full (method, SHARE_MODE_GSHAREDVT, error);
 			if (!gmethod)
 				return NULL;
 			sig = mono_method_signature (method);
@@ -3655,13 +3655,17 @@ get_shared_inst (MonoGenericInst *inst, MonoGenericInst *shared_inst, MonoGeneri
 	return res;
 }
 
-/*
+/**
  * mini_get_shared_method_full:
+ * \param method the method to find the shared version of.
+ * \param flags controls what sort of shared version to find
+ * \param error set if we hit any fatal error
  *
- *   Return the method which is actually compiled/registered when doing generic sharing.
- * If ALL_VT is true, return the shared method belonging to an all-vtype instantiation.
- * If IS_GSHAREDVT is true, treat METHOD as a gsharedvt method even if it fails some constraints.
- * METHOD can be a non-inflated generic method.
+ * \returns The method which is actually compiled/registered when doing generic sharing.
+
+ * If flags & ALL_VALUETYPES, return the shared method belonging to an all-vtype instantiation.
+ * If flags & IS_GSHAREDVT, treat @method as a gsharedvt method even if it fails some constraints.
+ * \p method can be a non-inflated generic method.
  */
 MonoMethod*
 mini_get_shared_method_full (MonoMethod *method, GetSharedMethodFlags flags, MonoError *error)
@@ -3677,8 +3681,8 @@ mini_get_shared_method_full (MonoMethod *method, GetSharedMethodFlags flags, Mon
 
 	error_init (error);
 	
-	gboolean all_vt = flags & AllValueTypes;
-	gboolean is_gsharedvt = flags & GSharedVT;
+	gboolean all_vt = flags & SHARE_MODE_ALL_VALUETYPES;
+	gboolean is_gsharedvt = flags & SHARE_MODE_GSHAREDVT;
 
 	/*
 	 * Instead of creating a shared version of the wrapper, create a shared version of the original

@@ -2489,9 +2489,9 @@ MonoClass* mini_class_get_container_class (MonoClass *klass);
 MonoGenericContext* mini_class_get_context (MonoClass *klass);
 
 typedef enum {
-	SharedModeNone = 0x0,
-	AllValueTypes = 0x1,
-	GSharedVT = 0x2,
+	SHARE_MODE_NONE = 0x0,
+	SHARE_MODE_ALL_VALUETYPES = 0x1,
+	SHARE_MODE_GSHAREDVT = 0x2,
 } GetSharedMethodFlags;
 
 MonoType* mini_get_underlying_type (MonoType *type) MONO_LLVM_INTERNAL;

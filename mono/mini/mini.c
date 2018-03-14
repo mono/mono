@@ -3130,7 +3130,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	} else {
 		if (try_generic_shared) {
 			ERROR_DECL (error);
-			method_to_compile = mini_get_shared_method_full (method, SharedModeNone, error);
+			method_to_compile = mini_get_shared_method_full (method, SHARE_MODE_NONE, error);
 			mono_error_assert_ok (error);
 		} else {
 			method_to_compile = method;
@@ -4221,7 +4221,7 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 	}
 
 	if (mono_method_is_generic_sharable (method, FALSE)) {
-		shared = mini_get_shared_method_full (method, SharedModeNone, error);
+		shared = mini_get_shared_method_full (method, SHARE_MODE_NONE, error);
 		if (!is_ok (error)) {
 			MONO_PROFILER_RAISE (jit_failed, (method));
 			mono_destroy_compile (cfg);

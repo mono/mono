@@ -4692,7 +4692,7 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 			/* Partial sharing */
 			MonoMethod *shared;
 
-			shared = mini_get_shared_method_full (method, SharedModeNone, error);
+			shared = mini_get_shared_method_full (method, SHARE_MODE_NONE, error);
 			return_val_if_nok (error, NULL);
 
 			method_index = find_aot_method (shared, &amodule);
@@ -4704,13 +4704,13 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 			MonoMethod *shared;
 			/* gsharedvt */
 			/* Use the all-vt shared method since this is what was AOTed */
-			shared = mini_get_shared_method_full (method, AllValueTypes | GSharedVT, error);
+			shared = mini_get_shared_method_full (method, SHARE_MODE_ALL_VALUETYPES | SHARE_MODE_GSHAREDVT, error);
 			if (!shared)
 				return NULL;
 
 			method_index = find_aot_method (shared, &amodule);
 			if (method_index != 0xffffff) {
-				method = mini_get_shared_method_full (method, AllValueTypes, error);
+				method = mini_get_shared_method_full (method, SHARE_MODE_ALL_VALUETYPES, error);
 				if (!method)
 					return NULL;
 			}
@@ -5668,12 +5668,12 @@ mono_aot_get_unbox_trampoline (MonoMethod *method)
 	if (method->is_inflated && !mono_method_is_generic_sharable_full (method, FALSE, FALSE, FALSE)) {
 		method_index = find_aot_method (method, &amodule);
 		if (method_index == 0xffffff && mono_method_is_generic_sharable_full (method, FALSE, TRUE, FALSE)) {
-			MonoMethod *shared = mini_get_shared_method_full (method, SharedModeNone, error);
+			MonoMethod *shared = mini_get_shared_method_full (method, SHARE_MODE_NONE, error);
 			mono_error_assert_ok (error);
 			method_index = find_aot_method (shared, &amodule);
 		}
 		if (method_index == 0xffffff && mono_method_is_generic_sharable_full (method, FALSE, TRUE, TRUE)) {
-			MonoMethod *shared = mini_get_shared_method_full (method, AllValueTypes | GSharedVT, error);
+			MonoMethod *shared = mini_get_shared_method_full (method, SHARE_MODE_ALL_VALUETYPES | SHARE_MODE_GSHAREDVT, error);
 			mono_error_assert_ok (error);
 
 			method_index = find_aot_method (shared, &amodule);
