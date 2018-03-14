@@ -344,6 +344,10 @@ _ios-$(1)_CXXFLAGS= \
 	-stdlib=libc++ \
 	$$(ios-$(1)_CXXFLAGS)
 
+_ios-$(1)_CPPFLAGS= \
+	-DMONOTOUCH=1 \
+	$$(ios-$(1)_CPPFLAGS)
+
 _ios-$(1)_LDFLAGS= \
 	$$(ios_LDFLAGS) \
 	-stdlib=libc++ \
