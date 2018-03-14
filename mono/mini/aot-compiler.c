@@ -3761,7 +3761,7 @@ add_extra_method_with_depth (MonoAotCompile *acfg, MonoMethod *method, int depth
 	}
 	else if ((acfg->opts & MONO_OPT_GSHAREDVT) && prefer_gsharedvt_method (acfg, method) && mono_method_is_generic_sharable_full (method, FALSE, FALSE, TRUE)) {
 		/* Use the gsharedvt version */
-		method = mini_get_shared_method_full (method, SHARE_MODE_ALL_VALUETYPES | SHARE_MODE_GSHAREDVT, error);
+		method = mini_get_shared_method_full (method, SHARE_MODE_GSHAREDVT, error);
 		mono_error_assert_ok (error);
 	}
 
@@ -4257,7 +4257,7 @@ add_wrappers (MonoAotCompile *acfg)
 				m = mono_marshal_get_delegate_begin_invoke (inst);
 				g_assert (m->is_inflated);
 
-				gshared = mini_get_shared_method_full (m, SHARE_MODE_ALL_VALUETYPES, error);
+				gshared = mini_get_shared_method_full (m, SHARE_MODE_GSHAREDVT, error);
 				mono_error_assert_ok (error);
 
 				add_extra_method (acfg, gshared);
@@ -10998,7 +10998,7 @@ collect_methods (MonoAotCompile *acfg)
 		if (method->is_generic || mono_class_is_gtd (method->klass)) {
 			MonoMethod *gshared;
 
-			gshared = mini_get_shared_method_full (method, SHARE_MODE_ALL_VALUETYPES | SHARE_MODE_GSHAREDVT, error);
+			gshared = mini_get_shared_method_full (method, SHARE_MODE_GSHAREDVT, error);
 			mono_error_assert_ok (error);
 
 			add_extra_method (acfg, gshared);

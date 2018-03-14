@@ -3663,8 +3663,7 @@ get_shared_inst (MonoGenericInst *inst, MonoGenericInst *shared_inst, MonoGeneri
  *
  * \returns The method which is actually compiled/registered when doing generic sharing.
 
- * If flags & ALL_VALUETYPES, return the shared method belonging to an all-vtype instantiation.
- * If flags & IS_GSHAREDVT, treat @method as a gsharedvt method even if it fails some constraints.
+ * If flags & SHARE_MODE_GSHAREDVT, produce a method using the gsharedvt instantiation.
  * \p method can be a non-inflated generic method.
  */
 MonoMethod*
@@ -3678,9 +3677,6 @@ mini_get_shared_method_full (MonoMethod *method, GetSharedMethodFlags flags, Mon
 	MonoGenericInst *inst;
 
 	error_init (error);
-	
-	gboolean all_vt = flags & SHARE_MODE_ALL_VALUETYPES;
-	gboolean is_gsharedvt = flags & SHARE_MODE_GSHAREDVT;
 
 	/*
 	 * Instead of creating a shared version of the wrapper, create a shared version of the original
@@ -3721,7 +3717,7 @@ mini_get_shared_method_full (MonoMethod *method, GetSharedMethodFlags flags, Mon
 		shared_context = mono_class_get_generic_container (declaring_method->klass)->context;
 
 	gboolean use_gsharedvt_inst = FALSE;
-	if (all_vt || is_gsharedvt)
+	if (flags & SHARE_MODE_GSHAREDVT)
 		use_gsharedvt_inst = TRUE;
 	else if (!mono_method_is_generic_sharable_full (method, FALSE, TRUE, FALSE))
 		use_gsharedvt_inst = mini_is_gsharedvt_sharable_method (method);

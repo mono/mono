@@ -4704,13 +4704,13 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 			MonoMethod *shared;
 			/* gsharedvt */
 			/* Use the all-vt shared method since this is what was AOTed */
-			shared = mini_get_shared_method_full (method, SHARE_MODE_ALL_VALUETYPES | SHARE_MODE_GSHAREDVT, error);
+			shared = mini_get_shared_method_full (method, SHARE_MODE_GSHAREDVT, error);
 			if (!shared)
 				return NULL;
 
 			method_index = find_aot_method (shared, &amodule);
 			if (method_index != 0xffffff) {
-				method = mini_get_shared_method_full (method, SHARE_MODE_ALL_VALUETYPES, error);
+				method = mini_get_shared_method_full (method, SHARE_MODE_GSHAREDVT, error);
 				if (!method)
 					return NULL;
 			}
@@ -5673,7 +5673,7 @@ mono_aot_get_unbox_trampoline (MonoMethod *method)
 			method_index = find_aot_method (shared, &amodule);
 		}
 		if (method_index == 0xffffff && mono_method_is_generic_sharable_full (method, FALSE, TRUE, TRUE)) {
-			MonoMethod *shared = mini_get_shared_method_full (method, SHARE_MODE_ALL_VALUETYPES | SHARE_MODE_GSHAREDVT, error);
+			MonoMethod *shared = mini_get_shared_method_full (method, SHARE_MODE_GSHAREDVT, error);
 			mono_error_assert_ok (error);
 
 			method_index = find_aot_method (shared, &amodule);
