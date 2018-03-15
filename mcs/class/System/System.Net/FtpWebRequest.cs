@@ -1038,8 +1038,7 @@ namespace System.Net
 					throw CreateExceptionFromResponse (status);
 			}
 
-			if (method != WebRequestMethods.Ftp.ListDirectory && method != WebRequestMethods.Ftp.ListDirectoryDetails &&
-			    method != WebRequestMethods.Ftp.UploadFileWithUniqueName) {
+			if (method != WebRequestMethods.Ftp.UploadFileWithUniqueName) {
 				status = SendCommand (method, file_name);
 			} else {
 				status = SendCommand (method);
