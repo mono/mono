@@ -825,8 +825,7 @@ namespace Mono.CSharp
 					next_token == Token.CLASS ||
 					next_token == Token.STRUCT ||
 					next_token == Token.INTERFACE ||
-					next_token == Token.VOID ||
-					next_token == Token.REF_STRUCT;
+					next_token == Token.VOID;
 
 				PopPosition ();
 
@@ -916,13 +915,19 @@ namespace Mono.CSharp
 
 				break;
 			case Token.REF:
-				if (peek_token () == Token.STRUCT) {
+				var pp = peek_token ();
+				switch (pp) {
+				case Token.STRUCT:
 					token ();
 					res = Token.REF_STRUCT;
+					break;
+				case Token.PARTIAL:
+					token ();
+					res = Token.REF_PARTIAL;
+					break;
 				}
 				break;
 			}
-
 
 			return res;
 		}
