@@ -80,7 +80,7 @@ namespace Mono.Unity
 					var serverKeyRef = UnityTls.NativeInterface.unitytls_key_get_ref (serverPrivateKey, &errorState);
 					Mono.Unity.Debug.CheckAndThrow (errorState, "Failed to parse server key/certificate");
 
-					tlsContext = UnityTls.NativeInterface.unitytls_tlsctx_create_server (protocolRange, callbacks, serverCertsRef, serverKeyRef, &errorState);
+					tlsContext = UnityTls.NativeInterface.unitytls_tlsctx_create_server (protocolRange, callbacks, serverCertsRef.handle, serverKeyRef.handle, &errorState);
 
 					if (askForClientCert) {
 						UnityTls.unitytls_x509list* clientAuthCAList = null;

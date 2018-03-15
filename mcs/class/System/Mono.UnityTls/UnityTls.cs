@@ -231,8 +231,10 @@ namespace Mono.Unity
             public delegate unitytls_x509verify_result                    unitytls_x509verify_explicit_ca_t(unitytls_x509list_ref chain, unitytls_x509list_ref trustCA, Int8* cn, size_t cnLen, unitytls_x509verify_callback cb, void* userData, unitytls_errorstate* errorState);
             public unitytls_x509verify_explicit_ca_t                      unitytls_x509verify_explicit_ca;
 
+            // Note that we take UInt64 here instead of handles!
+            // This a workaround for an android specific crash, caused by a bug in Mono's implementation of native calls through the arm ABI.
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            public delegate unitytls_tlsctx*                              unitytls_tlsctx_create_server_t(unitytls_tlsctx_protocolrange supportedProtocols, unitytls_tlsctx_callbacks callbacks, unitytls_x509list_ref certChain, unitytls_key_ref leafCertificateKey, unitytls_errorstate* errorState);
+            public delegate unitytls_tlsctx*                              unitytls_tlsctx_create_server_t(unitytls_tlsctx_protocolrange supportedProtocols, unitytls_tlsctx_callbacks callbacks, UInt64 certChain, UInt64 leafCertificateKey, unitytls_errorstate* errorState);
             public unitytls_tlsctx_create_server_t                        unitytls_tlsctx_create_server;
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
             public delegate unitytls_tlsctx*                              unitytls_tlsctx_create_client_t(unitytls_tlsctx_protocolrange supportedProtocols, unitytls_tlsctx_callbacks callbacks, Int8* cn, size_t cnLen, unitytls_errorstate* errorState);
