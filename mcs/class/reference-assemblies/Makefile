@@ -50,16 +50,17 @@ install-local:
 	$(INSTALL_LIB) ../../../external/binary-reference-assemblies/v4.7/Facades/*.dll $(PROFILE_DIR)/4.7-api/Facades
 	$(INSTALL_LIB) ../../../external/binary-reference-assemblies/v4.7.1/Facades/*.dll $(PROFILE_DIR)/4.7.1-api/Facades
 
+	# Unity: these are mono extensions to .NET we don't want to support going forward
 	$(INSTALL_LIB) ../../../external/binary-reference-assemblies/mono/*.dll $(PROFILE_DIR)/2.0-api
-	$(INSTALL_LIB) ../../../external/binary-reference-assemblies/mono/*.dll $(PROFILE_DIR)/4.0-api
-	$(INSTALL_LIB) ../../../external/binary-reference-assemblies/mono/*.dll $(PROFILE_DIR)/4.5-api
-	$(INSTALL_LIB) ../../../external/binary-reference-assemblies/mono/*.dll $(PROFILE_DIR)/4.5.1-api
-	$(INSTALL_LIB) ../../../external/binary-reference-assemblies/mono/*.dll $(PROFILE_DIR)/4.5.2-api
-	$(INSTALL_LIB) ../../../external/binary-reference-assemblies/mono/*.dll $(PROFILE_DIR)/4.6-api
-	$(INSTALL_LIB) ../../../external/binary-reference-assemblies/mono/*.dll $(PROFILE_DIR)/4.6.1-api
-	$(INSTALL_LIB) ../../../external/binary-reference-assemblies/mono/*.dll $(PROFILE_DIR)/4.6.2-api
-	$(INSTALL_LIB) ../../../external/binary-reference-assemblies/mono/*.dll $(PROFILE_DIR)/4.7-api
-	$(INSTALL_LIB) ../../../external/binary-reference-assemblies/mono/*.dll $(PROFILE_DIR)/4.7.1-api
+	#$(INSTALL_LIB) ../../../external/binary-reference-assemblies/mono/*.dll $(PROFILE_DIR)/4.0-api
+	#$(INSTALL_LIB) ../../../external/binary-reference-assemblies/mono/*.dll $(PROFILE_DIR)/4.5-api
+	#$(INSTALL_LIB) ../../../external/binary-reference-assemblies/mono/*.dll $(PROFILE_DIR)/4.5.1-api
+	#$(INSTALL_LIB) ../../../external/binary-reference-assemblies/mono/*.dll $(PROFILE_DIR)/4.5.2-api
+	#$(INSTALL_LIB) ../../../external/binary-reference-assemblies/mono/*.dll $(PROFILE_DIR)/4.6-api
+	#$(INSTALL_LIB) ../../../external/binary-reference-assemblies/mono/*.dll $(PROFILE_DIR)/4.6.1-api
+	#$(INSTALL_LIB) ../../../external/binary-reference-assemblies/mono/*.dll $(PROFILE_DIR)/4.6.2-api
+	#$(INSTALL_LIB) ../../../external/binary-reference-assemblies/mono/*.dll $(PROFILE_DIR)/4.7-api
+	#$(INSTALL_LIB) ../../../external/binary-reference-assemblies/mono/*.dll $(PROFILE_DIR)/4.7.1-api
 
 	# Unfortunately, a few programs (most notably NUnit and FSharp) have hardcoded checks for <prefix>/lib/mono/4.0/mscorlib.dll or Mono.Posix.dll,
 	# so we need to place something there or those tools break. We decided to symlink to the reference assembly for now.
