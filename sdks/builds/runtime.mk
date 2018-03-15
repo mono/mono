@@ -63,7 +63,7 @@ __$(1)_CONFIGURE_ENVIRONMENT = \
 .stamp-$(1)-configure: .stamp-$(1)-$$(CONFIGURATION)-configure
 
 .PHONY: build-custom-$(1)
-build-custom-$(1):
+build-custom-$(1)::
 	$$(MAKE) -C $(1)-$$(CONFIGURATION)
 
 .PHONY: setup-custom-$(1)
@@ -80,6 +80,10 @@ package-$(1)-$$(CONFIGURATION):
 package-android-$(1)-$$(CONFIGURATION)::
 	$$(MAKE) -C $$(TOP)/sdks/builds/android-$(1)-$$(CONFIGURATION)/mono install
 >>>>>>> 43ac34b36e2... [sdks] Unify targets to build runtimes (#7394)
+
+.PHONY: package-$(1)-$$(CONFIGURATION)
+package-$(1)-$$(CONFIGURATION)::
+	$$(MAKE) -C $$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION)/mono install
 
 .PHONY: package-$(1)
 package-$(1):

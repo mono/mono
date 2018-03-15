@@ -90,7 +90,7 @@ if [[ ${CI_TAGS} == *'product-sdks'* ]];
 	   ${TESTCMD} --label=run-sim --timeout=20m make -C sdks/ios run-ios-sim-all
 	   ${TESTCMD} --label=build-ios-dev --timeout=60m make -C sdks/ios build-ios-dev-all
 	   ${TESTCMD} --label=build-ios-dev-llvm --timeout=60m make -C sdks/ios build-ios-dev-llvm-all
-	   tar cvzf mono-product-sdk-$GIT_COMMIT.tar.gz -C sdks/out/ bcl llvm64 llvm32 ios-cross32 ios-cross64
+	   ${TESTCMD} --label=package --timeout=60m tar cvzf mono-product-sdk-$GIT_COMMIT.tar.gz -C sdks/out/ bcl ios-llvm64 ios-llvm32 ios-cross32-release ios-cross64-release
 	   exit 0
 fi
 
