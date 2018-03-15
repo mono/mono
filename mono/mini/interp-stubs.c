@@ -146,6 +146,12 @@ stub_walk_stack_with_ctx (MonoInternalStackWalk func, MonoContext *ctx, MonoUnwi
 	g_assert_not_reached ();
 }
 
+static gboolean
+stub_ip_in_interpreter_loop (gpointer ip)
+{
+	return FALSE;
+}
+
 void
 mono_interp_stub_init (void)
 {
@@ -175,5 +181,6 @@ mono_interp_stub_init (void)
 	c.frame_get_parent = stub_frame_get_parent;
 	c.start_single_stepping = stub_start_single_stepping;
 	c.stop_single_stepping = stub_stop_single_stepping;
+	c.ip_in_interpreter_loop = stub_ip_in_interpreter_loop;
 	mini_install_interp_callbacks (&c);
 }
