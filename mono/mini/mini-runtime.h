@@ -156,6 +156,16 @@ typedef struct {
 	gpointer interp_exit_data;
 } MonoLMFExt;
 
+typedef union MonoDebugTailcallOptions {
+	int all;
+	struct {
+		gboolean break_compile : 1;
+		gboolean break_run : 1;
+		gboolean try_all : 1;
+		gboolean log : 1;
+	};
+} MonoDebugTailcallOptions;
+
 typedef struct {
 	gboolean handle_sigint;
 	gboolean keep_delegates;
@@ -218,6 +228,7 @@ typedef struct {
 	 * identify the stack on some platforms
 	 */
 	gboolean disable_omit_fp;
+	MonoDebugTailcallOptions tailcall;
 } MonoDebugOptions;
 
 

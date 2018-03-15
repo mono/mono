@@ -2174,14 +2174,19 @@ mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig,
 	if (cfg->llvm_only)
 		tail = FALSE;
 
-#if 0 // debug code; can change tail to false in debugger
-	if (tail && mono_is_usermode_native_debugger_present ()) {
-		G_BREAKPOINT ();
-		MonoInst *brk;
-		MONO_INST_NEW (cfg, brk, OP_BREAK);
-		MONO_ADD_INS (cfg->cbb, brk);
+	// debug code; can change tail to false in debugger
+	if (tail) {
+		MonoDebugTailcallOptions const * const debug_options = &mini_get_debug_options ()->tailcall;
+		if (debug_options->all && mono_is_usermode_native_debugger_present ()) {
+			if (debug_options->break_compile)
+				G_BREAKPOINT ();
+			if (tail && debug_options->break_run) {
+				MonoInst *brk;
+				MONO_INST_NEW (cfg, brk, OP_BREAK);
+				MONO_ADD_INS (cfg->cbb, brk);
+			}
+		}
 	}
-#endif
 
 	if (tail) {
 		mini_profiler_emit_tail_call (cfg, target);
@@ -7226,6 +7231,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	MonoDebugMethodInfo *minfo;
 	MonoBitSet *seq_point_locs = NULL;
 	MonoBitSet *seq_point_set_locs = NULL;
+	MonoDebugTailcallOptions const * const debug_options = &mini_get_debug_options ()->tailcall;
 
 	cfg->disable_inline = is_jit_optimizer_disabled (method);
 
@@ -9048,13 +9054,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (ins)
 				goto call_end;
 
-#if 0 // debug code -- attempt to tailcall every call followed by a ret
 			gboolean inst_tailcall;
-			inst_tailcall = ip [5] == CEE_RET;
-#else
-			gboolean inst_tailcall;
-			inst_tailcall = (ins_flag & MONO_INST_TAILCALL) != 0;
-#endif
+			inst_tailcall = (ins_flag & MONO_INST_TAILCALL) != 0
+				|| (debug_options->try_all && ip [5] == CEE_RET);
 
 			/* Tail prefix / tail call optimization */
 
@@ -9070,7 +9072,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			// 2. a Non-generic static methods of reference types and b. non-generic methods
 			//    of value types need to be passed a pointer to the caller’s class’s VTable in the MONO_ARCH_RGCTX_REG register.
 			// 3. Generic methods need to be passed a pointer to the MRGCTX in the MONO_ARCH_RGCTX_REG register
-			if (inst_tailcall && cfg->verbose_level >= 2)
+			if (inst_tailcall && (cfg->verbose_level >= 2 || debug_options->log))
 				g_print ("tail.%s %s -> %s supported_tail_call:%d gshared:%d vtable_arg:%d\n",
 					mono_opcode_name (*ip), method->name, cmethod->name,
 					(int)supported_tail_call, (int)cfg->gshared, !!vtable_arg);
