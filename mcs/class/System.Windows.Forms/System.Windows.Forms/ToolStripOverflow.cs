@@ -50,12 +50,6 @@ namespace System.Windows.Forms
 		public override ToolStripItemCollection Items {
 			get { return base.Items; }
 		}
-		
-		public override LayoutEngine LayoutEngine {
-			get {
-				return FlowLayout.Instance;
-			}
-		}
 		#endregion
 
 		#region Protected Properties
