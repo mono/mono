@@ -9173,6 +9173,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			ip += 5;
 			if (skip_ret) {
+				// FIXME When not followed by CEE_RET, correct behavior is to raise an exception.
 				g_assert (*ip == CEE_RET);
 				ip += 1;
 			}
