@@ -1,6 +1,6 @@
 // Compiler options: -langversion:latest
 
-public readonly partial ref struct Test
+public readonly ref partial struct Test
 {
 	public static void Main ()
 	{
@@ -12,6 +12,11 @@ public readonly partial ref struct Test
 	{
 		return new Test ();
 	}
+}
+
+ref partial struct Test
+{
+
 }
 
 ref struct Second

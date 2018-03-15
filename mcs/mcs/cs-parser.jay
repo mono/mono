@@ -40,7 +40,9 @@ namespace Mono.CSharp
 		}
 		
 		static readonly object ModifierNone = 0;
-	
+		static readonly object RefStructToken = new object ();
+		static readonly object RefPartialStructToken = new object ();
+
 		NamespaceContainer current_namespace;
 		TypeContainer current_container;
 		TypeDefinition current_type;
@@ -338,6 +340,7 @@ namespace Mono.CSharp
 %token OPEN_BRACKET_EXPR
 %token OPEN_PARENS_DECONSTRUCT
 %token REF_STRUCT
+%token REF_PARTIAL
 
 // Make the parser go into eval mode parsing (statements and compilation units).
 %token EVAL_STATEMENT_PARSER
@@ -1028,7 +1031,15 @@ struct_keyword
 			FeatureIsNotAvailable (GetLocation ($1), "ref structs");
 		}
 
-		$$ = this;
+		$$ = RefStructToken;
+	  }
+	| REF_PARTIAL STRUCT
+	  {
+		if (lang_version < LanguageVersion.V_7_2) {
+			FeatureIsNotAvailable (GetLocation ($1), "ref structs");
+		}
+
+		$$ = RefPartialStructToken;
 	  }
 	;
 
@@ -1043,8 +1054,13 @@ struct_declaration
 		if ((mods & Modifiers.READONLY) != 0 && lang_version < LanguageVersion.V_7_2) {
 			FeatureIsNotAvailable (GetLocation ($4), "readonly structs");
 		}
-		if ($4 != null)
+		if ($4 != null) {
 			mods |= Modifiers.REF;
+			if ($4 == RefPartialStructToken) {
+				mods |= Modifiers.PARTIAL;
+				$3 = $4;
+			}
+		}
 
 		lexer.ConstraintsParsing = true;
 		valid_param_mod = ParameterModifierType.PrimaryConstructor;
@@ -8430,6 +8446,8 @@ static string GetTokenName (int token)
 	case Token.READONLY:
 		return "readonly";
 	case Token.REF:
+	case Token.REF_STRUCT:
+	case Token.REF_PARTIAL:
 		return "ref";
 	case Token.RETURN:
 		return "return";
@@ -8444,7 +8462,6 @@ static string GetTokenName (int token)
 	case Token.STATIC:
 		return "static";
 	case Token.STRUCT:
-	case Token.REF_STRUCT:
 		return "struct";
 	case Token.SWITCH:
 		return "switch";
