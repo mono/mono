@@ -556,8 +556,8 @@ namespace System.Windows.Forms
 		{
 			LayoutSettings layout_settings = base.CreateLayoutSettings (style);
 			if (style == ToolStripLayoutStyle.Flow) {
-                ((FlowLayoutSettings)layout_settings).FlowDirection = FlowDirection.TopDown;
-            }
+				((FlowLayoutSettings)layout_settings).FlowDirection = FlowDirection.TopDown;
+			}
 			return layout_settings;
 		}
 		
