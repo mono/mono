@@ -9048,8 +9048,13 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (ins)
 				goto call_end;
 
+#if 0 // debug code -- attempt to tailcall every call followed by a ret
+			gboolean inst_tailcall;
+			inst_tailcall = ip [5] == CEE_RET;
+#else
 			gboolean inst_tailcall;
 			inst_tailcall = (ins_flag & MONO_INST_TAILCALL) != 0;
+#endif
 
 			/* Tail prefix / tail call optimization */
 
