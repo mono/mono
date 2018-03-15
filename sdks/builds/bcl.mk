@@ -2,20 +2,20 @@
 .stamp-bcl-toolchain:
 	touch $@
 
-bcl_ios_CONFIGURE_FLAGS = \
-	--with-monotouch=yes \
-	--with-monotouch_tv=yes \
-	--with-xammac=yes \
-	--with-monotouch_watch=yes
+bcl-ios_CONFIGURE_FLAGS = \
+       --with-monotouch=yes \
+       --with-monotouch_tv=yes \
+       --with-xammac=yes \
+       --with-monotouch_watch=yes
 
 bcl_CONFIGURE_FLAGS = \
-	--with-profile4_x=no \
-	$(if $(DISABLE_ANDROID),,--with-monodroid=yes) \
-	$(if $(DISABLE_IOS),,$(bcl_ios_CONFIGURE_FLAGS)) \
-	$(if $(DISABLE_WASM),,--with-wasm=yes) \
-	--with-mcs-docs=no \
-	--disable-nls \
-	--disable-boehm
+       --with-profile4_x=no \
+       $(if $(DISABLE_ANDROID),,--with-monodroid=yes) \
+       $(if $(DISABLE_IOS),,$(bcl-ios_CONFIGURE_FLAGS)) \
+       $(if $(DISABLE_WASM),,--with-wasm=yes) \
+       --with-mcs-docs=no \
+       --disable-nls \
+       --disable-boehm
 
 .stamp-bcl-configure: $(TOP)/configure
 	mkdir -p $(TOP)/sdks/builds/bcl
