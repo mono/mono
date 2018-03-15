@@ -535,6 +535,7 @@ TESTS_CS_SRC=		\
 	threads-init.cs \
 	bug-60848.cs \
 	bug-59400.cs \
+	tailcall-generic-cast-cs.cs \
 	tailcall-interface.cs \
 	sizeof-empty-structs.cs \
 	bug-60843.cs
@@ -647,7 +648,8 @@ TESTS_IL_SRC=			\
 	dim-methodimpl.il	\
 	dim-sharedgenerics.il	\
 	dim-simple.il	\
-	dim-valuetypes.il
+	dim-valuetypes.il \
+	tailcall-generic-cast-il.il
 
 TESTS_GSHARED_SRC = \
 	generics-sharing.2.cs	\
@@ -1038,6 +1040,7 @@ INTERP_DISABLED_TESTS = $(DISABLED_TESTS) \
 	tailcall-mrgctx.exe \
 	tailcall-virt.exe   \
 	tailcall-rgctxa.exe \
+	tailcall-generic-cast-il.exe \
 	bug-60843.exe
 
 # bug-48015.exe: be careful when re-enabling, it happens that it returns with exit code 0, but doesn't actually execute the test.
