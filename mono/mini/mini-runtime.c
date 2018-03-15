@@ -3473,6 +3473,21 @@ mono_get_delegate_virtual_invoke_impl (MonoMethodSignature *sig, MonoMethod *met
 gboolean
 mini_parse_debug_option (const char *option)
 {
+	MonoDebugTailcallOptions * const tailcall = &mini_debug_options.tailcall;
+	switch (option [0]) {
+	case 't':
+		if (strcmp (option, "tailcall_break_compile") == 0)
+			return tailcall->break_compile = TRUE;
+		else if (strcmp (option, "tailcall_break_run") == 0)
+			return tailcall->break_run = TRUE;
+		else if (strcmp (option, "tailcall_log") == 0)
+			return tailcall->log = TRUE;
+		else if (strcmp (option, "tailcall_try_all") == 0)
+			return tailcall->try_all = TRUE;
+		else if (strcmp (option, "tailcall_all") == 0)
+			return tailcall->all = -1;
+		return FALSE;
+	}
 	if (!strcmp (option, "handle-sigint"))
 		mini_debug_options.handle_sigint = TRUE;
 	else if (!strcmp (option, "keep-delegates"))
@@ -3553,6 +3568,7 @@ mini_parse_debug_options (void)
 		if (!mini_parse_debug_option (arg)) {
 			fprintf (stderr, "Invalid option for the MONO_DEBUG env variable: %s\n", arg);
 			fprintf (stderr, "Available options: 'handle-sigint', 'keep-delegates', 'reverse-pinvoke-exceptions', 'collect-pagefault-stats', 'break-on-unverified', 'no-gdb-backtrace', 'suspend-on-native-crash', 'suspend-on-sigsegv', 'suspend-on-exception', 'suspend-on-unhandled', 'dont-free-domains', 'dyn-runtime-invoke', 'gdb', 'explicit-null-checks', 'gen-seq-points', 'no-compact-seq-points', 'single-imm-size', 'init-stacks', 'casts', 'soft-breakpoints', 'check-pinvoke-callconv', 'use-fallback-tls', 'debug-domain-unload', 'partial-sharing', 'align-small-structs', 'native-debugger-break'\n");
+			fprintf (stderr, "     more options: tailcall_break_compile, tailcall_break_run, tailcall_try_all, tailcall_log, tailcall_all\n");
 			exit (1);
 		}
 	}
