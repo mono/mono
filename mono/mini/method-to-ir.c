@@ -65,6 +65,7 @@
 #include <mono/metadata/mono-basic-block.h>
 #include <mono/metadata/reflection-internals.h>
 #include <mono/utils/mono-threads-coop.h>
+#include <mono/utils/mono-utils-debug.h>
 
 #include "trace.h"
 
@@ -2172,6 +2173,15 @@ mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig,
 
 	if (cfg->llvm_only)
 		tail = FALSE;
+
+#if 0 // debug code; can change tail to false in debugger
+	if (tail && mono_is_usermode_native_debugger_present ()) {
+		G_BREAKPOINT ();
+		MonoInst *brk;
+		MONO_INST_NEW (cfg, brk, OP_BREAK);
+		MONO_ADD_INS (cfg->cbb, brk);
+	}
+#endif
 
 	if (tail) {
 		mini_profiler_emit_tail_call (cfg, target);
