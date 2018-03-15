@@ -82,6 +82,11 @@
 #define BRANCH_COST 10
 #define INLINE_LENGTH_LIMIT 20
 
+//#define DEBUG_TAILCALL_BREAK_COMPILE 1
+//#define DEBUG_TAILCALL_BREAK_RUN 1
+//#define DEBUG_TAILCALL_TRY_ALL 1
+//#define DEBUG_TAILCALL 1
+
 /* These have 'cfg' as an implicit argument */
 #define INLINE_FAILURE(msg) do {									\
 	if ((cfg->method != cfg->current_method) && (cfg->current_method->wrapper_type == MONO_WRAPPER_NONE)) { \
@@ -2174,12 +2179,20 @@ mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig,
 	if (cfg->llvm_only)
 		tail = FALSE;
 
-#if 0 // debug code; can change tail to false in debugger
+#if defined (DEBUG_TAILCALL_BREAK_COMPILE) || defined (DEBUG_TAILCALL_BREAK_RUN) || defined (DEBUG_TAILCALL)
 	if (tail && mono_is_usermode_native_debugger_present ()) {
+
+#ifdef DEBUG_TAILCALL_BREAK_COMPILE
 		G_BREAKPOINT ();
-		MonoInst *brk;
-		MONO_INST_NEW (cfg, brk, OP_BREAK);
-		MONO_ADD_INS (cfg->cbb, brk);
+#endif
+
+#ifdef DEBUG_TAILCALL_BREAK_RUN
+		if (tail) { // Can change in debugger.
+			MonoInst *brk;
+			MONO_INST_NEW (cfg, brk, OP_BREAK);
+			MONO_ADD_INS (cfg->cbb, brk);
+		}
+#endif
 	}
 #endif
 
@@ -9033,11 +9046,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (ins)
 				goto call_end;
 
-#if 0 // debug code -- attempt to tailcall every call followed by a ret
 			gboolean inst_tailcall;
+#ifdef DEBUG_TAILCALL_TRY_ALL
 			inst_tailcall = ip [5] == CEE_RET;
 #else
-			gboolean inst_tailcall;
 			inst_tailcall = (ins_flag & MONO_INST_TAILCALL) != 0;
 #endif
 
@@ -9055,7 +9067,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			// 2. a Non-generic static methods of reference types and b. non-generic methods
 			//    of value types need to be passed a pointer to the caller’s class’s VTable in the MONO_ARCH_RGCTX_REG register.
 			// 3. Generic methods need to be passed a pointer to the MRGCTX in the MONO_ARCH_RGCTX_REG register
+#ifdef DEBUG_TAILCALL
+			if (inst_tailcall && cfg->verbose_level)
+#else
 			if (inst_tailcall && cfg->verbose_level >= 2)
+#endif
 				g_print ("tail.%s %s -> %s supported_tail_call:%d gshared:%d vtable_arg:%d\n",
 					mono_opcode_name (*ip), method->name, cmethod->name,
 					(int)supported_tail_call, (int)cfg->gshared, !!vtable_arg);
