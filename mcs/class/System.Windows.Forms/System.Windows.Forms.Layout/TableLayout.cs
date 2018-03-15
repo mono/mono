@@ -59,7 +59,7 @@ namespace System.Windows.Forms.Layout
 		// 3) Size and position each control
 		public override bool Layout (object container, LayoutEventArgs args)
 		{
-			IArrangedContainer panel = container as IArrangedContainer;
+			IArrangedContainer panel = (IArrangedContainer)container;
 			TableLayoutSettings settings = GetLayoutSettings (panel);
 			
 #if TABLE_DEBUG

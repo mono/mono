@@ -43,7 +43,7 @@ namespace System.Windows.Forms.Layout
 	
 		public override void InitLayout (object child, BoundsSpecified specified)
 		{
-			IArrangedElement control = child as IArrangedElement;
+			IArrangedElement control = (IArrangedElement)child;
 			IArrangedElement parent = control.Parent;
 			if (parent != null) {
 				Rectangle bounds = control.Bounds;

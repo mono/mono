@@ -47,12 +47,12 @@ namespace System.Windows.Forms.Layout
 			base.InitLayout (child, specified);
 		}
 
-		private FlowLayoutSettings GetLayoutSettings (IArrangedContainer container)
+		private static FlowLayoutSettings GetLayoutSettings (IArrangedContainer container)
 		{
-			if (container is FlowLayoutPanel)
-				return ((FlowLayoutPanel)container).LayoutSettings;
-			if (container is ToolStrip)
-				return (FlowLayoutSettings) ((ToolStrip)container).LayoutSettings;
+			if (container is FlowLayoutPanel flp)
+				return flp.LayoutSettings;
+			if (container is ToolStrip ts)
+				return (FlowLayoutSettings)ts.LayoutSettings;
 			return default_settings;
 		}
 
@@ -62,7 +62,7 @@ namespace System.Windows.Forms.Layout
 			if (container is ToolStripPanel)
 				return false;
 				
-			IArrangedContainer parent = container as IArrangedContainer;
+			IArrangedContainer parent = (IArrangedContainer)container;
 			if (parent.Controls.Count == 0)
 				return false;
 
@@ -206,7 +206,7 @@ namespace System.Windows.Forms.Layout
 
 		internal override Size GetPreferredSize (object container, Size proposedSize)
 		{
-			IArrangedContainer parent = container as IArrangedContainer;
+			IArrangedContainer parent = (IArrangedContainer)container;
 			FlowLayoutSettings settings = GetLayoutSettings (parent);
 			int width = 0;
 			int height = 0;
