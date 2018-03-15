@@ -535,7 +535,8 @@ TESTS_CS_SRC=		\
 	threads-init.cs \
 	bug-60848.cs \
 	bug-59400.cs \
-	sizeof-empty-structs.cs
+	sizeof-empty-structs.cs \
+	tailcall-generic-cast-cs.cs
 
 if AMD64
 TESTS_CS_SRC += async-exc-compilation.cs finally_guard.cs finally_block_ending_in_dead_bb.cs
@@ -643,7 +644,8 @@ TESTS_IL_SRC=			\
 	dim-methodimpl.il	\
 	dim-sharedgenerics.il	\
 	dim-simple.il	\
-	dim-valuetypes.il
+	dim-valuetypes.il \
+	tailcall-generic-cast-il.il
 
 TESTS_GSHARED_SRC = \
 	generics-sharing.2.cs	\
@@ -1035,7 +1037,8 @@ INTERP_DISABLED_TESTS = $(DISABLED_TESTS) \
 	sitail1.exe \
 	tailcall-mrgctx.exe \
 	tailcall-virt.exe   \
-	tailcall-rgctxa.exe
+	tailcall-rgctxa.exe \
+	tailcall-generic-cast-il.exe
 
 # bug-48015.exe: be careful when re-enabling, it happens that it returns with exit code 0, but doesn't actually execute the test.
 # bug-60862.exe: missing support to map IP->method; only works on platforms with altstack support.
