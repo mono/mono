@@ -7010,7 +7010,6 @@ is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmetho
 #if 0
 	if (!mono_debug_count ())
 		return FALSE;
-	}
 #endif
 
 	return TRUE;
