@@ -371,6 +371,34 @@ _wapi_utime (const gchar *filename, const struct utimbuf *buf)
 	return ret;
 }
 
+#ifdef HAVE_STRUCT_TIMEVAL
+static gint
+_wapi_utimes (const gchar *filename, const struct timeval times[2])
+{
+	gint ret;
+
+	MONO_ENTER_GC_SAFE;
+	ret = utimes (filename, times);
+	MONO_EXIT_GC_SAFE;
+	if (ret == -1 && errno == ENOENT && IS_PORTABILITY_SET) {
+		gint saved_errno = errno;
+		gchar *located_filename = mono_portability_find_file (filename, TRUE);
+
+		if (located_filename == NULL) {
+			errno = saved_errno;
+			return -1;
+		}
+
+		MONO_ENTER_GC_SAFE;
+		ret = utimes (located_filename, times);
+		MONO_EXIT_GC_SAFE;
+		g_free (located_filename);
+	}
+
+	return ret;
+}
+#endif
+
 static gint
 _wapi_unlink (const gchar *pathname)
 {
@@ -1405,7 +1433,7 @@ static guint32 file_getfilesize(FileHandle *filehandle, guint32 *highsize)
 }
 
 static guint64
-convert_unix_filetime (const FILETIME *file_time, size_t field_size, const char *ttype)
+convert_unix_filetime_ms (const FILETIME *file_time, const char *ttype)
 {
 	guint64 t = ((guint64) file_time->dwHighDateTime << 32) + file_time->dwLowDateTime;
 
@@ -1418,13 +1446,21 @@ convert_unix_filetime (const FILETIME *file_time, size_t field_size, const char 
 		return (FALSE);
 	}
 
-	if (field_size == 4 && ((t - CONVERT_BASE) / 10000000) > INT_MAX) {
+	return t - CONVERT_BASE;
+}
+
+static guint64
+convert_unix_filetime (const FILETIME *file_time, size_t field_size, const char *ttype)
+{
+	guint64 t = convert_unix_filetime_ms (file_time, ttype);
+
+	if (field_size == 4 && (t / 10000000) > INT_MAX) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: attempt to set %s time that is too big for a 32bits time_t", __func__, ttype);
 		mono_w32error_set_last (ERROR_INVALID_PARAMETER);
 		return (FALSE);
 	}
 
-	return (t - CONVERT_BASE) / 10000000;
+	return t / 10000000;
 }
 
 static gboolean file_setfiletime(FileHandle *filehandle,
@@ -1432,7 +1468,6 @@ static gboolean file_setfiletime(FileHandle *filehandle,
 				 const FILETIME *access_time,
 				 const FILETIME *write_time)
 {
-	struct utimbuf utbuf;
 	struct stat statbuf;
 	gint ret;
 	
@@ -1463,13 +1498,52 @@ static gboolean file_setfiletime(FileHandle *filehandle,
 		return(FALSE);
 	}
 
+#ifdef HAVE_STRUCT_TIMEVAL
+	struct timeval times [2];
+	memset (times, 0, sizeof (times));
+
+	if (access_time) {
+		guint64 actime = convert_unix_filetime_ms (access_time, "access");
+		times [0].tv_sec = actime / TICKS_PER_SECOND;
+		times [0].tv_usec = actime % TICKS_PER_SECOND;
+	} else {
+#if HAVE_STRUCT_STAT_ST_ATIMESPEC
+		times [0].tv_sec = statbuf.st_atimespec.tv_sec;
+		times [0].tv_usec = statbuf.st_atimespec.tv_nsec / 100;
+#else
+		times [0].tv_sec = statbuf.st_atime;
+#if HAVE_STRUCT_STAT_ST_ATIM
+		times [0].tv_usec = statbuf.st_atim.tv_nsec / 100;
+#endif
+#endif
+	}
+
+	if (write_time) {
+		guint64 wtime = convert_unix_filetime_ms (write_time, "write");
+		times [1].tv_sec = wtime / TICKS_PER_SECOND;
+		times [1].tv_usec = wtime % TICKS_PER_SECOND;
+	} else {
+#if HAVE_STRUCT_STAT_ST_ATIMESPEC
+		times [1].tv_sec = statbuf.st_mtimespec.tv_sec;
+		times [1].tv_usec = statbuf.st_mtimespec.tv_nsec / 100;
+#else
+		times [1].tv_sec = statbuf.st_mtime;
+#if HAVE_STRUCT_STAT_ST_ATIM
+		times [1].tv_usec = statbuf.st_mtim.tv_nsec / 100;
+#endif
+#endif
+	}
+
+	ret = _wapi_utimes (filehandle->filename, times);
+#else
+	struct utimbuf utbuf;
 	utbuf.actime  = access_time ? convert_unix_filetime (access_time, sizeof (utbuf.actime), "access") : statbuf.st_atime;
 	utbuf.modtime = write_time  ? convert_unix_filetime (write_time,  sizeof (utbuf.modtime), "write") : statbuf.st_mtime;
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: setting fd %d access %ld write %ld", __func__,
-		   ((MonoFDHandle*) filehandle)->fd, utbuf.actime, utbuf.modtime);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: setting fd %d access %ld write %ld", __func__, ((MonoFDHandle*) filehandle)->fd, utbuf.actime, utbuf.modtime);
 
 	ret = _wapi_utime (filehandle->filename, &utbuf);
+#endif
 	if (ret == -1) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d [%s] utime failed: %s", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->filename, g_strerror(errno));
 
