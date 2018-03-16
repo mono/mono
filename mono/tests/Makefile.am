@@ -645,7 +645,8 @@ TESTS_IL_SRC=			\
 	dim-sharedgenerics.il	\
 	dim-simple.il	\
 	dim-valuetypes.il \
-	tailcall-generic-cast-il.il
+	tailcall-generic-cast-conservestack-il.il \
+	tailcall-generic-cast-nocrash-il.il
 
 TESTS_GSHARED_SRC = \
 	generics-sharing.2.cs	\
@@ -742,6 +743,7 @@ endif
 if POWERPC
 # bug #71274
 PLATFORM_DISABLED_TESTS += finalizer-abort.exe finalizer-exception.exe finalizer-exit.exe
+PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
 endif
 
 if POWERPC64
@@ -751,10 +753,12 @@ PLATFORM_DISABLED_TESTS += monitor.exe threadpool-exceptions5.exe appdomain-unlo
 	pinvoke_ppcs.exe pinvoke_ppci.exe pinvoke_ppcf.exe pinvoke_ppcd.exe abort-cctor.exe load-exceptions.exe \
 	sgen-domain-unload-2.exe sgen-weakref-stress.exe sgen-cementing-stress.exe sgen-new-threads-dont-join-stw.exe \
 	sgen-new-threads-dont-join-stw-2.exe sgen-new-threads-collect.exe sgen-bridge.exe
+PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
 endif
 
 if ARM
 PLATFORM_DISABLED_TESTS += filter-stack.exe weak-fields.exe
+PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
 endif
 
 if ARM64
@@ -764,6 +768,7 @@ endif
 if MIPS
 # monitor.exe is racy
 PLATFORM_DISABLED_TESTS += filter-stack.exe monitor.exe
+PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
 endif
 
 if S390X
@@ -775,6 +780,7 @@ PLATFORM_DISABLED_TESTS += \
 	sgen-bridge.exe \
 	sgen-bridge-major-fragmentation.exe \
 	sgen-bridge-xref.exe
+PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
 endif
 
 PROFILE_DISABLED_TESTS= \
@@ -1038,7 +1044,7 @@ INTERP_DISABLED_TESTS = $(DISABLED_TESTS) \
 	tailcall-mrgctx.exe \
 	tailcall-virt.exe   \
 	tailcall-rgctxa.exe \
-	tailcall-generic-cast-il.exe
+	tailcall-generic-cast-conservestack-il.exe
 
 # bug-48015.exe: be careful when re-enabling, it happens that it returns with exit code 0, but doesn't actually execute the test.
 # bug-60862.exe: missing support to map IP->method; only works on platforms with altstack support.
