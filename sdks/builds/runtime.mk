@@ -63,7 +63,7 @@ setup-custom-$(1):
 	mkdir -p $$(TOP)/sdks/out/$(1)-$$(CONFIGURATION)
 
 .PHONY: package-$(1)-$$(CONFIGURATION)
-package-$(1)-$$(CONFIGURATION)::
+package-$(1)-$$(CONFIGURATION):
 	$$(MAKE) -C $$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION)/mono install
 	$$(MAKE) -C $$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION)/support install
 
@@ -72,7 +72,7 @@ package-$(1):
 	$$(MAKE) package-$(1)-$$(CONFIGURATION)
 
 .PHONY: clean-$(1)-$$(CONFIGURATION)
-clean-$(1)-$$(CONFIGURATION)::
+clean-$(1)-$$(CONFIGURATION):
 	rm -rf .stamp-$(1)-toolchain .stamp-$(1)-$$(CONFIGURATION)-configure $$(TOP)/sdks/builds/toolchains/$(1) $$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION) $$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION).config.cache $$(TOP)/sdks/out/$(1)-$$(CONFIGURATION)
 
 .PHONY: clean-$(1)
