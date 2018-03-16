@@ -2546,8 +2546,8 @@ namespace System.Windows.Forms
 			using (Graphics g = Graphics.FromImage (bitmap)) {			
 				// Only draw within the target bouds, and up to the size of the control
 				g.IntersectClip (targetBounds);
-				g.TranslateTransform (-targetBounds.X, -targetBounds.Y);
-				g.IntersectClip (new Rectangle(Point.Empty, Size));
+				g.TranslateTransform (targetBounds.X, targetBounds.Y);
+				g.IntersectClip (new Rectangle (Point.Empty, Size));
 			
 				// Logic copied from WmPaint
 				using (PaintEventArgs pea = new PaintEventArgs (g, new Rectangle(Point.Empty, targetBounds.Size))) {
