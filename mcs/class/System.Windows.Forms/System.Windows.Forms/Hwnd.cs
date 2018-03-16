@@ -55,6 +55,7 @@ namespace System.Windows.Forms {
 		internal int		height;
 		internal bool		allow_drop;
 		internal Hwnd		parent;
+		internal Hwnd		owner;
 		internal bool		visible;
 		internal bool		mapped;
 		internal uint		opacity;

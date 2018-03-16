@@ -2776,6 +2776,7 @@ namespace System.Windows.Forms
 				if (this.Location.Y + this.Height >= scrn_rect.Bottom)
 					this.Location = new Point (this.Location.X, this.Location.Y - (this.Height + owner.TextArea.Height));
 				Show ();
+				XplatUI.SetOwner (Handle, owner.Handle);
 
 				Refresh ();
 				owner.OnDropDown (EventArgs.Empty);
