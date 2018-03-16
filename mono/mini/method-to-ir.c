@@ -7020,6 +7020,24 @@ is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmetho
 		|| (cmethod->wrapper_type && cmethod->wrapper_type != MONO_WRAPPER_DYNAMIC_METHOD)
 		|| call_opcode == CEE_CALLI
 		|| (virtual_ && !cfg->backend->have_op_tail_call_membase)
+
+		// Passing vtable_arg uses (requires?) a volatile non-parameter register,
+		// such as AMD64 rax, r10, r11, or the return register on many architectures.
+		// ARM32 does not always clearly have such a register. ARM32's return register
+		// is a parameter register.
+		// iPhone could use r9 except on ancient systems. iPhone/ARM32 is not particularly
+		// important. Linux/arm32 is less clear.
+		// ARM32's scratch r12 is likely not viable.
+		//
+		// Imagine F1 calls F2, and F2 tailcalls F3.
+		// F2 and F3 are managed. F1 is native.
+		// Without a tailcall, F2 can save and restore everything needed for F1.
+		// However if the extra parameter were in a non-volatile, such as ARM32 V5/R8,
+		// F3 cannot easily restore it for F1, in the current scheme. The current
+		// scheme where the extra parameter is not merely an extra parameter, but
+		// passed "outside of the ABI".
+		|| (vtable_arg && !cfg->backend->have_volatile_non_param_register)
+
 		|| ((vtable_arg || cfg->gshared) && !cfg->backend->have_op_tail_call)
 		|| !mono_arch_tail_call_supported (cfg, mono_method_signature (method), mono_method_signature (cmethod)))
 		return FALSE;
