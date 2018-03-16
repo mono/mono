@@ -47,11 +47,11 @@ namespace System.Windows.Forms
 		private Dictionary<Object, int> column_spans;
 		private Dictionary<Object, int> rows;
 		private Dictionary<Object, int> row_spans;
-		private TableLayoutPanel panel;
+		private IArrangedContainer panel;
 		internal bool isSerialized;
 
 		#region Internal Constructor
-		internal TableLayoutSettings (TableLayoutPanel panel)
+		internal TableLayoutSettings (IArrangedContainer panel)
 		{
 			this.column_styles = new TableLayoutColumnStyleCollection (panel);
 			this.row_styles = new TableLayoutRowStyleCollection (panel);
@@ -65,7 +65,7 @@ namespace System.Windows.Forms
 			this.panel = panel;
 		}
 
-		internal TableLayoutSettings (TableLayoutPanel panel, TableLayoutSettings settings)
+		internal TableLayoutSettings (IArrangedContainer panel, TableLayoutSettings settings)
 		{
 			this.column_styles = new TableLayoutColumnStyleCollection (panel);
 			this.row_styles = new TableLayoutRowStyleCollection (panel);
@@ -157,7 +157,7 @@ namespace System.Windows.Forms
 					row_count = value;
 
 					if (panel != null)
-						panel.PerformLayout ();
+						panel.PerformLayout (panel, "Rows");
 				}
 			}
 		}
@@ -264,7 +264,7 @@ namespace System.Windows.Forms
 			rows[control] = cellPosition.Row;
 
 			if (panel != null)
-				panel.PerformLayout ();
+				panel.PerformLayout ((IArrangedElement) control, "TableIndex");
 		}
 
 		public void SetColumn (Object control, int column)
@@ -277,7 +277,7 @@ namespace System.Windows.Forms
 			columns[control] = column;
 
 			if (panel != null)
-				panel.PerformLayout ();
+				panel.PerformLayout ((IArrangedElement) control, "TableIndex");
 		}
 
 		public void SetColumnSpan (Object control, int value)
@@ -290,7 +290,7 @@ namespace System.Windows.Forms
 			column_spans[control] = value;
 
 			if (panel != null)
-				panel.PerformLayout ();
+				panel.PerformLayout ((IArrangedElement) control, "ColumnSpan");
 		}
 
 		public void SetRow (Object control, int row)
@@ -303,7 +303,7 @@ namespace System.Windows.Forms
 			rows[control] = row;
 
 			if (panel != null)
-				panel.PerformLayout ();
+				panel.PerformLayout ((IArrangedElement) control, "TableIndex");
 		}
 
 		public void SetRowSpan (Object control, int value)
@@ -316,7 +316,7 @@ namespace System.Windows.Forms
 			row_spans[control] = value;
 			
 			if (panel != null)
-				panel.PerformLayout ();
+				panel.PerformLayout ((IArrangedElement) control, "RowSpan");
 		}
 		#endregion
 

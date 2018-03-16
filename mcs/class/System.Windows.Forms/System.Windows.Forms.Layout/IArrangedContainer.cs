@@ -1,3 +1,6 @@
+//
+// IArrangedElement.cs
+//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -17,59 +20,17 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-//
-// Author:
-//   Miguel de Icaza (miguel@gnome.org)
-//
-// Copyright 2004-2006 Novell, Inc.
+// Copyright (c) 2018 Filip Navara
 //
 
-using System;
-using System.ComponentModel;
 using System.Collections;
-using System.Windows.Forms.Layout;
+using System.Drawing;
 
-namespace System.Windows.Forms {
-
-	public class TableLayoutRowStyleCollection : TableLayoutStyleCollection {
-		
-		internal TableLayoutRowStyleCollection (IArrangedContainer panel) : base (panel, "RowStyles")
-		{
-		}
-		
-		public int Add (RowStyle rowStyle)
-		{
-			return base.Add (rowStyle);
-		}
-
-		public bool Contains (RowStyle rowStyle)
-		{
-			return ((IList)this).Contains (rowStyle);
-		}
-
-		public int IndexOf (RowStyle rowStyle)
-		{
-			return ((IList)this).IndexOf (rowStyle);
-		}
-
-		public void Insert (int index, RowStyle rowStyle)
-		{
-			((IList)this).Insert (index, rowStyle);
-		}
-
-		public void Remove (RowStyle rowStyle)
-		{
-			((IList)this).Remove (rowStyle);
-		}
-		
-		public new RowStyle this [int index] {
-			get {
-				return (RowStyle) base [index];
-			}
-			
-			set {
-				base [index] = value;
-			}
-		}
+namespace System.Windows.Forms.Layout
+{
+	interface IArrangedContainer : IArrangedElement
+	{
+		ArrangedElementCollection Controls { get; }
+		void PerformLayout (IArrangedElement affectedElement, string affectedProperty);
 	}
 }
