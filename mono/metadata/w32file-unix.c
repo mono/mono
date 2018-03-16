@@ -1404,6 +1404,29 @@ static guint32 file_getfilesize(FileHandle *filehandle, guint32 *highsize)
 	return(size);
 }
 
+static guint64
+convert_unix_filetime (const FILETIME *file_time, size_t field_size, const char *ttype)
+{
+	guint64 t = ((guint64) file_time->dwHighDateTime << 32) + file_time->dwLowDateTime;
+
+	/* This is (time_t)0.  We can actually go to INT_MIN,
+	 * but this will do for now.
+	 */
+	if (t < CONVERT_BASE) {
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: attempt to set %s time too early", __func__, ttype);
+		mono_w32error_set_last (ERROR_INVALID_PARAMETER);
+		return (FALSE);
+	}
+
+	if (field_size == 4 && ((t - CONVERT_BASE) / 10000000) > INT_MAX) {
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: attempt to set %s time that is too big for a 32bits time_t", __func__, ttype);
+		mono_w32error_set_last (ERROR_INVALID_PARAMETER);
+		return (FALSE);
+	}
+
+	return (t - CONVERT_BASE) / 10000000;
+}
+
 static gboolean file_setfiletime(FileHandle *filehandle,
 				 const FILETIME *create_time G_GNUC_UNUSED,
 				 const FILETIME *access_time,
@@ -1411,9 +1434,7 @@ static gboolean file_setfiletime(FileHandle *filehandle,
 {
 	struct utimbuf utbuf;
 	struct stat statbuf;
-	guint64 access_ticks, write_ticks;
 	gint ret;
-	
 	
 	if(!(filehandle->fileaccess & (GENERIC_WRITE | GENERIC_ALL))) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d doesn't have GENERIC_WRITE access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
@@ -1442,54 +1463,8 @@ static gboolean file_setfiletime(FileHandle *filehandle,
 		return(FALSE);
 	}
 
-	if(access_time!=NULL) {
-		access_ticks=((guint64)access_time->dwHighDateTime << 32) +
-			access_time->dwLowDateTime;
-		/* This is (time_t)0.  We can actually go to INT_MIN,
-		 * but this will do for now.
-		 */
-		if (access_ticks < CONVERT_BASE) {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: attempt to set access time too early",
-				   __func__);
-			mono_w32error_set_last (ERROR_INVALID_PARAMETER);
-			return(FALSE);
-		}
-
-		if (sizeof (utbuf.actime) == 4 && ((access_ticks - CONVERT_BASE) / 10000000) > INT_MAX) {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: attempt to set write time that is too big for a 32bits time_t",
-				   __func__);
-			mono_w32error_set_last (ERROR_INVALID_PARAMETER);
-			return(FALSE);
-		}
-
-		utbuf.actime=(access_ticks - CONVERT_BASE) / 10000000;
-	} else {
-		utbuf.actime=statbuf.st_atime;
-	}
-
-	if(write_time!=NULL) {
-		write_ticks=((guint64)write_time->dwHighDateTime << 32) +
-			write_time->dwLowDateTime;
-		/* This is (time_t)0.  We can actually go to INT_MIN,
-		 * but this will do for now.
-		 */
-		if (write_ticks < CONVERT_BASE) {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: attempt to set write time too early",
-				   __func__);
-			mono_w32error_set_last (ERROR_INVALID_PARAMETER);
-			return(FALSE);
-		}
-		if (sizeof (utbuf.modtime) == 4 && ((write_ticks - CONVERT_BASE) / 10000000) > INT_MAX) {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: attempt to set write time that is too big for a 32bits time_t",
-				   __func__);
-			mono_w32error_set_last (ERROR_INVALID_PARAMETER);
-			return(FALSE);
-		}
-		
-		utbuf.modtime=(write_ticks - CONVERT_BASE) / 10000000;
-	} else {
-		utbuf.modtime=statbuf.st_mtime;
-	}
+	utbuf.actime  = access_time ? convert_unix_filetime (access_time, sizeof (utbuf.actime), "access") : statbuf.st_atime;
+	utbuf.modtime = write_time  ? convert_unix_filetime (write_time,  sizeof (utbuf.modtime), "write") : statbuf.st_mtime;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: setting fd %d access %ld write %ld", __func__,
 		   ((MonoFDHandle*) filehandle)->fd, utbuf.actime, utbuf.modtime);
