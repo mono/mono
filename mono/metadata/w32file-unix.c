@@ -345,6 +345,7 @@ _wapi_chmod (const gchar *pathname, mode_t mode)
 	return ret;
 }
 
+#ifndef HAVE_STRUCT_TIMEVAL
 static gint
 _wapi_utime (const gchar *filename, const struct utimbuf *buf)
 {
@@ -371,7 +372,7 @@ _wapi_utime (const gchar *filename, const struct utimbuf *buf)
 	return ret;
 }
 
-#ifdef HAVE_STRUCT_TIMEVAL
+#else
 static gint
 _wapi_utimes (const gchar *filename, const struct timeval times[2])
 {
@@ -1449,6 +1450,7 @@ convert_unix_filetime_ms (const FILETIME *file_time, const char *ttype)
 	return t - CONVERT_BASE;
 }
 
+#ifndef HAVE_STRUCT_TIMEVAL
 static guint64
 convert_unix_filetime (const FILETIME *file_time, size_t field_size, const char *ttype)
 {
@@ -1462,6 +1464,7 @@ convert_unix_filetime (const FILETIME *file_time, size_t field_size, const char 
 
 	return t / 10000000;
 }
+#endif
 
 static gboolean file_setfiletime(FileHandle *filehandle,
 				 const FILETIME *create_time G_GNUC_UNUSED,
