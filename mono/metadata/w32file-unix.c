@@ -1395,73 +1395,6 @@ static guint32 file_getfilesize(FileHandle *filehandle, guint32 *highsize)
 	return(size);
 }
 
-static gboolean file_getfiletime(FileHandle *filehandle, FILETIME *create_time,
-				 FILETIME *access_time,
-				 FILETIME *write_time)
-{
-	struct stat statbuf;
-	guint64 create_ticks, access_ticks, write_ticks;
-	gint ret;
-
-	if(!(filehandle->fileaccess & (GENERIC_READ | GENERIC_ALL))) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d doesn't have GENERIC_READ access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
-
-		mono_w32error_set_last (ERROR_ACCESS_DENIED);
-		return(FALSE);
-	}
-	
-	MONO_ENTER_GC_SAFE;
-	ret=fstat(((MonoFDHandle*) filehandle)->fd, &statbuf);
-	MONO_EXIT_GC_SAFE;
-	if(ret==-1) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d fstat failed: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
-
-		_wapi_set_last_error_from_errno ();
-		return(FALSE);
-	}
-
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: atime: %ld ctime: %ld mtime: %ld", __func__,
-		  statbuf.st_atime, statbuf.st_ctime,
-		  statbuf.st_mtime);
-
-	/* Try and guess a meaningful create time by using the older
-	 * of atime or ctime
-	 */
-	/* The magic constant comes from msdn documentation
-	 * "Converting a time_t Value to a File Time"
-	 */
-	if(statbuf.st_atime < statbuf.st_ctime) {
-		create_ticks=((guint64)statbuf.st_atime*10000000)
-			+ 116444736000000000ULL;
-	} else {
-		create_ticks=((guint64)statbuf.st_ctime*10000000)
-			+ 116444736000000000ULL;
-	}
-	
-	access_ticks=((guint64)statbuf.st_atime*10000000)+116444736000000000ULL;
-	write_ticks=((guint64)statbuf.st_mtime*10000000)+116444736000000000ULL;
-	
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: aticks: %" G_GUINT64_FORMAT " cticks: %" G_GUINT64_FORMAT " wticks: %" G_GUINT64_FORMAT, __func__,
-		  access_ticks, create_ticks, write_ticks);
-
-	if(create_time!=NULL) {
-		create_time->dwLowDateTime = create_ticks & 0xFFFFFFFF;
-		create_time->dwHighDateTime = create_ticks >> 32;
-	}
-	
-	if(access_time!=NULL) {
-		access_time->dwLowDateTime = access_ticks & 0xFFFFFFFF;
-		access_time->dwHighDateTime = access_ticks >> 32;
-	}
-	
-	if(write_time!=NULL) {
-		write_time->dwLowDateTime = write_ticks & 0xFFFFFFFF;
-		write_time->dwHighDateTime = write_ticks >> 32;
-	}
-
-	return(TRUE);
-}
-
 static gboolean file_setfiletime(FileHandle *filehandle,
 				 const FILETIME *create_time G_GNUC_UNUSED,
 				 const FILETIME *access_time,
@@ -2826,31 +2759,6 @@ GetFileSize(gpointer handle, guint32 *highsize)
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
 		mono_fdhandle_unref ((MonoFDHandle*) filehandle);
 		return INVALID_FILE_SIZE;
-	}
-
-	mono_fdhandle_unref ((MonoFDHandle*) filehandle);
-	return ret;
-}
-
-gboolean
-mono_w32file_get_times(gpointer handle, FILETIME *create_time, FILETIME *access_time, FILETIME *write_time)
-{
-	FileHandle *filehandle;
-	gboolean ret;
-
-	if (!mono_fdhandle_lookup_and_ref(GPOINTER_TO_INT(handle), (MonoFDHandle**) &filehandle)) {
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return FALSE;
-	}
-
-	switch (((MonoFDHandle*) filehandle)->type) {
-	case MONO_FDTYPE_FILE:
-		ret = file_getfiletime(filehandle, create_time, access_time, write_time);
-		break;
-	default:
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		mono_fdhandle_unref ((MonoFDHandle*) filehandle);
-		return FALSE;
 	}
 
 	mono_fdhandle_unref ((MonoFDHandle*) filehandle);
