@@ -146,6 +146,8 @@ compile-tailcall: $(TESTS_TAILCALL_COMPILE) $(TESTSAOT_TAILCALL)
 
 if FULL_AOT_TESTS
 
+# FullAOT does not allow --compile-all.
+
 else
 
 TEST_TAILCALL_COMPILE_ALL=--runtime-args "--compile-all"
