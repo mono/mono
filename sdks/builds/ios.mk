@@ -293,10 +293,6 @@ $$(TOP)/sdks/builds/ios-$(1)/$(2)-apple-darwin10.h: .stamp-ios-$(1)-configure $$
 
 build-ios-$(1): $$(TOP)/sdks/builds/ios-$(1)/$(2)-apple-darwin10.h
 
-.PHONY: package-ios-$(1)
-package-ios-$(1):
-	$$(MAKE) -C $$(TOP)/sdks/builds/ios-$(1)/mono install
-
 build-ios-$(1)-$$(CONFIGURATION): $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h
 
 $$(eval $$(call RuntimeTemplate,ios-$(1)))
