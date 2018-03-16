@@ -124,7 +124,7 @@ typedef struct
 
 // Does the ABI have a volatile non-parameter register, so tailcall
 // can pass context to generics or interfaces?
-#define MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 1
+#define MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0 // FIXME?
 
 /*-----------------------------------------------*/
 /* Macros used to generate instructions          */
