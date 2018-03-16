@@ -69,6 +69,7 @@ package-android-$(1)-$$(CONFIGURATION)::
 .PHONY: package-$(1)-$$(CONFIGURATION)
 package-$(1)-$$(CONFIGURATION)::
 	$$(MAKE) -C $$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION)/mono install
+	$$(MAKE) -C $$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION)/support install
 
 .PHONY: package-$(1)
 package-$(1):
