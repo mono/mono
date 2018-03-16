@@ -22,9 +22,19 @@ class A : Attribute
         return a.X;
     }
 
-    public static void Assert (bool b) {
-        if (!b)
-            throw new Exception("Assert failed");
+    private static int AssertCount = 0;
+
+    public static void Assert (
+        bool b, 
+        [CallerFilePath] string sourceFile = null, 
+        [CallerLineNumber] int lineNumber = 0
+    ) {
+        AssertCount++;
+
+        if (!b) {
+            Console.Error.WriteLine($"Assert failed at {sourceFile}:{lineNumber}");
+            Environment.Exit(AssertCount);
+        }
     }
 }
  

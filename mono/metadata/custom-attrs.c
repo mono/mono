@@ -228,18 +228,19 @@ load_cattr_type_object (MonoImage *image, MonoType *t, const char *p, const char
 
 	if (!decode_blob_value_checked (p, boundp, slen, &p, error))
 		return NULL;
-	if (slen > 0 && !bcheck_blob (p, *slen - 1, boundp, error))
+	if (*slen > 0 && !bcheck_blob (p, *slen - 1, boundp, error))
 		return NULL;
 	n = (char *)g_memdup (p, *slen + 1);
 	n [*slen] = 0;
 	t = cattr_type_from_name (n, image, FALSE, error);
 	g_free (n);
 	return_val_if_nok (error, NULL);
-	*end = p + *slen;
 
 	rt = mono_type_get_object_checked (mono_domain_get (), t, error);
-	if (!mono_error_ok (error))
+	if (!is_ok (error))
 		return NULL;
+
+	*end = p + *slen;
 
 	return rt;
 }
@@ -270,9 +271,9 @@ load_cattr_value (MonoImage *image, MonoType *t, const char *p, const char *boun
 	if (type == MONO_TYPE_GENERICINST) {
 		MonoGenericClass * mgc = t->data.generic_class;
 		MonoClass * cc = mgc->container_class;
-		if (cc->enumtype) {
-			tklass = cc->element_class;
-			t = m_class_get_byval_arg (cc->element_class);
+		if (m_class_is_enumtype (cc)) {
+			tklass = m_class_get_element_class (cc);
+			t = m_class_get_byval_arg (tklass);
 			type = t->type;
 		} else {
 			g_error ("Unhandled type of generic instance in load_cattr_value: %s", m_class_get_name (cc));
@@ -465,8 +466,8 @@ handle_enum:
 		if (basetype == MONO_TYPE_GENERICINST) {
 			MonoGenericClass * mgc = m_class_get_byval_arg (tklass)->data.generic_class;
 			MonoClass * cc = mgc->container_class;
-			if (cc->enumtype) {
-				basetype = m_class_get_byval_arg (cc->element_class)->type;
+			if (m_class_is_enumtype (cc)) {
+				basetype = m_class_get_byval_arg (m_class_get_element_class (cc))->type;
 			} else {
 				g_error ("Unhandled type of generic instance in load_cattr_value: %s[]", m_class_get_name (cc));
 			}
