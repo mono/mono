@@ -48,6 +48,7 @@
 #include "utils/strenc.h"
 #include "utils/refcount.h"
 
+#define TICKS_PER_MICROSECOND 10L
 #define TICKS_PER_MILLISECOND 10000L
 #define TICKS_PER_SECOND 10000000L
 #define TICKS_PER_MINUTE 600000000L
@@ -1504,15 +1505,15 @@ static gboolean file_setfiletime(FileHandle *filehandle,
 	if (access_time) {
 		guint64 actime = convert_unix_filetime_ms (access_time, "access");
 		times [0].tv_sec = actime / TICKS_PER_SECOND;
-		times [0].tv_usec = actime % TICKS_PER_SECOND;
+		times [0].tv_usec = (actime % TICKS_PER_SECOND) / TICKS_PER_MICROSECOND;
 	} else {
 #if HAVE_STRUCT_STAT_ST_ATIMESPEC
 		times [0].tv_sec = statbuf.st_atimespec.tv_sec;
-		times [0].tv_usec = statbuf.st_atimespec.tv_nsec / 100;
+		times [0].tv_usec = statbuf.st_atimespec.tv_nsec / 1000;
 #else
 		times [0].tv_sec = statbuf.st_atime;
 #if HAVE_STRUCT_STAT_ST_ATIM
-		times [0].tv_usec = statbuf.st_atim.tv_nsec / 100;
+		times [0].tv_usec = statbuf.st_atim.tv_nsec / 1000;
 #endif
 #endif
 	}
@@ -1520,15 +1521,15 @@ static gboolean file_setfiletime(FileHandle *filehandle,
 	if (write_time) {
 		guint64 wtime = convert_unix_filetime_ms (write_time, "write");
 		times [1].tv_sec = wtime / TICKS_PER_SECOND;
-		times [1].tv_usec = wtime % TICKS_PER_SECOND;
+		times [1].tv_usec = (wtime % TICKS_PER_SECOND) / TICKS_PER_MICROSECOND;
 	} else {
 #if HAVE_STRUCT_STAT_ST_ATIMESPEC
 		times [1].tv_sec = statbuf.st_mtimespec.tv_sec;
-		times [1].tv_usec = statbuf.st_mtimespec.tv_nsec / 100;
+		times [1].tv_usec = statbuf.st_mtimespec.tv_nsec / 1000;
 #else
 		times [1].tv_sec = statbuf.st_mtime;
 #if HAVE_STRUCT_STAT_ST_ATIM
-		times [1].tv_usec = statbuf.st_mtim.tv_nsec / 100;
+		times [1].tv_usec = statbuf.st_mtim.tv_nsec / 1000;
 #endif
 #endif
 	}
