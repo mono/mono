@@ -48,6 +48,13 @@
 #include "utils/strenc.h"
 #include "utils/refcount.h"
 
+#define TICKS_PER_MILLISECOND 10000L
+#define TICKS_PER_SECOND 10000000L
+#define TICKS_PER_MINUTE 600000000L
+#define TICKS_PER_HOUR 36000000000LL
+#define TICKS_PER_DAY 864000000000LL
+
+
 #define INVALID_HANDLE_VALUE (GINT_TO_POINTER (-1))
 
 typedef struct {
@@ -2790,12 +2797,6 @@ mono_w32file_set_times(gpointer handle, const FILETIME *create_time, const FILET
  * January 1 1601 GMT
  */
 
-#define TICKS_PER_MILLISECOND 10000L
-#define TICKS_PER_SECOND 10000000L
-#define TICKS_PER_MINUTE 600000000L
-#define TICKS_PER_HOUR 36000000000LL
-#define TICKS_PER_DAY 864000000000LL
-
 #define isleap(y) ((y) % 4 == 0 && ((y) % 100 != 0 || (y) % 400 == 0))
 
 static const guint16 mon_yday[2][13]={
@@ -3401,32 +3402,29 @@ mono_w32file_get_attributes_ex (const gunichar2 *name, MonoIOStat *stat)
 	stat->attributes = _wapi_stat_to_file_attributes (utf8_name, &buf, &linkbuf);
 	stat->length = (stat->attributes & FILE_ATTRIBUTE_DIRECTORY) ? 0 : buf.st_size;
 
-// Multiply seconds by this
-#define SECMULT (1000*1000*10ULL)
-
 // Constants to convert Unix times to the API expected by .NET and Windows
 #define CONVERT_BASE  116444736000000000ULL
 
 #if HAVE_STRUCT_STAT_ST_ATIMESPEC
 	if (buf.st_mtimespec.tv_sec < buf.st_ctimespec.tv_sec || (buf.st_mtimespec.tv_sec == buf.st_ctimespec.tv_sec && buf.st_mtimespec.tv_nsec < buf.st_ctimespec.tv_nsec))
-		stat->creation_time = buf.st_mtimespec.tv_sec * SECMULT + (buf.st_mtimespec.tv_nsec / 100) + CONVERT_BASE;
+		stat->creation_time = buf.st_mtimespec.tv_sec * TICKS_PER_SECOND + (buf.st_mtimespec.tv_nsec / 100) + CONVERT_BASE;
 	else
-		stat->creation_time = buf.st_ctimespec.tv_sec * SECMULT + (buf.st_ctimespec.tv_nsec / 100) + CONVERT_BASE;
+		stat->creation_time = buf.st_ctimespec.tv_sec * TICKS_PER_SECOND + (buf.st_ctimespec.tv_nsec / 100) + CONVERT_BASE;
 
-	stat->last_access_time = buf.st_atimespec.tv_sec * SECMULT + (buf.st_atimespec.tv_nsec / 100) + CONVERT_BASE;
-	stat->last_write_time = buf.st_mtimespec.tv_sec * SECMULT + (buf.st_mtimespec.tv_nsec / 100) + CONVERT_BASE;
+	stat->last_access_time = buf.st_atimespec.tv_sec * TICKS_PER_SECOND + (buf.st_atimespec.tv_nsec / 100) + CONVERT_BASE;
+	stat->last_write_time = buf.st_mtimespec.tv_sec * TICKS_PER_SECOND + (buf.st_mtimespec.tv_nsec / 100) + CONVERT_BASE;
 #elif HAVE_STRUCT_STAT_ST_ATIM
 	if (buf.st_mtime < buf.st_ctime || (buf.st_mtime == buf.st_ctime && buf.st_mtim.tv_nsec < buf.st_ctim.tv_nsec))
-		stat->creation_time = buf.st_mtime * SECMULT + (buf.st_mtim.tv_nsec / 100) + CONVERT_BASE;
+		stat->creation_time = buf.st_mtime * TICKS_PER_SECOND + (buf.st_mtim.tv_nsec / 100) + CONVERT_BASE;
 	else
-		stat->creation_time = buf.st_ctime * SECMULT + (buf.st_ctim.tv_nsec / 100) + CONVERT_BASE;
+		stat->creation_time = buf.st_ctime * TICKS_PER_SECOND + (buf.st_ctim.tv_nsec / 100) + CONVERT_BASE;
 
-	stat->last_access_time = buf.st_atime * SECMULT + (buf.st_atim.tv_nsec / 100) + CONVERT_BASE;
-	stat->last_write_time = buf.st_mtime * SECMULT + (buf.st_mtim.tv_nsec / 100) + CONVERT_BASE;
+	stat->last_access_time = buf.st_atime * TICKS_PER_SECOND + (buf.st_atim.tv_nsec / 100) + CONVERT_BASE;
+	stat->last_write_time = buf.st_mtime * TICKS_PER_SECOND + (buf.st_mtim.tv_nsec / 100) + CONVERT_BASE;
 #else
-	stat->creation_time = (((guint64) (buf.st_mtime < buf.st_ctime ? buf.st_mtime : buf.st_ctime)) * 10 * 1000 * 1000) + CONVERT_BASE;
-	stat->last_access_time = (((guint64) (buf.st_atime)) * SECMULT) + CONVERT_BASE;
-	stat->last_write_time = (((guint64) (buf.st_mtime)) * SECMULT) + CONVERT_BASE;
+	stat->creation_time = (((guint64) (buf.st_mtime < buf.st_ctime ? buf.st_mtime : buf.st_ctime)) * TICKS_PER_SECOND) + CONVERT_BASE;
+	stat->last_access_time = (((guint64) (buf.st_atime)) * TICKS_PER_SECOND) + CONVERT_BASE;
+	stat->last_write_time = (((guint64) (buf.st_mtime)) * TICKS_PER_SECOND) + CONVERT_BASE;
 #endif
 
 	g_free (utf8_name);
