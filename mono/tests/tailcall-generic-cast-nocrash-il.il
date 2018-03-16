@@ -33,6 +33,7 @@ This derived from nearby tailcall-generic-cast-cs.cs.
 	.method public static void
 	check (int64 stack1, int64 stack2) noinlining
 	{
+/*
 		ldsfld int32 C::i
 		ldc.i4.1
 		add
@@ -53,6 +54,7 @@ This derived from nearby tailcall-generic-cast-cs.cs.
 		ldc.i4.1
 		tail. call void [mscorlib]System.Environment::Exit (int32)
 IL_0037:
+*/
 		ret
 	}
 
