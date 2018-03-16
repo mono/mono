@@ -5435,6 +5435,15 @@ interp_stop_single_stepping (void)
 	ss_enabled = FALSE;
 }
 
+static gboolean
+interp_ip_in_interpreter_loop (gpointer ip)
+{
+	gpointer start = (gpointer) interp_exec_method_full;
+	gpointer end = start + 0x10000;
+
+	return ip >= start && ip <= end;
+}
+
 void
 mono_ee_interp_init (const char *opts)
 {
@@ -5473,5 +5482,6 @@ mono_ee_interp_init (const char *opts)
 	c.frame_arg_to_storage = interp_frame_arg_to_storage;
 	c.start_single_stepping = interp_start_single_stepping;
 	c.stop_single_stepping = interp_stop_single_stepping;
+	c.ip_in_interpreter_loop = interp_ip_in_interpreter_loop;
 	mini_install_interp_callbacks (&c);
 }

@@ -1874,6 +1874,12 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 	gboolean in_interp;
 
 	g_assert (ctx != NULL);
+
+	if (mini_get_interp_callbacks ()->ip_in_interpreter_loop (MONO_CONTEXT_GET_IP (ctx))) {
+		MonoException *ex = mono_get_exception_execution_engine ("Invalid interpreter state");
+		obj = (MonoObject *) ex;
+	}
+
 	if (!obj) {
 		MonoException *ex = mono_get_exception_null_reference ();
 		MonoString *msg = mono_string_new_checked (domain, "Object reference not set to an instance of an object", error);

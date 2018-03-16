@@ -15,7 +15,7 @@
 #ifndef __MONO_EE_H__
 #define __MONO_EE_H__
 
-#define MONO_EE_API_VERSION 0x2
+#define MONO_EE_API_VERSION 0x3
 
 typedef struct _MonoInterpStackIter MonoInterpStackIter;
 
@@ -51,6 +51,7 @@ struct _MonoEECallbacks {
 	MonoInterpFrameHandle (*frame_get_parent) (MonoInterpFrameHandle frame);
 	void (*start_single_stepping) (void);
 	void (*stop_single_stepping) (void);
+	gboolean (*ip_in_interpreter_loop) (gpointer ip);
 };
 
 typedef struct _MonoEECallbacks MonoEECallbacks;
