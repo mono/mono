@@ -1791,6 +1791,34 @@ namespace Mono.CSharp
 			}
 		}
 
+		ILiteralConstant handle_binary (Location loc)
+		{
+			int d;
+			ulong ul = 0;
+			
+			get_char ();
+			int digits = 0;
+			while ((d = peek_char ()) != -1){
+				if (d == '0' || d == '1'){
+					ul = (ul << 1);
+					digits++;
+					if (d == '1')
+						ul |= 1;
+					get_char ();
+					if (digits > 64){
+						Error_NumericConstantTooLong ();
+						return new IntLiteral (context.BuiltinTypes, 0, loc);
+					}
+				} else
+					break;
+			}
+			if (digits == 0){
+				Report.Error (1013, Location, "Invalid number");
+				return new IntLiteral (context.BuiltinTypes, 0, loc);
+			}
+			return integer_type_suffix (ul, peek_char (), loc);
+		}
+		
 		//
 		// Invoked if we know we have .digits or digits
 		//
@@ -1816,6 +1844,17 @@ namespace Mono.CSharp
 
 					if (peek == 'x' || peek == 'X') {
 						val = res = handle_hex (loc);
+#if FULL_AST
+						res.ParsedValue = reader.ReadChars (read_start, reader.Position - 1);
+#endif
+
+						return Token.LITERAL;
+					} else if (peek == 'b' || peek == 'B'){
+						if (context.Settings.Version < LanguageVersion.V_7){
+							Report.FeatureIsNotAvailable (context, Location, "binary literals");
+							return Token.ERROR;
+						}
+						val = res = handle_binary (loc);
 #if FULL_AST
 						res.ParsedValue = reader.ReadChars (read_start, reader.Position - 1);
 #endif
