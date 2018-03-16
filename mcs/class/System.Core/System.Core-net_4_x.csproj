@@ -385,6 +385,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Linq\src\System\Linq\Utilities.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Linq\src\System\Linq\Where.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Linq\src\System\Linq\Zip.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Algorithms\src\System\Security\Cryptography\IncrementalHash.net46.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="..\..\build\common\SR.cs" />
     <Compile Include="..\referencesource\System.Core\Microsoft\Scripting\Utils\Action.cs" />

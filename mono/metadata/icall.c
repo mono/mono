@@ -1890,7 +1890,7 @@ ves_icall_System_Reflection_FieldInfo_GetTypeModifiers (MonoReflectionFieldHandl
 }
 
 ICALL_EXPORT int
-vell_icall_get_method_attributes (MonoMethod *method)
+ves_icall_get_method_attributes (MonoMethod *method)
 {
 	return method->flags;
 }
@@ -5357,7 +5357,7 @@ ves_icall_System_RuntimeType_getFullName (MonoReflectionTypeHandle object, gbool
 }
 
 ICALL_EXPORT int
-vell_icall_RuntimeType_get_core_clr_security_level (MonoReflectionTypeHandle rfield, MonoError *error)
+ves_icall_RuntimeType_get_core_clr_security_level (MonoReflectionTypeHandle rfield, MonoError *error)
 {
 	error_init (error);
 	MonoType *type = MONO_HANDLE_GETVAL (rfield, type);
@@ -5711,7 +5711,7 @@ ves_icall_Mono_RuntimeMarshal_FreeAssemblyName (MonoAssemblyName *aname, gboolea
 ICALL_EXPORT void
 ves_icall_Mono_Runtime_DisableMicrosoftTelemetry (void)
 {
-#ifdef HOST_DARWIN
+#ifdef TARGET_OSX
 	mono_merp_disable ();
 #else
 	// Icall has platform check in managed too.
@@ -5722,7 +5722,7 @@ ves_icall_Mono_Runtime_DisableMicrosoftTelemetry (void)
 ICALL_EXPORT void
 ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (char *appBundleID, char *appSignature, char *appVersion, char *merpGUIPath)
 {
-#ifdef HOST_DARWIN
+#ifdef TARGET_OSX
 	mono_merp_enable (appBundleID, appSignature, appVersion, merpGUIPath);
 #else
 	// Icall has platform check in managed too.
@@ -7804,7 +7804,7 @@ mono_type_from_blob_type (MonoType *type, MonoTypeEnum blob_type, MonoType *real
 }
 
 ICALL_EXPORT MonoObject*
-property_info_get_default_value (MonoReflectionProperty *property)
+ves_icall_property_info_get_default_value (MonoReflectionProperty *property)
 {
 	ERROR_DECL (error);
 	MonoType blob_type;

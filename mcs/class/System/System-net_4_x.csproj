@@ -222,6 +222,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\SortedSetEqualityComparer.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\Stack.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\StackDebugView.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Diagnostics.StackTrace\src\System\Diagnostics\StackFrameExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.Compression\src\System\IO\Compression\CompressionLevel.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.Compression\src\System\IO\Compression\CompressionMode.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.Compression\src\System\IO\Compression\GZipStream.cs" />
@@ -247,6 +248,8 @@
     <Compile Include="..\..\..\external\corefx\src\System.Net.WebSockets\src\System\Net\WebSockets\WebSocketState.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Private.Uri\src\System\UriBuilder.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\CodeDom\Compiler\IndentedTextWriter.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\StringNormalizationExtensions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Runtime.InteropServices\src\System\Security\SecureStringMarshal.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime\src\System\Collections\Generic\ISet.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\OpenFlags.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\StoreLocation.cs" />
