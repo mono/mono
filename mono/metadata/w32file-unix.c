@@ -54,6 +54,8 @@
 #define TICKS_PER_HOUR 36000000000LL
 #define TICKS_PER_DAY 864000000000LL
 
+// Constants to convert Unix times to the API expected by .NET and Windows
+#define CONVERT_BASE  116444736000000000ULL
 
 #define INVALID_HANDLE_VALUE (GINT_TO_POINTER (-1))
 
@@ -103,7 +105,7 @@ time_t_to_filetime (time_t timeval, FILETIME *filetime)
 {
 	guint64 ticks;
 	
-	ticks = ((guint64)timeval * 10000000) + 116444736000000000ULL;
+	ticks = ((guint64)timeval * 10000000) + CONVERT_BASE;
 	filetime->dwLowDateTime = ticks & 0xFFFFFFFF;
 	filetime->dwHighDateTime = ticks >> 32;
 }
@@ -1446,21 +1448,21 @@ static gboolean file_setfiletime(FileHandle *filehandle,
 		/* This is (time_t)0.  We can actually go to INT_MIN,
 		 * but this will do for now.
 		 */
-		if (access_ticks < 116444736000000000ULL) {
+		if (access_ticks < CONVERT_BASE) {
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: attempt to set access time too early",
 				   __func__);
 			mono_w32error_set_last (ERROR_INVALID_PARAMETER);
 			return(FALSE);
 		}
 
-		if (sizeof (utbuf.actime) == 4 && ((access_ticks - 116444736000000000ULL) / 10000000) > INT_MAX) {
+		if (sizeof (utbuf.actime) == 4 && ((access_ticks - CONVERT_BASE) / 10000000) > INT_MAX) {
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: attempt to set write time that is too big for a 32bits time_t",
 				   __func__);
 			mono_w32error_set_last (ERROR_INVALID_PARAMETER);
 			return(FALSE);
 		}
 
-		utbuf.actime=(access_ticks - 116444736000000000ULL) / 10000000;
+		utbuf.actime=(access_ticks - CONVERT_BASE) / 10000000;
 	} else {
 		utbuf.actime=statbuf.st_atime;
 	}
@@ -1471,20 +1473,20 @@ static gboolean file_setfiletime(FileHandle *filehandle,
 		/* This is (time_t)0.  We can actually go to INT_MIN,
 		 * but this will do for now.
 		 */
-		if (write_ticks < 116444736000000000ULL) {
+		if (write_ticks < CONVERT_BASE) {
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: attempt to set write time too early",
 				   __func__);
 			mono_w32error_set_last (ERROR_INVALID_PARAMETER);
 			return(FALSE);
 		}
-		if (sizeof (utbuf.modtime) == 4 && ((write_ticks - 116444736000000000ULL) / 10000000) > INT_MAX) {
+		if (sizeof (utbuf.modtime) == 4 && ((write_ticks - CONVERT_BASE) / 10000000) > INT_MAX) {
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: attempt to set write time that is too big for a 32bits time_t",
 				   __func__);
 			mono_w32error_set_last (ERROR_INVALID_PARAMETER);
 			return(FALSE);
 		}
 		
-		utbuf.modtime=(write_ticks - 116444736000000000ULL) / 10000000;
+		utbuf.modtime=(write_ticks - CONVERT_BASE) / 10000000;
 	} else {
 		utbuf.modtime=statbuf.st_mtime;
 	}
@@ -3405,9 +3407,6 @@ mono_w32file_get_attributes_ex (const gunichar2 *name, MonoIOStat *stat)
 
 	stat->attributes = _wapi_stat_to_file_attributes (utf8_name, &buf, &linkbuf);
 	stat->length = (stat->attributes & FILE_ATTRIBUTE_DIRECTORY) ? 0 : buf.st_size;
-
-// Constants to convert Unix times to the API expected by .NET and Windows
-#define CONVERT_BASE  116444736000000000ULL
 
 #if HAVE_STRUCT_STAT_ST_ATIMESPEC
 	if (buf.st_mtimespec.tv_sec < buf.st_ctimespec.tv_sec || (buf.st_mtimespec.tv_sec == buf.st_ctimespec.tv_sec && buf.st_mtimespec.tv_nsec < buf.st_ctimespec.tv_nsec))
