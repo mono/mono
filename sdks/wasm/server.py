@@ -1,14 +1,32 @@
-import SimpleHTTPServer
-import SocketServer
+import sys
 
-PORT = 8000
+if sys.version_info[0] == 2:
 
-class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
-    pass
+    import SimpleHTTPServer
+    import SocketServer
 
-Handler.extensions_map['.wasm'] = 'application/wasm'
+    PORT = 8000
 
-httpd = SocketServer.TCPServer(("", PORT), Handler)
+    class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
+        pass
 
-print "serving at port", PORT
-httpd.serve_forever()
+    Handler.extensions_map['.wasm'] = 'application/wasm'
+
+    httpd = SocketServer.TCPServer(("", PORT), Handler)
+
+    print ("python 2 serving at port", PORT)
+    httpd.serve_forever()
+
+
+if sys.version_info[0] == 3:
+    
+    import http.server
+    import socketserver
+
+    PORT = 8000
+
+    Handler = http.server.SimpleHTTPRequestHandler
+    with socketserver.TCPServer(("", PORT), Handler) as httpd:
+        print("python 3 serving at port", PORT)
+        httpd.serve_forever()
+
