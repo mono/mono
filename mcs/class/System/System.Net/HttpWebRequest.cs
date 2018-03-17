@@ -983,7 +983,7 @@ namespace System.Net
 				WebConnection.Debug ($"HWR GET RESPONSE: Req={ID} {oldCompletion != null}");
 				if (oldCompletion != null) {
 					oldCompletion.ThrowOnError ();
-					if (haveResponse && oldCompletion.IsCompleted)
+					if (haveResponse && oldCompletion.Task.IsCompleted)
 						return webResponse;
 					throw new InvalidOperationException ("Cannot re-call start of asynchronous " +
 								"method while a previous call is still in progress.");
@@ -1052,7 +1052,7 @@ namespace System.Net
 				try {
 					if (mustReadAll)
 						await stream.ReadAllAsync (redirect || ntlm != null, cancellationToken).ConfigureAwait (false);
-					operation.CompleteResponseRead (true);
+					operation.Finish (true);
 					response.Close ();
 				} catch (Exception e) {
 					throwMe = GetWebException (e);
