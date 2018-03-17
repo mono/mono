@@ -4211,6 +4211,7 @@ mono_profiler_init_log (const char *desc)
 	}
 
 	mono_profiler_enable_allocations ();
+	mono_profiler_enable_clauses ();
 	mono_profiler_enable_sampling (handle);
 
 	/*
