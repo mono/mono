@@ -263,8 +263,8 @@ _ios-$(1)_LDFLAGS= \
 _ios-$(1)_CONFIGURE_FLAGS= \
 	$$(ios-$(1)_CONFIGURE_FLAGS) \
 	--target=$(2)-darwin \
-	--cache-file=$$(TOP)/sdks/builds/ios-$(1).config.cache \
-	--prefix=$$(TOP)/sdks/out/ios-$(1) \
+	--cache-file=$$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION).config.cache \
+	--prefix=$$(TOP)/sdks/out/ios-$(1)-$$(CONFIGURATION) \
 	--disable-boehm \
 	--disable-btls \
 	--disable-iconv \
@@ -280,20 +280,18 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 .stamp-ios-$(1)-toolchain:
 	touch $$@
 
-.stamp-ios-$(1)-configure-$$(CONFIGURATION): | build-ios-llvm
+.stamp-ios-$(1)-$$(CONFIGURATION)-configure: | build-ios-llvm
 
-$$(TOP)/sdks/builds/ios-$(1)/mono/utils/mono-dtrace.h: .stamp-ios-$(1)-configure
+$$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/mono/utils/mono-dtrace.h: .stamp-ios-$(1)-$$(CONFIGURATION)-configure
 	$$(MAKE) -C $$(dir $$@) $$(notdir $$@)
 
-$$(TOP)/sdks/builds/ios-$(1)/$(2)-apple-darwin10.h: .stamp-ios-$(1)-configure $$(TOP)/sdks/builds/ios-$(1)/mono/utils/mono-dtrace.h $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe
-	cd $$(TOP)/sdks/builds/ios-$(1) && \
+$$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(2)-apple-darwin10.h: .stamp-ios-$(1)-$$(CONFIGURATION)-configure $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/mono/utils/mono-dtrace.h $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe
+	cd $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION) && \
 		MONO_PATH=$(TOP)/tools/offsets-tool/CppSharp/osx_32 \
 			mono --arch=32 --debug $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe \
-				--gen-ios --abi $(2)-apple-darwin10 --out $$(TOP)/sdks/builds/ios-$(1)/ --mono $$(TOP) --targetdir $$(TOP)/sdks/builds/ios-$(1)
+				--gen-ios --abi $(2)-apple-darwin10 --out $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/ --mono $$(TOP) --targetdir $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)
 
-build-ios-$(1): $$(TOP)/sdks/builds/ios-$(1)/$(2)-apple-darwin10.h
-
-build-ios-$(1)-$$(CONFIGURATION): $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h
+build-ios-$(1)-$$(CONFIGURATION): $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(2)-apple-darwin10.h
 
 $$(eval $$(call RuntimeTemplate,ios-$(1)))
 
