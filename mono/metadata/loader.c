@@ -1955,11 +1955,7 @@ void
 mono_free_method  (MonoMethod *method)
 {
 	MONO_PROFILER_RAISE (method_free, (method));
-	
-	/* FIXME: This hack will go away when the profiler will support freeing methods */
-	if (G_UNLIKELY (mono_profiler_installed ()))
-		return;
-	
+
 	if (method->signature) {
 		/* 
 		 * FIXME: This causes crashes because the types inside signatures and
