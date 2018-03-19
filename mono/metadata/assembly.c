@@ -687,7 +687,7 @@ assembly_names_compare_versions (MonoAssemblyName *l, MonoAssemblyName *r, int m
 #define CMP(field) do {				\
 		if (l-> field < r-> field && i < maxcomps) return -1;	\
 		if (l-> field > r-> field && i < maxcomps) return 1;	\
-	} while (0);
+	} while (0)
 	CMP (major);
 	++i;
 	CMP (minor);
