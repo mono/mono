@@ -420,3 +420,21 @@ mono_mempool_get_bytes_allocated (void)
 {
 	return UnlockedRead64 (&total_bytes_allocated);
 }
+
+void 
+mono_mempool_foreach_block(MonoMemPool* pool, mono_mempool_block_proc callback, void* user_data)
+{
+	MonoMemPool *current = pool;
+
+	while (current)
+	{
+		gpointer start = (guint8*)current + SIZEOF_MEM_POOL;
+		gpointer end = (guint8*)start + current->size;
+
+		callback(start, end, user_data);
+		current = current->next;
+	}
+}
+
+
+

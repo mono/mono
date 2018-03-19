@@ -12,6 +12,7 @@
 #include <mono/metadata/row-indexes.h>
 #include <mono/metadata/image.h>
 #include <mono/metadata/object-forward.h>
+#include <glib.h>
 
 MONO_BEGIN_DECLS
 
@@ -436,6 +437,7 @@ MONO_API int            mono_type_stack_size            (MonoType        *type,
 
 MONO_API mono_bool       mono_type_generic_inst_is_valuetype      (MonoType *type);
 MONO_API mono_bool       mono_metadata_generic_class_is_valuetype (MonoGenericClass *gclass);
+MONO_API void            mono_metadata_generic_class_foreach(GFunc func, gpointer user_data);
 
 MONO_API unsigned int          mono_metadata_type_hash         (MonoType *t1);
 MONO_API mono_bool       mono_metadata_type_equal        (MonoType *t1, MonoType *t2);

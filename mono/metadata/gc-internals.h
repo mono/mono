@@ -179,6 +179,7 @@ mono_gc_register_object_with_weak_fields (MonoObjectHandle obj);
 typedef void (*MonoFinalizationProc)(gpointer, gpointer); // same as SGenFinalizationProc, GC_finalization_proc
 
 void  mono_gc_register_for_finalization (MonoObject *obj, MonoFinalizationProc user_data);
+void  mono_gc_strong_handle_foreach(GFunc func, gpointer user_data);
 void  mono_gc_add_memory_pressure (gint64 value);
 MONO_API int   mono_gc_register_root (char *start, size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg);
 void  mono_gc_deregister_root (char* addr);

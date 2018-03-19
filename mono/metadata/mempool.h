@@ -43,4 +43,9 @@ mono_mempool_strdup        (MonoMemPool *pool, const char *s);
 MONO_API uint32_t
 mono_mempool_get_allocated (MonoMemPool *pool);
 
+typedef void(*mono_mempool_block_proc)(void* start, void* end, void* user_data);
+
+MONO_API void
+mono_mempool_foreach_block(MonoMemPool* pool, mono_mempool_block_proc callback, void* user_data);
+
 #endif

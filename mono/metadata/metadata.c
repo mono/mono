@@ -5830,6 +5830,44 @@ mono_metadata_generic_class_is_valuetype (MonoGenericClass *gclass)
 	return m_class_is_valuetype (gclass->container_class);
 }
 
+typedef struct
+{
+	GFunc func;
+	gpointer user_data;
+} GenericClassForeachData;
+
+
+static void
+generic_class_foreach_callback(gpointer key, gpointer value, gpointer user_data)
+{
+	GenericClassForeachData* data = (GenericClassForeachData*)user_data;
+	data->func(key, data->user_data);
+}
+
+void
+mono_metadata_generic_class_foreach(GFunc func, gpointer user_data)
+{
+	GenericClassForeachData data;
+	guint i;
+
+	data.func = func;
+	data.user_data = user_data;
+
+	for(i = 0; i < HASH_TABLE_SIZE; ++i)
+	{ 
+		MonoImageSet* imageSet = img_set_cache[i];
+
+		if (imageSet == NULL || imageSet->gclass_cache == NULL)
+			continue;
+
+		mono_image_set_lock(imageSet);
+
+		mono_conc_hashtable_foreach(imageSet->gclass_cache, generic_class_foreach_callback, &data);
+
+		mono_image_set_unlock(imageSet);
+	}
+}
+
 static gboolean
 _mono_metadata_generic_class_equal (const MonoGenericClass *g1, const MonoGenericClass *g2, gboolean signature_only)
 {
