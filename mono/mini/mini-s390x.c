@@ -443,7 +443,6 @@ static inline void add_stackParm (guint *, size_data *, ArgInfo *, gint);
 static inline void add_float (guint *, size_data *, ArgInfo *);
 static CallInfo * get_call_info (MonoMemPool *, MonoMethodSignature *);
 static guchar * emit_float_to_int (MonoCompile *, guchar *, int, int, int, gboolean);
-static guint8 * emit_load_volatile_arguments (guint8 *, MonoCompile *, CallInfo *);
 static __inline__ void emit_unwind_regs(MonoCompile *, guint8 *, int, int, long);
 static void compare_and_branch(MonoBasicBlock *, MonoInst *, int, gboolean);
 
@@ -4309,8 +4308,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				}
 			}
 
-			// code =  emit_load_volatile_arguments (code, cfg, cinfo);
-
 			s390_lg  (code, s390_r14, 0, STK_BASE, S390_RET_ADDR_OFFSET);
 			mono_add_patch_info (cfg, code - cfg->native_code, 
 					     MONO_PATCH_INFO_METHOD_JUMP, 
@@ -6100,109 +6097,6 @@ mono_arch_patch_code (MonoCompile *cfg, MonoMethod *method, MonoDomain *domain,
 				s390_patch_rel (ip, (guint64) target);
 		}
 	}
-}
-
-/*========================= End of Function ========================*/
-
-/*------------------------------------------------------------------*/
-/*                                                                  */
-/* Name         - emit_load_volatile_arguments                      */
-/*                                                                  */
-/* Function     - Emit the instructions to reload parameter regist- */
-/*                registers for use with "tail" operations.         */
-/*                                                                  */
-/*                The register loading operations performed here    */
-/*                are the mirror of the store operations performed  */
-/*                in mono_arch_emit_prolog and need to be kept in   */
-/*                synchronization with it.                          */
-/*                                                                  */
-/*------------------------------------------------------------------*/
-
-guint8 *
-emit_load_volatile_arguments (guint8 *code, MonoCompile *cfg, CallInfo *cinfo)
-{
-	MonoInst *inst;
-	int pos = 0, i;
-
-	if (cinfo->struct_ret) {
-		ArgInfo *ainfo = &cinfo->ret;
-		inst         = cfg->vret_addr;
-		s390_lg (code, ainfo->reg, 0, inst->inst_basereg, inst->inst_offset);
-	}
-
-	for (i = 0; i < cinfo->sig->param_count + cinfo->sig->hasthis; ++i) {
-		ArgInfo *ainfo = cinfo->args + i;
-		inst = cfg->args [pos];
-
-		if (inst->opcode == OP_REGVAR) {
-			if (ainfo->regtype == RegTypeGeneral)
-				s390_lgr (code, ainfo->reg, inst->dreg);
-			else if (ainfo->regtype == RegTypeFP) {
-				if (inst->dreg != ainfo->reg) {
-					if (ainfo->size == 4) {
-						s390_ldebr (code, ainfo->reg, inst->dreg);
-					} else {
-						s390_ldr   (code, ainfo->reg, inst->dreg);
-					}
-				}
-			}
-			else if (ainfo->regtype == RegTypeBase) {
-			} else
-				g_assert_not_reached ();
-		} else {
-			if (ainfo->regtype == RegTypeGeneral) {
-				if (!((ainfo->reg >= 2) && (ainfo->reg <= 6)))
-					g_assert_not_reached();
-				switch (ainfo->size) {
-				case 1:
-					s390_llgc (code, ainfo->reg, 0, inst->inst_basereg, inst->inst_offset);
-					break;
-				case 2:
-					s390_lgh  (code, ainfo->reg, 0, inst->inst_basereg, inst->inst_offset);
-					break;
-				case 4: 
-					s390_lgf (code, ainfo->reg, 0, inst->inst_basereg, inst->inst_offset);
-					break;
-				case 8:
-					s390_lg  (code, ainfo->reg, 0, inst->inst_basereg, inst->inst_offset);
-					break;
-				}
-			} else if (ainfo->regtype == RegTypeBase) {
-			} else if (ainfo->regtype == RegTypeFP) {
-				if (ainfo->size == 8)
-					s390_ld  (code, ainfo->reg, 0, inst->inst_basereg, inst->inst_offset);
-				else if (ainfo->size == 4)
-					s390_le  (code, ainfo->reg, 0, inst->inst_basereg, inst->inst_offset);
-				else
-					g_assert_not_reached ();
-			} else if (ainfo->regtype == RegTypeStructByVal) {
-				if (ainfo->reg != STK_BASE) {
-					switch (ainfo->size) {
-					case 1:
-						s390_llgc (code, ainfo->reg, 0, inst->inst_basereg, inst->inst_offset);
-						break;
-					case 2:
-						s390_lgh (code, ainfo->reg, 0, inst->inst_basereg, inst->inst_offset);
-						break;
-					case 4:
-						s390_lgf (code, ainfo->reg, 0, inst->inst_basereg, inst->inst_offset);
-						break;
-					case 8:
-						s390_lg  (code, ainfo->reg, 0, inst->inst_basereg, inst->inst_offset);
-						break;
-					}
-				}
-			} else if (ainfo->regtype == RegTypeStructByAddr) {
-				if (ainfo->reg != STK_BASE) {
-					s390_lg (code, ainfo->reg, 0, inst->inst_basereg, inst->inst_offset);
-				}
-			} else
-				g_assert_not_reached ();
-		}
-		pos++;
-	}
-
-	return code;
 }
 
 /*========================= End of Function ========================*/
