@@ -1669,18 +1669,6 @@ if ($artifact)
 			system("cp", "$monoprefix/bin/mono-2.0-sgen.pdb", "$embedDirArchDestination/mono-2.0-sgen.pdb") eq 0 or die ("failed copying mono-2.0-sgen.pdb\n");
 		}
 
-		# sources directory setup
-		print ">>> Copying mono sources needed for il2cpp\n";
-		system("mkdir -p $sourcesroot") eq 0 or die "failed making directory $sourcesroot\n";
-
-		# need to build some arm headers to package up for android
-		chdir("$monoroot/mono/arch/arm") eq 1 or die ("failed to chdir to mono/arch/arm directory\n");
-		system(@commandPrefix, ("make")) eq 0 or die ("failed to make arm headers\n");
-		print(">>> Changing directory back to : $currentdir\n");
-		chdir("$currentdir") eq 1 or die ("failed to chdir to $currentdir\n");
-
-		system("perl", "$buildscriptsdir/copy_il2cpp_sources.pl", "--monoroot=$monoroot", "--sourcesroot=$sourcesroot") eq 0 or die ('failed to copy the source files needed for il2cpp');
-
 		# monodistribution directory setup
 		print(">>> Creating monodistribution directory\n");
 		if ($android || $iphone || $iphoneCross || $iphoneSimulator || $tizen || $tizenEmulator)
