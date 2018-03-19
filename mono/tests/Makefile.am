@@ -967,8 +967,8 @@ CI_PR_DISABLED_TESTS = \
 	process-stress-3.exe \
 	bug-80307.exe
 
-if ENABLE_COOP
-CI_PR_DISABLED_TESTS += \
+if !DISABLE_COOP
+COOP_DISABLED_TESTS = \
 	abort-cctor.exe \
 	bug-58782-plain-throw.exe \
 	bug-58782-capture-and-throw.exe
