@@ -3620,9 +3620,9 @@ framework_assembly_sn_match (MonoAssemblyName *wanted_name, MonoAssemblyName *ca
 			gboolean result = assembly_names_equal_flags (wanted_name, candidate_name, ANAME_EQ_IGNORE_VERSION);
 			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Predicate: candidate and wanted names %s (ignoring version)", result ? "match" : "don't match, returning FALSE");
 			if (result) {
-				// compare major.minor of candidate and wanted
-				int c = assembly_names_compare_versions (candidate_name, wanted_name, 2);
-				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Predicate: candidate major.minor is %s wanted major.minor, returning %s\n", c == 0 ? "same version" : (c < 0 ? "lower version" : "greater version"),
+				// compare major of candidate and wanted
+				int c = assembly_names_compare_versions (candidate_name, wanted_name, 1);
+				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Predicate: candidate major version is %s wanted major version, returning %s\n", c == 0 ? "the same as" : (c < 0 ? "lower than" : "greater than"),
 					    (c >= 0) ? "TRUE" : "FALSE");
 				return (c >= 0);  // don't accept a candidate that's older than wanted.
 			} else {
