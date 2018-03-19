@@ -12281,9 +12281,9 @@ unity_process_breakpoint_inner(DebuggerTlsData *tls, gboolean from_signal, Il2Cp
 
 	if (ss_reqs->len > 0)
 		ss_events = create_event_list(EVENT_KIND_STEP, ss_reqs, sequencePoint, NULL, &suspend_policy);
-	if (bp_reqs->len > 0)
+	else if (bp_reqs->len > 0)
 		bp_events = create_event_list(EVENT_KIND_BREAKPOINT, bp_reqs, sequencePoint, NULL, &suspend_policy);
-	if (kind != EVENT_KIND_BREAKPOINT)
+	else if (kind != EVENT_KIND_BREAKPOINT)
 		enter_leave_events = create_event_list(kind, NULL, sequencePoint, NULL, &suspend_policy);
 
 	mono_loader_unlock();
