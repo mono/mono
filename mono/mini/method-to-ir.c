@@ -82,10 +82,10 @@
 #define BRANCH_COST 10
 #define INLINE_LENGTH_LIMIT 20
 
-//#define DEBUG_TAILCALL_BREAK_COMPILE 1
-//#define DEBUG_TAILCALL_BREAK_RUN 1
-//#define DEBUG_TAILCALL_TRY_ALL 1
-//#define DEBUG_TAILCALL 1
+static const gboolean debug_tailcall_break_compile = FALSE; // break in method_to_ir
+static const gboolean debug_tailcall_break_run = FALSE;     // insert breakpoint in generated code
+static const gboolean debug_tailcall_try_all = FALSE;       // consider any call followed by ret
+static const gboolean debug_tailcall = FALSE;               // logging
 
 /* These have 'cfg' as an implicit argument */
 #define INLINE_FAILURE(msg) do {									\
@@ -2179,22 +2179,18 @@ mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig,
 	if (cfg->llvm_only)
 		tail = FALSE;
 
-#if defined (DEBUG_TAILCALL_BREAK_COMPILE) || defined (DEBUG_TAILCALL_BREAK_RUN) || defined (DEBUG_TAILCALL)
-	if (tail && mono_is_usermode_native_debugger_present ()) {
+	if (tail && (debug_tailcall_break_compile || debug_tailcall_break_run)
+		&& mono_is_usermode_native_debugger_present ()) {
 
-#ifdef DEBUG_TAILCALL_BREAK_COMPILE
-		G_BREAKPOINT ();
-#endif
+		if (debug_tailcall_break_compile)
+			G_BREAKPOINT ();
 
-#ifdef DEBUG_TAILCALL_BREAK_RUN
-		if (tail) { // Can change in debugger.
+		if (tail && debug_tailcall_break_run) { // Can change tail in debugger.
 			MonoInst *brk;
 			MONO_INST_NEW (cfg, brk, OP_BREAK);
 			MONO_ADD_INS (cfg->cbb, brk);
 		}
-#endif
 	}
-#endif
 
 	if (tail) {
 		mini_profiler_emit_tail_call (cfg, target);
@@ -9080,11 +9076,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				goto call_end;
 
 			gboolean inst_tailcall;
-#ifdef DEBUG_TAILCALL_TRY_ALL
-			inst_tailcall = ip [5] == CEE_RET;
-#else
-			inst_tailcall = (ins_flag & MONO_INST_TAILCALL) != 0;
-#endif
+			if (debug_tailcall_try_all)
+				inst_tailcall = ip [5] == CEE_RET;
+			else
+				inst_tailcall = (ins_flag & MONO_INST_TAILCALL) != 0;
 
 			/* Tail prefix / tail call optimization */
 
@@ -9100,11 +9095,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			// 2. a Non-generic static methods of reference types and b. non-generic methods
 			//    of value types need to be passed a pointer to the caller’s class’s VTable in the MONO_ARCH_RGCTX_REG register.
 			// 3. Generic methods need to be passed a pointer to the MRGCTX in the MONO_ARCH_RGCTX_REG register
-#ifdef DEBUG_TAILCALL
-			if (inst_tailcall && cfg->verbose_level)
-#else
-			if (inst_tailcall && cfg->verbose_level >= 2)
-#endif
+			if (inst_tailcall && (debug_tailcall ? cfg->verbose_level : (cfg->verbose_level >= 2)))
 				g_print ("tail.%s %s -> %s supported_tail_call:%d gshared:%d vtable_arg:%d\n",
 					mono_opcode_name (*ip), method->name, cmethod->name,
 					(int)supported_tail_call, (int)cfg->gshared, !!vtable_arg);
