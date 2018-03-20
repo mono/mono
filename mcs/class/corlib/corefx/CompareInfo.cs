@@ -88,6 +88,16 @@ namespace System.Globalization
 			return internal_index_switch (source, startIndex, count, target, options, true);
 		}
 
+		unsafe int IndexOfCore (ReadOnlySpan<char> source, ReadOnlySpan<char> target, CompareOptions options, int* matchLengthPtr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		int IndexOfOrdinalCore (ReadOnlySpan<char> source, ReadOnlySpan<char> value, bool ignoreCase)
+		{
+			throw new NotImplementedException ();
+		}
+
 		int CompareString (ReadOnlySpan<char> string1, string string2, CompareOptions options)
 		{
 			throw new NotImplementedException ();
@@ -125,6 +135,11 @@ namespace System.Globalization
 			return Compare (source, 0, prefix.Length, prefix, 0, prefix.Length, options) == 0;
 		}
 
+		bool StartsWith (ReadOnlySpan<char> source, ReadOnlySpan<char> prefix, CompareOptions options)
+		{
+			throw new NotImplementedException ();
+		}
+
 		bool EndsWith (string source, string suffix, CompareOptions options)
 		{
 			if (UseManagedCollation)
@@ -134,6 +149,11 @@ namespace System.Globalization
 				return false;
 
 			return Compare (source, source.Length - suffix.Length, suffix.Length, suffix, 0, suffix.Length, options) == 0;
+		}
+
+		bool EndsWith (ReadOnlySpan<char> source, ReadOnlySpan<char> suffix, CompareOptions options)
+		{
+			throw new NotImplementedException ();
 		}
 
 		internal int GetHashCodeOfStringCore (string source, CompareOptions options)

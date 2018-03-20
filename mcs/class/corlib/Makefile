@@ -32,6 +32,11 @@ RESX_RESOURCE_STRING = \
 	../../../external/corefx/src/System.Memory/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Threading.Tasks.Parallel/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Collections/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Collections.NonGeneric/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Runtime.Extensions/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.ObjectModel/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Numerics.Vectors/src/Resources/Strings.resx
 
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
@@ -103,7 +108,7 @@ DEFAULT_REFERENCES =
 
 TEST_LIB_REFS = System.Core System
 
-XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks Facades/System.Runtime.InteropServices.RuntimeInformation System.Numerics.Vectors System.Runtime.CompilerServices.Unsafe
+XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks Facades/System.Text.RegularExpressions System.Runtime.CompilerServices.Unsafe
 XTEST_LIB_FLAGS = -d:netcoreapp -publicsign -keyfile:../mono.snk
 
 ifndef AOT_FRIENDLY_PROFILE
