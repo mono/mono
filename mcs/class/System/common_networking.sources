@@ -21,7 +21,6 @@ System.Net/ChunkedInputStream.cs
 System.Net/EndPointListener.cs
 System.Net/EndPointManager.cs
 
-System.Net/FtpRequestCreator.cs
 ../../../external/corefx/src/Common/src/System/Net/TlsStream.cs
 ../../../external/corefx/src/Common/src/System/Net/ContextAwareResult.cs
 ../../../external/corefx/src/System.Net.Requests/src/System/Net/NetworkStreamWrapper.cs
