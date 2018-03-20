@@ -8,9 +8,9 @@ PLATFORM_RUNTIME = $(RUNTIME)
 PLATFORM_CORLIB = mscorlib.dll
 PLATFORM_TEST_HARNESS_EXCLUDES =
 
-EXTERNAL_MCS = mcs
-EXTERNAL_MBAS = mbas
-EXTERNAL_RUNTIME = mono
+EXTERNAL_MCS := $(shell which mcs)
+EXTERNAL_MBAS := $(shell which mbas)
+EXTERNAL_RUNTIME := $(shell which mono)
 #ILDISASM = monodis
 ILDISASM = false
 
