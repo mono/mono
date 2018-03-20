@@ -130,7 +130,7 @@ public class AppBuilder
 		ninja.WriteLine ($"monoios_dir = {runtimedir}");
 		ninja.WriteLine ($"appdir = {appdir}");
 		ninja.WriteLine ($"sysroot = {sysroot}");
-		ninja.WriteLine ("cross = $mono_sdkdir/ios-cross64/bin/aarch64-darwin-mono-sgen");
+		ninja.WriteLine ("cross = $mono_sdkdir/ios-cross64-release/bin/aarch64-darwin-mono-sgen");
 		ninja.WriteLine ($"builddir = .");
 		if (aotdir != null)
 			ninja.WriteLine ($"aotdir = {aotdir}");
