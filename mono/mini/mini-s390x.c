@@ -7543,7 +7543,7 @@ mono_arch_tail_call_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig
 	if (callee_sig->ret && MONO_TYPE_ISSTRUCT (callee_sig->ret))
 		/* An address on the callee's stack is passed as the first argument */
 		res = FALSE;
-	for (i = 0; i < c2->nargs; ++i) {
+	for (i = 0; i < c2->nargs && res != FALSE; ++i) {
 		if (c2->args [i].regtype == RegTypeStructByAddr)
 			/* An address on the callee's stack is passed as the argument */
 			res = FALSE;
