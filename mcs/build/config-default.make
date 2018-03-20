@@ -9,7 +9,11 @@
 # Use UTF-8 as the default encoding for compilers
 CODEPAGE = 65001
 
+ifdef TEST_WITH_INTERPRETER
+RUNTIME_FLAGS = --interpreter
+else
 RUNTIME_FLAGS =
+endif
 
 ifdef TEST_WITH_INTERPRETER
 TEST_RUNTIME_FLAGS = --interpreter
