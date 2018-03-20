@@ -61,8 +61,6 @@ static gpointer bp_trampoline;
 #define mono_mini_arch_unlock() mono_os_mutex_unlock (&mini_arch_mutex)
 static mono_mutex_t mini_arch_mutex;
 
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
-
 #define ARGS_OFFSET 8
 
 #ifdef TARGET_WIN32
@@ -2632,9 +2630,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
  		case OP_NOP:
  		case OP_DUMMY_USE:
- 		case OP_DUMMY_STORE:
 		case OP_DUMMY_ICONST:
 		case OP_DUMMY_R8CONST:
+		case OP_DUMMY_R4CONST:
  		case OP_NOT_REACHED:
  		case OP_NOT_NULL:
  			break;
@@ -4907,7 +4905,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_GC_SAFE_POINT: {
 			guint8 *br [1];
 
-			g_assert (mono_threads_is_coop_enabled ());
+			g_assert (mono_threads_are_safepoints_enabled ());
 
 			x86_test_membase_imm (code, ins->sreg1, 0, 1);
 			br[0] = code; x86_branch8 (code, X86_CC_EQ, 0, FALSE);
@@ -5270,22 +5268,6 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 		gint32 lmf_offset = cfg->lmf_var->inst_offset;
 		guint8 *patch;
 
-		/* check if we need to restore protection of the stack after a stack overflow */
-		if (!cfg->compile_aot && mono_arch_have_fast_tls () && mono_tls_get_tls_offset (TLS_KEY_JIT_TLS) != -1) {
-			code = mono_x86_emit_tls_get (code, X86_ECX, mono_tls_get_tls_offset (TLS_KEY_JIT_TLS));
-
-			/* we load the value in a separate instruction: this mechanism may be
-			 * used later as a safer way to do thread interruption
-			 */
-			x86_mov_reg_membase (code, X86_ECX, X86_ECX, MONO_STRUCT_OFFSET (MonoJitTlsData, restore_stack_prot), 4);
-			x86_alu_reg_imm (code, X86_CMP, X86_ECX, 0);
-			patch = code;
-			x86_branch8 (code, X86_CC_Z, 0, FALSE);
-			/* note that the call trampoline will preserve eax/edx */
-			x86_call_reg (code, X86_ECX);
-			x86_patch (patch, code);
-		}
-
 		/* restore caller saved regs */
 		if (cfg->used_int_regs & (1 << X86_EBX)) {
 			x86_mov_reg_membase (code, X86_EBX, cfg->frame_reg, lmf_offset + MONO_STRUCT_OFFSET (MonoLMF, ebx), 4);
@@ -5492,7 +5474,7 @@ mono_arch_flush_register_windows (void)
 }
 
 gboolean 
-mono_arch_is_inst_imm (gint64 imm)
+mono_arch_is_inst_imm (int opcode, int imm_opcode, gint64 imm)
 {
 	return TRUE;
 }

@@ -18,13 +18,14 @@
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
     
+    
     <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>
     </RootNamespace>
     <AssemblyName>System.ComponentModel.Annotations</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>true</SignAssembly>
     <DelaySign>true</DelaySign>
@@ -79,13 +80,13 @@
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../../corlib/corlib-net_4_x.csproj">
-      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
-      <Name>corlib-net_4_x</Name>
-    </ProjectReference>
     <ProjectReference Include="../../System.ComponentModel.DataAnnotations/System.ComponentModel.DataAnnotations-net_4_x.csproj">
       <Project>{8F86C287-38A5-49F8-BE6D-1E0E3D74AF39}</Project>
       <Name>System.ComponentModel.DataAnnotations-net_4_x</Name>
+    </ProjectReference>
+    <ProjectReference Include="../../corlib/corlib-net_4_x.csproj">
+      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
+      <Name>corlib-net_4_x</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

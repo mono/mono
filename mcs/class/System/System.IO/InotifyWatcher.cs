@@ -133,8 +133,9 @@ namespace System.IO {
 			return true;
 		}
 		
-		public void StartDispatching (FileSystemWatcher fsw)
+		public void StartDispatching (object handle)
 		{
+			var fsw = handle as FileSystemWatcher;
 			ParentInotifyData parent;
 			lock (this) {
 				if ((long) FD == -1)
@@ -328,8 +329,9 @@ namespace System.IO {
 			}
 		}
 
-		public void StopDispatching (FileSystemWatcher fsw)
+		public void StopDispatching (object handle)
 		{
+			var fsw = handle as FileSystemWatcher;
 			ParentInotifyData parent;
 			lock (this) {
 				parent = (ParentInotifyData) watches [fsw];
@@ -606,6 +608,11 @@ namespace System.IO {
 		{
 			mask |= InotifyMask.Directory;
 			return AddWatch (fd, directory, mask);
+		}
+
+		public void Dispose (object handle)
+		{
+			// does nothing
 		}
 
 		[DllImport ("libc", EntryPoint="close")]

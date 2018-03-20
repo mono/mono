@@ -18,13 +18,14 @@
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
     
+    
     <NoConfig>True</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>
     </RootNamespace>
     <AssemblyName>System.Xml</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
 
   </PropertyGroup>
@@ -288,7 +289,6 @@
     <Compile Include="..\referencesource\System.Xml\System\Xml\Cache\XPathNodeInfoAtom.cs" />
     <Compile Include="..\referencesource\System.Xml\System\Xml\Cache\XPathNodeView.cs" />
     <Compile Include="..\referencesource\System.Xml\System\Xml\Cache\XPathNodeViewPropertyDescriptor.cs" />
-    <Compile Include="..\referencesource\System.Xml\System\Xml\Core\BinaryCompatibility.cs" />
     <Compile Include="..\referencesource\System.Xml\System\Xml\Core\CharEntityEncoderFallback.cs" />
     <Compile Include="..\referencesource\System.Xml\System\Xml\Core\ConformanceLevel.cs" />
     <Compile Include="..\referencesource\System.Xml\System\Xml\Core\DtdProcessing.cs" />
@@ -718,6 +718,7 @@
     <Compile Include="..\referencesource\System.Xml\System\Xml\Xslt\XslTransform.cs" />
     <Compile Include="..\referencesource\System.Xml\System\Xml\Xslt\XsltSettings.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="ReferenceSources\BinaryCompatibility.cs" />
     <Compile Include="ReferenceSources\LocalAppContextSwitches.cs" />
     <Compile Include="ReferenceSources\Res.cs" />
     <Compile Include="ReferenceSources\ThisAssembly.cs" />  </ItemGroup>
@@ -743,17 +744,18 @@
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="./../../../external/binary-reference-assemblies/v4.7.1/System.Configuration.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/v4.7.1/System.Configuration.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <ProjectReference Include="../System/System-net_4_x.csproj">
+      <Project>{2762E921-91A8-4C87-91E9-BA628013F753}</Project>
+      <Name>System-net_4_x</Name>
+    </ProjectReference>
     <ProjectReference Include="../corlib/corlib-net_4_x.csproj">
       <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
       <Name>corlib-net_4_x</Name>
-    </ProjectReference>
-    <ProjectReference Include="../System/System-secxml-net_4_x.csproj">
-      <Project>{19954F80-065E-4D46-8FEF-62BA4D6CFDAD}</Project>
-      <Name>System-secxml-net_4_x</Name>
-    </ProjectReference>
-    <ProjectReference Include="../System.Configuration/System.Configuration-net_4_x.csproj">
-      <Project>{D5CDC09C-F19A-4811-A6C8-70F51CBFB644}</Project>
-      <Name>System.Configuration-net_4_x</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

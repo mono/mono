@@ -168,6 +168,8 @@ namespace System.Net
 
 				if (contentType == null)
 					contentType = webHeaders ["Content-Type"];
+				if (contentType == null)
+					contentType = string.Empty;
 
 				return contentType;
 			}

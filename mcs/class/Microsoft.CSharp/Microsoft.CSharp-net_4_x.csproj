@@ -18,13 +18,14 @@
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
     
+    
     <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>
     </RootNamespace>
     <AssemblyName>Microsoft.CSharp</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>../msfinal.pub</AssemblyOriginatorKeyFile>
@@ -84,7 +85,6 @@
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\ExpressionTreeCallRewriter.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\ICSharpBinder.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\ICSharpInvokeOrInvokeMemberBinder.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\ResetBindException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\RuntimeBinder.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\RuntimeBinderException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\RuntimeBinderExtensions.cs" />
@@ -149,7 +149,6 @@
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\ArrayInitialization.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\Assignment.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\BinaryOperator.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\Block.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\BoundAnonymousFunction.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\Call.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\Cast.cs" />
@@ -164,7 +163,6 @@
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\ExprWithType.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\Field.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\FieldInfo.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\HoistedLocal.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\IExprWithObject.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\List.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\LocalVariable.cs" />
@@ -173,8 +171,6 @@
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\NamedArgumentSpecification.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\Property.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\PropertyInfo.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\Return.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\Statement.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\Temporary.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\TypeOf.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\UnaryOperator.cs" />
@@ -187,7 +183,6 @@
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Types\AggregateType.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Types\ArgumentListType.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Types\ArrayType.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Types\ErrorType.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Types\MethodGroupType.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Types\NullableType.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Types\NullType.cs" />
@@ -241,10 +236,6 @@
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../corlib/corlib-net_4_x.csproj">
-      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
-      <Name>corlib-net_4_x</Name>
-    </ProjectReference>
     <ProjectReference Include="../System.Core/System.Core-net_4_x.csproj">
       <Project>{359142A1-D80F-401E-AA64-7167C9317649}</Project>
       <Name>System.Core-net_4_x</Name>
@@ -252,6 +243,10 @@
     <ProjectReference Include="../System/System-net_4_x.csproj">
       <Project>{2762E921-91A8-4C87-91E9-BA628013F753}</Project>
       <Name>System-net_4_x</Name>
+    </ProjectReference>
+    <ProjectReference Include="../corlib/corlib-net_4_x.csproj">
+      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
+      <Name>corlib-net_4_x</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -22,6 +22,8 @@
 #include "sgen/sgen-qsort.h"
 #include "utils/mono-logger-internals.h"
 
+#ifndef DISABLE_SGEN_GC_BRIDGE
+
 typedef enum {
 	BRIDGE_PROCESSOR_INVALID,
 	BRIDGE_PROCESSOR_OLD,
@@ -37,14 +39,14 @@ static MonoGCBridgeCallbacks pending_bridge_callbacks;
 // Configuration to be passed to bridge processor after init
 static SgenBridgeProcessorConfig bridge_processor_config;
 // Currently-in-use callbacks
-MonoGCBridgeCallbacks bridge_callbacks;
+MonoGCBridgeCallbacks mono_bridge_callbacks;
 
 // Bridge processor state
 static SgenBridgeProcessor bridge_processor;
 // This is used for a special debug feature
 static SgenBridgeProcessor compare_to_bridge_processor;
 
-volatile gboolean bridge_processing_in_progress = FALSE;
+volatile gboolean mono_bridge_processing_in_progress = FALSE;
 
 // FIXME: The current usage pattern for this function is unsafe. Bridge processing could start immediately after unlock
 /**
@@ -53,7 +55,7 @@ volatile gboolean bridge_processing_in_progress = FALSE;
 void
 mono_gc_wait_for_bridge_processing (void)
 {
-	if (!bridge_processing_in_progress)
+	if (!mono_bridge_processing_in_progress)
 		return;
 
 	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_BRIDGE waiting for bridge processing to finish");
@@ -145,10 +147,10 @@ sgen_init_bridge (void)
 		// This lock is not initialized until the GC is
 		sgen_gc_lock ();
 
-		bridge_callbacks = pending_bridge_callbacks;
+		mono_bridge_callbacks = pending_bridge_callbacks;
 
 		// If a bridge was registered but there is no bridge processor yet
-		if (bridge_callbacks.cross_references && !bridge_processor_started ()) {
+		if (mono_bridge_callbacks.cross_references && !bridge_processor_started ()) {
 			init_bridge_processor (&bridge_processor, bridge_processor_selection);
 
 			if (bridge_processor.set_config)
@@ -181,13 +183,13 @@ sgen_is_bridge_object (GCObject *obj)
 {
 	if ((obj->vtable->gc_bits & SGEN_GC_BIT_BRIDGE_OBJECT) != SGEN_GC_BIT_BRIDGE_OBJECT)
 		return FALSE;
-	return bridge_callbacks.is_bridge_object (obj);
+	return mono_bridge_callbacks.is_bridge_object (obj);
 }
 
 gboolean
 sgen_need_bridge_processing (void)
 {
-	return bridge_callbacks.cross_references != NULL;
+	return mono_bridge_callbacks.cross_references != NULL;
 }
 
 static gboolean
@@ -209,10 +211,10 @@ void
 sgen_bridge_processing_stw_step (void)
 {
 	/*
-	 * bridge_processing_in_progress must be set with the world
+	 * mono_bridge_processing_in_progress must be set with the world
 	 * stopped.  If not there would be race conditions.
 	 */
-	bridge_processing_in_progress = TRUE;
+	mono_bridge_processing_in_progress = TRUE;
 
 	bridge_processor.processing_stw_step ();
 	if (compare_bridge_processors ())
@@ -457,7 +459,7 @@ sgen_bridge_processing_finish (int generation)
 		goto after_callback;
 	}
 
-	bridge_callbacks.cross_references (bridge_processor.num_sccs, bridge_processor.api_sccs,
+	mono_bridge_callbacks.cross_references (bridge_processor.num_sccs, bridge_processor.api_sccs,
 			bridge_processor.num_xrefs, bridge_processor.api_xrefs);
 
 	if (compare_bridge_processors ())
@@ -476,7 +478,7 @@ sgen_bridge_processing_finish (int generation)
 
 	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_BRIDGE: Complete, was running for %.2fms", mono_time_since_last_stw () / 10000.0f);
 
-	bridge_processing_in_progress = FALSE;
+	mono_bridge_processing_in_progress = FALSE;
 }
 
 MonoGCBridgeObjectKind
@@ -514,7 +516,7 @@ static const char *bridge_class;
 static MonoGCBridgeObjectKind
 bridge_test_bridge_class_kind (MonoClass *klass)
 {
-	if (!strcmp (bridge_class, klass->name))
+	if (!strcmp (bridge_class, m_class_get_name (klass)))
 		return GC_BRIDGE_TRANSPARENT_BRIDGE_CLASS;
 	return GC_BRIDGE_TRANSPARENT_CLASS;
 }
@@ -723,5 +725,88 @@ sgen_bridge_print_gc_debug_usage (void)
 	fprintf (stderr, "  bridge-dump=<filename-prefix>\n");
 	fprintf (stderr, "  bridge-compare-to=<implementation>\n");
 }
+
+#else
+
+//UG
+volatile gboolean mono_bridge_processing_in_progress = FALSE;
+
+void
+mono_gc_wait_for_bridge_processing (void)
+{
+}
+
+MonoGCBridgeObjectKind
+sgen_bridge_class_kind (MonoClass *klass)
+{
+	return GC_BRIDGE_TRANSPARENT_CLASS;
+}
+
+void
+sgen_bridge_describe_pointer (GCObject *obj)
+{
+}
+
+gboolean
+sgen_bridge_handle_gc_debug (const char *opt)
+{
+	return FALSE;
+}
+
+gboolean
+sgen_bridge_handle_gc_param (const char *opt)
+{
+	return FALSE;
+}
+
+void
+sgen_bridge_print_gc_debug_usage (void)
+{
+}
+
+void
+sgen_bridge_processing_finish (int generation)
+{
+}
+
+void
+sgen_bridge_processing_stw_step (void)
+{
+}
+
+void
+sgen_bridge_register_finalized_object (GCObject *obj)
+{
+}
+
+void
+sgen_bridge_reset_data (void)
+{
+}
+
+void
+sgen_init_bridge (void)
+{
+}
+
+gboolean
+sgen_is_bridge_object (GCObject *obj)
+{
+	return FALSE;
+}
+
+gboolean
+sgen_need_bridge_processing (void)
+{
+	return FALSE;
+}
+
+void
+sgen_set_bridge_implementation (const char *name)
+{
+	g_error ("Sgen bridge disabled");
+}
+
+#endif
 
 #endif

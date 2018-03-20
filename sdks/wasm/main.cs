@@ -105,6 +105,26 @@ public class Driver {
 		return fin_count < 100;
 	}
 
+	static bool timer_called;
+	static int pump_count;
+
+	static void TimerStart () {
+		Timer t = new Timer ((_) => {
+			timer_called = true;
+		});
+		t.Change (10, Timeout.Infinite);
+		latest_test_result = "EITA";
+	}
+
+	static bool TimerPump () {
+		++pump_count;
+		if (pump_count > 5 || timer_called) {
+			latest_test_result = timer_called ? "PASS" : "FAIL";
+			return false;
+		}
+
+		return true;
+	}
 
 	static int run_count;
 	public static string Send (string key, string val) {
@@ -114,6 +134,9 @@ public class Driver {
 		}
 		if (key == "pump-test") {
 			return PumpTest (val) ? "IN-PROGRESS" : "DONE" ;
+		}
+		if (key == "test-result") {
+			return latest_test_result;
 		}
 
 		return "INVALID-KEY";
@@ -132,6 +155,7 @@ public class Driver {
 	};
 
 	static IncrementalTestRunner testRunner;
+	static string latest_test_result;
 
 	public static bool PumpTest (string name) {
 		if (name == "tp")
@@ -140,16 +164,21 @@ public class Driver {
 			return DelePump ();
 		if (name == "gc")
 			return GcPump ();
+		if (name == "timer")
+			return TimerPump ();
 
 		if (testRunner == null)
 			return false;
 		try {
 			bool res = testRunner.Step ();
-			if (!res)
+			if (!res) {
+				latest_test_result = testRunner.Status;
 				testRunner = null;
+			}
 			return res;
 		} catch (Exception e) {
 			Console.WriteLine (e);
+			latest_test_result = "FAIL";
 			return true;
 		}
 	}
@@ -171,8 +200,13 @@ public class Driver {
 			GcStart ();
 			return;
 		}
+		if (name == "timer") {
+			TimerStart ();
+			return;
+		}
 
 		string extra_disable = "";
+		latest_test_result = "IN-PROGRESS";
 
 		string[] args = name.Split (',');
 		var testsuite_name = suites.Where (ts => ts.Name == args [0]).Select (ts => ts.File).FirstOrDefault ();
@@ -194,7 +228,7 @@ public class Driver {
 		// if (test_name != null)
 		// 	testRunner.RunTest (test_name);
 
-		testRunner.Exclude ("WASM,NotWorking,ValueAdd,CAS,InetAccess,InterpreterNotWorking,MultiThreaded");
+		testRunner.Exclude ("NotWasm,WASM,NotWorking,ValueAdd,CAS,InetAccess,InterpreterNotWorking,MultiThreaded");
 		testRunner.Add (Assembly.LoadFrom (baseDir + "/" + testsuite_name));
 		// testRunner.RunOnly ("MonoTests.System.Threading.AutoResetEventTest.MultipleSet");
 

@@ -210,6 +210,7 @@ MINI_OP(OP_BR,         "br", NONE, NONE, NONE)
 MINI_OP(OP_JMP,        "jmp", NONE, NONE, NONE)
 /* Same as OP_JMP, but the passing of arguments is done similarly to calls */
 MINI_OP(OP_TAILCALL,   "tailcall", NONE, NONE, NONE)
+MINI_OP(OP_TAILCALL_MEMBASE, "tailcall_membase", NONE, IREG, NONE)
 MINI_OP(OP_BREAK,      "break", NONE, NONE, NONE)
 
 MINI_OP(OP_CEQ,   "ceq", IREG, NONE, NONE)
@@ -731,7 +732,6 @@ MINI_OP(OP_TLS_SET_REG,        "tls_set_reg", NONE, IREG, IREG)
 
 MINI_OP(OP_LOAD_GOTADDR, "load_gotaddr", IREG, NONE, NONE)
 MINI_OP(OP_DUMMY_USE, "dummy_use", NONE, IREG, NONE)
-MINI_OP(OP_DUMMY_STORE, "dummy_store", NONE, NONE, NONE)
 MINI_OP(OP_NOT_REACHED, "not_reached", NONE, NONE, NONE)
 MINI_OP(OP_NOT_NULL, "not_null", NONE, IREG, NONE)
 

@@ -18,13 +18,14 @@
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
     
+    
     <NoConfig>True</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>
     </RootNamespace>
     <AssemblyName>System.Data</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>../ecma.pub</AssemblyOriginatorKeyFile>
@@ -34,7 +35,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699,219,414,649,619</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;COREFX;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT</DefineConstants>
+    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;COREFX;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT;MONO_FEATURE_APPLETLS;MONO_FEATURE_BTLS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -42,7 +43,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,219,414,649,619</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;COREFX;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;COREFX;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT;MONO_FEATURE_APPLETLS;MONO_FEATURE_BTLS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -59,7 +60,6 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.NetSecurityNative.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\GssSafeHandles.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Data\Common\AdapterUtil.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Data\Common\BasicFieldNameLookup.cs" />
@@ -470,8 +470,8 @@
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlInfoMessageEventHandler.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlInternalConnection.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlInternalConnectionTds.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\sqlinternaltransaction.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\sqlmetadatafactory.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlInternalTransaction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlMetadataFactory_.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlNotificationEventArgs.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlNotificationInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlNotificationSource.cs" />
@@ -541,9 +541,9 @@
     <Compile Include="..\referencesource\System.Data\System\Data\SqlClient\SqlClientPermission.cs" />
     <Compile Include="..\referencesource\System.Data\System\Data\SQLTypes\SqlTypesSchemaImporter.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
-    <Compile Include="corefx\DbConnection.cs" />
     <Compile Include="corefx\DbConnectionOptions.cs" />
     <Compile Include="corefx\DiagnosticListener.cs" />
+    <Compile Include="corefx\Interop.NetSecurityNative.cs" />
     <Compile Include="corefx\Odbc\AdapterUtil.cs" />
     <Compile Include="corefx\Odbc\DbConnectionStringCommon.cs" />
     <Compile Include="corefx\Odbc\OdbcFactory.cs" />
@@ -585,10 +585,6 @@
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../corlib/corlib-net_4_x.csproj">
-      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
-      <Name>corlib-net_4_x</Name>
-    </ProjectReference>
     <ProjectReference Include="../System/System-net_4_x.csproj">
       <Project>{2762E921-91A8-4C87-91E9-BA628013F753}</Project>
       <Name>System-net_4_x</Name>
@@ -616,6 +612,10 @@
     <ProjectReference Include="../System.Configuration/System.Configuration-net_4_x.csproj">
       <Project>{D5CDC09C-F19A-4811-A6C8-70F51CBFB644}</Project>
       <Name>System.Configuration-net_4_x</Name>
+    </ProjectReference>
+    <ProjectReference Include="../corlib/corlib-net_4_x.csproj">
+      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
+      <Name>corlib-net_4_x</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

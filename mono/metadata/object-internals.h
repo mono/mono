@@ -16,6 +16,7 @@
 #include "mono/utils/mono-compiler.h"
 #include "mono/utils/mono-error.h"
 #include "mono/utils/mono-error-internals.h"
+#include "mono/utils/mono-machine.h"
 #include "mono/utils/mono-stack-unwinding.h"
 #include "mono/utils/mono-tls.h"
 #include "mono/utils/mono-coop-mutex.h"
@@ -79,7 +80,7 @@
 #define mono_array_class_get_cached(eclass,rank) ({	\
 			static MonoClass *tmp_klass; \
 			if (!tmp_klass) { \
-				tmp_klass = mono_array_class_get ((eclass), (rank));	\
+				tmp_klass = mono_class_create_array ((eclass), (rank));	\
 				g_assert (tmp_klass); \
 			}; \
 			tmp_klass; })
@@ -94,7 +95,7 @@
 #else
 
 #define mono_class_get_field_from_name_cached(klass,name) mono_class_get_field_from_name ((klass), (name))
-#define mono_array_class_get_cached(eclass,rank) mono_array_class_get ((eclass), (rank))
+#define mono_array_class_get_cached(eclass,rank) mono_class_create_array ((eclass), (rank))
 #define mono_array_new_cached(domain, eclass, size, error) mono_array_new_checked ((domain), (eclass), (size), (error))
 
 #endif
@@ -122,11 +123,11 @@ struct _MonoArray {
 	MonoArrayBounds *bounds;
 	/* total number of elements of the array */
 	mono_array_size_t max_length; 
-	/* we use double to ensure proper alignment on platforms that need it */
-	double vector [MONO_ZERO_LEN_ARRAY];
+	/* we use mono_64bitaligned_t to ensure proper alignment on platforms that need it */
+	mono_64bitaligned_t vector [MONO_ZERO_LEN_ARRAY];
 };
 
-#define MONO_SIZEOF_MONO_ARRAY (sizeof (MonoArray) - MONO_ZERO_LEN_ARRAY * sizeof (double))
+#define MONO_SIZEOF_MONO_ARRAY (sizeof (MonoArray) - MONO_ZERO_LEN_ARRAY * sizeof (mono_64bitaligned_t))
 
 struct _MonoString {
 	MonoObject object;
@@ -438,12 +439,6 @@ struct _MonoInternalThread {
 	gpointer last;
 };
 
-/* It's safe to access System.Threading.InternalThread from native code via a
- * raw pointer because all instances should be pinned.  But for uniformity of
- * icall wrapping, let's declare a MonoInternalThreadHandle anyway.
- */
-TYPED_HANDLE_DECL (MonoInternalThread);
-
 struct _MonoThread {
 	MonoObject obj;
 	struct _MonoInternalThread *internal_thread;
@@ -654,6 +649,9 @@ typedef struct {
 
 MONO_COLD void mono_set_pending_exception (MonoException *exc);
 
+MONO_COLD void
+mono_set_pending_exception_handle (MonoExceptionHandle exc);
+
 /* remoting and async support */
 
 MonoAsyncResult *
@@ -746,7 +744,7 @@ mono_domain_get_tls_offset (void);
  * encountering instances of user defined subclasses of System.Type.
  */
 
-#define IS_MONOTYPE(obj) (!(obj) || (((MonoObject*)(obj))->vtable->klass->image == mono_defaults.corlib && ((MonoReflectionType*)(obj))->type != NULL))
+#define IS_MONOTYPE(obj) (!(obj) || (m_class_get_image (mono_object_class ((obj))) == mono_defaults.corlib && ((MonoReflectionType*)(obj))->type != NULL))
 
 #define IS_MONOTYPE_HANDLE(obj) IS_MONOTYPE (MONO_HANDLE_RAW (obj))
 
@@ -1166,7 +1164,6 @@ typedef struct {
 	MonoString *name;
 	MonoObject *def_value;
 	gint32 offset;
-	gint32 table_idx;
 	MonoReflectionType *typeb;
 	MonoArray *rva_data;
 	MonoArray *cattrs;
@@ -1226,6 +1223,7 @@ typedef struct {
 	gboolean is_main;
 	MonoArray *resources;
 	GHashTable *unparented_classes;
+	MonoArray *table_indexes;
 } MonoReflectionModuleBuilder;
 
 /* Safely acess System.Reflection.Emit.ModuleBuidler from native code */
@@ -1627,8 +1625,14 @@ mono_nullable_init_from_handle (guint8 *buf, MonoObjectHandle value, MonoClass *
 MonoObject *
 mono_value_box_checked (MonoDomain *domain, MonoClass *klass, void* val, MonoError *error);
 
+MonoObjectHandle
+mono_value_box_handle (MonoDomain *domain, MonoClass *klass, gpointer val, MonoError *error);
+
 MonoObject*
-mono_nullable_box (guint8 *buf, MonoClass *klass, MonoError *error);
+mono_nullable_box (gpointer buf, MonoClass *klass, MonoError *error);
+
+MonoObjectHandle
+mono_nullable_box_handle (gpointer buf, MonoClass *klass, MonoError *error);
 
 #ifdef MONO_SMALL_CONFIG
 #define MONO_IMT_SIZE 9
@@ -1708,9 +1712,6 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error);
 
 void
 mono_method_clear_object (MonoDomain *domain, MonoMethod *method);
-
-void
-mono_class_compute_gc_descriptor (MonoClass *klass);
 
 gsize*
 mono_class_compute_bitmap (MonoClass *klass, gsize *bitmap, int size, int offset, int *max_set, gboolean static_fields);
@@ -1815,14 +1816,20 @@ mono_glist_to_array (GList *list, MonoClass *eclass, MonoError *error);
 MonoObject *
 mono_object_new_checked (MonoDomain *domain, MonoClass *klass, MonoError *error);
 
+MonoObjectHandle
+mono_object_new_handle (MonoDomain *domain, MonoClass *klass, MonoError *error);
+
 MonoObject*
 mono_object_new_mature (MonoVTable *vtable, MonoError *error);
 
-MonoObject*
-mono_object_new_fast_checked (MonoVTable *vtable, MonoError *error);
+MonoObjectHandle
+mono_object_new_handle_mature (MonoVTable *vtable, MonoError *error);
 
 MonoObject *
 mono_object_clone_checked (MonoObject *obj, MonoError *error);
+
+MonoObjectHandle
+mono_object_clone_handle (MonoObjectHandle obj, MonoError *error);
 
 MonoObject *
 mono_object_isinst_checked (MonoObject *obj, MonoClass *klass, MonoError *error);
@@ -1842,8 +1849,11 @@ mono_ldstr_checked (MonoDomain *domain, MonoImage *image, uint32_t str_index, Mo
 MonoString*
 mono_string_new_len_checked (MonoDomain *domain, const char *text, guint length, MonoError *error);
 
-MonoString*
+MONO_PROFILER_API MonoString*
 mono_string_new_checked (MonoDomain *domain, const char *text, MonoError *merror);
+
+MonoString*
+mono_string_new_wtf8_len_checked (MonoDomain *domain, const char *text, guint length, MonoError *error);
 
 MonoString *
 mono_string_new_utf16_checked (MonoDomain *domain, const guint16 *text, gint32 len, MonoError *error);
@@ -1859,6 +1869,9 @@ mono_string_from_utf32_checked (mono_unichar4 *data, MonoError *error);
 
 char*
 mono_ldstr_utf8 (MonoImage *image, guint32 idx, MonoError *error);
+
+char*
+mono_utf16_to_utf8 (const mono_unichar2 *s, gsize slength, MonoError *error);
 
 gboolean
 mono_runtime_object_init_checked (MonoObject *this_obj, MonoError *error);
@@ -1960,5 +1973,12 @@ ves_icall_ModuleBuilder_set_wrappers_type (MonoReflectionModuleBuilderHandle mod
 
 MonoAssembly*
 mono_try_assembly_resolve_handle (MonoDomain *domain, MonoStringHandle fname, MonoAssembly *requesting, gboolean refonly, MonoError *error);
+
+gboolean
+mono_runtime_object_init_handle (MonoObjectHandle this_obj, MonoError *error);
+
+/* GC write barriers support */
+void
+mono_gc_wbarrier_object_copy_handle (MonoObjectHandle obj, MonoObjectHandle src);
 
 #endif /* __MONO_OBJECT_INTERNALS_H__ */

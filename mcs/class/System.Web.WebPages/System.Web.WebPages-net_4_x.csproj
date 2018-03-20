@@ -18,13 +18,14 @@
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
     
+    
     <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>
     </RootNamespace>
     <AssemblyName>System.Web.WebPages</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>true</SignAssembly>
     <DelaySign>true</DelaySign>
@@ -222,10 +223,6 @@
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../corlib/corlib-net_4_x.csproj">
-      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
-      <Name>corlib-net_4_x</Name>
-    </ProjectReference>
     <ProjectReference Include="../Microsoft.CSharp/Microsoft.CSharp-net_4_x.csproj">
       <Project>{DABF9F75-63AD-4991-9D2B-9234E7032B32}</Project>
       <Name>Microsoft.CSharp-net_4_x</Name>
@@ -273,6 +270,10 @@
     <ProjectReference Include="../System.Xml.Linq/System.Xml.Linq-net_4_x.csproj">
       <Project>{526286D5-38D9-4579-B001-471440D57752}</Project>
       <Name>System.Xml.Linq-net_4_x</Name>
+    </ProjectReference>
+    <ProjectReference Include="../corlib/corlib-net_4_x.csproj">
+      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
+      <Name>corlib-net_4_x</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

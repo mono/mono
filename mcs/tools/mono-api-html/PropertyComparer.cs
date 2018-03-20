@@ -185,7 +185,7 @@ namespace Xamarin.ApiDiff {
 				isIndexer = srcIndexers != null && srcIndexers.Count > 0;
 			}
 
-			var change = new ApiChange ();
+			var change = new ApiChange (GetDescription (source));
 			change.Header = "Modified " + GroupName;
 			RenderMethodAttributes (GetMethodAttributes (srcGetter, srcSetter), GetMethodAttributes (tgtGetter, tgtSetter), change);
 			RenderPropertyType (source, target, change);

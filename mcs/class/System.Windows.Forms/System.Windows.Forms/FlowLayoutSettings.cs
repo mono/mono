@@ -37,7 +37,6 @@ namespace System.Windows.Forms
 	{
 		private FlowDirection flow_direction;
 		private bool wrap_contents;
-		private LayoutEngine layout_engine;
 		private Dictionary<object, bool> flow_breaks;
 		private Control owner;
 
@@ -68,10 +67,7 @@ namespace System.Windows.Forms
 
 		public override LayoutEngine LayoutEngine {
 			get { 
-				if (this.layout_engine == null)
-					this.layout_engine = new FlowLayout ();
-					
-				return this.layout_engine;
+				return System.Windows.Forms.Layout.DefaultLayout.Instance;
 			}
 		}
 

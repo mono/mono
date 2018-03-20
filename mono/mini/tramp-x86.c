@@ -28,8 +28,6 @@
 #include "debugger-agent.h"
 #include "jit-icalls.h"
 
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
-
 /*
  * mono_arch_get_unbox_trampoline:
  * @m: method pointer
@@ -395,7 +393,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	for (i = X86_EAX; i <= X86_EDI; ++i) {
 		if (i == X86_ESP || i == X86_EBP)
 			continue;
-		if (i == X86_EAX && !((tramp_type == MONO_TRAMPOLINE_RESTORE_STACK_PROT) || (tramp_type == MONO_TRAMPOLINE_AOT_PLT)))
+		if (i == X86_EAX && tramp_type != MONO_TRAMPOLINE_AOT_PLT)
 			continue;
 		x86_mov_reg_membase (code, i, X86_EBP, regarray_offset + (i * 4), 4);
 	}
@@ -654,7 +652,7 @@ mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpoint
  * mono_arch_create_sdb_trampoline:
  *
  *   Return a trampoline which captures the current context, passes it to
- * debugger_agent_single_step_from_context ()/debugger_agent_breakpoint_from_context (),
+ * mono_debugger_agent_single_step_from_context ()/mono_debugger_agent_breakpoint_from_context (),
  * then restores the (potentially changed) context.
  */
 guint8*
@@ -718,9 +716,9 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 		x86_breakpoint (code);
 	} else {
 		if (single_step)
-			x86_call_code (code, debugger_agent_single_step_from_context);
+			x86_call_code (code, mono_debugger_agent_single_step_from_context);
 		else
-			x86_call_code (code, debugger_agent_breakpoint_from_context);
+			x86_call_code (code, mono_debugger_agent_breakpoint_from_context);
 	}
 
 	/* Restore registers from ctx */
@@ -750,11 +748,3 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 
 	return buf;
 }
-
-gpointer
-mono_arch_get_interp_to_native_trampoline (MonoTrampInfo **info)
-{
-	g_assert_not_reached ();
-	return NULL;
-}
-

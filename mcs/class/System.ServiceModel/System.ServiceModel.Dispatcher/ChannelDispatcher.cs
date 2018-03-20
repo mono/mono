@@ -615,7 +615,8 @@ namespace System.ServiceModel.Dispatcher
 
 					if ((!(ex is SocketException)) && 
 					    (!(ex is XmlException)) &&
-					    (!(ex is IOException)))
+					    (!(ex is IOException)) &&
+					    rc != null)
 						rc.Reply (res);
 					
 					reply.Close (owner.DefaultCloseTimeout); // close the channel

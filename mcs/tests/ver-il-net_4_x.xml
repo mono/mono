@@ -68694,7 +68694,7 @@
   <test name="test-default-02.cs">
     <type name="C">
       <method name="Void Main()" attrs="145">
-        <size>8</size>
+        <size>36</size>
       </method>
       <method name="Void M[T](T, T)" attrs="145">
         <size>2</size>
@@ -68704,6 +68704,9 @@
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
+      </method>
+      <method name="Byte[] Test(S`1[System.Byte])" attrs="145">
+        <size>10</size>
       </method>
     </type>
   </test>
@@ -68784,6 +68787,30 @@
     <type name="X">
       <method name="Void Main()" attrs="150">
         <size>44</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-discards-01.cs">
+    <type name="X">
+      <method name="Void Main()" attrs="150">
+        <size>63</size>
+      </method>
+      <method name="Boolean TryGetValue(Int32 ByRef)" attrs="145">
+        <size>13</size>
+      </method>
+      <method name="Int32 TestValue()" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+&lt;Main&gt;c__AnonStorey0">
+      <method name="System.Object &lt;&gt;m__0()" attrs="131">
+        <size>25</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -70862,6 +70889,19 @@
         <size>7</size>
       </method>
       <method name="Void Method(Int32, Int32, System.Object)" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-named-11.cs">
+    <type name="X">
+      <method name="Void Main()" attrs="150">
+        <size>13</size>
+      </method>
+      <method name="Void Test(Int32, System.String)" attrs="145">
         <size>2</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
@@ -73720,6 +73760,19 @@
       </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-tuple-09.cs">
+    <type name="TupleDeconstructionDeclaration">
+      <method name="Int32 Main()" attrs="150">
+        <size>99</size>
+      </method>
+      <method name="System.ValueTuple`2[System.String,System.Int64] GetValues()" attrs="145">
+        <size>21</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>

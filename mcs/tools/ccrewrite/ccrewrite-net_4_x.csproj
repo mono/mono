@@ -16,7 +16,8 @@
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>obj-net_4_x-$(HostPlatform)</IntermediateOutputPath>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
-    <NoStdLib>True</NoStdLib>
+    <NoStdLib>False</NoStdLib>
+    
     
     <NoConfig>True</NoConfig>
     
@@ -24,7 +25,7 @@
     <RootNamespace>
     </RootNamespace>
     <AssemblyName>ccrewrite</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
 
   </PropertyGroup>
@@ -78,10 +79,6 @@
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../../class/corlib/corlib-net_4_x.csproj">
-      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
-      <Name>corlib-net_4_x</Name>
-    </ProjectReference>
     <ProjectReference Include="../../class/Mono.CodeContracts/Mono.CodeContracts-net_4_x.csproj">
       <Project>{9BE8D62B-471D-4538-8287-691B4ECE3209}</Project>
       <Name>Mono.CodeContracts-net_4_x</Name>

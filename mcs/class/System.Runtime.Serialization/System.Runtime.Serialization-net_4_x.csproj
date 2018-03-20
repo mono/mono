@@ -18,13 +18,14 @@
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
     
+    
     <NoConfig>True</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>
     </RootNamespace>
     <AssemblyName>System.Runtime.Serialization</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
 
   </PropertyGroup>
@@ -53,6 +54,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\..\..\external\corefx\src\System.Runtime.Serialization.Primitives\src\System\Runtime\Serialization\ISerializationSurrogateProvider.cs" />
     <Compile Include="..\..\build\common\SR.cs" />
     <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\AppSettings.cs" />
     <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Attributes.cs" />
@@ -206,11 +208,13 @@
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="ReferenceSources\BitFlagsGenerator.cs" />
     <Compile Include="ReferenceSources\CodeInterpreter.cs" />
+    <Compile Include="ReferenceSources\DataContractSerializerExtensions.cs" />
     <Compile Include="ReferenceSources\DiagnosticUtility.cs" />
     <Compile Include="ReferenceSources\FxTrace.cs" />
     <Compile Include="ReferenceSources\JsonFormatReaderGenerator_static.cs" />
     <Compile Include="ReferenceSources\JsonFormatWriterGenerator_static.cs" />
     <Compile Include="ReferenceSources\LocalAppContextSwitches.cs" />
+    <Compile Include="ReferenceSources\NotImplemented.cs" />
     <Compile Include="ReferenceSources\SR.cs" />
     <Compile Include="ReferenceSources\SR.missing.cs" />
     <Compile Include="ReferenceSources\XmlDataContract_static.cs" />
@@ -239,10 +243,6 @@
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../corlib/corlib-net_4_x.csproj">
-      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
-      <Name>corlib-net_4_x</Name>
-    </ProjectReference>
     <ProjectReference Include="../System/System-net_4_x.csproj">
       <Project>{2762E921-91A8-4C87-91E9-BA628013F753}</Project>
       <Name>System-net_4_x</Name>
@@ -270,6 +270,10 @@
     <ProjectReference Include="../SMDiagnostics/SMDiagnostics-net_4_x.csproj">
       <Project>{8B8C3ED9-96F9-49B3-B355-9FD3D29DD3AD}</Project>
       <Name>SMDiagnostics-net_4_x</Name>
+    </ProjectReference>
+    <ProjectReference Include="../corlib/corlib-net_4_x.csproj">
+      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
+      <Name>corlib-net_4_x</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

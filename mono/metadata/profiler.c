@@ -314,13 +314,12 @@ mono_profiler_get_coverage_data (MonoProfilerHandle handle, MonoMethod *method, 
 
 	coverage_unlock ();
 
-	ERROR_DECL (error);
-	MonoMethodHeader *header = mono_method_get_header_checked (method, &error);
-	mono_error_assert_ok (&error);
+	MonoMethodHeaderSummary header;
 
-	guint32 size;
+	g_assert (mono_method_get_header_summary (method, &header));
 
-	const unsigned char *start = mono_method_header_get_code (header, &size, NULL);
+	guint32 size = header.code_size;
+	const unsigned char *start = header.code;
 	const unsigned char *end = start + size;
 	MonoDebugMethodInfo *minfo = mono_debug_lookup_method (method);
 
@@ -362,7 +361,6 @@ mono_profiler_get_coverage_data (MonoProfilerHandle handle, MonoMethod *method, 
 		g_free (sym_seq_points);
 		g_ptr_array_free (source_file_list, TRUE);
 
-		mono_metadata_free_mh (header);
 		return TRUE;
 	}
 
@@ -398,9 +396,22 @@ mono_profiler_get_coverage_data (MonoProfilerHandle handle, MonoMethod *method, 
 		}
 	}
 
-	mono_metadata_free_mh (header);
-
 	return TRUE;
+}
+
+gboolean
+mono_profiler_coverage_instrumentation_enabled (MonoMethod *method)
+{
+	gboolean cover = FALSE;
+
+	for (MonoProfilerHandle handle = mono_profiler_state.profilers; handle; handle = handle->next) {
+		MonoProfilerCoverageFilterCallback cb = handle->coverage_filter;
+
+		if (cb)
+			cover |= cb (handle->prof, method);
+	}
+
+	return cover;
 }
 
 MonoProfilerCoverageInfo *
@@ -412,16 +423,7 @@ mono_profiler_coverage_alloc (MonoMethod *method, guint32 entries)
 	if (method->wrapper_type)
 		return FALSE;
 
-	gboolean cover = FALSE;
-
-	for (MonoProfilerHandle handle = mono_profiler_state.profilers; handle; handle = handle->next) {
-		MonoProfilerCoverageFilterCallback cb = handle->coverage_filter;
-
-		if (cb)
-			cover |= cb (handle->prof, method);
-	}
-
-	if (!cover)
+	if (!mono_profiler_coverage_instrumentation_enabled (method))
 		return NULL;
 
 	coverage_lock ();
@@ -566,7 +568,7 @@ mono_profiler_enable_allocations (void)
  * filter functions from all installed profilers. If any of them return flags
  * other than \c MONO_PROFILER_CALL_INSTRUMENTATION_NONE, then the given method
  * will be instrumented as requested. All filters are guaranteed to be called
- * exactly once per method, even if earlier filters have already specified all
+ * at least once per method, even if earlier filters have already specified all
  * flags.
  *
  * Note that filter functions must be installed before a method is compiled in

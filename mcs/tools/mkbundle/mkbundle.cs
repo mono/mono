@@ -48,8 +48,19 @@ class MakeBundle {
 	static bool keeptemp = false;
 	static bool compile_only = false;
 	static bool static_link = false;
-	static string config_file = null;
+
+	// Points to the $sysconfig/mono/4.5/machine.config, which contains System.Configuration settings
 	static string machine_config_file = null;
+
+        // By default, we automatically bundle a machine-config, use this to turn off the behavior.
+        static bool no_machine_config = false;
+
+	// Points to the $sysconfig/mono/config file, contains <dllmap> and others
+	static string config_file = null;
+
+        // By default, we automatically bundle the above config file, use this to turn off the behavior.
+	static bool no_config = false;
+	
 	static string config_dir = null;
 	static string style = "linux";
 	static bool bundled_header = false;
@@ -65,19 +76,9 @@ class MakeBundle {
 	static string fetch_target = null;
 	static bool custom_mode = true;
 	static string embedded_options = null;
-
-	static string runtime_bin = null;
-
-	static string runtime {
-		get {
-			if (runtime_bin == null && IsUnix)
-				runtime_bin = Process.GetCurrentProcess().MainModule.FileName;
-			return runtime_bin;
-		}
-
-		set { runtime_bin = value; }
-	}
 	
+	static string runtime = null;
+
 	static bool aot_compile = false;
 	static string aot_args = "static";
 	static DirectoryInfo aot_temp_dir = null;
@@ -158,7 +159,7 @@ class MakeBundle {
 					return 1;
 				}
 				if (sdk_path != null || runtime != null)
-					Error ("You can only specify one of --runtime, --sdk or --cross");
+					Error ("You can only specify one of --runtime, --sdk or --cross {sdk_path}/{runtime}");
 				custom_mode = false;
 				autodeps = true;
 				cross_target = args [++i];
@@ -298,6 +299,12 @@ class MakeBundle {
 
 				if (!quiet)
 					Console.WriteLine ("WARNING:\n  Check that the machine.config file you are bundling\n  doesn't contain sensitive information specific to this machine.");
+				break;
+			case "--no-machine-config":
+                                no_machine_config = true;
+                                break;
+			case "--no-config":
+				no_config = true;
 				break;
 			case "--config-dir":
 				if (i+1 == top) {
@@ -533,6 +540,18 @@ class MakeBundle {
 		if (!Directory.Exists (lib_path))
 			Error ($"The SDK location does not contain a {path}/lib/mono/4.5 directory");
 		link_paths.Add (lib_path);
+                if (machine_config_file == null && !no_machine_config) {
+                        machine_config_file = Path.Combine (path, "etc", "mono", "4.5", "machine.config");
+                        if (!File.Exists (machine_config_file)){
+                                Error ($"Could not locate the file machine.config file at ${machine_config_file} use --machine-config FILE or --no-machine-config");
+                        }
+                }
+                if (config_file == null && !no_config) {
+                        config_file = Path.Combine (path, "etc", "mono", "config");
+                        if (!File.Exists (config_file)){
+                                Error ($"Could not locate the file config file at ${config_file} use --config FILE or --no-config");
+                        }
+                }
 	}
 
 	static string targets_dir = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.Personal), ".mono", "targets");
@@ -737,8 +756,12 @@ class MakeBundle {
 	static bool GeneratePackage (List<string> files)
 	{
 		if (runtime == null){
-			Error ("You must specify at least one runtime with --runtime or --cross");
-			Environment.Exit (1);
+			if (IsUnix)
+				runtime = Process.GetCurrentProcess().MainModule.FileName;
+			else {
+				Error ("You must specify at least one runtime with --runtime or --cross");
+				Environment.Exit (1);
+			}
 		}
 		if (!File.Exists (runtime)){
 			Error ($"The specified runtime at {runtime} does not exist");
@@ -821,6 +844,11 @@ typedef struct {
 void          mono_register_bundled_assemblies (const MonoBundledAssembly **assemblies);
 void          mono_register_config_for_assembly (const char* assembly_name, const char* config_xml);
 ");
+
+				// These values are part of the public API, so they are expected not to change
+				tc.WriteLine("#define MONO_AOT_MODE_NORMAL 1");
+				tc.WriteLine("#define MONO_AOT_MODE_FULL 3");
+				tc.WriteLine("#define MONO_AOT_MODE_LLVMONLY 4");
 			} else {
 				tc.WriteLine ("#include <mono/metadata/mono-config.h>");
 				tc.WriteLine ("#include <mono/metadata/assembly.h>\n");
@@ -2464,7 +2492,15 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 	static bool Target64BitApplication ()
 	{
 		// Should probably handled the --cross and sdk parameters.
-		return Environment.Is64BitProcess;
+		string targetArchitecture = GetEnv ("VSCMD_ARG_TGT_ARCH", "");
+		if (targetArchitecture.Length != 0) {
+			if (string.Compare (targetArchitecture, "x64", StringComparison.OrdinalIgnoreCase) == 0)
+				return true;
+			else
+				return false;
+		} else {
+			return Environment.Is64BitProcess;
+		}
 	}
 
 	static string GetMonoDir ()
@@ -2559,6 +2595,13 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			linkerArgs.Add ("vcruntime.lib");
 			linkerArgs.Add ("msvcrt.lib");
 			linkerArgs.Add ("oldnames.lib");
+		}
+
+		if (MakeBundle.compress) {
+			if (staticLinkMono)
+				linkerArgs.Add("zlibstatic.lib");
+			else
+				linkerArgs.Add("zlib.lib");
 		}
 
 		return;

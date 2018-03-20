@@ -122,7 +122,7 @@ sgen_collect_bridge_objects (int generation, ScanCopyContext ctx)
 			continue;
 
 		/* Object is a bridge object and major heap says it's dead  */
-		if (major_collector.is_object_live (object))
+		if (sgen_major_collector.is_object_live (object))
 			continue;
 
 		/* Nursery says the object is dead. */
@@ -186,7 +186,7 @@ sgen_finalize_in_range (int generation, ScanCopyContext ctx)
 	SGEN_HASH_TABLE_FOREACH (hash_table, GCObject *, object, gpointer, dummy) {
 		int tag = tagged_object_get_tag (object);
 		object = tagged_object_get_object (object);
-		if (!major_collector.is_object_live (object)) {
+		if (!sgen_major_collector.is_object_live (object)) {
 			gboolean is_fin_ready = sgen_gc_is_object_ready_for_finalization (object);
 			GCObject *copy = object;
 			copy_func (&copy, queue);
@@ -548,7 +548,7 @@ sgen_process_fin_stage_entries (void)
 }
 
 void
-sgen_object_register_for_finalization (GCObject *obj, void *user_data)
+sgen_object_register_for_finalization (GCObject *obj, SGenFinalizationProc user_data)
 {
 	while (add_stage_entry (NUM_FIN_STAGE_ENTRIES, &next_fin_stage_entry, fin_stage_entries, obj, user_data) == -1) {
 		if (try_lock_stage_for_processing (NUM_FIN_STAGE_ENTRIES, &next_fin_stage_entry)) {

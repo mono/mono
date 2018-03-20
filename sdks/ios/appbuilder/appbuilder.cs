@@ -102,7 +102,7 @@ public class AppBuilder
 			aot_args = "soft-debug";
 		if (isllvm) {
 			cross_runtime_args = "--llvm";
-			aot_args = ",llvm-path=$mono_sdkdir/llvm64/bin,llvm-outfile=$llvm_outfile";
+			aot_args = ",llvm-path=$mono_sdkdir/ios-llvm64/bin,llvm-outfile=$llvm_outfile";
 		}
 
 		Directory.CreateDirectory (builddir);
@@ -224,7 +224,7 @@ public class AppBuilder
 		ninja.WriteLine ("build $appdir: mkdir");
 
 		if (isdev) {
-			ninja.WriteLine ($"build $appdir/{bundle_executable}: gen-exe {ofiles} $builddir/main.o $mono_sdkdir/ios-target64/lib/libmonosgen-2.0.a $monoios_dir/libmonoios.a");
+			ninja.WriteLine ($"build $appdir/{bundle_executable}: gen-exe {ofiles} $builddir/main.o $mono_sdkdir/ios-target64-release/lib/libmonosgen-2.0.a $monoios_dir/libmonoios.a");
 			ninja.WriteLine ("build $builddir/main.o: compile-objc $builddir/main.m");
 		} else {
 			ninja.WriteLine ($"build $appdir/{bundle_executable}: cp $monoios_dir/runtime");

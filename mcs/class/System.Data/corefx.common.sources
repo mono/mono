@@ -13,7 +13,6 @@ System.Data.SqlClient/SqlCredential.cs
 System.Data.SqlClient/SQLDebugging.cs
 corefx/Odbc/AdapterUtil.cs
 corefx/Odbc/Res.cs
-corefx/DbConnection.cs
 corefx/DbConnectionOptions.cs
 corefx/DiagnosticListener.cs
 corefx/SqlClientFactory.cs
@@ -395,14 +394,14 @@ corefx/SqlDependencyUtils.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlDataReader.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlEnums.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlError.cs
-../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/sqlmetadatafactory.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlMetadataFactory_.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlErrorCollection.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlException.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlInfoMessageEvent.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlInfoMessageEventHandler.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlInternalConnection.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlInternalConnectionTds.cs
-../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/sqlinternaltransaction.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlInternalTransaction.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlParameter.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlParameterCollection.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlParameterCollectionHelper.cs

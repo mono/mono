@@ -18,13 +18,14 @@
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
     
+    
     <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>
     </RootNamespace>
     <AssemblyName>System.Configuration</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>../msfinal.pub</AssemblyOriginatorKeyFile>
@@ -197,21 +198,21 @@
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../corlib/corlib-net_4_x.csproj">
-      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
-      <Name>corlib-net_4_x</Name>
-    </ProjectReference>
-    <ProjectReference Include="../System/System-secxml-net_4_x.csproj">
-      <Project>{19954F80-065E-4D46-8FEF-62BA4D6CFDAD}</Project>
-      <Name>System-secxml-net_4_x</Name>
-    </ProjectReference>
-    <ProjectReference Include="../System.XML/System.Xml-bare-net_4_x.csproj">
-      <Project>{A5216031-11A3-44DD-B2FF-A14AE63BD0C3}</Project>
-      <Name>System.Xml-bare-net_4_x</Name>
-    </ProjectReference>
     <ProjectReference Include="../System.Security/System.Security-net_4_x.csproj">
       <Project>{3ED36717-A9D1-4289-8949-9B7F39766DEB}</Project>
       <Name>System.Security-net_4_x</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System/System-net_4_x.csproj">
+      <Project>{2762E921-91A8-4C87-91E9-BA628013F753}</Project>
+      <Name>System-net_4_x</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System.XML/System.Xml-net_4_x.csproj">
+      <Project>{87FD2F0F-5222-4AE6-BD63-2D4975E11E5B}</Project>
+      <Name>System.Xml-net_4_x</Name>
+    </ProjectReference>
+    <ProjectReference Include="../corlib/corlib-net_4_x.csproj">
+      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
+      <Name>corlib-net_4_x</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

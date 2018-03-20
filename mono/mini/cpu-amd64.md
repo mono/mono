@@ -58,6 +58,7 @@
 
 break: len:2
 tailcall: len:120 clob:c
+tailcall_membase: src1:b len:120 clob:c # FIXME len?
 br: len:6
 label: len:0
 seq_point: len:46 clob:c
@@ -448,9 +449,10 @@ hard_nop: len:1
 # Linear IR opcodes
 nop: len:0
 dummy_use: src1:i len:0
-dummy_store: len:0
 dummy_iconst: dest:i len:0
+dummy_i8const: dest:i len:0
 dummy_r8const: dest:f len:0
+dummy_r4const: dest:f len:0
 not_reached: len:0
 not_null: src1:i len:0
 

@@ -532,17 +532,43 @@ TESTS_CS_SRC=		\
 	init_array_with_lazy_type.cs \
 	weak-fields.cs \
 	threads-leak.cs	\
-	threads-init.cs
+	threads-init.cs \
+	bug-60848.cs \
+	bug-59400.cs \
+	sizeof-empty-structs.cs
 
 if AMD64
 TESTS_CS_SRC += async-exc-compilation.cs finally_guard.cs finally_block_ending_in_dead_bb.cs
+if !HOST_WIN32
+# requires working altstack
+TESTS_CS_SRC += bug-60862.cs
+endif
 endif
 
 if X86
 TESTS_CS_SRC += async-exc-compilation.cs finally_guard.cs finally_block_ending_in_dead_bb.cs
+if !HOST_WIN32
+# requires working altstack
+TESTS_CS_SRC += bug-60862.cs
+endif
 endif
 
 TESTS_IL_SRC=			\
+	gptail1.il		\
+	itail1.il		\
+	itaili1.il		\
+	ivtail1.il		\
+	sirtail1.il		\
+	sitail1.il		\
+	srtail1.il		\
+	stail1.il		\
+	tail1.il		\
+	taili1.il		\
+	vtail1.il		\
+	tailcall-virt.il 	\
+	tailcall-rgctxa.il 	\
+	tailcall-rgctxb.il 	\
+	tailcall-mrgctx.il 	\
 	field-access.il		\
 	method-access.il	\
 	ldftn-access.il		\
@@ -555,7 +581,7 @@ TESTS_IL_SRC=			\
 	locallocTest.il		\
 	initblkTest.il		\
 	qt-instance.il		\
-	vararg.il		\
+	vararg3.il		\
 	bug-29859.il		\
 	bug-78549.il		\
 	static-fields-nonconst.il	\
@@ -675,7 +701,15 @@ TESTS_GSHARED_SRC = \
 	bug-1147.cs	\
 	generic-type-builder.2.cs
 
-PLATFORM_DISABLED_TESTS=
+PLATFORM_DISABLED_TESTS=\
+	tailcall-rgctxb.exe
+
+# tailcall-virt only currently implemented on AMD64 (JIT, AOT, LLVM).
+# Not ARM, not interpreter, etc.
+
+if !AMD64
+PLATFORM_DISABLED_TESTS += tailcall-virt.exe
+endif
 
 if HOST_WIN32
 PLATFORM_DISABLED_TESTS += bug-58782-plain-throw.exe bug-58782-capture-and-throw.exe
@@ -697,7 +731,8 @@ if HOST_WIN32
 PLATFORM_DISABLED_TESTS += async-exc-compilation.exe finally_guard.exe finally_block_ending_in_dead_bb.exe \
 	bug-18026.exe monitor.exe threadpool-exceptions5.exe process-unref-race.exe w32message.exe \
 	unhandled-exception-1.exe unhandled-exception-2.exe unhandled-exception-3.exe unhandled-exception-4.exe \
-	unhandled-exception-5.exe unhandled-exception-6.exe unhandled-exception-7.exe unhandled-exception-8.exe
+	unhandled-exception-5.exe unhandled-exception-6.exe unhandled-exception-7.exe unhandled-exception-8.exe \
+	finalizer-abort.exe
 endif
 
 endif
@@ -718,23 +753,10 @@ endif
 
 if ARM
 PLATFORM_DISABLED_TESTS += filter-stack.exe weak-fields.exe
-INTERP_PLATFORM_DISABLED_TESTS= \
-	assemblyresolve_event6.exe \
-	delegate-async-exit.exe \
-	delegate-delegate-exit.exe \
-	delegate-exit.exe \
-	delegate1.exe \
-	delegate3.exe \
-	thunks.exe \
-	finalizer-exception.exe \
-	monitor-abort.exe
 endif
 
 if ARM64
 PLATFORM_DISABLED_TESTS += weak-fields.exe
-INTERP_PLATFORM_DISABLED_TESTS= \
-	assemblyresolve_event6.exe \
-	finalizer-exception.exe
 endif
 
 if MIPS
@@ -753,13 +775,8 @@ PLATFORM_DISABLED_TESTS += \
 	sgen-bridge-xref.exe
 endif
 
-if ENABLE_COOP
-COOP_DISABLED_TESTS= thunks.exe
-else
-COOP_DISABLED_TESTS= 
-endif
-
-PROFILE_DISABLED_TESTS=
+PROFILE_DISABLED_TESTS= \
+	tailcall-rgctxb.exe
 
 if FULL_AOT_TESTS
 # Tests which rely on TypeLoadExceptions
@@ -916,6 +933,9 @@ PROFILE_DISABLED_TESTS += \
 	assemblyresolve_event3.exe \
 	appdomain-serialize-exception.exe
 
+PROFILE_DISABLED_TESTS += \
+	delegate15.exe
+
 # https://bugzilla.xamarin.com/show_bug.cgi?id=60973
 PROFILE_DISABLED_TESTS += \
 	weak-fields.exe
@@ -941,12 +961,27 @@ CI_DISABLED_TESTS = \
 # failing tests which we temporarily disable for PRs
 # so they don't interfere with other people's work
 CI_PR_DISABLED_TESTS = \
-	appdomain-threadpool-unload.exe
+	appdomain-threadpool-unload.exe \
+	monitor-abort.exe \
+	monitor-wait-abort.exe \
+	process-stress-3.exe \
+	bug-80307.exe
+
+if ENABLE_COOP
+CI_PR_DISABLED_TESTS += \
+	abort-cctor.exe \
+	bug-58782-plain-throw.exe \
+	bug-58782-capture-and-throw.exe
+endif
 
 # appdomain-threadpool-unload.exe creates 100 appdomains, takes too long with llvm
 LLVM_DISABLED_TESTS = \
 	finally_block_ending_in_dead_bb.exe \
 	appdomain-threadpool-unload.exe
+
+# https://github.com/mono/mono/issues/6490
+LLVM_DISABLED_TESTS += \
+	weak-fields.exe
 
 LLVM = $(filter --llvm, $(MONO_ENV_OPTIONS))
 
@@ -959,7 +994,11 @@ LLVM = $(filter --llvm, $(MONO_ENV_OPTIONS))
 # appdomain-thread-abort.exe: https://bugzilla.xamarin.com/show_bug.cgi?id=47054
 # abort-try-holes.exe is flaky due to unwinding failure to the finally block when aborting
 # appdomain-marshalbyref-assemblyload.exe: https://bugzilla.xamarin.com/show_bug.cgi?id=49308
-# dim-*: https://github.com/mono/mono/pull/6252
+# threads-init.exe: runs out of system threads
+# dim-constrainedcall.exe: fails on dontnet as well (https://github.com/dotnet/coreclr/issues/15353)
+# tailcall-rgctxb.exe seems like it would but it does not, needs debugging
+# tailcall-mrgctx.exe   temporarily disabled
+# tailcall-rgctxa.exe   temporarily disabled
 KNOWN_FAILING_TESTS = \
 	delegate-async-exception.exe	\
 	bug-348522.2.exe	\
@@ -968,70 +1007,118 @@ KNOWN_FAILING_TESTS = \
 	bug-Xamarin-5278.exe \
 	appdomain-marshalbyref-assemblyload.exe	\
 	abort-try-holes.exe \
-	dim-constrainedcall.exe	\
-	dim-diamondshape.exe	\
-	dim-methodimpl.exe	\
-	dim-simple.exe
+	threads-init.exe \
+	dim-constrainedcall.exe \
+	gptail1.exe \
+	itaili1.exe \
+	ivtail1.exe \
+	sirtail1.exe \
+	srtail1.exe \
+	stail1.exe \
+	tail1.exe \
+	taili1.exe \
+	vtail1.exe \
+	tailcall-mrgctx.exe \
+	tailcall-rgctxa.exe \
+	tailcall-rgctxb.exe
 
 DISABLED_TESTS = \
 	$(KNOWN_FAILING_TESTS) \
 	$(PLATFORM_DISABLED_TESTS) \
-	$(EXTRA_DISABLED_TESTS) \
-	$(COOP_DISABLED_TESTS) \
 	$(PROFILE_DISABLED_TESTS) \
 	$(if $(AOT),$(AOT_DISABLED_TESTS)) \
 	$(if $(CI),$(CI_DISABLED_TESTS)) \
 	$(if $(CI_PR),$(CI_PR_DISABLED_TESTS)) \
 	$(if $(LLVM),$(LLVM_DISABLED_TESTS))
 
-# bug-48015.exe: be careful when re-enabling, it happens that it returns with
-#                exit code 0, but doesn't actually execute the test.
-# block_guard_restore_aligment_on_exit.exe: flaky (10% of the time it hangs and thus times out)
-# weak-fields.exe: https://bugzilla.xamarin.com/show_bug.cgi?id=60973
-# dim-valuetypes.exe: https://github.com/mono/mono/issues/6287
-INTERP_DISABLED_TESTS = \
-	$(KNOWN_FAILING_TESTS) \
-	$(INTERP_PLATFORM_DISABLED_TESTS) \
-	$(COOP_DISABLED_TESTS) \
-	$(if $(CI),$(CI_DISABLED_TESTS)) \
-	$(if $(CI_PR),$(CI_PR_DISABLED_TESTS)) \
+# Interpreter does not currently implement tailcall.
+# Disable all tailcall tests that are not otherwise disabled.
+INTERP_DISABLED_TESTS = $(DISABLED_TESTS) \
+	itail1.exe \
+	sitail1.exe \
+	tailcall-mrgctx.exe \
+	tailcall-virt.exe   \
+	tailcall-rgctxa.exe
+
+# bug-48015.exe: be careful when re-enabling, it happens that it returns with exit code 0, but doesn't actually execute the test.
+# bug-60862.exe: missing support to map IP->method; only works on platforms with altstack support.
+
+if ARM
+INTERP_DISABLED_TESTS += \
+	appdomain-unload-callback.exe \
 	appdomain-unload.exe \
-	array_load_exception.exe \
-	async-exc-compilation.exe \
+	assemblyresolve_event6.exe \
 	async-with-cb-throws.exe \
 	block_guard_restore_aligment_on_exit.exe \
+	bug-323114.exe \
 	bug-335131.2.exe \
 	bug-415577.exe \
 	bug-45841-fpstack-exceptions.exe \
 	bug-48015.exe \
-	bug-58782-capture-and-throw.exe \
-	bug-58782-plain-throw.exe \
+	bug-60862.exe \
+	bug-80307.exe \
+	bug-80392.2.exe \
 	bug445361.exe \
 	calliGenericTest.exe \
 	cominterop.exe \
 	context-static.exe \
+	delegate-async-exit.exe \
+	delegate-delegate-exit.exe \
+	delegate-exit.exe \
 	delegate-with-null-target.exe \
+	delegate1.exe \
+	delegate3.exe \
+	delegate5.exe \
+	delegate8.exe \
 	delegate9.exe \
+	dim-diamondshape.exe \
 	dynamic-method-stack-traces.exe \
 	even-odd.exe \
 	exception18.exe \
 	field-access.exe \
+	finalizer-exception.exe \
 	handleref.exe \
+	monitor-abort.exe \
 	nullable_boxing.2.exe \
+	pinvoke.exe \
 	pinvoke2.exe \
 	pinvoke3.exe \
+	remoting2.exe \
+	remoting3.exe \
 	safehandle.2.exe \
 	stackframes-async.2.exe \
 	static-constructor.exe \
-	thread6.exe \
 	threadpool-exceptions2.exe \
+	threadpool-exceptions3.exe \
 	threadpool-exceptions4.exe \
 	threadpool-exceptions5.exe \
+	threadpool-exceptions6.exe \
+	thunks.exe \
 	typeload-unaligned.exe \
-	weak-fields.exe \
 	vararg.exe \
 	vararg2.exe \
-	dim-valuetypes.exe
+	vararg3.exe
+endif
+
+if ARM64
+INTERP_DISABLED_TESTS += \
+	bug-48015.exe \
+	bug-80307.exe \
+	delegate-with-null-target.exe \
+	dim-diamondshape.exe \
+	pinvoke3.exe
+endif
+
+if AMD64
+INTERP_DISABLED_TESTS += \
+	assemblyresolve_event6.exe \
+	bug-48015.exe \
+	bug-60862.exe \
+	cominterop.exe \
+	delegate-with-null-target.exe \
+	dim-diamondshape.exe \
+	pinvoke.exe
+endif
 
 TESTS_CS=$(filter-out $(DISABLED_TESTS),$(TESTS_CS_SRC:.cs=.exe))
 TESTS_IL=$(filter-out $(DISABLED_TESTS),$(TESTS_IL_SRC:.il=.exe))
@@ -1145,7 +1232,10 @@ test-env-options:
 
 # Precompile the test assemblies in parallel
 compile-tests:
-	$(MAKE) -j4 $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH) $(TESTS_STRESS) $(TESTS_GSHARED) $(TESTSAOT_CS) $(TESTSAOT_IL) $(TESTSAOT_BENCH) $(TESTSAOT_STRESS) $(TESTSAOT_GSHARED) compile-gac-loading
+	$(MAKE) -j4 compile-tests-parallel
+
+# Use the parallelism specified on the command line instead -- more or less than 4.
+compile-tests-parallel: $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH) $(TESTS_STRESS) $(TESTS_GSHARED) $(TESTSAOT_CS) $(TESTSAOT_IL) $(TESTSAOT_BENCH) $(TESTSAOT_STRESS) $(TESTSAOT_GSHARED) compile-gac-loading
 
 # Remove empty .stdout and .stderr files for wrench
 rm-empty-logs:
@@ -1984,7 +2074,7 @@ TESTSAOT_STRESS_PROCESS=$(TESTS_STRESS_PROCESS:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 endif
 
 test-process-stress: $(TESTS_STRESS_PROCESS) $(TESTSAOT_STRESS_PROCESS) test-runner.exe
-	$(TOOLS_RUNTIME) $(TEST_RUNNER) --testsuite-name $@ --disabled "$(DISABLED_TESTS)" --timeout 600 $(TESTS_STRESS_PROCESS)
+	$(TOOLS_RUNTIME) $(TEST_RUNNER) --testsuite-name $@ --disabled "$(DISABLED_TESTS)" --timeout 900 $(TESTS_STRESS_PROCESS)
 
 coreclr-gcstress:
 	$(MAKE) -C $(mono_build_root)/acceptance-tests coreclr-gcstress

@@ -1,3 +1,3 @@
 #!/bin/bash -e
 
-external/bockbuild/bb MacSDK --package --arch=darwin-64
+exec external/bockbuild/bb MacSDK --package --arch=darwin-64 "$@"

@@ -1,4 +1,5 @@
 TOP=$(realpath $(CURDIR)/../..)
+include $(TOP)/sdks/versions.mk
 include $(TOP)/sdks/paths.mk
 ADB       = $(SDK_DIR)/platform-tools/adb
 ANDROID   = $(SDK_DIR)/tools/android
@@ -144,6 +145,12 @@ $(APK_DIR)/assets/asm/Mono.Android.dll: managed/fake-monodroid.cs | $(APK_DIR)/a
 $(patsubst %,$(APK_DIR)/assets/asm/%,$(BCL_LIBS)) $(patsubst %,$(APK_DIR)/assets/asm/%,$(NUNIT_LIBS)): $(APK_DIR)/assets/asm/%: $(TOP)/sdks/out/bcl/monodroid/% | $(APK_DIR)/assets/asm
 	cp $< $@
 
+$(APK_DIR)/lldb-mono-0.1/xa-lldb:
+	cd $(APK_DIR) && curl -L -O 'https://github.com/mono/lldb-binaries/releases/download/v0.1/lldb-mono-0.1.tar.gz'
+	cd $(APK_DIR) && tar xfv lldb-mono-0.1.tar.gz && rm lldb-mono-0.1.tar.gz
+	cd $(APK_DIR) && rm lldb-mono-0.1/xa-lldb
+	cd $(APK_DIR) && cp ../xa-lldb lldb-mono-0.1
+
 .PHONY: package
 package: $(APK_DIR)/AndroidManifest.xml
 package: $(APK_DIR)/build.xml
@@ -165,6 +172,9 @@ package: $(APK_DIR)/assets/asm/Mono.Android.dll
 package: $(patsubst %,$(APK_DIR)/assets/asm/%,$(BCL_LIBS))
 package: $(patsubst %,$(APK_DIR)/assets/asm/%,$(NUNIT_LIBS))
 package: $(patsubst %,$(APK_DIR)/assets/asm/monodroid_%_test.dll,$(CHECKS))
+ifneq ($(MONO_WAIT_LLDB),)
+package: $(APK_DIR)/lldb-mono-0.1/xa-lldb
+endif
 
 .PHONY: build-%
 build-%: package
@@ -176,7 +186,11 @@ build-%: package
 check-%: build-%
 	cd $(APK_DIR) && $(ADB) uninstall $(PACKAGE) || true
 	cd $(APK_DIR) && $(ADB) install bin/AndroidActivity-debug.apk
+ifneq ($(MONO_WAIT_LLDB),)
+	cd $(APK_DIR) && ./lldb-mono-0.1/xa-lldb
+else
 	cd $(APK_DIR) && $(ADB) shell am instrument -w $(PACKAGE)/$(RUNNER)
+endif
 
 ## Mini tests
 

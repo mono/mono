@@ -1,4 +1,4 @@
-Build scripts and sample apps for mono targeting its supported platforms.
+This project provides build scripts and sample apps for Mono targeting its supported platforms. Supported are Android, iOS and WebAssembly.
 
 # Build instructions
 
@@ -7,11 +7,28 @@ Build scripts and sample apps for mono targeting its supported platforms.
 Copy `Make.config.sample` to `Make.config` and edit the new file to disable building the target you're not interested in.
 Unless you have a very particular need, the BCL build should be left enabled as it's needed by all test runners.
 
+## Targets
 
-# Android NDK
+To build Mono for Android, iOS or WebAssembly, the build scripts can be found in `sdks/builds/`. There are 5 predefined targets that can be invoked:
 
-- Mac OS X: [android-ndk-r11c-darwin-x86_64.zip](https://dl.google.com/android/repository/android-ndk-r11c-darwin-x86_64.zip). sha1: 4ce8e7ed8dfe08c5fe58aedf7f46be2a97564696
-- Linux 64-bit: [android-ndk-r11c-linux-x86_64.zip](https://dl.google.com/android/repository/android-ndk-r11c-linux-x86_64.zip). sha1: de5ce9bddeee16fb6af2b9117e9566352aa7e279
+ - toolchain: setup the toolchain so we can cross-compile the runtime for the appropriate platform
+ - configure: configure the build of Mono
+ - build: build Mono
+ - package: provide a package of the built Mono, the result can be found in `sdks/builds/out/`
+ - clean: clean the Mono build directory
+
+The `make` targets are as follow:
+
+```
+# Android
+make -C builds {toolchain,configure,build,package,clean}-android-{armeabi,armeabi-v7a,arm64-v8a,x86,x86_64}
+
+# iOS
+make -C builds {toolchain,configure,build,package,clean}-ios-{target{32,64},sim{32,64},cross{32,64}}
+
+# WebAssembly
+make -C builds {toolchain,configure,build,package,clean}-wasm-interp
+```
 
 # Testing instructions
 
@@ -36,42 +53,12 @@ Go to the `wasm` directory for building and testing WebAssembly. Right now the f
 For bcl or runtime changes, you must manually run the corresponding build/package steps in `builds`.
 For test suite changes, it's enough to just rerun the local target.
 
-# Open Tasks
+# Dependencies
 
-## SDKs
+| Project     | Dependencies        |
+| ----------- | ------------------- |
+| Android     | Android SDK and NDK |
+| iOS         | Xcode               |
+| WebAssembly |                     |
 
-- Build nunit-lite as part of the bcl build and ship it there
-- Build all test suites as part of the sdk itself
-- Move the ARM_CFLAGS & friends to the android makefile generator
-
-## Android
-
-- Add android SDK probing ~/Library/Developer/Xamarin/android-sdk-macosx.  Figure out if we should switch to Android Studio for SDK related stuff (Google got rid of the old SDK scheme).
-- Add remaining Android targets
-- Make the bcl build use the same setup as the android targets
-- Add cross-compiler targets for Android
-
-### XTC specifics
-
-Most Android devices are crap for testing, so we hand pick those that produce reliable and useful results.
-
-Here's the device set to pick in general:
-
-arm32: HTC One
-aarch64: Google Pixel
-x86_32: Acer Iconia A1-830
-
-
-## iOS
-
-Everything
-
-## BCL
-
-- Build depends on building a runtime, fix the build system to support using system mono/csc
-- Build will generate all profiles instead of those we care.
-
-## General
-
-Write the iOS driver.
-
+See `sdks/versions.mk` for specific version numbers, and `sdks/paths.mk` for where they should be installed. These dependencies will not be installed as part of the build process, and will be expected to be present; an error will be triggered if it's not the case. If you need an additional version, please do contact us or submit a pull-request against [mono/mono](https://github.com/mono/mono).

@@ -60,6 +60,7 @@ install-local:
 	$(INSTALL_LIB) ../../../external/binary-reference-assemblies/mono/*.dll $(PROFILE_DIR)/4.6.2-api
 	$(INSTALL_LIB) ../../../external/binary-reference-assemblies/mono/*.dll $(PROFILE_DIR)/4.7-api
 	$(INSTALL_LIB) ../../../external/binary-reference-assemblies/mono/*.dll $(PROFILE_DIR)/4.7.1-api
+	rm -f $(PROFILE_DIR)/4.7.1-api/ICSharpCode.SharpZipLib.dll
 
 	# Unfortunately, a few programs (most notably NUnit and FSharp) have hardcoded checks for <prefix>/lib/mono/4.0/mscorlib.dll or Mono.Posix.dll,
 	# so we need to place something there or those tools break. We decided to symlink to the reference assembly for now.

@@ -111,13 +111,11 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStar
 		process_info->pid = -GetLastError ();
 	} else {
 		process_info->process_handle = shellex.hProcess;
-		process_info->thread_handle = NULL;
 #if !defined(MONO_CROSS_COMPILE)
 		process_info->pid = GetProcessId (shellex.hProcess);
 #else
 		process_info->pid = 0;
 #endif
-		process_info->tid = 0;
 	}
 
 	return ret;
@@ -240,7 +238,7 @@ process_get_shell_arguments (MonoW32ProcessStartInfo *proc_start_info, MonoStrin
 {
 	gchar		*spath = NULL;
 	gchar		*new_cmd, *cmd_utf8;
-	ERROR_DECL (mono_error);
+	ERROR_DECL_VALUE (mono_error);
 
 	*cmd = proc_start_info->arguments;
 
@@ -335,11 +333,9 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStart
 	if (ret) {
 		process_info->process_handle = procinfo.hProcess;
 		/*process_info->thread_handle=procinfo.hThread;*/
-		process_info->thread_handle = NULL;
 		if (procinfo.hThread != NULL && procinfo.hThread != INVALID_HANDLE_VALUE)
 			CloseHandle (procinfo.hThread);
 		process_info->pid = procinfo.dwProcessId;
-		process_info->tid = procinfo.dwThreadId;
 	} else {
 		process_info->pid = -GetLastError ();
 	}
@@ -386,8 +382,8 @@ ves_icall_System_Diagnostics_Process_GetProcesses_internal (void)
 	} while (TRUE);
 
 	count = needed / sizeof (guint32);
-	procs = mono_array_new_checked (mono_domain_get (), mono_get_int32_class (), count, &error);
-	if (mono_error_set_pending_exception (&error)) {
+	procs = mono_array_new_checked (mono_domain_get (), mono_get_int32_class (), count, error);
+	if (mono_error_set_pending_exception (error)) {
 		g_free (pids);
 		return NULL;
 	}

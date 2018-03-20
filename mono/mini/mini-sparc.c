@@ -130,8 +130,6 @@
 #endif
 #endif
 
-#define ALIGN_TO(val,align) (((val) + ((align) - 1)) & ~((align) - 1))
-
 #define SIGNAL_STACK_SIZE (64 * 1024)
 
 #define STACK_BIAS MONO_SPARC_STACK_BIAS
@@ -346,7 +344,7 @@ mono_arch_flush_register_windows (void)
 }
 
 gboolean 
-mono_arch_is_inst_imm (gint64 imm)
+mono_arch_is_inst_imm (int opcode, int imm_opcode, gint64 imm)
 {
 	return sparc_is_imm13 (imm);
 }
@@ -1579,8 +1577,8 @@ emit_call (MonoCompile *cfg, guint32 *code, guint32 patch_type, gconstpointer da
 		patch_info.type = patch_type;
 		patch_info.data.target = data;
 
-		target = mono_resolve_patch_target (cfg->method, cfg->domain, NULL, &patch_info, FALSE, &error);
-		mono_error_raise_exception_deprecated (&error); /* FIXME: don't raise here */
+		target = mono_resolve_patch_target (cfg->method, cfg->domain, NULL, &patch_info, FALSE, error);
+		mono_error_raise_exception_deprecated (error); /* FIXME: don't raise here */
 
 		/* FIXME: Add optimizations if the target is close enough */
 		sparc_set (code, target, sparc_o7);
@@ -3145,7 +3143,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_RELAXED_NOP:
 		case OP_NOP:
 		case OP_DUMMY_USE:
-		case OP_DUMMY_STORE:
+		case OP_DUMMY_ICONST:
+		case OP_DUMMY_I8CONST:
+		case OP_DUMMY_R8CONST:
+		case OP_DUMMY_R4CONST:
 		case OP_NOT_REACHED:
 		case OP_NOT_NULL:
 			break;
@@ -3644,6 +3645,18 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_MEMORY_BARRIER:
 			sparc_membar (code, sparc_membar_all);
 			break;
+		case OP_LIVERANGE_START: {
+			if (cfg->verbose_level > 1)
+				printf ("R%d START=0x%x\n", MONO_VARINFO (cfg, ins->inst_c0)->vreg, (int)(code - cfg->native_code));
+			MONO_VARINFO (cfg, ins->inst_c0)->live_range_start = code - cfg->native_code;
+			break;
+		}
+		case OP_LIVERANGE_END: {
+			if (cfg->verbose_level > 1)
+				printf ("R%d END=0x%x\n", MONO_VARINFO (cfg, ins->inst_c0)->vreg, (int)(code - cfg->native_code));
+			MONO_VARINFO (cfg, ins->inst_c0)->live_range_end = code - cfg->native_code;
+			break;
+		}
 		case OP_GC_SAFE_POINT:
 			break;
 

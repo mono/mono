@@ -32,8 +32,6 @@
 #include "interp/interp.h"
 #endif
 
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
-
 void
 mono_arch_patch_callsite (guint8 *method_start, guint8 *code_ptr, guint8 *addr)
 {
@@ -788,9 +786,9 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 		ARM_LDR_IMM (code, ARMREG_IP, ARMREG_PC, 0);
 		ARM_B (code, 0);
 		if (single_step)
-			*(gpointer*)code = debugger_agent_single_step_from_context;
+			*(gpointer*)code = mono_debugger_agent_single_step_from_context;
 		else
-			*(gpointer*)code = debugger_agent_breakpoint_from_context;
+			*(gpointer*)code = mono_debugger_agent_breakpoint_from_context;
 		code += 4;
 		ARM_BLX_REG (code, ARMREG_IP);
 	}

@@ -18,13 +18,14 @@
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
     
+    
     <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>
     </RootNamespace>
     <AssemblyName>System.ServiceModel.Activation</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>../winfx.pub</AssemblyOriginatorKeyFile>
@@ -56,9 +57,9 @@
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-    <Compile Include="..\System.ServiceModel\System.ServiceModel.Activation\ServiceHostFactory.cs" />
-    <Compile Include="..\System.ServiceModel\System.ServiceModel\ServiceHostingEnvironment.cs" />
-    <Compile Include="Assembly\AssemblyInfo.cs" />  </ItemGroup>
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="System.ServiceModel.Activation\ServiceHostFactory.cs" />
+    <Compile Include="System.ServiceModel\ServiceHostingEnvironment.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -81,10 +82,6 @@
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../corlib/corlib-net_4_x.csproj">
-      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
-      <Name>corlib-net_4_x</Name>
-    </ProjectReference>
     <ProjectReference Include="../System.Core/System.Core-net_4_x.csproj">
       <Project>{359142A1-D80F-401E-AA64-7167C9317649}</Project>
       <Name>System.Core-net_4_x</Name>
@@ -93,9 +90,13 @@
       <Project>{2762E921-91A8-4C87-91E9-BA628013F753}</Project>
       <Name>System-net_4_x</Name>
     </ProjectReference>
-    <ProjectReference Include="../System.ServiceModel/System.ServiceModel-plainservice-net_4_x.csproj">
-      <Project>{88C258E1-F0AF-47DA-96C8-7FA6421067CD}</Project>
-      <Name>System.ServiceModel-plainservice-net_4_x</Name>
+    <ProjectReference Include="../System.ServiceModel/System.ServiceModel-net_4_x.csproj">
+      <Project>{FE596C31-BDA2-4850-8F79-F8F4DF70F44A}</Project>
+      <Name>System.ServiceModel-net_4_x</Name>
+    </ProjectReference>
+    <ProjectReference Include="../corlib/corlib-net_4_x.csproj">
+      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
+      <Name>corlib-net_4_x</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

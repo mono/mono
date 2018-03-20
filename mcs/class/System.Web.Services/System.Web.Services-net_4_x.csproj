@@ -18,13 +18,14 @@
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
     
+    
     <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>
     </RootNamespace>
     <AssemblyName>System.Web.Services</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>../msfinal.pub</AssemblyOriginatorKeyFile>
@@ -250,10 +251,11 @@
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../corlib/corlib-net_4_x.csproj">
-      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
-      <Name>corlib-net_4_x</Name>
-    </ProjectReference>
+    <Reference Include="./../../../external/binary-reference-assemblies/v4.7.1/System.Web.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/v4.7.1/System.Web.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <ProjectReference Include="../System/System-net_4_x.csproj">
       <Project>{2762E921-91A8-4C87-91E9-BA628013F753}</Project>
       <Name>System-net_4_x</Name>
@@ -270,13 +272,9 @@
       <Project>{EC439BB8-FFED-4A32-A05D-2FA3A70CAD64}</Project>
       <Name>System.Data-net_4_x</Name>
     </ProjectReference>
-    <ProjectReference Include="../System.Web/System.Web-plainweb-net_4_x.csproj">
-      <Project>{DE51B021-D51C-4F26-99EE-B0729D97631E}</Project>
-      <Name>System.Web-plainweb-net_4_x</Name>
-    </ProjectReference>
-    <ProjectReference Include="../System.Design/System.Design-plaindesign-net_4_x.csproj">
-      <Project>{DCE556E9-EF89-45F3-A51F-83D3C3E0FEF5}</Project>
-      <Name>System.Design-plaindesign-net_4_x</Name>
+    <ProjectReference Include="../System.Design/System.Design-net_4_x.csproj">
+      <Project>{EFEDC380-2CB0-4B40-9566-D2302867A4D9}</Project>
+      <Name>System.Design-net_4_x</Name>
     </ProjectReference>
     <ProjectReference Include="../System.DirectoryServices/System.DirectoryServices-net_4_x.csproj">
       <Project>{CC4F3F73-E0A6-49EE-8F7D-BD8B9F293A72}</Project>
@@ -285,6 +283,10 @@
     <ProjectReference Include="../System.Configuration/System.Configuration-net_4_x.csproj">
       <Project>{D5CDC09C-F19A-4811-A6C8-70F51CBFB644}</Project>
       <Name>System.Configuration-net_4_x</Name>
+    </ProjectReference>
+    <ProjectReference Include="../corlib/corlib-net_4_x.csproj">
+      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
+      <Name>corlib-net_4_x</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

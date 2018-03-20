@@ -473,14 +473,14 @@ mono_x86_throw_exception (mgreg_t *regs, MonoObject *exc,
 	g_assert ((ctx.esp % MONO_ARCH_FRAME_ALIGNMENT) == 0);
 #endif
 
-	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, &error)) {
+	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, error)) {
 		MonoException *mono_ex = (MonoException*)exc;
 		if (!rethrow) {
 			mono_ex->stack_trace = NULL;
 			mono_ex->trace_ips = NULL;
 		}
 	}
-	mono_error_assert_ok (&error);
+	mono_error_assert_ok (error);
 
 	/* adjust eip so that it point into the call instruction */
 	ctx.eip -= 1;
@@ -1034,12 +1034,20 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 #endif
 }
 
-static void
-restore_soft_guard_pages (void)
+static MonoObject*
+restore_soft_guard_pages ()
 {
 	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
+
 	if (jit_tls->stack_ovf_guard_base)
 		mono_mprotect (jit_tls->stack_ovf_guard_base, jit_tls->stack_ovf_guard_size, MONO_MMAP_NONE);
+
+	if (jit_tls->stack_ovf_pending) {
+		MonoDomain *domain = mono_domain_get ();
+		jit_tls->stack_ovf_pending = 0;
+		return (MonoObject *) domain->stack_overflow_ex;
+	}
+	return NULL;
 }
 
 /* 
@@ -1054,11 +1062,12 @@ prepare_for_guard_pages (MonoContext *mctx)
 	gpointer *sp;
 	sp = (gpointer)(mctx->esp);
 	sp -= 1;
-	/* the resturn addr */
+	/* the return addr */
 	sp [0] = (gpointer)(mctx->eip);
 	mctx->eip = (unsigned long)restore_soft_guard_pages;
 	mctx->esp = (unsigned long)sp;
 }
+
 
 static void
 altstack_handle_and_restore (MonoContext *ctx, gpointer obj, gboolean stack_ovf)
@@ -1068,8 +1077,11 @@ altstack_handle_and_restore (MonoContext *ctx, gpointer obj, gboolean stack_ovf)
 	mctx = *ctx;
 
 	mono_handle_exception (&mctx, obj);
-	if (stack_ovf)
+	if (stack_ovf) {
+		MonoJitTlsData *jit_tls = (MonoJitTlsData *) mono_tls_get_jit_tls ();
+		jit_tls->stack_ovf_pending = 1;
 		prepare_for_guard_pages (&mctx);
+	}
 	mono_restore_context (&mctx);
 }
 

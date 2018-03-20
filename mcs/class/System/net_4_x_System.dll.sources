@@ -142,7 +142,11 @@ System.IO/IFileWatcher.cs
 System.IO/InotifyWatcher.cs
 System.IO/KeventWatcher.cs
 System.IO/SearchPattern.cs
-System.IO/WindowsWatcher.cs
+
+../../../external/corefx/src/Common/src/System/IO/PathInternal.CaseSensitivity.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/PatternMatcher.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.cs
+System.IO/CoreFXFileSystemWatcherProxy.cs
 
 System.IO.Ports/Handshake.cs
 System.IO.Ports/ISerialStream.cs
@@ -378,3 +382,6 @@ ReferenceSources/ConfigurationManagerInternalFactory.cs
 ../../../external/corefx/src/System.CodeDom/src/System/CodeDom/FieldDirection.cs
 ../../../external/corefx/src/System.CodeDom/src/System/CodeDom/MemberAttributes.cs
 ../../../external/corefx/src/System.CodeDom/src/System/Collections/Specialized/FixedStringLookup.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexCompiler.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/CompiledRegexRunnerFactory.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexLWCGCompiler.cs

@@ -49,12 +49,18 @@ namespace System {
     using System.Runtime.CompilerServices;        
     using System.Runtime.Serialization;
     using System.Diagnostics.Contracts;
+    using System.Collections.Generic;
 
     [Pure]
+#if MONO
+    [System.Diagnostics.StackTraceHidden]
+#endif
     internal static partial class ThrowHelper {
+#if !MONO
         internal static void ThrowArgumentOutOfRangeException() {        
             ThrowArgumentOutOfRangeException(ExceptionArgument.index, ExceptionResource.ArgumentOutOfRange_Index);            
         }
+#endif
 
         internal static void ThrowWrongKeyTypeArgumentException(object key, Type targetType) {
             throw new ArgumentException(Environment.GetResourceString("Arg_WrongType", key, targetType), "key");
@@ -120,6 +126,68 @@ namespace System {
         internal static void ThrowObjectDisposedException(string objectName, ExceptionResource resource) {
             throw new ObjectDisposedException(objectName, Environment.GetResourceString(GetResourceName(resource)));
         }
+
+#if MONO
+        internal static void ThrowInvalidOperationException_InvalidOperation_EnumFailedVersion()
+        {
+            throw new InvalidOperationException(SR.InvalidOperation_EnumFailedVersion);
+        }
+
+        internal static void ThrowInvalidOperationException_InvalidOperation_EnumOpCantHappen()
+        {
+            throw new InvalidOperationException(SR.InvalidOperation_EnumOpCantHappen);
+        }
+
+        internal static void ThrowInvalidOperationException_InvalidOperation_EnumNotStarted()
+        {
+            throw new InvalidOperationException(SR.InvalidOperation_EnumNotStarted);
+        }
+
+        internal static void ThrowInvalidOperationException_InvalidOperation_EnumEnded()
+        {
+            throw new InvalidOperationException(SR.InvalidOperation_EnumEnded);
+        }
+
+        private static ArgumentOutOfRangeException GetArgumentOutOfRangeException(ExceptionArgument argument, string resource)
+        {
+            return new ArgumentOutOfRangeException(GetArgumentName(argument), resource);
+        }
+
+        internal static void ThrowArgumentOutOfRange_IndexException()
+        {
+            throw GetArgumentOutOfRangeException(ExceptionArgument.index,
+                                                    SR.ArgumentOutOfRange_Index);
+        }
+
+        internal static void ThrowIndexArgumentOutOfRange_NeedNonNegNumException()
+        {
+            throw GetArgumentOutOfRangeException(ExceptionArgument.index,
+                                                    SR.ArgumentOutOfRange_NeedNonNegNum);
+        }
+
+        internal static void ThrowArgumentException_Argument_InvalidArrayType()
+        {
+            throw new ArgumentException(SR.Argument_InvalidArrayType);
+        }
+
+        private static ArgumentException GetAddingDuplicateWithKeyArgumentException(object key)
+        {
+            return new ArgumentException(SR.Format(SR.Argument_AddingDuplicate, key));
+        }
+        internal static void ThrowAddingDuplicateWithKeyArgumentException(object key)
+        {
+            throw GetAddingDuplicateWithKeyArgumentException(key);
+        }
+
+        private static KeyNotFoundException GetKeyNotFoundException(object key)
+        {
+            throw new KeyNotFoundException(SR.Format(SR.Arg_KeyNotFoundWithKey, key.ToString()));
+        }
+        internal static void ThrowKeyNotFoundException(object key)
+        {
+            throw GetKeyNotFoundException(key);
+        }
+#endif
 
         // Allow nulls for reference types and Nullable<U>, but not for value types.
         internal static void IfNullAndNullsAreIllegalThenThrow<T>(object value, ExceptionArgument argName) {
@@ -476,6 +544,10 @@ namespace System {
         ownedMemory,
         text,
         length,
+        comparer,
+        comparable,
+        exceptions,
+        exception
 #endif
     }
 
@@ -530,7 +602,10 @@ namespace System {
         ObjectDisposed_RegKeyClosed,
         NotSupported_InComparableType,
         Argument_InvalidRegistryOptionsCheck,
-        Argument_InvalidRegistryViewCheck
+        Argument_InvalidRegistryViewCheck,
+        TaskT_TransitionToFinal_AlreadyCompleted,
+        TaskCompletionSourceT_TrySetException_NullException,
+        TaskCompletionSourceT_TrySetException_NoExceptions,
     }
 }
 

@@ -1391,6 +1391,49 @@ class Tests
 
 		return 0;
 	}
+
+	class LdobjStobj {
+		public int counter;
+		public LdobjStobj buffer1;
+		public LdobjStobj buffer2;
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static void swap<T>(ref T first, ref T second) {
+		second = first;
+	}
+
+	public static int test_42_ldobj_stobj_ref () {
+		var obj = new LdobjStobj ();
+		obj.counter = 42;
+		swap (ref obj.buffer1, ref obj.buffer2);
+		return obj.counter;
+	}
+
+	public interface ICompletion {
+		Type UnsafeOnCompleted ();
+	}
+
+	public struct TaskAwaiter<T> : ICompletion {
+		public Type UnsafeOnCompleted () {
+			typeof(T).GetHashCode ();
+			return typeof(T);
+		}
+	}
+
+	public struct AStruct {
+        public Type Caller<TAwaiter>(ref TAwaiter awaiter)
+            where TAwaiter : ICompletion {
+			return awaiter.UnsafeOnCompleted();
+		}
+	}
+
+    public static int test_0_partial_constrained_call_llvmonly () {
+		var builder = new AStruct ();
+		var awaiter = new TaskAwaiter<bool> ();
+		var res = builder.Caller (ref awaiter);
+		return res == typeof (bool) ? 0 : 1;
+	}
 }
 
 #if !__MOBILE__

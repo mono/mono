@@ -10,6 +10,7 @@
 #include <mono/metadata/blob.h>
 #include <mono/metadata/row-indexes.h>
 #include <mono/metadata/image.h>
+#include <mono/metadata/object-forward.h>
 
 MONO_BEGIN_DECLS
 
@@ -18,13 +19,11 @@ MONO_BEGIN_DECLS
 #define MONO_TYPE_IS_POINTER(t) mono_type_is_pointer (t)
 #define MONO_TYPE_IS_REFERENCE(t) mono_type_is_reference (t)
 
-#define MONO_CLASS_IS_INTERFACE(c) ((mono_class_get_flags (c) & TYPE_ATTRIBUTE_INTERFACE) || (c->byval_arg.type == MONO_TYPE_VAR) || (c->byval_arg.type == MONO_TYPE_MVAR))
+#define MONO_CLASS_IS_INTERFACE(c) ((mono_class_get_flags (c) & TYPE_ATTRIBUTE_INTERFACE) || mono_type_is_generic_parameter (mono_class_get_type (c)))
 
 #define MONO_CLASS_IS_IMPORT(c) ((mono_class_get_flags (c) & TYPE_ATTRIBUTE_IMPORT))
 
-typedef struct _MonoClass MonoClass;
 typedef struct _MonoDomain MonoDomain;
-typedef struct _MonoMethod MonoMethod;
 
 typedef enum {
 	MONO_EXCEPTION_CLAUSE_NONE,
@@ -237,6 +236,7 @@ MONO_API uint32_t mono_metadata_typedef_from_method (MonoImage *meta, uint32_t t
 MONO_API uint32_t mono_metadata_nested_in_typedef   (MonoImage *meta, uint32_t table_index);
 MONO_API uint32_t mono_metadata_nesting_typedef     (MonoImage *meta, uint32_t table_index, uint32_t start_index);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoClass** mono_metadata_interfaces_from_typedef (MonoImage *meta, uint32_t table_index, unsigned int *count);
 
 MONO_API uint32_t     mono_metadata_events_from_typedef     (MonoImage *meta, uint32_t table_index, unsigned int *end_idx);
@@ -413,6 +413,7 @@ MONO_API MonoType      *mono_metadata_parse_field_type  (MonoImage      *m,
 		                                short            field_flags,
 						const char      *ptr,
 						const char      **rptr);
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoType      *mono_type_create_from_typespec  (MonoImage        *image, 
 					        uint32_t           type_spec);
 MONO_API void           mono_metadata_free_type         (MonoType        *type);
@@ -435,6 +436,7 @@ MONO_RT_EXTERNAL_ONLY
 MONO_API MonoMethodSignature  *mono_metadata_parse_signature (MonoImage *image, 
 						     uint32_t    token);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoMethodSignature  *mono_metadata_parse_method_signature (MonoImage            *m,
                                                             int                    def,
                                                             const char            *ptr,

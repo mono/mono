@@ -10,7 +10,6 @@ System.Security.Cryptography.Pkcs/SignedCms.cs
 System.Security.Cryptography.Pkcs/SignerInfo.cs
 System.Security.Cryptography.Pkcs/SignerInfoCollection.cs
 System.Security.Cryptography.Pkcs/SignerInfoEnumerator.cs
-../System.Core/System.Security.Cryptography.X509Certificates/RSACertificateExtensions.cs
 System.Security.Cryptography.X509Certificates/X509Certificate2UI.cs
 System.Security.Cryptography.X509Certificates/X509SelectionFlag.cs
 

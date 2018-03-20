@@ -50,8 +50,6 @@ void bzero (void *to, size_t count) { memset (to, 0, count); }
 #error "The version of the mono llvm repository is too old."
 #endif
 
-#define ALIGN_PTR_TO(ptr,align) (gpointer)((((gssize)(ptr)) + (align - 1)) & (~(align - 1)))
-
  /*
   * Information associated by mono with LLVM modules.
   */
@@ -206,7 +204,7 @@ typedef struct {
 #define LREG 'l'
 /* keep in sync with the enum in mini.h */
 const char
-llvm_ins_info[] = {
+mini_llvm_ins_info[] = {
 #include "mini-ops.h"
 };
 #undef MINI_OP
@@ -218,7 +216,7 @@ llvm_ins_info[] = {
 #define GET_LONG_IMM(ins) ((ins)->inst_imm)
 #endif
 
-#define LLVM_INS_INFO(opcode) (&llvm_ins_info [((opcode) - OP_START - 1) * 4])
+#define LLVM_INS_INFO(opcode) (&mini_llvm_ins_info [((opcode) - OP_START - 1) * 4])
 
 #if 0
 #define TRACE_FAILURE(msg) do { printf ("%s\n", msg); } while (0)
@@ -1091,8 +1089,8 @@ resolve_patch (MonoCompile *cfg, MonoJumpInfoType type, gconstpointer target)
 	ji.type = type;
 	ji.data.target = target;
 
-	res = mono_resolve_patch_target (cfg->method, cfg->domain, NULL, &ji, FALSE, &error);
-	mono_error_assert_ok (&error);
+	res = mono_resolve_patch_target (cfg->method, cfg->domain, NULL, &ji, FALSE, error);
+	mono_error_assert_ok (error);
 
 	return res;
 }
@@ -3182,6 +3180,10 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 	gboolean is_virtual, calli, preserveall;
 	LLVMBuilderRef builder = *builder_ref;
 
+	/* If both imt and rgctx arg are required, only pass the imt arg, the rgctx trampoline will pass the rgctx */
+	if (call->imt_arg_reg)
+		call->rgctx_arg_reg = 0;
+
 	if ((call->signature->call_convention != MONO_CALL_DEFAULT) && !((call->signature->call_convention == MONO_CALL_C) && ctx->llvm_only)) {
 		set_failure (ctx, "non-default callconv");
 		return;
@@ -3200,7 +3202,7 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 	if (!ctx_ok (ctx))
 		return;
 
-	is_virtual = (ins->opcode == OP_VOIDCALL_MEMBASE || ins->opcode == OP_CALL_MEMBASE || ins->opcode == OP_VCALL_MEMBASE || ins->opcode == OP_LCALL_MEMBASE || ins->opcode == OP_FCALL_MEMBASE || ins->opcode == OP_RCALL_MEMBASE);
+	is_virtual = (ins->opcode == OP_VOIDCALL_MEMBASE || ins->opcode == OP_CALL_MEMBASE || ins->opcode == OP_VCALL_MEMBASE || ins->opcode == OP_LCALL_MEMBASE || ins->opcode == OP_FCALL_MEMBASE || ins->opcode == OP_RCALL_MEMBASE || ins->opcode == OP_TAILCALL_MEMBASE);
 	calli = !call->fptr_is_patch && (ins->opcode == OP_VOIDCALL_REG || ins->opcode == OP_CALL_REG || ins->opcode == OP_VCALL_REG || ins->opcode == OP_LCALL_REG || ins->opcode == OP_FCALL_REG || ins->opcode == OP_RCALL_REG);
 	/* Unused */
 	preserveall = FALSE;
@@ -3246,10 +3248,10 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 				if (!tramp_var) {
 					target =
 						mono_create_jit_trampoline (mono_domain_get (),
-													call->method, &error);
-					if (!is_ok (&error)) {
-						set_failure (ctx, mono_error_get_message (&error));
-						mono_error_cleanup (&error);
+													call->method, error);
+					if (!is_ok (error)) {
+						set_failure (ctx, mono_error_get_message (error));
+						mono_error_cleanup (error);
 						return;
 					}
 
@@ -3262,11 +3264,11 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 #else
 				target =
 					mono_create_jit_trampoline (mono_domain_get (),
-								    call->method, &error);
-				if (!is_ok (&error)) {
+								    call->method, error);
+				if (!is_ok (error)) {
 					g_free (name);
-					set_failure (ctx, mono_error_get_message (&error));
-					mono_error_cleanup (&error);
+					set_failure (ctx, mono_error_get_message (error));
+					mono_error_cleanup (error);
 					return;
 				}
 
@@ -3331,8 +3333,8 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 					if (abs_ji) {
 						ERROR_DECL (error);
 
-						target = mono_resolve_patch_target (cfg->method, cfg->domain, NULL, abs_ji, FALSE, &error);
-						mono_error_assert_ok (&error);
+						target = mono_resolve_patch_target (cfg->method, cfg->domain, NULL, abs_ji, FALSE, error);
+						mono_error_assert_ok (error);
 						callee = emit_jit_callee (ctx, "", llvm_sig, target);
 					} else {
 						g_assert_not_reached ();
@@ -3352,8 +3354,8 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 						 * FIXME: Some trampolines might have
 						 * their own calling convention on some platforms.
 						 */
-						target = mono_resolve_patch_target (cfg->method, cfg->domain, NULL, abs_ji, FALSE, &error);
-						mono_error_assert_ok (&error);
+						target = mono_resolve_patch_target (cfg->method, cfg->domain, NULL, abs_ji, FALSE, error);
+						mono_error_assert_ok (error);
 						LLVMAddGlobalMapping (ctx->module->ee, callee, target);
 					}
 				}
@@ -3528,7 +3530,7 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 
 	lcall = emit_call (ctx, bb, &builder, callee, args, LLVMCountParamTypes (llvm_sig));
 
-	if (ins->opcode != OP_TAILCALL && LLVMGetInstructionOpcode (lcall) == LLVMCall)
+	if (ins->opcode != OP_TAILCALL && ins->opcode != OP_TAILCALL_MEMBASE && LLVMGetInstructionOpcode (lcall) == LLVMCall)
 		mono_llvm_set_call_notail (lcall);
 
 	/*
@@ -8714,6 +8716,7 @@ emit_aot_file_info (MonoLLVMModule *module)
 		fields [tindex ++] = LLVMGetNamedGlobal (lmodule, "got_info_offsets");
 		fields [tindex ++] = LLVMGetNamedGlobal (lmodule, "llvm_got_info_offsets");
 		fields [tindex ++] = LLVMGetNamedGlobal (lmodule, "image_table");
+		fields [tindex ++] = LLVMGetNamedGlobal (lmodule, "weak_field_indexes");
 	}
 	/* Not needed (mem_end) */
 	fields [tindex ++] = LLVMConstNull (eltype);
@@ -8750,7 +8753,6 @@ emit_aot_file_info (MonoLLVMModule *module)
 		fields [tindex ++] = LLVMConstNull (eltype);
 		fields [tindex ++] = LLVMConstNull (eltype);
 	}
-	fields [tindex ++] = AddJitGlobal (module, eltype, "weak_field_indexes");
 
 	for (i = 0; i < MONO_AOT_FILE_INFO_NUM_SYMBOLS; ++i) {
 		g_assert (fields [2 + i]);

@@ -70,19 +70,19 @@ namespace System.Net
 			WriteBuffer = writeBuffer;
 			IsNtlmChallenge = isNtlmChallenge;
 			cts = CancellationTokenSource.CreateLinkedTokenSource (cancellationToken);
-			requestTask = new TaskCompletionSource<WebRequestStream> ();
-			requestWrittenTask = new TaskCompletionSource<WebRequestStream> ();
-			completeResponseReadTask = new TaskCompletionSource<bool> ();
-			responseTask = new TaskCompletionSource<WebResponseStream> ();
-			finishedTask = new TaskCompletionSource<(bool, WebOperation)> (); 
+			requestTask = new WebCompletionSource<WebRequestStream> ();
+			requestWrittenTask = new WebCompletionSource<WebRequestStream> ();
+			completeResponseReadTask = new WebCompletionSource<bool> ();
+			responseTask = new WebCompletionSource<WebResponseStream> ();
+			finishedTask = new WebCompletionSource<(bool, WebOperation)> (); 
 		}
 
 		CancellationTokenSource cts;
-		TaskCompletionSource<WebRequestStream> requestTask;
-		TaskCompletionSource<WebRequestStream> requestWrittenTask;
-		TaskCompletionSource<WebResponseStream> responseTask;
-		TaskCompletionSource<bool> completeResponseReadTask;
-		TaskCompletionSource<(bool, WebOperation)> finishedTask;
+		WebCompletionSource<WebRequestStream> requestTask;
+		WebCompletionSource<WebRequestStream> requestWrittenTask;
+		WebCompletionSource<WebResponseStream> responseTask;
+		WebCompletionSource<bool> completeResponseReadTask;
+		WebCompletionSource<(bool, WebOperation)> finishedTask;
 		WebRequestStream writeStream;
 		WebResponseStream responseStream;
 		ExceptionDispatchInfo disposedInfo;
@@ -155,6 +155,13 @@ namespace System.Net
 			return (old ?? exception, old == null);
 		}
 
+		internal ExceptionDispatchInfo CheckDisposed (CancellationToken cancellationToken)
+		{
+			if (Aborted || cancellationToken.IsCancellationRequested)
+				return CheckThrowDisposed (false, ref disposedInfo);
+			return null;
+		}
+
 		internal void ThrowIfDisposed ()
 		{
 			ThrowIfDisposed (CancellationToken.None);
@@ -163,7 +170,7 @@ namespace System.Net
 		internal void ThrowIfDisposed (CancellationToken cancellationToken)
 		{
 			if (Aborted || cancellationToken.IsCancellationRequested)
-				ThrowDisposed (ref disposedInfo);
+				CheckThrowDisposed (true, ref disposedInfo);
 		}
 
 		internal void ThrowIfClosedOrDisposed ()
@@ -174,15 +181,17 @@ namespace System.Net
 		internal void ThrowIfClosedOrDisposed (CancellationToken cancellationToken)
 		{
 			if (Closed || cancellationToken.IsCancellationRequested)
-				ThrowDisposed (ref closedInfo);
+				CheckThrowDisposed (true, ref closedInfo);
 		}
 
-		void ThrowDisposed (ref ExceptionDispatchInfo field)
+		ExceptionDispatchInfo CheckThrowDisposed (bool throwIt, ref ExceptionDispatchInfo field)
 		{
 			var (exception, disposed) = SetDisposed (ref field);
 			if (disposed)
 				cts?.Cancel ();
-			exception.Throw ();
+			if (throwIt)
+				exception.Throw ();
+			return exception;
 		}
 
 		internal void RegisterRequest (ServicePoint servicePoint, WebConnection connection)
@@ -215,14 +224,19 @@ namespace System.Net
 			}
 		}
 
-		public Task<WebRequestStream> GetRequestStream ()
+		public async Task<Stream> GetRequestStream ()
 		{
-			return requestTask.Task;
+			return await requestTask.WaitForCompletion ().ConfigureAwait (false);
+		}
+
+		internal Task<WebRequestStream> GetRequestStreamInternal ()
+		{
+			return requestTask.WaitForCompletion ();
 		}
 
 		public Task WaitUntilRequestWritten ()
 		{
-			return requestWrittenTask.Task;
+			return requestWrittenTask.WaitForCompletion ();
 		}
 
 		public WebRequestStream WriteStream {
@@ -234,13 +248,13 @@ namespace System.Net
 
 		public Task<WebResponseStream> GetResponseStream ()
 		{
-			return responseTask.Task;
+			return responseTask.WaitForCompletion ();
 		}
 
 		internal async Task<(bool, WebOperation)> WaitForCompletion (bool ignoreErrors)
 		{
 			try {
-				return await finishedTask.Task.ConfigureAwait (false);
+				return await finishedTask.WaitForCompletion ().ConfigureAwait (false);
 			} catch {
 				if (ignoreErrors)
 					return (false, null);
@@ -265,14 +279,14 @@ namespace System.Net
 
 				ThrowIfClosedOrDisposed ();
 
-				requestTask.TrySetResult (requestStream);
+				requestTask.TrySetCompleted (requestStream);
 
 				var stream = new WebResponseStream (requestStream);
 				responseStream = stream;
 
 				await stream.InitReadAsync (cts.Token).ConfigureAwait (false);
 
-				responseTask.TrySetResult (stream);
+				responseTask.TrySetCompleted (stream);
 			} catch (OperationCanceledException) {
 				SetCanceled ();
 			} catch (Exception e) {
@@ -286,7 +300,7 @@ namespace System.Net
 			Exception error = null;
 
 			try {
-				ok = await completeResponseReadTask.Task.ConfigureAwait (false);
+				ok = await completeResponseReadTask.WaitForCompletion ().ConfigureAwait (false);
 			} catch (Exception e) {
 				error = e;
 			}
@@ -316,7 +330,7 @@ namespace System.Net
 				keepAlive = false;
 			}
 
-			finishedTask.TrySetResult ((keepAlive, next));
+			finishedTask.TrySetCompleted ((keepAlive, next));
 
 			WebConnection.Debug ($"WO FINISH READING DONE: Cnc={Connection.ID} Op={ID} - {keepAlive} next={next?.ID}");
 		}
@@ -328,7 +342,7 @@ namespace System.Net
 			if (error != null)
 				SetError (error);
 			else
-				requestWrittenTask.TrySetResult (stream);
+				requestWrittenTask.TrySetCompleted (stream);
 		}
 
 		internal void CompleteResponseRead (bool ok, Exception error = null)
@@ -338,7 +352,7 @@ namespace System.Net
 			if (error != null)
 				completeResponseReadTask.TrySetException (error);
 			else
-				completeResponseReadTask.TrySetResult (ok);
+				completeResponseReadTask.TrySetCompleted (ok);
 		}
 	}
 }

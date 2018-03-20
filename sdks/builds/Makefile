@@ -1,9 +1,12 @@
 TOP=$(realpath $(CURDIR)/../..)
+include $(TOP)/sdks/versions.mk
 include $(TOP)/sdks/paths.mk
 
-RELEASE?=true
+CONFIGURATION?=release
 
-CONFIGURATION=$(if $(filter $(RELEASE),true),release,debug)
+RELEASE=$(if $(filter $(CONFIGURATION),release),1)
+
+CCACHE:=$(shell which ccache)
 
 #brew's libtool is not compatible with some of the deps needed (I.E. V8) so in those systems we need to explicit add to the path
 #this is due mono not being compatible with xcode's libtool, which is what's on path by default
@@ -11,25 +14,31 @@ ifeq (, $(shell which glibtoolize))
 EXTRA_PATH=$(wildcard /usr/local/Cellar/libtool/*/bin/)
 endif
 
+all: package
+
+## Common Mono targets
+
+.PHONY: configure-mono
+configure-mono: $(TOP)/configure
+
 $(TOP)/configure: $(TOP)/configure.ac $(TOP)/autogen.sh
 	cd $(TOP) && PATH=$(EXTRA_PATH):$$PATH NOCONFIGURE=1 ./autogen.sh
 
-## LLVM
-
-LLVM_REV=3b82b3c9041eb997f627f881a67d20be37264e9c
-
-# Download a prebuilt llvm
-# Shared between ios and android
-.stamp-llvm-$(LLVM_REV):
-	./download-llvm.sh $@ $(LLVM_REV)
-
-build-llvm: .stamp-llvm-$(LLVM_REV)
-
-clean-llvm:
-	$(RM) -r ../out/llvm64
-	$(RM) .stamp-llvm-*
+$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe: $(wildcard $(TOP)/tools/offsets-tool/*.cs)
+	$(MAKE) -C $(dir $@) MonoAotOffsetsDumper.exe
 
 TARGETS=
+
+## MXE targets
+ifndef DISABLE_ANDROID
+# FIXME add iOS support(?)
+include mxe.mk
+endif
+
+## LLVM targets
+ifeq ($(and $(DISABLE_ANDROID),$(DISABLE_IOS)),)
+include llvm.mk
+endif
 
 ## BCL targets
 ifndef DISABLE_BCL
@@ -54,6 +63,8 @@ endif
 ## Generic targets
 .PHONY: $(foreach target,$(TARGETS),toolchain-$(target))
 $(foreach target,$(TARGETS),toolchain-$(target)): toolchain-%: .stamp-%-toolchain
+
+$(foreach target,$(TARGETS),.stamp-$(target)-configure): .stamp-%-configure: .stamp-%-toolchain
 
 .PHONY: $(foreach target,$(TARGETS),configure-$(target))
 $(foreach target,$(TARGETS),configure-$(target)): configure-%: .stamp-%-configure

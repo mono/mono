@@ -56,6 +56,7 @@
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel\System\ServiceModel\Description\UseRequestHeadersForMetadataAddressBehavior.cs" />
     <Compile Include="..\System.ServiceModel.Web\System.ServiceModel.Syndication\Atom10FeedFormatter.cs" />
     <Compile Include="..\System.ServiceModel.Web\System.ServiceModel.Syndication\Atom10FeedFormatter_1.cs" />
     <Compile Include="..\System.ServiceModel.Web\System.ServiceModel.Syndication\Atom10ItemFormatter.cs" />

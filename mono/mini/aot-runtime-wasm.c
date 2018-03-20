@@ -123,17 +123,20 @@ get_long_arg (InterpMethodArguments *margs, int idx)
 static void
 wasm_interp_to_native_trampoline (void *target_func, InterpMethodArguments *margs)
 {
-	static char cookie [8];
-	static int c_count;
+	char cookie [32];
+	int c_count;
 
 	MonoMethodSignature *sig = margs->sig;
 
 	c_count = sig->param_count + sig->hasthis + 1;
+	g_assert (c_count < sizeof (cookie)); //ensure we don't overflow the local
+
 	cookie [0] = type_to_c (sig->ret);
 	if (sig->hasthis)
 		cookie [1] = 'I';
-	for (int i = 0; i < sig->param_count; ++i)
-		cookie [1 + sig->hasthis + i ] = type_to_c (sig->params [i]);
+	for (int i = 0; i < sig->param_count; ++i) {
+		cookie [1 + sig->hasthis + i] = type_to_c (sig->params [i]);
+	}
 	cookie [c_count] = 0;
 
 	icall_trampoline_dispatch (cookie, target_func, margs);
@@ -156,8 +159,11 @@ mono_aot_get_trampoline_full (const char *name, MonoTrampInfo **out_tinfo)
 		code = wasm_throw_corlib_exception;
 	else if (!strcmp (name, "interp_to_native_trampoline"))
 		code = wasm_interp_to_native_trampoline;
+	else if (!strcmp (name, "sdb_breakpoint_trampoline"))
+		code = mono_wasm_breakpoint_hit;
 
-	g_assert (code);
+	if (!code)
+		g_error ("could not find trampoline for %s\n", name);
 
 	if (out_tinfo) {
 		MonoTrampInfo *tinfo = g_new0 (MonoTrampInfo, 1);

@@ -107,6 +107,14 @@ typedef guint32 gunichar;
 #define ABS(a)         ((a) > 0 ? (a) : -(a))
 #endif
 
+#ifndef ALIGN_TO
+#define ALIGN_TO(val,align) ((((gssize)val) + ((align) - 1)) & ~((align) - 1))
+#endif
+
+#ifndef ALIGN_PTR_TO
+#define ALIGN_PTR_TO(ptr,align) (gpointer)((((gssize)(ptr)) + (align - 1)) & (~(align - 1)))
+#endif
+
 #define G_STRUCT_OFFSET(p_type,field) offsetof(p_type,field)
 
 #define EGLIB_STRINGIFY(x) #x
@@ -721,8 +729,33 @@ GUnicodeBreakType   g_unichar_break_type (gunichar c);
 #define  eg_unreachable()
 #endif
 
-#define  g_assert(x)     G_STMT_START { if (G_UNLIKELY (!(x))) g_assertion_message ("* Assertion at %s:%d, condition `%s' not met\n", __FILE__, __LINE__, #x);  } G_STMT_END
+/* g_assert is a boolean expression; the precise value is not preserved, just true or false. */
+#define g_assert(x) (G_LIKELY((x)) ? 1 : (g_assertion_message ("* Assertion at %s:%d, condition `%s' not met\n", __FILE__, __LINE__, #x), 0))
+
 #define  g_assert_not_reached() G_STMT_START { g_assertion_message ("* Assertion: should not be reached at %s:%d\n", __FILE__, __LINE__); eg_unreachable(); } G_STMT_END
+
+/* f is format -- like printf and scanf
+ * Where you might have said:
+ * 	if (!(expr))
+ * 		g_error("%s invalid bar:%d", __func__, bar)
+ * 
+ * You can say:
+ * 	g_assertf(expr, "bar:%d", bar);
+ * 
+ * The usual assertion text of file/line/expr/newline are builtin, and __func__.
+ * 
+ * g_assertf is a boolean expression -- the precise value is not preserved, just true or false.
+ * 
+ * Other than expr, the parameters are not evaluated unless expr is false.
+ * 
+ * format must be a string literal, in order to be concatenated.
+ * If this is too restrictive, g_error remains.
+ */
+#if defined(_MSC_VER) && (_MSC_VER < 1910)
+#define g_assertf(x, format, ...) (G_LIKELY((x)) ? 1 : (g_assertion_message ("* Assertion at %s:%d, condition `%s' not met, function:%s, " format "\n", __FILE__, __LINE__, #x, __func__, __VA_ARGS__), 0))
+#else
+#define g_assertf(x, format, ...) (G_LIKELY((x)) ? 1 : (g_assertion_message ("* Assertion at %s:%d, condition `%s' not met, function:%s, " format "\n", __FILE__, __LINE__, #x, __func__, ##__VA_ARGS__), 0))
+#endif
 
 /*
  * Unicode conversion
@@ -746,6 +779,7 @@ gunichar  *g_utf8_to_ucs4_fast (const gchar *str, glong len, glong *items_writte
 gunichar  *g_utf8_to_ucs4 (const gchar *str, glong len, glong *items_read, glong *items_written, GError **err);
 gunichar2 *g_utf8_to_utf16 (const gchar *str, glong len, glong *items_read, glong *items_written, GError **err);
 gunichar2 *eg_utf8_to_utf16_with_nuls (const gchar *str, glong len, glong *items_read, glong *items_written, GError **err);
+gunichar2 *eg_wtf8_to_utf16 (const gchar *str, glong len, glong *items_read, glong *items_written, GError **err);
 gchar     *g_utf16_to_utf8 (const gunichar2 *str, glong len, glong *items_read, glong *items_written, GError **err);
 gunichar  *g_utf16_to_ucs4 (const gunichar2 *str, glong len, glong *items_read, glong *items_written, GError **err);
 gchar     *g_ucs4_to_utf8  (const gunichar *str, glong len, glong *items_read, glong *items_written, GError **err);
@@ -880,10 +914,33 @@ GFileError g_file_error_from_errno (gint err_no);
 gint       g_file_open_tmp (const gchar *tmpl, gchar **name_used, GError **gerror);
 gboolean   g_file_test (const gchar *filename, GFileTest test);
 
+#ifdef G_OS_WIN32
+#define g_open _open
+#else
 #define g_open open
+#endif
 #define g_rename rename
 #define g_stat stat
+#ifdef G_OS_WIN32
+#define g_access _access
+#else
+#define g_access access
+#endif
+#ifdef G_OS_WIN32
+#define g_mktemp _mktemp
+#else
+#define g_mktemp mktemp
+#endif
+#ifdef G_OS_WIN32
+#define g_unlink _unlink
+#else
 #define g_unlink unlink
+#endif
+#ifdef G_OS_WIN32
+#define g_write _write
+#else
+#define g_write write
+#endif
 #define g_fopen fopen
 #define g_lstat lstat
 #define g_rmdir rmdir

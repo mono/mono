@@ -28,6 +28,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Windows.Forms.Layout;
 
 namespace System.Windows.Forms
 {
@@ -35,7 +36,7 @@ namespace System.Windows.Forms
 	public abstract class TableLayoutStyle
 	{
 		private SizeType size_type;
-		private TableLayoutPanel owner;
+		private IArrangedContainer owner;
 		
 		protected TableLayoutStyle ()
 		{
@@ -49,12 +50,12 @@ namespace System.Windows.Forms
 				if (size_type != value) {
 					size_type = value; 
 					if (owner != null)
-						owner.PerformLayout ();
+						owner.PerformLayout (owner, "Style");
 				}
 			}
 		}
 		
-		internal TableLayoutPanel Owner {
+		internal IArrangedContainer Owner {
 			get { return owner; }
 			set { owner = value; }
 		}

@@ -36,7 +36,7 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 	guint8 *code, *start;
 	int reg;
 
-	start = code = mono_global_codeman_reserve (36);
+	start = code = mono_domain_code_reserve (mono_domain_get (), 36);
 
 	/* This executes in the context of the caller, hence o0 */
 	sparc_add_imm (code, 0, sparc_o0, sizeof (MonoObject), sparc_o0);
@@ -71,8 +71,6 @@ mono_arch_patch_plt_entry (guint8 *code, gpointer *got, mgreg_t *regs, guint8 *a
 {
 	g_assert_not_reached ();
 }
-
-#define ALIGN_TO(val,align) (((val) + ((align) - 1)) & ~((align) - 1))
 
 guchar*
 mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInfo **info, gboolean aot)

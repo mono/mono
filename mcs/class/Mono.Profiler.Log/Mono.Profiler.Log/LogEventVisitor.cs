@@ -189,5 +189,9 @@ namespace Mono.Profiler.Log {
 		public virtual void Visit (SynchronizationPointEvent ev)
 		{
 		}
+
+		public virtual void Visit (AotIdEvent ev)
+		{
+		}
 	}
 }

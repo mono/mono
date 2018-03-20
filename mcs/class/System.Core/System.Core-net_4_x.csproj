@@ -18,13 +18,14 @@
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
     
+    
     <NoConfig>True</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>
     </RootNamespace>
     <AssemblyName>System.Core</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
 
   </PropertyGroup>
@@ -384,6 +385,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Linq\src\System\Linq\Utilities.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Linq\src\System\Linq\Where.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Linq\src\System\Linq\Zip.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Algorithms\src\System\Security\Cryptography\IncrementalHash.net46.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="..\..\build\common\SR.cs" />
     <Compile Include="..\referencesource\System.Core\Microsoft\Scripting\Utils\Action.cs" />
@@ -494,10 +496,6 @@
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../corlib/corlib-net_4_x.csproj">
-      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
-      <Name>corlib-net_4_x</Name>
-    </ProjectReference>
     <ProjectReference Include="../System/System-net_4_x.csproj">
       <Project>{2762E921-91A8-4C87-91E9-BA628013F753}</Project>
       <Name>System-net_4_x</Name>
@@ -505,6 +503,10 @@
     <ProjectReference Include="../Mono.Posix/Mono.Posix-net_4_x.csproj">
       <Project>{66DBB049-785B-4C2E-9EF6-C9E163F7DDD1}</Project>
       <Name>Mono.Posix-net_4_x</Name>
+    </ProjectReference>
+    <ProjectReference Include="../corlib/corlib-net_4_x.csproj">
+      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
+      <Name>corlib-net_4_x</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -3413,9 +3413,12 @@ namespace System
 
 #if MONO
             List<RuntimeType> list = null;
+            var nameComparison = ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
             foreach (RuntimeType t in GetInterfaces ()) {
-                if (t.Name != name)
-                    continue;
+
+                if (!String.Equals(t.Name, name, nameComparison)) {
+                       continue;
+                }
 
                 if (list == null)
                     list = new List<RuntimeType> (2);

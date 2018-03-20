@@ -37,6 +37,9 @@
 #ifdef __linux__
 #include <unistd.h>
 #endif
+#ifdef _AIX
+#include <sys/systemcfg.h>
+#endif
 
 #define FORCE_INDIR_CALL 1
 
@@ -537,6 +540,10 @@ mono_arch_init (void)
 #elif defined(G_COMPILER_CODEWARRIOR)
 	cachelinesize = 32;
 	cachelineinc = 32;
+#elif defined(_AIX)
+	/* FIXME: use block instead? */
+	cachelinesize = _system_configuration.icache_line;
+	cachelineinc = _system_configuration.icache_line;
 #else
 //#error Need a way to get cache line size
 #endif
@@ -1855,9 +1862,8 @@ mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
 	MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, cfg->ret->dreg, val->dreg);
 }
 
-/* FIXME: this is just a useless hint: fix the interface to include the opcode */
 gboolean
-mono_arch_is_inst_imm (gint64 imm)
+mono_arch_is_inst_imm (int opcode, int imm_opcode, gint64 imm)
 {
        return TRUE;
 }
@@ -3187,7 +3193,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_RELAXED_NOP:
 		case OP_NOP:
 		case OP_DUMMY_USE:
-		case OP_DUMMY_STORE:
+		case OP_DUMMY_ICONST:
+		case OP_DUMMY_I8CONST:
+		case OP_DUMMY_R8CONST:
+		case OP_DUMMY_R4CONST:
 		case OP_NOT_REACHED:
 		case OP_NOT_NULL:
 			break;
@@ -4618,6 +4627,18 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ppc_mr (code, ins->dreg, ppc_r0);
 			break;
 		}
+		case OP_LIVERANGE_START: {
+			if (cfg->verbose_level > 1)
+				printf ("R%d START=0x%x\n", MONO_VARINFO (cfg, ins->inst_c0)->vreg, (int)(code - cfg->native_code));
+			MONO_VARINFO (cfg, ins->inst_c0)->live_range_start = code - cfg->native_code;
+			break;
+		}
+		case OP_LIVERANGE_END: {
+			if (cfg->verbose_level > 1)
+				printf ("R%d END=0x%x\n", MONO_VARINFO (cfg, ins->inst_c0)->vreg, (int)(code - cfg->native_code));
+			MONO_VARINFO (cfg, ins->inst_c0)->live_range_end = code - cfg->native_code;
+			break;
+		}
 		case OP_GC_SAFE_POINT:
 			break;
 
@@ -4681,91 +4702,69 @@ mono_arch_register_lowlevel_calls (void)
 
 #ifndef DISABLE_JIT
 void
-mono_arch_patch_code (MonoCompile *cfg, MonoMethod *method, MonoDomain *domain, guint8 *code, MonoJumpInfo *ji, gboolean run_cctors, MonoError *error)
+mono_arch_patch_code_new (MonoCompile *cfg, MonoDomain *domain, guint8 *code, MonoJumpInfo *ji, gpointer target)
 {
-	MonoJumpInfo *patch_info;
-	gboolean compile_aot = !run_cctors;
+	unsigned char *ip = ji->ip.i + code;
+	gboolean is_fd = FALSE;
 
-	error_init (error);
+	switch (ji->type) {
+	case MONO_PATCH_INFO_IP:
+		patch_load_sequence (ip, ip);
+		break;
+	case MONO_PATCH_INFO_METHOD_REL:
+		g_assert_not_reached ();
+		*((gpointer *)(ip)) = code + ji->data.offset;
+		break;
+	case MONO_PATCH_INFO_SWITCH: {
+		gpointer *table = (gpointer *)ji->data.table->table;
+		int i;
 
-	for (patch_info = ji; patch_info; patch_info = patch_info->next) {
-		unsigned char *ip = patch_info->ip.i + code;
-		unsigned char *target;
-		gboolean is_fd = FALSE;
+		patch_load_sequence (ip, table);
 
-		target = mono_resolve_patch_target (method, domain, code, patch_info, run_cctors, error);
-		return_if_nok (error);
-
-		if (compile_aot) {
-			switch (patch_info->type) {
-			case MONO_PATCH_INFO_BB:
-			case MONO_PATCH_INFO_LABEL:
-				break;
-			default:
-				/* No need to patch these */
-				continue;
-			}
+		for (i = 0; i < ji->data.table->table_size; i++) {
+			table [i] = (glong)ji->data.table->table [i] + code;
 		}
-
-		switch (patch_info->type) {
-		case MONO_PATCH_INFO_IP:
-			patch_load_sequence (ip, ip);
-			continue;
-		case MONO_PATCH_INFO_METHOD_REL:
-			g_assert_not_reached ();
-			*((gpointer *)(ip)) = code + patch_info->data.offset;
-			continue;
-		case MONO_PATCH_INFO_SWITCH: {
-			gpointer *table = (gpointer *)patch_info->data.table->table;
-			int i;
-
-			patch_load_sequence (ip, table);
-
-			for (i = 0; i < patch_info->data.table->table_size; i++) {
-				table [i] = (glong)patch_info->data.table->table [i] + code;
-			}
-			/* we put into the table the absolute address, no need for ppc_patch in this case */
-			continue;
-		}
-		case MONO_PATCH_INFO_METHODCONST:
-		case MONO_PATCH_INFO_CLASS:
-		case MONO_PATCH_INFO_IMAGE:
-		case MONO_PATCH_INFO_FIELD:
-		case MONO_PATCH_INFO_VTABLE:
-		case MONO_PATCH_INFO_IID:
-		case MONO_PATCH_INFO_SFLDA:
-		case MONO_PATCH_INFO_LDSTR:
-		case MONO_PATCH_INFO_TYPE_FROM_HANDLE:
-		case MONO_PATCH_INFO_LDTOKEN:
-			/* from OP_AOTCONST : lis + ori */
-			patch_load_sequence (ip, target);
-			continue;
-		case MONO_PATCH_INFO_R4:
-		case MONO_PATCH_INFO_R8:
-			g_assert_not_reached ();
-			*((gconstpointer *)(ip + 2)) = patch_info->data.target;
-			continue;
-		case MONO_PATCH_INFO_EXC_NAME:
-			g_assert_not_reached ();
-			*((gconstpointer *)(ip + 1)) = patch_info->data.name;
-			continue;
-		case MONO_PATCH_INFO_NONE:
-		case MONO_PATCH_INFO_BB_OVF:
-		case MONO_PATCH_INFO_EXC_OVF:
-			/* everything is dealt with at epilog output time */
-			continue;
+		/* we put into the table the absolute address, no need for ppc_patch in this case */
+		break;
+	}
+	case MONO_PATCH_INFO_METHODCONST:
+	case MONO_PATCH_INFO_CLASS:
+	case MONO_PATCH_INFO_IMAGE:
+	case MONO_PATCH_INFO_FIELD:
+	case MONO_PATCH_INFO_VTABLE:
+	case MONO_PATCH_INFO_IID:
+	case MONO_PATCH_INFO_SFLDA:
+	case MONO_PATCH_INFO_LDSTR:
+	case MONO_PATCH_INFO_TYPE_FROM_HANDLE:
+	case MONO_PATCH_INFO_LDTOKEN:
+		/* from OP_AOTCONST : lis + ori */
+		patch_load_sequence (ip, target);
+		break;
+	case MONO_PATCH_INFO_R4:
+	case MONO_PATCH_INFO_R8:
+		g_assert_not_reached ();
+		*((gconstpointer *)(ip + 2)) = ji->data.target;
+		break;
+	case MONO_PATCH_INFO_EXC_NAME:
+		g_assert_not_reached ();
+		*((gconstpointer *)(ip + 1)) = ji->data.name;
+		break;
+	case MONO_PATCH_INFO_NONE:
+	case MONO_PATCH_INFO_BB_OVF:
+	case MONO_PATCH_INFO_EXC_OVF:
+		/* everything is dealt with at epilog output time */
+		break;
 #ifdef PPC_USES_FUNCTION_DESCRIPTOR
-		case MONO_PATCH_INFO_INTERNAL_METHOD:
-		case MONO_PATCH_INFO_ABS:
-		case MONO_PATCH_INFO_RGCTX_FETCH:
-		case MONO_PATCH_INFO_JIT_ICALL_ADDR:
-			is_fd = TRUE;
-			break;
+	case MONO_PATCH_INFO_INTERNAL_METHOD:
+	case MONO_PATCH_INFO_ABS:
+	case MONO_PATCH_INFO_RGCTX_FETCH:
+	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
+		is_fd = TRUE;
+		/* fall through */
 #endif
-		default:
-			break;
-		}
+	default:
 		ppc_patch_full (ip, target, is_fd);
+		break;
 	}
 }
 

@@ -12,6 +12,7 @@
 
 #include "config.h"
 #include "mini-gc.h"
+#include "mini-runtime.h"
 #include <mono/metadata/gc-internals.h>
 
 static gboolean
@@ -94,8 +95,6 @@ typedef struct {
 	guint8 *reg_ref_bitmap;
 	guint8 *reg_pin_bitmap;
 } MonoCompileGC;
-
-#define ALIGN_TO(val,align) ((((mgreg_t)val) + ((align) - 1)) & ~((align) - 1))
 
 #undef DEBUG
 

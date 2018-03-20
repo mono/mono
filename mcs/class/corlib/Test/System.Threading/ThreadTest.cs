@@ -835,6 +835,7 @@ namespace MonoTests.System.Threading
 #endif
 
 		[Test]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void Test_Interrupt ()
 		{
 			ManualResetEvent mre = new ManualResetEvent (false);
@@ -1045,8 +1046,10 @@ namespace MonoTests.System.Threading
 			Assert.Throws<ThreadStateException> (() => t.ApartmentState = ApartmentState.MTA, "ApartmentState setter");
 			Assert.Throws<ThreadStateException> (() => t.IsBackground = false, "IsBackground setter");
 			Assert.Throws<ThreadStateException> (() => t.Start (), "Start ()");
+#if MONO_FEATURE_THREAD_SUSPEND_RESUME
 			Assert.Throws<ThreadStateException> (() => t.Resume (), "Resume ()");
 			Assert.Throws<ThreadStateException> (() => t.Suspend (), "Suspend ()");
+#endif
 			Assert.Throws<ThreadStateException> (() => t.GetApartmentState (), "GetApartmentState ()");
 			Assert.Throws<ThreadStateException> (() => t.SetApartmentState (ApartmentState.MTA), "SetApartmentState ()");
 			Assert.Throws<ThreadStateException> (() => t.TrySetApartmentState (ApartmentState.MTA), "TrySetApartmentState ()");

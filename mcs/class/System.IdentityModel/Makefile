@@ -29,7 +29,8 @@ LIB_REFS += System.Web.ApplicationServices
 endif
 endif
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
+TEST_MCS_FLAGS =
+TEST_LIB_REFS = System System.Xml System.Security System.Runtime.Serialization
 
 ifdef MOBILE_PROFILE
 NO_TEST = yes

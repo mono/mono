@@ -65,6 +65,45 @@ and
 See the description for 
 .B MONO_IOMAP
 in the environment variables section for more details.
+.SH METHOD DESCRIPTIONS
+A number of diagnostic command line options take as argument a method
+description.   A method description is a textual representation that
+can be used to uniquely identify a method.   The syntax is as follows:
+.nf
+[namespace]classname:methodname[(arguments)]
+.fi
+.PP
+The values in brackets are optional, like the namespace and the
+arguments.   The arguments themselves are either empty, or a
+comma-separated list of arguments.   Both the
+\fBclassname\fR
+and
+\fBmethodname\fR
+can be set to the special value '*' to match any values (Unix shell
+users should escape the argument to avoid the shell interpreting
+this).
+.PP
+The arguments, if present should be a comma separated list of types
+either a full typename, or for built-in types it should use the
+low-level ILAsm type names for the built-in types,
+like 'void', 'char', 'bool', 'byte', 'sbyte', 'uint16', 'int16', 'uint',
+'int', 'ulong', 'long', 'uintptr', 'intptr', 'single', 'double', 'string', 'object'.
+.PP
+Pointer types should be the name of the type, followed by a '*',
+arrays should be the typename followed by '[' one or more commas (to
+indicate the rank of the array), and ']'.
+.PP
+Generic values should use '<', one or more type names, separated by
+both a comma and a space and '>'.
+.PP
+By-reference arguments should include a "&" after the typename.
+.PP
+Examples:
+.nf
+*:ctor(int)		// All constructors that take an int as an argument
+*:Main			// Methods named Main in any class
+*:Main(string[])	// Methods named Main that take a string array in any class
+.fi
 .SH RUNTIME OPTIONS
 The following options are available:
 .TP
@@ -1087,8 +1126,11 @@ When Mono is built with a soft float fallback on ARM and this variable is set to
 "1", Mono will always emit soft float code, even if a VFP unit is
 detected.
 .TP
+\fBMONO_DARWIN_USE_KQUEUE_FSW\fR
+Fall back on the kqueue FileSystemWatcher implementation in Darwin. The default is the FSEvent implementation.
+.TP
 \fBMONO_DARWIN_WATCHER_MAXFDS\fR
-This is a debugging aid used to force limits on the FileSystemWatcher
+This is a debugging aid used to force limits on the kqueue FileSystemWatcher
 implementation in Darwin.   There is no limit by default.
 .TP
 \fBMONO_DISABLE_AIO\fR
@@ -1557,12 +1599,6 @@ home directories that might be shared over the network.
 If set, extra checks are made during IO operations.  Currently, this
 includes only advisory locks around file writes.
 .TP
-\fBMONO_THEME\fR
-The name of the theme to be used by Windows.Forms.   Available themes today
-include "clearlooks", "nice" and "win32".
-.Sp
-The default is "win32".  
-.TP
 \fBMONO_TLS_SESSION_CACHE_TIMEOUT\fR
 The time, in seconds, that the SSL/TLS session cache will keep it's entry to
 avoid a new negotiation between the client and a server. Negotiation are very
@@ -1826,7 +1862,10 @@ for example, to see managed frame names on gdb backtraces.
 \fBMONO_VERBOSE_METHOD\fR
 Enables the maximum JIT verbosity for the specified method. This is
 very helpfull to diagnose a miscompilation problems of a specific
-method.
+method.   This can be a comma-separated list of method names to
+match.  If the name is simple, this applies to any method with that
+name, otherwise you can use a mono method description (see the section
+METHOD DESCRIPTIONS).
 .TP
 \fBMONO_JIT_DUMP_METHOD\fR
 Enables sending of the JITs intermediate representation for a specified

@@ -16,7 +16,8 @@
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>obj-net_4_x-$(HostPlatform)</IntermediateOutputPath>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
-    <NoStdLib>True</NoStdLib>
+    <NoStdLib>False</NoStdLib>
+    
     
     <NoConfig>True</NoConfig>
     
@@ -24,7 +25,7 @@
     <RootNamespace>
     </RootNamespace>
     <AssemblyName>mono-api-html</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
 
   </PropertyGroup>
@@ -90,10 +91,6 @@
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../../class/corlib/corlib-net_4_x.csproj">
-      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
-      <Name>corlib-net_4_x</Name>
-    </ProjectReference>
     <ProjectReference Include="../../class/System.XML/System.Xml-net_4_x.csproj">
       <Project>{87FD2F0F-5222-4AE6-BD63-2D4975E11E5B}</Project>
       <Name>System.Xml-net_4_x</Name>

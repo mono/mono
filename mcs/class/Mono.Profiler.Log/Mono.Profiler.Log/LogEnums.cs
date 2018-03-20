@@ -66,6 +66,7 @@ namespace Mono.Profiler.Log {
 		RuntimeJitHelper = 1 << 4,
 
 		MetaSynchronizationPoint = 0 << 4,
+		MetaAotId = 1 << 4,
 	}
 
 	// mono/profiler/log.h : TYPE_*

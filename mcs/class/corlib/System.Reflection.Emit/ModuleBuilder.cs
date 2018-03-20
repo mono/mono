@@ -63,6 +63,7 @@ namespace System.Reflection.Emit {
 		bool is_main;
 		private MonoResource[] resources;
 		private IntPtr unparented_classes;
+		private int[] table_indexes;
 		#endregion
 #pragma warning restore 169, 414
 		
@@ -71,7 +72,6 @@ namespace System.Reflection.Emit {
 		// name_cache keys are display names
 		Dictionary<TypeName, TypeBuilder> name_cache;
 		Dictionary<string, int> us_string_cache;
-		private int[] table_indexes;
 		bool transient;
 		ModuleBuilderTokenGenerator token_gen;
 		Hashtable resource_writers;
@@ -93,7 +93,7 @@ namespace System.Reflection.Emit {
 			// to keep mcs fast we do not want CryptoConfig wo be involved to create the RNG
 			guid = Guid.FastNewGuidArray ();
 			// guid = Guid.NewGuid().ToByteArray ();
-			table_idx = get_next_table_index (this, 0x00, true);
+			table_idx = get_next_table_index (this, 0x00, 1);
 			name_cache = new Dictionary<TypeName, TypeBuilder> ();
 			us_string_cache = new Dictionary<string, int> (512);
 
@@ -450,7 +450,7 @@ namespace System.Reflection.Emit {
 				return result;
 		}
 
-		internal int get_next_table_index (object obj, int table, bool inc) {
+		internal int get_next_table_index (object obj, int table, int count) {
 			if (table_indexes == null) {
 				table_indexes = new int [64];
 				for (int i=0; i < 64; ++i)
@@ -459,9 +459,9 @@ namespace System.Reflection.Emit {
 				table_indexes [0x02] = 2;
 			}
 			// Console.WriteLine ("getindex for table "+table.ToString()+" got "+table_indexes [table].ToString());
-			if (inc)
-				return table_indexes [table]++;
-			return table_indexes [table];
+			var index = table_indexes [table];
+			table_indexes [table] += count;
+			return index;
 		}
 
 		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
@@ -786,7 +786,7 @@ namespace System.Reflection.Emit {
 		}
 
 		internal int GetToken (MemberInfo member) {
-			if (member is ConstructorBuilder || member is MethodBuilder)
+			if (member is ConstructorBuilder || member is MethodBuilder || member is FieldBuilder)
 				return GetPseudoToken (member, false);
 			return getToken (this, member, true);
 		}

@@ -2,8 +2,8 @@ class FsharpPackage(GitHubTarballPackage):
     def __init__(self):
         GitHubTarballPackage.__init__(self,
             'fsharp', 'fsharp',
-            '4.1.29',
-            '1e9f26937cff8a22e8603c2176fab8100f03e6b1',
+            '4.1.33',
+            '561af8ba705fdbd84274702bc8073b9a94ba0a7d',
             configure='./configure --prefix="%{package_prefix}"',
             override_properties={ 'make': 'make' })
 
@@ -17,7 +17,7 @@ class FsharpPackage(GitHubTarballPackage):
             self.sh('patch -p1 < "%{local_sources[' + str(p) + ']}"')
 
     def build(self):
-        self.sh('autoreconf')
+        self.sh('autoreconf') 
         Package.configure(self)
         Package.make(self)
 

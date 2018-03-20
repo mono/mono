@@ -115,6 +115,8 @@ namespace System
 			}
 		}
 
+		internal IntPtr GetNativeFunctionPointer () => method_ptr;
+
 		//
 		// Methods
 		//

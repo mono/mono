@@ -28,7 +28,7 @@
 #include "mono/utils/mono-error-internals.h"
 #include "mono/utils/mono-os-mutex.h"
 
-const unsigned char table_sizes [MONO_TABLE_NUM] = {
+static const unsigned char table_sizes [MONO_TABLE_NUM] = {
 	MONO_MODULE_SIZE,
 	MONO_TYPEREF_SIZE,
 	MONO_TYPEDEF_SIZE,
@@ -198,7 +198,7 @@ mono_dynamic_image_register_token (MonoDynamicImage *assembly, guint32 token, Mo
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	g_assert (!MONO_HANDLE_IS_NULL (obj));
-	g_assert (strcmp (mono_handle_class (obj)->name, "EnumBuilder"));
+	g_assert (strcmp (m_class_get_name (mono_handle_class (obj)), "EnumBuilder"));
 	dynamic_image_lock (assembly);
 	MonoObject *prev = (MonoObject *)mono_g_hash_table_lookup (assembly->tokens, GUINT_TO_POINTER (token));
 	if (prev) {

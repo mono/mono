@@ -57,6 +57,9 @@
 #define IS_GC_REFERENCE(class,t) (mono_gc_is_moving () ? FALSE : ((t)->type == MONO_TYPE_U && (class)->image == mono_defaults.corlib))
 
 void   mono_object_register_finalizer               (MonoObject  *obj);
+void
+mono_object_register_finalizer_handle (MonoObjectHandle obj);
+
 void   ves_icall_System_GC_InternalCollect          (int          generation);
 gint64 ves_icall_System_GC_GetTotalMemory           (MonoBoolean  forceCollection);
 void   ves_icall_System_GC_KeepAlive                (MonoObject  *obj);
@@ -131,16 +134,43 @@ void     mono_gchandle_free_domain  (MonoDomain *domain);
 typedef void (*FinalizerThreadCallback) (gpointer user_data);
 
 void* mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size);
+
+MonoObjectHandle
+mono_gc_alloc_handle_pinned_obj (MonoVTable *vtable, gsize size);
+
 void* mono_gc_alloc_obj (MonoVTable *vtable, size_t size);
+
+MonoObjectHandle
+mono_gc_alloc_handle_obj (MonoVTable *vtable, gsize size);
+
 void* mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length);
+
+MonoArrayHandle
+mono_gc_alloc_handle_vector (MonoVTable *vtable, gsize size, gsize max_length);
+
 void* mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size);
+
+MonoArrayHandle
+mono_gc_alloc_handle_array (MonoVTable *vtable, gsize size, gsize max_length, gsize bounds_size);
+
 void* mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len);
+
+MonoStringHandle
+mono_gc_alloc_handle_string (MonoVTable *vtable, gsize size, gint32 len);
+
 void* mono_gc_alloc_mature (MonoVTable *vtable, size_t size);
 MonoGCDescriptor mono_gc_make_descr_for_string (gsize *bitmap, int numbits);
 
-void mono_gc_register_obj_with_weak_fields (void *obj);
+MonoObjectHandle
+mono_gc_alloc_handle_mature (MonoVTable *vtable, gsize size);
 
-void  mono_gc_register_for_finalization (MonoObject *obj, void *user_data);
+void mono_gc_register_obj_with_weak_fields (void *obj);
+void
+mono_gc_register_object_with_weak_fields (MonoObjectHandle obj);
+
+typedef void (*MonoFinalizationProc)(gpointer, gpointer); // same as SGenFinalizationProc, GC_finalization_proc
+
+void  mono_gc_register_for_finalization (MonoObject *obj, MonoFinalizationProc user_data);
 void  mono_gc_add_memory_pressure (gint64 value);
 MONO_API int   mono_gc_register_root (char *start, size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg);
 void  mono_gc_deregister_root (char* addr);
@@ -289,7 +319,9 @@ gboolean mono_gc_card_table_nursery_check (void);
 
 void* mono_gc_get_nursery (int *shift_bits, size_t *size);
 
-void mono_gc_set_skip_thread (gboolean skip);
+// Don't use directly; set/unset MONO_THREAD_INFO_FLAGS_NO_GC instead.
+void mono_gc_skip_thread_changing (gboolean skip);
+void mono_gc_skip_thread_changed (gboolean skip);
 
 #ifndef HOST_WIN32
 int mono_gc_pthread_create (pthread_t *new_thread, const pthread_attr_t *attr, void *(*start_routine)(void *), void *arg);
@@ -363,7 +395,7 @@ void mono_gc_thread_detach_with_lock (THREAD_INFO_TYPE *info);
 gboolean mono_gc_thread_in_critical_region (THREAD_INFO_TYPE *info);
 
 /* If set, print debugging messages around finalizers. */
-extern gboolean log_finalizers;
+extern gboolean mono_log_finalizers;
 
 /* If set, do not run finalizers. */
 extern gboolean mono_do_not_finalize;

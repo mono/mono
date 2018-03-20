@@ -613,6 +613,9 @@ namespace System.Net.NetworkInformation {
 		[DllImport ("iphlpapi.dll")]
 		static extern int GetIpStatisticsEx (out Win32_MIB_IPSTATS pStats, int dwFamily);
 
+		[DllImport ("Ws2_32.dll")]
+		static extern ushort ntohs (ushort netshort);
+
 		// Win32 structures
 
 		[StructLayout (LayoutKind.Explicit)]
@@ -673,10 +676,10 @@ namespace System.Net.NetworkInformation {
 		class Win32_MIB_UDPROW
 		{
 			public uint LocalAddr;
-			public int LocalPort;
+			public uint LocalPort;
 
 			public IPEndPoint LocalEndPoint {
-				get { return new IPEndPoint (LocalAddr, LocalPort); }
+				get { return new IPEndPoint (LocalAddr, ntohs((ushort)LocalPort)); }
 			}
 		}
 

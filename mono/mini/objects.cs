@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using System.Reflection;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
@@ -787,6 +788,11 @@ class Tests {
 		}
 		if (!ok)
 			return 12;
+
+		object arr = new int [10];
+		if (arr is IList<int?>)
+			return 13;
+
 		return 0;
 	}
 
@@ -1830,6 +1836,31 @@ ncells ) {
 		return 0;
 	}
 
+	enum FooEnum { Bar }
+	//https://github.com/mono/mono/issues/6666
+	public static int test_0_bad_unbox_nullable_of_enum () {
+		try {
+			var enumValue = FooEnum.Bar;
+			object value = (int)enumValue;
+			var res = (FooEnum?)value; // Should throw
+		} catch (InvalidCastException) {
+			return 0;
+		}
+		return 1;
+	}
+
+	//https://github.com/mono/mono/issues/6666
+	public static int test_0_unbox_nullable_of_enum () {
+		try {
+			var enumValue = FooEnum.Bar;
+			object value = (object)enumValue;
+			var res = (FooEnum?)value; // Should not throw
+		} catch (InvalidCastException) {
+			return 1;
+		}
+		return 0;
+	}
+
 	static void decode (out sbyte v) {
 		byte tmp = 134;
 		v = (sbyte)tmp;
@@ -1842,6 +1873,30 @@ ncells ) {
 
 	  return t == -122 ? 0 : 1;
 	}
+
+	public interface IFoo
+	{
+	  int MyInt { get; }
+	}
+
+	public class IFooImpl : IFoo
+	{
+	  public int MyInt => 0;
+	}
+
+	//gh 6266
+    public static int test_0_store_to_magic_iface_array ()
+    {
+      ICollection<IFoo> arr1 = new IFooImpl[1] { new IFooImpl() };
+      ICollection<IFoo> arr2 = new IFooImpl[1] { new IFooImpl() };
+
+      ICollection<IFoo>[] a2d = new ICollection<IFoo>[2] {
+        arr1,
+        arr2,
+      };
+
+	  return 0;
+    }
 }
 
 #if __MOBILE__

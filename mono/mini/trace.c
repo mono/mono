@@ -20,6 +20,7 @@
 #endif
 #include <string.h>
 #include "mini.h"
+#include "mini-runtime.h"
 #include <mono/metadata/debug-helpers.h>
 #include <mono/utils/mono-time.h>
 #include <mono/utils/mono-memory-model.h>
@@ -86,17 +87,17 @@ static char *
 string_to_utf8 (MonoString *s)
 {
 	char *as;
-	GError *error = NULL;
+	GError *gerror = NULL;
 
 	g_assert (s);
 
 	if (!s->length)
 		return g_strdup ("");
 
-	as = g_utf16_to_utf8 (mono_string_chars (s), s->length, NULL, NULL, &error);
-	if (error) {
+	as = g_utf16_to_utf8 (mono_string_chars (s), s->length, NULL, NULL, &gerror);
+	if (gerror) {
 		/* Happens with StringBuilders */
-		g_error_free (error);
+		g_error_free (gerror);
 		return g_strdup ("<INVALID UTF8>");
 	}
 	else

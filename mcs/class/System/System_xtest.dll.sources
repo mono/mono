@@ -1,3 +1,5 @@
+../test-helpers/Configuration.Http.cs
+
 ../../../external/corefx/src/Common/tests/System/Threading/Tasks/TaskTimeoutExtensions.cs
 
 ../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/AssertExtensions.cs
@@ -25,7 +27,7 @@ System/RemoteExecutorTests.cs
 ../../../external/corefx/src/Common/tests/System/Net/Configuration.cs
 ../../../external/corefx/src/Common/tests/System/Net/Configuration.Http.cs
 ../../../external/corefx/src/Common/tests/System/Net/Configuration.Certificates.cs
-#../../../external/corefx/src/System.Net.Requests/tests/*.cs
+#../../../external/corefx/src/System.Net.Requests/tests/*.cs:AuthenticationManagerTest.cs,FtpWebRequestTest.cs
 
 # System.Net.WebHeaderCollection
 #../../../external/corefx/src/System.Net.WebHeaderCollection/tests/*.cs
@@ -34,7 +36,7 @@ System/RemoteExecutorTests.cs
 #../../../external/corefx/src/System.Net.NameResolution/tests/FunctionalTests/*.cs
 
 # System.Net.WebClient
-#../../../external/corefx/src/System.Net.WebClient/tests/*.cs
+../../../external/corefx/src/System.Net.WebClient/tests/*.cs
 
 # System.Net.Security
 ../../../external/corefx/src/Common/tests/System/Net/SslProtocolSupport.cs
@@ -59,7 +61,7 @@ System/RemoteExecutorTests.cs
 #../../../external/corefx/src/System.Net.WebProxy/tests/*.cs
 
 # System.Net.ServicePoint
-#../../../external/corefx/src/System.Net.ServicePoint/tests/*.cs
+../../../external/corefx/src/System.Net.ServicePoint/tests/*.cs
 
 # System.Net.Sockets
 ../../../external/corefx/src/Common/tests/System/Diagnostics/Tracing/TestEventListener.cs
@@ -90,3 +92,14 @@ System/RemoteExecutorTests.cs
 ../../../external/corefx/src/Common/src/System/Net/UriScheme.cs
 ../../../external/corefx/src/Common/src/System/SerializableAttribute.cs
 ../../../external/corefx/src/Common/tests/System/ShouldNotBeInvokedException.cs
+
+# System.IO.FileSystemWatcher
+../../../external/corefx/src/System.IO.FileSystem.Watcher/tests/Utility/*.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/tests/FileSystemWatcher.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/tests/FileSystemWatcher.unit.cs
+../../../external/corefx/src/Common/tests/System/IO/TempFile.cs
+../../../external/corefx/src/Common/tests/System/IO/TempDirectory.cs
+
+# System.Text.RegularExpressions
+../../../external/corefx/src/Common/tests/System/Diagnostics/DebuggerAttributes.cs
+../../../external/corefx/src/System.Text.RegularExpressions/tests/*.cs:Regex.Serialization.cs,MatchCollectionTests.cs,MatchCollectionTests2.cs

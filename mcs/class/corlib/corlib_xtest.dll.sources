@@ -1,6 +1,12 @@
 ../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/AssertExtensions.cs
+
+../../../external/corefx/src/Common/tests/System/Diagnostics/Tracing/TestEventListener.cs
+../../../external/corefx/src/Common/tests/System/Threading/ThreadTestHelpers.cs
+../../../external/corefx/src/Common/tests/System/Threading/ThreadPoolHelpers.cs
 ../../../external/corefx/src/Common/tests/System/RandomDataGenerator.cs
 ../../../external/corefx/src/Common/tests/System/Runtime/Serialization/Formatters/BinaryFormatterHelpers.cs
+
+#../../../external/corefx/src/System.Globalization/tests/CompareInfo/*.cs:
 
 ../../../external/corefx/src/System.Reflection.Emit/tests/Utilities.cs
 
@@ -148,9 +154,8 @@
 
 ../../../external/corefx/src/System.ValueTuple/tests/*.cs
 
-../../../external/corefx/src/Common/tests/System/Diagnostics/Tracing/TestEventListener.cs
-../../../external/corefx/src/Common/tests/System/Threading/ThreadTestHelpers.cs
-../../../external/corefx/src/Common/tests/System/Threading/ThreadPoolHelpers.cs
+# System.Runtime
+../../../external/corefx/src/System.Runtime/tests/System/Runtime/CompilerServices/*.cs:RuntimeHelpersTests.netcoreapp.cs,ConditionalWeakTableTests.netcoreapp.cs,ConditionalWeakTableTests.cs
 
 # System.Threading.Tasks
 ../../../external/corefx/src/System.Threading.Tasks/tests/System.Runtime.CompilerServices/*.cs
@@ -170,9 +175,6 @@
 
 # System.Threading
 ../../../external/corefx/src/System.Threading/tests/*.cs:MutexTests.cs,SemaphoreTests.cs,InterlockedTests.netcoreapp.cs,EventWaitHandleTests.cs,XunitAssemblyAttributes.cs,ReaderWriterLockTests.cs,SynchronizationContextTests.cs,ExecutionContextTests.cs,HostExecutionContextManagerTests.cs,EtwTests.cs
-
-# System.Text.RegularExpressions
-../../../external/corefx/src/System.Text.RegularExpressions/tests/*.cs:CaptureCollectionTests.netcoreapp.cs,GroupCollectionTests.netcoreapp.cs,MatchCollectionTests.netcoreapp.cs,PrecompiledRegexScenarioTest.cs,RegexCompilationInfoTests.cs,RegexGroupNameTests.cs,Regex.Groups.Tests.cs,Regex.Match.Tests.cs,Regex.Serialization.cs,MatchCollectionTests.cs,Regex.Ctor.Tests.cs,GroupCollectionTests2.cs,MatchCollectionTests2.cs,CaptureCollectionTests2.cs
 
 ../../../external/corefx/src/System.Memory/tests/*.cs
 ../../../external/corefx/src/System.Memory/tests/Binary/*.cs

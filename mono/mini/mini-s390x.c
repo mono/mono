@@ -826,12 +826,12 @@ static void
 decodeParmString (MonoString *s)
 {
 	ERROR_DECL (error);
-	char *str = mono_string_to_utf8_checked(s, &error);
-	if (is_ok (&error))  {
+	char *str = mono_string_to_utf8_checked(s, error);
+	if (is_ok (error))  {
 		fprintf (trFd, "[STRING:%p:%s], ", s, str);
 		g_free (str);
 	} else {
-		mono_error_cleanup (&error);
+		mono_error_cleanup (error);
 		fprintf (trFd, "[STRING:%p:], ", s);
 	}
 }
@@ -2613,8 +2613,8 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 		MonoMethodHeader *header;
 		int srcReg;
 
-		header = mono_method_get_header_checked (cfg->method, &error);
-		mono_error_assert_ok (&error); /* FIXME don't swallow the error */
+		header = mono_method_get_header_checked (cfg->method, error);
+		mono_error_assert_ok (error); /* FIXME don't swallow the error */
 		if ((cfg->flags & MONO_CFG_HAS_ALLOCA) || header->num_clauses)
 			srcReg = s390_r11;
 		else
@@ -4417,7 +4417,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_RELAXED_NOP:
 		case OP_NOP:
 		case OP_DUMMY_USE:
-		case OP_DUMMY_STORE:
+		case OP_DUMMY_ICONST:
+		case OP_DUMMY_I8CONST:
+		case OP_DUMMY_R8CONST:
+		case OP_DUMMY_R4CONST:
 		case OP_NOT_REACHED:
 		case OP_NOT_NULL: {
 		}
@@ -5090,10 +5093,22 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_MEMORY_BARRIER:
 			s390_mem (code);
 			break;
+		case OP_LIVERANGE_START: {
+			if (cfg->verbose_level > 1)
+				printf ("R%d START=0x%x\n", MONO_VARINFO (cfg, ins->inst_c0)->vreg, (int)(code - cfg->native_code));
+			MONO_VARINFO (cfg, ins->inst_c0)->live_range_start = code - cfg->native_code;
+			break;
+		}
+		case OP_LIVERANGE_END: {
+			if (cfg->verbose_level > 1)
+				printf ("R%d END=0x%x\n", MONO_VARINFO (cfg, ins->inst_c0)->vreg, (int)(code - cfg->native_code));
+			MONO_VARINFO (cfg, ins->inst_c0)->live_range_end = code - cfg->native_code;
+			break;
+		}
 		case OP_GC_SAFE_POINT: {
 			short *br;
 
-			g_assert (mono_threads_is_coop_enabled ());
+			g_assert (mono_threads_are_safepoints_enabled ());
 
 			s390_ltg (code, s390_r0, 0, ins->sreg1, 0);	
 			s390_jz  (code, 0); CODEPTR(code, br);
@@ -6648,7 +6663,7 @@ mono_arch_flush_register_windows (void)
 /*------------------------------------------------------------------*/
 
 gboolean 
-mono_arch_is_inst_imm (gint64 imm)
+mono_arch_is_inst_imm (int opcode, int imm_opcode, gint64 imm)
 {
 	return s390_is_imm32 (imm);
 }

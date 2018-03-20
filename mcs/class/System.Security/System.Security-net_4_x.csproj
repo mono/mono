@@ -18,13 +18,14 @@
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
     
+    
     <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>
     </RootNamespace>
     <AssemblyName>System.Security</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>../msfinal.pub</AssemblyOriginatorKeyFile>
@@ -34,7 +35,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699,414,618</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;SECURITY_DEP;SYSTEM_SECURITY_DLL</DefineConstants>
+    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;SECURITY_DEP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -42,7 +43,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,414,618</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;SECURITY_DEP;SYSTEM_SECURITY_DLL</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;SECURITY_DEP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -133,7 +134,6 @@
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-    <Compile Include="..\System.Core\System.Security.Cryptography.X509Certificates\RSACertificateExtensions.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="corefx\SR.cs" />
     <Compile Include="Mono.Security.Cryptography\ManagedProtection.cs" />
@@ -203,26 +203,31 @@
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../corlib/corlib-net_4_x.csproj">
-      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
-      <Name>corlib-net_4_x</Name>
-    </ProjectReference>
     <Reference Include="./../../../external/binary-reference-assemblies/v4.7.1/System.Numerics.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/v4.7.1/System.Numerics.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <ProjectReference Include="../System/System-secxml-net_4_x.csproj">
-      <Project>{19954F80-065E-4D46-8FEF-62BA4D6CFDAD}</Project>
-      <Name>System-secxml-net_4_x</Name>
-    </ProjectReference>
-    <ProjectReference Include="../System.XML/System.Xml-bare-net_4_x.csproj">
-      <Project>{A5216031-11A3-44DD-B2FF-A14AE63BD0C3}</Project>
-      <Name>System.Xml-bare-net_4_x</Name>
-    </ProjectReference>
+    <Reference Include="./../../../external/binary-reference-assemblies/v4.7.1/System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/v4.7.1/System.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security-net_4_x.csproj">
       <Project>{42D59DE7-586F-4ACF-BDD5-E7869E39E3EF}</Project>
       <Name>Mono.Security-net_4_x</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System/System-net_4_x.csproj">
+      <Project>{2762E921-91A8-4C87-91E9-BA628013F753}</Project>
+      <Name>System-net_4_x</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System.XML/System.Xml-net_4_x.csproj">
+      <Project>{87FD2F0F-5222-4AE6-BD63-2D4975E11E5B}</Project>
+      <Name>System.Xml-net_4_x</Name>
+    </ProjectReference>
+    <ProjectReference Include="../corlib/corlib-net_4_x.csproj">
+      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
+      <Name>corlib-net_4_x</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

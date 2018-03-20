@@ -66,8 +66,6 @@
 
 #define THUNK_SIZE (3 * 4)
 
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
-
 #if __APPLE__
 void sys_icache_invalidate (void *start, size_t len);
 #endif
@@ -1617,7 +1615,7 @@ void
 mono_arch_set_native_call_context (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
 {
 	CallInfo *cinfo = get_call_info (NULL, sig);
-	MonoInterpCallbacks *interp_cb = mini_get_interp_callbacks ();
+	MonoEECallbacks *interp_cb = mini_get_interp_callbacks ();
 
 	memset (ccontext, 0, sizeof (CallContext));
 
@@ -1678,7 +1676,7 @@ mono_arch_set_native_call_context (CallContext *ccontext, gpointer frame, MonoMe
 void
 mono_arch_get_native_call_context (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
 {
-	MonoInterpCallbacks *interp_cb = mini_get_interp_callbacks ();
+	MonoEECallbacks *interp_cb = mini_get_interp_callbacks ();
 	CallInfo *cinfo;
 
 	/* No return value */
@@ -2738,7 +2736,7 @@ mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
 #endif /* #ifndef DISABLE_JIT */
 
 gboolean 
-mono_arch_is_inst_imm (gint64 imm)
+mono_arch_is_inst_imm (int opcode, int imm_opcode, gint64 imm)
 {
 	return TRUE;
 }
@@ -4646,9 +4644,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_NOP:
 		case OP_DUMMY_USE:
-		case OP_DUMMY_STORE:
 		case OP_DUMMY_ICONST:
 		case OP_DUMMY_R8CONST:
+		case OP_DUMMY_R4CONST:
 		case OP_NOT_REACHED:
 		case OP_NOT_NULL:
 			break;
@@ -6013,10 +6011,22 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ins->backend.pc_offset = code - cfg->native_code;
 			bb->spill_slot_defs = g_slist_prepend_mempool (cfg->mempool, bb->spill_slot_defs, ins);
 			break;
+		case OP_LIVERANGE_START: {
+			if (cfg->verbose_level > 1)
+				printf ("R%d START=0x%x\n", MONO_VARINFO (cfg, ins->inst_c0)->vreg, (int)(code - cfg->native_code));
+			MONO_VARINFO (cfg, ins->inst_c0)->live_range_start = code - cfg->native_code;
+			break;
+		}
+		case OP_LIVERANGE_END: {
+			if (cfg->verbose_level > 1)
+				printf ("R%d END=0x%x\n", MONO_VARINFO (cfg, ins->inst_c0)->vreg, (int)(code - cfg->native_code));
+			MONO_VARINFO (cfg, ins->inst_c0)->live_range_end = code - cfg->native_code;
+			break;
+		}
 		case OP_GC_SAFE_POINT: {
 			guint8 *buf [1];
 
-			g_assert (mono_threads_is_coop_enabled ());
+			g_assert (mono_threads_are_safepoints_enabled ());
 
 			ARM_LDR_IMM (code, ARMREG_IP, ins->sreg1, 0);
 			ARM_CMP_REG_IMM (code, ARMREG_IP, 0, 0);
@@ -7422,7 +7432,7 @@ mono_arch_get_seq_point_info (MonoDomain *domain, guint8 *code)
 	mono_domain_unlock (domain);
 
 	if (!info) {
-		ji = mono_jit_info_table_find (domain, (char*)code);
+		ji = mono_jit_info_table_find (domain, code);
 		g_assert (ji);
 
 		info = g_malloc0 (sizeof (SeqPointInfo) + ji->code_size);

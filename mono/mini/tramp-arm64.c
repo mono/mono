@@ -27,8 +27,6 @@
 #endif
 
 
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
-
 void
 mono_arch_patch_callsite (guint8 *method_start, guint8 *code_ptr, guint8 *addr)
 {
@@ -329,7 +327,7 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 	 */
 	tramp = mono_get_trampoline_code (tramp_type);
 
-	buf = code = mono_global_codeman_reserve (buf_len);
+	buf = code = mono_domain_code_reserve (domain, buf_len);
 
 	code = mono_arm_emit_imm64 (code, ARMREG_IP1, (guint64)arg1);
 	code = mono_arm_emit_imm64 (code, ARMREG_IP0, (guint64)tramp);
@@ -517,7 +515,7 @@ mono_arch_create_general_rgctx_lazy_fetch_trampoline (MonoTrampInfo **info, gboo
  * mono_arch_create_sdb_trampoline:
  *
  *   Return a trampoline which captures the current context, passes it to
- * debugger_agent_single_step_from_context ()/debugger_agent_breakpoint_from_context (),
+ * mono_debugger_agent_single_step_from_context ()/mono_debugger_agent_breakpoint_from_context (),
  * then restores the (potentially changed) context.
  */
 guint8*
@@ -583,7 +581,7 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 		else
 			code = mono_arm_emit_aotconst (&ji, code, buf, ARMREG_IP0, MONO_PATCH_INFO_JIT_ICALL_ADDR, "debugger_agent_breakpoint_from_context");
 	} else {
-		gpointer addr = single_step ? debugger_agent_single_step_from_context : debugger_agent_breakpoint_from_context;
+		gpointer addr = single_step ? mono_debugger_agent_single_step_from_context : mono_debugger_agent_breakpoint_from_context;
 
 		code = mono_arm_emit_imm64 (code, ARMREG_IP0, (guint64)addr);
 	}

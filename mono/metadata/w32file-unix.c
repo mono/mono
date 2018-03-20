@@ -893,6 +893,7 @@ static gboolean lock_while_writing = FALSE;
 static gboolean
 is_file_writable (struct stat *st, const gchar *path)
 {
+	gboolean ret;
 #if __APPLE__
 	// OS X Finder "locked" or `ls -lO` "uchg".
 	// This only covers one of several cases where an OS X file could be unwritable through special flags.
@@ -915,7 +916,10 @@ is_file_writable (struct stat *st, const gchar *path)
 	/* Fallback to using access(2). It's not ideal as it might not take into consideration euid/egid
 	 * but it's the only sane option we have on unix.
 	 */
-	return access (path, W_OK) == 0;
+	MONO_ENTER_GC_SAFE;
+	ret = access (path, W_OK) == 0;
+	MONO_EXIT_GC_SAFE;
+	return ret;
 }
 
 
@@ -4574,7 +4578,7 @@ mono_w32file_get_drive_type(const gunichar2 *root_path_name)
 	return (drive_type);
 }
 
-#if defined (HOST_DARWIN) || defined (__linux__) || defined(HOST_BSD) || defined(__FreeBSD_kernel__) || defined(__HAIKU__)
+#if defined (HOST_DARWIN) || defined (__linux__) || defined(HOST_BSD) || defined(__FreeBSD_kernel__) || defined(__HAIKU__) || defined(_AIX)
 static gchar*
 get_fstypename (gchar *utfpath)
 {

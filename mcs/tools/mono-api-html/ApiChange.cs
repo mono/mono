@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 
@@ -12,6 +13,12 @@ namespace Xamarin.ApiDiff
 		public bool Breaking;
 		public bool AnyChange;
 		public bool HasIgnoredChanges;
+		public string SourceDescription;
+
+		public ApiChange (string sourceDescription)
+		{
+			SourceDescription = sourceDescription;
+		}
 
 		public ApiChange Append (string text)
 		{
@@ -68,6 +75,11 @@ namespace Xamarin.ApiDiff
 				}
 				return;
 			}
+
+			var changeDescription = $"{State.Namespace}.{State.Type}: {change.Header}: {change.SourceDescription}";
+			State.LogDebugMessage ($"Possible -r value: {changeDescription}");
+			if (State.IgnoreRemoved.Any (re => re.IsMatch (changeDescription)))
+				return;
 
 			List<ApiChange> list;
 			if (!TryGetValue (change.Header, out list)) {

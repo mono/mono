@@ -33,6 +33,7 @@ namespace MonoTests.System.Windows.Forms
 			if (c > 0) {
 				Console.WriteLine ("HEY! You created " + c.ToString () + " form(s) and you didn't dispose of them!");
 				Console.WriteLine ("Please modify your test to shut me up.");
+				Console.WriteLine ("Test: " + NUnit.Framework.TestContext.CurrentContext.Test.FullName);
 			}
 			for (int i = Application.OpenForms.Count - 1; i >= 0; i--) {
 				Application.OpenForms[i].Dispose ();

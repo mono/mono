@@ -18,13 +18,14 @@
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
     
+    
     <NoConfig>True</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>
     </RootNamespace>
     <AssemblyName>System.Web</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>../msfinal.pub</AssemblyOriginatorKeyFile>
@@ -34,7 +35,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699,612,618,436,618</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;INSIDE_SYSTEM_WEB;WEBSERVICES_DEP</DefineConstants>
+    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;INSIDE_SYSTEM_WEB</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -42,7 +43,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,612,618,436,618</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;INSIDE_SYSTEM_WEB;WEBSERVICES_DEP</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;INSIDE_SYSTEM_WEB</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -1499,11 +1500,11 @@
   -->
   <PropertyGroup>
     <PreBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
-mono $(ProjectDir)\..\lib\net_4_x\culevel.exe -o $(ProjectDir)\System.Web\UplevelHelper.cs $(ProjectDir)\UplevelHelperDefinitions.xml
+mono $([MSBuild]::GetDirectoryNameOfFileAbove($(TargetDir), culevel.exe))\culevel.exe -o $(ProjectDir)\System.Web\UplevelHelper.cs $(ProjectDir)\UplevelHelperDefinitions.xml
 
     </PreBuildEvent>
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
-mono $(ProjectDir)\..\lib\net_4_x\culevel.exe -o $(ProjectDir)\System.Web\UplevelHelper.cs $(ProjectDir)\UplevelHelperDefinitions.xml
+ $([MSBuild]::GetDirectoryNameOfFileAbove($(TargetDir), culevel.exe))\culevel.exe -o $(ProjectDir)\System.Web\UplevelHelper.cs $(ProjectDir)\UplevelHelperDefinitions.xml
 
     </PreBuildEvent>
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
@@ -1514,10 +1515,6 @@ mono $(ProjectDir)\..\lib\net_4_x\culevel.exe -o $(ProjectDir)\System.Web\Upleve
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../corlib/corlib-net_4_x.csproj">
-      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
-      <Name>corlib-net_4_x</Name>
-    </ProjectReference>
     <ProjectReference Include="../System/System-net_4_x.csproj">
       <Project>{2762E921-91A8-4C87-91E9-BA628013F753}</Project>
       <Name>System-net_4_x</Name>
@@ -1566,9 +1563,13 @@ mono $(ProjectDir)\..\lib\net_4_x\culevel.exe -o $(ProjectDir)\System.Web\Upleve
       <Project>{E43ADBA7-5DB9-466B-90C6-FFFDA520848D}</Project>
       <Name>System.Web.Services-net_4_x</Name>
     </ProjectReference>
-    <ProjectReference Include="../System.Design/System.Design-plaindesign-net_4_x.csproj">
-      <Project>{DCE556E9-EF89-45F3-A51F-83D3C3E0FEF5}</Project>
-      <Name>System.Design-plaindesign-net_4_x</Name>
+    <ProjectReference Include="../System.Design/System.Design-net_4_x.csproj">
+      <Project>{EFEDC380-2CB0-4B40-9566-D2302867A4D9}</Project>
+      <Name>System.Design-net_4_x</Name>
+    </ProjectReference>
+    <ProjectReference Include="../corlib/corlib-net_4_x.csproj">
+      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
+      <Name>corlib-net_4_x</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

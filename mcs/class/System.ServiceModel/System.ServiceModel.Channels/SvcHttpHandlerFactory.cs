@@ -49,7 +49,7 @@ namespace System.ServiceModel.Channels {
 
 		public SvcHttpHandlerFactory ()
 		{
-			ServiceHostingEnvironment.InAspNet = true;
+			ServiceHostingEnvironmentInternal.InAspNet = true;
 		}
 
 		public IHttpHandler GetHandler (HttpContext context, string requestType, string url, string pathTranslated)

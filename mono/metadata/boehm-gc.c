@@ -18,6 +18,8 @@
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/method-builder.h>
+#include <mono/metadata/method-builder-ilgen.h>
+#include <mono/metadata/method-builder-ilgen-internals.h>
 #include <mono/metadata/opcodes.h>
 #include <mono/metadata/domain-internals.h>
 #include <mono/metadata/metadata-internals.h>
@@ -192,7 +194,7 @@ mono_gc_base_init (void)
 				if (!strcmp (opt, "do-not-finalize")) {
 					mono_do_not_finalize = 1;
 				} else if (!strcmp (opt, "log-finalizers")) {
-					log_finalizers = 1;
+					mono_log_finalizers = 1;
 				}
 			}
 			g_free (env);
@@ -460,7 +462,7 @@ on_gc_notification (GC_EventType event)
 		if (mono_perfcounters)
 			mono_atomic_inc_i32 (&mono_perfcounters->gc_collections0);
 #endif
-		mono_atomic_inc_i32 (&gc_stats.major_gc_count);
+		mono_atomic_inc_i32 (&mono_gc_stats.major_gc_count);
 		gc_start_time = mono_100ns_ticks ();
 		break;
 
@@ -485,7 +487,7 @@ on_gc_notification (GC_EventType event)
 			UnlockedWrite64 (&mono_perfcounters->gc_gen0size, heap_size);
 		}
 #endif
-		UnlockedAdd64 (&gc_stats.major_gc_time, mono_100ns_ticks () - gc_start_time);
+		UnlockedAdd64 (&mono_gc_stats.major_gc_time, mono_100ns_ticks () - gc_start_time);
 		mono_trace_message (MONO_TRACE_GC, "gc took %" G_GINT64_FORMAT " usecs", (mono_100ns_ticks () - gc_start_time) / 10);
 		break;
 	default:
@@ -600,7 +602,7 @@ push_handle_stack (HandleStack* stack)
 
 	while (cur) {
 		if (cur->size > 0)
-			GC_push_all (cur->elems, (char*)(cur->elems + cur->size) + 1);
+			GC_push_all ((gpointer)&cur->elems[0], (char*)(cur->elems + cur->size) + 1);
 		if (cur == last)
 			break;
 		cur = cur->next;
@@ -611,7 +613,7 @@ static void
 mono_push_other_roots (void)
 {
 	g_hash_table_foreach (roots, push_root, NULL);
-	FOREACH_THREAD (info) {
+	FOREACH_THREAD_EXCLUDE (info, MONO_THREAD_INFO_FLAGS_NO_GC) {
 		HandleStack* stack = (HandleStack*)info->handle_stack;
 		if (stack)
 			push_handle_stack (stack);
@@ -718,7 +720,7 @@ mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 {
 	MonoObject *obj;
 
-	if (!vtable->klass->has_references) {
+	if (!m_class_has_references (vtable->klass)) {
 		obj = (MonoObject *)GC_MALLOC_ATOMIC (size);
 		if (G_UNLIKELY (!obj))
 			return NULL;
@@ -750,7 +752,7 @@ mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 {
 	MonoArray *obj;
 
-	if (!vtable->klass->has_references) {
+	if (!m_class_has_references (vtable->klass)) {
 		obj = (MonoArray *)GC_MALLOC_ATOMIC (size);
 		if (G_UNLIKELY (!obj))
 			return NULL;
@@ -784,7 +786,7 @@ mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uint
 {
 	MonoArray *obj;
 
-	if (!vtable->klass->has_references) {
+	if (!m_class_has_references (vtable->klass)) {
 		obj = (MonoArray *)GC_MALLOC_ATOMIC (size);
 		if (G_UNLIKELY (!obj))
 			return NULL;
@@ -911,7 +913,7 @@ mono_gc_wbarrier_object_copy (MonoObject* obj, MonoObject *src)
 {
 	/* do not copy the sync state */
 	mono_gc_memmove_aligned ((char*)obj + sizeof (MonoObject), (char*)src + sizeof (MonoObject),
-			mono_object_class (obj)->instance_size - sizeof (MonoObject));
+				m_class_get_instance_size (mono_object_class (obj)) - sizeof (MonoObject));
 }
 
 void
@@ -1478,12 +1480,27 @@ mono_gc_set_stack_end (void *stack_end)
 {
 }
 
-void mono_gc_set_skip_thread (gboolean value)
+void
+mono_gc_skip_thread_changing (gboolean skip)
+{
+	/*
+	 * Unlike SGen, Boehm doesn't respect our thread info flags. We need to
+	 * inform Boehm manually to skip/not skip the current thread.
+	 */
+
+	if (skip)
+		GC_start_blocking ();
+	else
+		GC_end_blocking ();
+}
+
+void
+mono_gc_skip_thread_changed (gboolean skip)
 {
 }
 
 void
-mono_gc_register_for_finalization (MonoObject *obj, void *user_data)
+mono_gc_register_for_finalization (MonoObject *obj, MonoFinalizationProc user_data)
 {
 	guint offset = 0;
 

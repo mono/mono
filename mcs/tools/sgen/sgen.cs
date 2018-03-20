@@ -96,7 +96,19 @@ public class Driver
 			Console.WriteLine ("Generating serializer for the following types:");
 
 		if (types == null) {
-			foreach (Type t in asm.GetTypes ()) {
+			Type [] types;
+
+			try {
+				types = asm.GetTypes ();
+			} catch (ReflectionTypeLoadException tle){
+				Console.WriteLine ($"There was an error loading one or more of the types from the referenced assembly {assembly}");
+				foreach (var le in tle.LoaderExceptions){
+					Console.WriteLine (le);
+				}
+				return 1;
+			}
+			
+			foreach (Type t in types){
 				try {
 					maps.Add (imp.ImportTypeMapping (t));
 					userTypes.Add (t);

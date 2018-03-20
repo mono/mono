@@ -40,7 +40,9 @@ namespace Mono.CSharp
 		}
 		
 		static readonly object ModifierNone = 0;
-	
+		static readonly object RefStructToken = new object ();
+		static readonly object RefPartialStructToken = new object ();
+
 		NamespaceContainer current_namespace;
 		TypeContainer current_container;
 		TypeDefinition current_type;
@@ -338,6 +340,7 @@ namespace Mono.CSharp
 %token OPEN_BRACKET_EXPR
 %token OPEN_PARENS_DECONSTRUCT
 %token REF_STRUCT
+%token REF_PARTIAL
 
 // Make the parser go into eval mode parsing (statements and compilation units).
 %token EVAL_STATEMENT_PARSER
@@ -865,7 +868,7 @@ attribute_arguments
 		}
 		
 		Arguments args = ((Arguments) o [0]);
-		if (args.Count > 0 && !($3 is NamedArgument) && args [args.Count - 1] is NamedArgument)
+		if (lang_version < LanguageVersion.V_7_2 && args.Count > 0 && !($3 is NamedArgument) && args [args.Count - 1] is NamedArgument)
 			Error_NamedArgumentExpected ((NamedArgument) args [args.Count - 1]);
 		
 		args.Add ((Argument) $3);
@@ -1028,7 +1031,15 @@ struct_keyword
 			FeatureIsNotAvailable (GetLocation ($1), "ref structs");
 		}
 
-		$$ = this;
+		$$ = RefStructToken;
+	  }
+	| REF_PARTIAL STRUCT
+	  {
+		if (lang_version < LanguageVersion.V_7_2) {
+			FeatureIsNotAvailable (GetLocation ($1), "ref structs");
+		}
+
+		$$ = RefPartialStructToken;
 	  }
 	;
 
@@ -1043,8 +1054,13 @@ struct_declaration
 		if ((mods & Modifiers.READONLY) != 0 && lang_version < LanguageVersion.V_7_2) {
 			FeatureIsNotAvailable (GetLocation ($4), "readonly structs");
 		}
-		if ($4 != null)
+		if ($4 != null) {
 			mods |= Modifiers.REF;
+			if ($4 == RefPartialStructToken) {
+				mods |= Modifiers.PARTIAL;
+				$3 = $4;
+			}
+		}
 
 		lexer.ConstraintsParsing = true;
 		valid_param_mod = ParameterModifierType.PrimaryConstructor;
@@ -3856,7 +3872,7 @@ argument_list
 	| argument_list COMMA argument
 	  {
 		Arguments list = (Arguments) $1;
-		if (list [list.Count - 1] is NamedArgument)
+		if (lang_version < LanguageVersion.V_7_2 && list [list.Count - 1] is NamedArgument)
 			Error_NamedArgumentExpected ((NamedArgument) list [list.Count - 1]);
 		
 		list.Add ((Argument) $3);
@@ -4001,7 +4017,7 @@ expression_list_arguments
 	| expression_list_arguments COMMA expression_list_argument
 	  {
 		Arguments args = (Arguments) $1;
-		if (args [args.Count - 1] is NamedArgument && !($3 is NamedArgument))
+		if (lang_version < LanguageVersion.V_7_2 && args [args.Count - 1] is NamedArgument && !($3 is NamedArgument))
 			Error_NamedArgumentExpected ((NamedArgument) args [args.Count - 1]);
 	  
 		args.Add ((Argument) $3);
@@ -4792,7 +4808,7 @@ pattern_list
 	| pattern_list COMMA pattern_argument
 	  {
 		Arguments args = (Arguments) $1;
-		if (args [args.Count - 1] is NamedArgument && !($3 is NamedArgument))
+		if (lang_version < LanguageVersion.V_7_2 && args [args.Count - 1] is NamedArgument && !($3 is NamedArgument))
 			Error_NamedArgumentExpected ((NamedArgument) args [args.Count - 1]);
 
 		args.Add ((Argument) $3);
@@ -5109,17 +5125,25 @@ assignment_expression
 		$$ = new CompoundAssign (Binary.Operator.ExclusiveOr, (Expression) $1, (Expression) $3);
 		lbag.AddLocation ($$, GetLocation ($2));
 	  }
-	| OPEN_PARENS_DECONSTRUCT deconstruct_exprs CLOSE_PARENS ASSIGN expression
+	| OPEN_PARENS_DECONSTRUCT deconstruct_assignment CLOSE_PARENS ASSIGN expression
 	  {
 		if (lang_version < LanguageVersion.V_7)
 			FeatureIsNotAvailable (GetLocation ($1), "tuples");
 
-	  	var exprs = (List<Expression>) $2;
+		var exprs = (List<Expression>) $2;
+		$$ = new TupleDeconstruct (exprs, (Expression) $5, GetLocation ($4));
+	  }
+	| OPEN_PARENS_DECONSTRUCT deconstruct_declaration CLOSE_PARENS ASSIGN expression
+	  {
+		if (lang_version < LanguageVersion.V_7)
+			FeatureIsNotAvailable (GetLocation ($1), "tuples");
+
+		var exprs = (List<BlockVariable>) $2;
 		$$ = new TupleDeconstruct (exprs, (Expression) $5, GetLocation ($4));
 	  }
 	;
 
-deconstruct_exprs
+deconstruct_assignment
 	: expression COMMA expression
 	  {
 		$$ = new List<Expression> () {
@@ -5127,10 +5151,47 @@ deconstruct_exprs
 			(Expression) $3
 	  	};
 	  }
-	| deconstruct_exprs COMMA expression
+	| deconstruct_assignment COMMA expression
 	  {
 		var src = (List<Expression>) $1;
 		src.Add ((Expression) $3);
+		$$ = src;
+	  }
+	;
+
+deconstruct_declaration
+	: variable_type identifier_inside_body
+	  {
+		var lt = (LocatedToken) $2;
+		var li = new LocalVariable (current_block, lt.Value, lt.Location);
+		current_block.AddLocalName (li);
+		$$ = new List<BlockVariable> (2) {
+			new BlockVariable ((FullNamedExpression) $1, li)
+		};
+	  }
+	| deconstruct_declaration COMMA variable_type identifier_inside_body
+	  {
+		var lt = (LocatedToken) $4;
+		var li = new LocalVariable (current_block, lt.Value, lt.Location);
+		current_block.AddLocalName (li);
+
+		var src = (List<BlockVariable>) $1;
+		src.Add (new BlockVariable ((FullNamedExpression) $3, li));
+		$$ = src;
+	  }
+	| deconstruct_declaration COMMA identifier_inside_body
+	  {
+		var lt = (LocatedToken) $3;
+		var li = new LocalVariable (current_block, lt.Value, lt.Location);
+
+		if (lt.Value != "_") {
+			report.Error (8184, lt.Location, "A deconstruction cannot mix declarations and expressions on the left-hand-side");
+		} else {
+			li.Type = InternalType.Discard;
+		}
+
+		var src = (List<BlockVariable>) $1;
+		src.Add (new BlockVariable (new TypeExpression (li.Type, lt.Location), li));
 		$$ = src;
 	  }
 	;
@@ -7795,7 +7856,7 @@ void Warning_EmptyStatement (Location loc)
 
 void Error_NamedArgumentExpected (NamedArgument a)
 {
-	report.Error (1738, a.Location, "Named arguments must appear after the positional arguments");
+	report.Error (1738, a.Location, "Named arguments must appear after the positional arguments when using language version older than 7.2");
 }
 
 void Error_MissingInitializer (Location loc)
@@ -8385,6 +8446,8 @@ static string GetTokenName (int token)
 	case Token.READONLY:
 		return "readonly";
 	case Token.REF:
+	case Token.REF_STRUCT:
+	case Token.REF_PARTIAL:
 		return "ref";
 	case Token.RETURN:
 		return "return";
@@ -8399,7 +8462,6 @@ static string GetTokenName (int token)
 	case Token.STATIC:
 		return "static";
 	case Token.STRUCT:
-	case Token.REF_STRUCT:
 		return "struct";
 	case Token.SWITCH:
 		return "switch";

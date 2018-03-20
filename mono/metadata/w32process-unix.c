@@ -2062,10 +2062,6 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 		if (process_info != NULL) {
 			process_info->process_handle = handle;
 			process_info->pid = pid;
-
-			/* FIXME: we might need to handle the thread info some day */
-			process_info->thread_handle = INVALID_HANDLE_VALUE;
-			process_info->tid = 0;
 		}
 
 		mono_w32handle_unref (handle_data);
@@ -2218,20 +2214,18 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStar
 		}
 		/* Shell exec should not return a process handle when it spawned a GUI thing, like a browser. */
 		mono_w32handle_close (process_info->process_handle);
-		process_info->process_handle = NULL;
+		process_info->process_handle = INVALID_HANDLE_VALUE;
 	}
 
 done:
 	if (ret == FALSE) {
 		process_info->pid = -mono_w32error_get_last ();
 	} else {
-		process_info->thread_handle = NULL;
 #if !defined(MONO_CROSS_COMPILE)
 		process_info->pid = mono_w32process_get_pid (process_info->process_handle);
 #else
 		process_info->pid = 0;
 #endif
-		process_info->tid = 0;
 	}
 
 	return ret;
@@ -2338,8 +2332,8 @@ ves_icall_System_Diagnostics_Process_GetProcesses_internal (void)
 		mono_set_pending_exception (mono_get_exception_not_supported ("This system does not support EnumProcesses"));
 		return NULL;
 	}
-	procs = mono_array_new_checked (mono_domain_get (), mono_get_int32_class (), count, &error);
-	if (mono_error_set_pending_exception (&error)) {
+	procs = mono_array_new_checked (mono_domain_get (), mono_get_int32_class (), count, error);
+	if (mono_error_set_pending_exception (error)) {
 		g_free (pidarray);
 		return NULL;
 	}

@@ -17,6 +17,7 @@
     <IntermediateOutputPath>obj-net_4_x-$(HostPlatform)</IntermediateOutputPath>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
+    <RuntimeMetadataVersion>Mono</RuntimeMetadataVersion>
     
     <NoConfig>True</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -24,7 +25,7 @@
     <RootNamespace>
     </RootNamespace>
     <AssemblyName>mscorlib</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
 
   </PropertyGroup>
@@ -33,7 +34,7 @@
     <DebugType>full</DebugType>
     <NoWarn>612,618,3001,3002,3003,1635,1699</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;INSIDE_CORLIB;MONO_CULTURE_DATA;LIBC;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_MACL;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_MACL;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_FEATURE_CONSOLE;MONO_FEATURE_APPLETLS</DefineConstants>
+    <DefineConstants>TRACE;INSIDE_CORLIB;MONO_CULTURE_DATA;LIBC;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_MACL;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;FEATURE_PORTABLE_SPAN;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_MACL;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_FEATURE_CONSOLE;MONO_FEATURE_APPLETLS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -41,7 +42,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>612,618,3001,3002,3003,1635,1699</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>INSIDE_CORLIB;MONO_CULTURE_DATA;LIBC;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_MACL;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_MACL;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_FEATURE_CONSOLE;MONO_FEATURE_APPLETLS</DefineConstants>
+    <DefineConstants>INSIDE_CORLIB;MONO_CULTURE_DATA;LIBC;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_MACL;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;FEATURE_PORTABLE_SPAN;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_MACL;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_FEATURE_CONSOLE;MONO_FEATURE_APPLETLS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -53,7 +54,68 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\IRetainable.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\MemoryHandle.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\OwnedMemory.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\DictionaryEntry.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\Dictionary.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\IDictionaryDebugView.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\KeyValuePair.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Diagnostics\StackTraceHiddenAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CompareInfo.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CompareInfo.Invariant.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\HResults.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Memory.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\MemoryDebugView.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ReadOnlyMemory.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\AccessedThroughPropertyAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\AsyncStateMachineAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\CallerFilePathAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\CallerLineNumberAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\CallerMemberNameAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\CompilerGeneratedAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\CompilerGlobalScopeAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\CustomConstantAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\DateTimeConstantAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\DecimalConstantAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\DisablePrivateReflectionAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\DiscardableAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\ExtensionAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\FixedAddressValueTypeAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\FixedBufferAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\FormattableStringFactory.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\IAsyncStateMachine.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\IndexerNameAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\INotifyCompletion.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\IntrinsicAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\IsByRefLikeAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\IsConst.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\IsReadOnlyAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\IsVolatile.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\IteratorStateMachineAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\ITuple.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\ReferenceAssemblyAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\RuntimeCompatibilityAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\RuntimeFeature.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\RuntimeWrappedException.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\SpecialNameAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\StateMachineAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\SuppressIldasmAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\TupleElementNamesAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\TypeForwardedFromAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\TypeForwardedToAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\UnsafeValueTypeAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\InteropServices\MemoryMarshal.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\TaskCanceledException.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\TaskCompletionSource.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\TaskSchedulerException.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Tuple.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TupleExtensions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ValueTuple.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\LowLevelDictionary.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\ReferenceEqualityComparer.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Threading\Tasks\BeginEndAwaitableAdapter.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Threading\Tasks\RendezvousAwaitable.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\CDSCollectionETWBCLProvider.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\ConcurrentDictionary.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\ConcurrentQueue.cs" />
@@ -69,26 +131,21 @@
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Binary\Writer.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Binary\WriterBigEndian.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Binary\WriterLittleEndian.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\IRetainable.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\MemoryHandle.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\OperationStatus.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\OwnedMemory.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\StandardFormat.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Memory.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\MemoryDebugView.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\MemoryExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\MemoryExtensions.Portable.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Pinnable.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\ReadOnlyMemory.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\ReadOnlySpan.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Runtime\InteropServices\MemoryMarshal.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Span.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\SpanDebugView.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\SpanHelpers.BinarySearch.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\SpanHelpers.byte.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\SpanHelpers.Clear.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\SpanHelpers.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\SpanHelpers.T.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\ThrowHelper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\Globalization\Extensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.InteropServices.RuntimeInformation\src\System\Runtime\InteropServices\RuntimeInformation\Architecture.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.InteropServices.RuntimeInformation\src\System\Runtime\InteropServices\RuntimeInformation\OSPlatform.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\X509ContentType.cs" />
@@ -98,42 +155,52 @@
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Extensions\src\System\Runtime\CompilerServices\ConfiguredValueTaskAwaitable.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Extensions\src\System\Runtime\CompilerServices\ValueTaskAwaiter.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Extensions\src\System\Threading\Tasks\ValueTask.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Parallel\src\System\Threading\Tasks\Box.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Parallel\src\System\Threading\Tasks\Parallel.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Parallel\src\System\Threading\Tasks\ParallelETWProvider.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Parallel\src\System\Threading\Tasks\ParallelLoopState.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Parallel\src\System\Threading\Tasks\ParallelRangeManager.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Parallel\src\System\Threading\Tasks\TaskReplicator.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\System.Private.CoreLib.Native\Interop.MemAllocFree.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\Interop.Libraries.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\mincore\Interop.MemAllocFree.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\mincore\Interop.ThreadPoolIO.cs" />
+    <Compile Include="..\..\..\external\corert\src\Common\src\System\Collections\Generic\LowLevelList.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\System\Numerics\Hashing\HashHelpers.cs" />
     <Compile Include="..\..\..\external\corert\src\Runtime.Base\src\System\Runtime\InteropServices\NativeCallableAttribute.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\Interop\Windows\Interop.Errors.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\Interop\Windows\Interop.Libraries.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\Interop\Windows\Kernel32\Interop.FormatMessage.cs" />
-    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Collections\DictionaryEntry.cs" />
-    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Collections\Generic\KeyValuePair.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Diagnostics\Debug.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\IO\Win32Marshal.cs" />
-    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\CompilerServices\IsByRefLikeAttribute.cs" />
-    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\CompilerServices\IsReadOnlyAttribute.cs" />
-    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\CompilerServices\ITuple.cs" />
-    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\CompilerServices\RuntimeFeature.cs" />
-    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\CompilerServices\TupleElementNamesAttribute.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Threading\DeferredDisposableLifetime.cs" />
-    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\TupleExtensions.cs" />
-    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\ValueTuple.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\Internal\Runtime\Augments\AsyncCausalityTracer.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\Internal\Runtime\Augments\TaskTraceCallbacks.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\Internal\Threading\Tasks\Tracing\TaskTrace.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\Microsoft\Win32\SafeHandles\SafeThreadPoolIOHandle.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Array.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\Generic\ArraySortHelper.cs" />
-    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\Generic\Dictionary.cs" />
-    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\Generic\IDictionaryDebugView.cs" />
-    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
-    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\LowLevelComparer.cs" />
-    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\ObjectEqualityComparer.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Globalization\GlobalizationMode.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Runtime\CompilerServices\ReflectionBlockedAttribute.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Runtime\CompilerServices\TaskAwaiter.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\LockHolder.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\DebuggerSupport.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\DebuggerSupport.Dummy.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\Future.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\FutureFactory.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\Task.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\TaskContinuation.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\TaskFactory.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\TaskScheduler.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\ThreadPoolTaskScheduler.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\ThreadPoolCallbackWrapper.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Win32ThreadPoolBoundHandle.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Win32ThreadPoolNativeOverlapped.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Win32ThreadPoolNativeOverlapped.ExecutionContextCallbackArgs.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Win32ThreadPoolNativeOverlapped.OverlappedData.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Win32ThreadPoolPreAllocatedOverlapped.cs" />
-    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Tuple.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.Interop\src\InteropExtensions\Lock.cs" />
     <Compile Include="..\..\build\common\AssemblyRef.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
@@ -325,7 +392,6 @@
     <Compile Include="..\referencesource\mscorlib\system\globalization\CalendricalCalculationsHelper.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\charunicodeinfo.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\chineselunisolarcalendar.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\globalization\compareinfo.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\culturenotfoundexception.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\culturetypes.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\datetimeformat.cs" />
@@ -513,38 +579,18 @@
     <Compile Include="..\referencesource\mscorlib\system\resources\satellitecontractversionattribute.cs" />
     <Compile Include="..\referencesource\mscorlib\system\resources\ultimateresourcefallbacklocation.cs" />
     <Compile Include="..\referencesource\mscorlib\system\rttype.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\accessedthroughpropertyattribute.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\assemblyattributesgohere.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\assemblysettingattributes.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\AsyncMethodBuilder.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\AsyncStateMachineAttribute.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\CallerFilePathAttribute.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\CallerLineNumberAttribute.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\CallerMemberNameAttribute.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\callingconvention.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\compilationrelaxations.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\compilergeneratedattribute.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\compilerglobalscopeattribute.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\compilermarshaloverride.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\customconstantattribute.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\datetimeconstantattribute.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\decimalconstantattribute.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\decoratednameattribute.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\disableprivatereflectionattribute.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\discardableattribute.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\extensionattribute.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\fixedaddressvaluetypeattribute.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\fixedbufferattribute.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\FormattableStringFactory.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\hascopysemanticsattribute.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\IAsyncStateMachine.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\idispatchconstantattribute.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\indexernameattribute.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\INotifyCompletion.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\internalsvisibletoattribute.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\isboxed.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\isbyvalue.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\isconst.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\iscopyconstructed.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\isexplicitlydereferenced.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\isimplicitlydereferenced.cs" />
@@ -553,25 +599,13 @@
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\ispinned.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\issignunspecifiedbyte.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\isudtreturn.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\isvolatile.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\IteratorStateMachineAttribute.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\iunknownconstantattribute.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\methodimplattribute.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\nativecppclassattribute.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\ReferenceAssemblyAttribute.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\requiredattributeattribute.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\RuntimeCompatibilityAttribute.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\RuntimeWrappedException.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\scopelessenumattribute.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\specialnameattribute.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\StateMachineAttribute.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\suppressildasmattribute.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\suppressmergecheckattribute.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\TaskAwaiter.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\typedependencyattribute.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\TypeForwardedFromAttribute.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\TypeForwardedToAttribute.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\unsafevaluetypeattribute.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\YieldAwaitable.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\exceptionservices\corruptingexceptioncommon.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\exceptionservices\exceptionnotification.cs" />
@@ -637,6 +671,7 @@
     <Compile Include="..\referencesource\mscorlib\system\runtime\interopservices\windowsruntime\irestrictederrorinfo.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\interopservices\windowsruntime\windowsruntimemarshal.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\NgenServicingAttributes.cs" />
+    <Compile Include="..\referencesource\mscorlib\system\runtime\ProfileOptimization.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\remoting\callcontext.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\serialization\deserializationeventhandler.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\serialization\formatter.cs" />
@@ -829,24 +864,10 @@
     <Compile Include="..\referencesource\mscorlib\system\threading\synchronizationcontext.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\synchronizationlockexception.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\Tasks\AsyncCausalityTracer.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\threading\Tasks\BeginEndAwaitableAdapter.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\Tasks\ConcurrentExclusiveSchedulerPair.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\threading\Tasks\Future.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\threading\Tasks\FutureFactory.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\threading\Tasks\Parallel.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\threading\Tasks\ParallelLoopState.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\threading\Tasks\ParallelRangeManager.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\Tasks\ProducerConsumerQueues.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\threading\Tasks\Task.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\threading\Tasks\TaskCanceledException.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\threading\Tasks\TaskCompletionSource.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\threading\Tasks\TaskContinuation.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\Tasks\TaskExceptionHolder.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\threading\Tasks\TaskFactory.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\threading\Tasks\TaskScheduler.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\threading\Tasks\TaskSchedulerException.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\Tasks\TaskToApm.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\threading\Tasks\ThreadPoolTaskScheduler.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\thread.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\threadabortexception.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\threadinterruptedexception.cs" />
@@ -885,15 +906,23 @@
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="coreclr\SorterArray.cs" />
     <Compile Include="CoreFoundation\CFHelpers.cs" />
+    <Compile Include="corefx\AwaitTaskContinuation.cs" />
+    <Compile Include="corefx\CompareInfo.cs" />
+    <Compile Include="corefx\GlobalizationMode.cs" />
     <Compile Include="corefx\SR.cs" />
+    <Compile Include="corefx\SynchronizationContext.cs" />
     <Compile Include="corert\AddrofIntrinsics.cs" />
     <Compile Include="corert\Debug.cs" />
+    <Compile Include="corert\DependencyReductionRootAttribute.cs" />
     <Compile Include="corert\EnvironmentAugments.cs" />
     <Compile Include="corert\Interop.cs" />
     <Compile Include="corert\Interop.MemAllocFree.cs" />
     <Compile Include="corert\RelocatedTypeAttribute.cs" />
+    <Compile Include="corert\RuntimeAugments.cs" />
     <Compile Include="corert\RuntimeThread.cs" />
     <Compile Include="corert\Stream.cs" />
+    <Compile Include="corert\Task.cs" />
+    <Compile Include="corert\ThreadPool.cs" />
     <Compile Include="corert\ThreadPoolBoundHandle.cs" />
     <Compile Include="Microsoft.Win32\IRegistryApi.cs" />
     <Compile Include="Microsoft.Win32\Registry.cs" />

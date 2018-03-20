@@ -9,6 +9,7 @@
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 #include <config.h>
+#include <mono/metadata/exception-internals.h>
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/verify.h>
 #include <mono/metadata/verify-internals.h>
@@ -21,6 +22,7 @@
 #include <mono/metadata/metadata.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/class-internals.h>
+#include <mono/metadata/class-init.h>
 #include <mono/metadata/tokentype.h>
 #include <mono/metadata/security-manager.h>
 #include <mono/metadata/security-core-clr.h>
@@ -1732,7 +1734,7 @@ is_valid_cattr_type (MonoType *type)
 
 	if (type->type == MONO_TYPE_VALUETYPE) {
 		klass = mono_class_from_mono_type (type);
-		return klass && klass->enumtype;
+		return klass && m_class_is_enumtype (klass);
 	}
 
 	if (type->type == MONO_TYPE_CLASS)
@@ -1802,18 +1804,18 @@ get_enum_by_encoded_name (VerifyContext *ctx, const char **_ptr, const char *end
 
 	enum_name = (char *)g_memdup (str_start, str_len + 1);
 	enum_name [str_len] = 0;
-	type = mono_reflection_type_from_name_checked (enum_name, ctx->image, &error);
-	if (!type || !is_ok (&error)) {
-		ADD_ERROR_NO_RETURN (ctx, g_strdup_printf ("CustomAttribute: Invalid enum class %s, due to %s", enum_name, mono_error_get_message (&error)));
+	type = mono_reflection_type_from_name_checked (enum_name, ctx->image, error);
+	if (!type || !is_ok (error)) {
+		ADD_ERROR_NO_RETURN (ctx, g_strdup_printf ("CustomAttribute: Invalid enum class %s, due to %s", enum_name, mono_error_get_message (error)));
 		g_free (enum_name);
-		mono_error_cleanup (&error);
+		mono_error_cleanup (error);
 		return NULL;
 	}
 	g_free (enum_name);
 
 	klass = mono_class_from_mono_type (type);
-	if (!klass || !klass->enumtype) {
-		ADD_ERROR_NO_RETURN (ctx, g_strdup_printf ("CustomAttribute:Class %s::%s is not an enum", klass->name_space, klass->name));
+	if (!klass || !m_class_is_enumtype (klass)) {
+		ADD_ERROR_NO_RETURN (ctx, g_strdup_printf ("CustomAttribute:Class %s::%s is not an enum", m_class_get_name_space (klass), m_class_get_name (klass)));
 		return NULL;
 	}
 
@@ -1874,8 +1876,8 @@ handle_enum:
 			if (!klass)
 				return FALSE;
 
-			klass = klass->element_class;
-			type = klass->byval_arg.type;
+			klass = m_class_get_element_class (klass);
+			type = m_class_get_byval_arg (klass)->type;
 			goto handle_enum;
 		}
 		if (sub_type == 0x50) { /*Type*/
@@ -1907,31 +1909,31 @@ handle_enum:
 	}
 
 	case MONO_TYPE_CLASS:
-		if (klass && klass->enumtype) {
-			klass = klass->element_class;
-			type = klass->byval_arg.type;
+		if (klass && m_class_is_enumtype (klass)) {
+			klass = m_class_get_element_class (klass);
+			type = m_class_get_byval_arg (klass)->type;
 			goto handle_enum;
 		}
 
 		if (klass != mono_defaults.systemtype_class)
-			FAIL (ctx, g_strdup_printf ("CustomAttribute: Invalid class parameter type %s:%s ",klass->name_space, klass->name));
+			FAIL (ctx, g_strdup_printf ("CustomAttribute: Invalid class parameter type %s:%s ",m_class_get_name_space (klass), m_class_get_name (klass)));
 		*_ptr = ptr;
 		return is_valid_ser_string (ctx, _ptr, end);
 
 	case MONO_TYPE_VALUETYPE:
-		if (!klass || !klass->enumtype)
-			FAIL (ctx, g_strdup_printf ("CustomAttribute: Invalid valuetype parameter expected enum %s:%s ",klass->name_space, klass->name));
+		if (!klass || !m_class_is_enumtype (klass))
+			FAIL (ctx, g_strdup_printf ("CustomAttribute: Invalid valuetype parameter expected enum %s:%s ",m_class_get_name_space (klass), m_class_get_name (klass)));
 
-		klass = klass->element_class;
-		type = klass->byval_arg.type;
+		klass = m_class_get_element_class (klass);
+		type = m_class_get_byval_arg (klass)->type;
 		goto handle_enum;
 
 	case MONO_TYPE_SZARRAY:
-		mono_type = &klass->byval_arg;
+		mono_type = m_class_get_byval_arg (klass);
 		if (!is_valid_cattr_type (mono_type))
-			FAIL (ctx, g_strdup_printf ("CustomAttribute: Invalid array element type %s:%s ",klass->name_space, klass->name));
+			FAIL (ctx, g_strdup_printf ("CustomAttribute: Invalid array element type %s:%s ",m_class_get_name_space (klass), m_class_get_name (klass)));
 		if (!safe_read32 (element_count, ptr, end))
-			FAIL (ctx, g_strdup_printf ("CustomAttribute: Invalid class parameter type %s:%s ",klass->name_space, klass->name));
+			FAIL (ctx, g_strdup_printf ("CustomAttribute: Invalid class parameter type %s:%s ",m_class_get_name_space (klass), m_class_get_name (klass)));
 		if (element_count == 0xFFFFFFFFu) {
 			*_ptr = ptr;
 			return TRUE;
@@ -1965,10 +1967,10 @@ is_valid_cattr_content (VerifyContext *ctx, MonoMethod *ctor, const char *ptr, g
 	if (!ctor)
 		FAIL (ctx, g_strdup ("CustomAttribute: Invalid constructor"));
 
-	sig = mono_method_signature_checked (ctor, &error);
-	if (!mono_error_ok (&error)) {
-		ADD_ERROR_NO_RETURN (ctx, g_strdup_printf ("CustomAttribute: Invalid constructor signature %s", mono_error_get_message (&error)));
-		mono_error_cleanup (&error);
+	sig = mono_method_signature_checked (ctor, error);
+	if (!mono_error_ok (error)) {
+		ADD_ERROR_NO_RETURN (ctx, g_strdup_printf ("CustomAttribute: Invalid constructor signature %s", mono_error_get_message (error)));
+		mono_error_cleanup (error);
 		return FALSE;
 	}
 
@@ -2011,11 +2013,11 @@ is_valid_cattr_content (VerifyContext *ctx, MonoMethod *ctor, const char *ptr, g
 			MonoClass *klass = get_enum_by_encoded_name (ctx, &ptr, end);
 			if (!klass)
 				return FALSE;
-			type = &klass->byval_arg;
+			type = m_class_get_byval_arg (klass);
 		} else if (kind == 0x50) {
-			type = &mono_defaults.systemtype_class->byval_arg;
+			type = m_class_get_byval_arg (mono_defaults.systemtype_class);
 		} else if (kind == 0x51) {
-			type = &mono_defaults.object_class->byval_arg;
+			type = m_class_get_byval_arg (mono_defaults.object_class);
 		} else if (kind == MONO_TYPE_SZARRAY) {
 			MonoClass *klass;
 			unsigned etype = 0;
@@ -2034,7 +2036,7 @@ is_valid_cattr_content (VerifyContext *ctx, MonoMethod *ctor, const char *ptr, g
 			} else
 				FAIL (ctx, g_strdup_printf ("CustomAttribute: Invalid array element type %x", etype));
 
-			type = &mono_array_class_get (klass, 1)->byval_arg;
+			type = m_class_get_byval_arg (mono_class_create_array (klass, 1));
 		} else {
 			FAIL (ctx, g_strdup_printf ("CustomAttribute: Invalid named parameter type %x", kind));
 		}
@@ -2409,8 +2411,8 @@ verify_typeref_table (VerifyContext *ctx)
 	guint32 i;
 
 	for (i = 0; i < table->rows; ++i) {
-		mono_verifier_verify_typeref_row (ctx->image, i, &error);
-		add_from_mono_error (ctx, &error);
+		mono_verifier_verify_typeref_row (ctx->image, i, error);
+		add_from_mono_error (ctx, error);
 	}
 }
 
@@ -2969,11 +2971,11 @@ verify_cattr_table_full (VerifyContext *ctx)
 			ADD_ERROR (ctx, g_strdup_printf ("Invalid CustomAttribute constructor row %d Token 0x%08x", i, data [MONO_CUSTOM_ATTR_TYPE]));
 		}
 
-		ctor = mono_get_method_checked (ctx->image, mtoken, NULL, NULL, &error);
+		ctor = mono_get_method_checked (ctx->image, mtoken, NULL, NULL, error);
 
 		if (!ctor) {
-			ADD_ERROR (ctx, g_strdup_printf ("Invalid CustomAttribute content row %d Could not load ctor due to %s", i, mono_error_get_message (&error)));
-			mono_error_cleanup (&error);
+			ADD_ERROR (ctx, g_strdup_printf ("Invalid CustomAttribute content row %d Could not load ctor due to %s", i, mono_error_get_message (error)));
+			mono_error_cleanup (error);
 		}
 
 		/*This can't fail since this is checked in is_valid_cattr_blob*/
@@ -4370,11 +4372,11 @@ mono_verifier_verify_methodimpl_row (MonoImage *image, guint32 row, MonoError *e
 
 	mono_metadata_decode_row (table, row, data, MONO_METHODIMPL_SIZE);
 
-	body = method_from_method_def_or_ref (image, data [MONO_METHODIMPL_BODY], NULL, error);
+	body = mono_method_from_method_def_or_ref (image, data [MONO_METHODIMPL_BODY], NULL, error);
 	if (!body)
 		return FALSE;
 
-	declaration = method_from_method_def_or_ref (image, data [MONO_METHODIMPL_DECLARATION], NULL, error);
+	declaration = mono_method_from_method_def_or_ref (image, data [MONO_METHODIMPL_DECLARATION], NULL, error);
 	if (!declaration)
 		return FALSE;
 

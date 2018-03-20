@@ -676,6 +676,7 @@ namespace System.Windows.Forms {
 				internal struct IDropTarget {
 				internal IntPtr				vtbl;
 				internal IntPtr				Window;
+				internal uint				ref_count;
 				internal QueryInterfaceDelegate		QueryInterface;
 				internal AddRefDelegate			AddRef;
 				internal ReleaseDelegate		Release;
@@ -706,7 +707,7 @@ namespace System.Windows.Forms {
 
 				// Update vtbl pointer
 				offset = drop_target_ptr.ToInt64();
-				offset += 2 * Marshal.SizeOf(typeof(IntPtr));
+				offset += 2 * Marshal.SizeOf(typeof(IntPtr)) + Marshal.SizeOf(typeof(uint));
 				Marshal.WriteIntPtr(drop_target_ptr, new IntPtr(offset));
 				
 				return drop_target_ptr;
@@ -733,13 +734,18 @@ namespace System.Windows.Forms {
 			}
 
 			internal static uint AddRef(IntPtr @this) {
-				// We only use this for DnD, try and fake it
-				return 1;
+				var ref_count = (uint)Marshal.ReadInt32(@this, Marshal.SizeOf(typeof(IntPtr)) * 2);
+				Marshal.WriteInt32(@this, Marshal.SizeOf(typeof(IntPtr)) * 2, (int)(ref_count + 1));
+				return ref_count + 1;
 			}
 
 			internal static uint Release(IntPtr @this) {
-				// We only use this for DnD, try and fake it
-				return 0;
+				var ref_count = (uint)Marshal.ReadInt32(@this, Marshal.SizeOf(typeof(IntPtr)) * 2);
+				Marshal.WriteInt32(@this, Marshal.SizeOf(typeof(IntPtr)) * 2, (int)(ref_count - 1));
+				if (ref_count == 1) {
+					ReleaseUnmanaged(@this);
+				}
+				return ref_count - 1;
 			}
 
 			internal static uint DragEnter(IntPtr @this, IntPtr pDataObj, uint grfkeyState, IntPtr pt_x, IntPtr pt_y, IntPtr pdwEffect) {
@@ -995,17 +1001,10 @@ namespace System.Windows.Forms {
 		}
 
 		internal static bool RegisterDropTarget(IntPtr Window) {
-			Hwnd	hwnd;
 			IntPtr	drop_target;
 			uint	result;
 
-			hwnd = Hwnd.ObjectFromWindow(Window);
-			if (hwnd == null) {
-				return false;
-			}
-
 			drop_target = ComIDropTarget.GetUnmanaged(Window);
-			hwnd.marshal_free_list.Add(drop_target);
 			result = Win32RegisterDragDrop(Window, drop_target);
 
 			if (result != S_OK) {

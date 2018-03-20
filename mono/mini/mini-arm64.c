@@ -43,8 +43,6 @@
  * - d15/d16 are used as fp temporary registers
  */
 
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
-
 #define FP_TEMP_REG ARMREG_D16
 #define FP_TEMP_REG2 ARMREG_D17
 
@@ -1376,7 +1374,7 @@ void
 mono_arch_set_native_call_context (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
 {
 	CallInfo *cinfo = get_call_info (NULL, sig);
-	MonoInterpCallbacks *interp_cb = mini_get_interp_callbacks ();
+	MonoEECallbacks *interp_cb = mini_get_interp_callbacks ();
 
 	memset (ccontext, 0, sizeof (CallContext));
 
@@ -1445,7 +1443,7 @@ mono_arch_set_native_call_context (CallContext *ccontext, gpointer frame, MonoMe
 void
 mono_arch_get_native_call_context (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
 {
-	MonoInterpCallbacks *interp_cb = mini_get_interp_callbacks ();
+	MonoEECallbacks *interp_cb = mini_get_interp_callbacks ();
 	CallInfo *cinfo;
 
 	/* No return value */
@@ -1537,6 +1535,7 @@ dyn_call_supported (CallInfo *cinfo, MonoMethodSignature *sig)
 		case ArgHFA:
 		case ArgVtypeByRef:
 		case ArgOnStack:
+		case ArgVtypeOnStack:
 			break;
 		default:
 			return FALSE;
@@ -1651,7 +1650,7 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 		ArgInfo *ainfo = &cinfo->args [aindex + sig->hasthis];
 		int slot = -1;
 
-		if (ainfo->storage == ArgOnStack) {
+		if (ainfo->storage == ArgOnStack || ainfo->storage == ArgVtypeOnStack) {
 			slot = PARAM_REGS + 1 + (ainfo->offset / sizeof (mgreg_t));
 		} else {
 			slot = ainfo->reg;
@@ -1775,6 +1774,10 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 				break;
 			case ArgVtypeByRef:
 				p->regs [slot] = (mgreg_t)arg;
+				break;
+			case ArgVtypeOnStack:
+				for (i = 0; i < ainfo->size / 8; ++i)
+					p->regs [slot ++] = ((mgreg_t*)arg) [i];
 				break;
 			default:
 				g_assert_not_reached ();
@@ -2695,7 +2698,7 @@ mono_arch_tail_call_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig
 }
 
 gboolean 
-mono_arch_is_inst_imm (gint64 imm)
+mono_arch_is_inst_imm (int opcode, int imm_opcode, gint64 imm)
 {
 	return (imm >= -((gint64)1<<31) && imm <= (((gint64)1<<31)-1));
 }
@@ -3475,6 +3478,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			else
 				arm_lslw (code, dreg, sreg1, imm);
 			break;
+		case OP_SHL_IMM:
 		case OP_LSHL_IMM:
 			if (imm == 0)
 				arm_movx (code, dreg, sreg1);
@@ -3515,9 +3519,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_ZEXT_I4:
 			/* Clean out the upper word */
 			arm_movw (code, dreg, sreg1);
-			break;
-		case OP_SHL_IMM:
-			arm_lslx (code, dreg, sreg1, imm);
 			break;
 
 			/* MULTIPLY/DIVISION */
@@ -4378,6 +4379,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_NOT_NULL:
 		case OP_NOT_REACHED:
 		case OP_DUMMY_USE:
+		case OP_DUMMY_ICONST:
+		case OP_DUMMY_I8CONST:
+		case OP_DUMMY_R8CONST:
+		case OP_DUMMY_R4CONST:
 			break;
 		case OP_IL_SEQ_POINT:
 			mono_add_seq_point (cfg, bb, ins, code - cfg->native_code);
@@ -4467,6 +4472,18 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (ins->dreg != ARMREG_R0)
 				arm_movx (code, ins->dreg, ARMREG_R0);
 			break;
+		case OP_LIVERANGE_START: {
+			if (cfg->verbose_level > 1)
+				printf ("R%d START=0x%x\n", MONO_VARINFO (cfg, ins->inst_c0)->vreg, (int)(code - cfg->native_code));
+			MONO_VARINFO (cfg, ins->inst_c0)->live_range_start = code - cfg->native_code;
+			break;
+		}
+		case OP_LIVERANGE_END: {
+			if (cfg->verbose_level > 1)
+				printf ("R%d END=0x%x\n", MONO_VARINFO (cfg, ins->inst_c0)->vreg, (int)(code - cfg->native_code));
+			MONO_VARINFO (cfg, ins->inst_c0)->live_range_end = code - cfg->native_code;
+			break;
+		}
 		case OP_GC_SAFE_POINT: {
 #if defined (USE_COOP_GC)
 			guint8 *buf [1];
@@ -5320,7 +5337,7 @@ mono_arch_get_seq_point_info (MonoDomain *domain, guint8 *code)
 	mono_domain_unlock (domain);
 
 	if (!info) {
-		ji = mono_jit_info_table_find (domain, (char*)code);
+		ji = mono_jit_info_table_find (domain, code);
 		g_assert (ji);
 
 		info = g_malloc0 (sizeof (SeqPointInfo) + (ji->code_size / 4) * sizeof(guint8*));
