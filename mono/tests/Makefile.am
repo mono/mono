@@ -748,6 +748,8 @@ if POWERPC
 # bug #71274
 PLATFORM_DISABLED_TESTS += finalizer-abort.exe finalizer-exception.exe finalizer-exit.exe
 PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
+PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
+PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 endif
 
 if POWERPC64
@@ -763,6 +765,8 @@ endif
 if ARM
 PLATFORM_DISABLED_TESTS += filter-stack.exe weak-fields.exe
 PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
+PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
+PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 endif
 
 if ARM64
@@ -773,6 +777,8 @@ if MIPS
 # monitor.exe is racy
 PLATFORM_DISABLED_TESTS += filter-stack.exe monitor.exe
 PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
+PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
+PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 endif
 
 if S390X
@@ -785,6 +791,8 @@ PLATFORM_DISABLED_TESTS += \
 	sgen-bridge-major-fragmentation.exe \
 	sgen-bridge-xref.exe
 PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
+PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
+PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 endif
 
 PROFILE_DISABLED_TESTS= \
