@@ -1730,3 +1730,5 @@ corefx/GlobalizationMode.cs
 ../../../external/corefx/src/System.Threading.Tasks.Extensions/src/System/Runtime/CompilerServices/*.cs
 
 ../../../external/corefx/src/System.Threading.Tasks.Parallel/src/System/Threading/Tasks/*.cs
+
+../../../external/corefx/src/System.Runtime.Extensions/src/System/Globalization/Extensions.cs

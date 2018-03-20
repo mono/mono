@@ -107,7 +107,7 @@ init_frame (InterpFrame *frame, InterpFrame *parent_frame, InterpMethod *rmethod
  * List of classes whose methods will be executed by transitioning to JITted code.
  * Used for testing.
  */
-GSList *jit_classes;
+GSList *mono_interp_jit_classes;
 /* If TRUE, interpreted code will be interrupted at function entry/backward branches */
 static gboolean ss_enabled;
 
@@ -1506,6 +1506,7 @@ interp_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject 
 	stackval result;
 	stackval *args;
 	ThreadContext context_struct;
+	MonoMethod *target_method = method;
 
 	error_init (error);
 	if (exc)
@@ -1523,7 +1524,9 @@ interp_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject 
 
 	MonoDomain *domain = mono_domain_get ();
 
-	MonoMethod *invoke_wrapper = mono_marshal_get_runtime_invoke_full (method, FALSE, TRUE);
+	if (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)
+		target_method = mono_marshal_get_native_wrapper (target_method, FALSE, FALSE);
+	MonoMethod *invoke_wrapper = mono_marshal_get_runtime_invoke_full (target_method, FALSE, TRUE);
 
 	//* <code>MonoObject *runtime_invoke (MonoObject *this_obj, void **params, MonoObject **exc, void* method)</code>
 
@@ -1536,7 +1539,7 @@ interp_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject 
 		args [0].data.p = NULL;
 	args [1].data.p = params;
 	args [2].data.p = exc;
-	args [3].data.p = method;
+	args [3].data.p = target_method;
 
 	INIT_FRAME (&frame, context->current_frame, args, &result, domain, invoke_wrapper, error);
 
@@ -2172,10 +2175,10 @@ static void interp_entry_instance_ret_8 (gpointer this_arg, gpointer res, ARGLIS
 
 #define INTERP_ENTRY_FUNCLIST(type) interp_entry_ ## type ## _0, interp_entry_ ## type ## _1, interp_entry_ ## type ## _2, interp_entry_ ## type ## _3, interp_entry_ ## type ## _4, interp_entry_ ## type ## _5, interp_entry_ ## type ## _6, interp_entry_ ## type ## _7, interp_entry_ ## type ## _8
 
-gpointer entry_funcs_static [MAX_INTERP_ENTRY_ARGS + 1] = { INTERP_ENTRY_FUNCLIST (static) };
-gpointer entry_funcs_static_ret [MAX_INTERP_ENTRY_ARGS + 1] = { INTERP_ENTRY_FUNCLIST (static_ret) };
-gpointer entry_funcs_instance [MAX_INTERP_ENTRY_ARGS + 1] = { INTERP_ENTRY_FUNCLIST (instance) };
-gpointer entry_funcs_instance_ret [MAX_INTERP_ENTRY_ARGS + 1] = { INTERP_ENTRY_FUNCLIST (instance_ret) };
+static gpointer entry_funcs_static [MAX_INTERP_ENTRY_ARGS + 1] = { INTERP_ENTRY_FUNCLIST (static) };
+static gpointer entry_funcs_static_ret [MAX_INTERP_ENTRY_ARGS + 1] = { INTERP_ENTRY_FUNCLIST (static_ret) };
+static gpointer entry_funcs_instance [MAX_INTERP_ENTRY_ARGS + 1] = { INTERP_ENTRY_FUNCLIST (instance) };
+static gpointer entry_funcs_instance_ret [MAX_INTERP_ENTRY_ARGS + 1] = { INTERP_ENTRY_FUNCLIST (instance_ret) };
 
 /* General version for methods with more than MAX_INTERP_ENTRY_ARGS arguments */
 static void
@@ -2629,8 +2632,23 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			if (csignature->hasthis)
 				--sp;
 			child_frame.stack_args = sp;
-			ves_pinvoke_method (&child_frame, csignature, (MonoFuncV) code, FALSE, context);
+			if (frame->imethod->method->dynamic && csignature->pinvoke) {
+				MonoMarshalSpec **mspecs;
+				MonoMethodPInvoke piinfo;
+				MonoMethod *m;
 
+				/* Pinvoke call is missing the wrapper. See mono_get_native_calli_wrapper */
+				mspecs = alloca (sizeof (MonoMarshalSpec*) * (csignature->param_count + 1));
+				memset (&piinfo, 0, sizeof (piinfo));
+
+				m = mono_marshal_get_native_func_wrapper (frame->imethod->method->klass->image, csignature, &piinfo, mspecs, code);
+				child_frame.imethod = mono_interp_get_imethod (rtm->domain, m, error);
+				mono_error_cleanup (error); /* FIXME: don't swallow the error */
+
+				interp_exec_method (&child_frame, context);
+			} else {
+				ves_pinvoke_method (&child_frame, csignature, (MonoFuncV) code, FALSE, context);
+			}
 			context->current_frame = frame;
 
 			if (context->has_resume_state) {
@@ -4494,6 +4512,7 @@ array_constructed:
 		MINT_IN_CASE(MINT_ICALL_PPI_V)
 		MINT_IN_CASE(MINT_ICALL_PII_P)
 		MINT_IN_CASE(MINT_ICALL_PPII_V)
+			frame->ip = ip;
 			sp = do_icall (context, *ip, sp, rtm->data_items [*(guint16 *)(ip + 1)]);
 			EXCEPTION_CHECKPOINT;
 			if (context->has_resume_state) {
@@ -5179,7 +5198,7 @@ interp_parse_options (const char *options)
 		char *arg = *ptr;
 
 		if (strncmp (arg, "jit=", 4) == 0)
-			jit_classes = g_slist_prepend (jit_classes, arg + 4);
+			mono_interp_jit_classes = g_slist_prepend (mono_interp_jit_classes, arg + 4);
 	}
 }
 

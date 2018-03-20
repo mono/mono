@@ -14,6 +14,8 @@ SIGN_FLAGS = /delaysign /nowarn:1616,1699
 LIB_REFS = System
 LIB_MCS_FLAGS = $(SIGN_FLAGS) 
 
+PLATFORM_DEBUG_FLAGS =
+
 NO_TEST = yes
 
 include $(MCS_BUILD_DIR)/library.make

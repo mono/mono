@@ -53,7 +53,7 @@ namespace System.Windows.Forms
 				else
 					LayoutVerticalToolStrip (ts, ts_rect);
 					
-				return false;
+				return ts.AutoSize;
 			} else	{
 				ToolStripContentPanel ts = (ToolStripContentPanel)container;
 				int x = ts.DisplayRectangle.Left;
@@ -66,15 +66,15 @@ namespace System.Windows.Forms
 
 					new_bounds.Location = new Point (x, y + tsi.Margin.Top);
 					new_bounds.Height = ts.DisplayRectangle.Height - tsi.Margin.Vertical;
-					new_bounds.Width = tsi.GetToolStripPreferredSize (new Size (0, new_bounds.Height)).Width;
+					new_bounds.Width = tsi.GetPreferredSize (new Size (0, new_bounds.Height)).Width;
 
 					tsi.Width = new_bounds.Width + 12;
 
 					x += new_bounds.Width + tsi.Margin.Right;
 				}
-			}
 
-			return false;
+				return ts.AutoSize;
+			}
 		}
 		
 		private void LayoutHorizontalToolStrip (ToolStrip ts, Rectangle bounds)
@@ -258,6 +258,44 @@ namespace System.Windows.Forms
 				}
 
 				i++;
+			}
+		}
+
+		internal override Size GetPreferredSize(object container, Size proposedSize) {
+			ToolStrip ts = (ToolStrip) container;
+			Size new_size = Size.Empty;
+
+			if (ts.Orientation == Orientation.Vertical) {
+				foreach (ToolStripItem tsi in ts.Items)
+					if (tsi.Available) {
+						Size tsi_preferred = tsi.GetPreferredSize (Size.Empty);
+						new_size.Height += tsi_preferred.Height + tsi.Margin.Top + tsi.Margin.Bottom;
+						new_size.Width = Math.Max (new_size.Width, tsi_preferred.Width + tsi.Margin.Horizontal);
+					}
+
+				new_size.Height += (ts.GripRectangle.Height + ts.GripMargin.Vertical + 4);
+
+				if (new_size.Width == 0)
+					new_size.Width = ts.ExplicitBounds.Width;
+
+				return new_size;
+			} else {
+				foreach (ToolStripItem tsi in ts.Items)
+					if (tsi.Available) {
+						Size tsi_preferred = tsi.GetPreferredSize (Size.Empty);
+						new_size.Width += tsi_preferred.Width + tsi.Margin.Left + tsi.Margin.Right;
+						new_size.Height = Math.Min (new_size.Height, tsi_preferred.Height + tsi.Margin.Vertical);
+					}
+
+				new_size.Width += (ts.GripRectangle.Width + ts.GripMargin.Horizontal + 4);
+
+				if (new_size.Height == 0)
+					new_size.Height = ts.ExplicitBounds.Height;
+
+				if (ts is StatusStrip)
+					new_size.Height = Math.Max (new_size.Height, 22);
+
+				return new_size;
 			}
 		}
 	}

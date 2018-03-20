@@ -64,6 +64,7 @@
 #include <mono/metadata/mono-endian.h>
 #include <mono/metadata/environment.h>
 #include <mono/metadata/mono-mlist.h>
+#include <mono/utils/mono-merp.h>
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/mono-logger-internals.h>
 #include <mono/utils/mono-error.h>
@@ -1130,6 +1131,7 @@ mono_walk_stack_full (MonoJitStackWalk func, MonoContext *start_ctx, MonoDomain 
 	gboolean async = mono_thread_info_is_async_context ();
 	Unwinder unwinder;
 
+#ifndef TARGET_WASM
 	if (mono_llvm_only) {
 		GSList *l, *ips;
 
@@ -1160,6 +1162,7 @@ mono_walk_stack_full (MonoJitStackWalk func, MonoContext *start_ctx, MonoDomain 
 		g_free (ips);
 		return;
 	}
+#endif
 
 	g_assert (start_ctx);
 	g_assert (domain);
@@ -2712,6 +2715,27 @@ mono_handle_native_crash (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_T
 			prctl (PR_SET_PTRACER, pid, 0, 0, 0);
 		}
 #endif
+
+#if defined(TARGET_OSX)
+		if (mono_merp_enabled ()) {
+			if (pid == 0) {
+				MonoContext mctx;
+				if (!ctx) {
+					mono_runtime_printf_err ("\nMust always pass non-null context when using merp.\n");
+					exit (1);
+				}
+
+				mono_sigctx_to_monoctx (ctx, &mctx);
+
+				intptr_t thread_pointer = (intptr_t) MONO_CONTEXT_GET_SP (&mctx);
+
+				mono_merp_invoke (crashed_pid, thread_pointer, signal);
+
+				exit (1);
+			}
+		}
+#endif
+
 		if (pid == 0) {
 			dup2 (STDERR_FILENO, STDOUT_FILENO);
 

@@ -38,14 +38,13 @@ namespace System.Windows.Forms
 	[Designer ("System.Windows.Forms.Design.ToolStripDropDownDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class ToolStripDropDownMenu : ToolStripDropDown
 	{
-		private ToolStripLayoutStyle layout_style;
 		private bool show_check_margin;
 		private bool show_image_margin;
 
 		#region Public Constructors
 		public ToolStripDropDownMenu () : base ()
 		{
-			this.layout_style = ToolStripLayoutStyle.Flow;
+			base.LayoutStyle = ToolStripLayoutStyle.Flow;
 			this.show_image_margin = true;
 		}
 		#endregion
@@ -61,8 +60,8 @@ namespace System.Windows.Forms
 		
 		[DefaultValue (ToolStripLayoutStyle.Flow)]
 		public new ToolStripLayoutStyle LayoutStyle {
-			get { return this.layout_style; }
-			set { this.layout_style = value; }
+			get { return base.LayoutStyle; }
+			set { base.LayoutStyle = value; }
 		}
 		
 		[DefaultValue (false)]
@@ -96,6 +95,7 @@ namespace System.Windows.Forms
 		protected internal override Size MaxItemSize {
 			get { return Size; }
 		}
+
 		#endregion
 
 		#region Protected Methods

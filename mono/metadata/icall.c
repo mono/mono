@@ -100,6 +100,7 @@
 #include <mono/utils/mono-threads.h>
 #include <mono/metadata/w32error.h>
 #include <mono/utils/w32api.h>
+#include <mono/utils/mono-merp.h>
 
 #include "decimal-ms.h"
 #include "number-ms.h"
@@ -1107,6 +1108,9 @@ ves_icall_System_ValueType_InternalGetHashCode (MonoObject *this_obj, MonoArray 
 		case MONO_TYPE_I4:
 			result ^= *(gint32*)((guint8*)this_obj + field->offset);
 			break;
+		case MONO_TYPE_PTR:
+			result ^= mono_aligned_addr_hash (*(gpointer*)((guint8*)this_obj + field->offset));
+			break;
 		case MONO_TYPE_STRING: {
 			MonoString *s;
 			s = *(MonoString**)((guint8*)this_obj + field->offset);
@@ -1225,6 +1229,7 @@ ves_icall_System_ValueType_Equals (MonoObject *this_obj, MonoObject *that, MonoA
 			if (*(gint64 *) this_field != *(gint64 *) that_field)
 				return FALSE;
 			break;
+
 		case MONO_TYPE_R4:
 #ifdef NO_UNALIGNED_ACCESS
 			if (G_UNLIKELY ((intptr_t) this_field & 3 || (intptr_t) that_field & 3))
@@ -1241,6 +1246,15 @@ ves_icall_System_ValueType_Equals (MonoObject *this_obj, MonoObject *that, MonoA
 			else
 #endif
 			if (*(double *) this_field != *(double *) that_field)
+				return FALSE;
+			break;
+		case MONO_TYPE_PTR:
+#ifdef NO_UNALIGNED_ACCESS
+			if (G_UNLIKELY ((intptr_t) this_field & 7 || (intptr_t) that_field & 7))
+				UNALIGNED_COMPARE (gpointer);
+			else
+#endif
+			if (*(gpointer *) this_field != *(gpointer *) that_field)
 				return FALSE;
 			break;
 		case MONO_TYPE_STRING: {
@@ -1876,7 +1890,7 @@ ves_icall_System_Reflection_FieldInfo_GetTypeModifiers (MonoReflectionFieldHandl
 }
 
 ICALL_EXPORT int
-vell_icall_get_method_attributes (MonoMethod *method)
+ves_icall_get_method_attributes (MonoMethod *method)
 {
 	return method->flags;
 }
@@ -5343,7 +5357,7 @@ ves_icall_System_RuntimeType_getFullName (MonoReflectionTypeHandle object, gbool
 }
 
 ICALL_EXPORT int
-vell_icall_RuntimeType_get_core_clr_security_level (MonoReflectionTypeHandle rfield, MonoError *error)
+ves_icall_RuntimeType_get_core_clr_security_level (MonoReflectionTypeHandle rfield, MonoError *error)
 {
 	error_init (error);
 	MonoType *type = MONO_HANDLE_GETVAL (rfield, type);
@@ -5692,6 +5706,28 @@ ves_icall_Mono_RuntimeMarshal_FreeAssemblyName (MonoAssemblyName *aname, gboolea
 	mono_assembly_name_free (aname);
 	if (free_struct)
 		g_free (aname);
+}
+
+ICALL_EXPORT void
+ves_icall_Mono_Runtime_DisableMicrosoftTelemetry (void)
+{
+#ifdef TARGET_OSX
+	mono_merp_disable ();
+#else
+	// Icall has platform check in managed too.
+	g_assert_not_reached ();
+#endif
+}
+
+ICALL_EXPORT void
+ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (char *appBundleID, char *appSignature, char *appVersion, char *merpGUIPath)
+{
+#ifdef TARGET_OSX
+	mono_merp_enable (appBundleID, appSignature, appVersion, merpGUIPath);
+#else
+	// Icall has platform check in managed too.
+	g_assert_not_reached ();
+#endif
 }
 
 ICALL_EXPORT MonoBoolean
@@ -7768,7 +7804,7 @@ mono_type_from_blob_type (MonoType *type, MonoTypeEnum blob_type, MonoType *real
 }
 
 ICALL_EXPORT MonoObject*
-property_info_get_default_value (MonoReflectionProperty *property)
+ves_icall_property_info_get_default_value (MonoReflectionProperty *property)
 {
 	ERROR_DECL (error);
 	MonoType blob_type;

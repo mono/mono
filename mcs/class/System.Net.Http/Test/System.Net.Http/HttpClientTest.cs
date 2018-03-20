@@ -1439,6 +1439,27 @@ namespace MonoTests.System.Net.Http
 			ch.AllowAutoRedirect = false;
 		}
 
+		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		// Using HttpClientHandler, which indirectly requires BSD sockets.
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
+		// https://github.com/mono/mono/issues/7355
+		public void WildcardConnect ()
+		{
+			try {
+				using (var client = new HttpClient ()) {
+					client.GetAsync ("http://255.255.255.255").Wait (WaitTimeout);
+				}
+			} catch (AggregateException e) {
+				Assert.That (e.InnerException, Is.InstanceOf<HttpRequestException> (), "#1");
+				var rex = (HttpRequestException)e.InnerException;
+				Assert.That (rex.InnerException, Is.InstanceOf<WebException> (), "#2");
+				var wex = (WebException)rex.InnerException;
+				Assert.That (wex.Status, Is.EqualTo (WebExceptionStatus.ConnectFailure), "#3");
+			}
+		}
+
 		HttpListener CreateListener (Action<HttpListenerContext> contextAssert, int port)
 		{
 			var l = new HttpListener ();

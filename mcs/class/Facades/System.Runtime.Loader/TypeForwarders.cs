@@ -1,10 +1,5 @@
 //
-// AssemblyExtensions.cs
-//
-// Authors:
-//	Marek Safar  <marek.safar@gmail.com>
-//
-// Copyright (C) 2016 Xamarin Inc (http://www.xamarin.com)
+// Copyright (C) 2018 Microsoft Corporation (http://www.microsoft.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -13,10 +8,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -26,14 +21,4 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
-namespace System.Reflection.Metadata
-{
-	public static class AssemblyExtensions
-	{
-		public static unsafe bool TryGetRawMetadata (this System.Reflection.Assembly assembly, out byte* blob, out int length)
-		{
-			throw new NotImplementedException ();
-		}
-	}
-}
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.Metadata.AssemblyExtensions))]

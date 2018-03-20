@@ -194,6 +194,8 @@ namespace System.Windows.Forms {
 			this.owner = owner;
 			this.is_visible = false;
 			this.Size = this.DefaultSize;
+			if (owner != null)
+				SetTopLevel (true);
 		}
 
 		#endregion	// Public Constructors

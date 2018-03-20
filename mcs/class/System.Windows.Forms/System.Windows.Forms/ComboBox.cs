@@ -1114,7 +1114,7 @@ namespace System.Windows.Forms
 		{
 			base.OnHandleCreated (e);
 
-			SetBoundsInternal (Left, Top, Width, PreferredHeight, BoundsSpecified.None);
+			SetBoundsCore (Left, Top, Width, PreferredHeight, BoundsSpecified.None);
 
 			if (textbox_ctrl != null)
 				Controls.AddImplicit (textbox_ctrl);
@@ -2422,6 +2422,7 @@ namespace System.Windows.Forms
 
 				SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 				SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);
+				SetTopLevel (true);
 
 				this.is_visible = false;
 
@@ -2775,6 +2776,7 @@ namespace System.Windows.Forms
 				if (this.Location.Y + this.Height >= scrn_rect.Bottom)
 					this.Location = new Point (this.Location.X, this.Location.Y - (this.Height + owner.TextArea.Height));
 				Show ();
+				XplatUI.SetOwner (Handle, owner.Handle);
 
 				Refresh ();
 				owner.OnDropDown (EventArgs.Empty);

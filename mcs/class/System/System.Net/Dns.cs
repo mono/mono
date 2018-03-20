@@ -320,11 +320,9 @@ namespace System.Net {
 				try {
 					IPAddress newAddress = IPAddress.Parse(h_addrlist[i]);
 
-#pragma warning disable 618
-					if( (Socket.SupportsIPv6 && newAddress.AddressFamily == AddressFamily.InterNetworkV6) ||
-					    (Socket.SupportsIPv4 && newAddress.AddressFamily == AddressFamily.InterNetwork) )
+					if( (Socket.OSSupportsIPv6 && newAddress.AddressFamily == AddressFamily.InterNetworkV6) ||
+					    (Socket.OSSupportsIPv4 && newAddress.AddressFamily == AddressFamily.InterNetwork) )
 						addrlist.Add(newAddress);
-#pragma warning restore 618
 				} catch (ArgumentNullException) {
 					/* Ignore this, as the
 					 * internal call might have

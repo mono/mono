@@ -1,5 +1,5 @@
-﻿//
-// IBounds.cs
+//
+// IArrangedElement.cs
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -20,21 +20,33 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2008 Novell, Inc.
-//
-// Authors:
-//	Jonathan Pobst (monkey@jpobst.com)
+// Copyright (c) 2018 Filip Navara
 //
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Collections;
 using System.Drawing;
+using System.ComponentModel;
 
-namespace System.Windows.Forms
+namespace System.Windows.Forms.Layout
 {
-	interface IBounds
+	interface IArrangedElement : IComponent
 	{
+		bool Visible { get; }
+		bool AutoSize { get; }
+		AutoSizeMode GetAutoSizeMode();
 		Rectangle Bounds { get; }
+		Rectangle ExplicitBounds { get; }
+		Padding Padding { get; }
+		Padding Margin { get; }
+		Size MinimumSize { get; }
+		AnchorStyles Anchor { get; }
+		DockStyle Dock { get; }
+		Rectangle DisplayRectangle { get; }
+		IArrangedContainer Parent { get; }
+		string Name { get; }
+		void SetBounds(int x, int y, int width, int height, BoundsSpecified specified);
+		Size GetPreferredSize(Size proposedSize);
+		int DistanceRight { get; set; }
+		int DistanceBottom { get; set; }
 	}
 }

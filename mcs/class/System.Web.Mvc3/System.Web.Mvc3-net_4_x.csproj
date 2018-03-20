@@ -419,10 +419,6 @@
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../corlib/corlib-net_4_x.csproj">
-      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
-      <Name>corlib-net_4_x</Name>
-    </ProjectReference>
     <ProjectReference Include="../Microsoft.Web.Infrastructure/Microsoft.Web.Infrastructure-net_4_x.csproj">
       <Project>{CD409902-9DA0-48A3-B360-C09060168CB5}</Project>
       <Name>Microsoft.Web.Infrastructure-net_4_x</Name>
@@ -486,6 +482,10 @@
     <ProjectReference Include="../System.Web.WebPages/System.Web.WebPages-net_4_x.csproj">
       <Project>{D4EAC129-92AB-432C-941D-4B8481097060}</Project>
       <Name>System.Web.WebPages-net_4_x</Name>
+    </ProjectReference>
+    <ProjectReference Include="../corlib/corlib-net_4_x.csproj">
+      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
+      <Name>corlib-net_4_x</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

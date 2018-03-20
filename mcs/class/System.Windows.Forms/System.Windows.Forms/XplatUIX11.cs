@@ -3898,10 +3898,14 @@ namespace System.Windows.Forms {
 			Hwnd	hwnd;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
-			if (hwnd != null && hwnd.parent != null) {
-				return hwnd.parent.Handle;
+			if (hwnd != null) {
+				if (hwnd.parent != null) {
+					return hwnd.parent.Handle;
+				}
+				if (hwnd.owner != null && with_owner) {
+					return hwnd.owner.Handle;
+				}
 			}
-			// FIXME: Handle with_owner
 			return IntPtr.Zero;
 		}
 		
@@ -5827,12 +5831,11 @@ namespace System.Windows.Forms {
 		internal override bool SetOwner(IntPtr handle, IntPtr handle_owner)
 		{
 			Hwnd hwnd;
-			Hwnd hwnd_owner;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			if (handle_owner != IntPtr.Zero) {
-				hwnd_owner = Hwnd.ObjectFromHandle(handle_owner);
+				hwnd.owner = Hwnd.ObjectFromHandle(handle_owner);
 				lock (XlibLock) {
 					int[]	atoms;
 
@@ -5841,13 +5844,14 @@ namespace System.Windows.Forms {
 					atoms[0] = _NET_WM_WINDOW_TYPE_NORMAL.ToInt32();
 					XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_WINDOW_TYPE, (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, 1);
 
-					if (hwnd_owner != null) {
-						XSetTransientForHint(DisplayHandle, hwnd.whole_window, hwnd_owner.whole_window);
+					if (hwnd.owner != null) {
+						XSetTransientForHint(DisplayHandle, hwnd.whole_window, hwnd.owner.whole_window);
 					} else {
 						XSetTransientForHint(DisplayHandle, hwnd.whole_window, RootWindow);
 					}
 				}
 			} else {
+				hwnd.owner = null;
 				lock (XlibLock) {
 					XDeleteProperty(DisplayHandle, hwnd.whole_window, (IntPtr)Atom.XA_WM_TRANSIENT_FOR);
 				}

@@ -29,6 +29,7 @@
 #include "mono/metadata/threads.h"
 #include "mono/metadata/monitor.h"
 #include "mono/metadata/metadata-internals.h"
+#include "mono/metadata/method-builder-ilgen-internals.h"
 #include "mono/metadata/domain-internals.h"
 #include "mono/metadata/gc-internals.h"
 #include "mono/metadata/threads-types.h"
@@ -1834,7 +1835,7 @@ cominterop_rcw_finalizer (gpointer key, gpointer value, gpointer user_data)
 }
 
 void
-cominterop_release_all_rcws (void)
+mono_cominterop_release_all_rcws (void)
 {
 	if (!rcw_hash)
 		return;
@@ -3586,7 +3587,7 @@ mono_cominterop_cleanup (void)
 }
 
 void
-cominterop_release_all_rcws (void)
+mono_cominterop_release_all_rcws (void)
 {
 }
 

@@ -37,7 +37,6 @@ namespace System.Windows.Forms
 	{
 		private FlowDirection flow_direction;
 		private bool wrap_contents;
-		private LayoutEngine layout_engine;
 		private Dictionary<object, bool> flow_breaks;
 		private Control owner;
 

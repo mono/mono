@@ -48,8 +48,8 @@ build_SUBDIRS :=  \
 	../tools/cil-stringreplacer
 
 ifdef MCS_MODE
-basic_PARALLEL_SUBDIRS := ../mcs
-build_PARALLEL_SUBDIRS := ../mcs
+basic_PARALLEL_SUBDIRS := ../mcs $(pcl_facade_dirs)
+build_PARALLEL_SUBDIRS := ../mcs $(pcl_facade_dirs)
 else
 basic_PARALLEL_SUBDIRS := $(pcl_facade_dirs)
 build_PARALLEL_SUBDIRS := $(pcl_facade_dirs)
@@ -423,7 +423,7 @@ all-local-aot:
 monolite_dir = monolite-$(HOST_PLATFORM)/$(MONO_CORLIB_VERSION)
 
 # Files needed to bootstrap C# compiler
-build_files = mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Core.dll System.Security.dll System.Configuration.dll \
+build_files := mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Core.dll System.Security.dll System.Configuration.dll \
 	System.Numerics.dll System.Xml.Linq.dll \
 	Facades/System.Collections.Concurrent.dll Facades/System.Linq.dll Facades/System.Runtime.dll Facades/System.Collections.dll	\
 	Facades/System.Reflection.Extensions.dll Facades/System.Text.Encoding.Extensions.dll Facades/System.Diagnostics.Debug.dll \

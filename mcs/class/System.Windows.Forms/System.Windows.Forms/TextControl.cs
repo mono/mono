@@ -544,8 +544,11 @@ namespace System.Windows.Forms {
 				recalc_suspended--;
 
 			if (recalc_suspended == 0 && (immediate_update || recalc_pending) && !(recalc_start == int.MaxValue && recalc_end == int.MinValue)) {
-				RecalculateDocument (owner.CreateGraphicsInternal (), recalc_start, recalc_end, recalc_optimize);
-				recalc_pending = false;
+				if (owner.IsHandleCreated) {
+					using (var graphics = owner.CreateGraphics ())
+						RecalculateDocument (graphics, recalc_start, recalc_end, recalc_optimize);
+					recalc_pending = false;
+				}
 			}
 		}
 
@@ -866,7 +869,10 @@ namespace System.Windows.Forms {
 			}
 
 			// Optimize invalidation based on Line alignment
-			if (RecalculateDocument(owner.CreateGraphicsInternal(), line.line_no, line.line_no, true)) {
+			bool height_changed;
+			using (var graphics = owner.CreateGraphics())
+				height_changed = RecalculateDocument(graphics, line.line_no, line.line_no, true);
+			if (height_changed) {
 				// Lineheight changed, invalidate the rest of the document
 				if ((line.Y - viewport_y) >=0 ) {
 					// We formatted something that's in view, only draw parts of the screen
@@ -937,7 +943,10 @@ namespace System.Windows.Forms {
 			
 			int end_line_bottom = end_line.Y + end_line.height;
 			
-			if (RecalculateDocument(owner.CreateGraphicsInternal(), line.line_no, line.line_no + line_count, true)) {
+			bool height_changed;
+			using (var graphics = owner.CreateGraphics())
+				height_changed = RecalculateDocument(graphics, line.line_no, line.line_no + line_count, true);
+			if (height_changed) {
 				// Lineheight changed, invalidate the rest of the document
 				if ((line.Y - viewport_y) >=0 ) {
 					// We formatted something that's in view, only draw parts of the screen
@@ -1212,7 +1221,9 @@ namespace System.Windows.Forms {
 			// We always have a blank line
 			Add (1, String.Empty, owner.Font, owner.ForeColor, LineEnding.None);
 			
-			this.RecalculateDocument(owner.CreateGraphicsInternal());
+			if (owner.IsHandleCreated)
+				using (var graphics = owner.CreateGraphics())
+					this.RecalculateDocument(graphics);
 			PositionCaret(0, 0);
 
 			SetSelectionVisible (false);
@@ -3720,13 +3731,15 @@ namespace System.Windows.Forms {
 		}
 
 		private void owner_HandleCreated(object sender, EventArgs e) {
-			RecalculateDocument(owner.CreateGraphicsInternal());
+			using (var graphics = owner.CreateGraphics())
+				RecalculateDocument(graphics);
 			AlignCaret();
 		}
 
 		private void owner_VisibleChanged(object sender, EventArgs e) {
 			if (owner.Visible) {
-				RecalculateDocument(owner.CreateGraphicsInternal());
+				using (var graphics = owner.CreateGraphics())
+					RecalculateDocument(graphics);
 			}
 		}
 

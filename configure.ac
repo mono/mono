@@ -40,7 +40,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # This can be reset to 0 when Mono's version number is bumped
 # since it's part of the corlib version (the prefix '1' in the full
 # version number is to ensure the number isn't treated as octal in C)
-MONO_CORLIB_COUNTER=2
+MONO_CORLIB_COUNTER=3
 MONO_CORLIB_VERSION=`printf "1%02d%02d%02d%03d" $MONO_VERSION_MAJOR $MONO_VERSION_MINOR 0 $MONO_CORLIB_COUNTER`
 
 AC_DEFINE_UNQUOTED(MONO_CORLIB_VERSION,$MONO_CORLIB_VERSION,[Version of the corlib-runtime interface])
@@ -1422,6 +1422,12 @@ fi
 
 AM_CONDITIONAL(DISABLE_INTERPRETER, test x$mono_feature_disable_interpreter = xyes)
 
+if test "x$mono_feature_disable_interpreter" != "xyes" -o "x$mono_feature_disable_jit" != "xyes"; then
+	AC_DEFINE(ENABLE_ILGEN, 1, [Some VES is available at runtime])
+fi
+
+AM_CONDITIONAL(ENABLE_ILGEN, test x$mono_feature_disable_interpreter != xyes -o x$mono_feature_disable_jit != xyes)
+
 if test "x$mono_feature_disable_simd" = "xyes"; then
 	AC_DEFINE(DISABLE_SIMD, 1, [Disable SIMD intrinsics related optimizations.])
 	AC_MSG_NOTICE([Disabled SIMD support])
@@ -1654,6 +1660,33 @@ if test x$platform_android = xyes; then
 fi
 
 if test x$host_win32 = xno; then
+	dnl *************************************
+	dnl *** Checks for time capabilities ***
+	dnl *************************************
+
+	AC_MSG_CHECKING(for CLOCK_MONOTONIC)
+	AC_TRY_COMPILE([#include <time.h>], [
+		const int foo = CLOCK_MONOTONIC;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_CLOCK_MONOTONIC, 1, [CLOCK_MONOTONIC])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING(for CLOCK_MONOTONIC_COARSE)
+	AC_TRY_COMPILE([#include <time.h>], [
+		const int foo = CLOCK_MONOTONIC_COARSE;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_CLOCK_MONOTONIC_COARSE, 1, [CLOCK_MONOTONIC_COARSE])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	AC_CHECK_FUNC(mach_absolute_time, [AC_DEFINE(HAVE_MACH_ABSOLUTE_TIME, 1, [mach_absolute_time])])
+	AC_CHECK_FUNC(gethrtime, [AC_DEFINE(HAVE_GETHRTIME, 1, [gethrtime])])
+	AC_CHECK_FUNC(read_real_time, [AC_DEFINE(HAVE_READ_REAL_TIME, 1, [read_real_time])])
 
 	dnl hires monotonic clock support
 	AC_SEARCH_LIBS(clock_gettime, rt)
@@ -2605,6 +2638,21 @@ if test x$host_win32 = xno; then
 	], [
 		AC_MSG_RESULT(no)
 	])
+	dnl **********************************
+	dnl *** Check for access ***
+	dnl **********************************
+	AC_MSG_CHECKING(for access)
+		AC_TRY_LINK([
+		#include <unistd.h>
+	], [
+		access(NULL,0);
+	], [
+		# Yes, we have it...
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_ACCESS, 1, [Have access])
+	], [
+		AC_MSG_RESULT(no)
+	])
 			
 	dnl **********************************
 	dnl *** Checks for proclib         ***
@@ -3459,7 +3507,7 @@ case "$host" in
 			dnl if they are, we specify them by lib.a(lib.so)
 			dnl we may hardcode 64-bit names at times, but we don't do 32-bit AIX, so
 			LIBC="libc.a(shr_64.o)"
-			INTL="libintl.a(libintl.so.9)"
+			INTL="libintl.a(libintl.so.8)"
 			;;
 		  linux*)
 			BTLS_SUPPORTED=yes
@@ -4547,7 +4595,7 @@ if test "x$enable_btls" = "xyes"; then
 		btls_arch=powerpc
 		case $host_os in
 			aix*|os400*)
-				btls_cflags="$btls_cflags -maix64 -D_ALL_SOURCE -D_THREAD_SAFE -D_REENTRANT"
+				btls_cflags="$btls_cflags -maix64 -mminimal-toc -pthread -D_ALL_SOURCE -D_THREAD_SAFE -D_REENTRANT"
 				BTLS_CMAKE_ARGS="-DCMAKE_AR=/usr/bin/ar -DCMAKE_C_ARCHIVE_CREATE=\"<CMAKE_AR> -X64 cr <TARGET> <LINK_FLAGS> <OBJECTS>\""
 		esac
 		;;

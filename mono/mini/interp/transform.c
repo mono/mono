@@ -17,6 +17,7 @@
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/seq-points-data.h>
+#include <mono/metadata/mono-basic-block.h>
 
 #include <mono/mini/mini.h>
 #include <mono/mini/mini-runtime.h>
@@ -773,7 +774,7 @@ jit_call_supported (MonoMethod *method, MonoMethodSignature *sig)
 	if (method->string_ctor)
 		return FALSE;
 
-	for (l = jit_classes; l; l = l->next) {
+	for (l = mono_interp_jit_classes; l; l = l->next) {
 		char *class_name = l->data;
 		// FIXME: Namespaces
 		if (!strcmp (method->klass->name, class_name))
@@ -864,8 +865,6 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 	if (target_method == NULL) {
 		if (calli) {
 			CHECK_STACK(td, 1);
-			native = (method->wrapper_type != MONO_WRAPPER_DELEGATE_INVOKE && td->sp [-1].type == STACK_TYPE_I);
-			--td->sp;
 			if (method->wrapper_type != MONO_WRAPPER_NONE)
 				csignature = (MonoMethodSignature *)mono_method_get_wrapper_data (method, token);
 			else {
@@ -877,6 +876,13 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 				csignature = mono_inflate_generic_signature (csignature, generic_context, error);
 				return_if_nok (error);
 			}
+
+			/*
+			 * The compiled interp entry wrapper is passed to runtime_invoke instead of
+			 * the InterpMethod pointer. FIXME
+			 */
+			native = csignature->pinvoke || method->wrapper_type == MONO_WRAPPER_RUNTIME_INVOKE;
+			--td->sp;
 
 			target_method = NULL;
 		} else {
@@ -1224,7 +1230,7 @@ no_intrinsic:
 		PUSH_VT (td, vararg_stack);
 	}
 
-	g_assert (csignature->call_convention != MONO_CALL_THISCALL && csignature->call_convention != MONO_CALL_FASTCALL);
+	g_assert (csignature->call_convention != MONO_CALL_FASTCALL);
 	td->sp -= csignature->param_count + !!csignature->hasthis;
 	for (i = 0; i < csignature->param_count; ++i) {
 		if (td->sp [i + !!csignature->hasthis].type == STACK_TYPE_VT) {
@@ -1703,6 +1709,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 	MonoImage *image = method->klass->image;
 	MonoDomain *domain = rtm->domain;
 	MonoClass *constrained_class = NULL;
+	MonoSimpleBasicBlock *bb = NULL, *original_bb = NULL;
 	int offset, mt, i, i32;
 	gboolean readonly = FALSE;
 	gboolean volatile_ = FALSE;
@@ -1715,7 +1722,6 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 	guint32 token;
 	TransformData transform_data;
 	TransformData *td;
-	int generating_code = 1;
 	GArray *line_numbers;
 	MonoDebugMethodInfo *minfo;
 	MonoBitSet *seq_point_locs = NULL;
@@ -1752,7 +1758,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 	td->data_items = NULL;
 	td->data_hash = g_hash_table_new (NULL, NULL);
 	td->clause_indexes = g_malloc (header->code_size * sizeof (int));
-	td->gen_sdb_seq_points = debug_options.gen_sdb_seq_points;
+	td->gen_sdb_seq_points = mini_debug_options.gen_sdb_seq_points;
 	td->seq_points = g_ptr_array_new ();
 	td->relocs = g_ptr_array_new ();
 	td->verbose_level = mono_interp_traceopt;
@@ -1891,6 +1897,10 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 		emit_seq_point (td, METHOD_ENTRY_IL_OFFSET, cbb, FALSE);
 	}
 
+	original_bb = bb = mono_basic_block_split (method, error, header);
+	goto_if_nok (error, exit);
+	g_assert (bb);
+
 	int in_offset;
 	while (td->ip < end) {
 		g_assert (td->sp >= td->stack);
@@ -1912,14 +1922,21 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			td->sp = td->stack + td->stack_height [in_offset];
 			td->vt_sp = td->vt_stack_size [in_offset];
 		}
-		if (is_bb_start [in_offset]) {
-			generating_code = 1;
-		}
-		if (!generating_code) {
-			while (td->ip < end && !is_bb_start [td->ip - td->il_code])
-				++td->ip;
+
+		if (in_offset == bb->end)
+			bb = bb->next;
+
+		if (bb->dead) {
+			int op_size = mono_opcode_size (td->ip, end);
+			g_assert (op_size > 0); /* The BB formation pass must catch all bad ops */
+
+			if (td->verbose_level > 1)
+				g_print ("SKIPPING DEAD OP at %x\n", in_offset);
+
+			td->ip += op_size;
 			continue;
 		}
+
 		if (td->verbose_level > 1) {
 			g_print ("IL_%04lx %s %-10s -> IL_%04lx, sp %ld, %s %-12s vt_sp %u (max %u)\n", 
 				td->ip - td->il_code,
@@ -2165,6 +2182,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			int vt_size = 0;
 			MonoType *ult = mini_type_get_underlying_type (signature->ret);
 			if (ult->type != MONO_TYPE_VOID) {
+				CHECK_STACK (td, 1);
 				--td->sp;
 				if (mint_type (ult) == MINT_TYPE_VT) {
 					MonoClass *klass = mono_class_from_mono_type (ult);
@@ -2190,18 +2208,15 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 				WRITE32(td, &vt_size);
 				++td->ip;
 			}
-			generating_code = 0;
 			break;
 		}
 		case CEE_BR:
 			handle_branch (td, MINT_BR_S, MINT_BR, 5 + read32 (td->ip + 1));
 			td->ip += 5;
-			generating_code = 0;
 			break;
 		case CEE_BR_S:
 			handle_branch (td, MINT_BR_S, MINT_BR, 2 + (gint8)td->ip [1]);
 			td->ip += 2;
-			generating_code = 0;
 			break;
 		case CEE_BRFALSE:
 			one_arg_branch (td, MINT_BRFALSE_I4, 5 + read32 (td->ip + 1));
@@ -3006,8 +3021,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 		case CEE_THROW:
 			CHECK_STACK (td, 1);
 			SIMPLE_OP (td, MINT_THROW);
-			--td->sp;
-			generating_code = 0;
+			td->sp = td->stack;
 			break;
 		case CEE_LDFLDA: {
 			CHECK_STACK (td, 1);
@@ -3900,7 +3914,6 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			td->sp = td->stack;
 			SIMPLE_OP (td, MINT_ENDFINALLY);
 			ADD_CODE (td, td->clause_indexes [in_offset]);
-			generating_code = 0;
 			break;
 		}
 		case CEE_LEAVE:
@@ -3924,7 +3937,6 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 				td->ip += 5;
 			else
 				td->ip += 2;
-			generating_code = 0;
 			break;
 		}
 		case MONO_CUSTOM_PREFIX:
@@ -4343,7 +4355,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 				g_assert (clause_index != -1);
 				SIMPLE_OP (td, MINT_RETHROW);
 				ADD_CODE (td, rtm->exvar_offsets [clause_index]);
-				generating_code = 0;
+				td->sp = td->stack;
 				break;
 			}
 			case CEE_SIZEOF: {
@@ -4500,6 +4512,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 	save_seq_points (td);
 
 exit:
+	mono_basic_block_free (original_bb);
 	g_free (td->in_offsets);
 	for (i = 0; i < header->code_size; ++i)
 		g_free (td->stack_state [i]);

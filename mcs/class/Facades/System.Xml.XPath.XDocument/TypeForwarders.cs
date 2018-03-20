@@ -21,4 +21,4 @@
 // 
 
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Xml.XPath.Extensions))]
-
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Xml.XPath.XDocumentExtensions))]

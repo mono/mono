@@ -35,7 +35,7 @@ using System.Collections.Generic;
 namespace System.Windows.Forms
 {
 	[ToolboxItem (false)]
-	public class ToolStripPanelRow : Component, IComponent, IDisposable, IBounds
+	public class ToolStripPanelRow : Component, IComponent, IDisposable
 	{
 		private Rectangle bounds;
 		internal List<Control> controls;
@@ -190,7 +190,7 @@ namespace System.Windows.Forms
 					if (ts.Stretch)
 						ts.Width = this.bounds.Width - ts.Margin.Horizontal - this.Padding.Horizontal;
 					else
-						ts.Width = ts.GetToolStripPreferredSize (Size.Empty).Width;
+						ts.Width = ts.GetPreferredSize (Size.Empty).Width;
 						
 					position.X += ts.Margin.Left;
 					ts.Location = position;
@@ -198,9 +198,9 @@ namespace System.Windows.Forms
 					position.X += (ts.Width + ts.Margin.Left);
 				} else {
 					if (ts.Stretch)
-						ts.Size = new Size (ts.GetToolStripPreferredSize (Size.Empty).Width, this.bounds.Height - ts.Margin.Vertical - this.Padding.Vertical);
+						ts.Size = new Size (ts.GetPreferredSize (Size.Empty).Width, this.bounds.Height - ts.Margin.Vertical - this.Padding.Vertical);
 					else
-						ts.Size = ts.GetToolStripPreferredSize (Size.Empty);
+						ts.Size = ts.GetPreferredSize (Size.Empty);
 
 					position.Y += ts.Margin.Top;
 					ts.Location = position;

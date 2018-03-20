@@ -344,6 +344,10 @@ _ios-$(1)_CXXFLAGS= \
 	-stdlib=libc++ \
 	$$(ios-$(1)_CXXFLAGS)
 
+_ios-$(1)_CPPFLAGS= \
+	-DMONOTOUCH=1 \
+	$$(ios-$(1)_CPPFLAGS)
+
 _ios-$(1)_LDFLAGS= \
 	$$(ios_LDFLAGS) \
 	-stdlib=libc++ \
@@ -369,15 +373,15 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 .stamp-ios-$(1)-toolchain:
 	touch $$@
 
-.stamp-ios-$(1)-configure-$$(CONFIGURATION): | build-ios-llvm
+.stamp-ios-$(1)-$$(CONFIGURATION)-configure: | build-ios-llvm
 
-$$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h: .stamp-ios-$(1)-configure-$$(CONFIGURATION) $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe
+$$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h: .stamp-ios-$(1)-$$(CONFIGURATION)-configure $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe
 	cd $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION) && \
 		MONO_PATH=$(TOP)/tools/offsets-tool/CppSharp/osx_32 \
 			mono --arch=32 --debug $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe \
-				--gen-ios --abi $$(_ios_$(1)_OFFSET_TOOL_ABI) --outfile $$@ --mono $$(TOP) --targetdir $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)
+				--gen-ios --abi $$(_ios-$(1)_OFFSET_TOOL_ABI) --outfile $$@ --mono $$(TOP) --targetdir $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)
 
-build-ios-$(1)-$$(CONFIGURATION): $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h
+build-ios-$(1): $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h
 
 $$(eval $$(call RuntimeTemplate,ios-$(1)))
 

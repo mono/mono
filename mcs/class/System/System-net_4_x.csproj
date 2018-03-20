@@ -222,6 +222,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\SortedSetEqualityComparer.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\Stack.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\StackDebugView.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Diagnostics.StackTrace\src\System\Diagnostics\StackFrameExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.Compression\src\System\IO\Compression\CompressionLevel.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.Compression\src\System\IO\Compression\CompressionMode.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.Compression\src\System\IO\Compression\GZipStream.cs" />
@@ -247,6 +248,8 @@
     <Compile Include="..\..\..\external\corefx\src\System.Net.WebSockets\src\System\Net\WebSockets\WebSocketState.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Private.Uri\src\System\UriBuilder.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\CodeDom\Compiler\IndentedTextWriter.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\StringNormalizationExtensions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Runtime.InteropServices\src\System\Security\SecureStringMarshal.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime\src\System\Collections\Generic\ISet.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\OpenFlags.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\StoreLocation.cs" />
@@ -1376,10 +1379,6 @@
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../corlib/corlib-net_4_x.csproj">
-      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
-      <Name>corlib-net_4_x</Name>
-    </ProjectReference>
     <Reference Include="./../../../external/binary-reference-assemblies/v4.7.1/System.Net.Http.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/v4.7.1/System.Net.Http.dll</HintPath>
@@ -1395,6 +1394,10 @@
       <HintPath>./../../../external/binary-reference-assemblies/v4.7.1/System.Configuration.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <ProjectReference Include="../corlib/corlib-net_4_x.csproj">
+      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
+      <Name>corlib-net_4_x</Name>
+    </ProjectReference>
     <ProjectReference Include="../Mono.Security/Mono.Security-net_4_x.csproj">
       <Project>{42D59DE7-586F-4ACF-BDD5-E7869E39E3EF}</Project>
       <Name>Mono.Security-net_4_x</Name>

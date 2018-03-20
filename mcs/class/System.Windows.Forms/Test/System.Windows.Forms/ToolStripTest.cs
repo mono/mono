@@ -458,6 +458,16 @@ namespace MonoTests.System.Windows.Forms
 			ew.Clear ();
 			ts.LayoutStyle = ToolStripLayoutStyle.VerticalStackWithOverflow;
 			Assert.AreEqual (string.Empty, ew.ToString (), "B3");
+
+			ew.Clear ();
+			ts.LayoutStyle = ToolStripLayoutStyle.Flow;
+			Assert.AreEqual ("LayoutCompleted;LayoutStyleChanged", ew.ToString (), "B4");
+			Assert.AreEqual (typeof (FlowLayoutSettings), ts.LayoutSettings.GetType(), "B5");
+
+			ew.Clear ();
+			ts.LayoutStyle = ToolStripLayoutStyle.Table;
+			Assert.AreEqual ("LayoutCompleted;LayoutStyleChanged", ew.ToString (), "B6");
+			Assert.AreEqual (typeof (TableLayoutSettings), ts.LayoutSettings.GetType(), "B7");
 		}
 
 		[Test]

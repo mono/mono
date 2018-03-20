@@ -145,6 +145,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\SpanHelpers.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\SpanHelpers.T.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\ThrowHelper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\Globalization\Extensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.InteropServices.RuntimeInformation\src\System\Runtime\InteropServices\RuntimeInformation\Architecture.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.InteropServices.RuntimeInformation\src\System\Runtime\InteropServices\RuntimeInformation\OSPlatform.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\X509ContentType.cs" />
@@ -182,6 +183,7 @@
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\Generic\ArraySortHelper.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Globalization\GlobalizationMode.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Runtime\CompilerServices\ReflectionBlockedAttribute.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Runtime\CompilerServices\TaskAwaiter.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\LockHolder.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\DebuggerSupport.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\DebuggerSupport.Dummy.cs" />
@@ -603,7 +605,6 @@
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\requiredattributeattribute.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\scopelessenumattribute.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\suppressmergecheckattribute.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\TaskAwaiter.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\typedependencyattribute.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\compilerservices\YieldAwaitable.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\exceptionservices\corruptingexceptioncommon.cs" />

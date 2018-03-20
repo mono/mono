@@ -810,12 +810,19 @@ namespace System.IO.IsolatedStorage {
 				DirectoryInfo[] subdirs = directory.GetDirectories (path);
 				// we're looking for a single result, identical to path (no pattern here)
 				// we're also looking for something under the current path (not outside isolated storage)
-				if ((subdirs.Length == 1) && (subdirs [0].Name == path) && (subdirs [0].FullName.IndexOf (directory.FullName) >= 0)) {
-					afi = subdirs [0].GetFiles (pattern);
-				} else {
-					// CAS, even in FullTrust, normally enforce IsolatedStorage
-					throw new SecurityException ();
-				}
+				if (subdirs.Length != 1)
+					throw new SecurityException (); // CAS, even in FullTrust, normally enforce IsolatedStorage
+
+				//the base directory must be the prefix of the subdir
+				if (!subdirs [0].FullName.StartsWith (directory.FullName))
+					throw new SecurityException (); // CAS, even in FullTrust, normally enforce IsolatedStorage
+
+				//the subdir suffix must be equal to the provided one
+				var subdir_suffix = subdirs [0].FullName.Substring (directory.FullName.Length + 1); //skip the dir separator
+				if (subdir_suffix != path)
+					throw new SecurityException (); // CAS, even in FullTrust, normally enforce IsolatedStorage
+
+				afi = subdirs [0].GetFiles (pattern);
 			}
 
 			return GetNames (afi);

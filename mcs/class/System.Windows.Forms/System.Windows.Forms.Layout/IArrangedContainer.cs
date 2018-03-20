@@ -1,12 +1,5 @@
 //
-// RegistryAclExtensions.cs
-//
-// Author:
-//   Alexander Köplinger (alexander.koeplinger@xamarin.com)
-//
-// (C) 2016 Xamarin, Inc.
-//
-
+// IArrangedElement.cs
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,37 +20,17 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+// Copyright (c) 2018 Filip Navara
+//
 
-using System;
-using System.Security;
-using System.Security.AccessControl;
+using System.Collections;
+using System.Drawing;
 
-namespace Microsoft.Win32
+namespace System.Windows.Forms.Layout
 {
-	public static class RegistryAclExtensions
+	interface IArrangedContainer : IArrangedElement
 	{
-		public static RegistrySecurity GetAccessControl (this RegistryKey key)
-		{
-			if (key == null)
-				throw new ArgumentNullException (nameof (key));
-
-			return key.GetAccessControl ();
-		}
-
-		public static RegistrySecurity GetAccessControl (this RegistryKey key, AccessControlSections includeSections)
-		{
-			if (key == null)
-				throw new ArgumentNullException (nameof (key));
-
-			return key.GetAccessControl (includeSections);
-		}
-
-		public static void SetAccessControl (this RegistryKey key, RegistrySecurity registrySecurity)
-		{
-			if (key == null)
-				throw new ArgumentNullException (nameof (key));
-
-			key.SetAccessControl (registrySecurity);
-		}
+		ArrangedElementCollection Controls { get; }
+		void PerformLayout (IArrangedElement affectedElement, string affectedProperty);
 	}
 }

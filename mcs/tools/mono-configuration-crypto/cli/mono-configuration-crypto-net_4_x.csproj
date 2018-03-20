@@ -80,10 +80,6 @@
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../../../class/corlib/corlib-net_4_x.csproj">
-      <Project>{2CA6026B-2DC8-4C4C-A12C-1E8234049DB7}</Project>
-      <Name>corlib-net_4_x</Name>
-    </ProjectReference>
     <ProjectReference Include="../../../class/Mono.Security/Mono.Security-net_4_x.csproj">
       <Project>{42D59DE7-586F-4ACF-BDD5-E7869E39E3EF}</Project>
       <Name>Mono.Security-net_4_x</Name>

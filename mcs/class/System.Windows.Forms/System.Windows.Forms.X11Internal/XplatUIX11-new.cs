@@ -511,10 +511,14 @@ namespace System.Windows.Forms.X11Internal {
 			Hwnd	hwnd;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
-			if (hwnd != null && hwnd.parent != null) {
-				return hwnd.parent.Handle;
+			if (hwnd != null) {
+				if (hwnd.parent != null) {
+					return hwnd.parent.Handle;
+				}
+				if (hwnd.owner != null && with_owner) {
+					return hwnd.owner.Handle;
+				}
 			}
-			// FIXME: Handle with_owner
 			return IntPtr.Zero;
 		}
 
