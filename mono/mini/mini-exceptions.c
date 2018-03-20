@@ -1254,7 +1254,7 @@ ves_icall_get_frame_info (gint32 skip, MonoBoolean need_file_info,
 		/* FIXME: Generalize this code with an interface which returns an array of StackFrame structures */
 		jmethod = NULL;
 		ips = get_unwind_backtrace ();
-		for (l = ips; l && skip >= 0; l = l->next) {
+		for (l = ips; l && skip > 0; l = l->next) {
 			guint8 *ip = (guint8*)l->data;
 
 			frame_ip = ip;
