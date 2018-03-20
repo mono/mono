@@ -17,7 +17,7 @@
 #ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
 #endif
-#if defined(HAVE_SYS_SOCKET_H) || defined(__OpenBSD__)
+#if defined(HAVE_SYS_SOCKET_H)
 #include <sys/socket.h>
 #endif
 #ifdef HAVE_NET_IF_H
