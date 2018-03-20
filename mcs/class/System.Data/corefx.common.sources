@@ -60,6 +60,23 @@ corefx/SqlDependencyUtils.cs
 #../../../external/corefx/src/System.Data.Common/src/System/Data/Common/FieldNameLookup.cs
 #../../../external/corefx/src/System.Data.SqlClient/src/System/Data/DataException.cs
 
+../../../external/corefx/src/Common/src/System/Data/Common/AdapterUtil.cs
+../../../external/corefx/src/Common/src/System/Data/Common/AdapterUtil.Drivers.cs
+../../../external/corefx/src/Common/src/System/Data/Common/BasicFieldNameLookup.cs
+../../../external/corefx/src/Common/src/System/Data/Common/DbConnectionOptions.Common.cs
+../../../external/corefx/src/Common/src/System/Data/Common/DbConnectionPoolKey.cs
+../../../external/corefx/src/Common/src/System/Data/Common/FieldNameLookup.cs
+../../../external/corefx/src/Common/src/System/Data/Common/NameValuePair.cs
+../../../external/corefx/src/Common/src/System/Data/Common/MultipartIdentifier.cs
+
+
+../../../external/corefx/src/Common/src/System/Data/ProviderBase/DbConnectionClosed.cs
+../../../external/corefx/src/Common/src/System/Data/ProviderBase/DbConnectionFactory.cs
+../../../external/corefx/src/Common/src/System/Data/ProviderBase/DbConnectionPoolGroup.cs
+../../../external/corefx/src/Common/src/System/Data/ProviderBase/DbConnectionInternal.cs
+../../../external/corefx/src/Common/src/System/Data/ProviderBase/DbReferenceCollection.cs
+../../../external/corefx/src/Common/src/System/Data/ProviderBase/DbMetaDataFactory.cs
+../../../external/corefx/src/Common/src/System/Data/ProviderBase/TimeoutTimer.cs
 #
 # System.Data.Common
 #
@@ -197,7 +214,6 @@ corefx/SqlDependencyUtils.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/UInt64Storage.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/AdapterSwitches.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/AdapterUtil.Common.cs
-../../../external/corefx/src/Common/src/System/Data/Common/AdapterUtil.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/BigIntegerStorage.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/BooleanStorage.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/ByteStorage.cs
@@ -215,7 +231,6 @@ corefx/SqlDependencyUtils.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbCommand.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DBCommandBuilder.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbConnection.cs
-../../../external/corefx/src/Common/src/System/Data/Common/DbConnectionPoolKey.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbConnectionStringBuilder.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbConnectionStringBuilderDescriptor.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbDataAdapter.cs
@@ -242,9 +257,6 @@ corefx/SqlDependencyUtils.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/Int16Storage.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/Int32Storage.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/Int64Storage.cs
-../../../external/corefx/src/Common/src/System/Data/Common/MultipartIdentifier.cs
-../../../external/corefx/src/Common/src/System/Data/Common/NameValuePair.cs
-../../../external/corefx/src/Common/src/System/Data/Common/DbConnectionOptions.Common.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/ObjectStorage.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/RowUpdatedEventArgs.cs
 ../../../external/corefx/src/System.Data.Common/src/System/Data/Common/RowUpdatingEventArgs.cs
@@ -342,22 +354,14 @@ corefx/SqlDependencyUtils.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Common/DbConnectionStringCommon.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Common/AdapterUtil.SqlClient.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Common/DbConnectionOptions.cs
-../../../external/corefx/src/Common/src/System/Data/Common/FieldNameLookup.cs
-../../../external/corefx/src/Common/src/System/Data/Common/BasicFieldNameLookup.cs
-../../../external/corefx/src/Common/src/System/Data/Common/MultipartIdentifier.cs
-../../../external/corefx/src/Common/src/System/Data/Common/NameValuePair.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/DbConnectionClosed.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/DbConnectionFactory.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/DbConnectionInternal.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/DbConnectionPool.cs
-../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/DbConnectionPoolGroup.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/DbConnectionPoolGroupProviderInfo.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/DbConnectionPoolIdentity.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/DbConnectionPoolOptions.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/DbConnectionPoolProviderInfo.cs
-../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/DbReferenceCollection.cs
-../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/DbMetaDataFactory.cs
-../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/TimeoutTimer.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Sql/SqlNorm.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Sql/SqlMetaData.cs
 ../../../external/corefx/src/System.Data.SqlClient/src/System/Data/Sql/SqlNotificationRequest.cs
