@@ -270,7 +270,10 @@ namespace System.IO
 				fixed (char* sourceFileNameChars = sourceFileName,
 				       destinationFileNameChars = destinationFileName,
 				       destinationBackupFileNameChars = destinationBackupFileName) {
-					return ReplaceFile (sourceFileNameChars, destinationFileNameChars, destinationBackupFileNameChars, ignoreMetadataErrors, out error);
+					return ReplaceFile (sourceFileName == null ? null : sourceFileNameChars,
+							destinationFileName == null ? null : destinationFileNameChars,
+							destinationBackupFileName == null ? null : destinationBackupFileNameChars,
+							ignoreMetadataErrors, out error);
 				}
 			}
 		}
