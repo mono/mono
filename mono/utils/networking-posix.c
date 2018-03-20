@@ -17,13 +17,10 @@
 #ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
 #endif
-#ifdef HAVE_SYS_SOCKET_H
+#if defined(HAVE_SYS_SOCKET_H) || defined(__OpenBSD__)
 #include <sys/socket.h>
 #endif
 #ifdef HAVE_NET_IF_H
-#ifdef (__OpenBSD__)
-#include <sys/socket.h>
-#endif
 #include <net/if.h>
 #endif
 #ifdef HAVE_UNISTD_H
