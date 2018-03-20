@@ -699,6 +699,11 @@ if test x"$GCC" = xyes; then
 		# The runtime code does not respect ANSI C strict aliasing rules
 		CFLAGS="$CFLAGS -fno-strict-aliasing"
 
+		# Compliant C++ unwinding code will stop at any frame with CANTUNWIND in the
+		# FDE. If we don't include -fexceptions, some of the runtime functions end up 
+		# having the CANTUNWIND attribute. This is necessary for the C++ EH backend.
+		CFLAGS="$CFLAGS -fexceptions"
+
 		# We rely on signed overflow to behave
 		CFLAGS="$CFLAGS -fwrapv"
 
@@ -3282,7 +3287,7 @@ if test "x$enable_llvm" = "xyes"; then
 
    else
        LLVM_CFLAGS="-I$with_llvm/include -DNDEBUG -D__NO_CTYPE_INLINE -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS"
-       LLVM_CXXFLAGS="$LLVM_CFLAGS -std=gnu++11 -fvisibility-inlines-hidden -fno-rtti -Woverloaded-virtual -Wcast-qual"
+       LLVM_CXXFLAGS="$LLVM_CFLAGS -std=gnu++11 -fvisibility-inlines-hidden -fno-rtti -fexceptions -Woverloaded-virtual -Wcast-qual"
        LLVM_LDFLAGS="-L$with_llvm/lib"
        LLVM_SYSTEM_LIBS="-lshell32 -lpsapi -limagehlp -ldbghelp -lm"
        LLVM_LIBS="-lLLVMLTO -lLLVMObjCARCOpts -lLLVMLinker -lLLVMipo -lLLVMVectorize -lLLVMBitWriter \
@@ -3295,7 +3300,7 @@ if test "x$enable_llvm" = "xyes"; then
          -lLLVMInterpreter -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils \
          -lLLVMipa -lLLVMAnalysis -lLLVMProfileData -lLLVMMCJIT -lLLVMTarget -lLLVMRuntimeDyld \
          -lLLVMObject -lLLVMMCParser -lLLVMBitReader -lLLVMExecutionEngine -lLLVMMC -lLLVMCore \
-         -lLLVMSupport -lstdc++"
+         -lLLVMSupport -fexceptions -lstdc++"
        LLVM_LIBS="$LLVM_LIBS $LLVM_SYSTEM_LIBS"
 
        llvm_config_path=$with_llvm/include/llvm/Config/llvm-config.h
