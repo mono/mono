@@ -25,23 +25,6 @@
        #define __darwin_mcontext       __darwin_mcontext32
 #endif
 
-void *
-mono_mach_arch_get_ip (thread_state_t state)
-{
-	/* Can't use unified_thread_state on !ARM64 since this has to compile on armv6 too */
-	arm_thread_state_t *arch_state = (arm_thread_state_t *) state;
-
-	return (void *) arch_state->__pc;
-}
-
-void *
-mono_mach_arch_get_sp (thread_state_t state)
-{
-	arm_thread_state_t *arch_state = (arm_thread_state_t *) state;
-
-	return (void *) arch_state->__sp;
-}
-
 int
 mono_mach_arch_get_mcontext_size ()
 {
@@ -116,11 +99,6 @@ mono_mach_arch_set_thread_states (thread_port_t thread, thread_state_t state, ma
 #else
 	return thread_set_state (thread, ARM_THREAD_STATE, state, count);
 #endif
-}
-
-void
-mono_mach_init (pthread_key_t key)
-{
 }
 
 #endif

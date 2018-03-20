@@ -20,22 +20,6 @@
 // For reg numbers
 #include <mono/arch/amd64/amd64-codegen.h>
 
-void *
-mono_mach_arch_get_ip (thread_state_t state)
-{
-	x86_thread_state32_t *arch_state = (x86_thread_state32_t *) state;
-
-	return (void *) arch_state->__eip;
-}
-
-void *
-mono_mach_arch_get_sp (thread_state_t state)
-{
-	x86_thread_state32_t *arch_state = (x86_thread_state32_t *) state;
-
-	return (void *) arch_state->__esp;
-}
-
 int
 mono_mach_arch_get_mcontext_size ()
 {
@@ -133,11 +117,6 @@ mono_mach_arch_set_thread_states (thread_port_t thread, thread_state_t state, ma
 	ret = thread_set_state (thread, x86_FLOAT_STATE32, fpstate, fpcount);
 	return ret;
 #endif	
-}
-
-void
-mono_mach_init (pthread_key_t key)
-{
 }
 
 #endif
