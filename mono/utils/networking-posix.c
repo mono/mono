@@ -21,6 +21,9 @@
 #include <sys/socket.h>
 #endif
 #ifdef HAVE_NET_IF_H
+#ifdef (__OpenBSD__)
+#include <sys/socket.h>
+#endif
 #include <net/if.h>
 #endif
 #ifdef HAVE_UNISTD_H
