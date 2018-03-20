@@ -144,6 +144,12 @@ mono_set_allocator_vtable (MonoAllocatorVTable* vtable);
 #pragma GCC diagnostic error "-Wdeprecated-declarations"
 #endif
 
+#elif defined (_MSC_VER)
+#define MONO_RT_EXTERNAL_ONLY __declspec (deprecated ("The mono runtime must not call this function.")) \
+	MONO_RT_CENTRINEL_SUPPRESS
+// Turn deprecation warnings into errors
+#pragma warning (error : 4996)
+
 #else
 #define MONO_RT_EXTERNAL_ONLY MONO_RT_CENTRINEL_SUPPRESS
 #endif // clang or gcc
