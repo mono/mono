@@ -419,7 +419,7 @@ static char*
 get_plt_entry_debug_sym (MonoAotCompile *acfg, MonoJumpInfo *ji, GHashTable *cache);
 
 static void
-add_gsharedvt_wrappers (MonoAotCompile *acfg, MonoMethodSignature *sig, gboolean gsharedvt_in, gboolean gsharedvt_out);
+add_gsharedvt_wrappers (MonoAotCompile *acfg, MonoMethodSignature *sig, gboolean gsharedvt_in, gboolean gsharedvt_out, gboolean interp_in);
 
 static void
 add_profile_instances (MonoAotCompile *acfg, ProfileData *data);
@@ -4367,7 +4367,7 @@ add_wrappers (MonoAotCompile *acfg)
 		if (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) {
 			if (acfg->aot_opts.llvm_only) {
 				/* The wrappers have a different signature (hasthis is not set) so need to add this too */
-				add_gsharedvt_wrappers (acfg, mono_method_signature (method), FALSE, TRUE);
+				add_gsharedvt_wrappers (acfg, mono_method_signature (method), FALSE, TRUE, FALSE);
 			}
 		}
 	}
@@ -7680,7 +7680,7 @@ is_concrete_type (MonoType *t)
 
 /* LOCKING: Assumes the loader lock is held */
 static void
-add_gsharedvt_wrappers (MonoAotCompile *acfg, MonoMethodSignature *sig, gboolean gsharedvt_in, gboolean gsharedvt_out)
+add_gsharedvt_wrappers (MonoAotCompile *acfg, MonoMethodSignature *sig, gboolean gsharedvt_in, gboolean gsharedvt_out, gboolean interp_in)
 {
 	MonoMethod *wrapper;
 	gboolean concrete = TRUE;
@@ -7703,19 +7703,8 @@ add_gsharedvt_wrappers (MonoAotCompile *acfg, MonoMethodSignature *sig, gboolean
 	if (add_out)
 		g_hash_table_insert (acfg->gsharedvt_out_signatures, sig, sig);
 
-	if (!sig->has_type_parameters) {
-		//printf ("%s\n", mono_signature_full_name (sig));
-
-		if (gsharedvt_in) {
-			wrapper = mini_get_gsharedvt_in_sig_wrapper (sig);
-			add_extra_method (acfg, wrapper);
-		}
-		if (gsharedvt_out) {
-			wrapper = mini_get_gsharedvt_out_sig_wrapper (sig);
-			add_extra_method (acfg, wrapper);
-		}
-	} else {
-		/* For signatures creared during generic sharing, convert them to a concrete signature if possible */
+	if (sig->has_type_parameters) {
+		/* For signatures created during generic sharing, convert them to a concrete signature if possible */
 		MonoMethodSignature *copy = mono_metadata_signature_dup (sig);
 		int i;
 
@@ -7729,21 +7718,26 @@ add_gsharedvt_wrappers (MonoAotCompile *acfg, MonoMethodSignature *sig, gboolean
 			if (!is_concrete_type (copy->params [i]))
 				concrete = FALSE;
 		}
-		if (concrete) {
-			copy->has_type_parameters = 0;
+		copy->has_type_parameters = 0;
+		if (!concrete)
+			return;
+		sig = copy;
+	}
 
-			if (gsharedvt_in) {
-				wrapper = mini_get_gsharedvt_in_sig_wrapper (copy);
-				add_extra_method (acfg, wrapper);
-			}
+	//printf ("%s\n", mono_signature_full_name (sig));
 
-			if (gsharedvt_out) {
-				wrapper = mini_get_gsharedvt_out_sig_wrapper (copy);
-				add_extra_method (acfg, wrapper);
-			}
-
-			//printf ("%s\n", mono_method_full_name (wrapper, 1));
-		}
+	if (gsharedvt_in) {
+		wrapper = mini_get_gsharedvt_in_sig_wrapper (sig);
+		add_extra_method (acfg, wrapper);
+	}
+	if (gsharedvt_out) {
+		wrapper = mini_get_gsharedvt_out_sig_wrapper (sig);
+		add_extra_method (acfg, wrapper);
+	}
+	if (interp_in) {
+		wrapper = mini_get_interp_in_wrapper (sig);
+		add_extra_method (acfg, wrapper);
+		//printf ("X: %s\n", mono_method_full_name (wrapper, 1));
 	}
 }
 
@@ -8027,14 +8021,18 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 
 		if (!cfg->method->wrapper_type || cfg->method->wrapper_type == MONO_WRAPPER_DELEGATE_INVOKE)
 			/* These only need out wrappers */
-			add_gsharedvt_wrappers (acfg, mono_method_signature (cfg->method), FALSE, TRUE);
+			add_gsharedvt_wrappers (acfg, mono_method_signature (cfg->method), FALSE, TRUE, FALSE);
 
 		for (l = cfg->signatures; l; l = l->next) {
 			MonoMethodSignature *sig = mono_metadata_signature_dup ((MonoMethodSignature*)l->data);
 
 			/* These only need in wrappers */
-			add_gsharedvt_wrappers (acfg, sig, TRUE, FALSE);
+			add_gsharedvt_wrappers (acfg, sig, TRUE, FALSE, FALSE);
 		}
+	} else if (mono_aot_mode_is_full (&acfg->aot_opts) && mono_aot_mode_is_interp (&acfg->aot_opts)) {
+		/* The interpreter uses these wrappers to call aot-ed code */
+		if (!cfg->method->wrapper_type || cfg->method->wrapper_type == MONO_WRAPPER_DELEGATE_INVOKE)
+			add_gsharedvt_wrappers (acfg, mono_method_signature (cfg->method), FALSE, TRUE, TRUE);
 	}
 
 	/* 
@@ -12412,6 +12410,7 @@ static const char* interp_in_static_sigs[] = {
 	"void ptr",
 	"void int32 ptr&",
 	"void uint32 ptr&",
+	"void"
 };
 
 int
