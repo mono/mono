@@ -73792,6 +73792,19 @@
       </method>
     </type>
   </test>
+  <test name="test-tuple-10.cs">
+    <type name="Program">
+      <method name="Int32 Main()" attrs="150">
+        <size>65</size>
+      </method>
+      <method name="System.ValueTuple`2[System.String,System.Int32] &lt;Main&gt;m__0(System.Reflection.FieldInfo)" attrs="145">
+        <size>21</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-var-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
