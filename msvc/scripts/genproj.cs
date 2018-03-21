@@ -99,6 +99,16 @@ class SlnGenerator {
 		var dependencyGuids = new string[0];
 		if (proj.preBuildEvent.Contains ("jay"))
 			dependencyGuids = new [] { jay_vcxproj_guid };
+
+		foreach (var fd in MsbuildGenerator.fixed_dependencies) {
+			if (fullProjPath.EndsWith (fd.Item1)) {
+				dependencyGuids = dependencyGuids.Concat (fd.Item2).ToArray ();
+			}
+		}
+
+		if (dependencyGuids.Length > 0)
+			Console.WriteLine ($"Project {unixProjFile} has {dependencyGuids.Length} dependencies: {string.Join(", ", dependencyGuids)}");
+
 		WriteProjectReference(sln, "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}", proj.library, relativePath, proj.projectGuid, dependencyGuids);
 	}
 
@@ -188,6 +198,16 @@ class MsbuildGenerator {
 	public const string profile_4_0 = "_4_0";
 	public const string profile_4_x = "_4_x";
 
+	public const string culevel_guid = "{E8E246BD-CD0C-4734-A3C2-7F44796EC47B}";
+
+	public static readonly (string, string)[] fixed_guids = new [] {
+		("tools/culevel/culevel.csproj", culevel_guid)
+	};
+
+	public static readonly (string, string[])[] fixed_dependencies = new [] {
+		("class/System.Web/System.Web.csproj", new [] { culevel_guid })
+	};
+
 	static void Usage ()
 	{
 		Console.Error.WriteLine ("// Invalid argument");
@@ -265,6 +285,14 @@ class MsbuildGenerator {
 	string LookupOrGenerateGuid ()
 	{
 		var projectFile = NativeName (CsprojFilename);
+		string guidKey = Path.GetFullPath (projectFile);
+
+		foreach (var fg in fixed_guids) {
+			if (guidKey.EndsWith (fg.Item1)) {
+				Console.WriteLine($"Using fixed guid {fg.Item2} for {fg.Item1}");
+				return fg.Item2;
+			}
+		}
 
 		string result;
 		GuidForCsprojCache.TryGetValue (projectFile, out result);
