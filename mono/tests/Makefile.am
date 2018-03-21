@@ -535,6 +535,7 @@ TESTS_CS_SRC=		\
 	threads-init.cs \
 	bug-60848.cs \
 	bug-59400.cs \
+	tailcall-interface.cs \
 	sizeof-empty-structs.cs
 
 if AMD64
@@ -569,6 +570,8 @@ TESTS_IL_SRC=			\
 	tailcall-rgctxa.il 	\
 	tailcall-rgctxb.il 	\
 	tailcall-mrgctx.il 	\
+	tailcall-interface-conservestack.il \
+	tailcall-interface-justrun.il \
 	field-access.il		\
 	method-access.il	\
 	ldftn-access.il		\
@@ -702,6 +705,7 @@ TESTS_GSHARED_SRC = \
 	generic-type-builder.2.cs
 
 PLATFORM_DISABLED_TESTS=\
+	tailcall-interface-conservestack.exe \
 	tailcall-rgctxb.exe
 
 # tailcall-virt only currently implemented on AMD64 (JIT, AOT, LLVM).
@@ -731,8 +735,7 @@ if HOST_WIN32
 PLATFORM_DISABLED_TESTS += async-exc-compilation.exe finally_guard.exe finally_block_ending_in_dead_bb.exe \
 	bug-18026.exe monitor.exe threadpool-exceptions5.exe process-unref-race.exe w32message.exe \
 	unhandled-exception-1.exe unhandled-exception-2.exe unhandled-exception-3.exe unhandled-exception-4.exe \
-	unhandled-exception-5.exe unhandled-exception-6.exe unhandled-exception-7.exe unhandled-exception-8.exe \
-	finalizer-abort.exe
+	unhandled-exception-5.exe unhandled-exception-6.exe unhandled-exception-7.exe unhandled-exception-8.exe
 endif
 
 endif
@@ -969,7 +972,6 @@ CI_PR_DISABLED_TESTS = \
 
 if ENABLE_COOP
 CI_PR_DISABLED_TESTS += \
-	abort-cctor.exe \
 	bug-58782-plain-throw.exe \
 	bug-58782-capture-and-throw.exe
 endif
@@ -1117,7 +1119,8 @@ INTERP_DISABLED_TESTS += \
 	cominterop.exe \
 	delegate-with-null-target.exe \
 	dim-diamondshape.exe \
-	pinvoke.exe
+	pinvoke.exe \
+	pinvoke3.exe
 endif
 
 TESTS_CS=$(filter-out $(DISABLED_TESTS),$(TESTS_CS_SRC:.cs=.exe))
