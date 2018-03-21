@@ -77,20 +77,15 @@ int mono_mmap_map (void *handle, gint64 offset, gint64 *size, int access, void *
 	MmapInstance *h = g_malloc0 (sizeof (MmapInstance));
 	h->length = *size;
 
- #ifdef HOST_WIN32
 	h->address = UnityPalMemoryMappedFileMapWithParams((UnityPalFileHandle*) handle, (size_t) *size,  (size_t) offset);
- #else 
-    MmapHandle *fh = (MmapHandle *)handle; 
-	h->address = UnityPalMemoryMappedFileMapWithFileDescriptor(fh->fd, (size_t) *size,  (size_t) offset);
- #endif
 
-	if (h->address) 
+	if (h->address)
 	{
 		*mmap_handle = h;
 		*base_address = (char*) h->address + offset;
 		return 0;
-	} 
-	else 
+	}
+	else
 	{
 		g_free (h);
 		return COULD_NOT_MAP_MEMORY;
