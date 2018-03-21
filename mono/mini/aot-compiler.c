@@ -12678,6 +12678,8 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 	if (mono_aot_mode_is_interp (&acfg->aot_opts)) {
 		for (int i = 0; i < sizeof (interp_in_static_sigs) / sizeof (const char *); i++) {
 			MonoMethodSignature *sig = mono_create_icall_signature (interp_in_static_sigs [i]);
+			sig = mono_metadata_signature_dup_full (mono_get_corlib (), sig);
+			sig->pinvoke = FALSE;
 			MonoMethod *wrapper = mini_get_interp_in_wrapper (sig);
 			add_method (acfg, wrapper);
 		}
