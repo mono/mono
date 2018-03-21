@@ -164,6 +164,7 @@ typedef struct MonoAotOptions {
 	gboolean metadata_only;
 	gboolean bind_to_runtime_version;
 	MonoAotMode mode;
+	gboolean interp;
 	gboolean no_dlsym;
 	gboolean static_link;
 	gboolean asm_only;
@@ -4569,13 +4570,13 @@ method_has_type_vars (MonoMethod *method)
 static
 gboolean mono_aot_mode_is_full (MonoAotOptions *opts)
 {
-	return opts->mode == MONO_AOT_MODE_FULL || opts->mode == MONO_AOT_MODE_INTERP;
+	return opts->mode == MONO_AOT_MODE_FULL;
 }
 
 static
 gboolean mono_aot_mode_is_interp (MonoAotOptions *opts)
 {
-	return opts->mode == MONO_AOT_MODE_INTERP;
+	return opts->interp;
 }
 
 static
@@ -7361,7 +7362,7 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 		} else if (str_begins_with (arg, "hybrid")) {
 			opts->mode = MONO_AOT_MODE_HYBRID;			
 		} else if (str_begins_with (arg, "interp")) {
-			opts->mode = MONO_AOT_MODE_INTERP;
+			opts->interp = TRUE;
 		} else if (str_begins_with (arg, "threads=")) {
 			opts->nthreads = atoi (arg + strlen ("threads="));
 		} else if (str_begins_with (arg, "static")) {
@@ -12576,13 +12577,8 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 		}
 	}
 
-	if (!mono_aot_mode_is_interp (&acfg->aot_opts)) {
-		int method_index;
-
-       for (method_index = 0; method_index < acfg->image->tables [MONO_TABLE_METHOD].rows; ++method_index) {
-		   g_ptr_array_add (acfg->method_order,GUINT_TO_POINTER (method_index));
-       }
-	}
+	for (int method_index = 0; method_index < acfg->image->tables [MONO_TABLE_METHOD].rows; ++method_index)
+		g_ptr_array_add (acfg->method_order,GUINT_TO_POINTER (method_index));
 
 	acfg->num_trampolines [MONO_AOT_TRAMP_SPECIFIC] = mono_aot_mode_is_full (&acfg->aot_opts) ? acfg->aot_opts.ntrampolines : 0;
 #ifdef MONO_ARCH_GSHARED_SUPPORTED
@@ -12599,7 +12595,6 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 	arch_init (acfg);
 
 	if (mono_use_llvm || acfg->aot_opts.llvm) {
-
 		/*
 		 * Emit all LLVM code into a separate assembly/object file and link with it
 		 * normally.
@@ -12639,12 +12634,9 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 	if (mono_aot_mode_is_full (&acfg->aot_opts) || mono_aot_mode_is_hybrid (&acfg->aot_opts))
 		mono_set_partial_sharing_supported (TRUE);
 
-	if (!mono_aot_mode_is_interp (&acfg->aot_opts)) {
-		res = collect_methods (acfg);
-
-		if (!res)
-			return 1;
-	}
+	res = collect_methods (acfg);
+	if (!res)
+		return 1;
 
 	// If we're emitting all of the inflated methods into a dummy
 	// Assembly, then after extra_methods is set up, we're done
