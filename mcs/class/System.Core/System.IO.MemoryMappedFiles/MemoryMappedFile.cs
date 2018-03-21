@@ -100,9 +100,9 @@ namespace System.IO.MemoryMappedFiles
 
 		static void CheckString (string name, string value)
 		{
-			// Native code tends to truncate at nul which is incorrect. Guard it here.
-			if (value != null && value.IndexOf((char)0) != -1)
-				throw new ArgumentException ($"{name}:{value} contains embedded nul.");
+			// Native code tends to truncate at NUL which is incorrect. Guard it here.
+			if (value?.IndexOf((char)0) != -1)
+				throw new ArgumentException ("String must not contain embedded NULs.", name);
 		}
 
 		internal static unsafe IntPtr OpenFile (string path, FileMode mode, string mapName, out long capacity, MemoryMappedFileAccess access, MemoryMappedFileOptions options)
