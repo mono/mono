@@ -19742,7 +19742,7 @@
   <test name="gtest-629.cs">
     <type name="Program">
       <method name="Void Main()" attrs="150">
-        <size>116</size>
+        <size>121</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -47624,7 +47624,7 @@
         <size>7</size>
       </method>
       <method name="Void CopyTo(Int32, Char[], Int32, Int32)" attrs="145">
-        <size>73</size>
+        <size>78</size>
       </method>
     </type>
   </test>
@@ -52163,7 +52163,7 @@
         <size>14</size>
       </method>
       <method name="Void Outer(System.String)" attrs="145">
-        <size>29</size>
+        <size>34</size>
       </method>
       <method name="Void Inner(Char* ByRef, Char*)" attrs="145">
         <size>10</size>
@@ -52374,16 +52374,22 @@
   <test name="test-928.cs">
     <type name="Program">
       <method name="Void Test()" attrs="150">
-        <size>25</size>
+        <size>30</size>
       </method>
       <method name="Int32 Main()" attrs="150">
-        <size>105</size>
+        <size>141</size>
       </method>
       <method name="Boolean &lt;Main&gt;m__0(System.Reflection.LocalVariableInfo)" attrs="145">
         <size>29</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
+      </method>
+      <method name="Boolean StringNull(System.String)" attrs="150">
+        <size>32</size>
+      </method>
+      <method name="Boolean ArrayNull(Int32[])" attrs="150">
+        <size>45</size>
       </method>
     </type>
   </test>
@@ -67032,6 +67038,16 @@
       </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-binaryliteral.cs">
+    <type name="Demo">
+      <method name="Int32 Main()" attrs="145">
+        <size>503</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>
