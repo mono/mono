@@ -379,7 +379,7 @@ namespace System.Net
 					var oldCompletion = Interlocked.CompareExchange (ref pendingWrite, completion, null);
 					if (oldCompletion == null)
 						break;
-					var oldWriteTask = oldCompletion.WaitForCompletion (true);
+					var oldWriteTask = oldCompletion.WaitForCompletion ();
 					var ret = await Task.WhenAny (timeoutTask, oldWriteTask).ConfigureAwait (false);
 					if (ret == timeoutTask)
 						throw new WebException ("The operation has timed out.", WebExceptionStatus.Timeout);

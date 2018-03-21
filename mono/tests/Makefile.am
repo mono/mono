@@ -535,6 +535,7 @@ TESTS_CS_SRC=		\
 	threads-init.cs \
 	bug-60848.cs \
 	bug-59400.cs \
+	tailcall-interface.cs \
 	sizeof-empty-structs.cs \
 	bug-60843.cs
 
@@ -570,6 +571,8 @@ TESTS_IL_SRC=			\
 	tailcall-rgctxa.il 	\
 	tailcall-rgctxb.il 	\
 	tailcall-mrgctx.il 	\
+	tailcall-interface-conservestack.il \
+	tailcall-interface-justrun.il \
 	field-access.il		\
 	method-access.il	\
 	ldftn-access.il		\
@@ -703,6 +706,7 @@ TESTS_GSHARED_SRC = \
 	generic-type-builder.2.cs
 
 PLATFORM_DISABLED_TESTS=\
+	tailcall-interface-conservestack.exe \
 	tailcall-rgctxb.exe
 
 # tailcall-virt only currently implemented on AMD64 (JIT, AOT, LLVM).
@@ -732,8 +736,7 @@ if HOST_WIN32
 PLATFORM_DISABLED_TESTS += async-exc-compilation.exe finally_guard.exe finally_block_ending_in_dead_bb.exe \
 	bug-18026.exe monitor.exe threadpool-exceptions5.exe process-unref-race.exe w32message.exe \
 	unhandled-exception-1.exe unhandled-exception-2.exe unhandled-exception-3.exe unhandled-exception-4.exe \
-	unhandled-exception-5.exe unhandled-exception-6.exe unhandled-exception-7.exe unhandled-exception-8.exe \
-	finalizer-abort.exe
+	unhandled-exception-5.exe unhandled-exception-6.exe unhandled-exception-7.exe unhandled-exception-8.exe
 endif
 
 endif
@@ -966,12 +969,10 @@ CI_PR_DISABLED_TESTS = \
 	monitor-abort.exe \
 	monitor-wait-abort.exe \
 	process-stress-3.exe \
-	sleep.exe \
 	bug-80307.exe
 
 if ENABLE_COOP
 CI_PR_DISABLED_TESTS += \
-	abort-cctor.exe \
 	bug-58782-plain-throw.exe \
 	bug-58782-capture-and-throw.exe
 endif
@@ -999,6 +1000,8 @@ LLVM = $(filter --llvm, $(MONO_ENV_OPTIONS))
 # threads-init.exe: runs out of system threads
 # dim-constrainedcall.exe: fails on dontnet as well (https://github.com/dotnet/coreclr/issues/15353)
 # tailcall-rgctxb.exe seems like it would but it does not, needs debugging
+# tailcall-mrgctx.exe   temporarily disabled
+# tailcall-rgctxa.exe   temporarily disabled
 KNOWN_FAILING_TESTS = \
 	delegate-async-exception.exe	\
 	bug-348522.2.exe	\
@@ -1018,6 +1021,8 @@ KNOWN_FAILING_TESTS = \
 	tail1.exe \
 	taili1.exe \
 	vtail1.exe \
+	tailcall-mrgctx.exe \
+	tailcall-rgctxa.exe \
 	tailcall-rgctxb.exe
 
 DISABLED_TESTS = \
@@ -1104,10 +1109,8 @@ if ARM64
 INTERP_DISABLED_TESTS += \
 	bug-48015.exe \
 	bug-80307.exe \
-	calliGenericTest.exe \
 	delegate-with-null-target.exe \
 	dim-diamondshape.exe \
-	pinvoke2.exe \
 	pinvoke3.exe
 endif
 
@@ -1116,12 +1119,10 @@ INTERP_DISABLED_TESTS += \
 	assemblyresolve_event6.exe \
 	bug-48015.exe \
 	bug-60862.exe \
-	calliGenericTest.exe \
 	cominterop.exe \
 	delegate-with-null-target.exe \
 	dim-diamondshape.exe \
 	pinvoke.exe \
-	pinvoke2.exe \
 	pinvoke3.exe
 endif
 

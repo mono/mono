@@ -727,7 +727,7 @@ static gboolean buffer_replies;
 
 /* Buffered reply packets */
 static ReplyPacket reply_packets [128];
-int nreply_packets;
+static int nreply_packets;
 
 #define dbg_lock() mono_coop_mutex_lock (&debug_mutex)
 #define dbg_unlock() mono_coop_mutex_unlock (&debug_mutex)
@@ -1379,7 +1379,11 @@ socket_transport_connect (const char *address)
 				break;       /* Success */
 			
 			MONO_ENTER_GC_SAFE;
+#ifdef HOST_WIN32
+			closesocket (sfd);
+#else
 			close (sfd);
+#endif
 			MONO_EXIT_GC_SAFE;
 		}
 
@@ -5233,7 +5237,7 @@ mono_debugger_agent_user_break (void)
 		mono_loader_unlock ();
 
 		process_event (EVENT_KIND_USER_BREAK, NULL, 0, &ctx, events, suspend_policy);
-	} else if (debug_options.native_debugger_break) {
+	} else if (mini_debug_options.native_debugger_break) {
 		G_BREAKPOINT ();
 	}
 }
@@ -5403,7 +5407,7 @@ mono_debugger_agent_single_step_event (void *sigctx)
 }
 
 void
-debugger_agent_single_step_from_context (MonoContext *ctx)
+mono_debugger_agent_single_step_from_context (MonoContext *ctx)
 {
 	DebuggerTlsData *tls;
 	MonoThreadUnwindState orig_restore_state;
@@ -5430,7 +5434,7 @@ debugger_agent_single_step_from_context (MonoContext *ctx)
 }
 
 void
-debugger_agent_breakpoint_from_context (MonoContext *ctx)
+mono_debugger_agent_breakpoint_from_context (MonoContext *ctx)
 {
 	DebuggerTlsData *tls;
 	MonoThreadUnwindState orig_restore_state;
@@ -10537,17 +10541,21 @@ debugger_thread (void *arg)
 		/* This will break if the socket is closed during shutdown too */
 		if (res != HEADER_LENGTH) {
 			DEBUG_PRINTF (1, "[dbg] transport_recv () returned %d, expected %d.\n", res, HEADER_LENGTH);
-			break;
+			len = HEADER_LENGTH;
+			id = 0;
+			flags = 0;
+			command_set = CMD_SET_VM;
+			command = CMD_VM_DISPOSE;
+		} else {
+			p = header;
+			end = header + HEADER_LENGTH;
+
+			len = decode_int (p, &p, end);
+			id = decode_int (p, &p, end);
+			flags = decode_byte (p, &p, end);
+			command_set = (CommandSet)decode_byte (p, &p, end);
+			command = decode_byte (p, &p, end);
 		}
-
-		p = header;
-		end = header + HEADER_LENGTH;
-
-		len = decode_int (p, &p, end);
-		id = decode_int (p, &p, end);
-		flags = decode_byte (p, &p, end);
-		command_set = (CommandSet)decode_byte (p, &p, end);
-		command = decode_byte (p, &p, end);
 
 		g_assert (flags == 0);
 

@@ -3164,7 +3164,7 @@ namespace System.Windows.Forms {
 				if (new_size == Size)
 					return;
 
-				SetBoundsInternal (bounds.X, bounds.Y, new_size.Width, new_size.Height, BoundsSpecified.None);
+				SetBoundsCore (bounds.X, bounds.Y, new_size.Width, new_size.Height, BoundsSpecified.None);
 			}
 
 			base.OnLayout (levent);			

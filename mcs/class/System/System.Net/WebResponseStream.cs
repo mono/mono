@@ -134,7 +134,7 @@ namespace System.Net
 				WebConnection.Debug ($"{ME} READ ASYNC #1: {oldCompletion != null}");
 				if (oldCompletion == null)
 					break;
-				await oldCompletion.WaitForCompletion (true).ConfigureAwait (false);
+				await oldCompletion.WaitForCompletion ().ConfigureAwait (false);
 			}
 
 			WebConnection.Debug ($"{ME} READ ASYNC #2: {totalRead} {contentLength}");
@@ -164,7 +164,7 @@ namespace System.Net
 				}
 
 				closed = true;
-				Operation.CompleteResponseRead (false, throwMe);
+				Operation.Finish (false, throwMe);
 				throw throwMe;
 			}
 
@@ -178,7 +178,7 @@ namespace System.Net
 				WebConnection.Debug ($"{ME} READ ASYNC - READ COMPLETE: {oldBytes} {nbytes} - {totalRead} {contentLength} {nextReadCalled}");
 				if (!nextReadCalled) {
 					nextReadCalled = true;
-					Operation.CompleteResponseRead (true);
+					Operation.Finish (true);
 				}
 			}
 
@@ -388,7 +388,7 @@ namespace System.Net
 						contentLength = 0;
 					nextReadCalled = true;
 				}
-				Operation.CompleteResponseRead (true);
+				Operation.Finish (true);
 			}
 		}
 
@@ -399,7 +399,7 @@ namespace System.Net
 			if (read_eof || totalRead >= contentLength || nextReadCalled) {
 				if (!nextReadCalled) {
 					nextReadCalled = true;
-					Operation.CompleteResponseRead (true);
+					Operation.Finish (true);
 				}
 				return;
 			}
@@ -416,7 +416,7 @@ namespace System.Net
 					break;
 
 				// ReadAsync() is in progress.
-				var oldReadTask = oldCompletion.WaitForCompletion (true);
+				var oldReadTask = oldCompletion.WaitForCompletion ();
 				var anyTask = await Task.WhenAny (oldReadTask, timeoutTask).ConfigureAwait (false);
 				if (anyTask == timeoutTask)
 					throw new WebException ("The operation has timed out.", WebExceptionStatus.Timeout);
@@ -506,7 +506,7 @@ namespace System.Net
 				pendingRead = null;
 			}
 
-			Operation.CompleteResponseRead (true);
+			Operation.Finish (true);
 		}
 
 		public override Task WriteAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
@@ -521,12 +521,12 @@ namespace System.Net
 				nextReadCalled = true;
 				if (totalRead >= contentLength) {
 					disposed = true;
-					Operation.CompleteResponseRead (true);
+					Operation.Finish (true);
 				} else {
 					// If we have not read all the contents
 					closed = true;
 					disposed = true;
-					Operation.CompleteResponseRead (false);
+					Operation.Finish (false);
 				}
 			}
 		}

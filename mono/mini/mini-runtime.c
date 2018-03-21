@@ -125,7 +125,7 @@ static mono_mutex_t jit_mutex;
 
 static MonoCodeManager *global_codeman;
 
-MonoDebugOptions debug_options;
+MonoDebugOptions mini_debug_options;
 
 #ifdef VALGRIND_JIT_REGISTER_MAP
 int valgrind_register;
@@ -1661,10 +1661,13 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 void
 mini_register_jump_site (MonoDomain *domain, MonoMethod *method, gpointer ip)
 {
+	ERROR_DECL (error);
 	MonoJumpList *jlist;
 
-	if (mono_method_is_generic_sharable (method, TRUE))
-		method = mini_get_shared_method (method);
+	if (mono_method_is_generic_sharable (method, TRUE)) {
+		method = mini_get_shared_method_full (method, SHARE_MODE_NONE, error);
+		mono_error_assert_ok (error);
+	}
 
 	mono_domain_lock (domain);
 	jlist = (MonoJumpList *)g_hash_table_lookup (domain_jit_info (domain)->jump_target_hash, method);
@@ -1684,6 +1687,7 @@ mini_register_jump_site (MonoDomain *domain, MonoMethod *method, gpointer ip)
 void
 mini_patch_jump_sites (MonoDomain *domain, MonoMethod *method, gpointer addr)
 {
+	ERROR_DECL (error);
 	GHashTable *hash = domain_jit_info (domain)->jump_target_hash;
 
 	if (!hash)
@@ -1694,8 +1698,10 @@ mini_patch_jump_sites (MonoDomain *domain, MonoMethod *method, gpointer addr)
 	GSList *tmp;
 
 	/* The caller/callee might use different instantiations */
-	if (mono_method_is_generic_sharable (method, TRUE))
-		method = mini_get_shared_method (method);
+	if (mono_method_is_generic_sharable (method, TRUE)) {
+		method = mini_get_shared_method_full (method, SHARE_MODE_NONE, error);
+		mono_error_assert_ok (error);
+	}
 
 	mono_domain_lock (domain);
 	jlist = (MonoJumpList *)g_hash_table_lookup (hash, method);
@@ -1788,6 +1794,7 @@ mini_lookup_method (MonoDomain *domain, MonoMethod *method, MonoMethod *shared)
 static MonoJitInfo*
 lookup_method (MonoDomain *domain, MonoMethod *method)
 {
+	ERROR_DECL (error);
 	MonoJitInfo *ji;
 	MonoMethod *shared;
 
@@ -1796,7 +1803,8 @@ lookup_method (MonoDomain *domain, MonoMethod *method)
 	if (!ji) {
 		if (!mono_method_is_generic_sharable (method, FALSE))
 			return NULL;
-		shared = mini_get_shared_method (method);
+		shared = mini_get_shared_method_full (method, SHARE_MODE_NONE, error);
+		mono_error_assert_ok (error);
 		ji = mini_lookup_method (domain, method, shared);
 	}
 
@@ -2331,7 +2339,7 @@ mono_jit_free_method (MonoDomain *domain, MonoMethod *method)
 	mono_domain_unlock (domain);
 
 #ifdef MONO_ARCH_HAVE_INVALIDATE_METHOD
-	if (debug_options.keep_delegates && method->wrapper_type == MONO_WRAPPER_NATIVE_TO_MANAGED) {
+	if (mini_debug_options.keep_delegates && method->wrapper_type == MONO_WRAPPER_NATIVE_TO_MANAGED) {
 		/*
 		 * Instead of freeing the code, change it to call an error routine
 		 * so people can fix their code.
@@ -2490,7 +2498,7 @@ create_runtime_invoke_info (MonoDomain *domain, MonoMethod *method, gpointer com
 	 * possible, built on top of the OP_DYN_CALL opcode provided by the JIT.
 	 */
 #ifdef MONO_ARCH_DYN_CALL_SUPPORTED
-	if (!mono_llvm_only && (mono_aot_only || debug_options.dyn_runtime_invoke)) {
+	if (!mono_llvm_only && (mono_aot_only || mini_debug_options.dyn_runtime_invoke)) {
 		gboolean supported = TRUE;
 		int i;
 
@@ -2509,7 +2517,7 @@ create_runtime_invoke_info (MonoDomain *domain, MonoMethod *method, gpointer com
 
 		if (supported) {
 			info->dyn_call_info = mono_arch_dyn_call_prepare (sig);
-			if (debug_options.dyn_runtime_invoke)
+			if (mini_debug_options.dyn_runtime_invoke)
 				g_assert (info->dyn_call_info);
 		}
 	}
@@ -3474,51 +3482,51 @@ gboolean
 mini_parse_debug_option (const char *option)
 {
 	if (!strcmp (option, "handle-sigint"))
-		debug_options.handle_sigint = TRUE;
+		mini_debug_options.handle_sigint = TRUE;
 	else if (!strcmp (option, "keep-delegates"))
-		debug_options.keep_delegates = TRUE;
+		mini_debug_options.keep_delegates = TRUE;
 	else if (!strcmp (option, "reverse-pinvoke-exceptions"))
-		debug_options.reverse_pinvoke_exceptions = TRUE;
+		mini_debug_options.reverse_pinvoke_exceptions = TRUE;
 	else if (!strcmp (option, "collect-pagefault-stats"))
-		debug_options.collect_pagefault_stats = TRUE;
+		mini_debug_options.collect_pagefault_stats = TRUE;
 	else if (!strcmp (option, "break-on-unverified"))
-		debug_options.break_on_unverified = TRUE;
+		mini_debug_options.break_on_unverified = TRUE;
 	else if (!strcmp (option, "no-gdb-backtrace"))
-		debug_options.no_gdb_backtrace = TRUE;
+		mini_debug_options.no_gdb_backtrace = TRUE;
 	else if (!strcmp (option, "suspend-on-native-crash") || !strcmp (option, "suspend-on-sigsegv"))
-		debug_options.suspend_on_native_crash = TRUE;
+		mini_debug_options.suspend_on_native_crash = TRUE;
 	else if (!strcmp (option, "suspend-on-exception"))
-		debug_options.suspend_on_exception = TRUE;
+		mini_debug_options.suspend_on_exception = TRUE;
 	else if (!strcmp (option, "suspend-on-unhandled"))
-		debug_options.suspend_on_unhandled = TRUE;
+		mini_debug_options.suspend_on_unhandled = TRUE;
 	else if (!strcmp (option, "dont-free-domains"))
 		mono_dont_free_domains = TRUE;
 	else if (!strcmp (option, "dyn-runtime-invoke"))
-		debug_options.dyn_runtime_invoke = TRUE;
+		mini_debug_options.dyn_runtime_invoke = TRUE;
 	else if (!strcmp (option, "gdb"))
-		debug_options.gdb = TRUE;
+		mini_debug_options.gdb = TRUE;
 	else if (!strcmp (option, "lldb"))
-		debug_options.lldb = TRUE;
+		mini_debug_options.lldb = TRUE;
 	else if (!strcmp (option, "explicit-null-checks"))
-		debug_options.explicit_null_checks = TRUE;
+		mini_debug_options.explicit_null_checks = TRUE;
 	else if (!strcmp (option, "gen-seq-points"))
-		debug_options.gen_sdb_seq_points = TRUE;
+		mini_debug_options.gen_sdb_seq_points = TRUE;
 	else if (!strcmp (option, "gen-compact-seq-points"))
 		fprintf (stderr, "Mono Warning: option gen-compact-seq-points is deprecated.\n");
 	else if (!strcmp (option, "no-compact-seq-points"))
-		debug_options.no_seq_points_compact_data = TRUE;
+		mini_debug_options.no_seq_points_compact_data = TRUE;
 	else if (!strcmp (option, "single-imm-size"))
-		debug_options.single_imm_size = TRUE;
+		mini_debug_options.single_imm_size = TRUE;
 	else if (!strcmp (option, "init-stacks"))
-		debug_options.init_stacks = TRUE;
+		mini_debug_options.init_stacks = TRUE;
 	else if (!strcmp (option, "casts"))
-		debug_options.better_cast_details = TRUE;
+		mini_debug_options.better_cast_details = TRUE;
 	else if (!strcmp (option, "soft-breakpoints"))
-		debug_options.soft_breakpoints = TRUE;
+		mini_debug_options.soft_breakpoints = TRUE;
 	else if (!strcmp (option, "check-pinvoke-callconv"))
-		debug_options.check_pinvoke_callconv = TRUE;
+		mini_debug_options.check_pinvoke_callconv = TRUE;
 	else if (!strcmp (option, "use-fallback-tls"))
-		debug_options.use_fallback_tls = TRUE;
+		mini_debug_options.use_fallback_tls = TRUE;
 	else if (!strcmp (option, "debug-domain-unload"))
 		mono_enable_debug_domain_unload (TRUE);
 	else if (!strcmp (option, "partial-sharing"))
@@ -3526,9 +3534,9 @@ mini_parse_debug_option (const char *option)
 	else if (!strcmp (option, "align-small-structs"))
 		mono_align_small_structs = TRUE;
 	else if (!strcmp (option, "native-debugger-break"))
-		debug_options.native_debugger_break = TRUE;
+		mini_debug_options.native_debugger_break = TRUE;
 	else if (!strcmp (option, "disable_omit_fp"))
-		debug_options.disable_omit_fp = TRUE;
+		mini_debug_options.disable_omit_fp = TRUE;
 	else
 		return FALSE;
 
@@ -3563,7 +3571,7 @@ mini_parse_debug_options (void)
 MonoDebugOptions *
 mini_get_debug_options (void)
 {
-	return &debug_options;
+	return &mini_debug_options;
 }
 
 static gpointer
@@ -3851,7 +3859,7 @@ mini_add_profiler_argument (const char *desc)
 }
 
 
-MonoEECallbacks interp_cbs = {0};
+static MonoEECallbacks interp_cbs = {0};
 
 void
 mini_install_interp_callbacks (MonoEECallbacks *cbs)
@@ -4065,7 +4073,7 @@ mini_init (const char *filename, const char *runtime_version)
 
 	mono_profiler_started ();
 
-	if (debug_options.collect_pagefault_stats)
+	if (mini_debug_options.collect_pagefault_stats)
 		mono_aot_set_make_unreadable (TRUE);
 
 	if (runtime_version)
@@ -4206,7 +4214,7 @@ register_icalls (void)
 	register_dyn_icall (mono_get_rethrow_exception (), "mono_arch_rethrow_exception", "void object", TRUE);
 	register_dyn_icall (mono_get_throw_corlib_exception (), "mono_arch_throw_corlib_exception", "void ptr", TRUE);
 	register_icall (mono_thread_get_undeniable_exception, "mono_thread_get_undeniable_exception", "object", FALSE);
-	register_icall (mono_thread_self_abort, "mono_thread_self_abort", "void", FALSE);
+	register_icall (ves_icall_thread_finish_async_abort, "ves_icall_thread_finish_async_abort", "void", FALSE);
 	register_icall (mono_thread_interruption_checkpoint, "mono_thread_interruption_checkpoint", "object", FALSE);
 	register_icall (mono_thread_force_interruption_checkpoint_noraise, "mono_thread_force_interruption_checkpoint_noraise", "object", FALSE);
 
@@ -4492,7 +4500,7 @@ mini_cleanup (MonoDomain *domain)
 	MONO_PROFILER_RAISE (runtime_shutdown_begin, ());
 
 #ifndef DISABLE_COM
-	cominterop_release_all_rcws ();
+	mono_cominterop_release_all_rcws ();
 #endif
 
 #ifndef MONO_CROSS_COMPILE

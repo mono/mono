@@ -325,13 +325,13 @@ extern gboolean	mono_using_xdebug;
 extern int mini_verbose;
 extern int valgrind_register;
 
-#define INS_INFO(opcode) (&ins_info [((opcode) - OP_START - 1) * 4])
+#define INS_INFO(opcode) (&mini_ins_info [((opcode) - OP_START - 1) * 4])
 
-extern const char ins_info[];
-extern const gint8 ins_sreg_counts [];
+extern const char mini_ins_info[];
+extern const gint8 mini_ins_sreg_counts [];
 
 #ifndef DISABLE_JIT
-#define mono_inst_get_num_src_registers(ins) (ins_sreg_counts [(ins)->opcode - OP_START - 1])
+#define mono_inst_get_num_src_registers(ins) (mini_ins_sreg_counts [(ins)->opcode - OP_START - 1])
 #else
 #define mono_inst_get_num_src_registers(ins) 0
 #endif
@@ -959,6 +959,7 @@ typedef enum {
 	MONO_RGCTX_INFO_NULLABLE_CLASS_BOX,
 	MONO_RGCTX_INFO_NULLABLE_CLASS_UNBOX,
 	/* MONO_PATCH_INFO_VCALL_METHOD */
+	/* In llvmonly mode, this is a function descriptor */
 	MONO_RGCTX_INFO_VIRT_METHOD_CODE,
 	/*
 	 * MONO_PATCH_INFO_VCALL_METHOD
@@ -1490,6 +1491,7 @@ typedef struct {
 	int stat_code_reallocs;
 
 	MonoProfilerCallInstrumentationFlags prof_flags;
+	gboolean prof_coverage;
 
 	/* For deduplication */
 	gboolean skip;
@@ -2488,18 +2490,22 @@ void mono_generic_sharing_cleanup (void);
 MonoClass* mini_class_get_container_class (MonoClass *klass);
 MonoGenericContext* mini_class_get_context (MonoClass *klass);
 
+typedef enum {
+	SHARE_MODE_NONE = 0x0,
+	SHARE_MODE_GSHAREDVT = 0x1,
+} GetSharedMethodFlags;
+
 MonoType* mini_get_underlying_type (MonoType *type) MONO_LLVM_INTERNAL;
 MonoType* mini_type_get_underlying_type (MonoType *type);
 MonoClass* mini_get_class (MonoMethod *method, guint32 token, MonoGenericContext *context);
-MonoMethod* mini_get_shared_method (MonoMethod *method);
 MonoMethod* mini_get_shared_method_to_register (MonoMethod *method);
-MonoMethod* mini_get_shared_method_full (MonoMethod *method, gboolean all_vt, gboolean is_gsharedvt);
+MonoMethod* mini_get_shared_method_full (MonoMethod *method, GetSharedMethodFlags flags, MonoError *error);
 MonoType* mini_get_shared_gparam (MonoType *t, MonoType *constraint);
 int mini_get_rgctx_entry_slot (MonoJumpInfoRgctxEntry *entry);
 
 int mini_type_stack_size (MonoType *t, int *align);
 int mini_type_stack_size_full (MonoType *t, guint32 *align, gboolean pinvoke);
-void type_to_eval_stack_type (MonoCompile *cfg, MonoType *type, MonoInst *inst);
+void mini_type_to_eval_stack_type (MonoCompile *cfg, MonoType *type, MonoInst *inst);
 guint mono_type_to_regmove (MonoCompile *cfg, MonoType *type) MONO_LLVM_INTERNAL;
 
 void mono_cfg_add_try_hole (MonoCompile *cfg, MonoExceptionClause *clause, guint8 *start, MonoBasicBlock *bb);

@@ -1422,6 +1422,7 @@ namespace System.Windows.Forms.X11Internal {
 
 		public bool SetOwner (X11Hwnd owner)
 		{
+			this.owner = owner;
 			if (owner != null) {
 				WINDOW_TYPE = display.Atoms._NET_WM_WINDOW_TYPE_NORMAL;
 				if (owner != null)
