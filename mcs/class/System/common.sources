@@ -312,6 +312,7 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.Collections.Specialized/src/System/Collections/Specialized/StringCollection.cs
 ../../../external/corefx/src/System.Collections.Specialized/src/System/Collections/Specialized/NameValueCollection.cs
 ../referencesource/System/compmod/system/collections/specialized/stringdictionary.cs
+../../../external/corefx/src/System.Collections.Specialized/src/System/Collections/Specialized/StringDictionary.cs
 ../referencesource/System/compmod/system/collections/specialized/nameobjectcollectionbase.cs
 ../referencesource/System/compmod/system/collections/specialized/casesensitivestringdictionary.cs
 ../../../external/corefx/src/System.Collections.NonGeneric/src/System/Collections/Specialized/CollectionsUtil.cs
