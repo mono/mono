@@ -101,7 +101,7 @@ namespace System.IO.MemoryMappedFiles
 		static void CheckString (string name, string value)
 		{
 			// Native code tends to truncate at NUL which is incorrect. Guard it here.
-			if (value?.IndexOf((char)0) != -1)
+			if (value?.IndexOf((char)0) >= 0)
 				throw new ArgumentException ("String must not contain embedded NULs.", name);
 		}
 
