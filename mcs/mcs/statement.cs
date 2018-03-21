@@ -6562,18 +6562,26 @@ namespace Mono.CSharp {
 
 				// TODO: Should use Binary::Add
 				pinned_string.Emit (ec);
-				ec.Emit (OpCodes.Conv_I);
+				ec.Emit (OpCodes.Conv_U);
 
 				var m = ec.Module.PredefinedMembers.RuntimeHelpersOffsetToStringData.Resolve (loc);
 				if (m == null)
 					return;
 
+				var null_value = ec.DefineLabel ();
+				vi.EmitAssign (ec);
+				vi.Emit (ec);
+				ec.Emit (OpCodes.Brfalse_S, null_value);
+
+				vi.Emit (ec);
 				PropertyExpr pe = new PropertyExpr (m, pinned_string.Location);
 				//pe.InstanceExpression = pinned_string;
 				pe.Resolve (new ResolveContext (ec.MemberContext)).Emit (ec);
 
 				ec.Emit (OpCodes.Add);
 				vi.EmitAssign (ec);
+
+				ec.MarkLabel (null_value);
 			}
 
 			public override void EmitExit (EmitContext ec)
