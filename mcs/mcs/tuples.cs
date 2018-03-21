@@ -267,6 +267,11 @@ namespace Mono.CSharp
 			this.Location = expr.Location;
 		}
 
+		public TupleLiteralElement Clone (CloneContext clonectx)
+		{
+			return new TupleLiteralElement (Name, Expr.Clone (clonectx), Location);
+		}
+
 		public string Name { get; private set; }
 		public Expression Expr { get; set; }
 		public Location Location { get; private set; }
@@ -286,6 +291,16 @@ namespace Mono.CSharp
 			get {
 				return elements;
 			}
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Expression t)
+		{
+			var clone = new List<TupleLiteralElement> (elements.Count);
+			foreach (var te in elements)
+				clone.Add (te.Clone (clonectx));
+
+			TupleLiteral target = (TupleLiteral)t;
+			target.elements = clone;
 		}
 
 		public static bool ContainsNoTypeElement (TypeSpec type)
